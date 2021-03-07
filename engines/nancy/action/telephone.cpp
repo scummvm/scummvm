@@ -100,6 +100,7 @@ uint16 Telephone::readData(Common::SeekableReadStream &stream) {
     for (uint i = 0; i < numCalls; ++i) {
         calls.push_back(PhoneCall());
         PhoneCall &call = calls.back();
+
         for (uint j = 0; j < 11; ++j) {
             call.phoneNumber.push_back(stream.readByte());
         }
@@ -119,132 +120,133 @@ uint16 Telephone::readData(Common::SeekableReadStream &stream) {
 
 void Telephone::execute(NancyEngine *engine) {
     switch (state) {
-        case kBegin:
-            init();
-            registerGraphics();
-            _engine->sound->loadSound(dialToneSound);
-            _engine->sound->playSound(dialToneSound);
-            _engine->scene->getTextbox().clear();
-            _engine->scene->getTextbox().addTextLine(addressBookString);
-            state = kRun;
-            // fall through
-        case kRun:
-            switch (callState) {
-                case kWaiting:
-                    // Long phone numbers start with 1
-                    if (calledNumber.size() >= 11 || (calledNumber.size() >= 7 && (calledNumber[0] != 1))) {
-                        _engine->scene->getTextbox().clear();
-                        _engine->scene->getTextbox().addTextLine("ringing...<n><e>"); // Hardcoded in the original engine
-                        _engine->sound->loadSound(ringSound);
-                        _engine->sound->playSound(ringSound);
-                        callState = kRinging;
-                    }
-                    break;
-                case kButtonPress:
-                    if (!_engine->sound->isSoundPlaying(genericButtonSound)) {
-                        _engine->sound->stopSound(genericButtonSound);
-                        undrawButton(selected);
-                        callState = kWaiting;
-                    }
-
-                    break;
-                case kRinging:
-                    if (!_engine->sound->isSoundPlaying(ringSound)) {
-                        _engine->sound->stopSound(ringSound);
-
-                        uint numberLength = calledNumber[0] == 1 ? 11 : 7;
-                        for (uint i = 0; i < calls.size(); ++i) {
-                            bool invalid = false;
-                            for (uint j = 0; j < numberLength; ++j) {
-                                if (calledNumber[j] != calls[i].phoneNumber[j]) {
-                                    // Invalid number, move onto next
-                                    invalid = true;
-                                    break;
-                                }
-                            }
-
-                            if (invalid) {
-                                continue;
-                            }
-
-                            _engine->scene->getTextbox().clear();
-                            _engine->scene->getTextbox().addTextLine(calls[i].text);
-
-                            genericDialogueSound.name = calls[i].soundName;
-                            _engine->sound->loadSound(genericDialogueSound);
-                            _engine->sound->playSound(genericDialogueSound);
-                            selected = i;
-                            callState = kCall;
-
-                            return;
-                        }
-                        
-                        _engine->scene->getTextbox().clear();
-                        _engine->scene->getTextbox().addTextLine(dialAgainString);
-
-                        _engine->sound->loadSound(dialAgainSound);
-                        _engine->sound->playSound(dialAgainSound);
-                        callState = kBadNumber;
-                        return;
-                    }
-
-                    break;
-                case kBadNumber:
-                    if (!_engine->sound->isSoundPlaying(dialAgainSound)) {
-                        _engine->sound->stopSound(dialAgainSound);
-
-                        state = kActionTrigger;
-                    }
-
-                    break;
-                case kCall:
-                    if (!_engine->sound->isSoundPlaying(genericDialogueSound)) {
-                        _engine->sound->stopSound(genericDialogueSound);
-
-                        state = kActionTrigger;
-                    }
-
-                    break;
-                case kHangUp:
-                    if (!_engine->sound->isSoundPlaying(hangUpSound)) {
-                        _engine->sound->stopSound(hangUpSound);
-
-                        state = kActionTrigger;
-                    }
-
-                    break;
+    case kBegin:
+        init();
+        registerGraphics();
+        _engine->sound->loadSound(dialToneSound);
+        _engine->sound->playSound(dialToneSound);
+        _engine->scene->getTextbox().clear();
+        _engine->scene->getTextbox().addTextLine(addressBookString);
+        state = kRun;
+        // fall through
+    case kRun:
+        switch (callState) {
+        case kWaiting:
+            // Long phone numbers start with 1
+            if (calledNumber.size() >= 11 || (calledNumber.size() >= 7 && (calledNumber[0] != 1))) {
+                _engine->scene->getTextbox().clear();
+                _engine->scene->getTextbox().addTextLine("ringing...<n><e>"); // Hardcoded in the original engine
+                _engine->sound->loadSound(ringSound);
+                _engine->sound->playSound(ringSound);
+                callState = kRinging;
             }
 
             break;
-        case kActionTrigger:
-            switch (callState) {
-                case kBadNumber:
-                    engine->scene->changeScene(reloadScene);
-                    calledNumber.clear();
-                    _engine->scene->setEventFlag(flagOnReload);
-                    state = kRun;
-                    callState = kWaiting;
-
-                    break;
-                case kCall: {
-                    PhoneCall &call = calls[selected];
-                    _engine->scene->changeScene(call.sceneChange);
-                    _engine->scene->setEventFlag(call.flag);
-
-                    break;
-                }
-                case kHangUp:
-                    _engine->scene->changeScene(exitScene);
-                    _engine->scene->setEventFlag(flagOnExit);
-                    
-                    break;
-                default:
-                    break;
-
+        case kButtonPress:
+            if (!_engine->sound->isSoundPlaying(genericButtonSound)) {
+                _engine->sound->stopSound(genericButtonSound);
+                undrawButton(selected);
+                callState = kWaiting;
             }
 
-            finishExecution();
-            _engine->scene->getTextbox().clear();
+            break;
+        case kRinging:
+            if (!_engine->sound->isSoundPlaying(ringSound)) {
+                _engine->sound->stopSound(ringSound);
+                uint numberLength = calledNumber[0] == 1 ? 11 : 7;
+
+                for (uint i = 0; i < calls.size(); ++i) {
+                    bool invalid = false;
+
+                    for (uint j = 0; j < numberLength; ++j) {
+                        if (calledNumber[j] != calls[i].phoneNumber[j]) {
+                            // Invalid number, move onto next
+                            invalid = true;
+                            break;
+                        }
+                    }
+
+                    if (invalid) {
+                        continue;
+                    }
+
+                    _engine->scene->getTextbox().clear();
+                    _engine->scene->getTextbox().addTextLine(calls[i].text);
+
+                    genericDialogueSound.name = calls[i].soundName;
+                    _engine->sound->loadSound(genericDialogueSound);
+                    _engine->sound->playSound(genericDialogueSound);
+                    selected = i;
+                    callState = kCall;
+
+                    return;
+                }
+                
+                _engine->scene->getTextbox().clear();
+                _engine->scene->getTextbox().addTextLine(dialAgainString);
+
+                _engine->sound->loadSound(dialAgainSound);
+                _engine->sound->playSound(dialAgainSound);
+                callState = kBadNumber;
+                return;
+            }
+
+            break;
+        case kBadNumber:
+            if (!_engine->sound->isSoundPlaying(dialAgainSound)) {
+                _engine->sound->stopSound(dialAgainSound);
+
+                state = kActionTrigger;
+            }
+
+            break;
+        case kCall:
+            if (!_engine->sound->isSoundPlaying(genericDialogueSound)) {
+                _engine->sound->stopSound(genericDialogueSound);
+
+                state = kActionTrigger;
+            }
+
+            break;
+        case kHangUp:
+            if (!_engine->sound->isSoundPlaying(hangUpSound)) {
+                _engine->sound->stopSound(hangUpSound);
+
+                state = kActionTrigger;
+            }
+
+            break;
+        }
+
+        break;
+    case kActionTrigger:
+        switch (callState) {
+        case kBadNumber:
+            engine->scene->changeScene(reloadScene);
+            calledNumber.clear();
+            _engine->scene->setEventFlag(flagOnReload);
+            state = kRun;
+            callState = kWaiting;
+
+            break;
+        case kCall: {
+            PhoneCall &call = calls[selected];
+            _engine->scene->changeScene(call.sceneChange);
+            _engine->scene->setEventFlag(call.flag);
+
+            break;
+        }
+        case kHangUp:
+            _engine->scene->changeScene(exitScene);
+            _engine->scene->setEventFlag(flagOnExit);
+            
+            break;
+        default:
+            break;
+        }
+
+        finishExecution();
+        _engine->scene->getTextbox().clear();
     }
 }
 
@@ -272,6 +274,7 @@ void Telephone::handleInput(NancyInput &input) {
 
             callState = kHangUp;
         }
+        
         return;
     }
 

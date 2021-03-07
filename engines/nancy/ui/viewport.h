@@ -43,7 +43,7 @@ public:
     Viewport(NancyEngine *engine) :
         RenderObject(engine),
         _movementLastFrame(0),
-        _edgesMask(0)  {}
+        _edgesMask(0) {}
     virtual ~Viewport() { _decoder.close(); _fullFrame.free(); }
 
     virtual void init() override;

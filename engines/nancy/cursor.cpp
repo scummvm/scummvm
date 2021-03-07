@@ -80,27 +80,27 @@ void CursorManager::setCursor(CursorType type, int16 itemID) {
     bool hasItem = false;
 
     switch (type) {
-        case kNormalArrow:
-            newID = 4;
-            break;
-        case kHotspotArrow:
-            newID = 6;
-            break;
-        case kExitArrow:
-            newID = 3;
-            break;
-        default: {
-            if (itemID == -1) {
-                // No item held, set to eyeglass
-                itemID = 0;
-            } else {
-                // Item held
-                itemID += 3;
-                hasItem = true;
-            }
-
-            newID = itemID * 4 + type;
+    case kNormalArrow:
+        newID = 4;
+        break;
+    case kHotspotArrow:
+        newID = 6;
+        break;
+    case kExitArrow:
+        newID = 3;
+        break;
+    default: {
+        if (itemID == -1) {
+            // No item held, set to eyeglass
+            itemID = 0;
+        } else {
+            // Item held
+            itemID += 3;
+            hasItem = true;
         }
+
+        newID = itemID * 4 + type;
+    }
     }
 
     Graphics::ManagedSurface *surf;

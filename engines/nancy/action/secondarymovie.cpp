@@ -29,8 +29,9 @@
 namespace Nancy {
 namespace Action {
 
-PlaySecondaryMovie::~PlaySecondaryMovie()  {
-    _decoder.close(); 
+PlaySecondaryMovie::~PlaySecondaryMovie() {
+    _decoder.close();
+    
     if (hideMouse == kTrue && unknown == 5) {
         _engine->setMouseEnabled(true);
     }
@@ -47,6 +48,7 @@ uint16 PlaySecondaryMovie::readData(Common::SeekableReadStream &stream) {
     isReverse = (NancyFlag)stream.readUint16LE();
     firstFrame = (NancyFlag)stream.readUint16LE();
     lastFrame = (NancyFlag)stream.readUint16LE();
+
     for (uint i = 0; i < 15; ++i) {
         frameFlags[i].frameID = stream.readSint16LE();
         frameFlags[i].flagDesc.label = stream.readSint16LE();
@@ -67,9 +69,10 @@ uint16 PlaySecondaryMovie::readData(Common::SeekableReadStream &stream) {
 }
 
 void PlaySecondaryMovie::init() {
-    if(_decoder.isVideoLoaded()) {
+    if (_decoder.isVideoLoaded()) {
         _decoder.close();
     }
+
     _decoder.loadFile(videoName + ".avf");
     _drawSurface.create(_decoder.getWidth(), _decoder.getHeight(), GraphicsManager::pixelFormat);
     _screenPosition = _drawSurface.getBounds();
@@ -84,6 +87,7 @@ void PlaySecondaryMovie::updateGraphics() {
 
     if (!_decoder.isPlaying() && _isVisible && !isFinished) {
         _decoder.start();
+
 		if (isReverse == kTrue) {
 			_decoder.setRate(-_decoder.getRate());
 			_decoder.seekToFrame(lastFrame);
@@ -94,11 +98,13 @@ void PlaySecondaryMovie::updateGraphics() {
 
     if (_decoder.needsUpdate()) {
         uint descID = 0;
+
         for (uint i = 0; i < videoDescs.size(); ++i) {
             if (videoDescs[i].frameID == _curViewportFrame) {
                 descID = i;
             }
         }
+
         _drawSurface.blitFrom(*_decoder.decodeNextFrame(), videoDescs[descID].srcRect, Common::Point());
         _needsRedraw = true;
         
@@ -128,54 +134,54 @@ void PlaySecondaryMovie::onPause(bool pause) {
 
 void PlaySecondaryMovie::execute(NancyEngine *engine) {
     switch (state) {
-        case kBegin:
-            init();
-            registerGraphics();
-            engine->sound->loadSound(sound);
-            engine->sound->playSound(sound);
-            if (hideMouse == kTrue) {
-                engine->setMouseEnabled(false);
-            }
-            state = kRun;
-            // fall through
-        case kRun: {
-            
-            int newFrame = _engine->scene->getSceneInfo().frameID;
+    case kBegin:
+        init();
+        registerGraphics();
+        engine->sound->loadSound(sound);
+        engine->sound->playSound(sound);
 
-            if (newFrame != _curViewportFrame) {
-                _curViewportFrame = newFrame;
-                int activeFrame = -1;
-                for (uint i = 0; i < videoDescs.size(); ++i) {
-                    if (newFrame == videoDescs[i].frameID) {
-                        activeFrame = i;
-                        break;
-                    }
-                }
-
-                if (activeFrame != -1) {
-                    _screenPosition = videoDescs[activeFrame].destRect;
-                    setVisible(true);
-                } else {
-                    setVisible(false);
-                }
-            }
-
-            break;
+        if (hideMouse == kTrue) {
+            engine->setMouseEnabled(false);
         }
-        case kActionTrigger:
-            triggerFlags.execute(engine);
-            if (unknown == 5) {
-                engine->scene->changeScene(sceneChange);
-            } else {
-                // Not changing the scene so enable the mouse now
-                if (hideMouse == kTrue) {
-                    engine->setMouseEnabled(true);
+
+        state = kRun;
+        // fall through
+    case kRun: {
+        int newFrame = _engine->scene->getSceneInfo().frameID;
+
+        if (newFrame != _curViewportFrame) {
+            _curViewportFrame = newFrame;
+            int activeFrame = -1;
+            for (uint i = 0; i < videoDescs.size(); ++i) {
+                if (newFrame == videoDescs[i].frameID) {
+                    activeFrame = i;
+                    break;
                 }
             }
-            
 
-            finishExecution();
-            break;
+            if (activeFrame != -1) {
+                _screenPosition = videoDescs[activeFrame].destRect;
+                setVisible(true);
+            } else {
+                setVisible(false);
+            }
+        }
+
+        break;
+    }
+    case kActionTrigger:
+        triggerFlags.execute(engine);
+        if (unknown == 5) {
+            engine->scene->changeScene(sceneChange);
+        } else {
+            // Not changing the scene so enable the mouse now
+            if (hideMouse == kTrue) {
+                engine->setMouseEnabled(true);
+            }
+        }
+
+        finishExecution();
+        break;
     }
 }
 

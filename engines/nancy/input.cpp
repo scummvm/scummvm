@@ -39,86 +39,86 @@ void InputManager::processEvents() {
 
     while (_engine->getEventManager()->pollEvent(event)) {
         switch (event.type) {
-            case EVENT_KEYDOWN:
-                if (event.kbd.keycode == KEYCODE_d && event.kbd.flags & Common::KBD_CTRL) {
-                    // Launch debug console
-                    _engine->launchConsole = true;
-                } else if (event.kbd.keycode == KEYCODE_q && event.kbd.flags & Common::KBD_CTRL) {
-                    // Quit
-                    _engine->quitGame();
-                } else {
-                    // Push all other keyboard events into an array and let getInput() callers handle them
-                    _otherKbdInput.push_back(event.kbd);
-                }
+        case EVENT_KEYDOWN:
+            if (event.kbd.keycode == KEYCODE_d && event.kbd.flags & Common::KBD_CTRL) {
+                // Launch debug console
+                _engine->launchConsole = true;
+            } else if (event.kbd.keycode == KEYCODE_q && event.kbd.flags & Common::KBD_CTRL) {
+                // Quit
+                _engine->quitGame();
+            } else {
+                // Push all other keyboard events into an array and let getInput() callers handle them
+                _otherKbdInput.push_back(event.kbd);
+            }
+            break;
+        case EVENT_CUSTOM_ENGINE_ACTION_START:
+            switch (event.customType) {
+            case kNancyActionLeftClick:
+                _inputs |= NancyInput::kLeftMouseButtonDown;
+                _inputs |= NancyInput::kLeftMouseButtonHeld;
                 break;
-            case EVENT_CUSTOM_ENGINE_ACTION_START:
-                switch (event.customType) {
-                    case kNancyActionLeftClick:
-                        _inputs |= NancyInput::kLeftMouseButtonDown;
-                        _inputs |= NancyInput::kLeftMouseButtonHeld;
-                        break;
-                    case kNancyActionRightClick:
-                        _inputs |= NancyInput::kRightMouseButtonDown;
-                        _inputs |= NancyInput::kRightMouseButtonHeld;
-                        break;
-                    case kNancyActionMoveUp:
-                        _inputs |= NancyInput::kMoveUp;
-                        break;
-                    case kNancyActionMoveDown:
-                        _inputs |= NancyInput::kMoveDown;
-                        break;
-                    case kNancyActionMoveLeft:
-                        _inputs |= NancyInput::kMoveLeft;
-                        break;
-                    case kNancyActionMoveRight:
-                        _inputs |= NancyInput::kMoveRight;
-                        break;
-                    case kNancyActionMoveFast:
-                        _inputs |= NancyInput::kMoveFastModifier;
-                        break;
-                    case kNancyActionRequestCheatMenu:
-                        _engine->callCheatMenu(false);
-                        break;
-                    case kNancyActionRequestEventMenu:
-                        _engine->callCheatMenu(true);
-                        break;
-                    default:
-                        break;
-                }
-
+            case kNancyActionRightClick:
+                _inputs |= NancyInput::kRightMouseButtonDown;
+                _inputs |= NancyInput::kRightMouseButtonHeld;
                 break;
-            case EVENT_CUSTOM_ENGINE_ACTION_END:
-                switch (event.customType) {
-                    case kNancyActionLeftClick:
-                        _inputs |= NancyInput::kLeftMouseButtonUp;
-                        _inputs &= ~NancyInput::kLeftMouseButtonHeld;
-                        break;
-                    case kNancyActionRightClick:
-                        _inputs |= NancyInput::kRightMouseButtonUp;
-                        _inputs &= ~NancyInput::kRightMouseButtonHeld;
-                        break;
-                    case kNancyActionMoveUp:
-                        _inputs &= ~NancyInput::kMoveUp;
-                        break;
-                    case kNancyActionMoveDown:
-                        _inputs &= ~NancyInput::kMoveDown;
-                        break;
-                    case kNancyActionMoveLeft:
-                        _inputs &= ~NancyInput::kMoveLeft;
-                        break;
-                    case kNancyActionMoveRight:
-                        _inputs &= ~NancyInput::kMoveRight;
-                        break;
-                    case kNancyActionMoveFast:
-                        _inputs &= ~NancyInput::kMoveFastModifier;
-                        break;
-                    default:
-                        break;
-                }
-
+            case kNancyActionMoveUp:
+                _inputs |= NancyInput::kMoveUp;
+                break;
+            case kNancyActionMoveDown:
+                _inputs |= NancyInput::kMoveDown;
+                break;
+            case kNancyActionMoveLeft:
+                _inputs |= NancyInput::kMoveLeft;
+                break;
+            case kNancyActionMoveRight:
+                _inputs |= NancyInput::kMoveRight;
+                break;
+            case kNancyActionMoveFast:
+                _inputs |= NancyInput::kMoveFastModifier;
+                break;
+            case kNancyActionRequestCheatMenu:
+                _engine->callCheatMenu(false);
+                break;
+            case kNancyActionRequestEventMenu:
+                _engine->callCheatMenu(true);
                 break;
             default:
                 break;
+            }
+
+            break;
+        case EVENT_CUSTOM_ENGINE_ACTION_END:
+            switch (event.customType) {
+            case kNancyActionLeftClick:
+                _inputs |= NancyInput::kLeftMouseButtonUp;
+                _inputs &= ~NancyInput::kLeftMouseButtonHeld;
+                break;
+            case kNancyActionRightClick:
+                _inputs |= NancyInput::kRightMouseButtonUp;
+                _inputs &= ~NancyInput::kRightMouseButtonHeld;
+                break;
+            case kNancyActionMoveUp:
+                _inputs &= ~NancyInput::kMoveUp;
+                break;
+            case kNancyActionMoveDown:
+                _inputs &= ~NancyInput::kMoveDown;
+                break;
+            case kNancyActionMoveLeft:
+                _inputs &= ~NancyInput::kMoveLeft;
+                break;
+            case kNancyActionMoveRight:
+                _inputs &= ~NancyInput::kMoveRight;
+                break;
+            case kNancyActionMoveFast:
+                _inputs &= ~NancyInput::kMoveFastModifier;
+                break;
+            default:
+                break;
+            }
+
+            break;
+        default:
+            break;
         }
     }
 }

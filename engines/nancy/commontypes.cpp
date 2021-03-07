@@ -84,17 +84,17 @@ void SoundDescription::read(Common::SeekableReadStream &stream, Type type) {
 	// The difference between these is a couple members found at the same position
 	// whose purpose I don't understand, so for now just skip them
 	switch (type) {
-		case kNormal:
-			stream.skip(8);
-			break;
-		case kMenu:
-			stream.skip(6);	
-			break;
-		case kScene:
-			// fall through
-		case kDIGI:
-			stream.skip(4);
-			break;
+	case kNormal:
+		stream.skip(8);
+		break;
+	case kMenu:
+		stream.skip(6);	
+		break;
+	case kScene:
+		// fall through
+	case kDIGI:
+		stream.skip(4);
+		break;
 	}
 
 	numLoops = stream.readUint16LE();

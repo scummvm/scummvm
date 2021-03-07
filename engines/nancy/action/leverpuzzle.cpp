@@ -95,62 +95,62 @@ uint16 LeverPuzzle::readData(Common::SeekableReadStream &stream) {
 
 void LeverPuzzle::execute(Nancy::NancyEngine *engine) {
     switch (state) {
-        case kBegin:
-            init();
-            registerGraphics();
-            engine->sound->loadSound(moveSound);
-            engine->sound->loadSound(noMoveSound);
+    case kBegin:
+        init();
+        registerGraphics();
+        engine->sound->loadSound(moveSound);
+        engine->sound->loadSound(noMoveSound);
 
+        for (uint i = 0; i < 3; ++i) {
+            drawLever(i);
+        }
+
+        state = kRun;
+        // fall through
+    case kRun:
+        switch (solveState) {
+        case kNotSolved:
             for (uint i = 0; i < 3; ++i) {
-                drawLever(i);
+                if (playerSequence[i] != correctSequence[i]) {
+                    return;
+                }
+            }
+            
+            engine->scene->setEventFlag(flagOnSolve);
+            solveSoundPlayTime = _engine->getTotalPlayTime() + solveSoundDelay * 1000;
+            solveState = kPlaySound;
+            break;
+        case kPlaySound:
+            if (_engine->getTotalPlayTime() <= solveSoundPlayTime) {
+                break;
             }
 
-            state = kRun;
-            // fall through
-        case kRun:
-            switch (solveState) {
-                case kNotSolved:
-                    for (uint i = 0; i < 3; ++i) {
-                        if (playerSequence[i] != correctSequence[i]) {
-                            return;
-                        }
-                    }
-                    
-                    engine->scene->setEventFlag(flagOnSolve);
-                    solveSoundPlayTime = _engine->getTotalPlayTime() + solveSoundDelay * 1000;
-                    solveState = kPlaySound;
-                    break;
-                case kPlaySound:
-                    if (_engine->getTotalPlayTime() <= solveSoundPlayTime) {
-                        break;
-                    }
-
-                    engine->sound->loadSound(solveSound);
-                    _engine->sound->playSound(solveSound);
-                    solveState = kWaitForSound;
-                    break;
-                case kWaitForSound:
-                    if (!_engine->sound->isSoundPlaying(solveSound)) {
-                        _engine->sound->stopSound(solveSound);
-                        state = kActionTrigger;
-                    }
-
-                    break;
+            engine->sound->loadSound(solveSound);
+            _engine->sound->playSound(solveSound);
+            solveState = kWaitForSound;
+            break;
+        case kWaitForSound:
+            if (!_engine->sound->isSoundPlaying(solveSound)) {
+                _engine->sound->stopSound(solveSound);
+                state = kActionTrigger;
             }
 
             break;
-        case kActionTrigger:
-            _engine->sound->stopSound(moveSound);
-            _engine->sound->stopSound(noMoveSound);
-            
-            if (solveState == kNotSolved) {
-                _engine->scene->changeScene(exitScene);
-                _engine->scene->setEventFlag(flagOnExit);
-            } else {
-                _engine->scene->changeScene(solveExitScene);
-            }
+        }
 
-            finishExecution();
+        break;
+    case kActionTrigger:
+        _engine->sound->stopSound(moveSound);
+        _engine->sound->stopSound(noMoveSound);
+        
+        if (solveState == kNotSolved) {
+            _engine->scene->changeScene(exitScene);
+            _engine->scene->setEventFlag(flagOnExit);
+        } else {
+            _engine->scene->changeScene(solveExitScene);
+        }
+
+        finishExecution();
     }
 }
 
@@ -176,19 +176,21 @@ void LeverPuzzle::handleInput(NancyInput &input) {
                 bool isMoving = false;
                 // Hardcoded by the original engine
                 switch (i) {
-                    case 0:
+                case 0:
+                    isMoving = true;
+                    break;
+                case 1:
+                    if (playerSequence[0] == 1) {
                         isMoving = true;
-                        break;
-                    case 1:
-                        if (playerSequence[0] == 1) {
-                            isMoving = true;
-                        }
-                        break;
-                    case 2:
-                        if (playerSequence[0] == 2) {
-                            isMoving = true;
-                        }
-                        break;
+                    }
+
+                    break;
+                case 2:
+                    if (playerSequence[0] == 2) {
+                        isMoving = true;
+                    }
+                    
+                    break;
                 }
 
                 if (isMoving) {

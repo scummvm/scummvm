@@ -108,23 +108,23 @@ protected:
     
     void finishExecution() {
         switch (execType) {
-            case kOneShot:
-                isDone = true;
-                state = kBegin;
-                break;
-            case kRepeating:
-                isDone = false;
-                isActive = false;
-                state = kBegin;
+        case kOneShot:
+            isDone = true;
+            state = kBegin;
+            break;
+        case kRepeating:
+            isDone = false;
+            isActive = false;
+            state = kBegin;
 
-                for (uint i = 0; i < dependencies.size(); ++i) {
-                    dependencies[i].satisfied = false;
-                }
+            for (uint i = 0; i < dependencies.size(); ++i) {
+                dependencies[i].satisfied = false;
+            }
 
-                break;
-            default:
-                state = kBegin;
-                break;
+            break;
+        default:
+            state = kBegin;
+            break;
         }
     }
 

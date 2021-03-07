@@ -108,60 +108,60 @@ uint16 RotatingLockPuzzle::readData(Common::SeekableReadStream &stream) {
 
 void RotatingLockPuzzle::execute(Nancy::NancyEngine *engine) {
     switch (state) {
-        case kBegin:
-            init();
-            registerGraphics();
+    case kBegin:
+        init();
+        registerGraphics();
 
+        for (uint i = 0; i < correctSequence.size(); ++i) {
+            currentSequence.push_back(_engine->_rnd->getRandomNumber(9));
+            drawDial(i);
+        }
+
+        _engine->sound->loadSound(clickSound);
+        _engine->sound->loadSound(solveSound);
+        state = kRun;
+        // fall through
+    case kRun:
+        switch (solveState) {
+        case kNotSolved:
             for (uint i = 0; i < correctSequence.size(); ++i) {
-                currentSequence.push_back(_engine->_rnd->getRandomNumber(9));
-                drawDial(i);
+                if (currentSequence[i] != (int16)correctSequence[i]) {
+                    return;
+                }
             }
 
-            _engine->sound->loadSound(clickSound);
-            _engine->sound->loadSound(solveSound);
-            state = kRun;
+            _engine->scene->setEventFlag(flagOnSolve);
+            solveSoundPlayTime = _engine->getTotalPlayTime() + solveSoundDelay * 1000;
+            solveState = kPlaySound;
             // fall through
-        case kRun:
-            switch (solveState) {
-                case kNotSolved:
-                    for (uint i = 0; i < correctSequence.size(); ++i) {
-                        if (currentSequence[i] != (int16)correctSequence[i]) {
-                            return;
-                        }
-                    }
-
-                    _engine->scene->setEventFlag(flagOnSolve);
-                    solveSoundPlayTime = _engine->getTotalPlayTime() + solveSoundDelay * 1000;
-                    solveState = kPlaySound;
-                    // fall through
-                case kPlaySound:
-                    if (_engine->getTotalPlayTime() <= solveSoundPlayTime) {
-                        break;
-                    }
-
-                    _engine->sound->playSound(solveSound);
-                    solveState = kWaitForSound;
-                    break;
-                case kWaitForSound:
-                    if (!_engine->sound->isSoundPlaying(solveSound)) {
-                        state = kActionTrigger;
-                    }
-
-                    break;
+        case kPlaySound:
+            if (_engine->getTotalPlayTime() <= solveSoundPlayTime) {
+                break;
             }
+
+            _engine->sound->playSound(solveSound);
+            solveState = kWaitForSound;
             break;
-        case kActionTrigger:
-            _engine->sound->stopSound(clickSound);
-            _engine->sound->stopSound(solveSound);
-
-            if (solveState == kNotSolved) {
-                _engine->scene->changeScene(exitScene);
-                _engine->scene->setEventFlag(flagOnExit);
-            } else {
-                _engine->scene->changeScene(solveExitScene);
+        case kWaitForSound:
+            if (!_engine->sound->isSoundPlaying(solveSound)) {
+                state = kActionTrigger;
             }
 
-            finishExecution();
+            break;
+        }
+        break;
+    case kActionTrigger:
+        _engine->sound->stopSound(clickSound);
+        _engine->sound->stopSound(solveSound);
+
+        if (solveState == kNotSolved) {
+            _engine->scene->changeScene(exitScene);
+            _engine->scene->setEventFlag(flagOnExit);
+        } else {
+            _engine->scene->changeScene(solveExitScene);
+        }
+
+        finishExecution();
     }
 }
 
@@ -176,6 +176,7 @@ void RotatingLockPuzzle::handleInput(NancyInput &input) {
         if (input.input & NancyInput::kLeftMouseButtonUp) {
             state = kActionTrigger;
         }
+
         return;
     }
 
@@ -189,6 +190,7 @@ void RotatingLockPuzzle::handleInput(NancyInput &input) {
                 currentSequence[i] = ++currentSequence[i] > 9 ? 0 : currentSequence[i];
                 drawDial(i);
             }
+
             return;
         }
     }
@@ -205,6 +207,7 @@ void RotatingLockPuzzle::handleInput(NancyInput &input) {
                 currentSequence[i] = n;
                 drawDial(i);
             }
+            
             return;
         }
     }

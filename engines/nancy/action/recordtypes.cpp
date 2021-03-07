@@ -65,22 +65,22 @@ uint16 HotMultiframeSceneChange::readData(Common::SeekableReadStream &stream) {
 
 void HotMultiframeSceneChange::execute(NancyEngine *engine) {
     switch (state) {
-        case kBegin:
-            // turn main rendering on
-            state = kRun;
-            // fall through
-        case kRun:
-            hasHotspot = false;
-            for (uint i = 0; i < hotspots.size(); ++i) {
-                if (hotspots[i].frameID == engine->scene->getSceneInfo().frameID) {
-                    hasHotspot = true;
-                    hotspot = hotspots[i].coords;
-                }
+    case kBegin:
+        // turn main rendering on
+        state = kRun;
+        // fall through
+    case kRun:
+        hasHotspot = false;
+        for (uint i = 0; i < hotspots.size(); ++i) {
+            if (hotspots[i].frameID == engine->scene->getSceneInfo().frameID) {
+                hasHotspot = true;
+                hotspot = hotspots[i].coords;
             }
-            break;
-        case kActionTrigger:
-            SceneChange::execute(engine);
-            break;
+        }
+        break;
+    case kActionTrigger:
+        SceneChange::execute(engine);
+        break;
     }
 }
 
@@ -92,20 +92,20 @@ uint16 Hot1FrSceneChange::readData(Common::SeekableReadStream &stream) {
 
 void Hot1FrSceneChange::execute(NancyEngine *engine) {
     switch (state) {
-        case kBegin:
-            hotspot = hotspotDesc.coords;
-            state = kRun;
-            // fall through
-        case kRun:
-            if (hotspotDesc.frameID == engine->scene->getSceneInfo().frameID) {
-                hasHotspot = true;
-            } else {
-                hasHotspot = false;
-            }
-            break;
-        case kActionTrigger:
-            SceneChange::execute(engine);
-            break;
+    case kBegin:
+        hotspot = hotspotDesc.coords;
+        state = kRun;
+        // fall through
+    case kRun:
+        if (hotspotDesc.frameID == engine->scene->getSceneInfo().frameID) {
+            hasHotspot = true;
+        } else {
+            hasHotspot = false;
+        }
+        break;
+    case kActionTrigger:
+        SceneChange::execute(engine);
+        break;
     }
 }
 
@@ -144,18 +144,18 @@ uint16 MapCallHot1Fr::readData(Common::SeekableReadStream &stream) {
 
 void MapCallHot1Fr::execute(NancyEngine *engine) {
     switch (state) {
-        case kBegin:
-            hotspot = hotspotDesc.coords;
-            state = kRun;
-            // fall through
-        case kRun:
-            if (hotspotDesc.frameID == engine->scene->getSceneInfo().frameID) {
-                hasHotspot = true;
-            }
-            break;
-        case kActionTrigger:
-            MapCall::execute(engine);
-            break;
+    case kBegin:
+        hotspot = hotspotDesc.coords;
+        state = kRun;
+        // fall through
+    case kRun:
+        if (hotspotDesc.frameID == engine->scene->getSceneInfo().frameID) {
+            hasHotspot = true;
+        }
+        break;
+    case kActionTrigger:
+        MapCall::execute(engine);
+        break;
     }
 }
 
@@ -171,21 +171,21 @@ uint16 MapCallHotMultiframe::readData(Common::SeekableReadStream &stream) {
 
 void MapCallHotMultiframe::execute(NancyEngine *engine) {
     switch (state) {
-        case kBegin:
-            state = kRun;
-            // fall through
-        case kRun:
-            hasHotspot = false;
-            for (uint i = 0; i < hotspots.size(); ++i) {
-                if (hotspots[i].frameID == engine->scene->getSceneInfo().frameID) {
-                    hasHotspot = true;
-                    hotspot = hotspots[i].coords;
-                }
+    case kBegin:
+        state = kRun;
+        // fall through
+    case kRun:
+        hasHotspot = false;
+        for (uint i = 0; i < hotspots.size(); ++i) {
+            if (hotspots[i].frameID == engine->scene->getSceneInfo().frameID) {
+                hasHotspot = true;
+                hotspot = hotspots[i].coords;
             }
-            break;
-        case kActionTrigger:
-            MapCall::execute(engine);
-            break;  
+        }
+        break;
+    case kActionTrigger:
+        MapCall::execute(engine);
+        break;  
     }
 }
 
@@ -274,11 +274,13 @@ void EventFlags::execute(NancyEngine *engine) {
 uint16 EventFlagsMultiHS::readData(Common::SeekableReadStream &stream) {
     uint16 returnSize = EventFlags::readData(stream);
     uint16 numHotspots = stream.readUint16LE();
+
     for (uint16 i = 0; i < numHotspots; ++i) {
         hotspots.push_back(HotspotDescription());
         HotspotDescription &newDesc = hotspots[i];
         newDesc.readData(stream);
     }
+
     returnSize += numHotspots * 0x12 + 0x2;
 
     return returnSize;
@@ -286,24 +288,26 @@ uint16 EventFlagsMultiHS::readData(Common::SeekableReadStream &stream) {
 
 void EventFlagsMultiHS::execute(NancyEngine *engine) {
     switch (state) {
-        case kBegin:
-            // turn main rendering on
-            state = kRun;
-            // fall through
-        case kRun:
-            hasHotspot = false;
-            for (uint i = 0; i < hotspots.size(); ++i) {
-                if (hotspots[i].frameID == engine->scene->getSceneInfo().frameID) {
-                    hasHotspot = true;
-                    hotspot = hotspots[i].coords;
-                }
+    case kBegin:
+        // turn main rendering on
+        state = kRun;
+        // fall through
+    case kRun:
+        hasHotspot = false;
+
+        for (uint i = 0; i < hotspots.size(); ++i) {
+            if (hotspots[i].frameID == engine->scene->getSceneInfo().frameID) {
+                hasHotspot = true;
+                hotspot = hotspots[i].coords;
             }
-            break;
-        case kActionTrigger:
-            hasHotspot = false;
-            EventFlags::execute(engine);
-            finishExecution();
-            break;
+        }
+
+        break;
+    case kActionTrigger:
+        hasHotspot = false;
+        EventFlags::execute(engine);
+        finishExecution();
+        break;
     }
 }
 
@@ -387,44 +391,45 @@ uint16 ShowInventoryItem::readData(Common::SeekableReadStream &stream) {
 
 void ShowInventoryItem::execute(NancyEngine *engine) {
     switch (state) {
-        case kBegin:
-            init();
-            registerGraphics();
-            state = kRun;
-            // fall through
-        case kRun: {
-            int newFrame = -1;
+    case kBegin:
+        init();
+        registerGraphics();
+        state = kRun;
+        // fall through
+    case kRun: {
+        int newFrame = -1;
 
-            for (uint i = 0; i < bitmaps.size(); ++i) {
-                if (bitmaps[i].frameID == engine->scene->getSceneInfo().frameID) {
-                    newFrame = i;
-                    break;
-                }
+        for (uint i = 0; i < bitmaps.size(); ++i) {
+            if (bitmaps[i].frameID == engine->scene->getSceneInfo().frameID) {
+                newFrame = i;
+                break;
             }
-
-            if (newFrame != drawnFrameID) {
-                drawnFrameID = newFrame;
-                if (newFrame != -1) {
-                    hasHotspot = true;
-                    hotspot = bitmaps[newFrame].dest;
-                    _drawSurface.create(_fullSurface, bitmaps[newFrame].src);
-                    _screenPosition = bitmaps[newFrame].dest;
-                    setVisible(true);
-                } else {
-                    hasHotspot = false;
-                    setVisible(false);
-                }
-            }
-                   
-            break;
         }
-        case kActionTrigger:
-            engine->sound->playSound(24); // Hardcoded by original engine
-            engine->scene->addItemToInventory(objectID);
-            setVisible(false);
-            hasHotspot = false;
-            finishExecution();
-            break;
+
+        if (newFrame != drawnFrameID) {
+            drawnFrameID = newFrame;
+
+            if (newFrame != -1) {
+                hasHotspot = true;
+                hotspot = bitmaps[newFrame].dest;
+                _drawSurface.create(_fullSurface, bitmaps[newFrame].src);
+                _screenPosition = bitmaps[newFrame].dest;
+                setVisible(true);
+            } else {
+                hasHotspot = false;
+                setVisible(false);
+            }
+        }
+                
+        break;
+    }
+    case kActionTrigger:
+        engine->sound->playSound(24); // Hardcoded by original engine
+        engine->scene->addItemToInventory(objectID);
+        setVisible(false);
+        hasHotspot = false;
+        finishExecution();
+        break;
     }
 }
 
@@ -439,26 +444,27 @@ uint16 PlayDigiSoundAndDie::readData(Common::SeekableReadStream &stream) {
 
 void PlayDigiSoundAndDie::execute(NancyEngine *engine) {
     switch (state) {
-        case kBegin:
-            engine->sound->loadSound(sound);
-            engine->sound->playSound(sound);
-            state = kRun;
-            break;
-        case kRun:
-            if (!engine->sound->isSoundPlaying(sound)) {
-                state = kActionTrigger;
-            }
-            break;
-        case kActionTrigger:
-            if (sceneChange.sceneID != 9999) {
-                engine->scene->changeScene(sceneChange);
-            }
-            
-            engine->scene->setEventFlag(flagOnTrigger);
-            engine->sound->stopSound(sound);
+    case kBegin:
+        engine->sound->loadSound(sound);
+        engine->sound->playSound(sound);
+        state = kRun;
+        break;
+    case kRun:
+        if (!engine->sound->isSoundPlaying(sound)) {
+            state = kActionTrigger;
+        }
 
-            finishExecution();
-            break;
+        break;
+    case kActionTrigger:
+        if (sceneChange.sceneID != 9999) {
+            engine->scene->changeScene(sceneChange);
+        }
+        
+        engine->scene->setEventFlag(flagOnTrigger);
+        engine->sound->stopSound(sound);
+
+        finishExecution();
+        break;
     }
 }
 
@@ -485,30 +491,30 @@ uint16 PlaySoundMultiHS::readData(Common::SeekableReadStream &stream) {
 
 void PlaySoundMultiHS::execute(Nancy::NancyEngine *engine) {
     switch (state) {
-        case kBegin:
-            state = kRun;
-            // fall through
-        case kRun: {
-            hasHotspot = false;
-            uint currentFrame = engine->scene->getSceneInfo().frameID;
+    case kBegin:
+        state = kRun;
+        // fall through
+    case kRun: {
+        hasHotspot = false;
+        uint currentFrame = engine->scene->getSceneInfo().frameID;
 
-            for (uint i = 0; i < hotspots.size(); ++i) {
-                if (hotspots[i].frameID == currentFrame) {
-                    hotspot = hotspots[i].coords;
-                    hasHotspot = true;
-                    break;
-                }
+        for (uint i = 0; i < hotspots.size(); ++i) {
+            if (hotspots[i].frameID == currentFrame) {
+                hotspot = hotspots[i].coords;
+                hasHotspot = true;
+                break;
             }
-
-            break;
         }
-        case kActionTrigger:
-            engine->sound->loadSound(sound);
-            engine->sound->playSound(sound);
-            engine->scene->changeScene(sceneChange);
-            engine->scene->setEventFlag(flag);
-            finishExecution();
-            break;
+
+        break;
+    }
+    case kActionTrigger:
+        engine->sound->loadSound(sound);
+        engine->sound->playSound(sound);
+        engine->scene->changeScene(sceneChange);
+        engine->scene->setEventFlag(flag);
+        finishExecution();
+        break;
     }
 }
 
@@ -520,36 +526,37 @@ uint16 HintSystem::readData(Common::SeekableReadStream &stream) {
 
 void HintSystem::execute(Nancy::NancyEngine *engine) {
     switch (state) {
-        case kBegin:
-            if (engine->scene->getHintsRemaining() > 0) {
-                selectHint(engine);
-            } else {
-                getHint(0, engine->scene->getDifficulty());
-            }
+    case kBegin:
+        if (engine->scene->getHintsRemaining() > 0) {
+            selectHint(engine);
+        } else {
+            getHint(0, engine->scene->getDifficulty());
+        }
 
-            engine->scene->getTextbox().clear();
-            engine->scene->getTextbox().addTextLine(text);
+        engine->scene->getTextbox().clear();
+        engine->scene->getTextbox().addTextLine(text);
 
-            engine->sound->loadSound(genericSound);
-            engine->sound->playSound(genericSound);
-            state = kRun;
+        engine->sound->loadSound(genericSound);
+        engine->sound->playSound(genericSound);
+        state = kRun;
+        break;
+    case kRun:
+        if (!engine->sound->isSoundPlaying(genericSound)) {
+            engine->sound->stopSound(genericSound);
+            state = kActionTrigger;
+        } else {
             break;
-        case kRun:
-            if (!engine->sound->isSoundPlaying(genericSound)) {
-                engine->sound->stopSound(genericSound);
-                state = kActionTrigger;
-            } else {
-                break;
-            }
-            // fall through
-        case kActionTrigger:
-            engine->scene->useHint(hintID, hintWeight);
-            engine->scene->getTextbox().clear();
+        }
 
-            engine->scene->changeScene(sceneChange);
+        // fall through
+    case kActionTrigger:
+        engine->scene->useHint(hintID, hintWeight);
+        engine->scene->getTextbox().clear();
 
-            isDone = true;
-            break;
+        engine->scene->changeScene(sceneChange);
+
+        isDone = true;
+        break;
     }
 }
 
@@ -565,6 +572,7 @@ void HintSystem::selectHint(Nancy::NancyEngine *engine) {
             if (flag.label == -1) {
                 break;
             }
+            
             if (!engine->scene->getEventFlag(flag.label, flag.flag)) {
                 satisfied = false;
                 break;
@@ -575,6 +583,7 @@ void HintSystem::selectHint(Nancy::NancyEngine *engine) {
             if (inv.label == -1) {
                 break;
             }
+
             if (engine->scene->hasItem(inv.label) != inv.flag) {
                 satisfied = false;
                 break;

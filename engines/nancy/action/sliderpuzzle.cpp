@@ -109,74 +109,77 @@ uint16 SliderPuzzle::readData(Common::SeekableReadStream &stream) {
 
 void SliderPuzzle::execute(Nancy::NancyEngine *engine) {
     switch (state) {
-        case kBegin:
-            init();
-            registerGraphics();
-            if (!playerHasTriedPuzzle) {
-                Common::SeekableReadStream *spuz = engine->getBootChunkStream("SPUZ");
-                playerTileOrder.clear();
-                spuz->seek(engine->scene->getDifficulty() * 0x48);
-                for (uint y = 0; y < height; ++y) {
-                    playerTileOrder.push_back(Common::Array<int16>());
-                    for (uint x = 0; x < width; ++x) {
-                        playerTileOrder.back().push_back(spuz->readSint16LE());
-                    }
-                    spuz->skip((6 - width) * 2);
+    case kBegin:
+        init();
+        registerGraphics();
+        if (!playerHasTriedPuzzle) {
+            Common::SeekableReadStream *spuz = engine->getBootChunkStream("SPUZ");
+            playerTileOrder.clear();
+            spuz->seek(engine->scene->getDifficulty() * 0x48);
+            for (uint y = 0; y < height; ++y) {
+                playerTileOrder.push_back(Common::Array<int16>());
+
+                for (uint x = 0; x < width; ++x) {
+                    playerTileOrder.back().push_back(spuz->readSint16LE());
                 }
-                playerHasTriedPuzzle = true;
+
+                spuz->skip((6 - width) * 2);
             }
 
+            playerHasTriedPuzzle = true;
+        }
+
+        for (uint y = 0; y < height; ++y) {
+            for (uint x = 0; x < width; ++x) {
+                if (!srcRects[y][x].isEmpty()) {
+                    drawTile(playerTileOrder[y][x], x, y);
+                }
+            }
+        }
+
+        engine->sound->loadSound(clickSound);
+        state = kRun;
+        // fall through
+    case kRun:
+        switch (solveState) {
+        case kNotSolved:
             for (uint y = 0; y < height; ++y) {
                 for (uint x = 0; x < width; ++x) {
-                    if (!srcRects[y][x].isEmpty()) {
-                        drawTile(playerTileOrder[y][x], x, y);
+                    if (playerTileOrder[y][x] != correctTileOrder[y][x]) {
+                        return;
                     }
                 }
             }
 
-            engine->sound->loadSound(clickSound);
-            state = kRun;
-            // fall through
-        case kRun:
-            switch (solveState) {
-                case kNotSolved:
-                    for (uint y = 0; y < height; ++y) {
-                        for (uint x = 0; x < width; ++x) {
-                            if (playerTileOrder[y][x] != correctTileOrder[y][x]) {
-                                return;
-                            }
-                        }
-                    }
-
-                    engine->sound->loadSound(solveSound);
-                    engine->sound->playSound(solveSound);
-                    solveState = kWaitForSound;
-                    break;
-                case kWaitForSound:
-                    if (!engine->sound->isSoundPlaying(solveSound)) {
-                        engine->sound->stopSound(solveSound);
-                        state = kActionTrigger;
-                    }
-
-                    break;
+            engine->sound->loadSound(solveSound);
+            engine->sound->playSound(solveSound);
+            solveState = kWaitForSound;
+            break;
+        case kWaitForSound:
+            if (!engine->sound->isSoundPlaying(solveSound)) {
+                engine->sound->stopSound(solveSound);
+                state = kActionTrigger;
             }
 
             break;
-        case kActionTrigger:
-            switch (solveState) {
-                case kNotSolved:
-                    engine->scene->changeScene(exitScene);
-                    engine->scene->setEventFlag(flagOnExit);
-                    break;
-                case kWaitForSound:
-                    engine->scene->changeScene(solveExitScene);
-                    engine->scene->setEventFlag(flagOnSolve);
-                    playerHasTriedPuzzle = false;
-                    break;
-            }
+        }
 
-            engine->sound->stopSound(clickSound);
-            finishExecution();
+        break;
+    case kActionTrigger:
+        switch (solveState) {
+        case kNotSolved:
+            engine->scene->changeScene(exitScene);
+            engine->scene->setEventFlag(flagOnExit);
+            break;
+        case kWaitForSound:
+            engine->scene->changeScene(solveExitScene);
+            engine->scene->setEventFlag(flagOnSolve);
+            playerHasTriedPuzzle = false;
+            break;
+        }
+
+        engine->sound->stopSound(clickSound);
+        finishExecution();
     }
 }
 
@@ -191,6 +194,7 @@ void SliderPuzzle::handleInput(NancyInput &input) {
         if (input.input & NancyInput::kLeftMouseButtonUp) {
             state = kActionTrigger;
         }
+        
         return;
     }
 
@@ -246,38 +250,38 @@ void SliderPuzzle::handleInput(NancyInput &input) {
         if (input.input & NancyInput::kLeftMouseButtonUp) {
             _engine->sound->playSound(clickSound);
             switch (direction) {
-                case kUp: {
-                    uint curTileID = playerTileOrder[currentTileY][currentTileX];
-                    drawTile(curTileID, currentTileX, currentTileY - 1);
-                    undrawTile(currentTileX, currentTileY);
-                    playerTileOrder[currentTileY - 1][currentTileX] = curTileID;
-                    playerTileOrder[currentTileY][currentTileX] = -10;
-                    break;
-                }
-                case kDown: {
-                    uint curTileID = playerTileOrder[currentTileY][currentTileX];
-                    drawTile(curTileID, currentTileX, currentTileY + 1);
-                    undrawTile(currentTileX, currentTileY);
-                    playerTileOrder[currentTileY + 1][currentTileX] = curTileID;
-                    playerTileOrder[currentTileY][currentTileX] = -10;
-                    break;
-                }
-                case kLeft: {
-                    uint curTileID = playerTileOrder[currentTileY][currentTileX];
-                    drawTile(curTileID, currentTileX - 1, currentTileY);
-                    undrawTile(currentTileX, currentTileY);
-                    playerTileOrder[currentTileY][currentTileX - 1] = curTileID;
-                    playerTileOrder[currentTileY][currentTileX] = -10;
-                    break;
-                }
-                case kRight: {
-                    uint curTileID = playerTileOrder[currentTileY][currentTileX];
-                    drawTile(curTileID, currentTileX + 1, currentTileY);
-                    undrawTile(currentTileX, currentTileY);
-                    playerTileOrder[currentTileY][currentTileX + 1] = curTileID;
-                    playerTileOrder[currentTileY][currentTileX] = -10;
-                    break;
-                }
+            case kUp: {
+                uint curTileID = playerTileOrder[currentTileY][currentTileX];
+                drawTile(curTileID, currentTileX, currentTileY - 1);
+                undrawTile(currentTileX, currentTileY);
+                playerTileOrder[currentTileY - 1][currentTileX] = curTileID;
+                playerTileOrder[currentTileY][currentTileX] = -10;
+                break;
+            }
+            case kDown: {
+                uint curTileID = playerTileOrder[currentTileY][currentTileX];
+                drawTile(curTileID, currentTileX, currentTileY + 1);
+                undrawTile(currentTileX, currentTileY);
+                playerTileOrder[currentTileY + 1][currentTileX] = curTileID;
+                playerTileOrder[currentTileY][currentTileX] = -10;
+                break;
+            }
+            case kLeft: {
+                uint curTileID = playerTileOrder[currentTileY][currentTileX];
+                drawTile(curTileID, currentTileX - 1, currentTileY);
+                undrawTile(currentTileX, currentTileY);
+                playerTileOrder[currentTileY][currentTileX - 1] = curTileID;
+                playerTileOrder[currentTileY][currentTileX] = -10;
+                break;
+            }
+            case kRight: {
+                uint curTileID = playerTileOrder[currentTileY][currentTileX];
+                drawTile(curTileID, currentTileX + 1, currentTileY);
+                undrawTile(currentTileX, currentTileY);
+                playerTileOrder[currentTileY][currentTileX + 1] = curTileID;
+                playerTileOrder[currentTileY][currentTileX] = -10;
+                break;
+            }
             }
         }
     }

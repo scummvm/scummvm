@@ -107,59 +107,59 @@ uint16 OrderingPuzzle::readData(Common::SeekableReadStream &stream) {
 
 void OrderingPuzzle::execute(Nancy::NancyEngine *engine) {
     switch (state) {
-        case kBegin:
-            init();
-            registerGraphics();
-            _engine->sound->loadSound(clickSound);
-            _engine->sound->loadSound(solveSound);
-            state = kRun;
+    case kBegin:
+        init();
+        registerGraphics();
+        _engine->sound->loadSound(clickSound);
+        _engine->sound->loadSound(solveSound);
+        state = kRun;
+        // fall through
+    case kRun:
+        switch (solveState) {
+        case kNotSolved:
+            if (clickedSequence.size() != sequenceLength) {
+                return;
+            }
+
+            for (uint i = 0; i < sequenceLength; ++i) {
+                if (clickedSequence[i] != (int16)correctSequence[i]) {
+                    return;
+                }
+            }
+
+            _engine->scene->setEventFlag(flagOnSolve);
+            solveSoundPlayTime = _engine->getTotalPlayTime() + solveSoundDelay * 1000;
+            solveState = kPlaySound;
             // fall through
-        case kRun:
-            switch (solveState) {
-                case kNotSolved:
-                    if (clickedSequence.size() != sequenceLength) {
-                        return;
-                    }
-
-                    for (uint i = 0; i < sequenceLength; ++i) {
-                        if (clickedSequence[i] != (int16)correctSequence[i]) {
-                            return;
-                        }
-                    }
-
-                    _engine->scene->setEventFlag(flagOnSolve);
-                    solveSoundPlayTime = _engine->getTotalPlayTime() + solveSoundDelay * 1000;
-                    solveState = kPlaySound;
-                    // fall through
-                case kPlaySound:
-                    if (_engine->getTotalPlayTime() <= solveSoundPlayTime) {
-                        break;
-                    }
-
-                    _engine->sound->playSound(solveSound);
-                    solveState = kWaitForSound;
-                    break;
-                case kWaitForSound:
-                    if (!_engine->sound->isSoundPlaying(solveSound)) {
-                        state = kActionTrigger;
-                    }
-
-                    break;
-            }
-            break;
-        case kActionTrigger:
-            _engine->sound->stopSound(clickSound);
-            _engine->sound->stopSound(solveSound);
-
-            if (solveState == kNotSolved) {
-                _engine->scene->changeScene(exitScene);
-                _engine->scene->setEventFlag(flagOnExit);
-            } else {
-                _engine->scene->changeScene(solveExitScene);
+        case kPlaySound:
+            if (_engine->getTotalPlayTime() <= solveSoundPlayTime) {
+                break;
             }
 
-            finishExecution();
+            _engine->sound->playSound(solveSound);
+            solveState = kWaitForSound;
             break;
+        case kWaitForSound:
+            if (!_engine->sound->isSoundPlaying(solveSound)) {
+                state = kActionTrigger;
+            }
+
+            break;
+        }
+        break;
+    case kActionTrigger:
+        _engine->sound->stopSound(clickSound);
+        _engine->sound->stopSound(solveSound);
+
+        if (solveState == kNotSolved) {
+            _engine->scene->changeScene(exitScene);
+            _engine->scene->setEventFlag(flagOnExit);
+        } else {
+            _engine->scene->changeScene(solveExitScene);
+        }
+
+        finishExecution();
+        break;
     }
 }
 
@@ -190,6 +190,7 @@ void OrderingPuzzle::handleInput(NancyInput &input) {
                         if (clickedSequence.back() == i) {
                             clickedSequence.pop_back();
                         }
+                        
                         return;
                     }
                 }

@@ -165,8 +165,7 @@ void Textbox::drawTextbox() {
 
         // Subdivide current line into sublines for proper handling of the tab and color tokens
         // Assumes the tab token is on a new line
-        while (!currentLine.empty())
-        {
+        while (!currentLine.empty()) {
             if (currentLine.hasPrefix(tabToken)) {
                 horizontalOffset += font->getStringWidth("    "); // Replace tab with 4 spaces
                 currentLine = currentLine.substr(ARRAYSIZE(tabToken) - 1);

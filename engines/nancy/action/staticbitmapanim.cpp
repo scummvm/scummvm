@@ -94,61 +94,38 @@ uint16 PlayStaticBitmapAnimation::readData(Common::SeekableReadStream &stream) {
 void PlayStaticBitmapAnimation::execute(NancyEngine *engine) {
     uint32 currentFrameTime = engine->getTotalPlayTime();
     switch (state) {
-        case kBegin:
-            init();
-            registerGraphics();
-            _engine->sound->loadSound(sound);
-            _engine->sound->playSound(sound);
-            state = kRun;
-            // fall through
-        case kRun: {
-            // Check the timer to see if we need to draw the next animation frame
-            if (nextFrameTime <= currentFrameTime) {
-                // World's worst if statement
-                if (engine->scene->getEventFlag(interruptCondition) ||
-                    (   (((currentFrame == loopLastFrame) && (isReverse == kFalse) && (isLooping == kFalse)) ||
-                        ((currentFrame == loopFirstFrame) && (isReverse == kTrue) && (isLooping == kFalse))) &&
-                            !engine->sound->isSoundPlaying(sound))   ) {
-                    
-                    state = kActionTrigger;
+    case kBegin:
+        init();
+        registerGraphics();
+        _engine->sound->loadSound(sound);
+        _engine->sound->playSound(sound);
+        state = kRun;
+        // fall through
+    case kRun: {
+        // Check the timer to see if we need to draw the next animation frame
+        if (nextFrameTime <= currentFrameTime) {
+            // World's worst if statement
+            if (engine->scene->getEventFlag(interruptCondition) ||
+                (   (((currentFrame == loopLastFrame) && (isReverse == kFalse) && (isLooping == kFalse)) ||
+                    ((currentFrame == loopFirstFrame) && (isReverse == kTrue) && (isLooping == kFalse))) &&
+                        !engine->sound->isSoundPlaying(sound))   ) {
+                
+                state = kActionTrigger;
 
-                    // Not sure if hiding when triggered is a hack or the intended behavior, but it's here to fix
-                    // nancy1's safe lock light not turning off.
-                    setVisible(false);
-        
-                    if (!engine->sound->isSoundPlaying(sound)) {
-                        engine->sound->stopSound(sound);
-                    }
-                } else {
-                    // Check if we've moved the viewport
-                    uint16 newFrame = engine->scene->getSceneInfo().frameID;
-                    if (currentViewportFrame != newFrame) {
-                        currentViewportFrame = newFrame;
-                        for (uint i = 0; i < bitmaps.size(); ++i) {
-                            if (currentViewportFrame == bitmaps[i].frameID) {
-                                _screenPosition = bitmaps[i].dest;
-                                break;
-                            }
-                        }
-                    }
-                    
-                    nextFrameTime = currentFrameTime + frameTime;
-                    setFrame(currentFrame);
-                    if (isReverse == kTrue) {
-                        --currentFrame;
-                        currentFrame = currentFrame < loopFirstFrame ? loopLastFrame : currentFrame;
-                        return;
-                    } else {
-                        ++currentFrame;
-                        currentFrame = currentFrame > loopLastFrame ? loopFirstFrame : currentFrame;
-                        return;
-                    }
-                }                
+                // Not sure if hiding when triggered is a hack or the intended behavior, but it's here to fix
+                // nancy1's safe lock light not turning off.
+                setVisible(false);
+    
+                if (!engine->sound->isSoundPlaying(sound)) {
+                    engine->sound->stopSound(sound);
+                }
             } else {
                 // Check if we've moved the viewport
                 uint16 newFrame = engine->scene->getSceneInfo().frameID;
+
                 if (currentViewportFrame != newFrame) {
                     currentViewportFrame = newFrame;
+
                     for (uint i = 0; i < bitmaps.size(); ++i) {
                         if (currentViewportFrame == bitmaps[i].frameID) {
                             _screenPosition = bitmaps[i].dest;
@@ -156,17 +133,45 @@ void PlayStaticBitmapAnimation::execute(NancyEngine *engine) {
                         }
                     }
                 }
-            }      
-            
-            break;
-        }
-        case kActionTrigger:
-            triggerFlags.execute(engine);
-            if (doNotChangeScene == kFalse) {
-                engine->scene->changeScene(sceneChange);
-                finishExecution();
+                
+                nextFrameTime = currentFrameTime + frameTime;
+                setFrame(currentFrame);
+
+                if (isReverse == kTrue) {
+                    --currentFrame;
+                    currentFrame = currentFrame < loopFirstFrame ? loopLastFrame : currentFrame;
+                    return;
+                } else {
+                    ++currentFrame;
+                    currentFrame = currentFrame > loopLastFrame ? loopFirstFrame : currentFrame;
+                    return;
+                }
+            }                
+        } else {
+            // Check if we've moved the viewport
+            uint16 newFrame = engine->scene->getSceneInfo().frameID;
+
+            if (currentViewportFrame != newFrame) {
+                currentViewportFrame = newFrame;
+                
+                for (uint i = 0; i < bitmaps.size(); ++i) {
+                    if (currentViewportFrame == bitmaps[i].frameID) {
+                        _screenPosition = bitmaps[i].dest;
+                        break;
+                    }
+                }
             }
-            break;
+        }      
+        
+        break;
+    }
+    case kActionTrigger:
+        triggerFlags.execute(engine);
+        if (doNotChangeScene == kFalse) {
+            engine->scene->changeScene(sceneChange);
+            finishExecution();
+        }
+        break;
     }
 }
 

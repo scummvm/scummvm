@@ -150,88 +150,88 @@ CheatDialog::CheatDialog(NancyEngine *engine) :
 
 void CheatDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) {
     switch (cmd) {
-        case GUI::kOKCmd: {
-            if (_restartScene->getState()) {
-                uint sceneID = atoi(Common::String(_scene->getEditString()).c_str());
-                IFF iff(_engine, Common::String::format("S%u", sceneID));
-                if (iff.load()) {
-                    _engine->scene->changeScene(
-                        atoi(Common::String(_scene->getEditString()).c_str()),
-                        atoi(Common::String(_frame->getEditString()).c_str()),
-                        atoi(Common::String(_offset->getEditString()).c_str()),
-                        true);
-                } else {
-                    new GUI::StaticTextWidget(this, 20, 410, 150, 20, _("Invalid Scene ID!"), Graphics::kTextAlignLeft);
-                    return;
-                }
-            }
-
-            if (_timerOn->getState()) {
-                _engine->scene->_timers.timerIsActive = true;
-                Time &timer = _engine->scene->_timers.timerTime;
-                timer = 0;
-                timer += 1000 * atoi(Common::String(_timerSeconds->getEditString()).c_str());
-                timer += 60000 * atoi(Common::String(_timerMinutes->getEditString()).c_str());
-                timer += 3600000 * atoi(Common::String(_timerHours->getEditString()).c_str());
+    case GUI::kOKCmd: {
+        if (_restartScene->getState()) {
+            uint sceneID = atoi(Common::String(_scene->getEditString()).c_str());
+            IFF iff(_engine, Common::String::format("S%u", sceneID));
+            if (iff.load()) {
+                _engine->scene->changeScene(
+                    atoi(Common::String(_scene->getEditString()).c_str()),
+                    atoi(Common::String(_frame->getEditString()).c_str()),
+                    atoi(Common::String(_offset->getEditString()).c_str()),
+                    true);
             } else {
-                _engine->scene->stopTimer();
+                new GUI::StaticTextWidget(this, 20, 410, 150, 20, _("Invalid Scene ID!"), Graphics::kTextAlignLeft);
+                return;
             }
-
-            Time &playerTime = _engine->scene->_timers.timerTime;
-            playerTime = 0;
-            playerTime += 60000 * atoi(Common::String(_playerTimeMinutes->getEditString()).c_str());
-            playerTime += 3600000 * atoi(Common::String(_playerTimeHours->getEditString()).c_str());
-            playerTime += 86400000 * atoi(Common::String(_playerTimeMinutes->getEditString()).c_str());
-
-            _engine->scene->_difficulty = atoi(Common::String(_difficulty->getEditString()).c_str());
-            _engine->scene->_hintsRemaining[0] = atoi(Common::String(_hintsRemainingEasy->getEditString()).c_str());
-            _engine->scene->_hintsRemaining[1] = atoi(Common::String(_hintsRemainingMedium->getEditString()).c_str());
-            _engine->scene->_hintsRemaining[2] = atoi(Common::String(_hintsRemainingHard->getEditString()).c_str());
-
-            for (uint i = 0; i < _inventory.size(); ++i) {
-                if (_engine->scene->hasItem(i) == kTrue && !_inventory[i]->getState()) {
-                    _engine->scene->removeItemFromInventory(i, false);
-                } else if (_engine->scene->hasItem(i) == kFalse && _inventory[i]->getState()) {
-                    _engine->scene->addItemToInventory(i);
-                }
-            }
-            cmd = GUI::kCloseCmd;
-
-            break;
         }
-        case kInputSceneNr:
-            sanitizeInput(_scene);
-            break;
-        case kInputFrameNr: 
-            sanitizeInput(_frame);
-            break;
-        case kInputScroll:
-            sanitizeInput(_offset);
-            break;
-        case kInputDifficulty:
-            sanitizeInput(_scene, 2);
-            break;
-        case kInputHintsEasy:
-            sanitizeInput(_hintsRemainingEasy);
-            break;
-        case kInputHintsMedium:
-            sanitizeInput(_hintsRemainingMedium);
-            break;
-        case kInputHintsHard:
-            sanitizeInput(_hintsRemainingHard);
-            break;
-        case kInputPlayerTime:
-            sanitizeInput(_playerTimeMinutes, 59);
-            sanitizeInput(_playerTimeHours, 23);
-            sanitizeInput(_playerTimeDays);
-            break;
-        case kInputTimer:
-            sanitizeInput(_timerSeconds, 59);
-            sanitizeInput(_timerMinutes, 59);
-            sanitizeInput(_timerHours, 23);
-            break;
-        default:
-            break;
+
+        if (_timerOn->getState()) {
+            _engine->scene->_timers.timerIsActive = true;
+            Time &timer = _engine->scene->_timers.timerTime;
+            timer = 0;
+            timer += 1000 * atoi(Common::String(_timerSeconds->getEditString()).c_str());
+            timer += 60000 * atoi(Common::String(_timerMinutes->getEditString()).c_str());
+            timer += 3600000 * atoi(Common::String(_timerHours->getEditString()).c_str());
+        } else {
+            _engine->scene->stopTimer();
+        }
+
+        Time &playerTime = _engine->scene->_timers.timerTime;
+        playerTime = 0;
+        playerTime += 60000 * atoi(Common::String(_playerTimeMinutes->getEditString()).c_str());
+        playerTime += 3600000 * atoi(Common::String(_playerTimeHours->getEditString()).c_str());
+        playerTime += 86400000 * atoi(Common::String(_playerTimeMinutes->getEditString()).c_str());
+
+        _engine->scene->_difficulty = atoi(Common::String(_difficulty->getEditString()).c_str());
+        _engine->scene->_hintsRemaining[0] = atoi(Common::String(_hintsRemainingEasy->getEditString()).c_str());
+        _engine->scene->_hintsRemaining[1] = atoi(Common::String(_hintsRemainingMedium->getEditString()).c_str());
+        _engine->scene->_hintsRemaining[2] = atoi(Common::String(_hintsRemainingHard->getEditString()).c_str());
+
+        for (uint i = 0; i < _inventory.size(); ++i) {
+            if (_engine->scene->hasItem(i) == kTrue && !_inventory[i]->getState()) {
+                _engine->scene->removeItemFromInventory(i, false);
+            } else if (_engine->scene->hasItem(i) == kFalse && _inventory[i]->getState()) {
+                _engine->scene->addItemToInventory(i);
+            }
+        }
+        cmd = GUI::kCloseCmd;
+
+        break;
+    }
+    case kInputSceneNr:
+        sanitizeInput(_scene);
+        break;
+    case kInputFrameNr: 
+        sanitizeInput(_frame);
+        break;
+    case kInputScroll:
+        sanitizeInput(_offset);
+        break;
+    case kInputDifficulty:
+        sanitizeInput(_scene, 2);
+        break;
+    case kInputHintsEasy:
+        sanitizeInput(_hintsRemainingEasy);
+        break;
+    case kInputHintsMedium:
+        sanitizeInput(_hintsRemainingMedium);
+        break;
+    case kInputHintsHard:
+        sanitizeInput(_hintsRemainingHard);
+        break;
+    case kInputPlayerTime:
+        sanitizeInput(_playerTimeMinutes, 59);
+        sanitizeInput(_playerTimeHours, 23);
+        sanitizeInput(_playerTimeDays);
+        break;
+    case kInputTimer:
+        sanitizeInput(_timerSeconds, 59);
+        sanitizeInput(_timerMinutes, 59);
+        sanitizeInput(_timerHours, 23);
+        break;
+    default:
+        break;
     }
     
     Dialog::handleCommand(sender, cmd, data);

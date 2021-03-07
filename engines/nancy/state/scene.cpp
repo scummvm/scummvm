@@ -64,7 +64,6 @@ void Scene::process() {
     case kRun:
         run();
         break;
-    
     }
 }
 
@@ -167,9 +166,11 @@ void Scene::init() {
 
     Common::SeekableReadStream *chunk = _engine->getBootChunkStream("HINT");
     chunk->seek(0);
+
     for (uint i = 0; i < 3; ++i) {
         _hintsRemaining.push_back(chunk->readByte());
     }
+
     _lastHint = -1;
 
     chunk = _engine->getBootChunkStream("MAP");
@@ -204,11 +205,13 @@ void Scene::load() {
     // Scene IDs are prefixed with S inside the cif tree; e.g 100 -> S100                                                                                    
     Common::String sceneName = Common::String::format("S%u", _sceneState.nextScene.sceneID);
     IFF sceneIFF(_engine, sceneName);
+
 	if (!sceneIFF.load()) {
 		error("Faled to load IFF %s", sceneName.c_str());
 	}
 
     Common::SeekableReadStream *sceneSummaryChunk = sceneIFF.getChunkStream("SSUM");
+
     if (!sceneSummaryChunk) {
         error("Invalid IFF Chunk SSUM");
     }
@@ -225,8 +228,7 @@ void Scene::load() {
     // Search for Action Records, maximum for a scene is 30
     Common::SeekableReadStream *actionRecordChunk = nullptr;
 
-    while (actionRecordChunk = sceneIFF.getChunkStream("ACT", _actionManager._records.size()), actionRecordChunk != nullptr)
-    {
+    while (actionRecordChunk = sceneIFF.getChunkStream("ACT", _actionManager._records.size()), actionRecordChunk != nullptr) {
         if (_actionManager._records.size() >= 30) {
             error("Invalid number of Action Records");
         }
@@ -277,6 +279,7 @@ void Scene::run() {
     if (isComingFromMenu) {
         // TODO
     }
+
     isComingFromMenu = false;
 
     Time playTime = _engine->getTotalPlayTime();
@@ -414,9 +417,11 @@ void Scene::clearSceneData() {
     for (uint i = 44; i < 54; ++i) {
         _flags.eventFlags[i] = kFalse;
     }
+
     for (uint i = 63; i < 74; ++i) {
         _flags.eventFlags[i] = kFalse;
     }
+    
     for (uint i = 75; i < 85; ++i) {
         _flags.eventFlags[i] = kFalse;
     }
