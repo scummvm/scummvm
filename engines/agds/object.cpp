@@ -190,15 +190,18 @@ void Object::moveTo(Common::Point pos) {
 	_pos = pos;
 }
 
+void Object::generateRegion(Common::Rect rect) {
+	_region = RegionPtr(new Region(rect));
+	debug("%s: generated region: %s", _name.c_str(), _region->toString().c_str());
+}
+
 void Object::generateRegion() {
 	if (!getPicture()) {
 		warning("generateRegion called on null picture");
 		return;
 	}
 
-	auto rect = getRect();
-	_region = RegionPtr(new Region(rect));
-	debug("%s: generated region: %s", _name.c_str(), _region->toString().c_str());
+	generateRegion(getRect());
 }
 
 Common::Rect Object::getRect() const {
