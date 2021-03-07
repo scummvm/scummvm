@@ -68,40 +68,43 @@ void PlaySecondaryVideo::updateGraphics() {
         }
         
         switch (hoverState) {
-            case kNoHover:
-                if (_isHovered) {
-                    _decoder.seekToFrame(onHoverFirstFrame);
-                    
-                    hoverState = kHover;
-                } else {
-                    if (_decoder.getCurFrame() == loopLastFrame) {
-                        // loop back to beginning
-                        _decoder.seekToFrame(loopFirstFrame);
-                    }
-                    break;
-                }
-                // fall through
-            case kHover:
-                if (!_isHovered) {
-                    // Stopped hovering, reverse playback
-                    _decoder.seekToFrame(onHoverEndLastFrame);
-                    _decoder.setRate(-_decoder.getRate());
-                    if (!_decoder.isPlaying()) {
-                        _decoder.start();
-                    }
-                    hoverState = kEndHover;
-                } else {
-                    break;
-                }
-                // fall through
-            case kEndHover:
-                if (_decoder.getCurFrame() == onHoverEndFirstFrame) {
-                    // reversed playback has ended, go back to no hover state
+        case kNoHover:
+            if (_isHovered) {
+                _decoder.seekToFrame(onHoverFirstFrame);
+                
+                hoverState = kHover;
+            } else {
+                if (_decoder.getCurFrame() == loopLastFrame) {
+                    // loop back to beginning
                     _decoder.seekToFrame(loopFirstFrame);
-                    _decoder.setRate(-_decoder.getRate());
-                    hoverState = kNoHover;
                 }
+
                 break;
+            }
+            // fall through
+        case kHover:
+            if (!_isHovered) {
+                // Stopped hovering, reverse playback
+                _decoder.seekToFrame(onHoverEndLastFrame);
+                _decoder.setRate(-_decoder.getRate());
+                if (!_decoder.isPlaying()) {
+                    _decoder.start();
+                }
+
+                hoverState = kEndHover;
+            } else {
+                break;
+            }
+            // fall through
+        case kEndHover:
+            if (_decoder.getCurFrame() == onHoverEndFirstFrame) {
+                // reversed playback has ended, go back to no hover state
+                _decoder.seekToFrame(loopFirstFrame);
+                _decoder.setRate(-_decoder.getRate());
+                hoverState = kNoHover;
+            }
+
+            break;
         }
 
         if (_decoder.needsUpdate() && !_screenPosition.isEmpty()) {
@@ -111,6 +114,7 @@ void PlaySecondaryVideo::updateGraphics() {
                     break;
                 }
             }
+            
             _needsRedraw = true;
         }
     } else {
@@ -157,47 +161,47 @@ uint16 PlaySecondaryVideo::readData(Common::SeekableReadStream &stream) {
 
 void PlaySecondaryVideo::execute(NancyEngine *engine) {
     switch (state) {
-        case kBegin:
-            init();
-            registerGraphics();
-            state = kRun;
-            // fall through
-        case kRun: {
-            // Set correct position according to viewport frame
-            if (_currentViewportFrame != engine->scene->getSceneInfo().frameID) {
-                _currentViewportFrame = engine->scene->getSceneInfo().frameID;
+    case kBegin:
+        init();
+        registerGraphics();
+        state = kRun;
+        // fall through
+    case kRun: {
+        // Set correct position according to viewport frame
+        if (_currentViewportFrame != engine->scene->getSceneInfo().frameID) {
+            _currentViewportFrame = engine->scene->getSceneInfo().frameID;
 
-                int activeFrame = -1;
+            int activeFrame = -1;
 
-                for (uint i = 0; i < videoDescs.size(); ++i) {
-                    if ((uint16)videoDescs[i].frameID == _currentViewportFrame) {
-                        activeFrame = i;
-                    }
-                }
-
-                if (activeFrame != -1) {
-                    // Make the drawing destination rectangle valid
-                    _screenPosition = videoDescs[activeFrame].destRect;
-
-                    // Activate the hotspot
-                    hotspot = videoDescs[activeFrame].destRect;
-                    hasHotspot = true;
-                    _isPlaying = true;
-                    setVisible(true);
-                } else {
-                    setVisible(false);
-                    hasHotspot = false;
-                    _isPlaying = false;
+            for (uint i = 0; i < videoDescs.size(); ++i) {
+                if ((uint16)videoDescs[i].frameID == _currentViewportFrame) {
+                    activeFrame = i;
                 }
             }
 
-            break;
+            if (activeFrame != -1) {
+                // Make the drawing destination rectangle valid
+                _screenPosition = videoDescs[activeFrame].destRect;
+
+                // Activate the hotspot
+                hotspot = videoDescs[activeFrame].destRect;
+                hasHotspot = true;
+                _isPlaying = true;
+                setVisible(true);
+            } else {
+                setVisible(false);
+                hasHotspot = false;
+                _isPlaying = false;
+            }
         }
-        case kActionTrigger:
-            engine->scene->pushScene();
-            engine->scene->changeScene(sceneChange);
-            finishExecution();
-            break;
+
+        break;
+    }
+    case kActionTrigger:
+        engine->scene->pushScene();
+        engine->scene->changeScene(sceneChange);
+        finishExecution();
+        break;
     }
 }
 

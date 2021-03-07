@@ -74,90 +74,90 @@ uint16 PasswordPuzzle::readData(Common::SeekableReadStream &stream) {
 
 void PasswordPuzzle::execute(Nancy::NancyEngine *engine) {
     switch (state) {
-        case kBegin:
-            init();
-            registerGraphics();
-            nextBlinkTime = engine->getTotalPlayTime() + cursorBlinkTime;
-            state = kRun;
-            // fall through
-        case kRun:
-            switch (solveState) {
-                case kNotSolved: {
-                    Common::String &activeField = passwordFieldIsActive ? playerPasswordInput : playerNameInput;
-                    Common::String &correctField = passwordFieldIsActive ? password : name;
-                    Time currentTime = engine->getTotalPlayTime();
+    case kBegin:
+        init();
+        registerGraphics();
+        nextBlinkTime = engine->getTotalPlayTime() + cursorBlinkTime;
+        state = kRun;
+        // fall through
+    case kRun:
+        switch (solveState) {
+        case kNotSolved: {
+            Common::String &activeField = passwordFieldIsActive ? playerPasswordInput : playerNameInput;
+            Common::String &correctField = passwordFieldIsActive ? password : name;
+            Time currentTime = engine->getTotalPlayTime();
 
-                    if (playerHasHitReturn) {
-                        playerHasHitReturn = false;
+            if (playerHasHitReturn) {
+                playerHasHitReturn = false;
 
-                        if (activeField.lastChar() == '-') {
-                            activeField.deleteLastChar();
-                            drawText();
-                        }
-
-                        if (activeField.equalsIgnoreCase(correctField)) {
-                            if (!passwordFieldIsActive) {
-                                passwordFieldIsActive = true;
-                            } else {
-                                engine->sound->loadSound(solveSound);
-                                engine->sound->playSound(solveSound);
-                                solveState = kSolved;
-                            }
-                        } else {
-                            engine->sound->loadSound(failSound);
-                            engine->sound->playSound(failSound);
-                            solveState = kFailed;
-                        }
-                        
-                        
-                    } else if (currentTime >= nextBlinkTime) {
-                        nextBlinkTime = currentTime + cursorBlinkTime;
-
-                        if (activeField.size() && activeField.lastChar() == '-') {
-                            activeField.deleteLastChar();
-                        } else {
-                            activeField += '-';
-                        }
-
-                        drawText();
-                    }
-
-                    break;
+                if (activeField.lastChar() == '-') {
+                    activeField.deleteLastChar();
+                    drawText();
                 }
-                case kFailed:
-                    if (!engine->sound->isSoundPlaying(failSound)) {
-                        engine->sound->stopSound(failSound);
-                        state = kActionTrigger;
-                    }
 
-                    break;
-                case kSolved:
-                    if (!engine->sound->isSoundPlaying(solveSound)) {
-                        engine->sound->stopSound(solveSound);
-                        state = kActionTrigger;
+                if (activeField.equalsIgnoreCase(correctField)) {
+                    if (!passwordFieldIsActive) {
+                        passwordFieldIsActive = true;
+                    } else {
+                        engine->sound->loadSound(solveSound);
+                        engine->sound->playSound(solveSound);
+                        solveState = kSolved;
                     }
+                } else {
+                    engine->sound->loadSound(failSound);
+                    engine->sound->playSound(failSound);
+                    solveState = kFailed;
+                }
+                
+                
+            } else if (currentTime >= nextBlinkTime) {
+                nextBlinkTime = currentTime + cursorBlinkTime;
 
-                    break;
+                if (activeField.size() && activeField.lastChar() == '-') {
+                    activeField.deleteLastChar();
+                } else {
+                    activeField += '-';
+                }
+
+                drawText();
             }
 
             break;
-        case kActionTrigger:
-            switch (solveState) {
-                case kNotSolved:
-                    engine->scene->changeScene(exitScene);
-                    engine->scene->setEventFlag(flagOnExit);
-                    break;
-                case kFailed:
-                    engine->scene->changeScene(failExitScene);
-                    engine->scene->setEventFlag(flagOnFail.label);
-                    break;
-                case kSolved:
-                    engine->scene->changeScene(solveExitScene);
-                    engine->scene->setEventFlag(flagOnSolve.label);
-                    break;
+        }
+        case kFailed:
+            if (!engine->sound->isSoundPlaying(failSound)) {
+                engine->sound->stopSound(failSound);
+                state = kActionTrigger;
             }
 
-            finishExecution();
+            break;
+        case kSolved:
+            if (!engine->sound->isSoundPlaying(solveSound)) {
+                engine->sound->stopSound(solveSound);
+                state = kActionTrigger;
+            }
+
+            break;
+        }
+
+        break;
+    case kActionTrigger:
+        switch (solveState) {
+        case kNotSolved:
+            engine->scene->changeScene(exitScene);
+            engine->scene->setEventFlag(flagOnExit);
+            break;
+        case kFailed:
+            engine->scene->changeScene(failExitScene);
+            engine->scene->setEventFlag(flagOnFail.label);
+            break;
+        case kSolved:
+            engine->scene->changeScene(solveExitScene);
+            engine->scene->setEventFlag(flagOnSolve.label);
+            break;
+        }
+
+        finishExecution();
     }
 }
 
@@ -172,6 +172,7 @@ void PasswordPuzzle::handleInput(NancyInput &input) {
         if (input.input & NancyInput::kLeftMouseButtonUp) {
             state = kActionTrigger;
         }
+        
         return;
     }
 

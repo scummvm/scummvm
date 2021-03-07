@@ -48,29 +48,30 @@ void PlayPrimaryVideoChan0::ConditionFlag::read(Common::SeekableReadStream &stre
 
 bool PlayPrimaryVideoChan0::ConditionFlag::isSatisfied(NancyEngine *engine) const {
     switch (type) {
-        case ConditionFlag::kEventFlags:
-            return engine->scene->getEventFlag(flag);
-        case ConditionFlag::kInventory:
-            return engine->scene->hasItem(flag.label) == flag.flag;
-        default:
-            return false;
+    case ConditionFlag::kEventFlags:
+        return engine->scene->getEventFlag(flag);
+    case ConditionFlag::kInventory:
+        return engine->scene->hasItem(flag.label) == flag.flag;
+    default:
+        return false;
     }
 }
 
 void PlayPrimaryVideoChan0::ConditionFlag::set(NancyEngine *engine) const {
     switch (type) {
-        case ConditionFlag::kEventFlags:
-            engine->scene->setEventFlag(flag);
-            break;
-        case ConditionFlag::kInventory:
-            if (flag.flag == kTrue) {
-                engine->scene->addItemToInventory(flag.label);
-            } else {
-                engine->scene->removeItemFromInventory(flag.label);
-            }
-            break;
-        default:
-            break;
+    case ConditionFlag::kEventFlags:
+        engine->scene->setEventFlag(flag);
+        break;
+    case ConditionFlag::kInventory:
+        if (flag.flag == kTrue) {
+            engine->scene->addItemToInventory(flag.label);
+        } else {
+            engine->scene->removeItemFromInventory(flag.label);
+        }
+
+        break;
+    default:
+        break;
     }
 }
 
@@ -197,7 +198,7 @@ uint16 PlayPrimaryVideoChan0::readData(Common::SeekableReadStream &stream) {
     }
 
     uint16 numFlagsStructs = stream.readUint16LE();
-    if (numFlagsStructs > 0)  {
+    if (numFlagsStructs > 0) {
         for (uint16 i = 0; i < numFlagsStructs; ++i) {
             flagsStructs.push_back(FlagsStruct());
             FlagsStruct &flagsStruct = flagsStructs.back();
@@ -218,95 +219,97 @@ void PlayPrimaryVideoChan0::execute(NancyEngine *engine) {
     }
 
     switch (state) {
-        case kBegin:
-            init();
-            registerGraphics();
-            engine->sound->loadSound(sound);
-            engine->sound->playSound(sound);
-            state = kRun;
-		    activePrimaryVideo = this;
-            // fall through
-        case kRun:
-            if (!hasDrawnTextbox) {
-                hasDrawnTextbox = true;
-                engine->scene->getTextbox().clear();
-                engine->scene->getTextbox().addTextLine(text);
+    case kBegin:
+        init();
+        registerGraphics();
+        engine->sound->loadSound(sound);
+        engine->sound->playSound(sound);
+        state = kRun;
+        activePrimaryVideo = this;
+        // fall through
+    case kRun:
+        if (!hasDrawnTextbox) {
+            hasDrawnTextbox = true;
+            engine->scene->getTextbox().clear();
+            engine->scene->getTextbox().addTextLine(text);
 
-                // Add responses when conditions have been satisfied
-                if (conditionalResponseCharacterID != 10) {
-                    addConditionalResponses(engine);
-                }
-
-                if (goodbyeResponseCharacterID != 10) {
-                    addGoodbye(engine);
-                }
-
-                for (uint i = 0; i < responses.size(); ++i) {
-                    auto &res = responses[i];
-                    if (res.conditionFlags.isSatisfied(engine)) {
-                        engine->scene->getTextbox().addTextLine(res.text);
-                    }
-                }
+            // Add responses when conditions have been satisfied
+            if (conditionalResponseCharacterID != 10) {
+                addConditionalResponses(engine);
             }
 
-            if (!engine->sound->isSoundPlaying(sound)) {
-                engine->sound->stopSound(sound);
-                if (responses.size() == 0) {
-                    // NPC has finished talking with no responses available, auto-advance to next scene
+            if (goodbyeResponseCharacterID != 10) {
+                addGoodbye(engine);
+            }
+
+            for (uint i = 0; i < responses.size(); ++i) {
+                auto &res = responses[i];
+
+                if (res.conditionFlags.isSatisfied(engine)) {
+                    engine->scene->getTextbox().addTextLine(res.text);
+                }
+            }
+        }
+
+        if (!engine->sound->isSoundPlaying(sound)) {
+            engine->sound->stopSound(sound);
+            
+            if (responses.size() == 0) {
+                // NPC has finished talking with no responses available, auto-advance to next scene
+                state = kActionTrigger;
+            } else {
+                // NPC has finished talking, we have responses
+                for (uint i = 0; i < 30; ++i) {
+                    if (engine->scene->getLogicCondition(i, kTrue)) {
+                        pickedResponse = i;
+                        break;
+                    }
+                }
+
+                if (pickedResponse != -1) {
+                    // Player has picked response, play sound file and change state
+                    responseGenericSound.name = responses[pickedResponse].soundName;
+                    // TODO this is probably not correct
+                    engine->sound->loadSound(responseGenericSound);
+                    engine->sound->playSound(responseGenericSound);
                     state = kActionTrigger;
-                } else {
-                    // NPC has finished talking, we have responses
-                    for (uint i = 0; i < 30; ++i) {
-                        if (engine->scene->getLogicCondition(i, kTrue)) {
-                            pickedResponse = i;
-                            break;
-                        }
-                    }
-
-                    if (pickedResponse != -1) {
-                        // Player has picked response, play sound file and change state
-                        responseGenericSound.name = responses[pickedResponse].soundName;
-                        // TODO this is probably not correct
-                        engine->sound->loadSound(responseGenericSound);
-                        engine->sound->playSound(responseGenericSound);
-                        state = kActionTrigger;
-                    }
                 }
             }
-            break;
-        case kActionTrigger:
-            // process flags structs
-            for (auto flags : flagsStructs) {
-                if (flags.conditions.isSatisfied(engine)) {
-                    flags.flagToSet.set(engine);
+        }
+        break;
+    case kActionTrigger:
+        // process flags structs
+        for (auto flags : flagsStructs) {
+            if (flags.conditions.isSatisfied(engine)) {
+                flags.flagToSet.set(engine);
+            }
+        }
+        
+        if (pickedResponse != -1) {
+            // Set response's event flag, if any
+            engine->scene->setEventFlag(responses[pickedResponse].flagDesc);
+        }
+
+        if (!engine->sound->isSoundPlaying(responseGenericSound)) {
+            engine->sound->stopSound(responseGenericSound);
+            
+            if (pickedResponse != -1) {
+                engine->scene->changeScene(responses[pickedResponse].sceneChange);
+            } else {
+                // Evaluate scene branch structs here
+
+                if (isDialogueExitScene == kFalse) {
+                    engine->scene->changeScene(sceneChange);
+                } else if (doNotPop == kFalse) {
+                    // Exit dialogue
+                    engine->scene->popScene();
                 }
             }
             
-            if (pickedResponse != -1) {
-                // Set response's event flag, if any
-                engine->scene->setEventFlag(responses[pickedResponse].flagDesc);
-            }
+            finishExecution();
+        }
 
-            if (!engine->sound->isSoundPlaying(responseGenericSound)) {
-                engine->sound->stopSound(responseGenericSound);
-                
-                if (pickedResponse != -1) {
-                    engine->scene->changeScene(responses[pickedResponse].sceneChange);
-                } else {
-                    // Evaluate scene branch structs here
-
-                    if (isDialogueExitScene == kFalse) {
-                        engine->scene->changeScene(sceneChange);
-                    } else if (doNotPop == kFalse) {
-                        // Exit dialogue
-                        engine->scene->popScene();
-                    }
-                }
-                
-                finishExecution();
-            }
-
-            break;
+        break;
     }
 }
 

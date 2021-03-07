@@ -122,56 +122,56 @@ Common::Rect Font::getCharacterSourceRect(char chr) const {
         return ret;
     } else if (isPunct(chr)) {
         switch (chr) {
-            case '.':
-                offset = _periodOffset;
-                break;
-            case ',':
-                offset = _commaOffset;
-                break;
-            case '=':
-                offset = _equalitySignOffset;
-                break;
-            case ':':
-                offset = _colonOffset;
-                break;
-            case '-':
-                offset = _dashOffset;
-                break;
-            case '?':
-                offset = _questionMarkOffset;
-                break;
-            case '!':
-                offset = _exclamationMarkOffset;
-                break;
-            case '%':
-                offset = _percentOffset;
-                break;
-            case '&':
-                offset = _ampersandOffset;
-                break;
-            case '*':
-                offset = _asteriskOffset;
-                break;
-            case '(':
-                offset = _leftBracketOffset;
-                break;
-            case ')':
-                offset = _rightBracketOffset;
-                break;
-            case '+':
-                offset = _plusOffset;
-                break;
-            case '\'':
-                offset = _apostropheOffset;
-                break;
-            case ';':
-                offset = _semicolonOffset;
-                break;
-            case '/':
-                offset = _slashOffset;
-                break;
-            default:
-                error("Unsupported FONT character: %c", chr);
+        case '.':
+            offset = _periodOffset;
+            break;
+        case ',':
+            offset = _commaOffset;
+            break;
+        case '=':
+            offset = _equalitySignOffset;
+            break;
+        case ':':
+            offset = _colonOffset;
+            break;
+        case '-':
+            offset = _dashOffset;
+            break;
+        case '?':
+            offset = _questionMarkOffset;
+            break;
+        case '!':
+            offset = _exclamationMarkOffset;
+            break;
+        case '%':
+            offset = _percentOffset;
+            break;
+        case '&':
+            offset = _ampersandOffset;
+            break;
+        case '*':
+            offset = _asteriskOffset;
+            break;
+        case '(':
+            offset = _leftBracketOffset;
+            break;
+        case ')':
+            offset = _rightBracketOffset;
+            break;
+        case '+':
+            offset = _plusOffset;
+            break;
+        case '\'':
+            offset = _apostropheOffset;
+            break;
+        case ';':
+            offset = _semicolonOffset;
+            break;
+        case '/':
+            offset = _slashOffset;
+            break;
+        default:
+            error("Unsupported FONT character: %c", chr);
         }
     }
     ret = _symbolRects[offset];

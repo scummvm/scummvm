@@ -35,18 +35,18 @@ namespace State {
 
 void Help::process() {
     switch (_state) {
-        case kInit:
-            init();
-            // fall through
-        case kBegin:       
-            begin();
-            // fall through
-        case kRun:
-            run();
-            break;
-        case kWaitForSound:
-            waitForSound();
-            break;
+    case kInit:
+        init();
+        // fall through
+    case kBegin:       
+        begin();
+        // fall through
+    case kRun:
+        run();
+        break;
+    case kWaitForSound:
+        waitForSound();
+        break;
     }
 }
 
@@ -87,7 +87,7 @@ void Help::begin() {
 void Help::run() {
     NancyInput input = _engine->input->getInput();
 
-    if (_hotspot.contains(input.mousePos) && input.input & NancyInput::kLeftMouseButtonUp)  {
+    if (_hotspot.contains(input.mousePos) && input.input & NancyInput::kLeftMouseButtonUp) {
         _engine->sound->playSound(0x18); // Hardcoded by original engine
         _state = kWaitForSound;
     }

@@ -40,15 +40,15 @@ namespace State {
 
 void Map::process() {
     switch (_state) {
-        case kInit:
-            init();
-            // fall through
-        case kRun:
-            run();
-            break;
-        case kStop:
-            stop();
-            break;
+    case kInit:
+        init();
+        // fall through
+    case kRun:
+        run();
+        break;
+    case kStop:
+        stop();
+        break;
     }
 }
 
@@ -147,6 +147,7 @@ void Map::run() {
                 _pickedLocationID = i;
                 _state = kStop;
             }
+
             return;
         }
     }
@@ -168,6 +169,7 @@ void Map::stop() {
         
         _engine->sound->playSound(0x18);
     }
+    
     // The two sounds play at the same time if a location was picked
     _engine->sound->playSound(0x14);
 

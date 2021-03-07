@@ -157,69 +157,78 @@ bool ActionManager::addNewActionRecord(Common::SeekableReadStream &inputData) {
     for (uint i = 0; i < newRecord->dependencies.size(); ++i) {
         debugCN(1, kDebugActionRecord, "\tDependency %i: type ", i);
         switch (newRecord->dependencies[i].type) {
-            case kNone :debugCN(1, kDebugActionRecord, "kNone"); break;
-            case kInventory :
-                debugCN(1, kDebugActionRecord, "kInventory, item ID %i %s",
-                            newRecord->dependencies[i].label,
-                            newRecord->dependencies[i].condition == kTrue ? "is in possession" : "is not in possession");
-                break;
-            case kEventFlag :
-                debugCN(1, kDebugActionRecord, "kEventFlag, flag ID %i == %s",
-                            newRecord->dependencies[i].label,
-                            newRecord->dependencies[i].condition == kTrue ? "true" : "false");
-                break;
-            case kLogicCondition :
-                debugCN(1, kDebugActionRecord, "kLogicCondition, logic condition ID %i == %s",
-                            newRecord->dependencies[i].label,
-                            newRecord->dependencies[i].condition == kTrue ? "true" : "false");
-                break;
-            case kTotalTime :
-                debugCN(1, kDebugActionRecord, "kTotalTime, %i hours, %i minutes, %i seconds, %i milliseconds",
-                            newRecord->dependencies[i].hours,
-                            newRecord->dependencies[i].minutes,
-                            newRecord->dependencies[i].seconds,
-                            newRecord->dependencies[i].milliseconds);
-                break;
-            case kSceneTime :
-                debugCN(1, kDebugActionRecord, "kSceneTime, %i hours, %i minutes, %i seconds, %i milliseconds",
-                            newRecord->dependencies[i].hours,
-                            newRecord->dependencies[i].minutes,
-                            newRecord->dependencies[i].seconds,
-                            newRecord->dependencies[i].milliseconds);
-                break;
-            case kPlayerTime :
-                debugCN(1, kDebugActionRecord, "kPlayerTime, %i days, %i hours, %i minutes, %i seconds",
-                            newRecord->dependencies[i].hours,
-                            newRecord->dependencies[i].minutes,
-                            newRecord->dependencies[i].seconds,
-                            newRecord->dependencies[i].milliseconds);
-                break;
-            case kSceneCount :
-                debugCN(1, kDebugActionRecord, "kSceneCount, scene ID %i, hit count %s %i",
-                            newRecord->dependencies[i].hours,
-                            newRecord->dependencies[i].milliseconds == 1 ? ">" : newRecord->dependencies[i].milliseconds == 2 ? "<" : "==",
-                            newRecord->dependencies[i].seconds);
-                break;
-            case kResetOnNewDay : debugCN(1, kDebugActionRecord, "kResetOnNewDay"); break;
-            case kUseItem :
-                debugCN(1, kDebugActionRecord, "kUseItem, item ID %i %s",
-                            newRecord->dependencies[i].label,
-                            newRecord->dependencies[i].condition == kTrue ? "is held" : "is not held");
-                break;
-            case kTimeOfDay :
-                debugCN(1, kDebugActionRecord, "kTimeOfDay, %s",
-                            newRecord->dependencies[i].label == 0 ? "day" : newRecord->dependencies[i].label == 1 ? "night" : "dusk/dawn");
-                break;
-            case kTimerNotDone : debugCN(1, kDebugActionRecord, "kTimerNotDone"); break;
-            case kTimerDone : debugCN(1, kDebugActionRecord, "kTimerDone"); break;
-            case kDifficultyLevel :
-                debugCN(1, kDebugActionRecord, "kDifficultyLevel, level %i", newRecord->dependencies[i].condition);
-                break;
-            default: debugCN(1, kDebugActionRecord, "unknown"); break;
+        case kNone : 
+            debugCN(1, kDebugActionRecord, "kNone");
+            break;
+        case kInventory :
+            debugCN(1, kDebugActionRecord, "kInventory, item ID %i %s",
+                        newRecord->dependencies[i].label,
+                        newRecord->dependencies[i].condition == kTrue ? "is in possession" : "is not in possession");
+            break;
+        case kEventFlag :
+            debugCN(1, kDebugActionRecord, "kEventFlag, flag ID %i == %s",
+                        newRecord->dependencies[i].label,
+                        newRecord->dependencies[i].condition == kTrue ? "true" : "false");
+            break;
+        case kLogicCondition :
+            debugCN(1, kDebugActionRecord, "kLogicCondition, logic condition ID %i == %s",
+                        newRecord->dependencies[i].label,
+                        newRecord->dependencies[i].condition == kTrue ? "true" : "false");
+            break;
+        case kTotalTime :
+            debugCN(1, kDebugActionRecord, "kTotalTime, %i hours, %i minutes, %i seconds, %i milliseconds",
+                        newRecord->dependencies[i].hours,
+                        newRecord->dependencies[i].minutes,
+                        newRecord->dependencies[i].seconds,
+                        newRecord->dependencies[i].milliseconds);
+            break;
+        case kSceneTime :
+            debugCN(1, kDebugActionRecord, "kSceneTime, %i hours, %i minutes, %i seconds, %i milliseconds",
+                        newRecord->dependencies[i].hours,
+                        newRecord->dependencies[i].minutes,
+                        newRecord->dependencies[i].seconds,
+                        newRecord->dependencies[i].milliseconds);
+            break;
+        case kPlayerTime :
+            debugCN(1, kDebugActionRecord, "kPlayerTime, %i days, %i hours, %i minutes, %i seconds",
+                        newRecord->dependencies[i].hours,
+                        newRecord->dependencies[i].minutes,
+                        newRecord->dependencies[i].seconds,
+                        newRecord->dependencies[i].milliseconds);
+            break;
+        case kSceneCount :
+            debugCN(1, kDebugActionRecord, "kSceneCount, scene ID %i, hit count %s %i",
+                        newRecord->dependencies[i].hours,
+                        newRecord->dependencies[i].milliseconds == 1 ? ">" : newRecord->dependencies[i].milliseconds == 2 ? "<" : "==",
+                        newRecord->dependencies[i].seconds);
+            break;
+        case kResetOnNewDay :
+            debugCN(1, kDebugActionRecord, "kResetOnNewDay");
+            break;
+        case kUseItem :
+            debugCN(1, kDebugActionRecord, "kUseItem, item ID %i %s",
+                        newRecord->dependencies[i].label,
+                        newRecord->dependencies[i].condition == kTrue ? "is held" : "is not held");
+            break;
+        case kTimeOfDay :
+            debugCN(1, kDebugActionRecord, "kTimeOfDay, %s",
+                        newRecord->dependencies[i].label == 0 ? "day" : newRecord->dependencies[i].label == 1 ? "night" : "dusk/dawn");
+            break;
+        case kTimerNotDone :
+            debugCN(1, kDebugActionRecord, "kTimerNotDone");
+            break;
+        case kTimerDone :
+            debugCN(1, kDebugActionRecord, "kTimerDone");
+            break;
+        case kDifficultyLevel :
+            debugCN(1, kDebugActionRecord, "kDifficultyLevel, level %i", newRecord->dependencies[i].condition);
+            break;
+        default:
+            debugCN(1, kDebugActionRecord, "unknown");
+            break;
         }
         debugC(1, kDebugActionRecord, ", orFlag == %s", newRecord->dependencies[i].orFlag == true ? "true" : "false");
     }
-
 
     return true;
 }
@@ -233,136 +242,167 @@ void ActionManager::processActionRecords() {
         if (!record->isActive) {
             for (uint i = 0; i < record->dependencies.size(); ++i) {
                 DependencyRecord &dep = record->dependencies[i];
+
                 if (!dep.satisfied) {
                     switch (dep.type) {
-                        case kNone:
-                            dep.satisfied = true;
-                            break;
-                        case kInventory:
-                            switch (dep.condition) {
-                                case kFalse:
-                                    // Item not in possession or held
-                                    if (_engine->scene->_flags.items[dep.label] == kFalse &&
-                                        dep.label != _engine->scene->_flags.heldItem) {
-                                        dep.satisfied = true;
-                                    }
-                                    break;
-                                case kTrue:
-                                    if (_engine->scene->_flags.items[dep.label] == kTrue ||
-                                        dep.label == _engine->scene->_flags.heldItem) {
-                                        dep.satisfied = true;
-                                    }
-                                    break;
-                                default:
-                                    break;
-                            }
-                            break;
-                        case kEventFlag:
-                            if (_engine->scene->getEventFlag(dep.label, (NancyFlag)dep.condition))
-                                // nancy1 has code for some timer array that never gets used
-                                // and is discarded from nancy2 onward
+                    case kNone:
+                        dep.satisfied = true;
+                        break;
+                    case kInventory:
+                        switch (dep.condition) {
+                        case kFalse:
+                            // Item not in possession or held
+                            if (_engine->scene->_flags.items[dep.label] == kFalse &&
+                                dep.label != _engine->scene->_flags.heldItem) {
                                 dep.satisfied = true;
-                            break;
-                        case kLogicCondition:
-                            if (_engine->scene->_flags.logicConditions[dep.label].flag == dep.condition) {
-                                // Wait for specified time before satisfying dependency condition
-                                Time elapsed = _engine->scene->_timers.totalTime - _engine->scene->_flags.logicConditions[dep.label].timestamp;
-                                if (elapsed >= dep.timeData)
-                                    dep.satisfied = true;
-                            }
-                            break;
-                        case kTotalTime:
-                            if (_engine->scene->_timers.totalTime >= dep.timeData)
-                                dep.satisfied = true;
-                            break;
-                        case kSceneTime:
-                            if (_engine->scene->_timers.sceneTime >= dep.timeData)
-                                dep.satisfied = true;
-                            break;
-                        case kPlayerTime:
-                            // TODO almost definitely wrong, as the original engine treats player time differently
-                            if (_engine->scene->_timers.playerTime >= dep.timeData)
-                                dep.satisfied = true;
-                            break;
-                        /*case 7:
-                            // TODO
-                            break;
-                        case 8:
-                            // TODO
-                            break;*/
-                        case kSceneCount:
-                            // This dependency type keeps its data in the time variables
-                            // Also, I'm pretty sure it never gets used
-                            switch (dep.milliseconds) {
-                                case 1:
-                                    if (dep.seconds < _engine->scene->_sceneState.sceneHitCount[dep.hours])
-                                        dep.satisfied = true;
-                                    break;
-                                case 2:
-                                    if (dep.seconds > _engine->scene->_sceneState.sceneHitCount[dep.hours])
-                                        dep.satisfied = true;
-                                    break;
-                                case 3:
-                                    if (dep.seconds == _engine->scene->_sceneState.sceneHitCount[dep.hours])
-                                        dep.satisfied = true;
-                                    break;
-                            }
-                            break;
-                        case kResetOnNewDay:
-                            if (record->days == -1) {
-                                record->days = _engine->scene->_timers.playerTime.getDays();
-                                dep.satisfied = true;
-                                break;
                             }
 
-                            if (record->days < _engine->scene->_timers.playerTime.getDays()) {
-                                record->days = _engine->scene->_timers.playerTime.getDays();
-                                for (uint j = 0; j < record->dependencies.size(); ++j) {
-                                    if (record->dependencies[j].type == kPlayerTime) {
-                                        record->dependencies[j].satisfied = false;
-                                    }
-                                }
-                            }
                             break;
-                        case kUseItem: {
-                            bool hasUnsatisfiedDeps = false;
-                            for (uint j = 0; j < record->dependencies.size(); ++j) {
-                                if (j != i && record->dependencies[j].satisfied == false) {
-                                    hasUnsatisfiedDeps = true;
-                                }
+                        case kTrue:
+                            if (_engine->scene->_flags.items[dep.label] == kTrue ||
+                                dep.label == _engine->scene->_flags.heldItem) {
+                                dep.satisfied = true;
                             }
 
-                            if (hasUnsatisfiedDeps) {
-                                break;
-                            }
-
-                            record->itemRequired = dep.label;
-
-                            if (dep.condition == 1) {
-                                record->itemRequired += 100;
-                            }
-                            
-                            dep.satisfied = true;
-                            break;
-                        }
-                        case kTimeOfDay:
-                            if (dep.label == (byte)_engine->scene->_timers.timeOfDay)
-                                dep.satisfied = true;
-                            break;
-                        case kTimerNotDone:
-                            if (_engine->scene->_timers.timerTime <= dep.timeData)
-                                dep.satisfied = true;
-                            break;
-                        case kTimerDone:
-                            if (_engine->scene->_timers.timerTime > dep.timeData)
-                                dep.satisfied = true;
-                            break;
-                        case kDifficultyLevel:
-                            if (dep.condition == _engine->scene->_difficulty)
-                                dep.satisfied = true;
                             break;
                         default:
                             break;
+                        }
+
+                        break;
+                    case kEventFlag:
+                        if (_engine->scene->getEventFlag(dep.label, (NancyFlag)dep.condition)) {
+                            // nancy1 has code for some timer array that never gets used
+                            // and is discarded from nancy2 onward
+                            dep.satisfied = true;
+                        }
+
+                        break;
+                    case kLogicCondition:
+                        if (_engine->scene->_flags.logicConditions[dep.label].flag == dep.condition) {
+                            // Wait for specified time before satisfying dependency condition
+                            Time elapsed = _engine->scene->_timers.totalTime - _engine->scene->_flags.logicConditions[dep.label].timestamp;
+
+                            if (elapsed >= dep.timeData) {
+                                dep.satisfied = true;
+                            }
+                        }
+
+                        break;
+                    case kTotalTime:
+                        if (_engine->scene->_timers.totalTime >= dep.timeData) {
+                            dep.satisfied = true;
+                        }
+
+                        break;
+                    case kSceneTime:
+                        if (_engine->scene->_timers.sceneTime >= dep.timeData) {
+                            dep.satisfied = true;
+                        }
+
+                        break;
+                    case kPlayerTime:
+                        // TODO almost definitely wrong, as the original engine treats player time differently
+                        if (_engine->scene->_timers.playerTime >= dep.timeData) {
+                            dep.satisfied = true;
+                        }
+
+                        break;
+                    /*case 7:
+                        // TODO
+                        break;
+                    case 8:
+                        // TODO
+                        break;*/
+                    case kSceneCount:
+                        // This dependency type keeps its data in the time variables
+                        // Also, I'm pretty sure it never gets used
+                        switch (dep.milliseconds) {
+                        case 1:
+                            if (dep.seconds < _engine->scene->_sceneState.sceneHitCount[dep.hours]) {
+                                dep.satisfied = true;
+                            }
+
+                            break;
+                        case 2:
+                            if (dep.seconds > _engine->scene->_sceneState.sceneHitCount[dep.hours]) {
+                                dep.satisfied = true;
+                            }
+
+                            break;
+                        case 3:
+                            if (dep.seconds == _engine->scene->_sceneState.sceneHitCount[dep.hours]) {
+                                dep.satisfied = true;
+                            }
+
+                            break;
+                        }
+
+                        break;
+                    case kResetOnNewDay:
+                        if (record->days == -1) {
+                            record->days = _engine->scene->_timers.playerTime.getDays();
+                            dep.satisfied = true;
+                            break;
+                        }
+
+                        if (record->days < _engine->scene->_timers.playerTime.getDays()) {
+                            record->days = _engine->scene->_timers.playerTime.getDays();
+                            for (uint j = 0; j < record->dependencies.size(); ++j) {
+                                if (record->dependencies[j].type == kPlayerTime) {
+                                    record->dependencies[j].satisfied = false;
+                                }
+                            }
+                        }
+
+                        break;
+                    case kUseItem: {
+                        bool hasUnsatisfiedDeps = false;
+                        for (uint j = 0; j < record->dependencies.size(); ++j) {
+                            if (j != i && record->dependencies[j].satisfied == false) {
+                                hasUnsatisfiedDeps = true;
+                            }
+                        }
+
+                        if (hasUnsatisfiedDeps) {
+                            break;
+                        }
+
+                        record->itemRequired = dep.label;
+
+                        if (dep.condition == 1) {
+                            record->itemRequired += 100;
+                        }
+                        
+                        dep.satisfied = true;
+                        break;
+                    }
+                    case kTimeOfDay:
+                        if (dep.label == (byte)_engine->scene->_timers.timeOfDay) {
+                            dep.satisfied = true;
+                        }
+
+                        break;
+                    case kTimerNotDone:
+                        if (_engine->scene->_timers.timerTime <= dep.timeData) {
+                            dep.satisfied = true;
+                        }
+
+                        break;
+                    case kTimerDone:
+                        if (_engine->scene->_timers.timerTime > dep.timeData) {
+                            dep.satisfied = true;
+                        }
+
+                        break;
+                    case kDifficultyLevel:
+                        if (dep.condition == _engine->scene->_difficulty) {
+                            dep.satisfied = true;
+                        }
+
+                        break;
+                    default:
+                        break;
                     }
                 }
             }
