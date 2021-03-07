@@ -68,6 +68,7 @@
 #include "ags/engine/debugging/debugger.h"
 #include "ags/engine/debugging/logfile.h"
 #include "ags/engine/debugging/messagebuffer.h"
+#include "ags/engine/main/graphics_mode.h"
 #include "ags/engine/media/audio/ambientsound.h"
 #include "ags/engine/media/audio/audiodefines.h"
 #include "ags/engine/script/cc_instance.h"
@@ -158,6 +159,12 @@ Globals::Globals() {
 
 	// global_dialog.cpp globals
 	_last_in_dialog_request_script_pos = new ScriptPosition();
+
+	// graphics_mode.cpp globals
+	_SavedFullscreenSetting = new ActiveDisplaySetting();
+	_SavedWindowedSetting = new ActiveDisplaySetting();
+	_CurFrameSetup = new GameFrameSetup();
+	_GameScaling = new AGS::Engine::PlaneScaling();
 
 	// guibutton.cpp globals
 	_guibuts = new std::vector<AGS::Shared::GUIButton>();
@@ -287,6 +294,12 @@ Globals::~Globals() {
 
 	// global_dialog.cpp globals
 	delete _last_in_dialog_request_script_pos;
+
+	// graphics_mode.cpp globals
+	delete _SavedFullscreenSetting;
+	delete _SavedWindowedSetting;
+	delete _CurFrameSetup;
+	delete _GameScaling;
 
 	// guibutton.cpp globals
 	delete _guibuts;

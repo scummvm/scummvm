@@ -59,8 +59,10 @@ class RoomStruct;
 namespace Engine {
 
 class ConsoleOutputTarget;
+class IGfxDriverFactory;
 class LogFile;
 class MessageBuffer;
+struct PlaneScaling;
 
 } // namespace Engine
 } // namespace AGS
@@ -71,6 +73,7 @@ class SpriteCache;
 class TTFFontRenderer;
 class WFNFontRenderer;
 
+struct ActiveDisplaySetting;
 struct AmbientSound;
 struct CCAudioChannel;
 struct CCAudioClip;
@@ -86,6 +89,7 @@ struct CCRegion;
 struct CharacterCache;
 struct DirtyRects;
 struct ExecutingScript;
+struct GameFrameSetup;
 struct GameSetup;
 struct GameSetupStruct;
 struct GameState;
@@ -337,6 +341,25 @@ public:
 	 */
 
 	ScriptPosition *_last_in_dialog_request_script_pos;
+
+	/**@}*/
+
+	/**
+	 * \defgroup graphics_mode globals
+	 * @{
+	 */
+
+	AGS::Engine::IGfxDriverFactory *_GfxFactory = nullptr;
+
+	// Last saved fullscreen and windowed configs; they are used when switching
+	// between between fullscreen and windowed modes at runtime.
+	// If particular mode is modified, e.g. by script command, related config should be overwritten.
+	ActiveDisplaySetting *_SavedFullscreenSetting;
+	ActiveDisplaySetting *_SavedWindowedSetting;
+	// Current frame scaling setup
+	GameFrameSetup *_CurFrameSetup;
+	// The game-to-screen transformation
+	AGS::Engine::PlaneScaling *_GameScaling;
 
 	/**@}*/
 

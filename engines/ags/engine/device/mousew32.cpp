@@ -283,23 +283,23 @@ int minstalled() {
 }
 
 void Mouse::AdjustPosition(int &x, int &y) {
-	x = GameScaling.X.UnScalePt(x) - _GP(play).GetMainViewport().Left;
-	y = GameScaling.Y.UnScalePt(y) - _GP(play).GetMainViewport().Top;
+	x = _GP(GameScaling).X.UnScalePt(x) - _GP(play).GetMainViewport().Left;
+	y = _GP(GameScaling).Y.UnScalePt(y) - _GP(play).GetMainViewport().Top;
 }
 
 void Mouse::SetGraphicArea() {
-	Rect dst_r = GameScaling.ScaleRange(_GP(play).GetMainViewport());
+	Rect dst_r = _GP(GameScaling).ScaleRange(_GP(play).GetMainViewport());
 	mgraphconfine(dst_r.Left, dst_r.Top, dst_r.Right, dst_r.Bottom);
 }
 
 void Mouse::SetMoveLimit(const Rect &r) {
 	Rect src_r = OffsetRect(r, _GP(play).GetMainViewport().GetLT());
-	Rect dst_r = GameScaling.ScaleRange(src_r);
+	Rect dst_r = _GP(GameScaling).ScaleRange(src_r);
 	msetcursorlimit(dst_r.Left, dst_r.Top, dst_r.Right, dst_r.Bottom);
 }
 
 void Mouse::SetPosition(const Point p) {
-	msetgraphpos(GameScaling.X.ScalePt(p.X + _GP(play).GetMainViewport().Left), GameScaling.Y.ScalePt(p.Y + _GP(play).GetMainViewport().Top));
+	msetgraphpos(_GP(GameScaling).X.ScalePt(p.X + _GP(play).GetMainViewport().Left), _GP(GameScaling).Y.ScalePt(p.Y + _GP(play).GetMainViewport().Top));
 }
 
 bool Mouse::IsLockedToWindow() {
