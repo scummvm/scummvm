@@ -43,8 +43,6 @@
 
 namespace AGS3 {
 
-extern int _color_depth;
-
 } // namespace AGS3
 
 #endif

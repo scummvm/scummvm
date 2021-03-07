@@ -87,12 +87,12 @@ void ags_domouse(int what) {
 
 int ags_check_mouse_wheel() {
 	int result = 0;
-	if ((mouse_z != mouse_z_was) && (_GP(game).options[OPT_MOUSEWHEEL] != 0)) {
-		if (mouse_z > mouse_z_was)
+	if ((_G(mouse_z) != mouse_z_was) && (_GP(game).options[OPT_MOUSEWHEEL] != 0)) {
+		if (_G(mouse_z) > mouse_z_was)
 			result = 1;
 		else
 			result = -1;
-		mouse_z_was = mouse_z;
+		mouse_z_was = _G(mouse_z);
 	}
 	return result;
 }

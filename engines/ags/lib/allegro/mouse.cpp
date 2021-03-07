@@ -22,22 +22,10 @@
 
 #include "ags/lib/allegro/mouse.h"
 #include "ags/events.h"
+#include "ags/globals.h"
 #include "common/textconsole.h"
 
 namespace AGS3 {
-
-BITMAP *mouse_sprite;
-int mouse_x_focus;
-int mouse_y_focus;
-
-volatile int mouse_x;	// X position
-volatile int mouse_y;	// Y position
-volatile int mouse_z;	// Mouse wheel vertical
-volatile int mouse_w;	// Mouse wheel horizontal
-volatile int mouse_b;	// Mouse buttons bitflags
-volatile int mouse_pos;	// X position in upper 16 bits, Y in lower 16
-
-volatile int freeze_mouse_flag;
 
 static bool isMouseButtonDown(Common::EventType type) {
 	return type == Common::EVENT_LBUTTONDOWN || type == Common::EVENT_MBUTTONDOWN ||
@@ -60,9 +48,9 @@ static bool isMouseEvent(Common::EventType type) {
 
 
 int install_mouse() {
-	mouse_x = mouse_y = mouse_z = 0;
-	mouse_w = mouse_b = 0;
-	mouse_pos = 0;
+	_G(mouse_x) = _G(mouse_y) = _G(mouse_z) = 0;
+	_G(mouse_b) = 0;
+	_G(mouse_pos) = 0;
 
 	return 0;
 }
@@ -76,35 +64,35 @@ int poll_mouse() {
 	Common::Event e;
 	while ((e = ::AGS::g_events->readEvent()).type != Common::EVENT_INVALID) {
 		if (isMouseEvent(e.type)) {
-			mouse_x = e.mouse.x;
-			mouse_y = e.mouse.y;
-			mouse_pos = (e.mouse.x << 16) | e.mouse.y;
+			_G(mouse_x) = e.mouse.x;
+			_G(mouse_y) = e.mouse.y;
+			_G(mouse_pos) = (e.mouse.x << 16) | e.mouse.y;
 		}
 
 		switch (e.type) {
 		case Common::EVENT_LBUTTONDOWN:
-			mouse_b |= 1;
+			_G(mouse_b) |= 1;
 			break;
 		case Common::EVENT_LBUTTONUP:
-			mouse_b &= ~1;
+			_G(mouse_b) &= ~1;
 			break;
 		case Common::EVENT_RBUTTONDOWN:
-			mouse_b |= 2;
+			_G(mouse_b) |= 2;
 			break;
 		case Common::EVENT_RBUTTONUP:
-			mouse_b &= ~2;
+			_G(mouse_b) &= ~2;
 			break;
 		case Common::EVENT_MBUTTONDOWN:
-			mouse_b |= 4;
+			_G(mouse_b) |= 4;
 			break;
 		case Common::EVENT_MBUTTONUP:
-			mouse_b &= ~4;
+			_G(mouse_b) &= ~4;
 			break;
 		case Common::EVENT_WHEELDOWN:
-			++mouse_z;
+			++_G(mouse_z);
 			break;
 		case Common::EVENT_WHEELUP:
-			--mouse_z;
+			--_G(mouse_z);
 			break;
 		default:
 			break;
@@ -139,18 +127,14 @@ void unscare_mouse() {
 }
 
 void position_mouse(int x, int y) {
-	mouse_x = x;
-	mouse_y = y;
-	mouse_pos = (x << 16) | y;
+	_G(mouse_x) = x;
+	_G(mouse_y) = y;
+	_G(mouse_pos) = (x << 16) | y;
 	::AGS::g_events->warpMouse(Common::Point(x, y));
 }
 
 void position_mouse_z(int z) {
-	mouse_z = z;
-}
-
-void position_mouse_w(int w) {
-	mouse_w = w;
+	_G(mouse_z) = z;
 }
 
 void set_mouse_range(int x1, int y_1, int x2, int y2) {

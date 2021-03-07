@@ -373,7 +373,7 @@ int geta_depth(int color_depth, int c) {
  *  being used by the current video mode.
  */
 int getr(int c) {
-	return getr_depth(_color_depth, c);
+	return getr_depth(_G(_color_depth), c);
 }
 
 
@@ -383,7 +383,7 @@ int getr(int c) {
  *  being used by the current video mode.
  */
 int getg(int c) {
-	return getg_depth(_color_depth, c);
+	return getg_depth(_G(_color_depth), c);
 }
 
 
@@ -393,7 +393,7 @@ int getg(int c) {
  *  being used by the current video mode.
  */
 int getb(int c) {
-	return getb_depth(_color_depth, c);
+	return getb_depth(_G(_color_depth), c);
 }
 
 
@@ -403,7 +403,7 @@ int getb(int c) {
  *  being used by the current video mode.
  */
 int geta(int c) {
-	return geta_depth(_color_depth, c);
+	return geta_depth(_G(_color_depth), c);
 }
 
 

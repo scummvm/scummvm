@@ -51,19 +51,6 @@ AL_FUNC(void, disable_hardware_cursor, (void));
 #define MOUSE_CURSOR_EDIT        5
 #define AL_NUM_MOUSE_CURSORS        6
 
-AL_VAR(BITMAP *, mouse_sprite);
-AL_VAR(int, mouse_x_focus);
-AL_VAR(int, mouse_y_focus);
-
-AL_VAR(volatile int, mouse_x);
-AL_VAR(volatile int, mouse_y);
-AL_VAR(volatile int, mouse_z);
-AL_VAR(volatile int, mouse_w);
-AL_VAR(volatile int, mouse_b);
-AL_VAR(volatile int, mouse_pos);
-
-AL_VAR(volatile int, freeze_mouse_flag);
-
 #define MOUSE_FLAG_MOVE             1
 #define MOUSE_FLAG_LEFT_DOWN        2
 #define MOUSE_FLAG_LEFT_UP          4
@@ -82,7 +69,6 @@ AL_FUNC(void, scare_mouse_area, (int x, int y, int w, int h));
 AL_FUNC(void, unscare_mouse, (void));
 AL_FUNC(void, position_mouse, (int x, int y));
 AL_FUNC(void, position_mouse_z, (int z));
-AL_FUNC(void, position_mouse_w, (int w));
 AL_FUNC(void, set_mouse_range, (int x1, int y_1, int x2, int y2));
 AL_FUNC(void, set_mouse_speed, (int xspeed, int yspeed));
 AL_FUNC(void, select_mouse_cursor, (int cursor));

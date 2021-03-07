@@ -129,6 +129,7 @@ public:
 	 * @{
 	 */
 
+	int __color_depth = 0;
 	int __rgb_r_shift_15 = DEFAULT_RGB_R_SHIFT_15;     /* truecolor pixel format */
 	int __rgb_g_shift_15 = DEFAULT_RGB_G_SHIFT_15;
 	int __rgb_b_shift_15 = DEFAULT_RGB_B_SHIFT_15;
@@ -150,6 +151,14 @@ public:
 	int _trans_blend_green = 0;
 	int _trans_blend_blue = 0;
 	BlenderMode __blender_mode = kRgbToRgbBlender;
+
+	volatile int _mouse_x = 0;	// X position
+	volatile int _mouse_y = 0;	// Y position
+	volatile int _mouse_z = 0;	// Mouse wheel vertical
+	volatile int _mouse_b = 0;	// Mouse buttons bitflags
+	volatile int _mouse_pos = 0;	// X position in upper 16 bits, Y in lower 16
+
+	volatile int freeze_mouse_flag;
 
 	/**@}*/
 

@@ -157,8 +157,8 @@ void mgetgraphpos() {
 			return;
 	} else {
 		// Save real cursor coordinates provided by system
-		_G(real_mouse_x) = mouse_x;
-		_G(real_mouse_y) = mouse_y;
+		_G(real_mouse_x) = _G(mouse_x);
+		_G(real_mouse_y) = _G(mouse_y);
 	}
 
 	// Set new in-game cursor position
@@ -237,7 +237,7 @@ int butwas = 0;
 int mgetbutton() {
 	int toret = NONE;
 	poll_mouse();
-	int butis = mouse_b;
+	int butis = _G(mouse_b);
 
 	if ((butis > 0) &(butwas > 0))
 		return NONE;  // don't allow holding button down
@@ -262,7 +262,7 @@ int mgetbutton() {
 const int MB_ARRAY[3] = { 1, 2, 4 };
 int misbuttondown(int buno) {
 	poll_mouse();
-	if (mouse_b & MB_ARRAY[buno])
+	if (_G(mouse_b) & MB_ARRAY[buno])
 		return TRUE;
 	return FALSE;
 }

@@ -33,5 +33,4 @@ size_t ustrsize(const char *s) {
 	return strlen(s);
 }
 
-
 } // namespace AGS3
