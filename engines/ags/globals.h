@@ -455,6 +455,18 @@ public:
 	/**@}*/
 
 	/**
+	 * \defgroup lzw globals
+	 * @{
+	 */
+
+	char *_lzbuffer = nullptr;
+	int *_node = nullptr;
+	int _pos = 0;
+	long _outbytes = 0, _maxsize = 0, _putbytes = 0;
+
+	/**@}*/
+
+	/**
 	 * \defgroup main globals
 	 * @{
 	 */

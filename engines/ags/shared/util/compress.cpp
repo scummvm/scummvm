@@ -26,6 +26,7 @@
 #include "ags/shared/util/lzw.h"
 #include "ags/shared/util/misc.h"
 #include "ags/shared/util/stream.h"
+#include "ags/globals.h"
 #if AGS_PLATFORM_ENDIAN_BIG
 #include "ags/shared/util/bbop.h"
 #endif
@@ -322,12 +323,12 @@ void load_lzw(Stream *in, Bitmap **dst_bmp, int dst_bpp, color *pall) {
 	int           arin;
 
 	in->SafeReadArray(&pall[0], PALETTE_COUNT);
-	maxsize = in->ReadInt32();
+	_G(maxsize) = in->ReadInt32();
 	uncompsiz = in->ReadInt32();
 
 	uncompsiz += in->GetPosition();
-	outbytes = 0;
-	putbytes = 0;
+	_G(outbytes) = 0;
+	_G(putbytes) = 0;
 
 	update_polled_stuff_if_runtime();
 	membuffer = lzwexpand_to_mem(in);
