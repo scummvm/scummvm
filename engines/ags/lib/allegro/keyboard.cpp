@@ -21,21 +21,17 @@
  */
 
 #include "ags/lib/allegro/keyboard.h"
+#include "ags/events.h"
+#include "ags/globals.h"
 #include "common/algorithm.h"
 #include "common/textconsole.h"
 #include "common/system.h"
 #include "common/events.h"
 #include "common/textconsole.h"
-#include "ags/events.h"
 
 namespace AGS3 {
 
-bool key[Common::KEYCODE_LAST];
-uint key_shifts;
-
 int install_keyboard() {
-	Common::fill(&key[0], &key[Common::KEYCODE_LAST], false);
-	key_shifts = 0;
 	return 0;
 }
 

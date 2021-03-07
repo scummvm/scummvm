@@ -51,8 +51,6 @@ struct MOUSE_DRIVER {
 	AL_METHOD(int, select_system_cursor, (int cursor));
 };
 
-AL_VAR(MOUSE_DRIVER, mousedrv_none);
-AL_VAR(MOUSE_DRIVER *, mouse_driver);
 AL_ARRAY(_DRIVER_INFO, _mouse_driver_list);
 
 AL_FUNC(int, install_mouse, (void));

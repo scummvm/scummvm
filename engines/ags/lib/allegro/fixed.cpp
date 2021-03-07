@@ -25,9 +25,6 @@
 
 namespace AGS3 {
 
-fixed fixtorad_r;
-fixed radtofix_r;
-
 fixed ftofix(double x) {
 	if (x > 32767.0) {
 		*allegro_errno = AL_ERANGE;

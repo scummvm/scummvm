@@ -30,11 +30,9 @@ namespace AGS3 {
 
 typedef int32_t fixed;
 
-extern fixed fixtorad_r;
-extern fixed radtofix_r;
-extern fixed _cos_tbl[];
-extern fixed _tan_tbl[];
-extern fixed _acos_tbl[];
+extern const fixed _cos_tbl[];
+extern const fixed _tan_tbl[];
+extern const fixed _acos_tbl[];
 
 extern fixed ftofix(double x);
 extern double fixtof(fixed x);

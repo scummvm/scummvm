@@ -272,10 +272,6 @@ static void check_mouse_controls() {
 }
 
 // Returns current key modifiers;
-// NOTE: annoyingly enough, on Windows (not sure about other platforms)
-// Allegro API's 'key_shifts' variable seem to be always one step behind real
-// situation: if first modifier gets pressed, 'key_shifts' will be zero,
-// when second modifier gets pressed it will only contain first one, and so on.
 static int get_active_shifts() {
 	return ::AGS::g_events->getModifierFlags();
 }

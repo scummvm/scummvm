@@ -116,7 +116,7 @@ int ags_getch() {
 
 	/*if ((scancode >= KEY_0_PAD) && (scancode <= KEY_9_PAD)) {
 	// fix numeric pad keys if numlock is off (allegro 4.2 changed this behaviour)
-	if ((key_shifts & KB_NUMLOCK_FLAG) == 0)
+	if ((_G(key_shifts) & KB_NUMLOCK_FLAG) == 0)
 	gott = (gott & 0xff00) | EXTENDED_KEY_CODE;
 	}*/
 

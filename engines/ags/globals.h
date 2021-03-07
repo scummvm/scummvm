@@ -32,6 +32,7 @@
 #include "ags/lib/std/set.h"
 #include "ags/lib/allegro/fixed.h"
 #include "ags/lib/allegro/aintern.h"
+#include "common/events.h"
 
 namespace AGS3 {
 
