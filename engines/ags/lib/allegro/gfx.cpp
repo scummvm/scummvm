@@ -56,10 +56,12 @@ int set_gfx_mode(int card, int w, int h, int v_w, int v_h) {
 }
 
 void set_clip_rect(BITMAP *bitmap, int x1, int y1, int x2, int y2) {
+	// The rect passed to the function in inclusive-inclusive, but
+	// internally the clipping rect in BITMAP is inclusive-exclusive.
 	bitmap->cl = x1;
 	bitmap->ct = y1;
-	bitmap->cr = x2;
-	bitmap->cb = y2;
+	bitmap->cr = x2 + 1;
+	bitmap->cb = y2 + 1;
 }
 
 void get_clip_rect(BITMAP *bitmap, int *x1, int *y1, int *x2, int *y2) {
@@ -68,9 +70,9 @@ void get_clip_rect(BITMAP *bitmap, int *x1, int *y1, int *x2, int *y2) {
 	if (y1)
 		*y1 = bitmap->ct;
 	if (x2)
-		*x2 = bitmap->cr;
+		*x2 = bitmap->cr - 1;
 	if (y2)
-		*y2 = bitmap->cb;
+		*y2 = bitmap->cb - 1;
 }
 
 void acquire_bitmap(BITMAP *bitmap) {
