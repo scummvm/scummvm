@@ -1347,8 +1347,7 @@ void ModXmS3mStream::setSequencePos(int pos) {
 	_playCount = new int8 *[_module.sequenceLen];
 	memset(_playCount, 0, _module.sequenceLen * sizeof(int8 *));
 	int len = initPlayCount(_playCount);
-	_playCount[0] = new int8[len];
-	memset(_playCount[0], 0, len * sizeof(int8));
+	_playCount[0] = new int8[len]();
 	initPlayCount(_playCount);
 
 	for (int idx = 0; idx < _module.numChannels; ++idx) {

@@ -335,8 +335,7 @@ void AVIDecoder::handleStreamHeader(uint32 size) {
 		byte *initialPalette = 0;
 
 		if (bmInfo.bitCount == 8) {
-			initialPalette = new byte[256 * 3];
-			memset(initialPalette, 0, 256 * 3);
+			initialPalette = new byte[256 * 3]();
 
 			byte *palette = initialPalette;
 			for (uint32 i = 0; i < bmInfo.clrUsed; i++) {

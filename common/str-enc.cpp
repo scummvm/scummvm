@@ -320,8 +320,7 @@ void String::encodeWindows932(const U32String &src) {
 		loadCJKTables();
 
 	if (!reverseTable && windows932ConversionTable) {
-		uint16 *rt = new uint16[0x10000];
-		memset(rt, 0, sizeof(rt[0]) * 0x10000);
+		uint16 *rt = new uint16[0x10000]();
 		for (uint highidx = 0; highidx < 47; highidx++) {
 			uint8 high = 0;
 			if (highidx < 4)
@@ -390,8 +389,7 @@ void String::encodeWindows949(const U32String &src) {
 		loadCJKTables();
 
 	if (!reverseTable && windows949ConversionTable) {
-		uint16 *rt = new uint16[0x10000];
-		memset(rt, 0, sizeof(rt[0]) * 0x10000);
+		uint16 *rt = new uint16[0x10000]();
 
 		for (uint lowidx = 0; lowidx < 0xb2; lowidx++) {
 			uint8 low = 0;
@@ -480,8 +478,7 @@ void String::encodeWindows950(const U32String &src, bool transliterate) {
 		loadCJKTables();
 
 	if (!reverseTable && windows950ConversionTable) {
-		uint16 *rt = new uint16[0x10000];
-		memset(rt, 0, sizeof(rt[0]) * 0x10000);
+		uint16 *rt = new uint16[0x10000]();
 
 		for (uint lowidx = 0; lowidx < 157; lowidx++) {
 			uint8 low = 0;

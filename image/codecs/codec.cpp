@@ -75,8 +75,7 @@ inline uint16 makeQuickTimeDitherColor(byte r, byte g, byte b) {
 } // End of anonymous namespace
 
 byte *Codec::createQuickTimeDitherTable(const byte *palette, uint colorCount) {
-	byte *buf = new byte[0x10000];
-	memset(buf, 0, 0x10000);
+	byte *buf = new byte[0x10000]();
 
 	Common::List<uint16> checkQueue;
 

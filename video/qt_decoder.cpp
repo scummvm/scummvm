@@ -152,8 +152,7 @@ Common::QuickTimeParser::SampleDesc *QuickTimeDecoder::readSampleDesc(Common::Qu
 		// if the depth is 2, 4, or 8 bpp, file is palettized
 		if (colorDepth == 2 || colorDepth == 4 || colorDepth == 8) {
 			// Initialize the palette
-			entry->_palette = new byte[256 * 3];
-			memset(entry->_palette, 0, 256 * 3);
+			entry->_palette = new byte[256 * 3]();
 
 			if (colorGreyscale) {
 				debug(0, "Greyscale palette");

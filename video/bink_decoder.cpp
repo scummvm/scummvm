@@ -293,23 +293,17 @@ BinkDecoder::BinkVideoTrack::BinkVideoTrack(uint32 width, uint32 height, const G
 	_uvBlockHeight = (height + 15) >> 4;
 
 	// The planes are sized according to the number of blocks
-	_curPlanes[0] = new byte[_yBlockWidth  * 8 * _yBlockHeight  * 8]; // Y
-	_curPlanes[1] = new byte[_uvBlockWidth * 8 * _uvBlockHeight * 8]; // U, 1/4 resolution
-	_curPlanes[2] = new byte[_uvBlockWidth * 8 * _uvBlockHeight * 8]; // V, 1/4 resolution
+	_curPlanes[0] = new byte[_yBlockWidth  * 8 * _yBlockHeight  * 8](); // Y
+	_curPlanes[1] = new byte[_uvBlockWidth * 8 * _uvBlockHeight * 8](); // U, 1/4 resolution
+	_curPlanes[2] = new byte[_uvBlockWidth * 8 * _uvBlockHeight * 8](); // V, 1/4 resolution
 	_curPlanes[3] = new byte[_yBlockWidth  * 8 * _yBlockHeight  * 8]; // A
-	_oldPlanes[0] = new byte[_yBlockWidth  * 8 * _yBlockHeight  * 8]; // Y
-	_oldPlanes[1] = new byte[_uvBlockWidth * 8 * _uvBlockHeight * 8]; // U, 1/4 resolution
-	_oldPlanes[2] = new byte[_uvBlockWidth * 8 * _uvBlockHeight * 8]; // V, 1/4 resolution
+	_oldPlanes[0] = new byte[_yBlockWidth  * 8 * _yBlockHeight  * 8](); // Y
+	_oldPlanes[1] = new byte[_uvBlockWidth * 8 * _uvBlockHeight * 8](); // U, 1/4 resolution
+	_oldPlanes[2] = new byte[_uvBlockWidth * 8 * _uvBlockHeight * 8](); // V, 1/4 resolution
 	_oldPlanes[3] = new byte[_yBlockWidth  * 8 * _yBlockHeight  * 8]; // A
 
 	// Initialize the video with solid green
-	memset(_curPlanes[0],   0, _yBlockWidth  * 8 * _yBlockHeight  * 8);
-	memset(_curPlanes[1],   0, _uvBlockWidth * 8 * _uvBlockHeight * 8);
-	memset(_curPlanes[2],   0, _uvBlockWidth * 8 * _uvBlockHeight * 8);
 	memset(_curPlanes[3], 255, _yBlockWidth  * 8 * _yBlockHeight  * 8);
-	memset(_oldPlanes[0],   0, _yBlockWidth  * 8 * _yBlockHeight  * 8);
-	memset(_oldPlanes[1],   0, _uvBlockWidth * 8 * _uvBlockHeight * 8);
-	memset(_oldPlanes[2],   0, _uvBlockWidth * 8 * _uvBlockHeight * 8);
 	memset(_oldPlanes[3], 255, _yBlockWidth  * 8 * _yBlockHeight  * 8);
 
 	initBundles();

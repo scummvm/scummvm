@@ -83,8 +83,7 @@ void SourceScaler::setSource(const byte *src, uint pitch, int width, int height,
 
 	// Give _oldSrc same pitch
 	int size = (height + padding * 2) * pitch;
-	_oldSrc = new byte[size];
-	memset(_oldSrc, 0, size);
+	_oldSrc = new byte[size]();
 
 	_bufferedOutput.create(_width * _factor, _height * _factor, _format);
 }
