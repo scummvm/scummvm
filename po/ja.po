@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-02-21 00:21+0000\n"
-"PO-Revision-Date: 2021-03-07 12:24+0000\n"
+"PO-Revision-Date: 2021-03-07 17:18+0000\n"
 "Last-Translator: VAN-Gluon <masuda20100701@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ja/>\n"
@@ -5618,7 +5618,7 @@ msgstr "MIDI モード："
 msgid ""
 "When using external MIDI devices (e.g. through USB-MIDI), select your device "
 "here"
-msgstr ""
+msgstr "外部のMIDIデバイス(USB-MIDIなど)を使用する場合、ここで選択してください"
 
 #: engines/sci/detection.cpp:318
 msgid "Standard (GM / MT-32)"
@@ -5639,7 +5639,7 @@ msgstr "(自動セーブ)"
 #: engines/sci/engine/kgraphics32.cpp:358
 #, c-format
 msgid "Please use an external viewer to open the game's help file: %s"
-msgstr ""
+msgstr "ゲームのヘルプファイル%sを開くには、外部のビューアーを使用してください"
 
 #: engines/sci/engine/kmisc.cpp:869
 msgid ""
@@ -5647,10 +5647,11 @@ msgid ""
 "There exists some dummy logic for now, where opponent actions are chosen "
 "randomly"
 msgstr ""
+"ポーカーロジックは外部のDLLにハードコーディングされており、未実装です。代わりに、対戦相手のアクションをランダムに選ぶダミーのロジックが存在します"
 
 #: engines/sci/engine/savegame.cpp:1407
 msgid "The format of this saved game is obsolete, unable to load it"
-msgstr ""
+msgstr "セーブのフォーマットが古いため、ロードできません"
 
 #: engines/sci/engine/savegame.cpp:1409
 #, c-format
@@ -5661,13 +5662,13 @@ msgstr "セーブのゲームバージョンは%dですが、サポートされ�
 msgid ""
 "This saved game was created with a different version of the game, unable to "
 "load it"
-msgstr ""
+msgstr "別のバージョンで作成されたセーブであるため、ロードできません"
 
 #: engines/sci/graphics/video32.cpp:69
 #, c-format
 msgid ""
 "Cannot play back %dbpp video on a system with maximum color depth of 8bpp"
-msgstr ""
+msgstr "最大色深度が8bppのシステムで、%dbppの映像を再生する事はできません"
 
 #: engines/sci/metaengine.cpp:325
 #, fuzzy
