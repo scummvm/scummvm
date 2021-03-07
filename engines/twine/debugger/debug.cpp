@@ -420,6 +420,7 @@ void Debug::debugProcessWindow() {
 	int32 colorIdx = 4;
 	int32 count = 0;
 
+	ScopedCursor cursor(_engine);
 	_engine->_screens->copyScreen(_engine->frontVideoBuffer, _engine->workVideoBuffer);
 
 	debugResetButtonsState();
