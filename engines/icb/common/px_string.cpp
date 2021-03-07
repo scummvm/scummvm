@@ -201,6 +201,14 @@ void pxString::ConvertPath() {
 			*sp = (*sp == '\\' ? '/' : *sp);
 			sp++;
 		}
+		// trim '/'
+		if (*s == '/') {
+			uint32 len = strlen((char *)s);
+			sp = new char[len];
+			memcpy((unsigned char *)sp, (unsigned char *)(s + 1), len);
+			delete[] s;
+			s = sp;
+		}
 	}
 }
 
