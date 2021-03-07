@@ -45,6 +45,7 @@ namespace TwinE {
 static const char allowedCharIndex[] = " ABCDEFGHIJKLM.NOPQRSTUVWXYZ-abcdefghijklm?nopqrstuvwxyz!0123456789\040\b\r\0";
 
 void MenuOptions::newGame() {
+	_engine->setTotalPlayTime(0);
 	_engine->_music->stopMusic();
 	_engine->_sound->stopSamples();
 
