@@ -81,11 +81,11 @@ void _line_of_sight::Initialise() {
 	m_nNumObjects = MS->total_objects;
 
 	// Clear the tables.
-	memset((unsigned char *)m_pnTable, 0, (size_t)(LOS_2D_SIZE_PACKED * sizeof(uint8)));
-	memset((unsigned char *)m_pnSubscribers, 0, (size_t)(LOS_2D_SIZE_PACKED * sizeof(uint8)));
-	memset((unsigned char *)m_pbSuspended, 0, (size_t)(LOS_1D_SIZE * sizeof(bool8)));
-	memset((unsigned char *)m_pbCanSeeInDark, 0, LOS_1D_SIZE * sizeof(bool8));
-	memset((unsigned char *)m_pbIgnoreShadows, 0, LOS_1D_SIZE * sizeof(bool8));
+	memset((uint8 *)m_pnTable, 0, (size_t)(LOS_2D_SIZE_PACKED * sizeof(uint8)));
+	memset((uint8 *)m_pnSubscribers, 0, (size_t)(LOS_2D_SIZE_PACKED * sizeof(uint8)));
+	memset((uint8 *)m_pbSuspended, 0, (size_t)(LOS_1D_SIZE * sizeof(bool8)));
+	memset((uint8 *)m_pbCanSeeInDark, 0, LOS_1D_SIZE * sizeof(bool8));
+	memset((uint8 *)m_pbIgnoreShadows, 0, LOS_1D_SIZE * sizeof(bool8));
 
 	// Field-of-view for megas defaults to 180.  Note that this array is not accessed for non-megas, so it doesn't
 	// matter that their entries get set to 180 too.  Also, by default you are not subscribed to be looking for anything!

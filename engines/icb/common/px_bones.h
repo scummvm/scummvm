@@ -48,12 +48,12 @@ public:
 		boneNumber = -1;
 	}
 
-	short boneNumber;
-	short boneSpeed;
+	int16 boneNumber;
+	int16 boneSpeed;
 	SVECTOR boneValue;
 	SVECTOR boneTarget;
 
-	void UpdateBoneValue(short &v, short t);
+	void UpdateBoneValue(int16 &v, int16 t);
 	void Target0();
 	void Update();
 };

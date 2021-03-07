@@ -42,19 +42,19 @@ namespace ICB {
 void *OTusrData;
 
 // No ABR support : at the moment
-u_short psxTP;
+uint16 psxTP;
 
 // The emulation of VRAM : 16-bit pixels 1024x512 big
-u_short psxVRAM[VRAM_WIDTH * VRAM_HEIGHT];
+uint16 psxVRAM[VRAM_WIDTH * VRAM_HEIGHT];
 
 // Set VRAM to a certain colour
-int ClearImage(RECT16 *rect, u_char r, u_char g, u_char b) {
-	u_short colour;
-	int x, y;
-	int i;
+int32 ClearImage(RECT16 *rect, uint8 r, uint8 g, uint8 b) {
+	uint16 colour;
+	int32 x, y;
+	int32 i;
 
 	// Convert 24-bit colour to 15-bit
-	colour = (u_short)((r >> 3) | ((g >> 3) << 5) | ((b >> 3) << 10));
+	colour = (uint16)((r >> 3) | ((g >> 3) << 5) | ((b >> 3) << 10));
 
 	for (y = rect->y; y < rect->y + rect->h; y++) {
 		for (x = rect->x; x < rect->x + rect->w; x++) {
@@ -66,17 +66,17 @@ int ClearImage(RECT16 *rect, u_char r, u_char g, u_char b) {
 }
 
 // Fill VRAM with data
-u_short LoadClut(uint32 *clut, int x, int y) {
+uint16 LoadClut(uint32 *clut, int32 x, int32 y) {
 	RECT16 rect;
-	setRECT(&rect, (short)x, (short)y, 256, 1);
+	setRECT(&rect, (int16)x, (int16)y, 256, 1);
 	LoadImage(&rect, clut);
-	return (u_short)getClut(x, y);
+	return (uint16)getClut(x, y);
 }
 
 // Fill VRAM with data
-int LoadImage(RECT16 *rect, uint32 *p) {
-	int x, y, i;
-	u_short *p16 = (u_short *)p;
+int32 LoadImage(RECT16 *rect, uint32 *p) {
+	int32 x, y, i;
+	uint16 *p16 = (uint16 *)p;
 
 	for (y = rect->y; y < rect->y + rect->h; y++) {
 		for (x = rect->x; x < rect->x + rect->w; x++) {
@@ -89,9 +89,9 @@ int LoadImage(RECT16 *rect, uint32 *p) {
 }
 
 // Move data around within VRAM
-int MoveImage(RECT16 *rect, int x, int y) {
-	int x0, y0, i0;
-	int x1, y1, i1;
+int32 MoveImage(RECT16 *rect, int32 x, int32 y) {
+	int32 x0, y0, i0;
+	int32 x1, y1, i1;
 
 	y1 = y;
 	for (y0 = rect->y; y0 < rect->y + rect->h; y0++) {
@@ -108,8 +108,8 @@ int MoveImage(RECT16 *rect, int x, int y) {
 }
 
 // Setup the linked list for the OT tags from back to the front
-OT_tag *ClearOTagR(OT_tag *ot, uint size) {
-	int i = size - 1;
+OT_tag *ClearOTagR(OT_tag *ot, uint32 size) {
+	int32 i = size - 1;
 	while (i > 0) {
 		ot[i].addr = (void *)&ot[i - 1];
 		ot[i].len = UNLINKED_LEN;
@@ -121,8 +121,8 @@ OT_tag *ClearOTagR(OT_tag *ot, uint size) {
 }
 
 // Setup the linked list for the OT tags from front to back
-OT_tag *ClearOTag(OT_tag *ot, uint size) {
-	uint i = 0;
+OT_tag *ClearOTag(OT_tag *ot, uint32 size) {
+	uint32 i = 0;
 	while (i < (size - 1)) {
 		ot[i].addr = (void *)&ot[i + 1];
 		ot[i].len = UNLINKED_LEN;
@@ -132,7 +132,7 @@ OT_tag *ClearOTag(OT_tag *ot, uint size) {
 	return ot;
 }
 
-int nPrims;
+int32 nPrims;
 
 // Draw the damm things
 void DrawOTag(OT_tag *ot) {
@@ -156,14 +156,14 @@ void DrawPrim(void *prim) {
 	P_TAG *p = (P_TAG *)prim;
 	uint32 code = p->code;
 	uint32 len = p->len;
-	u_short z0 = p->z0;
+	uint16 z0 = p->z0;
 	void *usr = p->usr;
 	uint8 alpha = 0x00;
 
 	// Catch special primitives
 	// DR_TPAGE
 	if ((code & 0xe1) == 0xe1) {
-		psxTP = (u_short)(*((uint32 *)&(p->r0)) & 0xFFFF);
+		psxTP = (uint16)(*((uint32 *)&(p->r0)) & 0xFFFF);
 		len -= GPUSIZE_DR_TPAGE; // we have used one word of data up
 		// Move the pointer onto the correct place
 		p++; // move past the P_TAG
@@ -177,7 +177,7 @@ void DrawPrim(void *prim) {
 		// Get the base alpha value
 		alpha = ((P_HEADER *)(p))->code;
 		// Modify that based on tbe ABR value
-		u_char abr = (u_char)((psxTP >> 5) & 0x3);
+		uint8 abr = (uint8)((psxTP >> 5) & 0x3);
 		if (abr == 0) {
 			// alpha is 0-64, so 32 is average
 			alpha = 0xC0 | 0x20; // average of background + foreground

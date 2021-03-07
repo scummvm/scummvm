@@ -316,7 +316,7 @@ private:
 	_remora_sprite m_oBlipSprite;       // Holds the sprite for drawing the blips on the motion tracker.
 	_remora_sprite m_oPlayerBlipSprite; // Holds the sprite fot the player's blip.
 	_remora_sprite m_oCasing;           // REMORA casing sprite
-	int counter;
+	int32 counter;
 #else
 	uint32 m_nScanPan;        // Current position of scan beam.
 	uint32 m_nPulseHighlight; // This keeps track of the highlight in the pulse.
@@ -400,9 +400,9 @@ private:
 	uint32 ComputeOutcode(DXrect oRect, int32 nX, int32 nY) const;
 	inline bool8 TestOutcode(uint32 nOutcode, Outcode enCodeToTest) const;
 #if defined(_PSX)
-	void DrawWideScanMask(const int xc, const int yc, const int x1, const int y1, const int x2, const int y2);
+	void DrawWideScanMask(const int32 xc, const int32 yc, const int32 x1, const int32 y1, const int32 x2, const int32 y2);
 	void DrawBlip(int32 x, int32 z, _rgb sColour, uint32 size, uint32 pulse) const;
-	void InitRotMatrix(const int32 angle, const int zoom, const int x, const int z, int *dx, int *dz);
+	void InitRotMatrix(const int32 angle, const int32 zoom, const int32 x, const int32 z, int32 *dx, int32 *dz);
 #endif
 
 	// These functions are used by the text system.

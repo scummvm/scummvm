@@ -174,9 +174,9 @@ char *ClusterManager::GetCDRoot(void) {
 		return m_cdroot2;
 }
 
-int ClusterManager::WhichCD(MISSION_ID mission) {
+int32 ClusterManager::WhichCD(MISSION_ID mission) {
 	// All demos exist on one CD only
-	int demo = g_globalScriptVariables.GetVariable("demo");
+	int32 demo = g_globalScriptVariables.GetVariable("demo");
 	if (demo != 0)
 		return 1;
 
@@ -193,7 +193,7 @@ int ClusterManager::WhichCD(MISSION_ID mission) {
 	return 0;
 }
 
-bool8 ClusterManager::CheckForCD(int /*number*/) {
+bool8 ClusterManager::CheckForCD(int32 /*number*/) {
 	strcpy(m_cdroot1, "");
 	strcpy(m_cdroot2, "");
 	return TRUE8;
@@ -228,10 +228,10 @@ void ClusterManager::CleanHardDisk() {
 		return;
 }
 
-void ClusterManager::MissingCD(int /*number*/) {
+void ClusterManager::MissingCD(int32 /*number*/) {
 }
 
-bool8 ClusterManager::MissingCDWithCancel(int /*number*/) {
+bool8 ClusterManager::MissingCDWithCancel(int32 /*number*/) {
 	return FALSE8;
 }
 
@@ -286,16 +286,16 @@ bool8 ClusterManager::DrawCoverFrame(void) {
 
 void ClusterManager::InitialiseProgressBits() {
 	// Tweakable
-	int width = 5;
-	int height = 15;
-	int spacing = 2;
-	int initialY = SCREEN_DEPTH - height - 30;
+	int32 width = 5;
+	int32 height = 15;
+	int32 spacing = 2;
+	int32 initialY = SCREEN_DEPTH - height - 30;
 
 	// Calculate entire width so we can centre things
-	int length = (NUMBER_OF_PROGRESS_BITS * (width + spacing)) - spacing;
-	int initialX = (SCREEN_WIDTH / 2) - (length / 2);
+	int32 length = (NUMBER_OF_PROGRESS_BITS * (width + spacing)) - spacing;
+	int32 initialX = (SCREEN_WIDTH / 2) - (length / 2);
 
-	for (int i = 0; i < NUMBER_OF_PROGRESS_BITS; i++) {
+	for (int32 i = 0; i < NUMBER_OF_PROGRESS_BITS; i++) {
 		m_progressBits[i].r.left = initialX;
 		m_progressBits[i].r.top = initialY;
 		m_progressBits[i].r.right = initialX + width;
@@ -313,7 +313,7 @@ void ClusterManager::InitialiseProgressBits() {
 void ClusterManager::UpdateProgressBits() {
 	if (m_frameCounter % PROGRESS_BIT_DELAY == 0) {
 		// Update the state of all bits
-		for (int i = 0; i < NUMBER_OF_PROGRESS_BITS; i++) {
+		for (int32 i = 0; i < NUMBER_OF_PROGRESS_BITS; i++) {
 			if (m_progressBits[i].state > 0 && m_progressBits[i].state != 6) {
 				m_progressBits[i].state = m_progressBits[i].state + 1;
 			}
@@ -324,7 +324,7 @@ void ClusterManager::UpdateProgressBits() {
 	float progress_inc = (float)(m_filelistTotalBytes / NUMBER_OF_PROGRESS_BITS);
 
 	// The number of bits that should bit switched on
-	uint bitsOn = (int)((float)m_bytesDone / progress_inc);
+	uint32 bitsOn = (int32)((float)m_bytesDone / progress_inc);
 
 	// Do we need to switch on a new bit
 	if (bitsOn > m_bitsDone) {
@@ -334,7 +334,7 @@ void ClusterManager::UpdateProgressBits() {
 }
 
 void ClusterManager::DrawProgressBits() {
-	for (int i = 0; i < NUMBER_OF_PROGRESS_BITS; i++) {
+	for (int32 i = 0; i < NUMBER_OF_PROGRESS_BITS; i++) {
 		Fill_rect(m_progressBits[i].r.left, m_progressBits[i].r.top, m_progressBits[i].r.right, m_progressBits[i].r.bottom, g_progressColourMap[m_progressBits[i].state]);
 	}
 }

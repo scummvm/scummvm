@@ -112,7 +112,7 @@ namespace ICB {
 
 #define zeroTagPoly(p) (setaddr((&(p)->tag_poly), 0), setlen((&(p)->tag_poly), 0) = 0)
 
-#define setlen(p, _len) (((P_TAG *)(p))->len = (u_char)(_len))
+#define setlen(p, _len) (((P_TAG *)(p))->len = (uint8)(_len))
 
 #define setTDrawTPageSize(p, s) setlen((p), (s)), setTcode((p), _get_mode(0, 1, 0))
 
@@ -150,107 +150,107 @@ namespace ICB {
 typedef struct __tpoly_f3 {
 	P_TAG tag;
 	OT_tag tag_poly;
-	u_char r0, g0, b0, code;
-	int x0, y0;
-	int x1, y1;
-	int x2, y2;
+	uint8 r0, g0, b0, code;
+	int32 x0, y0;
+	int32 x1, y1;
+	int32 x2, y2;
 } TPOLY_F3; // Flat Triangle with ABR control
 
 typedef struct __tpoly_f4 {
 	P_TAG tag;
 	OT_tag tag_poly;
-	u_char r0, g0, b0, code;
-	int x0, y0;
-	int x1, y1;
-	int x2, y2;
-	int x3, y3;
+	uint8 r0, g0, b0, code;
+	int32 x0, y0;
+	int32 x1, y1;
+	int32 x2, y2;
+	int32 x3, y3;
 } TPOLY_F4; // Flat Quadrangle with ABR control
 
 typedef struct __tpoly_g3 {
 	P_TAG tag;
 	OT_tag tag_poly;
-	u_char r0, g0, b0, code;
-	int x0, y0;
-	u_char r1, g1, b1, pad1;
-	int x1, y1;
-	u_char r2, g2, b2, pad2;
-	int x2, y2;
+	uint8 r0, g0, b0, code;
+	int32 x0, y0;
+	uint8 r1, g1, b1, pad1;
+	int32 x1, y1;
+	uint8 r2, g2, b2, pad2;
+	int32 x2, y2;
 } TPOLY_G3; // Gouraud Triangle with ABR control
 
 typedef struct __tpoly_g4 {
 	P_TAG tag;
 	OT_tag tag_poly;
-	u_char r0, g0, b0, code;
-	int x0, y0;
-	u_char r1, g1, b1, pad1;
-	int x1, y1;
-	u_char r2, g2, b2, pad2;
-	int x2, y2;
-	u_char r3, g3, b3, pad3;
-	int x3, y3;
+	uint8 r0, g0, b0, code;
+	int32 x0, y0;
+	uint8 r1, g1, b1, pad1;
+	int32 x1, y1;
+	uint8 r2, g2, b2, pad2;
+	int32 x2, y2;
+	uint8 r3, g3, b3, pad3;
+	int32 x3, y3;
 } TPOLY_G4; // Gouraud Quadrangle with ABR control
 
 typedef struct __tline_f2 {
 	P_TAG tag;
 	OT_tag tag_poly;
-	u_char r0, g0, b0, code;
-	int x0, y0;
-	int x1, y1;
+	uint8 r0, g0, b0, code;
+	int32 x0, y0;
+	int32 x1, y1;
 } TLINE_F2; // Unconnected Flat Line with ABR control
 
 typedef struct __tline_g2 {
 	P_TAG tag;
 	OT_tag tag_poly;
-	u_char r0, g0, b0, code;
-	int x0, y0;
-	u_char r1, g1, b1, p1;
-	int x1, y1;
+	uint8 r0, g0, b0, code;
+	int32 x0, y0;
+	uint8 r1, g1, b1, p1;
+	int32 x1, y1;
 } TLINE_G2; // Unconnected Gouraud Line with ABR control
 
 typedef struct __tline_f3 {
 	P_TAG tag;
 	OT_tag tag_poly;
-	u_char r0, g0, b0, code;
-	int x0, y0;
-	int x1, y1;
-	int x2, y2;
+	uint8 r0, g0, b0, code;
+	int32 x0, y0;
+	int32 x1, y1;
+	int32 x2, y2;
 	uint32 pad;
 } TLINE_F3; // 2 connected Flat Line with ABR control
 
 typedef struct __tline_g3 {
 	P_TAG tag;
 	OT_tag tag_poly;
-	u_char r0, g0, b0, code;
-	int x0, y0;
-	u_char r1, g1, b1, p1;
-	int x1, y1;
-	u_char r2, g2, b2, p2;
-	int x2, y2;
+	uint8 r0, g0, b0, code;
+	int32 x0, y0;
+	uint8 r1, g1, b1, p1;
+	int32 x1, y1;
+	uint8 r2, g2, b2, p2;
+	int32 x2, y2;
 	uint32 pad;
 } TLINE_G3; // 2 connected Gouraud Line with ABR control
 
 typedef struct __tline_f4 {
 	P_TAG tag;
 	OT_tag tag_poly;
-	u_char r0, g0, b0, code;
-	int x0, y0;
-	int x1, y1;
-	int x2, y2;
-	int x3, y3;
+	uint8 r0, g0, b0, code;
+	int32 x0, y0;
+	int32 x1, y1;
+	int32 x2, y2;
+	int32 x3, y3;
 	uint32 pad;
 } TLINE_F4; // 3 connected Flat Line Quadrangle with ABR control
 
 typedef struct __tline_g4 {
 	P_TAG tag;
 	OT_tag tag_poly;
-	u_char r0, g0, b0, code;
-	int x0, y0;
-	u_char r1, g1, b1, p1;
-	int x1, y1;
-	u_char r2, g2, b2, p2;
-	int x2, y2;
-	u_char r3, g3, b3, p3;
-	int x3, y3;
+	uint8 r0, g0, b0, code;
+	int32 x0, y0;
+	uint8 r1, g1, b1, p1;
+	int32 x1, y1;
+	uint8 r2, g2, b2, p2;
+	int32 x2, y2;
+	uint8 r3, g3, b3, p3;
+	int32 x3, y3;
 	uint32 pad;
 } TLINE_G4; // 3 connected Gouraud Line with ABR control
 
@@ -258,58 +258,58 @@ typedef struct __tline_g4 {
 typedef struct __tsprt {
 	P_TAG tag;
 	OT_tag tag_poly;
-	u_char r0, g0, b0, code;
-	int x0, y0;
-	u_char u0, v0;
-	u_short clut;
-	short w, h;
+	uint8 r0, g0, b0, code;
+	int32 x0, y0;
+	uint8 u0, v0;
+	uint16 clut;
+	int16 w, h;
 } TSPRT; // Free size Sprite with TPage/ABR control
 
 typedef struct __tsprt_16 {
 	P_TAG tag;
 	OT_tag tag_poly;
-	u_char r0, g0, b0, code;
-	int x0, y0;
-	u_char u0, v0;
-	u_short clut;
+	uint8 r0, g0, b0, code;
+	int32 x0, y0;
+	uint8 u0, v0;
+	uint16 clut;
 } TSPRT_16; // 16x16 Sprite with TPage/ABR control
 
 typedef struct __tsprt_8 {
 	P_TAG tag;
 	OT_tag tag_poly;
-	u_char r0, g0, b0, code;
-	int x0, y0;
-	u_char u0, v0;
-	u_short clut;
+	uint8 r0, g0, b0, code;
+	int32 x0, y0;
+	uint8 u0, v0;
+	uint16 clut;
 } TSPRT_8; // 8x8 Sprite with TPage/ABR control
 
 typedef struct __ttile {
 	P_TAG tag;
 	OT_tag tag_poly;
-	u_char r0, g0, b0, code;
-	int x0, y0;
-	short w, h;
+	uint8 r0, g0, b0, code;
+	int32 x0, y0;
+	int16 w, h;
 } TTILE; // free size Tile with ABR control
 
 typedef struct __ttile16 {
 	P_TAG tag;
 	OT_tag tag_poly;
-	u_char r0, g0, b0, code;
-	int x0, y0;
+	uint8 r0, g0, b0, code;
+	int32 x0, y0;
 } TTILE_16; // 16x16 Tile with ABR control
 
 typedef struct __ttile_8 {
 	P_TAG tag;
 	OT_tag tag_poly;
-	u_char r0, g0, b0, code;
-	int x0, y0;
+	uint8 r0, g0, b0, code;
+	int32 x0, y0;
 } TTILE_8; // 8x8 Tile with ABR control
 
 typedef struct __ttile_1 {
 	P_TAG tag;
 	OT_tag tag_poly;
-	u_char r0, g0, b0, code;
-	int x0, y0;
+	uint8 r0, g0, b0, code;
+	int32 x0, y0;
 } TTILE_1; // 1x1 Tile with ABR control
 
 } // End of namespace ICB

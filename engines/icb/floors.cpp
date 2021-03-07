@@ -81,7 +81,7 @@ void _floor_world::___init() {
 	// get some useful stats
 	total_heights = 0; // set to 0
 
-	int nMissing = 0;
+	int32 nMissing = 0;
 	for (j = 0; j < total_floors; j++) {
 		floor = (_floor *)floors->Fetch_item_by_number(j);
 

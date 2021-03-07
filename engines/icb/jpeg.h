@@ -38,25 +38,25 @@ static uint32 _bit_count;
 static uint32 *_buf_pointer;
 static uint32 *_end_buf;
 
-const int JpegMaxHuffmanTables = 4;
-const int MaxQuantizationTables = 4;
-const int JpegMaxComponentsPerFrame = 255;
-const int JpegMaxComponentsPerScan = 4;
-const int JpegMinSamplingFrequency = 1;
-const int JpegMaxSamplingFrequency = 4;
-const int JpegSampleWidth = 8;
-const int JpegSampleSize = JpegSampleWidth * JpegSampleWidth;
-const int JpegMinSampleValue = 0;
-const int JpegMaxSampleValue = 255;      // For 12-Bits this would be 4095
-const int JpegMidpointSampleValue = 128; // For 12-Bits this 2048
-const int JpegMaxDataUnitsPerMCU = 10;
-const int JpegMaxSuccessiveApproximation = 13;
-const int JpegMax8BitQuantizationValue = 255;
-const int JpegMinQuantizationValue = 1;
-const unsigned int JpegMaxHuffmanCodeLength = 16;
-const unsigned int JpegMaxNumberOfHuffmanCodes = 256;
-extern const unsigned int JpegZigZagInputOrderCodes[JpegSampleSize];
-extern const unsigned int JpegZigZagOutputOrderCodes[JpegSampleSize];
+const int32 JpegMaxHuffmanTables = 4;
+const int32 MaxQuantizationTables = 4;
+const int32 JpegMaxComponentsPerFrame = 255;
+const int32 JpegMaxComponentsPerScan = 4;
+const int32 JpegMinSamplingFrequency = 1;
+const int32 JpegMaxSamplingFrequency = 4;
+const int32 JpegSampleWidth = 8;
+const int32 JpegSampleSize = JpegSampleWidth * JpegSampleWidth;
+const int32 JpegMinSampleValue = 0;
+const int32 JpegMaxSampleValue = 255;      // For 12-Bits this would be 4095
+const int32 JpegMidpointSampleValue = 128; // For 12-Bits this 2048
+const int32 JpegMaxDataUnitsPerMCU = 10;
+const int32 JpegMaxSuccessiveApproximation = 13;
+const int32 JpegMax8BitQuantizationValue = 255;
+const int32 JpegMinQuantizationValue = 1;
+const uint32 JpegMaxHuffmanCodeLength = 16;
+const uint32 JpegMaxNumberOfHuffmanCodes = 256;
+extern const uint32 JpegZigZagInputOrderCodes[JpegSampleSize];
+extern const uint32 JpegZigZagOutputOrderCodes[JpegSampleSize];
 typedef int16 JpegDecoderCoefficientBlock[JpegSampleWidth][JpegSampleWidth];
 
 // These definitions do not include the preceding 0xFF byte.
@@ -129,11 +129,11 @@ enum JpegMarkers {
 #define JPEGSAMPLE_GREEN_CONST2 2925
 #define JPEGSAMPLE_BLUE_CONST 7258
 
-inline void YCbCr_To_RGB(int yy, int cb, int cr, uint8 &r, uint8 &g, uint8 &b) {
-	int mcr = cr - JpegMidpointSampleValue;
-	int mcb = cb - JpegMidpointSampleValue;
+inline void YCbCr_To_RGB(int32 yy, int32 cb, int32 cr, uint8 &r, uint8 &g, uint8 &b) {
+	int32 mcr = cr - JpegMidpointSampleValue;
+	int32 mcb = cb - JpegMidpointSampleValue;
 
-	int a = yy + ((JPEGSAMPLE_RED_CONST * mcr + JPEGSAMPLE_ROUNDING) >> JPEGSAMPLE_SCALEFACTOR);
+	int32 a = yy + ((JPEGSAMPLE_RED_CONST * mcr + JPEGSAMPLE_ROUNDING) >> JPEGSAMPLE_SCALEFACTOR);
 	r = (uint8)((a < 0) ? 0 : (a > 255) ? 255 : a);
 
 	a = yy - ((JPEGSAMPLE_GREEN_CONST1 * mcb + JPEGSAMPLE_GREEN_CONST2 * mcr + JPEGSAMPLE_ROUNDING) >> JPEGSAMPLE_SCALEFACTOR);
@@ -153,10 +153,10 @@ public:
 	JpegDecoder();
 	virtual ~JpegDecoder();
 
-	virtual void ReadImage(unsigned char *inputData, uint32 surface_Id);
+	virtual void ReadImage(uint8 *inputData, uint32 surface_Id);
 	virtual void UpdateImage();
 
-	int cGetBit();
+	int32 cGetBit();
 
 	inline uint8 ReadByte() {
 		uint8 value = input_buffer[iPos];
@@ -172,8 +172,8 @@ public:
 		return value;
 	}
 
-	int NextBit();
-	int Receive(unsigned int count);
+	int32 NextBit();
+	int32 Receive(uint32 count);
 
 	void Initialize();
 	void ReadStreamHeader();
@@ -187,7 +187,7 @@ public:
 	void FreeAllocatedResources();
 	void ReadSequentialNonInterleavedScan();
 	void ResetDcDifferences();
-	void RefineAcCoefficient(int16 &value, unsigned int ssa);
+	void RefineAcCoefficient(int16 &value, uint32 ssa);
 
 	// Huffman tables
 	JpegHuffmanDecoder *ac_tables;
@@ -197,36 +197,36 @@ public:
 	JpegDecoderQuantizationTable *quantization_tables;
 
 	// Bit I/O state
-	int bit_position;       // Called CNT in Section F.2.2.5
-	unsigned char bit_data; // Called B in Section F.2.2.5
+	int32 bit_position;       // Called CNT in Section F.2.2.5
+	uint8 bit_data; // Called B in Section F.2.2.5
 
 	bool eoi_found;
 	bool sof_found;
 
-	unsigned char *input_buffer;
-	unsigned int iPos;
-	unsigned int surfaceId;
+	uint8 *input_buffer;
+	uint32 iPos;
+	uint32 surfaceId;
 
-	unsigned int frame_type;
+	uint32 frame_type;
 
-	unsigned max_horizontal_frequency;
-	unsigned max_vertical_frequency;
+	uint32 max_horizontal_frequency;
+	uint32 max_vertical_frequency;
 
-	unsigned int component_count;
+	uint32 component_count;
 	JpegDecoderComponent *components;
-	unsigned int *component_indices;
+	uint32 *component_indices;
 
 	// Progress Counters
-	unsigned int current_scan;
-	unsigned int scan_count;
+	uint32 current_scan;
+	uint32 scan_count;
 
-	unsigned int mcu_rows;
-	unsigned int mcu_cols;
+	uint32 mcu_rows;
+	uint32 mcu_cols;
 
-	unsigned int mcu_height;
-	unsigned int mcu_width;
+	uint32 mcu_height;
+	uint32 mcu_width;
 
-	unsigned int scan_component_count;
+	uint32 scan_component_count;
 	JpegDecoderComponent **scan_components;
 
 	friend class JpegDecoderQuantizationTable;
@@ -245,7 +245,7 @@ public:
 	virtual ~JpegHuffmanDecoder() {}
 
 	// This function reads a Huffman table from the input stream.
-	unsigned int ReadTable(JpegDecoder &);
+	uint32 ReadTable(JpegDecoder &);
 
 	// Function to decode the next value in the input stream.
 	int Decode(JpegDecoder &);
@@ -271,7 +271,7 @@ public:
 	~JpegDecoderQuantizationTable() {}
 
 	// Function to read the quantization table from the input stream.
-	void ReadTable(JpegDecoder &decoder, unsigned int precision);
+	void ReadTable(JpegDecoder &decoder, uint32 precision);
 
 	// This function builds the scaled quantization tables used in
 	// fast IDCT implementations.
@@ -299,7 +299,7 @@ public:
 //
 //
 class JpegDecoderDataUnit {
-      public:
+public:
 	// Declaration of a type for pointers to member functions
 	// for implementing the IDCT. The input parameters are
 	// The IDCT coefficients and the [de]quantization table.
@@ -316,7 +316,7 @@ class JpegDecoderDataUnit {
 	JpegDecoderDataUnit &IntegerInverseDCT(JpegDecoderCoefficientBlock, const JpegDecoderQuantizationTable &);
 
 	// Operators to retrieve the individual IDCT values.
-	// uint8 const* operator [] (unsigned int ii) const;
+	// uint8 const* operator [] (uint32 ii) const;
 
 	// The IDCT values.
 	uint8 values[JpegSampleWidth][JpegSampleWidth];
@@ -375,20 +375,20 @@ public:
 	void SetHuffmanTables(JpegHuffmanDecoder &dc, JpegHuffmanDecoder &ac);
 	void Upsample();
 
-	void DecodeSequential(JpegDecoder &decoder, unsigned int mcurow, unsigned int mcucol);
+	void DecodeSequential(JpegDecoder &decoder, uint32 mcurow, uint32 mcucol);
 
 	void ProgressiveInverseDct();
 
 	// Sampling Frequencies
-	unsigned int horizontal_frequency;
-	unsigned int vertical_frequency;
+	uint32 horizontal_frequency;
+	uint32 vertical_frequency;
 
 	// These values are the numnber of samples to take for each data
 	// point. They come from the sampling frequencies and the maximum
 	// sampling frequencies of all the components in the image.
 	// sampling frequencies of all the components in the image.
-	unsigned int v_sampling;
-	unsigned int h_sampling;
+	uint32 v_sampling;
+	uint32 h_sampling;
 
 	// Last encoded DC value.
 	int last_dc_value;
@@ -401,11 +401,11 @@ public:
 	JpegDecoderQuantizationTable *quantization_table;
 
 	// Non-interleaved dimensions.
-	unsigned int noninterleaved_rows;
-	unsigned int noninterleaved_cols;
+	uint32 noninterleaved_rows;
+	uint32 noninterleaved_cols;
 
-	unsigned int du_rows;
-	unsigned int du_cols;
+	uint32 du_rows;
+	uint32 du_cols;
 
 	JpegDecoderDataUnit *data_units;
 	uint8 *upsample_data;

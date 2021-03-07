@@ -70,7 +70,7 @@ typedef struct HEADER_OPEN {
 	uint32 header_size;
 	uint32 noFiles;
 	uint32 cluster_hash;
-	int cdpos;
+	int32 cdpos;
 	char description[MAX_DESCRIPTION_SIZE];
 } HEADER_OPEN;
 

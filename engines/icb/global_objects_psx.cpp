@@ -33,12 +33,12 @@ namespace ICB {
 
 // For reusing characters already loaded into VRAM
 // -32 because characters start from ' '
-u_short cPos[N_FONT_CHARS];
+uint16 cPos[N_FONT_CHARS];
 uint8 cPWidth[N_FONT_CHARS];
 uint8 cHeight[N_FONT_CHARS];
 uint8 cWidth[N_FONT_CHARS];
-u_short fontClutLoaded = 0;
-u_short fontFreePos = 0;
+uint16 fontClutLoaded = 0;
+uint16 fontFreePos = 0;
 uint8 fontNcolours = 0;
 
 // Global instances of common strings, as GCC seems to make
@@ -48,7 +48,7 @@ const char *global_null_path = "";
 
 // The different fonts we have available
 const char *fonts[MAX_FONTS] = {"font", "city", "futura", "futura_outline"};
-int selFont = 2;
+int32 selFont = 2;
 
 const char *global_sys_font = fonts[selFont];
 const char *global_set_path = "\\M\\%s.CAM;1";
@@ -85,68 +85,68 @@ TextureManager *tman;
 psxLight Lights[4];
 
 // Colour of ambient to add when targetting a mega and you are armed
-int mega_select_armed_r = 60;
-int mega_select_armed_g = 10;
-int mega_select_armed_b = 10;
+int32 mega_select_armed_r = 60;
+int32 mega_select_armed_g = 10;
+int32 mega_select_armed_b = 10;
 
 // Colour of ambient to add when targetting a mega and you are unarmed
-int mega_select_unarmed_r = 50;
-int mega_select_unarmed_g = 50;
-int mega_select_unarmed_b = 50;
+int32 mega_select_unarmed_r = 50;
+int32 mega_select_unarmed_g = 50;
+int32 mega_select_unarmed_b = 50;
 
 #if CD_BUILD == 0
 // Colour of the z-fragments outlines
-int zfragRed = 255;
-int zfragGreen = 0;
-int zfragBlue = 0;
+int32 zfragRed = 255;
+int32 zfragGreen = 0;
+int32 zfragBlue = 0;
 
 // Colour of the z-layers outlines
-int zoverRed = 255;
-int zoverGreen = 0;
-int zoverBlue = 255;
+int32 zoverRed = 255;
+int32 zoverGreen = 0;
+int32 zoverBlue = 255;
 #endif // #if CD_BUILD == 0
 
 // Colour of the actors bounding box
-int bboxRed = 0;
-int bboxGreen = 255;
-int bboxBlue = 0;
+int32 bboxRed = 0;
+int32 bboxGreen = 255;
+int32 bboxBlue = 0;
 
 // Colour of the actors screen outline
-int slineRed = 0;
-int slineGreen = 0;
-int slineBlue = 255;
+int32 slineRed = 0;
+int32 slineGreen = 0;
+int32 slineBlue = 255;
 
 // Colour of the wire-frame man
-int wfrmRed = 100;
-int wfrmGreen = 50;
-int wfrmBlue = 20;
+int32 wfrmRed = 100;
+int32 wfrmGreen = 50;
+int32 wfrmBlue = 20;
 
 // Drawing options
-int _normalScale = 8;
-int _useWindingOrder = 1;
-int _removeBackface = 1;
-int _drawWfrm = 0;
-int _drawTxture = 1;
-int _drawLit = 1;
-int _drawGouraud = 1;
-int _drawPolys = 1;
-int _drawNormals = 0;
+int32 _normalScale = 8;
+int32 _useWindingOrder = 1;
+int32 _removeBackface = 1;
+int32 _drawWfrm = 0;
+int32 _drawTxture = 1;
+int32 _drawLit = 1;
+int32 _drawGouraud = 1;
+int32 _drawPolys = 1;
+int32 _drawNormals = 0;
 
-int _drawActor = 1;
-int _drawSline = 0;
-int _drawShadowSline = 0;
-int _drawBbox = 0;
-int _drawShadowBbox = 0;
-int _drawSolidBbox = 0;
-int _drawZfragEdge = 0;
-int _drawZLayerEdge = 0;
-int _drawZfragImg = 1;
-int _drawText = 0;
-int _drawCompass = 0;
-int _drawBG = 1;
-int _drawProps = 1;
-int _drawSemiTrans = 1;
+int32 _drawActor = 1;
+int32 _drawSline = 0;
+int32 _drawShadowSline = 0;
+int32 _drawBbox = 0;
+int32 _drawShadowBbox = 0;
+int32 _drawSolidBbox = 0;
+int32 _drawZfragEdge = 0;
+int32 _drawZLayerEdge = 0;
+int32 _drawZfragImg = 1;
+int32 _drawText = 0;
+int32 _drawCompass = 0;
+int32 _drawBG = 1;
+int32 _drawProps = 1;
+int32 _drawSemiTrans = 1;
 
-int _drawDebugMesh = 0;
+int32 _drawDebugMesh = 0;
 
 } // End of namespace ICB

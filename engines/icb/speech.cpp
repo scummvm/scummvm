@@ -46,7 +46,7 @@ namespace ICB {
 #define SPEECH_ERROR 0
 #define IS_SPEECH_ALREADY_PLAYING 0
 
-uint GetCountReduction() { return 1; }
+uint32 GetCountReduction() { return 1; }
 
 // This colour is used to display voice over text (normally player's speech colour).
 uint8 voice_over_red = VOICE_OVER_DEFAULT_RED;
@@ -692,7 +692,7 @@ mcodeFunctionReturnCodes _game_session::fn_default_voice_over_colour(int32 &, in
 	return (IR_CONT);
 }
 
-extern int globalCharSpacing;
+extern int32 globalCharSpacing;
 
 // This function computes the formatting of a paragraph of Remora text without going as far as making
 // the sprite.  This is so the Remora can decide how it is going to format text before it tries to draw
@@ -753,14 +753,14 @@ void _game_session::Create_remora_text(uint32 x, uint32 y, const char *ascii,
 	else
 		bRemoraLeftFormatting = FALSE8;
 
-	int oldFlag = px.speechLineNumbers;
+	int32 oldFlag = px.speechLineNumbers;
 
 	// Turn off line numbers for non-spoken lines of dialogue
 	if (*ascii == TS_NON_SPOKEN_LINE)
 		px.speechLineNumbers = 0;
 
 	text_bloc->MakeTextSprite(analysisAlreadyDone, stopAtLine, bRemoraLeftFormatting);
-	px.speechLineNumbers = (u_char)oldFlag;
+	px.speechLineNumbers = (uint8)oldFlag;
 	text_bloc->GetRenderCoords(x, y, pin_pos, margin);
 
 	text_bloc->please_render = TRUE8;

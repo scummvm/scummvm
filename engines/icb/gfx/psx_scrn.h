@@ -67,14 +67,14 @@ typedef struct DoubleBuffer {
 // #define MAX_DRLOADS 2048
 
 // Screen position for 0,0
-extern int scrn_ox;
-extern int scrn_oy;
+extern int32 scrn_ox;
+extern int32 scrn_oy;
 
 // Global double buffer and drawing functions
 void SwapDoubleBuffer(void);
 void SwapBufferIndex(void);
-void DrawDisplayList(int buf);
-void Init_display(int w, int h, int x1, int y1, int x2, int y2, int ox, int oy, int clear);
+void DrawDisplayList(int32 buf);
+void Init_display(int32 w, int32 h, int32 x1, int32 y1, int32 x2, int32 y2, int32 ox, int32 oy, int32 clear);
 void RenderCycle(void);
 
 // Global double buffer and drawing variables
@@ -82,22 +82,22 @@ void RenderCycle(void);
 extern OT_tag *otarray[2];
 extern OT_tag *drawot;
 
-extern int drawBuf;
-extern int dont_set_dispbuf;
+extern int32 drawBuf;
+extern int32 dont_set_dispbuf;
 extern DoubleBuffer db[2];
 extern DoubleBuffer *pdb;
-extern u_int reloadFont;
-extern int global_use_otlist;
+extern uint32 reloadFont;
+extern int32 global_use_otlist;
 
 // A global array place in which to create GPU packets
-typedef u_char GPUPACKET;
+typedef uint8 GPUPACKET;
 extern GPUPACKET *drawpacket;
 extern GPUPACKET *drawpacketStart;
 extern GPUPACKET *drawpacketEnd;
 
 // For tracking the maximum number of packets used
-extern int globalPacketMax;
-extern int packetsUsed;
+extern int32 globalPacketMax;
+extern int32 packetsUsed;
 
 // How much to shift & then offset the z values from gte to
 // put them into the otlist
@@ -105,7 +105,7 @@ extern int32 otz_shift;
 extern int32 otz_offset;
 
 // Enable/disable updating of the auto-sliding & scaling min,max z position
-extern int update_minmaxzpos;
+extern int32 update_minmaxzpos;
 
 // Global graphics options for z-clipping and camera scalings
 extern int32 minZOTpos;
@@ -161,7 +161,7 @@ static inline void addPrims(uint32 *ot, void *p0, void *p1) {
 // Cheers to Nick Pelling for this excellent mySetDrawLoad
 // This one is a straight forward inline version of SetDrawLoad
 // and adds the DR_FLUSH onto the end
-static inline void mySetDrawLoad(DR_LOAD *p, RECT16 *r, int length) {
+static inline void mySetDrawLoad(DR_LOAD *p, RECT16 *r, int32 length) {
 	p->code[0] = (uint32)(0xA0 << 24); // 0xA0000000
 	p->code[1] = *((uint32 *)r);
 	p->code[2] = *((uint32 *)r + 1);
@@ -170,7 +170,7 @@ static inline void mySetDrawLoad(DR_LOAD *p, RECT16 *r, int length) {
 }
 
 // This one is just like SetDrawLoad but does not add the DR_FLUSH on the end
-static inline void mySetDrawLoadNoFlush(DR_LOAD *p, RECT16 *r, int length) {
+static inline void mySetDrawLoadNoFlush(DR_LOAD *p, RECT16 *r, int32 length) {
 	p->code[0] = (uint32)(0xA0 << 24); // 0xA0000000
 	p->code[1] = *((uint32 *)r);
 	p->code[2] = *((uint32 *)r + 1);
@@ -179,7 +179,7 @@ static inline void mySetDrawLoadNoFlush(DR_LOAD *p, RECT16 *r, int length) {
 }
 
 // Handy function for using the packets global array
-static inline void myAddPacket(int len) {
+static inline void myAddPacket(int32 len) {
 	// Advance to next spot :
 	// can still fail e.g. add a small packet then try to add a large packet
 	drawpacket += len;
@@ -189,7 +189,7 @@ static inline void myAddPacket(int len) {
 }
 
 // Handy function for putting a DR_LOAD into the packets global array
-static inline void myAddDRLOAD(RECT16 *r, uint32 *pot, int length) {
+static inline void myAddDRLOAD(RECT16 *r, uint32 *pot, int32 length) {
 	mySetDrawLoad((DR_LOAD *)drawpacket, r, length);
 	addPrim(pot, drawpacket);
 	myAddPacket(((5 + length) << 2));
@@ -197,7 +197,7 @@ static inline void myAddDRLOAD(RECT16 *r, uint32 *pot, int length) {
 
 // Handy function for putting a DR_LOAD into the packets global array
 // but without adding a DR_FLUSH onto the end
-static inline void myAddDRLOADNoFlush(RECT16 *r, uint32 *pot, int length) {
+static inline void myAddDRLOADNoFlush(RECT16 *r, uint32 *pot, int32 length) {
 	mySetDrawLoadNoFlush((DR_LOAD *)drawpacket, r, length);
 	addPrim(pot, drawpacket);
 	myAddPacket(((4 + length) << 2));

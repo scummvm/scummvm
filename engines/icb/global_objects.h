@@ -36,8 +36,8 @@
 namespace ICB {
 
 // Define the minimum distance an actor can be from the camera until he/she is clipped in cm
-const int g_actor_hither_plane = 100;    // 1m
-const int g_actor_far_clip_plane = 8000; // 80m
+const int32 g_actor_hither_plane = 100;    // 1m
+const int32 g_actor_far_clip_plane = 8000; // 80m
 
 class res_man;
 // this is the main resource manager object
@@ -103,14 +103,14 @@ extern const char *g_m09;
 extern const char *g_m10;
 
 // Prop sprite brightness to use when highlighting a prop that the player could interact with
-extern int g_prop_select_r;
-extern int g_prop_select_g;
-extern int g_prop_select_b;
+extern int32 g_prop_select_r;
+extern int32 g_prop_select_g;
+extern int32 g_prop_select_b;
 
 // extra ambient brightness to use when highlighting a mega that the player could interact with
-extern int g_mega_select_r;
-extern int g_mega_select_g;
-extern int g_mega_select_b;
+extern int32 g_mega_select_r;
+extern int32 g_mega_select_g;
+extern int32 g_mega_select_b;
 
 } // End of namespace ICB
 

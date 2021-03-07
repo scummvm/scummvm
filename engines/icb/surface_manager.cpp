@@ -70,7 +70,7 @@ _surface::_surface() {
 }
 
 void _surface_manager::PrintDebugLabel(const char *mess, uint32 c) {
-	static int y = 100;
+	static int32 y = 100;
 
 	if (mess == NULL) {
 		y = c;
@@ -92,13 +92,13 @@ void _surface_manager::PrintTimer(char label, uint32 time, uint32 limit) {
                                   0x00ff0000,   // 4x - 5x
                                   0x00ffffff }; // 5x +
 */
-	static int x = 20;
+	static int32 x = 20;
 
 	if (limit == 0) {
 		x = 20;
 	} else {
 		float perc = (float)time / (float)limit;
-		int percIndex = (int)perc;
+		int32 percIndex = (int32)perc;
 		if (percIndex < 0)
 			percIndex = 0;
 		if (percIndex > 5)
@@ -313,7 +313,7 @@ uint8 *_surface_manager::Lock_surface(uint32 s_id) {
 	return ((uint8 *)pSurface->m_dds->getBasePtr(0, 0));
 }
 
-int _surface_manager::Get_pitch(uint32 s_id) {
+int32 _surface_manager::Get_pitch(uint32 s_id) {
 	if (m_Surfaces[s_id]->m_locked == false) {
 		Fatal_error("**Get_pitch %s - surface is unlocked :O", (const char *)m_Surfaces[s_id]->m_name);
 		error("Should exit with error-code -1");
@@ -339,7 +339,7 @@ void _surface_manager::Fill_surface(uint32 s_id, uint32 rgb_value) {
 	m_Surfaces[s_id]->m_dds->fillRect(Common::Rect(0, 0, m_Surfaces[s_id]->m_dds->w, m_Surfaces[s_id]->m_dds->h), rgb_value);
 }
 
-static void copyRectToSurface(void *dstBuffer, const void *srcBuffer, int srcPitch, int dstPitch, int width, int height,
+static void copyRectToSurface(void *dstBuffer, const void *srcBuffer, int32 srcPitch, int32 dstPitch, int32 width, int32 height,
                                 bool8 colorKeyEnable, uint32 colorKey) {
 	assert(srcBuffer);
 	assert(dstBuffer);
@@ -347,8 +347,8 @@ static void copyRectToSurface(void *dstBuffer, const void *srcBuffer, int srcPit
 	if (colorKeyEnable) {
 		const uint32 *src = (const uint32 *)srcBuffer;
 		uint32 *dst = (uint32 *)dstBuffer;
-		for (int h = 0; h < height; h++) {
-			for (int w = 0; w < width; w++) {
+		for (int32 h = 0; h < height; h++) {
+			for (int32 w = 0; w < width; w++) {
 				if (src[w] != colorKey && src[w] != 0)
 					dst[w] = src[w];
 			}
@@ -358,7 +358,7 @@ static void copyRectToSurface(void *dstBuffer, const void *srcBuffer, int srcPit
 	} else {
 		const byte *src = (const byte *)srcBuffer;
 		byte *dst = (byte *)dstBuffer;
-		for (int h = 0; h < height; h++) {
+		for (int32 h = 0; h < height; h++) {
 			memcpy(dst, src, width * 4);
 			src += srcPitch;
 			dst += dstPitch;
@@ -367,7 +367,7 @@ static void copyRectToSurface(void *dstBuffer, const void *srcBuffer, int srcPit
 }
 
 static void copyRectToSurface(Graphics::Surface *dstSurface, Graphics::Surface *srcSurface,
-                              int destX, int destY, const Common::Rect subRect,
+                              int32 destX, int32 destY, const Common::Rect subRect,
                               bool8 colorKeyEnable, uint32 colorKey) {
 	assert(srcSurface->format == dstSurface->format);
 	assert(srcSurface->format.bytesPerPixel == 4);
@@ -482,11 +482,11 @@ void _surface_manager::DrawEffects(uint32 surface_id) {
 
 #if 1
 			for (uint32 lines = 0; lines < SCREEN_DEPTH; lines++) {
-				for (int xPos = 0; xPos < SCREEN_WIDTH; xPos++) {
+				for (int32 xPos = 0; xPos < SCREEN_WIDTH; xPos++) {
 					// 32-bit BGRA pixel
 					uint8 *pixel = &pixels[xPos * 4];
 					// Add from RGB components
-					for (int i = 0; i < 3; i++) {
+					for (int32 i = 0; i < 3; i++) {
 						pixel[i] = MIN(255, pixel[i] + additive[i]);
 					}
 				}
@@ -535,11 +535,11 @@ void _surface_manager::DrawEffects(uint32 surface_id) {
 
 #if 1
 			for (uint32 lines = 0; lines < SCREEN_DEPTH; lines++) {
-				for (int xPos = 0; xPos < SCREEN_WIDTH; xPos++) {
+				for (int32 xPos = 0; xPos < SCREEN_WIDTH; xPos++) {
 					// 32-bit BGRA pixel
 					uint8 *pixel = &pixels[xPos * 4];
 					// Subtract from RGB components
-					for (int i = 0; i < 3; i++) {
+					for (int32 i = 0; i < 3; i++) {
 						pixel[i] = MAX(0, pixel[i] - subtractive[i]);
 					}
 				}
@@ -599,11 +599,11 @@ void _surface_manager::DrawEffects(uint32 surface_id) {
 
 #if 1
 			for (uint32 lines = 0; lines < SCREEN_DEPTH; lines++) {
-				for (int xPos = 0; xPos < SCREEN_WIDTH; xPos++) {
+				for (int32 xPos = 0; xPos < SCREEN_WIDTH; xPos++) {
 					// 32-bit BGRA pixel
 					uint8 *pixel = &pixels[xPos * 4];
 					// Subtract from RGB components
-					for (int i = 0; i < 3; i++) {
+					for (int32 i = 0; i < 3; i++) {
 						pixel[i] = (pixel[i] * multiplier[i] + blendColour[i * 2]) >> 8;
 					}
 				}
@@ -730,11 +730,11 @@ void _surface_manager::DrawEffects(uint32 surface_id) {
 			uint8 *pixels = Lock_surface(surface_id);
 			uint32 pitch = Get_pitch(surface_id);
 #if 1
-			for (int xPos = 0; xPos < SCREEN_WIDTH; xPos++) {
+			for (int32 xPos = 0; xPos < SCREEN_WIDTH; xPos++) {
 				// 32-bit BGRA pixel
 				uint8 *pixel = &pixels[xPos * 4];
 				// Subtract from RGB components
-				for (int i = 0; i < 3; i++) {
+				for (int32 i = 0; i < 3; i++) {
 					pixel[i] = (pixel[i] * multiplier[i] + blendColour[i * 2]) >> 8;
 				}
 			}
@@ -779,11 +779,11 @@ void _surface_manager::DrawEffects(uint32 surface_id) {
 			pixels += pitch * m_borders.bottom;
 
 #if 1
-			for (int xPos = 0; xPos < SCREEN_WIDTH; xPos++) {
+			for (int32 xPos = 0; xPos < SCREEN_WIDTH; xPos++) {
 				// 32-bit BGRA pixel
 				uint8 *pixel = &pixels[xPos * 4];
 				// Subtract from RGB components
-				for (int i = 0; i < 3; i++) {
+				for (int32 i = 0; i < 3; i++) {
 					pixel[i] = (pixel[i] * multiplier[i] + blendColour[i * 2]) >> 8;
 				}
 			}

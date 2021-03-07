@@ -31,8 +31,8 @@
 namespace ICB {
 
 typedef struct psxLight {
-	int vx, vy, vz;
-	int r, g, b; // don't need to be int's but makes life easier
+	int32 vx, vy, vz;
+	int32 r, g, b; // don't need to be int's but makes life easier
 } psxLight;
 
 } // End of namespace ICB

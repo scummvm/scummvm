@@ -34,7 +34,7 @@
 
 namespace ICB {
 
-static inline PXframe_PSX *psxFrameEnOfAnim(unsigned int n, PXanim_PSX *pAnim, const char *file, const int line) {
+static inline PXframe_PSX *psxFrameEnOfAnim(uint32 n, PXanim_PSX *pAnim, const char *file, const int32 line) {
 	// Convert to the new schema
 	ConvertPXanim(pAnim);
 	if (n >= pAnim->frame_qty) {

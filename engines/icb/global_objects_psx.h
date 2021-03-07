@@ -48,12 +48,12 @@ extern uint8 *eightkb;
 // For reusing characters already loaded into VRAM
 // -32 because characters start from ' '
 #define N_FONT_CHARS (256 - ' ')
-extern u_short cPos[N_FONT_CHARS];
+extern uint16 cPos[N_FONT_CHARS];
 extern uint8 cPWidth[N_FONT_CHARS];
 extern uint8 cHeight[N_FONT_CHARS];
 extern uint8 cWidth[N_FONT_CHARS];
-extern u_short fontClutLoaded;
-extern u_short fontFreePos;
+extern uint16 fontClutLoaded;
+extern uint16 fontFreePos;
 extern uint8 fontNcolours;
 
 // Global instances of common strings, as GCC seems to make
@@ -97,97 +97,97 @@ extern _surface_manager *surface_manager;
 extern psxLight Lights[4];
 
 // Colour of ambient to add when targetting a mega and you are armed
-extern int mega_select_armed_r;
-extern int mega_select_armed_g;
-extern int mega_select_armed_b;
+extern int32 mega_select_armed_r;
+extern int32 mega_select_armed_g;
+extern int32 mega_select_armed_b;
 
 // Colour of ambient to add when targetting a mega and you are unarmed
-extern int mega_select_unarmed_r;
-extern int mega_select_unarmed_g;
-extern int mega_select_unarmed_b;
+extern int32 mega_select_unarmed_r;
+extern int32 mega_select_unarmed_g;
+extern int32 mega_select_unarmed_b;
 
 // Colour of the actors bounding box
-extern int bboxRed;
-extern int bboxGreen;
-extern int bboxBlue;
+extern int32 bboxRed;
+extern int32 bboxGreen;
+extern int32 bboxBlue;
 
 // Colour of the actors screen outline
-extern int slineRed;
-extern int slineGreen;
-extern int slineBlue;
+extern int32 slineRed;
+extern int32 slineGreen;
+extern int32 slineBlue;
 
 // Colour of the z-fragments outlines
-extern int zfragRed;
-extern int zfragGreen;
-extern int zfragBlue;
+extern int32 zfragRed;
+extern int32 zfragGreen;
+extern int32 zfragBlue;
 
 // Colour of the z-layers outlines
-extern int zoverRed;
-extern int zoverGreen;
-extern int zoverBlue;
+extern int32 zoverRed;
+extern int32 zoverGreen;
+extern int32 zoverBlue;
 
 // Colour of the wire-frame man
-extern int wfrmRed;
-extern int wfrmGreen;
-extern int wfrmBlue;
+extern int32 wfrmRed;
+extern int32 wfrmGreen;
+extern int32 wfrmBlue;
 
 // Drawing options
-extern int _normalScale;
-extern int _useWindingOrder;
-extern int _removeBackface;
-extern int _drawWfrm;
-extern int _drawTxture;
-extern int _drawLit;
-extern int _drawGouraud;
-extern int _drawPolys;
-extern int _drawNormals;
+extern int32 _normalScale;
+extern int32 _useWindingOrder;
+extern int32 _removeBackface;
+extern int32 _drawWfrm;
+extern int32 _drawTxture;
+extern int32 _drawLit;
+extern int32 _drawGouraud;
+extern int32 _drawPolys;
+extern int32 _drawNormals;
 
-extern int _drawActor;
-extern int _drawBbox;
-extern int _drawShadowBbox;
-extern int _drawSolidBbox;
-extern int _drawSline;
-extern int _drawShadowSline;
-extern int _drawZfragEdge;
-extern int _drawZLayerEdge;
-extern int _drawZfragImg;
-extern int _drawBG;
-extern int _drawProps;
-extern int _drawSemiTrans;
+extern int32 _drawActor;
+extern int32 _drawBbox;
+extern int32 _drawShadowBbox;
+extern int32 _drawSolidBbox;
+extern int32 _drawSline;
+extern int32 _drawShadowSline;
+extern int32 _drawZfragEdge;
+extern int32 _drawZLayerEdge;
+extern int32 _drawZfragImg;
+extern int32 _drawBG;
+extern int32 _drawProps;
+extern int32 _drawSemiTrans;
 
-extern int _drawText;
-extern int _drawCompass;
+extern int32 _drawText;
+extern int32 _drawCompass;
 
-extern int _drawDebugMesh;
+extern int32 _drawDebugMesh;
 
 // For choosing different fonts
 #define MAX_FONTS (4)
 extern const char *fonts[MAX_FONTS];
-extern int selFont;
+extern int32 selFont;
 
 #define MAX_MOVIES (64)
-extern int selMovie;
-extern int selSession;
-extern int selGame;
+extern int32 selMovie;
+extern int32 selSession;
+extern int32 selGame;
 
 // For choosing actor names for voxel_viewer
 #define MAX_ACTORS 10
-extern int selActor;
+extern int32 selActor;
 extern char *actor_names[MAX_ACTORS];
 
 // For choosing actor outfits for voxel_viewer
 #define MAX_OUTFITS 8
-extern int selOutfit;
+extern int32 selOutfit;
 extern char *actor_outfits[MAX_OUTFITS];
 
 // For choosing actor weapons for voxel_viewer
 #define MAX_WEAPONS 3
-extern int selWeapon;
+extern int32 selWeapon;
 extern char *actor_weapons[MAX_WEAPONS];
 
 // For choosing actor anims : these come from the master list in
 // animation_mega_set.{cpp,h}
-extern int selAnim;
+extern int32 selAnim;
 
 } // End of namespace ICB
 

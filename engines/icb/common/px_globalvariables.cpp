@@ -34,7 +34,7 @@ CpxGlobalScriptVariables::CpxGlobalScriptVariables() {
 	m_no_vars = 0;
 	m_sorted = 0;
 
-	int i;
+	int32 i;
 	for (i = 0; i < MAX_global_vars; i++) {
 		m_vars[i].hash = 666;
 		m_vars[i].value = 666;
@@ -43,15 +43,15 @@ CpxGlobalScriptVariables::CpxGlobalScriptVariables() {
 }
 
 int32 CpxGlobalScriptVariables::FindVariable(uint32 hash) {
-	int index = -1;
+	int32 index = -1;
 
 	if (m_sorted == 0) {
 		SortVariables();
 	} else {
 		// Use binary search system to find the variables
 		// The variables are stored in ascending hash sorted order
-		int min = 0;
-		int max = m_no_vars;
+		int32 min = 0;
+		int32 max = m_no_vars;
 		index = ((max - min) >> 1);
 		CpxVariable *pvar = m_vars + index;
 
@@ -81,7 +81,7 @@ int32 CpxGlobalScriptVariables::FindVariable(uint32 hash) {
 
 //#define CHECK_BINARY_SEARCH
 #ifdef CHECK_BINARY_SEARCH
-		uint i;
+		uint32 i;
 		int32 oldi = 0;
 		// Check the binarry search worked
 		for (i = 0; i < m_no_vars; i++) {
@@ -141,7 +141,7 @@ void CpxGlobalScriptVariables::SetVariable(uint32 hash, int32 value) {
 // i.e. they are relying on the initialisation code which is bad
 // warn = 0
 // Don't give the warning - this is needed for save games which Get all global's !
-int32 CpxGlobalScriptVariables::GetVariable(uint32 hash, const char *name, int warn) {
+int32 CpxGlobalScriptVariables::GetVariable(uint32 hash, const char *name, int32 warn) {
 	// Has the variable been defined already
 	int32 i = FindVariable(hash);
 	if (i != -1) {

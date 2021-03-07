@@ -43,12 +43,12 @@ namespace ICB {
 
 typedef struct {
 	MATRIX view;
-	u_short focLen;
+	uint16 focLen;
 } psxPCcameraOld;
 
 typedef struct {
 	MATRIX view;
-	u_short focLen;
+	uint16 focLen;
 	int32 pos[3];
 } psxPCcamera;
 
@@ -56,22 +56,22 @@ typedef struct {
 	float m[3][3];
 	float t[3];
 	float fov;
-	int width;
-	int height;
+	int32 width;
+	int32 height;
 } psxFloatCamera;
 
 typedef struct {
 	char id[4];
-	int schema;
+	int32 schema;
 	MATRIX view;
-	int pan;
-	u_short focLen;
-	int weatherType;
-	int lightning;
-	int windx;
-	int windy;
-	int windz;
-	int particleCount;
+	int32 pan;
+	uint16 focLen;
+	int32 weatherType;
+	int32 lightning;
+	int32 windx;
+	int32 windy;
+	int32 windz;
+	int32 particleCount;
 } psxCamera;
 
 // Useful camera and co-ordinate system based maths

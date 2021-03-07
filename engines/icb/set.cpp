@@ -52,10 +52,10 @@ int32 _game_session::GetSelectedMegaId(void) {
 	return selected_mega_id;
 }
 
-void _game_session::GetSelectedMegaRGB(u_char &r, u_char &g, u_char &b) {
-	int newr = (u_char)g_mega_select_r + r;
-	int newg = (u_char)g_mega_select_g + g;
-	int newb = (u_char)g_mega_select_b + b;
+void _game_session::GetSelectedMegaRGB(uint8 &r, uint8 &g, uint8 &b) {
+	int newr = (uint8)g_mega_select_r + r;
+	int newg = (uint8)g_mega_select_g + g;
+	int newb = (uint8)g_mega_select_b + b;
 
 	if (newr > 150)
 		newr = 150;
@@ -64,9 +64,9 @@ void _game_session::GetSelectedMegaRGB(u_char &r, u_char &g, u_char &b) {
 	if (newb > 150)
 		newb = 150;
 
-	r = (u_char)newr;
-	g = (u_char)newg;
-	b = (u_char)newb;
+	r = (uint8)newr;
+	g = (uint8)newg;
+	b = (uint8)newb;
 
 	g_mega_select_r += 8;
 	g_mega_select_g += 8;
@@ -91,10 +91,10 @@ int32 _game_session::GetSelectedPropId(void) {
 	return selected_prop_id;
 }
 
-void _game_session::GetSelectedPropRGB(u_char &r, u_char &g, u_char &b) {
-	r = (u_char)g_prop_select_r;
-	g = (u_char)g_prop_select_g;
-	b = (u_char)g_prop_select_b;
+void _game_session::GetSelectedPropRGB(uint8 &r, uint8 &g, uint8 &b) {
+	r = (uint8)g_prop_select_r;
+	g = (uint8)g_prop_select_g;
+	b = (uint8)g_prop_select_b;
 
 	g_prop_select_r += 4;
 	g_prop_select_g += 4;

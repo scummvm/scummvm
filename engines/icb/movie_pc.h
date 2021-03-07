@@ -50,8 +50,8 @@ extern MovieManager *g_theSequenceManager;
 
 class MovieManager {
 	Video::BinkDecoder *_binkDecoder;
-	int _x;
-	int _y;
+	int32 _x;
+	int32 _y;
 
 	uint32 _fadeCounter;
 	uint32 _fadeRate;
@@ -74,7 +74,7 @@ public:
 	bool busy();
 
 	uint32 drawFrame(uint32 surface_id = working_buffer_id);
-	int getFrameNumber();
+	int32 getFrameNumber();
 
 	void setRate();
 

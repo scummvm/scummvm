@@ -32,38 +32,38 @@
 namespace ICB {
 
 typedef struct {
-	int x0, x1;
-	int count;
-	int a0, r0, g0, b0;
-	int a1, r1, g1, b1;
-	int u0, v0;
-	int u1, v1;
+	int32 x0, x1;
+	int32 count;
+	int32 a0, r0, g0, b0;
+	int32 a1, r1, g1, b1;
+	int32 u0, v0;
+	int32 u1, v1;
 } span_t;
 
 #define MAX_SCREEN_HEIGHT 4096
 span_t spans[MAX_SCREEN_HEIGHT];
 
-#define GETBValue(rgb) ((u_char)(rgb))
-#define GETGValue(rgb) ((u_char)(((u_short)(rgb)) >> 8))
-#define GETRValue(rgb) ((u_char)((rgb) >> 16))
-#define GETAValue(rgb) ((u_char)((rgb) >> 24))
+#define GETBValue(rgb) ((uint8)(rgb))
+#define GETGValue(rgb) ((uint8)(((uint16)(rgb)) >> 8))
+#define GETRValue(rgb) ((uint8)((rgb) >> 16))
+#define GETAValue(rgb) ((uint8)((rgb) >> 24))
 
-extern int mip_map_level;
+extern int32 mip_map_level;
 
 typedef struct {
 	char *pRGB;
-	int RGBPitch;
-	int RGBBytesPerPixel;
+	int32 RGBPitch;
+	int32 RGBBytesPerPixel;
 
 	char *pZ;
-	int ZPitch;
-	int ZBytesPerPixel;
+	int32 ZPitch;
+	int32 ZBytesPerPixel;
 } MyRenderDevice;
 
 MyRenderDevice myRenDev = {NULL, 0, 0, NULL, 0, 0};
 RevRenderDevice *lastRevRenDev = NULL;
 
-int SetRenderDevice(RevRenderDevice *renderDev) {
+int32 SetRenderDevice(RevRenderDevice *renderDev) {
 	lastRevRenDev = NULL;
 	if (renderDev->RGBdata == NULL)
 		return 1;
@@ -90,13 +90,13 @@ int SetRenderDevice(RevRenderDevice *renderDev) {
 
 TextureHandle myTexHan;
 
-int SetTextureState(TextureHandle *texture) {
+int32 SetTextureState(TextureHandle *texture) {
 	myTexHan = *texture;
 	return 0;
 }
 
-int UnregisterTexture(TextureHandle *texture) {
-	int i;
+int32 UnregisterTexture(TextureHandle *texture) {
+	int32 i;
 
 	for (i = 0; i < 9; i++)
 		if ((texture->pRGBA[i]) != NULL)
@@ -112,7 +112,7 @@ int UnregisterTexture(TextureHandle *texture) {
 }
 
 TextureHandle *RegisterTexture(const RevTexture *revInput) {
-	int i;
+	int32 i;
 	TextureHandle *th = new TextureHandle();
 
 	th->w = revInput->width;
@@ -155,13 +155,13 @@ TextureHandle *RegisterTexture(const RevTexture *revInput) {
 		}
 
 		th->bpp = 1;
-		th->palette = new u_int[256];
+		th->palette = new uint32[256];
 		for (i = 0; i < 256; i++)
 			th->palette[i] = revInput->palette[i];
 
-		int size = th->w * th->h * th->bpp;
+		int32 size = th->w * th->h * th->bpp;
 		for (i = 0; i < 9; i++) {
-			th->pRGBA[i] = new u_char[size];
+			th->pRGBA[i] = new uint8[size];
 			memcpy(th->pRGBA[i], revInput->level[i], size);
 			size /= 4;
 			if (size / th->bpp == 0)
@@ -174,11 +174,11 @@ TextureHandle *RegisterTexture(const RevTexture *revInput) {
 
 void ClearProcessorState() { return; }
 
-int DrawGouraudTexturedPolygon(const vertex2D *verts, int nVerts, u_short z) {
-	int i, j, topvert, bottomvert, leftvert, rightvert, nextvert;
-	int itopy, ibottomy, spantopy, spanbottomy, count;
-	int x, a, r, g, b, u, v;
-	int ixslope, iaslope, irslope, igslope, ibslope, iuslope, ivslope;
+int32 DrawGouraudTexturedPolygon(const vertex2D *verts, int32 nVerts, uint16 z) {
+	int32 i, j, topvert, bottomvert, leftvert, rightvert, nextvert;
+	int32 itopy, ibottomy, spantopy, spanbottomy, count;
+	int32 x, a, r, g, b, u, v;
+	int32 ixslope, iaslope, irslope, igslope, ibslope, iuslope, ivslope;
 	float topy, bottomy, height, width, prestep;
 	float xslope, aslope, rslope, gslope, bslope, uslope, vslope;
 	float y;
@@ -190,10 +190,10 @@ int DrawGouraudTexturedPolygon(const vertex2D *verts, int nVerts, u_short z) {
 		return 0;
 
 	// Test for clockwise polygons
-	int l0x = (verts[0].x - verts[1].x) >> 16;
-	int l0y = (verts[0].y - verts[1].y) >> 16;
-	int l1x = (verts[2].x - verts[1].x) >> 16;
-	int l1y = (verts[2].y - verts[1].y) >> 16;
+	int32 l0x = (verts[0].x - verts[1].x) >> 16;
+	int32 l0y = (verts[0].y - verts[1].y) >> 16;
+	int32 l1x = (verts[2].x - verts[1].x) >> 16;
+	int32 l1y = (verts[2].y - verts[1].y) >> 16;
 	if (l0x * l1y > l0y * l1x) {
 		return 0;
 	}
@@ -214,8 +214,8 @@ int DrawGouraudTexturedPolygon(const vertex2D *verts, int nVerts, u_short z) {
 		}
 	}
 
-	itopy = (int)ceil(topy);
-	ibottomy = (int)ceil(bottomy);
+	itopy = (int32)ceil(topy);
+	ibottomy = (int32)ceil(bottomy);
 
 	// reject polygons that don't cross a scan
 	if (ibottomy == itopy)
@@ -230,9 +230,9 @@ int DrawGouraudTexturedPolygon(const vertex2D *verts, int nVerts, u_short z) {
 		if (nextvert < 0)
 			nextvert = nVerts - 1;
 		y = (float)(verts[leftvert].y / 65536.0f);
-		spantopy = (int)ceil(y);
+		spantopy = (int32)ceil(y);
 		y = (float)(verts[nextvert].y / 65536.0f);
-		spanbottomy = (int)ceil(y);
+		spanbottomy = (int32)ceil(y);
 		if (spantopy < spanbottomy) {
 			height = (float)((verts[nextvert].y - verts[leftvert].y) / 65536.0f);
 			width = (float)((verts[nextvert].x - verts[leftvert].x) / 65536.0f);
@@ -247,21 +247,21 @@ int DrawGouraudTexturedPolygon(const vertex2D *verts, int nVerts, u_short z) {
 
 			prestep = spantopy - (float)(verts[leftvert].y / 65536.0f);
 
-			x = (int)((((verts[leftvert].x) / 65536.0f) + (xslope * prestep)) * 65536.0) + ((1 << 16) - 1);
-			u = (int)((((verts[leftvert].u) / 65536.0f) + (uslope * prestep)) * 65536.0) + ((1 << 16) - 1);
-			v = (int)((((verts[leftvert].v) / 65536.0f) + (vslope * prestep)) * 65536.0) + ((1 << 16) - 1);
-			a = (int)((GETAValue(verts[leftvert].colour) + (aslope * prestep)) * 65536.0) + ((1 << 16) - 1);
-			r = (int)((GETRValue(verts[leftvert].colour) + (rslope * prestep)) * 65536.0) + ((1 << 16) - 1);
-			g = (int)((GETGValue(verts[leftvert].colour) + (gslope * prestep)) * 65536.0) + ((1 << 16) - 1);
-			b = (int)((GETBValue(verts[leftvert].colour) + (bslope * prestep)) * 65536.0) + ((1 << 16) - 1);
+			x = (int32)((((verts[leftvert].x) / 65536.0f) + (xslope * prestep)) * 65536.0) + ((1 << 16) - 1);
+			u = (int32)((((verts[leftvert].u) / 65536.0f) + (uslope * prestep)) * 65536.0) + ((1 << 16) - 1);
+			v = (int32)((((verts[leftvert].v) / 65536.0f) + (vslope * prestep)) * 65536.0) + ((1 << 16) - 1);
+			a = (int32)((GETAValue(verts[leftvert].colour) + (aslope * prestep)) * 65536.0) + ((1 << 16) - 1);
+			r = (int32)((GETRValue(verts[leftvert].colour) + (rslope * prestep)) * 65536.0) + ((1 << 16) - 1);
+			g = (int32)((GETGValue(verts[leftvert].colour) + (gslope * prestep)) * 65536.0) + ((1 << 16) - 1);
+			b = (int32)((GETBValue(verts[leftvert].colour) + (bslope * prestep)) * 65536.0) + ((1 << 16) - 1);
 
-			ixslope = (int)(xslope * 65536.0);
-			iuslope = (int)(uslope * 65536.0);
-			ivslope = (int)(vslope * 65536.0);
-			iaslope = (int)(aslope * 65536.0);
-			irslope = (int)(rslope * 65536.0);
-			igslope = (int)(gslope * 65536.0);
-			ibslope = (int)(bslope * 65536.0);
+			ixslope = (int32)(xslope * 65536.0);
+			iuslope = (int32)(uslope * 65536.0);
+			ivslope = (int32)(vslope * 65536.0);
+			iaslope = (int32)(aslope * 65536.0);
+			irslope = (int32)(rslope * 65536.0);
+			igslope = (int32)(gslope * 65536.0);
+			ibslope = (int32)(bslope * 65536.0);
 
 			for (j = spantopy; j < spanbottomy; j++) {
 				pspan->x0 = x >> 16;
@@ -294,9 +294,9 @@ int DrawGouraudTexturedPolygon(const vertex2D *verts, int nVerts, u_short z) {
 	do {
 		nextvert = (rightvert + 1) % nVerts;
 		y = (float)(verts[rightvert].y / 65536.0f);
-		spantopy = (int)ceil(y);
+		spantopy = (int32)ceil(y);
 		y = (float)(verts[nextvert].y / 65536.0f);
-		spanbottomy = (int)ceil(y);
+		spanbottomy = (int32)ceil(y);
 		if (spantopy < spanbottomy) {
 			height = (float)((verts[nextvert].y - verts[rightvert].y) / 65536.0f);
 			width = (float)((verts[nextvert].x - verts[rightvert].x) / 65536.0f);
@@ -311,21 +311,21 @@ int DrawGouraudTexturedPolygon(const vertex2D *verts, int nVerts, u_short z) {
 
 			prestep = spantopy - (float)(verts[rightvert].y / 65536.0f);
 
-			x = (int)((((verts[rightvert].x) / 65536.0f) + (xslope * prestep)) * 65536.0) + ((1 << 16) - 1);
-			u = (int)((((verts[rightvert].u) / 65536.0f) + (uslope * prestep)) * 65536.0) + ((1 << 16) - 1);
-			v = (int)((((verts[rightvert].v) / 65536.0f) + (vslope * prestep)) * 65536.0) + ((1 << 16) - 1);
-			a = (int)((GETAValue(verts[rightvert].colour) + (aslope * prestep)) * 65536.0) + ((1 << 16) - 1);
-			r = (int)((GETRValue(verts[rightvert].colour) + (rslope * prestep)) * 65536.0) + ((1 << 16) - 1);
-			g = (int)((GETGValue(verts[rightvert].colour) + (gslope * prestep)) * 65536.0) + ((1 << 16) - 1);
-			b = (int)((GETBValue(verts[rightvert].colour) + (bslope * prestep)) * 65536.0) + ((1 << 16) - 1);
+			x = (int32)((((verts[rightvert].x) / 65536.0f) + (xslope * prestep)) * 65536.0) + ((1 << 16) - 1);
+			u = (int32)((((verts[rightvert].u) / 65536.0f) + (uslope * prestep)) * 65536.0) + ((1 << 16) - 1);
+			v = (int32)((((verts[rightvert].v) / 65536.0f) + (vslope * prestep)) * 65536.0) + ((1 << 16) - 1);
+			a = (int32)((GETAValue(verts[rightvert].colour) + (aslope * prestep)) * 65536.0) + ((1 << 16) - 1);
+			r = (int32)((GETRValue(verts[rightvert].colour) + (rslope * prestep)) * 65536.0) + ((1 << 16) - 1);
+			g = (int32)((GETGValue(verts[rightvert].colour) + (gslope * prestep)) * 65536.0) + ((1 << 16) - 1);
+			b = (int32)((GETBValue(verts[rightvert].colour) + (bslope * prestep)) * 65536.0) + ((1 << 16) - 1);
 
-			ixslope = (int)(xslope * 65536.0);
-			iuslope = (int)(uslope * 65536.0);
-			ivslope = (int)(vslope * 65536.0);
-			iaslope = (int)(aslope * 65536.0);
-			irslope = (int)(rslope * 65536.0);
-			igslope = (int)(gslope * 65536.0);
-			ibslope = (int)(bslope * 65536.0);
+			ixslope = (int32)(xslope * 65536.0);
+			iuslope = (int32)(uslope * 65536.0);
+			ivslope = (int32)(vslope * 65536.0);
+			iaslope = (int32)(aslope * 65536.0);
+			irslope = (int32)(rslope * 65536.0);
+			igslope = (int32)(gslope * 65536.0);
+			ibslope = (int32)(bslope * 65536.0);
 
 			for (j = spantopy; j < spanbottomy; j++) {
 				pspan->x1 = x >> 16;
@@ -352,8 +352,8 @@ int DrawGouraudTexturedPolygon(const vertex2D *verts, int nVerts, u_short z) {
 	// Draw the spans
 	pspan = spans;
 
-	int mipw = myTexHan.w >> mip_map_level;
-	int miph = myTexHan.h >> mip_map_level;
+	int32 mipw = myTexHan.w >> mip_map_level;
+	int32 miph = myTexHan.h >> mip_map_level;
 
 	for (i = itopy; i < ibottomy; i++) {
 		count = pspan->x1 - pspan->x0;
@@ -376,8 +376,8 @@ int DrawGouraudTexturedPolygon(const vertex2D *verts, int nVerts, u_short z) {
 			char *left = myRenDev.pRGB + (myRenDev.RGBPitch * i) + myRenDev.RGBBytesPerPixel * x;
 			char *zleft = myRenDev.pZ + (myRenDev.ZPitch * i) + myRenDev.ZBytesPerPixel * pspan->x0;
 			do {
-				int pu = (u >> (8 + mip_map_level));
-				int pv = (v >> (8 + mip_map_level));
+				int32 pu = (u >> (8 + mip_map_level));
+				int32 pv = (v >> (8 + mip_map_level));
 
 				if (pu < 0)
 					pu = 0;
@@ -389,11 +389,11 @@ int DrawGouraudTexturedPolygon(const vertex2D *verts, int nVerts, u_short z) {
 				if (pv >= miph)
 					pv = miph - 1;
 
-				u_int toff = (pu + (pv * mipw)) * myTexHan.bpp;
-				u_char *texel = ((u_char *)(myTexHan.pRGBA[mip_map_level])) + toff;
+				uint32 toff = (pu + (pv * mipw)) * myTexHan.bpp;
+				uint8 *texel = ((uint8 *)(myTexHan.pRGBA[mip_map_level])) + toff;
 
 				// RGB data
-				int ta, tr, tg, tb;
+				int32 ta, tr, tg, tb;
 				if (myTexHan.bpp > 3) {
 					ta = *(texel + 3);
 					tr = *(texel + 2);
@@ -401,8 +401,8 @@ int DrawGouraudTexturedPolygon(const vertex2D *verts, int nVerts, u_short z) {
 					tb = *(texel + 0);
 				} else {
 					// Palette data
-					u_char index = *texel;
-					u_int colour = myTexHan.palette[index];
+					uint8 index = *texel;
+					uint32 colour = myTexHan.palette[index];
 					ta = ((colour >> 24) & 0xFF);
 					tr = ((colour >> 16) & 0xFF);
 					tg = ((colour >> 8) & 0xFF);
@@ -410,9 +410,9 @@ int DrawGouraudTexturedPolygon(const vertex2D *verts, int nVerts, u_short z) {
 				}
 
 				// BGR : 128 = scale of 1.0
-				int pr = ((r >> 8) * tr);
-				int pg = ((g >> 8) * tg);
-				int pb = ((b >> 8) * tb);
+				int32 pr = ((r >> 8) * tr);
+				int32 pg = ((g >> 8) * tg);
+				int32 pb = ((b >> 8) * tb);
 
 				if (pr < 0)
 					pr = 0;
@@ -436,7 +436,7 @@ int DrawGouraudTexturedPolygon(const vertex2D *verts, int nVerts, u_short z) {
 				*(left + 1) = (char)pg;
 				*(left + 2) = (char)pr;
 				*(left + 3) = (char)ta; // use the texture alpha value
-				*(u_short *)(zleft + 0) = z;
+				*(uint16 *)(zleft + 0) = z;
 
 				left += myRenDev.RGBBytesPerPixel;
 				zleft += myRenDev.ZBytesPerPixel;
@@ -454,9 +454,9 @@ int DrawGouraudTexturedPolygon(const vertex2D *verts, int nVerts, u_short z) {
 	return 1;
 }
 
-int DrawFlatUnTexturedPolygon(const vertex2D *verts, int nVerts, u_short z) {
-	int i, j, topvert, bottomvert, leftvert, rightvert, nextvert;
-	int itopy, ibottomy, ixslope, spantopy, spanbottomy, x, count;
+int32 DrawFlatUnTexturedPolygon(const vertex2D *verts, int32 nVerts, uint16 z) {
+	int32 i, j, topvert, bottomvert, leftvert, rightvert, nextvert;
+	int32 itopy, ibottomy, ixslope, spantopy, spanbottomy, x, count;
 	float topy, bottomy, xslope, height, width, prestep;
 	float y;
 	span_t *pspan;
@@ -465,19 +465,19 @@ int DrawFlatUnTexturedPolygon(const vertex2D *verts, int nVerts, u_short z) {
 		return 0;
 
 	// Test for clockwise polygons
-	int l0x = (verts[0].x - verts[1].x) >> 16;
-	int l0y = (verts[0].y - verts[1].y) >> 16;
-	int l1x = (verts[2].x - verts[1].x) >> 16;
-	int l1y = (verts[2].y - verts[1].y) >> 16;
+	int32 l0x = (verts[0].x - verts[1].x) >> 16;
+	int32 l0y = (verts[0].y - verts[1].y) >> 16;
+	int32 l1x = (verts[2].x - verts[1].x) >> 16;
+	int32 l1y = (verts[2].y - verts[1].y) >> 16;
 	if (l0x * l1y > l0y * l1x) {
 		return 0;
 	}
 
 	// The colour is in vertex 0
-	u_char a0 = GETAValue(verts[0].colour);
-	u_char r0 = GETRValue(verts[0].colour);
-	u_char g0 = GETGValue(verts[0].colour);
-	u_char b0 = GETBValue(verts[0].colour);
+	uint8 a0 = GETAValue(verts[0].colour);
+	uint8 r0 = GETRValue(verts[0].colour);
+	uint8 g0 = GETGValue(verts[0].colour);
+	uint8 b0 = GETBValue(verts[0].colour);
 
 	topy = 999999.0f;
 	bottomy = -999999.0f;
@@ -495,8 +495,8 @@ int DrawFlatUnTexturedPolygon(const vertex2D *verts, int nVerts, u_short z) {
 		}
 	}
 
-	itopy = (int)ceil(topy);
-	ibottomy = (int)ceil(bottomy);
+	itopy = (int32)ceil(topy);
+	ibottomy = (int32)ceil(bottomy);
 
 	// reject polygons that don't cross a scan
 	if (ibottomy == itopy)
@@ -511,20 +511,20 @@ int DrawFlatUnTexturedPolygon(const vertex2D *verts, int nVerts, u_short z) {
 		if (nextvert < 0)
 			nextvert = nVerts - 1;
 		y = (float)(verts[leftvert].y / 65536.0f);
-		spantopy = (int)ceil(y);
+		spantopy = (int32)ceil(y);
 		y = (float)(verts[nextvert].y / 65536.0f);
-		spanbottomy = (int)ceil(y);
+		spanbottomy = (int32)ceil(y);
 		if (spantopy < spanbottomy) {
-			height = (float)((int)(verts[nextvert].y - verts[leftvert].y) / 65536.0f);
-			width = (float)((int)(verts[nextvert].x - verts[leftvert].x) / 65536.0f);
+			height = (float)((int32)(verts[nextvert].y - verts[leftvert].y) / 65536.0f);
+			width = (float)((int32)(verts[nextvert].x - verts[leftvert].x) / 65536.0f);
 
 			xslope = width / height;
 
 			prestep = spantopy - (float)((verts[leftvert].y) / 65536.0f);
 
-			x = (int)((((verts[leftvert].x) / 65536.0f) + (xslope * prestep)) * 65536.0) + ((1 << 16) - 1);
+			x = (int32)((((verts[leftvert].x) / 65536.0f) + (xslope * prestep)) * 65536.0) + ((1 << 16) - 1);
 
-			ixslope = (int)(xslope * 65536.0);
+			ixslope = (int32)(xslope * 65536.0);
 
 			for (j = spantopy; j < spanbottomy; j++) {
 				pspan->x0 = x >> 16;
@@ -545,9 +545,9 @@ int DrawFlatUnTexturedPolygon(const vertex2D *verts, int nVerts, u_short z) {
 	do {
 		nextvert = (rightvert + 1) % nVerts;
 		y = (float)(verts[rightvert].y / 65536.0f);
-		spantopy = (int)ceil(y);
+		spantopy = (int32)ceil(y);
 		y = (float)(verts[nextvert].y / 65536.0f);
-		spanbottomy = (int)ceil(y);
+		spanbottomy = (int32)ceil(y);
 		if (spantopy < spanbottomy) {
 			height = (float)((verts[nextvert].y - verts[rightvert].y) / 65536.0f);
 			width = (float)((verts[nextvert].x - verts[rightvert].x) / 65536.0f);
@@ -556,9 +556,9 @@ int DrawFlatUnTexturedPolygon(const vertex2D *verts, int nVerts, u_short z) {
 
 			prestep = spantopy - (float)((verts[rightvert].y) / 65536.0f);
 
-			x = (int)((((verts[rightvert].x) / 65536.0f) + (xslope * prestep)) * 65536.0) + ((1 << 16) - 1);
+			x = (int32)((((verts[rightvert].x) / 65536.0f) + (xslope * prestep)) * 65536.0) + ((1 << 16) - 1);
 
-			ixslope = (int)(xslope * 65536.0);
+			ixslope = (int32)(xslope * 65536.0);
 
 			for (j = spantopy; j < spanbottomy; j++) {
 				pspan->x1 = x >> 16;
@@ -584,7 +584,7 @@ int DrawFlatUnTexturedPolygon(const vertex2D *verts, int nVerts, u_short z) {
 				*(left + 2) = r0;
 				*(left + 3) = a0;
 				left += myRenDev.RGBBytesPerPixel;
-				*(u_short *)(zleft + 0) = z;
+				*(uint16 *)(zleft + 0) = z;
 				zleft += myRenDev.ZBytesPerPixel;
 				count--;
 			} while (count > 0);
@@ -594,11 +594,11 @@ int DrawFlatUnTexturedPolygon(const vertex2D *verts, int nVerts, u_short z) {
 	return 1;
 }
 
-int DrawGouraudUnTexturedPolygon(const vertex2D *verts, int nVerts, u_short z) {
-	int i, j, topvert, bottomvert, leftvert, rightvert, nextvert;
-	int itopy, ibottomy, spantopy, spanbottomy, count;
-	int ixslope, iaslope, irslope, igslope, ibslope;
-	int x, a, r, g, b;
+int32 DrawGouraudUnTexturedPolygon(const vertex2D *verts, int32 nVerts, uint16 z) {
+	int32 i, j, topvert, bottomvert, leftvert, rightvert, nextvert;
+	int32 itopy, ibottomy, spantopy, spanbottomy, count;
+	int32 ixslope, iaslope, irslope, igslope, ibslope;
+	int32 x, a, r, g, b;
 	float topy, bottomy, xslope, aslope, rslope, gslope, bslope;
 	float height, width, prestep;
 	float y;
@@ -608,10 +608,10 @@ int DrawGouraudUnTexturedPolygon(const vertex2D *verts, int nVerts, u_short z) {
 		return 0;
 
 	// Test for clockwise polygons
-	int l0x = (verts[0].x - verts[1].x) >> 16;
-	int l0y = (verts[0].y - verts[1].y) >> 16;
-	int l1x = (verts[2].x - verts[1].x) >> 16;
-	int l1y = (verts[2].y - verts[1].y) >> 16;
+	int32 l0x = (verts[0].x - verts[1].x) >> 16;
+	int32 l0y = (verts[0].y - verts[1].y) >> 16;
+	int32 l1x = (verts[2].x - verts[1].x) >> 16;
+	int32 l1y = (verts[2].y - verts[1].y) >> 16;
 	if (l0x * l1y > l0y * l1x) {
 		return 0;
 	}
@@ -632,8 +632,8 @@ int DrawGouraudUnTexturedPolygon(const vertex2D *verts, int nVerts, u_short z) {
 		}
 	}
 
-	itopy = (int)ceil(topy);
-	ibottomy = (int)ceil(bottomy);
+	itopy = (int32)ceil(topy);
+	ibottomy = (int32)ceil(bottomy);
 
 	if (ibottomy == itopy)
 		return 1; // reject polygons that don't cross a scan
@@ -647,9 +647,9 @@ int DrawGouraudUnTexturedPolygon(const vertex2D *verts, int nVerts, u_short z) {
 		if (nextvert < 0)
 			nextvert = nVerts - 1;
 		y = (float)((verts[leftvert].y) / 65536.0f);
-		spantopy = (int)ceil(y);
+		spantopy = (int32)ceil(y);
 		y = (float)((verts[nextvert].y) / 65536.0f);
-		spanbottomy = (int)ceil(y);
+		spanbottomy = (int32)ceil(y);
 		if (spantopy < spanbottomy) {
 			height = (float)((verts[nextvert].y - verts[leftvert].y) / 65536.0f);
 			width = (float)((verts[nextvert].x - verts[leftvert].x) / 65536.0f);
@@ -662,17 +662,17 @@ int DrawGouraudUnTexturedPolygon(const vertex2D *verts, int nVerts, u_short z) {
 
 			prestep = spantopy - (float)((verts[leftvert].y) / 65536.0f);
 
-			x = (int)((((verts[leftvert].x) / 65536.0f) + (xslope * prestep)) * 65536.0) + ((1 << 16) - 1);
-			a = (int)((GETAValue(verts[leftvert].colour) + (aslope * prestep)) * 65536.0) + ((1 << 16) - 1);
-			r = (int)((GETRValue(verts[leftvert].colour) + (rslope * prestep)) * 65536.0) + ((1 << 16) - 1);
-			g = (int)((GETGValue(verts[leftvert].colour) + (gslope * prestep)) * 65536.0) + ((1 << 16) - 1);
-			b = (int)((GETBValue(verts[leftvert].colour) + (bslope * prestep)) * 65536.0) + ((1 << 16) - 1);
+			x = (int32)((((verts[leftvert].x) / 65536.0f) + (xslope * prestep)) * 65536.0) + ((1 << 16) - 1);
+			a = (int32)((GETAValue(verts[leftvert].colour) + (aslope * prestep)) * 65536.0) + ((1 << 16) - 1);
+			r = (int32)((GETRValue(verts[leftvert].colour) + (rslope * prestep)) * 65536.0) + ((1 << 16) - 1);
+			g = (int32)((GETGValue(verts[leftvert].colour) + (gslope * prestep)) * 65536.0) + ((1 << 16) - 1);
+			b = (int32)((GETBValue(verts[leftvert].colour) + (bslope * prestep)) * 65536.0) + ((1 << 16) - 1);
 
-			ixslope = (int)(xslope * 65536.0);
-			iaslope = (int)(aslope * 65536.0);
-			irslope = (int)(rslope * 65536.0);
-			igslope = (int)(gslope * 65536.0);
-			ibslope = (int)(bslope * 65536.0);
+			ixslope = (int32)(xslope * 65536.0);
+			iaslope = (int32)(aslope * 65536.0);
+			irslope = (int32)(rslope * 65536.0);
+			igslope = (int32)(gslope * 65536.0);
+			ibslope = (int32)(bslope * 65536.0);
 
 			for (j = spantopy; j < spanbottomy; j++) {
 				pspan->x0 = x >> 16;
@@ -701,9 +701,9 @@ int DrawGouraudUnTexturedPolygon(const vertex2D *verts, int nVerts, u_short z) {
 	do {
 		nextvert = (rightvert + 1) % nVerts;
 		y = (float)((verts[rightvert].y) / 65536.0f);
-		spantopy = (int)ceil(y);
+		spantopy = (int32)ceil(y);
 		y = (float)((verts[nextvert].y) / 65536.0f);
-		spanbottomy = (int)ceil(y);
+		spanbottomy = (int32)ceil(y);
 		if (spantopy < spanbottomy) {
 			height = (float)((verts[nextvert].y - verts[rightvert].y) / 65536.0f);
 			width = (float)((verts[nextvert].x - verts[rightvert].x) / 65536.0f);
@@ -716,17 +716,17 @@ int DrawGouraudUnTexturedPolygon(const vertex2D *verts, int nVerts, u_short z) {
 
 			prestep = spantopy - (float)((verts[rightvert].y) / 65536.0f);
 
-			x = (int)((((verts[rightvert].x) / 65536.0f) + (xslope * prestep)) * 65536.0) + ((1 << 16) - 1);
-			a = (int)((GETAValue(verts[rightvert].colour) + (aslope * prestep)) * 65536.0) + ((1 << 16) - 1);
-			r = (int)((GETRValue(verts[rightvert].colour) + (rslope * prestep)) * 65536.0) + ((1 << 16) - 1);
-			g = (int)((GETGValue(verts[rightvert].colour) + (gslope * prestep)) * 65536.0) + ((1 << 16) - 1);
-			b = (int)((GETBValue(verts[rightvert].colour) + (bslope * prestep)) * 65536.0) + ((1 << 16) - 1);
+			x = (int32)((((verts[rightvert].x) / 65536.0f) + (xslope * prestep)) * 65536.0) + ((1 << 16) - 1);
+			a = (int32)((GETAValue(verts[rightvert].colour) + (aslope * prestep)) * 65536.0) + ((1 << 16) - 1);
+			r = (int32)((GETRValue(verts[rightvert].colour) + (rslope * prestep)) * 65536.0) + ((1 << 16) - 1);
+			g = (int32)((GETGValue(verts[rightvert].colour) + (gslope * prestep)) * 65536.0) + ((1 << 16) - 1);
+			b = (int32)((GETBValue(verts[rightvert].colour) + (bslope * prestep)) * 65536.0) + ((1 << 16) - 1);
 
-			ixslope = (int)(xslope * 65536.0);
-			iaslope = (int)(aslope * 65536.0);
-			irslope = (int)(rslope * 65536.0);
-			igslope = (int)(gslope * 65536.0);
-			ibslope = (int)(bslope * 65536.0);
+			ixslope = (int32)(xslope * 65536.0);
+			iaslope = (int32)(aslope * 65536.0);
+			irslope = (int32)(rslope * 65536.0);
+			igslope = (int32)(gslope * 65536.0);
+			ibslope = (int32)(bslope * 65536.0);
 
 			for (j = spantopy; j < spanbottomy; j++) {
 				pspan->x1 = x >> 16;
@@ -768,7 +768,7 @@ int DrawGouraudUnTexturedPolygon(const vertex2D *verts, int nVerts, u_short z) {
 				*(left + 1) = (char)(g >> 8);
 				*(left + 2) = (char)(r >> 8);
 				*(left + 3) = (char)(a >> 8);
-				*(u_short *)(zleft + 0) = z;
+				*(uint16 *)(zleft + 0) = z;
 				zleft += myRenDev.ZBytesPerPixel;
 				left += myRenDev.RGBBytesPerPixel;
 				x++;
@@ -783,11 +783,11 @@ int DrawGouraudUnTexturedPolygon(const vertex2D *verts, int nVerts, u_short z) {
 	return 1;
 }
 
-int DrawFlatTexturedPolygon(const vertex2D *verts, int nVerts, u_short z) {
-	int i, j, topvert, bottomvert, leftvert, rightvert, nextvert;
-	int itopy, ibottomy, spantopy, spanbottomy, count;
-	int x, u, v;
-	int ixslope, iuslope, ivslope;
+int32 DrawFlatTexturedPolygon(const vertex2D *verts, int32 nVerts, uint16 z) {
+	int32 i, j, topvert, bottomvert, leftvert, rightvert, nextvert;
+	int32 itopy, ibottomy, spantopy, spanbottomy, count;
+	int32 x, u, v;
+	int32 ixslope, iuslope, ivslope;
 	float topy, bottomy, height, width, prestep;
 	float xslope, uslope, vslope;
 	float y;
@@ -799,18 +799,18 @@ int DrawFlatTexturedPolygon(const vertex2D *verts, int nVerts, u_short z) {
 		return 0;
 
 	// Test for clockwise polygons
-	int l0x = (verts[0].x - verts[1].x) >> 16;
-	int l0y = (verts[0].y - verts[1].y) >> 16;
-	int l1x = (verts[2].x - verts[1].x) >> 16;
-	int l1y = (verts[2].y - verts[1].y) >> 16;
+	int32 l0x = (verts[0].x - verts[1].x) >> 16;
+	int32 l0y = (verts[0].y - verts[1].y) >> 16;
+	int32 l1x = (verts[2].x - verts[1].x) >> 16;
+	int32 l1y = (verts[2].y - verts[1].y) >> 16;
 	if (l0x * l1y > l0y * l1x) {
 		return 0;
 	}
 
-	// u_char a0 = GETAValue(verts[0].colour);
-	u_char r0 = GETRValue(verts[0].colour);
-	u_char g0 = GETGValue(verts[0].colour);
-	u_char b0 = GETBValue(verts[0].colour);
+	// uint8 a0 = GETAValue(verts[0].colour);
+	uint8 r0 = GETRValue(verts[0].colour);
+	uint8 g0 = GETGValue(verts[0].colour);
+	uint8 b0 = GETBValue(verts[0].colour);
 
 	topy = 999999.0f;
 	bottomy = -999999.0f;
@@ -828,8 +828,8 @@ int DrawFlatTexturedPolygon(const vertex2D *verts, int nVerts, u_short z) {
 		}
 	}
 
-	itopy = (int)ceil(topy);
-	ibottomy = (int)ceil(bottomy);
+	itopy = (int32)ceil(topy);
+	ibottomy = (int32)ceil(bottomy);
 
 	if (ibottomy == itopy)
 		return 1; // reject polygons that don't cross a scan
@@ -843,9 +843,9 @@ int DrawFlatTexturedPolygon(const vertex2D *verts, int nVerts, u_short z) {
 		if (nextvert < 0)
 			nextvert = nVerts - 1;
 		y = (float)((verts[leftvert].y) / 65536.0f);
-		spantopy = (int)ceil(y);
+		spantopy = (int32)ceil(y);
 		y = (float)((verts[nextvert].y) / 65536.0f);
-		spanbottomy = (int)ceil(y);
+		spanbottomy = (int32)ceil(y);
 		if (spantopy < spanbottomy) {
 			height = (float)((verts[nextvert].y - verts[leftvert].y) / 65536.0f);
 			width = (float)((verts[nextvert].x - verts[leftvert].x) / 65536.0f);
@@ -856,13 +856,13 @@ int DrawFlatTexturedPolygon(const vertex2D *verts, int nVerts, u_short z) {
 
 			prestep = spantopy - (float)((verts[leftvert].y) / 65536.0f);
 
-			x = (int)((((verts[leftvert].x) / 65536.0f) + (xslope * prestep)) * 65536.0) + ((1 << 16) - 1);
-			u = (int)((((verts[leftvert].u) / 65536.0f) + (uslope * prestep)) * 65536.0) + ((1 << 16) - 1);
-			v = (int)((((verts[leftvert].v) / 65536.0f) + (vslope * prestep)) * 65536.0) + ((1 << 16) - 1);
+			x = (int32)((((verts[leftvert].x) / 65536.0f) + (xslope * prestep)) * 65536.0) + ((1 << 16) - 1);
+			u = (int32)((((verts[leftvert].u) / 65536.0f) + (uslope * prestep)) * 65536.0) + ((1 << 16) - 1);
+			v = (int32)((((verts[leftvert].v) / 65536.0f) + (vslope * prestep)) * 65536.0) + ((1 << 16) - 1);
 
-			ixslope = (int)(xslope * 65536.0);
-			iuslope = (int)(uslope * 65536.0);
-			ivslope = (int)(vslope * 65536.0);
+			ixslope = (int32)(xslope * 65536.0);
+			iuslope = (int32)(uslope * 65536.0);
+			ivslope = (int32)(vslope * 65536.0);
 
 			for (j = spantopy; j < spanbottomy; j++) {
 				pspan->x0 = x >> 16;
@@ -887,9 +887,9 @@ int DrawFlatTexturedPolygon(const vertex2D *verts, int nVerts, u_short z) {
 	do {
 		nextvert = (rightvert + 1) % nVerts;
 		y = (float)((verts[rightvert].y) / 65536.0f);
-		spantopy = (int)ceil(y);
+		spantopy = (int32)ceil(y);
 		y = (float)((verts[nextvert].y) / 65536.0f);
-		spanbottomy = (int)ceil(y);
+		spanbottomy = (int32)ceil(y);
 		if (spantopy < spanbottomy) {
 			height = (float)((verts[nextvert].y - verts[rightvert].y) / 65536.0f);
 			width = (float)((verts[nextvert].x - verts[rightvert].x) / 65536.0f);
@@ -900,13 +900,13 @@ int DrawFlatTexturedPolygon(const vertex2D *verts, int nVerts, u_short z) {
 
 			prestep = spantopy - (float)((verts[rightvert].y) / 65536.0f);
 
-			x = (int)((((verts[rightvert].x) / 65536.0f) + (xslope * prestep)) * 65536.0) + ((1 << 16) - 1);
-			u = (int)((((verts[rightvert].u) / 65536.0f) + (uslope * prestep)) * 65536.0) + ((1 << 16) - 1);
-			v = (int)((((verts[rightvert].v) / 65536.0f) + (vslope * prestep)) * 65536.0) + ((1 << 16) - 1);
+			x = (int32)((((verts[rightvert].x) / 65536.0f) + (xslope * prestep)) * 65536.0) + ((1 << 16) - 1);
+			u = (int32)((((verts[rightvert].u) / 65536.0f) + (uslope * prestep)) * 65536.0) + ((1 << 16) - 1);
+			v = (int32)((((verts[rightvert].v) / 65536.0f) + (vslope * prestep)) * 65536.0) + ((1 << 16) - 1);
 
-			ixslope = (int)(xslope * 65536.0);
-			iuslope = (int)(uslope * 65536.0);
-			ivslope = (int)(vslope * 65536.0);
+			ixslope = (int32)(xslope * 65536.0);
+			iuslope = (int32)(uslope * 65536.0);
+			ivslope = (int32)(vslope * 65536.0);
 
 			for (j = spantopy; j < spanbottomy; j++) {
 				pspan->x1 = x >> 16;
@@ -925,8 +925,8 @@ int DrawFlatTexturedPolygon(const vertex2D *verts, int nVerts, u_short z) {
 	// Draw the spans
 	pspan = spans;
 
-	int mipw = myTexHan.w >> mip_map_level;
-	int miph = myTexHan.h >> mip_map_level;
+	int32 mipw = myTexHan.w >> mip_map_level;
+	int32 miph = myTexHan.h >> mip_map_level;
 
 	for (i = itopy; i < ibottomy; i++) {
 		count = pspan->x1 - pspan->x0;
@@ -941,8 +941,8 @@ int DrawFlatTexturedPolygon(const vertex2D *verts, int nVerts, u_short z) {
 			char *left = myRenDev.pRGB + (myRenDev.RGBPitch * i) + myRenDev.RGBBytesPerPixel * x;
 			char *zleft = myRenDev.pZ + (myRenDev.ZPitch * i) + myRenDev.ZBytesPerPixel * pspan->x0;
 			do {
-				int pu = (u >> (8 + mip_map_level));
-				int pv = (v >> (8 + mip_map_level));
+				int32 pu = (u >> (8 + mip_map_level));
+				int32 pv = (v >> (8 + mip_map_level));
 
 				if (pu < 0)
 					pu = 0;
@@ -954,11 +954,11 @@ int DrawFlatTexturedPolygon(const vertex2D *verts, int nVerts, u_short z) {
 				if (pv >= miph)
 					pv = miph - 1;
 
-				u_int toff = (pu + (pv * mipw)) * myTexHan.bpp;
-				u_char *texel = ((u_char *)(myTexHan.pRGBA[mip_map_level])) + toff;
+				uint32 toff = (pu + (pv * mipw)) * myTexHan.bpp;
+				uint8 *texel = ((uint8 *)(myTexHan.pRGBA[mip_map_level])) + toff;
 
 				// RGB data
-				int ta, tr, tg, tb;
+				int32 ta, tr, tg, tb;
 				if (myTexHan.bpp > 3) {
 					ta = *(texel + 3);
 					tr = *(texel + 2);
@@ -966,18 +966,18 @@ int DrawFlatTexturedPolygon(const vertex2D *verts, int nVerts, u_short z) {
 					tb = *(texel + 0);
 				} else {
 					// Palette data
-					u_char index = *texel;
-					u_int colour = myTexHan.palette[index];
-					ta = (u_char)((colour >> 24) & 0xFF);
-					tr = (u_char)((colour >> 16) & 0xFF);
-					tg = (u_char)((colour >> 8) & 0xFF);
-					tb = (u_char)((colour >> 0) & 0xFF);
+					uint8 index = *texel;
+					uint32 colour = myTexHan.palette[index];
+					ta = (uint8)((colour >> 24) & 0xFF);
+					tr = (uint8)((colour >> 16) & 0xFF);
+					tg = (uint8)((colour >> 8) & 0xFF);
+					tb = (uint8)((colour >> 0) & 0xFF);
 				}
 				// BGR : 128 = scale of 1.0
-				// int a = a0;
-				int r = r0;
-				int g = g0;
-				int b = b0;
+				// int32 a = a0;
+				int32 r = r0;
+				int32 g = g0;
+				int32 b = b0;
 
 				r = (r * tr);
 				g = (g * tg);
@@ -1006,7 +1006,7 @@ int DrawFlatTexturedPolygon(const vertex2D *verts, int nVerts, u_short z) {
 				*(left + 2) = (char)r;
 				*(left + 3) = (char)ta; // use the texture alpha value
 
-				*(u_short *)(zleft + 0) = z;
+				*(uint16 *)(zleft + 0) = z;
 				left += myRenDev.RGBBytesPerPixel;
 				zleft += myRenDev.ZBytesPerPixel;
 				x++;

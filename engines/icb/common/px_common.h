@@ -107,10 +107,10 @@ class px_standard_header {
 	int32 unused2;                          // For future expansion
 	char name[STANDARD_HEADER_NAME_LENGTH]; // 32 bytes worth of ascii name information
 
-	void SetData(int version, _file_type type, int owner, const char *name);
+	void SetData(int32 version, _file_type type, int32 owner, const char *name);
 	_file_type GetType() { return (type); }
 	const char *GetName() { return (name); }
-	uint GetVersion() { return (version); }
+	uint32 GetVersion() { return (version); }
 };
 
 typedef struct {
@@ -177,10 +177,10 @@ typedef struct PXvector_PC {
 } PXvector_PC;
 
 typedef struct PXsvector_PSX {
-	short x;
-	short y;
-	short z;
-	short pad;
+	int16 x;
+	int16 y;
+	int16 z;
+	int16 pad;
 } PXsvector_PSX;
 
 typedef struct PXvector_PSX {
@@ -198,10 +198,10 @@ typedef PXsvector_PC PXsvector;
 #endif
 
 typedef struct PXorient_PSX {
-	short pan;
-	short tilt;
-	short cant;
-	short pad;
+	int16 pan;
+	int16 tilt;
+	int16 cant;
+	int16 pad;
 } PXorient_PSX;
 
 typedef struct PXorient_PC {

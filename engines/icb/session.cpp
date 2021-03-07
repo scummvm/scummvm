@@ -322,7 +322,7 @@ void _game_session::___init(const char *mission, const char *new_session_name) {
 		walk_areas = (_linked_data_file *)private_session_resman->Res_open(temp_buf, buf_hash, session_cluster, session_cluster_hash);
 		Tdebug("walkareas.txt", "%d top level walkareas\n", walk_areas->Fetch_number_of_items());
 
-		int nMissing = 0;
+		int32 nMissing = 0;
 		for (uint32 k = 0; k < walk_areas->Fetch_number_of_items(); k++) {
 			INTEGER_WalkAreaFile *inner_wa;
 			inner_wa = (INTEGER_WalkAreaFile *)walk_areas->Fetch_item_by_number(k);
@@ -571,7 +571,7 @@ void _game_session::Init_objects() {
 		L = logic_structs[j];
 		I = L->voxel_info;
 		if (L->image_type == VOXEL) {
-			for (uint i = 0; i < __NON_GENERIC; i++) {
+			for (uint32 i = 0; i < __NON_GENERIC; i++) {
 				if (I->IsAnimTable(i)) {
 #ifdef PRELOAD
 					rs_anims->Res_open(I->info_name[i], I->info_name_hash[i], I->base_path, I->base_path_hash);
@@ -614,7 +614,7 @@ void _game_session::Init_objects() {
 			player.Set_player_id(id);
 
 		// Preload the player animation to make PSX jerking better
-		for (uint i = 0; i < NUMBER_player_startup_anims; i++)
+		for (uint32 i = 0; i < NUMBER_player_startup_anims; i++)
 			rs_anims->Res_open(I->get_anim_name(player_startup_anims[i]), I->anim_name_hash[player_startup_anims[i]], I->base_path, I->base_path_hash);
 	}
 
@@ -837,7 +837,7 @@ void _game_session::One_logic_cycle() {
 					Script_cycle();
 				}
 
-				if (PXfabs(M->actor_xyz.y - logic_structs[player.Fetch_player_id()]->mega->actor_xyz.y) < (int)(M->slice_hold_tolerance)) {
+				if (PXfabs(M->actor_xyz.y - logic_structs[player.Fetch_player_id()]->mega->actor_xyz.y) < (int32)(M->slice_hold_tolerance)) {
 					L->big_mode = __SCRIPT;
 					g_oEventManager->ClearAllEventsForObject(cur_id);
 					g_oSoundLogicEngine->ClearHeardFlag(cur_id);
@@ -887,7 +887,7 @@ void _game_session::One_logic_cycle() {
 
 				// has slice hold mode and is now off camera - check for shut off tolerance
 				if ((L->hold_mode == mega_slice_hold) && (!M->on_players_floor)) {
-					if (PXfabs(M->actor_xyz.y - logic_structs[player.Fetch_player_id()]->mega->actor_xyz.y) > (int)(M->slice_hold_tolerance))
+					if (PXfabs(M->actor_xyz.y - logic_structs[player.Fetch_player_id()]->mega->actor_xyz.y) > (int32)(M->slice_hold_tolerance))
 						L->big_mode = __MEGA_SLICE_HELD;
 				}
 
@@ -1206,7 +1206,7 @@ _linked_data_file *LoadTranslatedFile(const char *mission, const char *session) 
 	if (stream == NULL) // if it could not be opened
 		Fatal_error("Unable to load file %s", (const char *)fname);
 
-	uint len = stream->size();
+	uint32 len = stream->size();
 
 	//      make space for file
 	char *mem = new char[len + 1];

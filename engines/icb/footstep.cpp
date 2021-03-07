@@ -83,7 +83,7 @@ mcodeFunctionReturnCodes _game_session::fn_set_floor_footstep_sfx(int32 &, int32
 // fn_set_footstep_weight(weight);
 // set weight of mega for footstep: % of cords weight alowable 0-200
 mcodeFunctionReturnCodes _game_session::fn_set_footstep_weight(int32 &, int32 *params) {
-	int w;
+	int32 w;
 
 	w = params[0];
 
@@ -162,7 +162,7 @@ void _game_session::UpdateFootstep() {
 		// do the footstep
 		if (step) {
 			// volume
-			int vol;
+			int32 vol;
 
 			// volume from weight (0-128, standard is 64)
 			vol = (M->footstep_weight * 63) / 100;
@@ -189,8 +189,8 @@ void _game_session::UpdateFootstep() {
 			else {
 				// try and find our floor in the overrides...
 				uint32 sfx = 0;
-				int floor = L->owner_floor_rect;
-				int i = 0;
+				int32 floor = L->owner_floor_rect;
+				int32 i = 0;
 
 				// loop through or until we have a sfx
 				while ((i < numFloorFootSfx) && (sfx == 0)) {

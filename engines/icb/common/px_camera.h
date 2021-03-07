@@ -39,7 +39,7 @@ typedef struct PXmatrix_PC {
 
 struct PCcamera {
 	char id[4];
-	int schema;
+	int32 schema;
 	PXmatrix_PC view;
 	float pan;
 	float focLen;

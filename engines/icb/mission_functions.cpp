@@ -39,8 +39,8 @@
 
 namespace ICB {
 
-int LoadMission(int m, void *usr) {
-	int demo = g_globalScriptVariables.GetVariable("demo");
+int32 LoadMission(int32 m, void *usr) {
+	int32 demo = g_globalScriptVariables.GetVariable("demo");
 	Init_globals(); // reload the global vars for the new mission
 	g_globalScriptVariables.SetVariable("missionelapsedtime", 0);
 
@@ -93,7 +93,7 @@ void RestartMission(void) {
 	mission_name = g_mission->Fetch_tiny_mission_name();
 
 	// Find which mission number the current mission is
-	int m = FindMissionNumber(mission_name);
+	int32 m = FindMissionNumber(mission_name);
 	if (m == -1) {
 		Fatal_error("Couldn't find the mission '%s'", mission_name);
 	}
@@ -105,8 +105,8 @@ void RestartMission(void) {
 	LoadMission(m, NULL);
 }
 
-int FindMissionNumber(const char *mission) {
-	int m;
+int32 FindMissionNumber(const char *mission) {
+	int32 m;
 
 	// Find which mission number this mission is
 	for (m = 0; m < NUMBER_OF_MISSIONS; m++) {

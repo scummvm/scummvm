@@ -847,7 +847,7 @@ bool8 _game_session::Make_floor_coordinate(PXreal *x, PXreal *z) {
 	if (!local_history_count)
 		return FALSE8;
 
-	int choice = g_icb->getRandomSource()->getRandomNumber(local_history_count - 1);
+	int32 choice = g_icb->getRandomSource()->getRandomNumber(local_history_count - 1);
 
 	*x = local_history[choice].x;
 	*z = local_history[choice].z;

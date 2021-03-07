@@ -73,18 +73,18 @@ typedef struct {
 #define MAXACTORQTY MAXIMUM_POTENTIAL_ON_SCREEN_ACTOR_QUANTITY
 
 RevRenderDevice revRen;
-int RGBWidth = SCREEN_WIDTH;                // width
-int RGBHeight = SCREEN_DEPTH;               // height
-int RGBBytesPerPixel = 4;                   // 32 bit
-int RGBPitch = RGBWidth * RGBBytesPerPixel; // pitch
-int ZBytesPerPixel = 2;                     // 16bit z-buffer
-int ZPitch = ZBytesPerPixel * SCREEN_WIDTH; // z-pitch
+int32 RGBWidth = SCREEN_WIDTH;                // width
+int32 RGBHeight = SCREEN_DEPTH;               // height
+int32 RGBBytesPerPixel = 4;                   // 32 bit
+int32 RGBPitch = RGBWidth * RGBBytesPerPixel; // pitch
+int32 ZBytesPerPixel = 2;                     // 16bit z-buffer
+int32 ZPitch = ZBytesPerPixel * SCREEN_WIDTH; // z-pitch
 char *pActorBuffer = NULL;                  // buffer for drawing actors
 char *pRGB = NULL;                          // buffer for RGB data
 char *pZa = NULL;                           // buffer for actor z data
 char *pZfx = NULL;                          // buffer for fx z data
 char *pZ = NULL;                            // Current z buffer being used by the renderer
-int mip_map_level = 0;
+int32 mip_map_level = 0;
 TextureManager the_tman;
 #define ZBUFFERSIZE (2 * SCREEN_WIDTH * SCREEN_DEPTH)
 
@@ -118,8 +118,8 @@ void InitRevRenderDevice() {
 	revRen.width = RGBWidth;
 	revRen.stride = RGBWidth * RGBBytesPerPixel;
 	revRen.height = RGBHeight;
-	revRen.RGBdata = (u_char *)pRGB;
-	revRen.Zdata = (u_short *)pZa;
+	revRen.RGBdata = (uint8 *)pRGB;
+	revRen.Zdata = (uint16 *)pZa;
 	SetRenderDevice(&revRen);
 
 	if (pUsedTiles == NULL)
@@ -147,10 +147,10 @@ void DestoryRevRenderDevice() {
 TextureHandle *texHans[MAX_NUM_TEX_HANS];
 uint32 texHanHashs[MAX_NUM_TEX_HANS][2];
 uint32 texHanBaseHashs[MAX_NUM_TEX_HANS];
-int numTexHans = 0;
+int32 numTexHans = 0;
 
 void ClearTextures() {
-	int i;
+	int32 i;
 
 	// remove all textures
 	for (i = 0; i < numTexHans; i++) {
@@ -199,7 +199,7 @@ void OpenTexture(const char *tex_name, uint32 tex_hash, const char *pal_name, ui
 	revTex.palette = rTexAPI->palette;
 	revTex.width = rTexAPI->width;
 	revTex.height = rTexAPI->height;
-	for (int i = 0; i < 9; i++) {
+	for (int32 i = 0; i < 9; i++) {
 		revTex.level[i] = (uint8 *)rTexAPI + rTexAPI->levelOffset[i];
 	}
 
@@ -218,7 +218,7 @@ void OpenTexture(const char *tex_name, uint32 tex_hash, const char *pal_name, ui
 
 // gets a handle to a texture, loading it in if necesary
 TextureHandle *GetRegisteredTexture(const char *tex_name, uint32 tex_hash, const char *pal_name, uint32 pal_hash, const char *base, uint32 base_hash) {
-	int i;
+	int32 i;
 
 	// Need to ensure the hash values are set
 	if (tex_hash == NULL_HASH)
@@ -247,7 +247,7 @@ void PreRegisterTexture(const char *tex_name, uint32 tex_hash, const char *pal_n
 		Fatal_error("Cant open texture:palette %s:%s\n", tex_name, pal_name);
 }
 
-void drawObjects(SDactor &act, PSXLampList &lamplist, PSXrgb *pAmbient, PSXShadeList &shadelist, MATRIXPC *local2screen, int *brightnessReturn) {
+void drawObjects(SDactor &act, PSXLampList &lamplist, PSXrgb *pAmbient, PSXShadeList &shadelist, MATRIXPC *local2screen, int32 *brightnessReturn) {
 	psxActor &actor = act.psx_actor;
 	rap_API *mesh;
 	rap_API *smesh;
@@ -280,7 +280,7 @@ void drawObjects(SDactor &act, PSXLampList &lamplist, PSXrgb *pAmbient, PSXShade
 	pose = (rap_API *)rs_anims->Res_open(poseName, poseHash, vox->base_path, vox->base_path_hash);
 	ConvertRAP(pose);
 	// check the pose data
-	if (*(int *)pose->id != *(int *)const_cast<char *>(RAP_API_ID))
+	if (*(int32 *)pose->id != *(int32 *)const_cast<char *>(RAP_API_ID))
 		Fatal_error("Pose Invalid rap ID rap_api.h %s file:%s file:%s", pose->id, RAP_API_ID, poseName);
 	if (pose->schema != RAP_API_SCHEMA)
 		Fatal_error("Wrong rap schema value file %d api %d file:%s", pose->schema, RAP_API_SCHEMA, poseName);
@@ -289,7 +289,7 @@ void drawObjects(SDactor &act, PSXLampList &lamplist, PSXrgb *pAmbient, PSXShade
 	mesh = (rap_API *)rs_anims->Res_open(vox->mesh_name, vox->mesh_hash, vox->base_path, vox->base_path_hash);
 	ConvertRAP(mesh);
 	// check the mesh data
-	if (*(int *)mesh->id != *(int *)const_cast<char *>(RAP_API_ID))
+	if (*(int32 *)mesh->id != *(int32 *)const_cast<char *>(RAP_API_ID))
 		Fatal_error("Mesh Invalid rap ID rap_api.h %s file:%s file:%s", mesh->id, RAP_API_ID, vox->mesh_name);
 	if (mesh->schema != RAP_API_SCHEMA)
 		Fatal_error("Mesh rap schema value file %d api %d file:%s", mesh->schema, RAP_API_SCHEMA, vox->mesh_name);
@@ -298,7 +298,7 @@ void drawObjects(SDactor &act, PSXLampList &lamplist, PSXrgb *pAmbient, PSXShade
 	smesh = (rap_API *)rs_anims->Res_open(vox->shadow_mesh_name, vox->shadow_mesh_hash, vox->base_path, vox->base_path_hash);
 	ConvertRAP(smesh);
 	// check the shadow mesh data
-	if (*(int *)smesh->id != *(int *)const_cast<char *>(RAP_API_ID))
+	if (*(int32 *)smesh->id != *(int32 *)const_cast<char *>(RAP_API_ID))
 		Fatal_error("Mesh Invalid rap ID rap_api.h %s file:%s file:%s", smesh->id, RAP_API_ID, vox->shadow_mesh_name);
 	if (smesh->schema != RAP_API_SCHEMA)
 		Fatal_error("Mesh rap schema value file %d api %d file:%s", smesh->schema, RAP_API_SCHEMA, vox->shadow_mesh_name);
@@ -306,58 +306,58 @@ void drawObjects(SDactor &act, PSXLampList &lamplist, PSXrgb *pAmbient, PSXShade
 	// Load the BONES
 	bones = (rab_API *)rs_anims->Res_open(vox->anim_name[act.log->cur_anim_type], vox->anim_name_hash[act.log->cur_anim_type], vox->base_path, vox->base_path_hash);
 	// check the bones...
-	if (*(int *)bones->id != *(int *)const_cast<char *>(RAB_API_ID))
+	if (*(int32 *)bones->id != *(int32 *)const_cast<char *>(RAB_API_ID))
 		Fatal_error("Bones Invalid rab ID rab_api.h %s file:%s file:%s", bones->id, RAB_API_ID, vox->anim_name[act.log->cur_anim_type]);
 	if (bones->schema != RAB_API_SCHEMA)
 		Fatal_error("Bones rab schema value file %d api %d file:%s", bones->schema, RAB_API_SCHEMA, vox->anim_name[act.log->cur_anim_type]);
 
 	// Check the data is all in still and resman has settled.
-	if (*(int *)mesh->id != *(int *)const_cast<char *>(RAP_API_ID)) {
+	if (*(int32 *)mesh->id != *(int32 *)const_cast<char *>(RAP_API_ID)) {
 		mesh = (rap_API *)rs_anims->Res_open(vox->mesh_name, vox->mesh_hash, vox->base_path, vox->base_path_hash);
 		ConvertRAP(mesh);
 	}
 
-	if (*(int *)smesh->id != *(int *)const_cast<char *>(RAP_API_ID)) {
+	if (*(int32 *)smesh->id != *(int32 *)const_cast<char *>(RAP_API_ID)) {
 		smesh = (rap_API *)rs_anims->Res_open(vox->shadow_mesh_name, vox->shadow_mesh_hash, vox->base_path, vox->base_path_hash);
 		ConvertRAP(smesh);
 	}
 
-	if (*(int *)bones->id != *(int *)const_cast<char *>(RAB_API_ID)) {
+	if (*(int32 *)bones->id != *(int32 *)const_cast<char *>(RAB_API_ID)) {
 		bones = (rab_API *)rs_anims->Res_open(vox->anim_name[act.log->cur_anim_type], vox->anim_name_hash[act.log->cur_anim_type], vox->base_path, vox->base_path_hash);
 	}
 
-	if (*(int *)pose->id != *(int *)const_cast<char *>(RAP_API_ID)) {
+	if (*(int32 *)pose->id != *(int32 *)const_cast<char *>(RAP_API_ID)) {
 		pose = (rap_API *)rs_anims->Res_open(poseName, poseHash, vox->base_path, vox->base_path_hash);
 		ConvertRAP(pose);
 	}
 
-	if (*(int *)mesh->id != *(int *)const_cast<char *>(RAP_API_ID)) {
+	if (*(int32 *)mesh->id != *(int32 *)const_cast<char *>(RAP_API_ID)) {
 		mesh = (rap_API *)rs_anims->Res_open(vox->mesh_name, vox->mesh_hash, vox->base_path, vox->base_path_hash);
 		ConvertRAP(mesh);
 	}
 
-	if (*(int *)smesh->id != *(int *)const_cast<char *>(RAP_API_ID)) {
+	if (*(int32 *)smesh->id != *(int32 *)const_cast<char *>(RAP_API_ID)) {
 		smesh = (rap_API *)rs_anims->Res_open(vox->shadow_mesh_name, vox->shadow_mesh_hash, vox->base_path, vox->base_path_hash);
 		ConvertRAP(smesh);
 	}
 
-	if (*(int *)bones->id != *(int *)const_cast<char *>(RAB_API_ID)) {
+	if (*(int32 *)bones->id != *(int32 *)const_cast<char *>(RAB_API_ID)) {
 		bones = (rab_API *)rs_anims->Res_open(vox->anim_name[act.log->cur_anim_type], vox->anim_name_hash[act.log->cur_anim_type], vox->base_path, vox->base_path_hash);
 	}
 
-	if (*(int *)pose->id != *(int *)const_cast<char *>(RAP_API_ID)) {
+	if (*(int32 *)pose->id != *(int32 *)const_cast<char *>(RAP_API_ID)) {
 		pose = (rap_API *)rs_anims->Res_open(poseName, poseHash, vox->base_path, vox->base_path_hash);
 		ConvertRAP(pose);
 	}
 
 	// FINAL CHECKS
-	if (*(int *)mesh->id != *(int *)const_cast<char *>(RAP_API_ID))
+	if (*(int32 *)mesh->id != *(int32 *)const_cast<char *>(RAP_API_ID))
 		Fatal_error("Failed to get MESH %s settled within Resman", vox->mesh_name);
-	if (*(int *)smesh->id != *(int *)const_cast<char *>(RAP_API_ID))
+	if (*(int32 *)smesh->id != *(int32 *)const_cast<char *>(RAP_API_ID))
 		Fatal_error("Failed to get SHADOW MESH %s settled within Resman", vox->shadow_mesh_name);
-	if (*(int *)bones->id != *(int *)const_cast<char *>(RAB_API_ID))
+	if (*(int32 *)bones->id != *(int32 *)const_cast<char *>(RAB_API_ID))
 		Fatal_error("Failed to get BONES %s settled within Resman", vox->anim_name[act.log->cur_anim_type]);
-	if (*(int *)pose->id != *(int *)const_cast<char *>(RAP_API_ID))
+	if (*(int32 *)pose->id != *(int32 *)const_cast<char *>(RAP_API_ID))
 		Fatal_error("Failed to get POSE %s settled within Resman", poseName);
 
 	// FINISHED LOADING
@@ -366,8 +366,8 @@ void drawObjects(SDactor &act, PSXLampList &lamplist, PSXrgb *pAmbient, PSXShade
 		Fatal_error("stagedraw_pc_poly Illegal frame %d bones %d anim %s", act.frame, bones->nFrames, vox->anim_name[act.log->cur_anim_type]);
 	}
 
-	int f = act.frame;
-	if ((f < 0) || (f >= (int)bones->nFrames))
+	int32 f = act.frame;
+	if ((f < 0) || (f >= (int32)bones->nFrames))
 		f = (bones->nFrames - 1);
 
 	Bone_Frame *frame;
@@ -410,7 +410,7 @@ void drawObjects(SDactor &act, PSXLampList &lamplist, PSXrgb *pAmbient, PSXShade
 		_drawWfrm = 0;
 	}
 
-	int nShadows = 0;
+	int32 nShadows = 0;
 	if (mega->drawShadow) {
 		// Complex shadows have up to nShadows of them
 		// Note: a top-down BLACK will get added if NO shadows are cast
@@ -418,13 +418,13 @@ void drawObjects(SDactor &act, PSXLampList &lamplist, PSXrgb *pAmbient, PSXShade
 	}
 
 	SVECTORPC p_n[MAX_SHADOWS];
-	int p_d[MAX_SHADOWS];
+	int32 p_d[MAX_SHADOWS];
 
-	for (int i = 0; i < MAX_SHADOWS; i++) {
+	for (int32 i = 0; i < MAX_SHADOWS; i++) {
 		p_n[i].vx = 0;
 		p_n[i].vy = 1;
 		p_n[i].vz = 0;
-		p_d[i] = (int)mega->actor_xyz.y; // At the actor's feet
+		p_d[i] = (int32)mega->actor_xyz.y; // At the actor's feet
 	}
 
 	// head movement
@@ -442,7 +442,7 @@ void drawObjects(SDactor &act, PSXLampList &lamplist, PSXrgb *pAmbient, PSXShade
 	if (MS->player.log == act.log)
 		myBones[SPARE_DEFORMATION] = &(MS->player.shotDeformation);
 
-	int uvframe;
+	int32 uvframe;
 
 	// For dead things do not draw the animating polygons
 	if (g_mission->session->objects == NULL || strcmp(act.log->GetName(), "StageView") == 0) {
@@ -471,12 +471,12 @@ void drawObjects(SDactor &act, PSXLampList &lamplist, PSXrgb *pAmbient, PSXShade
 	             brightnessReturn, local2screen);
 
 	// A white light is 4096+4096+4096
-	const int FullWhiteLight = (4096 * 3);
-	int inShadePercentage;
+	const int32 FullWhiteLight = (4096 * 3);
+	int32 inShadePercentage;
 
-	inShadePercentage = (int)(mega->inShadePercentage); // 0-100
+	inShadePercentage = (int32)(mega->inShadePercentage); // 0-100
 
-	int inShadeBrightness = ((FullWhiteLight * inShadePercentage) / 100);
+	int32 inShadeBrightness = ((FullWhiteLight * inShadePercentage) / 100);
 
 	if ((*brightnessReturn) < inShadeBrightness)
 		mega->in_shade = TRUE8;
@@ -484,9 +484,9 @@ void drawObjects(SDactor &act, PSXLampList &lamplist, PSXrgb *pAmbient, PSXShade
 		mega->in_shade = FALSE8;
 }
 
-int drawSpecialObjects(SDactor &actor, MATRIXPC *local2screen, int brightness, SVECTOR *minBBox, SVECTOR *maxBBox) {
+int32 drawSpecialObjects(SDactor &actor, MATRIXPC *local2screen, int32 brightness, SVECTOR *minBBox, SVECTOR *maxBBox) {
 	// Shooting ?
-	int mflash = 0;
+	int32 mflash = 0;
 	SVECTOR mpos;
 
 	_mega *&mega = actor.log->mega;
@@ -516,14 +516,14 @@ int drawSpecialObjects(SDactor &actor, MATRIXPC *local2screen, int brightness, S
 				// Muzzle flash only lasts for 1 cycle
 				mega->is_shooting = 0;
 
-				mpos.vx = (short)mx;
-				mpos.vz = (short)mz;
+				mpos.vx = (int16)mx;
+				mpos.vz = (int16)mz;
 
 				// Subtract the hip_height off the marker position
-				mpos.vy = (short)(my - oy);
+				mpos.vy = (int16)(my - oy);
 
 				// inititalise the cartridge case...
-				mega->InitCartridgeCase(&mpos, (short)0); // oy);
+				mega->InitCartridgeCase(&mpos, (int16)0); // oy);
 			}
 		}
 	}
@@ -544,7 +544,7 @@ int drawSpecialObjects(SDactor &actor, MATRIXPC *local2screen, int brightness, S
 	} else
 		local_mf_pos = mpos;
 
-	int ret = DrawActorSpecialEffectsPC(mflash, &local_mf_pos, 35, 5, mega->bulletOn, &(mega->bulletPos), (int)(mega->bulletColour), &(mega->breath), local2screen, brightness,
+	int32 ret = DrawActorSpecialEffectsPC(mflash, &local_mf_pos, 35, 5, mega->bulletOn, &(mega->bulletPos), (int32)(mega->bulletColour), &(mega->breath), local2screen, brightness,
 	                                    minBBox, maxBBox);
 
 	return ret;
@@ -554,11 +554,11 @@ void StageDrawPoly(SDactor *actors, uint32 actorQty) {
 	_set *set = &MS->set;
 
 	MATRIXPC local2screen[MAXACTORQTY]; // the local>screen matrices for each actor...
-	int brightnessValues[MAXACTORQTY];
+	int32 brightnessValues[MAXACTORQTY];
 	uint32 j;
 	SVECTOR effectsMin[MAXACTORQTY];
 	SVECTOR effectsMax[MAXACTORQTY];
-	int effectsDrawn = 0;
+	int32 effectsDrawn = 0;
 
 	// Reset the renderers z range thingy
 	ResetZRange();
@@ -572,7 +572,7 @@ void StageDrawPoly(SDactor *actors, uint32 actorQty) {
 	// PSX LIGHT RIG SETUP
 	ConvertRLP(set->GetPRig());
 	// check files
-	if (*(int *)set->GetPRig()->id != *(int *)const_cast<char *>(RLP_API_ID)) {
+	if (*(int32 *)set->GetPRig()->id != *(int32 *)const_cast<char *>(RLP_API_ID)) {
 		Fatal_error("Invalid rlp ID file %s rlp_api.h %s", set->GetPRig()->id, RLP_API_ID);
 	}
 	if (set->GetPRig()->schema != RLP_API_SCHEMA) {
@@ -647,7 +647,7 @@ void StageDrawPoly(SDactor *actors, uint32 actorQty) {
 
 	// Point the renderer at the actor z map
 	pZ = pZa;
-	revRen.Zdata = (u_short *)pZ;
+	revRen.Zdata = (uint16 *)pZ;
 	SetRenderDevice(&revRen);
 
 	// Render all the actors
@@ -700,10 +700,10 @@ void StageDrawPoly(SDactor *actors, uint32 actorQty) {
 			for (j = 0; j < actorQty; j++) {
 				// Get all the actors shadow tiles
 				for (uint32 s = 0; s < actors[j].psx_actor.nShadows; s++) {
-					int x0 = actors[j].psx_actor.shadowMinBox[s].vx + 320;
-					int x1 = actors[j].psx_actor.shadowMaxBox[s].vx + 321;
-					int y0 = actors[j].psx_actor.shadowMinBox[s].vy + 239;
-					int y1 = actors[j].psx_actor.shadowMaxBox[s].vy + 240;
+					int32 x0 = actors[j].psx_actor.shadowMinBox[s].vx + 320;
+					int32 x1 = actors[j].psx_actor.shadowMaxBox[s].vx + 321;
+					int32 y0 = actors[j].psx_actor.shadowMinBox[s].vy + 239;
+					int32 y1 = actors[j].psx_actor.shadowMaxBox[s].vy + 240;
 
 					if (x1 < 0)
 						continue; // Completely off screen
@@ -723,7 +723,7 @@ void StageDrawPoly(SDactor *actors, uint32 actorQty) {
 						y1 = 479;
 
 					// Include shake screen offset in clipping
-					int xShake = GetShakeX();
+					int32 xShake = GetShakeX();
 					if (xShake) {
 						x0 += xShake;
 						x1 += xShake;
@@ -742,7 +742,7 @@ void StageDrawPoly(SDactor *actors, uint32 actorQty) {
 						x1 -= xShake;
 					}
 
-					int yShake = GetShakeY();
+					int32 yShake = GetShakeY();
 					if (yShake) {
 						y0 += yShake;
 						y1 += yShake;
@@ -763,16 +763,16 @@ void StageDrawPoly(SDactor *actors, uint32 actorQty) {
 					}
 
 					// Mark these tiles as
-					int zTys = y0 / TILE_HEIGHT;
-					int zTxs = x0 / TILE_WIDTH;
-					int tileOffset = (zTys * TILES_WIDE) + zTxs;
-					int zTw = ((x1 + (TILE_WIDTH - 1)) / TILE_WIDTH) - zTxs;
-					int zTh = ((y1 + (TILE_HEIGHT - 1)) / TILE_HEIGHT) - zTys;
+					int32 zTys = y0 / TILE_HEIGHT;
+					int32 zTxs = x0 / TILE_WIDTH;
+					int32 tileOffset = (zTys * TILES_WIDE) + zTxs;
+					int32 zTw = ((x1 + (TILE_WIDTH - 1)) / TILE_WIDTH) - zTxs;
+					int32 zTh = ((y1 + (TILE_HEIGHT - 1)) / TILE_HEIGHT) - zTys;
 
 					// Now compose this actor
-					int rowStep = TILES_WIDE - zTw;
-					for (int zTy = zTh; zTy; --zTy) {
-						for (int zTx = zTw; zTx; --zTx) {
+					int32 rowStep = TILES_WIDE - zTw;
+					for (int32 zTy = zTh; zTy; --zTy) {
+						for (int32 zTx = zTw; zTx; --zTx) {
 							++pUsedTiles[tileOffset];
 							tileOffset++;
 						}
@@ -781,10 +781,10 @@ void StageDrawPoly(SDactor *actors, uint32 actorQty) {
 				}
 
 				// And the actor him/her self
-				int x0 = actors[j].psx_actor.minBbox.vx + 320;
-				int x1 = actors[j].psx_actor.maxBbox.vx + 321;
-				int y0 = actors[j].psx_actor.minBbox.vy + 239;
-				int y1 = actors[j].psx_actor.maxBbox.vy + 240;
+				int32 x0 = actors[j].psx_actor.minBbox.vx + 320;
+				int32 x1 = actors[j].psx_actor.maxBbox.vx + 321;
+				int32 y0 = actors[j].psx_actor.minBbox.vy + 239;
+				int32 y1 = actors[j].psx_actor.maxBbox.vy + 240;
 
 				// Check if actor is completely of screen
 				if (x1 < 0)
@@ -808,7 +808,7 @@ void StageDrawPoly(SDactor *actors, uint32 actorQty) {
 				if (y1 > 479)
 					y1 = 479;
 				// Include shake screen offset in clipping
-				int xShake = GetShakeX();
+				int32 xShake = GetShakeX();
 				if (xShake) {
 					x0 += xShake;
 					x1 += xShake;
@@ -827,7 +827,7 @@ void StageDrawPoly(SDactor *actors, uint32 actorQty) {
 					x1 -= xShake;
 				}
 
-				int yShake = GetShakeY();
+				int32 yShake = GetShakeY();
 				if (yShake) {
 					y0 += yShake;
 					y1 += yShake;
@@ -846,16 +846,16 @@ void StageDrawPoly(SDactor *actors, uint32 actorQty) {
 					y1 -= yShake;
 				}
 				// Mark these tiles as
-				int zTys = y0 / TILE_HEIGHT;
-				int zTxs = x0 / TILE_WIDTH;
-				int tileOffset = (zTys * TILES_WIDE) + zTxs;
-				int zTw = ((x1 + (TILE_WIDTH - 1)) / TILE_WIDTH) - zTxs;
-				int zTh = ((y1 + (TILE_HEIGHT - 1)) / TILE_HEIGHT) - zTys;
+				int32 zTys = y0 / TILE_HEIGHT;
+				int32 zTxs = x0 / TILE_WIDTH;
+				int32 tileOffset = (zTys * TILES_WIDE) + zTxs;
+				int32 zTw = ((x1 + (TILE_WIDTH - 1)) / TILE_WIDTH) - zTxs;
+				int32 zTh = ((y1 + (TILE_HEIGHT - 1)) / TILE_HEIGHT) - zTys;
 
 				// Now compose this actor
-				int rowStep = TILES_WIDE - zTw;
-				for (int zTy = zTh; zTy; --zTy) {
-					for (int zTx = zTw; zTx; --zTx) {
+				int32 rowStep = TILES_WIDE - zTw;
+				for (int32 zTy = zTh; zTy; --zTy) {
+					for (int32 zTx = zTw; zTx; --zTx) {
 						++pUsedTiles[tileOffset];
 						tileOffset++;
 					}
@@ -867,12 +867,12 @@ void StageDrawPoly(SDactor *actors, uint32 actorQty) {
 			uint32 tileOffset = 0;
 			uint32 rowOffset = 0;
 			uint32 pitchedRowOffset = 0;
-			for (int zTy = TILES_HIGH; zTy; --zTy) {
+			for (int32 zTy = TILES_HIGH; zTy; --zTy) {
 				uint32 offset = rowOffset;
 				uint32 pitchedOffset = pitchedRowOffset;
 
 				// Go through all the tiles the actor is occupying
-				for (int zTx = TILES_WIDE; zTx; --zTx) {
+				for (int32 zTx = TILES_WIDE; zTx; --zTx) {
 					if (pUsedTiles[tileOffset]) {
 						// This tile is used, so Get the prop quantity
 						uint32 propQty = propFile->GetPropQty();
@@ -890,12 +890,12 @@ void StageDrawPoly(SDactor *actors, uint32 actorQty) {
 								uint16 *zPtr = zTable;
 								uint16 *rowAd = zActor + offset;
 
-								for (int y = 0; y < TILE_HEIGHT; y++) {
+								for (int32 y = 0; y < TILE_HEIGHT; y++) {
 									uint16 *ptr = rowAd;
-									for (int x = 0; x < TILE_WIDTH;) {
+									for (int32 x = 0; x < TILE_WIDTH;) {
 										// read the rle counters (trans/solid)
-										int trans = ((int)*zPtr) & 0xff;
-										int solid = ((int)*zPtr) >> 8;
+										int32 trans = ((int32)*zPtr) & 0xff;
+										int32 solid = ((int32)*zPtr) >> 8;
 										zPtr++;
 
 										x += trans + solid;
@@ -919,13 +919,13 @@ void StageDrawPoly(SDactor *actors, uint32 actorQty) {
 								uint32 *bufRGB = source + offset;
 								uint16 *bufZ = zActor + offset;
 #if 1
-								for (int y = 0; y < TILE_HEIGHT; y++) {
+								for (int32 y = 0; y < TILE_HEIGHT; y++) {
 									uint32 *aRGB = bufRGB;
 									uint16 *aZ = bufZ;
-									for (int x = 0; x < TILE_WIDTH;) {
+									for (int32 x = 0; x < TILE_WIDTH;) {
 										// read the rle counters (trans/solid)
-										int trans = ((int)*tPtr) & 0xff;
-										int solid = ((int)*tPtr) >> 8;
+										int32 trans = ((int32)*tPtr) & 0xff;
+										int32 solid = ((int32)*tPtr) >> 8;
 										tPtr++;
 										aRGB += trans;
 										aZ += trans;
@@ -934,7 +934,7 @@ void StageDrawPoly(SDactor *actors, uint32 actorQty) {
 											if (*tPtr++ <= *aZ) {
 												uint8 *pix = (uint8 *)aRGB;
 												uint8 *t = (uint8 *)tPtr;
-												for (int i = 0; i < 3; i++) {
+												for (int32 i = 0; i < 3; i++) {
 													pix[i] = MIN(255, ((pix[i] * t[i]) >> 8) + t[i + 3]);
 												}
 											}
@@ -1059,13 +1059,13 @@ void StageDrawPoly(SDactor *actors, uint32 actorQty) {
 							uint32 *bufRGB = source + offset;
 							uint16 *bufZ = zActor + offset;
 #if 1
-							for (int y = 0; y < TILE_HEIGHT; y++) {
+							for (int32 y = 0; y < TILE_HEIGHT; y++) {
 								uint32 *aRGB = bufRGB;
 								uint16 *aZ = bufZ;
-								for (int x = 0; x < TILE_WIDTH;) {
+								for (int32 x = 0; x < TILE_WIDTH;) {
 									// read the rle counters (trans/solid)
-									int trans = ((int)*tPtr) & 0xff;
-									int solid = ((int)*tPtr) >> 8;
+									int32 trans = ((int32)*tPtr) & 0xff;
+									int32 solid = ((int32)*tPtr) >> 8;
 									tPtr++;
 									aRGB += trans;
 									aZ += trans;
@@ -1074,7 +1074,7 @@ void StageDrawPoly(SDactor *actors, uint32 actorQty) {
 										if (*tPtr++ <= *aZ) {
 											uint8 *pix = (uint8 *)aRGB;
 											uint8 *t = (uint8 *)tPtr;
-											for (int i = 0; i < 3; i++) {
+											for (int32 i = 0; i < 3; i++) {
 												pix[i] = MIN(255, ((pix[i] * t[i]) >> 8) + t[i + 3]);
 											}
 										}
@@ -1199,14 +1199,14 @@ void StageDrawPoly(SDactor *actors, uint32 actorQty) {
 						uint32 *rgbS32 = safe_ad + pitchedOffset + screenShakeOffset;
 						if (tilePtrs != NULL) {
 							uint16 *zPtr = tilePtrs;
-							for (int y = 0; y < TILE_HEIGHT; y++) {
+							for (int32 y = 0; y < TILE_HEIGHT; y++) {
 								uint16 *zDst = zA;
 								uint32 *rgbSrc = rgbA32;
 								uint32 *rgbDst = rgbS32;
-								for (int x = 0; x < TILE_WIDTH;) {
+								for (int32 x = 0; x < TILE_WIDTH;) {
 									// read the rle counters (trans/solid)
-									int trans = ((int)*zPtr) & 0xff;
-									int solid = ((int)*zPtr) >> 8;
+									int32 trans = ((int32)*zPtr) & 0xff;
+									int32 solid = ((int32)*zPtr) >> 8;
 									zPtr++;
 
 									x += trans + solid;
@@ -1224,7 +1224,7 @@ void StageDrawPoly(SDactor *actors, uint32 actorQty) {
 												uint8 *pixel = (uint8 *)rgbDst;
 												uint8 *src = (uint8 *)rgbSrc;
 												// Add from RGB components
-												for (int i = 0; i < 3; i++) {
+												for (int32 i = 0; i < 3; i++) {
 													pixel[i] = MIN(255, pixel[i] + src[i]);
 												}
 											}
@@ -1247,7 +1247,7 @@ void StageDrawPoly(SDactor *actors, uint32 actorQty) {
 												uint8 *pixel = (uint8 *)rgbDst;
 												uint8 *src = (uint8 *)rgbSrc;
 												// Sub from RGB components
-												for (int i = 0; i < 3; i++) {
+												for (int32 i = 0; i < 3; i++) {
 													pixel[i] = MAX(0, pixel[i] - src[i]);
 												}
 											}
@@ -1270,7 +1270,7 @@ void StageDrawPoly(SDactor *actors, uint32 actorQty) {
 												uint8 *pixel = (uint8 *)rgbDst;
 												uint8 *src = (uint8 *)rgbSrc;
 												// Add from RGB components
-												for (int i = 0; i < 3; i++) {
+												for (int32 i = 0; i < 3; i++) {
 													pixel[i] = (pixel[i] + src[i]) >> 1;
 												}
 											}
@@ -1312,7 +1312,7 @@ void StageDrawPoly(SDactor *actors, uint32 actorQty) {
 												uint8 *pixel = (uint8 *)rgbDst;
 												uint8 *src = (uint8 *)rgbSrc;
 												// Add from RGB components
-												for (int i = 0; i < 3; i++) {
+												for (int32 i = 0; i < 3; i++) {
 													pixel[i] = MIN(255, pixel[i] + src[i]);
 												}
 											}
@@ -1335,7 +1335,7 @@ void StageDrawPoly(SDactor *actors, uint32 actorQty) {
 												uint8 *pixel = (uint8 *)rgbDst;
 												uint8 *src = (uint8 *)rgbSrc;
 												// Sub from RGB components
-												for (int i = 0; i < 3; i++) {
+												for (int32 i = 0; i < 3; i++) {
 													pixel[i] = MAX(0, pixel[i] - src[i]);
 												}
 											}
@@ -1358,7 +1358,7 @@ void StageDrawPoly(SDactor *actors, uint32 actorQty) {
 												uint8 *pixel = (uint8 *)rgbDst;
 												uint8 *src = (uint8 *)rgbSrc;
 												// Add from RGB components
-												for (int i = 0; i < 3; i++) {
+												for (int32 i = 0; i < 3; i++) {
 													pixel[i] = (pixel[i] + src[i]) >> 1;
 												}
 											}
@@ -1392,11 +1392,11 @@ void StageDrawPoly(SDactor *actors, uint32 actorQty) {
 								rgbS32 += pitch >> 2;
 							}
 						} else {
-							for (int y = TILE_HEIGHT; y; --y) {
+							for (int32 y = TILE_HEIGHT; y; --y) {
 								uint16 *zDst = zA;
 								uint32 *rgbSrc = rgbA32;
 								uint32 *rgbDst = rgbS32;
-								for (int x = TILE_WIDTH; x; --x) {
+								for (int32 x = TILE_WIDTH; x; --x) {
 									if (*zDst != 0xffff) {
 										switch ((*rgbSrc) >> 30) {
 										case 0:
@@ -1409,7 +1409,7 @@ void StageDrawPoly(SDactor *actors, uint32 actorQty) {
 											uint8 *pixel = (uint8 *)rgbDst;
 											uint8 *src = (uint8 *)rgbSrc;
 											// Add from RGB components
-											for (int i = 0; i < 3; i++) {
+											for (int32 i = 0; i < 3; i++) {
 												pixel[i] = MIN(255, pixel[i] + src[i]);
 											}
 										}
@@ -1432,7 +1432,7 @@ void StageDrawPoly(SDactor *actors, uint32 actorQty) {
 											uint8 *pixel = (uint8 *)rgbDst;
 											uint8 *src = (uint8 *)rgbSrc;
 											// Sub from RGB components
-											for (int i = 0; i < 3; i++) {
+											for (int32 i = 0; i < 3; i++) {
 												pixel[i] = MAX(0, pixel[i] - src[i]);
 											}
 										}
@@ -1455,7 +1455,7 @@ void StageDrawPoly(SDactor *actors, uint32 actorQty) {
 											uint8 *pixel = (uint8 *)rgbDst;
 											uint8 *src = (uint8 *)rgbSrc;
 											// Add from RGB components
-											for (int i = 0; i < 3; i++) {
+											for (int32 i = 0; i < 3; i++) {
 												pixel[i] = (pixel[i] + src[i]) >> 1;
 											}
 										}
@@ -1503,17 +1503,17 @@ void StageDrawPoly(SDactor *actors, uint32 actorQty) {
 				if (effectsDrawn) {
 					// Point the renderer at the effects z map
 					pZ = pZfx;
-					revRen.Zdata = (u_short *)pZ;
+					revRen.Zdata = (uint16 *)pZ;
 					SetRenderDevice(&revRen);
 					drawOTList();
 
 					for (j = 0; j < actorQty; j++) {
-						int x0 = effectsMin[j].vx + 320;
-						int x1 = effectsMax[j].vx + 321;
-						int y0 = effectsMin[j].vy + 239;
-						int y1 = effectsMax[j].vy + 240;
-						//						int z0 = effectsMin[j].vz + 0;
-						//						int z1 = effectsMax[j].vz + 1;
+						int32 x0 = effectsMin[j].vx + 320;
+						int32 x1 = effectsMax[j].vx + 321;
+						int32 y0 = effectsMin[j].vy + 239;
+						int32 y1 = effectsMax[j].vy + 240;
+						//						int32 z0 = effectsMin[j].vz + 0;
+						//						int32 z1 = effectsMax[j].vz + 1;
 
 						if (x1 < x0)
 							continue; // Not a valid BBox
@@ -1548,7 +1548,7 @@ void StageDrawPoly(SDactor *actors, uint32 actorQty) {
 							y1 = 479;
 
 						// Include shake screen offset in clipping
-						int xShake = GetShakeX();
+						int32 xShake = GetShakeX();
 						if (xShake) {
 							x0 += xShake;
 							x1 += xShake;
@@ -1570,7 +1570,7 @@ void StageDrawPoly(SDactor *actors, uint32 actorQty) {
 							x1 -= xShake;
 						}
 
-						int yShake = GetShakeY();
+						int32 yShake = GetShakeY();
 						if (yShake) {
 							y0 += yShake;
 							y1 += yShake;
@@ -1593,22 +1593,22 @@ void StageDrawPoly(SDactor *actors, uint32 actorQty) {
 						}
 
 						// Find which tiles z tiles the actor is at
-						int zTys = y0 / TILE_HEIGHT;
-						int zTxs = x0 / TILE_WIDTH;
-						int tileOffset = (zTys * TILES_WIDE) + zTxs;
-						//						int tileStart = tileOffset;
-						int zTw = ((x1 + (TILE_WIDTH - 1)) / TILE_WIDTH) - zTxs;
-						int zTh = ((y1 + (TILE_HEIGHT - 1)) / TILE_HEIGHT) - zTys;
+						int32 zTys = y0 / TILE_HEIGHT;
+						int32 zTxs = x0 / TILE_WIDTH;
+						int32 tileOffset = (zTys * TILES_WIDE) + zTxs;
+						//						int32 tileStart = tileOffset;
+						int32 zTw = ((x1 + (TILE_WIDTH - 1)) / TILE_WIDTH) - zTxs;
+						int32 zTh = ((y1 + (TILE_HEIGHT - 1)) / TILE_HEIGHT) - zTys;
 						uint32 tileRowOffset = (TILE_HEIGHT * zTys * SCREEN_WIDTH) + (zTxs * TILE_WIDTH);
 						uint32 pitchedTileRowOffset = (TILE_HEIGHT * zTys * pitch >> 2) + (zTxs * TILE_WIDTH);
 
 						// Now composite the effects
-						for (int zTy = 0; zTy < zTh; zTy++) {
+						for (int32 zTy = 0; zTy < zTh; zTy++) {
 							// Go through all the tiles the actor is occupying
 							uint32 offset = tileRowOffset;
 							uint32 pitchedOffset = pitchedTileRowOffset;
 
-							for (int zTx = 0; zTx < zTw; zTx++) {
+							for (int32 zTx = 0; zTx < zTw; zTx++) {
 								// Get a pointer to the scene z table
 								uint16 *tilePtrs = sceneZ->GetTileTable(tileOffset);
 								uint16 *zA = (uint16 *)pZfx + offset;
@@ -1617,14 +1617,14 @@ void StageDrawPoly(SDactor *actors, uint32 actorQty) {
 
 								if (tilePtrs != NULL) {
 									uint16 *zPtr = tilePtrs;
-									for (int y = 0; y < TILE_HEIGHT; y++) {
+									for (int32 y = 0; y < TILE_HEIGHT; y++) {
 										uint16 *zDst = zA;
 										uint32 *rgbSrc = rgbA32;
 										uint32 *rgbDst = rgbS32;
-										for (int x = 0; x < TILE_WIDTH;) {
+										for (int32 x = 0; x < TILE_WIDTH;) {
 											// read the rle counters (trans/solid)
-											int trans = ((int)*zPtr) & 0xff;
-											int solid = ((int)*zPtr) >> 8;
+											int32 trans = ((int32)*zPtr) & 0xff;
+											int32 solid = ((int32)*zPtr) >> 8;
 											zPtr++;
 
 											x += trans + solid;
@@ -1642,7 +1642,7 @@ void StageDrawPoly(SDactor *actors, uint32 actorQty) {
 														uint8 *pixel = (uint8 *)rgbDst;
 														uint8 *src = (uint8 *)rgbSrc;
 														// Add from RGB components
-														for (int i = 0; i < 3; i++) {
+														for (int32 i = 0; i < 3; i++) {
 															pixel[i] = MIN(255, pixel[i] + src[i]);
 														}
 													}
@@ -1665,7 +1665,7 @@ void StageDrawPoly(SDactor *actors, uint32 actorQty) {
 														uint8 *pixel = (uint8 *)rgbDst;
 														uint8 *src = (uint8 *)rgbSrc;
 														// Sub from RGB components
-														for (int i = 0; i < 3; i++) {
+														for (int32 i = 0; i < 3; i++) {
 															pixel[i] = MAX(0, pixel[i] - src[i]);
 														}
 													}
@@ -1688,7 +1688,7 @@ void StageDrawPoly(SDactor *actors, uint32 actorQty) {
 														uint8 *pixel = (uint8 *)rgbDst;
 														uint8 *src = (uint8 *)rgbSrc;
 														// Add from RGB components
-														for (int i = 0; i < 3; i++) {
+														for (int32 i = 0; i < 3; i++) {
 															pixel[i] = (pixel[i] + src[i]) >> 1;
 														}
 													}
@@ -1730,7 +1730,7 @@ void StageDrawPoly(SDactor *actors, uint32 actorQty) {
 														uint8 *pixel = (uint8 *)rgbDst;
 														uint8 *src = (uint8 *)rgbSrc;
 														// Add from RGB components
-														for (int i = 0; i < 3; i++) {
+														for (int32 i = 0; i < 3; i++) {
 															pixel[i] = MIN(255, pixel[i] + src[i]);
 														}
 													}
@@ -1753,7 +1753,7 @@ void StageDrawPoly(SDactor *actors, uint32 actorQty) {
 														uint8 *pixel = (uint8 *)rgbDst;
 														uint8 *src = (uint8 *)rgbSrc;
 														// Sub from RGB components
-														for (int i = 0; i < 3; i++) {
+														for (int32 i = 0; i < 3; i++) {
 															pixel[i] = MAX(0, pixel[i] - src[i]);
 														}
 													}
@@ -1776,7 +1776,7 @@ void StageDrawPoly(SDactor *actors, uint32 actorQty) {
 														uint8 *pixel = (uint8 *)rgbDst;
 														uint8 *src = (uint8 *)rgbSrc;
 														// Add from RGB components
-														for (int i = 0; i < 3; i++) {
+														for (int32 i = 0; i < 3; i++) {
 															pixel[i] = (pixel[i] + src[i]) >> 1;
 														}
 													}
@@ -1810,11 +1810,11 @@ void StageDrawPoly(SDactor *actors, uint32 actorQty) {
 										rgbS32 += pitch >> 2;
 									}
 								} else {
-									for (int y = TILE_HEIGHT; y; --y) {
+									for (int32 y = TILE_HEIGHT; y; --y) {
 										uint16 *zDst = zA;
 										uint32 *rgbSrc = rgbA32;
 										uint32 *rgbDst = rgbS32;
-										for (int x = TILE_WIDTH; x; --x) {
+										for (int32 x = TILE_WIDTH; x; --x) {
 											if (*zDst < *(zDst + (ZBUFFERSIZE >> 1))) {
 												switch ((*rgbSrc) >> 30) {
 												case 0:
@@ -1827,7 +1827,7 @@ void StageDrawPoly(SDactor *actors, uint32 actorQty) {
 													uint8 *pixel = (uint8 *)rgbDst;
 													uint8 *src = (uint8 *)rgbSrc;
 													// Add from RGB components
-													for (int i = 0; i < 3; i++) {
+													for (int32 i = 0; i < 3; i++) {
 														pixel[i] = MIN(255, pixel[i] + src[i]);
 													}
 												}
@@ -1850,7 +1850,7 @@ void StageDrawPoly(SDactor *actors, uint32 actorQty) {
 													uint8 *pixel = (uint8 *)rgbDst;
 													uint8 *src = (uint8 *)rgbSrc;
 													// Sub from RGB components
-													for (int i = 0; i < 3; i++) {
+													for (int32 i = 0; i < 3; i++) {
 														pixel[i] = MAX(0, pixel[i] - src[i]);
 													}
 												}
@@ -1873,7 +1873,7 @@ void StageDrawPoly(SDactor *actors, uint32 actorQty) {
 													uint8 *pixel = (uint8 *)rgbDst;
 													uint8 *src = (uint8 *)rgbSrc;
 													// Add from RGB components
-													for (int i = 0; i < 3; i++) {
+													for (int32 i = 0; i < 3; i++) {
 														pixel[i] = (pixel[i] + src[i]) >> 1;
 													}
 												}
@@ -1921,12 +1921,12 @@ void StageDrawPoly(SDactor *actors, uint32 actorQty) {
 		// Reset the actor z map
 		uint32 *ptiles = pUsedTiles;
 		char *pZC = pZa;
-		for (int zTy = TILES_HIGH; zTy; zTy--) {
+		for (int32 zTy = TILES_HIGH; zTy; zTy--) {
 			// Go through all the tiles the actor is occupying
-			for (int zTx = TILES_WIDE; zTx; zTx--) {
+			for (int32 zTx = TILES_WIDE; zTx; zTx--) {
 				if (*ptiles) {
 					char *pCZ = pZC;
-					for (int i = TILE_HEIGHT; i; i--) {
+					for (int32 i = TILE_HEIGHT; i; i--) {
 						memset(pCZ, 0xff, TILE_WIDTH << 1);
 						pCZ += ZPitch;
 					}

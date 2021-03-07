@@ -31,17 +31,17 @@
 
 namespace ICB {
 
-int globalCharSpacing = 0;
+int32 globalCharSpacing = 0;
 
 // Prop sprite brightness to use when highlighting a prop that the player could interact with
-int g_prop_select_r = 200;
-int g_prop_select_g = 200;
-int g_prop_select_b = 200;
+int32 g_prop_select_r = 200;
+int32 g_prop_select_g = 200;
+int32 g_prop_select_b = 200;
 
 // extra ambient brightness to use when highlighting a mega that the player could interact with
-int g_mega_select_r = 200;
-int g_mega_select_g = 200;
-int g_mega_select_b = 200;
+int32 g_mega_select_r = 200;
+int32 g_mega_select_g = 200;
+int32 g_mega_select_b = 200;
 
 // holds info about current mission
 _mission *g_mission = NULL;

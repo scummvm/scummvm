@@ -30,17 +30,17 @@
 namespace ICB {
 
 inline void pcApplyMatrixLV(MATRIX *m, VECTOR *invec, VECTOR *outvec) {
-	outvec->vx = ((int)m->m[0][0] * invec->vx + (int)m->m[0][1] * invec->vy + (int)m->m[0][2] * invec->vz) >> 12;
-	outvec->vy = ((int)m->m[1][0] * invec->vx + (int)m->m[1][1] * invec->vy + (int)m->m[1][2] * invec->vz) >> 12;
-	outvec->vz = ((int)m->m[2][0] * invec->vx + (int)m->m[2][1] * invec->vy + (int)m->m[2][2] * invec->vz) >> 12;
+	outvec->vx = ((int32)m->m[0][0] * invec->vx + (int32)m->m[0][1] * invec->vy + (int32)m->m[0][2] * invec->vz) >> 12;
+	outvec->vy = ((int32)m->m[1][0] * invec->vx + (int32)m->m[1][1] * invec->vy + (int32)m->m[1][2] * invec->vz) >> 12;
+	outvec->vz = ((int32)m->m[2][0] * invec->vx + (int32)m->m[2][1] * invec->vy + (int32)m->m[2][2] * invec->vz) >> 12;
 }
 
 void WorldToFilm(const PXvector_PC &worldpos, const PCcamera &camera, bool8 &is_onfilm, PXvector_PC &filmpos) {
 	VECTOR scrn;
 	VECTOR vWorldPos;
-	vWorldPos.vx = (int)worldpos.x;
-	vWorldPos.vy = (int)worldpos.y;
-	vWorldPos.vz = (int)worldpos.z;
+	vWorldPos.vx = (int32)worldpos.x;
+	vWorldPos.vy = (int32)worldpos.y;
+	vWorldPos.vz = (int32)worldpos.z;
 
 	pcApplyMatrixLV(const_cast<MATRIX *>(&camera.view), &vWorldPos, &scrn);
 	scrn.vx += camera.view.t[0];

@@ -36,7 +36,7 @@ namespace ICB {
 
 void UpdateTalking(_logic *log, rap_API *rap);
 
-void SetPlayerShotBone(int obj_id);
+void SetPlayerShotBone(int32 obj_id);
 
 void UpdatePlayerLook();
 

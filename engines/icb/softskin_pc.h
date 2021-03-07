@@ -33,8 +33,8 @@
 
 namespace ICB {
 
-int softskinPC(rap_API *rap, int poseBone, MATRIXPC *lw, SVECTORPC *local, int16 *xminLocal, int16 *xmaxLocal, int16 *yminLocal, int16 *ymaxLocal, int16 *zminLocal,
-               int16 *zmaxLocal, int screenShift);
+int32 softskinPC(rap_API *rap, int poseBone, MATRIXPC *lw, SVECTORPC *local, int16 *xminLocal, int16 *xmaxLocal, int16 *yminLocal, int16 *ymaxLocal, int16 *zminLocal,
+               int16 *zmaxLocal, int32 screenShift);
 
 } // End of namespace ICB
 

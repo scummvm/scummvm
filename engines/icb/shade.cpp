@@ -104,38 +104,38 @@ void preprocessShadeData(FVECTOR v[3], ShadeTriangle *s) {
 	n20dots2 = DOT_PRODUCT(n20x, n20y, n20z, v[2].vx, v[2].vy, v[2].vz);
 
 	// Store the pre-processed data
-	s->l01.vx = (short)l01x;
-	s->l01.vy = (short)l01y;
-	s->l01.vz = (short)l01z;
+	s->l01.vx = (int16)l01x;
+	s->l01.vy = (int16)l01y;
+	s->l01.vz = (int16)l01z;
 
-	s->l12.vx = (short)l12x;
-	s->l12.vy = (short)l12y;
-	s->l12.vz = (short)l12z;
+	s->l12.vx = (int16)l12x;
+	s->l12.vy = (int16)l12y;
+	s->l12.vz = (int16)l12z;
 
-	s->l20.vx = (short)l20x;
-	s->l20.vy = (short)l20y;
-	s->l20.vz = (short)l20z;
+	s->l20.vx = (int16)l20x;
+	s->l20.vy = (int16)l20y;
+	s->l20.vz = (int16)l20z;
 
-	s->n01.vx = (short)(4096.0f * n01x);
-	s->n01.vy = (short)(4096.0f * n01y);
-	s->n01.vz = (short)(4096.0f * n01z);
+	s->n01.vx = (int16)(4096.0f * n01x);
+	s->n01.vy = (int16)(4096.0f * n01y);
+	s->n01.vz = (int16)(4096.0f * n01z);
 
-	s->n12.vx = (short)(4096.0f * n12x);
-	s->n12.vy = (short)(4096.0f * n12y);
-	s->n12.vz = (short)(4096.0f * n12z);
+	s->n12.vx = (int16)(4096.0f * n12x);
+	s->n12.vy = (int16)(4096.0f * n12y);
+	s->n12.vz = (int16)(4096.0f * n12z);
 
-	s->n20.vx = (short)(4096.0f * n20x);
-	s->n20.vy = (short)(4096.0f * n20y);
-	s->n20.vz = (short)(4096.0f * n20z);
+	s->n20.vx = (int16)(4096.0f * n20x);
+	s->n20.vy = (int16)(4096.0f * n20y);
+	s->n20.vz = (int16)(4096.0f * n20z);
 
-	s->pn.vx = (short)(4096.0f * nx);
-	s->pn.vy = (short)(4096.0f * ny);
-	s->pn.vz = (short)(4096.0f * nz);
+	s->pn.vx = (int16)(4096.0f * nx);
+	s->pn.vy = (int16)(4096.0f * ny);
+	s->pn.vz = (int16)(4096.0f * nz);
 
-	s->d = (int)(4096.0f * d);
-	s->n01dots0 = (int)n01dots0;
-	s->n12dots1 = (int)n12dots1;
-	s->n20dots2 = (int)n20dots2;
+	s->d = (int32)(4096.0f * d);
+	s->n01dots0 = (int32)n01dots0;
+	s->n12dots1 = (int32)n12dots1;
+	s->n20dots2 = (int32)n20dots2;
 }
 
 /*
@@ -210,47 +210,47 @@ void preprocessShadeData(FVECTOR v[4], ShadeQuad *s) {
 	n30dots3 = DOT_PRODUCT(n30x, n30y, n30z, v[3].vx, v[3].vy, v[3].vz);
 
 	// Store the pre-processed data
-	s->l01.vx = (short)l01x;
-	s->l01.vy = (short)l01y;
-	s->l01.vz = (short)l01z;
+	s->l01.vx = (int16)l01x;
+	s->l01.vy = (int16)l01y;
+	s->l01.vz = (int16)l01z;
 
-	s->l12.vx = (short)l12x;
-	s->l12.vy = (short)l12y;
-	s->l12.vz = (short)l12z;
+	s->l12.vx = (int16)l12x;
+	s->l12.vy = (int16)l12y;
+	s->l12.vz = (int16)l12z;
 
-	s->l23.vx = (short)l23x;
-	s->l23.vy = (short)l23y;
-	s->l23.vz = (short)l23z;
+	s->l23.vx = (int16)l23x;
+	s->l23.vy = (int16)l23y;
+	s->l23.vz = (int16)l23z;
 
-	s->l30.vx = (short)l30x;
-	s->l30.vy = (short)l30y;
-	s->l30.vz = (short)l30z;
+	s->l30.vx = (int16)l30x;
+	s->l30.vy = (int16)l30y;
+	s->l30.vz = (int16)l30z;
 
-	s->n01.vx = (short)(4096.0f * n01x);
-	s->n01.vy = (short)(4096.0f * n01y);
-	s->n01.vz = (short)(4096.0f * n01z);
+	s->n01.vx = (int16)(4096.0f * n01x);
+	s->n01.vy = (int16)(4096.0f * n01y);
+	s->n01.vz = (int16)(4096.0f * n01z);
 
-	s->n12.vx = (short)(4096.0f * n12x);
-	s->n12.vy = (short)(4096.0f * n12y);
-	s->n12.vz = (short)(4096.0f * n12z);
+	s->n12.vx = (int16)(4096.0f * n12x);
+	s->n12.vy = (int16)(4096.0f * n12y);
+	s->n12.vz = (int16)(4096.0f * n12z);
 
-	s->n23.vx = (short)(4096.0f * n23x);
-	s->n23.vy = (short)(4096.0f * n23y);
-	s->n23.vz = (short)(4096.0f * n23z);
+	s->n23.vx = (int16)(4096.0f * n23x);
+	s->n23.vy = (int16)(4096.0f * n23y);
+	s->n23.vz = (int16)(4096.0f * n23z);
 
-	s->n30.vx = (short)(4096.0f * n30x);
-	s->n30.vy = (short)(4096.0f * n30y);
-	s->n30.vz = (short)(4096.0f * n30z);
+	s->n30.vx = (int16)(4096.0f * n30x);
+	s->n30.vy = (int16)(4096.0f * n30y);
+	s->n30.vz = (int16)(4096.0f * n30z);
 
-	s->pn.vx = (short)(4096.0f * nx);
-	s->pn.vy = (short)(4096.0f * ny);
-	s->pn.vz = (short)(4096.0f * nz);
+	s->pn.vx = (int16)(4096.0f * nx);
+	s->pn.vy = (int16)(4096.0f * ny);
+	s->pn.vz = (int16)(4096.0f * nz);
 
-	s->d = (int)(4096.0f * d);
-	s->n01dots0 = (int)n01dots0;
-	s->n12dots1 = (int)n12dots1;
-	s->n23dots2 = (int)n23dots2;
-	s->n30dots3 = (int)n30dots3;
+	s->d = (int32)(4096.0f * d);
+	s->n01dots0 = (int32)n01dots0;
+	s->n12dots1 = (int32)n12dots1;
+	s->n23dots2 = (int32)n23dots2;
+	s->n30dots3 = (int32)n30dots3;
 }
 
 } // End of namespace ICB

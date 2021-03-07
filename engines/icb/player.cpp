@@ -64,9 +64,9 @@ mcodeFunctionReturnCodes fn_is_player_striking(int32 &result, int32 *params) { r
 // pc device switch
 extern __pc_input device;
 
-int armedChangesMode = 0;
-int animToggles = 0;
-int CAMERA_SMOOTH_CYCLES = 12;
+int32 armedChangesMode = 0;
+int32 animToggles = 0;
+int32 CAMERA_SMOOTH_CYCLES = 12;
 
 #define CORRECT_PAN                                                                                                                                                                \
 	if (log->pan >= HALF_TURN)                                                                                                                                                 \
@@ -968,7 +968,7 @@ void _player::Soft_start_new_mode_no_link(_player_stat new_mode, __mega_set_name
 
 	int32 diff = 1000000; // a big number
 	uint32 old_leg_pos;
-	int j;
+	int32 j;
 
 	// link anim not in CAPS
 	if ((!log->voxel_info->IsAnimTable(type)))
@@ -1009,7 +1009,7 @@ void _player::Soft_start_new_mode(_player_stat new_mode, __mega_set_names opt_li
 
 	int32 diff = 1000000; // a big number
 	uint32 old_leg_pos;
-	int j;
+	int32 j;
 
 	// link anim not in CAPS
 	if ((!log->voxel_info->IsAnimTable(opt_link))) {
@@ -1234,7 +1234,7 @@ void _player::Soft_start_new_mode(_player_stat new_mode, __mega_set_names opt_li
 	int32 diff = 1000000; // a big number
 
 	uint32 old_leg_pos;
-	int j;
+	int32 j;
 
 	// no link anim specified OR
 	// either link anim not in CAPS then just forget all about it - hey, too bad, ok?
@@ -1321,7 +1321,7 @@ __mode_return _player::Process_strike() {
 	                                             log->voxel_info->base_path, log->voxel_info->base_path_hash); //
 
 	// last frame?
-	if ((int)(log->anim_pc + 1) == (pAnim->frame_qty - 1)) {
+	if ((int32)(log->anim_pc + 1) == (pAnim->frame_qty - 1)) {
 		// we displayed the last frame last cycle - so display first of new mode this cycle
 
 		player_status = STOOD;
@@ -1433,7 +1433,7 @@ __mode_return _player::Process_fast_link() {
 	//	log->anim_pc+=1;
 
 	// last frame?
-	if ((int)(log->anim_pc + 2) >= (anim->frame_qty - 1)) {
+	if ((int32)(log->anim_pc + 2) >= (anim->frame_qty - 1)) {
 		// we displayed the last frame last cycle - so display first of new mode this cycle
 
 		// set target after-link-anim-mode
@@ -1475,7 +1475,7 @@ __mode_return _player::Process_link() {
 	                                            log->voxel_info->base_path, log->voxel_info->base_path_hash); //
 
 	// last frame?
-	if ((int)(log->anim_pc + 1) == (anim->frame_qty - 1)) {
+	if ((int32)(log->anim_pc + 1) == (anim->frame_qty - 1)) {
 		//		we displayed the last frame last cycle - so display first of new mode this cycle
 		player_status = stat_after_link;
 
@@ -1521,7 +1521,7 @@ __mode_return _player::Process_easy_link() {
 	                                            log->voxel_info->base_path, log->voxel_info->base_path_hash); //
 
 	// last frame?
-	if ((int)(log->anim_pc + 1) == (anim->frame_qty - 1)) {
+	if ((int32)(log->anim_pc + 1) == (anim->frame_qty - 1)) {
 		// we displayed the last frame last cycle - so display first of new mode this cycle
 		// set target after-link-anim-mode
 		player_status = stat_after_link;
@@ -1546,7 +1546,7 @@ __mode_return _player::Process_still_link() {
 	                                            log->voxel_info->base_path, log->voxel_info->base_path_hash); //
 
 	// last frame currently displayed?
-	if ((int)(log->anim_pc + 1) == (anim->frame_qty - 1)) {
+	if ((int32)(log->anim_pc + 1) == (anim->frame_qty - 1)) {
 		// we displayed the last frame last cycle
 
 		player_status = stat_after_link;

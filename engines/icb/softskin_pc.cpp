@@ -33,8 +33,8 @@
 
 namespace ICB {
 
-int softskinPC(rap_API *rap, int poseBone, MATRIXPC *lw, SVECTORPC *local, int16 *xminLocal, int16 *xmaxLocal, int16 *yminLocal, int16 *ymaxLocal, int16 *zminLocal,
-               int16 *zmaxLocal, int screenShift) {
+int32 softskinPC(rap_API *rap, int32 poseBone, MATRIXPC *lw, SVECTORPC *local, int16 *xminLocal, int16 *xmaxLocal, int16 *yminLocal, int16 *ymaxLocal, int16 *zminLocal,
+               int16 *zmaxLocal, int32 screenShift) {
 	// step 1 : make all the local-world and local-screen matrices
 	//    This is done prior to this function
 	// step 2 : take all the offsets from the mesh file
@@ -69,7 +69,7 @@ int softskinPC(rap_API *rap, int poseBone, MATRIXPC *lw, SVECTORPC *local, int16
 	VECTOR lvert, lvert2;
 
 	int32 flag;
-	uint oldPrim = rap->nBones;
+	uint32 oldPrim = rap->nBones;
 
 	int32 xmin = *xminLocal;
 	int32 ymin = *yminLocal;
@@ -115,9 +115,9 @@ int softskinPC(rap_API *rap, int poseBone, MATRIXPC *lw, SVECTORPC *local, int16
 			vIndex = noneLink->vertId;
 			plocal = local + vIndex;
 
-			plocal->vx = (short)(lvert2.vx >> worldScaleShift);
-			plocal->vy = (short)(lvert2.vy >> worldScaleShift);
-			plocal->vz = (short)(lvert2.vz >> worldScaleShift);
+			plocal->vx = (int16)(lvert2.vx >> worldScaleShift);
+			plocal->vy = (int16)(lvert2.vy >> worldScaleShift);
+			plocal->vz = (int16)(lvert2.vz >> worldScaleShift);
 
 			lvx = plocal->vx;
 			lvy = plocal->vy;
@@ -151,9 +151,9 @@ int softskinPC(rap_API *rap, int poseBone, MATRIXPC *lw, SVECTORPC *local, int16
 		plocal = local + singleLink->vertId;
 		if (singleLink->vertId > nVertices)
 			nVertices = singleLink->vertId;
-		plocal->vx = (short)(lvert2.vx >> worldScaleShift);
-		plocal->vy = (short)(lvert2.vy >> worldScaleShift);
-		plocal->vz = (short)(lvert2.vz >> worldScaleShift);
+		plocal->vx = (int16)(lvert2.vx >> worldScaleShift);
+		plocal->vy = (int16)(lvert2.vy >> worldScaleShift);
+		plocal->vz = (int16)(lvert2.vz >> worldScaleShift);
 
 		lvx = plocal->vx;
 		lvy = plocal->vy;
@@ -170,13 +170,13 @@ int softskinPC(rap_API *rap, int poseBone, MATRIXPC *lw, SVECTORPC *local, int16
 		singleLink++;
 	}
 
-	uint curVert = multiLink->link.vertId;
+	uint32 curVert = multiLink->link.vertId;
 
 	lvert.vx = 0;
 	lvert.vy = 0;
 	lvert.vz = 0;
 	for (i = 0; i < nMulti; i++) {
-		u_int weight = multiLink->weight;
+		uint32 weight = multiLink->weight;
 		prim = multiLink->link.primId; // which co-ordinate system to use
 
 		// Put the correct rot and trans matrix in place
@@ -204,9 +204,9 @@ int softskinPC(rap_API *rap, int poseBone, MATRIXPC *lw, SVECTORPC *local, int16
 				nVertices = curVert;
 
 			plocal = local + curVert;
-			plocal->vx = (short)(lvert.vx >> bothScaleShift);
-			plocal->vy = (short)(lvert.vy >> bothScaleShift);
-			plocal->vz = (short)(lvert.vz >> bothScaleShift);
+			plocal->vx = (int16)(lvert.vx >> bothScaleShift);
+			plocal->vy = (int16)(lvert.vy >> bothScaleShift);
+			plocal->vz = (int16)(lvert.vz >> bothScaleShift);
 			curVert = vIndex;
 			lvert.vx = 0;
 			lvert.vy = 0;
@@ -226,13 +226,13 @@ int softskinPC(rap_API *rap, int poseBone, MATRIXPC *lw, SVECTORPC *local, int16
 		}
 	}
 
-	*xminLocal = (short)xmin;
-	*yminLocal = (short)ymin;
-	*zminLocal = (short)zmin;
+	*xminLocal = (int16)xmin;
+	*yminLocal = (int16)ymin;
+	*zminLocal = (int16)zmin;
 
-	*xmaxLocal = (short)xmax;
-	*ymaxLocal = (short)ymax;
-	*zmaxLocal = (short)zmax;
+	*xmaxLocal = (int16)xmax;
+	*ymaxLocal = (int16)ymax;
+	*zmaxLocal = (int16)zmax;
 
 	nVertices++;
 	return nVertices;

@@ -33,11 +33,11 @@ namespace ICB {
 
 void BoneDeformation::UpdateBoneValue(short &v, short t) {
 	if (v < t) {
-		v = (short)(v + boneSpeed);
+		v = (int16)(v + boneSpeed);
 		if (v > t)
 			v = t;
 	} else if (v > t) {
-		v = (short)(v - boneSpeed);
+		v = (int16)(v - boneSpeed);
 		if (v < t)
 			v = t;
 	}

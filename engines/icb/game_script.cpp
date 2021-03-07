@@ -96,7 +96,7 @@ void _game_script::Run_to_bookmark(const char *name) {
 	char p1[ENGINE_STRING_LEN];
 
 	// reset program counter (but keep demo flag!)
-	int demo = g_globalScriptVariables.GetVariable("demo");
+	int32 demo = g_globalScriptVariables.GetVariable("demo");
 	Restart_game_script();
 	g_globalScriptVariables.SetVariable("demo", demo);
 

@@ -446,7 +446,7 @@ mcodeFunctionReturnCodes _game_session::Core_prop_interact(int32 & /*result*/, i
 		PXanim *pAnim = (PXanim *)rs_anims->Res_open(I->get_info_name(L->cur_anim_type), I->info_name_hash[L->cur_anim_type], I->base_path, I->base_path_hash); //
 
 		// last frame is currently displayed?
-		if ((int)(L->anim_pc + M->anim_speed) >= (pAnim->frame_qty - 1)) {
+		if ((int32)(L->anim_pc + M->anim_speed) >= (pAnim->frame_qty - 1)) {
 			L->looping = FALSE8;
 			M->reverse_route = FALSE8;
 

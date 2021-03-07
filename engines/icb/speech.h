@@ -73,7 +73,7 @@ public:
 class __conversation {
       public:
 	__conversation() {
-		for (int i = 0; i < MAX_people_talking; i++)
+		for (int32 i = 0; i < MAX_people_talking; i++)
 			subscribers_requested[i] = 0;
 
 		total_subscribers = 0;

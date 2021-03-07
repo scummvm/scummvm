@@ -33,7 +33,7 @@ namespace ICB {
 
 namespace MemoryUtil {
 
-const int PTR_ARRAY_MAX(1024);
+const int32 PTR_ARRAY_MAX(1024);
 
 // map pointers to 32-bit references (bottom 32-bits of address)
 struct PointerReference {

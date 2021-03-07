@@ -56,7 +56,7 @@ public:
 	void Append(const Type &);        // Append item to the end of the list
 	void Insert(const Type &);        // Inserts an item after the current item
 	pxList<Type> *Find(const Type &); // Returns the list whose head == entry (NULL if not found)
-	int Length();                     // Returns the length of the list
+	int32 Length();                     // Returns the length of the list
 };
 
 template <class Type> class rcSortedList {
@@ -77,7 +77,7 @@ public:
 	Type &Head();               // The lists' head
 	rcSortedList<Type> *Tail(); // The lists' tail
 	bool IsEmpty();             // Is the list empty ?
-	int Length();               // Returns the length of the list
+	int32 Length();               // Returns the length of the list
 
 public:
 	rcSortedList<Type> *Insert(const Type &); // Inserts an item in the correct place
@@ -117,7 +117,7 @@ template <class Type> pxList<Type> *pxList<Type>::Find(const Type &entry) {
 	return (Tail()->Find(entry));
 }
 
-template <class Type> int pxList<Type>::Length() {
+template <class Type> int32 pxList<Type>::Length() {
 	if (IsEmpty())
 		return 0;
 
@@ -173,7 +173,7 @@ template <class Type> rcSortedList<Type> *rcSortedList<Type>::Find(const Type &e
 	return (Tail()->Find(entry));
 }
 
-template <class Type> int rcSortedList<Type>::Length() {
+template <class Type> int32 rcSortedList<Type>::Length() {
 	if (IsEmpty())
 		return 0;
 

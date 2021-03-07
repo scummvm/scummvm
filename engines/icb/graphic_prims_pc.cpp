@@ -168,12 +168,12 @@ void General_draw_line_24_32(int16 x0, int16 y0, int16 x1, int16 y1, _rgb *colou
 	// we pass the surface base
 	// assume 640*480
 
-	int dx, dy;
-	int dxmod, dymod;
-	int ince, incne;
-	int d;
-	int x, y;
-	int addTo;
+	int32 dx, dy;
+	int32 dxmod, dymod;
+	int32 ince, incne;
+	int32 d;
+	int32 x, y;
+	int32 addTo;
 	uint32 BYTEWIDE;
 	uint32 vram = 4;
 
@@ -353,17 +353,17 @@ void General_draw_line_24_32(int16 x0, int16 y0, int16 x1, int16 y1, _rgb *colou
 void AdditiveGouraudLine(int16 x0, int16 y0, _rgb c0, int16 x1, int16 y1, _rgb c1, uint32 surface_id) {
 	// Uses Bressnham's incremental algorithm!
 	// We have a start colour and an end colour
-	int dx, dy;
-	int dxmod, dymod;
-	int ince, incne;
-	int d;
-	int x, y;
-	int addTo;
+	int32 dx, dy;
+	int32 dxmod, dymod;
+	int32 ince, incne;
+	int32 d;
+	int32 x, y;
+	int32 addTo;
 
 	uint8 *surface = (uint8 *)surface_manager->Lock_surface(surface_id);
 	uint32 pitch = surface_manager->Get_pitch(surface_id);
-	int surface_width = surface_manager->Get_width(surface_id);
-	int surface_height = surface_manager->Get_height(surface_id);
+	int32 surface_width = surface_manager->Get_width(surface_id);
+	int32 surface_height = surface_manager->Get_height(surface_id);
 
 	// Make sure we're going from left to right
 	if (x1 < x0) {
@@ -401,9 +401,9 @@ void AdditiveGouraudLine(int16 x0, int16 y0, _rgb c0, int16 x1, int16 y1, _rgb c
 			uint8 r = c0.red;
 			uint8 g = c0.green;
 			uint8 b = c0.blue;
-			int dr = (dx) ? (c1.red - c0.red) / dx : 0;
-			int dg = (dx) ? (c1.green - c0.green) / dx : 0;
-			int db = (dx) ? (c1.blue - c0.blue) / dx : 0;
+			int32 dr = (dx) ? (c1.red - c0.red) / dx : 0;
+			int32 dg = (dx) ? (c1.green - c0.green) / dx : 0;
+			int32 db = (dx) ? (c1.blue - c0.blue) / dx : 0;
 			uint32 offset = y * pitch + (x << 2);
 			if ((x >= 0) && (x < surface_width) && (y >= 0) && (y < surface_height)) {
 				surface[offset] = ((surface[offset] + b) > 255) ? (uint8)255 : (uint8)(surface[offset] + b);
@@ -446,9 +446,9 @@ void AdditiveGouraudLine(int16 x0, int16 y0, _rgb c0, int16 x1, int16 y1, _rgb c
 			uint8 r = c0.red;
 			uint8 g = c0.green;
 			uint8 b = c0.blue;
-			int dr = (dx) ? (c1.red - c0.red) / dx : 0;
-			int dg = (dx) ? (c1.green - c0.green) / dx : 0;
-			int db = (dx) ? (c1.blue - c0.blue) / dx : 0;
+			int32 dr = (dx) ? (c1.red - c0.red) / dx : 0;
+			int32 dg = (dx) ? (c1.green - c0.green) / dx : 0;
+			int32 db = (dx) ? (c1.blue - c0.blue) / dx : 0;
 
 			uint32 offset = (addTo - y) * pitch + (x << 2);
 			if ((x >= 0) && (x < surface_width) && (addTo - y >= 0) && (addTo - y < surface_height)) {
@@ -506,9 +506,9 @@ void AdditiveGouraudLine(int16 x0, int16 y0, _rgb c0, int16 x1, int16 y1, _rgb c
 			uint8 r = c0.red;
 			uint8 g = c0.green;
 			uint8 b = c0.blue;
-			int dr = (dy) ? (c1.red - c0.red) / dy : 0;
-			int dg = (dy) ? (c1.green - c0.green) / dy : 0;
-			int db = (dy) ? (c1.blue - c0.blue) / dy : 0;
+			int32 dr = (dy) ? (c1.red - c0.red) / dy : 0;
+			int32 dg = (dy) ? (c1.green - c0.green) / dy : 0;
+			int32 db = (dy) ? (c1.blue - c0.blue) / dy : 0;
 
 			uint32 offset = y * pitch + (x << 2);
 
@@ -553,9 +553,9 @@ void AdditiveGouraudLine(int16 x0, int16 y0, _rgb c0, int16 x1, int16 y1, _rgb c
 			uint8 r = c0.red;
 			uint8 g = c0.green;
 			uint8 b = c0.blue;
-			int dr = (dy) ? (c1.red - c0.red) / dy : 0;
-			int dg = (dy) ? (c1.green - c0.green) / dy : 0;
-			int db = (dy) ? (c1.blue - c0.blue) / dy : 0;
+			int32 dr = (dy) ? (c1.red - c0.red) / dy : 0;
+			int32 dg = (dy) ? (c1.green - c0.green) / dy : 0;
+			int32 db = (dy) ? (c1.blue - c0.blue) / dy : 0;
 
 			uint32 offset = y * pitch + ((addTo - x) << 2);
 
@@ -595,23 +595,23 @@ void AdditiveGouraudLine(int16 x0, int16 y0, _rgb c0, int16 x1, int16 y1, _rgb c
 void BlendedLine(int32 x0, int32 y0, int32 x1, int32 y1, _rgb c, uint32 surface_id) {
 	uint8 *surface = (uint8 *)surface_manager->Lock_surface(surface_id);
 	uint32 pitch = surface_manager->Get_pitch(surface_id);
-	int surface_width = surface_manager->Get_width(surface_id);
-	int surface_height = surface_manager->Get_height(surface_id);
+	int32 surface_width = surface_manager->Get_width(surface_id);
+	int32 surface_height = surface_manager->Get_height(surface_id);
 
 	BlendedLine(x0, y0, x1, y1, c, surface_width, surface_height, pitch, surface);
 
 	surface_manager->Unlock_surface(surface_id);
 }
 
-void BlendedLine(int32 x0, int32 y0, int32 x1, int32 y1, _rgb c, int surface_width, int surface_height, uint32 pitch, uint8 *surface) {
+void BlendedLine(int32 x0, int32 y0, int32 x1, int32 y1, _rgb c, int32 surface_width, int32 surface_height, uint32 pitch, uint8 *surface) {
 	// Uses Bressnham's incremental algorithm!
 	// We have a start colour and an end colour
-	int dx, dy;
-	int dxmod, dymod;
-	int ince, incne;
-	int d;
-	int x, y;
-	int addTo;
+	int32 dx, dy;
+	int32 dxmod, dymod;
+	int32 ince, incne;
+	int32 d;
+	int32 x, y;
+	int32 addTo;
 
 	// Make sure we're going from left to right
 	if (x1 < x0) {

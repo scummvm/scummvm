@@ -42,7 +42,7 @@ namespace ICB {
 void Terminate_ap(); // call this to end the game and return to windows
 
 // variables
-extern int gameCycle; // for head-up display
+extern int32 gameCycle; // for head-up display
 extern char gamelanguage[];
 extern bool8 camera_hack;
 extern uint32 font_cluster_hash; // Res_open will compute the hash value and store it
@@ -157,7 +157,7 @@ private:
 void Mission_and_console();
 
 // returns the CD number for the specified mission
-int WhichCD(const char *mission);
+int32 WhichCD(const char *mission);
 
 } // End of namespace ICB
 

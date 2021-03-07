@@ -36,7 +36,7 @@ void SetupSndEngine();
 
 int32 GetSamplePitch(const char *sampleName, bool8 isInSession);
 
-void StartSample(int32 ch, const char *sampleName, bool8 isInSession, int looping);
+void StartSample(int32 ch, const char *sampleName, bool8 isInSession, int32 looping);
 void StopSample(int32 ch);
 void SetChannelVolumeAndPan(int32 ch, int32 volume, int32 pan);
 void SetChannelPitch(int32 ch, int32 pitch);
@@ -49,8 +49,8 @@ bool8 DoesClusterContainFile(pxString clustername, uint32 hash_to_find, uint32 &
 bool8 IsSpeechPlaying(void);
 
 // returns length of sound in 12ths of second
-int PreloadSpeech(uint32 hash); // does nothing on psx
-int SayLineOfSpeech(uint32 speechHash);
+int32 PreloadSpeech(uint32 hash); // does nothing on psx
+int32 SayLineOfSpeech(uint32 speechHash);
 void StopSpeechPlayback(void);
 void CancelSpeechPlayback(void);
 

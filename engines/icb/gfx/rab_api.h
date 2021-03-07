@@ -157,17 +157,17 @@ typedef struct rab_API {
 	// byte offsets from start of the file
 	uint32 frameOffsets[1]; // nFrames of them
 
-	Bone_Frame *GetFrame(const int f);
+	Bone_Frame *GetFrame(const int32 f);
 
 	Bone_Frame *GetCurrentFrame(void) { return (Bone_Frame *)((uint8 *)(id + currentFrameOffset)); }
 
-	FrameData *GetFrameData(const int f) { return (FrameData *)((uint8 *)(id + frameOffsets[f])); }
+	FrameData *GetFrameData(const int32 f) { return (FrameData *)((uint8 *)(id + frameOffsets[f])); }
 
 } rab_API;
 
 // Compress an SVECTOR ( uint16 vx,vy,vz, pad; ) -> uint32
 // by dividing the angles (12-bits 0-4095) by four to make them 10-bits
-int CompressSVECTOR(SVECTOR rotin, uint32 *rotout);
+int32 CompressSVECTOR(SVECTOR rotin, uint32 *rotout);
 
 // Uncompress an SVECTOR ( uint32 -> uint16 vx,vy,vz, pad; )
 // by multiplying the angles (10-bits 0-1023) by four to make them 12-bits

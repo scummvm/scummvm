@@ -30,29 +30,25 @@
 
 namespace ICB {
 
-typedef unsigned int u_int;
-typedef unsigned char u_char;
-typedef unsigned short u_short;
-
 typedef struct {
-	u_int width;     // 640
-	u_int height;    // 480
-	u_int stride;    // width * 4
-	u_char *RGBdata; // width * height * 32-bits
-	u_short *Zdata;  // width * height * 16-bits
+	uint32 width;     // 640
+	uint32 height;    // 480
+	uint32 stride;    // width * 4
+	uint8 *RGBdata; // width * height * 32-bits
+	uint16 *Zdata;  // width * height * 16-bits
 } RevRenderDevice;
 
 typedef struct {
 	int x, y;     // fixed-point 16:16
 	int u, v;     // fixed-point 16:16
-	u_int colour; // B, G, R, alpha (low->high mem)
+	uint32 colour; // B, G, R, alpha (low->high mem)
 } vertex2D;
 
 typedef struct {
-	u_int *palette;   /*[256]*/ // windows 32-bit RGB with 1 byte of padding
-	u_int width;      // must be power of 2
-	u_int height;     // must be power of 2
-	u_char *level[9]; // width/1 * height/1 -> width/256 * height/256
+	uint32 *palette;   /*[256]*/ // windows 32-bit RGB with 1 byte of padding
+	uint32 width;      // must be power of 2
+	uint32 height;     // must be power of 2
+	uint8 *level[9]; // width/1 * height/1 -> width/256 * height/256
 } RevTexture;
 
 class TextureHandle;
@@ -67,19 +63,19 @@ int SetRenderDevice(RevRenderDevice *renderDev);
 int GetRenderDevice(RevRenderDevice *renderDev);
 
 // Colour is verts[0].colour
-int DrawFlatUnTexturedPolygon(const vertex2D *verts, int nVerts, u_short z);
+int DrawFlatUnTexturedPolygon(const vertex2D *verts, int nVerts, uint16 z);
 
-int DrawGouraudUnTexturedPolygon(const vertex2D *verts, int nVerts, u_short z);
-
-// Colour is verts[0].colour
-int DrawFlatTexturedPolygon(const vertex2D *verts, int nVerts, u_short z);
-
-int DrawGouraudTexturedPolygon(const vertex2D *verts, int nVerts, u_short z);
+int DrawGouraudUnTexturedPolygon(const vertex2D *verts, int nVerts, uint16 z);
 
 // Colour is verts[0].colour
-int DrawFlatTexturedTransparentPolygon(const vertex2D *verts, int nVerts, u_short z);
+int DrawFlatTexturedPolygon(const vertex2D *verts, int nVerts, uint16 z);
 
-int DrawGouraudTexturedTransparentPolygon(const vertex2D *verts, int nVerts, u_short z);
+int DrawGouraudTexturedPolygon(const vertex2D *verts, int nVerts, uint16 z);
+
+// Colour is verts[0].colour
+int DrawFlatTexturedTransparentPolygon(const vertex2D *verts, int nVerts, uint16 z);
+
+int DrawGouraudTexturedTransparentPolygon(const vertex2D *verts, int nVerts, uint16 z);
 
 static const int GFXLIB_TRANSPARENT_COLOUR = 0xDEADBEAF;
 

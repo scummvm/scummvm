@@ -30,7 +30,7 @@
 
 namespace ICB {
 
-int _selFace;
+int32 _selFace;
 
 // Number of GPU packets to reserve
 #define PACKETMAX 2900 * 4
@@ -48,7 +48,7 @@ GPUPACKET *drawpacketStart;
 GPUPACKET *drawpacketEnd;
 
 // Global double buffer index
-int drawBuf = 0;
+int32 drawBuf = 0;
 
 // Global ot arrays and stuff
 OT_tag *otarray[2];
@@ -109,7 +109,7 @@ void recoverFromOTcrash(void) {
 void ResetZRange(void) {
 	// Reset the z-sorting values
 	nearClip = minUsedZpos - 100; // last used value -1m
-	int dz = maxUsedZpos - nearClip;
+	int32 dz = maxUsedZpos - nearClip;
 	// Simple zones for otz_shift
 	if (dz < OTZ_ZONE1) // 1cm
 		otz_shift = 0;

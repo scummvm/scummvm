@@ -37,17 +37,17 @@ mcodeFunctionReturnCodes fx_generic_fade(int32 &result, int32 *params) { return 
 
 mcodeFunctionReturnCodes _game_session::fx_narrow_screen(int32 &, int32 *params) {
 	/* Parameters */
-	int mode = params[0];    // border mode
-	int red = params[1];     // red component of cover
-	int green = params[2];   // green component of cover
-	int blue = params[3];    // blue component of cover
-	int percent = params[4]; // 0 - 100 percentage screen to cover
-	int cycles = params[5];  // number of cycles to shirnk over
+	int32 mode = params[0];    // border mode
+	int32 red = params[1];     // red component of cover
+	int32 green = params[2];   // green component of cover
+	int32 blue = params[3];    // blue component of cover
+	int32 percent = params[4]; // 0 - 100 percentage screen to cover
+	int32 cycles = params[5];  // number of cycles to shirnk over
 
 	/* Function Storage */
-	static int heightStep = 0;
-	static int alphaStep = 0;
-	static int cycleCount = 0;
+	static int32 heightStep = 0;
+	static int32 alphaStep = 0;
+	static int32 cycleCount = 0;
 
 	// Get access to the border rectangle
 	LRECT &border = surface_manager->BorderRect();
@@ -57,7 +57,7 @@ mcodeFunctionReturnCodes _game_session::fx_narrow_screen(int32 &, int32 *params)
 		cycles = 1;
 
 	// Calculate the fxtarget screen coverage
-	int fxtarget = (480 * percent) / 200;
+	int32 fxtarget = (480 * percent) / 200;
 
 	if (cycleCount == 0) {
 		// First time through
@@ -153,18 +153,18 @@ mcodeFunctionReturnCodes _game_session::fx_narrow_screen(int32 &, int32 *params)
 // where on/off is equiverlant to to/from
 
 mcodeFunctionReturnCodes _game_session::fx_generic_fade(int32 &, int32 *params) {
-	int mode = params[0];
-	int onOff = params[1];
-	int fromRed = params[2];
-	int fromGreen = params[3];
-	int fromBlue = params[4];
-	int toRed = params[5];
-	int toGreen = params[6];
-	int toBlue = params[7];
-	int cycles = params[8];
+	int32 mode = params[0];
+	int32 onOff = params[1];
+	int32 fromRed = params[2];
+	int32 fromGreen = params[3];
+	int32 fromBlue = params[4];
+	int32 toRed = params[5];
+	int32 toGreen = params[6];
+	int32 toBlue = params[7];
+	int32 cycles = params[8];
 
 	/* Function Storage */
-	static int alphaStep = 0;
+	static int32 alphaStep = 0;
 
 	// Is this the first time through ?
 	if (alphaStep == 0) {
@@ -190,7 +190,7 @@ mcodeFunctionReturnCodes _game_session::fx_generic_fade(int32 &, int32 *params) 
 	}
 
 	// Increment / Decrement the alpha value
-	int newAlpha = surface_manager->FadeAlpha();
+	int32 newAlpha = surface_manager->FadeAlpha();
 	if (onOff) {
 		// Fading in
 		newAlpha += alphaStep;

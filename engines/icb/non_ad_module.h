@@ -35,10 +35,10 @@ namespace ICB {
 
 struct PCcamera {
 	char id[4];
-	int schema;
+	int32 schema;
 	MATRIX view;
-	int pan;
-	u_short focLen;
+	int32 pan;
+	uint16 focLen;
 };
 
 void WorldToFilm(const PXvector_PC &worldpos, const PCcamera &camera, bool8 &is_onfilm, PXvector_PC &filmpos);

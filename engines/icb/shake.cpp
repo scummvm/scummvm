@@ -44,15 +44,15 @@ int32 nextShakeY = 0;
 int32 rangeX = 0;
 int32 rangeY = 0;
 
-int GetShakeX() { return shakeX; }
+int32 GetShakeX() { return shakeX; }
 
-int GetShakeY() {
+int32 GetShakeY() {
 	return (shakeY << 1);
 }
 
-int GetNextShakeX() { return nextShakeX; }
+int32 GetNextShakeX() { return nextShakeX; }
 
-int GetNextShakeY() {
+int32 GetNextShakeY() {
 	return nextShakeY << 1;
 }
 
@@ -112,8 +112,8 @@ mcodeFunctionReturnCodes fn_shake_screen(int32 &, int32 *params) {
 		// one less cycle to go...
 		cycles--;
 
-		int randX, randY;
-		int x, y;
+		int32 randX, randY;
+		int32 x, y;
 
 		// Check that the current screen shake position is acceptable within the new shake range
 		if (((shakeX + sx) < -rx) || ((shakeX - sx) > rx)) {
@@ -124,11 +124,11 @@ mcodeFunctionReturnCodes fn_shake_screen(int32 &, int32 *params) {
 		}
 
 		// keep going till we find something that is acceptable...
-		int loop = 0;
+		int32 loop = 0;
 		// Want to make: -sx, -sx+1, .... 0, 1, 2, sx-1, sx
-		int sxrange = 2 * sx + 1;
+		int32 sxrange = 2 * sx + 1;
 		// Want to make: -sy, -sy+1, .... 0, 1, 2, sy-1, sy
-		int syrange = 2 * sy + 1;
+		int32 syrange = 2 * sy + 1;
 		do {
 			// work out steps...
 			randX = (g_icb->getRandomSource()->getRandomNumber(sxrange - 1)) - sx;

@@ -43,48 +43,48 @@ namespace ICB {
 typedef struct TextureInfo {
 	// DO NOT CHANGE THIS SECTION OF THE STRUCTURE
 	// AS PSX ASSMEBLER ROUTINES RELY ON IT BEING LIKE THIS
-	short tsb; // tpf | abr | texture_page  = getTpate( tpf, abr, x, y );
-	short cba; // cy | cx = getClut(cx,cy)
-	u_char uoffset;
-	u_char voffset;
-	short padding;
+	int16 tsb; // tpf | abr | texture_page  = getTpate( tpf, abr, x, y );
+	int16 cba; // cy | cx = getClut(cx,cy)
+	uint8 uoffset;
+	uint8 voffset;
+	int16 padding;
 	// DO WHAT YOU LIKE FROM HERE ONWARDS
-	u_int id;
-	u_int age;
+	uint32 id;
+	uint32 age;
 	RECT16 r;
 } TextureInfo;
 
 typedef struct PaletteInfo {
-	u_int id;
-	u_int age;
-	short x;
-	short y;
-	short cba; // cy | cx = getClut(cx,cy)
-	short padding;
+	uint32 id;
+	uint32 age;
+	int16 x;
+	int16 y;
+	int16 cba; // cy | cx = getClut(cx,cy)
+	int16 padding;
 } PaletteInfo;
 
 class TextureManager {
 public:
 	TextureManager();
-	TextureManager(short nx0, short ny0, short nx1, short ny1);
+	TextureManager(int16 nx0, int16 ny0, int16 nx1, int16 ny1);
 	~TextureManager();
-	void Init(short nx0, short ny0, short nx1, short ny1);
-	TextureInfo *FindTexture(u_int id, u_int age);
-	TextureInfo *AddTexture(uint32 *tim_ptr, u_int id, u_int age, u_short imgW, u_short imgH);
+	void Init(int16 nx0, int16 ny0, int16 nx1, int16 ny1);
+	TextureInfo *FindTexture(uint32 id, uint32 age);
+	TextureInfo *AddTexture(uint32 *tim_ptr, uint32 id, uint32 age, uint16 imgW, uint16 imgH);
 
-	PaletteInfo *FindPalette(u_int id, u_int age);
-	PaletteInfo *AddPalette(uint32 *clut_ptr, u_int id, u_int age);
+	PaletteInfo *FindPalette(uint32 id, uint32 age);
+	PaletteInfo *AddPalette(uint32 *clut_ptr, uint32 id, uint32 age);
 
 	void PurgeAll(void);
 
 	TextureInfo tSlots[MAX_NUMBER_SLOTS];
 	PaletteInfo pSlots[MAX_NUMBER_PALETTES];
-	u_char inuse[MAX_NUMBER_TILES];
-	short x0, y0;
-	short x1, y1;
-	u_short tileW, tileH;
-	u_int nSlotsUsed;
-	u_int nPalettesUsed;
+	uint8 inuse[MAX_NUMBER_TILES];
+	int16 x0, y0;
+	int16 x1, y1;
+	uint16 tileW, tileH;
+	uint32 nSlotsUsed;
+	uint32 nPalettesUsed;
 };
 
 } // End of namespace ICB

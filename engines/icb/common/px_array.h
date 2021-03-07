@@ -53,19 +53,19 @@ public:
 	void operator=(const rcActArray &);
 
 	// Member access functions
-	uint GetNoItems() const { return (m_userPosition); }
+	uint32 GetNoItems() const { return (m_userPosition); }
 
-	uint Add(const Type &f); // Add an item.
+	uint32 Add(const Type &f); // Add an item.
 
 	Type &operator[](uint); // Give access to an entry
-	const Type &operator[](uint i) const;
+	const Type &operator[](uint32 i) const;
 
-	void SetSize(uint n) { ResizeArray(n); }
+	void SetSize(uint32 n) { ResizeArray(n); }
 	void Reset();
 
 private:
-	uint m_userPosition;  // Next place to add an item to
-	uint m_allocatedSize; // How many items have been allocated
+	uint32 m_userPosition;  // Next place to add an item to
+	uint32 m_allocatedSize; // How many items have been allocated
 
 	Type **m_contents; // A pointer to pointers to the objects
 
@@ -83,13 +83,13 @@ void T_MYACTARRAY::operator=(const rcActArray &a) {
 
 	{
 		m_contents = new Type *[m_allocatedSize];
-		for (uint count = 0; count < m_allocatedSize; count++)
+		for (uint32 count = 0; count < m_allocatedSize; count++)
 			m_contents[count] = new Type(*(a.m_contents[count]));
 	}
 }
 
 MY_TEMPLATE
-Type &T_MYACTARRAY::operator[](uint n) {
+Type &T_MYACTARRAY::operator[](uint32 n) {
 	if (n >= m_userPosition) {
 		ResizeArray(n);
 		m_userPosition = n + 1;
@@ -98,7 +98,7 @@ Type &T_MYACTARRAY::operator[](uint n) {
 }
 
 MY_TEMPLATE
-const Type &T_MYACTARRAY::operator[](uint n) const {
+const Type &T_MYACTARRAY::operator[](uint32 n) const {
 	// It is permissable to look at an element that has not been defined, as the constructor assures
 	// that the contents are valid
 	if (n >= m_userPosition) {
@@ -113,7 +113,7 @@ const Type &T_MYACTARRAY::operator[](uint n) const {
 MY_TEMPLATE T_MYACTARRAY::~rcActArray() { Reset(); }
 
 MY_TEMPLATE void T_MYACTARRAY::Reset() {
-	for (uint count = 0; count < m_allocatedSize; count++)
+	for (uint32 count = 0; count < m_allocatedSize; count++)
 		delete m_contents[count];
 
 	if (m_allocatedSize)
@@ -122,11 +122,11 @@ MY_TEMPLATE void T_MYACTARRAY::Reset() {
 	m_userPosition = 0;
 }
 
-MY_TEMPLATE void T_MYACTARRAY::ResizeArray(uint n2) {
+MY_TEMPLATE void T_MYACTARRAY::ResizeArray(uint32 n2) {
 	// if n is still within the allocated area then just set the last position
 	if (n2 >= m_allocatedSize) {
 		// Make sure we are going to make the thing big enough
-		uint nextSize = m_allocatedSize ? m_allocatedSize + m_allocatedSize : 1; // Double, or 1 if now 0
+		uint32 nextSize = m_allocatedSize ? m_allocatedSize + m_allocatedSize : 1; // Double, or 1 if now 0
 		while (nextSize <= n2)
 			nextSize += nextSize;
 
@@ -137,7 +137,7 @@ MY_TEMPLATE void T_MYACTARRAY::ResizeArray(uint n2) {
 			memcpy((unsigned char *)newArray, (unsigned char *)m_contents, m_allocatedSize * sizeof(Type *));
 		}
 		// Put empty objects in the newly allocated space
-		for (uint newObjects = m_allocatedSize; newObjects < nextSize; newObjects++)
+		for (uint32 newObjects = m_allocatedSize; newObjects < nextSize; newObjects++)
 			newArray[newObjects] = new Type;
 		// Remove any old stuff
 		if (m_allocatedSize)
@@ -147,14 +147,14 @@ MY_TEMPLATE void T_MYACTARRAY::ResizeArray(uint n2) {
 	}
 }
 
-MY_TEMPLATE uint T_MYACTARRAY::Add(const Type &f) {
+MY_TEMPLATE uint32 T_MYACTARRAY::Add(const Type &f) {
 	operator[](m_userPosition) = f;
 	return (m_userPosition - 1);
 }
 
 MY_TEMPLATE class rcAutoPtrArray {
-	uint m_noContents;   // How many entries have been allocated
-	uint m_userPosition; // Next position for the Add command
+	uint32 m_noContents;   // How many entries have been allocated
+	uint32 m_userPosition; // Next position for the Add command
 
 	Type **m_contents; // A pointer to pointers to the objects
 
@@ -166,9 +166,9 @@ public:
 	~rcAutoPtrArray(); // Destruct the array
 
 	// Member access functions
-	uint GetNoItems() const { return (m_userPosition); }
+	uint32 GetNoItems() const { return (m_userPosition); }
 
-	uint Add(Type *f) {
+	uint32 Add(Type *f) {
 		operator[](m_userPosition) = f;
 		return (m_userPosition - 1);
 	}
@@ -178,7 +178,7 @@ public:
 
 	void Reset();
 	void RemoveAndShuffle(uint); // Remove an object from the array
-	void SetSize(uint n) { ResizeArray(n); }
+	void SetSize(uint32 n) { ResizeArray(n); }
 
 	// Super dangerous, but faster, access to the array
 	Type *GetRawArray() { return (*m_contents); }
@@ -190,7 +190,7 @@ private: // Prevent use of the PtrArray copy constructor
 };
 
 MY_TEMPLATE
-Type *&T_MYPTRARRAY::operator[](uint n) {
+Type *&T_MYPTRARRAY::operator[](uint32 n) {
 	if (n >= m_userPosition) {
 		ResizeArray(n);
 		m_userPosition = n + 1;
@@ -199,7 +199,7 @@ Type *&T_MYPTRARRAY::operator[](uint n) {
 }
 
 MY_TEMPLATE
-const Type *&T_MYPTRARRAY::operator[](uint n) const {
+const Type *&T_MYPTRARRAY::operator[](uint32 n) const {
 	// It is permissable to look at an element that has not been defined, as it will be defined as NULL
 	if (n >= m_userPosition) {
 		(const_cast<rcAutoPtrArray<Type> *>(this))->ResizeArray(n);
@@ -213,7 +213,7 @@ MY_TEMPLATE T_MYPTRARRAY::~rcAutoPtrArray() { Reset(); }
 
 MY_TEMPLATE void T_MYPTRARRAY::Reset() {
 	// The pointer array maintains responsibility for deleting any contents
-	for (uint count = 0; count < m_userPosition; count++)
+	for (uint32 count = 0; count < m_userPosition; count++)
 		if (m_contents[count])
 			delete m_contents[count];
 	if (m_noContents)
@@ -221,10 +221,10 @@ MY_TEMPLATE void T_MYPTRARRAY::Reset() {
 	m_noContents = m_userPosition = 0;
 }
 
-MY_TEMPLATE void T_MYPTRARRAY::ResizeArray(uint n2) {
+MY_TEMPLATE void T_MYPTRARRAY::ResizeArray(uint32 n2) {
 	if (n2 >= m_noContents) {
 		// Double the allocation value
-		uint nextSize = m_noContents > 0 ? m_noContents + m_noContents : 1;
+		uint32 nextSize = m_noContents > 0 ? m_noContents + m_noContents : 1;
 		while (n2 >= nextSize)
 			nextSize = nextSize + nextSize;
 		// Get a New pointer array of the correct size
@@ -242,7 +242,7 @@ MY_TEMPLATE void T_MYPTRARRAY::ResizeArray(uint n2) {
 	}
 }
 
-MY_TEMPLATE void T_MYPTRARRAY::RemoveAndShuffle(uint n) {
+MY_TEMPLATE void T_MYPTRARRAY::RemoveAndShuffle(uint32 n) {
 	// Remove an object from the array
 
 	// First delete it
@@ -253,8 +253,8 @@ MY_TEMPLATE void T_MYPTRARRAY::RemoveAndShuffle(uint n) {
 }
 
 template <class Type> class rcIntArray {
-	uint m_noContents;   // How many entries there are
-	uint m_userPosition; // Where the next add position goes
+	uint32 m_noContents;   // How many entries there are
+	uint32 m_userPosition; // Where the next add position goes
 	Type *m_contents;
 
 	void ResizeArray(uint); // Change the size of the array
@@ -275,25 +275,25 @@ public:
 	}
 
 	// Constructor with an initial size
-	rcIntArray(uint initialSize) { ResizeArray(initialSize); }
+	rcIntArray(uint32 initialSize) { ResizeArray(initialSize); }
 
 	const rcIntArray &operator=(const rcIntArray &);
 
 	// Member access functions
-	uint GetNoItems() const { return (m_userPosition); }
+	uint32 GetNoItems() const { return (m_userPosition); }
 
-	uint Add(Type f); // Add an integer. Only makes sense if the resize step is one
+	uint32 Add(Type f); // Add an integer. Only makes sense if the resize step is one
 
 	Type &operator[](uint);            // Give access to an entry
 	const Type operator[](uint) const; // Give access to an entry
 
 	void Reset();
-	void SetSize(uint n) { ResizeArray(n); }
+	void SetSize(uint32 n) { ResizeArray(n); }
 
 	Type *GetRawArray() { return (m_contents); }
 };
 
-template <class Type> Type &rcIntArray<Type>::operator[](uint index) {
+template <class Type> Type &rcIntArray<Type>::operator[](uint32 index) {
 	if (index >= m_userPosition) {
 		ResizeArray(index);
 		m_userPosition = index + 1;
@@ -302,7 +302,7 @@ template <class Type> Type &rcIntArray<Type>::operator[](uint index) {
 }
 
 // This version of [] allows the array to be part of a const function
-template <class Type> const Type rcIntArray<Type>::operator[](uint index) const {
+template <class Type> const Type rcIntArray<Type>::operator[](uint32 index) const {
 	// It is permissable to look at an element that has not been defined, as it will have been set to 0
 	if (index >= m_userPosition) {
 		// Remove any 'constness' for a resize
@@ -313,10 +313,10 @@ template <class Type> const Type rcIntArray<Type>::operator[](uint index) const 
 	return m_contents[index];
 }
 
-template <class IntType> void rcIntArray<IntType>::ResizeArray(uint accessedSize) {
+template <class IntType> void rcIntArray<IntType>::ResizeArray(uint32 accessedSize) {
 	// Check if we need to do any reallocating
 	if (accessedSize >= m_noContents) {
-		uint newSize = m_noContents > 0 ? m_noContents * 2 : 1;
+		uint32 newSize = m_noContents > 0 ? m_noContents * 2 : 1;
 		while (newSize <= accessedSize)
 			newSize = newSize + newSize;
 
@@ -334,7 +334,7 @@ template <class IntType> void rcIntArray<IntType>::ResizeArray(uint accessedSize
 }
 
 template <class IntType> const rcIntArray<IntType> &rcIntArray<IntType>::operator=(const rcIntArray<IntType> &obOpB) {
-	uint nCount;
+	uint32 nCount;
 
 	if (m_noContents)
 		delete[] m_contents;
@@ -358,7 +358,7 @@ template <class Type> void rcIntArray<Type>::Reset() {
 	}
 }
 
-template <class Type> uint rcIntArray<Type>::Add(Type f) {
+template <class Type> uint32 rcIntArray<Type>::Add(Type f) {
 	// Add an integer. Only makes sense if the resize step is one
 	operator[](m_userPosition) = f;
 	return (m_userPosition - 1);

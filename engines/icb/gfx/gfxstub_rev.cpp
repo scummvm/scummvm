@@ -33,32 +33,32 @@
 
 namespace ICB {
 
-#define MAKERGB(r, g, b, a) ((u_int)(((u_char)(b) | ((u_short)((u_char)(g)) << 8)) | (((u_int)(u_char)(r)) << 16) | (((u_int)(u_char)(a)) << 24)))
+#define MAKERGB(r, g, b, a) ((uint32)(((uint8)(b) | ((uint16)((uint8)(g)) << 8)) | (((uint32)(uint8)(r)) << 16) | (((uint32)(uint8)(a)) << 24)))
 
 #define TEMP_TEXTURE_WIDTH 256
 #define TEMP_TEXTURE_HEIGHT 256
 #define BYTES_PER_COLOUR 4
 
-u_char pcRGBA[TEMP_TEXTURE_WIDTH * TEMP_TEXTURE_HEIGHT * BYTES_PER_COLOUR];
+uint8 pcRGBA[TEMP_TEXTURE_WIDTH * TEMP_TEXTURE_HEIGHT * BYTES_PER_COLOUR];
 
-int bpp = 0;
+int32 bpp = 0;
 
 // The big screen bitmap to draw everything into
 extern char *pRGB;
-extern int RGBWidth;
-extern int RGBHeight;
-extern int RGBPitch;
-extern int RGBBytesPerPixel;
+extern int32 RGBWidth;
+extern int32 RGBHeight;
+extern int32 RGBPitch;
+extern int32 RGBBytesPerPixel;
 // The z buffer bitmap
 extern char *pZ;
-extern int ZPitch;
-extern int ZBytesPerPixel;
+extern int32 ZPitch;
+extern int32 ZBytesPerPixel;
 
 #define MAX_POLYGON_VERTS 8
 vertex2D verts[8];
 vertex2D clipverts[8];
 
-int SimpleReject(vertex2D *vertices) {
+int32 SimpleReject(vertex2D *vertices) {
 	int64 l0x = (verts[0].x - vertices[1].x);
 	int64 l0y = (verts[0].y - vertices[1].y);
 	int64 l1x = (verts[2].x - vertices[1].x);
@@ -74,7 +74,7 @@ int SimpleReject(vertex2D *vertices) {
 	return 0;
 }
 
-int ClipPolygon(vertex2D *inverts, int inNverts, vertex2D *outverts, int *outNverts);
+int32 ClipPolygon(vertex2D *inverts, int32 inNverts, vertex2D *outverts, int32 *outNverts);
 
 void startDrawing() {}
 
@@ -84,11 +84,11 @@ void endDrawing() {
 
 // Real graphic routines
 // r0, g0, b0 :  128 means colour scale of 1.0
-int DrawSprite(int x0, int y0, short w, short h, uint8 r0, uint8 g0, uint8 b0, u_short /*u0*/, u_short v0, uint8 alpha, u_short z, void *tex) {
-	int x, y;
-	int lx0, ly0;
+int32 DrawSprite(int32 x0, int32 y0, short w, short h, uint8 r0, uint8 g0, uint8 b0, uint16 /*u0*/, uint16 v0, uint8 alpha, uint16 z, void *tex) {
+	int32 x, y;
+	int32 lx0, ly0;
 	TextureHandle *pthan = NULL;
-	int lx1, ly1;
+	int32 lx1, ly1;
 
 	if (tex == NULL) {
 		return 0;
@@ -120,9 +120,9 @@ int DrawSprite(int x0, int y0, short w, short h, uint8 r0, uint8 g0, uint8 b0, u
 		return 1;
 
 	char *line = pRGB + (RGBPitch * ly0);
-	int xStart = RGBBytesPerPixel * lx0;
+	int32 xStart = RGBBytesPerPixel * lx0;
 	char *zline = pZ + (ZPitch * ly0);
-	int xzStart = ZBytesPerPixel * lx0;
+	int32 xzStart = ZBytesPerPixel * lx0;
 
 	uint8 *texel = (uint8 *)pcRGBA + (v0 * TEMP_TEXTURE_WIDTH) * BYTES_PER_COLOUR;
 
@@ -130,12 +130,12 @@ int DrawSprite(int x0, int y0, short w, short h, uint8 r0, uint8 g0, uint8 b0, u
 		char *row = line + xStart;
 		char *zrow = zline + xzStart;
 		for (x = lx0; x < lx1; x++) {
-			int r = r0;
-			int g = g0;
-			int b = b0;
-			int tr = *(texel + 2);
-			int tg = *(texel + 1);
-			int tb = *(texel + 0);
+			int32 r = r0;
+			int32 g = g0;
+			int32 b = b0;
+			int32 tr = *(texel + 2);
+			int32 tg = *(texel + 1);
+			int32 tb = *(texel + 0);
 
 			r = (r * tr);
 			g = (g * tg);
@@ -163,7 +163,7 @@ int DrawSprite(int x0, int y0, short w, short h, uint8 r0, uint8 g0, uint8 b0, u
 			*(row + 1) = (char)g;
 			*(row + 2) = (char)r;
 			*(row + 3) = alpha;
-			*(u_short *)(zrow + 0) = z;
+			*(uint16 *)(zrow + 0) = z;
 			row += RGBBytesPerPixel;
 			zrow += ZBytesPerPixel;
 		}
@@ -174,10 +174,10 @@ int DrawSprite(int x0, int y0, short w, short h, uint8 r0, uint8 g0, uint8 b0, u
 }
 
 // Single coloured rectangle
-int DrawTile(int x0, int y0, short w, short h, uint8 r0, uint8 g0, uint8 b0, uint8 alpha, u_short z) {
-	int x, y;
-	int lx0, ly0;
-	int lx1, ly1;
+int32 DrawTile(int32 x0, int32 y0, short w, short h, uint8 r0, uint8 g0, uint8 b0, uint8 alpha, uint16 z) {
+	int32 x, y;
+	int32 lx0, ly0;
+	int32 lx1, ly1;
 
 	lx0 = RGBWidth / 2 + x0;
 	ly0 = RGBHeight / 2 + y0;
@@ -199,9 +199,9 @@ int DrawTile(int x0, int y0, short w, short h, uint8 r0, uint8 g0, uint8 b0, uin
 		return 1;
 
 	char *line = pRGB + (RGBPitch * ly0);
-	int xStart = RGBBytesPerPixel * lx0;
+	int32 xStart = RGBBytesPerPixel * lx0;
 	char *zline = pZ + (ZPitch * ly0);
-	int xzStart = ZBytesPerPixel * lx0;
+	int32 xzStart = ZBytesPerPixel * lx0;
 
 	for (y = ly0; y < ly1; y++) {
 		char *row = line + xStart;
@@ -211,7 +211,7 @@ int DrawTile(int x0, int y0, short w, short h, uint8 r0, uint8 g0, uint8 b0, uin
 			*(row + 1) = g0;
 			*(row + 2) = r0;
 			*(row + 3) = alpha;
-			*(u_short *)(zrow + 0) = z;
+			*(uint16 *)(zrow + 0) = z;
 			row += RGBBytesPerPixel;
 			zrow += ZBytesPerPixel;
 		}
@@ -221,21 +221,21 @@ int DrawTile(int x0, int y0, short w, short h, uint8 r0, uint8 g0, uint8 b0, uin
 }
 
 // Single flat coloured line : 2 points, 1 colour
-int DrawLineF2(int x0, int y0, int x1, int y1, uint8 r0, uint8 g0, uint8 b0, uint8 alpha, u_short z) {
+int32 DrawLineF2(int32 x0, int32 y0, int32 x1, int32 y1, uint8 r0, uint8 g0, uint8 b0, uint8 alpha, uint16 z) {
 	// Uses Bressnham's incremental algorithm!
 	// we pass a colour
 
-	int dx, dy;
-	int dxmod, dymod;
-	int ince, incne;
-	int d;
-	int x, y;
-	int addTo;
+	int32 dx, dy;
+	int32 dxmod, dymod;
+	int32 ince, incne;
+	int32 d;
+	int32 x, y;
+	int32 addTo;
 
-	x0 = (short)(RGBWidth / 2 + x0);
-	x1 = (short)(RGBWidth / 2 + x1);
-	y0 = (short)(RGBHeight / 2 + y0);
-	y1 = (short)(RGBHeight / 2 + y1);
+	x0 = (int16)(RGBWidth / 2 + x0);
+	x1 = (int16)(RGBWidth / 2 + x1);
+	y0 = (int16)(RGBHeight / 2 + y0);
+	y1 = (int16)(RGBHeight / 2 + y1);
 
 	// Make sure we're going from left to right
 	if (x1 < x0) {
@@ -267,13 +267,13 @@ int DrawLineF2(int x0, int y0, int x1, int y1, uint8 r0, uint8 g0, uint8 b0, uin
 			x = x0;
 			y = y0;
 			if ((x >= 0) && (x < RGBWidth) && (y >= 0) && (y < RGBHeight)) {
-				int index = y * RGBPitch + (x * RGBBytesPerPixel);
+				int32 index = y * RGBPitch + (x * RGBBytesPerPixel);
 				pRGB[index + 0] = b0;
 				pRGB[index + 1] = g0;
 				pRGB[index + 2] = r0;
 				pRGB[index + 3] = alpha;
 				index = y * ZPitch + (x * ZBytesPerPixel);
-				*(u_short *)(pZ + index + 0) = z;
+				*(uint16 *)(pZ + index + 0) = z;
 			}
 
 			while (x < x1) {
@@ -286,13 +286,13 @@ int DrawLineF2(int x0, int y0, int x1, int y1, uint8 r0, uint8 g0, uint8 b0, uin
 					y += 1;
 				}
 				if ((x >= 0) && (x < RGBWidth) && (y >= 0) && (y < RGBHeight)) {
-					int index = y * RGBPitch + (x * RGBBytesPerPixel);
+					int32 index = y * RGBPitch + (x * RGBBytesPerPixel);
 					pRGB[index + 0] = b0;
 					pRGB[index + 1] = g0;
 					pRGB[index + 2] = r0;
 					pRGB[index + 3] = alpha;
 					index = y * ZPitch + (x * ZBytesPerPixel);
-					*(u_short *)(pZ + index + 0) = z;
+					*(uint16 *)(pZ + index + 0) = z;
 				}
 			}
 		} else {
@@ -308,13 +308,13 @@ int DrawLineF2(int x0, int y0, int x1, int y1, uint8 r0, uint8 g0, uint8 b0, uin
 			x = x0;
 			y = y0;
 			if ((x >= 0) && (x < RGBWidth) && (addTo - y >= 0) && (addTo - y < RGBHeight)) {
-				int index = (addTo - y) * RGBPitch + (x * RGBBytesPerPixel);
+				int32 index = (addTo - y) * RGBPitch + (x * RGBBytesPerPixel);
 				pRGB[index + 0] = b0;
 				pRGB[index + 1] = g0;
 				pRGB[index + 2] = r0;
 				pRGB[index + 3] = alpha;
 				index = (addTo - y) * ZPitch + (x * ZBytesPerPixel);
-				*(u_short *)(pZ + index + 0) = z;
+				*(uint16 *)(pZ + index + 0) = z;
 			}
 
 			while (x < x1) {
@@ -327,13 +327,13 @@ int DrawLineF2(int x0, int y0, int x1, int y1, uint8 r0, uint8 g0, uint8 b0, uin
 					y += 1;
 				}
 				if ((x >= 0) && (x < RGBWidth) && (addTo - y >= 0) && (addTo - y < RGBHeight)) {
-					int index = (addTo - y) * RGBPitch + (x * RGBBytesPerPixel);
+					int32 index = (addTo - y) * RGBPitch + (x * RGBBytesPerPixel);
 					pRGB[index + 0] = b0;
 					pRGB[index + 1] = g0;
 					pRGB[index + 2] = r0;
 					pRGB[index + 3] = alpha;
 					index = (addTo - y) * ZPitch + (x * ZBytesPerPixel);
-					*(u_short *)(pZ + index + 0) = z;
+					*(uint16 *)(pZ + index + 0) = z;
 				}
 			}
 		}
@@ -358,13 +358,13 @@ int DrawLineF2(int x0, int y0, int x1, int y1, uint8 r0, uint8 g0, uint8 b0, uin
 			x = x0;
 			y = y0;
 			if ((x >= 0) && (x < RGBWidth) && (y >= 0) && (y < RGBHeight)) {
-				int index = y * RGBPitch + (x * RGBBytesPerPixel);
+				int32 index = y * RGBPitch + (x * RGBBytesPerPixel);
 				pRGB[index + 0] = b0;
 				pRGB[index + 1] = g0;
 				pRGB[index + 2] = r0;
 				pRGB[index + 3] = alpha;
 				index = y * ZPitch + (x * ZBytesPerPixel);
-				*(u_short *)(pZ + index + 0) = z;
+				*(uint16 *)(pZ + index + 0) = z;
 			}
 			while (y < y1) {
 				if (d <= 0) {
@@ -376,13 +376,13 @@ int DrawLineF2(int x0, int y0, int x1, int y1, uint8 r0, uint8 g0, uint8 b0, uin
 					y += 1;
 				}
 				if ((x >= 0) && (x < RGBWidth) && (y >= 0) && (y < RGBHeight)) {
-					int index = y * RGBPitch + (x * RGBBytesPerPixel);
+					int32 index = y * RGBPitch + (x * RGBBytesPerPixel);
 					pRGB[index + 0] = b0;
 					pRGB[index + 1] = g0;
 					pRGB[index + 2] = r0;
 					pRGB[index + 3] = alpha;
 					index = y * ZPitch + (x * ZBytesPerPixel);
-					*(u_short *)(pZ + index + 0) = z;
+					*(uint16 *)(pZ + index + 0) = z;
 				}
 			}
 		} else {
@@ -398,13 +398,13 @@ int DrawLineF2(int x0, int y0, int x1, int y1, uint8 r0, uint8 g0, uint8 b0, uin
 			x = x0;
 			y = y0;
 			if ((addTo - x >= 0) && (addTo - x < RGBWidth) && (y >= 0) && (y < RGBHeight)) {
-				int index = y * RGBPitch + ((addTo - x) * RGBBytesPerPixel);
+				int32 index = y * RGBPitch + ((addTo - x) * RGBBytesPerPixel);
 				pRGB[index + 0] = b0;
 				pRGB[index + 1] = g0;
 				pRGB[index + 2] = r0;
 				pRGB[index + 3] = alpha;
 				index = y * ZPitch + ((addTo - x) * ZBytesPerPixel);
-				*(u_short *)(pZ + index + 0) = z;
+				*(uint16 *)(pZ + index + 0) = z;
 			}
 
 			while (y < y1) {
@@ -417,13 +417,13 @@ int DrawLineF2(int x0, int y0, int x1, int y1, uint8 r0, uint8 g0, uint8 b0, uin
 					y += 1;
 				}
 				if ((addTo - x >= 0) && (addTo - x < RGBWidth) && (y >= 0) && (y < RGBHeight)) {
-					int index = y * RGBPitch + ((addTo - x) * RGBBytesPerPixel);
+					int32 index = y * RGBPitch + ((addTo - x) * RGBBytesPerPixel);
 					pRGB[index + 0] = b0;
 					pRGB[index + 1] = g0;
 					pRGB[index + 2] = r0;
 					pRGB[index + 3] = alpha;
 					index = y * ZPitch + ((addTo - x) * ZBytesPerPixel);
-					*(u_short *)(pZ + index + 0) = z;
+					*(uint16 *)(pZ + index + 0) = z;
 				}
 			}
 		}
@@ -432,14 +432,14 @@ int DrawLineF2(int x0, int y0, int x1, int y1, uint8 r0, uint8 g0, uint8 b0, uin
 }
 
 // two connected lines flat coloured : 3 points, 1 colour
-int DrawLineF3(int x0, int y0, int x1, int y1, int x2, int y2, uint8 r0, uint8 g0, uint8 b0, uint8 alpha, u_short z) {
+int32 DrawLineF3(int32 x0, int32 y0, int32 x1, int32 y1, int32 x2, int32 y2, uint8 r0, uint8 g0, uint8 b0, uint8 alpha, uint16 z) {
 	DrawLineF2(x0, y0, x1, y1, r0, g0, b0, alpha, z);
 	DrawLineF2(x1, y1, x2, y2, r0, g0, b0, alpha, z);
 	return 0;
 }
 
 // three connected lines flat coloured : 4 points, 1 colour
-int DrawLineF4(int x0, int y0, int x1, int y1, int x2, int y2, int x3, int y3, uint8 r0, uint8 g0, uint8 b0, uint8 alpha, u_short z) {
+int32 DrawLineF4(int32 x0, int32 y0, int32 x1, int32 y1, int32 x2, int32 y2, int32 x3, int32 y3, uint8 r0, uint8 g0, uint8 b0, uint8 alpha, uint16 z) {
 	DrawLineF2(x0, y0, x1, y1, r0, g0, b0, alpha, z);
 	DrawLineF2(x1, y1, x2, y2, r0, g0, b0, alpha, z);
 	DrawLineF2(x2, y2, x3, y3, r0, g0, b0, alpha, z);
@@ -447,27 +447,27 @@ int DrawLineF4(int x0, int y0, int x1, int y1, int x2, int y2, int x3, int y3, u
 }
 
 // Single gouraud coloured line : 2 points, 2 colours
-int DrawLineG2(int x0, int y0, int x1, int y1, uint8 r0, uint8 g0, uint8 b0, uint8 r1, uint8 g1, uint8 b1, uint8 alpha, u_short z) {
+int32 DrawLineG2(int32 x0, int32 y0, int32 x1, int32 y1, uint8 r0, uint8 g0, uint8 b0, uint8 r1, uint8 g1, uint8 b1, uint8 alpha, uint16 z) {
 	// Uses Bressnham's incremental algorithm!
 	// we pass a colour
 
-	int dx, dy;
-	int dxmod, dymod;
-	int ince, incne;
-	int d;
-	int x, y;
-	int addTo;
-	int dred;
-	int dgreen;
-	int dblue;
-	int r, g, b;
-	int lr0, lg0, lb0;
-	int lr1, lg1, lb1;
+	int32 dx, dy;
+	int32 dxmod, dymod;
+	int32 ince, incne;
+	int32 d;
+	int32 x, y;
+	int32 addTo;
+	int32 dred;
+	int32 dgreen;
+	int32 dblue;
+	int32 r, g, b;
+	int32 lr0, lg0, lb0;
+	int32 lr1, lg1, lb1;
 
-	x0 = (short)(RGBWidth / 2 + x0);
-	x1 = (short)(RGBWidth / 2 + x1);
-	y0 = (short)(RGBHeight / 2 + y0);
-	y1 = (short)(RGBHeight / 2 + y1);
+	x0 = (int16)(RGBWidth / 2 + x0);
+	x1 = (int16)(RGBWidth / 2 + x1);
+	y0 = (int16)(RGBHeight / 2 + y0);
+	y1 = (int16)(RGBHeight / 2 + y1);
 
 	// Make sure we're going from left to right
 	if (x1 < x0) {
@@ -529,13 +529,13 @@ int DrawLineG2(int x0, int y0, int x1, int y1, uint8 r0, uint8 g0, uint8 b0, uin
 			g = lg0;
 			b = lb0;
 			if ((x >= 0) && (x < RGBWidth) && (y >= 0) && (y < RGBHeight)) {
-				int index = y * RGBPitch + (x * RGBBytesPerPixel);
+				int32 index = y * RGBPitch + (x * RGBBytesPerPixel);
 				pRGB[index + 0] = b0;
 				pRGB[index + 1] = g0;
 				pRGB[index + 2] = r0;
 				pRGB[index + 3] = alpha;
 				index = y * ZPitch + (x * ZBytesPerPixel);
-				*(u_short *)(pZ + index + 0) = z;
+				*(uint16 *)(pZ + index + 0) = z;
 			}
 
 			while (x < x1) {
@@ -551,12 +551,12 @@ int DrawLineG2(int x0, int y0, int x1, int y1, uint8 r0, uint8 g0, uint8 b0, uin
 				g += dgreen;
 				b += dblue;
 				if ((x >= 0) && (x < RGBWidth) && (y >= 0) && (y < RGBHeight)) {
-					int index = y * RGBPitch + (x * RGBBytesPerPixel);
+					int32 index = y * RGBPitch + (x * RGBBytesPerPixel);
 					pRGB[index + 0] = (uint8)(b >> 8);
 					pRGB[index + 1] = (uint8)(g >> 8);
 					pRGB[index + 2] = (uint8)(r >> 8);
 					index = y * ZPitch + (x * ZBytesPerPixel);
-					*(u_short *)(pZ + index + 0) = z;
+					*(uint16 *)(pZ + index + 0) = z;
 				}
 			}
 		} else {
@@ -575,13 +575,13 @@ int DrawLineG2(int x0, int y0, int x1, int y1, uint8 r0, uint8 g0, uint8 b0, uin
 			g = lg0;
 			b = lb0;
 			if ((x >= 0) && (x < RGBWidth) && (addTo - y >= 0) && (addTo - y < RGBHeight)) {
-				int index = (addTo - y) * RGBPitch + (x * RGBBytesPerPixel);
+				int32 index = (addTo - y) * RGBPitch + (x * RGBBytesPerPixel);
 				pRGB[index + 0] = b0;
 				pRGB[index + 1] = g0;
 				pRGB[index + 2] = r0;
 				pRGB[index + 3] = alpha;
 				index = (addTo - y) * ZPitch + (x * ZBytesPerPixel);
-				*(u_short *)(pZ + index + 0) = z;
+				*(uint16 *)(pZ + index + 0) = z;
 			}
 
 			while (x < x1) {
@@ -597,12 +597,12 @@ int DrawLineG2(int x0, int y0, int x1, int y1, uint8 r0, uint8 g0, uint8 b0, uin
 				g += dgreen;
 				b += dblue;
 				if ((x >= 0) && (x < RGBWidth) && (addTo - y >= 0) && (addTo - y < RGBHeight)) {
-					int index = (addTo - y) * RGBPitch + (x * RGBBytesPerPixel);
+					int32 index = (addTo - y) * RGBPitch + (x * RGBBytesPerPixel);
 					pRGB[index + 0] = (uint8)(b >> 8);
 					pRGB[index + 1] = (uint8)(g >> 8);
 					pRGB[index + 2] = (uint8)(r >> 8);
 					index = (addTo - y) * ZPitch + (x * ZBytesPerPixel);
-					*(u_short *)(pZ + index + 0) = z;
+					*(uint16 *)(pZ + index + 0) = z;
 				}
 			}
 		}
@@ -648,13 +648,13 @@ int DrawLineG2(int x0, int y0, int x1, int y1, uint8 r0, uint8 g0, uint8 b0, uin
 			g = lg0;
 			b = lb0;
 			if ((x >= 0) && (x < RGBWidth) && (y >= 0) && (y < RGBHeight)) {
-				int index = y * RGBPitch + (x * RGBBytesPerPixel);
+				int32 index = y * RGBPitch + (x * RGBBytesPerPixel);
 				pRGB[index + 0] = b0;
 				pRGB[index + 1] = g0;
 				pRGB[index + 2] = r0;
 				pRGB[index + 3] = alpha;
 				index = y * ZPitch + (x * ZBytesPerPixel);
-				*(u_short *)(pZ + index + 0) = z;
+				*(uint16 *)(pZ + index + 0) = z;
 			}
 			while (y < y1) {
 				if (d <= 0) {
@@ -669,13 +669,13 @@ int DrawLineG2(int x0, int y0, int x1, int y1, uint8 r0, uint8 g0, uint8 b0, uin
 				g += dgreen;
 				b += dblue;
 				if ((x >= 0) && (x < RGBWidth) && (y >= 0) && (y < RGBHeight)) {
-					int index = y * RGBPitch + (x * RGBBytesPerPixel);
+					int32 index = y * RGBPitch + (x * RGBBytesPerPixel);
 					pRGB[index + 0] = (uint8)(b >> 8);
 					pRGB[index + 1] = (uint8)(g >> 8);
 					pRGB[index + 2] = (uint8)(r >> 8);
 					pRGB[index + 3] = alpha;
 					index = y * ZPitch + (x * ZBytesPerPixel);
-					*(u_short *)(pZ + index + 0) = z;
+					*(uint16 *)(pZ + index + 0) = z;
 				}
 			}
 		} else {
@@ -694,13 +694,13 @@ int DrawLineG2(int x0, int y0, int x1, int y1, uint8 r0, uint8 g0, uint8 b0, uin
 			g = lg0;
 			b = lb0;
 			if ((addTo - x >= 0) && (addTo - x < RGBWidth) && (y >= 0) && (y < RGBHeight)) {
-				int index = y * RGBPitch + ((addTo - x) * RGBBytesPerPixel);
+				int32 index = y * RGBPitch + ((addTo - x) * RGBBytesPerPixel);
 				pRGB[index + 0] = b0;
 				pRGB[index + 1] = g0;
 				pRGB[index + 2] = r0;
 				pRGB[index + 3] = alpha;
 				index = y * ZPitch + ((addTo - x) * ZBytesPerPixel);
-				*(u_short *)(pZ + index + 0) = z;
+				*(uint16 *)(pZ + index + 0) = z;
 			}
 
 			while (y < y1) {
@@ -716,13 +716,13 @@ int DrawLineG2(int x0, int y0, int x1, int y1, uint8 r0, uint8 g0, uint8 b0, uin
 				g += dgreen;
 				b += dblue;
 				if ((addTo - x >= 0) && (addTo - x < RGBWidth) && (y >= 0) && (y < RGBHeight)) {
-					int index = y * RGBPitch + ((addTo - x) * RGBBytesPerPixel);
+					int32 index = y * RGBPitch + ((addTo - x) * RGBBytesPerPixel);
 					pRGB[index + 0] = (uint8)(b >> 8);
 					pRGB[index + 1] = (uint8)(g >> 8);
 					pRGB[index + 2] = (uint8)(r >> 8);
 					pRGB[index + 3] = alpha;
 					index = y * ZPitch + ((addTo - x) * ZBytesPerPixel);
-					*(u_short *)(pZ + index + 0) = z;
+					*(uint16 *)(pZ + index + 0) = z;
 				}
 			}
 		}
@@ -731,15 +731,15 @@ int DrawLineG2(int x0, int y0, int x1, int y1, uint8 r0, uint8 g0, uint8 b0, uin
 }
 
 // two connected lines gouraud coloured : 3 points, 3 colours
-int DrawLineG3(int x0, int y0, int x1, int y1, int x2, int y2, uint8 r0, uint8 g0, uint8 b0, uint8 r1, uint8 g1, uint8 b1, uint8 r2, uint8 g2, uint8 b2, uint8 alpha, u_short z) {
+int32 DrawLineG3(int32 x0, int32 y0, int32 x1, int32 y1, int32 x2, int32 y2, uint8 r0, uint8 g0, uint8 b0, uint8 r1, uint8 g1, uint8 b1, uint8 r2, uint8 g2, uint8 b2, uint8 alpha, uint16 z) {
 	DrawLineG2(x0, y0, x1, y1, r0, g0, b0, r1, g1, b1, alpha, z);
 	DrawLineG2(x1, y1, x2, y2, r1, g1, b1, r2, g2, b2, alpha, z);
 	return 0;
 }
 
 // three connected lines gouraud coloured : 4 points, 4 colours
-int DrawLineG4(int x0, int y0, int x1, int y1, int x2, int y2, int x3, int y3, uint8 r0, uint8 g0, uint8 b0, uint8 r1, uint8 g1, uint8 b1, uint8 r2, uint8 g2, uint8 b2, uint8 r3,
-               uint8 g3, uint8 b3, uint8 alpha, u_short z) {
+int32 DrawLineG4(int32 x0, int32 y0, int32 x1, int32 y1, int32 x2, int32 y2, int32 x3, int32 y3, uint8 r0, uint8 g0, uint8 b0, uint8 r1, uint8 g1, uint8 b1, uint8 r2, uint8 g2, uint8 b2, uint8 r3,
+               uint8 g3, uint8 b3, uint8 alpha, uint16 z) {
 	DrawLineG2(x0, y0, x1, y1, r0, g0, b0, r1, g1, b1, alpha, z);
 	DrawLineG2(x1, y1, x2, y2, r1, g1, b1, r2, g2, b2, alpha, z);
 	DrawLineG2(x2, y2, x3, y3, r2, g2, b2, r3, g3, b3, alpha, z);
@@ -747,7 +747,7 @@ int DrawLineG4(int x0, int y0, int x1, int y1, int x2, int y2, int x3, int y3, u
 }
 
 // Simple flat coloured triangle : 3 points, 1 colour
-int DrawFlatTriangle(int x0, int y0, int x1, int y1, int x2, int y2, uint8 r0, uint8 g0, uint8 b0, uint8 alpha, u_short z) {
+int32 DrawFlatTriangle(int32 x0, int32 y0, int32 x1, int32 y1, int32 x2, int32 y2, uint8 r0, uint8 g0, uint8 b0, uint8 alpha, uint16 z) {
 	verts[0].x = (RGBWidth / 2 + x0) << 16;
 	verts[0].y = (RGBHeight / 2 + y0) << 16;
 	verts[1].x = (RGBWidth / 2 + x1) << 16;
@@ -757,16 +757,16 @@ int DrawFlatTriangle(int x0, int y0, int x1, int y1, int x2, int y2, uint8 r0, u
 
 	verts[0].colour = MAKERGB(r0, g0, b0, alpha);
 
-	int nVerts;
+	int32 nVerts;
 	if (ClipPolygon(verts, 3, clipverts, &nVerts) == 0)
 		return 1;
 
-	int ret;
+	int32 ret;
 
 	if (nVerts == 3) {
 		ret = DrawFlatUnTexturedPolygon(clipverts, 3, z);
 	} else {
-		int i;
+		int32 i;
 		vertex2D newVerts[3];
 
 		ret = 0;
@@ -785,7 +785,7 @@ int DrawFlatTriangle(int x0, int y0, int x1, int y1, int x2, int y2, uint8 r0, u
 }
 
 // Simple flat coloured quad : 4 points, 1 colour
-int DrawFlatQuad(int x0, int y0, int x1, int y1, int x2, int y2, int x3, int y3, uint8 r0, uint8 g0, uint8 b0, uint8 alpha, u_short z) {
+int32 DrawFlatQuad(int32 x0, int32 y0, int32 x1, int32 y1, int32 x2, int32 y2, int32 x3, int32 y3, uint8 r0, uint8 g0, uint8 b0, uint8 alpha, uint16 z) {
 	// Input Quad is :
 	//  0----1
 	//  |    |
@@ -806,13 +806,13 @@ int DrawFlatQuad(int x0, int y0, int x1, int y1, int x2, int y2, int x3, int y3,
 
 	verts[0].colour = MAKERGB(r0, g0, b0, alpha);
 
-	int nVerts;
+	int32 nVerts;
 	if (ClipPolygon(verts, 4, clipverts, &nVerts) == 0)
 		return 1;
 
-	int ret;
+	int32 ret;
 	vertex2D newVerts[3];
-	int i;
+	int32 i;
 	ret = 0;
 
 	for (i = 3; i <= nVerts; i++) {
@@ -828,8 +828,8 @@ int DrawFlatQuad(int x0, int y0, int x1, int y1, int x2, int y2, int x3, int y3,
 }
 
 // Simple gouraud coloured triangle : 3 points, 3 colours
-int DrawGouraudTriangle(int x0, int y0, int x1, int y1, int x2, int y2, uint8 r0, uint8 g0, uint8 b0, uint8 r1, uint8 g1, uint8 b1, uint8 r2, uint8 g2, uint8 b2, uint8 alpha,
-                        u_short z) {
+int32 DrawGouraudTriangle(int32 x0, int32 y0, int32 x1, int32 y1, int32 x2, int32 y2, uint8 r0, uint8 g0, uint8 b0, uint8 r1, uint8 g1, uint8 b1, uint8 r2, uint8 g2, uint8 b2, uint8 alpha,
+                        uint16 z) {
 	verts[0].x = (RGBWidth / 2 + x0) << 16;
 	verts[0].y = (RGBHeight / 2 + y0) << 16;
 	verts[1].x = (RGBWidth / 2 + x1) << 16;
@@ -841,16 +841,16 @@ int DrawGouraudTriangle(int x0, int y0, int x1, int y1, int x2, int y2, uint8 r0
 	verts[1].colour = MAKERGB(r1, g1, b1, alpha);
 	verts[2].colour = MAKERGB(r2, g2, b2, alpha);
 
-	int nVerts;
+	int32 nVerts;
 	if (ClipPolygon(verts, 3, clipverts, &nVerts) == 0)
 		return 1;
 
-	int ret;
+	int32 ret;
 
 	if (nVerts == 3) {
 		ret = DrawGouraudUnTexturedPolygon(clipverts, 3, z);
 	} else {
-		int i;
+		int32 i;
 		vertex2D newVerts[3];
 
 		ret = 0;
@@ -869,8 +869,8 @@ int DrawGouraudTriangle(int x0, int y0, int x1, int y1, int x2, int y2, uint8 r0
 }
 
 // Simple gouraud coloured quad : 4 points, 4 colours
-int DrawGouraudQuad(int x0, int y0, int x1, int y1, int x2, int y2, int x3, int y3, uint8 r0, uint8 g0, uint8 b0, uint8 r1, uint8 g1, uint8 b1, uint8 r2, uint8 g2, uint8 b2,
-                    uint8 r3, uint8 g3, uint8 b3, uint8 alpha, u_short z) {
+int32 DrawGouraudQuad(int32 x0, int32 y0, int32 x1, int32 y1, int32 x2, int32 y2, int32 x3, int32 y3, uint8 r0, uint8 g0, uint8 b0, uint8 r1, uint8 g1, uint8 b1, uint8 r2, uint8 g2, uint8 b2,
+                    uint8 r3, uint8 g3, uint8 b3, uint8 alpha, uint16 z) {
 	// Input Quad is :
 	//  0----1
 	//  |    |
@@ -893,13 +893,13 @@ int DrawGouraudQuad(int x0, int y0, int x1, int y1, int x2, int y2, int x3, int 
 	verts[3].colour = MAKERGB(r2, g2, b2, alpha);
 	verts[2].colour = MAKERGB(r3, g3, b3, alpha);
 
-	int nVerts;
+	int32 nVerts;
 	if (ClipPolygon(verts, 4, clipverts, &nVerts) == 0)
 		return 1;
 
-	int ret;
+	int32 ret;
 	vertex2D newVerts[3];
-	int i;
+	int32 i;
 	ret = 0;
 
 	for (i = 3; i <= nVerts; i++) {
@@ -916,8 +916,8 @@ int DrawGouraudQuad(int x0, int y0, int x1, int y1, int x2, int y2, int x3, int 
 
 // Simple flat coloured triangle : 3 points, 1 colour, 3 UV's
 // r0, g0, b0 :  128 means colour scale of 1.0
-int DrawFlatTriangleTextured(int x0, int y0, int x1, int y1, int x2, int y2, uint8 r0, uint8 g0, uint8 b0, u_short u0, u_short v0, u_short u1, u_short v1, u_short u2, u_short v2,
-                             uint8 alpha, u_short z, void *tex) {
+int32 DrawFlatTriangleTextured(int32 x0, int32 y0, int32 x1, int32 y1, int32 x2, int32 y2, uint8 r0, uint8 g0, uint8 b0, uint16 u0, uint16 v0, uint16 u1, uint16 v1, uint16 u2, uint16 v2,
+                             uint8 alpha, uint16 z, void *tex) {
 	verts[0].x = (RGBWidth / 2 + x0) << 16;
 	verts[0].y = (RGBHeight / 2 + y0) << 16;
 	verts[1].x = (RGBWidth / 2 + x1) << 16;
@@ -934,7 +934,7 @@ int DrawFlatTriangleTextured(int x0, int y0, int x1, int y1, int x2, int y2, uin
 
 	verts[0].colour = MAKERGB(r0, g0, b0, alpha);
 
-	int nVerts;
+	int32 nVerts;
 	if (ClipPolygon(verts, 3, clipverts, &nVerts) == 0)
 		return 1;
 
@@ -949,12 +949,12 @@ int DrawFlatTriangleTextured(int x0, int y0, int x1, int y1, int x2, int y2, uin
 		return 0;
 	}
 
-	int ret;
+	int32 ret;
 
 	if (nVerts == 3) {
 		ret = DrawFlatTexturedPolygon(clipverts, 3, z);
 	} else {
-		int i;
+		int32 i;
 		vertex2D newVerts[3];
 
 		ret = 0;
@@ -976,8 +976,8 @@ int DrawFlatTriangleTextured(int x0, int y0, int x1, int y1, int x2, int y2, uin
 
 // Simple flat coloured quad : 4 points, 1 colour, 4 UV's
 // r0, g0, b0 :  128 means colour scale of 1.0
-int DrawFlatQuadTextured(int x0, int y0, int x1, int y1, int x2, int y2, int x3, int y3, uint8 r0, uint8 g0, uint8 b0, u_short u0, u_short v0, u_short u1, u_short v1, u_short u2,
-                         u_short v2, u_short u3, u_short v3, uint8 alpha, u_short z, void *tex) {
+int32 DrawFlatQuadTextured(int32 x0, int32 y0, int32 x1, int32 y1, int32 x2, int32 y2, int32 x3, int32 y3, uint8 r0, uint8 g0, uint8 b0, uint16 u0, uint16 v0, uint16 u1, uint16 v1, uint16 u2,
+                         uint16 v2, uint16 u3, uint16 v3, uint8 alpha, uint16 z, void *tex) {
 	// Input Quad is :
 	//  0----1
 	//  |    |
@@ -1007,7 +1007,7 @@ int DrawFlatQuadTextured(int x0, int y0, int x1, int y1, int x2, int y2, int x3,
 	verts[3].v = v2 << 8;
 	verts[2].v = v3 << 8;
 
-	int nVerts;
+	int32 nVerts;
 	if (ClipPolygon(verts, 4, clipverts, &nVerts) == 0)
 		return 1;
 
@@ -1022,9 +1022,9 @@ int DrawFlatQuadTextured(int x0, int y0, int x1, int y1, int x2, int y2, int x3,
 		return 0;
 	}
 
-	int ret;
+	int32 ret;
 	vertex2D newVerts[3];
-	int i;
+	int32 i;
 	ret = 0;
 
 	for (i = 3; i <= nVerts; i++) {
@@ -1041,12 +1041,12 @@ int DrawFlatQuadTextured(int x0, int y0, int x1, int y1, int x2, int y2, int x3,
 	return ret;
 }
 
-int tempor = 0;
+int32 tempor = 0;
 
 // Simple gouraud coloured triangle : 3 points, 3 colours
 // r0, g0, b0 :  128 means colour scale of 1.0
-int DrawGouraudTriangleTextured(int x0, int y0, int x1, int y1, int x2, int y2, uint8 r0, uint8 g0, uint8 b0, uint8 r1, uint8 g1, uint8 b1, uint8 r2, uint8 g2, uint8 b2,
-                                u_short u0, u_short v0, u_short u1, u_short v1, u_short u2, u_short v2, uint8 alpha, u_short z, void *tex) {
+int32 DrawGouraudTriangleTextured(int32 x0, int32 y0, int32 x1, int32 y1, int32 x2, int32 y2, uint8 r0, uint8 g0, uint8 b0, uint8 r1, uint8 g1, uint8 b1, uint8 r2, uint8 g2, uint8 b2,
+                                uint16 u0, uint16 v0, uint16 u1, uint16 v1, uint16 u2, uint16 v2, uint8 alpha, uint16 z, void *tex) {
 	verts[0].x = (RGBWidth / 2 + x0) << 16;
 	verts[0].y = (RGBHeight / 2 + y0) << 16;
 	verts[1].x = (RGBWidth / 2 + x1) << 16;
@@ -1064,7 +1064,7 @@ int DrawGouraudTriangleTextured(int x0, int y0, int x1, int y1, int x2, int y2, 
 	verts[1].colour = MAKERGB(r1, g1, b1, alpha);
 	verts[2].colour = MAKERGB(r2, g2, b2, alpha);
 
-	int nVerts;
+	int32 nVerts;
 	if (ClipPolygon(verts, 3, clipverts, &nVerts) == 0)
 		return 1;
 
@@ -1079,12 +1079,12 @@ int DrawGouraudTriangleTextured(int x0, int y0, int x1, int y1, int x2, int y2, 
 		return 0;
 	}
 
-	int ret;
+	int32 ret;
 
 	if (nVerts == 3) {
 		ret = DrawGouraudTexturedPolygon(clipverts, 3, z);
 	} else {
-		int i;
+		int32 i;
 		vertex2D newVerts[3];
 
 		ret = 0;
@@ -1107,9 +1107,9 @@ int DrawGouraudTriangleTextured(int x0, int y0, int x1, int y1, int x2, int y2, 
 
 // Simple gouraud coloured quad : 4 points, 4 colours
 // r0, g0, b0 :  128 means colour scale of 1.0
-int DrawGouraudQuadTextured(int x0, int y0, int x1, int y1, int x2, int y2, int x3, int y3, uint8 r0, uint8 g0, uint8 b0, uint8 r1, uint8 g1, uint8 b1, uint8 r2, uint8 g2,
-                            uint8 b2, uint8 r3, uint8 g3, uint8 b3, u_short u0, u_short v0, u_short u1, u_short v1, u_short u2, u_short v2, u_short u3, u_short v3, uint8 alpha,
-                            u_short z, void *tex) {
+int32 DrawGouraudQuadTextured(int32 x0, int32 y0, int32 x1, int32 y1, int32 x2, int32 y2, int32 x3, int32 y3, uint8 r0, uint8 g0, uint8 b0, uint8 r1, uint8 g1, uint8 b1, uint8 r2, uint8 g2,
+                            uint8 b2, uint8 r3, uint8 g3, uint8 b3, uint16 u0, uint16 v0, uint16 u1, uint16 v1, uint16 u2, uint16 v2, uint16 u3, uint16 v3, uint8 alpha,
+                            uint16 z, void *tex) {
 	// Input Quad is :
 	//  0----1
 	//  |    |
@@ -1142,7 +1142,7 @@ int DrawGouraudQuadTextured(int x0, int y0, int x1, int y1, int x2, int y2, int 
 	verts[3].v = v2 << 8;
 	verts[2].v = v3 << 8;
 
-	int nVerts;
+	int32 nVerts;
 	if (ClipPolygon(verts, 4, clipverts, &nVerts) == 0)
 		return 1;
 
@@ -1157,9 +1157,9 @@ int DrawGouraudQuadTextured(int x0, int y0, int x1, int y1, int x2, int y2, int 
 		return 0;
 	}
 
-	int ret;
+	int32 ret;
 	vertex2D newVerts[3];
-	int i;
+	int32 i;
 	ret = 0;
 
 	for (i = 3; i <= nVerts; i++) {
@@ -1176,7 +1176,7 @@ int DrawGouraudQuadTextured(int x0, int y0, int x1, int y1, int x2, int y2, int 
 	return ret;
 }
 
-inline void Intersection(vertex2D *out, vertex2D v0, vertex2D v1, int p) {
+inline void Intersection(vertex2D *out, vertex2D v0, vertex2D v1, int32 p) {
 
 	out->x = v0.x + p * ((v1.x - v0.x) >> 8);
 	out->y = v0.y + p * ((v1.y - v0.y) >> 8);
@@ -1185,14 +1185,14 @@ inline void Intersection(vertex2D *out, vertex2D v0, vertex2D v1, int p) {
 	out->v = v0.v + p * ((v1.v - v0.v) >> 8);
 }
 
-inline void ClipWithTopPlane(vertex2D *inVerts, int inNverts, vertex2D *outVerts, int *outNverts) {
+inline void ClipWithTopPlane(vertex2D *inVerts, int32 inNverts, vertex2D *outVerts, int32 *outNverts) {
 	vertex2D intersect;
-	int i, ni;
-	int j;
-	int percent;
+	int32 i, ni;
+	int32 j;
+	int32 percent;
 	uint8 bits[MAX_POLYGON_VERTS];
 
-	int yPlane = (0) << 16;
+	int32 yPlane = (0) << 16;
 
 	for (i = 0; i < inNverts; i++)
 		bits[i] = (uint8)(inVerts[i].y >= yPlane);
@@ -1245,14 +1245,14 @@ inline void ClipWithTopPlane(vertex2D *inVerts, int inNverts, vertex2D *outVerts
 	*outNverts = j;
 }
 
-inline void ClipWithBottomPlane(vertex2D *inVerts, int inNverts, vertex2D *outVerts, int *outNverts) {
+inline void ClipWithBottomPlane(vertex2D *inVerts, int32 inNverts, vertex2D *outVerts, int32 *outNverts) {
 	vertex2D intersect;
-	int i, ni;
-	int j;
-	int percent;
+	int32 i, ni;
+	int32 j;
+	int32 percent;
 	uint8 bits[MAX_POLYGON_VERTS];
 
-	int yPlane = (RGBHeight - 1) << 16;
+	int32 yPlane = (RGBHeight - 1) << 16;
 
 	for (i = 0; i < inNverts; i++)
 		bits[i] = (uint8)(inVerts[i].y < yPlane);
@@ -1304,14 +1304,14 @@ inline void ClipWithBottomPlane(vertex2D *inVerts, int inNverts, vertex2D *outVe
 	*outNverts = j;
 }
 
-inline void ClipWithLeftPlane(vertex2D *inVerts, int inNverts, vertex2D *outVerts, int *outNverts) {
+inline void ClipWithLeftPlane(vertex2D *inVerts, int32 inNverts, vertex2D *outVerts, int32 *outNverts) {
 	vertex2D intersect;
-	int i, ni;
-	int j;
-	int percent;
+	int32 i, ni;
+	int32 j;
+	int32 percent;
 	uint8 bits[MAX_POLYGON_VERTS];
 
-	int xPlane = (0) << 16;
+	int32 xPlane = (0) << 16;
 	for (i = 0; i < inNverts; i++)
 		bits[i] = (uint8)(inVerts[i].x >= xPlane);
 
@@ -1362,14 +1362,14 @@ inline void ClipWithLeftPlane(vertex2D *inVerts, int inNverts, vertex2D *outVert
 	*outNverts = j;
 }
 
-inline void ClipWithRightPlane(vertex2D *inVerts, int inNverts, vertex2D *outVerts, int *outNverts) {
+inline void ClipWithRightPlane(vertex2D *inVerts, int32 inNverts, vertex2D *outVerts, int32 *outNverts) {
 	vertex2D intersect;
-	int i, ni;
-	int j;
-	int percent;
+	int32 i, ni;
+	int32 j;
+	int32 percent;
 	uint8 bits[MAX_POLYGON_VERTS];
 
-	int xPlane = (RGBWidth - 1) << 16;
+	int32 xPlane = (RGBWidth - 1) << 16;
 	for (i = 0; i < inNverts; i++)
 		bits[i] = (uint8)(inVerts[i].x < xPlane);
 
@@ -1428,8 +1428,8 @@ inline void ClipWithRightPlane(vertex2D *inVerts, int inNverts, vertex2D *outVer
 
 // Simple clipping by polygon rejection
 
-int ClipPolygon(vertex2D *inverts, int inNverts, vertex2D *outverts, int *ret) {
-	int i;
+int32 ClipPolygon(vertex2D *inverts, int32 inNverts, vertex2D *outverts, int32 *ret) {
+	int32 i;
 
 	for (i = 0; i < inNverts; i++) {
 
@@ -1448,12 +1448,12 @@ int ClipPolygon(vertex2D *inverts, int inNverts, vertex2D *outverts, int *ret) {
 
 // Complex clipping to the screen boundaries
 
-int ClipPolygon(vertex2D *inverts, int inNverts, vertex2D *outverts, int *ret) {
-	int i;
+int32 ClipPolygon(vertex2D *inverts, int32 inNverts, vertex2D *outverts, int32 *ret) {
+	int32 i;
 
-	int outNverts;
+	int32 outNverts;
 
-	int newinNverts;
+	int32 newinNverts;
 	vertex2D newinverts[MAX_POLYGON_VERTS];
 
 	if (SimpleReject(inverts))

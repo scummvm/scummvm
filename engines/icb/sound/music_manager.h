@@ -44,16 +44,16 @@ private:
 	Audio::SoundHandle _handle;
 
 	uint32 m_bufferLength; // Stores the length of the sound buffers in bytes
-	int m_musicVol;        // The volume the each stream was started at
+	int32 m_musicVol;        // The volume the each stream was started at
 
 	uint32 m_wavByteOffsetInCluster;
 	uint32 m_wavDataSize;
 
 	bool8 m_paused;
-	int m_lengthInCycles; // Assumes 12 frames per second
+	int32 m_lengthInCycles; // Assumes 12 frames per second
 
-	int m_fading;
-	int m_adjustFadeVol;
+	int32 m_fading;
+	int32 m_adjustFadeVol;
 
 	uint32 m_identifier; // Handle if you like of loaded music
 
@@ -68,17 +68,17 @@ public:
 	bool8 PlayMusic();
 	void StopMusic();
 	void SetMusicPausedStatus(bool8 p = TRUE8);
-	void SetMusicVolume(int volume);
+	void SetMusicVolume(int32 volume);
 
 	bool8 IsPlaying();
 	bool8 IsPaused() { return m_paused; }
-	int GetLength() { return m_lengthInCycles; }
+	int32 GetLength() { return m_lengthInCycles; }
 
 private:
 	bool8 OpenMusic(Common::SeekableReadStream *stream);
 	void KillBuffer();
-	void SetVolume(int volume);
-	void AdjustVolume(int amount);
+	void SetVolume(int32 volume);
+	void AdjustVolume(int32 amount);
 };
 
 extern MusicManager *g_theMusicManager;

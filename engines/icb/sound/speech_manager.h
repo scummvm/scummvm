@@ -42,13 +42,13 @@ class SpeechManager {
 private:
 	Audio::AudioStream *_audioStream;
 	Audio::SoundHandle _handle;
-	int m_speechVol; // The volume the each stream was started at
+	int32 m_speechVol; // The volume the each stream was started at
 
 	uint32 m_wavByteOffsetInCluster;
 	uint32 m_wavDataSize;
 
 	bool8 m_paused;
-	int m_lengthInCycles; // Assumes 12 frames per second
+	int32 m_lengthInCycles; // Assumes 12 frames per second
 
 public:
 	SpeechManager();
@@ -60,15 +60,15 @@ public:
 	void StopSpeech();
 	void PauseSpeech();
 	void ResumeSpeech();
-	void SetSpeechVolume(int volume);
+	void SetSpeechVolume(int32 volume);
 	bool8 IsPlaying();
 	bool8 IsPaused() { return m_paused; }
-	int GetLength() { return m_lengthInCycles; }
+	int32 GetLength() { return m_lengthInCycles; }
 
 private:
 	bool8 OpenSpeech(Common::SeekableReadStream *stream);
 	void KillBuffer();
-	void SetVolume(int volume);
+	void SetVolume(int32 volume);
 };
 
 } // End of namespace ICB

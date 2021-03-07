@@ -339,7 +339,7 @@ void _prim_route_builder::Find_connects(uint32 point, PXreal cur_len, uint32 lev
 				pen += 20;
 				Tdebug("trout.txt", "hit the target");
 				if ((branch_len + cur_len) < final_len) { // point we got to is final point, so
-					Tdebug("trout.txt", "%d shorter than %d", (int)(branch_len + cur_len), (int)final_len);
+					Tdebug("trout.txt", "%d shorter than %d", (int32)(branch_len + cur_len), (int32)final_len);
 					final_len = branch_len + cur_len;
 					final_points = level + 1;
 
@@ -348,7 +348,7 @@ void _prim_route_builder::Find_connects(uint32 point, PXreal cur_len, uint32 lev
 						final_route[k].z = barrier_list[temp_route[k]].z;
 					}
 				} else
-					Tdebug("trout.txt", "%d is int32er then %d", (int)(branch_len + cur_len), (int)final_len);
+					Tdebug("trout.txt", "%d is int32er then %d", (int32)(branch_len + cur_len), (int32)final_len);
 			}
 		}
 	}

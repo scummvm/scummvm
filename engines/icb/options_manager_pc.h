@@ -65,12 +65,12 @@ private:
 	bool8 m_movieBackdrop;
 
 	bool8 m_loopingMovie;
-	int m_frameStart;
-	int m_totalMovieFrames;
+	int32 m_frameStart;
+	int32 m_totalMovieFrames;
 
 public:
 	Crediter();
-	void Initialise(const char *textFileName, const char *movieFileName, bool8 loopingMovie, bool8 attachLogo, int frameStart);
+	void Initialise(const char *textFileName, const char *movieFileName, bool8 loopingMovie, bool8 attachLogo, int32 frameStart);
 	int32 DoScreen();
 };
 
@@ -352,8 +352,8 @@ private:
 	bool8 m_controlPage1;       // Control screen page indicator
 	uint32 m_controlAnimCursor; // Animation sequence position
 
-	int m_move_sfx_channel;   // Audio channel for move sfx
-	int m_choose_sfx_channel; // Audio channel for select sfx
+	int32 m_move_sfx_channel;   // Audio channel for move sfx
+	int32 m_choose_sfx_channel; // Audio channel for select sfx
 
 	bool8 m_canSave; // Is save disabled in game
 
@@ -363,7 +363,7 @@ private:
 	char m_defaultSlotName[MAX_LABEL_LENGTH];
 	bool8 m_editing;
 	bool8 m_defaultWiper;
-	int m_emptySlotFlag;
+	int32 m_emptySlotFlag;
 
 	uint32 m_timePlayed;
 
@@ -380,7 +380,7 @@ private:
 
 	bool8 m_awaitingKeyPress; // For control assignment
 	bool8 m_configLimiter;
-	int m_assignFlash;
+	int32 m_assignFlash;
 
 	bool8 m_creditControl; // Credits displaying flag
 	Crediter m_crediter;   // Crediter class instance
@@ -418,7 +418,7 @@ public:
 
 	// Public access routines
 	void DoCredits();
-	void InitialiseScrollingText(const char *textFileName, const char *movieFileName, int frameStart);
+	void InitialiseScrollingText(const char *textFileName, const char *movieFileName, int32 frameStart);
 	void DoScrollingText();
 	void DisplayText(uint8 *ad, uint32 pitch, const char *str, int32 x, int32 y, uint32 col, bool8 centredHorizontally, bool8 boxed = FALSE8);
 	const char *GetTextFromReference(uint32 hashRef);

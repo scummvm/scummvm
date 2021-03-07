@@ -43,7 +43,7 @@
 
 namespace ICB {
 
-int tutorialMode = 0;
+int32 tutorialMode = 0;
 
 #define MAX_LW_MATRICES 64
 
@@ -53,12 +53,12 @@ int tutorialMode = 0;
 #define MAX_VECTORS 512
 #endif
 
-int littpc;
-int mattpc;
-int verttpc;
-int polytpc;
-int hiertpc;
-int shadtpc;
+int32 littpc;
+int32 mattpc;
+int32 verttpc;
+int32 polytpc;
+int32 hiertpc;
+int32 shadtpc;
 
 // Local prototypes
 #if CD_MODE == 0
@@ -66,7 +66,7 @@ void drawBboxPC(SVECTOR *scrn, CVECTOR colour);
 void drawOutlinePC(SVECTOR *min, SVECTOR *max, CVECTOR colour);
 #endif // #if CD_MODE == 0
 
-void DrawModel4PC(rap_API *mrap, int poseBone, MATRIXPC *lw, MATRIXPC *local2screen, int uvframe, uint debug, SVECTOR *bbox, SVECTOR *minbbox, SVECTOR *maxbbox);
+void DrawModel4PC(rap_API *mrap, int32 poseBone, MATRIXPC *lw, MATRIXPC *local2screen, int32 uvframe, uint32 debug, SVECTOR *bbox, SVECTOR *minbbox, SVECTOR *maxbbox);
 
 // My home grown replacement for the DrawActor routine
 // which uses home grown replacement to do the drawing
@@ -74,7 +74,7 @@ void DrawModel4PC(rap_API *mrap, int poseBone, MATRIXPC *lw, MATRIXPC *local2scr
 // using soft-skinning specific data
 
 void DrawActor4PC(psxActor *actor, psxCamera *camera, Bone_Frame *frame, rap_API *mesh, rap_API *pose, rap_API *smesh, PSXrgb *ambient, PSXLampList *lamplist,
-                  PSXShadeList *shadelist, int nShadows, SVECTORPC *p_n, int *p_d, uint32 debug, int uvframe, BoneDeformation **boneDeforms, int *brightness,
+                  PSXShadeList *shadelist, int32 nShadows, SVECTORPC *p_n, int32 *p_d, uint32 debug, int32 uvframe, BoneDeformation **boneDeforms, int32 *brightness,
                   MATRIXPC *local2screen // filled in
                   ) {
 
@@ -130,7 +130,7 @@ void DrawActor4PC(psxActor *actor, psxCamera *camera, Bone_Frame *frame, rap_API
 	BoneLink *skelPiece = bones;
 	LinkedMatrix *angles = frame->bones;
 	SVECTOR rot;
-	uint b;
+	uint32 b;
 
 	for (b = 0; b < mesh->nBones; bone++, angles++, skelPiece++, b++) {
 		// Make the translation part
@@ -141,11 +141,11 @@ void DrawActor4PC(psxActor *actor, psxCamera *camera, Bone_Frame *frame, rap_API
 		// Make the rotation part
 		ExpandSVECTOR(angles->crot, &rot);
 
-		for (int d = 0; d < MAX_DEFORMABLE_BONES; d++) {
-			if ((boneDeforms[d]) && ((int)b == boneDeforms[d]->boneNumber)) {
-				rot.vx = (short)(rot.vx + boneDeforms[d]->boneValue.vx);
-				rot.vy = (short)(rot.vy + boneDeforms[d]->boneValue.vy);
-				rot.vz = (short)(rot.vz + boneDeforms[d]->boneValue.vz);
+		for (int32 d = 0; d < MAX_DEFORMABLE_BONES; d++) {
+			if ((boneDeforms[d]) && ((int32)b == boneDeforms[d]->boneNumber)) {
+				rot.vx = (int16)(rot.vx + boneDeforms[d]->boneValue.vx);
+				rot.vy = (int16)(rot.vy + boneDeforms[d]->boneValue.vy);
+				rot.vz = (int16)(rot.vz + boneDeforms[d]->boneValue.vz);
 			}
 		}
 
@@ -158,7 +158,7 @@ void DrawActor4PC(psxActor *actor, psxCamera *camera, Bone_Frame *frame, rap_API
 			bone->parent = 0x0;
 	}
 
-	int hasUpperBodyDeform = 0;
+	int32 hasUpperBodyDeform = 0;
 	SVECTOR upperBodyDeform;
 
 	// no upper body deform
@@ -168,19 +168,19 @@ void DrawActor4PC(psxActor *actor, psxCamera *camera, Bone_Frame *frame, rap_API
 
 	// check for any bone transformations on bone 1 which will effect the gun position...
 
-	for (int d = 0; d < MAX_DEFORMABLE_BONES; d++) {
+	for (int32 d = 0; d < MAX_DEFORMABLE_BONES; d++) {
 		// if this is the upper body twist... (bone 1)
 		if ((boneDeforms[d]) && (boneDeforms[d]->boneNumber == 1)) {
 			hasUpperBodyDeform = 1;
-			upperBodyDeform.vx = (short)(upperBodyDeform.vx + boneDeforms[d]->boneValue.vx);
-			upperBodyDeform.vy = (short)(upperBodyDeform.vy + boneDeforms[d]->boneValue.vy);
-			upperBodyDeform.vz = (short)(upperBodyDeform.vz + boneDeforms[d]->boneValue.vz);
+			upperBodyDeform.vx = (int16)(upperBodyDeform.vx + boneDeforms[d]->boneValue.vx);
+			upperBodyDeform.vy = (int16)(upperBodyDeform.vy + boneDeforms[d]->boneValue.vy);
+			upperBodyDeform.vz = (int16)(upperBodyDeform.vz + boneDeforms[d]->boneValue.vz);
 		}
 	}
 
 	// Is there an accesory to draw ?
-	uint nBones = mesh->nBones;
-	int pb = 0;
+	uint32 nBones = mesh->nBones;
+	int32 pb = 0;
 	if (frame->poseBone.parent != mesh->nBones) {
 		pb = nBones;
 		// Make the translation part
@@ -202,7 +202,7 @@ void DrawActor4PC(psxActor *actor, psxCamera *camera, Bone_Frame *frame, rap_API
 
 			gun_rot.vx = upperBodyDeform.vx;
 			gun_rot.vy = upperBodyDeform.vy;
-			gun_rot.vz = (short)(48 * upperBodyDeform.vz / 64);
+			gun_rot.vz = (int16)(48 * upperBodyDeform.vz / 64);
 
 			RotMatrix_gte_pc(&gun_rot, &matrix);
 
@@ -285,7 +285,7 @@ void DrawActor4PC(psxActor *actor, psxCamera *camera, Bone_Frame *frame, rap_API
 
 	// Make the rotation matrix
 	MATRIXPC cam_pc, act_pc;
-	const int MSCALE = ONE_PC / ONE;
+	const int32 MSCALE = ONE_PC / ONE;
 	cam_pc.m[0][0] = camera->view.m[0][0] * MSCALE;
 	cam_pc.m[0][1] = camera->view.m[0][1] * MSCALE;
 	cam_pc.m[0][2] = camera->view.m[0][2] * MSCALE;
@@ -317,9 +317,9 @@ void DrawActor4PC(psxActor *actor, psxCamera *camera, Bone_Frame *frame, rap_API
 	// make the ls trans vector
 	//  = world2screen * local2world_trans + world2screen_trans
 	SVECTORPC sv;
-	sv.vx = (short)actor->lw.t[0];
-	sv.vy = (short)actor->lw.t[1];
-	sv.vz = (short)actor->lw.t[2];
+	sv.vx = (int16)actor->lw.t[0];
+	sv.vy = (int16)actor->lw.t[1];
+	sv.vz = (int16)actor->lw.t[2];
 
 	ApplyMatrixLV_pc(&cam_pc, (VECTOR *)&(actor->lw.t[0]), (VECTOR *)&(local2screen->t[0]));
 	local2screen->t[0] += cam_pc.t[0];
@@ -345,8 +345,8 @@ void DrawActor4PC(psxActor *actor, psxCamera *camera, Bone_Frame *frame, rap_API
 	// Ignore the hip.vy - which represents roll because the hips roll independently of the whole body movement
 	// e.g. when walking along rolling the hips !
 
-	trot.vx = (short)(hip.vx + (ONE / 4));
-	trot.vy = (short)(hip.vz);
+	trot.vx = (int16)(hip.vx + (ONE / 4));
+	trot.vy = (int16)(hip.vz);
 	trot.vz = 0;
 
 	// Make the rotation matrix to account for the hips orientation relative to the actor coords
@@ -376,27 +376,27 @@ void DrawActor4PC(psxActor *actor, psxCamera *camera, Bone_Frame *frame, rap_API
 	}
 	SVECTORPC ldirs[MAX_SHADOWS];
 	CVECTOR lcolours[MAX_SHADOWS];
-	int l;
-	int ns = 0;
-	int work;
+	int32 l;
+	int32 ns = 0;
+	int32 work;
 	for (l = 0; l < nShadows; l++) {
 		// Only use lights which are on and point downwards
 		if ((linfo[l].intens != 0) && (linfo[l].direct.vy < 0)) {
-			ldirs[ns].vx = (short)linfo[l].direct.vx;
-			ldirs[ns].vy = (short)linfo[l].direct.vy;
-			ldirs[ns].vz = (short)linfo[l].direct.vz;
+			ldirs[ns].vx = (int16)linfo[l].direct.vx;
+			ldirs[ns].vy = (int16)linfo[l].direct.vy;
+			ldirs[ns].vz = (int16)linfo[l].direct.vz;
 			work = (linfo[l].colour.vx >> 4);
 			if (work > 255)
 				work = 255;
-			lcolours[ns].r = (u_char)work;
+			lcolours[ns].r = (uint8)work;
 			work = (linfo[l].colour.vy >> 4);
 			if (work > 255)
 				work = 255;
-			lcolours[ns].g = (u_char)work;
+			lcolours[ns].g = (uint8)work;
 			work = (linfo[l].colour.vz >> 4);
 			if (work > 255)
 				work = 255;
-			lcolours[ns].b = (u_char)work;
+			lcolours[ns].b = (uint8)work;
 			ns++;
 		}
 	}
@@ -470,11 +470,11 @@ void DrawActor4PC(psxActor *actor, psxCamera *camera, Bone_Frame *frame, rap_API
 
 	SVECTORPC sxy0;
 	gte_RotTransPers_pc(&origin, &sxy0, &p, &flag, (int32 *)&(actor->sPos.vz));
-	actor->sPos.vx = (short)sxy0.vx;
-	actor->sPos.vy = (short)sxy0.vy;
+	actor->sPos.vx = (int16)sxy0.vx;
+	actor->sPos.vy = (int16)sxy0.vy;
 
 #if CD_MODE == 0
-	CVECTOR bboxColour = {(u_char)bboxRed, (u_char)bboxGreen, (u_char)bboxBlue, 0};
+	CVECTOR bboxColour = {(uint8)bboxRed, (uint8)bboxGreen, (uint8)bboxBlue, 0};
 	if (_drawBbox)
 		drawBboxPC(actor->bboxScrn, bboxColour);
 	CVECTOR sbColour = {240, 240, 240, 0};
@@ -493,16 +493,16 @@ void DrawActor4PC(psxActor *actor, psxCamera *camera, Bone_Frame *frame, rap_API
 	// 2 LINE_F3's : e.g. a rectangle
 	CVECTOR slColour;
 	if (_drawSline) {
-		slColour.r = (u_char)slineRed;
-		slColour.g = (u_char)slineGreen;
-		slColour.b = (u_char)slineBlue;
+		slColour.r = (uint8)slineRed;
+		slColour.g = (uint8)slineGreen;
+		slColour.b = (uint8)slineBlue;
 		drawOutlinePC(&actor->minBbox, &actor->maxBbox, slColour);
 	}
 	if (_drawShadowSline) {
 		for (b = 0; b < actor->nShadows; b++) {
-			slColour.r = (u_char)180;
-			slColour.g = (u_char)(20 + b * 70);
-			slColour.b = (u_char)255;
+			slColour.r = (uint8)180;
+			slColour.g = (uint8)(20 + b * 70);
+			slColour.b = (uint8)255;
 			drawOutlinePC(actor->shadowMinBox + b, actor->shadowMaxBox + b, slColour);
 		}
 	}
@@ -531,7 +531,7 @@ void drawOutlinePC(SVECTOR *min, SVECTOR *max, CVECTOR colour) {
 #endif
 
 // New version using soft-skinning specific data-files
-void DrawModel4PC(rap_API *mrap, int poseBone, MATRIXPC *lw, MATRIXPC *local2screen, int uvframe, uint debug, SVECTOR *bbox, SVECTOR *minbbox, SVECTOR *maxbbox) {
+void DrawModel4PC(rap_API *mrap, int32 poseBone, MATRIXPC *lw, MATRIXPC *local2screen, int32 uvframe, uint32 debug, SVECTOR *bbox, SVECTOR *minbbox, SVECTOR *maxbbox) {
 	SVECTORPC local[MAX_VECTORS];
 	SVECTORPC screen[MAX_VECTORS];
 
@@ -543,8 +543,8 @@ void DrawModel4PC(rap_API *mrap, int poseBone, MATRIXPC *lw, MATRIXPC *local2scr
 	int16 zmaxLocal = -32767;
 
 	verttpc = g_system->getMillis();
-	int screenScale = mrap->worldScaleShift;
-	int nVertices = softskinPC(mrap, poseBone, lw, local, &xminLocal, &xmaxLocal, &yminLocal, &ymaxLocal, &zminLocal, &zmaxLocal, screenScale);
+	int32 screenScale = mrap->worldScaleShift;
+	int32 nVertices = softskinPC(mrap, poseBone, lw, local, &xminLocal, &xmaxLocal, &yminLocal, &ymaxLocal, &zminLocal, &zmaxLocal, screenScale);
 
 	// So all the local positions have been made
 	verttpc = g_system->getMillis() - verttpc;
@@ -560,7 +560,7 @@ void DrawModel4PC(rap_API *mrap, int poseBone, MATRIXPC *lw, MATRIXPC *local2scr
 	gte_SetScreenScaleShift_pc(screenScale);
 
 	int32 flag, p;
-	int i;
+	int32 i;
 	SVECTORPC *v0;
 	SVECTOR *pbbox;
 
@@ -601,8 +601,8 @@ void DrawModel4PC(rap_API *mrap, int poseBone, MATRIXPC *lw, MATRIXPC *local2scr
 	SVECTORPC sxy0;
 	for (i = 0; i < 8; i++) {
 		gte_RotTransPers_pc(pbbox, &sxy0, &p, &flag, (int32 *)&(pbbox->vz));
-		pbbox->vx = (short)sxy0.vx;
-		pbbox->vy = (short)sxy0.vy;
+		pbbox->vx = (int16)sxy0.vx;
+		pbbox->vy = (int16)sxy0.vy;
 		pbbox++;
 	}
 
@@ -727,12 +727,12 @@ void DrawModel4PC(rap_API *mrap, int poseBone, MATRIXPC *lw, MATRIXPC *local2scr
 	}
 
 	// Now do the animating polygons
-	uint nTypes = mrap->nAnimTypes;
+	uint32 nTypes = mrap->nAnimTypes;
 	if (nTypes != 0) {
-		int nFrames = mrap->nFrames;
+		int32 nFrames = mrap->nFrames;
 		if (nFrames == 0)
 			nFrames = 1;
-		int frm = uvframe % nFrames;
+		int32 frm = uvframe % nFrames;
 
 		// for dead things uvframe = -1 : and in that case draw the last frame of the animation
 		if (uvframe == -1) {
@@ -744,7 +744,7 @@ void DrawModel4PC(rap_API *mrap, int poseBone, MATRIXPC *lw, MATRIXPC *local2scr
 
 		uint32 *typePtr = mrap->GetAnimPolyPtr();
 		polyStart = mrap->GetAnimPolyFrame(frm);
-		for (uint t = 0; t < nTypes; t++) {
+		for (uint32 t = 0; t < nTypes; t++) {
 			switch (*typePtr++) { // ++ skips the type field
 			case HMD_FUS3: {
 				nPolys = *typePtr++;
@@ -845,44 +845,44 @@ void DrawActorTiePC(psxCamera *camera, SVECTORPC *pos, uint32 size, CVECTOR *) {
 	SVECTORPC wcorners[8];
 	SVECTORPC scorners[8];
 
-	wcorners[0].vx = (short)(pos->vx - size);
+	wcorners[0].vx = (int16)(pos->vx - size);
 	wcorners[0].vy = pos->vy;
-	wcorners[0].vz = (short)(pos->vz + size / 2);
+	wcorners[0].vz = (int16)(pos->vz + size / 2);
 
-	wcorners[1].vx = (short)(pos->vx - size);
+	wcorners[1].vx = (int16)(pos->vx - size);
 	wcorners[1].vy = pos->vy;
-	wcorners[1].vz = (short)(pos->vz - size / 2);
+	wcorners[1].vz = (int16)(pos->vz - size / 2);
 
-	wcorners[2].vx = (short)(pos->vx - size / 2);
+	wcorners[2].vx = (int16)(pos->vx - size / 2);
 	wcorners[2].vy = pos->vy;
-	wcorners[2].vz = (short)(pos->vz - size);
+	wcorners[2].vz = (int16)(pos->vz - size);
 
-	wcorners[3].vx = (short)(pos->vx + size / 2);
+	wcorners[3].vx = (int16)(pos->vx + size / 2);
 	wcorners[3].vy = pos->vy;
-	wcorners[3].vz = (short)(pos->vz - size);
+	wcorners[3].vz = (int16)(pos->vz - size);
 
-	wcorners[4].vx = (short)(pos->vx + size);
+	wcorners[4].vx = (int16)(pos->vx + size);
 	wcorners[4].vy = pos->vy;
-	wcorners[4].vz = (short)(pos->vz - size / 2);
+	wcorners[4].vz = (int16)(pos->vz - size / 2);
 
-	wcorners[5].vx = (short)(pos->vx + size);
+	wcorners[5].vx = (int16)(pos->vx + size);
 	wcorners[5].vy = pos->vy;
-	wcorners[5].vz = (short)(pos->vz + size / 2);
+	wcorners[5].vz = (int16)(pos->vz + size / 2);
 
-	wcorners[6].vx = (short)(pos->vx + size / 2);
+	wcorners[6].vx = (int16)(pos->vx + size / 2);
 	wcorners[6].vy = pos->vy;
-	wcorners[6].vz = (short)(pos->vz + size);
+	wcorners[6].vz = (int16)(pos->vz + size);
 
-	wcorners[7].vx = (short)(pos->vx - size / 2);
+	wcorners[7].vx = (int16)(pos->vx - size / 2);
 	wcorners[7].vy = pos->vy;
-	wcorners[7].vz = (short)(pos->vz + size);
+	wcorners[7].vz = (int16)(pos->vz + size);
 
 	SVECTORPC *local = wcorners;
 	SVECTORPC *scrn;
 
 	// Make the rotation matrix
 	MATRIXPC cam_pc;
-	const int MSCALE = ONE_PC / ONE;
+	const int32 MSCALE = ONE_PC / ONE;
 	cam_pc.m[0][0] = camera->view.m[0][0] * MSCALE;
 	cam_pc.m[0][1] = camera->view.m[0][1] * MSCALE;
 	cam_pc.m[0][2] = camera->view.m[0][2] * MSCALE;
@@ -897,7 +897,7 @@ void DrawActorTiePC(psxCamera *camera, SVECTORPC *pos, uint32 size, CVECTOR *) {
 	cam_pc.t[1] = camera->view.t[1];
 	cam_pc.t[2] = camera->view.t[2] * ZSCALE;
 
-	int i;
+	int32 i;
 	int32 p, flag, z0;
 	gte_SetGeomScreen_pc(camera->focLen * ZSCALE);
 	gte_SetRotMatrix_pc(&cam_pc);
@@ -908,13 +908,13 @@ void DrawActorTiePC(psxCamera *camera, SVECTORPC *pos, uint32 size, CVECTOR *) {
 	scrn = &mine;
 
 	gte_RotTransPers_pc(pos, scrn, &p, &flag, &z0);
-	scrn->vz = (short)z0;
+	scrn->vz = (int16)z0;
 
 	scrn = scorners;
 
 	for (i = 0; i < 8; i++, local++, scrn++) {
 		gte_RotTransPers_pc(local, scrn, &p, &flag, &z0);
-		scrn->vz = (short)z0;
+		scrn->vz = (int16)z0;
 	}
 
 	TPOLY_G3 *tie;
@@ -927,7 +927,7 @@ void DrawActorTiePC(psxCamera *camera, SVECTORPC *pos, uint32 size, CVECTOR *) {
 	inz0 /= 8;
 
 	for (i = 0; i < 8; i++) {
-		int next = i + 1;
+		int32 next = i + 1;
 		if (next == 8)
 			next = 0;
 		tie = (TPOLY_G3 *)drawpacket;
@@ -1008,8 +1008,8 @@ void drawBboxPC(SVECTOR *scrn, CVECTOR colour) {
 }
 
 #endif
-void ConvertToScreenCoords(SVECTORPC *local, SVECTORPC *screen, int nVertices) {
-	int i;
+void ConvertToScreenCoords(SVECTORPC *local, SVECTORPC *screen, int32 nVertices) {
+	int32 i;
 	SVECTORPC *in = local;
 	SVECTORPC *out = screen;
 	int32 flag, p;
@@ -1019,14 +1019,14 @@ void ConvertToScreenCoords(SVECTORPC *local, SVECTORPC *screen, int nVertices) {
 		gte_RotTransPers_pc(in, out, &p, &flag, (int32 *)&(out->vz));
 		out->vz <<= 2; // multiply by 4 to cope with AverageZ later on dividing by 4
 		p = (flag & (1 << 31));
-		out->pad = (short)(p >> 16);
+		out->pad = (int16)(p >> 16);
 		in++;
 		out++;
 	}
 }
 
-void ConvertToScreenCoords(SVECTOR *local, SVECTOR *screen, int nVertices) {
-	int i;
+void ConvertToScreenCoords(SVECTOR *local, SVECTOR *screen, int32 nVertices) {
+	int32 i;
 	SVECTOR *in = local;
 	SVECTOR *out = screen;
 	int32 flag, p;
@@ -1036,7 +1036,7 @@ void ConvertToScreenCoords(SVECTOR *local, SVECTOR *screen, int nVertices) {
 		gte_RotTransPers(in, (int32 *)out, &p, &flag, (int32 *)&(out->vz));
 		out->vz <<= 2; // multiply by 4 to cope with AverageZ later on dividing by 4
 		p = (flag & (1 << 31));
-		out->pad = (short)(p >> 16);
+		out->pad = (int16)(p >> 16);
 		in++;
 		out++;
 	}

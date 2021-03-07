@@ -57,11 +57,11 @@ namespace ICB {
 
 #define CHECKDXDY(dx, dy)                                                                                                                                                          \
 	{                                                                                                                                                                          \
-		int r2 = (dx) * (dx) + (dy) * (dy);                                                                                                                                \
+		int32 r2 = (dx) * (dx) + (dy) * (dy);                                                                                                                                \
 		if (r2 < R_LIMIT * R_LIMIT) {                                                                                                                                      \
 			if (r2 < 1)                                                                                                                                                \
 				r2 = 1;                                                                                                                                            \
-			int scale = NEAREST_INT(PXsqrt((double)(128 * 128 * R_LIMIT * R_LIMIT) / r2));                                                                             \
+			int32 scale = NEAREST_INT(PXsqrt((double)(128 * 128 * R_LIMIT * R_LIMIT) / r2));                                                                             \
 			(dx) = ((dx)*scale) / 128;                                                                                                                                 \
 			(dy) = ((dy)*scale) / 128;                                                                                                                                 \
 		}                                                                                                                                                                  \
@@ -69,8 +69,8 @@ namespace ICB {
 
 // Which pan value the joystick is pointing at
 uint32 g_targetPan = 0;
-int g_playerPan;
-int g_joyPan;
+int32 g_playerPan;
+int32 g_joyPan;
 
 uint8 _DRAWCOMPASS_ = 0;
 
@@ -108,11 +108,11 @@ void _player::Update_input_state() {
 	// Are we trying to find a new pan value
 	g_targetPan = 0;
 	g_playerPan = NEAREST_INT(log->pan * 4096.0f);
-	int clastCameraPan = NEAREST_INT(lastCameraPan * 4096.0f);
-	int cdeltaCameraPan = NEAREST_INT(deltaCameraPan * 4096.0f);
+	int32 clastCameraPan = NEAREST_INT(lastCameraPan * 4096.0f);
+	int32 cdeltaCameraPan = NEAREST_INT(deltaCameraPan * 4096.0f);
 
-	int stairs = 0;
-	int ladders = 0;
+	int32 stairs = 0;
+	int32 ladders = 0;
 
 	// Defaults
 	cur_state.turn = __NO_TURN;

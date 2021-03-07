@@ -84,14 +84,14 @@ mcodeFunctionReturnCodes _game_session::fn_activate_sparkle(int32 &, int32 *para
 
 	L->GetPosition(rx, ry, rz);
 
-	int x, y, z;
-	x = (int)rx;
-	y = (int)ry;
-	z = (int)rz;
+	int32 x, y, z;
+	x = (int32)rx;
+	y = (int32)ry;
+	z = (int32)rz;
 
-	L->sparkleX = (short)(params[0] - x);
-	L->sparkleY = (short)(params[1] - y);
-	L->sparkleZ = (short)(params[2] - z);
+	L->sparkleX = (int16)(params[0] - x);
+	L->sparkleY = (int16)(params[1] - y);
+	L->sparkleZ = (int16)(params[2] - z);
 
 	L->sparkleOn = TRUE8;
 
@@ -108,7 +108,7 @@ mcodeFunctionReturnCodes _game_session::fn_deactivate_sparkle(int32 &, int32 *) 
 // these are the con and des-tructors for the game object objects
 // they are homeless and so stay here
 void _logic::___init(const char *name) {
-	int j;
+	int32 j;
 
 	// set objects name
 	Set_string(name, ob_name);
@@ -837,7 +837,7 @@ mcodeFunctionReturnCodes _game_session::fn_set_dynamic_light(int32 &, int32 *par
 mcodeFunctionReturnCodes _game_session::speak_set_dynamic_light(int32 &, int32 *params) {
 	const char *object_name = (const char *)MemoryUtil::resolvePtr(params[0]);
 
-	int obj_id = objects->Fetch_item_number_by_name(object_name);
+	int32 obj_id = objects->Fetch_item_number_by_name(object_name);
 
 	logic_structs[obj_id]->mega->SetDynamicLight(params[1],                       // cycles
 	                                             params[2], params[3], params[4], // rgb
@@ -861,9 +861,9 @@ void _mega::SetDynamicLight(int32 in_cycles, int32 in_r, int32 in_g, int32 in_b,
 		Fatal_error("Dynamic light rgb %d,%d,%d out of range (0-255)", in_r, in_g, in_b);
 
 	// set colours (scale 0-255 to 0-4095)
-	dynLight.states[0].c.r = (short)((in_r * 4096) / 256);
-	dynLight.states[0].c.g = (short)((in_g * 4096) / 256);
-	dynLight.states[0].c.b = (short)((in_b * 4096) / 256);
+	dynLight.states[0].c.r = (int16)((in_r * 4096) / 256);
+	dynLight.states[0].c.g = (int16)((in_g * 4096) / 256);
+	dynLight.states[0].c.b = (int16)((in_b * 4096) / 256);
 
 	// set the v field of colour to be the maximum of r,g,b
 
@@ -895,7 +895,7 @@ void AddDynamicLight(PSXLampList &lamplist, _logic *log) {
 	if (mega->dynLightOn == 0)
 		return;
 
-	int xx, yy, zz;
+	int32 xx, yy, zz;
 
 	xx = mega->dynLightX;
 	yy = mega->dynLightY;

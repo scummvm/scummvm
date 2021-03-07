@@ -187,7 +187,7 @@ _TSrtn text_sprite::MakeTextSprite(bool8 analysisAlreadyDone, int32 stopAtLine, 
 					Fatal_error("Found line number [%s] with no text", params.textLine);
 
 				// Write the modified pointer back into the text block.
-				params.textLine = (unsigned char *)const_cast<char *>(pcTextLine);
+				params.textLine = (uint8 *)const_cast<char *>(pcTextLine);
 			}
 		}
 
@@ -323,9 +323,9 @@ void text_sprite::CopyChar(_pxSprite *charPtr, uint8 *spritePtr, uint8 *pal) { /
 
 		for (cols = 0; cols < charPtr->width; cols++) { // *charPtr is width of char
 			if (*source) {
-				*dest++ = (unsigned char)(pal[((*source) * 4)]); // b
-				*dest++ = (unsigned char)(pal[((*source) * 4) + 1]); // g
-				*dest++ = (unsigned char)(pal[((*source) * 4) + 2]); // r
+				*dest++ = (uint8)(pal[((*source) * 4)]); // b
+				*dest++ = (uint8)(pal[((*source) * 4) + 1]); // g
+				*dest++ = (uint8)(pal[((*source) * 4) + 2]); // r
 			} else {
 				dest += 3;
 			}

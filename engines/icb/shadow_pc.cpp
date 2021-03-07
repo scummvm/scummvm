@@ -42,17 +42,17 @@ namespace ICB {
 #define MAX_VECTORS 512
 #define MAX_SCRATCHPAD_VECTORS 128
 
-int sverttpc;
-int st1pc;
-int st2pc;
-int st3pc;
+int32 sverttpc;
+int32 st1pc;
+int32 st2pc;
+int32 st3pc;
 
-void MakeShadowPC(rap_API *srap, SVECTORPC *local, int nVertices, SVECTORPC *p_n, int p_d, SVECTORPC *ldir, CVECTOR *lcolour, MATRIXPC *world2screen, MATRIXPC *local2world,
-                  int debug, SVECTOR *bbox, SVECTOR *minbbox, SVECTOR *maxbbox, int16 xminLocal, int16 xmaxLocal, int16 yminLocal, int16 ymaxLocal, int16 zminLocal,
+void MakeShadowPC(rap_API *srap, SVECTORPC *local, int32 nVertices, SVECTORPC *p_n, int32 p_d, SVECTORPC *ldir, CVECTOR *lcolour, MATRIXPC *world2screen, MATRIXPC *local2world,
+                  int32 debug, SVECTOR *bbox, SVECTOR *minbbox, SVECTOR *maxbbox, int16 xminLocal, int16 xmaxLocal, int16 yminLocal, int16 ymaxLocal, int16 zminLocal,
                   int16 zmaxLocal);
 
-void DrawShadow1PC(rap_API *srap, int poseBone, MATRIXPC *lw, MATRIXPC *world2screen, MATRIXPC *local2world, int nShadows, SVECTORPC *ldirs, CVECTOR *lcolours, SVECTORPC *p_n,
-                   int *p_d, int debug, SVECTOR **shadowBox, SVECTOR *shadowBoxMin, SVECTOR *shadowBoxMax) {
+void DrawShadow1PC(rap_API *srap, int32 poseBone, MATRIXPC *lw, MATRIXPC *world2screen, MATRIXPC *local2world, int32 nShadows, SVECTORPC *ldirs, CVECTOR *lcolours, SVECTORPC *p_n,
+                   int32 *p_d, int32 debug, SVECTOR **shadowBox, SVECTOR *shadowBoxMin, SVECTOR *shadowBoxMax) {
 	if (nShadows == 0)
 		return;
 
@@ -68,17 +68,17 @@ void DrawShadow1PC(rap_API *srap, int poseBone, MATRIXPC *lw, MATRIXPC *world2sc
 	int16 zmaxLocal = -32767;
 
 	sverttpc = g_system->getMillis();
-	int screenScale = 0;
-	int nVertices = softskinPC(srap, poseBone, lw, local, &xminLocal, &xmaxLocal, &yminLocal, &ymaxLocal, &zminLocal, &zmaxLocal, screenScale);
+	int32 screenScale = 0;
+	int32 nVertices = softskinPC(srap, poseBone, lw, local, &xminLocal, &xmaxLocal, &yminLocal, &ymaxLocal, &zminLocal, &zmaxLocal, screenScale);
 
 	gte_SetScreenScaleShift_pc(screenScale);
 
 	// So all the local positions have been made
 	sverttpc = g_system->getMillis() - sverttpc;
 
-	int s;
+	int32 s;
 	SVECTORPC *pp_n = p_n;
-	int *pp_d = p_d;
+	int32 *pp_d = p_d;
 	SVECTORPC *pldirs = ldirs;
 	CVECTOR *plcolours = lcolours;
 	for (s = 0; s < nShadows; s++) {
@@ -89,8 +89,8 @@ void DrawShadow1PC(rap_API *srap, int poseBone, MATRIXPC *lw, MATRIXPC *world2sc
 	}
 }
 
-void MakeShadowPC(rap_API *srap, SVECTORPC *local, int nVertices, SVECTORPC *p_n, int p_d, SVECTORPC *ldir, CVECTOR *lcolour, MATRIXPC *world2screen, MATRIXPC *local2world,
-                  int debug, SVECTOR *bbox, SVECTOR *minbbox, SVECTOR *maxbbox, int16 xminLocal, int16 xmaxLocal, int16 yminLocal, int16 ymaxLocal, int16 zminLocal,
+void MakeShadowPC(rap_API *srap, SVECTORPC *local, int32 nVertices, SVECTORPC *p_n, int32 p_d, SVECTORPC *ldir, CVECTOR *lcolour, MATRIXPC *world2screen, MATRIXPC *local2world,
+                  int32 debug, SVECTOR *bbox, SVECTOR *minbbox, SVECTOR *maxbbox, int16 xminLocal, int16 xmaxLocal, int16 yminLocal, int16 ymaxLocal, int16 zminLocal,
                   int16 zmaxLocal) {
 
 	SVECTORPC workVerts[MAX_VECTORS];
@@ -139,14 +139,14 @@ void MakeShadowPC(rap_API *srap, SVECTORPC *local, int nVertices, SVECTORPC *p_n
 
 	st1pc = g_system->getMillis();
 	// First-up let us make normalised_light_direction
-	int ld = p_n->vx * ldir->vx + p_n->vy * ldir->vy + p_n->vz * ldir->vz;
+	int32 ld = p_n->vx * ldir->vx + p_n->vy * ldir->vy + p_n->vz * ldir->vz;
 
 	// Can't do a shadow if ld == 0 : light perpendicular to the plane
 	if (ld == 0)
 		return;
 
 	// To match names in the comments
-	int D;
+	int32 D;
 	SVECTORPC *N;
 	SVECTORPC L;
 	int32 work;
@@ -159,36 +159,36 @@ void MakeShadowPC(rap_API *srap, SVECTORPC *local, int nVertices, SVECTORPC *p_n
 		work = 32767;
 	if (work < -32767)
 		work = -32767;
-	L.vx = (int)work;
+	L.vx = (int32)work;
 	work = (ldir->vy << 12) / ld;
 	if (work > 32767)
 		work = 32767;
 	if (work < -32767)
 		work = -32767;
-	L.vy = (int)work;
+	L.vy = (int32)work;
 	work = (ldir->vz << 12) / ld;
 	if (work > 32767)
 		work = 32767;
 	if (work < -32767)
 		work = -32767;
-	L.vz = (int)work;
+	L.vz = (int32)work;
 
 	MATRIXPC sproj;
 
 	// |  (1 - Nx*Lx)  -Ny*Lx   -Nz*Lx |
-	sproj.m[0][0] = (int)(4096 - N->vx * L.vx);
-	sproj.m[0][1] = (int)(-N->vy * L.vx);
-	sproj.m[0][2] = (int)(-N->vz * L.vx);
+	sproj.m[0][0] = (int32)(4096 - N->vx * L.vx);
+	sproj.m[0][1] = (int32)(-N->vy * L.vx);
+	sproj.m[0][2] = (int32)(-N->vz * L.vx);
 
 	// |  -Nx*Ly  (1 - Ny*Ly)   -Nz*Ly |
-	sproj.m[1][0] = (int)(-N->vx * L.vy);
-	sproj.m[1][1] = (int)(4096 - N->vy * L.vy);
-	sproj.m[1][2] = (int)(-N->vz * L.vy);
+	sproj.m[1][0] = (int32)(-N->vx * L.vy);
+	sproj.m[1][1] = (int32)(4096 - N->vy * L.vy);
+	sproj.m[1][2] = (int32)(-N->vz * L.vy);
 
 	// |  -Nx*Lz  -Ny*Lz   (1 - Nz*Lz) |
-	sproj.m[2][0] = (int)(-N->vx * L.vz);
-	sproj.m[2][1] = (int)(-N->vy * L.vz);
-	sproj.m[2][2] = (int)(4096 - N->vz * L.vz);
+	sproj.m[2][0] = (int32)(-N->vx * L.vz);
+	sproj.m[2][1] = (int32)(-N->vy * L.vz);
+	sproj.m[2][2] = (int32)(4096 - N->vz * L.vz);
 
 	// |  +Lx*D  |
 	sproj.t[0] = (L.vx * D) >> 12; // go back to integer maths not fixed point
@@ -213,16 +213,16 @@ void MakeShadowPC(rap_API *srap, SVECTORPC *local, int nVertices, SVECTORPC *p_n
 	plocal = local;
 	pworld = world;
 	VECTOR lpvert;
-	int i;
+	int32 i;
 
 	// Transform the local vertices into world vertices
 	gte_SetRotMatrix_pc(local2world);
 	gte_SetTransMatrix_pc(local2world);
 	for (i = 0; i < nVertices; i++) {
 		gte_RotTrans_pc(plocal, &lpvert, &flag);
-		pworld->vx = (int)lpvert.vx;
-		pworld->vy = (int)lpvert.vy;
-		pworld->vz = (int)lpvert.vz;
+		pworld->vx = (int32)lpvert.vx;
+		pworld->vy = (int32)lpvert.vy;
+		pworld->vz = (int32)lpvert.vz;
 		plocal++;
 		pworld++;
 	}
@@ -263,9 +263,9 @@ void MakeShadowPC(rap_API *srap, SVECTORPC *local, int nVertices, SVECTORPC *p_n
 	pbbox = bbox;
 	for (i = 0; i < 8; i++) {
 		gte_RotTrans_pc(pbbox, &lpvert, &flag);
-		pbbox->vx = (short)lpvert.vx;
-		pbbox->vy = (short)lpvert.vy;
-		pbbox->vz = (short)lpvert.vz;
+		pbbox->vx = (int16)lpvert.vx;
+		pbbox->vy = (int16)lpvert.vy;
+		pbbox->vz = (int16)lpvert.vz;
 		pbbox++;
 	}
 
@@ -291,9 +291,9 @@ void MakeShadowPC(rap_API *srap, SVECTORPC *local, int nVertices, SVECTORPC *p_n
 	pbbox = bbox;
 	for (i = 0; i < 8; i++) {
 		gte_RotTrans_pc(pbbox, &lpvert, &flag);
-		pbbox->vx = (short)lpvert.vx;
-		pbbox->vy = (short)lpvert.vy;
-		pbbox->vz = (short)lpvert.vz;
+		pbbox->vx = (int16)lpvert.vx;
+		pbbox->vy = (int16)lpvert.vy;
+		pbbox->vz = (int16)lpvert.vz;
 		pbbox++;
 	}
 
@@ -312,8 +312,8 @@ void MakeShadowPC(rap_API *srap, SVECTORPC *local, int nVertices, SVECTORPC *p_n
 	SVECTORPC sxy0;
 	for (i = 0; i < 8; i++) {
 		gte_RotTransPers_pc(pbbox, &sxy0, &p, &flag, (int32 *)&(pbbox->vz));
-		pbbox->vx = (short)sxy0.vx;
-		pbbox->vy = (short)sxy0.vy;
+		pbbox->vx = (int16)sxy0.vx;
+		pbbox->vy = (int16)sxy0.vy;
 		pbbox++;
 	}
 

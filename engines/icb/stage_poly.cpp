@@ -104,8 +104,8 @@ void _game_session::Stage_draw_poly() {
 
 				PXanim_PSX *pAnim = (PXanim_PSX *)rs_anims->Res_open(log->voxel_info->info_name[log->cur_anim_type], hash1, log->voxel_info->base_path, hash2);
 
-				int f = log->anim_pc;
-				if ((f < 0) || (f >= (int)pAnim->frame_qty)) {
+				int32 f = log->anim_pc;
+				if ((f < 0) || (f >= (int32)pAnim->frame_qty)) {
 					f = (pAnim->frame_qty - 1);
 				}
 				PXmarker_PSX &marker = PXFrameEnOfAnim(f, pAnim)->markers[ORG_POS];
@@ -113,50 +113,50 @@ void _game_session::Stage_draw_poly() {
 				marker.GetXYZ(&dx, &dy, &dz);
 
 				// Make the actors orientation matrix
-				int pan;
+				int32 pan;
 				if (log->auto_panning == FALSE8)
-					pan = (int)((log->pan - log->pan_adjust) * 4096);
+					pan = (int32)((log->pan - log->pan_adjust) * 4096);
 				else
-					pan = (int)((log->auto_display_pan - log->pan_adjust) * 4096);
+					pan = (int32)((log->auto_display_pan - log->pan_adjust) * 4096);
 
 				act.rot.vx = 0;
-				act.rot.vy = (short)pan;
+				act.rot.vy = (int16)pan;
 				act.rot.vz = 0;
 
 				// Because only one level in the hierarchy this is the lw matrix
 				RotMatrix_gte(&act.rot, &act.lw);
-				act.lw.t[0] = (int)log->mega->actor_xyz.x;
-				act.lw.t[1] = (int)log->mega->actor_xyz.y;
-				act.lw.t[2] = (int)log->mega->actor_xyz.z;
+				act.lw.t[0] = (int32)log->mega->actor_xyz.x;
+				act.lw.t[1] = (int32)log->mega->actor_xyz.y;
+				act.lw.t[2] = (int32)log->mega->actor_xyz.z;
 
 				// the bone local frame has the hip at 0,0,0
 				// so put the hip at correct world height
 				// uint32 dy = ( marker.pos.y == 0 ) ? 100 : marker.pos.y;
 				// if ( log->cur_anim_type == __BEING_SHOT_DEAD ) dy = 0;
-				act.lw.t[1] += (int)dy;
+				act.lw.t[1] += (int32)dy;
 
 				// Set the actors true rotation & position values
-				act.truePos.x = (int)log->mega->actor_xyz.x;
-				act.truePos.y = (int)log->mega->actor_xyz.y;
-				act.truePos.z = (int)log->mega->actor_xyz.z;
+				act.truePos.x = (int32)log->mega->actor_xyz.x;
+				act.truePos.y = (int32)log->mega->actor_xyz.y;
+				act.truePos.z = (int32)log->mega->actor_xyz.z;
 
-				act.truePos.y += (int)dy;
+				act.truePos.y += (int32)dy;
 
 				act.trueRot.vx = 0;
 
 				if (log->auto_panning == FALSE8)
-					act.trueRot.vy = (short)(log->pan * 4096);
+					act.trueRot.vy = (int16)(log->pan * 4096);
 				else
-					act.trueRot.vy = (short)(log->auto_display_pan * 4096);
+					act.trueRot.vy = (int16)(log->auto_display_pan * 4096);
 				act.trueRot.vz = 0;
 
 				//
 				thisActor.log = log;
 
 				// if selected then set ambient to be ambientSelect otherwise it's ambient normal...
-				u_char r = 0;
-				u_char g = 0;
-				u_char b = 0;
+				uint8 r = 0;
+				uint8 g = 0;
+				uint8 b = 0;
 
 				if (id == sel_id) {
 					GetSelectedMegaRGB(r, g, b);

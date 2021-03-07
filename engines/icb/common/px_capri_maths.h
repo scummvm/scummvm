@@ -36,8 +36,8 @@ namespace ICB {
 
 // make our own equivalents
 typedef struct MATRIX {
-	short m[3][3]; /* 3x3 rotation matrix */
-	short pad;
+	int16 m[3][3]; /* 3x3 rotation matrix */
+	int16 pad;
 	int32 t[3]; /* transfer vector */
 	MATRIX() { pad = 0; }
 } MATRIX;
@@ -51,8 +51,8 @@ typedef struct VECTOR {
 
 /* short word type 3D vector */
 typedef struct SVECTOR {
-	short vx, vy;
-	short vz, pad;
+	int16 vx, vy;
+	int16 vz, pad;
 	SVECTOR() { pad = 0; }
 	bool operator==(const SVECTOR &v) { return ((v.vx == vx) && (v.vy == vy) && (v.vz == vz)); }
 } SVECTOR;
@@ -60,7 +60,7 @@ typedef struct SVECTOR {
 /* short word type 3D vector */
 typedef struct CVECTOR {
 	uint8 r, g;
-	short b, pad;
+	int16 b, pad;
 	CVECTOR() { pad = 0; }
 	bool operator==(const CVECTOR &v) { return ((v.r == r) && (v.g == g) && (v.b == b)); }
 } CVECTOR;
@@ -70,7 +70,7 @@ typedef struct CVECTOR {
 #define ONE 4096
 #define myPI (3.141592654f)
 
-inline int myNINT(float f) {
+inline int32 myNINT(float f) {
 	if (f >= 0.0f)
 		return int(f + 0.5f);
 	else
@@ -101,7 +101,7 @@ extern MATRIX gterot;
 extern MATRIX gtetrans;
 extern MATRIX gtecolour;
 extern MATRIX gtelight;
-extern short gteback[3];
+extern int16 gteback[3];
 extern int32 gtegeomscrn;
 extern uint8 dcache[1024];
 
@@ -152,9 +152,9 @@ inline void myApplyMatrixLV(MATRIX *m, VECTOR *invec, VECTOR *outvec) {
 }
 
 inline void myApplyMatrixSV(MATRIX *m, SVECTOR *invec, SVECTOR *outvec) {
-	outvec->vx = (short)(((int)m->m[0][0] * invec->vx + (int)m->m[0][1] * invec->vy + (int)m->m[0][2] * invec->vz) / 4096);
-	outvec->vy = (short)(((int)m->m[1][0] * invec->vx + (int)m->m[1][1] * invec->vy + (int)m->m[1][2] * invec->vz) / 4096);
-	outvec->vz = (short)(((int)m->m[2][0] * invec->vx + (int)m->m[2][1] * invec->vy + (int)m->m[2][2] * invec->vz) / 4096);
+	outvec->vx = (int16)(((int)m->m[0][0] * invec->vx + (int)m->m[0][1] * invec->vy + (int)m->m[0][2] * invec->vz) / 4096);
+	outvec->vy = (int16)(((int)m->m[1][0] * invec->vx + (int)m->m[1][1] * invec->vy + (int)m->m[1][2] * invec->vz) / 4096);
+	outvec->vz = (int16)(((int)m->m[2][0] * invec->vx + (int)m->m[2][1] * invec->vy + (int)m->m[2][2] * invec->vz) / 4096);
 }
 
 inline void mygte_MulMatrix0(MATRIX *m1, MATRIX *m2, MATRIX *out) {
@@ -164,15 +164,15 @@ inline void mygte_MulMatrix0(MATRIX *m1, MATRIX *m2, MATRIX *out) {
 		work = &local;
 	else
 		work = out;
-	work->m[0][0] = (short)(((int)m1->m[0][0] * (int)m2->m[0][0] + (int)m1->m[0][1] * (int)m2->m[1][0] + (int)m1->m[0][2] * (int)m2->m[2][0]) / 4096);
-	work->m[0][1] = (short)(((int)m1->m[0][0] * (int)m2->m[0][1] + (int)m1->m[0][1] * (int)m2->m[1][1] + (int)m1->m[0][2] * (int)m2->m[2][1]) / 4096);
-	work->m[0][2] = (short)(((int)m1->m[0][0] * (int)m2->m[0][2] + (int)m1->m[0][1] * (int)m2->m[1][2] + (int)m1->m[0][2] * (int)m2->m[2][2]) / 4096);
-	work->m[1][0] = (short)(((int)m1->m[1][0] * (int)m2->m[0][0] + (int)m1->m[1][1] * (int)m2->m[1][0] + (int)m1->m[1][2] * (int)m2->m[2][0]) / 4096);
-	work->m[1][1] = (short)(((int)m1->m[1][0] * (int)m2->m[0][1] + (int)m1->m[1][1] * (int)m2->m[1][1] + (int)m1->m[1][2] * (int)m2->m[2][1]) / 4096);
-	work->m[1][2] = (short)(((int)m1->m[1][0] * (int)m2->m[0][2] + (int)m1->m[1][1] * (int)m2->m[1][2] + (int)m1->m[1][2] * (int)m2->m[2][2]) / 4096);
-	work->m[2][0] = (short)(((int)m1->m[2][0] * (int)m2->m[0][0] + (int)m1->m[2][1] * (int)m2->m[1][0] + (int)m1->m[2][2] * (int)m2->m[2][0]) / 4096);
-	work->m[2][1] = (short)(((int)m1->m[2][0] * (int)m2->m[0][1] + (int)m1->m[2][1] * (int)m2->m[1][1] + (int)m1->m[2][2] * (int)m2->m[2][1]) / 4096);
-	work->m[2][2] = (short)(((int)m1->m[2][0] * (int)m2->m[0][2] + (int)m1->m[2][1] * (int)m2->m[1][2] + (int)m1->m[2][2] * (int)m2->m[2][2]) / 4096);
+	work->m[0][0] = (int16)(((int)m1->m[0][0] * (int)m2->m[0][0] + (int)m1->m[0][1] * (int)m2->m[1][0] + (int)m1->m[0][2] * (int)m2->m[2][0]) / 4096);
+	work->m[0][1] = (int16)(((int)m1->m[0][0] * (int)m2->m[0][1] + (int)m1->m[0][1] * (int)m2->m[1][1] + (int)m1->m[0][2] * (int)m2->m[2][1]) / 4096);
+	work->m[0][2] = (int16)(((int)m1->m[0][0] * (int)m2->m[0][2] + (int)m1->m[0][1] * (int)m2->m[1][2] + (int)m1->m[0][2] * (int)m2->m[2][2]) / 4096);
+	work->m[1][0] = (int16)(((int)m1->m[1][0] * (int)m2->m[0][0] + (int)m1->m[1][1] * (int)m2->m[1][0] + (int)m1->m[1][2] * (int)m2->m[2][0]) / 4096);
+	work->m[1][1] = (int16)(((int)m1->m[1][0] * (int)m2->m[0][1] + (int)m1->m[1][1] * (int)m2->m[1][1] + (int)m1->m[1][2] * (int)m2->m[2][1]) / 4096);
+	work->m[1][2] = (int16)(((int)m1->m[1][0] * (int)m2->m[0][2] + (int)m1->m[1][1] * (int)m2->m[1][2] + (int)m1->m[1][2] * (int)m2->m[2][2]) / 4096);
+	work->m[2][0] = (int16)(((int)m1->m[2][0] * (int)m2->m[0][0] + (int)m1->m[2][1] * (int)m2->m[1][0] + (int)m1->m[2][2] * (int)m2->m[2][0]) / 4096);
+	work->m[2][1] = (int16)(((int)m1->m[2][0] * (int)m2->m[0][1] + (int)m1->m[2][1] * (int)m2->m[1][1] + (int)m1->m[2][2] * (int)m2->m[2][1]) / 4096);
+	work->m[2][2] = (int16)(((int)m1->m[2][0] * (int)m2->m[0][2] + (int)m1->m[2][1] * (int)m2->m[1][2] + (int)m1->m[2][2] * (int)m2->m[2][2]) / 4096);
 
 	if (work != out) {
 		out->m[0][0] = work->m[0][0];
@@ -218,8 +218,8 @@ inline void mygte_RotTransPers(SVECTOR *in0, int32 *sxy0, int32 * /* p */, int32
 	*flag = 0;
 
 	if (cam.vz != 0) {
-		scrn->vx = (short)((cam.vx * gtegeomscrn) / cam.vz);
-		scrn->vy = (short)((cam.vy * gtegeomscrn) / cam.vz);
+		scrn->vx = (int16)((cam.vx * gtegeomscrn) / cam.vz);
+		scrn->vy = (int16)((cam.vy * gtegeomscrn) / cam.vz);
 	} else {
 		// To force an error and hence an illegal polygon
 		scrn->vx = 2048;
@@ -254,50 +254,50 @@ inline void mygte_RotTransPers3(SVECTOR *in0, SVECTOR *in1, SVECTOR *in2, int32 
 }
 
 inline void myRotMatrix_gte(SVECTOR *rot, MATRIX *m) {
-	const int one = (1 << 12);
+	const int32 one = (1 << 12);
 	float ang0 = (float)rot->vx * 2.0f * myPI / one;
 	MATRIX m0;
-	int c0 = myNINT(one * (float)cos(ang0));
-	int s0 = myNINT(one * (float)sin(ang0));
+	int32 c0 = myNINT(one * (float)cos(ang0));
+	int32 s0 = myNINT(one * (float)sin(ang0));
 	m0.m[0][0] = one;
 	m0.m[0][1] = 0;
 	m0.m[0][2] = 0;
 
 	m0.m[1][0] = 0;
-	m0.m[1][1] = (short)c0;
-	m0.m[1][2] = (short)-s0;
+	m0.m[1][1] = (int16)c0;
+	m0.m[1][2] = (int16)-s0;
 
 	m0.m[2][0] = 0;
-	m0.m[2][1] = (short)s0;
-	m0.m[2][2] = (short)c0;
+	m0.m[2][1] = (int16)s0;
+	m0.m[2][2] = (int16)c0;
 
 	float ang1 = (float)rot->vy * 2.0f * myPI / one;
-	int c1 = myNINT(one * (float)cos(ang1));
-	int s1 = myNINT(one * (float)sin(ang1));
+	int32 c1 = myNINT(one * (float)cos(ang1));
+	int32 s1 = myNINT(one * (float)sin(ang1));
 	MATRIX m1;
-	m1.m[0][0] = (short)c1;
+	m1.m[0][0] = (int16)c1;
 	m1.m[0][1] = 0;
-	m1.m[0][2] = (short)s1;
+	m1.m[0][2] = (int16)s1;
 
 	m1.m[1][0] = 0;
 	m1.m[1][1] = one;
 	m1.m[1][2] = 0;
 
-	m1.m[2][0] = (short)-s1;
+	m1.m[2][0] = (int16)-s1;
 	m1.m[2][1] = 0;
-	m1.m[2][2] = (short)c1;
+	m1.m[2][2] = (int16)c1;
 
 	float ang2 = (float)rot->vz * 2.0f * myPI / one;
-	int c2 = myNINT(one * (float)cos(ang2));
-	int s2 = myNINT(one * (float)sin(ang2));
+	int32 c2 = myNINT(one * (float)cos(ang2));
+	int32 s2 = myNINT(one * (float)sin(ang2));
 	MATRIX m2;
 
-	m2.m[0][0] = (short)c2;
-	m2.m[0][1] = (short)-s2;
+	m2.m[0][0] = (int16)c2;
+	m2.m[0][1] = (int16)-s2;
 	m2.m[0][2] = 0;
 
-	m2.m[1][0] = (short)s2;
-	m2.m[1][1] = (short)c2;
+	m2.m[1][0] = (int16)s2;
+	m2.m[1][1] = (int16)c2;
 	m2.m[1][2] = 0;
 
 	m2.m[2][0] = 0;
@@ -309,9 +309,9 @@ inline void myRotMatrix_gte(SVECTOR *rot, MATRIX *m) {
 }
 
 inline void mygte_SetBackColor(int32 r, int32 g, int32 b) {
-	gteback[0] = (short)r;
-	gteback[1] = (short)g;
-	gteback[2] = (short)b;
+	gteback[0] = (int16)r;
+	gteback[1] = (int16)g;
+	gteback[2] = (int16)b;
 }
 
 inline void mygte_SetColorMatrix(MATRIX *m) { gtecolour = *m; }
@@ -343,15 +343,15 @@ inline void mygte_NormalColorCol(SVECTOR *v0, CVECTOR *in0, CVECTOR *out0) {
 
 	// colourEffect is 0-4095 (2^12)
 	// gteback is 0-255 (2^8)
-	colourEffect.vx = (short)((colourEffect.vx >> 4) + gteback[0]);
-	colourEffect.vy = (short)((colourEffect.vy >> 4) + gteback[1]);
-	colourEffect.vz = (short)((colourEffect.vz >> 4) + gteback[2]);
+	colourEffect.vx = (int16)((colourEffect.vx >> 4) + gteback[0]);
+	colourEffect.vy = (int16)((colourEffect.vy >> 4) + gteback[1]);
+	colourEffect.vz = (int16)((colourEffect.vz >> 4) + gteback[2]);
 
 	// 256 = 1.0 in colourEffect
 	// 128 = 1.0 in in0
-	int red = ((in0->r * colourEffect.vx) >> 8);
-	int green = ((in0->g * colourEffect.vy) >> 8);
-	int blue = ((in0->b * colourEffect.vz) >> 8);
+	int32 red = ((in0->r * colourEffect.vx) >> 8);
+	int32 green = ((in0->g * colourEffect.vy) >> 8);
+	int32 blue = ((in0->b * colourEffect.vz) >> 8);
 
 	if (red > 255)
 		red = 255;
@@ -390,10 +390,10 @@ inline void mygte_NormalClip(int32 sxy0, int32 sxy1, int32 sxy2, int32 *flag) {
 	SVECTOR *v2 = (SVECTOR *)&sxy2;
 
 	// compute the cross-product of (v1-v0) x (v2-v0)
-	int l0x = v1->vx - v0->vx;
-	int l0y = v1->vy - v0->vy;
-	int l1x = v2->vx - v0->vx;
-	int l1y = v2->vy - v0->vy;
+	int32 l0x = v1->vx - v0->vx;
+	int32 l0y = v1->vy - v0->vy;
+	int32 l1x = v2->vx - v0->vx;
+	int32 l1y = v2->vy - v0->vy;
 
 	*flag = ((l0x * l1y) - (l0y * l1x));
 }

@@ -135,7 +135,7 @@ inline void PXmarker_PSX::SetPackedXYZPan(uint8 _x8, uint16 _x7y9, uint32 _y6z15
 inline void PXmarker_PSX::GetPan(float *pan) const { *pan = (float)(((y6z15pan11 & 0x7FF) << 1)) / 4096.0f; }
 
 inline void PXmarker_PSX::GetXYZ(float *x, float *y, float *z) const {
-	int ix, iy, iz;
+	int32 ix, iy, iz;
 
 	ix = ((x8 << 7) | (x7y9 >> 9));
 	if (ix >= 16384)
@@ -168,7 +168,7 @@ typedef struct {
 // PXanim //
 typedef struct {
 	char tag[4];
-	int schema;
+	int32 schema;
 	uint8 frame_qty;
 	uint8 speed;
 	uint16 offsets[1];
@@ -176,7 +176,7 @@ typedef struct {
 
 typedef struct {
 	char tag[4];
-	int schema;
+	int32 schema;
 	uint8 frame_qty;
 	uint8 speed;
 	uint16 offsets[1];
@@ -185,7 +185,7 @@ typedef struct {
 inline void ConvertPXanim(PXanim_PSX *anim) {
 	// Support old schema type files
 	if (anim->schema == PSX_PXANIM_SCHEMA - 1) {
-		int nFrames = anim->frame_qty;
+		int32 nFrames = anim->frame_qty;
 		anim->frame_qty = (uint8)nFrames;
 		anim->speed = 1;
 		anim->schema = PSX_PXANIM_SCHEMA;
@@ -195,7 +195,7 @@ inline void ConvertPXanim(PXanim_PSX *anim) {
 inline void ConvertPXanim(PXanim_PC *anim) {
 	// Support old schema type files
 	if (anim->schema == PC_PXANIM_SCHEMA - 1) {
-		int nFrames = anim->frame_qty;
+		int32 nFrames = anim->frame_qty;
 		anim->frame_qty = (uint8)nFrames;
 		anim->speed = 1;
 		anim->schema = PC_PXANIM_SCHEMA;

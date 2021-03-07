@@ -33,10 +33,10 @@
 
 namespace ICB {
 
-extern unsigned int selFace;
+extern uint32 selFace;
 extern CVECTOR unlitPoly;
-extern unsigned int _drawBface;
-extern unsigned int deadObject;
+extern uint32 _drawBface;
+extern uint32 deadObject;
 
 #if CD_MODE == 0
 
@@ -44,60 +44,60 @@ extern unsigned int deadObject;
 void drawSolidBboxPC(SVECTOR *scrn, CVECTOR *rgbIn);
 
 // Debug : Flat, Un-Textured, Self-Luminous, triangles
-void drawFUS3PC(uint32 *polyStart, const u_int n, SVECTORPC *pVertex);
+void drawFUS3PC(uint32 *polyStart, const uint32 n, SVECTORPC *pVertex);
 
 // Debug : Gouraud, Un-Textured, Self-Luminous, triangles
-void drawGUS3PC(uint32 *polyStart, const u_int n, SVECTORPC *pVertex);
+void drawGUS3PC(uint32 *polyStart, const uint32 n, SVECTORPC *pVertex);
 
 // Debug : Flat, Textured, Self-Luminous Triangles
-void drawFTS3PC(uint32 *polyStart, const u_int n, SVECTORPC *pVertex);
+void drawFTS3PC(uint32 *polyStart, const uint32 n, SVECTORPC *pVertex);
 
 // Debug : Gouraud, Textured, Self-Luminous Triangles
-void drawGTS3PC(uint32 *polyStart, const u_int n, SVECTORPC *pVertex);
+void drawGTS3PC(uint32 *polyStart, const uint32 n, SVECTORPC *pVertex);
 
 // Debug : Flat, Un-Textured, Lit, triangles
-void drawFUL3PC(uint32 *polyStart, const u_int n, SVECTORPC *pVertex, SVECTOR *pNormal);
+void drawFUL3PC(uint32 *polyStart, const uint32 n, SVECTORPC *pVertex, SVECTOR *pNormal);
 
 // Debug : Gouraud, Un-Textured, Lit, triangles
-void drawGUL3PC(uint32 *polyStart, const u_int n, SVECTORPC *pVertex, SVECTOR *pNormal);
+void drawGUL3PC(uint32 *polyStart, const uint32 n, SVECTORPC *pVertex, SVECTOR *pNormal);
 
 // Debug : Flat, Textured, Lit Triangles
-void drawFTL3PC(uint32 *polyStart, const u_int n, SVECTORPC *pVertex, SVECTOR *pNormal);
+void drawFTL3PC(uint32 *polyStart, const uint32 n, SVECTORPC *pVertex, SVECTOR *pNormal);
 
 // Debug : Gouraud, Textured, Lit Triangles
-void drawGTL3PC(uint32 *polyStart, const u_int n, SVECTORPC *pVertex, SVECTOR *pNormal);
+void drawGTL3PC(uint32 *polyStart, const uint32 n, SVECTORPC *pVertex, SVECTOR *pNormal);
 
 // Debug : Simple Flat, Un-Textured triangles with no colour in them
-void drawTRI3PC(uint32 *polyStart, const u_int n, SVECTORPC *pVertex);
+void drawTRI3PC(uint32 *polyStart, const uint32 n, SVECTORPC *pVertex);
 
 #endif // #if CD_MODE == 0
 
 // Optimised : Flat, Un-Textured, Self-Luminous, triangles
-void fastDrawFUS3PC(uint32 *polyStart, const u_int n, SVECTORPC *pVertex);
+void fastDrawFUS3PC(uint32 *polyStart, const uint32 n, SVECTORPC *pVertex);
 
 // Optimised : Gouraud, Un-Textured, Self-Luminous, triangles
-void fastDrawGUS3PC(uint32 *polyStart, const u_int n, SVECTORPC *pVertex);
+void fastDrawGUS3PC(uint32 *polyStart, const uint32 n, SVECTORPC *pVertex);
 
 // Optimised : Flat, Textured, Self-Luminous Triangles
-void fastDrawFTS3PC(uint32 *polyStart, const u_int n, SVECTORPC *pVertex);
+void fastDrawFTS3PC(uint32 *polyStart, const uint32 n, SVECTORPC *pVertex);
 
 // Optimised : Gouraud, Textured, Self-Luminous Triangles
-void fastDrawGTS3PC(uint32 *polyStart, const u_int n, SVECTORPC *pVertex);
+void fastDrawGTS3PC(uint32 *polyStart, const uint32 n, SVECTORPC *pVertex);
 
 // Optimised : Flat, Un-Textured, Lit, triangles
-void fastDrawFUL3PC(uint32 *polyStart, const u_int n, SVECTORPC *pVertex, SVECTOR *pNormal);
+void fastDrawFUL3PC(uint32 *polyStart, const uint32 n, SVECTORPC *pVertex, SVECTOR *pNormal);
 
 // Optimised : Gouraud, Un-Textured, Lit, triangles
-void fastDrawGUL3PC(uint32 *polyStart, const u_int n, SVECTORPC *pVertex, SVECTOR *pNormal);
+void fastDrawGUL3PC(uint32 *polyStart, const uint32 n, SVECTORPC *pVertex, SVECTOR *pNormal);
 
 // Optimised : Flat, Textured, Lit Triangles
-void fastDrawFTL3PC(uint32 *polyStart, const u_int n, SVECTORPC *pVertex, SVECTOR *pNormal);
+void fastDrawFTL3PC(uint32 *polyStart, const uint32 n, SVECTORPC *pVertex, SVECTOR *pNormal);
 
 // Optimised : Gouraud, Textured, Lit Triangles
-void fastDrawGTL3PC(uint32 *polyStart, const u_int n, SVECTORPC *pVertex, SVECTOR *pNormal);
+void fastDrawGTL3PC(uint32 *polyStart, const uint32 n, SVECTORPC *pVertex, SVECTOR *pNormal);
 
 // Optimised : Simple Flat, Un-Textured triangles with no colour in them
-void fastDrawTRI3PC(uint32 *polyStart, const u_int n, SVECTORPC *pVertex);
+void fastDrawTRI3PC(uint32 *polyStart, const uint32 n, SVECTORPC *pVertex);
 
 } // End of namespace ICB
 

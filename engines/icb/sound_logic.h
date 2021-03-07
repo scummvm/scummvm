@@ -152,7 +152,7 @@ inline _sound_logic::_sound_logic() { Initialise(); }
 
 inline uint32 _sound_logic::ProcessSound(int32 nX, int32 nY, int32 nZ, const CSfx *pSFX) const {
 	// Calculate volume at player's hearing position for the sound engine.
-	int watch = MS->player.Fetch_player_id();
+	int32 watch = MS->player.Fetch_player_id();
 
 	if (g_mission->camera_follow_id_overide) {
 		watch = g_mission->camera_follow_id_overide;

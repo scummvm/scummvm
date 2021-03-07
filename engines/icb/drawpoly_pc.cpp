@@ -38,12 +38,12 @@ namespace ICB {
 
 #if _PSX_ON_PC == 1
 
-extern unsigned int selFace;
+extern uint32 selFace;
 extern CVECTOR unlitPoly;
 extern CVECTOR deadObjectColour;
-extern unsigned int deadObject;
+extern uint32 deadObject;
 
-extern unsigned int _drawBface;
+extern uint32 _drawBface;
 
 extern uint8 selWRed;
 extern uint8 selWGreen;
@@ -56,12 +56,12 @@ extern uint8 selPAlpha;
 
 #else // #if _PSX_ON_PC == 1
 
-unsigned int selFace = 65537;
+uint32 selFace = 65537;
 CVECTOR unlitPoly = {255, 255, 255, 0};
 CVECTOR deadObjectColour = {0, 0, 0, 0};
-unsigned int deadObject = 0;
+uint32 deadObject = 0;
 
-unsigned int _drawBface = 0;
+uint32 _drawBface = 0;
 
 uint8 selWRed = 0;
 uint8 selWGreen = 255;
@@ -82,25 +82,25 @@ inline void LightPolygon(SVECTOR *n0, CVECTOR *rgbIn, CVECTOR *rgb0) {
 	ApplyMatrixSV_pc(&gtelight_pc, n0, &lightEffect);
 
 	if (useLampWidth) {
-		lightEffect.vx = (short)(lightEffect.vx + lampWidth[0]);
-		lightEffect.vy = (short)(lightEffect.vy + lampWidth[1]);
-		lightEffect.vz = (short)(lightEffect.vy + lampWidth[2]);
+		lightEffect.vx = (int16)(lightEffect.vx + lampWidth[0]);
+		lightEffect.vy = (int16)(lightEffect.vy + lampWidth[1]);
+		lightEffect.vz = (int16)(lightEffect.vy + lampWidth[2]);
 	}
 	if (useLampBounce) {
 		if (lightEffect.vx < 0) {
-			lightEffect.vx = (short)-lightEffect.vx;
+			lightEffect.vx = (int16)-lightEffect.vx;
 			if (lightEffect.vx > lampBounce[0])
-				lightEffect.vx = (short)lampBounce[0];
+				lightEffect.vx = (int16)lampBounce[0];
 		}
 		if (lightEffect.vy < 0) {
-			lightEffect.vy = (short)-lightEffect.vy;
+			lightEffect.vy = (int16)-lightEffect.vy;
 			if (lightEffect.vy > lampBounce[1])
-				lightEffect.vy = (short)lampBounce[1];
+				lightEffect.vy = (int16)lampBounce[1];
 		}
 		if (lightEffect.vz < 0) {
-			lightEffect.vz = (short)-lightEffect.vz;
+			lightEffect.vz = (int16)-lightEffect.vz;
 			if (lightEffect.vz > lampBounce[2])
-				lightEffect.vz = (short)lampBounce[2];
+				lightEffect.vz = (int16)lampBounce[2];
 		}
 	} else {
 		if (lightEffect.vx < 0)
@@ -123,15 +123,15 @@ inline void LightPolygon(SVECTOR *n0, CVECTOR *rgbIn, CVECTOR *rgb0) {
 
 	// colourEffect is 0-4095 (2^12)
 	// gteback is 0-255 (2^8)
-	colourEffect.vx = (short)((colourEffect.vx >> 4) + gteback_pc[0]);
-	colourEffect.vy = (short)((colourEffect.vy >> 4) + gteback_pc[1]);
-	colourEffect.vz = (short)((colourEffect.vz >> 4) + gteback_pc[2]);
+	colourEffect.vx = (int16)((colourEffect.vx >> 4) + gteback_pc[0]);
+	colourEffect.vy = (int16)((colourEffect.vy >> 4) + gteback_pc[1]);
+	colourEffect.vz = (int16)((colourEffect.vz >> 4) + gteback_pc[2]);
 
 	// 256 = 1.0 in colourEffect
 	// 128 = 1.0 in in0
-	int red = (rgbIn->r * colourEffect.vx);
-	int green = (rgbIn->g * colourEffect.vy);
-	int blue = (rgbIn->b * colourEffect.vz);
+	int32 red = (rgbIn->r * colourEffect.vx);
+	int32 green = (rgbIn->g * colourEffect.vy);
+	int32 blue = (rgbIn->b * colourEffect.vz);
 
 	red = red >> 8;
 	green = green >> 8;
@@ -211,15 +211,15 @@ gte_lcirbk();
 //------------------------------------------------------------------------
 
 // Flat, Un-Textured, Self-Luminous, triangles
-void drawFUS3PC(uint32 *polyStart, const u_int n, SVECTORPC *pVertex) {
+void drawFUS3PC(uint32 *polyStart, const uint32 n, SVECTORPC *pVertex) {
 	SVECTORPC *v0;
 	SVECTORPC *v1;
 	SVECTORPC *v2;
 
-	// u_int num = min( n, 10 ); // do a maximum of 10 polygons
-	u_int num = n;
+	// uint32 num = min( n, 10 ); // do a maximum of 10 polygons
+	uint32 num = n;
 	int32 p, flag;
-	u_int i;
+	uint32 i;
 	uint32 *pPoly;
 	int32 z0, z1, z2;
 	SVECTORPC sxy0, sxy1, sxy2, stemp;
@@ -354,16 +354,16 @@ void drawFUS3PC(uint32 *polyStart, const u_int n, SVECTORPC *pVertex) {
 //------------------------------------------------------------------------
 
 // Gouraud, Un-Textured, Self-Luminous, triangles
-void drawGUS3PC(uint32 *polyStart, const u_int n, SVECTORPC *pVertex) {
+void drawGUS3PC(uint32 *polyStart, const uint32 n, SVECTORPC *pVertex) {
 	SVECTORPC *v0;
 	SVECTORPC *v1;
 	SVECTORPC *v2;
 
-	// u_int num = min( n, 10 ); // do a maximum of 10 polygons
-	u_int num = n;
+	// uint32 num = min( n, 10 ); // do a maximum of 10 polygons
+	uint32 num = n;
 	uint32 tmp;
 	int32 p, flag;
-	u_int i;
+	uint32 i;
 	uint32 *pPoly;
 	int32 z0, z1, z2;
 	SVECTORPC sxy0, sxy1, sxy2, stemp;
@@ -516,18 +516,18 @@ void drawGUS3PC(uint32 *polyStart, const u_int n, SVECTORPC *pVertex) {
 }
 
 // Flat, Textured, Self-Luminous Triangles
-void drawFTS3PC(uint32 *polyStart, const u_int n, SVECTORPC *pVertex) {
+void drawFTS3PC(uint32 *polyStart, const uint32 n, SVECTORPC *pVertex) {
 	SVECTORPC *v0;
 	SVECTORPC *v1;
 	SVECTORPC *v2;
 
-	// u_int num = min( n, 10 ); // do a maximum of 10 polygons
-	u_int num = n;
-	u_short uu0, uu1, uu2;
-	u_short vv0, vv1, vv2;
+	// uint32 num = min( n, 10 ); // do a maximum of 10 polygons
+	uint32 num = n;
+	uint16 uu0, uu1, uu2;
+	uint16 vv0, vv1, vv2;
 	uint32 tmp;
 	int32 p, flag;
-	u_int i;
+	uint32 i;
 	uint32 *pPoly;
 	int32 z0, z1, z2;
 	SVECTORPC sxy0, sxy1, sxy2, stemp;
@@ -560,16 +560,16 @@ void drawFTS3PC(uint32 *polyStart, const u_int n, SVECTORPC *pVertex) {
 		}
 
 		uv0 = *pPoly++;
-		vv0 = (u_short)((uv0 >> 16) & 0xFFFF);
-		uu0 = (u_short)(uv0 & 0xFFFF);
+		vv0 = (uint16)((uv0 >> 16) & 0xFFFF);
+		uu0 = (uint16)(uv0 & 0xFFFF);
 
 		uv1 = *pPoly++;
-		vv1 = (u_short)((uv1 >> 16) & 0xFFFF);
-		uu1 = (u_short)(uv1 & 0xFFFF);
+		vv1 = (uint16)((uv1 >> 16) & 0xFFFF);
+		uu1 = (uint16)(uv1 & 0xFFFF);
 
 		uv2 = *pPoly++;
-		vv2 = (u_short)((uv2 >> 16) & 0xFFFF);
-		uu2 = (u_short)(uv2 & 0xFFFF);
+		vv2 = (uint16)((uv2 >> 16) & 0xFFFF);
+		uu2 = (uint16)(uv2 & 0xFFFF);
 
 		tmp = *pPoly++;
 		v0 = pVertex + (tmp & 0xFFFF);
@@ -713,18 +713,18 @@ void drawFTS3PC(uint32 *polyStart, const u_int n, SVECTORPC *pVertex) {
 }
 
 // Gouraud, Textured, Self-Luminous Triangles
-void drawGTS3PC(uint32 *polyStart, const u_int n, SVECTORPC *pVertex) {
+void drawGTS3PC(uint32 *polyStart, const uint32 n, SVECTORPC *pVertex) {
 	SVECTORPC *v0;
 	SVECTORPC *v1;
 	SVECTORPC *v2;
 
-	// u_int num = min( n, 10 ); // do a maximum of 10 polygons
-	u_int num = n;
-	u_short uu0, uu1, uu2;
-	u_short vv0, vv1, vv2;
+	// uint32 num = min( n, 10 ); // do a maximum of 10 polygons
+	uint32 num = n;
+	uint16 uu0, uu1, uu2;
+	uint16 vv0, vv1, vv2;
 	uint32 tmp;
 	int32 p, flag;
-	u_int i;
+	uint32 i;
 	uint32 *pPoly;
 	int32 z0, z1, z2;
 	SVECTORPC sxy0, sxy1, sxy2, stemp;
@@ -763,16 +763,16 @@ void drawGTS3PC(uint32 *polyStart, const u_int n, SVECTORPC *pVertex) {
 		}
 
 		uv0 = *pPoly++;
-		vv0 = (u_short)((uv0 >> 16) & 0xFFFF);
-		uu0 = (u_short)(uv0 & 0xFFFF);
+		vv0 = (uint16)((uv0 >> 16) & 0xFFFF);
+		uu0 = (uint16)(uv0 & 0xFFFF);
 
 		uv1 = *pPoly++;
-		vv1 = (u_short)((uv1 >> 16) & 0xFFFF);
-		uu1 = (u_short)(uv1 & 0xFFFF);
+		vv1 = (uint16)((uv1 >> 16) & 0xFFFF);
+		uu1 = (uint16)(uv1 & 0xFFFF);
 
 		uv2 = *pPoly++;
-		vv2 = (u_short)((uv2 >> 16) & 0xFFFF);
-		uu2 = (u_short)(uv2 & 0xFFFF);
+		vv2 = (uint16)((uv2 >> 16) & 0xFFFF);
+		uu2 = (uint16)(uv2 & 0xFFFF);
 
 		tmp = *pPoly++;
 		v0 = pVertex + (tmp & 0xFFFF);
@@ -932,16 +932,16 @@ void drawGTS3PC(uint32 *polyStart, const u_int n, SVECTORPC *pVertex) {
 }
 
 // Flat, Un-Textured, Lit, triangles
-void drawFUL3PC(uint32 *polyStart, const u_int n, SVECTORPC *pVertex, SVECTOR *pNormal) {
+void drawFUL3PC(uint32 *polyStart, const uint32 n, SVECTORPC *pVertex, SVECTOR *pNormal) {
 	SVECTOR *n0;
 	SVECTORPC *v0;
 	SVECTORPC *v1;
 	SVECTORPC *v2;
 
-	// u_int num = min( n, 10 ); // do a maximum of 10 polygons
-	u_int num = n;
+	// uint32 num = min( n, 10 ); // do a maximum of 10 polygons
+	uint32 num = n;
 	int32 p, flag;
-	u_int i;
+	uint32 i;
 	uint32 *pPoly;
 	int32 z0, z1, z2;
 	SVECTORPC sxy0, sxy1, sxy2, stemp;
@@ -950,7 +950,7 @@ void drawFUL3PC(uint32 *polyStart, const u_int n, SVECTORPC *pVertex, SVECTOR *p
 	CVECTOR *rgbIn;
 	CVECTOR rgb0 = {0, 0, 0, 0};
 	uint32 tmp;
-	u_char ctmp;
+	uint8 ctmp;
 
 	pPoly = polyStart;
 	// Loop over each polygon
@@ -1032,9 +1032,9 @@ void drawFUL3PC(uint32 *polyStart, const u_int n, SVECTORPC *pVertex, SVECTOR *p
 		// so should be drawn in front of wireframe triangles
 		if ((_drawNormals) && ((selFace == i) || (selFace > 65536))) {
 			// Do coord transform on the scaled normal vectors + v0
-			sn0.vx = (short)(v0->vx + (-n0->vx >> _normalScale));
-			sn0.vy = (short)(v0->vy + (-n0->vy >> _normalScale));
-			sn0.vz = (short)(v0->vz + (-n0->vz >> _normalScale));
+			sn0.vx = (int16)(v0->vx + (-n0->vx >> _normalScale));
+			sn0.vy = (int16)(v0->vy + (-n0->vy >> _normalScale));
+			sn0.vz = (int16)(v0->vz + (-n0->vz >> _normalScale));
 			// z0 = RotTransPers( &sn0, &sxyn0, &p, &flag );
 			gte_RotTransPers_pc(&sn0, &sxyn0, &p, &flag, &z0);
 			// Normal 0 : scale the normal and add to vertex scrn pos
@@ -1077,7 +1077,7 @@ void drawFUL3PC(uint32 *polyStart, const u_int n, SVECTORPC *pVertex, SVECTOR *p
 			line->y3 = sxy0.vy;
 			// Draw a wireframe that responds to lighting
 			if (_drawLit) {
-				int cval;
+				int32 cval;
 				// Compute the colour scaling and clip it
 				// Flat shading so give the same colour to each vertex
 				if (rgbIn->r != 0) {
@@ -1152,7 +1152,7 @@ void drawFUL3PC(uint32 *polyStart, const u_int n, SVECTORPC *pVertex, SVECTOR *p
 }
 
 // Gouraud, Un-Textured, Lit, triangles
-void drawGUL3PC(uint32 *polyStart, const u_int n, SVECTORPC *pVertex, SVECTOR *pNormal) {
+void drawGUL3PC(uint32 *polyStart, const uint32 n, SVECTORPC *pVertex, SVECTOR *pNormal) {
 	SVECTOR *n0;
 	SVECTOR *n1;
 	SVECTOR *n2;
@@ -1161,12 +1161,12 @@ void drawGUL3PC(uint32 *polyStart, const u_int n, SVECTORPC *pVertex, SVECTOR *p
 	SVECTORPC *v2;
 	SVECTOR *ntemp;
 
-	// u_int num = min( n, 10 ); // do a maximum of 10 polygons
-	u_int num = n;
+	// uint32 num = min( n, 10 ); // do a maximum of 10 polygons
+	uint32 num = n;
 	uint32 tmp;
-	u_char ctmp;
+	uint8 ctmp;
 	int32 p, flag;
-	u_int i;
+	uint32 i;
 	uint32 *pPoly;
 	int32 z0, z1, z2;
 	SVECTORPC sxy0, sxy1, sxy2, stemp;
@@ -1271,7 +1271,7 @@ void drawGUL3PC(uint32 *polyStart, const u_int n, SVECTORPC *pVertex, SVECTOR *p
 			// NormalColorCol3( n0, n1, n2, &rgbIn, &rgb0, &rgb1, &rgb2 );
 			LIGHTPOLYGON3(n0, n1, n2, &rgbIn, &rgb0, &rgb1, &rgb2);
 
-			int cval;
+			int32 cval;
 
 			if (!_drawGouraud) {
 				// For flat shading mode take the average RGB for the face
@@ -1302,15 +1302,15 @@ void drawGUL3PC(uint32 *polyStart, const u_int n, SVECTORPC *pVertex, SVECTOR *p
 		// so should be drawn in front of wireframe triangles
 		if ((_drawNormals) && ((selFace == i) || (selFace > 65536))) {
 			// Do coord transform on the scaled normal vectors + v0
-			sn0.vx = (short)(v0->vx + (-n0->vx >> _normalScale));
-			sn0.vy = (short)(v0->vy + (-n0->vy >> _normalScale));
-			sn0.vz = (short)(v0->vz + (-n0->vz >> _normalScale));
-			sn1.vx = (short)(v1->vx + (-n1->vx >> _normalScale));
-			sn1.vy = (short)(v1->vy + (-n1->vy >> _normalScale));
-			sn1.vz = (short)(v1->vz + (-n1->vz >> _normalScale));
-			sn2.vx = (short)(v2->vx + (-n2->vx >> _normalScale));
-			sn2.vy = (short)(v2->vy + (-n2->vy >> _normalScale));
-			sn2.vz = (short)(v2->vz + (-n2->vz >> _normalScale));
+			sn0.vx = (int16)(v0->vx + (-n0->vx >> _normalScale));
+			sn0.vy = (int16)(v0->vy + (-n0->vy >> _normalScale));
+			sn0.vz = (int16)(v0->vz + (-n0->vz >> _normalScale));
+			sn1.vx = (int16)(v1->vx + (-n1->vx >> _normalScale));
+			sn1.vy = (int16)(v1->vy + (-n1->vy >> _normalScale));
+			sn1.vz = (int16)(v1->vz + (-n1->vz >> _normalScale));
+			sn2.vx = (int16)(v2->vx + (-n2->vx >> _normalScale));
+			sn2.vy = (int16)(v2->vy + (-n2->vy >> _normalScale));
+			sn2.vz = (int16)(v2->vz + (-n2->vz >> _normalScale));
 
 			// z0 = RotTransPers3( &sn0, &sn1, &sn2,
 			//                    &sxyn0, &sxyn1, &sxyn2, &p, &flag );
@@ -1392,7 +1392,7 @@ void drawGUL3PC(uint32 *polyStart, const u_int n, SVECTORPC *pVertex, SVECTOR *p
 			if (_drawLit) {
 				LINE_G4 *line = (LINE_G4 *)drawpacket;
 				setLineG4(line);
-				int cval;
+				int32 cval;
 				if (_drawGouraud) {
 					// Give each vertex a seperate colour
 					// Compute the colour scaling and clip it
@@ -1630,20 +1630,20 @@ void drawGUL3PC(uint32 *polyStart, const u_int n, SVECTORPC *pVertex, SVECTOR *p
 }
 
 // Flat, Textured, Lit Triangles
-void drawFTL3PC(uint32 *polyStart, const u_int n, SVECTORPC *pVertex, SVECTOR *pNormal) {
+void drawFTL3PC(uint32 *polyStart, const uint32 n, SVECTORPC *pVertex, SVECTOR *pNormal) {
 	SVECTOR *n0;
 	SVECTORPC *v0;
 	SVECTORPC *v1;
 	SVECTORPC *v2;
 
-	// u_int num = min( n, 10 ); // do a maximum of 10 polygons
-	u_int num = n;
-	u_short uu0, uu1, uu2;
-	u_short vv0, vv1, vv2;
+	// uint32 num = min( n, 10 ); // do a maximum of 10 polygons
+	uint32 num = n;
+	uint16 uu0, uu1, uu2;
+	uint16 vv0, vv1, vv2;
 	uint32 tmp;
-	u_char ctmp;
+	uint8 ctmp;
 	int32 p, flag;
-	u_int i;
+	uint32 i;
 	uint32 *pPoly;
 	int32 z0, z1, z2;
 	SVECTORPC sxy0, sxy1, sxy2, stemp;
@@ -1671,16 +1671,16 @@ void drawFTL3PC(uint32 *polyStart, const u_int n, SVECTORPC *pVertex, SVECTOR *p
 		//  v0              | n0
 		//  v2              | v1
 		uv0 = *pPoly++;
-		vv0 = (u_short)((uv0 >> 16) & 0xFFFF);
-		uu0 = (u_short)(uv0 & 0xFFFF);
+		vv0 = (uint16)((uv0 >> 16) & 0xFFFF);
+		uu0 = (uint16)(uv0 & 0xFFFF);
 
 		uv1 = *pPoly++;
-		vv1 = (u_short)((uv1 >> 16) & 0xFFFF);
-		uu1 = (u_short)(uv1 & 0xFFFF);
+		vv1 = (uint16)((uv1 >> 16) & 0xFFFF);
+		uu1 = (uint16)(uv1 & 0xFFFF);
 
 		uv2 = *pPoly++;
-		vv2 = (u_short)((uv2 >> 16) & 0xFFFF);
-		uu2 = (u_short)(uv2 & 0xFFFF);
+		vv2 = (uint16)((uv2 >> 16) & 0xFFFF);
+		uu2 = (uint16)(uv2 & 0xFFFF);
 
 		tmp = *pPoly++;
 		v0 = pVertex + (tmp >> 16);
@@ -1757,9 +1757,9 @@ void drawFTL3PC(uint32 *polyStart, const u_int n, SVECTORPC *pVertex, SVECTOR *p
 		// so should be drawn in front of wireframe triangles
 		if ((_drawNormals) && ((selFace == i) || (selFace > 65536))) {
 			// Do coord transform on the scaled normal vectors + v0
-			sn0.vx = (short)(v0->vx + (-n0->vx >> _normalScale));
-			sn0.vy = (short)(v0->vy + (-n0->vy >> _normalScale));
-			sn0.vz = (short)(v0->vz + (-n0->vz >> _normalScale));
+			sn0.vx = (int16)(v0->vx + (-n0->vx >> _normalScale));
+			sn0.vy = (int16)(v0->vy + (-n0->vy >> _normalScale));
+			sn0.vz = (int16)(v0->vz + (-n0->vz >> _normalScale));
 			// z0 = RotTransPers( &sn0, &sxyn0, &p, &flag );
 			gte_RotTransPers_pc(&sn0, &sxyn0, &p, &flag, &z0);
 			// Normal 0
@@ -1791,7 +1791,7 @@ void drawFTL3PC(uint32 *polyStart, const u_int n, SVECTORPC *pVertex, SVECTOR *p
 		if ((_drawWfrm) || (selFace == i)) {
 			// Draw a wireframe that responds to lighting
 			if (_drawLit) {
-				int cval;
+				int32 cval;
 				LINE_G4 *line = (LINE_G4 *)drawpacket;
 				setLineG4(line);
 				// Compute the colour scaling and clip it
@@ -1944,7 +1944,7 @@ void drawFTL3PC(uint32 *polyStart, const u_int n, SVECTORPC *pVertex, SVECTOR *p
 }
 
 // Gouraud, Textured, Lit Triangles
-void drawGTL3PC(uint32 *polyStart, const u_int n, SVECTORPC *pVertex, SVECTOR *pNormal) {
+void drawGTL3PC(uint32 *polyStart, const uint32 n, SVECTORPC *pVertex, SVECTOR *pNormal) {
 	SVECTOR *n0;
 	SVECTOR *n1;
 	SVECTOR *n2;
@@ -1953,14 +1953,14 @@ void drawGTL3PC(uint32 *polyStart, const u_int n, SVECTORPC *pVertex, SVECTOR *p
 	SVECTORPC *v2;
 	SVECTOR *ntemp;
 
-	// u_int num = min( n, 10 ); // do a maximum of 10 polygons
-	u_int num = n;
-	u_short uu0, uu1, uu2;
-	u_short vv0, vv1, vv2;
+	// uint32 num = min( n, 10 ); // do a maximum of 10 polygons
+	uint32 num = n;
+	uint16 uu0, uu1, uu2;
+	uint16 vv0, vv1, vv2;
 	uint32 tmp;
-	u_char ctmp;
+	uint8 ctmp;
 	int32 p, flag;
-	u_int i;
+	uint32 i;
 	uint32 *pPoly;
 	int32 z0, z1, z2;
 	SVECTORPC sxy0, sxy1, sxy2, stemp;
@@ -1986,16 +1986,16 @@ void drawGTL3PC(uint32 *polyStart, const u_int n, SVECTORPC *pVertex, SVECTOR *p
 		// v1     | n1
 		// v2     | n2
 		uv0 = *pPoly++;
-		vv0 = (u_short)((uv0 >> 16) & 0xFFFF);
-		uu0 = (u_short)(uv0 & 0xFFFF);
+		vv0 = (uint16)((uv0 >> 16) & 0xFFFF);
+		uu0 = (uint16)(uv0 & 0xFFFF);
 
 		uv1 = *pPoly++;
-		vv1 = (u_short)((uv1 >> 16) & 0xFFFF);
-		uu1 = (u_short)(uv1 & 0xFFFF);
+		vv1 = (uint16)((uv1 >> 16) & 0xFFFF);
+		uu1 = (uint16)(uv1 & 0xFFFF);
 
 		uv2 = *pPoly++;
-		vv2 = (u_short)((uv2 >> 16) & 0xFFFF);
-		uu2 = (u_short)(uv2 & 0xFFFF);
+		vv2 = (uint16)((uv2 >> 16) & 0xFFFF);
+		uu2 = (uint16)(uv2 & 0xFFFF);
 
 		tmp = *pPoly++;
 		v0 = pVertex + (tmp >> 16);
@@ -2073,7 +2073,7 @@ void drawGTL3PC(uint32 *polyStart, const u_int n, SVECTORPC *pVertex, SVECTOR *p
 			// Do the full gouraud computation
 			// NormalColorCol3( n0, n1, n2, &rgbIn, &rgb0, &rgb1, &rgb2 );
 			LIGHTPOLYGON3(n0, n1, n2, &rgbIn, &rgb0, &rgb1, &rgb2);
-			int cval;
+			int32 cval;
 
 			if (!_drawGouraud) {
 				// For flat shading mode take the average RGB for the face
@@ -2100,15 +2100,15 @@ void drawGTL3PC(uint32 *polyStart, const u_int n, SVECTORPC *pVertex, SVECTOR *p
 		// so should be drawn in front of wireframe triangles
 		if ((_drawNormals) && ((selFace == i) || (selFace > 65536))) {
 			// Do coord transform on the scaled normal vectors + v0
-			sn0.vx = (short)(v0->vx + (-n0->vx >> _normalScale));
-			sn0.vy = (short)(v0->vy + (-n0->vy >> _normalScale));
-			sn0.vz = (short)(v0->vz + (-n0->vz >> _normalScale));
-			sn1.vx = (short)(v1->vx + (-n1->vx >> _normalScale));
-			sn1.vy = (short)(v1->vy + (-n1->vy >> _normalScale));
-			sn1.vz = (short)(v1->vz + (-n1->vz >> _normalScale));
-			sn2.vx = (short)(v2->vx + (-n2->vx >> _normalScale));
-			sn2.vy = (short)(v2->vy + (-n2->vy >> _normalScale));
-			sn2.vz = (short)(v2->vz + (-n2->vz >> _normalScale));
+			sn0.vx = (int16)(v0->vx + (-n0->vx >> _normalScale));
+			sn0.vy = (int16)(v0->vy + (-n0->vy >> _normalScale));
+			sn0.vz = (int16)(v0->vz + (-n0->vz >> _normalScale));
+			sn1.vx = (int16)(v1->vx + (-n1->vx >> _normalScale));
+			sn1.vy = (int16)(v1->vy + (-n1->vy >> _normalScale));
+			sn1.vz = (int16)(v1->vz + (-n1->vz >> _normalScale));
+			sn2.vx = (int16)(v2->vx + (-n2->vx >> _normalScale));
+			sn2.vy = (int16)(v2->vy + (-n2->vy >> _normalScale));
+			sn2.vz = (int16)(v2->vz + (-n2->vz >> _normalScale));
 			// z0 = RotTransPers3( &sn0, &sn1, &sn2,
 			//                    &sxyn0, &sxyn1, &sxyn2, &p, &flag );
 			gte_RotTransPers3_pc(&sn0, &sn1, &sn2, &sxyn0, &sxyn1, &sxyn2, &p, &flag, &z0);
@@ -2189,7 +2189,7 @@ void drawGTL3PC(uint32 *polyStart, const u_int n, SVECTORPC *pVertex, SVECTOR *p
 			if (_drawLit) {
 				LINE_G4 *line = (LINE_G4 *)drawpacket;
 				setLineG4(line);
-				int cval;
+				int32 cval;
 				if (_drawGouraud) {
 					// Give each vertex a seperate colour
 					// Compute the colour scaling and clip it
@@ -2494,15 +2494,15 @@ void drawGTL3PC(uint32 *polyStart, const u_int n, SVECTORPC *pVertex, SVECTOR *p
 // draw backfacing triangles as well
 // the colour is set by a global variable
 
-void drawTRI3PC(uint32 *polyStart, const u_int n, SVECTORPC *pVertex) {
+void drawTRI3PC(uint32 *polyStart, const uint32 n, SVECTORPC *pVertex) {
 	SVECTORPC *v0;
 	SVECTORPC *v1;
 	SVECTORPC *v2;
 
-	// u_int num = min( n, 10 ); // do a maximum of 10 polygons
-	u_int num = n;
+	// uint32 num = min( n, 10 ); // do a maximum of 10 polygons
+	uint32 num = n;
 	int32 p, flag;
-	u_int i;
+	uint32 i;
 	uint32 *pPoly;
 	int32 z0, z1, z2;
 	SVECTORPC sxy0, sxy1, sxy2, stemp;
@@ -2625,13 +2625,13 @@ void drawTRI3PC(uint32 *polyStart, const u_int n, SVECTORPC *pVertex) {
 #endif // #if CD_MODE == 0
 
 // Flat, Un-Textured, Self-Luminous, triangles
-void fastDrawFUS3PC(uint32 *polyStart, const u_int n, SVECTORPC *pVertex) {
+void fastDrawFUS3PC(uint32 *polyStart, const uint32 n, SVECTORPC *pVertex) {
 	SVECTORPC *v0;
 	SVECTORPC *v1;
 	SVECTORPC *v2;
 
 	int32 flag;
-	u_int i;
+	uint32 i;
 	uint32 *pPoly;
 	int32 z0;
 	SVECTORPC sxy0, sxy1, sxy2;
@@ -2712,14 +2712,14 @@ void fastDrawFUS3PC(uint32 *polyStart, const u_int n, SVECTORPC *pVertex) {
 }
 
 // Fast: no options, Gouraud, Un-Textured, Self-Luminous, triangles
-void fastDrawGUS3PC(uint32 *polyStart, const u_int n, SVECTORPC *pVertex) {
+void fastDrawGUS3PC(uint32 *polyStart, const uint32 n, SVECTORPC *pVertex) {
 	SVECTORPC *v0;
 	SVECTORPC *v1;
 	SVECTORPC *v2;
 
 	uint32 tmp;
 	int32 flag;
-	u_int i;
+	uint32 i;
 	uint32 *pPoly;
 	int32 z0;
 	SVECTORPC sxy0, sxy1, sxy2;
@@ -2812,16 +2812,16 @@ void fastDrawGUS3PC(uint32 *polyStart, const u_int n, SVECTORPC *pVertex) {
 }
 
 // Fast: no options, Flat, Textured, Self-Luminous Triangles
-void fastDrawFTS3PC(uint32 *polyStart, const u_int n, SVECTORPC *pVertex) {
+void fastDrawFTS3PC(uint32 *polyStart, const uint32 n, SVECTORPC *pVertex) {
 	SVECTORPC *v0;
 	SVECTORPC *v1;
 	SVECTORPC *v2;
 
-	u_short uu0, uu1, uu2;
-	u_short vv0, vv1, vv2;
+	uint16 uu0, uu1, uu2;
+	uint16 vv0, vv1, vv2;
 	uint32 tmp;
 	int32 flag;
-	u_int i;
+	uint32 i;
 	uint32 *pPoly;
 	int32 z0;
 	SVECTORPC sxy0, sxy1, sxy2;
@@ -2854,16 +2854,16 @@ void fastDrawFTS3PC(uint32 *polyStart, const u_int n, SVECTORPC *pVertex) {
 		}
 
 		uv0 = *pPoly++;
-		vv0 = (u_short)((uv0 >> 16) & 0xFFFF);
-		uu0 = (u_short)(uv0 & 0xFFFF);
+		vv0 = (uint16)((uv0 >> 16) & 0xFFFF);
+		uu0 = (uint16)(uv0 & 0xFFFF);
 
 		uv1 = *pPoly++;
-		vv1 = (u_short)((uv1 >> 16) & 0xFFFF);
-		uu1 = (u_short)(uv1 & 0xFFFF);
+		vv1 = (uint16)((uv1 >> 16) & 0xFFFF);
+		uu1 = (uint16)(uv1 & 0xFFFF);
 
 		uv2 = *pPoly++;
-		vv2 = (u_short)((uv2 >> 16) & 0xFFFF);
-		uu2 = (u_short)(uv2 & 0xFFFF);
+		vv2 = (uint16)((uv2 >> 16) & 0xFFFF);
+		uu2 = (uint16)(uv2 & 0xFFFF);
 
 		tmp = *pPoly++;
 		v0 = pVertex + (tmp & 0xFFFF);
@@ -2925,16 +2925,16 @@ void fastDrawFTS3PC(uint32 *polyStart, const u_int n, SVECTORPC *pVertex) {
 }
 
 // Fast: no options, Gouraud, Textured, Self-Luminous Triangles
-void fastDrawGTS3PC(uint32 *polyStart, const u_int n, SVECTORPC *pVertex) {
+void fastDrawGTS3PC(uint32 *polyStart, const uint32 n, SVECTORPC *pVertex) {
 	SVECTORPC *v0;
 	SVECTORPC *v1;
 	SVECTORPC *v2;
 
-	u_short uu0, uu1, uu2;
-	u_short vv0, vv1, vv2;
+	uint16 uu0, uu1, uu2;
+	uint16 vv0, vv1, vv2;
 	uint32 tmp;
 	int32 flag;
-	u_int i;
+	uint32 i;
 	uint32 *pPoly;
 	int32 z0;
 	SVECTORPC sxy0, sxy1, sxy2;
@@ -2972,16 +2972,16 @@ void fastDrawGTS3PC(uint32 *polyStart, const u_int n, SVECTORPC *pVertex) {
 		}
 
 		uv0 = *pPoly++;
-		vv0 = (u_short)((uv0 >> 16) & 0xFFFF);
-		uu0 = (u_short)(uv0 & 0xFFFF);
+		vv0 = (uint16)((uv0 >> 16) & 0xFFFF);
+		uu0 = (uint16)(uv0 & 0xFFFF);
 
 		uv1 = *pPoly++;
-		vv1 = (u_short)((uv1 >> 16) & 0xFFFF);
-		uu1 = (u_short)(uv1 & 0xFFFF);
+		vv1 = (uint16)((uv1 >> 16) & 0xFFFF);
+		uu1 = (uint16)(uv1 & 0xFFFF);
 
 		uv2 = *pPoly++;
-		vv2 = (u_short)((uv2 >> 16) & 0xFFFF);
-		uu2 = (u_short)(uv2 & 0xFFFF);
+		vv2 = (uint16)((uv2 >> 16) & 0xFFFF);
+		uu2 = (uint16)(uv2 & 0xFFFF);
 
 		tmp = *pPoly++;
 		v0 = pVertex + (tmp & 0xFFFF);
@@ -3048,14 +3048,14 @@ void fastDrawGTS3PC(uint32 *polyStart, const u_int n, SVECTORPC *pVertex) {
 }
 
 // Fast: no options, Flat, Un-Textured, Lit, triangles
-void fastDrawFUL3PC(uint32 *polyStart, const u_int n, SVECTORPC *pVertex, SVECTOR *pNormal) {
+void fastDrawFUL3PC(uint32 *polyStart, const uint32 n, SVECTORPC *pVertex, SVECTOR *pNormal) {
 	SVECTOR *n0;
 	SVECTORPC *v0;
 	SVECTORPC *v1;
 	SVECTORPC *v2;
 
 	int32 flag;
-	u_int i;
+	uint32 i;
 	uint32 *pPoly;
 	int32 z0;
 	SVECTORPC sxy0, sxy1, sxy2;
@@ -3138,7 +3138,7 @@ void fastDrawFUL3PC(uint32 *polyStart, const u_int n, SVECTORPC *pVertex, SVECTO
 }
 
 // Fast: no options, Gouraud, Un-Textured, Lit, triangles
-void fastDrawGUL3PC(uint32 *polyStart, const u_int n, SVECTORPC *pVertex, SVECTOR *pNormal) {
+void fastDrawGUL3PC(uint32 *polyStart, const uint32 n, SVECTORPC *pVertex, SVECTOR *pNormal) {
 	SVECTOR *n0;
 	SVECTOR *n1;
 	SVECTOR *n2;
@@ -3148,7 +3148,7 @@ void fastDrawGUL3PC(uint32 *polyStart, const u_int n, SVECTORPC *pVertex, SVECTO
 
 	uint32 tmp;
 	int32 flag;
-	u_int i;
+	uint32 i;
 	uint32 *pPoly;
 	int32 z0;
 	SVECTORPC sxy0, sxy1, sxy2;
@@ -3246,17 +3246,17 @@ void fastDrawGUL3PC(uint32 *polyStart, const u_int n, SVECTORPC *pVertex, SVECTO
 //------------------------------------------------------------------------
 
 // Fast: no options, Flat, Textured, Lit Triangles
-void fastDrawFTL3PC(uint32 *polyStart, const u_int n, SVECTORPC *pVertex, SVECTOR *pNormal) {
+void fastDrawFTL3PC(uint32 *polyStart, const uint32 n, SVECTORPC *pVertex, SVECTOR *pNormal) {
 	SVECTOR *n0;
 	SVECTORPC *v0;
 	SVECTORPC *v1;
 	SVECTORPC *v2;
 
-	u_short uu0, uu1, uu2;
-	u_short vv0, vv1, vv2;
+	uint16 uu0, uu1, uu2;
+	uint16 vv0, vv1, vv2;
 	uint32 tmp;
 	int32 flag;
-	u_int i;
+	uint32 i;
 	uint32 *pPoly;
 	int32 z0;
 	SVECTORPC sxy0, sxy1, sxy2;
@@ -3282,16 +3282,16 @@ void fastDrawFTL3PC(uint32 *polyStart, const u_int n, SVECTORPC *pVertex, SVECTO
 		//  v0     | n0
 		//  v2     | v1
 		uv0 = *pPoly++;
-		vv0 = (u_short)((uv0 >> 16) & 0xFFFF);
-		uu0 = (u_short)(uv0 & 0xFFFF);
+		vv0 = (uint16)((uv0 >> 16) & 0xFFFF);
+		uu0 = (uint16)(uv0 & 0xFFFF);
 
 		uv1 = *pPoly++;
-		vv1 = (u_short)((uv1 >> 16) & 0xFFFF);
-		uu1 = (u_short)(uv1 & 0xFFFF);
+		vv1 = (uint16)((uv1 >> 16) & 0xFFFF);
+		uu1 = (uint16)(uv1 & 0xFFFF);
 
 		uv2 = *pPoly++;
-		vv2 = (u_short)((uv2 >> 16) & 0xFFFF);
-		uu2 = (u_short)(uv2 & 0xFFFF);
+		vv2 = (uint16)((uv2 >> 16) & 0xFFFF);
+		uu2 = (uint16)(uv2 & 0xFFFF);
 
 		tmp = *pPoly++;
 		v0 = pVertex + (tmp >> 16);
@@ -3356,7 +3356,7 @@ void fastDrawFTL3PC(uint32 *polyStart, const u_int n, SVECTORPC *pVertex, SVECTO
 }
 
 // Fast : no options : Gouraud, Textured, Lit Triangles
-void fastDrawGTL3PC(uint32 *polyStart, const u_int n, SVECTORPC *pVertex, SVECTOR *pNormal) {
+void fastDrawGTL3PC(uint32 *polyStart, const uint32 n, SVECTORPC *pVertex, SVECTOR *pNormal) {
 	SVECTOR *n0;
 	SVECTOR *n1;
 	SVECTOR *n2;
@@ -3364,14 +3364,14 @@ void fastDrawGTL3PC(uint32 *polyStart, const u_int n, SVECTORPC *pVertex, SVECTO
 	SVECTORPC *v1;
 	SVECTORPC *v2;
 
-	u_short uu0;
-	u_short uu1;
-	u_short uu2;
-	u_short vv0;
-	u_short vv1;
-	u_short vv2;
+	uint16 uu0;
+	uint16 uu1;
+	uint16 uu2;
+	uint16 vv0;
+	uint16 vv1;
+	uint16 vv2;
 	int32 flag;
-	u_int i;
+	uint32 i;
 	int32 z0;
 	uint32 uv0;
 	uint32 uv1;
@@ -3382,17 +3382,17 @@ void fastDrawGTL3PC(uint32 *polyStart, const u_int n, SVECTORPC *pVertex, SVECTO
 	SVECTORPC sxy0;
 	SVECTORPC sxy1;
 	SVECTORPC sxy2;
-	int pad0;
-	int pad1;
-	int pad2;
+	int32 pad0;
+	int32 pad1;
+	int32 pad2;
 
 	// Base colour for gouraud shading computation
 	// Could easily be specified per polygon
 	CVECTOR rgbIn = {128, 128, 128, 0};
 	CVECTOR rgb0, rgb1, rgb2;
 
-	int my_minUsedZpos;
-	int my_maxUsedZpos;
+	int32 my_minUsedZpos;
+	int32 my_maxUsedZpos;
 
 	my_minUsedZpos = minUsedZpos;
 	my_maxUsedZpos = maxUsedZpos;
@@ -3412,16 +3412,16 @@ void fastDrawGTL3PC(uint32 *polyStart, const u_int n, SVECTORPC *pVertex, SVECTO
 		// v2     | n2
 
 		uv0 = *(pPoly++);
-		vv0 = (u_short)((uv0 >> 16) & 0xFFFF);
-		uu0 = (u_short)(uv0 & 0xFFFF);
+		vv0 = (uint16)((uv0 >> 16) & 0xFFFF);
+		uu0 = (uint16)(uv0 & 0xFFFF);
 
 		uv1 = *(pPoly++);
-		vv1 = (u_short)((uv1 >> 16) & 0xFFFF);
-		uu1 = (u_short)(uv1 & 0xFFFF);
+		vv1 = (uint16)((uv1 >> 16) & 0xFFFF);
+		uu1 = (uint16)(uv1 & 0xFFFF);
 
 		uv2 = *(pPoly++);
-		vv2 = (u_short)((uv2 >> 16) & 0xFFFF);
-		uu2 = (u_short)(uv2 & 0xFFFF);
+		vv2 = (uint16)((uv2 >> 16) & 0xFFFF);
+		uu2 = (uint16)(uv2 & 0xFFFF);
 
 		vt0 = *(pPoly++);
 		v0 = (pVertex + (vt0 >> 16));
@@ -3666,13 +3666,13 @@ void drawSolidBboxPC(SVECTOR *scrn, CVECTOR *rgbIn) {
 // Simple flat untextured triangles
 // draw backfacing triangles as well
 // the colour is set by a global variable
-void fastDrawTRI3PC(uint32 *polyStart, const u_int n, SVECTORPC *pVertex) {
+void fastDrawTRI3PC(uint32 *polyStart, const uint32 n, SVECTORPC *pVertex) {
 	SVECTORPC *v0;
 	SVECTORPC *v1;
 	SVECTORPC *v2;
 
 	int32 flag;
-	u_int i;
+	uint32 i;
 	uint32 *pPoly;
 	int32 z0;
 	SVECTORPC sxy0, sxy1, sxy2, stemp;

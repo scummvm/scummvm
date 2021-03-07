@@ -98,7 +98,7 @@ bool8 soundOn = TRUE8;
 
 bool8 pauseSound = TRUE8;
 
-int speechOnSliderValue = MAX_VOLUME;
+int32 speechOnSliderValue = MAX_VOLUME;
 
 const uint8 pitchMakerMults[12 * 16] = PITCH_MULT;
 const uint8 pitchMakerDivs[12 * 16] = PITCH_DIV;
@@ -221,11 +221,11 @@ const char *menuCancelSfx = "menu\\menu_cancel";
 // x is in same units...
 int32 EvalEnv(const CEnvelope &env, int32 x) {
 
-	int pa = env.a;
-	int pb = env.b;
-	int pc = env.c;
-	int pd = env.d;
-	int xxx, xx;
+	int32 pa = env.a;
+	int32 pb = env.b;
+	int32 pc = env.c;
+	int32 pd = env.d;
+	int32 xxx, xx;
 
 	if (pa == 0)
 		xxx = 0;
@@ -881,8 +881,8 @@ void CRegisteredSound::GetPosition() {
 void CRegisteredSound::GetVolumeAndPan(int32 &vol, int32 &pan) {
 	// special sound, always central, etc
 	if (m_objID == SPECIAL_SOUND) {
-		vol = (int)m_z; // get sound from z position...!
-		pan = (int)m_x; // pan is x position!
+		vol = (int32)m_z; // get sound from z position...!
+		pan = (int32)m_x; // pan is x position!
 		return;
 	}
 
@@ -976,7 +976,7 @@ void UpdateHearableSounds() {
 
 	// speech volume slider
 
-	int speechOnSliderTarget;
+	int32 speechOnSliderTarget;
 
 	// if somebody speaking...
 	if ((g_mission) && (g_mission->session) && (MS->speech_info[CONV_ID].total_subscribers > 0) && (GetSpeechVolume() > 0))
@@ -1008,8 +1008,8 @@ int32 GetSoundCloser(int32 objID, PXreal x, PXreal y, PXreal z) {
 	PXreal dist;     // distance of this object
 	PXreal thisDist; // distance of comparing object
 
-	int i;
-	int c;
+	int32 i;
+	int32 c;
 
 	// if
 	if (objID != SPECIAL_SOUND) {
@@ -1023,8 +1023,8 @@ int32 GetSoundCloser(int32 objID, PXreal x, PXreal y, PXreal z) {
 		dist = (PXreal)0;
 
 	PXreal maxDist = dist;
-	int sfxReplace = -1;
-	int channelReplace = -1;
+	int32 sfxReplace = -1;
+	int32 channelReplace = -1;
 
 	for (i = 0; i < MAX_REGISTERED_SOUNDS; i++) {
 		c = registeredSounds[i].m_channel;
@@ -1097,13 +1097,13 @@ int32 FindSound(uint32 obj, uint32 sndHash, int32 start = 0) {
 
 // fn_play_sfx_offset(sfxName,sndID,x,y,z,isNico)
 // this is the generic function
-void RegisterSoundOffset(uint32 obj, const char *offsetName, const char *sfxName, uint32 sfxHash, const char *sndID, PXreal xo, PXreal yo, PXreal zo, int isNico, int time,
+void RegisterSoundOffset(uint32 obj, const char *offsetName, const char *sfxName, uint32 sfxHash, const char *sndID, PXreal xo, PXreal yo, PXreal zo, int32 isNico, int32 time,
                          int8 volume_offset) {
 	// check we have the hash before we register any sounds...!
 	if (menuSoundIDHash == NULL_HASH)
 		menuSoundIDHash = HashString(menuSoundID);
 
-	int i;
+	int32 i;
 	i = GetFreeSound(sfxName);
 
 	// for getting nico position
@@ -1191,7 +1191,7 @@ void RemoveRegisteredSound(uint32 obj, const char *sndID) {
 
 	sndIDHash = HashString(sndID);
 
-	int start;
+	int32 start;
 
 	// do object sounds with id
 
@@ -1241,7 +1241,7 @@ void RemoveAllSoundsWithID(uint32 obj) {
 
 void StopAllSoundsNow() {
 	Tdebug("sounds.txt", "stopping");
-	uint i;
+	uint32 i;
 
 	for (i = 0; i < MAX_REGISTERED_SOUNDS; i++) {
 		registeredSounds[i].Wipe();

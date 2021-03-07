@@ -179,13 +179,13 @@ extern void *OTusrData;
  * Primitive Handling Macros
  */
 #define setusr(p, _usr) (((P_TAG *)(p))->usr = (void *)(_usr))
-#define setz(p, _z) (((P_TAG *)(p))->z0 = (u_short)(_z))
-#define setlen(p, _len) (((P_TAG *)(p))->len = (u_char)(_len))
+#define setz(p, _z) (((P_TAG *)(p))->z0 = (uint16)(_z))
+#define setlen(p, _len) (((P_TAG *)(p))->len = (uint8)(_len))
 #define setaddr(p, _addr) (((P_TAG *)(p))->addr = (void *)(_addr))
-#define setcode(p, _code) (((P_TAG *)(p))->code = (u_char)(_code))
+#define setcode(p, _code) (((P_TAG *)(p))->code = (uint8)(_code))
 
-#define getlen(p) (u_char)(((P_TAG *)(p))->len)
-#define getcode(p) (u_char)(((P_TAG *)(p))->code)
+#define getlen(p) (uint8)(((P_TAG *)(p))->len)
+#define getcode(p) (uint8)(((P_TAG *)(p))->code)
 #define getaddr(p) (void *)(((P_TAG *)(p))->addr)
 
 #define nextPrim(p) (void *)(((P_TAG *)(p))->addr)
@@ -259,36 +259,36 @@ extern void *OTusrData;
  * Rectangle:
  */
 typedef struct {
-	short x, y; /* offset point on VRAM */
-	short w, h; /* width and height */
+	int16 x, y; /* offset point on VRAM */
+	int16 w, h; /* width and height */
 } RECT16;
 
 typedef struct {
-	int x, y; /* offset point on VRAM */
-	int w, h; /* width and height */
+	int32 x, y; /* offset point on VRAM */
+	int32 w, h; /* width and height */
 } RECT32;
 
 typedef struct {
 	void *addr;
-	u_short len;
-	u_short z0;
+	uint16 len;
+	uint16 z0;
 	void *usr;
-	u_char r0, g0, b0, code;
+	uint8 r0, g0, b0, code;
 } P_TAG;
 
-typedef struct { u_char r0, g0, b0, code; } P_CODE;
+typedef struct { uint8 r0, g0, b0, code; } P_CODE;
 
 typedef struct {
 	void *addr;
-	u_short len;
-	u_short z0;
+	uint16 len;
+	uint16 z0;
 	void *usr;
-	u_char r0, g0, b0, code;
+	uint8 r0, g0, b0, code;
 } OT_tag;
 
 typedef struct {
 	P_TAG tag;
-	u_char r0, g0, b0, code;
+	uint8 r0, g0, b0, code;
 } P_HEADER;
 
 /*
@@ -301,22 +301,22 @@ typedef struct {
 
 typedef struct {
 	RECT16 clip;       /* clip area */
-	short ofs[2];      /* drawing offset */
+	int16 ofs[2];      /* drawing offset */
 	RECT16 tw;         /* texture window */
-	u_short tpage;     /* texture page */
-	u_char dtd;        /* dither flag (0:off, 1:on) */
-	u_char dfe;        /* flag to draw on display area (0:off 1:on) */
-	u_char isbg;       /* enable to auto-clear */
-	u_char r0, g0, b0; /* initital background color */
+	uint16 tpage;     /* texture page */
+	uint8 dtd;        /* dither flag (0:off, 1:on) */
+	uint8 dfe;        /* flag to draw on display area (0:off 1:on) */
+	uint8 isbg;       /* enable to auto-clear */
+	uint8 r0, g0, b0; /* initital background color */
 	DR_ENV dr_env;     /* reserved */
 } DRAWENV;
 
 typedef struct {
 	RECT16 disp;       /* display area */
 	RECT16 screen;     /* display start point */
-	u_char isinter;    /* interlace 0: off 1: on */
-	u_char isrgb24;    /* RGB24 bit mode */
-	u_char pad0, pad1; /* reserved */
+	uint8 isinter;    /* interlace 0: off 1: on */
+	uint8 isrgb24;    /* RGB24 bit mode */
+	uint8 pad0, pad1; /* reserved */
 } DISPENV;
 
 /*
@@ -325,94 +325,94 @@ typedef struct {
 
 typedef struct {
 	P_TAG tag;
-	u_char r0, g0, b0, code;
-	int x0, y0;
-	int x1, y1;
-	int x2, y2;
+	uint8 r0, g0, b0, code;
+	int32 x0, y0;
+	int32 x1, y1;
+	int32 x2, y2;
 } POLY_F3; /* Flat Triangle */
 
 typedef struct {
 	P_TAG tag;
-	u_char r0, g0, b0, code;
-	int x0, y0;
-	int x1, y1;
-	int x2, y2;
-	int x3, y3;
+	uint8 r0, g0, b0, code;
+	int32 x0, y0;
+	int32 x1, y1;
+	int32 x2, y2;
+	int32 x3, y3;
 } POLY_F4; /* Flat Quadrangle */
 
 typedef struct {
 	P_TAG tag;
-	u_char r0, g0, b0, code;
-	int x0, y0;
-	u_short u0, v0;
-	int x1, y1;
-	u_short u1, v1;
-	int x2, y2;
-	u_short u2, v2;
+	uint8 r0, g0, b0, code;
+	int32 x0, y0;
+	uint16 u0, v0;
+	int32 x1, y1;
+	uint16 u1, v1;
+	int32 x2, y2;
+	uint16 u2, v2;
 } POLY_FT3; /* Flat Textured Triangle */
 
 typedef struct {
 	P_TAG tag;
-	u_char r0, g0, b0, code;
-	int x0, y0;
-	u_short u0, v0;
-	int x1, y1;
-	u_short u1, v1;
-	int x2, y2;
-	u_short u2, v2;
-	int x3, y3;
-	u_short u3, v3;
+	uint8 r0, g0, b0, code;
+	int32 x0, y0;
+	uint16 u0, v0;
+	int32 x1, y1;
+	uint16 u1, v1;
+	int32 x2, y2;
+	uint16 u2, v2;
+	int32 x3, y3;
+	uint16 u3, v3;
 } POLY_FT4; /* Flat Textured Quadrangle */
 
 typedef struct {
 	P_TAG tag;
-	u_char r0, g0, b0, code;
-	int x0, y0;
-	u_char r1, g1, b1, pad1;
-	int x1, y1;
-	u_char r2, g2, b2, pad2;
-	int x2, y2;
+	uint8 r0, g0, b0, code;
+	int32 x0, y0;
+	uint8 r1, g1, b1, pad1;
+	int32 x1, y1;
+	uint8 r2, g2, b2, pad2;
+	int32 x2, y2;
 } POLY_G3; /* Gouraud Triangle */
 
 typedef struct {
 	P_TAG tag;
-	u_char r0, g0, b0, code;
-	int x0, y0;
-	u_char r1, g1, b1, pad1;
-	int x1, y1;
-	u_char r2, g2, b2, pad2;
-	int x2, y2;
-	u_char r3, g3, b3, pad3;
-	int x3, y3;
+	uint8 r0, g0, b0, code;
+	int32 x0, y0;
+	uint8 r1, g1, b1, pad1;
+	int32 x1, y1;
+	uint8 r2, g2, b2, pad2;
+	int32 x2, y2;
+	uint8 r3, g3, b3, pad3;
+	int32 x3, y3;
 } POLY_G4; /* Gouraud Quadrangle */
 
 typedef struct {
 	P_TAG tag;
-	u_char r0, g0, b0, code;
-	int x0, y0;
-	u_short u0, v0;
-	u_char r1, g1, b1, p1;
-	int x1, y1;
-	u_short u1, v1;
-	u_char r2, g2, b2, p2;
-	int x2, y2;
-	u_short u2, v2;
+	uint8 r0, g0, b0, code;
+	int32 x0, y0;
+	uint16 u0, v0;
+	uint8 r1, g1, b1, p1;
+	int32 x1, y1;
+	uint16 u1, v1;
+	uint8 r2, g2, b2, p2;
+	int32 x2, y2;
+	uint16 u2, v2;
 } POLY_GT3; /* Gouraud Textured Triangle */
 
 typedef struct {
 	P_TAG tag;
-	u_char r0, g0, b0, code;
-	int x0, y0;
-	u_short u0, v0;
-	u_char r1, g1, b1, p1;
-	int x1, y1;
-	u_short u1, v1;
-	u_char r2, g2, b2, p2;
-	int x2, y2;
-	u_short u2, v2;
-	u_char r3, g3, b3, p3;
-	int x3, y3;
-	u_short u3, v3;
+	uint8 r0, g0, b0, code;
+	int32 x0, y0;
+	uint16 u0, v0;
+	uint8 r1, g1, b1, p1;
+	int32 x1, y1;
+	uint16 u1, v1;
+	uint8 r2, g2, b2, p2;
+	int32 x2, y2;
+	uint16 u2, v2;
+	uint8 r3, g3, b3, p3;
+	int32 x3, y3;
+	uint16 u3, v3;
 } POLY_GT4; /* Gouraud Textured Quadrangle */
 
 /*
@@ -420,59 +420,59 @@ typedef struct {
  */
 typedef struct {
 	P_TAG tag;
-	u_char r0, g0, b0, code;
-	int x0, y0;
-	int x1, y1;
+	uint8 r0, g0, b0, code;
+	int32 x0, y0;
+	int32 x1, y1;
 } LINE_F2; /* Unconnected Flat Line */
 
 typedef struct {
 	P_TAG tag;
-	u_char r0, g0, b0, code;
-	int x0, y0;
-	u_char r1, g1, b1, p1;
-	int x1, y1;
+	uint8 r0, g0, b0, code;
+	int32 x0, y0;
+	uint8 r1, g1, b1, p1;
+	int32 x1, y1;
 } LINE_G2; /* Unconnected Gouraud Line */
 
 typedef struct {
 	P_TAG tag;
-	u_char r0, g0, b0, code;
-	int x0, y0;
-	int x1, y1;
-	int x2, y2;
+	uint8 r0, g0, b0, code;
+	int32 x0, y0;
+	int32 x1, y1;
+	int32 x2, y2;
 	uint32 pad;
 } LINE_F3; /* 2 connected Flat Line */
 
 typedef struct {
 	P_TAG tag;
-	u_char r0, g0, b0, code;
-	int x0, y0;
-	u_char r1, g1, b1, p1;
-	int x1, y1;
-	u_char r2, g2, b2, p2;
-	int x2, y2;
+	uint8 r0, g0, b0, code;
+	int32 x0, y0;
+	uint8 r1, g1, b1, p1;
+	int32 x1, y1;
+	uint8 r2, g2, b2, p2;
+	int32 x2, y2;
 	uint32 pad;
 } LINE_G3; /* 2 connected Gouraud Line */
 
 typedef struct {
 	P_TAG tag;
-	u_char r0, g0, b0, code;
-	int x0, y0;
-	int x1, y1;
-	int x2, y2;
-	int x3, y3;
+	uint8 r0, g0, b0, code;
+	int32 x0, y0;
+	int32 x1, y1;
+	int32 x2, y2;
+	int32 x3, y3;
 	uint32 pad;
 } LINE_F4; /* 3 connected Flat Line Quadrangle */
 
 typedef struct {
 	P_TAG tag;
-	u_char r0, g0, b0, code;
-	int x0, y0;
-	u_char r1, g1, b1, p1;
-	int x1, y1;
-	u_char r2, g2, b2, p2;
-	int x2, y2;
-	u_char r3, g3, b3, p3;
-	int x3, y3;
+	uint8 r0, g0, b0, code;
+	int32 x0, y0;
+	uint8 r1, g1, b1, p1;
+	int32 x1, y1;
+	uint8 r2, g2, b2, p2;
+	int32 x2, y2;
+	uint8 r3, g3, b3, p3;
+	int32 x3, y3;
 	uint32 pad;
 } LINE_G4; /* 3 connected Gouraud Line */
 
@@ -481,24 +481,24 @@ typedef struct {
  */
 typedef struct {
 	P_TAG tag;
-	u_char r0, g0, b0, code;
-	int x0, y0;
-	u_short u0, v0;
-	short w, h;
+	uint8 r0, g0, b0, code;
+	int32 x0, y0;
+	uint16 u0, v0;
+	int16 w, h;
 } SPRT; /* free size Sprite */
 
 typedef struct {
 	P_TAG tag;
-	u_char r0, g0, b0, code;
-	int x0, y0;
-	u_short u0, v0;
+	uint8 r0, g0, b0, code;
+	int32 x0, y0;
+	uint16 u0, v0;
 } SPRT_16; /* 16x16 Sprite */
 
 typedef struct {
 	P_TAG tag;
-	u_char r0, g0, b0, code;
-	int x0, y0;
-	u_short u0, v0;
+	uint8 r0, g0, b0, code;
+	int32 x0, y0;
+	uint16 u0, v0;
 } SPRT_8; /* 8x8 Sprite */
 
 /*
@@ -506,27 +506,27 @@ typedef struct {
  */
 typedef struct {
 	P_TAG tag;
-	u_char r0, g0, b0, code;
-	int x0, y0;
-	short w, h;
+	uint8 r0, g0, b0, code;
+	int32 x0, y0;
+	int16 w, h;
 } TILE; /* free size Tile */
 
 typedef struct {
 	P_TAG tag;
-	u_char r0, g0, b0, code;
-	int x0, y0;
+	uint8 r0, g0, b0, code;
+	int32 x0, y0;
 } TILE_16; /* 16x16 Tile */
 
 typedef struct {
 	P_TAG tag;
-	u_char r0, g0, b0, code;
-	int x0, y0;
+	uint8 r0, g0, b0, code;
+	int32 x0, y0;
 } TILE_8; /* 8x8 Tile */
 
 typedef struct {
 	P_TAG tag;
-	u_char r0, g0, b0, code;
-	int x0, y0;
+	uint8 r0, g0, b0, code;
+	int32 x0, y0;
 } TILE_1; /* 1x1 Tile */
 
 /*
@@ -584,13 +584,13 @@ typedef struct {
  */
 typedef struct {
 	uint32 id;
-	u_char r0, g0, b0, p0; /* Color of vertex 0 */
-	u_char r1, g1, b1, p1; /* Color of vertex 1 */
-	u_char r2, g2, b2, p2; /* Color of vertex 2 */
-	u_char r3, g3, b3, p3; /* Color of vertex 3 */
-	u_short tpage, clut;   /* texture page ID, clut ID */
-	u_char u0, v0, u1, v1; /* texture corner point */
-	u_char u2, v2, u3, v3;
+	uint8 r0, g0, b0, p0; /* Color of vertex 0 */
+	uint8 r1, g1, b1, p1; /* Color of vertex 1 */
+	uint8 r2, g2, b2, p2; /* Color of vertex 2 */
+	uint8 r3, g3, b3, p3; /* Color of vertex 3 */
+	uint16 tpage, clut;   /* texture page ID, clut ID */
+	uint8 u0, v0, u1, v1; /* texture corner point */
+	uint8 u2, v2, u3, v3;
 
 	/* independent vertex model */
 	SVECTOR x0, x1, x2, x3; /* 3D corner point */
@@ -600,10 +600,10 @@ typedef struct {
 	SVECTOR *v_ofs; /* offset to vertex database */
 	SVECTOR *n_ofs; /* offset to normal database */
 
-	u_short vert0, vert1; /* index of vertex */
-	u_short vert2, vert3;
-	u_short norm0, norm1; /* index of normal */
-	u_short norm2, norm3;
+	uint16 vert0, vert1; /* index of vertex */
+	uint16 vert2, vert3;
+	uint16 norm0, norm1; /* index of normal */
+	uint16 norm2, norm3;
 
 } TMD_PRIM;
 
@@ -618,9 +618,9 @@ typedef struct {
 	uint32 *paddr; /* texture image address on main memory */
 } TIM_IMAGE;
 
-extern int LoadImage(RECT16 *rect, uint32 *p);
-extern OT_tag *ClearOTag(OT_tag *ot, uint n);
-extern OT_tag *ClearOTagR(OT_tag *ot, uint n);
+extern int32 LoadImage(RECT16 *rect, uint32 *p);
+extern OT_tag *ClearOTag(OT_tag *ot, uint32 n);
+extern OT_tag *ClearOTagR(OT_tag *ot, uint32 n);
 extern void DrawOTag(OT_tag *p);
 extern void DrawPrim(void *p);
 

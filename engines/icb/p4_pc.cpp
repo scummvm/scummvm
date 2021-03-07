@@ -385,7 +385,7 @@ void _stub::Fix_time() {
 	} while ((g_system->getMillis() - stub_timer_time) < targetTime);
 }
 
-int WhichCD(const char * /* mission */) { return 1; }
+int32 WhichCD(const char * /* mission */) { return 1; }
 
 bool HasMMXTechnology() { return true; }
 

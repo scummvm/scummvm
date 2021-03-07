@@ -64,7 +64,7 @@ Common::SeekableReadStream *openDiskFileForBinaryStreamRead(const Common::String
 	if (!f) {
 		return nullptr;
 	}
-	int size = f->size();
+	int32 size = f->size();
 	byte *data = new byte[size];
 	f->read(data, size);
 	f->close();
@@ -330,7 +330,7 @@ HEADER_NORMAL *res_man::GetFileHeader(int32 &cluster_search, RMParams *params) {
 	// and get the position and length to get the data from
 
 	// Check the schema value and the ID
-	if ((clu->schema != CLUSTER_API_SCHEMA) || (*(int *)clu->ID != *(int *)const_cast<char *>(CLUSTER_API_ID))) {
+	if ((clu->schema != CLUSTER_API_SCHEMA) || (*(int32 *)clu->ID != *(int32 *)const_cast<char *>(CLUSTER_API_ID))) {
 		// Big error unknown cluster filetype
 		Fatal_error("res_man::GetFileHeader unknown cluster schema or ID %d %s for %s::0x%X", clu->schema, clu->ID, params->cluster, params->url_hash);
 	}
@@ -366,13 +366,13 @@ void res_man::Res_open_mini_cluster(const char *cluster_url, uint32 &cluster_has
 	uint32 zeroHash = 0;
 	Cluster_API *clu = (Cluster_API *)Res_open(NULL, zeroHash, cluster_url, cluster_hash);
 
-	int numFiles = clu->ho.noFiles;
+	int32 numFiles = clu->ho.noFiles;
 
 	// check none of the fake files exist
 	// also find total size required
 
 	int32 mem_needed = 0;
-	int i;
+	int32 i;
 
 	for (i = 0; i < numFiles; i++) {
 		HEADER_NORMAL *hn = clu->hn + i;

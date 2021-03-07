@@ -45,7 +45,7 @@ void InitActorView(const char *name,   // Character to draw    (ie "cord")
                    int16 iy,           // Initial render y coord
                    int16 iz);          // Initial render z coord
 
-int ActorViewDraw(); // Call each cycle to draw
+int32 ActorViewDraw(); // Call each cycle to draw
 
 void ChangeAnimPlaying(const char *pose, // Pose to swap to NULL if keep the same
                        const char *anim, // Anim to change to

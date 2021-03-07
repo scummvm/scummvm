@@ -116,7 +116,7 @@ _linked_data_file *LoadTranslatedFile(const char *session, const char *mission);
 bool8 usedDeathText[MAX_DEATH_TEXT];
 
 void InitDeathText() {
-	for (int i = 0; i < MAX_DEATH_TEXT; i++) {
+	for (int32 i = 0; i < MAX_DEATH_TEXT; i++) {
 		usedDeathText[i] = 0;
 	}
 }
@@ -138,7 +138,7 @@ ANIM_DESC cc_anim_sequences[NUMBER_OF_CONTROLS * NUMBER_OF_ANIMS_PER_CONTROL];
 
 void InitialiseAnimSequences(void) {
 	// Set all to defaults (unused)
-	for (int i = 0; i < NUMBER_OF_CONTROLS * NUMBER_OF_ANIMS_PER_CONTROL; i++) {
+	for (int32 i = 0; i < NUMBER_OF_CONTROLS * NUMBER_OF_ANIMS_PER_CONTROL; i++) {
 		cc_anim_sequences[i].used = FALSE8;
 		cc_anim_sequences[i].pose = NULL;
 		cc_anim_sequences[i].anim = NULL;
@@ -146,7 +146,7 @@ void InitialiseAnimSequences(void) {
 		cc_anim_sequences[i].repeats = 0;
 	}
 
-	int control = 0;
+	int32 control = 0;
 
 	// Up
 	cc_anim_sequences[control].used = TRUE8;
@@ -797,9 +797,9 @@ void OptionsManager::StartInGameOptions() {
 	InitialiseInGameOptions();
 }
 
-int GetDeathText() {
-	int i;
-	int t;
+int32 GetDeathText() {
+	int32 i;
+	int32 t;
 
 	// Have 10 attempts at finding a random one not visited recently
 	i = 0;
@@ -919,7 +919,7 @@ void OptionsManager::StartGameOverOptions() {
 	// Now play some death speech
 	char deathSpeech[128];
 
-	int ds = 5;
+	int32 ds = 5;
 
 	if (g_missionNumber < 9)
 		ds = GetDeathText();
@@ -1089,7 +1089,7 @@ void OptionsManager::StartMainOptions(void) {
 	uint32 int32estWidth = 0;
 	const char *msg = NULL;
 
-	for (uint i = 0; i < NUMBER_OF_MAIN_TOP_CHOICES; i++) {
+	for (uint32 i = 0; i < NUMBER_OF_MAIN_TOP_CHOICES; i++) {
 		switch (i) {
 		case 0:
 			msg = GetTextFromReference(HashString("opt_newgame"));
@@ -1232,7 +1232,7 @@ void OptionsManager::InitialiseInGameOptions(void) {
 	m_defaultSlotName[MAX_LABEL_LENGTH - 1] = 0;
 
 	// Get number of game ticks at ~12fps
-	int ticks = g_globalScriptVariables.GetVariable("missionelapsedtime");
+	int32 ticks = g_globalScriptVariables.GetVariable("missionelapsedtime");
 
 	// Convert to seconds played
 	m_timePlayed = (uint32)((float)ticks / 12.0f);
@@ -1241,7 +1241,7 @@ void OptionsManager::InitialiseInGameOptions(void) {
 	uint32 int32estWidth = 0;
 	const char *msg = NULL;
 
-	for (uint i = 0; i < NUMBER_OF_IN_GAME_TOP_CHOICES; i++) {
+	for (uint32 i = 0; i < NUMBER_OF_IN_GAME_TOP_CHOICES; i++) {
 		switch (i) {
 		case 0:
 			msg = GetTextFromReference(HashString("opt_continue"));
@@ -2056,7 +2056,7 @@ void OptionsManager::MoveSelected(bool8 _down_) {
 
 	int32 currentlySelected;
 
-	int demo = g_globalScriptVariables.GetVariable("demo");
+	int32 demo = g_globalScriptVariables.GetVariable("demo");
 
 	ResetTitleScreenTimeout();
 
@@ -2389,7 +2389,7 @@ void OptionsManager::MoveSelected(bool8 _down_) {
 
 		if (m_CONTROL_selected >= UP_CROUCH && m_CONTROL_selected <= PAUSE) {
 			// Need to change to the next animation for this control
-			int indexToNextAnim = (m_CONTROL_selected - 2) * 2;
+			int32 indexToNextAnim = (m_CONTROL_selected - 2) * 2;
 			if (m_controlPage1 == FALSE8)
 				indexToNextAnim++;
 			indexToNextAnim *= NUMBER_OF_ANIMS_PER_CONTROL;
@@ -2712,7 +2712,7 @@ void OptionsManager::AlterSelected(bool8 _right_) {
 				}
 
 				// Need to change to the next animation for this control
-				int indexToNextAnim = (m_CONTROL_selected - 2) * 2;
+				int32 indexToNextAnim = (m_CONTROL_selected - 2) * 2;
 				if (m_controlPage1 == FALSE8)
 					indexToNextAnim++;
 				indexToNextAnim *= NUMBER_OF_ANIMS_PER_CONTROL;
@@ -3677,10 +3677,10 @@ bool8 OptionsManager::VerifyLabel() {
 
 void OptionsManager::EditSlotLabel() {
 	char c;
-	static int flash = 0;
+	static int32 flash = 0;
 	char buff[128];
 
-	int id = m_slotOffset + m_GAMESLOT_selected;
+	int32 id = m_slotOffset + m_GAMESLOT_selected;
 
 	if (KeyWaiting()) {
 		ReadKey(&c);
@@ -4237,7 +4237,7 @@ void OptionsManager::DrawPlaySelectScreen(uint32 surface_id) {
 	const char *msg = NULL;
 
 	// Some of this is disabled for demos
-	int demo = g_globalScriptVariables.GetVariable("demo");
+	int32 demo = g_globalScriptVariables.GetVariable("demo");
 
 	uint8 *ad = surface_manager->Lock_surface(surface_id);
 	uint32 pitch = surface_manager->Get_pitch(surface_id);
@@ -4331,7 +4331,7 @@ void OptionsManager::DrawProfileSelectScreen(uint32 surface_id) {
 
 void OptionsManager::InitialiseAProfile() {
 	// Check for outfit select
-	int outfit_cheat = 0;
+	int32 outfit_cheat = 0;
 	if (Read_DI_keys(Common::KEYCODE_1))
 		outfit_cheat = 1;
 	if (Read_DI_keys(Common::KEYCODE_2))
@@ -4346,7 +4346,7 @@ void OptionsManager::InitialiseAProfile() {
 	const char *msg = NULL;
 
 	// This ensures correct spacing for any translations
-	for (uint i = 0; i < 5; i++) {
+	for (uint32 i = 0; i < 5; i++) {
 		switch (i) {
 		case 0:
 			msg = GetTextFromReference(HashString("prf_name"));
@@ -4563,7 +4563,7 @@ void OptionsManager::DrawProfileScreen(uint32 surface_id) {
 	char *ptr = (char *)theData;
 
 	// Split the text into words (overwrite spaces with terminators)
-	int i = 0;
+	int32 i = 0;
 	uint32 numberOfWords = 1;
 	while (ptr[i]) {
 		// Found a space?
@@ -4599,7 +4599,7 @@ void OptionsManager::DrawProfileScreen(uint32 surface_id) {
 	uint8 *ad = surface_manager->Lock_surface(m_profileSurface);
 	uint32 pitch = surface_manager->Get_pitch(m_profileSurface);
 
-	int line;
+	int32 line;
 	if (m_profileScrollingLine != -1)
 		line = 0;
 	else
@@ -4755,12 +4755,12 @@ void OptionsManager::FadeStrip(uint32 x, uint32 y, uint32 w, bool8 up, uint8 *ad
 	}
 
 #if 1
-	for (uint lines = 0; lines < 15; lines++) {
-		for (uint xPos = 0; xPos < w; xPos++) {
+	for (uint32 lines = 0; lines < 15; lines++) {
+		for (uint32 xPos = 0; xPos < w; xPos++) {
 			// 32-bit BGRA pixel
 			uint8 *pixel = &pixels[xPos * 4];
 			// Subtract from RGB components
-			for (int i = 0; i < 3; i++) {
+			for (int32 i = 0; i < 3; i++) {
 				pixel[i] = MAX(0, pixel[i] - subtractive[i]);
 			}
 		}
@@ -4781,7 +4781,7 @@ void OptionsManager::FadeStrip(uint32 x, uint32 y, uint32 w, bool8 up, uint8 *ad
 		}
 	}
 #else
-	int pixelPairs = w / 2;
+	int32 pixelPairs = w / 2;
 	for (uint32 lines = 0; lines < 15; lines++) {
 		_asm {
 			lea  edi, subtractive   ; // Load the address of the blend colour block
@@ -4897,7 +4897,7 @@ void OptionsManager::InitialiseControlsScreen() {
 
 	// Need to calculate printing margin
 	m_margin = 0;
-	uint margin = 0;
+	uint32 margin = 0;
 	// This ensures correct spacing for any translations (assuming this is the int32est heading thang)
 	msg = GetTextFromReference(HashString("opt_controlmethod"));
 	margin = CalculateStringWidth(msg);
@@ -4949,7 +4949,7 @@ void OptionsManager::DrawControllerConfiguration() {
 		// Sequenceas only valid for controls selected
 		if (m_CONTROL_selected >= UP_CROUCH && m_CONTROL_selected <= PAUSE) {
 			// Need to change to the next animation for this control
-			int indexToNextAnim = (m_CONTROL_selected - 2) * 2;
+			int32 indexToNextAnim = (m_CONTROL_selected - 2) * 2;
 			if (m_controlPage1 == FALSE8)
 				indexToNextAnim++;
 			indexToNextAnim *= NUMBER_OF_ANIMS_PER_CONTROL;
@@ -5073,7 +5073,7 @@ void OptionsManager::DrawControllerConfiguration() {
 		char *ptr = (char *)theData;
 
 		// Split the text into words (overwrite spaces with terminators)
-		int i = 0;
+		int32 i = 0;
 		uint32 numberOfWords = 1;
 		while (ptr[i]) {
 			// Found a space?
@@ -5150,7 +5150,7 @@ void OptionsManager::DrawControllerConfiguration() {
 void OptionsManager::DrawControls(uint32 surface_id) {
 	const char *msg = NULL;
 	const char *msg2 = NULL;
-	static int flash = 0;
+	static int32 flash = 0;
 	uint32 temp;
 	pxString str;
 	bool8 screenRelative = (bool8)(g_icb_session->player.Get_control_mode() == SCREEN_RELATIVE);
@@ -5480,8 +5480,8 @@ void OptionsManager::DrawVideoSettings() {
 }
 
 void OptionsManager::AnimateSlotsPaging() {
-	int boxWidth = m_slotBoundingRect.right - m_slotBoundingRect.left;
-	int inc = 50;
+	int32 boxWidth = m_slotBoundingRect.right - m_slotBoundingRect.left;
+	int32 inc = 50;
 	uint32 t = 0;
 	LRECT repairRect;
 
@@ -6055,11 +6055,11 @@ void OptionsManager::DarkenScreen() {
 	// Darken the screen
 #if 1
 	for (uint32 lines = 0; lines < SCREEN_DEPTH; lines++) {
-		for (int xPos = 0; xPos < SCREEN_WIDTH; xPos++) {
+		for (int32 xPos = 0; xPos < SCREEN_WIDTH; xPos++) {
 			// 32-bit BGRA pixel
 			uint8 *pixel = &pixels[xPos * 4];
 			// Subtract from RGB components
-			for (int i = 0; i < 3; i++) {
+			for (int32 i = 0; i < 3; i++) {
 				pixel[i] = MAX(0, pixel[i] - subtractive[i]);
 			}
 		}
@@ -6114,11 +6114,11 @@ void OptionsManager::BloodScreen() {
 	// Darken the screen
 #if 1
 	for (uint32 lines = 0; lines < SCREEN_DEPTH; lines++) {
-		for (int xPos = 0; xPos < SCREEN_WIDTH; xPos++) {
+		for (int32 xPos = 0; xPos < SCREEN_WIDTH; xPos++) {
 			// 32-bit BGRA pixel
 			uint8 *pixel = &pixels[xPos * 4];
 			// Subtract from RGB components
-			for (int i = 0; i < 3; i++) {
+			for (int32 i = 0; i < 3; i++) {
 				pixel[i] = MAX(0, pixel[i] - subtractive[i]);
 			}
 		}
@@ -6225,10 +6225,10 @@ const char *OptionsManager::GetTextFromReference(uint32 hashRef) {
 
 	// To be a line number, there must be an open brace as the first string character.
 	if (textLine[0] == TS_LINENO_OPEN) {
-		int nLineLength = strlen((const char *)textLine);
+		int32 nLineLength = strlen((const char *)textLine);
 
 		// Okay, we appear to have a legal line number.  Find the close brace for it.
-		int nCloseBracePos = 1;
+		int32 nCloseBracePos = 1;
 		while ((nCloseBracePos < nLineLength) && (textLine[nCloseBracePos] != TS_LINENO_CLOSE))
 			++nCloseBracePos;
 
@@ -6295,7 +6295,7 @@ void OptionsManager::LoadGlobalTextFile() {
 }
 
 bool8 OptionsManager::SetCharacterSprite(char c) {
-	int index = (int)c - 32;
+	int32 index = (int32)c - 32;
 	if (index < 0)
 		index += 256;
 
@@ -6315,11 +6315,11 @@ uint32 OptionsManager::CalculateStringWidth(const char *str) {
 	if (!str)
 		Fatal_error("Cannot calculate width of a NULL or empty string");
 
-	uint noChars = strlen(str);
+	uint32 noChars = strlen(str);
 	int32 sentenceWidth = 0;
 
 	// Loop through all characters to get sentence length
-	for (uint i = 0; i < noChars; i++) {
+	for (uint32 i = 0; i < noChars; i++) {
 		// Select current sprite
 		SetCharacterSprite(str[i]);
 		// Keep track of sentence width
@@ -6336,7 +6336,7 @@ void OptionsManager::DisplayText(uint8 *ad, uint32 pitch, const char *str, int32
 		str = errorText;
 
 	// How many characters do we draw
-	uint noChars = strlen(str);
+	uint32 noChars = strlen(str);
 	int32 sentenceWidth;
 	int32 initialX;
 
@@ -6355,7 +6355,7 @@ void OptionsManager::DisplayText(uint8 *ad, uint32 pitch, const char *str, int32
 		x = initialX;
 	}
 
-	for (uint i = 0; i < noChars; i++) {
+	for (uint32 i = 0; i < noChars; i++) {
 		// Select current sprite
 		SetCharacterSprite(str[i]);
 
@@ -6684,7 +6684,7 @@ void OptionsManager::DoCredits() {
 	}
 }
 
-void OptionsManager::InitialiseScrollingText(const char *textFileName, const char *movieFileName, int frameStart) {
+void OptionsManager::InitialiseScrollingText(const char *textFileName, const char *movieFileName, int32 frameStart) {
 	// Free the sequence manager
 	UnloadTitleScreenMovie();
 
@@ -6884,7 +6884,7 @@ void OptionsManager::DrawSlideShow() {
 			m_y = (SCREEN_DEPTH / 2) - (binkDecoder->getHeight() / 2);
 		}
 
-		for (int i = 0; i < surfaceBink->h; i++) {
+		for (int32 i = 0; i < surfaceBink->h; i++) {
 			if (i + m_y >= height) {
 				break;
 			}
@@ -7019,7 +7019,7 @@ Crediter::Crediter()
 	m_movieRect.left = m_movieRect.right = m_movieRect.bottom = m_movieRect.top = 0;
 }
 
-void Crediter::Initialise(const char *textFileName, const char *movieFileName, bool8 loopingMovie, bool8 attachLogo, int frameStart) {
+void Crediter::Initialise(const char *textFileName, const char *movieFileName, bool8 loopingMovie, bool8 attachLogo, int32 frameStart) {
 	// Zero out our memory
 	memset(m_theData, 0, MAX_BYTESIZE_OF_CREDITS_FILE);
 
@@ -7046,7 +7046,7 @@ void Crediter::Initialise(const char *textFileName, const char *movieFileName, b
 	m_creditsFile = (char *)m_theData;
 
 	// Process the file first
-	int i = 0;
+	int32 i = 0;
 	while (m_creditsFile[i]) {
 		// New line encountered (NB: two bytes, carriage return and line feed)
 		if (m_creditsFile[i] == 0x0d) {
@@ -7282,7 +7282,7 @@ linesDone:
 	if (m_logoDraw != -1 && m_logoAttached == TRUE8) {
 		logo_rect.top = m_logoDraw;
 
-		int remainder = SCREEN_DEPTH - m_logoDraw;
+		int32 remainder = SCREEN_DEPTH - m_logoDraw;
 
 		if (remainder < 60) {
 			logo_rect.bottom = SCREEN_DEPTH - 1;

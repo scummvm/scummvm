@@ -36,7 +36,7 @@ namespace ICB {
 
 typedef struct __point { // 3D integer coordinate representation
 	__point(void) : x(0), y(0), z(0) { ; }
-	__point(int X, int Y, int Z) : x(X), y(Y), z(Z) { ; }
+	__point(int32 X, int32 Y, int32 Z) : x(X), y(Y), z(Z) { ; }
 
 	int32 x;
 	int32 y;

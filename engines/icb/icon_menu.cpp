@@ -62,8 +62,8 @@ _icon_menu::_icon_menu() {
 bool8 _icon_menu::CycleIconMenu(const _input &sKeyboardState) {
 	bool8 nRetVal = TRUE8;
 
-	static int lastInventoryPress = 0;
-	int inventoryPress;
+	static int32 lastInventoryPress = 0;
+	int32 inventoryPress;
 
 	// Cycle the transparency for the highlight, to pulse the icon on screen
 	++m_nHighlightCounter;
@@ -77,8 +77,8 @@ bool8 _icon_menu::CycleIconMenu(const _input &sKeyboardState) {
 
 	// FIND GOBACK if there is one
 	// found is -1 means none found
-	int found = -1;
-	int i;
+	int32 found = -1;
+	int32 i;
 
 	// loop through all the icons or until we find a goback
 	i = 0;
@@ -364,8 +364,8 @@ bool8 _icon_menu::IsAdding() const {
 // Scroll the icons smoothly left or right
 // This returns the x-position to start drawing the icons from (nX)
 // it also sets the first icon to start drawing (nIconIndex)
-int _icon_menu::GetScrollingPosition(const int nInputX, uint32 &nIconIndex) {
-	int nX = nInputX;
+int32 _icon_menu::GetScrollingPosition(const int32 nInputX, uint32 &nIconIndex) {
+	int32 nX = nInputX;
 
 	// OK are we scrolling
 	if (m_nScrollDirection != ICON_MENU_SCROLL_NONE) {

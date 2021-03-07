@@ -47,8 +47,8 @@ void Tdebug(const char *file, const char *format, ...);
 // XXX: FIXME:  This function stores the number of elapsed microseconds in an unsigned 32-bit int, which will overflow in just over an
 // hour...
 //             We should make sure all the client code deals with this properly!
-inline unsigned int GetMicroTimer(void) {
-	static int first = 1;
+inline uint32 GetMicroTimer(void) {
+	static int32 first = 1;
 
 	static TimeDate startTime;
 	if (first) {

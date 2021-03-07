@@ -33,7 +33,7 @@
 
 namespace ICB {
 
-int computeShadeMultiplierPC(ShadeTriangle *shadeTri, VECTOR *model_pos, VECTOR *light_pos, int m) {
+int32 computeShadeMultiplierPC(ShadeTriangle *shadeTri, VECTOR *model_pos, VECTOR *light_pos, int32 m) {
 	// No visible edges
 	if (shadeTri->vEdge == 0)
 		return m;
@@ -48,13 +48,13 @@ int computeShadeMultiplierPC(ShadeTriangle *shadeTri, VECTOR *model_pos, VECTOR 
 	// where :
 	//   d = shade_pos[0] . n
 	//   D = light . n
-	int D = DOT_PRODUCT_SVECTOR(shadeTri->pn, light_pos[0]);
-	int mdotn = DOT_PRODUCT_SVECTOR(shadeTri->pn, model_pos[0]);
+	int32 D = DOT_PRODUCT_SVECTOR(shadeTri->pn, light_pos[0]);
+	int32 mdotn = DOT_PRODUCT_SVECTOR(shadeTri->pn, model_pos[0]);
 
-	int mdotnSubD = mdotn - D;
-	int dSubD = shadeTri->d - D;
+	int32 mdotnSubD = mdotn - D;
+	int32 dSubD = shadeTri->d - D;
 
-	int retm;
+	int32 retm;
 	if (dSubD > 0) {
 		if (dSubD > mdotnSubD)
 			retm = m;
@@ -97,10 +97,10 @@ int computeShadeMultiplierPC(ShadeTriangle *shadeTri, VECTOR *model_pos, VECTOR 
 	// => n01dotl * mdotnSubD + dSubD * ( n01dotm - n01dotl ) - n01dots0*mdotnSubD < 0
 	// => mdotnSubD * ( n01dotl - n01dots0 ) + dSubD * ( n01dotm - n01dotl ) < 0
 	// Is edge one visible
-	int t01, t12, t20;
-	int n01dotl, n01dotm;
-	int n12dotl, n12dotm;
-	int n20dotl, n20dotm;
+	int32 t01, t12, t20;
+	int32 n01dotl, n01dotm;
+	int32 n12dotl, n12dotm;
+	int32 n20dotl, n20dotm;
 
 	if (shadeTri->vEdge & EDGE_ONE) {
 		n01dotl = DOT_PRODUCT_SVECTOR(shadeTri->n01, light_pos[0]) / 4096;
@@ -130,7 +130,7 @@ int computeShadeMultiplierPC(ShadeTriangle *shadeTri, VECTOR *model_pos, VECTOR 
 	// 32cm around the shade edge for gradually brightening & darkening
 #define MAX_SHADE_FALLOFF 32
 
-	int maxd = (1 << 30);
+	int32 maxd = (1 << 30);
 	if ((t01 > 0) && (t01 < maxd))
 		maxd = t01;
 	if ((t12 > 0) && (t12 < maxd))
@@ -146,7 +146,7 @@ int computeShadeMultiplierPC(ShadeTriangle *shadeTri, VECTOR *model_pos, VECTOR 
 	return ((m * maxd) / MAX_SHADE_FALLOFF);
 }
 
-int computeShadeMultiplierPC(ShadeQuad *shadeQuad, VECTOR *model_pos, VECTOR *light_pos, int m) {
+int32 computeShadeMultiplierPC(ShadeQuad *shadeQuad, VECTOR *model_pos, VECTOR *light_pos, int32 m) {
 	// No visible edges
 	if (shadeQuad->vEdge == 0)
 		return m;
@@ -161,13 +161,13 @@ int computeShadeMultiplierPC(ShadeQuad *shadeQuad, VECTOR *model_pos, VECTOR *li
 	// where :
 	//   d = shade_pos[0] . n
 	//   D = light . n
-	int D = DOT_PRODUCT_SVECTOR(shadeQuad->pn, light_pos[0]);
-	int mdotn = DOT_PRODUCT_SVECTOR(shadeQuad->pn, model_pos[0]);
+	int32 D = DOT_PRODUCT_SVECTOR(shadeQuad->pn, light_pos[0]);
+	int32 mdotn = DOT_PRODUCT_SVECTOR(shadeQuad->pn, model_pos[0]);
 
-	int mdotnSubD = mdotn - D;
-	int dSubD = shadeQuad->d - D;
+	int32 mdotnSubD = mdotn - D;
+	int32 dSubD = shadeQuad->d - D;
 
-	int retm;
+	int32 retm;
 	if (dSubD > 0) {
 		if (dSubD > mdotnSubD)
 			retm = m;
@@ -209,9 +209,9 @@ int computeShadeMultiplierPC(ShadeQuad *shadeQuad, VECTOR *model_pos, VECTOR *li
 	// => n01.light * mdotnSubD + dSubD * ( model.n01 - light.n01 ) -n01.s0*mdotnSubD < 0
 	// => n01dotl * mdotnSubD + dSubD * ( n01dotm - n01dotl ) - n01dots0*mdotnSubD < 0
 	// => mdotnSubD * ( n01dotl - n01dots0 ) + dSubD * ( n01dotm - n01dotl ) < 0
-	int n01dotl, n12dotl, n23dotl, n30dotl;
-	int n01dotm, n12dotm, n23dotm, n30dotm;
-	int t01, t12, t23, t30;
+	int32 n01dotl, n12dotl, n23dotl, n30dotl;
+	int32 n01dotm, n12dotm, n23dotm, n30dotm;
+	int32 t01, t12, t23, t30;
 
 	// Is edge1 visible ?
 	if (shadeQuad->vEdge & EDGE_ONE) {
@@ -252,7 +252,7 @@ int computeShadeMultiplierPC(ShadeQuad *shadeQuad, VECTOR *model_pos, VECTOR *li
 	// 32cm around the shade edge for gradually brightening & darkening
 #define MAX_SHADE_FALLOFF 32
 
-	int maxd = 0;
+	int32 maxd = 0;
 	if (t01 > maxd)
 		maxd = t01;
 	if (t12 > maxd)

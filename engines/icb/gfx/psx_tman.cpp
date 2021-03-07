@@ -41,15 +41,15 @@ void TextureManager::Init(short nx0, short ny0, short nx1, short ny1) {
 	y0 = ny0;
 	x1 = nx1;
 	y1 = ny1;
-	tileW = (short)((x1 - x0) / N_TILES_X);
-	tileH = (short)((y1 - y0) / N_TILES_Y);
+	tileW = (int16)((x1 - x0) / N_TILES_X);
+	tileH = (int16)((y1 - y0) / N_TILES_Y);
 	nSlotsUsed = 0;
 	nPalettesUsed = 0;
-	int t;
+	int32 t;
 	for (t = 0; t < MAX_NUMBER_TILES; t++) {
 		inuse[t] = 0;
 	}
-	int s;
+	int32 s;
 	for (s = 0; s < MAX_NUMBER_SLOTS; s++) {
 		tSlots[s].id = 0;
 		tSlots[s].age = 0;
@@ -62,8 +62,8 @@ void TextureManager::Init(short nx0, short ny0, short nx1, short ny1) {
 
 TextureManager::~TextureManager() {}
 
-TextureInfo *TextureManager::FindTexture(u_int id, u_int age) {
-	u_int s;
+TextureInfo *TextureManager::FindTexture(uint32 id, uint32 age) {
+	uint32 s;
 	TextureInfo *slot = tSlots;
 	for (s = 0; s < MAX_NUMBER_SLOTS; s++) {
 		if (slot->id == id) {
@@ -76,7 +76,7 @@ TextureInfo *TextureManager::FindTexture(u_int id, u_int age) {
 	return NULL;
 }
 
-TextureInfo *TextureManager::AddTexture(uint32 * /*tim_ptr*/, u_int id, u_int age, u_short imgW, u_short imgH) {
+TextureInfo *TextureManager::AddTexture(uint32 * /*tim_ptr*/, uint32 id, uint32 age, uint16 imgW, uint16 imgH) {
 	// printf( "Adding Texture %X", id );
 	if (id == 0) {
 		Message_box("AddTexture 0 ID");
@@ -84,22 +84,22 @@ TextureInfo *TextureManager::AddTexture(uint32 * /*tim_ptr*/, u_int id, u_int ag
 	}
 
 	// Try to find a slot for it
-	u_int t = 0;
-	u_int s = 0;
-	u_int purges = 0;
+	uint32 t = 0;
+	uint32 s = 0;
+	uint32 purges = 0;
 
-	u_int oldest;
-	u_int fitted = 0;
+	uint32 oldest;
+	uint32 fitted = 0;
 	TextureInfo *slot;
-	u_int xt = 0;
-	u_int yt = 0;
-	u_int ntx0 = (imgW + tileW - 1) / tileW;
-	u_int nty0 = (imgH + tileH - 1) / tileH;
+	uint32 xt = 0;
+	uint32 yt = 0;
+	uint32 ntx0 = (imgW + tileW - 1) / tileW;
+	uint32 nty0 = (imgH + tileH - 1) / tileH;
 
-	u_int x, y;
-	u_int xend, yend;
-	u_int dy = N_TILES_X;
-	u_int place0, place;
+	uint32 x, y;
+	uint32 xend, yend;
+	uint32 dy = N_TILES_X;
+	uint32 place0, place;
 	while (fitted == 0) {
 		xt = 0;
 		yt = 0;
@@ -188,10 +188,10 @@ TextureInfo *TextureManager::AddTexture(uint32 * /*tim_ptr*/, u_int id, u_int ag
 			tSlots[purges].age = 0;
 			// Now more tricky reset the inuse flags
 			RECT16 *pr = &(tSlots[purges].r);
-			u_int tx = (pr->x - x0) / tileW;
-			u_int ty = (pr->y - y0) / tileH;
-			u_int ntx = pr->w / tileW;
-			u_int nty = pr->h / tileH;
+			uint32 tx = (pr->x - x0) / tileW;
+			uint32 ty = (pr->y - y0) / tileH;
+			uint32 ntx = pr->w / tileW;
+			uint32 nty = pr->h / tileH;
 			if (ntx == 0)
 				ntx = 1;
 			if (nty == 0)
@@ -231,21 +231,21 @@ TextureInfo *TextureManager::AddTexture(uint32 * /*tim_ptr*/, u_int id, u_int ag
 	if (yt > N_TILES_Y) {
 		Message_box("bad yt %d", yt);
 	}
-	slot->r.x = (short)(xt * tileW + x0);
-	slot->r.y = (short)(yt * tileH + y0);
+	slot->r.x = (int16)(xt * tileW + x0);
+	slot->r.y = (int16)(yt * tileH + y0);
 	slot->r.w = imgW;
 	slot->r.h = imgH;
-	slot->tsb = (short)getTPage(1, 0, slot->r.x, slot->r.y); // 8-bit, b+f
-	slot->cba = (short)getClut(CHARACTER_CLUT_X, (CHARACTER_CLUT_Y + s));
-	slot->uoffset = (u_char)(slot->r.x - ((slot->tsb & 0xF) << 6));
-	slot->voffset = (u_char)(slot->r.y - (((slot->tsb >> 4) & 0x1) << 8));
+	slot->tsb = (int16)getTPage(1, 0, slot->r.x, slot->r.y); // 8-bit, b+f
+	slot->cba = (int16)getClut(CHARACTER_CLUT_X, (CHARACTER_CLUT_Y + s));
+	slot->uoffset = (uint8)(slot->r.x - ((slot->tsb & 0xF) << 6));
+	slot->voffset = (uint8)(slot->r.y - (((slot->tsb >> 4) & 0x1) << 8));
 	return slot;
 }
 
 void TextureManager::PurgeAll(void) { Init(x0, y0, x1, y1); }
 
-PaletteInfo *TextureManager::FindPalette(u_int id, u_int age) {
-	u_int s;
+PaletteInfo *TextureManager::FindPalette(uint32 id, uint32 age) {
+	uint32 s;
 	PaletteInfo *slot = pSlots;
 	for (s = 0; s < MAX_NUMBER_SLOTS; s++) {
 		if (slot->id == id) {
@@ -257,12 +257,12 @@ PaletteInfo *TextureManager::FindPalette(u_int id, u_int age) {
 	return NULL;
 }
 
-PaletteInfo *TextureManager::AddPalette(uint32 * /*clut_ptr*/, u_int id, u_int age) {
+PaletteInfo *TextureManager::AddPalette(uint32 * /*clut_ptr*/, uint32 id, uint32 age) {
 	if (nPalettesUsed < MAX_NUMBER_PALETTES) {
 		PaletteInfo *slot = &(pSlots[nPalettesUsed]);
 		slot->x = CHARACTER_ALTERNATE_CLUT_X;
-		slot->y = (short)(CHARACTER_ALTERNATE_CLUT_Y + nPalettesUsed);
-		slot->cba = (short)getClut(slot->x, slot->y);
+		slot->y = (int16)(CHARACTER_ALTERNATE_CLUT_Y + nPalettesUsed);
+		slot->cba = (int16)getClut(slot->x, slot->y);
 		slot->id = id;
 		slot->age = age;
 

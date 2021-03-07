@@ -84,7 +84,7 @@ DataPacker::ReturnCodes DataPacker::open(const ModeEnum mode, const PackModeEnum
 }
 
 // Put a value into the bit-stream
-DataPacker::ReturnCodes DataPacker::put(const int value, Common::WriteStream *stream) {
+DataPacker::ReturnCodes DataPacker::put(const int32 value, Common::WriteStream *stream) {
 	if (iMode != WRITE) {
 		return BAD_MODE;
 	}
@@ -100,15 +100,15 @@ DataPacker::ReturnCodes DataPacker::put(const int value, Common::WriteStream *st
 	// For DONT_PACK mode just write the data straight out
 	if (iPackMode == DONT_PACK) {
 		// Check it is a legal value : 16-bits
-		int lvarMin = -(1 << 15);
-		int lvarMax = +((1 << 15) - 1);
+		int32 lvarMin = -(1 << 15);
+		int32 lvarMax = +((1 << 15) - 1);
 		if ((value < lvarMin) || (value > lvarMax)) {
 			return BAD_VALUE;
 		}
 
-		int nItems = 2;
-		short v16 = (short)value;
-		int ret = stream->write((const void *)&v16, nItems);
+		int32 nItems = 2;
+		int16 v16 = (int16)value;
+		int32 ret = stream->write((const void *)&v16, nItems);
 
 		if (ret != nItems) {
 			return WRITE_ERROR;
@@ -117,7 +117,7 @@ DataPacker::ReturnCodes DataPacker::put(const int value, Common::WriteStream *st
 	}
 
 	// Convert the value to be within limits
-	int v = value - packMin;
+	int32 v = value - packMin;
 
 	// Check the value is within range
 	if ((v < 0) || (v > packMax)) {
@@ -126,19 +126,19 @@ DataPacker::ReturnCodes DataPacker::put(const int value, Common::WriteStream *st
 
 	// Add the value in
 	if (pos == 0) {
-		buffer[0] = (unsigned char)((v >> 6) & 0xFF); // v's top 8-bits
-		buffer[1] = (unsigned char)((v & 0x3F) << 2); // v's bottom 6-bits into top 6-bits
+		buffer[0] = (uint8)((v >> 6) & 0xFF); // v's top 8-bits
+		buffer[1] = (uint8)((v & 0x3F) << 2); // v's bottom 6-bits into top 6-bits
 	} else if (pos == 1) {
 		buffer[1] |= ((v >> 12) & 0x03);              // v's top 2-bits into bottom 2
-		buffer[2] = (unsigned char)((v >> 4) & 0xFF); // v's middle 8-bits
-		buffer[3] = (unsigned char)((v & 0x0F) << 4); // v's bottom 4-bits into top 4
+		buffer[2] = (uint8)((v >> 4) & 0xFF); // v's middle 8-bits
+		buffer[3] = (uint8)((v & 0x0F) << 4); // v's bottom 4-bits into top 4
 	} else if (pos == 2) {
 		buffer[3] |= ((v >> 10) & 0x0F);              // v's top 4-bits into bottom 4
-		buffer[4] = (unsigned char)((v >> 2) & 0xFF); // v's middle 8-bits
-		buffer[5] = (unsigned char)((v & 0x03) << 6); // v's bottom 2-bits into top 2
+		buffer[4] = (uint8)((v >> 2) & 0xFF); // v's middle 8-bits
+		buffer[5] = (uint8)((v & 0x03) << 6); // v's bottom 2-bits into top 2
 	} else if (pos == 3) {
 		buffer[5] |= ((v >> 8) & 0x3F);        // v's top 6-bits into bottom 6
-		buffer[6] = (unsigned char)(v & 0xFF); // v's bottom 8-bits
+		buffer[6] = (uint8)(v & 0xFF); // v's bottom 8-bits
 	}
 	// Put data into the next position !
 	pos++;
@@ -151,8 +151,8 @@ DataPacker::ReturnCodes DataPacker::put(const int value, Common::WriteStream *st
 		       buffer[4], buffer[5], buffer[6]);
 #endif // #if 0
 		// Write out the buffer
-		int nItems = BUFFER_BYTE_SIZE;
-		int ret = stream->write((const void *)buffer, nItems);
+		int32 nItems = BUFFER_BYTE_SIZE;
+		int32 ret = stream->write((const void *)buffer, nItems);
 
 		if (ret != nItems) {
 			return WRITE_ERROR;
@@ -180,9 +180,9 @@ DataPacker::ReturnCodes DataPacker::Get(int32 &value, Common::SeekableReadStream
 
 	// For DONT_PACK mode just read the data straight in
 	if (iPackMode == DONT_PACK) {
-		int nItems = 2;
-		short int v16;
-		int ret = stream->read((void *)&v16, nItems);
+		int32 nItems = 2;
+		int16 v16;
+		int32 ret = stream->read((void *)&v16, nItems);
 		value = v16;
 
 		if (ret != nItems) {
@@ -194,8 +194,8 @@ DataPacker::ReturnCodes DataPacker::Get(int32 &value, Common::SeekableReadStream
 	// Do we need to fill up the current buffer ?
 	if (pos == PACK_CHUNK_SIZE) {
 		// Read into the buffer
-		int nItems = BUFFER_BYTE_SIZE;
-		int ret = stream->read((void *)buffer, nItems);
+		int32 nItems = BUFFER_BYTE_SIZE;
+		int32 ret = stream->read((void *)buffer, nItems);
 
 		if (ret != nItems) {
 			return READ_ERROR;
@@ -245,8 +245,8 @@ DataPacker::ReturnCodes DataPacker::Get(int32 &value, Common::SeekableReadStream
 DataPacker::ReturnCodes DataPacker::close(Common::WriteStream *stream) {
 	if ((iMode == WRITE) && (pos != 0)) {
 		// Write out the remaining data items
-		int nItems = BUFFER_BYTE_SIZE;
-		int ret = stream->write((const void *)buffer, nItems);
+		int32 nItems = BUFFER_BYTE_SIZE;
+		int32 ret = stream->write((const void *)buffer, nItems);
 
 		if (ret != nItems) {
 			return WRITE_ERROR;
@@ -293,7 +293,7 @@ DataPacker &DataPacker::operator=(DataPacker &b) {
 	packMin = b.packMin;
 	packMax = b.packMax;
 
-	for (int i = 0; i < BUFFER_BYTE_SIZE; i++) {
+	for (int32 i = 0; i < BUFFER_BYTE_SIZE; i++) {
 		buffer[i] = b.buffer[i];
 	}
 
@@ -302,7 +302,7 @@ DataPacker &DataPacker::operator=(DataPacker &b) {
 
 // Clear out the data buffer
 void DataPacker::ClearBuffer() {
-	for (int i = 0; i < BUFFER_BYTE_SIZE; i++) {
+	for (int32 i = 0; i < BUFFER_BYTE_SIZE; i++) {
 		buffer[i] = 0x00;
 	}
 }

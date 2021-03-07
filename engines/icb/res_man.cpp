@@ -260,7 +260,7 @@ void res_man::Initialise(uint32 memory_tot) {
 void res_man::Reset() { // trash all resources
 
 	// set all to unused
-	uint j;
+	uint32 j;
 	for (j = 0; j < max_mem_blocks; j++) {
 		mem_list[j].state = MEM_null;
 		mem_offset_list[j].total_hash = 0;
@@ -292,10 +292,10 @@ res_man::~res_man() {
 	delete[] mem_list;
 }
 
-uint32 res_man::Fetch_old_memory(int number_of_cycles) {
+uint32 res_man::Fetch_old_memory(int32 number_of_cycles) {
 	uint32 amount;
 	int16 search;
-	int oldest_age;
+	int32 oldest_age;
 
 	amount = 0;
 	search = 0;
@@ -323,7 +323,7 @@ uint32 res_man::Fetch_old_memory(int number_of_cycles) {
 // If hash or cluster_hash == NULL_HASH then the hash of url/cluster_url
 // is computed and stored in hash/cluster_hash
 uint8 *res_man::Res_open(const char *url, uint32 &url_hash, const char *cluster, uint32 &cluster_hash,
-                         int compressed, // non zero if the resource is compressed
+                         int32 compressed, // non zero if the resource is compressed
                          int32 *ret_len) {
 	// make the hash names if we need to
 	MakeHash(url, url_hash);
@@ -528,7 +528,7 @@ int16 res_man::FindFile(uint32 url_hash, uint32 cluster_hash, uint32 total_hash)
 
 	// so it was in the list return it
 
-	return (short)search;
+	return (int16)search;
 }
 
 void res_man::AddMemOffset(uint32 hash, int32 search) {

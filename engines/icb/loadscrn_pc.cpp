@@ -25,6 +25,8 @@
  *
  */
 
+#include "common/scummsys.h"
+
 namespace ICB {
 
 void StartLoading(const char * /* name */) {
@@ -35,7 +37,7 @@ void LoadMsg(const char * /* name */) {
 	// Don't know what the PC wants to do with this
 }
 
-void StartInit(const int /* nObjs */) {
+void StartInit(const int32 /* nObjs */) {
 	// Don't know what the PC wants to do with this
 }
 

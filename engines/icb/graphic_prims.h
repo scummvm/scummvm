@@ -94,7 +94,7 @@ LRECT ConvertPxBitmapRectToRECT(const _PxBitmapRect &sBitmapRect);
 // Additive gouraud line .... what else ?
 void AdditiveGouraudLine(int16 x0, int16 y0, _rgb c0, int16 x1, int16 y1, _rgb c1, uint32 surface_id);
 void BlendedLine(int32 x0, int32 y0, int32 x1, int32 y1, _rgb c, uint32 surface_id);
-void BlendedLine(int32 x0, int32 y0, int32 x1, int32 y1, _rgb c, int surface_width, int surface_height, uint32 pitch, uint8 *surface);
+void BlendedLine(int32 x0, int32 y0, int32 x1, int32 y1, _rgb c, int32 surface_width, int32 surface_height, uint32 pitch, uint8 *surface);
 
 DXrect MakeRECTFromSpriteSizes(int32 nX, int32 nY, uint32 nWidth, uint32 nHeight);
 

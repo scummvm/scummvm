@@ -43,10 +43,10 @@ typedef struct revtex_API {
 	uint32 schema;
 
 	// RevTexture revtex;
-	u_int palette[256];   // windows 32-bit RGB with 1 byte of padding
-	u_int width;          // must be power of 2
-	u_int height;         // must be power of 2
-	u_int levelOffset[9]; // width/1 * height/1 -> width/256 * height/256
+	uint32 palette[256];   // windows 32-bit RGB with 1 byte of padding
+	uint32 width;          // must be power of 2
+	uint32 height;         // must be power of 2
+	uint32 levelOffset[9]; // width/1 * height/1 -> width/256 * height/256
 
 } revtex_API;
 

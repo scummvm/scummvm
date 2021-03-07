@@ -793,7 +793,7 @@ mcodeFunctionReturnCodes _game_session::fn_call_socket(int32 &result, int32 *par
 	//	params   0       ascii name of target object
 	//				1     ascii name of socket script
 
-	int retval;
+	int32 retval;
 	uint32 script_hash;
 
 	const char *target_object_name = (const char *)MemoryUtil::resolvePtr(params[0]);
@@ -895,7 +895,7 @@ bool8 _game_session::Call_socket(uint32 id, const char *script, int32 *retval) {
 			// get the address of the script we want to run
 			const char *pc = (const char *)scripts->Try_fetch_item_by_hash(socket_object->GetScriptNameFullHash(k));
 
-			int result = static_cast<int>(*retval);
+			int32 result = static_cast<int>(*retval);
 
 			// run the script - pass its object so vars can be accessed
 			RunScript(pc, socket_object, &result);
@@ -1960,7 +1960,7 @@ mcodeFunctionReturnCodes _game_session::fn_lib_lift_chord_and_chi(int32 &result,
 	uint32 lift = 0; // lift number in platform list
 	bool8 hit = FALSE8;
 	uint32 j = 0;
-	static int issued_warning = FALSE8;
+	static int32 issued_warning = FALSE8;
 	const char *nico_name = (const char *)MemoryUtil::resolvePtr(params[0]);
 
 	if (!prev_save_state) { // could not save last go - then cant operate lift either. Player is in a private script
@@ -2056,10 +2056,10 @@ mcodeFunctionReturnCodes _game_session::fn_lift2_process(int32 &result, int32 *p
 	bool8 has_platform = FALSE8;
 	PXreal lifty = REAL_ZERO;
 	uint32 lift = 0; // lift number in platform list
-	static int issued_warning = FALSE8;
+	static int32 issued_warning = FALSE8;
 	const char *nico_name = (const char *)MemoryUtil::resolvePtr(params[0]);
 
-	static int inited = FALSE8;
+	static int32 inited = FALSE8;
 	if (!inited) {
 		for (j = 0; j < MAX_session_objects; j++)
 			lift2s[j].init = 0;

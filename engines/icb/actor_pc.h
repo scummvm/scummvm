@@ -42,17 +42,17 @@
 
 namespace ICB {
 
-void ConvertToScreenCoords(SVECTORPC *local, SVECTORPC *screen, int nVertices);
-void ConvertToScreenCoords(SVECTOR *local, SVECTOR *screen, int nVertices);
+void ConvertToScreenCoords(SVECTORPC *local, SVECTORPC *screen, int32 nVertices);
+void ConvertToScreenCoords(SVECTOR *local, SVECTOR *screen, int32 nVertices);
 
 void DrawActor4PC(psxActor *actor, psxCamera *camera, Bone_Frame *frame, rap_API *mesh, rap_API *pose, rap_API *smesh, PSXrgb *ambient, PSXLampList *lamplist,
-                  PSXShadeList *shadelist, int nShadows, SVECTORPC *p_n, int *p_d, uint32 debug, int uvframe, BoneDeformation **boneDeforms, int *brightness,
+                  PSXShadeList *shadelist, int32 nShadows, SVECTORPC *p_n, int32 *p_d, uint32 debug, int32 uvframe, BoneDeformation **boneDeforms, int32 *brightness,
                   MATRIXPC *local2screen);
 
 void DrawActorTiePC(psxCamera *camera, SVECTORPC *pos, uint32 size, CVECTOR *colour);
 
 // return 1 if something drawn, else return 0
-int DrawActorSpecialEffectsPC(int mflash, SVECTOR *mfpos, int mfh, int mfw, int bullet, SVECTOR *bulletPos, int bulletCol, Breath *breath, MATRIXPC *local2screen, int brightness,
+int32 DrawActorSpecialEffectsPC(int32 mflash, SVECTOR *mfpos, int32 mfh, int32 mfw, int32 bullet, SVECTOR *bulletPos, int32 bulletCol, Breath *breath, MATRIXPC *local2screen, int32 brightness,
                               SVECTOR *minBBox, SVECTOR *maxBBox);
 
 } // End of namespace ICB

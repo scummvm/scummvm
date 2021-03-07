@@ -44,7 +44,7 @@ typedef struct psxActor {
 	MATRIX lw;
 	SVECTOR rot;
 	SVECTOR pos;
-	int style;
+	int32 style;
 
 	// Screen postion
 	SVECTOR sPos;
@@ -60,7 +60,7 @@ typedef struct psxActor {
 	SVECTOR shadowBox[MAX_SHADOWS][8];
 	SVECTOR shadowMinBox[MAX_SHADOWS];
 	SVECTOR shadowMaxBox[MAX_SHADOWS];
-	uint nShadows;
+	uint32 nShadows;
 
 } psxActor;
 

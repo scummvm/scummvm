@@ -51,7 +51,7 @@ uint32 font_cluster_hash = NULL_HASH;
 // Res_open will compute the hash value and store it
 uint32 sys_font_hash = NULL_HASH;
 
-int gameCycle; // holds current game cycle - ticks up one each cycle
+int32 gameCycle; // holds current game cycle - ticks up one each cycle
 
 // The PSX specific code is in p4_psx.cpp
 // PC specific code is in p4_pc.cpp

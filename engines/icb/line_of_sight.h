@@ -205,7 +205,7 @@ inline bool8 _line_of_sight::LineOfSight(uint32 nObserverID, uint32 nTargetID) {
 inline void _line_of_sight::SwitchOff() {
 	m_bSwitchedOn = FALSE8;
 
-	memset((unsigned char *)m_pnTable, 0, (size_t)(LOS_2D_SIZE_PACKED * sizeof(uint8)));
+	memset((uint8 *)m_pnTable, 0, (size_t)(LOS_2D_SIZE_PACKED * sizeof(uint8)));
 }
 
 inline void _line_of_sight::SetPackedBit(uint8 *pnArray, uint32 i, uint32 j, bool8 bValue) {

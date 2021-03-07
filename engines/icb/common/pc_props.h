@@ -72,7 +72,7 @@ public:
 	pcPropRGBState(uint8 *propBasePtr, uint32 dataOffset) {
 		uint8 *ptr = propBasePtr + dataOffset;
 
-		for (int i = 0; i < TILE_COUNT; i++) {
+		for (int32 i = 0; i < TILE_COUNT; i++) {
 			zPtrs[i] = 0;
 			if (uint32 offset = READ_LE_U32(ptr)) {
 				zPtrs[i] = (uint16 *)(propBasePtr + offset);
@@ -80,7 +80,7 @@ public:
 			ptr += 4;
 		}
 
-		for (int i = 0; i < TILE_COUNT; i++) {
+		for (int32 i = 0; i < TILE_COUNT; i++) {
 			semiPtrs[i] = 0;
 			if (uint32 offset = READ_LE_U32(ptr)) {
 				semiPtrs[i] = (uint16 *)(propBasePtr + offset);
@@ -142,8 +142,8 @@ public:
 		tileRects = (LRECT *)ptr;
 	}
 
-	uint16 *GetZTileTable(int t) { return zPtrs[t]; }
-	uint16 *GetSemiTileTable(int t) { return semiPtrs[t]; }
+	uint16 *GetZTileTable(int32 t) { return zPtrs[t]; }
+	uint16 *GetSemiTileTable(int32 t) { return semiPtrs[t]; }
 	uint16 GetLRBgTileQty() { return nLRBgTiles; }
 	uint16 GetLRFgTileQty() { return nLRFgTiles; }
 	uint16 GetHRBgTileQty() { return nHRBgTiles; }

@@ -52,9 +52,9 @@ class pcStaticLayers {
 	uint8 *DataStart() { return (uint8 *)id; }
 
       public:
-	uint16 *GetSemiTileTable(int idx) { return semiPtrs[idx] ? (uint16 *)(DataStart() + semiPtrs[idx]) : 0; }
+	uint16 *GetSemiTileTable(int32 idx) { return semiPtrs[idx] ? (uint16 *)(DataStart() + semiPtrs[idx]) : 0; }
 
-	uint16 *GetTileTable(int idx) { return tilePtrs[idx] ? (uint16 *)(DataStart() + tilePtrs[idx]) : 0; }
+	uint16 *GetTileTable(int32 idx) { return tilePtrs[idx] ? (uint16 *)(DataStart() + tilePtrs[idx]) : 0; }
 
 	uint32 GetSchema() {
 		if (READ_LE_U32(id) != PCLAYER_ID)

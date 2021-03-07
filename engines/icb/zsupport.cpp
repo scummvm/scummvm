@@ -38,7 +38,7 @@ namespace ICB {
 
 uint32 fileGetZipLength(const char *inFn) {
 	Common::SeekableReadStream *fileStream = openDiskFileForBinaryStreamRead(inFn);
-	uint len = fileGetZipLength2(fileStream);
+	uint32 len = fileGetZipLength2(fileStream);
 	delete fileStream;
 	return len;
 }
@@ -49,7 +49,7 @@ uint32 fileGetZipLength2(Common::SeekableReadStream *fileStream) {
 	gzFile in;
 	uint32 t = 0;
 
-	int noOfFile = fileno(file);
+	int32 noOfFile = fileno(file);
 	in = gzdopen(noOfFile , "rb");
 
 	if (in == NULL)
@@ -61,25 +61,25 @@ uint32 fileGetZipLength2(Common::SeekableReadStream *fileStream) {
 #endif
 }
 
-unsigned int memUncompress(unsigned char *outMem, const char *inFn) {
+uint32 memUncompress(uint8 *outMem, const char *inFn) {
 	Common::SeekableReadStream *fileStream = openDiskFileForBinaryStreamRead(inFn);
 
-	uint retVal = memUncompress(outMem, inFn, fileStream);
+	uint32 retVal = memUncompress(outMem, inFn, fileStream);
 
 	delete fileStream;
 
 	return retVal;
 }
 
-unsigned int memUncompress(unsigned char *outMem, const char *inFn, Common::SeekableReadStream *file) {
+uint32 memUncompress(uint8 *outMem, const char *inFn, Common::SeekableReadStream *file) {
 	error("TODO: Fix compression");
 #if 0
 	gzFile in;
-	unsigned char *myp;
-	uint uncompressedLen;
+	uint8 *myp;
+	uint32 uncompressedLen;
 
 
-	int noOfFile = fileno(file);
+	int32 noOfFile = fileno(file);
 	in = gzdopen(noOfFile , "rb");
 
 	if (in == NULL) {
@@ -92,20 +92,20 @@ unsigned int memUncompress(unsigned char *outMem, const char *inFn, Common::Seek
 		return 0;
 	}
 
-	uint bytesRead = 0;
-	uint bytesToRead = uncompressedLen;
+	uint32 bytesRead = 0;
+	uint32 bytesToRead = uncompressedLen;
 
 	myp = outMem;
 
 	while (bytesToRead) {
 		// Work out how much to read this go
-		uint bytesToReadThisPass = bytesToRead;
+		uint32 bytesToReadThisPass = bytesToRead;
 		// Only fill a buffer
 		if (bytesToReadThisPass > BUFLEN)
 			bytesToReadThisPass = BUFLEN;
 
 		// Read in those bytes
-		uint bytesReadThisPass = gzread(in, buf, bytesToReadThisPass);
+		uint32 bytesReadThisPass = gzread(in, buf, bytesToReadThisPass);
 		if (bytesReadThisPass == 0)
 			break;
 

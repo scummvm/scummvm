@@ -52,7 +52,7 @@ mcodeFunctionReturnCodes speak_stop_music(int32 &result, int32 *params) { return
 mcodeFunctionReturnCodes speak_end_music(int32 &result, int32 *params) { return (MS->speak_end_music(result, params)); }
 
 // Global data for this file
-int inSpeechMusicAllocated = 0;
+int32 inSpeechMusicAllocated = 0;
 
 // Useful prototype
 bool8 DoesClusterContainFile(const char *clustername, uint32 hash_to_find, uint32 &fileoffset, uint32 &filesize);
@@ -84,7 +84,7 @@ void LoadSting(uint32 looking_for_hash) {
 
 	// If we've allocated some emulated psx memory
 	if (inSpeechMusicAllocated != 0) {
-		if ((int)file_size > inSpeechMusicAllocated)
+		if ((int32)file_size > inSpeechMusicAllocated)
 			Fatal_error("Cannot load music as it's size exceeds that given to speak_allocate_music()!");
 	}
 
@@ -166,8 +166,8 @@ mcodeFunctionReturnCodes _game_session::fn_stop_sting(int32 &, int32 *) {
 }
 
 mcodeFunctionReturnCodes _game_session::speak_allocate_music(int32 &, int32 *params) {
-	int seconds = (int)params[0];
-	int hertz = (int)params[1];
+	int32 seconds = (int32)params[0];
+	int32 hertz = (int32)params[1];
 
 	// Hardcode this puupy to match the psx for now
 	hertz = 16000;

@@ -34,7 +34,7 @@ namespace ICB {
 // Decompress the FrameData into the CurrentFrame data storage
 // e.g. undo the delta compression or replace the zero ignored
 // values with zero
-Bone_Frame *rab_API::GetFrame(const int f) {
+Bone_Frame *rab_API::GetFrame(const int32 f) {
 	Bone_Frame *curFrm = GetCurrentFrame();
 	Bone_Frame *prevFrm = NULL;
 
@@ -50,22 +50,22 @@ Bone_Frame *rab_API::GetFrame(const int f) {
 		// For deltas we need the previous frame
 		if ((frm->typeSize & DataTypeDeltas) != 0) {
 			prevFrm = GetFrame(f - 1);
-			int dcvx;
-			int dcvy;
-			int dcvz;
-			int prevVx;
-			int prevVy;
-			int prevVz;
-			int curVx;
-			int curVy;
-			int curVz;
-			int temp;
-			int prevCrot;
-			int nBits = 0;
-			int min;
-			int mask;
-			int storeZero;
-			int dataSize;
+			int32 dcvx;
+			int32 dcvy;
+			int32 dcvz;
+			int32 prevVx;
+			int32 prevVy;
+			int32 prevVz;
+			int32 curVx;
+			int32 curVy;
+			int32 curVz;
+			int32 temp;
+			int32 prevCrot;
+			int32 nBits = 0;
+			int32 min;
+			int32 mask;
+			int32 storeZero;
+			int32 dataSize;
 
 			// So just need to add on the deltas to the previous frame !
 			{
@@ -92,7 +92,7 @@ Bone_Frame *rab_API::GetFrame(const int f) {
 					temp = 0;
 
 					if (storeZero == 0) {
-						b = (int)(*data);
+						b = (int32)(*data);
 						data++;
 					} else {
 						b = i;
@@ -167,7 +167,7 @@ Bone_Frame *rab_API::GetFrame(const int f) {
 				}
 				// Then update the angles which are non-zero
 				for (i = 0; i < nt; i++) {
-					b = (int)(*data);
+					b = (int32)(*data);
 					memcpy(&(curFrm->bones[b].crot), (data + 1), sizeof(CompTriplet));
 					data += NONZERO_ANGLES_32_BYTE_SIZE;
 				}
@@ -177,7 +177,7 @@ Bone_Frame *rab_API::GetFrame(const int f) {
 			}
 		}
 		curFrm->poseBone = frm->poseBone;
-		currentFrame = (u_char)f;
+		currentFrame = (uint8)f;
 	}
 
 	return curFrm;
@@ -185,7 +185,7 @@ Bone_Frame *rab_API::GetFrame(const int f) {
 
 // Compress an SVECTOR ( uint16 vx,vy,vz, pad; ) -> uint32
 // by dividing the angles (12-bits 0-4095) by four to make them 10-bits
-int CompressSVECTOR(SVECTOR rotin, CompTriplet *rotout) {
+int32 CompressSVECTOR(SVECTOR rotin, CompTriplet *rotout) {
 	int16 vx = rotin.vx;
 	int16 vy = rotin.vy;
 	int16 vz = rotin.vz;
@@ -199,13 +199,13 @@ int CompressSVECTOR(SVECTOR rotin, CompTriplet *rotout) {
 		vz += 4096;
 
 	// Reduce to 10-bits
-	vx = (short)((vx >> COMP_ANGLE_SHIFT) & COMP_VX_MASK);
-	vy = (short)((vy >> COMP_ANGLE_SHIFT) & COMP_VY_MASK);
-	vz = (short)((vz >> COMP_ANGLE_SHIFT) & COMP_VZ_MASK);
+	vx = (int16)((vx >> COMP_ANGLE_SHIFT) & COMP_VX_MASK);
+	vy = (int16)((vy >> COMP_ANGLE_SHIFT) & COMP_VY_MASK);
+	vz = (int16)((vz >> COMP_ANGLE_SHIFT) & COMP_VZ_MASK);
 
 	// Pack into a single int32
 	// x = 10-bits into upper rot
-	int temp = (vx << COMP_VX_SHIFT);
+	int32 temp = (vx << COMP_VX_SHIFT);
 	// y = 10-bits into middle rot
 	temp |= (vy << COMP_VY_SHIFT);
 	// z = 10-bits into lower rot

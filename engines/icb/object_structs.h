@@ -105,8 +105,8 @@ public:
 	bool8 Set_palette(const char *palette_name);
 	bool8 Set_mesh(const char *mesh_name);
 	void Promote_non_generic();
-	int8 IsAnimTable(int i);
-	void MakeAnimEntry(int i);
+	int8 IsAnimTable(int32 i);
+	void MakeAnimEntry(int32 i);
 
 	// those hashs in full
 
@@ -157,8 +157,8 @@ public:
 	// and so the access functions return the
 	// actual thing
 
-	char *get_anim_name(int i) { return anim_name[i]; }
-	char *get_info_name(int i) { return info_name[i]; }
+	char *get_anim_name(int32 i) { return anim_name[i]; }
+	char *get_info_name(int32 i) { return info_name[i]; }
 	char *get_mesh_name() { return mesh_name; }
 	char *get_shadow_mesh_name() { return shadow_mesh_name; }
 	char *get_texture_name() { return texture_name; }
@@ -168,7 +168,7 @@ public:
 
 };
 
-inline int8 _vox_image::IsAnimTable(int i) {
+inline int8 _vox_image::IsAnimTable(int32 i) {
 	// If the table has not been set yet : make the anim entry which will set anim_table entry to correct value
 	if (anim_table[i] == (int8)-1)
 		MakeAnimEntry(i);
@@ -319,7 +319,7 @@ class _mega { // mega logic specific
 
 	void ___init();
 
-	void InitCartridgeCase(SVECTOR *initPos, short initialHeight);
+	void InitCartridgeCase(SVECTOR *initPos, int16 initialHeight);
 
 	bool8 Fetch_armed_status();
 	bool8 Fetch_custom();

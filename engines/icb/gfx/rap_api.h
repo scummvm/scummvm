@@ -93,9 +93,9 @@ typedef struct WeightedVertexLink {
 // Notice, how poor ANSI C/C++ is at its representation
 //
 
-const int RAP_NO_PLATFORM = 0;
-const int RAP_PC_PLATFORM = 1;
-const int RAP_PSX_PLATFORM = 2;
+const int32 RAP_NO_PLATFORM = 0;
+const int32 RAP_PC_PLATFORM = 1;
+const int32 RAP_PSX_PLATFORM = 2;
 
 typedef struct rap_API {
 	char id[4];
@@ -161,7 +161,7 @@ typedef struct rap_API {
 	}
 
 	uint32 *GetAnimPolyPtr() { return (uint32 *)(id + animPolyOffset); }
-	uint32 *GetAnimPolyFrame(int frame) { return (uint32 *)(id + animPolyOffset + nAnimTypes * 2 * sizeof(uint32) + frame * animPolySize); }
+	uint32 *GetAnimPolyFrame(int32 frame) { return (uint32 *)(id + animPolyOffset + nAnimTypes * 2 * sizeof(uint32) + frame * animPolySize); }
 
 } rap_API;
 

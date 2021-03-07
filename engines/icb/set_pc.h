@@ -83,7 +83,7 @@ public:
 	inline uint32 GetPropRange(uint32 n);
 	bool8 DoesPropExist(const char *propName);
 
-	int OK() { return m_setOk; };
+	int32 OK() { return m_setOk; };
 	void Reset();
 	bool8 DoesCameraExist(const char *camera_name, const char *camera_cluster_name);
 
@@ -124,7 +124,7 @@ private:                       /* Member variables .... Move this to private sec
 public: /* _ WEATHER _ RAIN _ SNOW _ LIGHTNING _ SPARKLE */
 	void DrawSparkles();
 	void DrawWeather();
-	void InitWeather(int type, int particleQty, int lightning, int windX, int windY, int windZ);
+	void InitWeather(int32 type, int32 particleQty, int32 lightning, int32 windX, int32 windY, int32 windZ);
 
 private:
 	int16 m_wParticleX[WEATHER_MAX_PARTICLES]; // -320 - 320
@@ -133,16 +133,16 @@ private:
 	int8 m_wParticleDX[WEATHER_MAX_PARTICLES];
 	int8 m_wParticleDY[WEATHER_MAX_PARTICLES];
 	int8 m_wParticleDZ[WEATHER_MAX_PARTICLES];
-	int m_wLightningTimer;
-	int m_wType;
-	int m_wWindX;
-	int m_wWindY;
-	int m_wWindZ;
-	int m_wParticleQty;
-	int m_wLightning;
+	int32 m_wLightningTimer;
+	int32 m_wType;
+	int32 m_wWindX;
+	int32 m_wWindY;
+	int32 m_wWindZ;
+	int32 m_wParticleQty;
+	int32 m_wLightning;
 
 private:
-	int m_setOk;                   // Is The Set OK flag
+	int32 m_setOk;                   // Is The Set OK flag
 	PXcamera m_camera;             // The camera
 	_pcSetHeader *m_currentCamera; // All the camera data
 
@@ -150,9 +150,9 @@ private:
 
 public: /* Prop Surfaces */
 	uint32 m_propSurfaceIds[MAX_CAMERA_PROPS];
-	int m_propSurfaces[MAX_PROP_STATES];
-	int m_propResolutions[MAX_CAMERA_PROPS];
-	int m_TotalPropSurfaces;
+	int32 m_propSurfaces[MAX_PROP_STATES];
+	int32 m_propResolutions[MAX_CAMERA_PROPS];
+	int32 m_TotalPropSurfaces;
 };
 
 inline rlp_API *_set::GetPRig() { return (rlp_API *)(((uint8 *)m_currentCamera) + m_currentCamera->lightOffset); }

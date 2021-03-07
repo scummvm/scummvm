@@ -42,13 +42,13 @@ class Breath {
 public:
 	SVECTOR position; // 8 bytes?
 
-	short breathColour[MAX_BREATH]; // 8 bytes
+	int16 breathColour[MAX_BREATH]; // 8 bytes
 
 	int8 breathZ[MAX_BREATH];       // 4 bytes
 	int8 breathY[MAX_BREATH];       // 4 bytes
 	int8 breathSize[MAX_BREATH];    // 4 bytes
 	int8 breathStarted[MAX_BREATH]; // 4 bytes
-	short breathEnd;                // 2 bytes
+	int16 breathEnd;                // 2 bytes
 	uint8 on;                       // 1 byte
 	int8 allStarted;                // 1 byte (how many times reset)
 

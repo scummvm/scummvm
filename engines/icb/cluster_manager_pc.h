@@ -55,7 +55,7 @@ private:
 	char m_cdroot1[1024];
 	char m_cdroot2[1024];
 	bool8 m_multipleCDDrives;
-	int m_activeCDDrive;
+	int32 m_activeCDDrive;
 
 	// Working mission directory name (hashed)
 	char m_missionDir[8];
@@ -124,10 +124,10 @@ private:
 	void MinimumInstallCheck();
 	bool8 IsMissionDataInstalled(MISSION_ID &m);
 	void CleanHardDisk();
-	int WhichCD(MISSION_ID mission);
-	bool8 CheckForCD(int number);
-	void MissingCD(int number);
-	bool8 MissingCDWithCancel(int number);
+	int32 WhichCD(MISSION_ID mission);
+	bool8 CheckForCD(int32 number);
+	void MissingCD(int32 number);
+	bool8 MissingCDWithCancel(int32 number);
 
 	// Filelist handling
 	void LoadFileList(MISSION_ID mission);

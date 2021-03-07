@@ -39,20 +39,20 @@
 
 namespace ICB {
 
-extern int armedChangesMode;
-extern int animToggles;
+extern int32 armedChangesMode;
+extern int32 animToggles;
 extern PXreal REPEL_TURN;
 extern PXreal REPULSE_DISTANCE;
-extern int CAMERA_SMOOTH_CYCLES;
+extern int32 CAMERA_SMOOTH_CYCLES;
 
 // How deep the player control mode stack is !
 #define CONTROL_MODE_STACK_DEPTH 4
 
 // The maximum number of ammo clips the player can carry
-static const uint MAX_AMMO_CLIPS = 5;
+static const uint32 MAX_AMMO_CLIPS = 5;
 
 // The maximum number of hit points the player has
-static const uint MAX_HITS = 10;
+static const uint32 MAX_HITS = 10;
 
 // the player service is not tied to the session but exists as a global engine service
 enum _player_stat {
@@ -149,11 +149,11 @@ struct _input {
 	__player_momentum momentum;
 	__player_turn turn;
 
-	int bitflag;
+	int32 bitflag;
 
 	void SetButton(const enum ButtonEnums b) { bitflag |= b; }
 	void UnSetButton(const enum ButtonEnums b) { bitflag &= ~b; }
-	uint IsButtonSet(const enum ButtonEnums b) const {
+	uint32 IsButtonSet(const enum ButtonEnums b) const {
 		return (bitflag & b);
 	}
 };
@@ -347,7 +347,7 @@ public:
 	uint8 begun_at_bottom; // used when deciding to write history
 	int8 being_shot;
 	int8 shot_by_id;
-	int step_sample_num;
+	int32 step_sample_num;
 
 	int8 walk_count; // counts up as you walk - used to alert guards of non creeping player
 	bool8 stood_on_lift; // are we stood on a lift

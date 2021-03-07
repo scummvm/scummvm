@@ -71,10 +71,10 @@ namespace ICB {
             uint8   zdata[w*h];
             psxZOverlay layers[n]
             {
-            short xs, xe;
-                short ys, ye;
-                u_short zs, ze;
-                u_short dZScale, dZShift;
+            int16 xs, xe;
+                int16 ys, ye;
+                uint16 zs, ze;
+                uint16 dZScale, dZShift;
             }
         }
    }
@@ -112,10 +112,10 @@ namespace ICB {
             uint8   zdata[w*h];
             psxZOverlay layers[n]
             {
-            short xs, xe;
-                short ys, ye;
-                u_short zs, ze;
-                u_short dZScale, dZShift;
+            int16 xs, xe;
+                int16 ys, ye;
+                uint16 zs, ze;
+                uint16 dZScale, dZShift;
             }
         }
    }

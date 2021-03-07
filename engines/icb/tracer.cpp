@@ -225,8 +225,8 @@ void _tracer::GetBarriersForCube(const _XYZ_index &oCubeIndices, uint32 *oThisCu
 	// Get to the right cube entry.
 	nActualIndex = oCubeIndices.nZ * pSlice->row_length + oCubeIndices.nX;
 	nBarrierCubeOffset = pSlice->offset_cubes[nActualIndex];
-	pBarrierCube = (_barrier_cube *)((unsigned char *)pSlice + nBarrierCubeOffset);
-	pBarrierArray = (uint32 *)((unsigned char *)pSlice + pBarrierCube->barriers);
+	pBarrierCube = (_barrier_cube *)((uint8 *)pSlice + nBarrierCubeOffset);
+	pBarrierArray = (uint32 *)((uint8 *)pSlice + pBarrierCube->barriers);
 
 	// Add the barriers to the array we're returning.
 	if (pBarrierCube->num_barriers > MAX_BARRIERS)

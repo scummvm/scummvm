@@ -171,7 +171,7 @@ mcodeFunctionReturnCodes _game_session::fn_face_camera(int32 &, int32 *params) {
 // ensures actual pan is what we are looking at
 mcodeFunctionReturnCodes _game_session::fn_set_feet_to_pan(int32 &, int32 *) {
 	// we face straight ahead
-	I->lookBone.boneTarget.vz = (short)(0);
+	I->lookBone.boneTarget.vz = (int16)(0);
 
 	// and our pan is set to the looking_pan
 	L->pan = M->looking_pan;
@@ -710,7 +710,7 @@ mcodeFunctionReturnCodes _game_session::fn_play_generic_anim(int32 &, int32 *par
 	PXanim *anim = (PXanim *)rs_anims->Res_open(I->get_info_name(L->cur_anim_type), I->info_name_hash[L->cur_anim_type], I->base_path, I->base_path_hash); //
 
 	// last frame is currently displayed?
-	if ((int)(L->anim_pc + M->anim_speed) >= (anim->frame_qty - 1)) {
+	if ((int32)(L->anim_pc + M->anim_speed) >= (anim->frame_qty - 1)) {
 		L->looping = FALSE8;
 		return (IR_CONT);
 	}
@@ -783,7 +783,7 @@ mcodeFunctionReturnCodes _game_session::fn_easy_play_generic_anim(int32 &, int32
 	PXanim *anim = (PXanim *)rs_anims->Res_open(I->get_info_name(L->cur_anim_type), I->info_name_hash[L->cur_anim_type], I->base_path, I->base_path_hash);
 
 	// last frame is currently displayed?
-	if ((int)(L->anim_pc + M->anim_speed) >= (anim->frame_qty - 1)) {
+	if ((int32)(L->anim_pc + M->anim_speed) >= (anim->frame_qty - 1)) {
 		L->looping = FALSE8;
 		return (IR_CONT);
 	}
@@ -850,7 +850,7 @@ mcodeFunctionReturnCodes _game_session::fn_easy_play_generic_anim_with_pan(int32
 	PXanim *anim = (PXanim *)rs_anims->Res_open(I->get_info_name(L->cur_anim_type), I->info_name_hash[L->cur_anim_type], I->base_path, I->base_path_hash); //
 
 	// last frame is currently displayed?
-	if ((int)(L->anim_pc + 1) == (anim->frame_qty - 1)) {
+	if ((int32)(L->anim_pc + 1) == (anim->frame_qty - 1)) {
 		L->looping = FALSE8;
 		return (IR_CONT);
 	}
@@ -910,7 +910,7 @@ mcodeFunctionReturnCodes _game_session::fn_easy_play_custom_anim_with_pan(int32 
 	PXanim *anim = (PXanim *)rs_anims->Res_open(I->get_info_name(L->cur_anim_type), I->info_name_hash[L->cur_anim_type], I->base_path, I->base_path_hash); //
 
 	// last frame is currently displayed?
-	if ((int)(L->anim_pc + 1) == (anim->frame_qty - 1)) {
+	if ((int32)(L->anim_pc + 1) == (anim->frame_qty - 1)) {
 		L->looping = FALSE8;
 
 		return (IR_CONT);
@@ -1325,7 +1325,7 @@ mcodeFunctionReturnCodes _game_session::fn_new_apply_bullet(int32 &, int32 *para
 	// 0 - nothing on screen
 	// 1 - normal light/muzzleflash/cartridge case
 	// default is 1
-	int shotType = object->GetIntegerValueOrDefault("gun_effects", 1);
+	int32 shotType = object->GetIntegerValueOrDefault("gun_effects", 1);
 
 	// if mega then do dynamic light (only if shotType isnt 0
 	if ((logic_structs[cur_id]->image_type == VOXEL) && (shotType == 1)) {
@@ -1355,7 +1355,7 @@ mcodeFunctionReturnCodes _game_session::fn_new_apply_bullet(int32 &, int32 *para
 	rnd = g_icb->getRandomSource()->getRandomNumber(100 - 1);
 
 	// we didn't miss
-	int missed = 0;
+	int32 missed = 0;
 
 	// user hit chance of 0 means always miss
 	if (params[1]) {

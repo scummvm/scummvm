@@ -35,9 +35,9 @@ namespace ICB {
 // Definition of a boolean value that can be used across the PC and PSX.  I stopped true being 0xff because
 // C++ weak typing allows you to assign a bool8 to an int8 without warning, whereupon '==' fails for TRUE8 because
 // one is signed and one isn't.
-typedef unsigned char bool8;
-#define TRUE8 ((unsigned char)0x01)
-#define FALSE8 ((unsigned char)0x00)
+typedef uint8 bool8;
+#define TRUE8 ((uint8)0x01)
+#define FALSE8 ((uint8)0x00)
 
 // end of file
 

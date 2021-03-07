@@ -34,7 +34,7 @@ uint32 fileGetZipLength2(Common::SeekableReadStream *fileStream);
 // One takes a FILE * pointer and a place to unzip to
 // The second takes a url, opens it, and calls the first
 
-uint memUncompress(unsigned char *outMem, const char *inFn);
-unsigned int memUncompress(unsigned char *outMem, const char *inFn, Common::SeekableReadStream *fileStream);
+uint32 memUncompress(uint8 *outMem, const char *inFn);
+uint32 memUncompress(uint8 *outMem, const char *inFn, Common::SeekableReadStream *fileStream);
 
 } // End of namespace ICB

@@ -30,9 +30,9 @@
 
 namespace ICB {
 
-int LoadMission(int m, void *usr);
+int32 LoadMission(int32 m, void *usr);
 void RestartMission();
-int FindMissionNumber(const char *mission);
+int32 FindMissionNumber(const char *mission);
 
 } // End of namespace ICB
 

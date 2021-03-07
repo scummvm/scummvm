@@ -53,8 +53,8 @@ class c_un_game_object {
 public:
 	// Main access functions
 	const char *GetName() const;             // Get a pointer to the object name
-	uint GetNoLvars() const;                 // Get the number of local variables
-	uint GetNoScripts() const;               // Get the number of scripts
+	uint32 GetNoLvars() const;                 // Get the number of local variables
+	uint32 GetNoScripts() const;               // Get the number of scripts
 	const char *GetScriptName(uint32) const; // Get the name of a script
 	uint32 GetSize() { return (m_size); }
 	uint32 GetLvarInfoOffset() { return (m_var_table_offset); }
@@ -115,19 +115,19 @@ inline const char *c_un_game_object::GetName() const {
 	return ((const char *)(((const char *) this) + m_name_offset));
 }
 
-inline uint c_un_game_object::GetNoLvars() const {
+inline uint32 c_un_game_object::GetNoLvars() const {
 	// Get the number of local variables
 	return (m_noLvars);
 }
 
-inline uint c_un_game_object::GetNoScripts() const {
+inline uint32 c_un_game_object::GetNoScripts() const {
 	// Get the number of scripts
 	return (m_noScripts);
 }
 
 inline const char *c_un_game_object::GetScriptName(uint32 scriptNo) const {
 	assert(scriptNo < m_noScripts);
-	return ((const char *)(((const char *) this) + ((const int *)(((const char *)this) + m_script_name_table_offset))[scriptNo]));
+	return ((const char *)(((const char *) this) + ((const int32 *)(((const char *)this) + m_script_name_table_offset))[scriptNo]));
 }
 
 inline const char *c_un_game_object::GetScriptVariableName(uint32 varNo) const {
@@ -171,7 +171,7 @@ inline int32 c_un_game_object::GetVariable(const char *name) const {
 
 inline void c_un_game_object::SetIntegerVariable(uint32 lvar, int32 val) {
 	assert(lvar < m_noLvars);
-	(((int *)(((char *)this) + m_lvars_offset))[lvar]) = val;
+	(((int32 *)(((char *)this) + m_lvars_offset))[lvar]) = val;
 }
 
 inline int32 &c_un_game_object::GetIntegerVariable(uint32 lvar) {
@@ -183,7 +183,7 @@ inline int32 &c_un_game_object::GetIntegerVariable(uint32 lvar) {
 inline const char *c_un_game_object::GetStringVariable(uint32 lvar) const {
 	// Get an lvar value
 	assert(lvar < m_noLvars);
-	return (((const char *) this) + ((const int *)(((const char *)this) + m_lvars_offset))[lvar]);
+	return (((const char *) this) + ((const int32 *)(((const char *)this) + m_lvars_offset))[lvar]);
 }
 
 class c_compressed_game_object {
@@ -195,8 +195,8 @@ class c_compressed_game_object {
 public:
 	// Main access functions
 	const char *GetName() const;      // Get a pointer to the object name
-	uint GetNoLvars() const;   // Get the number of local variables
-	uint GetNoScripts() const; // Get the number of scripts
+	uint32 GetNoLvars() const;   // Get the number of local variables
+	uint32 GetNoScripts() const; // Get the number of scripts
 	uint32 GetSize() { return (m_size); }
 
 	// Using the hash system you cannot get names, only hashes
@@ -267,24 +267,24 @@ inline const char *c_compressed_game_object::GetName() const {
 	return ((const char *)(((const char *) this) + m_name_offset));
 }
 
-inline uint c_compressed_game_object::GetNoLvars() const {
+inline uint32 c_compressed_game_object::GetNoLvars() const {
 	// Get the number of local variables
 	return (m_noLvars);
 }
 
-inline uint c_compressed_game_object::GetNoScripts() const {
+inline uint32 c_compressed_game_object::GetNoScripts() const {
 	// Get the number of scripts
 	return (m_noScripts);
 }
 
 inline uint32 c_compressed_game_object::GetScriptNameFullHash(uint32 scriptNo) const {
 	assert(scriptNo < m_noScripts);
-	return (((const int *)(((const char *)this) + m_script_name_hash_table_offset))[scriptNo * 2]);
+	return (((const int32 *)(((const char *)this) + m_script_name_hash_table_offset))[scriptNo * 2]);
 }
 
 inline uint32 c_compressed_game_object::GetScriptNamePartHash(uint32 scriptNo) const {
 	assert(scriptNo < m_noScripts);
-	return (((const int *)(((const char *)this) + m_script_name_hash_table_offset))[scriptNo * 2 + 1]);
+	return (((const int32 *)(((const char *)this) + m_script_name_hash_table_offset))[scriptNo * 2 + 1]);
 }
 
 inline const char *c_compressed_game_object::GetScriptVariableName(uint32 varNo) const {
@@ -328,7 +328,7 @@ inline int32 c_compressed_game_object::GetVariable(const char *name) const {
 
 inline void c_compressed_game_object::SetIntegerVariable(uint32 lvar, int32 val) {
 	assert(lvar < m_noLvars);
-	(((int *)(((char *)this) + m_lvars_offset))[lvar]) = val;
+	(((int32 *)(((char *)this) + m_lvars_offset))[lvar]) = val;
 }
 
 inline int32 &c_compressed_game_object::GetIntegerVariable(uint32 lvar) {
@@ -340,7 +340,7 @@ inline int32 &c_compressed_game_object::GetIntegerVariable(uint32 lvar) {
 inline const char *c_compressed_game_object::GetStringVariable(uint32 lvar) const {
 	// Get an lvar value
 	assert(lvar < m_noLvars);
-	return (((const char *) this) + ((const int *)(((const char *)this) + m_lvars_offset))[lvar]);
+	return (((const char *) this) + ((const int32 *)(((const char *)this) + m_lvars_offset))[lvar]);
 }
 
 class CSettableGameObject : public c_un_game_object {

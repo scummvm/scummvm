@@ -599,8 +599,8 @@ void _remora::DrawStaticBarriers(_rgb oLineColour) const {
 		for (j = 0; j < pSlice->num_cubes; ++j) {
 			// Get to the barriers for this cube.
 			nBarrierCubeOffset = pSlice->offset_cubes[j];
-			pBarrierCube = (_barrier_cube *)((unsigned char *)pSlice + nBarrierCubeOffset);
-			pBarrierArray = (uint32 *)((unsigned char *)pSlice + pBarrierCube->barriers);
+			pBarrierCube = (_barrier_cube *)((uint8 *)pSlice + nBarrierCubeOffset);
+			pBarrierArray = (uint32 *)((uint8 *)pSlice + pBarrierCube->barriers);
 
 			// Draw the barriers for this cube.
 			for (k = 0; k < (uint32)pBarrierCube->num_barriers; ++k) {
@@ -1928,7 +1928,7 @@ void DrawGouraudTriangle(uint32 x0, uint32 y0, uint32 x1, uint32 y1, uint32 x2, 
 					++x;
 				}
 
-				int xLim = remora_spans[y].x1;
+				int32 xLim = remora_spans[y].x1;
 				if (xLim > REMORA_SCREEN_WIDTH)
 					xLim = REMORA_SCREEN_WIDTH;
 
@@ -1949,7 +1949,7 @@ void DrawGouraudTriangle(uint32 x0, uint32 y0, uint32 x1, uint32 y1, uint32 x2, 
 					uint8 *pixel = (uint8 *)&left;
 					uint8 *add = (uint8 *)&newCol;
 					// Add from RGB components
-					for (int p = 0; p < 3; p++) {
+					for (int32 p = 0; p < 3; p++) {
 						pixel[p] = MIN(255, pixel[p] + add[p]);
 					}
 #else
@@ -2028,7 +2028,7 @@ void DrawGouraudTriangle(uint32 x0, uint32 y0, uint32 x1, uint32 y1, uint32 x2, 
 				if (x < 0)
 					x = 0;
 
-				int xLim = remora_spans[y].x1;
+				int32 xLim = remora_spans[y].x1;
 				if (xLim > REMORA_SCREEN_WIDTH)
 					xLim = REMORA_SCREEN_WIDTH;
 
@@ -2049,7 +2049,7 @@ void DrawGouraudTriangle(uint32 x0, uint32 y0, uint32 x1, uint32 y1, uint32 x2, 
 				uint8 *pixel = (uint8 *)&left;
 				uint8 *add = (uint8 *)&newCol;
 				// Add from RGB components
-				for (int p = 0; p < 3; p++) {
+				for (int32 p = 0; p < 3; p++) {
 					pixel[p] = (pixel[p] + add[p]) >> 1;
 				}
 #else

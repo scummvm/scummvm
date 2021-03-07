@@ -54,9 +54,9 @@ const int32 HMD_FTL3_SIZE = 5;
 const int32 HMD_GTL3_SIZE = 6;
 const int32 TRIANGLE_SIZE = 2;
 
-int decodeHMDpolygon(uint primType, uint pcplatform, uint32 *&pp, uint &code0, uint &r0, uint &g0, uint &b0, uint &code1, uint &r1, uint &g1, uint &b1, uint &code2, uint &r2,
-                     uint &g2, uint &b2, uint &u0, uint &v0, uint &u1, uint &v1, uint &u2, uint &v2, uint &cba, uint &cx, uint &cy, uint &tsb, uint &tp, uint &n0, uint &vert0,
-                     uint &n1, uint &vert1, uint &n2, uint &vert2, uint dump);
+int32 decodeHMDpolygon(uint32 primType, uint32 pcplatform, uint32 *&pp, uint32 &code0, uint32 &r0, uint32 &g0, uint32 &b0, uint32 &code1, uint32 &r1, uint32 &g1, uint32 &b1, uint32 &code2, uint32 &r2,
+                     uint32 &g2, uint32 &b2, uint32 &u0, uint32 &v0, uint32 &u1, uint32 &v1, uint32 &u2, uint32 &v2, uint32 &cba, uint32 &cx, uint32 &cy, uint32 &tsb, uint32 &tp, uint32 &n0, uint32 &vert0,
+                     uint32 &n1, uint32 &vert1, uint32 &n2, uint32 &vert2, uint32 dump);
 
 // Handy structures for decoding polygon information
 
@@ -71,7 +71,7 @@ int decodeHMDpolygon(uint primType, uint pcplatform, uint32 *&pp, uint &code0, u
 //  vp1             | vp0
 //  pad             | vp2
 typedef struct PolyFUS3 {
-	u_char r0, g0, b0, code0;
+	uint8 r0, g0, b0, code0;
 	uint16 vp0, vp1;
 	uint16 vp2, pad;
 } PolyFUS3;
@@ -89,9 +89,9 @@ typedef struct PolyFUS3 {
 //  vp1             | vp0
 //  pad             | vp2
 typedef struct PolyGUS3 {
-	u_char r0, g0, b0, code0;
-	u_char r1, g1, b1, code1;
-	u_char r2, g2, b2, code2;
+	uint8 r0, g0, b0, code0;
+	uint8 r1, g1, b1, code1;
+	uint8 r2, g2, b2, code2;
 	uint16 vp0, vp1;
 	uint16 vp2, pad;
 } PolyGUS3;
@@ -111,12 +111,12 @@ typedef struct PolyGUS3 {
 // --------------------------
 // vp2              | vp1
 typedef struct PolyFTS3 {
-	u_char r0, g0, b0, code0;
-	u_char u0, v0;
+	uint8 r0, g0, b0, code0;
+	uint8 u0, v0;
 	uint16 cba;
-	u_char u1, v1;
+	uint8 u1, v1;
 	uint16 tsb;
-	u_char u2, v2;
+	uint8 u2, v2;
 	uint16 vp0;
 	uint16 vp1, vp2;
 } PolyFTS3;
@@ -138,14 +138,14 @@ typedef struct PolyFTS3 {
 // --------------------------
 //  vp2             | vp2
 typedef struct PolyGTS3 {
-	u_char r0, g0, b0, code0;
-	u_char r1, g1, b1, code1;
-	u_char r2, g2, b2, code2;
-	u_char u0, v0;
+	uint8 r0, g0, b0, code0;
+	uint8 r1, g1, b1, code1;
+	uint8 r2, g2, b2, code2;
+	uint8 u0, v0;
 	uint16 cba;
-	u_char u1, v1;
+	uint8 u1, v1;
 	uint16 tsb;
-	u_char u2, v2;
+	uint8 u2, v2;
 	uint16 vp0;
 	uint16 vp1, vp2;
 } PolyGTS3;
@@ -161,7 +161,7 @@ typedef struct PolyGTS3 {
 //  vp0     | np0
 //  vp2     | vp1
 typedef struct PolyFUL3 {
-	u_char r0, g0, b0, code0;
+	uint8 r0, g0, b0, code0;
 	uint16 np0, vp0;
 	uint16 vp1, vp2;
 } PolyFUL3;
@@ -178,7 +178,7 @@ typedef struct PolyFUL3 {
 //  vp1             | np1
 //  vp2             | np2
 typedef struct PolyGUL3 {
-	u_char r0, g0, b0, code0;
+	uint8 r0, g0, b0, code0;
 	uint16 np0, vp0;
 	uint16 np1, vp1;
 	uint16 np2, vp2;
@@ -198,11 +198,11 @@ typedef struct PolyGUL3 {
 //  vp0             | np0
 //  vp2             | vp1
 typedef struct PolyFTL3 {
-	u_char u0, v0;
+	uint8 u0, v0;
 	uint16 cba;
-	u_char u1, v1;
+	uint8 u1, v1;
 	uint16 tsb;
-	u_char u2, v2;
+	uint8 u2, v2;
 	uint16 pad;
 	uint16 np0, vp0;
 	uint16 vp1, vp2;
@@ -224,11 +224,11 @@ typedef struct PolyFTL3 {
 //  vp2             | np2
 //
 typedef struct PolyGTL3 {
-	u_char u0, v0;
+	uint8 u0, v0;
 	uint16 cba;
-	u_char u1, v1;
+	uint8 u1, v1;
 	uint16 tsb;
-	u_char u2, v2;
+	uint8 u2, v2;
 	uint16 pad;
 	uint16 np0, vp0;
 	uint16 np1, vp1;

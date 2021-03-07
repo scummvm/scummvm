@@ -34,15 +34,15 @@ namespace ICB {
 
 class TextureHandle {
 public:
-	u_char *pRGBA[9]; // width/1 * height/1 -> width/256 * height/256
-	u_int *palette;
-	int w;
-	int h;
-	int bpp;
+	uint8 *pRGBA[9]; // width/1 * height/1 -> width/256 * height/256
+	uint32 *palette;
+	int32 w;
+	int32 h;
+	int32 bpp;
 };
 
-RevTexture *MakeRevTexture(u_int w, u_int h, u_int *palette, u_char *img);
-void Make24palette(u_int *outPal, u_short *inPal);
+RevTexture *MakeRevTexture(uint32 w, uint32 h, uint32 *palette, uint8 *img);
+void Make24palette(uint32 *outPal, uint16 *inPal);
 
 } // End of namespace ICB
 

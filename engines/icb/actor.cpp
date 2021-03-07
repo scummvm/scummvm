@@ -107,7 +107,7 @@ int QuickActorCull(psxCamera *camera, VECTOR *pos, SVECTOR *orient) {
 
 	for (i = 0; i < 8; i++, local++, scrn++) {
 		gte_RotTransPers(local, (int32 *)&(scrn->vx), &p, &flag, &z0);
-		scrn->vz = (short)z0;
+		scrn->vz = (int16)z0;
 	}
 
 	// Find the minimum and maximum screen positions (plus z)

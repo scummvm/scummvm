@@ -75,11 +75,11 @@ void _mega::InitCartridgeCase(SVECTOR *initPos, short initialHeight) {
 void _game_session::UpdateCartridgeCase() {
 	if (M->bulletOn) {
 		// gravity acceleration
-		M->bulletDY = (short)(M->bulletDY + BULLET_G);
+		M->bulletDY = (int16)(M->bulletDY + BULLET_G);
 
 		// movement
-		M->bulletPos.vx = (short)(M->bulletPos.vx + M->bulletDX);
-		M->bulletPos.vy = (short)(M->bulletPos.vy + M->bulletDY);
+		M->bulletPos.vx = (int16)(M->bulletPos.vx + M->bulletDX);
+		M->bulletPos.vy = (int16)(M->bulletPos.vy + M->bulletDY);
 
 		// only reduce colour if >0
 		if (M->bulletColour)
@@ -88,9 +88,9 @@ void _game_session::UpdateCartridgeCase() {
 		if ((M->bulletPos.vy < -M->bulletInitialHeight) && (M->bulletBounced >= 1)) { // we are at ground height and have already bounced enough (1) times, turn us off
 			M->bulletOn = FALSE8;
 		} else if (M->bulletPos.vy < -M->bulletInitialHeight) {     // otherwise if we are at floor height then bounce us back up...
-			M->bulletPos.vy = (short)(-M->bulletInitialHeight); // clip
-			M->bulletDY = (short)(-M->bulletDY / 2);
-			M->bulletDX = (short)(M->bulletDX / 2);
+			M->bulletPos.vy = (int16)(-M->bulletInitialHeight); // clip
+			M->bulletDY = (int16)(-M->bulletDY / 2);
+			M->bulletDX = (int16)(M->bulletDX / 2);
 			M->bulletBounced++;
 
 			// this is where we make the bouncing sound...
@@ -120,32 +120,32 @@ void UpdateTalking(_logic *log, rap_API *rap) {
 	jawBone->boneSpeed = JAW_SPEED;
 
 	// set number of bone from rap file
-	jawBone->boneNumber = (short)(rap->jawBone);
-	neckBone->boneNumber = (short)(rap->neckBone);
+	jawBone->boneNumber = (int16)(rap->jawBone);
+	neckBone->boneNumber = (int16)(rap->neckBone);
 
 	// unless it's -1 (no bone) we want the bone above this...
-	if (neckBone->boneNumber != (short)-1) {
+	if (neckBone->boneNumber != (int16)-1) {
 		neckBone->boneNumber++; // add one to the value
 	}
 
 	// random neck movement (all three planes)
 	if ((g_icb->getRandomSource()->getRandomNumber(100 - 1)) < NECK_PERCENT) {
-		neckBone->boneTarget.vx = (short)((g_icb->getRandomSource()->getRandomNumber(2 * NECK_RANGE - 1)) - NECK_RANGE);
-		neckBone->boneTarget.vz = (short)((g_icb->getRandomSource()->getRandomNumber(2 * NECK_RANGE - 1)) - NECK_RANGE);
-		neckBone->boneTarget.vy = (short)((g_icb->getRandomSource()->getRandomNumber(2 * NECK_RANGE - 1)) - NECK_RANGE);
+		neckBone->boneTarget.vx = (int16)((g_icb->getRandomSource()->getRandomNumber(2 * NECK_RANGE - 1)) - NECK_RANGE);
+		neckBone->boneTarget.vz = (int16)((g_icb->getRandomSource()->getRandomNumber(2 * NECK_RANGE - 1)) - NECK_RANGE);
+		neckBone->boneTarget.vy = (int16)((g_icb->getRandomSource()->getRandomNumber(2 * NECK_RANGE - 1)) - NECK_RANGE);
 	}
 
 	// random jaw movement (just the v moves)
 	if ((g_icb->getRandomSource()->getRandomNumber(100 - 1)) < JAW_PERCENT) {
-		jawBone->boneTarget.vx = (short)(g_icb->getRandomSource()->getRandomNumber(JAW_MAX - 1));
-		jawBone->boneTarget.vz = (short)0;
-		jawBone->boneTarget.vy = (short)0;
+		jawBone->boneTarget.vx = (int16)(g_icb->getRandomSource()->getRandomNumber(JAW_MAX - 1));
+		jawBone->boneTarget.vz = (int16)0;
+		jawBone->boneTarget.vy = (int16)0;
 	}
 }
 
 // player was shot by obj
 // needs some work to  get right
-void SetPlayerShotBone(int obj_id) {
+void SetPlayerShotBone(int32 obj_id) {
 	_logic *player_log = MS->player.log;
 	_logic *obj_log = MS->logic_structs[obj_id];
 
@@ -169,11 +169,11 @@ void SetPlayerShotBone(int obj_id) {
 	else
 		player_pan = MS->player.log->auto_display_pan;
 
-	int direction;
+	int32 direction;
 
 // get direction got shot from...
 
-	direction = (int)(4096.0 * (PXAngleOfVector(-dz, -dx) - player_pan));
+	direction = (int32)(4096.0 * (PXAngleOfVector(-dz, -dx) - player_pan));
 
 	// make sure it is -2048 - 2048
 	if (direction > 2047)
@@ -220,7 +220,7 @@ void SetPlayerShotBone(int obj_id) {
 // update the neck bone
 // should only be called with player as logic
 void UpdatePlayerLook() {
-	static int status = STATUS_NONE;
+	static int32 status = STATUS_NONE;
 
 	_logic *log = MS->player.log;
 	BoneDeformation *b = &(log->voxel_info->lookBone);
@@ -257,7 +257,7 @@ void UpdatePlayerLook() {
 		PXfloat player_pan;
 		PXreal ox, oy, oz, px, py, pz;
 		PXreal dx, dy, dz;
-		int playerEye;
+		int32 playerEye;
 
 		// get postion of players head
 
@@ -302,7 +302,7 @@ void UpdatePlayerLook() {
 		}
 		// is an interact object, check for height.
 		else {
-			int height = STANDARD_MARKER_HEIGHT; // standard prop height
+			int32 height = STANDARD_MARKER_HEIGHT; // standard prop height
 
 			// if look_height set for this marker set
 			if (target->look_height != -1)
@@ -323,8 +323,8 @@ void UpdatePlayerLook() {
 
 // Now find angles for neck bone...
 
-		b->boneTarget.vz = (short)(4096.0 * (PXAngleOfVector(-dz, -dx) - player_pan));
-		b->boneTarget.vx = (short)(4096.0 * PXAngleOfVector((PXfloat)PXsqrt(dx * dx + dz * dz), dy));
+		b->boneTarget.vz = (int16)(4096.0 * (PXAngleOfVector(-dz, -dx) - player_pan));
+		b->boneTarget.vx = (int16)(4096.0 * PXAngleOfVector((PXfloat)PXsqrt(dx * dx + dz * dz), dy));
 
 		// make sure vz is in range -2048 - 2048... this might not be because of subtracting off player_pan
 
@@ -341,7 +341,7 @@ void UpdatePlayerLook() {
 
 		// armed unarmed
 
-		int armed = MS->player.log->mega->Fetch_armed_status();
+		int32 armed = MS->player.log->mega->Fetch_armed_status();
 
 		// from NONE to a status
 
@@ -379,7 +379,7 @@ void UpdatePlayerLook() {
 			LimitShort(b->boneTarget.vx, -256, 256);
 
 			// for turning it looks better if you look up slightly (vx=vx-abs(vz)/2)
-			b->boneTarget.vx = (short)(b->boneTarget.vx - (abs(b->boneTarget.vz) / 3));
+			b->boneTarget.vx = (int16)(b->boneTarget.vx - (abs(b->boneTarget.vz) / 3));
 
 			// we need to set the speed to be STANDARD_LOOK_SPEED
 			b->boneSpeed = STANDARD_LOOK_SPEED;
@@ -395,7 +395,7 @@ void UpdatePlayerLook() {
 			// limit pitch (pan can be any value so gun is always pointing at target...)
 			LimitShort(b->boneTarget.vx, -256, 256);
 
-			b->boneTarget.vy = (short)((b->boneTarget.vx * b->boneTarget.vz) / 1024);
+			b->boneTarget.vy = (int16)((b->boneTarget.vx * b->boneTarget.vz) / 1024);
 
 			// we need to set the speed to be STANDARD_LOOK_SPEED
 			b->boneSpeed = STANDARD_LOOK_SPEED * 2;
@@ -429,11 +429,11 @@ mcodeFunctionReturnCodes speak_simple_look(int32 &result, int32 *params) { retur
 
 // the array of standard look coords
 
-#define LOOK_RIGHT (short)(-384)
-#define LOOK_UP (short)(-196)
+#define LOOK_RIGHT (int16)(-384)
+#define LOOK_UP (int16)(-196)
 
-#define LOOK_LEFT (short)(-LOOK_RIGHT)
-#define LOOK_DOWN (short)(-LOOK_UP)
+#define LOOK_LEFT (int16)(-LOOK_RIGHT)
+#define LOOK_DOWN (int16)(-LOOK_UP)
 
 const short looks[9][3] = {
     {0, 0, 0},                  // ahead
@@ -460,7 +460,7 @@ const short looks[9][3] = {
 
 // simple look
 mcodeFunctionReturnCodes _game_session::fn_simple_look(int32 &, int32 *params) {
-	int l = params[0]; // which direction
+	int32 l = params[0]; // which direction
 
 	if (!logic_structs[cur_id]->mega)
 		Fatal_error("fn_set_neck_vector called by non mega %s", L->GetName());
@@ -480,10 +480,10 @@ mcodeFunctionReturnCodes _game_session::speak_simple_look(int32 &, int32 *params
 	const char *object_name = (const char *)MemoryUtil::resolvePtr(params[0]);
 
 	// object
-	int object_id = objects->Fetch_item_number_by_name(object_name);
+	int32 object_id = objects->Fetch_item_number_by_name(object_name);
 
 	// direction
-	int l = params[1];
+	int32 l = params[1];
 
 	if (!logic_structs[object_id]->mega)
 		Fatal_error("fn_set_neck_vector called by non mega %s", logic_structs[object_id]->GetName());
@@ -506,7 +506,7 @@ mcodeFunctionReturnCodes _game_session::speak_simple_look(int32 &, int32 *params
 
 // set neck bone of current object
 mcodeFunctionReturnCodes _game_session::fn_set_neck_bone(int32 &, int32 *params) {
-	int bone = params[0];
+	int32 bone = params[0];
 
 	if (!logic_structs[cur_id]->mega)
 		Fatal_error("fn_set_neck_bone called by non mega %s", L->GetName());
@@ -529,7 +529,7 @@ mcodeFunctionReturnCodes _game_session::fn_set_neck_bone(int32 &, int32 *params)
 // where NAME is object name...
 //
 mcodeFunctionReturnCodes _game_session::fn_set_neck_vector(int32 &, int32 *params) {
-	int x, y, z, speed;
+	int32 x, y, z, speed;
 
 	x = params[0];
 	y = params[1];
@@ -560,8 +560,8 @@ mcodeFunctionReturnCodes _game_session::fn_set_neck_vector(int32 &, int32 *param
 // 4    - speed
 //
 mcodeFunctionReturnCodes _game_session::speak_set_neck_vector(int32 &, int32 *params) {
-	int object_id;
-	int x, y, z, speed;
+	int32 object_id;
+	int32 x, y, z, speed;
 
 	const char *object_name = (const char *)MemoryUtil::resolvePtr(params[0]);
 
@@ -584,10 +584,10 @@ mcodeFunctionReturnCodes _game_session::speak_set_neck_vector(int32 &, int32 *pa
 
 	Tdebug("bones.txt", "%s: Setting bone <%d,%d,%d> at speed %d", object_name, x, y, z, speed);
 
-	logic_structs[object_id]->voxel_info->scriptedLookBoneTarget.vx = (short)x;
-	logic_structs[object_id]->voxel_info->scriptedLookBoneTarget.vy = (short)y;
-	logic_structs[object_id]->voxel_info->scriptedLookBoneTarget.vz = (short)z;
-	logic_structs[object_id]->voxel_info->lookBone.boneSpeed = (short)speed;
+	logic_structs[object_id]->voxel_info->scriptedLookBoneTarget.vx = (int16)x;
+	logic_structs[object_id]->voxel_info->scriptedLookBoneTarget.vy = (int16)y;
+	logic_structs[object_id]->voxel_info->scriptedLookBoneTarget.vz = (int16)z;
+	logic_structs[object_id]->voxel_info->lookBone.boneSpeed = (int16)speed;
 
 	return IR_CONT;
 }

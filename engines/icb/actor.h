@@ -32,7 +32,7 @@
 
 namespace ICB {
 
-int QuickActorCull(psxCamera *camera, VECTOR *pos, SVECTOR *orient);
+int32 QuickActorCull(psxCamera *camera, VECTOR *pos, SVECTOR *orient);
 
 } // End of namespace ICB
 

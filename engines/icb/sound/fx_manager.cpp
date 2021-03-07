@@ -46,7 +46,7 @@ bool8 noSoundEngine = FALSE8;
 #define NEAREST_INT(X) (X) > 0.0 ? int((X) + 0.5) : int((X)-0.5)
 
 FxManager::FxManager() {
-	for (int id = 0; id < MAX_FX; id++) {
+	for (int32 id = 0; id < MAX_FX; id++) {
 		memset(m_effects[id].name, 0, SAMPLE_NAME_LENGTH);
 		m_effects[id].flags = Effect::EMPTY;
 		m_effects[id].delay = 0;
@@ -70,7 +70,7 @@ bool8 FxManager::Poll() {
 	uint32 frequency;
 
 	// Update all buffers
-	for (int id = 0; id < MAX_FX; id++) {
+	for (int32 id = 0; id < MAX_FX; id++) {
 		switch (m_effects[id].flags) {
 		// If it's playing check it hasn't finished
 		case Effect::PLAYING:
@@ -123,7 +123,7 @@ bool8 FxManager::Poll() {
 	return TRUE8;
 }
 
-int FxManager::Register(const int32 id, const char *name, const int delay, uint32 byteOffsetInCluster) {
+int32 FxManager::Register(const int32 id, const char *name, const int32 delay, uint32 byteOffsetInCluster) {
 	if (noSoundEngine)
 		return 0;
 
@@ -148,7 +148,7 @@ int FxManager::Register(const int32 id, const char *name, const int delay, uint3
 	return id;
 }
 
-void FxManager::Unregister(int id) {
+void FxManager::Unregister(int32 id) {
 	if (noSoundEngine)
 		return;
 
@@ -163,7 +163,7 @@ void FxManager::Unregister(int id) {
 	m_effects[id].flags = Effect::EMPTY;
 }
 
-void FxManager::Play(int id) {
+void FxManager::Play(int32 id) {
 	if (noSoundEngine)
 		return;
 
@@ -173,28 +173,28 @@ void FxManager::Play(int id) {
 	}
 }
 
-void FxManager::SetVolume(int id, int vol) {
+void FxManager::SetVolume(int32 id, int32 vol) {
 	if (noSoundEngine)
 		return;
 
 	m_effects[id].volume = vol;
 }
 
-void FxManager::SetPan(int id, int pan) {
+void FxManager::SetPan(int32 id, int32 pan) {
 	if (noSoundEngine)
 		return;
 
 	m_effects[id].pan = pan;
 }
 
-void FxManager::SetPitch(int id, int pitch) {
+void FxManager::SetPitch(int32 id, int32 pitch) {
 	if (noSoundEngine)
 		return;
 
 	m_effects[id].pitch = pitch;
 }
 
-void FxManager::Stop(int id) {
+void FxManager::Stop(int32 id) {
 	if (noSoundEngine)
 		return;
 
@@ -210,7 +210,7 @@ void FxManager::StopAll() {
 	if (noSoundEngine)
 		return;
 
-	for (int id = 0; id < MAX_FX; id++) {
+	for (int32 id = 0; id < MAX_FX; id++) {
 		if (m_effects[id].flags == Effect::PLAYING) {
 			// Halt playback and reset position
 			g_icb->_mixer->stopHandle(m_effects[id]._handle);
@@ -224,7 +224,7 @@ void FxManager::UnregisterAll() {
 	if (noSoundEngine)
 		return;
 
-	for (int id = 0; id < MAX_FX; id++) {
+	for (int32 id = 0; id < MAX_FX; id++) {
 		Unregister(id);
 
 		delete m_effects[id]._stream;
@@ -232,9 +232,9 @@ void FxManager::UnregisterAll() {
 	}
 }
 
-int FxManager::GetDefaultRate(const char *name, uint32 byteOffsetInCluster) {
-	int rateToFind = 0;
-	int id;
+int32 FxManager::GetDefaultRate(const char *name, uint32 byteOffsetInCluster) {
+	int32 rateToFind = 0;
+	int32 id;
 
 	for (id = 0; id < MAX_FX; id++) {
 		// Do we have this sample loaded in memory
@@ -250,7 +250,7 @@ int FxManager::GetDefaultRate(const char *name, uint32 byteOffsetInCluster) {
 	return rateToFind;
 }
 
-int FxManager::GetDefaultRateByName(const char * /*name*/, uint32 byteOffsetInCluster) {
+int32 FxManager::GetDefaultRateByName(const char * /*name*/, uint32 byteOffsetInCluster) {
 	_wavHeader header;
 
 	// Open the cluster file and seek to the start of the sample
@@ -275,10 +275,10 @@ int FxManager::GetDefaultRateByName(const char * /*name*/, uint32 byteOffsetInCl
 	return (header.samplesPerSec);
 }
 
-bool8 FxManager::Load(int id, const char * /*name*/, uint32 byteOffsetInCluster) {
+bool8 FxManager::Load(int32 id, const char * /*name*/, uint32 byteOffsetInCluster) {
 	_wavHeader header;
 	uint32 length;
-	int lengthInCycles;
+	int32 lengthInCycles;
 
 	// Open the cluster file and seek to the start of the sample
 	const char *clusterName = (const char *)pxVString("g\\samples.clu");

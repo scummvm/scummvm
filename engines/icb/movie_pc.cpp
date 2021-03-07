@@ -117,7 +117,7 @@ bool MovieManager::busy() {
 	return _binkDecoder != nullptr;
 }
 
-int MovieManager::getFrameNumber() {
+int32 MovieManager::getFrameNumber() {
 	if (busy())
 		return _binkDecoder->getCurFrame() + 1;
 
@@ -186,7 +186,7 @@ uint32 MovieManager::drawFrame(uint32 surface_id) {
 	pitch = surface_manager->Get_pitch(surface_id);
 	uint32 height = surface_manager->Get_height(surface_id);
 
-	for (int i = 0; i < surface->h; i++) {
+	for (int32 i = 0; i < surface->h; i++) {
 		if (i + _y >= height) {
 			break;
 		}
@@ -229,11 +229,11 @@ void MovieManager::fadeScreen(uint32 surface_id) {
 	uint32 pitch = surface_manager->Get_pitch(surface_id);
 
 	for (uint32 lines = 0; lines < SCREEN_DEPTH; lines++) {
-		for (int xPos = 0; xPos < SCREEN_WIDTH; xPos++) {
+		for (int32 xPos = 0; xPos < SCREEN_WIDTH; xPos++) {
 			// 32-bit BGRA pixel
 			uint8 *pixel = &surface_address[xPos * 4];
 			// Subtract from RGB components
-			for (int i = 0; i < 3; i++) {
+			for (int32 i = 0; i < 3; i++) {
 				pixel[i] = MAX(0, pixel[i] - subtractive[i]);
 			}
 		}

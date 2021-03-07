@@ -99,7 +99,7 @@ public:
 	void PrintDebugLabel(const char *mess, uint32 c);
 	void PrintTimer(char label, uint32 time, uint32 limit);
 
-	int Get_pitch(uint32 s_id);
+	int32 Get_pitch(uint32 s_id);
 	inline uint32 Get_width(uint32 nSurfaceID) const;
 	inline uint32 Get_height(uint32 nSurfaceID) const;
 	inline uint32 Get_BytesPP(uint32 nSurfaceID) const;

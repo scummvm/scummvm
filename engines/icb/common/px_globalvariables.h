@@ -54,14 +54,14 @@ private:
 	// This is not part of the CpxVariable class - because of memory packing reasons
 	uint8 m_varInit[MAX_global_vars];
 
-	uint m_no_vars;
-	uint m_sorted;
+	uint32 m_no_vars;
+	uint32 m_sorted;
 
 public:
 	CpxGlobalScriptVariables();
 
 	void SortVariables();
-	int32 GetVariable(uint32 hash, const char *name = NULL, int warn = 1); // Get a variable by hash
+	int32 GetVariable(uint32 hash, const char *name = NULL, int32 warn = 1); // Get a variable by hash
 	int32 GetVariable(const char *n) {                                     // Get a variable
 		return GetVariable(EngineHashString(n), n);
 	}
@@ -81,9 +81,9 @@ public:
 		return FindVariable(EngineHashString(n));
 	}
 
-	uint GetNoItems() { return (m_no_vars); }
+	uint32 GetNoItems() { return (m_no_vars); }
 
-	const CpxVariable &operator[](uint n) { return (m_vars[n]); } // Return reference to variable itself (const)
+	const CpxVariable &operator[](uint32 n) { return (m_vars[n]); } // Return reference to variable itself (const)
 };
 
 } // End of namespace ICB

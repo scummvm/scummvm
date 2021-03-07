@@ -520,7 +520,7 @@ void _remora::SetText(const char *pcText, uint8 nAttribute, uint8 nIndent, _pin_
 		m_nCharacterHeight = (uint8)MS->text_bloc->CharHeight(psTextParameters->fontResource, psTextParameters->fontResource_hash);
 
 		// To have ceiling based rounding
-		m_nPictureHeightCorrection = (u_char)(m_nCharacterHeight - 1);
+		m_nPictureHeightCorrection = (uint8)(m_nCharacterHeight - 1);
 	}
 
 	// Check if we are setting the main heading for the screen.

@@ -69,7 +69,7 @@ void Credits() {
 	}
 }
 
-void InitisliaseScrollingText(const char *textFileName, const char *movieFileName, int frameStart) {
+void InitisliaseScrollingText(const char *textFileName, const char *movieFileName, int32 frameStart) {
 	// Movies are streamed from the CD
 	char *_root;
 

@@ -30,12 +30,12 @@
 
 namespace ICB {
 
-void GetProgress(int &val, int &total, int &time);
+void GetProgress(int32 &val, int32 &total, int32 &time);
 
 void StartLoading(const char *name);
 void LoadMsg(const char *name);
 
-void StartInit(const int nObjs);
+void StartInit(const int32 nObjs);
 void InitMsg(const char *obj);
 
 void EndLoading();

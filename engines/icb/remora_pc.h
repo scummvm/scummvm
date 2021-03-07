@@ -140,7 +140,7 @@ const int32 pnIRLinkPoints[REMORA_IR_LINK_POINTS][2] = {{0, 0}, {5, 0}, {10, 0},
 
 const int32 pnIRLinkPointsR[REMORA_IR_LINK_POINTS][2] = {{0, 10}, {5, 10}, {10, 10}, {10, 20}, {15, 20}, {20, 20}, {25, 20}, {30, 20}, {35, 20}};
 
-inline uint32 GetPen(uint8 nPalette, int eCI, uint8 nAlpha = 255) {
+inline uint32 GetPen(uint8 nPalette, int32 eCI, uint8 nAlpha = 255) {
 	return ((uint32)((nAlpha << 24) | (pnRemoraColour[nPalette][eCI][CI_RED] << 16) | (pnRemoraColour[nPalette][eCI][CI_GREEN] << 8) | pnRemoraColour[nPalette][eCI][CI_BLUE]));
 }
 

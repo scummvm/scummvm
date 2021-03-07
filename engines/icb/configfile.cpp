@@ -62,7 +62,7 @@ Common::String ConfigFile::readSetting(const Common::String &section, const Comm
 	return defaultValue;
 }
 
-int ConfigFile::readIntSetting(const Common::String &section, const Common::String &key, int defaultValue) const {
+int32 ConfigFile::readIntSetting(const Common::String &section, const Common::String &key, int32 defaultValue) const {
 	return atoi(readSetting(section, key, Common::String().format("%d", defaultValue)).c_str());
 }
 

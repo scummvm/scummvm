@@ -39,17 +39,17 @@
 
 namespace ICB {
 
-void DrawMuzzleFlashPC(SVECTOR *mfpos, int mfh, int mfw);
-void DrawCartridgeCasePC(SVECTOR *bulletOffset, int col);
+void DrawMuzzleFlashPC(SVECTOR *mfpos, int32 mfh, int32 mfw);
+void DrawCartridgeCasePC(SVECTOR *bulletOffset, int32 col);
 void DrawBreathingPC(Breath *breath); // test function
 
 #if _PSX_ON_PC == 1
 
-extern int minX, maxX, minY, maxY, minZ, maxZ;
+extern int32 minX, maxX, minY, maxY, minZ, maxZ;
 
 #else // #if _PSX_ON_PC == 1
 
-int minX, maxX, minY, maxY, minZ, maxZ;
+int32 minX, maxX, minY, maxY, minZ, maxZ;
 
 #endif // #if _PSX_ON_PC == 1
 
@@ -57,7 +57,7 @@ int minX, maxX, minY, maxY, minZ, maxZ;
 #define NOT_VERY_BRIGHT 3000
 
 // draw the special effects
-int DrawActorSpecialEffectsPC(int mflash, SVECTOR *mfpos, int mfh, int mfw, int bullet, SVECTOR *bulletPos, int bulletCol, Breath *breath, MATRIXPC *local2screen, int brightness,
+int32 DrawActorSpecialEffectsPC(int32 mflash, SVECTOR *mfpos, int32 mfh, int32 mfw, int32 bullet, SVECTOR *bulletPos, int32 bulletCol, Breath *breath, MATRIXPC *local2screen, int32 brightness,
                               SVECTOR *minBBox, SVECTOR *maxBBox) {
 	// Put the correct rot and trans matrix in place
 	// transform model from world space to screen space
@@ -77,8 +77,8 @@ int DrawActorSpecialEffectsPC(int mflash, SVECTOR *mfpos, int mfh, int mfw, int 
 	}
 
 	if (bullet) {
-		int col;
-		int b;
+		int32 col;
+		int32 b;
 
 		// get difference between actual brightness and the min level
 		b = brightness - NOT_VERY_BRIGHT;
@@ -101,13 +101,13 @@ int DrawActorSpecialEffectsPC(int mflash, SVECTOR *mfpos, int mfh, int mfw, int 
 	}
 
 	if ((minBBox) && (maxBBox)) {
-		minBBox->vx = (short)minX;
-		minBBox->vy = (short)minY;
-		minBBox->vz = (short)minZ;
+		minBBox->vx = (int16)minX;
+		minBBox->vy = (int16)minY;
+		minBBox->vz = (int16)minZ;
 
-		maxBBox->vx = (short)maxX;
-		maxBBox->vy = (short)maxY;
-		maxBBox->vz = (short)maxZ;
+		maxBBox->vx = (int16)maxX;
+		maxBBox->vy = (int16)maxY;
+		maxBBox->vz = (int16)maxZ;
 	}
 
 	if ((minX < maxX) && (minY < maxY))
@@ -118,22 +118,22 @@ int DrawActorSpecialEffectsPC(int mflash, SVECTOR *mfpos, int mfh, int mfw, int 
 
 #define CIRCLE_SEGMENTS 12
 
-void DrawBreathParticlePC(short x, short y, int z, uint8 col, short w, short h, int *rands) {
-	int angle = 0;
-	int da = 4096 / CIRCLE_SEGMENTS;
-	int cx, cy;
-	int nx, ny;
-	int i;
+void DrawBreathParticlePC(short x, short y, int32 z, uint8 col, short w, short h, int32 *rands) {
+	int32 angle = 0;
+	int32 da = 4096 / CIRCLE_SEGMENTS;
+	int32 cx, cy;
+	int32 nx, ny;
+	int32 i;
 	TPOLY_G3 *poly;
 
-#define getCircleX(ang) ((int)(PXcos((float)ang / 4096.0f) * w))
-#define getCircleY(ang) ((int)(PXsin((float)ang / 4096.0f) * h))
+#define getCircleX(ang) ((int32)(PXcos((float)ang / 4096.0f) * w))
+#define getCircleY(ang) ((int32)(PXsin((float)ang / 4096.0f) * h))
 
 	// get top point
-	nx = (int)getCircleX(angle);
-	ny = (int)getCircleY(angle);
+	nx = (int32)getCircleX(angle);
+	ny = (int32)getCircleY(angle);
 
-	int randPointer = (x & 7); // 0-7
+	int32 randPointer = (x & 7); // 0-7
 
 	// for every other point
 	for (i = 0; i < CIRCLE_SEGMENTS; i++) {
@@ -142,10 +142,10 @@ void DrawBreathParticlePC(short x, short y, int z, uint8 col, short w, short h, 
 
 		angle = (angle + da) & 4095;
 
-		nx = (int)(getCircleX(angle) + rands[randPointer]);
+		nx = (int32)(getCircleX(angle) + rands[randPointer]);
 		randPointer = (randPointer + 1) & 7;
 
-		ny = (int)(getCircleY(angle) + rands[randPointer]);
+		ny = (int32)(getCircleY(angle) + rands[randPointer]);
 		randPointer = (randPointer + 1) & 7;
 
 		poly = (TPOLY_G3 *)drawpacket;
@@ -153,7 +153,7 @@ void DrawBreathParticlePC(short x, short y, int z, uint8 col, short w, short h, 
 		setTSemiTrans(poly, 1);
 		setTABRMode(poly, 1);
 
-		setXY3(poly, (short)x, (short)y, (short)(cx + x), (short)(cy + y), (short)(nx + x), (short)(ny + y));
+		setXY3(poly, (int16)x, (int16)y, (int16)(cx + x), (int16)(cy + y), (int16)(nx + x), (int16)(ny + y));
 
 		setRGB0(poly, col, col, col);
 		setRGB1(poly, col, col, col);
@@ -169,7 +169,7 @@ void DrawBreathParticlePC(short x, short y, int z, uint8 col, short w, short h, 
 
 // breathing test....
 void DrawBreathingPC(Breath *breath) {
-	int i;
+	int32 i;
 	uint8 col;
 	// to get z value etc
 	SVECTORPC local;
@@ -178,7 +178,7 @@ void DrawBreathingPC(Breath *breath) {
 	int32 p, flag;
 	int32 z0;
 	int32 size;
-	int max;
+	int32 max;
 
 	// set maximum number of polys...
 	if (breath->on == BREATH_SMOKE)
@@ -186,18 +186,18 @@ void DrawBreathingPC(Breath *breath) {
 	else
 		max = MAX_DRAW_BREATH;
 
-	int rands[8];
+	int32 rands[8];
 
 	for (i = 0; i < 8; i++)
 		rands[i] = g_icb->getRandomSource()->getRandomNumber(5 - 1) - 2;
 
 	// draw the polys
 	for (i = 0; i < max; i++) {
-		if ((int)(breath->breathColour[i]) > 0) {
+		if ((int32)(breath->breathColour[i]) > 0) {
 
 			local.vx = breath->position.vx;
-			local.vy = (short)(breath->position.vy + breath->breathY[i]);
-			local.vz = (short)(breath->position.vz + breath->breathZ[i]);
+			local.vy = (int16)(breath->position.vy + breath->breathY[i]);
+			local.vz = (int16)(breath->position.vz + breath->breathZ[i]);
 
 			gte_RotTransPers_pc(&local, &out, &p, &flag, &z0);
 
@@ -206,15 +206,15 @@ void DrawBreathingPC(Breath *breath) {
 
 				short x, y;
 
-				x = (short)(out.vx);
-				y = (short)(out.vy);
+				x = (int16)(out.vx);
+				y = (int16)(out.vy);
 
 				col = (uint8)(2 * breath->breathColour[i]);
 
 				short w, h;
 
-				w = (short)((size * 3) >> 1);
-				h = (short)size;
+				w = (int16)((size * 3) >> 1);
+				h = (int16)size;
 
 				DrawBreathParticlePC(x, y, z0, col, w, h, rands);
 
@@ -226,16 +226,16 @@ void DrawBreathingPC(Breath *breath) {
 					minY = y;
 
 				if (y + w > maxX)
-					maxX = (short)(x + w);
+					maxX = (int16)(x + w);
 
 				if (y + h > maxY)
-					maxY = (short)(y + h);
+					maxY = (int16)(y + h);
 
 				if (z0 < minZ)
-					minZ = (short)z0;
+					minZ = (int16)z0;
 
 				if (z0 > maxZ)
-					maxZ = (short)z0;
+					maxZ = (int16)z0;
 			}
 		}
 	}
@@ -260,7 +260,7 @@ const short bulletOffsets[BULLET_POINTS][3] = {{-BULLET_RADIUS, BULLET_RADIUS, 0
                                                {-BULLET_RADIUS, -BULLET_RADIUS, BULLET_LENGTH}};
 
 // 6 sides for cube....
-const int bulletQuads[BULLET_QUADS][4] = {{1, 0, 2, 3}, {0, 1, 4, 5}, {1, 2, 5, 6}, {2, 3, 6, 7}, {3, 0, 7, 4}, {4, 5, 7, 6}};
+const int32 bulletQuads[BULLET_QUADS][4] = {{1, 0, 2, 3}, {0, 1, 4, 5}, {1, 2, 5, 6}, {2, 3, 6, 7}, {3, 0, 7, 4}, {4, 5, 7, 6}};
 
 #define BULLET_RED_1 255
 #define BULLET_GREEN_1 255
@@ -270,17 +270,17 @@ const int bulletQuads[BULLET_QUADS][4] = {{1, 0, 2, 3}, {0, 1, 4, 5}, {1, 2, 5, 
 #define BULLET_GREEN_2 100
 #define BULLET_BLUE_2 100
 
-void DrawCartridgeCasePC(SVECTOR *bulletOffset, int col) {
+void DrawCartridgeCasePC(SVECTOR *bulletOffset, int32 col) {
 	SVECTORPC sxy[BULLET_POINTS];
 	int32 p, flag, z = 0;
 	SVECTORPC pos;
 
-	int i;
+	int32 i;
 
 	for (i = 0; i < BULLET_POINTS; i++) {
-		pos.vx = (short)(bulletOffset->vx + bulletOffsets[i][0]);
-		pos.vy = (short)(bulletOffset->vy + bulletOffsets[i][1]);
-		pos.vz = (short)(bulletOffset->vz + bulletOffsets[i][2]);
+		pos.vx = (int16)(bulletOffset->vx + bulletOffsets[i][0]);
+		pos.vy = (int16)(bulletOffset->vy + bulletOffsets[i][1]);
+		pos.vz = (int16)(bulletOffset->vz + bulletOffsets[i][2]);
 
 		gte_RotTransPers_pc(&pos, &sxy[i], &p, &flag, &z);
 	}
@@ -362,10 +362,10 @@ void DrawCartridgeCasePC(SVECTOR *bulletOffset, int col) {
 		// z
 
 		if (z < minZ)
-			minZ = (short)z;
+			minZ = (int16)z;
 
 		if (z > maxZ)
-			maxZ = (short)z;
+			maxZ = (int16)z;
 
 		// set colours (remember dark at back and light at front
 
@@ -403,20 +403,20 @@ void DrawCartridgeCasePC(SVECTOR *bulletOffset, int col) {
 #define setRGB1Colour(prim, col) setRGB1(prim, (col >> 16) & 255, (col >> 8) & 255, col & 255)
 #define setRGB2Colour(prim, col) setRGB2(prim, (col >> 16) & 255, (col >> 8) & 255, col & 255)
 
-void DrawMuzzleFlashPC(SVECTOR *mfpos, int mfh, int mfw) {
+void DrawMuzzleFlashPC(SVECTOR *mfpos, int32 mfh, int32 mfw) {
 	// X left of character
 	// Y upwards
 	// Z forwards
-	int h = mfh;
-	int w = mfw;
-	int mz = 20;
+	int32 h = mfh;
+	int32 w = mfw;
+	int32 mz = 20;
 	int32 p, flag, z;
 	SVECTORPC origin;
 	SVECTORPC points[18];
 	SVECTORPC sxy0;
 	int32 z0;
 	SVECTORPC spoints[18];
-	int i;
+	int32 i;
 
 	// The centre point
 	short mfx = mfpos->vx;
@@ -431,111 +431,111 @@ void DrawMuzzleFlashPC(SVECTOR *mfpos, int mfh, int mfw) {
 	i = 0;
 
 	// slightly out... (OUT MORE FOR TRIS)
-	points[i].vx = (short)(mfx + 0);
-	points[i].vy = (short)(mfy + w);
-	points[i].vz = (short)(mfz + 2 * mz);
+	points[i].vx = (int16)(mfx + 0);
+	points[i].vy = (int16)(mfy + w);
+	points[i].vz = (int16)(mfz + 2 * mz);
 
 	// far...
 	i++;
-	points[i].vx = (short)(mfx + 0);
-	points[i].vy = (short)(mfy + 0);
-	points[i].vz = (short)(mfz + 2 * mz);
+	points[i].vx = (int16)(mfx + 0);
+	points[i].vy = (int16)(mfy + 0);
+	points[i].vz = (int16)(mfz + 2 * mz);
 
 	// slightly out... (OUT MORE FOR TRIS)
 	i++;
-	points[i].vx = (short)(mfx + 0);
-	points[i].vy = (short)(mfy - w);
-	points[i].vz = (short)(mfz + 2 * mz);
+	points[i].vx = (int16)(mfx + 0);
+	points[i].vy = (int16)(mfy - w);
+	points[i].vz = (int16)(mfz + 2 * mz);
 
 	// slightly out... (OUT MORE FOR TRIS)
 	i++;
-	points[i].vx = (short)(mfx + w);
-	points[i].vy = (short)(mfy + 0);
-	points[i].vz = (short)(mfz + 2 * mz);
+	points[i].vx = (int16)(mfx + w);
+	points[i].vy = (int16)(mfy + 0);
+	points[i].vz = (int16)(mfz + 2 * mz);
 
 	// far...
 	i++;
-	points[i].vx = (short)(mfx + 0);
-	points[i].vy = (short)(mfy + 0);
-	points[i].vz = (short)(mfz + 2 * mz);
+	points[i].vx = (int16)(mfx + 0);
+	points[i].vy = (int16)(mfy + 0);
+	points[i].vz = (int16)(mfz + 2 * mz);
 
 	// slightly out... (OUT MORE FOR TRIS)
 	i++;
-	points[i].vx = (short)(mfx - w);
-	points[i].vy = (short)(mfy + 0);
-	points[i].vz = (short)(mfz + 2 * mz);
+	points[i].vx = (int16)(mfx - w);
+	points[i].vy = (int16)(mfy + 0);
+	points[i].vz = (int16)(mfz + 2 * mz);
 
 	// The top-left corner
 	i++;
-	points[i].vx = (short)(mfx - w);
-	points[i].vy = (short)(mfy + h);
-	points[i].vz = (short)(mfz + mz);
+	points[i].vx = (int16)(mfx - w);
+	points[i].vy = (int16)(mfy + h);
+	points[i].vz = (int16)(mfz + mz);
 
 	// The top-middle corner
 	i++;
-	points[i].vx = (short)(mfx + 0);
-	points[i].vy = (short)(mfy + h + w);
-	points[i].vz = (short)(mfz + mz);
+	points[i].vx = (int16)(mfx + 0);
+	points[i].vy = (int16)(mfy + h + w);
+	points[i].vz = (int16)(mfz + mz);
 
 	// The top-right corner
 	i++;
-	points[i].vx = (short)(mfx + w);
-	points[i].vy = (short)(mfy + h);
-	points[i].vz = (short)(mfz + mz);
+	points[i].vx = (int16)(mfx + w);
+	points[i].vy = (int16)(mfy + h);
+	points[i].vz = (int16)(mfz + mz);
 
 	// The left-bottom corner
 	i++;
-	points[i].vx = (short)(mfx - h);
-	points[i].vy = (short)(mfy - w);
-	points[i].vz = (short)(mfz + mz);
+	points[i].vx = (int16)(mfx - h);
+	points[i].vy = (int16)(mfy - w);
+	points[i].vz = (int16)(mfz + mz);
 
 	// The left-middle corner
 	i++;
-	points[i].vx = (short)(mfx - h - w);
-	points[i].vy = (short)(mfy + 0);
-	points[i].vz = (short)(mfz + mz);
+	points[i].vx = (int16)(mfx - h - w);
+	points[i].vy = (int16)(mfy + 0);
+	points[i].vz = (int16)(mfz + mz);
 
 	// The left-top corner
 	i++;
-	points[i].vx = (short)(mfx - h);
-	points[i].vy = (short)(mfy + w);
-	points[i].vz = (short)(mfz + mz);
+	points[i].vx = (int16)(mfx - h);
+	points[i].vy = (int16)(mfy + w);
+	points[i].vz = (int16)(mfz + mz);
 
 	// The bottom-left corner
 	i++;
-	points[i].vx = (short)(mfx - w);
-	points[i].vy = (short)(mfy - h);
-	points[i].vz = (short)(mfz + mz);
+	points[i].vx = (int16)(mfx - w);
+	points[i].vy = (int16)(mfy - h);
+	points[i].vz = (int16)(mfz + mz);
 
 	// The bottom-middle corner
 	i++;
-	points[i].vx = (short)(mfx + 0);
-	points[i].vy = (short)(mfy - h - w);
-	points[i].vz = (short)(mfz + mz);
+	points[i].vx = (int16)(mfx + 0);
+	points[i].vy = (int16)(mfy - h - w);
+	points[i].vz = (int16)(mfz + mz);
 
 	// The bottom-right corner
 	i++;
-	points[i].vx = (short)(mfx + w);
-	points[i].vy = (short)(mfy - h);
-	points[i].vz = (short)(mfz + mz);
+	points[i].vx = (int16)(mfx + w);
+	points[i].vy = (int16)(mfy - h);
+	points[i].vz = (int16)(mfz + mz);
 
 	// The right-top corner
 	i++;
-	points[i].vx = (short)(mfx + h);
-	points[i].vy = (short)(mfy + w);
-	points[i].vz = (short)(mfz + mz);
+	points[i].vx = (int16)(mfx + h);
+	points[i].vy = (int16)(mfy + w);
+	points[i].vz = (int16)(mfz + mz);
 
 	// The right-middle corner
 	i++;
-	points[i].vx = (short)(mfx + h + w);
-	points[i].vy = (short)(mfy - 0);
-	points[i].vz = (short)(mfz + mz);
+	points[i].vx = (int16)(mfx + h + w);
+	points[i].vy = (int16)(mfy - 0);
+	points[i].vz = (int16)(mfz + mz);
 
 	// The right-bottom corner
 	i++;
-	points[i].vx = (short)(mfx + h);
-	points[i].vy = (short)(mfy - w);
-	points[i].vz = (short)(mfz + mz);
+	points[i].vx = (int16)(mfx + h);
+	points[i].vy = (int16)(mfy - w);
+	points[i].vz = (int16)(mfz + mz);
 
 	SVECTORPC *ppoints = points;
 	SVECTORPC *pspoints = spoints;
@@ -548,7 +548,7 @@ void DrawMuzzleFlashPC(SVECTOR *mfpos, int mfh, int mfw) {
 	TPOLY_G3 *poly;
 
 	// Draw the four polygons
-	int j = 0;
+	int32 j = 0;
 	for (i = 0; i < 6; i++) {
 		poly = (TPOLY_G3 *)drawpacket;
 
@@ -634,10 +634,10 @@ void DrawMuzzleFlashPC(SVECTOR *mfpos, int mfh, int mfw) {
 		// z
 
 		if (z0 < minZ)
-			minZ = (short)z0;
+			minZ = (int16)z0;
 
 		if (z0 > maxZ)
-			maxZ = (short)z0;
+			maxZ = (int16)z0;
 
 		// draw it
 

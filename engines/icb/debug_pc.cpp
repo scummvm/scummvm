@@ -44,9 +44,9 @@ namespace ICB {
 bool8 zdebug = false;
 
 // For the overloads of new & delete
-extern unsigned int newMemAlloc;
-extern unsigned int newMemUsed;
-extern unsigned int newNptrs;
+extern uint32 newMemAlloc;
+extern uint32 newMemUsed;
+extern uint32 newNptrs;
 
 void Fatal_error(const char *format...) {
 	char buf[256];

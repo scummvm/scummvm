@@ -163,7 +163,7 @@ void MusicManager::StopMusic() {
 	if (m_fading == 0 && IsPlaying()) {
 		// Set the fade active
 		m_fading = 10;
-		m_adjustFadeVol = (int)(GetMusicVolume() / m_fading) + 1;
+		m_adjustFadeVol = (int32)(GetMusicVolume() / m_fading) + 1;
 		if (m_adjustFadeVol == 0)
 			m_adjustFadeVol = 1;
 	}
@@ -194,7 +194,7 @@ void MusicManager::SetMusicPausedStatus(bool8 p) {
 	}
 }
 
-void MusicManager::SetMusicVolume(int volume) {
+void MusicManager::SetMusicVolume(int32 volume) {
 	if (noSoundEngine)
 		return;
 
@@ -211,7 +211,7 @@ bool8 MusicManager::IsPlaying() {
 	return FALSE8;
 }
 
-void MusicManager::SetVolume(int volume) {
+void MusicManager::SetVolume(int32 volume) {
 	// Store and set correct volume
 	m_musicVol = volume;
 
@@ -221,8 +221,8 @@ void MusicManager::SetVolume(int volume) {
 	}
 }
 
-void MusicManager::AdjustVolume(int amount) {
-	int musicVol = m_musicVol;
+void MusicManager::AdjustVolume(int32 amount) {
+	int32 musicVol = m_musicVol;
 	musicVol += amount;
 	if (musicVol > 127)
 		musicVol = 127;

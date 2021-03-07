@@ -43,16 +43,16 @@ typedef struct Effect {
 	enum FxFlags { EMPTY, DELAYED, QUEUED, PLAYING, READY };
 
 	char name[SAMPLE_NAME_LENGTH]; // Sample name
-	int delay;                     // The delay until playing
-	int looped;                    // Loop this effect
+	int32 delay;                     // The delay until playing
+	int32 looped;                    // Loop this effect
 
-	int pitch;  // Sampling rate (Hz)
-	int pan;    // Pan (DirectSound scale)
-	int volume; // Volume (DirectSound scale)
+	int32 pitch;  // Sampling rate (Hz)
+	int32 pan;    // Pan (DirectSound scale)
+	int32 volume; // Volume (DirectSound scale)
 
-	int rate;      // Original buffer sample rate
+	int32 rate;      // Original buffer sample rate
 	FxFlags flags; // Status of sample
-	int length;    // Length of sample in millisecs at base rate...
+	int32 length;    // Length of sample in millisecs at base rate...
 	Audio::SeekableAudioStream *_stream;
 	Audio::SoundHandle _handle;
 } Effect;
@@ -67,41 +67,41 @@ public:
 
 public:
 	// Register wavs and unregister (high level load and unload)
-	int Register(const int32 id, const char *name, const int delay = 0, uint32 byteOffsetInCluster = 0);
-	void Unregister(int id);
+	int32 Register(const int32 id, const char *name, const int32 delay = 0, uint32 byteOffsetInCluster = 0);
+	void Unregister(int32 id);
 	void UnregisterAll();
 
 	// Called on a timer 10 times a second
 	bool8 Poll();
 
 	// Pretty important really
-	void Play(int id);
-	void Stop(int id);
+	void Play(int32 id);
+	void Stop(int32 id);
 
 	void StopAll(void);
 
 	// All realtime tweakers
-	void SetVolume(int id, int vol);
-	void SetPitch(int id, int pitch);
+	void SetVolume(int32 id, int32 vol);
+	void SetPitch(int32 id, int32 pitch);
 
 	// A DirectSound buffer can support panning OR 3D position but not both
 	// A parameter for Register() lets you decide which to support
-	void SetPan(int id, int pan);
+	void SetPan(int32 id, int32 pan);
 
 	// Helpers and debug shat
-	void SetLooping(int id, int loop = 1) { m_effects[id].looped = loop; }
-	bool8 IsPlaying(int id) { return (m_effects[id].flags == Effect::PLAYING) ? TRUE8 : FALSE8; }
+	void SetLooping(int32 id, int32 loop = 1) { m_effects[id].looped = loop; }
+	bool8 IsPlaying(int32 id) { return (m_effects[id].flags == Effect::PLAYING) ? TRUE8 : FALSE8; }
 
-	int GetDefaultRate(const char *name, uint32 byteOffsetInCluster = 0);
+	int32 GetDefaultRate(const char *name, uint32 byteOffsetInCluster = 0);
 
-	int GetDefaultLength(int id) { return m_effects[id].length; }
+	int32 GetDefaultLength(int32 id) { return m_effects[id].length; }
 
 private:
-	bool8 Load(int id, const char *name, uint32 byteOffsetInCluster = 0);
+	bool8 Load(int32 id, const char *name, uint32 byteOffsetInCluster = 0);
 
 	// Can get original sampling rate by channel or examine a wav file
-	int GetDefaultRateByID(int id) { return m_effects[id].rate; }
-	int GetDefaultRateByName(const char *name, uint32 byteOffsetInCluster = 0);
+	int32 GetDefaultRateByID(int32 id) { return m_effects[id].rate; }
+	int32 GetDefaultRateByName(const char *name, uint32 byteOffsetInCluster = 0);
 };
 
 } // End of namespace ICB

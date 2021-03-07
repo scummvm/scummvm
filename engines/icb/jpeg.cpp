@@ -49,11 +49,11 @@ namespace ICB {
 // A.3.6 Figure A.6
 // These values are the inverse of those shown in the
 // JPEG standard.
-const unsigned int JpegZigZagInputOrderCodes[JpegSampleSize] = {0,  1,  8,  16, 9,  2,  3,  10, 17, 24, 32, 25, 18, 11, 4,  5,  12, 19, 26, 33, 40, 48,
+const uint32 JpegZigZagInputOrderCodes[JpegSampleSize] = {0,  1,  8,  16, 9,  2,  3,  10, 17, 24, 32, 25, 18, 11, 4,  5,  12, 19, 26, 33, 40, 48,
                                                                 41, 34, 27, 20, 13, 6,  7,  14, 21, 28, 35, 42, 49, 56, 57, 50, 43, 36, 29, 22, 15, 23,
                                                                 30, 37, 44, 51, 58, 59, 52, 45, 38, 31, 39, 46, 53, 60, 61, 54, 47, 55, 62, 63};
 
-const unsigned int JpegZigZagOutputOrderCodes[JpegSampleSize] = {0,  1,  5,  6,  14, 15, 27, 28, 2,  4,  7,  13, 16, 26, 29, 42, 3,  8,  12, 17, 25, 30,
+const uint32 JpegZigZagOutputOrderCodes[JpegSampleSize] = {0,  1,  5,  6,  14, 15, 27, 28, 2,  4,  7,  13, 16, 26, 29, 42, 3,  8,  12, 17, 25, 30,
                                                                  41, 43, 9,  11, 18, 24, 31, 40, 44, 53, 10, 19, 23, 32, 39, 45, 52, 54, 20, 21, 33, 38,
                                                                  46, 51, 55, 60, 21, 34, 37, 47, 50, 56, 59, 61, 35, 36, 48, 49, 57, 58, 62, 63};
 
@@ -84,7 +84,7 @@ void JpegDecoder::Initialize() {
 
 	quantization_tables = new JpegDecoderQuantizationTable[MaxQuantizationTables];
 	components = new JpegDecoderComponent[JpegMaxComponentsPerFrame];
-	component_indices = new unsigned int[JpegMaxComponentsPerFrame];
+	component_indices = new uint32[JpegMaxComponentsPerFrame];
 
 	scan_components = new JpegDecoderComponent *[JpegMaxComponentsPerScan];
 
@@ -144,14 +144,14 @@ void JpegDecoder::ReadMarker() {
 void JpegDecoder::ReadHuffmanTable() {
 	// Section B.2.4.2
 	uint16 length = ReadWord();
-	unsigned int remaining = length - sizeof(length);
+	uint32 remaining = length - sizeof(length);
 	while (remaining > 0) {
 		uint8 data = ReadByte();
 		--remaining;
 
 		// Tc in standard 0=>DC, 1=>AC
-		unsigned int tableclass = data >> 4;
-		unsigned int id = data & 0x0F; // Th in standard
+		uint32 tableclass = data >> 4;
+		uint32 id = data & 0x0F; // Th in standard
 
 		JpegHuffmanDecoder *table;
 		if (tableclass != 0)
@@ -171,13 +171,13 @@ void JpegDecoder::ReadQuantization() {
 
 	// Maintain a counter for the number of bytes remaining to be read in
 	// the quantization table.
-	int remaining = length - sizeof(length);
+	uint32 remaining = length - sizeof(length);
 
 	while (remaining > 0) {
 		data = ReadByte();
 		--remaining;
-		unsigned int precision = data >> 4; // Pq in standard
-		unsigned int index = data & 0x0F;   // Tq in standard
+		uint32 precision = data >> 4; // Pq in standard
+		uint32 index = data & 0x0F;   // Tq in standard
 
 		switch (precision) {
 		case 1:
@@ -196,8 +196,8 @@ void JpegDecoder::ReadQuantization() {
 void JpegDecoder::ReadStartOfFrame(uint8 type) {
 	// Section B.2.2
 	// Read in the image dimensions
-	/* unsigned int length = */ ReadWord();
-	/* unsigned int dataprecision = */ ReadByte(); // P in standard
+	/* uint32 length = */ ReadWord();
+	/* uint32 dataprecision = */ ReadByte(); // P in standard
 
 	component_count = ReadByte(); // Nf in standard
 
@@ -206,9 +206,9 @@ void JpegDecoder::ReadStartOfFrame(uint8 type) {
 	// Rread the component descriptions
 	max_horizontal_frequency = 0;
 	max_vertical_frequency = 0;
-	for (unsigned int ii = 0; ii < component_count; ++ii) {
-		unsigned int ID = ReadByte(); // Ci in standard
-		unsigned int qtable;
+	for (uint32 ii = 0; ii < component_count; ++ii) {
+		uint32 ID = ReadByte(); // Ci in standard
+		uint32 qtable;
 
 		component_indices[ii] = ID;
 
@@ -236,7 +236,7 @@ void JpegDecoder::ReadStartOfFrame(uint8 type) {
 }
 
 void JpegDecoder::ReadStartOfScan() {
-	unsigned int ii;
+	uint32 ii;
 
 	// Section B.2.3
 	/*uint16 length = */ ReadWord();
@@ -251,18 +251,18 @@ void JpegDecoder::ReadStartOfScan() {
 		// If the horizontal frequency is zero then the component was not
 		// defined in the SOFx marker.
 		uint8 rb = ReadByte();
-		unsigned int actable = rb & 0x0F;
-		unsigned int dctable = rb >> 4;
+		uint32 actable = rb & 0x0F;
+		uint32 dctable = rb >> 4;
 
 		scan_components[ii]->SetHuffmanTables(dc_tables[dctable], ac_tables[actable]);
 	}
 
-	/* unsigned int spectralselectionstart =*/ReadByte(); // Ss in standard
-	/* unsigned int spectralselectionend = */ ReadByte(); // Se in standard
+	/* uint32 spectralselectionstart =*/ReadByte(); // Ss in standard
+	/* uint32 spectralselectionend = */ ReadByte(); // Se in standard
 
 	/* uint8 ssa = */ ReadByte();
-	//  unsigned int successiveapproximationhigh = ssa >> 4;  // Ah in standard
-	//  unsigned int successiveapproximationlow = ssa & 0x0F; // Al in standard
+	//  uint32 successiveapproximationhigh = ssa >> 4;  // Ah in standard
+	//  uint32 successiveapproximationlow = ssa & 0x0F; // Al in standard
 
 	for (ii = 0; ii < scan_component_count; ++ii) {
 		scan_components[ii]->AllocateComponentBuffers(*this);
@@ -283,19 +283,19 @@ void JpegDecoder::CalculateMcuDimensions() {
 void JpegDecoder::ReadSequentialNonInterleavedScan() {
 	ResetDcDifferences();
 
-	for (unsigned int row = 0; row < scan_components[0]->noninterleaved_rows; ++row) {
-		for (unsigned int col = 0; col < scan_components[0]->noninterleaved_cols; ++col) {
+	for (uint32 row = 0; row < scan_components[0]->noninterleaved_rows; ++row) {
+		for (uint32 col = 0; col < scan_components[0]->noninterleaved_cols; ++col) {
 			scan_components[0]->DecodeSequential(*this, row, col);
 		}
 	}
 }
 
 void JpegDecoder::ResetDcDifferences() {
-	for (unsigned int ii = 0; ii < scan_component_count; ++ii)
+	for (uint32 ii = 0; ii < scan_component_count; ++ii)
 		scan_components[ii]->last_dc_value = 0;
 }
 
-void JpegDecoder::ReadImage(unsigned char *inputData, uint32 surface_Id) {
+void JpegDecoder::ReadImage(uint8 *inputData, uint32 surface_Id) {
 	uint8 data;
 
 	input_buffer = inputData;
@@ -338,12 +338,12 @@ void JpegDecoder::UpdateImage() {
 }
 
 void JpegDecoder::FreeAllocatedResources() {
-	for (unsigned int ii = 0; ii < component_count; ++ii) {
+	for (uint32 ii = 0; ii < component_count; ++ii) {
 		components[component_indices[ii]].FreeComponentBuffers();
 	}
 }
 
-int JpegDecoder::cGetBit() {
+int32 JpegDecoder::cGetBit() {
 	// Section F.2.2.5 Figure F.18.
 	// CNT is called bitposition
 	// B is called bitdata
@@ -370,15 +370,15 @@ int JpegDecoder::cGetBit() {
 	return result;
 }
 
-int JpegDecoder::NextBit() {
-	int result = cGetBit();
+int32 JpegDecoder::NextBit() {
+	int32 result = cGetBit();
 	return result;
 }
 
 // Extracts the next "count" bits from the input stream.
-int JpegDecoder::Receive(unsigned int count) {
-	int result = 0;
-	for (unsigned int ii = 0; ii < count; ++ii) {
+int32 JpegDecoder::Receive(uint32 count) {
+	int32 result = 0;
+	for (uint32 ii = 0; ii < count; ++ii) {
 		result <<= 1;
 		result |= cGetBit();
 	}
@@ -387,15 +387,15 @@ int JpegDecoder::Receive(unsigned int count) {
 
 JpegHuffmanDecoder::JpegHuffmanDecoder() {}
 
-unsigned int JpegHuffmanDecoder::ReadTable(JpegDecoder &decoder) {
+uint32 JpegHuffmanDecoder::ReadTable(JpegDecoder &decoder) {
 	// We declare this here because MSVC++ does not handle for
 	// statement scoping rules correctly.
-	unsigned int jj;
+	uint32 jj;
 
 	// B.2.4.2
 	uint8 huffbits[JpegMaxHuffmanCodeLength];
 
-	unsigned int count = 0; // Count of codes in the Huffman table.
+	uint32 count = 0; // Count of codes in the Huffman table.
 
 	// Read the 16 1-byte length counts and count the number of
 	// codes in the table.
@@ -420,14 +420,14 @@ unsigned int JpegHuffmanDecoder::ReadTable(JpegDecoder &decoder) {
 void JpegHuffmanDecoder::MakeTable(uint8 huffbits[JpegMaxHuffmanCodeLength]) {
 	// We have to declare the loop indices here because MSVC++ does not
 	// handle scoping in for statements correctly.
-	unsigned int ii, jj, kk;
+	uint32 ii, jj, kk;
 
 	// These values in these arrays correspond to the elements of the
 	// "values" array. The Huffman code for values [N] is huffcodes [N]
 	// and the length of the code is huffsizes [N].
 
 	uint16 huffcodes[JpegMaxNumberOfHuffmanCodes];
-	unsigned int huffsizes[JpegMaxNumberOfHuffmanCodes + 1];
+	uint32 huffsizes[JpegMaxNumberOfHuffmanCodes + 1];
 
 	// Section C.2 Figure C.1
 	// Convert the array "huff_bits" containing the count of codes
@@ -444,7 +444,7 @@ void JpegHuffmanDecoder::MakeTable(uint8 huffbits[JpegMaxHuffmanCodeLength]) {
 	// Section C.2 Figure C.2
 	// Calculate the Huffman code for each Huffman value.
 	uint16 code = 0;
-	unsigned int si;
+	uint32 si;
 	for (kk = 0, si = huffsizes[0]; huffsizes[kk] != 0; ++si, code <<= 1) {
 		for (; huffsizes[kk] == si; ++code, ++kk) {
 			huffcodes[kk] = code;
@@ -477,14 +477,14 @@ void JpegHuffmanDecoder::MakeTable(uint8 huffbits[JpegMaxHuffmanCodeLength]) {
 	}
 }
 
-int JpegHuffmanDecoder::Decode(JpegDecoder &decoder) {
+int32 JpegHuffmanDecoder::Decode(JpegDecoder &decoder) {
 	// This function decodes the next byte in the input stream using this
 	// Huffman table.
 
 	// Section A F.2.2.3 Figure F.16
 
 	uint16 code = (uint16)decoder.NextBit();
-	int codelength; // Called I in the standard.
+	int32 codelength; // Called I in the standard.
 
 	// Here we are taking advantage of the fact that 1 bits are used as
 	// a prefix to the longer codes.
@@ -497,11 +497,11 @@ int JpegHuffmanDecoder::Decode(JpegDecoder &decoder) {
 	// mincode [codelength]..maxcode [codelength].
 
 	// This code is the (offset + 1)'th code of (codelength + 1);
-	int offset = code - mincode[codelength];
+	int32 offset = code - mincode[codelength];
 
 	// valptr [codelength] is the first code of length (codelength + 1)
 	// so now we can look up the value for the Huffman code in the table.
-	int index = valptr[codelength] + offset;
+	int32 index = valptr[codelength] + offset;
 	return huff_values[index];
 }
 
@@ -581,9 +581,9 @@ JpegDecoderQuantizationTable::JpegDecoderQuantizationTable() { memset(data_value
 //    decoder:  The JPEG decoder that owns the table and the JPEG stream.
 //    precision: The quantization table precision
 //
-void JpegDecoderQuantizationTable::ReadTable(JpegDecoder &decoder, unsigned int) {
+void JpegDecoderQuantizationTable::ReadTable(JpegDecoder &decoder, uint32) {
 	// Read 8-bit values.
-	for (unsigned int ii = 0; ii < JpegSampleSize; ++ii) {
+	for (uint32 ii = 0; ii < JpegSampleSize; ++ii) {
 		data_values[ii] = decoder.ReadByte();
 	}
 
@@ -600,16 +600,16 @@ void JpegDecoderQuantizationTable::ReadTable(JpegDecoder &decoder, unsigned int)
 //    merge that constant with the quantization table valus.
 //
 void JpegDecoderQuantizationTable::BuildScaledTables() {
-	unsigned int ii; // Overcome MSVC++ Wierdness
+	uint32 ii; // Overcome MSVC++ Wierdness
 
 	for (ii = 0; ii < JpegSampleWidth; ++ii) {
-		for (int jj = 0; jj < JpegSampleWidth; ++jj) {
+		for (int32 jj = 0; jj < JpegSampleWidth; ++jj) {
 			float_scaling[ii][jj] = data_values[JpegZigZagOutputOrderCodes[ii * 8 + jj]] * floatscaling[ii][jj];
 		}
 	}
 
 	for (ii = 0; ii < JpegSampleWidth; ++ii) {
-		for (int jj = 0; jj < JpegSampleWidth; ++jj) {
+		for (int32 jj = 0; jj < JpegSampleWidth; ++jj) {
 			integer_scaling[ii][jj] = (int32)((1 << QuantizationIntegerScale) * floatscaling[ii][jj] * data_values[JpegZigZagOutputOrderCodes[ii * 8 + jj]]);
 		}
 	}
@@ -635,7 +635,7 @@ void JpegDecoderQuantizationTable::BuildScaledTables() {
 //
 JpegDecoderDataUnit::IDctFunction JpegDecoderDataUnit::idct_function = &JpegDecoderDataUnit::IntegerInverseDCT;
 
-const int IntegerScale = 6;
+const int32 IntegerScale = 6;
 
 const int32 IC4 = (int32)((1 << IntegerScale) * cos(M_PI * 4.0 / 16.0));
 const int32 ISEC2 = (int32)((1 << (IntegerScale - 1)) / cos(M_PI * 2.0 / 16.0));
@@ -672,7 +672,7 @@ const double FSEC6 = 0.5 / cos(M_PI * 6.0 / 16.0);
 //
 JpegDecoderDataUnit &JpegDecoderDataUnit::FloatInverseDCT(JpegDecoderCoefficientBlock data, const JpegDecoderQuantizationTable &qt) {
 	double tmp[JpegSampleWidth][JpegSampleWidth];
-	unsigned int ii;
+	uint32 ii;
 	for (ii = 0; ii < JpegSampleWidth; ++ii) {
 		double a0 = data[ii][0] * qt.float_scaling[ii][0];
 		double a1 = data[ii][4] * qt.float_scaling[ii][4];
@@ -868,7 +868,7 @@ JpegDecoderDataUnit &JpegDecoderDataUnit::FloatInverseDCT(JpegDecoderCoefficient
 //    qt: The prescaled quantization table.
 //
 JpegDecoderDataUnit &JpegDecoderDataUnit::IntegerInverseDCT(JpegDecoderCoefficientBlock data, const JpegDecoderQuantizationTable &qt) {
-	unsigned int ii;
+	uint32 ii;
 	int32 tmp[JpegSampleWidth][JpegSampleWidth];
 
 	for (ii = 0; ii < JpegSampleWidth; ++ii) {
@@ -1007,11 +1007,11 @@ JpegDecoderDataUnit &JpegDecoderDataUnit::IntegerInverseDCT(JpegDecoderCoefficie
 //    vv: The bit value
 //    tt: The length of the bit value
 //
-static inline int Extend(int vv, int t) {
+static inline int32 Extend(int32 vv, int32 t) {
 	// Extend function defined in Section F.2.2.1 Figure F.12
 	// The tt'th bit of vv is the sign bit. One is for
 	// positive values and zero is for negative values.
-	int vt = 1 << (t - 1);
+	int32 vt = 1 << (t - 1);
 	if (vv < vt) {
 		vt = (-1 << t) + 1;
 		return vv + vt;
@@ -1126,25 +1126,25 @@ void JpegDecoderComponent::SetHuffmanTables(JpegHuffmanDecoder &dc, JpegHuffmanD
 //    decoder: The decoder that owns this component
 //    mcurow, mcucol:  The row and column for this data unit.
 //
-void JpegDecoderComponent::DecodeSequential(JpegDecoder &decoder, unsigned int mcurow, unsigned int mcucol) {
+void JpegDecoderComponent::DecodeSequential(JpegDecoder &decoder, uint32 mcurow, uint32 mcucol) {
 	JpegDecoderCoefficientBlock data;
 	memset(&data, 0, sizeof(data));
 
 	// Decode the DC differce value.
 	// Section F.2.2.1
-	unsigned int count; // called T in F.2.2.1
+	uint32 count; // called T in F.2.2.1
 	count = dc_table->Decode(decoder);
-	int bits = decoder.Receive(count);
-	int diff = Extend(bits, count);
+	uint32 bits = decoder.Receive(count);
+	uint32 diff = Extend(bits, count);
 
 	// Create the DC value from the difference and the previous DC value.
-	int dc = diff + last_dc_value;
+	int32 dc = diff + last_dc_value;
 	last_dc_value = dc;
 	data[0][0] = (int16)dc;
 
 	// Decode the AC coefficients.
 	// Section F.2.2.2 Figure F.13
-	for (unsigned int kk = 1; kk < JpegSampleSize; ++kk) {
+	for (uint32 kk = 1; kk < JpegSampleSize; ++kk) {
 		uint16 rs = (uint16)ac_table->Decode(decoder);
 		uint16 ssss = (uint16)(rs & 0xF);
 		uint16 rrrr = (uint16)(rs >> 0x4);
@@ -1166,8 +1166,8 @@ void JpegDecoderComponent::DecodeSequential(JpegDecoder &decoder, unsigned int m
 
 			// Receive and extend the additional bits.
 			// Section F2.2.2 Figure F.14
-			int bit = decoder.Receive(ssss);
-			int value = Extend(bit, ssss);
+			int32 bit = decoder.Receive(ssss);
+			int32 value = Extend(bit, ssss);
 			(&data[0][0])[JpegZigZagInputOrderCodes[kk]] = (int16)value;
 		}
 	}
@@ -1184,7 +1184,7 @@ void JpegDecoderComponent::DecodeSequential(JpegDecoder &decoder, unsigned int m
 //    stretch the data during the copy.
 //
 void JpegDecoderComponent::Upsample() {
-	unsigned int imagesize = du_rows * v_sampling * du_cols * h_sampling * JpegSampleSize;
+	uint32 imagesize = du_rows * v_sampling * du_cols * h_sampling * JpegSampleSize;
 	if (imagesize == 0)
 		return; // No data for this component yet.
 
@@ -1193,12 +1193,12 @@ void JpegDecoderComponent::Upsample() {
 
 	// Simple case where component does not need to be upsampled.
 	if (v_sampling == 1 && h_sampling == 1) {
-		unsigned output = 0;
-		unsigned int startdu = 0;
-		for (unsigned int durow = 0; durow < du_rows; ++durow) {
-			for (unsigned int ii = 0; ii < JpegSampleWidth; ++ii) {
-				unsigned int du = startdu;
-				for (unsigned int ducol = 0; ducol < du_cols; ++ducol) {
+		uint32 output = 0;
+		uint32 startdu = 0;
+		for (uint32 durow = 0; durow < du_rows; ++durow) {
+			for (uint32 ii = 0; ii < JpegSampleWidth; ++ii) {
+				uint32 du = startdu;
+				for (uint32 ducol = 0; ducol < du_cols; ++ducol) {
 					upsample_data[output] = data_units[du].values[ii][0];
 					++output;
 					upsample_data[output] = data_units[du].values[ii][1];
@@ -1221,14 +1221,14 @@ void JpegDecoderComponent::Upsample() {
 			startdu += du_cols;
 		}
 	} else {
-		unsigned output = 0;
-		unsigned int startdu = 0;
-		for (unsigned int durow = 0; durow < du_rows; ++durow) {
-			for (unsigned int ii = 0; ii < JpegSampleWidth; ++ii) {
-				for (unsigned int vv = 0; vv < v_sampling; ++vv) {
-					unsigned int du = startdu;
-					for (unsigned int ducol = 0; ducol < du_cols; ++ducol) {
-						unsigned int jj;
+		uint32 output = 0;
+		uint32 startdu = 0;
+		for (uint32 durow = 0; durow < du_rows; ++durow) {
+			for (uint32 ii = 0; ii < JpegSampleWidth; ++ii) {
+				for (uint32 vv = 0; vv < v_sampling; ++vv) {
+					uint32 du = startdu;
+					for (uint32 ducol = 0; ducol < du_cols; ++ducol) {
+						uint32 jj;
 						for (jj = 0; jj < h_sampling; ++jj) {
 							upsample_data[output] = data_units[du].values[ii][0];
 							++output;
@@ -1288,13 +1288,13 @@ void JpegDecoderComponent::RGBConvert(JpegDecoderComponent &c1, JpegDecoderCompo
 	uint32 pitch = surface_manager->Get_pitch(surfaceId);
 	uint32 bpp = surface_manager->Get_BytesPP(surfaceId);
 
-	unsigned int rowstart = 0;
-	for (unsigned int ii = 480; ii; ii--) {
-		unsigned int offset = rowstart;
+	uint32 rowstart = 0;
+	for (uint32 ii = 480; ii; ii--) {
+		uint32 offset = rowstart;
 		uint8 *outrow = pDst8;
 		pDst8 += pitch;
 
-		for (unsigned int jj = 0; jj < (uint32)(bpp * 640); jj += bpp) {
+		for (uint32 jj = 0; jj < (uint32)(bpp * 640); jj += bpp) {
 			YCbCr_To_RGB(c1.upsample_data[offset], c2.upsample_data[offset], c3.upsample_data[offset], outrow[jj + 2], outrow[jj + 1], outrow[jj + 0]);
 			++offset;
 		}

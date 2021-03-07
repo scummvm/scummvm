@@ -41,7 +41,7 @@ CpxGlobalScriptVariables g_globalScriptVariables;
 // Information for the script program stack
 #define STACK_SIZE 10  // The size of the stack
 int32 stack[STACK_SIZE]; // The current stack
-int stackPointer = 0;  // Position within stack
+int32 stackPointer = 0;  // Position within stack
 
 #define _SCRIPT_ENGINE_ERROR(mess) Fatal_error("Script engine error\nObject %s\nScript %s\nMessage %s", object->GetName(), scriptSourceName, mess)
 
@@ -119,7 +119,7 @@ extern mcodeFunctionReturnCodes fn_start_player_interaction(int32 &, int32 *);
 
 scriptInterpreterReturnCodes RunScript(const char *&scriptData, // A pointer to the script data that can be modified
                                        c_game_object *object,   // A pointer to the object that owns this object
-                                       int *engineReturnValue2,
+                                       int32 *engineReturnValue2,
                                        const char *scriptSourceName) { // A value to return to the game engine
 	// Run a script
 	ScriptTrace("Run script");
@@ -135,14 +135,14 @@ scriptInterpreterReturnCodes RunScript(const char *&scriptData, // A pointer to 
 	const char *actualScript = scriptData;
 
 	// Some variables to hold parameters and values
-	int parameter1, parameter2, value;
+	int32 parameter1, parameter2, value;
 	bool8 isInExpression = FALSE8;
 
 	// Reset the fn routine control return value
-	int fn_routines_control_return_flag = (-1);
+	int32 fn_routines_control_return_flag = (-1);
 
 	// Variable to prevent infinite loops
-	uint infiniteLoopCounter = 0;
+	uint32 infiniteLoopCounter = 0;
 
 	while (*actualScript) {
 		// Quick check for infinite loops
@@ -152,7 +152,7 @@ scriptInterpreterReturnCodes RunScript(const char *&scriptData, // A pointer to 
 			Fatal_error("Internal script loop in object %s", object->GetName());
 		}
 
-		int command = *(actualScript++);
+		int32 command = *(actualScript++);
 
 		// so that call_mcode and call_mcode_expr can share code...
 		isInExpression = FALSE8;
@@ -181,7 +181,7 @@ scriptInterpreterReturnCodes RunScript(const char *&scriptData, // A pointer to 
 
 		case CP_PUSH_ADDRESS_LOCAL_VAR32: {
 			Fetch8(value); // Get the local variable number
-			if (!((value >= 0) && (value < (int)object->GetNoLvars())))
+			if (!((value >= 0) && (value < (int32)object->GetNoLvars())))
 				_SCRIPT_ENGINE_ERROR("Local variable out of range");
 			ScriptTrace("Push address of local integer variable %d = %d", value, &object->GetIntegerVariable(value));
 			PushOnStack(MemoryUtil::encodePtr((uint8 *)&object->GetIntegerVariable(value)));
@@ -329,7 +329,7 @@ scriptInterpreterReturnCodes RunScript(const char *&scriptData, // A pointer to 
 			// Get the script index
 			Fetch32(parameter1);
 
-			if (!((parameter1 >= 0) && (parameter1 < (int)object->GetNoScripts())))
+			if (!((parameter1 >= 0) && (parameter1 < (int32)object->GetNoScripts())))
 				_SCRIPT_ENGINE_ERROR("Virtual script call out of range");
 
 			// Get the type
@@ -365,7 +365,7 @@ scriptInterpreterReturnCodes RunScript(const char *&scriptData, // A pointer to 
 		case CP_PUSH_LOCAL_VAR32: //  16: Push a local variable on to the stack
 			Fetch8(value);    // Get the local variable number
 
-			if (!((value >= 0) && (value < (int)object->GetNoLvars())))
+			if (!((value >= 0) && (value < (int32)object->GetNoLvars())))
 				_SCRIPT_ENGINE_ERROR("Unknown variable??");
 
 			ScriptTrace("Push local integer variable %d = %d", value, object->GetIntegerVariable(value));
@@ -375,7 +375,7 @@ scriptInterpreterReturnCodes RunScript(const char *&scriptData, // A pointer to 
 		case CP_POP_LOCAL_VAR32: //  17              // Pop a local variable from the stack
 			Fetch8(value);   // Get the local variable number
 
-			if (!(value >= 0) && (value < (int)object->GetNoLvars()))
+			if (!(value >= 0) && (value < (int32)object->GetNoLvars()))
 				_SCRIPT_ENGINE_ERROR("Unknown variable??");
 
 			ScriptTrace("Pop local variable %d", value);
@@ -385,7 +385,7 @@ scriptInterpreterReturnCodes RunScript(const char *&scriptData, // A pointer to 
 		case CP_PUSH_LOCAL_VARSTRING: //  18: Push a local string variable on to the stack
 			Fetch8(value);        // Get the local variable number
 
-			if (!((value >= 0) && (value < (int)object->GetNoLvars())))
+			if (!((value >= 0) && (value < (int32)object->GetNoLvars())))
 				_SCRIPT_ENGINE_ERROR("Unknown variable (string)??");
 
 			ScriptTrace("Push local string variable %d = \"%s\"", value, object->GetStringVariable(value));

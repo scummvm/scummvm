@@ -498,8 +498,8 @@ uint32 sparkle_bmp[6 * 32 * 32] = {
     0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000};
 
 void ShakeRects(LRECT &sourceRect, LRECT &destRect) {
-	int xShift = GetShakeX();
-	int yShift = GetShakeY();
+	int32 xShift = GetShakeX();
+	int32 yShift = GetShakeY();
 
 	if (yShift > 0) {
 		destRect.top += yShift;
@@ -518,16 +518,16 @@ void ShakeRects(LRECT &sourceRect, LRECT &destRect) {
 	}
 }
 
-int ShakePropRects(LRECT &rect, LRECT &source) {
-	int xShift = GetShakeX();
-	int yShift = GetShakeY();
+int32 ShakePropRects(LRECT &rect, LRECT &source) {
+	int32 xShift = GetShakeX();
+	int32 yShift = GetShakeY();
 
 	rect.top += yShift;
 	rect.bottom += yShift;
 	rect.left += xShift;
 	rect.right += xShift;
 
-	int check = 0;
+	int32 check = 0;
 	if (rect.top < 0) {
 		source.top -= rect.top;
 		rect.top = 0;
@@ -569,7 +569,7 @@ _set::_set() {
 	m_setOk = 0;
 	m_TotalPropSurfaces = 0;
 	m_props = 0;
-	memset(m_propSurfaces, 0x00, sizeof(int) * MAX_PROP_STATES);
+	memset(m_propSurfaces, 0x00, sizeof(int32) * MAX_PROP_STATES);
 	InitWeather(WEATHER_NONE, 0, 0, 0, 0, 0);
 }
 
@@ -579,7 +579,7 @@ void _set::ReInit() {
 	// Free all the prop surface that have been created.
 	if (m_setOk) {
 		// Remove all the old surface
-		for (int s = 0; s < m_TotalPropSurfaces; s++) {
+		for (int32 s = 0; s < m_TotalPropSurfaces; s++) {
 			if (m_propSurfaces[s])
 				surface_manager->Kill_surface(m_propSurfaces[s]);
 		}
@@ -631,7 +631,7 @@ void _set::Reset() {
 		strcpy(set_name, "None");
 
 		// Remove all the old surface
-		for (int s = 0; s < m_TotalPropSurfaces; s++) {
+		for (int32 s = 0; s < m_TotalPropSurfaces; s++) {
 			if (m_propSurfaces[s])
 				surface_manager->Kill_surface(m_propSurfaces[s]);
 		}
@@ -730,7 +730,7 @@ void _set::Load_props() {
 	if (m_TotalPropSurfaces != 0)
 		Fatal_error("Set::Load_props called but there are still props using surfaces !");
 	// Reset the surface array
-	memset(m_propSurfaces, 0x00, sizeof(int) * MAX_PROP_STATES);
+	memset(m_propSurfaces, 0x00, sizeof(int32) * MAX_PROP_STATES);
 
 	// Set up the props
 	delete m_props;
@@ -1104,15 +1104,15 @@ void _set::Set_draw(bool8 helper) {
 			// Is this prop selected
 			if ((tileQty != 0) && MS->IsPropSelected(const_cast<char *>(pProp->GetName()))) {
 				// Get the rgb highlite multipliers ready for mmx ing
-				u_char multiplier[8] = {0, 0, 0, 0, 0, 0, 0, 0};
+				uint8 multiplier[8] = {0, 0, 0, 0, 0, 0, 0, 0};
 				MS->GetSelectedPropRGB(multiplier[0], multiplier[2], multiplier[4]);
 				// Hilite the palette
 #if 1
 				// 32-bit BGR pixel
 				uint8 *pixel = (uint8 *)&hilite_palette;
-				for (int c = 0; c < 256; c++) {
+				for (int32 c = 0; c < 256; c++) {
 					// Multiply from RGB components
-					for (int i = 0; i < 3; i++) {
+					for (int32 i = 0; i < 3; i++) {
 						pixel[i] = (pixel[i] * multiplier[i * 2]) >> 7;
 					}
 					pixel += 4;
@@ -1164,7 +1164,7 @@ void _set::Set_draw(bool8 helper) {
 				uint8 *pRle = pState->GetHRFgRlePtr();
 				uint32 *ad = (uint32 *)safe_ad;
 
-				for (int y = pState->GetHRFgSurfaceHeight(); y; y--) {
+				for (int32 y = pState->GetHRFgSurfaceHeight(); y; y--) {
 					uint32 count = pState->GetHRFgSurfaceWidth();
 					uint32 *rowAd = ad;
 					while (count) {
@@ -1209,15 +1209,15 @@ void _set::Set_draw(bool8 helper) {
 			// Is this prop selected
 			if ((tileQty != 0) && MS->IsPropSelected(const_cast<char *>(pProp->GetName()))) {
 				// Get the rgb highlite multipliers ready for mmx ing
-				u_char multiplier[8] = {0, 0, 0, 0, 0, 0, 0, 0};
+				uint8 multiplier[8] = {0, 0, 0, 0, 0, 0, 0, 0};
 				MS->GetSelectedPropRGB(multiplier[0], multiplier[2], multiplier[4]);
 				// Hilite the palette
 #if 1
 				// 32-bit BGR pixel
 				uint8 *pixel = (uint8 *)&hilite_palette;
-				for (int c = 0; c < 256; c++) {
+				for (int32 c = 0; c < 256; c++) {
 					// Multiply from RGB components
-					for (int i = 0; i < 3; i++) {
+					for (int32 i = 0; i < 3; i++) {
 						pixel[i] = (pixel[i] * multiplier[i * 2]) >> 7;
 					}
 					pixel += 4;
@@ -1269,7 +1269,7 @@ void _set::Set_draw(bool8 helper) {
 				uint8 *pRle = pState->GetLRFgRlePtr();
 				uint32 *ad = (uint32 *)safe_ad;
 
-				for (int y = pState->GetLRFgSurfaceHeight(); y; y--) {
+				for (int32 y = pState->GetLRFgSurfaceHeight(); y; y--) {
 					uint32 count = pState->GetLRFgSurfaceWidth();
 					uint32 *rowAd = ad;
 					while (count) {
@@ -1314,7 +1314,7 @@ void _set::Set_draw(bool8 helper) {
 	DrawSparkles();
 }
 
-void _set::InitWeather(int type, int particleQty, int lightning, int windX, int windY, int windZ) {
+void _set::InitWeather(int32 type, int32 particleQty, int32 lightning, int32 windX, int32 windY, int32 windZ) {
 	m_wType = type;
 	m_wLightningTimer = 0;
 	m_wWindX = windX;
@@ -1326,7 +1326,7 @@ void _set::InitWeather(int type, int particleQty, int lightning, int windX, int 
 	if (m_wParticleQty > WEATHER_MAX_PARTICLES)
 		m_wParticleQty = WEATHER_MAX_PARTICLES;
 
-	for (int i = WEATHER_MAX_PARTICLES; i >= 0; i--) {
+	for (int32 i = WEATHER_MAX_PARTICLES; i >= 0; i--) {
 		m_wParticleX[i] = (int16)((g_icb->getRandomSource()->getRandomNumber(WEATHER_SCREEN_WIDTH - 1)) - WEATHER_HALF_SCREEN_WIDTH);
 		m_wParticleY[i] = (int16)((g_icb->getRandomSource()->getRandomNumber(WEATHER_SCREEN_HEIGHT - 1)) - WEATHER_HALF_SCREEN_HEIGHT);
 		m_wParticleZ[i] = (int16)((g_icb->getRandomSource()->getRandomNumber(WEATHER_SCREEN_DEPTH - 1)) - WEATHER_HALF_SCREEN_DEPTH);
@@ -1344,7 +1344,7 @@ void _set::InitWeather(int type, int particleQty, int lightning, int windX, int 
 }
 
 void _set::DrawSparkles() {
-	static unsigned char step = 0;
+	static uint8 step = 0;
 	static uint32 animation[] = {1024 * 0, 1024 * 1, 1024 * 2, 1024 * 3, 1024 * 4, 1024 * 5, 1024 * 2, 1024 * 3, 1024 * 4, 1024 * 5, 1024 * 1, 1024 * 0};
 
 	step++;
@@ -1354,7 +1354,7 @@ void _set::DrawSparkles() {
 	if (step > 11)
 		return;
 
-	for (uint i = 0; i < MS->total_objects; i++) {
+	for (uint32 i = 0; i < MS->total_objects; i++) {
 		_logic *L = MS->logic_structs[i];
 
 		// if object visable to camera
@@ -1381,7 +1381,7 @@ void _set::DrawSparkles() {
 				uint32 *pPixels = (uint32 *)surface_manager->Lock_surface(working_buffer_id);
 				uint32 pitch = surface_manager->Get_pitch(working_buffer_id);
 
-				uint32 offset = ((pitch >> 2) * (225 - (int)screen.y)) + (int)screen.x + 305;
+				uint32 offset = ((pitch >> 2) * (225 - (int32)screen.y)) + (int32)screen.x + 305;
 
 				uint32 *colours = &sparkle_bmp[animation[step]];
 
@@ -1391,11 +1391,11 @@ void _set::DrawSparkles() {
 				uint8 *pixels = (uint8 *)&sPtr;
 				uint8 *colors = (uint8 *)&colours;
 				for (uint32 lines = 0; lines < 32; lines++) {
-					for (int xPos = 0; xPos < 32; xPos++) {
+					for (int32 xPos = 0; xPos < 32; xPos++) {
 						// 32-bit BGRA pixel
 						uint8 *pixel = &pixels[xPos * 4];
 						// Add BGRA components
-						for (int p = 0; p < 4; p++) {
+						for (int32 p = 0; p < 4; p++) {
 							pixel[p] = MIN(255, pixel[p] + colors[p]);
 						}
 					}
@@ -1442,12 +1442,12 @@ void _set::DrawWeather() {
 
 	float myCos = camera.view.m[1][1] / -4096.0f;
 	float mySin = camera.view.m[2][1] / -4096.0f;
-	int d = (camera.focLen) / 4;
-	int a = 512;
+	int32 d = (camera.focLen) / 4;
+	int32 a = 512;
 
 	uint32 rands[WEATHER_MAX_PARTICLES / 32];
 
-	int i;
+	int32 i;
 
 	// initialise random bits (for movement)
 	for (i = 0; i < (WEATHER_MAX_PARTICLES / 32); i++)
@@ -1482,21 +1482,21 @@ void _set::DrawWeather() {
 			int16 sx, sy, ss, sx2, sy2, ss2; // screen x, screen y, screen size,
 
 			// rotate around camera ypan
-			int pX = m_wParticleX[i];
-			int pY = m_wParticleY[i];
-			int pZ1 = m_wParticleZ[i];
-			int pX2 = pX - m_wParticleDX[i] - m_wWindX;
-			int pY2 = pY - m_wParticleDY[i] - m_wWindY;
-			int pZ2 = pZ1 - m_wParticleDZ[i] - m_wWindZ;
+			int32 pX = m_wParticleX[i];
+			int32 pY = m_wParticleY[i];
+			int32 pZ1 = m_wParticleZ[i];
+			int32 pX2 = pX - m_wParticleDX[i] - m_wWindX;
+			int32 pY2 = pY - m_wParticleDY[i] - m_wWindY;
+			int32 pZ2 = pZ1 - m_wParticleDZ[i] - m_wWindZ;
 
 			ss = (int16)(myCos * pZ1 + mySin * pY);
 			ss2 = (int16)(myCos * pZ2 + mySin * pY2);
 
 			if ((ss + a) != 0 && (ss2 + a) != 0) {
 				sx = (int16)(WEATHER_HALF_SCREEN_WIDTH + (pX * d) / (ss + a)); //  + (((128+256+ss)*pX)>>9));
-				sy = (int16)(WEATHER_HALF_SCREEN_HEIGHT + ((int)(myCos * pY - mySin * pZ1) * d) / (ss + a));
+				sy = (int16)(WEATHER_HALF_SCREEN_HEIGHT + ((int32)(myCos * pY - mySin * pZ1) * d) / (ss + a));
 				sx2 = (int16)(WEATHER_HALF_SCREEN_WIDTH + (pX2 * d) / (ss2 + a)); //  + (((128+256+ss)*pX)>>9));
-				sy2 = (int16)(WEATHER_HALF_SCREEN_HEIGHT + ((int)(myCos * pY2 - mySin * pZ2) * d) / (ss2 + a));
+				sy2 = (int16)(WEATHER_HALF_SCREEN_HEIGHT + ((int32)(myCos * pY2 - mySin * pZ2) * d) / (ss2 + a));
 
 				// setup semi trans (possibly) polygon...
 				// and draw
@@ -1527,9 +1527,9 @@ void _set::DrawWeather() {
 		uint32 pitch = surface_manager->Get_pitch(working_buffer_id) >> 2;
 
 		// wind acceleration for this frame
-		int dx = (g_icb->getRandomSource()->getRandomNumber(3 - 1)) - 1; // -1 - 1
-		int dy = (g_icb->getRandomSource()->getRandomNumber(4 - 1)) - 1; // -1 - 2
-		int dz = (g_icb->getRandomSource()->getRandomNumber(3 - 1)) - 1; // -1 - 1
+		int32 dx = (g_icb->getRandomSource()->getRandomNumber(3 - 1)) - 1; // -1 - 1
+		int32 dy = (g_icb->getRandomSource()->getRandomNumber(4 - 1)) - 1; // -1 - 2
+		int32 dz = (g_icb->getRandomSource()->getRandomNumber(3 - 1)) - 1; // -1 - 1
 
 		for (i = m_wParticleQty; i--;) {
 			// adjust velocities (it is a random test as to weather any particular m_wParticle picks up this change
@@ -1584,15 +1584,15 @@ void _set::DrawWeather() {
 
 			int32 sx, sy, ss; // screen x, screen y, screen size,
 
-			int pX = m_wParticleX[i];
-			int pY = m_wParticleY[i];
-			int pZ1 = m_wParticleZ[i];
+			int32 pX = m_wParticleX[i];
+			int32 pY = m_wParticleY[i];
+			int32 pZ1 = m_wParticleZ[i];
 
 			ss = (int16)(myCos * pZ1 + mySin * pY);
 
 			if ((ss + a) != 0) {
 				sx = (int16)(WEATHER_HALF_SCREEN_WIDTH + (pX * d) / (ss + a)); //  + (((128+256+ss)*pX)>>9));
-				sy = (int16)(WEATHER_HALF_SCREEN_HEIGHT + ((int)(myCos * pY - mySin * pZ1) * d) / (ss + a));
+				sy = (int16)(WEATHER_HALF_SCREEN_HEIGHT + ((int32)(myCos * pY - mySin * pZ1) * d) / (ss + a));
 
 				uint8 tCol = (uint8)(40 + (ss >> 1));
 				uint32 offset = (pitch * sy) + sx;
@@ -1787,9 +1787,9 @@ void _set::HackMakeCamera() {
 	m_camera.view.m[2][1] = (int16)(-matrix[2][1] * 4 * ONE);
 	m_camera.view.m[2][2] = (int16)(-matrix[2][2] * 4 * ONE);
 
-	int TR2vx = (int)(-(*(oldCameraData + 1)) * m_camera.view.m[0][0] - (*(oldCameraData + 2)) * m_camera.view.m[0][1] - (*(oldCameraData + 3)) * m_camera.view.m[0][2]);
-	int TR2vy = (int)(-(*(oldCameraData + 1)) * m_camera.view.m[1][0] - (*(oldCameraData + 2)) * m_camera.view.m[1][1] - (*(oldCameraData + 3)) * m_camera.view.m[1][2]);
-	int TR2vz = (int)(-(*(oldCameraData + 1)) * m_camera.view.m[2][0] - (*(oldCameraData + 2)) * m_camera.view.m[2][1] - (*(oldCameraData + 3)) * m_camera.view.m[2][2]);
+	int32 TR2vx = (int32)(-(*(oldCameraData + 1)) * m_camera.view.m[0][0] - (*(oldCameraData + 2)) * m_camera.view.m[0][1] - (*(oldCameraData + 3)) * m_camera.view.m[0][2]);
+	int32 TR2vy = (int32)(-(*(oldCameraData + 1)) * m_camera.view.m[1][0] - (*(oldCameraData + 2)) * m_camera.view.m[1][1] - (*(oldCameraData + 3)) * m_camera.view.m[1][2]);
+	int32 TR2vz = (int32)(-(*(oldCameraData + 1)) * m_camera.view.m[2][0] - (*(oldCameraData + 2)) * m_camera.view.m[2][1] - (*(oldCameraData + 3)) * m_camera.view.m[2][2]);
 
 	// Multiply the translation by rotation matrix
 	// to get into how PSX does the projection
@@ -1803,21 +1803,21 @@ void _set::HackMakeCamera() {
 	gte_SetRotMatrix(&m_camera.view);
 	gte_SetTransMatrix(&m_camera.view);
 
-	int stheta = m_camera.view.m[0][2];
-	int ctheta = m_camera.view.m[0][0];
+	int32 stheta = m_camera.view.m[0][2];
+	int32 ctheta = m_camera.view.m[0][0];
 
 	float fpan;
-	int scrnPan;
+	int32 scrnPan;
 	if (ctheta != 0) {
 		fpan = (float)atan((float)stheta / (float)ctheta) / (2.0f * (float)M_PI);
-		scrnPan = (int)(fpan * ONE);
+		scrnPan = (int32)(fpan * ONE);
 		// second & third quadrant (90-270 degrees) : pan += 180 (pan is -ve(90-180), (180-270)+ve)
 		if (ctheta < 0)
 			scrnPan += ONE / 2;
 	} else {
 		// ctheta = 0
 		fpan = 1.0f / 4.0f;
-		scrnPan = (int)(fpan * ONE);
+		scrnPan = (int32)(fpan * ONE);
 		// -180 degrees
 		if (stheta <= 0)
 			scrnPan += (ONE / 2);

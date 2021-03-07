@@ -193,7 +193,7 @@ public:
 	void UpdateOnOffCamera();
 
 	inline PXcamera &GetCamera();
-	inline int SetOK();
+	inline int32 SetOK();
 	inline void SetReset();
 
 	void Stage_draw();
@@ -207,11 +207,11 @@ public:
 	void Show_lit_unlit_diagnostics();
 
 	int32 GetSelectedPropId();
-	void GetSelectedPropRGB(u_char &r, u_char &g, u_char &b);
+	void GetSelectedPropRGB(uint8 &r, uint8 &g, uint8 &b);
 	bool8 IsPropSelected(const char *propName);
 
 	int32 GetSelectedMegaId();
-	void GetSelectedMegaRGB(u_char &r, u_char &g, u_char &b);
+	void GetSelectedMegaRGB(uint8 &r, uint8 &g, uint8 &b);
 
 	uint32 Fetch_number_of_props();
 	uint32 Fetch_number_of_objects();
@@ -773,7 +773,7 @@ public:
 	PXfloat normalAngle;
 	__barrier_result Check_barrier_bump_and_bounce(PXreal newx, PXreal newy, PXreal newz, PXreal oldx, PXreal oldy, PXreal oldz, bool8 player);
 
-	__barrier_result Check_this_barrier(_route_barrier *bar, PXreal newx, PXreal newz, PXreal oldx, PXreal oldz, PXreal bar_close, int *ignore);
+	__barrier_result Check_this_barrier(_route_barrier *bar, PXreal newx, PXreal newz, PXreal oldx, PXreal oldz, PXreal bar_close, int32 *ignore);
 
 	void Prepare_megas_route_barriers(bool8 player);
 	void Prepare_megas_abarriers(uint32 slice_number, uint32 parent_number);
@@ -919,8 +919,8 @@ public:
 	_vox_image sync_set[4];
 
 	void Async_helper();
-	int async_counter;
-	int async_off;
+	int32 async_counter;
+	int32 async_off;
 
 	uint32 num_stairs;
 	_stair stairs[MAX_stairs];
@@ -1202,7 +1202,7 @@ inline uint32 _game_session::Fetch_object_integer_variable(const char *pcName, c
 
 inline PXcamera &_game_session::GetCamera() { return set.GetCamera(); }
 
-inline int _game_session::SetOK() { return set.OK(); }
+inline int32 _game_session::SetOK() { return set.OK(); }
 
 inline void _game_session::SetReset() { set.Reset(); }
 

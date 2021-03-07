@@ -38,8 +38,8 @@ extern uint32 useLampBounce;
 extern int32 lampWidth[3];
 extern int32 lampBounce[3];
 
-int prepareLightsGlobalPC(MATRIXPC *lightDirects);
-int prepareLightsPC(VECTOR *pos, PSXrgb *ambient, PSXLampList *lamplist, PSXShadeList *shadelist, MATRIXPC *lDirects, LampInfo *linfo);
+int32 prepareLightsGlobalPC(MATRIXPC *lightDirects);
+int32 prepareLightsPC(VECTOR *pos, PSXrgb *ambient, PSXLampList *lamplist, PSXShadeList *shadelist, MATRIXPC *lDirects, LampInfo *linfo);
 
 } // End of namespace ICB
 

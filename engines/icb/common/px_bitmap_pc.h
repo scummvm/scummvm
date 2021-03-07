@@ -45,7 +45,7 @@ namespace ICB {
 typedef struct {
 	uint32 x, y;           // X and Y position of sprite.
 	uint32 width, height;  // Width and height of the sprite in pixels.
-	unsigned char data[1]; // Sprite data.
+	uint8 data[1]; // Sprite data.
 
 } _pxPCSprite;
 
@@ -64,10 +64,10 @@ public:
 	uint32 Fetch_number_of_items() const { return num_sprites; }
 	inline _pxPCSprite *Fetch_item_by_number(uint32 nNumber);
 
-	unsigned char *Fetch_palette_pointer() { return &palette[0]; }
+	uint8 *Fetch_palette_pointer() { return &palette[0]; }
 
 private:
-	unsigned char palette[4 * 256]; // RGB but padded with 0 to 32-bits.
+	uint8 palette[4 * 256]; // RGB but padded with 0 to 32-bits.
 	uint32 num_sprites;             // Number of sprites in this file.
 	uint32 sprite_offsets[1];       // Offsets to sprite data for each sprite.
 
@@ -80,7 +80,7 @@ inline _pxPCSprite *_pxPCBitmap::Fetch_item_by_number(uint32 nNumber) {
 	assert(nNumber < num_sprites);
 
 	// Return the pointer.
-	return ((_pxPCSprite *)(((unsigned char *)this) + sprite_offsets[nNumber]));
+	return ((_pxPCSprite *)(((uint8 *)this) + sprite_offsets[nNumber]));
 }
 
 } // End of namespace ICB

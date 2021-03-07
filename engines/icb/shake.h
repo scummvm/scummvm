@@ -30,9 +30,9 @@ namespace ICB {
 #define GET_SHAKE_RANGE_MAX_X 3
 #define GET_SHAKE_RANGE_MAX_Y 3
 
-int GetShakeX();
-int GetShakeY();
-int GetNextShakeX();
-int GetNextShakeY();
+int32 GetShakeX();
+int32 GetShakeY();
+int32 GetNextShakeX();
+int32 GetNextShakeY();
 
 } // End of namespace ICB

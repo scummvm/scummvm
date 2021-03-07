@@ -125,7 +125,7 @@ bool8 Setup_new_mission(const char *mission_name, const char *session_name) {
 	HashFile(session_name, h_session_name);
 
 	// convert hashes to lower-case for FS operations
-	for (int i = 0; i < 8; i++) {
+	for (int32 i = 0; i < 8; i++) {
 		h_mission_name[i] = (char)tolower(h_mission_name[i]);
 		h_session_name[i] = (char)tolower(h_session_name[i]);
 	}
@@ -290,10 +290,10 @@ _mission::_mission()
 	memset(tiny_mission_name, '\0', TINY_NAME_LEN);
 	memset(tiny_session_name, '\0', TINY_NAME_LEN);
 	memset(h_mission_name, '\0', 8);
-	for (int i = 0; i < MAX_sessions; i++) {
+	for (int32 i = 0; i < MAX_sessions; i++) {
 		memset(micro_sessions[i].session__name, '\0', ENGINE_STRING_LEN);
 		micro_sessions[i].number_of_micro_objects = 0;
-		for (int j = 0; j < MAX_session_objects; j++) {
+		for (int32 j = 0; j < MAX_session_objects; j++) {
 			memset(micro_sessions[i].micro_objects[j].lvar_value, 0, MAX_lvars * sizeof(int32));
 			micro_sessions[i].micro_objects[j].total_lvars = 0;
 			micro_sessions[i].micro_objects[j].status_flag = OB_STATUS_NOT_HELD;
@@ -458,11 +458,11 @@ void _mission::Save_micro_session() {
 			if (!object->IsVariableString(k)) {
 				Tdebug("micro_session.txt", "   saving lvar %d %s value %d", k, object->GetScriptVariableName(k), object->GetIntegerVariable(k));
 
-				int value = object->GetIntegerVariable(k);
+				int32 value = object->GetIntegerVariable(k);
 
 				// Using 14-bits to pack lvar's
-				int packMin = -(1 << 13);
-				int packMax = +((1 << 13) - 1);
+				int32 packMin = -(1 << 13);
+				int32 packMax = +((1 << 13) - 1);
 
 				if ((value < packMin) || (value > packMax)) {
 					// Don't do a message box for a CD build of the game!
@@ -472,8 +472,8 @@ void _mission::Save_micro_session() {
 				}
 
 				// Using 16-bits as a maximum to store lvar's
-				int lvarMin = -(1 << 15);
-				int lvarMax = +((1 << 15) - 1);
+				int32 lvarMin = -(1 << 15);
+				int32 lvarMax = +((1 << 15) - 1);
 
 				if ((value < lvarMin) || (value > lvarMax)) {
 					Fatal_error("Object '%s' lvar %d '%s' is too big to save %d range is %d->%d", object->GetName(), k, object->GetScriptVariableName(k), value,
@@ -595,7 +595,7 @@ void _mission::Save_game_position(const char *filename, const char *slot_label, 
 	Save_micro_session();
 
 	// Check the lvar's to see if we can pack them or not
-	uint nlvars = 0;
+	uint32 nlvars = 0;
 	for (j = 0; j < number_sessions_saved; j++) {
 		for (i = 0; i < micro_sessions[j].number_of_micro_objects; i++) {
 			nlvars = (uint8)micro_sessions[j].micro_objects[i].total_lvars;
@@ -604,8 +604,8 @@ void _mission::Save_game_position(const char *filename, const char *slot_label, 
 				lval = (int16)micro_sessions[j].micro_objects[i].lvar_value[k];
 
 				// Using 14-bits to pack lvar's
-				int packMin = -(1 << 13);
-				int packMax = +((1 << 13) - 1);
+				int32 packMin = -(1 << 13);
+				int32 packMax = +((1 << 13) - 1);
 
 				if ((lval < packMin) || (lval > packMax)) {
 					Message_box("Jake says : packData = 0");
@@ -752,7 +752,7 @@ void _mission::Save_game_position(const char *filename, const char *slot_label, 
 		dret = dpack.open(DataPacker::WRITE, packMode);
 
 		if (dret != DataPacker::OK) {
-			Real_Fatal_error("DataPacker::Open failed dret %d", (int)dret);
+			Real_Fatal_error("DataPacker::Open failed dret %d", (int32)dret);
 		}
 		for (i = 0; i < micro_sessions[j].number_of_micro_objects; i++) {
 			nlvars = micro_sessions[j].micro_objects[i].total_lvars;
@@ -762,13 +762,13 @@ void _mission::Save_game_position(const char *filename, const char *slot_label, 
 
 				dret = dpack.put(lval, stream);
 				if (dret != DataPacker::OK) {
-					Real_Fatal_error("DataPacker::Put failed dret %d", (int)dret);
+					Real_Fatal_error("DataPacker::Put failed dret %d", (int32)dret);
 				}
 			}
 		}
 		dret = dpack.close(stream);
 		if (dret != DataPacker::OK) {
-			Real_Fatal_error("DataPacker::Close failed dret %d", (int)dret);
+			Real_Fatal_error("DataPacker::Close failed dret %d", (int32)dret);
 		}
 	}
 
@@ -925,7 +925,7 @@ void _mission::Restore_micro_session_from_save_game(Common::SeekableReadStream *
 		dret = dpack.open(DataPacker::READ, packMode);
 
 		if (dret != DataPacker::OK) {
-			Real_Fatal_error("DataPacker::Open failed dret %d", (int)dret);
+			Real_Fatal_error("DataPacker::Open failed dret %d", (int32)dret);
 		}
 
 		for (i = 0; i < micro_sessions[j].number_of_micro_objects; i++) {
@@ -933,7 +933,7 @@ void _mission::Restore_micro_session_from_save_game(Common::SeekableReadStream *
 			for (k = 0; k < total_lvars; k++) {
 				dret = dpack.Get(avalue, stream);
 				if (dret != DataPacker::OK) {
-					Real_Fatal_error("DataPacker::Get failed dret %d", (int)dret);
+					Real_Fatal_error("DataPacker::Get failed dret %d", (int32)dret);
 				}
 				micro_sessions[j].micro_objects[i].lvar_value[k] = avalue;
 				Tdebug("save_restore.txt", "   lvar %d = %d", k, avalue);
@@ -942,7 +942,7 @@ void _mission::Restore_micro_session_from_save_game(Common::SeekableReadStream *
 
 		dret = dpack.close(stream);
 		if (dret != DataPacker::OK) {
-			Real_Fatal_error("DataPacker::Close failed dret %d", (int)dret);
+			Real_Fatal_error("DataPacker::Close failed dret %d", (int32)dret);
 		}
 	}
 }
@@ -1192,10 +1192,10 @@ void _mission::Create_display() {
 
 				// If not in the REMORA then draw the armed menu & health bar as well
 				if ((g_oRemora->IsActive() == FALSE8) && (session->logic_structs[session->player.Fetch_player_id()]->mega->Fetch_armed_status())) {
-					int nBullets = session->player.GetNoBullets();
-					int nClips = session->player.GetNoAmmoClips();
-					int maxBullets = session->player.GetBulletsPerClip();
-					int maxClips = session->player.GetMaxClips();
+					int32 nBullets = session->player.GetNoBullets();
+					int32 nClips = session->player.GetNoAmmoClips();
+					int32 maxBullets = session->player.GetBulletsPerClip();
+					int32 maxClips = session->player.GetMaxClips();
 					g_oIconMenu->DrawArmedMenu(nBullets, maxBullets, nClips, maxClips);
 
 					session->Draw_health_bar();
@@ -1205,10 +1205,10 @@ void _mission::Create_display() {
 				session->Draw_health_bar();
 				session->health_time = 0; // cancel the health bar timer
 
-				int nBullets = session->player.GetNoBullets();
-				int nClips = session->player.GetNoAmmoClips();
-				int maxBullets = session->player.GetBulletsPerClip();
-				int maxClips = session->player.GetMaxClips();
+				int32 nBullets = session->player.GetNoBullets();
+				int32 nClips = session->player.GetNoAmmoClips();
+				int32 maxBullets = session->player.GetBulletsPerClip();
+				int32 maxClips = session->player.GetMaxClips();
 				g_oIconMenu->DrawArmedMenu(nBullets, maxBullets, nClips, maxClips);
 			} else if (session->health_time) {
 				// Draw the health bar if unarmed and recently taken damage

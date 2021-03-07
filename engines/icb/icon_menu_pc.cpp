@@ -123,7 +123,7 @@ void _icon_menu::Activate(const _icon_list *pIconList, const _icon_menu_duplicat
 		uint32 *icon_ad = (uint32 *)pyIconBitmap;
 		for (uint32 y = 0; y < ICON_Y_SIZE; y++) {
 			uint32 *rowAd = icon_ad;
-			for (int x = 0; x < ICON_X_SIZE; x++) {
+			for (int32 x = 0; x < ICON_X_SIZE; x++) {
 				uint32 col = *rowAd;
 				if (col != m_nTransparentKey) {
 					(*((uint8 *)rowAd + 0)) >>= 1;
@@ -164,7 +164,7 @@ void _icon_menu::Activate(const _icon_list *pIconList, const _icon_menu_duplicat
 }
 
 void _icon_menu::ReActivate() {
-	int i;
+	int32 i;
 
 	// Free up all the previous icon surfaces
 	for (i = m_pIconList->GetIconCount() - 1; i >= 0; --i) {
@@ -211,7 +211,7 @@ void _icon_menu::ReActivate() {
 		uint32 *icon_ad = (uint32 *)pyIconBitmap;
 		for (uint32 y = 0; y < ICON_Y_SIZE; y++) {
 			uint32 *rowAd = icon_ad;
-			for (int x = 0; x < ICON_X_SIZE; x++) {
+			for (int32 x = 0; x < ICON_X_SIZE; x++) {
 				uint32 col = *rowAd;
 				if (col != m_nTransparentKey) {
 					(*((uint8 *)rowAd + 0)) >>= 1;
@@ -250,7 +250,7 @@ void _icon_menu::DrawIconMenu() {
 	LRECT sFromRectangle;
 	uint32 nIconCount;
 	uint32 nMaxDrawableIcons, nIconsToDraw;
-	int scrolling = 0;
+	int32 scrolling = 0;
 	char pcDigits[16];
 	const char *pcIconLabel;
 	char pcIconName[MAXLEN_ICON_NAME];
@@ -271,7 +271,7 @@ void _icon_menu::DrawIconMenu() {
 	nIconIndex = m_nSelectedIcon;
 	nStartX = ICON_MENU_PIXEL_X;
 
-	int scrollyX = GetScrollingPosition(nStartX, nIconIndex);
+	int32 scrollyX = GetScrollingPosition(nStartX, nIconIndex);
 
 	if ((nStartX != scrollyX) || (nIconIndex != m_nSelectedIcon)) {
 		scrolling = 1;
@@ -334,7 +334,7 @@ void _icon_menu::DrawIconMenu() {
 	nIconsToDraw = (nIconCount < nMaxDrawableIcons) ? nIconCount : nMaxDrawableIcons;
 
 	// Where to draw them
-	int x = nStartX;
+	int32 x = nStartX;
 
 	// Loop for each icon to be drawn.
 	for (i = 0; i < nIconsToDraw; ++i) {
@@ -561,7 +561,7 @@ void _icon_menu::SetEmailArrived() {
 	SetupAdding(EMAIL_ARRIVED_NAME, m_nEmailArrivedSurface);
 }
 
-void _icon_menu::DrawArmedMenu(const int nBullets, const int maxBullets, const int nClips, const int maxClips) {
+void _icon_menu::DrawArmedMenu(const int32 nBullets, const int32 maxBullets, const int32 nClips, const int32 maxClips) {
 	// Ok, let's see just how selfcontained, yet inefficient we can make one function :o)
 	uint32 gunSurface = 0;
 	uint32 clipSurface = 0;

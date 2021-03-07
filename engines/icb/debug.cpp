@@ -126,10 +126,10 @@ void _game_session::Show_lit_unlit_diagnostics() {
 				// Really shoud write a PSXLamp::GetState( uint32 n ) !
 				PSXLampState *plampstate = pLamp->states + state;
 
-				int r = plampstate->c.r;
-				int g = plampstate->c.g;
-				int b = plampstate->c.b;
-				int m = plampstate->m;
+				int32 r = plampstate->c.r;
+				int32 g = plampstate->c.g;
+				int32 b = plampstate->c.b;
+				int32 m = plampstate->m;
 
 				r = (r * m) >> 7; // m has 1.0 = 128
 				g = (g * m) >> 7; // m has 1.0 = 128
@@ -162,8 +162,8 @@ void _game_session::Show_lit_unlit_diagnostics() {
 				PXWorldToFilm(pos, camera, result, lightpos);
 
 				// draw rectangle of the correct colour
-				int x0 = (int32)(lightpos.x + (SCREEN_WIDTH / 2));
-				int y0 = (int32)(SCREEN_DEPTH / 2 - lightpos.y);
+				int32 x0 = (int32)(lightpos.x + (SCREEN_WIDTH / 2));
+				int32 y0 = (int32)(SCREEN_DEPTH / 2 - lightpos.y);
 				uint32 penrgb = (r << 16) | (g << 8) | (b << 0);
 
 				Fill_rect(x0 - LIGHT_RECT_WIDTH / 2, y0 - LIGHT_RECT_HEIGHT / 2, x0 + LIGHT_RECT_WIDTH / 2, y0 + LIGHT_RECT_HEIGHT / 2, penrgb, (int32)-lightpos.z);
@@ -171,8 +171,8 @@ void _game_session::Show_lit_unlit_diagnostics() {
 				// Draw a 'shadow' away from light ! - to try and guess z-distance
 				pos.y += LIGHT_TIE_Y_OFFSET;
 				PXWorldToFilm(pos, camera, result, tiepos);
-				int x1 = (int32)(tiepos.x + (SCREEN_WIDTH / 2));
-				int y1 = (int32)(SCREEN_DEPTH / 2 - tiepos.y);
+				int32 x1 = (int32)(tiepos.x + (SCREEN_WIDTH / 2));
+				int32 y1 = (int32)(SCREEN_DEPTH / 2 - tiepos.y);
 				penrgb = LIGHT_TIE_PEN;
 				Fill_rect(x1 - LIGHT_TIE_WIDTH / 2, y1 - LIGHT_TIE_HEIGHT / 2, x1 + LIGHT_TIE_WIDTH / 2, y1 + LIGHT_TIE_HEIGHT / 2, penrgb, (int32)-tiepos.z);
 
@@ -180,7 +180,7 @@ void _game_session::Show_lit_unlit_diagnostics() {
 				ad = surface_manager->Lock_surface(working_buffer_id);
 
 				// Draw a pink line from light to its tie !
-				General_draw_line_24_32((short)x0, (short)y0, (short)x1, (short)y1, &tiecolour, ad, pitch);
+				General_draw_line_24_32((int16)x0, (int16)y0, (int16)x1, (int16)y1, &tiecolour, ad, pitch);
 
 				// Print the name of the light at the light pos and the tie pos
 				Clip_text_print(&tcol, x0, y0, ad, pitch, "%s", pLamp->lamp_name);
@@ -190,9 +190,9 @@ void _game_session::Show_lit_unlit_diagnostics() {
 				if ((pLamp->type == DIRECT_LIGHT) || (pLamp->type == SPOT_LIGHT)) {
 					// plampstate direciton is normalised to be 4096 int32
 					// Take that down to 128cm int32 (>>5)
-					int dx = plampstate->vx >> 5;
-					int dy = plampstate->vy >> 5;
-					int dz = plampstate->vz >> 5;
+					int32 dx = plampstate->vx >> 5;
+					int32 dy = plampstate->vy >> 5;
+					int32 dz = plampstate->vz >> 5;
 
 					// Remove the tie position offset
 					pos.y -= LIGHT_TIE_Y_OFFSET;
@@ -204,7 +204,7 @@ void _game_session::Show_lit_unlit_diagnostics() {
 					// Draw a line to show the direction of the light
 					x1 = (int32)(tiepos.x + (SCREEN_WIDTH / 2));
 					y1 = (int32)(SCREEN_DEPTH / 2 - tiepos.y);
-					General_draw_line_24_32((short)x0, (short)y0, (short)x1, (short)y1, &dcolour, ad, pitch);
+					General_draw_line_24_32((int16)x0, (int16)y0, (int16)x1, (int16)y1, &dcolour, ad, pitch);
 				}
 
 				// Unlock to use Fill_rect !

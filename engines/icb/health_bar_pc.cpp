@@ -43,10 +43,10 @@ namespace ICB {
 #define MAX_HEALTH 10
 
 void _game_session::Draw_health_bar() {
-	static int targetHealth = -1;
-	static int barEnd;
-	static int barTarget;
-	static int healthStep = 0;
+	static int32 targetHealth = -1;
+	static int32 barEnd;
+	static int32 barTarget;
+	static int32 healthStep = 0;
 	static _rgb healthColours[MAX_HEALTH + 1] = {{254, 0, 0, 0},   //  0
 	                                             {254, 0, 0, 0},   //  1
 	                                             {254, 0, 0, 0},   //  2

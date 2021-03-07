@@ -144,14 +144,14 @@ void SpeechManager::ResumeSpeech() {
 	}
 }
 
-void SpeechManager::SetSpeechVolume(int volume) {
+void SpeechManager::SetSpeechVolume(int32 volume) {
 	if (noSoundEngine)
 		return;
 
 	SetVolume(volume);
 }
 
-void SpeechManager::SetVolume(int volume) {
+void SpeechManager::SetVolume(int32 volume) {
 	if (g_icb->_mixer->isSoundHandleActive(_handle)) {
 		float volumeConversion = Audio::Mixer::kMaxChannelVolume / 128.0f;
 		g_icb->_mixer->setChannelVolume(_handle, volume * volumeConversion);

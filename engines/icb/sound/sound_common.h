@@ -50,7 +50,7 @@ typedef struct _wavHeader {
 } _wavHeader;
 
 // Common code between the three sound managers
-bool8 openWav(Common::SeekableReadStream *filePtr, _wavHeader &header, uint32 &length, uint32 &byteOffsetInCluster, int &lengthInCycles);
+bool8 openWav(Common::SeekableReadStream *filePtr, _wavHeader &header, uint32 &length, uint32 &byteOffsetInCluster, int32 &lengthInCycles);
 
 } // End of namespace ICB
 

@@ -66,7 +66,7 @@ int32 lampBounce[3];
 // GTE light matrix and the lightDirects matrix
 //
 
-int prepareLightsPC(VECTOR *pos, PSXrgb *ambient, PSXLampList *lamplist, PSXShadeList *shadelist, MATRIXPC *lDirects, LampInfo *linfo) {
+int32 prepareLightsPC(VECTOR *pos, PSXrgb *ambient, PSXLampList *lamplist, PSXShadeList *shadelist, MATRIXPC *lDirects, LampInfo *linfo) {
 	// Disable the slow features as default
 	useLampBounce = 0;
 	useLampWidth = 0;
@@ -415,7 +415,7 @@ int prepareLightsPC(VECTOR *pos, PSXrgb *ambient, PSXLampList *lamplist, PSXShad
 		}
 
 		// Account for decay
-		int decaym = 4096;
+		int32 decaym = 4096;
 
 		if (plamp->decay == DECAY_INV_SQR) {
 			decaym = ((4096 * RLP_DECAY_CONSTANT * RLP_DECAY_CONSTANT) / rr);
@@ -506,9 +506,9 @@ int prepareLightsPC(VECTOR *pos, PSXrgb *ambient, PSXLampList *lamplist, PSXShad
 	// The brightness of the light at the actor
 
 	// Ambient is 0-255, other lights are 0-4095
-	int br = (ambient->r + ambient->g + ambient->g) << 4;
+	int32 br = (ambient->r + ambient->g + ambient->g) << 4;
 
-	int nlights = 0;
+	int32 nlights = 0;
 	// If we have an ambient
 	if (br != 0)
 		nlights = 1;
@@ -534,9 +534,9 @@ int prepareLightsPC(VECTOR *pos, PSXrgb *ambient, PSXLampList *lamplist, PSXShad
 		LampInfo *pLampInfo = &(lampInfo[index]);
 		linfo[i] = *pLampInfo;
 		VECTOR *padirs = &(pLampInfo->direct);
-		lDirects->m[i][0] = (short)padirs->vx;
-		lDirects->m[i][1] = (short)padirs->vy;
-		lDirects->m[i][2] = (short)padirs->vz;
+		lDirects->m[i][0] = (int16)padirs->vx;
+		lDirects->m[i][1] = (int16)padirs->vy;
+		lDirects->m[i][2] = (int16)padirs->vz;
 
 		// Fill in the lighting colour matrix
 		// | Lr1 Lr2 Lr3 |
@@ -571,13 +571,13 @@ int prepareLightsPC(VECTOR *pos, PSXrgb *ambient, PSXLampList *lamplist, PSXShad
 			m = computeShadeMultiplierPC(pshadestate, pos, &plampstat->pos, m);
 		}
 
-		lColours.m[0][i] = (short)(((uint32)(plampstat->c.r) * m) >> 7);
-		lColours.m[1][i] = (short)(((uint32)(plampstat->c.g) * m) >> 7);
-		lColours.m[2][i] = (short)(((uint32)(plampstat->c.b) * m) >> 7);
+		lColours.m[0][i] = (int16)(((uint32)(plampstat->c.r) * m) >> 7);
+		lColours.m[1][i] = (int16)(((uint32)(plampstat->c.g) * m) >> 7);
+		lColours.m[2][i] = (int16)(((uint32)(plampstat->c.b) * m) >> 7);
 
-		linfo[i].colour.vx = (short)lColours.m[0][i];
-		linfo[i].colour.vy = (short)lColours.m[1][i];
-		linfo[i].colour.vz = (short)lColours.m[2][i];
+		linfo[i].colour.vx = (int16)lColours.m[0][i];
+		linfo[i].colour.vy = (int16)lColours.m[1][i];
+		linfo[i].colour.vz = (int16)lColours.m[2][i];
 
 		br = br + (lColours.m[0][i] + lColours.m[1][i] + lColours.m[2][i]);
 
@@ -624,36 +624,36 @@ int prepareLightsPC(VECTOR *pos, PSXrgb *ambient, PSXLampList *lamplist, PSXShad
 // Sets the direciton lights colour matrix
 // Sets the ambient colour
 // Fills in the lightDirects matrix
-int prepareLightsGlobalPC(MATRIXPC *lightDirects) {
+int32 prepareLightsGlobalPC(MATRIXPC *lightDirects) {
 	// Compute the lighting matrix which is :
 	// | Lx1 Ly1 Lz1 |
 	// | Lx2 Ly2 Lz2 |  * local2world_matrix
 	// | Lx3 Ly3 Lz3 |
 	// Where : Lxn, Lyn, Lzn is the x/y/z component of directional light n
-	lightDirects->m[0][0] = (short)Lights[0].vx;
-	lightDirects->m[0][1] = (short)Lights[0].vy;
-	lightDirects->m[0][2] = (short)Lights[0].vz;
-	lightDirects->m[1][0] = (short)Lights[1].vx;
-	lightDirects->m[1][1] = (short)Lights[1].vy;
-	lightDirects->m[1][2] = (short)Lights[1].vz;
-	lightDirects->m[2][0] = (short)Lights[2].vx;
-	lightDirects->m[2][1] = (short)Lights[2].vy;
-	lightDirects->m[2][2] = (short)Lights[2].vz;
+	lightDirects->m[0][0] = (int16)Lights[0].vx;
+	lightDirects->m[0][1] = (int16)Lights[0].vy;
+	lightDirects->m[0][2] = (int16)Lights[0].vz;
+	lightDirects->m[1][0] = (int16)Lights[1].vx;
+	lightDirects->m[1][1] = (int16)Lights[1].vy;
+	lightDirects->m[1][2] = (int16)Lights[1].vz;
+	lightDirects->m[2][0] = (int16)Lights[2].vx;
+	lightDirects->m[2][1] = (int16)Lights[2].vy;
+	lightDirects->m[2][2] = (int16)Lights[2].vz;
 
 	MATRIXPC lightColours;
 	// Fill in the lighting colour matrix
 	// | Lr1 Lr2 Lr3 |
 	// | Lg1 Lg2 Lg3 |
 	// | Lb1 Lb2 Lb3 |
-	lightColours.m[0][0] = (short)Lights[0].r;
-	lightColours.m[1][0] = (short)Lights[0].g;
-	lightColours.m[2][0] = (short)Lights[0].b;
-	lightColours.m[0][1] = (short)Lights[1].r;
-	lightColours.m[1][1] = (short)Lights[1].g;
-	lightColours.m[2][1] = (short)Lights[1].b;
-	lightColours.m[0][2] = (short)Lights[2].r;
-	lightColours.m[1][2] = (short)Lights[2].g;
-	lightColours.m[2][2] = (short)Lights[2].b;
+	lightColours.m[0][0] = (int16)Lights[0].r;
+	lightColours.m[1][0] = (int16)Lights[0].g;
+	lightColours.m[2][0] = (int16)Lights[0].b;
+	lightColours.m[0][1] = (int16)Lights[1].r;
+	lightColours.m[1][1] = (int16)Lights[1].g;
+	lightColours.m[2][1] = (int16)Lights[1].b;
+	lightColours.m[0][2] = (int16)Lights[2].r;
+	lightColours.m[1][2] = (int16)Lights[2].g;
+	lightColours.m[2][2] = (int16)Lights[2].b;
 
 	// Set the GTE lighting colour matrix
 	gte_SetColorMatrix_pc(&lightColours);
@@ -661,7 +661,7 @@ int prepareLightsGlobalPC(MATRIXPC *lightDirects) {
 	// Set the ambient colour
 	gte_SetBackColor_pc(Lights[3].r, Lights[3].g, Lights[3].b);
 
-	int br;
+	int32 br;
 
 	br = (Lights[3].r + Lights[3].g + Lights[3].b) << 4;
 	br = br + Lights[0].r + Lights[0].g + Lights[0].b;

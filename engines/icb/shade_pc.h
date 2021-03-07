@@ -33,9 +33,9 @@
 
 namespace ICB {
 
-int computeShadeMultiplierPC(ShadeTriangle *shadeTri, VECTOR *model_pos, VECTOR *light_pos, int m);
+int32 computeShadeMultiplierPC(ShadeTriangle *shadeTri, VECTOR *model_pos, VECTOR *light_pos, int32 m);
 
-int computeShadeMultiplierPC(ShadeQuad *shadeQuad, VECTOR *model_pos, VECTOR *light_pos, int m);
+int32 computeShadeMultiplierPC(ShadeQuad *shadeQuad, VECTOR *model_pos, VECTOR *light_pos, int32 m);
 
 } // End of namespace ICB
 

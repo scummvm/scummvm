@@ -31,30 +31,17 @@
 #include "common/types.h"
 
 namespace ICB {
-
-// We'll need a u_char type
-typedef unsigned char u_char;
-
-// We'll need a u_short type
-typedef unsigned short u_short;
-
-// a u_int32 type
-// typedef unsigned long u_int32;
-
-// a uint type
-typedef unsigned int u_int;
-
 // make our own equivalents
 typedef struct MATRIX {
-	short m[3][3]; /* 3x3 rotation matrix */
-	short pad;
+	int16 m[3][3]; /* 3x3 rotation matrix */
+	int16 pad;
 	int32 t[3]; /* transfer vector */
 	MATRIX() { pad = 0; }
 } MATRIX;
 
 typedef struct MATRIXPC {
-	int m[3][3]; /* 3x3 rotation matrix */
-	int pad;
+	int32 m[3][3]; /* 3x3 rotation matrix */
+	int32 pad;
 	int32 t[3]; /* transfer vector */
 	MATRIXPC() { pad = 0; }
 } MATRIXPC;
@@ -68,26 +55,26 @@ typedef struct VECTOR {
 
 /* short word type 3D vector */
 typedef struct SVECTOR {
-	short vx, vy;
-	short vz, pad;
+	int16 vx, vy;
+	int16 vz, pad;
 } SVECTOR;
 
 /* short word type 3D vector - PC version */
 typedef struct SVECTORPC {
-	int vx, vy;
-	int vz, pad;
+	int32 vx, vy;
+	int32 vz, pad;
 } SVECTORPC;
 
 typedef struct CVECTOR {
 	/* color type vector */
-	u_char r, g, b, cd;
+	uint8 r, g, b, cd;
 } CVECTOR;
 
 typedef struct {/* 2D short vector */
 	short vx, vy;
 } DVECTOR;
 
-typedef unsigned char PACKET;
+typedef uint8 PACKET;
 
 /* For holding the coordinate frame of the bone animation */
 typedef struct _GsCOORDUNIT {
@@ -122,7 +109,7 @@ typedef struct GsTYPEUNIT {
 
 typedef struct GsOT_TAG {
 	unsigned p : 24;
-	unsigned char num : 8;
+	uint8 num : 8;
 } GsOT_TAG;
 
 typedef struct GsOT {
@@ -136,22 +123,22 @@ typedef struct GsOT {
 typedef struct {
 	uint32 *primp;
 	GsOT *tagp;
-	int shift;
-	int offset;
+	int32 shift;
+	int32 offset;
 	PACKET *out_packetp;
 } GsARGUNIT;
 
 typedef struct {
 	DVECTOR vec;
-	short otz;
-	short p;
+	int16 otz;
+	int16 p;
 } GsWORKUNIT;
 
 typedef struct {
 	uint32 *primp;
 	GsOT *tagp;
-	int shift;
-	int offset;
+	int32 shift;
+	int32 offset;
 	PACKET *out_packetp;
 	uint32 *primtop;
 	SVECTOR *vertop;
@@ -161,8 +148,8 @@ typedef struct {
 typedef struct {
 	uint32 *primp;
 	GsOT *tagp;
-	int shift;
-	int offset;
+	int32 shift;
+	int32 offset;
 	PACKET *out_packetp;
 	uint32 *primtop;
 	SVECTOR *vertop;
@@ -174,8 +161,8 @@ typedef struct {
 typedef struct {
 	uint32 *primp;
 	GsOT *tagp;
-	int shift;
-	int offset;
+	int32 shift;
+	int32 offset;
 	PACKET *out_packetp;
 	uint32 *imagetop;
 	uint32 *cluttop;
@@ -184,8 +171,8 @@ typedef struct {
 typedef struct {
 	uint32 *primp;
 	GsOT *tagp;
-	int shift;
-	int offset;
+	int32 shift;
+	int32 offset;
 	PACKET *out_packetp;
 	uint32 *polytop;
 	uint32 *boxtop;
@@ -196,8 +183,8 @@ typedef struct {
 typedef struct {
 	uint32 *primp;
 	GsOT *tagp;
-	int shift;
-	int offset;
+	int32 shift;
+	int32 offset;
 	PACKET *out_packetp;
 	uint32 *polytop;
 	uint32 *boxtop;
@@ -209,8 +196,8 @@ typedef struct {
 typedef struct {
 	uint32 *primp;
 	GsOT *tagp;
-	int shift;
-	int offset;
+	int32 shift;
+	int32 offset;
 	PACKET *out_packetp;
 	uint32 *cparam;
 	GsCOORDUNIT *coord;
@@ -220,8 +207,8 @@ typedef struct {
 typedef struct {
 	uint32 *primp;
 	GsOT *tagp;
-	int shift;
-	int offset;
+	int32 shift;
+	int32 offset;
 	PACKET *out_packetp;
 	uint32 *lparam;
 	GsCOORDUNIT *coord;
@@ -231,36 +218,36 @@ typedef struct {
 typedef struct {
 	uint32 *primp;
 	GsOT *tagp;
-	int shift;
-	int offset;
+	int32 shift;
+	int32 offset;
 	PACKET *out_packetp;
 	uint32 *coord_sect;
 	int32 *mimepr;
 	uint32 mimenum;
-	u_short mimeid, reserved;
+	uint16 mimeid, reserved;
 	uint32 *mime_diff_sect;
 } GsARGUNIT_JntMIMe;
 
 typedef struct {
 	uint32 *primp;
 	GsOT *tagp;
-	int shift;
-	int offset;
+	int32 shift;
+	int32 offset;
 	PACKET *out_packetp;
 	uint32 *coord_sect;
-	u_short mimeid, reserved;
+	uint16 mimeid, reserved;
 	uint32 *mime_diff_sect;
 } GsARGUNIT_RstJntMIMe;
 
 typedef struct {
 	uint32 *primp;
 	GsOT *tagp;
-	int shift;
-	int offset;
+	int32 shift;
+	int32 offset;
 	PACKET *out_packetp;
 	int32 *mimepr;
 	uint32 mimenum;
-	u_short mimeid, reserved;
+	uint16 mimeid, reserved;
 	uint32 *mime_diff_sect;
 	SVECTOR *orgs_vn_sect;
 	SVECTOR *vert_sect;
@@ -270,10 +257,10 @@ typedef struct {
 typedef struct {
 	uint32 *primp;
 	GsOT *tagp;
-	int shift;
-	int offset;
+	int32 shift;
+	int32 offset;
 	PACKET *out_packetp;
-	u_short mimeid, reserved;
+	uint16 mimeid, reserved;
 	uint32 *mime_diff_sect;
 	SVECTOR *orgs_vn_sect;
 	SVECTOR *vert_sect;
@@ -283,8 +270,8 @@ typedef struct {
 typedef struct {
 	uint32 *primp;
 	GsOT *tagp;
-	int shift;
-	int offset;
+	int32 shift;
+	int32 offset;
 	PACKET *out_packetp;
 	int32 header_size;
 	uint32 *htop;
@@ -293,25 +280,25 @@ typedef struct {
 } GsARGUNIT_ANIM;
 
 typedef struct {
-	short idx;
-	u_char sid;
-	u_char pad;
+	int16 idx;
+	uint8 sid;
+	uint8 pad;
 } GsSEH;
 
 typedef struct {
 	uint32 rewrite_idx;
-	u_short size, num;
-	u_short ii;
-	u_short aframe;
-	u_char sid;
-	signed char speed;
-	u_short srcii;
-	short rframe;
-	u_short tframe;
-	u_short ci, ti;
-	u_short start;
-	u_char start_sid;
-	u_char traveling;
+	uint16 size, num;
+	uint16 ii;
+	uint16 aframe;
+	uint8 sid;
+	int8 speed;
+	uint16 srcii;
+	int16 rframe;
+	uint16 tframe;
+	uint16 ci, ti;
+	uint16 start;
+	uint8 start_sid;
+	uint8 traveling;
 } GsSEQ;
 
 /*

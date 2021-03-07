@@ -533,14 +533,14 @@ bool8 _game_session::Calc_target_pan(PXreal x, PXreal z, PXreal x2, PXreal z2) {
 		L->anim_pc = 0; // legal pc for first frame in turn anim - this needs thought
 
 		// we face straight ahead
-		I->lookBone.boneTarget.vz = (short)(0);
+		I->lookBone.boneTarget.vz = (int16)(0);
 
 		return (TRUE8);
 	} else {
 		// face towards object or whatever with upper body
 		I->lookBone.boneNumber = 1;
 		I->lookBone.boneSpeed = 128;
-		I->lookBone.boneTarget.vz = (short)(diff * (4096 / FULL_TURN)); // on psx diff is 0-4096 (full_turn), so we want diff*1     = diff * (4096/4096)
+		I->lookBone.boneTarget.vz = (int16)(diff * (4096 / FULL_TURN)); // on psx diff is 0-4096 (full_turn), so we want diff*1     = diff * (4096/4096)
 		// on pc diff is 0-1 (full_turn), we we want diff*4096      = diff * (4096/1)
 
 		return (FALSE8);
@@ -586,7 +586,7 @@ bool8 _game_session::Calc_target_pan_no_bones(PXreal x, PXreal z, PXreal x2, PXr
 		L->anim_pc = 0; // legal pc for first frame in turn anim - this needs thought
 
 		// we face straight ahead
-		I->lookBone.boneTarget.vz = (short)(0);
+		I->lookBone.boneTarget.vz = (int16)(0);
 
 		return (TRUE8);
 	} else {
@@ -689,7 +689,7 @@ void _game_session::Hard_start_single_anim(__mega_set_names next_anim) {
 int32 _game_session::Soften_up_anim_file(__mega_set_names link, int32 diff) {
 	// pick best frame in passed anim compared to best so far passed in 'diff'
 	uint32 old_leg_pos;
-	int j;
+	int32 j;
 
 	// Jake check the anim exists / make its name
 	ANIM_CHECK(L->cur_anim_type);
@@ -738,7 +738,7 @@ bool8 _game_session::Play_anim() {
 	PXanim *pAnim = (PXanim *)rs_anims->Res_open(I->get_info_name(L->cur_anim_type), I->info_name_hash[L->cur_anim_type], I->base_path, I->base_path_hash);
 
 	// last frame currently displayed?
-	if ((int)(L->anim_pc + 1) == (pAnim->frame_qty - 1)) {
+	if ((int32)(L->anim_pc + 1) == (pAnim->frame_qty - 1)) {
 		// we displayed the last frame last cycle - so display first of new mode this cycle
 		// we may have been playing a link anim - so check for a new anim waiting in M->next_anim_type
 		if (M->next_anim_type == __NO_ANIM) {
@@ -818,7 +818,7 @@ bool8 _game_session::Play_anim_with_no_movement() {
 	PXanim *pAnim = (PXanim *)rs_anims->Res_open(I->get_info_name(L->cur_anim_type), I->info_name_hash[L->cur_anim_type], I->base_path, I->base_path_hash); //
 
 	// last frame currently displayed?
-	if ((int)(L->anim_pc + 1) == (pAnim->frame_qty - 1)) {
+	if ((int32)(L->anim_pc + 1) == (pAnim->frame_qty - 1)) {
 		// we displayed the last frame last cycle - so display first of new mode this cycle
 
 		// we may have been playing a link anim - so check for a new anim waiting in M->next_anim_type
