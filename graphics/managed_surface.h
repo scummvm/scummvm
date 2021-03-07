@@ -175,6 +175,29 @@ public:
 	DisposeAfterUse::Flag disposeAfterUse() const { return _disposeAfterUse; }
 
 	/**
+	 * Return the pixel at the specified point.
+	 *
+	 * @param x  The x coordinate of the pixel.
+	 * @param y  The y coordinate of the pixel.
+	 *
+	 * @return The value of the pixel.
+	 */
+	inline uint32 getPixel(int x, int y) const {
+		return _innerSurface.getPixel(x, y);
+	}
+
+	/**
+	 * Set the pixel at the specified point.
+	 *
+	 * @param x     The x coordinate of the pixel.
+	 * @param y     The y coordinate of the pixel.
+	 * @param pixel The value of the pixel.
+	 */
+	inline void setPixel(int x, int y, uint32 pixel) {
+		return _innerSurface.setPixel(x, y, pixel);
+	}
+
+	/**
 	 * Return a pointer to the pixel at the specified point.
 	 *
 	 * @param x  The x coordinate of the pixel.
