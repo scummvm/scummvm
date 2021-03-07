@@ -24,6 +24,7 @@
 #include "common/memstream.h"
 #include "common/system.h"
 #include "common/textconsole.h"
+#include "common/util.h"
 #include "graphics/surface.h"
 #include "twine/audio/sound.h"
 #include "twine/debugger/debug_scene.h"
@@ -150,10 +151,7 @@ void Redraw::sortDrawingList(DrawListStruct *list, int32 listSize) {
 	for (int32 i = 0; i < listSize - 1; i++) {
 		for (int32 j = 0; j < listSize - 1 - i; j++) {
 			if (list[j + 1].posValue < list[j].posValue) {
-				DrawListStruct tempStruct;
-				memcpy(&tempStruct, &list[j + 1], sizeof(DrawListStruct));
-				memcpy(&list[j + 1], &list[j], sizeof(DrawListStruct));
-				memcpy(&list[j], &tempStruct, sizeof(DrawListStruct));
+				SWAP(list[j + 1], list[j]);
 			}
 		}
 	}
