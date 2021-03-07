@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-02-21 00:21+0000\n"
-"PO-Revision-Date: 2021-02-24 21:24+0000\n"
+"PO-Revision-Date: 2021-03-07 12:24+0000\n"
 "Last-Translator: Joohan Lee <losernator@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ko/>\n"
@@ -3847,16 +3847,12 @@ msgstr ""
 "일부 음악이 올바르지 않게 들릴 수 있습니다."
 
 #: engines/ags/detection.cpp:86
-#, fuzzy
-#| msgid "GUI language:"
 msgid "Game language:"
-msgstr "GUI 언어:"
+msgstr "게임 언어:"
 
 #: engines/ags/detection.cpp:86
-#, fuzzy
-#| msgid "AdLib is used for music in many games"
 msgid "Language to use for multilingual games"
-msgstr "AdLib은 많은 게임에서 음악 재생에 사용됩니다"
+msgstr "다중 언어 게임에서 사용할 언어"
 
 #: engines/bladerunner/bladerunner.cpp:363
 msgid "Failed to initialize resources"
@@ -4509,9 +4505,8 @@ msgid "Examine/Look"
 msgstr "조사하기/보기"
 
 #: engines/grim/grim.cpp:1333
-#, fuzzy
 msgid "Error: the game could not be saved."
-msgstr "비디오 모드를 변경할 수 없음"
+msgstr "오류: 게임을 저장하지 못함."
 
 #: engines/grim/md5check.cpp:560
 #, c-format
@@ -4634,12 +4629,10 @@ msgid "Move down"
 msgstr "아래로 이동"
 
 #: engines/hdb/metaengine.cpp:205
-#, fuzzy
 msgid "Move left"
 msgstr "왼쪽으로 이동"
 
 #: engines/hdb/metaengine.cpp:211
-#, fuzzy
 msgid "Move right"
 msgstr "오른쪽으로 이동"
 
@@ -4653,9 +4646,8 @@ msgid "Use"
 msgstr "사용하기"
 
 #: engines/hdb/metaengine.cpp:224
-#, fuzzy
 msgid "Clear waypoints"
-msgstr "맵핑 지우기"
+msgstr "웨이포인트 지우기"
 
 #: engines/hdb/metaengine.cpp:250
 msgid "Debug"
@@ -5014,9 +5006,8 @@ msgid "Use TTS to read the descriptions (if TTS is available)"
 msgstr "TTS를 사용하여 설명 읽기 (TTS를 사용할 수있는 경우)"
 
 #: engines/made/detection_tables.h:387
-#, fuzzy
 msgid "The game is using unsupported engine"
-msgstr "이 게임은 지원되지 않습니다."
+msgstr "게임이 지원되지 않는 엔진을 사용합니다"
 
 #: engines/mads/detection.cpp:55
 msgid "Easy mouse interface"
@@ -5109,9 +5100,8 @@ msgid "CSTime support not compiled in"
 msgstr "CSTime 지원이 컴파일 되지 않음"
 
 #: engines/mohawk/mohawk.cpp:52
-#, fuzzy
 msgid "The game is paused. Press any key to continue."
-msgstr "게임이 일시 중지되었습니다. SPACE를 눌러 다시 시작합니다."
+msgstr "게임이 일시 중지되었습니다. 아무 키나 눌러 다시 시작합니다."
 
 #: engines/mohawk/myst.cpp:552 engines/mohawk/riven.cpp:822
 msgid "Open main menu"
@@ -5122,9 +5112,8 @@ msgid "Load game state"
 msgstr "게임 상태저장 불러오기"
 
 #: engines/mohawk/myst.cpp:581 engines/mohawk/riven.cpp:851
-#, fuzzy
 msgid "Save game state"
-msgstr "세이브 파일"
+msgstr "게임 상태저장 저장하기"
 
 #: engines/mohawk/myst.cpp:586 engines/mohawk/riven.cpp:856
 msgid "Show options menu"
@@ -5205,22 +5194,18 @@ msgid "You are missing the following required Riven data files:\n"
 msgstr "다음 필수 Riven 데이터 파일이 부족합니다:\n"
 
 #: engines/mohawk/riven.cpp:868
-#, fuzzy
 msgid "Move forward"
 msgstr "앞으로 이동"
 
 #: engines/mohawk/riven.cpp:874
-#, fuzzy
 msgid "Move forward left"
-msgstr "앞으로 이동"
+msgstr "왼쪽 앞으로 이동"
 
 #: engines/mohawk/riven.cpp:878
-#, fuzzy
 msgid "Move forward right"
-msgstr "앞으로 이동"
+msgstr "오른쪽 앞으로 이동"
 
 #: engines/mohawk/riven.cpp:882
-#, fuzzy
 msgid "Move backwards"
 msgstr "뒤로 이동"
 
@@ -5228,7 +5213,6 @@ msgstr "뒤로 이동"
 #: engines/wintermute/keymapper_tables.h:520
 #: engines/wintermute/keymapper_tables.h:1672
 #: engines/wintermute/keymapper_tables.h:1775
-#, fuzzy
 msgid "Turn left"
 msgstr "왼쪽으로 회전"
 
@@ -5236,7 +5220,6 @@ msgstr "왼쪽으로 회전"
 #: engines/wintermute/keymapper_tables.h:525
 #: engines/wintermute/keymapper_tables.h:1678
 #: engines/wintermute/keymapper_tables.h:1782
-#, fuzzy
 msgid "Turn right"
 msgstr "오른쪽으로 회전"
 
@@ -5277,14 +5260,13 @@ msgstr ""
 "해당 사이트도 지금은 존재하지 않습니다."
 
 #: engines/mutationofjb/util.cpp:33
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to locate the '%s' engine data file"
-msgstr "'%s' 엔진의 데이터 파일을 찾을 수 없습니다."
+msgstr "'%s' 엔진 데이터 파일을 찾을 수 없습니다"
 
 #: engines/myst3/detection.cpp:149 engines/myst3/detection.cpp:163
-#, fuzzy
 msgid "PS2 version is not yet supported"
-msgstr "이 게임은 지원되지 않습니다."
+msgstr "PS2 버전은 아직 지원되지 않습니다"
 
 #: engines/myst3/detection.cpp:182
 #, fuzzy
@@ -5373,7 +5355,7 @@ msgstr ""
 
 #: engines/parallaction/saveload.cpp:316
 msgid "ScummVM successfully converted all your saved games."
-msgstr ""
+msgstr "ScummVM이 모든 게임 저장파일을 성공적으로 변환했습니다."
 
 #: engines/parallaction/saveload.cpp:318
 msgid ""
@@ -5382,14 +5364,17 @@ msgid ""
 "\n"
 "Please report to the team."
 msgstr ""
+"ScummVM이 일부 콘솔 창에 일부 경고사항을 표시하고 모든 파일의 변환이 어려움을 알렸습니다.\n"
+"\n"
+"팀에 보고해 주십시오."
 
 #: engines/pegasus/pegasus.cpp:2483
 msgid "Up/Zoom In/Move Forward/Open Doors"
-msgstr ""
+msgstr "위로/확대/앞으로/문 열기"
 
 #: engines/pegasus/pegasus.cpp:2490
 msgid "Down/Zoom Out"
-msgstr ""
+msgstr "아래로/축소"
 
 #: engines/pegasus/pegasus.cpp:2511
 #, fuzzy
@@ -5398,11 +5383,11 @@ msgstr "Select"
 
 #: engines/pegasus/pegasus.cpp:2531
 msgid "Display/Hide Inventory Tray"
-msgstr ""
+msgstr "인벤토리 표시/숨김"
 
 #: engines/pegasus/pegasus.cpp:2538
 msgid "Display/Hide Biochip Tray"
-msgstr ""
+msgstr "바이오칩 표시/숨김"
 
 #: engines/pegasus/pegasus.cpp:2546
 #, fuzzy
@@ -5411,11 +5396,11 @@ msgstr "인벤토리/IQ 포인트 표시를 전환"
 
 #: engines/pegasus/pegasus.cpp:2553
 msgid "Display/Hide Info Screen"
-msgstr ""
+msgstr "정보 화면 표시/숨김"
 
 #: engines/pegasus/pegasus.cpp:2560
 msgid "Display/Hide Pause Menu"
-msgstr ""
+msgstr "정지 메뉴 표시/숨김"
 
 #: engines/pegasus/pegasus.cpp:2571 engines/wintermute/keymapper_tables.h:298
 #: engines/wintermute/keymapper_tables.h:325
@@ -5430,7 +5415,7 @@ msgstr ""
 #: engines/wintermute/keymapper_tables.h:1498
 #: engines/wintermute/keymapper_tables.h:1556
 msgid "???"
-msgstr ""
+msgstr "???"
 
 #: engines/pegasus/pegasus.cpp:2577
 msgid "Save Game"
@@ -5442,11 +5427,11 @@ msgstr "게임 불러오기"
 
 #: engines/pink/gui.cpp:220
 msgid "This menu item is not yet implemented"
-msgstr ""
+msgstr "현재 메뉴 항목은 아직 구현되지 않았습니다"
 
 #: engines/queen/detection.cpp:45
 msgid "Alternative intro"
-msgstr ""
+msgstr "대체 인트로"
 
 #: engines/queen/detection.cpp:46
 #, fuzzy
@@ -5463,115 +5448,105 @@ msgstr "SAGA2 지원이 컴파일 되지 않음"
 
 #: engines/saga/saga.cpp:247
 msgid "Error loading game resources."
-msgstr ""
+msgstr "게임 리소스 불러오기 오류."
 
 #: engines/sci/detection.cpp:143
 msgid "Skip EGA dithering pass (full color backgrounds)"
-msgstr ""
+msgstr "EGA 디더링 패스 건너뛰기 (풀컬러 배경화면)"
 
 #: engines/sci/detection.cpp:144
 msgid "Skip dithering pass in EGA games, graphics are shown with full colors"
-msgstr ""
+msgstr "EGA게임의 디더링 패스를 건너뛰고 그래픽이 풀 컬러로 표시됩니다"
 
 #: engines/sci/detection.cpp:153
-#, fuzzy
 msgid "Enable high resolution graphics"
-msgstr "HP 바 그래프를 활성화합니다."
+msgstr "고해상도 그래픽 사용"
 
 #: engines/sci/detection.cpp:154
-#, fuzzy
 msgid "Enable high resolution graphics/content"
-msgstr "HP 바 그래프를 활성화합니다."
+msgstr "고해상도 그래픽/컨텐츠를 사용합니다"
 
 #: engines/sci/detection.cpp:163
 msgid "Enable black-lined video"
-msgstr ""
+msgstr "비디오에 검은선 표시"
 
 #: engines/sci/detection.cpp:164
 msgid "Draw black lines over videos to increase their apparent sharpness"
-msgstr ""
+msgstr "선명도를 높이기 위해 비디오 위에 검은 선을 그립니다"
 
 #: engines/sci/detection.cpp:174
 msgid "Use high-quality video scaling"
-msgstr ""
+msgstr "고품질 비디오 크기조절 사용"
 
 #: engines/sci/detection.cpp:175
-#, fuzzy
 msgid "Use linear interpolation when upscaling videos, where possible"
-msgstr "화면 크기를 조절할 때 선형 필터링을 사용"
+msgstr "비디오 크기조절 할때 가능하면 선형 필터링을 사용"
 
 #: engines/sci/detection.cpp:185
 msgid "Use high-quality \"LarryScale\" cel scaling"
-msgstr ""
+msgstr "고품질 \"래리스케일\" 셀 크기조절 사용"
 
 #: engines/sci/detection.cpp:186
 msgid "Use special cartoon scaler for drawing character sprites"
-msgstr ""
+msgstr "케릭터를 표시할 때 특별한 카툰 크기조절 방식을 사용합니다"
 
 #: engines/sci/detection.cpp:195
-#, fuzzy
 msgid "Prefer digital sound effects"
-msgstr "효과음 볼륨"
+msgstr "디지털 사운드 효과 선호"
 
 #: engines/sci/detection.cpp:196
-#, fuzzy
 msgid "Prefer digital sound effects instead of synthesized ones"
-msgstr "ScummVM의 화면 대신 원래의 저장/불러오기 화면을 사용합니다."
+msgstr "신디사이져 대신 디지털 사운드 이펙트 선호"
 
 #: engines/sci/detection.cpp:215
-#, fuzzy
 msgid "Use CD audio"
-msgstr "SegaCD Audio"
+msgstr "CD 오디오 사용"
 
 #: engines/sci/detection.cpp:216
 msgid "Use CD audio instead of in-game audio, if available"
-msgstr ""
+msgstr "사용 가능할 경우 게임 오디오 대신 CD 오디오를 사용합니다"
 
 #: engines/sci/detection.cpp:226
 msgid "Use Windows cursors"
-msgstr ""
+msgstr "윈도우즈 커서 사용"
 
 #: engines/sci/detection.cpp:227
-#, fuzzy
 msgid ""
 "Use the Windows cursors (smaller and monochrome) instead of the DOS ones"
-msgstr "ScummVM의 화면 대신 원래의 저장/불러오기 화면을 사용합니다."
+msgstr "도스 커서 대신에 윈도우즈 커서(작은 크기, 흑백)를 사용합니다"
 
 #: engines/sci/detection.cpp:237
-#, fuzzy
 msgid "Use silver cursors"
-msgstr "일반 커서"
+msgstr "실버 커서 사용"
 
 #: engines/sci/detection.cpp:238
-#, fuzzy
 msgid ""
 "Use the alternate set of silver cursors instead of the normal golden ones"
-msgstr "ScummVM의 화면 대신 원래의 저장/불러오기 화면을 사용합니다."
+msgstr "금색 커서 대신에 은색 대체 커서 세트를 사용합니다"
 
 #: engines/sci/detection.cpp:248
-#, fuzzy
 msgid "Enable content censoring"
-msgstr "폰트 안티 앨리어싱 활성화"
+msgstr "컨텐츠 검열 사용"
 
 #: engines/sci/detection.cpp:249
 msgid "Enable the game's built-in optional content censoring"
-msgstr ""
+msgstr "컨텐츠 검열에 대한 내장 게임 옵션을 사용합니다"
 
 #: engines/sci/detection.cpp:259
 msgid "Upscale videos"
-msgstr ""
+msgstr "비디오 업스케일"
 
 #: engines/sci/detection.cpp:260
 msgid "Upscale videos to double their size"
-msgstr ""
+msgstr "실제 사이즈의 두배 크기로 비디오를 업스케일합니다"
 
 #: engines/sci/detection.cpp:270
 msgid "Use RGB rendering"
-msgstr ""
+msgstr "RGB 렌더링 사용"
 
 #: engines/sci/detection.cpp:271
 msgid "Use RGB rendering to improve screen transitions"
-msgstr ""
+msgstr "화면 전환효과를 개선하기위해 RGB 렌더링을 사용합니다"
 
 #: engines/sci/detection.cpp:281
 msgid "Use per-resource modified palettes"
@@ -5685,9 +5660,8 @@ msgid ""
 msgstr ""
 
 #: engines/sci/sci.cpp:518
-#, fuzzy
 msgid "Download patch"
-msgstr "다운로드 완료."
+msgstr "패치 다운로드"
 
 #: engines/sci/sci.cpp:519
 msgid ""
@@ -5750,7 +5724,7 @@ msgstr "NES 클래식 팔레트"
 
 #: engines/scumm/detection.cpp:166
 msgid "Use a more neutral color palette that closely emulates the NES Classic"
-msgstr "NES 클래식 버전을 재현하는, 더 자연스러운 컬러 팔레트를 사용합니다."
+msgstr "NES 클래식 버전을 재현하는 더 자연스러운 컬러 팔레트를 사용합니다"
 
 #: engines/scumm/dialogs.cpp:165
 #, c-format
@@ -5797,11 +5771,11 @@ msgstr "이름을 입력해야 합니다"
 
 #: engines/scumm/dialogs.cpp:185
 msgid "The game was NOT saved (disk full?)"
-msgstr "게임이 저장되지 않았습니다. (용량이 꽉 참?)"
+msgstr "게임이 저장되지 않았습니다 (디스크 부족?)"
 
 #: engines/scumm/dialogs.cpp:186
 msgid "The game was NOT loaded"
-msgstr "게임을 불러오지 않았습니다."
+msgstr "게임을 불러오지 않았습니다"
 
 #: engines/scumm/dialogs.cpp:187
 #, c-format
@@ -6286,7 +6260,7 @@ msgstr "  인게임 설명과는 달리"
 
 #: engines/scumm/help.cpp:298
 msgid "  actually toggles Mouse Fighting Off/On"
-msgstr "  실제로는 마우스 전투 켜기/끄기입니다."
+msgstr "  실제로는 마우스 전투 켜기/끄기입니다"
 
 #: engines/scumm/help.cpp:305
 msgid "Fighting controls (numpad):"
@@ -6310,39 +6284,36 @@ msgid "Block low"
 msgstr "하단 막기"
 
 #: engines/scumm/help.cpp:312
-#, fuzzy
 msgid "Punch high"
-msgstr "펀치"
+msgstr "상단 펀치"
 
 #: engines/scumm/help.cpp:313
-#, fuzzy
 msgid "Punch middle"
-msgstr "중단 막기"
+msgstr "중단 펀치"
 
 #: engines/scumm/help.cpp:314
-#, fuzzy
 msgid "Punch low"
-msgstr "펀치"
+msgstr "하단 펀치"
 
 #: engines/scumm/help.cpp:316
 msgid "Sucker punch"
-msgstr "Sucker punch"
+msgstr "써커 펀치"
 
 #: engines/scumm/help.cpp:319
 msgid "These are for Indy on left."
-msgstr "이 설명은 인디가 왼쪽에 있을"
+msgstr "인디가 왼쪽에 있을 기준입니다."
 
 #: engines/scumm/help.cpp:320
 msgid "When Indy is on the right,"
-msgstr "경우입니다. 인디가 오른쪽에"
+msgstr "인디가 오른 쪽에 있을 경우"
 
 #: engines/scumm/help.cpp:321
 msgid "7, 4, and 1 are switched with"
-msgstr "있는 경우, 7, 4, 1이"
+msgstr "7, 4 그리고 1이"
 
 #: engines/scumm/help.cpp:322
 msgid "9, 6, and 3, respectively."
-msgstr "9, 6, 3과 서로 바뀝니다."
+msgstr "9, 6, 3과 서로 바뀌게 됩니다."
 
 #: engines/scumm/help.cpp:331
 msgid "Biplane controls (numpad):"
@@ -6474,7 +6445,7 @@ msgstr "픽셀화된 씬 트랜지션"
 
 #: engines/sherlock/detection.cpp:61
 msgid "When changing scenes, a randomized pixel transition is done"
-msgstr "씬을 변경할 때, 랜덤화된 픽셀 트랜지션이 실행됩니다."
+msgstr "신을 변경할 때, 랜덤화된 픽셀 전환효과가 실행됩니다"
 
 #: engines/sherlock/detection.cpp:70
 msgid "Don't show hotspots when moving mouse"
@@ -6484,8 +6455,7 @@ msgstr "마우스를 이동할 때 핫스팟을 보여주지 않음"
 msgid ""
 "Only show hotspot names after you actually click on a hotspot or action "
 "button"
-msgstr ""
-"핫스팟이나 액션 버튼을 실제로 클릭한 뒤에만 핫스팟의 이름을 보여줍니다."
+msgstr "핫스팟이나 액션 버튼을 실제로 클릭한 뒤에만 핫스팟의 이름을 보여줍니다"
 
 #: engines/sherlock/detection.cpp:80
 msgid "Show character portraits"
@@ -6493,7 +6463,7 @@ msgstr "캐릭터 초상을 보이기"
 
 #: engines/sherlock/detection.cpp:81
 msgid "Show portraits for the characters when conversing"
-msgstr "대화시 캐릭터 초상을 표시합니다."
+msgstr "대화시 캐릭터 얼굴을 표시합니다"
 
 #: engines/sherlock/detection.cpp:90
 msgid "Slide dialogs into view"
@@ -6509,7 +6479,7 @@ msgstr "투명 창"
 
 #: engines/sherlock/detection.cpp:101
 msgid "Show windows with a partially transparent background"
-msgstr "창의 배경을 조금 투명하게 합니다."
+msgstr "창화면의 배경을 일부 투명하게 합니다"
 
 #: engines/sky/compact.cpp:142
 msgid "The \"sky.cpt\" engine data file has an incorrect size."
@@ -6608,8 +6578,7 @@ msgstr "'%s' 엔진의 데이터 파일을 찾을 수 없습니다."
 #, c-format
 msgid ""
 "Incorrect version of the '%s' engine data file found. Expected %d but got %d."
-msgstr ""
-"'%s' 엔진의 데이터 파일 버전이 잘못되었습니다. 필요한 버전:%d, 실제 버전: %d"
+msgstr "'%s' 엔진의 데이터 파일 버전이 잘못되었습니다. 필요한 버전:%d, 실제 버전: %d."
 
 #: engines/supernova/supernova.cpp:480
 #, c-format
@@ -6628,9 +6597,8 @@ msgid ""
 msgstr ""
 
 #: engines/supernova/supernova.cpp:828
-#, fuzzy
 msgid "Failed to load temporary game state."
-msgstr "게임 저장 실패"
+msgstr "임시 게임 상태저장 파일을 불러오는데 실패했습니다."
 
 #: engines/supernova/detection.cpp:35
 #, fuzzy
@@ -6728,9 +6696,8 @@ msgid ""
 msgstr ""
 
 #: engines/tinsel/detection_tables.h:466
-#, fuzzy
 msgid "Saturn CD version is not yet supported"
-msgstr "이 게임은 지원되지 않습니다."
+msgstr "새턴 CD 버전은 아직 지원되지 않습니다"
 
 #: engines/tony/tony.cpp:257
 #, fuzzy, c-format
@@ -6763,9 +6730,8 @@ msgid "Unable to locate the '%s' data file."
 msgstr "'%s' 엔진의 데이터 파일을 찾을 수 없습니다."
 
 #: engines/tsage/detection_tables.h:150
-#, fuzzy
 msgid "Spanish CD version is not yet supported"
-msgstr "이 게임은 지원되지 않습니다."
+msgstr "스페인어 CD 버전은 아직 지원되지 않습니다"
 
 #: engines/twine/metaengine.cpp:68
 msgid "Enable wall collisions"
@@ -6795,19 +6761,16 @@ msgid ""
 msgstr ""
 
 #: engines/twine/metaengine.cpp:90
-#, fuzzy
 msgid "Enable debug mode"
-msgstr "헬륨 모드를 활성화합니다."
+msgstr "디버그 모드 사용"
 
 #: engines/twine/metaengine.cpp:91
-#, fuzzy
 msgid "Enable the debug mode"
-msgstr "헬륨 모드를 활성화합니다."
+msgstr "디버그 모드를 활성화 합니다"
 
 #: engines/twine/metaengine.cpp:97
-#, fuzzy
 msgid "Enable audio CD"
-msgstr "스튜디오 관객을 활성화합니다."
+msgstr "오디오 CD 사용"
 
 #: engines/twine/metaengine.cpp:98
 msgid "Enable the original audio cd track"
@@ -6871,9 +6834,8 @@ msgid "Enable the USA specific version flags"
 msgstr ""
 
 #: engines/twine/metaengine.cpp:146
-#, fuzzy
 msgid "Enable high resolution"
-msgstr "HP 바 그래프를 활성화합니다."
+msgstr "고해상도 사용"
 
 #: engines/twine/metaengine.cpp:147
 #, fuzzy
@@ -7010,9 +6972,9 @@ msgid "Could not find correct ultima.dat datafile"
 msgstr ""
 
 #: engines/ultima/shared/engine/data_archive.cpp:81
-#, fuzzy, c-format
+#, c-format
 msgid "Could not locate engine data %s"
-msgstr "'%s' 엔진의 데이터 파일을 찾을 수 없습니다."
+msgstr "'%s' 엔진의 데이터 파일을 찾을 수 없습니다"
 
 #: engines/ultima/shared/engine/data_archive.cpp:99
 #, c-format
@@ -7084,10 +7046,8 @@ msgid ""
 msgstr ""
 
 #: engines/ultima/ultima8/meta_engine.cpp:166
-#, fuzzy
-#| msgid "Enable loading of external replacement assets."
 msgid "Enable font replacement"
-msgstr "대체용 외부 애셋을 불러오는 것을 활성화합니다."
+msgstr "대체 폰트 사용"
 
 #: engines/ultima/ultima8/meta_engine.cpp:167
 msgid "Replaces game fonts with rendered fonts"
@@ -7817,13 +7777,11 @@ msgid ""
 "LiberationSans and LiberationSerif, or FreeMono, FreeSans and FreeSerif "
 "respectively."
 msgstr ""
-"게임을 플레이하기 전에 필요한 글꼴을 ScummVM의 추가 디렉토리 또는 게임 디렉토"
-"리에 복사해야합니다. Windows에서는 Windows 글꼴 디렉토리에있는 Times New "
-"Roman, Century Schoolbook, Garamond, Courier New 및 Arial의 글꼴 파일이 필요"
-"합니다. 또는 Liberation Fonts 또는 GNU FreeFont 패키지를 다운로드 할 수 있습"
-"니다. 선택한 글꼴 패키지의 모든 글꼴이 필요 할 수 있습니다. 예: "
-"LiberationMono, LiberationSans 및 LiberationSerif 또는 FreeMono, FreeSans 및 "
-"FreeSerif가 각각 필요"
+"게임을 플레이하기 전에 필요한 글꼴을 ScummVM의 추가 디렉토리 또는 게임 디렉토리에 복사해야합니다. Windows에서는 "
+"Windows 글꼴 디렉토리에있는 Times New Roman, Century Schoolbook, Garamond, Courier "
+"New 및 Arial의 글꼴 파일이 필요합니다. 또는 Liberation Fonts 또는 GNU FreeFont 패키지를 다운로드 할 수 "
+"있습니다. 선택한 글꼴 패키지의 모든 글꼴이 필요 할 수 있습니다. 예: LiberationMono, LiberationSans 및 "
+"LiberationSerif 또는 FreeMono, FreeSans 및 FreeSerif가 각각 필요함."
 
 #~ msgid "ScummVM Main Menu"
 #~ msgstr "ScummVM 메인 메뉴"
