@@ -802,6 +802,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "lostanswers", "Lost Answers" },
 	{ "lostinparadise", "Lost In Paradise" },
 	{ "lostinthenightmare", "Lost In The Nightmare" },
+	{ "lostinthetomb", "Lost In The Tomb" },
 	{ "lostinthewoods", "Lost In The Woods" },
 	{ "lucidlucy", "LUCID LUCY" },
 	{ "lucylavender", "Lucy Lavender" },
@@ -1221,6 +1222,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "thebar", "The Bar" },
 	{ "thebrokenbrain", "The Broken Brain" },
 	{ "thebunker", "The Bunker" },
+	{ "theburn", "The Burn" },
 	{ "thecadaversynod", "The cadaver synod" },
 	{ "thecan", "The Can" },
 	{ "thecell", "The Cell" },
@@ -1597,6 +1599,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("sq2vga", "sq2vga.exe", "bdaf20d9779c01986d6d8b7e1d6118ee", 106094482),  // 1.0
 	GAME_ENTRY("sq2vga", "sq2vga.exe", "bdaf20d9779c01986d6d8b7e1d6118ee", 117200044),  // 1.1
 	GAME_ENTRY("sq2vga", "sq2vga_v2.exe", "28a946e8a278814362613f8600375438", 177645020),  // 2.0
+	GAME_ENTRY("sq2vga", "SQ2VGA_V2.ags", "b3026b025c640a5c6164274034a6bab9", 175145932), // Linux
 
 	// Commercial games
 	GAME_ENTRY("alemmo", "al-emmo.exe", "ff22fd118f18eca884dc7ed2a5be3877", 19045178), // Steam
@@ -1713,6 +1716,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("qfi", "agsgame.dat", "9efb669ada4b685f9a5a91ce161424a7", 532694795), // Linux Groupees
 	GAME_ENTRY("qfi", "agsgame.dat", "2a0ba29e479ca5aa8c6b4233f030e78f", 536391599),
 	GAME_ENTRY("qfi", "agsgame.dat", "2a0ba29e479ca5aa8c6b4233f030e78f", 536513114), // Steam Linux
+	GAME_ENTRY("qfi", "qfi.exe", "8a7bc4f9ef0e6b0a5b01d3e4d5d5ee7d", 534881961),
 	GAME_ENTRY("resonance", "resonance.exe", "2e635c22bcbf0ed3d46f1bcde71812d4", 849404957), // GOG
 	GAME_ENTRY("resonance", "resonance.exe", "2e635c22bcbf0ed3d46f1bcde71812d4", 849410915), // Steam
 	GAME_ENTRY("richardandalice", "richardandalice.exe", "1023d348f67ba958f78ed62d029565c7", 109164768), // Steam
@@ -2427,6 +2431,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("lostinparadise", "2paradise.exe", "06a03fe35791b0578068ab1873455463", 37279978),
 	GAME_ENTRY("lostinthenightmare", "litn.exe", "0710e2ec71042617f565c01824f0cf3c", 5492994),
 	GAME_ENTRY("lostinthenightmare", "litn.exe", "0710e2ec71042617f565c01824f0cf3c", 5493239),
+	GAME_ENTRY("lostinthetomb", "PaperKubik.exe", "33c2a53cb4a4ae48787d42980852047b", 2659023),
 	GAME_ENTRY("lostinthewoods", "LITW.exe", "00328f4f1e7729144483107b96b11df8", 55203461),
 	GAME_ENTRY("lucidlucy", "LUCID LUCY.exe", "655363c390c7ae7225c237108edf50b7", 182038828),
 	GAME_ENTRY("lucylavender", "Lucy.exe", "c87aa6377abc18c1a1b2968ae6db08eb", 7944054),
@@ -2857,6 +2862,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("thebar", "one room game.exe", "465f972675db2da6040518221af5b0ba", 11660587),
 	GAME_ENTRY("thebrokenbrain", "Brain.exe", "95b7dd55f6e15c8a2118856ed9fe8ff9", 1092293),
 	GAME_ENTRY("thebunker", "The Bunker.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 12391058),
+	GAME_ENTRY("theburn", "The Bum 1.04.exe", "0212ad5fd38d64f63c5d3f2f2a0f65ee", 28673515),
 	GAME_ENTRY("thecadaversynod", "The cadaver synod.exe", "36f44e064eab15e502caeb60fd09f52d", 37438749),
 	GAME_ENTRY("thecan", "TheCan.exe", "82da2565c456dcfb265ded6fe3189c0b", 72388782),
 	GAME_ENTRY("thecell", "Cell.exe", "0b7529a76f38283d6e850b8d56526fc1", 811527),
