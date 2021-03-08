@@ -55,10 +55,10 @@ static void logHandler(int level, const char *message, void *data) {
 		warning("FluidSynth: %s", message);
 		break;
 	case FLUID_WARN:
-		debug(2, "FluidSynth: %s", message);
+		debug(1, "FluidSynth: %s", message);
 		break;
 	case FLUID_INFO:
-		debug(1, "FluidSynth: %s", message);
+		debug(2, "FluidSynth: %s", message);
 		break;
 	case FLUID_DBG:
 		debug(3, "FluidSynth: %s", message);
