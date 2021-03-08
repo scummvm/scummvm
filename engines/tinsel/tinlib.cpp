@@ -4451,6 +4451,11 @@ NoirMapping translateNoirLibCode(int libCode, int32 *pp) {
 		pp -= mapping.numArgs - 1;
 		debug(7, "%s(%d)", mapping.name, pp[0]);
 		break;
+	case 164:
+		mapping = NoirMapping{"STAND", STAND, 4};
+		pp -= mapping.numArgs - 1;
+		debug(7, "%s(0x%08X, 0x%08X, 0x%08X, 0x%08X)", mapping.name, pp[0], pp[1], pp[2], pp[3]);
+		break;
 	case 167:
 		mapping = NoirMapping{"STARTPROCESS", STARTPROCESS, 1};
 		pp -= mapping.numArgs - 1;
@@ -5708,7 +5713,7 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 		return -7;
 
 	case STAND:
-		// Common to both DW1 & DW2
+		// Common to DW1 / DW2 / Noir
 		pp -= 3;			// 4 parameters
 		Stand(coroParam, pp[0], pp[1], pp[2], pp[3]);
 		return -4;
