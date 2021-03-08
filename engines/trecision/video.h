@@ -61,21 +61,21 @@ public:
 private:
 	TrecisionEngine *_vm;
 
-	uint16 _smackPal[MAXSMACK][256];
-	uint8 _curSmackAction;
-	NightlongSmackerDecoder *SmkAnims[MAXSMACK];
+	uint16 _smkPal[MAXSMACK][256];
+	uint8 _curSmkAction;
+	NightlongSmackerDecoder *_smkAnims[MAXSMACK];
 
-	void CallSmackOpen(Common::SeekableReadStream *stream);
-	void CallSmackClose();
-	void CallSmackNextFrame();
+	void openSmk(Common::SeekableReadStream *stream);
+	void closeSmk();
+	void smkNextFrame();
 
-	void PaintSmackBuffer(int px, int py, int dx, int dy);
-	void RegenFullMotion();
-	void RegenSmackIcon(int StartIcon, int num);
+	void drawSmkBuffer(int px, int py, int dx, int dy);
+	void refreshFullMotion();
+	void refreshSmkIcon(int StartIcon, int num);
 
 public:
-	uint8 *_smackBuffer[MAXSMACK];
-	uint8 *SmackTempBuffer[MAXSMACK];
+	uint8 *_smkBuffer[MAXSMACK];
+	uint8 *_smkTempBuffer[MAXSMACK];
 
 	uint8 _curSmackBuffer;
 	uint16 _playingAnims[MAXSMACK];
@@ -84,21 +84,21 @@ public:
 
 	uint16 _animMaxX, _animMinX, _animMaxY, _animMinY;
 
-	SAnim AnimTab[MAXANIM];
+	SAnim _animTab[MAXANIM];
 
-	void CallSmackGoto(int buf, int num);
-	void CallSmackSoundOnOff(int pos, bool on);
-	void CallSmackVolumePan(int buf, int track, int vol);
+	void smkGoto(int buf, int num);
+	void smkSoundOnOff(int pos, bool on);
+	void smkVolumePan(int buf, int track, int vol);
 
-	void PlayFullMotion(int start, int end);
-	void RefreshAllAnimations();
-	void RegenAnim(int box);
-	void RegenSmackAnim(int num);
-	void StartFullMotion(const char *name);
-	void StartSmackAnim(uint16 num);
-	void StopAllSmackAnims();
-	void StopFullMotion();
-	void StopSmackAnim(uint16 num);
+	void playFullMotion(int start, int end);
+	void refreshAllAnimations();
+	void refreshAnim(int box);
+	void refreshSmkAnim(int num);
+	void startFullMotion(const char *name);
+	void startSmkAnim(uint16 num);
+	void stopAllSmkAnims();
+	void stopFullMotion();
+	void stopSmkAnim(uint16 num);
 };
 } // end of namespace
 #endif

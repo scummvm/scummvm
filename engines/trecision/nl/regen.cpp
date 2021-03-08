@@ -374,7 +374,7 @@ void SortBlock() {
  appartenenti a curbox
  --------------------------------------------------*/
 void PaintObjAnm(uint16 CurBox) {
-	g_vm->_animMgr->RegenAnim(CurBox);
+	g_vm->_animMgr->refreshAnim(CurBox);
 
 	// disegna nuove schede appartenenti al box corrente
 	for (int a = 0; a < g_vm->_curSortTableNum; a++) {
@@ -480,7 +480,7 @@ void PaintObjAnm(uint16 CurBox) {
 
 		//FlagPaintCharacter = false;
 	} else if ((_actorPos == CurBox) && !FlagDialogActive) {
-		g_vm->_animMgr->RegenSmackAnim(g_vm->_animMgr->_playingAnims[1]);
+		g_vm->_animMgr->refreshSmkAnim(g_vm->_animMgr->_playingAnims[1]);
 	}
 }
 

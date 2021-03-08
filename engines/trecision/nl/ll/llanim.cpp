@@ -73,11 +73,11 @@ void RedrawRoom() {
 	MCopy(g_vm->_video2 + TOP * CurRoomMaxX, ImagePointer, CurRoomMaxX * AREA);
 
 	if (g_vm->_room[g_vm->_curRoom]._bkgAnim)
-		g_vm->_animMgr->StartSmackAnim(g_vm->_room[g_vm->_curRoom]._bkgAnim);
+		g_vm->_animMgr->startSmkAnim(g_vm->_room[g_vm->_curRoom]._bkgAnim);
 
 	if ((g_vm->_curRoom == r4P) && (_curDialog == dF4PI)) {
-		memset(g_vm->_animMgr->_smackBuffer[0], 0, SCREENLEN * AREA);
-		g_vm->_animMgr->CallSmackGoto(0, 21);
+		memset(g_vm->_animMgr->_smkBuffer[0], 0, SCREENLEN * AREA);
+		g_vm->_animMgr->smkGoto(0, 21);
 	}
 
 	RegenRoom();

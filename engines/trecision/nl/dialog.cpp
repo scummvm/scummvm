@@ -133,7 +133,7 @@ void PlayDialog(uint16 i) {
 	wordset(g_vm->_video2, 0, MAXX * TOP);
 	g_vm->_graphicsMgr->showScreen(0, 0, MAXX, TOP);
 
-	g_vm->_animMgr->StartFullMotion((const char *)_dialog[i]._startAnim);
+	g_vm->_animMgr->startFullMotion((const char *)_dialog[i]._startAnim);
 
 	int skip = 0;
 	int curChoice = 0;
@@ -149,9 +149,9 @@ void PlayDialog(uint16 i) {
 		skip++;
 	// se c'e' predialog
 	if ((_dialog[i]._startLen > 0) && !(skip))
-		g_vm->_animMgr->PlayFullMotion(1, _dialog[i]._startLen);
+		g_vm->_animMgr->playFullMotion(1, _dialog[i]._startLen);
 	else {
-		g_vm->_animMgr->CallSmackSoundOnOff(1, false);
+		g_vm->_animMgr->smkSoundOnOff(1, false);
 		afterChoice(1);
 	}
 }
@@ -248,7 +248,7 @@ void afterChoice(int numframe) {
 		g_vm->_obj[oCIOCCOLATINI4A]._examine = 1105;
 		g_vm->_obj[oCIOCCOLATINI4A]._action = 1106;
 		g_vm->_obj[oPORTAC4A]._action = 1118;
-		g_vm->_animMgr->AnimTab[aBKG4A]._flag |= SMKANIM_OFF1;
+		g_vm->_animMgr->_animTab[aBKG4A]._flag |= SMKANIM_OFF1;
 		g_vm->_obj[ocHELLEN4A]._mode &= ~OBJMODE_OBJSTATUS;
 		g_vm->_obj[oHELLENA4A]._mode |= OBJMODE_OBJSTATUS;
 		break;
@@ -271,7 +271,7 @@ void afterChoice(int numframe) {
 	}
 	// Se ultima scelta era un esci dialogo
 	if (_choice[_curChoice]._flag & DLGCHOICE_EXITDLG) {
-		g_vm->_animMgr->StopFullMotion();
+		g_vm->_animMgr->stopFullMotion();
 
 		switch (_curDialog) {
 		/*			case dASCENSORE12:
@@ -420,7 +420,7 @@ void afterChoice(int numframe) {
 
 		case dF371:
 			g_vm->_obj[oSCAFFALE36]._anim = a3615AAPRENDESCAFFALE;
-			g_vm->_animMgr->CallSmackVolumePan(0, 1, 1);
+			g_vm->_animMgr->smkVolumePan(0, 1, 1);
 			break;
 
 		case dF431:
@@ -555,7 +555,7 @@ void afterChoice(int numframe) {
 
 		// se c'e' predialog
 		if (_dialog[_curDialog]._startLen > 0) {
-			g_vm->_animMgr->PlayFullMotion(1, _dialog[_curDialog]._startLen);
+			g_vm->_animMgr->playFullMotion(1, _dialog[_curDialog]._startLen);
 			return ;
 		}
 	}
@@ -598,7 +598,7 @@ void afterChoice(int numframe) {
 	}
 
 	if (res == 0) {
-		g_vm->_animMgr->StopFullMotion();
+		g_vm->_animMgr->stopFullMotion();
 		if (_curDialog == dC381)
 			PlayDialog(dF381);
 		return;
@@ -652,7 +652,7 @@ void PlayScelta(uint16 i) {
 		lens += _subTitles[c]._length;
 
 	FlagMouseEnabled = false;
-	g_vm->_animMgr->PlayFullMotion(ss->_startFrame, ss->_startFrame + lens - 1);
+	g_vm->_animMgr->playFullMotion(ss->_startFrame, ss->_startFrame + lens - 1);
 }
 
 /* -----------------28/07/97 22.15-------------------

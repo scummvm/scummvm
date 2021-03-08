@@ -143,7 +143,7 @@ void NlInit() {
 void CheckSystem() {
 	//for ( int a=0; a<5; a++ )
 	{
-		g_vm->_animMgr->RefreshAllAnimations();
+		g_vm->_animMgr->refreshAllAnimations();
 		EventLoop();
 	}
 }
@@ -357,7 +357,7 @@ void CloseSys(const char *str) { // close all
 	FastFileFinish();
 	SpeechFileFinish();
 	AnimFileFinish();
-	g_vm->_animMgr->StopAllSmackAnims();
+	g_vm->_animMgr->stopAllSmkAnims();
 	StopSoundSystem();
 
 	if (str)
