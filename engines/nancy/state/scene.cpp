@@ -167,6 +167,8 @@ void Scene::init() {
     Common::SeekableReadStream *chunk = _engine->getBootChunkStream("HINT");
     chunk->seek(0);
 
+    _hintsRemaining.clear();
+
     for (uint i = 0; i < 3; ++i) {
         _hintsRemaining.push_back(chunk->readByte());
     }
