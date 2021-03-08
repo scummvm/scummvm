@@ -90,7 +90,7 @@ typedef struct Cluster_API {
 	                     // file data
 } Cluster_API;
 
-#define FILE_NAME(a) (sizeof(uint) + sizeof(uint) + sizeof(HEADER_OPEN) + (sizeof(HEADER_NORMAL) * (a)))
+#define FILE_NAME(a) (sizeof(uint) + sizeof(uint32) + sizeof(HEADER_OPEN) + (sizeof(HEADER_NORMAL) * (a)))
 #define FILE_SIZE(a) (FILE_NAME(a) + sizeof(uint32))
 #define FILE_OFFSET(a) (FILE_SIZE(a) + sizeof(uint32))
 #define FILE_HASH(a) (FILE_OFFSET(a) + sizeof(uint32))
