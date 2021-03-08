@@ -45,7 +45,12 @@ void Init_direct_input() {
 	SetDefaultKeys();
 }
 
-void setKeyState(Common::KeyCode key, bool pressed) { keyboard_buf_scancodes[key] = pressed; }
+void setKeyState(Common::KeyCode key, bool pressed) {
+	if (key >= Common::KEYCODE_LAST)
+		return;
+
+	keyboard_buf_scancodes[key] = pressed;
+}
 
 uint32 Get_DI_key_press() {
 	for (uint32 i = 0; i < Common::KEYCODE_LAST; i++) {
