@@ -109,7 +109,7 @@ void Logo::stop() {
 	// For the N+C key combo it looks for some kind of cheat file
 	// to initialize the game state with.
 
-	_engine->setGameState(NancyEngine::kScene);
+	_engine->setState(NancyEngine::kScene);
 	_engine->_system->fillScreen(0);
 }
 

@@ -318,7 +318,7 @@ uint16 LoseGame::readData(Common::SeekableReadStream &stream) {
 
 void LoseGame::execute(NancyEngine *engine) {
     engine->stopAndUnloadSpecificSounds();
-    engine->setGameState(NancyEngine::kMainMenu);
+    engine->setState(NancyEngine::kMainMenu);
     engine->scene->resetStateToInit();
     isDone = true;
 }
@@ -340,7 +340,7 @@ uint16 WinGame::readData(Common::SeekableReadStream &stream) {
 
 void WinGame::execute(NancyEngine *engine) {
     engine->stopAndUnloadSpecificSounds();
-    engine->setGameState(NancyEngine::kCredits, NancyEngine::kMainMenu);
+    engine->setState(NancyEngine::kCredits, NancyEngine::kMainMenu);
     engine->scene->resetStateToInit();
     isDone = true;
 }

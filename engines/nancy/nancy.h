@@ -125,10 +125,10 @@ public:
 	// Used for state switching
 	void stopAndUnloadSpecificSounds();
 	
-	void setGameState(GameState state, GameState overridePrevious = kNone, bool keepGraphics = false);
-	GameState getGameState() const { return _gameFlow.minGameState; }
-	GameState getPreviousGameState() const { return _gameFlow.previousGameState; }
-	void callCheatMenu(bool eventFlags) { setGameState(kCheat), _cheatTypeIsEventFlag = eventFlags; }
+	void setState(GameState state, GameState overridePrevious = kNone, bool keepGraphics = false);
+	GameState getState() const { return _gameFlow.minGameState; }
+	GameState getPreviousState() const { return _gameFlow.previousGameState; }
+	void callCheatMenu(bool eventFlags) { setState(kCheat), _cheatTypeIsEventFlag = eventFlags; }
 
 	void setMouseEnabled(bool enabled);
 

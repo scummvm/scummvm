@@ -160,7 +160,7 @@ void Map::stop() {
     sound.read(*chunk, SoundDescription::kMenu);
     _engine->sound->stopSound(sound);
     
-    _engine->setGameState(NancyEngine::kScene);
+    _engine->setState(NancyEngine::kScene);
 
     if (_pickedLocationID != -1) {
         auto &loc = _locations[_pickedLocationID];

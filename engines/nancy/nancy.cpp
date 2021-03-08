@@ -152,7 +152,7 @@ Common::Error NancyEngine::run() {
 			bootGameEngine();
 			graphicsManager->init();
 			cursorManager->init();
-			setGameState(kLogo);
+			setState(kLogo);
 			break;
 		case kLogo:
 			logo->process();
@@ -161,10 +161,10 @@ Common::Error NancyEngine::run() {
 			credits->process();
 			break;
 		case kMainMenu: {
-			GameState prevState = getPreviousGameState();
+			GameState prevState = getPreviousState();
 			// TODO until the game's own menus are implemented we simply open the GMM
 			openMainMenuDialog();
-			setGameState(prevState);
+			setState(prevState);
 			break;
 		}
 		case kHelp:
@@ -186,7 +186,7 @@ Common::Error NancyEngine::run() {
 				dialog->runModal();
 				delete dialog;
 			}
-			setGameState(getPreviousGameState());
+			setState(getPreviousState());
 			input->forceCleanInput();
 			break;
 		}
@@ -282,14 +282,14 @@ void NancyEngine::setMouseEnabled(bool enabled) {
 
 void NancyEngine::pauseEngineIntern(bool pause) {
 	if (pause) {
-		if (getGameState() == kScene) {
+		if (getState() == kScene) {
 			scene->requestStateChange(kPause);
 			scene->changeGameState(true);
 		} else {
-			setGameState(kPause, kNone, true);
+			setState(kPause, kNone, true);
 		}
 	} else {
-		setGameState(getPreviousGameState(), kNone, true);
+		setState(getPreviousState(), kNone, true);
 	}
 
 	graphicsManager->onPause(pause);
@@ -378,7 +378,7 @@ void NancyEngine::readImageList(const IFF &boot, const Common::String &prefix, I
 	}
 }
 
-void NancyEngine::setGameState(GameState state, GameState overridePrevious, bool keepGraphics) {
+void NancyEngine::setState(GameState state, GameState overridePrevious, bool keepGraphics) {
 	if (overridePrevious != kNone) {
 		_gameFlow.previousGameState = overridePrevious;
 	} else {
