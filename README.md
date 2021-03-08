@@ -1010,7 +1010,7 @@ need:
   * The `1a`—`79` directories (only `4f` for demo version).
   * The `global` directory.
   * The `static` directory.
-  * The `fonts` directory (not critical, but recommended – see below).
+  * The `fonts` directory (not critical, but recommended - see below).
   * `x.xarc` and all the `INI` files.
   * `game.exe` (not critical, but recommended for a styled message dialog)
 
@@ -3151,7 +3151,7 @@ debug messages (see
       - MinGW:
 
           - Please refer to:
-            <https://wiki.scummvm.org/index.php/Compiling_ScummVM/MinGW>
+            <https://wiki.scummvm.org/index.php/Compiling_ScummVM/MinGW-w64>
 
       - Visual Studio (MSVC):
 
