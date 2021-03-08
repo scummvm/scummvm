@@ -368,7 +368,7 @@ void GameState::processFoundItem(int32 item) {
 
 	_engine->_animations->stockAnimation(bodyPtr, &_engine->_scene->sceneHero->animTimerData);
 
-	int32 currentAnimState = 0;
+	uint currentAnimState = 0;
 
 	_engine->_redraw->numOfRedrawBox = 0;
 
@@ -394,8 +394,8 @@ void GameState::processFoundItem(int32 item) {
 
 		if (_engine->_animations->setModelAnimation(currentAnimState, currentAnimData, currentAnim, bodyPtr, &_engine->_scene->sceneHero->animTimerData)) {
 			currentAnimState++; // keyframe
-			if (currentAnimState >= _engine->_animations->getNumKeyframes(currentAnim)) {
-				currentAnimState = _engine->_animations->getStartKeyframe(currentAnim);
+			if (currentAnimState >= currentAnimData.getNumKeyframes()) {
+				currentAnimState = currentAnimData.getLoopFrame();
 			}
 		}
 

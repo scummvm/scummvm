@@ -139,7 +139,7 @@ private:
 	/** Hero behaviour menu entity */
 	uint8 *behaviourEntity = 0;
 	/** Behaviour menu anim state */
-	int16 behaviourAnimState[4]; // winTab
+	uint behaviourAnimState[4]; // winTab
 	/** Behaviour menu anim data pointer */
 	AnimTimerDataStruct behaviourAnimData[4];
 

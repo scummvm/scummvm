@@ -28,8 +28,9 @@
 #include "common/system.h"
 #include "common/translation.h"
 #include "engines/advancedDetector.h"
-#include "twine/detection.h"
+#include "graphics/scaler.h"
 #include "twine/achievements_tables.h"
+#include "twine/detection.h"
 #include "twine/input.h"
 #include "twine/twine.h"
 
@@ -62,6 +63,8 @@ public:
 	const ExtraGuiOptions getExtraGuiOptions(const Common::String &target) const override;
 
 	const Common::AchievementsInfo getAchievementsInfo(const Common::String &target) const override;
+
+	void getSavegameThumbnail(Graphics::Surface &thumb) override;
 };
 
 static const ExtraGuiOption OptWallCollision = {
@@ -189,6 +192,10 @@ const Common::AchievementsInfo TwinEMetaEngine::getAchievementsInfo(const Common
 		}
 	}
 	return result;
+}
+
+void TwinEMetaEngine::getSavegameThumbnail(Graphics::Surface &thumb) {
+	thumb.copyFrom(((TwinEEngine*)g_engine)->workVideoBuffer);
 }
 
 //

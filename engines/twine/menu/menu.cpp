@@ -917,12 +917,12 @@ void Menu::drawBehaviour(int32 left, int32 top, HeroBehaviourType behaviour, int
 	const uint8 *currentAnim = _engine->_resources->animTable[animIdx];
 	const AnimData &currentAnimData = _engine->_resources->animData[animIdx];
 
-	int16 currentAnimState = behaviourAnimState[(byte)behaviour];
+	uint currentAnimState = behaviourAnimState[(byte)behaviour];
 
 	if (_engine->_animations->setModelAnimation(currentAnimState, currentAnimData, currentAnim, behaviourEntity, &behaviourAnimData[(byte)behaviour])) {
 		currentAnimState++; // keyframe
-		if (currentAnimState >= _engine->_animations->getNumKeyframes(currentAnim)) {
-			currentAnimState = _engine->_animations->getStartKeyframe(currentAnim);
+		if (currentAnimState >= currentAnimData.getNumKeyframes()) {
+			currentAnimState = currentAnimData.getLoopFrame();
 		}
 		behaviourAnimState[(byte)behaviour] = currentAnimState;
 	}

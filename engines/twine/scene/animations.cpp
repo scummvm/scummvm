@@ -75,14 +75,6 @@ const uint8 *Animations::getKeyFrameData(int32 frameIdx, const uint8 *animPtr) {
 	return (const uint8 *)((numOfBonesInAnim * 8 + 8) * frameIdx + animPtr + 8);
 }
 
-int16 Animations::getNumKeyframes(const uint8 *animPtr) {
-	return READ_LE_INT16(animPtr + 0);
-}
-
-int16 Animations::getStartKeyframe(const uint8 *animPtr) {
-	return READ_LE_INT16(animPtr + 4);
-}
-
 void Animations::applyAnimStepRotation(uint8 *ptr, int32 deltaTime, int32 keyFrameLength, const uint8 *keyFramePtr, const uint8 *lastKeyFramePtr) {
 	const int16 lastAngle = ClampAngle(READ_LE_INT16(lastKeyFramePtr));
 	const int16 newAngle = ClampAngle(READ_LE_INT16(keyFramePtr));

@@ -327,7 +327,7 @@ void Holomap::drawHolomapTrajectory(int32 trajectoryIndex) {
 	uint8 *modelPtr = nullptr;
 	HQR::getAllocEntry(&modelPtr, Resources::HQR_RESS_FILE, data.getModel());
 	Renderer::prepareIsoModel(modelPtr);
-	int16 frameNumber = 0;
+	uint frameNumber = 0;
 	int32 frameTime = _engine->lbaTime;
 	int16 trajAnimFrameIdx = 0;
 
@@ -360,8 +360,8 @@ void Holomap::drawHolomapTrajectory(int32 trajectoryIndex) {
 
 		if (_engine->_animations->setModelAnimation(frameNumber, animData, animPtr, modelPtr, &animTimerData)) {
 			frameNumber++;
-			if (frameNumber >= _engine->_animations->getNumKeyframes(animPtr)) {
-				frameNumber = _engine->_animations->getStartKeyframe(animPtr);
+			if (frameNumber >= animData.getNumKeyframes()) {
+				frameNumber = animData.getLoopFrame();
 			}
 		}
 		_engine->_renderer->setCameraPosition(100, 400, 128, 900, 900);

@@ -83,18 +83,6 @@ public:
 	const uint8 *getKeyFrameData(int32 frameIdx, const uint8 *animPtr);
 
 	/**
-	 * Get total number of keyframes in animation
-	 * @param animPtr Pointer to animation
-	 */
-	int16 getNumKeyframes(const uint8 *animPtr);
-
-	/**
-	 * Get first keyframes in animation
-	 * @param animPtr Pointer to animation
-	 */
-	int16 getStartKeyframe(const uint8 *animPtr);
-
-	/**
 	 * Set new body animation
 	 * @param keyframeIdx Animation key frame index
 	 * @param animPtr Animation pointer
