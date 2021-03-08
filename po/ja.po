@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-03-07 17:34+0000\n"
-"PO-Revision-Date: 2021-03-07 17:18+0000\n"
+"PO-Revision-Date: 2021-03-08 11:24+0000\n"
 "Last-Translator: VAN-Gluon <masuda20100701@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ja/>\n"
@@ -5302,13 +5302,13 @@ msgstr "下を見る"
 
 #: engines/mohawk/riven.cpp:911
 msgid "Play intro videos"
-msgstr ""
+msgstr "イントロムービーを再生"
 
 #: engines/mohawk/riven_stack.cpp:204
 msgid ""
 "Exploration beyond this point available only within the full version of\n"
 "the game."
-msgstr ""
+msgstr "この先の探索は、完全版でお楽しみください。"
 
 #: engines/mohawk/riven_stacks/aspit.cpp:429
 msgid ""
@@ -5318,11 +5318,16 @@ msgid ""
 "the game. ScummVM cannot do that and\n"
 "the site no longer exists."
 msgstr ""
+"体験版では、この地点でゲーム購入のため\n"
+"the Red Orb storeにWebブラウザーを開いて\n"
+"お連れします。\n"
+"サイトがもう存在しないため、ScummVMでは\n"
+"この操作を行う事ができません。"
 
 #: engines/mutationofjb/util.cpp:33
 #, c-format
 msgid "Unable to locate the '%s' engine data file"
-msgstr ""
+msgstr "エンジンデータファイル%sが見つかりません"
 
 #: engines/myst3/detection.cpp:149 engines/myst3/detection.cpp:163
 msgid "PS2 version is not yet supported"
@@ -5334,7 +5339,7 @@ msgstr "ワイドスクリーン対応MOD"
 
 #: engines/myst3/detection.cpp:183
 msgid "Enable widescreen rendering in fullscreen mode."
-msgstr ""
+msgstr "全画面モードでワイドスクリーンレンダリングを有効にします。"
 
 #: engines/myst3/myst3.cpp:361
 msgid ""
@@ -5344,6 +5349,10 @@ msgid ""
 "The updates can be downloaded from:\n"
 "https://www.scummvm.org/frs/extras/patches/"
 msgstr ""
+"この「Myst III」は最新版ではありません。\n"
+"お使いの言語に対応したアップデートを適用してください。\n"
+"公式パッチは、以下からダウンロードできます：\n"
+"https://www.scummvm.org/frs/extras/patches/"
 
 #: engines/myst3/myst3.cpp:1575 engines/pegasus/pegasus.cpp:701
 #, fuzzy
@@ -5352,19 +5361,19 @@ msgstr "セーブデータの名前を入力してください"
 
 #: engines/neverhood/detection.cpp:119
 msgid "Skip the Hall of Records storyboard scenes"
-msgstr ""
+msgstr "古代図書館のストーリーをスキップ"
 
 #: engines/neverhood/detection.cpp:120
 msgid "Allows the player to skip past the Hall of Records storyboard scenes"
-msgstr ""
+msgstr "古代図書館のストーリーをスキップできます"
 
 #: engines/neverhood/detection.cpp:126
 msgid "Scale the making of videos to full screen"
-msgstr ""
+msgstr "メイキング映像をフルスクリーンで再生"
 
 #: engines/neverhood/detection.cpp:127
 msgid "Scale the making of videos, so that they use the whole screen"
-msgstr ""
+msgstr "メイキング映像を画面全体に広げて再生"
 
 #: engines/parallaction/saveload.cpp:130
 #, c-format
@@ -5372,6 +5381,8 @@ msgid ""
 "Can't save game in slot %i\n"
 "\n"
 msgstr ""
+"スロット%iにセーブできません\n"
+"\n"
 
 #: engines/parallaction/saveload.cpp:194
 #, fuzzy
@@ -5408,7 +5419,7 @@ msgstr ""
 
 #: engines/parallaction/saveload.cpp:316
 msgid "ScummVM successfully converted all your saved games."
-msgstr ""
+msgstr "ScummVMは全てのセーブの変換に成功しました。"
 
 #: engines/parallaction/saveload.cpp:318
 msgid ""
@@ -5417,10 +5428,13 @@ msgid ""
 "\n"
 "Please report to the team."
 msgstr ""
+"ScummVMはすべてのファイルが変換された事を保証できないため、コンソールに警告を表示します。\n"
+"\n"
+"開発チームに内容を報告してください。"
 
 #: engines/pegasus/pegasus.cpp:2483
 msgid "Up/Zoom In/Move Forward/Open Doors"
-msgstr ""
+msgstr "上/ズームイン/前方へ移動/ドアを開ける"
 
 #: engines/pegasus/pegasus.cpp:2490
 #, fuzzy
@@ -5682,6 +5696,7 @@ msgid ""
 "not work properly. Please check the console for more information, and verify "
 "that your game files are valid."
 msgstr ""
+"リソースに破損や欠落が検出されました。一部の機能は、正常に動作しない可能性があります。詳細はコンソールを確認し、ファイルが有効である事を確かめてください。"
 
 #: engines/sci/sci.cpp:389
 msgid ""
@@ -5691,6 +5706,8 @@ msgid ""
 "not always render properly or reflect the actual game speech. This is not a "
 "ScummVM bug -- it is a problem with the game's assets."
 msgstr ""
+"King's Quest 7の字幕は未完成で、製品版では無効になっていました。ScummVMで有効にする事はできますが、適切なレンダリングやゲームテキスト"
+"との連動は保証されません。これはバグではなく、ゲームアセットの問題です。"
 
 #: engines/sci/sci.cpp:413
 msgid ""
@@ -5704,6 +5721,11 @@ msgid ""
 "place it in the game folder. Without this patch, General MIDI music for this "
 "game will sound badly distorted."
 msgstr ""
+"サウンドデバイスとして汎用MIDIが選択されています。このゲームでMIDIを楽しむ場合、Sierra提供の「General MIDI "
+"Patch」を適用してください。付属の."
+"PATファイルを全て解凍してScummVMのextrasフォルダーに入れれば、自動的に適切なパッチが適用されます。また、パッチに同梱されているREAD."
+"MEファイルに従って4."
+"PATにリネームし、ゲームフォルダーに配置する事もできます。このパッチを使わない場合、ゲームのMIDIがひどく歪んだ音になるおそれがあります。"
 
 #: engines/sci/sci.cpp:432
 msgid ""
