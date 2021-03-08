@@ -5658,7 +5658,7 @@ EOF
 	cc_check $FRIBIDI_CFLAGS $FRIBIDI_LIBS && _fribidi=yes
 fi
 if test "$_fribidi" = yes ; then
-	append_var LIBS "$FRIBIDI_LIBS -lfribidi"
+	append_var LIBS "$FRIBIDI_LIBS"
 	append_var INCLUDES "$FRIBIDI_CFLAGS"
 fi
 define_in_config_if_yes "$_fribidi" 'USE_FRIBIDI'
