@@ -39,14 +39,18 @@ void InventoryBox::init() {
     Common::SeekableReadStream &stream = *_engine->getBootChunkStream("INV");
     stream.seek(0, SEEK_SET);
 
+    _order.clear();
+
     readRect(stream, _sliderSource);
     _sliderDefaultDest.x = stream.readUint16LE();
     _sliderDefaultDest.y = stream.readUint16LE();
 
     stream.seek(0xD6, SEEK_SET);
+
     for (uint i = 0; i < 14; ++i) {
         readRect(stream, _shadesSrc[i]);
     }
+
     readRect(stream, _screenPosition);
     _shadesFrameTime = stream.readUint16LE();
 
@@ -60,6 +64,7 @@ void InventoryBox::init() {
     readRect(stream, _emptySpace);
 
     char itemName[0x14];
+
     for (uint i = 0; i < 11; ++i) {
         stream.read(itemName, 0x14);
         _itemDescriptions[i].name = Common::String(itemName);
