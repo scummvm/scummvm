@@ -168,25 +168,25 @@ void LoadAll() {
 	}
 
 	for (int i = 0; i < MAXANIM; ++i) {
-		dataNl.read(&g_vm->_animMgr->AnimTab[i]._name, ARRAYSIZE(g_vm->_animMgr->AnimTab[i]._name));
+		dataNl.read(&g_vm->_animMgr->_animTab[i]._name, ARRAYSIZE(g_vm->_animMgr->_animTab[i]._name));
 
-		g_vm->_animMgr->AnimTab[i]._flag = dataNl.readUint16LE();
+		g_vm->_animMgr->_animTab[i]._flag = dataNl.readUint16LE();
 
 		for (int j = 0; j < MAXCHILD; ++j) {
-			g_vm->_animMgr->AnimTab[i]._lim[j][0] = dataNl.readUint16LE();
-			g_vm->_animMgr->AnimTab[i]._lim[j][1] = dataNl.readUint16LE();
-			g_vm->_animMgr->AnimTab[i]._lim[j][2] = dataNl.readUint16LE();
-			g_vm->_animMgr->AnimTab[i]._lim[j][3] = dataNl.readUint16LE();
+			g_vm->_animMgr->_animTab[i]._lim[j][0] = dataNl.readUint16LE();
+			g_vm->_animMgr->_animTab[i]._lim[j][1] = dataNl.readUint16LE();
+			g_vm->_animMgr->_animTab[i]._lim[j][2] = dataNl.readUint16LE();
+			g_vm->_animMgr->_animTab[i]._lim[j][3] = dataNl.readUint16LE();
 		}
 
-		g_vm->_animMgr->AnimTab[i]._nbox = dataNl.readByte();
+		g_vm->_animMgr->_animTab[i]._nbox = dataNl.readByte();
 		dataNl.readByte(); // Padding
 
 		for (int j = 0; j < MAXATFRAME; ++j) {
-			g_vm->_animMgr->AnimTab[i]._atFrame[j]._type = dataNl.readByte();
-			g_vm->_animMgr->AnimTab[i]._atFrame[j]._child = dataNl.readByte();
-			g_vm->_animMgr->AnimTab[i]._atFrame[j]._numFrame = dataNl.readUint16LE();
-			g_vm->_animMgr->AnimTab[i]._atFrame[j]._index = dataNl.readUint16LE();
+			g_vm->_animMgr->_animTab[i]._atFrame[j]._type = dataNl.readByte();
+			g_vm->_animMgr->_animTab[i]._atFrame[j]._child = dataNl.readByte();
+			g_vm->_animMgr->_animTab[i]._atFrame[j]._numFrame = dataNl.readUint16LE();
+			g_vm->_animMgr->_animTab[i]._atFrame[j]._index = dataNl.readUint16LE();
 		}
 	}
 

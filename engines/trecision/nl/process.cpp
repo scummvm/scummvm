@@ -42,7 +42,7 @@ void ProcessTime() {
 	static uint8 OldLightIcon = 0xFF;
 
 	TheTime = ReadTime();
-	g_vm->_animMgr->RefreshAllAnimations();
+	g_vm->_animMgr->refreshAllAnimations();
 
 	if (TheTime >= g_vm->NextRefresh) {
 		PaintString();

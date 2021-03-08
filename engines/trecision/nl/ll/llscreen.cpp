@@ -239,7 +239,7 @@ void OpenVideo() {
 	GameBytePointer += MAXTEXTAREA;
 
 	// icone area
-	g_vm->_animMgr->_smackBuffer[2] = (uint8 *)(MemoryArea + GameBytePointer);
+	g_vm->_animMgr->_smkBuffer[2] = (uint8 *)(MemoryArea + GameBytePointer);
 	GameBytePointer += ICONDX * ICONDY;
 	// zbuffer
 	ZBuffer = (int16 *)(MemoryArea + GameBytePointer);
@@ -252,20 +252,20 @@ void OpenVideo() {
 	ExtraObj2C = (uint16 *)SpeechBuf[0]; // for room 2C
 	GameBytePointer += SPEECHSIZE;
 	// omino e full motions area
-	g_vm->_animMgr->_smackBuffer[1] = (uint8 *)(MemoryArea + GameBytePointer);
-	ExtraObj41D = (uint16 *)g_vm->_animMgr->_smackBuffer[1]; // for room 41D
+	g_vm->_animMgr->_smkBuffer[1] = (uint8 *)(MemoryArea + GameBytePointer);
+	ExtraObj41D = (uint16 *)g_vm->_animMgr->_smkBuffer[1]; // for room 41D
 	GameBytePointer += SCREENLEN * AREA;
 	// omino buffer
-	g_vm->_animMgr->SmackTempBuffer[1] = (uint8 *)(MemoryArea + GameBytePointer);
+	g_vm->_animMgr->_smkTempBuffer[1] = (uint8 *)(MemoryArea + GameBytePointer);
 	GameBytePointer += SMKANBUFFER;
 	// background buffer
-	g_vm->_animMgr->SmackTempBuffer[0] = (uint8 *)(MemoryArea + GameBytePointer);
+	g_vm->_animMgr->_smkTempBuffer[0] = (uint8 *)(MemoryArea + GameBytePointer);
 	GameBytePointer += SMKBKGBUFFER;
 	// icone buffer
-	g_vm->_animMgr->SmackTempBuffer[2] = (uint8 *)(MemoryArea + GameBytePointer);
+	g_vm->_animMgr->_smkTempBuffer[2] = (uint8 *)(MemoryArea + GameBytePointer);
 	GameBytePointer += SMKICONBUFFER;
 	// background area
-	g_vm->_animMgr->_smackBuffer[0] = (uint8 *)(MemoryArea + GameBytePointer);
+	g_vm->_animMgr->_smkBuffer[0] = (uint8 *)(MemoryArea + GameBytePointer);
 	GameBytePointer += SCREENLEN * AREA;
 	// SmackImagePointer
 	SmackImagePointer = (uint16 *)(MemoryArea + GameBytePointer);
@@ -522,9 +522,9 @@ void ReadLoc() {
 
 	if (g_vm->_room[g_vm->_curRoom]._bkgAnim) {
 		wordcopy(SmackImagePointer, ImagePointer, MAXX * AREA);
-		g_vm->_animMgr->StartSmackAnim(g_vm->_room[g_vm->_curRoom]._bkgAnim);
+		g_vm->_animMgr->startSmkAnim(g_vm->_room[g_vm->_curRoom]._bkgAnim);
 	} else
-		g_vm->_animMgr->StopSmackAnim(g_vm->_animMgr->_playingAnims[0]);
+		g_vm->_animMgr->stopSmkAnim(g_vm->_animMgr->_playingAnims[0]);
 
 	InitAtFrameHandler(g_vm->_room[g_vm->_curRoom]._bkgAnim, 0);
 
@@ -907,7 +907,7 @@ void RegenInventory(uint8 StartIcon, uint8 StartLine) {
 	LeftArrow = 0;
 	RightArrow = 0;
 
-	//RegenSmackIcon( StartIcon, 2 );
+	//refreshSmkIcon( StartIcon, 2 );
 
 	VMouseCopy();
 	for (uint16 a = 0; a < ICONDY; a++) {
