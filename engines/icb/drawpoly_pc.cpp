@@ -3391,12 +3391,6 @@ void fastDrawGTL3PC(uint32 *polyStart, const uint32 n, SVECTORPC *pVertex, SVECT
 	CVECTOR rgbIn = {128, 128, 128, 0};
 	CVECTOR rgb0, rgb1, rgb2;
 
-	int32 my_minUsedZpos;
-	int32 my_maxUsedZpos;
-
-	my_minUsedZpos = minUsedZpos;
-	my_maxUsedZpos = maxUsedZpos;
-
 	POLY_GT3 *poly;
 	uint32 *pPoly;
 

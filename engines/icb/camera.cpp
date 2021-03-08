@@ -531,13 +531,12 @@ mcodeFunctionReturnCodes _game_session::fn_is_current_camera(int32 &result, int3
 mcodeFunctionReturnCodes _game_session::fn_is_current_location(int32 &result, int32 *params) {
 	char h_buf[8];
 	uint32 len;
-	uint32 nPlayerFloorIndex, nPlayerLocationHash;
+	uint32 nPlayerFloorIndex;
 	const char *location_name = (const char *)MemoryUtil::resolvePtr(params[0]);
 
 	// First we need to know which location the player is in, because the information level
 	// for this is automatically at full.
 	nPlayerFloorIndex = MS->logic_structs[MS->player.Fetch_player_id()]->owner_floor_rect;
-	nPlayerLocationHash = MS->floor_def->Fetch_floor_number(nPlayerFloorIndex)->map_location_hash;
 
 	Message_box("is %s current location?", location_name);
 

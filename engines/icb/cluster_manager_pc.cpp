@@ -95,7 +95,7 @@ ClusterManager::ClusterManager() {
 
 	m_installDone = FALSE8;
 
-	memset(m_progressBits, 0, NUMBER_OF_PROGRESS_BITS);
+	memset(m_progressBits, 0, sizeof(PROGRESS_BIT) * NUMBER_OF_PROGRESS_BITS);
 	m_bitsDone = 0;
 	m_frameCounter = 0;
 	m_currentLanguage = T_ENGLISH;

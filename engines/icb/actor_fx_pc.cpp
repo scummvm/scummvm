@@ -76,7 +76,6 @@ int32 DrawActorSpecialEffectsPC(int32 mflash, SVECTOR *mfpos, int32 mfh, int32 m
 	}
 
 	if (bullet) {
-		int32 col;
 		int32 b;
 
 		// get difference between actual brightness and the min level
@@ -88,9 +87,6 @@ int32 DrawActorSpecialEffectsPC(int32 mflash, SVECTOR *mfpos, int32 mfh, int32 m
 		// also limit at top range, anything above is clamped to full
 		else if (b > (VERY_BRIGHT - NOT_VERY_BRIGHT))
 			b = (VERY_BRIGHT - NOT_VERY_BRIGHT);
-
-		// now use the brightness slider to do proportion of bullet col which has come in
-		col = bulletCol * b / (VERY_BRIGHT - NOT_VERY_BRIGHT);
 
 		DrawCartridgeCasePC(bulletPos, bulletCol);
 	}

@@ -735,7 +735,6 @@ mcodeFunctionReturnCodes _game_session::fn_easy_play_generic_anim(int32 &, int32
 	// return    IR_CONT or
 	//			IR_REPEAT
 
-	bool8 ret;
 	const char *anim_name = NULL;
 	if (params && params[0]) {
 		anim_name = (const char *)MemoryUtil::resolvePtr(params[0]);
@@ -789,7 +788,7 @@ mcodeFunctionReturnCodes _game_session::fn_easy_play_generic_anim(int32 &, int32
 	}
 
 	// shift character and frame forward by the amount appropriate
-	ret = MS->Easy_frame_and_motion(L->cur_anim_type, 0, M->anim_speed);
+	MS->Easy_frame_and_motion(L->cur_anim_type, 0, M->anim_speed);
 
 	// more to do - come back again next cycle
 	return (IR_REPEAT);
@@ -803,7 +802,6 @@ mcodeFunctionReturnCodes _game_session::fn_easy_play_generic_anim_with_pan(int32
 	// return    IR_CONT or
 	//			IR_REPEAT
 
-	bool8 ret;
 	const char *anim_name = (const char *)MemoryUtil::resolvePtr(params[0]);
 
 	if (!L->looping) {
@@ -856,7 +854,7 @@ mcodeFunctionReturnCodes _game_session::fn_easy_play_generic_anim_with_pan(int32
 	}
 
 	// shift character and frame forward by the amount appropriate
-	ret = MS->Easy_frame_motion_and_pan(L->cur_anim_type, 0);
+	MS->Easy_frame_motion_and_pan(L->cur_anim_type, 0);
 
 	// more to do - come back again next cycle
 	return (IR_REPEAT);
@@ -870,8 +868,6 @@ mcodeFunctionReturnCodes _game_session::fn_easy_play_custom_anim_with_pan(int32 
 
 	// return    IR_CONT or
 	//			IR_REPEAT
-
-	bool8 ret;
 
 	const char *anim_name = (const char *)MemoryUtil::resolvePtr(params[0]);
 
@@ -917,7 +913,7 @@ mcodeFunctionReturnCodes _game_session::fn_easy_play_custom_anim_with_pan(int32 
 	}
 
 	// shift character and frame forward by the amount appropriate
-	ret = MS->Easy_frame_motion_and_pan(L->cur_anim_type, 0);
+	MS->Easy_frame_motion_and_pan(L->cur_anim_type, 0);
 
 	// more to do - come back again next cycle
 	return (IR_REPEAT);

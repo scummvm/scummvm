@@ -314,13 +314,6 @@ void DrawActor4PC(psxActor *actor, psxCamera *camera, Bone_Frame *frame, rap_API
 
 	gte_MulMatrix0_pc(&cam_pc, &act_pc, local2screen);
 
-	// make the ls trans vector
-	//  = world2screen * local2world_trans + world2screen_trans
-	SVECTORPC sv;
-	sv.vx = (int16)actor->lw.t[0];
-	sv.vy = (int16)actor->lw.t[1];
-	sv.vz = (int16)actor->lw.t[2];
-
 	ApplyMatrixLV_pc(&cam_pc, (VECTOR *)&(actor->lw.t[0]), (VECTOR *)&(local2screen->t[0]));
 	local2screen->t[0] += cam_pc.t[0];
 	local2screen->t[1] += cam_pc.t[1];
@@ -561,7 +554,6 @@ void DrawModel4PC(rap_API *mrap, int32 poseBone, MATRIXPC *lw, MATRIXPC *local2s
 
 	int32 flag, p;
 	int32 i;
-	SVECTORPC *v0;
 	SVECTOR *pbbox;
 
 	// Convert the bounding box from local co-ordinates into screen co-ordinates
@@ -627,7 +619,6 @@ void DrawModel4PC(rap_API *mrap, int32 poseBone, MATRIXPC *lw, MATRIXPC *local2s
 	}
 
 	// Loop over the vector pool converting them all to screen co-ordinates
-	v0 = local;
 	if (debug == 0) {
 		ConvertToScreenCoords(local, screen, nVertices);
 	}
@@ -956,14 +947,13 @@ void drawBboxPC(SVECTOR *scrn, CVECTOR colour) {
 	// 1->7->5
 	// 6->4->5
 
-	int32 z0;
 	LINE_F3 *line = (LINE_F3 *)drawpacket;
 	setLineF3(line);
 	setRGB0(line, colour.r, colour.g, colour.b);
 	// Pair0: 0->1->3
 	setXY3(line, scrn[0].vx, scrn[0].vy, scrn[1].vx, scrn[1].vy, scrn[3].vx, scrn[3].vy);
 
-	z0 = myAddPrimClip(scrn[3].vz, drawpacket);
+	myAddPrimClip(scrn[3].vz, drawpacket);
 	myAddPacket(sizeof(LINE_F3));
 
 	// Pair1: 2->3->5
@@ -971,7 +961,7 @@ void drawBboxPC(SVECTOR *scrn, CVECTOR colour) {
 	setLineF3(line);
 	setRGB0(line, colour.r, colour.g, colour.b);
 	setXY3(line, scrn[2].vx, scrn[2].vy, scrn[3].vx, scrn[3].vy, scrn[5].vx, scrn[5].vy);
-	z0 = myAddPrimClip(scrn[5].vz, drawpacket);
+	myAddPrimClip(scrn[5].vz, drawpacket);
 	myAddPacket(sizeof(LINE_F3));
 
 	// Pair2: 0->2->4
@@ -979,7 +969,7 @@ void drawBboxPC(SVECTOR *scrn, CVECTOR colour) {
 	setLineF3(line);
 	setRGB0(line, colour.r, colour.g, colour.b);
 	setXY3(line, scrn[0].vx, scrn[0].vy, scrn[2].vx, scrn[2].vy, scrn[4].vx, scrn[4].vy);
-	z0 = myAddPrimClip(scrn[5].vz, drawpacket);
+	myAddPrimClip(scrn[5].vz, drawpacket);
 	myAddPacket(sizeof(LINE_F3));
 
 	// Pair3: 0->6->7
@@ -987,7 +977,7 @@ void drawBboxPC(SVECTOR *scrn, CVECTOR colour) {
 	setLineF3(line);
 	setRGB0(line, colour.r, colour.g, colour.b);
 	setXY3(line, scrn[0].vx, scrn[0].vy, scrn[6].vx, scrn[6].vy, scrn[7].vx, scrn[7].vy);
-	z0 = myAddPrimClip(scrn[7].vz, drawpacket);
+	myAddPrimClip(scrn[7].vz, drawpacket);
 	myAddPacket(sizeof(LINE_F3));
 
 	// Pair4: 1->7->5
@@ -995,7 +985,7 @@ void drawBboxPC(SVECTOR *scrn, CVECTOR colour) {
 	setLineF3(line);
 	setRGB0(line, colour.r, colour.g, colour.b);
 	setXY3(line, scrn[1].vx, scrn[1].vy, scrn[7].vx, scrn[7].vy, scrn[5].vx, scrn[5].vy);
-	z0 = myAddPrimClip(scrn[5].vz, drawpacket);
+	myAddPrimClip(scrn[5].vz, drawpacket);
 	myAddPacket(sizeof(LINE_F3));
 
 	// Pair5: 6->4->5
@@ -1003,7 +993,7 @@ void drawBboxPC(SVECTOR *scrn, CVECTOR colour) {
 	setLineF3(line);
 	setRGB0(line, colour.r, colour.g, colour.b);
 	setXY3(line, scrn[6].vx, scrn[6].vy, scrn[4].vx, scrn[4].vy, scrn[5].vx, scrn[5].vy);
-	z0 = myAddPrimClip(scrn[5].vz, drawpacket);
+	myAddPrimClip(scrn[5].vz, drawpacket);
 	myAddPacket(sizeof(LINE_F3));
 }
 

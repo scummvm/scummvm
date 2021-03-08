@@ -421,7 +421,6 @@ __barrier_result _game_session::Check_barrier_bump_and_bounce(PXreal newx, PXrea
 }
 
 __barrier_result _game_session::Check_this_barrier(_route_barrier *bar, PXreal newx, PXreal newz, PXreal /* oldx */, PXreal /* oldz */, PXreal bar_close, int32 *ignoreThis) {
-	PXreal lpan;
 	PXfloat delta;
 	PXfloat delta2;
 	PXfloat barrier_tolerance = BARRIER_TOLERANCE; // 1/8 of a turn = 45 degress
@@ -447,7 +446,6 @@ __barrier_result _game_session::Check_this_barrier(_route_barrier *bar, PXreal n
 
 				// we are going to hit this barrier
 				// but, if the angle is narrow we can aquire the barriers pan and continue unmolested
-				lpan = L->pan;
 				delta = remainder(L->pan - bar->pan(), FULL_TURN, HALF_TURN);
 				delta2 = delta;
 

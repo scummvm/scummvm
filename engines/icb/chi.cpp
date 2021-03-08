@@ -256,7 +256,6 @@ bool8 _game_session::Process_chi() {
 	int32 result;
 	bool8 res;
 	PXreal sub1, sub2, cord_dist;
-	bool8 currently_stood;
 	bool8 route_res;
 
 	switch (chi_do_mode) {
@@ -697,8 +696,6 @@ bool8 _game_session::Process_chi() {
 						x = logic_structs[player.Fetch_player_id()]->mega->actor_xyz.x;
 						z = logic_structs[player.Fetch_player_id()]->mega->actor_xyz.z;
 
-						currently_stood = FALSE8;
-
 						bool8 run = TRUE8;
 						bool8 eos = FALSE8;
 						if (Cord_dist() < (400 * 400)) {
@@ -740,6 +737,7 @@ bool8 _game_session::Process_chi() {
 				chi_think_mode = __FOLLOWING; // set mode
 				Tdebug("chi.txt", "chi is finds cord again - chi=%d, player=%d", chi_history, cur_history);
 			}
+			/* fall through */
 
 		case __NOTHING:
 			// dummy mode for when switched to custom logics
