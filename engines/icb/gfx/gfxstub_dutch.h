@@ -63,19 +63,19 @@ int32 SetRenderDevice(RevRenderDevice *renderDev);
 int32 GetRenderDevice(RevRenderDevice *renderDev);
 
 // Colour is verts[0].colour
-int32 DrawFlatUnTexturedPolygon(const vertex2D *verts, int nVerts, uint16 z);
+int32 DrawFlatUnTexturedPolygon(const vertex2D *verts, int32 nVerts, uint16 z);
 
-int32 DrawGouraudUnTexturedPolygon(const vertex2D *verts, int nVerts, uint16 z);
-
-// Colour is verts[0].colour
-int32 DrawFlatTexturedPolygon(const vertex2D *verts, int nVerts, uint16 z);
-
-int32 DrawGouraudTexturedPolygon(const vertex2D *verts, int nVerts, uint16 z);
+int32 DrawGouraudUnTexturedPolygon(const vertex2D *verts, int32 nVerts, uint16 z);
 
 // Colour is verts[0].colour
-int32 DrawFlatTexturedTransparentPolygon(const vertex2D *verts, int nVerts, uint16 z);
+int32 DrawFlatTexturedPolygon(const vertex2D *verts, int32 nVerts, uint16 z);
 
-int32 DrawGouraudTexturedTransparentPolygon(const vertex2D *verts, int nVerts, uint16 z);
+int32 DrawGouraudTexturedPolygon(const vertex2D *verts, int32 nVerts, uint16 z);
+
+// Colour is verts[0].colour
+int32 DrawFlatTexturedTransparentPolygon(const vertex2D *verts, int32 nVerts, uint16 z);
+
+int32 DrawGouraudTexturedTransparentPolygon(const vertex2D *verts, int32 nVerts, uint16 z);
 
 static const int32 GFXLIB_TRANSPARENT_COLOUR = 0xDEADBEAF;
 
