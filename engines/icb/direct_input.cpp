@@ -38,8 +38,8 @@
 
 namespace ICB {
 
-bool8 keyboard_buf_scancodes[512]; // SDL_NUM_SCANCODES
-bool8 repeats_scancodes[512];      // SDL_NUM_SCANCODES
+bool8 keyboard_buf_scancodes[Common::KEYCODE_LAST];
+bool8 repeats_scancodes[Common::KEYCODE_LAST];
 
 void Init_direct_input() {
 	SetDefaultKeys();
@@ -48,7 +48,7 @@ void Init_direct_input() {
 void setKeyState(Common::KeyCode key, bool pressed) { keyboard_buf_scancodes[key] = pressed; }
 
 uint32 Get_DI_key_press() {
-	for (uint32 i = 0; i < 512; i++) {
+	for (uint32 i = 0; i < Common::KEYCODE_LAST; i++) {
 		if (Read_DI_once_keys(i)) {
 			return i;
 		}
@@ -58,7 +58,7 @@ uint32 Get_DI_key_press() {
 }
 
 void Clear_DI_key_buffer() {
-	for (uint32 i = 0; i < 512; i++) {
+	for (uint32 i = 0; i < Common::KEYCODE_LAST; i++) {
 		repeats_scancodes[i] = FALSE8;
 		keyboard_buf_scancodes[i] = FALSE8;
 	}
@@ -72,7 +72,7 @@ bool8 Read_DI_once_keys(uint32 key) {
 	//      0 not pressed down currently
 	//      1 pressed down
 
-	if (key >= 512)
+	if (key >= Common::KEYCODE_LAST)
 		FALSE8;
 
 	// set repeat
@@ -92,7 +92,7 @@ bool8 Read_DI_keys(uint32 key) {
 	//      0 not pressed down currently
 	//      1 pressed down
 
-	if (key >= 512)
+	if (key >= Common::KEYCODE_LAST)
 		FALSE8;
 
 	// set repeat
@@ -102,7 +102,7 @@ bool8 Read_DI_keys(uint32 key) {
 }
 
 bool8 DI_key_waiting() {
-	for (uint32 i = 0; i < 512; i++) {
+	for (uint32 i = 0; i < Common::KEYCODE_LAST; i++) {
 		if (keyboard_buf_scancodes[i])
 			return TRUE8;
 	}

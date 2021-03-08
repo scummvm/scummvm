@@ -32,10 +32,8 @@
 
 namespace ICB {
 
-extern bool8 keyboard_buf_ascii[256];
-extern bool8 repeats_ascii[256];
-extern bool8 keyboard_buf_scancodes[512]; // SDL_NUM_SCANCODES
-extern bool8 repeats_scancodes[512];      // SDL_NUM_SCANCODES
+extern bool8 keyboard_buf_scancodes[Common::KEYCODE_LAST];
+extern bool8 repeats_scancodes[Common::KEYCODE_LAST];
 
 void Init_direct_input();
 void setKeyState(Common::KeyCode key, bool pressed);
