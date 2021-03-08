@@ -693,6 +693,8 @@ void PrivateEngine::restartGame() {
 	// Pause
 	_pausedSetting = "";
 
+	// VSPicture
+	_nextVS = "";
 }
 
 Common::Error PrivateEngine::loadGameStream(Common::SeekableReadStream *stream) {
@@ -767,6 +769,9 @@ Common::Error PrivateEngine::loadGameStream(Common::SeekableReadStream *stream) 
 	for (uint32 i = 0; i < size; ++i) {
 		_playedPhoneClips.setVal(stream->readString(), true);
 	}
+
+	// VSPicture
+	_nextVS = stream->readString();
 
 	// Paused setting
 	_pausedSetting = stream->readString();
@@ -849,6 +854,10 @@ Common::Error PrivateEngine::saveGameStream(Common::WriteStream *stream, bool is
 		stream->writeString(it->_key);
 		stream->writeByte(0);
 	}
+
+	// VSPicture
+	stream->writeString(_nextVS);
+	stream->writeByte(0);
 
 	// In case the game was saved during a pause
 	stream->writeString(_pausedSetting);
