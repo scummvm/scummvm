@@ -292,7 +292,7 @@ void SuperSpriteProcess::makeBulletSplash(const Point3 &pt) {
 	firetypedat->makeBulletSplashShapeAndPlaySound(pt.x, pt.y, pt.z);
 }
 
-static bool _pointOutOfMap(const int pt[3], int maxxy) {
+static bool _pointOutOfMap(const int32 pt[3], int32 maxxy) {
 	return (pt[0] < 0     || pt[1] < 0     || pt[2] < 0 ||
 			pt[0] > maxxy || pt[1] > maxxy || pt[2] > 255);
 }
@@ -321,7 +321,7 @@ void SuperSpriteProcess::hitAndFinish() {
 		end[0] += xstep;
 		end[1] += ystep;
 		end[2] += zstep;
-		const int mapmax = map->getChunkSize() * MAP_NUM_CHUNKS;
+		const int32 mapmax = map->getChunkSize() * MAP_NUM_CHUNKS;
 		if (_pointOutOfMap(start, mapmax) || _pointOutOfMap(end, mapmax))
 			break;
 	}
