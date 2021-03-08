@@ -4455,6 +4455,11 @@ NoirMapping translateNoirLibCode(int libCode, int32 *pp) {
 		mapping = NoirMapping{"SYSTEMVAR", SYSTEMVAR, 0};
 		debug(7, "%s(%d)", mapping.name, pp[0]);
 		break;
+	case 183:
+		mapping = NoirMapping{"TALKVIA", TALKVIA, 1};
+		pp -= mapping.numArgs - 1;
+		debug(7, "%s(%d)", mapping.name, pp[0]);
+		break;
 	case 197:
 		mapping = NoirMapping{"WAITTIME", WAITTIME, 2};
 		pp -= mapping.numArgs - 1;
@@ -5826,7 +5831,7 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 		return -3;
 
 	case TALKVIA:
-		// DW2 only
+		// DW2 / Noir
 		TalkVia(pp[0]);
 		return -1;
 
