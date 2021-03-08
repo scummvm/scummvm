@@ -402,7 +402,7 @@ void Scene::readSceneSummary(Common::SeekableReadStream &stream) {
 bool Scene::changeGameState(bool keepGraphics) {
     if (_gameStateRequested != NancyEngine::kScene) {
         _timers.pushedPlayTime = _engine->getTotalPlayTime();
-        _engine->setGameState(_gameStateRequested, keepGraphics);
+        _engine->setGameState(_gameStateRequested, NancyEngine::kNone, keepGraphics);
         _gameStateRequested = NancyEngine::kScene;
         pauseSceneSpecificSounds();
 

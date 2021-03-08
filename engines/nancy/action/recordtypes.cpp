@@ -327,8 +327,15 @@ uint16 PopScene::readData(Common::SeekableReadStream &stream) {
 }
 
 uint16 WinGame::readData(Common::SeekableReadStream &stream) {
-    winData = stream.readByte();
+    stream.skip(1);
     return 1;
+}
+
+void WinGame::execute(NancyEngine *engine) {
+    engine->stopAndUnloadSpecificSounds();
+    engine->setGameState(NancyEngine::kCredits, NancyEngine::kMainMenu);
+    engine->scene->resetStateToInit();
+    isDone = true;
 }
 
 uint16 AddInventoryNoHS::readData(Common::SeekableReadStream &stream) {

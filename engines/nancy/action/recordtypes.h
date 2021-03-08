@@ -302,8 +302,7 @@ protected:
 class WinGame : public ActionRecord {
 public:
     virtual uint16 readData(Common::SeekableReadStream &stream) override;
-
-    byte winData = 0;
+    virtual void execute(Nancy::NancyEngine *engine) override;
     
 protected:
     virtual Common::String getRecordTypeName() const override { return "WinGame"; }
