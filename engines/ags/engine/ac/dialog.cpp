@@ -70,9 +70,8 @@ namespace AGS3 {
 
 using namespace AGS::Shared;
 
-extern int in_new_room;
 extern CharacterInfo *playerchar;
-extern AGSPlatformDriver *platform;
+
 extern int cur_mode, cur_cursor;
 extern IGraphicsDriver *gfxDriver;
 
@@ -268,7 +267,7 @@ int run_dialog_script(DialogTopic *dtpp, int dialogID, int offse, int optionInde
 			case DCMD_NEWROOM:
 				get_dialog_script_parameters(script, &param1, nullptr);
 				NewRoom(param1);
-				in_new_room = 1;
+				_G(in_new_room) = 1;
 				result = RUN_DIALOG_STOP_DIALOG;
 				script_running = false;
 				break;
@@ -301,7 +300,7 @@ int run_dialog_script(DialogTopic *dtpp, int dialogID, int offse, int optionInde
 		}
 	}
 
-	if (in_new_room > 0)
+	if (_G(in_new_room) > 0)
 		return RUN_DIALOG_STOP_DIALOG;
 
 	if (said_speech_line > 0) {

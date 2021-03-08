@@ -42,8 +42,6 @@ namespace AGS3 {
 
 using namespace AGS::Shared;
 
-extern RoomStatus *croom;
-
 void Hotspot_SetEnabled(ScriptHotspot *hss, int newval) {
 	if (newval)
 		EnableHotspot(hss->id);
@@ -52,7 +50,7 @@ void Hotspot_SetEnabled(ScriptHotspot *hss, int newval) {
 }
 
 int Hotspot_GetEnabled(ScriptHotspot *hss) {
-	return croom->hotspot_enabled[hss->id];
+	return _G(croom)->hotspot_enabled[hss->id];
 }
 
 int Hotspot_GetID(ScriptHotspot *hss) {
@@ -97,30 +95,30 @@ void Hotspot_RunInteraction(ScriptHotspot *hss, int mood) {
 }
 
 int Hotspot_GetProperty(ScriptHotspot *hss, const char *property) {
-	return get_int_property(_GP(thisroom).Hotspots[hss->id].Properties, croom->hsProps[hss->id], property);
+	return get_int_property(_GP(thisroom).Hotspots[hss->id].Properties, _G(croom)->hsProps[hss->id], property);
 }
 
 void Hotspot_GetPropertyText(ScriptHotspot *hss, const char *property, char *bufer) {
-	get_text_property(_GP(thisroom).Hotspots[hss->id].Properties, croom->hsProps[hss->id], property, bufer);
+	get_text_property(_GP(thisroom).Hotspots[hss->id].Properties, _G(croom)->hsProps[hss->id], property, bufer);
 
 }
 
 const char *Hotspot_GetTextProperty(ScriptHotspot *hss, const char *property) {
-	return get_text_property_dynamic_string(_GP(thisroom).Hotspots[hss->id].Properties, croom->hsProps[hss->id], property);
+	return get_text_property_dynamic_string(_GP(thisroom).Hotspots[hss->id].Properties, _G(croom)->hsProps[hss->id], property);
 }
 
 bool Hotspot_SetProperty(ScriptHotspot *hss, const char *property, int value) {
-	return set_int_property(croom->hsProps[hss->id], property, value);
+	return set_int_property(_G(croom)->hsProps[hss->id], property, value);
 }
 
 bool Hotspot_SetTextProperty(ScriptHotspot *hss, const char *property, const char *value) {
-	return set_text_property(croom->hsProps[hss->id], property, value);
+	return set_text_property(_G(croom)->hsProps[hss->id], property, value);
 }
 
 int get_hotspot_at(int xpp, int ypp) {
 	int onhs = _GP(thisroom).HotspotMask->GetPixel(room_to_mask_coord(xpp), room_to_mask_coord(ypp));
 	if (onhs <= 0 || onhs >= MAX_ROOM_HOTSPOTS) return 0;
-	if (croom->hotspot_enabled[onhs] == 0) return 0;
+	if (_G(croom)->hotspot_enabled[onhs] == 0) return 0;
 	return onhs;
 }
 

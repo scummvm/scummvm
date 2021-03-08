@@ -54,9 +54,7 @@ namespace AGS3 {
 using namespace AGS::Shared;
 using namespace AGS::Engine;
 
-extern int our_eip;
 extern char pexbuf[STD_BUFFER_SIZE];
-extern int proper_exit;
 extern char check_dynamic_sprites_at_exit;
 extern int need_to_stop_cd;
 extern int use_cdplayer;
@@ -98,23 +96,23 @@ void quit_check_dynamic_sprites(QuitReason qreason) {
 
 void quit_shutdown_platform(QuitReason qreason) {
 	// Be sure to unlock mouse on exit, or users will hate us
-	platform->UnlockMouse();
-	platform->AboutToQuitGame();
+	_G(platform)->UnlockMouse();
+	_G(platform)->AboutToQuitGame();
 
-	our_eip = 9016;
+	_G(our_eip) = 9016;
 
 	pl_stop_plugins();
 
 	quit_check_dynamic_sprites(qreason);
 
-	platform->FinishedUsingGraphicsMode();
+	_G(platform)->FinishedUsingGraphicsMode();
 
 	if (use_cdplayer)
-		platform->ShutdownCDPlayer();
+		_G(platform)->ShutdownCDPlayer();
 }
 
 void quit_shutdown_audio() {
-	our_eip = 9917;
+	_G(our_eip) = 9917;
 	_GP(game).options[OPT_CROSSFADEMUSIC] = 0;
 	shutdown_sound();
 }
@@ -168,7 +166,7 @@ void quit_message_on_exit(const char *qmsg, String &alertis, QuitReason qreason)
 		// Display the message (at this point the window still exists)
 		sprintf(pexbuf, "%s\n", qmsg);
 		alertis.Append(pexbuf);
-		platform->DisplayAlert("%s", alertis.GetCStr());
+		_G(platform)->DisplayAlert("%s", alertis.GetCStr());
 	}
 }
 
@@ -235,32 +233,32 @@ void quit_free() {
 
 	quit_tell_editor_debugger(_G(quit_message), qreason);
 
-	our_eip = 9900;
+	_G(our_eip) = 9900;
 
 	quit_stop_cd();
 
-	our_eip = 9020;
+	_G(our_eip) = 9020;
 
 	quit_shutdown_scripts();
 
 	quit_shutdown_platform(qreason);
 
-	our_eip = 9019;
+	_G(our_eip) = 9019;
 
 	quit_shutdown_audio();
 
-	our_eip = 9901;
+	_G(our_eip) = 9901;
 
 	shutdown_font_renderer();
-	our_eip = 9902;
+	_G(our_eip) = 9902;
 
 	_GP(spriteset).Reset();
 
-	our_eip = 9907;
+	_G(our_eip) = 9907;
 
 	close_translation();
 
-	our_eip = 9908;
+	_G(our_eip) = 9908;
 
 	shutdown_pathfinder();
 
@@ -275,19 +273,19 @@ void quit_free() {
 	// if their destruction is called later, program will crash!
 	allegro_exit();
 
-	platform->PostAllegroExit();
+	_G(platform)->PostAllegroExit();
 
-	our_eip = 9903;
+	_G(our_eip) = 9903;
 
 	quit_delete_temp_files();
 
-	proper_exit = 1;
+	_G(proper_exit) = 1;
 
 	Debug::Printf(kDbgMsg_Alert, "***** ENGINE HAS SHUTDOWN");
 
 	shutdown_debug();
 
-	our_eip = 9904;
+	_G(our_eip) = 9904;
 }
 
 extern "C" {

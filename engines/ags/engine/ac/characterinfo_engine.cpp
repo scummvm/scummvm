@@ -43,7 +43,7 @@ using namespace AGS::Shared;
 
 
 
-extern int displayed_room;
+
 
 extern int char_speaking;
 
@@ -164,7 +164,7 @@ int CharacterInfo::update_character_walking(CharacterExtras *chex) {
 }
 
 void CharacterInfo::update_character_moving(int &char_index, CharacterExtras *chex, int &doing_nothing) {
-	if ((walking > 0) && (room == displayed_room)) {
+	if ((walking > 0) && (room == _G(displayed_room))) {
 		if (walkwait > 0) walkwait--;
 		else {
 			flags &= ~CHF_AWAITINGMOVE;
@@ -261,7 +261,7 @@ int CharacterInfo::update_character_animating(int &aa, int &doing_nothing) {
 	// idleleft is <0 while idle view is playing (.animating is 0)
 	if (((animating != 0) || (idleleft < 0)) &&
 		((walking == 0) || ((flags & CHF_MOVENOTWALK) != 0)) &&
-		(room == displayed_room)) {
+		(room == _G(displayed_room))) {
 		doing_nothing = 0;
 		// idle anim doesn't count as doing something
 		if (idleleft < 0)
@@ -400,7 +400,7 @@ void CharacterInfo::update_character_follower(int &aa, int &numSheep, int *follo
 			prevroom = room;
 			room = _GP(game).chars[following].room;
 
-			if (room == displayed_room) {
+			if (room == _G(displayed_room)) {
 				// only move to the room-entered position if coming into
 				// the current room
 				if (_GP(play).entered_at_x > (_GP(thisroom).Width - 8)) {
@@ -425,7 +425,7 @@ void CharacterInfo::update_character_follower(int &aa, int &numSheep, int *follo
 					doing_nothing = 0;
 				}
 			}
-		} else if (room != displayed_room) {
+		} else if (room != _G(displayed_room)) {
 			// if the characetr is following another character and
 			// neither is in the current room, don't try to move
 		} else if ((abs(_GP(game).chars[following].x - x) > distaway + 30) |
@@ -449,7 +449,7 @@ void CharacterInfo::update_character_idle(CharacterExtras *chex, int &doing_noth
 	// currently playing idle anim
 	else if (idleleft < 0);
 	// not in the current room
-	else if (room != displayed_room);
+	else if (room != _G(displayed_room));
 	// they are moving or animating (or the view is locked), so
 	// reset idle timeout
 	else if ((doing_nothing == 0) || ((flags & CHF_FIXVIEW) != 0))

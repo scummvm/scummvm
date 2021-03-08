@@ -26,6 +26,7 @@
 #include "ags/shared/util/textstreamwriter.h"
 #include "ags/shared/util/wgt2allg.h"              // exists()
 #include "ags/engine/platform/base/agsplatformdriver.h"
+#include "ags/globals.h"
 #include "common/system.h"
 #include "common/savefile.h"
 
@@ -60,7 +61,7 @@ void FileBasedAGSDebugger::Shutdown() {
 
 bool FileBasedAGSDebugger::SendMessageToEditor(const char *message) {
 	while (exists(SENT_MESSAGE_FILE_NAME)) {
-		platform->YieldCPU();
+		_G(platform)->YieldCPU();
 	}
 
 	Stream *out = Shared::File::CreateFile(SENT_MESSAGE_FILE_NAME);

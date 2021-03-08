@@ -210,7 +210,7 @@ HSaveError WriteGameState(PStream out) {
 	// Game state
 	_GP(play).WriteForSavegame(out.get());
 	// Other dynamic values
-	out->WriteInt32(frames_per_second);
+	out->WriteInt32(_G(frames_per_second));
 	out->WriteInt32(loopcounter);
 	out->WriteInt32(ifacepopped);
 	out->WriteInt32(game_paused);
@@ -884,8 +884,8 @@ HSaveError ReadRoomStates(PStream in, int32_t cmp_ver, const PreservedParams &pp
 }
 
 HSaveError WriteThisRoom(PStream out) {
-	out->WriteInt32(displayed_room);
-	if (displayed_room < 0)
+	out->WriteInt32(_G(displayed_room));
+	if (_G(displayed_room) < 0)
 		return HSaveError::None();
 
 	// modified room backgrounds
@@ -918,7 +918,7 @@ HSaveError WriteThisRoom(PStream out) {
 	out->WriteInt32(_GP(thisroom).Options.MusicVolume);
 
 	// persistent room's indicator
-	const bool persist = displayed_room < MAX_ROOMS;
+	const bool persist = _G(displayed_room) < MAX_ROOMS;
 	out->WriteBool(persist);
 	// write the current troom state, in case they save in temporary room
 	if (!persist)
@@ -928,8 +928,8 @@ HSaveError WriteThisRoom(PStream out) {
 
 HSaveError ReadThisRoom(PStream in, int32_t cmp_ver, const PreservedParams &pp, RestoredData &r_data) {
 	HSaveError err;
-	displayed_room = in->ReadInt32();
-	if (displayed_room < 0)
+	_G(displayed_room) = in->ReadInt32();
+	if (_G(displayed_room) < 0)
 		return err;
 
 	// modified room backgrounds

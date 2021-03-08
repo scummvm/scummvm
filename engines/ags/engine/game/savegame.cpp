@@ -79,9 +79,6 @@ extern AGS::Engine::IGraphicsDriver *gfxDriver;
 extern Bitmap *dynamicallyCreatedSurfaces[MAX_DYNAMIC_SURFACES];
 extern Bitmap *raw_saved_screen;
 
-extern RoomStatus *croom;
-
-
 namespace AGS {
 namespace Engine {
 
@@ -492,8 +489,8 @@ HSaveError DoAfterRestore(const PreservedParams &pp, const RestoredData &r_data)
 	update_polled_stuff_if_runtime();
 
 	// load the room the game was saved in
-	if (displayed_room >= 0)
-		load_new_room(displayed_room, nullptr);
+	if (_G(displayed_room) >= 0)
+		load_new_room(_G(displayed_room), nullptr);
 
 	update_polled_stuff_if_runtime();
 
@@ -515,14 +512,14 @@ HSaveError DoAfterRestore(const PreservedParams &pp, const RestoredData &r_data)
 
 	update_polled_stuff_if_runtime();
 
-	if (displayed_room >= 0) {
+	if (_G(displayed_room) >= 0) {
 		for (int i = 0; i < MAX_ROOM_BGFRAMES; ++i) {
 			if (r_data.RoomBkgScene[i]) {
 				_GP(thisroom).BgFrames[i].Graphic = r_data.RoomBkgScene[i];
 			}
 		}
 
-		in_new_room = 3; // don't run "enters screen" events
+		_G(in_new_room) = 3; // don't run "enters screen" events
 		// now that room has loaded, copy saved light levels in
 		for (size_t i = 0; i < MAX_ROOM_REGIONS; ++i) {
 			_GP(thisroom).Regions[i].Light = r_data.RoomLightLevels[i];
@@ -618,7 +615,7 @@ HSaveError DoAfterRestore(const PreservedParams &pp, const RestoredData &r_data)
 
 	pl_run_plugin_hooks(AGSE_POSTRESTOREGAME, 0);
 
-	if (displayed_room < 0) {
+	if (_G(displayed_room) < 0) {
 		// the restart point, no room was loaded
 		load_new_room(playerchar->room, playerchar);
 		playerchar->prevroom = -1;
@@ -729,14 +726,14 @@ void DoBeforeSave() {
 			_GP(play).cur_music_number = -1;
 	}
 
-	if (displayed_room >= 0) {
+	if (_G(displayed_room) >= 0) {
 		// update the current room script's data segment copy
 		if (_G(roominst))
 			save_room_data_segment();
 
 		// Update the saved interaction variable values
 		for (size_t i = 0; i < _GP(thisroom).LocalVariables.size() && i < (size_t)MAX_GLOBAL_VARIABLES; ++i)
-			croom->interactionVariableValues[i] = _GP(thisroom).LocalVariables[i].Value;
+			_G(croom)->interactionVariableValues[i] = _GP(thisroom).LocalVariables[i].Value;
 	}
 }
 

@@ -85,9 +85,6 @@ using namespace AGS::Shared::Memory;
 using namespace AGS::Engine;
 
 extern IGraphicsDriver *gfxDriver;
-extern int displayed_room;
-extern RoomStatus *croom;
-
 extern int game_paused;
 extern color palette[256];
 extern PluginObjectReader pluginReaders[MAX_PLUGIN_OBJECT_READERS];
@@ -279,7 +276,7 @@ void IAGSEngine::GetMousePosition(int32 *x, int32 *y) {
 	if (y) y[0] = _G(mousey);
 }
 int IAGSEngine::GetCurrentRoom() {
-	return displayed_room;
+	return _G(displayed_room);
 }
 int IAGSEngine::GetNumBackgrounds() {
 	return _GP(thisroom).BgFrameCount;
@@ -455,13 +452,13 @@ void IAGSEngine::ViewportToRoom(int32 *x, int32 *y) {
 		*y = vpt.first.Y;
 }
 int IAGSEngine::GetNumObjects() {
-	return croom->numobj;
+	return _G(croom)->numobj;
 }
 AGSObject *IAGSEngine::GetObject(int32 num) {
-	if (num >= croom->numobj)
+	if (num >= _G(croom)->numobj)
 		quit("!IAGSEngine::GetObject: invalid object");
 
-	return (AGSObject *)&croom->obj[num];
+	return (AGSObject *)&_G(croom)->obj[num];
 }
 BITMAP *IAGSEngine::CreateBlankBitmap(int32 width, int32 height, int32 coldep) {
 	// [IKM] We should not create Bitmap object here, because
@@ -515,7 +512,7 @@ int IAGSEngine::GetRawPixelColor(int32 color) {
 int IAGSEngine::GetWalkbehindBaseline(int32 wa) {
 	if ((wa < 1) || (wa >= MAX_WALK_BEHINDS))
 		quit("!IAGSEngine::GetWalkBehindBase: invalid walk-behind area specified");
-	return croom->walkbehind_base[wa];
+	return _G(croom)->walkbehind_base[wa];
 }
 void *IAGSEngine::GetScriptFunctionAddress(const char *funcName) {
 	return ccGetSymbolAddressForPlugin((const char *)funcName);
@@ -550,7 +547,7 @@ void IAGSEngine::GetTextExtent(int32 font, const char *text, int32 *width, int32
 }
 void IAGSEngine::PrintDebugConsole(const char *text) {
 	debug_script_log("[PLUGIN] %s", text);
-	platform->WriteStdOut("[PLUGIN] %s", text);
+	_G(platform)->WriteStdOut("[PLUGIN] %s", text);
 }
 int IAGSEngine::IsChannelPlaying(int32 channel) {
 	return AGS3::IsChannelPlaying(channel);

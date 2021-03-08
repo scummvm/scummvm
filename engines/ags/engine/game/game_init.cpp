@@ -298,7 +298,7 @@ HGameInitError InitGameState(const LoadedGameEntities &ents, GameDataVersion dat
 	// If the game was compiled using unsupported version of the script API,
 	// we warn about potential incompatibilities but proceed further.
 	if (_GP(game).options[OPT_BASESCRIPTAPI] > kScriptAPI_Current)
-		platform->DisplayAlert("Warning: this game requests a higher version of AGS script API, it may not run correctly or run at all.");
+		_G(platform)->DisplayAlert("Warning: this game requests a higher version of AGS script API, it may not run correctly or run at all.");
 
 	//
 	// 1. Check that the loaded data is valid and compatible with the current

@@ -49,14 +49,6 @@ namespace AGS3 {
 using namespace Shared;
 using namespace Engine;
 
-
-
-
-extern RoomObject *objs;
-extern RoomStatus *croom;
-
-
-
 extern color palette[256];
 extern AGS::Engine::IGraphicsDriver *gfxDriver;
 
@@ -490,10 +482,10 @@ void free_dynamic_sprite(int gotSlot) {
 	}
 
 	// force refresh of any object caches using the sprite
-	if (croom != nullptr) {
-		for (tt = 0; tt < croom->numobj; tt++) {
-			if (objs[tt].num == gotSlot) {
-				objs[tt].num = 0;
+	if (_G(croom) != nullptr) {
+		for (tt = 0; tt < _G(croom)->numobj; tt++) {
+			if (_G(objs)[tt].num == gotSlot) {
+				_G(objs)[tt].num = 0;
 				_G(objcache)[tt].sppic = -1;
 			} else if (_G(objcache)[tt].sppic == gotSlot)
 				_G(objcache)[tt].sppic = -1;

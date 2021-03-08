@@ -37,6 +37,7 @@
 #include "ags/engine/ac/timer.h"
 #include "ags/lib/allegro/color.h"
 #include "ags/lib/std/algorithm.h"
+#include "ags/globals.h"
 #include "ags/ags.h"
 
 namespace AGS3 {
@@ -702,7 +703,7 @@ void ALScummVMGraphicsDriver::BoxOutEffect(bool blackingOut, int speed, int dela
 			if (_pollingCallback)
 				_pollingCallback();
 
-			platform->Delay(delay);
+			_G(platform)->Delay(delay);
 		}
 		delete bmp_buff;
 		SetMemoryBackBuffer(bmp_orig);

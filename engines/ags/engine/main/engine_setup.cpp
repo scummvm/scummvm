@@ -316,7 +316,7 @@ void engine_post_gfxmode_setup(const Size &init_desktop) {
 	// "windowed" flag to be specified. Find out whether this function
 	// has anything to do with graphics mode at all. It is quite possible
 	// that we may split it into two functions, or remove parameter.
-	platform->PostAllegroInit(_GP(scsystem).windowed != 0);
+	_G(platform)->PostAllegroInit(_GP(scsystem).windowed != 0);
 
 	video_on_gfxmode_changed();
 	invalidate_screen();

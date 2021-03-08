@@ -52,9 +52,6 @@ namespace AGS3 {
 
 using namespace AGS::Shared;
 
-
-extern RoomObject *objs;
-
 // defined in character unit
 extern CharacterExtras *charextra;
 extern CharacterInfo *playerchar;
@@ -332,7 +329,7 @@ void MoveCharacterToObject(int chaa, int obbj) {
 	if (!is_valid_object(obbj))
 		return;
 
-	walk_character(chaa, objs[obbj].x + 5, objs[obbj].y + 6, 0, true);
+	walk_character(chaa, _G(objs)[obbj].x + 5, _G(objs)[obbj].y + 6, 0, true);
 
 	GameLoopUntilNotMoving(&_GP(game).chars[chaa].walking);
 }

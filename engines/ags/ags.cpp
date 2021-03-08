@@ -69,8 +69,7 @@ using namespace Engine;
 
 extern HSaveError load_game(int slotNumber, bool &data_overwritten);
 
-extern int our_eip;
-extern AGSPlatformDriver *platform;
+
 extern int convert_16bit_bgr;
 
 // this needs to be updated if the "play" struct changes
@@ -88,13 +87,13 @@ extern int convert_16bit_bgr;
 extern void quit_free();
 
 void main_pre_init() {
-	our_eip = -999;
+	_G(our_eip) = -999;
 	Shared::AssetManager::SetSearchPriority(Shared::kAssetPriorityDir);
 	_GP(play).takeover_data = 0;
 }
 
 void main_create_platform_driver() {
-	platform = AGSPlatformDriver::GetDriver();
+	_G(platform) = AGSPlatformDriver::GetDriver();
 }
 
 void main_init(int argc, const char *argv[]) {
@@ -292,6 +291,14 @@ AGSEngine::AGSEngine(OSystem *syst, const AGSGameDescription *gameDesc) : Engine
 }
 
 AGSEngine::~AGSEngine() {
+	if (_G(proper_exit) == 0) {
+		_G(platform)->DisplayAlert("Error: the program has exited without requesting it.\n"
+			"Program pointer: %+03d  (write this number down), ACI version %s\n"
+			"If you see a list of numbers above, please write them down and contact\n"
+			"developers. Otherwise, note down any other information displayed.",
+			_G(our_eip), _G(EngineVersion).LongString.GetCStr());
+	}
+
 	delete _screen;
 	delete _rawScreen;
 	delete _events;
@@ -340,7 +347,7 @@ Common::Error AGSEngine::run() {
 		return Common::kUnknownError;
 
 	if (_G(justDisplayVersion)) {
-		AGS3::platform->WriteStdOut(AGS3::get_engine_string());
+		_G(platform)->WriteStdOut(AGS3::get_engine_string());
 		return Common::kNoError;
 	}
 
@@ -350,7 +357,7 @@ Common::Error AGSEngine::run() {
 	}
 
 	if (!_G(justTellInfo))
-		AGS3::platform->SetGUIMode(true);
+		_G(platform)->SetGUIMode(true);
 	AGS3::init_debug(startup_opts, _G(justTellInfo));
 	AGS3::Debug::Printf("%s", AGS3::get_engine_string().GetNullableCStr());
 

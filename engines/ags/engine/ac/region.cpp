@@ -40,7 +40,6 @@ namespace AGS3 {
 
 using namespace AGS::Shared;
 
-extern RoomStatus *croom;
 extern COLOR_MAP maincoltable;
 extern color palette[256];
 
@@ -109,7 +108,7 @@ void Region_SetEnabled(ScriptRegion *ssr, int enable) {
 }
 
 int Region_GetEnabled(ScriptRegion *ssr) {
-	return croom->region_enabled[ssr->id];
+	return _G(croom)->region_enabled[ssr->id];
 }
 
 int Region_GetID(ScriptRegion *ssr) {

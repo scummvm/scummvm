@@ -54,7 +54,7 @@ using namespace AGS::Shared;
 using namespace AGS::Engine;
 
 extern GameSetup usetup;
-extern int our_eip;
+extern int _G(our_eip);
 extern IGraphicsDriver *gfxDriver;
 extern color palette[256];
 
@@ -788,7 +788,7 @@ int AGSWin32::GetLastSystemError() {
 unsigned long AGSWin32::GetDiskFreeSpaceMB() {
 	DWORD returnMb = 0;
 	BOOL fResult;
-	our_eip = -1891;
+	_G(our_eip) = -1891;
 
 	// On Win9x, the last 3 params cannot be null, so need to supply values for all
 	__int64 i64FreeBytesToCaller, i64Unused1, i64Unused2;
@@ -801,7 +801,7 @@ unsigned long AGSWin32::GetDiskFreeSpaceMB() {
 	                             (PULARGE_INTEGER)&i64Unused1,
 	                             (PULARGE_INTEGER)&i64Unused2);
 
-	our_eip = -1893;
+	_G(our_eip) = -1893;
 
 	// convert down to MB so we can fit it in a 32-bit long
 	i64FreeBytesToCaller /= 1000000;

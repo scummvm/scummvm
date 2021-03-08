@@ -71,7 +71,6 @@ const int NONE = -1, LEFT = 0, RIGHT = 1, MIDDLE = 2;
 extern char lib_file_name[13];
 extern char alpha_blend_cursor;
 extern color palette[256];
-extern volatile bool switched_away;
 
 namespace Mouse {
 
@@ -117,7 +116,7 @@ void mgetgraphpos() {
 		return;
 	}
 
-	if (!switched_away && Mouse::ControlEnabled) {
+	if (!_G(switched_away) && Mouse::ControlEnabled) {
 		// Control mouse movement by querying mouse mickeys (movement deltas)
 		// and applying them to saved mouse coordinates.
 		int mickey_x, mickey_y;
@@ -308,12 +307,12 @@ bool Mouse::IsLockedToWindow() {
 
 bool Mouse::TryLockToWindow() {
 	if (!LockedToWindow)
-		LockedToWindow = platform->LockMouseToWindow();
+		LockedToWindow = _G(platform)->LockMouseToWindow();
 	return LockedToWindow;
 }
 
 void Mouse::UnlockFromWindow() {
-	platform->UnlockMouse();
+	_G(platform)->UnlockMouse();
 	LockedToWindow = false;
 }
 

@@ -44,7 +44,7 @@ using namespace AGS::Engine;
 
 
 extern IGraphicsDriver *gfxDriver;
-extern AGSPlatformDriver *platform;
+
 
 void my_fade_in(PALETTE p, int speed) {
 	if (_GP(game).color_depth > 1) {

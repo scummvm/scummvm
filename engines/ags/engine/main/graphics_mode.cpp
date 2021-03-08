@@ -50,8 +50,7 @@ namespace AGS3 {
 using namespace AGS::Shared;
 using namespace AGS::Engine;
 
-extern int proper_exit;
-extern AGSPlatformDriver *platform;
+
 extern IGraphicsDriver *gfxDriver;
 
 GameFrameSetup::GameFrameSetup()
@@ -89,7 +88,7 @@ Size get_desktop_size() {
 Size get_max_display_size(bool windowed) {
 	Size device_size = get_desktop_size();
 	if (windowed)
-		platform->ValidateWindowSize(device_size.Width, device_size.Height, false);
+		_G(platform)->ValidateWindowSize(device_size.Width, device_size.Height, false);
 	return device_size;
 }
 
@@ -408,8 +407,8 @@ bool simple_create_gfx_driver_and_init_mode(const String &gfx_driver_id,
 
 
 void display_gfx_mode_error(const Size &game_size, const ScreenSetup &setup, const int color_depth) {
-	proper_exit = 1;
-	platform->FinishedUsingGraphicsMode();
+	_G(proper_exit) = true;
+	_G(platform)->FinishedUsingGraphicsMode();
 
 	String main_error;
 	ScreenSizeSetup scsz = setup.DisplayMode.ScreenSize;
@@ -422,11 +421,11 @@ void display_gfx_mode_error(const Size &game_size, const ScreenSetup &setup, con
 		main_error.Format("There was a problem finding and/or creating valid graphics mode for game size %d x %d (%d-bit) and requested filter '%s'.",
 			game_size.Width, game_size.Height, color_depth, setup.Filter.UserRequest.IsEmpty() ? "Undefined" : setup.Filter.UserRequest.GetCStr());
 
-	platform->DisplayAlert("%s\n"
+	_G(platform)->DisplayAlert("%s\n"
 		"(Problem: '%s')\n"
 		"Try to correct the problem, or seek help from the AGS homepage."
 		"%s",
-		main_error.GetCStr(), get_allegro_error(), platform->GetGraphicsTroubleshootingText());
+		main_error.GetCStr(), get_allegro_error(), _G(platform)->GetGraphicsTroubleshootingText());
 }
 
 bool graphics_mode_init_any(const Size game_size, const ScreenSetup &setup, const ColorDepthOption &color_depth) {

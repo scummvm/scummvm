@@ -49,7 +49,7 @@ bool init_editor_debugging();
 // allow LShift to single-step,  RShift to pause flow
 void scriptDebugHook(ccInstance *ccinst, int linenum);
 
-extern AGSPlatformDriver *platform;
+
 
 } // namespace AGS3
 

@@ -42,7 +42,7 @@ using namespace AGS::Shared;
 using namespace AGS::Engine;
 
 extern IGraphicsDriver *gfxDriver;
-extern AGSPlatformDriver *platform;
+
 extern color palette[256];
 extern unsigned int loopcounter;
 
@@ -71,7 +71,7 @@ void ShakeScreen(int severe) {
 	if (gfxDriver->RequiresFullRedrawEachFrame()) {
 		for (int hh = 0; hh < 40; hh++) {
 			loopcounter++;
-			platform->Delay(50);
+			_G(platform)->Delay(50);
 
 			render_graphics();
 
@@ -82,7 +82,7 @@ void ShakeScreen(int severe) {
 		construct_game_scene();
 		gfxDriver->RenderToBackBuffer();
 		for (int hh = 0; hh < 40; hh++) {
-			platform->Delay(50);
+			_G(platform)->Delay(50);
 			const int yoff = hh % 2 == 0 ? 0 : severe;
 			_GP(play).shake_screen_yoff = yoff;
 			render_to_screen();

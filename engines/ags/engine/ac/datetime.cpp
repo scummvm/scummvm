@@ -26,13 +26,14 @@
 #include "ags/shared/debugging/out.h"
 #include "ags/engine/script/script_api.h"
 #include "ags/engine/script/script_runtime.h"
+#include "ags/globals.h"
 
 namespace AGS3 {
 
 ScriptDateTime *DateTime_Now_Core() {
 	ScriptDateTime *sdt = new ScriptDateTime();
 
-	platform->GetSystemTime(sdt);
+	_G(platform)->GetSystemTime(sdt);
 
 	return sdt;
 }

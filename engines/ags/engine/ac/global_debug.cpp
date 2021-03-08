@@ -57,7 +57,6 @@ extern CharacterInfo *playerchar;
 extern int convert_16bit_bgr;
 extern IGraphicsDriver *gfxDriver;
 extern TreeMap *transtree;
-extern int displayed_room, starting_room;
 extern char transFileName[MAX_PATH];
 
 String GetRuntimeInfo() {
@@ -126,13 +125,13 @@ void script_debug(int cmdd, int dataa) {
 		int goToRoom = -1;
 		if (_GP(game).roomCount == 0) {
 			char inroomtex[80];
-			sprintf(inroomtex, "!Enter new room: (in room %d)", displayed_room);
+			sprintf(inroomtex, "!Enter new room: (in room %d)", _G(displayed_room));
 			setup_for_dialog();
 			goToRoom = enternumberwindow(inroomtex);
 			restore_after_dialog();
 		} else {
 			setup_for_dialog();
-			goToRoom = roomSelectorWindow(displayed_room, _GP(game).roomCount, _GP(game).roomNumbers, _GP(game).roomNames);
+			goToRoom = roomSelectorWindow(_G(displayed_room), _GP(game).roomCount, _GP(game).roomNumbers, _GP(game).roomNames);
 			restore_after_dialog();
 		}
 		if (goToRoom >= 0)

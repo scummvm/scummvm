@@ -27,20 +27,20 @@
 #include "ags/engine/ac/roomstatus.h"
 #include "ags/engine/ac/walkbehind.h"
 #include "ags/engine/debugging/debug_log.h"
+#include "ags/globals.h"
 
 namespace AGS3 {
 
-extern RoomStatus *croom;
 extern int walk_behind_baselines_changed;
 
 void SetWalkBehindBase(int wa, int bl) {
 	if ((wa < 1) || (wa >= MAX_WALK_BEHINDS))
 		quit("!SetWalkBehindBase: invalid walk-behind area specified");
 
-	if (bl != croom->walkbehind_base[wa]) {
+	if (bl != _G(croom)->walkbehind_base[wa]) {
 		walk_behind_baselines_changed = 1;
 		invalidate_cached_walkbehinds();
-		croom->walkbehind_base[wa] = bl;
+		_G(croom)->walkbehind_base[wa] = bl;
 		debug_script_log("Walk-behind %d baseline changed to %d", wa, bl);
 	}
 }

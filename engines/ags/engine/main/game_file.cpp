@@ -61,7 +61,7 @@ using namespace AGS::Engine;
 
 extern int ifacepopped;
 extern DialogTopic *dialog;
-extern AGSPlatformDriver *platform;
+
 
 // Test if engine supports extended capabilities required to run the game
 bool test_game_caps(const std::set<String> &caps, std::set<String> &failed_caps) {
@@ -149,7 +149,7 @@ HError load_game_file() {
 }
 
 void display_game_file_error(HError err) {
-	platform->DisplayAlert("Loading game failed with error:\n%s.\n\nThe game files may be incomplete, corrupt or from unsupported version of AGS.",
+	_G(platform)->DisplayAlert("Loading game failed with error:\n%s.\n\nThe game files may be incomplete, corrupt or from unsupported version of AGS.",
 		err->FullMessage().GetCStr());
 }
 

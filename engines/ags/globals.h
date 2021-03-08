@@ -27,6 +27,7 @@
 #include "ags/shared/util/version.h"
 #include "ags/shared/gui/guimain.h"
 #include "ags/shared/script/cc_script.h"
+#include "ags/engine/ac/runtime_defines.h"
 #include "ags/engine/main/engine.h"
 #include "ags/engine/media/audio/audiodefines.h"
 #include "ags/lib/std/array.h"
@@ -78,6 +79,7 @@ class TTFFontRenderer;
 class WFNFontRenderer;
 
 struct ActiveDisplaySetting;
+struct AGSPlatformDriver;
 struct AmbientSound;
 struct AnimatingGUIButton;
 struct CCAudioChannel;
@@ -107,6 +109,7 @@ struct ObjectCache;
 struct ResourcePaths;
 struct RGB_MAP;
 struct RoomCameraDrawData;
+struct RoomObject;
 struct RoomStatus;
 struct RuntimeScriptValue;
 struct ScreenOverlay;
@@ -168,6 +171,15 @@ public:
 	volatile int _mouse_pos = 0;	// X position in upper 16 bits, Y in lower 16
 
 	volatile int freeze_mouse_flag;
+
+	/**@}*/
+
+	/**
+	 * \defgroup audio globals
+	 * @{
+	 */
+
+	AGSPlatformDriver *_platform = nullptr;
 
 	/**@}*/
 
@@ -407,10 +419,22 @@ public:
 	AGS::Shared::String _saveGameDirectory;
 	AGS::Shared::String _saveGameParent;
 	AGS::Shared::String _saveGameSuffix;
-
-	// Major overall flags
 	bool _want_exit = false;
 	bool _abort_engine = false;
+
+	RoomObject *_objs;
+	RoomStatus *_croom = nullptr;
+
+	volatile int _switching_away_from_game = 0;
+	volatile bool _switched_away = false;
+	int _frames_per_second = 40;
+	int _displayed_room = -10, _starting_room = -1;
+	int _in_new_room = 0, _new_room_was = 0; // 1 in new room, 2 first time in new room, 3 loading saved game
+	int _new_room_pos = 0;
+	int _new_room_x = SCR_NO_VALUE, _new_room_y = SCR_NO_VALUE;
+	int _new_room_loop = SCR_NO_VALUE;
+	bool _proper_exit = false;
+	int _our_eip = 0;
 
 	 /**@}*/
 

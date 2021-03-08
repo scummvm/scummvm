@@ -55,12 +55,8 @@ namespace AGS3 {
 
 using namespace AGS::Shared;
 
-extern RoomStatus *croom;
-extern RoomObject *objs;
-
 extern Bitmap *walkable_areas_temp;
 extern IGraphicsDriver *gfxDriver;
-
 
 int Object_IsCollidingWithObject(ScriptObject *objj, ScriptObject *obj2) {
 	return AreObjectsColliding(objj->id, obj2->id);
@@ -81,7 +77,7 @@ ScriptObject *GetObjectAtRoom(int x, int y) {
 }
 
 AGS_INLINE int is_valid_object(int obtest) {
-	if ((obtest < 0) || (obtest >= croom->numobj)) return 0;
+	if ((obtest < 0) || (obtest >= _G(croom)->numobj)) return 0;
 	return 1;
 }
 
@@ -96,7 +92,7 @@ void Object_RemoveTint(ScriptObject *objj) {
 void Object_SetView(ScriptObject *objj, int view, int loop, int frame) {
 	if (_GP(game).options[OPT_BASESCRIPTAPI] < kScriptAPI_v351) {
 		// Previous version of SetView had negative loop and frame mean "use latest values"
-		auto &obj = objs[objj->id];
+		auto &obj = _G(objs)[objj->id];
 		if (loop < 0) loop = obj.loop;
 		if (frame < 0) frame = obj.frame;
 		const int vidx = view - 1;
@@ -115,7 +111,7 @@ int Object_GetTransparency(ScriptObject *objj) {
 	if (!is_valid_object(objj->id))
 		quit("!Object.Transparent: invalid object number specified");
 
-	return GfxDef::LegacyTrans255ToTrans100(objs[objj->id].transparent);
+	return GfxDef::LegacyTrans255ToTrans100(_G(objs)[objj->id].transparent);
 }
 
 void Object_SetBaseline(ScriptObject *objj, int basel) {
@@ -152,9 +148,9 @@ void Object_StopAnimating(ScriptObject *objj) {
 	if (!is_valid_object(objj->id))
 		quit("!Object.StopAnimating: invalid object number");
 
-	if (objs[objj->id].cycling) {
-		objs[objj->id].cycling = 0;
-		objs[objj->id].wait = 0;
+	if (_G(objs)[objj->id].cycling) {
+		_G(objs)[objj->id].cycling = 0;
+		_G(objs)[objj->id].wait = 0;
 	}
 }
 
@@ -174,21 +170,21 @@ void Object_SetVisible(ScriptObject *objj, int onoroff) {
 }
 
 int Object_GetView(ScriptObject *objj) {
-	if (objs[objj->id].view < 0)
+	if (_G(objs)[objj->id].view < 0)
 		return 0;
-	return objs[objj->id].view + 1;
+	return _G(objs)[objj->id].view + 1;
 }
 
 int Object_GetLoop(ScriptObject *objj) {
-	if (objs[objj->id].view < 0)
+	if (_G(objs)[objj->id].view < 0)
 		return 0;
-	return objs[objj->id].loop;
+	return _G(objs)[objj->id].loop;
 }
 
 int Object_GetFrame(ScriptObject *objj) {
-	if (objs[objj->id].view < 0)
+	if (_G(objs)[objj->id].view < 0)
 		return 0;
-	return objs[objj->id].frame;
+	return _G(objs)[objj->id].frame;
 }
 
 int Object_GetVisible(ScriptObject *objj) {
@@ -205,7 +201,7 @@ int Object_GetGraphic(ScriptObject *objj) {
 
 int GetObjectX(int objj) {
 	if (!is_valid_object(objj)) quit("!GetObjectX: invalid object number");
-	return objs[objj].x;
+	return _G(objs)[objj].x;
 }
 
 int Object_GetX(ScriptObject *objj) {
@@ -225,15 +221,15 @@ int Object_GetMoving(ScriptObject *objj) {
 }
 
 bool Object_HasExplicitLight(ScriptObject *obj) {
-	return objs[obj->id].has_explicit_light();
+	return _G(objs)[obj->id].has_explicit_light();
 }
 
 bool Object_HasExplicitTint(ScriptObject *obj) {
-	return objs[obj->id].has_explicit_tint();
+	return _G(objs)[obj->id].has_explicit_tint();
 }
 
 int Object_GetLightLevel(ScriptObject *obj) {
-	return objs[obj->id].has_explicit_light() ? objs[obj->id].tint_light : 0;
+	return _G(objs)[obj->id].has_explicit_light() ? _G(objs)[obj->id].tint_light : 0;
 }
 
 void Object_SetLightLevel(ScriptObject *objj, int light_level) {
@@ -241,29 +237,29 @@ void Object_SetLightLevel(ScriptObject *objj, int light_level) {
 	if (!is_valid_object(obj))
 		quit("!SetObjectTint: invalid object number specified");
 
-	objs[obj].tint_light = light_level;
-	objs[obj].flags &= ~OBJF_HASTINT;
-	objs[obj].flags |= OBJF_HASLIGHT;
+	_G(objs)[obj].tint_light = light_level;
+	_G(objs)[obj].flags &= ~OBJF_HASTINT;
+	_G(objs)[obj].flags |= OBJF_HASLIGHT;
 }
 
 int Object_GetTintRed(ScriptObject *obj) {
-	return objs[obj->id].has_explicit_tint() ? objs[obj->id].tint_r : 0;
+	return _G(objs)[obj->id].has_explicit_tint() ? _G(objs)[obj->id].tint_r : 0;
 }
 
 int Object_GetTintGreen(ScriptObject *obj) {
-	return objs[obj->id].has_explicit_tint() ? objs[obj->id].tint_g : 0;
+	return _G(objs)[obj->id].has_explicit_tint() ? _G(objs)[obj->id].tint_g : 0;
 }
 
 int Object_GetTintBlue(ScriptObject *obj) {
-	return objs[obj->id].has_explicit_tint() ? objs[obj->id].tint_b : 0;
+	return _G(objs)[obj->id].has_explicit_tint() ? _G(objs)[obj->id].tint_b : 0;
 }
 
 int Object_GetTintSaturation(ScriptObject *obj) {
-	return objs[obj->id].has_explicit_tint() ? objs[obj->id].tint_level : 0;
+	return _G(objs)[obj->id].has_explicit_tint() ? _G(objs)[obj->id].tint_level : 0;
 }
 
 int Object_GetTintLuminance(ScriptObject *obj) {
-	return objs[obj->id].has_explicit_tint() ? ((objs[obj->id].tint_light * 10) / 25) : 0;
+	return _G(objs)[obj->id].has_explicit_tint() ? ((_G(objs)[obj->id].tint_light * 10) / 25) : 0;
 }
 
 void Object_SetPosition(ScriptObject *objj, int xx, int yy) {
@@ -271,11 +267,11 @@ void Object_SetPosition(ScriptObject *objj, int xx, int yy) {
 }
 
 void Object_SetX(ScriptObject *objj, int xx) {
-	SetObjectPosition(objj->id, xx, objs[objj->id].y);
+	SetObjectPosition(objj->id, xx, _G(objs)[objj->id].y);
 }
 
 void Object_SetY(ScriptObject *objj, int yy) {
-	SetObjectPosition(objj->id, objs[objj->id].x, yy);
+	SetObjectPosition(objj->id, _G(objs)[objj->id].x, yy);
 }
 
 void Object_GetName(ScriptObject *objj, char *buffer) {
@@ -309,7 +305,7 @@ void Object_Move(ScriptObject *objj, int x, int y, int speed, int blocking, int 
 	move_object(objj->id, x, y, speed, direct);
 
 	if ((blocking == BLOCKING) || (blocking == 1))
-		GameLoopUntilValueIsZero(&objs[objj->id].moving);
+		GameLoopUntilValueIsZero(&_G(objs)[objj->id].moving);
 	else if ((blocking != IN_BACKGROUND) && (blocking != 0))
 		quit("Object.Move: invalid BLOCKING paramter");
 }
@@ -322,14 +318,14 @@ int Object_GetClickable(ScriptObject *objj) {
 	if (!is_valid_object(objj->id))
 		quit("!Object.Clickable: Invalid object specified");
 
-	if (objs[objj->id].flags & OBJF_NOINTERACT)
+	if (_G(objs)[objj->id].flags & OBJF_NOINTERACT)
 		return 0;
 	return 1;
 }
 
 void Object_SetManualScaling(ScriptObject *objj, bool on) {
-	if (on) objs[objj->id].flags &= ~OBJF_USEROOMSCALING;
-	else objs[objj->id].flags |= OBJF_USEROOMSCALING;
+	if (on) _G(objs)[objj->id].flags &= ~OBJF_USEROOMSCALING;
+	else _G(objs)[objj->id].flags |= OBJF_USEROOMSCALING;
 	// clear the cache
 	_G(objcache)[objj->id].ywas = -9999;
 }
@@ -338,7 +334,7 @@ void Object_SetIgnoreScaling(ScriptObject *objj, int newval) {
 	if (!is_valid_object(objj->id))
 		quit("!Object.IgnoreScaling: Invalid object specified");
 	if (newval)
-		objs[objj->id].zoom = 100; // compatibility, for before manual scaling existed
+		_G(objs)[objj->id].zoom = 100; // compatibility, for before manual scaling existed
 	Object_SetManualScaling(objj, newval != 0);
 }
 
@@ -346,52 +342,52 @@ int Object_GetIgnoreScaling(ScriptObject *objj) {
 	if (!is_valid_object(objj->id))
 		quit("!Object.IgnoreScaling: Invalid object specified");
 
-	if (objs[objj->id].flags & OBJF_USEROOMSCALING)
+	if (_G(objs)[objj->id].flags & OBJF_USEROOMSCALING)
 		return 0;
 	return 1;
 }
 
 int Object_GetScaling(ScriptObject *objj) {
-	return objs[objj->id].zoom;
+	return _G(objs)[objj->id].zoom;
 }
 
 void Object_SetScaling(ScriptObject *objj, int zoomlevel) {
-	if ((objs[objj->id].flags & OBJF_USEROOMSCALING) != 0) {
+	if ((_G(objs)[objj->id].flags & OBJF_USEROOMSCALING) != 0) {
 		debug_script_warn("Object.Scaling: cannot set property unless ManualScaling is enabled");
 		return;
 	}
 	int zoom_fixed = Math::Clamp(zoomlevel, 1, (int)(INT16_MAX)); // RoomObject.zoom is int16
 	if (zoomlevel != zoom_fixed)
 		debug_script_warn("Object.Scaling: scaling level must be between 1 and %d%%", (int)(INT16_MAX));
-	objs[objj->id].zoom = zoom_fixed;
+	_G(objs)[objj->id].zoom = zoom_fixed;
 }
 
 void Object_SetSolid(ScriptObject *objj, int solid) {
-	objs[objj->id].flags &= ~OBJF_SOLID;
+	_G(objs)[objj->id].flags &= ~OBJF_SOLID;
 	if (solid)
-		objs[objj->id].flags |= OBJF_SOLID;
+		_G(objs)[objj->id].flags |= OBJF_SOLID;
 }
 
 int Object_GetSolid(ScriptObject *objj) {
-	if (objs[objj->id].flags & OBJF_SOLID)
+	if (_G(objs)[objj->id].flags & OBJF_SOLID)
 		return 1;
 	return 0;
 }
 
 void Object_SetBlockingWidth(ScriptObject *objj, int bwid) {
-	objs[objj->id].blocking_width = bwid;
+	_G(objs)[objj->id].blocking_width = bwid;
 }
 
 int Object_GetBlockingWidth(ScriptObject *objj) {
-	return objs[objj->id].blocking_width;
+	return _G(objs)[objj->id].blocking_width;
 }
 
 void Object_SetBlockingHeight(ScriptObject *objj, int bhit) {
-	objs[objj->id].blocking_height = bhit;
+	_G(objs)[objj->id].blocking_height = bhit;
 }
 
 int Object_GetBlockingHeight(ScriptObject *objj) {
-	return objs[objj->id].blocking_height;
+	return _G(objs)[objj->id].blocking_height;
 }
 
 int Object_GetID(ScriptObject *objj) {
@@ -406,7 +402,7 @@ int Object_GetIgnoreWalkbehinds(ScriptObject *chaa) {
 	if (!is_valid_object(chaa->id))
 		quit("!Object.IgnoreWalkbehinds: Invalid object specified");
 
-	if (objs[chaa->id].flags & OBJF_NOWALKBEHINDS)
+	if (_G(objs)[chaa->id].flags & OBJF_NOWALKBEHINDS)
 		return 1;
 	return 0;
 }
@@ -418,15 +414,15 @@ void move_object(int objj, int tox, int toy, int spee, int ignwal) {
 
 	// AGS <= 2.61 uses MoveObject with spp=-1 internally instead of SetObjectPosition
 	if ((loaded_game_file_version <= kGameVersion_261) && (spee == -1)) {
-		objs[objj].x = tox;
-		objs[objj].y = toy;
+		_G(objs)[objj].x = tox;
+		_G(objs)[objj].y = toy;
 		return;
 	}
 
 	debug_script_log("Object %d start move to %d,%d", objj, tox, toy);
 
-	int objX = room_to_mask_coord(objs[objj].x);
-	int objY = room_to_mask_coord(objs[objj].y);
+	int objX = room_to_mask_coord(_G(objs)[objj].x);
+	int objY = room_to_mask_coord(_G(objs)[objj].y);
 	tox = room_to_mask_coord(tox);
 	toy = room_to_mask_coord(toy);
 
@@ -435,7 +431,7 @@ void move_object(int objj, int tox, int toy, int spee, int ignwal) {
 	int mslot = find_route(objX, objY, tox, toy, prepare_walkable_areas(-1), objj + 1, 1, ignwal);
 	set_color_depth(_GP(game).GetColorDepth());
 	if (mslot > 0) {
-		objs[objj].moving = mslot;
+		_G(objs)[objj].moving = mslot;
 		_G(mls)[mslot].direct = ignwal;
 		convert_move_path_to_room_resolution(&_G(mls)[mslot]);
 	}
@@ -454,19 +450,19 @@ void Object_GetPropertyText(ScriptObject *objj, const char *property, char *bufe
 }
 
 const char *Object_GetTextProperty(ScriptObject *objj, const char *property) {
-	return get_text_property_dynamic_string(_GP(thisroom).Objects[objj->id].Properties, croom->objProps[objj->id], property);
+	return get_text_property_dynamic_string(_GP(thisroom).Objects[objj->id].Properties, _G(croom)->objProps[objj->id], property);
 }
 
 bool Object_SetProperty(ScriptObject *objj, const char *property, int value) {
-	return set_int_property(croom->objProps[objj->id], property, value);
+	return set_int_property(_G(croom)->objProps[objj->id], property, value);
 }
 
 bool Object_SetTextProperty(ScriptObject *objj, const char *property, const char *value) {
-	return set_text_property(croom->objProps[objj->id], property, value);
+	return set_text_property(_G(croom)->objProps[objj->id], property, value);
 }
 
 void get_object_blocking_rect(int objid, int *x1, int *y1, int *width, int *y2) {
-	RoomObject *tehobj = &objs[objid];
+	RoomObject *tehobj = &_G(objs)[objid];
 	int cwidth, fromx;
 
 	if (tehobj->blocking_width < 1)

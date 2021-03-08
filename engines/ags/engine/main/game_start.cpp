@@ -52,7 +52,6 @@ namespace AGS3 {
 using namespace AGS::Shared;
 using namespace AGS::Engine;
 
-extern int our_eip, displayed_room;
 extern CharacterInfo *playerchar;
 extern int convert_16bit_bgr;
 
@@ -83,7 +82,7 @@ void start_game() {
 	Mouse::SetPosition(Point(160, 100));
 	newmusic(0);
 
-	our_eip = -42;
+	_G(our_eip) = -42;
 
 	// skip ticks to account for initialisation or a restored _GP(game).
 	skipMissedTicks();
@@ -93,13 +92,13 @@ void start_game() {
 
 	RunTextScript(_G(gameinst), "game_start");
 
-	our_eip = -43;
+	_G(our_eip) = -43;
 
 	SetRestartPoint();
 
-	our_eip = -3;
+	_G(our_eip) = -3;
 
-	if (displayed_room < 0) {
+	if (_G(displayed_room) < 0) {
 		current_fade_out_effect();
 		load_new_room(playerchar->room, playerchar);
 		// load_new_room updates it, but it should be -1 in the first room
@@ -111,7 +110,7 @@ void start_game() {
 
 void do_start_game() {
 	// only start if replay playback hasn't loaded a game
-	if (displayed_room < 0)
+	if (_G(displayed_room) < 0)
 		start_game();
 }
 

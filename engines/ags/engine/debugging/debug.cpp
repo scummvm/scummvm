@@ -58,7 +58,7 @@ using namespace AGS::Shared;
 using namespace AGS::Engine;
 
 extern char check_dynamic_sprites_at_exit;
-extern int displayed_room;
+
 extern char pexbuf[STD_BUFFER_SIZE];
 
 const char *OutputMsgBufID = "buffer";
@@ -88,10 +88,10 @@ PDebugOutput create_log_output(const String &name, const String &path = "", LogF
 		return _GP(DbgMgr).RegisterOutput(OutputSystemID, AGSPlatformDriver::GetDriver(), kDbgMsg_None);
 	} else if (name.CompareNoCase(OutputFileID) == 0) {
 		_GP(DebugLogFile).reset(new LogFile());
-		String logfile_path = !path.IsEmpty() ? path : String::FromFormat("%s/ags.log", platform->GetAppOutputDirectory());
+		String logfile_path = !path.IsEmpty() ? path : String::FromFormat("%s/ags.log", _G(platform)->GetAppOutputDirectory());
 		if (!_GP(DebugLogFile)->OpenFile(logfile_path, open_mode))
 			return nullptr;
-		platform->WriteStdOut("Logging to %s", logfile_path.GetCStr());
+		_G(platform)->WriteStdOut("Logging to %s", logfile_path.GetCStr());
 		auto dbgout = _GP(DbgMgr).RegisterOutput(OutputFileID, _GP(DebugLogFile).get(), kDbgMsg_None);
 		return dbgout;
 	} else if (name.CompareNoCase(OutputGameConsoleID) == 0) {
@@ -196,7 +196,7 @@ void apply_log_config(const ConfigTree &cfg, const String &log_id,
 void init_debug(const ConfigTree &cfg, bool stderr_only) {
 	// Register outputs
 	apply_debug_config(cfg);
-	platform->SetOutputToErr(stderr_only);
+	_G(platform)->SetOutputToErr(stderr_only);
 
 	if (stderr_only)
 		return;
@@ -285,7 +285,7 @@ void debug_script_print(const String &msg, MessageType mt) {
 		script_ref.Format("[%s%d]", scriptname.GetCStr(), _G(currentline));
 	}
 
-	Debug::Printf(kDbgGroup_Game, mt, "(room:%d)%s %s", displayed_room, script_ref.GetCStr(), msg.GetCStr());
+	Debug::Printf(kDbgGroup_Game, mt, "(room:%d)%s %s", _G(displayed_room), script_ref.GetCStr(), msg.GetCStr());
 }
 
 void debug_script_warn(const char *msg, ...) {
@@ -366,7 +366,7 @@ bool init_editor_debugging() {
 		// Wait for the editor to send the initial breakpoints
 		// and then its READY message
 		while (check_for_messages_from_editor() != 2) {
-			platform->Delay(10);
+			_G(platform)->Delay(10);
 		}
 
 		send_message_to_editor("START");
@@ -464,7 +464,7 @@ bool send_exception_to_editor(const char *qmsg) {
 		return false;
 
 	while ((check_for_messages_from_editor() == 0) && (_G(want_exit) == 0)) {
-		platform->Delay(10);
+		_G(platform)->Delay(10);
 	}
 #endif
 	return true;
@@ -482,7 +482,7 @@ void break_into_debugger() {
 
 	while (_G(game_paused_in_debugger)) {
 		update_polled_stuff_if_runtime();
-		platform->YieldCPU();
+		_G(platform)->YieldCPU();
 	}
 
 #endif

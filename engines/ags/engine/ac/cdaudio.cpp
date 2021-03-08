@@ -22,6 +22,7 @@
 
 #include "ags/engine/ac/cdaudio.h"
 #include "ags/engine/platform/base/agsplatformdriver.h"
+#include "ags/globals.h"
 
 namespace AGS3 {
 
@@ -31,7 +32,7 @@ int need_to_stop_cd = 0;
 
 int init_cd_player() {
 	use_cdplayer = 0;
-	return platform->InitializeCDPlayer();
+	return _G(platform)->InitializeCDPlayer();
 }
 
 int cd_manager(int cmdd, int datt) {
@@ -42,7 +43,7 @@ int cd_manager(int cmdd, int datt) {
 	if (cmdd == 0) return use_cdplayer;
 	if (use_cdplayer == 0) return 0; // ignore other commands
 
-	return platform->CDPlayerCommand(cmdd, datt);
+	return _G(platform)->CDPlayerCommand(cmdd, datt);
 }
 
 } // namespace AGS3

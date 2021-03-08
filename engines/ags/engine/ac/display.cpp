@@ -63,7 +63,7 @@ using namespace AGS::Shared::BitmapHelper;
 
 
 extern int longestline;
-extern AGSPlatformDriver *platform;
+
 extern int loops_per_character;
 
 

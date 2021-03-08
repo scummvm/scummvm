@@ -102,8 +102,6 @@ void set_clip_to_channel(int chanid, SOUNDCLIP *clip) {
 
 extern CharacterInfo *playerchar;
 
-extern volatile int switching_away_from_game;
-
 void calculate_reserved_channel_count() {
 	int reservedChannels = 0;
 	for (size_t i = 0; i < _GP(game).audioClipTypes.size(); i++) {

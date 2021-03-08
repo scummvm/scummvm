@@ -55,7 +55,7 @@ namespace AGS3 {
 
 using namespace AGS::Shared;
 
-extern AGSPlatformDriver *platform;
+
 extern int MAXSTRLEN;
 
 // object-based File routines
@@ -210,7 +210,7 @@ const char *GameSavedgamesDirToken = "$SAVEGAMEDIR$";
 const char *GameDataDirToken = "$APPDATADIR$";
 
 void FixupFilename(char *filename) {
-	const char *illegal = platform->GetIllegalFileChars();
+	const char *illegal = _G(platform)->GetIllegalFileChars();
 	for (char *name_ptr = filename; *name_ptr; ++name_ptr) {
 		if (*name_ptr < ' ') {
 			*name_ptr = '_';

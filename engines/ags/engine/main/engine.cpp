@@ -84,11 +84,7 @@ using namespace AGS::Shared;
 using namespace AGS::Engine;
 
 extern char check_dynamic_sprites_at_exit;
-extern int our_eip;
-extern int proper_exit;
 extern char pexbuf[STD_BUFFER_SIZE];
-
-extern int displayed_room;
 extern int eip_guinum;
 extern int eip_guiobj;
 extern SpeechLipSyncLine *splipsync;
@@ -107,13 +103,13 @@ extern IDriverDependantBitmap **guibgbmp;
 bool engine_init_allegro() {
 	Debug::Printf(kDbgMsg_Info, "Initializing allegro");
 
-	our_eip = -199;
+	_G(our_eip) = -199;
 	// Initialize allegro
 	set_uformat(U_ASCII);
 	if (install_allegro()) {
 		const char *al_err = get_allegro_error();
-		const char *user_hint = platform->GetAllegroFailUserHint();
-		platform->DisplayAlert("Unable to initialize Allegro system driver.\n%s\n\n%s",
+		const char *user_hint = _G(platform)->GetAllegroFailUserHint();
+		_G(platform)->DisplayAlert("Unable to initialize Allegro system driver.\n%s\n\n%s",
 		                       al_err[0] ? al_err : "Allegro library provided no further information on the problem.",
 		                       user_hint);
 		return false;
@@ -131,11 +127,11 @@ void engine_setup_allegro() {
 void engine_setup_window() {
 	Debug::Printf(kDbgMsg_Info, "Setting up window");
 
-	our_eip = -198;
+	_G(our_eip) = -198;
 	//set_window_title("Adventure Game Studio");
-	our_eip = -197;
+	_G(our_eip) = -197;
 
-	platform->SetGameWindowIcon();
+	_G(platform)->SetGameWindowIcon();
 }
 
 // Starts up setup application, if capable.
@@ -153,11 +149,11 @@ bool engine_run_setup(const String &exe_path, ConfigTree &cfg, int &app_res) {
 		Debug::Printf(kDbgMsg_Info, "Running Setup");
 
 		ConfigTree cfg_out;
-		SetupReturnValue res = platform->RunSetup(cfg, cfg_out);
+		SetupReturnValue res = _G(platform)->RunSetup(cfg, cfg_out);
 		if (res != kSetup_Cancel) {
 			if (!IniUtil::Merge(cfg_file, cfg_out)) {
-				platform->DisplayAlert("Unable to write to the configuration file (error code 0x%08X).\n%s",
-				                       platform->GetLastSystemError(), platform->GetDiskWriteAccessTroubleshootingText());
+				_G(platform)->DisplayAlert("Unable to write to the configuration file (error code 0x%08X).\n%s",
+				                       _G(platform)->GetLastSystemError(), _G(platform)->GetDiskWriteAccessTroubleshootingText());
 			}
 		}
 		if (res != kSetup_RunGame)
@@ -283,7 +279,7 @@ bool engine_try_init_gamedata(String gamepak_path) {
 	// Search for an available game package in the known locations
 	AssetError err = AssetManager::SetDataFile(gamepak_path);
 	if (err != kAssetNoError) {
-		platform->DisplayAlert("ERROR: The game data is missing, is of unsupported format or corrupt.\nFile: '%s'", gamepak_path.GetCStr());
+		_G(platform)->DisplayAlert("ERROR: The game data is missing, is of unsupported format or corrupt.\nFile: '%s'", gamepak_path.GetCStr());
 		return false;
 	}
 	return true;
@@ -313,7 +309,7 @@ void engine_locate_speech_pak() {
 		if (!speech_filepath.IsEmpty()) {
 			Debug::Printf("Initializing speech vox");
 			if (AssetManager::SetDataFile(speech_filepath) != Shared::kAssetNoError) {
-				platform->DisplayAlert("Unable to read voice pack, file could be corrupted or of unknown format.\nSpeech voice-over will be disabled.");
+				_G(platform)->DisplayAlert("Unable to read voice pack, file could be corrupted or of unknown format.\nSpeech voice-over will be disabled.");
 				AssetManager::SetDataFile(_GP(ResPaths).GamePak.Path); // switch back to the main data pack
 				return;
 			}
@@ -363,7 +359,7 @@ void engine_locate_audio_pak() {
 			_GP(ResPaths).AudioPak.Name = music_file;
 			_GP(ResPaths).AudioPak.Path = music_filepath;
 		} else {
-			platform->DisplayAlert("Unable to initialize digital audio pack '%s', file could be corrupt or of unsupported format.",
+			_G(platform)->DisplayAlert("Unable to initialize digital audio pack '%s', file could be corrupt or of unsupported format.",
 			                       music_file.GetCStr());
 		}
 	}
@@ -393,7 +389,7 @@ void engine_init_audio() {
 		audio_core_init(); // audio core system
 	}
 #endif
-	our_eip = -181;
+	_G(our_eip) = -181;
 
 	if (_GP(usetup).audio_backend == 0) {
 		// all audio is disabled
@@ -405,29 +401,13 @@ void engine_init_audio() {
 
 void engine_init_debug() {
 	if ((_G(debug_flags) & (~DBG_DEBUGMODE)) > 0) {
-		platform->DisplayAlert("Engine debugging enabled.\n"
+		_G(platform)->DisplayAlert("Engine debugging enabled.\n"
 		                       "\nNOTE: You have selected to enable one or more engine debugging options.\n"
 		                       "These options cause many parts of the game to behave abnormally, and you\n"
 		                       "may not see the game as you are used to it. The point is to test whether\n"
 		                       "the engine passes a point where it is crashing on you normally.\n"
 		                       "[Debug flags enabled: 0x%02X]", _G(debug_flags));
 	}
-}
-
-void atexit_handler() {
-	if (proper_exit == 0) {
-		platform->DisplayAlert("Error: the program has exited without requesting it.\n"
-		                       "Program pointer: %+03d  (write this number down), ACI version %s\n"
-		                       "If you see a list of numbers above, please write them down and contact\n"
-		                       "developers. Otherwise, note down any other information displayed.",
-		                       our_eip, _G(EngineVersion).LongString.GetCStr());
-	}
-}
-
-void engine_init_exit_handler() {
-	Debug::Printf(kDbgMsg_Info, "Install exit handler");
-
-	atexit(atexit_handler);
 }
 
 void engine_init_rand() {
@@ -442,16 +422,16 @@ void engine_init_pathfinder() {
 void engine_pre_init_gfx() {
 	//Debug::Printf("Initialize gfx");
 
-	//platform->InitialiseAbufAtStartup();
+	//_G(platform)->InitialiseAbufAtStartup();
 }
 
 int engine_load_game_data() {
 	Debug::Printf("Load game data");
-	our_eip = -17;
+	_G(our_eip) = -17;
 	HError err = load_game_file();
 	if (!err) {
-		proper_exit = 1;
-		platform->FinishedUsingGraphicsMode();
+		_G(proper_exit) = 1;
+		_G(platform)->FinishedUsingGraphicsMode();
 		display_game_file_error(err);
 		return EXIT_ERROR;
 	}
@@ -460,14 +440,14 @@ int engine_load_game_data() {
 
 int engine_check_register_game() {
 	if (_G(justRegisterGame)) {
-		platform->RegisterGameWithGameExplorer();
-		proper_exit = 1;
+		_G(platform)->RegisterGameWithGameExplorer();
+		_G(proper_exit) = 1;
 		return EXIT_NORMAL;
 	}
 
 	if (_G(justUnRegisterGame)) {
-		platform->UnRegisterGameWithGameExplorer();
-		proper_exit = 1;
+		_G(platform)->UnRegisterGameWithGameExplorer();
+		_G(proper_exit) = 1;
 		return EXIT_NORMAL;
 	}
 
@@ -475,7 +455,7 @@ int engine_check_register_game() {
 }
 
 void engine_init_title() {
-	our_eip = -91;
+	_G(our_eip) = -91;
 	::AGS::g_vm->set_window_title(_GP(game).gamename);
 	Debug::Printf(kDbgMsg_Info, "Game title: '%s'", _GP(game).gamename);
 }
@@ -530,10 +510,10 @@ int check_write_access() {
 	return true;
 #else
 
-	if (platform->GetDiskFreeSpaceMB() < 2)
+	if (_G(platform)->GetDiskFreeSpaceMB() < 2)
 		return 0;
 
-	our_eip = -1895;
+	_G(our_eip) = -1895;
 
 	// The Save Game Dir is the only place that we should write to
 	String svg_dir = get_save_game_directory();
@@ -553,12 +533,12 @@ int check_write_access() {
 		return 0;
 #endif // AGS_PLATFORM_OS_ANDROID
 
-	our_eip = -1896;
+	_G(our_eip) = -1896;
 
 	temp_s->Write("just to test the drive free space", 30);
 	delete temp_s;
 
-	our_eip = -1897;
+	_G(our_eip) = -1897;
 
 	if (::remove(tempPath))
 		return 0;
@@ -571,8 +551,8 @@ int engine_check_disk_space() {
 	Debug::Printf(kDbgMsg_Info, "Checking for disk space");
 
 	if (check_write_access() == 0) {
-		platform->DisplayAlert("Unable to write in the savegame directory.\n%s", platform->GetDiskWriteAccessTroubleshootingText());
-		proper_exit = 1;
+		_G(platform)->DisplayAlert("Unable to write in the savegame directory.\n%s", _G(platform)->GetDiskWriteAccessTroubleshootingText());
+		_G(proper_exit) = 1;
 		return EXIT_ERROR;
 	}
 
@@ -581,8 +561,8 @@ int engine_check_disk_space() {
 
 int engine_check_font_was_loaded() {
 	if (!font_first_renderer_loaded()) {
-		platform->DisplayAlert("No game fonts found. At least one font is required to run the game.");
-		proper_exit = 1;
+		_G(platform)->DisplayAlert("No game fonts found. At least one font is required to run the game.");
+		_G(proper_exit) = 1;
 		return EXIT_ERROR;
 	}
 
@@ -616,7 +596,7 @@ void show_preload() {
 		gfxDriver->DestroyDDB(ddb);
 		delete splashsc;
 		delete tsc;
-		platform->Delay(500);
+		_G(platform)->Delay(500);
 	}
 }
 
@@ -625,10 +605,10 @@ int engine_init_sprites() {
 
 	HError err = _GP(spriteset).InitFile(SpriteCache::DefaultSpriteFileName, SpriteCache::DefaultSpriteIndexName);
 	if (!err) {
-		platform->FinishedUsingGraphicsMode();
+		_G(platform)->FinishedUsingGraphicsMode();
 		allegro_exit();
-		proper_exit = 1;
-		platform->DisplayAlert("Could not load sprite set file %s\n%s",
+		_G(proper_exit) = 1;
+		_G(platform)->DisplayAlert("Could not load sprite set file %s\n%s",
 		                       SpriteCache::DefaultSpriteFileName,
 		                       err->FullMessage().GetCStr());
 		return EXIT_ERROR;
@@ -638,7 +618,7 @@ int engine_init_sprites() {
 }
 
 void engine_init_game_settings() {
-	our_eip = -7;
+	_G(our_eip) = -7;
 	Debug::Printf("Initialize game settings");
 
 	int ee;
@@ -675,7 +655,7 @@ void engine_init_game_settings() {
 	dummyguicontrol.guin = -1;
 	dummyguicontrol.objn = -1;*/
 
-	our_eip = -6;
+	_G(our_eip) = -6;
 	//  _GP(game).chars[0].talkview=4;
 	//init_language_text(_GP(game).langcodes[0]);
 
@@ -718,7 +698,7 @@ void engine_init_game_settings() {
 		guibgbmp[ee] = nullptr;
 	}
 
-	our_eip = -5;
+	_G(our_eip) = -5;
 	for (ee = 0; ee < _GP(game).numinvitems; ee++) {
 		if (_GP(game).invinfo[ee].flags & IFLG_STARTWITH) playerchar->inv[ee] = 1;
 		else playerchar->inv[ee] = 0;
@@ -879,10 +859,10 @@ void engine_init_game_settings() {
 		init_translation(_GP(usetup).translation, "", true);
 
 	update_invorder();
-	displayed_room = -10;
+	_G(displayed_room) = -10;
 
 	_G(currentcursor) = 0;
-	our_eip = -4;
+	_G(our_eip) = -4;
 	_G(mousey) = 100; // stop icon bar popping up
 
 	// We use same variable to read config and be used at runtime for now,
@@ -898,7 +878,7 @@ void engine_setup_scsystem_auxiliary() {
 	if (_GP(usetup).override_script_os >= 0) {
 		_GP(scsystem).os = _GP(usetup).override_script_os;
 	} else {
-		_GP(scsystem).os = platform->GetSystemOSID();
+		_GP(scsystem).os = _G(platform)->GetSystemOSID();
 	}
 }
 
@@ -975,7 +955,7 @@ HError define_gamedata_location_checkall(const String &exe_path) {
 bool define_gamedata_location(const String &exe_path) {
 	HError err = define_gamedata_location_checkall(exe_path);
 	if (!err) {
-		platform->DisplayAlert("ERROR: Unable to determine game data.\n%s", err->FullMessage().GetCStr());
+		_G(platform)->DisplayAlert("ERROR: Unable to determine game data.\n%s", err->FullMessage().GetCStr());
 		main_print_help();
 		return false;
 	}
@@ -1122,7 +1102,7 @@ static void engine_print_info(const std::set<String> &keys, const String &exe_pa
 	}
 	String full;
 	IniUtil::WriteToString(full, data);
-	platform->WriteStdOut("%s", full.GetCStr());
+	_G(platform)->WriteStdOut("%s", full.GetCStr());
 }
 
 // TODO: this function is still a big mess, engine/system-related initialization
@@ -1165,53 +1145,51 @@ int initialize_engine(const ConfigTree &startup_opts) {
 	engine_setup_allegro();
 	engine_force_window();
 
-	our_eip = -190;
+	_G(our_eip) = -190;
 
 	//-----------------------------------------------------
 	// Init data paths and other directories, locate general data files
 	engine_init_directories();
 
-	our_eip = -191;
+	_G(our_eip) = -191;
 
 	engine_locate_speech_pak();
 
-	our_eip = -192;
+	_G(our_eip) = -192;
 
 	engine_locate_audio_pak();
 
-	our_eip = -193;
+	_G(our_eip) = -193;
 
 	//-----------------------------------------------------
 	// Begin setting up systems
 	engine_setup_window();
 
-	our_eip = -194;
+	_G(our_eip) = -194;
 
 	engine_init_fonts();
 
-	our_eip = -195;
+	_G(our_eip) = -195;
 
 	engine_init_keyboard();
 
-	our_eip = -196;
+	_G(our_eip) = -196;
 
 	engine_init_mouse();
 
-	our_eip = -197;
+	_G(our_eip) = -197;
 
 	engine_init_timer();
 
-	our_eip = -198;
+	_G(our_eip) = -198;
 
 	engine_init_audio();
 
-	our_eip = -199;
+	_G(our_eip) = -199;
 
 	engine_init_debug();
 
-	our_eip = -10;
-
-	engine_init_exit_handler();
+	_G(our_eip) = -10;
 
 	engine_init_rand();
 
@@ -1219,8 +1197,8 @@ int initialize_engine(const ConfigTree &startup_opts) {
 
 	set_game_speed(40);
 
-	our_eip = -20;
-	our_eip = -19;
+	_G(our_eip) = -20;
+	_G(our_eip) = -19;
 
 	int res = engine_load_game_data();
 	if (res != 0)
@@ -1232,7 +1210,7 @@ int initialize_engine(const ConfigTree &startup_opts) {
 
 	engine_init_title();
 
-	our_eip = -189;
+	_G(our_eip) = -189;
 
 	res = engine_check_disk_space();
 	if (res != 0)
@@ -1245,7 +1223,7 @@ int initialize_engine(const ConfigTree &startup_opts) {
 	if (res != 0)
 		return res;
 
-	our_eip = -179;
+	_G(our_eip) = -179;
 
 	engine_init_resolution_settings(_GP(game).GetGameRes());
 

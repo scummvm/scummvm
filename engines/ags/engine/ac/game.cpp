@@ -144,21 +144,7 @@ extern IGraphicsDriver *gfxDriver;
 
 //=============================================================================
 
-RoomObject *objs;
-RoomStatus *croom = nullptr;
-
-volatile int switching_away_from_game = 0;
-volatile bool switched_away = false;
 GameDataVersion loaded_game_file_version = kGameVersion_Undefined;
-int frames_per_second = 40;
-int displayed_room = -10, starting_room = -1;
-int in_new_room = 0, new_room_was = 0; // 1 in new room, 2 first time in new room, 3 loading saved game
-int new_room_pos = 0;
-int new_room_x = SCR_NO_VALUE, new_room_y = SCR_NO_VALUE;
-int new_room_loop = SCR_NO_VALUE;
-
-// initially size 1, this will be increased by the initFile function
-int proper_exit = 0, our_eip = 0;
 
 //=============================================================================
 
@@ -272,7 +258,7 @@ void set_debug_mode(bool on) {
 }
 
 void set_game_speed(int new_fps) {
-	frames_per_second = new_fps;
+	_G(frames_per_second) = new_fps;
 	if (!isTimerFpsMaxed()) // if in maxed mode, don't update timer for now
 		setTimerFps(new_fps);
 }
@@ -336,7 +322,7 @@ bool MakeSaveGameDir(const String &newFolder, ResolvedPath &rp) {
 
 	if (newSaveGameDir.CompareLeft(UserSavedgamesRootToken, strlen(UserSavedgamesRootToken)) == 0) {
 		if (_G(saveGameParent).IsEmpty()) {
-			base_dir = PathOrCurDir(platform->GetUserSavedgamesDirectory());
+			base_dir = PathOrCurDir(_G(platform)->GetUserSavedgamesDirectory());
 			newSaveGameDir.ReplaceMid(0, strlen(UserSavedgamesRootToken), base_dir);
 		} else {
 			// If there is a custom save parent directory, then replace
@@ -351,7 +337,7 @@ bool MakeSaveGameDir(const String &newFolder, ResolvedPath &rp) {
 		// Convert the path relative to installation folder into path relative to the
 		// safe save path with default name
 		if (_G(saveGameParent).IsEmpty()) {
-			base_dir = PathOrCurDir(platform->GetUserSavedgamesDirectory());
+			base_dir = PathOrCurDir(_G(platform)->GetUserSavedgamesDirectory());
 			newSaveGameDir.Format("%s/%s/%s", base_dir.GetCStr(), _GP(game).saveGameFolderName, newFolder.GetCStr());
 		} else {
 			base_dir = _G(saveGameParent);
@@ -999,7 +985,7 @@ void save_game(int slotn, const char *descript) {
 		return;
 	}
 
-	if (platform->GetDiskFreeSpaceMB() < 2) {
+	if (_G(platform)->GetDiskFreeSpaceMB() < 2) {
 		Display("ERROR: There is not enough disk space free to save the game. Clear some disk space and try again.");
 		return;
 	}
@@ -1094,7 +1080,7 @@ void ReadRoomStatus_Aligned(RoomStatus *roomstat, Stream *in) {
 void restore_game_room_state(Stream *in) {
 	int vv;
 
-	displayed_room = in->ReadInt32();
+	_G(displayed_room) = in->ReadInt32();
 
 	// read the room state for all the rooms the player has been in
 	RoomStatus *roomstat;
@@ -1277,7 +1263,7 @@ void restore_game_displayed_room_status(Stream *in, RestoredData &r_data) {
 	for (bb = 0; bb < MAX_ROOM_BGFRAMES; bb++)
 		r_data.RoomBkgScene[bb].reset();
 
-	if (displayed_room >= 0) {
+	if (_G(displayed_room) >= 0) {
 
 		for (bb = 0; bb < MAX_ROOM_BGFRAMES; bb++) {
 			r_data.RoomBkgScene[bb] = nullptr;
@@ -1510,8 +1496,8 @@ HSaveError load_game(int slotNumber, bool &data_overwritten) {
 	data_overwritten = false;
 	gameHasBeenRestored++;
 
-	oldeip = our_eip;
-	our_eip = 2050;
+	oldeip = _G(our_eip);
+	_G(our_eip) = 2050;
 
 	HSaveError err;
 	SavegameSource src;
@@ -1548,7 +1534,7 @@ HSaveError load_game(int slotNumber, bool &data_overwritten) {
 	if (!err)
 		return err;
 	src.InputStream.reset();
-	our_eip = oldeip;
+	_G(our_eip) = oldeip;
 
 	// ensure keyboard buffer is clean
 	ags_clear_input_buffer();
@@ -1675,11 +1661,11 @@ int __GetLocationType(int xxx, int yyy, int allowHotspot0) {
 	int wbat = _GP(thisroom).WalkBehindMask->GetPixel(xxx, yyy);
 
 	if (wbat <= 0) wbat = 0;
-	else wbat = croom->walkbehind_base[wbat];
+	else wbat = _G(croom)->walkbehind_base[wbat];
 
 	int winner = 0;
 	// if it's an Ignore Walkbehinds object, then ignore the walkbehind
-	if ((objat >= 0) && ((objs[objat].flags & OBJF_NOWALKBEHINDS) != 0))
+	if ((objat >= 0) && ((_G(objs)[objat].flags & OBJF_NOWALKBEHINDS) != 0))
 		wbat = 0;
 	if ((charat >= 0) && ((_GP(game).chars[charat].flags & CHF_NOWALKBEHINDS) != 0))
 		wbat = 0;
@@ -1723,12 +1709,12 @@ int __GetLocationType(int xxx, int yyy, int allowHotspot0) {
 
 // Called whenever game looses input focus
 void display_switch_out() {
-	switched_away = true;
+	_G(switched_away) = true;
 	ags_clear_input_buffer();
 	// Always unlock mouse when switching out from the game
 	Mouse::UnlockFromWindow();
-	platform->DisplaySwitchOut();
-	platform->ExitFullscreenMode();
+	_G(platform)->DisplaySwitchOut();
+	_G(platform)->ExitFullscreenMode();
 }
 
 void display_switch_out_suspend() {
@@ -1736,9 +1722,9 @@ void display_switch_out_suspend() {
 	//debug_script_warn("display_switch_out");
 	display_switch_out();
 
-	switching_away_from_game++;
+	_G(switching_away_from_game)++;
 
-	platform->PauseApplication();
+	_G(platform)->PauseApplication();
 
 	// allow background running temporarily to halt the sound
 	if (set_display_switch_mode(SWITCH_BACKGROUND) == -1)
@@ -1755,23 +1741,23 @@ void display_switch_out_suspend() {
 		}
 	} // -- AudioChannelsLock
 
-	platform->Delay(1000);
+	_G(platform)->Delay(1000);
 
 	// restore the callbacks
 	SetMultitasking(0);
 
-	switching_away_from_game--;
+	_G(switching_away_from_game)--;
 }
 
 // Called whenever game gets input focus
 void display_switch_in() {
-	switched_away = false;
+	_G(switched_away) = false;
 	if (gfxDriver) {
 		DisplayMode mode = gfxDriver->GetDisplayMode();
 		if (!mode.Windowed)
-			platform->EnterFullscreenMode(mode);
+			_G(platform)->EnterFullscreenMode(mode);
 	}
-	platform->DisplaySwitchIn();
+	_G(platform)->DisplaySwitchIn();
 	ags_clear_input_buffer();
 	// If auto lock option is set, lock mouse to the game window
 	if (_GP(usetup).mouse_auto_lock && _GP(scsystem).windowed)
@@ -1795,7 +1781,7 @@ void display_switch_in_resume() {
 	if (gfxDriver && gfxDriver->UsesMemoryBackBuffer())
 		gfxDriver->ClearRectangle(0, 0, _GP(game).GetGameRes().Width - 1, _GP(game).GetGameRes().Height - 1, nullptr);
 
-	platform->ResumeApplication();
+	_G(platform)->ResumeApplication();
 }
 
 void replace_tokens(const char *srcmes, char *destm, int maxlen) {

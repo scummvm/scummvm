@@ -204,7 +204,7 @@ int cd_player_control(int cmdd, int datt);
 
 // [IKM] What is a need to have this global var if you can get AGSPlatformDriver
 // instance by calling AGSPlatformDriver::GetDriver()?
-extern AGSPlatformDriver *platform;
+
 
 } // namespace AGS3
 

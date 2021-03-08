@@ -44,11 +44,8 @@ namespace AGS3 {
 
 using namespace Shared;
 
-
-
-extern RoomStatus *croom;
 extern CharacterInfo *playerchar;
-extern int displayed_room;
+
 extern int in_enters_screen;
 extern int in_leaves_screen;
 extern int in_inv_screen, inv_screen_newroom;
@@ -85,7 +82,7 @@ void NewRoom(int nrnum) {
 	if (nrnum < 0)
 		quitprintf("!NewRoom: room change requested to invalid room number %d.", nrnum);
 
-	if (displayed_room < 0) {
+	if (_G(displayed_room) < 0) {
 		// called from game_start; change the room where the game will start
 		playerchar->room = nrnum;
 		return;
@@ -151,7 +148,7 @@ void NewRoomNPC(int charid, int nrnum, int newx, int newy) {
 }
 
 void ResetRoom(int nrnum) {
-	if (nrnum == displayed_room)
+	if (nrnum == _G(displayed_room))
 		quit("!ResetRoom: cannot reset current room");
 	if ((nrnum < 0) | (nrnum >= MAX_ROOMS))
 		quit("!ResetRoom: invalid room number");
@@ -197,7 +194,7 @@ int HasBeenToRoom(int roomnum) {
 }
 
 void GetRoomPropertyText(const char *property, char *bufer) {
-	get_text_property(_GP(thisroom).Properties, croom->roomProps, property, bufer);
+	get_text_property(_GP(thisroom).Properties, _G(croom)->roomProps, property, bufer);
 }
 
 void SetBackgroundFrame(int frnum) {

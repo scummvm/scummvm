@@ -224,12 +224,12 @@ String find_default_cfg_file(const char *alt_cfg_file) {
 }
 
 String find_user_global_cfg_file() {
-	String parent_dir = PathOrCurDir(platform->GetUserGlobalConfigDirectory());
+	String parent_dir = PathOrCurDir(_G(platform)->GetUserGlobalConfigDirectory());
 	return String::FromFormat("%s/%s", parent_dir.GetCStr(), DefaultConfigFileName.GetCStr());
 }
 
 String find_user_cfg_file() {
-	String parent_dir = MakeSpecialSubDir(PathOrCurDir(platform->GetUserConfigDirectory()));
+	String parent_dir = MakeSpecialSubDir(PathOrCurDir(_G(platform)->GetUserConfigDirectory()));
 	return String::FromFormat("%s/%s", parent_dir.GetCStr(), DefaultConfigFileName.GetCStr());
 }
 

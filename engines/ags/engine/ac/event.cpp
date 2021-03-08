@@ -49,13 +49,9 @@ using namespace AGS::Shared;
 using namespace AGS::Engine;
 
 
-
-extern RoomStatus *croom;
-extern int displayed_room;
-
 extern color palette[256];
 extern IGraphicsDriver *gfxDriver;
-extern AGSPlatformDriver *platform;
+
 extern color old_palette[256];
 
 int in_enters_screen = 0, done_es_error = 0;
@@ -118,7 +114,7 @@ void run_room_event(int id) {
 	if (_GP(thisroom).EventHandlers != nullptr) {
 		run_interaction_script(_GP(thisroom).EventHandlers.get(), id);
 	} else {
-		run_interaction_event(&croom->intrRoom, id);
+		run_interaction_event(&_G(croom)->intrRoom, id);
 	}
 }
 
@@ -175,7 +171,7 @@ void process_event(EventHappened *evp) {
 			if (_GP(thisroom).Hotspots[evp->data2].EventHandlers != nullptr)
 				scriptPtr = _GP(thisroom).Hotspots[evp->data2].EventHandlers;
 			else
-				evpt = &croom->intrHotspot[evp->data2];
+				evpt = &_G(croom)->intrHotspot[evp->data2];
 
 			evblockbasename = "hotspot%d";
 			evblocknum = evp->data2;
@@ -185,12 +181,12 @@ void process_event(EventHappened *evp) {
 			if (_GP(thisroom).EventHandlers != nullptr)
 				scriptPtr = _GP(thisroom).EventHandlers;
 			else
-				evpt = &croom->intrRoom;
+				evpt = &_G(croom)->intrRoom;
 
 			evblockbasename = "room";
 			if (evp->data3 == 5) {
 				in_enters_screen++;
-				run_on_event(GE_ENTER_ROOM, RuntimeScriptValue().SetInt32(displayed_room));
+				run_on_event(GE_ENTER_ROOM, RuntimeScriptValue().SetInt32(_G(displayed_room)));
 
 			}
 			//Debug::Printf("Running room interaction, event %d", evp->data3);

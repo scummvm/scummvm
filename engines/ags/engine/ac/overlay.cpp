@@ -47,7 +47,7 @@ namespace AGS3 {
 using namespace AGS::Shared;
 using namespace AGS::Engine;
 
-extern int displayed_room;
+
 extern int face_talking;
 
 extern CharacterExtras *charextra;
@@ -248,7 +248,7 @@ void get_overlay_position(const ScreenOverlay &over, int *x, int *y) {
 
 		if ((tdxp + over.pic->GetWidth()) >= ui_view.GetWidth())
 			tdxp = (ui_view.GetWidth() - over.pic->GetWidth()) - 1;
-		if (_GP(game).chars[charid].room != displayed_room) {
+		if (_GP(game).chars[charid].room != _G(displayed_room)) {
 			tdxp = ui_view.GetWidth() / 2 - over.pic->GetWidth() / 2;
 			tdyp = ui_view.GetHeight() / 2 - over.pic->GetHeight() / 2;
 		}

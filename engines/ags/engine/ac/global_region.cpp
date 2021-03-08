@@ -36,8 +36,6 @@ namespace AGS3 {
 
 using namespace AGS::Shared;
 
-
-extern RoomStatus *croom;
 extern const char *evblockbasename;
 extern int evblocknum;
 
@@ -61,7 +59,7 @@ int GetRegionIDAtRoom(int xxx, int yyy) {
 
 	int hsthere = _GP(thisroom).RegionMask->GetPixel(xxx, yyy);
 	if (hsthere <= 0 || hsthere >= MAX_ROOM_REGIONS) return 0;
-	if (croom->region_enabled[hsthere] == 0) return 0;
+	if (_G(croom)->region_enabled[hsthere] == 0) return 0;
 	return hsthere;
 }
 
@@ -112,7 +110,7 @@ void DisableRegion(int hsnum) {
 	if ((hsnum < 0) || (hsnum >= MAX_ROOM_REGIONS))
 		quit("!DisableRegion: invalid region specified");
 
-	croom->region_enabled[hsnum] = 0;
+	_G(croom)->region_enabled[hsnum] = 0;
 	debug_script_log("Region %d disabled", hsnum);
 }
 
@@ -120,7 +118,7 @@ void EnableRegion(int hsnum) {
 	if ((hsnum < 0) || (hsnum >= MAX_ROOM_REGIONS))
 		quit("!EnableRegion: invalid region specified");
 
-	croom->region_enabled[hsnum] = 1;
+	_G(croom)->region_enabled[hsnum] = 1;
 	debug_script_log("Region %d enabled", hsnum);
 }
 
@@ -161,7 +159,7 @@ void RunRegionInteraction(int regnum, int mood) {
 	if (_GP(thisroom).Regions[regnum].EventHandlers != nullptr) {
 		run_interaction_script(_GP(thisroom).Regions[regnum].EventHandlers.get(), mood);
 	} else {
-		run_interaction_event(&croom->intrRegion[regnum], mood);
+		run_interaction_event(&_G(croom)->intrRegion[regnum], mood);
 	}
 
 	evblockbasename = oldbasename;

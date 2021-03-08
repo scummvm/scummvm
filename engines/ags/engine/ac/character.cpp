@@ -79,14 +79,11 @@ namespace AGS3 {
 
 using namespace AGS::Shared;
 
-extern int displayed_room, starting_room;
-extern RoomObject *objs;
 extern Bitmap *walkable_areas_temp;
 extern IGraphicsDriver *gfxDriver;
 extern Bitmap **actsps;
 extern int said_speech_line;
 extern int said_text;
-extern int our_eip;
 
 //--------------------------------
 
@@ -163,7 +160,7 @@ void Character_AddInventory(CharacterInfo *chaa, ScriptInvItem *invi, int addInd
 
 void Character_AddWaypoint(CharacterInfo *chaa, int x, int y) {
 
-	if (chaa->room != displayed_room)
+	if (chaa->room != _G(displayed_room))
 		quit("!MoveCharacterPath: specified character not in current room");
 
 	// not already walking, so just do a normal move
@@ -214,23 +211,23 @@ void Character_ChangeRoomAutoPosition(CharacterInfo *chaa, int room, int newPos)
 		quit("!Character.ChangeRoomAutoPosition can only be used with the player character.");
 	}
 
-	new_room_pos = newPos;
+	_G(new_room_pos) = newPos;
 
-	if (new_room_pos == 0) {
+	if (_G(new_room_pos) == 0) {
 		// auto place on other side of screen
 		if (chaa->x <= _GP(thisroom).Edges.Left + 10)
-			new_room_pos = 2000;
+			_G(new_room_pos) = 2000;
 		else if (chaa->x >= _GP(thisroom).Edges.Right - 10)
-			new_room_pos = 1000;
+			_G(new_room_pos) = 1000;
 		else if (chaa->y <= _GP(thisroom).Edges.Top + 10)
-			new_room_pos = 3000;
+			_G(new_room_pos) = 3000;
 		else if (chaa->y >= _GP(thisroom).Edges.Bottom - 10)
-			new_room_pos = 4000;
+			_G(new_room_pos) = 4000;
 
-		if (new_room_pos < 3000)
-			new_room_pos += chaa->y;
+		if (_G(new_room_pos) < 3000)
+			_G(new_room_pos) += chaa->y;
 		else
-			new_room_pos += chaa->x;
+			_G(new_room_pos) += chaa->x;
 	}
 	NewRoom(room);
 }
@@ -258,7 +255,7 @@ void Character_ChangeRoomSetLoop(CharacterInfo *chaa, int room, int x, int y, in
 	}
 
 	if ((x != SCR_NO_VALUE) && (y != SCR_NO_VALUE)) {
-		new_room_pos = 0;
+		_G(new_room_pos) = 0;
 
 		if (loaded_game_file_version <= kGameVersion_272) {
 			// Set position immediately on 2.x.
@@ -267,9 +264,9 @@ void Character_ChangeRoomSetLoop(CharacterInfo *chaa, int room, int x, int y, in
 		} else {
 			// don't check X or Y bounds, so that they can do a
 			// walk-in animation if they want
-			new_room_x = x;
-			new_room_y = y;
-			if (direction != SCR_NO_VALUE) new_room_loop = direction;
+			_G(new_room_x) = x;
+			_G(new_room_y) = y;
+			if (direction != SCR_NO_VALUE) _G(new_room_loop) = direction;
 		}
 	}
 
@@ -430,7 +427,7 @@ void Character_FaceObject(CharacterInfo *char1, ScriptObject *obj, int blockingS
 	if (obj == nullptr)
 		quit("!FaceObject: invalid object specified");
 
-	FaceLocationXY(char1, objs[obj->id].x, objs[obj->id].y, blockingStyle);
+	FaceLocationXY(char1, _G(objs)[obj->id].x, _G(objs)[obj->id].y, blockingStyle);
 }
 
 void Character_FaceCharacter(CharacterInfo *char1, CharacterInfo *char2, int blockingStyle) {
@@ -509,16 +506,16 @@ int Character_IsCollidingWithObject(CharacterInfo *chin, ScriptObject *objid) {
 	if (objid == nullptr)
 		quit("!AreCharObjColliding: invalid object number");
 
-	if (chin->room != displayed_room)
+	if (chin->room != _G(displayed_room))
 		return 0;
-	if (objs[objid->id].on != 1)
+	if (_G(objs)[objid->id].on != 1)
 		return 0;
 
 	Bitmap *checkblk = GetObjectImage(objid->id, nullptr);
 	int objWidth = checkblk->GetWidth();
 	int objHeight = checkblk->GetHeight();
-	int o1x = objs[objid->id].x;
-	int o1y = objs[objid->id].y - game_to_data_coord(objHeight);
+	int o1x = _G(objs)[objid->id].x;
+	int o1y = _G(objs)[objid->id].y - game_to_data_coord(objHeight);
 
 	Bitmap *charpic = GetCharacterImage(chin->index_id, nullptr);
 
@@ -704,7 +701,7 @@ void Character_LoseInventory(CharacterInfo *chap, ScriptInvItem *invi) {
 }
 
 void Character_PlaceOnWalkableArea(CharacterInfo *chap) {
-	if (displayed_room < 0)
+	if (_G(displayed_room) < 0)
 		quit("!Character.PlaceOnWalkableArea: no room is currently loaded");
 
 	find_nearest_walkable_area(&chap->x, &chap->y);
@@ -772,16 +769,16 @@ void Character_SetAsPlayer(CharacterInfo *chaa) {
 	debug_script_log("%s is new player character", playerchar->scrname);
 
 	// Within game_start, return now
-	if (displayed_room < 0)
+	if (_G(displayed_room) < 0)
 		return;
 
 	// Ignore invalid room numbers for the character and just place him in
 	// the current room for 2.x. Following script calls to NewRoom() will
 	// make sure this still works as intended.
 	if ((loaded_game_file_version <= kGameVersion_272) && (playerchar->room < 0))
-		playerchar->room = displayed_room;
+		playerchar->room = _G(displayed_room);
 
-	if (displayed_room != playerchar->room)
+	if (_G(displayed_room) != playerchar->room)
 		NewRoom(playerchar->room);
 	else   // make sure it doesn't run the region interactions
 		_GP(play).player_on_region = GetRegionIDAtRoom(playerchar->x, playerchar->y);
@@ -918,7 +915,7 @@ void Character_StopMoving(CharacterInfo *charp) {
 	}
 	if ((charp->walking > 0) && (charp->walking < TURNING_AROUND)) {
 		// if it's not a MoveCharDirect, make sure they end up on a walkable area
-		if ((_G(mls)[charp->walking].direct == 0) && (charp->room == displayed_room))
+		if ((_G(mls)[charp->walking].direct == 0) && (charp->room == _G(displayed_room)))
 			Character_PlaceOnWalkableArea(charp);
 
 		debug_script_log("%s: stop moving", charp->scrname);
@@ -997,7 +994,7 @@ void Character_Move(CharacterInfo *chaa, int x, int y, int blocking, int direct)
 
 void Character_WalkStraight(CharacterInfo *chaa, int xx, int yy, int blocking) {
 
-	if (chaa->room != displayed_room)
+	if (chaa->room != _G(displayed_room))
 		quit("!MoveCharacterStraight: specified character not in current room");
 
 	Character_StopMoving(chaa);
@@ -1602,7 +1599,7 @@ int turnlooporder[8] = {0, 6, 1, 7, 3, 5, 2, 4};
 
 void walk_character(int chac, int tox, int toy, int ignwal, bool autoWalkAnims) {
 	CharacterInfo *chin = &_GP(game).chars[chac];
-	if (chin->room != displayed_room)
+	if (chin->room != _G(displayed_room))
 		quit("!MoveCharacter: character not in current room");
 
 	chin->flags &= ~CHF_MOVENOTWALK;
@@ -1792,7 +1789,7 @@ int has_hit_another_character(int sourceChar) {
 
 	for (int ww = 0; ww < _GP(game).numcharacters; ww++) {
 		if (_GP(game).chars[ww].on != 1) continue;
-		if (_GP(game).chars[ww].room != displayed_room) continue;
+		if (_GP(game).chars[ww].room != _G(displayed_room)) continue;
 		if (ww == sourceChar) continue;
 		if (_GP(game).chars[ww].flags & CHF_NOBLOCKING) continue;
 
@@ -2133,7 +2130,7 @@ extern int char_lowest_yp, obj_lowest_yp;
 int is_pos_on_character(int xx, int yy) {
 	int cc, sppic, lowestyp = 0, lowestwas = -1;
 	for (cc = 0; cc < _GP(game).numcharacters; cc++) {
-		if (_GP(game).chars[cc].room != displayed_room) continue;
+		if (_GP(game).chars[cc].room != _G(displayed_room)) continue;
 		if (_GP(game).chars[cc].on == 0) continue;
 		if (_GP(game).chars[cc].flags & CHF_NOINTERACT) continue;
 		if (_GP(game).chars[cc].view < 0) continue;
@@ -2313,7 +2310,7 @@ void _displayspeech(const char *texx, int aschar, int xx, int yy, int widd, int 
 
 	// the strings are pre-translated
 	//texx = get_translation(texx);
-	our_eip = 150;
+	_G(our_eip) = 150;
 
 	int isPause = 1;
 	// if the message is all .'s, don't display anything
@@ -2328,7 +2325,7 @@ void _displayspeech(const char *texx, int aschar, int xx, int yy, int widd, int 
 	_GP(play).speech_in_post_state = false;
 
 	if (isPause) {
-		postpone_scheduled_music_update_by(std::chrono::milliseconds(_GP(play).messagetime * 1000 / frames_per_second));
+		postpone_scheduled_music_update_by(std::chrono::milliseconds(_GP(play).messagetime * 1000 / _G(frames_per_second)));
 		GameLoopUntilValueIsNegative(&_GP(play).messagetime);
 		return;
 	}
@@ -2345,7 +2342,7 @@ void _displayspeech(const char *texx, int aschar, int xx, int yy, int widd, int 
 	if (bwidth < 0)
 		bwidth = ui_view.GetWidth() / 2 + ui_view.GetWidth() / 4;
 
-	our_eip = 151;
+	_G(our_eip) = 151;
 
 	int useview = speakingChar->talkview;
 	if (isThought) {
@@ -2355,7 +2352,7 @@ void _displayspeech(const char *texx, int aschar, int xx, int yy, int widd, int 
 			useview = -1;
 		// speech bubble can shrink to fit
 		allowShrink = 1;
-		if (speakingChar->room != displayed_room) {
+		if (speakingChar->room != _G(displayed_room)) {
 			// not in room, centre it
 			xx = -1;
 			yy = -1;
@@ -2379,7 +2376,7 @@ void _displayspeech(const char *texx, int aschar, int xx, int yy, int widd, int 
 
 	if (_GP(game).options[OPT_SPEECHTYPE] == 3)
 		remove_screen_overlay(OVER_COMPLETE);
-	our_eip = 1500;
+	_G(our_eip) = 1500;
 
 	if (_GP(game).options[OPT_SPEECHTYPE] == 0)
 		allowShrink = 1;
@@ -2396,14 +2393,14 @@ void _displayspeech(const char *texx, int aschar, int xx, int yy, int widd, int 
 	if (speakingChar->flags & CHF_FIXVIEW)
 		viewWasLocked = 1;
 
-	/*if ((speakingChar->room == displayed_room) ||
+	/*if ((speakingChar->room == _G(displayed_room)) ||
 	((useview >= 0) && (_GP(game).options[OPT_SPEECHTYPE] > 0)) ) {*/
 
-	if (speakingChar->room == displayed_room) {
+	if (speakingChar->room == _G(displayed_room)) {
 		// If the character is in this room, go for it - otherwise
 		// run the "else" clause which  does text in the middle of
 		// the screen.
-		our_eip = 1501;
+		_G(our_eip) = 1501;
 
 		if (speakingChar->walking)
 			StopMoving(aschar);
@@ -2425,7 +2422,7 @@ void _displayspeech(const char *texx, int aschar, int xx, int yy, int widd, int 
 			quitprintf("Unable to display speech because the character %s has an invalid view frame (View %d, loop %d, frame %d)", speakingChar->scrname, speakingChar->view + 1, speakingChar->loop, speakingChar->frame);
 		}
 
-		our_eip = 1504;
+		_G(our_eip) = 1504;
 
 		// Calculate speech position based on character's position on screen
 		auto view = FindNearestViewport(aschar);
@@ -2446,7 +2443,7 @@ void _displayspeech(const char *texx, int aschar, int xx, int yy, int widd, int 
 		if (tdyp < 5)
 			tdyp = 5;
 
-		our_eip = 152;
+		_G(our_eip) = 152;
 
 		if ((useview >= 0) && (_GP(game).options[OPT_SPEECHTYPE] > 0)) {
 			// Sierra-style close-up portrait
@@ -2534,7 +2531,7 @@ void _displayspeech(const char *texx, int aschar, int xx, int yy, int widd, int 
 			if (widd > 0)
 				bwidth = widd - bigx;
 
-			our_eip = 153;
+			_G(our_eip) = 153;
 			int ovr_yp = get_fixed_pixel_size(20);
 			int view_frame_x = 0;
 			int view_frame_y = 0;
@@ -2640,7 +2637,7 @@ void _displayspeech(const char *texx, int aschar, int xx, int yy, int widd, int 
 			overlayPositionFixed = true;
 		} else if (useview >= 0) {
 			// Lucasarts-style speech
-			our_eip = 154;
+			_G(our_eip) = 154;
 
 			oldview = speakingChar->view;
 			oldloop = speakingChar->loop;
@@ -2698,9 +2695,9 @@ void _displayspeech(const char *texx, int aschar, int xx, int yy, int widd, int 
 	if (isThought)
 		char_thinking = aschar;
 
-	our_eip = 155;
+	_G(our_eip) = 155;
 	_display_at(tdxp, tdyp, bwidth, texx, DISPLAYTEXT_SPEECH, textcol, isThought, allowShrink, overlayPositionFixed);
-	our_eip = 156;
+	_G(our_eip) = 156;
 	if ((_GP(play).in_conversation > 0) && (_GP(game).options[OPT_SPEECHTYPE] == 3))
 		closeupface = nullptr;
 	if (closeupface != nullptr)
@@ -2708,7 +2705,7 @@ void _displayspeech(const char *texx, int aschar, int xx, int yy, int widd, int 
 	mark_screen_dirty();
 	face_talking = -1;
 	facetalkchar = nullptr;
-	our_eip = 157;
+	_G(our_eip) = 157;
 	if (oldview >= 0) {
 		speakingChar->flags &= ~CHF_FIXVIEW;
 		if (viewWasLocked)

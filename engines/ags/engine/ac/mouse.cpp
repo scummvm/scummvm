@@ -336,7 +336,7 @@ void Mouse_EnableControl(bool on) {
 	// Whether mouse movement control is supported by the engine - this is
 	// determined on per platform basis. Some builds may not have such
 	// capability, e.g. because of how backend library implements mouse utils.
-	bool can_control_mouse = platform->IsMouseControlSupported(is_windowed);
+	bool can_control_mouse = _G(platform)->IsMouseControlSupported(is_windowed);
 	// The resulting choice is made based on two aforementioned factors.
 	on &= should_control_mouse && can_control_mouse;
 	if (on)

@@ -61,7 +61,7 @@ extern int mouse_ifacebut_xoffs, mouse_ifacebut_yoffs;
 
 extern int evblocknum;
 extern CharacterInfo *playerchar;
-extern AGSPlatformDriver *platform;
+
 
 
 

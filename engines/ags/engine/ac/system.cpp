@@ -53,10 +53,9 @@ using namespace AGS::Shared;
 using namespace AGS::Engine;
 
 extern IGraphicsDriver *gfxDriver;
-extern volatile bool switched_away;
 
 bool System_HasInputFocus() {
-	return !switched_away;
+	return !_G(switched_away);
 }
 
 int System_GetColorDepth() {

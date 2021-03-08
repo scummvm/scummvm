@@ -52,13 +52,6 @@ namespace AGS3 {
 using namespace AGS::Shared;
 using namespace AGS::Engine;
 
-
-
-extern RoomStatus *croom;
-extern RoomObject *objs;
-
-
-
 extern Bitmap *dynamicallyCreatedSurfaces[MAX_DYNAMIC_SURFACES];
 
 // ** SCRIPT DRAWINGSURFACE OBJECT
@@ -85,9 +78,9 @@ void DrawingSurface_Release(ScriptDrawingSurface *sds) {
 		if (sds->modified) {
 			int tt;
 			// force a refresh of any cached object or character images
-			if (croom != nullptr) {
-				for (tt = 0; tt < croom->numobj; tt++) {
-					if (objs[tt].num == sds->dynamicSpriteNumber)
+			if (_G(croom) != nullptr) {
+				for (tt = 0; tt < _G(croom)->numobj; tt++) {
+					if (_G(objs)[tt].num == sds->dynamicSpriteNumber)
 						_G(objcache)[tt].sppic = -31999;
 				}
 			}

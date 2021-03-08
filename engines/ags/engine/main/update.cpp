@@ -54,13 +54,6 @@ namespace AGS3 {
 using namespace AGS::Shared;
 using namespace AGS::Engine;
 
-
-extern RoomStatus *croom;
-
-
-extern RoomObject *objs;
-
-extern int our_eip;
 extern CharacterInfo *playerchar;
 extern CharacterExtras *charextra;
 extern CharacterInfo *facetalkchar;
@@ -198,9 +191,9 @@ void update_script_timers() {
 
 void update_cycling_views() {
 	// update graphics for object if cycling view
-	for (int aa = 0; aa < croom->numobj; aa++) {
+	for (int aa = 0; aa < _G(croom)->numobj; aa++) {
 
-		RoomObject *obj = &objs[aa];
+		RoomObject *obj = &_G(objs)[aa];
 
 		obj->UpdateCyclingView();
 	}
@@ -441,17 +434,17 @@ void update_sierra_speech() {
 // the like.
 void update_stuff() {
 
-	our_eip = 20;
+	_G(our_eip) = 20;
 
 	update_script_timers();
 
 	update_cycling_views();
 
-	our_eip = 21;
+	_G(our_eip) = 21;
 
 	update_shadow_areas();
 
-	our_eip = 22;
+	_G(our_eip) = 22;
 
 	int numSheep = 0;
 	int followingAsSheep[MAX_SHEEP];
@@ -460,17 +453,17 @@ void update_stuff() {
 
 	update_following_exactly_characters(numSheep, followingAsSheep);
 
-	our_eip = 23;
+	_G(our_eip) = 23;
 
 	update_overlay_timers();
 
 	update_speech_and_messages();
 
-	our_eip = 24;
+	_G(our_eip) = 24;
 
 	update_sierra_speech();
 
-	our_eip = 25;
+	_G(our_eip) = 25;
 }
 
 } // namespace AGS3

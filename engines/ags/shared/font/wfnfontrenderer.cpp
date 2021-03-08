@@ -20,7 +20,7 @@
  *
  */
 
-#include "ags/shared/ac/common.h" // our_eip
+#include "ags/shared/ac/common.h" // _G(our_eip)
 #include "ags/shared/core/assetmanager.h"
 #include "ags/shared/debugging/out.h"
 #include "ags/shared/font/wfnfont.h"

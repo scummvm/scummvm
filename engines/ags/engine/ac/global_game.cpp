@@ -75,12 +75,11 @@ using namespace AGS::Shared;
 
 #define ALLEGRO_KEYBOARD_HANDLER
 
-extern int displayed_room;
+
 extern int game_paused;
 extern char gamefilenamebuf[200];
 extern unsigned int load_new_game;
 extern int load_new_game_restore;
-extern RoomStatus *croom;
 extern int gui_disabled_style;
 extern int getloctype_index;
 extern IGraphicsDriver *gfxDriver;
@@ -110,7 +109,7 @@ void restart_game() {
 }
 
 void RestoreGameSlot(int slnum) {
-	if (displayed_room < 0)
+	if (_G(displayed_room) < 0)
 		quit("!RestoreGameSlot: a game cannot be restored from within game_start");
 
 	can_run_delayed_command();
@@ -261,7 +260,7 @@ int RunAGSGame(const char *newgame, unsigned int mode, int data) {
 	int ee;
 
 	unload_old_room();
-	displayed_room = -10;
+	_G(displayed_room) = -10;
 
 	save_config_file(); // save current user config in case engine fails to run new game
 	unload_game_file();
@@ -345,7 +344,7 @@ int GetGameParameter(int parm, int data1, int data2, int data3) {
 	case GP_NUMGUIS:
 		return _GP(game).numgui;
 	case GP_NUMOBJECTS:
-		return croom->numobj;
+		return _G(croom)->numobj;
 	case GP_NUMCHARACTERS:
 		return _GP(game).numcharacters;
 	case GP_NUMINVITEMS:
@@ -432,7 +431,7 @@ int GetGameOption(int opt) {
 void SkipUntilCharacterStops(int cc) {
 	if (!is_valid_character(cc))
 		quit("!SkipUntilCharacterStops: invalid character specified");
-	if (_GP(game).chars[cc].room != displayed_room)
+	if (_GP(game).chars[cc].room != _G(displayed_room))
 		quit("!SkipUntilCharacterStops: specified character not in current room");
 
 	// if they are not currently moving, do nothing
@@ -524,7 +523,7 @@ void SaveCursorForLocationChange() {
 }
 
 void GetLocationName(int xxx, int yyy, char *tempo) {
-	if (displayed_room < 0)
+	if (_G(displayed_room) < 0)
 		quit("!GetLocationName: no room has been loaded");
 
 	VALIDATE_STRING(tempo);
@@ -665,57 +664,57 @@ int IsKeyPressed(int keycode) {
 		return ags_iskeypressed(__allegro_KEY_9);
 
 	case eAGSKeyCodeA:
-		return ags_iskeypressed(platform->ConvertKeycodeToScanCode('A'));
+		return ags_iskeypressed(_G(platform)->ConvertKeycodeToScanCode('A'));
 	case eAGSKeyCodeB:
-		return ags_iskeypressed(platform->ConvertKeycodeToScanCode('B'));
+		return ags_iskeypressed(_G(platform)->ConvertKeycodeToScanCode('B'));
 	case eAGSKeyCodeC:
-		return ags_iskeypressed(platform->ConvertKeycodeToScanCode('C'));
+		return ags_iskeypressed(_G(platform)->ConvertKeycodeToScanCode('C'));
 	case eAGSKeyCodeD:
-		return ags_iskeypressed(platform->ConvertKeycodeToScanCode('D'));
+		return ags_iskeypressed(_G(platform)->ConvertKeycodeToScanCode('D'));
 	case eAGSKeyCodeE:
-		return ags_iskeypressed(platform->ConvertKeycodeToScanCode('E'));
+		return ags_iskeypressed(_G(platform)->ConvertKeycodeToScanCode('E'));
 	case eAGSKeyCodeF:
-		return ags_iskeypressed(platform->ConvertKeycodeToScanCode('F'));
+		return ags_iskeypressed(_G(platform)->ConvertKeycodeToScanCode('F'));
 	case eAGSKeyCodeG:
-		return ags_iskeypressed(platform->ConvertKeycodeToScanCode('G'));
+		return ags_iskeypressed(_G(platform)->ConvertKeycodeToScanCode('G'));
 	case eAGSKeyCodeH:
-		return ags_iskeypressed(platform->ConvertKeycodeToScanCode('H'));
+		return ags_iskeypressed(_G(platform)->ConvertKeycodeToScanCode('H'));
 	case eAGSKeyCodeI:
-		return ags_iskeypressed(platform->ConvertKeycodeToScanCode('I'));
+		return ags_iskeypressed(_G(platform)->ConvertKeycodeToScanCode('I'));
 	case eAGSKeyCodeJ:
-		return ags_iskeypressed(platform->ConvertKeycodeToScanCode('J'));
+		return ags_iskeypressed(_G(platform)->ConvertKeycodeToScanCode('J'));
 	case eAGSKeyCodeK:
-		return ags_iskeypressed(platform->ConvertKeycodeToScanCode('K'));
+		return ags_iskeypressed(_G(platform)->ConvertKeycodeToScanCode('K'));
 	case eAGSKeyCodeL:
-		return ags_iskeypressed(platform->ConvertKeycodeToScanCode('L'));
+		return ags_iskeypressed(_G(platform)->ConvertKeycodeToScanCode('L'));
 	case eAGSKeyCodeM:
-		return ags_iskeypressed(platform->ConvertKeycodeToScanCode('M'));
+		return ags_iskeypressed(_G(platform)->ConvertKeycodeToScanCode('M'));
 	case eAGSKeyCodeN:
-		return ags_iskeypressed(platform->ConvertKeycodeToScanCode('N'));
+		return ags_iskeypressed(_G(platform)->ConvertKeycodeToScanCode('N'));
 	case eAGSKeyCodeO:
-		return ags_iskeypressed(platform->ConvertKeycodeToScanCode('O'));
+		return ags_iskeypressed(_G(platform)->ConvertKeycodeToScanCode('O'));
 	case eAGSKeyCodeP:
-		return ags_iskeypressed(platform->ConvertKeycodeToScanCode('P'));
+		return ags_iskeypressed(_G(platform)->ConvertKeycodeToScanCode('P'));
 	case eAGSKeyCodeQ:
-		return ags_iskeypressed(platform->ConvertKeycodeToScanCode('Q'));
+		return ags_iskeypressed(_G(platform)->ConvertKeycodeToScanCode('Q'));
 	case eAGSKeyCodeR:
-		return ags_iskeypressed(platform->ConvertKeycodeToScanCode('R'));
+		return ags_iskeypressed(_G(platform)->ConvertKeycodeToScanCode('R'));
 	case eAGSKeyCodeS:
-		return ags_iskeypressed(platform->ConvertKeycodeToScanCode('S'));
+		return ags_iskeypressed(_G(platform)->ConvertKeycodeToScanCode('S'));
 	case eAGSKeyCodeT:
-		return ags_iskeypressed(platform->ConvertKeycodeToScanCode('T'));
+		return ags_iskeypressed(_G(platform)->ConvertKeycodeToScanCode('T'));
 	case eAGSKeyCodeU:
-		return ags_iskeypressed(platform->ConvertKeycodeToScanCode('U'));
+		return ags_iskeypressed(_G(platform)->ConvertKeycodeToScanCode('U'));
 	case eAGSKeyCodeV:
-		return ags_iskeypressed(platform->ConvertKeycodeToScanCode('V'));
+		return ags_iskeypressed(_G(platform)->ConvertKeycodeToScanCode('V'));
 	case eAGSKeyCodeW:
-		return ags_iskeypressed(platform->ConvertKeycodeToScanCode('W'));
+		return ags_iskeypressed(_G(platform)->ConvertKeycodeToScanCode('W'));
 	case eAGSKeyCodeX:
-		return ags_iskeypressed(platform->ConvertKeycodeToScanCode('X'));
+		return ags_iskeypressed(_G(platform)->ConvertKeycodeToScanCode('X'));
 	case eAGSKeyCodeY:
-		return ags_iskeypressed(platform->ConvertKeycodeToScanCode('Y'));
+		return ags_iskeypressed(_G(platform)->ConvertKeycodeToScanCode('Y'));
 	case eAGSKeyCodeZ:
-		return ags_iskeypressed(platform->ConvertKeycodeToScanCode('Z'));
+		return ags_iskeypressed(_G(platform)->ConvertKeycodeToScanCode('Z'));
 
 	case eAGSKeyCodeF1:
 		return ags_iskeypressed(__allegro_KEY_F1);
