@@ -260,7 +260,7 @@ Common::Error PrivateEngine::run() {
 			drawScreen();
 		}
 
-		if (_videoDecoder) {
+		if (_videoDecoder && !_videoDecoder->isPaused()) {
 			if (_videoDecoder->getCurFrame() == 0)
 				stopSound(true);
 			if (_videoDecoder->endOfVideo()) {
@@ -441,7 +441,8 @@ bool PrivateEngine::cursorMask(Common::Point mousePos) {
 
 bool PrivateEngine::cursorPauseMovie(Common::Point mousePos) {
 	if (_mode == 1) {
-		Common::Rect window(_origin.x, _origin.y, _screenW - _origin.x, _screenH - _origin.y);
+		uint32 tol = 15;
+		Common::Rect window(_origin.x - tol, _origin.y - tol, _screenW - _origin.x + tol, _screenH - _origin.y + tol);
 		if (!window.contains(mousePos)) {
 			return true;
 		}
@@ -451,11 +452,19 @@ bool PrivateEngine::cursorPauseMovie(Common::Point mousePos) {
 
 void PrivateEngine::selectPauseMovie(Common::Point mousePos) {
 	if (_mode == 1) {
-		Common::Rect window(_origin.x, _origin.y, _screenW - _origin.x, _screenH - _origin.y);
+		uint32 tol = 15;
+		Common::Rect window(_origin.x - tol, _origin.y - tol, _screenW - _origin.x + tol, _screenH - _origin.y + tol);
 		if (!window.contains(mousePos)) {
-			if (!_pausedSetting.empty()) {
-				_pausedSetting = _currentSetting;
+			if (_pausedSetting.empty()) {
+				if (!_nextSetting.empty())
+					_pausedSetting = _nextSetting;
+				else
+					_pausedSetting = _currentSetting;
+
 				_nextSetting = "kPauseMovie";
+				if (_videoDecoder) {
+					_videoDecoder->pauseVideo(true);
+				}
 			}
 		}
 	}
@@ -681,6 +690,9 @@ void PrivateEngine::restartGame() {
 	_repeatedMovieExit = "";
 	_playedMovies.clear();
 
+	// Pause
+	_pausedSetting = "";
+
 }
 
 Common::Error PrivateEngine::loadGameStream(Common::SeekableReadStream *stream) {
@@ -689,7 +701,6 @@ Common::Error PrivateEngine::loadGameStream(Common::SeekableReadStream *stream) 
 
 	Common::Serializer s(stream, nullptr);
 	debugC(1, kPrivateDebugFunction, "loadGameStream");
-	_nextSetting = "kStartGame";
 	int val;
 
 	for (NameList::iterator it = maps.variableList.begin(); it != maps.variableList.end(); ++it) {
@@ -756,6 +767,14 @@ Common::Error PrivateEngine::loadGameStream(Common::SeekableReadStream *stream) 
 	for (uint32 i = 0; i < size; ++i) {
 		_playedPhoneClips.setVal(stream->readString(), true);
 	}
+
+	// Paused setting
+	_pausedSetting = stream->readString();
+
+	if (_pausedSetting.empty())
+		_nextSetting = "kStartGame";
+	else
+		_nextSetting = "kPauseMovie";
 
 	return Common::kNoError;
 }
@@ -830,6 +849,10 @@ Common::Error PrivateEngine::saveGameStream(Common::WriteStream *stream, bool is
 		stream->writeString(it->_key);
 		stream->writeByte(0);
 	}
+
+	// In case the game was saved during a pause
+	stream->writeString(_pausedSetting);
+	stream->writeByte(0);
 
 	return Common::kNoError;
 }
@@ -960,7 +983,7 @@ void PrivateEngine::drawMask(Graphics::ManagedSurface *surf) {
 void PrivateEngine::drawScreen() {
 	Graphics::ManagedSurface *surface = _compositeSurface;
 
-	if (_videoDecoder) {
+	if (_videoDecoder && !_videoDecoder->isPaused()) {
 		const Graphics::Surface *frame = _videoDecoder->decodeNextFrame();
 		Graphics::Surface *cframe = frame->convertTo(_pixelFormat, _videoDecoder->getPalette());
 		Common::Point center((_screenW - _videoDecoder->getWidth())/2, (_screenH - _videoDecoder->getHeight())/2);
