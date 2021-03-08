@@ -32,6 +32,8 @@
 
 namespace ICB {
 
+#define SLEN_CHECK (slen < 0)
+
 const char *pxString::operator=(const char *str) {
 	// Assign a value
 
@@ -231,10 +233,10 @@ const pxString &pxString::Format(const char *format, ...) {
 
 	// Process the variable arguments
 	va_list arglist;
-	uint32 slen;
+	int32 slen;
 
 	// Keep doubling the size of the buffer until it fits
-	while (va_start(arglist, format), slen = vsnprintf(s, startBufferSize, const_cast<char *>(format), arglist)) {
+	while (va_start(arglist, format), slen = vsnprintf(s, startBufferSize, const_cast<char *>(format), arglist), SLEN_CHECK) {
 		delete[] s;
 
 		startBufferSize += startBufferSize;
