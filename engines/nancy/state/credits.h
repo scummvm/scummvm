@@ -1,0 +1,79 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ */
+
+#ifndef NANCY_STATE_CREDITS_H
+#define NANCY_STATE_CREDITS_H
+
+#include "engines/nancy/ui/fullscreenimage.h"
+
+#include "engines/nancy/time.h"
+#include "engines/nancy/commontypes.h"
+
+#include "common/rect.h"
+
+#include "graphics/managed_surface.h"
+
+namespace Nancy {
+
+class NancyEngine;
+
+namespace State {
+
+class Credits {
+public:
+    enum State { kInit, kRun };
+    Credits(NancyEngine *engine) : _engine(engine), _state(kInit), _background(_engine), _text(_background) {}
+
+    void process();
+
+protected:
+    void init();
+    void run();
+
+    class CreditsText : public RenderObject {
+        friend class Credits;
+    public:
+        CreditsText(RenderObject &redrawFrom) : RenderObject(redrawFrom) {}
+        virtual ~CreditsText() =default;
+
+    protected:
+        virtual uint16 getZOrder() const override { return 1; }
+        virtual BlitType getBlitType() const override { return kTrans; }
+    };
+
+    NancyEngine *_engine;
+    State _state;
+    UI::FullScreenImage _background;
+    CreditsText _text;
+    Time _nextUpdateTime;
+    Graphics::ManagedSurface _fullTextSurface;
+    uint _returnToState;
+
+    Time _updateTime; // 0x54
+    uint16 _pixelsToScroll; // 0x56
+    SoundDescription _sound; // 0x58, kMenu?
+};
+
+} // End of namespace State
+} // End of namespace Nancy
+
+#endif // NANCY_STATE_CREDITS_H

@@ -20,6 +20,7 @@ MODULE_OBJS = \
   ui/scrollbar.o \
   ui/textbox.o \
   ui/viewport.o \
+  state/credits.o \
   state/logo.o \
   state/help.o \
   state/map.o \

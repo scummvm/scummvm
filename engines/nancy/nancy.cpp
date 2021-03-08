@@ -24,6 +24,7 @@
 #include "engines/nancy/state/scene.h"
 #include "engines/nancy/state/help.h"
 #include "engines/nancy/state/map.h"
+#include "engines/nancy/state/credits.h"
 
 #include "engines/nancy/nancy.h"
 #include "engines/nancy/resource.h"
@@ -69,6 +70,7 @@ NancyEngine::NancyEngine(OSystem *syst, const NancyGameDescription *gd) : Engine
 	logo = new State::Logo(this);
 	scene = new State::Scene(this);
 	map = new State::Map(this);
+	credits = new State::Credits(this);
 	help = new State::Help(this);
 	input = new InputManager(this);
 	sound = new SoundManager(this);
@@ -155,6 +157,9 @@ Common::Error NancyEngine::run() {
 		case kLogo:
 			logo->process();
 			break;
+		case kCredits:
+			credits->process();
+			break;
 		case kMainMenu: {
 			GameState prevState = getPreviousGameState();
 			// TODO until the game's own menus are implemented we simply open the GMM
@@ -185,7 +190,7 @@ Common::Error NancyEngine::run() {
 			input->forceCleanInput();
 			break;
 		}
-		case kIdle:
+		case kNone:
 			break;
 		default:
 			break;
@@ -281,10 +286,10 @@ void NancyEngine::pauseEngineIntern(bool pause) {
 			scene->requestStateChange(kPause);
 			scene->changeGameState(true);
 		} else {
-			setGameState(kPause, true);
+			setGameState(kPause, kNone, true);
 		}
 	} else {
-		setGameState(getPreviousGameState(), true);
+		setGameState(getPreviousGameState(), kNone, true);
 	}
 
 	graphicsManager->onPause(pause);
@@ -373,8 +378,13 @@ void NancyEngine::readImageList(const IFF &boot, const Common::String &prefix, I
 	}
 }
 
-void NancyEngine::setGameState(GameState state, bool keepGraphics) {
-	_gameFlow.previousGameState = _gameFlow.minGameState;
+void NancyEngine::setGameState(GameState state, GameState overridePrevious, bool keepGraphics) {
+	if (overridePrevious != kNone) {
+		_gameFlow.previousGameState = overridePrevious;
+	} else {
+		_gameFlow.previousGameState = _gameFlow.minGameState;
+	}
+	
 	_gameFlow.minGameState = state;
 	_gameFlow.justChanged = true;
 

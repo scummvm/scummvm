@@ -69,6 +69,7 @@ class Logo;
 class Scene;
 class Map;
 class Help;
+class Credits;
 }
 
 class NancyEngine : public Engine {
@@ -92,7 +93,7 @@ public:
 		kCheat,
 		kQuit,
 		// regain focus
-		kIdle,
+		kNone,
 		kPause, // only used when the GMM is on screen
 		kReloadSave
 	};
@@ -124,7 +125,7 @@ public:
 	// Used for state switching
 	void stopAndUnloadSpecificSounds();
 	
-	void setGameState(GameState state, bool keepGraphics = false);
+	void setGameState(GameState state, GameState overridePrevious = kNone, bool keepGraphics = false);
 	GameState getGameState() const { return _gameFlow.minGameState; }
 	GameState getPreviousGameState() const { return _gameFlow.previousGameState; }
 	void callCheatMenu(bool eventFlags) { setGameState(kCheat), _cheatTypeIsEventFlag = eventFlags; }
@@ -145,6 +146,7 @@ public:
 	State::Scene *scene;
 	State::Map *map;
 	State::Help *help;
+	State::Credits *credits;
 	
 	OSystem *_system;
 	Common::RandomSource *_rnd;

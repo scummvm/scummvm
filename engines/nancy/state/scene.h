@@ -129,6 +129,7 @@ public:
     void useHint(int hintID, int hintWeight);
 
     void requestStateChange(NancyEngine::GameState state) { _gameStateRequested = state; }
+    void resetStateToInit() { _state = kInit; }
 
     void resetAndStartTimer() { _timers.timerIsActive = true; _timers.timerTime = 0; }
     void stopTimer() { _timers.timerIsActive = false; _timers.timerTime = 0; }
