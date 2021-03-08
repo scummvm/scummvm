@@ -35,6 +35,7 @@
 
 #include "trecision/nl/sysdef.h"
 #include "trecision/graphics.h"
+#include "trecision/video.h"
 
 namespace Trecision {
 
@@ -109,6 +110,18 @@ TrecisionEngine::TrecisionEngine(OSystem *syst) : Engine(syst) {
 
 	_video2 = nullptr;
 	_graphicsMgr = nullptr;
+	_animMgr = nullptr;
+
+	for (int i = 0; i < 50; ++i) {
+		for (int j = 0; j < 4; ++j) {
+			_limits[i][j] = 0;
+		}
+	}
+
+	_limitsNum = 0;
+	_actorLimit = 0;
+	NextRefresh = 0;
+	UStr[0] = '\0';
 }
 
 TrecisionEngine::~TrecisionEngine() {
@@ -116,6 +129,7 @@ TrecisionEngine::~TrecisionEngine() {
 
 Common::Error TrecisionEngine::run() {
 	_graphicsMgr = new GraphicsManager(this);
+	_animMgr = new AnimManager(this);
 		
 	NlInit();
 

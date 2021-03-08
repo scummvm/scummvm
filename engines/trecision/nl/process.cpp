@@ -21,22 +21,20 @@
  */
 
 #include "common/scummsys.h"
+
 #include "trecision/nl/3d/3dinc.h"
 #include "trecision/nl/struct.h"
 #include "trecision/nl/message.h"
 #include "trecision/nl/extern.h"
 #include "trecision/trecision.h"
+#include "trecision/video.h"
 
 namespace Trecision {
-
-uint32 NextRefresh = 0;
 /*-------------------------------------------------------------------------*/
 /*                               PROCESSTIME          					   */
 /*-------------------------------------------------------------------------*/
 void ProcessTime() {
 #define SCR 2
-	void RefreshAllAnimations();
-
 	extern int16  TextStackTop;
 
 	static uint8 OldRegInvSI  = 0xFF;
@@ -44,9 +42,9 @@ void ProcessTime() {
 	static uint8 OldLightIcon = 0xFF;
 
 	TheTime = ReadTime();
-	RefreshAllAnimations();
+	g_vm->_animMgr->RefreshAllAnimations();
 
-	if (TheTime >= NextRefresh) {
+	if (TheTime >= g_vm->NextRefresh) {
 		PaintString();
 
 		if ((g_vm->_inventoryStatus == INV_PAINT) || (g_vm->_inventoryStatus == INV_DEPAINT))
@@ -67,9 +65,9 @@ void ProcessTime() {
 		FlagScreenRefreshed = true;
 		uint32 PaintTime = ReadTime();
 		if ((PaintTime - TheTime) >= 5)
-			NextRefresh = PaintTime + 1;
+			g_vm->NextRefresh = PaintTime + 1;
 		else
-			NextRefresh = TheTime + 5;
+			g_vm->NextRefresh = TheTime + 5;
 		FlagMousePolling = true;
 	}
 }

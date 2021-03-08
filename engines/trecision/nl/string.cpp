@@ -32,6 +32,7 @@
 #include "trecision/trecision.h"
 
 #include "common/config-manager.h"
+#include "trecision/video.h"
 
 namespace Trecision {
 
@@ -51,7 +52,6 @@ uint16 SubStringUsed;
 
 char sn[13];
 uint32 TalkTime;
-extern uint16 _playingAnims[];
 const char *dunno = "?";
 
 /*-------------------------------------------------------------------------*/
@@ -338,7 +338,7 @@ void CharacterSay(uint16 i) {
 	Flagskipenable = (i != 99999);
 
 	//	if he took some action
-	if ((g_vm->_sentence[i][0] == '*') && (_playingAnims[1] == 0))
+	if ((g_vm->_sentence[i][0] == '*') && (g_vm->_animMgr->_playingAnims[1] == 0))
 		StartCharacterAction(hBOH, 0, 0, 0);
 	else
 		CharacterTalk(g_vm->_sentence[i], true);

@@ -36,6 +36,7 @@
 #include "common/file.h"
 #include "common/str.h"
 #include "trecision/graphics.h"
+#include "trecision/video.h"
 
 namespace Trecision {
 
@@ -678,7 +679,7 @@ insave:
 			fwrite(&g_vm->_inventoryObj[a]._flag, sizeof(uint8), 1, fh);
 		}
 		for (int a = 0; a < MAXANIM; a++)
-			fwrite(&AnimTab[a],        sizeof(SAnim), 1, fh);
+			fwrite(&g_vm->_animMgr->AnimTab[a], sizeof(SAnim), 1, fh);
 		for (int a = 0; a < MAXSAMPLE; a++) {
 			fwrite(&GSample[a]._volume,  sizeof(uint8), 1, fh);
 			fwrite(&GSample[a]._flag,    sizeof(uint8), 1, fh);
@@ -934,7 +935,7 @@ bool DataLoad() {
 			fread(&g_vm->_inventoryObj[a]._flag, sizeof(uint8), 1, fh);
 		}
 		for (int a = 0; a < MAXANIM; a++)
-			fread(&AnimTab[a],        sizeof(SAnim), 1, fh);
+			fread(&g_vm->_animMgr->AnimTab[a], sizeof(SAnim), 1, fh);
 		for (int a = 0; a < MAXSAMPLE; a++) {
 			fread(&GSample[a]._volume,  sizeof(uint8), 1, fh);
 			fread(&GSample[a]._flag,    sizeof(uint8), 1, fh);

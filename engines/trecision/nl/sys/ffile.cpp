@@ -32,6 +32,7 @@
 #include "common/textconsole.h"
 #include "common/file.h"
 #include "common/substream.h"
+#include "trecision/video.h"
 
 namespace Trecision {
 
@@ -227,8 +228,6 @@ int FastFileLen(Common::SeekableReadStream *stream) {
 }
 
 // AnimFile
-#define MAXSMACK	3
-extern unsigned char _curSmackBuffer;
 FastFile animFile[MAXSMACK];
 
 /* -----------------19/01/98 17.13-------------------
@@ -261,7 +260,7 @@ void AnimFileFinish(void) {
  * AnimFileOpen
  * --------------------------------------------------*/
 Common::SeekableReadStream *AnimFileOpen(const char *name) {
-	if (!animFile[_curSmackBuffer].isOpen()) {
+	if (!animFile[g_vm->_animMgr->_curSmackBuffer].isOpen()) {
 		warning("AnimFileOpen: not initialized");
 		return nullptr;
 	}
@@ -270,10 +269,10 @@ Common::SeekableReadStream *AnimFileOpen(const char *name) {
 		return nullptr;
 	}
 
-	Common::SeekableReadStream *stream = animFile[_curSmackBuffer].createReadStreamForMember(name);
+	Common::SeekableReadStream *stream = animFile[g_vm->_animMgr->_curSmackBuffer].createReadStreamForMember(name);
 	if (stream == nullptr) {
 		CheckFileInCD(name);
-		stream = animFile[_curSmackBuffer].createReadStreamForMember(name);
+		stream = animFile[g_vm->_animMgr->_curSmackBuffer].createReadStreamForMember(name);
 	}
 	if (stream == nullptr) {
 		warning("AnimFileOpen: File %s not found", name);

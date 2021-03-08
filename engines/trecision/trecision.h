@@ -34,6 +34,7 @@
 
 namespace Trecision {
 class GraphicsManager;
+class AnimManager;
 
 class TrecisionEngine : public Engine {
 public:
@@ -53,6 +54,11 @@ public:
 	SObject _obj[MAXOBJ];
 	SInvObject _inventoryObj[MAXINVENTORY];
 	uint8 _actionLen[MAXACTION];
+
+	SDText sdt, osdt;
+	int16 _limits[50][4];
+	uint16 _limitsNum;
+	int _actorLimit;
 
 	// Inventory
 	uint8 _inventory[MAXICON];
@@ -101,7 +107,11 @@ public:
 
 	uint16 _bitMask[3];
 
+	uint32 NextRefresh;
+	char UStr[140];
+
 	GraphicsManager *_graphicsMgr;
+	AnimManager *_animMgr;
 
 	void getColorMask(const Graphics::PixelFormat &format);
 };
