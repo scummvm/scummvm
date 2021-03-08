@@ -79,6 +79,7 @@ class WFNFontRenderer;
 
 struct ActiveDisplaySetting;
 struct AmbientSound;
+struct AnimatingGUIButton;
 struct CCAudioChannel;
 struct CCAudioClip;
 struct CCCharacter;
@@ -196,6 +197,16 @@ public:
 	// we do a small delay before reverting any volume adjustments
 	bool _music_update_scheduled = false;
 	uint32 _music_update_at = 0;
+
+	/**@}*/
+
+	/**
+	 * \defgroup button globals
+	 * @{
+	 */
+
+	AnimatingGUIButton *_animbuts;
+	int _numAnimButs = 0;
 
 	/**@}*/
 

@@ -73,8 +73,6 @@ namespace AGS3 {
 
 using namespace AGS::Shared;
 
-extern AnimatingGUIButton animbuts[MAX_ANIMATING_BUTTONS];
-extern int numAnimButs;
 extern int mouse_on_iface;   // mouse cursor is over this interface
 extern int ifacepopped;
 extern int proper_exit, our_eip;
@@ -603,7 +601,7 @@ static void game_loop_update_animated_buttons() {
 	// update animating GUI buttons
 	// this bit isn't in update_stuff because it always needs to
 	// happen, even when the game is paused
-	for (int aa = 0; aa < numAnimButs; aa++) {
+	for (int aa = 0; aa < _G(numAnimButs); aa++) {
 		if (UpdateAnimatingButton(aa)) {
 			StopButtonAnimation(aa);
 			aa--;

@@ -120,9 +120,6 @@ extern int ifacepopped;  // currently displayed pop-up GUI (-1 if none)
 extern int mouse_on_iface;   // mouse cursor is over this interface
 extern int mouse_ifacebut_xoffs, mouse_ifacebut_yoffs;
 
-extern AnimatingGUIButton animbuts[MAX_ANIMATING_BUTTONS];
-extern int numAnimButs;
-
 #if AGS_PLATFORM_OS_IOS || AGS_PLATFORM_OS_ANDROID
 extern int _G(psp_gfx_renderer);
 #endif
@@ -1191,8 +1188,8 @@ void restore_game_more_dynamic_values(Stream *in) {
 
 void ReadAnimatedButtons_Aligned(Stream *in) {
 	AlignedStream align_s(in, Shared::kAligned_Read);
-	for (int i = 0; i < numAnimButs; ++i) {
-		animbuts[i].ReadFromFile(&align_s);
+	for (int i = 0; i < _G(numAnimButs); ++i) {
+		_G(animbuts)[i].ReadFromFile(&align_s);
 		align_s.Reset();
 	}
 }
@@ -1207,7 +1204,7 @@ HSaveError restore_game_gui(Stream *in, int numGuisWas) {
 		return new SavegameError(kSvgErr_GameContentAssertion, "Mismatching number of GUI.");
 	}
 
-	numAnimButs = in->ReadInt32();
+	_G(numAnimButs) = in->ReadInt32();
 	ReadAnimatedButtons_Aligned(in);
 	return HSaveError::None();
 }

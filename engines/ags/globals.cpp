@@ -70,6 +70,7 @@
 #include "ags/engine/debugging/debugger.h"
 #include "ags/engine/debugging/logfile.h"
 #include "ags/engine/debugging/messagebuffer.h"
+#include "ags/engine/gui/animatingguibutton.h"
 #include "ags/engine/main/graphics_mode.h"
 #include "ags/engine/media/audio/ambientsound.h"
 #include "ags/engine/media/audio/audiodefines.h"
@@ -89,11 +90,14 @@ Globals::Globals() {
 
 	Common::fill(&_mousecurs[0], &_mousecurs[MAXCURSORS], nullptr);
 
-	// audio.cpp
+	// audio.cpp globals
 	_audioChannels = new std::array<SOUNDCLIP *>(MAX_SOUND_CHANNELS + 1);
 	// TODO: double check that ambient sounds array actually needs +1
 	_ambient = new std::array<AmbientSound>(MAX_SOUND_CHANNELS + 1);
 	_scrAudioChannel = new ScriptAudioChannel[MAX_SOUND_CHANNELS + 1];
+
+	// button.cpp globals
+	_animbuts = new AnimatingGUIButton[MAX_ANIMATING_BUTTONS];
 
 	// cc_options.cpp globals
 	_ccCompOptions = SCOPT_LEFTTORIGHT;
@@ -237,6 +241,9 @@ Globals::~Globals() {
 	delete _audioChannels;
 	delete _ambient;
 	delete _scrAudioChannel;
+
+	// button.cpp globals
+	delete[] _animbuts;
 
 	// debug.cpp globals
 	delete[] _debug_line;

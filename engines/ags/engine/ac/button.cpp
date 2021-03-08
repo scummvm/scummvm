@@ -41,11 +41,6 @@ namespace AGS3 {
 
 using namespace AGS::Shared;
 
-// *** BUTTON FUNCTIONS
-
-AnimatingGUIButton animbuts[MAX_ANIMATING_BUTTONS];
-int numAnimButs;
-
 void Button_Animate(GUIButton *butt, int view, int loop, int speed, int repeat) {
 	int guin = butt->ParentId;
 	int objn = butt->Id;
@@ -60,7 +55,7 @@ void Button_Animate(GUIButton *butt, int view, int loop, int speed, int repeat) 
 	// if it's already animating, stop it
 	FindAndRemoveButtonAnimation(guin, objn);
 
-	if (numAnimButs >= MAX_ANIMATING_BUTTONS)
+	if (_G(numAnimButs) >= MAX_ANIMATING_BUTTONS)
 		quit("!AnimateButton: too many animating GUI buttons at once");
 
 	int buttonId = _GP(guis)[guin].GetControlID(objn);
@@ -68,20 +63,20 @@ void Button_Animate(GUIButton *butt, int view, int loop, int speed, int repeat) 
 	_GP(guibuts)[buttonId].PushedImage = 0;
 	_GP(guibuts)[buttonId].MouseOverImage = 0;
 
-	animbuts[numAnimButs].ongui = guin;
-	animbuts[numAnimButs].onguibut = objn;
-	animbuts[numAnimButs].buttonid = buttonId;
-	animbuts[numAnimButs].view = view;
-	animbuts[numAnimButs].loop = loop;
-	animbuts[numAnimButs].speed = speed;
-	animbuts[numAnimButs].repeat = repeat;
-	animbuts[numAnimButs].frame = -1;
-	animbuts[numAnimButs].wait = 0;
-	numAnimButs++;
+	_G(animbuts)[_G(numAnimButs)].ongui = guin;
+	_G(animbuts)[_G(numAnimButs)].onguibut = objn;
+	_G(animbuts)[_G(numAnimButs)].buttonid = buttonId;
+	_G(animbuts)[_G(numAnimButs)].view = view;
+	_G(animbuts)[_G(numAnimButs)].loop = loop;
+	_G(animbuts)[_G(numAnimButs)].speed = speed;
+	_G(animbuts)[_G(numAnimButs)].repeat = repeat;
+	_G(animbuts)[_G(numAnimButs)].frame = -1;
+	_G(animbuts)[_G(numAnimButs)].wait = 0;
+	_G(numAnimButs)++;
 	// launch into the first frame
-	if (UpdateAnimatingButton(numAnimButs - 1)) {
+	if (UpdateAnimatingButton(_G(numAnimButs) - 1)) {
 		debug_script_warn("AnimateButton: no frames to animate");
-		StopButtonAnimation(numAnimButs - 1);
+		StopButtonAnimation(_G(numAnimButs) - 1);
 	}
 }
 
@@ -193,61 +188,58 @@ void Button_SetTextColor(GUIButton *butt, int newcol) {
 	}
 }
 
-extern AnimatingGUIButton animbuts[MAX_ANIMATING_BUTTONS];
-extern int numAnimButs;
-
 // ** start animating buttons code
 
 // returns 1 if animation finished
 int UpdateAnimatingButton(int bu) {
-	if (animbuts[bu].wait > 0) {
-		animbuts[bu].wait--;
+	if (_G(animbuts)[bu].wait > 0) {
+		_G(animbuts)[bu].wait--;
 		return 0;
 	}
-	ViewStruct *tview = &_G(views)[animbuts[bu].view];
+	ViewStruct *tview = &_G(views)[_G(animbuts)[bu].view];
 
-	animbuts[bu].frame++;
+	_G(animbuts)[bu].frame++;
 
-	if (animbuts[bu].frame >= tview->loops[animbuts[bu].loop].numFrames) {
-		if (tview->loops[animbuts[bu].loop].RunNextLoop()) {
+	if (_G(animbuts)[bu].frame >= tview->loops[_G(animbuts)[bu].loop].numFrames) {
+		if (tview->loops[_G(animbuts)[bu].loop].RunNextLoop()) {
 			// go to next loop
-			animbuts[bu].loop++;
-			animbuts[bu].frame = 0;
-		} else if (animbuts[bu].repeat) {
-			animbuts[bu].frame = 0;
+			_G(animbuts)[bu].loop++;
+			_G(animbuts)[bu].frame = 0;
+		} else if (_G(animbuts)[bu].repeat) {
+			_G(animbuts)[bu].frame = 0;
 			// multi-loop anim, go back
-			while ((animbuts[bu].loop > 0) &&
-				(tview->loops[animbuts[bu].loop - 1].RunNextLoop()))
-				animbuts[bu].loop--;
+			while ((_G(animbuts)[bu].loop > 0) &&
+				(tview->loops[_G(animbuts)[bu].loop - 1].RunNextLoop()))
+				_G(animbuts)[bu].loop--;
 		} else
 			return 1;
 	}
 
-	CheckViewFrame(animbuts[bu].view, animbuts[bu].loop, animbuts[bu].frame);
+	CheckViewFrame(_G(animbuts)[bu].view, _G(animbuts)[bu].loop, _G(animbuts)[bu].frame);
 
 	// update the button's image
-	_GP(guibuts)[animbuts[bu].buttonid].Image = tview->loops[animbuts[bu].loop].frames[animbuts[bu].frame].pic;
-	_GP(guibuts)[animbuts[bu].buttonid].CurrentImage = _GP(guibuts)[animbuts[bu].buttonid].Image;
-	_GP(guibuts)[animbuts[bu].buttonid].PushedImage = 0;
-	_GP(guibuts)[animbuts[bu].buttonid].MouseOverImage = 0;
+	_GP(guibuts)[_G(animbuts)[bu].buttonid].Image = tview->loops[_G(animbuts)[bu].loop].frames[_G(animbuts)[bu].frame].pic;
+	_GP(guibuts)[_G(animbuts)[bu].buttonid].CurrentImage = _GP(guibuts)[_G(animbuts)[bu].buttonid].Image;
+	_GP(guibuts)[_G(animbuts)[bu].buttonid].PushedImage = 0;
+	_GP(guibuts)[_G(animbuts)[bu].buttonid].MouseOverImage = 0;
 	guis_need_update = 1;
 
-	animbuts[bu].wait = animbuts[bu].speed + tview->loops[animbuts[bu].loop].frames[animbuts[bu].frame].speed;
+	_G(animbuts)[bu].wait = _G(animbuts)[bu].speed + tview->loops[_G(animbuts)[bu].loop].frames[_G(animbuts)[bu].frame].speed;
 	return 0;
 }
 
 void StopButtonAnimation(int idxn) {
-	numAnimButs--;
-	for (int aa = idxn; aa < numAnimButs; aa++) {
-		animbuts[aa] = animbuts[aa + 1];
+	_G(numAnimButs)--;
+	for (int aa = idxn; aa < _G(numAnimButs); aa++) {
+		_G(animbuts)[aa] = _G(animbuts)[aa + 1];
 	}
 }
 
 // Returns the index of the AnimatingGUIButton object corresponding to the
 // given button ID; returns -1 if no such animation exists
 int FindAnimatedButton(int guin, int objn) {
-	for (int i = 0; i < numAnimButs; ++i) {
-		if (animbuts[i].ongui == guin && animbuts[i].onguibut == objn)
+	for (int i = 0; i < _G(numAnimButs); ++i) {
+		if (_G(animbuts)[i].ongui == guin && _G(animbuts)[i].onguibut == objn)
 			return i;
 	}
 	return -1;
@@ -273,17 +265,17 @@ bool Button_IsAnimating(GUIButton *butt) {
 // zero-based index and 0 in case of no animation.
 int Button_GetAnimView(GUIButton *butt) {
 	int idx = FindAnimatedButton(butt->ParentId, butt->Id);
-	return idx >= 0 ? animbuts[idx].view + 1 : 0;
+	return idx >= 0 ? _G(animbuts)[idx].view + 1 : 0;
 }
 
 int Button_GetAnimLoop(GUIButton *butt) {
 	int idx = FindAnimatedButton(butt->ParentId, butt->Id);
-	return idx >= 0 ? animbuts[idx].loop : 0;
+	return idx >= 0 ? _G(animbuts)[idx].loop : 0;
 }
 
 int Button_GetAnimFrame(GUIButton *butt) {
 	int idx = FindAnimatedButton(butt->ParentId, butt->Id);
-	return idx >= 0 ? animbuts[idx].frame : 0;
+	return idx >= 0 ? _G(animbuts)[idx].frame : 0;
 }
 
 int Button_GetTextAlignment(GUIButton *butt) {

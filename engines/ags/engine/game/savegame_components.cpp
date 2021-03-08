@@ -65,9 +65,6 @@ using namespace Shared;
 
 extern color palette[256];
 extern DialogTopic *dialog;
-extern AnimatingGUIButton animbuts[MAX_ANIMATING_BUTTONS];
-extern int numAnimButs;
-
 extern Bitmap *dynamicallyCreatedSurfaces[MAX_DYNAMIC_SURFACES];
 extern Bitmap *raw_saved_screen;
 
@@ -568,9 +565,9 @@ HSaveError WriteGUI(PStream out) {
 
 	// Animated buttons
 	WriteFormatTag(out, "AnimatedButtons");
-	out->WriteInt32(numAnimButs);
-	for (int i = 0; i < numAnimButs; ++i)
-		animbuts[i].WriteToFile(out.get());
+	out->WriteInt32(_G(numAnimButs));
+	for (int i = 0; i < _G(numAnimButs); ++i)
+		_G(animbuts)[i].WriteToFile(out.get());
 	return HSaveError::None();
 }
 
@@ -633,9 +630,9 @@ HSaveError ReadGUI(PStream in, int32_t cmp_ver, const PreservedParams &pp, Resto
 	int anim_count = in->ReadInt32();
 	if (!AssertCompatLimit(err, anim_count, MAX_ANIMATING_BUTTONS, "animated buttons"))
 		return err;
-	numAnimButs = anim_count;
-	for (int i = 0; i < numAnimButs; ++i)
-		animbuts[i].ReadFromFile(in.get());
+	_G(numAnimButs) = anim_count;
+	for (int i = 0; i < _G(numAnimButs); ++i)
+		_G(animbuts)[i].ReadFromFile(in.get());
 	return err;
 }
 
