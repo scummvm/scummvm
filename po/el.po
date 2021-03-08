@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-03-07 17:34+0000\n"
+"POT-Creation-Date: 2021-03-08 19:14+0000\n"
 "PO-Revision-Date: 2021-02-23 01:24+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
@@ -602,8 +602,8 @@ msgstr "Κλείσιμο"
 #: backends/platform/symbian/src/SymbianActions.cpp:40
 #: engines/dragons/metaengine.cpp:163 engines/glk/scott/scott.cpp:412
 #: engines/griffon/metaengine.cpp:96 engines/grim/grim.cpp:451
-#: engines/grim/grim.cpp:528 engines/twine/metaengine.cpp:433
-#: engines/twine/metaengine.cpp:500 engines/wintermute/keymapper_tables.h:1011
+#: engines/grim/grim.cpp:528 engines/twine/metaengine.cpp:440
+#: engines/twine/metaengine.cpp:507 engines/wintermute/keymapper_tables.h:1011
 #: engines/wintermute/keymapper_tables.h:1100
 #: engines/wintermute/keymapper_tables.h:1474
 #: engines/wintermute/keymapper_tables.h:1704
@@ -614,8 +614,8 @@ msgstr "Πάνω"
 #: backends/platform/symbian/src/SymbianActions.cpp:41
 #: engines/dragons/metaengine.cpp:169 engines/glk/scott/scott.cpp:412
 #: engines/griffon/metaengine.cpp:102 engines/grim/grim.cpp:456
-#: engines/grim/grim.cpp:533 engines/twine/metaengine.cpp:440
-#: engines/twine/metaengine.cpp:508 engines/wintermute/keymapper_tables.h:1017
+#: engines/grim/grim.cpp:533 engines/twine/metaengine.cpp:447
+#: engines/twine/metaengine.cpp:515 engines/wintermute/keymapper_tables.h:1017
 #: engines/wintermute/keymapper_tables.h:1107
 #: engines/wintermute/keymapper_tables.h:1480
 #: engines/wintermute/keymapper_tables.h:1710
@@ -626,7 +626,7 @@ msgstr "Κάτω"
 #: backends/platform/symbian/src/SymbianActions.cpp:42
 #: engines/dragons/metaengine.cpp:175 engines/griffon/metaengine.cpp:108
 #: engines/grim/grim.cpp:461 engines/grim/grim.cpp:538
-#: engines/twine/metaengine.cpp:455 engines/twine/metaengine.cpp:523
+#: engines/twine/metaengine.cpp:462 engines/twine/metaengine.cpp:530
 #: engines/wintermute/keymapper_tables.h:1023
 #: engines/wintermute/keymapper_tables.h:1462
 #: engines/wintermute/keymapper_tables.h:1570
@@ -638,7 +638,7 @@ msgstr "Αριστερά"
 #: backends/platform/symbian/src/SymbianActions.cpp:43
 #: engines/dragons/metaengine.cpp:181 engines/griffon/metaengine.cpp:114
 #: engines/grim/grim.cpp:466 engines/grim/grim.cpp:543
-#: engines/twine/metaengine.cpp:447 engines/twine/metaengine.cpp:516
+#: engines/twine/metaengine.cpp:454 engines/twine/metaengine.cpp:523
 #: engines/wintermute/keymapper_tables.h:1029
 #: engines/wintermute/keymapper_tables.h:1468
 #: engines/wintermute/keymapper_tables.h:1578
@@ -2400,7 +2400,7 @@ msgstr "Δεξί Click"
 #: backends/platform/symbian/src/SymbianActions.cpp:52
 #: engines/hdb/metaengine.cpp:238 engines/mohawk/myst.cpp:593
 #: engines/mohawk/riven.cpp:863 engines/sky/metaengine.cpp:113
-#: engines/twine/metaengine.cpp:213 engines/wintermute/keymapper_tables.h:1255
+#: engines/twine/metaengine.cpp:220 engines/wintermute/keymapper_tables.h:1255
 msgid "Pause"
 msgstr "Παύση"
 
@@ -2710,7 +2710,7 @@ msgstr "Θέλετε να βγείτε από το πρόγραμμα;"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:244
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:83
-#: engines/twine/metaengine.cpp:332
+#: engines/twine/metaengine.cpp:339
 msgid "Center"
 msgstr "Στο κέντρο"
 
@@ -4157,7 +4157,7 @@ msgstr "Αλλαγή Εντολής"
 #: engines/grim/grim.cpp:491 engines/grim/grim.cpp:583
 #: engines/hdb/metaengine.cpp:231 engines/scumm/help.cpp:225
 #: engines/scumm/help.cpp:234 engines/scumm/help.cpp:241
-#: engines/scumm/help.cpp:249 engines/twine/metaengine.cpp:390
+#: engines/scumm/help.cpp:249 engines/twine/metaengine.cpp:397
 #: engines/zvision/metaengine.cpp:164
 msgid "Inventory"
 msgstr "Υπάρχοντα"
@@ -4892,7 +4892,7 @@ msgid "Interact via Right Click"
 msgstr "Αλληλεπίδραση με Δεξί Click"
 
 #: engines/kyra/engine/eobcommon.cpp:369 engines/kyra/engine/lol.cpp:475
-#: engines/twine/metaengine.cpp:352
+#: engines/twine/metaengine.cpp:359
 msgid "Move Forward"
 msgstr "Προχώρησε Μπροστά"
 
@@ -4909,13 +4909,13 @@ msgid "Move Right"
 msgstr "Προχώρησε Δεξιά"
 
 #: engines/kyra/engine/eobcommon.cpp:373 engines/kyra/engine/lol.cpp:479
-#: engines/pegasus/pegasus.cpp:2497 engines/twine/metaengine.cpp:373
+#: engines/pegasus/pegasus.cpp:2497 engines/twine/metaengine.cpp:380
 #: engines/zvision/metaengine.cpp:141
 msgid "Turn Left"
 msgstr "Στρίψε Αριστερά"
 
 #: engines/kyra/engine/eobcommon.cpp:374 engines/kyra/engine/lol.cpp:480
-#: engines/pegasus/pegasus.cpp:2504 engines/twine/metaengine.cpp:366
+#: engines/pegasus/pegasus.cpp:2504 engines/twine/metaengine.cpp:373
 #: engines/zvision/metaengine.cpp:147
 msgid "Turn Right"
 msgstr "Στρίψε Δεξιά"
@@ -7003,224 +7003,224 @@ msgstr "Αδυναμία εντοπισμού του αρχείου παιχνι
 msgid "Spanish CD version is not yet supported"
 msgstr "Η Ισπανική έκδοση για CD δεν υποστηρίζεται ακόμα"
 
-#: engines/twine/metaengine.cpp:68
+#: engines/twine/metaengine.cpp:71
 msgid "Enable wall collisions"
 msgstr "Σύγκρουση με τοίχους"
 
-#: engines/twine/metaengine.cpp:69
+#: engines/twine/metaengine.cpp:72
 msgid "Enable the original wall collision damage"
 msgstr ""
 "Ενεργοποίηση επίπτωσης από σύγκρουση με τοίχο όπως ήταν στο αρχικό παιχνίδι"
 
-#: engines/twine/metaengine.cpp:75
+#: engines/twine/metaengine.cpp:78
 msgid "Enable cross fade"
 msgstr "Χρήση ομαλών μεταβάσεων"
 
-#: engines/twine/metaengine.cpp:76
+#: engines/twine/metaengine.cpp:79
 msgid "Enable cross fading of images and scenes"
 msgstr "Ενεργοποίηση ομαλής μετάβασης (cross fade) μεταξύ εικόνων και σκηνών"
 
-#: engines/twine/metaengine.cpp:83
+#: engines/twine/metaengine.cpp:86
 msgid "Disable save menu"
 msgstr "Απενεργοποίηση μενού αποθήκευσης"
 
-#: engines/twine/metaengine.cpp:84
+#: engines/twine/metaengine.cpp:87
 msgid ""
 "The original only had autosaves. This allows you to save whenever you want."
 msgstr ""
 "Το αρχικό παιχνίδι έκανε μόνο αυτόματη αποθήκευση. Αυτή η νέα δυνατότητα σας "
 "επιτρέπει να αποθηκεύσετε όποτε θέλετε."
 
-#: engines/twine/metaengine.cpp:90
+#: engines/twine/metaengine.cpp:93
 msgid "Enable debug mode"
 msgstr "Χρήση λειτουργίας αποσφαλμάτωσης"
 
-#: engines/twine/metaengine.cpp:91
+#: engines/twine/metaengine.cpp:94
 msgid "Enable the debug mode"
 msgstr "Ενεργοποίηση της λειτουργίας αποσφαλμάτωσης (debug)"
 
-#: engines/twine/metaengine.cpp:97
+#: engines/twine/metaengine.cpp:100
 msgid "Enable audio CD"
 msgstr "Ενεργοποίηση ήχου από CD"
 
-#: engines/twine/metaengine.cpp:98
+#: engines/twine/metaengine.cpp:101
 msgid "Enable the original audio cd track"
 msgstr "Ενεργοποίηση χρήσης ήχου από CD που είχε το αρχικό παιχνίδι"
 
-#: engines/twine/metaengine.cpp:104
+#: engines/twine/metaengine.cpp:107
 msgid "Enable sound"
 msgstr "Ενεργοποίηση ήχου"
 
-#: engines/twine/metaengine.cpp:105
+#: engines/twine/metaengine.cpp:108
 msgid "Enable the sound for the game"
 msgstr "Ενεργοποίηση του ήχου για το παιχνίδι"
 
-#: engines/twine/metaengine.cpp:111
+#: engines/twine/metaengine.cpp:114
 msgid "Enable voices"
 msgstr "Ενεργοποίηση φωνής"
 
-#: engines/twine/metaengine.cpp:112
+#: engines/twine/metaengine.cpp:115
 msgid "Enable the voices for the game"
 msgstr "Ενεργοποίηση των φωνών στο παιχνίδι"
 
-#: engines/twine/metaengine.cpp:118
+#: engines/twine/metaengine.cpp:121
 msgid "Enable text"
 msgstr "Ενεργοποίηση κειμένου"
 
-#: engines/twine/metaengine.cpp:119
+#: engines/twine/metaengine.cpp:122
 msgid "Enable the text for the game"
 msgstr "Ενεργοποίηση του κειμένου για το παιχνίδι"
 
-#: engines/twine/metaengine.cpp:125
+#: engines/twine/metaengine.cpp:128
 msgid "Enable movies"
 msgstr "Ενεργοποίηση ταινιών"
 
-#: engines/twine/metaengine.cpp:126
+#: engines/twine/metaengine.cpp:129
 msgid "Enable the cutscenes for the game"
 msgstr "Ενεργοποίηση των ταινιών (cutscenes) για το παιχνίδι"
 
-#: engines/twine/metaengine.cpp:132
+#: engines/twine/metaengine.cpp:135
 msgid "Enable mouse"
 msgstr "Χρήση ποντικιού"
 
-#: engines/twine/metaengine.cpp:133
+#: engines/twine/metaengine.cpp:136
 msgid "Enable the mouse for the UI"
 msgstr "Ενεργοποίηση του ποντικιού για το περιβάλλον διεπαφής (UI)"
 
-#: engines/twine/metaengine.cpp:139
+#: engines/twine/metaengine.cpp:142
 msgid "Use the USA version"
 msgstr "Χρήση της έκδοσης από ΗΠΑ"
 
-#: engines/twine/metaengine.cpp:140
+#: engines/twine/metaengine.cpp:143
 msgid "Enable the USA specific version flags"
 msgstr "Ενεργοποίηση ειδικών ρυθμίσεων που είχε η έκδοση από ΗΠΑ"
 
-#: engines/twine/metaengine.cpp:146
+#: engines/twine/metaengine.cpp:149
 msgid "Enable high resolution"
 msgstr "Ενεργοποίηση υψηλής ανάλυσης"
 
-#: engines/twine/metaengine.cpp:147
+#: engines/twine/metaengine.cpp:150
 msgid "Enable a higher resolution for the game"
 msgstr "Ενεργοποίηση υψηλής ανάλυσης για το παιχνίδι"
 
-#: engines/twine/metaengine.cpp:218
+#: engines/twine/metaengine.cpp:225
 msgid "Debug Next Room"
 msgstr "Αποσφαλμάτωση: Επόμενο Δωμάτιο"
 
-#: engines/twine/metaengine.cpp:223
+#: engines/twine/metaengine.cpp:230
 msgid "Debug Previous Room"
 msgstr "Αποσφαλμάτωση: Προηγούμενο Δωμάτιο"
 
-#: engines/twine/metaengine.cpp:228
+#: engines/twine/metaengine.cpp:235
 msgid "Debug Apply Celling Grid"
 msgstr "Αποσφαλμάτωση: Εφαρμογή Πλέγματος στο Ταβάνι"
 
-#: engines/twine/metaengine.cpp:233
+#: engines/twine/metaengine.cpp:240
 msgid "Debug Increase Celling Grid Index"
 msgstr "Αποσφαλμάτωση: Αύξηση του Δείκτη Πλέγματος στο Ταβάνι"
 
-#: engines/twine/metaengine.cpp:238
+#: engines/twine/metaengine.cpp:245
 msgid "Debug Decrease Celling Grid Index"
 msgstr "Αποσφαλμάτωση: Μείωση του Δείκτη Πλέγματος στο Ταβάνι"
 
-#: engines/twine/metaengine.cpp:243
+#: engines/twine/metaengine.cpp:250
 msgid "Debug Grid Camera Up"
 msgstr "Αποσφαλμάτωση: Κάμερα Πλέγματος Πάνω"
 
-#: engines/twine/metaengine.cpp:248
+#: engines/twine/metaengine.cpp:255
 msgid "Debug Grid Camera Down"
 msgstr "Αποσφαλμάτωση: Κάμερα Πλέγματος Κάτω"
 
-#: engines/twine/metaengine.cpp:253
+#: engines/twine/metaengine.cpp:260
 msgid "Debug Grid Camera Left"
 msgstr "Αποσφαλμάτωση: Κάμερα Πλέγματος Αριστερά"
 
-#: engines/twine/metaengine.cpp:259
+#: engines/twine/metaengine.cpp:266
 msgid "Debug Grid Camera Right"
 msgstr "Αποσφαλμάτωση: Κάμερα Πλέγματος Δεξιά"
 
-#: engines/twine/metaengine.cpp:264
+#: engines/twine/metaengine.cpp:271
 msgid "Debug Menu"
 msgstr "Μενού Αποσφαλμάτωσης"
 
-#: engines/twine/metaengine.cpp:269
+#: engines/twine/metaengine.cpp:276
 msgid "Debug Menu Execute"
 msgstr "Εκτέλεση Μενού Αποσφαλμάτωσης (Debug)"
 
-#: engines/twine/metaengine.cpp:274 engines/twine/metaengine.cpp:294
+#: engines/twine/metaengine.cpp:281 engines/twine/metaengine.cpp:301
 msgid "Normal Behaviour"
 msgstr "Κανονική Συμπεριφορά"
 
-#: engines/twine/metaengine.cpp:279 engines/twine/metaengine.cpp:299
+#: engines/twine/metaengine.cpp:286 engines/twine/metaengine.cpp:306
 msgid "Athletic Behaviour"
 msgstr "Αθλητική Συμπεριφορά"
 
-#: engines/twine/metaengine.cpp:284 engines/twine/metaengine.cpp:304
+#: engines/twine/metaengine.cpp:291 engines/twine/metaengine.cpp:311
 msgid "Aggressive Behaviour"
 msgstr "Επιθετική Συμπεριφορά"
 
-#: engines/twine/metaengine.cpp:289 engines/twine/metaengine.cpp:309
+#: engines/twine/metaengine.cpp:296 engines/twine/metaengine.cpp:316
 msgid "Discreet Behaviour"
 msgstr "Διακριτική Συμπεριφορά"
 
-#: engines/twine/metaengine.cpp:314
+#: engines/twine/metaengine.cpp:321
 msgid "Behaviour Action"
 msgstr "Ενέργεια Συμπεριφοράς"
 
-#: engines/twine/metaengine.cpp:320
+#: engines/twine/metaengine.cpp:327
 msgid "Change Behaviour"
 msgstr "Αλλαγή Συμπεριφοράς"
 
-#: engines/twine/metaengine.cpp:327
+#: engines/twine/metaengine.cpp:334
 msgid "Options Menu"
 msgstr "Μενού Επιλογών"
 
-#: engines/twine/metaengine.cpp:339
+#: engines/twine/metaengine.cpp:346
 msgid "Use Selected Object"
 msgstr "Χρήση Επιλεγμένου Αντικειμένου"
 
-#: engines/twine/metaengine.cpp:345
+#: engines/twine/metaengine.cpp:352
 msgid "Throw Magic Ball"
 msgstr "Πέτα Μαγική Σφαίρα"
 
-#: engines/twine/metaengine.cpp:359
+#: engines/twine/metaengine.cpp:366
 msgid "Move Backward"
 msgstr "Κίνηση προς τα πίσω"
 
-#: engines/twine/metaengine.cpp:380
+#: engines/twine/metaengine.cpp:387
 msgid "Use Protopack"
 msgstr "Χρήση Πρότο-πακ"
 
-#: engines/twine/metaengine.cpp:385
+#: engines/twine/metaengine.cpp:392
 msgid "Open Holomap"
 msgstr "Άνοιγμα ολογραφικού χάρτη"
 
-#: engines/twine/metaengine.cpp:398
+#: engines/twine/metaengine.cpp:405
 msgid "Special Action"
 msgstr "Ειδική Ενέργεια"
 
-#: engines/twine/metaengine.cpp:404 engines/wintermute/keymapper_tables.h:61
+#: engines/twine/metaengine.cpp:411 engines/wintermute/keymapper_tables.h:61
 msgid "Escape"
 msgstr "Πλήκτρο Escape"
 
-#: engines/twine/metaengine.cpp:417
+#: engines/twine/metaengine.cpp:424
 msgid "Accept"
 msgstr "Αποδοχή"
 
-#: engines/twine/metaengine.cpp:425 engines/twine/metaengine.cpp:477
-#: engines/twine/metaengine.cpp:493
+#: engines/twine/metaengine.cpp:432 engines/twine/metaengine.cpp:484
+#: engines/twine/metaengine.cpp:500
 msgid "Abort"
 msgstr "Ακύρωση"
 
-#: engines/twine/metaengine.cpp:463
+#: engines/twine/metaengine.cpp:470
 msgid "Next Page"
 msgstr "Επόμενη Σελίδα"
 
-#: engines/twine/metaengine.cpp:530
+#: engines/twine/metaengine.cpp:537
 msgid "Previous location"
 msgstr "Προηγούμενο μέρος"
 
-#: engines/twine/metaengine.cpp:535
+#: engines/twine/metaengine.cpp:542
 msgid "Next location"
 msgstr "Επόμενο μέρος"
 
