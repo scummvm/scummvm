@@ -108,7 +108,7 @@ public:
 	~pxFlexiCharBuffer();
 
 	char &operator[](uint); // Allow array access
-	void CheckSize(uint);   // Make sure we have enough room
+	void CheckSize(uint32);   // Make sure we have enough room
 	char *GetBuffer() {
 		return (m_buffer); // Make it a little more difficult to pass the pointer
 	}

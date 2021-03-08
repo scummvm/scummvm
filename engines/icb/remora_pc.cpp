@@ -255,16 +255,6 @@ void _remora::ActivateRemora(RemoraMode eMode) {
 }
 
 void _remora::DoPlatformSpecificInitialisation() {
-
-	uint32 nFileNameHash, nClusterHash;
-	char pcFileName[ENGINE_STRING_LEN];
-
-	// Load the Map Data.  When clustered the session files have the base stripped.
-	strcpy(pcFileName, REMORA_MAP_FILENAME);
-
-	nClusterHash = MS->Fetch_session_cluster_hash();
-	nFileNameHash = NULL_HASH;
-
 	// Allocate a text buffer if one hasn't been allocated already.
 	if (!m_pDisplayBuffer)
 		m_pDisplayBuffer = new _remora_line[REMORA_TEXT_BUFFER_ROWS];
@@ -1372,11 +1362,6 @@ void _remora::ColourToRGB(uint8 nAttributes, uint8 &nRed, uint8 &nGreen, uint8 &
 }
 
 void _remora::SetUpM08LockControl() {
-	uint32 oBitmapNameHash;
-
-	// We need the size of the scan screen for clipping the barriers.
-	oBitmapNameHash = NULL_HASH;
-
 	// Here we build a list of the door names and what object ID they are.
 	BuildM08DoorList();
 }

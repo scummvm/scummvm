@@ -187,7 +187,7 @@ uint32 MovieManager::drawFrame(uint32 surface_id) {
 	uint32 height = surface_manager->Get_height(surface_id);
 
 	for (int32 i = 0; i < surface->h; i++) {
-		if (i + _y >= height) {
+		if (i + _y >= (int32)height) {
 			break;
 		}
 		memcpy(surface_address + (i + _y) * pitch, surface->getBasePtr(0, i), MIN(surface->pitch, pitch));

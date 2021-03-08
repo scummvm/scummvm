@@ -34,10 +34,6 @@ namespace ICB {
 
 class _surface;
 
-static uint32 _bit_count;
-static uint32 *_buf_pointer;
-static uint32 *_end_buf;
-
 const int32 JpegMaxHuffmanTables = 4;
 const int32 MaxQuantizationTables = 4;
 const int32 JpegMaxComponentsPerFrame = 255;

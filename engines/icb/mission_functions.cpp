@@ -39,7 +39,7 @@
 
 namespace ICB {
 
-int32 LoadMission(int32 m, void *usr) {
+int32 LoadMission(int32 m, void * /*usr*/) {
 	int32 demo = g_globalScriptVariables.GetVariable("demo");
 	Init_globals(); // reload the global vars for the new mission
 	g_globalScriptVariables.SetVariable("missionelapsedtime", 0);
@@ -59,9 +59,6 @@ int32 LoadMission(int32 m, void *usr) {
 	// Purge the res_man's to prevent them getting confused
 	rs_anims->Res_purge_all();
 	rs_bg->Res_purge_all();
-
-	// To remove compiler warning
-	usr = NULL;
 
 	warning("rs_anims %d files %dKB rs_bg %d files %dKB", rs_anims->Fetch_files_open(), (rs_anims->Fetch_mem_used() / 1024), rs_bg->Fetch_files_open(),
 	        (rs_bg->Fetch_mem_used() / 1024));

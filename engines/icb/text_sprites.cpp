@@ -58,6 +58,7 @@ _TSrtn text_sprite::GetRenderCoords(const int32 pinX,           // screen x-coor
 	case PIN_AT_CENTRE:
 		renderX = pinX - spriteWidth / 2;
 		renderY = pinY - spriteHeight / 2;
+		break;
 
 	case PIN_AT_CENTRE_OF_TOP:
 		renderX = pinX - spriteWidth / 2;

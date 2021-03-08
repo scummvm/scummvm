@@ -34,7 +34,6 @@ namespace ICB {
 
 void _remora_sprite::GenericSpriteDraw(int32 nX, int32 nY, bool8 bPosition, const _rs_params *pParams) {
 	_pxBitmap *psBitmap;
-	_pxSprite *psSprite;
 	uint8 *pSurfaceBitmap;
 	uint32 nPitch;
 	uint32 nSurfaceWidth, nSurfaceHeight;
@@ -63,8 +62,6 @@ void _remora_sprite::GenericSpriteDraw(int32 nX, int32 nY, bool8 bPosition, cons
 
 	if (psBitmap->schema != PC_BITMAP_SCHEMA)
 		Fatal_error("Incorrect versions loading [%s] (engine has %d, data has %d", m_pcName, PC_BITMAP_SCHEMA, psBitmap->schema);
-
-	psSprite = psBitmap->Fetch_item_by_number(m_nFramePC);
 
 	// Lock the surface and get the pitch.
 	uint32 remoraSurfaceId = g_oRemora->GetRemoraSurfaceId();

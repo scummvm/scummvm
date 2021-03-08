@@ -307,10 +307,6 @@ void JpegDecoder::ReadImage(uint8 *inputData, uint32 surface_Id) {
 	eoi_found = false;
 	sof_found = false;
 
-	_bit_count = 0;
-	_buf_pointer = (uint32 *)input_buffer;
-	_end_buf = (uint32 *)(input_buffer + (1024 * 1024)); // blantantly wrong... need to make cash sized buffer
-
 	data = ReadByte();
 	while (!eoi_found) {
 		if (data == SOB) {

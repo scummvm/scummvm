@@ -144,7 +144,7 @@ mcodeFunctionReturnCodes _game_session::fn_request_speech(int32 &result, int32 *
 
 	//	conversation script doesnt exist
 	if (!S.script_pc)
-		Fatal_error("object [%d] tried to start conversation script [%s] which doesnt exist", cur_id, (const char *const)temp_buf);
+		Fatal_error("object [%d] tried to start conversation script [%s] which doesnt exist", cur_id, (const char *)temp_buf);
 
 	// reset number of subs
 	S.total_subscribers = 0; // everyone but us initially

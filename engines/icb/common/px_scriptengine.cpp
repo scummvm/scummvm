@@ -138,9 +138,6 @@ scriptInterpreterReturnCodes RunScript(const char *&scriptData, // A pointer to 
 	int32 parameter1, parameter2, value;
 	bool8 isInExpression = FALSE8;
 
-	// Reset the fn routine control return value
-	int32 fn_routines_control_return_flag = (-1);
-
 	// Variable to prevent infinite loops
 	uint32 infiniteLoopCounter = 0;
 
@@ -265,7 +262,6 @@ scriptInterpreterReturnCodes RunScript(const char *&scriptData, // A pointer to 
 				// Push the fn_routine return value
 				PushOnStack(routineReturnParameter);
 				// save the mcode return value
-				fn_routines_control_return_flag = mcodeRetVal;
 			} else {
 				// Check return value in case we want to pause the script
 

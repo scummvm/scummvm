@@ -1209,16 +1209,16 @@ _linked_data_file *LoadTranslatedFile(const char *mission, const char *session) 
 	uint32 len = stream->size();
 
 	//      make space for file
-	char *mem = new char[len + 1];
+	char *memPtr = new char[len + 1];
 
 	//      read it in
-	stream->read(mem, len);
+	stream->read(memPtr, len);
 	delete stream; // close the file
 
 	//      0 terminate the string
-	mem[len] = 0;
+	memPtr[len] = 0;
 
-	return ((_linked_data_file *)mem);
+	return ((_linked_data_file *)memPtr);
 }
 
 } // End of namespace ICB

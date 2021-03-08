@@ -70,17 +70,6 @@ void Credits() {
 }
 
 void InitisliaseScrollingText(const char *textFileName, const char *movieFileName, int32 frameStart) {
-	// Movies are streamed from the CD
-	char *_root;
-
-#if 1 // was ifdef FROM_PC_CD
-#ifndef PC_DEMO
-
-	_root = g_theClusterManager->GetCDRoot();
-
-#endif
-#endif
-
 	// Find movie to play
 	pxString fullMovieName;
 

@@ -43,7 +43,7 @@ bool8 _tracer::Trace(const px3DRealPoint &oFrom,      // IN:  Point to plot from
                      const px3DRealPoint &oTo,        // IN:  Point to plot to.
                      _barrier_ray_type eRayType,      // IN:  The type of the ray being plotted.
                      px3DRealPoint &oPointOfImpact,   // OUT: The first point of impact.
-                     _barrier_logic_value eImpactType // OUT: For interpretation by high-level logic.
+                     _barrier_logic_value /*eImpactType*/ // OUT: For interpretation by high-level logic.
                      ) {
 	uint32 i;
 	uint32 nLoopCount;
@@ -98,7 +98,7 @@ bool8 _tracer::Trace(const px3DRealPoint &oFrom,      // IN:  Point to plot from
 		if (!GetCubeAndIndices(oCurrentPoint, oThisIndex, oThisCube)) {
 			// We have gone outside the game world, so we can't have hit anything.
 			oPointOfImpact = oCurrentPoint;
-			eImpactType = BLOCKS;
+			//eImpactType = BLOCKS;
 			return (FALSE8);
 		}
 
@@ -186,7 +186,7 @@ bool8 _tracer::Trace(const px3DRealPoint &oFrom,      // IN:  Point to plot from
 						    ((int32)oCurrentPoint.GetZ() >= (int32)psFloor->rect.z1) && ((int32)oCurrentPoint.GetZ() <= (int32)psFloor->rect.z2)) {
 							// The ray has hit a floor rectangle.
 							oPointOfImpact = oCurrentPoint;
-							eImpactType = BLOCKS;
+							//eImpactType = BLOCKS;
 							return (FALSE8);
 						}
 					} // end if
@@ -203,7 +203,7 @@ bool8 _tracer::Trace(const px3DRealPoint &oFrom,      // IN:  Point to plot from
 			// In final release, we'll let this go back, but it may have the wrong answer.  The effects of
 			// this should be benign enough to allow this.
 			oPointOfImpact = oTo;
-			eImpactType = NO_IMPACT;
+			//eImpactType = NO_IMPACT;
 			return (FALSE8);
 		}
 	} // end while
