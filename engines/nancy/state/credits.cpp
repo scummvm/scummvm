@@ -77,7 +77,7 @@ void Credits::init() {
     _engine->sound->loadSound(_sound);
     _engine->sound->playSound(_sound);
 
-    _returnToState = _engine->getPreviousGameState();
+    _returnToState = _engine->getPreviousState();
 
     _background.registerGraphics();
     _text.registerGraphics();
@@ -94,9 +94,9 @@ void Credits::run() {
         _state = kInit;
         _engine->sound->stopSound(_sound);
         if (_returnToState == NancyEngine::kMainMenu) {
-            _engine->setGameState((NancyEngine::GameState)_returnToState, NancyEngine::kScene);
+            _engine->setState((NancyEngine::GameState)_returnToState, NancyEngine::kScene);
         } else {
-            _engine->setGameState((NancyEngine::GameState)_returnToState);
+            _engine->setState((NancyEngine::GameState)_returnToState);
         }
         _engine->cursorManager->showCursor(true);
         _fullTextSurface.free();

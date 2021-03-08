@@ -79,7 +79,7 @@ void Help::begin() {
     _image.setVisible(true);
 
     _engine->cursorManager->setCursorType(CursorManager::kNormalArrow);
-    _previousState = _engine->getPreviousGameState();
+    _previousState = _engine->getPreviousState();
     
     _state = kRun;
 }
@@ -95,7 +95,7 @@ void Help::run() {
 
 void Help::waitForSound() {
     if (!_engine->sound->isSoundPlaying(18)) {
-        _engine->setGameState((NancyEngine::GameState)_previousState);
+        _engine->setState((NancyEngine::GameState)_previousState);
         
 	    _engine->sound->stopSound(_sound);
         _state = kBegin;

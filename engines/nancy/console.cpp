@@ -323,7 +323,7 @@ bool NancyConsole::Cmd_loadScene(int argc, const char **argv) {
 		return true;
 	}
 	
-	if (_vm->getPreviousGameState() != NancyEngine::GameState::kScene) {
+	if (_vm->getPreviousState() != NancyEngine::GameState::kScene) {
 		debugPrintf("Not in the kScene state\n");
 		return true;
 	}
@@ -341,7 +341,7 @@ bool NancyConsole::Cmd_loadScene(int argc, const char **argv) {
 }
 
 bool NancyConsole::Cmd_sceneID(int argc, const char **argv) {
-	if (_vm->getPreviousGameState() != NancyEngine::GameState::kScene) {
+	if (_vm->getPreviousState() != NancyEngine::GameState::kScene) {
 		debugPrintf("Not in the kScene state\n");
 		return true;
 	}

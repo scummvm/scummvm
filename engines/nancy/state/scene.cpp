@@ -291,7 +291,7 @@ void Scene::run() {
     }
 
     // Do some work if we're coming from a different game state
-    if (_engine->getGameState() != _engine->getPreviousGameState()) {
+    if (_engine->getState() != _engine->getPreviousState()) {
         if (hasLoadedFromSavefile) {
             if (playTime > _timers.pushedPlayTime) {
                 _engine->setTotalPlayTime((uint32)_timers.pushedPlayTime);
@@ -300,7 +300,7 @@ void Scene::run() {
         }
 
         // If the GMM was on we shouldn't reregister graphics
-        if (_engine->getPreviousGameState() != Nancy::NancyEngine::kPause) {
+        if (_engine->getPreviousState() != Nancy::NancyEngine::kPause) {
             registerGraphics();
         }
 
@@ -404,7 +404,7 @@ void Scene::readSceneSummary(Common::SeekableReadStream &stream) {
 bool Scene::changeGameState(bool keepGraphics) {
     if (_gameStateRequested != NancyEngine::kScene) {
         _timers.pushedPlayTime = _engine->getTotalPlayTime();
-        _engine->setGameState(_gameStateRequested, NancyEngine::kNone, keepGraphics);
+        _engine->setState(_gameStateRequested, NancyEngine::kNone, keepGraphics);
         _gameStateRequested = NancyEngine::kScene;
         pauseSceneSpecificSounds();
 
