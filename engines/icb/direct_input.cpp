@@ -72,6 +72,9 @@ bool8 Read_DI_once_keys(uint32 key) {
 	//      0 not pressed down currently
 	//      1 pressed down
 
+	if (key >= 512)
+		FALSE8;
+
 	// set repeat
 	if (keyboard_buf_scancodes[key] && (repeats_scancodes[key]))
 		return (0); // key is still pressed so return 0
@@ -88,6 +91,9 @@ bool8 Read_DI_keys(uint32 key) {
 	// out
 	//      0 not pressed down currently
 	//      1 pressed down
+
+	if (key >= 512)
+		FALSE8;
 
 	// set repeat
 	repeats_scancodes[key] = keyboard_buf_scancodes[key];
