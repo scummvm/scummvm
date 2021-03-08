@@ -31,6 +31,7 @@
 #include "trecision/trecision.h"
 
 #include "common/file.h"
+#include "trecision/video.h"
 
 #define KEY_BUFFER          0x60
 #define KEY_CONTROL         0x61
@@ -167,25 +168,25 @@ void LoadAll() {
 	}
 
 	for (int i = 0; i < MAXANIM; ++i) {
-		dataNl.read(&AnimTab[i]._name, ARRAYSIZE(AnimTab[i]._name));
+		dataNl.read(&g_vm->_animMgr->AnimTab[i]._name, ARRAYSIZE(g_vm->_animMgr->AnimTab[i]._name));
 
-		AnimTab[i]._flag = dataNl.readUint16LE();
+		g_vm->_animMgr->AnimTab[i]._flag = dataNl.readUint16LE();
 
 		for (int j = 0; j < MAXCHILD; ++j) {
-			AnimTab[i]._lim[j][0] = dataNl.readUint16LE();
-			AnimTab[i]._lim[j][1] = dataNl.readUint16LE();
-			AnimTab[i]._lim[j][2] = dataNl.readUint16LE();
-			AnimTab[i]._lim[j][3] = dataNl.readUint16LE();
+			g_vm->_animMgr->AnimTab[i]._lim[j][0] = dataNl.readUint16LE();
+			g_vm->_animMgr->AnimTab[i]._lim[j][1] = dataNl.readUint16LE();
+			g_vm->_animMgr->AnimTab[i]._lim[j][2] = dataNl.readUint16LE();
+			g_vm->_animMgr->AnimTab[i]._lim[j][3] = dataNl.readUint16LE();
 		}
 
-		AnimTab[i]._nbox = dataNl.readByte();
+		g_vm->_animMgr->AnimTab[i]._nbox = dataNl.readByte();
 		dataNl.readByte(); // Padding
 
 		for (int j = 0; j < MAXATFRAME; ++j) {
-			AnimTab[i]._atFrame[j]._type = dataNl.readByte();
-			AnimTab[i]._atFrame[j]._child = dataNl.readByte();
-			AnimTab[i]._atFrame[j]._numFrame = dataNl.readUint16LE();
-			AnimTab[i]._atFrame[j]._index = dataNl.readUint16LE();
+			g_vm->_animMgr->AnimTab[i]._atFrame[j]._type = dataNl.readByte();
+			g_vm->_animMgr->AnimTab[i]._atFrame[j]._child = dataNl.readByte();
+			g_vm->_animMgr->AnimTab[i]._atFrame[j]._numFrame = dataNl.readUint16LE();
+			g_vm->_animMgr->AnimTab[i]._atFrame[j]._index = dataNl.readUint16LE();
 		}
 	}
 

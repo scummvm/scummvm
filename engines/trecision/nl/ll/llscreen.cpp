@@ -36,6 +36,7 @@
 #include "common/file.h"
 #include "common/str.h"
 #include "trecision/graphics.h"
+#include "trecision/video.h"
 
 namespace Trecision {
 
@@ -57,8 +58,6 @@ uint8 *MaskPointers[MAXOBJINROOM];
 uint8 *SoundPointer[MAXSOUNDSINROOM];
 uint8 *_actionPointer[MAXACTIONFRAMESINROOM];		// puntatore progressivo ai frame
 uint16 _actionPosition[MAXACTIONINROOM];			// Starting position of each action in the room
-uint8 *_smackBuffer[MAXSMACK];
-uint8 *SmackTempBuffer[MAXSMACK];
 // DATA POINTER
 uint16 *Icone;
 uint8 *Font;
@@ -102,7 +101,6 @@ uint8 SpeechTrackEnabled = 0;
 uint8 *SoundStartBuffer;
 // Temporary variables
 Common::SeekableReadStream *ff;
-char UStr[140];
 int32  hh;
 // MOUSE
 SDText curString;
@@ -158,12 +156,12 @@ void OpenVideo() {
 	GameBytePointer = 0;
 	GameWordPointer = 0;
 
-	sprintf(UStr, "NlData.cd0");
-	FastFileInit(UStr);
-	sprintf(UStr, "NlSpeech.cd0");
-	SpeechFileInit(UStr);
-	sprintf(UStr, "NlAnim.cd%c", CurCDSet+'0');
-	AnimFileInit(UStr);
+	sprintf(g_vm->UStr, "NlData.cd0");
+	FastFileInit(g_vm->UStr);
+	sprintf(g_vm->UStr, "NlSpeech.cd0");
+	SpeechFileInit(g_vm->UStr);
+	sprintf(g_vm->UStr, "NlAnim.cd%c", CurCDSet + '0');
+	AnimFileInit(g_vm->UStr);
 
 	g_vm->_video2 = (uint16 *)MemoryArea + 2000000L;
 
@@ -241,7 +239,7 @@ void OpenVideo() {
 	GameBytePointer += MAXTEXTAREA;
 
 	// icone area
-	_smackBuffer[2] = (uint8 *)(MemoryArea + GameBytePointer);
+	g_vm->_animMgr->_smackBuffer[2] = (uint8 *)(MemoryArea + GameBytePointer);
 	GameBytePointer += ICONDX * ICONDY;
 	// zbuffer
 	ZBuffer = (int16 *)(MemoryArea + GameBytePointer);
@@ -254,20 +252,20 @@ void OpenVideo() {
 	ExtraObj2C = (uint16 *)SpeechBuf[0]; // for room 2C
 	GameBytePointer += SPEECHSIZE;
 	// omino e full motions area
-	_smackBuffer[1] = (uint8 *)(MemoryArea + GameBytePointer);
-	ExtraObj41D = (uint16 *)_smackBuffer[1]; // for room 41D
+	g_vm->_animMgr->_smackBuffer[1] = (uint8 *)(MemoryArea + GameBytePointer);
+	ExtraObj41D = (uint16 *)g_vm->_animMgr->_smackBuffer[1]; // for room 41D
 	GameBytePointer += SCREENLEN * AREA;
 	// omino buffer
-	SmackTempBuffer[1] = (uint8 *)(MemoryArea + GameBytePointer);
+	g_vm->_animMgr->SmackTempBuffer[1] = (uint8 *)(MemoryArea + GameBytePointer);
 	GameBytePointer += SMKANBUFFER;
 	// background buffer
-	SmackTempBuffer[0] = (uint8 *)(MemoryArea + GameBytePointer);
+	g_vm->_animMgr->SmackTempBuffer[0] = (uint8 *)(MemoryArea + GameBytePointer);
 	GameBytePointer += SMKBKGBUFFER;
 	// icone buffer
-	SmackTempBuffer[2] = (uint8 *)(MemoryArea + GameBytePointer);
+	g_vm->_animMgr->SmackTempBuffer[2] = (uint8 *)(MemoryArea + GameBytePointer);
 	GameBytePointer += SMKICONBUFFER;
 	// background area
-	_smackBuffer[0] = (uint8 *)(MemoryArea + GameBytePointer);
+	g_vm->_animMgr->_smackBuffer[0] = (uint8 *)(MemoryArea + GameBytePointer);
 	GameBytePointer += SCREENLEN * AREA;
 	// SmackImagePointer
 	SmackImagePointer = (uint16 *)(MemoryArea + GameBytePointer);
@@ -485,8 +483,6 @@ int RoomReady = 0;
 						ReadLoc
 --------------------------------------------------*/
 void ReadLoc() {
-	extern uint16 _playingAnims[];
-
 	RoomReady = 0;
 	if ((g_vm->_curRoom == r11) && !(g_vm->_room[r11]._flag & OBJFLAG_DONE))
 		FlagShowCharacter = true;
@@ -497,10 +493,10 @@ void ReadLoc() {
 
 	GameWordPointer = (CurRoomMaxX * MAXY);           // space for _video2
 
-	sprintf(UStr, "%s.cr", g_vm->_room[g_vm->_curRoom]._baseName);
+	sprintf(g_vm->UStr, "%s.cr", g_vm->_room[g_vm->_curRoom]._baseName);
 	ImagePointer = (uint16 *)g_vm->_video2 + GameWordPointer - 4;
 
-	GameWordPointer += (DecCR(UStr, (uint8 *)ImagePointer, (uint8 *)g_vm->_video2) + 1) / 2;
+	GameWordPointer += (DecCR(g_vm->UStr, (uint8 *)ImagePointer, (uint8 *)g_vm->_video2) + 1) / 2;
 	memcpy(&BmInfo, (SBmInfo *)ImagePointer, sizeof(SBmInfo));
 	ImagePointer += 4;
 	g_vm->_graphicsMgr->updatePixelFormat(ImagePointer, BmInfo.dx * BmInfo.dy);
@@ -509,11 +505,11 @@ void ReadLoc() {
 	if ((g_vm->_room[g_vm->_curRoom]._sounds[0] != 0))
 		ReadSounds();
 
-	sprintf(UStr, "%s.3d", g_vm->_room[g_vm->_curRoom]._baseName);
+	sprintf(g_vm->UStr, "%s.3d", g_vm->_room[g_vm->_curRoom]._baseName);
 	_actionPointer[0] = (uint8 *)(g_vm->_video2 + GameWordPointer);
-	GameWordPointer += read3D(UStr) / 2;
+	GameWordPointer += read3D(g_vm->UStr) / 2;
 
-	sprintf(UStr, "act\\%s.act", g_vm->_room[g_vm->_curRoom]._baseName);
+	sprintf(g_vm->UStr, "act\\%s.act", g_vm->_room[g_vm->_curRoom]._baseName);
 
 	wordset(g_vm->_video2, 0, CurRoomMaxX * MAXY);
 	MCopy(g_vm->_video2 + TOP * CurRoomMaxX, ImagePointer, CurRoomMaxX * AREA);
@@ -526,9 +522,9 @@ void ReadLoc() {
 
 	if (g_vm->_room[g_vm->_curRoom]._bkgAnim) {
 		wordcopy(SmackImagePointer, ImagePointer, MAXX * AREA);
-		StartSmackAnim(g_vm->_room[g_vm->_curRoom]._bkgAnim);
+		g_vm->_animMgr->StartSmackAnim(g_vm->_room[g_vm->_curRoom]._bkgAnim);
 	} else
-		StopSmackAnim(_playingAnims[0]);
+		g_vm->_animMgr->StopSmackAnim(g_vm->_animMgr->_playingAnims[0]);
 
 	InitAtFrameHandler(g_vm->_room[g_vm->_curRoom]._bkgAnim, 0);
 
@@ -734,10 +730,11 @@ void ReadSounds() {
 
 		SoundPointer[a] = (uint8 *)(g_vm->_video2 + GameWordPointer);
 
-		sprintf(UStr, "%s", GSample[b]._name);
-		if (!scumm_stricmp(UStr, "RUOTE2C.WAV")) break;
+		sprintf(g_vm->UStr, "%s", GSample[b]._name);
+		if (!scumm_stricmp(g_vm->UStr, "RUOTE2C.WAV"))
+			break;
 
-		ff = FastFileOpen(UStr);
+		ff = FastFileOpen(g_vm->UStr);
 		if (ff == NULL)
 			CloseSys(g_vm->_sysText[1]);
 		int len = FastFileRead(ff, SoundPointer[a], FastFileLen(ff));

@@ -92,7 +92,7 @@ struct SAtFrame {
 
 struct SAnim {
 	char _name[14];
-	uint16 _flag;		// 1- background 2- icon 3- action 4- qctive	  -   4bits per child
+	uint16 _flag;		// 1- background 2- icon 3- action 4- active  -  4bits per child
 	uint16 _lim[MAXCHILD][4];
 	uint8 _nbox;
 	SAtFrame _atFrame[MAXATFRAME];

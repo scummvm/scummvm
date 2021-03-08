@@ -20,6 +20,9 @@
  *
  */
 
+#ifndef TRECISION_NL_DEFINE_H
+#define TRECISION_NL_DEFINE_H
+
 // OBJECT MODES
 #define OBJMODE_FULL    		1
 #define OBJMODE_MASK    		2
@@ -49,16 +52,6 @@
 #define SOUNDFLAG_SPSX    		8
 #define SOUNDFLAG_SPDX    		16
 
-// SMACKER ANIMATION FLAGS
-#define SMKANIM_BKG				1
-#define SMKANIM_ICON			2
-#define SMKANIM_LOOP			4
-#define SMKANIM_OLD 			8
-#define SMKANIM_ON				16
-#define SMKANIM_OFF1			32
-#define SMKANIM_OFF2			64
-#define SMKANIM_OFF3			128
-#define SMKANIM_OFF4			256
 
 #define HOMO_ANIM  			0
 #define BACKGROUND_ANIM 	1
@@ -3362,6 +3355,4 @@
 #define dFCRED				65
 
 
-/*------------------------------------------------------------------------*/
-/*                              END OF FILE            					  */
-/*------------------------------------------------------------------------*/
+#endif

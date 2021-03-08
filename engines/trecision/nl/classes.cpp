@@ -32,11 +32,11 @@
 #include "trecision/trecision.h"
 
 #include "common/config-manager.h"
+#include "trecision/video.h"
 
 namespace Trecision {
 
 extern int32 CurRoomMaxX;
-extern uint16 _playingAnims[];
 
 // inventory
 #define COUNTERSTEP 6
@@ -211,7 +211,7 @@ void doMouse() {
 				break; // Se sono in stanze senza omino tipo la mappa
 			if (((FlagSomeOneSpeak) && !(FlagCharacterSpeak)) || (FlagDialogMenuActive) || (FlagDialogActive) || (FlagUseWithLocked))
 				break;
-			if (_playingAnims[1])
+			if (g_vm->_animMgr->_playingAnims[1])
 				break;
 
 			if (g_vm->_inventoryStatus == INV_OFF)
@@ -329,7 +329,7 @@ void doMouse() {
 						doEvent(MC_ACTION, ME_MOUSEEXAMINE, MP_DEFAULT, 0, 0, 0, g_vm->_curObj);
 						break;
 					}
-					AnimTab[aBKG2C]._flag &= ~SMKANIM_OFF1;
+					g_vm->_animMgr->AnimTab[aBKG2C]._flag &= ~SMKANIM_OFF1;
 					g_vm->_obj[oBASERUOTE2C]._mode &= ~OBJMODE_OBJSTATUS;
 					g_vm->_obj[omRUOTE2C]._mode &= ~OBJMODE_OBJSTATUS;
 					g_vm->_obj[oPULSANTE2C]._mode &= ~OBJMODE_OBJSTATUS;
@@ -350,7 +350,7 @@ void doMouse() {
 					FlagShowCharacter = true;
 					RegenRoom();
 					memcpy(SmackImagePointer, ImagePointer, MAXX * AREA * 2);
-					StartSmackAnim(g_vm->_room[g_vm->_curRoom]._bkgAnim);
+					g_vm->_animMgr->StartSmackAnim(g_vm->_room[g_vm->_curRoom]._bkgAnim);
 
 					// combinazione giusta
 					if ((ruotepos[0] == 7) && (ruotepos[1] == 5) && (ruotepos[2] == 11)) {
@@ -378,7 +378,7 @@ void doMouse() {
 //			fine gestione particolare
 
 //			Zona GAME
-		if (GAMEAREA(g_vm->_curMessage->_u16Param2) && (!_playingAnims[1])) {
+		if (GAMEAREA(g_vm->_curMessage->_u16Param2) && (!g_vm->_animMgr->_playingAnims[1])) {
 			if (Flagscriptactive)
 				g_vm->_curObj = g_vm->_curMessage->_u32Param;
 
@@ -406,7 +406,7 @@ void doMouse() {
 					if (FlagUseWithStarted) {
 						if (g_vm->_useWithInv[USED]) {
 							g_vm->_lightIcon = 0xFF;
-							StopSmackAnim(g_vm->_inventoryObj[g_vm->_useWith[USED]]._anim);
+							g_vm->_animMgr->StopSmackAnim(g_vm->_inventoryObj[g_vm->_useWith[USED]]._anim);
 							RegenInv(g_vm->_regenInvStartIcon, INVENTORY_HIDE);
 							FlagInventoryLocked = false;
 						}
@@ -424,7 +424,7 @@ void doMouse() {
 					if (FlagUseWithStarted) {
 						if (g_vm->_useWithInv[USED]) {
 							g_vm->_lightIcon = 0xFF;
-							StopSmackAnim(g_vm->_inventoryObj[g_vm->_useWith[USED]]._anim);
+							g_vm->_animMgr->StopSmackAnim(g_vm->_inventoryObj[g_vm->_useWith[USED]]._anim);
 							RegenInv(g_vm->_regenInvStartIcon, INVENTORY_HIDE);
 							FlagInventoryLocked = false;
 						}
@@ -470,7 +470,7 @@ void doMouse() {
 		}
 		// Inventory Zone
 		else if (INVAREA(g_vm->_curMessage->_u16Param2)) {
-			if (_playingAnims[1] || FlagDialogActive || g_vm->_curRoom == rSYS)
+			if (g_vm->_animMgr->_playingAnims[1] || FlagDialogActive || g_vm->_curRoom == rSYS)
 				break;
 
 			if (ICONAREA(g_vm->_curMessage->_u16Param1, g_vm->_curMessage->_u16Param2) && (WhatIcon(g_vm->_curMessage->_u16Param1)) && (g_vm->_inventoryStatus == INV_INACTION)) {
@@ -541,7 +541,7 @@ void doInventory() {
 				doEvent(MC_ACTION, ME_USEWITH, MP_DEFAULT, 0, 0, 0, 0);
 				g_vm->_lightIcon = 0xFF;
 			} else {
-				StopSmackAnim(g_vm->_inventoryObj[g_vm->_useWith[USED]]._anim);
+				g_vm->_animMgr->StopSmackAnim(g_vm->_inventoryObj[g_vm->_useWith[USED]]._anim);
 				ShowInvName(g_vm->_curInventory, true);
 				g_vm->_lightIcon = g_vm->_curInventory;
 			}
@@ -550,7 +550,7 @@ void doInventory() {
 				CharacterSay(1565);
 				return;
 			}
-			StartSmackAnim(g_vm->_inventoryObj[g_vm->_curInventory]._anim);
+			g_vm->_animMgr->StartSmackAnim(g_vm->_inventoryObj[g_vm->_curInventory]._anim);
 			g_vm->_lightIcon = g_vm->_curInventory;
 			RegenInv(g_vm->_iconBase, INVENTORY_SHOW);
 			FlagInventoryLocked = true;
@@ -575,7 +575,7 @@ void doInventory() {
 				doEvent(MC_ACTION, ME_USEWITH, MP_DEFAULT, 0, 0, 0, 0);
 				g_vm->_lightIcon = 0xFF;
 			} else {
-				StopSmackAnim(g_vm->_inventoryObj[g_vm->_useWith[USED]]._anim);
+				g_vm->_animMgr->StopSmackAnim(g_vm->_inventoryObj[g_vm->_useWith[USED]]._anim);
 				ShowInvName(g_vm->_curInventory, true);
 				g_vm->_lightIcon = g_vm->_curInventory;
 			}
@@ -614,7 +614,7 @@ void StartCharacterAction(uint16 Act, uint16 NewRoom, uint8 NewPos, uint16 sent)
 
 	FlagInventoryLocked = false;
 	if (Act > hLAST) {
-		StartSmackAnim(Act);
+		g_vm->_animMgr->StartSmackAnim(Act);
 		InitAtFrameHandler(Act, g_vm->_curObj);
 		FlagMouseEnabled = false;
 		FlagShowCharacter = false;
@@ -691,7 +691,7 @@ void doCharacter() {
 		RegenInventory(g_vm->_regenInvStartIcon, INVENTORY_HIDE);
 		g_vm->_inventoryStatus = INV_OFF;
 		if (g_vm->_curMessage->_u16Param1 > hLAST) {
-			StartSmackAnim(g_vm->_curMessage->_u16Param1);
+			g_vm->_animMgr->StartSmackAnim(g_vm->_curMessage->_u16Param1);
 			InitAtFrameHandler(g_vm->_curMessage->_u16Param1, g_vm->_curMessage->_u32Param);
 			FlagMouseEnabled = false;
 			doEvent(MC_CHARACTER, ME_CHARACTERCONTINUEACTION, g_vm->_curMessage->_priority, g_vm->_curMessage->_u16Param1, g_vm->_curMessage->_u16Param2, g_vm->_curMessage->_u8Param, g_vm->_curMessage->_u32Param);
@@ -705,7 +705,7 @@ void doCharacter() {
 		FlagShowCharacter = false;
 		AtFrameHandler(HOMO_ANIM);
 		//	If the animation is over
-		if (!_playingAnims[1]) {
+		if (!g_vm->_animMgr->_playingAnims[1]) {
 			extern uint16 lastobj;
 			FlagMouseEnabled = true;
 			FlagShowCharacter = true;
@@ -775,7 +775,7 @@ void doSystem() {
 		FlagCharacterExist = true;
 		FlagShowCharacter = true;
 		CurRoomMaxX = SCREENLEN;
-		StopSmackAnim(g_vm->_inventoryObj[g_vm->_useWith[USED]]._anim);
+		g_vm->_animMgr->StopSmackAnim(g_vm->_inventoryObj[g_vm->_useWith[USED]]._anim);
 		g_vm->_useWith[USED] = 0;
 		g_vm->_useWith[WITH] = 0;
 		g_vm->_useWithInv[USED] = false;
@@ -808,7 +808,7 @@ void doSystem() {
 		}
 
 		if ((g_vm->_curRoom == r12) && (g_vm->_oldRoom == r11))
-			AnimTab[aBKG11]._flag |= SMKANIM_OFF1;
+			g_vm->_animMgr->AnimTab[aBKG11]._flag |= SMKANIM_OFF1;
 		else if ((g_vm->_oldRoom == r2BL) || (g_vm->_oldRoom == r36F))
 			g_vm->_oldRoom = g_vm->_curRoom;
 		else if (g_vm->_curRoom == rSYS) {
@@ -959,23 +959,17 @@ void doIdle() {
 			if (QuitGame())
 				doEvent(MC_SYSTEM, ME_QUIT, MP_SYSTEM, 0, 0, 0, 0);
 		} else { //if( _curDialog == dINTRO )
-			extern int _fullMotionEnd;
-			extern uint16 _curAnimFrame[];
-
-			if (_fullMotionEnd != _curAnimFrame[1])
-				_fullMotionEnd = _curAnimFrame[1] + 1;
+			if (g_vm->_animMgr->_fullMotionEnd != g_vm->_animMgr->_curAnimFrame[1])
+				g_vm->_animMgr->_fullMotionEnd = g_vm->_animMgr->_curAnimFrame[1] + 1;
 		}
 		break;
 
 	// Skip
 	case 0x1B:
 		if (FlagDialogActive) {
-			extern int _fullMotionEnd;
-			extern uint16 _curAnimFrame[];
-
-			if (_fullMotionEnd != _curAnimFrame[1])
-				_fullMotionEnd = _curAnimFrame[1] + 1;
-		} else if (!FlagSomeOneSpeak && !Flagscriptactive && !FlagDialogActive && !FlagDialogMenuActive && (_actor._curAction < hWALKIN) && !FlagUseWithStarted && _playingAnims[1] == 0 && FlagShowCharacter) {
+			if (g_vm->_animMgr->_fullMotionEnd != g_vm->_animMgr->_curAnimFrame[1])
+				g_vm->_animMgr->_fullMotionEnd = g_vm->_animMgr->_curAnimFrame[1] + 1;
+		} else if (!FlagSomeOneSpeak && !Flagscriptactive && !FlagDialogActive && !FlagDialogMenuActive && (_actor._curAction < hWALKIN) && !FlagUseWithStarted && g_vm->_animMgr->_playingAnims[1] == 0 && FlagShowCharacter) {
 			actorStop();
 			nextStep();
 			Mouse(1);
@@ -990,7 +984,7 @@ void doIdle() {
 
 	// Sys
 	case 0x3B:
-		if (!FlagSomeOneSpeak && !Flagscriptactive && !FlagDialogActive && !FlagDialogMenuActive && (_actor._curAction < hWALKIN) && !FlagUseWithStarted && _playingAnims[1] == 0 && FlagShowCharacter) {
+		if (!FlagSomeOneSpeak && !Flagscriptactive && !FlagDialogActive && !FlagDialogMenuActive && (_actor._curAction < hWALKIN) && !FlagUseWithStarted && g_vm->_animMgr->_playingAnims[1] == 0 && FlagShowCharacter) {
 			actorStop();
 			nextStep();
 			Mouse(1);
@@ -1005,7 +999,7 @@ void doIdle() {
 
 	// Save
 	case 0x3C:
-		if (!FlagSomeOneSpeak && !Flagscriptactive && !FlagDialogActive && !FlagDialogMenuActive && (_actor._curAction < hWALKIN) && !FlagUseWithStarted && _playingAnims[1] == 0 && FlagShowCharacter) {
+		if (!FlagSomeOneSpeak && !Flagscriptactive && !FlagDialogActive && !FlagDialogMenuActive && (_actor._curAction < hWALKIN) && !FlagUseWithStarted && g_vm->_animMgr->_playingAnims[1] == 0 && FlagShowCharacter) {
 			IconSnapShot();
 			FlagSaveInventory = true;
 			DataSave();
@@ -1017,7 +1011,7 @@ void doIdle() {
 
 	// Load
 	case 0x3D:
-		if (!FlagSomeOneSpeak && !Flagscriptactive && !FlagDialogActive && !FlagDialogMenuActive && (_actor._curAction < hWALKIN) && !FlagUseWithStarted && _playingAnims[1] == 0 && FlagShowCharacter) {
+		if (!FlagSomeOneSpeak && !Flagscriptactive && !FlagDialogActive && !FlagDialogMenuActive && (_actor._curAction < hWALKIN) && !FlagUseWithStarted && g_vm->_animMgr->_playingAnims[1] == 0 && FlagShowCharacter) {
 			IconSnapShot();
 			if (!DataLoad()) {
 				ShowInvName(NO_OBJECTS, false);

@@ -24,6 +24,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "common/scummsys.h"
+
 #include "trecision/nl/3d/3dinc.h"
 #include "trecision/nl/sysdef.h"
 #include "trecision/nl/struct.h"
@@ -32,24 +33,22 @@
 #include "trecision/nl/extern.h"
 #include "trecision/trecision.h"
 #include "trecision/graphics.h"
+#include "trecision/video.h"
 
 namespace Trecision {
 
 uint16 _curSortTableIndex = 0;
-int16  _limits[50][4];
-uint16 _limitsNum;
 
 #define MAXBLOCK 5000
 uint32 PaintBlock[MAXBLOCK];
 int16 BlockCount;
 
 int xr1, xr2, yr1, yr2;
-int _actorLimit, Tlim;
+int Tlim;
 int VisualRef[50];
 
 SDObj DObj;
 int sflag;
-extern uint16 _animMaxX, _animMinX, _animMaxY, _animMinY;
 int fillviola = 0;
 
 uint32 DislVar = 0;
@@ -69,12 +68,12 @@ void PaintScreen(uint8 flag) {
 //	if( ( !FlagPaintCharacter) && ( _curSortTableNum == 0 ) &&  ( curString.sign == NULL ) && ( oldString.sign == NULL ) )
 //		return;
 
-	_actorLimit = 255;
+	g_vm->_actorLimit = 255;
 	Tlim = 255;
 	for (a = 0; a < 20; a++)
 		VisualRef[a] = 255;
 
-	_limitsNum = 0;
+	g_vm->_limitsNum = 0;
 	FlagPaintCharacter = true;                      // ridisegna sempre l'omino
 	AddLine(0, 0, 0);
 
@@ -93,33 +92,33 @@ void PaintScreen(uint8 flag) {
 		DObj.flag = COPYTORAM;
 		DrawObj(DObj);
 
-		_limits[_limitsNum][0] = DObj.l[0];     // aggiunge rettangolo omino
-		_limits[_limitsNum][1] = DObj.l[1] + TOP;
-		_limits[_limitsNum][2] = DObj.l[2];
-		_limits[_limitsNum][3] = DObj.l[3] + TOP;
+		g_vm->_limits[g_vm->_limitsNum][0] = DObj.l[0]; // aggiunge rettangolo omino
+		g_vm->_limits[g_vm->_limitsNum][1] = DObj.l[1] + TOP;
+		g_vm->_limits[g_vm->_limitsNum][2] = DObj.l[2];
+		g_vm->_limits[g_vm->_limitsNum][3] = DObj.l[3] + TOP;
 
-		_actorLimit = _limitsNum;
-		_limitsNum ++;
-	} else if (_animMinX != MAXX) {
+		g_vm->_actorLimit = g_vm->_limitsNum;
+		g_vm->_limitsNum++;
+	} else if (g_vm->_animMgr->_animMinX != MAXX) {
 		DObj.x    = 0;
 		DObj.y    = TOP;
 		DObj.dx   = CurRoomMaxX;
 		DObj.dy   = AREA;
-		DObj.l[0] = _animMinX;
-		DObj.l[1] = _animMinY;
-		DObj.l[2] = _animMaxX;
-		DObj.l[3] = _animMaxY;
+		DObj.l[0] = g_vm->_animMgr->_animMinX;
+		DObj.l[1] = g_vm->_animMgr->_animMinY;
+		DObj.l[2] = g_vm->_animMgr->_animMaxX;
+		DObj.l[3] = g_vm->_animMgr->_animMaxY;
 		DObj.buf  = ImagePointer;
 		DObj.flag = COPYTORAM;
 		DrawObj(DObj);
 
-		_limits[_limitsNum][0] = DObj.l[0];     // aggiunge rettangolo omino
-		_limits[_limitsNum][1] = DObj.l[1] + TOP;
-		_limits[_limitsNum][2] = DObj.l[2];
-		_limits[_limitsNum][3] = DObj.l[3] + TOP;
+		g_vm->_limits[g_vm->_limitsNum][0] = DObj.l[0]; // aggiunge rettangolo omino
+		g_vm->_limits[g_vm->_limitsNum][1] = DObj.l[1] + TOP;
+		g_vm->_limits[g_vm->_limitsNum][2] = DObj.l[2];
+		g_vm->_limits[g_vm->_limitsNum][3] = DObj.l[3] + TOP;
 
-		_actorLimit = _limitsNum;
-		_limitsNum ++;
+		g_vm->_actorLimit = g_vm->_limitsNum;
+		g_vm->_limitsNum++;
 	}
 
 // CANCELLO LA SCRITTA
@@ -144,13 +143,13 @@ void PaintScreen(uint8 flag) {
 		}
 		oldString.sign = NULL;
 
-		_limits[_limitsNum][0] = DObj.l[0];     // aggiunge rettangolo scritta
-		_limits[_limitsNum][1] = DObj.l[1] + TOP;
-		_limits[_limitsNum][2] = DObj.l[2];
-		_limits[_limitsNum][3] = DObj.l[3] + TOP;
+		g_vm->_limits[g_vm->_limitsNum][0] = DObj.l[0]; // aggiunge rettangolo scritta
+		g_vm->_limits[g_vm->_limitsNum][1] = DObj.l[1] + TOP;
+		g_vm->_limits[g_vm->_limitsNum][2] = DObj.l[2];
+		g_vm->_limits[g_vm->_limitsNum][3] = DObj.l[3] + TOP;
 
-		Tlim = _limitsNum;
-		_limitsNum ++;
+		Tlim = g_vm->_limitsNum;
+		g_vm->_limitsNum++;
 
 		if (!(TextStatus & TEXT_DRAW))        // se non c'e' nuova scritta
 			TextStatus = TEXT_OFF;               // non aggiorna piu' scritta
@@ -178,16 +177,16 @@ void PaintScreen(uint8 flag) {
 			DObj.flag = COPYTORAM;
 			DrawObj(DObj);
 
-			_limits[_limitsNum][0] = DObj.l[0];    // aggiunge rettangolo
-			_limits[_limitsNum][1] = DObj.l[1] + TOP;
-			_limits[_limitsNum][2] = DObj.l[2];
-			_limits[_limitsNum][3] = DObj.l[3] + TOP;
+			g_vm->_limits[g_vm->_limitsNum][0] = DObj.l[0]; // aggiunge rettangolo
+			g_vm->_limits[g_vm->_limitsNum][1] = DObj.l[1] + TOP;
+			g_vm->_limits[g_vm->_limitsNum][2] = DObj.l[2];
+			g_vm->_limits[g_vm->_limitsNum][3] = DObj.l[3] + TOP;
 
 			if ((SortTable[a + 1]._typology  == SortTable[a]._typology) &&
 					(SortTable[a + 1]._roomIndex == SortTable[a]._roomIndex))
-				VisualRef[a + 1] = _limitsNum;
+				VisualRef[a + 1] = g_vm->_limitsNum;
 
-			_limitsNum ++;
+			g_vm->_limitsNum++;
 		}
 	}
 
@@ -213,9 +212,9 @@ void PaintScreen(uint8 flag) {
 	//PaintObjAnm( FOREGROUND );
 
 	if (TextStatus == TEXT_ON) {
-		for (a = 0; a < _limitsNum; a++) {
-			if (IntersecateRect(_limits[a][0], _limits[a][1],
-								_limits[a][2], _limits[a][3],
+		for (a = 0; a < g_vm->_limitsNum; a++) {
+			if (IntersecateRect(g_vm->_limits[a][0], g_vm->_limits[a][1],
+			                    g_vm->_limits[a][2], g_vm->_limits[a][3],
 								curString.x, curString.y,
 								curString.x + curString.dx,
 								curString.y + curString.dy)) {
@@ -230,22 +229,22 @@ void PaintScreen(uint8 flag) {
 
 	} else if (TextStatus & TEXT_DRAW) {
 		curString.DText();
-		_limits[_limitsNum][0] = curString.x;   // aggiunge rettangolo
-		_limits[_limitsNum][1] = curString.y;
-		_limits[_limitsNum][2] = curString.x + curString.dx;
-		_limits[_limitsNum][3] = curString.y + curString.dy;
+		g_vm->_limits[g_vm->_limitsNum][0] = curString.x; // aggiunge rettangolo
+		g_vm->_limits[g_vm->_limitsNum][1] = curString.y;
+		g_vm->_limits[g_vm->_limitsNum][2] = curString.x + curString.dx;
+		g_vm->_limits[g_vm->_limitsNum][3] = curString.y + curString.dy;
 
-		Tlim = _limitsNum;
-		_limitsNum ++;
+		Tlim = g_vm->_limitsNum;
+		g_vm->_limitsNum++;
 
 		TextStatus = TEXT_DRAW;                 // attiva aggiornamento scritta
 	}
 
 	SoundPasso((_actor._lim[1] + _actor._lim[0]) / 2, (_actor._lim[5] + _actor._lim[4]) / 2, _actor._curAction, _actor._curFrame, g_vm->_room[g_vm->_curRoom]._sounds);
 
-	for (liv = 0; liv < _limitsNum; liv++) {
-		for (int b = _limits[liv][1]; b < _limits[liv][3]; b++) {
-			AddLine(_limits[liv][0], _limits[liv][2], b);
+	for (liv = 0; liv < g_vm->_limitsNum; liv++) {
+		for (int b = g_vm->_limits[liv][1]; b < g_vm->_limits[liv][3]; b++) {
+			AddLine(g_vm->_limits[liv][0], g_vm->_limits[liv][2], b);
 		}
 	}
 
@@ -280,8 +279,7 @@ void PaintScreen(uint8 flag) {
 
 	// gestione papaverina ritardata
 	if ((g_vm->_curRoom == r4A) && (g_vm->_obj[oCIOCCOLATINI4A]._flag & OBJFLAG_EXTRA)) {
-		extern uint16 _curAnimFrame[];
-		if (_curAnimFrame[0] > 480) {
+		if (g_vm->_animMgr->_curAnimFrame[0] > 480) {
 			PlayScript(s4AHELLEN);
 			g_vm->_obj[oCIOCCOLATINI4A]._flag &= ~OBJFLAG_EXTRA;
 		}
@@ -376,9 +374,7 @@ void SortBlock() {
  appartenenti a curbox
  --------------------------------------------------*/
 void PaintObjAnm(uint16 CurBox) {
-	extern uint16 _playingAnims[];
-
-	RegenAnim(CurBox);
+	g_vm->_animMgr->RegenAnim(CurBox);
 
 	// disegna nuove schede appartenenti al box corrente
 	for (int a = 0; a < g_vm->_curSortTableNum; a++) {
@@ -402,29 +398,29 @@ void PaintObjAnm(uint16 CurBox) {
 					DrawObj(DObj);
 
 					if (VisualRef[a] == 255) {
-						_limits[_limitsNum][0] = DObj.x;    // aggiunge rettangolo
-						_limits[_limitsNum][1] = DObj.y;
-						_limits[_limitsNum][2] = DObj.x + DObj.dx;
-						_limits[_limitsNum][3] = DObj.y + DObj.dy;
-						_limitsNum ++;
+						g_vm->_limits[g_vm->_limitsNum][0] = DObj.x; // aggiunge rettangolo
+						g_vm->_limits[g_vm->_limitsNum][1] = DObj.y;
+						g_vm->_limits[g_vm->_limitsNum][2] = DObj.x + DObj.dx;
+						g_vm->_limits[g_vm->_limitsNum][3] = DObj.y + DObj.dy;
+						g_vm->_limitsNum++;
 					} else {
-						if (_limits[VisualRef[a]][0] > DObj.x)
-							_limits[VisualRef[a]][0] = DObj.x;
+						if (g_vm->_limits[VisualRef[a]][0] > DObj.x)
+							g_vm->_limits[VisualRef[a]][0] = DObj.x;
 
-						if (_limits[VisualRef[a]][1] > DObj.y)
-							_limits[VisualRef[a]][1] = DObj.y;
+						if (g_vm->_limits[VisualRef[a]][1] > DObj.y)
+							g_vm->_limits[VisualRef[a]][1] = DObj.y;
 
-						if (_limits[VisualRef[a]][2] < (DObj.x + DObj.dx))
-							_limits[VisualRef[a]][2] = DObj.x + DObj.dx;
+						if (g_vm->_limits[VisualRef[a]][2] < (DObj.x + DObj.dx))
+							g_vm->_limits[VisualRef[a]][2] = DObj.x + DObj.dx;
 
-						if (_limits[VisualRef[a]][3] < (DObj.y + DObj.dy))
-							_limits[VisualRef[a]][3] = DObj.y + DObj.dy;
+						if (g_vm->_limits[VisualRef[a]][3] < (DObj.y + DObj.dy))
+							g_vm->_limits[VisualRef[a]][3] = DObj.y + DObj.dy;
 					}
 				}
 			}
 		}
 	}
-	for (int a = 0; a < _limitsNum; a++) {
+	for (int a = 0; a < g_vm->_limitsNum; a++) {
 		for (int b = 0; b < MAXOBJINROOM; b++) {
 			uint16 curObject = g_vm->_room[g_vm->_curRoom]._object[b];
 
@@ -435,8 +431,8 @@ void PaintObjAnm(uint16 CurBox) {
 			    (g_vm->_obj[curObject]._mode & OBJMODE_OBJSTATUS) &&
 			    (g_vm->_obj[curObject]._nbox == CurBox)) {
 
-				if (IntersecateRect(_limits[a][0], _limits[a][1],
-									_limits[a][2], _limits[a][3],
+				if (IntersecateRect(g_vm->_limits[a][0], g_vm->_limits[a][1],
+				                    g_vm->_limits[a][2], g_vm->_limits[a][3],
 				                    g_vm->_obj[curObject]._px, g_vm->_obj[curObject]._py + TOP,
 				                    g_vm->_obj[curObject]._px + g_vm->_obj[curObject]._dx,
 				                    g_vm->_obj[curObject]._py + g_vm->_obj[curObject]._dy + TOP)) {
@@ -467,24 +463,24 @@ void PaintObjAnm(uint16 CurBox) {
 		drawCharacter(CALCPOINTS);
 
 		// enlarge the rectangle of the character
-		if (_limits[_actorLimit][0] > _actor._lim[0])
-			_limits[_actorLimit][0] = _actor._lim[0];
+		if (g_vm->_limits[g_vm->_actorLimit][0] > _actor._lim[0])
+			g_vm->_limits[g_vm->_actorLimit][0] = _actor._lim[0];
 
-		if (_limits[_actorLimit][1] > _actor._lim[2])
-			_limits[_actorLimit][1] = _actor._lim[2];
+		if (g_vm->_limits[g_vm->_actorLimit][1] > _actor._lim[2])
+			g_vm->_limits[g_vm->_actorLimit][1] = _actor._lim[2];
 
-		if (_limits[_actorLimit][2] < _actor._lim[1])
-			_limits[_actorLimit][2] = _actor._lim[1];
+		if (g_vm->_limits[g_vm->_actorLimit][2] < _actor._lim[1])
+			g_vm->_limits[g_vm->_actorLimit][2] = _actor._lim[1];
 
-		if (_limits[_actorLimit][3] < _actor._lim[3])
-			_limits[_actorLimit][3] = _actor._lim[3];
+		if (g_vm->_limits[g_vm->_actorLimit][3] < _actor._lim[3])
+			g_vm->_limits[g_vm->_actorLimit][3] = _actor._lim[3];
 
 		ResetZB(_actor._lim[0], _actor._lim[2], _actor._lim[1], _actor._lim[3]);
 		drawCharacter(DRAWFACES);
 
 		//FlagPaintCharacter = false;
 	} else if ((_actorPos == CurBox) && !FlagDialogActive) {
-		RegenSmackAnim(_playingAnims[1]);
+		g_vm->_animMgr->RegenSmackAnim(g_vm->_animMgr->_playingAnims[1]);
 	}
 }
 

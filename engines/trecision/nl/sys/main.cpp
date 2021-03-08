@@ -36,6 +36,7 @@
 #include "graphics/pixelformat.h"
 #include "graphics/surface.h"
 #include "trecision/graphics.h"
+#include "trecision/video.h"
 
 namespace Trecision {
 
@@ -58,9 +59,7 @@ extern int			KeybInput;
 void initMain();
 void NextMessage();
 void longset(void *dest, uint32 value, uint32 len);
-void StopAllSmackAnims();
 void StopSoundSystem();
-void RefreshAllAnimations();
 void FastFileFinish();
 void AnimFileFinish();
 void SpeechFileFinish();
@@ -144,7 +143,7 @@ void NlInit() {
 void CheckSystem() {
 	//for ( int a=0; a<5; a++ )
 	{
-		RefreshAllAnimations();
+		g_vm->_animMgr->RefreshAllAnimations();
 		EventLoop();
 	}
 }
@@ -358,7 +357,7 @@ void CloseSys(const char *str) { // close all
 	FastFileFinish();
 	SpeechFileFinish();
 	AnimFileFinish();
-	StopAllSmackAnims();
+	g_vm->_animMgr->StopAllSmackAnims();
 	StopSoundSystem();
 
 	if (str)
