@@ -272,8 +272,7 @@ protected:
 class LoseGame : public ActionRecord {
 public:
     virtual uint16 readData(Common::SeekableReadStream &stream) override;
-
-    byte loseData = 0;
+    virtual void execute(Nancy::NancyEngine *engine) override;
     
 protected:
     virtual Common::String getRecordTypeName() const override { return "LoseGame"; }

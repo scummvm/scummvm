@@ -312,8 +312,15 @@ void EventFlagsMultiHS::execute(NancyEngine *engine) {
 }
 
 uint16 LoseGame::readData(Common::SeekableReadStream &stream) {
-    loseData = stream.readByte();
+    stream.skip(1);
     return 1;
+}
+
+void LoseGame::execute(NancyEngine *engine) {
+    engine->stopAndUnloadSpecificSounds();
+    engine->setGameState(NancyEngine::kMainMenu);
+    engine->scene->resetStateToInit();
+    isDone = true;
 }
 
 uint16 PushScene::readData(Common::SeekableReadStream &stream) {
