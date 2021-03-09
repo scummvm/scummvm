@@ -6,7 +6,7 @@
 
 namespace AGDS {
 
-void Patch::load(Common::SeekableReadStream *stream) {
+void Patch::load(Common::ReadStream *stream) {
 	byte extended = stream->readByte();
 	if (extended != 1 && extended != 0) {
 		Common::String prototype = (char)extended + readString(stream, 31);
@@ -42,7 +42,7 @@ void Patch::load(Common::SeekableReadStream *stream) {
 	}
 }
 
-void Patch::save(Common::SeekableWriteStream *stream) {
+void Patch::save(Common::WriteStream *stream) {
 	int extended = 1;
 	stream->writeByte(extended);
 	writeString(stream, screenRegionName);

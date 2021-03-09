@@ -74,9 +74,9 @@ private:
 		virtual bool hasFile(const Common::String &name) const
 		{ return _members.find(name) != _members.end(); }
 
-		virtual int listMembers(Common::ArchiveMemberList &list) const;
-		virtual const Common::ArchiveMemberPtr getMember(const Common::String &name) const;
-		virtual Common::SeekableReadStream *createReadStreamForMember(const Common::String &name) const;
+		int listMembers(Common::ArchiveMemberList &list) const override;
+		const Common::ArchiveMemberPtr getMember(const Common::String &name) const override;
+		Common::SeekableReadStream *createReadStreamForMember(const Common::String &name) const override;
 	};
 
 public:
@@ -94,8 +94,8 @@ public:
 	Common::String loadText(const Common::String & name) const;
 };
 
-Common::String readString(Common::SeekableReadStream * stream, uint size = 32);
-void writeString(Common::SeekableWriteStream * stream, const Common::String &string, uint size = 32);
+Common::String readString(Common::ReadStream *stream, uint size = 32);
+void writeString(Common::WriteStream *stream, const Common::String &string, uint size = 32);
 
 } // End of namespace AGDS
 
