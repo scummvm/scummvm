@@ -80,7 +80,6 @@ AnimManager::AnimManager(TrecisionEngine *vm) : _vm(vm) {
 		_animTab[i]._name[0] = '\0';
 	}
 	
-
 	_animMaxX = _animMinX = 0;
 	_animMaxY = _animMinY = 0;
 
@@ -90,7 +89,12 @@ AnimManager::AnimManager(TrecisionEngine *vm) : _vm(vm) {
 	_fullMotionStart = _fullMotionEnd = 0;
 }
 
-AnimManager::~AnimManager() {}
+AnimManager::~AnimManager() {
+	for (int i = 0; i < MAXSMACK; ++i) {
+		delete _smkAnims[i];
+		_smkAnims[i] = nullptr;
+	}
+}
 
 /*------------------------------------------------
 					openSmk
@@ -545,7 +549,7 @@ void AnimManager::refreshSmkAnim(int num) {
 	} else
 		smkNextFrame();
 
-	if ((_smkAnims[pos] != NULL) && (_curAnimFrame[pos] >= _smkAnims[pos]->getFrameCount())) {
+	if ((_smkAnims[pos] != nullptr) && (_curAnimFrame[pos] >= _smkAnims[pos]->getFrameCount())) {
 		if ((_animTab[num]._flag & SMKANIM_LOOP) || (_animTab[num]._flag & SMKANIM_BKG))
 			InitAtFrameHandler(num, 0);
 
