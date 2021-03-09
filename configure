@@ -196,6 +196,7 @@ _no_pragma_pack=no
 _bink=yes
 _cloud=auto
 _pandoc=no
+_lld=no
 # Default vkeybd/eventrec options
 _vkeybd=no
 _eventrec=no
@@ -278,6 +279,7 @@ add_feature lua "lua" "_lua"
 add_feature fribidi "FriBidi" "_fribidi"
 add_feature cxx11 "c++11" "_use_cxx11"
 add_feature test_cxx11 "Test C++11" "_test_cxx11"
+add_feature lld "Use LLD linker" "_lld"
 
 # Directories for installing ScummVM.
 # This list is closely based on what GNU autoconf does,
@@ -1309,6 +1311,7 @@ for ac_option in $@; do
 	--disable-libcurl)            _libcurl=no            ;;
 	--enable-cloud)               _cloud=yes             ;;
 	--disable-cloud)              _cloud=no              ;;
+	--enable-lld)                 _lld=yes               ;;
 	--enable-updates)             _updates=yes           ;;
 	--disable-updates)            _updates=no            ;;
 	--enable-libunity)            _libunity=yes          ;;
@@ -2389,7 +2392,11 @@ if test "$_debug_build" != no; then
 		append_var CXXFLAGS "-gsplit-dwarf"
 		add_line_to_config_mk "SPLIT_DWARF = 1"
 		echo_n -- " + split DWARF"
-		if cc_check_no_clean $debug_mode -gsplit-dwarf -fuse-ld=gold -Wl,--gdb-index; then
+		if test "$_lld" = yes && cc_check_no_clean $debug_mode -gsplit-dwarf -fuse-ld=lld -Wl,--gdb-index; then
+			append_var LDFLAGS "-fuse-ld=lld"
+			append_var LDFLAGS "-Wl,--gdb-index"
+			echo_n -- " + LLD"
+		elif cc_check_no_clean $debug_mode -gsplit-dwarf -fuse-ld=gold -Wl,--gdb-index; then
 			append_var LDFLAGS "-fuse-ld=gold"
 			append_var LDFLAGS "-Wl,--gdb-index"
 			echo_n -- " + Gold"
@@ -2402,6 +2409,13 @@ if test "$_debug_build" != no; then
 	fi
 	cc_check_clean
 	echo ""
+fi
+
+if ! echo "$LDFLAGS" | grep -q -e -fuse-ld; then
+	echo "Using LLD linker... $_lld"
+	if test "$_lld" = yes ; then
+		append_var LDFLAGS -fuse-ld=lld
+	fi
 fi
 
 if test "$_release_build" = yes; then
