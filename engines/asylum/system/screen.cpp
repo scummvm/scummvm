@@ -1129,6 +1129,9 @@ void Screen::bltMasked(byte *srcBuffer, byte *maskBuffer, int16 height, int16 wi
 			dstBuffer++;
 			srcBuffer++;
 
+			if (i == width - 1)
+				break;
+
 			// Check run/skip
 			run--;
 			if (run < 0) {
