@@ -392,6 +392,16 @@ public:
 	/**@}*/
 
 	/**
+	 * \defgroup engine_setup globals
+	 * @{
+	 */
+
+	int _convert_16bit_bgr = 0;
+
+	/**@}*/
+
+
+	/**
 	 * \defgroup event globals
 	 * @{
 	 */

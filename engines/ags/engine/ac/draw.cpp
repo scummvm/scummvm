@@ -88,8 +88,6 @@ extern "C" void android_render();
 extern "C" void ios_render();
 #endif
 
-extern int convert_16bit_bgr;
-
 extern char noWalkBehindsAtAll;
 extern unsigned int loopcounter;
 extern char *walkBehindExists;  // whether a WB area is in this column
@@ -260,7 +258,7 @@ Bitmap *AdjustBitmapForUseWithDisplayMode(Bitmap *bitmap, bool has_alpha) {
 			new_bitmap = BitmapHelper::CreateBitmapCopy(bitmap, game_col_depth);
 	}
 	// Special case when we must convert 16-bit RGB to BGR
-	else if (convert_16bit_bgr == 1 && bmp_col_depth == 16) {
+	else if (_G(convert_16bit_bgr) == 1 && bmp_col_depth == 16) {
 		new_bitmap = convert_16_to_16bgr(bitmap);
 	}
 	return new_bitmap;

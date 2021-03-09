@@ -52,8 +52,6 @@ namespace AGS3 {
 using namespace AGS::Shared;
 using namespace AGS::Engine;
 
-extern int convert_16bit_bgr;
-
 void start_game_init_editor_debugging() {
 	if (_G(editor_debugging_enabled)) {
 		SetMultitasking(1);
@@ -118,7 +116,7 @@ void initialize_start_and_play_game(int override_start_room, int loadSaveOnStart
 
 		set_cursor_mode(MODE_WALK);
 
-		if (convert_16bit_bgr) {
+		if (_G(convert_16bit_bgr)) {
 			// Disable text as speech while displaying the warning message
 			// This happens if the user's graphics card does BGR order 16-bit colour
 			int oldalways = _GP(game).options[OPT_ALWAYSSPCH];

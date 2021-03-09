@@ -53,7 +53,6 @@ namespace AGS3 {
 using namespace AGS::Shared;
 using namespace AGS::Engine;
 
-extern int convert_16bit_bgr;
 extern IGraphicsDriver *gfxDriver;
 extern TreeMap *transtree;
 extern char transFileName[MAX_PATH];
@@ -68,7 +67,7 @@ String GetRuntimeInfo() {
 		"[Running %d x %d at %d-bit%s%s[GFX: %s; %s[Draw frame %d x %d["
 		"Sprite cache size: %d KB (limit %d KB; %d locked)",
 		_G(EngineVersion).LongString.GetCStr(), _GP(game).GetGameRes().Width, _GP(game).GetGameRes().Height, _GP(game).GetColorDepth(),
-		mode.Width, mode.Height, mode.ColorDepth, (convert_16bit_bgr) ? " BGR" : "",
+		mode.Width, mode.Height, mode.ColorDepth, (_G(convert_16bit_bgr)) ? " BGR" : "",
 		mode.Windowed ? " W" : "",
 		gfxDriver->GetDriverName(), filter->GetInfo().Name.GetCStr(),
 		render_frame.GetWidth(), render_frame.GetHeight(),

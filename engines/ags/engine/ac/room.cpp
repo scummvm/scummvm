@@ -374,8 +374,6 @@ void convert_room_coordinates_to_data_res(RoomStruct *rstruc) {
 	rstruc->Height /= mul;
 }
 
-extern int convert_16bit_bgr;
-
 void update_letterbox_mode() {
 	const Size real_room_sz = Size(data_to_game_coord(_GP(thisroom).Width), data_to_game_coord(_GP(thisroom).Height));
 	const Rect game_frame = RectWH(_GP(game).GetGameRes());

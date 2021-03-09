@@ -69,9 +69,6 @@ using namespace Engine;
 
 extern HSaveError load_game(int slotNumber, bool &data_overwritten);
 
-
-extern int convert_16bit_bgr;
-
 // this needs to be updated if the "play" struct changes
 #define SVG_VERSION_BWCOMPAT_MAJOR      3
 #define SVG_VERSION_BWCOMPAT_MINOR      2

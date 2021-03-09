@@ -50,12 +50,8 @@ namespace AGS3 {
 using namespace AGS::Shared;
 using namespace AGS::Engine;
 
-
-
 extern int _places_r, _places_g, _places_b;
 extern IGraphicsDriver *gfxDriver;
-
-int convert_16bit_bgr = 0;
 
 // Convert guis position and size to proper game resolution.
 // Necessary for pre 3.1.0 games only to sync with modern engine.
@@ -192,7 +188,7 @@ void engine_setup_color_conversions(int coldepth) {
 	// Most cards do 5-6-5 RGB, which is the format the files are saved in
 	// Some do 5-6-5 BGR, or  6-5-5 RGB, in which case convert the gfx
 	if ((coldepth == 16) && ((_G(_rgb_b_shift_16) != 0) || (_G(_rgb_r_shift_16) != 11))) {
-		convert_16bit_bgr = 1;
+		_G(convert_16bit_bgr) = 1;
 		if (_G(_rgb_r_shift_16) == 10) {
 			// some very old graphics cards lie about being 16-bit when they
 			// are in fact 15-bit ... get around this
