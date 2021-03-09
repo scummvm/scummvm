@@ -480,7 +480,7 @@ HSaveError WriteCharacters(PStream out) {
 	out->WriteInt32(_GP(game).numcharacters);
 	for (int i = 0; i < _GP(game).numcharacters; ++i) {
 		_GP(game).chars[i].WriteToFile(out.get());
-		charextra[i].WriteToFile(out.get());
+		_G(charextra)[i].WriteToFile(out.get());
 		Properties::WriteValues(_GP(play).charProps[i], out.get());
 		if (loaded_game_file_version <= kGameVersion_272)
 			WriteTimesRun272(*_GP(game).intrChar[i], out.get());
@@ -496,7 +496,7 @@ HSaveError ReadCharacters(PStream in, int32_t cmp_ver, const PreservedParams &pp
 		return err;
 	for (int i = 0; i < _GP(game).numcharacters; ++i) {
 		_GP(game).chars[i].ReadFromFile(in.get());
-		charextra[i].ReadFromFile(in.get());
+		_G(charextra)[i].ReadFromFile(in.get());
 		Properties::ReadValues(_GP(play).charProps[i], in.get());
 		if (loaded_game_file_version <= kGameVersion_272)
 			ReadTimesRun272(*_GP(game).intrChar[i], in.get());

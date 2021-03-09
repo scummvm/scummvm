@@ -56,7 +56,6 @@ namespace AGS3 {
 
 extern int gameHasBeenRestored;
 extern unsigned int load_new_game;
-extern CharacterInfo *playerchar;
 
 int run_dialog_request(int parmtr) {
 	_GP(play).stop_dialog_at_end = DIALOG_RUNNING;
@@ -494,7 +493,7 @@ void post_script_cleanup() {
 		case ePSANewRoom:
 			// only change rooms when all scripts are done
 			if (_G(num_scripts) == 0) {
-				new_room(thisData, playerchar);
+				new_room(thisData, _G(playerchar));
 				// don't allow any pending room scripts from the old room
 				// in run_another to be executed
 				return;
@@ -690,7 +689,7 @@ int run_interaction_commandlist(InteractionCommandList *nicl, int *timesrun, int
 			SetDialogOption(IPARAM1, IPARAM2, 0);
 			break;
 		case 12: // Go To Screen
-			Character_ChangeRoomAutoPosition(playerchar, IPARAM1, IPARAM2);
+			Character_ChangeRoomAutoPosition(_G(playerchar), IPARAM1, IPARAM2);
 			return -1;
 		case 13: // Add Inventory
 			add_inventory(IPARAM1);
@@ -729,7 +728,7 @@ int run_interaction_commandlist(InteractionCommandList *nicl, int *timesrun, int
 				cmdsrun[0] --;
 			break;
 		case 21: // if player has inventory item
-			if (playerchar->inv[IPARAM1] > 0)
+			if (_G(playerchar)->inv[IPARAM1] > 0)
 				if (run_interaction_commandlist(nicl->Cmds[i].Children.get(), timesrun, cmdsrun))
 					return -1;
 			break;

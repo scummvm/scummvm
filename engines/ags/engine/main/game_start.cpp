@@ -52,7 +52,6 @@ namespace AGS3 {
 using namespace AGS::Shared;
 using namespace AGS::Engine;
 
-extern CharacterInfo *playerchar;
 extern int convert_16bit_bgr;
 
 void start_game_init_editor_debugging() {
@@ -100,9 +99,9 @@ void start_game() {
 
 	if (_G(displayed_room) < 0) {
 		current_fade_out_effect();
-		load_new_room(playerchar->room, playerchar);
+		load_new_room(_G(playerchar)->room, _G(playerchar));
 		// load_new_room updates it, but it should be -1 in the first room
-		playerchar->prevroom = -1;
+		_G(playerchar)->prevroom = -1;
 	}
 
 	first_room_initialization();
@@ -131,7 +130,7 @@ void initialize_start_and_play_game(int override_start_room, int loadSaveOnStart
 
 		::AGS::g_vm->setRandomNumberSeed(_GP(play).randseed);
 		if (override_start_room)
-			playerchar->room = override_start_room;
+			_G(playerchar)->room = override_start_room;
 
 		Debug::Printf(kDbgMsg_Info, "Engine initialization complete");
 		Debug::Printf(kDbgMsg_Info, "Starting game");

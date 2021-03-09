@@ -45,10 +45,6 @@ namespace AGS3 {
 using namespace AGS::Shared;
 using namespace AGS::Engine;
 
-
-extern CharacterInfo *playerchar;
-
-
 GameState::GameState() {
 	Common::fill(&globalvars[0], &globalvars[MAXGLOBALVARS], 0);
 	Common::fill(&reserved[0], &reserved[GAME_STATE_RESERVED_INTS], 0);
@@ -183,8 +179,8 @@ void GameState::UpdateRoomCamera(int index) {
 	if ((real_room_sz.Width > rc.GetWidth()) || (real_room_sz.Height > rc.GetHeight())) {
 		// TODO: split out into Camera Behavior
 		if (!cam->IsLocked()) {
-			int x = data_to_game_coord(playerchar->x) - rc.GetWidth() / 2;
-			int y = data_to_game_coord(playerchar->y) - rc.GetHeight() / 2;
+			int x = data_to_game_coord(_G(playerchar)->x) - rc.GetWidth() / 2;
+			int y = data_to_game_coord(_G(playerchar)->y) - rc.GetHeight() / 2;
 			cam->SetAt(x, y);
 		}
 	} else {

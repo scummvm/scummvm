@@ -53,7 +53,6 @@ namespace AGS3 {
 using namespace AGS::Shared;
 using namespace AGS::Engine;
 
-extern CharacterInfo *playerchar;
 extern int convert_16bit_bgr;
 extern IGraphicsDriver *gfxDriver;
 extern TreeMap *transtree;
@@ -91,7 +90,7 @@ void script_debug(int cmdd, int dataa) {
 	int rr;
 	if (cmdd == 0) {
 		for (rr = 1; rr < _GP(game).numinvitems; rr++)
-			playerchar->inv[rr] = 1;
+			_G(playerchar)->inv[rr] = 1;
 		update_invorder();
 		//    Display("invorder decided there are %d items[display %d",_GP(play).inv_numorder,_GP(play).inv_numdisp);
 	} else if (cmdd == 1) {
@@ -99,7 +98,7 @@ void script_debug(int cmdd, int dataa) {
 		Display(toDisplay.GetCStr());
 		//    Display("shftR: %d  shftG: %d  shftB: %d", _G(_rgb_r_shift_16), _G(_rgb_g_shift_16), _G(_rgb_b_shift_16));
 		//    Display("Remaining memory: %d kb",_go32_dpmi_remaining_virtual_memory()/1024);
-		//Display("Play char bcd: %d",->GetColorDepth(_GP(spriteset)[_G(views)[playerchar->view].frames[playerchar->loop][playerchar->frame].pic]));
+		//Display("Play char bcd: %d",->GetColorDepth(_GP(spriteset)[_G(views)[_G(playerchar)->view].frames[_G(playerchar)->loop][_G(playerchar)->frame].pic]));
 	} else if (cmdd == 2) {
 		// show walkable areas from here
 		// TODO: support multiple viewports?!

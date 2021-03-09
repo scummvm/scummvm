@@ -85,9 +85,7 @@ namespace AGS3 {
 using namespace AGS::Shared;
 using namespace AGS::Engine;
 
-extern CharacterExtras *charextra;
 extern Bitmap *walkareabackup, *walkable_areas_temp;
-extern CharacterInfo *playerchar;
 extern unsigned int loopcounter;
 extern IDriverDependantBitmap *roomBackgroundBmp;
 extern IGraphicsDriver *gfxDriver;
@@ -287,7 +285,7 @@ void unload_old_room() {
 			_G(charcache)[ff].inUse = 0;
 		}
 		// ensure that any half-moves (eg. with scaled movement) are stopped
-		charextra[ff].xwas = INVALID_X;
+		_G(charextra)[ff].xwas = INVALID_X;
 	}
 
 	_GP(play).swap_portrait_lastchar = -1;
@@ -422,7 +420,7 @@ static void update_all_viewcams_with_newroom() {
 	}
 }
 
-// forchar = playerchar on NewRoom, or NULL if restore saved game
+// forchar = _G(playerchar) on NewRoom, or NULL if restore saved game
 void load_new_room(int newnum, CharacterInfo *forchar) {
 
 	debug_script_log("Loading room %d", newnum);
@@ -911,11 +909,11 @@ void new_room(int newnum, CharacterInfo *forchar) {
 	newnum = _G(in_leaves_screen);
 	_G(in_leaves_screen) = -1;
 
-	if ((playerchar->following >= 0) &&
-	        (_GP(game).chars[playerchar->following].room != newnum)) {
+	if ((_G(playerchar)->following >= 0) &&
+	        (_GP(game).chars[_G(playerchar)->following].room != newnum)) {
 		// the player character is following another character,
 		// who is not in the new room. therefore, abort the follow
-		playerchar->following = -1;
+		_G(playerchar)->following = -1;
 	}
 	update_polled_stuff_if_runtime();
 

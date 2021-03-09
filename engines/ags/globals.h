@@ -95,6 +95,8 @@ struct CCInventory;
 struct CCObject;
 struct CCRegion;
 struct CharacterCache;
+struct CharacterExtras;
+struct CharacterInfo;
 struct COLOR_MAP;
 struct DirtyRects;
 struct ExecutingScript;
@@ -126,6 +128,7 @@ struct ScriptRegion;
 struct ScriptString;
 struct ScriptSystem;
 struct SOUNDCLIP;
+struct SpeechLipSyncLine;
 struct SpriteListEntry;
 struct StaticArray;
 struct SystemImports;
@@ -256,6 +259,34 @@ public:
 	int _currentline = 0;
 	// script file format signature
 	const char *_scfilesig = "SCOM";
+
+	/**@}*/
+
+	/**
+	 * \defgroup character globals
+	 * @{
+	 */
+
+	CharacterExtras *_charextra = nullptr;
+	CharacterInfo *_playerchar = nullptr;
+	int32_t _sc_PlayerCharPtr = 0;
+	int _char_lowest_yp = 0;
+
+	// Sierra-style speech settings
+	int _face_talking = -1, _facetalkview = 0, _facetalkwait = 0, _facetalkframe = 0;
+	int _facetalkloop = 0, _facetalkrepeat = 0, _facetalkAllowBlink = 1;
+	int _facetalkBlinkLoop = 0;
+	CharacterInfo *_facetalkchar = nullptr;
+	// Do override default portrait position during QFG4-style speech overlay update
+	bool _facetalk_qfg4_override_placement_x = false;
+	bool _facetalk_qfg4_override_placement_y = false;
+
+	// lip-sync speech settings
+	int _loops_per_character, _text_lips_offset, _char_speaking = -1;
+	int _char_thinking = -1;
+	const char *_text_lips_text = nullptr;
+	SpeechLipSyncLine *_splipsync = nullptr;
+	int _numLipLines = 0, _curLipLine = -1, _curLipLinePhoneme = 0;
 
 	/**@}*/
 

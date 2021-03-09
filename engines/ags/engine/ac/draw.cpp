@@ -100,9 +100,6 @@ extern IDriverDependantBitmap *walkBehindBitmap[MAX_WALK_BEHINDS];
 extern int walkBehindsCachedForBgNum;
 extern WalkBehindMethodEnum walkBehindMethod;
 extern int walk_behind_baselines_changed;
-
-extern CharacterExtras *charextra;
-extern CharacterInfo *playerchar;
 extern int cur_mode, cur_cursor;
 extern int mouse_frame, mouse_delay;
 extern int lastmx, lastmy;
@@ -1599,29 +1596,29 @@ void prepare_characters_for_drawing() {
 
 		// calculate the zoom level
 		if (chin->flags & CHF_MANUALSCALING)  // character ignores scaling
-			zoom_level = charextra[aa].zoom;
+			zoom_level = _G(charextra)[aa].zoom;
 		else if ((onarea <= 0) && (_GP(thisroom).WalkAreas[0].ScalingFar == 0)) {
-			zoom_level = charextra[aa].zoom;
+			zoom_level = _G(charextra)[aa].zoom;
 			// NOTE: room objects don't have this fix
 			if (zoom_level == 0)
 				zoom_level = 100;
 		} else
 			zoom_level = get_area_scaling(onarea, chin->x, chin->y);
 
-		charextra[aa].zoom = zoom_level;
+		_G(charextra)[aa].zoom = zoom_level;
 
 		tint_red = tint_green = tint_blue = tint_amount = tint_light = light_level = 0;
 
 		if (chin->flags & CHF_HASTINT) {
 			// object specific tint, use it
-			tint_red = charextra[aa].tint_r;
-			tint_green = charextra[aa].tint_g;
-			tint_blue = charextra[aa].tint_b;
-			tint_amount = charextra[aa].tint_level;
-			tint_light = charextra[aa].tint_light;
+			tint_red = _G(charextra)[aa].tint_r;
+			tint_green = _G(charextra)[aa].tint_g;
+			tint_blue = _G(charextra)[aa].tint_b;
+			tint_amount = _G(charextra)[aa].tint_level;
+			tint_light = _G(charextra)[aa].tint_light;
 			light_level = 0;
 		} else if (chin->flags & CHF_HASLIGHT) {
-			light_level = charextra[aa].tint_light;
+			light_level = _G(charextra)[aa].tint_light;
 		} else {
 			get_local_tint(chin->x, chin->y, chin->flags & CHF_NOLIGHTING,
 			               &tint_amount, &tint_red, &tint_green, &tint_blue,
@@ -1675,13 +1672,13 @@ void prepare_characters_for_drawing() {
 			// it needs to be stretched, so calculate the new dimensions
 
 			scale_sprite_size(sppic, zoom_level, &newwidth, &newheight);
-			charextra[aa].width = newwidth;
-			charextra[aa].height = newheight;
+			_G(charextra)[aa].width = newwidth;
+			_G(charextra)[aa].height = newheight;
 		} else {
 			// draw at original size, so just use the sprite width and height
 			// TODO: store width and height always, that's much simplier to use for reference!
-			charextra[aa].width = 0;
-			charextra[aa].height = 0;
+			_G(charextra)[aa].width = 0;
+			_G(charextra)[aa].height = 0;
 			newwidth = _GP(game).SpriteInfos[sppic].Width;
 			newheight = _GP(game).SpriteInfos[sppic].Height;
 		}
@@ -1757,7 +1754,7 @@ void prepare_characters_for_drawing() {
 				usebasel += _GP(thisroom).Height;
 			}
 		} else if (walkBehindMethod == DrawAsSeparateCharSprite) {
-			sort_out_char_sprite_walk_behind(useindx, bgX, bgY, usebasel, charextra[aa].zoom, newwidth, newheight);
+			sort_out_char_sprite_walk_behind(useindx, bgX, bgY, usebasel, _G(charextra)[aa].zoom, newwidth, newheight);
 		} else if (walkBehindMethod == DrawOverCharSprite) {
 			sort_out_walk_behinds(actsps[useindx], bgX, bgY, usebasel);
 		}
@@ -1946,12 +1943,12 @@ void draw_gui_and_overlays() {
 	if (((_G(debug_flags) & DBG_NOIFACE) == 0) && (_G(displayed_room) >= 0)) {
 		int aa;
 
-		if (playerchar->activeinv >= MAX_INV) {
+		if (_G(playerchar)->activeinv >= MAX_INV) {
 			quit("!The player.activeinv variable has been corrupted, probably as a result\n"
 			     "of an incorrect assignment in the game script.");
 		}
-		if (playerchar->activeinv < 1) gui_inv_pic = -1;
-		else gui_inv_pic = _GP(game).invinfo[playerchar->activeinv].pic;
+		if (_G(playerchar)->activeinv < 1) gui_inv_pic = -1;
+		else gui_inv_pic = _GP(game).invinfo[_G(playerchar)->activeinv].pic;
 		_G(our_eip) = 37;
 		if (guis_need_update) {
 			guis_need_update = 0;

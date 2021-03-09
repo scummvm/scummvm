@@ -504,7 +504,7 @@ HSaveError DoAfterRestore(const PreservedParams &pp, const RestoredData &r_data)
 	set_cursor_mode(r_data.CursorMode);
 	set_mouse_cursor(r_data.CursorID);
 	if (r_data.CursorMode == MODE_USE)
-		SetActiveInventory(playerchar->activeinv);
+		SetActiveInventory(_G(playerchar)->activeinv);
 	// ensure that the current cursor is locked
 	_GP(spriteset).Precache(_GP(game).mcurs[r_data.CursorID].pic);
 
@@ -617,8 +617,8 @@ HSaveError DoAfterRestore(const PreservedParams &pp, const RestoredData &r_data)
 
 	if (_G(displayed_room) < 0) {
 		// the restart point, no room was loaded
-		load_new_room(playerchar->room, playerchar);
-		playerchar->prevroom = -1;
+		load_new_room(_G(playerchar)->room, _G(playerchar));
+		_G(playerchar)->prevroom = -1;
 
 		first_room_initialization();
 	}

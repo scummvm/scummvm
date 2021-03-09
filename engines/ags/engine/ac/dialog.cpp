@@ -70,8 +70,6 @@ namespace AGS3 {
 
 using namespace AGS::Shared;
 
-extern CharacterInfo *playerchar;
-
 extern int cur_mode, cur_cursor;
 extern IGraphicsDriver *gfxDriver;
 
@@ -332,7 +330,7 @@ int write_dialog_options(Bitmap *ds, bool ds_has_alpha, int dlgxp, int curyp, in
 			text_color = ds->GetCompatibleColor(_GP(play).read_dialog_option_colour);
 		} else {
 			// 'unread' colour
-			text_color = ds->GetCompatibleColor(playerchar->talkcolor);
+			text_color = ds->GetCompatibleColor(_G(playerchar)->talkcolor);
 		}
 
 		if (mouseison == ww) {
@@ -757,7 +755,7 @@ void DialogOptions::Redraw() {
 		// Set up the text box, if present
 		parserInput->Y = curyp + data_to_game_coord(_GP(game).options[OPT_DIALOGGAP]);
 		parserInput->Width = areawid - get_fixed_pixel_size(10);
-		parserInput->TextColor = playerchar->talkcolor;
+		parserInput->TextColor = _G(playerchar)->talkcolor;
 		if (mouseison == DLG_OPTION_PARSER)
 			parserInput->TextColor = forecol;
 

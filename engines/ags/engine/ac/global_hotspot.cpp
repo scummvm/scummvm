@@ -42,8 +42,6 @@ namespace AGS3 {
 
 using namespace AGS::Shared;
 
-extern CharacterInfo *playerchar;
-
 void DisableHotspot(int hsnum) {
 	if ((hsnum < 1) | (hsnum >= MAX_ROOM_HOTSPOTS))
 		quit("!DisableHotspot: invalid hotspot specified");
@@ -104,7 +102,7 @@ void RunHotspotInteraction(int hotspothere, int mood) {
 	else if (mood == MODE_CUSTOM2) passon = 9;
 	else if (mood == MODE_USE) {
 		passon = 3;
-		cdata = playerchar->activeinv;
+		cdata = _G(playerchar)->activeinv;
 		_GP(play).usedinv = cdata;
 	}
 

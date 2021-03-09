@@ -256,7 +256,7 @@ HError InitAndRegisterGameEntities() {
 
 	setup_player_character(_GP(game).playercharacter);
 	if (loaded_game_file_version >= kGameVersion_270)
-		ccAddExternalStaticObject("player", &_sc_PlayerCharPtr, &GlobalStaticManager);
+		ccAddExternalStaticObject("player", &_G(sc_PlayerCharPtr), &GlobalStaticManager);
 	return HError::None();
 }
 
@@ -331,7 +331,7 @@ HGameInitError InitGameState(const LoadedGameEntities &ents, GameDataVersion dat
 	//
 	// 3. Allocate and init game objects
 	//
-	charextra = (CharacterExtras *)calloc(_GP(game).numcharacters, sizeof(CharacterExtras));
+	_G(charextra) = (CharacterExtras *)calloc(_GP(game).numcharacters, sizeof(CharacterExtras));
 	_G(charcache) = (CharacterCache *)calloc(1, sizeof(CharacterCache) * _GP(game).numcharacters + 5);
 	_G(mls) = (MoveList *)calloc(_GP(game).numcharacters + MAX_ROOM_OBJECTS + 1, sizeof(MoveList));
 	actSpsCount = _GP(game).numcharacters + MAX_ROOM_OBJECTS + 2;

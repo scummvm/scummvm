@@ -41,12 +41,6 @@ namespace AGS3 {
 
 using namespace AGS::Shared;
 
-
-
-
-
-extern int char_speaking;
-
 extern unsigned int loopcounter;
 
 #define Random __Rand
@@ -268,7 +262,7 @@ int CharacterInfo::update_character_animating(int &aa, int &doing_nothing) {
 			doing_nothing = 1;
 
 		if (wait > 0) wait--;
-		else if ((char_speaking == aa) && (_GP(game).options[OPT_LIPSYNCTEXT] != 0)) {
+		else if ((_G(char_speaking) == aa) && (_GP(game).options[OPT_LIPSYNCTEXT] != 0)) {
 			// currently talking with lip-sync speech
 			int fraa = frame;
 			wait = update_lip_sync(view, loop, &fraa) - 1;
@@ -312,7 +306,7 @@ int CharacterInfo::update_character_animating(int &aa, int &doing_nothing) {
 			} else
 				frame++;
 
-			if ((aa == char_speaking) &&
+			if ((aa == _G(char_speaking)) &&
 				(_GP(play).speech_in_post_state ||
 				((!_GP(play).speech_has_voice) &&
 					(_GP(play).close_mouth_speech_time > 0) &&

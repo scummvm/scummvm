@@ -110,17 +110,13 @@ using namespace AGS::Shared;
 using namespace AGS::Engine;
 
 extern int cur_mode, cur_cursor;
-extern SpeechLipSyncLine *splipsync;
-extern int numLipLines, curLipLine, curLipLinePhoneme;
-
-extern CharacterExtras *charextra;
 extern DialogTopic *dialog;
 
 #if AGS_PLATFORM_OS_IOS || AGS_PLATFORM_OS_ANDROID
 extern int _G(psp_gfx_renderer);
 #endif
 
-extern int obj_lowest_yp, char_lowest_yp;
+extern int obj_lowest_yp;
 
 extern int actSpsCount;
 extern Bitmap **actsps;
@@ -465,7 +461,7 @@ void unload_game_file() {
 	_GP(play).FreeViewportsAndCameras();
 
 	_GP(characterScriptObjNames).clear();
-	free(charextra);
+	free(_G(charextra));
 	free(_G(mls));
 	free(actsps);
 	free(actspsbmp);
@@ -517,15 +513,15 @@ void unload_game_file() {
 	free(_G(charcache));
 	_G(charcache) = nullptr;
 
-	if (splipsync != nullptr) {
-		for (int i = 0; i < numLipLines; ++i) {
-			free(splipsync[i].endtimeoffs);
-			free(splipsync[i].frame);
+	if (_G(splipsync) != nullptr) {
+		for (int i = 0; i < _G(numLipLines); ++i) {
+			free(_G(splipsync)[i].endtimeoffs);
+			free(_G(splipsync)[i].frame);
 		}
-		free(splipsync);
-		splipsync = nullptr;
-		numLipLines = 0;
-		curLipLine = -1;
+		free(_G(splipsync));
+		_G(splipsync) = nullptr;
+		_G(numLipLines) = 0;
+		_G(curLipLine) = -1;
 	}
 
 	for (int i = 0; i < _GP(game).numdialog; ++i) {
@@ -1146,7 +1142,7 @@ void ReadGameSetupStructBase_Aligned(Stream *in) {
 void ReadCharacterExtras_Aligned(Stream *in) {
 	AlignedStream align_s(in, Shared::kAligned_Read);
 	for (int i = 0; i < _GP(game).numcharacters; ++i) {
-		charextra[i].ReadFromFile(&align_s);
+		_G(charextra)[i].ReadFromFile(&align_s);
 		align_s.Reset();
 	}
 }
@@ -1667,14 +1663,14 @@ int __GetLocationType(int xxx, int yyy, int allowHotspot0) {
 		wbat = 0;
 
 	if ((charat >= 0) && (objat >= 0)) {
-		if ((wbat > obj_lowest_yp) && (wbat > char_lowest_yp))
+		if ((wbat > obj_lowest_yp) && (wbat > _G(char_lowest_yp)))
 			winner = LOCTYPE_HOTSPOT;
-		else if (obj_lowest_yp > char_lowest_yp)
+		else if (obj_lowest_yp > _G(char_lowest_yp))
 			winner = LOCTYPE_OBJ;
 		else
 			winner = LOCTYPE_CHAR;
 	} else if (charat >= 0) {
-		if (wbat > char_lowest_yp)
+		if (wbat > _G(char_lowest_yp))
 			winner = LOCTYPE_HOTSPOT;
 		else
 			winner = LOCTYPE_CHAR;
@@ -1803,7 +1799,7 @@ void replace_tokens(const char *srcmes, char *destm, int maxlen) {
 			if (tokentype == 1) {
 				if ((inx < 1) | (inx >= _GP(game).numinvitems))
 					quit("!Display: invalid inv item specified in @IN@");
-				snprintf(tval, sizeof(tval), "%d", playerchar->inv[inx]);
+				snprintf(tval, sizeof(tval), "%d", _G(playerchar)->inv[inx]);
 			} else {
 				if ((inx < 0) | (inx >= MAXGSVALUES))
 					quit("!Display: invalid global int index speicifed in @GI@");

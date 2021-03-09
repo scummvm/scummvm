@@ -53,9 +53,6 @@ namespace AGS3 {
 
 using namespace AGS::Shared;
 
-extern CharacterExtras *charextra;
-extern CharacterInfo *playerchar;
-
 int in_inv_screen = 0, inv_screen_newroom = -1;
 
 // *** INV WINDOW FUNCTIONS
@@ -112,7 +109,7 @@ int InvWindow_GetItemsPerRow(GUIInvWindow *guii) {
 }
 
 int InvWindow_GetItemCount(GUIInvWindow *guii) {
-	return charextra[guii->GetCharacterId()].invorder_count;
+	return _G(charextra)[guii->GetCharacterId()].invorder_count;
 }
 
 int InvWindow_GetRowCount(GUIInvWindow *guii) {
@@ -120,7 +117,7 @@ int InvWindow_GetRowCount(GUIInvWindow *guii) {
 }
 
 void InvWindow_ScrollDown(GUIInvWindow *guii) {
-	if ((charextra[guii->GetCharacterId()].invorder_count) >
+	if ((_G(charextra)[guii->GetCharacterId()].invorder_count) >
 		(guii->TopItem + (guii->ColCount * guii->RowCount))) {
 		guii->TopItem += guii->ColCount;
 		guis_need_update = 1;
@@ -138,9 +135,9 @@ void InvWindow_ScrollUp(GUIInvWindow *guii) {
 }
 
 ScriptInvItem *InvWindow_GetItemAtIndex(GUIInvWindow *guii, int index) {
-	if ((index < 0) || (index >= charextra[guii->GetCharacterId()].invorder_count))
+	if ((index < 0) || (index >= _G(charextra)[guii->GetCharacterId()].invorder_count))
 		return nullptr;
-	return &_G(scrInv)[charextra[guii->GetCharacterId()].invorder[index]];
+	return &_G(scrInv)[_G(charextra)[guii->GetCharacterId()].invorder[index]];
 }
 
 //=============================================================================
@@ -157,10 +154,10 @@ int offset_over_inv(GUIInvWindow *inv) {
 		return -1;
 
 	mover += inv->TopItem;
-	if ((mover < 0) || (mover >= charextra[inv->GetCharacterId()].invorder_count))
+	if ((mover < 0) || (mover >= _G(charextra)[inv->GetCharacterId()].invorder_count))
 		return -1;
 
-	return charextra[inv->GetCharacterId()].invorder[mover];
+	return _G(charextra)[inv->GetCharacterId()].invorder[mover];
 }
 
 //
@@ -241,9 +238,9 @@ int InventoryScreen::Redraw() {
 	numitems = 0;
 	widest = 0;
 	highest = 0;
-	if (charextra[_GP(game).playercharacter].invorder_count < 0)
+	if (_G(charextra)[_GP(game).playercharacter].invorder_count < 0)
 		update_invorder();
-	if (charextra[_GP(game).playercharacter].invorder_count == 0) {
+	if (_G(charextra)[_GP(game).playercharacter].invorder_count == 0) {
 		DisplayMessage(996);
 		in_inv_screen--;
 		return -1;
@@ -255,17 +252,17 @@ int InventoryScreen::Redraw() {
 		return -1;
 	}
 
-	for (int i = 0; i < charextra[_GP(game).playercharacter].invorder_count; ++i) {
-		if (_GP(game).invinfo[charextra[_GP(game).playercharacter].invorder[i]].name[0] != 0) {
-			dii[numitems].num = charextra[_GP(game).playercharacter].invorder[i];
-			dii[numitems].sprnum = _GP(game).invinfo[charextra[_GP(game).playercharacter].invorder[i]].pic;
+	for (int i = 0; i < _G(charextra)[_GP(game).playercharacter].invorder_count; ++i) {
+		if (_GP(game).invinfo[_G(charextra)[_GP(game).playercharacter].invorder[i]].name[0] != 0) {
+			dii[numitems].num = _G(charextra)[_GP(game).playercharacter].invorder[i];
+			dii[numitems].sprnum = _GP(game).invinfo[_G(charextra)[_GP(game).playercharacter].invorder[i]].pic;
 			int snn = dii[numitems].sprnum;
 			if (_GP(game).SpriteInfos[snn].Width > widest) widest = _GP(game).SpriteInfos[snn].Width;
 			if (_GP(game).SpriteInfos[snn].Height > highest) highest = _GP(game).SpriteInfos[snn].Height;
 			numitems++;
 		}
 	}
-	if (numitems != charextra[_GP(game).playercharacter].invorder_count)
+	if (numitems != _G(charextra)[_GP(game).playercharacter].invorder_count)
 		quit("inconsistent inventory calculations");
 
 	widest += get_fixed_pixel_size(4);
@@ -392,21 +389,21 @@ bool InventoryScreen::Run() {
 				_GP(play).usedinv = toret;
 
 				// set the activeinv so the script can check it
-				int activeinvwas = playerchar->activeinv;
-				playerchar->activeinv = toret;
+				int activeinvwas = _G(playerchar)->activeinv;
+				_G(playerchar)->activeinv = toret;
 
 				//ags_domouse(DOMOUSE_DISABLE);
 				run_event_block_inv(dii[clickedon].num, 3);
 
 				// if the script didn't change it, then put it back
-				if (playerchar->activeinv == toret)
-					playerchar->activeinv = activeinvwas;
+				if (_G(playerchar)->activeinv == toret)
+					_G(playerchar)->activeinv = activeinvwas;
 
 				// in case the script did anything to the screen, redraw it
 				UpdateGameOnce();
 
 				// They used the active item and lost it
-				if (playerchar->inv[toret] < 1) {
+				if (_G(playerchar)->inv[toret] < 1) {
 					cmode = CURS_ARROW;
 					set_mouse_cursor(cmode);
 					toret = -1;
@@ -508,7 +505,7 @@ int __actual_invscreen() {
 int invscreen() {
 	int selt = __actual_invscreen();
 	if (selt < 0) return -1;
-	playerchar->activeinv = selt;
+	_G(playerchar)->activeinv = selt;
 	guis_need_update = 1;
 	set_cursor_mode(MODE_USE);
 	return selt;

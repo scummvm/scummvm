@@ -34,9 +34,6 @@ namespace AGS3 {
 
 extern int gui_disabled_style;
 
-extern CharacterExtras *charextra;
-
-
 namespace AGS {
 namespace Shared {
 
@@ -55,7 +52,7 @@ void GUIInvWindow::Draw(Bitmap *ds) {
 	// backwards compatibility
 	_GP(play).inv_numinline = ColCount;
 	_GP(play).inv_numdisp = RowCount * ColCount;
-	_GP(play).obsolete_inv_numorder = charextra[_GP(game).playercharacter].invorder_count;
+	_GP(play).obsolete_inv_numorder = _G(charextra)[_GP(game).playercharacter].invorder_count;
 	// if the user changes top_inv_item, switch into backwards
 	// compatibiltiy mode
 	if (_GP(play).inv_top)
@@ -68,12 +65,12 @@ void GUIInvWindow::Draw(Bitmap *ds) {
 	int at_x = X;
 	int at_y = Y;
 	int lastItem = TopItem + (ColCount * RowCount);
-	if (lastItem > charextra[GetCharacterId()].invorder_count)
-		lastItem = charextra[GetCharacterId()].invorder_count;
+	if (lastItem > _G(charextra)[GetCharacterId()].invorder_count)
+		lastItem = _G(charextra)[GetCharacterId()].invorder_count;
 
 	for (int item = TopItem; item < lastItem; ++item) {
 		// draw inv graphic
-		draw_gui_sprite(ds, _GP(game).invinfo[charextra[GetCharacterId()].invorder[item]].pic, at_x, at_y, true);
+		draw_gui_sprite(ds, _GP(game).invinfo[_G(charextra)[GetCharacterId()].invorder[item]].pic, at_x, at_y, true);
 		at_x += data_to_game_coord(ItemWidth);
 
 		// go to next row when appropriate

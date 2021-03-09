@@ -85,29 +85,6 @@ extern Bitmap **actsps;
 extern int said_speech_line;
 extern int said_text;
 
-//--------------------------------
-
-CharacterExtras *charextra;
-CharacterInfo *playerchar;
-int32_t _sc_PlayerCharPtr = 0;
-int char_lowest_yp;
-
-// Sierra-style speech settings
-int face_talking = -1, facetalkview = 0, facetalkwait = 0, facetalkframe = 0;
-int facetalkloop = 0, facetalkrepeat = 0, facetalkAllowBlink = 1;
-int facetalkBlinkLoop = 0;
-CharacterInfo *facetalkchar = nullptr;
-// Do override default portrait position during QFG4-style speech overlay update
-bool facetalk_qfg4_override_placement_x = false;
-bool facetalk_qfg4_override_placement_y = false;
-
-// lip-sync speech settings
-int loops_per_character, text_lips_offset, char_speaking = -1;
-int char_thinking = -1;
-const char *text_lips_text = nullptr;
-SpeechLipSyncLine *splipsync = nullptr;
-int numLipLines = 0, curLipLine = -1, curLipLinePhoneme = 0;
-
 // **** CHARACTER: FUNCTIONS ****
 
 void Character_AddInventory(CharacterInfo *chaa, ScriptInvItem *invi, int addIndex) {
@@ -127,33 +104,33 @@ void Character_AddInventory(CharacterInfo *chaa, ScriptInvItem *invi, int addInd
 
 	if (_GP(game).options[OPT_DUPLICATEINV] == 0) {
 		// Ensure it is only in the list once
-		for (ee = 0; ee < charextra[charid].invorder_count; ee++) {
-			if (charextra[charid].invorder[ee] == inum) {
+		for (ee = 0; ee < _G(charextra)[charid].invorder_count; ee++) {
+			if (_G(charextra)[charid].invorder[ee] == inum) {
 				// They already have the item, so don't add it to the list
-				if (chaa == playerchar)
+				if (chaa == _G(playerchar))
 					run_on_event(GE_ADD_INV, RuntimeScriptValue().SetInt32(inum));
 				return;
 			}
 		}
 	}
-	if (charextra[charid].invorder_count >= MAX_INVORDER)
+	if (_G(charextra)[charid].invorder_count >= MAX_INVORDER)
 		quit("!Too many inventory items added, max 500 display at one time");
 
 	if ((addIndex == SCR_NO_VALUE) ||
-	        (addIndex >= charextra[charid].invorder_count) ||
+	        (addIndex >= _G(charextra)[charid].invorder_count) ||
 	        (addIndex < 0)) {
 		// add new item at end of list
-		charextra[charid].invorder[charextra[charid].invorder_count] = inum;
+		_G(charextra)[charid].invorder[_G(charextra)[charid].invorder_count] = inum;
 	} else {
 		// insert new item at index
-		for (ee = charextra[charid].invorder_count - 1; ee >= addIndex; ee--)
-			charextra[charid].invorder[ee + 1] = charextra[charid].invorder[ee];
+		for (ee = _G(charextra)[charid].invorder_count - 1; ee >= addIndex; ee--)
+			_G(charextra)[charid].invorder[ee + 1] = _G(charextra)[charid].invorder[ee];
 
-		charextra[charid].invorder[addIndex] = inum;
+		_G(charextra)[charid].invorder[addIndex] = inum;
 	}
-	charextra[charid].invorder_count++;
+	_G(charextra)[charid].invorder_count++;
 	guis_need_update = 1;
-	if (chaa == playerchar)
+	if (chaa == _G(playerchar))
 		run_on_event(GE_ADD_INV, RuntimeScriptValue().SetInt32(inum));
 
 }
@@ -297,7 +274,7 @@ void Character_ChangeView(CharacterInfo *chap, int vii) {
 	chap->frame = 0;
 	chap->wait = 0;
 	chap->walkwait = 0;
-	charextra[chap->index_id].animwait = 0;
+	_G(charextra)[chap->index_id].animwait = 0;
 	FindReasonableLoopForCharacter(chap);
 }
 
@@ -677,7 +654,7 @@ void Character_LoseInventory(CharacterInfo *chap, ScriptInvItem *invi) {
 
 	if ((chap->activeinv == inum) & (chap->inv[inum] < 1)) {
 		chap->activeinv = -1;
-		if ((chap == playerchar) && (GetCursorMode() == MODE_USE))
+		if ((chap == _G(playerchar)) && (GetCursorMode() == MODE_USE))
 			set_cursor_mode(0);
 	}
 
@@ -685,18 +662,18 @@ void Character_LoseInventory(CharacterInfo *chap, ScriptInvItem *invi) {
 
 	if ((chap->inv[inum] == 0) || (_GP(game).options[OPT_DUPLICATEINV] > 0)) {
 		int xx, tt;
-		for (xx = 0; xx < charextra[charid].invorder_count; xx++) {
-			if (charextra[charid].invorder[xx] == inum) {
-				charextra[charid].invorder_count--;
-				for (tt = xx; tt < charextra[charid].invorder_count; tt++)
-					charextra[charid].invorder[tt] = charextra[charid].invorder[tt + 1];
+		for (xx = 0; xx < _G(charextra)[charid].invorder_count; xx++) {
+			if (_G(charextra)[charid].invorder[xx] == inum) {
+				_G(charextra)[charid].invorder_count--;
+				for (tt = xx; tt < _G(charextra)[charid].invorder_count; tt++)
+					_G(charextra)[charid].invorder[tt] = _G(charextra)[charid].invorder[tt + 1];
 				break;
 			}
 		}
 	}
 	guis_need_update = 1;
 
-	if (chap == playerchar)
+	if (chap == _G(playerchar))
 		run_on_event(GE_LOSE_INV, RuntimeScriptValue().SetInt32(inum));
 }
 
@@ -766,7 +743,7 @@ void Character_SetAsPlayer(CharacterInfo *chaa) {
 
 	//update_invorder();
 
-	debug_script_log("%s is new player character", playerchar->scrname);
+	debug_script_log("%s is new player character", _G(playerchar)->scrname);
 
 	// Within game_start, return now
 	if (_G(displayed_room) < 0)
@@ -775,23 +752,23 @@ void Character_SetAsPlayer(CharacterInfo *chaa) {
 	// Ignore invalid room numbers for the character and just place him in
 	// the current room for 2.x. Following script calls to NewRoom() will
 	// make sure this still works as intended.
-	if ((loaded_game_file_version <= kGameVersion_272) && (playerchar->room < 0))
-		playerchar->room = _G(displayed_room);
+	if ((loaded_game_file_version <= kGameVersion_272) && (_G(playerchar)->room < 0))
+		_G(playerchar)->room = _G(displayed_room);
 
-	if (_G(displayed_room) != playerchar->room)
-		NewRoom(playerchar->room);
+	if (_G(displayed_room) != _G(playerchar)->room)
+		NewRoom(_G(playerchar)->room);
 	else   // make sure it doesn't run the region interactions
-		_GP(play).player_on_region = GetRegionIDAtRoom(playerchar->x, playerchar->y);
+		_GP(play).player_on_region = GetRegionIDAtRoom(_G(playerchar)->x, _G(playerchar)->y);
 
-	if ((playerchar->activeinv >= 0) && (playerchar->inv[playerchar->activeinv] < 1))
-		playerchar->activeinv = -1;
+	if ((_G(playerchar)->activeinv >= 0) && (_G(playerchar)->inv[_G(playerchar)->activeinv] < 1))
+		_G(playerchar)->activeinv = -1;
 
 	// They had inv selected, so change the cursor
 	if (cur_mode == MODE_USE) {
-		if (playerchar->activeinv < 0)
+		if (_G(playerchar)->activeinv < 0)
 			SetNextCursor();
 		else
-			SetActiveInventory(playerchar->activeinv);
+			SetActiveInventory(_G(playerchar)->activeinv);
 	}
 
 }
@@ -828,7 +805,7 @@ void Character_SetIdleView(CharacterInfo *chaa, int iview, int itime) {
 	}
 	// if they switch to a swimming animation, kick it off immediately
 	if (itime == 0)
-		charextra[chaa->index_id].process_idle_this_time = 1;
+		_G(charextra)[chaa->index_id].process_idle_this_time = 1;
 
 }
 
@@ -837,35 +814,35 @@ bool Character_GetHasExplicitLight(CharacterInfo *ch) {
 }
 
 int Character_GetLightLevel(CharacterInfo *ch) {
-	return ch->has_explicit_light() ? charextra[ch->index_id].tint_light : 0;
+	return ch->has_explicit_light() ? _G(charextra)[ch->index_id].tint_light : 0;
 }
 
 void Character_SetLightLevel(CharacterInfo *chaa, int light_level) {
 	light_level = Math::Clamp(light_level, -100, 100);
 
-	charextra[chaa->index_id].tint_light = light_level;
+	_G(charextra)[chaa->index_id].tint_light = light_level;
 	chaa->flags &= ~CHF_HASTINT;
 	chaa->flags |= CHF_HASLIGHT;
 }
 
 int Character_GetTintRed(CharacterInfo *ch) {
-	return ch->has_explicit_tint() ? charextra[ch->index_id].tint_r : 0;
+	return ch->has_explicit_tint() ? _G(charextra)[ch->index_id].tint_r : 0;
 }
 
 int Character_GetTintGreen(CharacterInfo *ch) {
-	return ch->has_explicit_tint() ? charextra[ch->index_id].tint_g : 0;
+	return ch->has_explicit_tint() ? _G(charextra)[ch->index_id].tint_g : 0;
 }
 
 int Character_GetTintBlue(CharacterInfo *ch) {
-	return ch->has_explicit_tint() ? charextra[ch->index_id].tint_b : 0;
+	return ch->has_explicit_tint() ? _G(charextra)[ch->index_id].tint_b : 0;
 }
 
 int Character_GetTintSaturation(CharacterInfo *ch) {
-	return ch->has_explicit_tint() ? charextra[ch->index_id].tint_level : 0;
+	return ch->has_explicit_tint() ? _G(charextra)[ch->index_id].tint_level : 0;
 }
 
 int Character_GetTintLuminance(CharacterInfo *ch) {
-	return ch->has_explicit_tint() ? ((charextra[ch->index_id].tint_light * 10) / 25) : 0;
+	return ch->has_explicit_tint() ? ((_G(charextra)[ch->index_id].tint_light * 10) / 25) : 0;
 }
 
 void Character_SetOption(CharacterInfo *chaa, int flag, int yesorno) {
@@ -908,10 +885,10 @@ void Character_StopMoving(CharacterInfo *charp) {
 	if (chaa == _GP(play).skip_until_char_stops)
 		EndSkippingUntilCharStops();
 
-	if (charextra[chaa].xwas != INVALID_X) {
-		charp->x = charextra[chaa].xwas;
-		charp->y = charextra[chaa].ywas;
-		charextra[chaa].xwas = INVALID_X;
+	if (_G(charextra)[chaa].xwas != INVALID_X) {
+		charp->x = _G(charextra)[chaa].xwas;
+		charp->y = _G(charextra)[chaa].ywas;
+		_G(charextra)[chaa].xwas = INVALID_X;
 	}
 	if ((charp->walking > 0) && (charp->walking < TURNING_AROUND)) {
 		// if it's not a MoveCharDirect, make sure they end up on a walkable area
@@ -922,7 +899,7 @@ void Character_StopMoving(CharacterInfo *charp) {
 
 		charp->idleleft = charp->idletime;
 		// restart the idle animation straight away
-		charextra[chaa].process_idle_this_time = 1;
+		_G(charextra)[chaa].process_idle_this_time = 1;
 	}
 	if (charp->walking) {
 		// If the character is currently moving, stop them and reset their frame
@@ -941,11 +918,11 @@ void Character_Tint(CharacterInfo *chaa, int red, int green, int blue, int opaci
 
 	debug_script_log("Set %s tint RGB(%d,%d,%d) %d%%", chaa->scrname, red, green, blue, opacity);
 
-	charextra[chaa->index_id].tint_r = red;
-	charextra[chaa->index_id].tint_g = green;
-	charextra[chaa->index_id].tint_b = blue;
-	charextra[chaa->index_id].tint_level = opacity;
-	charextra[chaa->index_id].tint_light = (luminance * 25) / 10;
+	_G(charextra)[chaa->index_id].tint_r = red;
+	_G(charextra)[chaa->index_id].tint_g = green;
+	_G(charextra)[chaa->index_id].tint_b = blue;
+	_G(charextra)[chaa->index_id].tint_level = opacity;
+	_G(charextra)[chaa->index_id].tint_light = (luminance * 25) / 10;
 	chaa->flags &= ~CHF_HASLIGHT;
 	chaa->flags |= CHF_HASTINT;
 }
@@ -979,7 +956,7 @@ void Character_UnlockViewEx(CharacterInfo *chaa, int stopMoving) {
 	chaa->pic_xoffs = 0;
 	chaa->pic_yoffs = 0;
 	// restart the idle animation straight away
-	charextra[chaa->index_id].process_idle_this_time = 1;
+	_G(charextra)[chaa->index_id].process_idle_this_time = 1;
 
 }
 
@@ -1278,7 +1255,7 @@ void Character_SetIgnoreScaling(CharacterInfo *chaa, int yesorno) {
 	if (yesorno) {
 		// when setting IgnoreScaling to 1, should reset zoom level
 		// like it used to in pre-2.71
-		charextra[chaa->index_id].zoom = 100;
+		_G(charextra)[chaa->index_id].zoom = 100;
 	}
 	Character_SetManualScaling(chaa, yesorno);
 }
@@ -1412,7 +1389,7 @@ void Character_SetScaleVolume(CharacterInfo *chaa, int yesorno) {
 }
 
 int Character_GetScaling(CharacterInfo *chaa) {
-	return charextra[chaa->index_id].zoom;
+	return _G(charextra)[chaa->index_id].zoom;
 }
 
 void Character_SetScaling(CharacterInfo *chaa, int zoomlevel) {
@@ -1424,7 +1401,7 @@ void Character_SetScaling(CharacterInfo *chaa, int zoomlevel) {
 	if ((zoomlevel < 5) || (zoomlevel > 200))
 		quit("!Character.Scaling: scaling level must be between 5 and 200%");
 
-	charextra[chaa->index_id].zoom = zoomlevel;
+	_G(charextra)[chaa->index_id].zoom = zoomlevel;
 }
 
 int Character_GetSolid(CharacterInfo *chaa) {
@@ -1485,11 +1462,11 @@ void Character_SetSpeechView(CharacterInfo *chaa, int vii) {
 }
 
 bool Character_GetThinking(CharacterInfo *chaa) {
-	return char_thinking == chaa->index_id;
+	return _G(char_thinking) == chaa->index_id;
 }
 
 int Character_GetThinkingFrame(CharacterInfo *chaa) {
-	if (char_thinking == chaa->index_id)
+	if (_G(char_thinking) == chaa->index_id)
 		return chaa->thinkview > 0 ? chaa->frame : -1;
 
 	debug_script_warn("Character.ThinkingFrame: character is not currently thinking");
@@ -1574,16 +1551,14 @@ void Character_SetZ(CharacterInfo *chaa, int newval) {
 	chaa->z = newval;
 }
 
-extern int char_speaking;
-
 int Character_GetSpeakingFrame(CharacterInfo *chaa) {
 
-	if ((face_talking >= 0) && (facetalkrepeat)) {
-		if (facetalkchar->index_id == chaa->index_id) {
-			return facetalkframe;
+	if ((_G(face_talking) >= 0) && (_G(facetalkrepeat))) {
+		if (_G(facetalkchar)->index_id == chaa->index_id) {
+			return _G(facetalkframe);
 		}
-	} else if (char_speaking >= 0) {
-		if (char_speaking == chaa->index_id) {
+	} else if (_G(char_speaking) >= 0) {
+		if (_G(char_speaking) == chaa->index_id) {
 			return chaa->frame;
 		}
 	}
@@ -1631,7 +1606,7 @@ void walk_character(int chac, int tox, int toy, int ignwal, bool autoWalkAnims) 
 	// if they are currently walking, save the current Wait
 	if (chin->walking) {
 		waitWas = chin->walkwait;
-		animWaitWas = charextra[chac].animwait;
+		animWaitWas = _G(charextra)[chac].animwait;
 	}
 
 	StopMoving(chac);
@@ -1665,7 +1640,7 @@ void walk_character(int chac, int tox, int toy, int ignwal, bool autoWalkAnims) 
 		// are already moving
 		if (autoWalkAnims) {
 			chin->walkwait = waitWas;
-			charextra[chac].animwait = animWaitWas;
+			_G(charextra)[chac].animwait = animWaitWas;
 
 			if (_G(mls)[mslot].pos[0] != _G(mls)[mslot].pos[1]) {
 				fix_player_sprite(&_G(mls)[mslot], chin);
@@ -2033,10 +2008,10 @@ int wantMoveNow(CharacterInfo *chi, CharacterExtras *chex) {
 
 void setup_player_character(int charid) {
 	_GP(game).playercharacter = charid;
-	playerchar = &_GP(game).chars[charid];
-	_sc_PlayerCharPtr = ccGetObjectHandleFromAddress((char *)playerchar);
+	_G(playerchar) = &_GP(game).chars[charid];
+	_G(sc_PlayerCharPtr) = ccGetObjectHandleFromAddress((char *)_G(playerchar));
 	if (loaded_game_file_version < kGameVersion_270) {
-		ccAddExternalDynamicObject("player", playerchar, &_GP(ccDynamicCharacter));
+		ccAddExternalDynamicObject("player", _G(playerchar), &_GP(ccDynamicCharacter));
 	}
 }
 
@@ -2082,7 +2057,7 @@ void CheckViewFrameForCharacter(CharacterInfo *chi) {
 
 	if (chi->flags & CHF_SCALEVOLUME) {
 		// adjust the sound volume using the character's zoom level
-		int zoom_level = charextra[chi->index_id].zoom;
+		int zoom_level = _G(charextra)[chi->index_id].zoom;
 		if (zoom_level == 0)
 			zoom_level = 100;
 
@@ -2125,7 +2100,7 @@ CharacterInfo *GetCharacterAtRoom(int x, int y) {
 	return &_GP(game).chars[hsnum];
 }
 
-extern int char_lowest_yp, obj_lowest_yp;
+extern int obj_lowest_yp;
 
 int is_pos_on_character(int xx, int yy) {
 	int cc, sppic, lowestyp = 0, lowestwas = -1;
@@ -2143,8 +2118,8 @@ int is_pos_on_character(int xx, int yy) {
 		}
 
 		sppic = _G(views)[chin->view].loops[chin->loop].frames[chin->frame].pic;
-		int usewid = charextra[cc].width;
-		int usehit = charextra[cc].height;
+		int usewid = _G(charextra)[cc].width;
+		int usehit = _G(charextra)[cc].height;
 		if (usewid == 0) usewid = _GP(game).SpriteInfos[sppic].Width;
 		if (usehit == 0) usehit = _GP(game).SpriteInfos[sppic].Height;
 		int xxx = chin->x - game_to_data_coord(usewid) / 2;
@@ -2163,7 +2138,7 @@ int is_pos_on_character(int xx, int yy) {
 		lowestyp = use_base;
 		lowestwas = cc;
 	}
-	char_lowest_yp = lowestyp;
+	_G(char_lowest_yp) = lowestyp;
 	return lowestwas;
 }
 
@@ -2366,8 +2341,8 @@ void _displayspeech(const char *texx, int aschar, int xx, int yy, int widd, int 
 	int oldview = -1, oldloop = -1;
 	int ovr_type = 0;
 
-	text_lips_offset = 0;
-	text_lips_text = texx;
+	_G(text_lips_offset) = 0;
+	_G(text_lips_text) = texx;
 
 	Bitmap *closeupface = nullptr;
 	// TODO: we always call _display_at later which may also start voice-over;
@@ -2434,7 +2409,7 @@ void _displayspeech(const char *texx, int aschar, int xx, int yy, int widd, int 
 
 		if (tdyp < 0) {
 			int sppic = _G(views)[speakingChar->view].loops[speakingChar->loop].frames[0].pic;
-			int height = (charextra[aschar].height < 1) ? _GP(game).SpriteInfos[sppic].Height : charextra[aschar].height;
+			int height = (_G(charextra)[aschar].height < 1) ? _GP(game).SpriteInfos[sppic].Height : _G(charextra)[aschar].height;
 			tdyp = view->RoomToScreen(0, data_to_game_coord(_GP(game).chars[aschar].get_effective_y()) - height).first.Y
 			       - get_fixed_pixel_size(5);
 			if (isThought) // if it's a thought, lift it a bit further up
@@ -2535,19 +2510,19 @@ void _displayspeech(const char *texx, int aschar, int xx, int yy, int widd, int 
 			int ovr_yp = get_fixed_pixel_size(20);
 			int view_frame_x = 0;
 			int view_frame_y = 0;
-			facetalk_qfg4_override_placement_x = false;
-			facetalk_qfg4_override_placement_y = false;
+			_G(facetalk_qfg4_override_placement_x) = false;
+			_G(facetalk_qfg4_override_placement_y) = false;
 
 			if (_GP(game).options[OPT_SPEECHTYPE] == 3) {
 				// QFG4-style whole screen picture
 				closeupface = BitmapHelper::CreateBitmap(ui_view.GetWidth(), ui_view.GetHeight(), _GP(spriteset)[viptr->loops[0].frames[0].pic]->GetColorDepth());
 				closeupface->Clear(0);
 				if (xx < 0 && _GP(play).speech_portrait_placement) {
-					facetalk_qfg4_override_placement_x = true;
+					_G(facetalk_qfg4_override_placement_x) = true;
 					view_frame_x = _GP(play).speech_portrait_x;
 				}
 				if (yy < 0 && _GP(play).speech_portrait_placement) {
-					facetalk_qfg4_override_placement_y = true;
+					_G(facetalk_qfg4_override_placement_y) = true;
 					view_frame_y = _GP(play).speech_portrait_y;
 				} else {
 					view_frame_y = ui_view.GetHeight() / 2 - _GP(game).SpriteInfos[viptr->loops[0].frames[0].pic].Height / 2;
@@ -2620,19 +2595,19 @@ void _displayspeech(const char *texx, int aschar, int xx, int yy, int widd, int 
 			}
 			if (_GP(game).options[OPT_SPEECHTYPE] == 3)
 				overlay_x = 0;
-			face_talking = add_screen_overlay(overlay_x, ovr_yp, ovr_type, closeupface, closeupface_has_alpha);
-			facetalkframe = 0;
-			facetalkwait = viptr->loops[0].frames[0].speed + GetCharacterSpeechAnimationDelay(speakingChar);
-			facetalkloop = 0;
-			facetalkview = useview;
-			facetalkrepeat = (isThought) ? 0 : 1;
-			facetalkBlinkLoop = 0;
-			facetalkAllowBlink = 1;
+			_G(face_talking) = add_screen_overlay(overlay_x, ovr_yp, ovr_type, closeupface, closeupface_has_alpha);
+			_G(facetalkframe) = 0;
+			_G(facetalkwait) = viptr->loops[0].frames[0].speed + GetCharacterSpeechAnimationDelay(speakingChar);
+			_G(facetalkloop) = 0;
+			_G(facetalkview) = useview;
+			_G(facetalkrepeat) = (isThought) ? 0 : 1;
+			_G(facetalkBlinkLoop) = 0;
+			_G(facetalkAllowBlink) = 1;
 			if ((isThought) && (speakingChar->flags & CHF_NOBLINKANDTHINK))
-				facetalkAllowBlink = 0;
-			facetalkchar = &_GP(game).chars[aschar];
-			if (facetalkchar->blinktimer < 0)
-				facetalkchar->blinktimer = facetalkchar->blinkinterval;
+				_G(facetalkAllowBlink) = 0;
+			_G(facetalkchar) = &_GP(game).chars[aschar];
+			if (_G(facetalkchar)->blinktimer < 0)
+				_G(facetalkchar)->blinktimer = _G(facetalkchar)->blinkinterval;
 			textcol = -textcol;
 			overlayPositionFixed = true;
 		} else if (useview >= 0) {
@@ -2655,7 +2630,7 @@ void _displayspeech(const char *texx, int aschar, int xx, int yy, int widd, int 
 				speakingChar->loop = 0;
 			}
 
-			facetalkBlinkLoop = speakingChar->loop;
+			_G(facetalkBlinkLoop) = speakingChar->loop;
 
 			if (speakingChar->on && // don't bother checking if character is not visible (also fixes 'Trilby's Notes' legacy game)
 			        ((speakingChar->loop >= _G(views)[speakingChar->view].numLoops) ||
@@ -2678,7 +2653,7 @@ void _displayspeech(const char *texx, int aschar, int xx, int yy, int widd, int 
 			tdxp = OVR_AUTOPLACE;
 			tdyp = aschar;*/
 			if (!isThought)  // set up the lip sync if not thinking
-				char_speaking = aschar;
+				_G(char_speaking) = aschar;
 
 		}
 	} else
@@ -2693,7 +2668,7 @@ void _displayspeech(const char *texx, int aschar, int xx, int yy, int widd, int 
 		allowShrink = 0;
 
 	if (isThought)
-		char_thinking = aschar;
+		_G(char_thinking) = aschar;
 
 	_G(our_eip) = 155;
 	_display_at(tdxp, tdyp, bwidth, texx, DISPLAYTEXT_SPEECH, textcol, isThought, allowShrink, overlayPositionFixed);
@@ -2703,8 +2678,8 @@ void _displayspeech(const char *texx, int aschar, int xx, int yy, int widd, int 
 	if (closeupface != nullptr)
 		remove_screen_overlay(ovr_type);
 	mark_screen_dirty();
-	face_talking = -1;
-	facetalkchar = nullptr;
+	_G(face_talking) = -1;
+	_G(facetalkchar) = nullptr;
 	_G(our_eip) = 157;
 	if (oldview >= 0) {
 		speakingChar->flags &= ~CHF_FIXVIEW;
@@ -2721,19 +2696,19 @@ void _displayspeech(const char *texx, int aschar, int xx, int yy, int widd, int 
 		speakingChar->wait = 0;
 		speakingChar->idleleft = speakingChar->idletime;
 		// restart the idle animation straight away
-		charextra[aschar].process_idle_this_time = 1;
+		_G(charextra)[aschar].process_idle_this_time = 1;
 	}
-	char_speaking = -1;
-	char_thinking = -1;
+	_G(char_speaking) = -1;
+	_G(char_thinking) = -1;
 	if (_GP(play).IsBlockingVoiceSpeech())
 		stop_voice_speech();
 }
 
 int get_character_currently_talking() {
-	if ((face_talking >= 0) && (facetalkrepeat))
-		return facetalkchar->index_id;
-	else if (char_speaking >= 0)
-		return char_speaking;
+	if ((_G(face_talking) >= 0) && (_G(facetalkrepeat)))
+		return _G(facetalkchar)->index_id;
+	else if (_G(char_speaking) >= 0)
+		return _G(char_speaking);
 
 	return -1;
 }
@@ -2779,22 +2754,22 @@ int update_lip_sync(int talkview, int talkloop, int *talkframeptr) {
 	int talkwait = 0;
 
 	// lip-sync speech
-	const char *nowsaying = &text_lips_text[text_lips_offset];
+	const char *nowsaying = &_G(text_lips_text)[_G(text_lips_offset)];
 	// if it's an apostraphe, skip it (we'll, I'll, etc)
 	if (nowsaying[0] == '\'') {
-		text_lips_offset++;
+		_G(text_lips_offset)++;
 		nowsaying++;
 	}
 
-	if (text_lips_offset >= (int)strlen(text_lips_text))
+	if (_G(text_lips_offset) >= (int)strlen(_G(text_lips_text)))
 		talkframe = 0;
 	else {
-		talkframe = GetLipSyncFrame(nowsaying, &text_lips_offset);
+		talkframe = GetLipSyncFrame(nowsaying, &_G(text_lips_offset));
 		if (talkframe >= _G(views)[talkview].loops[talkloop].numFrames)
 			talkframe = 0;
 	}
 
-	talkwait = loops_per_character + _G(views)[talkview].loops[talkloop].frames[talkframe].speed;
+	talkwait = _G(loops_per_character) + _G(views)[talkview].loops[talkloop].frames[talkframe].speed;
 
 	talkframeptr[0] = talkframe;
 	return talkwait;
@@ -2802,7 +2777,7 @@ int update_lip_sync(int talkview, int talkloop, int *talkframeptr) {
 
 Rect GetCharacterRoomBBox(int charid, bool use_frame_0) {
 	int width, height;
-	const CharacterExtras &chex = charextra[charid];
+	const CharacterExtras &chex = _G(charextra)[charid];
 	const CharacterInfo &chin = _GP(game).chars[charid];
 	int frame = use_frame_0 ? 0 : chin.frame;
 	int pic = _G(views)[chin.view].loops[chin.loop].frames[frame].pic;

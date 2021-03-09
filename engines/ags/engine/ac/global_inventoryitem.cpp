@@ -39,8 +39,6 @@ namespace AGS3 {
 
 using namespace AGS::Shared;
 
-extern CharacterInfo *playerchar;
-
 void set_inv_item_pic(int invi, int piccy) {
 	if ((invi < 1) || (invi > _GP(game).numinvitems))
 		quit("!SetInvItemPic: invalid inventory item specified");
@@ -112,7 +110,7 @@ void RunInventoryInteraction(int iit, int modd) {
 	else if (modd == MODE_HAND)
 		run_event_block_inv(iit, 1);
 	else if (modd == MODE_USE) {
-		_GP(play).usedinv = playerchar->activeinv;
+		_GP(play).usedinv = _G(playerchar)->activeinv;
 		run_event_block_inv(iit, 3);
 	} else if (modd == MODE_TALK)
 		run_event_block_inv(iit, 2);

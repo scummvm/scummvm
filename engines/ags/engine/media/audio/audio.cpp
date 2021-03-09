@@ -100,8 +100,6 @@ void set_clip_to_channel(int chanid, SOUNDCLIP *clip) {
 }
 //-----------------------
 
-extern CharacterInfo *playerchar;
-
 void calculate_reserved_channel_count() {
 	int reservedChannels = 0;
 	for (size_t i = 0; i < _GP(game).audioClipTypes.size(); i++) {
@@ -513,8 +511,8 @@ SOUNDCLIP *load_sound_clip_from_old_style_number(bool isMusic, int indexNumber, 
 //=============================================================================
 
 int get_volume_adjusted_for_distance(int volume, int sndX, int sndY, int sndMaxDist) {
-	int distx = playerchar->x - sndX;
-	int disty = playerchar->y - sndY;
+	int distx = _G(playerchar)->x - sndX;
+	int disty = _G(playerchar)->y - sndY;
 	// it uses Allegro's "fix" sqrt without the ::
 	int dist = (int)::sqrt((double)(distx * distx + disty * disty));
 

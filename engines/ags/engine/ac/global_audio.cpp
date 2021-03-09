@@ -41,9 +41,6 @@ namespace AGS3 {
 
 using namespace AGS::Shared;
 
-extern SpeechLipSyncLine *splipsync;
-extern int numLipLines, curLipLine, curLipLinePhoneme;
-
 void StopAmbientSound(int channel) {
 	if ((channel < 0) || (channel >= MAX_SOUND_CHANNELS))
 		quit("!StopAmbientSound: invalid channel");
@@ -602,17 +599,17 @@ bool play_voice_speech(int charid, int sndid) {
 		return false;
 
 	int ii;  // Compare the base file name to the .pam file name
-	curLipLine = -1;  // See if we have voice lip sync for this line
-	curLipLinePhoneme = -1;
-	for (ii = 0; ii < numLipLines; ii++) {
-		if (ags_stricmp(splipsync[ii].filename, voice_file) == 0) {
-			curLipLine = ii;
+	_G(curLipLine) = -1;  // See if we have voice lip sync for this line
+	_G(curLipLinePhoneme) = -1;
+	for (ii = 0; ii < _G(numLipLines); ii++) {
+		if (ags_stricmp(_G(splipsync)[ii].filename, voice_file) == 0) {
+			_G(curLipLine) = ii;
 			break;
 		}
 	}
 	// if the lip-sync is being used for voice sync, disable
 	// the text-related lipsync
-	if (numLipLines > 0)
+	if (_G(numLipLines) > 0)
 		_GP(game).options[OPT_LIPSYNCTEXT] = 0;
 
 	// change Sierra w/bgrnd  to Sierra without background when voice
@@ -643,7 +640,7 @@ void stop_voice_speech() {
 	stop_voice_clip_impl();
 
 	// Reset lipsync
-	curLipLine = -1;
+	_G(curLipLine) = -1;
 	// Set back to Sierra w/bgrnd
 	if (_GP(play).no_textbg_when_voice == 2) {
 		_GP(play).no_textbg_when_voice = 1;

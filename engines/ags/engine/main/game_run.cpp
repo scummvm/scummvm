@@ -75,10 +75,8 @@ using namespace AGS::Shared;
 
 extern int game_paused;
 extern int getloctype_index;
-extern CharacterInfo *playerchar;
 extern int cur_mode;
 extern char noWalkBehindsAtAll;
-extern CharacterExtras *charextra;
 
 extern int cur_mode, cur_cursor;
 
@@ -146,12 +144,12 @@ static void game_loop_do_late_update() {
 static int game_loop_check_ground_level_interactions() {
 	if ((_GP(play).ground_level_areas_disabled & GLED_INTERACTION) == 0) {
 		// check if he's standing on a hotspot
-		int hotspotThere = get_hotspot_at(playerchar->x, playerchar->y);
+		int hotspotThere = get_hotspot_at(_G(playerchar)->x, _G(playerchar)->y);
 		// run Stands on Hotspot event
 		setevent(EV_RUNEVBLOCK, EVB_HOTSPOT, hotspotThere, 0);
 
 		// check current region
-		int onRegion = GetRegionIDAtRoom(playerchar->x, playerchar->y);
+		int onRegion = GetRegionIDAtRoom(_G(playerchar)->x, _G(playerchar)->y);
 		int inRoom = _G(displayed_room);
 
 		if (onRegion != _GP(play).player_on_region) {
@@ -404,8 +402,8 @@ static void check_keyboard_controls() {
 		int ff;
 		// MACPORT FIX 9/6/5: added last %s
 		sprintf(infobuf, "In room %d %s[Player at %d, %d (view %d, loop %d, frame %d)%s%s%s",
-			_G(displayed_room), (noWalkBehindsAtAll ? "(has no walk-behinds)" : ""), playerchar->x, playerchar->y,
-			playerchar->view + 1, playerchar->loop, playerchar->frame,
+			_G(displayed_room), (noWalkBehindsAtAll ? "(has no walk-behinds)" : ""), _G(playerchar)->x, _G(playerchar)->y,
+			_G(playerchar)->view + 1, _G(playerchar)->loop, _G(playerchar)->frame,
 			(IsGamePaused() == 0) ? "" : "[Game paused.",
 			(_GP(play).ground_level_areas_disabled == 0) ? "" : "[Ground areas disabled.",
 			(IsInterfaceEnabled() == 0) ? "[Game in Wait state" : "");
@@ -438,7 +436,7 @@ static void check_keyboard_controls() {
 				_GP(game).chars[chd].x, _GP(game).chars[chd].y, _GP(game).chars[chd].z,
 				_GP(game).chars[chd].idleview, _GP(game).chars[chd].idletime, _GP(game).chars[chd].idleleft,
 				_GP(game).chars[chd].walking, _GP(game).chars[chd].animating, _GP(game).chars[chd].following,
-				_GP(game).chars[chd].flags, _GP(game).chars[chd].wait, charextra[chd].zoom);
+				_GP(game).chars[chd].flags, _GP(game).chars[chd].wait, _G(charextra)[chd].zoom);
 		}
 		Display(bigbuffer);
 
@@ -540,13 +538,13 @@ static void check_room_edges(int numevents_was) {
 		if ((_G(numevents) == numevents_was) &&
 			((_GP(play).ground_level_areas_disabled & GLED_INTERACTION) == 0)) {
 
-			if (playerchar->x <= _GP(thisroom).Edges.Left)
+			if (_G(playerchar)->x <= _GP(thisroom).Edges.Left)
 				edgesActivated[0] = 1;
-			else if (playerchar->x >= _GP(thisroom).Edges.Right)
+			else if (_G(playerchar)->x >= _GP(thisroom).Edges.Right)
 				edgesActivated[1] = 1;
-			if (playerchar->y >= _GP(thisroom).Edges.Bottom)
+			if (_G(playerchar)->y >= _GP(thisroom).Edges.Bottom)
 				edgesActivated[2] = 1;
-			else if (playerchar->y <= _GP(thisroom).Edges.Top)
+			else if (_G(playerchar)->y <= _GP(thisroom).Edges.Top)
 				edgesActivated[3] = 1;
 
 			if ((_GP(play).entered_edge >= 0) && (_GP(play).entered_edge <= 3)) {

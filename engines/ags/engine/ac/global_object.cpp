@@ -52,8 +52,6 @@ using namespace AGS::Shared;
 
 #define OVERLAPPING_OBJECT 1000
 
-extern CharacterInfo *playerchar;
-
 extern int actSpsCount;
 extern Bitmap **actsps;
 extern IDriverDependantBitmap **actspsbmp;
@@ -407,7 +405,7 @@ void RunObjectInteraction(int aa, int mood) {
 	else if (mood == MODE_CUSTOM2) passon = 7;
 	else if (mood == MODE_USE) {
 		passon = 3;
-		cdata = playerchar->activeinv;
+		cdata = _G(playerchar)->activeinv;
 		_GP(play).usedinv = cdata;
 	}
 	_G(evblockbasename) = "object%d";
