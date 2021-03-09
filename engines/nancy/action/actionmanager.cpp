@@ -281,7 +281,7 @@ void ActionManager::processActionRecords() {
                     case kLogicCondition:
                         if (_engine->scene->_flags.logicConditions[dep.label].flag == dep.condition) {
                             // Wait for specified time before satisfying dependency condition
-                            Time elapsed = _engine->scene->_timers.totalTime - _engine->scene->_flags.logicConditions[dep.label].timestamp;
+                            Time elapsed = _engine->scene->_timers.lastTotalTime - _engine->scene->_flags.logicConditions[dep.label].timestamp;
 
                             if (elapsed >= dep.timeData) {
                                 dep.satisfied = true;
@@ -290,7 +290,7 @@ void ActionManager::processActionRecords() {
 
                         break;
                     case kTotalTime:
-                        if (_engine->scene->_timers.totalTime >= dep.timeData) {
+                        if (_engine->scene->_timers.lastTotalTime >= dep.timeData) {
                             dep.satisfied = true;
                         }
 

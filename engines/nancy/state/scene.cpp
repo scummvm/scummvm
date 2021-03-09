@@ -153,11 +153,11 @@ void Scene::init() {
         _flags.items[i] = kFalse;
     }
 
+    _timers.lastTotalTime = 0;
     _timers.playerTime = _engine->startTimeHours * 3600000;
     _timers.sceneTime = 0;
     _timers.timerTime = 0;
     _timers.timerIsActive = false;
-    _timers.tickCount = 0;
     _timers.playerTimeNextMinute = 0;
     _timers.pushedPlayTime = 0;
     _timers.timeOfDay = Timers::kDay;
@@ -284,7 +284,6 @@ void Scene::run() {
 
     isComingFromMenu = false;
 
-    Time playTime = _engine->getTotalPlayTime();
 
     if (changeGameState()) {
         return;
@@ -292,17 +291,12 @@ void Scene::run() {
 
     // Do some work if we're coming from a different game state
     if (_engine->getState() != _engine->getPreviousState()) {
-        if (hasLoadedFromSavefile) {
-            if (playTime > _timers.pushedPlayTime) {
-                _engine->setTotalPlayTime((uint32)_timers.pushedPlayTime);
-                playTime = _timers.pushedPlayTime;
-            }
-        }
-
         // If the GMM was on we shouldn't reregister graphics
         if (_engine->getPreviousState() != Nancy::NancyEngine::kPause) {
             registerGraphics();
         }
+
+        _engine->setTotalPlayTime((uint32)_timers.pushedPlayTime);
 
         unpauseSceneSpecificSounds();
         _menuButton.setVisible(false);
@@ -311,23 +305,21 @@ void Scene::run() {
         return;
     }
 
-    Time deltaTime = 0;
+    Time currentPlayTime = _engine->getTotalPlayTime();
 
-    if (_timers.tickCount < playTime) {
-        deltaTime = playTime - _timers.tickCount;
-        _timers.tickCount = playTime;
-    }
+    Time deltaTime = currentPlayTime - _timers.lastTotalTime;
+    _timers.lastTotalTime = currentPlayTime;
 
-    _timers.totalTime += deltaTime;
-
-    if (_timers.timerIsActive)
+    if (_timers.timerIsActive) {
         _timers.timerTime += deltaTime;
+    }
+    
     _timers.sceneTime += deltaTime;
 
     // Calculate the in-game time (playerTime)
-    if (playTime > _timers.playerTimeNextMinute) {
+    if (currentPlayTime > _timers.playerTimeNextMinute) {
         _timers.playerTime += 60000; // Add a minute
-        _timers.playerTimeNextMinute = playTime + playerTimeMinuteLength; // Set when we're going to add the next minute
+        _timers.playerTimeNextMinute = currentPlayTime + playerTimeMinuteLength; // Set when we're going to add the next minute
     }
 
     // Set the time of day according to playerTime
