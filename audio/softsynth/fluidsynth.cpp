@@ -46,7 +46,12 @@
 #include "backends/platform/ios7/ios7_common.h"
 #endif
 
-static void logHandler(int level, char *message, void *data) {
+#if defined(FLUIDSYNTH_VERSION_MAJOR) && FLUIDSYNTH_VERSION_MAJOR > 1
+static void logHandler(int level, const char *message, void *data)
+#else
+static void logHandler(int level, char *message, void *data)
+#endif
+{
 	switch (level) {
 	case FLUID_PANIC:
 		error("FluidSynth: %s", message);
