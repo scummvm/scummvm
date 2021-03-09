@@ -57,8 +57,6 @@ namespace AGS3 {
 using namespace AGS::Shared;
 using namespace AGS::Engine;
 
-extern char check_dynamic_sprites_at_exit;
-
 extern char pexbuf[STD_BUFFER_SIZE];
 
 const char *OutputMsgBufID = "buffer";
@@ -438,9 +436,9 @@ int check_for_messages_from_editor() {
 			_G(game_paused_in_debugger) = 0;
 			_G(break_on_next_script_step) = 1;
 		} else if (strncmp(msgPtr, "EXIT", 4) == 0) {
-			_G(want_exit) = 1;
-			_G(abort_engine) = 1;
-			check_dynamic_sprites_at_exit = 0;
+			_G(want_exit) = true;
+			_G(abort_engine) = true;
+			_G(check_dynamic_sprites_at_exit) = false;
 		}
 
 		free(msg);
@@ -449,9 +447,6 @@ int check_for_messages_from_editor() {
 
 	return 0;
 }
-
-
-
 
 bool send_exception_to_editor(const char *qmsg) {
 #if AGS_PLATFORM_OS_WINDOWS

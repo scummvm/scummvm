@@ -83,9 +83,7 @@ namespace AGS3 {
 using namespace AGS::Shared;
 using namespace AGS::Engine;
 
-extern char check_dynamic_sprites_at_exit;
 extern char pexbuf[STD_BUFFER_SIZE];
-
 extern IGraphicsDriver *gfxDriver;
 extern Bitmap **actsps;
 extern color palette[256];

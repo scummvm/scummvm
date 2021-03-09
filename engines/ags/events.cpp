@@ -24,10 +24,6 @@
 #include "common/system.h"
 #include "ags/globals.h"
 
-namespace AGS3 {
-extern char check_dynamic_sprites_at_exit;
-}
-
 namespace AGS {
 
 EventsManager *g_events;
@@ -48,7 +44,7 @@ void EventsManager::pollEvents() {
 		if (e.type == Common::EVENT_QUIT) {
 			_G(want_exit) = true;
 			_G(abort_engine) = true;
-			::AGS3::check_dynamic_sprites_at_exit = 0;
+			_G(check_dynamic_sprites_at_exit) = false;
 
 		} else if (e.type == Common::EVENT_KEYDOWN) {
 			updateKeys(e.kbd.keycode, true);

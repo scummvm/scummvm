@@ -42,8 +42,6 @@ using namespace AGS::Engine;
 extern volatile unsigned long globalTimerCounter;
 int pluginSimulatedClick;
 
-extern char check_dynamic_sprites_at_exit;
-
 extern void domouse(int str);
 extern int mgetbutton();
 extern int misbuttondown(int buno);
@@ -183,7 +181,7 @@ int ags_getch() {
 
 	// Alt+X, abort (but only once game is loaded)
 	if ((gott == _GP(play).abort_key) && (_G(displayed_room) >= 0)) {
-		check_dynamic_sprites_at_exit = 0;
+		_G(check_dynamic_sprites_at_exit) = false;
 		quit("!|");
 	}
 

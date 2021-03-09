@@ -52,8 +52,6 @@ using namespace Engine;
 extern color palette[256];
 extern AGS::Engine::IGraphicsDriver *gfxDriver;
 
-char check_dynamic_sprites_at_exit = 1;
-
 // ** SCRIPT DYNAMIC SPRITE
 
 void DynamicSprite_Delete(ScriptDynamicSprite *sds) {

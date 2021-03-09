@@ -396,6 +396,15 @@ public:
 	 * @{
 	 */
 
+	bool _check_dynamic_sprites_at_exit = true;
+
+	/**@}*/
+
+	/**
+	 * \defgroup engine globals
+	 * @{
+	 */
+
 	ResourcePaths *_ResPaths;
 	t_engine_pre_init_callback _engine_pre_init_callback = nullptr;
 

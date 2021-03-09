@@ -55,7 +55,6 @@ using namespace AGS::Shared;
 using namespace AGS::Engine;
 
 extern char pexbuf[STD_BUFFER_SIZE];
-extern char check_dynamic_sprites_at_exit;
 extern int need_to_stop_cd;
 extern int use_cdplayer;
 extern IGraphicsDriver *gfxDriver;
@@ -83,7 +82,7 @@ void quit_shutdown_scripts() {
 }
 
 void quit_check_dynamic_sprites(QuitReason qreason) {
-	if ((qreason & kQuitKind_NormalExit) && (check_dynamic_sprites_at_exit) &&
+	if ((qreason & kQuitKind_NormalExit) && (_G(check_dynamic_sprites_at_exit)) &&
 		(_GP(game).options[OPT_DEBUGMODE] != 0)) {
 		// game exiting normally -- make sure the dynamic sprites
 		// have been deleted
