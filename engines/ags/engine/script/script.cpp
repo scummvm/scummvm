@@ -180,7 +180,7 @@ int run_interaction_script(InteractionScripts *nint, int evnt, int chkAny, int i
 
 	RuntimeScriptValue rval_null;
 
-	if ((strstr(evblockbasename, "character") != nullptr) || (strstr(evblockbasename, "inventory") != nullptr)) {
+	if ((strstr(_G(evblockbasename), "character") != nullptr) || (strstr(_G(evblockbasename), "inventory") != nullptr)) {
 		// Character or Inventory (global script)
 		QueueScriptFunction(kScInstGame, nint->ScriptFuncNames[evnt]);
 	} else {
@@ -378,8 +378,8 @@ int RunScriptFunctionIfExists(ccInstance *sci, const char *tsname, int numParam,
 	_G(ccError) = cachedCcError;
 
 	// if the game has been restored, ensure that any further scripts are not run
-	if ((oldRestoreCount != gameHasBeenRestored) && (eventClaimed == EVENT_INPROGRESS))
-		eventClaimed = EVENT_CLAIMED;
+	if ((oldRestoreCount != gameHasBeenRestored) && (_G(eventClaimed) == EVENT_INPROGRESS))
+		_G(eventClaimed) = EVENT_CLAIMED;
 
 	return toret;
 }
@@ -635,14 +635,14 @@ int run_interaction_commandlist(InteractionCommandList *nicl, int *timesrun, int
 		{ // Run script
 			TempEip tempip(4001);
 			RuntimeScriptValue rval_null;
-			if ((strstr(evblockbasename, "character") != nullptr) || (strstr(evblockbasename, "inventory") != nullptr)) {
+			if ((strstr(_G(evblockbasename), "character") != nullptr) || (strstr(_G(evblockbasename), "inventory") != nullptr)) {
 				// Character or Inventory (global script)
-				const char *torun = make_ts_func_name(evblockbasename, evblocknum, nicl->Cmds[i].Data[0].Value);
+				const char *torun = make_ts_func_name(_G(evblockbasename), _G(evblocknum), nicl->Cmds[i].Data[0].Value);
 				// we are already inside the mouseclick event of the script, can't nest calls
 				QueueScriptFunction(kScInstGame, torun);
 			} else {
 				// Other (room script)
-				const char *torun = make_ts_func_name(evblockbasename, evblocknum, nicl->Cmds[i].Data[0].Value);
+				const char *torun = make_ts_func_name(_G(evblockbasename), _G(evblocknum), nicl->Cmds[i].Data[0].Value);
 				QueueScriptFunction(kScInstRoom, torun);
 			}
 			break;
@@ -852,15 +852,15 @@ void run_unhandled_event(int evnt) {
 		return;
 
 	int evtype = 0;
-	if (ags_strnicmp(evblockbasename, "hotspot", 7) == 0) evtype = 1;
-	else if (ags_strnicmp(evblockbasename, "object", 6) == 0) evtype = 2;
-	else if (ags_strnicmp(evblockbasename, "character", 9) == 0) evtype = 3;
-	else if (ags_strnicmp(evblockbasename, "inventory", 9) == 0) evtype = 5;
-	else if (ags_strnicmp(evblockbasename, "region", 6) == 0)
+	if (ags_strnicmp(_G(evblockbasename), "hotspot", 7) == 0) evtype = 1;
+	else if (ags_strnicmp(_G(evblockbasename), "object", 6) == 0) evtype = 2;
+	else if (ags_strnicmp(_G(evblockbasename), "character", 9) == 0) evtype = 3;
+	else if (ags_strnicmp(_G(evblockbasename), "inventory", 9) == 0) evtype = 5;
+	else if (ags_strnicmp(_G(evblockbasename), "region", 6) == 0)
 		return;  // no unhandled_events for regions
 
 	// clicked Hotspot 0, so change the type code
-	if ((evtype == 1) & (evblocknum == 0) & (evnt != 0) & (evnt != 5) & (evnt != 6))
+	if ((evtype == 1) & (_G(evblocknum) == 0) & (evnt != 0) & (evnt != 5) & (evnt != 6))
 		evtype = 4;
 	if ((evtype == 1) & ((evnt == 0) | (evnt == 5) | (evnt == 6)))
 		;  // character stands on hotspot, mouse moves over hotspot, any click

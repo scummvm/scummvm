@@ -389,8 +389,8 @@ void RunCharacterInteraction(int cc, int mood) {
 	else if (mood == MODE_CUSTOM1) passon = 6;
 	else if (mood == MODE_CUSTOM2) passon = 7;
 
-	evblockbasename = "character%d";
-	evblocknum = cc;
+	_G(evblockbasename) = "character%d";
+	_G(evblocknum) = cc;
 	if (loaded_game_file_version > kGameVersion_272) {
 		if (passon >= 0)
 			run_interaction_script(_GP(game).charScripts[cc].get(), passon, 4, (passon == 3));

@@ -48,42 +48,26 @@ namespace AGS3 {
 using namespace AGS::Shared;
 using namespace AGS::Engine;
 
-
 extern color palette[256];
 extern IGraphicsDriver *gfxDriver;
-
 extern color old_palette[256];
-
-int in_enters_screen = 0, done_es_error = 0;
-int in_leaves_screen = -1;
-
-EventHappened event[MAXEVENTS + 1];
-int numevents = 0;
-
-const char *evblockbasename;
-int evblocknum;
-
-int inside_processevent = 0;
-int eventClaimed = EVENT_NONE;
-
-const char *tsnames[4] = { nullptr, REP_EXEC_NAME, "on_key_press", "on_mouse_click" };
 
 
 int run_claimable_event(const char *tsname, bool includeRoom, int numParams, const RuntimeScriptValue *params, bool *eventWasClaimed) {
 	*eventWasClaimed = true;
 	// Run the room script function, and if it is not claimed,
 	// then run the main one
-	// We need to remember the eventClaimed variable's state, in case
+	// We need to remember the _G(eventClaimed) variable's state, in case
 	// this is a nested event
-	int eventClaimedOldValue = eventClaimed;
-	eventClaimed = EVENT_INPROGRESS;
+	int eventClaimedOldValue = _G(eventClaimed);
+	_G(eventClaimed) = EVENT_INPROGRESS;
 	int toret;
 
 	if (includeRoom && _G(roominst)) {
 		toret = RunScriptFunctionIfExists(_G(roominst), tsname, numParams, params);
 
-		if (eventClaimed == EVENT_CLAIMED) {
-			eventClaimed = eventClaimedOldValue;
+		if (_G(eventClaimed) == EVENT_CLAIMED) {
+			_G(eventClaimed) = eventClaimedOldValue;
 			return toret;
 		}
 	}
@@ -92,13 +76,13 @@ int run_claimable_event(const char *tsname, bool includeRoom, int numParams, con
 	for (int kk = 0; kk < _G(numScriptModules); kk++) {
 		toret = RunScriptFunctionIfExists(_GP(moduleInst)[kk], tsname, numParams, params);
 
-		if (eventClaimed == EVENT_CLAIMED) {
-			eventClaimed = eventClaimedOldValue;
+		if (_G(eventClaimed) == EVENT_CLAIMED) {
+			_G(eventClaimed) = eventClaimedOldValue;
 			return toret;
 		}
 	}
 
-	eventClaimed = eventClaimedOldValue;
+	_G(eventClaimed) = eventClaimedOldValue;
 	*eventWasClaimed = false;
 	return 0;
 }
@@ -109,7 +93,7 @@ void run_on_event(int evtype, RuntimeScriptValue &wparam) {
 }
 
 void run_room_event(int id) {
-	evblockbasename = "room";
+	_G(evblockbasename) = "room";
 
 	if (_GP(thisroom).EventHandlers != nullptr) {
 		run_interaction_script(_GP(thisroom).EventHandlers.get(), id);
@@ -119,7 +103,7 @@ void run_room_event(int id) {
 }
 
 void run_event_block_inv(int invNum, int event_) {
-	evblockbasename = "inventory%d";
+	_G(evblockbasename) = "inventory%d";
 	if (loaded_game_file_version > kGameVersion_272) {
 		run_interaction_script(_GP(game).invScripts[invNum].get(), event_);
 	} else {
@@ -130,20 +114,20 @@ void run_event_block_inv(int invNum, int event_) {
 
 // event list functions
 void setevent(int evtyp, int ev1, int ev2, int ev3) {
-	event[numevents].type = evtyp;
-	event[numevents].data1 = ev1;
-	event[numevents].data2 = ev2;
-	event[numevents].data3 = ev3;
-	event[numevents].player = _GP(game).playercharacter;
-	numevents++;
-	if (numevents >= MAXEVENTS) quit("too many events posted");
+	_G(event)[_G(numevents)].type = evtyp;
+	_G(event)[_G(numevents)].data1 = ev1;
+	_G(event)[_G(numevents)].data2 = ev2;
+	_G(event)[_G(numevents)].data3 = ev3;
+	_G(event)[_G(numevents)].player = _GP(game).playercharacter;
+	_G(numevents)++;
+	if (_G(numevents) >= MAXEVENTS) quit("too many events posted");
 }
 
 // TODO: this is kind of a hack, which forces event to be processed even if
 // it was fired from insides of other event processing.
 // The proper solution would be to do the event processing overhaul in AGS.
 void force_event(int evtyp, int ev1, int ev2, int ev3) {
-	if (inside_processevent)
+	if (_G(inside_processevent))
 		runevent_now(evtyp, ev1, ev2, ev3);
 	else
 		setevent(evtyp, ev1, ev2, ev3);
@@ -154,17 +138,17 @@ void process_event(EventHappened *evp) {
 	if (evp->type == EV_TEXTSCRIPT) {
 		_G(ccError) = 0;
 		if (evp->data2 > -1000) {
-			QueueScriptFunction(kScInstGame, tsnames[evp->data1], 1, RuntimeScriptValue().SetInt32(evp->data2));
+			QueueScriptFunction(kScInstGame, _G(tsnames)[evp->data1], 1, RuntimeScriptValue().SetInt32(evp->data2));
 		} else {
-			QueueScriptFunction(kScInstGame, tsnames[evp->data1]);
+			QueueScriptFunction(kScInstGame, _G(tsnames)[evp->data1]);
 		}
 	} else if (evp->type == EV_NEWROOM) {
 		NewRoom(evp->data1);
 	} else if (evp->type == EV_RUNEVBLOCK) {
 		Interaction *evpt = nullptr;
 		PInteractionScripts scriptPtr = nullptr;
-		const char *oldbasename = evblockbasename;
-		int   oldblocknum = evblocknum;
+		const char *oldbasename = _G(evblockbasename);
+		int   oldblocknum = _G(evblocknum);
 
 		if (evp->data1 == EVB_HOTSPOT) {
 
@@ -173,8 +157,8 @@ void process_event(EventHappened *evp) {
 			else
 				evpt = &_G(croom)->intrHotspot[evp->data2];
 
-			evblockbasename = "hotspot%d";
-			evblocknum = evp->data2;
+			_G(evblockbasename) = "hotspot%d";
+			_G(evblocknum) = evp->data2;
 			//Debug::Printf("Running hotspot interaction for hotspot %d, event %d", evp->data2, evp->data3);
 		} else if (evp->data1 == EVB_ROOM) {
 
@@ -183,9 +167,9 @@ void process_event(EventHappened *evp) {
 			else
 				evpt = &_G(croom)->intrRoom;
 
-			evblockbasename = "room";
+			_G(evblockbasename) = "room";
 			if (evp->data3 == 5) {
-				in_enters_screen++;
+				_G(in_enters_screen)++;
 				run_on_event(GE_ENTER_ROOM, RuntimeScriptValue().SetInt32(_G(displayed_room)));
 
 			}
@@ -199,11 +183,11 @@ void process_event(EventHappened *evp) {
 		} else
 			quit("process_event: RunEvBlock: unknown evb type");
 
-		evblockbasename = oldbasename;
-		evblocknum = oldblocknum;
+		_G(evblockbasename) = oldbasename;
+		_G(evblocknum) = oldblocknum;
 
 		if ((evp->data3 == 5) && (evp->data1 == EVB_ROOM))
-			in_enters_screen--;
+			_G(in_enters_screen)--;
 	} else if (evp->type == EV_FADEIN) {
 		// if they change the transition type before the fadein, make
 		// sure the screen doesn't freeze up
@@ -362,7 +346,7 @@ void runevent_now(int evtyp, int ev1, int ev2, int ev3) {
 void processallevents(int numev, EventHappened *evlist) {
 	int dd;
 
-	if (inside_processevent)
+	if (_G(inside_processevent))
 		return;
 
 	// make a copy of the events - if processing an event includes
@@ -373,7 +357,7 @@ void processallevents(int numev, EventHappened *evlist) {
 
 	int room_was = _GP(play).room_changes;
 
-	inside_processevent++;
+	_G(inside_processevent)++;
 
 	for (dd = 0; dd < numev; dd++) {
 
@@ -383,21 +367,21 @@ void processallevents(int numev, EventHappened *evlist) {
 			break;  // changed room, so discard other events
 	}
 
-	inside_processevent--;
+	_G(inside_processevent)--;
 }
 
 void update_events() {
-	processallevents(numevents, &event[0]);
-	numevents = 0;
+	processallevents(_G(numevents), &_G(event)[0]);
+	_G(numevents) = 0;
 }
 // end event list functions
 
 
 void ClaimEvent() {
-	if (eventClaimed == EVENT_NONE)
+	if (_G(eventClaimed) == EVENT_NONE)
 		quit("!ClaimEvent: no event to claim");
 
-	eventClaimed = EVENT_CLAIMED;
+	_G(eventClaimed) = EVENT_CLAIMED;
 }
 
 } // namespace AGS3

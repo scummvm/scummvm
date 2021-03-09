@@ -39,13 +39,8 @@ namespace AGS3 {
 
 using namespace AGS::Shared;
 
-
-
 extern int mouse_ifacebut_xoffs, mouse_ifacebut_yoffs;
-extern const char *evblockbasename;
-extern int evblocknum;
 extern CharacterInfo *playerchar;
-
 
 void set_inv_item_pic(int invi, int piccy) {
 	if ((invi < 1) || (invi > _GP(game).numinvitems))
@@ -112,7 +107,7 @@ void RunInventoryInteraction(int iit, int modd) {
 	if ((iit < 0) || (iit >= _GP(game).numinvitems))
 		quit("!RunInventoryInteraction: invalid inventory number");
 
-	evblocknum = iit;
+	_G(evblocknum) = iit;
 	if (modd == MODE_LOOK)
 		run_event_block_inv(iit, 0);
 	else if (modd == MODE_HAND)

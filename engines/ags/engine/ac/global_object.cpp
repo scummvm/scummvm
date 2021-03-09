@@ -410,8 +410,8 @@ void RunObjectInteraction(int aa, int mood) {
 		cdata = playerchar->activeinv;
 		_GP(play).usedinv = cdata;
 	}
-	evblockbasename = "object%d";
-	evblocknum = aa;
+	_G(evblockbasename) = "object%d";
+	_G(evblocknum) = aa;
 
 	if (_GP(thisroom).Objects[aa].EventHandlers != nullptr) {
 		if (passon >= 0) {

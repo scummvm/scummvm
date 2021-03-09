@@ -30,6 +30,7 @@
 #include "ags/engine/ac/runtime_defines.h"
 #include "ags/engine/main/engine.h"
 #include "ags/engine/media/audio/audiodefines.h"
+#include "ags/engine/script/script.h"
 #include "ags/lib/std/array.h"
 #include "ags/lib/std/set.h"
 #include "ags/lib/allegro/color.h"
@@ -97,6 +98,7 @@ struct CharacterCache;
 struct COLOR_MAP;
 struct DirtyRects;
 struct ExecutingScript;
+struct EventHappened;
 struct GameFrameSetup;
 struct GameSetup;
 struct GameSetupStruct;
@@ -345,6 +347,27 @@ public:
 
 	ResourcePaths *_ResPaths;
 	t_engine_pre_init_callback _engine_pre_init_callback = nullptr;
+
+	/**@}*/
+
+	/**
+	 * \defgroup event globals
+	 * @{
+	 */
+
+	int _in_enters_screen = 0, _done_es_error = 0;
+	int _in_leaves_screen = -1;
+
+	EventHappened *_event;
+	int _numevents = 0;
+
+	const char *_evblockbasename = nullptr;
+	int _evblocknum = 0;
+
+	int _inside_processevent = 0;
+	int _eventClaimed = 0;
+
+	const char *_tsnames[4] = { nullptr, REP_EXEC_NAME, "on_key_press", "on_mouse_click" };
 
 	/**@}*/
 

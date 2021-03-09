@@ -36,9 +36,6 @@ namespace AGS3 {
 
 using namespace AGS::Shared;
 
-extern const char *evblockbasename;
-extern int evblocknum;
-
 int GetRegionIDAtRoom(int xxx, int yyy) {
 	// if the co-ordinates are off the edge of the screen,
 	// correct them to be just within
@@ -150,11 +147,11 @@ void RunRegionInteraction(int regnum, int mood) {
 	// while another interaction (eg. hotspot) is in a Wait
 	// command, and leaving our basename would call the wrong
 	// script later on
-	const char *oldbasename = evblockbasename;
-	int   oldblocknum = evblocknum;
+	const char *oldbasename = _G(evblockbasename);
+	int   oldblocknum = _G(evblocknum);
 
-	evblockbasename = "region%d";
-	evblocknum = regnum;
+	_G(evblockbasename) = "region%d";
+	_G(evblocknum) = regnum;
 
 	if (_GP(thisroom).Regions[regnum].EventHandlers != nullptr) {
 		run_interaction_script(_GP(thisroom).Regions[regnum].EventHandlers.get(), mood);
@@ -162,8 +159,8 @@ void RunRegionInteraction(int regnum, int mood) {
 		run_interaction_event(&_G(croom)->intrRegion[regnum], mood);
 	}
 
-	evblockbasename = oldbasename;
-	evblocknum = oldblocknum;
+	_G(evblockbasename) = oldbasename;
+	_G(evblocknum) = oldblocknum;
 }
 
 } // namespace AGS3

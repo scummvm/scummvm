@@ -39,6 +39,7 @@
 #include "ags/shared/util/directory.h"
 #include "ags/engine/ac/draw.h"
 #include "ags/engine/ac/draw_software.h"
+#include "ags/engine/ac/event.h"
 #include "ags/engine/ac/gamesetup.h"
 #include "ags/engine/ac/gamestate.h"
 #include "ags/engine/ac/movelist.h"
@@ -125,6 +126,9 @@ Globals::Globals() {
 
 	// engine.cpp globals
 	_ResPaths = new ResourcePaths();
+
+	// event.cpp globals
+	_event = new EventHappened[MAXEVENTS + 1];
 
 	// fonts.cpp globals
 	_fonts = new std::vector<AGS::Shared::Font>();
@@ -266,6 +270,9 @@ Globals::~Globals() {
 
 	// engine.cpp globals
 	delete _ResPaths;
+
+	// event.cpp globals
+	delete[] _event;
 
 	// fonts.cpp globals
 	delete _fonts;

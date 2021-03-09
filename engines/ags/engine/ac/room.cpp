@@ -85,14 +85,8 @@ namespace AGS3 {
 using namespace AGS::Shared;
 using namespace AGS::Engine;
 
-
-
-extern int numevents;
 extern CharacterExtras *charextra;
-extern int done_es_error;
 extern Bitmap *walkareabackup, *walkable_areas_temp;
-
-extern int in_leaves_screen;
 extern CharacterInfo *playerchar;
 extern unsigned int loopcounter;
 extern IDriverDependantBitmap *roomBackgroundBmp;
@@ -259,7 +253,7 @@ void unload_old_room() {
 	}
 
 	cancel_all_scripts();
-	numevents = 0;  // cancel any pending room events
+	_G(numevents) = 0;  // cancel any pending room events
 
 	if (roomBackgroundBmp != nullptr) {
 		gfxDriver->DestroyDDB(roomBackgroundBmp);
@@ -435,7 +429,7 @@ void load_new_room(int newnum, CharacterInfo *forchar) {
 
 	String room_filename;
 	int cc;
-	done_es_error = 0;
+	_G(done_es_error) = 0;
 	_GP(play).room_changes ++;
 	// TODO: find out why do we need to temporarily lower color depth to 8-bit.
 	// Or do we? There's a serious usability problem in this: if any bitmap is
@@ -904,7 +898,7 @@ void new_room(int newnum, CharacterInfo *forchar) {
 	update_polled_stuff_if_runtime();
 
 	// we are currently running Leaves Screen scripts
-	in_leaves_screen = newnum;
+	_G(in_leaves_screen) = newnum;
 
 	// player leaves screen event
 	run_room_event(8);
@@ -914,8 +908,8 @@ void new_room(int newnum, CharacterInfo *forchar) {
 	pl_run_plugin_hooks(AGSE_LEAVEROOM, _G(displayed_room));
 
 	// update the new room number if it has been altered by OnLeave scripts
-	newnum = in_leaves_screen;
-	in_leaves_screen = -1;
+	newnum = _G(in_leaves_screen);
+	_G(in_leaves_screen) = -1;
 
 	if ((playerchar->following >= 0) &&
 	        (_GP(game).chars[playerchar->following].room != newnum)) {
@@ -1020,7 +1014,7 @@ void on_background_frame_change() {
 	if (_GP(game).color_depth > 1)
 		setpal();
 
-	if (in_enters_screen)
+	if (_G(in_enters_screen))
 		return;
 
 	// Don't update the palette if it hasn't changed

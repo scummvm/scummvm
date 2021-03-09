@@ -53,17 +53,9 @@ namespace AGS3 {
 
 using namespace AGS::Shared;
 
-
-
 extern CharacterExtras *charextra;
-
 extern int mouse_ifacebut_xoffs, mouse_ifacebut_yoffs;
-
-extern int evblocknum;
 extern CharacterInfo *playerchar;
-
-
-
 
 int in_inv_screen = 0, inv_screen_newroom = -1;
 
@@ -385,7 +377,7 @@ bool InventoryScreen::Run() {
 		if (mouseY < buttonyp) {
 			int clickedon = isonitem;
 			if (clickedon < 0) return true; // continue inventory screen loop
-			evblocknum = dii[clickedon].num;
+			_G(evblocknum) = dii[clickedon].num;
 			_GP(play).used_inv_on = dii[clickedon].num;
 
 			if (cmode == MODE_LOOK) {

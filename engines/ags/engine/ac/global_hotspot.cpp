@@ -115,11 +115,11 @@ void RunHotspotInteraction(int hotspothere, int mood) {
 
 	// can't use the setevent functions because this ProcessClick is only
 	// executed once in a eventlist
-	const char *oldbasename = evblockbasename;
-	int   oldblocknum = evblocknum;
+	const char *oldbasename = _G(evblockbasename);
+	int   oldblocknum = _G(evblocknum);
 
-	evblockbasename = "hotspot%d";
-	evblocknum = hotspothere;
+	_G(evblockbasename) = "hotspot%d";
+	_G(evblocknum) = hotspothere;
 
 	if (_GP(thisroom).Hotspots[hotspothere].EventHandlers != nullptr) {
 		if (passon >= 0)
@@ -128,8 +128,8 @@ void RunHotspotInteraction(int hotspothere, int mood) {
 	} else {
 		if (passon >= 0) {
 			if (run_interaction_event(&_G(croom)->intrHotspot[hotspothere], passon, 5, (passon == 3))) {
-				evblockbasename = oldbasename;
-				evblocknum = oldblocknum;
+				_G(evblockbasename) = oldbasename;
+				_G(evblocknum) = oldblocknum;
 				return;
 			}
 		}
@@ -137,8 +137,8 @@ void RunHotspotInteraction(int hotspothere, int mood) {
 		run_interaction_event(&_G(croom)->intrHotspot[hotspothere], 5);
 	}
 
-	evblockbasename = oldbasename;
-	evblocknum = oldblocknum;
+	_G(evblockbasename) = oldbasename;
+	_G(evblocknum) = oldblocknum;
 }
 
 int GetHotspotProperty(int hss, const char *property) {

@@ -73,19 +73,6 @@ void update_events();
 // end event list functions
 void ClaimEvent();
 
-extern int in_enters_screen, done_es_error;
-extern int in_leaves_screen;
-
-extern EventHappened event[MAXEVENTS + 1];
-extern int numevents;
-
-extern const char *evblockbasename;
-extern int evblocknum;
-
-extern int eventClaimed;
-
-extern const char *tsnames[4];
-
 } // namespace AGS3
 
 #endif
