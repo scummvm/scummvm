@@ -781,7 +781,7 @@ int IAGSEngine::DecrementManagedObjectRefCount(const char *address) {
 }
 
 void IAGSEngine::SetMousePosition(int32 x, int32 y) {
-	_mouse.SetPosition(Point(x, y));
+	_GP(mouse).SetPosition(Point(x, y));
 	RefreshMouse();
 }
 

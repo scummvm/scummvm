@@ -73,6 +73,7 @@
 #include "ags/engine/debugging/debugger.h"
 #include "ags/engine/debugging/logfile.h"
 #include "ags/engine/debugging/messagebuffer.h"
+#include "ags/engine/device/mousew32.h"
 #include "ags/engine/gui/animatingguibutton.h"
 #include "ags/engine/main/graphics_mode.h"
 #include "ags/engine/media/audio/ambientsound.h"
@@ -212,6 +213,9 @@ Globals::Globals() {
 
 	// managedobjectpool.cpp globals
 	_pool = new ManagedObjectPool();
+
+	// mousew32.cpp globals
+	_mouse = new Mouse();
 
 	// overlay.cpp globals
 	_screenover = new std::vector<ScreenOverlay>();
@@ -359,6 +363,9 @@ Globals::~Globals() {
 
 	// managedobjectpool.cpp globals
 	delete _pool;
+
+	// mousew32.cpp globals
+	delete _mouse;
 
 	// overlay.cpp globals
 	delete _screenover;

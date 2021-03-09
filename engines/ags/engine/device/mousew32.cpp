@@ -74,15 +74,14 @@ extern char lib_file_name[13];
 extern char alpha_blend_cursor;
 extern color palette[256];
 
-int butwas = 0;
-Mouse _mouse;
+static const int MB_ARRAY[3] = { 1, 2, 4 };
 
 void mgraphconfine(int x1, int y1, int x2, int y2) {
-	_mouse.ControlRect = Rect(x1, y1, x2, y2);
-	set_mouse_range(_mouse.ControlRect.Left, _mouse.ControlRect.Top, _mouse.ControlRect.Right, _mouse.ControlRect.Bottom);
+	_GP(mouse).ControlRect = Rect(x1, y1, x2, y2);
+	set_mouse_range(_GP(mouse).ControlRect.Left, _GP(mouse).ControlRect.Top, _GP(mouse).ControlRect.Right, _GP(mouse).ControlRect.Bottom);
 	Debug::Printf("Mouse confined: (%d,%d)-(%d,%d) (%dx%d)",
-		_mouse.ControlRect.Left, _mouse.ControlRect.Top, _mouse.ControlRect.Right, _mouse.ControlRect.Bottom,
-		_mouse.ControlRect.GetWidth(), _mouse.ControlRect.GetHeight());
+		_GP(mouse).ControlRect.Left, _GP(mouse).ControlRect.Top, _GP(mouse).ControlRect.Right, _GP(mouse).ControlRect.Bottom,
+		_GP(mouse).ControlRect.GetWidth(), _GP(mouse).ControlRect.GetHeight());
 }
 
 void mgetgraphpos() {
@@ -99,22 +98,22 @@ void mgetgraphpos() {
 		return;
 	}
 
-	if (!_G(switched_away) && _mouse.ControlEnabled) {
+	if (!_G(switched_away) && _GP(mouse).ControlEnabled) {
 		// Control mouse movement by querying mouse mickeys (movement deltas)
 		// and applying them to saved mouse coordinates.
 		int mickey_x, mickey_y;
 		get_mouse_mickeys(&mickey_x, &mickey_y);
 
 		// Apply mouse speed
-		int dx = _mouse.Speed * mickey_x;
-		int dy = _mouse.Speed * mickey_y;
+		int dx = _GP(mouse).Speed * mickey_x;
+		int dy = _GP(mouse).Speed * mickey_y;
 
 		//
 		// Perform actual cursor update
 		//---------------------------------------------------------------------
 		// If the real cursor is inside the control rectangle (read - game window),
 		// then apply sensitivity factors and adjust real cursor position
-		if (_mouse.ControlRect.IsInside(_G(real_mouse_x) + dx, _G(real_mouse_y) + dy)) {
+		if (_GP(mouse).ControlRect.IsInside(_G(real_mouse_x) + dx, _G(real_mouse_y) + dy)) {
 			_G(real_mouse_x) += dx;
 			_G(real_mouse_y) += dy;
 			position_mouse(_G(real_mouse_x), _G(real_mouse_y));
@@ -122,9 +121,9 @@ void mgetgraphpos() {
 		// Otherwise, if real cursor was moved outside the control rect, yet we
 		// are required to confine cursor inside one, then adjust cursor position
 		// to stay inside the rect's bounds.
-		else if (_mouse.ConfineInCtrlRect) {
-			_G(real_mouse_x) = Math::Clamp(_G(real_mouse_x) + dx, _mouse.ControlRect.Left, _mouse.ControlRect.Right);
-			_G(real_mouse_y) = Math::Clamp(_G(real_mouse_y) + dy, _mouse.ControlRect.Top, _mouse.ControlRect.Bottom);
+		else if (_GP(mouse).ConfineInCtrlRect) {
+			_G(real_mouse_x) = Math::Clamp(_G(real_mouse_x) + dx, _GP(mouse).ControlRect.Left, _GP(mouse).ControlRect.Right);
+			_G(real_mouse_y) = Math::Clamp(_G(real_mouse_y) + dy, _GP(mouse).ControlRect.Top, _GP(mouse).ControlRect.Bottom);
 			position_mouse(_G(real_mouse_x), _G(real_mouse_y));
 		}
 		// Lastly, if the real cursor is out of the control rect, simply add
@@ -135,7 +134,7 @@ void mgetgraphpos() {
 		}
 
 		// Do not update the game cursor if the real cursor is beyond the control rect
-		if (!_mouse.ControlRect.IsInside(_G(real_mouse_x), _G(real_mouse_y)))
+		if (!_GP(mouse).ControlRect.IsInside(_G(real_mouse_x), _G(real_mouse_y)))
 			return;
 	} else {
 		// Save real cursor coordinates provided by system
@@ -155,7 +154,7 @@ void mgetgraphpos() {
 	}
 
 	// Convert to virtual coordinates
-	_mouse.AdjustPosition(_G(mousex), _G(mousey));
+	_GP(mouse).AdjustPosition(_G(mousex), _G(mousey));
 }
 
 void msetcursorlimit(int x1, int y1, int x2, int y2) {
@@ -165,7 +164,6 @@ void msetcursorlimit(int x1, int y1, int x2, int y2) {
 	_G(boundy2) = y2;
 }
 
-int hotxwas = 0, hotywas = 0;
 void domouse(int str) {
 	/*
 	   TO USE THIS ROUTINE YOU MUST LOAD A MOUSE CURSOR USING mloadcursor.
@@ -173,7 +171,7 @@ void domouse(int str) {
 	*/
 	int poow = _G(mousecurs)[(int)_G(currentcursor)]->GetWidth();
 	int pooh = _G(mousecurs)[(int)_G(currentcursor)]->GetHeight();
-	//int smx = _G(mousex) - hotxwas, smy = _G(mousey) - hotywas;
+	//int smx = _G(mousex) - _G(hotxwas), smy = _G(mousey) - _G(hotywas);
 	const Rect &viewport = _GP(play).GetMainViewport();
 
 	mgetgraphpos();
@@ -188,8 +186,8 @@ void domouse(int str) {
 
 	_G(mousex) += _G(hotx);
 	_G(mousey) += _G(hoty);
-	hotxwas = _G(hotx);
-	hotywas = _G(hoty);
+	_G(hotxwas) = _G(hotx);
+	_G(hotywas) = _G(hoty);
 }
 
 int ismouseinbox(int lf, int tp, int rt, int bt) {
@@ -217,7 +215,7 @@ int mgetbutton() {
 	poll_mouse();
 	int butis = _G(mouse_b);
 
-	if ((butis > 0) &(butwas > 0))
+	if ((butis > 0) &(_G(butwas) > 0))
 		return NONE;  // don't allow holding button down
 
 	if (butis & 1) {
@@ -233,11 +231,10 @@ int mgetbutton() {
 	else if (butis & 4)
 		toret = MIDDLE;
 
-	butwas = butis;
+	_G(butwas) = butis;
 	return toret;
 }
 
-const int MB_ARRAY[3] = { 1, 2, 4 };
 int misbuttondown(int buno) {
 	poll_mouse();
 	if (_G(mouse_b) & MB_ARRAY[buno])

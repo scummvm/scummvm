@@ -99,7 +99,7 @@ unsigned long AGSMac::GetDiskFreeSpaceMB() {
 }
 
 const char *AGSMac::GetNoMouseErrorString() {
-	return "This game requires a mouse. You need to configure and setup your mouse to play this game.\n";
+	return "This game requires a _GP(mouse). You need to configure and setup your mouse to play this game.\n";
 }
 
 eScriptSystemOSID AGSMac::GetSystemOSID() {

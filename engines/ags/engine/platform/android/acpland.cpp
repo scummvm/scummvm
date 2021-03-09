@@ -671,7 +671,7 @@ unsigned long AGSAndroid::GetDiskFreeSpaceMB() {
 }
 
 const char *AGSAndroid::GetNoMouseErrorString() {
-	return "This game requires a mouse. You need to configure and setup your mouse to play this game.\n";
+	return "This game requires a _GP(mouse). You need to configure and setup your mouse to play this game.\n";
 }
 
 eScriptSystemOSID AGSAndroid::GetSystemOSID() {

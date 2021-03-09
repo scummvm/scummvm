@@ -189,15 +189,15 @@ static int game_loop_check_ground_level_interactions() {
 
 static void lock_mouse_on_click() {
 	if (_GP(usetup).mouse_auto_lock && _GP(scsystem).windowed)
-		_mouse.TryLockToWindow();
+		_GP(mouse).TryLockToWindow();
 }
 
 static void toggle_mouse_lock() {
 	if (_GP(scsystem).windowed) {
-		if (_mouse.IsLockedToWindow())
-			_mouse.UnlockFromWindow();
+		if (_GP(mouse).IsLockedToWindow())
+			_GP(mouse).UnlockFromWindow();
 		else
-			_mouse.TryLockToWindow();
+			_GP(mouse).TryLockToWindow();
 	}
 }
 

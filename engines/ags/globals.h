@@ -109,6 +109,7 @@ struct GameSetupStruct;
 struct GameState;
 struct IAGSEditorDebugger;
 struct ManagedObjectPool;
+struct Mouse;
 struct MoveList;
 struct NonBlockingScriptFunction;
 struct ObjectCache;
@@ -751,6 +752,17 @@ public:
 	int _disable_mgetgraphpos = 0;
 	char _ignore_bounds = 0;
 	AGS::Shared::Bitmap *_mousecurs[MAXCURSORS];
+
+	/**@}*/
+
+	/**
+	 * \defgroup mousew32 globals
+	 * @{
+	 */
+
+	int _butwas = 0;
+	int _hotxwas = 0, _hotywas = 0;
+	Mouse *_mouse;
 
 	/**@}*/
 

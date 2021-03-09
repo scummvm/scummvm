@@ -112,8 +112,6 @@ struct Mouse {
 	void SetPosition(const Point p);
 };
 
-extern Mouse _mouse;
-
 } // namespace AGS3
 
 #endif

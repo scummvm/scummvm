@@ -1701,7 +1701,7 @@ void display_switch_out() {
 	_G(switched_away) = true;
 	ags_clear_input_buffer();
 	// Always unlock mouse when switching out from the game
-	_mouse.UnlockFromWindow();
+	_GP(mouse).UnlockFromWindow();
 	_G(platform)->DisplaySwitchOut();
 	_G(platform)->ExitFullscreenMode();
 }
@@ -1750,7 +1750,7 @@ void display_switch_in() {
 	ags_clear_input_buffer();
 	// If auto lock option is set, lock mouse to the game window
 	if (_GP(usetup).mouse_auto_lock && _GP(scsystem).windowed)
-		_mouse.TryLockToWindow();
+		_GP(mouse).TryLockToWindow();
 }
 
 void display_switch_in_resume() {
