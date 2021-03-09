@@ -212,12 +212,12 @@ HSaveError WriteGameState(PStream out) {
 	// Other dynamic values
 	out->WriteInt32(_G(frames_per_second));
 	out->WriteInt32(loopcounter);
-	out->WriteInt32(ifacepopped);
+	out->WriteInt32(_G(ifacepopped));
 	out->WriteInt32(game_paused);
 	// Mouse cursor
 	out->WriteInt32(cur_mode);
 	out->WriteInt32(cur_cursor);
-	out->WriteInt32(mouse_on_iface);
+	out->WriteInt32(_G(mouse_on_iface));
 
 	// Viewports and cameras
 	int viewcam_flags = 0;
@@ -303,12 +303,12 @@ HSaveError ReadGameState(PStream in, int32_t cmp_ver, const PreservedParams &pp,
 	// Other dynamic values
 	r_data.FPS = in->ReadInt32();
 	set_loop_counter(in->ReadInt32());
-	ifacepopped = in->ReadInt32();
+	_G(ifacepopped) = in->ReadInt32();
 	game_paused = in->ReadInt32();
 	// Mouse cursor state
 	r_data.CursorMode = in->ReadInt32();
 	r_data.CursorID = in->ReadInt32();
-	mouse_on_iface = in->ReadInt32();
+	_G(mouse_on_iface) = in->ReadInt32();
 
 	// Viewports and cameras
 	if (svg_ver < kGSSvgVersion_3510) {

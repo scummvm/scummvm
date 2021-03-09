@@ -116,10 +116,6 @@ extern int numLipLines, curLipLine, curLipLinePhoneme;
 extern CharacterExtras *charextra;
 extern DialogTopic *dialog;
 
-extern int ifacepopped;  // currently displayed pop-up GUI (-1 if none)
-extern int mouse_on_iface;   // mouse cursor is over this interface
-extern int mouse_ifacebut_xoffs, mouse_ifacebut_yoffs;
-
 #if AGS_PLATFORM_OS_IOS || AGS_PLATFORM_OS_ANDROID
 extern int _G(psp_gfx_renderer);
 #endif
@@ -1165,10 +1161,10 @@ void restore_game_dialogs(Stream *in) {
 }
 
 void restore_game_more_dynamic_values(Stream *in) {
-	mouse_on_iface = in->ReadInt32();
+	_G(mouse_on_iface) = in->ReadInt32();
 	in->ReadInt32(); // mouse_on_iface_button
 	in->ReadInt32(); // mouse_pushed_iface
-	ifacepopped = in->ReadInt32();
+	_G(ifacepopped) = in->ReadInt32();
 	game_paused = in->ReadInt32();
 }
 
@@ -1572,8 +1568,8 @@ CutsceneSkipStyle get_cutscene_skipstyle() {
 void start_skipping_cutscene() {
 	_GP(play).fast_forward = 1;
 	// if a drop-down icon bar is up, remove it as it will pause the game
-	if (ifacepopped >= 0)
-		remove_popup_interface(ifacepopped);
+	if (_G(ifacepopped) >= 0)
+		remove_popup_interface(_G(ifacepopped));
 
 	// if a text message is currently displayed, remove it
 	if (_G(is_text_overlay) > 0)

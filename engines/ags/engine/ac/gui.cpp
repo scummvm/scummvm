@@ -68,12 +68,6 @@ extern Bitmap **guibg;
 extern IDriverDependantBitmap **guibgbmp;
 extern IGraphicsDriver *gfxDriver;
 
-int ifacepopped = -1; // currently displayed pop-up GUI (-1 if none)
-int mouse_on_iface = -1; // mouse cursor is over this interface
-int mouse_ifacebut_xoffs = -1, mouse_ifacebut_yoffs = -1;
-
-int eip_guinum, eip_guiobj;
-
 
 ScriptGUI *GUI_AsTextWindow(ScriptGUI *tehgui) {
 	// Internally both GUI and TextWindow are implemented by same class
@@ -307,8 +301,8 @@ void GUI_ProcessClick(int x, int y, int mbut) {
 //=============================================================================
 
 void remove_popup_interface(int ifacenum) {
-	if (ifacepopped != ifacenum) return;
-	ifacepopped = -1;
+	if (_G(ifacepopped) != ifacenum) return;
+	_G(ifacepopped) = -1;
 	UnPauseGame();
 	_GP(guis)[ifacenum].SetConceal(true);
 	if (_G(mousey) <= _GP(guis)[ifacenum].PopupAtMouseY)
@@ -319,7 +313,7 @@ void remove_popup_interface(int ifacenum) {
 	else if (IsInterfaceEnabled())
 		set_default_cursor();
 
-	if (ifacenum == mouse_on_iface) mouse_on_iface = -1;
+	if (ifacenum == _G(mouse_on_iface)) _G(mouse_on_iface) = -1;
 	guis_need_update = 1;
 }
 
@@ -589,7 +583,7 @@ int gui_on_mouse_move() {
 			if (_GP(guis)[guin].PopupStyle != kGUIPopupMouseY) continue;
 			if (_G(is_complete_overlay) > 0) break; // interfaces disabled
 			//    if (_GP(play).disabled_user_interface>0) break;
-			if (ifacepopped == guin) continue;
+			if (_G(ifacepopped) == guin) continue;
 			if (!_GP(guis)[guin].IsVisible()) continue;
 			// Don't allow it to be popped up while skipping cutscene
 			if (_GP(play).fast_forward) continue;
@@ -598,7 +592,7 @@ int gui_on_mouse_move() {
 				set_mouse_cursor(CURS_ARROW);
 				_GP(guis)[guin].SetConceal(false);
 				guis_need_update = 1;
-				ifacepopped = guin;
+				_G(ifacepopped) = guin;
 				PauseGame();
 				break;
 			}
@@ -632,8 +626,8 @@ void gui_on_mouse_up(const int wasongui, const int wasbutdown) {
 		if ((cttype == kGUIButton) || (cttype == kGUISlider) || (cttype == kGUIListBox)) {
 			force_event(EV_IFACECLICK, wasongui, i, wasbutdown);
 		} else if (cttype == kGUIInvWindow) {
-			mouse_ifacebut_xoffs = _G(mousex) - (guio->X) - _GP(guis)[wasongui].X;
-			mouse_ifacebut_yoffs = _G(mousey) - (guio->Y) - _GP(guis)[wasongui].Y;
+			_G(mouse_ifacebut_xoffs) = _G(mousex) - (guio->X) - _GP(guis)[wasongui].X;
+			_G(mouse_ifacebut_yoffs) = _G(mousey) - (guio->Y) - _GP(guis)[wasongui].Y;
 			int iit = offset_over_inv((GUIInvWindow *)guio);
 			if (iit >= 0) {
 				_G(evblocknum) = iit;

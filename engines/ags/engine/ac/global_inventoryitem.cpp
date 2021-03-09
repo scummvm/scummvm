@@ -39,7 +39,6 @@ namespace AGS3 {
 
 using namespace AGS::Shared;
 
-extern int mouse_ifacebut_xoffs, mouse_ifacebut_yoffs;
 extern CharacterInfo *playerchar;
 
 void set_inv_item_pic(int invi, int piccy) {
@@ -80,8 +79,8 @@ int GetInvAt(int xxx, int yyy) {
 		int onobj = _GP(guis)[ongui].FindControlUnderMouse();
 		GUIObject *guio = _GP(guis)[ongui].GetControl(onobj);
 		if (guio) {
-			mouse_ifacebut_xoffs = _G(mousex) - (guio->X);
-			mouse_ifacebut_yoffs = _G(mousey) - (guio->Y);
+			_G(mouse_ifacebut_xoffs) = _G(mousex) - (guio->X);
+			_G(mouse_ifacebut_yoffs) = _G(mousey) - (guio->Y);
 		}
 		_G(mousex) = mxwas;
 		_G(mousey) = mywas;

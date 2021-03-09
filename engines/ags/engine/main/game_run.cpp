@@ -73,13 +73,9 @@ namespace AGS3 {
 
 using namespace AGS::Shared;
 
-extern int mouse_on_iface;   // mouse cursor is over this interface
-extern int ifacepopped;
-
 extern int game_paused;
 extern int getloctype_index;
 extern CharacterInfo *playerchar;
-extern int mouse_ifacebut_xoffs, mouse_ifacebut_yoffs;
 extern int cur_mode;
 extern char noWalkBehindsAtAll;
 extern CharacterExtras *charextra;
@@ -213,9 +209,9 @@ static void check_mouse_controls() {
 
 	mongu = gui_on_mouse_move();
 
-	mouse_on_iface = mongu;
-	if ((ifacepopped >= 0) && (_G(mousey) >= _GP(guis)[ifacepopped].Y + _GP(guis)[ifacepopped].Height))
-		remove_popup_interface(ifacepopped);
+	_G(mouse_on_iface) = mongu;
+	if ((_G(ifacepopped) >= 0) && (_G(mousey) >= _GP(guis)[_G(ifacepopped)].Y + _GP(guis)[_G(ifacepopped)].Height))
+		remove_popup_interface(_G(ifacepopped));
 
 	// check mouse clicks on GUIs
 	static int wasbutdown = 0, wasongui = 0;
@@ -746,7 +742,7 @@ void UpdateGameOnce(bool checkControls, IDriverDependantBitmap *extraBitmap, int
 		return;
 	}
 
-	mouse_on_iface = -1;
+	_G(mouse_on_iface) = -1;
 
 	check_debug_keys();
 
@@ -798,7 +794,7 @@ static void UpdateMouseOverLocation() {
 
 	if ((_GP(play).get_loc_name_save_cursor >= 0) &&
 		(_GP(play).get_loc_name_save_cursor != _GP(play).get_loc_name_last_time) &&
-		(mouse_on_iface < 0) && (ifacepopped < 0)) {
+		(_G(mouse_on_iface) < 0) && (_G(ifacepopped) < 0)) {
 		// we have saved the cursor, but the mouse location has changed
 		// and it's time to restore it
 		_GP(play).get_loc_name_save_cursor = -1;

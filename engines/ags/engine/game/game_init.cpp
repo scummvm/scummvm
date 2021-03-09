@@ -352,7 +352,7 @@ HGameInitError InitGameState(const LoadedGameEntities &ents, GameDataVersion dat
 	// 4. Initialize certain runtime variables
 	//
 	game_paused = 0;  // reset the game paused flag
-	ifacepopped = -1;
+	_G(ifacepopped) = -1;
 
 	String svg_suffix;
 	if (_GP(game).saveGameFileExtension[0] != 0)

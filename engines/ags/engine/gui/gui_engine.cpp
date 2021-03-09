@@ -47,7 +47,6 @@ namespace AGS3 {
 using namespace AGS::Shared;
 
 // For engine these are defined in ac.cpp
-extern int eip_guiobj;
 extern void replace_macro_tokens(const char *, String &);
 
 // For engine these are defined in acfonts.cpp
@@ -99,11 +98,11 @@ bool is_sprite_alpha(int spr) {
 }
 
 void set_eip_guiobj(int eip) {
-	eip_guiobj = eip;
+	_G(eip_guiobj) = eip;
 }
 
 int get_eip_guiobj() {
-	return eip_guiobj;
+	return _G(eip_guiobj);
 }
 
 bool outlineGuiObjects = false;

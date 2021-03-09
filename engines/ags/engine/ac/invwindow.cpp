@@ -54,7 +54,6 @@ namespace AGS3 {
 using namespace AGS::Shared;
 
 extern CharacterExtras *charextra;
-extern int mouse_ifacebut_xoffs, mouse_ifacebut_yoffs;
 extern CharacterInfo *playerchar;
 
 int in_inv_screen = 0, inv_screen_newroom = -1;
@@ -149,11 +148,11 @@ ScriptInvItem *InvWindow_GetItemAtIndex(GUIInvWindow *guii, int index) {
 int offset_over_inv(GUIInvWindow *inv) {
 	if (inv->ItemWidth <= 0 || inv->ItemHeight <= 0)
 		return -1;
-	int mover = mouse_ifacebut_xoffs / data_to_game_coord(inv->ItemWidth);
+	int mover = _G(mouse_ifacebut_xoffs) / data_to_game_coord(inv->ItemWidth);
 	// if it's off the edge of the visible items, ignore
 	if (mover >= inv->ColCount)
 		return -1;
-	mover += (mouse_ifacebut_yoffs / data_to_game_coord(inv->ItemHeight)) * inv->ColCount;
+	mover += (_G(mouse_ifacebut_yoffs) / data_to_game_coord(inv->ItemHeight)) * inv->ColCount;
 	if (mover >= inv->ColCount * inv->RowCount)
 		return -1;
 

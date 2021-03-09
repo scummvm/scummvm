@@ -103,7 +103,6 @@ extern int walk_behind_baselines_changed;
 
 extern CharacterExtras *charextra;
 extern CharacterInfo *playerchar;
-extern int eip_guinum;
 extern int cur_mode, cur_cursor;
 extern int mouse_frame, mouse_delay;
 extern int lastmx, lastmy;
@@ -1570,7 +1569,7 @@ void prepare_characters_for_drawing() {
 	for (int aa = 0; aa < _GP(game).numcharacters; aa++) {
 		if (_GP(game).chars[aa].on == 0) continue;
 		if (_GP(game).chars[aa].room != _G(displayed_room)) continue;
-		eip_guinum = aa;
+		_G(eip_guinum) = aa;
 		const int useindx = aa + MAX_ROOM_OBJECTS;
 
 		CharacterInfo *chin = &_GP(game).chars[aa];
@@ -1962,7 +1961,7 @@ void draw_gui_and_overlays() {
 				if (guibg[aa] == nullptr)
 					recreate_guibg_image(&_GP(guis)[aa]);
 
-				eip_guinum = aa;
+				_G(eip_guinum) = aa;
 				_G(our_eip) = 370;
 				guibg[aa]->ClearTransparent();
 				_G(our_eip) = 372;

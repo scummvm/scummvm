@@ -85,8 +85,6 @@ using namespace AGS::Engine;
 
 extern char check_dynamic_sprites_at_exit;
 extern char pexbuf[STD_BUFFER_SIZE];
-extern int eip_guinum;
-extern int eip_guiobj;
 extern SpeechLipSyncLine *splipsync;
 extern int numLipLines, curLipLine, curLipLinePhoneme;
 

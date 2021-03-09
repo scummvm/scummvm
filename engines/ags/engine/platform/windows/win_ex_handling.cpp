@@ -42,8 +42,8 @@ namespace AGS3 {
 using namespace AGS::Shared;
 
 extern int _G(our_eip);
-extern int eip_guinum;
-extern int eip_guiobj;
+extern int _G(eip_guinum);
+extern int _G(eip_guiobj);
 extern int proper_exit;
 
 char tempmsg[100];
@@ -61,7 +61,7 @@ static void DisplayException() {
 	sprintf(printfworkingspace, "An exception 0x%X occurred in ACWIN.EXE at EIP = 0x%08X; program pointer is %+d, ACI version %s, gtags (%d,%d)\n\n"
 	        "AGS cannot continue, this exception was fatal. Please note down the numbers above, remember what you were doing at the time and post the details on the AGS Technical Forum.\n\n%s\n\n"
 	        "Most versions of Windows allow you to press Ctrl+C now to copy this entire message to the clipboard for easy reporting.\n\n%s (code %d)",
-	        excinfo.ExceptionCode, (intptr_t)excinfo.ExceptionAddress, _G(our_eip), EngineVersion.LongString.GetCStr(), eip_guinum, eip_guiobj, script_callstack.GetCStr(),
+	        excinfo.ExceptionCode, (intptr_t)excinfo.ExceptionAddress, _G(our_eip), EngineVersion.LongString.GetCStr(), _G(eip_guinum), _G(eip_guiobj), script_callstack.GetCStr(),
 	        (miniDumpResultCode == 0) ? "An error file CrashInfo.dmp has been created. You may be asked to upload this file when reporting this problem on the AGS Forums." :
 	        "Unable to create an error dump file.", miniDumpResultCode);
 	MessageBoxA(win_get_window(), printfworkingspace, "Illegal exception", MB_ICONSTOP | MB_OK);

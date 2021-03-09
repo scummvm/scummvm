@@ -87,11 +87,6 @@ void    gui_on_mouse_hold(const int wasongui, const int wasbutdown);
 void    gui_on_mouse_up(const int wasongui, const int wasbutdown);
 void    gui_on_mouse_down(const int guin, const int mbut);
 
-extern int ifacepopped;
-
-extern int ifacepopped;
-extern int mouse_on_iface;
-
 } // namespace AGS3
 
 #endif

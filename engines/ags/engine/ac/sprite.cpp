@@ -38,7 +38,6 @@ namespace AGS3 {
 using namespace AGS::Shared;
 using namespace AGS::Engine;
 
-extern int eip_guinum, eip_guiobj;
 extern color palette[256];
 extern IGraphicsDriver *gfxDriver;
 
@@ -148,8 +147,8 @@ void initialize_sprite(int ee) {
 		curspr = _GP(spriteset)[ee];
 		get_new_size_for_sprite(ee, curspr->GetWidth(), curspr->GetHeight(), newwid, newhit);
 
-		eip_guinum = ee;
-		eip_guiobj = newwid;
+		_G(eip_guinum) = ee;
+		_G(eip_guiobj) = newwid;
 
 		if ((newwid != curspr->GetWidth()) || (newhit != curspr->GetHeight())) {
 			tmpdbl = BitmapHelper::CreateTransparentBitmap(newwid, newhit, curspr->GetColorDepth());

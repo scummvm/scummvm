@@ -505,6 +505,18 @@ public:
 	/**@}*/
 
 	/**
+	 * \defgroup gui globals
+	 * @{
+	 */
+
+	int _ifacepopped = -1; // currently displayed pop-up GUI (-1 if none)
+	int _mouse_on_iface = -1; // mouse cursor is over this interface
+	int _mouse_ifacebut_xoffs = -1, _mouse_ifacebut_yoffs = -1;
+	int _eip_guinum = 0, _eip_guiobj = 0;
+
+	/**@}*/
+
+	/**
 	 * \defgroup guibutton globals
 	 * @{
 	 */
