@@ -224,7 +224,9 @@ void Process::run() {
 			}
 			break;
 		case kExitCodeSaveGame:
-			_engine->returnToPreviousScreen();
+			if (_engine->saveGameState(getExitIntArg1(), "").getCode() != Common::kNoError) {
+				warning("failed to save game");
+			}
 			activate();
 			break;
 		default:
