@@ -57,9 +57,6 @@ extern Bitmap **actsps;
 extern IDriverDependantBitmap **actspsbmp;
 extern IGraphicsDriver *gfxDriver;
 
-// Used for deciding whether a char or obj was closer
-int obj_lowest_yp;
-
 int GetObjectIDAtScreen(int scrx, int scry) {
 	// translate screen co-ordinates to room co-ordinates
 	VpPoint vpt = _GP(play).ScreenToRoomDivDown(scrx, scry);
@@ -94,7 +91,7 @@ int GetObjectIDAtRoom(int roomx, int roomy) {
 		bestshotwas = aa;
 		bestshotyp = usebasel;
 	}
-	obj_lowest_yp = bestshotyp;
+	_G(obj_lowest_yp) = bestshotyp;
 	return bestshotwas;
 }
 

@@ -115,8 +115,6 @@ extern int cur_mode, cur_cursor;
 extern int _G(psp_gfx_renderer);
 #endif
 
-extern int obj_lowest_yp;
-
 extern int actSpsCount;
 extern Bitmap **actsps;
 extern IDriverDependantBitmap * *actspsbmp;
@@ -1662,9 +1660,9 @@ int __GetLocationType(int xxx, int yyy, int allowHotspot0) {
 		wbat = 0;
 
 	if ((charat >= 0) && (objat >= 0)) {
-		if ((wbat > obj_lowest_yp) && (wbat > _G(char_lowest_yp)))
+		if ((wbat > _G(obj_lowest_yp)) && (wbat > _G(char_lowest_yp)))
 			winner = LOCTYPE_HOTSPOT;
-		else if (obj_lowest_yp > _G(char_lowest_yp))
+		else if (_G(obj_lowest_yp) > _G(char_lowest_yp))
 			winner = LOCTYPE_OBJ;
 		else
 			winner = LOCTYPE_CHAR;
@@ -1674,7 +1672,7 @@ int __GetLocationType(int xxx, int yyy, int allowHotspot0) {
 		else
 			winner = LOCTYPE_CHAR;
 	} else if (objat >= 0) {
-		if (wbat > obj_lowest_yp)
+		if (wbat > _G(obj_lowest_yp))
 			winner = LOCTYPE_HOTSPOT;
 		else
 			winner = LOCTYPE_OBJ;

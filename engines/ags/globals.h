@@ -527,6 +527,16 @@ public:
 	/**@}*/
 
 	/**
+	 * \defgroup global_object globals
+	 * @{
+	 */
+
+	// Used for deciding whether a char or obj was closer
+	int _obj_lowest_yp = 0;
+
+	/**@}*/
+
+	/**
 	 * \defgroup graphics_mode globals
 	 * @{
 	 */

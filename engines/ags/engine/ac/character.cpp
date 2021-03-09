@@ -2098,8 +2098,6 @@ CharacterInfo *GetCharacterAtRoom(int x, int y) {
 	return &_GP(game).chars[hsnum];
 }
 
-extern int obj_lowest_yp;
-
 int is_pos_on_character(int xx, int yy) {
 	int cc, sppic, lowestyp = 0, lowestwas = -1;
 	for (cc = 0; cc < _GP(game).numcharacters; cc++) {
