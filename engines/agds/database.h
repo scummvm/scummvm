@@ -52,6 +52,9 @@ private:
 
 	EntriesType		_entries;
 
+private:
+	static uint32 getDataOffset(uint32 maxNameSize, uint32 totalEntries);
+
 public:
 	bool open(const Common::String &filename);
 	bool open(const Common::String &filename, Common::SeekableReadStream *stream);

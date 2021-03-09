@@ -35,9 +35,17 @@ bool Database::open(const Common::String &filename) {
 	return open(filename, &file);
 }
 
-bool Database::open(const Common::String &filename, Common::SeekableReadStream *stream) {
+namespace {
 	static const uint32 kMagic = 666;
+	static const uint32 kHeaderFieldSize = 0x09;
+	static const uint32 kHeaderSize = 0x14;
+}
 
+uint32 Database::getDataOffset(uint32 maxNameSize, uint32 totalEntries) {
+	return kHeaderSize + (maxNameSize + kHeaderFieldSize) * totalEntries;
+}
+
+bool Database::open(const Common::String &filename, Common::SeekableReadStream *stream) {
 	_filename = filename;
 	uint32 magic = stream->readUint32LE();
 	if (magic != kMagic) {
@@ -53,10 +61,7 @@ bool Database::open(const Common::String &filename, Common::SeekableReadStream *
 		return false;
 	}
 
-	static const uint32 kHeaderFieldSize = 0x09;
-	static const uint32 kHeaderSize = 0x14;
-
-	uint32 dataOffset = kHeaderSize + (_maxNameSize + kHeaderFieldSize) * _totalEntries;
+	uint32 dataOffset = getDataOffset(_maxNameSize, _totalEntries);
 	Common::Array<char> nameBuffer(_maxNameSize + 1);
 	for (uint32 i = 0; i < _usedEntries; ++i) {
 		uint32 offset = stream->readUint32LE();
