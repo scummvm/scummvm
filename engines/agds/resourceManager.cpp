@@ -225,7 +225,7 @@ Common::String ResourceManager::loadText(const Common::String &name) const {
 	return loadText(stream);
 }
 
-Common::String readString(Common::SeekableReadStream * stream, uint size) {
+Common::String readString(Common::ReadStream *stream, uint size) {
 	Common::Array<char> text(size);
 	if (stream->read(text.data(), text.size()) != text.size())
 		error("readString: short read");
@@ -233,7 +233,7 @@ Common::String readString(Common::SeekableReadStream * stream, uint size) {
 	return Common::String(text.data(), strlen(text.data()));
 }
 
-void writeString(Common::SeekableWriteStream * stream, const Common::String &string, uint size) {
+void writeString(Common::WriteStream *stream, const Common::String &string, uint size) {
 	Common::Array<char> text(size);
 	memcpy(text.data(), string.c_str(), MIN(string.size(), size));
 
