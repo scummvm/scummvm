@@ -46,7 +46,7 @@
 #include "backends/platform/ios7/ios7_common.h"
 #endif
 
-static void logHandler(int level, const char *message, void *data) {
+static void logHandler(int level, char *message, void *data) {
 	switch (level) {
 	case FLUID_PANIC:
 		error("FluidSynth: %s", message);
