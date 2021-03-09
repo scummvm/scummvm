@@ -59,11 +59,10 @@ using namespace AGS::Engine;
 
 extern char pexbuf[STD_BUFFER_SIZE];
 
-const char *OutputMsgBufID = "buffer";
-const char *OutputFileID = "file";
-const char *OutputSystemID = "stdout";
-const char *OutputGameConsoleID = "console";
-
+static const char *OutputMsgBufID = "buffer";
+static const char *OutputFileID = "file";
+static const char *OutputSystemID = "stdout";
+static const char *OutputGameConsoleID = "console";
 
 #if AGS_PLATFORM_OS_WINDOWS
 HWND editor_window_handle = 0;
