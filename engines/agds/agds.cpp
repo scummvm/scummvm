@@ -39,6 +39,7 @@
 #include "common/events.h"
 #include "common/file.h"
 #include "common/ini-file.h"
+#include "common/savefile.h"
 #include "common/system.h"
 #include "engines/util.h"
 #include "graphics/transparent_surface.h"
@@ -1017,14 +1018,22 @@ void AGDSEngine::loadPatches(Common::SeekableReadStream *file, Database & db) {
 }
 
 
-Common::Error AGDSEngine::loadGameStream(Common::SeekableReadStream *file) {
+Common::Error AGDSEngine::loadGameState(int slot) {
+	saveAutosaveIfEnabled();
+
+	auto fileName = getSaveStateName(slot);
+	Common::InSaveFile *saveFile = _saveFileMan->openForLoading(fileName);
+
+	if (!saveFile)
+		return Common::kReadingFailed;
+
 	Database db;
-	if (!db.open("savefile", file))
+	if (!db.open(fileName, saveFile))
 		return Common::kReadingFailed;
 
 	{
 		// Compiled version (should be 2)
-		Common::ScopedPtr<Common::SeekableReadStream> agds_ver(db.getEntry(file, "__agds_ver"));
+		Common::ScopedPtr<Common::SeekableReadStream> agds_ver(db.getEntry(saveFile, "__agds_ver"));
 		int version = agds_ver->readUint32LE();
 		debug("version: %d", version);
 		if (version != 2) {
@@ -1040,7 +1049,7 @@ Common::Error AGDSEngine::loadGameStream(Common::SeekableReadStream *file) {
 
 	{
 		// Current character
-		Common::ScopedPtr<Common::SeekableReadStream> agds_c(db.getEntry(file, "__agds_c"));
+		Common::ScopedPtr<Common::SeekableReadStream> agds_c(db.getEntry(saveFile, "__agds_c"));
 		Common::String object = readString(agds_c.get());
 		Common::String name = readString(agds_c.get());
 		Common::String id = readString(agds_c.get());
@@ -1067,14 +1076,14 @@ Common::Error AGDSEngine::loadGameStream(Common::SeekableReadStream *file) {
 	Common::String screenName;
 	{
 		// Screenshot and screen name
-		Common::ScopedPtr<Common::SeekableReadStream> agds_s(db.getEntry(file, "__agds_s"));
+		Common::ScopedPtr<Common::SeekableReadStream> agds_s(db.getEntry(saveFile, "__agds_s"));
 		screenName = readString(agds_s.get());
 	}
 
 	{
 		// Global vars
 		_globals.clear();
-		Common::ScopedPtr<Common::SeekableReadStream> agds_v(db.getEntry(file, "__agds_v"));
+		Common::ScopedPtr<Common::SeekableReadStream> agds_v(db.getEntry(saveFile, "__agds_v"));
 		uint32 n = agds_v->readUint32LE();
 		debug("reading %u vars...", n);
 		while(n--) {
@@ -1088,7 +1097,7 @@ Common::Error AGDSEngine::loadGameStream(Common::SeekableReadStream *file) {
 	{
 		_soundManager.stopAll();
 		// Audio samples
-		Common::ScopedPtr<Common::SeekableReadStream> agds_a(db.getEntry(file, "__agds_a"));
+		Common::ScopedPtr<Common::SeekableReadStream> agds_a(db.getEntry(saveFile, "__agds_a"));
 		Common::String sample = loadText(readString(agds_a.get()));
 		Common::String phaseVar = readString(agds_a.get());
 		uint unk0 = agds_a->readUint32LE();
@@ -1100,7 +1109,7 @@ Common::Error AGDSEngine::loadGameStream(Common::SeekableReadStream *file) {
 
 	{
 		// System vars
-		Common::ScopedPtr<Common::SeekableReadStream> agds_d(db.getEntry(file, "__agds_d"));
+		Common::ScopedPtr<Common::SeekableReadStream> agds_d(db.getEntry(saveFile, "__agds_d"));
 		for(uint i = 0, n = _systemVarList.size(); i < n; ++i) {
 			Common::String & name = _systemVarList[i];
 			_systemVars[name]->read(agds_d.get());
@@ -1111,13 +1120,13 @@ Common::Error AGDSEngine::loadGameStream(Common::SeekableReadStream *file) {
 	SystemVariable *initVar = getSystemVariable("init_resources");
 	runObject(initVar->getString());
 
-	loadPatches(file, db);
+	loadPatches(saveFile, db);
 	loadScreen(screenName, false);
 
 	{
 		// Inventory
 		_inventory.clear();
-		Common::ScopedPtr<Common::SeekableReadStream> agds_i(db.getEntry(file, "__agds_i"));
+		Common::ScopedPtr<Common::SeekableReadStream> agds_i(db.getEntry(saveFile, "__agds_i"));
 		int n = 34;
 		while(n--) {
 			Common::String name = readString(agds_i.get());
@@ -1159,7 +1168,15 @@ void AGDSEngine::stopProcess(const Common::String & name) {
 }
 
 
-Common::Error AGDSEngine::saveGameStream(Common::WriteStream *file, bool isAutosave) { return Common::Error(Common::kNoError); }
+Common::Error AGDSEngine::saveGameState(int slot, const Common::String &desc, bool isAutosave) {
+	auto fileName = getSaveStateName(slot);
+	Common::OutSaveFile *saveFile = getSaveFileManager()->openForSaving(fileName);
+
+	if (!saveFile)
+		return Common::kWritingFailed;
+
+	return Common::Error(Common::kNoError);
+}
 
 void AGDSEngine::currentInventoryObject(const ObjectPtr & object) {
 	_currentInventoryObject = object;

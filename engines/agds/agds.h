@@ -110,8 +110,8 @@ private:
 public:
 
 	bool hasFeature(EngineFeature f) const;
-	Common::Error loadGameStream(Common::SeekableReadStream *file);
-	Common::Error saveGameStream(Common::WriteStream *file, bool isAutosave);
+	Common::Error loadGameState(int slot) override;
+	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave = false) override;
 	bool canLoadGameStateCurrently() { return true; }
 	bool canSaveGameStateCurrently() { return _userEnabled; }
 
