@@ -191,8 +191,8 @@ bool PuzzleMorgueDoor::mouseLeftDown(const AsylumEvent &evt) {
 	 && mousePos.y > 124 && mousePos.y < 177) {
 		if (_frameIndexes[kTopRightLever] == 4) {
 			getSound()->playSound(getWorld()->soundResourceIds[2], false, Config.sfxVolume - 10);
-			_data_4572A8 = true;
-			_data_4572AC = false;
+			_data_4572A4 = true;
+			_data_4572AC = true;
 		}
 
 		return true;
@@ -312,6 +312,7 @@ void PuzzleMorgueDoor::updateState() {
 			if (_frameIndexes[kBottomGear] < 0) {
 				_data_45A9DC = 0;
 				_frameIndexes[kBottomGear] = 0;
+				_moveBottomGear = false;
 
 				getSound()->stop(getWorld()->soundResourceIds[8]);
 			}
@@ -467,7 +468,7 @@ void PuzzleMorgueDoor::updateState() {
 							_bottomLeverOpen = true;
 							_flag7 = true;
 						} else {
-							++_frameIndexes[kTopLever];
+							++_frameIndexes[kBottomLever];
 						}
 					} else {
 						if (_frameIndexes[kCenterValve] >= 14)
@@ -480,6 +481,7 @@ void PuzzleMorgueDoor::updateState() {
 				_frameIndexes[kCenterValve] = 0;
 				getSound()->stop(getWorld()->soundResourceIds[0]);
 			}
+			goto updateIndices;
 		}
 
 		if ((!_flag6 && _frameIndexes[kTopLever] >= 15)
@@ -507,15 +509,15 @@ void PuzzleMorgueDoor::updateState() {
 			}
 
 			// Bottom lever
-			if (_frameIndexes[kBottomLever]) {
+			if (_frameIndexes[kBottomLever] >= 15) {
 				if (_frameIndexes[kBottomLever] == 20)
 					getSound()->playSound(getWorld()->soundResourceIds[3], false, Config.sfxVolume - 10);
 
-				if (_frameIndexes[kTopLever] <= 15) {
+				if (_frameIndexes[kBottomLever] <= 15) {
 					_frameIndexes[kCenterValve] = 0;
 					_flag7 = false;
 				} else {
-					--_frameIndexes[kTopLever];
+					--_frameIndexes[kBottomLever];
 				}
 
 				_bottomLeverOpen = false;
@@ -528,6 +530,7 @@ void PuzzleMorgueDoor::updateState() {
 	//////////////////////////////////////////////////////////////////////////
 	// Adjust frame indexes
 	//////////////////////////////////////////////////////////////////////////
+updateIndices:
 	if (_frameIndexes[kTopGear] > _frameCounts[kTopGear] - 1)
 		_frameIndexes[kTopGear] = 0;
 
@@ -567,7 +570,7 @@ void PuzzleMorgueDoor::updateState() {
 				_moveTopGear = true;
 			}
 
-			_frameIndexes[10] = 10;
+			_frameIndexes[kTopGear] = 10;
 		}
 	}
 
