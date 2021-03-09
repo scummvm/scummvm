@@ -60,12 +60,13 @@
 #include "ags/engine/ac/dynobj/cc_audioclip.h"
 #include "ags/engine/ac/dynobj/managedobjectpool.h"
 #include "ags/engine/ac/dynobj/scriptaudiochannel.h"
-#include "ags/engine/ac/dynobj/scriptsystem.h"
+#include "ags/engine/ac/dynobj/scriptdialogoptionsrendering.h"
 #include "ags/engine/ac/dynobj/scripthotspot.h"
 #include "ags/engine/ac/dynobj/scriptinvitem.h"
 #include "ags/engine/ac/dynobj/scriptobject.h"
 #include "ags/engine/ac/dynobj/scriptregion.h"
 #include "ags/engine/ac/dynobj/scriptstring.h"
+#include "ags/engine/ac/dynobj/scriptsystem.h"
 #include "ags/engine/ac/statobj/staticarray.h"
 #include "ags/engine/debugging/consoleoutputtarget.h"
 #include "ags/engine/debugging/debugger.h"
@@ -113,6 +114,9 @@ Globals::Globals() {
 
 	// debugmanager.cpp globals
 	_DbgMgr = new AGS::Shared::DebugManager();
+
+	// dialog.cpp globals
+	_ccDialogOptionsRendering = new ScriptDialogOptionsRendering();
 
 	// draw.cpp globals
 	_CameraDrawData = new std::vector<RoomCameraDrawData>();
@@ -257,6 +261,9 @@ Globals::~Globals() {
 
 	// debugmanager.cpp globals
 	delete _DbgMgr;
+
+	// dialog.cpp globals
+	delete _ccDialogOptionsRendering;
 
 	// draw.cpp globals
 	delete _CameraDrawData;

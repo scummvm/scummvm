@@ -110,7 +110,6 @@ using namespace AGS::Shared;
 using namespace AGS::Engine;
 
 extern int cur_mode, cur_cursor;
-extern DialogTopic *dialog;
 
 #if AGS_PLATFORM_OS_IOS || AGS_PLATFORM_OS_ANDROID
 extern int _G(psp_gfx_renderer);
@@ -525,12 +524,12 @@ void unload_game_file() {
 	}
 
 	for (int i = 0; i < _GP(game).numdialog; ++i) {
-		if (dialog[i].optionscripts != nullptr)
-			free(dialog[i].optionscripts);
-		dialog[i].optionscripts = nullptr;
+		if (_G(dialog)[i].optionscripts != nullptr)
+			free(_G(dialog)[i].optionscripts);
+		_G(dialog)[i].optionscripts = nullptr;
 	}
-	free(dialog);
-	dialog = nullptr;
+	free(_G(dialog));
+	_G(dialog) = nullptr;
 	delete[] _G(scrDialog);
 	_G(scrDialog) = nullptr;
 
@@ -1153,7 +1152,7 @@ void restore_game_palette(Stream *in) {
 
 void restore_game_dialogs(Stream *in) {
 	for (int vv = 0; vv < _GP(game).numdialog; vv++)
-		in->ReadArrayOfInt32(&dialog[vv].optionflags[0], MAXTOPICOPTIONS);
+		in->ReadArrayOfInt32(&_G(dialog)[vv].optionflags[0], MAXTOPICOPTIONS);
 }
 
 void restore_game_more_dynamic_values(Stream *in) {

@@ -63,8 +63,6 @@ extern IDriverDependantBitmap **actspsbmp;
 extern Bitmap **actspswb;
 extern IDriverDependantBitmap **actspswbbmp;
 extern CachedActSpsData *actspswbcache;
-extern ScriptDialogOptionsRendering ccDialogOptionsRendering;
-extern ScriptDrawingSurface *dialogOptionsRenderingSurface;
 extern AGSStaticObject GlobalStaticManager;
 
 namespace AGS {
@@ -147,11 +145,11 @@ void InitAndRegisterDialogs() {
 
 // Initializes dialog options rendering objects and registers them in the script system
 void InitAndRegisterDialogOptions() {
-	ccRegisterManagedObject(&ccDialogOptionsRendering, &ccDialogOptionsRendering);
+	ccRegisterManagedObject(&_GP(ccDialogOptionsRendering), &_GP(ccDialogOptionsRendering));
 
-	dialogOptionsRenderingSurface = new ScriptDrawingSurface();
-	dialogOptionsRenderingSurface->isLinkedBitmapOnly = true;
-	long dorsHandle = ccRegisterManagedObject(dialogOptionsRenderingSurface, dialogOptionsRenderingSurface);
+	_G(dialogOptionsRenderingSurface) = new ScriptDrawingSurface();
+	_G(dialogOptionsRenderingSurface)->isLinkedBitmapOnly = true;
+	long dorsHandle = ccRegisterManagedObject(_G(dialogOptionsRenderingSurface), _G(dialogOptionsRenderingSurface));
 	ccAddObjectReference(dorsHandle);
 }
 

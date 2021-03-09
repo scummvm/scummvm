@@ -98,6 +98,7 @@ struct CharacterCache;
 struct CharacterExtras;
 struct CharacterInfo;
 struct COLOR_MAP;
+struct DialogTopic;
 struct DirtyRects;
 struct ExecutingScript;
 struct EventHappened;
@@ -119,6 +120,8 @@ struct RuntimeScriptValue;
 struct ScreenOverlay;
 struct ScriptAudioChannel;
 struct ScriptDialog;
+struct ScriptDialogOptionsRendering;
+struct ScriptDrawingSurface;
 struct ScriptGUI;
 struct ScriptHotspot;
 struct ScriptInvItem;
@@ -337,7 +340,14 @@ public:
 	 * @{
 	 */
 
-	 // Old dialog support
+	DialogTopic *_dialog;
+	ScriptDialogOptionsRendering *_ccDialogOptionsRendering;
+	ScriptDrawingSurface *_dialogOptionsRenderingSurface = nullptr;
+
+	int _said_speech_line = 0; // used while in dialog to track whether screen needs updating
+	int _said_text = 0;
+	int _longestline = 0;
+	// Old dialog support
 	std::vector< std::shared_ptr<unsigned char> > _old_dialog_scripts;
 	std::vector<String> _old_speech_lines;
 

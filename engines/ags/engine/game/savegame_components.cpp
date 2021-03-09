@@ -64,7 +64,6 @@ namespace AGS3 {
 using namespace Shared;
 
 extern color palette[256];
-extern DialogTopic *dialog;
 extern Bitmap *dynamicallyCreatedSurfaces[MAX_DYNAMIC_SURFACES];
 extern Bitmap *raw_saved_screen;
 
@@ -511,7 +510,7 @@ HSaveError ReadCharacters(PStream in, int32_t cmp_ver, const PreservedParams &pp
 HSaveError WriteDialogs(PStream out) {
 	out->WriteInt32(_GP(game).numdialog);
 	for (int i = 0; i < _GP(game).numdialog; ++i) {
-		dialog[i].WriteToSavegame(out.get());
+		_G(dialog)[i].WriteToSavegame(out.get());
 	}
 	return HSaveError::None();
 }
@@ -521,7 +520,7 @@ HSaveError ReadDialogs(PStream in, int32_t cmp_ver, const PreservedParams &pp, R
 	if (!AssertGameContent(err, in->ReadInt32(), _GP(game).numdialog, "Dialogs"))
 		return err;
 	for (int i = 0; i < _GP(game).numdialog; ++i) {
-		dialog[i].ReadFromSavegame(in.get());
+		_G(dialog)[i].ReadFromSavegame(in.get());
 	}
 	return err;
 }

@@ -60,8 +60,6 @@ namespace AGS3 {
 using namespace AGS::Shared;
 using namespace AGS::Shared::BitmapHelper;
 
-extern int longestline;
-
 int display_message_aschar = 0;
 
 TopBarSettings topBar;
@@ -115,8 +113,8 @@ int _display_main(int xx, int yy, int wii, const char *text, int disp_type, int 
 		// any top bar text
 		int topBarWid = wgettextwidth_compensate(topBar.text, topBar.font);
 		topBarWid += data_to_game_coord(_GP(play).top_bar_borderwidth + 2) * 2;
-		if (longestline < topBarWid)
-			longestline = topBarWid;
+		if (_G(longestline) < topBarWid)
+			_G(longestline) = topBarWid;
 		// the top bar should behave like DisplaySpeech wrt blocking
 		disp_type = DISPLAYTEXT_SPEECH;
 	}
@@ -140,13 +138,13 @@ int _display_main(int xx, int yy, int wii, const char *text, int disp_type, int 
 		yy = adjust_y_for_guis(yy);
 	}
 
-	if (longestline < wii - paddingDoubledScaled) {
+	if (_G(longestline) < wii - paddingDoubledScaled) {
 		// shrink the width of the dialog box to fit the text
 		int oldWid = wii;
 		//if ((asspch >= 0) || (allowShrink > 0))
 		// If it's not speech, or a shrink is allowed, then shrink it
 		if ((asspch == 0) || (allowShrink > 0))
-			wii = longestline + paddingDoubledScaled;
+			wii = _G(longestline) + paddingDoubledScaled;
 
 		// shift the dialog box right to align it, if necessary
 		if ((allowShrink == 2) && (xx >= 0))

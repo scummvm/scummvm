@@ -82,8 +82,6 @@ using namespace AGS::Shared;
 extern Bitmap *walkable_areas_temp;
 extern IGraphicsDriver *gfxDriver;
 extern Bitmap **actsps;
-extern int said_speech_line;
-extern int said_text;
 
 // **** CHARACTER: FUNCTIONS ****
 
@@ -2270,7 +2268,7 @@ void _displayspeech(const char *texx, int aschar, int xx, int yy, int widd, int 
 
 	EndSkippingUntilCharStops();
 
-	said_speech_line = 1;
+	_G(said_speech_line) = 1;
 
 	if (_GP(play).bgspeech_stay_on_display == 0) {
 		// remove any background speech
@@ -2281,7 +2279,7 @@ void _displayspeech(const char *texx, int aschar, int xx, int yy, int widd, int 
 				i++;
 		}
 	}
-	said_text = 1;
+	_G(said_text) = 1;
 
 	// the strings are pre-translated
 	//texx = get_translation(texx);

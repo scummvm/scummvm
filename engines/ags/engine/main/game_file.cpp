@@ -59,9 +59,6 @@ namespace AGS3 {
 using namespace AGS::Shared;
 using namespace AGS::Engine;
 
-extern DialogTopic *dialog;
-
-
 // Test if engine supports extended capabilities required to run the game
 bool test_game_caps(const std::set<String> &caps, std::set<String> &failed_caps) {
 	// Currently we support nothing special
@@ -132,7 +129,7 @@ HError preload_game_data() {
 
 HError load_game_file() {
 	MainGameSource src;
-	LoadedGameEntities ents(_GP(game), dialog, _G(views));
+	LoadedGameEntities ents(_GP(game), _G(dialog), _G(views));
 	HGameFileError load_err = OpenMainGameFileFromDefaultAsset(src);
 	if (load_err) {
 		load_err = ReadGameData(ents, src.InputStream.get(), src.DataVersion);

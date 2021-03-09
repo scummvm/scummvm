@@ -237,7 +237,7 @@ void ReadDialogs(DialogTopic *&dialog,
 	// double check and remove if proved unnecessary
 	dialog = (DialogTopic *)malloc(sizeof(DialogTopic) * dlg_count + 5);
 	for (int i = 0; i < dlg_count; ++i) {
-		dialog[i].ReadFromFile(in);
+		_G(dialog)[i].ReadFromFile(in);
 	}
 
 	if (data_ver > kGameVersion_310)
@@ -246,9 +246,9 @@ void ReadDialogs(DialogTopic *&dialog,
 	old_dialog_scripts.resize(dlg_count);
 	old_dialog_src.resize(dlg_count);
 	for (int i = 0; i < dlg_count; ++i) {
-		// NOTE: originally this was read into dialog[i].optionscripts
-		old_dialog_scripts[i].reset(new unsigned char[dialog[i].codesize]);
-		in->Read(old_dialog_scripts[i].get(), dialog[i].codesize);
+		// NOTE: originally this was read into _G(dialog)[i].optionscripts
+		old_dialog_scripts[i].reset(new unsigned char[_G(dialog)[i].codesize]);
+		in->Read(old_dialog_scripts[i].get(), _G(dialog)[i].codesize);
 
 		// Encrypted text script
 		int script_text_len = in->ReadInt32();
