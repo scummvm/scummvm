@@ -1439,7 +1439,7 @@ HSaveError restore_game_data(Stream *in, SavegameVersion svg_version, const Pres
 	// save the new room music vol for later use
 	r_data.RoomVolume = (RoomVolumeMod)in->ReadInt32();
 
-	if (ccUnserializeAllObjects(in, &ccUnserializer)) {
+	if (ccUnserializeAllObjects(in, &_GP(ccUnserializer))) {
 		return new SavegameError(kSvgErr_GameObjectInitFailed,
 		                         String::FromFormat("Managed pool deserialization failed: %s.", _G(ccErrorString).GetCStr()));
 	}

@@ -110,6 +110,4 @@ void AGSDeSerializer::Unserialize(int index, const char *objectType, const char 
 	}
 }
 
-AGSDeSerializer ccUnserializer;
-
 } // namespace AGS3

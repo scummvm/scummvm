@@ -80,6 +80,7 @@ class TTFFontRenderer;
 class WFNFontRenderer;
 
 struct ActiveDisplaySetting;
+struct AGSDeSerializer;
 struct AGSPlatformDriver;
 struct AmbientSound;
 struct AnimatingGUIButton;
@@ -262,6 +263,15 @@ public:
 	int _currentline = 0;
 	// script file format signature
 	const char *_scfilesig = "SCOM";
+
+	/**@}*/
+
+	/**
+	 * \defgroup cc_serializer globals
+	 * @{
+	 */
+
+	AGSDeSerializer *_ccUnserializer;
 
 	/**@}*/
 

@@ -48,16 +48,17 @@
 #include "ags/engine/ac/route_finder_jps.h"
 #include "ags/engine/ac/screenoverlay.h"
 #include "ags/engine/ac/spritelistentry.h"
-#include "ags/engine/ac/dynobj/cc_dialog.h"
-#include "ags/engine/ac/dynobj/cc_guiobject.h"
-#include "ags/engine/ac/dynobj/cc_character.h"
-#include "ags/engine/ac/dynobj/cc_hotspot.h"
-#include "ags/engine/ac/dynobj/cc_region.h"
-#include "ags/engine/ac/dynobj/cc_inventory.h"
-#include "ags/engine/ac/dynobj/cc_gui.h"
-#include "ags/engine/ac/dynobj/cc_object.h"
 #include "ags/engine/ac/dynobj/cc_audiochannel.h"
 #include "ags/engine/ac/dynobj/cc_audioclip.h"
+#include "ags/engine/ac/dynobj/cc_character.h"
+#include "ags/engine/ac/dynobj/cc_dialog.h"
+#include "ags/engine/ac/dynobj/cc_gui.h"
+#include "ags/engine/ac/dynobj/cc_guiobject.h"
+#include "ags/engine/ac/dynobj/cc_hotspot.h"
+#include "ags/engine/ac/dynobj/cc_inventory.h"
+#include "ags/engine/ac/dynobj/cc_object.h"
+#include "ags/engine/ac/dynobj/cc_region.h"
+#include "ags/engine/ac/dynobj/cc_serializer.h"
 #include "ags/engine/ac/dynobj/managedobjectpool.h"
 #include "ags/engine/ac/dynobj/scriptaudiochannel.h"
 #include "ags/engine/ac/dynobj/scriptdialogoptionsrendering.h"
@@ -103,6 +104,9 @@ Globals::Globals() {
 
 	// cc_options.cpp globals
 	_ccCompOptions = SCOPT_LEFTTORIGHT;
+
+	// cc_serializer.cpp globals
+	_ccUnserializer = new AGSDeSerializer();
 
 	// debug.cpp globals
 	_fps = std::numeric_limits<float>::quiet_undefined();
@@ -252,6 +256,9 @@ Globals::~Globals() {
 
 	// button.cpp globals
 	delete[] _animbuts;
+
+	// cc_serializer.cpp globals
+	delete _ccUnserializer;
 
 	// debug.cpp globals
 	delete[] _debug_line;
