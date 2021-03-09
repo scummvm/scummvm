@@ -499,7 +499,7 @@ HSaveError DoAfterRestore(const PreservedParams &pp, const RestoredData &r_data)
 	// it with SetMusicVolume)
 	_GP(thisroom).Options.MusicVolume = r_data.RoomVolume;
 
-	Mouse::SetMoveLimit(Rect(oldx1, oldy1, oldx2, oldy2));
+	_mouse.SetMoveLimit(Rect(oldx1, oldy1, oldx2, oldy2));
 
 	set_cursor_mode(r_data.CursorMode);
 	set_mouse_cursor(r_data.CursorID);

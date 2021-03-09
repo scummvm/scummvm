@@ -34,6 +34,7 @@
 #include "ags/engine/ac/system.h"
 #include "ags/engine/ac/viewframe.h"
 #include "ags/engine/debugging/debug_log.h"
+#include "ags/engine/device/mousew32.h"
 #include "ags/shared/gui/guibutton.h"
 #include "ags/shared/gui/guimain.h"
 #include "ags/engine/device/mousew32.h"
@@ -66,7 +67,7 @@ Bitmap *dotted_mouse_cursor = nullptr;
 IDriverDependantBitmap *mouseCursor = nullptr;
 Bitmap *blank_mouse_cursor = nullptr;
 
-// The Mouse:: functions are static so the script doesn't pass
+// The _mouse. functions are static so the script doesn't pass
 // in an object parameter
 void Mouse_SetVisible(int isOn) {
 	if (isOn)
@@ -105,7 +106,7 @@ void SetMouseBounds(int x1, int y1, int x2, int y2) {
 	_GP(play).mboundx2 = x2;
 	_GP(play).mboundy1 = y1;
 	_GP(play).mboundy2 = y2;
-	Mouse::SetMoveLimit(Rect(x1, y1, x2, y2));
+	_mouse.SetMoveLimit(Rect(x1, y1, x2, y2));
 }
 
 // mouse cursor functions:
@@ -298,7 +299,7 @@ void SetMousePosition(int newx, int newy) {
 		newy = viewport.GetHeight() - 1;
 
 	data_to_game_coords(&newx, &newy);
-	Mouse::SetPosition(Point(newx, newy));
+	_mouse.SetPosition(Point(newx, newy));
 	RefreshMouse();
 }
 
@@ -335,9 +336,9 @@ void Mouse_EnableControl(bool on) {
 	// The resulting choice is made based on two aforementioned factors.
 	on &= should_control_mouse && can_control_mouse;
 	if (on)
-		Mouse::EnableControl(!is_windowed);
+		_mouse.EnableControl(!is_windowed);
 	else
-		Mouse::DisableControl();
+		_mouse.DisableControl();
 }
 
 //=============================================================================
@@ -559,7 +560,7 @@ RuntimeScriptValue Sc_Mouse_Click(const RuntimeScriptValue *params, int32_t para
 }
 
 RuntimeScriptValue Sc_Mouse_GetControlEnabled(const RuntimeScriptValue *params, int32_t param_count) {
-	API_SCALL_BOOL(Mouse::IsControlEnabled);
+	API_SCALL_BOOL(_mouse.IsControlEnabled);
 }
 
 RuntimeScriptValue Sc_Mouse_SetControlEnabled(const RuntimeScriptValue *params, int32_t param_count) {
@@ -568,64 +569,64 @@ RuntimeScriptValue Sc_Mouse_SetControlEnabled(const RuntimeScriptValue *params, 
 
 
 RuntimeScriptValue Sc_Mouse_GetSpeed(const RuntimeScriptValue *params, int32_t param_count) {
-	API_SCALL_FLOAT(Mouse::GetSpeed);
+	API_SCALL_FLOAT(_mouse.GetSpeed);
 }
 
 RuntimeScriptValue Sc_Mouse_SetSpeed(const RuntimeScriptValue *params, int32_t param_count) {
-	ASSERT_VARIABLE_VALUE("Mouse::Speed");
-	Mouse::SetSpeed(params[0].FValue);
+	ASSERT_VARIABLE_VALUE("_mouse.Speed");
+	_mouse.SetSpeed(params[0].FValue);
 	return RuntimeScriptValue();
 }
 
 void RegisterMouseAPI() {
-	ccAddExternalStaticFunction("Mouse::ChangeModeGraphic^2", Sc_ChangeCursorGraphic);
-	ccAddExternalStaticFunction("Mouse::ChangeModeHotspot^3", Sc_ChangeCursorHotspot);
-	ccAddExternalStaticFunction("Mouse::ChangeModeView^2", Sc_Mouse_ChangeModeView);
-	ccAddExternalStaticFunction("Mouse::Click^1", Sc_Mouse_Click);
-	ccAddExternalStaticFunction("Mouse::DisableMode^1", Sc_disable_cursor_mode);
-	ccAddExternalStaticFunction("Mouse::EnableMode^1", Sc_enable_cursor_mode);
-	ccAddExternalStaticFunction("Mouse::GetModeGraphic^1", Sc_Mouse_GetModeGraphic);
-	ccAddExternalStaticFunction("Mouse::IsButtonDown^1", Sc_IsButtonDown);
-	ccAddExternalStaticFunction("Mouse::IsModeEnabled^1", Sc_IsModeEnabled);
-	ccAddExternalStaticFunction("Mouse::SaveCursorUntilItLeaves^0", Sc_SaveCursorForLocationChange);
-	ccAddExternalStaticFunction("Mouse::SelectNextMode^0", Sc_SetNextCursor);
-	ccAddExternalStaticFunction("Mouse::SelectPreviousMode^0", Sc_SetPreviousCursor);
-	ccAddExternalStaticFunction("Mouse::SetBounds^4", Sc_SetMouseBounds);
-	ccAddExternalStaticFunction("Mouse::SetPosition^2", Sc_SetMousePosition);
-	ccAddExternalStaticFunction("Mouse::Update^0", Sc_RefreshMouse);
-	ccAddExternalStaticFunction("Mouse::UseDefaultGraphic^0", Sc_set_default_cursor);
-	ccAddExternalStaticFunction("Mouse::UseModeGraphic^1", Sc_set_mouse_cursor);
-	ccAddExternalStaticFunction("Mouse::get_ControlEnabled", Sc_Mouse_GetControlEnabled);
-	ccAddExternalStaticFunction("Mouse::set_ControlEnabled", Sc_Mouse_SetControlEnabled);
-	ccAddExternalStaticFunction("Mouse::get_Mode", Sc_GetCursorMode);
-	ccAddExternalStaticFunction("Mouse::set_Mode", Sc_set_cursor_mode);
-	ccAddExternalStaticFunction("Mouse::get_Speed", Sc_Mouse_GetSpeed);
-	ccAddExternalStaticFunction("Mouse::set_Speed", Sc_Mouse_SetSpeed);
-	ccAddExternalStaticFunction("Mouse::get_Visible", Sc_Mouse_GetVisible);
-	ccAddExternalStaticFunction("Mouse::set_Visible", Sc_Mouse_SetVisible);
+	ccAddExternalStaticFunction("_mouse.ChangeModeGraphic^2", Sc_ChangeCursorGraphic);
+	ccAddExternalStaticFunction("_mouse.ChangeModeHotspot^3", Sc_ChangeCursorHotspot);
+	ccAddExternalStaticFunction("_mouse.ChangeModeView^2", Sc_Mouse_ChangeModeView);
+	ccAddExternalStaticFunction("_mouse.Click^1", Sc_Mouse_Click);
+	ccAddExternalStaticFunction("_mouse.DisableMode^1", Sc_disable_cursor_mode);
+	ccAddExternalStaticFunction("_mouse.EnableMode^1", Sc_enable_cursor_mode);
+	ccAddExternalStaticFunction("_mouse.GetModeGraphic^1", Sc_Mouse_GetModeGraphic);
+	ccAddExternalStaticFunction("_mouse.IsButtonDown^1", Sc_IsButtonDown);
+	ccAddExternalStaticFunction("_mouse.IsModeEnabled^1", Sc_IsModeEnabled);
+	ccAddExternalStaticFunction("_mouse.SaveCursorUntilItLeaves^0", Sc_SaveCursorForLocationChange);
+	ccAddExternalStaticFunction("_mouse.SelectNextMode^0", Sc_SetNextCursor);
+	ccAddExternalStaticFunction("_mouse.SelectPreviousMode^0", Sc_SetPreviousCursor);
+	ccAddExternalStaticFunction("_mouse.SetBounds^4", Sc_SetMouseBounds);
+	ccAddExternalStaticFunction("_mouse.SetPosition^2", Sc_SetMousePosition);
+	ccAddExternalStaticFunction("_mouse.Update^0", Sc_RefreshMouse);
+	ccAddExternalStaticFunction("_mouse.UseDefaultGraphic^0", Sc_set_default_cursor);
+	ccAddExternalStaticFunction("_mouse.UseModeGraphic^1", Sc_set_mouse_cursor);
+	ccAddExternalStaticFunction("_mouse.get_ControlEnabled", Sc_Mouse_GetControlEnabled);
+	ccAddExternalStaticFunction("_mouse.set_ControlEnabled", Sc_Mouse_SetControlEnabled);
+	ccAddExternalStaticFunction("_mouse.get_Mode", Sc_GetCursorMode);
+	ccAddExternalStaticFunction("_mouse.set_Mode", Sc_set_cursor_mode);
+	ccAddExternalStaticFunction("_mouse.get_Speed", Sc_Mouse_GetSpeed);
+	ccAddExternalStaticFunction("_mouse.set_Speed", Sc_Mouse_SetSpeed);
+	ccAddExternalStaticFunction("_mouse.get_Visible", Sc_Mouse_GetVisible);
+	ccAddExternalStaticFunction("_mouse.set_Visible", Sc_Mouse_SetVisible);
 
 	/* ----------------------- Registering unsafe exports for plugins -----------------------*/
 
-	ccAddExternalFunctionForPlugin("Mouse::ChangeModeGraphic^2", (void *)ChangeCursorGraphic);
-	ccAddExternalFunctionForPlugin("Mouse::ChangeModeHotspot^3", (void *)ChangeCursorHotspot);
-	ccAddExternalFunctionForPlugin("Mouse::ChangeModeView^2", (void *)Mouse_ChangeModeView);
-	ccAddExternalFunctionForPlugin("Mouse::DisableMode^1", (void *)disable_cursor_mode);
-	ccAddExternalFunctionForPlugin("Mouse::EnableMode^1", (void *)enable_cursor_mode);
-	ccAddExternalFunctionForPlugin("Mouse::GetModeGraphic^1", (void *)Mouse_GetModeGraphic);
-	ccAddExternalFunctionForPlugin("Mouse::IsButtonDown^1", (void *)IsButtonDown);
-	ccAddExternalFunctionForPlugin("Mouse::IsModeEnabled^1", (void *)IsModeEnabled);
-	ccAddExternalFunctionForPlugin("Mouse::SaveCursorUntilItLeaves^0", (void *)SaveCursorForLocationChange);
-	ccAddExternalFunctionForPlugin("Mouse::SelectNextMode^0", (void *)SetNextCursor);
-	ccAddExternalFunctionForPlugin("Mouse::SelectPreviousMode^0", (void *)SetPreviousCursor);
-	ccAddExternalFunctionForPlugin("Mouse::SetBounds^4", (void *)SetMouseBounds);
-	ccAddExternalFunctionForPlugin("Mouse::SetPosition^2", (void *)SetMousePosition);
-	ccAddExternalFunctionForPlugin("Mouse::Update^0", (void *)RefreshMouse);
-	ccAddExternalFunctionForPlugin("Mouse::UseDefaultGraphic^0", (void *)set_default_cursor);
-	ccAddExternalFunctionForPlugin("Mouse::UseModeGraphic^1", (void *)set_mouse_cursor);
-	ccAddExternalFunctionForPlugin("Mouse::get_Mode", (void *)GetCursorMode);
-	ccAddExternalFunctionForPlugin("Mouse::set_Mode", (void *)set_cursor_mode);
-	ccAddExternalFunctionForPlugin("Mouse::get_Visible", (void *)Mouse_GetVisible);
-	ccAddExternalFunctionForPlugin("Mouse::set_Visible", (void *)Mouse_SetVisible);
+	ccAddExternalFunctionForPlugin("_mouse.ChangeModeGraphic^2", (void *)ChangeCursorGraphic);
+	ccAddExternalFunctionForPlugin("_mouse.ChangeModeHotspot^3", (void *)ChangeCursorHotspot);
+	ccAddExternalFunctionForPlugin("_mouse.ChangeModeView^2", (void *)Mouse_ChangeModeView);
+	ccAddExternalFunctionForPlugin("_mouse.DisableMode^1", (void *)disable_cursor_mode);
+	ccAddExternalFunctionForPlugin("_mouse.EnableMode^1", (void *)enable_cursor_mode);
+	ccAddExternalFunctionForPlugin("_mouse.GetModeGraphic^1", (void *)Mouse_GetModeGraphic);
+	ccAddExternalFunctionForPlugin("_mouse.IsButtonDown^1", (void *)IsButtonDown);
+	ccAddExternalFunctionForPlugin("_mouse.IsModeEnabled^1", (void *)IsModeEnabled);
+	ccAddExternalFunctionForPlugin("_mouse.SaveCursorUntilItLeaves^0", (void *)SaveCursorForLocationChange);
+	ccAddExternalFunctionForPlugin("_mouse.SelectNextMode^0", (void *)SetNextCursor);
+	ccAddExternalFunctionForPlugin("_mouse.SelectPreviousMode^0", (void *)SetPreviousCursor);
+	ccAddExternalFunctionForPlugin("_mouse.SetBounds^4", (void *)SetMouseBounds);
+	ccAddExternalFunctionForPlugin("_mouse.SetPosition^2", (void *)SetMousePosition);
+	ccAddExternalFunctionForPlugin("_mouse.Update^0", (void *)RefreshMouse);
+	ccAddExternalFunctionForPlugin("_mouse.UseDefaultGraphic^0", (void *)set_default_cursor);
+	ccAddExternalFunctionForPlugin("_mouse.UseModeGraphic^1", (void *)set_mouse_cursor);
+	ccAddExternalFunctionForPlugin("_mouse.get_Mode", (void *)GetCursorMode);
+	ccAddExternalFunctionForPlugin("_mouse.set_Mode", (void *)set_cursor_mode);
+	ccAddExternalFunctionForPlugin("_mouse.get_Visible", (void *)Mouse_GetVisible);
+	ccAddExternalFunctionForPlugin("_mouse.set_Visible", (void *)Mouse_SetVisible);
 }
 
 } // namespace AGS3

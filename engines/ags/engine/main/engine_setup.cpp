@@ -262,30 +262,30 @@ void engine_post_gfxmode_mouse_setup(const DisplayMode &dm, const Size &init_des
 	//
 	// NOTE that we setup speed and other related properties regardless of
 	// whether mouse control was requested because it may be enabled later.
-	Mouse::SetSpeedUnit(1.f);
+	_mouse.SetSpeedUnit(1.f);
 	if (_GP(usetup).mouse_speed_def == kMouseSpeed_CurrentDisplay) {
 		Size cur_desktop;
 		if (get_desktop_resolution(&cur_desktop.Width, &cur_desktop.Height) == 0)
-			Mouse::SetSpeedUnit(Math::Max((float)cur_desktop.Width / (float)init_desktop.Width,
+			_mouse.SetSpeedUnit(Math::Max((float)cur_desktop.Width / (float)init_desktop.Width,
 			(float)cur_desktop.Height / (float)init_desktop.Height));
 	}
 
 	Mouse_EnableControl(_GP(usetup).mouse_ctrl_enabled);
-	Debug::Printf(kDbgMsg_Info, "Mouse control: %s, base: %f, speed: %f", Mouse::IsControlEnabled() ? "on" : "off",
-		Mouse::GetSpeedUnit(), Mouse::GetSpeed());
+	Debug::Printf(kDbgMsg_Info, "Mouse control: %s, base: %f, speed: %f", _mouse.IsControlEnabled() ? "on" : "off",
+		_mouse.GetSpeedUnit(), _mouse.GetSpeed());
 
 	on_coordinates_scaling_changed();
 
 	// If auto lock option is set, lock mouse to the game window
 	if (_GP(usetup).mouse_auto_lock && _GP(scsystem).windowed != 0)
-		Mouse::TryLockToWindow();
+		_mouse.TryLockToWindow();
 }
 
 // Reset mouse controls before changing gfx mode
 void engine_pre_gfxmode_mouse_cleanup() {
 	// Always disable mouse control and unlock mouse when releasing down gfx mode
-	Mouse::DisableControl();
-	Mouse::UnlockFromWindow();
+	_mouse.DisableControl();
+	_mouse.UnlockFromWindow();
 }
 
 // Fill in scsystem struct with display mode parameters
@@ -332,12 +332,12 @@ void engine_pre_gfxsystem_shutdown() {
 
 void on_coordinates_scaling_changed() {
 	// Reset mouse graphic area and bounds
-	Mouse::SetGraphicArea();
+	_mouse.SetGraphicArea();
 	// If mouse bounds do not have valid values yet, then limit cursor to viewport
 	if (_GP(play).mboundx1 == 0 && _GP(play).mboundy1 == 0 && _GP(play).mboundx2 == 0 && _GP(play).mboundy2 == 0)
-		Mouse::SetMoveLimit(_GP(play).GetMainViewport());
+		_mouse.SetMoveLimit(_GP(play).GetMainViewport());
 	else
-		Mouse::SetMoveLimit(Rect(_GP(play).mboundx1, _GP(play).mboundy1, _GP(play).mboundx2, _GP(play).mboundy2));
+		_mouse.SetMoveLimit(Rect(_GP(play).mboundx1, _GP(play).mboundy1, _GP(play).mboundx2, _GP(play).mboundy2));
 }
 
 } // namespace AGS3

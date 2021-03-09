@@ -289,7 +289,7 @@ void engine_init_mouse() {
 		Debug::Printf(kDbgMsg_Info, "Initializing mouse: failed");
 	else
 		Debug::Printf(kDbgMsg_Info, "Initializing mouse: number of buttons reported is %d", res);
-	Mouse::SetSpeed(_GP(usetup).mouse_speed);
+	_mouse.SetSpeed(_GP(usetup).mouse_speed);
 }
 
 void engine_locate_speech_pak() {

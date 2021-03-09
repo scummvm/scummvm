@@ -189,15 +189,15 @@ static int game_loop_check_ground_level_interactions() {
 
 static void lock_mouse_on_click() {
 	if (_GP(usetup).mouse_auto_lock && _GP(scsystem).windowed)
-		Mouse::TryLockToWindow();
+		_mouse.TryLockToWindow();
 }
 
 static void toggle_mouse_lock() {
 	if (_GP(scsystem).windowed) {
-		if (Mouse::IsLockedToWindow())
-			Mouse::UnlockFromWindow();
+		if (_mouse.IsLockedToWindow())
+			_mouse.UnlockFromWindow();
 		else
-			Mouse::TryLockToWindow();
+			_mouse.TryLockToWindow();
 	}
 }
 

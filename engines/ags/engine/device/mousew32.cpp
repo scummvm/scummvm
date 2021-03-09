@@ -66,40 +66,23 @@ namespace AGS3 {
 using namespace AGS::Shared;
 using namespace AGS::Engine;
 
-const int NONE = -1, LEFT = 0, RIGHT = 1, MIDDLE = 2;
+enum {
+	NONE = -1, LEFT = 0, RIGHT = 1, MIDDLE = 2
+};
 
 extern char lib_file_name[13];
 extern char alpha_blend_cursor;
 extern color palette[256];
 
-namespace Mouse {
-
-// Tells whether mouse was locked to the game window
-bool LockedToWindow = false;
-
-// Screen rectangle, in which the mouse movement is controlled by engine
-Rect  ControlRect;
-// Mouse control enabled flag
-bool  ControlEnabled = false;
-// Flag that tells whether the mouse must be forced to stay inside control rect
-bool  ConfineInCtrlRect = false;
-// Mouse speed value provided by user
-float SpeedVal = 1.f;
-// Mouse speed unit
-float SpeedUnit = 1.f;
-// Actual speed factor (cached)
-float Speed = 1.f;
-
-
-void AdjustPosition(int &x, int &y);
-}
+int butwas = 0;
+Mouse _mouse;
 
 void mgraphconfine(int x1, int y1, int x2, int y2) {
-	Mouse::ControlRect = Rect(x1, y1, x2, y2);
-	set_mouse_range(Mouse::ControlRect.Left, Mouse::ControlRect.Top, Mouse::ControlRect.Right, Mouse::ControlRect.Bottom);
+	_mouse.ControlRect = Rect(x1, y1, x2, y2);
+	set_mouse_range(_mouse.ControlRect.Left, _mouse.ControlRect.Top, _mouse.ControlRect.Right, _mouse.ControlRect.Bottom);
 	Debug::Printf("Mouse confined: (%d,%d)-(%d,%d) (%dx%d)",
-		Mouse::ControlRect.Left, Mouse::ControlRect.Top, Mouse::ControlRect.Right, Mouse::ControlRect.Bottom,
-		Mouse::ControlRect.GetWidth(), Mouse::ControlRect.GetHeight());
+		_mouse.ControlRect.Left, _mouse.ControlRect.Top, _mouse.ControlRect.Right, _mouse.ControlRect.Bottom,
+		_mouse.ControlRect.GetWidth(), _mouse.ControlRect.GetHeight());
 }
 
 void mgetgraphpos() {
@@ -116,22 +99,22 @@ void mgetgraphpos() {
 		return;
 	}
 
-	if (!_G(switched_away) && Mouse::ControlEnabled) {
+	if (!_G(switched_away) && _mouse.ControlEnabled) {
 		// Control mouse movement by querying mouse mickeys (movement deltas)
 		// and applying them to saved mouse coordinates.
 		int mickey_x, mickey_y;
 		get_mouse_mickeys(&mickey_x, &mickey_y);
 
 		// Apply mouse speed
-		int dx = Mouse::Speed * mickey_x;
-		int dy = Mouse::Speed * mickey_y;
+		int dx = _mouse.Speed * mickey_x;
+		int dy = _mouse.Speed * mickey_y;
 
 		//
 		// Perform actual cursor update
 		//---------------------------------------------------------------------
 		// If the real cursor is inside the control rectangle (read - game window),
 		// then apply sensitivity factors and adjust real cursor position
-		if (Mouse::ControlRect.IsInside(_G(real_mouse_x) + dx, _G(real_mouse_y) + dy)) {
+		if (_mouse.ControlRect.IsInside(_G(real_mouse_x) + dx, _G(real_mouse_y) + dy)) {
 			_G(real_mouse_x) += dx;
 			_G(real_mouse_y) += dy;
 			position_mouse(_G(real_mouse_x), _G(real_mouse_y));
@@ -139,9 +122,9 @@ void mgetgraphpos() {
 		// Otherwise, if real cursor was moved outside the control rect, yet we
 		// are required to confine cursor inside one, then adjust cursor position
 		// to stay inside the rect's bounds.
-		else if (Mouse::ConfineInCtrlRect) {
-			_G(real_mouse_x) = Math::Clamp(_G(real_mouse_x) + dx, Mouse::ControlRect.Left, Mouse::ControlRect.Right);
-			_G(real_mouse_y) = Math::Clamp(_G(real_mouse_y) + dy, Mouse::ControlRect.Top, Mouse::ControlRect.Bottom);
+		else if (_mouse.ConfineInCtrlRect) {
+			_G(real_mouse_x) = Math::Clamp(_G(real_mouse_x) + dx, _mouse.ControlRect.Left, _mouse.ControlRect.Right);
+			_G(real_mouse_y) = Math::Clamp(_G(real_mouse_y) + dy, _mouse.ControlRect.Top, _mouse.ControlRect.Bottom);
 			position_mouse(_G(real_mouse_x), _G(real_mouse_y));
 		}
 		// Lastly, if the real cursor is out of the control rect, simply add
@@ -152,7 +135,7 @@ void mgetgraphpos() {
 		}
 
 		// Do not update the game cursor if the real cursor is beyond the control rect
-		if (!Mouse::ControlRect.IsInside(_G(real_mouse_x), _G(real_mouse_y)))
+		if (!_mouse.ControlRect.IsInside(_G(real_mouse_x), _G(real_mouse_y)))
 			return;
 	} else {
 		// Save real cursor coordinates provided by system
@@ -172,7 +155,7 @@ void mgetgraphpos() {
 	}
 
 	// Convert to virtual coordinates
-	Mouse::AdjustPosition(_G(mousex), _G(mousey));
+	_mouse.AdjustPosition(_G(mousex), _G(mousey));
 }
 
 void msetcursorlimit(int x1, int y1, int x2, int y2) {
@@ -222,9 +205,6 @@ void mfreemem() {
 	}
 }
 
-
-
-
 void mloadwcursor(char *namm) {
 	color dummypal[256];
 	if (wloadsprites(&dummypal[0], namm, _G(mousecurs), 0, MAXCURSORS)) {
@@ -232,7 +212,6 @@ void mloadwcursor(char *namm) {
 	}
 }
 
-int butwas = 0;
 int mgetbutton() {
 	int toret = NONE;
 	poll_mouse();

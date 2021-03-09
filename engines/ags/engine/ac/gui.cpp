@@ -306,7 +306,7 @@ void remove_popup_interface(int ifacenum) {
 	UnPauseGame();
 	_GP(guis)[ifacenum].SetConceal(true);
 	if (_G(mousey) <= _GP(guis)[ifacenum].PopupAtMouseY)
-		Mouse::SetPosition(Point(_G(mousex), _GP(guis)[ifacenum].PopupAtMouseY + 2));
+		_mouse.SetPosition(Point(_G(mousex), _GP(guis)[ifacenum].PopupAtMouseY + 2));
 	if ((!IsInterfaceEnabled()) && (cur_cursor == cur_mode))
 		// Only change the mouse cursor if it hasn't been specifically changed first
 		set_mouse_cursor(CURS_WAIT);

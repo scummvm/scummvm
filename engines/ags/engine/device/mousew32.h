@@ -31,6 +31,9 @@
 //
 //=============================================================================
 
+#ifndef AGS_ENGINE_DEVICE_MOUSEW32_H
+#define AGS_ENGINE_DEVICE_MOUSEW32_H
+
 #include "ags/shared/util/geometry.h"
 #include "ags/shared/util/geometry.h"
 
@@ -57,42 +60,60 @@ void msetgraphpos(int xa, int ya);
 void msethotspot(int xx, int yy);
 int minstalled();
 
-namespace Mouse {
+struct Mouse {
+	// Tells whether mouse was locked to the game window
+	bool LockedToWindow = false;
 
-// Get if mouse is locked to the game window
-bool IsLockedToWindow();
-// Try locking mouse to the game window
-bool TryLockToWindow();
-// Unlock mouse from the game window
-void UnlockFromWindow();
+	// Screen rectangle, in which the mouse movement is controlled by engine
+	Rect  ControlRect;
+	// Mouse control enabled flag
+	bool  ControlEnabled = false;
+	// Flag that tells whether the mouse must be forced to stay inside control rect
+	bool  ConfineInCtrlRect = false;
+	// Mouse speed value provided by user
+	float SpeedVal = 1.f;
+	// Mouse speed unit
+	float SpeedUnit = 1.f;
+	// Actual speed factor (cached)
+	float Speed = 1.f;
 
-// Enable mouse movement control
-void EnableControl(bool confine);
-// Disable mouse movement control
-void DisableControl();
-// Tell if the mouse movement control is enabled
-bool IsControlEnabled();
-// Set base speed factor, which would serve as a mouse speed unit
-void SetSpeedUnit(float f);
-// Get base speed factor
-float GetSpeedUnit();
-// Set speed factors
-void SetSpeed(float speed);
-// Get speed factor
-float GetSpeed();
 
-} // namespace Mouse
+	void AdjustPosition(int &x, int &y);
 
-namespace Mouse {
+	// Get if mouse is locked to the game window
+	bool IsLockedToWindow();
+	// Try locking mouse to the game window
+	bool TryLockToWindow();
+	// Unlock mouse from the game window
+	void UnlockFromWindow();
 
-// Updates limits of the area inside which the standard OS cursor is not shown;
-// uses game's main viewport (in native coordinates) to calculate real area on screen
-void SetGraphicArea();
-// Limits the area where the game cursor can move on virtual screen;
-// parameter must be in native game coordinates
-void SetMoveLimit(const Rect &r);
-// Set actual OS cursor position on screen; parameter must be in native game coordinates
-void SetPosition(const Point p);
+	// Enable mouse movement control
+	void EnableControl(bool confine);
+	// Disable mouse movement control
+	void DisableControl();
+	// Tell if the mouse movement control is enabled
+	bool IsControlEnabled();
+	// Set base speed factor, which would serve as a mouse speed unit
+	void SetSpeedUnit(float f);
+	// Get base speed factor
+	float GetSpeedUnit();
+	// Set speed factors
+	void SetSpeed(float speed);
+	// Get speed factor
+	float GetSpeed();
 
-} // namespace Mouse
+	// Updates limits of the area inside which the standard OS cursor is not shown;
+	// uses game's main viewport (in native coordinates) to calculate real area on screen
+	void SetGraphicArea();
+	// Limits the area where the game cursor can move on virtual screen;
+	// parameter must be in native game coordinates
+	void SetMoveLimit(const Rect &r);
+	// Set actual OS cursor position on screen; parameter must be in native game coordinates
+	void SetPosition(const Point p);
+};
+
+extern Mouse _mouse;
+
 } // namespace AGS3
+
+#endif
