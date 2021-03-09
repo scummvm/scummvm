@@ -195,11 +195,8 @@ protected:
 
     struct Timers {
         enum TimeOfDay { kDay = 0, kNight = 1, kDuskDawn = 2 };
-
-        Time tickCount;
         Time pushedPlayTime;
-
-        Time totalTime;
+        Time lastTotalTime;
         Time sceneTime;
         Time timerTime;
         bool timerIsActive = false;
