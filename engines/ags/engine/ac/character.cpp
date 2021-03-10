@@ -1564,7 +1564,7 @@ int Character_GetSpeakingFrame(CharacterInfo *chaa) {
 //=============================================================================
 
 // order of loops to turn character in circle from down to down
-int turnlooporder[8] = {0, 6, 1, 7, 3, 5, 2, 4};
+const int turnlooporder[8] = {0, 6, 1, 7, 3, 5, 2, 4};
 
 void walk_character(int chac, int tox, int toy, int ignwal, bool autoWalkAnims) {
 	CharacterInfo *chin = &_GP(game).chars[chac];

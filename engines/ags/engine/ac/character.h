@@ -220,7 +220,7 @@ Rect GetCharacterRoomBBox(int charid, bool use_frame_0 = false);
 PViewport FindNearestViewport(int charid);
 
 // order of loops to turn character in circle from down to down
-extern int turnlooporder[8];
+extern const int turnlooporder[8];
 
 } // namespace AGS3
 
