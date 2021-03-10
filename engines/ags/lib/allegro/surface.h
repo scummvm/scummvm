@@ -62,7 +62,7 @@ public:
 	}
 
 	uint getTransparentColor() const {
-		return format.RGBToColor(255, 0, 255);
+		return _owner->getTransparentColor();
 	}
 
 	int getpixel(int x, int y) const;
@@ -260,12 +260,6 @@ private:
  */
 class Surface : public Graphics::ManagedSurface, public BITMAP {
 public:
-	Surface() : Graphics::ManagedSurface(), BITMAP(this) {
-	}
-	Surface(const Graphics::ManagedSurface &surf) : Graphics::ManagedSurface(surf), BITMAP(this) {
-	}
-	Surface(int width, int height) : Graphics::ManagedSurface(width, height), BITMAP(this) {
-	}
 	Surface(int width, int height, const Graphics::PixelFormat &pixelFormat) :
 			Graphics::ManagedSurface(width, height, pixelFormat), BITMAP(this) {
 		// Allegro uses 255, 0, 255 RGB as the transparent color

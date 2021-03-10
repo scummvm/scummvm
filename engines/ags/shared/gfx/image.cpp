@@ -43,8 +43,7 @@ BITMAP *decodeImage(const char *filename, color *pal) {
 		const Graphics::Surface *src = decoder.getSurface();
 
 		// Copy the decoded surface
-		Surface *dest = new Surface();
-		dest->create(src->w, src->h, src->format);
+		Surface *dest = new Surface(src->w, src->h, src->format);
 		dest->blitFrom(*src);
 
 		// Copy the palette

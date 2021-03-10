@@ -288,7 +288,7 @@ public:
 /*-------------------------------------------------------------------*/
 
 BITMAP *create_bitmap(int width, int height) {
-	return new Surface(width, height);
+	return create_bitmap_ex(get_color_depth(), width, height);
 }
 
 BITMAP *create_bitmap_ex(int color_depth, int width, int height) {
