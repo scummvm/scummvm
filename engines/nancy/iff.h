@@ -40,7 +40,7 @@ class NancyEngine;
 
 class IFF {
 public:
-	IFF(NancyEngine *vm, const Common::String &name) : _name(name), _vm(vm) { };
+	IFF(const Common::String &name) : _name(name) { };
 	~IFF();
 
 	bool load();
@@ -64,7 +64,6 @@ private:
 
 	Common::Array<Chunk> _chunks;
 	const Common::String _name;
-	NancyEngine *_vm;
 };
 
 } // End of namespace Nancy

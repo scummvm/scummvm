@@ -42,6 +42,10 @@
 
 #include "graphics/surface.h"
 
+namespace Common {
+DECLARE_SINGLETON(Nancy::State::Scene);
+}
+
 namespace Nancy {
 namespace State{
 
@@ -59,15 +63,40 @@ void Scene::process() {
     case kStartSound:
         _state = kRun;
         if (!_sceneState._doNotStartSound) {
-            _engine->stopAndUnloadSpecificSounds();
-            _engine->sound->loadSound(_sceneState.summary.sound);
-            _engine->sound->playSound(_sceneState.summary.sound);
+            NanEngine.stopAndUnloadSpecificSounds();
+            NanEngine.sound->loadSound(_sceneState.summary.sound);
+            NanEngine.sound->playSound(_sceneState.summary.sound);
         }
         // fall through
     case kRun:
         run();
         break;
     }
+}
+
+void Scene::onStateEnter() {
+    if (_state != kInit) {
+        registerGraphics();
+        _actionManager.onPause(false);
+
+        NanEngine.graphicsManager->redrawAll();
+
+        // Run once to clear out the previous scene when coming from Map
+        process();
+
+        NanEngine.setTotalPlayTime((uint32)_timers.pushedPlayTime);
+
+        unpauseSceneSpecificSounds();
+    }
+}
+
+bool Scene::onStateExit() {
+    _timers.pushedPlayTime = NanEngine.getTotalPlayTime();
+    _actionManager.onPause(true);
+    pauseSceneSpecificSounds();
+    _gameStateRequested = NancyEngine::kNone;
+
+    return false;
 }
 
 void Scene::changeScene(uint16 id, uint16 frame, uint16 verticalOffset, bool noSound) {
@@ -100,13 +129,13 @@ void Scene::pauseSceneSpecificSounds() {
     // TODO missing if, same condition as the one in NancyEngine::stopAndUnloadSpecificSounds
 
     for (uint i = 0; i < 10; ++i) {
-		_engine->sound->pauseSound(i, true);
+		NanEngine.sound->pauseSound(i, true);
 	}
 }
 
 void Scene::unpauseSceneSpecificSounds() {
     for (uint i = 0; i < 10; ++i) {
-		_engine->sound->pauseSound(i, false);
+		NanEngine.sound->pauseSound(i, false);
 	}
 }
 
@@ -136,10 +165,9 @@ void Scene::registerGraphics() {
     _inventoryBox.registerGraphics();
     _menuButton.registerGraphics();
 
-    _engine->graphicsManager->redrawAll();
-
-    // Used to clear the map label
-    _textbox.setVisible(false);
+    _textbox.setVisible(!_shouldClearTextbox);
+    _menuButton.setVisible(false);
+    _helpButton.setVisible(false);
 }
 
 void Scene::synchronize(Common::Serializer &ser) {
@@ -196,7 +224,7 @@ void Scene::synchronize(Common::Serializer &ser) {
 	// TODO hardcoded inventory size
 	ser.syncArray(_flags.items, 11, Common::Serializer::Byte);
     ser.syncAsSint16LE(_flags.heldItem);
-    _engine->cursorManager->setCursorItemID(_flags.heldItem);
+    NanEngine.cursorManager->setCursorItemID(_flags.heldItem);
 
 	ser.syncAsUint32LE(_timers.lastTotalTime);
 	ser.syncAsUint32LE(_timers.sceneTime);
@@ -206,7 +234,7 @@ void Scene::synchronize(Common::Serializer &ser) {
 	ser.syncAsByte(_timers.timerIsActive);
     ser.syncAsByte(_timers.timeOfDay);
 
-    _engine->setTotalPlayTime((uint32)_timers.lastTotalTime);
+    NanEngine.setTotalPlayTime((uint32)_timers.lastTotalTime);
 
 	// TODO hardcoded number of event flags
 	ser.syncArray(_flags.eventFlags, 168, Common::Serializer::Byte);
@@ -233,7 +261,7 @@ void Scene::init() {
     }
 
     _timers.lastTotalTime = 0;
-    _timers.playerTime = _engine->startTimeHours * 3600000;
+    _timers.playerTime = NanEngine.startTimeHours * 3600000;
     _timers.sceneTime = 0;
     _timers.timerTime = 0;
     _timers.timerIsActive = false;
@@ -241,9 +269,9 @@ void Scene::init() {
     _timers.pushedPlayTime = 0;
     _timers.timeOfDay = Timers::kDay;
 
-    _sceneState.nextScene.sceneID = _engine->firstSceneID;
+    _sceneState.nextScene.sceneID = NanEngine.firstSceneID;
 
-    Common::SeekableReadStream *chunk = _engine->getBootChunkStream("HINT");
+    Common::SeekableReadStream *chunk = NanEngine.getBootChunkStream("HINT");
     chunk->seek(0);
 
     _hintsRemaining.clear();
@@ -257,10 +285,12 @@ void Scene::init() {
     Action::SliderPuzzle::playerHasTriedPuzzle = false;
 
     _state = kInitStatic;
+
+    registerGraphics();
 }
 
 void Scene::initStatic() {
-    Common::SeekableReadStream *chunk = _engine->getBootChunkStream("MAP");
+    Common::SeekableReadStream *chunk = NanEngine.getBootChunkStream("MAP");
     chunk->seek(0x8A);
     readRect(*chunk, _mapHotspot);
 
@@ -281,7 +311,7 @@ void Scene::initStatic() {
     _inventoryBox.init();
     _menuButton.init();
     _helpButton.init();
-    _engine->cursorManager->showCursor(true);
+    NanEngine.cursorManager->showCursor(true);
 
     _state = kLoad;
 }
@@ -291,7 +321,7 @@ void Scene::load() {
 
     // Scene IDs are prefixed with S inside the cif tree; e.g 100 -> S100                                                                                    
     Common::String sceneName = Common::String::format("S%u", _sceneState.nextScene.sceneID);
-    IFF sceneIFF(_engine, sceneName);
+    IFF sceneIFF(sceneName);
 
 	if (!sceneIFF.load()) {
 		error("Faled to load IFF %s", sceneName.c_str());
@@ -370,27 +400,13 @@ void Scene::run() {
     isComingFromMenu = false;
 
 
-    if (changeGameState()) {
-        return;
-    }
-
-    // Do some work if we're coming from a different game state
-    if (_engine->getState() != _engine->getPreviousState()) {
-        // If the GMM was on we shouldn't reregister graphics
-        if (_engine->getPreviousState() != Nancy::NancyEngine::kPause) {
-            registerGraphics();
-        }
-
-        _engine->setTotalPlayTime((uint32)_timers.pushedPlayTime);
-
-        unpauseSceneSpecificSounds();
-        _menuButton.setVisible(false);
-        _helpButton.setVisible(false);
+    if (_gameStateRequested != NancyEngine::kNone) {
+        NanEngine.setState(_gameStateRequested);
 
         return;
     }
 
-    Time currentPlayTime = _engine->getTotalPlayTime();
+    Time currentPlayTime = NanEngine.getTotalPlayTime();
 
     Time deltaTime = currentPlayTime - _timers.lastTotalTime;
     _timers.lastTotalTime = currentPlayTime;
@@ -417,7 +433,7 @@ void Scene::run() {
     }
 
     // Update the UI elements and handle input
-    NancyInput input = _engine->input->getInput();
+    NancyInput input = NanEngine.input->getInput();
     _viewport.handleInput(input);
     _menuButton.handleInput(input);
     _helpButton.handleInput(input);
@@ -432,7 +448,7 @@ void Scene::run() {
     for (uint i = 0; i < _mapAccessSceneIDs.size(); ++i) {
         if (_sceneState.currentScene.sceneID == _mapAccessSceneIDs[i]) {
             if (_mapHotspot.contains(input.mousePos)) {
-                _engine->cursorManager->setCursorType(CursorManager::kHotspotArrow);
+                NanEngine.cursorManager->setCursorType(CursorManager::kHotspotArrow);
 
                 if (input.input & NancyInput::kLeftMouseButtonUp) {
                     requestStateChange(NancyEngine::kMap);
@@ -470,25 +486,12 @@ void Scene::readSceneSummary(Common::SeekableReadStream &stream) {
     _sceneState.summary.slowMoveTimeDelta = stream.readUint16LE();
     _sceneState.summary.fastMoveTimeDelta = stream.readUint16LE();
 
-    if (_engine->overrideMovementTimeDeltas) {
-        _sceneState.summary.slowMoveTimeDelta = _engine->slowMovementTimeDelta;
-        _sceneState.summary.fastMoveTimeDelta = _engine->fastMovementTimeDelta;
+    if (NanEngine.overrideMovementTimeDeltas) {
+        _sceneState.summary.slowMoveTimeDelta = NanEngine.slowMovementTimeDelta;
+        _sceneState.summary.fastMoveTimeDelta = NanEngine.fastMovementTimeDelta;
     }
 
     delete[] buf;
-}
-
-bool Scene::changeGameState(bool keepGraphics) {
-    if (_gameStateRequested != NancyEngine::kScene) {
-        _timers.pushedPlayTime = _engine->getTotalPlayTime();
-        _engine->setState(_gameStateRequested, NancyEngine::kNone, keepGraphics);
-        _gameStateRequested = NancyEngine::kScene;
-        pauseSceneSpecificSounds();
-
-        return true;
-    }
-
-    return false;
 }
 
 void Scene::clearSceneData() {
@@ -534,7 +537,7 @@ bool Scene::getEventFlag(EventFlagDescription eventFlag) const {
 void Scene::setLogicCondition(int16 label, NancyFlag flag) {
     if (label > -1) {
         _flags.logicConditions[label].flag = flag;
-        _flags.logicConditions[label].timestamp = _engine->getTotalPlayTime();
+        _flags.logicConditions[label].timestamp = NanEngine.getTotalPlayTime();
     }
 }
 

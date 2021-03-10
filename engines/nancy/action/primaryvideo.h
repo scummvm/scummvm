@@ -49,15 +49,15 @@ enum ConditionType : byte { kNone = 0, kEventFlags = 1, kInventory = 2 };
     bool orFlag;
 
     void read(Common::SeekableReadStream &stream);
-    bool isSatisfied(NancyEngine *engine) const;
-    void set(NancyEngine *engine) const;
+    bool isSatisfied() const;
+    void set() const;
 };
 
 struct ConditionFlags {
     Common::Array<ConditionFlag> conditionFlags;
 
     void read(Common::SeekableReadStream &stream);
-    bool isSatisfied(NancyEngine *engine) const;
+    bool isSatisfied() const;
 };
 
 struct ResponseStruct {
@@ -82,11 +82,11 @@ public:
     virtual void onPause(bool pause) override;
 
     virtual uint16 readData(Common::SeekableReadStream &stream) override;
-    virtual void execute(NancyEngine *engine) override;
+    virtual void execute() override;
     
     // Functions for handling the built-in dialogue responses found in the executable
-    void addConditionalResponses(NancyEngine *engine);
-    void addGoodbye(NancyEngine *engine);
+    void addConditionalResponses();
+    void addGoodbye();
 
     Common::String videoName; // 0x00
     Common::Rect src; // 0x1D

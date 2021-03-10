@@ -34,7 +34,7 @@ namespace UI {
 
 // does NOT put the object in a valid state until loadVideo is called
 void Viewport::init() {
-    Common::SeekableReadStream *viewChunk = _engine->getBootChunkStream("VIEW");
+    Common::SeekableReadStream *viewChunk = NanEngine.getBootChunkStream("VIEW");
     viewChunk->seek(0);
 
     Common::Rect dest;
@@ -57,11 +57,11 @@ void Viewport::init() {
 }
 
 void Viewport::handleInput(NancyInput &input) {
-    Time playTime = _engine->getTotalPlayTime();
+    Time playTime = NanEngine.getTotalPlayTime();
     byte direction = 0;
 
     if (_screenPosition.contains(input.mousePos)) {
-        _engine->cursorManager->setCursorType(CursorManager::kNormal);
+        NanEngine.cursorManager->setCursorType(CursorManager::kNormal);
     }
 
     // Do not handle hotspots marked as incative and ignore diagonals if intersecting hotspots are not active
@@ -118,7 +118,7 @@ void Viewport::handleInput(NancyInput &input) {
     }
 
     if (direction) {
-        _engine->cursorManager->setCursorType(CursorManager::kMove);
+        NanEngine.cursorManager->setCursorType(CursorManager::kMove);
 
         if (input.input & NancyInput::kRightMouseButton) {
             direction |= kMoveFast;
@@ -151,8 +151,8 @@ void Viewport::handleInput(NancyInput &input) {
 
     // Perform the movement
     if (direction) {
-        const Nancy::State::Scene::SceneSummary &summary = _engine->scene->getSceneSummary();
-        Time movementDelta = _engine->scene->getMovementTimeDelta(direction & kMoveFast);
+        const Nancy::State::Scene::SceneSummary &summary = NancySceneState.getSceneSummary();
+        Time movementDelta = NancySceneState.getMovementTimeDelta(direction & kMoveFast);
 
         if (playTime > _nextMovementTime) {
             if (direction & kLeft) {

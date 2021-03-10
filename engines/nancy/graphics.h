@@ -37,12 +37,10 @@ class NancyEngine;
 // Graphics class that handles multilayered surface rendering with minimal redraw
 class GraphicsManager {
 public:
-    GraphicsManager(NancyEngine *engine) : _engine(engine), _objects(objectComparator) {}
+    GraphicsManager() : _objects(objectComparator) {}
 
     void init();
     void draw();
-
-    void onPause(bool pause);
 
     void addObject(RenderObject *object);
     void removeObject(RenderObject *object);
@@ -63,7 +61,6 @@ private:
 
     static int objectComparator(const void *a, const void *b);
 
-    NancyEngine *_engine;
     Common::SortedArray<RenderObject *> _objects;
 
     Graphics::Screen _screen;

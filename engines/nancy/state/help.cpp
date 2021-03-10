@@ -30,6 +30,10 @@
 
 #include "common/stream.h"
 
+namespace Common {
+DECLARE_SINGLETON(Nancy::State::Help);
+}
+
 namespace Nancy {
 namespace State {
 
@@ -51,7 +55,7 @@ void Help::process() {
 }
 
 void Help::init() {
-    Common::SeekableReadStream *chunk = _engine->getBootChunkStream("HELP");
+    Common::SeekableReadStream *chunk = NanEngine.getBootChunkStream("HELP");
 
     chunk->seek(0);
     char buf[10];
@@ -64,7 +68,7 @@ void Help::init() {
     _hotspot.right = chunk->readUint16LE();
     _hotspot.bottom = chunk->readUint16LE();
     
-    chunk = _engine->getBootChunkStream("MSND");
+    chunk = NanEngine.getBootChunkStream("MSND");
     chunk->seek(0);
 	_sound.read(*chunk, SoundDescription::kMenu);
 
@@ -72,33 +76,30 @@ void Help::init() {
 }
 
 void Help::begin() {
-	_engine->sound->loadSound(_sound);
-	_engine->sound->playSound(_sound);
+	NanEngine.sound->loadSound(_sound);
+	NanEngine.sound->playSound(_sound);
     
     _image.registerGraphics();
     _image.setVisible(true);
 
-    _engine->cursorManager->setCursorType(CursorManager::kNormalArrow);
-    _previousState = _engine->getPreviousState();
+    NanEngine.cursorManager->setCursorType(CursorManager::kNormalArrow);
     
     _state = kRun;
 }
 
 void Help::run() {
-    NancyInput input = _engine->input->getInput();
+    NancyInput input = NanEngine.input->getInput();
 
     if (_hotspot.contains(input.mousePos) && input.input & NancyInput::kLeftMouseButtonUp) {
-        _engine->sound->playSound(0x18); // Hardcoded by original engine
+        NanEngine.sound->playSound(0x18); // Hardcoded by original engine
         _state = kWaitForSound;
     }
 }
 
 void Help::waitForSound() {
-    if (!_engine->sound->isSoundPlaying(18)) {
-        _engine->setState((NancyEngine::GameState)_previousState);
-        
-	    _engine->sound->stopSound(_sound);
-        _state = kBegin;
+    if (!NanEngine.sound->isSoundPlaying(18)) {
+	    NanEngine.sound->stopSound(_sound);
+        NanEngine.setPreviousState();
     }
 }
 

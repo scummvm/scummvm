@@ -34,8 +34,7 @@ class CursorManager {
 public:
     enum CursorType { kNormal = 0, kHotspot = 1, kMove = 2, kNormalArrow, kHotspotArrow, kExitArrow };
 
-    CursorManager(NancyEngine *engine) :
-        _engine(engine),
+    CursorManager() :
         _isInitialized(false),
         _curItemID(-1),
         _curCursorType(kNormal) {}
@@ -52,8 +51,6 @@ private:
         Common::Rect bounds;
         Common::Point hotspot;
     };
-
-    NancyEngine *_engine;
 
     // CURS data
     Common::Array<Cursor> _cursors;

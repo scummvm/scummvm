@@ -29,8 +29,8 @@
 
 namespace Nancy {
 
-void Font::read(Common::SeekableReadStream &stream, NancyEngine *engine) {
-    _transColor = engine->graphicsManager->transColor;
+void Font::read(Common::SeekableReadStream &stream) {
+    _transColor = NanEngine.graphicsManager->transColor;
     _maxCharWidth = 0;
     _fontHeight = 0;
 
@@ -38,7 +38,7 @@ void Font::read(Common::SeekableReadStream &stream, NancyEngine *engine) {
     stream.read(name, 10);
     Common::String imageName = name;
 
-    engine->_res->loadImage("ciftree", name, _image);
+    NanEngine.resource->loadImage("ciftree", name, _image);
 
     char desc[0x20];
     stream.read(desc, 0x20);

@@ -76,7 +76,7 @@ struct MultiEventFlagDescription {
     EventFlagDescription descs[10];
 
     void readData(Common::SeekableReadStream &stream);
-    void execute(Nancy::NancyEngine *engine);
+    void execute();
 };
 
 struct SecondaryVideoDescription {

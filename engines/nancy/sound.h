@@ -44,7 +44,7 @@ class NancyEngine;
 
 class SoundManager {
 public:
-    SoundManager(NancyEngine *engine);
+    SoundManager();
     ~SoundManager();
 
     // Load a sound into a channel without starting it
@@ -73,7 +73,6 @@ protected:
     };
 
     void initSoundChannels();
-    NancyEngine *_engine;
     Audio::Mixer *_mixer;
 
     Channel _channels[32];

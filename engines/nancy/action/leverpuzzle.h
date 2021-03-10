@@ -45,8 +45,9 @@ public:
     virtual void init() override;
     
     virtual uint16 readData(Common::SeekableReadStream &stream) override;
-    virtual void execute(Nancy::NancyEngine *engine) override;
+    virtual void execute() override;
     virtual void handleInput(NancyInput &input) override;
+    virtual void onPause(bool pause) override;
 
     Common::String imageName; // 0x0
     Common::Array<Common::Array<Common::Rect>> srcRects; // 0xA, 0xC0 bytes

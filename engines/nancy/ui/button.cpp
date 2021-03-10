@@ -36,7 +36,7 @@ namespace UI {
 
 void Button::handleInput(NancyInput &input) {
     if (_screenPosition.contains(input.mousePos)) {
-        _engine->cursorManager->setCursorType(CursorManager::kHotspotArrow);
+        NanEngine.cursorManager->setCursorType(CursorManager::kHotspotArrow);
 
         if (input.input & NancyInput::kLeftMouseButtonUp) {
             onClick();
@@ -45,12 +45,12 @@ void Button::handleInput(NancyInput &input) {
 }
 
 void MenuButton::init() {
-    Common::SeekableReadStream *bsum = _engine->getBootChunkStream("BSUM");
+    Common::SeekableReadStream *bsum = NanEngine.getBootChunkStream("BSUM");
 
     bsum->seek(0x184, SEEK_SET);
     Common::Rect src;
     readRect(*bsum, src);
-    _drawSurface.create(_engine->graphicsManager->object0, src);
+    _drawSurface.create(NanEngine.graphicsManager->object0, src);
     bsum->skip(16);
     readRect(*bsum, _screenPosition);
     setVisible(false);
@@ -59,18 +59,18 @@ void MenuButton::init() {
 }
 
 void MenuButton::onClick() {
-    _engine->scene->requestStateChange(NancyEngine::kMainMenu);
-    _engine->sound->playSound(0x18);
+    NancySceneState.requestStateChange(NancyEngine::kMainMenu);
+    NanEngine.sound->playSound(0x18);
     setVisible(true);
 }
 
 void HelpButton::init() {
-    Common::SeekableReadStream *bsum = _engine->getBootChunkStream("BSUM");
+    Common::SeekableReadStream *bsum = NanEngine.getBootChunkStream("BSUM");
 
     bsum->seek(0x194, SEEK_SET);
     Common::Rect src;
     readRect(*bsum, src);
-    _drawSurface.create(_engine->graphicsManager->object0, src);
+    _drawSurface.create(NanEngine.graphicsManager->object0, src);
     bsum->skip(16);
     readRect(*bsum, _screenPosition);
     setVisible(false);
@@ -79,8 +79,8 @@ void HelpButton::init() {
 }
 
 void HelpButton::onClick() {
-    _engine->scene->requestStateChange(NancyEngine::kHelp);
-    _engine->sound->playSound(0x18);
+    NancySceneState.requestStateChange(NancyEngine::kHelp);
+    NanEngine.sound->playSound(0x18);
     setVisible(true);
 }
 

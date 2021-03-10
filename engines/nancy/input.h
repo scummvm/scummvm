@@ -87,8 +87,7 @@ enum NancyAction {
 };
 
 public:
-    InputManager(NancyEngine *engine) :
-        _engine(engine),
+    InputManager() :
         _inputs(0),
         _mouseEnabled(true) {}
 
@@ -101,7 +100,6 @@ public:
     static void initKeymaps(Common::KeymapArray &keymaps);
     
 private:
-    NancyEngine *_engine;
     uint16 _inputs;
     Common::Array<Common::KeyState> _otherKbdInput;
     bool _mouseEnabled;

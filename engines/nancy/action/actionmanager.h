@@ -50,8 +50,7 @@ class ActionManager {
     friend class Nancy::State::Scene;
 
 public:
-    ActionManager(Nancy::NancyEngine* engine) :
-        _engine(engine) {}
+    ActionManager() {}
     virtual ~ActionManager() {}
 
     void handleInput(NancyInput &input);
@@ -62,12 +61,13 @@ public:
     ActionRecord *getActionRecord(uint id) { if (id < _records.size()) return _records[id]; else return nullptr;}
     void clearActionRecords();
 
+    void onPause(bool pause);
+
     void synchronize(Common::Serializer &serializer);
 
 protected:
     virtual ActionRecord *createActionRecord(uint16 type);
 
-    Nancy::NancyEngine *_engine;
     Common::Array<ActionRecord *> _records;
 };
 

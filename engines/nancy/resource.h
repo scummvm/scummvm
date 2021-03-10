@@ -59,7 +59,7 @@ public:
 		uint32 compressedSize, size;
 	};
 
-	ResourceManager(NancyEngine *vm);
+	ResourceManager();
 	~ResourceManager();
 
 	void initialize();
@@ -74,7 +74,6 @@ public:
 	bool exportCif(const Common::String &treeName, const Common::String &name);
 	Common::String getCifDescription(const Common::String &treeName, const Common::String &name);
 private:
-	NancyEngine *_vm;
 	Decompressor *_dec;
 
 	byte *getCifData(const Common::String &treeName, const Common::String &name, CifInfo &info, uint *size = nullptr);

@@ -42,7 +42,7 @@ void SliderPuzzle::init() {
     _drawSurface.clear(GraphicsManager::transColor);
 
     Graphics::Surface surf;
-    _engine->_res->loadImage("ciftree", imageName, surf);
+    NanEngine.resource->loadImage("ciftree", imageName, surf);
     image.create(surf.w, surf.h, surf.format);
     image.blitFrom(surf);
     surf.free();
@@ -109,15 +109,15 @@ uint16 SliderPuzzle::readData(Common::SeekableReadStream &stream) {
     return 0x544;
 }
 
-void SliderPuzzle::execute(Nancy::NancyEngine *engine) {
+void SliderPuzzle::execute() {
     switch (state) {
     case kBegin:
         init();
         registerGraphics();
         if (!playerHasTriedPuzzle) {
-            Common::SeekableReadStream *spuz = engine->getBootChunkStream("SPUZ");
+            Common::SeekableReadStream *spuz = NanEngine.getBootChunkStream("SPUZ");
             playerTileOrder.clear();
-            spuz->seek(engine->scene->getDifficulty() * 0x48);
+            spuz->seek(NancySceneState.getDifficulty() * 0x48);
             for (uint y = 0; y < height; ++y) {
                 playerTileOrder.push_back(Common::Array<int16>());
 
@@ -137,7 +137,7 @@ void SliderPuzzle::execute(Nancy::NancyEngine *engine) {
             }
         }
 
-        engine->sound->loadSound(clickSound);
+        NanEngine.sound->loadSound(clickSound);
         state = kRun;
         // fall through
     case kRun:
@@ -151,13 +151,13 @@ void SliderPuzzle::execute(Nancy::NancyEngine *engine) {
                 }
             }
 
-            engine->sound->loadSound(solveSound);
-            engine->sound->playSound(solveSound);
+            NanEngine.sound->loadSound(solveSound);
+            NanEngine.sound->playSound(solveSound);
             solveState = kWaitForSound;
             break;
         case kWaitForSound:
-            if (!engine->sound->isSoundPlaying(solveSound)) {
-                engine->sound->stopSound(solveSound);
+            if (!NanEngine.sound->isSoundPlaying(solveSound)) {
+                NanEngine.sound->stopSound(solveSound);
                 state = kActionTrigger;
             }
 
@@ -168,17 +168,17 @@ void SliderPuzzle::execute(Nancy::NancyEngine *engine) {
     case kActionTrigger:
         switch (solveState) {
         case kNotSolved:
-            engine->scene->changeScene(exitScene);
-            engine->scene->setEventFlag(flagOnExit);
+            NancySceneState.changeScene(exitScene);
+            NancySceneState.setEventFlag(flagOnExit);
             break;
         case kWaitForSound:
-            engine->scene->changeScene(solveExitScene);
-            engine->scene->setEventFlag(flagOnSolve);
+            NancySceneState.changeScene(solveExitScene);
+            NancySceneState.setEventFlag(flagOnSolve);
             playerHasTriedPuzzle = false;
             break;
         }
 
-        engine->sound->stopSound(clickSound);
+        NanEngine.sound->stopSound(clickSound);
         finishExecution();
     }
 }
@@ -188,8 +188,8 @@ void SliderPuzzle::handleInput(NancyInput &input) {
         return;
     }
 
-    if (_engine->scene->getViewport().convertViewportToScreen(exitHotspot).contains(input.mousePos)) {
-        _engine->cursorManager->setCursorType(CursorManager::kExitArrow);
+    if (NancySceneState.getViewport().convertViewportToScreen(exitHotspot).contains(input.mousePos)) {
+        NanEngine.cursorManager->setCursorType(CursorManager::kExitArrow);
 
         if (input.input & NancyInput::kLeftMouseButtonUp) {
             state = kActionTrigger;
@@ -205,7 +205,7 @@ void SliderPuzzle::handleInput(NancyInput &input) {
         bool shouldBreak = false;
         for (uint x = 0; x < width; ++x) {
             if (x > 0 && playerTileOrder[y][x - 1] < 0) {
-                if (_engine->scene->getViewport().convertViewportToScreen(destRects[y][x]).contains(input.mousePos)) {
+                if (NancySceneState.getViewport().convertViewportToScreen(destRects[y][x]).contains(input.mousePos)) {
                     currentTileX = x;
                     currentTileY = y;
                     direction = kLeft;
@@ -213,7 +213,7 @@ void SliderPuzzle::handleInput(NancyInput &input) {
                     break;
                 }
             } else if ((int)x < width - 1 && playerTileOrder[y][x + 1] < 0) {
-                if (_engine->scene->getViewport().convertViewportToScreen(destRects[y][x]).contains(input.mousePos)) {
+                if (NancySceneState.getViewport().convertViewportToScreen(destRects[y][x]).contains(input.mousePos)) {
                     currentTileX = x;
                     currentTileY = y;
                     direction = kRight;
@@ -221,7 +221,7 @@ void SliderPuzzle::handleInput(NancyInput &input) {
                     break;
                 }
             } else if (y > 0 && playerTileOrder[y - 1][x] < 0) {
-                if (_engine->scene->getViewport().convertViewportToScreen(destRects[y][x]).contains(input.mousePos)) {
+                if (NancySceneState.getViewport().convertViewportToScreen(destRects[y][x]).contains(input.mousePos)) {
                     currentTileX = x;
                     currentTileY = y;
                     direction = kUp;
@@ -229,7 +229,7 @@ void SliderPuzzle::handleInput(NancyInput &input) {
                     break;
                 }
             } else if ((int)y < height - 1 && playerTileOrder[y + 1][x] < 0) {
-                if (_engine->scene->getViewport().convertViewportToScreen(destRects[y][x]).contains(input.mousePos)) {
+                if (NancySceneState.getViewport().convertViewportToScreen(destRects[y][x]).contains(input.mousePos)) {
                     currentTileX = x;
                     currentTileY = y;
                     direction = kDown;
@@ -245,10 +245,10 @@ void SliderPuzzle::handleInput(NancyInput &input) {
     }
 
     if (currentTileX != -1) {
-        _engine->cursorManager->setCursorType(CursorManager::kHotspot);
+        NanEngine.cursorManager->setCursorType(CursorManager::kHotspot);
 
         if (input.input & NancyInput::kLeftMouseButtonUp) {
-            _engine->sound->playSound(clickSound);
+            NanEngine.sound->playSound(clickSound);
             switch (direction) {
             case kUp: {
                 uint curTileID = playerTileOrder[currentTileY][currentTileX];
@@ -284,6 +284,12 @@ void SliderPuzzle::handleInput(NancyInput &input) {
             }
             }
         }
+    }
+}
+
+void SliderPuzzle::onPause(bool pause) {
+    if (pause) {
+        registerGraphics();
     }
 }
 

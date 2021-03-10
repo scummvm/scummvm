@@ -23,6 +23,8 @@
 #ifndef NANCY_STATE_MAP_H
 #define NANCY_STATE_MAP_H
 
+#include "engines/nancy/state/state.h"
+
 #include "engines/nancy/ui/viewport.h"
 #include "engines/nancy/ui/button.h"
 
@@ -34,6 +36,7 @@
 #include "common/str.h"
 #include "common/array.h"
 #include "common/rect.h"
+#include "common/singleton.h"
 
 #include "graphics/surface.h"
 
@@ -43,22 +46,22 @@ class NancyEngine;
 
 namespace State {
 
-class Map {
+class Map : public State, public Common::Singleton<Map> {
     friend class MapLabel;
     friend class MapButton;
 public:
-    enum State { kInit, kRun, kStop };
-    Map(Nancy::NancyEngine *engine) :
-        _engine(engine),
-        _state(kInit),
-        _mapID(0),
-        _mapButtonClicked(false),
-        _pickedLocationID(-1),
-        _viewport(engine),
-        _label(engine->scene->getFrame(), this),
-        _button(engine->scene->getFrame(), this) {}
+    enum State { kInit, kRun };
+    Map() : _state(kInit),
+            _mapID(0),
+            _mapButtonClicked(false),
+            _pickedLocationID(-1),
+            _viewport(),
+            _label(NancySceneState.getFrame(), this),
+            _button(NancySceneState.getFrame(), this) {}
 
-    void process();
+    // State API
+    virtual void process() override;
+    virtual bool onStateExit() override;
 
 private:
     struct Location {
@@ -108,11 +111,8 @@ private:
 
     void init();
     void run();
-    void stop();
 
     void registerGraphics();
-
-    Nancy::NancyEngine *_engine;
 
     Nancy::UI::Viewport _viewport;
     MapLabel _label;
@@ -124,6 +124,8 @@ private:
     int16 _pickedLocationID;
     Common::Array<Location> _locations;
 };
+
+#define NancyMapState Nancy::State::Map::instance()
 
 } // End of namespace State
 } // End of namespace Nancy

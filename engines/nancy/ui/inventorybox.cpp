@@ -36,7 +36,7 @@ namespace Nancy {
 namespace UI {
 
 void InventoryBox::init() {
-    Common::SeekableReadStream &stream = *_engine->getBootChunkStream("INV");
+    Common::SeekableReadStream &stream = *NanEngine.getBootChunkStream("INV");
     stream.seek(0, SEEK_SET);
 
     _order.clear();
@@ -72,7 +72,7 @@ void InventoryBox::init() {
         readRect(stream, _itemDescriptions[i].sourceRect);
     }
 
-    _engine->_res->loadImage("ciftree", inventoryBoxIconsImageName, _iconsSurface);
+    NanEngine.resource->loadImage("ciftree", inventoryBoxIconsImageName, _iconsSurface);
     
     uint numItems = 11; // TODO
     _fullInventorySurface.create(_screenPosition.width(), _screenPosition.height() * ((numItems / 4) + 1), GraphicsManager::pixelFormat);
@@ -115,17 +115,17 @@ void InventoryBox::handleInput(NancyInput &input) {
     
     for (uint i = 0; i < 4; ++i) {
         if (_itemHotspots[i].hotspot.contains(input.mousePos)) {
-            if (_engine->scene->getHeldItem() != -1) {
-                _engine->cursorManager->setCursorType(CursorManager::kHotspotArrow);
+            if (NancySceneState.getHeldItem() != -1) {
+                NanEngine.cursorManager->setCursorType(CursorManager::kHotspotArrow);
                 if (input.input & NancyInput::kLeftMouseButtonUp) {
-                    _engine->scene->addItemToInventory(_engine->scene->getHeldItem());
-                    _engine->sound->playSound(0x16);
+                    NancySceneState.addItemToInventory(NancySceneState.getHeldItem());
+                    NanEngine.sound->playSound(0x16);
                 }                
             } else if (_itemHotspots[i].itemID != -1) {
-                _engine->cursorManager->setCursorType(CursorManager::kHotspotArrow);
+                NanEngine.cursorManager->setCursorType(CursorManager::kHotspotArrow);
                 if (input.input & NancyInput::kLeftMouseButtonUp) {
-                    _engine->scene->removeItemFromInventory(_itemHotspots[i].itemID);
-                    _engine->sound->playSound(0x18);
+                    NancySceneState.removeItemFromInventory(_itemHotspots[i].itemID);
+                    NanEngine.sound->playSound(0x18);
                 }
             }
             break;
@@ -209,7 +209,7 @@ void InventoryBox::InventoryScrollbar::init() {
     Common::Rect &srcBounds = _parent->_sliderSource;
     Common::Point &topPosition = _parent->_sliderDefaultDest;
 
-    _drawSurface.create(_engine->graphicsManager->object0, srcBounds);
+    _drawSurface.create(NanEngine.graphicsManager->object0, srcBounds);
 
     _startPosition = topPosition;
     _startPosition.x -= srcBounds.width() / 2;
@@ -233,7 +233,7 @@ void InventoryBox::Shades::init() {
 }
 
 void InventoryBox::Shades::updateGraphics() {
-    Time time = _engine->getTotalPlayTime();
+    Time time = NanEngine.getTotalPlayTime();
     if (_areOpen) {
         if (_curFrame < 7 && time > _nextFrameTime) {
             setAnimationFrame(++_curFrame);
@@ -241,7 +241,7 @@ void InventoryBox::Shades::updateGraphics() {
 
             if (!_soundTriggered) {
                 _soundTriggered = true;
-                _engine->sound->playSound(0x12);
+                NanEngine.sound->playSound(0x12);
             }
         }
     } else {
@@ -251,7 +251,7 @@ void InventoryBox::Shades::updateGraphics() {
 
             if (!_soundTriggered) {
                 _soundTriggered = true;
-                _engine->sound->playSound(0x12);
+                NanEngine.sound->playSound(0x12);
             }
         }
     }
@@ -262,7 +262,7 @@ void InventoryBox::Shades::updateGraphics() {
 }
 
 void InventoryBox::Shades::setAnimationFrame(uint frame) {
-    Graphics::ManagedSurface &object0 = _engine->graphicsManager->object0;
+    Graphics::ManagedSurface &object0 = NanEngine.graphicsManager->object0;
     Common::Rect srcRect;
     Common::Point destPoint;
 

@@ -62,26 +62,19 @@
 
 namespace Nancy {
 
-NancyEngine *NancyEngine::s_Engine = nullptr;
-
 NancyEngine::NancyEngine(OSystem *syst, const NancyGameDescription *gd) : Engine(syst), _gameDescription(gd), _system(syst) {
 	DebugMan.addDebugChannel(kDebugEngine, "Engine", "Engine debug level");
 	DebugMan.addDebugChannel(kDebugActionRecord, "ActionRecord", "Action Record debug level");
 	DebugMan.addDebugChannel(kDebugScene, "Scene", "Scene debug level");
 
-	_console = new NancyConsole(this);
+	_console = new NancyConsole();
 	_rnd = new Common::RandomSource("Nancy");
 	_rnd->setSeed(_rnd->getSeed());
 
-	logo = new State::Logo(this);
-	scene = new State::Scene(this);
-	map = new State::Map(this);
-	credits = new State::Credits(this);
-	help = new State::Help(this);
-	input = new InputManager(this);
-	sound = new SoundManager(this);
-	graphicsManager = new GraphicsManager(this);
-	cursorManager = new CursorManager(this);
+	input = new InputManager();
+	sound = new SoundManager();
+	graphicsManager = new GraphicsManager();
+	cursorManager = new CursorManager();
 
 	launchConsole = false;
 }
@@ -91,9 +84,7 @@ NancyEngine::~NancyEngine() {
 	DebugMan.clearAllDebugChannels();
 	delete _console;
 	delete _rnd;
-	
-	delete scene;
-	delete map;
+
 	delete graphicsManager;
 	delete input;
 	delete sound;
@@ -120,10 +111,7 @@ Common::Platform NancyEngine::getPlatform() const {
 }
 
 Common::Error NancyEngine::run() {
-	s_Engine = this;
-
 	initGraphics(640, 480, &GraphicsManager::pixelFormat);
-	_console = new NancyConsole(this);
 
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
 	SearchMan.addSubDirectoryMatching(gameDataDir, "game");
@@ -141,74 +129,23 @@ Common::Error NancyEngine::run() {
 	if (cab)
 		SearchMan.add("data1.hdr", cab);
 	
-	_res = new ResourceManager(this);
-	_res->initialize();
+	resource = new ResourceManager();
+	resource->initialize();
 
 	// Setup mixer
 	syncSoundSettings();
 
-	_gameFlow.minGameState = kBoot;
+	setState(kBoot);
 
 	while (!shouldQuit()) {
 		cursorManager->setCursorType(CursorManager::kNormalArrow);
 		input->processEvents();
 		
-		switch (_gameFlow.minGameState) {
-		case kBoot:
-			bootGameEngine();
-			graphicsManager->init();
-			cursorManager->init();
-			setState(kLogo);
-			break;
-		case kLogo:
-			logo->process();
-			break;
-		case kCredits:
-			credits->process();
-			break;
-		case kMainMenu: {
-			GameState prevState = getPreviousState();
-			// TODO until the game's own menus are implemented we simply open the GMM
-			openMainMenuDialog();
-			setState(prevState);
-			break;
-		}
-		case kHelp:
-			help->process();
-			break;
-		case kScene:
-			scene->process();
-			break;
-		case kMap:
-			map->process();
-			break;
-		case kCheat: {
-			if (_cheatTypeIsEventFlag) {
-				EventFlagDialog *dialog = new EventFlagDialog(this);
-				dialog->runModal();
-				delete dialog;
-			} else {
-				CheatDialog *dialog = new CheatDialog(this);
-				dialog->runModal();
-				delete dialog;
-			}
-			setState(getPreviousState());
-			input->forceCleanInput();
-			break;
-		}
-		case kNone:
-			break;
-		default:
-			break;
+		if (_gameFlow.currentState) {
+			_gameFlow.currentState->process();
 		}
 
 		graphicsManager->draw();
-
-		if (_gameFlow.justChanged) {
-			_gameFlow.justChanged = false;
-		} else {
-			_gameFlow.previousGameState = _gameFlow.minGameState;
-		}
 
 		if (launchConsole) {
 			_console->attach();
@@ -225,7 +162,7 @@ Common::Error NancyEngine::run() {
 
 void NancyEngine::bootGameEngine() {
 	clearBootChunks();
-	IFF *boot = new IFF(this, "boot");
+	IFF *boot = new IFF("boot");
 	if (!boot->load())
 		error("Failed to load boot script");
 	preloadCals(*boot);
@@ -256,7 +193,39 @@ void NancyEngine::bootGameEngine() {
 	// TODO reset some vars
 	// TODO reset some more vars
 
+	// These originally get loaded inside Logo
+	SoundDescription desc;
+	desc.read(*NanEngine.getBootChunkStream("BUOK"), SoundDescription::kNormal);
+	NanEngine.sound->loadSound(desc);
+	desc.read(*NanEngine.getBootChunkStream("BUDE"), SoundDescription::kNormal);
+	NanEngine.sound->loadSound(desc);
+	desc.read(*NanEngine.getBootChunkStream("BULS"), SoundDescription::kNormal);
+	NanEngine.sound->loadSound(desc);
+	desc.read(*NanEngine.getBootChunkStream("GLOB"), SoundDescription::kNormal);
+	NanEngine.sound->loadSound(desc);
+	desc.read(*NanEngine.getBootChunkStream("CURT"), SoundDescription::kNormal);
+	NanEngine.sound->loadSound(desc);
+	desc.read(*NanEngine.getBootChunkStream("CANT"), SoundDescription::kNormal);
+	NanEngine.sound->loadSound(desc);
+
 	delete boot;
+}
+
+State::State *NancyEngine::getStateObject(GameState state) {
+	switch (state) {
+	case kLogo:
+		return &State::Logo::instance();
+	case kCredits:
+		return &State::Credits::instance();
+	case kMap:
+		return &State::Map::instance();
+	case kHelp:
+		return &State::Help::instance();
+	case kScene:
+		return &State::Scene::instance();
+	default:
+		return nullptr;
+	}
 }
 
 bool NancyEngine::addBootChunk(const Common::String &name, Common::SeekableReadStream *stream) {
@@ -276,7 +245,7 @@ Common::SeekableReadStream *NancyEngine::getBootChunkStream(const Common::String
 void NancyEngine::stopAndUnloadSpecificSounds() {
 	// TODO missing if
 	
-	sound->stopSound(logo->MSNDchannelID);
+	sound->stopSound(NancyLogoState.MSNDchannelID);
 
 	for (uint i = 0; i < 10; ++i) {
 		sound->stopSound(i);
@@ -286,33 +255,9 @@ void NancyEngine::setMouseEnabled(bool enabled) {
 	cursorManager->showCursor(enabled); input->setMouseInputEnabled(enabled);
 }
 
-void NancyEngine::pauseEngineIntern(bool pause) {
-	if (pause) {
-		if (getState() == kScene) {
-			scene->requestStateChange(kPause);
-			scene->changeGameState(true);
-		} else {
-			setState(kPause, kNone, true);
-		}
-	} else {
-		setState(getPreviousState(), kNone, true);
-	}
-
-	graphicsManager->onPause(pause);
-
-	Engine::pauseEngineIntern(pause);
-}
-
 Common::Error NancyEngine::loadGameStream(Common::SeekableReadStream *stream) {
 	Common::Serializer ser(stream, nullptr);
-
-	auto ret = synchronize(ser);
-
-	if (ret.getCode() == Common::kNoError) {
-		scene->hasLoadedFromSavefile = true;
-	}
-
-	return ret;
+	return synchronize(ser);
 }
 
 bool NancyEngine::canSaveGameStateCurrently() {
@@ -351,8 +296,8 @@ Common::Error NancyEngine::synchronize(Common::Serializer &ser) {
 		ser.syncBytes(buf, 90);
 	}
 
-	scene->synchronize(ser);
-	scene->_actionManager.synchronize(ser);
+	NancySceneState.synchronize(ser);
+	NancySceneState._actionManager.synchronize(ser);
 	Action::SliderPuzzle::synchronize(ser);
 
 	return Common::kNoError;
@@ -375,7 +320,7 @@ void NancyEngine::preloadCals(const IFF &boot) {
 			stream.read(name, nameLen);
 			name[nameLen - 1] = 0;
 			debugC(1, kDebugEngine, "Preloading CAL '%s'", name);
-			if (!_res->loadCifTree(name, "cal"))
+			if (!resource->loadCifTree(name, "cal"))
 				error("Failed to preload CAL '%s'", name);
 		}
 
@@ -428,19 +373,78 @@ void NancyEngine::readImageList(const IFF &boot, const Common::String &prefix, I
 	}
 }
 
-void NancyEngine::setState(GameState state, GameState overridePrevious, bool keepGraphics) {
-	if (overridePrevious != kNone) {
-		_gameFlow.previousGameState = overridePrevious;
-	} else {
-		_gameFlow.previousGameState = _gameFlow.minGameState;
-	}
-	
-	_gameFlow.minGameState = state;
-	_gameFlow.justChanged = true;
+void NancyEngine::setState(GameState state, GameState overridePrevious) {
+	// Handle special cases first
+	switch (state) {
+	case kBoot:
+		bootGameEngine();
+		graphicsManager->init();
+		cursorManager->init();
+		setState(kLogo);
+		return;
+	case kMainMenu:
+		if (_gameFlow.currentState) {
+			if (_gameFlow.currentState->onStateExit()) {
+				_gameFlow.currentState = nullptr;
+			}
+		}
+		
+		// TODO until the game's own menus are implemented we simply open the GMM
+		openMainMenuDialog();
 
-	if (!keepGraphics) {
-		graphicsManager->clearObjects();
+		if (shouldQuit()) {
+			return;
+		}
+
+		if (_gameFlow.currentState) {
+			_gameFlow.currentState->onStateEnter();
+		}
+
+		return;
+	case kCheat:
+		if (_cheatTypeIsEventFlag) {
+			EventFlagDialog *dialog = new EventFlagDialog();
+			runDialog(*dialog);
+			delete dialog;
+		} else {
+			CheatDialog *dialog = new CheatDialog();
+			runDialog(*dialog);
+			delete dialog;
+		}
+		input->forceCleanInput();
+		return;
+	default:
+		break;
 	}
+
+	graphicsManager->clearObjects();
+
+	_gameFlow.previousState = _gameFlow.currentState;
+	_gameFlow.currentState = getStateObject(state);
+
+	if (_gameFlow.previousState) {
+		_gameFlow.previousState->onStateExit();
+	}
+
+	if (_gameFlow.currentState) {
+		_gameFlow.currentState->onStateEnter();
+	}
+
+	if (overridePrevious != kNone) {
+		_gameFlow.previousState = getStateObject(state);
+	}
+}
+
+void NancyEngine::setPreviousState() {
+	if (_gameFlow.currentState) {
+		_gameFlow.currentState->onStateExit();
+	}
+
+	if (_gameFlow.previousState) {
+		_gameFlow.previousState->onStateEnter();
+	}
+
+	SWAP<Nancy::State::State *>(_gameFlow.currentState, _gameFlow.previousState);
 }
 
 class NancyEngine_v0 : public NancyEngine {
@@ -465,9 +469,10 @@ void NancyEngine_v0::readBootSummary(const IFF &boot) {
 	bsum->seek(0x1D1);
 	_fontSize = bsum->readSint32LE() * 1346;
 	bsum->seek(0x1ED);
-	scene->playerTimeMinuteLength = bsum->readSint16LE();
+	NancySceneState.playerTimeMinuteLength = bsum->readSint16LE();
 	bsum->seek(0x1F1);
     overrideMovementTimeDeltas = bsum->readByte();
+
     if (overrideMovementTimeDeltas) {
         slowMovementTimeDelta = bsum->readUint16LE();
         fastMovementTimeDelta = bsum->readUint16LE();

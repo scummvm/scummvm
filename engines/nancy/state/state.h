@@ -20,65 +20,27 @@
  *
  */
 
-#ifndef NANCY_STATE_LOGO_H
-#define NANCY_STATE_LOGO_H
+#ifndef NANCY_STATE_STATE_H
+#define NANCY_STATE_STATE_H
 
-#include "engines/nancy/state/state.h"
-
-#include "common/singleton.h"
-
-namespace Graphics {
-	struct Surface;
-}
+#include "common/types.h"
 
 namespace Nancy {
-
-class NancyEngine;
-
 namespace State {
 
-class Logo : public State, public Common::Singleton<Logo> {
+class State {
 public:
-	Logo() :
-		_state(kInit),
-		_runState(kBlit),
-		_startTicks(0),
-		_surf(nullptr) { }
-		
-	// State API
-    virtual void process() override;
-    virtual bool onStateExit() override { destroy(); return true; };
+    State() {}
+    virtual ~State() =default;
 
-	uint MSNDchannelID; // This definitely shouldn't be here
+    virtual void process() =0;
+    virtual void onStateEnter() {}
 
-private:
-	void init();
-	void startSound();
-	void run();
-	void stop();
-
-	enum State {
-		kInit,
-		kStartSound,
-		kRun,
-		kStop
-	};
-
-	enum RunState {
-		// First four states are related to testing mode
-		kBlit = 4,
-		kWait
-	};
-
-	State _state;
-	RunState _runState;
-	uint _startTicks;
-	Graphics::Surface *_surf;
+    // Returns whether the object destroyed itself after exit
+    virtual bool onStateExit() { return true; }
 };
 
-#define NancyLogoState Nancy::State::Logo::instance()
-
-} // end of namespace State
+} // End of namespace State
 } // End of namespace Nancy
 
-#endif // NANCY_STATE_LOGO_H
+#endif // NANCY_STATE_STATE_H

@@ -33,13 +33,12 @@ class NancyEngine;
 
 class NancyConsole : public GUI::Debugger {
 public:
-	NancyConsole(NancyEngine *vm);
+	NancyConsole();
 	virtual ~NancyConsole(void);
 
 	void postEnter();
 
 private:
-	NancyEngine *_vm;
 	bool Cmd_loadCal(int argc, const char **argv);
 	bool Cmd_cifHexDump(int argc, const char **argv);
 	bool Cmd_cifExport(int argc, const char **argv);

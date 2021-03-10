@@ -40,7 +40,7 @@ public:
 	Font() =default;
 	~Font() =default;
     
-    void read(Common::SeekableReadStream &stream, NancyEngine *engine);
+    void read(Common::SeekableReadStream &stream);
 
     int getFontHeight() const override { return _fontHeight; }
 	int getMaxCharWidth() const override { return _maxCharWidth; }

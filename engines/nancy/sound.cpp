@@ -176,9 +176,8 @@ Audio::SeekableAudioStream *SoundManager::makeHISStream(Common::SeekableReadStre
 		return Audio::makeVorbisStream(subStream, DisposeAfterUse::YES);
 }
 
-SoundManager::SoundManager(NancyEngine *engine) :
-		_engine(engine) {
-	_mixer = _engine->_system->getMixer();
+SoundManager::SoundManager() {
+	_mixer = NanEngine._system->getMixer();
 
 	initSoundChannels();
 }
@@ -235,7 +234,7 @@ void SoundManager::pauseSound(uint16 channelID, bool pause) {
 		return;
 
 	if (isSoundPlaying(channelID)) {
-		_engine->_system->getMixer()->pauseHandle(_channels[channelID].handle, pause);
+		NanEngine._system->getMixer()->pauseHandle(_channels[channelID].handle, pause);
 	}
 }
 
