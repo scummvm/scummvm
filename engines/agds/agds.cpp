@@ -1075,7 +1075,7 @@ Common::Error AGDSEngine::loadGameState(int slot) {
 
 	Common::String screenName;
 	{
-		// Screenshot and screen name
+		// Palette and screen name
 		Common::ScopedPtr<Common::SeekableReadStream> agds_s(db.getEntry(saveFile, "__agds_s"));
 		screenName = readString(agds_s.get());
 	}
@@ -1100,9 +1100,9 @@ Common::Error AGDSEngine::loadGameState(int slot) {
 		Common::ScopedPtr<Common::SeekableReadStream> agds_a(db.getEntry(saveFile, "__agds_a"));
 		Common::String sample = loadText(readString(agds_a.get()));
 		Common::String phaseVar = readString(agds_a.get());
-		uint unk0 = agds_a->readUint32LE();
-		uint unk1 = agds_a->readUint32LE();
-		debug("saved audio state: sample: '%s', var: '%s' %u %u", sample.c_str(), phaseVar.c_str(), unk0, unk1);
+		uint volume = agds_a->readUint32LE();
+		uint type = agds_a->readUint32LE();
+		debug("saved audio state: sample: '%s', var: '%s' %u %u", sample.c_str(), phaseVar.c_str(), volume, type);
 		debug("phase var for sample -> %d", getGlobal(phaseVar));
 		playSound(Common::String(), sample, phaseVar); //fixme: double check
 	}
