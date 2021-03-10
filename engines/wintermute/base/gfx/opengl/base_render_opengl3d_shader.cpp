@@ -642,6 +642,7 @@ bool BaseRenderOpenGL3DShader::setup3D(Camera3D *camera, bool force) {
 			color[1] = RGBCOLGetG(fogParameters._color) / 255.0f;
 			color[2] = RGBCOLGetB(fogParameters._color) / 255.0f;
 			color[3] = RGBCOLGetA(fogParameters._color) / 255.0f;
+			debug(5, "BaseRenderOpenGL3DShader::setup3D fog not yet implemented! [%f %f %f %f]", color[0], color[1], color[2], color[3]);
 		} else {
 			// TODO: Disable fog in shader
 		}
