@@ -23,6 +23,8 @@
 #ifndef NANCY_STATE_SCENE_H
 #define NANCY_STATE_SCENE_H
 
+#include "engines/nancy/state/state.h"
+
 #include "engines/nancy/action/actionmanager.h"
 
 #include "engines/nancy/ui/fullscreenimage.h"
@@ -39,6 +41,7 @@
 #include "common/scummsys.h"
 #include "common/array.h"
 #include "common/str.h"
+#include "common/singleton.h"
 
 namespace Graphics {
 	struct Surface;
@@ -61,7 +64,7 @@ struct SceneInfo {
     uint16 verticalOffset = 0;
 };
 
-class Scene {
+class Scene : public State, public Common::Singleton<Scene> {
     friend class Nancy::Action::ActionRecord;
     friend class Nancy::Action::ActionManager;
     friend class Nancy::NancyConsole;
@@ -85,20 +88,22 @@ public:
         //
     };
 
-    Scene(Nancy::NancyEngine *engine) :
-        _engine (engine),
+    Scene() :
         _state (kInit),
-        _frame(engine),
+        _frame(),
         _lastHint(-1),
-        _gameStateRequested(NancyEngine::kScene),
-        _viewport(engine),
+        _gameStateRequested(NancyEngine::kNone),
+        _viewport(),
         _textbox(_frame),
         _inventoryBox(_frame),
         _menuButton(_frame),
         _helpButton(_frame),
-        _actionManager(engine) {}
+        _actionManager() {}
 
-    void process();
+    // State API
+    virtual void process() override;
+    virtual void onStateEnter() override;
+    virtual bool onStateExit() override;
 
     void changeScene(uint16 id, uint16 frame, uint16 verticalOffset, bool noSound);
     void changeScene(const SceneChangeDescription &sceneDescription);
@@ -108,10 +113,12 @@ public:
     void pauseSceneSpecificSounds();
     void unpauseSceneSpecificSounds();
 
+    void setShouldClearTextbox(bool shouldClear) { _shouldClearTextbox = shouldClear; }
+
     void addItemToInventory(uint16 id);
     void removeItemFromInventory(uint16 id, bool pickUp = true);
     int16 getHeldItem() const { return _flags.heldItem; }
-    void setHeldItem(int16 id) { _flags.heldItem = id; _engine->cursorManager->setCursorItemID(id); }
+    void setHeldItem(int16 id) { _flags.heldItem = id; NanEngine.cursorManager->setCursorItemID(id); }
     NancyFlag hasItem(int16 id) const { return _flags.items[id]; }
 
     void setEventFlag(int16 label, NancyFlag flag = kTrue);
@@ -158,8 +165,6 @@ private:
     void run();
 
     void readSceneSummary(Common::SeekableReadStream &stream);
-
-    bool changeGameState(bool keepGraphics = false);
 
     void clearSceneData();
 
@@ -222,8 +227,6 @@ protected:
         int16 primaryVideoResponsePicked = -1;
     };
 
-    Nancy::NancyEngine *_engine;
-
     // RenderObjects
     UI::FullScreenImage _frame;
     UI::Viewport _viewport;
@@ -250,7 +253,10 @@ protected:
 
     bool isComingFromMenu = true;
     bool hasLoadedFromSavefile = false;
+    bool _shouldClearTextbox = true;
 };
+
+#define NancySceneState Nancy::State::Scene::instance()
 
 } // End of namespace State
 } // End of namespace Nancy

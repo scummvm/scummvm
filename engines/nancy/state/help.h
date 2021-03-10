@@ -23,11 +23,14 @@
 #ifndef NANCY_STATE_HELP_H
 #define NANCY_STATE_HELP_H
 
+#include "engines/nancy/state/state.h"
+
 #include "engines/nancy/ui/fullscreenimage.h"
 
 #include "engines/nancy/commontypes.h"
 
 #include "common/rect.h"
+#include "common/singleton.h"
 
 namespace Nancy {
 
@@ -35,12 +38,14 @@ class NancyEngine;
 
 namespace State {
 
-class Help {
+class Help : public State, public Common::Singleton<Help> {
 public:
     enum State { kInit, kBegin, kRun, kWaitForSound };
-    Help(NancyEngine *engine) : _engine(engine), _state(kInit), _image(engine) {}
+    Help() : _state(kInit), _image() {}
 
-    void process();
+    // State API
+    virtual void process() override;
+    virtual bool onStateExit() override { destroy(); return true; };
 
 private:
     void init();
@@ -48,13 +53,13 @@ private:
     void run();
     void waitForSound();
 
-    NancyEngine *_engine;
     State _state;
     UI::FullScreenImage _image;
     Common::Rect _hotspot; // Can be an array, but isn't in nancy1
     SoundDescription _sound;
-    uint _previousState;
 };
+
+#define NancyHelpState Nancy::State::Help::instance()
 
 } // End of namespace State
 } // End of namespace Nancy

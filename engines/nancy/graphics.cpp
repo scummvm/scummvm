@@ -40,16 +40,12 @@ void GraphicsManager::init() {
     _screen.setTransparentColor(transColor); 
 
     Graphics::Surface surf;
-    _engine->_res->loadImage("ciftree", "OBJECT0", surf);
+    NanEngine.resource->loadImage("ciftree", "OBJECT0", surf);
     object0.create(surf.w, surf.h, surf.format);
     object0.blitFrom(surf, Common::Point(0, 0));
     surf.free();
 
-    Common::SeekableReadStream *fontChunk = _engine->getBootChunkStream("FONT");
-    while(fontChunk->pos() != fontChunk->size()) {
-        _fonts.push_back(Font());
-        _fonts.back().read(*fontChunk, _engine);
-    }
+    loadFonts();
 }
 
 void GraphicsManager::draw() {
@@ -95,12 +91,6 @@ void GraphicsManager::draw() {
     _screen.update();
 }
 
-void GraphicsManager::onPause(bool pause) {
-    for (auto &object : _objects) {
-        object->onPause(pause);
-    }
-}
-
 void GraphicsManager::addObject(RenderObject *object) {
     for (auto &r : _objects) {
         if (r == object) {
@@ -135,12 +125,12 @@ void GraphicsManager::redrawAll() {
 }
 
 void GraphicsManager::loadFonts() {
-    Common::SeekableReadStream *chunk = _engine->getBootChunkStream("FONT");
+    Common::SeekableReadStream *chunk = NanEngine.getBootChunkStream("FONT");
     
     chunk->seek(0);
     while (chunk->pos() < chunk->size() - 1) {
         _fonts.push_back(Font());
-        _fonts.back().read(*chunk, _engine);
+        _fonts.back().read(*chunk);
     }
 }
 

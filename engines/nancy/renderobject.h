@@ -43,14 +43,12 @@ class RenderObject {
 public:
     enum BlitType { kNoTrans, kTrans };
 
-    RenderObject(NancyEngine *engine) :
-        _engine(engine),
+    RenderObject() :
         _needsRedraw(true),
         _isVisible(true),
         _redrawFrom(nullptr) {}
 
     RenderObject(RenderObject &redrawFrom) :
-        _engine(redrawFrom._engine),
         _needsRedraw(true),
         _isVisible(true),
         _redrawFrom(&redrawFrom) {}
@@ -60,7 +58,6 @@ public:
     virtual void init(); // Does _not_ get called automatically
     virtual void registerGraphics();
     virtual void updateGraphics() {}
-    virtual void onPause(bool pause) {}
 
     void moveTo(Common::Point position);
     void setVisible(bool visible);
@@ -84,8 +81,6 @@ protected:
 
     // Needed for proper handling of objects inside the viewport
     virtual bool isViewportRelative() const { return false; }
-
-    NancyEngine *_engine;
 
     RenderObject *_redrawFrom;
 

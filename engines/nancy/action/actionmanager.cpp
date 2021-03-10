@@ -46,14 +46,14 @@ void ActionManager::handleInput(NancyInput &input) {
             rec->handleInput(input);
         }
 
-        if (rec->isActive && rec->hasHotspot && _engine->scene->getViewport().convertViewportToScreen(rec->hotspot).contains(input.mousePos)) {
-            _engine->cursorManager->setCursorType(rec->getHoverCursor());
+        if (rec->isActive && rec->hasHotspot && NancySceneState.getViewport().convertViewportToScreen(rec->hotspot).contains(input.mousePos)) {
+            NanEngine.cursorManager->setCursorType(rec->getHoverCursor());
 
             if (input.input & NancyInput::kLeftMouseButtonUp) {
                 input.input &= ~NancyInput::kLeftMouseButtonUp;
 
                 bool shouldTrigger = false;
-                int16 heldItem = _engine->scene->getHeldItem();
+                int16 heldItem = NancySceneState.getHeldItem();
                 if (rec->itemRequired != -1) {
                     if (heldItem == -1 && rec->itemRequired == -2) {
                         shouldTrigger = true;
@@ -69,7 +69,7 @@ void ActionManager::handleInput(NancyInput &input) {
                     }
 
                     if (!shouldTrigger) {
-                        _engine->sound->playSound(17); // Hardcoded by original engine
+                        NanEngine.sound->playSound(17); // Hardcoded by original engine
                     }
                 } else {
                     shouldTrigger = true;
@@ -83,11 +83,11 @@ void ActionManager::handleInput(NancyInput &input) {
 
                     // Re-add the object to the inventory unless it's marked as a one-time use
                     if (rec->itemRequired == heldItem && rec->itemRequired != -1) {
-                        if (_engine->scene->getInventoryBox().getItemDescription(heldItem).oneTimeUse != 0) {
-                            _engine->scene->getInventoryBox().addItem(heldItem);
+                        if (NancySceneState.getInventoryBox().getItemDescription(heldItem).oneTimeUse != 0) {
+                            NancySceneState.getInventoryBox().addItem(heldItem);
                         }
 
-                        _engine->scene->setHeldItem(-1);
+                        NancySceneState.setHeldItem(-1);
                     }
                 }
 
@@ -253,15 +253,15 @@ void ActionManager::processActionRecords() {
                         switch (dep.condition) {
                         case kFalse:
                             // Item not in possession or held
-                            if (_engine->scene->_flags.items[dep.label] == kFalse &&
-                                dep.label != _engine->scene->_flags.heldItem) {
+                            if (NancySceneState._flags.items[dep.label] == kFalse &&
+                                dep.label != NancySceneState._flags.heldItem) {
                                 dep.satisfied = true;
                             }
 
                             break;
                         case kTrue:
-                            if (_engine->scene->_flags.items[dep.label] == kTrue ||
-                                dep.label == _engine->scene->_flags.heldItem) {
+                            if (NancySceneState._flags.items[dep.label] == kTrue ||
+                                dep.label == NancySceneState._flags.heldItem) {
                                 dep.satisfied = true;
                             }
 
@@ -272,7 +272,7 @@ void ActionManager::processActionRecords() {
 
                         break;
                     case kEventFlag:
-                        if (_engine->scene->getEventFlag(dep.label, (NancyFlag)dep.condition)) {
+                        if (NancySceneState.getEventFlag(dep.label, (NancyFlag)dep.condition)) {
                             // nancy1 has code for some timer array that never gets used
                             // and is discarded from nancy2 onward
                             dep.satisfied = true;
@@ -280,9 +280,9 @@ void ActionManager::processActionRecords() {
 
                         break;
                     case kLogicCondition:
-                        if (_engine->scene->_flags.logicConditions[dep.label].flag == dep.condition) {
+                        if (NancySceneState._flags.logicConditions[dep.label].flag == dep.condition) {
                             // Wait for specified time before satisfying dependency condition
-                            Time elapsed = _engine->scene->_timers.lastTotalTime - _engine->scene->_flags.logicConditions[dep.label].timestamp;
+                            Time elapsed = NancySceneState._timers.lastTotalTime - NancySceneState._flags.logicConditions[dep.label].timestamp;
 
                             if (elapsed >= dep.timeData) {
                                 dep.satisfied = true;
@@ -291,20 +291,20 @@ void ActionManager::processActionRecords() {
 
                         break;
                     case kTotalTime:
-                        if (_engine->scene->_timers.lastTotalTime >= dep.timeData) {
+                        if (NancySceneState._timers.lastTotalTime >= dep.timeData) {
                             dep.satisfied = true;
                         }
 
                         break;
                     case kSceneTime:
-                        if (_engine->scene->_timers.sceneTime >= dep.timeData) {
+                        if (NancySceneState._timers.sceneTime >= dep.timeData) {
                             dep.satisfied = true;
                         }
 
                         break;
                     case kPlayerTime:
                         // TODO almost definitely wrong, as the original engine treats player time differently
-                        if (_engine->scene->_timers.playerTime >= dep.timeData) {
+                        if (NancySceneState._timers.playerTime >= dep.timeData) {
                             dep.satisfied = true;
                         }
 
@@ -320,19 +320,19 @@ void ActionManager::processActionRecords() {
                         // Also, I'm pretty sure it never gets used
                         switch (dep.milliseconds) {
                         case 1:
-                            if (dep.seconds < _engine->scene->_sceneState.sceneHitCount[dep.hours]) {
+                            if (dep.seconds < NancySceneState._sceneState.sceneHitCount[dep.hours]) {
                                 dep.satisfied = true;
                             }
 
                             break;
                         case 2:
-                            if (dep.seconds > _engine->scene->_sceneState.sceneHitCount[dep.hours]) {
+                            if (dep.seconds > NancySceneState._sceneState.sceneHitCount[dep.hours]) {
                                 dep.satisfied = true;
                             }
 
                             break;
                         case 3:
-                            if (dep.seconds == _engine->scene->_sceneState.sceneHitCount[dep.hours]) {
+                            if (dep.seconds == NancySceneState._sceneState.sceneHitCount[dep.hours]) {
                                 dep.satisfied = true;
                             }
 
@@ -342,13 +342,13 @@ void ActionManager::processActionRecords() {
                         break;
                     case kResetOnNewDay:
                         if (record->days == -1) {
-                            record->days = _engine->scene->_timers.playerTime.getDays();
+                            record->days = NancySceneState._timers.playerTime.getDays();
                             dep.satisfied = true;
                             break;
                         }
 
-                        if (record->days < _engine->scene->_timers.playerTime.getDays()) {
-                            record->days = _engine->scene->_timers.playerTime.getDays();
+                        if (record->days < NancySceneState._timers.playerTime.getDays()) {
+                            record->days = NancySceneState._timers.playerTime.getDays();
                             for (uint j = 0; j < record->dependencies.size(); ++j) {
                                 if (record->dependencies[j].type == kPlayerTime) {
                                     record->dependencies[j].satisfied = false;
@@ -379,25 +379,25 @@ void ActionManager::processActionRecords() {
                         break;
                     }
                     case kTimeOfDay:
-                        if (dep.label == (byte)_engine->scene->_timers.timeOfDay) {
+                        if (dep.label == (byte)NancySceneState._timers.timeOfDay) {
                             dep.satisfied = true;
                         }
 
                         break;
                     case kTimerNotDone:
-                        if (_engine->scene->_timers.timerTime <= dep.timeData) {
+                        if (NancySceneState._timers.timerTime <= dep.timeData) {
                             dep.satisfied = true;
                         }
 
                         break;
                     case kTimerDone:
-                        if (_engine->scene->_timers.timerTime > dep.timeData) {
+                        if (NancySceneState._timers.timerTime > dep.timeData) {
                             dep.satisfied = true;
                         }
 
                         break;
                     case kDifficultyLevel:
-                        if (dep.condition == _engine->scene->_difficulty) {
+                        if (dep.condition == NancySceneState._difficulty) {
                             dep.satisfied = true;
                         }
 
@@ -432,7 +432,7 @@ void ActionManager::processActionRecords() {
         }
 
         if (record->isActive) {
-            record->execute(_engine);
+            record->execute();
         }
     }
 }
@@ -442,6 +442,14 @@ void ActionManager::clearActionRecords() {
         delete r;
     }
     _records.clear();
+}
+
+void ActionManager::onPause(bool pause) {
+    for (auto &r : _records) {
+        if (r->isActive && !r->isDone) {
+            r->onPause(pause);
+        }
+    }
 }
 
 void ActionManager::synchronize(Common::Serializer &ser) {

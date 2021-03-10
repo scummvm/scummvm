@@ -564,7 +564,7 @@ const CifExporter *CifExporter::create(uint32 version) {
 	return exp;
 }
 
-ResourceManager::ResourceManager(NancyEngine *vm) : _vm(vm) {
+ResourceManager::ResourceManager() {
 	_dec = new Decompressor;
 }
 

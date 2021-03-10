@@ -69,7 +69,7 @@ bool IFF::callback(Common::IFFChunk &c) {
 bool IFF::load() {
 	byte *data;
 	uint size;
-	data = _vm->_res->loadData("ciftree", _name, size);
+	data = NanEngine.resource->loadData("ciftree", _name, size);
 
 	if (!data)
 		return false;

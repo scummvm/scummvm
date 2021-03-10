@@ -40,8 +40,8 @@ namespace UI {
 
 class Viewport : public Nancy::RenderObject {
 public:
-    Viewport(NancyEngine *engine) :
-        RenderObject(engine),
+    Viewport() :
+        RenderObject(),
         _movementLastFrame(0),
         _edgesMask(0) {}
     virtual ~Viewport() { _decoder.close(); _fullFrame.free(); }

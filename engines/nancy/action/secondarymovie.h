@@ -53,7 +53,7 @@ public:
     virtual void onPause(bool pause) override;
 
     virtual uint16 readData(Common::SeekableReadStream &stream) override;
-    virtual void execute(NancyEngine *engine) override;
+    virtual void execute() override;
 
     Common::String videoName; // 0x00
 

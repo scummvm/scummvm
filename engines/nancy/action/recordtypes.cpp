@@ -45,8 +45,8 @@ uint16 SceneChange::readData(Common::SeekableReadStream &stream) {
     return 8;
 }
 
-void SceneChange::execute(NancyEngine *engine) {
-    engine->scene->changeScene(sceneChange);
+void SceneChange::execute() {
+    NancySceneState.changeScene(sceneChange);
     isDone = true;
 }
 
@@ -63,7 +63,7 @@ uint16 HotMultiframeSceneChange::readData(Common::SeekableReadStream &stream) {
     return ret + (numHotspots * 0x12) + 2;
 }
 
-void HotMultiframeSceneChange::execute(NancyEngine *engine) {
+void HotMultiframeSceneChange::execute() {
     switch (state) {
     case kBegin:
         // turn main rendering on
@@ -72,14 +72,14 @@ void HotMultiframeSceneChange::execute(NancyEngine *engine) {
     case kRun:
         hasHotspot = false;
         for (uint i = 0; i < hotspots.size(); ++i) {
-            if (hotspots[i].frameID == engine->scene->getSceneInfo().frameID) {
+            if (hotspots[i].frameID == NancySceneState.getSceneInfo().frameID) {
                 hasHotspot = true;
                 hotspot = hotspots[i].coords;
             }
         }
         break;
     case kActionTrigger:
-        SceneChange::execute(engine);
+        SceneChange::execute();
         break;
     }
 }
@@ -90,21 +90,21 @@ uint16 Hot1FrSceneChange::readData(Common::SeekableReadStream &stream) {
     return 0x1A;
 }
 
-void Hot1FrSceneChange::execute(NancyEngine *engine) {
+void Hot1FrSceneChange::execute() {
     switch (state) {
     case kBegin:
         hotspot = hotspotDesc.coords;
         state = kRun;
         // fall through
     case kRun:
-        if (hotspotDesc.frameID == engine->scene->getSceneInfo().frameID) {
+        if (hotspotDesc.frameID == NancySceneState.getSceneInfo().frameID) {
             hasHotspot = true;
         } else {
             hasHotspot = false;
         }
         break;
     case kActionTrigger:
-        SceneChange::execute(engine);
+        SceneChange::execute();
         break;
     }
 }
@@ -131,9 +131,9 @@ uint16 MapCall::readData(Common::SeekableReadStream &stream) {
     return 1;
 }
 
-void MapCall::execute(NancyEngine *engine) {
+void MapCall::execute() {
     execType = kRepeating;
-    engine->scene->requestStateChange(NancyEngine::kMap);
+    NancySceneState.requestStateChange(NancyEngine::kMap);
     finishExecution();
 }
 
@@ -142,19 +142,19 @@ uint16 MapCallHot1Fr::readData(Common::SeekableReadStream &stream) {
     return 0x12;
 }
 
-void MapCallHot1Fr::execute(NancyEngine *engine) {
+void MapCallHot1Fr::execute() {
     switch (state) {
     case kBegin:
         hotspot = hotspotDesc.coords;
         state = kRun;
         // fall through
     case kRun:
-        if (hotspotDesc.frameID == engine->scene->getSceneInfo().frameID) {
+        if (hotspotDesc.frameID == NancySceneState.getSceneInfo().frameID) {
             hasHotspot = true;
         }
         break;
     case kActionTrigger:
-        MapCall::execute(engine);
+        MapCall::execute();
         break;
     }
 }
@@ -169,7 +169,7 @@ uint16 MapCallHotMultiframe::readData(Common::SeekableReadStream &stream) {
     return 2 + numDescs * 0x12;
 }
 
-void MapCallHotMultiframe::execute(NancyEngine *engine) {
+void MapCallHotMultiframe::execute() {
     switch (state) {
     case kBegin:
         state = kRun;
@@ -177,14 +177,14 @@ void MapCallHotMultiframe::execute(NancyEngine *engine) {
     case kRun:
         hasHotspot = false;
         for (uint i = 0; i < hotspots.size(); ++i) {
-            if (hotspots[i].frameID == engine->scene->getSceneInfo().frameID) {
+            if (hotspots[i].frameID == NancySceneState.getSceneInfo().frameID) {
                 hasHotspot = true;
                 hotspot = hotspots[i].coords;
             }
         }
         break;
     case kActionTrigger:
-        MapCall::execute(engine);
+        MapCall::execute();
         break;  
     }
 }
@@ -246,8 +246,8 @@ uint16 ResetAndStartTimer::readData(Common::SeekableReadStream &stream) {
     return 1;
 }
 
-void ResetAndStartTimer::execute(NancyEngine *engine) {
-    engine->scene->resetAndStartTimer();
+void ResetAndStartTimer::execute() {
+    NancySceneState.resetAndStartTimer();
     isDone = true;
 }
 
@@ -256,8 +256,8 @@ uint16 StopTimer::readData(Common::SeekableReadStream &stream) {
     return 1;
 }
 
-void StopTimer::execute(NancyEngine *engine) {
-    engine->scene->stopTimer();
+void StopTimer::execute() {
+    NancySceneState.stopTimer();
     isDone = true;
 }
 
@@ -266,8 +266,8 @@ uint16 EventFlags::readData(Common::SeekableReadStream &stream) {
     return 0x28;
 }
 
-void EventFlags::execute(NancyEngine *engine) {
-    flags.execute(engine);
+void EventFlags::execute() {
+    flags.execute();
     isDone = true;
 }
 
@@ -286,7 +286,7 @@ uint16 EventFlagsMultiHS::readData(Common::SeekableReadStream &stream) {
     return returnSize;
 }
 
-void EventFlagsMultiHS::execute(NancyEngine *engine) {
+void EventFlagsMultiHS::execute() {
     switch (state) {
     case kBegin:
         // turn main rendering on
@@ -296,7 +296,7 @@ void EventFlagsMultiHS::execute(NancyEngine *engine) {
         hasHotspot = false;
 
         for (uint i = 0; i < hotspots.size(); ++i) {
-            if (hotspots[i].frameID == engine->scene->getSceneInfo().frameID) {
+            if (hotspots[i].frameID == NancySceneState.getSceneInfo().frameID) {
                 hasHotspot = true;
                 hotspot = hotspots[i].coords;
             }
@@ -305,7 +305,7 @@ void EventFlagsMultiHS::execute(NancyEngine *engine) {
         break;
     case kActionTrigger:
         hasHotspot = false;
-        EventFlags::execute(engine);
+        EventFlags::execute();
         finishExecution();
         break;
     }
@@ -316,10 +316,10 @@ uint16 LoseGame::readData(Common::SeekableReadStream &stream) {
     return 1;
 }
 
-void LoseGame::execute(NancyEngine *engine) {
-    engine->stopAndUnloadSpecificSounds();
-    engine->setState(NancyEngine::kMainMenu);
-    engine->scene->resetStateToInit();
+void LoseGame::execute() {
+    NanEngine.stopAndUnloadSpecificSounds();
+    NanEngine.setState(NancyEngine::kMainMenu);
+    NancySceneState.resetStateToInit();
     isDone = true;
 }
 
@@ -338,10 +338,12 @@ uint16 WinGame::readData(Common::SeekableReadStream &stream) {
     return 1;
 }
 
-void WinGame::execute(NancyEngine *engine) {
-    engine->stopAndUnloadSpecificSounds();
-    engine->setState(NancyEngine::kCredits, NancyEngine::kMainMenu);
-    engine->scene->resetStateToInit();
+void WinGame::execute() {
+    NanEngine.stopAndUnloadSpecificSounds();
+    NanEngine.setState(NancyEngine::kCredits, NancyEngine::kMainMenu);
+    
+    // TODO replace with destroy()?
+    NancySceneState.resetStateToInit();
     isDone = true;
 }
 
@@ -350,9 +352,9 @@ uint16 AddInventoryNoHS::readData(Common::SeekableReadStream &stream) {
     return 2;
 }
 
-void AddInventoryNoHS::execute(Nancy::NancyEngine *engine) {
-    if (engine->scene->hasItem(itemID) == kFalse) {
-        engine->scene->addItemToInventory(itemID);
+void AddInventoryNoHS::execute() {
+    if (NancySceneState.hasItem(itemID) == kFalse) {
+        NancySceneState.addItemToInventory(itemID);
     }
 
     isDone = true;
@@ -369,15 +371,15 @@ uint16 DifficultyLevel::readData(Common::SeekableReadStream &stream) {
     return 6;
 }
 
-void DifficultyLevel::execute(NancyEngine *engine) {
-    engine->scene->setDifficulty(difficulty);
-    engine->scene->setEventFlag(flag);
+void DifficultyLevel::execute() {
+    NancySceneState.setDifficulty(difficulty);
+    NancySceneState.setEventFlag(flag);
     isDone = true;
 }
 
 void ShowInventoryItem::init() {
     Graphics::Surface srcSurf;
-    _engine->_res->loadImage("ciftree", imageName, srcSurf);
+    NanEngine.resource->loadImage("ciftree", imageName, srcSurf);
     _fullSurface.create(srcSurf.w, srcSurf.h, srcSurf.format);
     _fullSurface.blitFrom(srcSurf);
     srcSurf.free();
@@ -403,7 +405,7 @@ uint16 ShowInventoryItem::readData(Common::SeekableReadStream &stream) {
     return 0xE + 0x22 * numFrames;
 }
 
-void ShowInventoryItem::execute(NancyEngine *engine) {
+void ShowInventoryItem::execute() {
     switch (state) {
     case kBegin:
         init();
@@ -414,7 +416,7 @@ void ShowInventoryItem::execute(NancyEngine *engine) {
         int newFrame = -1;
 
         for (uint i = 0; i < bitmaps.size(); ++i) {
-            if (bitmaps[i].frameID == engine->scene->getSceneInfo().frameID) {
+            if (bitmaps[i].frameID == NancySceneState.getSceneInfo().frameID) {
                 newFrame = i;
                 break;
             }
@@ -438,12 +440,18 @@ void ShowInventoryItem::execute(NancyEngine *engine) {
         break;
     }
     case kActionTrigger:
-        engine->sound->playSound(24); // Hardcoded by original engine
-        engine->scene->addItemToInventory(objectID);
+        NanEngine.sound->playSound(24); // Hardcoded by original engine
+        NancySceneState.addItemToInventory(objectID);
         setVisible(false);
         hasHotspot = false;
         finishExecution();
         break;
+    }
+}
+
+void ShowInventoryItem::onPause(bool pause) {
+    if (pause) {
+        registerGraphics();
     }
 }
 
@@ -456,26 +464,26 @@ uint16 PlayDigiSoundAndDie::readData(Common::SeekableReadStream &stream) {
     return 0x2B;
 }
 
-void PlayDigiSoundAndDie::execute(NancyEngine *engine) {
+void PlayDigiSoundAndDie::execute() {
     switch (state) {
     case kBegin:
-        engine->sound->loadSound(sound);
-        engine->sound->playSound(sound);
+        NanEngine.sound->loadSound(sound);
+        NanEngine.sound->playSound(sound);
         state = kRun;
         break;
     case kRun:
-        if (!engine->sound->isSoundPlaying(sound)) {
+        if (!NanEngine.sound->isSoundPlaying(sound)) {
             state = kActionTrigger;
         }
 
         break;
     case kActionTrigger:
         if (sceneChange.sceneID != 9999) {
-            engine->scene->changeScene(sceneChange);
+            NancySceneState.changeScene(sceneChange);
         }
         
-        engine->scene->setEventFlag(flagOnTrigger);
-        engine->sound->stopSound(sound);
+        NancySceneState.setEventFlag(flagOnTrigger);
+        NanEngine.sound->stopSound(sound);
 
         finishExecution();
         break;
@@ -503,14 +511,14 @@ uint16 PlaySoundMultiHS::readData(Common::SeekableReadStream &stream) {
     return 0x31 + numHotspots * 0x12;
 }
 
-void PlaySoundMultiHS::execute(Nancy::NancyEngine *engine) {
+void PlaySoundMultiHS::execute() {
     switch (state) {
     case kBegin:
         state = kRun;
         // fall through
     case kRun: {
         hasHotspot = false;
-        uint currentFrame = engine->scene->getSceneInfo().frameID;
+        uint currentFrame = NancySceneState.getSceneInfo().frameID;
 
         for (uint i = 0; i < hotspots.size(); ++i) {
             if (hotspots[i].frameID == currentFrame) {
@@ -523,10 +531,10 @@ void PlaySoundMultiHS::execute(Nancy::NancyEngine *engine) {
         break;
     }
     case kActionTrigger:
-        engine->sound->loadSound(sound);
-        engine->sound->playSound(sound);
-        engine->scene->changeScene(sceneChange);
-        engine->scene->setEventFlag(flag);
+        NanEngine.sound->loadSound(sound);
+        NanEngine.sound->playSound(sound);
+        NancySceneState.changeScene(sceneChange);
+        NancySceneState.setEventFlag(flag);
         finishExecution();
         break;
     }
@@ -538,25 +546,25 @@ uint16 HintSystem::readData(Common::SeekableReadStream &stream) {
     return 0x23;
 }
 
-void HintSystem::execute(Nancy::NancyEngine *engine) {
+void HintSystem::execute() {
     switch (state) {
     case kBegin:
-        if (engine->scene->getHintsRemaining() > 0) {
-            selectHint(engine);
+        if (NancySceneState.getHintsRemaining() > 0) {
+            selectHint();
         } else {
-            getHint(0, engine->scene->getDifficulty());
+            getHint(0, NancySceneState.getDifficulty());
         }
 
-        engine->scene->getTextbox().clear();
-        engine->scene->getTextbox().addTextLine(text);
+        NancySceneState.getTextbox().clear();
+        NancySceneState.getTextbox().addTextLine(text);
 
-        engine->sound->loadSound(genericSound);
-        engine->sound->playSound(genericSound);
+        NanEngine.sound->loadSound(genericSound);
+        NanEngine.sound->playSound(genericSound);
         state = kRun;
         break;
     case kRun:
-        if (!engine->sound->isSoundPlaying(genericSound)) {
-            engine->sound->stopSound(genericSound);
+        if (!NanEngine.sound->isSoundPlaying(genericSound)) {
+            NanEngine.sound->stopSound(genericSound);
             state = kActionTrigger;
         } else {
             break;
@@ -564,17 +572,17 @@ void HintSystem::execute(Nancy::NancyEngine *engine) {
 
         // fall through
     case kActionTrigger:
-        engine->scene->useHint(hintID, hintWeight);
-        engine->scene->getTextbox().clear();
+        NancySceneState.useHint(hintID, hintWeight);
+        NancySceneState.getTextbox().clear();
 
-        engine->scene->changeScene(sceneChange);
+        NancySceneState.changeScene(sceneChange);
 
         isDone = true;
         break;
     }
 }
 
-void HintSystem::selectHint(Nancy::NancyEngine *engine) {
+void HintSystem::selectHint() {
     for (auto &hint : nancy1Hints) {
         if (hint.characterID != characterID) {
             continue;
@@ -587,7 +595,7 @@ void HintSystem::selectHint(Nancy::NancyEngine *engine) {
                 break;
             }
             
-            if (!engine->scene->getEventFlag(flag.label, flag.flag)) {
+            if (!NancySceneState.getEventFlag(flag.label, flag.flag)) {
                 satisfied = false;
                 break;
             }
@@ -598,14 +606,14 @@ void HintSystem::selectHint(Nancy::NancyEngine *engine) {
                 break;
             }
 
-            if (engine->scene->hasItem(inv.label) != inv.flag) {
+            if (NancySceneState.hasItem(inv.label) != inv.flag) {
                 satisfied = false;
                 break;
             }
         }
 
         if (satisfied) {
-            getHint(hint.hintID, engine->scene->getDifficulty());
+            getHint(hint.hintID, NancySceneState.getDifficulty());
             break;
         }
     }

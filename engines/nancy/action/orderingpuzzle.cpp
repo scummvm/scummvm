@@ -44,7 +44,7 @@ void OrderingPuzzle::init() {
     clearAllElements();
 
     Graphics::Surface surf;
-    _engine->_res->loadImage("ciftree", imageName, surf);
+    NanEngine.resource->loadImage("ciftree", imageName, surf);
     image.create(surf.w, surf.h, surf.format);
     image.blitFrom(surf);
     surf.free();
@@ -105,13 +105,13 @@ uint16 OrderingPuzzle::readData(Common::SeekableReadStream &stream) {
     return 0x26D;
 }
 
-void OrderingPuzzle::execute(Nancy::NancyEngine *engine) {
+void OrderingPuzzle::execute() {
     switch (state) {
     case kBegin:
         init();
         registerGraphics();
-        _engine->sound->loadSound(clickSound);
-        _engine->sound->loadSound(solveSound);
+        NanEngine.sound->loadSound(clickSound);
+        NanEngine.sound->loadSound(solveSound);
         state = kRun;
         // fall through
     case kRun:
@@ -127,20 +127,20 @@ void OrderingPuzzle::execute(Nancy::NancyEngine *engine) {
                 }
             }
 
-            _engine->scene->setEventFlag(flagOnSolve);
-            solveSoundPlayTime = _engine->getTotalPlayTime() + solveSoundDelay * 1000;
+            NancySceneState.setEventFlag(flagOnSolve);
+            solveSoundPlayTime = NanEngine.getTotalPlayTime() + solveSoundDelay * 1000;
             solveState = kPlaySound;
             // fall through
         case kPlaySound:
-            if (_engine->getTotalPlayTime() <= solveSoundPlayTime) {
+            if (NanEngine.getTotalPlayTime() <= solveSoundPlayTime) {
                 break;
             }
 
-            _engine->sound->playSound(solveSound);
+            NanEngine.sound->playSound(solveSound);
             solveState = kWaitForSound;
             break;
         case kWaitForSound:
-            if (!_engine->sound->isSoundPlaying(solveSound)) {
+            if (!NanEngine.sound->isSoundPlaying(solveSound)) {
                 state = kActionTrigger;
             }
 
@@ -148,14 +148,14 @@ void OrderingPuzzle::execute(Nancy::NancyEngine *engine) {
         }
         break;
     case kActionTrigger:
-        _engine->sound->stopSound(clickSound);
-        _engine->sound->stopSound(solveSound);
+        NanEngine.sound->stopSound(clickSound);
+        NanEngine.sound->stopSound(solveSound);
 
         if (solveState == kNotSolved) {
-            _engine->scene->changeScene(exitScene);
-            _engine->scene->setEventFlag(flagOnExit);
+            NancySceneState.changeScene(exitScene);
+            NancySceneState.setEventFlag(flagOnExit);
         } else {
-            _engine->scene->changeScene(solveExitScene);
+            NancySceneState.changeScene(solveExitScene);
         }
 
         finishExecution();
@@ -168,8 +168,8 @@ void OrderingPuzzle::handleInput(NancyInput &input) {
         return;
     }
 
-    if (_engine->scene->getViewport().convertViewportToScreen(exitHotspot).contains(input.mousePos)) {
-        _engine->cursorManager->setCursorType(CursorManager::kExitArrow);
+    if (NancySceneState.getViewport().convertViewportToScreen(exitHotspot).contains(input.mousePos)) {
+        NanEngine.cursorManager->setCursorType(CursorManager::kExitArrow);
 
         if (input.input & NancyInput::kLeftMouseButtonUp) {
             state = kActionTrigger;
@@ -178,11 +178,11 @@ void OrderingPuzzle::handleInput(NancyInput &input) {
     }
 
     for (int i = 0; i < (int)destRects.size(); ++i) {
-        if (_engine->scene->getViewport().convertViewportToScreen(destRects[i]).contains(input.mousePos)) {
-            _engine->cursorManager->setCursorType(CursorManager::kHotspot);
+        if (NancySceneState.getViewport().convertViewportToScreen(destRects[i]).contains(input.mousePos)) {
+            NanEngine.cursorManager->setCursorType(CursorManager::kHotspot);
 
             if (input.input & NancyInput::kLeftMouseButtonUp) {
-                _engine->sound->playSound(clickSound);
+                NanEngine.sound->playSound(clickSound);
                 
                 for (uint j = 0; j < clickedSequence.size(); ++j) {
                     if (clickedSequence[j] == i && drawnElements[i] == true) {
@@ -208,6 +208,12 @@ void OrderingPuzzle::handleInput(NancyInput &input) {
     }
 }
 
+void OrderingPuzzle::onPause(bool pause) {
+    if (pause) {
+        registerGraphics();
+    }
+}
+
 void OrderingPuzzle::drawElement(uint id) {
     drawnElements[id] = true;
     Common::Point destPoint(destRects[id].left - _screenPosition.left, destRects[id].top - _screenPosition.top);
@@ -225,7 +231,7 @@ void OrderingPuzzle::undrawElement(uint id) {
 }
 
 void OrderingPuzzle::clearAllElements() {
-    _drawSurface.clear(_engine->graphicsManager->transColor);
+    _drawSurface.clear(NanEngine.graphicsManager->transColor);
     setVisible(false);
     clickedSequence.clear();
     return;

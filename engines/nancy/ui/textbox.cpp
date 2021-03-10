@@ -48,7 +48,7 @@ const char Textbox::tabToken[] = "<t>";
 const char Textbox::telephoneEndToken[] = "<e>";
 
 void Textbox::init() {    
-    Common::SeekableReadStream *chunk = _engine->getBootChunkStream("TBOX");
+    Common::SeekableReadStream *chunk = NanEngine.getBootChunkStream("TBOX");
     chunk->seek(0);
     readRect(*chunk, _scrollbarSourceBounds);
 
@@ -69,7 +69,7 @@ void Textbox::init() {
     chunk->seek(0x1FE, SEEK_SET);
     _fontID = chunk->readUint16LE();
 
-    chunk = _engine->getBootChunkStream("BSUM");
+    chunk = NanEngine.getBootChunkStream("BSUM");
     chunk->seek(0x164);
     readRect(*chunk, _screenPosition);
 
@@ -108,12 +108,12 @@ void Textbox::handleInput(NancyInput &input) {
         Common::Rect hotspot = _hotspots[i];
         hotspot.translate(0, -_drawSurface.getOffsetFromOwner().y);
         if (convertToScreen(hotspot).findIntersectingRect(_screenPosition).contains(input.mousePos)) {
-            _engine->cursorManager->setCursorType(CursorManager::kHotspotArrow);
+            NanEngine.cursorManager->setCursorType(CursorManager::kHotspotArrow);
 
             if (input.input & NancyInput::kLeftMouseButtonUp) {
                 input.input &= ~NancyInput::kLeftMouseButtonUp;
-                _engine->scene->clearLogicConditions();
-                _engine->scene->setLogicCondition(i);
+                NancySceneState.clearLogicConditions();
+                NancySceneState.setLogicCondition(i);
             }
             
             break;
@@ -126,7 +126,7 @@ void Textbox::drawTextbox() {
 
     _numLines = 0;
 
-    Font *font = _engine->graphicsManager->getFont(_fontID);
+    Font *font = NanEngine.graphicsManager->getFont(_fontID);
 
     uint maxWidth = _fullSurface.w - _borderWidth * 2;
     uint lineDist = _lineHeight + _lineHeight / 4;
@@ -289,7 +289,7 @@ void Textbox::TextboxScrollbar::init() {
     Common::Rect &srcBounds = _parent->_scrollbarSourceBounds;
     Common::Point &topPosition = _parent->_scrollbarDefaultDest;
 
-    _drawSurface.create(_engine->graphicsManager->object0, srcBounds);
+    _drawSurface.create(NanEngine.graphicsManager->object0, srcBounds);
 
     _startPosition = topPosition;
     _startPosition.x -= srcBounds.width() / 2;

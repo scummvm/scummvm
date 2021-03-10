@@ -37,15 +37,15 @@ void InputManager::processEvents() {
     _inputs &= ~(NancyInput::kLeftMouseButtonDown | NancyInput::kLeftMouseButtonUp | NancyInput::kRightMouseButtonDown | NancyInput::kRightMouseButtonUp);
     _otherKbdInput.clear();
 
-    while (_engine->getEventManager()->pollEvent(event)) {
+    while (NanEngine.getEventManager()->pollEvent(event)) {
         switch (event.type) {
         case EVENT_KEYDOWN:
             if (event.kbd.keycode == KEYCODE_d && event.kbd.flags & Common::KBD_CTRL) {
                 // Launch debug console
-                _engine->launchConsole = true;
+                NanEngine.launchConsole = true;
             } else if (event.kbd.keycode == KEYCODE_q && event.kbd.flags & Common::KBD_CTRL) {
                 // Quit
-                _engine->quitGame();
+                NanEngine.quitGame();
             } else {
                 // Push all other keyboard events into an array and let getInput() callers handle them
                 _otherKbdInput.push_back(event.kbd);
@@ -77,10 +77,10 @@ void InputManager::processEvents() {
                 _inputs |= NancyInput::kMoveFastModifier;
                 break;
             case kNancyActionRequestCheatMenu:
-                _engine->callCheatMenu(false);
+                NanEngine.callCheatMenu(false);
                 break;
             case kNancyActionRequestEventMenu:
-                _engine->callCheatMenu(true);
+                NanEngine.callCheatMenu(true);
                 break;
             default:
                 break;
@@ -127,7 +127,7 @@ NancyInput InputManager::getInput() const {
     NancyInput ret;
     ret.input = _inputs;
     if (_mouseEnabled) {
-        ret.mousePos = _engine->getEventManager()->getMousePos();
+        ret.mousePos = NanEngine.getEventManager()->getMousePos();
     } else {
         ret.eatMouseInput();
     }

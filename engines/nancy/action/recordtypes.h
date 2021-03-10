@@ -42,7 +42,7 @@ namespace Action {
 class SceneChange : public ActionRecord {
 public:
     virtual uint16 readData(Common::SeekableReadStream &stream) override;
-    virtual void execute(Nancy::NancyEngine *engine) override;
+    virtual void execute() override;
 
     SceneChangeDescription sceneChange;
 
@@ -53,7 +53,7 @@ protected:
 class HotMultiframeSceneChange : public SceneChange {
 public:
     virtual uint16 readData(Common::SeekableReadStream &stream) override;
-    virtual void execute(Nancy::NancyEngine *engine) override;
+    virtual void execute() override;
 
     Common::Array<HotspotDescription> hotspots;
 
@@ -64,7 +64,7 @@ protected:
 class Hot1FrSceneChange : public SceneChange {
 public:
     virtual uint16 readData(Common::SeekableReadStream &stream) override;
-    virtual void execute(Nancy::NancyEngine *engine) override;
+    virtual void execute() override;
 
     HotspotDescription hotspotDesc;
 
@@ -109,7 +109,7 @@ protected:
 class MapCall : public ActionRecord {
 public:
     virtual uint16 readData(Common::SeekableReadStream &stream) override;
-    virtual void execute(Nancy::NancyEngine *engine) override;
+    virtual void execute() override;
 
     virtual CursorManager::CursorType getHoverCursor() const override { return CursorManager::kExitArrow; }
 
@@ -120,7 +120,7 @@ protected:
 class MapCallHot1Fr : public MapCall {
 public:
     virtual uint16 readData(Common::SeekableReadStream &stream) override;
-    virtual void execute(Nancy::NancyEngine *engine) override;
+    virtual void execute() override;
 
     HotspotDescription hotspotDesc;
     
@@ -131,7 +131,7 @@ protected:
 class MapCallHotMultiframe : public MapCall {
 public:
     virtual uint16 readData(Common::SeekableReadStream &stream) override;
-    virtual void execute(Nancy::NancyEngine *engine) override;
+    virtual void execute() override;
 
     Common::Array<HotspotDescription> hotspots;
     
@@ -232,7 +232,7 @@ protected:
 class ResetAndStartTimer : public ActionRecord {
 public:
     virtual uint16 readData(Common::SeekableReadStream &stream) override;
-    virtual void execute(Nancy::NancyEngine *engine) override;
+    virtual void execute() override;
     
 protected:
     virtual Common::String getRecordTypeName() const override { return "ResetAndStartTimer"; }
@@ -241,7 +241,7 @@ protected:
 class StopTimer : public ActionRecord {
 public:
     virtual uint16 readData(Common::SeekableReadStream &stream) override;
-    virtual void execute(Nancy::NancyEngine *engine) override;
+    virtual void execute() override;
     
 protected:
     virtual Common::String getRecordTypeName() const override { return "StopTimer"; }
@@ -250,7 +250,7 @@ protected:
 class EventFlags : public ActionRecord {
 public:
     virtual uint16 readData(Common::SeekableReadStream &stream) override;
-    virtual void execute(Nancy::NancyEngine *engine) override;
+    virtual void execute() override;
 
     MultiEventFlagDescription flags;
     
@@ -261,7 +261,7 @@ protected:
 class EventFlagsMultiHS : public EventFlags {
 public:
     virtual uint16 readData(Common::SeekableReadStream &stream) override;
-    virtual void execute(Nancy::NancyEngine *engine) override;
+    virtual void execute() override;
 
     Common::Array<HotspotDescription> hotspots;
     
@@ -272,7 +272,7 @@ protected:
 class LoseGame : public ActionRecord {
 public:
     virtual uint16 readData(Common::SeekableReadStream &stream) override;
-    virtual void execute(Nancy::NancyEngine *engine) override;
+    virtual void execute() override;
     
 protected:
     virtual Common::String getRecordTypeName() const override { return "LoseGame"; }
@@ -301,7 +301,7 @@ protected:
 class WinGame : public ActionRecord {
 public:
     virtual uint16 readData(Common::SeekableReadStream &stream) override;
-    virtual void execute(Nancy::NancyEngine *engine) override;
+    virtual void execute() override;
     
 protected:
     virtual Common::String getRecordTypeName() const override { return "WinGame"; }
@@ -310,7 +310,7 @@ protected:
 class AddInventoryNoHS : public ActionRecord {
 public:
     virtual uint16 readData(Common::SeekableReadStream &stream) override;
-    virtual void execute(Nancy::NancyEngine *engine) override;
+    virtual void execute() override;
     
     uint itemID;
     
@@ -329,7 +329,7 @@ protected:
 class DifficultyLevel : public ActionRecord {
 public:
     virtual uint16 readData(Common::SeekableReadStream &stream) override;
-    virtual void execute(Nancy::NancyEngine *engine) override;
+    virtual void execute() override;
 
     uint16 difficulty = 0;
     EventFlagDescription flag;
@@ -341,12 +341,13 @@ protected:
 class ShowInventoryItem : public ActionRecord, public RenderObject {
 public:
     virtual uint16 readData(Common::SeekableReadStream &stream) override;
-    virtual void execute(Nancy::NancyEngine *engine) override;
+    virtual void execute() override;
 
     ShowInventoryItem(RenderObject &redrawFrom) : RenderObject(redrawFrom) {}
     virtual ~ShowInventoryItem() { _fullSurface.free(); }
 
-    virtual void init()override;
+    virtual void init() override;
+    virtual void onPause(bool pause) override;
  
     uint16 objectID = 0;
     Common::String imageName;
@@ -366,7 +367,7 @@ protected:
 class PlayDigiSoundAndDie : public ActionRecord {
 public:
     virtual uint16 readData(Common::SeekableReadStream &stream) override;
-    virtual void execute(Nancy::NancyEngine *engine) override;
+    virtual void execute() override;
     // TODO subclass into Play and Stop (?)
 
     SoundDescription sound;
@@ -388,7 +389,7 @@ protected:
 class PlaySoundMultiHS : public ActionRecord {
 public:
     virtual uint16 readData(Common::SeekableReadStream &stream) override;
-    virtual void execute(Nancy::NancyEngine *engine) override;
+    virtual void execute() override;
 
     SoundDescription sound; // 0x0
     SceneChangeDescription sceneChange; // 0x22
@@ -402,7 +403,7 @@ protected:
 class HintSystem : public ActionRecord {
 public:
     virtual uint16 readData(Common::SeekableReadStream &stream) override;
-    virtual void execute(Nancy::NancyEngine *engine) override;
+    virtual void execute() override;
 
     byte characterID; // 0x00
     SoundDescription genericSound; // 0x01
@@ -412,7 +413,7 @@ public:
     uint16 hintID;
     int16 hintWeight;
 
-    void selectHint(Nancy::NancyEngine *engine);
+    void selectHint();
     void getHint(uint hint, uint difficulty);
     
 protected:

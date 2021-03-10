@@ -126,10 +126,14 @@ void PlaySecondaryVideo::updateGraphics() {
 
 void PlaySecondaryVideo::onPause(bool pause) {
     _decoder.pauseVideo(pause);
+
+    if (pause) {
+        registerGraphics();
+    }
 }
 
 void PlaySecondaryVideo::handleInput(NancyInput &input) {
-    if (hasHotspot && _engine->scene->getViewport().convertViewportToScreen(hotspot).contains(input.mousePos)) {
+    if (hasHotspot && NancySceneState.getViewport().convertViewportToScreen(hotspot).contains(input.mousePos)) {
         _isHovered = true;
     } else {
         _isHovered = false;
@@ -159,7 +163,7 @@ uint16 PlaySecondaryVideo::readData(Common::SeekableReadStream &stream) {
     return 0x35 + (numVideoDescs * 0x42);
 }
 
-void PlaySecondaryVideo::execute(NancyEngine *engine) {
+void PlaySecondaryVideo::execute() {
     switch (state) {
     case kBegin:
         init();
@@ -168,8 +172,8 @@ void PlaySecondaryVideo::execute(NancyEngine *engine) {
         // fall through
     case kRun: {
         // Set correct position according to viewport frame
-        if (_currentViewportFrame != engine->scene->getSceneInfo().frameID) {
-            _currentViewportFrame = engine->scene->getSceneInfo().frameID;
+        if (_currentViewportFrame != NancySceneState.getSceneInfo().frameID) {
+            _currentViewportFrame = NancySceneState.getSceneInfo().frameID;
 
             int activeFrame = -1;
 
@@ -198,8 +202,8 @@ void PlaySecondaryVideo::execute(NancyEngine *engine) {
         break;
     }
     case kActionTrigger:
-        engine->scene->pushScene();
-        engine->scene->changeScene(sceneChange);
+        NancySceneState.pushScene();
+        NancySceneState.changeScene(sceneChange);
         finishExecution();
         break;
     }

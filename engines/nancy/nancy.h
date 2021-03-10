@@ -66,6 +66,7 @@ class CursorManager;
 class CheatDialog;
 
 namespace State {
+class State;
 class Logo;
 class Scene;
 class Map;
@@ -125,14 +126,12 @@ public:
 	// Used for state switching
 	void stopAndUnloadSpecificSounds();
 	
-	void setState(GameState state, GameState overridePrevious = kNone, bool keepGraphics = false);
-	GameState getState() const { return _gameFlow.minGameState; }
-	GameState getPreviousState() const { return _gameFlow.previousGameState; }
+	void setState(GameState state, GameState overridePrevious = kNone);
+	void setPreviousState();
+
 	void callCheatMenu(bool eventFlags) { setState(kCheat), _cheatTypeIsEventFlag = eventFlags; }
 
 	void setMouseEnabled(bool enabled);
-
-	virtual void pauseEngineIntern(bool pause) override;
 
 	virtual Common::Error loadGameStream(Common::SeekableReadStream *stream) override;
 	virtual Common::Error saveGameStream(Common::WriteStream *stream, bool isAutosave = false) override;
@@ -140,18 +139,11 @@ public:
 	virtual bool canSaveGameStateCurrently() override;
 
 	// Managers
-	ResourceManager *_res;
+	ResourceManager *resource;
 	GraphicsManager *graphicsManager;
 	CursorManager *cursorManager;
 	InputManager *input;
 	SoundManager *sound;
-
-	// States
-	State::Logo *logo;
-	State::Scene *scene;
-	State::Map *map;
-	State::Help *help;
-	State::Credits *credits;
 	
 	OSystem *_system;
 	Common::RandomSource *_rnd;
@@ -171,6 +163,8 @@ protected:
 
 	void bootGameEngine();
 
+	State::State *getStateObject(GameState state);
+
 	bool addBootChunk(const Common::String &name, Common::SeekableReadStream *stream);
 	void clearBootChunks();
 
@@ -187,9 +181,8 @@ protected:
 	};
 
 	struct GameFlow {
-		GameState minGameState;
-		GameState previousGameState;
-		bool justChanged = false;
+		State::State *currentState = nullptr;
+		State::State *previousState = nullptr;
 	};
 
 	typedef Common::Array<Image> ImageList;
@@ -209,8 +202,6 @@ protected:
 	virtual void readBootSummary(const IFF &boot) = 0;
 
 private:
-	static NancyEngine *s_Engine;
-
 	GameFlow _gameFlow;
 
 	NancyConsole *_console;
@@ -219,6 +210,8 @@ private:
 
 	Common::HashMap<Common::String, Common::SeekableReadStream *> _bootChunks;
 };
+
+#define NanEngine (*((NancyEngine *)(g_engine)))
 
 } // End of namespace Nancy
 

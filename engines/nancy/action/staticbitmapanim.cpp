@@ -36,7 +36,7 @@ namespace Action {
 
 void PlayStaticBitmapAnimation::init() {
     Graphics::Surface surf;
-    _engine->_res->loadImage("ciftree", imageName, surf);
+    NanEngine.resource->loadImage("ciftree", imageName, surf);
 
     _fullSurface.create(surf.w, surf.h, surf.format);
     _fullSurface.blitFrom(surf);
@@ -91,24 +91,24 @@ uint16 PlayStaticBitmapAnimation::readData(Common::SeekableReadStream &stream) {
     return baseSize + numViewportFrames * 0x22 + (loopLastFrame - firstFrame + 1) * 16;
 }
 
-void PlayStaticBitmapAnimation::execute(NancyEngine *engine) {
-    uint32 currentFrameTime = engine->getTotalPlayTime();
+void PlayStaticBitmapAnimation::execute() {
+    uint32 currentFrameTime = NanEngine.getTotalPlayTime();
     switch (state) {
     case kBegin:
         init();
         registerGraphics();
-        _engine->sound->loadSound(sound);
-        _engine->sound->playSound(sound);
+        NanEngine.sound->loadSound(sound);
+        NanEngine.sound->playSound(sound);
         state = kRun;
         // fall through
     case kRun: {
         // Check the timer to see if we need to draw the next animation frame
         if (nextFrameTime <= currentFrameTime) {
             // World's worst if statement
-            if (engine->scene->getEventFlag(interruptCondition) ||
+            if (NancySceneState.getEventFlag(interruptCondition) ||
                 (   (((currentFrame == loopLastFrame) && (isReverse == kFalse) && (isLooping == kFalse)) ||
                     ((currentFrame == loopFirstFrame) && (isReverse == kTrue) && (isLooping == kFalse))) &&
-                        !engine->sound->isSoundPlaying(sound))   ) {
+                        !NanEngine.sound->isSoundPlaying(sound))   ) {
                 
                 state = kActionTrigger;
 
@@ -116,12 +116,12 @@ void PlayStaticBitmapAnimation::execute(NancyEngine *engine) {
                 // nancy1's safe lock light not turning off.
                 setVisible(false);
     
-                if (!engine->sound->isSoundPlaying(sound)) {
-                    engine->sound->stopSound(sound);
+                if (!NanEngine.sound->isSoundPlaying(sound)) {
+                    NanEngine.sound->stopSound(sound);
                 }
             } else {
                 // Check if we've moved the viewport
-                uint16 newFrame = engine->scene->getSceneInfo().frameID;
+                uint16 newFrame = NancySceneState.getSceneInfo().frameID;
 
                 if (currentViewportFrame != newFrame) {
                     currentViewportFrame = newFrame;
@@ -149,7 +149,7 @@ void PlayStaticBitmapAnimation::execute(NancyEngine *engine) {
             }                
         } else {
             // Check if we've moved the viewport
-            uint16 newFrame = engine->scene->getSceneInfo().frameID;
+            uint16 newFrame = NancySceneState.getSceneInfo().frameID;
 
             if (currentViewportFrame != newFrame) {
                 currentViewportFrame = newFrame;
@@ -166,12 +166,18 @@ void PlayStaticBitmapAnimation::execute(NancyEngine *engine) {
         break;
     }
     case kActionTrigger:
-        triggerFlags.execute(engine);
+        triggerFlags.execute();
         if (doNotChangeScene == kFalse) {
-            engine->scene->changeScene(sceneChange);
+            NancySceneState.changeScene(sceneChange);
             finishExecution();
         }
         break;
+    }
+}
+
+void PlayStaticBitmapAnimation::onPause(bool pause) {
+    if (pause) {
+        registerGraphics();
     }
 }
 

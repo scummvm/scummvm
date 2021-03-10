@@ -43,7 +43,7 @@ class NancyEngine;
 
 class CheatDialog : public GUI::Dialog {
 public:
-    CheatDialog(NancyEngine *engine);
+    CheatDialog();
 
 protected:
     enum Commands {
@@ -60,8 +60,6 @@ protected:
 
     void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) override;
     static void sanitizeInput(GUI::EditTextWidget *textWidget, int maxValue = -1);
-    
-    NancyEngine *_engine;
 
     GUI::CheckboxWidget *_restartScene;
     GUI::EditTextWidget *_scene;
@@ -87,12 +85,10 @@ protected:
 
 class EventFlagDialog : public GUI::Dialog {
 public:
-    EventFlagDialog(NancyEngine *engine);
+    EventFlagDialog();
 
 protected:
     void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) override;
-    
-    NancyEngine *_engine;
 };
 
 } // End of namespace Nancy

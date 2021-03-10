@@ -35,6 +35,10 @@
 #include "common/stream.h"
 #include "common/str.h"
 
+namespace Common {
+DECLARE_SINGLETON(Nancy::State::Map);
+}
+
 namespace Nancy {
 namespace State {
 
@@ -46,21 +50,18 @@ void Map::process() {
     case kRun:
         run();
         break;
-    case kStop:
-        stop();
-        break;
     }
 }
 
 void Map::init() {
-    Common::SeekableReadStream *chunk = _engine->getBootChunkStream("MAP");
+    Common::SeekableReadStream *chunk = NanEngine.getBootChunkStream("MAP");
 
     _viewport.init();
     _label.init();
     _button.init();
 
-    if (_engine->scene->getEventFlag(40, kTrue) && // Has set up sting
-        _engine->scene->getEventFlag(95, kTrue)) { // Connie chickens
+    if (NancySceneState.getEventFlag(40, kTrue) && // Has set up sting
+        NancySceneState.getEventFlag(95, kTrue)) { // Connie chickens
         _mapID = 1;
     } else {
         _mapID = 0;
@@ -79,8 +80,8 @@ void Map::init() {
     chunk->seek(0x18 + _mapID * 0x20, SEEK_SET);
     SoundDescription sound;
     sound.read(*chunk, SoundDescription::kMenu);
-    _engine->sound->loadSound(sound);
-    _engine->sound->playSound(0x14);
+    NanEngine.sound->loadSound(sound);
+    NanEngine.sound->playSound(0x14);
 
     _locations.clear();
 
@@ -115,37 +116,37 @@ void Map::init() {
     }
 
     registerGraphics();
-    _engine->cursorManager->setCursorItemID(-1);
+    NanEngine.cursorManager->setCursorItemID(-1);
 
     _state = kRun;
 }
 
 void Map::run() {
-    if (!_engine->sound->isSoundPlaying(0x14) && !_engine->sound->isSoundPlaying(0x13)) {
-        _engine->sound->playSound(0x13);
+    if (!NanEngine.sound->isSoundPlaying(0x14) && !NanEngine.sound->isSoundPlaying(0x13)) {
+        NanEngine.sound->playSound(0x13);
     }
 
-    NancyInput input = _engine->input->getInput();
+    NancyInput input = NanEngine.input->getInput();
 
     _label.setLabel(-1);
 
     _button.handleInput(input);
 
     if (_mapButtonClicked) {
-        _state = kStop;
+        NanEngine.setState(NancyEngine::kScene);
         return;
     }
 
     for (uint i = 0; i < 4; ++i) {
         auto &loc = _locations[i];
         if (loc.isActive && _viewport.convertToScreen(loc.hotspot).contains(input.mousePos)) {
-            _engine->cursorManager->setCursorType(CursorManager::kHotspotArrow);
+            NanEngine.cursorManager->setCursorType(CursorManager::kHotspotArrow);
 
             _label.setLabel(i);
 
             if (input.input & NancyInput::kLeftMouseButtonUp) {
                 _pickedLocationID = i;
-                _state = kStop;
+                NanEngine.setState(NancyEngine::kScene);
             }
 
             return;
@@ -153,29 +154,30 @@ void Map::run() {
     }
 }
 
-void Map::stop() {
-    Common::SeekableReadStream *chunk = _engine->getBootChunkStream("MAP");
+bool Map::onStateExit() {
+    Common::SeekableReadStream *chunk = NanEngine.getBootChunkStream("MAP");
     SoundDescription sound;
     chunk->seek(0x18 + _mapID * 0x20, SEEK_SET);
     sound.read(*chunk, SoundDescription::kMenu);
-    _engine->sound->stopSound(sound);
+    NanEngine.sound->stopSound(sound);
     
-    _engine->setState(NancyEngine::kScene);
+    NanEngine.setState(NancyEngine::kScene);
 
     if (_pickedLocationID != -1) {
         auto &loc = _locations[_pickedLocationID];
-        _engine->scene->changeScene(loc.scenes[_mapID].sceneID, loc.scenes[_mapID].frameID, loc.scenes[_mapID].verticalOffset, false);
+        NancySceneState.changeScene(loc.scenes[_mapID].sceneID, loc.scenes[_mapID].frameID, loc.scenes[_mapID].verticalOffset, false);
         _pickedLocationID = -1;
         
-        _engine->sound->playSound(0x18);
+        NanEngine.sound->playSound(0x18);
     }
     
     // The two sounds play at the same time if a location was picked
-    _engine->sound->playSound(0x14);
+    NanEngine.sound->playSound(0x14);
 
     _mapButtonClicked = false;
 
-    _state = kInit;
+    destroy();
+    return true;
 }
 
 void Map::registerGraphics() {
@@ -195,18 +197,18 @@ void Map::MapLabel::setLabel(int labelID) {
         setVisible(false);
     } else {
         _screenPosition = _parent->_locations[labelID].labelDest;
-        _drawSurface.create(_engine->graphicsManager->object0, _parent->_locations[labelID].labelSrc);
+        _drawSurface.create(NanEngine.graphicsManager->object0, _parent->_locations[labelID].labelSrc);
         setVisible(true);
     }
 }
 
 void Map::MapButton::init() {
-    Common::SeekableReadStream *map = _engine->getBootChunkStream("MAP");
+    Common::SeekableReadStream *map = NanEngine.getBootChunkStream("MAP");
 
     map->seek(0x7A, SEEK_SET);
     Common::Rect src;
     readRect(*map, src);
-    _drawSurface.create(_engine->graphicsManager->object0, src);
+    _drawSurface.create(NanEngine.graphicsManager->object0, src);
     readRect(*map, _screenPosition);
     setVisible(true);
 

@@ -46,27 +46,27 @@ void PlayPrimaryVideoChan0::ConditionFlag::read(Common::SeekableReadStream &stre
     orFlag = stream.readByte();
 }
 
-bool PlayPrimaryVideoChan0::ConditionFlag::isSatisfied(NancyEngine *engine) const {
+bool PlayPrimaryVideoChan0::ConditionFlag::isSatisfied() const {
     switch (type) {
     case ConditionFlag::kEventFlags:
-        return engine->scene->getEventFlag(flag);
+        return NancySceneState.getEventFlag(flag);
     case ConditionFlag::kInventory:
-        return engine->scene->hasItem(flag.label) == flag.flag;
+        return NancySceneState.hasItem(flag.label) == flag.flag;
     default:
         return false;
     }
 }
 
-void PlayPrimaryVideoChan0::ConditionFlag::set(NancyEngine *engine) const {
+void PlayPrimaryVideoChan0::ConditionFlag::set() const {
     switch (type) {
     case ConditionFlag::kEventFlags:
-        engine->scene->setEventFlag(flag);
+        NancySceneState.setEventFlag(flag);
         break;
     case ConditionFlag::kInventory:
         if (flag.flag == kTrue) {
-            engine->scene->addItemToInventory(flag.label);
+            NancySceneState.addItemToInventory(flag.label);
         } else {
-            engine->scene->removeItemFromInventory(flag.label);
+            NancySceneState.removeItemFromInventory(flag.label);
         }
 
         break;
@@ -84,13 +84,13 @@ void PlayPrimaryVideoChan0::ConditionFlags::read(Common::SeekableReadStream &str
     }
 }
 
-bool PlayPrimaryVideoChan0::ConditionFlags::isSatisfied(NancyEngine *engine) const {
+bool PlayPrimaryVideoChan0::ConditionFlags::isSatisfied() const {
     bool orFlag = false;
 
     for (uint i = 0; i < conditionFlags.size(); ++i) {
         const ConditionFlag &cur = conditionFlags[i];
         
-        if (!cur.isSatisfied(engine)) {
+        if (!cur.isSatisfied()) {
             if (orFlag) {
                 return false;
             } else {
@@ -108,10 +108,13 @@ bool PlayPrimaryVideoChan0::ConditionFlags::isSatisfied(NancyEngine *engine) con
 
 PlayPrimaryVideoChan0::~PlayPrimaryVideoChan0() {
     _decoder.close();
+
 	if (activePrimaryVideo == this) {
 		activePrimaryVideo = nullptr;
 	}
-    _engine->scene->getTextbox().setVisible(false);
+    
+    NancySceneState.setShouldClearTextbox(true);
+    NancySceneState.getTextbox().setVisible(false);
 }
 
 void PlayPrimaryVideoChan0::init() {
@@ -119,6 +122,8 @@ void PlayPrimaryVideoChan0::init() {
     _drawSurface.create(src.width(), src.height(), _decoder.getPixelFormat());
 
     RenderObject::init();
+    
+    NancySceneState.setShouldClearTextbox(false);
 }
 
 void PlayPrimaryVideoChan0::updateGraphics() {
@@ -140,6 +145,10 @@ void PlayPrimaryVideoChan0::updateGraphics() {
 
 void PlayPrimaryVideoChan0::onPause(bool pause) {
     _decoder.pauseVideo(pause);
+
+    if (pause) {
+        registerGraphics();
+    }
 }
 
 uint16 PlayPrimaryVideoChan0::readData(Common::SeekableReadStream &stream) {
@@ -213,7 +222,7 @@ uint16 PlayPrimaryVideoChan0::readData(Common::SeekableReadStream &stream) {
     return bytesRead;
 }
 
-void PlayPrimaryVideoChan0::execute(NancyEngine *engine) {
+void PlayPrimaryVideoChan0::execute() {
 	if (activePrimaryVideo != this && activePrimaryVideo != nullptr) {
         return;
     }
@@ -222,37 +231,37 @@ void PlayPrimaryVideoChan0::execute(NancyEngine *engine) {
     case kBegin:
         init();
         registerGraphics();
-        engine->sound->loadSound(sound);
-        engine->sound->playSound(sound);
+        NanEngine.sound->loadSound(sound);
+        NanEngine.sound->playSound(sound);
         state = kRun;
         activePrimaryVideo = this;
         // fall through
     case kRun:
         if (!hasDrawnTextbox) {
             hasDrawnTextbox = true;
-            engine->scene->getTextbox().clear();
-            engine->scene->getTextbox().addTextLine(text);
+            NancySceneState.getTextbox().clear();
+            NancySceneState.getTextbox().addTextLine(text);
 
             // Add responses when conditions have been satisfied
             if (conditionalResponseCharacterID != 10) {
-                addConditionalResponses(engine);
+                addConditionalResponses();
             }
 
             if (goodbyeResponseCharacterID != 10) {
-                addGoodbye(engine);
+                addGoodbye();
             }
 
             for (uint i = 0; i < responses.size(); ++i) {
                 auto &res = responses[i];
 
-                if (res.conditionFlags.isSatisfied(engine)) {
-                    engine->scene->getTextbox().addTextLine(res.text);
+                if (res.conditionFlags.isSatisfied()) {
+                    NancySceneState.getTextbox().addTextLine(res.text);
                 }
             }
         }
 
-        if (!engine->sound->isSoundPlaying(sound)) {
-            engine->sound->stopSound(sound);
+        if (!NanEngine.sound->isSoundPlaying(sound)) {
+            NanEngine.sound->stopSound(sound);
             
             if (responses.size() == 0) {
                 // NPC has finished talking with no responses available, auto-advance to next scene
@@ -260,7 +269,7 @@ void PlayPrimaryVideoChan0::execute(NancyEngine *engine) {
             } else {
                 // NPC has finished talking, we have responses
                 for (uint i = 0; i < 30; ++i) {
-                    if (engine->scene->getLogicCondition(i, kTrue)) {
+                    if (NancySceneState.getLogicCondition(i, kTrue)) {
                         pickedResponse = i;
                         break;
                     }
@@ -270,8 +279,8 @@ void PlayPrimaryVideoChan0::execute(NancyEngine *engine) {
                     // Player has picked response, play sound file and change state
                     responseGenericSound.name = responses[pickedResponse].soundName;
                     // TODO this is probably not correct
-                    engine->sound->loadSound(responseGenericSound);
-                    engine->sound->playSound(responseGenericSound);
+                    NanEngine.sound->loadSound(responseGenericSound);
+                    NanEngine.sound->playSound(responseGenericSound);
                     state = kActionTrigger;
                 }
             }
@@ -280,29 +289,29 @@ void PlayPrimaryVideoChan0::execute(NancyEngine *engine) {
     case kActionTrigger:
         // process flags structs
         for (auto flags : flagsStructs) {
-            if (flags.conditions.isSatisfied(engine)) {
-                flags.flagToSet.set(engine);
+            if (flags.conditions.isSatisfied()) {
+                flags.flagToSet.set();
             }
         }
         
         if (pickedResponse != -1) {
             // Set response's event flag, if any
-            engine->scene->setEventFlag(responses[pickedResponse].flagDesc);
+            NancySceneState.setEventFlag(responses[pickedResponse].flagDesc);
         }
 
-        if (!engine->sound->isSoundPlaying(responseGenericSound)) {
-            engine->sound->stopSound(responseGenericSound);
+        if (!NanEngine.sound->isSoundPlaying(responseGenericSound)) {
+            NanEngine.sound->stopSound(responseGenericSound);
             
             if (pickedResponse != -1) {
-                engine->scene->changeScene(responses[pickedResponse].sceneChange);
+                NancySceneState.changeScene(responses[pickedResponse].sceneChange);
             } else {
                 // Evaluate scene branch structs here
 
                 if (isDialogueExitScene == kFalse) {
-                    engine->scene->changeScene(sceneChange);
+                    NancySceneState.changeScene(sceneChange);
                 } else if (doNotPop == kFalse) {
                     // Exit dialogue
-                    engine->scene->popScene();
+                    NancySceneState.popScene();
                 }
             }
             
@@ -313,7 +322,7 @@ void PlayPrimaryVideoChan0::execute(NancyEngine *engine) {
     }
 }
 
-void PlayPrimaryVideoChan0::addConditionalResponses(NancyEngine *engine) {
+void PlayPrimaryVideoChan0::addConditionalResponses() {
     for (auto &res : nancy1ConditionalResponses) {
         if (res.characterID == conditionalResponseCharacterID) {
             bool isSatisfied = true;
@@ -322,7 +331,7 @@ void PlayPrimaryVideoChan0::addConditionalResponses(NancyEngine *engine) {
                     break;
                 }
 
-                if (!engine->scene->getEventFlag(cond.label, cond.flag)) {
+                if (!NancySceneState.getEventFlag(cond.label, cond.flag)) {
                     isSatisfied = false;
                     break;
                 }
@@ -349,7 +358,7 @@ void PlayPrimaryVideoChan0::addConditionalResponses(NancyEngine *engine) {
     }
 }
 
-void PlayPrimaryVideoChan0::addGoodbye(NancyEngine *engine) {
+void PlayPrimaryVideoChan0::addGoodbye() {
     for (auto &res : nancy1Goodbyes) {
         if (res.characterID == goodbyeResponseCharacterID) {
             Common::File file;
@@ -364,7 +373,7 @@ void PlayPrimaryVideoChan0::addGoodbye(NancyEngine *engine) {
             newResponse.soundName = snd;
             newResponse.text = file.readString();
             // response is picked randomly
-            newResponse.sceneChange.sceneID = res.sceneIDs[engine->_rnd->getRandomNumber(3)];
+            newResponse.sceneChange.sceneID = res.sceneIDs[NanEngine._rnd->getRandomNumber(3)];
             newResponse.sceneChange.doNotStartSound = true;
 
             file.close();

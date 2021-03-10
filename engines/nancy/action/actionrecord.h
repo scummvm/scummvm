@@ -94,7 +94,8 @@ public:
     virtual ~ActionRecord() {}
 
     virtual uint16 readData(Common::SeekableReadStream &stream) =0;
-    virtual void execute(NancyEngine *engine) {};
+    virtual void execute() {}
+    virtual void onPause(bool pause) {}
 
     virtual CursorManager::CursorType getHoverCursor() const { return CursorManager::kHotspot; }
     virtual void handleInput(NancyInput &input) {}

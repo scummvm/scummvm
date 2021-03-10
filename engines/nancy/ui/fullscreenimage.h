@@ -30,7 +30,7 @@ namespace UI {
 
 class FullScreenImage : public RenderObject {
 public:
-    FullScreenImage(NancyEngine *engine) : RenderObject(engine) {}
+    FullScreenImage() : RenderObject() {}
     virtual ~FullScreenImage() =default;
 
     void init(Common::String imageName);

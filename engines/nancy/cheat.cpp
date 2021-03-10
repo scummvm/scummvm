@@ -35,16 +35,14 @@
 
 namespace Nancy {
 
-CheatDialog::CheatDialog(NancyEngine *engine) :
-        GUI::Dialog(20, 20, 600, 440),
-        _engine(engine) {
+CheatDialog::CheatDialog() : GUI::Dialog(20, 20, 600, 440) {
     _backgroundType = GUI::ThemeEngine::kDialogBackgroundSpecial;
     Common::WinResources *res = Common::WinResources::createFromEXE("game.exe");
     Common::Array<Common::WinResourceID> dialogIDs = res->getIDList(Common::kWinDialog);
-    State::SceneInfo scene = _engine->scene->getSceneInfo();
-    Time playerTime = _engine->scene->_timers.playerTime;
-    Time timerTime = _engine->scene->_timers.timerTime;
-    bool timerIsActive = _engine->scene->_timers.timerIsActive;
+    State::SceneInfo scene = NancySceneState.getSceneInfo();
+    Time playerTime = NancySceneState._timers.playerTime;
+    Time timerTime = NancySceneState._timers.timerTime;
+    bool timerIsActive = NancySceneState._timers.timerIsActive;
     if (!timerIsActive) {
         timerTime = 0;
     }
@@ -67,11 +65,11 @@ CheatDialog::CheatDialog(NancyEngine *engine) :
 
     new GUI::StaticTextWidget(_tabs, 30, 160, 150, 20, _("Hints Remaining"), Graphics::kTextAlignLeft);
     new GUI::StaticTextWidget(_tabs, 35, 185, 45, 20, _("Easy"), Graphics::kTextAlignLeft);
-    _hintsRemainingEasy = new GUI::EditTextWidget(_tabs, 35, 205, 45, 20, _(itoa(_engine->scene->_hintsRemaining[0], buf, 10)), _(""), kInputHintsEasy, kInputHintsEasy);
+    _hintsRemainingEasy = new GUI::EditTextWidget(_tabs, 35, 205, 45, 20, _(itoa(NancySceneState._hintsRemaining[0], buf, 10)), _(""), kInputHintsEasy, kInputHintsEasy);
     new GUI::StaticTextWidget(_tabs, 85, 185, 45, 20, _("Medium"), Graphics::kTextAlignLeft);
-    _hintsRemainingMedium = new GUI::EditTextWidget(_tabs, 85, 205, 45, 20, _(itoa(_engine->scene->_hintsRemaining[1], buf, 10)), _(""), kInputHintsMedium, kInputHintsMedium);
+    _hintsRemainingMedium = new GUI::EditTextWidget(_tabs, 85, 205, 45, 20, _(itoa(NancySceneState._hintsRemaining[1], buf, 10)), _(""), kInputHintsMedium, kInputHintsMedium);
     new GUI::StaticTextWidget(_tabs, 135, 185, 45, 20, _("Hard"), Graphics::kTextAlignLeft);
-    _hintsRemainingHard = new GUI::EditTextWidget(_tabs, 135, 205, 45, 20, _(itoa(_engine->scene->_hintsRemaining[2], buf, 10)), _(""), kInputHintsHard, kInputHintsHard);
+    _hintsRemainingHard = new GUI::EditTextWidget(_tabs, 135, 205, 45, 20, _(itoa(NancySceneState._hintsRemaining[2], buf, 10)), _(""), kInputHintsHard, kInputHintsHard);
     
     new GUI::StaticTextWidget(_tabs, 250, 20, 150, 20, _("Player Data"), Graphics::kTextAlignLeft);
     new GUI::StaticTextWidget(_tabs, 255, 50, 150, 20, _("Player Time:"), Graphics::kTextAlignLeft);
@@ -81,7 +79,7 @@ CheatDialog::CheatDialog(NancyEngine *engine) :
     new GUI::StaticTextWidget(_tabs, 375, 75, 40, 20, _("Hours"), Graphics::kTextAlignLeft);
     _playerTimeMinutes =new GUI::EditTextWidget(_tabs, 415, 75, 35, 20, _(itoa(playerTime.getMinutes(), buf, 10)), _(""), kInputPlayerTime, kInputPlayerTime);
     new GUI::StaticTextWidget(_tabs, 455, 75, 50, 20, _("Minutes"), Graphics::kTextAlignLeft);
-    _difficulty = new GUI::EditTextWidget(_tabs, 255, 105, 35, 20, _(itoa(_engine->scene->_difficulty, buf, 10)), _(""), kInputDifficulty, kInputDifficulty);
+    _difficulty = new GUI::EditTextWidget(_tabs, 255, 105, 35, 20, _(itoa(NancySceneState._difficulty, buf, 10)), _(""), kInputDifficulty, kInputDifficulty);
     new GUI::StaticTextWidget(_tabs, 295, 105, 150, 20, _("Player Difficulty Level"), Graphics::kTextAlignLeft);
 
     new GUI::StaticTextWidget(_tabs, 250, 140, 150, 20, _("Player Data"), Graphics::kTextAlignLeft);
@@ -135,7 +133,7 @@ CheatDialog::CheatDialog(NancyEngine *engine) :
                     }
                 }
                 GUI::CheckboxWidget *box = new GUI::CheckboxWidget(_tabs, 250 * (numItems / 10) + 20, (350 / 10) * (numItems % 10) + 15, 250, 250/10, _(itemLabel), Common::U32String());
-                box->setState(_engine->scene->hasItem(numItems) == kTrue);
+                box->setState(NancySceneState.hasItem(numItems) == kTrue);
                 _inventory.push_back(box);
 
                 ++numItems;
@@ -153,9 +151,9 @@ void CheatDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 d
     case GUI::kOKCmd: {
         if (_restartScene->getState()) {
             uint sceneID = atoi(Common::String(_scene->getEditString()).c_str());
-            IFF iff(_engine, Common::String::format("S%u", sceneID));
+            IFF iff(Common::String::format("S%u", sceneID));
             if (iff.load()) {
-                _engine->scene->changeScene(
+                NancySceneState.changeScene(
                     atoi(Common::String(_scene->getEditString()).c_str()),
                     atoi(Common::String(_frame->getEditString()).c_str()),
                     atoi(Common::String(_offset->getEditString()).c_str()),
@@ -167,32 +165,32 @@ void CheatDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 d
         }
 
         if (_timerOn->getState()) {
-            _engine->scene->_timers.timerIsActive = true;
-            Time &timer = _engine->scene->_timers.timerTime;
+            NancySceneState._timers.timerIsActive = true;
+            Time &timer = NancySceneState._timers.timerTime;
             timer = 0;
             timer += 1000 * atoi(Common::String(_timerSeconds->getEditString()).c_str());
             timer += 60000 * atoi(Common::String(_timerMinutes->getEditString()).c_str());
             timer += 3600000 * atoi(Common::String(_timerHours->getEditString()).c_str());
         } else {
-            _engine->scene->stopTimer();
+            NancySceneState.stopTimer();
         }
 
-        Time &playerTime = _engine->scene->_timers.timerTime;
+        Time &playerTime = NancySceneState._timers.timerTime;
         playerTime = 0;
         playerTime += 60000 * atoi(Common::String(_playerTimeMinutes->getEditString()).c_str());
         playerTime += 3600000 * atoi(Common::String(_playerTimeHours->getEditString()).c_str());
         playerTime += 86400000 * atoi(Common::String(_playerTimeMinutes->getEditString()).c_str());
 
-        _engine->scene->_difficulty = atoi(Common::String(_difficulty->getEditString()).c_str());
-        _engine->scene->_hintsRemaining[0] = atoi(Common::String(_hintsRemainingEasy->getEditString()).c_str());
-        _engine->scene->_hintsRemaining[1] = atoi(Common::String(_hintsRemainingMedium->getEditString()).c_str());
-        _engine->scene->_hintsRemaining[2] = atoi(Common::String(_hintsRemainingHard->getEditString()).c_str());
+        NancySceneState._difficulty = atoi(Common::String(_difficulty->getEditString()).c_str());
+        NancySceneState._hintsRemaining[0] = atoi(Common::String(_hintsRemainingEasy->getEditString()).c_str());
+        NancySceneState._hintsRemaining[1] = atoi(Common::String(_hintsRemainingMedium->getEditString()).c_str());
+        NancySceneState._hintsRemaining[2] = atoi(Common::String(_hintsRemainingHard->getEditString()).c_str());
 
         for (uint i = 0; i < _inventory.size(); ++i) {
-            if (_engine->scene->hasItem(i) == kTrue && !_inventory[i]->getState()) {
-                _engine->scene->removeItemFromInventory(i, false);
-            } else if (_engine->scene->hasItem(i) == kFalse && _inventory[i]->getState()) {
-                _engine->scene->addItemToInventory(i);
+            if (NancySceneState.hasItem(i) == kTrue && !_inventory[i]->getState()) {
+                NancySceneState.removeItemFromInventory(i, false);
+            } else if (NancySceneState.hasItem(i) == kFalse && _inventory[i]->getState()) {
+                NancySceneState.addItemToInventory(i);
             }
         }
         cmd = GUI::kCloseCmd;
@@ -258,9 +256,7 @@ void CheatDialog::sanitizeInput(GUI::EditTextWidget *textWidget, int maxValue) {
     textWidget->setCaretPos(str.size());
 }
 
-EventFlagDialog::EventFlagDialog(NancyEngine *engine) :
-        GUI::Dialog(20, 20, 600, 440),
-        _engine(engine) {
+EventFlagDialog::EventFlagDialog() : GUI::Dialog(20, 20, 600, 440) {
     _backgroundType = GUI::ThemeEngine::kDialogBackgroundSpecial;
     Common::WinResources *res = Common::WinResources::createFromEXE("game.exe");
     Common::Array<Common::WinResourceID> dialogIDs = res->getIDList(Common::kWinDialog);
@@ -324,7 +320,7 @@ EventFlagDialog::EventFlagDialog(NancyEngine *engine) :
                     uint32 command = atoi(num.c_str()) << 16 | 'ev';
 
                     GUI::CheckboxWidget *box = new GUI::CheckboxWidget(_tabs, 300 * (numFlags / 12) + 20, (350 / 12) * (numFlags % 12) + 15, 300, 350/12, _(flagLabel), Common::U32String(), command);
-                    box->setState(_engine->scene->getEventFlag(command >> 16));
+                    box->setState(NancySceneState.getEventFlag(command >> 16));
 
                     ++numFlags;
                 }
@@ -339,7 +335,7 @@ void EventFlagDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint
     Dialog::handleCommand(sender, cmd, data);
     if (cmd & 'ev') {
         cmd >>= 16;
-        _engine->scene->setEventFlag(cmd, data == 0 ? kFalse : kTrue);
+        NancySceneState.setEventFlag(cmd, data == 0 ? kFalse : kTrue);
     }
 }
 

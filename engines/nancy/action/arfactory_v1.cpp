@@ -62,17 +62,17 @@ ActionRecord *ActionManager::createActionRecord(uint16 type) {
     case 0x15:
         return new StartStopPlayerScrolling(); // TODO
     case 0x28:
-        return new PlayPrimaryVideoChan0(_engine->scene->getViewport());
+        return new PlayPrimaryVideoChan0(NancySceneState.getViewport());
     case 0x29:
-        return new PlaySecondaryVideo('0', _engine->scene->getViewport());
+        return new PlaySecondaryVideo('0', NancySceneState.getViewport());
     case 0x2A:
-        return new PlaySecondaryVideo('1', _engine->scene->getViewport());
+        return new PlaySecondaryVideo('1', NancySceneState.getViewport());
     case 0x2B:
-        return new PlaySecondaryMovie(_engine->scene->getViewport());
+        return new PlaySecondaryMovie(NancySceneState.getViewport());
     case 0x2C:
-        return new PlayStaticBitmapAnimation(false, _engine->scene->getViewport()); // PlayStaticBitmapAnimation
+        return new PlayStaticBitmapAnimation(false, NancySceneState.getViewport()); // PlayStaticBitmapAnimation
     case 0x2D:
-        return new PlayStaticBitmapAnimation(true, _engine->scene->getViewport()); // PlayIntStaticBitmapAnimation
+        return new PlayStaticBitmapAnimation(true, NancySceneState.getViewport()); // PlayIntStaticBitmapAnimation
     case 0x32:
         return new MapCall();
     case 0x33:
@@ -108,7 +108,7 @@ ActionRecord *ActionManager::createActionRecord(uint16 type) {
     case 0x61:
         return new EventFlags();
     case 0x62:
-        return new OrderingPuzzle(_engine->scene->getViewport());
+        return new OrderingPuzzle(NancySceneState.getViewport());
     case 0x63:
         return new LoseGame();
     case 0x64:
@@ -120,21 +120,21 @@ ActionRecord *ActionManager::createActionRecord(uint16 type) {
     case 0x67:
         return new DifficultyLevel();
     case 0x68:
-        return new RotatingLockPuzzle(_engine->scene->getViewport());
+        return new RotatingLockPuzzle(NancySceneState.getViewport());
     case 0x69:
-        return new LeverPuzzle(_engine->scene->getViewport());
+        return new LeverPuzzle(NancySceneState.getViewport());
     case 0x6A:
-        return new Telephone(_engine->scene->getViewport());
+        return new Telephone(NancySceneState.getViewport());
     case 0x6B:
-        return new SliderPuzzle(_engine->scene->getViewport());
+        return new SliderPuzzle(NancySceneState.getViewport());
     case 0x6C:
-        return new PasswordPuzzle(_engine->scene->getViewport());
+        return new PasswordPuzzle(NancySceneState.getViewport());
     case 0x6E:
         return new AddInventoryNoHS();
     case 0x6F:
         return new RemoveInventoryNoHS();
     case 0x70:
-        return new ShowInventoryItem(_engine->scene->getViewport());
+        return new ShowInventoryItem(NancySceneState.getViewport());
     case 0x8C:
         return new PlayDigiSoundAndDie(); // TODO
     case 0x8D:

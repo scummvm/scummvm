@@ -37,6 +37,10 @@
 
 #include "graphics/surface.h"
 
+namespace Common {
+DECLARE_SINGLETON(Nancy::State::Logo);
+}
+
 namespace Nancy {
 namespace State {
 
@@ -59,44 +63,32 @@ void Logo::process() {
 void Logo::init() {
 	_surf = new Graphics::Surface;
 
-	if (!_engine->_res->loadImage("ciftree", _engine->_logos[0].name, *_surf))
-		error("Failed to load %s", _engine->_logos[0].name.c_str());
+	if (!NanEngine.resource->loadImage("ciftree", NanEngine._logos[0].name, *_surf))
+		error("Failed to load %s", NanEngine._logos[0].name.c_str());
 
 	_state = kStartSound;
 }
 
 void Logo::startSound() {
 	SoundDescription desc;
-	desc.read(*_engine->getBootChunkStream("MSND"), SoundDescription::kMenu);
-	_engine->sound->loadSound(desc);
+	desc.read(*NanEngine.getBootChunkStream("MSND"), SoundDescription::kMenu);
+	NanEngine.sound->loadSound(desc);
 	MSNDchannelID = desc.channelID;
-	desc.read(*_engine->getBootChunkStream("BUOK"), SoundDescription::kNormal);
-	_engine->sound->loadSound(desc);
-	desc.read(*_engine->getBootChunkStream("BUDE"), SoundDescription::kNormal);
-	_engine->sound->loadSound(desc);
-	desc.read(*_engine->getBootChunkStream("BULS"), SoundDescription::kNormal);
-	_engine->sound->loadSound(desc);
-	desc.read(*_engine->getBootChunkStream("GLOB"), SoundDescription::kNormal);
-	_engine->sound->loadSound(desc);
-	desc.read(*_engine->getBootChunkStream("CURT"), SoundDescription::kNormal);
-	_engine->sound->loadSound(desc);
-	desc.read(*_engine->getBootChunkStream("CANT"), SoundDescription::kNormal);
-	_engine->sound->loadSound(desc);
 
-	_engine->sound->playSound(MSNDchannelID);
+	NanEngine.sound->playSound(MSNDchannelID);
 
-	_startTicks = _engine->_system->getMillis();
+	_startTicks = NanEngine._system->getMillis();
 	_state = kRun;
 }
 
 void Logo::run() {
 	switch (_runState) {
 	case kBlit:
-		_engine->_system->copyRectToScreen(_surf->getPixels(), _surf->pitch, 0, 0, _surf->w, _surf->h);
+		NanEngine._system->copyRectToScreen(_surf->getPixels(), _surf->pitch, 0, 0, _surf->w, _surf->h);
 		_runState = kWait;
 		break;
 	case kWait:
-		if (_engine->_system->getMillis() - _startTicks >= 7000 || (_engine->input->getInput().input & NancyInput::kLeftMouseButtonDown))
+		if (NanEngine._system->getMillis() - _startTicks >= 7000 || (NanEngine.input->getInput().input & NancyInput::kLeftMouseButtonDown))
 			_state = kStop;
 	}
 }
@@ -109,8 +101,10 @@ void Logo::stop() {
 	// For the N+C key combo it looks for some kind of cheat file
 	// to initialize the game state with.
 
-	_engine->setState(NancyEngine::kScene);
-	_engine->_system->fillScreen(0);
+	NanEngine.sound->stopSound(MSNDchannelID);
+
+	NanEngine.setState(NancyEngine::kScene);
+	NanEngine._system->fillScreen(0);
 }
 
 } // End of namespace State

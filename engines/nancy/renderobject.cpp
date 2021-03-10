@@ -37,11 +37,11 @@ void RenderObject::init() {
 }
 
 void RenderObject::registerGraphics() {
-    _engine->graphicsManager->addObject(this);
+    NanEngine.graphicsManager->addObject(this);
 }
 
 RenderObject::~RenderObject() {
-    _engine->graphicsManager->removeObject(this);
+    NanEngine.graphicsManager->removeObject(this);
     if (_drawSurface.getPixels()) {
         _drawSurface.free();
     }
@@ -60,7 +60,7 @@ void RenderObject::setVisible(bool visible) {
 
 Common::Rect RenderObject::getScreenPosition() const {
     if (isViewportRelative()) {
-        return _engine->scene->getViewport().convertViewportToScreen(_screenPosition);
+        return NancySceneState.getViewport().convertViewportToScreen(_screenPosition);
     } else {
         return _screenPosition;
     }
@@ -68,7 +68,7 @@ Common::Rect RenderObject::getScreenPosition() const {
 
 Common::Rect RenderObject::getPreviousScreenPosition() const {
     if (isViewportRelative()) {
-        return _engine->scene->getViewport().convertViewportToScreen(_previousScreenPosition);
+        return NancySceneState.getViewport().convertViewportToScreen(_previousScreenPosition);
     } else {
         return _previousScreenPosition;
     }
@@ -80,10 +80,10 @@ Common::Rect RenderObject::convertToLocal(const Common::Rect &screen) const {
     Common::Point offset;
 
     if (isViewportRelative()) {
-        Common::Rect viewportScreenPos = _engine->scene->getViewport().getScreenPosition();
+        Common::Rect viewportScreenPos = NancySceneState.getViewport().getScreenPosition();
         offset.x -= viewportScreenPos.left;
         offset.y -= viewportScreenPos.top;
-        uint viewportScroll = _engine->scene->getViewport().getCurVerticalScroll();
+        uint viewportScroll = NancySceneState.getViewport().getCurVerticalScroll();
         offset.y += viewportScroll;
     }
 
@@ -101,10 +101,10 @@ Common::Rect RenderObject::convertToScreen(const Common::Rect &rect) const {
     Common::Point offset;
 
     if (isViewportRelative()) {
-        Common::Rect viewportScreenPos = _engine->scene->getViewport().getScreenPosition();
+        Common::Rect viewportScreenPos = NancySceneState.getViewport().getScreenPosition();
         offset.x += viewportScreenPos.left;
         offset.y += viewportScreenPos.top;
-        uint viewportScroll = _engine->scene->getViewport().getCurVerticalScroll();
+        uint viewportScroll = NancySceneState.getViewport().getCurVerticalScroll();
         offset.y -= viewportScroll;
     }
 

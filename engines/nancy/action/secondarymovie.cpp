@@ -33,7 +33,7 @@ PlaySecondaryMovie::~PlaySecondaryMovie() {
     _decoder.close();
     
     if (hideMouse == kTrue && unknown == 5) {
-        _engine->setMouseEnabled(true);
+        NanEngine.setMouseEnabled(true);
     }
 }
 
@@ -110,15 +110,15 @@ void PlaySecondaryMovie::updateGraphics() {
         
         for (auto f : frameFlags) {
             if (_decoder.getCurFrame() == f.frameID) {
-                _engine->scene->setEventFlag(f.flagDesc);
+                NancySceneState.setEventFlag(f.flagDesc);
             }
         }
     }
 
 	if ((_decoder.getCurFrame() == lastFrame && isReverse == kFalse) ||
 	    (_decoder.getCurFrame() == firstFrame && isReverse == kTrue)) {
-		if (!_engine->sound->isSoundPlaying(sound)) {
-			_engine->sound->stopSound(sound);
+		if (!NanEngine.sound->isSoundPlaying(sound)) {
+			NanEngine.sound->stopSound(sound);
 			_decoder.stop();
             isFinished = true;
 			state = kActionTrigger;
@@ -130,24 +130,28 @@ void PlaySecondaryMovie::updateGraphics() {
 
 void PlaySecondaryMovie::onPause(bool pause) {
     _decoder.pauseVideo(pause);
+
+    if (pause) {
+        registerGraphics();
+    }
 }
 
-void PlaySecondaryMovie::execute(NancyEngine *engine) {
+void PlaySecondaryMovie::execute() {
     switch (state) {
     case kBegin:
         init();
         registerGraphics();
-        engine->sound->loadSound(sound);
-        engine->sound->playSound(sound);
+        NanEngine.sound->loadSound(sound);
+        NanEngine.sound->playSound(sound);
 
         if (hideMouse == kTrue) {
-            engine->setMouseEnabled(false);
+            NanEngine.setMouseEnabled(false);
         }
 
         state = kRun;
         // fall through
     case kRun: {
-        int newFrame = _engine->scene->getSceneInfo().frameID;
+        int newFrame = NancySceneState.getSceneInfo().frameID;
 
         if (newFrame != _curViewportFrame) {
             _curViewportFrame = newFrame;
@@ -170,13 +174,13 @@ void PlaySecondaryMovie::execute(NancyEngine *engine) {
         break;
     }
     case kActionTrigger:
-        triggerFlags.execute(engine);
+        triggerFlags.execute();
         if (unknown == 5) {
-            engine->scene->changeScene(sceneChange);
+            NancySceneState.changeScene(sceneChange);
         } else {
             // Not changing the scene so enable the mouse now
             if (hideMouse == kTrue) {
-                engine->setMouseEnabled(true);
+                NanEngine.setMouseEnabled(true);
             }
         }
 

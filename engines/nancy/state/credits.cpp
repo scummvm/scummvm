@@ -32,6 +32,10 @@
 
 #include "common/stream.h"
 
+namespace Common {
+DECLARE_SINGLETON(Nancy::State::Credits);
+}
+
 namespace Nancy {
 namespace State {
 
@@ -47,7 +51,7 @@ void Credits::process() {
 }
 
 void Credits::init() {
-    Common::SeekableReadStream *cred = _engine->getBootChunkStream("CRED");
+    Common::SeekableReadStream *cred = NanEngine.getBootChunkStream("CRED");
     cred->seek(0);
 
     char buf[10];
@@ -63,7 +67,7 @@ void Credits::init() {
     _sound.read(*cred, SoundDescription::kMenu);
 
     Graphics::Surface surf;
-    _engine->_res->loadImage("ciftree", buf, surf);
+    NanEngine.resource->loadImage("ciftree", buf, surf);
     _fullTextSurface.create(surf.w, surf.h + _text._screenPosition.height() * 2, GraphicsManager::pixelFormat);
     _fullTextSurface.clear(GraphicsManager::transColor);
     _fullTextSurface.blitFrom(surf, Common::Point(0, _text._screenPosition.height()));
@@ -74,35 +78,29 @@ void Credits::init() {
     _text._drawSurface.create(_fullTextSurface, src);
     _text.init();
 
-    _engine->sound->loadSound(_sound);
-    _engine->sound->playSound(_sound);
-
-    _returnToState = _engine->getPreviousState();
+    NanEngine.sound->loadSound(_sound);
+    NanEngine.sound->playSound(_sound);
 
     _background.registerGraphics();
     _text.registerGraphics();
 
-    _engine->cursorManager->showCursor(false);
+    NanEngine.cursorManager->showCursor(false);
 
     _state = kRun;
 }
 
 void Credits::run() {
-    NancyInput input = _engine->input->getInput();
+    NancyInput input = NanEngine.input->getInput();
 
     if (input.input & NancyInput::kLeftMouseButtonDown) {
         _state = kInit;
-        _engine->sound->stopSound(_sound);
-        if (_returnToState == NancyEngine::kMainMenu) {
-            _engine->setState((NancyEngine::GameState)_returnToState, NancyEngine::kScene);
-        } else {
-            _engine->setState((NancyEngine::GameState)_returnToState);
-        }
-        _engine->cursorManager->showCursor(true);
+        NanEngine.sound->stopSound(_sound);
+        NanEngine.setState(NancyEngine::kMainMenu);
+        NanEngine.cursorManager->showCursor(true);
         _fullTextSurface.free();
     }
 
-    Time currentTime = _engine->getTotalPlayTime();
+    Time currentTime = NanEngine.getTotalPlayTime();
     if (currentTime >= _nextUpdateTime) {
         _nextUpdateTime = currentTime + _updateTime;
 

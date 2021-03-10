@@ -23,12 +23,15 @@
 #ifndef NANCY_STATE_CREDITS_H
 #define NANCY_STATE_CREDITS_H
 
+#include "engines/nancy/state/state.h"
+
 #include "engines/nancy/ui/fullscreenimage.h"
 
 #include "engines/nancy/time.h"
 #include "engines/nancy/commontypes.h"
 
 #include "common/rect.h"
+#include "common/singleton.h"
 
 #include "graphics/managed_surface.h"
 
@@ -38,12 +41,14 @@ class NancyEngine;
 
 namespace State {
 
-class Credits {
+class Credits : public State, public Common::Singleton<Credits> {
 public:
     enum State { kInit, kRun };
-    Credits(NancyEngine *engine) : _engine(engine), _state(kInit), _background(_engine), _text(_background) {}
+    Credits() : _state(kInit), _background(), _text(_background) {}
 
-    void process();
+    // State API
+    virtual void process() override;
+    virtual bool onStateExit() override { destroy(); return true; };
 
 protected:
     void init();
@@ -60,18 +65,18 @@ protected:
         virtual BlitType getBlitType() const override { return kTrans; }
     };
 
-    NancyEngine *_engine;
     State _state;
     UI::FullScreenImage _background;
     CreditsText _text;
     Time _nextUpdateTime;
     Graphics::ManagedSurface _fullTextSurface;
-    uint _returnToState;
 
     Time _updateTime; // 0x54
     uint16 _pixelsToScroll; // 0x56
     SoundDescription _sound; // 0x58, kMenu?
 };
+
+#define NancyCreditsState Nancy::State::Credits::instance()
 
 } // End of namespace State
 } // End of namespace Nancy

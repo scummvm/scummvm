@@ -36,7 +36,7 @@ namespace UI {
 
 void Scrollbar::handleInput(NancyInput &input) {
     if (_screenPosition.contains(input.mousePos)) {
-        _engine->cursorManager->setCursorType(CursorManager::kHotspotArrow);
+        NanEngine.cursorManager->setCursorType(CursorManager::kHotspotArrow);
 
         if (input.input & NancyInput::kLeftMouseButtonDown && !_isClicked) {
             // Begin click and hold

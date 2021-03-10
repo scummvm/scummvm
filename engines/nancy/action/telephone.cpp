@@ -41,10 +41,12 @@ void Telephone::init() {
     _drawSurface.clear(GraphicsManager::transColor);
 
     Graphics::Surface surf;
-    _engine->_res->loadImage("ciftree", imageName, surf);
+    NanEngine.resource->loadImage("ciftree", imageName, surf);
     image.create(surf.w, surf.h, surf.format);
     image.blitFrom(surf);
     surf.free();
+
+    NancySceneState.setShouldClearTextbox(false);
 }
 
 uint16 Telephone::readData(Common::SeekableReadStream &stream) {
@@ -118,15 +120,15 @@ uint16 Telephone::readData(Common::SeekableReadStream &stream) {
     return numCalls * 0xEB + 0x48C;
 }
 
-void Telephone::execute(NancyEngine *engine) {
+void Telephone::execute() {
     switch (state) {
     case kBegin:
         init();
         registerGraphics();
-        _engine->sound->loadSound(dialToneSound);
-        _engine->sound->playSound(dialToneSound);
-        _engine->scene->getTextbox().clear();
-        _engine->scene->getTextbox().addTextLine(addressBookString);
+        NanEngine.sound->loadSound(dialToneSound);
+        NanEngine.sound->playSound(dialToneSound);
+        NancySceneState.getTextbox().clear();
+        NancySceneState.getTextbox().addTextLine(addressBookString);
         state = kRun;
         // fall through
     case kRun:
@@ -134,25 +136,25 @@ void Telephone::execute(NancyEngine *engine) {
         case kWaiting:
             // Long phone numbers start with 1
             if (calledNumber.size() >= 11 || (calledNumber.size() >= 7 && (calledNumber[0] != 1))) {
-                _engine->scene->getTextbox().clear();
-                _engine->scene->getTextbox().addTextLine("ringing...<n><e>"); // Hardcoded in the original engine
-                _engine->sound->loadSound(ringSound);
-                _engine->sound->playSound(ringSound);
+                NancySceneState.getTextbox().clear();
+                NancySceneState.getTextbox().addTextLine("ringing...<n><e>"); // Hardcoded in the original engine
+                NanEngine.sound->loadSound(ringSound);
+                NanEngine.sound->playSound(ringSound);
                 callState = kRinging;
             }
 
             break;
         case kButtonPress:
-            if (!_engine->sound->isSoundPlaying(genericButtonSound)) {
-                _engine->sound->stopSound(genericButtonSound);
+            if (!NanEngine.sound->isSoundPlaying(genericButtonSound)) {
+                NanEngine.sound->stopSound(genericButtonSound);
                 undrawButton(selected);
                 callState = kWaiting;
             }
 
             break;
         case kRinging:
-            if (!_engine->sound->isSoundPlaying(ringSound)) {
-                _engine->sound->stopSound(ringSound);
+            if (!NanEngine.sound->isSoundPlaying(ringSound)) {
+                NanEngine.sound->stopSound(ringSound);
                 uint numberLength = calledNumber[0] == 1 ? 11 : 7;
 
                 for (uint i = 0; i < calls.size(); ++i) {
@@ -170,47 +172,47 @@ void Telephone::execute(NancyEngine *engine) {
                         continue;
                     }
 
-                    _engine->scene->getTextbox().clear();
-                    _engine->scene->getTextbox().addTextLine(calls[i].text);
+                    NancySceneState.getTextbox().clear();
+                    NancySceneState.getTextbox().addTextLine(calls[i].text);
 
                     genericDialogueSound.name = calls[i].soundName;
-                    _engine->sound->loadSound(genericDialogueSound);
-                    _engine->sound->playSound(genericDialogueSound);
+                    NanEngine.sound->loadSound(genericDialogueSound);
+                    NanEngine.sound->playSound(genericDialogueSound);
                     selected = i;
                     callState = kCall;
 
                     return;
                 }
                 
-                _engine->scene->getTextbox().clear();
-                _engine->scene->getTextbox().addTextLine(dialAgainString);
+                NancySceneState.getTextbox().clear();
+                NancySceneState.getTextbox().addTextLine(dialAgainString);
 
-                _engine->sound->loadSound(dialAgainSound);
-                _engine->sound->playSound(dialAgainSound);
+                NanEngine.sound->loadSound(dialAgainSound);
+                NanEngine.sound->playSound(dialAgainSound);
                 callState = kBadNumber;
                 return;
             }
 
             break;
         case kBadNumber:
-            if (!_engine->sound->isSoundPlaying(dialAgainSound)) {
-                _engine->sound->stopSound(dialAgainSound);
+            if (!NanEngine.sound->isSoundPlaying(dialAgainSound)) {
+                NanEngine.sound->stopSound(dialAgainSound);
 
                 state = kActionTrigger;
             }
 
             break;
         case kCall:
-            if (!_engine->sound->isSoundPlaying(genericDialogueSound)) {
-                _engine->sound->stopSound(genericDialogueSound);
+            if (!NanEngine.sound->isSoundPlaying(genericDialogueSound)) {
+                NanEngine.sound->stopSound(genericDialogueSound);
 
                 state = kActionTrigger;
             }
 
             break;
         case kHangUp:
-            if (!_engine->sound->isSoundPlaying(hangUpSound)) {
-                _engine->sound->stopSound(hangUpSound);
+            if (!NanEngine.sound->isSoundPlaying(hangUpSound)) {
+                NanEngine.sound->stopSound(hangUpSound);
 
                 state = kActionTrigger;
             }
@@ -222,23 +224,23 @@ void Telephone::execute(NancyEngine *engine) {
     case kActionTrigger:
         switch (callState) {
         case kBadNumber:
-            engine->scene->changeScene(reloadScene);
+            NancySceneState.changeScene(reloadScene);
             calledNumber.clear();
-            _engine->scene->setEventFlag(flagOnReload);
+            NancySceneState.setEventFlag(flagOnReload);
             state = kRun;
             callState = kWaiting;
 
             break;
         case kCall: {
             PhoneCall &call = calls[selected];
-            _engine->scene->changeScene(call.sceneChange);
-            _engine->scene->setEventFlag(call.flag);
+            NancySceneState.changeScene(call.sceneChange);
+            NancySceneState.setEventFlag(call.flag);
 
             break;
         }
         case kHangUp:
-            _engine->scene->changeScene(exitScene);
-            _engine->scene->setEventFlag(flagOnExit);
+            NancySceneState.changeScene(exitScene);
+            NancySceneState.setEventFlag(flagOnExit);
             
             break;
         default:
@@ -246,7 +248,8 @@ void Telephone::execute(NancyEngine *engine) {
         }
 
         finishExecution();
-        _engine->scene->getTextbox().clear();
+        NancySceneState.setShouldClearTextbox(true);
+        NancySceneState.getTextbox().clear();
     }
 }
 
@@ -254,8 +257,8 @@ void Telephone::handleInput(NancyInput &input) {
     int buttonNr = -1;
     // Cursor gets changed regardless of state
     for (uint i = 0; i < 12; ++i) {
-        if (_engine->scene->getViewport().convertViewportToScreen(destRects[i]).contains(input.mousePos)) {
-            _engine->cursorManager->setCursorType(CursorManager::kHotspot);
+        if (NancySceneState.getViewport().convertViewportToScreen(destRects[i]).contains(input.mousePos)) {
+            NanEngine.cursorManager->setCursorType(CursorManager::kHotspot);
             buttonNr = i;
             break;
         }
@@ -265,12 +268,12 @@ void Telephone::handleInput(NancyInput &input) {
         return;
     }
 
-    if (_engine->scene->getViewport().convertViewportToScreen(exitHotspot).contains(input.mousePos)) {
-        _engine->cursorManager->setCursorType(CursorManager::kExitArrow);
+    if (NancySceneState.getViewport().convertViewportToScreen(exitHotspot).contains(input.mousePos)) {
+        NanEngine.cursorManager->setCursorType(CursorManager::kExitArrow);
 
         if (input.input & NancyInput::kLeftMouseButtonUp) {
-            _engine->sound->loadSound(hangUpSound);
-            _engine->sound->playSound(hangUpSound);
+            NanEngine.sound->loadSound(hangUpSound);
+            NanEngine.sound->playSound(hangUpSound);
 
             callState = kHangUp;
         }
@@ -280,14 +283,14 @@ void Telephone::handleInput(NancyInput &input) {
 
     if (buttonNr != -1) {
         if (input.input & NancyInput::kLeftMouseButtonUp) {
-            if (_engine->sound->isSoundPlaying(dialToneSound)) {
-                _engine->sound->stopSound(dialToneSound);
+            if (NanEngine.sound->isSoundPlaying(dialToneSound)) {
+                NanEngine.sound->stopSound(dialToneSound);
             }
 
             calledNumber.push_back(buttonNr);
             genericButtonSound.name = buttonSoundNames[buttonNr];
-            _engine->sound->loadSound(genericButtonSound);
-            _engine->sound->playSound(genericButtonSound);
+            NanEngine.sound->loadSound(genericButtonSound);
+            NanEngine.sound->playSound(genericButtonSound);
 
             drawButton(buttonNr);
 

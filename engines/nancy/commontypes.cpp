@@ -55,9 +55,9 @@ void MultiEventFlagDescription::readData(Common::SeekableReadStream &stream) {
     }
 }
 
-void MultiEventFlagDescription::execute(NancyEngine *engine) {
+void MultiEventFlagDescription::execute() {
     for (uint i = 0; i < 10; ++i) {
-        engine->scene->setEventFlag(descs[i]);
+        NancySceneState.setEventFlag(descs[i]);
     }
 }
 
