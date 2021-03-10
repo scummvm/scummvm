@@ -97,10 +97,6 @@ extern IDriverDependantBitmap *walkBehindBitmap[MAX_WALK_BEHINDS];
 extern int walkBehindsCachedForBgNum;
 extern WalkBehindMethodEnum walkBehindMethod;
 extern int walk_behind_baselines_changed;
-extern int cur_mode, cur_cursor;
-extern int mouse_frame, mouse_delay;
-extern int lastmx, lastmy;
-extern IDriverDependantBitmap *mouseCursor;
 extern int bg_just_changed;
 
 color palette[256];
@@ -2133,41 +2129,41 @@ void construct_game_screen_overlay(bool draw_mouse) {
 	// TODO: find out if it's okay to move cursor animation and state update
 	// to the update loop instead of doing it in the drawing routine
 	// update animating mouse cursor
-	if (_GP(game).mcurs[cur_cursor].view >= 0) {
+	if (_GP(game).mcurs[_G(cur_cursor)].view >= 0) {
 		ags_domouse(DOMOUSE_NOCURSOR);
 		// only on mousemove, and it's not moving
-		if (((_GP(game).mcurs[cur_cursor].flags & MCF_ANIMMOVE) != 0) &&
-		        (_G(mousex) == lastmx) && (_G(mousey) == lastmy));
+		if (((_GP(game).mcurs[_G(cur_cursor)].flags & MCF_ANIMMOVE) != 0) &&
+		        (_G(mousex) == _G(lastmx)) && (_G(mousey) == _G(lastmy)));
 		// only on hotspot, and it's not on one
-		else if (((_GP(game).mcurs[cur_cursor].flags & MCF_HOTSPOT) != 0) &&
+		else if (((_GP(game).mcurs[_G(cur_cursor)].flags & MCF_HOTSPOT) != 0) &&
 		         (GetLocationType(game_to_data_coord(_G(mousex)), game_to_data_coord(_G(mousey))) == 0))
-			set_new_cursor_graphic(_GP(game).mcurs[cur_cursor].pic);
-		else if (mouse_delay > 0) mouse_delay--;
+			set_new_cursor_graphic(_GP(game).mcurs[_G(cur_cursor)].pic);
+		else if (_G(mouse_delay) > 0) _G(mouse_delay)--;
 		else {
-			int viewnum = _GP(game).mcurs[cur_cursor].view;
+			int viewnum = _GP(game).mcurs[_G(cur_cursor)].view;
 			int loopnum = 0;
 			if (loopnum >= _G(views)[viewnum].numLoops)
 				quitprintf("An animating mouse cursor is using view %d which has no loops", viewnum + 1);
 			if (_G(views)[viewnum].loops[loopnum].numFrames < 1)
 				quitprintf("An animating mouse cursor is using view %d which has no frames in loop %d", viewnum + 1, loopnum);
 
-			mouse_frame++;
-			if (mouse_frame >= _G(views)[viewnum].loops[loopnum].numFrames)
-				mouse_frame = 0;
-			set_new_cursor_graphic(_G(views)[viewnum].loops[loopnum].frames[mouse_frame].pic);
-			mouse_delay = _G(views)[viewnum].loops[loopnum].frames[mouse_frame].speed + 5;
-			CheckViewFrame(viewnum, loopnum, mouse_frame);
+			_G(mouse_frame)++;
+			if (_G(mouse_frame) >= _G(views)[viewnum].loops[loopnum].numFrames)
+				_G(mouse_frame) = 0;
+			set_new_cursor_graphic(_G(views)[viewnum].loops[loopnum].frames[_G(mouse_frame)].pic);
+			_G(mouse_delay) = _G(views)[viewnum].loops[loopnum].frames[_G(mouse_frame)].speed + 5;
+			CheckViewFrame(viewnum, loopnum, _G(mouse_frame));
 		}
-		lastmx = _G(mousex);
-		lastmy = _G(mousey);
+		_G(lastmx) = _G(mousex);
+		_G(lastmy) = _G(mousey);
 	}
 
 	ags_domouse(DOMOUSE_NOCURSOR);
 
 	// Stage: mouse cursor
 	if (draw_mouse && !_GP(play).mouse_cursor_hidden && _GP(play).screen_is_faded_out == 0) {
-		_G(gfxDriver)->DrawSprite(_G(mousex) - _G(hotx), _G(mousey) - _G(hoty), mouseCursor);
-		invalidate_sprite(_G(mousex) - _G(hotx), _G(mousey) - _G(hoty), mouseCursor, false);
+		_G(gfxDriver)->DrawSprite(_G(mousex) - _G(hotx), _G(mousey) - _G(hoty), _G(mouseCursor));
+		invalidate_sprite(_G(mousex) - _G(hotx), _G(mousey) - _G(hoty), _G(mouseCursor), false);
 	}
 
 	if (_GP(play).screen_is_faded_out == 0) {

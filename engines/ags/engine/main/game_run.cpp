@@ -75,9 +75,7 @@ using namespace AGS::Shared;
 
 extern int game_paused;
 extern int getloctype_index;
-extern int cur_mode;
 extern char noWalkBehindsAtAll;
-extern int cur_mode, cur_cursor;
 
 // Checks if user interface should remain disabled for now
 static int ShouldStayInWaitMode();
@@ -786,7 +784,7 @@ static void UpdateMouseOverLocation() {
 		_GP(play).get_loc_name_save_cursor = -1;
 		set_cursor_mode(_GP(play).restore_cursor_mode_to);
 
-		if (cur_mode == _GP(play).restore_cursor_mode_to) {
+		if (_G(cur_mode) == _GP(play).restore_cursor_mode_to) {
 			// make sure it changed -- the new mode might have been disabled
 			// in which case don't change the image
 			set_mouse_cursor(_GP(play).restore_cursor_image_to);
@@ -884,8 +882,8 @@ static void SetupLoopParameters(int untilwhat, const void *udata) {
 	guis_need_update = 1;
 	// Only change the mouse cursor if it hasn't been specifically changed first
 	// (or if it's speech, always change it)
-	if (((cur_cursor == cur_mode) || (untilwhat == UNTIL_NOOVERLAY)) &&
-		(cur_mode != CURS_WAIT))
+	if (((_G(cur_cursor) == _G(cur_mode)) || (untilwhat == UNTIL_NOOVERLAY)) &&
+		(_G(cur_mode) != CURS_WAIT))
 		set_mouse_cursor(CURS_WAIT);
 
 	_G(restrict_until) = untilwhat;

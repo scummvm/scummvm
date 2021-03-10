@@ -42,6 +42,7 @@
 #include "ags/engine/ac/event.h"
 #include "ags/engine/ac/gamesetup.h"
 #include "ags/engine/ac/gamestate.h"
+#include "ags/engine/ac/mouse.h"
 #include "ags/engine/ac/movelist.h"
 #include "ags/engine/ac/objectcache.h"
 #include "ags/engine/ac/roomstatus.h"
@@ -217,6 +218,9 @@ Globals::Globals() {
 	// managedobjectpool.cpp globals
 	_pool = new ManagedObjectPool();
 
+	// mouse.cpp globals
+	_scmouse = new ScriptMouse();
+
 	// mousew32.cpp globals
 	_mouse = new Mouse();
 
@@ -370,6 +374,9 @@ Globals::~Globals() {
 
 	// managedobjectpool.cpp globals
 	delete _pool;
+
+	// mouse.cpp globals
+	delete _scmouse;
 
 	// mousew32.cpp globals
 	delete _mouse;

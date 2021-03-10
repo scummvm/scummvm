@@ -75,11 +75,6 @@ void set_new_cursor_graphic(int spriteslot);
 int find_next_enabled_cursor(int startwith);
 int find_previous_enabled_cursor(int startwith);
 
-extern ScriptMouse scmouse;
-
-extern int cur_mode;
-extern int cur_cursor;
-
 } // namespace AGS3
 
 #endif

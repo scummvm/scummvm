@@ -109,8 +109,6 @@ namespace AGS3 {
 using namespace AGS::Shared;
 using namespace AGS::Engine;
 
-extern int cur_mode, cur_cursor;
-
 #if AGS_PLATFORM_OS_IOS || AGS_PLATFORM_OS_ANDROID
 extern int _G(psp_gfx_renderer);
 #endif
@@ -248,7 +246,7 @@ void setup_for_dialog() {
 	acdialog_font = _GP(play).normal_font;
 	if (!_GP(play).mouse_cursor_hidden)
 		ags_domouse(DOMOUSE_ENABLE);
-	oldmouse = cur_cursor;
+	oldmouse = _G(cur_cursor);
 	set_mouse_cursor(CURS_ARROW);
 }
 void restore_after_dialog() {
@@ -2225,7 +2223,7 @@ void RegisterGameAPI() {
 void RegisterStaticObjects() {
 	ccAddExternalStaticObject("game", &_GP(play), &GameStaticManager);
 	ccAddExternalStaticObject("gs_globals", &_GP(play).globalvars[0], &GlobalStaticManager);
-	ccAddExternalStaticObject("mouse", &scmouse, &GlobalStaticManager);
+	ccAddExternalStaticObject("mouse", &_GP(scmouse), &GlobalStaticManager);
 	ccAddExternalStaticObject("palette", &palette[0], &GlobalStaticManager);
 	ccAddExternalStaticObject("system", &_GP(scsystem), &GlobalStaticManager);
 	ccAddExternalStaticObject("savegameindex", &_GP(play).filenumbers[0], &GlobalStaticManager);

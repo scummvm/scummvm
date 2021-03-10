@@ -758,7 +758,7 @@ void Character_SetAsPlayer(CharacterInfo *chaa) {
 		_G(playerchar)->activeinv = -1;
 
 	// They had inv selected, so change the cursor
-	if (cur_mode == MODE_USE) {
+	if (_G(cur_mode) == MODE_USE) {
 		if (_G(playerchar)->activeinv < 0)
 			SetNextCursor();
 		else

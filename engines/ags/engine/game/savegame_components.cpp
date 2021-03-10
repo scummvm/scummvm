@@ -212,8 +212,8 @@ HSaveError WriteGameState(PStream out) {
 	out->WriteInt32(_G(ifacepopped));
 	out->WriteInt32(game_paused);
 	// Mouse cursor
-	out->WriteInt32(cur_mode);
-	out->WriteInt32(cur_cursor);
+	out->WriteInt32(_G(cur_mode));
+	out->WriteInt32(_G(cur_cursor));
 	out->WriteInt32(_G(mouse_on_iface));
 
 	// Viewports and cameras

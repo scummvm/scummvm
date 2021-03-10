@@ -41,8 +41,6 @@
 
 namespace AGS3 {
 
-extern int cur_cursor;
-
 void InventoryItem_SetCursorGraphic(ScriptInvItem *iitem, int newSprite) {
 	set_inv_item_cursorpic(iitem->id, newSprite);
 }
@@ -115,9 +113,9 @@ bool InventoryItem_SetTextProperty(ScriptInvItem *scii, const char *property, co
 void set_inv_item_cursorpic(int invItemId, int piccy) {
 	_GP(game).invinfo[invItemId].cursorPic = piccy;
 
-	if ((cur_cursor == MODE_USE) && (_G(playerchar)->activeinv == invItemId)) {
+	if ((_G(cur_cursor) == MODE_USE) && (_G(playerchar)->activeinv == invItemId)) {
 		update_inv_cursor(invItemId);
-		set_mouse_cursor(cur_cursor);
+		set_mouse_cursor(_G(cur_cursor));
 	}
 }
 

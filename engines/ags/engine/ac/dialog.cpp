@@ -70,8 +70,6 @@ namespace AGS3 {
 
 using namespace AGS::Shared;
 
-extern int cur_mode, cur_cursor;
-
 void Dialog_Start(ScriptDialog *sd) {
 	RunDialog(sd->id);
 }
@@ -451,7 +449,7 @@ void DialogOptions::Prepare(int _dlgnum, bool _runGameLoopsInBackground) {
 	usingfont = FONT_NORMAL;
 	lineheight = getfontheight_outlined(usingfont);
 	linespacing = getfontspacing_outlined(usingfont);
-	curswas = cur_cursor;
+	curswas = _G(cur_cursor);
 	bullet_wid = 0;
 	ddb = nullptr;
 	subBitmap = nullptr;

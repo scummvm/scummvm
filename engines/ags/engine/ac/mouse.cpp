@@ -56,15 +56,6 @@ using namespace AGS::Engine;
 extern void ags_domouse(int str);
 extern int misbuttondown(int buno);
 
-ScriptMouse scmouse;
-int cur_mode, cur_cursor;
-int mouse_frame = 0, mouse_delay = 0;
-int lastmx = -1, lastmy = -1;
-char alpha_blend_cursor = 0;
-Bitmap *dotted_mouse_cursor = nullptr;
-IDriverDependantBitmap *mouseCursor = nullptr;
-Bitmap *blank_mouse_cursor = nullptr;
-
 // The mouse functions are static so the script doesn't pass
 // in an object parameter
 void Mouse_SetVisible(int isOn) {
@@ -114,56 +105,56 @@ void set_mouse_cursor(int newcurs) {
 	msethotspot(hotspotx, hotspoty);
 
 	// if it's same cursor and there's animation in progress, then don't assign a new pic just yet
-	if (newcurs == cur_cursor && _GP(game).mcurs[newcurs].view >= 0 &&
-		(mouse_frame > 0 || mouse_delay > 0)) {
+	if (newcurs == _G(cur_cursor) && _GP(game).mcurs[newcurs].view >= 0 &&
+		(_G(mouse_frame) > 0 || _G(mouse_delay) > 0)) {
 		return;
 	}
 
 	// reset animation timing only if it's another cursor
-	if (newcurs != cur_cursor) {
-		cur_cursor = newcurs;
-		mouse_frame = 0;
-		mouse_delay = 0;
+	if (newcurs != _G(cur_cursor)) {
+		_G(cur_cursor) = newcurs;
+		_G(mouse_frame) = 0;
+		_G(mouse_delay) = 0;
 	}
 
 	// Assign new pic
 	set_new_cursor_graphic(_GP(game).mcurs[newcurs].pic);
-	delete dotted_mouse_cursor;
-	dotted_mouse_cursor = nullptr;
+	delete _G(dotted_mouse_cursor);
+	_G(dotted_mouse_cursor) = nullptr;
 
 	// If it's inventory cursor, draw hotspot crosshair sprite upon it
 	if ((newcurs == MODE_USE) && (_GP(game).mcurs[newcurs].pic > 0) &&
 		((_GP(game).hotdot > 0) || (_GP(game).invhotdotsprite > 0))) {
 		// If necessary, create a copy of the cursor and put the hotspot
 		// dot onto it
-		dotted_mouse_cursor = BitmapHelper::CreateBitmapCopy(_G(mousecurs)[0]);
+		_G(dotted_mouse_cursor) = BitmapHelper::CreateBitmapCopy(_G(mousecurs)[0]);
 
 		if (_GP(game).invhotdotsprite > 0) {
-			draw_sprite_slot_support_alpha(dotted_mouse_cursor,
+			draw_sprite_slot_support_alpha(_G(dotted_mouse_cursor),
 				(_GP(game).SpriteInfos[_GP(game).mcurs[newcurs].pic].Flags & SPF_ALPHACHANNEL) != 0,
 				hotspotx - _GP(game).SpriteInfos[_GP(game).invhotdotsprite].Width / 2,
 				hotspoty - _GP(game).SpriteInfos[_GP(game).invhotdotsprite].Height / 2,
 				_GP(game).invhotdotsprite);
 		} else {
-			putpixel_compensate(dotted_mouse_cursor, hotspotx, hotspoty, MakeColor(_GP(game).hotdot));
+			putpixel_compensate(_G(dotted_mouse_cursor), hotspotx, hotspoty, MakeColor(_GP(game).hotdot));
 
 			if (_GP(game).hotdotouter > 0) {
 				int outercol = MakeColor(_GP(game).hotdotouter);
 
-				putpixel_compensate(dotted_mouse_cursor, hotspotx + get_fixed_pixel_size(1), hotspoty, outercol);
-				putpixel_compensate(dotted_mouse_cursor, hotspotx, hotspoty + get_fixed_pixel_size(1), outercol);
-				putpixel_compensate(dotted_mouse_cursor, hotspotx - get_fixed_pixel_size(1), hotspoty, outercol);
-				putpixel_compensate(dotted_mouse_cursor, hotspotx, hotspoty - get_fixed_pixel_size(1), outercol);
+				putpixel_compensate(_G(dotted_mouse_cursor), hotspotx + get_fixed_pixel_size(1), hotspoty, outercol);
+				putpixel_compensate(_G(dotted_mouse_cursor), hotspotx, hotspoty + get_fixed_pixel_size(1), outercol);
+				putpixel_compensate(_G(dotted_mouse_cursor), hotspotx - get_fixed_pixel_size(1), hotspoty, outercol);
+				putpixel_compensate(_G(dotted_mouse_cursor), hotspotx, hotspoty - get_fixed_pixel_size(1), outercol);
 			}
 		}
-		_G(mousecurs)[0] = dotted_mouse_cursor;
+		_G(mousecurs)[0] = _G(dotted_mouse_cursor);
 		update_cached_mouse_cursor();
 	}
 }
 
 // set_default_cursor: resets visual appearance to current mode (walk, look, etc)
 void set_default_cursor() {
-	set_mouse_cursor(cur_mode);
+	set_mouse_cursor(_G(cur_mode));
 }
 
 // permanently change cursor graphic
@@ -176,7 +167,7 @@ void ChangeCursorGraphic(int curs, int newslot) {
 
 	_GP(game).mcurs[curs].pic = newslot;
 	_GP(spriteset).Precache(newslot);
-	if (curs == cur_mode)
+	if (curs == _G(cur_mode))
 		set_mouse_cursor(curs);
 }
 
@@ -192,8 +183,8 @@ void ChangeCursorHotspot(int curs, int x, int y) {
 		quit("!ChangeCursorHotspot: invalid mouse cursor");
 	_GP(game).mcurs[curs].hotx = data_to_game_coord(x);
 	_GP(game).mcurs[curs].hoty = data_to_game_coord(y);
-	if (curs == cur_cursor)
-		set_mouse_cursor(cur_cursor);
+	if (curs == _G(cur_cursor))
+		set_mouse_cursor(_G(cur_cursor));
 }
 
 void Mouse_ChangeModeView(int curs, int newview) {
@@ -208,16 +199,16 @@ void Mouse_ChangeModeView(int curs, int newview) {
 		precache_view(newview);
 	}
 
-	if (curs == cur_cursor)
-		mouse_delay = 0;  // force update
+	if (curs == _G(cur_cursor))
+		_G(mouse_delay) = 0;  // force update
 }
 
 void SetNextCursor() {
-	set_cursor_mode(find_next_enabled_cursor(cur_mode + 1));
+	set_cursor_mode(find_next_enabled_cursor(_G(cur_mode) + 1));
 }
 
 void SetPreviousCursor() {
-	set_cursor_mode(find_previous_enabled_cursor(cur_mode - 1));
+	set_cursor_mode(find_previous_enabled_cursor(_G(cur_mode) - 1));
 }
 
 // set_cursor_mode: changes mode and appearance
@@ -237,7 +228,7 @@ void set_cursor_mode(int newmode) {
 		}
 		update_inv_cursor(_G(playerchar)->activeinv);
 	}
-	cur_mode = newmode;
+	_G(cur_mode) = newmode;
 	set_default_cursor();
 
 	debug_script_log("Cursor mode set to %d", newmode);
@@ -274,14 +265,14 @@ void disable_cursor_mode(int modd) {
 			gbpt->SetEnabled(false);
 		}
 	}
-	if (cur_mode == modd) find_next_enabled_cursor(modd);
+	if (_G(cur_mode) == modd) find_next_enabled_cursor(modd);
 	guis_need_update = 1;
 }
 
 void RefreshMouse() {
 	ags_domouse(DOMOUSE_NOCURSOR);
-	scmouse.x = game_to_data_coord(_G(mousex));
-	scmouse.y = game_to_data_coord(_G(mousey));
+	_GP(scmouse).x = game_to_data_coord(_G(mousex));
+	_GP(scmouse).y = game_to_data_coord(_G(mousey));
 }
 
 void SetMousePosition(int newx, int newy) {
@@ -302,7 +293,7 @@ void SetMousePosition(int newx, int newy) {
 }
 
 int GetCursorMode() {
-	return cur_mode;
+	return _G(cur_mode);
 }
 
 int IsButtonDown(int which) {
@@ -342,12 +333,12 @@ void Mouse_EnableControl(bool on) {
 //=============================================================================
 
 int GetMouseCursor() {
-	return cur_cursor;
+	return _G(cur_cursor);
 }
 
 void update_script_mouse_coords() {
-	scmouse.x = game_to_data_coord(_G(mousex));
-	scmouse.y = game_to_data_coord(_G(mousey));
+	_GP(scmouse).x = game_to_data_coord(_G(mousex));
+	_GP(scmouse).y = game_to_data_coord(_G(mousey));
 }
 
 void update_inv_cursor(int invnum) {
@@ -375,9 +366,9 @@ void update_inv_cursor(int invnum) {
 }
 
 void update_cached_mouse_cursor() {
-	if (mouseCursor != nullptr)
-		_G(gfxDriver)->DestroyDDB(mouseCursor);
-	mouseCursor = _G(gfxDriver)->CreateDDBFromBitmap(_G(mousecurs)[0], alpha_blend_cursor != 0);
+	if (_G(mouseCursor) != nullptr)
+		_G(gfxDriver)->DestroyDDB(_G(mouseCursor));
+	_G(mouseCursor) = _G(gfxDriver)->CreateDDBFromBitmap(_G(mousecurs)[0], _G(alpha_blend_cursor) != 0);
 }
 
 void set_new_cursor_graphic(int spriteslot) {
@@ -386,16 +377,16 @@ void set_new_cursor_graphic(int spriteslot) {
 	// It looks like spriteslot 0 can be used in games with version 2.72 and lower.
 	// The NULL check should ensure that the sprite is valid anyway.
 	if (((spriteslot < 1) && (loaded_game_file_version > kGameVersion_272)) || (_G(mousecurs)[0] == nullptr)) {
-		if (blank_mouse_cursor == nullptr) {
-			blank_mouse_cursor = BitmapHelper::CreateTransparentBitmap(1, 1, _GP(game).GetColorDepth());
+		if (_G(blank_mouse_cursor) == nullptr) {
+			_G(blank_mouse_cursor) = BitmapHelper::CreateTransparentBitmap(1, 1, _GP(game).GetColorDepth());
 		}
-		_G(mousecurs)[0] = blank_mouse_cursor;
+		_G(mousecurs)[0] = _G(blank_mouse_cursor);
 	}
 
 	if (_GP(game).SpriteInfos[spriteslot].Flags & SPF_ALPHACHANNEL)
-		alpha_blend_cursor = 1;
+		_G(alpha_blend_cursor) = 1;
 	else
-		alpha_blend_cursor = 0;
+		_G(alpha_blend_cursor) = 0;
 
 	update_cached_mouse_cursor();
 }
