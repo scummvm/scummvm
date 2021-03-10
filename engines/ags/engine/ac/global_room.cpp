@@ -44,8 +44,6 @@ namespace AGS3 {
 
 using namespace Shared;
 
-extern int in_inv_screen, inv_screen_newroom;
-
 void SetAmbientTint(int red, int green, int blue, int opacity, int luminance) {
 	if ((red < 0) || (green < 0) || (blue < 0) ||
 		(red > 255) || (green > 255) || (blue > 255) ||
@@ -106,8 +104,8 @@ void NewRoom(int nrnum) {
 	} else if (_G(in_enters_screen)) {
 		setevent(EV_NEWROOM, nrnum);
 		return;
-	} else if (in_inv_screen) {
-		inv_screen_newroom = nrnum;
+	} else if (_G(in_inv_screen)) {
+		_G(inv_screen_newroom) = nrnum;
 		return;
 	} else if ((_G(inside_script) == 0) & (_G(in_graph_script) == 0)) {
 		new_room(nrnum, _G(playerchar));

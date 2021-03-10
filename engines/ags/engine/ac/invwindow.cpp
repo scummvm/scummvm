@@ -53,10 +53,6 @@ namespace AGS3 {
 
 using namespace AGS::Shared;
 
-int in_inv_screen = 0, inv_screen_newroom = -1;
-
-// *** INV WINDOW FUNCTIONS
-
 void InvWindow_SetCharacterToUse(GUIInvWindow *guii, CharacterInfo *chaa) {
 	if (chaa == nullptr)
 		guii->CharId = -1;
@@ -216,8 +212,8 @@ void InventoryScreen::Prepare() {
 	top_item = 0;
 	num_visible_items = 0;
 	MAX_ITEMAREA_HEIGHT = ((_GP(play).GetUIViewport().GetHeight() - BUTTONAREAHEIGHT) - get_fixed_pixel_size(20));
-	in_inv_screen++;
-	inv_screen_newroom = -1;
+	_G(in_inv_screen)++;
+	_G(inv_screen_newroom) = -1;
 
 	// Sprites 2041, 2042 and 2043 were hardcoded in the older versions of
 	// the engine to be used in the built-in inventory window.
@@ -242,13 +238,13 @@ int InventoryScreen::Redraw() {
 		update_invorder();
 	if (_G(charextra)[_GP(game).playercharacter].invorder_count == 0) {
 		DisplayMessage(996);
-		in_inv_screen--;
+		_G(in_inv_screen)--;
 		return -1;
 	}
 
-	if (inv_screen_newroom >= 0) {
-		in_inv_screen--;
-		NewRoom(inv_screen_newroom);
+	if (_G(inv_screen_newroom) >= 0) {
+		_G(in_inv_screen)--;
+		NewRoom(_G(inv_screen_newroom));
 		return -1;
 	}
 
@@ -480,7 +476,7 @@ void InventoryScreen::Close() {
 	clear_gui_screen();
 	set_default_cursor();
 	invalidate_screen();
-	in_inv_screen--;
+	_G(in_inv_screen)--;
 }
 
 int __actual_invscreen() {

@@ -714,6 +714,15 @@ public:
 	/**@}*/
 
 	/**
+	 * \defgroup invwindow globals
+	 * @{
+	 */
+
+	int _in_inv_screen = 0, _inv_screen_newroom = -1;
+
+	/**@}*/
+
+	/**
 	 * \defgroup lzw globals
 	 * @{
 	 */
