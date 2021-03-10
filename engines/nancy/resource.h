@@ -64,9 +64,9 @@ public:
 
 	void initialize();
 	bool loadCifTree(const Common::String &name, const Common::String &ext);
-	bool loadImage(const Common::String &treeName, const Common::String &name, Graphics::Surface &surf);
+	bool loadImage(const Common::String &name, Graphics::Surface &surf);
 	void freeImage(Graphics::Surface &surf);
-	byte *loadData(const Common::String &treeName, const Common::String &name, uint &size);
+	byte *loadData(const Common::String &name, uint &size);
 
 	// Debugger functions
 	void list(const Common::String &treeName, Common::Array<Common::String> &nameList, uint type);
@@ -76,7 +76,9 @@ public:
 private:
 	Decompressor *_dec;
 
+	byte *getCifData(const Common::String &name, CifInfo &info, uint *size = nullptr);
 	byte *getCifData(const Common::String &treeName, const Common::String &name, CifInfo &info, uint *size = nullptr);
+	bool getCifInfo(const Common::String &name, CifInfo &info);
 	bool getCifInfo(const Common::String &treeName, const Common::String &name, CifInfo &info);
 	const CifTree *findCifTree(const Common::String &name) const;
 

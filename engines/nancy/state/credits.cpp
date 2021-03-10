@@ -67,7 +67,7 @@ void Credits::init() {
     _sound.read(*cred, SoundDescription::kMenu);
 
     Graphics::Surface surf;
-    NanEngine.resource->loadImage("ciftree", buf, surf);
+    NanEngine.resource->loadImage(buf, surf);
     _fullTextSurface.create(surf.w, surf.h + _text._screenPosition.height() * 2, GraphicsManager::pixelFormat);
     _fullTextSurface.clear(GraphicsManager::transColor);
     _fullTextSurface.blitFrom(surf, Common::Point(0, _text._screenPosition.height()));

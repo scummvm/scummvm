@@ -36,7 +36,7 @@ namespace Action {
 
 void PlayStaticBitmapAnimation::init() {
     Graphics::Surface surf;
-    NanEngine.resource->loadImage("ciftree", imageName, surf);
+    NanEngine.resource->loadImage(imageName, surf);
 
     _fullSurface.create(surf.w, surf.h, surf.format);
     _fullSurface.blitFrom(surf);

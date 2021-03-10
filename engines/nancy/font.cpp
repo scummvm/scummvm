@@ -38,7 +38,7 @@ void Font::read(Common::SeekableReadStream &stream) {
     stream.read(name, 10);
     Common::String imageName = name;
 
-    NanEngine.resource->loadImage("ciftree", name, _image);
+    NanEngine.resource->loadImage(name, _image);
 
     char desc[0x20];
     stream.read(desc, 0x20);

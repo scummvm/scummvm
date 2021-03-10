@@ -44,7 +44,7 @@ void OrderingPuzzle::init() {
     clearAllElements();
 
     Graphics::Surface surf;
-    NanEngine.resource->loadImage("ciftree", imageName, surf);
+    NanEngine.resource->loadImage(imageName, surf);
     image.create(surf.w, surf.h, surf.format);
     image.blitFrom(surf);
     surf.free();

@@ -52,7 +52,7 @@ void CursorManager::init() {
     _primaryVideoInitialPos.y = chunk->readUint16LE();
 
     Graphics::Surface surf;
-    NanEngine.resource->loadImage("ciftree", inventoryCursorsImageName, surf);
+    NanEngine.resource->loadImage(inventoryCursorsImageName, surf);
     _invCursorsSurface.create(surf.w, surf.h, surf.format);
     _invCursorsSurface.blitFrom(surf);
 

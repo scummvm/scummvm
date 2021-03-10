@@ -301,6 +301,40 @@ byte *CifTree::getCifData(const Common::String &name, ResourceManager::CifInfo &
 	return buf;
 }
 
+byte *ResourceManager::getCifData(const Common::String &treeName, const Common::String &name, CifInfo &info, uint *size) {
+	const CifFile *cifFile = CifFile::load(name);
+	byte *buf;
+
+	if (cifFile) {
+		buf = cifFile->getCifData(info, size);
+		delete cifFile;
+	} else {
+		const CifTree *cifTree = findCifTree(treeName);
+		if (!cifTree)
+			return 0;
+
+		buf = cifTree->getCifData(name, info, size);
+	}
+
+	if (buf && info.comp == kResCompression) {
+		Common::MemoryReadStream input(buf, info.compressedSize);
+		byte *raw = new byte[info.size];
+		Common::MemoryWriteStream output(raw, info.size);
+		if (!_dec->decompress(input, output)) {
+			warning("Failed to decompress '%s'", name.c_str());
+			delete[] buf;
+			delete[] raw;
+			return 0;
+		}
+		delete[] buf;
+		if (size)
+			*size = output.size();
+		return raw;
+	}
+
+	return buf;
+}
+
 class CifTree20 : public CifTree {
 public:
 	CifTree20(const Common::String &name, const Common::String &ext) : CifTree(name, ext) { }
@@ -575,9 +609,6 @@ ResourceManager::~ResourceManager() {
 }
 
 bool ResourceManager::loadCifTree(const Common::String &name, const Common::String &ext) {
-	// NOTE: It seems likely that multiple CifTrees can be open at the same time
-	// For now, we just replace the current CifTree with the new one
-
 	const CifTree *cifTree = CifTree::load(name, ext);
 
 	if (!cifTree)
@@ -597,8 +628,17 @@ const CifTree *ResourceManager::findCifTree(const Common::String &name) const {
 }
 
 void ResourceManager::initialize() {
-	if (!loadCifTree("ciftree", "dat"))
-		error("Failed to read 'ciftree.dat'");
+	loadCifTree("ciftree", "dat");
+}
+
+bool ResourceManager::getCifInfo(const Common::String &name, CifInfo &info) {
+	for (auto &tree : _cifTrees) {
+		if (getCifInfo(tree->getName(), name, info)) {
+			return true;
+		}
+	}
+
+	return false;
 }
 
 bool ResourceManager::getCifInfo(const Common::String &treeName, const Common::String &name, CifInfo &info) {
@@ -618,19 +658,22 @@ bool ResourceManager::getCifInfo(const Common::String &treeName, const Common::S
 	return cifTree->getCifInfo(name, info);
 }
 
-byte *ResourceManager::getCifData(const Common::String &treeName, const Common::String &name, CifInfo &info, uint *size) {
+byte *ResourceManager::getCifData(const Common::String &name, CifInfo &info, uint *size) {
+	// Try to open name.cif
 	const CifFile *cifFile = CifFile::load(name);
-	byte *buf;
+	byte *buf = nullptr;
 
+	// Look for cif inside cif tree
 	if (cifFile) {
 		buf = cifFile->getCifData(info, size);
 		delete cifFile;
 	} else {
-		const CifTree *cifTree = findCifTree(treeName);
-		if (!cifTree)
-			return 0;
-
-		buf = cifTree->getCifData(name, info, size);
+		for (auto &tree : _cifTrees) {
+			buf = tree->getCifData(name, info, size);
+			if (buf) {
+				break;
+			}
+		}
 	}
 
 	if (buf && info.comp == kResCompression) {
@@ -660,7 +703,7 @@ byte *ResourceManager::loadCif(const Common::String &treeName, const Common::Str
 bool ResourceManager::exportCif(const Common::String &treeName, const Common::String &name) {
 	CifInfo info;
 	uint size;
-	byte *buf = getCifData(treeName, name, info, &size);
+	byte *buf = getCifData(name, info, &size);
 
 	if (!buf)
 		return false;
@@ -679,27 +722,35 @@ bool ResourceManager::exportCif(const Common::String &treeName, const Common::St
 	return retval;
 }
 
-byte *ResourceManager::loadData(const Common::String &treeName, const Common::String &name, uint &size) {
+byte *ResourceManager::loadData(const Common::String &name, uint &size) {
 	CifInfo info;
-
-	byte *buf = getCifData(treeName, name, info, &size);
-
-	if (!buf)
-		return 0;
-
-	if (info.type != kResTypeScript) {
+	byte *buf = getCifData(name, info, &size);
+	
+	if (!buf) {
+		// Data was not found inside a cif tree or a cif file, try to open an .iff file
+		// This is used by The Vampire Diaries
+		Common::File *f = new Common::File;
+		if (f->open(name + ".iff")) {
+			size = f->size();
+			buf = new byte[size];
+			f->read(buf, size);
+		} else {
+			delete f;
+			return nullptr;
+		}
+	} else if (info.type != kResTypeScript) {
 		warning("Resource '%s' is not a script", name.c_str());
 		delete[] buf;
-		return 0;
+		return nullptr;
 	}
 
 	return buf;
 }
 
-bool ResourceManager::loadImage(const Common::String &treeName, const Common::String &name, Graphics::Surface &surf) {
+bool ResourceManager::loadImage(const Common::String &name, Graphics::Surface &surf) {
 	CifInfo info;
 
-	byte *buf = getCifData(treeName, name, info);
+	byte *buf = getCifData(name, info);
 
 	if (!buf)
 		return false;
@@ -722,10 +773,6 @@ bool ResourceManager::loadImage(const Common::String &treeName, const Common::St
 	surf.setPixels(buf);
 	surf.format = GraphicsManager::pixelFormat;
 	return true;
-}
-
-void ResourceManager::freeImage(Graphics::Surface &surf) {
-	delete[] (byte *)surf.getPixels();
 }
 
 void ResourceManager::list(const Common::String &treeName, Common::Array<Common::String> &nameList, uint type) {

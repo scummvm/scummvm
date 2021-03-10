@@ -31,7 +31,7 @@ namespace UI {
 
 void FullScreenImage::init(Common::String imageName) {
     Graphics::Surface surf;
-    NanEngine.resource->loadImage("ciftree", imageName, surf);
+    NanEngine.resource->loadImage(imageName, surf);
 
     Common::Rect srcBounds = Common::Rect(0,0, surf.w, surf.h);
     _screenPosition = srcBounds;
