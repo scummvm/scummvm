@@ -29,6 +29,7 @@ namespace Nancy {
 
 enum GameType {
 	kGameTypeNone = 0,
+	kGameTypeVampire,
 	kGameTypeNancy1,
 	kGameTypeNancy2,
 	kGameTypeNancy3

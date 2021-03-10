@@ -39,6 +39,7 @@ const char *const directoryGlobs[] = {
 
 static const PlainGameDescriptor nancyGames[] = {
 	// Games
+	{"vampirediaries", "The Vampire Diaries"},
 	{"nancy1", "Nancy Drew: Secrets Can Kill"},
 	{"nancy2", "Nancy Drew: Stay Tuned for Danger"},
 	{"nancy3", "Nancy Drew: Message in a Haunted Mansion"},
@@ -49,7 +50,21 @@ static const PlainGameDescriptor nancyGames[] = {
 };
 
 static const Nancy::NancyGameDescription gameDescriptions[] = {
-
+	
+	{ // MD5 by fracturehill
+		{
+			"vampirediaries", 0,
+			{
+				{"vampire.exe", 0, "c6207f4bb7418b8a067ad75ed9f57bdf", 114688},
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO0()
+		},
+		Nancy::GameType::kGameTypeVampire
+	},
 	{ // MD5 by waltervn
 		{
 			"nancy1", 0,
