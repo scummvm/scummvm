@@ -38,10 +38,6 @@ namespace AGS3 {
 
 using namespace AGS::Shared;
 
-
-
-Bitmap *walkareabackup = nullptr, *walkable_areas_temp = nullptr;
-
 void redo_walkable_areas() {
 
 	// since this is an 8-bit memory bitmap, we can just use direct
@@ -49,12 +45,12 @@ void redo_walkable_areas() {
 	if ((!_GP(thisroom).WalkAreaMask->IsLinearBitmap()) || (_GP(thisroom).WalkAreaMask->GetColorDepth() != 8))
 		quit("Walkable areas bitmap not linear");
 
-	_GP(thisroom).WalkAreaMask->Blit(walkareabackup, 0, 0, 0, 0, _GP(thisroom).WalkAreaMask->GetWidth(), _GP(thisroom).WalkAreaMask->GetHeight());
+	_GP(thisroom).WalkAreaMask->Blit(_G(walkareabackup), 0, 0, 0, 0, _GP(thisroom).WalkAreaMask->GetWidth(), _GP(thisroom).WalkAreaMask->GetHeight());
 
 	int hh, ww;
-	for (hh = 0; hh < walkareabackup->GetHeight(); hh++) {
+	for (hh = 0; hh < _G(walkareabackup)->GetHeight(); hh++) {
 		uint8_t *walls_scanline = _GP(thisroom).WalkAreaMask->GetScanLineForWriting(hh);
-		for (ww = 0; ww < walkareabackup->GetWidth(); ww++) {
+		for (ww = 0; ww < _G(walkareabackup)->GetWidth(); ww++) {
 			//      if (_GP(play).walkable_areas_on[_getpixel(_GP(thisroom).WalkAreaMask,ww,hh)]==0)
 			if (_GP(play).walkable_areas_on[walls_scanline[ww]] == 0)
 				walls_scanline[ww] = 0;
@@ -121,14 +117,14 @@ void remove_walkable_areas_from_temp(int fromx, int cwidth, int starty, int endy
 	endy = room_to_mask_coord(endy);
 
 	int yyy;
-	if (endy >= walkable_areas_temp->GetHeight())
-		endy = walkable_areas_temp->GetHeight() - 1;
+	if (endy >= _G(walkable_areas_temp)->GetHeight())
+		endy = _G(walkable_areas_temp)->GetHeight() - 1;
 	if (starty < 0)
 		starty = 0;
 
 	for (; cwidth > 0; cwidth--) {
 		for (yyy = starty; yyy <= endy; yyy++)
-			walkable_areas_temp->PutPixel(fromx, yyy, 0);
+			_G(walkable_areas_temp)->PutPixel(fromx, yyy, 0);
 		fromx++;
 	}
 
@@ -142,11 +138,11 @@ int is_point_in_rect(int x, int y, int left, int top, int right, int bottom) {
 
 Bitmap *prepare_walkable_areas(int sourceChar) {
 	// copy the walkable areas to the temp bitmap
-	walkable_areas_temp->Blit(_GP(thisroom).WalkAreaMask.get(), 0, 0, 0, 0, _GP(thisroom).WalkAreaMask->GetWidth(), _GP(thisroom).WalkAreaMask->GetHeight());
+	_G(walkable_areas_temp)->Blit(_GP(thisroom).WalkAreaMask.get(), 0, 0, 0, 0, _GP(thisroom).WalkAreaMask->GetWidth(), _GP(thisroom).WalkAreaMask->GetHeight());
 	// if the character who's moving doesn't Bitmap *, don't bother checking
 	if (sourceChar < 0);
 	else if (_GP(game).chars[sourceChar].flags & CHF_NOBLOCKING)
-		return walkable_areas_temp;
+		return _G(walkable_areas_temp);
 
 	int ww;
 	// for each character in the current room, make the area under
@@ -156,8 +152,8 @@ Bitmap *prepare_walkable_areas(int sourceChar) {
 		if (_GP(game).chars[ww].room != _G(displayed_room)) continue;
 		if (ww == sourceChar) continue;
 		if (_GP(game).chars[ww].flags & CHF_NOBLOCKING) continue;
-		if (room_to_mask_coord(_GP(game).chars[ww].y) >= walkable_areas_temp->GetHeight()) continue;
-		if (room_to_mask_coord(_GP(game).chars[ww].x) >= walkable_areas_temp->GetWidth()) continue;
+		if (room_to_mask_coord(_GP(game).chars[ww].y) >= _G(walkable_areas_temp)->GetHeight()) continue;
+		if (room_to_mask_coord(_GP(game).chars[ww].x) >= _G(walkable_areas_temp)->GetWidth()) continue;
 		if ((_GP(game).chars[ww].y < 0) || (_GP(game).chars[ww].x < 0)) continue;
 
 		CharacterInfo *char1 = &_GP(game).chars[ww];
@@ -177,8 +173,8 @@ Bitmap *prepare_walkable_areas(int sourceChar) {
 		if (_G(objs)[ww].on != 1) continue;
 		if ((_G(objs)[ww].flags & OBJF_SOLID) == 0)
 			continue;
-		if (room_to_mask_coord(_G(objs)[ww].y) >= walkable_areas_temp->GetHeight()) continue;
-		if (room_to_mask_coord(_G(objs)[ww].x) >= walkable_areas_temp->GetWidth()) continue;
+		if (room_to_mask_coord(_G(objs)[ww].y) >= _G(walkable_areas_temp)->GetHeight()) continue;
+		if (room_to_mask_coord(_G(objs)[ww].x) >= _G(walkable_areas_temp)->GetWidth()) continue;
 		if ((_G(objs)[ww].y < 0) || (_G(objs)[ww].x < 0)) continue;
 
 		int x1, y1, width, y2;
@@ -194,7 +190,7 @@ Bitmap *prepare_walkable_areas(int sourceChar) {
 		remove_walkable_areas_from_temp(x1, width, y1, y2);
 	}
 
-	return walkable_areas_temp;
+	return _G(walkable_areas_temp);
 }
 
 // return the walkable area at the character's feet, taking into account

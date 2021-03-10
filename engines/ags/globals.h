@@ -903,6 +903,15 @@ public:
 
 	/**@}*/
 
+	/**
+	 * \defgroup walkablearea globals
+	 * @{
+	 */
+
+	AGS::Shared::Bitmap *_walkareabackup = nullptr, *_walkable_areas_temp = nullptr;
+
+	/**@}*/
+
 public:
 	Globals();
 	~Globals();

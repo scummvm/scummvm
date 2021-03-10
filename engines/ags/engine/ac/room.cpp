@@ -85,7 +85,6 @@ namespace AGS3 {
 using namespace AGS::Shared;
 using namespace AGS::Engine;
 
-extern Bitmap *walkareabackup, *walkable_areas_temp;
 extern color palette[256];
 extern int mouse_z_was;
 
@@ -485,16 +484,16 @@ void load_new_room(int newnum, CharacterInfo *forchar) {
 	_G(our_eip) = 203;
 	_G(in_new_room) = 1;
 
-	// walkable_areas_temp is used by the pathfinder to generate a
+	// _G(walkable_areas_temp) is used by the pathfinder to generate a
 	// copy of the walkable areas - allocate it here to save time later
-	delete walkable_areas_temp;
-	walkable_areas_temp = BitmapHelper::CreateBitmap(_GP(thisroom).WalkAreaMask->GetWidth(), _GP(thisroom).WalkAreaMask->GetHeight(), 8);
+	delete _G(walkable_areas_temp);
+	_G(walkable_areas_temp) = BitmapHelper::CreateBitmap(_GP(thisroom).WalkAreaMask->GetWidth(), _GP(thisroom).WalkAreaMask->GetHeight(), 8);
 
 	// Make a backup copy of the walkable areas prior to
 	// any RemoveWalkableArea commands
-	delete walkareabackup;
+	delete _G(walkareabackup);
 	// copy the walls screen
-	walkareabackup = BitmapHelper::CreateBitmapCopy(_GP(thisroom).WalkAreaMask.get());
+	_G(walkareabackup) = BitmapHelper::CreateBitmapCopy(_GP(thisroom).WalkAreaMask.get());
 
 	_G(our_eip) = 204;
 	update_polled_stuff_if_runtime();
