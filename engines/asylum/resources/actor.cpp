@@ -1007,7 +1007,7 @@ void Actor::updateDirection() {
 
 	// Get the next resource index offset
 	uint32 index = 0;
-	while (getWorld()->graphicResourceIds[index] != _resourceId) {
+	while (_graphicResourceIds[index] != _resourceId) {
 		index++;
 
 		if (index >= 55)
