@@ -30,6 +30,10 @@
 #include "common/array.h"
 #include "common/func.h"
 
+namespace Common {
+class Serializer;
+}
+
 namespace Nancy {
 
 class NancyEngine;
@@ -57,6 +61,8 @@ public:
     Common::Array<ActionRecord *> &getActionRecords() { return _records; }
     ActionRecord *getActionRecord(uint id) { if (id < _records.size()) return _records[id]; else return nullptr;}
     void clearActionRecords();
+
+    void synchronize(Common::Serializer &serializer);
 
 protected:
     virtual ActionRecord *createActionRecord(uint16 type);

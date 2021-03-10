@@ -33,6 +33,7 @@
 
 namespace Common {
 class RandomSource;
+class Serializer;
 }
 
 /**
@@ -114,7 +115,6 @@ public:
 	bool hasFeature(EngineFeature f) const;
 	const char *getCopyrightString() const;
 
-	Common::String getSavegameFilename(int slot);
 	void syncSoundSettings();
 
 	static NancyEngine *create(GameType type, OSystem *syst, const NancyGameDescription *gd);
@@ -133,6 +133,11 @@ public:
 	void setMouseEnabled(bool enabled);
 
 	virtual void pauseEngineIntern(bool pause) override;
+
+	virtual Common::Error loadGameStream(Common::SeekableReadStream *stream) override;
+	virtual Common::Error saveGameStream(Common::WriteStream *stream, bool isAutosave = false) override;
+	virtual bool canLoadGameStateCurrently() override { return canSaveGameStateCurrently(); };
+	virtual bool canSaveGameStateCurrently() override;
 
 	// Managers
 	ResourceManager *_res;
@@ -168,6 +173,8 @@ protected:
 
 	bool addBootChunk(const Common::String &name, Common::SeekableReadStream *stream);
 	void clearBootChunks();
+
+	Common::Error synchronize(Common::Serializer &serializer);
 
 	enum {
 		kMaxFilenameLen = 32

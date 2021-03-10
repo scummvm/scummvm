@@ -45,7 +45,8 @@ namespace Graphics {
 }
 
 namespace Common {
-    class SeekableReadStream;
+class SeekableReadStream;
+class Serializer;
 }
 
 namespace Nancy {
@@ -138,6 +139,8 @@ public:
 
     void registerGraphics();
 
+    void synchronize(Common::Serializer &serializer);
+
     UI::FullScreenImage &getFrame() { return _frame; }
     UI::Viewport &getViewport() { return _viewport; }
     UI::Textbox &getTextbox() { return _textbox; }
@@ -150,6 +153,7 @@ public:
 
 private:
     void init();
+    void initStatic();
     void load();
     void run();
 
@@ -162,10 +166,10 @@ private:
 public:
     enum State {
         kInit,
+        kInitStatic,
         kLoad,
         kStartSound,
-        kRun,
-        kLoadNew
+        kRun
     };
 
     enum GameStateChange : byte {
@@ -188,7 +192,7 @@ protected:
         SceneInfo nextScene;
         SceneInfo pushedScene;
         bool isScenePushed;
-        byte sceneHitCount[1000];
+        uint16 sceneHitCount[2001];
 
         bool _doNotStartSound = false;
     };
@@ -233,7 +237,7 @@ protected:
     PlayFlags _flags;
     Timers _timers;
     uint16 _difficulty;
-    Common::Array<byte> _hintsRemaining;
+    Common::Array<uint16> _hintsRemaining;
     int16 _lastHint;
     NancyEngine::GameState _gameStateRequested;
 

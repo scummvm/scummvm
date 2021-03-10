@@ -34,6 +34,10 @@
 
 #include "graphics/managed_surface.h"
 
+namespace Common {
+class Serializer;
+}
+
 namespace Nancy {
 namespace Action {
 
@@ -48,6 +52,8 @@ public:
     virtual uint16 readData(Common::SeekableReadStream &stream) override;
     virtual void execute(Nancy::NancyEngine *engine) override;
     virtual void handleInput(NancyInput &input) override;
+
+    static void synchronize(Common::Serializer &ser);
 
     Common::String imageName; // 0x00
     uint16 width; // 0xA
@@ -76,7 +82,7 @@ protected:
     virtual BlitType getBlitType() const override { return kTrans; }
     virtual bool isViewportRelative() const override { return true; }
 
-    void drawTile(uint tileID, uint posX, uint posY);
+    void drawTile(int tileID, uint posX, uint posY);
     void undrawTile(uint posX, uint posY);
 };
 

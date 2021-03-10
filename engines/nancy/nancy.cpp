@@ -26,6 +26,10 @@
 #include "engines/nancy/state/map.h"
 #include "engines/nancy/state/credits.h"
 
+#include "engines/nancy/action/sliderpuzzle.h"
+#include "engines/nancy/action/primaryvideo.h"
+#include "engines/nancy/action/secondarymovie.h"
+
 #include "engines/nancy/nancy.h"
 #include "engines/nancy/resource.h"
 #include "engines/nancy/iff.h"
@@ -46,6 +50,8 @@
 #include "common/memstream.h"
 #include "common/installshield_cab.h"
 #include "common/str.h"
+#include "common/savefile.h"
+#include "common/serializer.h"
 
 #include "graphics/surface.h"
 
@@ -297,11 +303,59 @@ void NancyEngine::pauseEngineIntern(bool pause) {
 	Engine::pauseEngineIntern(pause);
 }
 
+Common::Error NancyEngine::loadGameStream(Common::SeekableReadStream *stream) {
+	Common::Serializer ser(stream, nullptr);
+
+	auto ret = synchronize(ser);
+
+	if (ret.getCode() == Common::kNoError) {
+		scene->hasLoadedFromSavefile = true;
+	}
+
+	return ret;
+}
+
+bool NancyEngine::canSaveGameStateCurrently() {
+	// TODO also disable during secondary movie
+	return Action::PlayPrimaryVideoChan0::activePrimaryVideo == nullptr;
+}
+
+Common::Error NancyEngine::saveGameStream(Common::WriteStream *stream, bool isAutosave) {
+	Common::Serializer ser(nullptr, stream);
+
+	return synchronize(ser);
+}
+
 void NancyEngine::clearBootChunks() {
 	for (auto const& i : _bootChunks) {
 		delete i._value;
 	}
 	_bootChunks.clear();
+}
+
+Common::Error NancyEngine::synchronize(Common::Serializer &ser) {
+	Common::SeekableReadStream *bsum = getBootChunkStream("BSUM");
+	bsum->seek(0);
+	
+	if (ser.isLoading()) {
+		byte buf[90];
+		byte bsumBuf[90];
+		ser.syncBytes(buf, 90);
+		bsum->read(bsumBuf, 90);
+		if (Common::String((char *)bsumBuf) != (char *)buf) {
+			return Common::kReadingFailed;
+		}
+	} else if (ser.isSaving()) {
+		byte buf[90];
+		bsum->read(buf, 90);
+		ser.syncBytes(buf, 90);
+	}
+
+	scene->synchronize(ser);
+	scene->_actionManager.synchronize(ser);
+	Action::SliderPuzzle::synchronize(ser);
+
+	return Common::kNoError;
 }
 
 void NancyEngine::preloadCals(const IFF &boot) {
@@ -337,10 +391,6 @@ void NancyEngine::syncSoundSettings() {
 	Engine::syncSoundSettings();
 
 //	_sound->syncVolume();
-}
-
-Common::String NancyEngine::getSavegameFilename(int slot) {
-	return _targetName + Common::String::format("-%02d.SAV", slot);
 }
 
 Common::String NancyEngine::readFilename(Common::ReadStream *stream) const {

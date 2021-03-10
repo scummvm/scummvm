@@ -34,6 +34,7 @@
 #include "common/memstream.h"
 #include "common/events.h"
 #include "common/str.h"
+#include "common/serializer.h"
 
 namespace Nancy {
 namespace Action {
@@ -441,6 +442,14 @@ void ActionManager::clearActionRecords() {
         delete r;
     }
     _records.clear();
+}
+
+void ActionManager::synchronize(Common::Serializer &ser) {
+    // When loading, the records should already have been initialized by scene
+    for (auto &rec : _records) {
+        ser.syncAsByte(rec->isActive);
+        ser.syncAsByte(rec->isDone);
+    }
 }
 
 } // End of namespace Action
