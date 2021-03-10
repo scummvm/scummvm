@@ -96,7 +96,7 @@ void NancyConsole::postEnter() {
 
 	if (!_imageFile.empty()) {
 		Graphics::Surface surf;
-		if (NanEngine.resource->loadImage(_imageCifTree, _imageFile, surf)) {
+		if (NanEngine.resource->loadImage(_imageFile, surf)) {
 			g_system->fillScreen(0);
 			g_system->copyRectToScreen(surf.getPixels(), surf.pitch, 0, 0, surf.w > 640 ? 640 : surf.w, surf.h > 480 ? 480 : surf.h);
 			g_system->updateScreen();
@@ -122,7 +122,6 @@ void NancyConsole::postEnter() {
 		}
 		
 		_imageFile.clear();
-		_imageCifTree.clear();
 	}
 
 	// After calling the console, action end events get sent to it and the input manager
@@ -256,14 +255,13 @@ bool NancyConsole::Cmd_chunkList(int argc, const char **argv) {
 }
 
 bool NancyConsole::Cmd_showImage(int argc, const char **argv) {
-	if (argc < 2 || argc > 3) {
+	if (argc != 2) {
 		debugPrintf("Draws an image on the screen\n");
 		debugPrintf("Usage: %s name [cal]\n", argv[0]);
 		return true;
 	}
 
 	_imageFile = argv[1];
-	_imageCifTree = argc == 2 ? "ciftree" : argv[2];
 	return cmdExit(0, 0);
 }
 

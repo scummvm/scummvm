@@ -72,7 +72,7 @@ void InventoryBox::init() {
         readRect(stream, _itemDescriptions[i].sourceRect);
     }
 
-    NanEngine.resource->loadImage("ciftree", inventoryBoxIconsImageName, _iconsSurface);
+    NanEngine.resource->loadImage(inventoryBoxIconsImageName, _iconsSurface);
     
     uint numItems = 11; // TODO
     _fullInventorySurface.create(_screenPosition.width(), _screenPosition.height() * ((numItems / 4) + 1), GraphicsManager::pixelFormat);

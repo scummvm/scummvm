@@ -120,14 +120,16 @@ Common::Error NancyEngine::run() {
 	SearchMan.addSubDirectoryMatching(gameDataDir, "cdsound");
 	SearchMan.addSubDirectoryMatching(gameDataDir, "hdvideo");
 	SearchMan.addSubDirectoryMatching(gameDataDir, "cdvideo");
+	SearchMan.addSubDirectoryMatching(gameDataDir, "iff");
 	
 	Common::SeekableReadStream *stream = SearchMan.createReadStreamForMember("data1.cab");
-		if (!stream)
-			error("Failed to open data1.cab");
-
+	if (stream) {
 		Common::Archive *cab = Common::makeInstallShieldArchive(stream);
-	if (cab)
-		SearchMan.add("data1.hdr", cab);
+		
+		if (cab) {
+			SearchMan.add("data1.hdr", cab);
+		}
+	}
 	
 	resource = new ResourceManager();
 	resource->initialize();
@@ -176,8 +178,7 @@ void NancyEngine::bootGameEngine() {
 		"MAP", "CD", "TBOX", "CURS", "VIEW", "MSND",
 		"BUOK", "BUDE", "BULS", "GLOB", "SLID",
 		"SET", "CURT", "CANT", "TH1", "TH2",
-		"QUOT", "TMOD"
-		};
+		"QUOT", "TMOD" };
 
 	for (auto const &n : names) {
 		addBootChunk(n, boot->getChunkStream(n));
@@ -185,10 +186,6 @@ void NancyEngine::bootGameEngine() {
 
 	// The FR, LG and OB chunks get added here	
 
-	Common::SeekableReadStream *font = getBootChunkStream("FONT");
-	if (_fontSize != font->size()) {
-		error("Mismatch NumFonts and FONT memory... %i, %i", _fontSize, font->size());
-	}
 	
 	// TODO reset some vars
 	// TODO reset some more vars
@@ -457,7 +454,6 @@ void NancyEngine::readBootSummary(const IFF &boot) {
 	// nancy3 has not been looked into, skip straight to images
 	ser.skip(0xA7, kGameTypeNancy3, kGameTypeNancy3);
 
-	bsum->seek(0x151);
 	readChunkList(boot, ser, "FR");
 	readChunkList(boot, ser, "LG");
 

@@ -54,7 +54,6 @@ private:
 
 	Common::String _videoFile;
 	Common::String _imageFile;
-	Common::String _imageCifTree;
 };
 
 } // End of namespace Nancy

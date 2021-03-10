@@ -379,7 +379,7 @@ void DifficultyLevel::execute() {
 
 void ShowInventoryItem::init() {
     Graphics::Surface srcSurf;
-    NanEngine.resource->loadImage("ciftree", imageName, srcSurf);
+    NanEngine.resource->loadImage(imageName, srcSurf);
     _fullSurface.create(srcSurf.w, srcSurf.h, srcSurf.format);
     _fullSurface.blitFrom(srcSurf);
     srcSurf.free();

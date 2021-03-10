@@ -69,10 +69,11 @@ bool IFF::callback(Common::IFFChunk &c) {
 bool IFF::load() {
 	byte *data;
 	uint size;
-	data = NanEngine.resource->loadData("ciftree", _name, size);
+	data = NanEngine.resource->loadData(_name, size);
 
-	if (!data)
+	if (!data) {
 		return false;
+	}
 
 	// Scan the file for DATA chunks, completely ignoring IFF structure
 	// Presumably the string "DATA" is not allowed inside of chunks...
@@ -80,16 +81,17 @@ bool IFF::load() {
 
 	while (offset < size - 3) {
 		uint32 id = READ_BE_UINT32(data + offset);
-		if (id == ID_DATA) {
+		if (id == ID_DATA || id == ID_FORM) {
 			// Replace 'DATA' with standard 'FORM' for the parser
 			WRITE_BE_UINT32(data + offset, ID_FORM);
 			Common::MemoryReadStream stream(data + offset, size - offset);
 			Common::IFFParser iff(&stream);
-			Common::Functor1Mem< Common::IFFChunk &, bool, IFF > c(this, &IFF::callback);
+			Common::Functor1Mem<Common::IFFChunk &, bool, IFF> c(this, &IFF::callback);
 			iff.parse(c);
 			offset += 16; // Original engine skips 16, while 12 seems more logical
-		} else
+		} else {
 			++offset;
+		}
 	}
 
 	delete[] data;
