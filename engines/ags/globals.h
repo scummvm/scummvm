@@ -908,6 +908,16 @@ public:
 	 * @{
 	 */
 
+	int _pluginSimulatedClick = 0;
+	int _mouse_z_was = 0;
+
+	/**@}*/
+
+	/**
+	 * \defgroup walkablearea globals
+	 * @{
+	 */
+
 	AGS::Shared::Bitmap *_walkareabackup = nullptr, *_walkable_areas_temp = nullptr;
 
 	/**@}*/

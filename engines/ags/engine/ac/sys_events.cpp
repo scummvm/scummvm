@@ -40,13 +40,9 @@ using namespace AGS::Shared;
 using namespace AGS::Engine;
 
 extern volatile unsigned long globalTimerCounter;
-int pluginSimulatedClick;
-
 extern void domouse(int str);
 extern int mgetbutton();
 extern int misbuttondown(int buno);
-
-int mouse_z_was = 0;
 
 int ags_kbhit() {
 	return keypressed();
@@ -66,9 +62,9 @@ int ags_misbuttondown(int but) {
 int ags_mgetbutton() {
 	int result;
 
-	if (pluginSimulatedClick > NONE) {
-		result = pluginSimulatedClick;
-		pluginSimulatedClick = NONE;
+	if (_G(pluginSimulatedClick) > NONE) {
+		result = _G(pluginSimulatedClick);
+		_G(pluginSimulatedClick) = NONE;
 	} else {
 		result = mgetbutton();
 	}
@@ -85,12 +81,12 @@ void ags_domouse(int what) {
 
 int ags_check_mouse_wheel() {
 	int result = 0;
-	if ((_G(mouse_z) != mouse_z_was) && (_GP(game).options[OPT_MOUSEWHEEL] != 0)) {
-		if (_G(mouse_z) > mouse_z_was)
+	if ((_G(mouse_z) != _G(mouse_z_was)) && (_GP(game).options[OPT_MOUSEWHEEL] != 0)) {
+		if (_G(mouse_z) > _G(mouse_z_was))
 			result = 1;
 		else
 			result = -1;
-		mouse_z_was = _G(mouse_z);
+		_G(mouse_z_was) = _G(mouse_z);
 	}
 	return result;
 }

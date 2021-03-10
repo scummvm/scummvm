@@ -89,10 +89,9 @@ extern color palette[256];
 extern PluginObjectReader pluginReaders[MAX_PLUGIN_OBJECT_READERS];
 extern int numPluginReaders;
 extern RuntimeScriptValue GlobalReturnValue;
-extern int pluginSimulatedClick;
 
 void PluginSimulateMouseClick(int pluginButtonID) {
-	pluginSimulatedClick = pluginButtonID - 1;
+	_G(pluginSimulatedClick) = pluginButtonID - 1;
 }
 
 // **************** PLUGIN IMPLEMENTATION ****************
