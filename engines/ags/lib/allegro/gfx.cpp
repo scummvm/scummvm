@@ -216,6 +216,24 @@ void bmp_write8(byte *addr, int color) {
 	*addr = color;
 }
 
+void bmp_write15(byte *addr, int color) {
+	*((uint16 *)addr) = color;
+}
+
+void bmp_write16(byte *addr, int color) {
+	*((uint16 *)addr) = color;
+}
+
+void bmp_write24(byte *addr, int color) {
+	*addr = (color & 0xff);
+	*(addr+1) = ((color >> 8) & 0xff);
+	*(addr+2) = ((color >> 16) & 0xff);
+}
+
+void bmp_write32(byte *addr, int color) {
+	*((uint32 *)addr) = color;
+}
+
 void memory_putpixel(BITMAP *bmp, int x, int y, int color) {
 	putpixel(bmp, x, y, color);
 }

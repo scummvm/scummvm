@@ -37,6 +37,7 @@
 
 #include "ags/lib/aastr-0.1.1/aautil.h"
 #include "ags/globals.h"
+#include "ags/lib/allegro/color.h"
 
 namespace AGS3 {
 

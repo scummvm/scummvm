@@ -25,6 +25,11 @@
 
 namespace AGS3 {
 
+/* which color depths to include? */
+#define ALLEGRO_COLOR8
+#define ALLEGRO_COLOR16
+#define ALLEGRO_COLOR24
+#define ALLEGRO_COLOR32
 
 #ifndef INLINE
 #define INLINE
