@@ -39,8 +39,11 @@ void GraphicsManager::init() {
     _screen.create(640, 480, pixelFormat);
     _screen.setTransparentColor(transColor); 
 
+    Common::SeekableReadStream *ob = NanEngine.getBootChunkStream("OB0");
+    ob->seek(0);
+
     Graphics::Surface surf;
-    NanEngine.resource->loadImage("ciftree", "OBJECT0", surf);
+    NanEngine.resource->loadImage(ob->readString(), surf);
     object0.create(surf.w, surf.h, surf.format);
     object0.blitFrom(surf, Common::Point(0, 0));
     surf.free();

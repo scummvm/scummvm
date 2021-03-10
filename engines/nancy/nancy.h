@@ -185,21 +185,14 @@ protected:
 		State::State *previousState = nullptr;
 	};
 
-	typedef Common::Array<Image> ImageList;
-
-	ImageList _logos;
-	ImageList _frames;
-	ImageList _objects;
-	int32 _fontSize;
-
 	bool _cheatTypeIsEventFlag;
 
 	void preloadCals(const IFF &boot);
-	void readImageList(const IFF &boot, const Common::String &prefix, ImageList &list);
+	void readChunkList(const IFF &boot, Common::Serializer &ser, const Common::String &prefix);
 	Common::String readFilename(Common::ReadStream *stream) const;
 
-	virtual uint getFilenameLen() const = 0;
-	virtual void readBootSummary(const IFF &boot) = 0;
+	virtual uint getFilenameLen() const { return 9; };
+	virtual void readBootSummary(const IFF &boot);
 
 private:
 	GameFlow _gameFlow;

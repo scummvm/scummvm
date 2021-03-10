@@ -63,8 +63,11 @@ void Logo::process() {
 void Logo::init() {
 	_surf = new Graphics::Surface;
 
-	if (!NanEngine.resource->loadImage("ciftree", NanEngine._logos[0].name, *_surf))
-		error("Failed to load %s", NanEngine._logos[0].name.c_str());
+	Common::SeekableReadStream *lg = NanEngine.getBootChunkStream("LG0");
+	lg->seek(0);
+
+	if (!NanEngine.resource->loadImage(lg->readString(), *_surf))
+		error("Failed to load logo image");
 
 	_state = kStartSound;
 }

@@ -29,10 +29,10 @@ namespace Nancy {
 
 enum GameType {
 	kGameTypeNone = 0,
-	kGameTypeVampire,
-	kGameTypeNancy1,
-	kGameTypeNancy2,
-	kGameTypeNancy3
+	kGameTypeVampire = 1,
+	kGameTypeNancy1 = 2,
+	kGameTypeNancy2 = 3,
+	kGameTypeNancy3 = 4
 };
 
 struct NancyGameDescription {

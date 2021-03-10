@@ -305,7 +305,10 @@ void Scene::initStatic() {
     _mapAccessSceneIDs.push_back(0x4E2);
     _mapAccessSceneIDs.push_back(0x682);
 
-    _frame.init("FRAME"); // TODO should be extracted from BSUM
+    Common::SeekableReadStream *fr = NanEngine.getBootChunkStream("FR0");
+    fr->seek(0);
+
+    _frame.init(fr->readString());
     _viewport.init();
     _textbox.init();
     _inventoryBox.init();
