@@ -21,10 +21,10 @@
  */
 
 #include "engines/nancy/state/scene.h"
+
 #include "engines/nancy/nancy.h"
 #include "engines/nancy/resource.h"
 #include "engines/nancy/iff.h"
-#include "engines/nancy/action/actionmanager.h"
 #include "engines/nancy/input.h"
 #include "engines/nancy/sound.h"
 #include "engines/nancy/graphics.h"
@@ -32,9 +32,13 @@
 #include "engines/nancy/time.h"
 #include "engines/nancy/util.h"
 
+#include "engines/nancy/action/actionmanager.h"
+#include "engines/nancy/action/sliderpuzzle.h"
+
 #include "common/memstream.h"
 #include "common/rect.h"
 #include "common/func.h"
+#include "common/serializer.h"
 
 #include "graphics/surface.h"
 
@@ -45,10 +49,9 @@ void Scene::process() {
     switch (_state) {
     case kInit:
         init();
-        _state = kLoad;
         // fall through
-    case kLoadNew:
-        _state = kLoad;
+    case kInitStatic:
+        initStatic();
         // fall through
     case kLoad:
         load();
@@ -76,7 +79,7 @@ void Scene::changeScene(uint16 id, uint16 frame, uint16 verticalOffset, bool noS
     _sceneState.nextScene.frameID = frame;
     _sceneState.nextScene.verticalOffset = verticalOffset;
     _sceneState._doNotStartSound = noSound;
-    _state = kLoadNew;
+    _state = kLoad;
 }
 
 void Scene::changeScene(const SceneChangeDescription &sceneDescription) {
@@ -139,13 +142,89 @@ void Scene::registerGraphics() {
     _textbox.setVisible(false);
 }
 
+void Scene::synchronize(Common::Serializer &ser) {
+    if (ser.isSaving()) {
+        ser.syncAsUint16LE(_sceneState.currentScene.sceneID);
+        ser.syncAsUint16LE(_sceneState.currentScene.frameID);
+        ser.syncAsUint16LE(_sceneState.currentScene.verticalOffset);
+    } else if (ser.isLoading()) {
+        ser.syncAsUint16LE(_sceneState.nextScene.sceneID);
+        ser.syncAsUint16LE(_sceneState.nextScene.frameID);
+        ser.syncAsUint16LE(_sceneState.nextScene.verticalOffset);
+        _sceneState._doNotStartSound = false;
+
+        initStatic();
+        load();
+    }
+    
+    ser.syncAsUint16LE(_sceneState.pushedScene.sceneID);
+    ser.syncAsUint16LE(_sceneState.pushedScene.frameID);
+    ser.syncAsUint16LE(_sceneState.pushedScene.verticalOffset);
+    ser.syncAsByte(_sceneState.isScenePushed);
+
+    // hardcoded number of logic conditions, check if there can ever be more/less
+	for (uint i = 0; i < 30; ++i) {
+		ser.syncAsUint32LE(_flags.logicConditions[i].flag);
+	}
+
+	for (uint i = 0; i < 30; ++i) {
+		ser.syncAsUint32LE(_flags.logicConditions[i].timestamp);
+	}
+
+	// TODO hardcoded inventory size
+	auto &order = getInventoryBox()._order;
+	uint prevSize = getInventoryBox()._order.size();
+	getInventoryBox()._order.resize(11);
+	
+	if (ser.isSaving()) {
+		for (uint i = prevSize; i < order.size(); ++i) {
+			order[i] = -1;
+		}
+	}
+
+	ser.syncArray(order.data(), 11, Common::Serializer::Sint16LE);
+	
+	while (order.size() && order.back() == -1) {
+		order.pop_back();
+	}
+
+    if (ser.isLoading()) {
+        // Make sure the shades are open if we have items
+        getInventoryBox().onReorder();
+    }
+
+	// TODO hardcoded inventory size
+	ser.syncArray(_flags.items, 11, Common::Serializer::Byte);
+    ser.syncAsSint16LE(_flags.heldItem);
+    _engine->cursorManager->setCursorItemID(_flags.heldItem);
+
+	ser.syncAsUint32LE(_timers.lastTotalTime);
+	ser.syncAsUint32LE(_timers.sceneTime);
+	ser.syncAsUint32LE(_timers.playerTime);
+	ser.syncAsUint32LE(_timers.pushedPlayTime);
+	ser.syncAsUint32LE(_timers.timerTime);
+	ser.syncAsByte(_timers.timerIsActive);
+    ser.syncAsByte(_timers.timeOfDay);
+
+    _engine->setTotalPlayTime((uint32)_timers.lastTotalTime);
+
+	// TODO hardcoded number of event flags
+	ser.syncArray(_flags.eventFlags, 168, Common::Serializer::Byte);
+	
+	ser.syncArray<uint16>(_sceneState.sceneHitCount, (uint16)2001, Common::Serializer::Uint16LE);
+
+	ser.syncAsUint16LE(_difficulty);
+	ser.syncArray<uint16>(_hintsRemaining.data(), _hintsRemaining.size(), Common::Serializer::Uint16LE);
+	ser.syncAsSint16LE(_lastHint);
+}
+
 void Scene::init() {
     for (uint i = 0; i < 168; ++i) {
         _flags.eventFlags[i] = kFalse;
     }
 
     // Does this ever get used?
-    for (uint i = 0; i < 1000; ++i) {
+    for (uint i = 0; i < 2001; ++i) {
         _sceneState.sceneHitCount[i] = 0;
     }
 
@@ -175,7 +254,13 @@ void Scene::init() {
 
     _lastHint = -1;
 
-    chunk = _engine->getBootChunkStream("MAP");
+    Action::SliderPuzzle::playerHasTriedPuzzle = false;
+
+    _state = kInitStatic;
+}
+
+void Scene::initStatic() {
+    Common::SeekableReadStream *chunk = _engine->getBootChunkStream("MAP");
     chunk->seek(0x8A);
     readRect(*chunk, _mapHotspot);
 

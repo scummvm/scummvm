@@ -336,7 +336,7 @@ bool NancyConsole::Cmd_loadScene(int argc, const char **argv) {
 	}
 
 	_vm->scene->changeScene((uint16)atoi(argv[1]), 0, 0, false);
-	_vm->scene->_state = State::Scene::kLoadNew;
+	_vm->scene->_state = State::Scene::kLoad;
 	return cmdExit(0, 0);
 }
 

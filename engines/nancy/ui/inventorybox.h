@@ -37,11 +37,16 @@ namespace Nancy {
 class NancyEngine;
 struct NancyInput;
 
+namespace State {
+class Scene;
+}
+
 namespace UI {
 
 class InventoryBox : public RenderObject {
 	friend class InventoryScrollbar;
     friend class Shades;
+    friend class Nancy::State::Scene;
 
 public:
     struct ItemDescription {
@@ -64,8 +69,8 @@ public:
     void handleInput(NancyInput &input);
 
     // To be called from Scene
-    void addItem(uint itemID);
-    void removeItem(uint itemID);
+    void addItem(int16 itemID);
+    void removeItem(int16 itemID);
 
     ItemDescription getItemDescription(uint id) { return _itemDescriptions[id]; }
 
@@ -97,7 +102,9 @@ private:
         Shades(RenderObject &redrawFrom, InventoryBox *parent) :
             RenderObject(redrawFrom),
             _parent(parent),
-            _soundTriggered(false) {}
+            _soundTriggered(false),
+            _areOpen(false),
+            _curFrame(0) {}
         virtual ~Shades() =default;
 
         virtual void init() override;
@@ -132,7 +139,7 @@ private:
 
     float _scrollbarPos;
 
-    Common::Array<uint> _order;
+    Common::Array<int16> _order;
     ItemHotspot _itemHotspots[4]; 
 
     // INV contents

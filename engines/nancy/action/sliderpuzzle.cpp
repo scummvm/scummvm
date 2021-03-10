@@ -29,6 +29,8 @@
 #include "engines/nancy/sound.h"
 #include "engines/nancy/state/scene.h"
 
+#include "common/serializer.h"
+
 namespace Nancy {
 namespace Action {
 
@@ -131,9 +133,7 @@ void SliderPuzzle::execute(Nancy::NancyEngine *engine) {
 
         for (uint y = 0; y < height; ++y) {
             for (uint x = 0; x < width; ++x) {
-                if (!srcRects[y][x].isEmpty()) {
-                    drawTile(playerTileOrder[y][x], x, y);
-                }
+                drawTile(playerTileOrder[y][x], x, y);
             }
         }
 
@@ -287,7 +287,35 @@ void SliderPuzzle::handleInput(NancyInput &input) {
     }
 }
 
-void SliderPuzzle::drawTile(uint tileID, uint posX, uint posY) {
+void SliderPuzzle::synchronize(Common::Serializer &ser) {
+    ser.syncAsByte(playerHasTriedPuzzle);
+
+    byte x, y;
+
+    if (ser.isSaving()) {
+        y = playerTileOrder.size();
+        if (y) {
+            x = playerTileOrder.back().size();
+        }
+    }
+
+    ser.syncAsByte(x);
+    ser.syncAsByte(y);
+
+    playerTileOrder.resize(y);
+
+    for (int i = 0; i < y; ++i) {
+        playerTileOrder[i].resize(x);
+        ser.syncArray(playerTileOrder[i].data(), x, Common::Serializer::Sint16LE);
+    }
+}
+
+void SliderPuzzle::drawTile(int tileID, uint posX, uint posY) {
+    if (tileID < 0) {
+        undrawTile(posX, posY);
+        return;
+    }
+
     Common::Point destPoint(destRects[posY][posX].left - _screenPosition.left, destRects[posY][posX].top - _screenPosition.top);
     _drawSurface.blitFrom(image, srcRects[tileID / height][tileID % width], destPoint);
 

@@ -35,7 +35,7 @@ namespace Nancy {
 
 class NancyEngine;
 
-enum NancyFlag { kFalse = 1, kTrue = 2 };
+enum NancyFlag : byte { kFalse = 1, kTrue = 2 };
 enum MovementDirection : byte { kUp = 1, kDown = 2, kLeft = 4, kRight = 8, kMoveFast = 16 };
 
 // Describes a scene transition

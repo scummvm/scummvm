@@ -133,12 +133,12 @@ void InventoryBox::handleInput(NancyInput &input) {
     }
 }
 
-void InventoryBox::addItem(uint itemID) {
+void InventoryBox::addItem(int16 itemID) {
     if (_order.size() == 0) {
         // Adds first item, start shades animation
         _shades.setOpen(true);
     }
-    Common::Array<uint> back = _order;
+    Common::Array<int16> back = _order;
     _order.clear();
     _order.push_back(itemID);
     _order.push_back(back);
@@ -146,13 +146,9 @@ void InventoryBox::addItem(uint itemID) {
     onReorder();
 }
 
-void InventoryBox::removeItem(uint itemID) {
+void InventoryBox::removeItem(int16 itemID) {
     for (auto &i : _order) {
         if (i == itemID) {
-            if (_order.size() == 1) {
-                // Removes last item, start shades animation
-                _shades.setOpen(false);
-            }
             _order.erase(&i);
             onReorder();
             break;
@@ -174,6 +170,11 @@ void InventoryBox::onReorder() {
         _fullInventorySurface.blitFrom(_iconsSurface, _itemDescriptions[_order[i]].sourceRect, destPoint);
     }
 
+    if (_order.size() > 0) {
+        _shades.setOpen(true);
+    } else {
+        _shades.setOpen(false);
+    }
 
     _needsRedraw = true;
 }
@@ -225,8 +226,7 @@ void InventoryBox::Shades::init() {
     Common::Rect bounds = _parent->getBounds();
     _drawSurface.create(bounds.width(), bounds.height(), GraphicsManager::pixelFormat);
     _screenPosition = _parent->getScreenPosition();
-    _curFrame = 0;
-    _areOpen = false;
+    _nextFrameTime = 0;
     setAnimationFrame(_curFrame);
 
     RenderObject::init();

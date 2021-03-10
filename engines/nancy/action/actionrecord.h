@@ -85,7 +85,7 @@ public:
     ActionRecord() :
         type(0),
         execType(kOneShot),
-        isActive(0),
+        isActive(false),
         isDone(false),
         hasHotspot(false),
         state(ExecutionState::kBegin),
