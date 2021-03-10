@@ -39,8 +39,6 @@ using namespace AGS::Shared;
 using namespace AGS::Engine;
 
 extern color palette[256];
-extern IGraphicsDriver *gfxDriver;
-
 
 void get_new_size_for_sprite(int ee, int ww, int hh, int &newwid, int &newhit) {
 	newwid = ww;

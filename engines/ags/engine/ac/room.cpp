@@ -86,20 +86,8 @@ using namespace AGS::Shared;
 using namespace AGS::Engine;
 
 extern Bitmap *walkareabackup, *walkable_areas_temp;
-extern IDriverDependantBitmap *roomBackgroundBmp;
-extern IGraphicsDriver *gfxDriver;
-extern Bitmap *raw_saved_screen;
-extern int actSpsCount;
-extern Bitmap **actsps;
-extern IDriverDependantBitmap * *actspsbmp;
-extern Bitmap **actspswb;
-extern IDriverDependantBitmap * *actspswbbmp;
-extern CachedActSpsData *actspswbcache;
 extern color palette[256];
 extern int mouse_z_was;
-
-extern Bitmap **guibg;
-extern IDriverDependantBitmap **guibgbmp;
 
 RGB_MAP rgb_table;  // for 256-col antialiasing
 int new_room_flags = 0;
@@ -252,9 +240,9 @@ void unload_old_room() {
 	cancel_all_scripts();
 	_G(numevents) = 0;  // cancel any pending room events
 
-	if (roomBackgroundBmp != nullptr) {
-		gfxDriver->DestroyDDB(roomBackgroundBmp);
-		roomBackgroundBmp = nullptr;
+	if (_G(roomBackgroundBmp) != nullptr) {
+		_G(gfxDriver)->DestroyDDB(_G(roomBackgroundBmp));
+		_G(roomBackgroundBmp) = nullptr;
 	}
 
 	if (_G(croom) == nullptr) ;
@@ -269,8 +257,8 @@ void unload_old_room() {
 	_GP(play).bg_frame = 0;
 	_GP(play).bg_frame_locked = 0;
 	remove_screen_overlay(-1);
-	delete raw_saved_screen;
-	raw_saved_screen = nullptr;
+	delete _G(raw_saved_screen);
+	_G(raw_saved_screen) = nullptr;
 	for (ff = 0; ff < MAX_ROOM_BGFRAMES; ff++)
 		_GP(play).raw_modified[ff] = 0;
 	for (size_t i = 0; i < _GP(thisroom).LocalVariables.size() && i < MAX_GLOBAL_VARIABLES; ++i)
@@ -312,25 +300,25 @@ void unload_old_room() {
 		delete _G(objcache)[ff].image;
 		_G(objcache)[ff].image = nullptr;
 	}
-	// clear the actsps buffers to save memory, since the
+	// clear the _G(actsps) buffers to save memory, since the
 	// objects/characters involved probably aren't on the
 	// new screen. this also ensures all cached data is flushed
 	for (ff = 0; ff < MAX_ROOM_OBJECTS + _GP(game).numcharacters; ff++) {
-		delete actsps[ff];
-		actsps[ff] = nullptr;
+		delete _G(actsps)[ff];
+		_G(actsps)[ff] = nullptr;
 
-		if (actspsbmp[ff] != nullptr)
-			gfxDriver->DestroyDDB(actspsbmp[ff]);
-		actspsbmp[ff] = nullptr;
+		if (_G(actspsbmp)[ff] != nullptr)
+			_G(gfxDriver)->DestroyDDB(_G(actspsbmp)[ff]);
+		_G(actspsbmp)[ff] = nullptr;
 
-		delete actspswb[ff];
-		actspswb[ff] = nullptr;
+		delete _G(actspswb)[ff];
+		_G(actspswb)[ff] = nullptr;
 
-		if (actspswbbmp[ff] != nullptr)
-			gfxDriver->DestroyDDB(actspswbbmp[ff]);
-		actspswbbmp[ff] = nullptr;
+		if (_G(actspswbbmp)[ff] != nullptr)
+			_G(gfxDriver)->DestroyDDB(_G(actspswbbmp)[ff]);
+		_G(actspswbbmp)[ff] = nullptr;
 
-		actspswbcache[ff].valid = 0;
+		_G(actspswbcache)[ff].valid = 0;
 	}
 
 	// if Hide Player Character was ticked, restore it to visible
@@ -923,12 +911,12 @@ void new_room(int newnum, CharacterInfo *forchar) {
 
 		// Delete all gui background images
 		for (int i = 0; i < _GP(game).numgui; i++) {
-			delete guibg[i];
-			guibg[i] = nullptr;
+			delete _G(guibg)[i];
+			_G(guibg)[i] = nullptr;
 
-			if (guibgbmp[i])
-				gfxDriver->DestroyDDB(guibgbmp[i]);
-			guibgbmp[i] = nullptr;
+			if (_G(guibgbmp)[i])
+				_G(gfxDriver)->DestroyDDB(_G(guibgbmp)[i]);
+			_G(guibgbmp)[i] = nullptr;
 		}
 		guis_need_update = 1;
 	}

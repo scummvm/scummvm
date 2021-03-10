@@ -57,7 +57,6 @@ using namespace AGS::Engine;
 extern char pexbuf[STD_BUFFER_SIZE];
 extern int need_to_stop_cd;
 extern int use_cdplayer;
-extern IGraphicsDriver *gfxDriver;
 
 // TODO: move to test unit
 extern Bitmap *test_allegro_bitmap;
@@ -197,7 +196,7 @@ void quit_delete_temp_files() {
 void allegro_bitmap_test_release() {
 	delete test_allegro_bitmap;
 	if (test_allegro_ddb)
-		gfxDriver->DestroyDDB(test_allegro_ddb);
+		_G(gfxDriver)->DestroyDDB(test_allegro_ddb);
 }
 
 // quit - exits the engine, shutting down everything gracefully

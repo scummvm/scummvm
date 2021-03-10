@@ -72,13 +72,6 @@ using namespace Engine;
 // function is currently implemented in game.cpp
 HSaveError restore_game_data(Stream *in, SavegameVersion svg_version, const PreservedParams &pp, RestoredData &r_data);
 
-
-extern Bitmap **guibg;
-extern AGS::Engine::IDriverDependantBitmap **guibgbmp;
-extern AGS::Engine::IGraphicsDriver *gfxDriver;
-extern Bitmap *dynamicallyCreatedSurfaces[MAX_DYNAMIC_SURFACES];
-extern Bitmap *raw_saved_screen;
-
 namespace AGS {
 namespace Engine {
 
@@ -326,8 +319,8 @@ void DoBeforeRestore(PreservedParams &pp) {
 	pp.MusicVOX = _GP(play).separate_music_lib;
 
 	unload_old_room();
-	delete raw_saved_screen;
-	raw_saved_screen = nullptr;
+	delete _G(raw_saved_screen);
+	_G(raw_saved_screen) = nullptr;
 	remove_screen_overlay(-1);
 	_G(is_complete_overlay) = 0;
 	_G(is_text_overlay) = 0;
@@ -344,12 +337,12 @@ void DoBeforeRestore(PreservedParams &pp) {
 
 	// cleanup GUI backgrounds
 	for (int i = 0; i < _GP(game).numgui; ++i) {
-		delete guibg[i];
-		guibg[i] = nullptr;
+		delete _G(guibg)[i];
+		_G(guibg)[i] = nullptr;
 
-		if (guibgbmp[i])
-			gfxDriver->DestroyDDB(guibgbmp[i]);
-		guibgbmp[i] = nullptr;
+		if (_G(guibgbmp)[i])
+			_G(gfxDriver)->DestroyDDB(_G(guibgbmp)[i]);
+		_G(guibgbmp)[i] = nullptr;
 	}
 
 	// preserve script data sizes and cleanup scripts
@@ -451,7 +444,7 @@ HSaveError DoAfterRestore(const PreservedParams &pp, const RestoredData &r_data)
 	// restore these to the ones retrieved from the save game
 	const size_t dynsurf_num = Math::Min((uint)MAX_DYNAMIC_SURFACES, r_data.DynamicSurfaces.size());
 	for (size_t i = 0; i < dynsurf_num; ++i) {
-		dynamicallyCreatedSurfaces[i] = r_data.DynamicSurfaces[i];
+		_G(dynamicallyCreatedSurfaces)[i] = r_data.DynamicSurfaces[i];
 	}
 
 	for (int i = 0; i < _GP(game).numgui; ++i)
@@ -600,8 +593,8 @@ HSaveError DoAfterRestore(const PreservedParams &pp, const RestoredData &r_data)
 	update_directional_sound_vol();
 
 	for (int i = 0; i < _GP(game).numgui; ++i) {
-		guibg[i] = BitmapHelper::CreateBitmap(_GP(guis)[i].Width, _GP(guis)[i].Height, _GP(game).GetColorDepth());
-		guibg[i] = ReplaceBitmapWithSupportedFormat(guibg[i]);
+		_G(guibg)[i] = BitmapHelper::CreateBitmap(_GP(guis)[i].Width, _GP(guis)[i].Height, _GP(game).GetColorDepth());
+		_G(guibg)[i] = ReplaceBitmapWithSupportedFormat(_G(guibg)[i]);
 	}
 
 	recreate_overlay_ddbs();

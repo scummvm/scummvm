@@ -36,9 +36,6 @@ namespace AGS3 {
 using namespace AGS::Shared;
 using namespace AGS::Engine;
 
-
-extern IGraphicsDriver *gfxDriver;
-
 int LoadImageFile(const char *filename) {
 	ResolvedPath rp;
 	if (!ResolveScriptPath(filename, true, rp))

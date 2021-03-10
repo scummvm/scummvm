@@ -147,8 +147,8 @@ void draw_game_screen_callback();
 void GfxDriverOnInitCallback(void *data);
 bool GfxDriverNullSpriteCallback(int x, int y);
 void putpixel_compensate(Shared::Bitmap *g, int xx, int yy, int col);
-// create the actsps[aa] image with the object drawn correctly
-// returns 1 if nothing at all has changed and actsps is still
+// create the _G(actsps)[aa] image with the object drawn correctly
+// returns 1 if nothing at all has changed and _G(actsps) is still
 // intact from last time; 0 otherwise
 int construct_object_gfx(int aa, int *drawnWidth, int *drawnHeight, bool alwaysUseSoftware);
 void clear_letterbox_borders();

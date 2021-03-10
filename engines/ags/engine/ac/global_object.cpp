@@ -52,11 +52,6 @@ using namespace AGS::Shared;
 
 #define OVERLAPPING_OBJECT 1000
 
-extern int actSpsCount;
-extern Bitmap **actsps;
-extern IDriverDependantBitmap **actspsbmp;
-extern IGraphicsDriver *gfxDriver;
-
 int GetObjectIDAtScreen(int scrx, int scry) {
 	// translate screen co-ordinates to room co-ordinates
 	VpPoint vpt = _GP(play).ScreenToRoomDivDown(scrx, scry);
@@ -257,13 +252,13 @@ void MergeObject(int obn) {
 	//Bitmap *oldabuf = graphics->bmp;
 	//abuf = _GP(thisroom).BgFrames.Graphic[_GP(play).bg_frame];
 	PBitmap bg_frame = _GP(thisroom).BgFrames[_GP(play).bg_frame].Graphic;
-	if (bg_frame->GetColorDepth() != actsps[obn]->GetColorDepth())
+	if (bg_frame->GetColorDepth() != _G(actsps)[obn]->GetColorDepth())
 		quit("!MergeObject: unable to merge object due to color depth differences");
 
 	int xpos = data_to_game_coord(_G(objs)[obn].x);
 	int ypos = (data_to_game_coord(_G(objs)[obn].y) - theHeight);
 
-	draw_sprite_support_alpha(bg_frame.get(), false, xpos, ypos, actsps[obn], (_GP(game).SpriteInfos[_G(objs)[obn].num].Flags & SPF_ALPHACHANNEL) != 0);
+	draw_sprite_support_alpha(bg_frame.get(), false, xpos, ypos, _G(actsps)[obn], (_GP(game).SpriteInfos[_G(objs)[obn].num].Flags & SPF_ALPHACHANNEL) != 0);
 	invalidate_screen();
 	mark_current_background_dirty();
 
@@ -495,13 +490,13 @@ void GetObjectPropertyText(int item, const char *property, char *bufer) {
 }
 
 Bitmap *GetObjectImage(int obj, int *isFlipped) {
-	if (!gfxDriver->HasAcceleratedTransform()) {
-		if (actsps[obj] != nullptr) {
-			// the actsps image is pre-flipped, so no longer register the image as such
+	if (!_G(gfxDriver)->HasAcceleratedTransform()) {
+		if (_G(actsps)[obj] != nullptr) {
+			// the _G(actsps) image is pre-flipped, so no longer register the image as such
 			if (isFlipped)
 				*isFlipped = 0;
 
-			return actsps[obj];
+			return _G(actsps)[obj];
 		}
 	}
 	return _GP(spriteset)[_G(objs)[obj].num];

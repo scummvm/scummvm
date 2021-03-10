@@ -53,8 +53,6 @@ namespace AGS3 {
 using namespace AGS::Shared;
 using namespace AGS::Engine;
 
-extern IGraphicsDriver *gfxDriver;
-
 extern void ags_domouse(int str);
 extern int misbuttondown(int buno);
 
@@ -378,8 +376,8 @@ void update_inv_cursor(int invnum) {
 
 void update_cached_mouse_cursor() {
 	if (mouseCursor != nullptr)
-		gfxDriver->DestroyDDB(mouseCursor);
-	mouseCursor = gfxDriver->CreateDDBFromBitmap(_G(mousecurs)[0], alpha_blend_cursor != 0);
+		_G(gfxDriver)->DestroyDDB(mouseCursor);
+	mouseCursor = _G(gfxDriver)->CreateDDBFromBitmap(_G(mousecurs)[0], alpha_blend_cursor != 0);
 }
 
 void set_new_cursor_graphic(int spriteslot) {

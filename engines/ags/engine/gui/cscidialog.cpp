@@ -48,8 +48,6 @@ namespace AGS3 {
 using AGS::Shared::Bitmap;
 namespace BitmapHelper = AGS::Shared::BitmapHelper;
 
-extern IGraphicsDriver *gfxDriver;
-
 //-----------------------------------------------------------------------------
 // DIALOG SYSTEM STUFF below
 

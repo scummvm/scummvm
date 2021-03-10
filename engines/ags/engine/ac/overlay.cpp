@@ -47,8 +47,6 @@ namespace AGS3 {
 using namespace AGS::Shared;
 using namespace AGS::Engine;
 
-extern IGraphicsDriver *gfxDriver;
-
 void Overlay_Remove(ScriptOverlay *sco) {
 	sco->Remove();
 }
@@ -151,7 +149,7 @@ void dispose_overlay(ScreenOverlay &over) {
 	delete over.pic;
 	over.pic = nullptr;
 	if (over.bmp != nullptr)
-		gfxDriver->DestroyDDB(over.bmp);
+		_G(gfxDriver)->DestroyDDB(over.bmp);
 	over.bmp = nullptr;
 	// if the script didn't actually use the Overlay* return
 	// value, dispose of the pointer
@@ -205,7 +203,7 @@ size_t add_screen_overlay(int x, int y, int type, Shared::Bitmap *piccy, int pic
 	}
 	ScreenOverlay over;
 	over.pic = piccy;
-	over.bmp = gfxDriver->CreateDDBFromBitmap(piccy, alphaChannel);
+	over.bmp = _G(gfxDriver)->CreateDDBFromBitmap(piccy, alphaChannel);
 	over.x = x;
 	over.y = y;
 	over._offsetX = pic_offx;
@@ -267,9 +265,9 @@ void get_overlay_position(const ScreenOverlay &over, int *x, int *y) {
 void recreate_overlay_ddbs() {
 	for (auto &over : _GP(screenover)) {
 		if (over.bmp)
-			gfxDriver->DestroyDDB(over.bmp);
+			_G(gfxDriver)->DestroyDDB(over.bmp);
 		if (over.pic)
-			over.bmp = gfxDriver->CreateDDBFromBitmap(over.pic, false);
+			over.bmp = _G(gfxDriver)->CreateDDBFromBitmap(over.pic, false);
 		else
 			over.bmp = nullptr;
 	}

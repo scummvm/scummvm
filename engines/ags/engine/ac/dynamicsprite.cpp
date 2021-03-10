@@ -50,7 +50,6 @@ using namespace Shared;
 using namespace Engine;
 
 extern color palette[256];
-extern AGS::Engine::IGraphicsDriver *gfxDriver;
 
 // ** SCRIPT DYNAMIC SPRITE
 

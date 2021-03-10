@@ -54,8 +54,6 @@ using namespace AGS::Shared;
 using namespace AGS::Engine;
 
 extern GameSetup usetup;
-extern int _G(our_eip);
-extern IGraphicsDriver *gfxDriver;
 extern color palette[256];
 
 //include <shlobj.h>
@@ -962,7 +960,7 @@ LPDIRECTDRAWSURFACE2 IAGSEngine::GetBitmapSurface(BITMAP *bmp) {
 
 	BMP_EXTRA_INFO *bei = (BMP_EXTRA_INFO *)bmp->extra;
 
-	if (bmp == gfxDriver->GetMemoryBackBuffer()->GetAllegroBitmap())
+	if (bmp == _G(gfxDriver)->GetMemoryBackBuffer()->GetAllegroBitmap())
 		invalidate_screen();
 
 	return bei->surf;

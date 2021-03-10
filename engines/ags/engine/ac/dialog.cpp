@@ -71,7 +71,6 @@ namespace AGS3 {
 using namespace AGS::Shared;
 
 extern int cur_mode, cur_cursor;
-extern IGraphicsDriver *gfxDriver;
 
 void Dialog_Start(ScriptDialog *sd) {
 	RunDialog(sd->id);
@@ -780,14 +779,14 @@ void DialogOptions::Redraw() {
 	if ((ddb != nullptr) &&
 	        ((ddb->GetWidth() != dirtywidth) ||
 	         (ddb->GetHeight() != dirtyheight))) {
-		gfxDriver->DestroyDDB(ddb);
+		_G(gfxDriver)->DestroyDDB(ddb);
 		ddb = nullptr;
 	}
 
 	if (ddb == nullptr)
-		ddb = gfxDriver->CreateDDBFromBitmap(subBitmap, options_surface_has_alpha, false);
+		ddb = _G(gfxDriver)->CreateDDBFromBitmap(subBitmap, options_surface_has_alpha, false);
 	else
-		gfxDriver->UpdateDDBFromBitmap(ddb, subBitmap, options_surface_has_alpha);
+		_G(gfxDriver)->UpdateDDBFromBitmap(ddb, subBitmap, options_surface_has_alpha);
 
 	if (runGameLoopsInBackground) {
 		render_graphics(ddb, dirtyx, dirtyy);
@@ -988,7 +987,7 @@ void DialogOptions::Close() {
 	}
 
 	if (ddb != nullptr)
-		gfxDriver->DestroyDDB(ddb);
+		_G(gfxDriver)->DestroyDDB(ddb);
 	delete subBitmap;
 
 	set_mouse_cursor(curswas);

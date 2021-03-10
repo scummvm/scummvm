@@ -82,7 +82,6 @@ extern unsigned int load_new_game;
 extern int load_new_game_restore;
 extern int gui_disabled_style;
 extern int getloctype_index;
-extern IGraphicsDriver *gfxDriver;
 extern color palette[256];
 
 #if AGS_PLATFORM_OS_IOS || AGS_PLATFORM_OS_ANDROID

@@ -43,12 +43,6 @@ namespace AGS3 {
 using namespace AGS::Shared;
 using namespace AGS::Engine;
 
-extern Bitmap *raw_saved_screen;
-
-
-
-
-
 // Raw screen writing routines - similar to old CapturedStuff
 #define RAW_START() _GP(play).raw_drawing_surface = _GP(thisroom).BgFrames[_GP(play).bg_frame].Graphic; _GP(play).raw_modified[_GP(play).bg_frame] = 1
 #define RAW_END()
@@ -56,27 +50,27 @@ extern Bitmap *raw_saved_screen;
 
 // RawSaveScreen: copy the current screen to a backup bitmap
 void RawSaveScreen() {
-	if (raw_saved_screen != nullptr)
-		delete raw_saved_screen;
+	if (_G(raw_saved_screen) != nullptr)
+		delete _G(raw_saved_screen);
 	PBitmap source = _GP(thisroom).BgFrames[_GP(play).bg_frame].Graphic;
-	raw_saved_screen = BitmapHelper::CreateBitmapCopy(source.get());
+	_G(raw_saved_screen) = BitmapHelper::CreateBitmapCopy(source.get());
 }
 // RawRestoreScreen: copy backup bitmap back to screen; we
 // deliberately don't free the Bitmap *cos they can multiple restore
 // and it gets freed on room exit anyway
 void RawRestoreScreen() {
-	if (raw_saved_screen == nullptr) {
+	if (_G(raw_saved_screen) == nullptr) {
 		debug_script_warn("RawRestoreScreen: unable to restore, since the screen hasn't been saved previously.");
 		return;
 	}
 	PBitmap deston = _GP(thisroom).BgFrames[_GP(play).bg_frame].Graphic;
-	deston->Blit(raw_saved_screen, 0, 0, 0, 0, deston->GetWidth(), deston->GetHeight());
+	deston->Blit(_G(raw_saved_screen), 0, 0, 0, 0, deston->GetWidth(), deston->GetHeight());
 	invalidate_screen();
 	mark_current_background_dirty();
 }
 // Restores the backup bitmap, but tints it to the specified level
 void RawRestoreScreenTinted(int red, int green, int blue, int opacity) {
-	if (raw_saved_screen == nullptr) {
+	if (_G(raw_saved_screen) == nullptr) {
 		debug_script_warn("RawRestoreScreenTinted: unable to restore, since the screen hasn't been saved previously.");
 		return;
 	}
@@ -88,7 +82,7 @@ void RawRestoreScreenTinted(int red, int green, int blue, int opacity) {
 	debug_script_log("RawRestoreTinted RGB(%d,%d,%d) %d%%", red, green, blue, opacity);
 
 	PBitmap deston = _GP(thisroom).BgFrames[_GP(play).bg_frame].Graphic;
-	tint_image(deston.get(), raw_saved_screen, red, green, blue, opacity);
+	tint_image(deston.get(), _G(raw_saved_screen), red, green, blue, opacity);
 	invalidate_screen();
 	mark_current_background_dirty();
 }

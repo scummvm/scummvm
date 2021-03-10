@@ -64,8 +64,6 @@ namespace AGS3 {
 using namespace Shared;
 
 extern color palette[256];
-extern Bitmap *dynamicallyCreatedSurfaces[MAX_DYNAMIC_SURFACES];
-extern Bitmap *raw_saved_screen;
 
 namespace AGS {
 namespace Engine {
@@ -777,11 +775,11 @@ HSaveError ReadOverlays(PStream in, int32_t cmp_ver, const PreservedParams &pp, 
 HSaveError WriteDynamicSurfaces(PStream out) {
 	out->WriteInt32(MAX_DYNAMIC_SURFACES);
 	for (int i = 0; i < MAX_DYNAMIC_SURFACES; ++i) {
-		if (dynamicallyCreatedSurfaces[i] == nullptr) {
+		if (_G(dynamicallyCreatedSurfaces)[i] == nullptr) {
 			out->WriteInt8(0);
 		} else {
 			out->WriteInt8(1);
-			serialize_bitmap(dynamicallyCreatedSurfaces[i], out.get());
+			serialize_bitmap(_G(dynamicallyCreatedSurfaces)[i], out.get());
 		}
 	}
 	return HSaveError::None();
@@ -893,9 +891,9 @@ HSaveError WriteThisRoom(PStream out) {
 		if (_GP(play).raw_modified[i])
 			serialize_bitmap(_GP(thisroom).BgFrames[i].Graphic.get(), out.get());
 	}
-	out->WriteBool(raw_saved_screen != nullptr);
-	if (raw_saved_screen)
-		serialize_bitmap(raw_saved_screen, out.get());
+	out->WriteBool(_G(raw_saved_screen) != nullptr);
+	if (_G(raw_saved_screen))
+		serialize_bitmap(_G(raw_saved_screen), out.get());
 
 	// room region state
 	for (int i = 0; i < MAX_ROOM_REGIONS; ++i) {
@@ -940,7 +938,7 @@ HSaveError ReadThisRoom(PStream in, int32_t cmp_ver, const PreservedParams &pp, 
 			r_data.RoomBkgScene[i] = nullptr;
 	}
 	if (in->ReadBool())
-		raw_saved_screen = read_serialized_bitmap(in.get());
+		_G(raw_saved_screen) = read_serialized_bitmap(in.get());
 
 	// room region state
 	for (int i = 0; i < MAX_ROOM_REGIONS; ++i) {

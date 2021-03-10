@@ -64,10 +64,6 @@ using namespace AGS::Shared;
 using namespace AGS::Engine;
 
 extern int cur_mode, cur_cursor;
-extern Bitmap **guibg;
-extern IDriverDependantBitmap **guibgbmp;
-extern IGraphicsDriver *gfxDriver;
-
 
 ScriptGUI *GUI_AsTextWindow(ScriptGUI *tehgui) {
 	// Internally both GUI and TextWindow are implemented by same class
@@ -550,15 +546,15 @@ int adjust_y_for_guis(int yy) {
 
 void recreate_guibg_image(GUIMain *tehgui) {
 	int ifn = tehgui->ID;
-	delete guibg[ifn];
-	guibg[ifn] = BitmapHelper::CreateBitmap(tehgui->Width, tehgui->Height, _GP(game).GetColorDepth());
-	if (guibg[ifn] == nullptr)
+	delete _G(guibg)[ifn];
+	_G(guibg)[ifn] = BitmapHelper::CreateBitmap(tehgui->Width, tehgui->Height, _GP(game).GetColorDepth());
+	if (_G(guibg)[ifn] == nullptr)
 		quit("SetGUISize: internal error: unable to reallocate gui cache");
-	guibg[ifn] = ReplaceBitmapWithSupportedFormat(guibg[ifn]);
+	_G(guibg)[ifn] = ReplaceBitmapWithSupportedFormat(_G(guibg)[ifn]);
 
-	if (guibgbmp[ifn] != nullptr) {
-		gfxDriver->DestroyDDB(guibgbmp[ifn]);
-		guibgbmp[ifn] = nullptr;
+	if (_G(guibgbmp)[ifn] != nullptr) {
+		_G(gfxDriver)->DestroyDDB(_G(guibgbmp)[ifn]);
+		_G(guibgbmp)[ifn] = nullptr;
 	}
 }
 

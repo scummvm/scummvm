@@ -49,9 +49,7 @@ using namespace AGS::Shared;
 using namespace AGS::Engine;
 
 extern color palette[256];
-extern IGraphicsDriver *gfxDriver;
 extern color old_palette[256];
-
 
 int run_claimable_event(const char *tsname, bool includeRoom, int numParams, const RuntimeScriptValue *params, bool *eventWasClaimed) {
 	*eventWasClaimed = true;
@@ -227,8 +225,8 @@ void process_event(EventHappened *evp) {
 		else if (theTransition == FADE_NORMAL) {
 			my_fade_in(palette, 5);
 		} else if (theTransition == FADE_BOXOUT) {
-			if (!gfxDriver->UsesMemoryBackBuffer()) {
-				gfxDriver->BoxOutEffect(false, get_fixed_pixel_size(16), 1000 / GetGameSpeed());
+			if (!_G(gfxDriver)->UsesMemoryBackBuffer()) {
+				_G(gfxDriver)->BoxOutEffect(false, get_fixed_pixel_size(16), 1000 / GetGameSpeed());
 			} else {
 				// First of all we render the game once again and save backbuffer from further editing.
 				// We put temporary bitmap as a new backbuffer for the transition period, and
@@ -236,10 +234,10 @@ void process_event(EventHappened *evp) {
 				set_palette_range(palette, 0, 255, 0);
 				construct_game_scene(true);
 				construct_game_screen_overlay(false);
-				gfxDriver->RenderToBackBuffer();
-				Bitmap *saved_backbuf = gfxDriver->GetMemoryBackBuffer();
+				_G(gfxDriver)->RenderToBackBuffer();
+				Bitmap *saved_backbuf = _G(gfxDriver)->GetMemoryBackBuffer();
 				Bitmap *temp_scr = new Bitmap(saved_backbuf->GetWidth(), saved_backbuf->GetHeight(), saved_backbuf->GetColorDepth());
-				gfxDriver->SetMemoryBackBuffer(temp_scr);
+				_G(gfxDriver)->SetMemoryBackBuffer(temp_scr);
 				temp_scr->Clear();
 				render_to_screen();
 
@@ -253,13 +251,13 @@ void process_event(EventHappened *evp) {
 					boxhit = Math::Clamp(boxhit, 0, viewport.GetHeight());
 					int lxp = viewport.GetWidth() / 2 - boxwid / 2;
 					int lyp = viewport.GetHeight() / 2 - boxhit / 2;
-					gfxDriver->Vsync();
+					_G(gfxDriver)->Vsync();
 					temp_scr->Blit(saved_backbuf, lxp, lyp, lxp, lyp,
 						boxwid, boxhit);
 					render_to_screen();
 					WaitForNextFrame();
 				}
-				gfxDriver->SetMemoryBackBuffer(saved_backbuf);
+				_G(gfxDriver)->SetMemoryBackBuffer(saved_backbuf);
 			}
 			_GP(play).screen_is_faded_out = 0;
 		} else if (theTransition == FADE_CROSSFADE) {
@@ -280,7 +278,7 @@ void process_event(EventHappened *evp) {
 				if (transparency > 16) {
 					// on last frame of fade (where transparency < 16), don't
 					// draw the old screen on top
-					gfxDriver->DrawSprite(0, 0, ddb);
+					_G(gfxDriver)->DrawSprite(0, 0, ddb);
 				}
 				render_to_screen();
 				update_polled_stuff_if_runtime();
@@ -292,7 +290,7 @@ void process_event(EventHappened *evp) {
 			delete saved_viewport_bitmap;
 			saved_viewport_bitmap = nullptr;
 			set_palette_range(palette, 0, 255, 0);
-			gfxDriver->DestroyDDB(ddb);
+			_G(gfxDriver)->DestroyDDB(ddb);
 		} else if (theTransition == FADE_DISSOLVE) {
 			int pattern[16] = { 0, 4, 14, 9, 5, 11, 2, 8, 10, 3, 12, 7, 15, 6, 13, 1 };
 			int aa, bb, cc;
@@ -312,10 +310,10 @@ void process_event(EventHappened *evp) {
 						saved_viewport_bitmap->PutPixel(bb + pattern[aa] / 4, cc + pattern[aa] % 4, maskCol);
 					}
 				}
-				gfxDriver->UpdateDDBFromBitmap(ddb, saved_viewport_bitmap, false);
+				_G(gfxDriver)->UpdateDDBFromBitmap(ddb, saved_viewport_bitmap, false);
 				construct_game_scene(true);
 				construct_game_screen_overlay(false);
-				gfxDriver->DrawSprite(0, 0, ddb);
+				_G(gfxDriver)->DrawSprite(0, 0, ddb);
 				render_to_screen();
 				update_polled_stuff_if_runtime();
 				WaitForNextFrame();
@@ -324,7 +322,7 @@ void process_event(EventHappened *evp) {
 			delete saved_viewport_bitmap;
 			saved_viewport_bitmap = nullptr;
 			set_palette_range(palette, 0, 255, 0);
-			gfxDriver->DestroyDDB(ddb);
+			_G(gfxDriver)->DestroyDDB(ddb);
 		}
 
 	} else if (evp->type == EV_IFACECLICK)

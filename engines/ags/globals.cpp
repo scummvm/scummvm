@@ -127,6 +127,9 @@ Globals::Globals() {
 	_CameraDrawData = new std::vector<RoomCameraDrawData>();
 	_sprlist = new std::vector<SpriteListEntry>();
 	_thingsToDrawList = new std::vector<SpriteListEntry>();
+	_dynamicallyCreatedSurfaces = new AGS::Shared::Bitmap *[MAX_DYNAMIC_SURFACES];
+	Common::fill(_dynamicallyCreatedSurfaces, _dynamicallyCreatedSurfaces +
+		MAX_DYNAMIC_SURFACES, (AGS::Shared::Bitmap *)nullptr);
 
 	// draw_software.cpp globals
 	_BlackRects = new DirtyRects();
@@ -280,6 +283,7 @@ Globals::~Globals() {
 	delete _CameraDrawData;
 	delete _sprlist;
 	delete _thingsToDrawList;
+	delete[] _dynamicallyCreatedSurfaces;
 
 	// draw_software.cpp globals
 	delete _BlackRects;

@@ -80,8 +80,6 @@ namespace AGS3 {
 using namespace AGS::Shared;
 
 extern Bitmap *walkable_areas_temp;
-extern IGraphicsDriver *gfxDriver;
-extern Bitmap **actsps;
 
 // **** CHARACTER: FUNCTIONS ****
 
@@ -2071,12 +2069,12 @@ void CheckViewFrameForCharacter(CharacterInfo *chi) {
 }
 
 Bitmap *GetCharacterImage(int charid, int *isFlipped) {
-	if (!gfxDriver->HasAcceleratedTransform()) {
-		if (actsps[charid + MAX_ROOM_OBJECTS] != nullptr) {
-			// the actsps image is pre-flipped, so no longer register the image as such
+	if (!_G(gfxDriver)->HasAcceleratedTransform()) {
+		if (_G(actsps)[charid + MAX_ROOM_OBJECTS] != nullptr) {
+			// the _G(actsps) image is pre-flipped, so no longer register the image as such
 			if (isFlipped)
 				*isFlipped = 0;
-			return actsps[charid + MAX_ROOM_OBJECTS];
+			return _G(actsps)[charid + MAX_ROOM_OBJECTS];
 		}
 	}
 	CharacterInfo *chin = &_GP(game).chars[charid];

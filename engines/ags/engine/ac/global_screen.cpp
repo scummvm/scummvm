@@ -41,7 +41,6 @@ namespace AGS3 {
 using namespace AGS::Shared;
 using namespace AGS::Engine;
 
-extern IGraphicsDriver *gfxDriver;
 extern color palette[256];
 
 void FlipScreen(int amount) {
@@ -66,7 +65,7 @@ void ShakeScreen(int severe) {
 	_GP(play).shakesc_amount = severe;
 	_GP(play).mouse_cursor_hidden++;
 
-	if (gfxDriver->RequiresFullRedrawEachFrame()) {
+	if (_G(gfxDriver)->RequiresFullRedrawEachFrame()) {
 		for (int hh = 0; hh < 40; hh++) {
 			_G(loopcounter)++;
 			_G(platform)->Delay(50);
@@ -78,7 +77,7 @@ void ShakeScreen(int severe) {
 	} else {
 		// Optimized variant for software render: create game scene once and shake it
 		construct_game_scene();
-		gfxDriver->RenderToBackBuffer();
+		_G(gfxDriver)->RenderToBackBuffer();
 		for (int hh = 0; hh < 40; hh++) {
 			_G(platform)->Delay(50);
 			const int yoff = hh % 2 == 0 ? 0 : severe;
@@ -135,7 +134,7 @@ void my_fade_out(int spdd) {
 		return;
 
 	if (_GP(play).screen_is_faded_out == 0)
-		gfxDriver->FadeOut(spdd, _GP(play).fade_to_red, _GP(play).fade_to_green, _GP(play).fade_to_blue);
+		_G(gfxDriver)->FadeOut(spdd, _GP(play).fade_to_red, _GP(play).fade_to_green, _GP(play).fade_to_blue);
 
 	if (_GP(game).color_depth > 1)
 		_GP(play).screen_is_faded_out = 1;

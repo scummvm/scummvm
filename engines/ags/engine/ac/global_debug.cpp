@@ -53,14 +53,13 @@ namespace AGS3 {
 using namespace AGS::Shared;
 using namespace AGS::Engine;
 
-extern IGraphicsDriver *gfxDriver;
 extern TreeMap *transtree;
 extern char transFileName[MAX_PATH];
 
 String GetRuntimeInfo() {
-	DisplayMode mode = gfxDriver->GetDisplayMode();
-	Rect render_frame = gfxDriver->GetRenderDestination();
-	PGfxFilter filter = gfxDriver->GetGraphicsFilter();
+	DisplayMode mode = _G(gfxDriver)->GetDisplayMode();
+	Rect render_frame = _G(gfxDriver)->GetRenderDestination();
+	PGfxFilter filter = _G(gfxDriver)->GetGraphicsFilter();
 	String runtimeInfo = String::FromFormat(
 		"Adventure Game Studio run-time engine[ACI version %s"
 		"[Game resolution %d x %d (%d-bit)"
@@ -69,7 +68,7 @@ String GetRuntimeInfo() {
 		_G(EngineVersion).LongString.GetCStr(), _GP(game).GetGameRes().Width, _GP(game).GetGameRes().Height, _GP(game).GetColorDepth(),
 		mode.Width, mode.Height, mode.ColorDepth, (_G(convert_16bit_bgr)) ? " BGR" : "",
 		mode.Windowed ? " W" : "",
-		gfxDriver->GetDriverName(), filter->GetInfo().Name.GetCStr(),
+		_G(gfxDriver)->GetDriverName(), filter->GetInfo().Name.GetCStr(),
 		render_frame.GetWidth(), render_frame.GetHeight(),
 		_GP(spriteset).GetCacheSize() / 1024, _GP(spriteset).GetMaxCacheSize() / 1024, _GP(spriteset).GetLockedSize() / 1024);
 	if (_GP(play).separate_music_lib)
@@ -111,12 +110,12 @@ void script_debug(int cmdd, int dataa) {
 		Rect mask_src = Rect(camera.Left / _GP(thisroom).MaskResolution, camera.Top / _GP(thisroom).MaskResolution, camera.Right / _GP(thisroom).MaskResolution, camera.Bottom / _GP(thisroom).MaskResolution);
 		view_bmp->StretchBlt(tempw, mask_src, RectWH(0, 0, viewport.GetWidth(), viewport.GetHeight()), Shared::kBitmap_Transparency);
 
-		IDriverDependantBitmap *ddb = gfxDriver->CreateDDBFromBitmap(view_bmp, false, true);
+		IDriverDependantBitmap *ddb = _G(gfxDriver)->CreateDDBFromBitmap(view_bmp, false, true);
 		render_graphics(ddb, viewport.Left, viewport.Top);
 
 		delete tempw;
 		delete view_bmp;
-		gfxDriver->DestroyDDB(ddb);
+		_G(gfxDriver)->DestroyDDB(ddb);
 		ags_wait_until_keypress();
 		invalidate_screen();
 	} else if (cmdd == 3) {
@@ -165,12 +164,12 @@ void script_debug(int cmdd, int dataa) {
 		Rect mask_src = Rect(camera.Left / _GP(thisroom).MaskResolution, camera.Top / _GP(thisroom).MaskResolution, camera.Right / _GP(thisroom).MaskResolution, camera.Bottom / _GP(thisroom).MaskResolution);
 		view_bmp->StretchBlt(tempw, mask_src, RectWH(0, 0, viewport.GetWidth(), viewport.GetHeight()), Shared::kBitmap_Transparency);
 
-		IDriverDependantBitmap *ddb = gfxDriver->CreateDDBFromBitmap(view_bmp, false, true);
+		IDriverDependantBitmap *ddb = _G(gfxDriver)->CreateDDBFromBitmap(view_bmp, false, true);
 		render_graphics(ddb, viewport.Left, viewport.Top);
 
 		delete tempw;
 		delete view_bmp;
-		gfxDriver->DestroyDDB(ddb);
+		_G(gfxDriver)->DestroyDDB(ddb);
 		ags_wait_until_keypress();
 	} else if (cmdd == 99)
 		ccSetOption(SCOPT_DEBUGRUN, dataa);

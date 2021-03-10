@@ -51,7 +51,6 @@ using namespace AGS::Shared;
 using namespace AGS::Engine;
 
 extern int _places_r, _places_g, _places_b;
-extern IGraphicsDriver *gfxDriver;
 
 // Convert guis position and size to proper game resolution.
 // Necessary for pre 3.1.0 games only to sync with modern engine.
@@ -143,17 +142,17 @@ void engine_init_resolution_settings(const Size game_size) {
 
 // Setup gfx driver callbacks and options
 void engine_post_gfxmode_driver_setup() {
-	gfxDriver->SetCallbackForPolling(update_polled_stuff_if_runtime);
-	gfxDriver->SetCallbackToDrawScreen(draw_game_screen_callback, construct_engine_overlay);
-	gfxDriver->SetCallbackForNullSprite(GfxDriverNullSpriteCallback);
+	_G(gfxDriver)->SetCallbackForPolling(update_polled_stuff_if_runtime);
+	_G(gfxDriver)->SetCallbackToDrawScreen(draw_game_screen_callback, construct_engine_overlay);
+	_G(gfxDriver)->SetCallbackForNullSprite(GfxDriverNullSpriteCallback);
 }
 
 // Reset gfx driver callbacks
 void engine_pre_gfxmode_driver_cleanup() {
-	gfxDriver->SetCallbackForPolling(nullptr);
-	gfxDriver->SetCallbackToDrawScreen(nullptr, nullptr);
-	gfxDriver->SetCallbackForNullSprite(nullptr);
-	gfxDriver->SetMemoryBackBuffer(nullptr);
+	_G(gfxDriver)->SetCallbackForPolling(nullptr);
+	_G(gfxDriver)->SetCallbackToDrawScreen(nullptr, nullptr);
+	_G(gfxDriver)->SetCallbackForNullSprite(nullptr);
+	_G(gfxDriver)->SetMemoryBackBuffer(nullptr);
 }
 
 // Setup virtual screen
@@ -296,7 +295,7 @@ void engine_setup_scsystem_screen(const DisplayMode &dm) {
 }
 
 void engine_post_gfxmode_setup(const Size &init_desktop) {
-	DisplayMode dm = gfxDriver->GetDisplayMode();
+	DisplayMode dm = _G(gfxDriver)->GetDisplayMode();
 	// If color depth has changed (or graphics mode was inited for the
 	// very first time), we also need to recreate bitmaps
 	bool has_driver_changed = _GP(scsystem).coldepth != dm.ColorDepth;

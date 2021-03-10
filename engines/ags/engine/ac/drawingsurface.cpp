@@ -52,8 +52,6 @@ namespace AGS3 {
 using namespace AGS::Shared;
 using namespace AGS::Engine;
 
-extern Bitmap *dynamicallyCreatedSurfaces[MAX_DYNAMIC_SURFACES];
-
 // ** SCRIPT DRAWINGSURFACE OBJECT
 
 void DrawingSurface_Release(ScriptDrawingSurface *sds) {
@@ -100,8 +98,8 @@ void DrawingSurface_Release(ScriptDrawingSurface *sds) {
 		sds->dynamicSpriteNumber = -1;
 	}
 	if (sds->dynamicSurfaceNumber >= 0) {
-		delete dynamicallyCreatedSurfaces[sds->dynamicSurfaceNumber];
-		dynamicallyCreatedSurfaces[sds->dynamicSurfaceNumber] = nullptr;
+		delete _G(dynamicallyCreatedSurfaces)[sds->dynamicSurfaceNumber];
+		_G(dynamicallyCreatedSurfaces)[sds->dynamicSurfaceNumber] = nullptr;
 		sds->dynamicSurfaceNumber = -1;
 	}
 	sds->modified = 0;
@@ -128,8 +126,8 @@ ScriptDrawingSurface *DrawingSurface_CreateCopy(ScriptDrawingSurface *sds) {
 	Bitmap *sourceBitmap = sds->GetBitmapSurface();
 
 	for (int i = 0; i < MAX_DYNAMIC_SURFACES; i++) {
-		if (dynamicallyCreatedSurfaces[i] == nullptr) {
-			dynamicallyCreatedSurfaces[i] = BitmapHelper::CreateBitmapCopy(sourceBitmap);
+		if (_G(dynamicallyCreatedSurfaces)[i] == nullptr) {
+			_G(dynamicallyCreatedSurfaces)[i] = BitmapHelper::CreateBitmapCopy(sourceBitmap);
 			ScriptDrawingSurface *newSurface = new ScriptDrawingSurface();
 			newSurface->dynamicSurfaceNumber = i;
 			newSurface->hasAlphaChannel = sds->hasAlphaChannel;

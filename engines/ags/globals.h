@@ -65,7 +65,9 @@ class RoomStruct;
 namespace Engine {
 
 class ConsoleOutputTarget;
+class IDriverDependantBitmap;
 class IGfxDriverFactory;
+class IGraphicsDriver;
 class LogFile;
 class MessageBuffer;
 struct PlaneScaling;
@@ -84,6 +86,7 @@ struct AGSDeSerializer;
 struct AGSPlatformDriver;
 struct AmbientSound;
 struct AnimatingGUIButton;
+struct CachedActSpsData;
 struct CCAudioChannel;
 struct CCAudioClip;
 struct CCCharacter;
@@ -372,6 +375,31 @@ public:
 	std::vector<RoomCameraDrawData> *_CameraDrawData;
 	std::vector<SpriteListEntry> *_sprlist;
 	std::vector<SpriteListEntry> *_thingsToDrawList;
+
+	AGS::Engine::IGraphicsDriver *_gfxDriver = nullptr;
+	AGS::Engine::IDriverDependantBitmap *_blankImage = nullptr;
+	AGS::Engine::IDriverDependantBitmap *_blankSidebarImage = nullptr;
+	AGS::Engine::IDriverDependantBitmap *_debugConsole = nullptr;
+
+	// actsps is used for temporary storage of the bitamp image
+	// of the latest version of the sprite
+	int _actSpsCount = 0;
+	AGS::Shared::Bitmap **_actsps = nullptr;
+	AGS::Engine::IDriverDependantBitmap **_actspsbmp = nullptr;
+	// temporary cache of walk-behind for this actsps image
+	AGS::Shared::Bitmap **_actspswb = nullptr;
+	AGS::Engine::IDriverDependantBitmap **_actspswbbmp = nullptr;
+	CachedActSpsData *_actspswbcache = nullptr;
+	bool _current_background_is_dirty = false;
+	// Room background sprite
+	AGS::Engine::IDriverDependantBitmap *_roomBackgroundBmp = nullptr;
+	AGS::Shared::Bitmap **_guibg = nullptr;
+	AGS::Engine::IDriverDependantBitmap **_guibgbmp = nullptr;
+	AGS::Shared::Bitmap *_debugConsoleBuffer = nullptr;
+	// whether there are currently remnants of a DisplaySpeech
+	bool _screen_is_dirty = false;
+	AGS::Shared::Bitmap *_raw_saved_screen = nullptr;
+	AGS::Shared::Bitmap **_dynamicallyCreatedSurfaces = nullptr;
 
 	/**@}*/
 

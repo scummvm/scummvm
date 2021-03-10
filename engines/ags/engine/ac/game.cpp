@@ -115,20 +115,8 @@ extern int cur_mode, cur_cursor;
 extern int _G(psp_gfx_renderer);
 #endif
 
-extern int actSpsCount;
-extern Bitmap **actsps;
-extern IDriverDependantBitmap * *actspsbmp;
-// temporary cache of walk-behind for this actsps image
-extern Bitmap **actspswb;
-extern IDriverDependantBitmap * *actspswbbmp;
-extern CachedActSpsData *actspswbcache;
-extern Bitmap **guibg;
-extern IDriverDependantBitmap **guibgbmp;
 extern char transFileName[MAX_PATH];
 extern color palette[256];
-extern Bitmap *raw_saved_screen;
-extern Bitmap *dynamicallyCreatedSurfaces[MAX_DYNAMIC_SURFACES];
-extern IGraphicsDriver *gfxDriver;
 
 //=============================================================================
 
@@ -459,11 +447,11 @@ void unload_game_file() {
 	_GP(characterScriptObjNames).clear();
 	free(_G(charextra));
 	free(_G(mls));
-	free(actsps);
-	free(actspsbmp);
-	free(actspswb);
-	free(actspswbbmp);
-	free(actspswbcache);
+	free(_G(actsps));
+	free(_G(actspsbmp));
+	free(_G(actspswb));
+	free(_G(actspswbbmp));
+	free(_G(actspswbcache));
 
 	if ((_G(gameinst) != nullptr) && (_G(gameinst)->pc != 0)) {
 		quit("Error: unload_game called while script still running");
@@ -531,12 +519,12 @@ void unload_game_file() {
 	_G(scrDialog) = nullptr;
 
 	for (int i = 0; i < _GP(game).numgui; ++i) {
-		free(guibg[i]);
-		guibg[i] = nullptr;
+		free(_G(guibg)[i]);
+		_G(guibg)[i] = nullptr;
 	}
 
 	_GP(guiScriptObjNames).clear();
-	free(guibg);
+	free(_G(guibg));
 	_GP(guis).clear();
 	free(_G(scrGui));
 
@@ -1262,7 +1250,7 @@ void restore_game_displayed_room_status(Stream *in, RestoredData &r_data) {
 		bb = in->ReadInt32();
 
 		if (bb)
-			raw_saved_screen = read_serialized_bitmap(in);
+			_G(raw_saved_screen) = read_serialized_bitmap(in);
 
 		// get the current troom, in case they save in room 600 or whatever
 		ReadRoomStatus_Aligned(&_GP(troom), in);
@@ -1740,8 +1728,8 @@ void display_switch_out_suspend() {
 // Called whenever game gets input focus
 void display_switch_in() {
 	_G(switched_away) = false;
-	if (gfxDriver) {
-		DisplayMode mode = gfxDriver->GetDisplayMode();
+	if (_G(gfxDriver)) {
+		DisplayMode mode = _G(gfxDriver)->GetDisplayMode();
 		if (!mode.Windowed)
 			_G(platform)->EnterFullscreenMode(mode);
 	}
@@ -1766,8 +1754,8 @@ void display_switch_in_resume() {
 	} // -- AudioChannelsLock
 
 	// clear the screen if necessary
-	if (gfxDriver && gfxDriver->UsesMemoryBackBuffer())
-		gfxDriver->ClearRectangle(0, 0, _GP(game).GetGameRes().Width - 1, _GP(game).GetGameRes().Height - 1, nullptr);
+	if (_G(gfxDriver) && _G(gfxDriver)->UsesMemoryBackBuffer())
+		_G(gfxDriver)->ClearRectangle(0, 0, _GP(game).GetGameRes().Width - 1, _GP(game).GetGameRes().Height - 1, nullptr);
 
 	_G(platform)->ResumeApplication();
 }

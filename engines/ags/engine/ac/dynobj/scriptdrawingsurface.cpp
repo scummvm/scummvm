@@ -35,11 +35,6 @@ namespace AGS3 {
 
 using namespace AGS::Shared;
 
-
-
-extern Bitmap *dynamicallyCreatedSurfaces[MAX_DYNAMIC_SURFACES];
-
-
 Bitmap *ScriptDrawingSurface::GetBitmapSurface() {
 	// TODO: consider creating weak_ptr here, and store one in the DrawingSurface!
 	if (roomBackgroundNumber >= 0)
@@ -47,7 +42,7 @@ Bitmap *ScriptDrawingSurface::GetBitmapSurface() {
 	else if (dynamicSpriteNumber >= 0)
 		return _GP(spriteset)[dynamicSpriteNumber];
 	else if (dynamicSurfaceNumber >= 0)
-		return dynamicallyCreatedSurfaces[dynamicSurfaceNumber];
+		return _G(dynamicallyCreatedSurfaces)[dynamicSurfaceNumber];
 	else if (linkedBitmapOnly != nullptr)
 		return linkedBitmapOnly;
 	else if (roomMaskType > kRoomAreaNone)

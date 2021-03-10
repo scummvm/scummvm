@@ -33,10 +33,6 @@ namespace AGS3 {
 using namespace AGS::Shared;
 using namespace AGS::Engine;
 
-
-extern IGraphicsDriver *gfxDriver;
-
-
 char *walkBehindExists = nullptr;  // whether a WB area is in this column
 int *walkBehindStartY = nullptr, *walkBehindEndY = nullptr;
 char noWalkBehindsAtAll = 0;
@@ -72,9 +68,9 @@ void update_walk_behind_images() {
 			update_polled_stuff_if_runtime();
 
 			if (walkBehindBitmap[ee] != nullptr) {
-				gfxDriver->DestroyDDB(walkBehindBitmap[ee]);
+				_G(gfxDriver)->DestroyDDB(walkBehindBitmap[ee]);
 			}
-			walkBehindBitmap[ee] = gfxDriver->CreateDDBFromBitmap(wbbmp, false);
+			walkBehindBitmap[ee] = _G(gfxDriver)->CreateDDBFromBitmap(wbbmp, false);
 			delete wbbmp;
 		}
 	}
@@ -104,7 +100,7 @@ void recache_walk_behinds() {
 		walkBehindBottom[ee] = 0;
 
 		if (walkBehindBitmap[ee] != nullptr) {
-			gfxDriver->DestroyDDB(walkBehindBitmap[ee]);
+			_G(gfxDriver)->DestroyDDB(walkBehindBitmap[ee]);
 			walkBehindBitmap[ee] = nullptr;
 		}
 	}

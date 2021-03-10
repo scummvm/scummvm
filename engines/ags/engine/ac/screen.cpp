@@ -42,10 +42,6 @@ namespace AGS3 {
 using namespace AGS::Shared;
 using namespace AGS::Engine;
 
-
-extern IGraphicsDriver *gfxDriver;
-
-
 void my_fade_in(PALETTE p, int speed) {
 	if (_GP(game).color_depth > 1) {
 		set_palette(p);
@@ -57,7 +53,7 @@ void my_fade_in(PALETTE p, int speed) {
 		}
 	}
 
-	gfxDriver->FadeIn(speed, p, _GP(play).fade_to_red, _GP(play).fade_to_green, _GP(play).fade_to_blue);
+	_G(gfxDriver)->FadeIn(speed, p, _GP(play).fade_to_red, _GP(play).fade_to_green, _GP(play).fade_to_blue);
 }
 
 Bitmap *saved_viewport_bitmap = nullptr;
@@ -79,7 +75,7 @@ void current_fade_out_effect() {
 	} else if (theTransition == FADE_NORMAL) {
 		my_fade_out(5);
 	} else if (theTransition == FADE_BOXOUT) {
-		gfxDriver->BoxOutEffect(true, get_fixed_pixel_size(16), 1000 / GetGameSpeed());
+		_G(gfxDriver)->BoxOutEffect(true, get_fixed_pixel_size(16), 1000 / GetGameSpeed());
 		_GP(play).screen_is_faded_out = 1;
 	} else {
 		get_palette(old_palette);
@@ -105,7 +101,7 @@ IDriverDependantBitmap *prepare_screen_for_transition_in() {
 		delete saved_viewport_bitmap;
 		saved_viewport_bitmap = clippedBuffer;
 	}
-	IDriverDependantBitmap *ddb = gfxDriver->CreateDDBFromBitmap(saved_viewport_bitmap, false);
+	IDriverDependantBitmap *ddb = _G(gfxDriver)->CreateDDBFromBitmap(saved_viewport_bitmap, false);
 	return ddb;
 }
 

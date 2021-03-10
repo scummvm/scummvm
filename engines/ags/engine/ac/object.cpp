@@ -56,7 +56,6 @@ namespace AGS3 {
 using namespace AGS::Shared;
 
 extern Bitmap *walkable_areas_temp;
-extern IGraphicsDriver *gfxDriver;
 
 int Object_IsCollidingWithObject(ScriptObject *objj, ScriptObject *obj2) {
 	return AreObjectsColliding(objj->id, obj2->id);
@@ -515,7 +514,7 @@ int is_pos_in_sprite(int xx, int yy, int arx, int ary, Bitmap *sprit, int spww, 
 		int xpos = data_to_game_coord(xx - arx);
 		int ypos = data_to_game_coord(yy - ary);
 
-		if (gfxDriver->HasAcceleratedTransform()) {
+		if (_G(gfxDriver)->HasAcceleratedTransform()) {
 			// hardware acceleration, so the sprite in memory will not have
 			// been stretched, it will be original size. Thus, adjust our
 			// calculations to compensate
