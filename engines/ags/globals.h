@@ -548,6 +548,24 @@ public:
 	/**@}*/
 
 	/**
+	 * \defgroup game_run globals
+	 * @{
+	 */
+
+	 // Following 3 parameters instruct the engine to run game loops until
+	 // certain condition is not fullfilled.
+	int _restrict_until = 0;
+	int _user_disabled_for = 0;
+	const void *_user_disabled_data = nullptr;
+
+	unsigned int _loopcounter = 0;
+	unsigned int _lastcounter = 0;
+	int _numEventsAtStartOfFunction = 0;
+	uint32 _t1 = 0; // timer for FPS
+
+	 /**@}*/
+
+	/**
 	 * \defgroup global_dialog globals
 	 * @{
 	 */

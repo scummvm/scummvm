@@ -126,7 +126,6 @@ extern Bitmap **guibg;
 extern IDriverDependantBitmap **guibgbmp;
 extern char transFileName[MAX_PATH];
 extern color palette[256];
-extern unsigned int loopcounter;
 extern Bitmap *raw_saved_screen;
 extern Bitmap *dynamicallyCreatedSurfaces[MAX_DYNAMIC_SURFACES];
 extern IGraphicsDriver *gfxDriver;

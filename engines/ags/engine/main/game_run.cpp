@@ -77,14 +77,10 @@ extern int game_paused;
 extern int getloctype_index;
 extern int cur_mode;
 extern char noWalkBehindsAtAll;
-
 extern int cur_mode, cur_cursor;
 
 // Checks if user interface should remain disabled for now
 static int ShouldStayInWaitMode();
-
-static int numEventsAtStartOfFunction;
-static uint32 t1 = 0; // AGS_Clock::now();  // timer for FPS // ... 't1'... how very appropriate.. :)
 
 #define UNTIL_ANIMEND   1
 #define UNTIL_MOVEEND   2
@@ -95,14 +91,6 @@ static uint32 t1 = 0; // AGS_Clock::now();  // timer for FPS // ... 't1'... how 
 #define UNTIL_SHORTIS0  7
 #define UNTIL_INTISNEG  8
 
-// Following 3 parameters instruct the engine to run game loops until
-// certain condition is not fullfilled.
-static int restrict_until = 0;
-static int user_disabled_for = 0;
-static const void *user_disabled_data = nullptr;
-
-unsigned int loopcounter = 0;
-static unsigned int lastcounter = 0;
 
 static void ProperExit() {
 	_G(want_exit) = 0;
@@ -176,10 +164,10 @@ static int game_loop_check_ground_level_interactions() {
 		// if in a Wait loop which is no longer valid (probably
 		// because the Region interaction did a NewRoom), abort
 		// the rest of the loop
-		if ((restrict_until) && (!ShouldStayInWaitMode())) {
+		if ((_G(restrict_until)) && (!ShouldStayInWaitMode())) {
 			// cancel the Rep Exec and Stands on Hotspot events that
 			// we just added -- otherwise the event queue gets huge
-			_G(numevents) = numEventsAtStartOfFunction;
+			_G(numevents) = _G(numEventsAtStartOfFunction);
 			return 0;
 		}
 	} // end if checking ground level interactions
@@ -451,7 +439,7 @@ static void check_keyboard_controls() {
 	// }
 
 	if (kgn == eAGSKeyCodeAltV && (::AGS::g_events->getModifierFlags() & KB_CTRL_FLAG)
-			&& (_GP(play).wait_counter < 1) && (_G(is_text_overlay) == 0) && (restrict_until == 0)) {
+			&& (_GP(play).wait_counter < 1) && (_G(is_text_overlay) == 0) && (_G(restrict_until) == 0)) {
 		// make sure we can't interrupt a Wait()
 		// and desync the music to cutscene
 		_GP(play).debug_mode++;
@@ -667,12 +655,12 @@ static void game_loop_update_background_animation() {
 }
 
 static void game_loop_update_loop_counter() {
-	loopcounter++;
+	_G(loopcounter)++;
 
 	if (_GP(play).wait_counter > 0) _GP(play).wait_counter--;
 	if (_GP(play).shakesc_length > 0) _GP(play).shakesc_length--;
 
-	if (loopcounter % 5 == 0) {
+	if (_G(loopcounter) % 5 == 0) {
 		update_ambient_sound_vol();
 		update_directional_sound_vol();
 	}
@@ -680,13 +668,13 @@ static void game_loop_update_loop_counter() {
 
 static void game_loop_update_fps() {
 	auto t2 = AGS_Clock::now();
-	auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1);
-	auto frames = loopcounter - lastcounter;
+	auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(t2 - _G(t1));
+	auto frames = _G(loopcounter) - _G(lastcounter);
 
 	if (duration >= std::chrono::milliseconds(1000) && frames > 0) {
 		_G(fps) = 1000.0f * frames / duration.count();
-		t1 = t2;
-		lastcounter = loopcounter;
+		_G(t1) = t2;
+		_G(lastcounter) = _G(loopcounter);
 	}
 }
 
@@ -700,9 +688,9 @@ float get_current_fps() {
 }
 
 void set_loop_counter(unsigned int new_counter) {
-	loopcounter = new_counter;
-	t1 = AGS_Clock::now();
-	lastcounter = loopcounter;
+	_G(loopcounter) = new_counter;
+	_G(t1) = AGS_Clock::now();
+	_G(lastcounter) = _G(loopcounter);
 	_G(fps) = std::numeric_limits<float>::quiet_undefined();
 }
 
@@ -710,7 +698,7 @@ void UpdateGameOnce(bool checkControls, IDriverDependantBitmap *extraBitmap, int
 
 	int res;
 
-	numEventsAtStartOfFunction = _G(numevents);
+	_G(numEventsAtStartOfFunction) = _G(numevents);
 
 	if (_G(want_exit)) {
 		ProperExit();
@@ -809,29 +797,29 @@ static void UpdateMouseOverLocation() {
 
 // Checks if user interface should remain disabled for now
 static int ShouldStayInWaitMode() {
-	if (restrict_until == 0)
+	if (_G(restrict_until) == 0)
 		quit("end_wait_loop called but game not in loop_until state");
-	int retval = restrict_until;
+	int retval = _G(restrict_until);
 
-	if (restrict_until == UNTIL_MOVEEND) {
-		const short *wkptr = (const short *)user_disabled_data;
+	if (_G(restrict_until) == UNTIL_MOVEEND) {
+		const short *wkptr = (const short *)_G(user_disabled_data);
 		if (wkptr[0] < 1) retval = 0;
-	} else if (restrict_until == UNTIL_CHARIS0) {
-		const char *chptr = (const char *)user_disabled_data;
+	} else if (_G(restrict_until) == UNTIL_CHARIS0) {
+		const char *chptr = (const char *)_G(user_disabled_data);
 		if (chptr[0] == 0) retval = 0;
-	} else if (restrict_until == UNTIL_NEGATIVE) {
-		const short *wkptr = (const short *)user_disabled_data;
+	} else if (_G(restrict_until) == UNTIL_NEGATIVE) {
+		const short *wkptr = (const short *)_G(user_disabled_data);
 		if (wkptr[0] < 0) retval = 0;
-	} else if (restrict_until == UNTIL_INTISNEG) {
-		const int *wkptr = (const int *)user_disabled_data;
+	} else if (_G(restrict_until) == UNTIL_INTISNEG) {
+		const int *wkptr = (const int *)_G(user_disabled_data);
 		if (wkptr[0] < 0) retval = 0;
-	} else if (restrict_until == UNTIL_NOOVERLAY) {
+	} else if (_G(restrict_until) == UNTIL_NOOVERLAY) {
 		if (_G(is_text_overlay) < 1) retval = 0;
-	} else if (restrict_until == UNTIL_INTIS0) {
-		const int *wkptr = (const int *)user_disabled_data;
+	} else if (_G(restrict_until) == UNTIL_INTIS0) {
+		const int *wkptr = (const int *)_G(user_disabled_data);
 		if (wkptr[0] == 0) retval = 0;
-	} else if (restrict_until == UNTIL_SHORTIS0) {
-		const short *wkptr = (const short *)user_disabled_data;
+	} else if (_G(restrict_until) == UNTIL_SHORTIS0) {
+		const short *wkptr = (const short *)_G(user_disabled_data);
 		if (wkptr[0] == 0) retval = 0;
 	} else quit("loop_until: unknown until event");
 
@@ -839,23 +827,23 @@ static int ShouldStayInWaitMode() {
 }
 
 static int UpdateWaitMode() {
-	if (restrict_until == 0) {
+	if (_G(restrict_until) == 0) {
 		return RETURN_CONTINUE;
 	}
 
-	restrict_until = ShouldStayInWaitMode();
+	_G(restrict_until) = ShouldStayInWaitMode();
 	_G(our_eip) = 77;
 
-	if (restrict_until != 0) {
+	if (_G(restrict_until) != 0) {
 		return RETURN_CONTINUE;
 	}
 
-	auto was_disabled_for = user_disabled_for;
+	auto was_disabled_for = _G(user_disabled_for);
 
 	set_default_cursor();
 	guis_need_update = 1;
 	_GP(play).disabled_user_interface--;
-	user_disabled_for = 0;
+	_G(user_disabled_for) = 0;
 
 	switch (was_disabled_for) {
 		// case FOR_ANIMATION:
@@ -867,7 +855,7 @@ static int UpdateWaitMode() {
 		quit("err: for_script obsolete (v2.1 and earlier only)");
 		break;
 	default:
-		quit("Unknown user_disabled_for in end restrict_until");
+		quit("Unknown _G(user_disabled_for) in end _G(restrict_until)");
 	}
 
 	// we shouldn't get here.
@@ -900,9 +888,9 @@ static void SetupLoopParameters(int untilwhat, const void *udata) {
 		(cur_mode != CURS_WAIT))
 		set_mouse_cursor(CURS_WAIT);
 
-	restrict_until = untilwhat;
-	user_disabled_data = udata;
-	user_disabled_for = FOR_EXITLOOP;
+	_G(restrict_until) = untilwhat;
+	_G(user_disabled_data) = udata;
+	_G(user_disabled_for) = FOR_EXITLOOP;
 }
 
 // This function is called from lot of various functions
@@ -914,9 +902,9 @@ static void GameLoopUntilEvent(int untilwhat, const void *daaa) {
 	// this function can get called in a nested context, so
 	// remember the state of these vars in case a higher level
 	// call needs them
-	auto cached_restrict_until = restrict_until;
-	auto cached_user_disabled_data = user_disabled_data;
-	auto cached_user_disabled_for = user_disabled_for;
+	auto cached_restrict_until = _G(restrict_until);
+	auto cached_user_disabled_data = _G(user_disabled_data);
+	auto cached_user_disabled_for = _G(user_disabled_for);
 
 	SetupLoopParameters(untilwhat, daaa);
 	while (GameTick() == 0 && !_G(abort_engine)) {
@@ -924,9 +912,9 @@ static void GameLoopUntilEvent(int untilwhat, const void *daaa) {
 
 	_G(our_eip) = 78;
 
-	restrict_until = cached_restrict_until;
-	user_disabled_data = cached_user_disabled_data;
-	user_disabled_for = cached_user_disabled_for;
+	_G(restrict_until) = cached_restrict_until;
+	_G(user_disabled_data) = cached_user_disabled_data;
+	_G(user_disabled_for) = cached_user_disabled_for;
 }
 
 void GameLoopUntilValueIsZero(const char *value) {

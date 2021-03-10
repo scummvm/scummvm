@@ -89,7 +89,6 @@ extern "C" void ios_render();
 #endif
 
 extern char noWalkBehindsAtAll;
-extern unsigned int loopcounter;
 extern char *walkBehindExists;  // whether a WB area is in this column
 extern int *walkBehindStartY, *walkBehindEndY;
 extern int walkBehindLeft[MAX_WALK_BEHINDS], walkBehindTop[MAX_WALK_BEHINDS];
@@ -1906,7 +1905,7 @@ void draw_fps(const Rect &viewport) {
 	wouttext_outline(fpsDisplay, 1, 1, font, text_color, fps_buffer);
 
 	char loop_buffer[60];
-	sprintf(loop_buffer, "Loop %u", loopcounter);
+	sprintf(loop_buffer, "Loop %u", _G(loopcounter));
 	wouttext_outline(fpsDisplay, viewport.GetWidth() / 2, 1, font, text_color, loop_buffer);
 
 	if (ddb)
@@ -2259,7 +2258,7 @@ static void update_shakescreen() {
 	// TODO: unify blocking and non-blocking shake update
 	_GP(play).shake_screen_yoff = 0;
 	if (_GP(play).shakesc_length > 0) {
-		if ((loopcounter % _GP(play).shakesc_delay) < (_GP(play).shakesc_delay / 2))
+		if ((_G(loopcounter) % _GP(play).shakesc_delay) < (_GP(play).shakesc_delay / 2))
 			_GP(play).shake_screen_yoff = _GP(play).shakesc_amount;
 	}
 }

@@ -191,7 +191,7 @@ struct GameState {
 	int   silent_midi = 0;
 	int   silent_midi_channel = 0;
 	int   current_music_repeating = 0;  // remember what the loop flag was when this music started
-	unsigned long shakesc_delay = 0;  // unsigned long to match loopcounter
+	unsigned long shakesc_delay = 0;  // unsigned long to match _G(loopcounter)
 	int   shakesc_amount = 0, shakesc_length = 0;
 	int   rtint_red = 0, rtint_green = 0, rtint_blue = 0, rtint_level = 0, rtint_light = 0;
 	bool  rtint_enabled = 0;

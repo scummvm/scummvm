@@ -210,7 +210,7 @@ HSaveError WriteGameState(PStream out) {
 	_GP(play).WriteForSavegame(out.get());
 	// Other dynamic values
 	out->WriteInt32(_G(frames_per_second));
-	out->WriteInt32(loopcounter);
+	out->WriteInt32(_G(loopcounter));
 	out->WriteInt32(_G(ifacepopped));
 	out->WriteInt32(game_paused);
 	// Mouse cursor

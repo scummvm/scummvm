@@ -86,7 +86,6 @@ using namespace AGS::Shared;
 using namespace AGS::Engine;
 
 extern Bitmap *walkareabackup, *walkable_areas_temp;
-extern unsigned int loopcounter;
 extern IDriverDependantBitmap *roomBackgroundBmp;
 extern IGraphicsDriver *gfxDriver;
 extern Bitmap *raw_saved_screen;
