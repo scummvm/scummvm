@@ -39,6 +39,7 @@ namespace {
 	static const uint32 kMagic = 666;
 	static const uint32 kHeaderFieldSize = 0x09;
 	static const uint32 kHeaderSize = 0x14;
+	static const uint32 kDefaultNameSize = 0x1f;
 }
 
 uint32 Database::getDataOffset(uint32 maxNameSize, uint32 totalEntries) {
@@ -74,6 +75,29 @@ bool Database::open(const Common::String &filename, Common::SeekableReadStream *
 	}
 
 	return true;
+}
+
+void Database::write(Common::WriteStream *stream, const Common::HashMap<Common::String, Common::Array<uint8>> & entries) {
+	auto n = entries.size();
+	stream->writeUint32LE(kMagic);
+	stream->writeUint32LE(1);
+	stream->writeUint32LE(n);
+	stream->writeUint32LE(n);
+	stream->writeUint32LE(kDefaultNameSize);
+	auto dataOffset = getDataOffset(kDefaultNameSize, n);
+	auto offset = dataOffset;
+	for(auto entry: entries) {
+		stream->writeUint32LE(offset);
+		Common::Array<char> text(kDefaultNameSize);
+		auto &key = entry._key;
+		memcpy(text.data(), key.c_str(), MIN(key.size(), text.size()));
+		offset += entry._value.size();
+		stream->writeUint32LE(entry._value.size());
+	}
+	for(auto entry: entries) {
+		auto & data = entry._value;
+		stream->write(data.data(), data.size());
+	}
 }
 
 Common::Array<Common::String> Database::getEntries() const {

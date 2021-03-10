@@ -1139,8 +1139,24 @@ Common::Error AGDSEngine::loadGameState(int slot) {
 		}
 	}
 
+	delete saveFile;
 	return Common::kNoError;
 }
+
+Common::Error AGDSEngine::saveGameState(int slot, const Common::String &desc, bool isAutosave) {
+	auto fileName = getSaveStateName(slot);
+	Common::OutSaveFile *saveFile = getSaveFileManager()->openForSaving(fileName);
+
+	if (!saveFile)
+		return Common::kWritingFailed;
+
+	Common::HashMap<Common::String, Common::Array<uint8>> entries;
+	Database::write(saveFile, entries);
+
+	delete saveFile;
+	return Common::kNoError;
+}
+
 
 void AGDSEngine::reactivate(const Common::String &name, bool runNow) {
 	if (name.empty())
@@ -1165,17 +1181,6 @@ void AGDSEngine::stopProcess(const Common::String & name) {
 			process->done();
 		}
 	}
-}
-
-
-Common::Error AGDSEngine::saveGameState(int slot, const Common::String &desc, bool isAutosave) {
-	auto fileName = getSaveStateName(slot);
-	Common::OutSaveFile *saveFile = getSaveFileManager()->openForSaving(fileName);
-
-	if (!saveFile)
-		return Common::kWritingFailed;
-
-	return Common::Error(Common::kNoError);
 }
 
 void AGDSEngine::currentInventoryObject(const ObjectPtr & object) {
