@@ -87,10 +87,6 @@ using namespace AGS::Engine;
 
 extern color palette[256];
 
-RGB_MAP rgb_table;  // for 256-col antialiasing
-int new_room_flags = 0;
-int gs_to_newroom = -1;
-
 ScriptDrawingSurface *Room_GetDrawingSurfaceForBackground(int backgroundNumber) {
 	if (_G(displayed_room) < 0)
 		quit("!Room.GetDrawingSurfaceForBackground: no room is currently loaded");
@@ -650,8 +646,8 @@ void load_new_room(int newnum, CharacterInfo *forchar) {
 			if (palette[ff].b > 63)
 				palette[ff].b = 63;
 		}
-		create_rgb_table(&rgb_table, palette, nullptr);
-		_G(rgb_map) = &rgb_table;
+		create_rgb_table(&_GP(rgb_table), palette, nullptr);
+		_G(rgb_map) = &_GP(rgb_table);
 	}
 	_G(our_eip) = 211;
 	if (forchar != nullptr) {
@@ -852,7 +848,7 @@ void load_new_room(int newnum, CharacterInfo *forchar) {
 		if (_G(objs)[cc].on == 2)
 			MergeObject(cc);
 	}
-	new_room_flags = 0;
+	_G(new_room_flags) = 0;
 	_GP(play).gscript_timer = -1; // avoid screw-ups with changing screens
 	_GP(play).player_on_region = 0;
 	// trash any input which they might have done while it was loading

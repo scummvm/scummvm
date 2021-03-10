@@ -223,6 +223,9 @@ Globals::Globals() {
 	// overlay.cpp globals
 	_screenover = new std::vector<ScreenOverlay>();
 
+	// room.cpp globals
+	_rgb_table = new RGB_MAP();
+
 	// route_finder_impl.cpp globals
 	_navpoints = new int32_t[MAXNEEDSTAGES];
 	_nav = new Navigation();
@@ -373,6 +376,9 @@ Globals::~Globals() {
 
 	// overlay.cpp globals
 	delete _screenover;
+
+	// room.cpp globals
+	delete _rgb_table;
 
 	// route_finder_impl.cpp globals
 	delete _navpoints;

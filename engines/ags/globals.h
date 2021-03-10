@@ -835,6 +835,17 @@ public:
 	 /**@}*/
 
 	/**
+	 * \defgroup room globals
+	 * @{
+	 */
+
+	RGB_MAP *_rgb_table;  // for 256-col antialiasing
+	int _new_room_flags = 0;
+	int _gs_to_newroom = -1;
+
+	/**@}*/
+
+	/**
 	 * \defgroup route_finder_impl globals
 	 * @{
 	 */
