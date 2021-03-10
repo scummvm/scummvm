@@ -847,6 +847,9 @@ void Scene::updateAmbientSounds() {
 
 		for (int32 f = 0; f < 6; f++) {
 			int32 gameFlag = snd->flagNum[f];
+			if (gameFlag == 99999)
+				continue;
+
 			if (gameFlag >= 0) {
 				if (_vm->isGameFlagNotSet((GameFlag)gameFlag)) {
 					processSound = false;
@@ -1382,8 +1385,8 @@ ActorIndex Scene::hitTestActor() {
 		break;
 
 	case kChapter8:
-		if (_ws->actors.size() <= 7)
-			error("[Scene::hitTestActor] Not enough actors to check (chapter 8 - checking actors 1-7)!");
+		if (_ws->actors.size() < 7)
+			error("[Scene::hitTestActor] Not enough actors to check (chapter 8 - checking actors 1-6)!");
 
 		for (uint i = 1; i < 7; i++) {
 			Actor *actor = getActor(i);
@@ -2324,7 +2327,7 @@ void Scene::changePlayer(ActorIndex index) {
 
 		// Setup new values
 		for (uint32 i = 0; i < 11; i++)
-			_ws->cursorResources[i] = _ws->graphicResourceIds[40 + i];
+			_ws->cursorResources[i] = _ws->graphicResourceIds[20 + i];
 
 		_ws->font1 = _ws->graphicResourceIds[35];
 		_ws->font2 = _ws->graphicResourceIds[37];

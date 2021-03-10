@@ -241,7 +241,7 @@ bool SharedData::getFlag(GlobalFlag flag) const {
 void SharedData::setFlag(GlobalFlag flag, bool state) {
 	switch (flag) {
 	default:
-		error("[SharedData::getFlag] Invalid flag type (%d)!", flag);
+		error("[SharedData::setFlag] Invalid flag type (%d)!", flag);
 
 	case kFlag1:
 		_flag1 = state;
@@ -264,7 +264,7 @@ void SharedData::setFlag(GlobalFlag flag, bool state) {
 		break;
 
 	case kFlagSceneRectChanged:
-		error("[SharedData::getFlag] Invalid flag type (kFlagSceneRectChanged)!");
+		warning("[SharedData::setFlag] Invalid flag type (kFlagSceneRectChanged)!");
 		break;
 
 	case kFlagScene1:
