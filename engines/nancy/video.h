@@ -52,7 +52,7 @@ private:
 	class AVFVideoTrack : public FixedRateVideoTrack {
 	friend class AVFDecoder;
 	public:
-		AVFVideoTrack(Common::SeekableReadStream *stream);
+		AVFVideoTrack(Common::SeekableReadStream *stream, uint32 chunkFileFormat);
 		virtual ~AVFVideoTrack();
 
 		virtual uint16 getWidth() const override { return _width; }
@@ -73,6 +73,7 @@ private:
 
 	private:
 		struct ChunkInfo {
+			Common::String name;
 			uint16 index;
 			uint32 offset;
 			uint32 compressedSize;

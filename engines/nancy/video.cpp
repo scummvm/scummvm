@@ -22,6 +22,7 @@
 
 #include "engines/nancy/video.h"
 #include "engines/nancy/decompress.h"
+#include "engines/nancy/graphics.h"
 
 #include "common/endian.h"
 #include "common/stream.h"
@@ -46,24 +47,31 @@ bool AVFDecoder::loadStream(Common::SeekableReadStream *stream) {
 	char id[15];
 	stream->read(id, 15);
 	id[14] = 0;
+	Common::String idString = id;
 
-	if (stream->eos() || Common::String(id) != "AVF WayneSikes") {
-		warning("Invalid id string found in AVF");
+	bool earlyHeaderFormat = false;
+
+	if (idString == "AVF WayneSikes") {	
+		stream->skip(1); // Unknown
+	} else if (idString.hasPrefix("ALG")) {
+		earlyHeaderFormat = true;
+		stream->seek(10, SEEK_SET);
+	}
+
+	uint32 chunkFileFormat;
+	chunkFileFormat = stream->readUint16LE() << 16;
+	chunkFileFormat |= stream->readUint16LE();
+
+	if (chunkFileFormat != 0x00020000 && chunkFileFormat != 0x00010000) {
+		warning("Unsupported version %d.%d found in AVF", chunkFileFormat >> 16, chunkFileFormat & 0xffff);
 		return false;
 	}
 
-	stream->skip(1); // Unknown
-
-	uint32 ver;
-	ver = stream->readUint16LE() << 16;
-	ver |= stream->readUint16LE();
-
-	if (ver != 0x00020000) {
-		warning("Unsupported version %d.%d found in AVF", ver >> 16, ver & 0xffff);
-		return false;
+	if (!earlyHeaderFormat) {
+		stream->skip(1); // Unknown
 	}
 
-	addTrack(new AVFVideoTrack(stream));
+	addTrack(new AVFVideoTrack(stream, chunkFileFormat));
 
 	return true;
 }
@@ -76,15 +84,13 @@ void AVFDecoder::addFrameTime(const uint16 timeToAdd) {
 	((AVFDecoder::AVFVideoTrack *)getTrack(0))->_frameTime += timeToAdd;
 }
 
-AVFDecoder::AVFVideoTrack::AVFVideoTrack(Common::SeekableReadStream *stream) {
+AVFDecoder::AVFVideoTrack::AVFVideoTrack(Common::SeekableReadStream *stream, uint32 chunkFileFormat) {
 	assert(stream);
 	_fileStream = stream;
 	_curFrame = -1;
 	_refFrame = -1;
 	_reversed = false;
 	_dec = new Decompressor;
-
-	stream->skip(1); // Unknown
 
 	_frameCount = stream->readUint16LE();
 	_width = stream->readUint16LE();
@@ -94,23 +100,51 @@ AVFDecoder::AVFVideoTrack::AVFVideoTrack(Common::SeekableReadStream *stream) {
 
 	byte comp = stream->readByte();
 
+	uint formatHi = chunkFileFormat >> 16;
+
+	if (formatHi == 1) {
+		stream->skip(1);
+	}
+
 	if (comp != 2)
 		error("Unknown compression type %d found in AVF", comp);
 
 	_surface = new Graphics::Surface();
-	_pixelFormat = Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0);
+	
+	if (formatHi == 1) {
+		_pixelFormat = Graphics::PixelFormat::createFormatCLUT8();
+	} else if (formatHi == 2) {
+		_pixelFormat = GraphicsManager::pixelFormat;
+	}
+
 	_surface->create(_width, _height, _pixelFormat);
 	_frameSize = _width * _height * _pixelFormat.bytesPerPixel;
 
-
 	for (uint i = 0; i < _frameCount; i++) {
 		ChunkInfo info;
-		info.index = stream->readUint16LE();
-		info.offset = stream->readUint32LE();
-		info.compressedSize = stream->readUint32LE();
-		info.size = stream->readUint32LE();
-		info.type = stream->readByte();
-		stream->skip(4); // Unknown;
+
+		if (formatHi == 1) {
+			char buf[13];
+			stream->read(buf, 13);
+			info.name = buf;
+			info.size = stream->readUint32LE();
+
+			if (info.size == 0) {
+				info.size = _frameSize;
+			}
+			
+			info.offset = stream->readUint32LE();
+			info.compressedSize = stream->readUint32LE();
+			info.type = 0;
+		} else if (formatHi == 2) {
+			info.index = stream->readUint16LE();
+			info.offset = stream->readUint32LE();
+			info.compressedSize = stream->readUint32LE();
+			info.size = stream->readUint32LE();
+			info.type = stream->readByte();
+			stream->skip(4); // Unknown;
+		}
+		
 		_chunkInfo.push_back(info);
 	}
 }
