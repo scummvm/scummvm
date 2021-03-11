@@ -61,13 +61,11 @@ void Logo::process() {
 }
 
 void Logo::init() {
-	_surf = new Graphics::Surface;
-
 	Common::SeekableReadStream *lg = NanEngine.getBootChunkStream("LG0");
 	lg->seek(0);
 
-	if (!NanEngine.resource->loadImage(lg->readString(), *_surf))
-		error("Failed to load logo image");
+	_logoImage.init(lg->readString());
+	_logoImage.registerGraphics();
 
 	_state = kStartSound;
 }
@@ -85,21 +83,12 @@ void Logo::startSound() {
 }
 
 void Logo::run() {
-	switch (_runState) {
-	case kBlit:
-		NanEngine._system->copyRectToScreen(_surf->getPixels(), _surf->pitch, 0, 0, _surf->w, _surf->h);
-		_runState = kWait;
-		break;
-	case kWait:
-		if (NanEngine._system->getMillis() - _startTicks >= 7000 || (NanEngine.input->getInput().input & NancyInput::kLeftMouseButtonDown))
-			_state = kStop;
+	if (NanEngine._system->getMillis() - _startTicks >= 7000 || (NanEngine.input->getInput().input & NancyInput::kLeftMouseButtonDown)) {
+		_state = kStop;
 	}
 }
 
 void Logo::stop() {
-	_surf->free();
-	delete _surf;
-
 	// The original engine checks for N+D and N+C key combos here.
 	// For the N+C key combo it looks for some kind of cheat file
 	// to initialize the game state with.
