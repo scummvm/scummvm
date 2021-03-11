@@ -189,7 +189,7 @@ enum Opcode {
 	kGetIntegerSystemVariable		= 169,
 	kSetDelay						= 170,
 	kGetRandomNumber				= 171,
-	kStub172						= 172,
+	kSetSampleType					= 172,
 	kStub173						= 173,
 	kStub174						= 174,
 	kAppendToSharedStorage			= 175,
@@ -407,7 +407,7 @@ enum Opcode {
 	OP(kGetSaveGameName, getSaveGameName) \
 	OP(kSetObjectRegionOffset, setObjectRegionOffset) \
 	OP(kSetDelay, setDelay) \
-	OP(kStub172, stub172) \
+	OP(kSetSampleType, setSampleType) \
 	OP(kStub173, stub173) \
 	OP(kStub174, stub174) \
 	OP(kStub192, stub192) \

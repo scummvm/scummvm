@@ -851,9 +851,9 @@ void Process::setObjectRegionOffset() {
 		warning("setObjectRegionOffset: object %s not found", objectName.c_str());
 }
 
-void Process::stub172() {
+void Process::setSampleType() {
 	int value = pop();
-	debug("stub172: setMusicVolume? %d", value);
+	debug("setSampleType: %d stub", value);
 }
 
 void Process::stub173() {
