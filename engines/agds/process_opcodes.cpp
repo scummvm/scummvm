@@ -163,9 +163,9 @@ void Process::loadAnimation() {
 }
 
 void Process::loadSample() {
-	Common::String name = popText();
+	Common::String name = popString();
 	debug("loadSample %s, phaseVar: %s, ambient: %d", name.c_str(), _phaseVar.c_str(), _sampleAmbient);
-	int id = _engine->playSound(getName(), name, _phaseVar);
+	int id = _engine->playSound(getName(), name, _engine->loadText(name), _phaseVar);
 	if (_sampleAmbient)
 		_engine->setAmbientSoundId(id);
 }
@@ -226,7 +226,7 @@ void Process::restartSample() {
 	debug("restartSample %s", name.c_str());
 	auto sound = _engine->soundManager().findSampleByPhaseVar(name);
 	if (sound) {
-		debug("sample found (%s)", sound->name.c_str());
+		debug("sample found (%s:%s)", sound->resource.c_str(), sound->filename.c_str());
 		int value = _engine->getGlobal(name);
 		_engine->setGlobal(name, value | 2);
 	} else {
@@ -239,7 +239,7 @@ void Process::stopSample() {
 	debug("restartSample %s", name.c_str());
 	auto sound = _engine->soundManager().findSampleByPhaseVar(name);
 	if (sound) {
-		debug("sample found (%s)", sound->name.c_str());
+		debug("sample found (%s:%s)", sound->resource.c_str(), sound->filename.c_str());
 		int value = _engine->getGlobal(name);
 		_engine->setGlobal(name, value | 4);
 	} else {
