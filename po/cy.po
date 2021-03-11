@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-03-09 11:33+0000\n"
+"POT-Creation-Date: 2021-03-11 13:47+0000\n"
 "PO-Revision-Date: 2021-01-27 11:15+0000\n"
 "Last-Translator: Morgan Roberts <morganroberts@mentercaerffili.cymru>\n"
 "Language-Team: Welsh <https://translations.scummvm.org/projects/scummvm/"
@@ -2057,7 +2057,7 @@ msgstr ""
 #: engines/illusions/menusystem.cpp:703 engines/kingdom/kingdom.cpp:739
 #: engines/lab/savegame.cpp:243 engines/mads/nebular/dialogs_nebular.cpp:350
 #: engines/neverhood/menumodule.cpp:890 engines/pegasus/pegasus.cpp:374
-#: engines/prince/saveload.cpp:55 engines/sci/engine/guest_additions.cpp:698
+#: engines/prince/saveload.cpp:55 engines/sci/engine/guest_additions.cpp:688
 #: engines/sci/engine/kfile.cpp:1075 engines/sherlock/scalpel/scalpel.cpp:1250
 #: engines/sherlock/tattoo/widget_files.cpp:75 engines/startrek/saveload.cpp:43
 #: engines/toltecs/menu.cpp:292 engines/toon/toon.cpp:3362
@@ -2077,7 +2077,7 @@ msgstr ""
 #: engines/lab/savegame.cpp:243 engines/mads/nebular/dialogs_nebular.cpp:350
 #: engines/neverhood/menumodule.cpp:890 engines/parallaction/saveload.cpp:209
 #: engines/pegasus/pegasus.cpp:374 engines/prince/saveload.cpp:55
-#: engines/sci/engine/guest_additions.cpp:699 engines/sci/engine/kfile.cpp:1075
+#: engines/sci/engine/guest_additions.cpp:689 engines/sci/engine/kfile.cpp:1075
 #: engines/scumm/dialogs.cpp:177 engines/sherlock/scalpel/scalpel.cpp:1250
 #: engines/sherlock/tattoo/widget_files.cpp:75 engines/startrek/saveload.cpp:43
 #: engines/toltecs/menu.cpp:292 engines/toon/toon.cpp:3362
@@ -3660,7 +3660,7 @@ msgstr ""
 #: engines/illusions/menusystem.cpp:680 engines/kingdom/kingdom.cpp:749
 #: engines/lab/savegame.cpp:258 engines/mads/nebular/dialogs_nebular.cpp:377
 #: engines/neverhood/menumodule.cpp:903 engines/prince/saveload.cpp:64
-#: engines/sci/engine/guest_additions.cpp:701 engines/sci/engine/kfile.cpp:1192
+#: engines/sci/engine/guest_additions.cpp:691 engines/sci/engine/kfile.cpp:1192
 #: engines/sherlock/scalpel/scalpel.cpp:1263
 #: engines/sherlock/tattoo/widget_files.cpp:94 engines/startrek/saveload.cpp:68
 #: engines/toltecs/menu.cpp:267 engines/toon/toon.cpp:3456
@@ -3677,7 +3677,7 @@ msgstr ""
 #: engines/lab/savegame.cpp:238 engines/lab/savegame.cpp:258
 #: engines/mads/nebular/dialogs_nebular.cpp:377
 #: engines/neverhood/menumodule.cpp:903 engines/prince/saveload.cpp:64
-#: engines/sci/engine/guest_additions.cpp:702 engines/sci/engine/kfile.cpp:1192
+#: engines/sci/engine/guest_additions.cpp:692 engines/sci/engine/kfile.cpp:1192
 #: engines/sherlock/scalpel/scalpel.cpp:1263
 #: engines/sherlock/tattoo/widget_files.cpp:94 engines/startrek/saveload.cpp:68
 #: engines/toltecs/menu.cpp:267 engines/toon/toon.cpp:3456
