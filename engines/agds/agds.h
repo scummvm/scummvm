@@ -296,6 +296,7 @@ private:
 	typedef Common::HashMap<int, Font *> FontsType;
 	typedef Common::HashMap<Common::String, PatchPtr, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> PatchesType;
 	typedef Common::HashMap<Common::String, ObjectPatchPtr, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> ObjectPatchesType;
+	typedef Common::HashMap<Common::String, Common::Array<uint8>> PatchDatabase;
 
 	const ADGameDescription *	_gameDescription;
 	ResourceManager				_resourceManager;

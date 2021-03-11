@@ -93,6 +93,9 @@ void SoundManager::stopAll() {
 
 int SoundManager::play(const Common::String &process, const Common::String &resource, const Common::String &phaseVar, bool startPlaying, int id) {
 	debug("SoundMan::play %s %s %s %d %d", process.c_str(), resource.c_str(), phaseVar.c_str(), startPlaying, id);
+	if (resource.empty())
+		return -1;
+
 	{
 		auto sample = findSampleByPhaseVar(phaseVar);
 		if (sample && playing(sample->id)) {
