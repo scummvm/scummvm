@@ -181,8 +181,7 @@ enum GlobalVar {
 	kGlobalVarPhant2ControlPanel   = 250,
 	kGlobalVarShivers1Score        = 349,
 	kGlobalVarQFG4Flags            = 500,
-	kGlobalVarHoyle5MusicVolume    = 897,
-	kGlobalVarHoyle5ResponseTime  = 899
+	kGlobalVarHoyle5MusicVolume    = 897
 };
 
 /** Number of kernel calls in between gcs; should be < 50000 */

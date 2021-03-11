@@ -824,7 +824,9 @@ reg_t kStringFormatAt(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kStringToInteger(EngineState *s, int argc, reg_t *argv) {
-	return make_reg(0, (uint16)s->_segMan->getString(argv[0]).asUint64());
+	Common::String string = s->_segMan->getString(argv[0]);
+	int16 result = (int16)atoi(string.c_str());
+	return make_reg(0, result);
 }
 
 reg_t kStringTrim(EngineState *s, int argc, reg_t *argv) {

@@ -167,16 +167,6 @@ void GuestAdditions::writeVarHook(const int type, const int index, const reg_t v
 			syncGK1StartupVolumeFromScummVM(index, value);
 		} else if (g_sci->getGameId() == GID_HOYLE5 && index == kGlobalVarHoyle5MusicVolume) {
 			syncHoyle5VolumeFromScummVM((ConfMan.getInt("music_volume") + 1) * kHoyle5VolumeMax / Audio::Mixer::kMaxMixerVolume);
-		} else if (g_sci->getGameId() == GID_HOYLE5 && index == kGlobalVarHoyle5ResponseTime && value.getOffset() == 0) {
-			// WORKAROUND: Global 899 contains the response time value,
-			// which may have values between 1 and 15. There is a script
-			// bug when loading values from game.opt, where this variable
-			// may be incorrectly set to 0. This makes the opponent freeze
-			// while playing Backgammon and Bridge. Fix this case here, by
-			// setting the correct minimum value, 1.
-			// TODO: Either make this a script patch, or find out if it's
-			// a bug with ScummVM when reading values from text files.
-			_state->variables[VAR_GLOBAL][index].setOffset(1);
 		} else if (g_sci->getGameId() == GID_RAMA && !g_sci->isDemo() && index == kGlobalVarRamaMusicVolume) {
 			syncRamaVolumeFromScummVM((ConfMan.getInt("music_volume") + 1) * kRamaVolumeMax / Audio::Mixer::kMaxMixerVolume);
 		}
