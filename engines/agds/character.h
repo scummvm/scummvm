@@ -84,7 +84,7 @@ public:
 
 	void load(Common::SeekableReadStream* stream);
 	void loadState(Common::ReadStream* stream);
-	void saveState(Common::WriteStream* stream);
+	void saveState(Common::WriteStream* stream) const;
 
 	void enable(bool enabled = true) {
 		_enabled = enabled;

@@ -112,7 +112,7 @@ void Character::loadState(Common::ReadStream* stream) {
 	}
 }
 
-void Character::saveState(Common::WriteStream* stream) {
+void Character::saveState(Common::WriteStream* stream) const {
 	stream->writeUint16LE(_pos.x);
 	stream->writeUint16LE(_pos.y);
 	stream->writeUint16LE(_direction);
