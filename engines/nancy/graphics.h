@@ -50,18 +50,24 @@ public:
 
     Font *getFont(uint id) { return id < _fonts.size() ? &_fonts[id] : nullptr; }
 
+    static const Graphics::PixelFormat &getInputPixelFormat();
+    static uint getTransColor();
+
     Graphics::ManagedSurface object0;
     
-    static const Graphics::PixelFormat pixelFormat;
-    static const uint transColor;
-
 private:
     void loadFonts();
     void blitToScreen(const RenderObject &src, Common::Rect dest);
 
     static int objectComparator(const void *a, const void *b);
 
+    static const uint transColor;
+
     Common::SortedArray<RenderObject *> _objects;
+
+    static const Graphics::PixelFormat inputPixelFormat;
+    static const Graphics::PixelFormat outputPixelFormat;
+    static const Graphics::PixelFormat clut8Format;
 
     Graphics::Screen _screen;
     Common::Array<Font> _fonts;

@@ -75,7 +75,7 @@ void InventoryBox::init() {
     NanEngine.resource->loadImage(inventoryBoxIconsImageName, _iconsSurface);
     
     uint numItems = 11; // TODO
-    _fullInventorySurface.create(_screenPosition.width(), _screenPosition.height() * ((numItems / 4) + 1), GraphicsManager::pixelFormat);
+    _fullInventorySurface.create(_screenPosition.width(), _screenPosition.height() * ((numItems / 4) + 1), GraphicsManager::getInputPixelFormat());
     Common::Rect sourceRect = _screenPosition;
     sourceRect.moveTo(0, 0);
     _drawSurface.create(_fullInventorySurface, sourceRect);
@@ -224,7 +224,7 @@ void InventoryBox::InventoryScrollbar::init() {
 
 void InventoryBox::Shades::init() {
     Common::Rect bounds = _parent->getBounds();
-    _drawSurface.create(bounds.width(), bounds.height(), GraphicsManager::pixelFormat);
+    _drawSurface.create(bounds.width(), bounds.height(), GraphicsManager::getInputPixelFormat());
     _screenPosition = _parent->getScreenPosition();
     _nextFrameTime = 0;
     setAnimationFrame(_curFrame);
@@ -273,7 +273,7 @@ void InventoryBox::Shades::setAnimationFrame(uint frame) {
         setVisible(true);
     }
 
-    _drawSurface.clear(GraphicsManager::transColor);
+    _drawSurface.clear(GraphicsManager::getTransColor());
 
     // Draw left shade
     srcRect = _parent->_shadesSrc[frame * 2];

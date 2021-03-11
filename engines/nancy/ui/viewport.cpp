@@ -199,7 +199,7 @@ void Viewport::setFrame(uint frameNr) {
     const Graphics::Surface *newFrame = _decoder.decodeFrame(frameNr);
 
     if (_fullFrame.w != newFrame->w || _fullFrame.h != newFrame->h) {
-        _fullFrame.create(newFrame->w, newFrame->h, GraphicsManager::pixelFormat);
+        _fullFrame.create(newFrame->w, newFrame->h, GraphicsManager::getInputPixelFormat());
     }
 
     _fullFrame.blitFrom(*newFrame);

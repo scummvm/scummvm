@@ -35,12 +35,8 @@ namespace Nancy {
 namespace Action {
 
 void PlayStaticBitmapAnimation::init() {
-    Graphics::Surface surf;
-    NanEngine.resource->loadImage(imageName, surf);
+    NanEngine.resource->loadImage(imageName, _fullSurface);
 
-    _fullSurface.create(surf.w, surf.h, surf.format);
-    _fullSurface.blitFrom(surf);
-    surf.free();
     setFrame(0);
 
     RenderObject::init();

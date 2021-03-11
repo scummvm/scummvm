@@ -28,6 +28,7 @@
 
 namespace Graphics {
 struct Surface;
+class ManagedSurface;
 }
 
 namespace Nancy {
@@ -65,6 +66,7 @@ public:
 	void initialize();
 	bool loadCifTree(const Common::String &name, const Common::String &ext);
 	bool loadImage(const Common::String &name, Graphics::Surface &surf);
+	bool loadImage(const Common::String &name, Graphics::ManagedSurface &surf);
 	void freeImage(Graphics::Surface &surf);
 	byte *loadData(const Common::String &name, uint &size);
 

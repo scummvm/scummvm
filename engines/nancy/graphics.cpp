@@ -30,23 +30,36 @@
 #include "engines/nancy/state/scene.h"
 #include "engines/nancy/ui/viewport.h"
 
+#include "common/file.h"
+#include "common/system.h"
+
+#include "image/bmp.h"
+
+#include "engines/util.h"
+
 namespace Nancy {
 
-const Graphics::PixelFormat GraphicsManager::pixelFormat = Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0);
+const Graphics::PixelFormat GraphicsManager::inputPixelFormat = Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0);
+const Graphics::PixelFormat GraphicsManager::outputPixelFormat = Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0);
+const Graphics::PixelFormat GraphicsManager::clut8Format = Graphics::PixelFormat::createFormatCLUT8();
 const uint GraphicsManager::transColor = 0x3E0;
 
 void GraphicsManager::init() {
-    _screen.create(640, 480, pixelFormat);
-    _screen.setTransparentColor(transColor); 
+    initGraphics(640, 480, &outputPixelFormat);
+    _screen.create(640, 480, outputPixelFormat);
+    _screen.setTransparentColor(getTransColor());
+
+    auto formats = NanEngine._system->getSupportedFormats();
+
+    for (auto f : formats) {
+        debug(f.toString().c_str());
+
+    }
 
     Common::SeekableReadStream *ob = NanEngine.getBootChunkStream("OB0");
     ob->seek(0);
 
-    Graphics::Surface surf;
-    NanEngine.resource->loadImage(ob->readString(), surf);
-    object0.create(surf.w, surf.h, surf.format);
-    object0.blitFrom(surf, Common::Point(0, 0));
-    surf.free();
+    NanEngine.resource->loadImage(ob->readString(), object0);
 
     loadFonts();
 }
@@ -124,6 +137,23 @@ void GraphicsManager::clearObjects() {
 void GraphicsManager::redrawAll() {
     for (auto &obj : _objects) {
         obj->_needsRedraw = true;
+    }
+}
+
+const Graphics::PixelFormat &GraphicsManager::getInputPixelFormat() {
+    if (NanEngine._gameDescription->desc.flags & NGF_8BITCOLOR) {
+        return clut8Format;
+    } else {
+        return inputPixelFormat;
+    }
+}
+
+uint GraphicsManager::getTransColor() {
+    if (NanEngine._gameDescription->desc.flags & NGF_8BITCOLOR) {
+        Graphics::PixelFormat format = Graphics::PixelFormat::createFormatCLUT8();
+        return format.RGBToColor(255, 0, 255);
+    } else {
+        return transColor;
     }
 }
 

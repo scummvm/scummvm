@@ -378,11 +378,7 @@ void DifficultyLevel::execute() {
 }
 
 void ShowInventoryItem::init() {
-    Graphics::Surface srcSurf;
-    NanEngine.resource->loadImage(imageName, srcSurf);
-    _fullSurface.create(srcSurf.w, srcSurf.h, srcSurf.format);
-    _fullSurface.blitFrom(srcSurf);
-    srcSurf.free();
+    NanEngine.resource->loadImage(imageName, _fullSurface);
 
     _drawSurface.create(_fullSurface, bitmaps[0].src);
 

@@ -74,7 +74,7 @@ void PlaySecondaryMovie::init() {
     }
 
     _decoder.loadFile(videoName + ".avf");
-    _drawSurface.create(_decoder.getWidth(), _decoder.getHeight(), GraphicsManager::pixelFormat);
+    _drawSurface.create(_decoder.getWidth(), _decoder.getHeight(), GraphicsManager::getInputPixelFormat());
     _screenPosition = _drawSurface.getBounds();
 
     RenderObject::init();

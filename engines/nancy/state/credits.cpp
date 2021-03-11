@@ -66,12 +66,7 @@ void Credits::init() {
     _pixelsToScroll = cred->readUint16LE();
     _sound.read(*cred, SoundDescription::kMenu);
 
-    Graphics::Surface surf;
-    NanEngine.resource->loadImage(buf, surf);
-    _fullTextSurface.create(surf.w, surf.h + _text._screenPosition.height() * 2, GraphicsManager::pixelFormat);
-    _fullTextSurface.clear(GraphicsManager::transColor);
-    _fullTextSurface.blitFrom(surf, Common::Point(0, _text._screenPosition.height()));
-    surf.free();
+    NanEngine.resource->loadImage(buf, _fullTextSurface);
     
     Common::Rect src = _text._screenPosition;
     src.moveTo(Common::Point());

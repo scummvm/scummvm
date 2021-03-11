@@ -111,8 +111,6 @@ Common::Platform NancyEngine::getPlatform() const {
 }
 
 Common::Error NancyEngine::run() {
-	initGraphics(640, 480, &GraphicsManager::pixelFormat);
-
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
 	SearchMan.addSubDirectoryMatching(gameDataDir, "game");
 	SearchMan.addSubDirectoryMatching(gameDataDir, "datafiles");

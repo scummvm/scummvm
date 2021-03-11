@@ -110,13 +110,7 @@ AVFDecoder::AVFVideoTrack::AVFVideoTrack(Common::SeekableReadStream *stream, uin
 		error("Unknown compression type %d found in AVF", comp);
 
 	_surface = new Graphics::Surface();
-	
-	if (formatHi == 1) {
-		_pixelFormat = Graphics::PixelFormat::createFormatCLUT8();
-	} else if (formatHi == 2) {
-		_pixelFormat = GraphicsManager::pixelFormat;
-	}
-
+	_pixelFormat = GraphicsManager::getInputPixelFormat();
 	_surface->create(_width, _height, _pixelFormat);
 	_frameSize = _width * _height * _pixelFormat.bytesPerPixel;
 

@@ -37,14 +37,10 @@ namespace Nancy {
 namespace Action {
 
 void Telephone::init() {
-    _drawSurface.create(_screenPosition.width(), _screenPosition.height(), GraphicsManager::pixelFormat);
-    _drawSurface.clear(GraphicsManager::transColor);
+    _drawSurface.create(_screenPosition.width(), _screenPosition.height(), GraphicsManager::getInputPixelFormat());
+    _drawSurface.clear(GraphicsManager::getTransColor());
 
-    Graphics::Surface surf;
-    NanEngine.resource->loadImage(imageName, surf);
-    image.create(surf.w, surf.h, surf.format);
-    image.blitFrom(surf);
-    surf.free();
+    NanEngine.resource->loadImage(imageName, image);
 
     NancySceneState.setShouldClearTextbox(false);
 }
@@ -312,7 +308,7 @@ void Telephone::undrawButton(uint id) {
     Common::Rect bounds = destRects[id];
     bounds.translate(-_screenPosition.left, -_screenPosition.top);
 
-    _drawSurface.fillRect(bounds, GraphicsManager::transColor);
+    _drawSurface.fillRect(bounds, GraphicsManager::getTransColor());
     _needsRedraw = true;
 }
 

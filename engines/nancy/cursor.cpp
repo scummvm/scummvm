@@ -51,12 +51,7 @@ void CursorManager::init() {
     _primaryVideoInitialPos.x = chunk->readUint16LE();
     _primaryVideoInitialPos.y = chunk->readUint16LE();
 
-    Graphics::Surface surf;
-    NanEngine.resource->loadImage(inventoryCursorsImageName, surf);
-    _invCursorsSurface.create(surf.w, surf.h, surf.format);
-    _invCursorsSurface.blitFrom(surf);
-
-    surf.free();
+    NanEngine.resource->loadImage(inventoryCursorsImageName, _invCursorsSurface);
 
     setCursor(kNormalArrow, -1);
     showCursor(false);
@@ -121,7 +116,7 @@ void CursorManager::setCursor(CursorType type, int16 itemID) {
     s.copyRectToSurface(*surf, 0, 0, bounds);
 
     // TODO hotspots are terrible for arrow cursors, fix that??
-    CursorMan.replaceCursor(s.getPixels(), s.w, s.h, hotspot.x, hotspot.y, GraphicsManager::transColor, false, &GraphicsManager::pixelFormat);
+    CursorMan.replaceCursor(s.getPixels(), s.w, s.h, hotspot.x, hotspot.y, GraphicsManager::getTransColor(), false, &GraphicsManager::getInputPixelFormat());
 
     s.free();
 

@@ -23,6 +23,7 @@
 #include "engines/nancy/resource.h"
 #include "engines/nancy/decompress.h"
 #include "engines/nancy/graphics.h"
+#include "engines/nancy/nancy.h"
 
 #include "common/file.h"
 #include "common/textconsole.h"
@@ -750,6 +751,7 @@ byte *ResourceManager::loadData(const Common::String &name, uint &size) {
 
 bool ResourceManager::loadImage(const Common::String &name, Graphics::Surface &surf) {
 	CifInfo info;
+	surf.free();
 
 	byte *buf = getCifData(name, info);
 
@@ -768,7 +770,7 @@ bool ResourceManager::loadImage(const Common::String &name, Graphics::Surface &s
 		} else {
 			return false;
 		}
-	} else  {
+	} else {
 		if (info.type != kResTypeImage) {
 			warning("Resource '%s' is not an image", name.c_str());
 			delete[] buf;
@@ -786,7 +788,63 @@ bool ResourceManager::loadImage(const Common::String &name, Graphics::Surface &s
 	surf.h = info.height;
 	surf.pitch = info.pitch;
 	surf.setPixels(buf);
-	surf.format = GraphicsManager::pixelFormat;
+	surf.format = GraphicsManager::getInputPixelFormat();
+	return true;
+}
+
+bool ResourceManager::loadImage(const Common::String &name, Graphics::ManagedSurface &surf) {
+	CifInfo info;
+	Image::BitmapDecoder dec;
+	Common::File f;
+	bool loadedFromBitmapFile = false;
+	surf.free();
+
+	Graphics::Surface tmpSurf;
+
+	byte *buf = getCifData(name, info);
+
+	if (!buf)  {
+		// Couldn't find image in a cif tree, try to open a .bmp file
+		// This is used by The Vampire Diaries
+		loadedFromBitmapFile = f.open(name + ".bmp");
+		if (loadedFromBitmapFile) {
+			if (dec.loadStream(f)) {
+				tmpSurf.copyFrom(*dec.getSurface());
+			} else {
+				return false;
+			}
+		} else {
+			return false;
+		}
+	} else {
+		if (info.type != kResTypeImage) {
+			warning("Resource '%s' is not an image", name.c_str());
+			delete[] buf;
+			return false;
+		}
+
+		if (info.depth != 16) {
+			warning("Image '%s' has unsupported depth %i", name.c_str(), info.depth);
+			delete[] buf;
+			return false;
+		}
+
+		tmpSurf.w = info.width;
+		tmpSurf.h = info.height;
+		tmpSurf.pitch = info.pitch;
+		tmpSurf.setPixels(buf);
+		tmpSurf.format = GraphicsManager::getInputPixelFormat();
+	}
+
+	surf.create(tmpSurf.w, tmpSurf.h, tmpSurf.format);
+	surf.blitFrom(tmpSurf);
+	
+	if (NanEngine._gameDescription->desc.flags & NGF_8BITCOLOR && loadedFromBitmapFile) {
+		surf.setPalette(dec.getPalette(), dec.getPaletteStartIndex(), dec.getPaletteColorCount() - 1);
+	}
+
+	tmpSurf.free();
+
 	return true;
 }
 

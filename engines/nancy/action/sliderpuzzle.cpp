@@ -38,14 +38,10 @@ Common::Array<Common::Array<int16>> SliderPuzzle::playerTileOrder = Common::Arra
 bool SliderPuzzle::playerHasTriedPuzzle = false;
 
 void SliderPuzzle::init() {
-    _drawSurface.create(_screenPosition.width(), _screenPosition.height(), GraphicsManager::pixelFormat);
-    _drawSurface.clear(GraphicsManager::transColor);
+    _drawSurface.create(_screenPosition.width(), _screenPosition.height(), GraphicsManager::getInputPixelFormat());
+    _drawSurface.clear(GraphicsManager::getTransColor());
 
-    Graphics::Surface surf;
-    NanEngine.resource->loadImage(imageName, surf);
-    image.create(surf.w, surf.h, surf.format);
-    image.blitFrom(surf);
-    surf.free();
+    NanEngine.resource->loadImage(imageName, image);
 }
 
 uint16 SliderPuzzle::readData(Common::SeekableReadStream &stream) {
@@ -331,7 +327,7 @@ void SliderPuzzle::drawTile(int tileID, uint posX, uint posY) {
 void SliderPuzzle::undrawTile(uint posX, uint posY) {
     Common::Rect bounds = destRects[posY][posX];
     bounds.translate(-_screenPosition.left, -_screenPosition.top);
-    _drawSurface.fillRect(bounds, GraphicsManager::transColor);
+    _drawSurface.fillRect(bounds, GraphicsManager::getTransColor());
 
     _needsRedraw = true;
 }
