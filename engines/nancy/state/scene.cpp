@@ -272,15 +272,18 @@ void Scene::init() {
     _sceneState.nextScene.sceneID = NanEngine.firstSceneID;
 
     Common::SeekableReadStream *chunk = NanEngine.getBootChunkStream("HINT");
-    chunk->seek(0);
+    
+    if (chunk) {
+        chunk->seek(0);
 
-    _hintsRemaining.clear();
+        _hintsRemaining.clear();
 
-    for (uint i = 0; i < 3; ++i) {
-        _hintsRemaining.push_back(chunk->readByte());
+        for (uint i = 0; i < 3; ++i) {
+            _hintsRemaining.push_back(chunk->readByte());
+        }
+
+        _lastHint = -1;
     }
-
-    _lastHint = -1;
 
     Action::SliderPuzzle::playerHasTriedPuzzle = false;
 
