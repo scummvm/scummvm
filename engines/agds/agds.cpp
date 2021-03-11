@@ -65,6 +65,7 @@ AGDSEngine::AGDSEngine(OSystem *system, const ADGameDescription *gameDesc) : Eng
 																			 _dialog(this),
 																			 _tellTextTimer(0),
 																			 _syncSoundId(-1),
+																			 _ambientSoundId(-1),
                                                                              _fastMode(true),
 																			 _hintMode(false) {
 }
@@ -322,6 +323,7 @@ void AGDSEngine::loadScreen(const Common::String &name, bool savePatch) {
 		_processes[i].reset();
 	}
 	_animations.clear();
+	_ambientSoundId = -1;
 
 	auto patch = getPatch(name);
 	auto screenObject = loadObject(name);

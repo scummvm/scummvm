@@ -63,6 +63,7 @@ namespace AGDS {
 		int play(const Common::String &process, const Common::String &file, const Common::String &phaseVar, bool startPlaying = true, int id = -1);
 		bool playing(int id) const;
 		void stopAll();
+		const Sound *find(int id) const;
 		Sound *findSampleByPhaseVar(const Common::String &phaseVar);
 	};
 
