@@ -1024,7 +1024,7 @@ void AGDSEngine::loadPatches(Common::SeekableReadStream *file, Database & db) {
 
 
 Common::Error AGDSEngine::loadGameState(int slot) {
-	saveAutosaveIfEnabled();
+	//saveAutosaveIfEnabled();
 
 	auto fileName = getSaveStateName(slot);
 	Common::InSaveFile *saveFile = _saveFileMan->openForLoading(fileName);
