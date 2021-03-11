@@ -221,6 +221,22 @@ void AGDSEngine::runObject(const ObjectPtr &object) {
 	if (_currentScreen) {
 		if (_currentScreen->add(object)) {
 			runProcess(object);
+
+			auto it = _objectPatches.find(object->getName());
+			if (it != _objectPatches.end()) {
+				auto& patch = *it->_value;
+				if (!patch.region.empty()) {
+					RegionPtr region = loadRegion(patch.region);
+					debug("runObject: patch region: %s", region->toString().c_str());
+					object->region(region);
+				}
+				if (!patch.text.empty()) {
+					auto text = loadText(patch.text);
+					debug("runObject: patch title: %s -> %s", patch.text.c_str(), text.c_str());
+					object->title(text);
+				}
+				object->z(patch.z);
+			}
 		} else
 			debug("object %s is in scene, skip run", object->getName().c_str());
 	} else
