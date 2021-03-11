@@ -32,6 +32,8 @@
 
 #include "graphics/surface.h"
 
+#include "image/bmp.h"
+
 namespace Nancy {
 
 static void readCifInfo20(Common::File &f, ResourceManager::CifInfo &info, uint32 *dataOffset = nullptr) {
@@ -729,13 +731,12 @@ byte *ResourceManager::loadData(const Common::String &name, uint &size) {
 	if (!buf) {
 		// Data was not found inside a cif tree or a cif file, try to open an .iff file
 		// This is used by The Vampire Diaries
-		Common::File *f = new Common::File;
-		if (f->open(name + ".iff")) {
-			size = f->size();
+		Common::File f;
+		if (f.open(name + ".iff")) {
+			size = f.size();
 			buf = new byte[size];
-			f->read(buf, size);
+			f.read(buf, size);
 		} else {
-			delete f;
 			return nullptr;
 		}
 	} else if (info.type != kResTypeScript) {
@@ -752,19 +753,33 @@ bool ResourceManager::loadImage(const Common::String &name, Graphics::Surface &s
 
 	byte *buf = getCifData(name, info);
 
-	if (!buf)
-		return false;
+	if (!buf)  {
+		// Couldn't find image in a cif tree, try to open a .bmp file
+		// This is used by The Vampire Diaries
+		Common::File f;
+		if (f.open(name + ".bmp")) {
+			Image::BitmapDecoder dec;
+			if (dec.loadStream(f)) {
+				surf.copyFrom(*dec.getSurface());
+				return true;
+			} else {
+				return false;
+			}
+		} else {
+			return false;
+		}
+	} else  {
+		if (info.type != kResTypeImage) {
+			warning("Resource '%s' is not an image", name.c_str());
+			delete[] buf;
+			return false;
+		}
 
-	if (info.type != kResTypeImage) {
-		warning("Resource '%s' is not an image", name.c_str());
-		delete[] buf;
-		return false;
-	}
-
-	if (info.depth != 16) {
-		warning("Image '%s' has unsupported depth %i", name.c_str(), info.depth);
-		delete[] buf;
-		return false;
+		if (info.depth != 16) {
+			warning("Image '%s' has unsupported depth %i", name.c_str(), info.depth);
+			delete[] buf;
+			return false;
+		}
 	}
 
 	surf.w = info.width;

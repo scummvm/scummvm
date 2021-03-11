@@ -121,6 +121,8 @@ Common::Error NancyEngine::run() {
 	SearchMan.addSubDirectoryMatching(gameDataDir, "hdvideo");
 	SearchMan.addSubDirectoryMatching(gameDataDir, "cdvideo");
 	SearchMan.addSubDirectoryMatching(gameDataDir, "iff");
+	SearchMan.addSubDirectoryMatching(gameDataDir, "art");
+	SearchMan.addSubDirectoryMatching(gameDataDir, "font");
 	
 	Common::SeekableReadStream *stream = SearchMan.createReadStreamForMember("data1.cab");
 	if (stream) {
