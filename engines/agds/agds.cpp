@@ -1056,21 +1056,11 @@ Common::Error AGDSEngine::loadGameState(int slot) {
 		Common::String filename = loadText(name);
 		debug("savegame character %s %s -> %s %s", object.c_str(), name.c_str(), filename.c_str(), id.c_str());
 		loadCharacter(id, filename, object);
-		int x = agds_c->readUint16LE();
-		int y = agds_c->readUint16LE();
-		int dir = agds_c->readUint16LE();
-		debug("character at %d, %d, dir: %d", x, y, dir);
 		auto character = getCharacter(id);
 		if (character) {
-			character->position(Common::Point(x, y));
-			character->direction(dir);
+			character->loadState(agds_c.get());
 		} else
 			warning("no character");
-		int n = 2;
-		while(n--) {
-			int v = agds_c->readUint16LE();
-			debug("savegame character leftover: %d", v);
-		}
 	}
 
 	Common::String screenName;
