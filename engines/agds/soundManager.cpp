@@ -44,12 +44,12 @@ void SoundManager::tick() {
 				if (value == 1 && !active)
 					_engine->setGlobal(phaseVar, 0);
 			} else if (value & 2) {
-				debug("sample %s restarts (via phase var)", sound.name.c_str());
+				debug("sample %s:%s restarts (via phase var)", sound.resource.c_str(), sound.filename.c_str());
 				_engine->setGlobal(phaseVar, 1);
 				_mixer->stopID(sound.id);
-				play(sound.process, sound.name, sound.phaseVar, true, sound.id);
+				play(sound.process, sound.resource, sound.filename, sound.phaseVar, true, sound.id);
 			} else if (value & 4) {
-				debug("sample %s stops (via phase var)", sound.name.c_str());
+				debug("sample %s:%s stops (via phase var)", sound.resource.c_str(), sound.filename.c_str());
 				_mixer->stopID(sound.id);
 				_engine->setGlobal(phaseVar, 0);
 			}
@@ -91,9 +91,9 @@ void SoundManager::stopAll() {
 	_sounds.clear();
 }
 
-int SoundManager::play(const Common::String &process, const Common::String &resource, const Common::String &phaseVar, bool startPlaying, int id) {
-	debug("SoundMan::play %s %s %s %d %d", process.c_str(), resource.c_str(), phaseVar.c_str(), startPlaying, id);
-	if (resource.empty())
+int SoundManager::play(const Common::String &process, const Common::String &resource, const Common::String &filename, const Common::String &phaseVar, bool startPlaying, int id) {
+	debug("SoundMan::play '%s' '%s' '%s' '%s' %d %d", process.c_str(), resource.c_str(), filename.c_str(), phaseVar.c_str(), startPlaying, id);
+	if (filename.empty())
 		return -1;
 
 	{
@@ -104,14 +104,14 @@ int SoundManager::play(const Common::String &process, const Common::String &reso
 		}
 	}
 	Common::File *file = new Common::File();
-	if (!file->open(resource)) {
+	if (!file->open(filename)) {
 		if (!phaseVar.empty())
 			_engine->setGlobal(phaseVar, 0);
-		warning("no sound %s", resource.c_str());
+		warning("no sound %s", filename.c_str());
 		return -1;
 	}
 
-	Common::String lname(resource);
+	Common::String lname(filename);
 	lname.toLowercase();
 
 	Audio::SeekableAudioStream *stream = NULL;
@@ -121,7 +121,7 @@ int SoundManager::play(const Common::String &process, const Common::String &reso
 		stream = Audio::makeWAVStream(file, DisposeAfterUse::YES);
 	}
 	if (!stream) {
-		warning("could not play sound %s", resource.c_str());
+		warning("could not play sound %s", filename.c_str());
 		delete file;
 		if (!phaseVar.empty())
 			_engine->setGlobal(phaseVar, 0);
@@ -133,7 +133,7 @@ int SoundManager::play(const Common::String &process, const Common::String &reso
 	if (id == -1)
 		id = _nextId++;
 
-	_sounds.push_back(Sound(id, process, resource, phaseVar, handle));
+	_sounds.push_back(Sound(id, process, resource, filename, phaseVar, handle));
 	_mixer->playStream(Audio::Mixer::kPlainSoundType, &handle, stream, id);
 	//if (sound_off)
 	//	setPhaseVar(_sounds.back(), 1);
