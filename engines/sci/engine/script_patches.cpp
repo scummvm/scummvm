@@ -10789,6 +10789,44 @@ static const SciScriptPatcherEntry pq1vgaSignatures[] = {
 };
 
 // ===========================================================================
+// Police Quest 2
+
+// Starting in PQ2 1.002.011, the introduction runs too fast. The speed test was
+//  changed to run before the introduction but this introduced a bug where the
+//  game speed wasn't restored from the temporary fast speed used for the test.
+//
+// We fix this by restoring the game speed to the correct default value. Since
+//  we're patching the speed test anyway, we also disable it so that it returns
+//  the maximum value without delaying game startup.
+//
+// Applies to: All versions, although the speed bug is in 1.002.011 and later
+// Responsible method: rm99:doit
+// Fixes bug: #5496
+static const uint16 pq2SignatureSpeedTest[] = {
+	SIG_MAGICDWORD,
+	0x8b, 0x00,                          // lsl 00
+	0x76,                                // push0
+	0x43, 0x46, 0x00,                    // callk GetTime 00
+	0x22,                                // lt?
+	0x30,                                // bnt [ skip exiting speed test ]
+	SIG_END
+};
+
+static const uint16 pq2PatchSpeedTest[] = {
+	0x34, PATCH_UINT16(0x7fff),          // ldi 7fff
+	0xa1, 0x6e,                          // sag 6e [ speed test result = $7fff ]
+	0x34, PATCH_UINT16(0x0006),          // ldi 0006
+	0xa1, 0x03,                          // sag 03 [ game speed = 6 ]
+	PATCH_END
+};
+
+//          script, description,                                 signature                     patch
+static const SciScriptPatcherEntry pq2Signatures[] = {
+	{  true,    99, "speed test / intro speed",               1, pq2SignatureSpeedTest,        pq2PatchSpeedTest },
+	SCI_SIGNATUREENTRY_TERMINATOR
+};
+
+// ===========================================================================
 // Police Quest 3
 
 // The player can give the locket to Marie on day 6, which was supposed to grant
@@ -20972,6 +21010,9 @@ void ScriptPatcher::processScript(uint16 scriptNr, SciSpan<byte> scriptData) {
 		break;
 	case GID_PQ1:
 		signatureTable = pq1vgaSignatures;
+		break;
+	case GID_PQ2:
+		signatureTable = pq2Signatures;
 		break;
 	case GID_PQ3:
 		signatureTable = pq3Signatures;
