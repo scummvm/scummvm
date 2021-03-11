@@ -6,15 +6,20 @@
 
 namespace AGDS {
 
+void ObjectPatch::load(Common::ReadStream *stream) {
+	text = readString(stream);
+	region = readString(stream);
+	z = stream->readUint16LE();
+}
+
+void ObjectPatch::save(Common::WriteStream *stream) const {
+	writeString(stream, text);
+	writeString(stream, region);
+	stream->writeUint16LE(z);
+}
+
 void Patch::load(Common::ReadStream *stream) {
 	byte extended = stream->readByte();
-	if (extended != 1 && extended != 0) {
-		Common::String prototype = (char)extended + readString(stream, 31);
-		Common::String unk = readString(stream);
-		debug("patch for object: %s %s", prototype.c_str(), unk.c_str());
-		return;
-	}
-
 	screenRegionName = readString(stream);
 	prevScreenName = readString(stream);
 	if (extended == 0)

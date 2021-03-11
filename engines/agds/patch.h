@@ -35,6 +35,16 @@ namespace AGDS {
 class AGDSEngine;
 class Object;
 
+struct ObjectPatch {
+	static constexpr unsigned Size = 66;
+
+	Common::String text;
+	Common::String region;
+	int z;
+	void load(Common::ReadStream *stream);
+	void save(Common::WriteStream *stream) const;
+};
+
 struct Patch {
 	struct Object {
 		Common::String 	name;
