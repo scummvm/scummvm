@@ -699,7 +699,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "intergalacticspacepancake", "Intergalactic Space Pancake!" },
 	{ "intothelight", "Into The Light" },
 	{ "invincibleisland", "Invincible Island" },
-	{ "ioawn4t", "If On A Winter's Night" },
+	{ "ioawn4t", "If On A Winter's Night, Four Travelers" },
 	{ "isnkill", "ISN: Kill!" },
 	{ "isos", "ISOS" },
 	{ "itsabugslife", "It's a Bugs Life" },
