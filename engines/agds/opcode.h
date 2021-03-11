@@ -98,7 +98,7 @@ enum Opcode {
 	kScreenCloneObject				= 77,
 	kScreenRemoveObject				= 78,
 	kSetNextScreen					= 79,
-	kSetNextScreenSaveInHistory		= 80,
+	kSetNextScreen2					= 80,
 	kStub82							= 82,
 	kStub83							= 83,
 	kStub84							= 84,
@@ -342,7 +342,6 @@ enum Opcode {
 	OP(kResetMousePointer, resetMousePointer) \
 	OP(kInventoryAddObject, inventoryAddObject) \
 	OP(kInventoryRemoveObject, inventoryRemoveObject) \
-	OP(kSetNextScreenSaveInHistory, setNextScreenSaveInHistory) \
 	OP_U(kObjectRegisterUseObjectHandler, onObjectUse) \
 	OP(kStub82, stub82) \
 	OP(kStub83, stub83) \
@@ -357,6 +356,7 @@ enum Opcode {
 	OP(kScreenLoadRegion, loadScreenRegion) \
 	OP(kScreenCloneObject, cloneObject) \
 	OP(kSetNextScreen, setNextScreen) \
+	OP(kSetNextScreen2, setNextScreen2) \
 	OP(kScreenRemoveObject, removeScreenObject) \
 	OP(kLoadAnimation, loadAnimation) \
 	OP(kLoadSample, loadSample) \

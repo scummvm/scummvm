@@ -183,12 +183,9 @@ void Process::run() {
 			_engine->runDialog(getName(), getExitArg1());
 			break;
 		case kExitCodeSetNextScreen:
+		case kExitCodeSetNextScreen2:
 			debug("process %s launches screen: %s", getName().c_str(), getExitArg1().c_str());
-			_engine->setNextScreenName(getExitArg1(), false);
-			done();
-			break;
-		case kExitCodeSetNextScreenSaveInHistory:
-			_engine->setNextScreenName(getExitArg1(), true);
+			_engine->setNextScreenName(getExitArg1());
 			done();
 			break;
 		case kExitCodeMouseAreaChange:
