@@ -1365,9 +1365,9 @@ void Process::addMouseArea() {
 
 void Process::loadCharacter() {
 	Common::String object = popString();
-	Common::String chrFilename = popText();
+	Common::String filename = popString();
 	Common::String id = popString();
-	_engine->loadCharacter(id, chrFilename, object);
+	_engine->loadCharacter(id, filename, object);
 }
 
 void Process::enableCharacter() {

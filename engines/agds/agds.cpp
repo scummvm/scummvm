@@ -790,9 +790,13 @@ void AGDSEngine::loadCharacter(const Common::String &id, const Common::String &f
 	debug("loadCharacter %s %s %s", id.c_str(), filename.c_str(), object.c_str());
 
 	delete _currentCharacter;
+
 	_currentCharacterName = id;
+	_currentCharacterFilename = filename;
+	_currentCharacterObject = object;
+
 	_currentCharacter = new Character(this, id, loadObject(object));
-	_currentCharacter->load(_resourceManager.getResource(filename));
+	_currentCharacter->load(_resourceManager.getResource(loadText(filename)));
 }
 
 Graphics::TransparentSurface *AGDSEngine::loadPicture(const Common::String &name) {
@@ -1051,10 +1055,9 @@ Common::Error AGDSEngine::loadGameState(int slot) {
 		// Current character
 		Common::ScopedPtr<Common::SeekableReadStream> agds_c(db.getEntry(saveFile, "__agds_c"));
 		Common::String object = readString(agds_c.get());
-		Common::String name = readString(agds_c.get());
+		Common::String filename = readString(agds_c.get());
 		Common::String id = readString(agds_c.get());
-		Common::String filename = loadText(name);
-		debug("savegame character %s %s -> %s %s", object.c_str(), name.c_str(), filename.c_str(), id.c_str());
+		debug("savegame character %s %s -> %s %s", object.c_str(), filename.c_str(), filename.c_str(), id.c_str());
 		loadCharacter(id, filename, object);
 		auto character = getCharacter(id);
 		if (character) {
