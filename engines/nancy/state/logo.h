@@ -25,6 +25,8 @@
 
 #include "engines/nancy/state/state.h"
 
+#include "engines/nancy/ui/fullscreenimage.h"
+
 #include "common/singleton.h"
 
 namespace Graphics {
@@ -39,11 +41,7 @@ namespace State {
 
 class Logo : public State, public Common::Singleton<Logo> {
 public:
-	Logo() :
-		_state(kInit),
-		_runState(kBlit),
-		_startTicks(0),
-		_surf(nullptr) { }
+	Logo() : _state(kInit), _startTicks(0) { }
 		
 	// State API
     virtual void process() override;
@@ -64,16 +62,9 @@ private:
 		kStop
 	};
 
-	enum RunState {
-		// First four states are related to testing mode
-		kBlit = 4,
-		kWait
-	};
-
 	State _state;
-	RunState _runState;
 	uint _startTicks;
-	Graphics::Surface *_surf;
+	UI::FullScreenImage _logoImage;
 };
 
 #define NancyLogoState Nancy::State::Logo::instance()
