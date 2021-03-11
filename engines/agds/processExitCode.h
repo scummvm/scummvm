@@ -29,7 +29,7 @@ namespace AGDS {
 		kExitCodeDestroy						= 2,
 		kExitCodeSuspend						= 5,
 		kExitCodeSetNextScreen					= 6,
-		kExitCodeSetNextScreenSaveInHistory		= 7,
+		kExitCodeSetNextScreen2					= 7,
 		kExitCodeLoadScreenObject				= 8,
 		kExitCodeLoadScreenObjectAs				= 9,
 		kExitCodeLoadInventoryObject			= 10,

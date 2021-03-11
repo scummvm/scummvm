@@ -223,21 +223,8 @@ public:
 	void initSystemVariables();
 	SystemVariable *getSystemVariable(const Common::String &name);
 
-	void setNextScreenName(const Common::String &nextScreenName, bool savePrev) {
-		_navigatedToPreviousScreen = false;
-		if (_currentScreen && savePrev) {
-			_previousScreenName = _currentScreenName;
-		}
-		_nextScreenName = nextScreenName;
-	}
-
-	void returnToPreviousScreen() {
-		if (!_previousScreenName.empty()) {
-			_navigatedToPreviousScreen = true;
-			_nextScreenName = _previousScreenName;
-			_previousScreenName.clear();
-		}
-	}
+	void setNextScreenName(const Common::String &nextScreenName);
+	void returnToPreviousScreen();
 
 	void runDialog(const Common::String &dialogParentProcess, const Common::String &dialogProcess) {
 		_dialog.run(dialogParentProcess, dialogProcess);
