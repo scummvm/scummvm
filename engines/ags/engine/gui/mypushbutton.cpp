@@ -37,10 +37,6 @@ namespace AGS3 {
 
 using AGS::Shared::Bitmap;
 
-extern int windowbackgroundcolor, pushbuttondarkcolor;
-extern int pushbuttonlightcolor;
-extern int cbuttfont;
-
 MyPushButton::MyPushButton(int xx, int yy, int wi, int hi, const char *tex) {
 	//wlevel=2;
 	x = xx;
@@ -57,23 +53,23 @@ void MyPushButton::draw(Bitmap *ds) {
 	color_t draw_color = ds->GetCompatibleColor(COL254);
 	ds->FillRect(Rect(x, y, x + wid, y + hit), draw_color);
 	if (state == 0)
-		draw_color = ds->GetCompatibleColor(pushbuttondarkcolor);
+		draw_color = ds->GetCompatibleColor(_G(pushbuttondarkcolor));
 	else
-		draw_color = ds->GetCompatibleColor(pushbuttonlightcolor);
+		draw_color = ds->GetCompatibleColor(_G(pushbuttonlightcolor));
 
 	ds->DrawRect(Rect(x, y, x + wid, y + hit), draw_color);
 	if (state == 0)
-		draw_color = ds->GetCompatibleColor(pushbuttonlightcolor);
+		draw_color = ds->GetCompatibleColor(_G(pushbuttonlightcolor));
 	else
-		draw_color = ds->GetCompatibleColor(pushbuttondarkcolor);
+		draw_color = ds->GetCompatibleColor(_G(pushbuttondarkcolor));
 
 	ds->DrawLine(Line(x, y, x + wid - 1, y), draw_color);
 	ds->DrawLine(Line(x, y, x, y + hit - 1), draw_color);
-	wouttextxy(ds, x + (wid / 2 - wgettextwidth(text, cbuttfont) / 2), y + 2, cbuttfont, text_color, text);
+	wouttextxy(ds, x + (wid / 2 - wgettextwidth(text, _G(cbuttfont)) / 2), y + 2, _G(cbuttfont), text_color, text);
 	if (typeandflags & CNF_DEFAULT)
 		draw_color = ds->GetCompatibleColor(0);
 	else
-		draw_color = ds->GetCompatibleColor(windowbackgroundcolor);
+		draw_color = ds->GetCompatibleColor(_G(windowbackgroundcolor));
 
 	ds->DrawRect(Rect(x - 1, y - 1, x + wid + 1, y + hit + 1), draw_color);
 }

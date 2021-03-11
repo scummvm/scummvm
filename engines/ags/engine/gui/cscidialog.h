@@ -33,6 +33,9 @@
 
 namespace AGS3 {
 
+#define MAXCONTROLS 20
+#define MAXSCREENWINDOWS 5
+
 int  CSCIGetVersion();
 int  CSCIDrawWindow(int xx, int yy, int wid, int hit);
 void CSCIEraseWindow(int handl);

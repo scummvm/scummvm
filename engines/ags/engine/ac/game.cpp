@@ -116,6 +116,8 @@ extern int _G(psp_gfx_renderer);
 extern char transFileName[MAX_PATH];
 extern color palette[256];
 
+int oldmouse;
+
 //=============================================================================
 
 GameDataVersion loaded_game_file_version = kGameVersion_Undefined;
@@ -237,13 +239,9 @@ void set_game_speed(int new_fps) {
 		setTimerFps(new_fps);
 }
 
-extern int cbuttfont;
-extern int acdialog_font;
-
-int oldmouse;
 void setup_for_dialog() {
-	cbuttfont = _GP(play).normal_font;
-	acdialog_font = _GP(play).normal_font;
+	_G(cbuttfont) = _GP(play).normal_font;
+	_G(acdialog_font) = _GP(play).normal_font;
 	if (!_GP(play).mouse_cursor_hidden)
 		ags_domouse(DOMOUSE_ENABLE);
 	oldmouse = _G(cur_cursor);

@@ -114,8 +114,10 @@ struct IAGSEditorDebugger;
 struct ManagedObjectPool;
 struct Mouse;
 struct MoveList;
+struct NewControl;
 struct NonBlockingScriptFunction;
 struct ObjectCache;
+struct OnScreenWindow;
 struct ResourcePaths;
 struct RGB_MAP;
 struct RoomCameraDrawData;
@@ -305,6 +307,25 @@ public:
 	const char *_text_lips_text = nullptr;
 	SpeechLipSyncLine *_splipsync = nullptr;
 	int _numLipLines = 0, _curLipLine = -1, _curLipLinePhoneme = 0;
+
+	/**@}*/
+
+	/**
+	 * \defgroup cscdialog globals
+	 * @{
+	 */
+
+	int _windowbackgroundcolor, _pushbuttondarkcolor;
+	int _pushbuttonlightcolor;
+	int _topwindowhandle = -1;
+	int _cbuttfont = 0;
+	int _acdialog_font = 0;
+	int _smcode = 0;
+	int _controlid = 0;
+	NewControl **_vobjs;
+	OnScreenWindow *_oswi;
+
+	int controlid = 0;
 
 	/**@}*/
 

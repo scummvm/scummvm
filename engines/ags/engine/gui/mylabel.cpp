@@ -33,8 +33,6 @@ namespace AGS3 {
 
 using namespace Shared;
 
-extern int acdialog_font;
-
 MyLabel::MyLabel(int xx, int yy, int wii, const char *tee) {
 	strncpy(text, tee, 150);
 	text[149] = 0;
@@ -49,10 +47,10 @@ void MyLabel::draw(Bitmap *ds) {
 	char *teptr = &text[0];
 	color_t text_color = ds->GetCompatibleColor(0);
 
-	if (break_up_text_into_lines(teptr, _GP(fontLines), wid, acdialog_font) == 0)
+	if (break_up_text_into_lines(teptr, _GP(fontLines), wid, _G(acdialog_font)) == 0)
 		return;
 	for (size_t ee = 0; ee < _GP(fontLines).Count(); ee++) {
-		wouttext_outline(ds, x, cyp, acdialog_font, text_color, _GP(fontLines)[ee]);
+		wouttext_outline(ds, x, cyp, _G(acdialog_font), text_color, _GP(fontLines)[ee]);
 		cyp += TEXT_HT;
 	}
 }

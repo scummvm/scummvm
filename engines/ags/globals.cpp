@@ -76,6 +76,9 @@
 #include "ags/engine/debugging/messagebuffer.h"
 #include "ags/engine/device/mousew32.h"
 #include "ags/engine/gui/animatingguibutton.h"
+#include "ags/engine/gui/cscidialog.h"
+#include "ags/engine/gui/guidialogdefines.h"
+#include "ags/engine/gui/newcontrol.h"
 #include "ags/engine/main/graphics_mode.h"
 #include "ags/engine/media/audio/ambientsound.h"
 #include "ags/engine/media/audio/audiodefines.h"
@@ -109,6 +112,14 @@ Globals::Globals() {
 
 	// cc_serializer.cpp globals
 	_ccUnserializer = new AGSDeSerializer();
+
+	// cscdialog.cpp globals
+	_vobjs = new NewControl *[MAXCONTROLS];
+	_oswi = new OnScreenWindow[MAXSCREENWINDOWS];
+	Common::fill(_vobjs, _vobjs + MAXCONTROLS, (NewControl *)nullptr);
+	_windowbackgroundcolor = COL254;
+	_pushbuttondarkcolor = COL255;
+	_pushbuttonlightcolor = COL253;
 
 	// debug.cpp globals
 	_fps = std::numeric_limits<float>::quiet_undefined();
@@ -273,6 +284,10 @@ Globals::~Globals() {
 
 	// cc_serializer.cpp globals
 	delete _ccUnserializer;
+
+	// cscdialog.cpp globals
+	delete[] _vobjs;
+	delete[] _oswi;
 
 	// debug.cpp globals
 	delete[] _debug_line;

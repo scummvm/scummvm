@@ -31,9 +31,6 @@ namespace AGS3 {
 
 using AGS::Shared::Bitmap;
 
-extern int windowbackgroundcolor;
-extern int cbuttfont;
-
 MyTextBox::MyTextBox(int xx, int yy, int wii, const char *tee) {
 	x = xx;
 	y = yy;
@@ -47,15 +44,15 @@ MyTextBox::MyTextBox(int xx, int yy, int wii, const char *tee) {
 }
 
 void MyTextBox::draw(Bitmap *ds) {
-	color_t draw_color = ds->GetCompatibleColor(windowbackgroundcolor);
+	color_t draw_color = ds->GetCompatibleColor(_G(windowbackgroundcolor));
 	ds->FillRect(Rect(x, y, x + wid, y + hit), draw_color);
 	draw_color = ds->GetCompatibleColor(0);
 	ds->DrawRect(Rect(x, y, x + wid, y + hit), draw_color);
 	color_t text_color = ds->GetCompatibleColor(0);
-	wouttextxy(ds, x + 2, y + 1, cbuttfont, text_color, text);
+	wouttextxy(ds, x + 2, y + 1, _G(cbuttfont), text_color, text);
 
 	char tbu[2] = "_";
-	wouttextxy(ds, x + 2 + wgettextwidth(text, cbuttfont), y + 1, cbuttfont, text_color, tbu);
+	wouttextxy(ds, x + 2 + wgettextwidth(text, _G(cbuttfont)), y + 1, _G(cbuttfont), text_color, tbu);
 }
 
 int MyTextBox::pressedon(int mousex, int mousey) {
@@ -76,7 +73,7 @@ int MyTextBox::processmessage(int mcode, int wParam, NumberPtr lParam) {
 			drawandmouse();
 		} else if (strlen(text) >= TEXTBOX_MAXLEN - 1)
 			;
-		else if (wgettextwidth(text, cbuttfont) >= wid - 5)
+		else if (wgettextwidth(text, _G(cbuttfont)) >= wid - 5)
 			;
 		else if (wParam > 127)
 			;  // font only has 128 chars

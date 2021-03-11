@@ -734,7 +734,7 @@ void calculate_move_stage(MoveList *mlsp, int aaa) {
 #ifdef DEBUG_PATHFINDER
 	AGS::Shared::Debug::Printf("stage %d from %d,%d to %d,%d Xpermove:%X Ypm:%X", aaa, ourx, oury, destx, desty, newxmove, newymove);
 	// wtextcolor(14);
-	// wgtprintf((reallyneed[aaa] >> 16) & 0x000ffff, reallyneed[aaa] & 0x000ffff, cbuttfont, "%d", aaa);
+	// wgtprintf((reallyneed[aaa] >> 16) & 0x000ffff, reallyneed[aaa] & 0x000ffff, _G(cbuttfont), "%d", aaa);
 #endif
 }
 
