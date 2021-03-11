@@ -37,9 +37,6 @@ namespace AGS3 {
 
 using namespace AGS::Shared::Memory;
 
-extern TreeMap *transtree;
-extern char transFileName[MAX_PATH];
-
 const char *get_translation(const char *text) {
 	if (text == nullptr)
 		quit("!Null string supplied to CheckForTranslations");
@@ -55,9 +52,9 @@ const char *get_translation(const char *text) {
 	}
 #endif
 
-	if (transtree != nullptr) {
+	if (_G(transtree) != nullptr) {
 		// translate the text using the translation file
-		char *transl = transtree->findValue(text);
+		char *transl = _G(transtree)->findValue(text);
 		if (transl != nullptr)
 			return transl;
 	}
@@ -66,14 +63,14 @@ const char *get_translation(const char *text) {
 }
 
 int IsTranslationAvailable() {
-	if (transtree != nullptr)
+	if (_G(transtree) != nullptr)
 		return 1;
 	return 0;
 }
 
 int GetTranslationName(char *buffer) {
 	VALIDATE_STRING(buffer);
-	const char *copyFrom = transFileName;
+	const char *copyFrom = _G(transFileName);
 
 	while (strchr(copyFrom, '\\') != nullptr) {
 		copyFrom = strchr(copyFrom, '\\') + 1;

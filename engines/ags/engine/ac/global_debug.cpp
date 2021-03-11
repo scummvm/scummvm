@@ -53,9 +53,6 @@ namespace AGS3 {
 using namespace AGS::Shared;
 using namespace AGS::Engine;
 
-extern TreeMap *transtree;
-extern char transFileName[MAX_PATH];
-
 String GetRuntimeInfo() {
 	DisplayMode mode = _G(gfxDriver)->GetDisplayMode();
 	Rect render_frame = _G(gfxDriver)->GetRenderDestination();
@@ -75,9 +72,9 @@ String GetRuntimeInfo() {
 		runtimeInfo.Append("[AUDIO.VOX enabled");
 	if (_GP(play).want_speech >= 1)
 		runtimeInfo.Append("[SPEECH.VOX enabled");
-	if (transtree != nullptr) {
+	if (_G(transtree) != nullptr) {
 		runtimeInfo.Append("[Using translation ");
-		runtimeInfo.Append(transFileName);
+		runtimeInfo.Append(_G(transFileName));
 	}
 
 	return runtimeInfo;

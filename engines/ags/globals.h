@@ -146,6 +146,7 @@ struct SpriteListEntry;
 struct StaticArray;
 struct SystemImports;
 struct TopBarSettings;
+struct TreeMap;
 struct ViewStruct;
 
 class Globals {
@@ -990,6 +991,17 @@ public:
 
 	int _pluginSimulatedClick = 0;
 	int _mouse_z_was = 0;
+
+	/**@}*/
+
+	/**
+	 * \defgroup translation globals
+	 * @{
+	 */
+
+	TreeMap *_transtree = nullptr;
+	long _lang_offs_start = 0;
+	char _transFileName[MAX_PATH] = { 0 };
 
 	/**@}*/
 

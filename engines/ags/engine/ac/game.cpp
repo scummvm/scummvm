@@ -113,7 +113,6 @@ using namespace AGS::Engine;
 extern int _G(psp_gfx_renderer);
 #endif
 
-extern char transFileName[MAX_PATH];
 extern color palette[256];
 
 int oldmouse;
@@ -756,19 +755,19 @@ const char *Game_GetTranslationFilename() {
 int Game_ChangeTranslation(const char *newFilename) {
 	if ((newFilename == nullptr) || (newFilename[0] == 0)) {
 		close_translation();
-		strcpy(transFileName, "");
+		strcpy(_G(transFileName), "");
 		_GP(usetup).translation = "";
 		return 1;
 	}
 
 	String oldTransFileName;
-	oldTransFileName = transFileName;
+	oldTransFileName = _G(transFileName);
 
 	if (init_translation(newFilename, oldTransFileName.LeftSection('.'), false)) {
 		_GP(usetup).translation = newFilename;
 		return 1;
 	} else {
-		strcpy(transFileName, oldTransFileName);
+		strcpy(_G(transFileName), oldTransFileName);
 		return 0;
 	}
 }

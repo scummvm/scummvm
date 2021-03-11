@@ -40,16 +40,10 @@ namespace AGS3 {
 
 using namespace AGS::Shared;
 
-extern char transFileName[MAX_PATH];
-
-TreeMap *transtree = nullptr;
-long lang_offs_start = 0;
-char transFileName[MAX_PATH] = "\0";
-
 void close_translation() {
-	if (transtree != nullptr) {
-		delete transtree;
-		transtree = nullptr;
+	if (_G(transtree) != nullptr) {
+		delete _G(transtree);
+		_G(transtree) = nullptr;
 	}
 }
 
@@ -59,28 +53,28 @@ bool init_translation(const String &lang, const String &fallback_lang, bool quit
 
 	if (lang.IsEmpty())
 		return false;
-	sprintf(transFileName, "%s.tra", lang.GetCStr());
+	sprintf(_G(transFileName), "%s.tra", lang.GetCStr());
 
-	Stream *language_file = find_open_asset(transFileName);
+	Stream *language_file = find_open_asset(_G(transFileName));
 	if (language_file == nullptr) {
-		Debug::Printf(kDbgMsg_Error, "Cannot open translation: %s", transFileName);
+		Debug::Printf(kDbgMsg_Error, "Cannot open translation: %s", _G(transFileName));
 		return false;
 	}
 	// in case it's inside a library file, record the offset
-	lang_offs_start = language_file->GetPosition();
+	_G(lang_offs_start) = language_file->GetPosition();
 
 	char transsig[16] = { 0 };
 	language_file->Read(transsig, 15);
 	if (strcmp(transsig, "AGSTranslation") != 0) {
-		Debug::Printf(kDbgMsg_Error, "Translation signature mismatch: %s", transFileName);
+		Debug::Printf(kDbgMsg_Error, "Translation signature mismatch: %s", _G(transFileName));
 		delete language_file;
 		return false;
 	}
 
-	if (transtree != nullptr) {
+	if (_G(transtree) != nullptr) {
 		close_translation();
 	}
-	transtree = new TreeMap();
+	_G(transtree) = new TreeMap();
 
 	String parse_error;
 	bool result = parse_translation(language_file, parse_error);
@@ -88,7 +82,7 @@ bool init_translation(const String &lang, const String &fallback_lang, bool quit
 
 	if (!result) {
 		close_translation();
-		parse_error.Prepend(String::FromFormat("Failed to read translation file: %s:\n", transFileName));
+		parse_error.Prepend(String::FromFormat("Failed to read translation file: %s:\n", _G(transFileName)));
 		if (quit_on_error) {
 			parse_error.PrependChar('!');
 			quit(parse_error);
@@ -101,7 +95,7 @@ bool init_translation(const String &lang, const String &fallback_lang, bool quit
 			return false;
 		}
 	}
-	Debug::Printf("Translation initialized: %s", transFileName);
+	Debug::Printf("Translation initialized: %s", _G(transFileName));
 	return true;
 }
 
@@ -124,7 +118,7 @@ bool parse_translation(Stream *language_file, String &parse_error) {
 					parse_error = "Translation file is corrupt";
 					return false;
 				}
-				transtree->addText(original, translation);
+				_G(transtree)->addText(original, translation);
 			}
 
 		} else if (blockType == 2) {
@@ -162,7 +156,7 @@ bool parse_translation(Stream *language_file, String &parse_error) {
 		}
 	}
 
-	if (transtree->text == nullptr) {
+	if (_G(transtree)->text == nullptr) {
 		parse_error = "The translation file was empty.";
 		return false;
 	}
