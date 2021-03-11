@@ -42,7 +42,11 @@ Common::Error PrivateMetaEngine::createInstance(OSystem *syst, Engine **engine, 
 
 void PrivateMetaEngine::getSavegameThumbnail(Graphics::Surface &thumb) {
 	Graphics::Surface *vs = Private::g_private->decodeImage(Private::g_private->_nextVS);
-	thumb = *vs->scale(kThumbnailWidth, kThumbnailHeight2);
+	Graphics::Surface *svs = vs->scale(kThumbnailWidth, kThumbnailHeight2);
+	thumb.copyFrom(*svs);
+
+	svs->free();
+	delete svs;
 
 	vs->free();
 	delete vs;
