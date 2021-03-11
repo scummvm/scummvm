@@ -1008,6 +1008,7 @@ bool AGDSEngine::hasFeature(EngineFeature f) const {
 void AGDSEngine::loadPatches(Common::SeekableReadStream *file, Database & db) {
 	debug("loading patches");
 	_patches.clear();
+	_objectPatches.clear();
 	Common::Array<Common::String> entries = db.getEntries();
 	for (uint i = 0; i < entries.size(); ++i) {
 		const Common::String & name = entries[i];
@@ -1015,9 +1016,15 @@ void AGDSEngine::loadPatches(Common::SeekableReadStream *file, Database & db) {
 			continue;
 		debug("loading patch for %s", name.c_str());
 		Common::ScopedPtr<Common::SeekableReadStream> patchStream(db.getEntry(file, name));
-		PatchPtr patch(new Patch());
-		patch->load(patchStream.get());
-		_patches[name] = patch;
+		if (patchStream->size() != ObjectPatch::Size) {
+			PatchPtr patch(new Patch());
+			patch->load(patchStream.get());
+			_patches[name] = patch;
+		} else {
+			ObjectPatchPtr patch(new ObjectPatch());
+			patch->load(patchStream.get());
+			_objectPatches[name] = patch;
+		}
 	}
 	debug("done loading patches");
 }

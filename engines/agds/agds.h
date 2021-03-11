@@ -60,6 +60,8 @@ class Character;
 class Font;
 class Object;
 typedef Common::SharedPtr<Object> ObjectPtr;
+struct ObjectPatch;
+typedef Common::SharedPtr<ObjectPatch> ObjectPatchPtr;
 struct Patch;
 typedef Common::SharedPtr<Patch> PatchPtr;
 class Process;
@@ -89,7 +91,9 @@ public:
 
 		uint32 map(const Graphics::PixelFormat &format) const;
 	};
+
 	AGDSEngine(OSystem *syst, const ADGameDescription *gameDesc);
+	AGDSEngine(const AGDSEngine &) = delete;
 	~AGDSEngine();
 
 	Common::Error run() override;
@@ -290,6 +294,7 @@ private:
 	typedef Common::HashMap<Common::String, Animation *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> AnimationsType;
 	typedef Common::HashMap<int, Font *> FontsType;
 	typedef Common::HashMap<Common::String, PatchPtr, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> PatchesType;
+	typedef Common::HashMap<Common::String, ObjectPatchPtr, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> ObjectPatchesType;
 
 	const ADGameDescription *	_gameDescription;
 	ResourceManager				_resourceManager;
@@ -302,6 +307,7 @@ private:
 	AnimationsType				_animations;
 	ProcessListType				_processes;
 	PatchesType					_patches;
+	ObjectPatchesType			_objectPatches;
 	int							_sharedStorageIndex;
 	Common::String				_sharedStorage[10];
 	GlobalsType					_globals;
