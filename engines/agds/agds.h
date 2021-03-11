@@ -320,7 +320,7 @@ private:
 	bool						_loadingScreen;
 	Character *					_currentCharacter;
 	Character *					_jokes;
-	Common::String				_currentCharacterName;
+	Common::String				_currentCharacterName, _currentCharacterFilename, _currentCharacterObject;
 	Common::String				_nextScreenName;
 	Common::String				_previousScreenName;
 	Common::String 				_defaultMouseCursorName;
