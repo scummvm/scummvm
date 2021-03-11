@@ -196,7 +196,7 @@ void Scene::synchronize(Common::Serializer &ser) {
 	}
 
 	for (uint i = 0; i < 30; ++i) {
-		ser.syncAsUint32LE(_flags.logicConditions[i].timestamp);
+		ser.syncAsUint32LE((uint32 &)_flags.logicConditions[i].timestamp);
 	}
 
 	// TODO hardcoded inventory size
@@ -226,11 +226,11 @@ void Scene::synchronize(Common::Serializer &ser) {
     ser.syncAsSint16LE(_flags.heldItem);
     NanEngine.cursorManager->setCursorItemID(_flags.heldItem);
 
-	ser.syncAsUint32LE(_timers.lastTotalTime);
-	ser.syncAsUint32LE(_timers.sceneTime);
-	ser.syncAsUint32LE(_timers.playerTime);
-	ser.syncAsUint32LE(_timers.pushedPlayTime);
-	ser.syncAsUint32LE(_timers.timerTime);
+	ser.syncAsUint32LE((uint32 &)_timers.lastTotalTime);
+	ser.syncAsUint32LE((uint32 &)_timers.sceneTime);
+	ser.syncAsUint32LE((uint32 &)_timers.playerTime);
+	ser.syncAsUint32LE((uint32 &)_timers.pushedPlayTime);
+	ser.syncAsUint32LE((uint32 &)_timers.timerTime);
 	ser.syncAsByte(_timers.timerIsActive);
     ser.syncAsByte(_timers.timeOfDay);
 
