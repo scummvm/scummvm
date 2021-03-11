@@ -61,6 +61,7 @@ AGDSEngine::AGDSEngine(OSystem *system, const ADGameDescription *gameDesc) : Eng
                                                                              _random("agds"),
                                                                              _inventoryRegion(),
                                                                              _soundManager(this, system->getMixer()),
+																			 _inventory(this),
 																			 _dialog(this),
 																			 _tellTextTimer(0),
 																			 _syncSoundId(-1),
@@ -1117,19 +1118,8 @@ Common::Error AGDSEngine::loadGameState(int slot) {
 	loadScreen(screenName, false);
 
 	{
-		// Inventory
-		_inventory.clear();
 		Common::ScopedPtr<Common::SeekableReadStream> agds_i(db.getEntry(saveFile, "__agds_i"));
-		int n = 34;
-		while(n--) {
-			Common::String name = readString(agds_i.get());
-			int refcount = agds_i->readUint32LE();
-			int objectPtr = agds_i->readUint32LE();
-			if (!name.empty() && refcount) {
-				debug("inventory: %s %d %d", name.c_str(), refcount, objectPtr);
-				_inventory.add(runObject(name));
-			}
-		}
+		_inventory.load(agds_i.get());
 	}
 
 	delete saveFile;

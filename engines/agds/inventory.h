@@ -28,11 +28,14 @@
 #include "common/ptr.h"
 #include "common/rect.h"
 
+namespace Common { class ReadStream; class WriteStream; }
+
 namespace AGDS {
 class Object;
 typedef Common::SharedPtr<Object> ObjectPtr;
 
 class Inventory {
+	class AGDSEngine* _engine;
 	typedef Common::Array<ObjectPtr> EntriesType;
 	EntriesType _entries;
 	bool _enabled;
@@ -41,8 +44,11 @@ class Inventory {
 public:
 	static const int kMaxSize = 35;
 
-	Inventory();
+	Inventory(AGDSEngine* _engine);
 	~Inventory();
+
+	void load(Common::ReadStream* stream);
+	void save(Common::WriteStream* stream) const;
 
 	bool enabled() const {
 		return _enabled;
