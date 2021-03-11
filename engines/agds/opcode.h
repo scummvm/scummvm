@@ -211,7 +211,7 @@ enum Opcode {
 	kStub191						= 191,
 	kStub192						= 192,
 	kRemoveGapsFromInventory		= 193,
-	kSamplePaused					= 194,
+	kSampleAmbient					= 194,
 	kGetObjectPictureWidth			= 195,
 	kGetObjectPictureHeight			= 196,
 	kSetRotation					= 197,
@@ -429,7 +429,7 @@ enum Opcode {
 	OP(kSetObjectScale, setObjectScale) \
 	OP(kStub191, disableMouseAreas) \
 	OP(kRemoveGapsFromInventory, removeGapsFromInventory) \
-	OP(kSamplePaused, samplePaused) \
+	OP(kSampleAmbient, sampleAmbient) \
 	OP(kGetObjectPictureWidth, getObjectPictureWidth) \
 	OP(kGetObjectPictureHeight, getObjectPictureHeight) \
 	OP(kLoadPicture, loadPicture) \

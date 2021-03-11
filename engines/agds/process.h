@@ -65,7 +65,7 @@ private:
 	bool			_phaseVarControlled;
 	int				_animationSpeed;
 	bool			_samplePeriodic;
-	bool			_samplePaused;
+	bool			_sampleAmbient;
 	Common::Point	_mousePosition;
 	int				_filmSubtitlesResource;
 
