@@ -75,7 +75,6 @@ using namespace AGS::Shared;
 
 extern int game_paused;
 extern int getloctype_index;
-extern char noWalkBehindsAtAll;
 
 // Checks if user interface should remain disabled for now
 static int ShouldStayInWaitMode();
@@ -388,7 +387,7 @@ static void check_keyboard_controls() {
 		int ff;
 		// MACPORT FIX 9/6/5: added last %s
 		sprintf(infobuf, "In room %d %s[Player at %d, %d (view %d, loop %d, frame %d)%s%s%s",
-			_G(displayed_room), (noWalkBehindsAtAll ? "(has no walk-behinds)" : ""), _G(playerchar)->x, _G(playerchar)->y,
+			_G(displayed_room), (_G(noWalkBehindsAtAll) ? "(has no walk-behinds)" : ""), _G(playerchar)->x, _G(playerchar)->y,
 			_G(playerchar)->view + 1, _G(playerchar)->loop, _G(playerchar)->frame,
 			(IsGamePaused() == 0) ? "" : "[Game paused.",
 			(_GP(play).ground_level_areas_disabled == 0) ? "" : "[Ground areas disabled.",

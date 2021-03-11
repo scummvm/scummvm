@@ -31,14 +31,12 @@
 
 namespace AGS3 {
 
-extern int walk_behind_baselines_changed;
-
 void SetWalkBehindBase(int wa, int bl) {
 	if ((wa < 1) || (wa >= MAX_WALK_BEHINDS))
 		quit("!SetWalkBehindBase: invalid walk-behind area specified");
 
 	if (bl != _G(croom)->walkbehind_base[wa]) {
-		walk_behind_baselines_changed = 1;
+		_G(walk_behind_baselines_changed) = 1;
 		invalidate_cached_walkbehinds();
 		_G(croom)->walkbehind_base[wa] = bl;
 		debug_script_log("Walk-behind %d baseline changed to %d", wa, bl);

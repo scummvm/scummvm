@@ -273,6 +273,14 @@ Globals::Globals() {
 	// systemimports.cpp globals
 	_simp = new SystemImports();
 	_simp_for_plugin = new SystemImports();
+
+	// walkbehind.cpp globals
+	Common::fill(_walkBehindLeft, _walkBehindLeft + MAX_WALK_BEHINDS, 0);
+	Common::fill(_walkBehindTop, _walkBehindTop + MAX_WALK_BEHINDS, 0);
+	Common::fill(_walkBehindRight, _walkBehindRight + MAX_WALK_BEHINDS, 0);
+	Common::fill(_walkBehindBottom, _walkBehindBottom + MAX_WALK_BEHINDS, 0);
+	Common::fill(_walkBehindBitmap, _walkBehindBitmap + MAX_WALK_BEHINDS,
+		(AGS::Engine::IDriverDependantBitmap *)nullptr);
 }
 
 Globals::~Globals() {

@@ -33,16 +33,6 @@ namespace AGS3 {
 using namespace AGS::Shared;
 using namespace AGS::Engine;
 
-char *walkBehindExists = nullptr;  // whether a WB area is in this column
-int *walkBehindStartY = nullptr, *walkBehindEndY = nullptr;
-char noWalkBehindsAtAll = 0;
-int walkBehindLeft[MAX_WALK_BEHINDS], walkBehindTop[MAX_WALK_BEHINDS];
-int walkBehindRight[MAX_WALK_BEHINDS], walkBehindBottom[MAX_WALK_BEHINDS];
-IDriverDependantBitmap *walkBehindBitmap[MAX_WALK_BEHINDS];
-int walkBehindsCachedForBgNum = 0;
-WalkBehindMethodEnum walkBehindMethod = DrawOverCharSprite;
-int walk_behind_baselines_changed = 0;
-
 void update_walk_behind_images() {
 	int ee, rr;
 	int bpp = (_GP(thisroom).BgFrames[_GP(play).bg_frame].Graphic->GetColorDepth() + 7) / 8;
@@ -50,14 +40,14 @@ void update_walk_behind_images() {
 	for (ee = 1; ee < MAX_WALK_BEHINDS; ee++) {
 		update_polled_stuff_if_runtime();
 
-		if (walkBehindRight[ee] > 0) {
+		if (_G(walkBehindRight)[ee] > 0) {
 			wbbmp = BitmapHelper::CreateTransparentBitmap(
-				(walkBehindRight[ee] - walkBehindLeft[ee]) + 1,
-				(walkBehindBottom[ee] - walkBehindTop[ee]) + 1,
+				(_G(walkBehindRight)[ee] - _G(walkBehindLeft)[ee]) + 1,
+				(_G(walkBehindBottom)[ee] - _G(walkBehindTop)[ee]) + 1,
 				_GP(thisroom).BgFrames[_GP(play).bg_frame].Graphic->GetColorDepth());
-			int yy, startX = walkBehindLeft[ee], startY = walkBehindTop[ee];
-			for (rr = startX; rr <= walkBehindRight[ee]; rr++) {
-				for (yy = startY; yy <= walkBehindBottom[ee]; yy++) {
+			int yy, startX = _G(walkBehindLeft)[ee], startY = _G(walkBehindTop)[ee];
+			for (rr = startX; rr <= _G(walkBehindRight)[ee]; rr++) {
+				for (yy = startY; yy <= _G(walkBehindBottom)[ee]; yy++) {
 					if (_GP(thisroom).WalkBehindMask->GetScanLine(yy)[rr] == ee) {
 						for (int ii = 0; ii < bpp; ii++)
 							wbbmp->GetScanLineForWriting(yy - startY)[(rr - startX) * bpp + ii] = _GP(thisroom).BgFrames[_GP(play).bg_frame].Graphic->GetScanLine(yy)[rr * bpp + ii];
@@ -67,41 +57,41 @@ void update_walk_behind_images() {
 
 			update_polled_stuff_if_runtime();
 
-			if (walkBehindBitmap[ee] != nullptr) {
-				_G(gfxDriver)->DestroyDDB(walkBehindBitmap[ee]);
+			if (_G(walkBehindBitmap)[ee] != nullptr) {
+				_G(gfxDriver)->DestroyDDB(_G(walkBehindBitmap)[ee]);
 			}
-			walkBehindBitmap[ee] = _G(gfxDriver)->CreateDDBFromBitmap(wbbmp, false);
+			_G(walkBehindBitmap)[ee] = _G(gfxDriver)->CreateDDBFromBitmap(wbbmp, false);
 			delete wbbmp;
 		}
 	}
 
-	walkBehindsCachedForBgNum = _GP(play).bg_frame;
+	_G(walkBehindsCachedForBgNum) = _GP(play).bg_frame;
 }
 
 
 void recache_walk_behinds() {
-	if (walkBehindExists) {
-		free(walkBehindExists);
-		free(walkBehindStartY);
-		free(walkBehindEndY);
+	if (_G(walkBehindExists)) {
+		free(_G(walkBehindExists));
+		free(_G(walkBehindStartY));
+		free(_G(walkBehindEndY));
 	}
 
-	walkBehindExists = (char *)malloc(_GP(thisroom).WalkBehindMask->GetWidth());
-	walkBehindStartY = (int *)malloc(_GP(thisroom).WalkBehindMask->GetWidth() * sizeof(int));
-	walkBehindEndY = (int *)malloc(_GP(thisroom).WalkBehindMask->GetWidth() * sizeof(int));
-	noWalkBehindsAtAll = 1;
+	_G(walkBehindExists) = (char *)malloc(_GP(thisroom).WalkBehindMask->GetWidth());
+	_G(walkBehindStartY) = (int *)malloc(_GP(thisroom).WalkBehindMask->GetWidth() * sizeof(int));
+	_G(walkBehindEndY) = (int *)malloc(_GP(thisroom).WalkBehindMask->GetWidth() * sizeof(int));
+	_G(noWalkBehindsAtAll) = 1;
 
 	int ee, rr, tmm;
 	const int NO_WALK_BEHIND = 100000;
 	for (ee = 0; ee < MAX_WALK_BEHINDS; ee++) {
-		walkBehindLeft[ee] = NO_WALK_BEHIND;
-		walkBehindTop[ee] = NO_WALK_BEHIND;
-		walkBehindRight[ee] = 0;
-		walkBehindBottom[ee] = 0;
+		_G(walkBehindLeft)[ee] = NO_WALK_BEHIND;
+		_G(walkBehindTop)[ee] = NO_WALK_BEHIND;
+		_G(walkBehindRight)[ee] = 0;
+		_G(walkBehindBottom)[ee] = 0;
 
-		if (walkBehindBitmap[ee] != nullptr) {
-			_G(gfxDriver)->DestroyDDB(walkBehindBitmap[ee]);
-			walkBehindBitmap[ee] = nullptr;
+		if (_G(walkBehindBitmap)[ee] != nullptr) {
+			_G(gfxDriver)->DestroyDDB(_G(walkBehindBitmap)[ee]);
+			_G(walkBehindBitmap)[ee] = nullptr;
 		}
 	}
 
@@ -113,27 +103,27 @@ void recache_walk_behinds() {
 		quit("Walk behinds bitmap not linear");
 
 	for (ee = 0; ee < _GP(thisroom).WalkBehindMask->GetWidth(); ee++) {
-		walkBehindExists[ee] = 0;
+		_G(walkBehindExists)[ee] = 0;
 		for (rr = 0; rr < _GP(thisroom).WalkBehindMask->GetHeight(); rr++) {
 			tmm = _GP(thisroom).WalkBehindMask->GetScanLine(rr)[ee];
 			//tmm = _getpixel(_GP(thisroom).WalkBehindMask,ee,rr);
 			if ((tmm >= 1) && (tmm < MAX_WALK_BEHINDS)) {
-				if (!walkBehindExists[ee]) {
-					walkBehindStartY[ee] = rr;
-					walkBehindExists[ee] = tmm;
-					noWalkBehindsAtAll = 0;
+				if (!_G(walkBehindExists)[ee]) {
+					_G(walkBehindStartY)[ee] = rr;
+					_G(walkBehindExists)[ee] = tmm;
+					_G(noWalkBehindsAtAll) = 0;
 				}
-				walkBehindEndY[ee] = rr + 1;  // +1 to allow bottom line of screen to work
+				_G(walkBehindEndY)[ee] = rr + 1;  // +1 to allow bottom line of screen to work
 
-				if (ee < walkBehindLeft[tmm]) walkBehindLeft[tmm] = ee;
-				if (rr < walkBehindTop[tmm]) walkBehindTop[tmm] = rr;
-				if (ee > walkBehindRight[tmm]) walkBehindRight[tmm] = ee;
-				if (rr > walkBehindBottom[tmm]) walkBehindBottom[tmm] = rr;
+				if (ee < _G(walkBehindLeft)[tmm]) _G(walkBehindLeft)[tmm] = ee;
+				if (rr < _G(walkBehindTop)[tmm]) _G(walkBehindTop)[tmm] = rr;
+				if (ee > _G(walkBehindRight)[tmm]) _G(walkBehindRight)[tmm] = ee;
+				if (rr > _G(walkBehindBottom)[tmm]) _G(walkBehindBottom)[tmm] = rr;
 			}
 		}
 	}
 
-	if (walkBehindMethod == DrawAsSeparateSprite) {
+	if (_G(walkBehindMethod) == DrawAsSeparateSprite) {
 		update_walk_behind_images();
 	}
 }

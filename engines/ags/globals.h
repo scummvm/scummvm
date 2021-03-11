@@ -28,6 +28,7 @@
 #include "ags/shared/gui/guimain.h"
 #include "ags/shared/script/cc_script.h"
 #include "ags/engine/ac/runtime_defines.h"
+#include "ags/engine/ac/walkbehind.h"
 #include "ags/engine/main/engine.h"
 #include "ags/engine/media/audio/audiodefines.h"
 #include "ags/engine/script/script.h"
@@ -973,7 +974,7 @@ public:
 	/**@}*/
 
 	/**
-	 * \defgroup walkablearea globals
+	 * \defgroup sys_events globals
 	 * @{
 	 */
 
@@ -988,6 +989,23 @@ public:
 	 */
 
 	AGS::Shared::Bitmap *_walkareabackup = nullptr, *_walkable_areas_temp = nullptr;
+
+	/**@}*/
+
+	/**
+	 * \defgroup walkbehind globals
+	 * @{
+	 */
+
+	char *_walkBehindExists = nullptr;  // whether a WB area is in this column
+	int *_walkBehindStartY = nullptr, *_walkBehindEndY = nullptr;
+	char _noWalkBehindsAtAll = 0;
+	int _walkBehindLeft[MAX_WALK_BEHINDS], _walkBehindTop[MAX_WALK_BEHINDS];
+	int _walkBehindRight[MAX_WALK_BEHINDS], _walkBehindBottom[MAX_WALK_BEHINDS];
+	AGS::Engine::IDriverDependantBitmap *_walkBehindBitmap[MAX_WALK_BEHINDS];
+	int _walkBehindsCachedForBgNum = 0;
+	WalkBehindMethodEnum _walkBehindMethod = DrawOverCharSprite;
+	int _walk_behind_baselines_changed = 0;
 
 	/**@}*/
 
