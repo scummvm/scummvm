@@ -427,15 +427,6 @@ void NancyEngine::setPreviousState() {
 	SWAP<Nancy::State::State *>(_gameFlow.currentState, _gameFlow.previousState);
 }
 
-class NancyEngine_v0 : public NancyEngine {
-public:
-	NancyEngine_v0(OSystem *syst, const NancyGameDescription *gd) : NancyEngine(syst, gd) { }
-
-private:
-	virtual uint getFilenameLen() const { return 9; }
-	virtual void readBootSummary(const IFF &boot);
-};
-
 void NancyEngine::readBootSummary(const IFF &boot) {
 	Common::SeekableReadStream *bsum = getBootChunkStream("BSUM");
 	bsum->seek(0);
