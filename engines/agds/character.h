@@ -28,7 +28,7 @@
 #include "common/ptr.h"
 #include "common/rect.h"
 
-namespace Common	{ class SeekableReadStream; }
+namespace Common	{ class SeekableReadStream; class ReadStream; class WriteStream; }
 namespace Graphics	{ struct Surface; }
 
 namespace AGDS {
@@ -83,6 +83,8 @@ public:
 	}
 
 	void load(Common::SeekableReadStream* stream);
+	void loadState(Common::ReadStream* stream);
+	void saveState(Common::WriteStream* stream);
 
 	void enable(bool enabled = true) {
 		_enabled = enabled;

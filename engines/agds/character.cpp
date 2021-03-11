@@ -98,6 +98,29 @@ void Character::load(Common::SeekableReadStream *stream) {
 	delete stream;
 }
 
+void Character::loadState(Common::ReadStream* stream) {
+	int x = stream->readUint16LE();
+	int y = stream->readUint16LE();
+	int dir = stream->readUint16LE();
+	debug("character at %d, %d, dir: %d", x, y, dir);
+	position(Common::Point(x, y));
+	direction(dir);
+	int n = 2;
+	while(n--) {
+		int v = stream->readUint16LE();
+		debug("savegame character leftover: %d", v);
+	}
+}
+
+void Character::saveState(Common::WriteStream* stream) {
+	stream->writeUint16LE(_pos.x);
+	stream->writeUint16LE(_pos.y);
+	stream->writeUint16LE(_direction);
+	stream->writeUint16LE(1);
+	stream->writeUint16LE(1);
+}
+
+
 void Character::direction(int dir) {
 	debug("setDirection %d", dir);
 	_direction = dir;
