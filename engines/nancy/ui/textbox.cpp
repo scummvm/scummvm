@@ -55,7 +55,7 @@ void Textbox::init() {
     chunk->seek(0x20);
     Common::Rect innerBoundingBox;
     readRect(*chunk, innerBoundingBox);
-    _fullSurface.create(innerBoundingBox.width(), innerBoundingBox.height(), GraphicsManager::pixelFormat);
+    _fullSurface.create(innerBoundingBox.width(), innerBoundingBox.height(), GraphicsManager::getInputPixelFormat());
     
     _scrollbarDefaultDest.x = chunk->readUint16LE();
     _scrollbarDefaultDest.y = chunk->readUint16LE();

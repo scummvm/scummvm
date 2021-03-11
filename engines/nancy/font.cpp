@@ -30,7 +30,7 @@
 namespace Nancy {
 
 void Font::read(Common::SeekableReadStream &stream) {
-    _transColor = NanEngine.graphicsManager->transColor;
+    _transColor = GraphicsManager::getTransColor();
     _maxCharWidth = 0;
     _fontHeight = 0;
 

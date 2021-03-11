@@ -40,14 +40,10 @@ namespace Action {
 void OrderingPuzzle::init() {
     // Screen position is initialized in readData and fits exactly the bounds of all elements on screen.
     // This is a hacky way to make this particular action record work with this implementation's graphics manager
-    _drawSurface.create(_screenPosition.width(), _screenPosition.height(), GraphicsManager::pixelFormat);
+    _drawSurface.create(_screenPosition.width(), _screenPosition.height(), GraphicsManager::getInputPixelFormat());
     clearAllElements();
 
-    Graphics::Surface surf;
-    NanEngine.resource->loadImage(imageName, surf);
-    image.create(surf.w, surf.h, surf.format);
-    image.blitFrom(surf);
-    surf.free();
+    NanEngine.resource->loadImage(imageName, image);
 
     setVisible(false);
 
@@ -226,12 +222,12 @@ void OrderingPuzzle::undrawElement(uint id) {
     Common::Rect bounds = destRects[id];
     bounds.translate(-_screenPosition.left, -_screenPosition.top);
 
-    _drawSurface.fillRect(bounds, GraphicsManager::transColor);
+    _drawSurface.fillRect(bounds, GraphicsManager::getTransColor());
     _needsRedraw = true;
 }
 
 void OrderingPuzzle::clearAllElements() {
-    _drawSurface.clear(NanEngine.graphicsManager->transColor);
+    _drawSurface.clear(GraphicsManager::getTransColor());
     setVisible(false);
     clickedSequence.clear();
     return;

@@ -33,14 +33,10 @@ namespace Nancy {
 namespace Action {
 
 void LeverPuzzle::init() {
-    _drawSurface.create(_screenPosition.width(), _screenPosition.height(), GraphicsManager::pixelFormat);
-    _drawSurface.clear(GraphicsManager::transColor);
+    _drawSurface.create(_screenPosition.width(), _screenPosition.height(), GraphicsManager::getInputPixelFormat());
+    _drawSurface.clear(GraphicsManager::getTransColor());
 
-    Graphics::Surface surf;
-    NanEngine.resource->loadImage(imageName, surf);
-    image.create(surf.w, surf.h, surf.format);
-    image.blitFrom(surf);
-    surf.free();
+    NanEngine.resource->loadImage(imageName, image);
 }
 
 uint16 LeverPuzzle::readData(Common::SeekableReadStream &stream) {

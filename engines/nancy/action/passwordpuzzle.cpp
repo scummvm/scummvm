@@ -35,8 +35,8 @@ namespace Nancy {
 namespace Action {
 
 void PasswordPuzzle::init() {
-    _drawSurface.create(_screenPosition.width(), _screenPosition.height(), GraphicsManager::pixelFormat);
-    _drawSurface.clear(GraphicsManager::transColor);
+    _drawSurface.create(_screenPosition.width(), _screenPosition.height(), GraphicsManager::getInputPixelFormat());
+    _drawSurface.clear(GraphicsManager::getTransColor());
 
     RenderObject::init();
 }
@@ -217,7 +217,7 @@ void PasswordPuzzle::onPause(bool pause) {
 }
 
 void PasswordPuzzle::drawText() {
-    _drawSurface.clear(GraphicsManager::transColor);
+    _drawSurface.clear(GraphicsManager::getTransColor());
     Graphics::Font *font = NanEngine.graphicsManager->getFont(fontID);
 
     Common::Rect bounds = nameBounds;

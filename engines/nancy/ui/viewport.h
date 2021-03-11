@@ -50,9 +50,7 @@ public:
     void handleInput(NancyInput &input);
 
     void loadVideo(const Common::String &filename, uint frameNr = 0, uint verticalScroll = 0);
-
-    // Check for click events and return a MovementDirection
-
+    
     void setFrame(uint frameNr);
     void setNextFrame();
     void setPreviousFrame();
