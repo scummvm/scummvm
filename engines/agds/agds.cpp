@@ -39,6 +39,7 @@
 #include "common/events.h"
 #include "common/file.h"
 #include "common/ini-file.h"
+#include "common/memstream.h"
 #include "common/savefile.h"
 #include "common/system.h"
 #include "engines/util.h"
@@ -323,7 +324,6 @@ void AGDSEngine::loadScreen(const Common::String &name, bool savePatch) {
 		_processes[i].reset();
 	}
 	_animations.clear();
-	_ambientSoundId = -1;
 
 	auto patch = getPatch(name);
 	auto screenObject = loadObject(name);
@@ -1061,6 +1061,8 @@ Common::Error AGDSEngine::loadGameState(int slot) {
 	if (!db.open(fileName, saveFile))
 		return Common::kReadingFailed;
 
+	_soundManager.stopAll();
+
 	{
 		// Compiled version (should be 2)
 		Common::ScopedPtr<Common::SeekableReadStream> agds_ver(db.getEntry(saveFile, "__agds_ver"));
@@ -1114,19 +1116,6 @@ Common::Error AGDSEngine::loadGameState(int slot) {
 	}
 
 	{
-		_soundManager.stopAll();
-		// Audio samples
-		Common::ScopedPtr<Common::SeekableReadStream> agds_a(db.getEntry(saveFile, "__agds_a"));
-		Common::String sample = loadText(readString(agds_a.get()));
-		Common::String phaseVar = readString(agds_a.get());
-		uint volume = agds_a->readUint32LE();
-		uint type = agds_a->readUint32LE();
-		debug("saved audio state: sample: '%s', var: '%s' %u %u", sample.c_str(), phaseVar.c_str(), volume, type);
-		debug("phase var for sample -> %d", getGlobal(phaseVar));
-		playSound(Common::String(), sample, phaseVar); //fixme: double check
-	}
-
-	{
 		// System vars
 		Common::ScopedPtr<Common::SeekableReadStream> agds_d(db.getEntry(saveFile, "__agds_d"));
 		for(uint i = 0, n = _systemVarList.size(); i < n; ++i) {
@@ -1143,6 +1132,18 @@ Common::Error AGDSEngine::loadGameState(int slot) {
 	loadScreen(screenName, false);
 
 	{
+		// Saved ambient sound
+		Common::ScopedPtr<Common::SeekableReadStream> agds_a(db.getEntry(saveFile, "__agds_a"));
+		Common::String sample = loadText(readString(agds_a.get()));
+		Common::String phaseVar = readString(agds_a.get());
+		uint volume = agds_a->readUint32LE();
+		uint type = agds_a->readUint32LE();
+		debug("saved audio state: sample: '%s', var: '%s' %u %u", sample.c_str(), phaseVar.c_str(), volume, type);
+		debug("phase var for sample -> %d", getGlobal(phaseVar));
+		_ambientSoundId = playSound(Common::String(), sample, phaseVar); //fixme: double check
+		debug("ambient sound id = %d", _ambientSoundId);
+	}
+	{
 		Common::ScopedPtr<Common::SeekableReadStream> agds_i(db.getEntry(saveFile, "__agds_i"));
 		_inventory.load(agds_i.get());
 	}
@@ -1153,12 +1154,103 @@ Common::Error AGDSEngine::loadGameState(int slot) {
 
 Common::Error AGDSEngine::saveGameState(int slot, const Common::String &desc, bool isAutosave) {
 	auto fileName = getSaveStateName(slot);
-	Common::OutSaveFile *saveFile = getSaveFileManager()->openForSaving(fileName);
+	Common::OutSaveFile *saveFile = getSaveFileManager()->openForSaving(fileName, false);
 
 	if (!saveFile)
 		return Common::kWritingFailed;
 
 	Common::HashMap<Common::String, Common::Array<uint8>> entries;
+
+	{
+		Common::MemoryWriteStreamDynamic stream(DisposeAfterUse::YES);
+		stream.writeUint32LE(2);
+		entries["__agds_ver"].assign(stream.getData(), stream.getData() + stream.size());
+	}
+
+	{
+		Common::MemoryWriteStreamDynamic stream(DisposeAfterUse::YES);
+		writeString(&stream, _currentCharacterObject);
+		writeString(&stream, _currentCharacterFilename);
+		writeString(&stream, _currentCharacterName);
+		auto character = getCharacter(_currentCharacterName);
+		if (character) {
+			character->saveState(&stream);
+		} else
+			warning("no character to save");
+
+		auto size = stream.size();
+		if (size < 106) {
+			Common::Array<unsigned char> filler(106 - size);
+			stream.write(filler.data(), filler.size());
+		}
+		entries["__agds_c"].assign(stream.getData(), stream.getData() + stream.size());
+	}
+
+	{
+		Common::MemoryWriteStreamDynamic stream(DisposeAfterUse::YES);
+		writeString(&stream, _currentScreenName);
+		char palette[0x300];
+		memset(palette, 0xaa, sizeof(palette));
+		stream.write(palette, sizeof(palette));
+		entries["__agds_s"].assign(stream.getData(), stream.getData() + stream.size());
+	}
+
+	{
+		Common::MemoryWriteStreamDynamic stream(DisposeAfterUse::YES);
+		for(uint i = 0, n = _systemVarList.size(); i < n; ++i) {
+			Common::String & name = _systemVarList[i];
+			_systemVars[name]->write(&stream);
+		}
+		entries["__agds_d"].assign(stream.getData(), stream.getData() + stream.size());
+	}
+
+	{
+		Common::MemoryWriteStreamDynamic stream(DisposeAfterUse::YES);
+		auto n = _globals.size();
+		stream.writeUint32LE(n);
+		debug("saving %u vars...", n);
+		for(auto & global : _globals) {
+			writeString(&stream, global._key);
+			stream.writeUint32LE(global._value);
+		}
+		entries["__agds_v"].assign(stream.getData(), stream.getData() + stream.size());
+	}
+
+	{
+		Common::MemoryWriteStreamDynamic stream(DisposeAfterUse::YES);
+		_inventory.save(&stream);
+		entries["__agds_i"].assign(stream.getData(), stream.getData() + stream.size());
+	}
+
+	{
+		Common::MemoryWriteStreamDynamic stream(DisposeAfterUse::YES);
+		debug("ambient sound id: %d", _ambientSoundId);
+		auto sound = _soundManager.find(_ambientSoundId);
+		if (sound) {
+			writeString(&stream, sound->name);
+			writeString(&stream, sound->phaseVar);
+		} else {
+			writeString(&stream, Common::String());
+			writeString(&stream, Common::String());
+		}
+		stream.writeUint32LE(70); //volume
+		stream.writeUint32LE(30); //type
+
+		entries["__agds_a"].assign(stream.getData(), stream.getData() + stream.size());
+	}
+
+	for(auto & objectPatch : _objectPatches) {
+		Common::MemoryWriteStreamDynamic stream(DisposeAfterUse::YES);
+		objectPatch._value->save(&stream);
+		entries[objectPatch._key].assign(stream.getData(), stream.getData() + stream.size());
+	}
+
+	for(auto & patch : _patches) {
+		Common::MemoryWriteStreamDynamic stream(DisposeAfterUse::YES);
+		patch._value->save(&stream);
+		entries[patch._key].assign(stream.getData(), stream.getData() + stream.size());
+	}
+
 	Database::write(saveFile, entries);
 
 	delete saveFile;

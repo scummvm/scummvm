@@ -85,7 +85,8 @@ void Database::write(Common::WriteStream *stream, const Common::HashMap<Common::
 	stream->writeUint32LE(n);
 	stream->writeUint32LE(kDefaultNameSize);
 	auto dataOffset = getDataOffset(kDefaultNameSize, n);
-	auto offset = dataOffset;
+	debug("database data offset: 0x%06x", dataOffset);
+	auto offset = 0;
 
 	for(auto entry: entries) {
 		auto &key = entry._key;
@@ -95,6 +96,7 @@ void Database::write(Common::WriteStream *stream, const Common::HashMap<Common::
 		Common::Array<char> text(kDefaultNameSize + 1);
 		strncpy(text.data(), key.c_str(), kDefaultNameSize);
 		stream->write(text.data(), text.size());
+		debug("database entry %s: 0x%06x", key.c_str(), offset);
 		offset += value.size();
 		stream->writeUint32LE(value.size());
 	}
