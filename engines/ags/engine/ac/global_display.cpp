@@ -44,12 +44,6 @@ namespace AGS3 {
 
 using namespace AGS::Shared;
 
-extern TopBarSettings topBar;
-
-
-extern int display_message_aschar;
-
-
 void Display(const char *texx, ...) {
 	char displbuf[STD_BUFFER_SIZE];
 	va_list ap;
@@ -64,10 +58,10 @@ void DisplaySimple(const char *text) {
 }
 
 void DisplayTopBar(int ypos, int ttexcol, int backcol, const char *title, const char *text) {
-	// FIXME: refactor source_text_length and get rid of this ugly hack!
-	const int real_text_sourcelen = source_text_length;
-	snprintf(topBar.text, sizeof(topBar.text), "%s", get_translation(title));
-	source_text_length = real_text_sourcelen;
+	// FIXME: refactor _G(source_text_length) and get rid of this ugly hack!
+	const int real_text_sourcelen = _G(source_text_length);
+	snprintf(_GP(topBar).text, sizeof(_GP(topBar).text), "%s", get_translation(title));
+	_G(source_text_length) = real_text_sourcelen;
 
 	if (ypos > 0)
 		_GP(play).top_bar_ypos = ypos;
@@ -76,14 +70,14 @@ void DisplayTopBar(int ypos, int ttexcol, int backcol, const char *title, const 
 	if (backcol > 0)
 		_GP(play).top_bar_backcolor = backcol;
 
-	topBar.wantIt = 1;
-	topBar.font = FONT_NORMAL;
-	topBar.height = getfontheight_outlined(topBar.font);
-	topBar.height += data_to_game_coord(_GP(play).top_bar_borderwidth) * 2 + get_fixed_pixel_size(1);
+	_GP(topBar).wantIt = 1;
+	_GP(topBar).font = FONT_NORMAL;
+	_GP(topBar).height = getfontheight_outlined(_GP(topBar).font);
+	_GP(topBar).height += data_to_game_coord(_GP(play).top_bar_borderwidth) * 2 + get_fixed_pixel_size(1);
 
 	// they want to customize the font
 	if (_GP(play).top_bar_font >= 0)
-		topBar.font = _GP(play).top_bar_font;
+		_GP(topBar).font = _GP(play).top_bar_font;
 
 	// DisplaySpeech normally sets this up, but since we're not going via it...
 	if (_GP(play).cant_skip_speech & SKIP_AUTOTIMER)
@@ -103,16 +97,16 @@ void DisplayMessageAtY(int msnum, int ypos) {
 	char msgbufr[3001];
 	if (msnum >= 500) {
 		get_message_text(msnum, msgbufr);
-		if (display_message_aschar > 0)
-			DisplaySpeech(msgbufr, display_message_aschar);
+		if (_G(display_message_aschar) > 0)
+			DisplaySpeech(msgbufr, _G(display_message_aschar));
 		else
 			DisplayAtY(ypos, msgbufr);
-		display_message_aschar = 0;
+		_G(display_message_aschar) = 0;
 		return;
 	}
 
-	if (display_message_aschar > 0) {
-		display_message_aschar = 0;
+	if (_G(display_message_aschar) > 0) {
+		_G(display_message_aschar) = 0;
 		quit("!DisplayMessage: data column specified a character for local\n"
 			"message; use the message editor to select the character for room\n"
 			"messages.\n");

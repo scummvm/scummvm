@@ -49,6 +49,7 @@
 #include "ags/engine/ac/route_finder_jps.h"
 #include "ags/engine/ac/screenoverlay.h"
 #include "ags/engine/ac/spritelistentry.h"
+#include "ags/engine/ac/topbarsettings.h"
 #include "ags/engine/ac/dynobj/cc_audiochannel.h"
 #include "ags/engine/ac/dynobj/cc_audioclip.h"
 #include "ags/engine/ac/dynobj/cc_character.h"
@@ -134,6 +135,9 @@ Globals::Globals() {
 
 	// dialog.cpp globals
 	_ccDialogOptionsRendering = new ScriptDialogOptionsRendering();
+
+	// display.cpp globals
+	_topBar = new TopBarSettings();
 
 	// draw.cpp globals
 	_CameraDrawData = new std::vector<RoomCameraDrawData>();
@@ -300,6 +304,9 @@ Globals::~Globals() {
 
 	// dialog.cpp globals
 	delete _ccDialogOptionsRendering;
+
+	// display.cpp globals
+	delete _topBar;
 
 	// draw.cpp globals
 	delete _CameraDrawData;

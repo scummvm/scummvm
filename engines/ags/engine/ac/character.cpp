@@ -2218,8 +2218,8 @@ void _DisplaySpeechCore(int chid, const char *displbuf) {
 	// adjust timing of text (so that DisplaySpeech("%s", str) pauses
 	// for the length of the string not 2 frames)
 	int len = (int)strlen(displbuf);
-	if (len > source_text_length + 3)
-		source_text_length = len;
+	if (len > _G(source_text_length) + 3)
+		_G(source_text_length) = len;
 
 	DisplaySpeech(displbuf, chid);
 }
@@ -2228,8 +2228,8 @@ void _DisplayThoughtCore(int chid, const char *displbuf) {
 	// adjust timing of text (so that DisplayThought("%s", str) pauses
 	// for the length of the string not 2 frames)
 	int len = (int)strlen(displbuf);
-	if (len > source_text_length + 3)
-		source_text_length = len;
+	if (len > _G(source_text_length) + 3)
+		_G(source_text_length) = len;
 
 	int xpp = -1, ypp = -1, width = -1;
 

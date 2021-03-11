@@ -657,7 +657,7 @@ int run_interaction_commandlist(InteractionCommandList *nicl, int *timesrun, int
 			break;
 		case 4:  // Display Message
 			/*        if (comprdata<0)
-			display_message_aschar=evb->data[ss];*/
+			_G(display_message_aschar)=evb->data[ss];*/
 			DisplayMessage(IPARAM1);
 			break;
 		case 5:  // Play Music

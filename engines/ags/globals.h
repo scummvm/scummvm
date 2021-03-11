@@ -143,6 +143,7 @@ struct SpeechLipSyncLine;
 struct SpriteListEntry;
 struct StaticArray;
 struct SystemImports;
+struct TopBarSettings;
 struct ViewStruct;
 
 class Globals {
@@ -386,6 +387,23 @@ public:
 	// Old dialog support
 	std::vector< std::shared_ptr<unsigned char> > _old_dialog_scripts;
 	std::vector<String> _old_speech_lines;
+
+	/**@}*/
+
+	/**
+	 * \defgroup display globals
+	 * @{
+	 */
+
+	int _display_message_aschar = 0;
+	int _source_text_length = -1;
+
+	TopBarSettings *_topBar;
+	struct DisplayVars {
+		int lineheight = 0;    // font's height of single line
+		int linespacing = 0;   // font's line spacing
+		int fulltxtheight = 0; // total height of all the text
+	} _disp;
 
 	/**@}*/
 
