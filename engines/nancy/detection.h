@@ -35,6 +35,10 @@ enum GameType {
 	kGameTypeNancy3 = 4
 };
 
+enum NancyGameFlags {
+	NGF_8BITCOLOR = 1 << 0 // Used in The Vampire Diaries
+};
+
 struct NancyGameDescription {
 	ADGameDescription desc;
 	GameType gameType;

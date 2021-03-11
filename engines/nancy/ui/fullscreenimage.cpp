@@ -30,15 +30,10 @@ namespace Nancy {
 namespace UI {
 
 void FullScreenImage::init(Common::String imageName) {
-    Graphics::Surface surf;
-    NanEngine.resource->loadImage(imageName, surf);
+    NanEngine.resource->loadImage(imageName, _drawSurface);
 
-    Common::Rect srcBounds = Common::Rect(0,0, surf.w, surf.h);
+    Common::Rect srcBounds = Common::Rect(0,0, _drawSurface.w, _drawSurface.h);
     _screenPosition = srcBounds;
-    
-    _drawSurface.create(surf.w, surf.h, surf.format);
-    _drawSurface.blitFrom(surf, Common::Point(0, 0));
-    surf.free();
 
     RenderObject::init();
 }

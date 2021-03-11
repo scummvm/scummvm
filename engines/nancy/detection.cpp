@@ -60,7 +60,7 @@ static const Nancy::NancyGameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformWindows,
-			ADGF_NO_FLAGS,
+			Nancy::NGF_8BITCOLOR,
 			GUIO0()
 		},
 		Nancy::GameType::kGameTypeVampire
