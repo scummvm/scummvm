@@ -58,6 +58,15 @@ void SoundManager::tick() {
 	}
 }
 
+const Sound *SoundManager::find(int id) const {
+	for (auto i = _sounds.begin(); i != _sounds.end(); ++i) {
+		auto &sound = *i;
+		if (sound.id == id)
+			return &sound;
+	}
+	return nullptr;
+}
+
 Sound *SoundManager::findSampleByPhaseVar(const Common::String &phaseVar) {
 	if (phaseVar.empty())
 		return nullptr;

@@ -164,8 +164,10 @@ void Process::loadAnimation() {
 
 void Process::loadSample() {
 	Common::String name = popText();
-	debug("loadSample %s, phaseVar: %s", name.c_str(), _phaseVar.c_str());
-	_engine->playSound(getName(), name, _phaseVar);
+	debug("loadSample %s, phaseVar: %s, ambient: %d", name.c_str(), _phaseVar.c_str(), _sampleAmbient);
+	int id = _engine->playSound(getName(), name, _phaseVar);
+	if (_sampleAmbient)
+		_engine->setAmbientSoundId(id);
 }
 
 void Process::getSampleVolume() {
@@ -887,7 +889,7 @@ void Process::disableMouseAreas() {
 }
 
 void Process::sampleAmbient() {
-	debug("sampleAmbient: stub");
+	debug("setAmbientSample");
 	_sampleAmbient = true;
 }
 

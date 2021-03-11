@@ -252,6 +252,7 @@ public:
 	void playSoundSync(const Common::String &resource, const Common::String &phaseVar) {
 		_syncSoundId = playSound(Common::String(), resource, phaseVar);
 	}
+	void setAmbientSoundId(int id) { _ambientSoundId = id; }
 
 	void tell(Process &process, const Common::String &region, Common::String text, Common::String sound, bool npc);
 
@@ -351,6 +352,7 @@ private:
 	TextLayout					_textLayout;
 
 	int							_syncSoundId;
+	int							_ambientSoundId;
 
 	bool						_fastMode;
 	bool						_hintMode;
