@@ -59,7 +59,7 @@ void GUILabel::Draw(Shared::Bitmap *ds) {
 	color_t text_color = ds->GetCompatibleColor(TextColor);
 	const int linespacing = getfontlinespacing(Font) + 1;
 	// < 2.72 labels did not limit vertical size of text
-	const bool limit_by_label_frame = loaded_game_file_version >= kGameVersion_272;
+	const bool limit_by_label_frame = _G(loaded_game_file_version) >= kGameVersion_272;
 	int at_y = Y;
 	for (size_t i = 0;
 		i < _GP(fontLines).Count() && (!limit_by_label_frame || at_y <= Y + Height);

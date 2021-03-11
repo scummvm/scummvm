@@ -148,7 +148,7 @@ HGameFileError OpenMainGameFileBase(PStream &in, MainGameSource &src) {
 	// NOTE: this global variable is embedded in the code too much to get
 	// rid of it too easily; the easy way is to set it whenever the main
 	// game file is opened.
-	loaded_game_file_version = src.DataVersion;
+	_G(loaded_game_file_version) = src.DataVersion;
 	return HGameFileError::None();
 }
 

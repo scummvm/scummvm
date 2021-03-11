@@ -362,7 +362,7 @@ void GameSetupStruct::ReadFromSaveGame_v321(Stream *in, char *gswas, ccScript *c
 	ReadInvInfo_Aligned(in);
 	ReadMouseCursors_Aligned(in);
 
-	if (loaded_game_file_version <= kGameVersion_272) {
+	if (_G(loaded_game_file_version) <= kGameVersion_272) {
 		for (bb = 0; bb < numinvitems; bb++)
 			intrInv[bb]->ReadTimesRunFromSave_v321(in);
 		for (bb = 0; bb < numcharacters; bb++)

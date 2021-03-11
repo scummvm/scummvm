@@ -73,9 +73,6 @@ namespace AGS3 {
 
 using namespace AGS::Shared;
 
-extern int game_paused;
-extern int getloctype_index;
-
 // Checks if user interface should remain disabled for now
 static int ShouldStayInWaitMode();
 
@@ -566,7 +563,7 @@ static void game_loop_check_controls(bool checkControls) {
 
 static void game_loop_do_update() {
 	if (_G(debug_flags) & DBG_NOUPDATE);
-	else if (game_paused == 0) update_stuff();
+	else if (_G(game_paused) == 0) update_stuff();
 }
 
 static void game_loop_update_animated_buttons() {
@@ -607,7 +604,7 @@ static void game_loop_do_render_and_check_mouse(IDriverDependantBitmap *extraBit
 				(offsetxWas != offsetx) || (offsetyWas != offsety))) {
 				// mouse moves over hotspot
 				if (__GetLocationType(game_to_data_coord(_G(mousex)), game_to_data_coord(_G(mousey)), 1) == LOCTYPE_HOTSPOT) {
-					int onhs = getloctype_index;
+					int onhs = _G(getloctype_index);
 
 					setevent(EV_RUNEVBLOCK, EVB_HOTSPOT, onhs, 6);
 				}
@@ -946,8 +943,6 @@ void GameLoopUntilNoOverlay() {
 	GameLoopUntilEvent(UNTIL_NOOVERLAY, 0);
 }
 
-
-extern unsigned int load_new_game;
 void RunGameUntilAborted() {
 	// skip ticks to account for time spent starting _GP(game).
 	skipMissedTicks();
@@ -955,9 +950,9 @@ void RunGameUntilAborted() {
 	while (!_G(abort_engine)) {
 		GameTick();
 
-		if (load_new_game) {
-			RunAGSGame(nullptr, load_new_game, 0);
-			load_new_game = 0;
+		if (_G(load_new_game)) {
+			RunAGSGame(nullptr, _G(load_new_game), 0);
+			_G(load_new_game) = 0;
 		}
 	}
 }

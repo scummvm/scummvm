@@ -424,7 +424,7 @@ void RestoreViewportsAndCameras(const RestoredData &r_data) {
 HSaveError DoAfterRestore(const PreservedParams &pp, const RestoredData &r_data) {
 	// Use a yellow dialog highlight for older game versions
 	// CHECKME: it is dubious that this should be right here
-	if (loaded_game_file_version < kGameVersion_331)
+	if (_G(loaded_game_file_version) < kGameVersion_331)
 		_GP(play).dialog_options_highlight_color = DIALOG_OPTIONS_HIGHLIGHT_COLOR_DEFAULT;
 
 	// Preserve whether the music vox is available
@@ -667,7 +667,7 @@ void WriteDescription(Stream *out, const String &user_text, const Bitmap *user_i
 	StrUtil::WriteString(_GP(game).guid, out);
 	StrUtil::WriteString(_GP(game).gamename, out);
 	StrUtil::WriteString(_GP(ResPaths).GamePak.Name, out);
-	out->WriteInt32(loaded_game_file_version);
+	out->WriteInt32(_G(loaded_game_file_version));
 	out->WriteInt32(_GP(game).GetColorDepth());
 	// User description
 	StrUtil::WriteString(user_text, out);

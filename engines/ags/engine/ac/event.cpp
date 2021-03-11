@@ -102,7 +102,7 @@ void run_room_event(int id) {
 
 void run_event_block_inv(int invNum, int event_) {
 	_G(evblockbasename) = "inventory%d";
-	if (loaded_game_file_version > kGameVersion_272) {
+	if (_G(loaded_game_file_version) > kGameVersion_272) {
 		run_interaction_script(_GP(game).invScripts[invNum].get(), event_);
 	} else {
 		run_interaction_event(_GP(game).intrInv[invNum].get(), event_);

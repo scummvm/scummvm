@@ -27,6 +27,7 @@
 #include "ags/shared/ac/gamestructdefines.h"
 #include "ags/shared/util/string.h"
 #include "ags/shared/util/wgt2allg.h" // color (allegro RGB)
+#include "ags/globals.h"
 
 namespace AGS3 {
 
@@ -210,7 +211,7 @@ struct GameSetupStructBase {
 
 	// Test if the game is built around old audio system
 	inline bool IsLegacyAudioSystem() const {
-		return loaded_game_file_version < kGameVersion_320;
+		return _G(loaded_game_file_version) < kGameVersion_320;
 	}
 
 	// Returns the expected filename of a digital audio package

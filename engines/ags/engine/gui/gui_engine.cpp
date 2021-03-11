@@ -70,7 +70,7 @@ bool GUIMain::HasAlphaChannel() const {
 		// transparent background have alpha channel only since 3.2.0;
 		// "classic" gui rendering mode historically had non-alpha transparent backgrounds
 		// (3.2.0 broke the compatibility, now we restore it)
-		loaded_game_file_version >= kGameVersion_320 && _GP(game).options[OPT_NEWGUIALPHA] != kGuiAlphaRender_Legacy;
+		_G(loaded_game_file_version) >= kGameVersion_320 && _GP(game).options[OPT_NEWGUIALPHA] != kGuiAlphaRender_Legacy;
 }
 
 //=============================================================================

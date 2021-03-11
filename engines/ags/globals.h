@@ -23,6 +23,7 @@
 #ifndef AGS_GLOBALS_H
 #define AGS_GLOBALS_H
 
+#include "ags/shared/ac/game_version.h"
 #include "ags/shared/util/string.h"
 #include "ags/shared/util/version.h"
 #include "ags/shared/gui/guimain.h"
@@ -609,6 +610,15 @@ public:
 	int _new_room_loop = SCR_NO_VALUE;
 	bool _proper_exit = false;
 	int _our_eip = 0;
+
+	int _oldmouse = 0;
+	GameDataVersion _loaded_game_file_version = kGameVersion_Undefined;
+	int _game_paused = 0;
+	char _pexbuf[STD_BUFFER_SIZE] = { 0 };
+	unsigned int _load_new_game = 0;
+	int _load_new_game_restore = -1;
+	// TODO: refactor these global vars into function arguments
+	int _getloctype_index = 0, _getloctype_throughgui = 0;
 
 	 /**@}*/
 

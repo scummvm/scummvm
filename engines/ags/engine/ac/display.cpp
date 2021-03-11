@@ -87,7 +87,7 @@ int _display_main(int xx, int yy, int wii, const char *text, int disp_type, int 
 	_G(disp).fulltxtheight = getheightoflines(usingfont, _GP(fontLines).Count());
 
 	// AGS 2.x: If the screen is faded out, fade in again when displaying a message box.
-	if (!asspch && (loaded_game_file_version <= kGameVersion_272))
+	if (!asspch && (_G(loaded_game_file_version) <= kGameVersion_272))
 		_GP(play).screen_is_faded_out = 0;
 
 	// if it's a normal message box and the game was being skipped,
@@ -594,7 +594,7 @@ void draw_button_background(Bitmap *ds, int xx1, int yy1, int xx2, int yy2, GUIM
 		/*    draw_color = ds->GetCompatibleColor(opts.tws.backcol); ds->FillRect(Rect(xx1,yy1,xx2,yy2);
 		draw_color = ds->GetCompatibleColor(opts.tws.ds->GetTextColor()); ds->DrawRect(Rect(xx1+1,yy1+1,xx2-1,yy2-1);*/
 	} else {
-		if (loaded_game_file_version < kGameVersion_262) { // < 2.62
+		if (_G(loaded_game_file_version) < kGameVersion_262) { // < 2.62
 			// Color 0 wrongly shows as transparent instead of black
 			// From the changelog of 2.62:
 			//  - Fixed text windows getting a black background if colour 0 was
@@ -612,7 +612,7 @@ void draw_button_background(Bitmap *ds, int xx1, int yy1, int xx2, int yy2, GUIM
 		int leftRightWidth = _GP(game).SpriteInfos[get_but_pic(iep, 4)].Width;
 		int topBottomHeight = _GP(game).SpriteInfos[get_but_pic(iep, 6)].Height;
 		if (iep->BgImage > 0) {
-			if ((loaded_game_file_version <= kGameVersion_272) // 2.xx
+			if ((_G(loaded_game_file_version) <= kGameVersion_272) // 2.xx
 				&& (_GP(spriteset)[iep->BgImage]->GetWidth() == 1)
 				&& (_GP(spriteset)[iep->BgImage]->GetHeight() == 1)
 				&& (*((const unsigned int *)_GP(spriteset)[iep->BgImage]->GetData()) == 0x00FF00FF)) {

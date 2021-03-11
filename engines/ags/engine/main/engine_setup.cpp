@@ -131,8 +131,8 @@ void engine_init_resolution_settings(const Size game_size) {
 	Debug::Printf(kDbgMsg_Info, "Game native resolution: %d x %d (%d bit)%s", game_size.Width, game_size.Height, _GP(game).color_depth * 8,
 		_GP(game).IsLegacyLetterbox() ? " letterbox-by-design" : "");
 
-	convert_gui_to_game_resolution(loaded_game_file_version);
-	convert_objects_to_data_resolution(loaded_game_file_version);
+	convert_gui_to_game_resolution(_G(loaded_game_file_version));
+	convert_objects_to_data_resolution(_G(loaded_game_file_version));
 
 	Rect viewport = RectWH(game_size);
 	_GP(play).SetMainViewport(viewport);

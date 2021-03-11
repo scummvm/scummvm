@@ -57,8 +57,6 @@ namespace AGS3 {
 using namespace AGS::Shared;
 using namespace AGS::Engine;
 
-extern char pexbuf[STD_BUFFER_SIZE];
-
 static const char *OutputMsgBufID = "buffer";
 static const char *OutputFileID = "file";
 static const char *OutputSystemID = "stdout";

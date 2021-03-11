@@ -55,7 +55,6 @@
 namespace AGS3 {
 
 extern int gameHasBeenRestored;
-extern unsigned int load_new_game;
 
 int run_dialog_request(int parmtr) {
 	_GP(play).stop_dialog_at_end = DIALOG_RUNNING;
@@ -512,7 +511,7 @@ void post_script_cleanup() {
 			return;
 		case ePSARunAGSGame:
 			cancel_all_scripts();
-			load_new_game = thisData;
+			_G(load_new_game) = thisData;
 			return;
 		case ePSARunDialog:
 			do_conversation(thisData);
@@ -548,7 +547,7 @@ void post_script_cleanup() {
 		}
 
 		// if they've changed rooms, cancel any further pending scripts
-		if ((_G(displayed_room) != old_room_number) || (load_new_game))
+		if ((_G(displayed_room) != old_room_number) || (_G(load_new_game)))
 			break;
 	}
 	copyof.numanother = 0;

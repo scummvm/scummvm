@@ -419,8 +419,8 @@ void load_new_room(int newnum, CharacterInfo *forchar) {
 	if (newnum == 0) {
 		// support both room0.crm and intro.crm
 		// 2.70: Renamed intro.crm to room0.crm, to stop it causing confusion
-		if ((loaded_game_file_version < kGameVersion_270 && Shared::AssetManager::DoesAssetExist("intro.crm")) ||
-		        (loaded_game_file_version >= kGameVersion_270 && !Shared::AssetManager::DoesAssetExist(room_filename))) {
+		if ((_G(loaded_game_file_version) < kGameVersion_270 && Shared::AssetManager::DoesAssetExist("intro.crm")) ||
+		        (_G(loaded_game_file_version) >= kGameVersion_270 && !Shared::AssetManager::DoesAssetExist(room_filename))) {
 			room_filename = "intro.crm";
 		}
 	}

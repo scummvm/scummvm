@@ -247,7 +247,7 @@ HError InitAndRegisterGameEntities() {
 	RegisterStaticArrays();
 
 	setup_player_character(_GP(game).playercharacter);
-	if (loaded_game_file_version >= kGameVersion_270)
+	if (_G(loaded_game_file_version) >= kGameVersion_270)
 		ccAddExternalStaticObject("player", &_G(sc_PlayerCharPtr), &GlobalStaticManager);
 	return HError::None();
 }
@@ -343,7 +343,7 @@ HGameInitError InitGameState(const LoadedGameEntities &ents, GameDataVersion dat
 	//
 	// 4. Initialize certain runtime variables
 	//
-	game_paused = 0;  // reset the game paused flag
+	_G(game_paused) = 0;  // reset the game paused flag
 	_G(ifacepopped) = -1;
 
 	String svg_suffix;

@@ -65,7 +65,7 @@ struct GameSetupStruct : public GameSetupStructBase {
 	std::vector<PInteractionScripts> charScripts;
 	std::vector<PInteractionScripts> invScripts;
 	// TODO: why we do not use this in the engine instead of
-	// loaded_game_file_version?
+	// _G(loaded_game_file_version)?
 	int               filever;  // just used by editor
 	Shared::String    compiled_with; // version of AGS this data was created by
 	char              lipSyncFrameLetters[MAXLIPSYNCFRAMES][50];

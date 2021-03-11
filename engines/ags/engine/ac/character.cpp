@@ -228,7 +228,7 @@ void Character_ChangeRoomSetLoop(CharacterInfo *chaa, int room, int x, int y, in
 	if ((x != SCR_NO_VALUE) && (y != SCR_NO_VALUE)) {
 		_G(new_room_pos) = 0;
 
-		if (loaded_game_file_version <= kGameVersion_272) {
+		if (_G(loaded_game_file_version) <= kGameVersion_272) {
 			// Set position immediately on 2.x.
 			chaa->x = x;
 			chaa->y = y;
@@ -293,7 +293,7 @@ DirectionalLoop GetDirectionalLoop(CharacterInfo *chinfo, int x_diff, int y_diff
 	DirectionalLoop next_loop = kDirLoop_Left; // NOTE: default loop was Left for some reason
 
 	const ViewStruct &chview  = _G(views)[chinfo->view];
-	const bool new_version    = loaded_game_file_version > kGameVersion_272;
+	const bool new_version    = _G(loaded_game_file_version) > kGameVersion_272;
 	const bool has_down_loop  = ((chview.numLoops > kDirLoop_Down)  && (chview.loops[kDirLoop_Down].numFrames > 0));
 	const bool has_up_loop    = ((chview.numLoops > kDirLoop_Up)    && (chview.loops[kDirLoop_Up].numFrames > 0));
 	// NOTE: 3.+ games required left & right loops to be present at all times
@@ -730,7 +730,7 @@ void Character_SetAsPlayer(CharacterInfo *chaa) {
 	// But only on versions > 2.61. The relevant entry in the 2.62 changelog is:
 	//  - Fixed SetPlayerCharacter to do nothing at all if you pass the current
 	//    player character to it (previously it was resetting the inventory layout)
-	if ((loaded_game_file_version > kGameVersion_261) && (_GP(game).playercharacter == chaa->index_id))
+	if ((_G(loaded_game_file_version) > kGameVersion_261) && (_GP(game).playercharacter == chaa->index_id))
 		return;
 
 	setup_player_character(chaa->index_id);
@@ -746,7 +746,7 @@ void Character_SetAsPlayer(CharacterInfo *chaa) {
 	// Ignore invalid room numbers for the character and just place him in
 	// the current room for 2.x. Following script calls to NewRoom() will
 	// make sure this still works as intended.
-	if ((loaded_game_file_version <= kGameVersion_272) && (_G(playerchar)->room < 0))
+	if ((_G(loaded_game_file_version) <= kGameVersion_272) && (_G(playerchar)->room < 0))
 		_G(playerchar)->room = _G(displayed_room);
 
 	if (_G(displayed_room) != _G(playerchar)->room)
@@ -1873,7 +1873,7 @@ void find_nearest_walkable_area(int32_t *xx, int32_t *yy) {
 
 	int pixValue = _GP(thisroom).WalkAreaMask->GetPixel(room_to_mask_coord(xx[0]), room_to_mask_coord(yy[0]));
 	// only fix this code if the game was built with 2.61 or above
-	if (pixValue == 0 || (loaded_game_file_version >= kGameVersion_261 && pixValue < 1)) {
+	if (pixValue == 0 || (_G(loaded_game_file_version) >= kGameVersion_261 && pixValue < 1)) {
 		// First, check every 2 pixels within immediate area
 		if (!find_nearest_walkable_area_within(xx, yy, 20, 2)) {
 			// If not, check whole screen at 5 pixel intervals
@@ -2004,7 +2004,7 @@ void setup_player_character(int charid) {
 	_GP(game).playercharacter = charid;
 	_G(playerchar) = &_GP(game).chars[charid];
 	_G(sc_PlayerCharPtr) = ccGetObjectHandleFromAddress((char *)_G(playerchar));
-	if (loaded_game_file_version < kGameVersion_270) {
+	if (_G(loaded_game_file_version) < kGameVersion_270) {
 		ccAddExternalDynamicObject("player", _G(playerchar), &_GP(ccDynamicCharacter));
 	}
 }
@@ -2680,7 +2680,7 @@ void _displayspeech(const char *texx, int aschar, int xx, int yy, int widd, int 
 		speakingChar->view = oldview;
 
 		// Don't reset the loop in 2.x games
-		if (loaded_game_file_version > kGameVersion_272)
+		if (_G(loaded_game_file_version) > kGameVersion_272)
 			speakingChar->loop = oldloop;
 
 		speakingChar->animating = 0;

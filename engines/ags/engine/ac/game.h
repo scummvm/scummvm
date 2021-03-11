@@ -197,7 +197,6 @@ void get_message_text(int msnum, char *buffer, char giveErr = 1);
 bool unserialize_audio_script_object(int index, const char *objectType, const char *serializedData, int dataSize);
 
 extern void set_loop_counter(unsigned int new_counter);
-extern int game_paused;
 
 } // namespace AGS3
 

@@ -84,7 +84,6 @@ using namespace AGS::Shared;
 using namespace AGS::Shared::Memory;
 using namespace AGS::Engine;
 
-extern int game_paused;
 extern color palette[256];
 extern PluginObjectReader pluginReaders[MAX_PLUGIN_OBJECT_READERS];
 extern int numPluginReaders;
@@ -523,7 +522,7 @@ int IAGSEngine::GetAreaScaling(int32 x, int32 y) {
 	return GetScalingAt(x, y);
 }
 int IAGSEngine::IsGamePaused() {
-	return game_paused;
+	return _G(game_paused);
 }
 int IAGSEngine::GetSpriteWidth(int32 slot) {
 	return _GP(game).SpriteInfos[slot].Width;

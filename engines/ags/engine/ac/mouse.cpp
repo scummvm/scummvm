@@ -376,7 +376,7 @@ void set_new_cursor_graphic(int spriteslot) {
 
 	// It looks like spriteslot 0 can be used in games with version 2.72 and lower.
 	// The NULL check should ensure that the sprite is valid anyway.
-	if (((spriteslot < 1) && (loaded_game_file_version > kGameVersion_272)) || (_G(mousecurs)[0] == nullptr)) {
+	if (((spriteslot < 1) && (_G(loaded_game_file_version) > kGameVersion_272)) || (_G(mousecurs)[0] == nullptr)) {
 		if (_G(blank_mouse_cursor) == nullptr) {
 			_G(blank_mouse_cursor) = BitmapHelper::CreateTransparentBitmap(1, 1, _GP(game).GetColorDepth());
 		}

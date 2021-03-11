@@ -83,7 +83,6 @@ namespace AGS3 {
 using namespace AGS::Shared;
 using namespace AGS::Engine;
 
-extern char pexbuf[STD_BUFFER_SIZE];
 extern color palette[256];
 
 #define ALLEGRO_KEYBOARD_HANDLER
@@ -404,7 +403,7 @@ void engine_init_rand() {
 }
 
 void engine_init_pathfinder() {
-	init_pathfinder(loaded_game_file_version);
+	init_pathfinder(_G(loaded_game_file_version));
 }
 
 void engine_pre_init_gfx() {
@@ -1084,7 +1083,7 @@ static void engine_print_info(const std::set<String> &keys, const String &exe_pa
 	}
 	if (all || keys.count("data") > 0) {
 		data["data"]["gamename"] = _GP(game).gamename;
-		data["data"]["version"] = String::FromFormat("%d", loaded_game_file_version);
+		data["data"]["version"] = String::FromFormat("%d", _G(loaded_game_file_version));
 		data["data"]["compiledwith"] = _GP(game).compiled_with;
 		data["data"]["basepack"] = _GP(usetup).main_data_filepath;
 	}

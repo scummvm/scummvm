@@ -147,7 +147,7 @@ void GameSetupStructBase::OnResolutionSet() {
 void GameSetupStructBase::ReadFromFile(Stream *in) {
 	in->Read(&gamename[0], GAME_NAME_LENGTH);
 	in->ReadArrayOfInt32(options, MAX_OPTIONS);
-	if (loaded_game_file_version < kGameVersion_340_4) {
+	if (_G(loaded_game_file_version) < kGameVersion_340_4) {
 		// TODO: this should probably be possible to deduce script API level
 		// using game data version and other options like OPT_STRICTSCRIPTING
 		options[OPT_BASESCRIPTAPI] = kScriptAPI_Undefined;
@@ -174,7 +174,7 @@ void GameSetupStructBase::ReadFromFile(Stream *in) {
 	numcursors = in->ReadInt32();
 	GameResolutionType resolution_type = (GameResolutionType)in->ReadInt32();
 	Size game_size;
-	if (resolution_type == kGameResolution_Custom && loaded_game_file_version >= kGameVersion_330) {
+	if (resolution_type == kGameResolution_Custom && _G(loaded_game_file_version) >= kGameVersion_330) {
 		game_size.Width = in->ReadInt32();
 		game_size.Height = in->ReadInt32();
 	}

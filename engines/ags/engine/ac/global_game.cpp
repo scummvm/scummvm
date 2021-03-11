@@ -76,12 +76,8 @@ using namespace AGS::Shared;
 #define ALLEGRO_KEYBOARD_HANDLER
 
 
-extern int game_paused;
 extern char gamefilenamebuf[200];
-extern unsigned int load_new_game;
-extern int load_new_game_restore;
 extern int gui_disabled_style;
-extern int getloctype_index;
 extern color palette[256];
 
 #if AGS_PLATFORM_OS_IOS || AGS_PLATFORM_OS_ANDROID
@@ -138,18 +134,18 @@ void DeleteSaveSlot(int slnum) {
 }
 
 void PauseGame() {
-	game_paused++;
+	_G(game_paused)++;
 	debug_script_log("Game paused");
 }
 void UnPauseGame() {
-	if (game_paused > 0)
-		game_paused--;
-	debug_script_log("Game UnPaused, pause level now %d", game_paused);
+	if (_G(game_paused) > 0)
+		_G(game_paused)--;
+	debug_script_log("Game UnPaused, pause level now %d", _G(game_paused));
 }
 
 
 int IsGamePaused() {
-	if (game_paused > 0) return 1;
+	if (_G(game_paused) > 0) return 1;
 	return 0;
 }
 
@@ -245,13 +241,13 @@ int RunAGSGame(const char *newgame, unsigned int mode, int data) {
 		_GP(ResPaths).GamePak.Path = gamefilenamebuf;
 		_GP(ResPaths).GamePak.Name = Shared::Path::get_filename(gamefilenamebuf);
 		_GP(play).takeover_data = data;
-		load_new_game_restore = -1;
+		_G(load_new_game_restore) = -1;
 
 		if (_G(inside_script)) {
 			_G(curscript)->queue_action(ePSARunAGSGame, mode | RAGMODE_LOADNOW, "RunAGSGame");
 			ccInstance::GetCurrentInstance()->Abort();
 		} else
-			load_new_game = mode | RAGMODE_LOADNOW;
+			_G(load_new_game) = mode | RAGMODE_LOADNOW;
 
 		return 0;
 	}
@@ -290,9 +286,9 @@ int RunAGSGame(const char *newgame, unsigned int mode, int data) {
 	engine_init_game_settings();
 	_GP(play).screen_is_faded_out = 1;
 
-	if (load_new_game_restore >= 0) {
-		try_restore_save(load_new_game_restore);
-		load_new_game_restore = -1;
+	if (_G(load_new_game_restore) >= 0) {
+		try_restore_save(_G(load_new_game_restore));
+		_G(load_new_game_restore) = -1;
 	} else
 		start_game();
 
@@ -564,7 +560,7 @@ void GetLocationName(int xxx, int yyy, char *tempo) {
 
 	// on character
 	if (loctype == LOCTYPE_CHAR) {
-		onhs = getloctype_index;
+		onhs = _G(getloctype_index);
 		strcpy(tempo, get_translation(_GP(game).chars[onhs].name));
 		if (_GP(play).get_loc_name_last_time != 2000 + onhs)
 			guis_need_update = 1;
@@ -573,11 +569,11 @@ void GetLocationName(int xxx, int yyy, char *tempo) {
 	}
 	// on object
 	if (loctype == LOCTYPE_OBJ) {
-		aa = getloctype_index;
+		aa = _G(getloctype_index);
 		strcpy(tempo, get_translation(_GP(thisroom).Objects[aa].Name));
 		// Compatibility: < 3.1.1 games returned space for nameless object
 		// (presumably was a bug, but fixing it affected certain games behavior)
-		if (loaded_game_file_version < kGameVersion_311 && tempo[0] == 0) {
+		if (_G(loaded_game_file_version) < kGameVersion_311 && tempo[0] == 0) {
 			tempo[0] = ' ';
 			tempo[1] = 0;
 		}
@@ -586,7 +582,7 @@ void GetLocationName(int xxx, int yyy, char *tempo) {
 		_GP(play).get_loc_name_last_time = 3000 + aa;
 		return;
 	}
-	onhs = getloctype_index;
+	onhs = _G(getloctype_index);
 	if (onhs > 0)
 		strcpy(tempo, get_translation(_GP(thisroom).Hotspots[onhs].Name));
 	if (_GP(play).get_loc_name_last_time != onhs)
@@ -875,10 +871,8 @@ void SetMultitasking(int mode) {
 	}
 }
 
-extern int getloctype_throughgui, getloctype_index;
-
 void RoomProcessClick(int xx, int yy, int mood) {
-	getloctype_throughgui = 1;
+	_G(getloctype_throughgui) = 1;
 	int loctype = GetLocationType(xx, yy);
 	VpPoint vpt = _GP(play).ScreenToRoomDivDown(xx, yy);
 	if (vpt.second < 0)
@@ -903,7 +897,7 @@ void RoomProcessClick(int xx, int yy, int mood) {
 
 	if (loctype == 0) {
 		// click on nothing -> hotspot 0
-		getloctype_index = 0;
+		_G(getloctype_index) = 0;
 		loctype = LOCTYPE_HOTSPOT;
 	}
 
@@ -912,11 +906,11 @@ void RoomProcessClick(int xx, int yy, int mood) {
 	} else if (loctype == LOCTYPE_OBJ) {
 		if (check_click_on_object(xx, yy, mood)) return;
 	} else if (loctype == LOCTYPE_HOTSPOT)
-		RunHotspotInteraction(getloctype_index, mood);
+		RunHotspotInteraction(_G(getloctype_index), mood);
 }
 
 int IsInteractionAvailable(int xx, int yy, int mood) {
-	getloctype_throughgui = 1;
+	_G(getloctype_throughgui) = 1;
 	int loctype = GetLocationType(xx, yy);
 	VpPoint vpt = _GP(play).ScreenToRoomDivDown(xx, yy);
 	if (vpt.second < 0)
@@ -932,7 +926,7 @@ int IsInteractionAvailable(int xx, int yy, int mood) {
 
 	if (loctype == 0) {
 		// click on nothing -> hotspot 0
-		getloctype_index = 0;
+		_G(getloctype_index) = 0;
 		loctype = LOCTYPE_HOTSPOT;
 	}
 
@@ -941,7 +935,7 @@ int IsInteractionAvailable(int xx, int yy, int mood) {
 	} else if (loctype == LOCTYPE_OBJ) {
 		check_click_on_object(xx, yy, mood);
 	} else if (loctype == LOCTYPE_HOTSPOT)
-		RunHotspotInteraction(getloctype_index, mood);
+		RunHotspotInteraction(_G(getloctype_index), mood);
 
 	int ciwas = _GP(play).check_interaction_only;
 	_GP(play).check_interaction_only = 0;

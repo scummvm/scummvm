@@ -115,23 +115,6 @@ extern int _G(psp_gfx_renderer);
 
 extern color palette[256];
 
-int oldmouse;
-
-//=============================================================================
-
-GameDataVersion loaded_game_file_version = kGameVersion_Undefined;
-
-//=============================================================================
-
-int game_paused = 0;
-char pexbuf[STD_BUFFER_SIZE];
-
-unsigned int load_new_game = 0;
-int load_new_game_restore = -1;
-
-// TODO: refactor these global vars into function arguments
-int getloctype_index = 0, getloctype_throughgui = 0;
-
 //=============================================================================
 // Audio
 //=============================================================================
@@ -243,11 +226,11 @@ void setup_for_dialog() {
 	_G(acdialog_font) = _GP(play).normal_font;
 	if (!_GP(play).mouse_cursor_hidden)
 		ags_domouse(DOMOUSE_ENABLE);
-	oldmouse = _G(cur_cursor);
+	_G(oldmouse) = _G(cur_cursor);
 	set_mouse_cursor(CURS_ARROW);
 }
 void restore_after_dialog() {
-	set_mouse_cursor(oldmouse);
+	set_mouse_cursor(_G(oldmouse));
 	if (!_GP(play).mouse_cursor_hidden)
 		ags_domouse(DOMOUSE_DISABLE);
 	invalidate_screen();
@@ -1140,7 +1123,7 @@ void restore_game_more_dynamic_values(Stream *in) {
 	in->ReadInt32(); // mouse_on_iface_button
 	in->ReadInt32(); // mouse_pushed_iface
 	_G(ifacepopped) = in->ReadInt32();
-	game_paused = in->ReadInt32();
+	_G(game_paused) = in->ReadInt32();
 }
 
 void ReadAnimatedButtons_Aligned(Stream *in) {
@@ -1309,7 +1292,7 @@ HSaveError restore_game_audioclips_and_crossfade(Stream *in, RestoredData &r_dat
 			chan_info.VolAsPercent = in->ReadInt32();
 			chan_info.PanAsPercent = in->ReadInt32();
 			chan_info.Speed = 1000;
-			if (loaded_game_file_version >= kGameVersion_340_2)
+			if (_G(loaded_game_file_version) >= kGameVersion_340_2)
 				chan_info.Speed = in->ReadInt32();
 		}
 	}
@@ -1492,7 +1475,7 @@ HSaveError load_game(int slotNumber, bool &data_overwritten) {
 		get_install_dir_path(gamefilenamebuf, desc.MainDataFilename);
 		if (Shared::File::TestReadFile(gamefilenamebuf)) {
 			RunAGSGame(desc.MainDataFilename, 0, 0);
-			load_new_game_restore = slotNumber;
+			_G(load_new_game_restore) = slotNumber;
 			return HSaveError::None();
 		}
 		Shared::Debug::Printf(kDbgMsg_Warn, "WARNING: the saved game '%s' references game file '%s', but it cannot be found in the current directory. Trying to restore in the running game instead.",
@@ -1604,12 +1587,12 @@ void stop_fast_forwarding() {
 // allowHotspot0 defines whether Hotspot 0 returns LOCTYPE_HOTSPOT
 // or whether it returns 0
 int __GetLocationType(int xxx, int yyy, int allowHotspot0) {
-	getloctype_index = 0;
+	_G(getloctype_index) = 0;
 	// If it's not in ProcessClick, then return 0 when over a GUI
-	if ((GetGUIAt(xxx, yyy) >= 0) && (getloctype_throughgui == 0))
+	if ((GetGUIAt(xxx, yyy) >= 0) && (_G(getloctype_throughgui) == 0))
 		return 0;
 
-	getloctype_throughgui = 0;
+	_G(getloctype_throughgui) = 0;
 
 	const int scrx = xxx;
 	const int scry = yyy;
@@ -1669,11 +1652,11 @@ int __GetLocationType(int xxx, int yyy, int allowHotspot0) {
 		winner = 0;
 
 	if (winner == LOCTYPE_HOTSPOT)
-		getloctype_index = hsat;
+		_G(getloctype_index) = hsat;
 	else if (winner == LOCTYPE_CHAR)
-		getloctype_index = charat;
+		_G(getloctype_index) = charat;
 	else if (winner == LOCTYPE_OBJ)
-		getloctype_index = objat;
+		_G(getloctype_index) = objat;
 
 	return winner;
 }

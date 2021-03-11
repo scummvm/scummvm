@@ -43,7 +43,7 @@ int GetRegionIDAtRoom(int xxx, int yyy) {
 	xxx = room_to_mask_coord(xxx);
 	yyy = room_to_mask_coord(yyy);
 
-	if (loaded_game_file_version >= kGameVersion_262) { // Version 2.6.2+
+	if (_G(loaded_game_file_version) >= kGameVersion_262) { // Version 2.6.2+
 		if (xxx >= _GP(thisroom).RegionMask->GetWidth())
 			xxx = _GP(thisroom).RegionMask->GetWidth() - 1;
 		if (yyy >= _GP(thisroom).RegionMask->GetHeight())

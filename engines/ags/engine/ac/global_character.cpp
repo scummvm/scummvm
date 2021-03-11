@@ -356,7 +356,7 @@ void MoveCharacterBlocking(int chaa, int xx, int yy, int direct) {
 }
 
 int GetCharacterSpeechAnimationDelay(CharacterInfo *cha) {
-	if ((loaded_game_file_version < kGameVersion_312) && (_GP(game).options[OPT_SPEECHTYPE] != 0)) {
+	if ((_G(loaded_game_file_version) < kGameVersion_312) && (_GP(game).options[OPT_SPEECHTYPE] != 0)) {
 		// legacy versions of AGS assigned a fixed delay to Sierra-style speech only
 		return 5;
 	}
@@ -384,7 +384,7 @@ void RunCharacterInteraction(int cc, int mood) {
 
 	_G(evblockbasename) = "character%d";
 	_G(evblocknum) = cc;
-	if (loaded_game_file_version > kGameVersion_272) {
+	if (_G(loaded_game_file_version) > kGameVersion_272) {
 		if (passon >= 0)
 			run_interaction_script(_GP(game).charScripts[cc].get(), passon, 4, (passon == 3));
 		run_interaction_script(_GP(game).charScripts[cc].get(), 4);  // any click on char

@@ -92,7 +92,7 @@ void GUIMain::InitDefaults() {
 }
 
 int32_t GUIMain::FindControlUnderMouse(int leeway, bool must_be_clickable) const {
-	if (loaded_game_file_version <= kGameVersion_262) {
+	if (_G(loaded_game_file_version) <= kGameVersion_262) {
 		// Ignore draw order On 2.6.2 and lower
 		for (size_t i = 0; i < _controls.size(); ++i) {
 			if (!_controls[i]->IsVisible())
@@ -699,7 +699,7 @@ HError ReadGUI(std::vector<GUIMain> &theGuis, Stream *in, bool is_savegame) {
 		if (GameGuiVersion < kGuiVersion_331)
 			gui.Padding = TEXTWINDOW_PADDING_DEFAULT;
 		// fix names for 2.x: "GUI" -> "gGui"
-		if (loaded_game_file_version <= kGameVersion_272)
+		if (_G(loaded_game_file_version) <= kGameVersion_272)
 			gui.Name = GUIMain::FixupGUIName(gui.Name);
 
 		// GUI popup style and visibility

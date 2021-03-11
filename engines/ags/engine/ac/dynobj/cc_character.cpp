@@ -55,7 +55,7 @@ void CCCharacter::WriteInt16(const char *address, intptr_t offset, int16_t val) 
 	// Detect when a game directly modifies the inventory, which causes the displayed
 	// and actual inventory to diverge since 2.70. Force an update of the displayed
 	// inventory for older games that reply on the previous behaviour.
-	if (loaded_game_file_version < kGameVersion_270) {
+	if (_G(loaded_game_file_version) < kGameVersion_270) {
 		const int invoffset = 112;
 		if (offset >= invoffset && offset < (int)(invoffset + MAX_INV * sizeof(short))) {
 			update_invorder();

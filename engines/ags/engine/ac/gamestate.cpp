@@ -541,7 +541,7 @@ void GameState::ReadFromSavegame(Shared::Stream *in, GameStateSvgVersion svg_ver
 	rtint_blue = in->ReadInt32();
 	rtint_level = in->ReadInt32();
 	rtint_light = in->ReadInt32();
-	if (!old_save || loaded_game_file_version >= kGameVersion_340_4)
+	if (!old_save || _G(loaded_game_file_version) >= kGameVersion_340_4)
 		rtint_enabled = in->ReadBool();
 	else
 		rtint_enabled = rtint_level > 0;
@@ -818,7 +818,7 @@ void GameState::FreeViewportsAndCameras() {
 }
 
 void GameState::ReadCustomProperties_v340(Shared::Stream *in) {
-	if (loaded_game_file_version >= kGameVersion_340_4) {
+	if (_G(loaded_game_file_version) >= kGameVersion_340_4) {
 		// After runtime property values were read we also copy missing default,
 		// because we do not keep defaults in the saved game, and also in case
 		// this save is made by an older game version which had different
@@ -831,7 +831,7 @@ void GameState::ReadCustomProperties_v340(Shared::Stream *in) {
 }
 
 void GameState::WriteCustomProperties_v340(Shared::Stream *out) const {
-	if (loaded_game_file_version >= kGameVersion_340_4) {
+	if (_G(loaded_game_file_version) >= kGameVersion_340_4) {
 		// We temporarily remove properties that kept default values
 		// just for the saving data time to avoid getting lots of
 		// redundant data into saved games

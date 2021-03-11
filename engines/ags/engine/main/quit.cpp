@@ -54,7 +54,6 @@ namespace AGS3 {
 using namespace AGS::Shared;
 using namespace AGS::Engine;
 
-extern char pexbuf[STD_BUFFER_SIZE];
 extern int need_to_stop_cd;
 extern int use_cdplayer;
 
@@ -162,8 +161,8 @@ void quit_message_on_exit(const char *qmsg, String &alertis, QuitReason qreason)
 	// if it is empty).
 	if ((qreason & kQuitKind_NormalExit) == 0 && !_G(handledErrorInEditor)) {
 		// Display the message (at this point the window still exists)
-		sprintf(pexbuf, "%s\n", qmsg);
-		alertis.Append(pexbuf);
+		sprintf(_G(pexbuf), "%s\n", qmsg);
+		alertis.Append(_G(pexbuf));
 		_G(platform)->DisplayAlert("%s", alertis.GetCStr());
 	}
 }

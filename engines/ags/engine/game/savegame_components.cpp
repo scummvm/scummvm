@@ -197,7 +197,7 @@ HSaveError WriteGameState(PStream out) {
 	// Game palette
 	out->SafeWriteArray(palette, PALETTE_COUNT);
 
-	if (loaded_game_file_version <= kGameVersion_272) {
+	if (_G(loaded_game_file_version) <= kGameVersion_272) {
 		// Global variables
 		out->WriteInt32(_G(numGlobalVars));
 		for (int i = 0; i < _G(numGlobalVars); ++i)
@@ -210,7 +210,7 @@ HSaveError WriteGameState(PStream out) {
 	out->WriteInt32(_G(frames_per_second));
 	out->WriteInt32(_G(loopcounter));
 	out->WriteInt32(_G(ifacepopped));
-	out->WriteInt32(game_paused);
+	out->WriteInt32(_G(game_paused));
 	// Mouse cursor
 	out->WriteInt32(_G(cur_mode));
 	out->WriteInt32(_G(cur_cursor));
@@ -286,7 +286,7 @@ HSaveError ReadGameState(PStream in, int32_t cmp_ver, const PreservedParams &pp,
 	// Game palette
 	in->SafeReadArray(palette, PALETTE_COUNT);
 
-	if (loaded_game_file_version <= kGameVersion_272) {
+	if (_G(loaded_game_file_version) <= kGameVersion_272) {
 		// Legacy interaction global variables
 		if (!AssertGameContent(err, in->ReadInt32(), _G(numGlobalVars), "Global Variables"))
 			return err;
@@ -301,7 +301,7 @@ HSaveError ReadGameState(PStream in, int32_t cmp_ver, const PreservedParams &pp,
 	r_data.FPS = in->ReadInt32();
 	set_loop_counter(in->ReadInt32());
 	_G(ifacepopped) = in->ReadInt32();
-	game_paused = in->ReadInt32();
+	_G(game_paused) = in->ReadInt32();
 	// Mouse cursor state
 	r_data.CursorMode = in->ReadInt32();
 	r_data.CursorID = in->ReadInt32();
@@ -479,7 +479,7 @@ HSaveError WriteCharacters(PStream out) {
 		_GP(game).chars[i].WriteToFile(out.get());
 		_G(charextra)[i].WriteToFile(out.get());
 		Properties::WriteValues(_GP(play).charProps[i], out.get());
-		if (loaded_game_file_version <= kGameVersion_272)
+		if (_G(loaded_game_file_version) <= kGameVersion_272)
 			WriteTimesRun272(*_GP(game).intrChar[i], out.get());
 		// character movement path cache
 		_G(mls)[CHMLSOFFS + i].WriteToFile(out.get());
@@ -495,7 +495,7 @@ HSaveError ReadCharacters(PStream in, int32_t cmp_ver, const PreservedParams &pp
 		_GP(game).chars[i].ReadFromFile(in.get());
 		_G(charextra)[i].ReadFromFile(in.get());
 		Properties::ReadValues(_GP(play).charProps[i], in.get());
-		if (loaded_game_file_version <= kGameVersion_272)
+		if (_G(loaded_game_file_version) <= kGameVersion_272)
 			ReadTimesRun272(*_GP(game).intrChar[i], in.get());
 		// character movement path cache
 		err = _G(mls)[CHMLSOFFS + i].ReadFromFile(in.get(), cmp_ver > 0 ? 1 : 0);
@@ -638,7 +638,7 @@ HSaveError WriteInventory(PStream out) {
 	for (int i = 0; i < _GP(game).numinvitems; ++i) {
 		_GP(game).invinfo[i].WriteToSavegame(out.get());
 		Properties::WriteValues(_GP(play).invProps[i], out.get());
-		if (loaded_game_file_version <= kGameVersion_272)
+		if (_G(loaded_game_file_version) <= kGameVersion_272)
 			WriteTimesRun272(*_GP(game).intrInv[i], out.get());
 	}
 	return HSaveError::None();
@@ -651,7 +651,7 @@ HSaveError ReadInventory(PStream in, int32_t cmp_ver, const PreservedParams &pp,
 	for (int i = 0; i < _GP(game).numinvitems; ++i) {
 		_GP(game).invinfo[i].ReadFromSavegame(in.get());
 		Properties::ReadValues(_GP(play).invProps[i], in.get());
-		if (loaded_game_file_version <= kGameVersion_272)
+		if (_G(loaded_game_file_version) <= kGameVersion_272)
 			ReadTimesRun272(*_GP(game).intrInv[i], in.get());
 	}
 	return err;
