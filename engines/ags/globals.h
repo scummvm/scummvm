@@ -112,6 +112,7 @@ struct GameSetup;
 struct GameSetupStruct;
 struct GameState;
 struct IAGSEditorDebugger;
+struct ICCStringClass;
 struct ManagedObjectPool;
 struct Mouse;
 struct MoveList;
@@ -237,6 +238,15 @@ public:
 
 	AnimatingGUIButton *_animbuts;
 	int _numAnimButs = 0;
+
+	/**@}*/
+
+	/**
+	 * \defgroup cc_dynamicobject globals
+	 * @{
+	 */
+
+	ICCStringClass *_stringClassImpl = nullptr;
 
 	/**@}*/
 

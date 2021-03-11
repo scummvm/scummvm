@@ -21,6 +21,7 @@
  */
 
 #include "ags/engine/ac/dynobj/cc_dynamicarray.h"
+#include  "ags/globals.h"
 
 namespace AGS3 {
 
@@ -143,7 +144,7 @@ DynObjectRef DynamicArrayHelpers::CreateStringArray(const std::vector<const char
 	// Create script strings and put handles into array
 	int32_t *slots = static_cast<int32_t *>(arr.second);
 	for (auto s : items) {
-		DynObjectRef str = stringClassImpl->CreateString(s);
+		DynObjectRef str = _G(stringClassImpl)->CreateString(s);
 		*(slots++) = str.first;
 	}
 	return arr;

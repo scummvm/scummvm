@@ -48,11 +48,9 @@ namespace AGS3 {
 
 using namespace AGS::Shared;
 
-ICCStringClass *stringClassImpl = nullptr;
-
 // set the class that will be used for dynamic strings
 void ccSetStringClassImpl(ICCStringClass *theClass) {
-	stringClassImpl = theClass;
+	_G(stringClassImpl) = theClass;
 }
 
 // register a memory handle for the object and allow script

@@ -1170,13 +1170,13 @@ int ccInstance::Run(int32_t curpc) {
 			}
 			break;
 		case SCMD_CREATESTRING:
-			if (stringClassImpl == nullptr) {
+			if (_G(stringClassImpl) == nullptr) {
 				cc_error("No string class implementation set, but opcode was used");
 				return -1;
 			}
 			direct_ptr1 = (const char *)reg1.GetDirectPtr();
 			reg1.SetDynamicObject(
-			    stringClassImpl->CreateString(direct_ptr1).second,
+			    _G(stringClassImpl)->CreateString(direct_ptr1).second,
 			    &_GP(myScriptStringImpl));
 			break;
 		case SCMD_STRINGSEQUAL:

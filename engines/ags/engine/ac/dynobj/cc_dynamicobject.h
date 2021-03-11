@@ -131,8 +131,6 @@ extern const char *ccGetObjectAddressFromHandle(int32_t handle);
 extern int ccAddObjectReference(int32_t handle);
 extern int ccReleaseObjectReference(int32_t handle);
 
-extern ICCStringClass *stringClassImpl;
-
 } // namespace AGS3
 
 #endif
