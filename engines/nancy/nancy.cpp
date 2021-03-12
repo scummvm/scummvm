@@ -159,6 +159,8 @@ Common::Error NancyEngine::run() {
 		_system->delayMillis(16);
 	}
 
+	NancySceneState.destroy();
+
 	return Common::kNoError;
 }
 
