@@ -339,7 +339,7 @@ void Scene::load() {
         error("Invalid IFF Chunk SSUM");
     }
 
-    readSceneSummary(*sceneSummaryChunk);
+    _sceneState.summary.read(*sceneSummaryChunk);
 
     debugC(0, kDebugScene, "Loading new scene %i: description \"%s\", frame %i, vertical scroll %i, doNotStartSound == %s",
                 _sceneState.nextScene.sceneID,
@@ -359,7 +359,7 @@ void Scene::load() {
         _actionManager.addNewActionRecord(*actionRecordChunk);
     }
 
-    _viewport.loadVideo(_sceneState.summary.videoFile, _sceneState.nextScene.frameID, _sceneState.nextScene.verticalOffset);
+    _viewport.loadVideo(_sceneState.summary.videoFile, _sceneState.nextScene.frameID, _sceneState.nextScene.verticalOffset, _sceneState.summary.videoPaletteFile);
 
     // TODO TEMPORARY
     _viewport.setEdgesSize(25, 25, 25, 25);
@@ -466,35 +466,42 @@ void Scene::run() {
     _actionManager.processActionRecords();
 }
 
-void Scene::readSceneSummary(Common::SeekableReadStream &stream) {
+void Scene::SceneSummary::read(Common::SeekableReadStream &stream) {
     char *buf = new char[0x32];
 
     stream.seek(0);
-    stream.read(buf, 0x31);
-    buf[32] = 0;
-    _sceneState.summary.description = Common::String(buf);
+    Common::Serializer ser(&stream, nullptr);
+    ser.setVersion(NanEngine._gameDescription->gameType);
 
-    stream.seek(1, SEEK_CUR);
-    stream.read(buf, 9);
+    ser.syncBytes((byte *)buf, 0x32);
+    description = Common::String(buf);
+
+    ser.syncBytes((byte *)buf, 10);
     buf[9] = 0;
-    _sceneState.summary.videoFile = Common::String(buf);
+    videoFile = Common::String(buf);
 
-    // skip 1 extra byte & 2 unknown bytes
-    stream.seek(3, SEEK_CUR);
-    _sceneState.summary.videoFormat = stream.readUint16LE();
+    // skip 2 unknown bytes
+    ser.skip(2);
+    videoFormat = stream.readUint16LE();
 
-    _sceneState.summary.sound.read(stream, SoundDescription::kScene);
+    // Load the palette data in The Vampire Diaries
+    ser.skip(4, kGameTypeVampire, kGameTypeVampire);
+    ser.syncBytes((byte *)buf, 10, kGameTypeVampire, kGameTypeVampire);
+    videoPaletteFile = buf;
+    ser.skip(0x14, kGameTypeVampire, kGameTypeVampire);
 
-    stream.seek(0x72);
-    _sceneState.summary.verticalScrollDelta = stream.readUint16LE();
-    _sceneState.summary.horizontalEdgeSize = stream.readUint16LE();
-    _sceneState.summary.verticalEdgeSize = stream.readUint16LE();
-    _sceneState.summary.slowMoveTimeDelta = stream.readUint16LE();
-    _sceneState.summary.fastMoveTimeDelta = stream.readUint16LE();
+    sound.read(stream, SoundDescription::kScene);
+
+    ser.skip(0x10);
+    ser.syncAsUint16LE(verticalScrollDelta);
+    ser.syncAsUint16LE(horizontalEdgeSize);
+    ser.syncAsUint16LE(verticalEdgeSize);
+    ser.syncAsUint16LE((uint32 &)slowMoveTimeDelta);
+    ser.syncAsUint16LE((uint32 &)fastMoveTimeDelta);
 
     if (NanEngine.overrideMovementTimeDeltas) {
-        _sceneState.summary.slowMoveTimeDelta = NanEngine.slowMovementTimeDelta;
-        _sceneState.summary.fastMoveTimeDelta = NanEngine.fastMovementTimeDelta;
+        slowMoveTimeDelta = NanEngine.slowMovementTimeDelta;
+        fastMoveTimeDelta = NanEngine.fastMovementTimeDelta;
     }
 
     delete[] buf;
