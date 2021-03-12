@@ -53,7 +53,7 @@ public:
     virtual void execute() override;
 
     Common::String filename;
-    //...
+    Common::String paletteFilename;
     uint16 loopFirstFrame = 0; // 0x1E
     uint16 loopLastFrame = 0; // 0x20
     uint16 onHoverFirstFrame = 0; // 0x22
@@ -68,7 +68,6 @@ protected:
     virtual Common::String getRecordTypeName() const override { return Common::String::format("PlaySecondaryVideoChan%i", channel); }
 
     virtual uint16 getZOrder() const override { return 8; }
-    virtual BlitType getBlitType() const override { return kTrans; }
     virtual bool isViewportRelative() const override { return true; }
 
     HoverState hoverState = kNoHover;

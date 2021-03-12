@@ -37,7 +37,6 @@ public:
 protected:
     virtual void init() override {}
     virtual uint16 getZOrder() const override { return 0; }
-    virtual BlitType getBlitType() const override { return kNoTrans; }
 };
 
 } // End of namespace UI

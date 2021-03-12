@@ -37,6 +37,8 @@ namespace Action {
 void PasswordPuzzle::init() {
     _drawSurface.create(_screenPosition.width(), _screenPosition.height(), GraphicsManager::getInputPixelFormat());
     _drawSurface.clear(GraphicsManager::getTransColor());
+    
+    setTransparent(true);
 
     RenderObject::init();
 }

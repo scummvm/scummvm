@@ -42,7 +42,6 @@ namespace Nancy {
 const Graphics::PixelFormat GraphicsManager::inputPixelFormat = Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0);
 const Graphics::PixelFormat GraphicsManager::screenPixelFormat = Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0);
 const Graphics::PixelFormat GraphicsManager::clut8Format = Graphics::PixelFormat::createFormatCLUT8();
-const uint GraphicsManager::transColor = 0x3E0;
 
 void GraphicsManager::init() {
     initGraphics(640, 480, &screenPixelFormat);
@@ -79,7 +78,7 @@ void GraphicsManager::draw() {
                     blitToScreen(*current._redrawFrom, current.getPreviousScreenPosition());
                 }
 
-                if (current.getBlitType() == RenderObject::kTrans) {
+                if (current._drawSurface.hasTransparentColor()) {
                     // Redraw below if transparent
                     blitToScreen(*current._redrawFrom, current.getScreenPosition());
                 }
@@ -153,10 +152,9 @@ const Graphics::PixelFormat &GraphicsManager::getInputPixelFormat() {
 
 uint GraphicsManager::getTransColor() {
     if (NanEngine._gameDescription->desc.flags & NGF_8BITCOLOR) {
-        Graphics::PixelFormat format = Graphics::PixelFormat::createFormatCLUT8();
-        return format.RGBToColor(255, 0, 255);
+        return 1; // If this isn't correct, try picking the pixel at [0, 0] inside the palette bitmap
     } else {
-        return transColor;
+        return inputPixelFormat.ARGBToColor(0, 0, 255, 0);
     }
 }
 
@@ -173,11 +171,7 @@ void GraphicsManager::loadFonts() {
 // Draw a given screen-space rectangle to the screen
 void GraphicsManager::blitToScreen(const RenderObject &src, Common::Rect screenRect) {
     Common::Point pointDest(screenRect.left, screenRect.top);
-    if (src.getBlitType() == RenderObject::kNoTrans) {
-        _screen.blitFrom(src._drawSurface, src.convertToLocal(screenRect), pointDest);
-    } else if (src.getBlitType() == RenderObject::kTrans) {
-        _screen.transBlitFrom(src._drawSurface, src.convertToLocal(screenRect), pointDest, transColor);
-    }
+    _screen.blitFrom(src._drawSurface, src.convertToLocal(screenRect), pointDest);
 }
 
 int GraphicsManager::objectComparator(const void *a, const void *b) {

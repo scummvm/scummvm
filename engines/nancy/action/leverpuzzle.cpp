@@ -35,6 +35,8 @@ namespace Action {
 void LeverPuzzle::init() {
     _drawSurface.create(_screenPosition.width(), _screenPosition.height(), GraphicsManager::getInputPixelFormat());
     _drawSurface.clear(GraphicsManager::getTransColor());
+    
+    setTransparent(true);
 
     NanEngine.resource->loadImage(imageName, image);
 }

@@ -117,7 +117,6 @@ protected:
     virtual Common::String getRecordTypeName() const override { return "PlayPrimaryVideoChan0"; }
     
     virtual uint16 getZOrder() const override { return 8; }
-    virtual BlitType getBlitType() const override { return kNoTrans; }
     virtual bool isViewportRelative() const override { return true; }
 };
 

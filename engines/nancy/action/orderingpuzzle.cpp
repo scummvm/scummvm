@@ -42,6 +42,8 @@ void OrderingPuzzle::init() {
     // This is a hacky way to make this particular action record work with this implementation's graphics manager
     _drawSurface.create(_screenPosition.width(), _screenPosition.height(), GraphicsManager::getInputPixelFormat());
     clearAllElements();
+    
+    setTransparent(true);
 
     NanEngine.resource->loadImage(imageName, image);
 

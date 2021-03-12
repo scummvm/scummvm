@@ -65,8 +65,6 @@ private:
 
     static int objectComparator(const void *a, const void *b);
 
-    static const uint transColor;
-
     Common::SortedArray<RenderObject *> _objects;
 
     static const Graphics::PixelFormat inputPixelFormat;

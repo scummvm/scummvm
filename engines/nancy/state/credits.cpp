@@ -71,6 +71,7 @@ void Credits::init() {
     Common::Rect src = _text._screenPosition;
     src.moveTo(Common::Point());
     _text._drawSurface.create(_fullTextSurface, src);
+    _text.setTransparent(true);
     _text.init();
 
     NanEngine.sound->loadSound(_sound);

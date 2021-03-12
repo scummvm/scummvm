@@ -53,6 +53,7 @@ void PlaySecondaryVideo::init() {
     _drawSurface.create(_decoder.getWidth(), _decoder.getHeight(), GraphicsManager::getInputPixelFormat());
 
     setVisible(false);
+    setTransparent(true);
 
     RenderObject::init();
 }

@@ -34,6 +34,11 @@
 namespace Nancy {
 namespace UI {
 
+void Scrollbar::init() {
+    setTransparent(true);
+    RenderObject::init();
+}
+
 void Scrollbar::handleInput(NancyInput &input) {
     if (_screenPosition.contains(input.mousePos)) {
         NanEngine.cursorManager->setCursorType(CursorManager::kHotspotArrow);

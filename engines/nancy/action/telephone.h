@@ -91,7 +91,6 @@ protected:
     virtual Common::String getRecordTypeName() const override { return "Telephone"; }
 
     virtual uint16 getZOrder() const override { return 7; }
-    virtual BlitType getBlitType() const override { return kTrans; }
     virtual bool isViewportRelative() const override { return true; }
 
     void drawButton(uint id);

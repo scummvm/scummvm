@@ -178,6 +178,9 @@ void PlayStaticBitmapAnimation::onPause(bool pause) {
 void PlayStaticBitmapAnimation::setFrame(uint frame) {
     currentFrame = frame;
     _drawSurface.create(_fullSurface, srcRects[frame]);
+    
+    setTransparent(isTransparent == kTrue);
+
     _needsRedraw = true;
 }
 

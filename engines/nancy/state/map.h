@@ -90,7 +90,6 @@ private:
 
     protected:
         virtual uint16 getZOrder() const override { return 7; }
-        virtual BlitType getBlitType() const override { return kNoTrans; }
 
         Map *_parent;
     };
