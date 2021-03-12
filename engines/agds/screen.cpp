@@ -39,7 +39,8 @@ int Screen::AnimationZCompare(const Animation *a, const Animation *b) {
 	return b->z() - a->z();
 }
 
-Screen::Screen(AGDSEngine * engine, ObjectPtr object) : _engine(engine), _object(object), _name(object->getName()),
+Screen::Screen(AGDSEngine * engine, ObjectPtr object, ScreenLoadingType loadingType, const Common::String &prevScreen) :
+	_engine(engine), _object(object), _name(object->getName()), _loadingType(loadingType), _previousScreen(prevScreen),
 	_children(&ObjectZCompare), _animations(&AnimationZCompare), _applyingPatch(false),
 	_characterNear(g_system->getHeight()), _characterFar(g_system->getHeight()) {
 	add(object);
@@ -242,10 +243,15 @@ void Screen::load(const PatchPtr &patch) {
 		else
 			_engine->runObject(object.name, Common::String(), false);
 	}
+	_loadingType = patch->loadingType;
+	if (!patch->prevScreenName.empty())
+		_previousScreen = patch->prevScreenName;
 	_applyingPatch = false;
 }
 
 void Screen::save(const PatchPtr &patch) {
+	patch->prevScreenName = _previousScreen;
+	patch->loadingType = _loadingType;
 	patch->objects.clear();
 	for (ChildrenType::const_iterator i = _children.begin(); i != _children.end(); ++i) {
 		ObjectPtr object = *i;

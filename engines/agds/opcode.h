@@ -98,7 +98,7 @@ enum Opcode {
 	kScreenCloneObject				= 77,
 	kScreenRemoveObject				= 78,
 	kSetNextScreen					= 79,
-	kSetNextScreen2					= 80,
+	kSetNextScreenSaveOrLoad		= 80,
 	kStub82							= 82,
 	kStub83							= 83,
 	kStub84							= 84,
@@ -356,7 +356,7 @@ enum Opcode {
 	OP(kScreenLoadRegion, loadScreenRegion) \
 	OP(kScreenCloneObject, cloneObject) \
 	OP(kSetNextScreen, setNextScreen) \
-	OP(kSetNextScreen2, setNextScreen2) \
+	OP(kSetNextScreenSaveOrLoad, setNextScreenSaveOrLoad) \
 	OP(kScreenRemoveObject, removeScreenObject) \
 	OP(kLoadAnimation, loadAnimation) \
 	OP(kLoadSample, loadSample) \

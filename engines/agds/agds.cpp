@@ -54,8 +54,8 @@ AGDSEngine::AGDSEngine(OSystem *system, const ADGameDescription *gameDesc) : Eng
                                                                              _mjpgPlayer(), _filmStarted(0),
 																			 _currentScreen(), _loadingScreen(false),
 																			 _currentCharacter(),
-																			 _navigatedToPreviousScreen(false),
                                                                              _defaultMouseCursor(),
+																			 _nextScreenType(ScreenLoadingType::Normal),
                                                                              _mouse(400, 300),
 																			 _userEnabled(true), _systemUserEnabled(true),
 																			 _currentRegion(),
@@ -165,7 +165,7 @@ bool AGDSEngine::load() {
 		return false;
 
 	initSystemVariables();
-	_nextScreenName = "main";
+	setNextScreenName("main", ScreenLoadingType::Normal);
 
 	{
 		Common::File file;
@@ -303,10 +303,6 @@ void AGDSEngine::saveScreenPatch() {
 	if (!patch)
 		patch = PatchPtr(new Patch());
 	_currentScreen->save(patch);
-	if (!_previousScreenName.empty()) {
-		patch->prevScreenName = _previousScreenName;
-		patch->hasPreviousScreen = 1;
-	}
 	patch->characterPresent = _currentCharacter != nullptr;
 	if (_currentCharacter) {
 		patch->characterPosition = _currentCharacter->position();
@@ -316,16 +312,16 @@ void AGDSEngine::saveScreenPatch() {
 }
 
 
-void AGDSEngine::loadScreen(const Common::String &name, bool savePatch) {
+void AGDSEngine::loadScreen(const Common::String &name, ScreenLoadingType loadingType, bool savePatch) {
 	_loadingScreen = true;
-	_nextScreenName.clear();
-	debug("loadScreen %s [return to previous: %d, save patch: %d]", name.c_str(), _navigatedToPreviousScreen, savePatch);
+	debug("loadScreen %s [type: %d, save patch: %d, previous: %s]", name.c_str(), static_cast<int>(loadingType), savePatch, _currentScreenName.c_str());
 	if (savePatch)
 		saveScreenPatch();
 	returnCurrentInventoryObject();
 	_inventory.enable(false);
 	_mouseMap.hideAll(this);
 
+	auto previousScreenName = _currentScreenName;
 	resetCurrentScreen();
 	for(uint i = 0; i < _processes.size(); ++i) {
 		_processes[i].reset();
@@ -337,7 +333,7 @@ void AGDSEngine::loadScreen(const Common::String &name, bool savePatch) {
 	bool doPatch = patch;
 
 	_currentScreenName = name;
-	_currentScreen = new Screen(this, screenObject);
+	_currentScreen = new Screen(this, screenObject, loadingType, previousScreenName);
 	if (doPatch)
 		screenObject->allowInitialise(false);
 
@@ -351,20 +347,12 @@ void AGDSEngine::loadScreen(const Common::String &name, bool savePatch) {
 		}
 		if (!patch->defaultMouseCursor.empty())
 			loadDefaultMouseCursor(patch->defaultMouseCursor);
-		if (patch->hasPreviousScreen && !patch->prevScreenName.empty()) {
-			debug("setting previous screen name to %s (from patch)", patch->prevScreenName.c_str());
-			_previousScreenName = patch->prevScreenName;
-		}
 	}
 	reAddInventory();
-	_navigatedToPreviousScreen = false;
 	_loadingScreen = false;
 }
 
 void AGDSEngine::resetCurrentScreen() {
-	debug("setting previous screen name to %s", _currentScreenName.c_str());
-	_previousScreenName = _currentScreenName;
-
 	if (_currentRegion) {
 		_currentRegion->hide(this);
 		_currentRegion = NULL;
@@ -1138,7 +1126,7 @@ Common::Error AGDSEngine::loadGameState(int slot) {
 	runObject(initVar->getString());
 
 	loadPatches(saveFile, db);
-	loadScreen(screenName, false);
+	loadScreen(screenName, ScreenLoadingType::Normal, false);
 
 	{
 		// Saved ambient sound
@@ -1165,7 +1153,10 @@ Common::Error AGDSEngine::loadGameState(int slot) {
 void AGDSEngine::loadNextScreen() {
 	while (!_nextScreenName.empty()) {
 		Common::String nextScreenName = _nextScreenName;
-		loadScreen(nextScreenName);
+		auto nextScreenType = _nextScreenType;
+		_nextScreenName.clear();
+		_nextScreenType = ScreenLoadingType::Normal;
+		loadScreen(nextScreenName, nextScreenType);
 	}
 }
 
@@ -1176,7 +1167,10 @@ Common::Error AGDSEngine::saveGameState(int slot, const Common::String &desc, bo
 	if (!saveFile)
 		return Common::kWritingFailed;
 
-	saveScreenPatch();
+	while(_currentScreen && _currentScreen->loadingType() == ScreenLoadingType::SaveOrLoad) {
+		returnToPreviousScreen();
+		loadNextScreen();
+	}
 
 	Common::HashMap<Common::String, Common::Array<uint8>> entries;
 
@@ -1207,8 +1201,8 @@ Common::Error AGDSEngine::saveGameState(int slot, const Common::String &desc, bo
 
 	{
 		Common::MemoryWriteStreamDynamic stream(DisposeAfterUse::YES);
-		writeString(&stream, _previousScreenName);
-		debug("saving screen name: %s", _previousScreenName.c_str());
+		writeString(&stream, _currentScreenName);
+		debug("saving screen name: %s", _currentScreenName.c_str());
 		char palette[0x300];
 		memset(palette, 0xaa, sizeof(palette));
 		stream.write(palette, sizeof(palette));
@@ -1322,17 +1316,18 @@ void AGDSEngine::returnCurrentInventoryObject() {
 	runObject(object);
 }
 
-void AGDSEngine::setNextScreenName(const Common::String &nextScreenName) {
-	_navigatedToPreviousScreen = false;
+void AGDSEngine::setNextScreenName(const Common::String &nextScreenName, ScreenLoadingType type) {
+	debug("setNextScreenName %s:%d", nextScreenName.c_str(), static_cast<int>(type));
 	_nextScreenName = nextScreenName;
+	_nextScreenType = type;
 }
 
 void AGDSEngine::returnToPreviousScreen() {
-	debug("returnToPreviousScreen, previous screen: %s", _previousScreenName.c_str());
-	if (!_previousScreenName.empty()) {
-		_navigatedToPreviousScreen = true;
-		_nextScreenName = _previousScreenName;
-		_previousScreenName.clear();
+	auto previousScreenName = _currentScreen? _currentScreen->getPreviousScreenName(): Common::String();
+	debug("returnToPreviousScreen from %s, previous screen: %s", _currentScreenName.c_str(), previousScreenName.c_str());
+	if (!previousScreenName.empty()) {
+		_nextScreenName = previousScreenName;
+		_nextScreenType = ScreenLoadingType::Previous;
 	}
 }
 
