@@ -402,12 +402,14 @@ void AnimManager::refreshAnim(int box) {
 void AnimManager::refreshAllAnimations() {
 	soundtimefunct();
 
-	/*for (int a = 0; a < MAXSMACK; a++) {
+	#if 0
+	for (int a = 0; a < MAXSMACK; a++) {
 		if (_playingAnims[a]) {
 			_curSmackBuffer = a;
 			smkNextFrame();
 		}
-	}*/
+	}
+	#endif
 }
 
 /*------------------------------------------------

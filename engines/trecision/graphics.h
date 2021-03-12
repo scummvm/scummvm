@@ -62,6 +62,9 @@ public:
 	void updatePixelFormat(uint16 *p, uint32 len) const;
 	uint16 restorePixelFormat(uint16 t) const;
 
+	uint16 shadow(uint32 val, uint8 num);
+	uint16 aliasing(uint32 val1, uint32 val2, uint8 num);
+
 }; // end of class
 
 } // end of namespace
