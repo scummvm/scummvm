@@ -55,6 +55,8 @@ public:
 
     Graphics::ManagedSurface object0;
     
+    static const Graphics::PixelFormat screenPixelFormat;
+    
 private:
     void loadFonts();
     void blitToScreen(const RenderObject &src, Common::Rect dest);
@@ -66,7 +68,6 @@ private:
     Common::SortedArray<RenderObject *> _objects;
 
     static const Graphics::PixelFormat inputPixelFormat;
-    static const Graphics::PixelFormat outputPixelFormat;
     static const Graphics::PixelFormat clut8Format;
 
     Graphics::Screen _screen;
