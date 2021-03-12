@@ -128,6 +128,7 @@ public:
 
 	void resetCurrentScreen();
 	void loadScreen(const Common::String & name, bool savePatch = true);
+	void saveScreenPatch();
 
 	RegionPtr loadRegion(const Common::String &name);
 	Common::String loadText(const Common::String &name);

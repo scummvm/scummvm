@@ -295,26 +295,33 @@ PatchPtr AGDSEngine::createPatch(const Common::String &screenName) {
 	return patch;
 }
 
+void AGDSEngine::saveScreenPatch() {
+	if (!_currentScreen || _currentScreenName.empty())
+		return;
+
+	PatchPtr &patch = _patches[_currentScreenName];
+	if (!patch)
+		patch = PatchPtr(new Patch());
+	_currentScreen->save(patch);
+	if (!_previousScreenName.empty()) {
+		patch->prevScreenName = _previousScreenName;
+		patch->hasPreviousScreen = 1;
+	}
+	patch->characterPresent = _currentCharacter != nullptr;
+	if (_currentCharacter) {
+		patch->characterPosition = _currentCharacter->position();
+		patch->characterDirection = _currentCharacter->direction();
+	}
+	patch->defaultMouseCursor = _defaultMouseCursorName;
+}
+
+
 void AGDSEngine::loadScreen(const Common::String &name, bool savePatch) {
 	_loadingScreen = true;
 	_nextScreenName.clear();
 	debug("loadScreen %s [return to previous: %d, save patch: %d]", name.c_str(), _navigatedToPreviousScreen, savePatch);
-	if (savePatch && _currentScreen && !_currentScreenName.empty()) {
-		PatchPtr &patch = _patches[_currentScreenName];
-		if (!patch)
-			patch = PatchPtr(new Patch());
-		_currentScreen->save(patch);
-		if (!_previousScreenName.empty()) {
-			patch->prevScreenName = _previousScreenName;
-			patch->hasPreviousScreen = 1;
-		}
-		patch->characterPresent = _currentCharacter != nullptr;
-		if (_currentCharacter) {
-			patch->characterPosition = _currentCharacter->position();
-			patch->characterDirection = _currentCharacter->direction();
-		}
-		patch->defaultMouseCursor = _defaultMouseCursorName;
-	}
+	if (savePatch)
+		saveScreenPatch();
 	returnCurrentInventoryObject();
 	_inventory.enable(false);
 	_mouseMap.hideAll(this);
@@ -1164,6 +1171,8 @@ Common::Error AGDSEngine::saveGameState(int slot, const Common::String &desc, bo
 
 	if (!saveFile)
 		return Common::kWritingFailed;
+
+	saveScreenPatch();
 
 	Common::HashMap<Common::String, Common::Array<uint8>> entries;
 
