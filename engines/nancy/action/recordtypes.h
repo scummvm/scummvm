@@ -41,7 +41,7 @@ namespace Action {
 
 class SceneChange : public ActionRecord {
 public:
-    virtual uint16 readData(Common::SeekableReadStream &stream) override;
+    virtual void readData(Common::SeekableReadStream &stream) override;
     virtual void execute() override;
 
     SceneChangeDescription sceneChange;
@@ -52,7 +52,7 @@ protected:
 
 class HotMultiframeSceneChange : public SceneChange {
 public:
-    virtual uint16 readData(Common::SeekableReadStream &stream) override;
+    virtual void readData(Common::SeekableReadStream &stream) override;
     virtual void execute() override;
 
     Common::Array<HotspotDescription> hotspots;
@@ -63,7 +63,7 @@ protected:
 
 class Hot1FrSceneChange : public SceneChange {
 public:
-    virtual uint16 readData(Common::SeekableReadStream &stream) override;
+    virtual void readData(Common::SeekableReadStream &stream) override;
     virtual void execute() override;
 
     HotspotDescription hotspotDesc;
@@ -81,7 +81,7 @@ protected:
 
 class HotMultiframeMultisceneChange : public ActionRecord {
 public:
-    virtual uint16 readData(Common::SeekableReadStream &stream) override;
+    virtual void readData(Common::SeekableReadStream &stream) override;
 
 protected:
     virtual Common::String getRecordTypeName() const override { return "HotMultiframeMultisceneChange"; }
@@ -89,7 +89,7 @@ protected:
 
 class StartFrameNextScene : public ActionRecord {
 public:
-    virtual uint16 readData(Common::SeekableReadStream &stream) override;
+    virtual void readData(Common::SeekableReadStream &stream) override;
 
 protected:
     virtual Common::String getRecordTypeName() const override { return "StartFrameNextScene"; }
@@ -97,7 +97,7 @@ protected:
 
 class StartStopPlayerScrolling : public ActionRecord {
 public:
-    virtual uint16 readData(Common::SeekableReadStream &stream) override;
+    virtual void readData(Common::SeekableReadStream &stream) override;
     // TODO add a Start and Stop subclass
 
     byte type = 0;
@@ -108,7 +108,7 @@ protected:
 
 class MapCall : public ActionRecord {
 public:
-    virtual uint16 readData(Common::SeekableReadStream &stream) override;
+    virtual void readData(Common::SeekableReadStream &stream) override;
     virtual void execute() override;
 
     virtual CursorManager::CursorType getHoverCursor() const override { return CursorManager::kExitArrow; }
@@ -119,7 +119,7 @@ protected:
 
 class MapCallHot1Fr : public MapCall {
 public:
-    virtual uint16 readData(Common::SeekableReadStream &stream) override;
+    virtual void readData(Common::SeekableReadStream &stream) override;
     virtual void execute() override;
 
     HotspotDescription hotspotDesc;
@@ -130,7 +130,7 @@ protected:
 
 class MapCallHotMultiframe : public MapCall {
 public:
-    virtual uint16 readData(Common::SeekableReadStream &stream) override;
+    virtual void readData(Common::SeekableReadStream &stream) override;
     virtual void execute() override;
 
     Common::Array<HotspotDescription> hotspots;
@@ -141,7 +141,7 @@ protected:
 
 class MapLocationAccess : public ActionRecord {
 public:
-    virtual uint16 readData(Common::SeekableReadStream &stream) override;
+    virtual void readData(Common::SeekableReadStream &stream) override;
     
 protected:
     virtual Common::String getRecordTypeName() const override { return "MapLocationAccess"; }
@@ -149,7 +149,7 @@ protected:
 
 class MapSound : public ActionRecord {
 public:
-    virtual uint16 readData(Common::SeekableReadStream &stream) override;
+    virtual void readData(Common::SeekableReadStream &stream) override;
     
 protected:
     virtual Common::String getRecordTypeName() const override { return "MapSound"; }
@@ -157,7 +157,7 @@ protected:
 
 class MapAviOverride : public ActionRecord {
 public:
-    virtual uint16 readData(Common::SeekableReadStream &stream) override;
+    virtual void readData(Common::SeekableReadStream &stream) override;
     
 protected:
     virtual Common::String getRecordTypeName() const override { return "MapAviOverride"; }
@@ -165,9 +165,7 @@ protected:
 
 class MapAviOverrideOff : public ActionRecord {
 public:
-    virtual uint16 readData(Common::SeekableReadStream &stream) override;
-
-    byte overrideOffData = 0;
+    virtual void readData(Common::SeekableReadStream &stream) override;
     
 protected:
     virtual Common::String getRecordTypeName() const override { return "MapAviOverrideOff"; }
@@ -175,7 +173,7 @@ protected:
 
 class TextBoxWrite : public ActionRecord {
 public:
-    virtual uint16 readData(Common::SeekableReadStream &stream) override;
+    virtual void readData(Common::SeekableReadStream &stream) override;
     
 protected:
     virtual Common::String getRecordTypeName() const override { return "TextBoxWrite"; }
@@ -183,9 +181,7 @@ protected:
 
 class TextBoxClear : public ActionRecord {
 public:
-    virtual uint16 readData(Common::SeekableReadStream &stream) override;
-
-    byte clearData = 0;
+    virtual void readData(Common::SeekableReadStream &stream) override;
     
 protected:
     virtual Common::String getRecordTypeName() const override { return "TextBoxClear"; }
@@ -193,7 +189,7 @@ protected:
 
 class BumpPlayerClock : public ActionRecord {
 public:
-    virtual uint16 readData(Common::SeekableReadStream &stream) override;
+    virtual void readData(Common::SeekableReadStream &stream) override;
     
 protected:
     virtual Common::String getRecordTypeName() const override { return "BumpPlayerClock"; }
@@ -201,9 +197,7 @@ protected:
 
 class SaveContinueGame : public ActionRecord {
 public:
-    virtual uint16 readData(Common::SeekableReadStream &stream) override;
-
-    byte saveContinueData = 0;
+    virtual void readData(Common::SeekableReadStream &stream) override;
     
 protected:
     virtual Common::String getRecordTypeName() const override { return "SaveContinueGame"; }
@@ -211,9 +205,7 @@ protected:
 
 class TurnOffMainRendering : public ActionRecord {
 public:
-    virtual uint16 readData(Common::SeekableReadStream &stream) override;
-
-    byte turnOffData = 0;
+    virtual void readData(Common::SeekableReadStream &stream) override;
     
 protected:
     virtual Common::String getRecordTypeName() const override { return "TurnOffMainRendering"; }
@@ -221,9 +213,7 @@ protected:
 
 class TurnOnMainRendering : public ActionRecord {
 public:
-    virtual uint16 readData(Common::SeekableReadStream &stream) override;
-
-    byte turnOnData = 0;
+    virtual void readData(Common::SeekableReadStream &stream) override;
     
 protected:
     virtual Common::String getRecordTypeName() const override { return "TurnOnMainRendering"; }
@@ -231,7 +221,7 @@ protected:
 
 class ResetAndStartTimer : public ActionRecord {
 public:
-    virtual uint16 readData(Common::SeekableReadStream &stream) override;
+    virtual void readData(Common::SeekableReadStream &stream) override;
     virtual void execute() override;
     
 protected:
@@ -240,7 +230,7 @@ protected:
 
 class StopTimer : public ActionRecord {
 public:
-    virtual uint16 readData(Common::SeekableReadStream &stream) override;
+    virtual void readData(Common::SeekableReadStream &stream) override;
     virtual void execute() override;
     
 protected:
@@ -249,7 +239,7 @@ protected:
 
 class EventFlags : public ActionRecord {
 public:
-    virtual uint16 readData(Common::SeekableReadStream &stream) override;
+    virtual void readData(Common::SeekableReadStream &stream) override;
     virtual void execute() override;
 
     MultiEventFlagDescription flags;
@@ -260,7 +250,7 @@ protected:
 
 class EventFlagsMultiHS : public EventFlags {
 public:
-    virtual uint16 readData(Common::SeekableReadStream &stream) override;
+    virtual void readData(Common::SeekableReadStream &stream) override;
     virtual void execute() override;
 
     Common::Array<HotspotDescription> hotspots;
@@ -271,7 +261,7 @@ protected:
 
 class LoseGame : public ActionRecord {
 public:
-    virtual uint16 readData(Common::SeekableReadStream &stream) override;
+    virtual void readData(Common::SeekableReadStream &stream) override;
     virtual void execute() override;
     
 protected:
@@ -280,9 +270,7 @@ protected:
 
 class PushScene : public ActionRecord {
 public:
-    virtual uint16 readData(Common::SeekableReadStream &stream) override;
-
-    byte pushData = 0;
+    virtual void readData(Common::SeekableReadStream &stream) override;
     
 protected:
     virtual Common::String getRecordTypeName() const override { return "PushScene"; }
@@ -290,9 +278,7 @@ protected:
 
 class PopScene : public ActionRecord {
 public:
-    virtual uint16 readData(Common::SeekableReadStream &stream) override;
-
-    byte popData = 0;
+    virtual void readData(Common::SeekableReadStream &stream) override;
     
 protected:
     virtual Common::String getRecordTypeName() const override { return "PopScene"; }
@@ -300,7 +286,7 @@ protected:
 
 class WinGame : public ActionRecord {
 public:
-    virtual uint16 readData(Common::SeekableReadStream &stream) override;
+    virtual void readData(Common::SeekableReadStream &stream) override;
     virtual void execute() override;
     
 protected:
@@ -309,7 +295,7 @@ protected:
 
 class AddInventoryNoHS : public ActionRecord {
 public:
-    virtual uint16 readData(Common::SeekableReadStream &stream) override;
+    virtual void readData(Common::SeekableReadStream &stream) override;
     virtual void execute() override;
     
     uint itemID;
@@ -320,7 +306,7 @@ protected:
 
 class RemoveInventoryNoHS : public ActionRecord {
 public:
-    virtual uint16 readData(Common::SeekableReadStream &stream) override;
+    virtual void readData(Common::SeekableReadStream &stream) override;
     
 protected:
     virtual Common::String getRecordTypeName() const override { return "RemoveInventoryNoHS"; }
@@ -328,7 +314,7 @@ protected:
 
 class DifficultyLevel : public ActionRecord {
 public:
-    virtual uint16 readData(Common::SeekableReadStream &stream) override;
+    virtual void readData(Common::SeekableReadStream &stream) override;
     virtual void execute() override;
 
     uint16 difficulty = 0;
@@ -340,7 +326,7 @@ protected:
 
 class ShowInventoryItem : public ActionRecord, public RenderObject {
 public:
-    virtual uint16 readData(Common::SeekableReadStream &stream) override;
+    virtual void readData(Common::SeekableReadStream &stream) override;
     virtual void execute() override;
 
     ShowInventoryItem(RenderObject &redrawFrom) : RenderObject(redrawFrom) {}
@@ -366,7 +352,7 @@ protected:
 
 class PlayDigiSoundAndDie : public ActionRecord {
 public:
-    virtual uint16 readData(Common::SeekableReadStream &stream) override;
+    virtual void readData(Common::SeekableReadStream &stream) override;
     virtual void execute() override;
     // TODO subclass into Play and Stop (?)
 
@@ -380,7 +366,7 @@ protected:
 
 class PlaySoundPanFrameAnchorAndDie : public ActionRecord {
 public:
-    virtual uint16 readData(Common::SeekableReadStream &stream) override;
+    virtual void readData(Common::SeekableReadStream &stream) override;
     
 protected:
     virtual Common::String getRecordTypeName() const override { return "PlaySoundPanFrameAnchorAndDie"; }
@@ -388,7 +374,7 @@ protected:
 
 class PlaySoundMultiHS : public ActionRecord {
 public:
-    virtual uint16 readData(Common::SeekableReadStream &stream) override;
+    virtual void readData(Common::SeekableReadStream &stream) override;
     virtual void execute() override;
 
     SoundDescription sound; // 0x0
@@ -402,7 +388,7 @@ protected:
 
 class HintSystem : public ActionRecord {
 public:
-    virtual uint16 readData(Common::SeekableReadStream &stream) override;
+    virtual void readData(Common::SeekableReadStream &stream) override;
     virtual void execute() override;
 
     byte characterID; // 0x00

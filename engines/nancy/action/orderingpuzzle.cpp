@@ -50,7 +50,7 @@ void OrderingPuzzle::init() {
     RenderObject::init();
 }
 
-uint16 OrderingPuzzle::readData(Common::SeekableReadStream &stream) {
+void OrderingPuzzle::readData(Common::SeekableReadStream &stream) {
     char buf[10];
 
     stream.read(buf, 10);
@@ -97,8 +97,6 @@ uint16 OrderingPuzzle::readData(Common::SeekableReadStream &stream) {
     flagOnExit.label = stream.readSint16LE();
     flagOnExit.flag = (NancyFlag)stream.readByte();
     readRect(stream, exitHotspot);
-
-    return 0x26D;
 }
 
 void OrderingPuzzle::execute() {

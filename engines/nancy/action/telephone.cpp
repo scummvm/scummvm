@@ -45,7 +45,7 @@ void Telephone::init() {
     NancySceneState.setShouldClearTextbox(false);
 }
 
-uint16 Telephone::readData(Common::SeekableReadStream &stream) {
+void Telephone::readData(Common::SeekableReadStream &stream) {
     char buf[10];
     stream.read(buf, 10);
     imageName = buf;
@@ -112,8 +112,6 @@ uint16 Telephone::readData(Common::SeekableReadStream &stream) {
         call.flag.label = stream.readSint16LE();
         call.flag.flag = (NancyFlag)stream.readUint16LE();
     }
-
-    return numCalls * 0xEB + 0x48C;
 }
 
 void Telephone::execute() {

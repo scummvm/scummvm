@@ -64,9 +64,9 @@ ActionRecord *ActionManager::createActionRecord(uint16 type) {
     case 0x28:
         return new PlayPrimaryVideoChan0(NancySceneState.getViewport());
     case 0x29:
-        return new PlaySecondaryVideo('0', NancySceneState.getViewport());
+        return new PlaySecondaryVideo(0, NancySceneState.getViewport());
     case 0x2A:
-        return new PlaySecondaryVideo('1', NancySceneState.getViewport());
+        return new PlaySecondaryVideo(1, NancySceneState.getViewport());
     case 0x2B:
         return new PlaySecondaryMovie(NancySceneState.getViewport());
     case 0x2C:

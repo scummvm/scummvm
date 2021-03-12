@@ -81,7 +81,7 @@ public:
     virtual void updateGraphics() override;
     virtual void onPause(bool pause) override;
 
-    virtual uint16 readData(Common::SeekableReadStream &stream) override;
+    virtual void readData(Common::SeekableReadStream &stream) override;
     virtual void execute() override;
     
     // Functions for handling the built-in dialogue responses found in the executable

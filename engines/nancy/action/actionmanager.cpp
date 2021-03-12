@@ -111,7 +111,9 @@ bool ActionManager::addNewActionRecord(Common::SeekableReadStream &inputData) {
     newRecord->type = inputData.readByte(); // redundant
     newRecord->execType = (ActionRecord::ExecutionType)inputData.readByte();
 
-    uint16 localChunkSize = newRecord->readData(inputData);
+    uint16 localChunkSize = inputData.pos();
+    newRecord->readData(inputData);
+    localChunkSize = inputData.pos() - localChunkSize;
     localChunkSize += 0x32;
 
     // If the localChunkSize is less than the total data, there must be dependencies at the end of the chunk
@@ -120,7 +122,7 @@ bool ActionManager::addNewActionRecord(Common::SeekableReadStream &inputData) {
         // Each dependency is 0x0C bytes long (in v1)
         uint numDependencies = depsDataSize / 0xC;
         if (depsDataSize % 0xC) {
-            error("Invalid dependency data size!");
+            error("Action record type %s has incorrect read size", newRecord->getRecordTypeName().c_str());;
         }
 
         // Initialize the dependencies data
