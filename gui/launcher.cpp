@@ -278,7 +278,7 @@ void LauncherDialog::updateListing() {
 	// Retrieve a list of all games defined in the config file
 	_domains.clear();
 	const ConfigManager::DomainMap &domains = ConfMan.getGameDomains();
-	bool scanEntries = numEntries == -1 ? true : (domains.size() <= numEntries);
+	bool scanEntries = numEntries == -1 ? true : ((int)domains.size() <= numEntries);
 
 	// Turn it into a list of pointers
 	Common::List<LauncherEntry> domainList;
