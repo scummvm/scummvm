@@ -219,7 +219,7 @@ void InventoryBox::InventoryScrollbar::init() {
     
     _maxDist = _parent->getBounds().height() - _drawSurface.h;
     
-    RenderObject::init();
+    Scrollbar::init();
 }
 
 void InventoryBox::Shades::init() {
@@ -228,6 +228,8 @@ void InventoryBox::Shades::init() {
     _screenPosition = _parent->getScreenPosition();
     _nextFrameTime = 0;
     setAnimationFrame(_curFrame);
+    
+    setTransparent(true);
 
     RenderObject::init();
 }

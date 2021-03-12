@@ -76,7 +76,6 @@ public:
 
 protected:
     virtual uint16 getZOrder() const override { return 6; }
-    virtual BlitType getBlitType() const override { return kNoTrans; }
 
     Common::Rect _upHotspot;
     Common::Rect _downHotspot;

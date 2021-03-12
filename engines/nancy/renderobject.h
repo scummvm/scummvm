@@ -41,8 +41,6 @@ class NancyEngine;
 class RenderObject {
     friend class GraphicsManager;
 public:
-    enum BlitType { kNoTrans, kTrans };
-
     RenderObject() :
         _needsRedraw(true),
         _isVisible(true),
@@ -61,6 +59,7 @@ public:
 
     void moveTo(Common::Point position);
     void setVisible(bool visible);
+    void setTransparent(bool isTransparent);
 
     bool hasMoved() const { return _previousScreenPosition != _screenPosition; }
     Common::Rect getScreenPosition() const;
@@ -77,7 +76,6 @@ protected:
     // Z order and blit type are extracted directly from the corresponding
     // ZRenderStruct from the original engine
     virtual uint16 getZOrder() const =0;
-    virtual BlitType getBlitType() const = 0;
 
     // Needed for proper handling of objects inside the viewport
     virtual bool isViewportRelative() const { return false; }

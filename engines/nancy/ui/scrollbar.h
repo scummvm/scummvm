@@ -42,6 +42,8 @@ public:
         _maxDist(0) {}
     virtual ~Scrollbar() =default;
 
+    virtual void init() override;
+
     void handleInput(NancyInput &input);
 
     void resetPosition();
@@ -49,7 +51,6 @@ public:
 
 protected:
     virtual uint16 getZOrder() const override { return 9; }
-    virtual BlitType getBlitType() const override { return kTrans; }
 
     void calculatePosition();
 

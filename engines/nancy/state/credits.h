@@ -62,7 +62,6 @@ protected:
 
     protected:
         virtual uint16 getZOrder() const override { return 1; }
-        virtual BlitType getBlitType() const override { return kTrans; }
     };
 
     State _state;

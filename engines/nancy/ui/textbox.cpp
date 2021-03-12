@@ -299,7 +299,7 @@ void Textbox::TextboxScrollbar::init() {
 
     _maxDist = _parent->getBounds().height() - _drawSurface.h;
 
-    RenderObject::init();
+    Scrollbar::init();
 }
 
 } // End of namespace UI

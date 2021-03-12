@@ -76,7 +76,6 @@ public:
 
 protected:
     virtual uint16 getZOrder() const override { return 6; }
-    virtual BlitType getBlitType() const override { return kNoTrans; }
 
     void onScrollbarMove();
 
@@ -114,7 +113,6 @@ private:
 
     protected:
         virtual uint16 getZOrder() const override { return 9; }
-        virtual BlitType getBlitType() const override { return kTrans; }
 
         void setAnimationFrame(uint frame);
 

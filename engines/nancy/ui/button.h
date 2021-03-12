@@ -42,8 +42,6 @@ public:
 
 protected:
     virtual uint16 getZOrder() const override { return 5; }
-    virtual BlitType getBlitType() const override { return kNoTrans; }
-
 };
 
 class MenuButton : public Button {

@@ -58,6 +58,14 @@ void RenderObject::setVisible(bool visible) {
     _needsRedraw = true;
 }
 
+void RenderObject::setTransparent(bool isTransparent) {
+    if (isTransparent) {
+        _drawSurface.setTransparentColor(GraphicsManager::getTransColor());
+    } else {
+        _drawSurface.clearTransparentColor();
+    }
+}
+
 Common::Rect RenderObject::getScreenPosition() const {
     if (isViewportRelative()) {
         return NancySceneState.getViewport().convertViewportToScreen(_screenPosition);
