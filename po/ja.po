@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-03-11 13:47+0000\n"
-"PO-Revision-Date: 2021-03-08 11:24+0000\n"
-"Last-Translator: VAN-Gluon <masuda20100701@gmail.com>\n"
+"PO-Revision-Date: 2021-03-12 22:24+0000\n"
+"Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ja/>\n"
 "Language: ja\n"
@@ -5535,11 +5535,11 @@ msgstr "高解像度のグラフィック/コンテンツを有効にする"
 
 #: engines/sci/detection.cpp:163
 msgid "Enable black-lined video"
-msgstr ""
+msgstr "黒塗りの映像を有効化"
 
 #: engines/sci/detection.cpp:164
 msgid "Draw black lines over videos to increase their apparent sharpness"
-msgstr ""
+msgstr "映像に黒い線を重ね、シャープネスを強める"
 
 #: engines/sci/detection.cpp:174
 msgid "Use high-quality video scaling"
@@ -5552,11 +5552,11 @@ msgstr "線形フィルターによる画像を拡大する"
 
 #: engines/sci/detection.cpp:185
 msgid "Use high-quality \"LarryScale\" cel scaling"
-msgstr ""
+msgstr "高品質なLarryScaleセルスケーリングを使用"
 
 #: engines/sci/detection.cpp:186
 msgid "Use special cartoon scaler for drawing character sprites"
-msgstr ""
+msgstr "キャラクタースプライト用に特別なカートゥーンスケーラーを使用"
 
 #: engines/sci/detection.cpp:195
 #, fuzzy
@@ -5565,7 +5565,7 @@ msgstr "音響効果の音量"
 
 #: engines/sci/detection.cpp:196
 msgid "Prefer digital sound effects instead of synthesized ones"
-msgstr ""
+msgstr "合成音声ではなくデジタルSEを選ぶ"
 
 #: engines/sci/detection.cpp:215
 msgid "Use CD audio"
@@ -5573,20 +5573,20 @@ msgstr "CD音楽を使用"
 
 #: engines/sci/detection.cpp:216
 msgid "Use CD audio instead of in-game audio, if available"
-msgstr ""
+msgstr "可能な場合、BGMとしてCDオーディオを使用"
 
 #: engines/sci/detection.cpp:226
 msgid "Use Windows cursors"
-msgstr ""
+msgstr "Windowsのカーソルを使用"
 
 #: engines/sci/detection.cpp:227
 msgid ""
 "Use the Windows cursors (smaller and monochrome) instead of the DOS ones"
-msgstr ""
+msgstr "DOSのカーソルの代わりにWindowsのカーソル(小さいモノクロ)を使用"
 
 #: engines/sci/detection.cpp:237
 msgid "Use silver cursors"
-msgstr ""
+msgstr "銀カーソルを使用"
 
 #: engines/sci/detection.cpp:238
 msgid ""
@@ -5740,6 +5740,8 @@ msgid ""
 "remove this patch from your game folder in order to avoid having unexpected "
 "errors and/or issues later on."
 msgstr ""
+"ファンメイドのスクリプトパッチが適用されています。これはゲームスクリプトを広範囲に変更するため、問題が発生する事が報告されています。パッチが修正する問題は"
+"、ScummVMでは発生しません。予期せぬエラーを避けるために、ゲームフォルダーからパッチを削除する事をお勧めします。"
 
 #: engines/sci/sci.cpp:518
 msgid "Download patch"
@@ -5749,7 +5751,7 @@ msgstr "パッチをダウンロード"
 msgid ""
 "(or click 'Download patch' button. But note - it only downloads, you will "
 "have to continue from there)\n"
-msgstr ""
+msgstr "(または「パッチをダウンロード」ボタンをクリックします。ただし、ダウンロード後の作業を手動で行う必要があります)\n"
 
 #: engines/sci/sci.cpp:526
 msgid ""
@@ -5760,6 +5762,11 @@ msgid ""
 "- download http://www.sierrahelp.com/Files/Patches/GabrielKnight/"
 "GK2Subtitles.zip\n"
 msgstr ""
+"GK2は、SierraHelpのおかげでファンメイドの字幕が用意されています。\n"
+"\n"
+"以下のファイルをインストール：\n"
+"- ダウンロード先 http://www.sierrahelp.com/Files/Patches/GabrielKnight/GK2Subtitles."
+"zip\n"
 
 #: engines/sci/sci.cpp:884
 msgid ""
@@ -5769,12 +5776,17 @@ msgid ""
 "was saved in: 'qfg1-' for Quest for Glory 1, 'qfg2-' for Quest for Glory 2. "
 "Example: 'qfg2-thief.sav'."
 msgstr ""
+"ScummVMに保存されたキャラクターは、自動で表示されます。オリジナル版のインタープリターで保存したキャラクターファイルは、ScummVMのセーブフォル"
+"ダーに置く必要があります。この場合、保存したゲームに応じてプレフィックスが必要です。Quest for Glory 1は「qfg1-」、Quest "
+"for Glory 2は「qfg2-」です(例：qfg2-thief.sav)。"
 
 #: engines/sci/sound/music.cpp:161
 msgid ""
 "The selected audio driver requires the following file(s):\n"
 "\n"
 msgstr ""
+"選択されたオーディオドライバーは以下のファイルが必要です：\n"
+"\n"
 
 #: engines/sci/sound/music.cpp:164
 msgid ""
@@ -5806,11 +5818,11 @@ msgstr ""
 
 #: engines/scumm/detection.cpp:158
 msgid "Show Object Line"
-msgstr ""
+msgstr "オブジェクトラインの表示"
 
 #: engines/scumm/detection.cpp:159
 msgid "Show the names of objects at the bottom of the screen"
-msgstr ""
+msgstr "画面下にオブジェクト名を表示"
 
 #: engines/scumm/detection.cpp:165
 msgid "Use NES Classic Palette"
@@ -5946,7 +5958,7 @@ msgstr "エキスパート"
 
 #: engines/scumm/help.cpp:73
 msgid "Common keyboard commands:"
-msgstr ""
+msgstr "一般的なキーボードコマンド："
 
 #: engines/scumm/help.cpp:74
 msgid "Save / Load dialog"
@@ -6021,7 +6033,7 @@ msgstr "マウスの右ボタン"
 
 #: engines/scumm/help.cpp:93
 msgid "Special keyboard commands:"
-msgstr ""
+msgstr "特殊なキーボードコマンド："
 
 #: engines/scumm/help.cpp:94
 #, fuzzy
@@ -6042,11 +6054,11 @@ msgstr "高速モードで実行(*)"
 
 #: engines/scumm/help.cpp:98
 msgid "Run in really fast mode (*)"
-msgstr ""
+msgstr "超高速モードで実行(*)"
 
 #: engines/scumm/help.cpp:100
 msgid "Switch between graphics filters"
-msgstr ""
+msgstr "グラフィックフィルターの切り替え"
 
 #: engines/scumm/help.cpp:101
 #, fuzzy
