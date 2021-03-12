@@ -751,7 +751,7 @@ void Animations::processActorAnimations(int32 actorIdx) { // DoAnim
 						_engine->_movements->heroMoved = true;
 					}
 
-					actor->life--;
+					actor->addLife(-1);
 				}
 			}
 		}
@@ -769,7 +769,7 @@ void Animations::processActorAnimations(int32 actorIdx) { // DoAnim
 						_engine->_extra->addExtraSpecial(actor->pos.x, actor->pos.y + 1000, actor->pos.z, ExtraSpecialType::kHitStars);
 						initAnim(AnimationTypes::kBigHit, kAnimationType_2, AnimationTypes::kStanding, currentlyProcessedActorIdx);
 						_engine->_movements->heroMoved = true;
-						actor->life--;
+						actor->addLife(-1);
 					}
 
 					// no Z coordinate issue
