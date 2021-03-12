@@ -50,6 +50,8 @@ public:
 
     Font *getFont(uint id) { return id < _fonts.size() ? &_fonts[id] : nullptr; }
 
+    static void loadSurfacePalette(Graphics::ManagedSurface &inSurf, const Common::String paletteFilename);
+
     static const Graphics::PixelFormat &getInputPixelFormat();
     static uint getTransColor();
 
