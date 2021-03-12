@@ -65,6 +65,14 @@ struct DrawListStruct {
 	uint16 field_C = 0;
 	uint16 field_E = 0;
 	uint16 field_10 = 0;
+
+	inline bool operator==(const DrawListStruct& other) const {
+		return posValue == other.posValue;
+	}
+
+	inline bool operator<(const DrawListStruct& other) const {
+		return posValue < other.posValue;
+	}
 };
 
 class TwinEEngine;
