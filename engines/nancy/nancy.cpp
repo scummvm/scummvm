@@ -433,12 +433,13 @@ void NancyEngine::readBootSummary(const IFF &boot) {
 	Common::Serializer ser(bsum, nullptr);
 	ser.setVersion(_gameDescription->gameType);
 
-	ser.skip(0xA3, kGameTypeVampire, kGameTypeNancy2);
+	ser.skip(0x71, kGameTypeVampire, kGameTypeVampire);
+	ser.skip(0xA3, kGameTypeNancy1, kGameTypeNancy2);
 	ser.syncAsUint16LE(firstSceneID);
-	ser.skip(4, kGameTypeVampire, kGameTypeNancy2);
-	ser.syncAsUint16LE(startTimeHours);
+	ser.skip(4, kGameTypeNancy1, kGameTypeNancy2);
+	ser.syncAsUint16LE(startTimeHours, kGameTypeNancy1, kGameTypeNancy2);
 	
-	ser.skip(0x80, kGameTypeVampire, kGameTypeVampire);
+	ser.skip(0xB8, kGameTypeVampire, kGameTypeVampire);
 	ser.skip(0xA6, kGameTypeNancy1, kGameTypeNancy1);
 	ser.skip(0xA0, kGameTypeNancy2, kGameTypeNancy2);
 
