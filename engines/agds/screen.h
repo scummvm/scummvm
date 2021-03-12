@@ -28,6 +28,7 @@
 #include "common/ptr.h"
 #include "common/str.h"
 #include "common/rect.h"
+#include "agds/screenLoadingType.h"
 
 namespace Graphics {
 	struct Surface;
@@ -54,6 +55,8 @@ class Screen {
 	AGDSEngine *	_engine;
 	ObjectPtr		_object;
 	Common::String	_name;
+	ScreenLoadingType _loadingType;
+	Common::String	_previousScreen;
 	ChildrenType	_children;
 	AnimationsType	_animations;
 	RegionPtr		_region;
@@ -69,7 +72,7 @@ public:
 		KeyHandler(Object *o, uint i): object(o), ip(i) { }
 	};
 
-	Screen(AGDSEngine *engine, ObjectPtr object);
+	Screen(AGDSEngine *engine, ObjectPtr object, ScreenLoadingType loadingType, const Common::String &prevScreen);
 	~Screen();
 
 	void setCharacterNearFar(int near, int far) {
@@ -89,6 +92,14 @@ public:
 
 	const Common::String &getName() const {
 		return _name;
+	}
+
+	const Common::String &getPreviousScreenName() const {
+		return _previousScreen;
+	}
+
+	ScreenLoadingType loadingType() const {
+		return _loadingType;
 	}
 
 	RegionPtr region() const {

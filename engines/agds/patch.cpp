@@ -25,7 +25,7 @@ void Patch::load(Common::ReadStream *stream) {
 	if (extended == 0)
 		return;
 
-	hasPreviousScreen = stream->readUint32LE();
+	loadingType = static_cast<ScreenLoadingType>(stream->readUint32LE());
 	characterPosition.x = stream->readUint32LE();
 	characterPosition.y = stream->readUint32LE();
 	characterDirection = stream->readUint32LE();
@@ -56,7 +56,7 @@ void Patch::save(Common::WriteStream *stream) {
 	if (extended == 0)
 		return;
 
-	stream->writeUint32LE(hasPreviousScreen);
+	stream->writeUint32LE(static_cast<uint>(loadingType));
 	stream->writeUint32LE(characterPosition.x);
 	stream->writeUint32LE(characterPosition.y);
 	stream->writeUint32LE(characterDirection);

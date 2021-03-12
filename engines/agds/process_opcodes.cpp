@@ -1261,10 +1261,10 @@ void Process::setNextScreen() {
 	suspend(kExitCodeSetNextScreen, name);
 }
 
-void Process::setNextScreen2() {
+void Process::setNextScreenSaveOrLoad() {
 	Common::String name = popString();
-	debug("exitProcessSetNextScreen2 %s", name.c_str());
-	suspend(kExitCodeSetNextScreen2, name);
+	debug("exitProcessSetNextScreenSaveOrLoad %s", name.c_str());
+	suspend(kExitCodeSetNextScreenSaveOrLoad, name);
 }
 
 void Process::loadPreviousScreen() {

@@ -183,9 +183,9 @@ void Process::run() {
 			_engine->runDialog(getName(), getExitArg1());
 			break;
 		case kExitCodeSetNextScreen:
-		case kExitCodeSetNextScreen2:
-			debug("process %s launches screen: %s", getName().c_str(), getExitArg1().c_str());
-			_engine->setNextScreenName(getExitArg1());
+		case kExitCodeSetNextScreenSaveOrLoad:
+			debug("process %s launches screen: %s, saveorload: ", getName().c_str(), getExitArg1().c_str(), code == kExitCodeSetNextScreenSaveOrLoad);
+			_engine->setNextScreenName(getExitArg1(), code == kExitCodeSetNextScreenSaveOrLoad? ScreenLoadingType::SaveOrLoad: ScreenLoadingType::Normal);
 			done();
 			break;
 		case kExitCodeMouseAreaChange:

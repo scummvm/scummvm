@@ -127,7 +127,7 @@ public:
 	void reactivate(const Common::String &name, bool runNow = false);
 
 	void resetCurrentScreen();
-	void loadScreen(const Common::String & name, bool savePatch = true);
+	void loadScreen(const Common::String & name, ScreenLoadingType type, bool savePatch = true);
 	void loadNextScreen();
 	void saveScreenPatch();
 
@@ -225,7 +225,7 @@ public:
 	void initSystemVariables();
 	SystemVariable *getSystemVariable(const Common::String &name);
 
-	void setNextScreenName(const Common::String &nextScreenName);
+	void setNextScreenName(const Common::String &nextScreenName, ScreenLoadingType type);
 	void returnToPreviousScreen();
 
 	void runDialog(const Common::String &dialogParentProcess, const Common::String &dialogProcess) {
@@ -319,9 +319,8 @@ private:
 	Character *					_jokes;
 	Common::String				_currentCharacterName, _currentCharacterFilename, _currentCharacterObject;
 	Common::String				_nextScreenName;
-	Common::String				_previousScreenName;
+	ScreenLoadingType			_nextScreenType;
 	Common::String 				_defaultMouseCursorName;
-	bool						_navigatedToPreviousScreen;
 	Animation *					_defaultMouseCursor;
 	Common::Point				_mouse;
 	MouseRegion *				_currentRegion;

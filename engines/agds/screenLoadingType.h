@@ -20,27 +20,16 @@
  *
  */
 
-#ifndef AGDS_PROCESS_EXIT_CODE_H
-#define AGDS_PROCESS_EXIT_CODE_H
+#ifndef AGDS_SCREEN_LOADING_TYPE_H
+#define AGDS_SCREEN_LOADING_TYPE_H
 
 namespace AGDS {
 
-	enum ProcessExitCode {
-		kExitCodeDestroy						= 2,
-		kExitCodeSuspend						= 5,
-		kExitCodeSetNextScreen					= 6,
-		kExitCodeSetNextScreenSaveOrLoad		= 7,
-		kExitCodeLoadScreenObject				= 8,
-		kExitCodeLoadScreenObjectAs				= 9,
-		kExitCodeLoadInventoryObject			= 10,
-		kExitCodeMouseAreaChange				= 11,
-		kExitCodeRunDialog						= 12,
-		kExitCodeCreatePatchLoadResources		= 13,
-		kExitCodeLoadGame						= 14,
-		kExitCodeExitScreen						= 15,
-		kExitCodeCloseInventory					= 16,
-		kExitCodeSaveGame						= 17,
-	};
+enum struct ScreenLoadingType {
+	Normal = 0,
+	SaveOrLoad = 1,
+	Previous = 2
+};
 
 }
 

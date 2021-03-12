@@ -27,6 +27,7 @@
 #include "common/array.h"
 #include "common/rect.h"
 #include "common/str.h"
+#include "agds/screenLoadingType.h"
 
 namespace Common	{ class ReadStream; class WriteStream; }
 
@@ -56,7 +57,7 @@ struct Patch {
 	Common::String screenRegionName;
 	Common::String prevScreenName;
 
-	uint hasPreviousScreen = 0;
+	ScreenLoadingType loadingType = ScreenLoadingType::Normal;
 	Common::Point characterPosition;
 	uint characterDirection = 0;
 	bool characterPresent = false;
