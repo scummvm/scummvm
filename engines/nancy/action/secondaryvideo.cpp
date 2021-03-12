@@ -35,7 +35,6 @@
 #include "engines/nancy/sound.h"
 
 #include "common/system.h"
-
 #include "common/events.h"
 
 namespace Nancy {
@@ -51,6 +50,10 @@ void PlaySecondaryVideo::init() {
     // I'm still not sure how/why that happens so for now I'm using this hack to fix the timings
     _decoder.addFrameTime(12);
     _drawSurface.create(_decoder.getWidth(), _decoder.getHeight(), GraphicsManager::getInputPixelFormat());
+
+    if (paletteFilename.size()) {
+        GraphicsManager::loadSurfacePalette(_drawSurface, paletteFilename);
+    }
 
     setVisible(false);
     setTransparent(true);
@@ -145,15 +148,28 @@ void PlaySecondaryVideo::readData(Common::SeekableReadStream &stream) {
     char buf[10];
     stream.read(buf, 10);
     filename = buf;
-    stream.skip(0x14);
+    stream.read(buf, 10);
+    paletteFilename = buf;
+    stream.skip(10);
+    
+    if (paletteFilename.size()) {
+        stream.skip(14); // unknown data
+    }
+
     loopFirstFrame = stream.readUint16LE();
     loopLastFrame = stream.readUint16LE();
     onHoverFirstFrame = stream.readUint16LE();
     onHoverLastFrame = stream.readUint16LE();
     onHoverEndFirstFrame = stream.readUint16LE();
     onHoverEndLastFrame = stream.readUint16LE();
+
     sceneChange.readData(stream);
-    stream.skip(1);
+
+    if (paletteFilename.size()) {
+        stream.skip(3);
+    } else {
+        stream.skip(1);
+    }
 
     uint16 numVideoDescs = stream.readUint16LE();
     for (uint i = 0; i < numVideoDescs; ++i) {
