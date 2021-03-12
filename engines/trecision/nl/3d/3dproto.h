@@ -33,8 +33,6 @@ void goToPosition(int num);
 void lookAt(float x, float z);
 float sinCosAngle(float sinus, float cosinus);
 void createTextureMapping(int16 mat);
-uint16 shadow(uint32 val, uint8 num);
-uint16 aliasing(uint32 val1, uint32 val2, uint8 num);
 void textureTriangle(int32 x1, int32 y1, int32 z1, int32 c1, int32 tx1, int32 ty1, int32 x2, int32 y2, int32 z2, int32 c2, int32 tx2, int32 ty2, int32 x3, int32 y3, int32 z3, int32 c3, int32 tx3, int32 ty3, STexture *t);
 void textureScanEdge(int32 x1, int32 y1, int32 z1, int32 c1, int32 tx1, int32 ty1, int32 x2, int32 y2, int32 z2, int32 c2, int32 tx2, int32 ty2);
 void shadowTriangle(int32 x1, int32 y1, int32 x2, int32 y2, int32 x3, int32 y3, uint8 cv, int32 zv);

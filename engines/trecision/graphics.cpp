@@ -273,4 +273,33 @@ uint16 GraphicsManager::restorePixelFormat(uint16 t) const {
 	return (uint16)kImageFormat.RGBToColor(r, g, b);
 }
 
+/*------------------------------------------------
+					Shadow Pixel
+				(dark) 0..8 (light)
+--------------------------------------------------*/
+uint16 GraphicsManager::shadow(uint32 val, uint8 num) {
+	return ((((val & _bitMask[2]) * num >> 7) & _bitMask[2]) |
+			(((val & _bitMask[1]) * num >> 7) & _bitMask[1]) |
+			(((val & _bitMask[0]) * num >> 7) & _bitMask[0]));
+}
+
+/*------------------------------------------------
+					Aliasing Pixel
+--------------------------------------------------*/
+uint16 GraphicsManager::aliasing(uint32 val1, uint32 val2, uint8 num) {
+	// 0:   0% val1 100% val2
+	// 1:  12% val1  87% val2
+	// 2:  25% val1  75% val2
+	// 3:  37% val1  62% val2
+	// 4:  50% val1  50% val2
+	// 5:  62% val1  37% val2
+	// 6:  75% val1  25% val2
+	// 7:  87% val1  12% val2
+	// 8: 100% val1   0% val2
+
+	return (((((val1 & _bitMask[2]) * num + (val2 & _bitMask[2]) * (8 - num)) >> 3) & _bitMask[2]) |
+			((((val1 & _bitMask[1]) * num + (val2 & _bitMask[1]) * (8 - num)) >> 3) & _bitMask[1]) |
+			((((val1 & _bitMask[0]) * num + (val2 & _bitMask[0]) * (8 - num)) >> 3) & _bitMask[0]));
+}
+
 } // end of namespace

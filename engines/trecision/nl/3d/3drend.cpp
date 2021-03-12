@@ -233,35 +233,6 @@ float sinCosAngle(float sinus, float cosinus) {
 }
 
 /*------------------------------------------------
-					Shadow Pixel
-				(dark) 0..8 (light)
---------------------------------------------------*/
-uint16 shadow(uint32 val, uint8 num) {
-	return ((((val & g_vm->_graphicsMgr->_bitMask[2]) * num >> 7) & g_vm->_graphicsMgr->_bitMask[2]) |
-	        (((val & g_vm->_graphicsMgr->_bitMask[1]) * num >> 7) & g_vm->_graphicsMgr->_bitMask[1]) |
-	        (((val & g_vm->_graphicsMgr->_bitMask[0]) * num >> 7) & g_vm->_graphicsMgr->_bitMask[0]));
-}
-
-/*------------------------------------------------
-					Aliasing Pixel
---------------------------------------------------*/
-uint16 aliasing(uint32 val1, uint32 val2, uint8 num) {
-	// 0:   0% val1 100% val2
-	// 1:  12% val1  87% val2
-	// 2:  25% val1  75% val2
-	// 3:  37% val1  62% val2
-	// 4:  50% val1  50% val2
-	// 5:  62% val1  37% val2
-	// 6:  75% val1  25% val2
-	// 7:  87% val1  12% val2
-	// 8: 100% val1   0% val2
-
-	return (((((val1 & g_vm->_graphicsMgr->_bitMask[2]) * num + (val2 & g_vm->_graphicsMgr->_bitMask[2]) * (8 - num)) >> 3) & g_vm->_graphicsMgr->_bitMask[2]) |
-	        ((((val1 & g_vm->_graphicsMgr->_bitMask[1]) * num + (val2 & g_vm->_graphicsMgr->_bitMask[1]) * (8 - num)) >> 3) & g_vm->_graphicsMgr->_bitMask[1]) |
-	        ((((val1 & g_vm->_graphicsMgr->_bitMask[0]) * num + (val2 & g_vm->_graphicsMgr->_bitMask[0]) * (8 - num)) >> 3) & g_vm->_graphicsMgr->_bitMask[0]));
-}
-
-/*------------------------------------------------
 		Texture Triangle routine
 --------------------------------------------------*/
 void textureTriangle(int32 x1, int32 y1, int32 z1, int32 c1, int32 tx1, int32 ty1,
@@ -524,7 +495,7 @@ void shadowTriangle(int32 x1, int32 y1, int32 x2, int32 y2,
 			// loop through every pixel in horizontal scanline
 			while (dx) {
 				if (*zBufferPtr != zv) {
-					*screenPtr = shadow(*screenPtr, cv);
+					*screenPtr = g_vm->_graphicsMgr->shadow(*screenPtr, cv);
 					*zBufferPtr = (int16)zv;
 				}
 				screenPtr++;		// increase screen x
@@ -960,8 +931,8 @@ void drawCharacter(uint8 flag) {
 					px1 = _curPage[px0 + a - 1];
 					px2 = _curPage[px0 + a];
 
-					_curPage[px0 + a - 1] = aliasing(px1, px2, 6); // 75% 25%
-					_curPage[px0 + a] = aliasing(px1, px2, 2); // 25% 75%
+					_curPage[px0 + a - 1] = g_vm->_graphicsMgr->aliasing(px1, px2, 6); // 75% 25%
+					_curPage[px0 + a] = g_vm->_graphicsMgr->aliasing(px1, px2, 2);     // 25% 75%
 
 					// if the first is the character
 					if (p1)

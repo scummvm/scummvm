@@ -1466,6 +1466,7 @@ void doInvInvUseWith() {
 			StartCharacterAction(hUSEGG, 0, 0, 1441);
 			printsent = false;
 		}
+		break;
 
 	// GG
 	case iTOPO1C:
