@@ -40,13 +40,6 @@
 
 namespace Trecision {
 
-int CurKey, CurAscii;
-int16 wmx = 0, wmy = 0;
-bool wmleft = false, wmright = false;
-int16 omx = 0, omy = 0;
-
-bool _gamePaused = false;
-
 extern int16 mx, my;
 extern bool mleft, mright;
 extern uint8		*SoundStartBuffer;
@@ -54,7 +47,6 @@ extern uint8		*MemoryArea;
 extern const char 		*_sysSentence[];
 extern int			ForceQuit;
 extern int			RoomReady;
-extern int			KeybInput;
 
 void initMain();
 void NextMessage();
@@ -68,75 +60,6 @@ void VMouseOFF();
 char waitKey();
 void wordset(void *dest, uint16 value, uint32 len);
 
-void EventLoop() {
-	Common::Event event;
-	while (g_system->getEventManager()->pollEvent(event)) {
-		switch (event.type) {
-		case Common::EVENT_MOUSEMOVE:
-			wmx = event.mouse.x;
-			wmy = event.mouse.y;
-			break;
-
-		case Common::EVENT_LBUTTONDOWN:
-			wmleft = true;
-			break;
-
-		case Common::EVENT_LBUTTONUP:
-			wmleft = false;
-			break;
-
-		case Common::EVENT_RBUTTONDOWN:
-			wmright = true;
-			break;
-
-		case Common::EVENT_RBUTTONUP:
-			wmright = false;
-			break;
-
-		case Common::EVENT_KEYDOWN:
-			if (event.kbd.keycode == Common::KEYCODE_CAPSLOCK) {
-				if (!g_vm->_fastWalkLocked)
-					g_vm->_fastWalk ^= true;
-				g_vm->_fastWalkLocked = true;
-			}
-			break;
-
-		case Common::EVENT_KEYUP:
-			CurKey = event.kbd.keycode;
-			CurAscii = event.kbd.ascii;
-			switch (event.kbd.keycode) {
-			case Common::KEYCODE_p:
-				if (!_gamePaused && !KeybInput) {
-					CurKey = 0;
-					_gamePaused = true;
-					waitKey();
-				}
-				_gamePaused = false;
-				break;
-
-			case Common::KEYCODE_CAPSLOCK:
-				g_vm->_fastWalkLocked = false;
-				break;
-			}
-			break;
-
-		default:
-			break;
-		}
-	}
-	//g_system->delayMillis(10);
-	g_system->updateScreen();
-}
-
-void NlInit() {
-	initMain();
-
-	while (!g_engine->shouldQuit()) {
-		EventLoop();
-		NextMessage();
-	}
-}
-
 /* -----------------25/10/97 15.12-------------------
 					CheckSystem
  --------------------------------------------------*/
@@ -144,7 +67,7 @@ void CheckSystem() {
 	//for ( int a=0; a<5; a++ )
 	{
 		g_vm->_animMgr->refreshAllAnimations();
-		EventLoop();
+		g_vm->EventLoop();
 	}
 }
 
@@ -152,10 +75,10 @@ void CheckSystem() {
 					GetKey
 --------------------------------------------------*/
 char GetKey() {
-	int key = CurKey;
-	int ascii = CurAscii;
-	CurKey = 0;
-	CurAscii = 0;
+	int key = g_vm->CurKey;
+	int ascii = g_vm->CurAscii;
+	g_vm->CurKey = 0;
+	g_vm->CurAscii = 0;
 
 	switch (key) {
 	case Common::KEYCODE_SPACE:
@@ -184,11 +107,11 @@ char GetKey() {
 					waitKey
 --------------------------------------------------*/
 char waitKey() {
-	while (CurKey == 0)
+	while (g_vm->CurKey == 0)
 		CheckSystem();
 
-	int t = CurKey;
-	CurKey = 0;
+	int t = g_vm->CurKey;
+	g_vm->CurKey = 0;
 
 	return t;
 }
@@ -197,7 +120,7 @@ char waitKey() {
 					FreeKey
 --------------------------------------------------*/
 void FreeKey() {
-	CurKey = 0;
+	g_vm->CurKey = 0;
 }
 
 /*-----------------10/12/95 15.52-------------------
@@ -311,11 +234,11 @@ void Mouse(uint8 opt) {
 			Mouse(1);
 
 		if (g_vm->_mouseONOFF) {
-			mleft = wmleft;
-			mright = wmright;
+			mleft = g_vm->wmleft;
+			mright = g_vm->wmright;
 
-			mx = CLIP<int16>(wmx, 10, MAXX - 11);
-			my = CLIP<int16>(wmy, 10, MAXY - 11);
+			mx = CLIP<int16>(g_vm->wmx, 10, MAXX - 11);
+			my = CLIP<int16>(g_vm->wmy, 10, MAXY - 11);
 
 			VMouseON();
 		}
@@ -335,11 +258,11 @@ void Mouse(uint8 opt) {
 			break;
 		g_vm->_mouseONOFF = true;
 
-		mleft = wmleft;
-		mright = wmright;
+		mleft = g_vm->wmleft;
+		mright = g_vm->wmright;
 
-		mx = CLIP<int16>(wmx, 10, MAXX - 11);
-		my = CLIP<int16>(wmy, 10, MAXY - 11);
+		mx = CLIP<int16>(g_vm->wmx, 10, MAXX - 11);
+		my = CLIP<int16>(g_vm->wmy, 10, MAXY - 11);
 
 		VMouseON();
 		break;

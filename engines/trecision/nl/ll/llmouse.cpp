@@ -40,12 +40,9 @@
 
 namespace Trecision {
 
-// LOCALS
-extern int16 omx, omy;
 
 uint16 BlinkLastDTextChar = MASKCOL;
 uint16 MouseBuf[50];
-int	KeybInput;
 
 extern int NlVer;
 
@@ -87,16 +84,16 @@ void VPix(int16 x, int16 y, uint16 col) {
 					VMouseOFF
 --------------------------------------------------*/
 void VMouseOFF() {
-	int16 comx = omx;
+	int16 comx = g_vm->omx;
 
 	bool vl = g_vm->_graphicsMgr->_locked;
 	if (!vl)
 		g_vm->_graphicsMgr->lock();
 
 	for (int16 i = (comx - 10); i <= (comx + 10); i++)
-		VPix(i, omy, vr(i, omy));
+		VPix(i, g_vm->omy, vr(i, g_vm->omy));
 
-	for (int16 i = (omy - 10); i <= (omy + 10); i++)
+	for (int16 i = (g_vm->omy - 10); i <= (g_vm->omy + 10); i++)
 		VPix(comx, i, vr(comx, i));
 
 	if (!vl)
@@ -110,7 +107,7 @@ void VMouseON() {
 	if (!g_vm->_mouseONOFF)
 		return ;
 
-	int16 comx = omx;
+	int16 comx = g_vm->omx;
 	int16 cmx = mx;
 	uint16 mc = g_vm->_graphicsMgr->palTo16bit(255, 255, 255);
 
@@ -119,11 +116,11 @@ void VMouseON() {
 		g_vm->_graphicsMgr->lock();
 
 	for (int16 i = (comx - 10); i <= (comx + 10); i++) {
-		if ((!(((i >= (cmx - 10)) && (i <= (cmx + 10))) && (omy == my))))
-			VPix(i, omy, vr(i, omy));
+		if ((!(((i >= (cmx - 10)) && (i <= (cmx + 10))) && (g_vm->omy == my))))
+			VPix(i, g_vm->omy, vr(i, g_vm->omy));
 	}
 
-	for (int16 i = (omy - 10); i <= (omy + 10); i++) {
+	for (int16 i = (g_vm->omy - 10); i <= (g_vm->omy + 10); i++) {
 		if ((!(((i >= (my - 10)) && (i <= (my + 10))) && (comx == cmx))))
 			VPix(comx, i, vr(comx, i));
 	}
@@ -150,8 +147,8 @@ void VMouseON() {
 	}
 
 	VPix(cmx, my, mc);
-	omx = mx;
-	omy = my;
+	g_vm->omx = mx;
+	g_vm->omy = my;
 
 	if (!vl)
 		g_vm->_graphicsMgr->unlock();
@@ -166,36 +163,36 @@ void VMouseRestore() {
 	if (!g_vm->_mouseONOFF)
 		return ;
 
-	for (int32 i = (omx - 10); i <= (omx + 10); i++)
-		g_vm->_video2[i + omy * MAXX] = MouseBuf[c++];
+	for (int32 i = (g_vm->omx - 10); i <= (g_vm->omx + 10); i++)
+		g_vm->_video2[i + g_vm->omy * MAXX] = MouseBuf[c++];
 
-	for (int32 i = (omy - 10); i <= (omy + 10); i++)
-		g_vm->_video2[omx + i * MAXX] = MouseBuf[c++];
+	for (int32 i = (g_vm->omy - 10); i <= (g_vm->omy + 10); i++)
+		g_vm->_video2[g_vm->omx + i * MAXX] = MouseBuf[c++];
 }
 
 /*-----------------05/03/98 11.21-------------------
 					VMouseCopy
 --------------------------------------------------*/
 void VMouseCopy() {
+	if (!g_vm->_mouseONOFF)
+		return;
+
 	int32 c = 0;
 	uint16 mc = g_vm->_graphicsMgr->palTo16bit(255, 255, 255);
 
-	if (!g_vm->_mouseONOFF)
-		return ;
+	for (int32 i = (g_vm->omx - 10); i <= (g_vm->omx + 10); i++)
+		MouseBuf[c++] = g_vm->_video2[i + g_vm->omy * MAXX];
+	for (int32 i = (g_vm->omy - 10); i <= (g_vm->omy + 10); i++)
+		MouseBuf[c++] = g_vm->_video2[g_vm->omx + i * MAXX];
 
-	for (int32 i = (omx - 10); i <= (omx + 10); i++)
-		MouseBuf[c++] = g_vm->_video2[i + omy * MAXX];
-	for (int32 i = (omy - 10); i <= (omy + 10); i++)
-		MouseBuf[c++] = g_vm->_video2[omx + i * MAXX];
-
-	for (int32 i = (omx - 10); i <= (omx + 10); i++) {
-		if ((i != omx - 2) && (i != omx - 1) && (i != omx + 1) && (i != omx + 2))
-			g_vm->_video2[i + omy * MAXX] = mc;
+	for (int32 i = (g_vm->omx - 10); i <= (g_vm->omx + 10); i++) {
+		if ((i != g_vm->omx - 2) && (i != g_vm->omx - 1) && (i != g_vm->omx + 1) && (i != g_vm->omx + 2))
+			g_vm->_video2[i + g_vm->omy * MAXX] = mc;
 	}
 
-	for (int32 i = (omy - 10); i <= (omy + 10); i++) {
-		if ((i != omy - 2) && (i != omy - 1) && (i != omy + 1) && (i != omy + 2))
-			g_vm->_video2[omx + i * MAXX] = mc;
+	for (int32 i = (g_vm->omy - 10); i <= (g_vm->omy + 10); i++) {
+		if ((i != g_vm->omy - 2) && (i != g_vm->omy - 1) && (i != g_vm->omy + 1) && (i != g_vm->omy + 2))
+			g_vm->_video2[g_vm->omx + i * MAXX] = mc;
 	}
 }
 
@@ -547,13 +544,13 @@ insave:
 		}
 
 		for (; ;) {
-			KeybInput = true;
+			g_vm->KeybInput = true;
 			CheckSystem();
 			ch = GetKey();
 			FreeKey();
 
 			Mouse(3);
-			KeybInput = false;
+			g_vm->KeybInput = false;
 
 			if (ch == 0x1B) {
 				ch = 0;
