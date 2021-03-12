@@ -133,6 +133,16 @@ void GraphicsManager::redrawAll() {
     }
 }
 
+void GraphicsManager::loadSurfacePalette(Graphics::ManagedSurface &inSurf, const Common::String paletteFilename) {
+    Common::File f;
+    if (f.open(paletteFilename + ".bmp")) {
+        Image::BitmapDecoder dec;
+        if (dec.loadStream(f)) {
+            inSurf.setPalette(dec.getPalette(), dec.getPaletteStartIndex(), dec.getPaletteColorCount());
+        }
+    }
+}
+
 const Graphics::PixelFormat &GraphicsManager::getInputPixelFormat() {
     if (NanEngine._gameDescription->desc.flags & NGF_8BITCOLOR) {
         return clut8Format;

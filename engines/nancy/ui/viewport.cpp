@@ -29,10 +29,6 @@
 #include "engines/nancy/cursor.h"
 #include "engines/nancy/util.h"
 
-#include "common/file.h"
-
-#include "image/bmp.h"
-
 namespace Nancy {
 namespace UI {
 
@@ -194,14 +190,8 @@ void Viewport::loadVideo(const Common::String &filename, uint frameNr, uint vert
     setVerticalScroll(verticalScroll);
 
     if (palette.size()) {
-        Common::File paletteFile;
-        if (paletteFile.open(palette + ".bmp")) {
-            Image::BitmapDecoder b;
-            if (b.loadStream(paletteFile)) {
-                _drawSurface.setPalette(b.getPalette(), b.getPaletteStartIndex(), b.getPaletteColorCount() - 1);
-                _fullFrame.setPalette(b.getPalette(), b.getPaletteStartIndex(), b.getPaletteColorCount() - 1);
-            }
-        }
+        GraphicsManager::loadSurfacePalette(_drawSurface, palette);
+        GraphicsManager::loadSurfacePalette(_fullFrame, palette);
     }
 
     _movementLastFrame = 0;
