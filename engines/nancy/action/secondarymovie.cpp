@@ -37,7 +37,7 @@ PlaySecondaryMovie::~PlaySecondaryMovie() {
     }
 }
 
-uint16 PlaySecondaryMovie::readData(Common::SeekableReadStream &stream) {  
+void PlaySecondaryMovie::readData(Common::SeekableReadStream &stream) {  
     char name[10];
     stream.read(name, 10);
     videoName = name;
@@ -64,8 +64,6 @@ uint16 PlaySecondaryMovie::readData(Common::SeekableReadStream &stream) {
         videoDescs.push_back(SecondaryVideoDescription());
         videoDescs[i].readData(stream);
     }
-
-    return 0xD4 + numVideoDescs * 0x42; // TODO
 }
 
 void PlaySecondaryMovie::init() {

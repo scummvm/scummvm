@@ -93,20 +93,14 @@ public:
         itemRequired(-1) {}
     virtual ~ActionRecord() {}
 
-    virtual uint16 readData(Common::SeekableReadStream &stream) =0;
+    virtual void readData(Common::SeekableReadStream &stream) =0;
     virtual void execute() {}
     virtual void onPause(bool pause) {}
 
     virtual CursorManager::CursorType getHoverCursor() const { return CursorManager::kHotspot; }
     virtual void handleInput(NancyInput &input) {}
 
-protected:
-    // TODO this is temporary until every record type is figured out
-    uint16 readRaw(Common::SeekableReadStream &stream, uint16 bytes) {
-        stream.skip(bytes);
-        return bytes;
-    }
-    
+protected:   
     void finishExecution() {
         switch (execType) {
         case kOneShot:

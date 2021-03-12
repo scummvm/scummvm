@@ -52,7 +52,7 @@ public:
     virtual void updateGraphics() override;
     virtual void onPause(bool pause) override;
 
-    virtual uint16 readData(Common::SeekableReadStream &stream) override;
+    virtual void readData(Common::SeekableReadStream &stream) override;
     virtual void execute() override;
 
     Common::String videoName; // 0x00

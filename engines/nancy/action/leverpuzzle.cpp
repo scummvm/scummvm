@@ -39,7 +39,7 @@ void LeverPuzzle::init() {
     NanEngine.resource->loadImage(imageName, image);
 }
 
-uint16 LeverPuzzle::readData(Common::SeekableReadStream &stream) {
+void LeverPuzzle::readData(Common::SeekableReadStream &stream) {
     char buf[10];
     stream.read(buf, 10);
     imageName = buf;
@@ -85,8 +85,6 @@ uint16 LeverPuzzle::readData(Common::SeekableReadStream &stream) {
     flagOnExit.label = stream.readSint16LE();
     flagOnExit.flag = (NancyFlag)stream.readByte();
     readRect(stream, exitHotspot);
-
-    return 0x192;
 }
 
 void LeverPuzzle::execute() {

@@ -151,8 +151,8 @@ void PlayPrimaryVideoChan0::onPause(bool pause) {
     }
 }
 
-uint16 PlayPrimaryVideoChan0::readData(Common::SeekableReadStream &stream) {
-    uint16 bytesRead = stream.pos();
+void PlayPrimaryVideoChan0::readData(Common::SeekableReadStream &stream) {
+    uint16 beginOffset = stream.pos();
 
     char name[10];
     stream.read(name, 10);
@@ -177,7 +177,7 @@ uint16 PlayPrimaryVideoChan0::readData(Common::SeekableReadStream &stream) {
     doNotPop = (NancyFlag)stream.readByte();
     sceneChange.readData(stream);
 
-    stream.seek(bytesRead + 0x69C);
+    stream.seek(beginOffset + 0x69C);
 
     uint16 numResponses = stream.readUint16LE();
     if (numResponses > 0) {
@@ -217,9 +217,6 @@ uint16 PlayPrimaryVideoChan0::readData(Common::SeekableReadStream &stream) {
             flagsStruct.flagToSet.flag.flag = (NancyFlag)stream.readByte();
         }
     }
-
-    bytesRead = stream.pos() - bytesRead;
-    return bytesRead;
 }
 
 void PlayPrimaryVideoChan0::execute() {

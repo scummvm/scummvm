@@ -40,9 +40,8 @@
 namespace Nancy {
 namespace Action {
 
-uint16 SceneChange::readData(Common::SeekableReadStream &stream) {
+void SceneChange::readData(Common::SeekableReadStream &stream) {
     sceneChange.readData(stream);
-    return 8;
 }
 
 void SceneChange::execute() {
@@ -50,8 +49,8 @@ void SceneChange::execute() {
     isDone = true;
 }
 
-uint16 HotMultiframeSceneChange::readData(Common::SeekableReadStream &stream) {
-    uint16 ret = SceneChange::readData(stream);
+void HotMultiframeSceneChange::readData(Common::SeekableReadStream &stream) {
+    SceneChange::readData(stream);
     uint16 numHotspots = stream.readUint16LE();
 
     for (uint i = 0; i < numHotspots; ++i) {
@@ -59,8 +58,6 @@ uint16 HotMultiframeSceneChange::readData(Common::SeekableReadStream &stream) {
         HotspotDescription &newDesc = hotspots[i];
         newDesc.readData(stream);
     }
-
-    return ret + (numHotspots * 0x12) + 2;
 }
 
 void HotMultiframeSceneChange::execute() {
@@ -84,10 +81,9 @@ void HotMultiframeSceneChange::execute() {
     }
 }
 
-uint16 Hot1FrSceneChange::readData(Common::SeekableReadStream &stream) {
+void Hot1FrSceneChange::readData(Common::SeekableReadStream &stream) {
     SceneChange::readData(stream);
     hotspotDesc.readData(stream);
-    return 0x1A;
 }
 
 void Hot1FrSceneChange::execute() {
@@ -109,26 +105,22 @@ void Hot1FrSceneChange::execute() {
     }
 }
 
-uint16 HotMultiframeMultisceneChange::readData(Common::SeekableReadStream &stream) {
+void HotMultiframeMultisceneChange::readData(Common::SeekableReadStream &stream) {
     stream.seek(0x14, SEEK_CUR);
-    uint size = stream.readUint16LE() * 0x12 + 0x16;
-    stream.seek(-0x16, SEEK_CUR);
-
-    return readRaw(stream, size); // TODO
+    uint size = stream.readUint16LE() * 0x12;
+    stream.skip(size);
 }
 
-uint16 StartFrameNextScene::readData(Common::SeekableReadStream &stream) {
-    return readRaw(stream, 0x4); // TODO
+void StartFrameNextScene::readData(Common::SeekableReadStream &stream) {
+    stream.skip(4);
 }
 
-uint16 StartStopPlayerScrolling::readData(Common::SeekableReadStream &stream) {
-    type = stream.readByte();    
-    return 1;
-}
-
-uint16 MapCall::readData(Common::SeekableReadStream &stream) {
+void StartStopPlayerScrolling::readData(Common::SeekableReadStream &stream) {
     stream.skip(1);
-    return 1;
+}
+
+void MapCall::readData(Common::SeekableReadStream &stream) {
+    stream.skip(1);
 }
 
 void MapCall::execute() {
@@ -137,9 +129,8 @@ void MapCall::execute() {
     finishExecution();
 }
 
-uint16 MapCallHot1Fr::readData(Common::SeekableReadStream &stream) {
-    hotspotDesc.readData(stream);
-    return 0x12;
+void MapCallHot1Fr::readData(Common::SeekableReadStream &stream) {
+    stream.skip(0x12);
 }
 
 void MapCallHot1Fr::execute() {
@@ -159,14 +150,12 @@ void MapCallHot1Fr::execute() {
     }
 }
 
-uint16 MapCallHotMultiframe::readData(Common::SeekableReadStream &stream) {
+void MapCallHotMultiframe::readData(Common::SeekableReadStream &stream) {
     uint16 numDescs = stream.readUint16LE();
     for (uint i = 0; i < numDescs; ++i) {
         hotspots.push_back(HotspotDescription());
         hotspots[i].readData(stream);
     }
-
-    return 2 + numDescs * 0x12;
 }
 
 void MapCallHotMultiframe::execute() {
@@ -189,61 +178,53 @@ void MapCallHotMultiframe::execute() {
     }
 }
 
-uint16 MapLocationAccess::readData(Common::SeekableReadStream &stream) {
-    return readRaw(stream, 0x4); // TODO
+void MapLocationAccess::readData(Common::SeekableReadStream &stream) {
+    stream.skip(4);
 }
 
-uint16 MapSound::readData(Common::SeekableReadStream &stream) {
-    return readRaw(stream, 0x10); // TODO
+void MapSound::readData(Common::SeekableReadStream &stream) {
+    stream.skip(0x10);
 }
 
-uint16 MapAviOverride::readData(Common::SeekableReadStream &stream) {
-    return readRaw(stream, 0x2); // TODO
+void MapAviOverride::readData(Common::SeekableReadStream &stream) {
+    stream.skip(2);
 }
 
-uint16 MapAviOverrideOff::readData(Common::SeekableReadStream &stream) {
-    overrideOffData = stream.readByte();
-    return 1;
+void MapAviOverrideOff::readData(Common::SeekableReadStream &stream) {
+    stream.skip(1);
 }
 
-uint16 TextBoxWrite::readData(Common::SeekableReadStream &stream) {
+void TextBoxWrite::readData(Common::SeekableReadStream &stream) {
     uint16 size = stream.readUint16LE();
-    stream.seek(-2, SEEK_CUR);
+    stream.skip(size);
 
-    if (size > 0x2710) {
+    if (size > 10000) {
         error("Action Record atTextboxWrite has too many text box chars: %d", size);;
     }
-
-    return readRaw(stream, size+2); // TODO
 }
 
-uint16 TextBoxClear::readData(Common::SeekableReadStream &stream) {
-    clearData = stream.readByte();
-    return 1;
-}
-
-uint16 BumpPlayerClock::readData(Common::SeekableReadStream &stream) {
-    return readRaw(stream, 0x5); // TODO
-}
-
-uint16 SaveContinueGame::readData(Common::SeekableReadStream &stream) {
-    saveContinueData = stream.readByte();
-    return 1;
-}
-
-uint16 TurnOffMainRendering::readData(Common::SeekableReadStream &stream) {
-    turnOffData = stream.readByte();
-    return 1;
-}
-
-uint16 TurnOnMainRendering::readData(Common::SeekableReadStream &stream) {
-    turnOnData = stream.readByte();
-    return 1;
-}
-
-uint16 ResetAndStartTimer::readData(Common::SeekableReadStream &stream) {
+void TextBoxClear::readData(Common::SeekableReadStream &stream) {
     stream.skip(1);
-    return 1;
+}
+
+void BumpPlayerClock::readData(Common::SeekableReadStream &stream) {
+    stream.skip(5);
+}
+
+void SaveContinueGame::readData(Common::SeekableReadStream &stream) {
+    stream.skip(1);
+}
+
+void TurnOffMainRendering::readData(Common::SeekableReadStream &stream) {
+    stream.skip(1);
+}
+
+void TurnOnMainRendering::readData(Common::SeekableReadStream &stream) {
+    stream.skip(1);
+}
+
+void ResetAndStartTimer::readData(Common::SeekableReadStream &stream) {
+    stream.skip(1);
 }
 
 void ResetAndStartTimer::execute() {
@@ -251,9 +232,8 @@ void ResetAndStartTimer::execute() {
     isDone = true;
 }
 
-uint16 StopTimer::readData(Common::SeekableReadStream &stream) {
+void StopTimer::readData(Common::SeekableReadStream &stream) {
     stream.skip(1);
-    return 1;
 }
 
 void StopTimer::execute() {
@@ -261,9 +241,8 @@ void StopTimer::execute() {
     isDone = true;
 }
 
-uint16 EventFlags::readData(Common::SeekableReadStream &stream) {
+void EventFlags::readData(Common::SeekableReadStream &stream) {
     flags.readData(stream);
-    return 0x28;
 }
 
 void EventFlags::execute() {
@@ -271,8 +250,8 @@ void EventFlags::execute() {
     isDone = true;
 }
 
-uint16 EventFlagsMultiHS::readData(Common::SeekableReadStream &stream) {
-    uint16 returnSize = EventFlags::readData(stream);
+void EventFlagsMultiHS::readData(Common::SeekableReadStream &stream) {
+    EventFlags::readData(stream);
     uint16 numHotspots = stream.readUint16LE();
 
     for (uint16 i = 0; i < numHotspots; ++i) {
@@ -280,10 +259,6 @@ uint16 EventFlagsMultiHS::readData(Common::SeekableReadStream &stream) {
         HotspotDescription &newDesc = hotspots[i];
         newDesc.readData(stream);
     }
-
-    returnSize += numHotspots * 0x12 + 0x2;
-
-    return returnSize;
 }
 
 void EventFlagsMultiHS::execute() {
@@ -311,9 +286,8 @@ void EventFlagsMultiHS::execute() {
     }
 }
 
-uint16 LoseGame::readData(Common::SeekableReadStream &stream) {
+void LoseGame::readData(Common::SeekableReadStream &stream) {
     stream.skip(1);
-    return 1;
 }
 
 void LoseGame::execute() {
@@ -323,19 +297,16 @@ void LoseGame::execute() {
     isDone = true;
 }
 
-uint16 PushScene::readData(Common::SeekableReadStream &stream) {
-    pushData = stream.readByte();
-    return 1;
-}
-
-uint16 PopScene::readData(Common::SeekableReadStream &stream) {
-    popData = stream.readByte();
-    return 1;
-}
-
-uint16 WinGame::readData(Common::SeekableReadStream &stream) {
+void PushScene::readData(Common::SeekableReadStream &stream) {
     stream.skip(1);
-    return 1;
+}
+
+void PopScene::readData(Common::SeekableReadStream &stream) {
+    stream.skip(1);
+}
+
+void WinGame::readData(Common::SeekableReadStream &stream) {
+    stream.skip(1);
 }
 
 void WinGame::execute() {
@@ -347,9 +318,8 @@ void WinGame::execute() {
     isDone = true;
 }
 
-uint16 AddInventoryNoHS::readData(Common::SeekableReadStream &stream) {
+void AddInventoryNoHS::readData(Common::SeekableReadStream &stream) {
     itemID = stream.readUint16LE();
-    return 2;
 }
 
 void AddInventoryNoHS::execute() {
@@ -360,15 +330,14 @@ void AddInventoryNoHS::execute() {
     isDone = true;
 }
 
-uint16 RemoveInventoryNoHS::readData(Common::SeekableReadStream &stream) {
-    return readRaw(stream, 0x2); // TODO
+void RemoveInventoryNoHS::readData(Common::SeekableReadStream &stream) {
+    stream.skip(2);
 }
 
-uint16 DifficultyLevel::readData(Common::SeekableReadStream &stream) {
+void DifficultyLevel::readData(Common::SeekableReadStream &stream) {
     difficulty = stream.readUint16LE();
     flag.label = stream.readSint16LE();
     flag.flag = (NancyFlag)stream.readUint16LE();
-    return 6;
 }
 
 void DifficultyLevel::execute() {
@@ -385,7 +354,7 @@ void ShowInventoryItem::init() {
     RenderObject::init();
 }
 
-uint16 ShowInventoryItem::readData(Common::SeekableReadStream &stream) {
+void ShowInventoryItem::readData(Common::SeekableReadStream &stream) {
     objectID = stream.readUint16LE();
     char name[10];
     stream.read(name, 10);
@@ -397,8 +366,6 @@ uint16 ShowInventoryItem::readData(Common::SeekableReadStream &stream) {
         bitmaps.push_back(BitmapDescription());
         bitmaps[i].readData(stream);
     }
-
-    return 0xE + 0x22 * numFrames;
 }
 
 void ShowInventoryItem::execute() {
@@ -451,13 +418,12 @@ void ShowInventoryItem::onPause(bool pause) {
     }
 }
 
-uint16 PlayDigiSoundAndDie::readData(Common::SeekableReadStream &stream) {
+void PlayDigiSoundAndDie::readData(Common::SeekableReadStream &stream) {
     sound.read(stream, SoundDescription::kDIGI);
     sceneChange.readData(stream);
     flagOnTrigger.label = stream.readSint16LE();
     flagOnTrigger.flag = (NancyFlag)stream.readByte();
-    stream.skip(1);
-    return 0x2B;
+    stream.skip(2);
 }
 
 void PlayDigiSoundAndDie::execute() {
@@ -486,11 +452,11 @@ void PlayDigiSoundAndDie::execute() {
     }
 }
 
-uint16 PlaySoundPanFrameAnchorAndDie::readData(Common::SeekableReadStream &stream) {
-    return readRaw(stream, 0x20); // TODO
+void PlaySoundPanFrameAnchorAndDie::readData(Common::SeekableReadStream &stream) {
+    stream.skip(0x20);
 }
 
-uint16 PlaySoundMultiHS::readData(Common::SeekableReadStream &stream) {
+void PlaySoundMultiHS::readData(Common::SeekableReadStream &stream) {
     sound.read(stream, SoundDescription::kNormal);
     sceneChange.readData(stream);
     flag.label = stream.readSint16LE();
@@ -503,8 +469,6 @@ uint16 PlaySoundMultiHS::readData(Common::SeekableReadStream &stream) {
         hotspots.back().frameID = stream.readUint16LE();
         readRect(stream, hotspots.back().coords);
     }
-
-    return 0x31 + numHotspots * 0x12;
 }
 
 void PlaySoundMultiHS::execute() {
@@ -536,10 +500,9 @@ void PlaySoundMultiHS::execute() {
     }
 }
 
-uint16 HintSystem::readData(Common::SeekableReadStream &stream) {
+void HintSystem::readData(Common::SeekableReadStream &stream) {
     characterID = stream.readByte();
     genericSound.read(stream, SoundDescription::kNormal);
-    return 0x23;
 }
 
 void HintSystem::execute() {

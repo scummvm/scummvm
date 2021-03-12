@@ -41,7 +41,7 @@ void RotatingLockPuzzle::init() {
     NanEngine.resource->loadImage(imageName, image);
 }
 
-uint16 RotatingLockPuzzle::readData(Common::SeekableReadStream &stream) {
+void RotatingLockPuzzle::readData(Common::SeekableReadStream &stream) {
     char buf[10];
     stream.read(buf, 10);
     imageName = buf;
@@ -98,8 +98,6 @@ uint16 RotatingLockPuzzle::readData(Common::SeekableReadStream &stream) {
     flagOnExit.label = stream.readSint16LE();
     flagOnExit.flag = (NancyFlag)stream.readByte();
     readRect(stream, exitHotspot);
-
-    return 0x2A4;
 }
 
 void RotatingLockPuzzle::execute() {

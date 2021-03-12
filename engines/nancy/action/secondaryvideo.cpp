@@ -140,7 +140,7 @@ void PlaySecondaryVideo::handleInput(NancyInput &input) {
     }
 }
 
-uint16 PlaySecondaryVideo::readData(Common::SeekableReadStream &stream) {
+void PlaySecondaryVideo::readData(Common::SeekableReadStream &stream) {
     char buf[10];
     stream.read(buf, 10);
     filename = buf;
@@ -159,8 +159,6 @@ uint16 PlaySecondaryVideo::readData(Common::SeekableReadStream &stream) {
         videoDescs.push_back(SecondaryVideoDescription());
         videoDescs[i].readData(stream);
     }
-
-    return 0x35 + (numVideoDescs * 0x42);
 }
 
 void PlaySecondaryVideo::execute() {

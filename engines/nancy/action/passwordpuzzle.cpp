@@ -41,7 +41,7 @@ void PasswordPuzzle::init() {
     RenderObject::init();
 }
 
-uint16 PasswordPuzzle::readData(Common::SeekableReadStream &stream) {
+void PasswordPuzzle::readData(Common::SeekableReadStream &stream) {
     fontID = stream.readUint16LE();
     cursorBlinkTime = stream.readUint16LE();
     readRect(stream, nameBounds);
@@ -68,8 +68,6 @@ uint16 PasswordPuzzle::readData(Common::SeekableReadStream &stream) {
     flagOnExit.label = stream.readSint16LE();
     flagOnExit.flag = (NancyFlag)stream.readByte();
     readRect(stream, exitHotspot);
-
-    return 0xD7;
 }
 
 void PasswordPuzzle::execute() {

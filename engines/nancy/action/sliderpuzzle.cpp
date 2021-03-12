@@ -44,7 +44,7 @@ void SliderPuzzle::init() {
     NanEngine.resource->loadImage(imageName, image);
 }
 
-uint16 SliderPuzzle::readData(Common::SeekableReadStream &stream) {
+void SliderPuzzle::readData(Common::SeekableReadStream &stream) {
     char buf[10];
     stream.read(buf, 10);
     imageName = buf;
@@ -101,8 +101,6 @@ uint16 SliderPuzzle::readData(Common::SeekableReadStream &stream) {
     flagOnExit.label = stream.readSint16LE();
     flagOnExit.flag = (NancyFlag)stream.readByte();
     readRect(stream, exitHotspot);
-
-    return 0x544;
 }
 
 void SliderPuzzle::execute() {

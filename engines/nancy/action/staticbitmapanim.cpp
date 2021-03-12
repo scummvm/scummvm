@@ -42,7 +42,7 @@ void PlayStaticBitmapAnimation::init() {
     RenderObject::init();
 }
 
-uint16 PlayStaticBitmapAnimation::readData(Common::SeekableReadStream &stream) {
+void PlayStaticBitmapAnimation::readData(Common::SeekableReadStream &stream) {
     char name[10];
     stream.read(name, 10);
     imageName = Common::String(name);
@@ -57,6 +57,7 @@ uint16 PlayStaticBitmapAnimation::readData(Common::SeekableReadStream &stream) {
     loopLastFrame = stream.readUint16LE();
     frameTime = Common::Rational(1000, stream.readUint16LE()).toInt();
     zOrder = stream.readUint16LE();
+
     if (isInterruptible) {
         interruptCondition.label = stream.readSint16LE();
         interruptCondition.flag = (NancyFlag)stream.readUint16LE();
@@ -64,6 +65,7 @@ uint16 PlayStaticBitmapAnimation::readData(Common::SeekableReadStream &stream) {
         interruptCondition.label = -1;
         interruptCondition.flag = kFalse;
     }
+
     sceneChange.readData(stream);
     triggerFlags.readData(stream);
     sound.read(stream, SoundDescription::kNormal);
@@ -81,10 +83,6 @@ uint16 PlayStaticBitmapAnimation::readData(Common::SeekableReadStream &stream) {
         readRect(stream, rects.src);
         readRect(stream, rects.dest);
     }
-
-    uint baseSize = isInterruptible ? 0x76 : 0x72;
-
-    return baseSize + numViewportFrames * 0x22 + (loopLastFrame - firstFrame + 1) * 16;
 }
 
 void PlayStaticBitmapAnimation::execute() {

@@ -49,13 +49,6 @@ void GraphicsManager::init() {
     _screen.create(640, 480, screenPixelFormat);
     _screen.setTransparentColor(getTransColor());
 
-    auto formats = NanEngine._system->getSupportedFormats();
-
-    for (auto f : formats) {
-        debug(f.toString().c_str());
-
-    }
-
     Common::SeekableReadStream *ob = NanEngine.getBootChunkStream("OB0");
     ob->seek(0);
 
