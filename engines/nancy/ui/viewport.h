@@ -49,7 +49,7 @@ public:
     virtual void init() override;
     void handleInput(NancyInput &input);
 
-    void loadVideo(const Common::String &filename, uint frameNr = 0, uint verticalScroll = 0);
+    void loadVideo(const Common::String &filename, uint frameNr = 0, uint verticalScroll = 0, const Common::String &palette = Common::String());
     
     void setFrame(uint frameNr);
     void setNextFrame();

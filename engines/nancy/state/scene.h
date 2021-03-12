@@ -72,20 +72,23 @@ class Scene : public State, public Common::Singleton<Scene> {
     friend class Nancy::CheatDialog;
 public:
     struct SceneSummary { // SSUM
-        Common::String description;             // 0x00
-        Common::String videoFile;               // 0x32
+        Common::String description;
+        Common::String videoFile;
         //
-        uint16 videoFormat;                     // 0x3E, value is 1 or 2
+        uint16 videoFormat;
+        Common::String videoPaletteFile;
         Common::String audioFile;               
-        SoundDescription sound;   // 0x40
+        SoundDescription sound;
         //
-        uint16 verticalScrollDelta;             // 0x72
-        uint16 horizontalEdgeSize;              // 0x74
-        uint16 verticalEdgeSize;                // 0x76
-        Time slowMoveTimeDelta;                 // 0x78
-        Time fastMoveTimeDelta;                 // 0x7A
+        uint16 verticalScrollDelta;
+        uint16 horizontalEdgeSize;
+        uint16 verticalEdgeSize;
+        Time slowMoveTimeDelta;
+        Time fastMoveTimeDelta;
         // byte unknown7C enum with 4 values
         //
+
+        void read(Common::SeekableReadStream &stream);
     };
 
     Scene() :
@@ -163,8 +166,6 @@ private:
     void initStatic();
     void load();
     void run();
-
-    void readSceneSummary(Common::SeekableReadStream &stream);
 
     void clearSceneData();
 
