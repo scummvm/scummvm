@@ -312,8 +312,15 @@ bool ResolveScriptPath(const String &orig_sc_path, bool read_only, ResolvedPath 
 		// Remap "agsgame.*"
 		const char  *agsSavePrefix = "/agssave.";
 		if (child_path.CompareLeft(agsSavePrefix) == 0) {
-			int slotNum = child_path.Mid(strlen(agsSavePrefix)).ToInt();
-			child_path = ::AGS::g_vm->getSaveStateName(slotNum);
+			String suffix = child_path.Mid(strlen(agsSavePrefix));
+			if (suffix.CompareLeft("*") == 0) {
+				Common::String file_name = ::AGS::g_vm->getSaveStateName(999);
+				Common::replace(file_name, "999", "*");
+				child_path = file_name;
+			} else {
+				int slotNum = suffix.ToInt();
+				child_path = ::AGS::g_vm->getSaveStateName(slotNum);
+			}
 		}
 #endif
 	} else if (sc_path.CompareLeft(GameDataDirToken) == 0) {

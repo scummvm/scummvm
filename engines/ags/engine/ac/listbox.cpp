@@ -33,6 +33,7 @@
 #include "ags/engine/debugging/debug_log.h"
 
 #include "ags/shared/debugging/out.h"
+#include "ags/shared/util/path.h"
 #include "ags/engine/script/script_api.h"
 #include "ags/engine/script/script_runtime.h"
 #include "ags/engine/ac/dynobj/scriptstring.h"
@@ -40,6 +41,7 @@
 #include "ags/ags.h"
 #include "common/fs.h"
 #include "common/savefile.h"
+#include "common/config-manager.h"
 
 namespace AGS3 {
 
@@ -72,12 +74,26 @@ void ListBox_Clear(GUIListBox *listbox) {
 }
 
 void FillDirList(std::set<String> &files, const String &path) {
-	Common::FSNode folder(path);
-	Common::FSList fsList;
-	folder.getChildren(fsList, Common::FSNode::kListAll);
+	String dirName = Path::GetDirectoryPath(path);
+	String filePattern = Path::get_filename(path);
+	if (dirName.CompareLeftNoCase(get_install_dir()) == 0) {
+		String subDir = dirName.Mid(get_install_dir().GetLength());
+		if (!subDir.IsEmpty() && subDir[0u] == '/')
+			subDir.ClipLeft(1);
+		dirName = ConfMan.get("path");
+	} else if (dirName.CompareLeftNoCase(get_save_game_directory()) == 0) {
+		String subDir = dirName.Mid(get_save_game_directory().GetLength());
+		if (!subDir.IsEmpty() && subDir[0u] == '/')
+			subDir.ClipLeft(1);
+		dirName = Path::ConcatPaths(ConfMan.get("savepath"), subDir);
+	}
 
-	for (uint idx = 0; idx < fsList.size(); ++idx)
-		files.insert(fsList[idx].getName());
+	Common::FSDirectory dir(dirName);
+	Common::ArchiveMemberList fileList;
+	dir.listMatchingMembers(fileList, filePattern);
+	for (Common::ArchiveMemberList::iterator iter = fileList.begin(); iter != fileList.end(); ++iter) {
+		files.insert((*iter)->getName());
+	}
 }
 
 void ListBox_FillDirList(GUIListBox *listbox, const char *filemask) {
@@ -85,6 +101,7 @@ void ListBox_FillDirList(GUIListBox *listbox, const char *filemask) {
 	guis_need_update = 1;
 
 	ResolvedPath rp;
+	ResolveScriptPath("$SAVEGAMEDIR$/agssave.*", true, rp);
 	if (!ResolveScriptPath(filemask, true, rp))
 		return;
 
