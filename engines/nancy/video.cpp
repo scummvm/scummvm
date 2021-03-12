@@ -121,14 +121,12 @@ AVFDecoder::AVFVideoTrack::AVFVideoTrack(Common::SeekableReadStream *stream, uin
 			char buf[13];
 			stream->read(buf, 13);
 			info.name = buf;
-			info.size = stream->readUint32LE();
-
-			if (info.size == 0) {
-				info.size = _frameSize;
-			}
+			
+			stream->skip(4); // unknown
 			
 			info.offset = stream->readUint32LE();
 			info.compressedSize = stream->readUint32LE();
+			info.size = _frameSize;
 			info.type = 0;
 		} else if (formatHi == 2) {
 			info.index = stream->readUint16LE();
