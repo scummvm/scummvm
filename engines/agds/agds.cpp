@@ -418,10 +418,7 @@ void AGDSEngine::newGame() {
 }
 
 void AGDSEngine::tick() {
-	while (!_nextScreenName.empty()) {
-		Common::String nextScreenName = _nextScreenName;
-		loadScreen(nextScreenName);
-	}
+	loadNextScreen();
 	if (_dialog.tick()) {
 		runProcesses();
 		return;
@@ -1163,6 +1160,13 @@ Common::Error AGDSEngine::loadGameState(int slot) {
 
 	delete saveFile;
 	return Common::kNoError;
+}
+
+void AGDSEngine::loadNextScreen() {
+	while (!_nextScreenName.empty()) {
+		Common::String nextScreenName = _nextScreenName;
+		loadScreen(nextScreenName);
+	}
 }
 
 Common::Error AGDSEngine::saveGameState(int slot, const Common::String &desc, bool isAutosave) {
