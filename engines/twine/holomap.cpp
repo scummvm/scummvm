@@ -430,10 +430,6 @@ void Holomap::renderLocations(int xRot, int yRot, int zRot, bool lower) {
 	int n = 0;
 	for (int locationIdx = 0; locationIdx < NUM_LOCATIONS; ++locationIdx) {
 		if ((_engine->_gameState->holomapFlags[locationIdx] & 0x80) || locationIdx == _engine->_scene->currentSceneIdx) {
-			uint8 flags = _engine->_gameState->holomapFlags[locationIdx] & 1;
-			if (locationIdx == _engine->_scene->currentSceneIdx) {
-				flags |= 2u; // model type
-			}
 			const Location &loc = _locations[locationIdx];
 			_engine->_renderer->setBaseRotation(loc.x, loc.y, 0);
 			_engine->_renderer->getBaseRotationPosition(0, 0, loc.z + 1000);
@@ -460,6 +456,10 @@ void Holomap::renderLocations(int xRot, int yRot, int zRot, bool lower) {
 				if (_engine->_renderer->destPos.z > zpos1_copy2) {
 					continue;
 				}
+			}
+			uint8 flags = _engine->_gameState->holomapFlags[locationIdx] & 1;
+			if (locationIdx == _engine->_scene->currentSceneIdx) {
+				flags |= 2u; // model type
 			}
 			DrawListStruct &drawList = _engine->_redraw->drawList[n];
 			drawList.posValue = zpos1_copy2;
