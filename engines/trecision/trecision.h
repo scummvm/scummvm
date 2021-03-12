@@ -42,6 +42,7 @@ public:
 	~TrecisionEngine() override;
 
 	Common::Error run() override;
+	void EventLoop();
 
 	uint16 _curRoom;
 	uint16 _oldRoom;
@@ -107,6 +108,14 @@ public:
 
 	uint32 NextRefresh;
 	char UStr[140];
+
+	int CurKey, CurAscii;
+	int16 wmx, wmy;
+	bool wmleft, wmright;
+	int16 omx, omy;
+	bool KeybInput;
+
+	bool _gamePaused = false;
 
 	GraphicsManager *_graphicsMgr;
 	AnimManager *_animMgr;

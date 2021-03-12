@@ -24,6 +24,7 @@
 
 #include "common/error.h"
 #include "common/system.h"
+#include "common/events.h"
 #include "graphics/pixelformat.h"
 #include "engines/util.h"
 
@@ -33,14 +34,12 @@
 #include "common/config-manager.h"
 #include "common/fs.h"
 
+#include "trecision/nl/extern.h"
 #include "trecision/nl/sysdef.h"
 #include "trecision/graphics.h"
 #include "trecision/video.h"
 
 namespace Trecision {
-
-// TODO: Move to main engine?
-void NlInit();
 
 TrecisionEngine *g_vm;
 
@@ -122,6 +121,15 @@ TrecisionEngine::TrecisionEngine(OSystem *syst) : Engine(syst) {
 	_actorLimit = 0;
 	NextRefresh = 0;
 	UStr[0] = '\0';
+
+	CurKey = CurAscii = 0;
+	wmx = wmy = 0;
+	wmleft = wmright = false;
+	omx = omy = 0;
+	KeybInput = false;
+
+	_gamePaused = false;
+
 }
 
 TrecisionEngine::~TrecisionEngine() {
@@ -134,10 +142,75 @@ Common::Error TrecisionEngine::run() {
 	if (!_graphicsMgr->initScreen())
 		return Common::kUnsupportedColorMode;
 	_animMgr = new AnimManager(this);
-		
-	NlInit();
+
+	initMain();
+
+	while (!g_engine->shouldQuit()) {
+		EventLoop();
+		NextMessage();
+	}
 
 	return Common::kNoError;
+}
+
+void TrecisionEngine::EventLoop() {
+	Common::Event event;
+	while (g_system->getEventManager()->pollEvent(event)) {
+		switch (event.type) {
+		case Common::EVENT_MOUSEMOVE:
+			wmx = event.mouse.x;
+			wmy = event.mouse.y;
+			break;
+
+		case Common::EVENT_LBUTTONDOWN:
+			wmleft = true;
+			break;
+
+		case Common::EVENT_LBUTTONUP:
+			wmleft = false;
+			break;
+
+		case Common::EVENT_RBUTTONDOWN:
+			wmright = true;
+			break;
+
+		case Common::EVENT_RBUTTONUP:
+			wmright = false;
+			break;
+
+		case Common::EVENT_KEYDOWN:
+			if (event.kbd.keycode == Common::KEYCODE_CAPSLOCK) {
+				if (!_fastWalkLocked)
+					_fastWalk ^= true;
+				_fastWalkLocked = true;
+			}
+			break;
+
+		case Common::EVENT_KEYUP:
+			CurKey = event.kbd.keycode;
+			CurAscii = event.kbd.ascii;
+			switch (event.kbd.keycode) {
+			case Common::KEYCODE_p:
+				if (!_gamePaused && !KeybInput) {
+					CurKey = 0;
+					_gamePaused = true;
+					waitKey();
+				}
+				_gamePaused = false;
+				break;
+
+			case Common::KEYCODE_CAPSLOCK:
+				_fastWalkLocked = false;
+				break;
+			}
+			break;
+
+		default:
+			break;
+		}
+	}
+	//g_system->delayMillis(10);
+	g_system->updateScreen();
 }
 
 } // End of namespace Trecision
