@@ -680,7 +680,7 @@ Common::Error AGDSEngine::run() {
 				if (Common::Rect::getBlitRect(dst, srcRect, backbuffer->getRect())) {
 					picture->blit(*backbuffer, dst.x, dst.y, Graphics::FLIP_NONE, &srcRect, color);
 				}
-			} else {
+			} else if (mouseCursor) {
 				mouseCursor->tick();
 				mouseCursor->paint(*backbuffer, _mouse);
 			}
