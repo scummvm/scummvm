@@ -317,8 +317,11 @@ static int32 processLifeConditions(TwinEEngine *engine, LifeScriptContext &ctx) 
 		}
 		break;
 	}
-	case 23: // unused
+	case 23:
+		engine->_scene->currentScriptValue = engine->_gameState->magicLevelIdx;
+		break;
 	case 24:
+		engine->_scene->currentScriptValue = engine->_gameState->inventoryMagicPoints;
 		break;
 	case kcUSE_INVENTORY: {
 		int32 item = ctx.stream.readByte();
