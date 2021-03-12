@@ -50,6 +50,8 @@
 #include "ags/engine/script/script_runtime.h"
 #include "ags/engine/ac/dynobj/scriptstring.h"
 #include "ags/globals.h"
+#include "ags/ags.h"
+#include "common/config-manager.h"
 
 namespace AGS3 {
 
@@ -306,6 +308,14 @@ bool ResolveScriptPath(const String &orig_sc_path, bool read_only, ResolvedPath 
 	} else if (sc_path.CompareLeft(GameSavedgamesDirToken) == 0) {
 		parent_dir = get_save_game_directory();
 		child_path = sc_path.Mid(strlen(GameSavedgamesDirToken));
+#if AGS_PLATFORM_SCUMMVM
+		// Remap "agsgame.*"
+		const char  *agsSavePrefix = "/agssave.";
+		if (child_path.CompareLeft(agsSavePrefix) == 0) {
+			int slotNum = child_path.Mid(strlen(agsSavePrefix)).ToInt();
+			child_path = ::AGS::g_vm->getSaveStateName(slotNum);
+		}
+#endif
 	} else if (sc_path.CompareLeft(GameDataDirToken) == 0) {
 		parent_dir = MakeAppDataPath();
 		child_path = sc_path.Mid(strlen(GameDataDirToken));
@@ -327,6 +337,16 @@ bool ResolveScriptPath(const String &orig_sc_path, bool read_only, ResolvedPath 
 
 	if (child_path[0u] == '\\' || child_path[0u] == '/')
 		child_path.ClipLeft(1);
+
+#if AGS_PLATFORM_SCUMMVM
+	// For files on savepath, always ensure it starts with the game target prefix to avoid
+	// conflicts (as we usually have the same save dir for all games).
+	if (parent_dir == SAVE_FOLDER_PREFIX) {
+		String gameTarget = ConfMan.getActiveDomainName();
+		if (child_path.CompareLeft(gameTarget) != 0)
+			child_path = String::FromFormat("%s-%s", gameTarget.GetCStr(), child_path.GetCStr());
+	}
+#endif
 
 	String full_path = String::FromFormat("%s%s", parent_dir.GetCStr(), child_path.GetCStr());
 	// don't allow write operations for relative paths outside game dir
