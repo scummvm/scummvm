@@ -120,7 +120,7 @@ void SetDefaultKeys() {
 	interact_key = Common::KEYCODE_LCTRL;
 	inventory_key = Common::KEYCODE_RETURN;
 	arm_key = Common::KEYCODE_LALT;
-	remora_key = Common::KEYCODE_DELETE;
+	remora_key = Common::KEYCODE_r;
 	crouch_key = Common::KEYCODE_x;
 	sidestep_key = Common::KEYCODE_LSHIFT;
 	run_key = Common::KEYCODE_z;

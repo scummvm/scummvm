@@ -27,10 +27,16 @@
 
 #include "engines/icb/icb.h"
 
+#include "backends/keymapper/action.h"
+#include "backends/keymapper/keymap.h"
+#include "backends/keymapper/standard-actions.h"
+
 #include "common/config-manager.h"
 #include "common/events.h"
 #include "common/savefile.h"
 #include "common/system.h"
+#include "common/translation.h"
+
 #include "audio/mixer.h"
 
 #include "graphics/pixelbuffer.h"
@@ -52,6 +58,81 @@ IcbEngine::IcbEngine(OSystem *syst, const ADGameDescription *gameDesc) : Engine(
 IcbEngine::~IcbEngine() {
 	delete _randomSource;
 	g_icb = NULL;
+}
+
+Common::KeymapArray IcbEngine::initKeymapsIcb(const char *target) {
+	using namespace Common;
+
+	Keymap *engineKeyMap = new Keymap(Keymap::kKeymapTypeGame, "icb", "In Cold Blood");
+	Action *act;
+
+	act = new Action(kStandardActionMoveUp, _("Up"));
+	act->setKeyEvent(KEYCODE_UP);
+	act->addDefaultInputMapping("JOY_UP");
+	engineKeyMap->addAction(act);
+
+	act = new Action(kStandardActionMoveDown, _("Down"));
+	act->setKeyEvent(KEYCODE_DOWN);
+	act->addDefaultInputMapping("JOY_DOWN");
+	engineKeyMap->addAction(act);
+
+	act = new Action(kStandardActionMoveLeft, _("Left"));
+	act->setKeyEvent(KEYCODE_LEFT);
+	act->addDefaultInputMapping("JOY_LEFT");
+	engineKeyMap->addAction(act);
+
+	act = new Action(kStandardActionMoveRight, _("Right"));
+	act->setKeyEvent(KEYCODE_RIGHT);
+	act->addDefaultInputMapping("JOY_RIGHT");
+	engineKeyMap->addAction(act);
+
+	act = new Action("BFIR", _("Fire"));
+	act->setKeyEvent(KeyState(KEYCODE_SPACE));
+	act->addDefaultInputMapping("JOY_RIGHT_SHOULDER");
+	engineKeyMap->addAction(act);
+
+	act = new Action("BUSE", _("Interact"));
+	act->setKeyEvent(KeyState(KEYCODE_LCTRL));
+	act->addDefaultInputMapping("JOY_A");
+	engineKeyMap->addAction(act);
+
+	act = new Action("BINV", _("Inventory"));
+	act->setKeyEvent(KeyState(KEYCODE_RETURN));
+	act->addDefaultInputMapping("JOY_B");
+	engineKeyMap->addAction(act);
+
+	act = new Action("BARM", _("Arm"));
+	act->setKeyEvent(KeyState(KEYCODE_LALT));
+	act->addDefaultInputMapping("JOY_LEFT_SHOULDER");
+	engineKeyMap->addAction(act);
+
+	act = new Action("BREM", _("Remora"));
+	act->setKeyEvent(KeyState(KEYCODE_r));
+	act->addDefaultInputMapping("JOY_X");
+	engineKeyMap->addAction(act);
+
+	act = new Action("BCRU", _("Crouch"));
+	act->setKeyEvent(KeyState(KEYCODE_x));
+	act->addDefaultInputMapping("JOY_Y");
+	engineKeyMap->addAction(act);
+
+	act = new Action("BSID", _("Side Step"));
+	act->setKeyEvent(KeyState(KEYCODE_LSHIFT));
+	act->addDefaultInputMapping("JOY_RIGHT_TRIGGER");
+	engineKeyMap->addAction(act);
+
+	act = new Action("BRUN", _("Run"));
+	act->setKeyEvent(KeyState(KEYCODE_z));
+	act->addDefaultInputMapping("JOY_LEFT_TRIGGER");
+	engineKeyMap->addAction(act);
+
+	act = new Action("BPAS", _("Pause"));
+	act->setKeyEvent(KeyState(KEYCODE_ESCAPE, ASCII_ESCAPE));
+	act->addDefaultInputMapping("ESCAPE");
+	act->addDefaultInputMapping("JOY_BACK");
+	engineKeyMap->addAction(act);
+
+	return Keymap::arrayOf(engineKeyMap);
 }
 
 // TODO: Refactor, this is currently implemented in p4_pc.cpp

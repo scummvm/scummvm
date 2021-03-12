@@ -41,6 +41,7 @@ public:
 	virtual ~IcbEngine();
 
 	Common::RandomSource *getRandomSource() { return _randomSource; }
+	static Common::Array<Common::Keymap *> initKeymapsIcb(const char *target);
 
 protected:
 	// Engine APIs

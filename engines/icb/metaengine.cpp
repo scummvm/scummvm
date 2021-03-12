@@ -24,6 +24,7 @@
 
 #include "common/savefile.h"
 #include "common/system.h"
+#include "common/config-manager.h"
 
 namespace ICB {
 
@@ -35,11 +36,23 @@ public:
 	virtual bool hasFeature(MetaEngineFeature f) const override { return false; }
 
 	virtual Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+
+	Common::KeymapArray initKeymaps(const char *target) const override;
 };
 
 Common::Error IcbMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 	*engine = new IcbEngine(syst, desc);
 	return Common::kNoError;
+}
+
+Common::KeymapArray IcbMetaEngine::initKeymaps(const char *target) const {
+	Common::String gameId = ConfMan.get("gameid", target);
+
+	if (gameId == "icb") {
+		return ICB::IcbEngine::initKeymapsIcb(target);
+	}
+
+	return AdvancedMetaEngine::initKeymaps(target);
 }
 
 } // End of namespace ICB
