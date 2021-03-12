@@ -164,6 +164,7 @@ void Scene::registerGraphics() {
     _textbox.registerGraphics();
     _inventoryBox.registerGraphics();
     _menuButton.registerGraphics();
+    _helpButton.registerGraphics();
 
     _textbox.setVisible(!_shouldClearTextbox);
     _menuButton.setVisible(false);

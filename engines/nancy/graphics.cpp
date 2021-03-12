@@ -40,13 +40,13 @@
 namespace Nancy {
 
 const Graphics::PixelFormat GraphicsManager::inputPixelFormat = Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0);
-const Graphics::PixelFormat GraphicsManager::outputPixelFormat = Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0);
+const Graphics::PixelFormat GraphicsManager::screenPixelFormat = Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0);
 const Graphics::PixelFormat GraphicsManager::clut8Format = Graphics::PixelFormat::createFormatCLUT8();
 const uint GraphicsManager::transColor = 0x3E0;
 
 void GraphicsManager::init() {
-    initGraphics(640, 480, &outputPixelFormat);
-    _screen.create(640, 480, outputPixelFormat);
+    initGraphics(640, 480, &screenPixelFormat);
+    _screen.create(640, 480, screenPixelFormat);
     _screen.setTransparentColor(getTransColor());
 
     auto formats = NanEngine._system->getSupportedFormats();
