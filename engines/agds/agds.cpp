@@ -295,6 +295,18 @@ PatchPtr AGDSEngine::createPatch(const Common::String &screenName) {
 	return patch;
 }
 
+ObjectPatchPtr AGDSEngine::getObjectPatch(const Common::String &objectName) const {
+	auto it = _objectPatches.find(objectName);
+	return it != _objectPatches.end()? it->_value: ObjectPatchPtr();
+}
+
+ObjectPatchPtr AGDSEngine::createObjectPatch(const Common::String &objectName) {
+	auto & patch = _objectPatches[objectName];
+	if (!patch)
+		patch = ObjectPatchPtr(new ObjectPatch());
+	return patch;
+}
+
 void AGDSEngine::saveScreenPatch() {
 	if (!_currentScreen || _currentScreenName.empty())
 		return;

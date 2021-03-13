@@ -631,18 +631,6 @@ void Process::setPeriodic() {
 	_samplePeriodic = value;
 }
 
-void Process::stub82() {
-	Common::String arg2 = popString();
-	Common::String arg1 = popString();
-	debug("stub82: %s %s", arg1.c_str(), arg2.c_str());
-}
-
-void Process::stub83() {
-	Common::String arg2 = popString();
-	Common::String arg1 = popString();
-	debug("stub83: %s %s", arg1.c_str(), arg2.c_str());
-}
-
 void Process::stub102() {
 	Common::String name = popString();
 	debug("stub102: load picture? %s", name.c_str());
@@ -704,6 +692,34 @@ void Process::compareScreenName() {
 	auto currentScreenName = _engine->getCurrentScreenName();
 	debug("compareScreenName %s (currentScreen: %s)", name.c_str(), currentScreenName.c_str());
 	push(name == currentScreenName? 1: 0);
+}
+
+void Process::objectPatchSetText() {
+	Common::String resource = popString();
+	Common::String objectName = popString();
+	debug("objectPatchSetText: %s %s", objectName.c_str(), resource.c_str());
+	auto text = _engine->loadText(resource);
+
+	auto object = _engine->getCurrentScreenObject(objectName);
+	if (object) {
+		object->title(text);
+	}
+	auto patch = _engine->createObjectPatch(objectName);
+	patch->text = text;
+}
+
+void Process::objectPatchSetRegionName() {
+	Common::String regionName = popString();
+	Common::String objectName = popString();
+	debug("objectPatchSetRegionName: %s %s", objectName.c_str(), regionName.c_str());
+	auto object = _engine->getCurrentScreenObject(objectName);
+	if (object) {
+		RegionPtr region = _engine->loadRegion(regionName);
+		debug("region: %s", region->toString().c_str());
+		object->region(region);
+	}
+	auto patch = _engine->createObjectPatch(objectName);
+	patch->region = regionName;
 }
 
 void Process::screenObjectPatchIncRef() {
