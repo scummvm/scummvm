@@ -33,7 +33,8 @@ public:
     FullScreenImage() : RenderObject() {}
     virtual ~FullScreenImage() =default;
 
-    void init(Common::String imageName);
+    void init(const Common::String &imageName);
+
 protected:
     virtual void init() override {}
     virtual uint16 getZOrder() const override { return 0; }
