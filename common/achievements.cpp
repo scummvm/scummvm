@@ -139,9 +139,8 @@ float AchievementsManager::getStatFloat(const String &id) {
 
 	String tmp;
 	_iniFile->getKey(id, "statistics", tmp);
-	return atof(tmp.c_str());
+	return (float)atof(tmp.c_str());
 }
-
 
 bool AchievementsManager::setStatInt(String const &id, int value) {
 	if (!isReady()) {
@@ -162,7 +161,7 @@ int AchievementsManager::getStatInt(String const &id) {
 
 	String tmp;
 	_iniFile->getKey(id, "statistics", tmp);
-	return atol(tmp.c_str());
+	return (int)atol(tmp.c_str());
 }
 
 
