@@ -31,6 +31,8 @@
 #include "image/pcx.h"
 #include "image/tga.h"
 
+#define VGA_COLOR_TRANS(x) ((x) * 255 / 63)
+
 namespace AGS3 {
 
 template<class DECODER>
@@ -101,7 +103,17 @@ int save_bitmap(Common::WriteStream &out, BITMAP *bmp, const RGB *pal) {
 	const Graphics::PixelFormat requiredFormat_3byte(3, 8, 8, 8, 0, 0, 8, 16, 0);
 #endif
 
-	const Graphics::ManagedSurface &src = bmp->getSurface();
+	Graphics::ManagedSurface &src = bmp->getSurface();
+	if (bmp->format.bytesPerPixel == 1 && pal != nullptr) {
+		// We don't use the ManagedSurface palette in-game, so it is not defined yet.
+		byte palette[256 * 3];
+		for (int c = 0, i = 0 ; c < 256 ; ++c, i += 3) {
+			palette[i] = VGA_COLOR_TRANS(pal[c].r);
+			palette[i + 1] = VGA_COLOR_TRANS(pal[c].g);
+			palette[i + 2] = VGA_COLOR_TRANS(pal[c].b);
+		}
+		src.setPalette(palette, 0, 256);
+	}
 	Graphics::ManagedSurface surface(bmp->w, bmp->h, requiredFormat_3byte);
 	surface.rawBlitFrom(bmp->getSurface(), Common::Rect(0, 0, src.w, src.h),
 		Common::Point(0, 0), src.getPalette());
