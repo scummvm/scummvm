@@ -51,6 +51,8 @@ public:
     Font *getFont(uint id) { return id < _fonts.size() ? &_fonts[id] : nullptr; }
 
     static void loadSurfacePalette(Graphics::ManagedSurface &inSurf, const Common::String paletteFilename);
+    static void copyToManaged(const Graphics::Surface &src, Graphics::ManagedSurface &dst, bool verticalFlip = false, bool doubleSize = false);
+    static void copyToManaged(void *src, Graphics::ManagedSurface &dst, uint srcW, uint srcH, const Graphics::PixelFormat &format, bool verticalFlip = false, bool doubleSize = false);
 
     static const Graphics::PixelFormat &getInputPixelFormat();
     static uint getTransColor();

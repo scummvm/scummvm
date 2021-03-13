@@ -29,6 +29,8 @@
 #include "engines/nancy/cursor.h"
 #include "engines/nancy/util.h"
 
+#include "graphics/transparent_surface.h"
+
 namespace Nancy {
 namespace UI {
 
@@ -178,11 +180,13 @@ void Viewport::handleInput(NancyInput &input) {
     _movementLastFrame = direction;
 }
 
-void Viewport::loadVideo(const Common::String &filename, uint frameNr, uint verticalScroll, const Common::String &palette) {
+void Viewport::loadVideo(const Common::String &filename, uint frameNr, uint verticalScroll, uint16 format, const Common::String &palette) {
     if (_decoder.isVideoLoaded()) {
         _decoder.close();
     }
     _decoder.loadFile(filename + ".avf");
+
+    _videoFormat = format;
     
     enableEdges(kUp | kDown | kLeft | kRight);
     
@@ -203,11 +207,14 @@ void Viewport::setFrame(uint frameNr) {
 
     const Graphics::Surface *newFrame = _decoder.decodeFrame(frameNr);
 
-    if (_fullFrame.w != newFrame->w || _fullFrame.h != newFrame->h) {
-        _fullFrame.create(newFrame->w, newFrame->h, GraphicsManager::getInputPixelFormat());
+    if (_videoFormat == 2) {
+        // Format 2 uses full-size images
+        GraphicsManager::copyToManaged(*newFrame, _fullFrame);
+    } else if (_videoFormat == 1) {
+        // Format 1 uses quarter-size, upside-down images
+        GraphicsManager::copyToManaged(*newFrame, _fullFrame, true, true);
     }
 
-    _fullFrame.blitFrom(*newFrame);
     _needsRedraw = true;
 
     _currentFrame = frameNr;

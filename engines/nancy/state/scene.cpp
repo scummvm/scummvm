@@ -360,7 +360,11 @@ void Scene::load() {
         _actionManager.addNewActionRecord(*actionRecordChunk);
     }
 
-    _viewport.loadVideo(_sceneState.summary.videoFile, _sceneState.nextScene.frameID, _sceneState.nextScene.verticalOffset, _sceneState.summary.videoPaletteFile);
+    _viewport.loadVideo(_sceneState.summary.videoFile,
+                        _sceneState.nextScene.frameID,
+                        _sceneState.nextScene.verticalOffset,
+                        _sceneState.summary.videoFormat,
+                        _sceneState.summary.videoPaletteFile);
 
     // TODO TEMPORARY
     _viewport.setEdgesSize(25, 25, 25, 25);

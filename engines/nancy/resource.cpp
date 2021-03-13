@@ -794,22 +794,22 @@ bool ResourceManager::loadImage(const Common::String &name, Graphics::Surface &s
 
 bool ResourceManager::loadImage(const Common::String &name, Graphics::ManagedSurface &surf) {
 	CifInfo info;
-	Image::BitmapDecoder dec;
-	Common::File f;
 	bool loadedFromBitmapFile = false;
 	surf.free();
-
-	Graphics::Surface tmpSurf;
 
 	byte *buf = getCifData(name, info);
 
 	if (!buf)  {
 		// Couldn't find image in a cif tree, try to open a .bmp file
 		// This is used by The Vampire Diaries
+		Common::File f;
 		loadedFromBitmapFile = f.open(name + ".bmp");
 		if (loadedFromBitmapFile) {
+			Image::BitmapDecoder dec;
 			if (dec.loadStream(f)) {
-				tmpSurf.copyFrom(*dec.getSurface());
+				GraphicsManager::copyToManaged(*dec.getSurface(), surf);
+				surf.setPalette(dec.getPalette(), dec.getPaletteStartIndex(), MIN<uint>(256, dec.getPaletteColorCount())); // LOGO.BMP reports 257 colors
+				return true;
 			} else {
 				return false;
 			}
@@ -829,23 +829,9 @@ bool ResourceManager::loadImage(const Common::String &name, Graphics::ManagedSur
 			return false;
 		}
 
-		tmpSurf.w = info.width;
-		tmpSurf.h = info.height;
-		tmpSurf.pitch = info.pitch;
-		tmpSurf.setPixels(buf);
-		tmpSurf.format = GraphicsManager::getInputPixelFormat();
+		GraphicsManager::copyToManaged(buf, surf, info.width, info.height, GraphicsManager::getInputPixelFormat());
+		return true;
 	}
-
-	surf.create(tmpSurf.w, tmpSurf.h, tmpSurf.format);
-	surf.blitFrom(tmpSurf);
-	
-	if (NanEngine._gameDescription->desc.flags & NGF_8BITCOLOR && loadedFromBitmapFile) {
-		surf.setPalette(dec.getPalette(), dec.getPaletteStartIndex(), dec.getPaletteColorCount() - 1);
-	}
-
-	tmpSurf.free();
-
-	return true;
 }
 
 void ResourceManager::list(const Common::String &treeName, Common::Array<Common::String> &nameList, uint type) {

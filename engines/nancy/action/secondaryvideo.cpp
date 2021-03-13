@@ -114,7 +114,8 @@ void PlaySecondaryVideo::updateGraphics() {
         if (_decoder.needsUpdate() && !_screenPosition.isEmpty()) {
             for (uint i = 0; i < videoDescs.size(); ++i) {
                 if ((uint16)videoDescs[i].frameID == _currentViewportFrame) {
-                    _drawSurface.blitFrom(*_decoder.decodeNextFrame(), videoDescs[i].srcRect, Common::Point());
+                    // This ignores the srcRects for every frame
+                    GraphicsManager::copyToManaged(*_decoder.decodeNextFrame(), _drawSurface, paletteFilename.size() > 0);
                     break;
                 }
             }
