@@ -163,16 +163,16 @@ public:
 
 private:
     void init();
-    void initStatic();
     void load();
     void run();
+
+    void initStaticData();
 
     void clearSceneData();
 
 public:
     enum State {
         kInit,
-        kInitStatic,
         kLoad,
         kStartSound,
         kRun
@@ -253,7 +253,6 @@ protected:
     State _state;
 
     bool isComingFromMenu = true;
-    bool hasLoadedFromSavefile = false;
     bool _shouldClearTextbox = true;
 };
 
