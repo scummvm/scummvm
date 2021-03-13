@@ -76,14 +76,12 @@ int64 AGSParallax::AGS_EngineOnEvent(int event, NumberPtr data) {
 	if (event == AGSE_PREGUIDRAW) {
 		Draw(true);
 	} else if (event == AGSE_PRESCREENDRAW) {
+		// Get screen size and then draw
+		_engine->GetScreenDimensions(&_screenWidth, &_screenHeight, &_screenColorDepth);
 		Draw(false);
 	} else if (event == AGSE_ENTERROOM) {
 		// Reset all _sprites
 		clear();
-	} else if (event == AGSE_PRESCREENDRAW) {
-		// Get screen size once here
-		_engine->GetScreenDimensions(&_screenWidth, &_screenHeight, &_screenColorDepth);
-		_engine->UnrequestEventHook(AGSE_PRESCREENDRAW);
 	} else if (event == AGSE_RESTOREGAME) {
 		Serializer s(_engine, data, true);
 		syncGame(s);
