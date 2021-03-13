@@ -292,23 +292,18 @@ void NancyEngine::clearBootChunks() {
 Common::Error NancyEngine::synchronize(Common::Serializer &ser) {
 	Common::SeekableReadStream *bsum = getBootChunkStream("BSUM");
 	bsum->seek(0);
-	
-	if (ser.isLoading()) {
-		byte buf[90];
-		byte bsumBuf[90];
-		ser.syncBytes(buf, 90);
-		bsum->read(bsumBuf, 90);
-		if (Common::String((char *)bsumBuf) != (char *)buf) {
-			return Common::kReadingFailed;
-		}
-	} else if (ser.isSaving()) {
-		byte buf[90];
-		bsum->read(buf, 90);
-		ser.syncBytes(buf, 90);
-	}
 
+	// Sync boot summary header, which includes full game title
+	ser.syncVersion(kSavegameVersion);
+	char buf[90];
+	bsum->read(buf, 90);
+	ser.matchBytes(buf, 90);
+
+	// Sync scene and action records
 	NancySceneState.synchronize(ser);
 	NancySceneState._actionManager.synchronize(ser);
+
+	// Sync any action record-related data
 	Action::SliderPuzzle::synchronize(ser);
 
 	return Common::kNoError;
