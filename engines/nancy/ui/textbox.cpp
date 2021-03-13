@@ -280,7 +280,7 @@ void Textbox::onScrollbarMove() {
     _needsRedraw = true;
 }
 
-uint16 Textbox::getInnerHeight() {
+uint16 Textbox::getInnerHeight() const {
     uint lineDist = _lineHeight + _lineHeight / 4;
     return _numLines * lineDist + _firstLineOffset + lineDist / 2;
 }
