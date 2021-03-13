@@ -384,10 +384,6 @@ uint32 _mission::Game_cycle() {
 
 	session->Process_conveyors(); // conveyor belts
 
-#if defined(DEBUG_AUTOSAVE)
-	RAM_save_and_restore();
-#endif
-
 	// Update global timer by a tick
 	g_globalScriptVariables.SetVariable("missionelapsedtime", g_globalScriptVariables.GetVariable("missionelapsedtime") + 1);
 
@@ -615,34 +611,11 @@ void _mission::Save_game_position(const char *filename, const char *slot_label, 
 		}
 	}
 
-	error("TODO: Fix savegame-path");
-	/*
-	#ifdef _WIN32
-	        mkdir("saves");
-	#else
-	        mkdir("saves", 0755);
-	#endif
-	*/
-
 	// first save the index file which contains the session name and mission name that we're currently running - and hence want to
 	// restore to later
 	Common::WriteStream *stream = openDiskWriteStream(filename); // attempt to open the file for writing
-
-#if defined(DEBUG_AUTOSAVE)
-
-	// NULL is only an error if the filename is something other than the name of
-	// the debug autosave file.
-	if (strcmp(filename, AUTOSAVE_FILENAME) != 0) {
-		if (fh == NULL)
-			Fatal_error("Save_game_position cannot *OPEN* [%s]", (const char *)filename);
-	}
-
-#else
-
 	if (stream == NULL)
 		Fatal_error("Save_game_position cannot *OPEN* [%s]", (const char *)filename);
-
-#endif
 
 	// specific stuff for pc save game menu
 	stream->write(slot_label, MAX_LABEL_LENGTH);
@@ -653,11 +626,11 @@ void _mission::Save_game_position(const char *filename, const char *slot_label, 
 
 	avalue = strlen(Fetch_tiny_mission_name()) + 1;
 	stream->writeSint32LE(avalue);
-	stream->write((const char *)Fetch_tiny_mission_name(), strlen(Fetch_tiny_mission_name()) + 1); // TODO: Refactor to string
+	stream->write((const char *)Fetch_tiny_mission_name(), avalue);
 
 	avalue = strlen(Fetch_tiny_session_name()) + 1;
 	stream->writeSint32LE(avalue);
-	stream->write((const char *)Fetch_tiny_session_name(), strlen(Fetch_tiny_session_name()) + 1); // TODO: Refactor to string
+	stream->write((const char *)Fetch_tiny_session_name(), avalue);
 
 	// now write the globals out
 	atinyvalue = (uint8)g_globalScriptVariables.GetNoItems();
@@ -680,7 +653,7 @@ void _mission::Save_game_position(const char *filename, const char *slot_label, 
 		// write length of icon name then the string
 		avalue = strlen(iconnames[j]) + 1;
 		stream->writeSint32LE(avalue);
-		stream->write((const void *)iconnames[j], avalue); // TODO: Refactor to string?
+		stream->write((const void *)iconnames[j], avalue);
 
 		// write the hash value
 		avalue = (uint32)iconHashes[j];
@@ -707,7 +680,7 @@ void _mission::Save_game_position(const char *filename, const char *slot_label, 
 		avalue = strlen(micro_sessions[j].session__name) + 1;
 		stream->writeSint32LE(avalue);
 		Tdebug("save_restore.txt", "  name len %d", avalue);
-		stream->write((const void *)micro_sessions[j].session__name, strlen(micro_sessions[j].session__name) + 1); // TODO: Refactor to string?
+		stream->write((const void *)micro_sessions[j].session__name, avalue);
 
 		for (l = 0; l < MAX_fvars; l++) {
 			fval = micro_sessions[j].fvars[l];
@@ -815,7 +788,7 @@ void _mission::Save_game_position(const char *filename, const char *slot_label, 
 		stream->writeByte(atinyvalue);
 
 		// save name
-		stream->write(session->manual_camera_name, ENGINE_STRING_LEN); // TODO: Refactor to string?
+		stream->write(session->manual_camera_name, ENGINE_STRING_LEN);
 		// cam number
 		stream->writeUint32LE(session->cur_camera_number);
 	} else {
@@ -835,16 +808,6 @@ void _mission::Save_game_position(const char *filename, const char *slot_label, 
 
 	// Save the Remora's locations-visited information.
 	g_oRemora->Save(stream);
-
-	// Need to guard against NULL pointer in use by debug autosave.
-#if 0 // TODO: Do we actually need to do this? We don't have a max size...
-	if (stream) {
-		fseek(fh, 0, SEEK_END);    //get size of file
-		if (ftell(fh) > SAVE_GAME_MAX_SIZE)
-			Message_box("Warning : save game is greater than %d bytes (is %d bytes)\nthis will not work on the PSX please tell Jake",
-			            SAVE_GAME_MAX_SIZE, ftell(fh));
-	}
-#endif
 
 	// save gfx init info for initing a set...
 	MSS.SaveGFXInfo(stream);

@@ -661,7 +661,7 @@ void _remora::AddFloorRange(uint32 nLower, uint32 nUpper) {
 
 void _remora::Save(Common::WriteStream *stream) const {
 	// Save any outstanding email.  Just write the whole string since it is small and there's only one.
-	stream->write(m_pcEmailID, sizeof(char) * (REMORA_MAXLEN_EMAIL_ID_STRING + 1)); // TODO: Refactor to string.
+	stream->write(m_pcEmailID, sizeof(char) * (REMORA_MAXLEN_EMAIL_ID_STRING + 1));
 }
 
 void _remora::Restore(Common::SeekableReadStream *stream) {

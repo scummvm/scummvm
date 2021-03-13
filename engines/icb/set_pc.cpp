@@ -1827,9 +1827,10 @@ void _set::HackMakeCamera() {
 
 // read in init values for set from file
 void _set::LoadGFXInfo(Common::SeekableReadStream *stream) {
-	// TODO: Add a proper stream-read of the rects.
-	stream->read(&surface_manager->BorderRect(), sizeof(LRECT)); // FIXME endian and alignment
-	// FIXME: Plug a deserializer into surface-manager directly instead of exposing these.
+	surface_manager->BorderRect().left = stream->readSint32LE();
+	surface_manager->BorderRect().top = stream->readSint32LE();
+	surface_manager->BorderRect().right = stream->readSint32LE();
+	surface_manager->BorderRect().bottom = stream->readSint32LE();
 	surface_manager->BorderRed() = stream->readByte();
 	surface_manager->BorderGreen() = stream->readByte();
 	surface_manager->BorderBlue() = stream->readByte();
@@ -1847,9 +1848,10 @@ void _set::LoadGFXInfo(Common::SeekableReadStream *stream) {
 
 // write out current init values1 to file
 void _set::SaveGFXInfo(Common::WriteStream *stream) {
-	// TODO: Refactor.
-	// FIXME HACK TODO: Don't write rects this way:
-	stream->write(&surface_manager->BorderRect(), sizeof(LRECT));
+	stream->writeSint32LE(surface_manager->BorderRect().left);
+	stream->writeSint32LE(surface_manager->BorderRect().top);
+	stream->writeSint32LE(surface_manager->BorderRect().right);
+	stream->writeSint32LE(surface_manager->BorderRect().bottom);
 	stream->writeByte(surface_manager->BorderRed());
 	stream->writeByte(surface_manager->BorderGreen());
 	stream->writeByte(surface_manager->BorderBlue());
