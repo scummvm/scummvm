@@ -59,7 +59,7 @@ void set_palette(const PALETTE p) {
 }
 
 void set_palette_range(const PALETTE p, int from, int to, int retracesync) {
-	for (int i = from; i < to; ++i) {
+	for (int i = from; i <= to; ++i) {
 		_G(current_palette)[i] = p[i];
 	}
 }
