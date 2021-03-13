@@ -99,16 +99,16 @@ enum Opcode {
 	kScreenRemoveObject				= 78,
 	kSetNextScreen					= 79,
 	kSetNextScreenSaveOrLoad		= 80,
-	kStub82							= 82,
-	kStub83							= 83,
-	kStub84							= 84,
+	kObjectPatchSetText				= 82,
+	kObjectPatchSetRegionName		= 83,
+	kScreenPatchSetRegionName		= 84,
 	kLoadCharacter					= 85,
-	kStub86							= 86,
-	kStub87							= 87,
+	kUnloadCharacter				= 86,
+	kAssociateCharacter				= 87,
 	kAnimateCharacter				= 88,
 	kHideCharacter					= 89,
 	kShowCharacter					= 90,
-	kStub91							= 91,
+	kDisableCharacter				= 91,
 	kEnableCharacter				= 92,
 	kMoveCharacterUserMove			= 93,
 	kLeaveCharacter					= 94,
@@ -345,8 +345,8 @@ enum Opcode {
 	OP(kInventoryAddObject, inventoryAddObject) \
 	OP(kInventoryRemoveObject, inventoryRemoveObject) \
 	OP_U(kObjectRegisterUseObjectHandler, onObjectUse) \
-	OP(kStub82, stub82) \
-	OP(kStub83, stub83) \
+	OP(kObjectPatchSetText, objectPatchSetText) \
+	OP(kObjectPatchSetRegionName, objectPatchSetRegionName) \
 	OP(kAnimateCharacter, animateCharacter) \
 	OP(kLoadCharacter, loadCharacter) \
 	OP(kSetObjectZ, setObjectZ) \

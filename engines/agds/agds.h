@@ -268,6 +268,8 @@ public:
 	void reAddInventory();
 	PatchPtr getPatch(const Common::String &screenName) const;
 	PatchPtr createPatch(const Common::String &screenName);
+	ObjectPatchPtr getObjectPatch(const Common::String &screenName) const;
+	ObjectPatchPtr createObjectPatch(const Common::String &screenName);
 
 	void shadowIntensity(int intensity) {
 		_shadowIntensity = intensity;
