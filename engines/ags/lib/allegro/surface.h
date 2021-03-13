@@ -71,6 +71,8 @@ public:
 		_owner->clear();
 	}
 
+	void makeOpaque();
+
 	/**
 	 * Draws a solid filled in circle
 	 */

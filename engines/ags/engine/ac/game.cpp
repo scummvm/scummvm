@@ -922,6 +922,7 @@ void create_savegame_screenshot(Bitmap *&screenShot) {
 			quit("!Invalid game.screenshot_width/height, must be from 16x16 to screen res");
 
 		screenShot = CopyScreenIntoBitmap(usewid, usehit);
+		screenShot->GetAllegroBitmap()->makeOpaque();
 
 		// Restore original screen
 		_G(debug_flags) = old_flags;

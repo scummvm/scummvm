@@ -51,6 +51,20 @@ int BITMAP::getpixel(int x, int y) const {
 		return *(const uint32 *)pixel;
 }
 
+void BITMAP::makeOpaque() {
+	if (format.aBits() == 0)
+		return;
+	assert(format.bytesPerPixel == 4);
+	uint32 alphaMask = format.ARGBToColor(0xff, 0, 0, 0);
+
+	unsigned char *pixels = getPixels();
+	for (int y = 0 ; y < h ; ++y, pixels += pitch) {
+		uint32 *data = (uint32*)pixels;
+		for (int x = 0 ; x < w ; ++x, ++data)
+			(*data) |= alphaMask;
+	}
+}
+
 void BITMAP::circlefill(int x, int y, int radius, int color) {
 	int cx = 0;
 	int cy = radius;
