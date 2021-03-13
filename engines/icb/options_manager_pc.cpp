@@ -121,191 +121,6 @@ void InitDeathText() {
 	}
 }
 
-// Animation sequences for the control configuration screen
-#define NUMBER_OF_CONTROLS 14
-#define NUMBER_OF_ANIMS_PER_CONTROL 5
-
-typedef struct {
-	bool8 used;
-	const char *pose;
-	const char *anim;
-	bool8 forwards;
-	int32 repeats;
-
-} ANIM_DESC;
-
-ANIM_DESC cc_anim_sequences[NUMBER_OF_CONTROLS * NUMBER_OF_ANIMS_PER_CONTROL];
-
-void InitialiseAnimSequences(void) {
-	// Set all to defaults (unused)
-	for (int32 i = 0; i < NUMBER_OF_CONTROLS * NUMBER_OF_ANIMS_PER_CONTROL; i++) {
-		cc_anim_sequences[i].used = FALSE8;
-		cc_anim_sequences[i].pose = NULL;
-		cc_anim_sequences[i].anim = NULL;
-		cc_anim_sequences[i].forwards = TRUE8;
-		cc_anim_sequences[i].repeats = 0;
-	}
-
-	int32 control = 0;
-
-	// Up
-	cc_anim_sequences[control].used = TRUE8;
-	cc_anim_sequences[control].anim = "stand_to_walk";
-	cc_anim_sequences[control + 1].used = TRUE8;
-	cc_anim_sequences[control + 1].anim = "walk";
-	cc_anim_sequences[control + 1].repeats = 3;
-	cc_anim_sequences[control + 2].used = TRUE8;
-	cc_anim_sequences[control + 2].anim = "walk_to_stand";
-	cc_anim_sequences[control + 3].used = TRUE8;
-	cc_anim_sequences[control + 3].anim = "stand";
-	cc_anim_sequences[control + 3].repeats = 20;
-	control += NUMBER_OF_ANIMS_PER_CONTROL;
-	// Crouch
-	cc_anim_sequences[control].used = TRUE8;
-	cc_anim_sequences[control].anim = "stand";
-	cc_anim_sequences[control + 1].used = TRUE8;
-	cc_anim_sequences[control + 1].pose = "crouched";
-	cc_anim_sequences[control + 1].anim = "stand_crouch_to_stand";
-	cc_anim_sequences[control + 1].forwards = FALSE8;
-	cc_anim_sequences[control + 2].used = TRUE8;
-	cc_anim_sequences[control + 2].pose = "crouched";
-	cc_anim_sequences[control + 2].anim = "stand";
-	cc_anim_sequences[control + 2].repeats = 20;
-	cc_anim_sequences[control + 3].used = TRUE8;
-	cc_anim_sequences[control + 3].pose = "crouched";
-	cc_anim_sequences[control + 3].anim = "stand_crouch_to_stand";
-	control += NUMBER_OF_ANIMS_PER_CONTROL;
-	// Down
-	cc_anim_sequences[control].used = TRUE8;
-	cc_anim_sequences[control].anim = "stand_to_walk";
-	cc_anim_sequences[control + 1].used = TRUE8;
-	cc_anim_sequences[control + 1].anim = "walk";
-	cc_anim_sequences[control + 1].repeats = 3;
-	cc_anim_sequences[control + 2].used = TRUE8;
-	cc_anim_sequences[control + 2].anim = "walk_to_stand";
-	cc_anim_sequences[control + 3].used = TRUE8;
-	cc_anim_sequences[control + 3].anim = "step_backward";
-	cc_anim_sequences[control + 3].repeats = 3;
-	cc_anim_sequences[control + 4].used = TRUE8;
-	cc_anim_sequences[control + 4].anim = "stand";
-	cc_anim_sequences[control + 4].repeats = 20;
-	control += NUMBER_OF_ANIMS_PER_CONTROL;
-	// Interact
-	cc_anim_sequences[control].used = TRUE8;
-	cc_anim_sequences[control].anim = "pick_up_object_from_table";
-	cc_anim_sequences[control + 1].used = TRUE8;
-	cc_anim_sequences[control + 1].anim = "use_card_on_slot";
-	control += NUMBER_OF_ANIMS_PER_CONTROL;
-	// Left
-	cc_anim_sequences[control].used = TRUE8;
-	cc_anim_sequences[control].anim = "stand_to_walk";
-	cc_anim_sequences[control + 1].used = TRUE8;
-	cc_anim_sequences[control + 1].anim = "walk";
-	cc_anim_sequences[control + 1].repeats = 3;
-	cc_anim_sequences[control + 2].used = TRUE8;
-	cc_anim_sequences[control + 2].anim = "walk_to_stand";
-	cc_anim_sequences[control + 3].used = TRUE8;
-	cc_anim_sequences[control + 3].anim = "sidestep_left";
-	cc_anim_sequences[control + 3].repeats = 3;
-	cc_anim_sequences[control + 4].used = TRUE8;
-	cc_anim_sequences[control + 4].anim = "stand";
-	cc_anim_sequences[control + 4].repeats = 20;
-	control += NUMBER_OF_ANIMS_PER_CONTROL;
-	// Arm
-	cc_anim_sequences[control].used = TRUE8;
-	cc_anim_sequences[control].pose = "gun";
-	cc_anim_sequences[control].anim = "pull_out_weapon";
-	cc_anim_sequences[control + 1].used = TRUE8;
-	cc_anim_sequences[control + 1].pose = "gun";
-	cc_anim_sequences[control + 1].anim = "stand";
-	cc_anim_sequences[control + 1].repeats = 30;
-	cc_anim_sequences[control + 2].used = TRUE8;
-	cc_anim_sequences[control + 2].pose = "gun";
-	cc_anim_sequences[control + 2].anim = "put_away_weapon";
-	control += NUMBER_OF_ANIMS_PER_CONTROL;
-	// Right
-	cc_anim_sequences[control].used = TRUE8;
-	cc_anim_sequences[control].anim = "stand_to_walk";
-	cc_anim_sequences[control + 1].used = TRUE8;
-	cc_anim_sequences[control + 1].anim = "walk";
-	cc_anim_sequences[control + 1].repeats = 3;
-	cc_anim_sequences[control + 2].used = TRUE8;
-	cc_anim_sequences[control + 2].anim = "walk_to_stand";
-	cc_anim_sequences[control + 3].used = TRUE8;
-	cc_anim_sequences[control + 3].anim = "sidestep_left";
-	cc_anim_sequences[control + 3].forwards = FALSE8;
-	cc_anim_sequences[control + 3].repeats = 3;
-	cc_anim_sequences[control + 4].used = TRUE8;
-	cc_anim_sequences[control + 4].anim = "stand";
-	cc_anim_sequences[control + 4].repeats = 20;
-	control += NUMBER_OF_ANIMS_PER_CONTROL;
-	// Attack
-	cc_anim_sequences[control].used = TRUE8;
-	cc_anim_sequences[control].anim = "low_strike";
-	cc_anim_sequences[control + 1].used = TRUE8;
-	cc_anim_sequences[control + 1].pose = "gun";
-	cc_anim_sequences[control + 1].anim = "pull_out_weapon";
-	cc_anim_sequences[control + 2].used = TRUE8;
-	cc_anim_sequences[control + 2].pose = "gun";
-	cc_anim_sequences[control + 2].anim = "stand_and_shoot";
-	cc_anim_sequences[control + 2].repeats = 3;
-	cc_anim_sequences[control + 3].used = TRUE8;
-	cc_anim_sequences[control + 3].pose = "gun";
-	cc_anim_sequences[control + 3].anim = "put_away_weapon";
-	cc_anim_sequences[control + 4].used = TRUE8;
-	cc_anim_sequences[control + 4].anim = "stand";
-	cc_anim_sequences[control + 4].repeats = 12;
-	control += NUMBER_OF_ANIMS_PER_CONTROL;
-	// Run
-	cc_anim_sequences[control].used = TRUE8;
-	cc_anim_sequences[control].anim = "stand_to_run";
-	cc_anim_sequences[control + 1].used = TRUE8;
-	cc_anim_sequences[control + 1].anim = "run";
-	cc_anim_sequences[control + 1].repeats = 5;
-	cc_anim_sequences[control + 2].used = TRUE8;
-	cc_anim_sequences[control + 2].anim = "run_to_stand";
-	control += NUMBER_OF_ANIMS_PER_CONTROL;
-	// Inventory
-	cc_anim_sequences[control].used = TRUE8;
-	cc_anim_sequences[control].anim = "stand";
-	control += NUMBER_OF_ANIMS_PER_CONTROL;
-	// Sidestep
-	cc_anim_sequences[control].used = TRUE8;
-	cc_anim_sequences[control].anim = "sidestep_left";
-	cc_anim_sequences[control].repeats = 3;
-	cc_anim_sequences[control + 1].used = TRUE8;
-	cc_anim_sequences[control + 1].anim = "stand";
-	cc_anim_sequences[control + 1].repeats = 10;
-	cc_anim_sequences[control + 2].used = TRUE8;
-	cc_anim_sequences[control + 2].anim = "step_backward";
-	cc_anim_sequences[control + 2].repeats = 3;
-	cc_anim_sequences[control + 3].used = TRUE8;
-	cc_anim_sequences[control + 3].anim = "sidestep_left";
-	cc_anim_sequences[control + 3].forwards = FALSE8;
-	cc_anim_sequences[control + 3].repeats = 3;
-	cc_anim_sequences[control + 4].used = TRUE8;
-	cc_anim_sequences[control + 4].anim = "stand";
-	cc_anim_sequences[control + 4].repeats = 30;
-	control += NUMBER_OF_ANIMS_PER_CONTROL;
-	// Remora
-	cc_anim_sequences[control].used = TRUE8;
-	cc_anim_sequences[control].anim = "use_remora";
-	cc_anim_sequences[control + 1].used = TRUE8;
-	cc_anim_sequences[control + 1].anim = "use_remora";
-	cc_anim_sequences[control + 1].forwards = FALSE8;
-	control += NUMBER_OF_ANIMS_PER_CONTROL;
-
-	// Empty slot here for another button on page1 (currently unused)
-	control += NUMBER_OF_ANIMS_PER_CONTROL;
-
-	// Pause
-	cc_anim_sequences[control].used = TRUE8;
-	cc_anim_sequences[control].anim = "shrug";
-	cc_anim_sequences[control + 1].used = TRUE8;
-	cc_anim_sequences[control + 1].anim = "stand";
-	cc_anim_sequences[control + 1].repeats = 15;
-}
-
 // Debug timers
 uint32 movieTime;
 uint32 movieblitTime;
@@ -620,7 +435,7 @@ OptionsManager::OptionsManager() {
 	m_IG_TOP_selected = CONTINUE;
 	m_OPTION_selected = VIDEO_SETTINGS;
 	m_AUDIO_selected = MUSIC_VOLUME;
-	m_CONTROL_selected = DEVICE;
+	m_CONTROL_selected = METHOD;
 	m_GAMESLOT_selected = SLOT1;
 	m_SAVECONFIRM_selected = YEY;
 	m_QUIT_selected = YES;
@@ -2379,31 +2194,6 @@ void OptionsManager::MoveSelected(bool8 _down_) {
 		else
 			m_CONTROL_selected = (CONTROL_CHOICES)(currentlySelected % NUMBER_OF_CONTROL_CHOICES);
 
-		// Account for extra choice on second page
-		if (m_controlPage1 && m_CONTROL_selected == PAUSE) {
-			if (_down_)
-				m_CONTROL_selected = (CONTROL_CHOICES)(PAUSE + 1);
-			else
-				m_CONTROL_selected = (CONTROL_CHOICES)(PAUSE - 1);
-		}
-
-		if (m_CONTROL_selected >= UP_CROUCH && m_CONTROL_selected <= PAUSE) {
-			// Need to change to the next animation for this control
-			int32 indexToNextAnim = (m_CONTROL_selected - 2) * 2;
-			if (m_controlPage1 == FALSE8)
-				indexToNextAnim++;
-			indexToNextAnim *= NUMBER_OF_ANIMS_PER_CONTROL;
-
-			// Reset to first animation in this control sequence as we've just changed selection
-			m_controlAnimCursor = 0;
-
-			// Do the dynamic change
-			ChangeAnimPlaying(cc_anim_sequences[indexToNextAnim + m_controlAnimCursor].pose, cc_anim_sequences[indexToNextAnim + m_controlAnimCursor].anim,
-			                  cc_anim_sequences[indexToNextAnim + m_controlAnimCursor].forwards, cc_anim_sequences[indexToNextAnim + m_controlAnimCursor].repeats,
-			                  CTRL_ACTOR_X, CTRL_ACTOR_Y, CTRL_ACTOR_Z);
-		} else
-			ChangeAnimPlaying(NULL, "stand", TRUE8, 0, CTRL_ACTOR_X, CTRL_ACTOR_Y, CTRL_ACTOR_Z);
-
 		break;
 
 	case GAME_OVER:
@@ -2692,9 +2482,6 @@ void OptionsManager::AlterSelected(bool8 _right_) {
 		m_alterLimiter = TRUE8;
 
 		switch (m_CONTROL_selected) {
-		case DEVICE:
-			break;
-
 		case METHOD:
 			if (g_icb_session->player.Get_control_mode() == ACTOR_RELATIVE)
 				g_icb_session->player.Set_control_mode(SCREEN_RELATIVE);
@@ -2703,36 +2490,6 @@ void OptionsManager::AlterSelected(bool8 _right_) {
 			break;
 
 		default:
-			if (m_CONTROL_selected >= UP_CROUCH && m_CONTROL_selected <= PAUSE) {
-				if (m_controlPage1)
-					m_controlPage1 = FALSE8;
-				else {
-					m_controlPage1 = TRUE8;
-
-					// Account for extra choice on page 2
-					if (m_CONTROL_selected == PAUSE)
-						m_CONTROL_selected = SIDESTEP_REMORA;
-				}
-
-				// Need to change to the next animation for this control
-				int32 indexToNextAnim = (m_CONTROL_selected - 2) * 2;
-				if (m_controlPage1 == FALSE8)
-					indexToNextAnim++;
-				indexToNextAnim *= NUMBER_OF_ANIMS_PER_CONTROL;
-
-				// See if we have a valid animation left in this sequence or return to first animation
-				if (cc_anim_sequences[indexToNextAnim + m_controlAnimCursor + 1].used && m_controlAnimCursor < 4)
-					m_controlAnimCursor++;
-				else
-					m_controlAnimCursor = 0;
-
-				// Do the dynamic change
-				ChangeAnimPlaying(cc_anim_sequences[indexToNextAnim + m_controlAnimCursor].pose, cc_anim_sequences[indexToNextAnim + m_controlAnimCursor].anim,
-				                  cc_anim_sequences[indexToNextAnim + m_controlAnimCursor].forwards,
-				                  cc_anim_sequences[indexToNextAnim + m_controlAnimCursor].repeats, CTRL_ACTOR_X, CTRL_ACTOR_Y, CTRL_ACTOR_Z);
-			} else
-				return;
-
 			break;
 		}
 
@@ -3098,7 +2855,7 @@ void OptionsManager::DoChoice() {
 				m_activeMenu = INGAME_CONTROLS;
 			} else
 				m_activeMenu = MAIN_CONTROLS;
-			m_CONTROL_selected = DEVICE;
+			m_CONTROL_selected = METHOD;
 			InitialiseControlsScreen();
 			break;
 		case BACK:
@@ -3315,83 +3072,6 @@ void OptionsManager::DoChoice() {
 		m_assignFlash = 0;
 		switch (m_CONTROL_selected) {
 		// Set the selected function to unassigned
-
-		case UP_CROUCH:
-			if (m_controlPage1) {
-				up_key = 0;
-			} else {
-				crouch_key = 0;
-			}
-			m_awaitingKeyPress = TRUE8;
-			m_editing = TRUE8;
-			Clear_DI_key_buffer();
-			break;
-
-		case DOWN_INTERACT:
-			if (m_controlPage1) {
-				down_key = 0;
-			} else {
-				interact_key = 0;
-			}
-			m_awaitingKeyPress = TRUE8;
-			m_editing = TRUE8;
-			Clear_DI_key_buffer();
-			break;
-
-		case LEFT_ARM:
-			if (m_controlPage1) {
-				left_key = 0;
-			} else {
-				arm_key = 0;
-			}
-			m_awaitingKeyPress = TRUE8;
-			m_editing = TRUE8;
-			Clear_DI_key_buffer();
-			break;
-
-		case RIGHT_ATTACK:
-			if (m_controlPage1) {
-				right_key = 0;
-			} else {
-				fire_key = 0;
-			}
-			m_awaitingKeyPress = TRUE8;
-			m_editing = TRUE8;
-			Clear_DI_key_buffer();
-			break;
-
-		case RUN_INVENTORY:
-			if (m_controlPage1) {
-				run_key = 0;
-			} else {
-				inventory_key = 0;
-			}
-			m_awaitingKeyPress = TRUE8;
-			m_editing = TRUE8;
-			Clear_DI_key_buffer();
-			break;
-
-		case SIDESTEP_REMORA:
-			if (m_controlPage1) {
-				sidestep_key = 0;
-			} else {
-				remora_key = 0;
-			}
-			m_awaitingKeyPress = TRUE8;
-			m_editing = TRUE8;
-			Clear_DI_key_buffer();
-			break;
-
-		case PAUSE: // Can only select this on page 2 by default
-			pause_key = 0;
-			m_awaitingKeyPress = TRUE8;
-			m_editing = TRUE8;
-			Clear_DI_key_buffer();
-			break;
-
-		case DEFAULTS:
-			SetDefaultKeys();
-			break;
 
 		case DONE:
 			if (m_inGame) {
@@ -4881,23 +4561,6 @@ void OptionsManager::GetKeyAssignment() {
 void OptionsManager::InitialiseControlsScreen() {
 	const char *msg = NULL;
 
-	InitialiseAnimSequences();
-	m_controlAnimCursor = 0;
-
-	// Initialise an actor model to draw
-	InitActorView("cord", "flack_jacket", "unarmed", "stand", CTRL_ACTOR_X, CTRL_ACTOR_Y, CTRL_ACTOR_Z);
-
-	// Ensure these flags are set for the polgon renderer
-	_drawActor = 1;
-	_drawPolys = 0;
-	_drawTxture = 0;
-	_drawBbox = 0;
-	_drawWfrm = 1;
-	_drawLit = 1;
-	wfrmRed = 3;
-	wfrmGreen = 204;
-	wfrmBlue = 0;
-
 	// Need to calculate printing margin
 	m_margin = 0;
 	uint32 margin = 0;
@@ -4920,7 +4583,6 @@ void OptionsManager::InitialiseControlsScreen() {
 
 void OptionsManager::DrawControllerConfiguration() {
 	const char *msg = NULL;
-	const char *info = NULL;
 	uint32 halfScreen = SCREEN_WIDTH / 2;
 	uint32 temp;
 	pxString sentence;
@@ -4947,40 +4609,11 @@ void OptionsManager::DrawControllerConfiguration() {
 		surface_manager->Blit_surface_to_surface(m_myScreenSurfaceID, working_buffer_id, &repairRect, &repairRect);
 	}
 
-	// Draw the actor first up (following sequence logic)
-	if (ActorViewDraw() == ANIMATION_END) {
-		// Sequenceas only valid for controls selected
-		if (m_CONTROL_selected >= UP_CROUCH && m_CONTROL_selected <= PAUSE) {
-			// Need to change to the next animation for this control
-			int32 indexToNextAnim = (m_CONTROL_selected - 2) * 2;
-			if (m_controlPage1 == FALSE8)
-				indexToNextAnim++;
-			indexToNextAnim *= NUMBER_OF_ANIMS_PER_CONTROL;
-
-			// See if we have a valid animation left in this sequence or return to first animation
-			if (cc_anim_sequences[indexToNextAnim + m_controlAnimCursor + 1].used && m_controlAnimCursor < 4)
-				m_controlAnimCursor++;
-			else
-				m_controlAnimCursor = 0;
-
-			// Do the dynamic change
-			ChangeAnimPlaying(cc_anim_sequences[indexToNextAnim + m_controlAnimCursor].pose, cc_anim_sequences[indexToNextAnim + m_controlAnimCursor].anim,
-			                  cc_anim_sequences[indexToNextAnim + m_controlAnimCursor].forwards, cc_anim_sequences[indexToNextAnim + m_controlAnimCursor].repeats,
-			                  CTRL_ACTOR_X, CTRL_ACTOR_Y, CTRL_ACTOR_Z);
-		}
-	}
-
 	uint8 *ad = surface_manager->Lock_surface(working_buffer_id);
 	uint32 pitch = surface_manager->Get_pitch(working_buffer_id);
 
 	msg = GetTextFromReference(HashString("opt_controls"));
 	DisplayText(ad, pitch, msg, 0, 80, NORMALFONT, TRUE8, TRUE8);
-
-	msg = GetTextFromReference(HashString("opt_device"));
-	temp = CalculateStringWidth(msg);
-	DisplayText(ad, pitch, msg, m_margin - temp, 130, (m_CONTROL_selected == DEVICE) ? SELECTEDFONT : NORMALFONT, FALSE8);
-	msg = GetTextFromReference(HashString("opt_keyboard"));
-	DisplayText(ad, pitch, msg, m_margin + 5, 130, NORMALFONT, FALSE8);
 
 	msg = GetTextFromReference(HashString("opt_controlmethod"));
 	temp = CalculateStringWidth(msg);
@@ -4991,336 +4624,10 @@ void OptionsManager::DrawControllerConfiguration() {
 		msg = GetTextFromReference(HashString("opt_actorrelative"));
 	DisplayText(ad, pitch, msg, m_margin + 5, 155, NORMALFONT, FALSE8);
 
-	// Now do the info thing
-	bool8 doinfo = TRUE8;
-
-	// Whose profile are we drawing
-	switch (m_CONTROL_selected) {
-	case UP_CROUCH:
-		if (m_controlPage1)
-			info = "up";
-		else
-			info = "crouch";
-		break;
-	case DOWN_INTERACT:
-		if (m_controlPage1)
-			info = "down";
-		else
-			info = "interact";
-		break;
-	case LEFT_ARM:
-		if (m_controlPage1)
-			info = "left";
-		else
-			info = "arm";
-		break;
-	case RIGHT_ATTACK:
-		if (m_controlPage1)
-			info = "right";
-		else
-			info = "attack";
-		break;
-	case RUN_INVENTORY:
-		if (m_controlPage1)
-			info = "run";
-		else
-			info = "inventory";
-		break;
-	case SIDESTEP_REMORA:
-		if (m_controlPage1)
-			info = "sidestep";
-		else
-			info = "remora";
-		break;
-	case PAUSE:
-		info = "pause";
-		break;
-
-	default:
-		doinfo = FALSE8;
-		break;
-	}
-
-	if (doinfo) {
-		int32 LEFT_HAND_MARGIN = m_margin + 130;
-
-		// Hack the italian screen more cos they use int32 key names
-		if (g_theClusterManager->GetLanguage() == T_ITALIAN)
-			LEFT_HAND_MARGIN += 25;
-		else if (g_theClusterManager->GetLanguage() == T_SPANISH)
-			LEFT_HAND_MARGIN += 60;
-		else if (g_theClusterManager->GetLanguage() == T_RUSSIAN)
-			LEFT_HAND_MARGIN += 45;
-		else if (g_theClusterManager->GetLanguage() == T_POLISH)
-			LEFT_HAND_MARGIN += 50;
-
-		msg = GetTextFromReference(HashString("opt_info"));
-		DisplayText(ad, pitch, msg, LEFT_HAND_MARGIN, 192, PALEFONT, FALSE8);
-
-		// Now we need to parse the info string word by word writing to the screen until we
-		// need a new line
-
-		// Get the whole string
-		sentence.Format("opt_%sinfo", info);
-		msg = GetTextFromReference(HashString(sentence));
-		if (msg == NULL)
-			msg = "PLEASE UPDATE GLOBAL TEXT DATA";
-
-		// Get some storage from the stack
-		uint8 theData[MAX_BYTESIZE_OF_CONTROL_INFO];
-		// Zero out our memory
-		memset(theData, 0, MAX_BYTESIZE_OF_CONTROL_INFO);
-		// Make a personal copy
-		memcpy(theData, msg, strlen(msg) + 1);
-		// Get a pointer to our memory
-		char *ptr = (char *)theData;
-
-		// Split the text into words (overwrite spaces with terminators)
-		int32 i = 0;
-		uint32 numberOfWords = 1;
-		while (ptr[i]) {
-			// Found a space?
-			if (ptr[i] == ' ') {
-				// Watch for multiple spaces!
-				do {
-					ptr[i] = 0;
-					i++;
-
-				} while (ptr[i] == ' ');
-
-				numberOfWords++;
-			} else
-				i++;
-		}
-
-		// Positional cursors initialised
-		uint32 xp = LEFT_HAND_MARGIN;
-		uint32 yp = 212;
-
-		uint32 RIGHT_HAND_MARGIN = xp + 170;
-		uint32 BOTTOM_EDGE_LIMIT = SCREEN_DEPTH - 50;
-		uint32 SPACE_PIXELWIDTH = 5;
-		uint32 cur = 0;
-
-		// Now we're in a position to display it word by word
-		for (uint32 w = 0; w < numberOfWords; w++) {
-			// Safety check
-			if (cur >= sizeof(theData))
-				break;
-
-			DisplayText(ad, pitch, (const char *)(ptr + cur), xp, yp, PALEFONT, FALSE8);
-
-			// Move cursor(s)
-			xp += CalculateStringWidth((const char *)(ptr + cur)) + SPACE_PIXELWIDTH;
-
-			// Last word already printed so break
-			if (w + 1 == numberOfWords) {
-				break;
-			}
-
-			// Point to next word
-			cur += strlen((const char *)(ptr + cur));
-			while (!ptr[cur])
-				cur++;
-
-			// Calculate pixel length of NEXT word
-			uint32 nextw = CalculateStringWidth((const char *)(ptr + cur));
-
-			// Check for line ends
-			if (xp + nextw > RIGHT_HAND_MARGIN) {
-				yp += 20;
-				xp = LEFT_HAND_MARGIN;
-
-				// Check we've some screen left
-				if (yp > BOTTOM_EDGE_LIMIT) {
-					break;
-				}
-			}
-		}
-	}
-
-	msg = GetTextFromReference(HashString("opt_defaults"));
-	DisplayText(ad, pitch, msg, m_margin + 5, 356, (m_CONTROL_selected == DEFAULTS) ? SELECTEDFONT : NORMALFONT, FALSE8);
-
 	msg = GetTextFromReference(HashString("opt_back"));
 	DisplayText(ad, pitch, msg, m_margin + 5, 385, (bool8)(m_CONTROL_selected == DONE) ? SELECTEDFONT : NORMALFONT, FALSE8);
 
 	surface_manager->Unlock_surface(working_buffer_id);
-
-	DrawControls(working_buffer_id);
-}
-
-void OptionsManager::DrawControls(uint32 surface_id) {
-	const char *msg = NULL;
-	const char *msg2 = NULL;
-	static int32 flash = 0;
-	uint32 temp;
-	pxString str;
-	bool8 screenRelative = (bool8)(g_icb_session->player.Get_control_mode() == SCREEN_RELATIVE);
-
-	// Define initial offsets here that all controls relate too
-	uint32 h = 192;  // Screen height of first control
-	uint32 spc = 21; // Vertical spacing
-
-	// Adjust spacing for first page (as it has one less choice)
-	if (m_controlPage1)
-		spc = 24;
-
-	// Are we trying to assign a key to a game function
-	if (m_awaitingKeyPress)
-		GetKeyAssignment();
-
-	uint8 *ad = surface_manager->Lock_surface(surface_id);
-	uint32 pitch = surface_manager->Get_pitch(surface_id);
-
-	flash++;
-	// Draw flashing page indicators
-	if (flash < 7)
-		DisplayText(ad, pitch, "<>", 10, h - 15, NORMALFONT, FALSE8);
-
-	// Cycling
-	if (flash == 14)
-		flash = 0;
-
-	if (m_controlPage1) {
-		msg = screenRelative ? GetTextFromReference(HashString("opt_up")) : GetTextFromReference(HashString("opt_forwards"));
-		temp = CalculateStringWidth(msg);
-
-		msg2 = GetKeyName(up_key);
-		if (msg2 == NULL)
-			msg2 = "???";
-	} else {
-		msg = GetTextFromReference(HashString("opt_crouch"));
-		temp = CalculateStringWidth(msg);
-
-		msg2 = GetKeyName(crouch_key);
-		if (msg2 == NULL)
-			msg2 = "???";
-	}
-
-	DisplayText(ad, pitch, msg, m_margin - temp, h, (bool8)(m_CONTROL_selected == UP_CROUCH) ? SELECTEDFONT : PALEFONT, FALSE8);
-	DisplayText(ad, pitch, msg2, m_margin + 5, h, (bool8)(m_CONTROL_selected == UP_CROUCH && m_assignFlash < 5) ? SELECTEDFONT : NORMALFONT, FALSE8);
-
-	h += spc;
-
-	if (m_controlPage1) {
-		msg = screenRelative ? GetTextFromReference(HashString("opt_down")) : GetTextFromReference(HashString("opt_backwards"));
-		temp = CalculateStringWidth(msg);
-
-		msg2 = GetKeyName(down_key);
-		if (msg2 == NULL)
-			msg2 = "???";
-	} else {
-		msg = GetTextFromReference(HashString("opt_interact"));
-		temp = CalculateStringWidth(msg);
-
-		msg2 = GetKeyName(interact_key);
-		if (msg2 == NULL)
-			msg2 = "???";
-	}
-
-	DisplayText(ad, pitch, msg, m_margin - temp, h, (bool8)(m_CONTROL_selected == DOWN_INTERACT) ? SELECTEDFONT : PALEFONT, FALSE8);
-	DisplayText(ad, pitch, msg2, m_margin + 5, h, (bool8)(m_CONTROL_selected == DOWN_INTERACT && m_assignFlash < 5) ? SELECTEDFONT : NORMALFONT, FALSE8);
-
-	h += spc;
-
-	if (m_controlPage1) {
-		msg = screenRelative ? GetTextFromReference(HashString("opt_left")) : GetTextFromReference(HashString("opt_turnleft"));
-		temp = CalculateStringWidth(msg);
-
-		msg2 = GetKeyName(left_key);
-		if (msg2 == NULL)
-			msg2 = "???";
-	} else {
-		msg = GetTextFromReference(HashString("opt_arm"));
-		temp = CalculateStringWidth(msg);
-
-		msg2 = GetKeyName(arm_key);
-		if (msg2 == NULL)
-			msg2 = "???";
-	}
-
-	DisplayText(ad, pitch, msg, m_margin - temp, h, (bool8)(m_CONTROL_selected == LEFT_ARM) ? SELECTEDFONT : PALEFONT, FALSE8);
-	DisplayText(ad, pitch, msg2, m_margin + 5, h, (bool8)(m_CONTROL_selected == LEFT_ARM && m_assignFlash < 5) ? SELECTEDFONT : NORMALFONT, FALSE8);
-
-	h += spc;
-
-	if (m_controlPage1) {
-		msg = screenRelative ? GetTextFromReference(HashString("opt_right")) : GetTextFromReference(HashString("opt_turnright"));
-		temp = CalculateStringWidth(msg);
-
-		msg2 = GetKeyName(right_key);
-		if (msg2 == NULL)
-			msg2 = "???";
-	} else {
-		msg = GetTextFromReference(HashString("opt_attack"));
-		temp = CalculateStringWidth(msg);
-
-		msg2 = GetKeyName(fire_key);
-		if (msg2 == NULL)
-			msg2 = "???";
-	}
-
-	DisplayText(ad, pitch, msg, m_margin - temp, h, (bool8)(m_CONTROL_selected == RIGHT_ATTACK) ? SELECTEDFONT : PALEFONT, FALSE8);
-	DisplayText(ad, pitch, msg2, m_margin + 5, h, (bool8)(m_CONTROL_selected == RIGHT_ATTACK && m_assignFlash < 5) ? SELECTEDFONT : NORMALFONT, FALSE8);
-
-	h += spc;
-
-	if (m_controlPage1) {
-		msg = GetTextFromReference(HashString("opt_run"));
-		temp = CalculateStringWidth(msg);
-
-		msg2 = GetKeyName(run_key);
-		if (msg2 == NULL)
-			msg2 = "???";
-	} else {
-		msg = GetTextFromReference(HashString("opt_inventory"));
-		temp = CalculateStringWidth(msg);
-
-		msg2 = GetKeyName(inventory_key);
-		if (msg2 == NULL)
-			msg2 = "???";
-	}
-
-	DisplayText(ad, pitch, msg, m_margin - temp, h, (bool8)(m_CONTROL_selected == RUN_INVENTORY) ? SELECTEDFONT : PALEFONT, FALSE8);
-	DisplayText(ad, pitch, msg2, m_margin + 5, h, (bool8)(m_CONTROL_selected == RUN_INVENTORY && m_assignFlash < 5) ? SELECTEDFONT : NORMALFONT, FALSE8);
-
-	h += spc;
-
-	if (m_controlPage1) {
-		msg = GetTextFromReference(HashString("opt_sidestep"));
-		temp = CalculateStringWidth(msg);
-
-		msg2 = GetKeyName(sidestep_key);
-		if (msg2 == NULL)
-			msg2 = "???";
-	} else {
-		msg = GetTextFromReference(HashString("opt_remora"));
-		temp = CalculateStringWidth(msg);
-
-		msg2 = GetKeyName(remora_key);
-		if (msg2 == NULL)
-			msg2 = "???";
-	}
-
-	DisplayText(ad, pitch, msg, m_margin - temp, h, (bool8)(m_CONTROL_selected == SIDESTEP_REMORA) ? SELECTEDFONT : PALEFONT, FALSE8);
-	DisplayText(ad, pitch, msg2, m_margin + 5, h, (bool8)(m_CONTROL_selected == SIDESTEP_REMORA && m_assignFlash < 5) ? SELECTEDFONT : NORMALFONT, FALSE8);
-
-	h += spc;
-
-	if (m_controlPage1 == FALSE8) {
-		msg = GetTextFromReference(HashString("opt_pause"));
-		temp = CalculateStringWidth(msg);
-
-		msg2 = GetKeyName(pause_key);
-		if (msg2 == NULL)
-			msg2 = "???";
-
-		DisplayText(ad, pitch, msg, m_margin - temp, h, (bool8)(m_CONTROL_selected == PAUSE) ? SELECTEDFONT : PALEFONT, FALSE8);
-		DisplayText(ad, pitch, msg2, m_margin + 5, h, (bool8)(m_CONTROL_selected == PAUSE && m_assignFlash < 5) ? SELECTEDFONT : NORMALFONT, FALSE8);
-	}
-
-	surface_manager->Unlock_surface(surface_id);
 }
 
 void OptionsManager::DrawGameOptions() {

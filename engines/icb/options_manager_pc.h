@@ -140,20 +140,11 @@ enum VIDEO_CHOICES {
 	LEAVE = 3
 };
 
-#define NUMBER_OF_CONTROL_CHOICES 11
+#define NUMBER_OF_CONTROL_CHOICES 2
 
 enum CONTROL_CHOICES {
-	DEVICE = 0,
-	METHOD = 1,
-	UP_CROUCH = 2,
-	DOWN_INTERACT = 3,
-	LEFT_ARM = 4,
-	RIGHT_ATTACK = 5,
-	RUN_INVENTORY = 6,
-	SIDESTEP_REMORA = 7,
-	PAUSE = 8,
-	DEFAULTS = 9,
-	DONE = 10
+	METHOD = 0,
+	DONE = 1
 };
 
 #define TOTAL_NUMBER_OF_GAME_SLOTS 100
@@ -472,7 +463,6 @@ private:
 	void DrawAudioSettings();
 	void DrawVideoSettings();
 	void DrawControllerConfiguration();
-	void DrawControls(uint32 surface_id = working_buffer_id);
 	void DrawMainLoadScreen(uint32 surface_id = working_buffer_id);
 	void DrawMovieScreen(uint32 surface_id = working_buffer_id);
 	void DrawQuitGameConfirmScreen(uint32 surface_id = working_buffer_id);
