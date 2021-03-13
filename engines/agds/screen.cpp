@@ -158,6 +158,9 @@ void Screen::paint(Graphics::Surface &backbuffer) {
 	}
 
 	Character * character = _engine->currentCharacter();
+	if (character)
+		character->tick();
+
 	ChildrenType::iterator child = _children.begin();
 	AnimationsType::iterator animation = _animations.begin();
 	while(child != _children.end() || animation != _animations.end() || character) {

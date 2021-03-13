@@ -118,7 +118,8 @@ public:
 		return _direction;
 	}
 
-	void paint(Graphics::Surface & backbuffer);
+	void tick();
+	void paint(Graphics::Surface & backbuffer) const;
 
 	int getDirectionForMovement(Common::Point delta);
 

@@ -175,12 +175,9 @@ void Character::stop() {
 	_frames = 0;
 }
 
-
-void Character::paint(Graphics::Surface &backbuffer) {
+void Character::tick() {
 	if (!_enabled || !_visible || !_animation)
 		return;
-
-	Common::Point pos = _pos + _animationPos;
 
 	auto screen = _engine->getCurrentScreen();
 	auto scale = screen? screen->getZScale(_pos.y): 1;
@@ -196,6 +193,14 @@ void Character::paint(Graphics::Surface &backbuffer) {
 		}
 	}
 	_engine->reactivate(_processName, true);
+}
+
+
+void Character::paint(Graphics::Surface &backbuffer) const {
+	if (!_enabled || !_visible || !_animation)
+		return;
+
+	Common::Point pos = _pos + _animationPos;
 
 	pos.y -= _animation->height();
 	pos.x -= _animation->width() / 2;
