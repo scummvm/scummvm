@@ -31,7 +31,12 @@ lib*.a
 /map.txt
 *.elf
 /*.nds
+/*.3dsx
+/*.cia
+/*.smdh
+/*.bnr
 /romfs
+/dist_3ds
 /.project
 /.cproject
 /.settings
@@ -56,6 +61,9 @@ lib*.a
 /staging
 /portdist
 
+/backends/platform/3ds/shader.shbin
+/backends/platform/3ds/shader_shbin.h
+
 /backends/platform/dc/gui
 /backends/platform/dc/graphics
 /backends/platform/dc/sound
@@ -69,8 +77,6 @@ lib*.a
 /backends/platform/dc/scummvm.bin
 /backends/platform/dc/SCUMMVM.BIN
 /backends/platform/dc/*.PLG
-
-/backends/platform/ds/arm9/data/*.h
 
 /backends/platform/maemo/scummvm
 
