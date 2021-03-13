@@ -37,6 +37,10 @@ namespace Nancy {
 
 class NancyEngine;
 
+namespace State {
+class State;
+}
+
 struct NancyInput {
     enum InputType : uint16 {
         kLeftMouseButtonDown    = 1 << 0,
@@ -103,6 +107,7 @@ private:
     uint16 _inputs;
     Common::Array<Common::KeyState> _otherKbdInput;
     bool _mouseEnabled;
+    State::State *_inputBeginState;
 };
 
 } // End of namespace Nancy
