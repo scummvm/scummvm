@@ -27,9 +27,6 @@
 
 namespace AGS3 {
 
-AGSStaticObject GlobalStaticManager;
-StaticGame      GameStaticManager;
-
 const char *AGSStaticObject::GetFieldPtr(const char *address, intptr_t offset) {
 	return address + offset;
 }

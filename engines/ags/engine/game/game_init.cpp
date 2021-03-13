@@ -57,8 +57,6 @@ namespace AGS3 {
 using namespace Shared;
 using namespace Engine;
 
-extern AGSStaticObject GlobalStaticManager;
-
 namespace AGS {
 namespace Engine {
 
@@ -248,7 +246,7 @@ HError InitAndRegisterGameEntities() {
 
 	setup_player_character(_GP(game).playercharacter);
 	if (_G(loaded_game_file_version) >= kGameVersion_270)
-		ccAddExternalStaticObject("player", &_G(sc_PlayerCharPtr), &GlobalStaticManager);
+		ccAddExternalStaticObject("player", &_G(sc_PlayerCharPtr), &_GP(GlobalStaticManager));
 	return HError::None();
 }
 

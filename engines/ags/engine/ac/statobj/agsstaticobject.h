@@ -49,9 +49,6 @@ struct StaticGame : public AGSStaticObject {
 	void    WriteInt32(const char *address, intptr_t offset, int32_t val) override;
 };
 
-extern AGSStaticObject GlobalStaticManager;
-extern StaticGame      GameStaticManager;
-
 } // namespace AGS3
 
 #endif

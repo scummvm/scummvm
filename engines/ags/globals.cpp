@@ -98,7 +98,9 @@ Globals *g_globals;
 Globals::Globals() {
 	g_globals = this;
 
-	Common::fill(&_mousecurs[0], &_mousecurs[MAXCURSORS], nullptr);
+	// agsstaticobject.cpp globals
+	_GlobalStaticManager = new AGSStaticObject();
+	_GameStaticManager = new StaticGame();
 
 	// audio.cpp globals
 	_audioChannels = new std::array<SOUNDCLIP *>(MAX_SOUND_CHANNELS + 1);
@@ -241,6 +243,7 @@ Globals::Globals() {
 
 	// mouse.cpp globals
 	_scmouse = new ScriptMouse();
+	Common::fill(&_mousecurs[0], &_mousecurs[MAXCURSORS], nullptr);
 
 	// mousew32.cpp globals
 	_mouse = new Mouse();
@@ -301,6 +304,10 @@ Globals::Globals() {
 
 Globals::~Globals() {
 	g_globals = nullptr;
+
+	// agsstaticobject.cpp globals
+	delete _GlobalStaticManager;
+	delete _GameStaticManager;
 
 	// audio.cpp globals
 	delete _audioChannels;

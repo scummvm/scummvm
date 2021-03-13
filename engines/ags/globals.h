@@ -87,6 +87,7 @@ class WFNFontRenderer;
 struct ActiveDisplaySetting;
 struct AGSDeSerializer;
 struct AGSPlatformDriver;
+struct AGSStaticObject;
 struct AmbientSound;
 struct AnimatingGUIButton;
 struct CachedActSpsData;
@@ -148,6 +149,7 @@ struct SOUNDCLIP;
 struct SpeechLipSyncLine;
 struct SpriteListEntry;
 struct StaticArray;
+struct StaticGame;
 struct SystemImports;
 struct TopBarSettings;
 struct TreeMap;
@@ -199,11 +201,12 @@ public:
 	/**@}*/
 
 	/**
-	 * \defgroup audio globals
+	 * \defgroup agsstaticobject globals
 	 * @{
 	 */
 
-	AGSPlatformDriver *_platform = nullptr;
+	AGSStaticObject *_GlobalStaticManager;
+	StaticGame      *_GameStaticManager;
 
 	/**@}*/
 
@@ -627,6 +630,7 @@ public:
 	AGS::Shared::String _saveGameSuffix;
 	bool _want_exit = false;
 	bool _abort_engine = false;
+	AGSPlatformDriver *_platform = nullptr;
 
 	RoomObject *_objs;
 	RoomStatus *_croom = nullptr;

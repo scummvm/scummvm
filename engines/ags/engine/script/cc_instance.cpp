@@ -1492,7 +1492,7 @@ bool ccInstance::CreateGlobalVars(PScript scri) {
 				return false;
 			}
 			// TODO: register this explicitly as a string instead (can do this later)
-			glvar.RValue.SetStaticObject(globaldata + data_addr, &GlobalStaticManager);
+			glvar.RValue.SetStaticObject(globaldata + data_addr, &_GP(GlobalStaticManager));
 		}
 		break;
 		default:

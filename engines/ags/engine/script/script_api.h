@@ -374,7 +374,7 @@ inline const char *ScriptVSprintf(char *buffer, size_t buf_length, const char *f
 #define API_SCALL_STOBJ_POBJ2(RET_CLASS, FUNCTION, P1CLASS, P2CLASS) \
 	ASSERT_PARAM_COUNT(FUNCTION, 2); \
 	RET_CLASS* ret_obj = FUNCTION((P1CLASS*)params[0].Ptr, (P2CLASS*)params[1].Ptr); \
-	return RuntimeScriptValue().SetStaticObject(ret_obj, &GlobalStaticManager)
+	return RuntimeScriptValue().SetStaticObject(ret_obj, &_GP(GlobalStaticManager))
 
 //-----------------------------------------------------------------------------
 // Calls to object functions

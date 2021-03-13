@@ -2190,12 +2190,12 @@ void RegisterGameAPI() {
 }
 
 void RegisterStaticObjects() {
-	ccAddExternalStaticObject("game", &_GP(play), &GameStaticManager);
-	ccAddExternalStaticObject("gs_globals", &_GP(play).globalvars[0], &GlobalStaticManager);
-	ccAddExternalStaticObject("mouse", &_GP(scmouse), &GlobalStaticManager);
-	ccAddExternalStaticObject("palette", &_G(palette)[0], &GlobalStaticManager);
-	ccAddExternalStaticObject("system", &_GP(scsystem), &GlobalStaticManager);
-	ccAddExternalStaticObject("savegameindex", &_GP(play).filenumbers[0], &GlobalStaticManager);
+	ccAddExternalStaticObject("game", &_GP(play), &_GP(GameStaticManager));
+	ccAddExternalStaticObject("gs_globals", &_GP(play).globalvars[0], &_GP(GlobalStaticManager));
+	ccAddExternalStaticObject("mouse", &_GP(scmouse), &_GP(GlobalStaticManager));
+	ccAddExternalStaticObject("palette", &_G(palette)[0], &_GP(GlobalStaticManager));
+	ccAddExternalStaticObject("system", &_GP(scsystem), &_GP(GlobalStaticManager));
+	ccAddExternalStaticObject("savegameindex", &_GP(play).filenumbers[0], &_GP(GlobalStaticManager));
 }
 
 } // namespace AGS3
