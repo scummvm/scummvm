@@ -220,7 +220,7 @@ public:
 		return _userUseHandler;
 	}
 
-	void paint(AGDSEngine &engine, Graphics::Surface &backbuffer);
+	void paint(AGDSEngine &engine, Graphics::Surface &backbuffer) const;
 
 	void moveTo(Common::Point pos);
 

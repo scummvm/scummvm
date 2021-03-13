@@ -244,7 +244,7 @@ bool Object::pointIn(Common::Point pos) {
 	return false;
 }
 
-void Object::paint(AGDSEngine &engine, Graphics::Surface &backbuffer) {
+void Object::paint(AGDSEngine &engine, Graphics::Surface &backbuffer) const {
 	auto picture = getPicture();
 	if (picture) {
 		Common::Point dst = getPosition();
