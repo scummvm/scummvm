@@ -186,7 +186,7 @@ void Character::paint(Graphics::Surface &backbuffer) {
 	auto scale = screen? screen->getZScale(_pos.y): 1;
 	_animation->scale(scale);
 
-	debug("character %d/%d", _phase, _frames);
+	// debug("character %d/%d", _phase, _frames);
 	if (_phase >= 0 && _phase < _frames) {
 		_animation->tick();
 		_phase = _animation->phase();
