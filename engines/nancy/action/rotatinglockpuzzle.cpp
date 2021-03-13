@@ -109,7 +109,7 @@ void RotatingLockPuzzle::execute() {
         registerGraphics();
 
         for (uint i = 0; i < correctSequence.size(); ++i) {
-            currentSequence.push_back(NanEngine._rnd->getRandomNumber(9));
+            currentSequence.push_back(NanEngine.randomSource->getRandomNumber(9));
             drawDial(i);
         }
 

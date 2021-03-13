@@ -60,6 +60,12 @@ void Logo::process() {
 	}
 }
 
+bool Logo::onStateExit() {
+	NanEngine.sound->stopSound(_msnd);
+	destroy();
+	return true;
+}
+
 void Logo::init() {
 	Common::SeekableReadStream *lg = NanEngine.getBootChunkStream("LG0");
 	lg->seek(0);
@@ -71,19 +77,16 @@ void Logo::init() {
 }
 
 void Logo::startSound() {
-	SoundDescription desc;
-	desc.read(*NanEngine.getBootChunkStream("MSND"), SoundDescription::kMenu);
-	NanEngine.sound->loadSound(desc);
-	MSNDchannelID = desc.channelID;
+	_msnd.read(*NanEngine.getBootChunkStream("MSND"), SoundDescription::kMenu);
+	NanEngine.sound->loadSound(_msnd);
+	NanEngine.sound->playSound(_msnd);
 
-	NanEngine.sound->playSound(MSNDchannelID);
-
-	_startTicks = NanEngine._system->getMillis();
+	_startTicks = g_system->getMillis();
 	_state = kRun;
 }
 
 void Logo::run() {
-	if (NanEngine._system->getMillis() - _startTicks >= 7000 || (NanEngine.input->getInput().input & NancyInput::kLeftMouseButtonDown)) {
+	if (g_system->getMillis() - _startTicks >= 7000 || (NanEngine.input->getInput().input & NancyInput::kLeftMouseButtonDown)) {
 		_state = kStop;
 	}
 }
@@ -93,10 +96,9 @@ void Logo::stop() {
 	// For the N+C key combo it looks for some kind of cheat file
 	// to initialize the game state with.
 
-	NanEngine.sound->stopSound(MSNDchannelID);
+	NanEngine.sound->stopSound(_msnd);
 
 	NanEngine.setState(NancyEngine::kScene);
-	NanEngine._system->fillScreen(0);
 }
 
 } // End of namespace State

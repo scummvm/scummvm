@@ -64,13 +64,25 @@ struct SceneInfo {
     uint16 verticalOffset = 0;
 };
 
+// The game state that handles all of the gameplay
 class Scene : public State, public Common::Singleton<Scene> {
     friend class Nancy::Action::ActionRecord;
     friend class Nancy::Action::ActionManager;
     friend class Nancy::NancyConsole;
     friend class Nancy::NancyEngine;
     friend class Nancy::CheatDialog;
+
 public:
+    enum GameStateChange : byte {
+        kHelpMenu = 1 << 0,
+        kMainMenu = 1 << 1,
+        kSaveLoad = 1 << 2,
+        kReloadSave = 1 << 3,
+        kSetupMenu = 1 << 4,
+        kCredits = 1 << 5,
+        kMap = 1 << 6
+    };
+
     struct SceneSummary { // SSUM
         Common::String description;
         Common::String videoFile;
@@ -85,7 +97,6 @@ public:
         uint16 verticalEdgeSize;
         Time slowMoveTimeDelta;
         Time fastMoveTimeDelta;
-        // byte unknown7C enum with 4 values
         //
 
         void read(Common::SeekableReadStream &stream);
@@ -93,9 +104,9 @@ public:
 
     Scene() :
         _state (kInit),
-        _frame(),
         _lastHint(-1),
         _gameStateRequested(NancyEngine::kNone),
+        _frame(),
         _viewport(),
         _textbox(_frame),
         _inventoryBox(_frame),
@@ -115,8 +126,6 @@ public:
 
     void pauseSceneSpecificSounds();
     void unpauseSceneSpecificSounds();
-
-    void setShouldClearTextbox(bool shouldClear) { _shouldClearTextbox = shouldClear; }
 
     void addItemToInventory(uint16 id);
     void removeItemFromInventory(uint16 id, bool pickUp = true);
@@ -151,6 +160,8 @@ public:
 
     void synchronize(Common::Serializer &serializer);
 
+    void setShouldClearTextbox(bool shouldClear) { _shouldClearTextbox = shouldClear; }
+
     UI::FullScreenImage &getFrame() { return _frame; }
     UI::Viewport &getViewport() { return _viewport; }
     UI::Textbox &getTextbox() { return _textbox; }
@@ -170,7 +181,6 @@ private:
 
     void clearSceneData();
 
-public:
     enum State {
         kInit,
         kLoad,
@@ -178,27 +188,12 @@ public:
         kRun
     };
 
-    enum GameStateChange : byte {
-        kHelpMenu = 1 << 0,
-        kMainMenu = 1 << 1,
-        kSaveLoad = 1 << 2,
-        kReloadSave = 1 << 3,
-        kSetupMenu = 1 << 4,
-        kCredits = 1 << 5,
-        kMap = 1 << 6
-    };
-    
-    // TODO move 
-    Time playerTimeMinuteLength;
-
-protected:
     struct SceneState {
         SceneSummary summary;
         SceneInfo currentScene;
         SceneInfo nextScene;
         SceneInfo pushedScene;
         bool isScenePushed;
-        uint16 sceneHitCount[2001];
 
         bool _doNotStartSound = false;
     };
@@ -223,12 +218,13 @@ protected:
 
         LogicCondition logicConditions[30];
         NancyFlag eventFlags[168];
+        uint16 sceneHitCount[2001];
         NancyFlag items[11];
         int16 heldItem = -1;
         int16 primaryVideoResponsePicked = -1;
     };
 
-    // RenderObjects
+    // UI
     UI::FullScreenImage _frame;
     UI::Viewport _viewport;
     UI::Textbox _textbox;
@@ -252,7 +248,7 @@ protected:
 
     State _state;
 
-    bool isComingFromMenu = true;
+    bool _isComingFromMenu = true;
     bool _shouldClearTextbox = true;
 };
 

@@ -52,13 +52,19 @@ public:
 
     void playSound(uint16 channelID);
     void playSound(const SoundDescription &description);
+
     void pauseSound(uint16 channelID, bool pause);
     void pauseSound(const SoundDescription &description, bool pause);
+
     bool isSoundPlaying(uint16 channelID);
     bool isSoundPlaying(const SoundDescription &description);
+
     void stopSound(uint16 channelID);
     void stopSound(const SoundDescription &description);
     void stopAllSounds();
+    
+    // Used when changing scenes
+    void stopAndUnloadSpecificSounds();
 
     static Audio::SeekableAudioStream *makeHISStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse);
 

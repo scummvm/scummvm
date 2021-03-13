@@ -370,7 +370,7 @@ void PlayPrimaryVideoChan0::addGoodbye() {
             newResponse.soundName = snd;
             newResponse.text = file.readString();
             // response is picked randomly
-            newResponse.sceneChange.sceneID = res.sceneIDs[NanEngine._rnd->getRandomNumber(3)];
+            newResponse.sceneChange.sceneID = res.sceneIDs[NanEngine.randomSource->getRandomNumber(3)];
             newResponse.sceneChange.doNotStartSound = true;
 
             file.close();

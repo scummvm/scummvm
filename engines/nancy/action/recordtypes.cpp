@@ -291,7 +291,7 @@ void LoseGame::readData(Common::SeekableReadStream &stream) {
 }
 
 void LoseGame::execute() {
-    NanEngine.stopAndUnloadSpecificSounds();
+    NanEngine.sound->stopAndUnloadSpecificSounds();
     NanEngine.setState(NancyEngine::kMainMenu);
     NancySceneState.resetStateToInit();
     isDone = true;
@@ -310,7 +310,7 @@ void WinGame::readData(Common::SeekableReadStream &stream) {
 }
 
 void WinGame::execute() {
-    NanEngine.stopAndUnloadSpecificSounds();
+    NanEngine.sound->stopAndUnloadSpecificSounds();
     NanEngine.setState(NancyEngine::kCredits, NancyEngine::kMainMenu);
     
     // TODO replace with destroy()?

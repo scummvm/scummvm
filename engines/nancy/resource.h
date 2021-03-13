@@ -75,9 +75,8 @@ public:
 	byte *loadCif(const Common::String &treeName, const Common::String &name, uint &size);
 	bool exportCif(const Common::String &treeName, const Common::String &name);
 	Common::String getCifDescription(const Common::String &treeName, const Common::String &name);
-private:
-	Decompressor *_dec;
 
+private:
 	byte *getCifData(const Common::String &name, CifInfo &info, uint *size = nullptr);
 	byte *getCifData(const Common::String &treeName, const Common::String &name, CifInfo &info, uint *size = nullptr);
 	bool getCifInfo(const Common::String &name, CifInfo &info);
@@ -85,6 +84,7 @@ private:
 	const CifTree *findCifTree(const Common::String &name) const;
 
 	Common::Array<const CifTree *> _cifTrees;
+	Decompressor *_dec;
 };
 
 } // End of namespace Nancy
