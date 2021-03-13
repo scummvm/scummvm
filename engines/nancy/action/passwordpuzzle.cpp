@@ -77,7 +77,7 @@ void PasswordPuzzle::execute() {
     case kBegin:
         init();
         registerGraphics();
-        nextBlinkTime = NanEngine.getTotalPlayTime() + cursorBlinkTime;
+        nextBlinkTime = g_nancy->getTotalPlayTime() + cursorBlinkTime;
         state = kRun;
         // fall through
     case kRun:
@@ -85,7 +85,7 @@ void PasswordPuzzle::execute() {
         case kNotSolved: {
             Common::String &activeField = passwordFieldIsActive ? playerPasswordInput : playerNameInput;
             Common::String &correctField = passwordFieldIsActive ? password : name;
-            Time currentTime = NanEngine.getTotalPlayTime();
+            Time currentTime = g_nancy->getTotalPlayTime();
 
             if (playerHasHitReturn) {
                 playerHasHitReturn = false;
@@ -99,13 +99,13 @@ void PasswordPuzzle::execute() {
                     if (!passwordFieldIsActive) {
                         passwordFieldIsActive = true;
                     } else {
-                        NanEngine.sound->loadSound(solveSound);
-                        NanEngine.sound->playSound(solveSound);
+                        g_nancy->sound->loadSound(solveSound);
+                        g_nancy->sound->playSound(solveSound);
                         solveState = kSolved;
                     }
                 } else {
-                    NanEngine.sound->loadSound(failSound);
-                    NanEngine.sound->playSound(failSound);
+                    g_nancy->sound->loadSound(failSound);
+                    g_nancy->sound->playSound(failSound);
                     solveState = kFailed;
                 }
                 
@@ -125,15 +125,15 @@ void PasswordPuzzle::execute() {
             break;
         }
         case kFailed:
-            if (!NanEngine.sound->isSoundPlaying(failSound)) {
-                NanEngine.sound->stopSound(failSound);
+            if (!g_nancy->sound->isSoundPlaying(failSound)) {
+                g_nancy->sound->stopSound(failSound);
                 state = kActionTrigger;
             }
 
             break;
         case kSolved:
-            if (!NanEngine.sound->isSoundPlaying(solveSound)) {
-                NanEngine.sound->stopSound(solveSound);
+            if (!g_nancy->sound->isSoundPlaying(solveSound)) {
+                g_nancy->sound->stopSound(solveSound);
                 state = kActionTrigger;
             }
 
@@ -167,7 +167,7 @@ void PasswordPuzzle::handleInput(NancyInput &input) {
     }
 
     if (NancySceneState.getViewport().convertViewportToScreen(exitHotspot).contains(input.mousePos)) {
-        NanEngine.cursorManager->setCursorType(CursorManager::kExitArrow);
+        g_nancy->cursorManager->setCursorType(CursorManager::kExitArrow);
 
         if (input.input & NancyInput::kLeftMouseButtonUp) {
             state = kActionTrigger;
@@ -218,7 +218,7 @@ void PasswordPuzzle::onPause(bool pause) {
 
 void PasswordPuzzle::drawText() {
     _drawSurface.clear(GraphicsManager::getTransColor());
-    Graphics::Font *font = NanEngine.graphicsManager->getFont(fontID);
+    Graphics::Font *font = g_nancy->graphicsManager->getFont(fontID);
 
     Common::Rect bounds = nameBounds;
     bounds = NancySceneState.getViewport().convertViewportToScreen(bounds);

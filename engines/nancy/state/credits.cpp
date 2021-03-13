@@ -51,7 +51,7 @@ void Credits::process() {
 }
 
 void Credits::init() {
-    Common::SeekableReadStream *cred = NanEngine.getBootChunkStream("CRED");
+    Common::SeekableReadStream *cred = g_nancy->getBootChunkStream("CRED");
     cred->seek(0);
 
     char buf[10];
@@ -66,7 +66,7 @@ void Credits::init() {
     _pixelsToScroll = cred->readUint16LE();
     _sound.read(*cred, SoundDescription::kMenu);
 
-    NanEngine.resource->loadImage(buf, _fullTextSurface);
+    g_nancy->resource->loadImage(buf, _fullTextSurface);
     
     Common::Rect src = _text._screenPosition;
     src.moveTo(Common::Point());
@@ -74,29 +74,29 @@ void Credits::init() {
     _text.setTransparent(true);
     _text.init();
 
-    NanEngine.sound->loadSound(_sound);
-    NanEngine.sound->playSound(_sound);
+    g_nancy->sound->loadSound(_sound);
+    g_nancy->sound->playSound(_sound);
 
     _background.registerGraphics();
     _text.registerGraphics();
 
-    NanEngine.cursorManager->showCursor(false);
+    g_nancy->cursorManager->showCursor(false);
 
     _state = kRun;
 }
 
 void Credits::run() {
-    NancyInput input = NanEngine.input->getInput();
+    NancyInput input = g_nancy->input->getInput();
 
     if (input.input & NancyInput::kLeftMouseButtonDown) {
         _state = kInit;
-        NanEngine.sound->stopSound(_sound);
-        NanEngine.setState(NancyEngine::kMainMenu);
-        NanEngine.cursorManager->showCursor(true);
+        g_nancy->sound->stopSound(_sound);
+        g_nancy->setState(NancyEngine::kMainMenu);
+        g_nancy->cursorManager->showCursor(true);
         _fullTextSurface.free();
     }
 
-    Time currentTime = NanEngine.getTotalPlayTime();
+    Time currentTime = g_nancy->getTotalPlayTime();
     if (currentTime >= _nextUpdateTime) {
         _nextUpdateTime = currentTime + _updateTime;
 

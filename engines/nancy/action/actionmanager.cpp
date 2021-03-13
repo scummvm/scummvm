@@ -47,7 +47,7 @@ void ActionManager::handleInput(NancyInput &input) {
         }
 
         if (rec->isActive && rec->hasHotspot && NancySceneState.getViewport().convertViewportToScreen(rec->hotspot).contains(input.mousePos)) {
-            NanEngine.cursorManager->setCursorType(rec->getHoverCursor());
+            g_nancy->cursorManager->setCursorType(rec->getHoverCursor());
 
             if (input.input & NancyInput::kLeftMouseButtonUp) {
                 input.input &= ~NancyInput::kLeftMouseButtonUp;
@@ -69,7 +69,7 @@ void ActionManager::handleInput(NancyInput &input) {
                     }
 
                     if (!shouldTrigger) {
-                        NanEngine.sound->playSound(17); // Hardcoded by original engine
+                        g_nancy->sound->playSound(17); // Hardcoded by original engine
                     }
                 } else {
                     shouldTrigger = true;

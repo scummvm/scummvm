@@ -36,7 +36,7 @@ namespace UI {
 
 // does NOT put the object in a valid state until loadVideo is called
 void Viewport::init() {
-    Common::SeekableReadStream *viewChunk = NanEngine.getBootChunkStream("VIEW");
+    Common::SeekableReadStream *viewChunk = g_nancy->getBootChunkStream("VIEW");
     viewChunk->seek(0);
 
     Common::Rect dest;
@@ -59,11 +59,11 @@ void Viewport::init() {
 }
 
 void Viewport::handleInput(NancyInput &input) {
-    Time playTime = NanEngine.getTotalPlayTime();
+    Time playTime = g_nancy->getTotalPlayTime();
     byte direction = 0;
 
     if (_screenPosition.contains(input.mousePos)) {
-        NanEngine.cursorManager->setCursorType(CursorManager::kNormal);
+        g_nancy->cursorManager->setCursorType(CursorManager::kNormal);
     }
 
     // Do not handle hotspots marked as incative and ignore diagonals if intersecting hotspots are not active
@@ -120,7 +120,7 @@ void Viewport::handleInput(NancyInput &input) {
     }
 
     if (direction) {
-        NanEngine.cursorManager->setCursorType(CursorManager::kMove);
+        g_nancy->cursorManager->setCursorType(CursorManager::kMove);
 
         if (input.input & NancyInput::kRightMouseButton) {
             direction |= kMoveFast;

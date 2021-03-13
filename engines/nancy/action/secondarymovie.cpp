@@ -33,7 +33,7 @@ PlaySecondaryMovie::~PlaySecondaryMovie() {
     _decoder.close();
     
     if (hideMouse == kTrue && unknown == 5) {
-        NanEngine.setMouseEnabled(true);
+        g_nancy->setMouseEnabled(true);
     }
 }
 
@@ -115,8 +115,8 @@ void PlaySecondaryMovie::updateGraphics() {
 
 	if ((_decoder.getCurFrame() == lastFrame && isReverse == kFalse) ||
 	    (_decoder.getCurFrame() == firstFrame && isReverse == kTrue)) {
-		if (!NanEngine.sound->isSoundPlaying(sound)) {
-			NanEngine.sound->stopSound(sound);
+		if (!g_nancy->sound->isSoundPlaying(sound)) {
+			g_nancy->sound->stopSound(sound);
 			_decoder.stop();
             isFinished = true;
 			state = kActionTrigger;
@@ -139,11 +139,11 @@ void PlaySecondaryMovie::execute() {
     case kBegin:
         init();
         registerGraphics();
-        NanEngine.sound->loadSound(sound);
-        NanEngine.sound->playSound(sound);
+        g_nancy->sound->loadSound(sound);
+        g_nancy->sound->playSound(sound);
 
         if (hideMouse == kTrue) {
-            NanEngine.setMouseEnabled(false);
+            g_nancy->setMouseEnabled(false);
         }
 
         state = kRun;
@@ -178,7 +178,7 @@ void PlaySecondaryMovie::execute() {
         } else {
             // Not changing the scene so enable the mouse now
             if (hideMouse == kTrue) {
-                NanEngine.setMouseEnabled(true);
+                g_nancy->setMouseEnabled(true);
             }
         }
 

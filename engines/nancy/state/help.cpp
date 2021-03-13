@@ -55,7 +55,7 @@ void Help::process() {
 }
 
 void Help::init() {
-    Common::SeekableReadStream *chunk = NanEngine.getBootChunkStream("HELP");
+    Common::SeekableReadStream *chunk = g_nancy->getBootChunkStream("HELP");
 
     chunk->seek(0);
     char buf[10];
@@ -68,7 +68,7 @@ void Help::init() {
     _hotspot.right = chunk->readUint16LE();
     _hotspot.bottom = chunk->readUint16LE();
     
-    chunk = NanEngine.getBootChunkStream("MSND");
+    chunk = g_nancy->getBootChunkStream("MSND");
     chunk->seek(0);
 	_sound.read(*chunk, SoundDescription::kMenu);
 
@@ -76,30 +76,30 @@ void Help::init() {
 }
 
 void Help::begin() {
-	NanEngine.sound->loadSound(_sound);
-	NanEngine.sound->playSound(_sound);
+	g_nancy->sound->loadSound(_sound);
+	g_nancy->sound->playSound(_sound);
     
     _image.registerGraphics();
     _image.setVisible(true);
 
-    NanEngine.cursorManager->setCursorType(CursorManager::kNormalArrow);
+    g_nancy->cursorManager->setCursorType(CursorManager::kNormalArrow);
     
     _state = kRun;
 }
 
 void Help::run() {
-    NancyInput input = NanEngine.input->getInput();
+    NancyInput input = g_nancy->input->getInput();
 
     if (_hotspot.contains(input.mousePos) && input.input & NancyInput::kLeftMouseButtonUp) {
-        NanEngine.sound->playSound(0x18); // Hardcoded by original engine
+        g_nancy->sound->playSound(0x18); // Hardcoded by original engine
         _state = kWaitForSound;
     }
 }
 
 void Help::waitForSound() {
-    if (!NanEngine.sound->isSoundPlaying(18)) {
-	    NanEngine.sound->stopSound(_sound);
-        NanEngine.setPreviousState();
+    if (!g_nancy->sound->isSoundPlaying(18)) {
+	    g_nancy->sound->stopSound(_sound);
+        g_nancy->setPreviousState();
     }
 }
 

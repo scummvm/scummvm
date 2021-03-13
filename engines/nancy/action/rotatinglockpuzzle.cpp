@@ -40,7 +40,7 @@ void RotatingLockPuzzle::init() {
     
     setTransparent(true);
 
-    NanEngine.resource->loadImage(imageName, image);
+    g_nancy->resource->loadImage(imageName, image);
 }
 
 void RotatingLockPuzzle::readData(Common::SeekableReadStream &stream) {
@@ -109,12 +109,12 @@ void RotatingLockPuzzle::execute() {
         registerGraphics();
 
         for (uint i = 0; i < correctSequence.size(); ++i) {
-            currentSequence.push_back(NanEngine.randomSource->getRandomNumber(9));
+            currentSequence.push_back(g_nancy->randomSource->getRandomNumber(9));
             drawDial(i);
         }
 
-        NanEngine.sound->loadSound(clickSound);
-        NanEngine.sound->loadSound(solveSound);
+        g_nancy->sound->loadSound(clickSound);
+        g_nancy->sound->loadSound(solveSound);
         state = kRun;
         // fall through
     case kRun:
@@ -127,19 +127,19 @@ void RotatingLockPuzzle::execute() {
             }
 
             NancySceneState.setEventFlag(flagOnSolve);
-            solveSoundPlayTime = NanEngine.getTotalPlayTime() + solveSoundDelay * 1000;
+            solveSoundPlayTime = g_nancy->getTotalPlayTime() + solveSoundDelay * 1000;
             solveState = kPlaySound;
             // fall through
         case kPlaySound:
-            if (NanEngine.getTotalPlayTime() <= solveSoundPlayTime) {
+            if (g_nancy->getTotalPlayTime() <= solveSoundPlayTime) {
                 break;
             }
 
-            NanEngine.sound->playSound(solveSound);
+            g_nancy->sound->playSound(solveSound);
             solveState = kWaitForSound;
             break;
         case kWaitForSound:
-            if (!NanEngine.sound->isSoundPlaying(solveSound)) {
+            if (!g_nancy->sound->isSoundPlaying(solveSound)) {
                 state = kActionTrigger;
             }
 
@@ -147,8 +147,8 @@ void RotatingLockPuzzle::execute() {
         }
         break;
     case kActionTrigger:
-        NanEngine.sound->stopSound(clickSound);
-        NanEngine.sound->stopSound(solveSound);
+        g_nancy->sound->stopSound(clickSound);
+        g_nancy->sound->stopSound(solveSound);
 
         if (solveState == kNotSolved) {
             NancySceneState.changeScene(exitScene);
@@ -167,7 +167,7 @@ void RotatingLockPuzzle::handleInput(NancyInput &input) {
     }
 
     if (NancySceneState.getViewport().convertViewportToScreen(exitHotspot).contains(input.mousePos)) {
-        NanEngine.cursorManager->setCursorType(CursorManager::kExitArrow);
+        g_nancy->cursorManager->setCursorType(CursorManager::kExitArrow);
 
         if (input.input & NancyInput::kLeftMouseButtonUp) {
             state = kActionTrigger;
@@ -178,10 +178,10 @@ void RotatingLockPuzzle::handleInput(NancyInput &input) {
 
     for (uint i = 0; i < upHotspots.size(); ++i) {
         if (NancySceneState.getViewport().convertViewportToScreen(upHotspots[i]).contains(input.mousePos)) {
-            NanEngine.cursorManager->setCursorType(CursorManager::kHotspot);
+            g_nancy->cursorManager->setCursorType(CursorManager::kHotspot);
 
             if (input.input & NancyInput::kLeftMouseButtonUp) {
-                NanEngine.sound->playSound(clickSound);
+                g_nancy->sound->playSound(clickSound);
                 
                 currentSequence[i] = ++currentSequence[i] > 9 ? 0 : currentSequence[i];
                 drawDial(i);
@@ -193,10 +193,10 @@ void RotatingLockPuzzle::handleInput(NancyInput &input) {
 
     for (uint i = 0; i < downHotspots.size(); ++i) {
         if (NancySceneState.getViewport().convertViewportToScreen(downHotspots[i]).contains(input.mousePos)) {
-            NanEngine.cursorManager->setCursorType(CursorManager::kHotspot);
+            g_nancy->cursorManager->setCursorType(CursorManager::kHotspot);
 
             if (input.input & NancyInput::kLeftMouseButtonUp) {
-                NanEngine.sound->playSound(clickSound);
+                g_nancy->sound->playSound(clickSound);
 
                 int8 n = currentSequence[i];
                 n = --n < 0 ? 9 : n;

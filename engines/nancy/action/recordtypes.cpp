@@ -291,8 +291,8 @@ void LoseGame::readData(Common::SeekableReadStream &stream) {
 }
 
 void LoseGame::execute() {
-    NanEngine.sound->stopAndUnloadSpecificSounds();
-    NanEngine.setState(NancyEngine::kMainMenu);
+    g_nancy->sound->stopAndUnloadSpecificSounds();
+    g_nancy->setState(NancyEngine::kMainMenu);
     NancySceneState.resetStateToInit();
     isDone = true;
 }
@@ -310,8 +310,8 @@ void WinGame::readData(Common::SeekableReadStream &stream) {
 }
 
 void WinGame::execute() {
-    NanEngine.sound->stopAndUnloadSpecificSounds();
-    NanEngine.setState(NancyEngine::kCredits, NancyEngine::kMainMenu);
+    g_nancy->sound->stopAndUnloadSpecificSounds();
+    g_nancy->setState(NancyEngine::kCredits, NancyEngine::kMainMenu);
     
     // TODO replace with destroy()?
     NancySceneState.resetStateToInit();
@@ -347,7 +347,7 @@ void DifficultyLevel::execute() {
 }
 
 void ShowInventoryItem::init() {
-    NanEngine.resource->loadImage(imageName, _fullSurface);
+    g_nancy->resource->loadImage(imageName, _fullSurface);
 
     _drawSurface.create(_fullSurface, bitmaps[0].src);
 
@@ -403,7 +403,7 @@ void ShowInventoryItem::execute() {
         break;
     }
     case kActionTrigger:
-        NanEngine.sound->playSound(24); // Hardcoded by original engine
+        g_nancy->sound->playSound(24); // Hardcoded by original engine
         NancySceneState.addItemToInventory(objectID);
         setVisible(false);
         hasHotspot = false;
@@ -429,12 +429,12 @@ void PlayDigiSoundAndDie::readData(Common::SeekableReadStream &stream) {
 void PlayDigiSoundAndDie::execute() {
     switch (state) {
     case kBegin:
-        NanEngine.sound->loadSound(sound);
-        NanEngine.sound->playSound(sound);
+        g_nancy->sound->loadSound(sound);
+        g_nancy->sound->playSound(sound);
         state = kRun;
         break;
     case kRun:
-        if (!NanEngine.sound->isSoundPlaying(sound)) {
+        if (!g_nancy->sound->isSoundPlaying(sound)) {
             state = kActionTrigger;
         }
 
@@ -445,7 +445,7 @@ void PlayDigiSoundAndDie::execute() {
         }
         
         NancySceneState.setEventFlag(flagOnTrigger);
-        NanEngine.sound->stopSound(sound);
+        g_nancy->sound->stopSound(sound);
 
         finishExecution();
         break;
@@ -491,8 +491,8 @@ void PlaySoundMultiHS::execute() {
         break;
     }
     case kActionTrigger:
-        NanEngine.sound->loadSound(sound);
-        NanEngine.sound->playSound(sound);
+        g_nancy->sound->loadSound(sound);
+        g_nancy->sound->playSound(sound);
         NancySceneState.changeScene(sceneChange);
         NancySceneState.setEventFlag(flag);
         finishExecution();
@@ -517,13 +517,13 @@ void HintSystem::execute() {
         NancySceneState.getTextbox().clear();
         NancySceneState.getTextbox().addTextLine(text);
 
-        NanEngine.sound->loadSound(genericSound);
-        NanEngine.sound->playSound(genericSound);
+        g_nancy->sound->loadSound(genericSound);
+        g_nancy->sound->playSound(genericSound);
         state = kRun;
         break;
     case kRun:
-        if (!NanEngine.sound->isSoundPlaying(genericSound)) {
-            NanEngine.sound->stopSound(genericSound);
+        if (!g_nancy->sound->isSoundPlaying(genericSound)) {
+            g_nancy->sound->stopSound(genericSound);
             state = kActionTrigger;
         } else {
             break;

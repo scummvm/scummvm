@@ -33,11 +33,11 @@
 namespace Nancy {
 
 void CursorManager::init() {
-    Common::SeekableReadStream *chunk = NanEngine.getBootChunkStream("INV");
+    Common::SeekableReadStream *chunk = g_nancy->getBootChunkStream("INV");
     chunk->seek(0x1D2); // TODO
     Common::String inventoryCursorsImageName = chunk->readString();
 
-    chunk = NanEngine.getBootChunkStream("CURS");
+    chunk = g_nancy->getBootChunkStream("CURS");
     for (uint i = 0; i < 56; ++i) {
         _cursors.push_back(Cursor());
         chunk->seek(i * 16, SEEK_SET);
@@ -51,7 +51,7 @@ void CursorManager::init() {
     _primaryVideoInitialPos.x = chunk->readUint16LE();
     _primaryVideoInitialPos.y = chunk->readUint16LE();
 
-    NanEngine.resource->loadImage(inventoryCursorsImageName, _invCursorsSurface);
+    g_nancy->resource->loadImage(inventoryCursorsImageName, _invCursorsSurface);
 
     setCursor(kNormalArrow, -1);
     showCursor(false);
@@ -106,7 +106,7 @@ void CursorManager::setCursor(CursorType type, int16 itemID) {
         surf = &_invCursorsSurface;
         
     } else {
-        surf = &NanEngine.graphicsManager->object0;
+        surf = &g_nancy->graphicsManager->object0;
     }
 
     // TODO this is ridiculous, figure out why just calling

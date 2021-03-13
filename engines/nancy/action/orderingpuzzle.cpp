@@ -45,7 +45,7 @@ void OrderingPuzzle::init() {
     
     setTransparent(true);
 
-    NanEngine.resource->loadImage(imageName, image);
+    g_nancy->resource->loadImage(imageName, image);
 
     setVisible(false);
 
@@ -106,8 +106,8 @@ void OrderingPuzzle::execute() {
     case kBegin:
         init();
         registerGraphics();
-        NanEngine.sound->loadSound(clickSound);
-        NanEngine.sound->loadSound(solveSound);
+        g_nancy->sound->loadSound(clickSound);
+        g_nancy->sound->loadSound(solveSound);
         state = kRun;
         // fall through
     case kRun:
@@ -124,19 +124,19 @@ void OrderingPuzzle::execute() {
             }
 
             NancySceneState.setEventFlag(flagOnSolve);
-            solveSoundPlayTime = NanEngine.getTotalPlayTime() + solveSoundDelay * 1000;
+            solveSoundPlayTime = g_nancy->getTotalPlayTime() + solveSoundDelay * 1000;
             solveState = kPlaySound;
             // fall through
         case kPlaySound:
-            if (NanEngine.getTotalPlayTime() <= solveSoundPlayTime) {
+            if (g_nancy->getTotalPlayTime() <= solveSoundPlayTime) {
                 break;
             }
 
-            NanEngine.sound->playSound(solveSound);
+            g_nancy->sound->playSound(solveSound);
             solveState = kWaitForSound;
             break;
         case kWaitForSound:
-            if (!NanEngine.sound->isSoundPlaying(solveSound)) {
+            if (!g_nancy->sound->isSoundPlaying(solveSound)) {
                 state = kActionTrigger;
             }
 
@@ -144,8 +144,8 @@ void OrderingPuzzle::execute() {
         }
         break;
     case kActionTrigger:
-        NanEngine.sound->stopSound(clickSound);
-        NanEngine.sound->stopSound(solveSound);
+        g_nancy->sound->stopSound(clickSound);
+        g_nancy->sound->stopSound(solveSound);
 
         if (solveState == kNotSolved) {
             NancySceneState.changeScene(exitScene);
@@ -165,7 +165,7 @@ void OrderingPuzzle::handleInput(NancyInput &input) {
     }
 
     if (NancySceneState.getViewport().convertViewportToScreen(exitHotspot).contains(input.mousePos)) {
-        NanEngine.cursorManager->setCursorType(CursorManager::kExitArrow);
+        g_nancy->cursorManager->setCursorType(CursorManager::kExitArrow);
 
         if (input.input & NancyInput::kLeftMouseButtonUp) {
             state = kActionTrigger;
@@ -175,10 +175,10 @@ void OrderingPuzzle::handleInput(NancyInput &input) {
 
     for (int i = 0; i < (int)destRects.size(); ++i) {
         if (NancySceneState.getViewport().convertViewportToScreen(destRects[i]).contains(input.mousePos)) {
-            NanEngine.cursorManager->setCursorType(CursorManager::kHotspot);
+            g_nancy->cursorManager->setCursorType(CursorManager::kHotspot);
 
             if (input.input & NancyInput::kLeftMouseButtonUp) {
-                NanEngine.sound->playSound(clickSound);
+                g_nancy->sound->playSound(clickSound);
                 
                 for (uint j = 0; j < clickedSequence.size(); ++j) {
                     if (clickedSequence[j] == i && drawnElements[i] == true) {

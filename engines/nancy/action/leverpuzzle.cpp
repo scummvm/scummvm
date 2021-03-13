@@ -38,7 +38,7 @@ void LeverPuzzle::init() {
     
     setTransparent(true);
 
-    NanEngine.resource->loadImage(imageName, image);
+    g_nancy->resource->loadImage(imageName, image);
 }
 
 void LeverPuzzle::readData(Common::SeekableReadStream &stream) {
@@ -94,8 +94,8 @@ void LeverPuzzle::execute() {
     case kBegin:
         init();
         registerGraphics();
-        NanEngine.sound->loadSound(moveSound);
-        NanEngine.sound->loadSound(noMoveSound);
+        g_nancy->sound->loadSound(moveSound);
+        g_nancy->sound->loadSound(noMoveSound);
 
         for (uint i = 0; i < 3; ++i) {
             drawLever(i);
@@ -113,21 +113,21 @@ void LeverPuzzle::execute() {
             }
             
             NancySceneState.setEventFlag(flagOnSolve);
-            solveSoundPlayTime = NanEngine.getTotalPlayTime() + solveSoundDelay * 1000;
+            solveSoundPlayTime = g_nancy->getTotalPlayTime() + solveSoundDelay * 1000;
             solveState = kPlaySound;
             break;
         case kPlaySound:
-            if (NanEngine.getTotalPlayTime() <= solveSoundPlayTime) {
+            if (g_nancy->getTotalPlayTime() <= solveSoundPlayTime) {
                 break;
             }
 
-            NanEngine.sound->loadSound(solveSound);
-            NanEngine.sound->playSound(solveSound);
+            g_nancy->sound->loadSound(solveSound);
+            g_nancy->sound->playSound(solveSound);
             solveState = kWaitForSound;
             break;
         case kWaitForSound:
-            if (!NanEngine.sound->isSoundPlaying(solveSound)) {
-                NanEngine.sound->stopSound(solveSound);
+            if (!g_nancy->sound->isSoundPlaying(solveSound)) {
+                g_nancy->sound->stopSound(solveSound);
                 state = kActionTrigger;
             }
 
@@ -136,8 +136,8 @@ void LeverPuzzle::execute() {
 
         break;
     case kActionTrigger:
-        NanEngine.sound->stopSound(moveSound);
-        NanEngine.sound->stopSound(noMoveSound);
+        g_nancy->sound->stopSound(moveSound);
+        g_nancy->sound->stopSound(noMoveSound);
         
         if (solveState == kNotSolved) {
             NancySceneState.changeScene(exitScene);
@@ -156,7 +156,7 @@ void LeverPuzzle::handleInput(NancyInput &input) {
     }
 
     if (NancySceneState.getViewport().convertViewportToScreen(exitHotspot).contains(input.mousePos)) {
-        NanEngine.cursorManager->setCursorType(CursorManager::kExitArrow);
+        g_nancy->cursorManager->setCursorType(CursorManager::kExitArrow);
 
         if (input.input & NancyInput::kLeftMouseButtonUp) {
             state = kActionTrigger;
@@ -166,7 +166,7 @@ void LeverPuzzle::handleInput(NancyInput &input) {
 
     for (uint i = 0; i < 3; ++i) {
         if (NancySceneState.getViewport().convertViewportToScreen(destRects[i]).contains(input.mousePos)) {
-            NanEngine.cursorManager->setCursorType(CursorManager::kHotspot);
+            g_nancy->cursorManager->setCursorType(CursorManager::kHotspot);
             
             if (input.input & NancyInput::kLeftMouseButtonUp) {
                 bool isMoving = false;
@@ -190,7 +190,7 @@ void LeverPuzzle::handleInput(NancyInput &input) {
                 }
 
                 if (isMoving) {
-                    NanEngine.sound->playSound(moveSound);
+                    g_nancy->sound->playSound(moveSound);
 
                     if (leverDirection[i]) {
                         // Moving down
@@ -212,7 +212,7 @@ void LeverPuzzle::handleInput(NancyInput &input) {
 
                     drawLever(i);
                 } else {
-                    NanEngine.sound->playSound(noMoveSound);
+                    g_nancy->sound->playSound(noMoveSound);
                     return;
                 }
             }

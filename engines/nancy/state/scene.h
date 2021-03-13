@@ -130,7 +130,7 @@ public:
     void addItemToInventory(uint16 id);
     void removeItemFromInventory(uint16 id, bool pickUp = true);
     int16 getHeldItem() const { return _flags.heldItem; }
-    void setHeldItem(int16 id) { _flags.heldItem = id; NanEngine.cursorManager->setCursorItemID(id); }
+    void setHeldItem(int16 id) { _flags.heldItem = id; g_nancy->cursorManager->setCursorItemID(id); }
     NancyFlag hasItem(int16 id) const { return _flags.items[id]; }
 
     void setEventFlag(int16 label, NancyFlag flag = kTrue);

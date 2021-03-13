@@ -69,7 +69,7 @@ bool IFF::callback(Common::IFFChunk &c) {
 bool IFF::load() {
 	byte *data;
 	uint size;
-	data = NanEngine.resource->loadData(_name, size);
+	data = g_nancy->resource->loadData(_name, size);
 
 	if (!data) {
 		return false;

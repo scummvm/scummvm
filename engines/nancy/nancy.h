@@ -190,7 +190,7 @@ private:
 	Common::HashMap<Common::String, Common::SeekableReadStream *> _bootChunks;
 };
 
-#define NanEngine (*((NancyEngine *)(g_engine)))
+extern NancyEngine *g_nancy;
 
 } // End of namespace Nancy
 
