@@ -111,7 +111,7 @@ int _display_main(int xx, int yy, int wii, const char *text, int disp_type, int 
 	}
 
 	if (asspch > 0) {
-		// update the all_buttons_disabled variable in advance
+		// update the _G(all_buttons_disabled) variable in advance
 		// of the adjust_x/y_for_guis calls
 		_GP(play).disabled_user_interface++;
 		update_gui_disabled_status();

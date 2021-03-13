@@ -32,8 +32,6 @@
 
 namespace AGS3 {
 
-extern int gui_disabled_style;
-
 namespace AGS {
 namespace Shared {
 
@@ -46,7 +44,7 @@ int GUIInvWindow::GetCharacterId() const {
 
 void GUIInvWindow::Draw(Bitmap *ds) {
 	const bool enabled = IsGUIEnabled(this);
-	if (!enabled && (gui_disabled_style == GUIDIS_BLACKOUT))
+	if (!enabled && (_G(gui_disabled_style) == GUIDIS_BLACKOUT))
 		return;
 
 	// backwards compatibility
@@ -81,7 +79,7 @@ void GUIInvWindow::Draw(Bitmap *ds) {
 	}
 
 	if (!enabled &&
-		gui_disabled_style == GUIDIS_GREYOUT &&
+		_G(gui_disabled_style) == GUIDIS_GREYOUT &&
 		_GP(play).inventory_greys_out == 1) {
 		// darken the inventory when disabled
 		GUI::DrawDisabledEffect(ds, RectWH(X, Y, Width, Height));

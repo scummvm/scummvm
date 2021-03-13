@@ -794,6 +794,17 @@ public:
 	/**@}*/
 
 	/**
+	 * \defgroup guimain globals
+	 * @{
+	 */
+
+	int _guis_need_update = 1;
+	int _all_buttons_disabled = 0, _gui_inv_pic = -1;
+	int _gui_disabled_style = 0;
+
+	/**@}*/
+
+	/**
 	 * \defgroup guislider globals
 	 * @{
 	 */

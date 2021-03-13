@@ -471,7 +471,7 @@ void update_invorder() {
 	// backwards compatibility
 	_GP(play).obsolete_inv_numorder = _G(charextra)[_GP(game).playercharacter].invorder_count;
 
-	guis_need_update = 1;
+	_G(guis_need_update) = 1;
 }
 
 void add_inventory(int inum) {

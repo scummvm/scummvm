@@ -25,6 +25,7 @@
 #include "ags/shared/gui/guitextbox.h"
 #include "ags/shared/util/stream.h"
 #include "ags/shared/util/string_utils.h"
+#include "ags/globals.h"
 
 namespace AGS3 {
 
@@ -61,7 +62,7 @@ void GUITextBox::Draw(Bitmap *ds) {
 }
 
 void GUITextBox::OnKeyPress(int keycode) {
-	guis_need_update = 1;
+	_G(guis_need_update) = 1;
 	// TODO: use keycode constants
 	// backspace, remove character
 	if (keycode == 8) {

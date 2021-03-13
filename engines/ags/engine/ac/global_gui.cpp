@@ -75,7 +75,7 @@ void InterfaceOn(int ifn) {
 		debug_script_log("GUIOn(%d) ignored (already on)", ifn);
 		return;
 	}
-	guis_need_update = 1;
+	_G(guis_need_update) = 1;
 	_GP(guis)[ifn].SetVisible(true);
 	debug_script_log("GUI %d turned on", ifn);
 	// modal interface
@@ -99,7 +99,7 @@ void InterfaceOff(int ifn) {
 		_GP(guis)[ifn].MouseOverCtrl = -1;
 	}
 	_GP(guis)[ifn].OnControlPositionChanged();
-	guis_need_update = 1;
+	_G(guis_need_update) = 1;
 	// modal interface
 	if (_GP(guis)[ifn].PopupStyle == kGUIPopupModal) UnPauseGame();
 }
@@ -214,12 +214,12 @@ void SetGUIBackgroundPic(int guin, int slotn) {
 
 void DisableInterface() {
 	_GP(play).disabled_user_interface++;
-	guis_need_update = 1;
+	_G(guis_need_update) = 1;
 	set_mouse_cursor(CURS_WAIT);
 }
 
 void EnableInterface() {
-	guis_need_update = 1;
+	_G(guis_need_update) = 1;
 	_GP(play).disabled_user_interface--;
 	if (_GP(play).disabled_user_interface < 1) {
 		_GP(play).disabled_user_interface = 0;

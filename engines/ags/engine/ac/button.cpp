@@ -92,7 +92,7 @@ void Button_SetText(GUIButton *butt, const char *newtx) {
 	newtx = get_translation(newtx);
 
 	if (strcmp(butt->GetText(), newtx)) {
-		guis_need_update = 1;
+		_G(guis_need_update) = 1;
 		butt->SetText(newtx);
 	}
 }
@@ -103,7 +103,7 @@ void Button_SetFont(GUIButton *butt, int newFont) {
 
 	if (butt->Font != newFont) {
 		butt->Font = newFont;
-		guis_need_update = 1;
+		_G(guis_need_update) = 1;
 	}
 }
 
@@ -118,7 +118,7 @@ int Button_GetClipImage(GUIButton *butt) {
 void Button_SetClipImage(GUIButton *butt, int newval) {
 	if (butt->IsClippingImage() != (newval != 0)) {
 		butt->SetClipImage(newval != 0);
-		guis_need_update = 1;
+		_G(guis_need_update) = 1;
 	}
 }
 
@@ -140,7 +140,7 @@ void Button_SetMouseOverGraphic(GUIButton *guil, int slotn) {
 		guil->CurrentImage = slotn;
 	guil->MouseOverImage = slotn;
 
-	guis_need_update = 1;
+	_G(guis_need_update) = 1;
 	FindAndRemoveButtonAnimation(guil->ParentId, guil->Id);
 }
 
@@ -158,7 +158,7 @@ void Button_SetNormalGraphic(GUIButton *guil, int slotn) {
 	guil->Width = _GP(game).SpriteInfos[slotn].Width;
 	guil->Height = _GP(game).SpriteInfos[slotn].Height;
 
-	guis_need_update = 1;
+	_G(guis_need_update) = 1;
 	FindAndRemoveButtonAnimation(guil->ParentId, guil->Id);
 }
 
@@ -173,7 +173,7 @@ void Button_SetPushedGraphic(GUIButton *guil, int slotn) {
 		guil->CurrentImage = slotn;
 	guil->PushedImage = slotn;
 
-	guis_need_update = 1;
+	_G(guis_need_update) = 1;
 	FindAndRemoveButtonAnimation(guil->ParentId, guil->Id);
 }
 
@@ -184,7 +184,7 @@ int Button_GetTextColor(GUIButton *butt) {
 void Button_SetTextColor(GUIButton *butt, int newcol) {
 	if (butt->TextColor != newcol) {
 		butt->TextColor = newcol;
-		guis_need_update = 1;
+		_G(guis_need_update) = 1;
 	}
 }
 
@@ -222,7 +222,7 @@ int UpdateAnimatingButton(int bu) {
 	_GP(guibuts)[_G(animbuts)[bu].buttonid].CurrentImage = _GP(guibuts)[_G(animbuts)[bu].buttonid].Image;
 	_GP(guibuts)[_G(animbuts)[bu].buttonid].PushedImage = 0;
 	_GP(guibuts)[_G(animbuts)[bu].buttonid].MouseOverImage = 0;
-	guis_need_update = 1;
+	_G(guis_need_update) = 1;
 
 	_G(animbuts)[bu].wait = _G(animbuts)[bu].speed + tview->loops[_G(animbuts)[bu].loop].frames[_G(animbuts)[bu].frame].speed;
 	return 0;
@@ -285,7 +285,7 @@ int Button_GetTextAlignment(GUIButton *butt) {
 void Button_SetTextAlignment(GUIButton *butt, int align) {
 	if (butt->TextAlignment != align) {
 		butt->TextAlignment = (FrameAlignment)align;
-		guis_need_update = 1;
+		_G(guis_need_update) = 1;
 	}
 }
 

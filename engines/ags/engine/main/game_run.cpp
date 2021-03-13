@@ -456,7 +456,7 @@ static void check_keyboard_controls() {
 	// pressed, but exclude control characters (<32) and
 	// extended keys (eg. up/down arrow; 256+)
 	if ((((kgn >= 32) && (kgn <= 255) && (kgn != '[')) || (kgn == eAGSKeyCodeReturn) || (kgn == eAGSKeyCodeBackspace))
-		&& !all_buttons_disabled) {
+		&& !_G(all_buttons_disabled)) {
 		for (int guiIndex = 0; guiIndex < _GP(game).numgui; guiIndex++) {
 			auto &gui = _GP(guis)[guiIndex];
 
@@ -835,7 +835,7 @@ static int UpdateWaitMode() {
 	auto was_disabled_for = _G(user_disabled_for);
 
 	set_default_cursor();
-	guis_need_update = 1;
+	_G(guis_need_update) = 1;
 	_GP(play).disabled_user_interface--;
 	_G(user_disabled_for) = 0;
 
@@ -875,7 +875,7 @@ static int GameTick() {
 
 static void SetupLoopParameters(int untilwhat, const void *udata) {
 	_GP(play).disabled_user_interface++;
-	guis_need_update = 1;
+	_G(guis_need_update) = 1;
 	// Only change the mouse cursor if it hasn't been specifically changed first
 	// (or if it's speech, always change it)
 	if (((_G(cur_cursor) == _G(cur_mode)) || (untilwhat == UNTIL_NOOVERLAY)) &&

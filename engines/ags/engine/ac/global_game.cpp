@@ -75,10 +75,8 @@ using namespace AGS::Shared;
 
 #define ALLEGRO_KEYBOARD_HANDLER
 
-extern int gui_disabled_style;
-
 void GiveScore(int amnt) {
-	guis_need_update = 1;
+	_G(guis_need_update) = 1;
 	_GP(play).score += amnt;
 
 	if ((amnt > 0) && (_GP(play).score_sound >= 0))
@@ -400,7 +398,7 @@ int SetGameOption(int opt, int setting) {
 	if (opt == OPT_DUPLICATEINV)
 		update_invorder();
 	else if (opt == OPT_DISABLEOFF)
-		gui_disabled_style = convert_gui_disabled_style(_GP(game).options[OPT_DISABLEOFF]);
+		_G(gui_disabled_style) = convert_gui_disabled_style(_GP(game).options[OPT_DISABLEOFF]);
 	else if (opt == OPT_PORTRAITSIDE) {
 		if (setting == 0)  // set back to Left
 			_GP(play).swap_portrait_side = 0;
@@ -522,12 +520,12 @@ void GetLocationName(int xxx, int yyy, char *tempo) {
 		int mover = GetInvAt(xxx, yyy);
 		if (mover > 0) {
 			if (_GP(play).get_loc_name_last_time != 1000 + mover)
-				guis_need_update = 1;
+				_G(guis_need_update) = 1;
 			_GP(play).get_loc_name_last_time = 1000 + mover;
 			strcpy(tempo, get_translation(_GP(game).invinfo[mover].name));
 		} else if ((_GP(play).get_loc_name_last_time > 1000) && (_GP(play).get_loc_name_last_time < 1000 + MAX_INV)) {
 			// no longer selecting an item
-			guis_need_update = 1;
+			_G(guis_need_update) = 1;
 			_GP(play).get_loc_name_last_time = -1;
 		}
 		return;
@@ -546,7 +544,7 @@ void GetLocationName(int xxx, int yyy, char *tempo) {
 	if (loctype == 0) {
 		if (_GP(play).get_loc_name_last_time != 0) {
 			_GP(play).get_loc_name_last_time = 0;
-			guis_need_update = 1;
+			_G(guis_need_update) = 1;
 		}
 		return;
 	}
@@ -556,7 +554,7 @@ void GetLocationName(int xxx, int yyy, char *tempo) {
 		onhs = _G(getloctype_index);
 		strcpy(tempo, get_translation(_GP(game).chars[onhs].name));
 		if (_GP(play).get_loc_name_last_time != 2000 + onhs)
-			guis_need_update = 1;
+			_G(guis_need_update) = 1;
 		_GP(play).get_loc_name_last_time = 2000 + onhs;
 		return;
 	}
@@ -571,7 +569,7 @@ void GetLocationName(int xxx, int yyy, char *tempo) {
 			tempo[1] = 0;
 		}
 		if (_GP(play).get_loc_name_last_time != 3000 + aa)
-			guis_need_update = 1;
+			_G(guis_need_update) = 1;
 		_GP(play).get_loc_name_last_time = 3000 + aa;
 		return;
 	}
@@ -579,7 +577,7 @@ void GetLocationName(int xxx, int yyy, char *tempo) {
 	if (onhs > 0)
 		strcpy(tempo, get_translation(_GP(thisroom).Hotspots[onhs].Name));
 	if (_GP(play).get_loc_name_last_time != onhs)
-		guis_need_update = 1;
+		_G(guis_need_update) = 1;
 	_GP(play).get_loc_name_last_time = onhs;
 }
 

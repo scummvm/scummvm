@@ -826,7 +826,7 @@ void engine_init_game_settings() {
 	_GP(play).game_speed_modifier = 0;
 	if (_G(debug_flags) & DBG_DEBUGMODE)
 		_GP(play).debug_mode = 1;
-	gui_disabled_style = convert_gui_disabled_style(_GP(game).options[OPT_DISABLEOFF]);
+	_G(gui_disabled_style) = convert_gui_disabled_style(_GP(game).options[OPT_DISABLEOFF]);
 	_GP(play).shake_screen_yoff = 0;
 
 	memset(&_GP(play).walkable_areas_on[0], 1, MAX_WALK_AREAS + 1);

@@ -528,7 +528,7 @@ HSaveError DoAfterRestore(const PreservedParams &pp, const RestoredData &r_data)
 		on_background_frame_change();
 	}
 
-	gui_disabled_style = convert_gui_disabled_style(_GP(game).options[OPT_DISABLEOFF]);
+	_G(gui_disabled_style) = convert_gui_disabled_style(_GP(game).options[OPT_DISABLEOFF]);
 
 	// restore the queue now that the music is playing
 	_GP(play).music_queue_size = queuedMusicSize;
@@ -599,7 +599,7 @@ HSaveError DoAfterRestore(const PreservedParams &pp, const RestoredData &r_data)
 
 	recreate_overlay_ddbs();
 
-	guis_need_update = 1;
+	_G(guis_need_update) = 1;
 
 	RestoreViewportsAndCameras(r_data);
 

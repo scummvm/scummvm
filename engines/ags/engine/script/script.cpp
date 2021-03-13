@@ -433,7 +433,7 @@ int RunTextScript2IParam(ccInstance *sci, const char *tsname, const RuntimeScrip
 
 	// response to a button click, better update guis
 	if (ags_strnicmp(tsname, "interface_click", 15) == 0)
-		guis_need_update = 1;
+		_G(guis_need_update) = 1;
 
 	return RunScriptFunctionIfExists(sci, tsname, 2, params);
 }

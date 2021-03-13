@@ -61,7 +61,7 @@ void InvWindow_SetCharacterToUse(GUIInvWindow *guii, CharacterInfo *chaa) {
 	// reset to top of list
 	guii->TopItem = 0;
 
-	guis_need_update = 1;
+	_G(guis_need_update) = 1;
 }
 
 CharacterInfo *InvWindow_GetCharacterToUse(GUIInvWindow *guii) {
@@ -92,7 +92,7 @@ int InvWindow_GetItemHeight(GUIInvWindow *guii) {
 void InvWindow_SetTopItem(GUIInvWindow *guii, int topitem) {
 	if (guii->TopItem != topitem) {
 		guii->TopItem = topitem;
-		guis_need_update = 1;
+		_G(guis_need_update) = 1;
 	}
 }
 
@@ -116,7 +116,7 @@ void InvWindow_ScrollDown(GUIInvWindow *guii) {
 	if ((_G(charextra)[guii->GetCharacterId()].invorder_count) >
 		(guii->TopItem + (guii->ColCount * guii->RowCount))) {
 		guii->TopItem += guii->ColCount;
-		guis_need_update = 1;
+		_G(guis_need_update) = 1;
 	}
 }
 
@@ -126,7 +126,7 @@ void InvWindow_ScrollUp(GUIInvWindow *guii) {
 		if (guii->TopItem < 0)
 			guii->TopItem = 0;
 
-		guis_need_update = 1;
+		_G(guis_need_update) = 1;
 	}
 }
 
@@ -502,7 +502,7 @@ int invscreen() {
 	int selt = __actual_invscreen();
 	if (selt < 0) return -1;
 	_G(playerchar)->activeinv = selt;
-	guis_need_update = 1;
+	_G(guis_need_update) = 1;
 	set_cursor_mode(MODE_USE);
 	return selt;
 }

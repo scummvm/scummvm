@@ -93,15 +93,15 @@ void GUIButton::Draw(Bitmap *ds) {
 
 	check_font(&Font);
 	// if it's "Unchanged when disabled" or "GUI Off", don't grey out
-	if (gui_disabled_style == GUIDIS_UNCHANGED ||
-		gui_disabled_style == GUIDIS_GUIOFF) {
+	if (_G(gui_disabled_style) == GUIDIS_UNCHANGED ||
+		_G(gui_disabled_style) == GUIDIS_GUIOFF) {
 		draw_disabled = false;
 	}
 	// TODO: should only change properties in reaction to particular events
 	if (CurrentImage <= 0 || draw_disabled)
 		CurrentImage = Image;
 
-	if (draw_disabled && gui_disabled_style == GUIDIS_BLACKOUT)
+	if (draw_disabled && _G(gui_disabled_style) == GUIDIS_BLACKOUT)
 		// buttons off when disabled - no point carrying on
 		return;
 
@@ -265,11 +265,11 @@ void GUIButton::DrawImageButton(Bitmap *ds, bool draw_disabled) {
 		draw_gui_sprite(ds, CurrentImage, X, Y, true);
 
 	// Draw active inventory item
-	if (_placeholder != kButtonPlace_None && gui_inv_pic >= 0) {
+	if (_placeholder != kButtonPlace_None && _G(gui_inv_pic) >= 0) {
 		GUIButtonPlaceholder place = _placeholder;
 		if (place == kButtonPlace_InvItemAuto) {
-			if ((get_adjusted_spritewidth(gui_inv_pic) > Width - 6) ||
-				(get_adjusted_spriteheight(gui_inv_pic) > Height - 6)) {
+			if ((get_adjusted_spritewidth(_G(gui_inv_pic)) > Width - 6) ||
+				(get_adjusted_spriteheight(_G(gui_inv_pic)) > Height - 6)) {
 				place = kButtonPlace_InvItemStretch;
 			} else {
 				place = kButtonPlace_InvItemCenter;
@@ -277,16 +277,16 @@ void GUIButton::DrawImageButton(Bitmap *ds, bool draw_disabled) {
 		}
 
 		if (place == kButtonPlace_InvItemStretch) {
-			ds->StretchBlt(_GP(spriteset)[gui_inv_pic], RectWH(X + 3, Y + 3, Width - 6, Height - 6), Shared::kBitmap_Transparency);
+			ds->StretchBlt(_GP(spriteset)[_G(gui_inv_pic)], RectWH(X + 3, Y + 3, Width - 6, Height - 6), Shared::kBitmap_Transparency);
 		} else if (place == kButtonPlace_InvItemCenter) {
-			draw_gui_sprite(ds, gui_inv_pic,
-				X + Width / 2 - get_adjusted_spritewidth(gui_inv_pic) / 2,
-				Y + Height / 2 - get_adjusted_spriteheight(gui_inv_pic) / 2,
+			draw_gui_sprite(ds, _G(gui_inv_pic),
+				X + Width / 2 - get_adjusted_spritewidth(_G(gui_inv_pic)) / 2,
+				Y + Height / 2 - get_adjusted_spriteheight(_G(gui_inv_pic)) / 2,
 				true);
 		}
 	}
 
-	if ((draw_disabled) && (gui_disabled_style == GUIDIS_GREYOUT)) {
+	if ((draw_disabled) && (_G(gui_disabled_style) == GUIDIS_GREYOUT)) {
 		// darken the button when disabled
 		GUI::DrawDisabledEffect(ds, RectWH(X, Y,
 			_GP(spriteset)[CurrentImage]->GetWidth(),

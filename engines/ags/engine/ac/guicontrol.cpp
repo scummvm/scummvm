@@ -73,7 +73,7 @@ void GUIControl_SetVisible(GUIObject *guio, int visible) {
 	if (on != guio->IsVisible()) {
 		guio->SetVisible(on);
 		_GP(guis)[guio->ParentId].OnControlPositionChanged();
-		guis_need_update = 1;
+		_G(guis_need_update) = 1;
 	}
 }
 
@@ -90,7 +90,7 @@ void GUIControl_SetClickable(GUIObject *guio, int enabled) {
 		guio->SetClickable(false);
 
 	_GP(guis)[guio->ParentId].OnControlPositionChanged();
-	guis_need_update = 1;
+	_G(guis_need_update) = 1;
 }
 
 int GUIControl_GetEnabled(GUIObject *guio) {
@@ -102,7 +102,7 @@ void GUIControl_SetEnabled(GUIObject *guio, int enabled) {
 	if (on != guio->IsEnabled()) {
 		guio->SetEnabled(on);
 		_GP(guis)[guio->ParentId].OnControlPositionChanged();
-		guis_need_update = 1;
+		_G(guis_need_update) = 1;
 	}
 }
 
@@ -164,7 +164,7 @@ int GUIControl_GetX(GUIObject *guio) {
 void GUIControl_SetX(GUIObject *guio, int xx) {
 	guio->X = data_to_game_coord(xx);
 	_GP(guis)[guio->ParentId].OnControlPositionChanged();
-	guis_need_update = 1;
+	_G(guis_need_update) = 1;
 }
 
 int GUIControl_GetY(GUIObject *guio) {
@@ -174,7 +174,7 @@ int GUIControl_GetY(GUIObject *guio) {
 void GUIControl_SetY(GUIObject *guio, int yy) {
 	guio->Y = data_to_game_coord(yy);
 	_GP(guis)[guio->ParentId].OnControlPositionChanged();
-	guis_need_update = 1;
+	_G(guis_need_update) = 1;
 }
 
 int GUIControl_GetZOrder(GUIObject *guio) {
@@ -183,7 +183,7 @@ int GUIControl_GetZOrder(GUIObject *guio) {
 
 void GUIControl_SetZOrder(GUIObject *guio, int zorder) {
 	if (_GP(guis)[guio->ParentId].SetControlZOrder(guio->Id, zorder))
-		guis_need_update = 1;
+		_G(guis_need_update) = 1;
 }
 
 void GUIControl_SetPosition(GUIObject *guio, int xx, int yy) {
@@ -200,7 +200,7 @@ void GUIControl_SetWidth(GUIObject *guio, int newwid) {
 	guio->Width = data_to_game_coord(newwid);
 	guio->OnResized();
 	_GP(guis)[guio->ParentId].OnControlPositionChanged();
-	guis_need_update = 1;
+	_G(guis_need_update) = 1;
 }
 
 int GUIControl_GetHeight(GUIObject *guio) {
@@ -211,7 +211,7 @@ void GUIControl_SetHeight(GUIObject *guio, int newhit) {
 	guio->Height = data_to_game_coord(newhit);
 	guio->OnResized();
 	_GP(guis)[guio->ParentId].OnControlPositionChanged();
-	guis_need_update = 1;
+	_G(guis_need_update) = 1;
 }
 
 void GUIControl_SetSize(GUIObject *guio, int newwid, int newhit) {
@@ -225,12 +225,12 @@ void GUIControl_SetSize(GUIObject *guio, int newwid, int newhit) {
 
 void GUIControl_SendToBack(GUIObject *guio) {
 	if (_GP(guis)[guio->ParentId].SendControlToBack(guio->Id))
-		guis_need_update = 1;
+		_G(guis_need_update) = 1;
 }
 
 void GUIControl_BringToFront(GUIObject *guio) {
 	if (_GP(guis)[guio->ParentId].BringControlToFront(guio->Id))
-		guis_need_update = 1;
+		_G(guis_need_update) = 1;
 }
 
 //=============================================================================

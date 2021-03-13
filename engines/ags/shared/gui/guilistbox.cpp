@@ -25,6 +25,7 @@
 #include "ags/shared/gui/guimain.h"
 #include "ags/shared/util/stream.h"
 #include "ags/shared/util/string_utils.h"
+#include "ags/globals.h"
 
 namespace AGS3 {
 
@@ -78,7 +79,7 @@ bool GUIListBox::IsInRightMargin(int x) const {
 }
 
 int GUIListBox::AddItem(const String &text) {
-	guis_need_update = 1;
+	_G(guis_need_update) = 1;
 	Items.push_back(text);
 	SavedGameIndex.push_back(-1);
 	ItemCount++;
@@ -91,7 +92,7 @@ void GUIListBox::Clear() {
 	ItemCount = 0;
 	SelectedItem = 0;
 	TopItem = 0;
-	guis_need_update = 1;
+	_G(guis_need_update) = 1;
 }
 
 void GUIListBox::Draw(Shared::Bitmap *ds) {
@@ -177,7 +178,7 @@ int GUIListBox::InsertItem(int index, const String &text) {
 		SelectedItem++;
 
 	ItemCount++;
-	guis_need_update = 1;
+	_G(guis_need_update) = 1;
 	return ItemCount - 1;
 }
 
@@ -193,7 +194,7 @@ void GUIListBox::RemoveItem(int index) {
 		SelectedItem--;
 	if (SelectedItem >= ItemCount)
 		SelectedItem = -1;
-	guis_need_update = 1;
+	_G(guis_need_update) = 1;
 }
 
 void GUIListBox::SetShowArrows(bool on) {
@@ -225,7 +226,7 @@ void GUIListBox::SetFont(int font) {
 
 void GUIListBox::SetItemText(int index, const String &text) {
 	if (index >= 0 && index < ItemCount) {
-		guis_need_update = 1;
+		_G(guis_need_update) = 1;
 		Items[index] = text;
 	}
 }

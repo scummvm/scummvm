@@ -122,7 +122,7 @@ void GUI_SetSize(ScriptGUI *sgui, int widd, int hitt) {
 
 	recreate_guibg_image(tehgui);
 
-	guis_need_update = 1;
+	_G(guis_need_update) = 1;
 }
 
 int GUI_GetWidth(ScriptGUI *sgui) {
@@ -206,7 +206,7 @@ void GUI_Centre(ScriptGUI *sgui) {
 void GUI_SetBackgroundGraphic(ScriptGUI *tehgui, int slotn) {
 	if (_GP(guis)[tehgui->id].BgImage != slotn) {
 		_GP(guis)[tehgui->id].BgImage = slotn;
-		guis_need_update = 1;
+		_G(guis_need_update) = 1;
 	}
 }
 
@@ -219,7 +219,7 @@ int GUI_GetBackgroundGraphic(ScriptGUI *tehgui) {
 void GUI_SetBackgroundColor(ScriptGUI *tehgui, int newcol) {
 	if (_GP(guis)[tehgui->id].BgColor != newcol) {
 		_GP(guis)[tehgui->id].BgColor = newcol;
-		guis_need_update = 1;
+		_G(guis_need_update) = 1;
 	}
 }
 
@@ -232,7 +232,7 @@ void GUI_SetBorderColor(ScriptGUI *tehgui, int newcol) {
 		return;
 	if (_GP(guis)[tehgui->id].FgColor != newcol) {
 		_GP(guis)[tehgui->id].FgColor = newcol;
-		guis_need_update = 1;
+		_G(guis_need_update) = 1;
 	}
 }
 
@@ -247,7 +247,7 @@ void GUI_SetTextColor(ScriptGUI *tehgui, int newcol) {
 		return;
 	if (_GP(guis)[tehgui->id].FgColor != newcol) {
 		_GP(guis)[tehgui->id].FgColor = newcol;
-		guis_need_update = 1;
+		_G(guis_need_update) = 1;
 	}
 }
 
@@ -308,7 +308,7 @@ void remove_popup_interface(int ifacenum) {
 		set_default_cursor();
 
 	if (ifacenum == _G(mouse_on_iface)) _G(mouse_on_iface) = -1;
-	guis_need_update = 1;
+	_G(guis_need_update) = 1;
 }
 
 void process_interface_click(int ifce, int btn, int mbut) {
@@ -478,26 +478,26 @@ int convert_gui_disabled_style(int oldStyle) {
 void update_gui_disabled_status() {
 	// update GUI display status (perhaps we've gone into
 	// an interface disabled state)
-	int all_buttons_was = all_buttons_disabled;
-	all_buttons_disabled = 0;
+	int all_buttons_was = _G(all_buttons_disabled);
+	_G(all_buttons_disabled) = 0;
 
 	if (!IsInterfaceEnabled()) {
-		all_buttons_disabled = gui_disabled_style;
+		_G(all_buttons_disabled) = _G(gui_disabled_style);
 	}
 
-	if (all_buttons_was != all_buttons_disabled) {
+	if (all_buttons_was != _G(all_buttons_disabled)) {
 		// GUIs might have been removed/added
 		for (int aa = 0; aa < _GP(game).numgui; aa++) {
 			_GP(guis)[aa].OnControlPositionChanged();
 		}
-		guis_need_update = 1;
+		_G(guis_need_update) = 1;
 		invalidate_screen();
 	}
 }
 
 
 int adjust_x_for_guis(int xx, int yy) {
-	if ((_GP(game).options[OPT_DISABLEOFF] == 3) && (all_buttons_disabled > 0))
+	if ((_GP(game).options[OPT_DISABLEOFF] == 3) && (_G(all_buttons_disabled) > 0))
 		return xx;
 	// If it's covered by a GUI, move it right a bit
 	for (int aa = 0; aa < _GP(game).numgui; aa++) {
@@ -520,7 +520,7 @@ int adjust_x_for_guis(int xx, int yy) {
 }
 
 int adjust_y_for_guis(int yy) {
-	if ((_GP(game).options[OPT_DISABLEOFF] == 3) && (all_buttons_disabled > 0))
+	if ((_GP(game).options[OPT_DISABLEOFF] == 3) && (_G(all_buttons_disabled) > 0))
 		return yy;
 	// If it's covered by a GUI, move it down a bit
 	for (int aa = 0; aa < _GP(game).numgui; aa++) {
@@ -557,7 +557,7 @@ void recreate_guibg_image(GUIMain *tehgui) {
 }
 
 int gui_get_interactable(int x, int y) {
-	if ((_GP(game).options[OPT_DISABLEOFF] == 3) && (all_buttons_disabled > 0))
+	if ((_GP(game).options[OPT_DISABLEOFF] == 3) && (_G(all_buttons_disabled) > 0))
 		return -1;
 	return GetGUIAt(x, y);
 }
@@ -565,7 +565,7 @@ int gui_get_interactable(int x, int y) {
 int gui_on_mouse_move() {
 	int mouse_over_gui = -1;
 	// If all GUIs are off, skip the loop
-	if ((_GP(game).options[OPT_DISABLEOFF] == 3) && (all_buttons_disabled > 0));
+	if ((_GP(game).options[OPT_DISABLEOFF] == 3) && (_G(all_buttons_disabled) > 0));
 	else {
 		// Scan for mouse-y-pos GUIs, and pop one up if appropriate
 		// Also work out the mouse-over GUI while we're at it
@@ -585,7 +585,7 @@ int gui_on_mouse_move() {
 			if (_G(mousey) < _GP(guis)[guin].PopupAtMouseY) {
 				set_mouse_cursor(CURS_ARROW);
 				_GP(guis)[guin].SetConceal(false);
-				guis_need_update = 1;
+				_G(guis_need_update) = 1;
 				_G(ifacepopped) = guin;
 				PauseGame();
 				break;

@@ -53,7 +53,7 @@ void set_inv_item_pic(int invi, int piccy) {
 	}
 
 	_GP(game).invinfo[invi].pic = piccy;
-	guis_need_update = 1;
+	_G(guis_need_update) = 1;
 }
 
 void SetInvItemName(int invi, const char *newName) {
@@ -65,7 +65,7 @@ void SetInvItemName(int invi, const char *newName) {
 	_GP(game).invinfo[invi].name[24] = 0;
 
 	// might need to redraw the GUI if it has the inv item name on it
-	guis_need_update = 1;
+	_G(guis_need_update) = 1;
 }
 
 int GetInvAt(int xxx, int yyy) {

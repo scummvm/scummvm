@@ -178,9 +178,6 @@ enum GuiSvgVersion {
 
 } // namespace Shared
 } // namespace AGS
-
-extern int guis_need_update;
-
 } // namespace AGS3
 
 #endif

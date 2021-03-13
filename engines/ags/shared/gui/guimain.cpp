@@ -42,10 +42,6 @@ using namespace AGS::Shared;
 
 #define MOVER_MOUSEDOWNLOCKED -4000
 
-int guis_need_update = 1;
-int all_buttons_disabled = 0, gui_inv_pic = -1;
-int gui_disabled_style = 0;
-
 namespace AGS {
 namespace Shared {
 
@@ -231,7 +227,7 @@ void GUIMain::DrawAt(Bitmap *ds, int x, int y) {
 
 	SET_EIP(379)
 
-		if (all_buttons_disabled && gui_disabled_style == GUIDIS_BLACKOUT)
+		if (_G(all_buttons_disabled) && _G(gui_disabled_style) == GUIDIS_BLACKOUT)
 			return; // don't draw GUI controls
 
 	for (size_t ctrl_index = 0; ctrl_index < _controls.size(); ++ctrl_index) {
@@ -239,7 +235,7 @@ void GUIMain::DrawAt(Bitmap *ds, int x, int y) {
 
 		GUIObject *objToDraw = _controls[_ctrlDrawOrder[ctrl_index]];
 
-		if (!objToDraw->IsEnabled() && gui_disabled_style == GUIDIS_BLACKOUT)
+		if (!objToDraw->IsEnabled() && _G(gui_disabled_style) == GUIDIS_BLACKOUT)
 			continue;
 		if (!objToDraw->IsVisible())
 			continue;
@@ -307,7 +303,7 @@ void GUIMain::Poll() {
 					_controls[MouseOverCtrl]->OnMouseMove(_G(mousex), _G(mousey));
 				}
 			}
-			guis_need_update = 1;
+			_G(guis_need_update) = 1;
 		} else if (MouseOverCtrl >= 0)
 			_controls[MouseOverCtrl]->OnMouseMove(_G(mousex), _G(mousey));
 	}
@@ -422,7 +418,7 @@ void GUIMain::SetTextWindow(bool on) {
 
 void GUIMain::SetTransparencyAsPercentage(int percent) {
 	Transparency = GfxDef::Trans100ToLegacyTrans255(percent);
-	guis_need_update = 1;
+	_G(guis_need_update) = 1;
 }
 
 void GUIMain::SetVisible(bool on) {
@@ -451,7 +447,7 @@ void GUIMain::OnMouseButtonDown() {
 	if (_controls[MouseOverCtrl]->OnMouseDown())
 		MouseOverCtrl = MOVER_MOUSEDOWNLOCKED;
 	_controls[MouseDownCtrl]->OnMouseMove(_G(mousex) - X, _G(mousey) - Y);
-	guis_need_update = 1;
+	_G(guis_need_update) = 1;
 }
 
 void GUIMain::OnMouseButtonUp() {
@@ -467,7 +463,7 @@ void GUIMain::OnMouseButtonUp() {
 
 	_controls[MouseDownCtrl]->OnMouseUp();
 	MouseDownCtrl = -1;
-	guis_need_update = 1;
+	_G(guis_need_update) = 1;
 }
 
 void GUIMain::ReadFromFile(Stream *in, GuiVersion gui_version) {
@@ -660,7 +656,7 @@ HError ResortGUI(std::vector<GUIMain> &theGuis, bool bwcompat_ctrl_zorder = fals
 		}
 		gui.ResortZOrder();
 	}
-	guis_need_update = 1;
+	_G(guis_need_update) = 1;
 	return HError::None();
 }
 

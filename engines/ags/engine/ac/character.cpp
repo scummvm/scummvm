@@ -123,7 +123,7 @@ void Character_AddInventory(CharacterInfo *chaa, ScriptInvItem *invi, int addInd
 		_G(charextra)[charid].invorder[addIndex] = inum;
 	}
 	_G(charextra)[charid].invorder_count++;
-	guis_need_update = 1;
+	_G(guis_need_update) = 1;
 	if (chaa == _G(playerchar))
 		run_on_event(GE_ADD_INV, RuntimeScriptValue().SetInt32(inum));
 
@@ -665,7 +665,7 @@ void Character_LoseInventory(CharacterInfo *chap, ScriptInvItem *invi) {
 			}
 		}
 	}
-	guis_need_update = 1;
+	_G(guis_need_update) = 1;
 
 	if (chap == _G(playerchar))
 		run_on_event(GE_LOSE_INV, RuntimeScriptValue().SetInt32(inum));
@@ -1032,7 +1032,7 @@ ScriptInvItem *Character_GetActiveInventory(CharacterInfo *chaa) {
 }
 
 void Character_SetActiveInventory(CharacterInfo *chaa, ScriptInvItem *iit) {
-	guis_need_update = 1;
+	_G(guis_need_update) = 1;
 
 	if (iit == nullptr) {
 		chaa->activeinv = -1;

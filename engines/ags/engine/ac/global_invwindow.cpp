@@ -44,7 +44,7 @@ void SetInvDimensions(int ww, int hh) {
 		_GP(guiinv)[i].ItemHeight = hh;
 		_GP(guiinv)[i].OnResized();
 	}
-	guis_need_update = 1;
+	_G(guis_need_update) = 1;
 }
 
 } // namespace AGS3

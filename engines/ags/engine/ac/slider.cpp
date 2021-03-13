@@ -22,10 +22,10 @@
 
 #include "ags/engine/ac/slider.h"
 #include "ags/shared/ac/common.h"
-
 #include "ags/shared/debugging/out.h"
 #include "ags/engine/script/script_api.h"
 #include "ags/engine/script/script_runtime.h"
+#include "ags/globals.h"
 
 namespace AGS3 {
 
@@ -41,7 +41,7 @@ void Slider_SetMax(GUISlider *guisl, int valn) {
 		if (guisl->MinValue > guisl->MaxValue)
 			quit("!Slider.Max: minimum cannot be greater than maximum");
 
-		guis_need_update = 1;
+		_G(guis_need_update) = 1;
 	}
 
 }
@@ -60,7 +60,7 @@ void Slider_SetMin(GUISlider *guisl, int valn) {
 		if (guisl->MinValue > guisl->MaxValue)
 			quit("!Slider.Min: minimum cannot be greater than maximum");
 
-		guis_need_update = 1;
+		_G(guis_need_update) = 1;
 	}
 
 }
@@ -75,7 +75,7 @@ void Slider_SetValue(GUISlider *guisl, int valn) {
 
 	if (valn != guisl->Value) {
 		guisl->Value = valn;
-		guis_need_update = 1;
+		_G(guis_need_update) = 1;
 	}
 }
 
@@ -90,7 +90,7 @@ int Slider_GetBackgroundGraphic(GUISlider *guisl) {
 void Slider_SetBackgroundGraphic(GUISlider *guisl, int newImage) {
 	if (newImage != guisl->BgImage) {
 		guisl->BgImage = newImage;
-		guis_need_update = 1;
+		_G(guis_need_update) = 1;
 	}
 }
 
@@ -101,7 +101,7 @@ int Slider_GetHandleGraphic(GUISlider *guisl) {
 void Slider_SetHandleGraphic(GUISlider *guisl, int newImage) {
 	if (newImage != guisl->HandleImage) {
 		guisl->HandleImage = newImage;
-		guis_need_update = 1;
+		_G(guis_need_update) = 1;
 	}
 }
 
@@ -112,7 +112,7 @@ int Slider_GetHandleOffset(GUISlider *guisl) {
 void Slider_SetHandleOffset(GUISlider *guisl, int newOffset) {
 	if (newOffset != guisl->HandleOffset) {
 		guisl->HandleOffset = newOffset;
-		guis_need_update = 1;
+		_G(guis_need_update) = 1;
 	}
 }
 

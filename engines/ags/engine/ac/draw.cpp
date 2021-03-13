@@ -1890,11 +1890,11 @@ void draw_gui_and_overlays() {
 			quit("!The player.activeinv variable has been corrupted, probably as a result\n"
 			     "of an incorrect assignment in the game script.");
 		}
-		if (_G(playerchar)->activeinv < 1) gui_inv_pic = -1;
-		else gui_inv_pic = _GP(game).invinfo[_G(playerchar)->activeinv].pic;
+		if (_G(playerchar)->activeinv < 1) _G(gui_inv_pic) = -1;
+		else _G(gui_inv_pic) = _GP(game).invinfo[_G(playerchar)->activeinv].pic;
 		_G(our_eip) = 37;
-		if (guis_need_update) {
-			guis_need_update = 0;
+		if (_G(guis_need_update)) {
+			_G(guis_need_update) = 0;
 			for (aa = 0; aa < _GP(game).numgui; aa++) {
 				if (!_GP(guis)[aa].IsDisplayed()) continue;
 
@@ -1934,7 +1934,7 @@ void draw_gui_and_overlays() {
 
 			// Don't draw GUI if "GUIs Turn Off When Disabled"
 			if ((_GP(game).options[OPT_DISABLEOFF] == 3) &&
-			        (all_buttons_disabled > 0) &&
+			        (_G(all_buttons_disabled) > 0) &&
 			        (_GP(guis)[aa].PopupStyle != kGUIPopupNoAutoRemove))
 				continue;
 

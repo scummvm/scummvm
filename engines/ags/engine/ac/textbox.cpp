@@ -45,7 +45,7 @@ void TextBox_GetText(GUITextBox *texbox, char *buffer) {
 void TextBox_SetText(GUITextBox *texbox, const char *newtex) {
 	if (strcmp(texbox->Text, newtex)) {
 		texbox->Text = newtex;
-		guis_need_update = 1;
+		_G(guis_need_update) = 1;
 	}
 }
 
@@ -56,7 +56,7 @@ int TextBox_GetTextColor(GUITextBox *guit) {
 void TextBox_SetTextColor(GUITextBox *guit, int colr) {
 	if (guit->TextColor != colr) {
 		guit->TextColor = colr;
-		guis_need_update = 1;
+		_G(guis_need_update) = 1;
 	}
 }
 
@@ -70,7 +70,7 @@ void TextBox_SetFont(GUITextBox *guit, int fontnum) {
 
 	if (guit->Font != fontnum) {
 		guit->Font = fontnum;
-		guis_need_update = 1;
+		_G(guis_need_update) = 1;
 	}
 }
 
@@ -81,7 +81,7 @@ bool TextBox_GetShowBorder(GUITextBox *guit) {
 void TextBox_SetShowBorder(GUITextBox *guit, bool on) {
 	if (guit->IsBorderShown() != on) {
 		guit->SetShowBorder(on);
-		guis_need_update = 1;
+		_G(guis_need_update) = 1;
 	}
 }
 

@@ -24,6 +24,7 @@
 #include "ags/shared/gui/guimain.h"
 #include "ags/shared/gui/guiobject.h"
 #include "ags/shared/util/stream.h"
+#include "ags/globals.h"
 
 namespace AGS3 {
 namespace AGS {
@@ -197,4 +198,9 @@ HorAlignment ConvertLegacyGUIAlignment(LegacyGUIAlignment align) {
 
 } // namespace Shared
 } // namespace AGS
+
+bool IsGUIEnabled(AGS::Shared::GUIObject *g) {
+	return !_G(all_buttons_disabled) && g->IsEnabled();
+}
+
 } // namespace AGS3

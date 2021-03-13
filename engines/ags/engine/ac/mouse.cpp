@@ -216,7 +216,7 @@ void set_cursor_mode(int newmode) {
 	if ((newmode < 0) || (newmode >= _GP(game).numcursors))
 		quit("!SetCursorMode: invalid cursor mode specified");
 
-	guis_need_update = 1;
+	_G(guis_need_update) = 1;
 	if (_GP(game).mcurs[newmode].flags & MCF_DISABLED) {
 		find_next_enabled_cursor(newmode);
 		return;
@@ -248,7 +248,7 @@ void enable_cursor_mode(int modd) {
 			gbpt->SetEnabled(true);
 		}
 	}
-	guis_need_update = 1;
+	_G(guis_need_update) = 1;
 }
 
 void disable_cursor_mode(int modd) {
@@ -266,7 +266,7 @@ void disable_cursor_mode(int modd) {
 		}
 	}
 	if (_G(cur_mode) == modd) find_next_enabled_cursor(modd);
-	guis_need_update = 1;
+	_G(guis_need_update) = 1;
 }
 
 void RefreshMouse() {

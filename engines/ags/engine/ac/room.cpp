@@ -858,7 +858,7 @@ void load_new_room(int newnum, CharacterInfo *forchar) {
 	_G(our_eip) = 220;
 	update_polled_stuff_if_runtime();
 	debug_script_log("Now in room %d", _G(displayed_room));
-	guis_need_update = 1;
+	_G(guis_need_update) = 1;
 	pl_run_plugin_hooks(AGSE_ENTERROOM, _G(displayed_room));
 	//  MoveToWalkableArea(_GP(game).playercharacter);
 	//  MSS_CHECK_ALL_BLOCKS;
@@ -910,7 +910,7 @@ void new_room(int newnum, CharacterInfo *forchar) {
 				_G(gfxDriver)->DestroyDDB(_G(guibgbmp)[i]);
 			_G(guibgbmp)[i] = nullptr;
 		}
-		guis_need_update = 1;
+		_G(guis_need_update) = 1;
 	}
 
 	update_polled_stuff_if_runtime();

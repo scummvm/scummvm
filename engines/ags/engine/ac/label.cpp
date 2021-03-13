@@ -49,7 +49,7 @@ void Label_SetText(GUILabel *labl, const char *newtx) {
 	newtx = get_translation(newtx);
 
 	if (strcmp(labl->GetText(), newtx)) {
-		guis_need_update = 1;
+		_G(guis_need_update) = 1;
 		labl->SetText(newtx);
 	}
 }
@@ -61,7 +61,7 @@ int Label_GetTextAlignment(GUILabel *labl) {
 void Label_SetTextAlignment(GUILabel *labl, int align) {
 	if (labl->TextAlignment != align) {
 		labl->TextAlignment = (HorAlignment)align;
-		guis_need_update = 1;
+		_G(guis_need_update) = 1;
 	}
 }
 
@@ -72,7 +72,7 @@ int Label_GetColor(GUILabel *labl) {
 void Label_SetColor(GUILabel *labl, int colr) {
 	if (labl->TextColor != colr) {
 		labl->TextColor = colr;
-		guis_need_update = 1;
+		_G(guis_need_update) = 1;
 	}
 }
 
@@ -86,7 +86,7 @@ void Label_SetFont(GUILabel *guil, int fontnum) {
 
 	if (fontnum != guil->Font) {
 		guil->Font = fontnum;
-		guis_need_update = 1;
+		_G(guis_need_update) = 1;
 	}
 }
 
