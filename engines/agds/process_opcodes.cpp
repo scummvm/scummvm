@@ -1531,13 +1531,17 @@ void Process::getCharacterY() {
 }
 
 void Process::stopCharacter() {
-	int arg = pop();
+	int direction = pop();
 	Common::String name = popString();
-	debug("stopCharacter: stub %s %d", name.c_str(), arg);
+	debug("stopCharacter: %s, direction: %d", name.c_str(), direction);
 	Character *character = _engine->getCharacter(name);
-	if (character)
+	if (character) {
+		if (direction != -1) {
+			character->direction(direction);
+			debug("no suspend here, stub");
+		}
 		character->stop();
-	else
+	} else
 		warning("could not find character %s", name.c_str());
 }
 
