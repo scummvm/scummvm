@@ -67,6 +67,9 @@ public:
 	int frames() const {
 		return _frames;
 	}
+	bool ended() const {
+		return _phase >= _frames;
+	}
 
 	const Common::Point & position() const {
 		return _position;
