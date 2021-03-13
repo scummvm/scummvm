@@ -39,6 +39,7 @@
 #include "ags/lib/system/datetime.h"
 #include "ags/lib/std/algorithm.h"
 #include "ags/lib/std/thread.h"
+#include "ags/globals.h"
 
 #if defined (AGS_HAS_CD_AUDIO)
 #include "libcda.h"
@@ -60,34 +61,52 @@ AGSPlatformDriver *AGSPlatformDriver::instance = nullptr;
 
 void AGSPlatformDriver::AboutToQuitGame() {
 }
+
 void AGSPlatformDriver::PostAllegroInit(bool windowed) {
 }
+
 void AGSPlatformDriver::AttachToParentConsole() {
 }
+
+int AGSPlatformDriver::GetLastSystemError() {
+	return _G(errnum);
+}
+
 void AGSPlatformDriver::DisplaySwitchOut() {
 }
+
 void AGSPlatformDriver::DisplaySwitchIn() {
 }
+
 void AGSPlatformDriver::PauseApplication() {
 }
+
 void AGSPlatformDriver::ResumeApplication() {
 }
+
 void AGSPlatformDriver::GetSystemDisplayModes(std::vector<DisplayMode> &dms) {
 }
+
 bool AGSPlatformDriver::EnterFullscreenMode(const DisplayMode &dm) {
 	return true;
 }
+
 bool AGSPlatformDriver::ExitFullscreenMode() {
 	return true;
 }
+
 void AGSPlatformDriver::AdjustWindowStyleForFullscreen() {
 }
+
 void AGSPlatformDriver::AdjustWindowStyleForWindowed() {
 }
+
 void AGSPlatformDriver::RegisterGameWithGameExplorer() {
 }
+
 void AGSPlatformDriver::UnRegisterGameWithGameExplorer() {
 }
+
 void AGSPlatformDriver::PlayVideo(const char *name, int skip, int flags) {
 }
 
@@ -166,12 +185,14 @@ int AGSPlatformDriver::ConvertKeycodeToScanCode(int keycode) {
 bool AGSPlatformDriver::LockMouseToWindow() {
 	return false;
 }
+
 void AGSPlatformDriver::UnlockMouse() {
 }
 
 //-----------------------------------------------
 // IOutputHandler implementation
 //-----------------------------------------------
+
 void AGSPlatformDriver::PrintMessage(const Shared::DebugMessage &msg) {
 	if (_logToStdErr) {
 		if (msg.GroupName.IsEmpty())

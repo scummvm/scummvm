@@ -25,6 +25,7 @@
 
 #include "ags/lib/allegro/error.h"
 #include "ags/lib/allegro/fixed.h"
+#include "ags/globals.h"
 
 namespace AGS3 {
 
@@ -248,17 +249,17 @@ fixed fixatan2(fixed y, fixed x) {
 
 	if (x == 0) {
 		if (y == 0) {
-			*allegro_errno = AL_EDOM;
+			*_G(allegro_errno) = AL_EDOM;
 			return 0L;
 		} else
 			return ((y < 0) ? -0x00400000L : 0x00400000L);
 	}
 
-	*allegro_errno = AL_NOERROR;
+	*_G(allegro_errno) = AL_NOERROR;
 	r = fixdiv(y, x);
 
-	if (*allegro_errno) {
-		*allegro_errno = AL_NOERROR;
+	if (*_G(allegro_errno)) {
+		*_G(allegro_errno) = AL_NOERROR;
 		return ((y < 0) ? -0x00400000L : 0x00400000L);
 	}
 

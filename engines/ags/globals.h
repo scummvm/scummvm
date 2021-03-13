@@ -163,6 +163,9 @@ public:
 	 * @{
 	 */
 
+	int _errnum = 0;
+	int *_allegro_errno = &_errnum;
+
 	int __color_depth = 0;
 	int __rgb_r_shift_15 = DEFAULT_RGB_R_SHIFT_15;     /* truecolor pixel format */
 	int __rgb_g_shift_15 = DEFAULT_RGB_G_SHIFT_15;

@@ -70,9 +70,6 @@ enum AllegroError {
 	AL_EILSEQ = 42
 };
 
-extern AllegroError errnum;
-extern AllegroError *allegro_errno;
-
 } // namespace AGS3
 
 #endif
