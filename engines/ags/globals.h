@@ -464,6 +464,7 @@ public:
 	bool _screen_is_dirty = false;
 	AGS::Shared::Bitmap *_raw_saved_screen = nullptr;
 	AGS::Shared::Bitmap **_dynamicallyCreatedSurfaces = nullptr;
+	int _places_r = 3, _places_g = 2, _places_b = 3;
 
 	/**@}*/
 

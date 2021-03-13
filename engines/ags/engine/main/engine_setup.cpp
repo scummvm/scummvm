@@ -50,8 +50,6 @@ namespace AGS3 {
 using namespace AGS::Shared;
 using namespace AGS::Engine;
 
-extern int _places_r, _places_g, _places_b;
-
 // Convert guis position and size to proper game resolution.
 // Necessary for pre 3.1.0 games only to sync with modern engine.
 void convert_gui_to_game_resolution(GameDataVersion filever) {
@@ -191,8 +189,8 @@ void engine_setup_color_conversions(int coldepth) {
 		if (_G(_rgb_r_shift_16) == 10) {
 			// some very old graphics cards lie about being 16-bit when they
 			// are in fact 15-bit ... get around this
-			_places_r = 3;
-			_places_g = 3;
+			_G(places_r) = 3;
+			_G(places_g) = 3;
 		}
 	}
 	if (coldepth > 16) {
