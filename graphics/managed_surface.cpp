@@ -23,6 +23,7 @@
 #include "graphics/managed_surface.h"
 #include "common/algorithm.h"
 #include "common/textconsole.h"
+#include "common/endian.h"
 
 namespace Graphics {
 
@@ -347,11 +348,8 @@ void ManagedSurface::blitFromInner(const Surface &src, const Common::Rect &srcRe
 				*(uint16 *)destVal = destPixel;
 			else if (format.bytesPerPixel == 4)
 				*(uint32 *)destVal = destPixel;
-			else {
-				destVal[0] = rDest;
-				destVal[1] = gDest;
-				destVal[2] = bDest;
-			}
+			else
+				WRITE_UINT24(destVal, destPixel);
 		}
 	}
 
