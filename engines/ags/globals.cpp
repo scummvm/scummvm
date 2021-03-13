@@ -258,6 +258,9 @@ Globals::Globals() {
 	_navpoints = new int32_t[MAXNEEDSTAGES];
 	_nav = new Navigation();
 
+	// screen.cpp globals
+	_old_palette = new color[256];
+
 	// script.cpp globals
 	_scripts = new ExecutingScript[MAX_SCRIPT_AT_ONCE];
 	_gamescript = new PScript();
@@ -437,6 +440,9 @@ Globals::~Globals() {
 	// route_finder_impl.cpp globals
 	delete _navpoints;
 	delete _nav;
+
+	// screen.cpp globals
+	delete[] _old_palette;
 
 	// script.cpp globals
 	delete[] _scripts;

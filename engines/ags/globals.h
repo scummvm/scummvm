@@ -983,6 +983,17 @@ public:
 	 /**@}*/
 
 	/**
+	 * \defgroup screen globals
+	 * @{
+	 */
+
+	// Screenshot made in the last room, used during some of the transition effects
+	AGS::Shared::Bitmap *_saved_viewport_bitmap = nullptr;
+	color *_old_palette;
+
+	/**@}*/
+
+	/**
 	 * \defgroup script globals
 	 * @{
 	 */

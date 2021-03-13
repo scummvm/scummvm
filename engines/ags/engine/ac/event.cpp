@@ -48,8 +48,6 @@ namespace AGS3 {
 using namespace AGS::Shared;
 using namespace AGS::Engine;
 
-extern color old_palette[256];
-
 int run_claimable_event(const char *tsname, bool includeRoom, int numParams, const RuntimeScriptValue *params, bool *eventWasClaimed) {
 	*eventWasClaimed = true;
 	// Run the room script function, and if it is not claimed,
@@ -207,7 +205,7 @@ void process_event(EventHappened *evp) {
 
 		const bool ignore_transition = (_GP(play).screen_tint > 0);
 		if (((theTransition == FADE_CROSSFADE) || (theTransition == FADE_DISSOLVE)) &&
-			(saved_viewport_bitmap == nullptr) && !ignore_transition) {
+			(_G(saved_viewport_bitmap) == nullptr) && !ignore_transition) {
 			// transition type was not crossfade/dissolve when the screen faded out,
 			// but it is now when the screen fades in (Eg. a save game was restored
 			// with a different setting). Therefore just fade normally.
@@ -284,10 +282,10 @@ void process_event(EventHappened *evp) {
 				WaitForNextFrame();
 				transparency -= 16;
 			}
-			saved_viewport_bitmap->Release();
+			_G(saved_viewport_bitmap)->Release();
 
-			delete saved_viewport_bitmap;
-			saved_viewport_bitmap = nullptr;
+			delete _G(saved_viewport_bitmap);
+			_G(saved_viewport_bitmap) = nullptr;
 			set_palette_range(_G(palette), 0, 255, 0);
 			_G(gfxDriver)->DestroyDDB(ddb);
 		} else if (theTransition == FADE_DISSOLVE) {
@@ -299,17 +297,17 @@ void process_event(EventHappened *evp) {
 			for (aa = 0; aa < 16; aa++) {
 				// merge the palette while dithering
 				if (_GP(game).color_depth == 1) {
-					fade_interpolate(old_palette, _G(palette), interpal, aa * 4, 0, 255);
+					fade_interpolate(_G(old_palette), _G(palette), interpal, aa * 4, 0, 255);
 					set_palette_range(interpal, 0, 255, 0);
 				}
 				// do the dissolving
-				int maskCol = saved_viewport_bitmap->GetMaskColor();
+				int maskCol = _G(saved_viewport_bitmap)->GetMaskColor();
 				for (bb = 0; bb < viewport.GetWidth(); bb += 4) {
 					for (cc = 0; cc < viewport.GetHeight(); cc += 4) {
-						saved_viewport_bitmap->PutPixel(bb + pattern[aa] / 4, cc + pattern[aa] % 4, maskCol);
+						_G(saved_viewport_bitmap)->PutPixel(bb + pattern[aa] / 4, cc + pattern[aa] % 4, maskCol);
 					}
 				}
-				_G(gfxDriver)->UpdateDDBFromBitmap(ddb, saved_viewport_bitmap, false);
+				_G(gfxDriver)->UpdateDDBFromBitmap(ddb, _G(saved_viewport_bitmap), false);
 				construct_game_scene(true);
 				construct_game_screen_overlay(false);
 				_G(gfxDriver)->DrawSprite(0, 0, ddb);
@@ -318,8 +316,8 @@ void process_event(EventHappened *evp) {
 				WaitForNextFrame();
 			}
 
-			delete saved_viewport_bitmap;
-			saved_viewport_bitmap = nullptr;
+			delete _G(saved_viewport_bitmap);
+			_G(saved_viewport_bitmap) = nullptr;
 			set_palette_range(_G(palette), 0, 255, 0);
 			_G(gfxDriver)->DestroyDDB(ddb);
 		}
