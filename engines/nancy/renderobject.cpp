@@ -37,11 +37,11 @@ void RenderObject::init() {
 }
 
 void RenderObject::registerGraphics() {
-    NanEngine.graphicsManager->addObject(this);
+    g_nancy->graphicsManager->addObject(this);
 }
 
 RenderObject::~RenderObject() {
-    NanEngine.graphicsManager->removeObject(this);
+    g_nancy->graphicsManager->removeObject(this);
     if (_drawSurface.getPixels()) {
         _drawSurface.free();
     }

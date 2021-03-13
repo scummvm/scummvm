@@ -62,7 +62,11 @@
 
 namespace Nancy {
 
+NancyEngine *g_nancy;
+
 NancyEngine::NancyEngine(OSystem *syst, const NancyGameDescription *gd) : Engine(syst), _gameDescription(gd), _system(syst) {
+	g_nancy = this;
+
 	DebugMan.addDebugChannel(kDebugEngine, "Engine", "Engine debug level");
 	DebugMan.addDebugChannel(kDebugActionRecord, "ActionRecord", "Action Record debug level");
 	DebugMan.addDebugChannel(kDebugScene, "Scene", "Scene debug level");
@@ -327,18 +331,18 @@ void NancyEngine::bootGameEngine() {
 
 	// Persistent sounds that are used across the engine. These originally get loaded inside Logo
 	SoundDescription desc;
-	desc.read(*NanEngine.getBootChunkStream("BUOK"), SoundDescription::kNormal);
-	NanEngine.sound->loadSound(desc);
-	desc.read(*NanEngine.getBootChunkStream("BUDE"), SoundDescription::kNormal);
-	NanEngine.sound->loadSound(desc);
-	desc.read(*NanEngine.getBootChunkStream("BULS"), SoundDescription::kNormal);
-	NanEngine.sound->loadSound(desc);
-	desc.read(*NanEngine.getBootChunkStream("GLOB"), SoundDescription::kNormal);
-	NanEngine.sound->loadSound(desc);
-	desc.read(*NanEngine.getBootChunkStream("CURT"), SoundDescription::kNormal);
-	NanEngine.sound->loadSound(desc);
-	desc.read(*NanEngine.getBootChunkStream("CANT"), SoundDescription::kNormal);
-	NanEngine.sound->loadSound(desc);
+	desc.read(*g_nancy->getBootChunkStream("BUOK"), SoundDescription::kNormal);
+	g_nancy->sound->loadSound(desc);
+	desc.read(*g_nancy->getBootChunkStream("BUDE"), SoundDescription::kNormal);
+	g_nancy->sound->loadSound(desc);
+	desc.read(*g_nancy->getBootChunkStream("BULS"), SoundDescription::kNormal);
+	g_nancy->sound->loadSound(desc);
+	desc.read(*g_nancy->getBootChunkStream("GLOB"), SoundDescription::kNormal);
+	g_nancy->sound->loadSound(desc);
+	desc.read(*g_nancy->getBootChunkStream("CURT"), SoundDescription::kNormal);
+	g_nancy->sound->loadSound(desc);
+	desc.read(*g_nancy->getBootChunkStream("CANT"), SoundDescription::kNormal);
+	g_nancy->sound->loadSound(desc);
 
 	delete boot;
 	

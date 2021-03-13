@@ -37,15 +37,15 @@ void InputManager::processEvents() {
     _inputs &= ~(NancyInput::kLeftMouseButtonDown | NancyInput::kLeftMouseButtonUp | NancyInput::kRightMouseButtonDown | NancyInput::kRightMouseButtonUp);
     _otherKbdInput.clear();
 
-    while (NanEngine.getEventManager()->pollEvent(event)) {
+    while (g_nancy->getEventManager()->pollEvent(event)) {
         switch (event.type) {
         case EVENT_KEYDOWN:
             if (event.kbd.keycode == KEYCODE_d && event.kbd.flags & Common::KBD_CTRL) {
                 // Launch debug console
-                NanEngine.launchConsole = true;
+                g_nancy->launchConsole = true;
             } else if (event.kbd.keycode == KEYCODE_q && event.kbd.flags & Common::KBD_CTRL) {
                 // Quit
-                NanEngine.quitGame();
+                g_nancy->quitGame();
             } else {
                 // Push all other keyboard events into an array and let getInput() callers handle them
                 _otherKbdInput.push_back(event.kbd);
@@ -53,7 +53,7 @@ void InputManager::processEvents() {
             break;
         case EVENT_CUSTOM_ENGINE_ACTION_START:
             if (_inputBeginState == nullptr) {
-                _inputBeginState = NanEngine.getState();
+                _inputBeginState = g_nancy->getState();
             }
             
             switch (event.customType) {
@@ -81,10 +81,10 @@ void InputManager::processEvents() {
                 _inputs |= NancyInput::kMoveFastModifier;
                 break;
             case kNancyActionRequestCheatMenu:
-                NanEngine.callCheatMenu(false);
+                g_nancy->callCheatMenu(false);
                 break;
             case kNancyActionRequestEventMenu:
-                NanEngine.callCheatMenu(true);
+                g_nancy->callCheatMenu(true);
                 break;
             default:
                 break;
@@ -137,7 +137,7 @@ NancyInput InputManager::getInput() const {
     // Filter out inputs that began in other states; e.g. if the mouse was pushed and held down
     // in a previous state, the button up event won't fire. Right now we simply block all events
     // until everything's clear, but if that causes problems the fix should be easy.
-    if (_inputBeginState == NanEngine.getState()) {
+    if (_inputBeginState == g_nancy->getState()) {
         ret.input = _inputs;
         ret.otherKbdInput = _otherKbdInput;
     } else {
@@ -145,7 +145,7 @@ NancyInput InputManager::getInput() const {
     }
 
     if (_mouseEnabled) {
-        ret.mousePos = NanEngine.getEventManager()->getMousePos();
+        ret.mousePos = g_nancy->getEventManager()->getMousePos();
     } else {
         ret.eatMouseInput();
     }

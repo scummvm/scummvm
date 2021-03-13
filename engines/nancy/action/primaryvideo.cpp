@@ -228,8 +228,8 @@ void PlayPrimaryVideoChan0::execute() {
     case kBegin:
         init();
         registerGraphics();
-        NanEngine.sound->loadSound(sound);
-        NanEngine.sound->playSound(sound);
+        g_nancy->sound->loadSound(sound);
+        g_nancy->sound->playSound(sound);
         state = kRun;
         activePrimaryVideo = this;
         // fall through
@@ -257,8 +257,8 @@ void PlayPrimaryVideoChan0::execute() {
             }
         }
 
-        if (!NanEngine.sound->isSoundPlaying(sound) && _decoder.endOfVideo()) {
-            NanEngine.sound->stopSound(sound);
+        if (!g_nancy->sound->isSoundPlaying(sound) && _decoder.endOfVideo()) {
+            g_nancy->sound->stopSound(sound);
             
             if (responses.size() == 0) {
                 // NPC has finished talking with no responses available, auto-advance to next scene
@@ -276,8 +276,8 @@ void PlayPrimaryVideoChan0::execute() {
                     // Player has picked response, play sound file and change state
                     responseGenericSound.name = responses[pickedResponse].soundName;
                     // TODO this is probably not correct
-                    NanEngine.sound->loadSound(responseGenericSound);
-                    NanEngine.sound->playSound(responseGenericSound);
+                    g_nancy->sound->loadSound(responseGenericSound);
+                    g_nancy->sound->playSound(responseGenericSound);
                     state = kActionTrigger;
                 }
             }
@@ -296,8 +296,8 @@ void PlayPrimaryVideoChan0::execute() {
             NancySceneState.setEventFlag(responses[pickedResponse].flagDesc);
         }
 
-        if (!NanEngine.sound->isSoundPlaying(responseGenericSound)) {
-            NanEngine.sound->stopSound(responseGenericSound);
+        if (!g_nancy->sound->isSoundPlaying(responseGenericSound)) {
+            g_nancy->sound->stopSound(responseGenericSound);
             
             if (pickedResponse != -1) {
                 NancySceneState.changeScene(responses[pickedResponse].sceneChange);
@@ -370,7 +370,7 @@ void PlayPrimaryVideoChan0::addGoodbye() {
             newResponse.soundName = snd;
             newResponse.text = file.readString();
             // response is picked randomly
-            newResponse.sceneChange.sceneID = res.sceneIDs[NanEngine.randomSource->getRandomNumber(3)];
+            newResponse.sceneChange.sceneID = res.sceneIDs[g_nancy->randomSource->getRandomNumber(3)];
             newResponse.sceneChange.doNotStartSound = true;
 
             file.close();

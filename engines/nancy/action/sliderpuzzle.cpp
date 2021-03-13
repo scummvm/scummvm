@@ -43,7 +43,7 @@ void SliderPuzzle::init() {
     
     setTransparent(true);
 
-    NanEngine.resource->loadImage(imageName, image);
+    g_nancy->resource->loadImage(imageName, image);
 }
 
 void SliderPuzzle::readData(Common::SeekableReadStream &stream) {
@@ -111,7 +111,7 @@ void SliderPuzzle::execute() {
         init();
         registerGraphics();
         if (!playerHasTriedPuzzle) {
-            Common::SeekableReadStream *spuz = NanEngine.getBootChunkStream("SPUZ");
+            Common::SeekableReadStream *spuz = g_nancy->getBootChunkStream("SPUZ");
             playerTileOrder.clear();
             spuz->seek(NancySceneState.getDifficulty() * 0x48);
             for (uint y = 0; y < height; ++y) {
@@ -133,7 +133,7 @@ void SliderPuzzle::execute() {
             }
         }
 
-        NanEngine.sound->loadSound(clickSound);
+        g_nancy->sound->loadSound(clickSound);
         state = kRun;
         // fall through
     case kRun:
@@ -147,13 +147,13 @@ void SliderPuzzle::execute() {
                 }
             }
 
-            NanEngine.sound->loadSound(solveSound);
-            NanEngine.sound->playSound(solveSound);
+            g_nancy->sound->loadSound(solveSound);
+            g_nancy->sound->playSound(solveSound);
             solveState = kWaitForSound;
             break;
         case kWaitForSound:
-            if (!NanEngine.sound->isSoundPlaying(solveSound)) {
-                NanEngine.sound->stopSound(solveSound);
+            if (!g_nancy->sound->isSoundPlaying(solveSound)) {
+                g_nancy->sound->stopSound(solveSound);
                 state = kActionTrigger;
             }
 
@@ -174,7 +174,7 @@ void SliderPuzzle::execute() {
             break;
         }
 
-        NanEngine.sound->stopSound(clickSound);
+        g_nancy->sound->stopSound(clickSound);
         finishExecution();
     }
 }
@@ -185,7 +185,7 @@ void SliderPuzzle::handleInput(NancyInput &input) {
     }
 
     if (NancySceneState.getViewport().convertViewportToScreen(exitHotspot).contains(input.mousePos)) {
-        NanEngine.cursorManager->setCursorType(CursorManager::kExitArrow);
+        g_nancy->cursorManager->setCursorType(CursorManager::kExitArrow);
 
         if (input.input & NancyInput::kLeftMouseButtonUp) {
             state = kActionTrigger;
@@ -241,10 +241,10 @@ void SliderPuzzle::handleInput(NancyInput &input) {
     }
 
     if (currentTileX != -1) {
-        NanEngine.cursorManager->setCursorType(CursorManager::kHotspot);
+        g_nancy->cursorManager->setCursorType(CursorManager::kHotspot);
 
         if (input.input & NancyInput::kLeftMouseButtonUp) {
-            NanEngine.sound->playSound(clickSound);
+            g_nancy->sound->playSound(clickSound);
             switch (direction) {
             case kUp: {
                 uint curTileID = playerTileOrder[currentTileY][currentTileX];

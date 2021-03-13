@@ -35,7 +35,7 @@ namespace Nancy {
 namespace Action {
 
 void PlayStaticBitmapAnimation::init() {
-    NanEngine.resource->loadImage(imageName, _fullSurface);
+    g_nancy->resource->loadImage(imageName, _fullSurface);
 
     setFrame(0);
 
@@ -86,13 +86,13 @@ void PlayStaticBitmapAnimation::readData(Common::SeekableReadStream &stream) {
 }
 
 void PlayStaticBitmapAnimation::execute() {
-    uint32 currentFrameTime = NanEngine.getTotalPlayTime();
+    uint32 currentFrameTime = g_nancy->getTotalPlayTime();
     switch (state) {
     case kBegin:
         init();
         registerGraphics();
-        NanEngine.sound->loadSound(sound);
-        NanEngine.sound->playSound(sound);
+        g_nancy->sound->loadSound(sound);
+        g_nancy->sound->playSound(sound);
         state = kRun;
         // fall through
     case kRun: {
@@ -102,7 +102,7 @@ void PlayStaticBitmapAnimation::execute() {
             if (NancySceneState.getEventFlag(interruptCondition) ||
                 (   (((currentFrame == loopLastFrame) && (isReverse == kFalse) && (isLooping == kFalse)) ||
                     ((currentFrame == loopFirstFrame) && (isReverse == kTrue) && (isLooping == kFalse))) &&
-                        !NanEngine.sound->isSoundPlaying(sound))   ) {
+                        !g_nancy->sound->isSoundPlaying(sound))   ) {
                 
                 state = kActionTrigger;
 
@@ -110,8 +110,8 @@ void PlayStaticBitmapAnimation::execute() {
                 // nancy1's safe lock light not turning off.
                 setVisible(false);
     
-                if (!NanEngine.sound->isSoundPlaying(sound)) {
-                    NanEngine.sound->stopSound(sound);
+                if (!g_nancy->sound->isSoundPlaying(sound)) {
+                    g_nancy->sound->stopSound(sound);
                 }
             } else {
                 // Check if we've moved the viewport

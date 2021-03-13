@@ -49,10 +49,10 @@ void GraphicsManager::init() {
     _screen.setTransparentColor(getTransColor());
     _screen.clear();
 
-    Common::SeekableReadStream *ob = NanEngine.getBootChunkStream("OB0");
+    Common::SeekableReadStream *ob = g_nancy->getBootChunkStream("OB0");
     ob->seek(0);
 
-    NanEngine.resource->loadImage(ob->readString(), object0);
+    g_nancy->resource->loadImage(ob->readString(), object0);
 
     loadFonts();
 }
@@ -219,7 +219,7 @@ void GraphicsManager::copyToManaged(void *src, Graphics::ManagedSurface &dst, ui
 }
 
 const Graphics::PixelFormat &GraphicsManager::getInputPixelFormat() {
-    if (NanEngine.getGameFlags() & NGF_8BITCOLOR) {
+    if (g_nancy->getGameFlags() & NGF_8BITCOLOR) {
         return clut8Format;
     } else {
         return inputPixelFormat;
@@ -227,7 +227,7 @@ const Graphics::PixelFormat &GraphicsManager::getInputPixelFormat() {
 }
 
 uint GraphicsManager::getTransColor() {
-    if (NanEngine.getGameFlags() & NGF_8BITCOLOR) {
+    if (g_nancy->getGameFlags() & NGF_8BITCOLOR) {
         return 1; // If this isn't correct, try picking the pixel at [0, 0] inside the palette bitmap
     } else {
         return inputPixelFormat.ARGBToColor(0, 0, 255, 0);
@@ -235,7 +235,7 @@ uint GraphicsManager::getTransColor() {
 }
 
 void GraphicsManager::loadFonts() {
-    Common::SeekableReadStream *chunk = NanEngine.getBootChunkStream("FONT");
+    Common::SeekableReadStream *chunk = g_nancy->getBootChunkStream("FONT");
     
     chunk->seek(0);
     while (chunk->pos() < chunk->size() - 1) {
