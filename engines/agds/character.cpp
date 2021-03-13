@@ -135,6 +135,7 @@ void Character::direction(int dir) {
 		debug("no animation?");
 		_phase = -1;
 		_frames = 0;
+		return;
 	}
 	_animation->rewind();
 }
