@@ -47,6 +47,8 @@
 #include "engines/icb/gfx/rlp_api.h"
 #include "engines/icb/common/px_capri_maths_pc.h"
 #include "engines/icb/common/px_capri_maths.h"
+#include "engines/icb/common/ptr_util.h"
+#include "engines/icb/sound.h"
 
 namespace ICB {
 
@@ -116,7 +118,7 @@ void Init_globals() {
 			i = atoi(value);
 
 			Tdebug("globals.txt", "found var [%s] set to [%s, %d]", input, value, i);
-			g_globalScriptVariables.InitVariable(input, i);
+			g_globalScriptVariables->InitVariable(input, i);
 
 			nVars++;
 		} while (index < (len - 1));
@@ -127,12 +129,14 @@ void Init_globals() {
 
 	// Right all done
 	// So sort the globals so they can be searched quicker !
-	g_globalScriptVariables.SortVariables();
+	g_globalScriptVariables->SortVariables();
 
 	Tdebug("globals.txt", "Found %d global variables", nVars);
 }
 
 void CreateGlobalObjects() {
+	g_ptrArray = new Common::Array<PointerReference>();
+	g_globalScriptVariables = new CpxGlobalScriptVariables;
 	g_theSequenceManager = new MovieManager;
 	g_while_u_wait_SequenceManager = new MovieManager;
 	g_personalSequenceManager = new MovieManager;
@@ -172,6 +176,8 @@ void CreateGlobalObjects() {
 }
 
 void DestroyGlobalObjects() {
+	delete g_ptrArray;
+	delete g_globalScriptVariables;
 	delete g_theSequenceManager;
 	delete g_while_u_wait_SequenceManager;
 	delete g_personalSequenceManager;

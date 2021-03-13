@@ -3164,7 +3164,7 @@ void _game_session::Restart_player() {
 }
 
 uint32 _player::GetBulletsPerClip() {
-	uint32 bull_per_clip = g_globalScriptVariables.GetVariable("bullets_per_clip");
+	uint32 bull_per_clip = g_globalScriptVariables->GetVariable("bullets_per_clip");
 	return bull_per_clip;
 }
 

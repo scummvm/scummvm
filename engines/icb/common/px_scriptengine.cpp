@@ -36,7 +36,7 @@ namespace ICB {
 
 const char *playerString = "player";
 
-CpxGlobalScriptVariables g_globalScriptVariables;
+CpxGlobalScriptVariables *g_globalScriptVariables;
 
 // Information for the script program stack
 #define STACK_SIZE 10  // The size of the stack
@@ -217,7 +217,7 @@ scriptInterpreterReturnCodes RunScript(const char *&scriptData, // A pointer to 
 
 		case CP_PUSH_GLOBAL_VAR32: {
 			Fetch32(parameter1);                                          // hash of global
-			parameter2 = g_globalScriptVariables.GetVariable(parameter1); // value of global
+			parameter2 = g_globalScriptVariables->GetVariable(parameter1); // value of global
 			PushOnStack(parameter2);                                      // push on stack
 			                                                              // printf("push global 0x%08x = %d",parameter1,parameter2);
 		} break;
@@ -225,7 +225,7 @@ scriptInterpreterReturnCodes RunScript(const char *&scriptData, // A pointer to 
 		case CP_POP_GLOBAL_VAR32: {
 			Fetch32(parameter1);                                         // hash of global
 			PopOffStack(parameter2);                                     // value from stack
-			g_globalScriptVariables.SetVariable(parameter1, parameter2); // set value
+			g_globalScriptVariables->SetVariable(parameter1, parameter2); // set value
 			                                                             // printf("pop global 0x%08x = %d",parameter1,parameter2);
 		} break;
 

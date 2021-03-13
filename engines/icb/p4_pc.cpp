@@ -235,8 +235,8 @@ void InitEngine(const char *lpCmdLine) {
 	// init global variables
 	Zdebug("Init_globals");
 	Init_globals();
-	g_globalScriptVariables.SetVariable("missionelapsedtime", 0);
-	g_globalScriptVariables.SetVariable("demo", 0);
+	g_globalScriptVariables->SetVariable("missionelapsedtime", 0);
+	g_globalScriptVariables->SetVariable("demo", 0);
 	Zdebug("~Init_globals");
 
 	// ok, see if the special gameScript is present

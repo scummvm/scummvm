@@ -40,21 +40,21 @@
 namespace ICB {
 
 int32 LoadMission(int32 m, void * /*usr*/) {
-	int32 demo = g_globalScriptVariables.GetVariable("demo");
+	int32 demo = g_globalScriptVariables->GetVariable("demo");
 	Init_globals(); // reload the global vars for the new mission
-	g_globalScriptVariables.SetVariable("missionelapsedtime", 0);
+	g_globalScriptVariables->SetVariable("missionelapsedtime", 0);
 
 	// On mission 8 (m=7?) then set a global variable to say we are on mission 8 and not on mission 9
 	if (m == 7) {
-		g_globalScriptVariables.SetVariable("mission9", 0);
+		g_globalScriptVariables->SetVariable("mission9", 0);
 	}
 	// On mission 9 (m=8?) then set a global variable to say we are on mission 9 and not on mission 8
 	if (m == 8) {
-		g_globalScriptVariables.SetVariable("mission9", 1);
+		g_globalScriptVariables->SetVariable("mission9", 1);
 	}
 
 	// update the demo flag status
-	g_globalScriptVariables.SetVariable("demo", demo);
+	g_globalScriptVariables->SetVariable("demo", demo);
 
 	// Purge the res_man's to prevent them getting confused
 	rs_anims->Res_purge_all();
@@ -110,7 +110,7 @@ int32 FindMissionNumber(const char *mission) {
 		if (scumm_stricmp(g_mission_names[m], mission) == 0) {
 			// Mission 8-9 special case check
 			if (m == 6) {
-				if (g_globalScriptVariables.GetVariable("mission9") == 1)
+				if (g_globalScriptVariables->GetVariable("mission9") == 1)
 					m = 7;
 			}
 

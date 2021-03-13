@@ -26,22 +26,17 @@
  */
 
 #include "engines/icb/common/px_common.h"
+#include "engines/icb/common/ptr_util.h"
 
 #include "common/array.h"
 
 namespace ICB {
 
+Common::Array<PointerReference> *g_ptrArray;
+
 namespace MemoryUtil {
 
 const int32 PTR_ARRAY_MAX(1024);
-
-// map pointers to 32-bit references (bottom 32-bits of address)
-struct PointerReference {
-	uint32 ref;
-	uint8 *ptr;
-};
-
-Common::Array<PointerReference> ptrArray;
 
 uint32 encodePtr(uint8 *ptr) {
 	PointerReference ptrRef;
@@ -51,7 +46,7 @@ uint32 encodePtr(uint8 *ptr) {
 	ptrRef.ptr = ptr;
 
 	// find free slot
-	for (Common::Array<PointerReference>::iterator it = ptrArray.begin(); it < ptrArray.end(); it++) {
+	for (Common::Array<PointerReference>::iterator it = g_ptrArray->begin(); it < g_ptrArray->end(); it++) {
 		if (it->ref == 0) {
 			*it = ptrRef; // store
 			return ptrRef.ref;
@@ -59,9 +54,9 @@ uint32 encodePtr(uint8 *ptr) {
 	}
 
 	// append
-	ptrArray.push_back(ptrRef);
+	g_ptrArray->push_back(ptrRef);
 
-	if (ptrArray.size() >= (uint)PTR_ARRAY_MAX) {
+	if (g_ptrArray->size() >= (uint)PTR_ARRAY_MAX) {
 		error("MemoryUtil::encodePtr(): too many pointers (MAX = %u)\n", PTR_ARRAY_MAX);
 	}
 
@@ -73,7 +68,7 @@ uint8 *resolvePtr(uint32 ref) {
 		return NULL;
 
 	// do a linear search
-	for (Common::Array<PointerReference>::iterator it = ptrArray.begin(); it < ptrArray.end(); it++) {
+	for (Common::Array<PointerReference>::iterator it = g_ptrArray->begin(); it < g_ptrArray->end(); it++) {
 		if (it->ref == ref) {
 			uint8 *ptr = it->ptr;
 
@@ -90,7 +85,7 @@ uint8 *resolvePtr(uint32 ref) {
 	return NULL;
 }
 
-void clearAllPtrs(void) { ptrArray.clear(); }
+void clearAllPtrs(void) { g_ptrArray->clear(); }
 }
 
 } // End of namespace ICB

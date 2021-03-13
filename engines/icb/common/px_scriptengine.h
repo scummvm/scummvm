@@ -50,7 +50,7 @@ scriptInterpreterReturnCodes RunScript(const char *&scriptData, // A pointer to 
 
 void SetScriptDebugging(bool8 f); // Set script debugging flag
 
-extern CpxGlobalScriptVariables g_globalScriptVariables;
+extern CpxGlobalScriptVariables *g_globalScriptVariables;
 
 #define CP_END_SCRIPT 0               // Terminate a script
 #define CP_PUSH_INT32 1               // Push a number on to the stack

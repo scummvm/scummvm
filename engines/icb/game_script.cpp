@@ -96,9 +96,9 @@ void _game_script::Run_to_bookmark(const char *name) {
 	char p1[ENGINE_STRING_LEN];
 
 	// reset program counter (but keep demo flag!)
-	int32 demo = g_globalScriptVariables.GetVariable("demo");
+	int32 demo = g_globalScriptVariables->GetVariable("demo");
 	Restart_game_script();
-	g_globalScriptVariables.SetVariable("demo", demo);
+	g_globalScriptVariables->SetVariable("demo", demo);
 
 	// now loop through gamescript...
 	while (1) {
@@ -231,7 +231,7 @@ void _game_script::Process_game_script() {
 		Fetch_next_param(p1);
 		Fetch_next_param(p2);
 		Fetch_next_line();
-		g_globalScriptVariables.SetVariable(p1, (atoi(p2)));
+		g_globalScriptVariables->SetVariable(p1, (atoi(p2)));
 		break;
 
 	case 'R': // restart

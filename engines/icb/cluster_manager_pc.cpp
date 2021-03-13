@@ -176,7 +176,7 @@ char *ClusterManager::GetCDRoot(void) {
 
 int32 ClusterManager::WhichCD(MISSION_ID mission) {
 	// All demos exist on one CD only
-	int32 demo = g_globalScriptVariables.GetVariable("demo");
+	int32 demo = g_globalScriptVariables->GetVariable("demo");
 	if (demo != 0)
 		return 1;
 

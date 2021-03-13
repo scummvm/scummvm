@@ -385,7 +385,7 @@ uint32 _mission::Game_cycle() {
 	session->Process_conveyors(); // conveyor belts
 
 	// Update global timer by a tick
-	g_globalScriptVariables.SetVariable("missionelapsedtime", g_globalScriptVariables.GetVariable("missionelapsedtime") + 1);
+	g_globalScriptVariables->SetVariable("missionelapsedtime", g_globalScriptVariables->GetVariable("missionelapsedtime") + 1);
 
 	// call the camera director which will pick a view depending upon the player objects position
 	session->Camera_director();
@@ -633,14 +633,14 @@ void _mission::Save_game_position(const char *filename, const char *slot_label, 
 	stream->write((const char *)Fetch_tiny_session_name(), avalue);
 
 	// now write the globals out
-	atinyvalue = (uint8)g_globalScriptVariables.GetNoItems();
+	atinyvalue = (uint8)g_globalScriptVariables->GetNoItems();
 	Tdebug("save_restore.txt", " %d globals", atinyvalue);
 	stream->writeByte(atinyvalue);
 
 	for (j = 0; j < atinyvalue; j++) {
-		avalue = (int32)g_globalScriptVariables.GetVariable(g_globalScriptVariables[j].hash, 0, 0);
+		avalue = (int32)g_globalScriptVariables->GetVariable((*g_globalScriptVariables)[j].hash, 0, 0);
 		stream->writeSint32LE(avalue);
-		Tdebug("save_restore.txt", "  %d 0x%08x = %d", j, g_globalScriptVariables[j].hash, avalue);
+		Tdebug("save_restore.txt", "  %d 0x%08x = %d", j, (*g_globalScriptVariables)[j].hash, avalue);
 	}
 
 	// get the icon information
@@ -961,14 +961,14 @@ __load_result Load_game(const char *filename) {
 	// number of globals
 	atinyvalue = stream->readByte();
 	Tdebug("save_restore.txt", " %d globals", atinyvalue);
-	if (atinyvalue != (uint8)g_globalScriptVariables.GetNoItems()) {
+	if (atinyvalue != (uint8)g_globalScriptVariables->GetNoItems()) {
 		Tdebug("save_restore.txt", " globals mismatch");
 		return __GLOBAL_MISMATCH;
 	}
 
 	for (j = 0; j < atinyvalue; j++) {
 		avalue = stream->readSint32LE();
-		g_globalScriptVariables.SetVariable(g_globalScriptVariables[j].hash, avalue);
+		g_globalScriptVariables->SetVariable((*g_globalScriptVariables)[j].hash, avalue);
 		Tdebug("save_restore.txt", "  %d = %d", j, avalue);
 	}
 

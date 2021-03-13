@@ -30,7 +30,17 @@
 
 #include "engines/icb/common/px_common.h"
 
+#include "common/array.h"
+
 namespace ICB {
+
+// map pointers to 32-bit references (bottom 32-bits of address)
+struct PointerReference {
+	uint32 ref;
+	uint8 *ptr;
+};
+
+extern Common::Array<PointerReference> *g_ptrArray;
 
 namespace MemoryUtil {
 

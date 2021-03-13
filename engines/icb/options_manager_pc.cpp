@@ -678,7 +678,7 @@ void OptionsManager::StartGameOverOptions() {
 		g_missionNumber = 7;
 		break;
 	case '8':
-		if (g_globalScriptVariables.GetVariable("mission9") == 0)
+		if (g_globalScriptVariables->GetVariable("mission9") == 0)
 			g_missionNumber = 8;
 		else
 			g_missionNumber = 9;
@@ -953,7 +953,7 @@ void OptionsManager::StartMainOptions(void) {
 	MakeAllSurfii();
 
 	// Need to ensure that that global timer variable is set to zero
-	g_globalScriptVariables.SetVariable("missionelapsedtime", 0);
+	g_globalScriptVariables->SetVariable("missionelapsedtime", 0);
 
 	// Initial selection
 	m_M_TOP_selected = _NEWGAME;
@@ -1027,7 +1027,7 @@ void OptionsManager::InitialiseInGameOptions(void) {
 		strncpy(m_defaultSlotName, GetTextFromReference(HashString("opt_mainlandbase")), MAX_LABEL_LENGTH - 1);
 		break;
 	case '8':
-		if (g_globalScriptVariables.GetVariable("mission9") == 0)
+		if (g_globalScriptVariables->GetVariable("mission9") == 0)
 			strncpy(m_defaultSlotName, GetTextFromReference(HashString("opt_islandbase")), MAX_LABEL_LENGTH - 1);
 		else
 			strncpy(m_defaultSlotName, GetTextFromReference(HashString("opt_escape")), MAX_LABEL_LENGTH - 1);
@@ -1044,7 +1044,7 @@ void OptionsManager::InitialiseInGameOptions(void) {
 	m_defaultSlotName[MAX_LABEL_LENGTH - 1] = 0;
 
 	// Get number of game ticks at ~12fps
-	int32 ticks = g_globalScriptVariables.GetVariable("missionelapsedtime");
+	int32 ticks = g_globalScriptVariables->GetVariable("missionelapsedtime");
 
 	// Convert to seconds played
 	m_timePlayed = (uint32)((float)ticks / 12.0f);
@@ -1868,7 +1868,7 @@ void OptionsManager::MoveSelected(bool8 _down_) {
 
 	int32 currentlySelected;
 
-	int32 demo = g_globalScriptVariables.GetVariable("demo");
+	int32 demo = g_globalScriptVariables->GetVariable("demo");
 
 	ResetTitleScreenTimeout();
 
@@ -3230,20 +3230,20 @@ void OptionsManager::DoChoice() {
 
 			// Mission 8-9 special cases
 			if (g_missionNumber == 7) {
-				g_globalScriptVariables.SetVariable("mission9", 0);
+				g_globalScriptVariables->SetVariable("mission9", 0);
 			}
 			if (g_missionNumber == 8) {
-				g_globalScriptVariables.SetVariable("mission9", 1);
+				g_globalScriptVariables->SetVariable("mission9", 1);
 			}
 
 			// Need to preserve global timer variable
 			int32 tv;
-			tv = g_globalScriptVariables.GetVariable("missionelapsedtime");
+			tv = g_globalScriptVariables->GetVariable("missionelapsedtime");
 
 			// Use this function and then quit
 			RestartMission();
 
-			g_globalScriptVariables.SetVariable("missionelapsedtime", tv);
+			g_globalScriptVariables->SetVariable("missionelapsedtime", tv);
 
 			m_thatsEnoughTa = TRUE8;
 			break;
@@ -3917,7 +3917,7 @@ void OptionsManager::DrawPlaySelectScreen(uint32 surface_id) {
 	const char *msg = NULL;
 
 	// Some of this is disabled for demos
-	int32 demo = g_globalScriptVariables.GetVariable("demo");
+	int32 demo = g_globalScriptVariables->GetVariable("demo");
 
 	uint8 *ad = surface_manager->Lock_surface(surface_id);
 	uint32 pitch = surface_manager->Get_pitch(surface_id);

@@ -189,7 +189,7 @@ void DrawTimer() {
 
 	int32 mins, secs, cycles, totalSecs, hs, danger;
 
-	cycles = g_globalScriptVariables.GetVariable(timerVariable);
+	cycles = g_globalScriptVariables->GetVariable(timerVariable);
 
 	totalSecs = cycles / timerMultiplier;
 
@@ -230,7 +230,7 @@ mcodeFunctionReturnCodes fn_activate_timer(int32 &, int32 *params) {
 	timerVariable = HashString(timer_name);
 
 	// test variable exists...
-	int32 test = g_globalScriptVariables.FindVariable(timerVariable);
+	int32 test = g_globalScriptVariables->FindVariable(timerVariable);
 	if (test == -1) {
 		Fatal_error("No global variable %s which fn_activate_timer() has been told to follow!", timer_name);
 	}
