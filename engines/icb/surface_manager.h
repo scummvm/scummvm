@@ -64,7 +64,6 @@ public:
 	uint32 m_width;  // The surface width
 	uint32 m_height; // The surface height
 	bool8 m_locked;  // Is the surface locked ?
-	bool8 m_colorKeyEnable;
 	uint32 m_colorKey;
 
 	_surface();

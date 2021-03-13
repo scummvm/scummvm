@@ -178,7 +178,6 @@ uint32 _surface_manager::Init_direct_draw() {
 	m_Surfaces[0]->m_height = SCREEN_DEPTH;
 	m_Surfaces[0]->m_name = "backbuffer";
 	m_Surfaces[0]->m_dds = screenSurface;
-	m_Surfaces[0]->m_colorKeyEnable = false;
 
 	working_buffer_id = 0;
 
@@ -278,7 +277,6 @@ uint32 _surface_manager::Create_new_surface(const char *name, uint32 width, uint
 	m_Surfaces[slot]->m_name = name;
 	m_Surfaces[slot]->m_dds = new Graphics::Surface;
 	m_Surfaces[slot]->m_dds->create(width, height, Graphics::PixelFormat(4, 8, 8, 8, 8, 16, 8, 0, 24));
-	m_Surfaces[slot]->m_colorKeyEnable = false;
 
 	if (m_Surfaces[slot]->m_dds)
 		return slot;
@@ -403,23 +401,19 @@ void _surface_manager::Blit_surface_to_surface(uint32 from_id, uint32 to_id, LRE
 	Graphics::Surface *dstSurface = m_Surfaces[to_id]->m_dds;
 	Graphics::Surface *srcSurface = m_Surfaces[from_id]->m_dds;
 
-	if (dwFlags == 0) {
-		m_Surfaces[from_id]->m_colorKeyEnable = false;
-	}
-
 	if (pDestRect) {
 		if (pSrcRect) {
 			copyRectToSurface(dstSurface, srcSurface, dstRect.left, dstRect.top, srcRect,
-			                  m_Surfaces[from_id]->m_colorKeyEnable, m_Surfaces[from_id]->m_colorKey);
+			                  dwFlags != 0, m_Surfaces[from_id]->m_colorKey);
 		} else {
 			copyRectToSurface(dstSurface, srcSurface, dstRect.left, dstRect.top, Common::Rect(0, 0, srcSurface->w, srcSurface->h),
-			                  m_Surfaces[from_id]->m_colorKeyEnable, m_Surfaces[from_id]->m_colorKey);
+			                  dwFlags != 0, m_Surfaces[from_id]->m_colorKey);
 		}
 	} else {
 		if (pSrcRect) {
 			uint16 dstX = dstSurface->w - srcRect.right;
 			copyRectToSurface(dstSurface, srcSurface, dstX, 0, srcRect,
-			                  m_Surfaces[from_id]->m_colorKeyEnable, m_Surfaces[from_id]->m_colorKey);
+			                  dwFlags != 0, m_Surfaces[from_id]->m_colorKey);
 			if (dstX != 0) {
 				dstSurface->fillRect(Common::Rect(0, 0, dstX - 1, dstSurface->h), 0);
 			} else {
@@ -428,7 +422,7 @@ void _surface_manager::Blit_surface_to_surface(uint32 from_id, uint32 to_id, LRE
 			}
 		} else {
 			copyRectToSurface(dstSurface, srcSurface, 0, 0, Common::Rect(0, 0, srcSurface->w, srcSurface->h),
-			                  m_Surfaces[from_id]->m_colorKeyEnable, m_Surfaces[from_id]->m_colorKey);
+			                  dwFlags != 0, m_Surfaces[from_id]->m_colorKey);
 		}
 	}
 }
@@ -450,7 +444,6 @@ void _surface_manager::Blit_fillfx(uint32 surface_id, LRECT *rect, uint32 col) {
 }
 
 void _surface_manager::Set_transparent_colour_key(uint32 nSurfaceID, uint32 nKey) {
-	m_Surfaces[nSurfaceID]->m_colorKeyEnable = true;
 	m_Surfaces[nSurfaceID]->m_colorKey = nKey;
 }
 
