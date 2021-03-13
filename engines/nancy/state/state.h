@@ -28,6 +28,7 @@
 namespace Nancy {
 namespace State {
 
+// Base class for all states. Provides a simple API for handling state switching
 class State {
 public:
     State() {}
@@ -35,9 +36,7 @@ public:
 
     virtual void process() =0;
     virtual void onStateEnter() {}
-
-    // Returns whether the object destroyed itself after exit
-    virtual bool onStateExit() { return true; }
+    virtual bool onStateExit() { return true; } // Returns whether the object destroyed itself after exit
 };
 
 } // End of namespace State

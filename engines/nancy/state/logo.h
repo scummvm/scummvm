@@ -45,9 +45,7 @@ public:
 		
 	// State API
     virtual void process() override;
-    virtual bool onStateExit() override { destroy(); return true; };
-
-	uint MSNDchannelID; // This definitely shouldn't be here
+    virtual bool onStateExit() override;
 
 private:
 	void init();
@@ -65,6 +63,7 @@ private:
 	State _state;
 	uint _startTicks;
 	UI::FullScreenImage _logoImage;
+	SoundDescription _msnd;
 };
 
 #define NancyLogoState Nancy::State::Logo::instance()

@@ -20,7 +20,6 @@
  *
  */
 
-
 #ifndef NANCY_CHEAT_H
 #define NANCY_CHEAT_H
 

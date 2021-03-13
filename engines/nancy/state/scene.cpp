@@ -48,7 +48,48 @@ DECLARE_SINGLETON(Nancy::State::Scene);
 }
 
 namespace Nancy {
-namespace State{
+namespace State {
+
+void Scene::SceneSummary::read(Common::SeekableReadStream &stream) {
+    char *buf = new char[0x32];
+
+    stream.seek(0);
+    Common::Serializer ser(&stream, nullptr);
+    ser.setVersion(NanEngine.getGameType());
+
+    ser.syncBytes((byte *)buf, 0x32);
+    description = Common::String(buf);
+
+    ser.syncBytes((byte *)buf, 10);
+    buf[9] = 0;
+    videoFile = Common::String(buf);
+
+    // skip 2 unknown bytes
+    ser.skip(2);
+    videoFormat = stream.readUint16LE();
+
+    // Load the palette data in The Vampire Diaries
+    ser.skip(4, kGameTypeVampire, kGameTypeVampire);
+    ser.syncBytes((byte *)buf, 10, kGameTypeVampire, kGameTypeVampire);
+    videoPaletteFile = buf;
+    ser.skip(0x14, kGameTypeVampire, kGameTypeVampire);
+
+    sound.read(stream, SoundDescription::kScene);
+
+    ser.skip(0x10);
+    ser.syncAsUint16LE(verticalScrollDelta);
+    ser.syncAsUint16LE(horizontalEdgeSize);
+    ser.syncAsUint16LE(verticalEdgeSize);
+    ser.syncAsUint16LE((uint32 &)slowMoveTimeDelta);
+    ser.syncAsUint16LE((uint32 &)fastMoveTimeDelta);
+
+    if (NanEngine.overrideMovementTimeDeltas) {
+        slowMoveTimeDelta = NanEngine.slowMovementTimeDelta;
+        fastMoveTimeDelta = NanEngine.fastMovementTimeDelta;
+    }
+
+    delete[] buf;
+}
 
 void Scene::process() {
     switch (_state) {
@@ -66,7 +107,7 @@ void Scene::process() {
     case kStartSound:
         _state = kRun;
         if (!_sceneState._doNotStartSound) {
-            NanEngine.stopAndUnloadSpecificSounds();
+            NanEngine.sound->stopAndUnloadSpecificSounds();
             NanEngine.sound->loadSound(_sceneState.summary.sound);
             NanEngine.sound->playSound(_sceneState.summary.sound);
         }
@@ -129,7 +170,7 @@ void Scene::popScene() {
 }
 
 void Scene::pauseSceneSpecificSounds() {
-    // TODO missing if, same condition as the one in NancyEngine::stopAndUnloadSpecificSounds
+    // TODO missing if, same condition as the one in SoundManager::stopAndUnloadSpecificSounds
 
     for (uint i = 0; i < 10; ++i) {
 		NanEngine.sound->pauseSound(i, true);
@@ -159,6 +200,57 @@ void Scene::removeItemFromInventory(uint16 id, bool pickUp) {
     }
 
     _inventoryBox.removeItem(id);
+}
+
+void Scene::setEventFlag(int16 label, NancyFlag flag) {
+    if (label > -1) {
+        _flags.eventFlags[label] = flag;
+    }
+}
+
+void Scene::setEventFlag(EventFlagDescription eventFlag) {
+    setEventFlag(eventFlag.label, eventFlag.flag);
+}
+
+bool Scene::getEventFlag(int16 label, NancyFlag flag) const {
+    if (label > -1) {
+        return _flags.eventFlags[label] == flag;
+    } else {
+        return false;
+    }
+}
+
+bool Scene::getEventFlag(EventFlagDescription eventFlag) const {
+    return getEventFlag(eventFlag.label, eventFlag.flag);
+}
+
+void Scene::setLogicCondition(int16 label, NancyFlag flag) {
+    if (label > -1) {
+        _flags.logicConditions[label].flag = flag;
+        _flags.logicConditions[label].timestamp = NanEngine.getTotalPlayTime();
+    }
+}
+
+bool Scene::getLogicCondition(int16 label, NancyFlag flag) const {
+    if (label > -1) {
+        return _flags.logicConditions[label].flag == flag;
+    } else {
+        return false;
+    }
+}
+
+void Scene::clearLogicConditions() {
+    for (auto &cond : _flags.logicConditions) {
+        cond.flag = kFalse;
+        cond.timestamp = 0;
+    }
+}
+
+void Scene::useHint(int hintID, int hintWeight) {
+    if (_lastHint != hintID) {
+        _hintsRemaining[_difficulty] += hintWeight;
+        _lastHint = hintID;
+    }
 }
 
 void Scene::registerGraphics() {
@@ -242,7 +334,7 @@ void Scene::synchronize(Common::Serializer &ser) {
 	// TODO hardcoded number of event flags
 	ser.syncArray(_flags.eventFlags, 168, Common::Serializer::Byte);
 	
-	ser.syncArray<uint16>(_sceneState.sceneHitCount, (uint16)2001, Common::Serializer::Uint16LE);
+	ser.syncArray<uint16>(_flags.sceneHitCount, (uint16)2001, Common::Serializer::Uint16LE);
 
 	ser.syncAsUint16LE(_difficulty);
 	ser.syncArray<uint16>(_hintsRemaining.data(), _hintsRemaining.size(), Common::Serializer::Uint16LE);
@@ -256,7 +348,7 @@ void Scene::init() {
 
     // Does this ever get used?
     for (uint i = 0; i < 2001; ++i) {
-        _sceneState.sceneHitCount[i] = 0;
+        _flags.sceneHitCount[i] = 0;
     }
 
     for (uint i = 0; i < 11; ++i) {
@@ -306,36 +398,6 @@ void Scene::init() {
 
     registerGraphics();
     NanEngine.graphicsManager->redrawAll();
-}
-
-void Scene::initStaticData() {
-    Common::SeekableReadStream *chunk = NanEngine.getBootChunkStream("MAP");
-    chunk->seek(0x8A);
-    readRect(*chunk, _mapHotspot);
-
-    // Hardcoded by original engine
-    _mapAccessSceneIDs.clear();
-    _mapAccessSceneIDs.push_back(9);
-    _mapAccessSceneIDs.push_back(10);
-    _mapAccessSceneIDs.push_back(11);
-    _mapAccessSceneIDs.push_back(0x4B0);
-    _mapAccessSceneIDs.push_back(0x378);
-    _mapAccessSceneIDs.push_back(0x29A);
-    _mapAccessSceneIDs.push_back(0x4E2);
-    _mapAccessSceneIDs.push_back(0x682);
-
-    Common::SeekableReadStream *fr = NanEngine.getBootChunkStream("FR0");
-    fr->seek(0);
-
-    _frame.init(fr->readString());
-    _viewport.init();
-    _textbox.init();
-    _inventoryBox.init();
-    _menuButton.init();
-    _helpButton.init();
-    NanEngine.cursorManager->showCursor(true);
-
-    _state = kLoad;
 }
 
 void Scene::load() {
@@ -392,7 +454,7 @@ void Scene::load() {
     _sceneState.currentScene.frameID = _sceneState.nextScene.frameID;
 
     if (_sceneState.summary.videoFormat == 1) {
-        // TODO not sure this ever gets hit
+        // TODO
     } else if (_sceneState.summary.videoFormat == 2) {
         // always start from the bottom
         _sceneState.currentScene.verticalOffset = _viewport.getMaxScroll();
@@ -400,10 +462,8 @@ void Scene::load() {
         error("Unrecognized Scene summary chunk video file format");
     }
 
-    // Some checks against rFrame
-
     if (_sceneState.summary.videoFormat == 1) {
-        // TODO not sure this ever gets hit
+        // TODO
     } else if (_sceneState.summary.videoFormat == 2) {
         if (_viewport.getMaxScroll() == 0) {
             _viewport.disableEdges(kUp | kDown);
@@ -417,11 +477,11 @@ void Scene::load() {
 }
 
 void Scene::run() {
-    if (isComingFromMenu) {
+    if (_isComingFromMenu) {
         // TODO
     }
 
-    isComingFromMenu = false;
+    _isComingFromMenu = false;
 
 
     if (_gameStateRequested != NancyEngine::kNone) {
@@ -444,7 +504,7 @@ void Scene::run() {
     // Calculate the in-game time (playerTime)
     if (currentPlayTime > _timers.playerTimeNextMinute) {
         _timers.playerTime += 60000; // Add a minute
-        _timers.playerTimeNextMinute = currentPlayTime + playerTimeMinuteLength; // Set when we're going to add the next minute
+        _timers.playerTimeNextMinute = currentPlayTime + NanEngine.playerTimeMinuteLength;
     }
 
     // Set the time of day according to playerTime
@@ -484,45 +544,34 @@ void Scene::run() {
     _actionManager.processActionRecords();
 }
 
-void Scene::SceneSummary::read(Common::SeekableReadStream &stream) {
-    char *buf = new char[0x32];
+void Scene::initStaticData() {
+    Common::SeekableReadStream *chunk = NanEngine.getBootChunkStream("MAP");
+    chunk->seek(0x8A);
+    readRect(*chunk, _mapHotspot);
 
-    stream.seek(0);
-    Common::Serializer ser(&stream, nullptr);
-    ser.setVersion(NanEngine._gameDescription->gameType);
+    // Hardcoded by original engine
+    _mapAccessSceneIDs.clear();
+    _mapAccessSceneIDs.push_back(9);
+    _mapAccessSceneIDs.push_back(10);
+    _mapAccessSceneIDs.push_back(11);
+    _mapAccessSceneIDs.push_back(0x4B0);
+    _mapAccessSceneIDs.push_back(0x378);
+    _mapAccessSceneIDs.push_back(0x29A);
+    _mapAccessSceneIDs.push_back(0x4E2);
+    _mapAccessSceneIDs.push_back(0x682);
 
-    ser.syncBytes((byte *)buf, 0x32);
-    description = Common::String(buf);
+    Common::SeekableReadStream *fr = NanEngine.getBootChunkStream("FR0");
+    fr->seek(0);
 
-    ser.syncBytes((byte *)buf, 10);
-    buf[9] = 0;
-    videoFile = Common::String(buf);
+    _frame.init(fr->readString());
+    _viewport.init();
+    _textbox.init();
+    _inventoryBox.init();
+    _menuButton.init();
+    _helpButton.init();
+    NanEngine.cursorManager->showCursor(true);
 
-    // skip 2 unknown bytes
-    ser.skip(2);
-    videoFormat = stream.readUint16LE();
-
-    // Load the palette data in The Vampire Diaries
-    ser.skip(4, kGameTypeVampire, kGameTypeVampire);
-    ser.syncBytes((byte *)buf, 10, kGameTypeVampire, kGameTypeVampire);
-    videoPaletteFile = buf;
-    ser.skip(0x14, kGameTypeVampire, kGameTypeVampire);
-
-    sound.read(stream, SoundDescription::kScene);
-
-    ser.skip(0x10);
-    ser.syncAsUint16LE(verticalScrollDelta);
-    ser.syncAsUint16LE(horizontalEdgeSize);
-    ser.syncAsUint16LE(verticalEdgeSize);
-    ser.syncAsUint16LE((uint32 &)slowMoveTimeDelta);
-    ser.syncAsUint16LE((uint32 &)fastMoveTimeDelta);
-
-    if (NanEngine.overrideMovementTimeDeltas) {
-        slowMoveTimeDelta = NanEngine.slowMovementTimeDelta;
-        fastMoveTimeDelta = NanEngine.fastMovementTimeDelta;
-    }
-
-    delete[] buf;
+    _state = kLoad;
 }
 
 void Scene::clearSceneData() {
@@ -541,57 +590,6 @@ void Scene::clearSceneData() {
 
     clearLogicConditions();
     _actionManager.clearActionRecords();
-}
-
-void Scene::setEventFlag(int16 label, NancyFlag flag) {
-    if (label > -1) {
-        _flags.eventFlags[label] = flag;
-    }
-}
-
-void Scene::setEventFlag(EventFlagDescription eventFlag) {
-    setEventFlag(eventFlag.label, eventFlag.flag);
-}
-
-bool Scene::getEventFlag(int16 label, NancyFlag flag) const {
-    if (label > -1) {
-        return _flags.eventFlags[label] == flag;
-    } else {
-        return false;
-    }
-}
-
-bool Scene::getEventFlag(EventFlagDescription eventFlag) const {
-    return getEventFlag(eventFlag.label, eventFlag.flag);
-}
-
-void Scene::setLogicCondition(int16 label, NancyFlag flag) {
-    if (label > -1) {
-        _flags.logicConditions[label].flag = flag;
-        _flags.logicConditions[label].timestamp = NanEngine.getTotalPlayTime();
-    }
-}
-
-bool Scene::getLogicCondition(int16 label, NancyFlag flag) const {
-    if (label > -1) {
-        return _flags.logicConditions[label].flag == flag;
-    } else {
-        return false;
-    }
-}
-
-void Scene::clearLogicConditions() {
-    for (auto &cond : _flags.logicConditions) {
-        cond.flag = kFalse;
-        cond.timestamp = 0;
-    }
-}
-
-void Scene::useHint(int hintID, int hintWeight) {
-    if (_lastHint != hintID) {
-        _hintsRemaining[_difficulty] += hintWeight;
-        _lastHint = hintID;
-    }
 }
 
 } // End of namespace State

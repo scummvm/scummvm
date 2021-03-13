@@ -33,23 +33,6 @@
 
 #include "engines/advancedDetector.h"
 
-namespace Nancy {
-
-uint32 NancyEngine::getFeatures() const {
-	return _gameDescription->desc.flags;
-}
-
-const char *NancyEngine::getGameId() const {
-	return _gameDescription->desc.gameId;
-}
-
-void NancyEngine::initGame(const NancyGameDescription *gd) {
-	_gameType = gd->gameType;
-	_platform = gd->desc.platform;
-}
-
-} // End of namespace Nancy
-
 class NancyMetaEngine : public AdvancedMetaEngine {
 public:
     const char *getName() const override {
@@ -85,7 +68,6 @@ bool NancyMetaEngine::hasFeature(MetaEngineFeature f) const {
 Common::Error NancyMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const {
 	if (gd) {
 		*engine = Nancy::NancyEngine::create(((const Nancy::NancyGameDescription *)gd)->gameType, syst, (const Nancy::NancyGameDescription *)gd);
-		((Nancy::NancyEngine *)*engine)->initGame((const Nancy::NancyGameDescription *)gd);
 	}
 	if (gd) {
 		return Common::kNoError;

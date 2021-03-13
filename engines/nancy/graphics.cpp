@@ -219,7 +219,7 @@ void GraphicsManager::copyToManaged(void *src, Graphics::ManagedSurface &dst, ui
 }
 
 const Graphics::PixelFormat &GraphicsManager::getInputPixelFormat() {
-    if (NanEngine._gameDescription->desc.flags & NGF_8BITCOLOR) {
+    if (NanEngine.getGameFlags() & NGF_8BITCOLOR) {
         return clut8Format;
     } else {
         return inputPixelFormat;
@@ -227,7 +227,7 @@ const Graphics::PixelFormat &GraphicsManager::getInputPixelFormat() {
 }
 
 uint GraphicsManager::getTransColor() {
-    if (NanEngine._gameDescription->desc.flags & NGF_8BITCOLOR) {
+    if (NanEngine.getGameFlags() & NGF_8BITCOLOR) {
         return 1; // If this isn't correct, try picking the pixel at [0, 0] inside the palette bitmap
     } else {
         return inputPixelFormat.ARGBToColor(0, 0, 255, 0);

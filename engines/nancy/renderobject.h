@@ -53,8 +53,8 @@ public:
 
     virtual ~RenderObject();
 
-    virtual void init(); // Does _not_ get called automatically
-    virtual void registerGraphics();
+    virtual void init(); // Does not get called automatically
+    virtual void registerGraphics(); // Does not get called automatically
     virtual void updateGraphics() {}
 
     void moveTo(Common::Point position);

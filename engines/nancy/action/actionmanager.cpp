@@ -322,19 +322,19 @@ void ActionManager::processActionRecords() {
                         // Also, I'm pretty sure it never gets used
                         switch (dep.milliseconds) {
                         case 1:
-                            if (dep.seconds < NancySceneState._sceneState.sceneHitCount[dep.hours]) {
+                            if (dep.seconds < NancySceneState._flags.sceneHitCount[dep.hours]) {
                                 dep.satisfied = true;
                             }
 
                             break;
                         case 2:
-                            if (dep.seconds > NancySceneState._sceneState.sceneHitCount[dep.hours]) {
+                            if (dep.seconds > NancySceneState._flags.sceneHitCount[dep.hours]) {
                                 dep.satisfied = true;
                             }
 
                             break;
                         case 3:
-                            if (dep.seconds == NancySceneState._sceneState.sceneHitCount[dep.hours]) {
+                            if (dep.seconds == NancySceneState._flags.sceneHitCount[dep.hours]) {
                                 dep.satisfied = true;
                             }
 

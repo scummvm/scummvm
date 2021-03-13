@@ -177,7 +177,7 @@ Audio::SeekableAudioStream *SoundManager::makeHISStream(Common::SeekableReadStre
 }
 
 SoundManager::SoundManager() {
-	_mixer = NanEngine._system->getMixer();
+	_mixer = g_system->getMixer();
 
 	initSoundChannels();
 }
@@ -234,7 +234,7 @@ void SoundManager::pauseSound(uint16 channelID, bool pause) {
 		return;
 
 	if (isSoundPlaying(channelID)) {
-		NanEngine._system->getMixer()->pauseHandle(_channels[channelID].handle, pause);
+		g_system->getMixer()->pauseHandle(_channels[channelID].handle, pause);
 	}
 }
 
@@ -280,6 +280,14 @@ void SoundManager::stopSound(const SoundDescription &description) {
 // Returns whether the exception was skipped
 void SoundManager::stopAllSounds() {
 	for (uint i = 0; i < 32; ++i) {
+		stopSound(i);
+	}
+}
+
+void SoundManager::stopAndUnloadSpecificSounds() {
+	// TODO missing if
+
+	for (uint i = 0; i < 10; ++i) {
 		stopSound(i);
 	}
 }
