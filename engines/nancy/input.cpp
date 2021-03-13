@@ -52,6 +52,10 @@ void InputManager::processEvents() {
             }
             break;
         case EVENT_CUSTOM_ENGINE_ACTION_START:
+            if (_inputBeginState == nullptr) {
+                _inputBeginState = NanEngine.getState();
+            }
+            
             switch (event.customType) {
             case kNancyActionLeftClick:
                 _inputs |= NancyInput::kLeftMouseButtonDown;
@@ -121,17 +125,30 @@ void InputManager::processEvents() {
             break;
         }
     }
+
+    if (_inputs == 0 && _otherKbdInput.size() == 0) {
+        _inputBeginState = nullptr;
+    }
 }
 
 NancyInput InputManager::getInput() const {
     NancyInput ret;
-    ret.input = _inputs;
+
+    // Filter out inputs that began in other states; e.g. if the mouse was pushed and held down
+    // in a previous state, the button up event won't fire. Right now we simply block all events
+    // until everything's clear, but if that causes problems the fix should be easy.
+    if (_inputBeginState == NanEngine.getState()) {
+        ret.input = _inputs;
+        ret.otherKbdInput = _otherKbdInput;
+    } else {
+        ret.input = 0;
+    }
+
     if (_mouseEnabled) {
         ret.mousePos = NanEngine.getEventManager()->getMousePos();
     } else {
         ret.eatMouseInput();
     }
-    ret.otherKbdInput = _otherKbdInput;
     return ret;
 }
 

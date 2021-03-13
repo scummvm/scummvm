@@ -127,6 +127,7 @@ public:
 	void stopAndUnloadSpecificSounds();
 	
 	void setState(GameState state, GameState overridePrevious = kNone);
+	State::State *getState() { return _gameFlow.currentState; }
 	void setPreviousState();
 
 	void callCheatMenu(bool eventFlags) { setState(kCheat), _cheatTypeIsEventFlag = eventFlags; }
