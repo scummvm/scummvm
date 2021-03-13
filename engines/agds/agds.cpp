@@ -378,7 +378,7 @@ void AGDSEngine::resetCurrentScreen() {
 
 void AGDSEngine::runProcesses() {
 	for (uint i = 0; i < _processes.size(); ++i) {
-		ProcessPtr &process = _processes[i];
+		ProcessPtr process = _processes[i];
 		if (!process)
 			continue;
 
@@ -387,7 +387,7 @@ void AGDSEngine::runProcesses() {
 		}
 		if (process->finished()) {
 			debug("deleting process %s", process->getName().c_str());
-			process.reset();
+			_processes[i].reset();
 			//FIXME: when the last process exits, remove object from scene
 		} else {
 			//debug("suspended process %s", process->getName().c_str());
