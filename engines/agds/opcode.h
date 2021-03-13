@@ -56,8 +56,8 @@ enum Opcode {
 	kOr								= 34,
 	kXor							= 35,
 	kNot							= 36,
-	kStub37							= 37,
-	kStub38							= 38,
+	kShl							= 37,
+	kShr							= 38,
 	kBoolAnd						= 39,
 	kBoolOr							= 40,
 	kBoolNot						= 41,
@@ -311,6 +311,8 @@ enum Opcode {
 	OP(kOr, bitOr) \
 	OP(kXor, bitXor) \
 	OP(kNot, bitNot) \
+	OP(kShl, shl) \
+	OP(kShr, shr) \
 	OP(kBoolNot, boolNot) \
 	OP(kNegate, negate) \
 	OP_U(kObjectInitialise, initialise) \

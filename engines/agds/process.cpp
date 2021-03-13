@@ -238,6 +238,8 @@ void Process::run() {
 	UNARY_OP(boolNot, !)
 	UNARY_OP(bitNot, ~)
 	UNARY_OP(negate, -)
+	BINARY_OP(shl, <<)
+	BINARY_OP(shr, >>)
 	BINARY_OP(boolOr, ||)
 	BINARY_OP(boolAnd, &&)
 	BINARY_OP(equals, ==)
