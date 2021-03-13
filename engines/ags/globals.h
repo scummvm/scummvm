@@ -35,6 +35,7 @@
 #include "ags/engine/script/script.h"
 #include "ags/engine/script/script_runtime.h"
 #include "ags/lib/std/array.h"
+#include "ags/lib/std/chrono.h"
 #include "ags/lib/std/set.h"
 #include "ags/lib/allegro/color.h"
 #include "ags/lib/allegro/fixed.h"
@@ -1128,6 +1129,19 @@ public:
 
 	int _pluginSimulatedClick = 0;
 	int _mouse_z_was = 0;
+
+	/**@}*/
+
+	/**
+	 * \defgroup timer globals
+	 * @{
+	 */
+
+	std::chrono::microseconds _tick_duration = std::chrono::microseconds(1000000LL / 40);
+	bool _framerate_maxed = false;
+
+	uint32 _last_tick_time = 0; // AGS_Clock::now();
+	uint32 _next_frame_timestamp = 0; // AGS_Clock::now();
 
 	/**@}*/
 

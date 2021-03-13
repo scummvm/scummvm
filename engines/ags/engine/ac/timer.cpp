@@ -24,45 +24,31 @@
 #include "ags/shared/core/platform.h"
 #include "ags/lib/std/chrono.h"
 #include "ags/lib/std/thread.h"
-#if AGS_PLATFORM_DEBUG && defined (__GNUC__)
-//include <stdio.h>
-//include <execinfo.h>
-//include <unistd.h>
-#endif
 #include "ags/engine/platform/base/agsplatformdriver.h"
 #include "ags/ags.h"
+#include "ags/globals.h"
 
 namespace AGS3 {
 
-namespace {
-
 const auto MAXIMUM_FALL_BEHIND = 3;
 
-auto tick_duration = std::chrono::microseconds(1000000LL / 40);
-auto framerate_maxed = false;
-
-uint32 last_tick_time = 0; // AGS_Clock::now();
-uint32 next_frame_timestamp = 0; // AGS_Clock::now();
-
-}
-
 std::chrono::microseconds GetFrameDuration() {
-	if (framerate_maxed) {
+	if (_G(framerate_maxed)) {
 		return std::chrono::microseconds(0);
 	}
-	return tick_duration;
+	return _G(tick_duration);
 }
 
 void setTimerFps(int new_fps) {
-	tick_duration = std::chrono::microseconds(1000000LL / new_fps);
-	framerate_maxed = new_fps >= 1000;
+	_G(tick_duration) = std::chrono::microseconds(1000000LL / new_fps);
+	_G(framerate_maxed) = new_fps >= 1000;
 
-	last_tick_time = AGS_Clock::now();
-	next_frame_timestamp = AGS_Clock::now();
+	_G(last_tick_time) = AGS_Clock::now();
+	_G(next_frame_timestamp) = AGS_Clock::now();
 }
 
 bool isTimerFpsMaxed() {
-	return framerate_maxed;
+	return _G(framerate_maxed);
 }
 
 void WaitForNextFrame() {
@@ -71,21 +57,21 @@ void WaitForNextFrame() {
 
 	// early exit if we're trying to maximise framerate
 	if (frameDuration <= std::chrono::milliseconds::zero()) {
-		next_frame_timestamp = now;
+		_G(next_frame_timestamp) = now;
 		return;
 	}
 
 	// jump ahead if we're lagging
-	if (next_frame_timestamp < (now - MAXIMUM_FALL_BEHIND * frameDuration)) {
-		next_frame_timestamp = now;
+	if (_G(next_frame_timestamp) < (now - MAXIMUM_FALL_BEHIND * frameDuration)) {
+		_G(next_frame_timestamp) = now;
 	}
 
-	if (next_frame_timestamp > now) {
-		auto frame_time_remaining = next_frame_timestamp - now;
+	if (_G(next_frame_timestamp) > now) {
+		auto frame_time_remaining = _G(next_frame_timestamp) - now;
 		std::this_thread::sleep_for(frame_time_remaining);
 	}
 
-	next_frame_timestamp += frameDuration;
+	_G(next_frame_timestamp) += frameDuration;
 
 	::AGS::g_vm->_rawScreen->update();
 }
@@ -93,15 +79,15 @@ void WaitForNextFrame() {
 bool waitingForNextTick() {
 	auto now = AGS_Clock::now();
 
-	if (framerate_maxed) {
-		last_tick_time = now;
+	if (_G(framerate_maxed)) {
+		_G(last_tick_time) = now;
 		return false;
 	}
 
-	auto is_lagging = (now - last_tick_time) > (MAXIMUM_FALL_BEHIND * tick_duration);
+	auto is_lagging = (now - _G(last_tick_time)) > (MAXIMUM_FALL_BEHIND * _G(tick_duration));
 	if (is_lagging) {
 #if AGS_PLATFORM_DEBUG && defined (__GNUC__)
-		auto missed_ticks = ((now - last_tick_time) / tick_duration);
+		auto missed_ticks = ((now - _G(last_tick_time)) / _G(tick_duration));
 		warning("Lagging! Missed %lld ticks!\n", (long long)missed_ticks);
 /*		void *array[10];
 		auto size = backtrace(array, 10);
@@ -109,13 +95,13 @@ bool waitingForNextTick() {
 */
 		warning("\n");
 #endif
-		last_tick_time = now;
+		_G(last_tick_time) = now;
 		return false;
 	}
 
-	auto next_tick_time = last_tick_time + tick_duration;
+	auto next_tick_time = _G(last_tick_time) + _G(tick_duration);
 	if (next_tick_time <= now) {
-		last_tick_time = next_tick_time;
+		_G(last_tick_time) = next_tick_time;
 		return false;
 	}
 
@@ -123,8 +109,8 @@ bool waitingForNextTick() {
 }
 
 void skipMissedTicks() {
-	last_tick_time = AGS_Clock::now();
-	next_frame_timestamp = AGS_Clock::now();
+	_G(last_tick_time) = AGS_Clock::now();
+	_G(next_frame_timestamp) = AGS_Clock::now();
 }
 
 } // namespace AGS3
