@@ -165,13 +165,6 @@ const char *regnames[] = { "null", "sp", "mar", "ax", "bx", "cx", "op", "dx" };
 
 const char *fixupnames[] = { "null", "fix_gldata", "fix_func", "fix_string", "fix_import", "fix_datadata", "fix_stack" };
 
-ccInstance *current_instance;
-// [IKM] 2012-10-21:
-// NOTE: This is temporary solution (*sigh*, one of many) which allows certain
-// exported functions return value as a RuntimeScriptValue object;
-// Of 2012-12-20: now used only for plugin exports
-RuntimeScriptValue GlobalReturnValue;
-
 // Function call stack is used to temporarily store
 // values before passing them to script function
 #define MAX_FUNC_PARAMS 20
@@ -196,7 +189,7 @@ struct FunctionCallStack {
 
 
 ccInstance *ccInstance::GetCurrentInstance() {
-	return current_instance;
+	return _G(current_instance);
 }
 
 ccInstance *ccInstance::CreateFromScript(PScript scri) {
@@ -337,7 +330,7 @@ int ccInstance::CallScriptFunction(const char *funcname, int32_t numargs, const 
 	// object pointer needs to start zeroed
 	registers[SREG_OP].SetDynamicObject(nullptr, nullptr);
 
-	ccInstance *currentInstanceWas = current_instance;
+	ccInstance *currentInstanceWas = _G(current_instance);
 	registers[SREG_SP].SetStackPtr(&stack[0]);
 	stackdata_ptr = stackdata;
 	// NOTE: Pushing parameters to stack in reverse order
@@ -355,7 +348,7 @@ int ccInstance::CallScriptFunction(const char *funcname, int32_t numargs, const 
 	ASSERT_STACK_SIZE(numargs);
 	PopValuesFromStack(numargs);
 	pc = 0;
-	current_instance = currentInstanceWas;
+	_G(current_instance) = currentInstanceWas;
 
 	// NOTE that if proper multithreading is added this will need
 	// to be reconsidered, since the GC could be run in the middle
@@ -423,7 +416,7 @@ int ccInstance::Run(int32_t curpc) {
 	int loopIterationCheckDisabled = 0;
 	thisbase[0] = 0;
 	funcstart[0] = pc;
-	current_instance = this;
+	_G(current_instance) = this;
 	ccInstance *codeInst = runningInst;
 	int write_debug_dump = ccGetOption(SCOPT_DEBUGRUN);
 	ScriptOperation codeOp;
@@ -612,7 +605,7 @@ int ccInstance::Run(int32_t curpc) {
 				returnValue = registers[SREG_AX].IValue;
 				return 0;
 			}
-			current_instance = this;
+			_G(current_instance) = this;
 			POP_CALL_STACK;
 			continue; // continue so that the PC doesn't get overwritten
 		}
@@ -995,7 +988,7 @@ int ccInstance::Run(int32_t curpc) {
 			RuntimeScriptValue return_value;
 
 			if (reg1.Type == kScValPluginFunction) {
-				GlobalReturnValue.Invalidate();
+				_GP(GlobalReturnValue).Invalidate();
 				int32_t int_ret_val;
 				if (next_call_needs_object) {
 					RuntimeScriptValue obj_rval = registers[SREG_OP];
@@ -1005,8 +998,8 @@ int ccInstance::Run(int32_t curpc) {
 					int_ret_val = call_function((intptr_t)reg1.Ptr, nullptr, num_args_to_func, func_callstack.GetHead() + 1);
 				}
 
-				if (GlobalReturnValue.IsValid()) {
-					return_value = GlobalReturnValue;
+				if (_GP(GlobalReturnValue).IsValid()) {
+					return_value = _GP(GlobalReturnValue);
 				} else {
 					return_value.SetPluginArgument(int_ret_val);
 				}
@@ -1033,7 +1026,7 @@ int ccInstance::Run(int32_t curpc) {
 			}
 
 			registers[SREG_AX] = return_value;
-			current_instance = this;
+			_G(current_instance) = this;
 			next_call_needs_object = 0;
 			num_args_to_func = -1;
 			break;

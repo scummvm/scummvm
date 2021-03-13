@@ -87,7 +87,6 @@ using namespace AGS::Engine;
 extern color palette[256];
 extern PluginObjectReader pluginReaders[MAX_PLUGIN_OBJECT_READERS];
 extern int numPluginReaders;
-extern RuntimeScriptValue GlobalReturnValue;
 
 void PluginSimulateMouseClick(int pluginButtonID) {
 	_G(pluginSimulatedClick) = pluginButtonID - 1;
@@ -718,7 +717,7 @@ void IAGSEngine::QueueGameScriptFunction(const char *name, int32 globalScript, i
 
 int IAGSEngine::RegisterManagedObject(const void *object, IAGSScriptManagedObject *callback) {
 	// TODO: handle loss of const better
-	GlobalReturnValue.SetPluginObject(const_cast<void *>(object), (ICCDynamicObject *)callback);
+	_GP(GlobalReturnValue).SetPluginObject(const_cast<void *>(object), (ICCDynamicObject *)callback);
 	return ccRegisterManagedObject(object, (ICCDynamicObject *)callback, true);
 }
 
@@ -741,7 +740,7 @@ void IAGSEngine::AddManagedObjectReader(const char *typeName, IAGSManagedObjectR
 
 void IAGSEngine::RegisterUnserializedObject(int key_, const void *object, IAGSScriptManagedObject *callback) {
 	// TODO: handle loss of const better
-	GlobalReturnValue.SetPluginObject(const_cast<void *>(object), (ICCDynamicObject *)callback);
+	_GP(GlobalReturnValue).SetPluginObject(const_cast<void *>(object), (ICCDynamicObject *)callback);
 	ccRegisterUnserializedObject(key_, object, (ICCDynamicObject *)callback, true);
 }
 
@@ -754,9 +753,9 @@ void *IAGSEngine::GetManagedObjectAddressByKey(int key_) {
 	ICCDynamicObject *manager;
 	ScriptValueType obj_type = ccGetObjectAddressAndManagerFromHandle(key_, object, manager);
 	if (obj_type == kScValPluginObject) {
-		GlobalReturnValue.SetPluginObject(object, manager);
+		_GP(GlobalReturnValue).SetPluginObject(object, manager);
 	} else {
-		GlobalReturnValue.SetDynamicObject(object, manager);
+		_GP(GlobalReturnValue).SetDynamicObject(object, manager);
 	}
 	return object;
 }
@@ -765,7 +764,7 @@ const char *IAGSEngine::CreateScriptString(const char *fromText) {
 	const char *string = CreateNewScriptString(fromText);
 	// Should be still standard dynamic object, because not managed by plugin
 	// TODO: handle loss of const better
-	GlobalReturnValue.SetDynamicObject(const_cast<char *>(string), &_GP(myScriptStringImpl));
+	_GP(GlobalReturnValue).SetDynamicObject(const_cast<char *>(string), &_GP(myScriptStringImpl));
 	return string;
 }
 

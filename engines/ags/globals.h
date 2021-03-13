@@ -267,6 +267,20 @@ public:
 	/**@}*/
 
 	/**
+	 * \defgroup cc_instance globals
+	 * @{
+	 */
+
+	ccInstance *_current_instance = nullptr;
+	// [IKM] 2012-10-21:
+	// NOTE: This is temporary solution (*sigh*, one of many) which allows certain
+	// exported functions return value as a RuntimeScriptValue object;
+	// Of 2012-12-20: now used only for plugin exports
+	RuntimeScriptValue *_GlobalReturnValue;
+
+	/**@}*/
+
+	/**
 	 * \defgroup cc_options globals
 	 * @{
 	 */

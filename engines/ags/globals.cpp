@@ -108,6 +108,9 @@ Globals::Globals() {
 	// button.cpp globals
 	_animbuts = new AnimatingGUIButton[MAX_ANIMATING_BUTTONS];
 
+	// cc_instance.cpp globals
+	_GlobalReturnValue = new RuntimeScriptValue();
+
 	// cc_options.cpp globals
 	_ccCompOptions = SCOPT_LEFTTORIGHT;
 
@@ -293,6 +296,9 @@ Globals::~Globals() {
 
 	// button.cpp globals
 	delete[] _animbuts;
+
+	// cc_instance.cpp globals
+	delete _GlobalReturnValue;
 
 	// cc_serializer.cpp globals
 	delete _ccUnserializer;

@@ -47,8 +47,6 @@
 
 namespace AGS3 {
 
-extern ccInstance *current_instance; // in script/cc_instance
-
 bool ccAddExternalStaticFunction(const String &name, ScriptAPIFunction *pfn) {
 	return _GP(simp).add(name, RuntimeScriptValue().SetStaticFunction(pfn), nullptr) == 0;
 }
@@ -134,8 +132,8 @@ void ccSetScriptAliveTimer(int numloop) {
 }
 
 void ccNotifyScriptStillAlive() {
-	if (current_instance != nullptr)
-		current_instance->flags |= INSTF_RUNNING;
+	if (_G(current_instance) != nullptr)
+		_G(current_instance)->flags |= INSTF_RUNNING;
 }
 
 void ccSetDebugHook(new_line_hook_type jibble) {
