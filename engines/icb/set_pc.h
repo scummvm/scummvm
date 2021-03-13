@@ -87,10 +87,6 @@ public:
 	void Reset();
 	bool8 DoesCameraExist(const char *camera_name, const char *camera_cluster_name);
 
-	/* Save game compliance */
-	void LoadGFXInfo(Common::SeekableReadStream *stream);
-	void SaveGFXInfo(Common::WriteStream *stream);
-
 private:
 	void HackMakeCamera();
 

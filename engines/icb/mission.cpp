@@ -810,7 +810,7 @@ void _mission::Save_game_position(const char *filename, const char *slot_label, 
 	g_oRemora->Save(stream);
 
 	// save gfx init info for initing a set...
-	MSS.SaveGFXInfo(stream);
+	surface_manager->SaveGFXInfo(stream);
 	SavePlatformSpecific(stream);
 
 	delete stream;
@@ -1090,7 +1090,7 @@ __load_result Load_game(const char *filename) {
 	g_oRemora->Restore(stream);
 
 	// load gfx init info for initing a set...
-	MSS.LoadGFXInfo(stream);
+	surface_manager->LoadGFXInfo(stream);
 	g_mission->LoadPlatformSpecific(stream);
 
 	delete stream;

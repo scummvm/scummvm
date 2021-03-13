@@ -1825,46 +1825,4 @@ void _set::HackMakeCamera() {
 	m_camera.pan = scrnPan;
 }
 
-// read in init values for set from file
-void _set::LoadGFXInfo(Common::SeekableReadStream *stream) {
-	surface_manager->BorderRect().left = stream->readSint32LE();
-	surface_manager->BorderRect().top = stream->readSint32LE();
-	surface_manager->BorderRect().right = stream->readSint32LE();
-	surface_manager->BorderRect().bottom = stream->readSint32LE();
-	surface_manager->BorderRed() = stream->readByte();
-	surface_manager->BorderGreen() = stream->readByte();
-	surface_manager->BorderBlue() = stream->readByte();
-	surface_manager->BorderAlpha() = stream->readByte();
-	surface_manager->BorderMode() = stream->readUint32LE();
-	surface_manager->FadeMode() = stream->readUint32LE();
-	surface_manager->FadeToRed() = stream->readByte();
-	surface_manager->FadeToGreen() = stream->readByte();
-	surface_manager->FadeToBlue() = stream->readByte();
-	surface_manager->FadeFromRed() = stream->readByte();
-	surface_manager->FadeFromGreen() = stream->readByte();
-	surface_manager->FadeFromBlue() = stream->readByte();
-	surface_manager->FadeAlpha() = stream->readByte();
-}
-
-// write out current init values1 to file
-void _set::SaveGFXInfo(Common::WriteStream *stream) {
-	stream->writeSint32LE(surface_manager->BorderRect().left);
-	stream->writeSint32LE(surface_manager->BorderRect().top);
-	stream->writeSint32LE(surface_manager->BorderRect().right);
-	stream->writeSint32LE(surface_manager->BorderRect().bottom);
-	stream->writeByte(surface_manager->BorderRed());
-	stream->writeByte(surface_manager->BorderGreen());
-	stream->writeByte(surface_manager->BorderBlue());
-	stream->writeByte(surface_manager->BorderAlpha());
-	stream->writeUint32LE(surface_manager->BorderMode());
-	stream->writeUint32LE(surface_manager->FadeMode());
-	stream->writeByte(surface_manager->FadeToRed());
-	stream->writeByte(surface_manager->FadeToGreen());
-	stream->writeByte(surface_manager->FadeToBlue());
-	stream->writeByte(surface_manager->FadeFromRed());
-	stream->writeByte(surface_manager->FadeFromGreen());
-	stream->writeByte(surface_manager->FadeFromBlue());
-	stream->writeByte(surface_manager->FadeAlpha());
-}
-
 } // End of namespace ICB

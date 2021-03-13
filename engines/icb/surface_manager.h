@@ -127,6 +127,9 @@ public:
 	}
 	uint32 &BorderMode() { return m_borderMode; }
 
+	void LoadGFXInfo(Common::SeekableReadStream *stream);
+	void SaveGFXInfo(Common::WriteStream *stream);
+
 private:
 	LRECT m_borders;     // The border to add to the screen
 	uint8 m_borderRed;   // The colour of the border

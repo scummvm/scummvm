@@ -263,12 +263,12 @@ void _event_manager::Save(Common::WriteStream *stream) const {
 	}
 
 	// Write the number of active event timers in the file.
-	stream->write(&nNumActiveTimers, sizeof(nNumActiveTimers)); // TODO: DON'T WRITE LIKE THIS
+	stream->writeUint32LE(nNumActiveTimers);
 
 	// Now write the actual active event timers.
 	for (i = 0; i < EVENT_MANAGER_MAX_TIMERS; ++i) {
 		if (m_pbActiveTimers[i])
-			stream->write(&m_pEventTimers[i], sizeof(_event_timer)); // TODO: DON'T WRITE LIKE THIS
+			m_pEventTimers[i].Save(stream);
 	}
 }
 
@@ -283,18 +283,16 @@ void _event_manager::Restore(Common::SeekableReadStream *stream) {
 
 	// Find out how many timers we are going to read in.
 	nNumActiveTimers = stream->readUint32LE();
-	if (stream->err())
-		Fatal_error("Error restoring event timers from save file");
 
 	// Read them in.
 	for (i = 0; i < nNumActiveTimers; ++i) {
-		if (stream->read(&oEventTimer, sizeof(oEventTimer)) != sizeof(oEventTimer)) { // TODO: We REALLY shouldn't read structs this way. FIXME HACK
-			Fatal_error("Error restoring %d event timers from save file", nNumActiveTimers);
-		} else {
-			m_pEventTimers[i] = oEventTimer;
-			m_pbActiveTimers[i] = TRUE8;
-		}
+		oEventTimer.Restore(stream);
+		m_pEventTimers[i] = oEventTimer;
+		m_pbActiveTimers[i] = TRUE8;
 	}
+
+	if (stream->err())
+		Fatal_error("Error restoring event timers from save file");
 }
 
 } // End of namespace ICB

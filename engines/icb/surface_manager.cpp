@@ -824,6 +824,46 @@ void _surface_manager::DrawEffects(uint32 surface_id) {
 	effect_time = (GetMicroTimer() - effect_time);
 }
 
+void _surface_manager::LoadGFXInfo(Common::SeekableReadStream *stream) {
+	m_borders.left = stream->readSint32LE();
+	m_borders.top = stream->readSint32LE();
+	m_borders.right = stream->readSint32LE();
+	m_borders.bottom = stream->readSint32LE();
+	m_borderRed = stream->readByte();
+	m_borderGreen = stream->readByte();
+	m_borderBlue = stream->readByte();
+	m_borderAlpha = stream->readByte();
+	m_borderMode = stream->readUint32LE();
+	m_fadeMode = stream->readUint32LE();
+	m_fadeToRed = stream->readByte();
+	m_fadeToGreen = stream->readByte();
+	m_fadeToBlue = stream->readByte();
+	m_fadeFromRed = stream->readByte();
+	m_fadeFromGreen = stream->readByte();
+	m_fadeFromBlue = stream->readByte();
+	m_fadeAlpha = stream->readByte();
+}
+
+void _surface_manager::SaveGFXInfo(Common::WriteStream *stream) {
+	stream->writeSint32LE(m_borders.left);
+	stream->writeSint32LE(m_borders.top);
+	stream->writeSint32LE(m_borders.right);
+	stream->writeSint32LE(m_borders.bottom);
+	stream->writeByte(m_borderRed);
+	stream->writeByte(m_borderGreen);
+	stream->writeByte(m_borderBlue);
+	stream->writeByte(m_borderAlpha);
+	stream->writeUint32LE(m_borderMode);
+	stream->writeUint32LE(m_fadeMode);
+	stream->writeByte(m_fadeToRed);
+	stream->writeByte(m_fadeToGreen);
+	stream->writeByte(m_fadeToBlue);
+	stream->writeByte(m_fadeFromRed);
+	stream->writeByte(m_fadeFromGreen);
+	stream->writeByte(m_fadeFromBlue);
+	stream->writeByte(m_fadeAlpha);
+}
+
 void _surface_manager::RecordFrame(const char *path) {
 	Common::DumpFile dumpFile;
 	bool result = dumpFile.open(path);

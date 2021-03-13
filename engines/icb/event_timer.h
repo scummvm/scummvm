@@ -28,6 +28,8 @@
 #ifndef ICB_EVENTTIMER_H_INCLUDED
 #define ICB_EVENTTIMER_H_INCLUDED
 
+#include "common/stream.h"
+
 #include "engines/icb/string_vest.h"
 #include "engines/icb/common/px_string.h"
 #include "engines/icb/event_list.h"
@@ -63,6 +65,23 @@ public:
 	uint32 GetInterval() const { return (m_nInterval); }
 	uint32 GetEventTime() const { return (m_nCurrentTime); }
 	const char *GetEventName() const { return (m_pcEventName); }
+
+	void Save(Common::WriteStream *stream) const {
+		stream->writeSint32LE(m_nObjectID);
+		stream->writeUint32LE(m_nStart);
+		stream->writeUint32LE(m_nEnd);
+		stream->writeUint32LE(m_nInterval);
+		stream->writeUint32LE(m_nCurrentTime);
+		stream->write(m_pcEventName, MAXLEN_EVENT_NAME);
+	}
+	void Restore(Common::SeekableReadStream *stream) {
+		m_nObjectID = stream->readSint32LE();
+		m_nStart = stream->readUint32LE();
+		m_nEnd = stream->readUint32LE();
+		m_nInterval = stream->readUint32LE();
+		m_nCurrentTime = stream->readUint32LE();
+		stream->read(m_pcEventName, MAXLEN_EVENT_NAME);
+	}
 
 private:
 	int32 m_nObjectID;                     // ID of object initiating this timer.
