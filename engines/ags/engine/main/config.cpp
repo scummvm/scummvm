@@ -52,7 +52,7 @@ using namespace AGS::Shared;
 using namespace AGS::Engine;
 
 // Filename of the default config file, the one found in the game installation
-const String DefaultConfigFileName = "acsetup.cfg";
+static const char *DefaultConfigFileName = "acsetup.cfg";
 
 // Replace the filename part of complete path WASGV with INIFIL
 // TODO: get rid of this and use proper lib path function instead
@@ -211,7 +211,9 @@ void graphics_mode_get_defaults(bool windowed, ScreenSizeSetup &scsz_setup, Game
 
 String find_default_cfg_file(const char *alt_cfg_file) {
 	// Try current directory for config first; else try exe dir
-	String filename = String::FromFormat("%s/%s", Directory::GetCurrentDirectory().GetCStr(), DefaultConfigFileName.GetCStr());
+	String filename = String::FromFormat("%s/%s",
+		Directory::GetCurrentDirectory().GetCStr(),
+		DefaultConfigFileName);
 	if (!Shared::File::TestReadFile(filename)) {
 		char conffilebuf[512];
 		strcpy(conffilebuf, alt_cfg_file);
@@ -225,12 +227,12 @@ String find_default_cfg_file(const char *alt_cfg_file) {
 
 String find_user_global_cfg_file() {
 	String parent_dir = PathOrCurDir(_G(platform)->GetUserGlobalConfigDirectory());
-	return String::FromFormat("%s/%s", parent_dir.GetCStr(), DefaultConfigFileName.GetCStr());
+	return String::FromFormat("%s/%s", parent_dir.GetCStr(), DefaultConfigFileName);
 }
 
 String find_user_cfg_file() {
 	String parent_dir = MakeSpecialSubDir(PathOrCurDir(_G(platform)->GetUserConfigDirectory()));
-	return String::FromFormat("%s/%s", parent_dir.GetCStr(), DefaultConfigFileName.GetCStr());
+	return String::FromFormat("%s/%s", parent_dir.GetCStr(), DefaultConfigFileName);
 }
 
 void config_defaults() {

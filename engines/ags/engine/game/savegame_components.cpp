@@ -68,7 +68,7 @@ namespace Engine {
 
 namespace SavegameComponents {
 
-const String ComponentListTag = "Components";
+static const char *ComponentListTag = "Components";
 
 void WriteFormatTag(PStream out, const String &tag, bool open = true) {
 	String full_tag = String::FromFormat(open ? "<%s>" : "</%s>", tag.GetCStr());
@@ -1000,15 +1000,15 @@ HSaveError ReadPluginData(PStream in, int32_t cmp_ver, const PreservedParams &pp
 
 // Description of a supported game state serialization component
 struct ComponentHandler {
-	String             Name;    // internal component's ID
-	int32_t            Version; // current version to write and the highest supported version
-	int32_t            LowestVersion; // lowest supported version that the engine can read
+	const char *Name;      // internal component's ID
+	int32_t Version;       // current version to write and the highest supported version
+	int32_t LowestVersion; // lowest supported version that the engine can read
 	HSaveError(*Serialize)(PStream);
 	HSaveError(*Unserialize)(PStream, int32_t cmp_ver, const PreservedParams &, RestoredData &);
 };
 
 // Array of supported components
-ComponentHandler ComponentHandlers[] = {
+static const ComponentHandler ComponentHandlers[] = {
 	{
 		"Game State",
 		kGSSvgVersion_3510,
@@ -1128,8 +1128,8 @@ ComponentHandler ComponentHandlers[] = {
 typedef std::map<String, ComponentHandler> HandlersMap;
 void GenerateHandlersMap(HandlersMap &map) {
 	map.clear();
-	for (int i = 0; !ComponentHandlers[i].Name.IsEmpty(); ++i)
-		map[ComponentHandlers[i].Name] = ComponentHandlers[i];
+	for (int i = 0; !strlen(ComponentHandlers[i].Name); ++i)
+		map[String(ComponentHandlers[i].Name)] = ComponentHandlers[i];
 }
 
 // A helper struct to pass to (de)serialization handlers
@@ -1218,7 +1218,7 @@ HSaveError ReadAll(PStream in, SavegameVersion svg_version, const PreservedParam
 	return new SavegameError(kSvgErr_ComponentListClosingTagMissing);
 }
 
-HSaveError WriteComponent(PStream out, ComponentHandler &hdlr) {
+HSaveError WriteComponent(PStream out, const ComponentHandler &hdlr) {
 	WriteFormatTag(out, hdlr.Name, true);
 	out->WriteInt32(hdlr.Version);
 	soff_t ref_pos = out->GetPosition();
@@ -1235,11 +1235,11 @@ HSaveError WriteComponent(PStream out, ComponentHandler &hdlr) {
 
 HSaveError WriteAllCommon(PStream out) {
 	WriteFormatTag(out, ComponentListTag, true);
-	for (int type = 0; !ComponentHandlers[type].Name.IsEmpty(); ++type) {
+	for (int type = 0; !strlen(ComponentHandlers[type].Name); ++type) {
 		HSaveError err = WriteComponent(out, ComponentHandlers[type]);
 		if (!err) {
 			return new SavegameError(kSvgErr_ComponentSerialization,
-			                         String::FromFormat("Component: (#%d) %s", type, ComponentHandlers[type].Name.GetCStr()),
+			                         String::FromFormat("Component: (#%d) %s", type, ComponentHandlers[type].Name),
 			                         err);
 		}
 		update_polled_stuff_if_runtime();

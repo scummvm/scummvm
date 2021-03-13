@@ -50,11 +50,6 @@
 */
 
 #include "ags/shared/core/platform.h"
-
-#if !AGS_PLATFORM_OS_WINDOWS
-//include <dirent.h>
-#endif
-
 #include "ags/lib/allegro.h"
 #include "ags/shared/util/file.h"
 #include "ags/shared/util/stream.h"
