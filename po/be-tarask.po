@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-03-11 13:47+0000\n"
-"PO-Revision-Date: 2021-01-24 08:43+0000\n"
+"PO-Revision-Date: 2021-03-13 15:33+0000\n"
 "Last-Translator: Kastuś K. <oakum2334@gmail.com>\n"
 "Language-Team: Belarusian (Taraškievica) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/be-tarask/>\n"
@@ -57,7 +57,7 @@ msgstr "Вярнуцца да папярэдняе тэчкі"
 #: gui/browser.cpp:81 gui/remotebrowser.cpp:59
 msgctxt "lowres"
 msgid "Go up"
-msgstr ""
+msgstr "Угару"
 
 #: gui/browser.cpp:82 gui/chooser.cpp:46 gui/editgamedialog.cpp:370
 #: gui/editrecorddialog.cpp:67 gui/filebrowser-dialog.cpp:65
@@ -121,10 +121,12 @@ msgid "Hide"
 msgstr "Схаваць"
 
 #: gui/downloaddialog.cpp:118
+#, fuzzy
 msgid ""
 "It looks like your connection is limited. Do you really want to download "
 "files with it?"
 msgstr ""
+"Відаць, вашая злука мае абмежаваньне. Вы запраўды хочаце зладаваць файлы?"
 
 #: gui/downloaddialog.cpp:119 gui/downloaddialog.cpp:153
 #: gui/filebrowser-dialog.cpp:133 gui/fluidsynth-dialog.cpp:218
