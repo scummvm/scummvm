@@ -86,6 +86,14 @@ bool Screen::add(ObjectPtr object) {
 	return true;
 }
 
+void Screen::add(Animation * animation) {
+	if (animation)
+		_animations.insert(animation);
+	else
+		warning("Screen: skipping null animation");
+}
+
+
 bool Screen::remove(Animation * animation) {
 	bool removed = false;
 	for(auto i = _animations.begin(); i != _animations.end(); ) {
