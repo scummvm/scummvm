@@ -47,6 +47,7 @@ void GraphicsManager::init() {
     initGraphics(640, 480, &screenPixelFormat);
     _screen.create(640, 480, screenPixelFormat);
     _screen.setTransparentColor(getTransColor());
+    _screen.clear();
 
     Common::SeekableReadStream *ob = NanEngine.getBootChunkStream("OB0");
     ob->seek(0);
@@ -57,17 +58,10 @@ void GraphicsManager::init() {
 }
 
 void GraphicsManager::draw() {
-    // First go through all objects and update them
-    // Then add dirty rects to layers below if transparent
     for (auto it : _objects) {
         RenderObject &current = *it;
+
         current.updateGraphics();
-    }
-
-    Common::Array<Common::Rect> drawn;
-
-    for (auto it : _objects) {
-        RenderObject &current = *it;
 
         if (current._isVisible && current._needsRedraw) {
             // object is visible and updated
