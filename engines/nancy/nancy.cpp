@@ -111,34 +111,19 @@ Common::Platform NancyEngine::getPlatform() const {
 }
 
 Common::Error NancyEngine::run() {
-	const Common::FSNode gameDataDir(ConfMan.get("path"));
-	SearchMan.addSubDirectoryMatching(gameDataDir, "game");
-	SearchMan.addSubDirectoryMatching(gameDataDir, "datafiles");
-	SearchMan.addSubDirectoryMatching(gameDataDir, "hdsound");
-	SearchMan.addSubDirectoryMatching(gameDataDir, "cdsound");
-	SearchMan.addSubDirectoryMatching(gameDataDir, "hdvideo");
-	SearchMan.addSubDirectoryMatching(gameDataDir, "cdvideo");
-	SearchMan.addSubDirectoryMatching(gameDataDir, "iff");
-	SearchMan.addSubDirectoryMatching(gameDataDir, "art");
-	SearchMan.addSubDirectoryMatching(gameDataDir, "font");
+	// Boot the engine
+	setState(kBoot);
 	
-	Common::SeekableReadStream *stream = SearchMan.createReadStreamForMember("data1.cab");
-	if (stream) {
-		Common::Archive *cab = Common::makeInstallShieldArchive(stream);
-		
-		if (cab) {
-			SearchMan.add("data1.hdr", cab);
+	// Check if we need to load a save state from the launcher
+	if (ConfMan.hasKey("save_slot")) {
+		int saveSlot = ConfMan.getInt("save_slot");
+		if (saveSlot >= 0 && saveSlot <= getMetaEngine().getMaximumSaveSlot()) {
+			// Set to Scene but do not do the loading yet
+			setState(kScene);
 		}
 	}
-	
-	resource = new ResourceManager();
-	resource->initialize();
 
-	// Setup mixer
-	syncSoundSettings();
-
-	setState(kBoot);
-
+	// Main loop
 	while (!shouldQuit()) {
 		cursorManager->setCursorType(CursorManager::kNormalArrow);
 		input->processEvents();
@@ -165,6 +150,34 @@ Common::Error NancyEngine::run() {
 }
 
 void NancyEngine::bootGameEngine() {
+	// Load paths
+	const Common::FSNode gameDataDir(ConfMan.get("path"));
+	SearchMan.addSubDirectoryMatching(gameDataDir, "game");
+	SearchMan.addSubDirectoryMatching(gameDataDir, "datafiles");
+	SearchMan.addSubDirectoryMatching(gameDataDir, "hdsound");
+	SearchMan.addSubDirectoryMatching(gameDataDir, "cdsound");
+	SearchMan.addSubDirectoryMatching(gameDataDir, "hdvideo");
+	SearchMan.addSubDirectoryMatching(gameDataDir, "cdvideo");
+	SearchMan.addSubDirectoryMatching(gameDataDir, "iff");
+	SearchMan.addSubDirectoryMatching(gameDataDir, "art");
+	SearchMan.addSubDirectoryMatching(gameDataDir, "font");
+	
+	// Load archive
+	Common::SeekableReadStream *stream = SearchMan.createReadStreamForMember("data1.cab");
+	if (stream) {
+		Common::Archive *cab = Common::makeInstallShieldArchive(stream);
+		
+		if (cab) {
+			SearchMan.add("data1.hdr", cab);
+		}
+	}
+	
+	resource = new ResourceManager();
+	resource->initialize();
+
+	// Setup mixer
+	syncSoundSettings();
+
 	clearBootChunks();
 	IFF *boot = new IFF("boot");
 	if (!boot->load())
@@ -174,6 +187,8 @@ void NancyEngine::bootGameEngine() {
 	addBootChunk("BSUM", boot->getChunkStream("BSUM"));
 	readBootSummary(*boot);
 
+	// Data chunks found in BOOT. These get used in many places in the engine,
+	// so we always keep them in memory
 	Common::String names[] = {
 		"INTR", "HINT", "LOGO", "SPUZ", "INV",
 		"FONT", "MENU", "HELP", "CRED", "LOAD",
@@ -186,13 +201,7 @@ void NancyEngine::bootGameEngine() {
 		addBootChunk(n, boot->getChunkStream(n));
 	}
 
-	// The FR, LG and OB chunks get added here	
-
-	
-	// TODO reset some vars
-	// TODO reset some more vars
-
-	// These originally get loaded inside Logo
+	// Persistent sounds that are used across the engine. These originally get loaded inside Logo
 	SoundDescription desc;
 	desc.read(*NanEngine.getBootChunkStream("BUOK"), SoundDescription::kNormal);
 	NanEngine.sound->loadSound(desc);
@@ -208,6 +217,9 @@ void NancyEngine::bootGameEngine() {
 	NanEngine.sound->loadSound(desc);
 
 	delete boot;
+	
+	graphicsManager->init();
+	cursorManager->init();
 }
 
 State::State *NancyEngine::getStateObject(GameState state) {
@@ -358,8 +370,6 @@ void NancyEngine::setState(GameState state, GameState overridePrevious) {
 	switch (state) {
 	case kBoot:
 		bootGameEngine();
-		graphicsManager->init();
-		cursorManager->init();
 		setState(kLogo);
 		return;
 	case kMainMenu:

@@ -39,6 +39,7 @@
 #include "common/rect.h"
 #include "common/func.h"
 #include "common/serializer.h"
+#include "common/config-manager.h"
 
 #include "graphics/surface.h"
 
@@ -53,9 +54,11 @@ void Scene::process() {
     switch (_state) {
     case kInit:
         init();
-        // fall through
-    case kInitStatic:
-        initStatic();
+
+        if (_state != kLoad) {
+            break;
+        }
+
         // fall through
     case kLoad:
         load();
@@ -182,7 +185,6 @@ void Scene::synchronize(Common::Serializer &ser) {
         ser.syncAsUint16LE(_sceneState.nextScene.verticalOffset);
         _sceneState._doNotStartSound = false;
 
-        initStatic();
         load();
     }
     
@@ -288,12 +290,25 @@ void Scene::init() {
 
     Action::SliderPuzzle::playerHasTriedPuzzle = false;
 
-    _state = kInitStatic;
+    initStaticData();
+
+    if (ConfMan.hasKey("save_slot")) {
+        // Load savefile directly from the launcher
+		int saveSlot = ConfMan.getInt("save_slot");
+		if (saveSlot >= 0 && saveSlot <= NanEngine.getMetaEngine().getMaximumSaveSlot()) {
+			// Set to Scene but do not do the loading yet
+			NanEngine.loadGameState(saveSlot);
+		}
+	} else {
+        // Normal boot, load default first scene
+        _state = kLoad;
+    }
 
     registerGraphics();
+    NanEngine.graphicsManager->redrawAll();
 }
 
-void Scene::initStatic() {
+void Scene::initStaticData() {
     Common::SeekableReadStream *chunk = NanEngine.getBootChunkStream("MAP");
     chunk->seek(0x8A);
     readRect(*chunk, _mapHotspot);
@@ -373,27 +388,25 @@ void Scene::load() {
         _viewport.disableEdges(kLeft | kRight);
     }
 
-    if (!hasLoadedFromSavefile) {
-        _sceneState.currentScene.verticalOffset = _sceneState.nextScene.verticalOffset;
-        _sceneState.currentScene.frameID = _sceneState.nextScene.frameID;
+    _sceneState.currentScene.verticalOffset = _sceneState.nextScene.verticalOffset;
+    _sceneState.currentScene.frameID = _sceneState.nextScene.frameID;
 
-        if (_sceneState.summary.videoFormat == 1) {
-            // TODO not sure this ever gets hit
-        } else if (_sceneState.summary.videoFormat == 2) {
-            // always start from the bottom
-            _sceneState.currentScene.verticalOffset = _viewport.getMaxScroll();
-        } else {
-            error("Unrecognized Scene summary chunk video file format");
-        }
+    if (_sceneState.summary.videoFormat == 1) {
+        // TODO not sure this ever gets hit
+    } else if (_sceneState.summary.videoFormat == 2) {
+        // always start from the bottom
+        _sceneState.currentScene.verticalOffset = _viewport.getMaxScroll();
+    } else {
+        error("Unrecognized Scene summary chunk video file format");
+    }
 
-        // Some checks against rFrame
+    // Some checks against rFrame
 
-        if (_sceneState.summary.videoFormat == 1) {
-            // TODO not sure this ever gets hit
-        } else if (_sceneState.summary.videoFormat == 2) {
-            if (_viewport.getMaxScroll() == 0) {
-                _viewport.disableEdges(kUp | kDown);
-            }
+    if (_sceneState.summary.videoFormat == 1) {
+        // TODO not sure this ever gets hit
+    } else if (_sceneState.summary.videoFormat == 2) {
+        if (_viewport.getMaxScroll() == 0) {
+            _viewport.disableEdges(kUp | kDown);
         }
     }
 
