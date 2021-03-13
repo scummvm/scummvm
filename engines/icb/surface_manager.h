@@ -35,10 +35,6 @@
 #include "graphics/surface.h"
 #include "graphics/pixelbuffer.h"
 
-namespace TinyGL {
-struct FrameBuffer;
-}
-
 namespace ICB {
 
 #define SURFACE_MANAGER_LOG "surface_manager_log.txt"

@@ -240,7 +240,7 @@ enum M_PROFILES_CHOICES {
 };
 #define NUMBER_OF_GAMEOVER_CHOICES 3
 
-enum GAMEOVER_CHOICES { RESTORE = 0, RESTART = 1, FUCKTHAT = 2 };
+enum GAMEOVER_CHOICES { RESTORE = 0, RESTART = 1, GAMEOVER = 2 };
 
 #define MAX_LABEL_LENGTH 24
 
@@ -362,7 +362,7 @@ private:
 	bool8 m_paging;              // Are we currently paging (animating)
 	bool8 m_pageleft;            // Left or right paging
 	LRECT m_slotBoundingRect;    // Box containing the 10 visible slots
-	int32 m_slotsFuckOffBy;      // Animation step incrementer
+	int32 m_slotsAnimOffBy;      // Animation step incrementer
 	LRECT m_pageOn_from;         // Source blit rect for slots entering the screen
 	LRECT m_pageOn_dest;         // Target blit rect for slots entering the screen
 	LRECT m_pageOff_from;        // Source blit rect for slots leaving the screen

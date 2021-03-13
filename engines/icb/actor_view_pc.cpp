@@ -584,8 +584,6 @@ void AutoCycleLight() {
 		}
 	}
 
-	// Now fuck with the colours a bit
-
 	// Red component
 	if (av_autoR) {
 		av_LightR += 3;

@@ -259,7 +259,6 @@ void SaveThumbnail(uint32 slot_id) {
 	if (!g_thumbSurfaceID)
 		Fatal_error("SaveThumbnail() cannot save a null surface");
 
-	// Now lock the fucker
 	// Lock the directdraw surface (working buffer)
 	uint8 *surface_address = surface_manager->Lock_surface(g_thumbSurfaceID);
 	uint32 pitch = surface_manager->Get_pitch(g_thumbSurfaceID);
@@ -300,7 +299,6 @@ void LoadThumbnail(uint32 slot_id, uint32 to_surface_id) {
 	if (!to_surface_id)
 		Fatal_error("LoadThumbnail() cannot read to a null surface");
 
-	// Now lock the fucker
 	// Lock the directdraw surface (working buffer)
 	uint8 *surface_address = surface_manager->Lock_surface(to_surface_id);
 	uint32 pitch = surface_manager->Get_pitch(to_surface_id);
@@ -348,7 +346,6 @@ void LoadAMovieShot(uint32 slot_id, uint32 to_surface_id) {
 	if (!to_surface_id)
 		Fatal_error("LoadAMovieShot() cannot read to a null surface");
 
-	// Now lock the fucker
 	uint8 *surface_address = surface_manager->Lock_surface(to_surface_id);
 	uint32 pitch = surface_manager->Get_pitch(to_surface_id);
 
@@ -484,7 +481,7 @@ OptionsManager::OptionsManager() {
 	m_slotBoundingRect.top = 128;
 	m_slotBoundingRect.bottom = 375;
 
-	m_slotsFuckOffBy = 0;
+	m_slotsAnimOffBy = 0;
 	m_pageOn_from.left = m_pageOn_from.right = m_pageOn_from.bottom = m_pageOn_from.top = 0;
 	m_pageOn_dest.left = m_pageOn_dest.right = m_pageOn_dest.bottom = m_pageOn_dest.top = 0;
 	m_pageOff_from.left = m_pageOff_from.right = m_pageOff_from.bottom = m_pageOff_from.top = 0;
@@ -1204,7 +1201,7 @@ void OptionsManager::DrawGameOverScreen() {
 		DisplayText(ad, pitch, msg, 0, 170, (m_GAMEOVER_selected == RESTART) ? SELECTEDFONT : NORMALFONT, TRUE8);
 
 		msg = GetTextFromReference(HashString("opt_quit"));
-		DisplayText(ad, pitch, msg, 0, 190, (m_GAMEOVER_selected == FUCKTHAT) ? SELECTEDFONT : NORMALFONT, TRUE8);
+		DisplayText(ad, pitch, msg, 0, 190, (m_GAMEOVER_selected == GAMEOVER) ? SELECTEDFONT : NORMALFONT, TRUE8);
 
 		surface_manager->Unlock_surface(working_buffer_id);
 
@@ -2662,7 +2659,7 @@ void OptionsManager::OnEscapeKey() {
 		m_IG_TOP_selected = CONTINUE;
 		break;
 	case GAME_OVER:
-		m_GAMEOVER_selected = FUCKTHAT;
+		m_GAMEOVER_selected = GAMEOVER;
 		break;
 
 	// Do nothing for (critical) menus not in the list ie quit confirm screens
@@ -3251,7 +3248,7 @@ void OptionsManager::DoChoice() {
 			m_thatsEnoughTa = TRUE8;
 			break;
 
-		case FUCKTHAT:
+		case GAMEOVER:
 			m_activeMenu = DEAD_QUIT;
 			m_QUIT_selected = NO;
 			break;
@@ -3262,7 +3259,7 @@ void OptionsManager::DoChoice() {
 		switch (m_QUIT_selected) {
 		case NO:
 			m_activeMenu = GAME_OVER;
-			m_GAMEOVER_selected = FUCKTHAT;
+			m_GAMEOVER_selected = GAMEOVER;
 			break;
 		case YES:
 			m_thatsEnoughTa = TRUE8;
@@ -4548,7 +4545,6 @@ void OptionsManager::GetKeyAssignment() {
 	if (m_configLimiter) {
 		// Now allowed to assign a button
 		m_configLimiter = FALSE8;
-		// Hacky fuck fuck!
 		g_system->delayMillis(200);
 		return;
 	}
@@ -4851,10 +4847,9 @@ void OptionsManager::AnimateSlotsPaging() {
 			surface_manager->Blit_surface_to_surface(m_mySlotSurface1ID, working_buffer_id, &m_pageOn_from, &m_pageOn_dest, DDBLT_KEYSRC);
 		}
 
-		// Now for the page that's fucking off the screen to the right
 		surface_manager->Fill_surface(m_mySlotSurface1ID, m_colourKey);
 
-		m_pageOff_dest.left += m_slotsFuckOffBy * inc;
+		m_pageOff_dest.left += m_slotsAnimOffBy * inc;
 		m_pageOff_dest.right = m_pageOff_dest.left + boxWidth;
 
 		if (m_pageOff_dest.right > SCREEN_WIDTH - 1) {
@@ -4879,7 +4874,7 @@ void OptionsManager::AnimateSlotsPaging() {
 		if (m_pageOn_dest.right == m_slotBoundingRect.right) {
 			// Stop animating and alter slot offset
 			m_paging = FALSE8;
-			m_slotsFuckOffBy = 0;
+			m_slotsAnimOffBy = 0;
 
 			if (saveRestoreScreen) {
 				m_slotOffset -= NUMBER_OF_VISIBLE_GAME_SLOTS;
@@ -4899,7 +4894,7 @@ void OptionsManager::AnimateSlotsPaging() {
 		}
 
 		// Decrement counter
-		m_slotsFuckOffBy++;
+		m_slotsAnimOffBy++;
 	} else {
 		// We want to increment the slot offset
 
@@ -4936,10 +4931,9 @@ void OptionsManager::AnimateSlotsPaging() {
 			surface_manager->Blit_surface_to_surface(m_mySlotSurface1ID, working_buffer_id, &m_pageOn_from, &m_pageOn_dest, DDBLT_KEYSRC);
 		}
 
-		// Now for the page that's fucking off the screen to the right
 		surface_manager->Fill_surface(m_mySlotSurface1ID, m_colourKey);
 
-		m_pageOff_dest.right -= m_slotsFuckOffBy * inc;
+		m_pageOff_dest.right -= m_slotsAnimOffBy * inc;
 		m_pageOff_dest.left = m_pageOff_dest.right - boxWidth;
 
 		if (m_pageOff_dest.left < 0) {
@@ -4963,7 +4957,7 @@ void OptionsManager::AnimateSlotsPaging() {
 		if (m_pageOn_dest.left == m_slotBoundingRect.left) {
 			// Stop animating and alter slot offset
 			m_paging = FALSE8;
-			m_slotsFuckOffBy = 0;
+			m_slotsAnimOffBy = 0;
 
 			if (saveRestoreScreen) {
 				m_slotOffset += NUMBER_OF_VISIBLE_GAME_SLOTS;
@@ -4987,7 +4981,7 @@ void OptionsManager::AnimateSlotsPaging() {
 		}
 
 		// Decrement counter
-		m_slotsFuckOffBy++;
+		m_slotsAnimOffBy++;
 	}
 
 	if (m_useDirtyRects) {
@@ -6272,7 +6266,6 @@ void LoadLogo(uint32 to_surface_id) {
 	if (!to_surface_id)
 		Fatal_error("LoadLogo() cannot read to a null surface");
 
-	// Now lock the fucker
 	uint8 *surface_address = surface_manager->Lock_surface(to_surface_id);
 	uint32 pitch = surface_manager->Get_pitch(to_surface_id);
 
@@ -6504,7 +6497,6 @@ linesDone:
 		goto linesDone;
 	}
 
-	// Now lock the fucker
 	uint8 *ad = surface_manager->Lock_surface(working_buffer_id);
 	uint32 pitch = surface_manager->Get_pitch(working_buffer_id);
 

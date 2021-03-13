@@ -99,7 +99,7 @@ enum _file_type {
 #define STANDARD_HEADER_NAME_LENGTH 32 // Max length of the header name
 
 class px_standard_header {
-      public:
+public:
 	int32 version;                          // This is incremented every time the object is updated
 	_file_type type;                        // enumerated value for every type of object in the game
 	int32 owner;                            // Who is responsible for producing this object
