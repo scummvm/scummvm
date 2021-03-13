@@ -150,7 +150,7 @@ public:
 	}
 
 	bool load(Common::SeekableReadStream *stream, const Common::String &fname);
-	void paint(Graphics::Surface & backbuffer, Common::Point dst);
+	void paint(Graphics::Surface & backbuffer, Common::Point dst) const;
 	int width() const;
 	int height() const;
 	bool tick();

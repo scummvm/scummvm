@@ -167,7 +167,7 @@ bool Animation::tick() {
 	return true;
 }
 
-void Animation::paint(Graphics::Surface &backbuffer, Common::Point dst) {
+void Animation::paint(Graphics::Surface &backbuffer, Common::Point dst) const {
 	dst += _position;
 	if (_frame) {
 		Common::Rect srcRect = _frame->getRect();
