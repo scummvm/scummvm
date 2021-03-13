@@ -272,7 +272,7 @@ MODULE_OBJS = \
 	engine/media/audio/soundclip.o \
 	engine/media/video/video.o \
 	engine/platform/base/agsplatformdriver.o \
-	engine/platform/linux/acpllnx.o \
+	engine/platform/scummvm/scummvm_platform_driver.o \
 	engine/script/cc_instance.o \
 	engine/script/executingscript.o \
 	engine/script/exports.o \

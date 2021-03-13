@@ -23,9 +23,7 @@
 #include "ags/shared/core/platform.h"
 #include "ags/ags.h"
 
-#if AGS_PLATFORM_OS_LINUX
-
-// ********* LINUX PLACEHOLDER DRIVER *********
+#if AGS_PLATFORM_SCUMMVM
 
 #include "ags/lib/allegro.h"
 #include "ags/engine/ac/runtime_defines.h"
@@ -38,8 +36,7 @@ namespace AGS3 {
 
 using AGS::Shared::String;
 
-struct AGSLinux : AGSPlatformDriver {
-
+struct ScummVMPlatformDriver : AGSPlatformDriver {
 	int  CDPlayerCommand(int cmdd, int datt) override;
 	void DisplayAlert(const char *, ...) override;
 	const char *GetAllUsersDataDirectory() override;
@@ -61,13 +58,13 @@ struct AGSLinux : AGSPlatformDriver {
 };
 
 
-int AGSLinux::CDPlayerCommand(int cmdd, int datt) {
+int ScummVMPlatformDriver::CDPlayerCommand(int cmdd, int datt) {
 	warning("CDPlayerCommand(%d,%d)", cmdd, datt);
 	//return cd_player_control(cmdd, datt);
 	return 0;
 }
 
-void AGSLinux::DisplayAlert(const char *text, ...) {
+void ScummVMPlatformDriver::DisplayAlert(const char *text, ...) {
 	va_list ap;
 	va_start(ap, text);
 	Common::String msg = Common::String::vformat(text, ap);
@@ -79,83 +76,74 @@ void AGSLinux::DisplayAlert(const char *text, ...) {
 		::AGS::g_vm->GUIError(msg);
 }
 
-const char *AGSLinux::GetAllUsersDataDirectory() {
+const char *ScummVMPlatformDriver::GetAllUsersDataDirectory() {
 	return "";
 }
 
-const char *AGSLinux::GetUserSavedgamesDirectory() {
+const char *ScummVMPlatformDriver::GetUserSavedgamesDirectory() {
 	return "";
 }
 
-const char *AGSLinux::GetUserConfigDirectory() {
+const char *ScummVMPlatformDriver::GetUserConfigDirectory() {
 	return GetUserSavedgamesDirectory();
 }
 
-const char *AGSLinux::GetUserGlobalConfigDirectory() {
+const char *ScummVMPlatformDriver::GetUserGlobalConfigDirectory() {
 	return GetUserSavedgamesDirectory();
 }
 
-const char *AGSLinux::GetAppOutputDirectory() {
+const char *ScummVMPlatformDriver::GetAppOutputDirectory() {
 	return "";
 }
 
-unsigned long AGSLinux::GetDiskFreeSpaceMB() {
+unsigned long ScummVMPlatformDriver::GetDiskFreeSpaceMB() {
 	// placeholder
 	return 100;
 }
 
-const char *AGSLinux::GetNoMouseErrorString() {
-	return "This game requires a _GP(mouse). You need to configure and setup your mouse to play this game.\n";
+const char *ScummVMPlatformDriver::GetNoMouseErrorString() {
+	return "This game requires a mouse. You need to configure and setup your mouse to play this game.\n";
 }
 
-const char *AGSLinux::GetAllegroFailUserHint() {
+const char *ScummVMPlatformDriver::GetAllegroFailUserHint() {
 	return nullptr;
 }
 
-eScriptSystemOSID AGSLinux::GetSystemOSID() {
+eScriptSystemOSID ScummVMPlatformDriver::GetSystemOSID() {
 	return eOS_Linux;
 }
 
-int AGSLinux::InitializeCDPlayer() {
+int ScummVMPlatformDriver::InitializeCDPlayer() {
 	//return cd_player_init();
 	return 0;
 }
 
-void AGSLinux::PostAllegroExit() {
+void ScummVMPlatformDriver::PostAllegroExit() {
 	// do nothing
 }
 
-void AGSLinux::SetGameWindowIcon() {
+void ScummVMPlatformDriver::SetGameWindowIcon() {
 	// do nothing
 }
 
-void AGSLinux::ShutdownCDPlayer() {
+void ScummVMPlatformDriver::ShutdownCDPlayer() {
 	//cd_exit();
 }
 
 AGSPlatformDriver *AGSPlatformDriver::GetDriver() {
 	if (instance == nullptr)
-		instance = new AGSLinux();
+		instance = new ScummVMPlatformDriver();
 	return instance;
 }
 
-bool AGSLinux::LockMouseToWindow() {
-#if 0
-	return XGrabPointer(_xwin.display, _xwin.window, False,
-	                    PointerMotionMask | ButtonPressMask | ButtonReleaseMask,
-	                    GrabModeAsync, GrabModeAsync, _xwin.window, None, CurrentTime) == GrabSuccess;
-#else
+bool ScummVMPlatformDriver::LockMouseToWindow() {
 	return false;
-#endif
 }
 
-void AGSLinux::UnlockMouse() {
-#if 0
-	XUngrabPointer(_xwin.display, CurrentTime);
-#endif
+void ScummVMPlatformDriver::UnlockMouse() {
 }
 
-void AGSLinux::GetSystemDisplayModes(std::vector<Engine::DisplayMode> &dms) {
+void ScummVMPlatformDriver::GetSystemDisplayModes(std::vector<Engine::DisplayMode> &dms) {
 	dms.clear();
 	GFX_MODE_LIST *gmlist = get_gfx_mode_list(GFX_SCUMMVM_FULLSCREEN);
 	for (int i = 0; i < gmlist->num_modes; ++i) {
