@@ -114,7 +114,7 @@ const byte *IFF::getChunk(uint32 id, uint &size, uint index) const {
 	return nullptr;
 }
 
-Common::SeekableReadStream *IFF::getChunkStream(Common::String id, uint index) const {
+Common::SeekableReadStream *IFF::getChunkStream(const Common::String &id, uint index) const {
 	uint size;
 	const byte *chunk = getChunk(stringToId(id), size, index);
 
