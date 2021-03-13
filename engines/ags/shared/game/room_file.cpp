@@ -397,7 +397,7 @@ HRoomFileError ReadScriptBlock(char *&buf, Stream *in, RoomFileVersion data_ver)
 	in->Read(buf, len);
 	buf[len] = 0;
 	for (size_t i = 0; i < len; ++i)
-		buf[i] += passwencstring[i % 11];
+		buf[i] += _G(passwencstring)[i % 11];
 	return HRoomFileError::None();
 }
 

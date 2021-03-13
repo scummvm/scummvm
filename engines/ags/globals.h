@@ -1145,6 +1145,15 @@ public:
 
 	/**@}*/
 
+	/**
+	 * \defgroup wordsdictionary globals
+	 * @{
+	 */
+
+	const char *_passwencstring = "Avis Durgan";
+
+	/**@}*/
+
 public:
 	Globals();
 	~Globals();

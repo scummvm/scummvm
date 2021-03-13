@@ -52,8 +52,6 @@ struct WordsDictionary {
 	int   find_index(const char *);
 };
 
-extern const char *passwencstring;
-
 extern void decrypt_text(char *toenc);
 extern void read_string_decrypt(Shared::Stream *in, char *buf, size_t buf_sz);
 extern void read_dictionary(WordsDictionary *dict, Shared::Stream *in);
