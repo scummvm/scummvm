@@ -34,30 +34,6 @@
 
 namespace ICB {
 
-void _marker::Write_markers() {
-	uint32 j, len;
-	Common::WriteStream *stream = 0; // file pointer
-
-	// For clusters hacky stuff to point to the correct directory
-	len = sprintf(temp_buf, "..\\..\\..\\..\\..\\..\\..\\missions\\%smarkers.linked", g_mission->session->Fetch_session_name());
-	if (len > ENGINE_STRING_LEN)
-		Fatal_error("_marker::Write_markers string error");
-
-	if (num_markers) {
-		// write the file out
-		stream = openDiskWriteStream(temp_buf); // attempt to open the file for writing
-		if (stream == NULL)
-			Fatal_error("Write_markers cannot *OPEN* %s", temp_buf);
-
-		for (j = 0; j < num_markers; j++)                                             // save out actual amount to save a few bytes of cd space
-			if (MS->objects->Try_fetch_item_by_name(marks[j].name))               // if object exists
-				stream->write(&marks[j], sizeof(char) * sizeof(_map_marker)); // TODO: Don't write like this.
-			else
-				Message_box("stripping out marker for deleted object '%s'", marks[j].name);
-		delete stream;
-	}
-}
-
 void _marker::___init() {
 	// read in the session markers file - this is the engine written file not the max Nico file
 	// read data into a structure as it needs to be modifiable and saveable which isnt posible with res_man files

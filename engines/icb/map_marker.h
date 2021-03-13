@@ -58,7 +58,6 @@ typedef struct {
 class _marker {
 public:
 	void ___init();
-	void Write_markers();
 	_map_marker *Fetch_marker_by_object_name(const char *name);
 	_map_marker *Create_new_marker(const char *name);
 	uint32 num_markers;
