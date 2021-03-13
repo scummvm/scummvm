@@ -45,6 +45,7 @@
 #include "engines/icb/gfx/psx_camera.h"
 #include "engines/icb/gfx/psx_pxactor.h"
 #include "engines/icb/gfx/rlp_api.h"
+#include "engines/icb/gfx/psx_scrn.h"
 #include "engines/icb/common/px_capri_maths_pc.h"
 #include "engines/icb/common/px_capri_maths.h"
 #include "engines/icb/common/ptr_util.h"
@@ -130,6 +131,8 @@ void Init_globals() {
 	// Right all done
 	// So sort the globals so they can be searched quicker !
 	g_globalScriptVariables->SortVariables();
+
+	g_otz_offset = -5;
 
 	Tdebug("globals.txt", "Found %d global variables", nVars);
 }

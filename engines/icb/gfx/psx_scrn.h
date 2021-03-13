@@ -101,8 +101,8 @@ extern int32 packetsUsed;
 
 // How much to shift & then offset the z values from gte to
 // put them into the otlist
-extern int32 otz_shift;
-extern int32 otz_offset;
+extern int32 g_otz_shift;
+extern int32 g_otz_offset;
 
 // Enable/disable updating of the auto-sliding & scaling min,max z position
 extern int32 update_minmaxzpos;
@@ -205,7 +205,7 @@ static inline void myAddDRLOADNoFlush(RECT16 *r, uint32 *pot, int32 length) {
 
 // Little to convert a z-value into an OT position
 static inline int32 myMakeOTPosition(int32 z0) {
-	int32 z1 = (z0 >> otz_shift) - otz_offset;
+	int32 z1 = (z0 >> g_otz_shift) - g_otz_offset;
 
 	minUsedZpos = MIN(z0, minUsedZpos);
 	maxUsedZpos = MAX(z0, maxUsedZpos);
