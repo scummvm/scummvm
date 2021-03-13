@@ -71,7 +71,6 @@ enum {
 };
 
 extern char lib_file_name[13];
-extern color palette[256];
 
 static const int MB_ARRAY[3] = { 1, 2, 4 };
 

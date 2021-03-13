@@ -76,7 +76,6 @@ using namespace AGS::Shared;
 #define ALLEGRO_KEYBOARD_HANDLER
 
 extern int gui_disabled_style;
-extern color palette[256];
 
 #if AGS_PLATFORM_OS_IOS || AGS_PLATFORM_OS_ANDROID
 extern int _G(psp_gfx_renderer);
@@ -835,7 +834,7 @@ int SaveScreenShot(const char *namm) {
 		fileName.Format("%s%s", svg_dir.GetCStr(), namm);
 
 	Bitmap *buffer = CopyScreenIntoBitmap(_GP(play).GetMainViewport().GetWidth(), _GP(play).GetMainViewport().GetHeight());
-	if (!buffer->SaveToFile(fileName, palette)) {
+	if (!buffer->SaveToFile(fileName, _G(palette))) {
 		delete buffer;
 		return 0;
 	}

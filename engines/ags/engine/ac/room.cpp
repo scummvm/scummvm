@@ -85,8 +85,6 @@ namespace AGS3 {
 using namespace AGS::Shared;
 using namespace AGS::Engine;
 
-extern color palette[256];
-
 ScriptDrawingSurface *Room_GetDrawingSurfaceForBackground(int backgroundNumber) {
 	if (_G(displayed_room) < 0)
 		quit("!Room.GetDrawingSurfaceForBackground: no room is currently loaded");
@@ -455,11 +453,11 @@ void load_new_room(int newnum, CharacterInfo *forchar) {
 	// do the palette
 	for (cc = 0; cc < 256; cc++) {
 		if (_GP(game).paluses[cc] == PAL_BACKGROUND)
-			palette[cc] = _GP(thisroom).Palette[cc];
+			_G(palette)[cc] = _GP(thisroom).Palette[cc];
 		else {
 			// copy the gamewide colours into the room palette
 			for (size_t i = 0; i < _GP(thisroom).BgFrameCount; ++i)
-				_GP(thisroom).BgFrames[i].Palette[cc] = palette[cc];
+				_GP(thisroom).BgFrames[i].Palette[cc] = _G(palette)[cc];
 		}
 	}
 
@@ -639,14 +637,14 @@ void load_new_room(int newnum, CharacterInfo *forchar) {
 		// the create_rgb_table call
 		// so, fix them
 		for (int ff = 0; ff < 256; ff++) {
-			if (palette[ff].r > 63)
-				palette[ff].r = 63;
-			if (palette[ff].g > 63)
-				palette[ff].g = 63;
-			if (palette[ff].b > 63)
-				palette[ff].b = 63;
+			if (_G(palette)[ff].r > 63)
+				_G(palette)[ff].r = 63;
+			if (_G(palette)[ff].g > 63)
+				_G(palette)[ff].g = 63;
+			if (_G(palette)[ff].b > 63)
+				_G(palette)[ff].b = 63;
 		}
-		create_rgb_table(&_GP(rgb_table), palette, nullptr);
+		create_rgb_table(&_GP(rgb_table), _G(palette), nullptr);
 		_G(rgb_map) = &_GP(rgb_table);
 	}
 	_G(our_eip) = 211;
@@ -984,7 +982,7 @@ void on_background_frame_change() {
 	invalidate_cached_walkbehinds();
 
 	// get the new frame's palette
-	memcpy(palette, _GP(thisroom).BgFrames[_GP(play).bg_frame].Palette, sizeof(color) * 256);
+	memcpy(_G(palette), _GP(thisroom).BgFrames[_GP(play).bg_frame].Palette, sizeof(color) * 256);
 
 	// hi-colour, update the palette. It won't have an immediate effect
 	// but will be drawn properly when the screen fades in

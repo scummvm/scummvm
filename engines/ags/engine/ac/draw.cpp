@@ -90,11 +90,6 @@ extern "C" void ios_render();
 
 extern int bg_just_changed;
 
-color palette[256];
-
-COLOR_MAP maincoltable;
-
-
 SpriteListEntry::SpriteListEntry()
 	: bmp(nullptr)
 	, pic(nullptr)
@@ -104,7 +99,7 @@ SpriteListEntry::SpriteListEntry()
 }
 
 void setpal() {
-	set_palette_range(palette, 0, 255, 0);
+	set_palette_range(_G(palette), 0, 255, 0);
 }
 
 // convert RGB to BGR for strange graphics cards
@@ -226,7 +221,7 @@ Bitmap *ReplaceBitmapWithSupportedFormat(Bitmap *bitmap) {
 Bitmap *PrepareSpriteForUse(Bitmap *bitmap, bool has_alpha) {
 	bool must_switch_palette = bitmap->GetColorDepth() == 8 && _GP(game).GetColorDepth() > 8;
 	if (must_switch_palette)
-		select_palette(palette);
+		select_palette(_G(palette));
 
 	Bitmap *new_bitmap = AdjustBitmapForUseWithDisplayMode(bitmap, has_alpha);
 	if (new_bitmap != bitmap)
@@ -241,7 +236,7 @@ Bitmap *PrepareSpriteForUse(Bitmap *bitmap, bool has_alpha) {
 PBitmap PrepareSpriteForUse(PBitmap bitmap, bool has_alpha) {
 	bool must_switch_palette = bitmap->GetColorDepth() == 8 && System_GetColorDepth() > 8;
 	if (must_switch_palette)
-		select_palette(palette);
+		select_palette(_G(palette));
 
 	Bitmap *new_bitmap = AdjustBitmapForUseWithDisplayMode(bitmap.get(), has_alpha);
 	new_bitmap = ReplaceBitmapWithSupportedFormat(new_bitmap);
@@ -1164,7 +1159,7 @@ int scale_and_flip_sprite(int useindx, int coldept, int zoom_level,
 		// Ensure that anti-aliasing routines have a palette to
 		// use for mapping while faded out
 		if (_G(in_new_room))
-			select_palette(palette);
+			select_palette(_G(palette));
 
 
 		if (isMirrored) {

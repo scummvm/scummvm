@@ -63,8 +63,6 @@ namespace AGS3 {
 
 using namespace Shared;
 
-extern color palette[256];
-
 namespace AGS {
 namespace Engine {
 
@@ -195,7 +193,7 @@ HSaveError WriteGameState(PStream out) {
 	// Game base
 	_GP(game).WriteForSavegame(out);
 	// Game palette
-	out->SafeWriteArray(palette, PALETTE_COUNT);
+	out->SafeWriteArray(_G(palette), PALETTE_COUNT);
 
 	if (_G(loaded_game_file_version) <= kGameVersion_272) {
 		// Global variables
@@ -284,7 +282,7 @@ HSaveError ReadGameState(PStream in, int32_t cmp_ver, const PreservedParams &pp,
 	// Game base
 	_GP(game).ReadFromSavegame(in);
 	// Game palette
-	in->SafeReadArray(palette, PALETTE_COUNT);
+	in->SafeReadArray(_G(palette), PALETTE_COUNT);
 
 	if (_G(loaded_game_file_version) <= kGameVersion_272) {
 		// Legacy interaction global variables

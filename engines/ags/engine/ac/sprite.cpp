@@ -38,8 +38,6 @@ namespace AGS3 {
 using namespace AGS::Shared;
 using namespace AGS::Engine;
 
-extern color palette[256];
-
 void get_new_size_for_sprite(int ee, int ww, int hh, int &newwid, int &newhit) {
 	newwid = ww;
 	newhit = hh;

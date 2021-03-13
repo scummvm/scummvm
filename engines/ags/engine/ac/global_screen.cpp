@@ -41,8 +41,6 @@ namespace AGS3 {
 using namespace AGS::Shared;
 using namespace AGS::Engine;
 
-extern color palette[256];
-
 void FlipScreen(int amount) {
 	if ((amount < 0) | (amount > 3)) quit("!FlipScreen: invalid argument (0-3)");
 	_GP(play).screen_flipped = amount;
@@ -174,7 +172,7 @@ void FadeIn(int sppd) {
 	if (_GP(play).fast_forward)
 		return;
 
-	my_fade_in(palette, sppd);
+	my_fade_in(_G(palette), sppd);
 }
 
 } // namespace AGS3

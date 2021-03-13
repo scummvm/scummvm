@@ -84,8 +84,6 @@ using namespace AGS::Shared;
 using namespace AGS::Shared::Memory;
 using namespace AGS::Engine;
 
-extern color palette[256];
-
 void PluginSimulateMouseClick(int pluginButtonID) {
 	_G(pluginSimulatedClick) = pluginButtonID - 1;
 }
@@ -417,7 +415,7 @@ AGSGameOptions *IAGSEngine::GetGameOptions() {
 	return (AGSGameOptions *)&_GP(play);
 }
 AGSColor *IAGSEngine::GetPalette() {
-	return (AGSColor *)&palette[0];
+	return (AGSColor *)&_G(palette)[0];
 }
 void IAGSEngine::SetPalette(int32 start, int32 finish, AGSColor *cpl) {
 	set_palette_range((color *)cpl, start, finish, 0);

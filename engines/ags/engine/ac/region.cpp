@@ -40,9 +40,6 @@ namespace AGS3 {
 
 using namespace AGS::Shared;
 
-extern COLOR_MAP maincoltable;
-extern color palette[256];
-
 ScriptRegion *GetRegionAtRoom(int xx, int yy) {
 	return &_G(scrRegion)[GetRegionIDAtRoom(xx, yy)];
 }
@@ -123,8 +120,8 @@ void Region_RunInteraction(ScriptRegion *ssr, int mood) {
 
 void generate_light_table() {
 	if (_GP(game).color_depth == 1 && _G(color_map) == nullptr) {
-		create_light_table(&maincoltable, palette, 0, 0, 0, nullptr);
-		_G(color_map) = &maincoltable;
+		create_light_table(&_GP(maincoltable), _G(palette), 0, 0, 0, nullptr);
+		_G(color_map) = &_GP(maincoltable);
 	}
 }
 

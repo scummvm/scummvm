@@ -83,8 +83,6 @@ namespace AGS3 {
 using namespace AGS::Shared;
 using namespace AGS::Engine;
 
-extern color palette[256];
-
 #define ALLEGRO_KEYBOARD_HANDLER
 
 bool engine_init_allegro() {
@@ -615,7 +613,7 @@ void engine_init_game_settings() {
 
 	for (ee = 0; ee < 256; ee++) {
 		if (_GP(game).paluses[ee] != PAL_BACKGROUND)
-			palette[ee] = _GP(game).defpal[ee];
+			_G(palette)[ee] = _GP(game).defpal[ee];
 	}
 
 	for (ee = 0; ee < _GP(game).numcursors; ee++) {

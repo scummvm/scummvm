@@ -48,7 +48,6 @@ namespace AGS3 {
 using namespace AGS::Shared;
 using namespace AGS::Engine;
 
-extern color palette[256];
 extern color old_palette[256];
 
 int run_claimable_event(const char *tsname, bool includeRoom, int numParams, const RuntimeScriptValue *params, bool *eventWasClaimed) {
@@ -221,9 +220,9 @@ void process_event(EventHappened *evp) {
 		const Rect &viewport = _GP(play).GetMainViewport();
 
 		if ((theTransition == FADE_INSTANT) || ignore_transition)
-			set_palette_range(palette, 0, 255, 0);
+			set_palette_range(_G(palette), 0, 255, 0);
 		else if (theTransition == FADE_NORMAL) {
-			my_fade_in(palette, 5);
+			my_fade_in(_G(palette), 5);
 		} else if (theTransition == FADE_BOXOUT) {
 			if (!_G(gfxDriver)->UsesMemoryBackBuffer()) {
 				_G(gfxDriver)->BoxOutEffect(false, get_fixed_pixel_size(16), 1000 / GetGameSpeed());
@@ -231,7 +230,7 @@ void process_event(EventHappened *evp) {
 				// First of all we render the game once again and save backbuffer from further editing.
 				// We put temporary bitmap as a new backbuffer for the transition period, and
 				// will be drawing saved image of the game over to that backbuffer, simulating "box-out".
-				set_palette_range(palette, 0, 255, 0);
+				set_palette_range(_G(palette), 0, 255, 0);
 				construct_game_scene(true);
 				construct_game_screen_overlay(false);
 				_G(gfxDriver)->RenderToBackBuffer();
@@ -289,7 +288,7 @@ void process_event(EventHappened *evp) {
 
 			delete saved_viewport_bitmap;
 			saved_viewport_bitmap = nullptr;
-			set_palette_range(palette, 0, 255, 0);
+			set_palette_range(_G(palette), 0, 255, 0);
 			_G(gfxDriver)->DestroyDDB(ddb);
 		} else if (theTransition == FADE_DISSOLVE) {
 			int pattern[16] = { 0, 4, 14, 9, 5, 11, 2, 8, 10, 3, 12, 7, 15, 6, 13, 1 };
@@ -300,7 +299,7 @@ void process_event(EventHappened *evp) {
 			for (aa = 0; aa < 16; aa++) {
 				// merge the palette while dithering
 				if (_GP(game).color_depth == 1) {
-					fade_interpolate(old_palette, palette, interpal, aa * 4, 0, 255);
+					fade_interpolate(old_palette, _G(palette), interpal, aa * 4, 0, 255);
 					set_palette_range(interpal, 0, 255, 0);
 				}
 				// do the dissolving
@@ -321,7 +320,7 @@ void process_event(EventHappened *evp) {
 
 			delete saved_viewport_bitmap;
 			saved_viewport_bitmap = nullptr;
-			set_palette_range(palette, 0, 255, 0);
+			set_palette_range(_G(palette), 0, 255, 0);
 			_G(gfxDriver)->DestroyDDB(ddb);
 		}
 

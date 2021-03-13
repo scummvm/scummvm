@@ -103,6 +103,7 @@ struct CCRegion;
 struct CharacterCache;
 struct CharacterExtras;
 struct CharacterInfo;
+struct color;
 struct COLOR_MAP;
 struct DialogTopic;
 struct DirtyRects;
@@ -480,6 +481,8 @@ public:
 	AGS::Shared::Bitmap *_raw_saved_screen = nullptr;
 	AGS::Shared::Bitmap **_dynamicallyCreatedSurfaces = nullptr;
 	int _places_r = 3, _places_g = 2, _places_b = 3;
+	color *_palette;
+	COLOR_MAP *_maincoltable;
 
 	/**@}*/
 

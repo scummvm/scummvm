@@ -29,9 +29,6 @@
 
 namespace AGS3 {
 
-
-extern color palette[256];
-
 void CyclePalette(int strt, int eend) {
 	// hi-color game must invalidate screen since the palette changes
 	// the effect of the drawing operations
@@ -43,12 +40,12 @@ void CyclePalette(int strt, int eend) {
 
 	if (eend > strt) {
 		// forwards
-		wcolrotate(strt, eend, 0, palette);
-		set_palette_range(palette, strt, eend, 0);
+		wcolrotate(strt, eend, 0, _G(palette));
+		set_palette_range(_G(palette), strt, eend, 0);
 	} else {
 		// backwards
-		wcolrotate(eend, strt, 1, palette);
-		set_palette_range(palette, eend, strt, 0);
+		wcolrotate(eend, strt, 1, _G(palette));
+		set_palette_range(_G(palette), eend, strt, 0);
 	}
 
 }
@@ -56,8 +53,8 @@ void SetPalRGB(int inndx, int rr, int gg, int bb) {
 	if (_GP(game).color_depth > 1)
 		invalidate_screen();
 
-	wsetrgb(inndx, rr, gg, bb, palette);
-	set_palette_range(palette, inndx, inndx, 0);
+	wsetrgb(inndx, rr, gg, bb, _G(palette));
+	set_palette_range(_G(palette), inndx, inndx, 0);
 }
 /*void scSetPal(color*pptr) {
 wsetpalette(0,255,pptr);

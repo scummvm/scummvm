@@ -113,8 +113,6 @@ using namespace AGS::Engine;
 extern int _G(psp_gfx_renderer);
 #endif
 
-extern color palette[256];
-
 //=============================================================================
 // Audio
 //=============================================================================
@@ -881,7 +879,7 @@ void skip_serialized_bitmap(Stream *in) {
 long write_screen_shot_for_vista(Stream *out, Bitmap *screenshot) {
 	// Save the screenshot to a memory stream so we can access the raw data
 	Common::MemoryWriteStreamDynamic bitmap(DisposeAfterUse::YES);
-	screenshot->SaveToFile(bitmap, palette);
+	screenshot->SaveToFile(bitmap, _G(palette));
 
 	update_polled_stuff_if_runtime();
 
@@ -1108,7 +1106,7 @@ void ReadCharacterExtras_Aligned(Stream *in) {
 }
 
 void restore_game_palette(Stream *in) {
-	in->SafeReadArray(&palette[0], PALETTE_COUNT);
+	in->SafeReadArray(&_G(palette)[0], PALETTE_COUNT);
 }
 
 void restore_game_dialogs(Stream *in) {
@@ -2199,7 +2197,7 @@ void RegisterStaticObjects() {
 	ccAddExternalStaticObject("game", &_GP(play), &GameStaticManager);
 	ccAddExternalStaticObject("gs_globals", &_GP(play).globalvars[0], &GlobalStaticManager);
 	ccAddExternalStaticObject("mouse", &_GP(scmouse), &GlobalStaticManager);
-	ccAddExternalStaticObject("palette", &palette[0], &GlobalStaticManager);
+	ccAddExternalStaticObject("palette", &_G(palette)[0], &GlobalStaticManager);
 	ccAddExternalStaticObject("system", &_GP(scsystem), &GlobalStaticManager);
 	ccAddExternalStaticObject("savegameindex", &_GP(play).filenumbers[0], &GlobalStaticManager);
 }
