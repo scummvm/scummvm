@@ -323,7 +323,8 @@ void KIASectionSettings::draw(Graphics::Surface &surface) {
 		}
 		// +2 to the max of original index of textOptions which is 41
 		const char *textSubtitles  = strcmp(_vm->_textOptions->getText(42), "") == 0 ? subtitlesTranslation : _vm->_textOptions->getText(42);
-		//const char *textLanguageSelect = strcmp(_vm->_textOptions->getText(43), "") == 0 ? languageSelectTranslation : _vm->_textOptions->getText(43);
+		const char *textLanguageSelect = strcmp(_vm->_textOptions->getText(43), "") == 0 ? languageSelectTranslation : _vm->_textOptions->getText(43);
+		debug(9, "TODO: Implement _textLanguageDropdown for %s", textLanguageSelect);
 
 		if (_vm->_language == Common::RU_RUS) {
 			// special case for Russian version, put the option in a new line to avoid overlap
