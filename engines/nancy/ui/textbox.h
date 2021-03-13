@@ -70,7 +70,7 @@ protected:
     virtual uint16 getZOrder() const override { return 6; }
 
 private:
-    uint16 getInnerHeight();
+    uint16 getInnerHeight() const;
     void onScrollbarMove();
 
     struct Response {
