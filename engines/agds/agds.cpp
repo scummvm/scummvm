@@ -341,10 +341,10 @@ void AGDSEngine::loadScreen(const Common::String &name, ScreenLoadingType loadin
 	_animations.clear();
 
 	auto patch = getPatch(name);
-	auto screenObject = loadObject(name);
-	bool doPatch = patch;
+	bool doPatch = patch && loadingType != ScreenLoadingType::SaveOrLoad;
 
 	_currentScreenName = name;
+	auto screenObject = loadObject(name);
 	_currentScreen = new Screen(this, screenObject, loadingType, previousScreenName);
 	if (doPatch)
 		screenObject->allowInitialise(false);
