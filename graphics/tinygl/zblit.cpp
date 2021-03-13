@@ -115,8 +115,9 @@ public:
 			_pixels = _buf.getRawBuffer();
 		}
 
-		Line(const Line& other) : _buf(other._buf.getFormat(), other._length, DisposeAfterUse::NO),
-					_x(other._x), _y(other._y), _length(other._length){
+		Line &operator=(const Line &other) = default; // FIXME: This may need replacing with custom copy operator code
+
+		Line(const Line& other) : _buf(other._buf.getFormat(), other._length, DisposeAfterUse::NO), _x(other._x), _y(other._y), _length(other._length) {
 			_buf.copyBuffer(0, 0, _length, other._buf);
 			_pixels = _buf.getRawBuffer();
 		}
