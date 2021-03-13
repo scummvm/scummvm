@@ -54,8 +54,6 @@
 
 namespace AGS3 {
 
-extern int gameHasBeenRestored;
-
 int run_dialog_request(int parmtr) {
 	_GP(play).stop_dialog_at_end = DIALOG_RUNNING;
 	RunTextScriptIParam(_G(gameinst), "dialog_request", RuntimeScriptValue().SetInt32(parmtr));
@@ -334,7 +332,7 @@ int PrepareTextScript(ccInstance *sci, const char **tsname) {
 }
 
 int RunScriptFunctionIfExists(ccInstance *sci, const char *tsname, int numParam, const RuntimeScriptValue *params) {
-	int oldRestoreCount = gameHasBeenRestored;
+	int oldRestoreCount = _G(gameHasBeenRestored);
 	// First, save the current _G(ccError) state
 	// This is necessary because we might be attempting
 	// to run Script B, while Script A is still running in the
@@ -376,7 +374,7 @@ int RunScriptFunctionIfExists(ccInstance *sci, const char *tsname, int numParam,
 	_G(ccError) = cachedCcError;
 
 	// if the game has been restored, ensure that any further scripts are not run
-	if ((oldRestoreCount != gameHasBeenRestored) && (_G(eventClaimed) == EVENT_INPROGRESS))
+	if ((oldRestoreCount != _G(gameHasBeenRestored)) && (_G(eventClaimed) == EVENT_INPROGRESS))
 		_G(eventClaimed) = EVENT_CLAIMED;
 
 	return toret;
@@ -388,14 +386,14 @@ int RunTextScript(ccInstance *sci, const char *tsname) {
 		// FIXME: in theory the function may be already called for _GP(moduleInst)[i],
 		// in which case this should not be executed; need to rearrange the code somehow
 		int room_changes_was = _GP(play).room_changes;
-		int restore_game_count_was = gameHasBeenRestored;
+		int restore_game_count_was = _G(gameHasBeenRestored);
 
 		for (int kk = 0; kk < _G(numScriptModules); kk++) {
 			if (!_GP(moduleRepExecAddr)[kk].IsNull())
 				RunScriptFunctionIfExists(_GP(moduleInst)[kk], tsname, 0, nullptr);
 
 			if ((room_changes_was != _GP(play).room_changes) ||
-				(restore_game_count_was != gameHasBeenRestored))
+				(restore_game_count_was != _G(gameHasBeenRestored)))
 				return 0;
 		}
 	}

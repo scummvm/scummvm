@@ -229,13 +229,13 @@ void setup_for_dialog() {
 	_G(oldmouse) = _G(cur_cursor);
 	set_mouse_cursor(CURS_ARROW);
 }
+
 void restore_after_dialog() {
 	set_mouse_cursor(_G(oldmouse));
 	if (!_GP(play).mouse_cursor_hidden)
 		ags_domouse(DOMOUSE_DISABLE);
 	invalidate_screen();
 }
-
 
 
 String get_save_game_directory() {
@@ -527,9 +527,6 @@ const char *Game_GetGlobalStrings(int index) {
 
 	return CreateNewScriptString(_GP(play).globalstrings[index]);
 }
-
-
-char gamefilenamebuf[200];
 
 // ** GetGameParameter replacement functions
 
@@ -1416,9 +1413,6 @@ HSaveError restore_game_data(Stream *in, SavegameVersion svg_version, const Pres
 	return HSaveError::None();
 }
 
-int gameHasBeenRestored = 0;
-int oldeip;
-
 bool read_savedgame_description(const String &savedgame, String &description) {
 	SavegameDescription desc;
 	if (OpenSavegame(savedgame, desc, kSvgDesc_UserText)) {
@@ -1449,9 +1443,9 @@ bool read_savedgame_screenshot(const String &savedgame, int &want_shot) {
 
 HSaveError load_game(int slotNumber, bool &data_overwritten) {
 	data_overwritten = false;
-	gameHasBeenRestored++;
+	_G(gameHasBeenRestored)++;
 
-	oldeip = _G(our_eip);
+	_G(oldeip) = _G(our_eip);
 	_G(our_eip) = 2050;
 
 	HSaveError err;
@@ -1473,8 +1467,8 @@ HSaveError load_game(int slotNumber, bool &data_overwritten) {
 		// [IKM] 2012-11-26: this is a workaround, indeed.
 		// Try to find wanted game's executable; if it does not exist,
 		// continue loading savedgame in current game, and pray for the best
-		get_install_dir_path(gamefilenamebuf, desc.MainDataFilename);
-		if (Shared::File::TestReadFile(gamefilenamebuf)) {
+		get_install_dir_path(_G(gamefilenamebuf), desc.MainDataFilename);
+		if (Shared::File::TestReadFile(_G(gamefilenamebuf))) {
 			RunAGSGame(desc.MainDataFilename, 0, 0);
 			_G(load_new_game_restore) = slotNumber;
 			return HSaveError::None();
@@ -1489,7 +1483,7 @@ HSaveError load_game(int slotNumber, bool &data_overwritten) {
 	if (!err)
 		return err;
 	src.InputStream.reset();
-	_G(our_eip) = oldeip;
+	_G(our_eip) = _G(oldeip);
 
 	// ensure keyboard buffer is clean
 	ags_clear_input_buffer();

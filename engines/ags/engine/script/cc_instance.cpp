@@ -51,7 +51,7 @@ using namespace AGS::Shared;
 using namespace AGS::Shared::Memory;
 
 extern ccInstance *loadedInstances[MAX_LOADED_INSTANCES]; // in script/script_runtime
-extern int gameHasBeenRestored; // in ac/game
+
  // in script/script
 extern int maxWhileLoops;
 extern new_line_hook_type new_line_hook;

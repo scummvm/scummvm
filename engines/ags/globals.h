@@ -645,6 +645,9 @@ public:
 	int _load_new_game_restore = -1;
 	// TODO: refactor these global vars into function arguments
 	int _getloctype_index = 0, _getloctype_throughgui = 0;
+	char _gamefilenamebuf[200] = { 0 };
+	int _gameHasBeenRestored = 0;
+	int _oldeip = 0;
 
 	 /**@}*/
 

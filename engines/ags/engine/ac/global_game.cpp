@@ -75,8 +75,6 @@ using namespace AGS::Shared;
 
 #define ALLEGRO_KEYBOARD_HANDLER
 
-
-extern char gamefilenamebuf[200];
 extern int gui_disabled_style;
 extern color palette[256];
 
@@ -237,9 +235,9 @@ int RunAGSGame(const char *newgame, unsigned int mode, int data) {
 
 	if ((mode & RAGMODE_LOADNOW) == 0) {
 		// need to copy, since the script gets destroyed
-		get_install_dir_path(gamefilenamebuf, newgame);
-		_GP(ResPaths).GamePak.Path = gamefilenamebuf;
-		_GP(ResPaths).GamePak.Name = Shared::Path::get_filename(gamefilenamebuf);
+		get_install_dir_path(_G(gamefilenamebuf), newgame);
+		_GP(ResPaths).GamePak.Path = _G(gamefilenamebuf);
+		_GP(ResPaths).GamePak.Name = Shared::Path::get_filename(_G(gamefilenamebuf));
 		_GP(play).takeover_data = data;
 		_G(load_new_game_restore) = -1;
 
