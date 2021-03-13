@@ -109,7 +109,7 @@ public:
 
 	static NancyEngine *create(GameType type, OSystem *syst, const NancyGameDescription *gd);
 
-	GUI::Debugger *getDebugger();
+	virtual GUI::Debugger *getDebugger() override;
 
 	virtual bool hasFeature(EngineFeature f) const override;
 
@@ -160,7 +160,7 @@ private:
 		State::State *previousState = nullptr;
 	};
 
-	Common::Error run();
+	virtual Common::Error run() override;
 
 	void bootGameEngine();
 

@@ -61,7 +61,7 @@ private:
 		virtual int getCurFrame() const override { return _curFrame; }
 		virtual int getFrameCount() const override { return _frameCount; }
 		virtual bool isSeekable() const override { return true; }
-		virtual bool seek(const Audio::Timestamp &time);
+		virtual bool seek(const Audio::Timestamp &time) override;
 		virtual bool setReverse(bool reverse) override;
 		virtual bool isReversed() const override { return _reversed; }
 		virtual bool endOfTrack() const override;
