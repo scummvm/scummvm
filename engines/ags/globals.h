@@ -301,6 +301,17 @@ public:
 	 * @{
 	 */
 
+	int _use_cdplayer = 0;
+	bool _triedToUseCdAudioCommand = false;
+	int _need_to_stop_cd = 0;
+
+	/**@}*/
+
+	/**
+	 * \defgroup character globals
+	 * @{
+	 */
+
 	CharacterExtras *_charextra = nullptr;
 	CharacterInfo *_playerchar = nullptr;
 	int32_t _sc_PlayerCharPtr = 0;

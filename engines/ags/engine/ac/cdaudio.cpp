@@ -26,22 +26,18 @@
 
 namespace AGS3 {
 
-int use_cdplayer = 0;
-bool triedToUseCdAudioCommand = false;
-int need_to_stop_cd = 0;
-
 int init_cd_player() {
-	use_cdplayer = 0;
+	_G(use_cdplayer) = 0;
 	return _G(platform)->InitializeCDPlayer();
 }
 
 int cd_manager(int cmdd, int datt) {
-	if (!triedToUseCdAudioCommand) {
-		triedToUseCdAudioCommand = true;
+	if (!_G(triedToUseCdAudioCommand)) {
+		_G(triedToUseCdAudioCommand) = true;
 		init_cd_player();
 	}
-	if (cmdd == 0) return use_cdplayer;
-	if (use_cdplayer == 0) return 0; // ignore other commands
+	if (cmdd == 0) return _G(use_cdplayer);
+	if (_G(use_cdplayer) == 0) return 0; // ignore other commands
 
 	return _G(platform)->CDPlayerCommand(cmdd, datt);
 }

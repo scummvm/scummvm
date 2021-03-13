@@ -191,8 +191,8 @@ void AGSPlatformDriver::PrintMessage(const Shared::DebugMessage &msg) {
 #if defined (AGS_HAS_CD_AUDIO)
 
 // from ac_cdplayer
-extern int use_cdplayer;
-extern int need_to_stop_cd;
+extern int _G(use_cdplayer);
+extern int _G(need_to_stop_cd);
 
 int numcddrives = 0;
 
@@ -200,7 +200,7 @@ int cd_player_init() {
 	int erro = cd_init();
 	if (erro) return -1;
 	numcddrives = 1;
-	use_cdplayer = 1;
+	_G(use_cdplayer) = 1;
 	return 0;
 }
 
@@ -211,7 +211,7 @@ int cd_player_control(int cmdd, int datt) {
 		return 0;
 	} else if (cmdd == 2) {
 		cd_play_from(datt);
-		need_to_stop_cd = 1;
+		_G(need_to_stop_cd) = 1;
 	} else if (cmdd == 3)
 		cd_pause();
 	else if (cmdd == 4)

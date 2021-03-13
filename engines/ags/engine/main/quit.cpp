@@ -54,9 +54,6 @@ namespace AGS3 {
 using namespace AGS::Shared;
 using namespace AGS::Engine;
 
-extern int need_to_stop_cd;
-extern int use_cdplayer;
-
 // TODO: move to test unit
 extern Bitmap *test_allegro_bitmap;
 extern IDriverDependantBitmap *test_allegro_ddb;
@@ -71,7 +68,7 @@ void quit_tell_editor_debugger(const String &qmsg, QuitReason qreason) {
 }
 
 void quit_stop_cd() {
-	if (need_to_stop_cd)
+	if (_G(need_to_stop_cd))
 		cd_manager(3, 0);
 }
 
@@ -104,7 +101,7 @@ void quit_shutdown_platform(QuitReason qreason) {
 
 	_G(platform)->FinishedUsingGraphicsMode();
 
-	if (use_cdplayer)
+	if (_G(use_cdplayer))
 		_G(platform)->ShutdownCDPlayer();
 }
 
