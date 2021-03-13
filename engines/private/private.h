@@ -210,6 +210,7 @@ public:
 	Common::String _framePath;
 	Graphics::Surface *_frame;
 	Common::String _nextVS;
+	Common::Point _origin;
 	void drawScreen();
 
 	// settings
@@ -217,9 +218,9 @@ public:
 	Common::String _pausedSetting;
 	Common::String _currentSetting;
 
+	// movies
 	Common::String _nextMovie;
-	Common::Point  _origin;
-	bool		   _toTake;
+	Common::String _currentMovie;
 
 	// Dossiers
 	DossierArray _dossiers;
@@ -246,6 +247,7 @@ public:
 	Common::String _diaryLocPrefix;
 	void loadLocations(const Common::Rect &);
 	void loadInventory(uint32, const Common::Rect &, const Common::Rect &);
+	bool _toTake;
 
 	// Save/Load games
 	MaskInfo _saveGameMask;

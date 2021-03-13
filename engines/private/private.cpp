@@ -70,6 +70,7 @@ PrivateEngine::PrivateEngine(OSystem *syst, const ADGameDescription *gd)
 
 	// Movies
 	_nextMovie = "";
+	_currentMovie = "";
 	_nextVS = "";
 	_repeatedMovieExit = "";
 
@@ -250,6 +251,7 @@ Common::Error PrivateEngine::run() {
 			removeTimer();
 			_videoDecoder = new Video::SmackerDecoder();
 			playVideo(_nextMovie);
+			_currentMovie = _nextMovie;
 			_nextMovie = "";
 			continue;
 		}
@@ -266,6 +268,7 @@ Common::Error PrivateEngine::run() {
 				_videoDecoder->close();
 				delete _videoDecoder;
 				_videoDecoder = nullptr;
+				_currentMovie = "";
 			} else if (_videoDecoder->needsUpdate()) {
 				drawScreen();
 			}
@@ -775,6 +778,17 @@ Common::Error PrivateEngine::loadGameStream(Common::SeekableReadStream *stream) 
 	// Paused setting
 	_pausedSetting = stream->readString();
 
+	// Restore a movie that was playing
+	_currentMovie = stream->readString();
+	int currentTime = stream->readUint32LE();
+
+	if (!_currentMovie.empty()) {
+		_videoDecoder = new Video::SmackerDecoder();
+		playVideo(_currentMovie);
+		_videoDecoder->pauseVideo(true);
+		// TODO: implement seek
+	}
+
 	if (_pausedSetting.empty())
 		_nextSetting = "kStartGame";
 	else
@@ -862,6 +876,14 @@ Common::Error PrivateEngine::saveGameStream(Common::WriteStream *stream, bool is
 	stream->writeString(_pausedSetting);
 	stream->writeByte(0);
 
+	// If we were playing a movie
+	stream->writeString(_currentMovie);
+	stream->writeByte(0);
+	if (_videoDecoder)
+		stream->writeUint32LE(_videoDecoder->getCurFrame());
+	else
+		stream->writeUint32LE(0);
+
 	return Common::kNoError;
 }
 
@@ -928,6 +950,7 @@ void PrivateEngine::skipVideo() {
 	_videoDecoder->close();
 	delete _videoDecoder;
 	_videoDecoder = nullptr;
+	_currentMovie = "";
 }
 
 void PrivateEngine::stopSound(bool all) {
