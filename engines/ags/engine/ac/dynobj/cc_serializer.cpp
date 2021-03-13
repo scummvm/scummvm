@@ -36,9 +36,6 @@
 
 namespace AGS3 {
 
-extern PluginObjectReader pluginReaders[MAX_PLUGIN_OBJECT_READERS];
-extern int numPluginReaders;
-
 // *** De-serialization of script objects
 
 void AGSDeSerializer::Unserialize(int index, const char *objectType, const char *serializedData, int dataSize) {
@@ -100,9 +97,9 @@ void AGSDeSerializer::Unserialize(int index, const char *objectType, const char 
 		suo->Unserialize(index, serializedData, dataSize);
 	} else if (!unserialize_audio_script_object(index, objectType, serializedData, dataSize)) {
 		// check if the type is read by a plugin
-		for (int ii = 0; ii < numPluginReaders; ii++) {
-			if (strcmp(objectType, pluginReaders[ii].type) == 0) {
-				pluginReaders[ii].reader->Unserialize(index, serializedData, dataSize);
+		for (int ii = 0; ii < _G(numPluginReaders); ii++) {
+			if (strcmp(objectType, _G(pluginReaders)[ii].type) == 0) {
+				_G(pluginReaders)[ii].reader->Unserialize(index, serializedData, dataSize);
 				return;
 			}
 		}

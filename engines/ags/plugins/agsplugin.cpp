@@ -85,8 +85,6 @@ using namespace AGS::Shared::Memory;
 using namespace AGS::Engine;
 
 extern color palette[256];
-extern PluginObjectReader pluginReaders[MAX_PLUGIN_OBJECT_READERS];
-extern int numPluginReaders;
 
 void PluginSimulateMouseClick(int pluginButtonID) {
 	_G(pluginSimulatedClick) = pluginButtonID - 1;
@@ -722,20 +720,20 @@ int IAGSEngine::RegisterManagedObject(const void *object, IAGSScriptManagedObjec
 }
 
 void IAGSEngine::AddManagedObjectReader(const char *typeName, IAGSManagedObjectReader *reader) {
-	if (numPluginReaders >= MAX_PLUGIN_OBJECT_READERS)
+	if (_G(numPluginReaders) >= MAX_PLUGIN_OBJECT_READERS)
 		quit("Plugin error: IAGSEngine::AddObjectReader: Too many object readers added");
 
 	if ((typeName == nullptr) || (typeName[0] == 0))
 		quit("Plugin error: IAGSEngine::AddObjectReader: invalid name for type");
 
-	for (int ii = 0; ii < numPluginReaders; ii++) {
-		if (strcmp(pluginReaders[ii].type, typeName) == 0)
+	for (int ii = 0; ii < _G(numPluginReaders); ii++) {
+		if (strcmp(_G(pluginReaders)[ii].type, typeName) == 0)
 			quitprintf("Plugin error: IAGSEngine::AddObjectReader: type '%s' has been registered already", typeName);
 	}
 
-	pluginReaders[numPluginReaders].reader = reader;
-	pluginReaders[numPluginReaders].type = typeName;
-	numPluginReaders++;
+	_G(pluginReaders)[_G(numPluginReaders)].reader = reader;
+	_G(pluginReaders)[_G(numPluginReaders)].type = typeName;
+	_G(numPluginReaders)++;
 }
 
 void IAGSEngine::RegisterUnserializedObject(int key_, const void *object, IAGSScriptManagedObject *callback) {

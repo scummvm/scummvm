@@ -89,6 +89,7 @@
 #include "ags/engine/script/script.h"
 #include "ags/engine/script/systemimports.h"
 #include "ags/lib/std/limits.h"
+#include "ags/plugins/pluginobjectreader.h"
 
 namespace AGS3 {
 
@@ -244,6 +245,9 @@ Globals::Globals() {
 
 	// overlay.cpp globals
 	_screenover = new std::vector<ScreenOverlay>();
+
+	// pluginobjectreader.cpp globals
+	_pluginReaders = new PluginObjectReader[MAX_PLUGIN_OBJECT_READERS];
 
 	// room.cpp globals
 	_rgb_table = new RGB_MAP();
@@ -419,6 +423,9 @@ Globals::~Globals() {
 
 	// overlay.cpp globals
 	delete _screenover;
+
+	// pluginobjectreader.cpp globals
+	delete[] _pluginReaders;
 
 	// room.cpp globals
 	delete _rgb_table;

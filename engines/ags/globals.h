@@ -121,6 +121,7 @@ struct NewControl;
 struct NonBlockingScriptFunction;
 struct ObjectCache;
 struct OnScreenWindow;
+struct PluginObjectReader;
 struct ResourcePaths;
 struct RGB_MAP;
 struct RoomCameraDrawData;
@@ -928,6 +929,16 @@ public:
 
 	std::vector<ScreenOverlay> *_screenover;
 	int _is_complete_overlay = 0, _is_text_overlay = 0;
+
+	/**@}*/
+
+	/**
+	 * \defgroup quit globals
+	 * @{
+	 */
+
+	PluginObjectReader *_pluginReaders;
+	int _numPluginReaders = 0;
 
 	/**@}*/
 
