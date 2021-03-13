@@ -327,7 +327,7 @@ bool NancyConsole::Cmd_loadScene(int argc, const char **argv) {
 	}
 
 	Common::String sceneName = Common::String::format("S%s", argv[1]);
-    IFF iff(sceneName);
+	IFF iff(sceneName);
 	if (!iff.load()) {
 		debugPrintf("Invalid scene S%s\n", argv[1]);
 		return true;

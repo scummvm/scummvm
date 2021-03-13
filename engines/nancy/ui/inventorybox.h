@@ -44,7 +44,7 @@ class Scene;
 namespace UI {
 
 class InventoryBox : public RenderObject {
-	friend class InventoryScrollbar;
+    friend class InventoryScrollbar;
     friend class Shades;
     friend class Nancy::State::Scene;
 
