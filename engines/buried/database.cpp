@@ -82,7 +82,7 @@ Common::SeekableReadStream *DatabaseNE::getBitmapStream(uint32 bitmapID) {
 }
 
 Graphics::WinCursorGroup *DatabaseNE::getCursorGroup(uint32 cursorGroupID) {
-	return Graphics::WinCursorGroup::createCursorGroup(*_exe, cursorGroupID);
+	return Graphics::WinCursorGroup::createCursorGroup(_exe, cursorGroupID);
 }
 
 Common::SeekableReadStream *DatabaseNE::getResourceStream(const Common::String &resourceType, uint32 resourceID) {
@@ -147,7 +147,7 @@ Common::SeekableReadStream *DatabasePE::getBitmapStream(uint32 bitmapID) {
 }
 
 Graphics::WinCursorGroup *DatabasePE::getCursorGroup(uint32 cursorGroupID) {
-	return Graphics::WinCursorGroup::createCursorGroup(*_exe, cursorGroupID);
+	return Graphics::WinCursorGroup::createCursorGroup(_exe, cursorGroupID);
 }
 
 Common::SeekableReadStream *DatabasePE::getResourceStream(const Common::String &resourceType, uint32 resourceID) {
