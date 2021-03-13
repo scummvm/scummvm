@@ -169,38 +169,37 @@ void _player::Update_input_state() {
 		g_playerPan = NEAREST_INT(4096.0f * MS->stairs[stair_num].pan_ref);
 	}
 
-	// No Joystick
-	else {
-		// Keyboard support (generic controls)
+	// Keyboard support (generic controls)
 
-		// If running then always running
-		if (cur_state.IsButtonSet(__JOG)) {
-			if (player_status == STOOD)
-				cur_state.momentum = __FORWARD_1;
-			else
-				cur_state.momentum = __FORWARD_2;
-		} else
-		    // Forward/backward - one or the other
-		    if (Read_DI_keys(up_key)) {
+	// If running then always running
+	if (cur_state.IsButtonSet(__JOG)) {
+		if (player_status == STOOD)
+			cur_state.momentum = __FORWARD_1;
+		else
+			cur_state.momentum = __FORWARD_2;
+	} else {
+		// Forward/backward - one or the other
+		if (Read_DI_keys(up_key)) {
 			// Can't move forward with sidestep held (unless on stairs or ladders)
 			if (cur_state.IsButtonSet(__SIDESTEP) && stairs == 0 && ladders == 0) {
 				cur_state.momentum = __STILL;
-			} else
+			} else {
 				// We want to walk
 				cur_state.momentum = __FORWARD_1;
+			}
 		} else if (Read_DI_keys(down_key))
 			cur_state.momentum = __BACKWARD_1;
 		else
 			cur_state.momentum = __STILL;
-
-		// Left/right
-		if (Read_DI_keys(left_key)) {
-			cur_state.turn = __LEFT;
-		} else if (Read_DI_keys(right_key)) {
-			cur_state.turn = __RIGHT;
-		} else
-			cur_state.turn = __NO_TURN;
 	}
+
+	// Left/right
+	if (Read_DI_keys(left_key)) {
+		cur_state.turn = __LEFT;
+	} else if (Read_DI_keys(right_key)) {
+		cur_state.turn = __RIGHT;
+	} else
+		cur_state.turn = __NO_TURN;
 
 	// Set the floating point version of the fixed point variables we've used
 	lastCameraPan = ((float)clastCameraPan / 4096.0f);
