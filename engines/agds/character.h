@@ -34,7 +34,6 @@ namespace Graphics	{ struct Surface; }
 namespace AGDS {
 
 class AGDSEngine;
-class Process;
 class Object;
 typedef Common::SharedPtr<Object> ObjectPtr;
 class Animation;
@@ -44,6 +43,7 @@ class Character {
 	ObjectPtr		_object;
 	Animation *		_animation;
 	Common::String 	_name;
+	Common::String	_processName;
 	Common::Point	_pos;
 	Common::Point	_animationPos;
 	bool _enabled;
@@ -94,12 +94,9 @@ public:
 		_visible = visible;
 	}
 
-	void animate(Common::Point pos, int direction, int speed);
+	void animate(const Common::String &processName, Common::Point pos, int direction, int speed);
 
-	void stop() {
-		_phase = -1;
-		_frames = 0;
-	}
+	void stop();
 
 	int getPhase() const {
 		return _phase;
@@ -113,7 +110,7 @@ public:
 		return _pos;
 	}
 
-	void moveTo(Common::Point dst, int direction);
+	void moveTo(const Common::String &processName, Common::Point dst, int direction);
 
 	void direction(int dir);
 

@@ -140,14 +140,16 @@ void Character::direction(int dir) {
 	_animation->rewind();
 }
 
-void Character::moveTo(Common::Point dst, int dir) {
+void Character::moveTo(const Common::String & processName, Common::Point dst, int dir) {
 	debug("character move %d,%d %d", dst.x, dst.y, dir);
+	_processName = processName;
 	_pos = dst;
 	direction(dir);
 }
 
-void Character::animate(Common::Point pos, int direction, int speed) {
+void Character::animate(const Common::String & processName, Common::Point pos, int direction, int speed) {
 	debug("animate character: %d,%d %d %d", pos.x, pos.y, direction, speed);
+	_processName = processName;
 	if (direction == -1)
 		return;
 	auto jokes = _engine->jokes();
@@ -162,9 +164,17 @@ void Character::animate(Common::Point pos, int direction, int speed) {
 	_animation->speed(speed);
 	_animation->rewind();
 	_phase = 0;
-	_frames = (100 * _animation->frames() + speed - 1) / speed;
+	_frames = _animation->frames();
 	_animationPos = pos;
+	debug("character animation frames: %d, enabled: %d, visible: %d", _frames, _enabled, _visible);
 }
+
+void Character::stop() {
+	debug("character %s: stop", _object->getName().c_str());
+	_phase = -1;
+	_frames = 0;
+}
+
 
 void Character::paint(Graphics::Surface &backbuffer) {
 	if (!_enabled || !_visible || !_animation)
@@ -176,15 +186,16 @@ void Character::paint(Graphics::Surface &backbuffer) {
 	auto scale = screen? screen->getZScale(_pos.y): 1;
 	_animation->scale(scale);
 
+	debug("character %d/%d", _phase, _frames);
 	if (_phase >= 0 && _phase < _frames) {
 		_animation->tick();
-		if (_phase + 1 >= _frames) {
+		_phase = _animation->phase();
+		if (_phase >= _frames) {
 			_phase = -1;
 			_frames = 0;
-		} else {
-			++_phase;
 		}
 	}
+	_engine->reactivate(_processName, true);
 
 	pos.y -= _animation->height();
 	pos.x -= _animation->width() / 2;
