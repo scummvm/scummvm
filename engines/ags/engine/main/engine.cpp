@@ -68,7 +68,6 @@
 #include "ags/engine/main/main.h"
 #include "ags/engine/main/main_allegro.h"
 #include "ags/engine/media/audio/audio_system.h"
-#include "ags/engine/platform/util/pe.h"
 #include "ags/shared/gfx/image.h"
 #include "ags/shared/util/directory.h"
 #include "ags/shared/util/error.h"
