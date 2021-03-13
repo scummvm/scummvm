@@ -269,6 +269,7 @@ Common::Rect Viewport::getBoundsByFormat(uint format) const {
 Common::Rect Viewport::convertViewportToScreen(const Common::Rect &viewportRect) const {
     Common::Rect ret = convertToScreen(viewportRect);
     ret.translate(0, -getCurVerticalScroll());
+    ret.clip(_screenPosition);
     return ret;
 }
 
