@@ -54,10 +54,6 @@ namespace AGS3 {
 using namespace AGS::Shared;
 using namespace AGS::Engine;
 
-// TODO: move to test unit
-extern Bitmap *test_allegro_bitmap;
-extern IDriverDependantBitmap *test_allegro_ddb;
-
 void quit_tell_editor_debugger(const String &qmsg, QuitReason qreason) {
 	if (_G(editor_debugging_initialized)) {
 		if (qreason & kQuitKind_GameException)
@@ -188,13 +184,6 @@ void quit_delete_temp_files() {
 #endif
 }
 
-// TODO: move to test unit
-void allegro_bitmap_test_release() {
-	delete test_allegro_bitmap;
-	if (test_allegro_ddb)
-		_G(gfxDriver)->DestroyDDB(test_allegro_ddb);
-}
-
 // quit - exits the engine, shutting down everything gracefully
 // The parameter is the message to print. If this message begins with
 // an '!' character, then it is printed as a "contact game author" error.
@@ -220,8 +209,6 @@ void quit_free() {
 
 	if (qreason & kQuitKind_NormalExit)
 		save_config_file();
-
-	allegro_bitmap_test_release();
 
 	_G(handledErrorInEditor) = false;
 
