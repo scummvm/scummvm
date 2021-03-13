@@ -45,7 +45,6 @@ uint32 Get_DI_key_press();
 void Clear_DI_key_buffer();
 void SetDefaultKeys();
 const char *GetKeyName(uint32 key);
-void UnsetKeys();
 
 } // End of namespace ICB
 
