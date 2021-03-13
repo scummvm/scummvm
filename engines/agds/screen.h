@@ -119,9 +119,7 @@ public:
 	}
 
 	bool add(ObjectPtr object);
-	void add(Animation * animation) {
-		_animations.insert(animation);
-	}
+	void add(Animation * animation);
 	bool remove(Animation * animation);
 
 	void update(const ObjectPtr &object) {
