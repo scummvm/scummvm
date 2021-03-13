@@ -156,7 +156,7 @@ static const PARALLACTIONGameDescription gameDescriptions[] = {
 	{
 		{
 			"bra",
-			"Multi-lingual",
+			"En/Fr/De",
 			AD_ENTRY1s("request.win", "7a844b9518310e4cc72eabb9c0340314", 6497),
 			Common::UNK_LANG,
 			Common::kPlatformAmiga,
@@ -164,7 +164,7 @@ static const PARALLACTIONGameDescription gameDescriptions[] = {
 			GUIO1(GUIO_NOSPEECH)
 		},
 		GType_BRA,
-		GF_LANG_EN | GF_LANG_FR | GF_LANG_DE | GF_LANG_IT | GF_LANG_MULT,
+		GF_LANG_EN | GF_LANG_FR | GF_LANG_DE | GF_LANG_MULT,
 	},
 
 	{
