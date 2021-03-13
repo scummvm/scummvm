@@ -97,10 +97,10 @@ inline int32 myNINT(float f) {
 #define gte_NormalClip mygte_NormalClip
 #define gte_AverageZ3 mygte_AverageZ3
 
-extern MATRIX gterot;
-extern MATRIX gtetrans;
-extern MATRIX gtecolour;
-extern MATRIX gtelight;
+extern MATRIX *gterot;
+extern MATRIX *gtetrans;
+extern MATRIX *gtecolour;
+extern MATRIX *gtelight;
 extern int16 gteback[3];
 extern int32 gtegeomscrn;
 extern uint8 dcache[1024];
@@ -189,21 +189,21 @@ inline void mygte_MulMatrix0(MATRIX *m1, MATRIX *m2, MATRIX *out) {
 	}
 }
 
-inline void mygte_SetRotMatrix(MATRIX *m) { gterot = *m; }
+inline void mygte_SetRotMatrix(MATRIX *m) { *gterot = *m; }
 
-inline void mygte_SetTransMatrix(MATRIX *m) { gtetrans = *m; }
+inline void mygte_SetTransMatrix(MATRIX *m) { *gtetrans = *m; }
 
 inline void mygte_ApplyRotMatrix(SVECTOR *invec, VECTOR *outvec) {
-	outvec->vx = (((int)gterot.m[0][0] * (int)invec->vx + (int)gterot.m[0][1] * (int)invec->vy + (int)gterot.m[0][2] * (int)invec->vz) / 4096);
-	outvec->vy = (((int)gterot.m[1][0] * (int)invec->vx + (int)gterot.m[1][1] * (int)invec->vy + (int)gterot.m[1][2] * (int)invec->vz) / 4096);
-	outvec->vz = (((int)gterot.m[2][0] * (int)invec->vx + (int)gterot.m[2][1] * (int)invec->vy + (int)gterot.m[2][2] * (int)invec->vz) / 4096);
+	outvec->vx = (((int)gterot->m[0][0] * (int)invec->vx + (int)gterot->m[0][1] * (int)invec->vy + (int)gterot->m[0][2] * (int)invec->vz) / 4096);
+	outvec->vy = (((int)gterot->m[1][0] * (int)invec->vx + (int)gterot->m[1][1] * (int)invec->vy + (int)gterot->m[1][2] * (int)invec->vz) / 4096);
+	outvec->vz = (((int)gterot->m[2][0] * (int)invec->vx + (int)gterot->m[2][1] * (int)invec->vy + (int)gterot->m[2][2] * (int)invec->vz) / 4096);
 }
 
 inline void mygte_RotTrans(SVECTOR *in0, VECTOR *out0, int32 *flag) {
 	mygte_ApplyRotMatrix(in0, out0);
-	out0->vx += gtetrans.t[0];
-	out0->vy += gtetrans.t[1];
-	out0->vz += gtetrans.t[2];
+	out0->vx += gtetrans->t[0];
+	out0->vy += gtetrans->t[1];
+	out0->vz += gtetrans->t[2];
 
 	// What GTE flags should we set ?
 	*flag = 0;
@@ -314,16 +314,16 @@ inline void mygte_SetBackColor(int32 r, int32 g, int32 b) {
 	gteback[2] = (int16)b;
 }
 
-inline void mygte_SetColorMatrix(MATRIX *m) { gtecolour = *m; }
+inline void mygte_SetColorMatrix(MATRIX *m) { *gtecolour = *m; }
 
-inline void mygte_SetLightMatrix(MATRIX *m) { gtelight = *m; }
+inline void mygte_SetLightMatrix(MATRIX *m) { *gtelight = *m; }
 
 inline void mygte_SetGeomScreen(int32 h) { gtegeomscrn = h; }
 
 inline void mygte_NormalColorCol(SVECTOR *v0, CVECTOR *in0, CVECTOR *out0) {
 	SVECTOR lightEffect;
 	// Normal line vector(local) -> light source effect
-	ApplyMatrixSV(&gtelight, v0, &lightEffect);
+	ApplyMatrixSV(gtelight, v0, &lightEffect);
 	if (lightEffect.vx < 0)
 		lightEffect.vx = 0;
 	if (lightEffect.vy < 0)
@@ -333,7 +333,7 @@ inline void mygte_NormalColorCol(SVECTOR *v0, CVECTOR *in0, CVECTOR *out0) {
 
 	// Light source effect -> Colour effect(local colour matrix+back colour)
 	SVECTOR colourEffect;
-	ApplyMatrixSV(&gtecolour, &lightEffect, &colourEffect);
+	ApplyMatrixSV(gtecolour, &lightEffect, &colourEffect);
 	if (colourEffect.vx < 0)
 		colourEffect.vx = 0;
 	if (colourEffect.vy < 0)

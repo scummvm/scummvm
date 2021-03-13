@@ -246,9 +246,9 @@ void InitEngine(const char *lpCmdLine) {
 		// unless there is a console.icb file we dont allow debugging
 
 		// set base mode of stub to gameScript processor
-		stub.Set_current_stub_mode(__game_script);
+		g_stub->Set_current_stub_mode(__game_script);
 	} else
-		stub.Set_current_stub_mode(__mission_and_console);
+		g_stub->Set_current_stub_mode(__mission_and_console);
 
 	// Initialise the runtime cluster manager
 	g_theClusterManager->Initialise();
@@ -337,7 +337,7 @@ bool mainLoopIteration() {
 		}
 	}
 	// Used to be triggered by else if(gotTheFocus).
-	stub.Process_stub();
+	g_stub->Process_stub();
 
 	g_system->delayMillis(1);
 	return true;
@@ -362,7 +362,7 @@ void Mission_and_console() {
 		int32 ret = ob->GetVariable("state");
 		if (ob->GetIntegerVariable(ret)) {
 			// Return to avoid deleting the mission
-			stub.Push_stub_mode(__gameover_menu);
+			g_stub->Push_stub_mode(__gameover_menu);
 			return;
 		}
 
@@ -372,7 +372,7 @@ void Mission_and_console() {
 			Fatal_error("Thank you for playing In Cold Blood");
 
 		else
-			stub.Pop_stub_mode(); // back to game script server
+			g_stub->Pop_stub_mode(); // back to game script server
 	} else
 		g_mission->Create_display();
 }

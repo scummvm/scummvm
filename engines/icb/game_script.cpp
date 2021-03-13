@@ -164,7 +164,7 @@ void _game_script::Process_game_script() {
 
 	case 'X': // yes, its the amazing X mode   - t h e  m a i n  m e n u -
 		Fetch_next_line();
-		stub.Push_stub_mode(__toe_on_door);
+		g_stub->Push_stub_mode(__toe_on_door);
 		break;
 
 	case 'W':
@@ -182,7 +182,7 @@ void _game_script::Process_game_script() {
 		if (Setup_new_mission(p1, p2)) { // mission_name, session_name
 			// only do actor relative on pc
 			MS->player.Set_control_mode(ACTOR_RELATIVE);
-			stub.Push_stub_mode(__mission_and_console);
+			g_stub->Push_stub_mode(__mission_and_console);
 		} else {
 			Fatal_error("no such mission-session [%s][%s]", p1, p2);
 		}
@@ -208,7 +208,7 @@ void _game_script::Process_game_script() {
 	case 'P':
 		Fetch_next_line();
 		MS->player.Set_control_mode(ACTOR_RELATIVE);
-		stub.Push_stub_mode(__mission_and_console);
+		g_stub->Push_stub_mode(__mission_and_console);
 		break;
 
 	case 'T':
@@ -222,7 +222,7 @@ void _game_script::Process_game_script() {
 		warning("text scrolly %s over movie/screen %s starting frame %d", p1, p2, atoi(p3));
 
 		InitisliaseScrollingText(p1, p2, atoi(p3));
-		stub.Push_stub_mode(__scrolling_text);
+		g_stub->Push_stub_mode(__scrolling_text);
 		break;
 
 	case 'G':

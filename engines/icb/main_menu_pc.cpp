@@ -42,7 +42,7 @@ void Main_menu() {
 	} else {
 		// OptionsManager is in control
 		g_theOptionsManager->CycleLogic();
-		stub.Update_screen();
+		g_stub->Update_screen();
 	}
 }
 
@@ -52,13 +52,13 @@ void Pause_menu() {
 		g_theOptionsManager->ForceInGameScreenRefresh();
 
 	g_theOptionsManager->CycleLogic();
-	stub.Update_screen();
+	g_stub->Update_screen();
 }
 
 void Credits() {
 	uint32 t = GetMicroTimer();
 	g_theOptionsManager->DoCredits();
-	stub.Update_screen();
+	g_stub->Update_screen();
 	t = GetMicroTimer() - t;
 
 	// As the DoCredits() function takes a variable time this timing code
@@ -135,7 +135,7 @@ void InitisliaseScrollingText(const char *textFileName, const char *movieFileNam
 void ScrollingText() {
 	uint32 t = GetMicroTimer();
 	g_theOptionsManager->DoScrollingText();
-	stub.Update_screen();
+	g_stub->Update_screen();
 	t = GetMicroTimer() - t;
 
 #ifdef PC_DEMO
@@ -161,7 +161,7 @@ void Gameover_menu() {
 			g_theOptionsManager->ForceInGameScreenRefresh();
 
 		g_theOptionsManager->CycleLogic();
-		stub.Update_screen();
+		g_stub->Update_screen();
 	}
 }
 

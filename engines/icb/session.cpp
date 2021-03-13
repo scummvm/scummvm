@@ -672,7 +672,7 @@ void _game_session::Pre_initialise_objects() {
 
 		object = (c_game_object *)objects->Fetch_item_by_number(j);
 
-		logic_structs[j] = &logics[j];
+		logic_structs[j] = g_logics[j];
 		logic_structs[j]->___init((const char *)object->GetName());
 	}
 

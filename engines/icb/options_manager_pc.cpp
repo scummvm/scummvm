@@ -598,7 +598,7 @@ void OptionsManager::KillAllSurfii() {
 
 void OptionsManager::StartInGameOptions() {
 	// Pauses the game and presents the in game options
-	stub.Push_stub_mode(__pause_menu);
+	g_stub->Push_stub_mode(__pause_menu);
 
 	if (g_theSpeechManager)
 		g_theSpeechManager->PauseSpeech();
@@ -756,7 +756,7 @@ void OptionsManager::CycleInGameOptionsLogic() {
 	if ((m_thatsEnoughTa) && (m_autoAnimating < 0)) {
 		// Refresh entire screen
 		surface_manager->Clear_surface(working_buffer_id);
-		stub.Update_screen();
+		g_stub->Update_screen();
 
 		// Free up any resources we have used
 		KillAllSurfii();
@@ -766,7 +766,7 @@ void OptionsManager::CycleInGameOptionsLogic() {
 		// An extra pop needed to return control to gamescript
 		if (g_resetToTitleScreen) {
 			g_resetToTitleScreen = FALSE8;
-			stub.Pop_stub_mode();
+			g_stub->Pop_stub_mode();
 		} else {
 			// Resume the engines sounds
 			UnpauseSounds();
@@ -774,7 +774,7 @@ void OptionsManager::CycleInGameOptionsLogic() {
 		}
 
 		// Then quit
-		stub.Pop_stub_mode();
+		g_stub->Pop_stub_mode();
 		m_haveControl = FALSE8;
 
 		return;
@@ -807,11 +807,11 @@ void OptionsManager::CycleGameOverLogic() {
 		// An extra pop needed to return control to gamescript
 		if (g_resetToTitleScreen) {
 			g_resetToTitleScreen = FALSE8;
-			stub.Pop_stub_mode();
+			g_stub->Pop_stub_mode();
 		}
 
 		// Then quit
-		stub.Pop_stub_mode();
+		g_stub->Pop_stub_mode();
 		m_haveControl = FALSE8;
 
 		// Specifically for the Restart Mission command but can't hurt anyway
@@ -1750,10 +1750,10 @@ void OptionsManager::CycleMainOptionsLogic() {
 
 		if (!g_mainMenuLoadPlease) {
 			// If we want a new game then just pop to gamescript
-			stub.Pop_stub_mode();
+			g_stub->Pop_stub_mode();
 		} else {
 			// When loading a game this sets the right gamescript position
-			stub.Set_current_stub_mode(__mission_and_console);
+			g_stub->Set_current_stub_mode(__mission_and_console);
 		}
 
 		UnpauseSounds();
@@ -2407,15 +2407,15 @@ void OptionsManager::AlterSelected(bool8 _right_) {
 
 		case FRAMELIMITER:
 			if (_right_) {
-				if (stub.cycle_speed < 200)
-					stub.cycle_speed += 10;
-				else if (stub.cycle_speed < 951)
-					stub.cycle_speed += 50;
+				if (g_stub->cycle_speed < 200)
+					g_stub->cycle_speed += 10;
+				else if (g_stub->cycle_speed < 951)
+					g_stub->cycle_speed += 50;
 			} else {
-				if (stub.cycle_speed > 200)
-					stub.cycle_speed -= 50;
-				else if (stub.cycle_speed > 10)
-					stub.cycle_speed -= 10;
+				if (g_stub->cycle_speed > 200)
+					g_stub->cycle_speed -= 50;
+				else if (g_stub->cycle_speed > 10)
+					g_stub->cycle_speed -= 10;
 			}
 			PlayChosenFX();
 			Poll_Sound_Engine();
@@ -2743,7 +2743,7 @@ void OptionsManager::DoChoice() {
 			m_M_PROFILES_selected = CORD;
 			break;
 		case CREDITS:
-			stub.Push_stub_mode(__credits);
+			g_stub->Push_stub_mode(__credits);
 			break;
 		case ALLDONE:
 			m_warpDirection = FALSE8;
@@ -4773,7 +4773,7 @@ void OptionsManager::DrawVideoSettings() {
 		temp = CalculateStringWidth(msg);
 		DisplayText(ad, pitch, msg, halfScreen - temp - 10, hite, (m_VIDEO_selected == FRAMELIMITER) ? SELECTEDFONT : NORMALFONT, FALSE8);
 		char msg2[6];
-		sprintf(msg2, "%d%%", stub.cycle_speed);
+		sprintf(msg2, "%d%%", g_stub->cycle_speed);
 		DisplayText(ad, pitch, msg2, halfScreen, hite, NORMALFONT, FALSE8);
 	}
 
@@ -5983,7 +5983,7 @@ void OptionsManager::DoCredits() {
 			// Reinstate the title screen movie
 			LoadTitleScreenMovie();
 			m_creditControl = FALSE8;
-			stub.Pop_stub_mode();
+			g_stub->Pop_stub_mode();
 		}
 	}
 }
@@ -6007,7 +6007,7 @@ void OptionsManager::InitialiseScrollingText(const char *textFileName, const cha
 void OptionsManager::DoScrollingText() {
 	if (m_crediter.DoScreen() == 0) {
 		m_creditControl = FALSE8;
-		stub.Pop_stub_mode();
+		g_stub->Pop_stub_mode();
 	}
 }
 

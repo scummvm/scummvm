@@ -79,7 +79,7 @@ uint8 selPAlpha = 0;
 inline void LightPolygon(SVECTOR *n0, CVECTOR *rgbIn, CVECTOR *rgb0) {
 	SVECTORPC lightEffect;
 	// Normal line vector(local) -> light source effect
-	ApplyMatrixSV_pc(&gtelight_pc, n0, &lightEffect);
+	ApplyMatrixSV_pc(gtelight_pc, n0, &lightEffect);
 
 	if (useLampWidth) {
 		lightEffect.vx = (int16)(lightEffect.vx + lampWidth[0]);
@@ -113,7 +113,7 @@ inline void LightPolygon(SVECTOR *n0, CVECTOR *rgbIn, CVECTOR *rgb0) {
 
 	// Light source effect -> Colour effect(local colour matrix+back colour)
 	SVECTORPC colourEffect;
-	ApplyMatrixSV_pc(&gtecolour_pc, &lightEffect, &colourEffect);
+	ApplyMatrixSV_pc(gtecolour_pc, &lightEffect, &colourEffect);
 	if (colourEffect.vx < 0)
 		colourEffect.vx = 0;
 	if (colourEffect.vy < 0)

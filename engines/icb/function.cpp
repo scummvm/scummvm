@@ -337,7 +337,7 @@ mcodeFunctionReturnCodes _game_session::fn_create_mega(int32 &, int32 *) {
 	Zdebug("FN_create_mega");
 
 	// assign _mega object
-	logic_structs[cur_id]->mega = &megas[num_megas];
+	logic_structs[cur_id]->mega = g_megas[num_megas];
 
 	logic_structs[cur_id]->mega->___init();
 
@@ -434,7 +434,7 @@ mcodeFunctionReturnCodes _game_session::fn_set_voxel_image_path(int32 &, int32 *
 	// create _vox_image object
 	if (!logic_structs[cur_id]->voxel_info) {
 		// assign a struct
-		logic_structs[cur_id]->voxel_info = &vox_images[num_vox_images];
+		logic_structs[cur_id]->voxel_info = g_vox_images[num_vox_images];
 		num_vox_images++;
 	}
 

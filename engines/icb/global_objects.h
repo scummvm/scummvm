@@ -68,7 +68,7 @@ class _mission;
 // holds info about current mission
 extern _mission *g_mission;
 
-extern _stub stub;
+extern _stub *g_stub;
 
 // game script manager
 extern _game_script gs;
@@ -79,9 +79,9 @@ extern _game_session *g_icb_session;
 // session objects
 extern _barrier_handler g_icb_session_barriers;
 extern _floor_world *g_icb_session_floors;
-extern _logic logics[MAX_session_objects];
-extern _mega megas[MAX_voxel_list];
-extern _vox_image vox_images[MAX_voxel_list];
+extern _logic *g_logics[MAX_session_objects];
+extern _mega *g_megas[MAX_voxel_list];
+extern _vox_image *g_vox_images[MAX_voxel_list];
 
 // For choosing different sessions & missions
 #define NUMBER_OF_MISSIONS (11)

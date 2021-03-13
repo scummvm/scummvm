@@ -64,14 +64,10 @@ extern int32 texturesUsedThisCycle;
 uint32 auto_anim = 2;
 
 // Camera and animation structures
-psxCamera camera;
 PXanim *pxanim;
 SVECTOR rot;   // Actor rotation
 SVECTOR _crot; // Camera rotation
 int32 uvframe = 0;
-
-// Actor structure
-psxActor av_actor;
 
 // Global filename stuff
 char cluster_name[32];
@@ -92,7 +88,6 @@ int32 g_repeats;
 bool8 g_av_userControlled = FALSE8;
 
 // Lighting structure and coordinates, colour components
-PSXLamp av_Light;
 int16 av_LightX;
 int16 av_LightY;
 int16 av_LightZ;
@@ -368,7 +363,7 @@ void DrawFrame(const int32 frame) {
 	PSXShadeList the_shades;
 	the_lights.n = 1;
 	the_lights.states[0] = 0;
-	the_lights.lamps[0] = (PSXLamp *)(&av_Light);
+	the_lights.lamps[0] = g_av_Light;
 	the_shades.n = 0;
 
 	// Open the animation file
@@ -385,11 +380,11 @@ void DrawFrame(const int32 frame) {
 	PXFrameEnOfAnim(framenum, pxanim)->markers[ORG_POS];
 
 	// Make the actors orientation matrix
-	av_actor.rot = rot;
-	av_actor.rot.vy = (int16)(av_actor.rot.vy);
+	g_av_actor->rot = rot;
+	g_av_actor->rot.vy = (int16)(g_av_actor->rot.vy);
 
 	// Make the root local-world matrix
-	RotMatrix_gte(&av_actor.rot, &av_actor.lw);
+	RotMatrix_gte(&g_av_actor->rot, &g_av_actor->lw);
 
 	// Need to use marker to get correct actor height (making crouch look correct)
 	PXframe *frm = PXFrameEnOfAnim(framenum, pxanim);
@@ -398,15 +393,15 @@ void DrawFrame(const int32 frame) {
 	marker.GetXYZ(&mposx, &mposy, &mposz);
 	int32 dy = (int32)mposy;
 
-	av_actor.lw.t[0] = 0;
-	av_actor.lw.t[1] = dy - 112;
-	av_actor.lw.t[2] = 0;
+	g_av_actor->lw.t[0] = 0;
+	g_av_actor->lw.t[1] = dy - 112;
+	g_av_actor->lw.t[2] = 0;
 
 	// Set the true rotation & position values from the ORG marker
-	av_actor.truePos.x = 0;
-	av_actor.truePos.y = dy - 112;
-	av_actor.truePos.z = 0;
-	av_actor.trueRot = av_actor.rot;
+	g_av_actor->truePos.x = 0;
+	g_av_actor->truePos.y = dy - 112;
+	g_av_actor->truePos.z = 0;
+	g_av_actor->trueRot = g_av_actor->rot;
 
 	sprintf(pose_name, "%s\\pose.rap", weapon_name);
 	sprintf(bone_name, "%s\\%s.rab", weapon_name, anim_name);
@@ -474,35 +469,35 @@ void DrawFrame(const int32 frame) {
 	MATRIXPC local2screen; // not really bothered about this...
 
 	// Drawing finally
-	DrawActor4PC(&av_actor, &camera, bone_frame, mesh, pose, smesh, &ambient, &the_lights, &the_shades, nShadows, p_n, p_d, debug, uvframe, myBones, &brightness,
+	DrawActor4PC(g_av_actor, g_camera, bone_frame, mesh, pose, smesh, &ambient, &the_lights, &the_shades, nShadows, p_n, p_d, debug, uvframe, myBones, &brightness,
 	             &local2screen);
 
 	uvframe++;
 }
 
 void MakeCameraView() {
-	RotMatrix_gte(&_crot, &camera.view);
+	RotMatrix_gte(&_crot, &g_camera->view);
 
 	// Include the x,y,z scalings
-	camera.view.m[0][0] = (int16)(camera.view.m[0][0] * 1);
-	camera.view.m[0][1] = (int16)(camera.view.m[0][1] * 1);
-	camera.view.m[0][2] = (int16)(camera.view.m[0][2] * 1);
-	camera.view.m[1][0] = (int16)(camera.view.m[1][0] * 1);
-	camera.view.m[1][1] = (int16)(camera.view.m[1][1] * 1);
-	camera.view.m[1][2] = (int16)(camera.view.m[1][2] * 1);
-	camera.view.m[2][0] = (int16)(camera.view.m[2][0] * 4);
-	camera.view.m[2][1] = (int16)(camera.view.m[2][1] * 4);
-	camera.view.m[2][2] = (int16)(camera.view.m[2][2] * 4);
+	g_camera->view.m[0][0] = (int16)(g_camera->view.m[0][0] * 1);
+	g_camera->view.m[0][1] = (int16)(g_camera->view.m[0][1] * 1);
+	g_camera->view.m[0][2] = (int16)(g_camera->view.m[0][2] * 1);
+	g_camera->view.m[1][0] = (int16)(g_camera->view.m[1][0] * 1);
+	g_camera->view.m[1][1] = (int16)(g_camera->view.m[1][1] * 1);
+	g_camera->view.m[1][2] = (int16)(g_camera->view.m[1][2] * 1);
+	g_camera->view.m[2][0] = (int16)(g_camera->view.m[2][0] * 4);
+	g_camera->view.m[2][1] = (int16)(g_camera->view.m[2][1] * 4);
+	g_camera->view.m[2][2] = (int16)(g_camera->view.m[2][2] * 4);
 }
 
 void ResetCamera() {
 	_crot.vx = (4096 * 180) / 360;
 	_crot.vy = (4096 * -30) / 360;
 	_crot.vz = 0;
-	camera.view.t[0] = 170 + av_x;
-	camera.view.t[1] = 0 + av_y;
-	camera.view.t[2] = 1800 + av_z;
-	camera.focLen = 619 * 4;
+	g_camera->view.t[0] = 170 + av_x;
+	g_camera->view.t[1] = 0 + av_y;
+	g_camera->view.t[2] = 1800 + av_z;
+	g_camera->focLen = 619 * 4;
 	MakeCameraView();
 }
 
@@ -514,25 +509,25 @@ void ResetActor() {
 }
 
 void InitLight() {
-	av_Light.nStates = 1;       // One state
-	av_Light.w = 0;             // Zero width
-	av_Light.b = 0;             // Zero bounce
-	av_Light.anu = 0;           // Don't use it
-	av_Light.type = OMNI_LIGHT; // OMNI
-	av_Light.ba = 0;            // Means nothing for an OMNI
-	av_Light.bs = 0;            // Means nothing for an OMNI
+	g_av_Light->nStates = 1;       // One state
+	g_av_Light->w = 0;             // Zero width
+	g_av_Light->b = 0;             // Zero bounce
+	g_av_Light->anu = 0;           // Don't use it
+	g_av_Light->type = OMNI_LIGHT; // OMNI
+	g_av_Light->ba = 0;            // Means nothing for an OMNI
+	g_av_Light->bs = 0;            // Means nothing for an OMNI
 
 	// Don't think these things are used...
-	av_Light.states[0].ans2 = 0;
-	av_Light.states[0].ane2 = (100 * 1) * (100 * 1);
+	g_av_Light->states[0].ans2 = 0;
+	g_av_Light->states[0].ane2 = (100 * 1) * (100 * 1);
 
 	// No shade...
-	av_Light.states[0].m = 128;
+	g_av_Light->states[0].m = 128;
 
 	// Direction doesn't matter; it's an OMNI light
-	av_Light.states[0].vx = 4096; // Ignored for an OMNI light
-	av_Light.states[0].vy = 0;    // Ignored for an OMNI light
-	av_Light.states[0].vz = 0;    // Ignored for an OMNI light
+	g_av_Light->states[0].vx = 4096; // Ignored for an OMNI light
+	g_av_Light->states[0].vy = 0;    // Ignored for an OMNI light
+	g_av_Light->states[0].vz = 0;    // Ignored for an OMNI light
 
 	// Initial angle
 	av_LightA = 0;
@@ -642,33 +637,33 @@ void SetLight(int32 falloff) {
 		Fatal_error("ActorView light rgb %d,%d,%d out of range (0-255)", av_LightR, av_LightG, av_LightB);
 
 	// Set colours (scale 0-255 to 0-4095)
-	av_Light.states[0].c.r = (int16)((av_LightR * 4096) / 256);
-	av_Light.states[0].c.g = (int16)((av_LightG * 4096) / 256);
-	av_Light.states[0].c.b = (int16)((av_LightB * 4096) / 256);
+	g_av_Light->states[0].c.r = (int16)((av_LightR * 4096) / 256);
+	g_av_Light->states[0].c.g = (int16)((av_LightG * 4096) / 256);
+	g_av_Light->states[0].c.b = (int16)((av_LightB * 4096) / 256);
 
 	// Set the v field of colour to be the maximum of r,g,b
-	av_Light.states[0].c.v = av_Light.states[0].c.r;         // Start at red
-	if (av_Light.states[0].c.g > av_Light.states[0].c.v)     // If green bigger
-		av_Light.states[0].c.v = av_Light.states[0].c.g; // Set to green
-	if (av_Light.states[0].c.b > av_Light.states[0].c.v)     // If blue bigger
-		av_Light.states[0].c.v = av_Light.states[0].c.b; // Set to blue
+	g_av_Light->states[0].c.v = g_av_Light->states[0].c.r;         // Start at red
+	if (g_av_Light->states[0].c.g > g_av_Light->states[0].c.v)     // If green bigger
+		g_av_Light->states[0].c.v = g_av_Light->states[0].c.g; // Set to green
+	if (g_av_Light->states[0].c.b > g_av_Light->states[0].c.v)     // If blue bigger
+		g_av_Light->states[0].c.v = g_av_Light->states[0].c.b; // Set to blue
 
-	av_Light.states[0].pos.vx = (int32)av_LightX;
-	av_Light.states[0].pos.vy = (int32)av_LightY;
-	av_Light.states[0].pos.vz = (int32)av_LightZ;
+	g_av_Light->states[0].pos.vx = (int32)av_LightX;
+	g_av_Light->states[0].pos.vy = (int32)av_LightY;
+	g_av_Light->states[0].pos.vz = (int32)av_LightZ;
 
 	// And add the players position
-	av_Light.states[0].pos.vx += (int32)av_actor.truePos.x;
-	av_Light.states[0].pos.vy += (int32)av_actor.truePos.y;
-	av_Light.states[0].pos.vz += (int32)av_actor.truePos.z;
+	g_av_Light->states[0].pos.vx += (int32)g_av_actor->truePos.x;
+	g_av_Light->states[0].pos.vy += (int32)g_av_actor->truePos.y;
+	g_av_Light->states[0].pos.vz += (int32)g_av_actor->truePos.z;
 
 	// Falloff
 	if (falloff == 0) {
-		av_Light.afu = 0; // Don't use it
+		g_av_Light->afu = 0; // Don't use it
 	} else {
-		av_Light.states[0].afs2 = (falloff * falloff) / 100; // (d/10)^2     = (d*d)/100
-		av_Light.states[0].afe2 = falloff * falloff;         // d^2          = (d*d)
-		av_Light.afu = 1;                                    // Use it
+		g_av_Light->states[0].afs2 = (falloff * falloff) / 100; // (d/10)^2     = (d*d)/100
+		g_av_Light->states[0].afe2 = falloff * falloff;         // d^2          = (d*d)
+		g_av_Light->afu = 1;                                    // Use it
 	}
 }
 

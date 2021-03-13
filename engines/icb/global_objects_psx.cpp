@@ -37,6 +37,15 @@ TextureManager *tman;
 // The 3 directional lights and the ambient light
 psxLight Lights[4];
 
+// Camera and animation structures
+psxCamera *g_camera;
+
+// Actor structure
+psxActor *g_av_actor;
+
+// Lighting structure and coordinates, colour components
+PSXLamp *g_av_Light;
+
 #if CD_BUILD == 0
 // Colour of the z-fragments outlines
 int32 zfragRed = 255;

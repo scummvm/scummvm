@@ -105,10 +105,10 @@ inline int32 myNINT_PC(float f) {
 
 //------------------------------------------------------------------------
 
-extern MATRIXPC gterot_pc;
-extern MATRIXPC gtetrans_pc;
-extern MATRIXPC gtecolour_pc;
-extern MATRIXPC gtelight_pc;
+extern MATRIXPC *gterot_pc;
+extern MATRIXPC *gtetrans_pc;
+extern MATRIXPC *gtecolour_pc;
+extern MATRIXPC *gtelight_pc;
 extern int32 gteback_pc[3];
 extern int32 gtegeomscrn_pc;
 extern int32 gtescreenscaleshift_pc;
@@ -219,27 +219,27 @@ inline void mygte_MulMatrix0_pc(MATRIXPC *m1, MATRIXPC *m2, MATRIXPC *out) {
 
 //------------------------------------------------------------------------
 
-inline void mygte_SetRotMatrix_pc(MATRIXPC *m) { gterot_pc = *m; }
+inline void mygte_SetRotMatrix_pc(MATRIXPC *m) { *gterot_pc = *m; }
 
 //------------------------------------------------------------------------
 
-inline void mygte_SetTransMatrix_pc(MATRIXPC *m) { gtetrans_pc = *m; }
+inline void mygte_SetTransMatrix_pc(MATRIXPC *m) { *gtetrans_pc = *m; }
 
 //------------------------------------------------------------------------
 
 inline void mygte_ApplyRotMatrix_pc(SVECTORPC *invec, VECTOR *outvec) {
-	outvec->vx = ((gterot_pc.m[0][0] * invec->vx + gterot_pc.m[0][1] * invec->vy + gterot_pc.m[0][2] * invec->vz) / ONE_PC);
-	outvec->vy = ((gterot_pc.m[1][0] * invec->vx + gterot_pc.m[1][1] * invec->vy + gterot_pc.m[1][2] * invec->vz) / ONE_PC);
-	outvec->vz = ((gterot_pc.m[2][0] * invec->vx + gterot_pc.m[2][1] * invec->vy + gterot_pc.m[2][2] * invec->vz) / ONE_PC);
+	outvec->vx = ((gterot_pc->m[0][0] * invec->vx + gterot_pc->m[0][1] * invec->vy + gterot_pc->m[0][2] * invec->vz) / ONE_PC);
+	outvec->vy = ((gterot_pc->m[1][0] * invec->vx + gterot_pc->m[1][1] * invec->vy + gterot_pc->m[1][2] * invec->vz) / ONE_PC);
+	outvec->vz = ((gterot_pc->m[2][0] * invec->vx + gterot_pc->m[2][1] * invec->vy + gterot_pc->m[2][2] * invec->vz) / ONE_PC);
 }
 
 //------------------------------------------------------------------------
 
 inline void mygte_RotTrans_pc(SVECTORPC *in0, VECTOR *out0, int32 *flag) {
 	mygte_ApplyRotMatrix_pc(in0, out0);
-	out0->vx += gtetrans_pc.t[0];
-	out0->vy += gtetrans_pc.t[1];
-	out0->vz += gtetrans_pc.t[2];
+	out0->vx += gtetrans_pc->t[0];
+	out0->vy += gtetrans_pc->t[1];
+	out0->vz += gtetrans_pc->t[2];
 
 	// What GTE flags should we set ?
 	*flag = 0;
@@ -255,9 +255,9 @@ inline void mygte_RotTrans_pc(SVECTOR *in0, VECTOR *out0, int32 *flag) {
 
 	mygte_ApplyRotMatrix_pc(&sv_pc, out0);
 
-	out0->vx += gtetrans_pc.t[0];
-	out0->vy += gtetrans_pc.t[1];
-	out0->vz += gtetrans_pc.t[2];
+	out0->vx += gtetrans_pc->t[0];
+	out0->vy += gtetrans_pc->t[1];
+	out0->vz += gtetrans_pc->t[2];
 
 	// What GTE flags should we set ?
 	*flag = 0;
@@ -267,12 +267,12 @@ inline void mygte_RotTrans_pc(SVECTOR *in0, VECTOR *out0, int32 *flag) {
 
 inline void mygte_RotTransPers_pc(SVECTORPC *in0, SVECTORPC *sxy0, int32 * /* p */, int32 *flag, int32 *z) {
 	VECTOR cam;
-	cam.vx = ((gterot_pc.m[0][0] * in0->vx + gterot_pc.m[0][1] * in0->vy + gterot_pc.m[0][2] * in0->vz) / ONE_PC);
-	cam.vy = ((gterot_pc.m[1][0] * in0->vx + gterot_pc.m[1][1] * in0->vy + gterot_pc.m[1][2] * in0->vz) / ONE_PC);
-	cam.vz = ((gterot_pc.m[2][0] * in0->vx + gterot_pc.m[2][1] * in0->vy + gterot_pc.m[2][2] * in0->vz) / ONE_PC);
-	cam.vx += (gtetrans_pc.t[0] << gtescreenscaleshift_pc);
-	cam.vy += (gtetrans_pc.t[1] << gtescreenscaleshift_pc);
-	cam.vz += (gtetrans_pc.t[2] << gtescreenscaleshift_pc);
+	cam.vx = ((gterot_pc->m[0][0] * in0->vx + gterot_pc->m[0][1] * in0->vy + gterot_pc->m[0][2] * in0->vz) / ONE_PC);
+	cam.vy = ((gterot_pc->m[1][0] * in0->vx + gterot_pc->m[1][1] * in0->vy + gterot_pc->m[1][2] * in0->vz) / ONE_PC);
+	cam.vz = ((gterot_pc->m[2][0] * in0->vx + gterot_pc->m[2][1] * in0->vy + gterot_pc->m[2][2] * in0->vz) / ONE_PC);
+	cam.vx += (gtetrans_pc->t[0] << gtescreenscaleshift_pc);
+	cam.vy += (gtetrans_pc->t[1] << gtescreenscaleshift_pc);
+	cam.vz += (gtetrans_pc->t[2] << gtescreenscaleshift_pc);
 
 	*flag = 0;
 
@@ -302,12 +302,12 @@ inline void mygte_RotTransPers_pc(SVECTORPC *in0, SVECTORPC *sxy0, int32 * /* p 
 
 inline void mygte_RotTransPers_pc(SVECTOR *in0, SVECTORPC *sxy0, int32 * /* p */, int32 *flag, int32 *z) {
 	VECTOR cam;
-	cam.vx = ((gterot_pc.m[0][0] * (int)in0->vx + gterot_pc.m[0][1] * (int)in0->vy + gterot_pc.m[0][2] * (int)in0->vz) / ONE_PC);
-	cam.vy = ((gterot_pc.m[1][0] * (int)in0->vx + gterot_pc.m[1][1] * (int)in0->vy + gterot_pc.m[1][2] * (int)in0->vz) / ONE_PC);
-	cam.vz = ((gterot_pc.m[2][0] * (int)in0->vx + gterot_pc.m[2][1] * (int)in0->vy + gterot_pc.m[2][2] * (int)in0->vz) / ONE_PC);
-	cam.vx += (gtetrans_pc.t[0] << gtescreenscaleshift_pc);
-	cam.vy += (gtetrans_pc.t[1] << gtescreenscaleshift_pc);
-	cam.vz += (gtetrans_pc.t[2] << gtescreenscaleshift_pc);
+	cam.vx = ((gterot_pc->m[0][0] * (int)in0->vx + gterot_pc->m[0][1] * (int)in0->vy + gterot_pc->m[0][2] * (int)in0->vz) / ONE_PC);
+	cam.vy = ((gterot_pc->m[1][0] * (int)in0->vx + gterot_pc->m[1][1] * (int)in0->vy + gterot_pc->m[1][2] * (int)in0->vz) / ONE_PC);
+	cam.vz = ((gterot_pc->m[2][0] * (int)in0->vx + gterot_pc->m[2][1] * (int)in0->vy + gterot_pc->m[2][2] * (int)in0->vz) / ONE_PC);
+	cam.vx += (gtetrans_pc->t[0] << gtescreenscaleshift_pc);
+	cam.vy += (gtetrans_pc->t[1] << gtescreenscaleshift_pc);
+	cam.vz += (gtetrans_pc->t[2] << gtescreenscaleshift_pc);
 
 	*flag = 0;
 
@@ -416,11 +416,11 @@ inline void mygte_SetBackColor_pc(int32 r, int32 g, int32 b) {
 
 //------------------------------------------------------------------------
 
-inline void mygte_SetColorMatrix_pc(MATRIXPC *m) { gtecolour_pc = *m; }
+inline void mygte_SetColorMatrix_pc(MATRIXPC *m) { *gtecolour_pc = *m; }
 
 //------------------------------------------------------------------------
 
-inline void mygte_SetLightMatrix_pc(MATRIXPC *m) { gtelight_pc = *m; }
+inline void mygte_SetLightMatrix_pc(MATRIXPC *m) { *gtelight_pc = *m; }
 
 //------------------------------------------------------------------------
 
@@ -431,7 +431,7 @@ inline void mygte_SetGeomScreen_pc(int32 h) { gtegeomscrn_pc = h; }
 inline void mygte_NormalColorCol_pc(SVECTOR *v0, CVECTOR *in0, CVECTOR *out0) {
 	SVECTORPC lightEffect;
 	// Normal line vector(local) -> light source effect
-	ApplyMatrixSV_pc(&gtelight_pc, v0, &lightEffect);
+	ApplyMatrixSV_pc(gtelight_pc, v0, &lightEffect);
 	if (lightEffect.vx < 0)
 		lightEffect.vx = 0;
 	if (lightEffect.vy < 0)
@@ -441,7 +441,7 @@ inline void mygte_NormalColorCol_pc(SVECTOR *v0, CVECTOR *in0, CVECTOR *out0) {
 
 	// Light source effect -> Colour effect(local colour matrix+back colour)
 	SVECTORPC colourEffect;
-	ApplyMatrixSV_pc(&gtecolour_pc, &lightEffect, &colourEffect);
+	ApplyMatrixSV_pc(gtecolour_pc, &lightEffect, &colourEffect);
 	if (colourEffect.vx < 0)
 		colourEffect.vx = 0;
 	if (colourEffect.vy < 0)

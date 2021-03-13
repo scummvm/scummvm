@@ -33,10 +33,10 @@
 
 namespace ICB {
 
-MATRIXPC gterot_pc;
-MATRIXPC gtetrans_pc;
-MATRIXPC gtecolour_pc;
-MATRIXPC gtelight_pc;
+MATRIXPC *gterot_pc;
+MATRIXPC *gtetrans_pc;
+MATRIXPC *gtecolour_pc;
+MATRIXPC *gtelight_pc;
 int32 gteback_pc[3];
 int32 gtegeomscrn_pc;
 int32 gtescreenscaleshift_pc = 0;

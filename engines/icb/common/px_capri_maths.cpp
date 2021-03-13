@@ -33,10 +33,10 @@
 
 namespace ICB {
 
-MATRIX gterot;
-MATRIX gtetrans;
-MATRIX gtecolour;
-MATRIX gtelight;
+MATRIX *gterot;
+MATRIX *gtetrans;
+MATRIX *gtecolour;
+MATRIX *gtelight;
 short gteback[3];
 int32 gtegeomscrn;
 uint8 dcache[1024];

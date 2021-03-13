@@ -32,6 +32,9 @@
 #include "engines/icb/surface_manager.h"
 #include "engines/icb/gfx/psx_light.h"
 #include "engines/icb/gfx/psx_tman.h"
+#include "engines/icb/gfx/psx_camera.h"
+#include "engines/icb/gfx/psx_pxactor.h"
+#include "engines/icb/gfx/rlp_api.h"
 
 namespace ICB {
 
@@ -40,6 +43,15 @@ extern TextureManager *tman;
 
 // The 3 directional lights and the ambient light
 extern psxLight Lights[4];
+
+// Camera and animation structures
+extern psxCamera *g_camera;
+
+// Actor structure
+extern psxActor *g_av_actor;
+
+// Lighting structure and coordinates, colour components
+extern PSXLamp *g_av_Light;
 
 // Colour of the actors bounding box
 extern int32 bboxRed;

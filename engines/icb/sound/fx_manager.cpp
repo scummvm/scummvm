@@ -30,6 +30,7 @@
 #include "engines/icb/res_man_pc.h"
 #include "engines/icb/sound/sound_common.h"
 #include "engines/icb/icb.h"
+#include "engines/icb/global_objects.h"
 
 #include "common/textconsole.h"
 
@@ -80,7 +81,7 @@ bool8 FxManager::Poll() {
 				g_icb->_mixer->setChannelVolume(m_effects[id]._handle, m_effects[id].volume * volumeConversion);
 				g_icb->_mixer->setChannelBalance(m_effects[id]._handle, m_effects[id].pan);
 
-				frequency = (m_effects[id].pitch * stub.cycle_speed) / 100;
+				frequency = (m_effects[id].pitch * g_stub->cycle_speed) / 100;
 				// FIXME correct pitch control
 				//m_effects[id].buffer->SetFrequency( frequency ) ;
 				//alSourcef(m_effects[id].alStream.source, AL_PITCH, 1.0f);
@@ -103,7 +104,7 @@ bool8 FxManager::Poll() {
 		case Effect::QUEUED: {
 
 			// Apply current settings
-			frequency = (m_effects[id].pitch * stub.cycle_speed) / 100;
+			frequency = (m_effects[id].pitch * g_stub->cycle_speed) / 100;
 			// FIXME corrent pitch control
 			//m_effects[id].buffer->SetFrequency( frequency ) ;
 			//alSourcef(m_effects[id].alStream.source, AL_PITCH, 1.0f);

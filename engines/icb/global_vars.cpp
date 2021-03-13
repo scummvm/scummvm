@@ -33,6 +33,7 @@
 #include "engines/icb/mission.h"
 #include "engines/icb/object_structs.h"
 #include "engines/icb/global_objects.h"
+#include "engines/icb/global_objects_psx.h"
 #include "engines/icb/debug.h"
 #include "engines/icb/res_man.h"
 #include "engines/icb/movie_pc.h"
@@ -41,6 +42,11 @@
 #include "engines/icb/options_manager_pc.h"
 #include "engines/icb/floors.h"
 #include "engines/icb/remora.h"
+#include "engines/icb/gfx/psx_camera.h"
+#include "engines/icb/gfx/psx_pxactor.h"
+#include "engines/icb/gfx/rlp_api.h"
+#include "engines/icb/common/px_capri_maths_pc.h"
+#include "engines/icb/common/px_capri_maths.h"
 
 namespace ICB {
 
@@ -137,6 +143,25 @@ void CreateGlobalObjects() {
 	g_icb_session_floors = new _floor_world;
 	g_text_bloc1 = new text_sprite;
 	g_text_bloc2 = new text_sprite;
+	g_av_actor = new psxActor;
+	g_camera = new psxCamera;
+	g_av_Light = new PSXLamp;
+	for (int i = 0; i < MAX_voxel_list; i++) {
+		g_megas[i] = new _mega;
+		g_vox_images[i] = new _vox_image;
+	}
+	for (int i = 0; i < MAX_session_objects; i++)
+		g_logics[i] = new _logic;
+	g_stub = new _stub;
+	gterot_pc = new MATRIXPC;
+	gtetrans_pc = new MATRIXPC;
+	gtecolour_pc = new MATRIXPC;
+	gtelight_pc = new MATRIXPC;
+	gterot = new MATRIX;
+	gtetrans = new MATRIX;
+	gtecolour = new MATRIX;
+	gtelight = new MATRIX;
+
 	// The order of creation matters:
 	g_oEventManager = new _event_manager;
 	g_oLineOfSight = new _line_of_sight;
@@ -157,6 +182,25 @@ void DestroyGlobalObjects() {
 	delete g_icb_session_floors;
 	delete g_text_bloc1;
 	delete g_text_bloc2;
+	delete g_camera;
+	delete g_av_actor;
+	delete g_av_Light;
+	for (int i = 0; i < MAX_voxel_list; i++) {
+		delete g_megas[i];
+		delete g_vox_images[i];
+	}
+	for (int i = 0; i < MAX_session_objects; i++)
+		delete g_logics[i];
+	delete g_stub;
+	delete gterot_pc;
+	delete gtetrans_pc;
+	delete gtecolour_pc;
+	delete gtelight_pc;
+	delete gterot;
+	delete gtetrans;
+	delete gtecolour;
+	delete gtelight;
+
 	delete g_oEventManager;
 	delete g_oLineOfSight;
 	delete g_oIconMenu;

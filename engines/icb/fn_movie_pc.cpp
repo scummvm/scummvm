@@ -155,7 +155,7 @@ void Init_play_movie(const char *param0, bool8 param1) {
 		// Bink is now active and playing
 
 		// Successfully opened a bink sequence so set the engine to play and display it
-		stub.Push_stub_mode(__sequence);
+		g_stub->Push_stub_mode(__sequence);
 	} else {
 		Fatal_error(pxVString("Couldn't register the movie: %s", (const char *)fullname));
 	}

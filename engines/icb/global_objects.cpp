@@ -83,12 +83,12 @@ _game_session *g_icb_session;
 // session objects
 _barrier_handler g_icb_session_barriers;
 _floor_world *g_icb_session_floors;
-_logic logics[MAX_session_objects];
-_mega megas[MAX_voxel_list];
-_vox_image vox_images[MAX_voxel_list];
+_logic *g_logics[MAX_session_objects];
+_mega *g_megas[MAX_voxel_list];
+_vox_image *g_vox_images[MAX_voxel_list];
 
 // master modes
-_stub stub;
+_stub *g_stub;
 
 // game script manager
 _game_script gs;
