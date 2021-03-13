@@ -1165,6 +1165,7 @@ Common::Error AGDSEngine::loadGameState(int slot) {
 void AGDSEngine::loadNextScreen() {
 	while (!_nextScreenName.empty()) {
 		Common::String nextScreenName = _nextScreenName;
+		debug("loadNextScreen %s", nextScreenName.c_str());
 		auto nextScreenType = _nextScreenType;
 		_nextScreenName.clear();
 		_nextScreenType = ScreenLoadingType::Normal;
@@ -1173,6 +1174,7 @@ void AGDSEngine::loadNextScreen() {
 }
 
 Common::Error AGDSEngine::saveGameState(int slot, const Common::String &desc, bool isAutosave) {
+	debug("saveGameState %d %s autosave: %d", slot, desc.c_str(), isAutosave);
 	auto fileName = getSaveStateName(slot);
 	Common::OutSaveFile *saveFile = getSaveFileManager()->openForSaving(fileName, false);
 
