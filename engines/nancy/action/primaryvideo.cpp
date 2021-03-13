@@ -257,7 +257,7 @@ void PlayPrimaryVideoChan0::execute() {
             }
         }
 
-        if (!NanEngine.sound->isSoundPlaying(sound)) {
+        if (!NanEngine.sound->isSoundPlaying(sound) && _decoder.endOfVideo()) {
             NanEngine.sound->stopSound(sound);
             
             if (responses.size() == 0) {
