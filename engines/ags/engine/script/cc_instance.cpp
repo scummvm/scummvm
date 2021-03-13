@@ -1084,8 +1084,8 @@ int ccInstance::Run(int32_t curpc) {
 				cc_error("invalid size for dynamic array; requested: %d, range: 1..%d", numElements, INT32_MAX);
 				return -1;
 			}
-			DynObjectRef ref = globalDynamicArray.Create(numElements, arg2.IValue, arg3.GetAsBool());
-			reg1.SetDynamicObject(ref.second, &globalDynamicArray);
+			DynObjectRef ref = _GP(globalDynamicArray).Create(numElements, arg2.IValue, arg3.GetAsBool());
+			reg1.SetDynamicObject(ref.second, &_GP(globalDynamicArray));
 			break;
 		}
 		case SCMD_NEWUSEROBJECT: {

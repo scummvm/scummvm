@@ -88,8 +88,6 @@ extern "C" void android_render();
 extern "C" void ios_render();
 #endif
 
-extern int bg_just_changed;
-
 SpriteListEntry::SpriteListEntry()
 	: bmp(nullptr)
 	, pic(nullptr)
@@ -2237,9 +2235,9 @@ void render_graphics(IDriverDependantBitmap *extraBitmap, int extraX, int extraY
 	if (!_GP(play).screen_is_faded_out) {
 		// always update the palette, regardless of whether the plugin
 		// vetos the screen update
-		if (bg_just_changed) {
+		if (_G(bg_just_changed)) {
 			setpal();
-			bg_just_changed = 0;
+			_G(bg_just_changed) = 0;
 		}
 	}
 

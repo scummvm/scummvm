@@ -95,6 +95,7 @@ struct CCAudioChannel;
 struct CCAudioClip;
 struct CCCharacter;
 struct CCDialog;
+struct CCDynamicArray;
 struct CCGUI;
 struct CCGUIObject;
 struct CCHotspot;
@@ -246,6 +247,15 @@ public:
 
 	AnimatingGUIButton *_animbuts;
 	int _numAnimButs = 0;
+
+	/**@}*/
+
+	/**
+	 * \defgroup cc_dynamicarray globals
+	 * @{
+	 */
+
+	CCDynamicArray *_globalDynamicArray;
 
 	/**@}*/
 
@@ -970,6 +980,7 @@ public:
 	RGB_MAP *_rgb_table;  // for 256-col antialiasing
 	int _new_room_flags = 0;
 	int _gs_to_newroom = -1;
+	int _bg_just_changed = 0;
 
 	/**@}*/
 
@@ -1051,6 +1062,15 @@ public:
 	new_line_hook_type _new_line_hook = nullptr;
 	int _maxWhileLoops = 0;
 	ccInstance *_loadedInstances[MAX_LOADED_INSTANCES];
+
+	/**@}*/
+
+	/**
+	 * \defgroup string globals
+	 * @{
+	 */
+
+	int _MAXSTRLEN = MAX_MAXSTRLEN;
 
 	/**@}*/
 

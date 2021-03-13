@@ -22,12 +22,13 @@
 
 #include "ags/lib/std/vector.h"
 #include "ags/engine/ac/dynobj/managedobjectpool.h"
-#include "ags/engine/ac/dynobj/cc_dynamicarray.h" // globalDynamicArray, constants
+#include "ags/engine/ac/dynobj/cc_dynamicarray.h" // _GP(globalDynamicArray), constants
 #include "ags/shared/debugging/out.h"
 #include "ags/shared/util/string_utils.h"               // fputstring, etc
 #include "ags/shared/script/cc_error.h"
 #include "ags/shared/script/script_common.h"
 #include "ags/shared/util/stream.h"
+#include "ags/globals.h"
 
 namespace AGS3 {
 
@@ -303,7 +304,7 @@ int ManagedObjectPool::ReadFromDisk(Stream *in, ICCObjectReader *reader) {
 				}
 				in->Read(&serializeBuffer.front(), numBytes);
 				if (strcmp(typeNameBuffer, CC_DYNAMIC_ARRAY_TYPE_NAME) == 0) {
-					globalDynamicArray.Unserialize(i, &serializeBuffer.front(), numBytes);
+					_GP(globalDynamicArray).Unserialize(i, &serializeBuffer.front(), numBytes);
 				} else {
 					reader->Unserialize(i, typeNameBuffer, &serializeBuffer.front(), numBytes);
 				}
@@ -328,7 +329,7 @@ int ManagedObjectPool::ReadFromDisk(Stream *in, ICCObjectReader *reader) {
 			}
 			in->Read(&serializeBuffer.front(), numBytes);
 			if (strcmp(typeNameBuffer, CC_DYNAMIC_ARRAY_TYPE_NAME) == 0) {
-				globalDynamicArray.Unserialize(handle, &serializeBuffer.front(), numBytes);
+				_GP(globalDynamicArray).Unserialize(handle, &serializeBuffer.front(), numBytes);
 			} else {
 				reader->Unserialize(handle, typeNameBuffer, &serializeBuffer.front(), numBytes);
 			}

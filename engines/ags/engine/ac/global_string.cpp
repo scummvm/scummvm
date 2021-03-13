@@ -26,10 +26,9 @@
 #include "ags/engine/ac/runtime_defines.h"
 #include "ags/engine/ac/string.h"
 #include "ags/shared/util/string_compat.h"
+#include "ags/globals.h"
 
 namespace AGS3 {
-
-extern int MAXSTRLEN;
 
 int StrGetCharAt(const char *strin, int posn) {
 	if ((posn < 0) || (posn >= (int)strlen(strin)))
@@ -50,7 +49,7 @@ void _sc_strcat(char *s1, const char *s2) {
 	// make sure they don't try to append a char to the string
 	VALIDATE_STRING(s2);
 	check_strlen(s1);
-	int mosttocopy = (MAXSTRLEN - strlen(s1)) - 1;
+	int mosttocopy = (_G(MAXSTRLEN) - strlen(s1)) - 1;
 	//  int numbf=_GP(game).iface[4].numbuttons;
 	my_strncpy(&s1[strlen(s1)], s2, mosttocopy);
 }
@@ -78,7 +77,7 @@ return ags_stricmp (get_translation (s1), get_translation(s2));
 void _sc_strcpy(char *destt, const char *text) {
 	VALIDATE_STRING(destt);
 	check_strlen(destt);
-	my_strncpy(destt, text, MAXSTRLEN - 1);
+	my_strncpy(destt, text, _G(MAXSTRLEN) - 1);
 }
 
 } // namespace AGS3

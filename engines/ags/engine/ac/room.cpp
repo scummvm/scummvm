@@ -973,8 +973,6 @@ void compile_room_script() {
 	_GP(getDialogOptionsDimensionsFunc).roomHasFunction = true;
 }
 
-int bg_just_changed = 0;
-
 void on_background_frame_change() {
 
 	invalidate_screen();
@@ -999,7 +997,7 @@ void on_background_frame_change() {
 	// 256-colours, tell it to update the palette (will actually be done as
 	// close as possible to the screen update to prevent flicker problem)
 	if (_GP(game).color_depth == 1)
-		bg_just_changed = 1;
+		_G(bg_just_changed) = 1;
 }
 
 void croom_ptr_clear() {

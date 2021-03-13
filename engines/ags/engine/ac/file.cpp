@@ -57,9 +57,6 @@ namespace AGS3 {
 
 using namespace AGS::Shared;
 
-
-extern int MAXSTRLEN;
-
 // object-based File routines
 
 int File_Exists(const char *fnmm) {
@@ -121,7 +118,7 @@ void File_ReadRawLine(sc_File *fil, char *buffer) {
 	Stream *in = get_valid_file_stream_from_handle(fil->handle, "File.ReadRawLine");
 	check_strlen(buffer);
 	int i = 0;
-	while (i < MAXSTRLEN - 1) {
+	while (i < _G(MAXSTRLEN) - 1) {
 		buffer[i] = in->ReadInt8();
 		if (buffer[i] == 13) {
 			// CR -- skip LF and abort

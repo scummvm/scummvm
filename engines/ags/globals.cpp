@@ -54,6 +54,7 @@
 #include "ags/engine/ac/dynobj/cc_audioclip.h"
 #include "ags/engine/ac/dynobj/cc_character.h"
 #include "ags/engine/ac/dynobj/cc_dialog.h"
+#include "ags/engine/ac/dynobj/cc_dynamicarray.h"
 #include "ags/engine/ac/dynobj/cc_gui.h"
 #include "ags/engine/ac/dynobj/cc_guiobject.h"
 #include "ags/engine/ac/dynobj/cc_hotspot.h"
@@ -119,6 +120,9 @@ Globals::Globals() {
 
 	// cc_serializer.cpp globals
 	_ccUnserializer = new AGSDeSerializer();
+
+	// cc_dynamicarray.cpp globals
+	_globalDynamicArray = new CCDynamicArray();
 
 	// cscdialog.cpp globals
 	_vobjs = new NewControl *[MAXCONTROLS];
@@ -322,6 +326,9 @@ Globals::~Globals() {
 
 	// cc_serializer.cpp globals
 	delete _ccUnserializer;
+
+	// cc_dynamicarray.cpp globals
+	delete _globalDynamicArray;
 
 	// cscdialog.cpp globals
 	delete[] _vobjs;
