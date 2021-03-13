@@ -705,7 +705,7 @@ void Process::objectPatchSetText() {
 		object->title(text);
 	}
 	auto patch = _engine->createObjectPatch(objectName);
-	patch->text = text;
+	patch->text = resource;
 }
 
 void Process::objectPatchSetRegionName() {
