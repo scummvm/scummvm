@@ -100,7 +100,7 @@ bool AchievementsManager::setAchievement(const String &id, const String &display
 }
 
 
-bool AchievementsManager::isAchieved(const String &id) {
+bool AchievementsManager::isAchieved(const String &id) const {
 	if (!isReady()) {
 		return false;
 	}

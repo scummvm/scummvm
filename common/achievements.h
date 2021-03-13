@@ -107,7 +107,7 @@ public:
 	 *
 	 * @param[in] id Internal ID of the achievement.
 	 */
-	bool isAchieved(const String &id);
+	bool isAchieved(const String &id) const;
 
 	/**
 	 * Clear an achieved achievement.
