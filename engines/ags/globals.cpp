@@ -223,6 +223,14 @@ Globals::Globals() {
 	// guibutton.cpp globals
 	_guibuts = new std::vector<AGS::Shared::GUIButton>();
 
+	// guidlaog.cpp globals
+	Common::fill(_filenumbers, _filenumbers + MAXSAVEGAMES_20, 0);
+	Common::fill(_filedates, _filedates + MAXSAVEGAMES_20, 0);
+	Common::fill(_bufTemp, _bufTemp + 260, 0);
+	Common::fill(_buffer2, _buffer2 + 260, 0);
+	Common::fill(_buff, _buff + 200, 0);
+	_smes = new CSCIMessage();
+
 	// guiinv.cpp globals
 	_guiinv = new std::vector<AGS::Shared::GUIInvWindow>();
 
@@ -418,6 +426,9 @@ Globals::~Globals() {
 
 	// guibutton.cpp globals
 	delete _guibuts;
+
+	// guidlaog.cpp globals
+	delete _smes;
 
 	// guiinv.cpp globals
 	delete _guiinv;

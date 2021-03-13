@@ -39,31 +39,8 @@ namespace AGS3 {
 using namespace AGS::Shared;
 using namespace AGS::Engine;
 
-namespace {
-
-// TODO: store drawing surface inside old gui classes instead
-int windowPosX, windowPosY, windowPosWidth, windowPosHeight;
-Bitmap *windowBuffer;
-IDriverDependantBitmap *dialogDDB;
-
-#undef MAXSAVEGAMES
-#define MAXSAVEGAMES 20
-//DisplayProperties dispp;
-char *lpTemp, *lpTemp2;
-char bufTemp[260], buffer2[260];
-int numsaves = 0, toomanygames;
-int filenumbers[MAXSAVEGAMES];
-unsigned long filedates[MAXSAVEGAMES];
-
-CSCIMessage smes;
-
-char buff[200];
-int myscrnwid = 320, myscrnhit = 200;
-
-}
-
 char *get_gui_dialog_buffer() {
-	return buffer2;
+	return _G(buffer2);
 }
 
 //
@@ -71,42 +48,42 @@ char *get_gui_dialog_buffer() {
 //
 
 Bitmap *prepare_gui_screen(int x, int y, int width, int height, bool opaque) {
-	windowPosX = x;
-	windowPosY = y;
-	windowPosWidth = width;
-	windowPosHeight = height;
-	if (windowBuffer) {
-		windowBuffer = recycle_bitmap(windowBuffer, windowBuffer->GetColorDepth(), windowPosWidth, windowPosHeight, !opaque);
+	_G(windowPosX) = x;
+	_G(windowPosY) = y;
+	_G(windowPosWidth) = width;
+	_G(windowPosHeight) = height;
+	if (_G(windowBuffer)) {
+		_G(windowBuffer) = recycle_bitmap(_G(windowBuffer), _G(windowBuffer)->GetColorDepth(), _G(windowPosWidth), _G(windowPosHeight), !opaque);
 	} else {
-		windowBuffer = BitmapHelper::CreateBitmap(windowPosWidth, windowPosHeight, _GP(game).GetColorDepth());
-		windowBuffer = ReplaceBitmapWithSupportedFormat(windowBuffer);
+		_G(windowBuffer) = BitmapHelper::CreateBitmap(_G(windowPosWidth), _G(windowPosHeight), _GP(game).GetColorDepth());
+		_G(windowBuffer) = ReplaceBitmapWithSupportedFormat(_G(windowBuffer));
 	}
-	dialogDDB = recycle_ddb_bitmap(dialogDDB, windowBuffer, false, opaque);
-	return windowBuffer;
+	_G(dialogDDB) = recycle_ddb_bitmap(_G(dialogDDB), _G(windowBuffer), false, opaque);
+	return _G(windowBuffer);
 }
 
 Bitmap *get_gui_screen() {
-	return windowBuffer;
+	return _G(windowBuffer);
 }
 
 void clear_gui_screen() {
-	if (dialogDDB)
-		_G(gfxDriver)->DestroyDDB(dialogDDB);
-	dialogDDB = nullptr;
-	delete windowBuffer;
-	windowBuffer = nullptr;
+	if (_G(dialogDDB))
+		_G(gfxDriver)->DestroyDDB(_G(dialogDDB));
+	_G(dialogDDB) = nullptr;
+	delete _G(windowBuffer);
+	_G(windowBuffer) = nullptr;
 }
 
 void refresh_gui_screen() {
-	_G(gfxDriver)->UpdateDDBFromBitmap(dialogDDB, windowBuffer, false);
-	render_graphics(dialogDDB, windowPosX, windowPosY);
+	_G(gfxDriver)->UpdateDDBFromBitmap(_G(dialogDDB), _G(windowBuffer), false);
+	render_graphics(_G(dialogDDB), _G(windowPosX), _G(windowPosY));
 }
 
 int loadgamedialog() {
 	const int wnd_width = 200;
 	const int wnd_height = 120;
-	const int boxleft = myscrnwid / 2 - wnd_width / 2;
-	const int boxtop = myscrnhit / 2 - wnd_height / 2;
+	const int boxleft = _G(myscrnwid) / 2 - wnd_width / 2;
+	const int boxtop = _G(myscrnhit) / 2 - wnd_height / 2;
 	const int buttonhit = _GP(usetup).textheight + 5;
 
 	int handl = CSCIDrawWindow(boxleft, boxtop, wnd_width, wnd_height);
@@ -121,23 +98,23 @@ int loadgamedialog() {
 
 	preparesavegamelist(ctrllist);
 	CSCIMessage mes;
-	lpTemp = nullptr;
+	_G(lpTemp) = nullptr;
 	int toret = -1;
 	while (1) {
 		CSCIWaitMessage(&mes);      //printf("mess: %d, id %d ",mes.code,mes.id);
 		if (mes.code == CM_COMMAND) {
 			if (mes.id == ctrlok) {
 				int cursel = CSCISendControlMessage(ctrllist, CLB_GETCURSEL, 0, 0);
-				if ((cursel >= numsaves) | (cursel < 0))
-					lpTemp = nullptr;
+				if ((cursel >= _G(numsaves)) | (cursel < 0))
+					_G(lpTemp) = nullptr;
 				else {
-					toret = filenumbers[cursel];
+					toret = _G(filenumbers)[cursel];
 					String path = get_save_game_path(toret);
-					strcpy(bufTemp, path);
-					lpTemp = &bufTemp[0];
+					strcpy(_G(bufTemp), path);
+					_G(lpTemp) = &_G(bufTemp)[0];
 				}
 			} else if (mes.id == ctrlcancel) {
-				lpTemp = nullptr;
+				_G(lpTemp) = nullptr;
 			}
 
 			break;
@@ -159,8 +136,8 @@ int savegamedialog() {
 	strcpy(labeltext, get_global_message(MSG_SAVEDIALOG));
 	const int wnd_width = 200;
 	const int wnd_height = 120;
-	const int boxleft = myscrnwid / 2 - wnd_width / 2;
-	const int boxtop = myscrnhit / 2 - wnd_height / 2;
+	const int boxleft = _G(myscrnwid) / 2 - wnd_width / 2;
+	const int boxtop = _G(myscrnhit) / 2 - wnd_height / 2;
 	const int buttonhit = _GP(usetup).textheight + 5;
 	int labeltop = 5;
 
@@ -173,7 +150,7 @@ int savegamedialog() {
 
 	CSCISendControlMessage(ctrllist, CLB_CLEAR, 0, 0);    // clear the list box
 	preparesavegamelist(ctrllist);
-	if (toomanygames) {
+	if (_G(toomanygames)) {
 		strcpy(okbuttontext, get_global_message(MSG_REPLACE));
 		strcpy(labeltext, get_global_message(MSG_MUSTREPLACE));
 		labeltop = 2;
@@ -184,13 +161,13 @@ int savegamedialog() {
 	int ctrltex1 = CSCICreateControl(CNT_LABEL, 10, labeltop, 120, 0, labeltext);
 	CSCIMessage mes;
 
-	lpTemp = nullptr;
-	if (numsaves > 0)
-		CSCISendControlMessage(ctrllist, CLB_GETTEXT, 0,  &buffer2[0]);
+	_G(lpTemp) = nullptr;
+	if (_G(numsaves) > 0)
+		CSCISendControlMessage(ctrllist, CLB_GETTEXT, 0,  &_G(buffer2)[0]);
 	else
-		buffer2[0] = 0;
+		_G(buffer2)[0] = 0;
 
-	CSCISendControlMessage(ctrltbox, CTB_SETTEXT, 0, &buffer2[0]);
+	CSCISendControlMessage(ctrltbox, CTB_SETTEXT, 0, &_G(buffer2)[0]);
 
 	int toret = -1;
 	while (1) {
@@ -198,21 +175,21 @@ int savegamedialog() {
 		if (mes.code == CM_COMMAND) {
 			if (mes.id == ctrlok) {
 				int cursell = CSCISendControlMessage(ctrllist, CLB_GETCURSEL, 0, 0);
-				CSCISendControlMessage(ctrltbox, CTB_GETTEXT, 0, &buffer2[0]);
+				CSCISendControlMessage(ctrltbox, CTB_GETTEXT, 0, &_G(buffer2)[0]);
 
-				if (numsaves > 0)
-					CSCISendControlMessage(ctrllist, CLB_GETTEXT, cursell, &bufTemp[0]);
+				if (_G(numsaves) > 0)
+					CSCISendControlMessage(ctrllist, CLB_GETTEXT, cursell, &_G(bufTemp)[0]);
 				else
-					strcpy(bufTemp, "_NOSAVEGAMENAME");
+					strcpy(_G(bufTemp), "_NOSAVEGAMENAME");
 
-				if (toomanygames) {
+				if (_G(toomanygames)) {
 					int nwhand = CSCIDrawWindow(boxleft + 5, boxtop + 20, 190, 65);
 					int lbl1 =
 						CSCICreateControl(CNT_LABEL, 15, 5, 160, 0, get_global_message(MSG_REPLACEWITH1));
-					int lbl2 = CSCICreateControl(CNT_LABEL, 25, 14, 160, 0, bufTemp);
+					int lbl2 = CSCICreateControl(CNT_LABEL, 25, 14, 160, 0, _G(bufTemp));
 					int lbl3 =
 						CSCICreateControl(CNT_LABEL, 15, 25, 160, 0, get_global_message(MSG_REPLACEWITH2));
-					int txt1 = CSCICreateControl(CNT_TEXTBOX, 15, 35, 160, 0, bufTemp);
+					int txt1 = CSCICreateControl(CNT_TEXTBOX, 15, 35, 160, 0, _G(bufTemp));
 					int btnOk =
 						CSCICreateControl(CNT_PUSHBUTTON | CNF_DEFAULT, 25, 50, 60, 10,
 							get_global_message(MSG_REPLACE));
@@ -225,7 +202,7 @@ int savegamedialog() {
 						CSCIWaitMessage(&cmes);
 					} while (cmes.code != CM_COMMAND);
 
-					CSCISendControlMessage(txt1, CTB_GETTEXT, 0, &buffer2[0]);
+					CSCISendControlMessage(txt1, CTB_GETTEXT, 0, &_G(buffer2)[0]);
 					CSCIDeleteControl(btnCancel);
 					CSCIDeleteControl(btnOk);
 					CSCIDeleteControl(txt1);
@@ -233,19 +210,19 @@ int savegamedialog() {
 					CSCIDeleteControl(lbl2);
 					CSCIDeleteControl(lbl1);
 					CSCIEraseWindow(nwhand);
-					bufTemp[0] = 0;
+					_G(bufTemp)[0] = 0;
 
 					if (cmes.id == btnCancel) {
-						lpTemp = nullptr;
+						_G(lpTemp) = nullptr;
 						break;
 					} else
-						toret = filenumbers[cursell];
+						toret = _G(filenumbers)[cursell];
 
-				} else if (strcmp(buffer2, bufTemp) != 0) {   // create a new game (description different)
+				} else if (strcmp(_G(buffer2), _G(bufTemp)) != 0) {   // create a new game (description different)
 					int highestnum = 0;
-					for (int pp = 0; pp < numsaves; pp++) {
-						if (filenumbers[pp] > highestnum)
-							highestnum = filenumbers[pp];
+					for (int pp = 0; pp < _G(numsaves); pp++) {
+						if (_G(filenumbers)[pp] > highestnum)
+							highestnum = _G(filenumbers)[pp];
 					}
 
 					if (highestnum > 90)
@@ -253,28 +230,28 @@ int savegamedialog() {
 
 					toret = highestnum + 1;
 					String path = get_save_game_path(toret);
-					strcpy(bufTemp, path);
+					strcpy(_G(bufTemp), path);
 				} else {
-					toret = filenumbers[cursell];
-					bufTemp[0] = 0;
+					toret = _G(filenumbers)[cursell];
+					_G(bufTemp)[0] = 0;
 				}
 
-				if (bufTemp[0] == 0) {
+				if (_G(bufTemp)[0] == 0) {
 					String path = get_save_game_path(toret);
-					strcpy(bufTemp, path);
+					strcpy(_G(bufTemp), path);
 				}
 
-				lpTemp = &bufTemp[0];
-				lpTemp2 = &buffer2[0];
+				_G(lpTemp) = &_G(bufTemp)[0];
+				_G(lpTemp2) = &_G(buffer2)[0];
 			} else if (mes.id == ctrlcancel) {
-				lpTemp = nullptr;
+				_G(lpTemp) = nullptr;
 			}
 			break;
 		} else if (mes.code == CM_SELCHANGE) {
 			int cursel = CSCISendControlMessage(ctrllist, CLB_GETCURSEL, 0, 0);
 			if (cursel >= 0) {
-				CSCISendControlMessage(ctrllist, CLB_GETTEXT, cursel, &buffer2[0]);
-				CSCISendControlMessage(ctrltbox, CTB_SETTEXT, 0, &buffer2[0]);
+				CSCISendControlMessage(ctrllist, CLB_GETTEXT, cursel, &_G(buffer2)[0]);
+				CSCISendControlMessage(ctrltbox, CTB_SETTEXT, 0, &_G(buffer2)[0]);
 			}
 		}
 	}
@@ -289,8 +266,8 @@ int savegamedialog() {
 }
 
 void preparesavegamelist(int ctrllist) {
-	numsaves = 0;
-	toomanygames = 0;
+	_G(numsaves) = 0;
+	_G(toomanygames) = 0;
 
 	// Get a list of savegames
 	SaveStateList saveList = ::AGS::g_vm->listSaves();
@@ -304,28 +281,28 @@ void preparesavegamelist(int ctrllist) {
 
 		// Select the first item
 		CSCISendControlMessage(ctrllist, CLB_SETCURSEL, 0, 0);
-		filenumbers[numsaves] = it->getSaveSlot();
-		filedates[numsaves] = 0;		// TODO: How to handle file dates in ScummVM
+		_G(filenumbers)[_G(numsaves)] = it->getSaveSlot();
+		_G(filedates)[_G(numsaves)] = 0;		// TODO: How to handle file dates in ScummVM
 
-		++numsaves;
+		++_G(numsaves);
 	}
 
-	if (numsaves >= MAXSAVEGAMES)
-		toomanygames = 1;
+	if (_G(numsaves) >= MAXSAVEGAMES)
+		_G(toomanygames) = 1;
 
-	for (int nn = 0; nn < numsaves - 1; nn++) {
-		for (int kk = 0; kk < numsaves - 1; kk++) { // Date order the games
-			if (filedates[kk] < filedates[kk + 1]) {  // swap them round
-				CSCISendControlMessage(ctrllist, CLB_GETTEXT, kk, &buff[0]);
-				CSCISendControlMessage(ctrllist, CLB_GETTEXT, kk + 1, &buffer2[0]);
-				CSCISendControlMessage(ctrllist, CLB_SETTEXT, kk + 1, &buff[0]);
-				CSCISendControlMessage(ctrllist, CLB_SETTEXT, kk, &buffer2[0]);
-				int numtem = filenumbers[kk];
-				filenumbers[kk] = filenumbers[kk + 1];
-				filenumbers[kk + 1] = numtem;
-				long numted = filedates[kk];
-				filedates[kk] = filedates[kk + 1];
-				filedates[kk + 1] = numted;
+	for (int nn = 0; nn < _G(numsaves) - 1; nn++) {
+		for (int kk = 0; kk < _G(numsaves) - 1; kk++) { // Date order the games
+			if (_G(filedates)[kk] < _G(filedates)[kk + 1]) {  // swap them round
+				CSCISendControlMessage(ctrllist, CLB_GETTEXT, kk, &_G(buff)[0]);
+				CSCISendControlMessage(ctrllist, CLB_GETTEXT, kk + 1, &_G(buffer2)[0]);
+				CSCISendControlMessage(ctrllist, CLB_SETTEXT, kk + 1, &_G(buff)[0]);
+				CSCISendControlMessage(ctrllist, CLB_SETTEXT, kk, &_G(buffer2)[0]);
+				int numtem = _G(filenumbers)[kk];
+				_G(filenumbers)[kk] = _G(filenumbers)[kk + 1];
+				_G(filenumbers)[kk + 1] = numtem;
+				long numted = _G(filedates)[kk];
+				_G(filedates)[kk] = _G(filedates)[kk + 1];
+				_G(filedates)[kk + 1] = numted;
 			}
 		}
 	}
@@ -354,9 +331,9 @@ void enterstringwindow(const char *prompttext, char *stouse) {
 		CSCIWaitMessage(&mes);
 		if (mes.code == CM_COMMAND) {
 			if (mes.id == ctrlcancel)
-				buffer2[0] = 0;
+				_G(buffer2)[0] = 0;
 			else
-				CSCISendControlMessage(ctrltbox, CTB_GETTEXT, 0, &buffer2[0]);
+				CSCISendControlMessage(ctrltbox, CTB_GETTEXT, 0, &_G(buffer2)[0]);
 			break;
 		}
 	}
@@ -367,7 +344,7 @@ void enterstringwindow(const char *prompttext, char *stouse) {
 	if (wantCancel)
 		CSCIDeleteControl(ctrlcancel);
 	CSCIEraseWindow(handl);
-	strcpy(stouse, buffer2);
+	strcpy(stouse, _G(buffer2));
 }
 
 int enternumberwindow(char *prompttext) {
@@ -383,8 +360,8 @@ int roomSelectorWindow(int currentRoom, int numRooms, int *roomNumbers, char **r
 	strcpy(labeltext, get_global_message(MSG_SAVEDIALOG));
 	const int wnd_width = 240;
 	const int wnd_height = 160;
-	const int boxleft = myscrnwid / 2 - wnd_width / 2;
-	const int boxtop = myscrnhit / 2 - wnd_height / 2;
+	const int boxleft = _G(myscrnwid) / 2 - wnd_width / 2;
+	const int boxtop = _G(myscrnhit) / 2 - wnd_height / 2;
 	const int labeltop = 5;
 
 	int handl = CSCIDrawWindow(boxleft, boxtop, wnd_width, wnd_height);
@@ -394,8 +371,8 @@ int roomSelectorWindow(int currentRoom, int numRooms, int *roomNumbers, char **r
 
 	CSCISendControlMessage(ctrllist, CLB_CLEAR, 0, 0);    // clear the list box
 	for (int aa = 0; aa < numRooms; aa++) {
-		sprintf(buff, "%3d %s", roomNumbers[aa], roomNames[aa]);
-		CSCISendControlMessage(ctrllist, CLB_ADDITEM, 0, &buff[0]);
+		sprintf(_G(buff), "%3d %s", roomNumbers[aa], roomNames[aa]);
+		CSCISendControlMessage(ctrllist, CLB_ADDITEM, 0, &_G(buff)[0]);
 		if (roomNumbers[aa] == currentRoom) {
 			CSCISendControlMessage(ctrllist, CLB_SETCURSEL, aa, 0);
 		}
@@ -405,20 +382,20 @@ int roomSelectorWindow(int currentRoom, int numRooms, int *roomNumbers, char **r
 	int ctrltex1 = CSCICreateControl(CNT_LABEL, 10, labeltop, 180, 0, "Choose which room to go to:");
 	CSCIMessage mes;
 
-	lpTemp = nullptr;
-	buffer2[0] = 0;
+	_G(lpTemp) = nullptr;
+	_G(buffer2)[0] = 0;
 
 	int ctrltbox = CSCICreateControl(CNT_TEXTBOX, 10, 29, 120, 0, nullptr);
-	CSCISendControlMessage(ctrltbox, CTB_SETTEXT, 0, &buffer2[0]);
+	CSCISendControlMessage(ctrltbox, CTB_SETTEXT, 0, &_G(buffer2)[0]);
 
 	int toret = -1;
 	while (1) {
 		CSCIWaitMessage(&mes);      //printf("mess: %d, id %d ",mes.code,mes.id);
 		if (mes.code == CM_COMMAND) {
 			if (mes.id == ctrlok) {
-				CSCISendControlMessage(ctrltbox, CTB_GETTEXT, 0, &buffer2[0]);
-				if (Common::isDigit(buffer2[0])) {
-					toret = atoi(buffer2);
+				CSCISendControlMessage(ctrltbox, CTB_GETTEXT, 0, &_G(buffer2)[0]);
+				if (Common::isDigit(_G(buffer2)[0])) {
+					toret = atoi(_G(buffer2));
 				}
 			} else if (mes.id == ctrlcancel) {
 			}
@@ -426,8 +403,8 @@ int roomSelectorWindow(int currentRoom, int numRooms, int *roomNumbers, char **r
 		} else if (mes.code == CM_SELCHANGE) {
 			int cursel = CSCISendControlMessage(ctrllist, CLB_GETCURSEL, 0, 0);
 			if (cursel >= 0) {
-				sprintf(buffer2, "%d", roomNumbers[cursel]);
-				CSCISendControlMessage(ctrltbox, CTB_SETTEXT, 0, &buffer2[0]);
+				sprintf(_G(buffer2), "%d", roomNumbers[cursel]);
+				CSCISendControlMessage(ctrltbox, CTB_SETTEXT, 0, &_G(buffer2)[0]);
 			}
 		}
 	}
@@ -462,11 +439,11 @@ int myscimessagebox(const char *lpprompt, char *btn1, char *btn2) {
 	if (btn2 != nullptr)
 		btnPlay = CSCICreateControl(CNT_PUSHBUTTON | CNF_CANCEL, 85, 25, 60, 10, btn2);
 
-	smes.code = 0;
+	_GP(smes).code = 0;
 
 	do {
-		CSCIWaitMessage(&smes);
-	} while (smes.code != CM_COMMAND);
+		CSCIWaitMessage(&_GP(smes));
+	} while (_GP(smes).code != CM_COMMAND);
 
 	if (btnPlay)
 		CSCIDeleteControl(btnPlay);
@@ -475,7 +452,7 @@ int myscimessagebox(const char *lpprompt, char *btn1, char *btn2) {
 	CSCIDeleteControl(lbl1);
 	CSCIEraseWindow(windl);
 
-	if (smes.id == btnQuit)
+	if (_GP(smes).id == btnQuit)
 		return 1;
 
 	return 0;

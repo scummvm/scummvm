@@ -108,6 +108,7 @@ struct CharacterExtras;
 struct CharacterInfo;
 struct color;
 struct COLOR_MAP;
+struct CSCIMessage;
 struct DialogTopic;
 struct DirtyRects;
 struct ExecutingScript;
@@ -763,6 +764,28 @@ public:
 
 	std::vector<AGS::Shared::GUIButton> *_guibuts;
 	int _numguibuts = 0;
+
+	/**@}*/
+
+	/**
+	 * \defgroup guidialog globals
+	 * @{
+	 */
+
+	// TODO: store drawing surface inside old gui classes instead
+	int _windowPosX = 0, _windowPosY = 0, _windowPosWidth = 0, _windowPosHeight = 0;
+	AGS::Shared::Bitmap *_windowBuffer = nullptr;
+	AGS::Engine::IDriverDependantBitmap *_dialogDDB = nullptr;
+
+	#define MAXSAVEGAMES_20 20
+	int _myscrnwid = 320, _myscrnhit = 200;
+	char *_lpTemp = nullptr, *_lpTemp2 = nullptr;
+	int _numsaves = 0, _toomanygames = 0;
+	int _filenumbers[MAXSAVEGAMES_20];
+	unsigned long _filedates[MAXSAVEGAMES_20];
+	char _bufTemp[260], _buffer2[260];
+	char _buff[200];
+	CSCIMessage *_smes;
 
 	/**@}*/
 
