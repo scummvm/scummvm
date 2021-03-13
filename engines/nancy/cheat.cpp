@@ -29,6 +29,7 @@
 #include "common/winexe.h"
 #include "common/stream.h"
 #include "common/translation.h"
+#include "common/ustr.h"
 
 #include "gui/widgets/tab.h"
 #include "gui/widgets/edittext.h"
@@ -56,40 +57,40 @@ CheatDialog::CheatDialog() : GUI::Dialog(20, 20, 600, 440) {
     
     new GUI::StaticTextWidget(_tabs, 30, 20, 150, 20, _("Scene Data"), Graphics::kTextAlignLeft);
     _restartScene = new GUI::CheckboxWidget(_tabs, 35, 50, 150, 20, _("Restart the Scene"), _(""));
-    _scene = new GUI::EditTextWidget(_tabs, 35, 75, 45, 20, _(itoa(scene.sceneID, buf, 10)), _(""), kInputSceneNr, kInputSceneNr);
+    _scene = new GUI::EditTextWidget(_tabs, 35, 75, 45, 20, _(Common::U32String::itoa(scene.sceneID, buf, 10)), _(""), kInputSceneNr, kInputSceneNr);
     new GUI::StaticTextWidget(_tabs, 85, 75, 150, 20, _("Scene Number"), Graphics::kTextAlignLeft);
-    _frame = new GUI::EditTextWidget(_tabs, 35, 100, 45, 20, _(itoa(scene.frameID, buf, 10)), _(""), kInputFrameNr, kInputFrameNr);
+    _frame = new GUI::EditTextWidget(_tabs, 35, 100, 45, 20, _(Common::U32String::itoa(scene.frameID, buf, 10)), _(""), kInputFrameNr, kInputFrameNr);
     new GUI::StaticTextWidget(_tabs, 85, 100, 150, 20, _("Frame Number"), Graphics::kTextAlignLeft);
-    _offset = new GUI::EditTextWidget(_tabs, 35, 125, 45, 20, _(itoa(scene.verticalOffset, buf, 10)), _(""), kInputScroll, kInputScroll);
+    _offset = new GUI::EditTextWidget(_tabs, 35, 125, 45, 20, _(Common::U32String::itoa(scene.verticalOffset, buf, 10)), _(""), kInputScroll, kInputScroll);
     new GUI::StaticTextWidget(_tabs, 85, 125, 150, 20, _("Background Top (Y)"), Graphics::kTextAlignLeft);
 
     new GUI::StaticTextWidget(_tabs, 30, 160, 150, 20, _("Hints Remaining"), Graphics::kTextAlignLeft);
     new GUI::StaticTextWidget(_tabs, 35, 185, 45, 20, _("Easy"), Graphics::kTextAlignLeft);
-    _hintsRemainingEasy = new GUI::EditTextWidget(_tabs, 35, 205, 45, 20, _(itoa(NancySceneState._hintsRemaining[0], buf, 10)), _(""), kInputHintsEasy, kInputHintsEasy);
+    _hintsRemainingEasy = new GUI::EditTextWidget(_tabs, 35, 205, 45, 20, _(Common::U32String::itoa(NancySceneState._hintsRemaining[0], buf, 10)), _(""), kInputHintsEasy, kInputHintsEasy);
     new GUI::StaticTextWidget(_tabs, 85, 185, 45, 20, _("Medium"), Graphics::kTextAlignLeft);
-    _hintsRemainingMedium = new GUI::EditTextWidget(_tabs, 85, 205, 45, 20, _(itoa(NancySceneState._hintsRemaining[1], buf, 10)), _(""), kInputHintsMedium, kInputHintsMedium);
+    _hintsRemainingMedium = new GUI::EditTextWidget(_tabs, 85, 205, 45, 20, _(Common::U32String::itoa(NancySceneState._hintsRemaining[1], buf, 10)), _(""), kInputHintsMedium, kInputHintsMedium);
     new GUI::StaticTextWidget(_tabs, 135, 185, 45, 20, _("Hard"), Graphics::kTextAlignLeft);
-    _hintsRemainingHard = new GUI::EditTextWidget(_tabs, 135, 205, 45, 20, _(itoa(NancySceneState._hintsRemaining[2], buf, 10)), _(""), kInputHintsHard, kInputHintsHard);
+    _hintsRemainingHard = new GUI::EditTextWidget(_tabs, 135, 205, 45, 20, _(Common::U32String::itoa(NancySceneState._hintsRemaining[2], buf, 10)), _(""), kInputHintsHard, kInputHintsHard);
     
     new GUI::StaticTextWidget(_tabs, 250, 20, 150, 20, _("Player Data"), Graphics::kTextAlignLeft);
     new GUI::StaticTextWidget(_tabs, 255, 50, 150, 20, _("Player Time:"), Graphics::kTextAlignLeft);
-    _playerTimeDays = new GUI::EditTextWidget(_tabs, 255, 75, 35, 20, _(itoa(playerTime.getDays(), buf, 10)), _(""), kInputPlayerTime, kInputPlayerTime);
+    _playerTimeDays = new GUI::EditTextWidget(_tabs, 255, 75, 35, 20, _(Common::U32String::itoa(playerTime.getDays(), buf, 10)), _(""), kInputPlayerTime, kInputPlayerTime);
     new GUI::StaticTextWidget(_tabs, 295, 75, 40, 20, _("Days"), Graphics::kTextAlignLeft);
-    _playerTimeHours =new GUI::EditTextWidget(_tabs, 335, 75, 35, 20, _(itoa(playerTime.getHours(), buf, 10)), _(""), kInputPlayerTime, kInputPlayerTime);
+    _playerTimeHours =new GUI::EditTextWidget(_tabs, 335, 75, 35, 20, _(Common::U32String::itoa(playerTime.getHours(), buf, 10)), _(""), kInputPlayerTime, kInputPlayerTime);
     new GUI::StaticTextWidget(_tabs, 375, 75, 40, 20, _("Hours"), Graphics::kTextAlignLeft);
-    _playerTimeMinutes =new GUI::EditTextWidget(_tabs, 415, 75, 35, 20, _(itoa(playerTime.getMinutes(), buf, 10)), _(""), kInputPlayerTime, kInputPlayerTime);
+    _playerTimeMinutes =new GUI::EditTextWidget(_tabs, 415, 75, 35, 20, _(Common::U32String::itoa(playerTime.getMinutes(), buf, 10)), _(""), kInputPlayerTime, kInputPlayerTime);
     new GUI::StaticTextWidget(_tabs, 455, 75, 50, 20, _("Minutes"), Graphics::kTextAlignLeft);
-    _difficulty = new GUI::EditTextWidget(_tabs, 255, 105, 35, 20, _(itoa(NancySceneState._difficulty, buf, 10)), _(""), kInputDifficulty, kInputDifficulty);
+    _difficulty = new GUI::EditTextWidget(_tabs, 255, 105, 35, 20, _(Common::U32String::itoa(NancySceneState._difficulty, buf, 10)), _(""), kInputDifficulty, kInputDifficulty);
     new GUI::StaticTextWidget(_tabs, 295, 105, 150, 20, _("Player Difficulty Level"), Graphics::kTextAlignLeft);
 
     new GUI::StaticTextWidget(_tabs, 250, 140, 150, 20, _("Player Data"), Graphics::kTextAlignLeft);
     _timerOn = new GUI::CheckboxWidget(_tabs, 255, 170, 150, 20, _("Timer On"), _(""));
     _timerOn->setState(timerIsActive);
-    _timerHours = new GUI::EditTextWidget(_tabs, 255, 195, 35, 20, _(itoa(timerTime.getTotalHours(), buf, 10)), _(""), kInputTimer, kInputTimer);
+    _timerHours = new GUI::EditTextWidget(_tabs, 255, 195, 35, 20, _(Common::U32String::itoa(timerTime.getTotalHours(), buf, 10)), _(""), kInputTimer, kInputTimer);
     new GUI::StaticTextWidget(_tabs, 295, 195, 40, 20, _("Hours"), Graphics::kTextAlignLeft);
-    _timerMinutes = new GUI::EditTextWidget(_tabs, 335, 195, 35, 20, _(itoa(timerTime.getMinutes(), buf, 10)), _(""), kInputTimer, kInputTimer);
+    _timerMinutes = new GUI::EditTextWidget(_tabs, 335, 195, 35, 20, _(Common::U32String::itoa(timerTime.getMinutes(), buf, 10)), _(""), kInputTimer, kInputTimer);
     new GUI::StaticTextWidget(_tabs, 375, 195, 50, 20, _("Minutes"), Graphics::kTextAlignLeft);
-    _timerSeconds = new GUI::EditTextWidget(_tabs, 425, 195, 35, 20, _(itoa(timerTime.getSeconds(), buf, 10)), _(""), kInputTimer, kInputTimer);
+    _timerSeconds = new GUI::EditTextWidget(_tabs, 425, 195, 35, 20, _(Common::U32String::itoa(timerTime.getSeconds(), buf, 10)), _(""), kInputTimer, kInputTimer);
     new GUI::StaticTextWidget(_tabs, 465, 195, 50, 20, _("Seconds"), Graphics::kTextAlignLeft);
 
     _tabs->addTab(_("Inventory"), _("Cheat.Inventory"));
@@ -248,7 +249,7 @@ void CheatDialog::sanitizeInput(GUI::EditTextWidget *textWidget, int maxValue) {
         int number = atoi(Common::String(str).c_str());
         if (number > maxValue) {
             char *buf = new char[str.size() + 1];
-            textWidget->setEditString(_(itoa(maxValue, buf, 10)));
+            textWidget->setEditString(_(Common::U32String::itoa(maxValue, buf, 10)));
             delete[] buf;
         }
     }
