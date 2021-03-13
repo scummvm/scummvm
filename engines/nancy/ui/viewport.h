@@ -49,7 +49,7 @@ public:
     virtual void init() override;
     void handleInput(NancyInput &input);
 
-    void loadVideo(const Common::String &filename, uint frameNr = 0, uint verticalScroll = 0, const Common::String &palette = Common::String());
+    void loadVideo(const Common::String &filename, uint frameNr = 0, uint verticalScroll = 0, uint16 format = 2, const Common::String &palette = Common::String());
     
     void setFrame(uint frameNr);
     void setNextFrame();
@@ -89,6 +89,7 @@ protected:
 
     AVFDecoder _decoder;
     uint16 _currentFrame;
+    uint16 _videoFormat;
     Graphics::ManagedSurface _fullFrame;
     Common::Rect _format1Bounds;
     Common::Rect _format2Bounds;

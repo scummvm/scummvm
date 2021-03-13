@@ -137,9 +137,91 @@ void GraphicsManager::loadSurfacePalette(Graphics::ManagedSurface &inSurf, const
     if (f.open(paletteFilename + ".bmp")) {
         Image::BitmapDecoder dec;
         if (dec.loadStream(f)) {
-            inSurf.setPalette(dec.getPalette(), dec.getPaletteStartIndex(), dec.getPaletteColorCount());
+            inSurf.setPalette(dec.getPalette(), dec.getPaletteStartIndex(), MIN<uint>(256, dec.getPaletteColorCount()));
         }
     }
+}
+
+void GraphicsManager::copyToManaged(const Graphics::Surface &src, Graphics::ManagedSurface &dst, bool verticalFlip, bool doubleSize) {
+    if (dst.w != doubleSize ? src.w * 2 : src.w || dst.h != doubleSize ? src.h * 2 : src.h) {
+        const uint32 *palette = dst.getPalette();
+        bool hasTransColor = dst.hasTransparentColor();
+        dst.create(doubleSize ? src.w * 2 : src.w, doubleSize ? src.h * 2 : src.h, src.format);
+
+        if (palette) {
+            // free() clears the _hasPalette flag but doesn't clear the palette itself, so
+            // we just set it to itself; hopefully this doesn't cause any issues
+            dst.setPalette(palette, 0, 256);
+        }
+
+        if (hasTransColor) {
+            // Do the same trick with the transparent color
+            dst.setTransparentColor(dst.getTransparentColor());
+        }
+    }
+
+    if (!verticalFlip && !doubleSize) {
+        dst.copyRectToSurface(src, 0, 0, Common::Rect(0, 0, src.w, src.h));
+        return;
+    }
+
+    for (uint y = 0; y < src.h; ++y) {
+        if (!doubleSize) {
+            // Copy single line bottom to top
+            memcpy(dst.getBasePtr(0, y), src.getBasePtr(0, src.h - y - 1), src.w * src.format.bytesPerPixel);
+        } else {
+            // Make four copies of each source pixel
+            for (uint x = 0; x < src.w; ++x) {
+                switch (src.format.bytesPerPixel) {
+                case 1: {
+                    const byte *srcP = (const byte *)src.getBasePtr(x, y);
+                    uint dstX = x * 2;
+                    uint dstY = verticalFlip ? (src.h - y - 1) * 2 : src.h - y - 1;
+                    *((byte *)dst.getBasePtr(dstX, dstY)) = *srcP;
+                    *((byte *)dst.getBasePtr(dstX + 1, dstY)) = *srcP;
+                    *((byte *)dst.getBasePtr(dstX, dstY + 1)) = *srcP;
+                    *((byte *)dst.getBasePtr(dstX + 1, dstY + 1)) = *srcP;
+                    break;
+                }
+                case 2: {
+                    const uint16 *srcP = (const uint16 *)src.getBasePtr(x, y);
+                    uint dstX = x * 2;
+                    uint dstY = verticalFlip ? (src.h - y - 1) * 2 : src.h - y - 1;
+                    *((uint16 *)dst.getBasePtr(dstX, dstY)) = *srcP;
+                    *((uint16 *)dst.getBasePtr(dstX + 1, dstY)) = *srcP;
+                    *((uint16 *)dst.getBasePtr(dstX, dstY + 1)) = *srcP;
+                    *((uint16 *)dst.getBasePtr(dstX + 1, dstY + 1)) = *srcP;
+                    break;
+                }
+                case 4: {
+                    const uint32 *srcP = (const uint32 *)src.getBasePtr(x, y);
+                    uint dstX = x * 2;
+                    uint dstY = verticalFlip ? (src.h - y - 1) * 2 : src.h - y - 1;
+                    *((uint32 *)dst.getBasePtr(dstX, dstY)) = *srcP;
+                    *((uint32 *)dst.getBasePtr(dstX + 1, dstY)) = *srcP;
+                    *((uint32 *)dst.getBasePtr(dstX, dstY + 1)) = *srcP;
+                    *((uint32 *)dst.getBasePtr(dstX + 1, dstY + 1)) = *srcP;
+                    break;
+                }
+                default:
+                    return;
+                }
+            }
+        }
+    }
+}
+
+void GraphicsManager::copyToManaged(void *src, Graphics::ManagedSurface &dst, uint srcW, uint srcH, const Graphics::PixelFormat &format, bool verticalFlip, bool doubleSize) {
+    // Do things the lazy way and simply create a Surface and pass it to the other overload
+    // We do NOT free the surface since it's a temporary object and does not own the pixels
+    Graphics::Surface surf;
+    surf.w = srcW;
+    surf.h = srcH;
+    surf.format = format;
+    surf.pitch = srcW * format.bytesPerPixel;
+    surf.setPixels(src);
+
+    copyToManaged(surf, dst, verticalFlip, doubleSize);
 }
 
 const Graphics::PixelFormat &GraphicsManager::getInputPixelFormat() {
