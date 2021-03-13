@@ -30,7 +30,7 @@
 
 namespace AGDS {
 
-Inventory::Inventory(AGDSEngine* engine): _engine(engine), _entries(kMaxSize), _enabled(false) {}
+Inventory::Inventory(AGDSEngine* engine): _engine(engine), _entries(kMaxSize), _enabled(false), _visible(false) {}
 Inventory::~Inventory() {}
 
 int Inventory::free() const {
