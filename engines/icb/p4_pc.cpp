@@ -262,6 +262,27 @@ void InitEngine(const char *lpCmdLine) {
 	ReadConfigFromIniFile();
 }
 
+void quitEngine() {
+	Zdebug("\nap closed");
+	Zdebug("Be Vigilant!\n");
+
+	if (g_mission)
+		g_icb_mission->___delete_mission();
+
+	Close_Sound_Engine();
+
+	if (surface_manager)
+		delete surface_manager;
+
+	Save_config_file(); // write user options ini file
+	DestoryRevRenderDevice();
+
+	// Shutdown the runtime cluster manager
+	g_theClusterManager->Shutdown();
+
+	DestroyGlobalObjects();
+}
+
 bool mainLoopIteration() {
 	Common::Event event;
 
@@ -309,24 +330,7 @@ bool mainLoopIteration() {
 			break;
 
 		case Common::EVENT_QUIT:
-			Zdebug("\nap closed");
-			Zdebug("Be Vigilant!\n");
-
-			if (g_mission)
-				g_icb_mission->___delete_mission();
-
-			Close_Sound_Engine();
-
-			if (surface_manager)
-				delete surface_manager;
-
-			Save_config_file(); // write user options ini file
-			DestoryRevRenderDevice();
-
-			// Shutdown the runtime cluster manager
-			g_theClusterManager->Shutdown();
-
-			DestroyGlobalObjects();
+			quitEngine();
 			return false;
 		default:
 			break;

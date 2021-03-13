@@ -135,9 +135,15 @@ Common::KeymapArray IcbEngine::initKeymapsIcb(const char *target) {
 	return Keymap::arrayOf(engineKeyMap);
 }
 
+bool IcbEngine::hasFeature(EngineFeature f) const {
+	return
+		(f == kSupportsReturnToLauncher);
+}
+
 // TODO: Refactor, this is currently implemented in p4_pc.cpp
 void InitEngine(const char *cmdLine);
 bool mainLoopIteration();
+void quitEngine();
 
 Common::Error IcbEngine::run() {
 	initGfx(false, false);
@@ -152,6 +158,10 @@ void IcbEngine::initGfx(bool hwAccel, bool fullscreen) {
 
 void IcbEngine::mainLoop() {
 	while (mainLoopIteration()) {
+		if (shouldQuit()) {
+			quitEngine();
+			break;
+		}
 	}
 }
 
