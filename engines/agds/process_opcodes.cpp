@@ -1407,7 +1407,7 @@ void Process::moveCharacter(bool usermove) {
 	if (character) {
 		auto region = _engine->loadRegion(regionName);
 		if (region) {
-			character->moveTo(region->center, direction);
+			character->moveTo(_object->getName(), region->center, direction);
 		}
 	} else
 		warning("character %s could not be found", id.c_str());
@@ -1430,7 +1430,7 @@ void Process::animateCharacter() {
 
 	Character *character = _engine->getCharacter(name);
 	if (character)
-		character->animate(_animationPosition, direction, _animationSpeed);
+		character->animate(_object->getName(), _animationPosition, direction, _animationSpeed);
 	else
 		warning("character %s could not be found", name.c_str());
 }
