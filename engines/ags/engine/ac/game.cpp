@@ -109,10 +109,6 @@ namespace AGS3 {
 using namespace AGS::Shared;
 using namespace AGS::Engine;
 
-#if AGS_PLATFORM_OS_IOS || AGS_PLATFORM_OS_ANDROID
-extern int _G(psp_gfx_renderer);
-#endif
-
 //=============================================================================
 // Audio
 //=============================================================================

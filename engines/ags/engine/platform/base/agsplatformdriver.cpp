@@ -190,10 +190,6 @@ void AGSPlatformDriver::PrintMessage(const Shared::DebugMessage &msg) {
 
 #if defined (AGS_HAS_CD_AUDIO)
 
-// from ac_cdplayer
-extern int _G(use_cdplayer);
-extern int _G(need_to_stop_cd);
-
 int numcddrives = 0;
 
 int cd_player_init() {

@@ -83,11 +83,6 @@ void ccRemoveAllSymbols() {
 	_GP(simp).clear();
 }
 
-ccInstance *loadedInstances[MAX_LOADED_INSTANCES] = { nullptr,
-													 nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
-													 nullptr, nullptr, nullptr, nullptr, nullptr, nullptr
-};
-
 void nullfree(void *data) {
 	if (data != nullptr)
 		free(data);
@@ -119,16 +114,11 @@ void *ccGetSymbolAddressForPlugin(const String &name) {
 	return nullptr;
 }
 
-new_line_hook_type new_line_hook = nullptr;
-
-char ccRunnerCopyright[] = "ScriptExecuter32 v" SCOM_VERSIONSTR " (c) 2001 Chris Jones";
-int maxWhileLoops = 0;
-
 // If a while loop does this many iterations without the
 // NofityScriptAlive function getting called, the script
 // aborts. Set to 0 to disable.
 void ccSetScriptAliveTimer(int numloop) {
-	maxWhileLoops = numloop;
+	_G(maxWhileLoops) = numloop;
 }
 
 void ccNotifyScriptStillAlive() {
@@ -137,7 +127,7 @@ void ccNotifyScriptStillAlive() {
 }
 
 void ccSetDebugHook(new_line_hook_type jibble) {
-	new_line_hook = jibble;
+	_G(new_line_hook) = jibble;
 }
 
 int call_function(intptr_t addr, const RuntimeScriptValue *object, int numparm, const RuntimeScriptValue *parms) {

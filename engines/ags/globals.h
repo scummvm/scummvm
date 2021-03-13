@@ -33,6 +33,7 @@
 #include "ags/engine/main/engine.h"
 #include "ags/engine/media/audio/audiodefines.h"
 #include "ags/engine/script/script.h"
+#include "ags/engine/script/script_runtime.h"
 #include "ags/lib/std/array.h"
 #include "ags/lib/std/set.h"
 #include "ags/lib/allegro/color.h"
@@ -1039,7 +1040,18 @@ public:
 	/**@}*/
 
 	/**
-	 * \defgroup script globals
+	 * \defgroup script_runtime globals
+	 * @{
+	 */
+
+	new_line_hook_type _new_line_hook = nullptr;
+	int _maxWhileLoops = 0;
+	ccInstance *_loadedInstances[MAX_LOADED_INSTANCES];
+
+	/**@}*/
+
+	/**
+	 * \defgroup systemimports globals
 	 * @{
 	 */
 

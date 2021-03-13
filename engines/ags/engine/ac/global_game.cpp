@@ -77,10 +77,6 @@ using namespace AGS::Shared;
 
 extern int gui_disabled_style;
 
-#if AGS_PLATFORM_OS_IOS || AGS_PLATFORM_OS_ANDROID
-extern int _G(psp_gfx_renderer);
-#endif
-
 void GiveScore(int amnt) {
 	guis_need_update = 1;
 	_GP(play).score += amnt;

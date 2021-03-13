@@ -282,6 +282,10 @@ Globals::Globals() {
 	_objectScriptObjNames = new String[MAX_ROOM_OBJECTS];
 	_guiScriptObjNames = new std::vector<String>();
 
+	// script_runtime.cpp globals
+	Common::fill(_loadedInstances, _loadedInstances + MAX_LOADED_INSTANCES,
+		(ccInstance *)nullptr);
+
 	// systemimports.cpp globals
 	_simp = new SystemImports();
 	_simp_for_plugin = new SystemImports();

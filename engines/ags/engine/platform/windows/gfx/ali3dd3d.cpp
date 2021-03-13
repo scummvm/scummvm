@@ -49,9 +49,6 @@ namespace AGS3 {
 
 using namespace AGS::Shared;
 
-// Necessary to update textures from 8-bit bitmaps
-extern RGB palette[256];
-
 //
 // Following functions implement various matrix operations. Normally they are found in the auxiliary d3d9x.dll,
 // but we do not want AGS to be dependent on it.

@@ -41,9 +41,6 @@ namespace AGS3 {
 
 using namespace AGS::Shared;
 
-extern int _G(our_eip);
-extern int _G(eip_guinum);
-extern int _G(eip_guiobj);
 extern int proper_exit;
 
 char tempmsg[100];

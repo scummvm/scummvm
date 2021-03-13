@@ -50,14 +50,6 @@ namespace AGS3 {
 using namespace AGS::Shared;
 using namespace AGS::Shared::Memory;
 
-extern ccInstance *loadedInstances[MAX_LOADED_INSTANCES]; // in script/script_runtime
-
- // in script/script
-extern int maxWhileLoops;
-extern new_line_hook_type new_line_hook;
-
-
-
 enum ScriptOpArgIsReg {
 	kScOpNoArgIsReg     = 0,
 	kScOpArg1IsReg      = 0x0001,
@@ -356,8 +348,8 @@ int ccInstance::CallScriptFunction(const char *funcname, int32_t numargs, const 
 	// object with ref count 0 that is in use
 	_GP(pool).RunGarbageCollectionIfAppropriate();
 
-	if (new_line_hook)
-		new_line_hook(nullptr, 0);
+	if (_G(new_line_hook))
+		_G(new_line_hook)(nullptr, 0);
 
 	if (reterr)
 		return -6;
@@ -525,8 +517,8 @@ int ccInstance::Run(int32_t curpc) {
 		case SCMD_LINENUM:
 			line_number = arg1.IValue;
 			_G(currentline) = arg1.IValue;
-			if (new_line_hook)
-				new_line_hook(this, _G(currentline));
+			if (_G(new_line_hook))
+				_G(new_line_hook)(this, _G(currentline));
 			break;
 		case SCMD_ADD:
 			// If the the register is SREG_SP, we are allocating new variable on the stack
@@ -760,13 +752,13 @@ int ccInstance::Run(int32_t curpc) {
 		case SCMD_JMP:
 			pc += arg1.IValue;
 
-			if ((arg1.IValue < 0) && (maxWhileLoops > 0) && (loopIterationCheckDisabled == 0)) {
+			if ((arg1.IValue < 0) && (_G(maxWhileLoops) > 0) && (loopIterationCheckDisabled == 0)) {
 				// Make sure it's not stuck in a While loop
 				loopIterations ++;
 				if (flags & INSTF_RUNNING) {
 					loopIterations = 0;
 					flags &= ~INSTF_RUNNING;
-				} else if (loopIterations > maxWhileLoops) {
+				} else if (loopIterations > _G(maxWhileLoops)) {
 					cc_error("!Script appears to be hung (a while loop ran %d times). The problem may be in a calling function; check the call stack.", loopIterations);
 					return -1;
 				}
@@ -943,7 +935,7 @@ int ccInstance::Run(int32_t curpc) {
 			// extract the instance ID
 			int32_t instId = codeOp.Instruction.InstanceId;
 			// determine the offset into the code of the instance we want
-			runningInst = loadedInstances[instId];
+			runningInst = _G(loadedInstances)[instId];
 			intptr_t callAddr = reg1.Ptr - (char *)&runningInst->code[0];
 			if (callAddr % sizeof(intptr_t) != 0) {
 				cc_error("call address not aligned");
@@ -1336,8 +1328,8 @@ bool ccInstance::_Create(PScript scri, ccInstance *joined) {
 
 	// find a LoadedInstance slot for it
 	for (i = 0; i < MAX_LOADED_INSTANCES; i++) {
-		if (loadedInstances[i] == nullptr) {
-			loadedInstances[i] = this;
+		if (_G(loadedInstances)[i] == nullptr) {
+			_G(loadedInstances)[i] = this;
 			loadedInstanceId = i;
 			break;
 		}
@@ -1413,8 +1405,8 @@ void ccInstance::Free() {
 	}
 
 	// remove from the Active Instances list
-	if (loadedInstances[loadedInstanceId] == this)
-		loadedInstances[loadedInstanceId] = nullptr;
+	if (_G(loadedInstances)[loadedInstanceId] == this)
+		_G(loadedInstances)[loadedInstanceId] = nullptr;
 
 	if ((flags & INSTF_SHAREDATA) == 0) {
 		nullfree(globaldata);
