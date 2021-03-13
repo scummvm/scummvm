@@ -96,11 +96,23 @@ void Font::drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint32 col
     
     for (uint curY = 0; curY < height; ++curY) {
         for (uint curX = 0; curX < width; ++curX) {
-            // Assumes 2 bytes per pixel
-            uint16 curByte = *(const uint16 *)_image.getBasePtr(srcRect.left + curX, srcRect.top +  curY);
-            
-            if (curByte != _transColor) {
-                *(uint16 *)dst->getBasePtr(x + curX, y + yOffset + curY) = curByte;
+            switch (GraphicsManager::getInputPixelFormat().bytesPerPixel) {
+            case 1:
+                // TODO
+                break;
+            case 2: {
+                uint16 curColor = *(const uint16 *)_image.getBasePtr(srcRect.left + curX, srcRect.top +  curY);
+                
+                if (curColor != _transColor) {
+                    uint8 r, g, b;
+                    _image.format.colorToRGB(curColor, r, g, b);
+                    *(uint16 *)dst->getBasePtr(x + curX, y + yOffset + curY) = dst->format.RGBToColor(r, g, b);
+                }
+
+                break;
+            }
+            default:
+                break;
             }
         }
     }
