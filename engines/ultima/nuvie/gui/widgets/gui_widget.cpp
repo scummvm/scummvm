@@ -373,12 +373,6 @@ GUI_status GUI_Widget::HandleEvent(const Common::Event *event) {
 		button = Shared::whichButton(event->type);
 		if (focused || HitRect(x, y)) {
 			set_mousedown(SDL_GetTicks(), button);
- 
-			if (button == Common::EVENT_WHEELUP)
-				return MouseWheel(0, 1);
-			else if (button == Common::EVENT_WHEELDOWN)
-				return MouseWheel(0, -1);
-
 			return(MouseDown(x, y, button));
 		}
 		break;
