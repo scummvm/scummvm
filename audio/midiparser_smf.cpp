@@ -43,7 +43,7 @@ protected:
 
 protected:
 	void compressToType0();
-	void parseNextEvent(EventInfo &info);
+	void parseNextEvent(EventInfo &info) override;
 
 	void sendToDriver(uint32 b) override;
 	void sendMetaEventToDriver(byte type, byte *data, uint16 length) override;
@@ -52,8 +52,8 @@ public:
 	MidiParser_SMF(int8 source = -1) : _buffer(0), _malformedPitchBends(false), _source(source) { }
 	~MidiParser_SMF();
 
-	bool loadMusic(byte *data, uint32 size);
-	void property(int property, int value);
+	bool loadMusic(byte *data, uint32 size) override;
+	void property(int property, int value) override;
 };
 
 
