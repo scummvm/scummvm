@@ -54,6 +54,7 @@ class Screen {
 
 	AGDSEngine *	_engine;
 	ObjectPtr		_object;
+	Common::Point	_scroll;
 	Common::String	_name;
 	ScreenLoadingType _loadingType;
 	Common::String	_previousScreen;
@@ -116,6 +117,10 @@ public:
 
 	const AnimationsType & animations() const {
 		return _animations;
+	}
+	void scrollTo(Common::Point scroll);
+	Common::Point scrollPosition() const {
+		return _scroll;
 	}
 
 	bool add(ObjectPtr object);

@@ -50,6 +50,17 @@ Screen::~Screen() {
 	_children.clear();
 }
 
+void Screen::scrollTo(Common::Point scroll) {
+	int maxW = g_system->getWidth();
+	int maxH = g_system->getHeight();
+	if (scroll.x < 0)
+		scroll.x = 0;
+	if (scroll.y < 0)
+		scroll.y = 0;
+	_scroll = scroll;
+}
+
+
 float Screen::getZScale(int y) const
 {
 	int dy = g_system->getHeight() - y;
@@ -192,21 +203,27 @@ void Screen::paint(Graphics::Surface &backbuffer) {
 			}
 		}
 
+		auto basePos = _scroll;
 		switch (render_type) {
 			case 0:
 				//debug("object z: %d", (*child)->z());
-				if ((*child) != currentInventoryObject && (*child)->alive())
-					(*child)->paint(*_engine, backbuffer);
+				if ((*child) != currentInventoryObject && (*child)->alive()) {
+					if ((*child)->scale() < 0)
+						basePos = Common::Point();
+					(*child)->paint(*_engine, backbuffer, basePos);
+				}
 				++child;
 				break;
 			case 1:
 				//debug("animation z: %d", (*animation)->z());
-				(*animation)->paint(backbuffer, Common::Point());
+				(*animation)->paint(backbuffer, basePos);
+				if ((*animation)->scale() < 0)
+					basePos = Common::Point();
 				++animation;
 				break;
 			case 2:
 				//debug("character z: %d", character->z());
-				character->paint(backbuffer);
+				character->paint(backbuffer, _scroll);
 				character = nullptr;
 				break;
 			default:
