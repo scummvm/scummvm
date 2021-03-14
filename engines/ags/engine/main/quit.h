@@ -48,6 +48,8 @@ enum QuitReason {
 	kQuit_FatalError = kQuitKind_EngineException
 };
 
+extern void quit_free();
+
 } // namespace AGS3
 
 #endif

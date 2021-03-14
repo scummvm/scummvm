@@ -261,6 +261,7 @@ MODULE_OBJS = \
 	engine/main/game_run.o \
 	engine/main/game_start.o \
 	engine/main/graphics_mode.o \
+	engine/main/main.o \
 	engine/main/quit.o \
 	engine/main/update.o \
 	engine/media/audio/ambientsound.o \
