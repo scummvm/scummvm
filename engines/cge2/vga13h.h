@@ -82,6 +82,7 @@ public:
 	V3D() { }
 	V3D(FXP x, FXP y, FXP z = 0) : _x(x), _y(y), _z(z) { }
 	V3D(const V3D &p) : _x(p._x), _y(p._y), _z(p._z) { }
+	V3D &operator=(const V3D &p) { _x = p._x; _y = p._y; _z = p._z; return *this; }
 	V3D operator+(const V3D &p) const { return V3D(_x + p._x, _y + p._y, _z + p._z); }
 	V3D operator-(const V3D &p) const { return V3D(_x - p._x, _y - p._y, _z - p._z); }
 	V3D operator*(long n) const { return V3D(_x * n, _y * n, _z * n); }
