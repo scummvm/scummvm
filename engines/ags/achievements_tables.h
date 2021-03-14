@@ -39,6 +39,24 @@ struct AchievementDescriptionList {
 
 static const AchievementDescriptionList achievementDescriptionList[] = {
 	{
+		"adateinthepark",
+		Common::STEAM_ACHIEVEMENTS,
+		"468530",
+		{
+			ACHIEVEMENT_SIMPLE_ENTRY("NEW_ACHIEVEMENT_1_0_PHOTO", "Eye of the Beholder", "Remnants of an enchanting evening..."),
+			ACHIEVEMENT_SIMPLE_ENTRY("NEW_ACHIEVEMENT_1_1_", "A Friend in Need", "Sometimes we all need some help."),
+			ACHIEVEMENT_SIMPLE_ENTRY("NEW_ACHIEVEMENT_1_2", "Explorer", "You know this place like the back of your hand!"),
+			ACHIEVEMENT_SIMPLE_ENTRY("NEW_ACHIEVEMENT_1_3", "An Old Head", "A strange discovery... A?"),
+			ACHIEVEMENT_SIMPLE_ENTRY("NEW_ACHIEVEMENT_1_4", "Lost in Translation", "Lou really needs to learn Portuguese."),
+			ACHIEVEMENT_SIMPLE_ENTRY("NEW_ACHIEVEMENT_1_5", "Hanging on the Telephone", "HELP!"),
+			ACHIEVEMENT_SIMPLE_ENTRY("NEW_ACHIEVEMENT_1_6", "Statue Fan", "Lou appreciates a fine sculpture or three."),
+			ACHIEVEMENT_SIMPLE_ENTRY("NEW_ACHIEVEMENT_1_7", "Boom or Bust?", "Visions of Adrasteia."),
+			ACHIEVEMENT_SIMPLE_ENTRY("NEW_ACHIEVEMENT_1_8", "A Good Samaritan", "Now there's a good boy."),
+			ACHIEVEMENTS_LISTEND
+		}
+	},
+
+	{
 		"alemmo",
 		Common::STEAM_ACHIEVEMENTS,
 		"296850",
@@ -176,6 +194,148 @@ static const AchievementDescriptionList achievementDescriptionList[] = {
 			ACHIEVEMENT_SIMPLE_ENTRY("HOWARD_PHILIPS", "The Howard Philips Award", "Achieved the maximum score, chose your destiny with Vril, and collected every inventory item."),
 			ACHIEVEMENT_SIMPLE_ENTRY("DESTINY", "Destiny", "Unlocked the first 25 achievements and the Howard Philips Award."),
 			ACHIEVEMENT_SIMPLE_ENTRY("HARDCORE", "Hard-core", "Unlocked every achievement!"),
+			ACHIEVEMENTS_LISTEND
+		}
+	},
+
+	{
+		"atotkdeluxe",
+		Common::STEAM_ACHIEVEMENTS,
+		"603870",
+		{
+			ACHIEVEMENT_SIMPLE_ENTRY("NEW_ACHIEVEMENT_1_0", "Chapter One", "A Mixed Welcome"),
+			ACHIEVEMENT_SIMPLE_ENTRY("NEW_ACHIEVEMENT_1_1", "Chapter Two", "Flight of the Dove"),
+			ACHIEVEMENT_SIMPLE_ENTRY("NEW_ACHIEVEMENT_1_2", "Chapter Three", "Lay of the Land"),
+			ACHIEVEMENT_SIMPLE_ENTRY("NEW_ACHIEVEMENT_1_3", "Chapter Four", "The Other Kingdom"),
+			ACHIEVEMENT_SIMPLE_ENTRY("NEW_ACHIEVEMENT_1_4", "Chapter Five", "First Strike"),
+			ACHIEVEMENT_SIMPLE_ENTRY("NEW_ACHIEVEMENT_1_5", "Chapter Six", "The Light of Truth"),
+			ACHIEVEMENT_SIMPLE_ENTRY("NEW_ACHIEVEMENT_1_6", "Chapter Seven", "Point of View"),
+			ACHIEVEMENT_SIMPLE_ENTRY("NEW_ACHIEVEMENT_1_7", "Chapter Eight", "End of the Line"),
+			ACHIEVEMENT_SIMPLE_ENTRY("NEW_ACHIEVEMENT_1_8", "Paradur's Approval", "Complete the game"),
+			ACHIEVEMENT_SIMPLE_ENTRY("NEW_ACHIEVEMENT_1_9", "Take Him Away, Boys", "Capture the assassin"),
+			ACHIEVEMENT_HIDDEN_ENTRY("NEW_ACHIEVEMENT_1_10", "Happily Ever After"),
+			ACHIEVEMENT_SIMPLE_ENTRY("NEW_ACHIEVEMENT_1_11", "Summer Unending", "You have found solace"),
+			ACHIEVEMENT_HIDDEN_ENTRY("NEW_ACHIEVEMENT_1_12", "By Hook or By Crook"),
+			ACHIEVEMENT_SIMPLE_ENTRY("NEW_ACHIEVEMENT_1_13", "Not Our Problem", "Theylinn can sort itself out"),
+			ACHIEVEMENT_SIMPLE_ENTRY("NEW_ACHIEVEMENT_1_14", "Meticulous Adventurer", "See all 20 cutscenes in one playthrough"),
+			ACHIEVEMENT_HIDDEN_ENTRY("NEW_ACHIEVEMENT_1_15", "Karma is a Witch"),
+			ACHIEVEMENT_HIDDEN_ENTRY("NEW_ACHIEVEMENT_1_16", "Earned Her Name"),
+			ACHIEVEMENT_HIDDEN_ENTRY("NEW_ACHIEVEMENT_1_17", "Midir's Manumission"),
+			ACHIEVEMENT_HIDDEN_ENTRY("NEW_ACHIEVEMENT_1_18", "Kindred Spirits"),
+			ACHIEVEMENT_SIMPLE_ENTRY("NEW_ACHIEVEMENT_1_19", "Rhiannon's Restoration", "Rescued the princess"),
+			ACHIEVEMENT_SIMPLE_ENTRY("NEW_ACHIEVEMENT_1_20", "Penultimate Problem Ponderer", "Pass the Pooka's test without shortcuts"),
+			ACHIEVEMENT_SIMPLE_ENTRY("NEW_ACHIEVEMENT_1_21", "Survival of the Fittest", "Counterattack on the goblins"),
+			ACHIEVEMENT_HIDDEN_ENTRY("NEW_ACHIEVEMENT_1_22", "Scarecrow Support"),
+			ACHIEVEMENT_HIDDEN_ENTRY("NEW_ACHIEVEMENT_1_23", "Second Chance"),
+			ACHIEVEMENT_HIDDEN_ENTRY("NEW_ACHIEVEMENT_1_24", "Not Bad for a Mortal"),
+			ACHIEVEMENT_HIDDEN_ENTRY("NEW_ACHIEVEMENT_1_25", "Seven at One Blow"),
+			ACHIEVEMENT_HIDDEN_ENTRY("NEW_ACHIEVEMENT_1_26", "It Belongs in a Museum"),
+			ACHIEVEMENT_HIDDEN_ENTRY("NEW_ACHIEVEMENT_1_27", "Rogue's Escape"),
+			ACHIEVEMENT_HIDDEN_ENTRY("NEW_ACHIEVEMENT_1_28", "Take the High Road"),
+			ACHIEVEMENT_HIDDEN_ENTRY("NEW_ACHIEVEMENT_1_29", "Cailte's Carelessness"),
+			ACHIEVEMENT_SIMPLE_ENTRY("NEW_ACHIEVEMENT_1_30", "Spun from Straw", "Find the faerie gold"),
+			ACHIEVEMENT_SIMPLE_ENTRY("NEW_ACHIEVEMENT_1_31", "Goblin Getaway", "Free yourself from captivity"),
+			ACHIEVEMENT_SIMPLE_ENTRY("NEW_ACHIEVEMENT_2_0", "Wisdom of the Bards", "Obtain 100% wisdom rating"),
+			ACHIEVEMENT_SIMPLE_ENTRY("NEW_ACHIEVEMENT_2_1", "Fierce Warrior", "Obtain 100% honor rating"),
+			ACHIEVEMENTS_LISTEND
+		}
+	},
+
+	{
+		"beer",
+		Common::STEAM_ACHIEVEMENTS,
+		"782280",
+		{
+			ACHIEVEMENT_SIMPLE_ENTRY("NEW_ACHIEVEMENT_1_1", "In Soviet Russia...", "...Beer drinks you!"),
+			ACHIEVEMENT_SIMPLE_ENTRY("NEW_ACHIEVEMENT_1_2", "You Can't Get Ye Beer.", "I'm certainly not gonna tell you."),
+			ACHIEVEMENT_SIMPLE_ENTRY("NEW_ACHIEVEMENT_1_3", "No Cheese for You!", "Don't be cheesy."),
+			ACHIEVEMENT_SIMPLE_ENTRY("NEW_ACHIEVEMENT_1_4", "Help?", "I just need somebody..."),
+			ACHIEVEMENT_SIMPLE_ENTRY("NEW_ACHIEVEMENT_1_5", "Spellling is Hard.", "To bee or not to bee..."),
+			ACHIEVEMENT_SIMPLE_ENTRY("NEW_ACHIEVEMENT_1_6", "Divide and Conquer!", "Multiply and Liberate!"),
+			ACHIEVEMENT_SIMPLE_ENTRY("NEW_ACHIEVEMENT_1_7", "Liquor Hunt.", "It's better than pixels!"),
+			ACHIEVEMENT_SIMPLE_ENTRY("NEW_ACHIEVEMENT_1_8", "Word Salad.", "A Sad World."),
+			ACHIEVEMENT_SIMPLE_ENTRY("NEW_ACHIEVEMENT_1_9", "Connect Four.", "Five is right out."),
+			ACHIEVEMENT_SIMPLE_ENTRY("NEW_ACHIEVEMENT_1_10", "With Friggin' Sharks!", "Throw me a friggin' bone here."),
+			ACHIEVEMENT_SIMPLE_ENTRY("NEW_ACHIEVEMENT_1_11", "Butter, Cheese, Eggs.", "All for noughts."),
+			ACHIEVEMENT_SIMPLE_ENTRY("NEW_ACHIEVEMENT_1_12", "Waldo is Drunk.", "Where?"),
+			ACHIEVEMENT_SIMPLE_ENTRY("NEW_ACHIEVEMENT_1_13", "Rorrim!", "Noitcelfer!"),
+			ACHIEVEMENT_SIMPLE_ENTRY("NEW_ACHIEVEMENT_1_14", "Please?", "Abracadabra?"),
+			ACHIEVEMENT_SIMPLE_ENTRY("NEW_ACHIEVEMENT_1_15", "Are you Certain?", "You achieved this?"),
+			ACHIEVEMENT_SIMPLE_ENTRY("NEW_ACHIEVEMENT_1_16", "Simon says cheers!", "Cheers!"),
+			ACHIEVEMENT_SIMPLE_ENTRY("NEW_ACHIEVEMENT_1_17", "Frictionless.", "http://xkcd.com/669/"),
+			ACHIEVEMENT_SIMPLE_ENTRY("NEW_ACHIEVEMENT_1_18", "Kaboom?", "Join the Bucket Brigade!"),
+			ACHIEVEMENT_SIMPLE_ENTRY("NEW_ACHIEVEMENT_1_19", "To Everything, there is a Season.", "And a time to every purpose."),
+			ACHIEVEMENT_SIMPLE_ENTRY("NEW_ACHIEVEMENT_1_20", "Korobeiniki.", "Go ask Ylfing."),
+			ACHIEVEMENT_SIMPLE_ENTRY("NEW_ACHIEVEMENT_1_21", "Beer Pressure.", "A Pierless Achievement."),
+			ACHIEVEMENT_SIMPLE_ENTRY("NEW_ACHIEVEMENT_1_22", "Elephant in the Room.", "Mouse in the corner."),
+			ACHIEVEMENT_SIMPLE_ENTRY("NEW_ACHIEVEMENT_1_23", "See No Evil.", "Beer No Evil."),
+			ACHIEVEMENT_SIMPLE_ENTRY("NEW_ACHIEVEMENT_1_24", "Made by Gippazoid.", "2001 Odessa blastway."),
+			ACHIEVEMENT_SIMPLE_ENTRY("NEW_ACHIEVEMENT_1_25", "Lady or the Tiger?", "Smullyan was here."),
+			ACHIEVEMENT_SIMPLE_ENTRY("NEW_ACHIEVEMENT_1_26", "2 + 5 + 5 + 18.", "That's almost 42."),
+			ACHIEVEMENT_SIMPLE_ENTRY("NEW_ACHIEVEMENT_1_27", "Sseeing Ddouble!", "Sseeing Ddouble!"),
+			ACHIEVEMENT_SIMPLE_ENTRY("NEW_ACHIEVEMENT_1_28", "Unbeerable!", "Beerly doable!"),
+			ACHIEVEMENT_SIMPLE_ENTRY("NEW_ACHIEVEMENT_1_29", "The Answer, My Friend", "Do I know what rhetorical means?"),
+			ACHIEVEMENT_SIMPLE_ENTRY("NEW_ACHIEVEMENT_1_30", "Test your Memory!", "640 kb should be enough."),
+			ACHIEVEMENT_SIMPLE_ENTRY("NEW_ACHIEVEMENT_1_31", "The Bonus Round.", "Round The Bonus."),
+			ACHIEVEMENT_SIMPLE_ENTRY("NEW_ACHIEVEMENT_2_0", "Lock Master.", "Achievement Unlocked."),
+			ACHIEVEMENT_SIMPLE_ENTRY("NEW_ACHIEVEMENT_1_0", "Get the Beer!", "Well that was easy."),
+			ACHIEVEMENTS_LISTEND
+		}
+	},
+
+	{
+		"blackwell1",
+		Common::STEAM_ACHIEVEMENTS,
+		"80330",
+		{
+			ACHIEVEMENT_SIMPLE_ENTRY("MEDIUM_WELL_DONE", "Medium Well Done", "Finish the game at least once"),
+			ACHIEVEMENT_SIMPLE_ENTRY("HEAR_ME", "Hear me", "Finish the game with both commentary modes active, from the opening menu till the end"),
+			ACHIEVEMENT_SIMPLE_ENTRY("PACIFIST", "Pacifist", "Convince the Deacon to move on without resorting to violence"),
+			ACHIEVEMENT_SIMPLE_ENTRY("HELLO_JOEY", "Hello Joey", "Rosa, meet your new life partner"),
+			ACHIEVEMENT_SIMPLE_ENTRY("HISTORIAN", "Family Historian", "Get Joey to tell you everything he knows about your family"),
+			ACHIEVEMENT_SIMPLE_ENTRY("HANG_OF_IT", "Crowd Control", "Never talk to Joey in public"),
+			ACHIEVEMENT_SIMPLE_ENTRY("MEDIUM_LIE", "Medium Lie", "Bluff your way past the guard on your first attempt"),
+			ACHIEVEMENT_SIMPLE_ENTRY("SAVIOR", "Savior", "Save the Deacon's soul"),
+			ACHIEVEMENTS_LISTEND
+		}
+	},
+
+	{
+		"blackwell2",
+		Common::STEAM_ACHIEVEMENTS,
+		"80340",
+		{
+			ACHIEVEMENT_SIMPLE_ENTRY("SHUTTERBUG", "Shutterbug", "Take all four photographs"),
+			ACHIEVEMENT_SIMPLE_ENTRY("ON_THE_CHIN", "Take it on the Chin", "Get hit by the saxophone only once"),
+			ACHIEVEMENT_SIMPLE_ENTRY("LAUGH_IT_UP", "Laugh it Up", "Find the game's blooper reel"),
+			ACHIEVEMENT_SIMPLE_ENTRY("CHAIN_SMOKER", "Chain Smoker", "Smoke at least 100 cigarettes"),
+			ACHIEVEMENT_SIMPLE_ENTRY("CUT_DOWN", "Trying to Cut Down", "Smoke less than 20 cigarettes by the end of the game"),
+			ACHIEVEMENT_SIMPLE_ENTRY("FLOATING_HEAD", "Floating Head", "Find the floating head easter egg"),
+			ACHIEVEMENT_SIMPLE_ENTRY("SHIVAH_CALL", "Shivah Call", "Make an unusual phone call"),
+			ACHIEVEMENT_SIMPLE_ENTRY("DREAMCATCHER", "Dreamcatcher", "Listen to all of Lauren's dreams"),
+			ACHIEVEMENT_SIMPLE_ENTRY("COMMENTARY_MODE", "Commentary Mode", "Play the game in commentary mode, from the opening menu till the end"),
+			ACHIEVEMENT_SIMPLE_ENTRY("MEDIUM_WELL_DONE", "Medium Well Done", "Finish the game at least once"),
+			ACHIEVEMENTS_LISTEND
+		}
+	},
+
+	{
+		"blackwell3",
+		Common::STEAM_ACHIEVEMENTS,
+		"80350",
+		{
+			ACHIEVEMENT_SIMPLE_ENTRY("SOFT_TOUCH", "Soft Touch", "Give Allen some hope before he goes"),
+			ACHIEVEMENT_SIMPLE_ENTRY("LUSH_LIFE", "Lush Life", "Have a few drinks, but you might regret it in the morning"),
+			ACHIEVEMENT_SIMPLE_ENTRY("SOBER", "Sober Solidarity", "Keep a clear head, but others might think less of you"),
+			ACHIEVEMENT_SIMPLE_ENTRY("CAT_TRICK", "Cat Trick", "Distract the cat only once"),
+			ACHIEVEMENT_SIMPLE_ENTRY("LEADING_LADY", "Leading Lady", "While holding Frank's script, get though a performance without flubbing a single line"),
+			ACHIEVEMENT_SIMPLE_ENTRY("ART_MEDIUM", "Art Medium", "Convince Frank that you are an artist on your first try"),
+			ACHIEVEMENT_SIMPLE_ENTRY("WONDER_WOMAN", "Wonder Woman", "Defeat the Countess with one throw of an improvised lasso"),
+			ACHIEVEMENT_SIMPLE_ENTRY("SOLO", "Solo", "Finish the game without asking Joey for a single hint"),
+			ACHIEVEMENT_SIMPLE_ENTRY("SAVIOR", "Reluctant Savior", "Save Charlie Meltzer's life"),
+			ACHIEVEMENT_SIMPLE_ENTRY("MEDIUM_WELL_DONE", "Medium Well Done", "Finish the game at least once"),
+			ACHIEVEMENT_SIMPLE_ENTRY("COMMENTARY", "Convergence Commentary", "Finish the game in commentary mode, from the opening menu till the end"),
+			ACHIEVEMENT_SIMPLE_ENTRY("SECRET_FINDER", "Secret Finder", "Find the secret extras menu"),
 			ACHIEVEMENTS_LISTEND
 		}
 	},
