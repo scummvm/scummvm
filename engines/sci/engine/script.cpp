@@ -1055,6 +1055,8 @@ void Script::initializeClasses(SegManager *segMan) {
 					segMan->resizeClassTable(species + 1);
 				else if (g_sci->getGameId() == GID_SQ3 && !g_sci->isDemo() && _nr == 99)
 					segMan->resizeClassTable(species + 1);
+				else if (g_sci->getGameId() == GID_KQ5 && g_sci->getPlatform() == Common::kPlatformAmiga && _nr == 220)
+					segMan->resizeClassTable(species + 1);
 			}
 
 			if (species < 0 || species >= (int)segMan->classTableSize())
