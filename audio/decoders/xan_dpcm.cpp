@@ -65,7 +65,7 @@ public:
 				*pshift = 15;
 			}
 			*ppred += (diff >> *pshift);
-			*ppred = CLIP(*ppred, -32768, 32767);
+			*ppred = CLIP(*ppred, (int32)-32768, (int32)32767);
 			*buffer = *ppred;
 			buffer++;
 			if (_data->eos())
