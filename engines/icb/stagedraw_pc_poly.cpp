@@ -84,7 +84,6 @@ char *pZa = NULL;                           // buffer for actor z data
 char *pZfx = NULL;                          // buffer for fx z data
 char *pZ = NULL;                            // Current z buffer being used by the renderer
 int32 mip_map_level = 0;
-TextureManager the_tman;
 #define ZBUFFERSIZE (2 * SCREEN_WIDTH * SCREEN_DEPTH)
 
 // Stage draw composition table ... keeps track of the tiles which need drawing
@@ -93,7 +92,7 @@ uint32 *pUsedTiles = NULL;
 // Init the dutch dll thing render device etc...
 void InitRevRenderDevice() {
 	InitDrawing();
-	tman = &the_tman;
+	tman = new TextureManager;
 	tman->Init(0, 0, 1024, 512);
 
 	if (!pActorBuffer) {
@@ -127,6 +126,8 @@ void InitRevRenderDevice() {
 }
 
 void DestoryRevRenderDevice() {
+	if (tman)
+		delete tman;
 	if (pActorBuffer)
 		delete[] pActorBuffer;
 
