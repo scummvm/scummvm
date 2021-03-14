@@ -442,6 +442,9 @@ int myscimessagebox(const char *lpprompt, char *btn1, char *btn2) {
 	_GP(smes).code = 0;
 
 	do {
+		if (SHOULD_QUIT)
+			return 1;
+
 		CSCIWaitMessage(&_GP(smes));
 	} while (_GP(smes).code != CM_COMMAND);
 
