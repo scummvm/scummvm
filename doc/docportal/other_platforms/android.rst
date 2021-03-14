@@ -73,15 +73,27 @@ Controls can also be manually configured in the :doc:`Keymaps tab <../settings/k
 
         Touch screen control, Action
         One finger tap, Left mouse click
+        One finger tap + movement, Mouse movement
+        One finger tap held for >0.5s, Right mouse click
+        One finger tap held for >1s, Middle mouse click
+        Double Tap + movement, "Drag-and-drop, or (for some games): emulates left mouse button hold and drag, eg. for selection from action wheel in Curse of Monkey Island"
         Two finger tap, Right mouse click
-        One finger touch & hold, Middle mouse click
+        Two finger tap + movement of second finger, "Right mouse hold and drag, eg. for selection from action wheel in Tony Tough"
+        Three finger tap, Middle mouse click
+        Three finger tap + movement of third finger, Middle mouse hold and drag
         Long press system Back button, Opens Global Main Menu
         Short press system Back button, "Skip, or Cancel/Quit in the Launcher"
+        Long press system Menu button, Opens/closes Virtual keyboard
+        Short press system Menu button, Opens Global Main Menu
         Small keyboard icon (top right), Opens/closes Virtual keyboard
+        D-pad up/down/left/right, Mouse movement
+        D-pad center, Left mouse click
+        Trackball movement, Mouse movement
+        Trackball click, Left mouse click
 
 Touch controls
 ****************
-The touch control scheme can be switched in the global settings. From the Launcher, go to **Options > Control > Touchpad mouse mode**.
+The touch control scheme can be switched in the global settings. From the Launcher, go to **Options > Backend > Touchpad mouse mode**.
 
     - When touchpad mouse mode is off (default), the touch controls are direct. The pointer jumps to where the finger touches the screen.
     - When touchpad mouse mode is on, the touch controls are indirect. The finger can be far away from the pointer and still move it, like on a laptop touchpad.
@@ -103,7 +115,7 @@ Virtual keyboard
 
 To open the virtual keyboard, tap on the small keyboard icon at the top right of the screen, or tap on any editable text field. To hide the virtual keyboard, tap the small keyboard icon again, or tap outside the text field.
 
-To display or hide the small keyboard icon, from the Launcher select **Options** and then the **Control** tab. Tick the **Show on-screen control** box to enable the keyboard icon.
+To display or hide the small keyboard icon, from the Launcher select **Options** and then the **Backend** tab. Tick the **Show on-screen control** box to enable the keyboard icon.
 
 
 Paths
@@ -129,7 +141,7 @@ To access the internal app folder, use ScummVM's built-in LAN functionality:
 2. Select **/root/Path**.
 3. Use the file browser to **Go up** to the root of the ScummVM internal app folder.
 4. Select the **ScummVM data (int)** shortcut, and tap **Choose**.
-5. Run the server to access the ``scummvm.ini``` configuration file.
+5. Run the server to access the ``scummvm.ini`` configuration file.
 
 For more information, see the :doc:`../use_scummvm/LAN` page.
 
