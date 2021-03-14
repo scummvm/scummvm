@@ -7,6 +7,7 @@ MODULE_OBJS = \
 	globals.o \
 	metaengine.o \
 	music.o \
+	console.o \
 	lib/aastr-0.1.1/aarot.o \
 	lib/aastr-0.1.1/aastr.o \
 	lib/aastr-0.1.1/aautil.o \

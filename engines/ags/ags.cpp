@@ -25,6 +25,7 @@
 #include "ags/events.h"
 #include "ags/game_scanner.h"
 #include "ags/music.h"
+#include "ags/console.h"
 #include "common/scummsys.h"
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
@@ -120,6 +121,8 @@ Common::Error AGSEngine::run() {
 	AGS3::Test_DoAllTests();
 	return Common::kNoError;
 #endif
+
+	setDebugger(new AGSConsole(this));
 
 	const char *filename = _gameDescription->desc.filesDescriptions[0].fileName;
 	const char *ARGV[] = { "scummvm.exe", filename };
