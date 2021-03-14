@@ -217,10 +217,11 @@ void Screen::paint(Graphics::Surface &backbuffer) {
 
 Common::Array<ObjectPtr> Screen::find(Common::Point pos) const {
 	Common::Array<ObjectPtr> objects;
+	objects.reserve(_children.size());
 	for (ChildrenType::const_iterator i = _children.begin(); i != _children.end(); ++i) {
 		ObjectPtr object = *i;
 		if (object->pointIn(pos) && object->alive()) {
-			objects.push_back(object);
+			objects.insert_at(0, object);
 		}
 	}
 	return objects;
