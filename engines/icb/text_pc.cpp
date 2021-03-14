@@ -52,6 +52,7 @@ void Clip_text_print(_rgb *pen, uint32 x, uint32 y, uint8 *base, uint32 pitch, c
 	va_start(arg_ptr, format);
 	vsnprintf(ascii, 150, format, arg_ptr);
 
+	pxString font_cluster = FONT_CLUSTER_PATH;
 	charSet = rs_font->Res_open(SYS_FONT, sys_font_hash, font_cluster, font_cluster_hash);
 
 	do {

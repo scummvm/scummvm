@@ -5565,6 +5565,7 @@ void OptionsManager::LoadBitmapFont() {
 	sprintf(m_fontName, FONT_PATH, OPTIONS_FONT_NAME);
 	uint32 hashedname = NULL_HASH;
 
+	pxString font_cluster = FONT_CLUSTER_PATH;
 	m_font_file = (_pxBitmap *)rs_font->Res_open(m_fontName, hashedname, font_cluster, font_cluster_hash);
 
 	if (m_font_file->schema != PC_BITMAP_SCHEMA)

@@ -49,8 +49,6 @@ namespace ICB {
 bool gRegainedFocus = false;
 bool gotTheFocus = false;
 
-pxString font_cluster = FONT_CLUSTER_PATH;
-
 char g_characters[] = "characters\\";
 char gamelanguage[ENGINE_STRING_LEN] = "english";
 bool8 camera_hack;
@@ -227,7 +225,7 @@ void InitEngine(const char *lpCmdLine) {
 
 	// we run a special check for a font file - otherwise, res-open will fail triggering a con-fatal-error - not good
 	sys_font_hash = HashString(SYS_FONT);
-	font_cluster_hash = HashString(font_cluster);
+	font_cluster_hash = HashString(FONT_CLUSTER_PATH);
 
 	// inti direct input
 	Init_direct_input();

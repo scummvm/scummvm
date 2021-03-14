@@ -81,6 +81,7 @@ _TSrtn text_sprite::BuildTextSprite(int32 stopAtLine, bool8 bRemoraLeftFormattin
 
 	_pxBitmap *charSet;
 
+	pxString font_cluster = FONT_CLUSTER_PATH;
 	charSet = (_pxBitmap *)rs_font->Res_open(const_cast<char *>(params.fontResource), params.fontResource_hash, font_cluster, font_cluster_hash); // open font file
 
 	if (charSet->schema != PC_BITMAP_SCHEMA)

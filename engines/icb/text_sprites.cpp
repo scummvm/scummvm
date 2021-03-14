@@ -338,6 +338,7 @@ void text_sprite::CopyChar(_pxSprite *charPtr, uint8 *spritePtr, uint8 *pal) { /
 }
 
 _pxBitmap *text_sprite::LoadFont(const char *fontRes, uint32 fontRes_hash) {
+	pxString font_cluster = FONT_CLUSTER_PATH;
 	_pxBitmap *font = (_pxBitmap *)rs_font->Res_open(const_cast<char *>(fontRes), fontRes_hash, font_cluster, font_cluster_hash); // open font file
 
 	return (font);
