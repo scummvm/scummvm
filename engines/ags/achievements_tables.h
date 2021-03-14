@@ -907,6 +907,21 @@ static const AchievementDescriptionList achievementDescriptionList[] = {
 	},
 
 	{
+		"metaphobia",
+		Common::STEAM_ACHIEVEMENTS,
+		"1220930",
+		{
+			ACHIEVEMENT_HIDDEN_ENTRY("Have you seen this man?", "Have you seen this man?"),
+			ACHIEVEMENT_SIMPLE_ENTRY("Bookworm", "Bookworm", "Carl's words live on"),
+			ACHIEVEMENT_SIMPLE_ENTRY("Ancient knowledge", "Ancient knowledge", "You clarified the secret of the ruins on one try"),
+			ACHIEVEMENT_SIMPLE_ENTRY("Emases nepo", "Emases nepo", "You sorted out the dark cave puzzle on one try"),
+			ACHIEVEMENT_SIMPLE_ENTRY("What are these?", "What are these?", "You solved an other-worldly puzzle on one try"),
+			ACHIEVEMENT_SIMPLE_ENTRY("Inevitable", "Inevitable", "A final outcome"),
+			ACHIEVEMENTS_LISTEND
+		}
+	},
+
+	{
 		"neofeud",
 		Common::STEAM_ACHIEVEMENTS,
 		"673850",

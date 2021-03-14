@@ -2484,6 +2484,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("meta", "meta.exe", "9358670438c3fab77489a1dd229029b1", 2536926), // Steam
 	GAME_ENTRY("metaphobia", "Metaphobia.exe", "10da7427cf74ba0cc7ceb29f99ff0a67", 92083437), // itch.io 1.01 Windows
 	GAME_ENTRY("metaphobia", "ac2game.exe", "10da7427cf74ba0cc7ceb29f99ff0a67", 92083437), // itch.io MacOS
+	GAME_ENTRY("metaphobia", "Metaphobia.exe", "10da7427cf74ba0cc7ceb29f99ff0a67", 92086491), // Steam
 	GAME_ENTRY("meteorfamily20", "Meteor Family.exe", "06a03fe35791b0578068ab1873455463", 5759077),
 	GAME_ENTRY("meteorheadrecycled", "Meteorhead.exe", "6cddccb3744ec5c6af7c398fb7b3b11c", 5081311),
 	GAME_ENTRY("mibaddaytobedead", "Monkey.exe", "f120690b506dd63cd7d1112ea6af2f77", 2117238),
