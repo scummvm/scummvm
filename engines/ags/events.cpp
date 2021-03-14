@@ -41,7 +41,7 @@ void EventsManager::pollEvents() {
 	Common::Event e;
 
 	while (g_system->getEventManager()->pollEvent(e)) {
-		if (e.type == Common::EVENT_QUIT) {
+		if (e.type == Common::EVENT_QUIT || e.type == Common::EVENT_RETURN_TO_LAUNCHER) {
 			_G(want_exit) = true;
 			_G(abort_engine) = true;
 			_G(check_dynamic_sprites_at_exit) = false;
