@@ -44,9 +44,9 @@ float _lookX, _lookZ;
 /*-----------------06/11/95 15.20-------------------
 					read3D
 --------------------------------------------------*/
-int read3D(const char *c) {
-	ff = FastFileOpen(c);
-	if (ff == NULL)
+int read3D(Common::String c) {
+	ff = FastFileOpen(c.c_str());
+	if (ff == nullptr)
 		CloseSys("Can't open 3D file!\n");
 
 	// read rooms and lights
@@ -102,7 +102,7 @@ int read3D(const char *c) {
 	init3DRoom(CurRoomMaxX, g_vm->_video2, ZBuffer);
 	setClipping(0, TOP, CurRoomMaxX, AREA + TOP);
 
-	return (10L);
+	return 10L;
 }
 
 #define NOOLDINTERS		1

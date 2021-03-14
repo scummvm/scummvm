@@ -53,7 +53,7 @@
 #define SOUNDFLAG_SPDX    		16
 
 
-#define HOMO_ANIM  			0
+#define CHARACTER_ANIM  	0
 #define BACKGROUND_ANIM 	1
 #define ICON_ANIM 			2
 
@@ -97,17 +97,9 @@
 // REDEFINE
 #define MASKCOL  	 		0xEEEE
 #define MOUSECOL    		0x7FFF
-#define HRED        		0x7C00
-#define HBLUE  	     		0x001F
 #define HGREEN     	   		0x03E0
-#define HCYAN       		0x03FF
-#define HMAGENTA    		0x7C1F
 #define HYELLOW     		0x7FE0
 #define HWHITE      		0x7777
-#define HGRAYLT     		0x2108
-#define HGRAYDK     		0x4210
-#define HBLUELT     		0x0010
-#define HDBLUE		 		0x000f
 
 // Functions for ATFDO
 #define fCLROBJSTATUS 		1

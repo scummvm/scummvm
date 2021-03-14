@@ -120,7 +120,6 @@ TrecisionEngine::TrecisionEngine(OSystem *syst) : Engine(syst) {
 	_limitsNum = 0;
 	_actorLimit = 0;
 	NextRefresh = 0;
-	UStr[0] = '\0';
 
 	CurKey = CurAscii = 0;
 	wmx = wmy = 0;

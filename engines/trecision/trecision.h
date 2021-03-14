@@ -107,7 +107,6 @@ public:
 	uint16 *_video2;
 
 	uint32 NextRefresh;
-	char UStr[140];
 
 	int CurKey, CurAscii;
 	int16 wmx, wmy;

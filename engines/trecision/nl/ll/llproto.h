@@ -20,6 +20,8 @@
  *
  */
 
+#include "Common/str.h"
+
 namespace Common {
 class SeekableReadStream;
 }
@@ -27,9 +29,8 @@ class SeekableReadStream;
 namespace Trecision {
 
 int Compare(const void *p1, const void *p2);
-bool AnimFileInit(const char *fname);
 void AnimFileFinish();
-Common::SeekableReadStream *AnimFileOpen(const char *name);
+Common::SeekableReadStream *AnimFileOpen(Common::String name);
 Common::SeekableReadStream *FmvFileOpen(const char *name);
 bool SpeechFileInit(const char *fname);
 void SpeechFileFinish();
@@ -37,15 +38,9 @@ int SpeechFileLen(const char *name);
 int SpeechFileRead(const char *name, uint8 *buf);
 void RedrawRoom();
 void decompress(const uint8 *src, unsigned int src_len, uint8 *dst, unsigned int dst_len);
-uint32 DecXPK(const char *ArcName, const char *FileName, uint8 *DestArea, uint8 *DecArea);
-void setbiosisr();
-void setrawisr();
-void installlowisr();
 char waitKey();
-char ReadKey();
 void FreeKey();
 char *GetNextSent();
-void SaveAll();
 void LoadAll();
 uint16 vr(int16 x, int16 y);
 void VPix(int16 x, int16 y, uint16 col);
@@ -55,13 +50,12 @@ void VMouseRestore();
 void VMouseCopy();
 void Mouse(uint8 opt);
 uint16 TextLength(const char *sign, uint16 num);
-void IntroText(int16 x, int16 y, const char *sign, uint8 *buf);
 void IconSnapShot();
 bool DataSave();
 bool DataLoad();
 bool QuitGame();
 void DemoOver();
-void CheckFileInCD(const char *name);
+void CheckFileInCD(Common::String name);
 void openSys();
 void OpenVideo();
 uint32 ReadActor(const char *filename, uint8 *Area);
@@ -71,28 +65,14 @@ void TendIn();
 void ReadObj();
 void ReadExtraObj2C();
 void ReadExtraObj41D();
-void ReadAnims();
 void ReadSounds();
 void RegenRoom();
 void PaintRegenRoom();
 void DrawObj(SDObj d);
-void VisualFrame(uint16 CurAnim);
-void KillFrame(uint16 CurAnim);
 void RegenInventory(uint8 StartIcon, uint8 StartLine);
-void RGBColor(uint16 a, uint8 *r, uint8 *g, uint8 *b);
-uint16 RGB2Color(uint8 r, uint8 g, uint8 b);
 uint16 ULaw2Linear(uint8 ulawbyte);
-void GrabVideo();
-void SaveAction();
-void InitScrollPage(int flag);
-void VisualScrollPage(int dx);
-void ScrollPage(int dx);
-void AlternativeScrolling(int dx);
-void SetHeadTexture(uint8 num);
-void SetTexture(int flag);
 void StartSoundSystem();
 void StopSoundSystem();
-void LoadSound(int16 num, uint8 *Buffer);
 int16 LoadAudioWav(int num, uint8 *Buffer, int len);
 void NLPlaySound(int num);
 void NLStopSound(int num);
@@ -100,24 +80,15 @@ void SoundFadOut();
 void SoundFadIn(int num);
 void WaitSoundFadEnd();
 void SoundPasso(int midx, int midz, int act, int frame, uint16 *list);
-void SetBackgroundVolume(int val);
-void serve_sample();
 void ContinueTalk();
 int32 Talk(const char *name);
 void StopTalk();
-void DetectVesaMode(unsigned int ModeNumber);
-void SetVesaMode(unsigned int ModeNumber);
-void SetVesaLineLength(unsigned int Length);
-void SetVesaStartVisualPage(unsigned int StartX, unsigned int StartY);
 void ResetZB(int x1, int y1, int x2, int y2);
-void SetVesaPage(unsigned int PageNumber);
 void MCopy(uint16 *Dest, uint16 *Src, uint32 Len);
 uint32 ReadTime();
 void NlDelay(uint32 val);
 void NlDissolve(int val);
-uint32 TrecRnd(uint32 t);
 bool CheckMask(uint16 MX, uint16 my);
-void WaitCop(uint8 num);
 char FastFileInit(const char *fname);
 void FastFileFinish();
 Common::SeekableReadStream *FastFileOpen(const char *name);
@@ -132,6 +103,5 @@ void byte2word(void *dest, void *src, void *data, uint32 len);
 void byte2long(void *dest, void *src, void *data, uint32 len);
 void byte2wordm(void *dest, void *src, void *data, uint32 len);
 void byte2wordn(void *dest, void *src, void *data, uint32 len);
-void byte2longm(void *dest, void *src, void *data, uint32 len);
 
 } // End of namespace Trecision

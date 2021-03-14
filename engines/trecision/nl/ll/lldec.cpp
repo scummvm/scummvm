@@ -99,10 +99,10 @@ void decompress(const unsigned char *src, unsigned src_len, unsigned char *dst, 
 	}
 }
 
-uint32 DecCR(const char *FileName, uint8 *DestArea, uint8 *DecArea) {
-	ff = FastFileOpen(FileName);
-	if (ff == NULL)
-		error("File not found %s", FileName);
+uint32 DecCR(Common::String FileName, uint8 *DestArea, uint8 *DecArea) {
+	ff = FastFileOpen(FileName.c_str());
+	if (ff == nullptr)
+		error("File not found %s", FileName.c_str());
 
 	char *ibuf = (char *)DecArea;
 	char *obuf = (char *)DestArea;
@@ -130,7 +130,7 @@ uint32 DecCR(const char *FileName, uint8 *DestArea, uint8 *DecArea) {
 		memcpy(obuf, ibuf, isize);
 	}
 
-	return (osize);
+	return osize;
 }
 
 } // End of namespace Trecision

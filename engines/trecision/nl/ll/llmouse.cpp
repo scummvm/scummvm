@@ -1077,12 +1077,13 @@ void DemoOver() {
 /* -----------------01/02/98 18.38-------------------
  * 					CheckFileInCD
  * --------------------------------------------------*/
-void CheckFileInCD(const char *name) {
+void CheckFileInCD(Common::String name) {
 	extern char CurCDSet;
 	char str[200];
 	SFileEntry fe;
 
-	strcpy(fe.name, name);
+	strncpy(fe.name, name.c_str(), 11);
+	fe.name[11] = '\0';	
 	SFileEntry *pfe = (SFileEntry *)bsearch(&fe, FileRef, NumFileRef, sizeof(SFileEntry), Compare);
 	if (pfe == nullptr)
 		CloseSys(g_vm->_sysText[5]);
@@ -1148,12 +1149,10 @@ void CheckFileInCD(const char *name) {
 
 	CurCDSet = ncd;
 
-	sprintf(str, "NlData.cd0");
-	FastFileInit(str);
-	sprintf(str, "NlSpeech.cd0");
-	SpeechFileInit(str);
-	sprintf(str, "NlAnim.cd%c", CurCDSet + '0');
-	AnimFileInit(str);
+	FastFileInit("NlData.cd0");
+	SpeechFileInit("NlSpeech.cd0");
+	Common::String fname = Common::String::format("NlAnim.cd%c", CurCDSet + '0');
+	AnimFileInit(fname);
 
 	VMouseON();
 }

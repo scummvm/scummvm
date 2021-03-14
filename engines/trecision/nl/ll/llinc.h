@@ -122,8 +122,6 @@ extern uint32 GameBytePointer;
 extern uint32 GameWordPointer;
 extern uint32 TotalMemory;
 // VESA
-extern uint8 CVP;
-extern uint16 VesaGranularity;
 extern int32  CurRoomMaxX;
 // DTEXT
 extern int8 DTextLines[MAXDTEXTLINES][MAXDTEXTCHARS];

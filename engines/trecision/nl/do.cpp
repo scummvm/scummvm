@@ -1844,7 +1844,7 @@ void doInvScrUseWith() {
 		if (g_vm->_useWith[WITH] == oBAR11) {
 			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a113USAFIALA, 0, 0, g_vm->_useWith[WITH]);
 			ReplaceIcon(iACIDO15, iFIALAMETA);
-			//AnimTab[a113USAFIALA]._atFrame[0]._index = 1483;
+			//g_vm->_animMgr->_animTab[a113USAFIALA]._atFrame[0]._index = 1483;
 			printsent = false;
 		} else if (g_vm->_useWith[WITH] == oPADLOCK1B) {
 			if (g_vm->_obj[oTOMBINOA1B]._mode & OBJMODE_OBJSTATUS)
@@ -1885,7 +1885,6 @@ void doInvScrUseWith() {
 
 	case iKEY15:
 		if (g_vm->_useWith[WITH] == oSTRONGBOXC15) {
-			// ParteFli
 			PlayDialog(dF151);
 			g_vm->_obj[oSTRONGBOXC15]._mode &= ~OBJMODE_OBJSTATUS;
 			g_vm->_obj[oCASSAFORTEA15]._mode |= OBJMODE_OBJSTATUS;
@@ -1908,7 +1907,7 @@ void doInvScrUseWith() {
 		if (g_vm->_useWith[WITH] == oMANHOLEC1B) {
 			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a1B1USASBARRA, 0, 0, g_vm->_useWith[WITH]);
 			g_vm->_obj[oBOTOLAA1B]._anim = a1B6ASCENDEBOTOLA;
-			//_obj[oBOTOLAC1B]._anim = a1B3AAPREBOTOLA;
+			//g_vm->_obj[oBOTOLAC1B]._anim = a1B3AAPREBOTOLA;
 			printsent = false;
 		} else if (g_vm->_useWith[WITH] == oCATENAT21) {
 			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a216, 0, 0, g_vm->_useWith[WITH]);
@@ -2124,7 +2123,7 @@ void doInvScrUseWith() {
 			PlayDialog(dF1D1);
 			updateinv = false;
 			KillIcon(iTOPO1D);
-			read3D("1d2.3d");		// dopo pattino
+			read3D("1d2.3d");		// after skate
 			g_vm->_obj[oDONNA1D]._mode &= ~OBJMODE_OBJSTATUS;
 			g_vm->_room[g_vm->_curRoom]._flag |= OBJFLAG_EXTRA;
 			g_vm->_animMgr->_animTab[aBKG1D]._flag |= SMKANIM_OFF1;
@@ -2247,12 +2246,12 @@ void doInvScrUseWith() {
 			g_vm->_obj[oCARTELLONE2H]._mode &= ~OBJMODE_OBJSTATUS;
 			g_vm->_obj[oPASSERELLA24]._mode &= ~OBJMODE_OBJSTATUS;
 			g_vm->_obj[oMACERIE24]._mode &= ~OBJMODE_OBJSTATUS;
-			//_obj[oPASSERELLA24]._flag &= ~OBJFLAG_ROOMOUT;
-			//_obj[oPASSERELLA24]._anim = 0;
+			//g_vm->_obj[oPASSERELLA24]._flag &= ~OBJFLAG_ROOMOUT;
+			//g_vm->_obj[oPASSERELLA24]._anim = 0;
 			printsent = false;
 		} else if ((g_vm->_useWith[WITH] == oTUBOT34) && (g_vm->_obj[oVALVOLAC34]._mode & OBJMODE_OBJSTATUS)) {
 			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a341USAPINZE, 0, 0, g_vm->_useWith[WITH]);
-			//_obj[oVALVOLAC34]._anim = 0;
+			//g_vm->_obj[oVALVOLAC34]._anim = 0;
 			printsent = false;
 		} else if ((g_vm->_useWith[WITH] == oTUBOT34) && (g_vm->_obj[oVALVOLA34]._mode & OBJMODE_OBJSTATUS)) {
 			CharacterSay(2007);
@@ -2628,7 +2627,7 @@ void doInvScrUseWith() {
 			g_vm->_obj[oLICANTROPOM4P]._mode |= OBJMODE_OBJSTATUS;
 			g_vm->_obj[oSANGUE4P]._mode |= OBJMODE_OBJSTATUS;
 			g_vm->_room[r4P]._flag |= OBJFLAG_EXTRA;
-			read3D("4p2.3d");		// dopo licantropo
+			read3D("4p2.3d");		// after werewolf
 			g_vm->_animMgr->_animTab[aBKG4P]._flag |= SMKANIM_OFF1;
 			PlayDialog(dF4P2);
 			printsent = false;
@@ -3965,12 +3964,12 @@ void ProcessATF(ATFHandle *h, int type, int atf) {
 		break;
 	case ATFREADBOX:
 		if (h->curanim->_atFrame[atf]._index == 1) {
-			sprintf(g_vm->UStr, "%s.3d", g_vm->_room[g_vm->_curRoom]._baseName);
-			read3D(g_vm->UStr);
+			Common::String filename = Common::String::format("%s.3d", g_vm->_room[g_vm->_curRoom]._baseName);
+			read3D(filename);
 			g_vm->_room[g_vm->_curRoom]._flag &= ~OBJFLAG_EXTRA;
 		} else if (h->curanim->_atFrame[atf]._index == 2) {
-			sprintf(g_vm->UStr, "%s2.3d", g_vm->_room[g_vm->_curRoom]._baseName);
-			read3D(g_vm->UStr);
+			Common::String filename = Common::String::format("%s2.3d", g_vm->_room[g_vm->_curRoom]._baseName);
+			read3D(filename);
 			g_vm->_room[g_vm->_curRoom]._flag |= OBJFLAG_EXTRA;
 			if (g_vm->_curRoom == r37) {
 				g_vm->_animMgr->smkVolumePan(0, 1, 1);

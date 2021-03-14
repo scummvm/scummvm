@@ -117,7 +117,7 @@ Common::SeekableReadStream *FastFile::createReadStreamForMember(const Common::St
 
 FastFile dataFile;
 
-void CheckFileInCD(const char *name);
+void CheckFileInCD(Common::String name);
 void CloseSys(const char *str);
 void FastFileFinish();
 void AnimFileFinish();
@@ -233,12 +233,12 @@ FastFile animFile[MAXSMACK];
 /* -----------------19/01/98 17.13-------------------
  * AnimFileInit
  * --------------------------------------------------*/
-bool AnimFileInit(const char *fname) {
+bool AnimFileInit(Common::String fname) {
 	AnimFileFinish();
 
 	for (int a = 0; a < MAXSMACK; a++) {
 		if (!animFile[a].open(fname)) {
-			warning("AnimFileInit: failed to open file %s", fname);
+			warning("AnimFileInit: failed to open file %s", fname.c_str());
 			AnimFileFinish();
 			CloseSys(g_vm->_sysText[1]);
 			return false;
@@ -259,12 +259,12 @@ void AnimFileFinish(void) {
 /* -----------------19/01/98 17.15-------------------
  * AnimFileOpen
  * --------------------------------------------------*/
-Common::SeekableReadStream *AnimFileOpen(const char *name) {
+Common::SeekableReadStream *AnimFileOpen(Common::String name) {
 	if (!animFile[g_vm->_animMgr->_curSmackBuffer].isOpen()) {
 		warning("AnimFileOpen: not initialized");
 		return nullptr;
 	}
-	if (name == nullptr || name[0] == 0) {
+	if (name.empty()) {
 		warning("AnimFileOpen: invalid name");
 		return nullptr;
 	}
@@ -275,7 +275,7 @@ Common::SeekableReadStream *AnimFileOpen(const char *name) {
 		stream = animFile[g_vm->_animMgr->_curSmackBuffer].createReadStreamForMember(name);
 	}
 	if (stream == nullptr) {
-		warning("AnimFileOpen: File %s not found", name);
+		warning("AnimFileOpen: File %s not found", name.c_str());
 		CloseSys(g_vm->_sysText[1]);
 	}
 
