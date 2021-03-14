@@ -1,8 +1,6 @@
 # Android specific build targets
 PATH_DIST = $(srcdir)/dists/android
 
-PORT_DISTFILES = $(PATH_DIST)/README.Android
-
 GRADLE_FILES = $(shell find $(PATH_DIST)/gradle -type f) $(PATH_DIST)/gradlew $(PATH_DIST)/build.gradle
 
 PATH_BUILD = ./android_project
@@ -27,9 +25,9 @@ $(PATH_BUILD_GRADLE): $(GRADLE_FILES) | $(PATH_BUILD)
 	$(ECHO) "android.enableJetifier=true\n" >> $(PATH_BUILD)/gradle.properties
 	$(ECHO) "sdk.dir=$(realpath $(ANDROID_SDK_ROOT))\n" > $(PATH_BUILD)/local.properties
 
-$(PATH_BUILD_ASSETS): $(DIST_FILES_THEMES) $(DIST_FILES_ENGINEDATA) $(DIST_FILES_NETWORKING) $(DIST_FILES_VKEYBD) $(DIST_FILES_DOCS) $(PORT_DISTFILES) | $(PATH_BUILD)
+$(PATH_BUILD_ASSETS): $(DIST_FILES_THEMES) $(DIST_FILES_ENGINEDATA) $(DIST_FILES_NETWORKING) $(DIST_FILES_VKEYBD) $(DIST_FILES_DOCS) | $(PATH_BUILD)
 	$(INSTALL) -d $(PATH_BUILD_ASSETS)
-	$(INSTALL) -c -m 644 $(DIST_FILES_THEMES) $(DIST_FILES_ENGINEDATA) $(DIST_FILES_NETWORKING) $(DIST_FILES_VKEYBD) $(DIST_FILES_DOCS) $(PORT_DISTFILES) $(PATH_BUILD_ASSETS)/
+	$(INSTALL) -c -m 644 $(DIST_FILES_THEMES) $(DIST_FILES_ENGINEDATA) $(DIST_FILES_NETWORKING) $(DIST_FILES_VKEYBD) $(DIST_FILES_DOCS) $(PATH_BUILD_ASSETS)/
 
 $(PATH_BUILD_LIBSCUMMVM): libscummvm.so | $(PATH_BUILD)
 	$(INSTALL) -d  $(PATH_BUILD_LIB)
@@ -68,14 +66,14 @@ androidtest: $(APK_MAIN)
 androiddistdebug: all
 	$(MKDIR) debug
 	$(CP) $(APK_MAIN) debug/
-	for i in $(DIST_FILES_DOCS) $(PORT_DISTFILES); do \
+	for i in $(DIST_FILES_DOCS); do \
 		sed 's/$$/\r/' < $$i > debug/`basename $$i`.txt; \
 	done
 
 androiddistrelease: androidrelease
 	$(MKDIR) release
 	$(CP) $(APK_MAIN_RELEASE) release/
-	for i in $(DIST_FILES_DOCS) $(PORT_DISTFILES); do \
+	for i in $(DIST_FILES_DOCS); do \
 		sed 's/$$/\r/' < $$i > release/`basename $$i`.txt; \
 	done
 
