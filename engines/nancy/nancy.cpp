@@ -72,26 +72,26 @@ NancyEngine::NancyEngine(OSystem *syst, const NancyGameDescription *gd) : Engine
 	DebugMan.addDebugChannel(kDebugScene, "Scene", "Scene debug level");
 
 	_console = new NancyConsole();
-	randomSource = new Common::RandomSource("Nancy");
-	randomSource->setSeed(randomSource->getSeed());
+	_randomSource = new Common::RandomSource("Nancy");
+	_randomSource->setSeed(_randomSource->getSeed());
 
-	input = new InputManager();
-	sound = new SoundManager();
-	graphicsManager = new GraphicsManager();
-	cursorManager = new CursorManager();
+	_input = new InputManager();
+	_sound = new SoundManager();
+	_graphicsManager = new GraphicsManager();
+	_cursorManager = new CursorManager();
 
-	launchConsole = false;
+	_launchConsole = false;
 }
 
 NancyEngine::~NancyEngine() {
 	clearBootChunks();
 	DebugMan.clearAllDebugChannels();
 	delete _console;
-	delete randomSource;
+	delete _randomSource;
 
-	delete graphicsManager;
-	delete input;
-	delete sound;
+	delete _graphicsManager;
+	delete _input;
+	delete _sound;
 }
 
 NancyEngine *NancyEngine::create(GameType type, OSystem *syst, const NancyGameDescription *gd) {
@@ -130,7 +130,7 @@ bool NancyEngine::canLoadGameStateCurrently()  {
 
 bool NancyEngine::canSaveGameStateCurrently() {
 	// TODO also disable during secondary movie
-	return Action::PlayPrimaryVideoChan0::activePrimaryVideo == nullptr;
+	return Action::PlayPrimaryVideoChan0::_activePrimaryVideo == nullptr;
 }
 
 bool NancyEngine::hasFeature(EngineFeature f) const {
@@ -193,13 +193,13 @@ void NancyEngine::setState(GameState state, GameState overridePrevious) {
 			runDialog(*dialog);
 			delete dialog;
 		}
-		input->forceCleanInput();
+		_input->forceCleanInput();
 		return;
 	default:
 		break;
 	}
 
-	graphicsManager->clearObjects();
+	_graphicsManager->clearObjects();
 
 	_gameFlow.previousState = _gameFlow.currentState;
 	_gameFlow.currentState = getStateObject(state);
@@ -230,7 +230,7 @@ void NancyEngine::setPreviousState() {
 }
 
 void NancyEngine::setMouseEnabled(bool enabled) {
-	cursorManager->showCursor(enabled); input->setMouseInputEnabled(enabled);
+	_cursorManager->showCursor(enabled); _input->setMouseInputEnabled(enabled);
 }
 
 void NancyEngine::callCheatMenu(bool eventFlags)
@@ -253,18 +253,18 @@ Common::Error NancyEngine::run() {
 
 	// Main loop
 	while (!shouldQuit()) {
-		cursorManager->setCursorType(CursorManager::kNormalArrow);
-		input->processEvents();
+		_cursorManager->setCursorType(CursorManager::kNormalArrow);
+		_input->processEvents();
 		
 		if (_gameFlow.currentState) {
 			_gameFlow.currentState->process();
 		}
 
-		graphicsManager->draw();
+		_graphicsManager->draw();
 
-		if (launchConsole) {
+		if (_launchConsole) {
 			_console->attach();
-			launchConsole = false;
+			_launchConsole = false;
 		}
 		_console->onFrame();
 
@@ -300,8 +300,8 @@ void NancyEngine::bootGameEngine() {
 		}
 	}
 	
-	resource = new ResourceManager();
-	resource->initialize();
+	_resource = new ResourceManager();
+	_resource->initialize();
 
 	// Setup mixer
 	syncSoundSettings();
@@ -332,22 +332,22 @@ void NancyEngine::bootGameEngine() {
 	// Persistent sounds that are used across the engine. These originally get loaded inside Logo
 	SoundDescription desc;
 	desc.read(*g_nancy->getBootChunkStream("BUOK"), SoundDescription::kNormal);
-	g_nancy->sound->loadSound(desc);
+	g_nancy->_sound->loadSound(desc);
 	desc.read(*g_nancy->getBootChunkStream("BUDE"), SoundDescription::kNormal);
-	g_nancy->sound->loadSound(desc);
+	g_nancy->_sound->loadSound(desc);
 	desc.read(*g_nancy->getBootChunkStream("BULS"), SoundDescription::kNormal);
-	g_nancy->sound->loadSound(desc);
+	g_nancy->_sound->loadSound(desc);
 	desc.read(*g_nancy->getBootChunkStream("GLOB"), SoundDescription::kNormal);
-	g_nancy->sound->loadSound(desc);
+	g_nancy->_sound->loadSound(desc);
 	desc.read(*g_nancy->getBootChunkStream("CURT"), SoundDescription::kNormal);
-	g_nancy->sound->loadSound(desc);
+	g_nancy->_sound->loadSound(desc);
 	desc.read(*g_nancy->getBootChunkStream("CANT"), SoundDescription::kNormal);
-	g_nancy->sound->loadSound(desc);
+	g_nancy->_sound->loadSound(desc);
 
 	delete boot;
 	
-	graphicsManager->init();
-	cursorManager->init();
+	_graphicsManager->init();
+	_cursorManager->init();
 }
 
 State::State *NancyEngine::getStateObject(GameState state) {
@@ -405,7 +405,7 @@ void NancyEngine::preloadCals(const IFF &boot) {
 			stream.read(name, nameLen);
 			name[nameLen - 1] = 0;
 			debugC(1, kDebugEngine, "Preloading CAL '%s'", name);
-			if (!resource->loadCifTree(name, "cal"))
+			if (!_resource->loadCifTree(name, "cal"))
 				error("Failed to preload CAL '%s'", name);
 		}
 
@@ -436,9 +436,9 @@ void NancyEngine::readBootSummary(const IFF &boot) {
 
 	ser.skip(0x71, kGameTypeVampire, kGameTypeVampire);
 	ser.skip(0xA3, kGameTypeNancy1, kGameTypeNancy2);
-	ser.syncAsUint16LE(firstSceneID);
+	ser.syncAsUint16LE(_firstSceneID);
 	ser.skip(4, kGameTypeNancy1, kGameTypeNancy2);
-	ser.syncAsUint16LE(startTimeHours, kGameTypeNancy1, kGameTypeNancy2);
+	ser.syncAsUint16LE(_startTimeHours, kGameTypeNancy1, kGameTypeNancy2);
 	
 	ser.skip(0xB8, kGameTypeVampire, kGameTypeVampire);
 	ser.skip(0xA6, kGameTypeNancy1, kGameTypeNancy1);
@@ -457,15 +457,15 @@ void NancyEngine::readBootSummary(const IFF &boot) {
 	ser.skip(0x99, kGameTypeNancy1, kGameTypeNancy1);
 	int16 time = 0;
 	ser.syncAsSint16LE(time, kGameTypeNancy1, kGameTypeNancy1);
-	playerTimeMinuteLength = time;
+	_playerTimeMinuteLength = time;
 	ser.skip(2, kGameTypeNancy1, kGameTypeNancy1);
-    ser.syncAsByte(overrideMovementTimeDeltas, kGameTypeNancy1, kGameTypeNancy1);
+    ser.syncAsByte(_overrideMovementTimeDeltas, kGameTypeNancy1, kGameTypeNancy1);
 
-    if (overrideMovementTimeDeltas) {
+    if (_overrideMovementTimeDeltas) {
 		ser.syncAsSint16LE(time, kGameTypeNancy1, kGameTypeNancy1);
-		slowMovementTimeDelta = time;
+		_slowMovementTimeDelta = time;
 		ser.syncAsSint16LE(time, kGameTypeNancy1, kGameTypeNancy1);
-		fastMovementTimeDelta = time;
+		_fastMovementTimeDelta = time;
     }
 }
 

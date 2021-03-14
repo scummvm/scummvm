@@ -63,7 +63,7 @@ void Viewport::handleInput(NancyInput &input) {
     byte direction = 0;
 
     if (_screenPosition.contains(input.mousePos)) {
-        g_nancy->cursorManager->setCursorType(CursorManager::kNormal);
+        g_nancy->_cursorManager->setCursorType(CursorManager::kNormal);
     }
 
     // Do not handle hotspots marked as incative and ignore diagonals if intersecting hotspots are not active
@@ -120,7 +120,7 @@ void Viewport::handleInput(NancyInput &input) {
     }
 
     if (direction) {
-        g_nancy->cursorManager->setCursorType(CursorManager::kMove);
+        g_nancy->_cursorManager->setCursorType(CursorManager::kMove);
 
         if (input.input & NancyInput::kRightMouseButton) {
             direction |= kMoveFast;

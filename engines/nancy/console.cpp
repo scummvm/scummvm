@@ -85,7 +85,7 @@ void NancyConsole::postEnter() {
 				g_system->delayMillis(10);
 			}
 
-			g_nancy->graphicsManager->redrawAll();
+			g_nancy->_graphicsManager->redrawAll();
 		} else {
 			debugPrintf("Failed to load '%s'\n", _videoFile.c_str());
 		}
@@ -96,7 +96,7 @@ void NancyConsole::postEnter() {
 
 	if (!_imageFile.empty()) {
 		Graphics::Surface surf;
-		if (g_nancy->resource->loadImage(_imageFile, surf)) {
+		if (g_nancy->_resource->loadImage(_imageFile, surf)) {
 			g_system->fillScreen(0);
 			g_system->copyRectToScreen(surf.getPixels(), surf.pitch, 0, 0, surf.w > 640 ? 640 : surf.w, surf.h > 480 ? 480 : surf.h);
 			g_system->updateScreen();
@@ -116,7 +116,7 @@ void NancyConsole::postEnter() {
 				g_system->delayMillis(10);
 			}
 			
-			g_nancy->graphicsManager->redrawAll();
+			g_nancy->_graphicsManager->redrawAll();
 		} else {
 			debugPrintf("Failed to load image '%s'\n", _imageFile.c_str());
 		}
@@ -126,7 +126,7 @@ void NancyConsole::postEnter() {
 
 	// After calling the console, action end events get sent to it and the input manager
 	// can still think a keyboard button is being held when it is not; clearing all inputs fixes that
-	g_nancy->input->forceCleanInput();
+	g_nancy->_input->forceCleanInput();
 }
 
 bool NancyConsole::Cmd_cifHexDump(int argc, const char **argv) {
@@ -137,7 +137,7 @@ bool NancyConsole::Cmd_cifHexDump(int argc, const char **argv) {
 	}
 
 	uint size;
-	byte *buf = g_nancy->resource->loadCif((argc == 2 ? "ciftree" : argv[2]), argv[1], size);
+	byte *buf = g_nancy->_resource->loadCif((argc == 2 ? "ciftree" : argv[2]), argv[1], size);
 	if (!buf) {
 		debugPrintf("Failed to load resource '%s'\n", argv[1]);
 		return true;
@@ -155,7 +155,7 @@ bool NancyConsole::Cmd_cifExport(int argc, const char **argv) {
 		return true;
 	}
 
-	if (!g_nancy->resource->exportCif((argc == 2 ? "ciftree" : argv[2]), argv[1]))
+	if (!g_nancy->_resource->exportCif((argc == 2 ? "ciftree" : argv[2]), argv[1]))
 		debugPrintf("Failed to export '%s'\n", argv[1]);
 
 	return true;
@@ -170,7 +170,7 @@ bool NancyConsole::Cmd_cifList(int argc, const char **argv) {
 	}
 
 	Common::Array<Common::String> list;
-	g_nancy->resource->list((argc == 2 ? "ciftree" : argv[2]), list, atoi(argv[1]));
+	g_nancy->_resource->list((argc == 2 ? "ciftree" : argv[2]), list, atoi(argv[1]));
 	for (uint i = 0; i < list.size(); i++) {
 		debugPrintf("%-38s", list[i].c_str());
 		if ((i % 2) == 1 && i + 1 != list.size())
@@ -189,7 +189,7 @@ bool NancyConsole::Cmd_cifInfo(int argc, const char **argv) {
 		return true;
 	}
 
-	debugPrintf("%s", g_nancy->resource->getCifDescription((argc == 2 ? "ciftree" : argv[2]), argv[1]).c_str());
+	debugPrintf("%s", g_nancy->_resource->getCifDescription((argc == 2 ? "ciftree" : argv[2]), argv[1]).c_str());
 	return true;
 }
 
@@ -272,7 +272,7 @@ bool NancyConsole::Cmd_loadCal(int argc, const char **argv) {
 		return true;
 	}
 
-	if (!g_nancy->resource->loadCifTree(argv[1], "cal"))
+	if (!g_nancy->_resource->loadCifTree(argv[1], "cal"))
 		debugPrintf("Failed to load '%s.cal'\n", argv[1]);
 	return true;
 }

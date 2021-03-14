@@ -80,8 +80,8 @@ void Map::init() {
     chunk->seek(0x18 + _mapID * 0x20, SEEK_SET);
     SoundDescription sound;
     sound.read(*chunk, SoundDescription::kMenu);
-    g_nancy->sound->loadSound(sound);
-    g_nancy->sound->playSound(0x14);
+    g_nancy->_sound->loadSound(sound);
+    g_nancy->_sound->playSound(0x14);
 
     _locations.clear();
 
@@ -116,17 +116,17 @@ void Map::init() {
     }
 
     registerGraphics();
-    g_nancy->cursorManager->setCursorItemID(-1);
+    g_nancy->_cursorManager->setCursorItemID(-1);
 
     _state = kRun;
 }
 
 void Map::run() {
-    if (!g_nancy->sound->isSoundPlaying(0x14) && !g_nancy->sound->isSoundPlaying(0x13)) {
-        g_nancy->sound->playSound(0x13);
+    if (!g_nancy->_sound->isSoundPlaying(0x14) && !g_nancy->_sound->isSoundPlaying(0x13)) {
+        g_nancy->_sound->playSound(0x13);
     }
 
-    NancyInput input = g_nancy->input->getInput();
+    NancyInput input = g_nancy->_input->getInput();
 
     _label.setLabel(-1);
 
@@ -140,7 +140,7 @@ void Map::run() {
     for (uint i = 0; i < 4; ++i) {
         auto &loc = _locations[i];
         if (loc.isActive && _viewport.convertToScreen(loc.hotspot).contains(input.mousePos)) {
-            g_nancy->cursorManager->setCursorType(CursorManager::kHotspotArrow);
+            g_nancy->_cursorManager->setCursorType(CursorManager::kHotspotArrow);
 
             _label.setLabel(i);
 
@@ -159,7 +159,7 @@ bool Map::onStateExit() {
     SoundDescription sound;
     chunk->seek(0x18 + _mapID * 0x20, SEEK_SET);
     sound.read(*chunk, SoundDescription::kMenu);
-    g_nancy->sound->stopSound(sound);
+    g_nancy->_sound->stopSound(sound);
     
     g_nancy->setState(NancyEngine::kScene);
 
@@ -168,11 +168,11 @@ bool Map::onStateExit() {
         NancySceneState.changeScene(loc.scenes[_mapID].sceneID, loc.scenes[_mapID].frameID, loc.scenes[_mapID].verticalOffset, false);
         _pickedLocationID = -1;
         
-        g_nancy->sound->playSound(0x18);
+        g_nancy->_sound->playSound(0x18);
     }
     
     // The two sounds play at the same time if a location was picked
-    g_nancy->sound->playSound(0x14);
+    g_nancy->_sound->playSound(0x14);
 
     _mapButtonClicked = false;
 
@@ -197,7 +197,7 @@ void Map::MapLabel::setLabel(int labelID) {
         setVisible(false);
     } else {
         _screenPosition = _parent->_locations[labelID].labelDest;
-        _drawSurface.create(g_nancy->graphicsManager->object0, _parent->_locations[labelID].labelSrc);
+        _drawSurface.create(g_nancy->_graphicsManager->_object0, _parent->_locations[labelID].labelSrc);
         setVisible(true);
     }
 }
@@ -208,7 +208,7 @@ void Map::MapButton::init() {
     map->seek(0x7A, SEEK_SET);
     Common::Rect src;
     readRect(*map, src);
-    _drawSurface.create(g_nancy->graphicsManager->object0, src);
+    _drawSurface.create(g_nancy->_graphicsManager->_object0, src);
     readRect(*map, _screenPosition);
     setVisible(true);
 

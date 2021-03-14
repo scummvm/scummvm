@@ -49,25 +49,25 @@ public:
     virtual void handleInput(NancyInput &input) override;
     virtual void onPause(bool pause) override;
 
-    Common::String imageName; // 0x0
-    Common::Array<Common::Array<Common::Rect>> srcRects; // 0xA, 0xC0 bytes
-    Common::Array<Common::Rect> destRects; // 0xCA, 0x30 bytes
-    Common::Array<byte> correctSequence; // 0xFA, 3 bytes
-    SoundDescription moveSound; // 0x100
-    SoundDescription noMoveSound; // 0x122
-    SceneChangeDescription solveExitScene; // 0x144
-    EventFlagDescription flagOnSolve; // 0x14E
-    uint16 solveSoundDelay; // 0x151
-    SoundDescription solveSound; // 0x153
-    SceneChangeDescription exitScene; // 0x175
-    EventFlagDescription flagOnExit; // 0x17F
-    Common::Rect exitHotspot; // 0x182
+    Common::String _imageName; // 0x0
+    Common::Array<Common::Array<Common::Rect>> _srcRects; // 0xA, 0xC0 bytes
+    Common::Array<Common::Rect> _destRects; // 0xCA, 0x30 bytes
+    Common::Array<byte> _correctSequence; // 0xFA, 3 bytes
+    SoundDescription _moveSound; // 0x100
+    SoundDescription _noMoveSound; // 0x122
+    SceneChangeDescription _solveExitScene; // 0x144
+    EventFlagDescription _flagOnSolve; // 0x14E
+    uint16 _solveSoundDelay; // 0x151
+    SoundDescription _solveSound; // 0x153
+    SceneChangeDescription _exitScene; // 0x175
+    EventFlagDescription _flagOnExit; // 0x17F
+    Common::Rect _exitHotspot; // 0x182
 
-    Common::Array<byte> playerSequence;
-    Common::Array<bool> leverDirection;
-    Graphics::ManagedSurface image;
-    Time solveSoundPlayTime;
-    SolveState solveState = kNotSolved;
+    Common::Array<byte> _playerSequence;
+    Common::Array<bool> _leverDirection;
+    Graphics::ManagedSurface _image;
+    Time _solveSoundPlayTime;
+    SolveState _solveState = kNotSolved;
 
 protected:
     virtual Common::String getRecordTypeName() const override { return "LeverPuzzle"; }

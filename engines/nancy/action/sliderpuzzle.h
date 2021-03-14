@@ -56,25 +56,25 @@ public:
 
     static void synchronize(Common::Serializer &ser);
 
-    Common::String imageName; // 0x00
-    uint16 width; // 0xA
-    uint16 height; // 0xC
-    Common::Array<Common::Array<Common::Rect>> srcRects; // 0x0E, size 0x240
-    Common::Array<Common::Array<Common::Rect>> destRects; // 0x24E, size 0x240
-    Common::Array<Common::Array<int16>> correctTileOrder; // 0x48E, size 0x48
-    SoundDescription clickSound; // 0x4D6
-    SceneChangeDescription solveExitScene; // 0x4F8
-    EventFlagDescription flagOnSolve; // 0x502
-    SoundDescription solveSound; // 0x505
-    SceneChangeDescription exitScene; // 0x527
-    EventFlagDescription flagOnExit; // 0x531
-    Common::Rect exitHotspot; // 0x534
+    Common::String _imageName; // 0x00
+    uint16 _width; // 0xA
+    uint16 _height; // 0xC
+    Common::Array<Common::Array<Common::Rect>> _srcRects; // 0x0E, size 0x240
+    Common::Array<Common::Array<Common::Rect>> _destRects; // 0x24E, size 0x240
+    Common::Array<Common::Array<int16>> _correctTileOrder; // 0x48E, size 0x48
+    SoundDescription _clickSound; // 0x4D6
+    SceneChangeDescription _solveExitScene; // 0x4F8
+    EventFlagDescription _flagOnSolve; // 0x502
+    SoundDescription _solveSound; // 0x505
+    SceneChangeDescription _exitScene; // 0x527
+    EventFlagDescription _flagOnExit; // 0x531
+    Common::Rect _exitHotspot; // 0x534
 
-    SolveState solveState = kNotSolved;
-    Graphics::ManagedSurface image;
+    SolveState _solveState = kNotSolved;
+    Graphics::ManagedSurface _image;
 
-    static Common::Array<Common::Array<int16>> playerTileOrder;
-    static bool playerHasTriedPuzzle;
+    static Common::Array<Common::Array<int16>> _playerTileOrder;
+    static bool _playerHasTriedPuzzle;
 
 protected:
     virtual Common::String getRecordTypeName() const override { return "SliderPuzzle"; }

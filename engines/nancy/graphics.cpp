@@ -39,20 +39,20 @@
 
 namespace Nancy {
 
-const Graphics::PixelFormat GraphicsManager::inputPixelFormat = Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0);
-const Graphics::PixelFormat GraphicsManager::screenPixelFormat = Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0);
-const Graphics::PixelFormat GraphicsManager::clut8Format = Graphics::PixelFormat::createFormatCLUT8();
+const Graphics::PixelFormat GraphicsManager::_inputPixelFormat = Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0);
+const Graphics::PixelFormat GraphicsManager::_screenPixelFormat = Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0);
+const Graphics::PixelFormat GraphicsManager::_clut8Format = Graphics::PixelFormat::createFormatCLUT8();
 
 void GraphicsManager::init() {
-    initGraphics(640, 480, &screenPixelFormat);
-    _screen.create(640, 480, screenPixelFormat);
+    initGraphics(640, 480, &_screenPixelFormat);
+    _screen.create(640, 480, _screenPixelFormat);
     _screen.setTransparentColor(getTransColor());
     _screen.clear();
 
     Common::SeekableReadStream *ob = g_nancy->getBootChunkStream("OB0");
     ob->seek(0);
 
-    g_nancy->resource->loadImage(ob->readString(), object0);
+    g_nancy->_resource->loadImage(ob->readString(), _object0);
 
     loadFonts();
 }
@@ -220,9 +220,9 @@ void GraphicsManager::copyToManaged(void *src, Graphics::ManagedSurface &dst, ui
 
 const Graphics::PixelFormat &GraphicsManager::getInputPixelFormat() {
     if (g_nancy->getGameFlags() & NGF_8BITCOLOR) {
-        return clut8Format;
+        return _clut8Format;
     } else {
-        return inputPixelFormat;
+        return _inputPixelFormat;
     }
 }
 
@@ -230,7 +230,7 @@ uint GraphicsManager::getTransColor() {
     if (g_nancy->getGameFlags() & NGF_8BITCOLOR) {
         return 1; // If this isn't correct, try picking the pixel at [0, 0] inside the palette bitmap
     } else {
-        return inputPixelFormat.ARGBToColor(0, 0, 255, 0);
+        return _inputPixelFormat.ARGBToColor(0, 0, 255, 0);
     }
 }
 

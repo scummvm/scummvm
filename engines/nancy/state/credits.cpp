@@ -66,7 +66,7 @@ void Credits::init() {
     _pixelsToScroll = cred->readUint16LE();
     _sound.read(*cred, SoundDescription::kMenu);
 
-    g_nancy->resource->loadImage(buf, _fullTextSurface);
+    g_nancy->_resource->loadImage(buf, _fullTextSurface);
     
     Common::Rect src = _text._screenPosition;
     src.moveTo(Common::Point());
@@ -74,25 +74,25 @@ void Credits::init() {
     _text.setTransparent(true);
     _text.init();
 
-    g_nancy->sound->loadSound(_sound);
-    g_nancy->sound->playSound(_sound);
+    g_nancy->_sound->loadSound(_sound);
+    g_nancy->_sound->playSound(_sound);
 
     _background.registerGraphics();
     _text.registerGraphics();
 
-    g_nancy->cursorManager->showCursor(false);
+    g_nancy->_cursorManager->showCursor(false);
 
     _state = kRun;
 }
 
 void Credits::run() {
-    NancyInput input = g_nancy->input->getInput();
+    NancyInput input = g_nancy->_input->getInput();
 
     if (input.input & NancyInput::kLeftMouseButtonDown) {
         _state = kInit;
-        g_nancy->sound->stopSound(_sound);
+        g_nancy->_sound->stopSound(_sound);
         g_nancy->setState(NancyEngine::kMainMenu);
-        g_nancy->cursorManager->showCursor(true);
+        g_nancy->_cursorManager->showCursor(true);
         _fullTextSurface.free();
     }
 

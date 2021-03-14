@@ -51,7 +51,7 @@ void CursorManager::init() {
     _primaryVideoInitialPos.x = chunk->readUint16LE();
     _primaryVideoInitialPos.y = chunk->readUint16LE();
 
-    g_nancy->resource->loadImage(inventoryCursorsImageName, _invCursorsSurface);
+    g_nancy->_resource->loadImage(inventoryCursorsImageName, _invCursorsSurface);
 
     setCursor(kNormalArrow, -1);
     showCursor(false);
@@ -106,7 +106,7 @@ void CursorManager::setCursor(CursorType type, int16 itemID) {
         surf = &_invCursorsSurface;
         
     } else {
-        surf = &g_nancy->graphicsManager->object0;
+        surf = &g_nancy->_graphicsManager->_object0;
     }
 
     // TODO this is ridiculous, figure out why just calling

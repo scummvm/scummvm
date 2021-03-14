@@ -34,8 +34,8 @@
 namespace Nancy {
 namespace Action {
 
-Common::Array<Common::Array<int16>> SliderPuzzle::playerTileOrder = Common::Array<Common::Array<int16>>();
-bool SliderPuzzle::playerHasTriedPuzzle = false;
+Common::Array<Common::Array<int16>> SliderPuzzle::_playerTileOrder = Common::Array<Common::Array<int16>>();
+bool SliderPuzzle::_playerHasTriedPuzzle = false;
 
 void SliderPuzzle::init() {
     _drawSurface.create(_screenPosition.width(), _screenPosition.height(), GraphicsManager::getInputPixelFormat());
@@ -43,118 +43,118 @@ void SliderPuzzle::init() {
     
     setTransparent(true);
 
-    g_nancy->resource->loadImage(imageName, image);
+    g_nancy->_resource->loadImage(_imageName, _image);
 }
 
 void SliderPuzzle::readData(Common::SeekableReadStream &stream) {
     char buf[10];
     stream.read(buf, 10);
-    imageName = buf;
+    _imageName = buf;
 
-    width = stream.readUint16LE();
-    height = stream.readUint16LE();
+    _width = stream.readUint16LE();
+    _height = stream.readUint16LE();
 
-    for (uint y = 0; y < height; ++y) {
-        srcRects.push_back(Common::Array<Common::Rect>());
-        for (uint x = 0; x < width; ++x) {
-            srcRects.back().push_back(Common::Rect());
-            readRect(stream, srcRects.back().back());
+    for (uint y = 0; y < _height; ++y) {
+        _srcRects.push_back(Common::Array<Common::Rect>());
+        for (uint x = 0; x < _width; ++x) {
+            _srcRects.back().push_back(Common::Rect());
+            readRect(stream, _srcRects.back().back());
         }
-        stream.skip((6 - width) * 16);
+        stream.skip((6 - _width) * 16);
     }
 
-    stream.skip((6 - height) * 6 * 16);
+    stream.skip((6 - _height) * 6 * 16);
 
-    for (uint y = 0; y < height; ++y) {
-        destRects.push_back(Common::Array<Common::Rect>());
-        for (uint x = 0; x < width; ++x) {
-            destRects.back().push_back(Common::Rect());
-            readRect(stream, destRects.back().back());
+    for (uint y = 0; y < _height; ++y) {
+        _destRects.push_back(Common::Array<Common::Rect>());
+        for (uint x = 0; x < _width; ++x) {
+            _destRects.back().push_back(Common::Rect());
+            readRect(stream, _destRects.back().back());
 
             if (x == 0 && y == 0) {
-                _screenPosition = destRects.back().back();
+                _screenPosition = _destRects.back().back();
             } else {
-                _screenPosition.extend(destRects.back().back());
+                _screenPosition.extend(_destRects.back().back());
             }
         }
-        stream.skip((6 - width) * 16);
+        stream.skip((6 - _width) * 16);
     }
 
-    stream.skip((6 - height) * 6 * 16);
+    stream.skip((6 - _height) * 6 * 16);
 
-    for (uint y = 0; y < height; ++y) {
-        correctTileOrder.push_back(Common::Array<int16>());
-        for (uint x = 0; x < width; ++x) {
-            correctTileOrder.back().push_back(stream.readSint16LE());
+    for (uint y = 0; y < _height; ++y) {
+        _correctTileOrder.push_back(Common::Array<int16>());
+        for (uint x = 0; x < _width; ++x) {
+            _correctTileOrder.back().push_back(stream.readSint16LE());
         }
-        stream.skip((6 - width) * 2);
+        stream.skip((6 - _width) * 2);
     }
 
-    stream.skip((6 - height) * 6 * 2);
+    stream.skip((6 - _height) * 6 * 2);
 
-    clickSound.read(stream, SoundDescription::kNormal);
-    solveExitScene.readData(stream);
+    _clickSound.read(stream, SoundDescription::kNormal);
+    _solveExitScene.readData(stream);
     stream.skip(2);
-    flagOnSolve.label = stream.readSint16LE();
-    flagOnSolve.flag = (NancyFlag)stream.readByte();
-    solveSound.read(stream, SoundDescription::kNormal);
-    exitScene.readData(stream);
+    _flagOnSolve.label = stream.readSint16LE();
+    _flagOnSolve.flag = (NancyFlag)stream.readByte();
+    _solveSound.read(stream, SoundDescription::kNormal);
+    _exitScene.readData(stream);
     stream.skip(2);
-    flagOnExit.label = stream.readSint16LE();
-    flagOnExit.flag = (NancyFlag)stream.readByte();
-    readRect(stream, exitHotspot);
+    _flagOnExit.label = stream.readSint16LE();
+    _flagOnExit.flag = (NancyFlag)stream.readByte();
+    readRect(stream, _exitHotspot);
 }
 
 void SliderPuzzle::execute() {
-    switch (state) {
+    switch (_state) {
     case kBegin:
         init();
         registerGraphics();
-        if (!playerHasTriedPuzzle) {
+        if (!_playerHasTriedPuzzle) {
             Common::SeekableReadStream *spuz = g_nancy->getBootChunkStream("SPUZ");
-            playerTileOrder.clear();
+            _playerTileOrder.clear();
             spuz->seek(NancySceneState.getDifficulty() * 0x48);
-            for (uint y = 0; y < height; ++y) {
-                playerTileOrder.push_back(Common::Array<int16>());
+            for (uint y = 0; y < _height; ++y) {
+                _playerTileOrder.push_back(Common::Array<int16>());
 
-                for (uint x = 0; x < width; ++x) {
-                    playerTileOrder.back().push_back(spuz->readSint16LE());
+                for (uint x = 0; x < _width; ++x) {
+                    _playerTileOrder.back().push_back(spuz->readSint16LE());
                 }
 
-                spuz->skip((6 - width) * 2);
+                spuz->skip((6 - _width) * 2);
             }
 
-            playerHasTriedPuzzle = true;
+            _playerHasTriedPuzzle = true;
         }
 
-        for (uint y = 0; y < height; ++y) {
-            for (uint x = 0; x < width; ++x) {
-                drawTile(playerTileOrder[y][x], x, y);
+        for (uint y = 0; y < _height; ++y) {
+            for (uint x = 0; x < _width; ++x) {
+                drawTile(_playerTileOrder[y][x], x, y);
             }
         }
 
-        g_nancy->sound->loadSound(clickSound);
-        state = kRun;
+        g_nancy->_sound->loadSound(_clickSound);
+        _state = kRun;
         // fall through
     case kRun:
-        switch (solveState) {
+        switch (_solveState) {
         case kNotSolved:
-            for (uint y = 0; y < height; ++y) {
-                for (uint x = 0; x < width; ++x) {
-                    if (playerTileOrder[y][x] != correctTileOrder[y][x]) {
+            for (uint y = 0; y < _height; ++y) {
+                for (uint x = 0; x < _width; ++x) {
+                    if (_playerTileOrder[y][x] != _correctTileOrder[y][x]) {
                         return;
                     }
                 }
             }
 
-            g_nancy->sound->loadSound(solveSound);
-            g_nancy->sound->playSound(solveSound);
-            solveState = kWaitForSound;
+            g_nancy->_sound->loadSound(_solveSound);
+            g_nancy->_sound->playSound(_solveSound);
+            _solveState = kWaitForSound;
             break;
         case kWaitForSound:
-            if (!g_nancy->sound->isSoundPlaying(solveSound)) {
-                g_nancy->sound->stopSound(solveSound);
-                state = kActionTrigger;
+            if (!g_nancy->_sound->isSoundPlaying(_solveSound)) {
+                g_nancy->_sound->stopSound(_solveSound);
+                _state = kActionTrigger;
             }
 
             break;
@@ -162,33 +162,33 @@ void SliderPuzzle::execute() {
 
         break;
     case kActionTrigger:
-        switch (solveState) {
+        switch (_solveState) {
         case kNotSolved:
-            NancySceneState.changeScene(exitScene);
-            NancySceneState.setEventFlag(flagOnExit);
+            NancySceneState.changeScene(_exitScene);
+            NancySceneState.setEventFlag(_flagOnExit);
             break;
         case kWaitForSound:
-            NancySceneState.changeScene(solveExitScene);
-            NancySceneState.setEventFlag(flagOnSolve);
-            playerHasTriedPuzzle = false;
+            NancySceneState.changeScene(_solveExitScene);
+            NancySceneState.setEventFlag(_flagOnSolve);
+            _playerHasTriedPuzzle = false;
             break;
         }
 
-        g_nancy->sound->stopSound(clickSound);
+        g_nancy->_sound->stopSound(_clickSound);
         finishExecution();
     }
 }
 
 void SliderPuzzle::handleInput(NancyInput &input) {
-    if (solveState != kNotSolved) {
+    if (_solveState != kNotSolved) {
         return;
     }
 
-    if (NancySceneState.getViewport().convertViewportToScreen(exitHotspot).contains(input.mousePos)) {
-        g_nancy->cursorManager->setCursorType(CursorManager::kExitArrow);
+    if (NancySceneState.getViewport().convertViewportToScreen(_exitHotspot).contains(input.mousePos)) {
+        g_nancy->_cursorManager->setCursorType(CursorManager::kExitArrow);
 
         if (input.input & NancyInput::kLeftMouseButtonUp) {
-            state = kActionTrigger;
+            _state = kActionTrigger;
         }
         
         return;
@@ -197,35 +197,35 @@ void SliderPuzzle::handleInput(NancyInput &input) {
     int currentTileX = -1;
     int currentTileY = -1;
     uint direction = 0;
-    for (uint y = 0; y < height; ++y) {
+    for (uint y = 0; y < _height; ++y) {
         bool shouldBreak = false;
-        for (uint x = 0; x < width; ++x) {
-            if (x > 0 && playerTileOrder[y][x - 1] < 0) {
-                if (NancySceneState.getViewport().convertViewportToScreen(destRects[y][x]).contains(input.mousePos)) {
+        for (uint x = 0; x < _width; ++x) {
+            if (x > 0 && _playerTileOrder[y][x - 1] < 0) {
+                if (NancySceneState.getViewport().convertViewportToScreen(_destRects[y][x]).contains(input.mousePos)) {
                     currentTileX = x;
                     currentTileY = y;
                     direction = kLeft;
                     shouldBreak = true;
                     break;
                 }
-            } else if ((int)x < width - 1 && playerTileOrder[y][x + 1] < 0) {
-                if (NancySceneState.getViewport().convertViewportToScreen(destRects[y][x]).contains(input.mousePos)) {
+            } else if ((int)x < _width - 1 && _playerTileOrder[y][x + 1] < 0) {
+                if (NancySceneState.getViewport().convertViewportToScreen(_destRects[y][x]).contains(input.mousePos)) {
                     currentTileX = x;
                     currentTileY = y;
                     direction = kRight;
                     shouldBreak = true;
                     break;
                 }
-            } else if (y > 0 && playerTileOrder[y - 1][x] < 0) {
-                if (NancySceneState.getViewport().convertViewportToScreen(destRects[y][x]).contains(input.mousePos)) {
+            } else if (y > 0 && _playerTileOrder[y - 1][x] < 0) {
+                if (NancySceneState.getViewport().convertViewportToScreen(_destRects[y][x]).contains(input.mousePos)) {
                     currentTileX = x;
                     currentTileY = y;
                     direction = kUp;
                     shouldBreak = true;
                     break;
                 }
-            } else if ((int)y < height - 1 && playerTileOrder[y + 1][x] < 0) {
-                if (NancySceneState.getViewport().convertViewportToScreen(destRects[y][x]).contains(input.mousePos)) {
+            } else if ((int)y < _height - 1 && _playerTileOrder[y + 1][x] < 0) {
+                if (NancySceneState.getViewport().convertViewportToScreen(_destRects[y][x]).contains(input.mousePos)) {
                     currentTileX = x;
                     currentTileY = y;
                     direction = kDown;
@@ -241,41 +241,41 @@ void SliderPuzzle::handleInput(NancyInput &input) {
     }
 
     if (currentTileX != -1) {
-        g_nancy->cursorManager->setCursorType(CursorManager::kHotspot);
+        g_nancy->_cursorManager->setCursorType(CursorManager::kHotspot);
 
         if (input.input & NancyInput::kLeftMouseButtonUp) {
-            g_nancy->sound->playSound(clickSound);
+            g_nancy->_sound->playSound(_clickSound);
             switch (direction) {
             case kUp: {
-                uint curTileID = playerTileOrder[currentTileY][currentTileX];
+                uint curTileID = _playerTileOrder[currentTileY][currentTileX];
                 drawTile(curTileID, currentTileX, currentTileY - 1);
                 undrawTile(currentTileX, currentTileY);
-                playerTileOrder[currentTileY - 1][currentTileX] = curTileID;
-                playerTileOrder[currentTileY][currentTileX] = -10;
+                _playerTileOrder[currentTileY - 1][currentTileX] = curTileID;
+                _playerTileOrder[currentTileY][currentTileX] = -10;
                 break;
             }
             case kDown: {
-                uint curTileID = playerTileOrder[currentTileY][currentTileX];
+                uint curTileID = _playerTileOrder[currentTileY][currentTileX];
                 drawTile(curTileID, currentTileX, currentTileY + 1);
                 undrawTile(currentTileX, currentTileY);
-                playerTileOrder[currentTileY + 1][currentTileX] = curTileID;
-                playerTileOrder[currentTileY][currentTileX] = -10;
+                _playerTileOrder[currentTileY + 1][currentTileX] = curTileID;
+                _playerTileOrder[currentTileY][currentTileX] = -10;
                 break;
             }
             case kLeft: {
-                uint curTileID = playerTileOrder[currentTileY][currentTileX];
+                uint curTileID = _playerTileOrder[currentTileY][currentTileX];
                 drawTile(curTileID, currentTileX - 1, currentTileY);
                 undrawTile(currentTileX, currentTileY);
-                playerTileOrder[currentTileY][currentTileX - 1] = curTileID;
-                playerTileOrder[currentTileY][currentTileX] = -10;
+                _playerTileOrder[currentTileY][currentTileX - 1] = curTileID;
+                _playerTileOrder[currentTileY][currentTileX] = -10;
                 break;
             }
             case kRight: {
-                uint curTileID = playerTileOrder[currentTileY][currentTileX];
+                uint curTileID = _playerTileOrder[currentTileY][currentTileX];
                 drawTile(curTileID, currentTileX + 1, currentTileY);
                 undrawTile(currentTileX, currentTileY);
-                playerTileOrder[currentTileY][currentTileX + 1] = curTileID;
-                playerTileOrder[currentTileY][currentTileX] = -10;
+                _playerTileOrder[currentTileY][currentTileX + 1] = curTileID;
+                _playerTileOrder[currentTileY][currentTileX] = -10;
                 break;
             }
             }
@@ -290,25 +290,25 @@ void SliderPuzzle::onPause(bool pause) {
 }
 
 void SliderPuzzle::synchronize(Common::Serializer &ser) {
-    ser.syncAsByte(playerHasTriedPuzzle);
+    ser.syncAsByte(_playerHasTriedPuzzle);
 
     byte x, y;
 
     if (ser.isSaving()) {
-        y = playerTileOrder.size();
+        y = _playerTileOrder.size();
         if (y) {
-            x = playerTileOrder.back().size();
+            x = _playerTileOrder.back().size();
         }
     }
 
     ser.syncAsByte(x);
     ser.syncAsByte(y);
 
-    playerTileOrder.resize(y);
+    _playerTileOrder.resize(y);
 
     for (int i = 0; i < y; ++i) {
-        playerTileOrder[i].resize(x);
-        ser.syncArray(playerTileOrder[i].data(), x, Common::Serializer::Sint16LE);
+        _playerTileOrder[i].resize(x);
+        ser.syncArray(_playerTileOrder[i].data(), x, Common::Serializer::Sint16LE);
     }
 }
 
@@ -318,14 +318,14 @@ void SliderPuzzle::drawTile(int tileID, uint posX, uint posY) {
         return;
     }
 
-    Common::Point destPoint(destRects[posY][posX].left - _screenPosition.left, destRects[posY][posX].top - _screenPosition.top);
-    _drawSurface.blitFrom(image, srcRects[tileID / height][tileID % width], destPoint);
+    Common::Point destPoint(_destRects[posY][posX].left - _screenPosition.left, _destRects[posY][posX].top - _screenPosition.top);
+    _drawSurface.blitFrom(_image, _srcRects[tileID / _height][tileID % _width], destPoint);
 
     _needsRedraw = true;
 }
 
 void SliderPuzzle::undrawTile(uint posX, uint posY) {
-    Common::Rect bounds = destRects[posY][posX];
+    Common::Rect bounds = _destRects[posY][posX];
     bounds.translate(-_screenPosition.left, -_screenPosition.top);
     _drawSurface.fillRect(bounds, GraphicsManager::getTransColor());
 

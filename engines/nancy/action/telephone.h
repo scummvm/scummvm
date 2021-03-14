@@ -43,7 +43,7 @@ public:
         Common::Array<byte> phoneNumber; // 0x0, 11 bytes
         Common::String soundName; // 0xB
         Common::String text; // 0x15, 0xC8 bytes
-        SceneChangeDescription sceneChange; // 0xDD
+        SceneChangeDescription _sceneChange; // 0xDD
         // shouldStopRendering
         EventFlagDescription flag; // 0xE7
     };
@@ -52,8 +52,8 @@ public:
 
     Telephone(RenderObject &redrawFrom) :
         RenderObject(redrawFrom),
-        callState(kWaiting),
-        selected(0) {}
+        _callState(kWaiting),
+        _selected(0) {}
     virtual ~Telephone() {}
 
     virtual void init() override;
@@ -62,30 +62,30 @@ public:
     virtual void execute() override;
     virtual void handleInput(NancyInput &input) override;
 
-    Common::String imageName; // 0x00
-    Common::Array<Common::Rect> srcRects; // 0xA, 12
-    Common::Array<Common::Rect> destRects; // 0xCA, 12
-    SoundDescription genericDialogueSound; // 0x18A
-    SoundDescription genericButtonSound; // 0x1AC
-    SoundDescription ringSound; // 0x1CE
-    SoundDescription dialToneSound; // 0x1F0
-    SoundDescription dialAgainSound; // 0x212
-    SoundDescription hangUpSound; // 0x234
-    Common::Array<Common::String> buttonSoundNames; // 0x256, 12 * 0xA
-    Common::String addressBookString; // 0x2CE, 0xC8 long
-    Common::String dialAgainString; // 0x396
-    SceneChangeDescription reloadScene; // 0x45E
-    EventFlagDescription flagOnReload; // 0x468 ??
-    SceneChangeDescription exitScene; // 0x46C
-    EventFlagDescription flagOnExit; // 0x476
-    Common::Rect exitHotspot; // 0x47A
+    Common::String _imageName; // 0x00
+    Common::Array<Common::Rect> _srcRects; // 0xA, 12
+    Common::Array<Common::Rect> _destRects; // 0xCA, 12
+    SoundDescription _genericDialogueSound; // 0x18A
+    SoundDescription _genericButtonSound; // 0x1AC
+    SoundDescription _ringSound; // 0x1CE
+    SoundDescription _dialToneSound; // 0x1F0
+    SoundDescription _dialAgainSound; // 0x212
+    SoundDescription _hangUpSound; // 0x234
+    Common::Array<Common::String> _buttonSoundNames; // 0x256, 12 * 0xA
+    Common::String _addressBookString; // 0x2CE, 0xC8 long
+    Common::String _dialAgainString; // 0x396
+    SceneChangeDescription _reloadScene; // 0x45E
+    EventFlagDescription _flagOnReload; // 0x468 ??
+    SceneChangeDescription _exitScene; // 0x46C
+    EventFlagDescription _flagOnExit; // 0x476
+    Common::Rect _exitHotspot; // 0x47A
     // 0x48A numConvos
-    Common::Array<PhoneCall> calls; // 0x48C
+    Common::Array<PhoneCall> _calls; // 0x48C
 
-    Common::Array<byte> calledNumber;
-    Graphics::ManagedSurface image;
-    CallState callState;
-    uint selected;
+    Common::Array<byte> _calledNumber;
+    Graphics::ManagedSurface _image;
+    CallState _callState;
+    uint _selected;
 
 protected:
     virtual Common::String getRecordTypeName() const override { return "Telephone"; }

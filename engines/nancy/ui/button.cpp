@@ -36,7 +36,7 @@ namespace UI {
 
 void Button::handleInput(NancyInput &input) {
     if (_screenPosition.contains(input.mousePos)) {
-        g_nancy->cursorManager->setCursorType(CursorManager::kHotspotArrow);
+        g_nancy->_cursorManager->setCursorType(CursorManager::kHotspotArrow);
 
         if (input.input & NancyInput::kLeftMouseButtonUp) {
             onClick();
@@ -50,7 +50,7 @@ void MenuButton::init() {
     bsum->seek(0x184, SEEK_SET);
     Common::Rect src;
     readRect(*bsum, src);
-    _drawSurface.create(g_nancy->graphicsManager->object0, src);
+    _drawSurface.create(g_nancy->_graphicsManager->_object0, src);
     bsum->skip(16);
     readRect(*bsum, _screenPosition);
     setVisible(false);
@@ -60,7 +60,7 @@ void MenuButton::init() {
 
 void MenuButton::onClick() {
     NancySceneState.requestStateChange(NancyEngine::kMainMenu);
-    g_nancy->sound->playSound(0x18);
+    g_nancy->_sound->playSound(0x18);
     setVisible(true);
 }
 
@@ -70,7 +70,7 @@ void HelpButton::init() {
     bsum->seek(0x194, SEEK_SET);
     Common::Rect src;
     readRect(*bsum, src);
-    _drawSurface.create(g_nancy->graphicsManager->object0, src);
+    _drawSurface.create(g_nancy->_graphicsManager->_object0, src);
     bsum->skip(16);
     readRect(*bsum, _screenPosition);
     setVisible(false);
@@ -80,7 +80,7 @@ void HelpButton::init() {
 
 void HelpButton::onClick() {
     NancySceneState.requestStateChange(NancyEngine::kHelp);
-    g_nancy->sound->playSound(0x18);
+    g_nancy->_sound->playSound(0x18);
     setVisible(true);
 }
 

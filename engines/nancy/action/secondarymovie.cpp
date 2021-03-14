@@ -32,7 +32,7 @@ namespace Action {
 PlaySecondaryMovie::~PlaySecondaryMovie() {
     _decoder.close();
     
-    if (hideMouse == kTrue && unknown == 5) {
+    if (_hideMouse == kTrue && _unknown == 5) {
         g_nancy->setMouseEnabled(true);
     }
 }
@@ -40,29 +40,29 @@ PlaySecondaryMovie::~PlaySecondaryMovie() {
 void PlaySecondaryMovie::readData(Common::SeekableReadStream &stream) {  
     char name[10];
     stream.read(name, 10);
-    videoName = name;
+    _videoName = name;
 
     stream.skip(0x12);
-    unknown = stream.readUint16LE();
-	hideMouse = (NancyFlag)stream.readUint16LE();
-    isReverse = (NancyFlag)stream.readUint16LE();
-    firstFrame = (NancyFlag)stream.readUint16LE();
-    lastFrame = (NancyFlag)stream.readUint16LE();
+    _unknown = stream.readUint16LE();
+	_hideMouse = (NancyFlag)stream.readUint16LE();
+    _isReverse = (NancyFlag)stream.readUint16LE();
+    _firstFrame = (NancyFlag)stream.readUint16LE();
+    _lastFrame = (NancyFlag)stream.readUint16LE();
 
     for (uint i = 0; i < 15; ++i) {
-        frameFlags[i].frameID = stream.readSint16LE();
-        frameFlags[i].flagDesc.label = stream.readSint16LE();
-        frameFlags[i].flagDesc.flag = (NancyFlag)stream.readUint16LE();
+        _frameFlags[i].frameID = stream.readSint16LE();
+        _frameFlags[i].flagDesc.label = stream.readSint16LE();
+        _frameFlags[i].flagDesc.flag = (NancyFlag)stream.readUint16LE();
     }
 
-    triggerFlags.readData(stream);
-    sound.read(stream, SoundDescription::kNormal);
-    sceneChange.readData(stream);
+    _triggerFlags.readData(stream);
+    _sound.read(stream, SoundDescription::kNormal);
+    _sceneChange.readData(stream);
 
     uint16 numVideoDescs = stream.readUint16LE();
     for (uint i = 0; i < numVideoDescs; ++i) {
-        videoDescs.push_back(SecondaryVideoDescription());
-        videoDescs[i].readData(stream);
+        _videoDescs.push_back(SecondaryVideoDescription());
+        _videoDescs[i].readData(stream);
     }
 }
 
@@ -71,7 +71,7 @@ void PlaySecondaryMovie::init() {
         _decoder.close();
     }
 
-    _decoder.loadFile(videoName + ".avf");
+    _decoder.loadFile(_videoName + ".avf");
     _drawSurface.create(_decoder.getWidth(), _decoder.getHeight(), GraphicsManager::getInputPixelFormat());
     _screenPosition = _drawSurface.getBounds();
 
@@ -83,43 +83,43 @@ void PlaySecondaryMovie::updateGraphics() {
         return;
     }
 
-    if (!_decoder.isPlaying() && _isVisible && !isFinished) {
+    if (!_decoder.isPlaying() && _isVisible && !_isFinished) {
         _decoder.start();
 
-		if (isReverse == kTrue) {
+		if (_isReverse == kTrue) {
 			_decoder.setRate(-_decoder.getRate());
-			_decoder.seekToFrame(lastFrame);
+			_decoder.seekToFrame(_lastFrame);
 		} else {
-			_decoder.seekToFrame(firstFrame);
+			_decoder.seekToFrame(_firstFrame);
 		}
     }
 
     if (_decoder.needsUpdate()) {
         uint descID = 0;
 
-        for (uint i = 0; i < videoDescs.size(); ++i) {
-            if (videoDescs[i].frameID == _curViewportFrame) {
+        for (uint i = 0; i < _videoDescs.size(); ++i) {
+            if (_videoDescs[i].frameID == _curViewportFrame) {
                 descID = i;
             }
         }
 
-        _drawSurface.blitFrom(*_decoder.decodeNextFrame(), videoDescs[descID].srcRect, Common::Point());
+        _drawSurface.blitFrom(*_decoder.decodeNextFrame(), _videoDescs[descID].srcRect, Common::Point());
         _needsRedraw = true;
         
-        for (auto f : frameFlags) {
+        for (auto f : _frameFlags) {
             if (_decoder.getCurFrame() == f.frameID) {
                 NancySceneState.setEventFlag(f.flagDesc);
             }
         }
     }
 
-	if ((_decoder.getCurFrame() == lastFrame && isReverse == kFalse) ||
-	    (_decoder.getCurFrame() == firstFrame && isReverse == kTrue)) {
-		if (!g_nancy->sound->isSoundPlaying(sound)) {
-			g_nancy->sound->stopSound(sound);
+	if ((_decoder.getCurFrame() == _lastFrame && _isReverse == kFalse) ||
+	    (_decoder.getCurFrame() == _firstFrame && _isReverse == kTrue)) {
+		if (!g_nancy->_sound->isSoundPlaying(_sound)) {
+			g_nancy->_sound->stopSound(_sound);
 			_decoder.stop();
-            isFinished = true;
-			state = kActionTrigger;
+            _isFinished = true;
+			_state = kActionTrigger;
 		}
 	}
 
@@ -135,18 +135,18 @@ void PlaySecondaryMovie::onPause(bool pause) {
 }
 
 void PlaySecondaryMovie::execute() {
-    switch (state) {
+    switch (_state) {
     case kBegin:
         init();
         registerGraphics();
-        g_nancy->sound->loadSound(sound);
-        g_nancy->sound->playSound(sound);
+        g_nancy->_sound->loadSound(_sound);
+        g_nancy->_sound->playSound(_sound);
 
-        if (hideMouse == kTrue) {
+        if (_hideMouse == kTrue) {
             g_nancy->setMouseEnabled(false);
         }
 
-        state = kRun;
+        _state = kRun;
         // fall through
     case kRun: {
         int newFrame = NancySceneState.getSceneInfo().frameID;
@@ -154,15 +154,15 @@ void PlaySecondaryMovie::execute() {
         if (newFrame != _curViewportFrame) {
             _curViewportFrame = newFrame;
             int activeFrame = -1;
-            for (uint i = 0; i < videoDescs.size(); ++i) {
-                if (newFrame == videoDescs[i].frameID) {
+            for (uint i = 0; i < _videoDescs.size(); ++i) {
+                if (newFrame == _videoDescs[i].frameID) {
                     activeFrame = i;
                     break;
                 }
             }
 
             if (activeFrame != -1) {
-                _screenPosition = videoDescs[activeFrame].destRect;
+                _screenPosition = _videoDescs[activeFrame].destRect;
                 setVisible(true);
             } else {
                 setVisible(false);
@@ -172,12 +172,12 @@ void PlaySecondaryMovie::execute() {
         break;
     }
     case kActionTrigger:
-        triggerFlags.execute();
-        if (unknown == 5) {
-            NancySceneState.changeScene(sceneChange);
+        _triggerFlags.execute();
+        if (_unknown == 5) {
+            NancySceneState.changeScene(_sceneChange);
         } else {
             // Not changing the scene so enable the mouse now
-            if (hideMouse == kTrue) {
+            if (_hideMouse == kTrue) {
                 g_nancy->setMouseEnabled(true);
             }
         }

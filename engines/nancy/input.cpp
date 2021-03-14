@@ -42,7 +42,7 @@ void InputManager::processEvents() {
         case EVENT_KEYDOWN:
             if (event.kbd.keycode == KEYCODE_d && event.kbd.flags & Common::KBD_CTRL) {
                 // Launch debug console
-                g_nancy->launchConsole = true;
+                g_nancy->_launchConsole = true;
             } else if (event.kbd.keycode == KEYCODE_q && event.kbd.flags & Common::KBD_CTRL) {
                 // Quit
                 g_nancy->quitGame();

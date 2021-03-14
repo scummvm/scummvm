@@ -42,7 +42,7 @@ void Telephone::init() {
     
     setTransparent(true);
 
-    g_nancy->resource->loadImage(imageName, image);
+    g_nancy->_resource->loadImage(_imageName, _image);
 
     NancySceneState.setShouldClearTextbox(false);
 }
@@ -50,56 +50,56 @@ void Telephone::init() {
 void Telephone::readData(Common::SeekableReadStream &stream) {
     char buf[10];
     stream.read(buf, 10);
-    imageName = buf;
+    _imageName = buf;
 
     for (uint i = 0; i < 12; ++i) {
-        srcRects.push_back(Common::Rect());
-        readRect(stream, srcRects.back());
+        _srcRects.push_back(Common::Rect());
+        readRect(stream, _srcRects.back());
     }
 
     for (uint i = 0; i < 12; ++i) {
-        destRects.push_back(Common::Rect());
-        readRect(stream, destRects.back());
+        _destRects.push_back(Common::Rect());
+        readRect(stream, _destRects.back());
 
         if (i == 0) {
-            _screenPosition = destRects.back();
+            _screenPosition = _destRects.back();
         } else {
-            _screenPosition.extend(destRects.back());
+            _screenPosition.extend(_destRects.back());
         }
     }
 
-    genericDialogueSound.read(stream, SoundDescription::kNormal);
-    genericButtonSound.read(stream, SoundDescription::kNormal);
-    ringSound.read(stream, SoundDescription::kNormal);
-    dialToneSound.read(stream, SoundDescription::kNormal);
-    dialAgainSound.read(stream, SoundDescription::kNormal);
-    hangUpSound.read(stream, SoundDescription::kNormal);
+    _genericDialogueSound.read(stream, SoundDescription::kNormal);
+    _genericButtonSound.read(stream, SoundDescription::kNormal);
+    _ringSound.read(stream, SoundDescription::kNormal);
+    _dialToneSound.read(stream, SoundDescription::kNormal);
+    _dialAgainSound.read(stream, SoundDescription::kNormal);
+    _hangUpSound.read(stream, SoundDescription::kNormal);
 
     for (uint i = 0; i < 12; ++i) {
         stream.read(buf, 10);
-        buttonSoundNames.push_back(buf);
+        _buttonSoundNames.push_back(buf);
     }
 
     char buf2[200];
     stream.read(buf2, 200);
-    addressBookString = buf2;
+    _addressBookString = buf2;
     stream.read(buf2, 200);
-    dialAgainString = buf2;
-    reloadScene.readData(stream);
+    _dialAgainString = buf2;
+    _reloadScene.readData(stream);
     stream.skip(2);
-    flagOnReload.label = stream.readSint16LE();
-    flagOnReload.flag = (NancyFlag)stream.readUint16LE();
-    exitScene.readData(stream);
+    _flagOnReload.label = stream.readSint16LE();
+    _flagOnReload.flag = (NancyFlag)stream.readUint16LE();
+    _exitScene.readData(stream);
     stream.skip(2);
-    flagOnExit.label = stream.readSint16LE();
-    flagOnExit.flag = (NancyFlag)stream.readUint16LE();
-    readRect(stream, exitHotspot);
+    _flagOnExit.label = stream.readSint16LE();
+    _flagOnExit.flag = (NancyFlag)stream.readUint16LE();
+    readRect(stream, _exitHotspot);
 
     uint numCalls = stream.readUint16LE();
 
     for (uint i = 0; i < numCalls; ++i) {
-        calls.push_back(PhoneCall());
-        PhoneCall &call = calls.back();
+        _calls.push_back(PhoneCall());
+        PhoneCall &call = _calls.back();
 
         for (uint j = 0; j < 11; ++j) {
             call.phoneNumber.push_back(stream.readByte());
@@ -109,7 +109,7 @@ void Telephone::readData(Common::SeekableReadStream &stream) {
         call.soundName = buf;
         stream.read(buf2, 200);
         call.text = buf2;
-        call.sceneChange.readData(stream);
+        call._sceneChange.readData(stream);
         stream.skip(2);
         call.flag.label = stream.readSint16LE();
         call.flag.flag = (NancyFlag)stream.readUint16LE();
@@ -117,47 +117,47 @@ void Telephone::readData(Common::SeekableReadStream &stream) {
 }
 
 void Telephone::execute() {
-    switch (state) {
+    switch (_state) {
     case kBegin:
         init();
         registerGraphics();
-        g_nancy->sound->loadSound(dialToneSound);
-        g_nancy->sound->playSound(dialToneSound);
+        g_nancy->_sound->loadSound(_dialToneSound);
+        g_nancy->_sound->playSound(_dialToneSound);
         NancySceneState.getTextbox().clear();
-        NancySceneState.getTextbox().addTextLine(addressBookString);
-        state = kRun;
+        NancySceneState.getTextbox().addTextLine(_addressBookString);
+        _state = kRun;
         // fall through
     case kRun:
-        switch (callState) {
+        switch (_callState) {
         case kWaiting:
             // Long phone numbers start with 1
-            if (calledNumber.size() >= 11 || (calledNumber.size() >= 7 && (calledNumber[0] != 1))) {
+            if (_calledNumber.size() >= 11 || (_calledNumber.size() >= 7 && (_calledNumber[0] != 1))) {
                 NancySceneState.getTextbox().clear();
                 NancySceneState.getTextbox().addTextLine("ringing...<n><e>"); // Hardcoded in the original engine
-                g_nancy->sound->loadSound(ringSound);
-                g_nancy->sound->playSound(ringSound);
-                callState = kRinging;
+                g_nancy->_sound->loadSound(_ringSound);
+                g_nancy->_sound->playSound(_ringSound);
+                _callState = kRinging;
             }
 
             break;
         case kButtonPress:
-            if (!g_nancy->sound->isSoundPlaying(genericButtonSound)) {
-                g_nancy->sound->stopSound(genericButtonSound);
-                undrawButton(selected);
-                callState = kWaiting;
+            if (!g_nancy->_sound->isSoundPlaying(_genericButtonSound)) {
+                g_nancy->_sound->stopSound(_genericButtonSound);
+                undrawButton(_selected);
+                _callState = kWaiting;
             }
 
             break;
         case kRinging:
-            if (!g_nancy->sound->isSoundPlaying(ringSound)) {
-                g_nancy->sound->stopSound(ringSound);
-                uint numberLength = calledNumber[0] == 1 ? 11 : 7;
+            if (!g_nancy->_sound->isSoundPlaying(_ringSound)) {
+                g_nancy->_sound->stopSound(_ringSound);
+                uint numberLength = _calledNumber[0] == 1 ? 11 : 7;
 
-                for (uint i = 0; i < calls.size(); ++i) {
+                for (uint i = 0; i < _calls.size(); ++i) {
                     bool invalid = false;
 
                     for (uint j = 0; j < numberLength; ++j) {
-                        if (calledNumber[j] != calls[i].phoneNumber[j]) {
+                        if (_calledNumber[j] != _calls[i].phoneNumber[j]) {
                             // Invalid number, move onto next
                             invalid = true;
                             break;
@@ -169,48 +169,48 @@ void Telephone::execute() {
                     }
 
                     NancySceneState.getTextbox().clear();
-                    NancySceneState.getTextbox().addTextLine(calls[i].text);
+                    NancySceneState.getTextbox().addTextLine(_calls[i].text);
 
-                    genericDialogueSound.name = calls[i].soundName;
-                    g_nancy->sound->loadSound(genericDialogueSound);
-                    g_nancy->sound->playSound(genericDialogueSound);
-                    selected = i;
-                    callState = kCall;
+                    _genericDialogueSound.name = _calls[i].soundName;
+                    g_nancy->_sound->loadSound(_genericDialogueSound);
+                    g_nancy->_sound->playSound(_genericDialogueSound);
+                    _selected = i;
+                    _callState = kCall;
 
                     return;
                 }
                 
                 NancySceneState.getTextbox().clear();
-                NancySceneState.getTextbox().addTextLine(dialAgainString);
+                NancySceneState.getTextbox().addTextLine(_dialAgainString);
 
-                g_nancy->sound->loadSound(dialAgainSound);
-                g_nancy->sound->playSound(dialAgainSound);
-                callState = kBadNumber;
+                g_nancy->_sound->loadSound(_dialAgainSound);
+                g_nancy->_sound->playSound(_dialAgainSound);
+                _callState = kBadNumber;
                 return;
             }
 
             break;
         case kBadNumber:
-            if (!g_nancy->sound->isSoundPlaying(dialAgainSound)) {
-                g_nancy->sound->stopSound(dialAgainSound);
+            if (!g_nancy->_sound->isSoundPlaying(_dialAgainSound)) {
+                g_nancy->_sound->stopSound(_dialAgainSound);
 
-                state = kActionTrigger;
+                _state = kActionTrigger;
             }
 
             break;
         case kCall:
-            if (!g_nancy->sound->isSoundPlaying(genericDialogueSound)) {
-                g_nancy->sound->stopSound(genericDialogueSound);
+            if (!g_nancy->_sound->isSoundPlaying(_genericDialogueSound)) {
+                g_nancy->_sound->stopSound(_genericDialogueSound);
 
-                state = kActionTrigger;
+                _state = kActionTrigger;
             }
 
             break;
         case kHangUp:
-            if (!g_nancy->sound->isSoundPlaying(hangUpSound)) {
-                g_nancy->sound->stopSound(hangUpSound);
+            if (!g_nancy->_sound->isSoundPlaying(_hangUpSound)) {
+                g_nancy->_sound->stopSound(_hangUpSound);
 
-                state = kActionTrigger;
+                _state = kActionTrigger;
             }
 
             break;
@@ -218,25 +218,25 @@ void Telephone::execute() {
 
         break;
     case kActionTrigger:
-        switch (callState) {
+        switch (_callState) {
         case kBadNumber:
-            NancySceneState.changeScene(reloadScene);
-            calledNumber.clear();
-            NancySceneState.setEventFlag(flagOnReload);
-            state = kRun;
-            callState = kWaiting;
+            NancySceneState.changeScene(_reloadScene);
+            _calledNumber.clear();
+            NancySceneState.setEventFlag(_flagOnReload);
+            _state = kRun;
+            _callState = kWaiting;
 
             break;
         case kCall: {
-            PhoneCall &call = calls[selected];
-            NancySceneState.changeScene(call.sceneChange);
+            PhoneCall &call = _calls[_selected];
+            NancySceneState.changeScene(call._sceneChange);
             NancySceneState.setEventFlag(call.flag);
 
             break;
         }
         case kHangUp:
-            NancySceneState.changeScene(exitScene);
-            NancySceneState.setEventFlag(flagOnExit);
+            NancySceneState.changeScene(_exitScene);
+            NancySceneState.setEventFlag(_flagOnExit);
             
             break;
         default:
@@ -253,25 +253,25 @@ void Telephone::handleInput(NancyInput &input) {
     int buttonNr = -1;
     // Cursor gets changed regardless of state
     for (uint i = 0; i < 12; ++i) {
-        if (NancySceneState.getViewport().convertViewportToScreen(destRects[i]).contains(input.mousePos)) {
-            g_nancy->cursorManager->setCursorType(CursorManager::kHotspot);
+        if (NancySceneState.getViewport().convertViewportToScreen(_destRects[i]).contains(input.mousePos)) {
+            g_nancy->_cursorManager->setCursorType(CursorManager::kHotspot);
             buttonNr = i;
             break;
         }
     }
 
-    if (callState != kWaiting) {
+    if (_callState != kWaiting) {
         return;
     }
 
-    if (NancySceneState.getViewport().convertViewportToScreen(exitHotspot).contains(input.mousePos)) {
-        g_nancy->cursorManager->setCursorType(CursorManager::kExitArrow);
+    if (NancySceneState.getViewport().convertViewportToScreen(_exitHotspot).contains(input.mousePos)) {
+        g_nancy->_cursorManager->setCursorType(CursorManager::kExitArrow);
 
         if (input.input & NancyInput::kLeftMouseButtonUp) {
-            g_nancy->sound->loadSound(hangUpSound);
-            g_nancy->sound->playSound(hangUpSound);
+            g_nancy->_sound->loadSound(_hangUpSound);
+            g_nancy->_sound->playSound(_hangUpSound);
 
-            callState = kHangUp;
+            _callState = kHangUp;
         }
         
         return;
@@ -279,33 +279,33 @@ void Telephone::handleInput(NancyInput &input) {
 
     if (buttonNr != -1) {
         if (input.input & NancyInput::kLeftMouseButtonUp) {
-            if (g_nancy->sound->isSoundPlaying(dialToneSound)) {
-                g_nancy->sound->stopSound(dialToneSound);
+            if (g_nancy->_sound->isSoundPlaying(_dialToneSound)) {
+                g_nancy->_sound->stopSound(_dialToneSound);
             }
 
-            calledNumber.push_back(buttonNr);
-            genericButtonSound.name = buttonSoundNames[buttonNr];
-            g_nancy->sound->loadSound(genericButtonSound);
-            g_nancy->sound->playSound(genericButtonSound);
+            _calledNumber.push_back(buttonNr);
+            _genericButtonSound.name = _buttonSoundNames[buttonNr];
+            g_nancy->_sound->loadSound(_genericButtonSound);
+            g_nancy->_sound->playSound(_genericButtonSound);
 
             drawButton(buttonNr);
 
-            selected = buttonNr;
+            _selected = buttonNr;
 
-            callState = kButtonPress;
+            _callState = kButtonPress;
         }
     }
 }
 
 void Telephone::drawButton(uint id) {
-    Common::Point destPoint(destRects[id].left - _screenPosition.left, destRects[id].top - _screenPosition.top);
-    _drawSurface.blitFrom(image, srcRects[id], destPoint);
+    Common::Point destPoint(_destRects[id].left - _screenPosition.left, _destRects[id].top - _screenPosition.top);
+    _drawSurface.blitFrom(_image, _srcRects[id], destPoint);
 
     _needsRedraw = true;
 }
 
 void Telephone::undrawButton(uint id) {
-    Common::Rect bounds = destRects[id];
+    Common::Rect bounds = _destRects[id];
     bounds.translate(-_screenPosition.left, -_screenPosition.top);
 
     _drawSurface.fillRect(bounds, GraphicsManager::getTransColor());

@@ -38,97 +38,97 @@ void LeverPuzzle::init() {
     
     setTransparent(true);
 
-    g_nancy->resource->loadImage(imageName, image);
+    g_nancy->_resource->loadImage(_imageName, _image);
 }
 
 void LeverPuzzle::readData(Common::SeekableReadStream &stream) {
     char buf[10];
     stream.read(buf, 10);
-    imageName = buf;
+    _imageName = buf;
 
     for (uint leverID = 0; leverID < 3; ++leverID) {
-        srcRects.push_back(Common::Array<Common::Rect>());
+        _srcRects.push_back(Common::Array<Common::Rect>());
         for (uint i = 0; i < 4; ++i) {
-            srcRects.back().push_back(Common::Rect());
-            readRect(stream, srcRects.back().back());
+            _srcRects.back().push_back(Common::Rect());
+            readRect(stream, _srcRects.back().back());
         }
     }
 
     for (uint leverID = 0; leverID < 3; ++leverID) {
-        destRects.push_back(Common::Rect());
-        readRect(stream, destRects.back());
+        _destRects.push_back(Common::Rect());
+        readRect(stream, _destRects.back());
 
         if (leverID == 0) {
-            _screenPosition = destRects.back();
+            _screenPosition = _destRects.back();
         } else {
-            _screenPosition.extend(destRects.back());
+            _screenPosition.extend(_destRects.back());
         }
     }
 
     for (uint leverID = 0; leverID < 3; ++leverID) {
-        playerSequence.push_back(stream.readByte());
-        leverDirection.push_back(true);
+        _playerSequence.push_back(stream.readByte());
+        _leverDirection.push_back(true);
     }
 
     for (uint leverID = 0; leverID < 3; ++leverID) {
-        correctSequence.push_back(stream.readByte());
+        _correctSequence.push_back(stream.readByte());
     }
 
-    moveSound.read(stream, SoundDescription::kNormal);
-    noMoveSound.read(stream, SoundDescription::kNormal);
-    solveExitScene.readData(stream);
+    _moveSound.read(stream, SoundDescription::kNormal);
+    _noMoveSound.read(stream, SoundDescription::kNormal);
+    _solveExitScene.readData(stream);
     stream.skip(2);
-    flagOnSolve.label = stream.readSint16LE();
-    flagOnSolve.flag = (NancyFlag)stream.readByte();
-    solveSoundDelay = stream.readUint16LE();
-    solveSound.read(stream, SoundDescription::kNormal);
-    exitScene.readData(stream);
+    _flagOnSolve.label = stream.readSint16LE();
+    _flagOnSolve.flag = (NancyFlag)stream.readByte();
+    _solveSoundDelay = stream.readUint16LE();
+    _solveSound.read(stream, SoundDescription::kNormal);
+    _exitScene.readData(stream);
     stream.skip(2);
-    flagOnExit.label = stream.readSint16LE();
-    flagOnExit.flag = (NancyFlag)stream.readByte();
-    readRect(stream, exitHotspot);
+    _flagOnExit.label = stream.readSint16LE();
+    _flagOnExit.flag = (NancyFlag)stream.readByte();
+    readRect(stream, _exitHotspot);
 }
 
 void LeverPuzzle::execute() {
-    switch (state) {
+    switch (_state) {
     case kBegin:
         init();
         registerGraphics();
-        g_nancy->sound->loadSound(moveSound);
-        g_nancy->sound->loadSound(noMoveSound);
+        g_nancy->_sound->loadSound(_moveSound);
+        g_nancy->_sound->loadSound(_noMoveSound);
 
         for (uint i = 0; i < 3; ++i) {
             drawLever(i);
         }
 
-        state = kRun;
+        _state = kRun;
         // fall through
     case kRun:
-        switch (solveState) {
+        switch (_solveState) {
         case kNotSolved:
             for (uint i = 0; i < 3; ++i) {
-                if (playerSequence[i] != correctSequence[i]) {
+                if (_playerSequence[i] != _correctSequence[i]) {
                     return;
                 }
             }
             
-            NancySceneState.setEventFlag(flagOnSolve);
-            solveSoundPlayTime = g_nancy->getTotalPlayTime() + solveSoundDelay * 1000;
-            solveState = kPlaySound;
+            NancySceneState.setEventFlag(_flagOnSolve);
+            _solveSoundPlayTime = g_nancy->getTotalPlayTime() + _solveSoundDelay * 1000;
+            _solveState = kPlaySound;
             break;
         case kPlaySound:
-            if (g_nancy->getTotalPlayTime() <= solveSoundPlayTime) {
+            if (g_nancy->getTotalPlayTime() <= _solveSoundPlayTime) {
                 break;
             }
 
-            g_nancy->sound->loadSound(solveSound);
-            g_nancy->sound->playSound(solveSound);
-            solveState = kWaitForSound;
+            g_nancy->_sound->loadSound(_solveSound);
+            g_nancy->_sound->playSound(_solveSound);
+            _solveState = kWaitForSound;
             break;
         case kWaitForSound:
-            if (!g_nancy->sound->isSoundPlaying(solveSound)) {
-                g_nancy->sound->stopSound(solveSound);
-                state = kActionTrigger;
+            if (!g_nancy->_sound->isSoundPlaying(_solveSound)) {
+                g_nancy->_sound->stopSound(_solveSound);
+                _state = kActionTrigger;
             }
 
             break;
@@ -136,14 +136,14 @@ void LeverPuzzle::execute() {
 
         break;
     case kActionTrigger:
-        g_nancy->sound->stopSound(moveSound);
-        g_nancy->sound->stopSound(noMoveSound);
+        g_nancy->_sound->stopSound(_moveSound);
+        g_nancy->_sound->stopSound(_noMoveSound);
         
-        if (solveState == kNotSolved) {
-            NancySceneState.changeScene(exitScene);
-            NancySceneState.setEventFlag(flagOnExit);
+        if (_solveState == kNotSolved) {
+            NancySceneState.changeScene(_exitScene);
+            NancySceneState.setEventFlag(_flagOnExit);
         } else {
-            NancySceneState.changeScene(solveExitScene);
+            NancySceneState.changeScene(_solveExitScene);
         }
 
         finishExecution();
@@ -151,22 +151,22 @@ void LeverPuzzle::execute() {
 }
 
 void LeverPuzzle::handleInput(NancyInput &input) {
-    if (solveState != kNotSolved) {
+    if (_solveState != kNotSolved) {
         return;
     }
 
-    if (NancySceneState.getViewport().convertViewportToScreen(exitHotspot).contains(input.mousePos)) {
-        g_nancy->cursorManager->setCursorType(CursorManager::kExitArrow);
+    if (NancySceneState.getViewport().convertViewportToScreen(_exitHotspot).contains(input.mousePos)) {
+        g_nancy->_cursorManager->setCursorType(CursorManager::kExitArrow);
 
         if (input.input & NancyInput::kLeftMouseButtonUp) {
-            state = kActionTrigger;
+            _state = kActionTrigger;
         }
         return;
     }
 
     for (uint i = 0; i < 3; ++i) {
-        if (NancySceneState.getViewport().convertViewportToScreen(destRects[i]).contains(input.mousePos)) {
-            g_nancy->cursorManager->setCursorType(CursorManager::kHotspot);
+        if (NancySceneState.getViewport().convertViewportToScreen(_destRects[i]).contains(input.mousePos)) {
+            g_nancy->_cursorManager->setCursorType(CursorManager::kHotspot);
             
             if (input.input & NancyInput::kLeftMouseButtonUp) {
                 bool isMoving = false;
@@ -176,13 +176,13 @@ void LeverPuzzle::handleInput(NancyInput &input) {
                     isMoving = true;
                     break;
                 case 1:
-                    if (playerSequence[0] == 1) {
+                    if (_playerSequence[0] == 1) {
                         isMoving = true;
                     }
 
                     break;
                 case 2:
-                    if (playerSequence[0] == 2) {
+                    if (_playerSequence[0] == 2) {
                         isMoving = true;
                     }
                     
@@ -190,29 +190,29 @@ void LeverPuzzle::handleInput(NancyInput &input) {
                 }
 
                 if (isMoving) {
-                    g_nancy->sound->playSound(moveSound);
+                    g_nancy->_sound->playSound(_moveSound);
 
-                    if (leverDirection[i]) {
+                    if (_leverDirection[i]) {
                         // Moving down
-                        if (playerSequence[i] == 3) {
-                            --playerSequence[i];
-                            leverDirection[i] = false;
+                        if (_playerSequence[i] == 3) {
+                            --_playerSequence[i];
+                            _leverDirection[i] = false;
                         } else {
-                            ++playerSequence[i];
+                            ++_playerSequence[i];
                         }
                     } else {
                         // Moving up
-                        if (playerSequence[i] == 0) {
-                            ++playerSequence[i];
-                            leverDirection[i] = true;
+                        if (_playerSequence[i] == 0) {
+                            ++_playerSequence[i];
+                            _leverDirection[i] = true;
                         } else {
-                            --playerSequence[i];
+                            --_playerSequence[i];
                         }
                     }
 
                     drawLever(i);
                 } else {
-                    g_nancy->sound->playSound(noMoveSound);
+                    g_nancy->_sound->playSound(_noMoveSound);
                     return;
                 }
             }
@@ -227,8 +227,8 @@ void LeverPuzzle::onPause(bool pause) {
 }
 
 void LeverPuzzle::drawLever(uint id) {
-    Common::Point destPoint(destRects[id].left - _screenPosition.left, destRects[id].top - _screenPosition.top);
-    _drawSurface.blitFrom(image, srcRects[id][playerSequence[id]], destPoint);
+    Common::Point destPoint(_destRects[id].left - _screenPosition.left, _destRects[id].top - _screenPosition.top);
+    _drawSurface.blitFrom(_image, _srcRects[id][_playerSequence[id]], destPoint);
     
     _needsRedraw = true;
 }

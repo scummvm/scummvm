@@ -38,14 +38,14 @@
 namespace Nancy {
 namespace UI {
 
-const char Textbox::CCBeginToken[] = "<i>";
-const char Textbox::CCEndToken[] = "<o>";
-const char Textbox::colorBeginToken[] = "<c1>";
-const char Textbox::colorEndToken[] = "<c0>";
-const char Textbox::hotspotToken[] = "<h>";
-const char Textbox::newLineToken[] = "<n>";
-const char Textbox::tabToken[] = "<t>";
-const char Textbox::telephoneEndToken[] = "<e>";
+const char Textbox::_CCBeginToken[] = "<i>";
+const char Textbox::_CCEndToken[] = "<o>";
+const char Textbox::_colorBeginToken[] = "<c1>";
+const char Textbox::_colorEndToken[] = "<c0>";
+const char Textbox::_hotspotToken[] = "<h>";
+const char Textbox::_newLineToken[] = "<n>";
+const char Textbox::_tabToken[] = "<t>";
+const char Textbox::_telephoneEndToken[] = "<e>";
 
 void Textbox::init() {    
     Common::SeekableReadStream *chunk = g_nancy->getBootChunkStream("TBOX");
@@ -55,7 +55,7 @@ void Textbox::init() {
     chunk->seek(0x20);
     Common::Rect innerBoundingBox;
     readRect(*chunk, innerBoundingBox);
-    _fullSurface.create(innerBoundingBox.width(), innerBoundingBox.height(), GraphicsManager::screenPixelFormat);
+    _fullSurface.create(innerBoundingBox.width(), innerBoundingBox.height(), GraphicsManager::_screenPixelFormat);
     
     _scrollbarDefaultDest.x = chunk->readUint16LE();
     _scrollbarDefaultDest.y = chunk->readUint16LE();
@@ -108,7 +108,7 @@ void Textbox::handleInput(NancyInput &input) {
         Common::Rect hotspot = _hotspots[i];
         hotspot.translate(0, -_drawSurface.getOffsetFromOwner().y);
         if (convertToScreen(hotspot).findIntersectingRect(_screenPosition).contains(input.mousePos)) {
-            g_nancy->cursorManager->setCursorType(CursorManager::kHotspotArrow);
+            g_nancy->_cursorManager->setCursorType(CursorManager::kHotspotArrow);
 
             if (input.input & NancyInput::kLeftMouseButtonUp) {
                 input.input &= ~NancyInput::kLeftMouseButtonUp;
@@ -126,7 +126,7 @@ void Textbox::drawTextbox() {
 
     _numLines = 0;
 
-    Font *font = g_nancy->graphicsManager->getFont(_fontID);
+    Font *font = g_nancy->_graphicsManager->getFont(_fontID);
 
     uint maxWidth = _fullSurface.w - _borderWidth * 2;
     uint lineDist = _lineHeight + _lineHeight / 4;
@@ -140,40 +140,40 @@ void Textbox::drawTextbox() {
         Rect hotspot;
 
         // Trim the begin and end tokens from the line
-        if (currentLine.hasPrefix(CCBeginToken) && currentLine.hasSuffix(CCEndToken)) {
-            currentLine = currentLine.substr(ARRAYSIZE(CCBeginToken) - 1, currentLine.size() - ARRAYSIZE(CCBeginToken) - ARRAYSIZE(CCEndToken) + 2);
+        if (currentLine.hasPrefix(_CCBeginToken) && currentLine.hasSuffix(_CCEndToken)) {
+            currentLine = currentLine.substr(ARRAYSIZE(_CCBeginToken) - 1, currentLine.size() - ARRAYSIZE(_CCBeginToken) - ARRAYSIZE(_CCEndToken) + 2);
         }
         
         // Replace every newline token with \n
         uint32 newLinePos;
-        while (newLinePos = currentLine.find(newLineToken), newLinePos != String::npos) {
-            currentLine.replace(newLinePos, ARRAYSIZE(newLineToken) - 1, "\n");
+        while (newLinePos = currentLine.find(_newLineToken), newLinePos != String::npos) {
+            currentLine.replace(newLinePos, ARRAYSIZE(_newLineToken) - 1, "\n");
         }
 
         // Simply remove telephone end token
-        if (currentLine.hasSuffix(telephoneEndToken)) {
-            currentLine = currentLine.substr(0, currentLine.size() - ARRAYSIZE(telephoneEndToken) + 1);
+        if (currentLine.hasSuffix(_telephoneEndToken)) {
+            currentLine = currentLine.substr(0, currentLine.size() - ARRAYSIZE(_telephoneEndToken) + 1);
         }
 
         // Remove hotspot token and mark that we need to calculate the bounds
         // Assumes a single text line has a single hotspot
-        uint32 hotspotPos = currentLine.find(hotspotToken);
+        uint32 hotspotPos = currentLine.find(_hotspotToken);
         if (hotspotPos != String::npos) {
-            currentLine.erase(hotspotPos, ARRAYSIZE(hotspotToken) - 1);
+            currentLine.erase(hotspotPos, ARRAYSIZE(_hotspotToken) - 1);
             hasHotspot = true;
         }
 
         // Subdivide current line into sublines for proper handling of the tab and color tokens
         // Assumes the tab token is on a new line
         while (!currentLine.empty()) {
-            if (currentLine.hasPrefix(tabToken)) {
+            if (currentLine.hasPrefix(_tabToken)) {
                 horizontalOffset += font->getStringWidth("    "); // Replace tab with 4 spaces
-                currentLine = currentLine.substr(ARRAYSIZE(tabToken) - 1);
+                currentLine = currentLine.substr(ARRAYSIZE(_tabToken) - 1);
             }
 
             String currentSubLine;
 
-            uint32 nextTabPos = currentLine.find(tabToken);
+            uint32 nextTabPos = currentLine.find(_tabToken);
             if (nextTabPos != String::npos) {
                 currentSubLine = currentLine.substr(0, nextTabPos);
                 currentLine = currentLine.substr(nextTabPos);
@@ -183,12 +183,12 @@ void Textbox::drawTextbox() {
             }
 
             // Assumes color token will be at the beginning of the line, and color string will not need wrapping
-            if (currentSubLine.hasPrefix(colorBeginToken)) {
+            if (currentSubLine.hasPrefix(_colorBeginToken)) {
                 // Found color string, look for end token
-                uint32 colorEndPos = currentSubLine.find(colorEndToken);
+                uint32 colorEndPos = currentSubLine.find(_colorEndToken);
 
-                Common::String colorSubLine = currentSubLine.substr(ARRAYSIZE(colorBeginToken) - 1, colorEndPos - ARRAYSIZE(colorBeginToken) + 1);
-                currentSubLine = currentSubLine.substr(ARRAYSIZE(colorBeginToken) + ARRAYSIZE(colorEndToken) + colorSubLine.size() - 2);
+                Common::String colorSubLine = currentSubLine.substr(ARRAYSIZE(_colorBeginToken) - 1, colorEndPos - ARRAYSIZE(_colorBeginToken) + 1);
+                currentSubLine = currentSubLine.substr(ARRAYSIZE(_colorBeginToken) + ARRAYSIZE(_colorEndToken) + colorSubLine.size() - 2);
 
                 // Draw the color line
                 font->drawString(&_fullSurface, colorSubLine, _borderWidth + horizontalOffset, _firstLineOffset - font->getFontHeight() + _numLines * lineDist, maxWidth, 1);
@@ -289,7 +289,7 @@ void Textbox::TextboxScrollbar::init() {
     Common::Rect &srcBounds = _parent->_scrollbarSourceBounds;
     Common::Point &topPosition = _parent->_scrollbarDefaultDest;
 
-    _drawSurface.create(g_nancy->graphicsManager->object0, srcBounds);
+    _drawSurface.create(g_nancy->_graphicsManager->_object0, srcBounds);
 
     _startPosition = topPosition;
     _startPosition.x -= srcBounds.width() / 2;
