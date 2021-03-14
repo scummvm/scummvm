@@ -226,7 +226,6 @@ void AnimManager::startSmkAnim(uint16 num) {
 
 	// choose how to open
 	if (_animTab[num]._flag & SMKANIM_BKG) {
-		sprintf(_vm->UStr, "Bkg\\%s", _animTab[num]._name);
 		openSmk(AnimFileOpen(_animTab[num]._name));
 
 		// Turns off when not needed
@@ -260,12 +259,10 @@ void AnimManager::startSmkAnim(uint16 num) {
 		          (_vm->_obj[oVALVOLAC34]._mode & OBJMODE_OBJSTATUS)))  // if the valve is closed
 			smkVolumePan(0, 2, 0);
 	} else if (_animTab[num]._flag & SMKANIM_ICON) {
-		sprintf(_vm->UStr, "Icon\\%s", _animTab[num]._name);
 		openSmk(AnimFileOpen(_animTab[num]._name));
 	} else {
 		uint32 st = ReadTime();
 
-		sprintf(_vm->UStr, "Anim\\%s", _animTab[num]._name);
 		openSmk(AnimFileOpen(_animTab[num]._name));
 		_vm->NextRefresh += (ReadTime() - st); // fixup opening time
 	}

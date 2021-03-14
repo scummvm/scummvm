@@ -74,11 +74,6 @@ struct STexture {
 };
 
 /*------------------------------------------------
-	Create reference table for the vertices of
-	a texture
---------------------------------------------------*/
-void createTextureMapping(int16 mat);
-/*------------------------------------------------
 	Initialize a 3D Room
 --------------------------------------------------*/
 void init3DRoom(int16 dx, uint16 *destBuffer, int16 *zBuffer);

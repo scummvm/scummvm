@@ -72,15 +72,11 @@ uint16 *ExtraObj41D;
 int16  *ZBuffer;
 uint8 *_characterArea;
 uint8 *TextureArea;
-uint8 *BaseHeadTexture;
-uint8 AddObjectMaterial;
 // MEMORY
 uint32 GameBytePointer;
 uint32 GameWordPointer;
 uint32 TotalMemory;
 // VESA
-uint8 CVP;
-uint16 VesaGranularity;
 int32  CurRoomMaxX = 640L;
 // DTEXT
 int8 DTextLines[MAXDTEXTLINES][MAXDTEXTCHARS];
@@ -156,12 +152,10 @@ void OpenVideo() {
 	GameBytePointer = 0;
 	GameWordPointer = 0;
 
-	sprintf(g_vm->UStr, "NlData.cd0");
-	FastFileInit(g_vm->UStr);
-	sprintf(g_vm->UStr, "NlSpeech.cd0");
-	SpeechFileInit(g_vm->UStr);
-	sprintf(g_vm->UStr, "NlAnim.cd%c", CurCDSet + '0');
-	AnimFileInit(g_vm->UStr);
+	FastFileInit("NlData.cd0");
+	SpeechFileInit("NlSpeech.cd0");
+	Common::String filename = Common::String::format("NlAnim.cd%c", CurCDSet + '0');
+	AnimFileInit(filename);
 
 	g_vm->_video2 = (uint16 *)MemoryArea + 2000000L;
 
@@ -192,7 +186,6 @@ void OpenVideo() {
 
 	//
 	TextureArea = (uint8 *)MemoryArea + GameBytePointer;
-	BaseHeadTexture = (uint8 *)(TextureArea);
 
 	ff = FastFileOpen("textur.bm");
 	GameBytePointer += FastFileRead(ff, TextureArea, FastFileLen(ff));
@@ -493,10 +486,10 @@ void ReadLoc() {
 
 	GameWordPointer = (CurRoomMaxX * MAXY);           // space for _video2
 
-	sprintf(g_vm->UStr, "%s.cr", g_vm->_room[g_vm->_curRoom]._baseName);
+	Common::String filename = Common::String::format("%s.cr", g_vm->_room[g_vm->_curRoom]._baseName);
 	ImagePointer = (uint16 *)g_vm->_video2 + GameWordPointer - 4;
 
-	GameWordPointer += (DecCR(g_vm->UStr, (uint8 *)ImagePointer, (uint8 *)g_vm->_video2) + 1) / 2;
+	GameWordPointer += (DecCR(filename, (uint8 *)ImagePointer, (uint8 *)g_vm->_video2) + 1) / 2;
 	memcpy(&BmInfo, (SBmInfo *)ImagePointer, sizeof(SBmInfo));
 	ImagePointer += 4;
 	g_vm->_graphicsMgr->updatePixelFormat(ImagePointer, BmInfo.dx * BmInfo.dy);
@@ -505,11 +498,9 @@ void ReadLoc() {
 	if ((g_vm->_room[g_vm->_curRoom]._sounds[0] != 0))
 		ReadSounds();
 
-	sprintf(g_vm->UStr, "%s.3d", g_vm->_room[g_vm->_curRoom]._baseName);
 	_actionPointer[0] = (uint8 *)(g_vm->_video2 + GameWordPointer);
-	GameWordPointer += read3D(g_vm->UStr) / 2;
-
-	sprintf(g_vm->UStr, "act\\%s.act", g_vm->_room[g_vm->_curRoom]._baseName);
+	Common::String fname = Common::String::format("%s.3d", g_vm->_room[g_vm->_curRoom]._baseName);
+	GameWordPointer += read3D(fname) / 2;
 
 	wordset(g_vm->_video2, 0, CurRoomMaxX * MAXY);
 	MCopy(g_vm->_video2 + TOP * CurRoomMaxX, ImagePointer, CurRoomMaxX * AREA);
@@ -730,12 +721,11 @@ void ReadSounds() {
 
 		SoundPointer[a] = (uint8 *)(g_vm->_video2 + GameWordPointer);
 
-		sprintf(g_vm->UStr, "%s", GSample[b]._name);
-		if (!scumm_stricmp(g_vm->UStr, "RUOTE2C.WAV"))
+		if (!scumm_stricmp(GSample[b]._name, "RUOTE2C.WAV"))
 			break;
 
-		ff = FastFileOpen(g_vm->UStr);
-		if (ff == NULL)
+		ff = FastFileOpen(GSample[b]._name);
+		if (ff == nullptr)
 			CloseSys(g_vm->_sysText[1]);
 		int len = FastFileRead(ff, SoundPointer[a], FastFileLen(ff));
 		FastFileClose(ff);

@@ -703,7 +703,7 @@ void doCharacter() {
 
 	case ME_CHARACTERCONTINUEACTION:
 		FlagShowCharacter = false;
-		AtFrameHandler(HOMO_ANIM);
+		AtFrameHandler(CHARACTER_ANIM);
 		//	If the animation is over
 		if (!g_vm->_animMgr->_playingAnims[1]) {
 			extern uint16 lastobj;
@@ -711,7 +711,7 @@ void doCharacter() {
 			FlagShowCharacter = true;
 			_characterInMovement = false;
 			g_vm->_characterQueue.initQueue();
-			AtFrameEnd(HOMO_ANIM);
+			AtFrameEnd(CHARACTER_ANIM);
 			FlagWaitRegen = true;
 			lastobj = 0;
 			ShowObjName(g_vm->_curObj, true);
