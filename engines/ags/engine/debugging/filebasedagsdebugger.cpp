@@ -35,7 +35,7 @@ namespace AGS3 {
 using AGS::Shared::Stream;
 using AGS::Shared::TextStreamWriter;
 
-const char *SENT_MESSAGE_FILE_NAME = "dbgrecv.tmp";
+static const char *SENT_MESSAGE_FILE_NAME = "dbgrecv.tmp";
 
 static bool exists(const char *filename) {
 	Common::InSaveFile *save = g_system->getSavefileManager()->openForLoading(filename);

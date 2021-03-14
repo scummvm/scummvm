@@ -34,10 +34,10 @@ namespace AGS3 {
 
 using namespace AGS::Shared;
 
-const auto OBJECT_CACHE_MAGIC_NUMBER = 0xa30b;
-const auto SERIALIZE_BUFFER_SIZE = 10240;
-const auto GARBAGE_COLLECTION_INTERVAL = 1024;
-const auto RESERVED_SIZE = 2048;
+static const auto OBJECT_CACHE_MAGIC_NUMBER = 0xa30b;
+static const auto SERIALIZE_BUFFER_SIZE = 10240;
+static const auto GARBAGE_COLLECTION_INTERVAL = 1024;
+static const auto RESERVED_SIZE = 2048;
 
 int ManagedObjectPool::Remove(ManagedObject &o, bool force) {
 	if (!o.isUsed()) {

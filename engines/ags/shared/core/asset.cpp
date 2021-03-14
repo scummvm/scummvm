@@ -31,6 +31,7 @@ AssetInfo::AssetInfo()
 	, Offset(0)
 	, Size(0) {
 }
+
 void AssetLibInfo::Unload() {
 	BaseFileName = "";
 	BaseFilePath = "";

@@ -27,7 +27,6 @@
 #include "ags/globals.h"
 
 namespace AGS3 {
-
 namespace AGS {
 namespace Shared {
 

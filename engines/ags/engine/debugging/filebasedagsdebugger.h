@@ -29,7 +29,6 @@ namespace AGS3 {
 
 struct FileBasedAGSDebugger : IAGSEditorDebugger {
 public:
-
 	bool Initialize() override;
 	void Shutdown() override;
 	bool SendMessageToEditor(const char *message) override;
@@ -37,8 +36,6 @@ public:
 	char *GetNextMessage() override;
 
 };
-
-extern const char *SENT_MESSAGE_FILE_NAME;
 
 } // namespace AGS3
 

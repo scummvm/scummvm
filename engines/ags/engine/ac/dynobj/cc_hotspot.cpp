@@ -28,8 +28,6 @@
 
 namespace AGS3 {
 
-
-
 // return the type name of the object
 const char *CCHotspot::GetType() {
 	return "Hotspot";

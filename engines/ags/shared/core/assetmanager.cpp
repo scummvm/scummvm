@@ -30,13 +30,12 @@ namespace AGS3 {
 namespace AGS {
 namespace Shared {
 
+AssetManager *AssetManager::_theAssetManager = nullptr;
+
 AssetLocation::AssetLocation()
 	: Offset(0)
 	, Size(0) {
 }
-
-
-AssetManager *AssetManager::_theAssetManager = nullptr;
 
 /* static */ bool AssetManager::CreateInstance() {
 	// Issue a warning - recreating asset manager is not a normal behavior

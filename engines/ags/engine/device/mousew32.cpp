@@ -70,8 +70,6 @@ enum {
 	NONE = -1, LEFT = 0, RIGHT = 1, MIDDLE = 2
 };
 
-extern char lib_file_name[13];
-
 static const int MB_ARRAY[3] = { 1, 2, 4 };
 
 void mgraphconfine(int x1, int y1, int x2, int y2) {
