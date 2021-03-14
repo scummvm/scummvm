@@ -38,7 +38,7 @@ UnicodeBiDiText::UnicodeBiDiText(const Common::String &str, const Common::CodePa
 	initWithU32String(str.decode(page));
 }
 
-UnicodeBiDiText::UnicodeBiDiText(const Common::String &str, const Common::CodePage page, uint *pbase_dir) : logical(str), _log_to_vis_index(NULL), _vis_to_log_index(NULL) {
+UnicodeBiDiText::UnicodeBiDiText(const Common::String &str, const Common::CodePage page, uint32 *pbase_dir) : logical(str), _log_to_vis_index(NULL), _vis_to_log_index(NULL) {
 	_pbase_dir = *pbase_dir;
 	initWithU32String(str.decode(page));
 	*pbase_dir = _pbase_dir;
@@ -71,11 +71,12 @@ void UnicodeBiDiText::initWithU32String(const U32String &input) {
 	_log_to_vis_index = new uint32[input_size];
 	_vis_to_log_index = new uint32[input_size];
 
+	FriBidiParType pbase_dir = FriBidiParType(_pbase_dir);
 	if (!fribidi_log2vis(
 		/* input */
 		(const FriBidiChar *)input.c_str(),
 		input_size,
-		&_pbase_dir,
+		&pbase_dir,
 		/* output */
 		visual_str,
 		(FriBidiStrIndex *)_log_to_vis_index,	// position_L_to_V_list,
@@ -93,6 +94,7 @@ void UnicodeBiDiText::initWithU32String(const U32String &input) {
 		visual = U32String((uint32 *)visual_str, input.size());
 		delete[] visual_str;
 	}
+	_pbase_dir = pbase_dir;
 #else
 	static bool fribidiWarning = true;
 	if (fribidiWarning) {
