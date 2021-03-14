@@ -57,6 +57,16 @@ const uint32 JpegZigZagOutputOrderCodes[JpegSampleSize] = {0,  1,  5,  6,  14, 1
                                                                  41, 43, 9,  11, 18, 24, 31, 40, 44, 53, 10, 19, 23, 32, 39, 45, 52, 54, 20, 21, 33, 38,
                                                                  46, 51, 55, 60, 21, 34, 37, 47, 50, 56, 59, 61, 35, 36, 48, 49, 57, 58, 62, 63};
 
+static const int32 IntegerScale = 6;
+
+static int32 IC4;
+static int32 ISEC2;
+static int32 ISEC6;
+
+static double FC4;
+static double FSEC2;
+static double FSEC6;
+
 JpegDecoder::JpegDecoder() {
 	Initialize();
 	return;
@@ -89,6 +99,14 @@ void JpegDecoder::Initialize() {
 	scan_components = new JpegDecoderComponent *[JpegMaxComponentsPerScan];
 
 	bit_position = 0;
+
+	IC4 = (int32)((1 << IntegerScale) * cos(M_PI * 4.0 / 16.0));
+	ISEC2 = (int32)((1 << (IntegerScale - 1)) / cos(M_PI * 2.0 / 16.0));
+	ISEC6 = (int32)((1 << (IntegerScale - 1)) / cos(M_PI * 6.0 / 16.0));
+
+	FC4 = cos(M_PI * 4.0 / 16.0);
+	FSEC2 = 0.5 / cos(M_PI * 2.0 / 16.0);
+	FSEC6 = 0.5 / cos(M_PI * 6.0 / 16.0);
 }
 
 void JpegDecoder::ReadMarker() {
@@ -630,16 +648,6 @@ void JpegDecoderQuantizationTable::BuildScaledTables() {
 // quantization.
 //
 JpegDecoderDataUnit::IDctFunction JpegDecoderDataUnit::idct_function = &JpegDecoderDataUnit::IntegerInverseDCT;
-
-const int32 IntegerScale = 6;
-
-const int32 IC4 = (int32)((1 << IntegerScale) * cos(M_PI * 4.0 / 16.0));
-const int32 ISEC2 = (int32)((1 << (IntegerScale - 1)) / cos(M_PI * 2.0 / 16.0));
-const int32 ISEC6 = (int32)((1 << (IntegerScale - 1)) / cos(M_PI * 6.0 / 16.0));
-
-const double FC4 = cos(M_PI * 4.0 / 16.0);
-const double FSEC2 = 0.5 / cos(M_PI * 2.0 / 16.0);
-const double FSEC6 = 0.5 / cos(M_PI * 6.0 / 16.0);
 
 //
 //  Description:
