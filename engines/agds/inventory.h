@@ -33,6 +33,7 @@ namespace Common { class ReadStream; class WriteStream; }
 namespace AGDS {
 class Object;
 typedef Common::SharedPtr<Object> ObjectPtr;
+class AGDSEngine;
 
 class Inventory {
 	class AGDSEngine* _engine;
@@ -54,6 +55,8 @@ public:
 		return _enabled;
 	}
 	void enable(bool enabled) {
+		if (!enabled)
+			visible(false);
 		_enabled = enabled;
 	}
 
@@ -61,9 +64,7 @@ public:
 		return _visible;
 	}
 
-	void visible(bool visible) {
-		_visible = visible;
-	}
+	void visible(bool visible);
 
 	int add(const ObjectPtr & object);
 	bool remove(const Common::String &name);

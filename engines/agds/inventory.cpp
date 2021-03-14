@@ -24,6 +24,7 @@
 #include "agds/object.h"
 #include "agds/resourceManager.h"
 #include "agds/agds.h"
+#include "agds/systemVariable.h"
 #include "common/debug.h"
 #include "common/textconsole.h"
 #include "graphics/transparent_surface.h"
@@ -32,6 +33,25 @@ namespace AGDS {
 
 Inventory::Inventory(AGDSEngine* engine): _engine(engine), _entries(kMaxSize), _enabled(false), _visible(false) {}
 Inventory::~Inventory() {}
+
+void Inventory::visible(bool visible) {
+	if (_visible == visible)
+		return;
+
+	_visible = visible;
+
+	if (!_enabled || !visible) {
+		debug("closing inventory...");
+		Common::String inv_close = _engine->getSystemVariable("inv_close")->getString();
+		if (!inv_close.empty())
+			_engine->runObject(inv_close);
+	} else if (enabled() && visible) {
+		debug("opening inventory...");
+		Common::String inv_open = _engine->getSystemVariable("inv_open")->getString();
+		if (!inv_open.empty())
+			_engine->runObject(inv_open);
+	}
+}
 
 int Inventory::free() const {
 	int free = 0;
