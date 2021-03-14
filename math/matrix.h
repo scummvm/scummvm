@@ -75,7 +75,6 @@ public:
 	 */
 	class Row {
 	public:
-		Row &operator=(const Row &r);
 		Row &operator<<(float value);
 
 	private:
@@ -144,6 +143,7 @@ protected:
 	MatrixBase();
 	MatrixBase(const float *data);
 	MatrixBase(const MatrixBase<rows, cols> &m);
+	MatrixBase &operator=(const MatrixBase<rows, cols> &m);
 
 	inline const Matrix<rows, cols> &getThis() const {
 		return *static_cast<const Matrix<rows, cols> *>(this); }
@@ -228,6 +228,11 @@ MatrixBase<rows, cols>::MatrixBase(const MatrixBase<rows, cols> &m) {
 	setData(m._values);
 }
 
+template<int rows, int cols>
+MatrixBase<rows, cols> &MatrixBase<rows, cols>::operator=(const MatrixBase<rows, cols> &m) {
+	setData(m._values);
+	return *this;
+}
 
 
 
@@ -386,15 +391,6 @@ template<int rows, int cols>
 MatrixBase<rows, cols>::Row::Row(MatrixBase<rows, cols> *m, int row) :
 	_matrix(m), _row(row), _col(0) {
 
-}
-
-template<int rows, int cols>
-typename MatrixBase<rows, cols>::Row &MatrixBase<rows, cols>::Row::operator=(const Row &r) {
-	_col = r._col;
-	_row = r._row;
-	_matrix = r._matrix;
-
-	return *this;
 }
 
 template<int rows, int cols>
