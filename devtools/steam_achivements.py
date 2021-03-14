@@ -9,17 +9,19 @@
 # in AGS achievements_table.h
 
 import requests
+import argparse
 from requests_html import HTMLSession
 import sys
 
-if len(sys.argv) < 2:
-	steam_game_id = 212050
-	sys.stderr.write('missing steam game id as first parameter - assuming {0}\n'.format(steam_game_id))
-else:
-	steam_game_id = sys.argv[1]
+parser = argparse.ArgumentParser()
+parser.add_argument('--steamid', required=True, default='212050', type=int, help="The steam game id")
+parser.add_argument('--gameid', help="The scummvm game id string")
+parser.add_argument('-v', '--verbose', action='store_true')
+args = parser.parse_args()
 
-
-statsurl = "https://steamdb.info/app/{0}/stats/".format(steam_game_id)
+statsurl = "https://steamdb.info/app/{0}/stats/".format(args.steamid)
+if args.verbose:
+	sys.stderr.write('query {0}\n'.format(statsurl))
 
 try:
 	session = HTMLSession()
@@ -28,15 +30,19 @@ try:
 	game = response.html.xpath("//h1[@itemprop='name']/text()")
 	achievements_columns = 3 # id, text, img
 	entries = int(len(achievements_rows) / achievements_columns)
-	sys.stderr.write('found {0} achievements\n'.format(entries))
+	if entries == 0:
+		sys.exit(127)
 
-	if len(sys.argv) < 3:
+	if args.verbose:
+		sys.stderr.write('found {0} achievements\n'.format(entries))
+
+	scummvm_game_id = args.gameid
+	if not scummvm_game_id:
 		scummvm_game_id = game[0].lower().replace(' ', '').replace('-', '')
-		sys.stderr.write('missing scummvm game id - assuming {0}\n'.format(scummvm_game_id))
-	else:
-		scummvm_game_id = sys.argv[2]
+		if args.verbose:
+			sys.stderr.write('missing scummvm game id - assuming {0}\n'.format(scummvm_game_id))
 
-	print("\t{\n\t\t\"%s\",\n\t\tCommon::STEAM_ACHIEVEMENTS,\n\t\t\"%s\",\n\t\t{" % (scummvm_game_id, steam_game_id))
+	print("\t{\n\t\t\"%s\",\n\t\tCommon::STEAM_ACHIEVEMENTS,\n\t\t\"%s\",\n\t\t{" % (scummvm_game_id, args.steamid))
 	for i in range(entries):
 		idx       = achievements_columns * i
 		ach_id    = achievements_rows[idx + 0].text.strip()
