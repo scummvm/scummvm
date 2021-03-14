@@ -330,7 +330,7 @@ void AGDSEngine::loadScreen(const Common::String &name, ScreenLoadingType loadin
 	if (savePatch)
 		saveScreenPatch();
 	returnCurrentInventoryObject();
-	_inventory.enable(false);
+	_inventory.visible(false);
 	_mouseMap.hideAll(this);
 
 	auto previousScreenName = _currentScreenName;
@@ -553,7 +553,7 @@ Common::Error AGDSEngine::run() {
 							region->show(this);
 						}
 					}
-					_inventory.enable(_inventoryRegion ? !_mouseMap.disabled() && _inventoryRegion->pointIn(_mouse) : false);
+					_inventory.visible(_inventoryRegion ? !_mouseMap.disabled() && _inventoryRegion->pointIn(_mouse) : false);
 				}
 				break;
 			case Common::EVENT_LBUTTONDOWN:
@@ -911,7 +911,7 @@ void AGDSEngine::addSystemVar(const Common::String &name, SystemVariable *var) {
 
 void AGDSEngine::tell(Process &process, const Common::String &regionName, Common::String text, Common::String sound, bool npc) {
 	if (getSystemVariable("tell_close_inv")->getInteger())
-		_inventory.enable(false);
+		_inventory.visible(false);
 
 	int font_id = getSystemVariable(npc? "npc_tell_font": "tell_font")->getInteger();
 	Common::Point pos;
@@ -994,20 +994,6 @@ SystemVariable *AGDSEngine::getSystemVariable(const Common::String &name) {
 }
 
 void AGDSEngine::tickInventory() {
-	if (!_inventory.enabled() && _inventory.visible()) {
-		debug("closing inventory...");
-		Common::String inv_close = getSystemVariable("inv_close")->getString();
-		if (!inv_close.empty())
-			runObject(inv_close);
-		_inventory.visible(false);
-	} else if (_inventory.enabled() && !_inventory.visible()) {
-		debug("opening inventory...");
-		Common::String inv_open = getSystemVariable("inv_open")->getString();
-		if (!inv_open.empty())
-			runObject(inv_open);
-		_inventory.visible(true);
-	}
-
 	const Common::String &inv_region_name = getSystemVariable("inv_region")->getString();
 	if (!inv_region_name.empty()) {
 		if (!_inventoryRegion || _inventoryRegionName != inv_region_name) {
