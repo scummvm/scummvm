@@ -32,6 +32,13 @@
 
 namespace ICB {
 
+#define RGBBytesPerPixel    4                                 // 32 bit
+#define RGBWidth            SCREEN_WIDTH                      // width
+#define RGBHeight           SCREEN_DEPTH                      // height
+#define RGBPitch            (RGBWidth * RGBBytesPerPixel)     // pitch
+#define ZPitch              (ZBytesPerPixel * SCREEN_WIDTH)   // z-pitch
+#define ZBytesPerPixel      2                                 // 16bit z-buffer
+
 #define MAXIMUM_POTENTIAL_ON_SCREEN_ACTOR_QUANTITY 32
 #define ACTOR_SHADE_LIMIT 0.3f
 

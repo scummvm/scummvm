@@ -71,13 +71,14 @@ typedef struct {
 #define ACTORSORTBUFFERSIZE (256 * 1024)
 #define MAXACTORQTY MAXIMUM_POTENTIAL_ON_SCREEN_ACTOR_QUANTITY
 
+#define RGBBytesPerPixel    4                                 // 32 bit
+#define RGBWidth            SCREEN_WIDTH                      // width
+#define RGBHeight           SCREEN_DEPTH                      // height
+#define RGBPitch            (RGBWidth * RGBBytesPerPixel)     // pitch
+#define ZPitch              (ZBytesPerPixel * SCREEN_WIDTH)   // z-pitch
+#define ZBytesPerPixel      2                                 // 16bit z-buffer
+
 RevRenderDevice revRen;
-int32 RGBWidth = SCREEN_WIDTH;                // width
-int32 RGBHeight = SCREEN_DEPTH;               // height
-int32 RGBBytesPerPixel = 4;                   // 32 bit
-int32 RGBPitch = RGBWidth * RGBBytesPerPixel; // pitch
-int32 ZBytesPerPixel = 2;                     // 16bit z-buffer
-int32 ZPitch = ZBytesPerPixel * SCREEN_WIDTH; // z-pitch
 char *pActorBuffer = NULL;                  // buffer for drawing actors
 char *pRGB = NULL;                          // buffer for RGB data
 char *pZa = NULL;                           // buffer for actor z data
@@ -691,8 +692,6 @@ void StageDrawPoly(SDactor *actors, uint32 actorQty) {
 	uint32 *source = (uint32 *)pRGB;
 	uint16 *zActor = (uint16 *)pZa;
 	screenShakeOffset += ((GetShakeY() * pitch >> 2) + GetShakeX());
-
-	RGBPitch = RGBWidth * RGBBytesPerPixel;
 
 	{
 		/*try*/ {

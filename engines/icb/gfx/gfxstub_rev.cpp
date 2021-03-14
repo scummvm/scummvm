@@ -30,6 +30,7 @@
 #include "engines/icb/gfx/gfxstub.h"
 #include "engines/icb/gfx/gfxstub_dutch.h"
 #include "engines/icb/gfx/gfxstub_rev_dutch.h"
+#include "engines/icb/p4_generic_pc.h"
 
 namespace ICB {
 
@@ -43,16 +44,18 @@ uint8 pcRGBA[TEMP_TEXTURE_WIDTH * TEMP_TEXTURE_HEIGHT * BYTES_PER_COLOUR];
 
 int32 bpp = 0;
 
+#define RGBBytesPerPixel    4                                 // 32 bit
+#define RGBWidth            SCREEN_WIDTH                      // width
+#define RGBHeight           SCREEN_DEPTH                      // height
+#define RGBPitch            (RGBWidth * RGBBytesPerPixel)     // pitch
+#define ZPitch              (ZBytesPerPixel * SCREEN_WIDTH)   // z-pitch
+#define ZBytesPerPixel      2                                 // 16bit z-buffer
+
 // The big screen bitmap to draw everything into
 extern char *pRGB;
-extern int32 RGBWidth;
-extern int32 RGBHeight;
-extern int32 RGBPitch;
-extern int32 RGBBytesPerPixel;
+
 // The z buffer bitmap
 extern char *pZ;
-extern int32 ZPitch;
-extern int32 ZBytesPerPixel;
 
 #define MAX_POLYGON_VERTS 8
 vertex2D verts[8];
