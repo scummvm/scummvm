@@ -40,7 +40,7 @@ Object::Object(const Common::String &name, Common::SeekableReadStream *stream) :
                                                                                  _pos(), _z(10),
                                                                                  _clickHandler(0), _examineHandler(0), _userUseHandler(0),
 																				 _throwHandler(0), _useOnHandler(0),
-                                                                                 _alpha(255), _alive(true),
+                                                                                 _alpha(255), _scale(100), _alive(true),
 																				 _persistent(true), _allowInitialise(true) {
 	uint16 id = stream->readUint16LE();
 	debug("id: 0x%02x %u", id, id);
@@ -244,7 +244,7 @@ bool Object::pointIn(Common::Point pos) {
 	return false;
 }
 
-void Object::paint(AGDSEngine &engine, Graphics::Surface &backbuffer) const {
+void Object::paint(AGDSEngine &engine, Graphics::Surface &backbuffer, Common::Point pos) const {
 	auto picture = getPicture();
 	if (picture) {
 		Common::Point dst = getPosition();
@@ -261,13 +261,13 @@ void Object::paint(AGDSEngine &engine, Graphics::Surface &backbuffer) const {
 	}
 
 	if (!_text.empty()) {
-		Common::Point pos = _region ? _region->center + _regionOffset : _pos;
+		pos += _region ? _region->center + _regionOffset : _pos;
 		int w = backbuffer.w - pos.x;
 		engine.getFont(engine.getSystemVariable("objtext_font")->getInteger())->drawString(&backbuffer, _text, pos.x, pos.y, w, 0);
 	}
 
 	if (engine.showHints() && !_title.empty()) {
-		Common::Point pos = _region ? _region->center : _pos;
+		pos += _region ? _region->center : _pos;
 		int w = backbuffer.w - pos.x;
 		auto font = engine.getFont(engine.getSystemVariable("tell_font")->getInteger());
 		pos.x -= font->getStringWidth(_title) / 2;

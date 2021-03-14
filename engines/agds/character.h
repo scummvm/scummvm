@@ -120,7 +120,7 @@ public:
 	}
 
 	void tick();
-	void paint(Graphics::Surface & backbuffer) const;
+	void paint(Graphics::Surface & backbuffer, Common::Point pos) const;
 
 	int getDirectionForMovement(Common::Point delta);
 

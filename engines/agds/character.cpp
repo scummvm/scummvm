@@ -196,11 +196,11 @@ void Character::tick() {
 }
 
 
-void Character::paint(Graphics::Surface &backbuffer) const {
+void Character::paint(Graphics::Surface &backbuffer, Common::Point pos) const {
 	if (!_enabled || !_visible || !_animation)
 		return;
 
-	Common::Point pos = _pos + _animationPos;
+	pos += _pos + _animationPos;
 
 	pos.y -= _animation->height();
 	pos.x -= _animation->width() / 2;

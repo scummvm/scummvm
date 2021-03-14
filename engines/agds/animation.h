@@ -144,6 +144,9 @@ public:
 	void scale(float scale) {
 		_scale = scale;
 	}
+	float scale() const {
+		return _scale;
+	}
 
 	int phase() const {
 		return _phase;
