@@ -149,6 +149,7 @@ struct ScriptPosition;
 struct ScriptRegion;
 struct ScriptString;
 struct ScriptSystem;
+struct sound_cache_entry_t;
 struct SOUNDCLIP;
 struct SpeechLipSyncLine;
 struct SpriteListEntry;
@@ -1119,6 +1120,16 @@ public:
 	new_line_hook_type _new_line_hook = nullptr;
 	int _maxWhileLoops = 0;
 	ccInstance *_loadedInstances[MAX_LOADED_INSTANCES];
+
+	/**@}*/
+
+	/**
+	 * \defgroup soundcache globals
+	 * @{
+	 */
+
+	sound_cache_entry_t *_sound_cache_entries = nullptr;
+	unsigned int _sound_cache_counter = 0;
 
 	/**@}*/
 

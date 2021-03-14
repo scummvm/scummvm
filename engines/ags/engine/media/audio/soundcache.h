@@ -34,7 +34,7 @@ namespace AGS3 {
 
 //#define SOUND_CACHE_DEBUG
 
-typedef struct {
+struct sound_cache_entry_t {
 	char *file_name;
 	int number;
 	int free;
@@ -42,7 +42,7 @@ typedef struct {
 	unsigned int size;
 	char *data;
 	int reference;
-} sound_cache_entry_t;
+};
 
 void clear_sound_cache();
 void sound_cache_free(char *buffer);

@@ -35,26 +35,23 @@ namespace AGS3 {
 
 using namespace Shared;
 
-sound_cache_entry_t *sound_cache_entries = nullptr;
-unsigned int sound_cache_counter = 0;
-
 void clear_sound_cache() {
 	AGS::Engine::MutexLock _lock(::AGS::g_vm->_soundCacheMutex);
 
-	if (sound_cache_entries) {
+	if (_G(sound_cache_entries)) {
 		int i;
 		for (i = 0; i < _G(psp_audio_cachesize); i++) {
-			if (sound_cache_entries[i].data) {
-				free(sound_cache_entries[i].data);
-				sound_cache_entries[i].data = nullptr;
-				free(sound_cache_entries[i].file_name);
-				sound_cache_entries[i].file_name = nullptr;
-				sound_cache_entries[i].reference = 0;
+			if (_G(sound_cache_entries)[i].data) {
+				free(_G(sound_cache_entries)[i].data);
+				_G(sound_cache_entries)[i].data = nullptr;
+				free(_G(sound_cache_entries)[i].file_name);
+				_G(sound_cache_entries)[i].file_name = nullptr;
+				_G(sound_cache_entries)[i].reference = 0;
 			}
 		}
 	} else {
-		sound_cache_entries = (sound_cache_entry_t *)malloc(_G(psp_audio_cachesize) * sizeof(sound_cache_entry_t));
-		memset(sound_cache_entries, 0, _G(psp_audio_cachesize) * sizeof(sound_cache_entry_t));
+		_G(sound_cache_entries) = (sound_cache_entry_t *)malloc(_G(psp_audio_cachesize) * sizeof(sound_cache_entry_t));
+		memset(_G(sound_cache_entries), 0, _G(psp_audio_cachesize) * sizeof(sound_cache_entry_t));
 	}
 }
 
@@ -66,12 +63,12 @@ void sound_cache_free(char *buffer) {
 #endif
 	int i;
 	for (i = 0; i < _G(psp_audio_cachesize); i++) {
-		if (sound_cache_entries[i].data == buffer) {
-			if (sound_cache_entries[i].reference > 0)
-				sound_cache_entries[i].reference--;
+		if (_G(sound_cache_entries)[i].data == buffer) {
+			if (_G(sound_cache_entries)[i].reference > 0)
+				_G(sound_cache_entries)[i].reference--;
 
 #ifdef SOUND_CACHE_DEBUG
-			Debug::Printf("..decreased reference count of slot %d to %d\n", i, sound_cache_entries[i].reference);
+			Debug::Printf("..decreased reference count of slot %d to %d\n", i, _G(sound_cache_entries)[i].reference);
 #endif
 			return;
 		}
@@ -99,18 +96,18 @@ char *get_cached_sound(const AssetPath &asset_name, size_t &size) {
 
 	int i;
 	for (i = 0; i < _G(psp_audio_cachesize); i++) {
-		if (sound_cache_entries[i].data == nullptr)
+		if (_G(sound_cache_entries)[i].data == nullptr)
 			continue;
 
-		if (strcmp(asset_name.second, sound_cache_entries[i].file_name) == 0) {
+		if (strcmp(asset_name.second, _G(sound_cache_entries)[i].file_name) == 0) {
 #ifdef SOUND_CACHE_DEBUG
 			Debug::Printf("..found in slot %d\n", i);
 #endif
-			sound_cache_entries[i].reference++;
-			sound_cache_entries[i].last_used = sound_cache_counter++;
-			size = sound_cache_entries[i].size;
+			_G(sound_cache_entries)[i].reference++;
+			_G(sound_cache_entries)[i].last_used = _G(sound_cache_counter)++;
+			size = _G(sound_cache_entries)[i].size;
 
-			return sound_cache_entries[i].data;
+			return _G(sound_cache_entries)[i].data;
 		}
 	}
 
@@ -124,19 +121,19 @@ char *get_cached_sound(const AssetPath &asset_name, size_t &size) {
 
 	// Find free slot
 	for (i = 0; i < _G(psp_audio_cachesize); i++) {
-		if (sound_cache_entries[i].data == nullptr)
+		if (_G(sound_cache_entries)[i].data == nullptr)
 			break;
 	}
 
 	// No free slot?
 	if (i == _G(psp_audio_cachesize)) {
-		unsigned int oldest = sound_cache_counter;
+		unsigned int oldest = _G(sound_cache_counter);
 		int index = -1;
 
 		for (i = 0; i < _G(psp_audio_cachesize); i++) {
-			if (sound_cache_entries[i].reference == 0) {
-				if (sound_cache_entries[i].last_used < oldest) {
-					oldest = sound_cache_entries[i].last_used;
+			if (_G(sound_cache_entries)[i].reference == 0) {
+				if (_G(sound_cache_entries)[i].last_used < oldest) {
+					oldest = _G(sound_cache_entries)[i].last_used;
 					index = i;
 				}
 			}
@@ -170,21 +167,21 @@ char *get_cached_sound(const AssetPath &asset_name, size_t &size) {
 		Debug::Printf("..loading cached in slot %d\n", i);
 #endif
 
-		if (sound_cache_entries[i].data) {
-			free(sound_cache_entries[i].data);
+		if (_G(sound_cache_entries)[i].data) {
+			free(_G(sound_cache_entries)[i].data);
 		}
 
-		sound_cache_entries[i].size = size;
-		sound_cache_entries[i].data = newdata;
+		_G(sound_cache_entries)[i].size = size;
+		_G(sound_cache_entries)[i].data = newdata;
 
-		if (sound_cache_entries[i].file_name)
-			free(sound_cache_entries[i].file_name);
-		sound_cache_entries[i].file_name = (char *)malloc(strlen(asset_name.second) + 1);
-		strcpy(sound_cache_entries[i].file_name, asset_name.second);
-		sound_cache_entries[i].reference = 1;
-		sound_cache_entries[i].last_used = sound_cache_counter++;
+		if (_G(sound_cache_entries)[i].file_name)
+			free(_G(sound_cache_entries)[i].file_name);
+		_G(sound_cache_entries)[i].file_name = (char *)malloc(strlen(asset_name.second) + 1);
+		strcpy(_G(sound_cache_entries)[i].file_name, asset_name.second);
+		_G(sound_cache_entries)[i].reference = 1;
+		_G(sound_cache_entries)[i].last_used = _G(sound_cache_counter)++;
 
-		return sound_cache_entries[i].data;
+		return _G(sound_cache_entries)[i].data;
 	}
 }
 
