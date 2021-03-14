@@ -28,6 +28,7 @@ void TextLayout::reset(AGDSEngine &engine) {
 			engine.setGlobal(var, 0);
 		}
 		engine.reactivate(_process);
+		engine.inventory().enable(true);
 	}
 }
 
