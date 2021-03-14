@@ -102,8 +102,12 @@ void SoundGenMIDI::sendToChannel(byte channel, uint32 b) {
 			_channelsTable[channel]->volume(_channelsVolume[channel] * _masterVolume / 255);
 	}
 
-	if (_channelsTable[channel])
-		_channelsTable[channel]->send(b);
+	if (_channelsTable[channel]) {
+		if (_vm->getFlag(VM_FLAG_SOUND_ON))
+			_channelsTable[channel]->send(b);
+		else
+			_channelsTable[channel]->send(0x7bb0 + channel);	// all notes off
+	}
 }
 
 void SoundGenMIDI::endOfTrack() {
