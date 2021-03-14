@@ -29,6 +29,7 @@
 
       settings/game
       settings/engine
+      settings/backend
       settings/graphics
       settings/control
       settings/keymaps

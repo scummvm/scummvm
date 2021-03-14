@@ -28,8 +28,5 @@ Joy deadzone
 
 	*joystick_deadzone*
 
-Show on-screen control
-	Toggles the small on-screen keyboard icon on and off.
-
 Touchpad mouse mode
 	Toggles between direct mode and touchpad mode.
