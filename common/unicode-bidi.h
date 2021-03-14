@@ -53,11 +53,11 @@ private:
 public:
 	const Common::U32String logical; // original string, ordered logically
 	Common::U32String visual; // from fribidi conversion, ordered visually
-	uint32 _pbase_dir;
+	long unsigned int _pbase_dir;
 
 	UnicodeBiDiText(const Common::U32String &str);
 	UnicodeBiDiText(const Common::String &str, const Common::CodePage page);
-	UnicodeBiDiText(const Common::String &str, const Common::CodePage page, uint *pbase_dir);
+	UnicodeBiDiText(const Common::String &str, const Common::CodePage page, long unsigned int *pbase_dir);
 	~UnicodeBiDiText();
 
 	/**
