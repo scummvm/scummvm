@@ -18,7 +18,9 @@ parser.add_argument('-a', '--all', action='store_true', help="Show all matches, 
 parser.add_argument('-v', '--verbose', action='store_true', help="Also print some meta information next to the steam game id")
 args = parser.parse_args()
 
-searchurl = "https://steamdb.info/search/?a=app&q={0}&type=1&category={1}".format(urllib.parse.quote_plus(args.name), args.category)
+searchurl = "https://steamdb.info/search/?a=app&type=1&category={1}&q={0}".format(urllib.parse.quote_plus(args.name, safe='!'), args.category)
+if args.verbose:
+	sys.stderr.write('query url: {0}\n'.format(searchurl))
 
 try:
 	session = HTMLSession()
