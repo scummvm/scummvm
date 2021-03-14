@@ -168,6 +168,8 @@ void CreateGlobalObjects() {
 	gtetrans = new MATRIX;
 	gtecolour = new MATRIX;
 	gtelight = new MATRIX;
+	for (int i = 0; i < MAX_REGISTERED_SOUNDS; i++)
+		g_registeredSounds[i] = new CRegisteredSound;
 
 	// The order of creation matters:
 	g_oEventManager = new _event_manager;
@@ -209,6 +211,8 @@ void DestroyGlobalObjects() {
 	delete gtetrans;
 	delete gtecolour;
 	delete gtelight;
+	for (int i = 0; i < MAX_REGISTERED_SOUNDS; i++)
+		delete g_registeredSounds[i];
 
 	delete g_oEventManager;
 	delete g_oLineOfSight;
