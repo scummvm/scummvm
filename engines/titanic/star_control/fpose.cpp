@@ -55,10 +55,6 @@ FPose::FPose(Axis axis, float amount) {
 	setRotationMatrix(axis, amount);
 }
 
-FPose::FPose(const FPose &src) : FMatrix() {
-	copyFrom(src);
-}
-
 FPose::FPose(const FPose &s1, const FPose &s2) {
 	fposeProd(s1, s2, *this);
 }
