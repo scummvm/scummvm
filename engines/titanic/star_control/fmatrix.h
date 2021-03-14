@@ -41,7 +41,6 @@ public:
 public:
 	FMatrix();
 	FMatrix(const FVector &, const FVector &, const FVector &);
-	FMatrix(const FMatrix &src);
 
 	/**
 	 * Load the data for the class from file

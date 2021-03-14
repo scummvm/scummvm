@@ -38,7 +38,6 @@ public:
 public:
 	FPose();
 	FPose(Axis axis, float amount);
-	FPose(const FPose &src);
 	FPose(int mode, const FVector &src);
 	/**
 	 * This fpose is the fpose product of s1 (on the left) and s2 (on the right)

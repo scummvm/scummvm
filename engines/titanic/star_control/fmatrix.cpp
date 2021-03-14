@@ -51,12 +51,6 @@ FMatrix::FMatrix(const FVector &row1, const FVector &row2, const FVector &row3) 
 	_row3 = row3;
 }
 
-FMatrix::FMatrix(const FMatrix &src) {
-	_row1 = src._row1;
-	_row2 = src._row2;
-	_row3 = src._row3;
-}
-
 void FMatrix::load(SimpleFile *file, int param) {
 	_row1._x = file->readFloat();
 	_row1._y = file->readFloat();
