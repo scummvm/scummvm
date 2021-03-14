@@ -209,6 +209,18 @@ public:
 	/**@}*/
 
 	/**
+	 * \defgroup agsplatformdriver globals
+	 * @{
+	 */
+
+	// We don't have many places where we delay longer than a frame, but where we
+	// do, we should give the audio layer a chance to update.
+	// 16 milliseconds is rough period for 60fps
+	const std::chrono::milliseconds _MaximumDelayBetweenPolling = std::chrono::milliseconds(16);
+
+	/**@}*/
+
+	/**
 	 * \defgroup agsstaticobject globals
 	 * @{
 	 */
