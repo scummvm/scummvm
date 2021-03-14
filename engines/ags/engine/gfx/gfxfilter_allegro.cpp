@@ -21,6 +21,7 @@
  */
 
 #include "ags/engine/gfx/gfxfilter_allegro.h"
+#include "ags/globals.h"
 
 namespace AGS3 {
 namespace AGS {
@@ -28,8 +29,6 @@ namespace Engine {
 namespace ALGfx {
 
 using namespace Shared;
-
-const GfxFilterInfo AllegroGfxFilter::FilterInfo = GfxFilterInfo("StdScale", "Nearest-neighbour");
 
 AllegroGfxFilter::AllegroGfxFilter()
 	: realScreen(nullptr)
@@ -41,7 +40,7 @@ AllegroGfxFilter::AllegroGfxFilter()
 }
 
 const GfxFilterInfo &AllegroGfxFilter::GetInfo() const {
-	return FilterInfo;
+	return _GP(allegroFilterInfo);
 }
 
 Bitmap *AllegroGfxFilter::InitVirtualScreen(Bitmap *screen, const Size src_size, const Rect dst_rect) {

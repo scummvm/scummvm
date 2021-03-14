@@ -69,6 +69,7 @@ class RoomStruct;
 namespace Engine {
 
 class ConsoleOutputTarget;
+struct GfxFilterInfo;
 class IDriverDependantBitmap;
 class IGfxDriverFactory;
 class IGraphicsDriver;
@@ -707,6 +708,24 @@ public:
 	uint32 _t1 = 0; // timer for FPS
 
 	 /**@}*/
+
+	/**
+	 * \defgroup gfxfilter_allegro globals
+	 * @{
+	 */
+
+	const AGS::Engine::GfxFilterInfo *_allegroFilterInfo;
+
+	/**@}*/
+
+	/**
+	 * \defgroup gfxfilter_allegro globals
+	 * @{
+	 */
+
+	const AGS::Engine::GfxFilterInfo *_hqxFilterInfo;
+
+	/**@}*/
 
 	/**
 	 * \defgroup global_dialog globals

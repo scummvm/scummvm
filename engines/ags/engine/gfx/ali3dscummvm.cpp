@@ -727,16 +727,16 @@ size_t ALScummVMGraphicsFactory::GetFilterCount() const {
 const GfxFilterInfo *ALScummVMGraphicsFactory::GetFilterInfo(size_t index) const {
 	switch (index) {
 	case 0:
-		return &AllegroGfxFilter::FilterInfo;
+		return &_GP(allegroFilterInfo);
 	case 1:
-		return &HqxGfxFilter::FilterInfo;
+		return &_GP(hqxFilterInfo);
 	default:
 		return nullptr;
 	}
 }
 
 String ALScummVMGraphicsFactory::GetDefaultFilterID() const {
-	return AllegroGfxFilter::FilterInfo.Id;
+	return _GP(allegroFilterInfo).Id;
 }
 
 /* static */ ALScummVMGraphicsFactory *ALScummVMGraphicsFactory::GetFactory() {
@@ -752,9 +752,9 @@ ALScummVMGraphicsDriver *ALScummVMGraphicsFactory::EnsureDriverCreated() {
 }
 
 AllegroGfxFilter *ALScummVMGraphicsFactory::CreateFilter(const String &id) {
-	if (AllegroGfxFilter::FilterInfo.Id.CompareNoCase(id) == 0)
+	if (_GP(allegroFilterInfo).Id.CompareNoCase(id) == 0)
 		return new AllegroGfxFilter();
-	else if (HqxGfxFilter::FilterInfo.Id.CompareNoCase(id) == 0)
+	else if (_GP(hqxFilterInfo).Id.CompareNoCase(id) == 0)
 		return new HqxGfxFilter();
 	return nullptr;
 }

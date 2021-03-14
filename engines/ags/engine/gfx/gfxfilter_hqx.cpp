@@ -23,6 +23,7 @@
 #include "ags/shared/gfx/bitmap.h"
 #include "ags/engine/gfx/gfxfilter_hqx.h"
 #include "ags/engine/gfx/hq2x3x.h"
+#include "ags/globals.h"
 
 namespace AGS3 {
 namespace AGS {
@@ -30,8 +31,6 @@ namespace Engine {
 namespace ALGfx {
 
 using namespace Shared;
-
-const GfxFilterInfo HqxGfxFilter::FilterInfo = GfxFilterInfo("Hqx", "Hqx (High Quality)", 2, 3);
 
 HqxGfxFilter::HqxGfxFilter()
 	: _pfnHqx(nullptr)
@@ -43,7 +42,7 @@ HqxGfxFilter::~HqxGfxFilter() {
 }
 
 const GfxFilterInfo &HqxGfxFilter::GetInfo() const {
-	return FilterInfo;
+	return _GP(hqxFilterInfo);
 }
 
 bool HqxGfxFilter::Initialize(const int color_depth, String &err_str) {

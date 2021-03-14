@@ -54,8 +54,6 @@ public:
 	virtual void GetCopyOfScreenIntoBitmap(Bitmap *copyBitmap);
 	virtual void GetCopyOfScreenIntoBitmap(Bitmap *copyBitmap, bool copy_with_yoffset);
 
-	static const GfxFilterInfo FilterInfo;
-
 protected:
 	virtual Bitmap *PreRenderPass(Bitmap *toRender);
 

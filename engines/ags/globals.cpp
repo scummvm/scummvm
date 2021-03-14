@@ -77,6 +77,7 @@
 #include "ags/engine/debugging/logfile.h"
 #include "ags/engine/debugging/messagebuffer.h"
 #include "ags/engine/device/mousew32.h"
+#include "ags/engine/gfx/gfxfilter.h"
 #include "ags/engine/gui/animatingguibutton.h"
 #include "ags/engine/gui/cscidialog.h"
 #include "ags/engine/gui/guidialogdefines.h"
@@ -210,6 +211,13 @@ Globals::Globals() {
 	_StaticRegionArray = new StaticArray();
 	_StaticInventoryArray = new StaticArray();
 	_StaticDialogArray = new StaticArray();
+
+	// gfxfilter_allegro.cpp globals
+	_allegroFilterInfo = new AGS::Engine::GfxFilterInfo("StdScale", "Nearest-neighbour");
+
+	// gfxfilter_hqx.cpp globals
+	_hqxFilterInfo = new AGS::Engine::GfxFilterInfo("Hqx", "Hqx (High Quality)", 2, 3);
+
 
 	// global_dialog.cpp globals
 	_last_in_dialog_request_script_pos = new ScriptPosition();
@@ -414,6 +422,12 @@ Globals::~Globals() {
 	delete _StaticRegionArray;
 	delete _StaticInventoryArray;
 	delete _StaticDialogArray;
+
+	// gfxfilter_allegro.cpp globals
+	delete _allegroFilterInfo;
+
+	// gfxfilter_hqx.cpp globals
+	delete _hqxFilterInfo;
 
 	// global_dialog.cpp globals
 	delete _last_in_dialog_request_script_pos;

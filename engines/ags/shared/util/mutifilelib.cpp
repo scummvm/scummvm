@@ -42,7 +42,7 @@ static const size_t V10LibFileLen = 20;
 static const size_t V10AssetFileLen = 25;
 
 static const int EncryptionRandSeed = 9338638;
-static const String EncryptionString = "My\x1\xde\x4Jibzle";
+static const char *EncryptionString = "My\x1\xde\x4Jibzle";
 
 MFLError ReadSigsAndVersion(Stream *in, MFLVersion *p_lib_version, soff_t *p_abs_offset);
 MFLError ReadSingleFileLib(AssetLibInfo &lib, Stream *in, MFLVersion lib_version);

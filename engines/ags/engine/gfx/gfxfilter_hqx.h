@@ -47,8 +47,6 @@ public:
 	Bitmap *InitVirtualScreen(Bitmap *screen, const Size src_size, const Rect dst_rect) override;
 	Bitmap *ShutdownAndReturnRealScreen() override;
 
-	static const GfxFilterInfo FilterInfo;
-
 protected:
 	Bitmap *PreRenderPass(Bitmap *toRender) override;
 
