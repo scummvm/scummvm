@@ -26,6 +26,11 @@
 
 #ifdef USE_FRIBIDI
 #include <fribidi/fribidi.h>
+#else
+/* This constant is used below in common code
+ * fake it here to lighten code
+ */
+#define FRIBIDI_PAR_ON 0
 #endif
 
 namespace Common {
@@ -107,13 +112,15 @@ void UnicodeBiDiText::initWithU32String(const U32String &input) {
 }
 
 Common::String bidiByLineHelper(Common::String line, va_list args) {
-	Common::CodePage page = va_arg(args, Common::CodePage);
+	/* Common::CodePage is int
+	 * GCC warns that using Common::CodePage in va_arg would abort program */
+	Common::CodePage page = (Common::CodePage) va_arg(args, int);
 	uint32 *pbase_dir = va_arg(args, uint32*);
 	return UnicodeBiDiText(line, page, pbase_dir).visual.encode(page);
 }
 
 String convertBiDiStringByLines(const String &input, const Common::CodePage page) {
-	uint32 pbase_dir = SCUMMVM_FRIBIDI_PAR_ON;
+	uint32 pbase_dir = FRIBIDI_PAR_ON;
 	return input.forEachLine(bidiByLineHelper, page, &pbase_dir);
 }
 

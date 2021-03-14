@@ -27,21 +27,6 @@
 #include "common/ustr.h"
 #include "common/language.h"
 
-
-// SCUMMVM_FRIBIDI_PAR_ON: automatically check the text's direction
-// SCUMMVM_FRIBIDI_PAR_LTR, SCUMMVM_FRIBIDI_PAR_RTL: enforce LTR or RTL direction
-// if not USE_FRIBIDI, these defines values don't matter
-#ifdef USE_FRIBIDI
-#define SCUMMVM_FRIBIDI_PAR_ON			FRIBIDI_PAR_ON
-#define SCUMMVM_FRIBIDI_PAR_LTR			FRIBIDI_PAR_LTR
-#define SCUMMVM_FRIBIDI_PAR_RTL			FRIBIDI_PAR_RTL
-#else
-#define SCUMMVM_FRIBIDI_PAR_ON			0
-#define SCUMMVM_FRIBIDI_PAR_LTR			0
-#define SCUMMVM_FRIBIDI_PAR_RTL			0
-#endif
-
-
 namespace Common {
 
 class UnicodeBiDiText {
@@ -57,6 +42,7 @@ public:
 
 	UnicodeBiDiText(const Common::U32String &str);
 	UnicodeBiDiText(const Common::String &str, const Common::CodePage page);
+	/* This constructor shouldn't be used outside of unicode-bidi.cpp file */
 	UnicodeBiDiText(const Common::String &str, const Common::CodePage page, uint32 *pbase_dir);
 	~UnicodeBiDiText();
 
