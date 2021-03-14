@@ -38,8 +38,6 @@ public:
 	}
 	MapTile(const TileId &i, byte f = 0) : _id(i), _frame(f), _freezeAnimation(false) {
 	}
-	MapTile(const MapTile &t) : _id(t._id), _frame(t._frame), _freezeAnimation(t._freezeAnimation) {
-	}
 
 	TileId getId() const {
 		return _id;

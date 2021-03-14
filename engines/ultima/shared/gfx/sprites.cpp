@@ -52,6 +52,12 @@ Sprite::Sprite(const byte *src, uint bpp, uint16 w, uint16 h) {
 	}
 }
 
+Sprite &Sprite::operator=(const Sprite &src) {
+	_surface.copyFrom(src._surface);
+	_transSurface.copyFrom(src._transSurface);
+	return *this;
+}
+
 void Sprite::draw(Graphics::ManagedSurface &dest, const Common::Point &pt) {
 	// Get area to be drawn on
 	Graphics::Surface s = dest.getSubArea(Common::Rect(pt.x, pt.y, pt.x + _surface.w, pt.y + _surface.h));
