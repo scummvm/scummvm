@@ -41,12 +41,12 @@ namespace Nancy {
 namespace Action {
 
 void SceneChange::readData(Common::SeekableReadStream &stream) {
-    sceneChange.readData(stream);
+    _sceneChange.readData(stream);
 }
 
 void SceneChange::execute() {
-    NancySceneState.changeScene(sceneChange);
-    isDone = true;
+    NancySceneState.changeScene(_sceneChange);
+    _isDone = true;
 }
 
 void HotMultiframeSceneChange::readData(Common::SeekableReadStream &stream) {
@@ -54,24 +54,24 @@ void HotMultiframeSceneChange::readData(Common::SeekableReadStream &stream) {
     uint16 numHotspots = stream.readUint16LE();
 
     for (uint i = 0; i < numHotspots; ++i) {
-        hotspots.push_back(HotspotDescription());
-        HotspotDescription &newDesc = hotspots[i];
+        _hotspots.push_back(HotspotDescription());
+        HotspotDescription &newDesc = _hotspots[i];
         newDesc.readData(stream);
     }
 }
 
 void HotMultiframeSceneChange::execute() {
-    switch (state) {
+    switch (_state) {
     case kBegin:
         // turn main rendering on
-        state = kRun;
+        _state = kRun;
         // fall through
     case kRun:
-        hasHotspot = false;
-        for (uint i = 0; i < hotspots.size(); ++i) {
-            if (hotspots[i].frameID == NancySceneState.getSceneInfo().frameID) {
-                hasHotspot = true;
-                hotspot = hotspots[i].coords;
+        _hasHotspot = false;
+        for (uint i = 0; i < _hotspots.size(); ++i) {
+            if (_hotspots[i].frameID == NancySceneState.getSceneInfo().frameID) {
+                _hasHotspot = true;
+                _hotspot = _hotspots[i].coords;
             }
         }
         break;
@@ -83,20 +83,20 @@ void HotMultiframeSceneChange::execute() {
 
 void Hot1FrSceneChange::readData(Common::SeekableReadStream &stream) {
     SceneChange::readData(stream);
-    hotspotDesc.readData(stream);
+    _hotspotDesc.readData(stream);
 }
 
 void Hot1FrSceneChange::execute() {
-    switch (state) {
+    switch (_state) {
     case kBegin:
-        hotspot = hotspotDesc.coords;
-        state = kRun;
+        _hotspot = _hotspotDesc.coords;
+        _state = kRun;
         // fall through
     case kRun:
-        if (hotspotDesc.frameID == NancySceneState.getSceneInfo().frameID) {
-            hasHotspot = true;
+        if (_hotspotDesc.frameID == NancySceneState.getSceneInfo().frameID) {
+            _hasHotspot = true;
         } else {
-            hasHotspot = false;
+            _hasHotspot = false;
         }
         break;
     case kActionTrigger:
@@ -124,7 +124,7 @@ void MapCall::readData(Common::SeekableReadStream &stream) {
 }
 
 void MapCall::execute() {
-    execType = kRepeating;
+    _execType = kRepeating;
     NancySceneState.requestStateChange(NancyEngine::kMap);
     finishExecution();
 }
@@ -134,14 +134,14 @@ void MapCallHot1Fr::readData(Common::SeekableReadStream &stream) {
 }
 
 void MapCallHot1Fr::execute() {
-    switch (state) {
+    switch (_state) {
     case kBegin:
-        hotspot = hotspotDesc.coords;
-        state = kRun;
+        _hotspot = _hotspotDesc.coords;
+        _state = kRun;
         // fall through
     case kRun:
-        if (hotspotDesc.frameID == NancySceneState.getSceneInfo().frameID) {
-            hasHotspot = true;
+        if (_hotspotDesc.frameID == NancySceneState.getSceneInfo().frameID) {
+            _hasHotspot = true;
         }
         break;
     case kActionTrigger:
@@ -153,22 +153,22 @@ void MapCallHot1Fr::execute() {
 void MapCallHotMultiframe::readData(Common::SeekableReadStream &stream) {
     uint16 numDescs = stream.readUint16LE();
     for (uint i = 0; i < numDescs; ++i) {
-        hotspots.push_back(HotspotDescription());
-        hotspots[i].readData(stream);
+        _hotspots.push_back(HotspotDescription());
+        _hotspots[i].readData(stream);
     }
 }
 
 void MapCallHotMultiframe::execute() {
-    switch (state) {
+    switch (_state) {
     case kBegin:
-        state = kRun;
+        _state = kRun;
         // fall through
     case kRun:
-        hasHotspot = false;
-        for (uint i = 0; i < hotspots.size(); ++i) {
-            if (hotspots[i].frameID == NancySceneState.getSceneInfo().frameID) {
-                hasHotspot = true;
-                hotspot = hotspots[i].coords;
+        _hasHotspot = false;
+        for (uint i = 0; i < _hotspots.size(); ++i) {
+            if (_hotspots[i].frameID == NancySceneState.getSceneInfo().frameID) {
+                _hasHotspot = true;
+                _hotspot = _hotspots[i].coords;
             }
         }
         break;
@@ -229,7 +229,7 @@ void ResetAndStartTimer::readData(Common::SeekableReadStream &stream) {
 
 void ResetAndStartTimer::execute() {
     NancySceneState.resetAndStartTimer();
-    isDone = true;
+    _isDone = true;
 }
 
 void StopTimer::readData(Common::SeekableReadStream &stream) {
@@ -238,16 +238,16 @@ void StopTimer::readData(Common::SeekableReadStream &stream) {
 
 void StopTimer::execute() {
     NancySceneState.stopTimer();
-    isDone = true;
+    _isDone = true;
 }
 
 void EventFlags::readData(Common::SeekableReadStream &stream) {
-    flags.readData(stream);
+    _flags.readData(stream);
 }
 
 void EventFlags::execute() {
-    flags.execute();
-    isDone = true;
+    _flags.execute();
+    _isDone = true;
 }
 
 void EventFlagsMultiHS::readData(Common::SeekableReadStream &stream) {
@@ -255,31 +255,31 @@ void EventFlagsMultiHS::readData(Common::SeekableReadStream &stream) {
     uint16 numHotspots = stream.readUint16LE();
 
     for (uint16 i = 0; i < numHotspots; ++i) {
-        hotspots.push_back(HotspotDescription());
-        HotspotDescription &newDesc = hotspots[i];
+        _hotspots.push_back(HotspotDescription());
+        HotspotDescription &newDesc = _hotspots[i];
         newDesc.readData(stream);
     }
 }
 
 void EventFlagsMultiHS::execute() {
-    switch (state) {
+    switch (_state) {
     case kBegin:
         // turn main rendering on
-        state = kRun;
+        _state = kRun;
         // fall through
     case kRun:
-        hasHotspot = false;
+        _hasHotspot = false;
 
-        for (uint i = 0; i < hotspots.size(); ++i) {
-            if (hotspots[i].frameID == NancySceneState.getSceneInfo().frameID) {
-                hasHotspot = true;
-                hotspot = hotspots[i].coords;
+        for (uint i = 0; i < _hotspots.size(); ++i) {
+            if (_hotspots[i].frameID == NancySceneState.getSceneInfo().frameID) {
+                _hasHotspot = true;
+                _hotspot = _hotspots[i].coords;
             }
         }
 
         break;
     case kActionTrigger:
-        hasHotspot = false;
+        _hasHotspot = false;
         EventFlags::execute();
         finishExecution();
         break;
@@ -291,10 +291,10 @@ void LoseGame::readData(Common::SeekableReadStream &stream) {
 }
 
 void LoseGame::execute() {
-    g_nancy->sound->stopAndUnloadSpecificSounds();
+    g_nancy->_sound->stopAndUnloadSpecificSounds();
     g_nancy->setState(NancyEngine::kMainMenu);
     NancySceneState.resetStateToInit();
-    isDone = true;
+    _isDone = true;
 }
 
 void PushScene::readData(Common::SeekableReadStream &stream) {
@@ -310,24 +310,24 @@ void WinGame::readData(Common::SeekableReadStream &stream) {
 }
 
 void WinGame::execute() {
-    g_nancy->sound->stopAndUnloadSpecificSounds();
+    g_nancy->_sound->stopAndUnloadSpecificSounds();
     g_nancy->setState(NancyEngine::kCredits, NancyEngine::kMainMenu);
     
     // TODO replace with destroy()?
     NancySceneState.resetStateToInit();
-    isDone = true;
+    _isDone = true;
 }
 
 void AddInventoryNoHS::readData(Common::SeekableReadStream &stream) {
-    itemID = stream.readUint16LE();
+    _itemID = stream.readUint16LE();
 }
 
 void AddInventoryNoHS::execute() {
-    if (NancySceneState.hasItem(itemID) == kFalse) {
-        NancySceneState.addItemToInventory(itemID);
+    if (NancySceneState.hasItem(_itemID) == kFalse) {
+        NancySceneState.addItemToInventory(_itemID);
     }
 
-    isDone = true;
+    _isDone = true;
 }
 
 void RemoveInventoryNoHS::readData(Common::SeekableReadStream &stream) {
@@ -335,67 +335,67 @@ void RemoveInventoryNoHS::readData(Common::SeekableReadStream &stream) {
 }
 
 void DifficultyLevel::readData(Common::SeekableReadStream &stream) {
-    difficulty = stream.readUint16LE();
-    flag.label = stream.readSint16LE();
-    flag.flag = (NancyFlag)stream.readUint16LE();
+    _difficulty = stream.readUint16LE();
+    _flag.label = stream.readSint16LE();
+    _flag.flag = (NancyFlag)stream.readUint16LE();
 }
 
 void DifficultyLevel::execute() {
-    NancySceneState.setDifficulty(difficulty);
-    NancySceneState.setEventFlag(flag);
-    isDone = true;
+    NancySceneState.setDifficulty(_difficulty);
+    NancySceneState.setEventFlag(_flag);
+    _isDone = true;
 }
 
 void ShowInventoryItem::init() {
-    g_nancy->resource->loadImage(imageName, _fullSurface);
+    g_nancy->_resource->loadImage(_imageName, _fullSurface);
 
-    _drawSurface.create(_fullSurface, bitmaps[0].src);
+    _drawSurface.create(_fullSurface, _bitmaps[0].src);
 
     RenderObject::init();
 }
 
 void ShowInventoryItem::readData(Common::SeekableReadStream &stream) {
-    objectID = stream.readUint16LE();
+    _objectID = stream.readUint16LE();
     char name[10];
     stream.read(name, 10);
-    imageName = Common::String(name);
+    _imageName = Common::String(name);
 
     uint16 numFrames = stream.readUint16LE();
 
     for (uint i = 0; i < numFrames; ++i) {
-        bitmaps.push_back(BitmapDescription());
-        bitmaps[i].readData(stream);
+        _bitmaps.push_back(BitmapDescription());
+        _bitmaps[i].readData(stream);
     }
 }
 
 void ShowInventoryItem::execute() {
-    switch (state) {
+    switch (_state) {
     case kBegin:
         init();
         registerGraphics();
-        state = kRun;
+        _state = kRun;
         // fall through
     case kRun: {
         int newFrame = -1;
 
-        for (uint i = 0; i < bitmaps.size(); ++i) {
-            if (bitmaps[i].frameID == NancySceneState.getSceneInfo().frameID) {
+        for (uint i = 0; i < _bitmaps.size(); ++i) {
+            if (_bitmaps[i].frameID == NancySceneState.getSceneInfo().frameID) {
                 newFrame = i;
                 break;
             }
         }
 
-        if (newFrame != drawnFrameID) {
-            drawnFrameID = newFrame;
+        if (newFrame != _drawnFrameID) {
+            _drawnFrameID = newFrame;
 
             if (newFrame != -1) {
-                hasHotspot = true;
-                hotspot = bitmaps[newFrame].dest;
-                _drawSurface.create(_fullSurface, bitmaps[newFrame].src);
-                _screenPosition = bitmaps[newFrame].dest;
+                _hasHotspot = true;
+                _hotspot = _bitmaps[newFrame].dest;
+                _drawSurface.create(_fullSurface, _bitmaps[newFrame].src);
+                _screenPosition = _bitmaps[newFrame].dest;
                 setVisible(true);
             } else {
-                hasHotspot = false;
+                _hasHotspot = false;
                 setVisible(false);
             }
         }
@@ -403,10 +403,10 @@ void ShowInventoryItem::execute() {
         break;
     }
     case kActionTrigger:
-        g_nancy->sound->playSound(24); // Hardcoded by original engine
-        NancySceneState.addItemToInventory(objectID);
+        g_nancy->_sound->playSound(24); // Hardcoded by original engine
+        NancySceneState.addItemToInventory(_objectID);
         setVisible(false);
-        hasHotspot = false;
+        _hasHotspot = false;
         finishExecution();
         break;
     }
@@ -419,33 +419,33 @@ void ShowInventoryItem::onPause(bool pause) {
 }
 
 void PlayDigiSoundAndDie::readData(Common::SeekableReadStream &stream) {
-    sound.read(stream, SoundDescription::kDIGI);
-    sceneChange.readData(stream);
-    flagOnTrigger.label = stream.readSint16LE();
-    flagOnTrigger.flag = (NancyFlag)stream.readByte();
+    _sound.read(stream, SoundDescription::kDIGI);
+    _sceneChange.readData(stream);
+    _flagOnTrigger.label = stream.readSint16LE();
+    _flagOnTrigger.flag = (NancyFlag)stream.readByte();
     stream.skip(2);
 }
 
 void PlayDigiSoundAndDie::execute() {
-    switch (state) {
+    switch (_state) {
     case kBegin:
-        g_nancy->sound->loadSound(sound);
-        g_nancy->sound->playSound(sound);
-        state = kRun;
+        g_nancy->_sound->loadSound(_sound);
+        g_nancy->_sound->playSound(_sound);
+        _state = kRun;
         break;
     case kRun:
-        if (!g_nancy->sound->isSoundPlaying(sound)) {
-            state = kActionTrigger;
+        if (!g_nancy->_sound->isSoundPlaying(_sound)) {
+            _state = kActionTrigger;
         }
 
         break;
     case kActionTrigger:
-        if (sceneChange.sceneID != 9999) {
-            NancySceneState.changeScene(sceneChange);
+        if (_sceneChange.sceneID != 9999) {
+            NancySceneState.changeScene(_sceneChange);
         }
         
-        NancySceneState.setEventFlag(flagOnTrigger);
-        g_nancy->sound->stopSound(sound);
+        NancySceneState.setEventFlag(_flagOnTrigger);
+        g_nancy->_sound->stopSound(_sound);
 
         finishExecution();
         break;
@@ -457,33 +457,33 @@ void PlaySoundPanFrameAnchorAndDie::readData(Common::SeekableReadStream &stream)
 }
 
 void PlaySoundMultiHS::readData(Common::SeekableReadStream &stream) {
-    sound.read(stream, SoundDescription::kNormal);
-    sceneChange.readData(stream);
-    flag.label = stream.readSint16LE();
-    flag.flag = (NancyFlag)stream.readByte();
+    _sound.read(stream, SoundDescription::kNormal);
+    _sceneChange.readData(stream);
+    _flag.label = stream.readSint16LE();
+    _flag.flag = (NancyFlag)stream.readByte();
     stream.skip(2);
     uint16 numHotspots = stream.readUint16LE();
 
     for (uint i = 0; i < numHotspots; ++i) {
-        hotspots.push_back(HotspotDescription());
-        hotspots.back().frameID = stream.readUint16LE();
-        readRect(stream, hotspots.back().coords);
+        _hotspots.push_back(HotspotDescription());
+        _hotspots.back().frameID = stream.readUint16LE();
+        readRect(stream, _hotspots.back().coords);
     }
 }
 
 void PlaySoundMultiHS::execute() {
-    switch (state) {
+    switch (_state) {
     case kBegin:
-        state = kRun;
+        _state = kRun;
         // fall through
     case kRun: {
-        hasHotspot = false;
+        _hasHotspot = false;
         uint currentFrame = NancySceneState.getSceneInfo().frameID;
 
-        for (uint i = 0; i < hotspots.size(); ++i) {
-            if (hotspots[i].frameID == currentFrame) {
-                hotspot = hotspots[i].coords;
-                hasHotspot = true;
+        for (uint i = 0; i < _hotspots.size(); ++i) {
+            if (_hotspots[i].frameID == currentFrame) {
+                _hotspot = _hotspots[i].coords;
+                _hasHotspot = true;
                 break;
             }
         }
@@ -491,22 +491,22 @@ void PlaySoundMultiHS::execute() {
         break;
     }
     case kActionTrigger:
-        g_nancy->sound->loadSound(sound);
-        g_nancy->sound->playSound(sound);
-        NancySceneState.changeScene(sceneChange);
-        NancySceneState.setEventFlag(flag);
+        g_nancy->_sound->loadSound(_sound);
+        g_nancy->_sound->playSound(_sound);
+        NancySceneState.changeScene(_sceneChange);
+        NancySceneState.setEventFlag(_flag);
         finishExecution();
         break;
     }
 }
 
 void HintSystem::readData(Common::SeekableReadStream &stream) {
-    characterID = stream.readByte();
-    genericSound.read(stream, SoundDescription::kNormal);
+    _characterID = stream.readByte();
+    _genericSound.read(stream, SoundDescription::kNormal);
 }
 
 void HintSystem::execute() {
-    switch (state) {
+    switch (_state) {
     case kBegin:
         if (NancySceneState.getHintsRemaining() > 0) {
             selectHint();
@@ -515,35 +515,35 @@ void HintSystem::execute() {
         }
 
         NancySceneState.getTextbox().clear();
-        NancySceneState.getTextbox().addTextLine(text);
+        NancySceneState.getTextbox().addTextLine(_text);
 
-        g_nancy->sound->loadSound(genericSound);
-        g_nancy->sound->playSound(genericSound);
-        state = kRun;
+        g_nancy->_sound->loadSound(_genericSound);
+        g_nancy->_sound->playSound(_genericSound);
+        _state = kRun;
         break;
     case kRun:
-        if (!g_nancy->sound->isSoundPlaying(genericSound)) {
-            g_nancy->sound->stopSound(genericSound);
-            state = kActionTrigger;
+        if (!g_nancy->_sound->isSoundPlaying(_genericSound)) {
+            g_nancy->_sound->stopSound(_genericSound);
+            _state = kActionTrigger;
         } else {
             break;
         }
 
         // fall through
     case kActionTrigger:
-        NancySceneState.useHint(hintID, hintWeight);
+        NancySceneState.useHint(_hintID, _hintWeight);
         NancySceneState.getTextbox().clear();
 
-        NancySceneState.changeScene(sceneChange);
+        NancySceneState.changeScene(_sceneChange);
 
-        isDone = true;
+        _isDone = true;
         break;
     }
 }
 
 void HintSystem::selectHint() {
     for (auto &hint : nancy1Hints) {
-        if (hint.characterID != characterID) {
+        if (hint.characterID != _characterID) {
             continue;
         }
 
@@ -580,8 +580,8 @@ void HintSystem::selectHint() {
 
 void HintSystem::getHint(uint hint, uint difficulty) {
     uint fileOffset;
-    if (characterID < 3) {
-        fileOffset = nancy1HintOffsets[characterID];
+    if (_characterID < 3) {
+        fileOffset = nancy1HintOffsets[_characterID];
     }
 
     fileOffset += 0x288 * hint;
@@ -590,26 +590,26 @@ void HintSystem::getHint(uint hint, uint difficulty) {
     file.open("game.exe");
     file.seek(fileOffset);
 
-    hintID = file.readSint16LE();
-    hintWeight = file.readSint16LE();
+    _hintID = file.readSint16LE();
+    _hintWeight = file.readSint16LE();
 
     file.seek(difficulty * 10, SEEK_CUR);
 
     char soundName[10];
     file.read(soundName, 10);
-    genericSound.name = soundName;
+    _genericSound.name = soundName;
 
     file.seek(-(difficulty * 10) - 10, SEEK_CUR);
     file.seek(30 + difficulty * 200, SEEK_CUR);
 
     char textBuf[200];
     file.read(textBuf, 200);
-    text = textBuf;
+    _text = textBuf;
 
     file.seek(-(difficulty * 200) - 200, SEEK_CUR);
     file.seek(600, SEEK_CUR);
 
-    sceneChange.readData(file);
+    _sceneChange.readData(file);
 }
 
 }

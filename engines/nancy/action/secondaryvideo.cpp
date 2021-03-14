@@ -45,14 +45,14 @@ void PlaySecondaryVideo::init() {
         _decoder.close();
     }
 
-    _decoder.loadFile(filename + ".avf");
+    _decoder.loadFile(_filename + ".avf");
     // Every secondary video frame (in nancy1) plays exactly 12ms slower than what its metadata says.
     // I'm still not sure how/why that happens so for now I'm using this hack to fix the timings
     _decoder.addFrameTime(12);
     _drawSurface.create(_decoder.getWidth(), _decoder.getHeight(), GraphicsManager::getInputPixelFormat());
 
-    if (paletteFilename.size()) {
-        GraphicsManager::loadSurfacePalette(_drawSurface, paletteFilename);
+    if (_paletteFilename.size()) {
+        GraphicsManager::loadSurfacePalette(_drawSurface, _paletteFilename);
     }
 
     setVisible(false);
@@ -71,16 +71,16 @@ void PlaySecondaryVideo::updateGraphics() {
             _decoder.start();
         }
         
-        switch (hoverState) {
+        switch (_hoverState) {
         case kNoHover:
             if (_isHovered) {
-                _decoder.seekToFrame(onHoverFirstFrame);
+                _decoder.seekToFrame(_onHoverFirstFrame);
                 
-                hoverState = kHover;
+                _hoverState = kHover;
             } else {
-                if (_decoder.getCurFrame() == loopLastFrame) {
+                if (_decoder.getCurFrame() == _loopLastFrame) {
                     // loop back to beginning
-                    _decoder.seekToFrame(loopFirstFrame);
+                    _decoder.seekToFrame(_loopFirstFrame);
                 }
 
                 break;
@@ -89,33 +89,33 @@ void PlaySecondaryVideo::updateGraphics() {
         case kHover:
             if (!_isHovered) {
                 // Stopped hovering, reverse playback
-                _decoder.seekToFrame(onHoverEndLastFrame);
+                _decoder.seekToFrame(_onHoverEndLastFrame);
                 _decoder.setRate(-_decoder.getRate());
                 if (!_decoder.isPlaying()) {
                     _decoder.start();
                 }
 
-                hoverState = kEndHover;
+                _hoverState = kEndHover;
             } else {
                 break;
             }
             // fall through
         case kEndHover:
-            if (_decoder.getCurFrame() == onHoverEndFirstFrame) {
-                // reversed playback has ended, go back to no hover state
-                _decoder.seekToFrame(loopFirstFrame);
+            if (_decoder.getCurFrame() == _onHoverEndFirstFrame) {
+                // reversed playback has ended, go back to no hover _state
+                _decoder.seekToFrame(_loopFirstFrame);
                 _decoder.setRate(-_decoder.getRate());
-                hoverState = kNoHover;
+                _hoverState = kNoHover;
             }
 
             break;
         }
 
         if (_decoder.needsUpdate() && !_screenPosition.isEmpty()) {
-            for (uint i = 0; i < videoDescs.size(); ++i) {
-                if ((uint16)videoDescs[i].frameID == _currentViewportFrame) {
+            for (uint i = 0; i < _videoDescs.size(); ++i) {
+                if ((uint16)_videoDescs[i].frameID == _currentViewportFrame) {
                     // This ignores the srcRects for every frame
-                    GraphicsManager::copyToManaged(*_decoder.decodeNextFrame(), _drawSurface, paletteFilename.size() > 0);
+                    GraphicsManager::copyToManaged(*_decoder.decodeNextFrame(), _drawSurface, _paletteFilename.size() > 0);
                     break;
                 }
             }
@@ -138,7 +138,7 @@ void PlaySecondaryVideo::onPause(bool pause) {
 }
 
 void PlaySecondaryVideo::handleInput(NancyInput &input) {
-    if (hasHotspot && NancySceneState.getViewport().convertViewportToScreen(hotspot).contains(input.mousePos)) {
+    if (_hasHotspot && NancySceneState.getViewport().convertViewportToScreen(_hotspot).contains(input.mousePos)) {
         _isHovered = true;
     } else {
         _isHovered = false;
@@ -148,25 +148,25 @@ void PlaySecondaryVideo::handleInput(NancyInput &input) {
 void PlaySecondaryVideo::readData(Common::SeekableReadStream &stream) {
     char buf[10];
     stream.read(buf, 10);
-    filename = buf;
+    _filename = buf;
     stream.read(buf, 10);
-    paletteFilename = buf;
+    _paletteFilename = buf;
     stream.skip(10);
     
-    if (paletteFilename.size()) {
+    if (_paletteFilename.size()) {
         stream.skip(14); // unknown data
     }
 
-    loopFirstFrame = stream.readUint16LE();
-    loopLastFrame = stream.readUint16LE();
-    onHoverFirstFrame = stream.readUint16LE();
-    onHoverLastFrame = stream.readUint16LE();
-    onHoverEndFirstFrame = stream.readUint16LE();
-    onHoverEndLastFrame = stream.readUint16LE();
+    _loopFirstFrame = stream.readUint16LE();
+    _loopLastFrame = stream.readUint16LE();
+    _onHoverFirstFrame = stream.readUint16LE();
+    _onHoverLastFrame = stream.readUint16LE();
+    _onHoverEndFirstFrame = stream.readUint16LE();
+    _onHoverEndLastFrame = stream.readUint16LE();
 
-    sceneChange.readData(stream);
+    _sceneChange.readData(stream);
 
-    if (paletteFilename.size()) {
+    if (_paletteFilename.size()) {
         stream.skip(3);
     } else {
         stream.skip(1);
@@ -174,17 +174,17 @@ void PlaySecondaryVideo::readData(Common::SeekableReadStream &stream) {
 
     uint16 numVideoDescs = stream.readUint16LE();
     for (uint i = 0; i < numVideoDescs; ++i) {
-        videoDescs.push_back(SecondaryVideoDescription());
-        videoDescs[i].readData(stream);
+        _videoDescs.push_back(SecondaryVideoDescription());
+        _videoDescs[i].readData(stream);
     }
 }
 
 void PlaySecondaryVideo::execute() {
-    switch (state) {
+    switch (_state) {
     case kBegin:
         init();
         registerGraphics();
-        state = kRun;
+        _state = kRun;
         // fall through
     case kRun: {
         // Set correct position according to viewport frame
@@ -193,24 +193,24 @@ void PlaySecondaryVideo::execute() {
 
             int activeFrame = -1;
 
-            for (uint i = 0; i < videoDescs.size(); ++i) {
-                if ((uint16)videoDescs[i].frameID == _currentViewportFrame) {
+            for (uint i = 0; i < _videoDescs.size(); ++i) {
+                if ((uint16)_videoDescs[i].frameID == _currentViewportFrame) {
                     activeFrame = i;
                 }
             }
 
             if (activeFrame != -1) {
                 // Make the drawing destination rectangle valid
-                _screenPosition = videoDescs[activeFrame].destRect;
+                _screenPosition = _videoDescs[activeFrame].destRect;
 
                 // Activate the hotspot
-                hotspot = videoDescs[activeFrame].destRect;
-                hasHotspot = true;
+                _hotspot = _videoDescs[activeFrame].destRect;
+                _hasHotspot = true;
                 _isPlaying = true;
                 setVisible(true);
             } else {
                 setVisible(false);
-                hasHotspot = false;
+                _hasHotspot = false;
                 _isPlaying = false;
             }
         }
@@ -219,7 +219,7 @@ void PlaySecondaryVideo::execute() {
     }
     case kActionTrigger:
         NancySceneState.pushScene();
-        NancySceneState.changeScene(sceneChange);
+        NancySceneState.changeScene(_sceneChange);
         finishExecution();
         break;
     }

@@ -83,14 +83,14 @@ public:
     enum ExecutionState { kBegin, kRun, kActionTrigger };
     enum ExecutionType { kOneShot = 1, kRepeating = 2 };
     ActionRecord() :
-        type(0),
-        execType(kOneShot),
-        isActive(false),
-        isDone(false),
-        hasHotspot(false),
-        state(ExecutionState::kBegin),
-        days(-1),
-        itemRequired(-1) {}
+        _type(0),
+        _execType(kOneShot),
+        _isActive(false),
+        _isDone(false),
+        _hasHotspot(false),
+        _state(ExecutionState::kBegin),
+        _days(-1),
+        _itemRequired(-1) {}
     virtual ~ActionRecord() {}
 
     virtual void readData(Common::SeekableReadStream &stream) =0;
@@ -102,23 +102,23 @@ public:
 
 protected:   
     void finishExecution() {
-        switch (execType) {
+        switch (_execType) {
         case kOneShot:
-            isDone = true;
-            state = kBegin;
+            _isDone = true;
+            _state = kBegin;
             break;
         case kRepeating:
-            isDone = false;
-            isActive = false;
-            state = kBegin;
+            _isDone = false;
+            _isActive = false;
+            _state = kBegin;
 
-            for (uint i = 0; i < dependencies.size(); ++i) {
-                dependencies[i].satisfied = false;
+            for (uint i = 0; i < _dependencies.size(); ++i) {
+                _dependencies[i].satisfied = false;
             }
 
             break;
         default:
-            state = kBegin;
+            _state = kBegin;
             break;
         }
     }
@@ -127,22 +127,22 @@ protected:
     virtual Common::String getRecordTypeName() const =0;
 
 public:
-    Common::String description;                     // 0x00
-    byte type;                                      // 0x30
-    ExecutionType execType;                         // 0x31
+    Common::String _description;                    // 0x00
+    byte _type;                                     // 0x30
+    ExecutionType _execType;                        // 0x31
     // 0x32 data
-    Common::Array<DependencyRecord> dependencies;   // 0x36
+    Common::Array<DependencyRecord> _dependencies;  // 0x36
     // 0x3A numDependencies
-    bool isActive;                                  // 0x3B
+    bool _isActive;                                 // 0x3B
     // 0x3C satisfiedDependencies[] 
     // 0x48 timers[]
     // 0x78 orFlags[]
-    bool isDone;                                    // 0x84
-    bool hasHotspot;                                // 0x85
-    Common::Rect hotspot;                           // 0x89
-    ExecutionState state;                           // 0x91
-    int16 days;                                     // 0x95
-    int8 itemRequired;                              // 0x97
+    bool _isDone;                                   // 0x84
+    bool _hasHotspot;                               // 0x85
+    Common::Rect _hotspot;                          // 0x89
+    ExecutionState _state;                          // 0x91
+    int16 _days;                                    // 0x95
+    int8 _itemRequired;                             // 0x97
 };
 
 } // End of namespace Action

@@ -57,9 +57,9 @@ public:
     static const Graphics::PixelFormat &getInputPixelFormat();
     static uint getTransColor();
 
-    Graphics::ManagedSurface object0;
+    Graphics::ManagedSurface _object0;
     
-    static const Graphics::PixelFormat screenPixelFormat;
+    static const Graphics::PixelFormat _screenPixelFormat;
     
 private:
     void loadFonts();
@@ -69,8 +69,8 @@ private:
 
     Common::SortedArray<RenderObject *> _objects;
 
-    static const Graphics::PixelFormat inputPixelFormat;
-    static const Graphics::PixelFormat clut8Format;
+    static const Graphics::PixelFormat _inputPixelFormat;
+    static const Graphics::PixelFormat _clut8Format;
 
     Graphics::Screen _screen;
     Common::Array<Font> _fonts;

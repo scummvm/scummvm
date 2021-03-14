@@ -49,26 +49,26 @@ public:
     virtual void handleInput(NancyInput &input) override;
     virtual void onPause(bool pause) override;
 
-    Common::String imageName; // 0x00
+    Common::String _imageName; // 0x00
     // 0xA numDials
-    Common::Array<Common::Rect> srcRects; // 0xC, 10
-    Common::Array<Common::Rect> destRects; // 0xAC, 8
-    Common::Array<Common::Rect> upHotspots; // 0x12C, 8
-    Common::Array<Common::Rect> downHotspots; // 0x1AC, 8
-    Common::Array<byte> correctSequence; // 0x22C
-    Nancy::SoundDescription clickSound; // 0x234, kNormal
-    SceneChangeDescription solveExitScene; // 0x256
-    EventFlagDescription flagOnSolve; // 0x260
-    uint16 solveSoundDelay; // 0x263
-    Nancy::SoundDescription solveSound; // 0x265
-    SceneChangeDescription exitScene; // 0x287
-    EventFlagDescription flagOnExit; // 0x291
-    Common::Rect exitHotspot; // 0x294
+    Common::Array<Common::Rect> _srcRects; // 0xC, 10
+    Common::Array<Common::Rect> _destRects; // 0xAC, 8
+    Common::Array<Common::Rect> _upHotspots; // 0x12C, 8
+    Common::Array<Common::Rect> _downHotspots; // 0x1AC, 8
+    Common::Array<byte> _correctSequence; // 0x22C
+    Nancy::SoundDescription _clickSound; // 0x234, kNormal
+    SceneChangeDescription _solveExitScene; // 0x256
+    EventFlagDescription _flagOnSolve; // 0x260
+    uint16 _solveSoundDelay; // 0x263
+    Nancy::SoundDescription _solveSound; // 0x265
+    SceneChangeDescription _exitScene; // 0x287
+    EventFlagDescription _flagOnExit; // 0x291
+    Common::Rect _exitHotspot; // 0x294
 
-    SolveState solveState = kNotSolved;
-    Graphics::ManagedSurface image;
-    Common::Array<byte> currentSequence;
-    Time solveSoundPlayTime;
+    SolveState _solveState = kNotSolved;
+    Graphics::ManagedSurface _image;
+    Common::Array<byte> _currentSequence;
+    Time _solveSoundPlayTime;
 
 
 protected:

@@ -136,23 +136,23 @@ public:
 	void callCheatMenu(bool eventFlags);
 
 	// Managers
-	ResourceManager *resource;
-	GraphicsManager *graphicsManager;
-	CursorManager *cursorManager;
-	InputManager *input;
-	SoundManager *sound;
+	ResourceManager *_resource;
+	GraphicsManager *_graphicsManager;
+	CursorManager *_cursorManager;
+	InputManager *_input;
+	SoundManager *_sound;
 	
-	Common::RandomSource *randomSource;
+	Common::RandomSource *_randomSource;
 
-	bool launchConsole;
+	bool _launchConsole;
 	
-	uint16 firstSceneID;
-	uint16 startTimeHours;
+	uint16 _firstSceneID;
+	uint16 _startTimeHours;
 
-	bool overrideMovementTimeDeltas;
-	Time slowMovementTimeDelta;
-	Time fastMovementTimeDelta;
-	Time playerTimeMinuteLength;
+	bool _overrideMovementTimeDeltas;
+	Time _slowMovementTimeDelta;
+	Time _fastMovementTimeDelta;
+	Time _playerTimeMinuteLength;
 
 private:
 	struct GameFlow {

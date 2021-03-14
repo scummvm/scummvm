@@ -44,51 +44,51 @@ void PasswordPuzzle::init() {
 }
 
 void PasswordPuzzle::readData(Common::SeekableReadStream &stream) {
-    fontID = stream.readUint16LE();
-    cursorBlinkTime = stream.readUint16LE();
-    readRect(stream, nameBounds);
-    readRect(stream, passwordBounds);
+    _fontID = stream.readUint16LE();
+    _cursorBlinkTime = stream.readUint16LE();
+    readRect(stream, _nameBounds);
+    readRect(stream, _passwordBounds);
     readRect(stream, _screenPosition);
 
     char buf[20];
     stream.read(buf, 20);
-    name = buf;
+    _name = buf;
     stream.read(buf, 20);
-    password = buf;
-    solveExitScene.readData(stream);
+    _password = buf;
+    _solveExitScene.readData(stream);
     stream.skip(2);
-    flagOnSolve.label = stream.readSint16LE();
-    flagOnSolve.flag = (NancyFlag)stream.readByte();
-    solveSound.read(stream, SoundDescription::kNormal);
-    failExitScene.readData(stream);
+    _flagOnSolve.label = stream.readSint16LE();
+    _flagOnSolve.flag = (NancyFlag)stream.readByte();
+    _solveSound.read(stream, SoundDescription::kNormal);
+    _failExitScene.readData(stream);
     stream.skip(2);
-    flagOnFail.label = stream.readSint16LE();
-    flagOnFail.flag = (NancyFlag)stream.readByte();
-    failSound.read(stream, SoundDescription::kNormal);
-    exitScene.readData(stream);
+    _flagOnFail.label = stream.readSint16LE();
+    _flagOnFail.flag = (NancyFlag)stream.readByte();
+    _failSound.read(stream, SoundDescription::kNormal);
+    _exitScene.readData(stream);
     stream.skip(2);
-    flagOnExit.label = stream.readSint16LE();
-    flagOnExit.flag = (NancyFlag)stream.readByte();
-    readRect(stream, exitHotspot);
+    _flagOnExit.label = stream.readSint16LE();
+    _flagOnExit.flag = (NancyFlag)stream.readByte();
+    readRect(stream, _exitHotspot);
 }
 
 void PasswordPuzzle::execute() {
-    switch (state) {
+    switch (_state) {
     case kBegin:
         init();
         registerGraphics();
-        nextBlinkTime = g_nancy->getTotalPlayTime() + cursorBlinkTime;
-        state = kRun;
+        _nextBlinkTime = g_nancy->getTotalPlayTime() + _cursorBlinkTime;
+        _state = kRun;
         // fall through
     case kRun:
-        switch (solveState) {
+        switch (_solveState) {
         case kNotSolved: {
-            Common::String &activeField = passwordFieldIsActive ? playerPasswordInput : playerNameInput;
-            Common::String &correctField = passwordFieldIsActive ? password : name;
+            Common::String &activeField = _passwordFieldIsActive ? _playerPasswordInput : _playerNameInput;
+            Common::String &correctField = _passwordFieldIsActive ? _password : _name;
             Time currentTime = g_nancy->getTotalPlayTime();
 
-            if (playerHasHitReturn) {
-                playerHasHitReturn = false;
+            if (_playerHasHitReturn) {
+                _playerHasHitReturn = false;
 
                 if (activeField.lastChar() == '-') {
                     activeField.deleteLastChar();
@@ -96,22 +96,22 @@ void PasswordPuzzle::execute() {
                 }
 
                 if (activeField.equalsIgnoreCase(correctField)) {
-                    if (!passwordFieldIsActive) {
-                        passwordFieldIsActive = true;
+                    if (!_passwordFieldIsActive) {
+                        _passwordFieldIsActive = true;
                     } else {
-                        g_nancy->sound->loadSound(solveSound);
-                        g_nancy->sound->playSound(solveSound);
-                        solveState = kSolved;
+                        g_nancy->_sound->loadSound(_solveSound);
+                        g_nancy->_sound->playSound(_solveSound);
+                        _solveState = kSolved;
                     }
                 } else {
-                    g_nancy->sound->loadSound(failSound);
-                    g_nancy->sound->playSound(failSound);
-                    solveState = kFailed;
+                    g_nancy->_sound->loadSound(_failSound);
+                    g_nancy->_sound->playSound(_failSound);
+                    _solveState = kFailed;
                 }
                 
                 
-            } else if (currentTime >= nextBlinkTime) {
-                nextBlinkTime = currentTime + cursorBlinkTime;
+            } else if (currentTime >= _nextBlinkTime) {
+                _nextBlinkTime = currentTime + _cursorBlinkTime;
 
                 if (activeField.size() && activeField.lastChar() == '-') {
                     activeField.deleteLastChar();
@@ -125,16 +125,16 @@ void PasswordPuzzle::execute() {
             break;
         }
         case kFailed:
-            if (!g_nancy->sound->isSoundPlaying(failSound)) {
-                g_nancy->sound->stopSound(failSound);
-                state = kActionTrigger;
+            if (!g_nancy->_sound->isSoundPlaying(_failSound)) {
+                g_nancy->_sound->stopSound(_failSound);
+                _state = kActionTrigger;
             }
 
             break;
         case kSolved:
-            if (!g_nancy->sound->isSoundPlaying(solveSound)) {
-                g_nancy->sound->stopSound(solveSound);
-                state = kActionTrigger;
+            if (!g_nancy->_sound->isSoundPlaying(_solveSound)) {
+                g_nancy->_sound->stopSound(_solveSound);
+                _state = kActionTrigger;
             }
 
             break;
@@ -142,18 +142,18 @@ void PasswordPuzzle::execute() {
 
         break;
     case kActionTrigger:
-        switch (solveState) {
+        switch (_solveState) {
         case kNotSolved:
-            NancySceneState.changeScene(exitScene);
-            NancySceneState.setEventFlag(flagOnExit);
+            NancySceneState.changeScene(_exitScene);
+            NancySceneState.setEventFlag(_flagOnExit);
             break;
         case kFailed:
-            NancySceneState.changeScene(failExitScene);
-            NancySceneState.setEventFlag(flagOnFail.label);
+            NancySceneState.changeScene(_failExitScene);
+            NancySceneState.setEventFlag(_flagOnFail.label);
             break;
         case kSolved:
-            NancySceneState.changeScene(solveExitScene);
-            NancySceneState.setEventFlag(flagOnSolve.label);
+            NancySceneState.changeScene(_solveExitScene);
+            NancySceneState.setEventFlag(_flagOnSolve.label);
             break;
         }
 
@@ -162,15 +162,15 @@ void PasswordPuzzle::execute() {
 }
 
 void PasswordPuzzle::handleInput(NancyInput &input) {
-    if (solveState != kNotSolved) {
+    if (_solveState != kNotSolved) {
         return;
     }
 
-    if (NancySceneState.getViewport().convertViewportToScreen(exitHotspot).contains(input.mousePos)) {
-        g_nancy->cursorManager->setCursorType(CursorManager::kExitArrow);
+    if (NancySceneState.getViewport().convertViewportToScreen(_exitHotspot).contains(input.mousePos)) {
+        g_nancy->_cursorManager->setCursorType(CursorManager::kExitArrow);
 
         if (input.input & NancyInput::kLeftMouseButtonUp) {
-            state = kActionTrigger;
+            _state = kActionTrigger;
         }
         
         return;
@@ -178,8 +178,8 @@ void PasswordPuzzle::handleInput(NancyInput &input) {
 
     for (uint i = 0; i < input.otherKbdInput.size(); ++i) {
         Common::KeyState &key = input.otherKbdInput[i];
-        Common::String &activeField = passwordFieldIsActive ? playerPasswordInput : playerNameInput;
-        Common::String &correctField = passwordFieldIsActive ? password : name;
+        Common::String &activeField = _passwordFieldIsActive ? _playerPasswordInput : _playerNameInput;
+        Common::String &correctField = _passwordFieldIsActive ? _password : _name;
         if (key.keycode == Common::KEYCODE_BACKSPACE) {
             if (activeField.size() && activeField.lastChar() == '-' ? activeField.size() > 1 : true) {
                 if (activeField.lastChar() == '-') {
@@ -191,7 +191,7 @@ void PasswordPuzzle::handleInput(NancyInput &input) {
                 drawText();
             }
         } else if (key.keycode == Common::KEYCODE_RETURN) {
-            playerHasHitReturn = true;
+            _playerHasHitReturn = true;
         } else if (Common::isAlnum(key.ascii) || Common::isSpace(key.ascii)) {
             if (activeField.size() && activeField.lastChar() == '-') {
                 if (activeField.size() <= correctField.size() + 2) {
@@ -218,20 +218,20 @@ void PasswordPuzzle::onPause(bool pause) {
 
 void PasswordPuzzle::drawText() {
     _drawSurface.clear(GraphicsManager::getTransColor());
-    Graphics::Font *font = g_nancy->graphicsManager->getFont(fontID);
+    Graphics::Font *font = g_nancy->_graphicsManager->getFont(_fontID);
 
-    Common::Rect bounds = nameBounds;
+    Common::Rect bounds = _nameBounds;
     bounds = NancySceneState.getViewport().convertViewportToScreen(bounds);
     bounds = convertToLocal(bounds);
     Common::Point destPoint(bounds.left, bounds.bottom + 1 - font->getFontHeight());
-    font->drawString(&_drawSurface, playerNameInput, destPoint.x, destPoint.y, bounds.width(), 0);
+    font->drawString(&_drawSurface, _playerNameInput, destPoint.x, destPoint.y, bounds.width(), 0);
 
-    bounds = passwordBounds;
+    bounds = _passwordBounds;
     bounds = NancySceneState.getViewport().convertViewportToScreen(bounds);
     bounds = convertToLocal(bounds);
     destPoint.x = bounds.left;
     destPoint.y = bounds.bottom + 1 - font->getFontHeight();
-    font->drawString(&_drawSurface, playerPasswordInput, destPoint.x, destPoint.y, bounds.width(), 0);
+    font->drawString(&_drawSurface, _playerPasswordInput, destPoint.x, destPoint.y, bounds.width(), 0);
 
     _needsRedraw = true;
 }

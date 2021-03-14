@@ -107,16 +107,14 @@ private:
     bool _needsTextRedraw;
     float _scrollbarPos;
 
-    static const char CCBeginToken[];
-    static const char CCEndToken[];
-    static const char colorBeginToken[];
-    static const char colorEndToken[];
-    static const char hotspotToken[];
-    static const char newLineToken[];
-    static const char tabToken[];
-    static const char telephoneEndToken[];
-
-protected:
+    static const char _CCBeginToken[];
+    static const char _CCEndToken[];
+    static const char _colorBeginToken[];
+    static const char _colorEndToken[];
+    static const char _hotspotToken[];
+    static const char _newLineToken[];
+    static const char _tabToken[];
+    static const char _telephoneEndToken[];
 };
 
 } // End of namespace UI

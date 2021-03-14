@@ -44,7 +44,7 @@ public:
     virtual void readData(Common::SeekableReadStream &stream) override;
     virtual void execute() override;
 
-    SceneChangeDescription sceneChange;
+    SceneChangeDescription _sceneChange;
 
 protected:
     virtual Common::String getRecordTypeName() const override { return "SceneChange"; }
@@ -55,7 +55,7 @@ public:
     virtual void readData(Common::SeekableReadStream &stream) override;
     virtual void execute() override;
 
-    Common::Array<HotspotDescription> hotspots;
+    Common::Array<HotspotDescription> _hotspots;
 
 protected:
     virtual Common::String getRecordTypeName() const override { return "HotMultiframeSceneChange"; }
@@ -66,7 +66,7 @@ public:
     virtual void readData(Common::SeekableReadStream &stream) override;
     virtual void execute() override;
 
-    HotspotDescription hotspotDesc;
+    HotspotDescription _hotspotDesc;
 
 protected:
     virtual Common::String getRecordTypeName() const override { return "Hot1FrSceneChange"; }
@@ -100,7 +100,7 @@ public:
     virtual void readData(Common::SeekableReadStream &stream) override;
     // TODO add a Start and Stop subclass
 
-    byte type = 0;
+    byte _type = 0;
 
 protected:
     virtual Common::String getRecordTypeName() const override { return "StartStopPlayerScrolling"; }
@@ -122,7 +122,7 @@ public:
     virtual void readData(Common::SeekableReadStream &stream) override;
     virtual void execute() override;
 
-    HotspotDescription hotspotDesc;
+    HotspotDescription _hotspotDesc;
     
 protected:
     virtual Common::String getRecordTypeName() const override { return "MapCallHot1Fr"; }
@@ -133,7 +133,7 @@ public:
     virtual void readData(Common::SeekableReadStream &stream) override;
     virtual void execute() override;
 
-    Common::Array<HotspotDescription> hotspots;
+    Common::Array<HotspotDescription> _hotspots;
     
 protected:
     virtual Common::String getRecordTypeName() const override { return "MapCallHotMultiframe"; }
@@ -242,7 +242,7 @@ public:
     virtual void readData(Common::SeekableReadStream &stream) override;
     virtual void execute() override;
 
-    MultiEventFlagDescription flags;
+    MultiEventFlagDescription _flags;
     
 protected:
     virtual Common::String getRecordTypeName() const override { return "EventFlags"; }
@@ -253,7 +253,7 @@ public:
     virtual void readData(Common::SeekableReadStream &stream) override;
     virtual void execute() override;
 
-    Common::Array<HotspotDescription> hotspots;
+    Common::Array<HotspotDescription> _hotspots;
     
 protected:
     virtual Common::String getRecordTypeName() const override { return "EventFlagsMultiHS"; }
@@ -298,7 +298,7 @@ public:
     virtual void readData(Common::SeekableReadStream &stream) override;
     virtual void execute() override;
     
-    uint itemID;
+    uint _itemID;
     
 protected:
     virtual Common::String getRecordTypeName() const override { return "AddInventoryNoHS"; }
@@ -317,8 +317,8 @@ public:
     virtual void readData(Common::SeekableReadStream &stream) override;
     virtual void execute() override;
 
-    uint16 difficulty = 0;
-    EventFlagDescription flag;
+    uint16 _difficulty = 0;
+    EventFlagDescription _flag;
     
 protected:
     virtual Common::String getRecordTypeName() const override { return "DifficultyLevel"; }
@@ -335,11 +335,11 @@ public:
     virtual void init() override;
     virtual void onPause(bool pause) override;
  
-    uint16 objectID = 0;
-    Common::String imageName;
-    Common::Array<BitmapDescription> bitmaps;
+    uint16 _objectID = 0;
+    Common::String _imageName;
+    Common::Array<BitmapDescription> _bitmaps;
 
-    int16 drawnFrameID = -1;
+    int16 _drawnFrameID = -1;
     Graphics::ManagedSurface _fullSurface;
     
 protected:
@@ -355,9 +355,9 @@ public:
     virtual void execute() override;
     // TODO subclass into Play and Stop (?)
 
-    SoundDescription sound;
-    SceneChangeDescription sceneChange;
-    EventFlagDescription flagOnTrigger;
+    SoundDescription _sound;
+    SceneChangeDescription _sceneChange;
+    EventFlagDescription _flagOnTrigger;
     
 protected:
     virtual Common::String getRecordTypeName() const override { return "PlayDigiSoundAndDie"; }
@@ -376,10 +376,10 @@ public:
     virtual void readData(Common::SeekableReadStream &stream) override;
     virtual void execute() override;
 
-    SoundDescription sound; // 0x0
-    SceneChangeDescription sceneChange; // 0x22
-    EventFlagDescription flag; // 0x2A
-    Common::Array<HotspotDescription> hotspots; // 0x31
+    SoundDescription _sound; // 0x0
+    SceneChangeDescription _sceneChange; // 0x22
+    EventFlagDescription _flag; // 0x2A
+    Common::Array<HotspotDescription> _hotspots; // 0x31
     
 protected:
     virtual Common::String getRecordTypeName() const override { return "PlaySoundMultiHS"; }
@@ -390,13 +390,13 @@ public:
     virtual void readData(Common::SeekableReadStream &stream) override;
     virtual void execute() override;
 
-    byte characterID; // 0x00
-    SoundDescription genericSound; // 0x01
+    byte _characterID; // 0x00
+    SoundDescription _genericSound; // 0x01
 
-    Common::String text;
-    SceneChangeDescription sceneChange;
-    uint16 hintID;
-    int16 hintWeight;
+    Common::String _text;
+    SceneChangeDescription _sceneChange;
+    uint16 _hintID;
+    int16 _hintWeight;
 
     void selectHint();
     void getHint(uint hint, uint difficulty);

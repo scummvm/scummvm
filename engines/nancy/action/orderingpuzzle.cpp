@@ -45,7 +45,7 @@ void OrderingPuzzle::init() {
     
     setTransparent(true);
 
-    g_nancy->resource->loadImage(imageName, image);
+    g_nancy->_resource->loadImage(_imageName, _image);
 
     setVisible(false);
 
@@ -56,102 +56,102 @@ void OrderingPuzzle::readData(Common::SeekableReadStream &stream) {
     char buf[10];
 
     stream.read(buf, 10);
-    imageName = buf;
+    _imageName = buf;
     uint16 numElements = stream.readUint16LE();
 
     for (uint i = 0; i < numElements; ++i) {
-        srcRects.push_back(Common::Rect());
-        readRect(stream, srcRects.back());
+        _srcRects.push_back(Common::Rect());
+        readRect(stream, _srcRects.back());
     }
     
     stream.skip(16 * (15 - numElements));
 
     for (uint i = 0; i < numElements; ++i) {
-        destRects.push_back(Common::Rect());
-        readRect(stream, destRects.back());
+        _destRects.push_back(Common::Rect());
+        readRect(stream, _destRects.back());
 
         if (i == 0) {
-            _screenPosition = destRects[i];
+            _screenPosition = _destRects[i];
         } else {
-            _screenPosition.extend(destRects[i]);
+            _screenPosition.extend(_destRects[i]);
         }
 
-        drawnElements.push_back(false);
+        _drawnElements.push_back(false);
     }
 
     stream.skip(16 * (15 - numElements));
 
-    sequenceLength = stream.readUint16LE();
+    _sequenceLength = stream.readUint16LE();
 
     for (uint i = 0; i < 15; ++i) {
-        correctSequence.push_back(stream.readByte());
+        _correctSequence.push_back(stream.readByte());
     }
 
-    clickSound.read(stream, SoundDescription::kNormal);
-    solveExitScene.readData(stream);
+    _clickSound.read(stream, SoundDescription::kNormal);
+    _solveExitScene.readData(stream);
     stream.skip(2); // shouldStopRendering, useless
-    flagOnSolve.label = stream.readSint16LE();
-    flagOnSolve.flag = (NancyFlag)stream.readByte();
-    solveSoundDelay = stream.readUint16LE();
-    solveSound.read(stream, SoundDescription::kNormal);
-    exitScene.readData(stream);
+    _flagOnSolve.label = stream.readSint16LE();
+    _flagOnSolve.flag = (NancyFlag)stream.readByte();
+    _solveSoundDelay = stream.readUint16LE();
+    _solveSound.read(stream, SoundDescription::kNormal);
+    _exitScene.readData(stream);
     stream.skip(2); // shouldStopRendering, useless
-    flagOnExit.label = stream.readSint16LE();
-    flagOnExit.flag = (NancyFlag)stream.readByte();
-    readRect(stream, exitHotspot);
+    _flagOnExit.label = stream.readSint16LE();
+    _flagOnExit.flag = (NancyFlag)stream.readByte();
+    readRect(stream, _exitHotspot);
 }
 
 void OrderingPuzzle::execute() {
-    switch (state) {
+    switch (_state) {
     case kBegin:
         init();
         registerGraphics();
-        g_nancy->sound->loadSound(clickSound);
-        g_nancy->sound->loadSound(solveSound);
-        state = kRun;
+        g_nancy->_sound->loadSound(_clickSound);
+        g_nancy->_sound->loadSound(_solveSound);
+        _state = kRun;
         // fall through
     case kRun:
-        switch (solveState) {
+        switch (_solveState) {
         case kNotSolved:
-            if (clickedSequence.size() != sequenceLength) {
+            if (_clickedSequence.size() != _sequenceLength) {
                 return;
             }
 
-            for (uint i = 0; i < sequenceLength; ++i) {
-                if (clickedSequence[i] != (int16)correctSequence[i]) {
+            for (uint i = 0; i < _sequenceLength; ++i) {
+                if (_clickedSequence[i] != (int16)_correctSequence[i]) {
                     return;
                 }
             }
 
-            NancySceneState.setEventFlag(flagOnSolve);
-            solveSoundPlayTime = g_nancy->getTotalPlayTime() + solveSoundDelay * 1000;
-            solveState = kPlaySound;
+            NancySceneState.setEventFlag(_flagOnSolve);
+            _solveSoundPlayTime = g_nancy->getTotalPlayTime() + _solveSoundDelay * 1000;
+            _solveState = kPlaySound;
             // fall through
         case kPlaySound:
-            if (g_nancy->getTotalPlayTime() <= solveSoundPlayTime) {
+            if (g_nancy->getTotalPlayTime() <= _solveSoundPlayTime) {
                 break;
             }
 
-            g_nancy->sound->playSound(solveSound);
-            solveState = kWaitForSound;
+            g_nancy->_sound->playSound(_solveSound);
+            _solveState = kWaitForSound;
             break;
         case kWaitForSound:
-            if (!g_nancy->sound->isSoundPlaying(solveSound)) {
-                state = kActionTrigger;
+            if (!g_nancy->_sound->isSoundPlaying(_solveSound)) {
+                _state = kActionTrigger;
             }
 
             break;
         }
         break;
     case kActionTrigger:
-        g_nancy->sound->stopSound(clickSound);
-        g_nancy->sound->stopSound(solveSound);
+        g_nancy->_sound->stopSound(_clickSound);
+        g_nancy->_sound->stopSound(_solveSound);
 
-        if (solveState == kNotSolved) {
-            NancySceneState.changeScene(exitScene);
-            NancySceneState.setEventFlag(flagOnExit);
+        if (_solveState == kNotSolved) {
+            NancySceneState.changeScene(_exitScene);
+            NancySceneState.setEventFlag(_flagOnExit);
         } else {
-            NancySceneState.changeScene(solveExitScene);
+            NancySceneState.changeScene(_solveExitScene);
         }
 
         finishExecution();
@@ -160,40 +160,40 @@ void OrderingPuzzle::execute() {
 }
 
 void OrderingPuzzle::handleInput(NancyInput &input) {
-    if (solveState != kNotSolved) {
+    if (_solveState != kNotSolved) {
         return;
     }
 
-    if (NancySceneState.getViewport().convertViewportToScreen(exitHotspot).contains(input.mousePos)) {
-        g_nancy->cursorManager->setCursorType(CursorManager::kExitArrow);
+    if (NancySceneState.getViewport().convertViewportToScreen(_exitHotspot).contains(input.mousePos)) {
+        g_nancy->_cursorManager->setCursorType(CursorManager::kExitArrow);
 
         if (input.input & NancyInput::kLeftMouseButtonUp) {
-            state = kActionTrigger;
+            _state = kActionTrigger;
         }
         return;
     }
 
-    for (int i = 0; i < (int)destRects.size(); ++i) {
-        if (NancySceneState.getViewport().convertViewportToScreen(destRects[i]).contains(input.mousePos)) {
-            g_nancy->cursorManager->setCursorType(CursorManager::kHotspot);
+    for (int i = 0; i < (int)_destRects.size(); ++i) {
+        if (NancySceneState.getViewport().convertViewportToScreen(_destRects[i]).contains(input.mousePos)) {
+            g_nancy->_cursorManager->setCursorType(CursorManager::kHotspot);
 
             if (input.input & NancyInput::kLeftMouseButtonUp) {
-                g_nancy->sound->playSound(clickSound);
+                g_nancy->_sound->playSound(_clickSound);
                 
-                for (uint j = 0; j < clickedSequence.size(); ++j) {
-                    if (clickedSequence[j] == i && drawnElements[i] == true) {
+                for (uint j = 0; j < _clickedSequence.size(); ++j) {
+                    if (_clickedSequence[j] == i && _drawnElements[i] == true) {
                         undrawElement(i);
-                        if (clickedSequence.back() == i) {
-                            clickedSequence.pop_back();
+                        if (_clickedSequence.back() == i) {
+                            _clickedSequence.pop_back();
                         }
                         
                         return;
                     }
                 }
 
-                clickedSequence.push_back(i);
+                _clickedSequence.push_back(i);
 
-                if (clickedSequence.size() > (uint)sequenceLength + 1) {
+                if (_clickedSequence.size() > (uint)_sequenceLength + 1) {
                     clearAllElements();
                 } else {
                     drawElement(i);
@@ -211,15 +211,15 @@ void OrderingPuzzle::onPause(bool pause) {
 }
 
 void OrderingPuzzle::drawElement(uint id) {
-    drawnElements[id] = true;
-    Common::Point destPoint(destRects[id].left - _screenPosition.left, destRects[id].top - _screenPosition.top);
-    _drawSurface.blitFrom(image, srcRects[id], destPoint);
+    _drawnElements[id] = true;
+    Common::Point destPoint(_destRects[id].left - _screenPosition.left, _destRects[id].top - _screenPosition.top);
+    _drawSurface.blitFrom(_image, _srcRects[id], destPoint);
     setVisible(true);
 }
 
 void OrderingPuzzle::undrawElement(uint id) {
-    drawnElements[id] = false;
-    Common::Rect bounds = destRects[id];
+    _drawnElements[id] = false;
+    Common::Rect bounds = _destRects[id];
     bounds.translate(-_screenPosition.left, -_screenPosition.top);
 
     _drawSurface.fillRect(bounds, GraphicsManager::getTransColor());
@@ -229,7 +229,7 @@ void OrderingPuzzle::undrawElement(uint id) {
 void OrderingPuzzle::clearAllElements() {
     _drawSurface.clear(GraphicsManager::getTransColor());
     setVisible(false);
-    clickedSequence.clear();
+    _clickedSequence.clear();
     return;
 }
 

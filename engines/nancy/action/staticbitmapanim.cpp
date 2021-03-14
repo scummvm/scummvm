@@ -35,7 +35,7 @@ namespace Nancy {
 namespace Action {
 
 void PlayStaticBitmapAnimation::init() {
-    g_nancy->resource->loadImage(imageName, _fullSurface);
+    g_nancy->_resource->loadImage(_imageName, _fullSurface);
 
     setFrame(0);
 
@@ -45,40 +45,40 @@ void PlayStaticBitmapAnimation::init() {
 void PlayStaticBitmapAnimation::readData(Common::SeekableReadStream &stream) {
     char name[10];
     stream.read(name, 10);
-    imageName = Common::String(name);
+    _imageName = Common::String(name);
 
     stream.skip(0x2);
-    isTransparent = (NancyFlag)(stream.readUint16LE());
-    doNotChangeScene = (NancyFlag)(stream.readUint16LE());
-    isReverse = (NancyFlag)(stream.readUint16LE());
-    isLooping = (NancyFlag)(stream.readUint16LE());
-    firstFrame = stream.readUint16LE();
-    loopFirstFrame = stream.readUint16LE();
-    loopLastFrame = stream.readUint16LE();
-    frameTime = Common::Rational(1000, stream.readUint16LE()).toInt();
-    zOrder = stream.readUint16LE();
+    _isTransparent = (NancyFlag)(stream.readUint16LE());
+    _doNotChangeScene = (NancyFlag)(stream.readUint16LE());
+    _isReverse = (NancyFlag)(stream.readUint16LE());
+    _isLooping = (NancyFlag)(stream.readUint16LE());
+    _firstFrame = stream.readUint16LE();
+    _loopFirstFrame = stream.readUint16LE();
+    _loopLastFrame = stream.readUint16LE();
+    _frameTime = Common::Rational(1000, stream.readUint16LE()).toInt();
+    _zOrder = stream.readUint16LE();
 
-    if (isInterruptible) {
-        interruptCondition.label = stream.readSint16LE();
-        interruptCondition.flag = (NancyFlag)stream.readUint16LE();
+    if (_isInterruptible) {
+        _interruptCondition.label = stream.readSint16LE();
+        _interruptCondition.flag = (NancyFlag)stream.readUint16LE();
     } else {
-        interruptCondition.label = -1;
-        interruptCondition.flag = kFalse;
+        _interruptCondition.label = -1;
+        _interruptCondition.flag = kFalse;
     }
 
-    sceneChange.readData(stream);
-    triggerFlags.readData(stream);
-    sound.read(stream, SoundDescription::kNormal);
+    _sceneChange.readData(stream);
+    _triggerFlags.readData(stream);
+    _sound.read(stream, SoundDescription::kNormal);
     uint numViewportFrames = stream.readUint16LE();
 
-    for (uint i = firstFrame; i <= loopLastFrame; ++i) {
-        srcRects.push_back(Common::Rect());
-        readRect(stream, srcRects[i]);
+    for (uint i = _firstFrame; i <= _loopLastFrame; ++i) {
+        _srcRects.push_back(Common::Rect());
+        readRect(stream, _srcRects[i]);
     }
 
     for (uint i = 0; i < numViewportFrames; ++i) {
-        bitmaps.push_back(BitmapDescription());
-        BitmapDescription &rects = bitmaps.back();
+        _bitmaps.push_back(BitmapDescription());
+        BitmapDescription &rects = _bitmaps.back();
         rects.frameID = stream.readUint16LE();
         readRect(stream, rects.src);
         readRect(stream, rects.dest);
@@ -86,58 +86,58 @@ void PlayStaticBitmapAnimation::readData(Common::SeekableReadStream &stream) {
 }
 
 void PlayStaticBitmapAnimation::execute() {
-    uint32 currentFrameTime = g_nancy->getTotalPlayTime();
-    switch (state) {
+    uint32 _currentFrameTime = g_nancy->getTotalPlayTime();
+    switch (_state) {
     case kBegin:
         init();
         registerGraphics();
-        g_nancy->sound->loadSound(sound);
-        g_nancy->sound->playSound(sound);
-        state = kRun;
+        g_nancy->_sound->loadSound(_sound);
+        g_nancy->_sound->playSound(_sound);
+        _state = kRun;
         // fall through
     case kRun: {
         // Check the timer to see if we need to draw the next animation frame
-        if (nextFrameTime <= currentFrameTime) {
+        if (_nextFrameTime <= _currentFrameTime) {
             // World's worst if statement
-            if (NancySceneState.getEventFlag(interruptCondition) ||
-                (   (((currentFrame == loopLastFrame) && (isReverse == kFalse) && (isLooping == kFalse)) ||
-                    ((currentFrame == loopFirstFrame) && (isReverse == kTrue) && (isLooping == kFalse))) &&
-                        !g_nancy->sound->isSoundPlaying(sound))   ) {
+            if (NancySceneState.getEventFlag(_interruptCondition) ||
+                (   (((_currentFrame == _loopLastFrame) && (_isReverse == kFalse) && (_isLooping == kFalse)) ||
+                    ((_currentFrame == _loopFirstFrame) && (_isReverse == kTrue) && (_isLooping == kFalse))) &&
+                        !g_nancy->_sound->isSoundPlaying(_sound))   ) {
                 
-                state = kActionTrigger;
+                _state = kActionTrigger;
 
                 // Not sure if hiding when triggered is a hack or the intended behavior, but it's here to fix
                 // nancy1's safe lock light not turning off.
                 setVisible(false);
     
-                if (!g_nancy->sound->isSoundPlaying(sound)) {
-                    g_nancy->sound->stopSound(sound);
+                if (!g_nancy->_sound->isSoundPlaying(_sound)) {
+                    g_nancy->_sound->stopSound(_sound);
                 }
             } else {
                 // Check if we've moved the viewport
                 uint16 newFrame = NancySceneState.getSceneInfo().frameID;
 
-                if (currentViewportFrame != newFrame) {
-                    currentViewportFrame = newFrame;
+                if (_currentViewportFrame != newFrame) {
+                    _currentViewportFrame = newFrame;
 
-                    for (uint i = 0; i < bitmaps.size(); ++i) {
-                        if (currentViewportFrame == bitmaps[i].frameID) {
-                            _screenPosition = bitmaps[i].dest;
+                    for (uint i = 0; i < _bitmaps.size(); ++i) {
+                        if (_currentViewportFrame == _bitmaps[i].frameID) {
+                            _screenPosition = _bitmaps[i].dest;
                             break;
                         }
                     }
                 }
                 
-                nextFrameTime = currentFrameTime + frameTime;
-                setFrame(currentFrame);
+                _nextFrameTime = _currentFrameTime + _frameTime;
+                setFrame(_currentFrame);
 
-                if (isReverse == kTrue) {
-                    --currentFrame;
-                    currentFrame = currentFrame < loopFirstFrame ? loopLastFrame : currentFrame;
+                if (_isReverse == kTrue) {
+                    --_currentFrame;
+                    _currentFrame = _currentFrame < _loopFirstFrame ? _loopLastFrame : _currentFrame;
                     return;
                 } else {
-                    ++currentFrame;
-                    currentFrame = currentFrame > loopLastFrame ? loopFirstFrame : currentFrame;
+                    ++_currentFrame;
+                    _currentFrame = _currentFrame > _loopLastFrame ? _loopFirstFrame : _currentFrame;
                     return;
                 }
             }                
@@ -145,12 +145,12 @@ void PlayStaticBitmapAnimation::execute() {
             // Check if we've moved the viewport
             uint16 newFrame = NancySceneState.getSceneInfo().frameID;
 
-            if (currentViewportFrame != newFrame) {
-                currentViewportFrame = newFrame;
+            if (_currentViewportFrame != newFrame) {
+                _currentViewportFrame = newFrame;
                 
-                for (uint i = 0; i < bitmaps.size(); ++i) {
-                    if (currentViewportFrame == bitmaps[i].frameID) {
-                        _screenPosition = bitmaps[i].dest;
+                for (uint i = 0; i < _bitmaps.size(); ++i) {
+                    if (_currentViewportFrame == _bitmaps[i].frameID) {
+                        _screenPosition = _bitmaps[i].dest;
                         break;
                     }
                 }
@@ -160,9 +160,9 @@ void PlayStaticBitmapAnimation::execute() {
         break;
     }
     case kActionTrigger:
-        triggerFlags.execute();
-        if (doNotChangeScene == kFalse) {
-            NancySceneState.changeScene(sceneChange);
+        _triggerFlags.execute();
+        if (_doNotChangeScene == kFalse) {
+            NancySceneState.changeScene(_sceneChange);
             finishExecution();
         }
         break;
@@ -176,10 +176,10 @@ void PlayStaticBitmapAnimation::onPause(bool pause) {
 }
 
 void PlayStaticBitmapAnimation::setFrame(uint frame) {
-    currentFrame = frame;
-    _drawSurface.create(_fullSurface, srcRects[frame]);
+    _currentFrame = frame;
+    _drawSurface.create(_fullSurface, _srcRects[frame]);
     
-    setTransparent(isTransparent == kTrue);
+    setTransparent(_isTransparent == kTrue);
 
     _needsRedraw = true;
 }

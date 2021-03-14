@@ -37,11 +37,11 @@ void RenderObject::init() {
 }
 
 void RenderObject::registerGraphics() {
-    g_nancy->graphicsManager->addObject(this);
+    g_nancy->_graphicsManager->addObject(this);
 }
 
 RenderObject::~RenderObject() {
-    g_nancy->graphicsManager->removeObject(this);
+    g_nancy->_graphicsManager->removeObject(this);
     if (_drawSurface.getPixels()) {
         _drawSurface.free();
     }

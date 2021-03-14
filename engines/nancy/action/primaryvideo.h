@@ -64,7 +64,7 @@ struct ResponseStruct {
     ConditionFlags conditionFlags; // 0x01
     Common::String text; // 0x06
     Common::String soundName; // 0x196
-    SceneChangeDescription sceneChange; // 0x1A0
+    SceneChangeDescription _sceneChange; // 0x1A0
     EventFlagDescription flagDesc; // 0x1A8
 };
 
@@ -88,30 +88,30 @@ public:
     void addConditionalResponses();
     void addGoodbye();
 
-    Common::String videoName; // 0x00
-    Common::Rect src; // 0x1D
+    Common::String _videoName; // 0x00
+    Common::Rect _src; // 0x1D
     // _screenPosition 0x2D
-    Common::String text; // 0x3D
+    Common::String _text; // 0x3D
 
-    SoundDescription sound; // 0x619
-    SoundDescription responseGenericSound; // 0x63B
+    SoundDescription _sound; // 0x619
+    SoundDescription _responseGenericSound; // 0x63B
 
-    byte conditionalResponseCharacterID; // 0x65E
-    byte goodbyeResponseCharacterID; // 0x65F
-    NancyFlag isDialogueExitScene; // 0x660
-    NancyFlag doNotPop; // 0x661
-    SceneChangeDescription sceneChange; // 0x662
+    byte _conditionalResponseCharacterID; // 0x65E
+    byte _goodbyeResponseCharacterID; // 0x65F
+    NancyFlag _isDialogueExitScene; // 0x660
+    NancyFlag _doNotPop; // 0x661
+    SceneChangeDescription _sceneChange; // 0x662
 
-    Common::Array<ResponseStruct> responses; // 0x69E
-    Common::Array<FlagsStruct> flagsStructs; // 0x6AA
+    Common::Array<ResponseStruct> _responses; // 0x69E
+    Common::Array<FlagsStruct> _flagsStructs; // 0x6AA
 
     AVFDecoder _decoder;
 
-    bool hasDrawnTextbox = false;
-    int16 pickedResponse = -1;
+    bool _hasDrawnTextbox = false;
+    int16 _pickedResponse = -1;
 
     // Used to avoid clashes between multiple instances in the same scene
-	static PlayPrimaryVideoChan0 *activePrimaryVideo;
+	static PlayPrimaryVideoChan0 *_activePrimaryVideo;
 
 protected:
     virtual Common::String getRecordTypeName() const override { return "PlayPrimaryVideoChan0"; }

@@ -76,29 +76,29 @@ void Help::init() {
 }
 
 void Help::begin() {
-	g_nancy->sound->loadSound(_sound);
-	g_nancy->sound->playSound(_sound);
+	g_nancy->_sound->loadSound(_sound);
+	g_nancy->_sound->playSound(_sound);
     
     _image.registerGraphics();
     _image.setVisible(true);
 
-    g_nancy->cursorManager->setCursorType(CursorManager::kNormalArrow);
+    g_nancy->_cursorManager->setCursorType(CursorManager::kNormalArrow);
     
     _state = kRun;
 }
 
 void Help::run() {
-    NancyInput input = g_nancy->input->getInput();
+    NancyInput input = g_nancy->_input->getInput();
 
     if (_hotspot.contains(input.mousePos) && input.input & NancyInput::kLeftMouseButtonUp) {
-        g_nancy->sound->playSound(0x18); // Hardcoded by original engine
+        g_nancy->_sound->playSound(0x18); // Hardcoded by original engine
         _state = kWaitForSound;
     }
 }
 
 void Help::waitForSound() {
-    if (!g_nancy->sound->isSoundPlaying(18)) {
-	    g_nancy->sound->stopSound(_sound);
+    if (!g_nancy->_sound->isSoundPlaying(18)) {
+	    g_nancy->_sound->stopSound(_sound);
         g_nancy->setPreviousState();
     }
 }

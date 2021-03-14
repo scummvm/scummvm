@@ -72,10 +72,10 @@ void InventoryBox::init() {
         readRect(stream, _itemDescriptions[i].sourceRect);
     }
 
-    g_nancy->resource->loadImage(inventoryBoxIconsImageName, _iconsSurface);
+    g_nancy->_resource->loadImage(inventoryBoxIconsImageName, _iconsSurface);
     
     uint numItems = 11; // TODO
-    _fullInventorySurface.create(_screenPosition.width(), _screenPosition.height() * ((numItems / 4) + 1), GraphicsManager::screenPixelFormat);
+    _fullInventorySurface.create(_screenPosition.width(), _screenPosition.height() * ((numItems / 4) + 1), GraphicsManager::_screenPixelFormat);
     Common::Rect sourceRect = _screenPosition;
     sourceRect.moveTo(0, 0);
     _drawSurface.create(_fullInventorySurface, sourceRect);
@@ -116,16 +116,16 @@ void InventoryBox::handleInput(NancyInput &input) {
     for (uint i = 0; i < 4; ++i) {
         if (_itemHotspots[i].hotspot.contains(input.mousePos)) {
             if (NancySceneState.getHeldItem() != -1) {
-                g_nancy->cursorManager->setCursorType(CursorManager::kHotspotArrow);
+                g_nancy->_cursorManager->setCursorType(CursorManager::kHotspotArrow);
                 if (input.input & NancyInput::kLeftMouseButtonUp) {
                     NancySceneState.addItemToInventory(NancySceneState.getHeldItem());
-                    g_nancy->sound->playSound(0x16);
+                    g_nancy->_sound->playSound(0x16);
                 }                
             } else if (_itemHotspots[i].itemID != -1) {
-                g_nancy->cursorManager->setCursorType(CursorManager::kHotspotArrow);
+                g_nancy->_cursorManager->setCursorType(CursorManager::kHotspotArrow);
                 if (input.input & NancyInput::kLeftMouseButtonUp) {
                     NancySceneState.removeItemFromInventory(_itemHotspots[i].itemID);
-                    g_nancy->sound->playSound(0x18);
+                    g_nancy->_sound->playSound(0x18);
                 }
             }
             break;
@@ -209,7 +209,7 @@ void InventoryBox::InventoryScrollbar::init() {
     Common::Rect &srcBounds = _parent->_sliderSource;
     Common::Point &topPosition = _parent->_sliderDefaultDest;
 
-    _drawSurface.create(g_nancy->graphicsManager->object0, srcBounds);
+    _drawSurface.create(g_nancy->_graphicsManager->_object0, srcBounds);
 
     _startPosition = topPosition;
     _startPosition.x -= srcBounds.width() / 2;
@@ -224,7 +224,7 @@ void InventoryBox::InventoryScrollbar::init() {
 
 void InventoryBox::Shades::init() {
     Common::Rect bounds = _parent->getBounds();
-    _drawSurface.create(bounds.width(), bounds.height(), GraphicsManager::screenPixelFormat);
+    _drawSurface.create(bounds.width(), bounds.height(), GraphicsManager::_screenPixelFormat);
     _screenPosition = _parent->getScreenPosition();
     _nextFrameTime = 0;
     setAnimationFrame(_curFrame);
@@ -243,7 +243,7 @@ void InventoryBox::Shades::updateGraphics() {
 
             if (!_soundTriggered) {
                 _soundTriggered = true;
-                g_nancy->sound->playSound(0x12);
+                g_nancy->_sound->playSound(0x12);
             }
         }
     } else {
@@ -253,7 +253,7 @@ void InventoryBox::Shades::updateGraphics() {
 
             if (!_soundTriggered) {
                 _soundTriggered = true;
-                g_nancy->sound->playSound(0x12);
+                g_nancy->_sound->playSound(0x12);
             }
         }
     }
@@ -264,7 +264,7 @@ void InventoryBox::Shades::updateGraphics() {
 }
 
 void InventoryBox::Shades::setAnimationFrame(uint frame) {
-    Graphics::ManagedSurface &object0 = g_nancy->graphicsManager->object0;
+    Graphics::ManagedSurface &_object0 = g_nancy->_graphicsManager->_object0;
     Common::Rect srcRect;
     Common::Point destPoint;
 
@@ -279,12 +279,12 @@ void InventoryBox::Shades::setAnimationFrame(uint frame) {
 
     // Draw left shade
     srcRect = _parent->_shadesSrc[frame * 2];
-    _drawSurface.blitFrom(object0, srcRect, destPoint);
+    _drawSurface.blitFrom(_object0, srcRect, destPoint);
 
     // Draw right shade
     srcRect = _parent->_shadesSrc[frame * 2 + 1];
     destPoint.x = getBounds().width() - srcRect.width();
-    _drawSurface.blitFrom(object0, srcRect, destPoint);
+    _drawSurface.blitFrom(_object0, srcRect, destPoint);
 
     _needsRedraw = true;
 }

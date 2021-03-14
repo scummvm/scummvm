@@ -40,7 +40,7 @@ namespace Action {
 // action record types, whose functionality is nearly identical
 class PlayStaticBitmapAnimation : public ActionRecord, public RenderObject {
 public:
-    PlayStaticBitmapAnimation(bool interruptible, RenderObject &redrawFrom) : RenderObject(redrawFrom), isInterruptible(interruptible) {}
+    PlayStaticBitmapAnimation(bool interruptible, RenderObject &redrawFrom) : RenderObject(redrawFrom), _isInterruptible(interruptible) {}
     virtual ~PlayStaticBitmapAnimation() { _fullSurface.free(); }
 
     virtual void init() override;
@@ -49,38 +49,38 @@ public:
     virtual void execute() override;
     virtual void onPause(bool pause) override;
 
-    Common::String imageName;
+    Common::String _imageName;
 
-    NancyFlag isTransparent; // 0xC
-    NancyFlag doNotChangeScene; // 0xE
-    NancyFlag isReverse; // 0x10
-    NancyFlag isLooping; // 0x12
-    uint16 firstFrame; // 0x14
-    uint16 loopFirstFrame; // 0x16
-    uint16 loopLastFrame; // 0x18
-    Time frameTime;
-    uint16 zOrder; // 0x1C
-    EventFlagDescription interruptCondition; // 0x1E
-    SceneChangeDescription sceneChange;
-    MultiEventFlagDescription triggerFlags; // 0x2A
+    NancyFlag _isTransparent; // 0xC
+    NancyFlag _doNotChangeScene; // 0xE
+    NancyFlag _isReverse; // 0x10
+    NancyFlag _isLooping; // 0x12
+    uint16 _firstFrame; // 0x14
+    uint16 _loopFirstFrame; // 0x16
+    uint16 _loopLastFrame; // 0x18
+    Time _frameTime;
+    uint16 _zOrder; // 0x1C
+    EventFlagDescription _interruptCondition; // 0x1E
+    SceneChangeDescription _sceneChange;
+    MultiEventFlagDescription _triggerFlags; // 0x2A
 
-    Nancy::SoundDescription sound; // 0x52
+    Nancy::SoundDescription _sound; // 0x52
 
     // Describes a single frame in this animation
-    Common::Array<Common::Rect> srcRects;
+    Common::Array<Common::Rect> _srcRects;
     // Describes how the animation will be displayed on a single
     // frame of the viewport
-    Common::Array<BitmapDescription> bitmaps;
+    Common::Array<BitmapDescription> _bitmaps;
 
-    int16 currentFrame = -1;
-    int16 currentViewportFrame = -1;
-    Time nextFrameTime;
-    bool isInterruptible;
+    int16 _currentFrame = -1;
+    int16 _currentViewportFrame = -1;
+    Time _nextFrameTime;
+    bool _isInterruptible;
     
 protected:
-    virtual Common::String getRecordTypeName() const override { return isInterruptible ? "PlayIntStaticBitmapAnimation" : "PlayStaticBitmapAnimation"; }
+    virtual Common::String getRecordTypeName() const override { return _isInterruptible ? "PlayIntStaticBitmapAnimation" : "PlayStaticBitmapAnimation"; }
 
-    virtual uint16 getZOrder() const override { return zOrder; }
+    virtual uint16 getZOrder() const override { return _zOrder; }
     virtual bool isViewportRelative() const override { return true; }
 
     void setFrame(uint frame);

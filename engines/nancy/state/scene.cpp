@@ -83,9 +83,9 @@ void Scene::SceneSummary::read(Common::SeekableReadStream &stream) {
     ser.syncAsUint16LE((uint32 &)slowMoveTimeDelta);
     ser.syncAsUint16LE((uint32 &)fastMoveTimeDelta);
 
-    if (g_nancy->overrideMovementTimeDeltas) {
-        slowMoveTimeDelta = g_nancy->slowMovementTimeDelta;
-        fastMoveTimeDelta = g_nancy->fastMovementTimeDelta;
+    if (g_nancy->_overrideMovementTimeDeltas) {
+        slowMoveTimeDelta = g_nancy->_slowMovementTimeDelta;
+        fastMoveTimeDelta = g_nancy->_fastMovementTimeDelta;
     }
 
     delete[] buf;
@@ -106,10 +106,10 @@ void Scene::process() {
         // fall through
     case kStartSound:
         _state = kRun;
-        if (!_sceneState._doNotStartSound) {
-            g_nancy->sound->stopAndUnloadSpecificSounds();
-            g_nancy->sound->loadSound(_sceneState.summary.sound);
-            g_nancy->sound->playSound(_sceneState.summary.sound);
+        if (!_sceneState.doNotStartSound) {
+            g_nancy->_sound->stopAndUnloadSpecificSounds();
+            g_nancy->_sound->loadSound(_sceneState.summary.sound);
+            g_nancy->_sound->playSound(_sceneState.summary.sound);
         }
         // fall through
     case kRun:
@@ -123,7 +123,7 @@ void Scene::onStateEnter() {
         registerGraphics();
         _actionManager.onPause(false);
 
-        g_nancy->graphicsManager->redrawAll();
+        g_nancy->_graphicsManager->redrawAll();
 
         // Run once to clear out the previous scene when coming from Map
         process();
@@ -151,7 +151,7 @@ void Scene::changeScene(uint16 id, uint16 frame, uint16 verticalOffset, bool noS
     _sceneState.nextScene.sceneID = id;
     _sceneState.nextScene.frameID = frame;
     _sceneState.nextScene.verticalOffset = verticalOffset;
-    _sceneState._doNotStartSound = noSound;
+    _sceneState.doNotStartSound = noSound;
     _state = kLoad;
 }
 
@@ -173,13 +173,13 @@ void Scene::pauseSceneSpecificSounds() {
     // TODO missing if, same condition as the one in SoundManager::stopAndUnloadSpecificSounds
 
     for (uint i = 0; i < 10; ++i) {
-		g_nancy->sound->pauseSound(i, true);
+		g_nancy->_sound->pauseSound(i, true);
 	}
 }
 
 void Scene::unpauseSceneSpecificSounds() {
     for (uint i = 0; i < 10; ++i) {
-		g_nancy->sound->pauseSound(i, false);
+		g_nancy->_sound->pauseSound(i, false);
 	}
 }
 
@@ -275,7 +275,7 @@ void Scene::synchronize(Common::Serializer &ser) {
         ser.syncAsUint16LE(_sceneState.nextScene.sceneID);
         ser.syncAsUint16LE(_sceneState.nextScene.frameID);
         ser.syncAsUint16LE(_sceneState.nextScene.verticalOffset);
-        _sceneState._doNotStartSound = false;
+        _sceneState.doNotStartSound = false;
 
         load();
     }
@@ -319,7 +319,7 @@ void Scene::synchronize(Common::Serializer &ser) {
 	// TODO hardcoded inventory size
 	ser.syncArray(_flags.items, 11, Common::Serializer::Byte);
     ser.syncAsSint16LE(_flags.heldItem);
-    g_nancy->cursorManager->setCursorItemID(_flags.heldItem);
+    g_nancy->_cursorManager->setCursorItemID(_flags.heldItem);
 
 	ser.syncAsUint32LE((uint32 &)_timers.lastTotalTime);
 	ser.syncAsUint32LE((uint32 &)_timers.sceneTime);
@@ -356,7 +356,7 @@ void Scene::init() {
     }
 
     _timers.lastTotalTime = 0;
-    _timers.playerTime = g_nancy->startTimeHours * 3600000;
+    _timers.playerTime = g_nancy->_startTimeHours * 3600000;
     _timers.sceneTime = 0;
     _timers.timerTime = 0;
     _timers.timerIsActive = false;
@@ -364,7 +364,7 @@ void Scene::init() {
     _timers.pushedPlayTime = 0;
     _timers.timeOfDay = Timers::kDay;
 
-    _sceneState.nextScene.sceneID = g_nancy->firstSceneID;
+    _sceneState.nextScene.sceneID = g_nancy->_firstSceneID;
 
     Common::SeekableReadStream *chunk = g_nancy->getBootChunkStream("HINT");
     
@@ -380,7 +380,7 @@ void Scene::init() {
         _lastHint = -1;
     }
 
-    Action::SliderPuzzle::playerHasTriedPuzzle = false;
+    Action::SliderPuzzle::_playerHasTriedPuzzle = false;
 
     initStaticData();
 
@@ -397,7 +397,7 @@ void Scene::init() {
     }
 
     registerGraphics();
-    g_nancy->graphicsManager->redrawAll();
+    g_nancy->_graphicsManager->redrawAll();
 }
 
 void Scene::load() {
@@ -424,7 +424,7 @@ void Scene::load() {
                 _sceneState.summary.description.c_str(),
                 _sceneState.nextScene.frameID,
                 _sceneState.nextScene.verticalOffset,
-                _sceneState._doNotStartSound == true ? "true" : "false");
+                _sceneState.doNotStartSound == true ? "true" : "false");
 
     // Search for Action Records, maximum for a scene is 30
     Common::SeekableReadStream *actionRecordChunk = nullptr;
@@ -504,7 +504,7 @@ void Scene::run() {
     // Calculate the in-game time (playerTime)
     if (currentPlayTime > _timers.playerTimeNextMinute) {
         _timers.playerTime += 60000; // Add a minute
-        _timers.playerTimeNextMinute = currentPlayTime + g_nancy->playerTimeMinuteLength;
+        _timers.playerTimeNextMinute = currentPlayTime + g_nancy->_playerTimeMinuteLength;
     }
 
     // Set the time of day according to playerTime
@@ -517,7 +517,7 @@ void Scene::run() {
     }
 
     // Update the UI elements and handle input
-    NancyInput input = g_nancy->input->getInput();
+    NancyInput input = g_nancy->_input->getInput();
     _viewport.handleInput(input);
     _menuButton.handleInput(input);
     _helpButton.handleInput(input);
@@ -532,7 +532,7 @@ void Scene::run() {
     for (uint i = 0; i < _mapAccessSceneIDs.size(); ++i) {
         if (_sceneState.currentScene.sceneID == _mapAccessSceneIDs[i]) {
             if (_mapHotspot.contains(input.mousePos)) {
-                g_nancy->cursorManager->setCursorType(CursorManager::kHotspotArrow);
+                g_nancy->_cursorManager->setCursorType(CursorManager::kHotspotArrow);
 
                 if (input.input & NancyInput::kLeftMouseButtonUp) {
                     requestStateChange(NancyEngine::kMap);
@@ -569,7 +569,7 @@ void Scene::initStaticData() {
     _inventoryBox.init();
     _menuButton.init();
     _helpButton.init();
-    g_nancy->cursorManager->showCursor(true);
+    g_nancy->_cursorManager->showCursor(true);
 
     _state = kLoad;
 }

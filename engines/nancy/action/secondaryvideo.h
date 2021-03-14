@@ -52,17 +52,17 @@ public:
     virtual void readData(Common::SeekableReadStream &stream) override;
     virtual void execute() override;
 
-    Common::String filename;
-    Common::String paletteFilename;
-    uint16 loopFirstFrame = 0; // 0x1E
-    uint16 loopLastFrame = 0; // 0x20
-    uint16 onHoverFirstFrame = 0; // 0x22
-    uint16 onHoverLastFrame = 0; // 0x24
-    uint16 onHoverEndFirstFrame = 0; // 0x26
-    uint16 onHoverEndLastFrame = 0; // 0x28
-    SceneChangeDescription sceneChange; // 0x2A
+    Common::String _filename;
+    Common::String _paletteFilename;
+    uint16 _loopFirstFrame = 0; // 0x1E
+    uint16 _loopLastFrame = 0; // 0x20
+    uint16 _onHoverFirstFrame = 0; // 0x22
+    uint16 _onHoverLastFrame = 0; // 0x24
+    uint16 _onHoverEndFirstFrame = 0; // 0x26
+    uint16 _onHoverEndLastFrame = 0; // 0x28
+    SceneChangeDescription _sceneChange; // 0x2A
     // unknown byte
-    Common::Array<SecondaryVideoDescription> videoDescs; // 0x35
+    Common::Array<SecondaryVideoDescription> _videoDescs; // 0x35
 
 protected:
     virtual Common::String getRecordTypeName() const override { return Common::String::format("PlaySecondaryVideoChan%i", channel); }
@@ -70,7 +70,7 @@ protected:
     virtual uint16 getZOrder() const override { return 8; }
     virtual bool isViewportRelative() const override { return true; }
 
-    HoverState hoverState = kNoHover;
+    HoverState _hoverState = kNoHover;
     AVFDecoder _decoder;
     int _currentViewportFrame = -1;
     bool _isPlaying = false;

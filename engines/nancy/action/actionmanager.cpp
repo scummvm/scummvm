@@ -41,48 +41,48 @@ namespace Action {
 
 void ActionManager::handleInput(NancyInput &input) {
     for (auto &rec : _records) {
-        if (rec->isActive) {
+        if (rec->_isActive) {
             // Send input to all active records
             rec->handleInput(input);
         }
 
-        if (rec->isActive && rec->hasHotspot && NancySceneState.getViewport().convertViewportToScreen(rec->hotspot).contains(input.mousePos)) {
-            g_nancy->cursorManager->setCursorType(rec->getHoverCursor());
+        if (rec->_isActive && rec->_hasHotspot && NancySceneState.getViewport().convertViewportToScreen(rec->_hotspot).contains(input.mousePos)) {
+            g_nancy->_cursorManager->setCursorType(rec->getHoverCursor());
 
             if (input.input & NancyInput::kLeftMouseButtonUp) {
                 input.input &= ~NancyInput::kLeftMouseButtonUp;
 
                 bool shouldTrigger = false;
                 int16 heldItem = NancySceneState.getHeldItem();
-                if (rec->itemRequired != -1) {
-                    if (heldItem == -1 && rec->itemRequired == -2) {
+                if (rec->_itemRequired != -1) {
+                    if (heldItem == -1 && rec->_itemRequired == -2) {
                         shouldTrigger = true;
                     } else {
-                        if (rec->itemRequired <= 100) {
-                            if (heldItem == rec->itemRequired) {
+                        if (rec->_itemRequired <= 100) {
+                            if (heldItem == rec->_itemRequired) {
                                 shouldTrigger = true;
                             }
-                        } else if (rec->itemRequired <= 110 && rec->itemRequired - 100 != heldItem) {
+                        } else if (rec->_itemRequired <= 110 && rec->_itemRequired - 100 != heldItem) {
                             // IDs 100 - 110 mean the record will activate when the object is _not_ the specified one
                             shouldTrigger = true;
                         }
                     }
 
                     if (!shouldTrigger) {
-                        g_nancy->sound->playSound(17); // Hardcoded by original engine
+                        g_nancy->_sound->playSound(17); // Hardcoded by original engine
                     }
                 } else {
                     shouldTrigger = true;
                 }
                 if (shouldTrigger) {
-                    rec->state = ActionRecord::ExecutionState::kActionTrigger;
+                    rec->_state = ActionRecord::ExecutionState::kActionTrigger;
                     
-                    if (rec->itemRequired > 100 && rec->itemRequired <= 110) {
-                        rec->itemRequired -= 100;
+                    if (rec->_itemRequired > 100 && rec->_itemRequired <= 110) {
+                        rec->_itemRequired -= 100;
                     }
 
                     // Re-add the object to the inventory unless it's marked as a one-time use
-                    if (rec->itemRequired == heldItem && rec->itemRequired != -1) {
+                    if (rec->_itemRequired == heldItem && rec->_itemRequired != -1) {
                         if (NancySceneState.getInventoryBox().getItemDescription(heldItem).oneTimeUse != 0) {
                             NancySceneState.getInventoryBox().addItem(heldItem);
                         }
@@ -105,11 +105,11 @@ bool ActionManager::addNewActionRecord(Common::SeekableReadStream &inputData) {
     inputData.seek(0);
     char *descBuf = new char[0x30];
     inputData.read(descBuf, 0x30);
-    newRecord->description = Common::String(descBuf);
+    newRecord->_description = Common::String(descBuf);
     delete[] descBuf;
 
-    newRecord->type = inputData.readByte(); // redundant
-    newRecord->execType = (ActionRecord::ExecutionType)inputData.readByte();
+    newRecord->_type = inputData.readByte(); // redundant
+    newRecord->_execType = (ActionRecord::ExecutionType)inputData.readByte();
 
     uint16 localChunkSize = inputData.pos();
     newRecord->readData(inputData);
@@ -128,8 +128,8 @@ bool ActionManager::addNewActionRecord(Common::SeekableReadStream &inputData) {
         // Initialize the dependencies data
         inputData.seek(localChunkSize);
         for (uint16 i = 0; i < numDependencies; ++i) {
-            newRecord->dependencies.push_back(DependencyRecord());
-            DependencyRecord &dep = newRecord->dependencies.back();
+            newRecord->_dependencies.push_back(DependencyRecord());
+            DependencyRecord &dep = newRecord->_dependencies.back();
 
             dep.type = (DependencyType)inputData.readByte();
             dep.label = inputData.readByte();
@@ -146,7 +146,7 @@ bool ActionManager::addNewActionRecord(Common::SeekableReadStream &inputData) {
         }
     } else {
         // Set new record to active if it doesn't depend on anything
-        newRecord->isActive = true;
+        newRecord->_isActive = true;
     }
 
     _records.push_back(newRecord);
@@ -154,68 +154,68 @@ bool ActionManager::addNewActionRecord(Common::SeekableReadStream &inputData) {
     debugC(1, kDebugActionRecord, "Loaded action record %i, type %s, typeID %i, description \"%s\", execType == %s",
             _records.size() - 1,
             newRecord->getRecordTypeName().c_str(),
-            newRecord->type,
-            newRecord->description.c_str(),
-            newRecord->execType == ActionRecord::kRepeating ? "kRepeating" : "kOneShot");
-    for (uint i = 0; i < newRecord->dependencies.size(); ++i) {
+            newRecord->_type,
+            newRecord->_description.c_str(),
+            newRecord->_execType == ActionRecord::kRepeating ? "kRepeating" : "kOneShot");
+    for (uint i = 0; i < newRecord->_dependencies.size(); ++i) {
         debugCN(1, kDebugActionRecord, "\tDependency %i: type ", i);
-        switch (newRecord->dependencies[i].type) {
+        switch (newRecord->_dependencies[i].type) {
         case kNone : 
             debugCN(1, kDebugActionRecord, "kNone");
             break;
         case kInventory :
             debugCN(1, kDebugActionRecord, "kInventory, item ID %i %s",
-                        newRecord->dependencies[i].label,
-                        newRecord->dependencies[i].condition == kTrue ? "is in possession" : "is not in possession");
+                        newRecord->_dependencies[i].label,
+                        newRecord->_dependencies[i].condition == kTrue ? "is in possession" : "is not in possession");
             break;
         case kEventFlag :
             debugCN(1, kDebugActionRecord, "kEventFlag, flag ID %i == %s",
-                        newRecord->dependencies[i].label,
-                        newRecord->dependencies[i].condition == kTrue ? "true" : "false");
+                        newRecord->_dependencies[i].label,
+                        newRecord->_dependencies[i].condition == kTrue ? "true" : "false");
             break;
         case kLogicCondition :
             debugCN(1, kDebugActionRecord, "kLogicCondition, logic condition ID %i == %s",
-                        newRecord->dependencies[i].label,
-                        newRecord->dependencies[i].condition == kTrue ? "true" : "false");
+                        newRecord->_dependencies[i].label,
+                        newRecord->_dependencies[i].condition == kTrue ? "true" : "false");
             break;
         case kTotalTime :
             debugCN(1, kDebugActionRecord, "kTotalTime, %i hours, %i minutes, %i seconds, %i milliseconds",
-                        newRecord->dependencies[i].hours,
-                        newRecord->dependencies[i].minutes,
-                        newRecord->dependencies[i].seconds,
-                        newRecord->dependencies[i].milliseconds);
+                        newRecord->_dependencies[i].hours,
+                        newRecord->_dependencies[i].minutes,
+                        newRecord->_dependencies[i].seconds,
+                        newRecord->_dependencies[i].milliseconds);
             break;
         case kSceneTime :
             debugCN(1, kDebugActionRecord, "kSceneTime, %i hours, %i minutes, %i seconds, %i milliseconds",
-                        newRecord->dependencies[i].hours,
-                        newRecord->dependencies[i].minutes,
-                        newRecord->dependencies[i].seconds,
-                        newRecord->dependencies[i].milliseconds);
+                        newRecord->_dependencies[i].hours,
+                        newRecord->_dependencies[i].minutes,
+                        newRecord->_dependencies[i].seconds,
+                        newRecord->_dependencies[i].milliseconds);
             break;
         case kPlayerTime :
             debugCN(1, kDebugActionRecord, "kPlayerTime, %i days, %i hours, %i minutes, %i seconds",
-                        newRecord->dependencies[i].hours,
-                        newRecord->dependencies[i].minutes,
-                        newRecord->dependencies[i].seconds,
-                        newRecord->dependencies[i].milliseconds);
+                        newRecord->_dependencies[i].hours,
+                        newRecord->_dependencies[i].minutes,
+                        newRecord->_dependencies[i].seconds,
+                        newRecord->_dependencies[i].milliseconds);
             break;
         case kSceneCount :
             debugCN(1, kDebugActionRecord, "kSceneCount, scene ID %i, hit count %s %i",
-                        newRecord->dependencies[i].hours,
-                        newRecord->dependencies[i].milliseconds == 1 ? ">" : newRecord->dependencies[i].milliseconds == 2 ? "<" : "==",
-                        newRecord->dependencies[i].seconds);
+                        newRecord->_dependencies[i].hours,
+                        newRecord->_dependencies[i].milliseconds == 1 ? ">" : newRecord->_dependencies[i].milliseconds == 2 ? "<" : "==",
+                        newRecord->_dependencies[i].seconds);
             break;
         case kResetOnNewDay :
             debugCN(1, kDebugActionRecord, "kResetOnNewDay");
             break;
         case kUseItem :
             debugCN(1, kDebugActionRecord, "kUseItem, item ID %i %s",
-                        newRecord->dependencies[i].label,
-                        newRecord->dependencies[i].condition == kTrue ? "is held" : "is not held");
+                        newRecord->_dependencies[i].label,
+                        newRecord->_dependencies[i].condition == kTrue ? "is held" : "is not held");
             break;
         case kTimeOfDay :
             debugCN(1, kDebugActionRecord, "kTimeOfDay, %s",
-                        newRecord->dependencies[i].label == 0 ? "day" : newRecord->dependencies[i].label == 1 ? "night" : "dusk/dawn");
+                        newRecord->_dependencies[i].label == 0 ? "day" : newRecord->_dependencies[i].label == 1 ? "night" : "dusk/dawn");
             break;
         case kTimerNotDone :
             debugCN(1, kDebugActionRecord, "kTimerNotDone");
@@ -224,13 +224,13 @@ bool ActionManager::addNewActionRecord(Common::SeekableReadStream &inputData) {
             debugCN(1, kDebugActionRecord, "kTimerDone");
             break;
         case kDifficultyLevel :
-            debugCN(1, kDebugActionRecord, "kDifficultyLevel, level %i", newRecord->dependencies[i].condition);
+            debugCN(1, kDebugActionRecord, "kDifficultyLevel, level %i", newRecord->_dependencies[i].condition);
             break;
         default:
             debugCN(1, kDebugActionRecord, "unknown");
             break;
         }
-        debugC(1, kDebugActionRecord, ", orFlag == %s", newRecord->dependencies[i].orFlag == true ? "true" : "false");
+        debugC(1, kDebugActionRecord, ", orFlag == %s", newRecord->_dependencies[i].orFlag == true ? "true" : "false");
     }
 
     return true;
@@ -238,13 +238,13 @@ bool ActionManager::addNewActionRecord(Common::SeekableReadStream &inputData) {
 
 void ActionManager::processActionRecords() {    
     for (auto record : _records) {
-        if (record->isDone) {
+        if (record->_isDone) {
             continue;
         }
 
-        if (!record->isActive) {
-            for (uint i = 0; i < record->dependencies.size(); ++i) {
-                DependencyRecord &dep = record->dependencies[i];
+        if (!record->_isActive) {
+            for (uint i = 0; i < record->_dependencies.size(); ++i) {
+                DependencyRecord &dep = record->_dependencies[i];
 
                 if (!dep.satisfied) {
                     switch (dep.type) {
@@ -343,17 +343,17 @@ void ActionManager::processActionRecords() {
 
                         break;
                     case kResetOnNewDay:
-                        if (record->days == -1) {
-                            record->days = NancySceneState._timers.playerTime.getDays();
+                        if (record->_days == -1) {
+                            record->_days = NancySceneState._timers.playerTime.getDays();
                             dep.satisfied = true;
                             break;
                         }
 
-                        if (record->days < NancySceneState._timers.playerTime.getDays()) {
-                            record->days = NancySceneState._timers.playerTime.getDays();
-                            for (uint j = 0; j < record->dependencies.size(); ++j) {
-                                if (record->dependencies[j].type == kPlayerTime) {
-                                    record->dependencies[j].satisfied = false;
+                        if (record->_days < NancySceneState._timers.playerTime.getDays()) {
+                            record->_days = NancySceneState._timers.playerTime.getDays();
+                            for (uint j = 0; j < record->_dependencies.size(); ++j) {
+                                if (record->_dependencies[j].type == kPlayerTime) {
+                                    record->_dependencies[j].satisfied = false;
                                 }
                             }
                         }
@@ -361,8 +361,8 @@ void ActionManager::processActionRecords() {
                         break;
                     case kUseItem: {
                         bool hasUnsatisfiedDeps = false;
-                        for (uint j = 0; j < record->dependencies.size(); ++j) {
-                            if (j != i && record->dependencies[j].satisfied == false) {
+                        for (uint j = 0; j < record->_dependencies.size(); ++j) {
+                            if (j != i && record->_dependencies[j].satisfied == false) {
                                 hasUnsatisfiedDeps = true;
                             }
                         }
@@ -371,10 +371,10 @@ void ActionManager::processActionRecords() {
                             break;
                         }
 
-                        record->itemRequired = dep.label;
+                        record->_itemRequired = dep.label;
 
                         if (dep.condition == 1) {
-                            record->itemRequired += 100;
+                            record->_itemRequired += 100;
                         }
                         
                         dep.satisfied = true;
@@ -412,28 +412,28 @@ void ActionManager::processActionRecords() {
 
             // An orFlag marks that its corresponding dependency and the one after it
             // mutually satisfy each other; if one is satisfied, so is the other
-            for (uint i = 1; i < record->dependencies.size(); ++i) {
-                if (record->dependencies[i-1].orFlag) {
-                    if (record->dependencies[i-1].satisfied)
-                        record->dependencies[i].satisfied = true;
-                    if (record->dependencies[i].satisfied)
-                        record->dependencies[i-1].satisfied = true;
+            for (uint i = 1; i < record->_dependencies.size(); ++i) {
+                if (record->_dependencies[i-1].orFlag) {
+                    if (record->_dependencies[i-1].satisfied)
+                        record->_dependencies[i].satisfied = true;
+                    if (record->_dependencies[i].satisfied)
+                        record->_dependencies[i-1].satisfied = true;
                 }
             }
 
             // Check if all dependencies have been satisfied, and activate the record if they have
             uint satisfied = 0;
-            for (uint i = 0; i < record->dependencies.size(); ++i) {
-                if (record->dependencies[i].satisfied)
+            for (uint i = 0; i < record->_dependencies.size(); ++i) {
+                if (record->_dependencies[i].satisfied)
                     ++satisfied;
             }
 
-            if (satisfied == record->dependencies.size())
-                record->isActive = true;
+            if (satisfied == record->_dependencies.size())
+                record->_isActive = true;
         
         }
 
-        if (record->isActive) {
+        if (record->_isActive) {
             record->execute();
         }
     }
@@ -448,7 +448,7 @@ void ActionManager::clearActionRecords() {
 
 void ActionManager::onPause(bool pause) {
     for (auto &r : _records) {
-        if (r->isActive && !r->isDone) {
+        if (r->_isActive && !r->_isDone) {
             r->onPause(pause);
         }
     }
@@ -457,8 +457,8 @@ void ActionManager::onPause(bool pause) {
 void ActionManager::synchronize(Common::Serializer &ser) {
     // When loading, the records should already have been initialized by scene
     for (auto &rec : _records) {
-        ser.syncAsByte(rec->isActive);
-        ser.syncAsByte(rec->isDone);
+        ser.syncAsByte(rec->_isActive);
+        ser.syncAsByte(rec->_isDone);
     }
 }
 
