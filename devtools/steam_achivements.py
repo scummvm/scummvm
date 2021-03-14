@@ -23,6 +23,11 @@ statsurl = "https://steamdb.info/app/{0}/stats/".format(args.steamid)
 if args.verbose:
 	sys.stderr.write('query {0}\n'.format(statsurl))
 
+def cleanup_text(text):
+	text = text.encode(encoding="ascii", errors="backslashreplace").decode()
+	text = text.replace('"','\\"')
+	return text
+
 try:
 	session = HTMLSession()
 	response = session.get(statsurl)
@@ -47,8 +52,8 @@ try:
 		idx       = achievements_columns * i
 		ach_id    = achievements_rows[idx + 0].text.strip()
 		ach_text  = achievements_rows[idx + 1].text.strip()
-		ach_title = ach_text.split('\n')[0].replace('"','\\"')
-		ach_desc  = ach_text.split('\n')[1].replace('"','\\"')
+		ach_title = cleanup_text(ach_text.split('\n')[0])
+		ach_desc  = cleanup_text(ach_text.split('\n')[1])
 		if ach_desc == "Hidden.":
 			print("\t\t\tACHIEVEMENT_HIDDEN_ENTRY(\"%s\", \"%s\")," % (ach_id, ach_title))
 		else:
