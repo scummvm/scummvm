@@ -80,6 +80,10 @@ struct LBValue {
 		list = l;
 	}
 	LBValue(const LBValue &val) {
+		copy(val);
+	}
+
+	void copy(const LBValue &val) {
 		type = val.type;
 		switch (type) {
 		case kLBValueString:
@@ -110,6 +114,8 @@ struct LBValue {
 			break;
 		}
 	}
+
+	LBValue &operator=(const LBValue &other);
 
 	LBValueType type;
 	Common::String string;

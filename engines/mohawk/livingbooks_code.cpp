@@ -30,6 +30,42 @@
 
 namespace Mohawk {
 
+LBValue &LBValue::operator=(const LBValue &other)
+{
+	if (type != other.type) {
+		switch (type) {
+		case kLBValueString:
+			string.clear();
+			break;
+		case kLBValueInteger:
+			integer = 0;
+			break;
+		case kLBValueReal:
+			real = 0.0;
+			break;
+		case kLBValuePoint:
+			point = Common::Point();
+			break;
+		case kLBValueRect:
+			rect = Common::Rect();
+			break;
+		case kLBValueItemPtr:
+			item = nullptr;
+			break;
+		case kLBValueLBX:
+			lbx.reset();
+			break;
+		case kLBValueList:
+			list.reset();
+			break;
+		default:
+			break;
+		}
+	}
+	copy(other);
+	return *this;
+}
+
 bool LBValue::operator==(const LBValue &x) const {
 	if (type != x.type) {
 		if (isNumeric() && x.isNumeric())
