@@ -3,31 +3,31 @@
 Configuration file
 =======================
 
-The configuration file provides a way to edit both global and game-specific settings. It is a text file containing configuration keys and parameters. 
+The configuration file provides a way to edit both global and game-specific settings. It is a text file containing configuration keys and parameters.
 
-Settings are also accessible directly from the Launcher. See :doc:`../use_scummvm/how_to_settings`. 
+Settings are also accessible directly from the Launcher. See :doc:`../use_scummvm/how_to_settings`.
 
 Location
 ==========
 
-The configuration file saves to different default locations, depending on the platform. 
+The configuration file saves to different default locations, depending on the platform.
 
-	
+
 .. tabbed:: Windows
 
 	.. panels::
 		:column: col-lg-12 mb-2
 
 		95/98/ME
-		^^^^^^^^^^ 
-	
+		^^^^^^^^^^
+
 		``C:\WINDOWS\scummvm.ini``
-		
-	
+
+
 		---
 		:column: col-lg-12 mb-2
 
-		Windows NT4 
+		Windows NT4
 		^^^^^^^^^^^^
 
 		``C:\WINDOWS\Profiles\username\Application Data\ScummVM\scummvm.ini``
@@ -56,11 +56,11 @@ The configuration file saves to different default locations, depending on the pl
 		.. note::
 
 			If an earlier version of ScummVM was installed on your system, the configuration file remains in the previous default location of ``~/.scummvmrc``.
-		
+
 		.. tip::
-			
+
 			To see the Library folder, press :kbd:`Option` when clicking **Go** in the Finder menu.
-		
+
 
 .. tabbed:: Linux
 
@@ -68,20 +68,20 @@ The configuration file saves to different default locations, depending on the pl
 		:column: col-lg-12 mb-2
 
 		ScummVM follows the XDG Base Directory Specification, so by default the configuration file is found at ``~/.config/scummvm/scummvm.ini``, but its location might vary depending on the value of the ``XDG_CONFIG_HOME`` environment variable.
-		
+
 		If ScummVM was installed using Snap, the configuration file is found at ``~/snap/scummvm/current/.config/scummvm/scummvm.ini``
 
 		.. note::
-			
+
 			``.config`` is a hidden directory. To view it use ``ls -a`` on the command line.
 
-	
+
 
 
 Using the configuration file
 ==================================
 
-Global settings are listed under the ``[scummvm]`` heading. Global :doc:`keymaps settings <../settings/keymaps>` are listed under the ``[keymapper]`` heading. Game-specific settings, including keymaps, are listed under the heading for that game, for example ``[queen]`` for Flight of the Amazon Queen. Use the configuration keys to change settings. 
+Global settings are listed under the ``[scummvm]`` heading. Global :doc:`keymaps settings <../settings/keymaps>` are listed under the ``[keymapper]`` heading. Game-specific settings, including keymaps, are listed under the heading for that game, for example ``[queen]`` for Flight of the Amazon Queen. Use the configuration keys to change settings.
 
 
 Example of a configuration file
@@ -128,11 +128,11 @@ Example of a configuration file
 Configuration keys
 =====================
 
-There are many recognized configuration keys. In the table below, each key is either linked to an explanatory description in the Settings pages, or has further information in the **Decription/Options** column. 
+There are many recognized configuration keys. In the table below, each key is either linked to an explanatory description in the Settings pages, or has further information in the **Decription/Options** column.
 
-.. csv-table:: 
+.. csv-table::
 	:widths: 37 13 25 25
-  	:header-rows: 1 
+  	:header-rows: 1
 
 		Key,Type,Default,Description/Options
 		alsa_port,integer,,Specifies which ALSA port ScummVM uses when using the ALSA music driver (Linux).
@@ -142,15 +142,15 @@ There are many recognized configuration keys. In the table below, each key is ei
 		":ref:`aspect_ratio <ratio>`",boolean,false,
 		":ref:`audio_buffer_size <buffer>`",integer,"Calculated based on output sampling frequency to keep audio latency below 45ms.","Overrides the size of the audio buffer. Allowed values:
 
-	- 256 
-	- 512 
-	- 1024 
-	- 2048 
-	- 4096                             
-	- 8192 
-	- 16384 
+	- 256
+	- 512
+	- 1024
+	- 2048
+	- 4096
+	- 8192
+	- 16384
 	- 32768"
-		":ref:`autosave_period <autosave>`", integer, 300, 
+		":ref:`autosave_period <autosave>`", integer, 300,
 		auto_savenames,boolean,false, Automatically generates names for saved games
 		":ref:`bilinear_filtering <bilinear>`",boolean,false,
 		`boot_param <https://wiki.scummvm.org/index.php/Boot_Params>`_,integer,none,
@@ -159,13 +159,13 @@ There are many recognized configuration keys. In the table below, each key is ei
 		":ref:`color <color>`",boolean,,
 		":ref:`commandpromptwindow <cmd>`",boolean,false,
 		confirm_exit,boolean,false, ScummVM requests confirmation before quitting (SDL backend only)
-		console,boolean,true, Enables the console window for Win32/Symbian32. 
-		controller_map_db,string,"``gamecontrollerdb.txt`` is loaded from the specified extrapath", "Specifies the custom controller mapping file to load to complete the default database (SDL backend only)." 
+		console,boolean,true, Enables the console window for Win32/Symbian32.
+		controller_map_db,string,"``gamecontrollerdb.txt`` is loaded from the specified extrapath", "Specifies the custom controller mapping file to load to complete the default database (SDL backend only)."
 		copy_protection,boolean,false, Enables copy protection
 		demo_mode,boolean,false, Starts demo mode of Maniac Mansion or the 7th Guest
 		":ref:`description <description>`",string,,
 		desired_screen_aspect_ratio,string,auto,
-		dimuse_tempo,integer,10,"Sets internal Digital iMuse tempo per second; 0 - 100" 
+		dimuse_tempo,integer,10,"Sets internal Digital iMuse tempo per second; 0 - 100"
 		":ref:`disable_dithering <dither>`",boolean,false,
 		":ref:`disable_stamina_drain <stamina>`",boolean,false,
 		":ref:`DurableArmor <durable>`",boolean,false,
@@ -178,10 +178,10 @@ There are many recognized configuration keys. In the table below, each key is ei
 		":ref:`enable_high_resolution_graphics <hires>`",boolean,true,
 		":ref:`enable_hq_video <hq>`",boolean,true,
 		":ref:`enable_larryscale <larry>`",boolean,true,
-		":ref:`enable_reporter <reporter>`",boolean,false,RISC OS only. 
+		":ref:`enable_reporter <reporter>`",boolean,false,RISC OS only.
 		":ref:`enable_video_upscale <upscale>`",boolean,true,
 		":ref:`enable_tts <ttsenabled>`",boolean,false,
-		enable_unsupported_game_warning,boolean,true, Shows a warning when adding a game that is unsupported. 
+		enable_unsupported_game_warning,boolean,true, Shows a warning when adding a game that is unsupported.
 		extra,string, ,"Shows additional information about a game, such as version"
 		":ref:`extrapath <extra>`",string,None,
 		":ref:`fade_style <fade>`",boolean,true,
@@ -192,7 +192,7 @@ There are many recognized configuration keys. In the table below, each key is ei
 		":ref:`fluidsynth_chorus_level <chlevel>`",integer,100,"- 0 - 100"
 		":ref:`fluidsynth_chorus_nr <chnr>`",integer,3,"- 0 - 99"
 		":ref:`fluidsynth_chorus_speed <chspeed>`",integer,30,"- 10 - 500"
-		":ref:`fluidsynth_chorus_waveform <chwave>`",string,Sine," 
+		":ref:`fluidsynth_chorus_waveform <chwave>`",string,Sine,"
 	- sine
 	- triangle"
 		":ref:`fluidsynth_misc_interpolation <interp>`",string,4th,"
@@ -227,14 +227,14 @@ There are many recognized configuration keys. In the table below, each key is ei
 		":ref:`gm_device <gm>`",string,null,"
 	- auto
 	- alsa
-	- seq 
+	- seq
 	- sndio
-	- fluidsynth 
+	- fluidsynth
 	- timidity"
 		":ref:`GraphicsDithering <gdither>`",boolean,true,
 		":ref:`gui_browser_native <guibrowser>`", boolean, true
 		gui_browser_show_hidden,boolean,false, Shows hidden files/folders in the ScummVM file browser.
-		gui_list_max_scan_entries,integer,-1, "Specifies the threshold for scanning directories in the Launcher. If the number of game entires exceeds the specified number, then scanning is skipped." 
+		gui_list_max_scan_entries,integer,-1, "Specifies the threshold for scanning directories in the Launcher. If the number of game entires exceeds the specified number, then scanning is skipped."
 		gui_saveload_chooser,string,grid,"- list
 	- grid"
 		gui_saveload_last_pos,string,0,
@@ -244,11 +244,11 @@ There are many recognized configuration keys. In the table below, each key is ei
 		":ref:`herculesfont <herc>`",boolean,false,
 		":ref:`hpbargraphs <hp>`",boolean,true,
 		":ref:`hypercheat <hyper>`",boolean,false,
-		iconpath,string,, "Specifies the path to icons to use as overlay for the ScummVM icon in the Windows taskbar or the macOS Dock when running a game. The icon files should be named after the :ref:`gameid <gameid>`, and be an ICO file on Windows, or a PNG file on macOS." 
+		iconpath,string,, "Specifies the path to icons to use as overlay for the ScummVM icon in the Windows taskbar or the macOS Dock when running a game. The icon files should be named after the :ref:`gameid <gameid>`, and be an ICO file on Windows, or a PNG file on macOS."
 		":ref:`improved <improved>`",boolean,true,
 		":ref:`InvObjectsAnimated <objanimated>`",boolean,true,
 		":ref:`joystick_deadzone <deadzone>`",integer, 3
-		joystick_num,integer,0,Enables joystick input and selects which joystick to use. The default is the first joystick. 
+		joystick_num,integer,0,Enables joystick input and selects which joystick to use. The default is the first joystick.
 		":ref:`kbdmouse_speed <mousespeed>`", integer, 10
 		":ref:`keymap_engine-default_DOWN <down>`",string,JOY_DOWN
 		":ref:`keymap_engine-default_LCLK <LCLK>`",string,MOUSE_LEFT JOY_A
@@ -262,38 +262,38 @@ There are many recognized configuration keys. In the table below, each key is ei
 		":ref:`keymap_engine-default_RIGHT <right>`",string,JOY_RIGHT
 		":ref:`keymap_engine-default_SKIP <skip>`",string,ESCAPE JOY
 		":ref:`keymap_engine-default_SKLI <SKLI>`",string,PERIOD JOY_X
-		":ref:`keymap_engine-default_UP <up>`",string,JOY_UP 
-		":ref:`keymap_global_DEBUGGER <debug>`",string,C+A+d 
+		":ref:`keymap_engine-default_UP <up>`",string,JOY_UP
+		":ref:`keymap_global_DEBUGGER <debug>`",string,C+A+d
 		":ref:`keymap_global_MENU <gmm>`",string,C+F5 JOY_START,
-		":ref:`keymap_global_MUTE <mute>`",string,C+u, 
-		":ref:`keymap_global_QUIT <globalquit>`",string,C+q, 
-		":ref:`keymap_global_VMOUSEDOWN <vmousedown>`",string,JOY_LEFT_STICK_Y+, 
-		":ref:`keymap_global_VMOUSELEFT <vmouseleft>`",string,JOY_LEFT_STICK_X-, 
-		":ref:`keymap_global_VMOUSERIGHT <vmouseright>`",string,JOY_LEFT_STICK_X+, 
-		":ref:`keymap_global_VMOUSESLOW <vmouseslow>`",string,JOY_RIGHT_SHOULDER, 
-		":ref:`keymap_global_VMOUSEUP <vmouseup>`",string,JOY_LEFT_STICK_Y-, 
-		":ref:`keymap_gui_CLOS <close>`",string,ESCAPE JOY_Y, 
-		":ref:`keymap_gui_DOWN <guidown>`",string,JOY_DOWN, 
-		":ref:`keymap_gui_INTRCT <interact>`",string,JOY_A, 
-		":ref:`keymap_gui_LEFT <guileft>`",string, 
-		":ref:`keymap_gui_RIGHT <guiright>`",string,JOY_RIGHT, 
-		":ref:`keymap_gui_UP <guiup>`",string,JOY_UP, 
-		":ref:`keymap_sdl-graphics_ASPT <ASPT>`",string,C+A+a, 
+		":ref:`keymap_global_MUTE <mute>`",string,C+u,
+		":ref:`keymap_global_QUIT <globalquit>`",string,C+q,
+		":ref:`keymap_global_VMOUSEDOWN <vmousedown>`",string,JOY_LEFT_STICK_Y+,
+		":ref:`keymap_global_VMOUSELEFT <vmouseleft>`",string,JOY_LEFT_STICK_X-,
+		":ref:`keymap_global_VMOUSERIGHT <vmouseright>`",string,JOY_LEFT_STICK_X+,
+		":ref:`keymap_global_VMOUSESLOW <vmouseslow>`",string,JOY_RIGHT_SHOULDER,
+		":ref:`keymap_global_VMOUSEUP <vmouseup>`",string,JOY_LEFT_STICK_Y-,
+		":ref:`keymap_gui_CLOS <close>`",string,ESCAPE JOY_Y,
+		":ref:`keymap_gui_DOWN <guidown>`",string,JOY_DOWN,
+		":ref:`keymap_gui_INTRCT <interact>`",string,JOY_A,
+		":ref:`keymap_gui_LEFT <guileft>`",string,
+		":ref:`keymap_gui_RIGHT <guiright>`",string,JOY_RIGHT,
+		":ref:`keymap_gui_UP <guiup>`",string,JOY_UP,
+		":ref:`keymap_sdl-graphics_ASPT <ASPT>`",string,C+A+a,
 		":ref:`keymap_sdl-graphics_CAPT <CAPT>`",string,C+m,
 		":ref:`keymap_sdl-graphics_FILT <FILT>`",string,C+A+f
-		":ref:`keymap_sdl-graphics_FLT1 <FLT1>`",string,C+A+1 
+		":ref:`keymap_sdl-graphics_FLT1 <FLT1>`",string,C+A+1
 		":ref:`keymap_sdl-graphics_FLT2 <FLT2>`",string,C+A+2
-		":ref:`keymap_sdl-graphics_FLT3 <FLT3>`",string,C+A+3 
-		":ref:`keymap_sdl-graphics_FLT4 <FLT4>`",string,C+A+4 
-		":ref:`keymap_sdl-graphics_FLT5 <FLT5>`",string,C+A+5 
+		":ref:`keymap_sdl-graphics_FLT3 <FLT3>`",string,C+A+3
+		":ref:`keymap_sdl-graphics_FLT4 <FLT4>`",string,C+A+4
+		":ref:`keymap_sdl-graphics_FLT5 <FLT5>`",string,C+A+5
 		":ref:`keymap_sdl-graphics_FLT6 <FLT6>`",string, C+A+6
 		":ref:`keymap_sdl-graphics_FLT7 <FLT7>`",string,C+A+7
 		":ref:`keymap_sdl-graphics_FLT8 <FLT8>`",string,C+A+8
 		":ref:`keymap_sdl-graphics_FULS <FULS>`",string,A+RETURN
-		":ref:`keymap_sdl-graphics_SCL- <SCL>`",string,C+A+MINUS 
-		":ref:`keymap_sdl-graphics_SCL+ <SCL>`",string,C+A+PLUS 
-		":ref:`keymap_sdl-graphics_SCRS <SCRS>`",string,A+s 
-		":ref:`keymap_sdl-graphics_STCH <STCH>`",string,C+A+s 
+		":ref:`keymap_sdl-graphics_SCL- <SCL>`",string,C+A+MINUS
+		":ref:`keymap_sdl-graphics_SCL+ <SCL>`",string,C+A+PLUS
+		":ref:`keymap_sdl-graphics_SCRS <SCRS>`",string,A+s
+		":ref:`keymap_sdl-graphics_STCH <STCH>`",string,C+A+s
 		":ref:`language <lang>`",string,,
 		":ref:`local_server_port <serverport>`",integer,12345,
 		":ref:`midi_gain <gain>`",integer,,"- 0 - 1000"
@@ -304,12 +304,12 @@ There are many recognized configuration keys. In the table below, each key is ei
 		":ref:`mt32_device <mt32>`",string,auto,"
 	- auto
 	- alsa
-	- seq 
+	- seq
 	- fluidsynth
 	- mt32
 	- timidity "
 		":ref:`multi_midi <multi>`",boolean,,
-		":ref:`music_driver [scummvm] <device>`",string,auto,"	
+		":ref:`music_driver [scummvm] <device>`",string,auto,"
 	- null
 	- auto
 
@@ -322,10 +322,10 @@ There are many recognized configuration keys. In the table below, each key is ei
 
 	- windows (Windows)
 
-	- fluidsynth 
+	- fluidsynth
 	- mt32
 	- adlib
-	- pcspk 
+	- pcspk
 	- pcjr
 	- cms
 	- timidity
@@ -338,7 +338,7 @@ There are many recognized configuration keys. In the table below, each key is ei
 	- pc98
 	- segacd
 	"
-		music_mute,boolean,false, Mutes the game music. 
+		music_mute,boolean,false, Mutes the game music.
 		":ref:`music_volume <music>`",integer,192,"- 0-256 "
 		":ref:`mute <mute>`",boolean,false,
 		":ref:`native_fb01 <fb01>`",boolean,false,
@@ -360,24 +360,24 @@ There are many recognized configuration keys. In the table below, each key is ei
 		":ref:`output_rate <outputrate>`",integer,,"
 	Sensible values are:
 
-	- 11025 
+	- 11025
 	- 22050
 	- 44100"
 		":ref:`platform <platform>`",string,,
 		":ref:`portaits_on <portraits>`",boolean,true,
 		":ref:`prefer_digitalsfx <dsfx>`",boolean,true,
-		":ref:`render_mode <render>`",string,default,"	
-	- hercGreen 
+		":ref:`render_mode <render>`",string,default,"
+	- hercGreen
 	- hercAmber
 	- cga
 	- ega
 	- vga
-	- amiga 
-	- fmtowns 
+	- amiga
+	- fmtowns
 	- pc9821
-	- pc9801 
-	- 2gs 
-	- atari 
+	- pc9801
+	- 2gs
+	- atari
 	- macintosh "
 		":ref:`rootpath <rootpath>`",string,,
 		":ref:`savepath <savepath>`",string,,
@@ -385,7 +385,7 @@ There are many recognized configuration keys. In the table below, each key is ei
 		":ref:`scalemakingofvideos <scale>`",boolean,false,
 		":ref:`scanlines <scan>`",boolean,false,
 		screenshotpath,string,,Specifies where screenshots are saved
-		sfx_mute,boolean,false, Mutes the game sound effects. 
+		sfx_mute,boolean,false, Mutes the game sound effects.
 		":ref:`sfx_volume <sfx>`",integer,192,
 		":ref:`shorty <shorty>`",boolean,false,
 		":ref:`show_fps <fps>`",boolean,false,
@@ -398,16 +398,16 @@ There are many recognized configuration keys. In the table below, each key is ei
 		":ref:`speech_mute <speechmute>`",boolean,false,
 		":ref:`speech_volume <speechvol>`",integer,192,
 		":ref:`stretch_mode <stretchmode>`",string,,"
-	- center 
-	- pixel-perfect 
-	- fit 
-	- stretch 
+	- center
+	- pixel-perfect
+	- fit
+	- stretch
 	- fit_force_aspect "
 		":ref:`studio_audience <studio>`",boolean,true,
 		":ref:`subtitles <speechmute>`",boolean,false,
 		":ref:`talkspeed <talkspeed>`",integer,60,"- 0 - 255 "
 		tempo,integer,100,"Sets the music tempo, in percent, for SCUMM games.
-		
+
 	- 50-200"
 		":ref:`TextWindowAnimated <windowanimated>`",boolean,true,
 		":ref:`themepath <themepath>`",string,none,
@@ -416,24 +416,24 @@ There are many recognized configuration keys. In the table below, each key is ei
 		":ref:`tts_enabled <ttsenabled>`",boolean,false,
 		":ref:`tts_narrator <ttsnarrator>`",boolean,false,
 		use_cdaudio,boolean,true, "If true, ScummVM uses audio from the game CD."
-		versioninfo,string,,Shows the ScummVM version that created the configuration file. 
+		versioninfo,string,,Shows the ScummVM version that created the configuration file.
 		":ref:`window_style <style>`",boolean,true,
 		":ref:`windows_cursors <wincursors>`",boolean,false,
-		
-		
-		
-		
-	
-		
-		
-		
-		
-		
-		
-	
-		
-		
-		
-		
 
-		
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

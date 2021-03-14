@@ -7,34 +7,34 @@ This page contains all the information you need to get ScummVM up and running on
 What you'll need
 ===================
 
-- A Nintendo 3DS with a Homebrew Launcher or custom firmware. How to enable homebrew is outside the scope of this documentation. 
+- A Nintendo 3DS with a Homebrew Launcher or custom firmware. How to enable homebrew is outside the scope of this documentation.
 
 Installing ScummVM
 ======================================
 
-Download the Nintendo 3DS package from the `ScummVM Downloads page <https://www.scummvm.org/downloads/>`_. Extract the archive. 
+Download the Nintendo 3DS package from the `ScummVM Downloads page <https://www.scummvm.org/downloads/>`_. Extract the archive.
 
-There are two ways to install ScummVM: using the 3DSX format, or the CIA format. 
+There are two ways to install ScummVM: using the 3DSX format, or the CIA format.
 
 Using the 3DSX format
 ***********************
-Copy the extracted files to your SD card into the ``/3ds/scummvm`` directory. 
+Copy the extracted files to your SD card into the ``/3ds/scummvm`` directory.
 
-Launch ScummVM using the Homebrew Launcher. 
+Launch ScummVM using the Homebrew Launcher.
 
 Using the CIA format
 ***********************
 
 Use any CIA installation software to install the ``scummvm.cia`` file.
 
-The CIA format requires a DSP binary dump saved on your SD card as ``/3ds/dspfirm.cdc``. This is not an optional step, because without this you will not have proper audio support. Documenting this process is outside the scope of this documentation.  
+The CIA format requires a DSP binary dump saved on your SD card as ``/3ds/dspfirm.cdc``. This is not an optional step, because without this you will not have proper audio support. Documenting this process is outside the scope of this documentation.
 
 Transferring game files
 ========================
 
-Transfer game folders onto the SD card. The exact location is not important. 
+Transfer game folders onto the SD card. The exact location is not important.
 
-ScummVM for the Nintendo 3DS also has cloud functionality. See :doc:`../use_scummvm/connect_cloud`. 
+ScummVM for the Nintendo 3DS also has cloud functionality. See :doc:`../use_scummvm/connect_cloud`.
 
 See :doc:`../use_scummvm/game_files` for more information about game file requirements.
 
@@ -45,7 +45,7 @@ Controls
 Default control mapping
 ****************************
 
-Controls can also be manually configured in the :doc:`Keymaps tab <../settings/keymaps>`. See the :doc:`../use_scummvm/keyboard_shortcuts` page for common keyboard shortcuts. 
+Controls can also be manually configured in the :doc:`Keymaps tab <../settings/keymaps>`. See the :doc:`../use_scummvm/keyboard_shortcuts` page for common keyboard shortcuts.
 
 .. csv-table::
     :widths: 50 50
@@ -58,7 +58,7 @@ Controls can also be manually configured in the :doc:`Keymaps tab <../settings/k
     Ⓐ,Left mouse button
     Ⓑ,Right mouse button
     Ⓧ,Opens the virtual keyboard
-    Ⓨ,ESC 
+    Ⓨ,ESC
     Control Pad,Keypad cursor keys
     L Button,Toggles magnify mode on/off
     R Button,Toggles between hover/drag modes
@@ -70,7 +70,7 @@ Controls can also be manually configured in the :doc:`Keymaps tab <../settings/k
 Hover mode
 ************
 
-When using the touchscreen, hover mode simulates the movement of the mouse. You can click with taps, however you can't drag or hold down a mouse button unless you use the buttons mapped to the right/left mouse buttons. 
+When using the touchscreen, hover mode simulates the movement of the mouse. You can click with taps, however you can't drag or hold down a mouse button unless you use the buttons mapped to the right/left mouse buttons.
 
 Drag mode
 **************
@@ -93,15 +93,15 @@ Magnify mode can only be used when the following conditions are met:
 
 Magnify mode cannot be used in the Launcher menu.
 
-Paths 
+Paths
 =======
 
-Saved games 
+Saved games
 *******************
 
 ``sdmc:/3ds/scummvm/saves/``
 
-Configuration file 
+Configuration file
 **************************
 
 ``sdmc:/3ds/scummvm/scummvm.ini``
@@ -110,14 +110,14 @@ Configuration file
 Settings
 ==========
 
-For more information about Settings, see the Settings section of the documentation. Only platform-specific differences are listed here. 
+For more information about Settings, see the Settings section of the documentation. Only platform-specific differences are listed here.
 
 The 3DS config menu
 *********************
 
 .. figure:: ../images/3ds/config.png
 
-    The 3DS config menu. 
+    The 3DS config menu.
 
 Show mouse cursor
     Toggles a visible mouse cursor on/off.
@@ -126,25 +126,25 @@ Stretch to fit
     Stretches the image to fit the screen
 
 Snap to edges
-    The 3DS touch screen has difficulty reaching the very end of the screen. With this option enabled, if you're within a few pixels of the edge the cursor snaps to the edge. 
-    
+    The 3DS touch screen has difficulty reaching the very end of the screen. With this option enabled, if you're within a few pixels of the edge the cursor snaps to the edge.
+
 Use Screen:
     Sets whether ScummVM uses the **Top**, **Bottom** or **Both** screens.
-    
+
 C-Pad Sensitivity
-    Sets the sensitivity of the Circle Pad. 
+    Sets the sensitivity of the Circle Pad.
 
 Audio
 ******
 
 Supported audio file formats:
 
-- MP3 
-- OGG 
+- MP3
+- OGG
 - OGG
 - Uncompressed audio
 
 Known issues
 ==============
 
-Some games are not playable due to the slow CPU speed on the 3DS. If there are any games that run really slowly, this is considered a hardware limitation, not a bug. 
+Some games are not playable due to the slow CPU speed on the 3DS. If there are any games that run really slowly, this is considered a hardware limitation, not a bug.

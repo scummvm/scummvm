@@ -1,8 +1,8 @@
 ======================================
 Version 2.2.0 - "Interactive Fantasy"
 ======================================
- 
- 
+
+
 New games
 =============
 
@@ -11,7 +11,7 @@ Currently, more than 1600 games are detected and supported.
     - Added support for Blazing Dragons.
     - Added support for Griffon Legend.
     - Added support for Interactive Fiction games based on the following engines:
-        
+
         - ADRIFT (except for version 5)
         - AdvSys
         - AGT
@@ -34,7 +34,7 @@ Currently, more than 1600 games are detected and supported.
 
 New ports
 ==============
-    - MorphOS port got a major rewrite. 
+    - MorphOS port got a major rewrite.
 
 Engines
 ===========
@@ -48,55 +48,55 @@ General
     - Updated the Roland MT-32 emulation code to Munt 2.4.0.
     - Added option to select the default voice for ports that support Text-to-Speech.
     - Added support for Discord Rich Presence integration on supported platforms (Windows Vista+, macOS 10.9+ 64 Bit)
-    - Major improvements to the keymapper. 
+    - Major improvements to the keymapper.
 
 BBVS
 ****************
 
     - Added support for the demo, available from our website.
-    - Added support for the Loogie minigame demo. 
+    - Added support for the Loogie minigame demo.
 
 Dreamweb
 ****************
 
     - Added support for Russian fan-translation.
-    - Fixed animation speed. 
+    - Fixed animation speed.
 
 Illusions
 ************
 
     - Fixed subtitle speed (set it to max for good speed).
-    - Added support for Russian Duckman. 
+    - Added support for Russian Duckman.
 
 Kyra
 ******
 
     - Added support for the SegaCD version of Eye of the Beholder I (with CD-Audio, animated cutscenes and map function).
     - Added support for the PC-98 version of Eye of the Beholder I.
-    - Added support for the Spanish versions of Eye of the Beholder I and II, Legend of Kyrandia 1 (CD-ROM fan translation) and Legend of Kyrandia 2 (floppy version and CD-ROM fan translation). Fix Spanish Lands of Lore support (floppy version and CD-ROM fan translation). 
+    - Added support for the Spanish versions of Eye of the Beholder I and II, Legend of Kyrandia 1 (CD-ROM fan translation) and Legend of Kyrandia 2 (floppy version and CD-ROM fan translation). Fix Spanish Lands of Lore support (floppy version and CD-ROM fan translation).
 
 Lab
 ******
 
-    - Fixed sound looping in some rooms. 
+    - Fixed sound looping in some rooms.
 
 Neverhood
 **********
 
-    - Added support for bigger demo, available from our website. 
+    - Added support for bigger demo, available from our website.
 
 Prince
 **********
 
     - Fixed inventory item descriptions display.
     - Added English translation.
-    - Fixed bug with infinite loop when looking at some objects. 
+    - Fixed bug with infinite loop when looking at some objects.
 
 Queen
 ********
 
     - Fixed loading a save game from the launcher.
-    - Fixed random long delays when starting a game. 
+    - Fixed random long delays when starting a game.
 
 SCI
 ****
@@ -116,7 +116,7 @@ SCI
     - Fixed QFG4 and Shivers save game thumbnails being obscured by control panels.
     - Fixed a random crash in the Windows version when exiting a game.
     - Added support for Roland D-110 sound driver.
-    - The **Prefer digital sound effects** checkbox now works correctly for SCI01/SCI1 games. 
+    - The **Prefer digital sound effects** checkbox now works correctly for SCI01/SCI1 games.
 
 SCUMM
 **********
@@ -127,38 +127,38 @@ SCUMM
     - Added a new GUI option to switch to an alternative NES palette based on the NES Classic.
     - Improved colors in Apple IIGS Maniac Mansion.
     - Fixed crash when entering garage in Apple IIGS Maniac Mansion.
-    - Added support from Classic Full Throttle from Remastered release. 
+    - Added support from Classic Full Throttle from Remastered release.
 
 Supernova
 **********
 
-    - Improved English translation. 
+    - Improved English translation.
 
 Sky
 ********
 
-    - Fixed syncing of music volume between built-in settings panel and ScummVM configuration. 
+    - Fixed syncing of music volume between built-in settings panel and ScummVM configuration.
 
 Sword1
 ********
 
     - Added support for localized menus in Novy Disk Russian Trilogy release.
-    - Added support for Spanish playable Demo available from our website. 
+    - Added support for Spanish playable Demo available from our website.
 
 Sword2
 **********
 
-    - Added support for Spanish playable Demo available from our website. 
+    - Added support for Spanish playable Demo available from our website.
 
 Titanic
 **********
 
-    - Fixed Barbot crash after asking what else he needs. 
+    - Fixed Barbot crash after asking what else he needs.
 
 Wintermute
 ************
 
-    - Added subsystem for tracking achievements, implemented for 10+ games. 
+    - Added subsystem for tracking achievements, implemented for 10+ games.
 
 Xeen
 ************
@@ -172,13 +172,13 @@ Xeen
     - Fixed incorrect mirror destination for Dragon Tower
     - Fixed crash reading book in Great Pyramid safe
     - Prevent attributes from going negative
-    - Fixed border faces animation during Clairvoyance 
+    - Fixed border faces animation during Clairvoyance
 
 ZVision
 **********
 
     - Fixed regression in the safe puzzle in Zork Nemesis: The Forbidden Lands.
-    - Fixed getting perfect score in Zork: Grand Inquisitor. 
+    - Fixed getting perfect score in Zork: Grand Inquisitor.
 
 Ports
 =======
@@ -187,7 +187,7 @@ Android port
 ************************
 
     - Added support for immersive fullscreen mode.
-    - Improved keyboard and mouse input. 
+    - Improved keyboard and mouse input.
 
 iOS port
 ************
@@ -195,23 +195,23 @@ iOS port
     - Fixed unsupported graphic mode for some games (such as SCI games with high quality video scaling enabled).
     - Removed Quit button to follow the iOS design guidelines.
     - Removed virtual keyboard input assistant bar. In particular this means that we no longer see a bar at the bottom of the screen when using an external keyboard.
-    - Added save of current game state if possible when switching to a different task and restore game state when returning to the ScummVM task. 
+    - Added save of current game state if possible when switching to a different task and restore game state when returning to the ScummVM task.
 
 Linux port
 ************
 
-    - Added option to use the system file browser instead of the ScummVM file browser. 
+    - Added option to use the system file browser instead of the ScummVM file browser.
 
 MacOS X port
 *************
 
     - Fixed blurry on Retina screens. Unfortunately this required dropping support for the dark theme for window decorations.
-    - Fixed Taskbar icon display when running a game (this was broken since ScummVM 1.9.0). 
+    - Fixed Taskbar icon display when running a game (this was broken since ScummVM 1.9.0).
 
 RISC OS port
 *****************
 
-    - Added a VFP optimized build for newer hardware. 
+    - Added a VFP optimized build for newer hardware.
 
 Windows port
 ****************

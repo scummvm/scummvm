@@ -2,15 +2,15 @@
 Keymaps
 ===============
 
-Use the Keymaps tab to assign actions to keyboard keys or shortcuts, or to mouse or joystick buttons. 
+Use the Keymaps tab to assign actions to keyboard keys or shortcuts, or to mouse or joystick buttons.
 
-**To change settings globally:** 
+**To change settings globally:**
 
-	From the Launcher, select **Options**, then select the **Keymaps** tab. 
+	From the Launcher, select **Options**, then select the **Keymaps** tab.
 
-**To change settings for a specific game:** 
+**To change settings for a specific game:**
 
-	Highlight the game in the games list, select **Edit Game** then select the **Keymaps** tab. 
+	Highlight the game in the games list, select **Edit Game** then select the **Keymaps** tab.
 
 .. figure:: ../images/settings/keymaps.png
 
@@ -21,19 +21,19 @@ Use the Keymaps tab to assign actions to keyboard keys or shortcuts, or to mouse
     The Keymaps dropdown options.
 
 
-All settings can also be changed in the :doc:`../advanced_topics/configuration_file`. The configuration key is listed in italics after each setting description. 
+All settings can also be changed in the :doc:`../advanced_topics/configuration_file`. The configuration key is listed in italics after each setting description.
 
 ,,,,,,,,,,,,,,,,,
 
-Click on the button next to the desired action to add an additional key or button. Click on the **▼**  dropdown expander for more options. 
+Click on the button next to the desired action to add an additional key or button. Click on the **▼**  dropdown expander for more options.
 
-If all the mapped keys are not visible, hold the pointer over the button to see all the mapped keys. 
+If all the mapped keys are not visible, hold the pointer over the button to see all the mapped keys.
 
 Reset
 	Resets all keymaps to default.
 
 Reset to defaults
-	Resets the keymaps for that action to default. 
+	Resets the keymaps for that action to default.
 
 Clear mapping
 	Clears all keymaps for that action.
@@ -43,9 +43,9 @@ Clear mapping
 Global settings
 -------------------
 
-The following are the available global keymap options. Listed in italics are the configuration keywords. For more information, see the :doc:`../advanced_topics/configuration_file` page. 
+The following are the available global keymap options. Listed in italics are the configuration keywords. For more information, see the :doc:`../advanced_topics/configuration_file` page.
 
-Global 
+Global
 *********
 .. _gmm:
 
@@ -70,7 +70,7 @@ Open Debugger
 .. _vmouseup:
 
 Virtual mouse up
-	*keymap_global_VMOUSEUP* 
+	*keymap_global_VMOUSEUP*
 
 .. _vmousedown:
 
@@ -89,7 +89,7 @@ Virtual mouse right
 
 .. _vmouseslow:
 
-Slow down virtual mouse 
+Slow down virtual mouse
 	*keymap_global_VMOUSESLOW*
 
 Graphics
@@ -131,11 +131,11 @@ Increase the scale factor
 	*keymap_sdl-graphics_SCL+*
 
 Decrease the scale factor
-	*keymap_sdl-graphics_SCL-* 
+	*keymap_sdl-graphics_SCL-*
 
 .. _FLT1:
 
-Switch to nearest neighbour scaling 
+Switch to nearest neighbour scaling
 	*keymap_sdl-graphics_FLT1*
 
 .. _FLT2:
@@ -151,7 +151,7 @@ Switch to HQ 2x/3x scaling
 .. _FLT4:
 
 Switch to 2XSai scaling
-	*keymap_sdl-graphics_FLT4* 
+	*keymap_sdl-graphics_FLT4*
 
 .. _FLT5:
 
@@ -171,9 +171,9 @@ Switch to TV 2x scaling
 .. _FLT8:
 
 Switch to DotMatrix scaling
-	*keymap_sdl-graphics_FLT8* 
+	*keymap_sdl-graphics_FLT8*
 
-GUI 
+GUI
 *****
 .. _interact:
 
@@ -187,7 +187,7 @@ Close
 
 .. _guiup:
 
-Up 
+Up
 	*keymap_gui_UP*
 
 .. _guidown:
@@ -197,7 +197,7 @@ Down
 
 .. _guileft:
 
-Left 
+Left
 	*keymap_gui_LEFT*
 
 .. _guiright:
@@ -208,19 +208,19 @@ Right
 Game settings
 -------------------
 
-The following are the available keymap game-specific keymaps options. Listed in italics are the configuration keywords. For more information, see the :doc:`../advanced_topics/configuration_file` page. 
+The following are the available keymap game-specific keymaps options. Listed in italics are the configuration keywords. For more information, see the :doc:`../advanced_topics/configuration_file` page.
 
 Default game keymap
 ********************
 
 .. _LCLK:
 
-Left mouse button 
-	*keymap_engine-default_LCLK* 
+Left mouse button
+	*keymap_engine-default_LCLK*
 
 .. _MCLK:
 
-Middle click 
+Middle click
 	*keymap_engine-default_MCLK*
 
 .. _RCLK:
@@ -235,7 +235,7 @@ Pause
 
 .. _menu:
 
-Game menu 
+Game menu
 	keymap_engine-default_MENU
 
 .. _skip:
@@ -245,35 +245,35 @@ Skip
 
 .. _SKLI:
 
-Skip line 
+Skip line
 	*keymap_engine-default_SKLI*
 
 .. _PIND:
 
-Predictive input dialog 
+Predictive input dialog
 	*keymap_engine-default_PIND*
 
 .. _RETURN:
 
-Confirm 
+Confirm
 	*keymap_engine-default_RETURN*
 
 .. _up:
 
-Up 
+Up
 	*keymap_engine-default_UP*
 
 .. _down:
 
-Down 
+Down
 	*keymap_engine-default_DOWN*
 
 .. _left:
 
-Left 
+Left
 	*keymap_engine-default_LEFT*
 
 .. _right:
 
-Right 
+Right
 	*keymap_engine-default_RIGHT*

@@ -2,14 +2,14 @@
 Understanding the graphics settings
 =====================================
 
-This guide expands on the information contained on the :doc:`graphics settings <../settings/graphics>` page. 
+This guide expands on the information contained on the :doc:`graphics settings <../settings/graphics>` page.
 
 How do the graphics settings work together?
 ----------------------------------------------
 
-The graphics mode, aspect ratio, and stretch mode settings work together to change the resolution and display of each game. The first setting applied to the image is the graphics mode, then the aspect ratio correction, and then the stretch mode setting. The only exception to this is OpenGL mode, which applies all settings in one pass to arrive at a final image. 
+The graphics mode, aspect ratio, and stretch mode settings work together to change the resolution and display of each game. The first setting applied to the image is the graphics mode, then the aspect ratio correction, and then the stretch mode setting. The only exception to this is OpenGL mode, which applies all settings in one pass to arrive at a final image.
 
-Render modes are only applicable to some older games that were designed to be played on multiple systems, and lets us choose which system's graphics to replicate. 
+Render modes are only applicable to some older games that were designed to be played on multiple systems, and lets us choose which system's graphics to replicate.
 
 
 Graphics modes
@@ -27,13 +27,13 @@ A comparison of graphics modes
 .. figure:: ../images/graphics/graphics_mode/1x.png
 
     **1x**: No filtering, no scaling. Fastest.
-   
+
 .. figure:: /images/graphics/graphics_mode/2x.png
 
    **2x**: No filtering, scales the image by a factor of 2. Default for non 640x480 games.
 
 .. figure:: ../images/graphics/graphics_mode/3x.png
-   
+
    **3x**: No filtering, scales the image by a factor of 3.
 
 .. figure:: ../images/graphics/graphics_mode/2xsai.png
@@ -74,17 +74,17 @@ A comparison of graphics modes
 
 
 .. note::
-    
-    Not all platforms support all the graphics modes. 
 
-To switch between graphics modes, press :kbd:`Ctrl + Alt` and :kbd:`1` to :kbd:`8`. 
+    Not all platforms support all the graphics modes.
+
+To switch between graphics modes, press :kbd:`Ctrl + Alt` and :kbd:`1` to :kbd:`8`.
 
 OpenGL mode
 **************
 
-OpenGL graphics mode works a little differently to the other graphics modes. Instead of applying the aspect ratio and stretch mode settings one after the other (and after the graphics mode scaling has been applied), it does all the scaling and stretching in one step, going directly from the original game resolution to the final display resolution. OpenGL mode uses hardware rendering, instead of software rendering. 
+OpenGL graphics mode works a little differently to the other graphics modes. Instead of applying the aspect ratio and stretch mode settings one after the other (and after the graphics mode scaling has been applied), it does all the scaling and stretching in one step, going directly from the original game resolution to the final display resolution. OpenGL mode uses hardware rendering, instead of software rendering.
 
-Output is controlled by your window size (or screen resolution if in full screen) and the stretch mode selected, as well as the **Filter graphics** option. 
+Output is controlled by your window size (or screen resolution if in full screen) and the stretch mode selected, as well as the **Filter graphics** option.
 
 
 
@@ -93,9 +93,9 @@ Output is controlled by your window size (or screen resolution if in full screen
 Aspect ratio correction
 ------------------------------------
 
-Older games were designed to be run at 320x200 pixels, but on systems where each pixel was rectangular instead of square. This means that on modern systems these games look wider and flatter than they are supposed to. Aspect ratio correction duplicates lines of pixels to correct this. 
+Older games were designed to be run at 320x200 pixels, but on systems where each pixel was rectangular instead of square. This means that on modern systems these games look wider and flatter than they are supposed to. Aspect ratio correction duplicates lines of pixels to correct this.
 
-For a game with an original resolution of 320x200, aspect ratio correction results in a resolution of 320x240. 
+For a game with an original resolution of 320x200, aspect ratio correction results in a resolution of 320x240.
 
 .. figure:: ../images/graphics/aspect_ratio/no_aspect_ratio.png
 
@@ -103,7 +103,7 @@ For a game with an original resolution of 320x200, aspect ratio correction resul
 
 .. figure:: ../images/graphics/aspect_ratio/aspect_ratio.png
 
-    Aspect ratio correction applied. The moon is actually round, as it should be!  
+    Aspect ratio correction applied. The moon is actually round, as it should be!
 
 To toggle aspect ratio on and off, press :kbd:`Ctrl+Alt+a`.
 
@@ -115,8 +115,8 @@ Stretch modes
 
 There are five stretch modes:
 
-- Center: centers the image in the window. 
-- Pixel-perfect scaling: scales the image to the highest multiple of the game resolution that fits the window, or that fits the screen if in fullscreen mode. Any empty space is filled with black bars. 
+- Center: centers the image in the window.
+- Pixel-perfect scaling: scales the image to the highest multiple of the game resolution that fits the window, or that fits the screen if in fullscreen mode. Any empty space is filled with black bars.
 
     - For example, a game with an original resolution of 320x200 with aspect ratio correction applied (320x240) and a 3x graphics mode, will be stretched to a multiple of 900x720 pixels: 1800x1440, 2700x2160 and so on.
 
@@ -129,12 +129,12 @@ To switch between stretch modes, press :kbd:`Ctrl+Alt+s`.
 Render mode
 -------------
 
-For most games this setting will have no effect. For some of the older games that could be played on different systems and graphics cards, this control lets you decide which system you want ScummVM to reproduce. 
+For most games this setting will have no effect. For some of the older games that could be played on different systems and graphics cards, this control lets you decide which system you want ScummVM to reproduce.
 
-Below are some of the common render modes, to illustrate how the render mode setting works. 
+Below are some of the common render modes, to illustrate how the render mode setting works.
 
 .. figure:: ../images/graphics/render_mode/default.png
-   
+
     Maniac Mansion with <default> render mode
 
 .. figure:: ../images/graphics/render_mode/herc_green.png
@@ -160,8 +160,8 @@ Below are some of the common render modes, to illustrate how the render mode set
 Filter graphics
 ----------------
 
-When enabled, ScummVM uses bilinear interpolation instead of nearest neighbor for the :ref:`aspect ratio <aspect>` and :ref:`stretch mode <stretch>`. It does not affect the graphics mode scaling unless OpenGL is selected, in which case it determines how the OpenGL scaling is done. 
+When enabled, ScummVM uses bilinear interpolation instead of nearest neighbor for the :ref:`aspect ratio <aspect>` and :ref:`stretch mode <stretch>`. It does not affect the graphics mode scaling unless OpenGL is selected, in which case it determines how the OpenGL scaling is done.
 
-Nearest neighbor is a simple way to scale an image; each pixel becomes multiple pixels of the same color. While this preserves the sharper details in a pixel art image, it also creates "jagged" edges as the image is scaled up. Bilinear interpolation finds the average color between pixel color values and fills in missing pixel, which results in a "smoothed" image. 
+Nearest neighbor is a simple way to scale an image; each pixel becomes multiple pixels of the same color. While this preserves the sharper details in a pixel art image, it also creates "jagged" edges as the image is scaled up. Bilinear interpolation finds the average color between pixel color values and fills in missing pixel, which results in a "smoothed" image.
 
 To toggle between bilinear interpolation and nearest neighbor, press :kbd:`Ctrl+Alt+f`.

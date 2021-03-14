@@ -13,7 +13,7 @@
       use_scummvm/how_to_settings
       use_scummvm/connect_cloud
       use_scummvm/LAN
-      
+
 .. toctree::
       :caption: Platform guides
       :glob:
@@ -66,7 +66,7 @@
       :glob:
       :hidden:
 
-      release_notes/*  
+      release_notes/*
 
 
 
@@ -78,9 +78,9 @@ Welcome to ScummVM!
 
 ScummVM allows you to play classic graphic point-and-click adventure games, text adventure games, and RPGs, as long as you already have the game data files. ScummVM replaces the executable files shipped with the games, which means you can now play your favorite games on all your favorite devices.
 
-So how did ScummVM get its name? Many of the famous LucasArts adventure games, such as Maniac Mansion and the Monkey Island series, were created using a utility called SCUMM (Script Creation Utility for Maniac Mansion). The 'VM' in ScummVM stands for Virtual Machine. 
+So how did ScummVM get its name? Many of the famous LucasArts adventure games, such as Maniac Mansion and the Monkey Island series, were created using a utility called SCUMM (Script Creation Utility for Maniac Mansion). The 'VM' in ScummVM stands for Virtual Machine.
 
-While ScummVM was originally designed to run LucasArts' SCUMM games, over time support has been added for many other games: see the full list `here <https://wiki.scummvm.org/index.php?title=Category:Supported_Games>`_. Noteworthy titles include Broken Sword, Myst and Blade Runner, although there are countless other hidden gems to explore. 
+While ScummVM was originally designed to run LucasArts' SCUMM games, over time support has been added for many other games: see the full list `here <https://wiki.scummvm.org/index.php?title=Category:Supported_Games>`_. Noteworthy titles include Broken Sword, Myst and Blade Runner, although there are countless other hidden gems to explore.
 
 
 
@@ -101,7 +101,7 @@ We have a user manual section covering **THE BASICS**:
       :doc:`use_scummvm/the_launcher`
 
       ---
-      
+
       Playing games
       ^^^^^^^^^^^^^^^
       :doc:`use_scummvm/game_files`
@@ -111,7 +111,7 @@ We have a user manual section covering **THE BASICS**:
       :doc:`use_scummvm/save_load_games`
 
       ---
-   
+
 
       Controls and settings
       ^^^^^^^^^^^^^^^^^^^^^^^
@@ -120,7 +120,7 @@ We have a user manual section covering **THE BASICS**:
       :doc:`use_scummvm/how_to_settings`
 
       ---
-     
+
       Useful features
       ^^^^^^^^^^^^^^^^
 
@@ -147,7 +147,7 @@ We also have guides on how to get ScummVM running on a wide range of other platf
       :doc:`other_platforms/playstation_vita`
 
       ---
-      
+
       Other consoles
       ^^^^^^^^^^^^^^^^
 
@@ -173,8 +173,8 @@ We also have guides on how to get ScummVM running on a wide range of other platf
 
       :doc:`other_platforms/risc_os`
 
-      
-      
+
+
 
 
 
@@ -182,9 +182,9 @@ We also have guides on how to get ScummVM running on a wide range of other platf
 Advanced topics
 ============================
 
-For our more experienced users, ScummVM features a command line interface, as well as the ability to edit settings directly in a configuration file. 
+For our more experienced users, ScummVM features a command line interface, as well as the ability to edit settings directly in a configuration file.
 
-In this section, we also take a deep dive into understanding the graphics and audio settings. 
+In this section, we also take a deep dive into understanding the graphics and audio settings.
 
 
 .. panels::
@@ -192,12 +192,12 @@ In this section, we also take a deep dive into understanding the graphics and au
 
       Advanced features
       ^^^^^^^^^^^^^^^^^^^^
-      :doc:`advanced_topics/configuration_file` 
-      
+      :doc:`advanced_topics/configuration_file`
+
       :doc:`advanced_topics/command_line`
 
       ---
-      
+
       Understanding the settings
       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -218,22 +218,22 @@ If you are having problems with any aspect of ScummVM, take a look at our help s
       :container: text-center mb-4
       :column: col-lg-12
 
-      :doc:`help/faq` 
-     
-      :doc:`How to report a bug <help/report_bugs>` 
-      
+      :doc:`help/faq`
+
+      :doc:`How to report a bug <help/report_bugs>`
+
       :doc:`help/contact`
 
 What's changed since I was last here?
 ======================================
 
-We have a **RELEASE NOTES** section on the sidebar; here you can see what's changed in both current and past releases. 
+We have a **RELEASE NOTES** section on the sidebar; here you can see what's changed in both current and past releases.
 
 
 The ScummVM Project
 ===================
 
-ScummVM is an open-source project created, maintained and constantly improved by a team of passionate volunteers from all around the world.  If you enjoy using ScummVM and would like to support the team, you can use the PayPal Donate button below. 
+ScummVM is an open-source project created, maintained and constantly improved by a team of passionate volunteers from all around the world.  If you enjoy using ScummVM and would like to support the team, you can use the PayPal Donate button below.
 
 .. raw:: html
 
@@ -246,7 +246,7 @@ ScummVM is an open-source project created, maintained and constantly improved by
 
 Another way to support us is to buy your games from GOG.com using the ScummVM Affiliate link.
 
-.. raw:: html 
+.. raw:: html
 
       <a href="https://www.gog.com/?pp=22d200f8670dbdb3e253a90eee5098477c95c23d">
             <img src="GOG_button_small.png" width="126" height="46" alt="GOG.com games">
@@ -254,7 +254,7 @@ Another way to support us is to buy your games from GOG.com using the ScummVM Af
 
 
 
-If you have software development or technical writing skills, we would love for you to join the ScummVM team! Check out `Developer Central <https://wiki.scummvm.org/index.php?title=Developer_Central>`_ on the ScummVM wiki for more information on contributing to ScummVM. 
+If you have software development or technical writing skills, we would love for you to join the ScummVM team! Check out `Developer Central <https://wiki.scummvm.org/index.php?title=Developer_Central>`_ on the ScummVM wiki for more information on contributing to ScummVM.
 
 
 

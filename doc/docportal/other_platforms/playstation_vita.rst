@@ -14,19 +14,19 @@ Installing ScummVM
 
 The PS Vita package is available for download on the ScummVM `Downloads page <https://www.scummvm.org/downloads>`_.
 
-Copy the ``.vpk`` to the PS Vita and install it using VitaShell. 
+Copy the ``.vpk`` to the PS Vita and install it using VitaShell.
 
 
 Transferring game files
 =======================
 
-There are a few ways to transfer game files to the PS Vita. 
+There are a few ways to transfer game files to the PS Vita.
 
-Use VitaShell to transfer the files by USB or FTP, or use SD2Vita to transfer the files directly to the microSD card. 
+Use VitaShell to transfer the files by USB or FTP, or use SD2Vita to transfer the files directly to the microSD card.
 
-Folders containing game files can be copied anywhere on the SD card. 
+Folders containing game files can be copied anywhere on the SD card.
 
-ScummVM on the PS Vita supports :doc:`cloud functionality <../use_scummvm/connect_cloud>`. 
+ScummVM on the PS Vita supports :doc:`cloud functionality <../use_scummvm/connect_cloud>`.
 
 See :doc:`../use_scummvm/game_files` for more information about game file requirements.
 
@@ -37,7 +37,7 @@ Controls
 Default control map
 *********************************
 
-These controls can also be manually configured in the :doc:`Keymaps tab <../settings/keymaps>`. See the :doc:`../use_scummvm/keyboard_shortcuts` page for common keyboard shortcuts. 
+These controls can also be manually configured in the :doc:`Keymaps tab <../settings/keymaps>`. See the :doc:`../use_scummvm/keyboard_shortcuts` page for common keyboard shortcuts.
 
 
 .. |square| raw:: html
@@ -56,7 +56,7 @@ These controls can also be manually configured in the :doc:`Keymaps tab <../sett
 
    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M11.574 3.712c.195-.323.662-.323.857 0l9.37 15.545c.2.333-.039.757-.429.757l-18.668-.006c-.385 0-.629-.422-.428-.758l9.298-15.538zm.429-2.483c-.76 0-1.521.37-1.966 1.111l-9.707 16.18c-.915 1.523.182 3.472 1.965 3.472h19.416c1.783 0 2.879-1.949 1.965-3.472l-9.707-16.18c-.446-.741-1.205-1.111-1.966-1.111z"/></svg>
 
-.. csv-table:: 
+.. csv-table::
     :widths: 50 50
     :header-rows: 2
 
@@ -66,19 +66,19 @@ These controls can also be manually configured in the :doc:`Keymaps tab <../sett
         Left stick + R button,Slow Mouse
         |x|,Left mouse click
         |circle|,Right mouse click
-        Directional buttons,Keypad 'Cursor' Keys 
+        Directional buttons,Keypad 'Cursor' Keys
         Directional buttons + R button,Diagonal Keypad 'Cursor' Keys
         L button,Game menu (F5)
-        R button,Shift 
+        R button,Shift
         |square|,Period (.)
-        R button + |square|,Spacebar 
-        |triangle|,Escape 
+        R button + |square|,Spacebar
+        |triangle|,Escape
         R button + |triangle|,Return
         START,Global main menu (GMM)
         SELECT,Toggle virtual keyboard
         SELECT + R button,AGI predictive input dialog
 
-.. csv-table:: 
+.. csv-table::
   	:header-rows: 2
 
         "Front Touchscreen Controls, always enabled",
@@ -86,10 +86,10 @@ These controls can also be manually configured in the :doc:`Keymaps tab <../sett
         One finger tap,Moves pointer to finger position and left mouse click
         Two finger tap,Moves pointer to first finger position and right mouse click
         Single finger drag,Moves pointer directly with finger
-        `Two finger drag`_ ,Moves pointer while left mouse button is held down (drag-and-drop). 
-        `Three finger drag`_ ,Moves pointer while right mouse button is held down (drag-and-drop). 
+        `Two finger drag`_ ,Moves pointer while left mouse button is held down (drag-and-drop).
+        `Three finger drag`_ ,Moves pointer while right mouse button is held down (drag-and-drop).
 
-.. csv-table::  
+.. csv-table::
     :widths: 50 50
     :header-rows: 2
 
@@ -98,8 +98,8 @@ These controls can also be manually configured in the :doc:`Keymaps tab <../sett
         One finger tap,Left mouse button click
         Two finger tap,Right mouse button click
         Single finger drag,"Moves pointer indirectly with finger, pointer speed can be adjusted in control settings"
-        `Two finger drag`_,Moves pointer while left mouse button is held down (drag-and-drop). 
-        `Three finger drag`_ ,Moves pointer while right mouse button is held down (drag-and-drop). 
+        `Two finger drag`_,Moves pointer while left mouse button is held down (drag-and-drop).
+        `Three finger drag`_ ,Moves pointer while right mouse button is held down (drag-and-drop).
 
 Keyboard and mouse support
 ****************************
@@ -121,15 +121,15 @@ Touchpad mouse mode
 The touch control scheme can be switched in the global settings. Go to **Options > Control**:
 
     - When **Touchpad mouse mode** is off:
-    
-        - The touch controls are direct, which means the pointer always jumps to the finger position. 
-        - The rear touch pad is disabled. 
+
+        - The touch controls are direct, which means the pointer always jumps to the finger position.
+        - The rear touch pad is disabled.
 
     - When **Touchpad mouse mode** is on:
-        
-        - The touch controls are indirect. The finger can be far away from the pointer and still move it, like on a laptop touchpad. 
+
+        - The touch controls are indirect. The finger can be far away from the pointer and still move it, like on a laptop touchpad.
         - The pointer speed setting in the :doc:`Control tab <../settings/control>` affects how far the pointer moves in response to a finger movement.
-        - The rear touch pad is enabled. 
+        - The rear touch pad is enabled.
 
 
 The front touchscreen uses the direct mode by default, but this can be changed by editing the :doc:`configuration file <../advanced_topics/configuration_file>` with the following keyword:
@@ -138,36 +138,36 @@ The front touchscreen uses the direct mode by default, but this can be changed b
 
 *frontpanel_touchpad_mode*
 
-When set to true, the touch controls on the front touchscreen are indirect. 
+When set to true, the touch controls on the front touchscreen are indirect.
 
 Two finger tap
 ^^^^^^^^^^^^^^^^^^^^
 
-For a two finger tap, hold one finger down and then tap with a second finger. 
+For a two finger tap, hold one finger down and then tap with a second finger.
 
 
 Two finger drag
 ^^^^^^^^^^^^^^^^^^^
 
-Hold down two fingers to initiate a drag-and-drop feature. The two finger drag simulates the left mouse button being held down. 
+Hold down two fingers to initiate a drag-and-drop feature. The two finger drag simulates the left mouse button being held down.
 
-- The first finger affects mouse motion during the drag, the second finger can be removed without affecting the drag. 
-- When the last finger is removed, the left mouse button is released and the drag is over. 
+- The first finger affects mouse motion during the drag, the second finger can be removed without affecting the drag.
+- When the last finger is removed, the left mouse button is released and the drag is over.
 - The second finger can be anywhere, it doesn't have to be close to the first finger, and it doesn't have to be put down simultaneously with the first finger.
 
 Three finger drag
 ^^^^^^^^^^^^^^^^^^^^
 
-Hold down the three fingers to initiate a drag-and-drop feature. The three finger drag simulates the right mouse button being held down. 
+Hold down the three fingers to initiate a drag-and-drop feature. The three finger drag simulates the right mouse button being held down.
 
-Paths 
+Paths
 ============================
 
-Saved games 
+Saved games
 *******************
-``ux0:/data/scummvm/saves`` 
+``ux0:/data/scummvm/saves``
 
-Configuration file 
+Configuration file
 **************************
 ``ux0:/data/scummvm/scummvm.ini``
 
@@ -175,7 +175,7 @@ Configuration file
 Settings
 ===========================
 
-For more information, see the Settings section of the documentation. Only platform-specific differences are listed here. 
+For more information, see the Settings section of the documentation. Only platform-specific differences are listed here.
 
 Audio
 ******
@@ -183,14 +183,14 @@ Audio
 Supported audio file formats:
 
 - MP3
-- OGG 
+- OGG
 - FLAC
 - Uncompressed audio
 
 Controls
 *********
 
-See the `Touch support`_ section. 
+See the `Touch support`_ section.
 
 Known Issues
 ===============

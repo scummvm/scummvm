@@ -14,26 +14,26 @@ What you'll need
 Installing ScummVM
 =====================================
 
-Download the Playstation 3 package from the `ScummVM Downloads page <https://www.scummvm.org/downloads/>`_. Copy the ``.pkg`` file to a USB drive. 
+Download the Playstation 3 package from the `ScummVM Downloads page <https://www.scummvm.org/downloads/>`_. Copy the ``.pkg`` file to a USB drive.
 
 Plug the USB drive into the PS3.  Go to the XMB, then go to **Games > Install Package** to install the ScummVM package.
 
-To launch ScummVM, go to the XMB, then go to **Games > PlayStation 3 > ScummVM**. 
+To launch ScummVM, go to the XMB, then go to **Games > PlayStation 3 > ScummVM**.
 
 
 Transferring game files
 =======================
 
-Games can be launched from either a USB drive, or from the internal hard drive. The hard drive has better performance.  
+Games can be launched from either a USB drive, or from the internal hard drive. The hard drive has better performance.
 
-To copy game files to the hard drive, use the USB drive, or use ScummVM's :doc:`cloud functionality <../use_scummvm/connect_cloud>`. 
+To copy game files to the hard drive, use the USB drive, or use ScummVM's :doc:`cloud functionality <../use_scummvm/connect_cloud>`.
 
 See :doc:`../use_scummvm/game_files` for more information about game file requirements.
 
 Controls
 =================
 
-Controls can also be manually configured in the :doc:`Keymaps tab <../settings/keymaps>`. See the :doc:`../use_scummvm/keyboard_shortcuts` page for common keyboard shortcuts. 
+Controls can also be manually configured in the :doc:`Keymaps tab <../settings/keymaps>`. See the :doc:`../use_scummvm/keyboard_shortcuts` page for common keyboard shortcuts.
 
 
 Default control map
@@ -65,22 +65,22 @@ Default control map
         Left stick,Moves pointer
         |x|,Left mouse button
         |circle|,Right mouse button
-        |triangle|,Game menu 
+        |triangle|,Game menu
         |square|,Esc
-        START,Global Main Menu 
+        START,Global Main Menu
         SELECT,Toggle virtual keyboard
         L1 button,AGI predictive input dialog
 
 
-Paths 
+Paths
 =======
 
-Saved games 
+Saved games
 *******************
 
 ```/hdd0/game/SCUM12000/USRDIR/saves/``
 
-Configuration file 
+Configuration file
 **************************
 
 ``/hdd0/game/SCUM12000/USRDIR/scummvm.ini``
@@ -88,7 +88,7 @@ Configuration file
 Settings
 ==========
 
-For more information, see the Settings section of the documentation. Only platform-specific differences are listed here. 
+For more information, see the Settings section of the documentation. Only platform-specific differences are listed here.
 
 Audio
 *********

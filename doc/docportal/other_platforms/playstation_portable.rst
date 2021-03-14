@@ -8,25 +8,25 @@ What you'll need
 ===================
 
 - A homebrew-enabled PSP. How to enable homebrew is outside the scope of this documentation.
-- A computer to download an extract the install files. 
+- A computer to download an extract the install files.
 
 Installing ScummVM
 =======================================
 
 The PSP package is available for download ScummVM's `Downloads page <https://www.scummvm.org/downloads>`_.
 
-Download the zip file to a computer, and extract the files. 
+Download the zip file to a computer, and extract the files.
 
-Connect the PSP to the computer by USB cable. Go to **Settings > USB Connection** on the PSP. Ensure the **USB Device** option is set to **Memory Stick**.  The computer automatically opens the root folder of the PSP. Alternatively, if you have a Memory Stick adapter, copy the files directly to the Memory Stick. 
+Connect the PSP to the computer by USB cable. Go to **Settings > USB Connection** on the PSP. Ensure the **USB Device** option is set to **Memory Stick**.  The computer automatically opens the root folder of the PSP. Alternatively, if you have a Memory Stick adapter, copy the files directly to the Memory Stick.
 
-Copy the extracted ``scummvm`` folder to your PSP, into the ``/PSP/GAME/`` folder. 
+Copy the extracted ``scummvm`` folder to your PSP, into the ``/PSP/GAME/`` folder.
 
 Go to **Game > Memory Stick** and choose **ScummVM** to launch ScummVM!
 
 Transferring game files
 ==========================
 
-Transfer game files onto the PSP as described in the installation section above. They can be copied to any folder; location doesn't matter. 
+Transfer game files onto the PSP as described in the installation section above. They can be copied to any folder; location doesn't matter.
 
 See :doc:`../use_scummvm/game_files` for more information about game file requirements.
 
@@ -36,7 +36,7 @@ Controls
 Default control map
 *********************************
 
-These controls can also be manually configured in the :doc:`Keymaps tab <../settings/keymaps>`. See the :doc:`../use_scummvm/keyboard_shortcuts` page for common keyboard shortcuts. 
+These controls can also be manually configured in the :doc:`Keymaps tab <../settings/keymaps>`. See the :doc:`../use_scummvm/keyboard_shortcuts` page for common keyboard shortcuts.
 
 
 .. |square| raw:: html
@@ -56,28 +56,28 @@ These controls can also be manually configured in the :doc:`Keymaps tab <../sett
    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M11.574 3.712c.195-.323.662-.323.857 0l9.37 15.545c.2.333-.039.757-.429.757l-18.668-.006c-.385 0-.629-.422-.428-.758l9.298-15.538zm.429-2.483c-.76 0-1.521.37-1.966 1.111l-9.707 16.18c-.915 1.523.182 3.472 1.965 3.472h19.416c1.783 0 2.879-1.949 1.965-3.472l-9.707-16.18c-.446-.741-1.205-1.111-1.966-1.111z"/></svg>
 
 
-.. csv-table:: 
+.. csv-table::
   	:header-rows: 2
 
         Game Controller Mapping,
         Button,Action
-        R button,Modifier key 
-        L button,ESC 
+        R button,Modifier key
+        L button,ESC
         Analog stick,Mouse movement
         Analog stick + R button,Fine mouse movement
-        Directional buttons,Arrow keys 
-        Directional buttons + R button,Diagonal arrow keys 
-        |triangle|,Enter 
-        |x|,Left Mouse Button 
-        |circle|,Right Mouse Button 
+        Directional buttons,Arrow keys
+        Directional buttons + R button,Diagonal arrow keys
+        |triangle|,Enter
+        |x|,Left Mouse Button
+        |circle|,Right Mouse Button
         |square|,Period
         |square| + R button,Spacebar
-        SELECT,Shows/Hides the virtual Keyboard. Hold down with Directional buttons to move the keyboard. 
-        SELECT + R button ,Shows Image Viewer 
+        SELECT,Shows/Hides the virtual Keyboard. Hold down with Directional buttons to move the keyboard.
+        SELECT + R button ,Shows Image Viewer
         START,Global Main Menu
-        START + R button,F5 
+        START + R button,F5
 
-.. csv-table:: 
+.. csv-table::
   	:header-rows: 1
 
         Virtual Keyboard Mode,
@@ -87,9 +87,9 @@ These controls can also be manually configured in the :doc:`Keymaps tab <../sett
         L button,Input: numbers/symbols (press to toggle)
         Directional buttons,"Selects square of characters (up, down, left or right)"
         |triangle| |x| |circle| |square| and L/R buttons,Chooses a specific character in the square. The four center characters are chosen by the button in the corresponding position. The 2 top characters are chosen by the L/R buttons.
-        Analog stick,Moves in a direction (left/right/up/down) 
+        Analog stick,Moves in a direction (left/right/up/down)
 
-.. csv-table:: 
+.. csv-table::
   	:header-rows: 1
 
         Image Viewer,
@@ -98,7 +98,7 @@ These controls can also be manually configured in the :doc:`Keymaps tab <../sett
         Analog stick,Moves around the image
         "L/R buttons + START",Exits image viewer
 
-.. csv-table:: 
+.. csv-table::
   	:header-rows: 1
 
         1st Person Game Mode ,
@@ -108,12 +108,12 @@ These controls can also be manually configured in the :doc:`Keymaps tab <../sett
         Directional buttons left/right,Turns left/right
         |square| + Directional buttons,F1/F2/F3/F4
         |square| + SELECT,Image Viewer
-        |square| + START,Esc 
+        |square| + START,Esc
 
 Settings
 ===========================
 
-For more information, see the Settings section of the documentation. Only platform-specific differences are listed here. 
+For more information, see the Settings section of the documentation. Only platform-specific differences are listed here.
 
 Audio
 *******
@@ -146,4 +146,4 @@ Known issues
 ==============
 
 - Plugin files are not interchangeable between ScummVM versions.  You must copy all the plugin files found in the ``/PSP/GAME/scummvm/plugin/`` folder for every new version you install. If ScummVM crashes on startup, delete the existing plugin files in the plugin directory and copy the new ones again.
-- If the virtual keyboard does not show up on the screen, ensure the ``kbd.zip`` file is in the ``scummvm`` folder. 
+- If the virtual keyboard does not show up on the screen, ensure the ``kbd.zip`` file is in the ``scummvm`` folder.

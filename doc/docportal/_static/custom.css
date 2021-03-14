@@ -3,12 +3,12 @@
 @media (min-width: 385px){
     .wy-table-responsive table td {
        white-space: normal !important;
-        
+
     }
- 
+
     .wy-table-responsive {
        overflow: visible !important;
-      
+
     }
     .wy-table-responsive table {
 

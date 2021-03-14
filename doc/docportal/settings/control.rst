@@ -2,7 +2,7 @@
 Control
 =================
 
-Use the Control tab to change settings for joysticks, game controllers, and touch screens.  This tab is not always available. 
+Use the Control tab to change settings for joysticks, game controllers, and touch screens.  This tab is not always available.
 
 From the Launcher, select **Options**, and then select the **Control** tab.
 
@@ -10,14 +10,14 @@ From the Launcher, select **Options**, and then select the **Control** tab.
 
     The Control tab in the global settings
 
-All settings can also be changed in the :doc:`../advanced_topics/configuration_file`. The configuration key is listed in italics after each setting description. 
+All settings can also be changed in the :doc:`../advanced_topics/configuration_file`. The configuration key is listed in italics after each setting description.
 
 ,,,,,,,,,,,,,,
 
 .. _mousespeed:
 
-Pointer Speed	
-	Sets the speed for the mouse pointer, when it is controlled by the keyboard or a joystick. 
+Pointer Speed
+	Sets the speed for the mouse pointer, when it is controlled by the keyboard or a joystick.
 
 	*kbdmouse_speed*
 
@@ -32,4 +32,4 @@ Show on-screen control
 	Toggles the small on-screen keyboard icon on and off.
 
 Touchpad mouse mode
-	Toggles between direct mode and touchpad mode. 
+	Toggles between direct mode and touchpad mode.
