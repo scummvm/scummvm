@@ -69,11 +69,10 @@ void Map::init() {
 
     // Load the video
     chunk->seek(_mapID * 10, SEEK_SET);
-    char name[10];
-    chunk->read(name, 10);
-    Common::String n(name);
+    Common::String videoName;
+    readFilename(*chunk, videoName);
 
-    _viewport.loadVideo(n, 0, 0);
+    _viewport.loadVideo(videoName, 0, 0);
     _viewport.setEdgesSize(0, 0, 0, 0);
 
     // Load the audio

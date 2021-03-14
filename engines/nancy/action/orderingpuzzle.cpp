@@ -53,10 +53,7 @@ void OrderingPuzzle::init() {
 }
 
 void OrderingPuzzle::readData(Common::SeekableReadStream &stream) {
-    char buf[10];
-
-    stream.read(buf, 10);
-    _imageName = buf;
+    readFilename(stream, _imageName);
     uint16 numElements = stream.readUint16LE();
 
     for (uint i = 0; i < numElements; ++i) {

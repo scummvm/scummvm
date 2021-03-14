@@ -43,9 +43,7 @@ void PlayStaticBitmapAnimation::init() {
 }
 
 void PlayStaticBitmapAnimation::readData(Common::SeekableReadStream &stream) {
-    char name[10];
-    stream.read(name, 10);
-    _imageName = Common::String(name);
+    readFilename(stream, _imageName);
 
     stream.skip(0x2);
     _isTransparent = (NancyFlag)(stream.readUint16LE());

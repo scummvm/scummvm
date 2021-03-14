@@ -34,14 +34,14 @@ void Font::read(Common::SeekableReadStream &stream) {
     _maxCharWidth = 0;
     _fontHeight = 0;
 
-    char name[10];
-    stream.read(name, 10);
-    Common::String imageName = name;
+    Common::String imageName;
+    readFilename(stream, imageName);
 
-    g_nancy->_resource->loadImage(name, _image);
+    g_nancy->_resource->loadImage(imageName, _image);
 
     char desc[0x20];
     stream.read(desc, 0x20);
+    desc[0x1F] = '\0';
     _description = desc;
     stream.skip(8);
     _colorCoordsOffset.x = stream.readUint16LE();

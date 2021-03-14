@@ -54,11 +54,12 @@ void Credits::init() {
     Common::SeekableReadStream *cred = g_nancy->getBootChunkStream("CRED");
     cred->seek(0);
 
-    char buf[10];
-    cred->read(buf, 10);
-    _background.init(buf);
+    Common::String imageName;
+    readFilename(*cred, imageName);
+    _background.init(imageName);
 
-    cred->read(buf, 10);
+    readFilename(*cred, imageName);
+    
     cred->skip(0x20); // Skip the src and dest rectangles
     readRect(*cred, _text._screenPosition);
     cred->skip(0x10);
@@ -66,7 +67,7 @@ void Credits::init() {
     _pixelsToScroll = cred->readUint16LE();
     _sound.read(*cred, SoundDescription::kMenu);
 
-    g_nancy->_resource->loadImage(buf, _fullTextSurface);
+    g_nancy->_resource->loadImage(imageName, _fullTextSurface);
     
     Common::Rect src = _text._screenPosition;
     src.moveTo(Common::Point());

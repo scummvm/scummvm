@@ -24,6 +24,7 @@
 
 #include "engines/nancy/graphics.h"
 #include "engines/nancy/nancy.h"
+#include "engines/nancy/util.h"
 #include "engines/nancy/state/scene.h"
 
 namespace Nancy {
@@ -38,9 +39,7 @@ PlaySecondaryMovie::~PlaySecondaryMovie() {
 }
 
 void PlaySecondaryMovie::readData(Common::SeekableReadStream &stream) {  
-    char name[10];
-    stream.read(name, 10);
-    _videoName = name;
+    readFilename(stream, _videoName);
 
     stream.skip(0x12);
     _unknown = stream.readUint16LE();

@@ -146,11 +146,8 @@ void PlaySecondaryVideo::handleInput(NancyInput &input) {
 }
 
 void PlaySecondaryVideo::readData(Common::SeekableReadStream &stream) {
-    char buf[10];
-    stream.read(buf, 10);
-    _filename = buf;
-    stream.read(buf, 10);
-    _paletteFilename = buf;
+    readFilename(stream, _filename);
+    readFilename(stream, _paletteFilename);
     stream.skip(10);
     
     if (_paletteFilename.size()) {

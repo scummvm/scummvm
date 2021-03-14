@@ -154,16 +154,14 @@ void PlayPrimaryVideoChan0::onPause(bool pause) {
 void PlayPrimaryVideoChan0::readData(Common::SeekableReadStream &stream) {
     uint16 beginOffset = stream.pos();
 
-    char name[10];
-    stream.read(name, 10);
-    _videoName = Common::String(name);
+    readFilename(stream, _videoName);
 
     stream.skip(0x13);
 
     readRect(stream, _src);
     readRect(stream, _screenPosition);
 
-    char *rawText = new char[1500]();
+    char *rawText = new char[1500];
     stream.read(rawText, 1500);
     UI::Textbox::assembleTextLine(rawText, _text, 1500);
     delete[] rawText;
@@ -180,18 +178,16 @@ void PlayPrimaryVideoChan0::readData(Common::SeekableReadStream &stream) {
     stream.seek(beginOffset + 0x69C);
 
     uint16 numResponses = stream.readUint16LE();
+    rawText = new char[400];
+
     if (numResponses > 0) {
         for (uint i = 0; i < numResponses; ++i) {
             _responses.push_back(ResponseStruct());
             ResponseStruct &response = _responses[i];
             response.conditionFlags.read(stream);
-            rawText = new char[400];
             stream.read(rawText, 400);
             UI::Textbox::assembleTextLine(rawText, response.text, 400);
-            delete[] rawText;
-
-            stream.read(name, 10);
-            response.soundName = name;
+            readFilename(stream, response.soundName);
             stream.skip(1);
             response._sceneChange.readData(stream);
             response.flagDesc.label = stream.readSint16LE();
@@ -200,6 +196,8 @@ void PlayPrimaryVideoChan0::readData(Common::SeekableReadStream &stream) {
             stream.skip(0x32);
         }
     }
+    
+    delete[] rawText;
 
     uint16 numSceneBranchStructs = stream.readUint16LE();
     if (numSceneBranchStructs > 0) {
@@ -336,11 +334,12 @@ void PlayPrimaryVideoChan0::addConditionalResponses() {
 
             if (isSatisfied) {
                 Common::File file;
-                char snd[10];
+                char snd[9];
 
                 file.open("game.exe");
                 file.seek(nancy1ResponseBaseFileOffset + res.fileOffset);
                 file.read(snd, 8);
+                snd[8] = '\0';
 
                 _responses.push_back(ResponseStruct());
                 ResponseStruct &newResponse = _responses.back();
@@ -359,11 +358,12 @@ void PlayPrimaryVideoChan0::addGoodbye() {
     for (auto &res : nancy1Goodbyes) {
         if (res.characterID == _goodbyeResponseCharacterID) {
             Common::File file;
-            char snd[10];
+            char snd[9];
 
             file.open("game.exe");
             file.seek(nancy1ResponseBaseFileOffset + res.fileOffset);
             file.read(snd, 8);
+            snd[8] = '\0';
 
             _responses.push_back(ResponseStruct());
             ResponseStruct &newResponse = _responses.back();
