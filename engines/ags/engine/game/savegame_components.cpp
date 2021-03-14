@@ -1128,8 +1128,8 @@ static const ComponentHandler ComponentHandlers[] = {
 typedef std::map<String, ComponentHandler> HandlersMap;
 void GenerateHandlersMap(HandlersMap &map) {
 	map.clear();
-	for (int i = 0; !strlen(ComponentHandlers[i].Name); ++i)
-		map[String(ComponentHandlers[i].Name)] = ComponentHandlers[i];
+	for (int i = 0; ComponentHandlers[i].Name; ++i)
+		map[ComponentHandlers[i].Name] = ComponentHandlers[i];
 }
 
 // A helper struct to pass to (de)serialization handlers
@@ -1235,7 +1235,7 @@ HSaveError WriteComponent(PStream out, const ComponentHandler &hdlr) {
 
 HSaveError WriteAllCommon(PStream out) {
 	WriteFormatTag(out, ComponentListTag, true);
-	for (int type = 0; !strlen(ComponentHandlers[type].Name); ++type) {
+	for (int type = 0; ComponentHandlers[type].Name; ++type) {
 		HSaveError err = WriteComponent(out, ComponentHandlers[type]);
 		if (!err) {
 			return new SavegameError(kSvgErr_ComponentSerialization,
