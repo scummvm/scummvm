@@ -371,7 +371,7 @@ void _icon_menu::DrawIconMenu() {
 			pcIconLabel = (const char *)global_text->Try_fetch_item_by_hash(nHashRef);
 
 			// If we found it, display it.
-			if (pcIconLabel && (px.display_mode == THREED)) {
+			if (pcIconLabel && (g_px->display_mode == THREED)) {
 				SetTextColour(255, 255, 255);
 				MS->Create_remora_text(sToRectangle.left, sToRectangle.top - 17, pcIconLabel, 2, PIN_AT_TOP_LEFT, 3, 2, 600);
 				MS->Render_speech(MS->text_bloc);
@@ -383,7 +383,7 @@ void _icon_menu::DrawIconMenu() {
 		nItemCount = m_sDuplicates.s_pnItemCounts[nIconIndex];
 
 		// Only write the number on in 3D mode.
-		if (px.display_mode == THREED) {
+		if (g_px->display_mode == THREED) {
 			// Write the number if greater than 1 or it is the clips or medipacks count.
 			if (((nItemCount > 1) || (nHashRef == HashString(ARMS_HEALTH_NAME)) || (nHashRef == HashString(ARMS_AMMO_NAME))) && x > 0) {
 				snprintf(pcDigits, 16, "%d", m_sDuplicates.s_pnItemCounts[nIconIndex]);

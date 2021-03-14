@@ -138,7 +138,8 @@ void Init_globals() {
 }
 
 void CreateGlobalObjects() {
-	g_ptrArray = new Common::Array<PointerReference>();
+	g_px = new c_global_switches;
+	g_ptrArray = new Common::Array<PointerReference>;
 	g_globalScriptVariables = new CpxGlobalScriptVariables;
 	g_theSequenceManager = new MovieManager;
 	g_while_u_wait_SequenceManager = new MovieManager;
@@ -181,6 +182,7 @@ void CreateGlobalObjects() {
 }
 
 void DestroyGlobalObjects() {
+	delete g_px;
 	delete g_ptrArray;
 	delete g_globalScriptVariables;
 	delete g_theSequenceManager;

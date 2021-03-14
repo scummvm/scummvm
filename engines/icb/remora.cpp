@@ -160,7 +160,7 @@ void _remora::SetDefaultOrOverrideMode() {
 
 void _remora::DisplayCharacterSpeech(uint32 nHash) {
 	// No character speech is displayed unless sub_titles are turned on
-	if (px.on_screen_text == TRUE8) {
+	if (g_px->on_screen_text == TRUE8) {
 		const char *pcText;
 
 		// Find the text in the resources.
@@ -886,7 +886,7 @@ void _remora::ClearAllText() {
 
 void _remora::DrawVoiceOverText() const {
 	// Here we draw the text that characters may say inside the Remora.
-	if (px.on_screen_text && (m_nSpeechTimer > 0) && (strlen(m_pcSpeechText) > 0)) {
+	if (g_px->on_screen_text && (m_nSpeechTimer > 0) && (strlen(m_pcSpeechText) > 0)) {
 		// Yes we need to display speech text.
 		MS->Create_remora_text(REMORA_SPEECH_X_POSITION, REMORA_SPEECH_Y_POSITION, m_pcSpeechText, 0, PIN_AT_CENTRE, 0, 0, REMORA_DISPLAY_WIDTH);
 

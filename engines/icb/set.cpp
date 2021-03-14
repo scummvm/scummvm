@@ -43,7 +43,7 @@ namespace ICB {
 
 int32 _game_session::GetSelectedMegaId(void) {
 	selected_mega_id = -1;
-	if ((px.mega_hilite) && (player.interact_selected)) {
+	if ((g_px->mega_hilite) && (player.interact_selected)) {
 		int32 sel_id = player.cur_interact_id;
 		if (logic_structs[sel_id]->image_type != PROP) {
 			selected_mega_id = player.cur_interact_id;
@@ -82,7 +82,7 @@ void _game_session::GetSelectedMegaRGB(uint8 &r, uint8 &g, uint8 &b) {
 
 int32 _game_session::GetSelectedPropId(void) {
 	selected_prop_id = -1;
-	if ((px.prop_hilite) && (player.interact_selected)) {
+	if ((g_px->prop_hilite) && (player.interact_selected)) {
 		int32 sel_id = player.cur_interact_id;
 		if (logic_structs[sel_id]->image_type == PROP) {
 			selected_prop_id = player.cur_interact_id;
@@ -133,7 +133,7 @@ void _game_session::Render_3d_nicos() {
 	            0, 230, 255, 0};
 
 	// is this mode switched on
-	if (px.nicos_displayed == FALSE8)
+	if (g_px->nicos_displayed == FALSE8)
 		return;
 
 	ad = surface_manager->Lock_surface(working_buffer_id);

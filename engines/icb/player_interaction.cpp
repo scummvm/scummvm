@@ -242,7 +242,7 @@ void _player::Render_crude_interact_highlight() {
 		return;
 
 	// cross hair is now a development option
-	if (px.cross_hair == FALSE8)
+	if (g_px->cross_hair == FALSE8)
 		return;
 
 	ad = surface_manager->Lock_surface(working_buffer_id);

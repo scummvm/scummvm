@@ -784,11 +784,11 @@ void _game_session::One_logic_cycle() {
 			// run appropriate logic
 			switch (L->big_mode) {
 			case __SCRIPT: // just running full scripts
-				if (px.mega_timer)
+				if (g_px->mega_timer)
 					script_cycleTimer = GetMicroTimer();
 				Pre_logic_event_check();
 				Script_cycle();
-				if (px.mega_timer) {
+				if (g_px->mega_timer) {
 					script_cycleTimer = GetMicroTimer() - script_cycleTimer;
 					L->cycle_time = script_cycleTimer;
 				}
@@ -798,10 +798,10 @@ void _game_session::One_logic_cycle() {
 				break;
 
 			case __CUSTOM_SIMPLE_ANIMATE: // special simple animator logic
-				if (px.mega_timer)
+				if (g_px->mega_timer)
 					script_cycleTimer = GetMicroTimer();
 				Custom_simple_animator();
-				if (px.mega_timer) {
+				if (g_px->mega_timer) {
 					script_cycleTimer = GetMicroTimer() - script_cycleTimer;
 					L->cycle_time = script_cycleTimer;
 				}
@@ -809,10 +809,10 @@ void _game_session::One_logic_cycle() {
 				break;
 
 			case __CUSTOM_BUTTON_OPERATED_DOOR: // special button operated door
-				if (px.mega_timer)
+				if (g_px->mega_timer)
 					script_cycleTimer = GetMicroTimer();
 				Custom_button_operated_door();
-				if (px.mega_timer) {
+				if (g_px->mega_timer) {
 					script_cycleTimer = GetMicroTimer() - script_cycleTimer;
 					L->cycle_time = script_cycleTimer;
 				}
@@ -820,10 +820,10 @@ void _game_session::One_logic_cycle() {
 				break;
 
 			case __CUSTOM_AUTO_DOOR:
-				if (px.mega_timer)
+				if (g_px->mega_timer)
 					script_cycleTimer = GetMicroTimer();
 				Custom_auto_door();
-				if (px.mega_timer) {
+				if (g_px->mega_timer) {
 					script_cycleTimer = GetMicroTimer() - script_cycleTimer;
 					L->cycle_time = script_cycleTimer;
 				}

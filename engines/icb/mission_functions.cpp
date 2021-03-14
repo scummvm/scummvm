@@ -63,7 +63,7 @@ int32 LoadMission(int32 m, void * /*usr*/) {
 	warning("rs_anims %d files %dKB rs_bg %d files %dKB", rs_anims->Fetch_files_open(), (rs_anims->Fetch_mem_used() / 1024), rs_bg->Fetch_files_open(),
 	        (rs_bg->Fetch_mem_used() / 1024));
 
-	px.current_cd = WhichCD(g_mission_names[m - 1]);
+	g_px->current_cd = WhichCD(g_mission_names[m - 1]);
 
 	// Load in the session (mission_name, session_name)
 	if (Setup_new_mission(g_mission_startup_names[(m - 1) * 2], g_mission_startup_names[(m - 1) * 2 + 1])) {

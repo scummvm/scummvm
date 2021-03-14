@@ -381,7 +381,7 @@ void drawObjects(SDactor &act, PSXLampList &lamplist, PSXrgb *pAmbient, PSXShade
 	_drawGouraud = 1;
 	_drawDebugMesh = 0;
 
-	if (px.texturedActors) {
+	if (g_px->texturedActors) {
 		ChooseTexture(texHan);
 		_drawTxture = 1;
 	} else {
@@ -389,20 +389,20 @@ void drawObjects(SDactor &act, PSXLampList &lamplist, PSXrgb *pAmbient, PSXShade
 		_drawDebugMesh = 1;
 	}
 
-	if (px.litActors) {
+	if (g_px->litActors) {
 		_drawLit = 1;
 	} else {
 		_drawLit = 0;
 	}
 
-	if (px.polyActors) {
+	if (g_px->polyActors) {
 		_drawPolys = 1;
 	} else {
 		_drawPolys = 0;
 		_drawDebugMesh = 1;
 	}
 
-	if (px.wireframeActors) {
+	if (g_px->wireframeActors) {
 		_drawWfrm = 1;
 		_drawDebugMesh = 1;
 	} else {
@@ -413,7 +413,7 @@ void drawObjects(SDactor &act, PSXLampList &lamplist, PSXrgb *pAmbient, PSXShade
 	if (mega->drawShadow) {
 		// Complex shadows have up to nShadows of them
 		// Note: a top-down BLACK will get added if NO shadows are cast
-		nShadows = px.actorShadows;
+		nShadows = g_px->actorShadows;
 	}
 
 	SVECTORPC p_n[MAX_SHADOWS];
@@ -566,7 +566,7 @@ void StageDrawPoly(SDactor *actors, uint32 actorQty) {
 	set->RefreshBackdrop();
 
 	// Call Set Draw to update all the props
-	set->Set_draw(px.frag_help);
+	set->Set_draw(g_px->frag_help);
 
 	// PSX LIGHT RIG SETUP
 	ConvertRLP(set->GetPRig());
@@ -913,7 +913,7 @@ void StageDrawPoly(SDactor *actors, uint32 actorQty) {
 
 							// Now do the semi transparencies for this prop tile
 							uint16 *tilePtrs = pStat->GetSemiTileTable(tileOffset); // pStat->GetSemiTileTable(tileOffset);
-							if ((tilePtrs != NULL) && (px.semitransparencies == TRUE8)) {
+							if ((tilePtrs != NULL) && (g_px->semitransparencies == TRUE8)) {
 								uint16 *tPtr = tilePtrs;
 								uint32 *bufRGB = source + offset;
 								uint16 *bufZ = zActor + offset;
@@ -1053,7 +1053,7 @@ void StageDrawPoly(SDactor *actors, uint32 actorQty) {
 
 						// Now add the static semitransparencies
 						uint16 *tilePtrs = sceneZ->GetSemiTileTable(tileOffset);
-						if ((tilePtrs != NULL) && (px.semitransparencies == TRUE8)) {
+						if ((tilePtrs != NULL) && (g_px->semitransparencies == TRUE8)) {
 							uint16 *tPtr = tilePtrs;
 							uint32 *bufRGB = source + offset;
 							uint16 *bufZ = zActor + offset;

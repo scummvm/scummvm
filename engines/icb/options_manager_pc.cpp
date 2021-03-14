@@ -1921,7 +1921,7 @@ void OptionsManager::MoveSelected(bool8 _down_) {
 		else
 			currentlySelected--;
 
-		if (px.game_completed) {
+		if (g_px->game_completed) {
 			if (currentlySelected < 0)
 				m_M_EXTRA_selected = (M_EXTRA_CHOICES)(NUMBER_OF_EXTRA_CHOICES - 1);
 			else
@@ -2378,10 +2378,10 @@ void OptionsManager::AlterSelected(bool8 _right_) {
 
 		switch (m_VIDEO_selected) {
 		case SUBTITLES:
-			if (px.on_screen_text)
-				px.on_screen_text = FALSE8;
+			if (g_px->on_screen_text)
+				g_px->on_screen_text = FALSE8;
 			else
-				px.on_screen_text = TRUE8;
+				g_px->on_screen_text = TRUE8;
 
 			// Chosen noise please
 			PlayChosenFX();
@@ -2390,15 +2390,15 @@ void OptionsManager::AlterSelected(bool8 _right_) {
 
 		case SHADOWS:
 			if (_right_) {
-				if (px.actorShadows == 3)
-					px.actorShadows = -1;
+				if (g_px->actorShadows == 3)
+					g_px->actorShadows = -1;
 				else
-					px.actorShadows++;
+					g_px->actorShadows++;
 			} else {
-				if (px.actorShadows == -1)
-					px.actorShadows = 3;
+				if (g_px->actorShadows == -1)
+					g_px->actorShadows = 3;
 				else
-					px.actorShadows--;
+					g_px->actorShadows--;
 			}
 			// Chosen noise please
 			PlayChosenFX();
@@ -3885,17 +3885,17 @@ void OptionsManager::DrawExtrasScreen(uint32 surface_id) {
 	msg = GetTextFromReference(HashString("opt_movies"));
 	DisplayText(ad, pitch, msg, 0, 130, (m_M_EXTRA_selected == MOVIES) ? SELECTEDFONT : NORMALFONT, TRUE8);
 	msg = GetTextFromReference(HashString("opt_slideshow"));
-	if (px.game_completed)
+	if (g_px->game_completed)
 		DisplayText(ad, pitch, msg, 0, 150, (m_M_EXTRA_selected == SLIDESHOW) ? SELECTEDFONT : NORMALFONT, TRUE8);
 	else
 		DisplayText(ad, pitch, msg, 0, 150, PALEFONT, TRUE8);
 	msg = GetTextFromReference(HashString("opt_playselect"));
-	if (px.game_completed)
+	if (g_px->game_completed)
 		DisplayText(ad, pitch, msg, 0, 170, (m_M_EXTRA_selected == PLAYSELECT) ? SELECTEDFONT : NORMALFONT, TRUE8);
 	else
 		DisplayText(ad, pitch, msg, 0, 170, PALEFONT, TRUE8);
 	msg = GetTextFromReference(HashString("opt_profiles"));
-	if (px.game_completed)
+	if (g_px->game_completed)
 		DisplayText(ad, pitch, msg, 0, 190, (m_M_EXTRA_selected == PROFILES) ? SELECTEDFONT : NORMALFONT, TRUE8);
 	else
 		DisplayText(ad, pitch, msg, 0, 190, PALEFONT, TRUE8);
@@ -4741,7 +4741,7 @@ void OptionsManager::DrawVideoSettings() {
 	msg = GetTextFromReference(HashString("opt_subtitles"));
 	temp = CalculateStringWidth(msg);
 	DisplayText(ad, pitch, msg, halfScreen - temp - 10, hite, (m_VIDEO_selected == SUBTITLES) ? SELECTEDFONT : NORMALFONT, FALSE8);
-	if (px.on_screen_text)
+	if (g_px->on_screen_text)
 		msg = GetTextFromReference(HashString("opt_on"));
 	else
 		msg = GetTextFromReference(HashString("opt_off"));
@@ -4755,13 +4755,13 @@ void OptionsManager::DrawVideoSettings() {
 		msg = GetTextFromReference(HashString("opt_shadows"));
 		temp = CalculateStringWidth(msg);
 		DisplayText(ad, pitch, msg, halfScreen - temp - 10, hite, (m_VIDEO_selected == SHADOWS) ? SELECTEDFONT : NORMALFONT, FALSE8);
-		if (px.actorShadows == -1)
+		if (g_px->actorShadows == -1)
 			msg = GetTextFromReference(HashString("opt_shadows_simple"));
-		else if (px.actorShadows == 1)
+		else if (g_px->actorShadows == 1)
 			msg = GetTextFromReference(HashString("opt_shadows_1"));
-		else if (px.actorShadows == 2)
+		else if (g_px->actorShadows == 2)
 			msg = GetTextFromReference(HashString("opt_shadows_2"));
-		else if (px.actorShadows == 3)
+		else if (g_px->actorShadows == 3)
 			msg = GetTextFromReference(HashString("opt_shadows_3"));
 		else
 			msg = GetTextFromReference(HashString("opt_shadows_off"));
@@ -5543,7 +5543,7 @@ const char *OptionsManager::GetTextFromReference(uint32 hashRef) {
 		// Right we appear to have a present-and-correct line number.  To display it we don't have
 		// to do anything special.  If the displaying of line numbers is turned off then we must skip
 		// past the line number.
-		if (!px.speechLineNumbers) {
+		if (!g_px->speechLineNumbers) {
 			// Skip to first non-space after the line number.
 			const char *pcTextLine = (const char *)(&textLine[nCloseBracePos + 1]);
 			while ((*pcTextLine != '\0') && (*pcTextLine == ' '))
@@ -5882,7 +5882,7 @@ void OptionsManager::PollInput() {
 
 				g_theOptionsManager->DisplayText(ad, pitch, "Extras unlocked", 0, SCREEN_DEPTH - 30, SELECTEDFONT, TRUE8);
 
-				px.game_completed = TRUE8;
+				g_px->game_completed = TRUE8;
 
 				surface_manager->Unlock_surface(working_buffer_id);
 

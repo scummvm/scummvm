@@ -189,7 +189,7 @@ void _mission::___init_mission(const char *new_mission_name, const char *session
 		Fatal_error("new mission no session name");
 
 	// Work out which CD we should be using
-	px.current_cd = WhichCD(new_mission_name);
+	g_px->current_cd = WhichCD(new_mission_name);
 
 	// Need a mission id number fist of all
 	MISSION_ID m = (MISSION_ID)FindMissionNumber(new_mission_name);
@@ -369,14 +369,14 @@ uint32 _mission::Game_cycle() {
 	MS->prev_save_state = MS->Can_save(); // get previous state - used by lifts to see if player is active
 	MS->Set_can_save(FALSE8);             // cant save as default - this is reversed by states that allow save this game cycle
 
-	px.logic_timing = TRUE8;
+	g_px->logic_timing = TRUE8;
 	logic_time = GetMicroTimer();
 	resman_logic_time = 0; // reset
 	xtra_mega_time = 0;
 	session->One_logic_cycle();
 	// work out overall time
 	logic_time = GetMicroTimer() - logic_time;
-	px.logic_timing = FALSE8;
+	g_px->logic_timing = FALSE8;
 
 	// cancel SAVE if watching another mega
 	if (g_mission->camera_follow_id_overide)
@@ -1104,11 +1104,11 @@ __load_result Load_game(const char *filename) {
 }
 
 void _mission::Create_display() {
-	switch (px.display_mode) {
+	switch (g_px->display_mode) {
 	case THREED:
 		// Need this for development safey - but is redundant in final (console-less) game
 		if (!session->SetOK()) {
-			px.display_mode = TEMP_NETHACK; // so we can bounce out again if a real camera/set is found
+			g_px->display_mode = TEMP_NETHACK; // so we can bounce out again if a real camera/set is found
 
 			// Save the actor's control mode
 			session->player.Push_control_mode(ACTOR_RELATIVE);
@@ -1137,7 +1137,7 @@ void _mission::Create_display() {
 
 				// Only render speech when not in REMORA mode
 				// (as REMORA uses speech system to draw its own text)
-				if (px.on_screen_text) {
+				if (g_px->on_screen_text) {
 					session->Render_speech(session->text_speech_bloc);
 
 					// If there is currently a SFX subtitle active then display it.
@@ -1183,7 +1183,7 @@ void _mission::Create_display() {
 			if (!g_oRemora->IsActive() && g_oIconMenu->IsAdding())
 				g_oIconMenu->DrawAdding();
 
-			if (px.mega_timer)
+			if (g_px->mega_timer)
 				session->Display_mega_times();
 
 			// Crude Interaction Highlight

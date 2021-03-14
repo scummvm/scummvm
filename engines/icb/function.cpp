@@ -364,7 +364,7 @@ mcodeFunctionReturnCodes _game_session::socket_force_new_logic(int32 &, int32 *p
 
 	script_hash = HashString(script_name);
 
-	if (px.socket_watch)
+	if (g_px->socket_watch)
 		Message_box("socket_force_new_logic - obj %s, script %s", socket_object->GetName(), script_name);
 
 	// now try and find a script with the passed extention i.e. ???::looping
@@ -376,7 +376,7 @@ mcodeFunctionReturnCodes _game_session::socket_force_new_logic(int32 &, int32 *p
 			// get the address of the script we want to run
 			ad = (char *)scripts->Try_fetch_item_by_hash(socket_object->GetScriptNameFullHash(k));
 
-			if (px.socket_watch)
+			if (g_px->socket_watch)
 				Message_box("replacing logic");
 
 			// write actual offset
@@ -801,7 +801,7 @@ mcodeFunctionReturnCodes _game_session::fn_call_socket(int32 &result, int32 *par
 
 	Zdebug("fn_call_socket - obj %s, script %s", target_object_name, socket_script_name);
 
-	if (px.socket_watch)
+	if (g_px->socket_watch)
 		Message_box("%s fn_call_socket - obj %s, script %s", object->GetName(), target_object_name, socket_script_name);
 
 	script_hash = HashString(socket_script_name);
@@ -2370,7 +2370,7 @@ mcodeFunctionReturnCodes _game_session::fn_set_watch(int32 &, int32 *params) {
 
 	// If we are switching back to the player then we need to put the Remora back up if
 	// it was up when we switched to a manual watch (but only in 3D).
-	if (px.display_mode == THREED) {
+	if (g_px->display_mode == THREED) {
 		// Check if switching to player.
 		if (id == player.Fetch_player_id()) {
 			// If the Remora was active, need to bring it back up.

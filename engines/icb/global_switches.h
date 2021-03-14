@@ -81,7 +81,7 @@ public:
 	bool8 game_completed; // Set by gamescript marker - unlocks title screen bonuses
 };
 
-extern c_global_switches px;
+extern c_global_switches *g_px;
 
 } // End of namespace ICB
 

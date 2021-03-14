@@ -560,7 +560,7 @@ mcodeFunctionReturnCodes _player::Gateway() {
 	c_game_object *ob;
 
 	// Set the player control mode correctly
-	switch (px.display_mode) {
+	switch (g_px->display_mode) {
 	case NETHACK:
 	case TEMP_NETHACK: {
 		// Set the player into ACTOR_RELATIVE mode for nethack modes

@@ -127,16 +127,16 @@ void ReadConfigFromIniFile() {
 	warning("Enabling all extras for development purposes");
 	temp = 1;
 	if (temp == 0)
-		px.game_completed = FALSE8;
+		g_px->game_completed = FALSE8;
 	else
-		px.game_completed = TRUE8;
+		g_px->game_completed = TRUE8;
 
 	// Subtitle switch
 	temp = getConfigValueWithDefault(config, "Video Settings", "Subtitles", 1);
 	if (temp == 0)
-		px.on_screen_text = FALSE8;
+		g_px->on_screen_text = FALSE8;
 	else
-		px.on_screen_text = TRUE8;
+		g_px->on_screen_text = TRUE8;
 
 	// Control method
 	temp = getConfigValueWithDefault(config, "Controller Settings", "Method", ACTOR_RELATIVE);
@@ -162,8 +162,8 @@ void Save_config_file() {
 	ConfMan.setInt("music_volume", GetMusicVolume() * 2);
 	ConfMan.setInt("speech_volume", GetMusicVolume() * 2);
 	ConfMan.setInt("sfx_volume", GetMusicVolume() * 2);
-	ConfMan.setBool("subtitles", px.on_screen_text != 0);
-	ConfMan.setBool("game_completed", px.game_completed);
+	ConfMan.setBool("subtitles", g_px->on_screen_text != 0);
+	ConfMan.setBool("game_completed", g_px->game_completed);
 	ConfMan.setBool("actor_relative", g_icb_session->player.Get_control_mode() == ACTOR_RELATIVE);
 
 	// Write the movie library settings

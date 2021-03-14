@@ -239,7 +239,7 @@ void _game_script::Process_game_script() {
 		break;
 
 	case 'D': // debugging on again
-		px.debugging_and_console = TRUE8;
+		g_px->debugging_and_console = TRUE8;
 		Fetch_next_line();
 		break;
 
@@ -255,10 +255,10 @@ void _game_script::Process_game_script() {
 		pc += 2;
 		Fetch_next_param(p1);
 		Fetch_next_line();
-		px.current_cd = atoi(p1);
+		g_px->current_cd = atoi(p1);
 
-		if ((!px.current_cd) || (px.current_cd > 3))
-			Fatal_error("gamescript tried to set silly cd number %d", px.current_cd);
+		if ((!g_px->current_cd) || (g_px->current_cd > 3))
+			Fatal_error("gamescript tried to set silly cd number %d", g_px->current_cd);
 		break;
 
 	case 'Z': // Signify that the game has been completed

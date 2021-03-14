@@ -339,13 +339,13 @@ uint8 *res_man::Res_open(const char *url, uint32 &url_hash, const char *cluster,
 	params.compressed = compressed;
 	params.not_ready_yet = 0;
 
-	if ((px.logic_timing) && (px.mega_timer)) {
+	if ((g_px->logic_timing) && (g_px->mega_timer)) {
 		time = GetMicroTimer();
 	}
 
 	uint8 *ret = this->Internal_open(&params, ret_len);
 
-	if ((px.logic_timing) && (px.mega_timer)) {
+	if ((g_px->logic_timing) && (g_px->mega_timer)) {
 		time = GetMicroTimer() - time;
 		g_mission->resman_logic_time += time;
 	}

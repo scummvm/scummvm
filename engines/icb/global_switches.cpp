@@ -30,7 +30,7 @@
 namespace ICB {
 
 // projects x's global flags
-c_global_switches px;
+c_global_switches *g_px;
 
 c_global_switches::c_global_switches() {
 	px_fps = 1;               // 12

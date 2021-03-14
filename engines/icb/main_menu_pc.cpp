@@ -166,7 +166,7 @@ void Gameover_menu() {
 }
 
 void GameCompleted() {
-	px.game_completed = TRUE8;
+	g_px->game_completed = TRUE8;
 	// Fill in any gaps in the movie library
 	g_theOptionsManager->UnlockMovies();
 }

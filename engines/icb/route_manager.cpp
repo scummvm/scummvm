@@ -119,7 +119,7 @@ void _game_session::Create_initial_route(__rtype type) {
 	_route_stat res;
 	uint32 time = 0;
 
-	if ((px.logic_timing) && (px.mega_timer))
+	if ((g_px->logic_timing) && (g_px->mega_timer))
 		time = GetMicroTimer();
 
 	Zdebug("create_initial_route");
@@ -180,7 +180,7 @@ void _game_session::Create_initial_route(__rtype type) {
 		M->m_main_route.request_form.error = __ROUTE_REQUEST_PRIM_FAILED;
 	}
 
-	if ((px.logic_timing) && (px.mega_timer)) {
+	if ((g_px->logic_timing) && (g_px->mega_timer)) {
 		time = GetMicroTimer() - time;
 		L->slowest_cycle_time = time;
 	}

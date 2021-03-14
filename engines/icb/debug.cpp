@@ -73,7 +73,7 @@ void _game_session::Show_lit_unlit_diagnostics() {
 	            255, 0, 0, 0};
 
 	// cross hair is now a development option
-	if (px.cross_hair == FALSE8)
+	if (g_px->cross_hair == FALSE8)
 		return;
 
 	ad = surface_manager->Lock_surface(working_buffer_id);

@@ -177,7 +177,7 @@ _TSrtn text_sprite::MakeTextSprite(bool8 analysisAlreadyDone, int32 stopAtLine, 
 			// Right we appear to have a present-and-correct line number.  To display it we don't have
 			// to do anything special.  If the displaying of line numbers is turned off then we must skip
 			// past the line number.
-			if (!px.speechLineNumbers) {
+			if (!g_px->speechLineNumbers) {
 				// Skip to first non-space after the line number.
 				pcTextLine = (const char *)(&params.textLine[nCloseBracePos + 1]);
 				while ((*pcTextLine != '\0') && (*pcTextLine == ' '))

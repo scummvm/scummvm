@@ -942,7 +942,7 @@ const char *SkipLineNumber(const char *pcLine) {
 	const char *pcParsePos;
 
 	// If line number display is turned on, don't do anything.
-	if (px.speechLineNumbers)
+	if (g_px->speechLineNumbers)
 		return (pcLine);
 
 	// Initialise parse pointer.

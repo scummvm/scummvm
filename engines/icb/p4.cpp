@@ -217,7 +217,7 @@ void _stub::Update_screen() {
 
 	// Record the next frame of the video if any
 	static uint32 frameNumber = 0;
-	if (px.recordingVideo)
+	if (g_px->recordingVideo)
 		surface_manager->RecordFrame(pxVString("icb%05d.bmp", frameNumber++));
 
 	// Grab screen shots if required

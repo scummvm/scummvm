@@ -591,7 +591,7 @@ mcodeFunctionReturnCodes _game_session::fn_speak(int32 &, int32 *params) {
 		if (ret_code != TS_OK)
 			Fatal_error("line [%s] text formating is illegal [%s]", text_label, ascii);
 
-		if (px.display_mode == THREED) {
+		if (g_px->display_mode == THREED) {
 
 			// get coords
 			if (logic_structs[speaker_id]->image_type == PROP) {
@@ -753,14 +753,14 @@ void _game_session::Create_remora_text(uint32 x, uint32 y, const char *ascii,
 	else
 		bRemoraLeftFormatting = FALSE8;
 
-	int32 oldFlag = px.speechLineNumbers;
+	int32 oldFlag = g_px->speechLineNumbers;
 
 	// Turn off line numbers for non-spoken lines of dialogue
 	if (*ascii == TS_NON_SPOKEN_LINE)
-		px.speechLineNumbers = 0;
+		g_px->speechLineNumbers = 0;
 
 	text_bloc->MakeTextSprite(analysisAlreadyDone, stopAtLine, bRemoraLeftFormatting);
-	px.speechLineNumbers = (uint8)oldFlag;
+	g_px->speechLineNumbers = (uint8)oldFlag;
 	text_bloc->GetRenderCoords(x, y, pin_pos, margin);
 
 	text_bloc->please_render = TRUE8;

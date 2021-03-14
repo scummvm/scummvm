@@ -364,7 +364,7 @@ void _game_session::Camera_director() {
 
 		if (floor_to_camera_index[this_rect] == 0xffffffff) { // no named camera so its a more complex logic switch
 			// ok, lets assume that there was no special camera!
-			px.display_mode = TEMP_NETHACK; // stick us into temporary nethack mode which will bounce out again if it can
+			g_px->display_mode = TEMP_NETHACK; // stick us into temporary nethack mode which will bounce out again if it can
 			Zdebug("no named camera! - entering TEMP_NETHACK");
 		} else { // ok, there is a named camera! and we know its different from current
 			// different from current
@@ -375,8 +375,8 @@ void _game_session::Camera_director() {
 			anchor_floor = this_rect;
 
 			// if we're not in NETHACK mode then switch in the set
-			if (px.display_mode != NETHACK) {
-				px.display_mode = THREED; // force back in-case we were in TEMP_NETHACK
+			if (g_px->display_mode != NETHACK) {
+				g_px->display_mode = THREED; // force back in-case we were in TEMP_NETHACK
 
 				// init the new set - Initialise_set will record the name of the new camera
 				// it will also handle missing set files and bung us into TEMP_NETHACK mode if it has to
