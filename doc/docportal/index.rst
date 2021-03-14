@@ -58,6 +58,7 @@
       help/report_bugs
       help/contact
       help/faq
+      help/credits
 
 
 
