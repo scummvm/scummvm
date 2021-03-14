@@ -6519,7 +6519,8 @@ msgid ""
 "piracy.\n"
 "The full version is available for purchase from the iTunes Store."
 msgstr ""
-"Putt-Putt Saves the ZooのiOS体験版は、著作権保護の観点からサポートしていません。\n"
+"Putt-Putt Saves the ZooのiOS体験版は、著作権保護の観点からサポートしていませ"
+"ん。\n"
 "製品版はiTunes Storeからご購入いただけます。"
 
 #: engines/scumm/metaengine.cpp:422
