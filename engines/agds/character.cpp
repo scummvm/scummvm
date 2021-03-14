@@ -128,8 +128,8 @@ void Character::direction(int dir) {
 	if (dir < 0)
 		return;
 
-	auto desc = animationDescription(dir);
-	_animation = desc? _engine->loadAnimation(desc->filename): nullptr;
+	_description = animationDescription(dir);
+	_animation = _description? _engine->loadAnimation(_description->filename): nullptr;
 	_animationPos = Common::Point();
 	if (!_animation) {
 		debug("no animation?");
@@ -153,8 +153,8 @@ void Character::animate(const Common::String & processName, Common::Point pos, i
 	if (direction == -1)
 		return;
 	auto jokes = _engine->jokes();
-	auto animationDescription = jokes->animationDescription(direction);
-	_animation = animationDescription? _engine->loadAnimation(animationDescription->filename): nullptr;
+	_description = jokes->animationDescription(direction);
+	_animation = _description? _engine->loadAnimation(_description->filename): nullptr;
 	if (!_animation) {
 		warning("no jokes animation %d", direction);
 		_phase = -1;

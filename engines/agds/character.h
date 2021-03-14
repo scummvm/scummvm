@@ -63,6 +63,7 @@ class Character {
 		Common::Array<Frame> 	frames;
 	};
 	Common::HashMap<int, AnimationDescription> _animations;
+	const AnimationDescription * _description;
 
 public:
 	Character(AGDSEngine * engine, const Common::String & name, const ObjectPtr & object):
