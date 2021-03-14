@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-03-13 15:42+0000\n"
+"POT-Creation-Date: 2021-03-14 17:52+0000\n"
 "PO-Revision-Date: 2020-11-29 17:10+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
@@ -2117,7 +2117,7 @@ msgctxt "lowres"
 msgid "~R~eturn to Launcher"
 msgstr "S~t~artmenu"
 
-#: engines/dialogs.cpp:103 engines/engine.cpp:831 engines/agi/saveload.cpp:759
+#: engines/dialogs.cpp:103 engines/engine.cpp:831 engines/agi/saveload.cpp:768
 #: engines/avalanche/parser.cpp:1919 engines/cine/various.cpp:350
 #: engines/dm/loadsave.cpp:199 engines/drascula/saveload.cpp:383
 #: engines/dreamweb/saveload.cpp:262 engines/glk/streams.cpp:1433
@@ -2136,7 +2136,7 @@ msgstr "Spel opslaan:"
 
 #: engines/dialogs.cpp:103 engines/engine.cpp:831
 #: backends/platform/symbian/src/SymbianActions.cpp:46
-#: engines/agi/saveload.cpp:759 engines/avalanche/parser.cpp:1919
+#: engines/agi/saveload.cpp:768 engines/avalanche/parser.cpp:1919
 #: engines/cine/various.cpp:350 engines/dm/loadsave.cpp:199
 #: engines/drascula/saveload.cpp:383 engines/dreamweb/saveload.cpp:262
 #: engines/glk/streams.cpp:1433 engines/gnap/menu.cpp:466
@@ -3802,7 +3802,7 @@ msgstr ""
 "Als u een dergelijke file van een ander AGI (Sierra) spel heeft, kunt u het "
 "kopiëren naar de spel folder"
 
-#: engines/agi/saveload.cpp:772 engines/avalanche/parser.cpp:1907
+#: engines/agi/saveload.cpp:781 engines/avalanche/parser.cpp:1907
 #: engines/cine/various.cpp:361 engines/dm/dm.cpp:276
 #: engines/dm/loadsave.cpp:187 engines/drascula/saveload.cpp:396
 #: engines/dreamweb/saveload.cpp:170 engines/glk/streams.cpp:1442
@@ -3818,7 +3818,7 @@ msgstr ""
 msgid "Restore game:"
 msgstr "Laad opgeslagen spel:"
 
-#: engines/agi/saveload.cpp:772 engines/avalanche/parser.cpp:1907
+#: engines/agi/saveload.cpp:781 engines/avalanche/parser.cpp:1907
 #: engines/cine/various.cpp:361 engines/dm/dm.cpp:276
 #: engines/dm/loadsave.cpp:187 engines/drascula/saveload.cpp:396
 #: engines/dreamweb/saveload.cpp:170 engines/glk/streams.cpp:1442
