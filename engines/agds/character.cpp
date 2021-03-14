@@ -165,7 +165,6 @@ void Character::animate(const Common::String & processName, Common::Point pos, i
 	_animation->rewind();
 	_phase = 0;
 	_frames = _animation->frames();
-	pos.x += animationDescription->frames.empty()? 0: animationDescription->frames.front().w / 2;
 	_animationPos = pos;
 	debug("character animation frames: %d, enabled: %d, visible: %d", _frames, _enabled, _visible);
 }
