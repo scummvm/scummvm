@@ -63,6 +63,26 @@ void NightlongSmackerDecoder::setMute(bool mute) {
 	}
 }
 
+bool NightlongSmackerDecoder::forceSeekToFrame(uint frame) {
+	if (!isVideoLoaded())
+		return true;
+
+	if (frame >= getFrameCount())
+		return false;
+
+	if (!rewind())
+		return false;
+
+	SmackerVideoTrack *videoTrack = (SmackerVideoTrack *)getTrack(0);
+	uint32 offset = 0;
+	for (uint32 i = 0; i < frame; i++) {
+		videoTrack->increaseCurFrame();
+		offset += _frameSizes[i] & ~3;
+	}
+
+	return _fileStream->seek(offset, SEEK_CUR);
+}
+
 AnimManager::AnimManager(TrecisionEngine *vm) : _vm(vm) {
 	for (int i = 0; i < MAXSMACK; ++i) {
 		_smkBuffer[i] = nullptr;
@@ -133,11 +153,8 @@ void AnimManager::smkNextFrame() {
 		_smkAnims[_curSmackBuffer]->rewind();
 	}
 
-	if (_smkAnims[_curSmackBuffer]->needsUpdate()) {
-		const Graphics::Surface *surface = _smkAnims[_curSmackBuffer]->decodeNextFrame();
-		if (surface != nullptr)
-			_smkBuffer[_curSmackBuffer] = (uint8 *)surface->getPixels();
-	}
+	const Graphics::Surface *surface = _smkAnims[_curSmackBuffer]->decodeNextFrame();
+	_smkBuffer[_curSmackBuffer] = (uint8 *)surface->getPixels();
 }
 
 /*---------------------------------------------------
@@ -149,7 +166,7 @@ void AnimManager::smkGoto(int buf, int num) {
 	if (_smkAnims[_curSmackBuffer] == NULL)
 		return;
 
-	_smkAnims[_curSmackBuffer]->seekToFrame(num);
+	_smkAnims[_curSmackBuffer]->forceSeekToFrame(num);
 }
 
 /*------------------------------------------------
@@ -744,7 +761,7 @@ void AnimManager::playFullMotion(int start, int end) {
 	if (_curAnimFrame[pos] != (start - 1)) {
 		for (int a = 0; a < MAXNEWSMKPAL; a++) {
 			if (((_dialog[_curDialog]._newPal[a] > start) || !(_dialog[_curDialog]._newPal[a])) && (a)) {
-				_smkAnims[pos]->seekToFrame(_dialog[_curDialog]._newPal[a - 1]);
+				smkGoto(pos, _dialog[_curDialog]._newPal[a - 1]);
 				for (a = 0; a < 256; a++) {
 					_smkPal[pos][a] = _vm->_graphicsMgr->palTo16bit(_smkAnims[pos]->getPalette()[a * 3 + 0],
 					                                                  _smkAnims[pos]->getPalette()[a * 3 + 1],
@@ -762,16 +779,19 @@ void AnimManager::playFullMotion(int start, int end) {
 
 		if ((end - start) > 2) {
 			if (start > 10)
-				_smkAnims[pos]->seekToFrame(start - 10);
+				smkGoto(pos, start - 10);
 			else
-				_smkAnims[pos]->seekToFrame(1);
+				smkGoto(pos, 1);
 
-			smkSoundOnOff(pos, true);
+			while (_smkAnims[pos]->getCurFrame() < start - 1) {
+				smkNextFrame();
+			}
 		} else
-			_smkAnims[pos]->seekToFrame(start);
+			smkGoto(pos, start);
 
 		_curAnimFrame[pos] = start - 1;
-	} else if ((end - start) > 2)
+	}
+	if ((end - start) > 2)
 		smkSoundOnOff(pos, true);
 
 	_fullMotionStart = start;
