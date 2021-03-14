@@ -730,6 +730,35 @@ static const AchievementDescriptionList achievementDescriptionList[] = {
 	},
 
 	{
+		"kathyrain",
+		Common::STEAM_ACHIEVEMENTS,
+		"370910",
+		{
+			ACHIEVEMENT_SIMPLE_ENTRY("FinishDayOne", "Get on the Katmobile", "Finished day one"),
+			ACHIEVEMENT_SIMPLE_ENTRY("FinishDayTwo", "Wow, they're hypnotic...", "Finished day two"),
+			ACHIEVEMENT_SIMPLE_ENTRY("FinishDayThree", "We've met before, haven't we?", "Finished day three"),
+			ACHIEVEMENT_SIMPLE_ENTRY("FinishDayFour", "Down the rabbit hole", "Finished day four"),
+			ACHIEVEMENT_SIMPLE_ENTRY("FinishGame", "Been there, done that", "Finished the game"),
+			ACHIEVEMENT_HIDDEN_ENTRY("Procrastinator", "Procrastinator"),
+			ACHIEVEMENT_HIDDEN_ENTRY("EnjoyingTheScenery", "Enjoying the scenery"),
+			ACHIEVEMENT_HIDDEN_ENTRY("Hotwheels", "Hotwheels"),
+			ACHIEVEMENT_HIDDEN_ENTRY("Aww", "Aaw!"),
+			ACHIEVEMENT_HIDDEN_ENTRY("Undateable", "Undateable"),
+			ACHIEVEMENT_HIDDEN_ENTRY("MrBear", "Mr. Bear, reporting for duty!"),
+			ACHIEVEMENT_HIDDEN_ENTRY("Nocturnal", "Nocturnal"),
+			ACHIEVEMENT_HIDDEN_ENTRY("HowYouDoing", "How YOU doing?"),
+			ACHIEVEMENT_HIDDEN_ENTRY("RestingScowlyFace", "Resting scowly face"),
+			ACHIEVEMENT_HIDDEN_ENTRY("Pyromaniac", "Pyromaniac"),
+			ACHIEVEMENT_HIDDEN_ENTRY("PassiveSmoking", "Passive smoking"),
+			ACHIEVEMENT_HIDDEN_ENTRY("FilmBuff", "Film buff"),
+			ACHIEVEMENT_HIDDEN_ENTRY("Heretic", "Heretic"),
+			ACHIEVEMENT_HIDDEN_ENTRY("TriggerHappy", "Trigger happy"),
+			ACHIEVEMENT_HIDDEN_ENTRY("HookedOnCorleys", "Hooked on Corleys"),
+			ACHIEVEMENTS_LISTEND
+		}
+	},
+
+	{
 		"killyourself",
 		Common::STEAM_ACHIEVEMENTS,
 		"1251910",
