@@ -345,9 +345,10 @@ int AGSCreditz2::VGACheck(int value) {
 
 void AGSCreditz2::draw() {
 	int endPoint;
-	_engine->PollSystem();
 
 	if (_state->_creditsRunning) {
+		_engine->PollSystem();
+
 		if (!_state->_staticCredits) {
 			// Scrolling credits
 			drawMask(_state->_creditSequence, 0);
