@@ -51,6 +51,7 @@ public:
 	bool loadStream(Common::SeekableReadStream *stream) override;
 	void muteTrack(uint track, bool mute);
 	void setMute(bool mute);
+	bool forceSeekToFrame(uint frame);
 };
 
 class AnimManager {

@@ -33,6 +33,7 @@ private:
 	TrecisionEngine *_vm;
 
 	Graphics::PixelFormat _screenFormat;
+	uint16 _bitMask[3];
 
 	static const Graphics::PixelFormat kImageFormat;
 
@@ -43,7 +44,6 @@ public:
 	bool _linearMode;
 	bool _locked;
 	uint16 _pitch;
-	uint16 _bitMask[3];
 
 	uint16 *_screenPtr;
 
