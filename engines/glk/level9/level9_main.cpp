@@ -3071,9 +3071,8 @@ void GameState::synchronize(Common::Serializer &s) {
 		s.syncAsUint16LE(stack[i]);
 }
 
-#define CHECKSUMW(V) checksum += (V & 0xff) + (V >> 8) & 0xff
-#define CHECKSUML(V) checksum += (V & 0xff) + (V >> 8) & 0xff \
-	+ (V >> 16) & 0xff + (V >> 24) & 0xff
+#define CHECKSUMW(V) checksum += (V & 0xff) + ((V >> 8) & 0xff)
+#define CHECKSUML(V) checksum += (V & 0xff) + ((V >> 8) & 0xff) + ((V >> 16) & 0xff) + ((V >> 24) & 0xff)
 
 void GameState::calculateChecksum() {
 	checksum = 0;
