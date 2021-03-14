@@ -139,6 +139,7 @@ public:
 	uint16 toUint16() const { return _data; } // I don't like 'em cast operators
 	bool operator==(const Thing &rhs) const { return _data == rhs._data; }
 	bool operator!=(const Thing &rhs) const { return _data != rhs._data; }
+	Thing &operator=(const Thing &rhs) { _data = rhs._data; return *this; }
 }; // @ THING
 
 #define setFlag(val, mask) ((val) |= (mask))
