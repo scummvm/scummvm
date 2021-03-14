@@ -204,7 +204,7 @@ Common::String AGDSEngine::loadText(const Common::String &entryName) {
 }
 
 ObjectPtr AGDSEngine::loadObject(const Common::String &name, const Common::String &prototype, bool allowInitialise) {
-	debug("loadObject %s %s", name.c_str(), prototype.c_str());
+	debug("loadObject %s %s, allow init: %d", name.c_str(), prototype.c_str(), allowInitialise);
 	Common::String clone = prototype.empty() ? name : prototype;
 	Common::SeekableReadStream *stream = _data.getEntry(clone);
 	if (!stream)
