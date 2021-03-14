@@ -47,9 +47,7 @@ void SliderPuzzle::init() {
 }
 
 void SliderPuzzle::readData(Common::SeekableReadStream &stream) {
-    char buf[10];
-    stream.read(buf, 10);
-    _imageName = buf;
+    readFilename(stream, _imageName);
 
     _width = stream.readUint16LE();
     _height = stream.readUint16LE();

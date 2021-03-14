@@ -34,6 +34,14 @@ inline void readRect(Common::SeekableReadStream &stream, Common::Rect &inRect) {
     inRect.bottom = stream.readSint32LE();
 }
 
+// Reads an 8-character filename from a 10-character source
+inline void readFilename(Common::SeekableReadStream &stream, Common::String &inString) {
+    char buf[10];
+    stream.read(buf, 10);
+    buf[9] = '\0';
+    inString = buf;
+}
+
 } // End of namespace Nancy
 
 #endif // NANCY_UTIL_H

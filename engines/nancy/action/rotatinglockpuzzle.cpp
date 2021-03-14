@@ -44,9 +44,7 @@ void RotatingLockPuzzle::init() {
 }
 
 void RotatingLockPuzzle::readData(Common::SeekableReadStream &stream) {
-    char buf[10];
-    stream.read(buf, 10);
-    _imageName = buf;
+    readFilename(stream, _imageName);
 
     uint numDials = stream.readUint16LE();
 

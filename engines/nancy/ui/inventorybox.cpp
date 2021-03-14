@@ -54,11 +54,9 @@ void InventoryBox::init() {
     readRect(stream, _screenPosition);
     _shadesFrameTime = stream.readUint16LE();
 
-    char name[10];
-    stream.read(name, 10);
-    Common::String inventoryBoxIconsImageName = Common::String(name);
-    stream.read(name, 10);
-    _inventoryCursorsImageName = Common::String(name);
+    Common::String inventoryBoxIconsImageName;
+    readFilename(stream, inventoryBoxIconsImageName);
+    readFilename(stream, _inventoryCursorsImageName);
 
     stream.skip(8);
     readRect(stream, _emptySpace);
@@ -67,6 +65,7 @@ void InventoryBox::init() {
 
     for (uint i = 0; i < 11; ++i) {
         stream.read(itemName, 0x14);
+        itemName[0x13] = '\0';
         _itemDescriptions[i].name = Common::String(itemName);
         _itemDescriptions[i].oneTimeUse = stream.readUint16LE();
         readRect(stream, _itemDescriptions[i].sourceRect);

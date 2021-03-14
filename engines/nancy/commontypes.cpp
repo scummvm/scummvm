@@ -69,10 +69,7 @@ void SecondaryVideoDescription::readData(Common::SeekableReadStream &stream) {
 }
 
 void SoundDescription::read(Common::SeekableReadStream &stream, Type type) {
-	char buf[10];
-
-	stream.read(buf, 10);
-	name = buf;
+	readFilename(stream, name);
 
 	if (type == SoundDescription::kScene) {
 		stream.skip(4);

@@ -27,6 +27,7 @@
 #include "engines/nancy/sound.h"
 #include "engines/nancy/input.h"
 #include "engines/nancy/cursor.h"
+#include "engines/nancy/util.h"
 
 #include "common/stream.h"
 
@@ -58,9 +59,9 @@ void Help::init() {
     Common::SeekableReadStream *chunk = g_nancy->getBootChunkStream("HELP");
 
     chunk->seek(0);
-    char buf[10];
-    chunk->read(buf, 10);
-    _image.init(buf);
+    Common::String imageName;
+    readFilename(*chunk, imageName);
+    _image.init(imageName);
 
     chunk->skip(20);
     _hotspot.left = chunk->readUint16LE();

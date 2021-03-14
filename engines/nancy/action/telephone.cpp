@@ -48,9 +48,7 @@ void Telephone::init() {
 }
 
 void Telephone::readData(Common::SeekableReadStream &stream) {
-    char buf[10];
-    stream.read(buf, 10);
-    _imageName = buf;
+    readFilename(stream, _imageName);
 
     for (uint i = 0; i < 12; ++i) {
         _srcRects.push_back(Common::Rect());
@@ -76,15 +74,18 @@ void Telephone::readData(Common::SeekableReadStream &stream) {
     _hangUpSound.read(stream, SoundDescription::kNormal);
 
     for (uint i = 0; i < 12; ++i) {
-        stream.read(buf, 10);
-        _buttonSoundNames.push_back(buf);
+        Common::String buttonSoundName;
+        readFilename(stream, buttonSoundName);
+        _buttonSoundNames.push_back(buttonSoundName);
     }
 
-    char buf2[200];
-    stream.read(buf2, 200);
-    _addressBookString = buf2;
-    stream.read(buf2, 200);
-    _dialAgainString = buf2;
+    char textBuf[200];
+    stream.read(textBuf, 200);
+    textBuf[199] = '\0';
+    _addressBookString = textBuf;
+    stream.read(textBuf, 200);
+    textBuf[199] = '\0';
+    _dialAgainString = textBuf;
     _reloadScene.readData(stream);
     stream.skip(2);
     _flagOnReload.label = stream.readSint16LE();
@@ -104,11 +105,11 @@ void Telephone::readData(Common::SeekableReadStream &stream) {
         for (uint j = 0; j < 11; ++j) {
             call.phoneNumber.push_back(stream.readByte());
         }
-        
-        stream.read(buf, 10);
-        call.soundName = buf;
-        stream.read(buf2, 200);
-        call.text = buf2;
+
+        readFilename(stream, call.soundName);
+        stream.read(textBuf, 200);
+        textBuf[199] = '\0';
+        call.text = textBuf;
         call._sceneChange.readData(stream);
         stream.skip(2);
         call.flag.label = stream.readSint16LE();

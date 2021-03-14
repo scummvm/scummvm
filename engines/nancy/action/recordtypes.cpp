@@ -356,9 +356,7 @@ void ShowInventoryItem::init() {
 
 void ShowInventoryItem::readData(Common::SeekableReadStream &stream) {
     _objectID = stream.readUint16LE();
-    char name[10];
-    stream.read(name, 10);
-    _imageName = Common::String(name);
+    readFilename(stream, _imageName);
 
     uint16 numFrames = stream.readUint16LE();
 
@@ -595,15 +593,14 @@ void HintSystem::getHint(uint hint, uint difficulty) {
 
     file.seek(difficulty * 10, SEEK_CUR);
 
-    char soundName[10];
-    file.read(soundName, 10);
-    _genericSound.name = soundName;
+    readFilename(file, _genericSound.name);
 
     file.seek(-(difficulty * 10) - 10, SEEK_CUR);
     file.seek(30 + difficulty * 200, SEEK_CUR);
 
     char textBuf[200];
     file.read(textBuf, 200);
+    textBuf[199] = '\0';
     _text = textBuf;
 
     file.seek(-(difficulty * 200) - 200, SEEK_CUR);

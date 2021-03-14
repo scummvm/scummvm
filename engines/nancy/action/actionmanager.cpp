@@ -103,10 +103,10 @@ bool ActionManager::addNewActionRecord(Common::SeekableReadStream &inputData) {
     ActionRecord *newRecord = createActionRecord(ARType);
 
     inputData.seek(0);
-    char *descBuf = new char[0x30];
+    char descBuf[0x30];
     inputData.read(descBuf, 0x30);
-    newRecord->_description = Common::String(descBuf);
-    delete[] descBuf;
+    descBuf[0x2F] = '\0';
+    newRecord->_description = descBuf;
 
     newRecord->_type = inputData.readByte(); // redundant
     newRecord->_execType = (ActionRecord::ExecutionType)inputData.readByte();
