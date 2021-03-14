@@ -100,7 +100,7 @@ struct EnginePlugin {
 	int         invalidatedRegion;
 	void (*engineStartup)(IAGSEngine *) = nullptr;
 	void (*engineShutdown)() = nullptr;
-	NumberPtr (*onEvent)(int, NumberPtr) = nullptr;
+	int64 (*onEvent)(int, NumberPtr) = nullptr;
 	void (*initGfxHook)(const char *driverName, void *data) = nullptr;
 	int (*debugHook)(const char *whichscript, int lineNumber, int reserved) = nullptr;
 	IAGSEngine  eiface;
@@ -946,7 +946,7 @@ Engine::GameInitError pl_register_plugins(const std::vector<Shared::PluginInfo> 
 			if (apl->engineStartup == nullptr) {
 				quitprintf("Plugin '%s' is not a valid AGS plugin (no engine startup entry point)", apl->filename);
 			}
-			apl->onEvent = (NumberPtr(*)(int, NumberPtr))apl->library.GetFunctionAddress("AGS_EngineOnEvent");
+			apl->onEvent = (int64(*)(int, NumberPtr))apl->library.GetFunctionAddress("AGS_EngineOnEvent");
 			apl->debugHook = (int(*)(const char *, int, int))apl->library.GetFunctionAddress("AGS_EngineDebugHook");
 			apl->initGfxHook = (void(*)(const char *, void *))apl->library.GetFunctionAddress("AGS_EngineInitGfx");
 		} else {
