@@ -33,6 +33,7 @@ AGSCreditz2::AGSCreditz2() : AGSCreditz() {
 
 	DLL_METHOD(AGS_GetPluginName);
 	DLL_METHOD(AGS_EngineStartup);
+	DLL_METHOD(AGS_EngineOnEvent);
 }
 
 const char *AGSCreditz2::AGS_GetPluginName() {
@@ -42,6 +43,7 @@ const char *AGSCreditz2::AGS_GetPluginName() {
 void AGSCreditz2::AGS_EngineStartup(IAGSEngine *engine) {
 	_engine = engine;
 	_playSound = (IntFunction)_engine->GetScriptFunctionAddress("PlaySound");
+	engine->RequestEventHook(AGSE_POSTSCREENDRAW);
 
 	SCRIPT_METHOD(RunCreditSequence);
 	SCRIPT_METHOD(SetCredit);
@@ -61,6 +63,13 @@ void AGSCreditz2::AGS_EngineStartup(IAGSEngine *engine) {
 	SCRIPT_METHOD(ShowStaticCredit);
 	SCRIPT_METHOD(SetStaticImage);
 	SCRIPT_METHOD(GetCurrentStaticCredit);
+}
+
+int64 AGSCreditz2::AGS_EngineOnEvent(int event, NumberPtr data) {
+	if (event & AGSE_POSTSCREENDRAW)
+		draw();
+
+	return 0;
 }
 
 void AGSCreditz2::RunCreditSequence(ScriptMethodParams &params) {
