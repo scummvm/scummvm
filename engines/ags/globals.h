@@ -723,6 +723,15 @@ public:
 	 /**@}*/
 
 	/**
+	 * \defgroup gfxfilter_aad3d globals
+	 * @{
+	 */
+
+	const AGS::Engine::GfxFilterInfo *_aad3dFilterInfo;
+
+	/**@}*/
+
+	/**
 	 * \defgroup gfxfilter_allegro globals
 	 * @{
 	 */
@@ -737,6 +746,15 @@ public:
 	 */
 
 	const AGS::Engine::GfxFilterInfo *_hqxFilterInfo;
+
+	/**@}*/
+
+	/**
+	 * \defgroup gfxfilter_d3d globals
+	 * @{
+	 */
+
+	const AGS::Engine::GfxFilterInfo *_d3dFilterInfo;
 
 	/**@}*/
 

@@ -22,7 +22,7 @@
 
 #include "ags/shared/core/platform.h"
 #include "ags/engine/gfx/gfxfilter_aad3d.h"
-
+#include "ags/globals.h"
 #if AGS_PLATFORM_OS_WINDOWS
 //include <d3d9.h>
 #endif
@@ -32,10 +32,8 @@ namespace AGS {
 namespace Engine {
 namespace D3D {
 
-const GfxFilterInfo AAD3DGfxFilter::FilterInfo = GfxFilterInfo("Linear", "Linear interpolation");
-
 const GfxFilterInfo &AAD3DGfxFilter::GetInfo() const {
-	return FilterInfo;
+	return _GP(aad3dFilterInfo);
 }
 
 void AAD3DGfxFilter::SetSamplerStateForStandardSprite(void *direct3ddevice9) {

@@ -42,8 +42,6 @@ public:
 
 	void SetSamplerStateForStandardSprite(void *direct3ddevice9) override;
 	bool NeedToColourEdgeLines() override;
-
-	static const GfxFilterInfo FilterInfo;
 };
 
 } // namespace D3D

@@ -212,8 +212,14 @@ Globals::Globals() {
 	_StaticInventoryArray = new StaticArray();
 	_StaticDialogArray = new StaticArray();
 
+	// gfxfilter_aad3d.cpp globals
+	_aad3dFilterInfo = new AGS::Engine::GfxFilterInfo("Linear", "Linear interpolation");
+
 	// gfxfilter_allegro.cpp globals
 	_allegroFilterInfo = new AGS::Engine::GfxFilterInfo("StdScale", "Nearest-neighbour");
+
+	// gfxfilter_d3d.cpp globals
+	_d3dFilterInfo = new AGS::Engine::GfxFilterInfo("StdScale", "Nearest-neighbour");
 
 	// gfxfilter_hqx.cpp globals
 	_hqxFilterInfo = new AGS::Engine::GfxFilterInfo("Hqx", "Hqx (High Quality)", 2, 3);
@@ -423,8 +429,14 @@ Globals::~Globals() {
 	delete _StaticInventoryArray;
 	delete _StaticDialogArray;
 
+	// gfxfilter_aad3d.cpp globals
+	delete _aad3dFilterInfo;
+
 	// gfxfilter_allegro.cpp globals
 	delete _allegroFilterInfo;
+
+	// gfxfilter_d3d.cpp globals
+	delete _d3dFilterInfo;
 
 	// gfxfilter_hqx.cpp globals
 	delete _hqxFilterInfo;

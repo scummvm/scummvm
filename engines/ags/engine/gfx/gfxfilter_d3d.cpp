@@ -22,6 +22,7 @@
 
 #include "ags/shared/core/platform.h"
 #include "ags/engine/gfx/gfxfilter_d3d.h"
+#include "ags/globals.h"
 #if AGS_PLATFORM_OS_WINDOWS
 //include <d3d9.h>
 #endif
@@ -31,10 +32,8 @@ namespace AGS {
 namespace Engine {
 namespace D3D {
 
-const GfxFilterInfo D3DGfxFilter::FilterInfo = GfxFilterInfo("StdScale", "Nearest-neighbour");
-
 const GfxFilterInfo &D3DGfxFilter::GetInfo() const {
-	return FilterInfo;
+	return _GP(d3dFilterInfo);
 }
 
 void D3DGfxFilter::SetSamplerStateForStandardSprite(void *direct3ddevice9) {
