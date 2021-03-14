@@ -106,109 +106,73 @@ _sound_logic *g_oSoundLogicEngine;
 
 // Mission strings for the options menus (harmonised for PC and PSX)
 
-// For test_mission
-const char *test_mission = "test_mission";
-const char *test_session = "test_session";
-
-const char *test_session_2 = "test_session_2";
-
-// For m01_investigate_mine
 const char *g_m01 = "m01_investigate_mine";
-const char *office_building = "office_building";
-
-const char *mine = "mine";
-const char *mineworkings = "mineworkings";
-
-// For m02_security_hq
 const char *g_m02 = "m02_security_hq";
-const char *basement = "basement";
-
-const char *ground_floor = "ground_floor";
-const char *first_floor = "first_floor";
-
-// For m03_land_train
 const char *g_m03 = "m03_land_train";
-const char *car_5 = "car_5";
-
-const char *car_1 = "car_1";
-const char *car_2 = "car_2";
-const char *car_3 = "car_3";
-const char *car_4 = "car_4";
-
-// For m04_raid_on_containment
 const char *g_m04 = "m04_raid_on_containment";
-const char *level_alphabeta = "level_alphabeta";
-
-const char *level_kappa = "level_kappa";
-const char *level_omega = "level_omega";
-
-// For m05_sabotage_refinery
 const char *g_m05 = "m05_sabotage_refinery";
-const char *m5_mine = "m5_mine";
-
-const char *m5_office_building = "m5_office_building";
-const char *m5_refinery = "refinery";
-
-// For m07_mainland_base
 const char *g_m07 = "m07_mainland_base";
-const char *compound = "compound";
-
-const char *monorail_station = "monorail__station";
-const char *cable_car_building = "cable_car_building";
-
-// For m08_entering_island_base
 const char *g_m08 = "m08_entering_island_base";
-const char *cable_car_dock = "cable_car_dock";
-
-// Mission 9 which is mission 8 but with a global set
 const char *g_m09 = "m09_escape_island_base";
-const char *security = "security";
-
-const char *manufacturing = "manufacturing";
-const char *quayside = "quayside";
-const char *reactor = "reactor";
-
-const char *m_ed = "m_ed";
-const char *a2_ship = "2_ship";
-
-// For m10_submarine
 const char *g_m10 = "m10_submarine";
-const char *submarine = "submarine";
 
 // The collection of possible missions including the session to start for each mission
-const char *g_mission_startup_names[MAX_MISSIONS] = {g_m01, office_building, g_m02, basement, g_m03, car_5,     g_m04, level_alphabeta, g_m05,        m5_mine,     g_m07, compound,
-                                                     g_m08, cable_car_dock,  g_m08, security, g_m10, submarine, m_ed,  a2_ship,         test_mission, test_session};
+const char *g_mission_startup_names[MAX_MISSIONS] = {
+	"m01_investigate_mine", "office_building",
+	"m02_security_hq", "basement",
+	"m03_land_train", "car_5",
+	"m04_raid_on_containment", "level_alphabeta",
+	"m05_sabotage_refinery", "m5_mine",
+	"m07_mainland_base", "compound",
+	"m08_entering_island_base", "cable_car_dock",
+	"m08_entering_island_base", "security",
+	"m10_submarine", "submarine",
+	"m_ed", "2_ship",
+	"test_mission", "test_session"
+};
 
-const char *g_mission_names[NUMBER_OF_MISSIONS] = {g_m01, g_m02, g_m03, g_m04, g_m05, g_m07, g_m08, g_m08, g_m10, m_ed, test_mission};
+const char *g_mission_names[NUMBER_OF_MISSIONS] = {
+	"m01_investigate_mine",
+	"m02_security_hq",
+	"m03_land_train",
+	"m04_raid_on_containment",
+	"m05_sabotage_refinery",
+	"m07_mainland_base",
+	"m08_entering_island_base",
+	"m08_entering_island_base",
+	"m10_submarine",
+	"m_ed",
+	"test_mission"
+};
 
-const char *g_sessions[MAX_SESSIONS] = {g_m01,        mine,
-                                        g_m01,        mineworkings,
-                                        g_m01,        office_building,
-                                        g_m02,        basement,
-                                        g_m02,        ground_floor,
-                                        g_m02,        first_floor,
-                                        g_m03,        car_1,
-                                        g_m03,        car_2,
-                                        g_m03,        car_3,
-                                        g_m03,        car_4,
-                                        g_m03,        car_5,
-                                        g_m04,        level_alphabeta,
-                                        g_m04,        level_kappa,
-                                        g_m04,        level_omega,
-                                        g_m05,        m5_mine,
-                                        g_m05,        m5_office_building,
-                                        g_m05,        m5_refinery,
-                                        g_m07,        compound,
-                                        g_m07,        monorail_station,
-                                        g_m07,        cable_car_building,
-                                        g_m08,        cable_car_dock,
-                                        g_m08,        manufacturing,
-                                        g_m08,        quayside,
-                                        g_m08,        reactor,
-                                        g_m08,        security,
-                                        g_m10,        submarine,
-                                        test_mission, test_session,
-                                        test_mission, test_session_2,
-                                        m_ed,         a2_ship};
+const char *g_sessions[MAX_SESSIONS] = {"m01_investigate_mine",     "mine",
+                                        "m01_investigate_mine",     "mineworkings",
+                                        "m01_investigate_mine",     "office_building",
+                                        "m02_security_hq",          "basement",
+                                        "m02_security_hq",          "ground_floor",
+                                        "m02_security_hq",          "first_floor",
+                                        "m03_land_train",           "car_1",
+                                        "m03_land_train",           "car_2",
+                                        "m03_land_train",           "car_3",
+                                        "m03_land_train",           "car_4",
+                                        "m03_land_train",           "car_5",
+                                        "m04_raid_on_containment",  "level_alphabeta",
+                                        "m04_raid_on_containment",  "level_kappa",
+                                        "m04_raid_on_containment",  "level_omega",
+                                        "m05_sabotage_refinery",    "m5_mine",
+                                        "m05_sabotage_refinery",    "m5_office_building",
+                                        "m05_sabotage_refinery",    "refinery",
+                                        "m07_mainland_base",        "compound",
+                                        "m07_mainland_base",        "monorail__station",
+                                        "m07_mainland_base",        "cable_car_building",
+                                        "m08_entering_island_base", "cable_car_dock",
+                                        "m08_entering_island_base", "manufacturing",
+                                        "m08_entering_island_base", "quayside",
+                                        "m08_entering_island_base", "reactor",
+                                        "m08_entering_island_base", "security",
+                                        "m10_submarine",            "submarine",
+                                        "test_mission",             "test_mission",
+                                        "test_mission",             "test_session_2",
+                                        "m_ed",                     "2_ship"};
 
 } // End of namespace ICB
