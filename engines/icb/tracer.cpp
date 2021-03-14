@@ -33,7 +33,7 @@
 
 namespace ICB {
 
-_tracer g_oTracer;
+_tracer *g_oTracer;
 
 #define TRACER_COMPARE_TOLERANCE FLOAT_COMPARE_TOLERANCE
 

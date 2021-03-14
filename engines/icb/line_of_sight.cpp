@@ -75,7 +75,7 @@ void _line_of_sight::Initialise() {
 		Fatal_error(".pxwglineofsight version check failed (file has %d, engine has %d)", m_pyLOSData->GetHeaderVersion(), VERSION_PXWGLINEOFSIGHT);
 
 	// The tracer object can be initialised now we have the barrier map.
-	g_oTracer.SetUpParameters(m_pyLOSData);
+	g_oTracer->SetUpParameters(m_pyLOSData);
 
 	// Set the number of objects from the list that should already have been created in the session.
 	m_nNumObjects = MS->total_objects;
@@ -102,11 +102,11 @@ void _line_of_sight::Initialise() {
 	if (!pyBarriers)
 		Fatal_error("Barriers pointer NULL in _line_of_sight::Initialise()");
 
-	g_oTracer.SetBarrierPointer(pyBarriers);
+	g_oTracer->SetBarrierPointer(pyBarriers);
 
 	// The tracer also needs access to the routing data to get the floor rectangles.
 	pFloorWorld = MS->floor_def;
-	g_oTracer.SetFloorsPointer(pFloorWorld);
+	g_oTracer->SetFloorsPointer(pFloorWorld);
 
 	// These probably don't need setting, but we'll do it for completeness.
 	m_oImpactPoint.Set(REAL_ZERO, REAL_ZERO, REAL_ZERO);
@@ -293,7 +293,7 @@ bool8 _line_of_sight::ObjectToObject(uint32 nObserverID, uint32 nTargetID, _barr
 				if (bCanSeeUs)
 					return (TRUE8);
 				int32 john_test_time = GetMicroTimer();
-				nRetVal = g_oTracer.Trace(oFrom, oTo, eRayType, m_oImpactPoint, m_eImpactType);
+				nRetVal = g_oTracer->Trace(oFrom, oTo, eRayType, m_oImpactPoint, m_eImpactType);
 				john_test_time = GetMicroTimer() - john_test_time;
 				john_total_traces += john_test_time;
 				john_number_traces++;
@@ -307,7 +307,7 @@ bool8 _line_of_sight::ObjectToObject(uint32 nObserverID, uint32 nTargetID, _barr
 		} else {
 			// Don't need to apply field-of-view for 360-degree vision.
 			int32 john_test_time = g_system->getMillis();
-			nRetVal = g_oTracer.Trace(oFrom, oTo, eRayType, m_oImpactPoint, m_eImpactType);
+			nRetVal = g_oTracer->Trace(oFrom, oTo, eRayType, m_oImpactPoint, m_eImpactType);
 			john_test_time = g_system->getMillis() - john_test_time;
 			john_total_traces += john_test_time;
 			john_number_traces++;
@@ -316,7 +316,7 @@ bool8 _line_of_sight::ObjectToObject(uint32 nObserverID, uint32 nTargetID, _barr
 	} else {
 		// Objects are assumed to have 360-degree vision so we just have to do a line-of-sight.
 		int32 john_test_time = g_system->getMillis();
-		nRetVal = g_oTracer.Trace(oFrom, oTo, eRayType, m_oImpactPoint, m_eImpactType);
+		nRetVal = g_oTracer->Trace(oFrom, oTo, eRayType, m_oImpactPoint, m_eImpactType);
 		john_test_time = g_system->getMillis() - john_test_time;
 		john_total_traces += john_test_time;
 		john_number_traces++;

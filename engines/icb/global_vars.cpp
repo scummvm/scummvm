@@ -50,6 +50,7 @@
 #include "engines/icb/common/px_capri_maths.h"
 #include "engines/icb/common/ptr_util.h"
 #include "engines/icb/sound.h"
+#include "engines/icb/tracer.h"
 
 namespace ICB {
 
@@ -139,6 +140,7 @@ void Init_globals() {
 
 void CreateGlobalObjects() {
 	g_px = new c_global_switches;
+	g_oTracer = new _tracer;
 	g_ptrArray = new Common::Array<PointerReference>;
 	g_globalScriptVariables = new CpxGlobalScriptVariables;
 	g_theSequenceManager = new MovieManager;
@@ -183,6 +185,7 @@ void CreateGlobalObjects() {
 
 void DestroyGlobalObjects() {
 	delete g_px;
+	delete g_oTracer;
 	delete g_ptrArray;
 	delete g_globalScriptVariables;
 	delete g_theSequenceManager;

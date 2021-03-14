@@ -95,7 +95,7 @@ inline const _route_barrier *_tracer::GetBarrier(uint32 i) const {
 	return &(pBarriers[i]);
 }
 
-extern _tracer g_oTracer; // Object for doing the plotting of bullets and line-of-sight.
+extern _tracer *g_oTracer; // Object for doing the plotting of bullets and line-of-sight.
 
 } // End of namespace ICB
 

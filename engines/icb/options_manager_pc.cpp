@@ -2627,7 +2627,7 @@ void OptionsManager::OnEscapeKey() {
 		break;
 	case INGAME_OPTIONS:
 	case MAIN_OPTIONS:
-		m_OPTION_selected = BACK;
+		m_OPTION_selected = DO_BACK;
 		break;
 	case INGAME_VIDEO:
 	case MAIN_VIDEO:
@@ -2855,7 +2855,7 @@ void OptionsManager::DoChoice() {
 			m_CONTROL_selected = METHOD;
 			InitialiseControlsScreen();
 			break;
-		case BACK:
+		case DO_BACK:
 			m_warpDirection = FALSE8;
 			if (m_activeMenu == INGAME_OPTIONS) {
 				m_activeMenu = INGAME_TOP;
@@ -4645,7 +4645,7 @@ void OptionsManager::DrawGameOptions() {
 	DisplayText(ad, pitch, msg, 0, 170, (m_OPTION_selected == CONTROLS) ? SELECTEDFONT : NORMALFONT, TRUE8);
 
 	msg = GetTextFromReference(HashString("opt_back"));
-	DisplayText(ad, pitch, msg, 0, 205, (m_OPTION_selected == BACK) ? SELECTEDFONT : NORMALFONT, TRUE8);
+	DisplayText(ad, pitch, msg, 0, 205, (m_OPTION_selected == DO_BACK) ? SELECTEDFONT : NORMALFONT, TRUE8);
 
 	surface_manager->Unlock_surface(working_buffer_id);
 }
