@@ -45,6 +45,7 @@ public:
 	String(const String &str) : Common::String(str) {}
 	String(const Common::String &str) : Common::String(str) {}
 	explicit String(char c) : Common::String(c) {}
+	String& operator=(const String &str) { this->Common::String::operator=(str); return *this; }
 
 	/**
 	 * Returns the index of a given character, or -1 if not present
