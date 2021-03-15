@@ -220,8 +220,8 @@ int32 Redraw::fillActorDrawingList(bool bgRedraw) {
 
 			// if actor is above another actor
 			if (actor->standOn != -1) {
-				//const ActorStruct *standOnActor = _engine->_scene->getActor(actor->standOn);
-				//tmpVal = standOnActor->pos.x - _engine->_grid->camera.x + standOnActor->pos.z - _engine->_grid->camera.z + 2;
+				const ActorStruct *standOnActor = _engine->_scene->getActor(actor->standOn);
+				tmpVal = standOnActor->pos.x - _engine->_grid->camera.x + standOnActor->pos.z - _engine->_grid->camera.z + 2;
 			}
 
 			if (actor->staticFlags.bIsSpriteActor) {
