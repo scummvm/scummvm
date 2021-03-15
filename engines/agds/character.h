@@ -42,6 +42,7 @@ class Character {
 	AGDSEngine *	_engine;
 	ObjectPtr		_object;
 	Animation *		_animation;
+	bool			_jokes;
 	Common::String 	_name;
 	Common::String	_processName;
 	Common::Point	_pos;
@@ -51,6 +52,7 @@ class Character {
 	int _phase;
 	int _frames;
 	int _direction;
+	int _jokesDirection;
 	int _movementDirections;
 
 	struct AnimationDescription {
@@ -67,7 +69,8 @@ class Character {
 
 public:
 	Character(AGDSEngine * engine, const Common::String & name):
-		_engine(engine), _name(name), _object(), _animation(nullptr), _enabled(true), _visible(true), _phase(-1), _frames(0), _direction(-1), _movementDirections(0) {
+		_engine(engine), _name(name), _object(), _animation(nullptr), _jokes(false),
+		_enabled(true), _visible(true), _phase(-1), _frames(0), _direction(-1), _movementDirections(0) {
 	}
 
 	void associate(const Common::String &name);
@@ -98,11 +101,12 @@ public:
 	}
 
 	void animate(const Common::String &processName, Common::Point pos, int direction, int speed);
+	void animate(int direction, int speed, bool jokes);
 
 	void stop();
 
 	int getPhase() const {
-		return _phase;
+		return _jokes? _phase: -1;
 	}
 
 	void position(Common::Point pos) {
@@ -118,7 +122,7 @@ public:
 	void direction(int dir);
 
 	int direction() const {
-		return _direction;
+		return _jokes? _jokesDirection: _direction;
 	}
 
 	void tick();

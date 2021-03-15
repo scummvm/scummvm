@@ -86,6 +86,7 @@ void TextLayout::layout(AGDSEngine &engine, const Common::String &process, const
 	if (!var.empty()) {
 		if (!engine.getGlobal(var))
 			engine.setGlobal(var, 1);
+		engine.reactivate(_process);
 	}
 	auto character = engine.currentCharacter();
 	if (character) {
@@ -106,6 +107,7 @@ void TextLayout::layout(AGDSEngine &engine, const Common::String &process, const
 					character->animate(_process, Common::Point(), character->direction(), 100);
 			}
 		}
+		engine.reactivate(_process);
 	} else
 		warning("no current character, skipping direction notification");
 }
