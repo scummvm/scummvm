@@ -121,7 +121,6 @@ private:
 	ChannelEntry _channelsInner[NUM_CHANNELS];
 	bool _channelsInUse[NUM_CHANNELS];
 	bool _sourcesInUse[LURE_MAX_SOURCES];
-	bool _isPlaying;
 	bool _nativeMT32;
 	bool _isRoland;
 	Common::Mutex _soundMutex;
