@@ -98,6 +98,12 @@ void Character::load(Common::SeekableReadStream *stream) {
 	delete stream;
 }
 
+void Character::associate(const Common::String &name) {
+	_object = _engine->loadObject(name);
+	_engine->runObject(_object);
+}
+
+
 void Character::loadState(Common::ReadStream* stream) {
 	int x = stream->readUint16LE();
 	int y = stream->readUint16LE();

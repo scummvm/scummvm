@@ -1385,8 +1385,19 @@ void Process::addMouseArea() {
 void Process::loadCharacter() {
 	Common::String object = popString();
 	Common::String filename = popString();
-	Common::String id = popString();
-	_engine->loadCharacter(id, filename, object);
+	Common::String name = popString();
+	_engine->loadCharacter(name, filename, object);
+}
+
+void Process::associateCharacter() {
+	Common::String object = popString();
+	Common::String name = popString();
+	debug("associateCharacter %s %s", name.c_str(), object.c_str());
+	Character *character = _engine->getCharacter(name);
+	if (character)
+		character->associate(name);
+	else
+		warning("character %s could not be found", name.c_str());
 }
 
 void Process::enableCharacter() {
