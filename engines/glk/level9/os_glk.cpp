@@ -292,6 +292,7 @@ struct gln_rgb_t {
 };
 typedef gln_rgb_t *gln_rgbref_t;
 
+#ifndef GARGLK
 /*
  * Maximum number of regions to consider in a single repaint pass.  A
  * couple of hundred seems to strike the right balance between not too
@@ -299,6 +300,7 @@ typedef gln_rgb_t *gln_rgbref_t;
  * rendering, when combined with short timeouts.
  */
 static const int GLN_REPAINT_LIMIT = 256;
+#endif
 
 /*
  * Graphics timeout; we like an update call after this period (ms).  In

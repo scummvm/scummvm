@@ -97,12 +97,7 @@ static gms_abbreviation_t GMS_ABBREVIATIONS[] = {
 /*  Module constants                                                   */
 /*---------------------------------------------------------------------*/
 
-/* Glk Magnetic Scrolls port version number. */
-static const glui32 GMS_PORT_VERSION = 0x00010601;
-
-/* Magnetic Scrolls standard input prompt string. */
-static const char *const GMS_INPUT_PROMPT = ">";
-
+#ifndef GARGLK
 /*
  * Maximum number of regions to consider in a single repaint pass.  A
  * couple of hundred seems to strike the right balance between not too
@@ -110,6 +105,7 @@ static const char *const GMS_INPUT_PROMPT = ">";
  * rendering, when combined with short timeouts.
  */
 static const int GMS_REPAINT_LIMIT = 256;
+#endif
 
 /*
  * Graphics timeout; we like an update call after this period (ms).  In
@@ -170,8 +166,8 @@ static const int GMS_GRAPHICS_UNUSED_PIXEL = 0xff;
 static const int GMS_DEFAULT_STATUS_WIDTH = 74;
 
 /* Success and fail return codes from hint functions. */
-static const type8 GMS_HINT_SUCCESS = 1,
-GMS_HINT_ERROR = 0;
+static const type8 GMS_HINT_SUCCESS = 1;
+// static const type8 GMS_HINT_ERROR = 0;
 
 /* Default window sizes for non-windowing Glk libraries. */
 static const glui32 GMS_HINT_DEFAULT_WIDTH = 72,
