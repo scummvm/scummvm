@@ -608,8 +608,12 @@ Common::Error AGDSEngine::run() {
 							debug("found handler: %s %08x", object->getName().c_str(), ip + 7);
 							runProcess(object, ip);
 							break;
-						} else
+						} else {
 							debug("no handler found");
+							auto scroll = _currentScreen->scrollPosition();
+							scroll.x += _mouse.x - g_system->getWidth() / 2;
+							_currentScreen->scrollTo(scroll);
+						}
 					}
 				}
 				break;
