@@ -261,4 +261,4 @@ void LogOutputTarget::PrintMessage(const AGS3::AGS::Shared::DebugMessage &msg) {
 }
 
 
-} // End of namespace CGE
+} // End of namespace AGS

@@ -27,6 +27,7 @@
 #include "gui/debugger.h"
 #include "ags/shared/debugging/debugmanager.h"
 #include "ags/shared/debugging/outputhandler.h"
+#include "ags/shared/core/types.h"
 
 namespace AGS {
 
@@ -64,6 +65,6 @@ public:
 	void PrintMessage(const AGS3::AGS::Shared::DebugMessage &msg) override;
 };
 
-} // End of namespace CGE
+} // End of namespace AGS
 
 #endif
