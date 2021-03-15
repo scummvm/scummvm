@@ -150,15 +150,6 @@ static const KeybindingRecord MENU_KEYS[] = {
 	{ KEYBIND_NONE, nullptr, nullptr, nullptr, nullptr, nullptr }
 };
 
-static const KeybindingRecord COMBAT_KEYS[] = {
-	{ KEYBIND_PASS, "PASS", "Pass", "pass", "SPACE", nullptr },
-	{ KEYBIND_UP, "UP", "Up", nullptr, "UP", nullptr },
-	{ KEYBIND_DOWN, "DOWN", "Down", nullptr, "DOWN", nullptr },
-	{ KEYBIND_LEFT, "LEFT", "Left", nullptr, "LEFT", nullptr },
-	{ KEYBIND_RIGHT, "RIGHT", "Right", nullptr, "RIGHT", nullptr },
-	{ KEYBIND_NONE, nullptr, nullptr, nullptr, nullptr, nullptr }
-};
-
 struct KeysRecord {
 	const char *_id;
 	const char *_desc;
