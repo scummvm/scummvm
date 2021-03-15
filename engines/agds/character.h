@@ -66,9 +66,11 @@ class Character {
 	const AnimationDescription * _description;
 
 public:
-	Character(AGDSEngine * engine, const Common::String & name, const ObjectPtr & object):
-		_engine(engine), _name(name), _object(object), _animation(nullptr), _enabled(true), _visible(true), _phase(-1), _frames(0), _direction(-1), _movementDirections(0) {
+	Character(AGDSEngine * engine, const Common::String & name):
+		_engine(engine), _name(name), _object(), _animation(nullptr), _enabled(true), _visible(true), _phase(-1), _frames(0), _direction(-1), _movementDirections(0) {
 	}
+
+	void associate(const Common::String &name);
 
 	const AnimationDescription * animationDescription(uint index) const {
 		auto it = _animations.find(index);

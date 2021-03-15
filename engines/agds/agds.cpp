@@ -178,7 +178,7 @@ bool AGDSEngine::load() {
 	{
 		Common::File * file = new Common::File();
 		file->open("jokes.chr");
-		_jokes = new Character(this, "jokes", ObjectPtr());
+		_jokes = new Character(this, "jokes");
 		_jokes->load(file);
 	}
 
@@ -832,8 +832,9 @@ void AGDSEngine::loadCharacter(const Common::String &id, const Common::String &f
 	_currentCharacterFilename = filename;
 	_currentCharacterObject = object;
 
-	_currentCharacter = new Character(this, id, loadObject(object));
+	_currentCharacter = new Character(this, id);
 	_currentCharacter->load(_resourceManager.getResource(loadText(filename)));
+	_currentCharacter->associate(object);
 }
 
 Graphics::TransparentSurface *AGDSEngine::loadPicture(const Common::String &name) {
