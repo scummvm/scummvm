@@ -45,12 +45,6 @@ class Queue {
 //	typedef T value_type;
 
 public:
-	Queue<T>() : _impl() {}
-	Queue<T>(const Queue<T> &queue) : _impl(queue._impl) {}
-#ifdef USE_CXX11
-	Queue<T> &operator=(const Queue<T> &other) = default; // FIXME: This may need replacing with custom copy operator code
-#endif
-
 	bool empty() const {
 		return _impl.empty();
 	}
