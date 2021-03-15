@@ -339,6 +339,8 @@ void BMVPlayer::t3DoOperation(BMV_OP op, uint32 len, const byte **src, byte **ds
 			}
 			break;
 		}
+		case BMV_OP_COUNT:
+			break;
 	}
 }
 
