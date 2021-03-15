@@ -208,7 +208,7 @@ void show_split(String s) {
 
 Logger::Nullstreambuf Logger::cnull;
 
-Logger::Logger() : logfilestr_(NULL) { //, cerrbuf_(NULL) {
+Logger::Logger() { // : logfilestr_(NULL), cerrbuf_(NULL) {
 /*
 	cerr.flush();
 

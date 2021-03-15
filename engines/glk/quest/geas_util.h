@@ -86,7 +86,7 @@ private:
 		int32 pos() const override { return 0; }
 	};
 
-	Common::WriteStream *logfilestr_;
+//	Common::WriteStream *logfilestr_;
 //	std::streambuf *cerrbuf_;
 	static Nullstreambuf cnull;
 };
