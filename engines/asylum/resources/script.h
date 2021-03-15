@@ -184,8 +184,8 @@ private:
 		int32 scriptIndex;
 		int32 currentLine;
 		ActorIndex actorIndex;
-		uint32 field_C;
-		uint32 field_10;
+		uint32 next;
+		uint32 prev;
 
 		ScriptQueueEntry() {
 			reset();
@@ -195,23 +195,23 @@ private:
 			scriptIndex = -1;
 			currentLine = 0;
 			actorIndex = 0;
-			field_C = 0;
-			field_10 = 0;
+			next = 0;
+			prev = 0;
 		}
 
 		void saveLoadWithSerializer(Common::Serializer &s) {
 			s.syncAsSint32LE(scriptIndex);
 			s.syncAsSint32LE(currentLine);
 			s.syncAsUint32LE(actorIndex);
-			s.syncAsUint32LE(field_C);
-			s.syncAsUint32LE(field_10);
+			s.syncAsUint32LE(next);
+			s.syncAsUint32LE(prev);
 		}
 	};
 
 	struct ScriptQueue : public Common::Serializable {
 		ScriptQueueEntry entries[10];
-		uint32 currentEntry;
-		uint32 field_CC;
+		uint32 first;
+		uint32 last;
 
 		ScriptQueue() {
 			reset();
@@ -221,16 +221,16 @@ private:
 			for (uint32 i = 0; i < ARRAYSIZE(entries); i++)
 				entries[i].reset();
 
-			currentEntry = 0;
-			field_CC = 0;
+			first = 0;
+			last = 0;
 		}
 
 		void saveLoadWithSerializer(Common::Serializer &s) {
 			for (uint32 i = 0; i < ARRAYSIZE(entries); i++)
 				entries[i].saveLoadWithSerializer(s);
 
-			s.syncAsUint32LE(currentEntry);
-			s.syncAsUint32LE(field_CC);
+			s.syncAsUint32LE(first);
+			s.syncAsUint32LE(last);
 		}
 	};
 

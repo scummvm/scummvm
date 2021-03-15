@@ -318,17 +318,17 @@ void ScriptManager::queueScript(int32 scriptIndex, ActorIndex actorIndex) {
 
 	// Setup script and queue
 	_scripts[scriptIndex].counter = 0;
-	_queue.entries[index].field_10 = 0;
-	_queue.entries[index].field_C = 0;
+	_queue.entries[index].prev = 0;
+	_queue.entries[index].next = 0;
 
-	if (_queue.currentEntry) {
-		_queue.entries[_queue.field_CC].field_C = index;
-		_queue.entries[index].field_10 = _queue.field_CC;
+	if (_queue.first) {
+		_queue.entries[_queue.last].next = index;
+		_queue.entries[index].prev = _queue.last;
 	} else {
-		_queue.currentEntry = index;
+		_queue.first = index;
 	}
 
-	_queue.field_CC = index;
+	_queue.last = index;
 
 	_queue.entries[index].scriptIndex = scriptIndex;
 	_queue.entries[index].currentLine = 0;
@@ -345,21 +345,21 @@ bool ScriptManager::isInQueue(int32 scriptIndex) const {
 }
 
 void ScriptManager::updateQueue(uint32 entryIndex) {
-	if (_queue.currentEntry == _queue.field_CC) {
-		_queue.field_CC = 0;
-		_queue.currentEntry = 0;
+	if (_queue.first == _queue.last) {
+		_queue.last = 0;
+		_queue.first = 0;
 		_queue.entries[entryIndex].scriptIndex = -1;
-	} else if (_queue.currentEntry == entryIndex) {
-		_queue.currentEntry = _queue.entries[entryIndex].field_C;
-		_queue.entries[_queue.currentEntry].field_10 = 0;
+	} else if (_queue.first == entryIndex) {
+		_queue.first = _queue.entries[entryIndex].next;
+		_queue.entries[_queue.first].prev = 0;
 		_queue.entries[entryIndex].scriptIndex = -1;
-	} else if (_queue.field_CC == entryIndex) {
-		_queue.field_CC = _queue.entries[entryIndex].field_10;
-		_queue.entries[_queue.field_CC].field_C = 0;
+	} else if (_queue.last == entryIndex) {
+		_queue.last = _queue.entries[entryIndex].prev;
+		_queue.entries[_queue.last].next = 0;
 		_queue.entries[entryIndex].scriptIndex = -1;
 	} else {
-		_queue.entries[_queue.entries[entryIndex].field_10].field_C = _queue.entries[entryIndex].field_C;
-		_queue.entries[_queue.entries[entryIndex].field_C].field_10 = _queue.entries[entryIndex].field_10;
+		_queue.entries[_queue.entries[entryIndex].prev].next = _queue.entries[entryIndex].next;
+		_queue.entries[_queue.entries[entryIndex].next].prev = _queue.entries[entryIndex].prev;
 		_queue.entries[entryIndex].scriptIndex = -1;
 	}
 }
@@ -370,9 +370,9 @@ bool ScriptManager::process() {
 	_vm->setGameFlag(kGameFlagScriptProcessing);
 
 	// Setup queue entry
-	if (_queue.currentEntry) {
-		uint32 entryIndex  = _queue.currentEntry;
-		uint32 nextIndex   = _queue.entries[entryIndex].field_C;
+	if (_queue.first) {
+		uint32 entryIndex  = _queue.first;
+		uint32 nextIndex   = _queue.entries[entryIndex].next;
 		int32  scriptIndex = _queue.entries[entryIndex].scriptIndex;
 
 		if (scriptIndex != -1) {
@@ -403,8 +403,8 @@ bool ScriptManager::process() {
 						error("[ScriptManager::process] Invalid opcode index (was: %d, max: %d)", cmd->opcode, _opcodes.size() - 1);
 
 					if (_lastProcessedCmd != cmd)
-						debugC(kDebugLevelScripts, "[Script idx: %d] 0x%02X: %s (%d, %d, %d, %d, %d, %d, %d, %d, %d)",
-							scriptIndex, cmd->opcode, _opcodes[cmd->opcode]->name,
+						debugC(kDebugLevelScripts, "[Script idx: %d] %2d: %s (%d, %d, %d, %d, %d, %d, %d, %d, %d)",
+							scriptIndex, cmdIndex, _opcodes[cmd->opcode]->name,
 							cmd->param1, cmd->param2, cmd->param3, cmd->param4, cmd->param5,
 							cmd->param6, cmd->param7, cmd->param8, cmd->param9);
 
@@ -433,7 +433,7 @@ label_processNextEntry:
 					if (!nextIndex)
 						goto label_exit_processing;
 
-					nextIndex = _queue.entries[nextIndex].field_C;
+					nextIndex = _queue.entries[nextIndex].next;
 					scriptIndex = _queue.entries[nextIndex].scriptIndex;
 
 					if (scriptIndex == -1)
@@ -2078,8 +2078,8 @@ void ScriptManager::setNextLine(int32 line) {
 	if (!_currentQueueEntry)
 		error("[ScriptManager::setNextLine] No current queue entry");
 
-	int32 opcode = _currentScript->commands[line].opcode;
-	if (opcode == 0x10 || opcode == 0) { // Return
+	OpcodeType opcode = _currentScript->commands[line].opcode;
+	if (opcode == kOpcodeReturn1 || opcode == kOpcodeReturn) {
 		_currentQueueEntry->currentLine = line;
 	} else {
 		_done = true;
