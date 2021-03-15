@@ -326,13 +326,6 @@ private:
 	void deinit();
 };
 
-// Example console class
-class Console : public GUI::Debugger {
-public:
-	Console(CGEEngine *vm) {}
-	~Console() override {}
-};
-
 } // End of namespace CGE
 
 #endif
