@@ -115,9 +115,20 @@ public:
 			_pixels = _buf.getRawBuffer();
 		}
 
-#ifdef USE_CXX11
-		Line &operator=(const Line &other) = default; // FIXME: This may need replacing with custom copy operator code
-#endif
+		Line &operator=(const Line &other) {
+			if (this == &other)
+				return *this;
+			_x = other._x;
+			_y = other._y;
+			if (_length != other._length || _buf.getFormat() != other._buf.getFormat()) {
+				_buf.free();
+				_buf.create(other._buf.getFormat(), other._length, DisposeAfterUse::NO);
+				_length = other._length;
+			}
+			_buf.copyBuffer(0, 0, _length, other._buf);
+			_pixels = _buf.getRawBuffer();
+			return *this;
+		}
 
 		Line(const Line& other) : _buf(other._buf.getFormat(), other._length, DisposeAfterUse::NO), _x(other._x), _y(other._y), _length(other._length) {
 			_buf.copyBuffer(0, 0, _length, other._buf);
