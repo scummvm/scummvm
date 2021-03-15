@@ -59,7 +59,7 @@ struct Patch {
 
 	ScreenLoadingType loadingType = ScreenLoadingType::Normal;
 	Common::Point characterPosition;
-	uint characterDirection = 0;
+	int characterDirection = 0;
 	bool characterPresent = false;
 
 	byte palette[0x300] = {};
