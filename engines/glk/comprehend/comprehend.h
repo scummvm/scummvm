@@ -33,8 +33,6 @@
 namespace Glk {
 namespace Comprehend {
 
-#define PATH_MAX 256
-
 class DrawSurface;
 class Pics;
 

@@ -62,7 +62,7 @@ static const GameStrings OO_STRINGS = {
 };
 
 OOToposGame::OOToposGame() : ComprehendGameV2(), _restartMode(RESTART_IMMEDIATE),
-		_noFloodfill(UNSET), _lightOn(UNSET), _stringVal1(0), _stringVal2(0),
+		_noFloodfill(UNSET), _stringVal1(0), _stringVal2(0),
 		_printComputerMsg(true), _shipNotWorking(false) {
 	_gameDataFile = "g0";
 

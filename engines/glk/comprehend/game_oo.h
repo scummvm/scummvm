@@ -35,7 +35,7 @@ enum YesNo { NO, YES, UNSET };
 class OOToposGame : public ComprehendGameV2 {
 private:
 	RestartMode _restartMode;
-	YesNo _noFloodfill, _lightOn;
+	YesNo _noFloodfill;
 	int _stringVal1, _stringVal2;
 	bool _printComputerMsg, _shipNotWorking;
 
