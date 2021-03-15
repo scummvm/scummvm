@@ -247,7 +247,7 @@ bool Object::pointIn(Common::Point pos) {
 void Object::paint(AGDSEngine &engine, Graphics::Surface &backbuffer, Common::Point pos) const {
 	auto picture = getPicture();
 	if (picture) {
-		Common::Point dst = getPosition();
+		Common::Point dst = pos + getPosition();
 		Common::Rect srcRect = picture->getRect();
 		uint32 color = (_alpha << 24) | 0xffffff; //fixme: _picture->format.ARGBToColor(_alpha, 255, 255, 255); is not working
 		if (Common::Rect::getBlitRect(dst, srcRect, backbuffer.getRect())) {
@@ -256,8 +256,9 @@ void Object::paint(AGDSEngine &engine, Graphics::Surface &backbuffer, Common::Po
 	}
 
 	if (_animation) {
+		pos += _pos + _animationPos;
 		_animation->tick();
-		_animation->paint(backbuffer, _pos + _animationPos);
+		_animation->paint(backbuffer, pos);
 	}
 
 	if (!_text.empty()) {

@@ -51,12 +51,35 @@ Screen::~Screen() {
 }
 
 void Screen::scrollTo(Common::Point scroll) {
-	int maxW = g_system->getWidth();
-	int maxH = g_system->getHeight();
+	int windowW = g_system->getWidth();
+	int windowH = g_system->getHeight();
+
+	ObjectPtr background;
+	for(uint i = 0, n = _children.size(); i < n; ++i) {
+		auto & child = _children.data()[i];
+		if (child->getPicture()) {
+			background = child;
+			break;
+		}
+	}
+	if (!background) {
+		_scroll.x = _scroll.y = 0;
+		return;
+	}
+
+	auto rect = background->getRect();
+	int w = rect.width(), h = rect.height();
+	debug("picture size %dx%d", w, h);
+	if (scroll.x + windowW > w)
+		scroll.x = w - windowW;
+	if (scroll.y + windowH > h)
+		scroll.y = h - windowH;
 	if (scroll.x < 0)
 		scroll.x = 0;
 	if (scroll.y < 0)
 		scroll.y = 0;
+
+	debug("setting scroll to %d,%d", scroll.x, scroll.y);
 	_scroll = scroll;
 }
 
@@ -203,7 +226,7 @@ void Screen::paint(Graphics::Surface &backbuffer) {
 			}
 		}
 
-		auto basePos = _scroll;
+		auto basePos = Common::Point() - _scroll;
 		switch (render_type) {
 			case 0:
 				//debug("object z: %d", (*child)->z());
@@ -216,14 +239,14 @@ void Screen::paint(Graphics::Surface &backbuffer) {
 				break;
 			case 1:
 				//debug("animation z: %d", (*animation)->z());
-				(*animation)->paint(backbuffer, basePos);
 				if ((*animation)->scale() < 0)
 					basePos = Common::Point();
+				(*animation)->paint(backbuffer, basePos);
 				++animation;
 				break;
 			case 2:
 				//debug("character z: %d", character->z());
-				character->paint(backbuffer, _scroll);
+				character->paint(backbuffer, basePos);
 				character = nullptr;
 				break;
 			default:
@@ -233,6 +256,7 @@ void Screen::paint(Graphics::Surface &backbuffer) {
 }
 
 Common::Array<ObjectPtr> Screen::find(Common::Point pos) const {
+	pos += _scroll;
 	Common::Array<ObjectPtr> objects;
 	objects.reserve(_children.size());
 	for (ChildrenType::const_iterator i = _children.begin(); i != _children.end(); ++i) {
