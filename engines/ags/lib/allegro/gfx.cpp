@@ -33,11 +33,6 @@ namespace AGS3 {
 
 int color_conversion;
 
-// For Allegro, paletted sprites always use index 0 as the transparent color,
-// and for higher resolution formats uses bright pink RGB 255, 0, 255
-#define TRANSPARENT_COLOR(BITMAP) ((BITMAP).format.bytesPerPixel == 1 ? 0 : \
-	(BITMAP).format.RGBToColor(255, 0, 255))
-
 /*-------------------------------------------------------------------*/
 
 void set_color_conversion(int mode) {
@@ -98,7 +93,13 @@ int bitmap_color_depth(BITMAP *bmp) {
 }
 
 int bitmap_mask_color(BITMAP *bmp) {
-	return TRANSPARENT_COLOR(*bmp);
+	// For paletted sprites this is 0.
+	// For other color depths this is bright pink (RGB 255, 0, 255).
+	// The alpha chanel should be 0.
+	//if (bmp-format.bytesPerPixel == 1)
+	//	return 0;
+	//return bmp->format.AGRBToColor(0, 255, 0, 255);
+	return bmp->getTransparentColor();
 }
 
 void blit(const BITMAP *src, BITMAP *dest, int src_x, int src_y, int dst_x, int dst_y, int width, int height) {

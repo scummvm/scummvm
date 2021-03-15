@@ -62,7 +62,12 @@ public:
 	}
 
 	uint getTransparentColor() const {
-		return _owner->getTransparentColor();
+		// See allegro bitmap_mask_color
+		// For paletted sprites this is 0.
+		// For other color depths this is bright pink (RGB 255, 0, 255) with alpha set to 0.
+		if (format.bytesPerPixel == 1)
+			return 0;
+		return format.ARGBToColor(0, 255, 0, 255);
 	}
 
 	int getpixel(int x, int y) const;
