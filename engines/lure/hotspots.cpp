@@ -2827,8 +2827,8 @@ void HotspotTickHandlers::standardCharacterAnimHandler(Hotspot &h) {
 
 //			if (h.destHotspotId() != 0) {
 				// Walking to an exit, check for any required room change
-				if (Support::checkRoomChange(h))
-					break;
+			if (Support::checkRoomChange(h))
+				break;
 //			}
 		}
 
