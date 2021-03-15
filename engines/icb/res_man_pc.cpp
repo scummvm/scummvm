@@ -65,7 +65,7 @@ Common::SeekableReadStream *openDiskFileForBinaryStreamRead(const Common::String
 		return nullptr;
 	}
 	int32 size = f->size();
-	byte *data = new byte[size];
+	byte *data = (byte *)malloc(size);
 	f->read(data, size);
 	f->close();
 	delete f;
