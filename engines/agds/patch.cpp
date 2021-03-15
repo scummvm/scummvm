@@ -28,9 +28,9 @@ void Patch::load(Common::ReadStream *stream) {
 	loadingType = static_cast<ScreenLoadingType>(stream->readUint32LE());
 	characterPosition.x = stream->readUint32LE();
 	characterPosition.y = stream->readUint32LE();
-	characterDirection = stream->readUint32LE();
+	characterDirection = stream->readSint32LE();
 	characterPresent = stream->readUint32LE();
-	debug("character %s at %u,%u with dir: %u", characterPresent? "[present]": "[absent]", characterPosition.x, characterPosition.y, characterDirection);
+	debug("character %s at %u,%u with dir: %d", characterPresent? "[present]": "[absent]", characterPosition.x, characterPosition.y, characterDirection);
 	uint object_count = stream->readUint32LE();
 	debug("objects in this patch: %u", object_count);
 	if (stream->read(palette, sizeof(palette)) != sizeof(palette)) {
