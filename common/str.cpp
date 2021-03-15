@@ -416,7 +416,7 @@ String String::forEachLine(String(*func)(const String, va_list args), ...) const
 	size_t prev_index = 0;
 	va_list args;
 	va_start(args, func);
-	while (index != -1) {
+	while (index != npos) {
 		String textLine = substr(prev_index, index - prev_index);
 		textLine = (*func)(textLine, args);
 		result = result + textLine + '\n';
