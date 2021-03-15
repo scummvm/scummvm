@@ -112,6 +112,35 @@ static const AchievementDescriptionList achievementDescriptionList[] = {
 	},
 
 	{
+		"astroloco",
+		Common::STEAM_ACHIEVEMENTS,
+		"357490",
+		{
+			ACHIEVEMENT_SIMPLE_ENTRY("NEW_GAME", "New Game", "It's all downhill from here."),
+			ACHIEVEMENT_SIMPLE_ENTRY("TECH_WHIZZ", "Tech-Whizz", "Get Gary back on his feet within two attempts."),
+			ACHIEVEMENT_SIMPLE_ENTRY("DONT_GET_COCKY", "Don't Get Cocky", "Defeat the marauding pirates."),
+			ACHIEVEMENT_SIMPLE_ENTRY("BROKEN_PIPE_DREAMS", "Broken Pipe Dreams", "Discover the pipe of your dreams."),
+			ACHIEVEMENT_SIMPLE_ENTRY("SUBATOMIC_FAMILY", "subAtomic Family", "Find the family from a previous game."),
+			ACHIEVEMENT_SIMPLE_ENTRY("THOROUGH_INVESTIGATION", "Thorough Investigation", "Diligently examine the contents of a locked cupboard."),
+			ACHIEVEMENT_SIMPLE_ENTRY("THE_KING_IN_THE_NORTH", "The King in the North", "Find an old friend within the Request-O-Matic."),
+			ACHIEVEMENT_SIMPLE_ENTRY("MONKEYING_AROUND", "Monkeying Around", "Find a sweet poster for a previous game."),
+			ACHIEVEMENT_SIMPLE_ENTRY("WIRETAP", "Wiretap", "Remotely remind a criminal that he's being watched."),
+			ACHIEVEMENT_SIMPLE_ENTRY("NO_MORE_HICCUPS", "No More Hiccups", "You're getting really good at holding your breath!"),
+			ACHIEVEMENT_SIMPLE_ENTRY("UNWANTED_GUEST", "Unwanted Guest", "Create your own 'Knock-Knock' joke."),
+			ACHIEVEMENT_SIMPLE_ENTRY("RECURRING_NIGHTMARE", "Recurring Nightmare", "This guy always bounces back!"),
+			ACHIEVEMENT_SIMPLE_ENTRY("BEHIND_THE_SCENES", "Behind the Scenes", "Our game has commentary! Are we cool yet?"),
+			ACHIEVEMENT_SIMPLE_ENTRY("ANTISOCIAL", "Antisocial", "That's no way to greet someone new!"),
+			ACHIEVEMENT_SIMPLE_ENTRY("THE_OTHER_SIDE", "The Other Side", "See things from someone else's point of view."),
+			ACHIEVEMENT_SIMPLE_ENTRY("INDECISIVE", "Indecisive", "You're in two minds on the matter."),
+			ACHIEVEMENT_SIMPLE_ENTRY("VIOLENT_TENDENCIES", "Violent Tendencies", "See the violence inherent in the system!"),
+			ACHIEVEMENT_SIMPLE_ENTRY("FOLLOW_THE_MONEY", "Follow the Money", "Find and follow the trail of gold."),
+			ACHIEVEMENT_SIMPLE_ENTRY("TUNNEL_VISION", "Tunnel Vision", "Find all five hidden trains."),
+			ACHIEVEMENT_SIMPLE_ENTRY("CRACK_SHOT", "Crack Shot", "Find all five hidden targets."),
+			ACHIEVEMENTS_LISTEND
+		}
+	},
+
+	{
 		"atotkdeluxe",
 		Common::STEAM_ACHIEVEMENTS,
 		"603870",
