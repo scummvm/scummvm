@@ -37,6 +37,10 @@ class GraphicsManager;
 class AnimManager;
 
 class TrecisionEngine : public Engine {
+private:
+	void initMain();
+	void InitMessageSystem();
+
 public:
 	TrecisionEngine(OSystem *syst);
 	~TrecisionEngine() override;

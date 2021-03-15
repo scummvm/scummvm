@@ -31,36 +31,6 @@
 
 namespace Trecision {
 
-/*-----------------03/01/97 16.15-------------------
-					InitMain
---------------------------------------------------*/
-void initMain() {
-	for (int c = 0; c < MAXOBJ; c++)
-		g_vm->_obj[c]._position = -1;
-
-	initNames();
-	initScript();
-	openSys();
-
-	LoadAll();
-
-	InitMessageSystem();                   // schedule.c
-	g_vm->_inventorySize = 0;
-	memset(g_vm->_inventory, iNULL, MAXICON);
-
-	g_vm->_inventory[g_vm->_inventorySize++] = iBANCONOTE;
-	g_vm->_inventory[g_vm->_inventorySize++] = iSAM;
-	g_vm->_inventory[g_vm->_inventorySize++] = iCARD03;
-	g_vm->_inventory[g_vm->_inventorySize++] = iPEN;
-	g_vm->_inventory[g_vm->_inventorySize++] = iKEY05;
-
-	g_vm->_curRoom = rINTRO;
-
-	ProcessTime();
-
-	doEvent(MC_SYSTEM, ME_START, MP_DEFAULT, 0, 0, 0, 0);
-}
-
 /* -----------------25/12/96 16.40-------------------
 					NextMessage
  --------------------------------------------------*/

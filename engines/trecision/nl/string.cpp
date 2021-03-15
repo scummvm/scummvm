@@ -104,7 +104,7 @@ void PositionString(uint16 x, uint16 y, const char *string, uint16 *posx, uint16
 void ShowObjName(uint16 obj, bool showhide) {
 	uint16 posx;
 	uint16 posy;
-	char locsent[256];
+	Common::String locsent;
 
 	if (FlagSomeOneSpeak)
 		return;
@@ -123,26 +123,26 @@ void ShowObjName(uint16 obj, bool showhide) {
 		if ((g_vm->_obj[g_vm->_curObj]._flag & (OBJFLAG_ROOMOUT | OBJFLAG_ROOMIN)) && !(g_vm->_obj[g_vm->_curObj]._flag & OBJFLAG_EXAMINE))
 			return;
 
-		strcpy(locsent, g_vm->_sysText[23]);
+		locsent += g_vm->_sysText[23];
 		if (g_vm->_useWithInv[USED])
-			strcat(locsent, g_vm->_objName[g_vm->_inventoryObj[g_vm->_useWith[USED]]._name]);
+			locsent += g_vm->_objName[g_vm->_inventoryObj[g_vm->_useWith[USED]]._name];
 		else if (g_vm->_obj[g_vm->_useWith[USED]]._mode & OBJMODE_HIDDEN)
-			strcat(locsent, dunno);
+			locsent += dunno;
 		else
-			strcat(locsent, g_vm->_objName[g_vm->_obj[g_vm->_useWith[USED]]._name]);
+			locsent += g_vm->_objName[g_vm->_obj[g_vm->_useWith[USED]]._name];
 
-		strcat(locsent, g_vm->_sysText[24]);
+		locsent += g_vm->_sysText[24];
 		if (obj && (g_vm->_useWithInv[USED] || (obj != g_vm->_useWith[USED]))) {
 			if (g_vm->_obj[obj]._mode & OBJMODE_HIDDEN)
-				strcat(locsent, dunno);
+				locsent += dunno;
 			else
-				strcat(locsent, g_vm->_objName[g_vm->_obj[obj]._name]);
+				locsent += g_vm->_objName[g_vm->_obj[obj]._name];
 		}
 
 		posx = 320;
 		posy = MAXY - CARHEI;
 		lastobj = (obj | 0x8000);
-		uint16 LenText = TextLength(locsent, 0);
+		uint16 LenText = TextLength(locsent.c_str(), 0);
 		if (posx - (LenText / 2) < 2)
 			posx = 2;
 		else
@@ -153,7 +153,7 @@ void ShowObjName(uint16 obj, bool showhide) {
 
 		if (lastobj)
 			ClearText();
-		Text(posx, posy, locsent, COLOR_INVENTORY, MASKCOL);
+		Text(posx, posy, locsent.c_str(), COLOR_INVENTORY, MASKCOL);
 	} else {
 		if ((!obj) || (!showhide)) {
 			ClearText();
@@ -165,17 +165,17 @@ void ShowObjName(uint16 obj, bool showhide) {
 			return;
 		if (!(g_vm->_obj[obj]._flag & OBJFLAG_EXAMINE)) {
 			if ((g_vm->_obj[obj]._flag & OBJFLAG_DONE) || (g_vm->_room[g_vm->_obj[obj]._goRoom]._flag & OBJFLAG_DONE)) {
-				strcpy(locsent, g_vm->_sysText[25]);
+				locsent =  g_vm->_sysText[25];
 				if (g_vm->_obj[obj]._mode & OBJMODE_HIDDEN)
-					strcat(locsent, dunno);
+					locsent += dunno;
 				else
-					strcat(locsent, g_vm->_objName[g_vm->_obj[obj]._name]);
+					locsent += g_vm->_objName[g_vm->_obj[obj]._name];
 			} else
-				strcpy(locsent, g_vm->_sysText[26]);
+				locsent = g_vm->_sysText[26];
 		} else if (g_vm->_obj[obj]._mode & OBJMODE_HIDDEN)
-			strcpy(locsent, dunno);
+			locsent = dunno;
 		else
-			strcpy(locsent, g_vm->_objName[g_vm->_obj[obj]._name]);
+			locsent = g_vm->_objName[g_vm->_obj[obj]._name];
 
 		switch (obj) {
 		case oRUOTE2C:
@@ -188,11 +188,11 @@ void ShowObjName(uint16 obj, bool showhide) {
 			posy = g_vm->_obj[obj]._lim[1];
 			break;
 		}
-		PositionString(posx, posy, locsent, &posx, &posy, false);
+		PositionString(posx, posy, locsent.c_str(), &posx, &posy, false);
 		if (lastobj)
 			ClearText();
 		lastobj = obj;
-		Text(posx, posy, locsent, COLOR_OBJECT, MASKCOL);
+		Text(posx, posy, locsent.c_str(), COLOR_OBJECT, MASKCOL);
 	}
 }
 
