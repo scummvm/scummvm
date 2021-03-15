@@ -588,7 +588,14 @@ int16 GameState::setMagicPoints(int16 val) {
 	inventoryMagicPoints = val;
 	if (inventoryMagicPoints > magicLevelIdx * 20) {
 		inventoryMagicPoints = magicLevelIdx * 20;
+	} else if (inventoryMagicPoints < 0) {
+		inventoryMagicPoints = 0;
 	}
+	return inventoryMagicPoints;
+}
+
+int16 GameState::setMaxMagicPoints() {
+	inventoryMagicPoints = magicLevelIdx * 20;
 	return inventoryMagicPoints;
 }
 

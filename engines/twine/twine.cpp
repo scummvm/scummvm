@@ -939,7 +939,7 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 						_scene->sceneHero->pos = _scene->newHeroPos;
 
 						_scene->needChangeScene = _scene->currentSceneIdx;
-						_gameState->inventoryMagicPoints = _gameState->magicLevelIdx * 20;
+						_gameState->setMaxMagicPoints();
 
 						_grid->centerOnActor(_scene->sceneHero);
 
@@ -953,7 +953,7 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 					} else { // game over
 						_gameState->setLeafBoxes(2);
 						_gameState->setLeafs(1);
-						_gameState->setMagicPoints(_gameState->magicLevelIdx * 20);
+						_gameState->setMaxMagicPoints();
 						_actor->heroBehaviour = _actor->previousHeroBehaviour;
 						actor->angle = _actor->previousHeroAngle;
 						actor->setLife(kActorMaxLife);

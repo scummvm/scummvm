@@ -119,7 +119,7 @@ bool TwinEConsole::doAddMagicPoints(int argc, const char **argv) {
 	}
 	const int16 magicPoints = atoi(argv[1]);
 	_engine->_gameState->magicLevelIdx = CLIP<int16>(magicPoints, 0, 4);
-	_engine->_gameState->inventoryMagicPoints = _engine->_gameState->magicLevelIdx * 20;
+	_engine->_gameState->setMaxMagicPoints();
 	return true;
 }
 

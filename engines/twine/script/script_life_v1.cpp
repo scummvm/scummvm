@@ -1133,7 +1133,7 @@ static int32 lPOS_POINT(TwinEEngine *engine, LifeScriptContext &ctx) {
  */
 static int32 lSET_MAGIC_LEVEL(TwinEEngine *engine, LifeScriptContext &ctx) {
 	engine->_gameState->magicLevelIdx = ctx.stream.readByte();
-	engine->_gameState->inventoryMagicPoints = engine->_gameState->magicLevelIdx * 20;
+	engine->_gameState->setMaxMagicPoints();
 	return 0;
 }
 
@@ -1142,10 +1142,7 @@ static int32 lSET_MAGIC_LEVEL(TwinEEngine *engine, LifeScriptContext &ctx) {
  * @note Opcode @c 0x3C
  */
 static int32 lSUB_MAGIC_POINT(TwinEEngine *engine, LifeScriptContext &ctx) {
-	engine->_gameState->inventoryMagicPoints = ctx.stream.readByte();
-	if (engine->_gameState->inventoryMagicPoints < 0) {
-		engine->_gameState->inventoryMagicPoints = 0;
-	}
+	engine->_gameState->addMagicPoints(-ctx.stream.readByte());
 	return 0;
 }
 
@@ -1398,7 +1395,7 @@ static int32 lSAY_MESSAGE_OBJ(TwinEEngine *engine, LifeScriptContext &ctx) {
  */
 static int32 lFULL_POINT(TwinEEngine *engine, LifeScriptContext &ctx) {
 	engine->_scene->sceneHero->setLife(kActorMaxLife);
-	engine->_gameState->inventoryMagicPoints = engine->_gameState->magicLevelIdx * 20;
+	engine->_gameState->setMaxMagicPoints();
 	return 0;
 }
 
