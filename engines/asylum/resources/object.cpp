@@ -353,7 +353,7 @@ void Object::update() {
 
 		if ((flags & kObjectFlag10000) && (_vm->getTick() - _tickCount >= (uint32)Common::Rational(1000, _field_B4).toInt())) {
 
-			++_frameIndex;
+			--_frameIndex;
 
 			if (_frameIndex == 0) {
 				flags &= ~kObjectFlag10000;
