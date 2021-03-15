@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-03-14 17:52+0000\n"
+"POT-Creation-Date: 2021-03-15 14:48+0000\n"
 "PO-Revision-Date: 2021-02-23 01:27+0000\n"
 "Last-Translator: Thierry Crozat <criezy@scummvm.org>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
@@ -2269,7 +2269,7 @@ msgstr ""
 "Lisez le fichier README pour plus de détails."
 
 #: engines/engine.cpp:548 engines/metaengine.cpp:325 engines/savestate.cpp:81
-#: backends/platform/ios7/ios7_osys_main.cpp:277 engines/sky/metaengine.cpp:176
+#: backends/platform/ios7/ios7_osys_main.cpp:251 engines/sky/metaengine.cpp:176
 #: engines/xeen/saves.cpp:290
 msgid "Autosave"
 msgstr "Sauvegarde auto"
@@ -2676,28 +2676,28 @@ msgid "Do you want to quit ?"
 msgstr "Voulez-vous quitter ?"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:244
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:83
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:73
 #: engines/twine/metaengine.cpp:339
 msgid "Center"
 msgstr "Centrer"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:245
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:84
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:74
 msgid "Pixel-perfect scaling"
 msgstr "Mise à l'échelle des pixels"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:246
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:85
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:75
 msgid "Fit to window"
 msgstr "Adapter à la fenêtre"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:247
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:86
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:76
 msgid "Stretch to window"
 msgstr "Étirer pour remplir la fenêtre"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:248
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:87
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:77
 msgid "Fit to window (4:3)"
 msgstr "Adapter à la fenêtre (4:3)"
 
@@ -2707,40 +2707,36 @@ msgid "Resolution: %dx%d"
 msgstr "Résolution : %dx%d"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:618
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2500
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2498
 msgid "Enabled aspect ratio correction"
 msgstr "Activer la correction du rapport d'aspect"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:620
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2506
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2504
 msgid "Disabled aspect ratio correction"
 msgstr "Désactiver la correction du rapport d'aspect"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:641
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2523
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2520
 msgid "Filtering enabled"
 msgstr "Filtrage Activé"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:643
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2525
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2522
 msgid "Filtering disabled"
 msgstr "Filtrage Désactivé"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:672
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2553
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2549
 msgid "Stretch mode"
 msgstr "Mode d'étirement"
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:62
-msgid "Normal (no scaling)"
-msgstr "Normal (échelle d'origine)"
-
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:92
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:84
 msgctxt "lowres"
 msgid "Normal (no scaling)"
 msgstr "Normal"
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2466
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2463
 msgid "Active graphics filter:"
 msgstr "Mode graphique actif :"
 
@@ -2793,37 +2789,17 @@ msgstr "Augmenter le facteur d'échelle"
 msgid "Decrease the scale factor"
 msgstr "Diminuer le facteur d'échelle"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:442
-msgid "Switch to nearest neighbour scaling"
-msgstr "Basculer vers l'échelle voisine la plus proche"
-
-#: backends/graphics/sdl/sdl-graphics.cpp:443
-msgid "Switch to AdvMame 2x/3x scaling"
-msgstr "Basculer vers l'échelle AdvMame 2x/3x"
-
-#: backends/graphics/sdl/sdl-graphics.cpp:445
-msgid "Switch to HQ 2x/3x scaling"
-msgstr "Basculer vers l'échelle HQ 2x/3x"
-
-#: backends/graphics/sdl/sdl-graphics.cpp:447
-msgid "Switch to 2xSai scaling"
-msgstr "Basculer vers l'échelle 2xSai"
-
-#: backends/graphics/sdl/sdl-graphics.cpp:448
-msgid "Switch to Super2xSai scaling"
-msgstr "Basculer vers l'échelle Super2xSai"
-
-#: backends/graphics/sdl/sdl-graphics.cpp:449
-msgid "Switch to SuperEagle scaling"
-msgstr "Basculer vers l'échelle SuperEagle"
-
-#: backends/graphics/sdl/sdl-graphics.cpp:450
-msgid "Switch to TV 2x scaling"
+#: backends/graphics/sdl/sdl-graphics.cpp:436
+#, fuzzy
+#| msgid "Switch to TV 2x scaling"
+msgid "Switch to the next scaler"
 msgstr "Basculer vers l'échelle TV 2x"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:451
-msgid "Switch to DotMatrix scaling"
-msgstr "Basculer vers l'échelle DotMatrix"
+#: backends/graphics/sdl/sdl-graphics.cpp:441
+#, fuzzy
+#| msgid "Switch to nearest neighbour scaling"
+msgid "Switch to the previous scaler"
+msgstr "Basculer vers l'échelle voisine la plus proche"
 
 #: backends/keymapper/hardware-input.cpp:245
 msgid "Left Mouse Button"
@@ -7968,6 +7944,27 @@ msgstr ""
 "les polices du paquet de polices que vous avez choisi, c'est-à-dire "
 "LiberationMono, LiberationSans et LiberationSerif, ou respectivement "
 "FreeMono, FreeSans et FreeSerif."
+
+#~ msgid "Normal (no scaling)"
+#~ msgstr "Normal (échelle d'origine)"
+
+#~ msgid "Switch to AdvMame 2x/3x scaling"
+#~ msgstr "Basculer vers l'échelle AdvMame 2x/3x"
+
+#~ msgid "Switch to HQ 2x/3x scaling"
+#~ msgstr "Basculer vers l'échelle HQ 2x/3x"
+
+#~ msgid "Switch to 2xSai scaling"
+#~ msgstr "Basculer vers l'échelle 2xSai"
+
+#~ msgid "Switch to Super2xSai scaling"
+#~ msgstr "Basculer vers l'échelle Super2xSai"
+
+#~ msgid "Switch to SuperEagle scaling"
+#~ msgstr "Basculer vers l'échelle SuperEagle"
+
+#~ msgid "Switch to DotMatrix scaling"
+#~ msgstr "Basculer vers l'échelle DotMatrix"
 
 #~ msgid "ScummVM Main Menu"
 #~ msgstr "Menu Principal ScummVM"

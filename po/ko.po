@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-03-14 17:52+0000\n"
+"POT-Creation-Date: 2021-03-15 14:48+0000\n"
 "PO-Revision-Date: 2021-03-07 12:24+0000\n"
 "Last-Translator: Joohan Lee <losernator@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -2222,7 +2222,7 @@ msgstr ""
 "README 파일에서 추가정보를 확인해 주세요."
 
 #: engines/engine.cpp:548 engines/metaengine.cpp:325 engines/savestate.cpp:81
-#: backends/platform/ios7/ios7_osys_main.cpp:277 engines/sky/metaengine.cpp:176
+#: backends/platform/ios7/ios7_osys_main.cpp:251 engines/sky/metaengine.cpp:176
 #: engines/xeen/saves.cpp:290
 msgid "Autosave"
 msgstr "자동 저장"
@@ -2626,28 +2626,28 @@ msgid "Do you want to quit ?"
 msgstr "종료하시겠습니까?"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:244
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:83
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:73
 #: engines/twine/metaengine.cpp:339
 msgid "Center"
 msgstr "중앙"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:245
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:84
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:74
 msgid "Pixel-perfect scaling"
 msgstr "픽셀 맞춤 크기조절"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:246
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:85
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:75
 msgid "Fit to window"
 msgstr "창 크기에 맞춤"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:247
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:86
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:76
 msgid "Stretch to window"
 msgstr "창에 맞게 늘림"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:248
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:87
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:77
 msgid "Fit to window (4:3)"
 msgstr "창 크기에 맞춤 (4:3)"
 
@@ -2657,40 +2657,36 @@ msgid "Resolution: %dx%d"
 msgstr "해상도: %dx%d"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:618
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2500
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2498
 msgid "Enabled aspect ratio correction"
 msgstr "화면 종횡비 보정 활성화"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:620
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2506
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2504
 msgid "Disabled aspect ratio correction"
 msgstr "화면 종횡비 보정 비활성화"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:641
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2523
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2520
 msgid "Filtering enabled"
 msgstr "필터링 활성화"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:643
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2525
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2522
 msgid "Filtering disabled"
 msgstr "필터링 비활성화"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:672
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2553
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2549
 msgid "Stretch mode"
 msgstr "확대 모드"
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:62
-msgid "Normal (no scaling)"
-msgstr "일반 (확대 없음)"
-
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:92
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:84
 msgctxt "lowres"
 msgid "Normal (no scaling)"
 msgstr "일반 (확대 없음)"
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2466
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2463
 msgid "Active graphics filter:"
 msgstr "활성 그래픽 필터:"
 
@@ -2743,37 +2739,17 @@ msgstr "확대 비율 증가"
 msgid "Decrease the scale factor"
 msgstr "확대 비율 감소"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:442
-msgid "Switch to nearest neighbour scaling"
-msgstr "근접 이웃 크기조절로 전환"
-
-#: backends/graphics/sdl/sdl-graphics.cpp:443
-msgid "Switch to AdvMame 2x/3x scaling"
-msgstr "AdvMame 2x/3x 크기조절로 전환"
-
-#: backends/graphics/sdl/sdl-graphics.cpp:445
-msgid "Switch to HQ 2x/3x scaling"
-msgstr "HQ 2x/3x 크기조절로 전환"
-
-#: backends/graphics/sdl/sdl-graphics.cpp:447
-msgid "Switch to 2xSai scaling"
-msgstr "2xSai 크기조절로 전환"
-
-#: backends/graphics/sdl/sdl-graphics.cpp:448
-msgid "Switch to Super2xSai scaling"
-msgstr "Super2xSai 크기조절로 전환"
-
-#: backends/graphics/sdl/sdl-graphics.cpp:449
-msgid "Switch to SuperEagle scaling"
-msgstr "SuperEagle 크기조절로 전환"
-
-#: backends/graphics/sdl/sdl-graphics.cpp:450
-msgid "Switch to TV 2x scaling"
+#: backends/graphics/sdl/sdl-graphics.cpp:436
+#, fuzzy
+#| msgid "Switch to TV 2x scaling"
+msgid "Switch to the next scaler"
 msgstr "TV 2x 크기조절로 전환"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:451
-msgid "Switch to DotMatrix scaling"
-msgstr "DotMatrix 크기조절로 전환"
+#: backends/graphics/sdl/sdl-graphics.cpp:441
+#, fuzzy
+#| msgid "Switch to nearest neighbour scaling"
+msgid "Switch to the previous scaler"
+msgstr "근접 이웃 크기조절로 전환"
 
 #: backends/keymapper/hardware-input.cpp:245
 msgid "Left Mouse Button"
@@ -7786,6 +7762,27 @@ msgstr ""
 "니다. 선택한 글꼴 패키지의 모든 글꼴이 필요 할 수 있습니다. 예: "
 "LiberationMono, LiberationSans 및 LiberationSerif 또는 FreeMono, FreeSans 및 "
 "FreeSerif가 각각 필요함."
+
+#~ msgid "Normal (no scaling)"
+#~ msgstr "일반 (확대 없음)"
+
+#~ msgid "Switch to AdvMame 2x/3x scaling"
+#~ msgstr "AdvMame 2x/3x 크기조절로 전환"
+
+#~ msgid "Switch to HQ 2x/3x scaling"
+#~ msgstr "HQ 2x/3x 크기조절로 전환"
+
+#~ msgid "Switch to 2xSai scaling"
+#~ msgstr "2xSai 크기조절로 전환"
+
+#~ msgid "Switch to Super2xSai scaling"
+#~ msgstr "Super2xSai 크기조절로 전환"
+
+#~ msgid "Switch to SuperEagle scaling"
+#~ msgstr "SuperEagle 크기조절로 전환"
+
+#~ msgid "Switch to DotMatrix scaling"
+#~ msgstr "DotMatrix 크기조절로 전환"
 
 #~ msgid "ScummVM Main Menu"
 #~ msgstr "ScummVM 메인 메뉴"

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.5.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-03-14 17:52+0000\n"
+"POT-Creation-Date: 2021-03-15 14:48+0000\n"
 "PO-Revision-Date: 2020-10-26 22:27+0000\n"
 "Last-Translator: anonymous <noreply@weblate.org>\n"
 "Language-Team: Swedish <https://translations.scummvm.org/projects/scummvm/"
@@ -2258,7 +2258,7 @@ msgstr ""
 "Se README-filen för detaljer."
 
 #: engines/engine.cpp:548 engines/metaengine.cpp:325 engines/savestate.cpp:81
-#: backends/platform/ios7/ios7_osys_main.cpp:277 engines/sky/metaengine.cpp:176
+#: backends/platform/ios7/ios7_osys_main.cpp:251 engines/sky/metaengine.cpp:176
 #: engines/xeen/saves.cpp:290
 #, fuzzy
 msgid "Autosave"
@@ -2670,28 +2670,28 @@ msgid "Do you want to quit ?"
 msgstr "Vill du avsluta?"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:244
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:83
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:73
 #: engines/twine/metaengine.cpp:339
 msgid "Center"
 msgstr "Centrera"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:245
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:84
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:74
 msgid "Pixel-perfect scaling"
 msgstr "Pixelperfekt förstoring"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:246
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:85
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:75
 msgid "Fit to window"
 msgstr "Anpassa till fönster"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:247
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:86
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:76
 msgid "Stretch to window"
 msgstr "Dra ut till fönsterstorlek"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:248
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:87
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:77
 msgid "Fit to window (4:3)"
 msgstr "Anpassa till fönster (4:3)"
 
@@ -2701,40 +2701,36 @@ msgid "Resolution: %dx%d"
 msgstr "Upplösning: %dx%d"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:618
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2500
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2498
 msgid "Enabled aspect ratio correction"
 msgstr "Korrektion av bildförhållande på"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:620
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2506
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2504
 msgid "Disabled aspect ratio correction"
 msgstr "Korrektion av bildförhållande av"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:641
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2523
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2520
 msgid "Filtering enabled"
 msgstr "Filtrering aktiverad"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:643
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2525
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2522
 msgid "Filtering disabled"
 msgstr "Filtrering inaktiverad"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:672
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2553
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2549
 msgid "Stretch mode"
 msgstr "Utdraget läge"
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:62
-msgid "Normal (no scaling)"
-msgstr "Normalt (ingen skalning)"
-
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:92
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:84
 msgctxt "lowres"
 msgid "Normal (no scaling)"
 msgstr "Normalt (ingen skalning)"
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2466
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2463
 msgid "Active graphics filter:"
 msgstr "Aktivt grafikfilter:"
 
@@ -2791,37 +2787,17 @@ msgstr "Öka / sänk skalningsfaktor"
 msgid "Decrease the scale factor"
 msgstr "Öka / sänk skalningsfaktor"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:442
-msgid "Switch to nearest neighbour scaling"
-msgstr "Byt till närmsta-granne-förstoring"
-
-#: backends/graphics/sdl/sdl-graphics.cpp:443
-msgid "Switch to AdvMame 2x/3x scaling"
-msgstr "Byt till AdvMame 2x/3x-förstoring"
-
-#: backends/graphics/sdl/sdl-graphics.cpp:445
-msgid "Switch to HQ 2x/3x scaling"
-msgstr "Byt till HQ 2x/3x-förstoring"
-
-#: backends/graphics/sdl/sdl-graphics.cpp:447
-msgid "Switch to 2xSai scaling"
-msgstr "Byt till 2xSai-förstoring"
-
-#: backends/graphics/sdl/sdl-graphics.cpp:448
-msgid "Switch to Super2xSai scaling"
-msgstr "Byt till Super2xSai-förstoring"
-
-#: backends/graphics/sdl/sdl-graphics.cpp:449
-msgid "Switch to SuperEagle scaling"
-msgstr "Byt till SuperEagle-förstoring"
-
-#: backends/graphics/sdl/sdl-graphics.cpp:450
-msgid "Switch to TV 2x scaling"
+#: backends/graphics/sdl/sdl-graphics.cpp:436
+#, fuzzy
+#| msgid "Switch to TV 2x scaling"
+msgid "Switch to the next scaler"
 msgstr "Byt till TV 2x-förstoring"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:451
-msgid "Switch to DotMatrix scaling"
-msgstr "Byt till DotMatrix-förstoring"
+#: backends/graphics/sdl/sdl-graphics.cpp:441
+#, fuzzy
+#| msgid "Switch to nearest neighbour scaling"
+msgid "Switch to the previous scaler"
+msgstr "Byt till närmsta-granne-förstoring"
 
 #: backends/keymapper/hardware-input.cpp:245
 #, fuzzy
@@ -7953,6 +7929,27 @@ msgid ""
 "LiberationSans and LiberationSerif, or FreeMono, FreeSans and FreeSerif "
 "respectively."
 msgstr ""
+
+#~ msgid "Normal (no scaling)"
+#~ msgstr "Normalt (ingen skalning)"
+
+#~ msgid "Switch to AdvMame 2x/3x scaling"
+#~ msgstr "Byt till AdvMame 2x/3x-förstoring"
+
+#~ msgid "Switch to HQ 2x/3x scaling"
+#~ msgstr "Byt till HQ 2x/3x-förstoring"
+
+#~ msgid "Switch to 2xSai scaling"
+#~ msgstr "Byt till 2xSai-förstoring"
+
+#~ msgid "Switch to Super2xSai scaling"
+#~ msgstr "Byt till Super2xSai-förstoring"
+
+#~ msgid "Switch to SuperEagle scaling"
+#~ msgstr "Byt till SuperEagle-förstoring"
+
+#~ msgid "Switch to DotMatrix scaling"
+#~ msgstr "Byt till DotMatrix-förstoring"
 
 #~ msgid "ScummVM Main Menu"
 #~ msgstr "ScummVM huvudmeny"

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-03-14 17:52+0000\n"
+"POT-Creation-Date: 2021-03-15 14:48+0000\n"
 "PO-Revision-Date: 2021-03-14 15:12+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
@@ -2224,7 +2224,7 @@ msgstr ""
 "詳細はREADMEを参照してください。"
 
 #: engines/engine.cpp:548 engines/metaengine.cpp:325 engines/savestate.cpp:81
-#: backends/platform/ios7/ios7_osys_main.cpp:277 engines/sky/metaengine.cpp:176
+#: backends/platform/ios7/ios7_osys_main.cpp:251 engines/sky/metaengine.cpp:176
 #: engines/xeen/saves.cpp:290
 msgid "Autosave"
 msgstr "自動セーブ"
@@ -2628,29 +2628,29 @@ msgid "Do you want to quit ?"
 msgstr "終了してもよろしいですか？"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:244
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:83
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:73
 #: engines/twine/metaengine.cpp:339
 msgid "Center"
 msgstr "中央"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:245
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:84
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:74
 msgid "Pixel-perfect scaling"
 msgstr "ピクセルパーフェクト"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:246
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:85
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:75
 msgid "Fit to window"
 msgstr "ウィンドウに合わせる"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:247
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:86
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:76
 #, fuzzy
 msgid "Stretch to window"
 msgstr "拡大モード："
 
 #: backends/graphics/opengl/opengl-graphics.cpp:248
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:87
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:77
 msgid "Fit to window (4:3)"
 msgstr "ウィンドウに合わせる(4:3)"
 
@@ -2660,40 +2660,36 @@ msgid "Resolution: %dx%d"
 msgstr "解像度: %dx%d"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:618
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2500
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2498
 msgid "Enabled aspect ratio correction"
 msgstr "縦横比修正適用"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:620
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2506
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2504
 msgid "Disabled aspect ratio correction"
 msgstr "縦横比修正無効"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:641
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2523
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2520
 msgid "Filtering enabled"
 msgstr "フィルター適用"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:643
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2525
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2522
 msgid "Filtering disabled"
 msgstr "フィルター無効"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:672
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2553
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2549
 msgid "Stretch mode"
 msgstr "ストレッチモード"
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:62
-msgid "Normal (no scaling)"
-msgstr "標準比率"
-
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:92
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:84
 msgctxt "lowres"
 msgid "Normal (no scaling)"
 msgstr "標準比率"
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2466
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2463
 msgid "Active graphics filter:"
 msgstr "適用中の映像フィルター："
 
@@ -2747,37 +2743,17 @@ msgstr "スケールを拡大する"
 msgid "Decrease the scale factor"
 msgstr "スケールを縮小する"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:442
-msgid "Switch to nearest neighbour scaling"
-msgstr "最近傍補間に切り替える"
-
-#: backends/graphics/sdl/sdl-graphics.cpp:443
-msgid "Switch to AdvMame 2x/3x scaling"
-msgstr "Scale2x/3xに切り替える"
-
-#: backends/graphics/sdl/sdl-graphics.cpp:445
-msgid "Switch to HQ 2x/3x scaling"
-msgstr "HQ 2x/3xに切り替える"
-
-#: backends/graphics/sdl/sdl-graphics.cpp:447
-msgid "Switch to 2xSai scaling"
-msgstr "2xSaiに切り替える"
-
-#: backends/graphics/sdl/sdl-graphics.cpp:448
-msgid "Switch to Super2xSai scaling"
-msgstr "Super2xSaiに切り替える"
-
-#: backends/graphics/sdl/sdl-graphics.cpp:449
-msgid "Switch to SuperEagle scaling"
-msgstr "SuperEagleに切り替える"
-
-#: backends/graphics/sdl/sdl-graphics.cpp:450
-msgid "Switch to TV 2x scaling"
+#: backends/graphics/sdl/sdl-graphics.cpp:436
+#, fuzzy
+#| msgid "Switch to TV 2x scaling"
+msgid "Switch to the next scaler"
 msgstr "TV 2xに切り替える"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:451
-msgid "Switch to DotMatrix scaling"
-msgstr "DotMatrixに切り替える"
+#: backends/graphics/sdl/sdl-graphics.cpp:441
+#, fuzzy
+#| msgid "Switch to nearest neighbour scaling"
+msgid "Switch to the previous scaler"
+msgstr "最近傍補間に切り替える"
 
 #: backends/keymapper/hardware-input.cpp:245
 msgid "Left Mouse Button"
@@ -7939,6 +7915,27 @@ msgstr ""
 "Arialが必要です。LiberationFontsを使用する場合、LiberationMono、"
 "LiberationSans、LiberationSerifが必要です。GNUFreeFontを使用する場合、"
 "FreeMono、FreeSans、FreeSerifが必要です。"
+
+#~ msgid "Normal (no scaling)"
+#~ msgstr "標準比率"
+
+#~ msgid "Switch to AdvMame 2x/3x scaling"
+#~ msgstr "Scale2x/3xに切り替える"
+
+#~ msgid "Switch to HQ 2x/3x scaling"
+#~ msgstr "HQ 2x/3xに切り替える"
+
+#~ msgid "Switch to 2xSai scaling"
+#~ msgstr "2xSaiに切り替える"
+
+#~ msgid "Switch to Super2xSai scaling"
+#~ msgstr "Super2xSaiに切り替える"
+
+#~ msgid "Switch to SuperEagle scaling"
+#~ msgstr "SuperEagleに切り替える"
+
+#~ msgid "Switch to DotMatrix scaling"
+#~ msgstr "DotMatrixに切り替える"
 
 #~ msgid "ScummVM Main Menu"
 #~ msgstr "ScummVMメインメニュー"

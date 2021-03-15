@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-03-14 17:52+0000\n"
+"POT-Creation-Date: 2021-03-15 14:48+0000\n"
 "PO-Revision-Date: 2021-01-27 11:15+0000\n"
 "Last-Translator: Morgan Roberts <morganroberts@mentercaerffili.cymru>\n"
 "Language-Team: Welsh <https://translations.scummvm.org/projects/scummvm/"
@@ -2167,7 +2167,7 @@ msgid ""
 msgstr ""
 
 #: engines/engine.cpp:548 engines/metaengine.cpp:325 engines/savestate.cpp:81
-#: backends/platform/ios7/ios7_osys_main.cpp:277 engines/sky/metaengine.cpp:176
+#: backends/platform/ios7/ios7_osys_main.cpp:251 engines/sky/metaengine.cpp:176
 #: engines/xeen/saves.cpp:290
 msgid "Autosave"
 msgstr ""
@@ -2542,28 +2542,28 @@ msgid "Do you want to quit ?"
 msgstr ""
 
 #: backends/graphics/opengl/opengl-graphics.cpp:244
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:83
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:73
 #: engines/twine/metaengine.cpp:339
 msgid "Center"
 msgstr ""
 
 #: backends/graphics/opengl/opengl-graphics.cpp:245
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:84
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:74
 msgid "Pixel-perfect scaling"
 msgstr ""
 
 #: backends/graphics/opengl/opengl-graphics.cpp:246
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:85
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:75
 msgid "Fit to window"
 msgstr ""
 
 #: backends/graphics/opengl/opengl-graphics.cpp:247
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:86
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:76
 msgid "Stretch to window"
 msgstr ""
 
 #: backends/graphics/opengl/opengl-graphics.cpp:248
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:87
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:77
 msgid "Fit to window (4:3)"
 msgstr ""
 
@@ -2573,40 +2573,36 @@ msgid "Resolution: %dx%d"
 msgstr ""
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:618
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2500
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2498
 msgid "Enabled aspect ratio correction"
 msgstr ""
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:620
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2506
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2504
 msgid "Disabled aspect ratio correction"
 msgstr ""
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:641
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2523
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2520
 msgid "Filtering enabled"
 msgstr ""
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:643
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2525
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2522
 msgid "Filtering disabled"
 msgstr ""
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:672
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2553
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2549
 msgid "Stretch mode"
 msgstr ""
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:62
-msgid "Normal (no scaling)"
-msgstr ""
-
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:92
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:84
 msgctxt "lowres"
 msgid "Normal (no scaling)"
 msgstr ""
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2466
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2463
 msgid "Active graphics filter:"
 msgstr ""
 
@@ -2659,36 +2655,12 @@ msgstr ""
 msgid "Decrease the scale factor"
 msgstr ""
 
-#: backends/graphics/sdl/sdl-graphics.cpp:442
-msgid "Switch to nearest neighbour scaling"
+#: backends/graphics/sdl/sdl-graphics.cpp:436
+msgid "Switch to the next scaler"
 msgstr ""
 
-#: backends/graphics/sdl/sdl-graphics.cpp:443
-msgid "Switch to AdvMame 2x/3x scaling"
-msgstr ""
-
-#: backends/graphics/sdl/sdl-graphics.cpp:445
-msgid "Switch to HQ 2x/3x scaling"
-msgstr ""
-
-#: backends/graphics/sdl/sdl-graphics.cpp:447
-msgid "Switch to 2xSai scaling"
-msgstr ""
-
-#: backends/graphics/sdl/sdl-graphics.cpp:448
-msgid "Switch to Super2xSai scaling"
-msgstr ""
-
-#: backends/graphics/sdl/sdl-graphics.cpp:449
-msgid "Switch to SuperEagle scaling"
-msgstr ""
-
-#: backends/graphics/sdl/sdl-graphics.cpp:450
-msgid "Switch to TV 2x scaling"
-msgstr ""
-
-#: backends/graphics/sdl/sdl-graphics.cpp:451
-msgid "Switch to DotMatrix scaling"
+#: backends/graphics/sdl/sdl-graphics.cpp:441
+msgid "Switch to the previous scaler"
 msgstr ""
 
 #: backends/keymapper/hardware-input.cpp:245
