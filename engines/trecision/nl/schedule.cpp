@@ -51,20 +51,6 @@ bool MessageQueue::getMessage() {
 }
 
 /*-------------------------------------------------------------------------*/
-/*                            INITMESSAGESYSTEM          				   */
-/*-------------------------------------------------------------------------*/
-void InitMessageSystem() {
-	g_vm->_gameQueue.initQueue();
-	g_vm->_animQueue.initQueue();
-	g_vm->_characterQueue.initQueue();
-	for (uint8 i = 0; i < MAXMESSAGE; i++) {
-		g_vm->_gameQueue._event[i] = &g_vm->_gameMsg[i];
-		g_vm->_characterQueue._event[i] = &g_vm->_characterMsg[i];
-		g_vm->_animQueue._event[i] = &g_vm->_animMsg[i];
-	}
-}
-
-/*-------------------------------------------------------------------------*/
 /*                                INITQUEUE           					   */
 /*-------------------------------------------------------------------------*/
 void MessageQueue::initQueue() {

@@ -197,7 +197,7 @@ void VMouseCopy() {
 }
 
 /*-----------------17/02/95 09.53-------------------
- TextLength - calcola lunghezza str dal car 0 a num
+ TextLength - Compute string length from character 0 to num
 --------------------------------------------------*/
 uint16 TextLength(const char *sign, uint16 num) {
 	if (sign == nullptr)

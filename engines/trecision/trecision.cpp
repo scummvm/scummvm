@@ -33,6 +33,7 @@
 #include "common/archive.h"
 #include "common/config-manager.h"
 #include "common/fs.h"
+#include "nl/define.h"
 
 #include "trecision/nl/extern.h"
 #include "trecision/nl/sysdef.h"
@@ -201,6 +202,8 @@ void TrecisionEngine::EventLoop() {
 			case Common::KEYCODE_CAPSLOCK:
 				_fastWalkLocked = false;
 				break;
+			default:
+				break;
 			}
 			break;
 
@@ -210,6 +213,48 @@ void TrecisionEngine::EventLoop() {
 	}
 	//g_system->delayMillis(10);
 	g_system->updateScreen();
+}
+
+/*-----------------03/01/97 16.15-------------------
+					InitMain
+--------------------------------------------------*/
+void TrecisionEngine::initMain() {
+	for (int c = 0; c < MAXOBJ; c++)
+		_obj[c]._position = -1;
+
+	initNames();
+	initScript();
+	openSys();
+
+	LoadAll();
+
+	InitMessageSystem();
+
+	_inventory[_inventorySize++] = iBANCONOTE;
+	_inventory[_inventorySize++] = iSAM;
+	_inventory[_inventorySize++] = iCARD03;
+	_inventory[_inventorySize++] = iPEN;
+	_inventory[_inventorySize++] = iKEY05;
+
+	_curRoom = rINTRO;
+
+	ProcessTime();
+
+	doEvent(MC_SYSTEM, ME_START, MP_DEFAULT, 0, 0, 0, 0);
+}
+
+/*-------------------------------------------------------------------------*/
+/*                            INITMESSAGESYSTEM          				   */
+/*-------------------------------------------------------------------------*/
+void TrecisionEngine::InitMessageSystem() {
+	_gameQueue.initQueue();
+	_animQueue.initQueue();
+	_characterQueue.initQueue();
+	for (uint8 i = 0; i < MAXMESSAGE; i++) {
+		_gameQueue._event[i] = &_gameMsg[i];
+		_characterQueue._event[i] = &_characterMsg[i];
+		_animQueue._event[i] = &_animMsg[i];
+	}
 }
 
 } // End of namespace Trecision
