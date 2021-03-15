@@ -189,8 +189,10 @@ Console::Console(AsylumEngine *engine) : _vm(engine) {
     registerCmd("show_script",    WRAP_METHOD(Console, cmdShowScript));
 
     registerCmd("scene",          WRAP_METHOD(Console, cmdChangeScene));
-    registerCmd("encounter",      WRAP_METHOD(Console, cmdRunEncounter));
     registerCmd("puzzle",         WRAP_METHOD(Console, cmdRunPuzzle));
+
+    registerCmd("encounter",      WRAP_METHOD(Console, cmdRunEncounter));
+    registerCmd("show_enc",       WRAP_METHOD(Console, cmdShowEncounter));
 
     registerCmd("items",          WRAP_METHOD(Console, cmdListItems));
     registerCmd("grab",           WRAP_METHOD(Console, cmdAddToInventory));
@@ -248,9 +250,11 @@ bool Console::cmdHelp(int, const char **) {
     debugPrintf(" video       - play a video\n");
     debugPrintf(" script      - run a script\n");
     debugPrintf(" scene       - change the scene\n");
-    debugPrintf(" show_script - Show script commands\n");
-    debugPrintf(" encounter   - run an encounter\n");
+    debugPrintf(" show_script - show script commands\n");
     debugPrintf(" puzzle      - run an puzzle\n");
+    debugPrintf("\n");
+    debugPrintf(" encounter   - run an encounter\n");
+    debugPrintf(" show_enc    - show encounter commands\n");
     debugPrintf("\n");
     debugPrintf(" items       - list all grabbable objects\n");
     debugPrintf(" grab        - add an item to inventory\n");
@@ -630,6 +634,32 @@ bool Console::cmdRunEncounter(int32 argc, const char **argv) {
 	                      data->actorIndex);
 
 	return false;
+}
+
+bool Console::cmdShowEncounter(int32 argc, const char **argv) {
+	if (argc != 2) {
+		debugPrintf("Syntax: %s <encounter index>\n", argv[0]);
+		return true;
+	}
+
+	// Check index is valid
+	int32 index = atoi(argv[1]);
+	if (index < 0 || index >= (int32)getEncounter()->_items.size()) {
+		debugPrintf("[Error] Invalid index (was: %d - valid: [0-%d])\n", index, getEncounter()->_items.size() - 1);
+		return true;
+	}
+
+	int32 i = 0;
+	ResourceId resourceId = getEncounter()->_items[index].scriptResourceId;
+	do {
+		Encounter::ScriptEntry entry = getEncounter()->getScriptEntry(resourceId, i);
+
+		if (entry.opcode > 25)
+			break;
+		debugPrintf("%2d %s\n", i, entry.toString().c_str());
+	} while (++i);
+
+	return true;
 }
 
 bool Console::cmdRunPuzzle(int32 argc, const char **argv) {
