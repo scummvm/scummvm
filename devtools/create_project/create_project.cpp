@@ -1058,6 +1058,8 @@ const Feature s_features[] = {
 	{             "bink",                      "USE_BINK", false, true,  "Bink video support" },
 	{          "scalers",                   "USE_SCALERS", false, true,  "Scalers" },
 	{        "hqscalers",                "USE_HQ_SCALERS", false, true,  "HQ scalers" },
+	{      "edgescalers",              "USE_EDGE_SCALERS", false, true,  "Edge scalers" },
+	{           "aspect",                    "USE_ASPECT", false, true,  "Aspect ratio correction" },
 	{            "16bit",                 "USE_RGB_COLOR", false, true,  "16bit color support" },
 	{          "highres",                   "USE_HIGHRES", false, true,  "high resolution" },
 	{          "mt32emu",                   "USE_MT32EMU", false, true,  "integrated MT-32 emulator" },
