@@ -154,9 +154,16 @@ void Button_SetNormalGraphic(GUIButton *guil, int slotn) {
 	if (((guil->IsMouseOver == 0) || (guil->MouseOverImage < 1)) && (guil->IsPushed == 0))
 		guil->CurrentImage = slotn;
 	guil->Image = slotn;
-	// update the clickable area to the same size as the graphic
-	guil->Width = _GP(game).SpriteInfos[slotn].Width;
-	guil->Height = _GP(game).SpriteInfos[slotn].Height;
+
+	// WORKAROUND: Showing the map in Shivah has a button with invalid slot -1
+	if (slotn == -1) {
+		guil->Width = 0;
+		guil->Height = 0;
+	} else {
+		// update the clickable area to the same size as the graphic
+		guil->Width = _GP(game).SpriteInfos[slotn].Width;
+		guil->Height = _GP(game).SpriteInfos[slotn].Height;
+	}
 
 	_G(guis_need_update) = 1;
 	FindAndRemoveButtonAnimation(guil->ParentId, guil->Id);
