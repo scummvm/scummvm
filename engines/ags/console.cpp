@@ -23,13 +23,18 @@
 #include "ags/console.h"
 #include "ags/ags.h"
 #include "ags/globals.h"
+#include "ags/shared/ac/spritecache.h"
+#include "ags/shared/gfx/allegrobitmap.h"
+#include "image/png.h"
 
 namespace AGS {
 
 AGSConsole::AGSConsole(AGSEngine *vm) : GUI::Debugger(), _vm(vm), _logOutputTarget(nullptr), _agsDebuggerOutput(nullptr) {
 	registerCmd("ags_debug_groups_list",   WRAP_METHOD(AGSConsole, Cmd_listDebugGroups));
 	registerCmd("ags_debug_groups_set",  WRAP_METHOD(AGSConsole, Cmd_setDebugGroupLevel));
-	
+	registerCmd("ags_sprite_info",   WRAP_METHOD(AGSConsole, Cmd_getSptintInfo));
+	registerCmd("ags_sprite_dump",  WRAP_METHOD(AGSConsole, Cmd_dumpSrite));
+
 	_logOutputTarget = new LogOutputTarget();
 	_agsDebuggerOutput = _GP(DbgMgr).RegisterOutput("ScummVMLog", _logOutputTarget, AGS3::AGS::Shared::kDbgMsg_None);
 }
@@ -163,6 +168,66 @@ void AGSConsole::printLevelList() {
 	debugPrintf("%s", levelNames[0].name);
 	for (int i = 1 ; levelNames[i].name != nullptr ; ++i)
 		debugPrintf(", %s", levelNames[i].name);
+}
+
+bool AGSConsole::Cmd_getSptintInfo(int argc, const char **argv) {
+	if (argc != 2) {
+		debugPrintf("Usage: %s SpriteNumber\n", argv[0]);
+		return true;
+	}
+
+	int spriteId = atoi(argv[1]);
+	if (!_GP(spriteset).DoesSpriteExist(spriteId)) {
+		debugPrintf("Sprite %d does not exist\n", spriteId);
+		return true;
+	}
+
+	AGS3::Shared::Bitmap *sprite = _GP(spriteset)[spriteId];
+	if (!sprite) {
+		debugPrintf("Failed to get sprite %d\n", spriteId);
+		return true;
+	}
+
+	debugPrintf("Size: %dx%d\n", sprite->GetWidth(), sprite->GetHeight());
+	debugPrintf("Color depth: %d\n", sprite->GetColorDepth());
+	return true;
+}
+
+bool AGSConsole::Cmd_dumpSrite(int argc, const char **argv) {
+	if (argc != 2) {
+		debugPrintf("Usage: %s SpriteNumber\n", argv[0]);
+		return true;
+	}
+
+	int spriteId = atoi(argv[1]);
+	if (!_GP(spriteset).DoesSpriteExist(spriteId)) {
+		debugPrintf("Sprite %d does not exist\n", spriteId);
+		return true;
+	}
+
+	AGS3::Shared::Bitmap *sprite = _GP(spriteset)[spriteId];
+	if (!sprite) {
+		debugPrintf("Failed to get sprite %d\n", spriteId);
+		return true;
+	}
+
+	Common::String pngFile = Common::String::format("%s-sprite%03d.png", _vm->getGameId().c_str(), spriteId);
+	Common::DumpFile df;
+	if (df.open(pngFile)) {
+		byte *palette = nullptr;
+		if (sprite->GetColorDepth() == 8) {
+			palette = new byte[256 * 3];
+			for (int c = 0, i = 0 ; c < 256 ; ++c, i += 3) {
+				palette[i] = _G(current_palette)[c].r * 255 / 63;
+				palette[i + 1] = _G(current_palette)[c].g * 255 / 63;
+				palette[i + 2] = _G(current_palette)[c].b * 255 / 63;
+			}
+		}
+		Image::writePNG(df, sprite->GetAllegroBitmap()->getSurface().rawSurface(), palette);
+		delete [] palette;
+	}
+
+	return true;
 }
 
 LogOutputTarget::LogOutputTarget() {
