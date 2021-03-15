@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-03-15 14:53+0000\n"
-"PO-Revision-Date: 2021-03-15 15:34+0000\n"
+"PO-Revision-Date: 2021-03-15 23:24+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
@@ -312,17 +312,13 @@ msgid "Backend"
 msgstr "Back-end"
 
 #: gui/editgamedialog.cpp:250
-#, fuzzy
-#| msgid "Override global audio settings"
 msgid "Override global backend settings"
-msgstr "Ignorar opciones de sonido generales"
+msgstr "Ignorar opciones generales del back-end"
 
 #: gui/editgamedialog.cpp:252
-#, fuzzy
-#| msgid "Override global audio settings"
 msgctxt "lowres"
 msgid "Override global backend settings"
-msgstr "Ignorar opciones de sonido generales"
+msgstr "Ignorar opciones generales del back-end"
 
 #: gui/editgamedialog.cpp:266 gui/options.cpp:1858 engines/dialogs.cpp:301
 msgid "Audio"
