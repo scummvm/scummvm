@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.5.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-03-15 14:48+0000\n"
+"POT-Creation-Date: 2021-03-15 14:53+0000\n"
 "PO-Revision-Date: 2021-01-02 18:37+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Basque <https://translations.scummvm.org/projects/scummvm/"
@@ -55,7 +55,7 @@ msgctxt "lowres"
 msgid "Go up"
 msgstr "Joan gora"
 
-#: gui/browser.cpp:82 gui/chooser.cpp:46 gui/editgamedialog.cpp:370
+#: gui/browser.cpp:82 gui/chooser.cpp:46 gui/editgamedialog.cpp:376
 #: gui/editrecorddialog.cpp:67 gui/filebrowser-dialog.cpp:65
 #: gui/fluidsynth-dialog.cpp:153 gui/KeysDialog.cpp:44 gui/massadd.cpp:92
 #: gui/options.cpp:1946 gui/predictivedialog.cpp:69 gui/recorderdialog.cpp:68
@@ -91,7 +91,7 @@ msgstr "Aukeratu"
 msgid "Select directory where to download game data"
 msgstr "Jokoaren jaitsiera direktorioa aukeratu"
 
-#: gui/downloaddialog.cpp:50 gui/editgamedialog.cpp:554 gui/launcher.cpp:207
+#: gui/downloaddialog.cpp:50 gui/editgamedialog.cpp:569 gui/launcher.cpp:207
 msgid "Select directory with game data"
 msgstr "Jokoaren direktorioa aukeratu"
 
@@ -161,7 +161,7 @@ msgstr ""
 "Deskarga direktorioa ezin da sortu - zehaztutako direktorioak izen bereko "
 "fitxategia dauka."
 
-#: gui/downloaddialog.cpp:147 gui/editgamedialog.cpp:371
+#: gui/downloaddialog.cpp:147 gui/editgamedialog.cpp:377
 #: gui/fluidsynth-dialog.cpp:154 gui/KeysDialog.cpp:43 gui/launcher.cpp:509
 #: gui/launcher.cpp:513 gui/massadd.cpp:89 gui/options.cpp:1948
 #: gui/saveload-dialog.cpp:1166 engines/engine.cpp:511 engines/engine.cpp:522
@@ -199,16 +199,16 @@ msgstr "Jaitsita %s %S / %s %S"
 msgid "Download speed: %s %S"
 msgstr "Jaitsiera abiadura: %s %S"
 
-#: gui/editgamedialog.cpp:141 engines/dialogs.cpp:285
+#: gui/editgamedialog.cpp:142 engines/dialogs.cpp:285
 msgid "Game"
 msgstr "Jokoa"
 
-#: gui/editgamedialog.cpp:145
+#: gui/editgamedialog.cpp:146
 msgid "ID:"
 msgstr "ID:"
 
-#: gui/editgamedialog.cpp:145 gui/editgamedialog.cpp:147
-#: gui/editgamedialog.cpp:148
+#: gui/editgamedialog.cpp:146 gui/editgamedialog.cpp:148
+#: gui/editgamedialog.cpp:149
 msgid ""
 "Short game identifier used for referring to saved games and running the game "
 "from the command line"
@@ -216,212 +216,225 @@ msgstr ""
 "Partida gordeak identifikatzeko eta jokoa komando lerrotik abiarazteko "
 "erabiltzen den identifikatzailea"
 
-#: gui/editgamedialog.cpp:147
+#: gui/editgamedialog.cpp:148
 msgctxt "lowres"
 msgid "ID:"
 msgstr "ID:"
 
-#: gui/editgamedialog.cpp:152 gui/editrecorddialog.cpp:59
+#: gui/editgamedialog.cpp:153 gui/editrecorddialog.cpp:59
 msgid "Name:"
 msgstr "Izena:"
 
-#: gui/editgamedialog.cpp:152 gui/editgamedialog.cpp:154
-#: gui/editgamedialog.cpp:155
+#: gui/editgamedialog.cpp:153 gui/editgamedialog.cpp:155
+#: gui/editgamedialog.cpp:156
 msgid "Full title of the game"
 msgstr "Jokoaren izen osoa"
 
-#: gui/editgamedialog.cpp:154
+#: gui/editgamedialog.cpp:155
 msgctxt "lowres"
 msgid "Name:"
 msgstr "Izena:"
 
-#: gui/editgamedialog.cpp:158 engines/mohawk/dialogs.cpp:140
+#: gui/editgamedialog.cpp:159 engines/mohawk/dialogs.cpp:140
 #: engines/mohawk/dialogs.cpp:341
 msgid "Language:"
 msgstr "Hizkuntza:"
 
-#: gui/editgamedialog.cpp:158 gui/editgamedialog.cpp:159
+#: gui/editgamedialog.cpp:159 gui/editgamedialog.cpp:160
 msgid ""
 "Language of the game. This will not turn your Spanish game version into "
 "English"
 msgstr ""
 "Jokoaren hizkuntza. Honek ez du zure ingelesezko bertsioa frantsesera pasako"
 
-#: gui/editgamedialog.cpp:160 gui/editgamedialog.cpp:174 gui/options.cpp:1269
+#: gui/editgamedialog.cpp:161 gui/editgamedialog.cpp:175 gui/options.cpp:1269
 #: gui/options.cpp:1289 gui/options.cpp:1302 gui/options.cpp:1316
 #: gui/options.cpp:1330 gui/options.cpp:1339 gui/options.cpp:2135
 #: gui/options.cpp:2307 audio/null.cpp:41 engines/ags/detection.cpp:90
 msgid "<default>"
 msgstr "<lehenetsia>"
 
-#: gui/editgamedialog.cpp:170
+#: gui/editgamedialog.cpp:171
 msgid "Platform:"
 msgstr "Plataforma:"
 
-#: gui/editgamedialog.cpp:170 gui/editgamedialog.cpp:172
-#: gui/editgamedialog.cpp:173
+#: gui/editgamedialog.cpp:171 gui/editgamedialog.cpp:173
+#: gui/editgamedialog.cpp:174
 msgid "Platform the game was originally designed for"
 msgstr "Jatorriz, jokoa diseinatua izan zen plataforma"
 
-#: gui/editgamedialog.cpp:172
+#: gui/editgamedialog.cpp:173
 msgctxt "lowres"
 msgid "Platform:"
 msgstr "Plataforma:"
 
-#: gui/editgamedialog.cpp:186
+#: gui/editgamedialog.cpp:187
 msgid "Engine"
 msgstr "Motorea"
 
-#: gui/editgamedialog.cpp:202 gui/options.cpp:1659 gui/options.cpp:1792
+#: gui/editgamedialog.cpp:203 gui/options.cpp:1659 gui/options.cpp:1792
 #: backends/graphics/sdl/sdl-graphics.cpp:382
 #: backends/graphics3d/sdl/sdl-graphics3d.cpp:132
 msgid "Graphics"
 msgstr "Grafikoak"
 
-#: gui/editgamedialog.cpp:202 gui/options.cpp:1659 gui/options.cpp:1792
+#: gui/editgamedialog.cpp:203 gui/options.cpp:1659 gui/options.cpp:1792
 msgid "GFX"
 msgstr "GFX"
 
-#: gui/editgamedialog.cpp:208
+#: gui/editgamedialog.cpp:209
 msgid "Override global graphic settings"
 msgstr "Ezarpen grafiko globalak baliogabetu"
 
-#: gui/editgamedialog.cpp:210
+#: gui/editgamedialog.cpp:211
 msgctxt "lowres"
 msgid "Override global graphic settings"
 msgstr "Ezarpen grafiko globalak baliogabetu"
 
-#: gui/editgamedialog.cpp:220 gui/options.cpp:1803
+#: gui/editgamedialog.cpp:221 gui/options.cpp:1803
 msgid "Shader"
 msgstr "Itzaldura"
 
-#: gui/editgamedialog.cpp:223
+#: gui/editgamedialog.cpp:224
 msgid "Override global shader settings"
 msgstr "Itzaldura ezarpen globalak baliogabetu"
 
-#: gui/editgamedialog.cpp:225
+#: gui/editgamedialog.cpp:226
 msgctxt "lowres"
 msgid "Override global shader settings"
 msgstr "Itzaldura ezarpen globalak baliogabetu"
 
-#: gui/editgamedialog.cpp:239 gui/options.cpp:1837 engines/dialogs.cpp:326
+#: gui/editgamedialog.cpp:240 gui/options.cpp:1837 engines/dialogs.cpp:326
 msgid "Keymaps"
 msgstr "Tekla-mapak"
 
-#: gui/editgamedialog.cpp:246 gui/options.cpp:1844 engines/dialogs.cpp:333
+#: gui/editgamedialog.cpp:247 gui/options.cpp:1844 engines/dialogs.cpp:333
 msgid "Backend"
 msgstr "Motorra"
 
-#: gui/editgamedialog.cpp:260 gui/options.cpp:1858 engines/dialogs.cpp:301
+#: gui/editgamedialog.cpp:250
+#, fuzzy
+#| msgid "Override global audio settings"
+msgid "Override global backend settings"
+msgstr "Soinu ezarpen globalak baliogabetu"
+
+#: gui/editgamedialog.cpp:252
+#, fuzzy
+#| msgid "Override global audio settings"
+msgctxt "lowres"
+msgid "Override global backend settings"
+msgstr "Soinu ezarpen globalak baliogabetu"
+
+#: gui/editgamedialog.cpp:266 gui/options.cpp:1858 engines/dialogs.cpp:301
 msgid "Audio"
 msgstr "Soinua"
 
-#: gui/editgamedialog.cpp:263
+#: gui/editgamedialog.cpp:269
 msgid "Override global audio settings"
 msgstr "Soinu ezarpen globalak baliogabetu"
 
-#: gui/editgamedialog.cpp:265
+#: gui/editgamedialog.cpp:271
 msgctxt "lowres"
 msgid "Override global audio settings"
 msgstr "Soinu ezarpen globalak baliogabetu"
 
-#: gui/editgamedialog.cpp:274 gui/options.cpp:1863
+#: gui/editgamedialog.cpp:280 gui/options.cpp:1863
 msgid "Volume"
 msgstr "Bolumena"
 
-#: gui/editgamedialog.cpp:276 gui/options.cpp:1865
+#: gui/editgamedialog.cpp:282 gui/options.cpp:1865
 msgctxt "lowres"
 msgid "Volume"
 msgstr "Bolumena"
 
-#: gui/editgamedialog.cpp:279
+#: gui/editgamedialog.cpp:285
 msgid "Override global volume settings"
 msgstr "Bolumen ezarpen globalak baliogabetu"
 
-#: gui/editgamedialog.cpp:281
+#: gui/editgamedialog.cpp:287
 msgctxt "lowres"
 msgid "Override global volume settings"
 msgstr "Bolumen ezarpen globalak baliogabetu"
 
-#: gui/editgamedialog.cpp:292 gui/options.cpp:1873
+#: gui/editgamedialog.cpp:298 gui/options.cpp:1873
 msgid "MIDI"
 msgstr "MIDI"
 
-#: gui/editgamedialog.cpp:295
+#: gui/editgamedialog.cpp:301
 msgid "Override global MIDI settings"
 msgstr "MIDI ezarpen globalak baliogabetu"
 
-#: gui/editgamedialog.cpp:297
+#: gui/editgamedialog.cpp:303
 msgctxt "lowres"
 msgid "Override global MIDI settings"
 msgstr "MIDI ezarpen globalak baliogabetu"
 
-#: gui/editgamedialog.cpp:307 gui/options.cpp:1879
+#: gui/editgamedialog.cpp:313 gui/options.cpp:1879
 msgid "MT-32"
 msgstr "MT-32"
 
-#: gui/editgamedialog.cpp:310
+#: gui/editgamedialog.cpp:316
 msgid "Override global MT-32 settings"
 msgstr "MT-32 ezarpen globalak baliogabetu"
 
-#: gui/editgamedialog.cpp:312
+#: gui/editgamedialog.cpp:318
 msgctxt "lowres"
 msgid "Override global MT-32 settings"
 msgstr "MT-32 ezarpen globalak baliogabetu"
 
-#: gui/editgamedialog.cpp:321 gui/options.cpp:1886
+#: gui/editgamedialog.cpp:327 gui/options.cpp:1886
 msgid "Paths"
 msgstr "Bide-izenak"
 
-#: gui/editgamedialog.cpp:323 gui/options.cpp:1888
+#: gui/editgamedialog.cpp:329 gui/options.cpp:1888
 msgctxt "lowres"
 msgid "Paths"
 msgstr "Bideak"
 
-#: gui/editgamedialog.cpp:330
+#: gui/editgamedialog.cpp:336
 msgid "Game Path:"
 msgstr "Jokoa:"
 
-#: gui/editgamedialog.cpp:332
+#: gui/editgamedialog.cpp:338
 msgctxt "lowres"
 msgid "Game Path:"
 msgstr "Jokoa:"
 
-#: gui/editgamedialog.cpp:337 gui/options.cpp:2064
+#: gui/editgamedialog.cpp:343 gui/options.cpp:2064
 msgid "Extra Path:"
 msgstr "Gehigarriak:"
 
-#: gui/editgamedialog.cpp:337 gui/editgamedialog.cpp:339
-#: gui/editgamedialog.cpp:340
+#: gui/editgamedialog.cpp:343 gui/editgamedialog.cpp:345
+#: gui/editgamedialog.cpp:346
 msgid "Specifies path to additional data used by the game"
 msgstr "Jokoak erabiltzen duen datu gehigarrien bide-izena"
 
-#: gui/editgamedialog.cpp:339 gui/options.cpp:2066
+#: gui/editgamedialog.cpp:345 gui/options.cpp:2066
 msgctxt "lowres"
 msgid "Extra Path:"
 msgstr "Gehigarria:"
 
-#: gui/editgamedialog.cpp:346 gui/options.cpp:2048
+#: gui/editgamedialog.cpp:352 gui/options.cpp:2048
 msgid "Save Path:"
 msgstr "Partida gordeak:"
 
-#: gui/editgamedialog.cpp:346 gui/editgamedialog.cpp:348
-#: gui/editgamedialog.cpp:349 gui/options.cpp:2048 gui/options.cpp:2050
+#: gui/editgamedialog.cpp:352 gui/editgamedialog.cpp:354
+#: gui/editgamedialog.cpp:355 gui/options.cpp:2048 gui/options.cpp:2050
 #: gui/options.cpp:2051
 msgid "Specifies where your saved games are put"
 msgstr "Zure gordetako partidak non gordeko diren zehazten du"
 
-#: gui/editgamedialog.cpp:348 gui/options.cpp:2050
+#: gui/editgamedialog.cpp:354 gui/options.cpp:2050
 msgctxt "lowres"
 msgid "Save Path:"
 msgstr "Partida gordeak:"
 
-#: gui/editgamedialog.cpp:360 engines/dialogs.cpp:348
+#: gui/editgamedialog.cpp:366 engines/dialogs.cpp:348
 msgid "Achievements"
 msgstr "Lorpenak"
 
-#: gui/editgamedialog.cpp:384 gui/editgamedialog.cpp:479
-#: gui/editgamedialog.cpp:541 gui/editgamedialog.cpp:602 gui/options.cpp:1973
+#: gui/editgamedialog.cpp:390 gui/editgamedialog.cpp:490
+#: gui/editgamedialog.cpp:556 gui/editgamedialog.cpp:617 gui/options.cpp:1973
 #: gui/options.cpp:1979 gui/options.cpp:1987 gui/options.cpp:2011
 #: gui/options.cpp:2059 gui/options.cpp:2067 gui/options.cpp:2076
 #: gui/options.cpp:2331 gui/options.cpp:2337 gui/options.cpp:2344
@@ -431,25 +444,25 @@ msgctxt "path"
 msgid "None"
 msgstr "Bat ere ez"
 
-#: gui/editgamedialog.cpp:389 gui/editgamedialog.cpp:485
-#: gui/editgamedialog.cpp:606 gui/options.cpp:1967 gui/options.cpp:2325
+#: gui/editgamedialog.cpp:395 gui/editgamedialog.cpp:496
+#: gui/editgamedialog.cpp:621 gui/options.cpp:1967 gui/options.cpp:2325
 #: gui/options.cpp:2601 backends/platform/wii/options.cpp:56
 msgid "Default"
 msgstr "Lehenetsia"
 
-#: gui/editgamedialog.cpp:534 gui/options.cpp:2616
+#: gui/editgamedialog.cpp:549 gui/options.cpp:2616
 msgid "Select SoundFont"
 msgstr "SoundFont-a aukeratu"
 
-#: gui/editgamedialog.cpp:573
+#: gui/editgamedialog.cpp:588
 msgid "Select additional game directory"
 msgstr "Direktorio gehigarria aukeratu"
 
-#: gui/editgamedialog.cpp:586 gui/options.cpp:2530
+#: gui/editgamedialog.cpp:601 gui/options.cpp:2530
 msgid "Select directory for saved games"
 msgstr "Partida gordeen direktorioa aukeratu"
 
-#: gui/editgamedialog.cpp:592
+#: gui/editgamedialog.cpp:607
 msgid ""
 "Saved games sync feature doesn't work with non-default directories. If you "
 "want your saved games to sync, use default directory."
@@ -458,7 +471,7 @@ msgstr ""
 "direktorioekin. Gordetako jokoak sinkronizatzeko, erabili lehenetsitako "
 "direktorioa."
 
-#: gui/editgamedialog.cpp:618
+#: gui/editgamedialog.cpp:633
 msgid "This game ID is already taken. Please choose another one."
 msgstr "ID hau jada erabilia izaten ari da. Mesedez, aukeratu beste bat."
 
