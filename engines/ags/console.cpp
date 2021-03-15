@@ -32,8 +32,8 @@ namespace AGS {
 AGSConsole::AGSConsole(AGSEngine *vm) : GUI::Debugger(), _vm(vm), _logOutputTarget(nullptr), _agsDebuggerOutput(nullptr) {
 	registerCmd("ags_debug_groups_list",   WRAP_METHOD(AGSConsole, Cmd_listDebugGroups));
 	registerCmd("ags_debug_groups_set",  WRAP_METHOD(AGSConsole, Cmd_setDebugGroupLevel));
-	registerCmd("ags_sprite_info",   WRAP_METHOD(AGSConsole, Cmd_getSptintInfo));
-	registerCmd("ags_sprite_dump",  WRAP_METHOD(AGSConsole, Cmd_dumpSrite));
+	registerCmd("ags_sprite_info",   WRAP_METHOD(AGSConsole, Cmd_getSpriteInfo));
+	registerCmd("ags_sprite_dump",  WRAP_METHOD(AGSConsole, Cmd_dumpSprite));
 
 	_logOutputTarget = new LogOutputTarget();
 	_agsDebuggerOutput = _GP(DbgMgr).RegisterOutput("ScummVMLog", _logOutputTarget, AGS3::AGS::Shared::kDbgMsg_None);
@@ -170,7 +170,7 @@ void AGSConsole::printLevelList() {
 		debugPrintf(", %s", levelNames[i].name);
 }
 
-bool AGSConsole::Cmd_getSptintInfo(int argc, const char **argv) {
+bool AGSConsole::Cmd_getSpriteInfo(int argc, const char **argv) {
 	if (argc != 2) {
 		debugPrintf("Usage: %s SpriteNumber\n", argv[0]);
 		return true;
@@ -193,7 +193,7 @@ bool AGSConsole::Cmd_getSptintInfo(int argc, const char **argv) {
 	return true;
 }
 
-bool AGSConsole::Cmd_dumpSrite(int argc, const char **argv) {
+bool AGSConsole::Cmd_dumpSprite(int argc, const char **argv) {
 	if (argc != 2) {
 		debugPrintf("Usage: %s SpriteNumber\n", argv[0]);
 		return true;

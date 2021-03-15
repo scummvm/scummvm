@@ -47,8 +47,8 @@ private:
 	bool Cmd_listDebugGroups(int argc, const char **argv);
 	bool Cmd_setDebugGroupLevel(int argc, const char **argv);
 
-	bool Cmd_getSptintInfo(int argc, const char **argv);
-	bool Cmd_dumpSrite(int argc, const char **argv);
+	bool Cmd_getSpriteInfo(int argc, const char **argv);
+	bool Cmd_dumpSprite(int argc, const char **argv);
 
 	const char *getVerbosityLevel(AGS3::uint32_t groupID) const;
 	AGS3::uint32_t parseGroup(const char *, bool &) const;
