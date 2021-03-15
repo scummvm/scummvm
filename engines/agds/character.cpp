@@ -134,16 +134,8 @@ void Character::direction(int dir) {
 	if (dir < 0)
 		return;
 
-	_description = animationDescription(dir);
-	_animation = _description? _engine->loadAnimation(_description->filename): nullptr;
 	_animationPos = Common::Point();
-	if (!_animation) {
-		debug("no animation?");
-		_phase = -1;
-		_frames = 0;
-		return;
-	}
-	_animation->rewind();
+	animate(dir, 100, false);
 }
 
 void Character::moveTo(const Common::String & processName, Common::Point dst, int dir) {
@@ -153,26 +145,39 @@ void Character::moveTo(const Common::String & processName, Common::Point dst, in
 	direction(dir);
 }
 
-void Character::animate(const Common::String & processName, Common::Point pos, int direction, int speed) {
-	debug("animate character: %d,%d %d %d", pos.x, pos.y, direction, speed);
-	_processName = processName;
+void Character::animate(int direction, int speed, bool jokes) {
 	if (direction == -1)
 		return;
-	auto jokes = _engine->jokes();
-	_description = jokes->animationDescription(direction);
+
+	auto character = jokes? _engine->jokes(): this;
+	_description = character->animationDescription(direction);
 	_animation = _description? _engine->loadAnimation(_description->filename): nullptr;
 	if (!_animation) {
-		warning("no jokes animation %d", direction);
+		warning("no %s animation %d", jokes? "jokes": "character", direction);
 		_phase = -1;
 		_frames = 0;
 		return;
 	}
 	_animation->speed(speed);
 	_animation->rewind();
+	if (!_jokes)
+		_animation->tick(); //load first frame
 	_phase = 0;
 	_frames = _animation->frames();
-	_animationPos = pos;
+	_jokes = jokes;
+	if (jokes)
+		_jokesDirection = direction;
+	else
+		_direction = direction;
 	debug("character animation frames: %d, enabled: %d, visible: %d", _frames, _enabled, _visible);
+}
+
+void Character::animate(const Common::String & processName, Common::Point pos, int direction, int speed) {
+	debug("animate character: %d,%d %d %d", pos.x, pos.y, direction, speed);
+	_processName = processName;
+	_animationPos = pos;
+
+	animate(direction, speed, true);
 }
 
 void Character::stop() {
@@ -191,11 +196,14 @@ void Character::tick() {
 
 	// debug("character %d/%d", _phase, _frames);
 	if (_phase >= 0 && _phase < _frames) {
-		_animation->tick();
+		if (_jokes)
+			_animation->tick();
 		_phase = _animation->phase();
 		if (_phase >= _frames) {
+			//many dialog scripts rely on jokes direction returned from direction notify var
 			_phase = -1;
 			_frames = 0;
+			//animate(_direction, 100, false);
 		}
 	}
 	_engine->reactivate(_processName, true);
