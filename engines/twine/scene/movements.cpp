@@ -113,15 +113,15 @@ int32 Movements::getAngleAndSetTargetActorDistance(int32 x1, int32 z1, int32 x2,
 
 	const int32 destAngle = (difZ * SCENE_SIZE_HALF) / targetActorDistance;
 
-	int32 startAngle = ANGLE_135;
-	//	stopAngle  = 0x100;
-
-	while (shadeAngleTable[startAngle] > destAngle) {
+	int32 startAngle = ANGLE_0;
+	//	stopAngle  = ANGLE_90;
+	const int16 *shadeAngleTab3(&shadeAngleTable[ANGLE_135]);
+	while (shadeAngleTab3[startAngle] > destAngle) {
 		startAngle++;
 	}
 
-	if (shadeAngleTable[startAngle] != destAngle) {
-		if ((shadeAngleTable[startAngle - 1] + shadeAngleTable[startAngle]) / 2 <= destAngle) {
+	if (shadeAngleTab3[startAngle] != destAngle) {
+		if ((shadeAngleTab3[startAngle - 1] + shadeAngleTab3[startAngle]) / 2 <= destAngle) {
 			startAngle--;
 		}
 	}
