@@ -61,7 +61,7 @@ static const LevelName levelNames[] = {
 
 struct GroupName{
 	const char* name;
-	uint32_t group;
+	AGS3::uint32_t group;
 };
 
 static const GroupName groupNames[] = {
@@ -70,7 +70,7 @@ static const GroupName groupNames[] = {
 	{"Script", AGS3::AGS::Shared::kDbgGroup_Script},
 	{"SpriteCache", AGS3::AGS::Shared::kDbgGroup_SprCache},
 	{"ManObj", AGS3::AGS::Shared::kDbgGroup_ManObj},
-	{nullptr, (uint32_t)-1}
+	{nullptr, (AGS3::uint32_t)-1}
 };
 
 bool AGSConsole::Cmd_listDebugGroups(int argc, const char **argv) {
@@ -98,7 +98,7 @@ bool AGSConsole::Cmd_setDebugGroupLevel(int argc, const char **argv) {
 	}
 
 	bool found = false;
-	uint32_t group = parseGroup(argv[1], found);
+	AGS3::uint32_t group = parseGroup(argv[1], found);
 	if (!found) {
 		debugPrintf("Unknown debug group '%s'\n", argv[1]);
 		debugPrintf("Valid groups are: ");
@@ -120,7 +120,7 @@ bool AGSConsole::Cmd_setDebugGroupLevel(int argc, const char **argv) {
 	return true;
 }
 
-const char *AGSConsole::getVerbosityLevel(uint32_t groupID) const {
+const char *AGSConsole::getVerbosityLevel(AGS3::uint32_t groupID) const {
 	int i = 1;
 	while (levelNames[i].name != nullptr) {
 		if (!_agsDebuggerOutput->TestGroup(groupID, levelNames[i].level))
@@ -130,7 +130,7 @@ const char *AGSConsole::getVerbosityLevel(uint32_t groupID) const {
 	return levelNames[i - 1].name;
 }
 
-uint32_t AGSConsole::parseGroup(const char *name, bool &found) const {
+AGS3::uint32_t AGSConsole::parseGroup(const char *name, bool &found) const {
 	int i = 0;
 	while (groupNames[i].name != nullptr) {
 		if (scumm_stricmp(name, groupNames[i].name) == 0) {
@@ -141,7 +141,7 @@ uint32_t AGSConsole::parseGroup(const char *name, bool &found) const {
 	}
 
 	found = false;
-	return (uint32_t)-1;
+	return (AGS3::uint32_t)-1;
 }
 
 AGS3::AGS::Shared::MessageType AGSConsole::parseLevel(const char *name, bool &found) const {
