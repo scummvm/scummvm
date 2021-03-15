@@ -293,7 +293,7 @@ SoundManager::SoundManager(DragonsEngine *vm, BigfileArchive *bigFileArchive, Dr
 
 	SomeInitSound_FUN_8003f64c();
 	initVabData();
-	_midiPlayer = new MidiMusicPlayer(_bigFileArchive, _vabMusx);
+	_midiPlayer = new MidiMusicPlayer(_bigFileArchive);
 
 	syncSoundSettings();
 }
