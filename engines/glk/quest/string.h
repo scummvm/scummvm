@@ -45,7 +45,7 @@ public:
 	String(const char *beginP, const char *endP) : Common::String(beginP, endP) {}
 	String(const String &str) : Common::String(str) {}
 	explicit String(char c) : Common::String(c) {}
-	using Common::String::operator=;
+	String& operator=(const String &str) { this->Common::String::operator=(str); return *this; }
 
 	char &operator[](int idx) {
 		assert(_str && idx >= 0 && idx < (int)_size);
