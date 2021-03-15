@@ -151,6 +151,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "alemmoanozira", "Al Emmo's Postcards from Anozira" },
 	{ "alum", "Alum" },
 	{ "apotheosis", "The Apotheosis Project" },
+	{ "astroloco", "Astroloco: Worst Contact"},
 	{ "atotkdeluxe", "A Tale of Two Kingdoms: Deluxe Edition" },
 	{ "beer", "Beer!" },
 	{ "blackwell1", "The Blackwell Legacy" },
@@ -248,6 +249,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "advwelcome", "Adventure: Welcome to the Game" },
 	{ "aerinde", "Aerinde" },
 	{ "aeronuts", "AeroNuts" },
+	{ "afragmentofher", "A Fragment of Her" },
 	{ "afriendindeed", "A Friend Indeed ..." },
 	{ "afrojones", "Afro Jones" },
 	{ "afterashadow", "After a Shadow" },
@@ -278,6 +280,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "alienthreat", "Alien Threat" },
 	{ "alientimezone", "Alien Time Zone" },
 	{ "allpigs", "All Pigs Deserve To Burn In Hell" },
+	{ "allthewaydown", "All The Way Down" },
 	{ "aloneinthenight", "Alone in the Night" },
 	{ "alphadog", "Alpha Dog" },
 	{ "alphax", "Alpha X" },
@@ -406,6 +409,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "carrin", "Carrin" },
 	{ "carrotbobinzxspeccyworld", "Carrot Bob in ZX speccy world" },
 	{ "casablancathedayafter", "Casablanca The Day After" },
+	{ "casenoir", "Case Noir" },
 	{ "castleoffire", "Castle of Fire" },
 	{ "catacombic", "Catacombic" },
 	{ "catapault", "CATapault" },
@@ -495,6 +499,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "diamondsintherough", "Diamonds in the Rough" },
 	{ "diemaskennyarlathoteps", "Die Masken Nyarlathoteps" },
 	{ "dinnerforpigeons", "Dinner for Pigeons" },
+	{ "dislocation", "Dislocation" },
 	{ "disquiet", "Disquiet" },
 	{ "doctormaze", "DOCTOR MAZE" },
 	{ "doctormuttonchop", "Doctor Muttonchop" },
@@ -568,6 +573,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "farnowhere", "FAR NOWHERE" },
 	{ "fasmo", "Fasmo!" },
 	{ "fasmogoeswest", "Fasmo Goes West" },
+	{ "fayeking", "Faye King: Jungle Jeopardy" },
 	{ "fbiquest", "FBI Quest" },
 	{ "fearaphobia", "FEARAPHOBIA" },
 	{ "featherweight", "Featherweight" },
@@ -1614,6 +1620,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("apotheosis", "the apotheosis project.exe", "0cab252e992e5da65bdbf3648c2b70df", 1144087889), // 1.0
 	GAME_ENTRY("apotheosis", "the apotheosis project.exe", "0115a64ddec9396108f32da31d761ecb", 1144677502), //Steam
 	GAME_ENTRY("apotheosis", "The Apotheosis Project.ags", "0d9ae5a4ffd3e3e968c6addb5d524954", 1142362222), // Steam Linux
+	GAME_ENTRY("astroloco", "astroloco1.exe", "c71919e3b0cc415ef725cf1a9818a515", 42894919), // Steam
 	GAME_ENTRY("beer", "beer!.exe", "6f201fd7a19869c85f49c7c471d0479a", 5055091), // Steam
 	GAME_ENTRY("blackwell1", "blackwell1.exe", "605e124cb7e0b56841c471e2d641c224", 18822697), // GOG
 	GAME_ENTRY_PLUGIN("blackwell1", "blackwell1.exe", "605e124cb7e0b56841c471e2d641c224", 18824597, AGSTEAM_BLACKWELL), // Steam
@@ -1877,6 +1884,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("advwelcome", "welcome to the genre.exe", "7b312aca49376e8a92bc31c612dfe81d", 31339728),
 	GAME_ENTRY("aerinde", "aerinde.exe", "3d40063da244931d67726a2d9600f1e8", 31700697),
 	GAME_ENTRY("aeronuts", "aeronuts.exe", "e446d58cf60bf13e32d0edd470065c7d", 10984662),
+	GAME_ENTRY("afragmentofher", "afragmentofher_v0.2.1.0.exe", "618d7dce9631229b4579340b964c6810", 8400475),
 	GAME_ENTRY("afriendindeed", "thehouse.exe", "3128b9f90e2f954ba704414ae854d10b", 6197624),
 	GAME_ENTRY("afrojones", "afrojones.exe", "f3a13b2d6c2e0fe04c6f466062920e23", 4739799),
 	GAME_ENTRY("afterashadow", "after a shadow.exe", "6cddccb3744ec5c6af7c398fb7b3b11c", 6157553),
@@ -1907,6 +1915,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("alienthreat", "alien threat.exe", "f120690b506dd63cd7d1112ea6af2f77", 6341266),
 	GAME_ENTRY("alientimezone", "atz.exe", "0710e2ec71042617f565c01824f0cf3c", 2911858),
 	GAME_ENTRY("allpigs", "All pigs deserve to burn in hell.exe", "973f6b65820ca1f4e19704a49be99d76", 20836147),
+	GAME_ENTRY("allthewaydown", "deepuns3.exe", "6c0b5468657c22d62201e3769cd8d2b3", 29830067),
 	GAME_ENTRY("aloneinthenight", "alone.exe", "0710e2ec71042617f565c01824f0cf3c", 9501343),
 	GAME_ENTRY("alphadog", "alpha_dog.exe", "a01a9639ce30bdcd5bf82e528b51fa06", 3329253),
 	GAME_ENTRY("alphax", "alphax.exe", "06a03fe35791b0578068ab1873455463", 17879795),
@@ -2041,6 +2050,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("carrin", "carrin.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 2376923),
 	GAME_ENTRY("carrotbobinzxspeccyworld", "carrotbob.exe", "949f7440e3692b7366c2029979dee9a0", 914509),
 	GAME_ENTRY("casablancathedayafter", "casablanca.exe", "e88fd6a23a5e498d7b0d50e3bb914085", 4238105),
+	GAME_ENTRY("casenoir", "case noir.exe", "fd3ecd8289bebadbf775fe8a13b9c5d7", 15407193),
 	GAME_ENTRY("castleoffire", "castle of fire.exe", "b6f0726bd5776abee0d452b8f1073850", 14800915),
 	GAME_ENTRY("catacombic", "catacombic.exe", "057d1aa29f6fadd83209268efcfb35a3", 7317791),
 	GAME_ENTRY("catapault", "catapault.exe", "290afe0bac54418822f15175e474731d", 8286661),
@@ -2132,6 +2142,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("dgsearchofthebatterie", "dgsfb.exe", "88cf59aad15ca331ab0f854e16c84df3", 1664209),
 	GAME_ENTRY("diemaskennyarlathoteps", "ags_masken.exe", "74dc062c5f68f3d70da911f2db5737b6", 129219473),
 	GAME_ENTRY("dinnerforpigeons", "DinnerForPigeons.exe", "0de24019f4bf96e6a7add17110514609", 27207204),
+	GAME_ENTRY("dislocation", "dislocation.exe", "aecd482222ff54206e43a029b5f0b170", 168869859),
 	GAME_ENTRY("disquiet", "Disquiet.exe", "f90f5f612ed5879addfdd8634d093333", 9624101),
 	GAME_ENTRY("doctormaze", "Maze.exe", "825ccacaabe2a3b0cd48d6f8deb42d72", 43934617),
 	GAME_ENTRY("doctormuttonchop", "muttonchop.exe", "57e261dd3bb45761af4a002775e45710", 5781714),
@@ -2157,6 +2168,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("duzzquest", "DuzzQuest.exe", "3128b9f90e2f954ba704414ae854d10b", 13125200),
 	GAME_ENTRY("duzzquest2", "DuzzQuest2.exe", "8911d942c1a71458370d37ca3e5bfdda", 59088366),
 	GAME_ENTRY("dysmaton", "Dysmaton.exe", "6e861b1f476ff7cdf036082abb271329", 140513956),
+	GAME_ENTRY("dysmaton", "Dysmaton.ags", "1e0cda052a371ebf6aa0bd62c0e754b9", 138033300),
 	GAME_ENTRY("earlbobbyislookingforhisshoes", "Bobby's Shoes.exe", "bb59de174d70797d774dec76a171352d", 12735626),
 	GAME_ENTRY("earlbobbysballs", "Bobby's Balls.exe", "bb59de174d70797d774dec76a171352d", 4006605),
 	GAME_ENTRY("earlmansinthebreakout", "Earl Mansin.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 108987401),
@@ -2202,6 +2214,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("farnowhere", "FAR NOWHERE.exe", "06a03fe35791b0578068ab1873455463", 77186777),
 	GAME_ENTRY("fasmo", "fasmo.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 16778433),
 	GAME_ENTRY("fasmogoeswest", "FasmoGoesWest.exe", "f120690b506dd63cd7d1112ea6af2f77", 15348030),
+	GAME_ENTRY("fayeking", "FKJJ.exe", "7ce746c19cf3080a9fac568979b2bf9b", 10664729),
 	GAME_ENTRY("fbiquest", "FQ.exe", "465f972675db2da6040518221af5b0ba", 3838610),
 	GAME_ENTRY("fearaphobia", "Fearaphobia.exe", "c48d0beedcdc1b05e9e25dcd60de46a9", 9646228),
 	GAME_ENTRY("featherweight", "Featherweight.exe", "e8b2a430042709f07183c2c249e0e0d9", 6399452),
