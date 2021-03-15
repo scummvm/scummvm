@@ -52,7 +52,7 @@ public:
 	 * @param endHeight height value where the line ends
 	 * @param lineColor line color in the current palette
 	 */
-	void drawLine(int32 startWidth, int32 startHeight, int32 endWidth, int32 endHeight, uint8 lineColor);
+	bool drawLine(int32 startWidth, int32 startHeight, int32 endWidth, int32 endHeight, uint8 lineColor);
 
 	/**
 	 * Blit button box from working buffer to front buffer

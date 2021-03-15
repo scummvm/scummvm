@@ -262,7 +262,7 @@ bool Scene::loadSceneLBA2() {
 
 	sceneNumTracks = stream.readUint16LE();
 	for (int32 i = 0; i < sceneNumTracks; i++) {
-		ScenePoint *point = &sceneTracks[i];
+		Vec3 *point = &sceneTracks[i];
 		point->x = stream.readSint32LE();
 		point->y = stream.readSint32LE();
 		point->z = stream.readSint32LE();
@@ -387,13 +387,14 @@ bool Scene::loadSceneLBA1() {
 
 	sceneNumTracks = stream.readUint16LE();
 	for (int32 i = 0; i < sceneNumTracks; i++) {
-		ScenePoint *point = &sceneTracks[i];
+		Vec3 *point = &sceneTracks[i];
 		point->x = stream.readUint16LE();
 		point->y = stream.readUint16LE();
 		point->z = stream.readUint16LE();
 	}
 
 	if (_engine->_debugScene->useScenePatches) {
+		// TODO: these were found in the disassembly and might be some script fixes - check me and activate me
 		switch (currentSceneIdx) {
 		case LBA1SceneId::Hamalayi_Mountains_landing_place:
 			assert(sceneNumActors >= 22);

@@ -45,18 +45,12 @@ enum class ScenePositionType {
 
 // ZONES
 
-struct ScenePoint {
-	int16 x = 0;
-	int16 y = 0;
-	int16 z = 0;
-};
-
 /**
  * Special actions, like change scene, climbing a ladder, ...
  */
 struct ZoneStruct {
-	ScenePoint bottomLeft;
-	ScenePoint topRight;
+	Vec3 bottomLeft;
+	Vec3 topRight;
 	int16 type = 0;
 	int16 snap = 0;
 	union {
@@ -351,7 +345,7 @@ public:
 	// TRACKS Tell the actor where to go
 
 	int32 sceneNumTracks = 0;
-	ScenePoint sceneTracks[NUM_MAX_TRACKS];
+	Vec3 sceneTracks[NUM_MAX_TRACKS];
 
 	bool enableGridTileRendering = true;
 

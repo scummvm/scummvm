@@ -49,6 +49,8 @@ TwinEConsole::TwinEConsole(TwinEEngine *engine) : _engine(engine), GUI::Debugger
 	registerCmd("list_menutext", WRAP_METHOD(TwinEConsole, doListMenuText));
 	registerCmd("toggle_debug", WRAP_METHOD(TwinEConsole, doToggleDebug));
 	registerCmd("toggle_zones", WRAP_METHOD(TwinEConsole, doToggleZoneRendering));
+	registerCmd("toggle_tracks", WRAP_METHOD(TwinEConsole, doToggleTrackRendering));
+	registerCmd("toggle_actors", WRAP_METHOD(TwinEConsole, doToggleActorRendering));
 	registerCmd("toggle_clips", WRAP_METHOD(TwinEConsole, doToggleClipRendering));
 	registerCmd("toggle_freecamera", WRAP_METHOD(TwinEConsole, doToggleFreeCamera));
 	registerCmd("toggle_scenechanges", WRAP_METHOD(TwinEConsole, doToggleSceneChanges));
@@ -82,6 +84,16 @@ TwinEConsole::~TwinEConsole() {
 
 bool TwinEConsole::doToggleZoneRendering(int argc, const char **argv) {
 	TOGGLE_DEBUG(_engine->_debugScene->showingZones, "zone rendering\n")
+	return true;
+}
+
+bool TwinEConsole::doToggleActorRendering(int argc, const char **argv) {
+	TOGGLE_DEBUG(_engine->_debugScene->showingActors, "actor rendering\n")
+	return true;
+}
+
+bool TwinEConsole::doToggleTrackRendering(int argc, const char **argv) {
+	TOGGLE_DEBUG(_engine->_debugScene->showingTracks, "tracks rendering\n")
 	return true;
 }
 

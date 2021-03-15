@@ -50,7 +50,7 @@ int32 Interface::checkClipping(int32 x, int32 y) const {
 }
 
 // TODO: check if Graphics::drawLine() works here
-void Interface::drawLine(int32 startWidth, int32 startHeight, int32 endWidth, int32 endHeight, uint8 lineColor) {
+bool Interface::drawLine(int32 startWidth, int32 startHeight, int32 endWidth, int32 endHeight, uint8 lineColor) {
 	// draw line from left to right
 	if (startWidth > endWidth) {
 		SWAP(endWidth, startWidth);
@@ -63,7 +63,7 @@ void Interface::drawLine(int32 startWidth, int32 startHeight, int32 endWidth, in
 
 	while ((outcode0 | outcode1) != INSIDE) {
 		if ((outcode0 & outcode1) != INSIDE && outcode0 != INSIDE) {
-			return; // Reject lines which are behind one clipping plane
+			return false; // Reject lines which are behind one clipping plane
 		}
 
 		// At least one endpoint is outside the clip rectangle; pick it.
@@ -137,6 +137,7 @@ void Interface::drawLine(int32 startWidth, int32 startHeight, int32 endWidth, in
 			}
 		} while (--endWidth);
 	}
+	return true;
 }
 
 void Interface::blitBox(const Common::Rect &rect, const Graphics::ManagedSurface &source, Graphics::ManagedSurface &dest) {

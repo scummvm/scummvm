@@ -116,7 +116,7 @@ static int32 mANIM(TwinEEngine *engine, MoveScriptContext &ctx) {
 static int32 mGOTO_POINT(TwinEEngine *engine, MoveScriptContext &ctx) {
 	engine->_scene->currentScriptValue = ctx.stream.readByte();
 
-	const ScenePoint &sp = engine->_scene->sceneTracks[engine->_scene->currentScriptValue];
+	const Vec3 &sp = engine->_scene->sceneTracks[engine->_scene->currentScriptValue];
 	engine->_renderer->destPos.x = sp.x;
 	engine->_renderer->destPos.y = sp.y;
 	engine->_renderer->destPos.z = sp.z;
@@ -188,7 +188,7 @@ static int32 mANGLE(TwinEEngine *engine, MoveScriptContext &ctx) {
 static int32 mPOS_POINT(TwinEEngine *engine, MoveScriptContext &ctx) {
 	engine->_scene->currentScriptValue = ctx.stream.readByte();
 
-	const ScenePoint &sp = engine->_scene->sceneTracks[engine->_scene->currentScriptValue];
+	const Vec3 &sp = engine->_scene->sceneTracks[engine->_scene->currentScriptValue];
 	engine->_renderer->destPos.x = sp.x;
 	engine->_renderer->destPos.y = sp.y;
 	engine->_renderer->destPos.z = sp.z;
@@ -248,7 +248,7 @@ static int32 mSTOP(TwinEEngine *engine, MoveScriptContext &ctx) {
 static int32 mGOTO_SYM_POINT(TwinEEngine *engine, MoveScriptContext &ctx) {
 	engine->_scene->currentScriptValue = ctx.stream.readByte();
 
-	const ScenePoint &sp = engine->_scene->sceneTracks[engine->_scene->currentScriptValue];
+	const Vec3 &sp = engine->_scene->sceneTracks[engine->_scene->currentScriptValue];
 	engine->_renderer->destPos.x = sp.x;
 	engine->_renderer->destPos.y = sp.y;
 	engine->_renderer->destPos.z = sp.z;
@@ -321,7 +321,7 @@ static int32 mGOTO_POINT_3D(TwinEEngine *engine, MoveScriptContext &ctx) {
 
 	engine->_scene->currentScriptValue = trackId;
 
-	const ScenePoint &sp = engine->_scene->sceneTracks[engine->_scene->currentScriptValue];
+	const Vec3 &sp = engine->_scene->sceneTracks[engine->_scene->currentScriptValue];
 	engine->_renderer->destPos.x = sp.x;
 	engine->_renderer->destPos.y = sp.y;
 	engine->_renderer->destPos.z = sp.z;
