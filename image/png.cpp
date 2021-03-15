@@ -299,7 +299,7 @@ bool PNGDecoder::loadStream(Common::SeekableReadStream &stream) {
 #endif
 }
 
-bool writePNG(Common::WriteStream &out, const Graphics::Surface &input) {
+bool writePNG(Common::WriteStream &out, const Graphics::Surface &input, const byte *palette) {
 #ifdef USE_PNG
 #ifdef SCUMM_LITTLE_ENDIAN
 	const Graphics::PixelFormat requiredFormat_3byte(3, 8, 8, 8, 0, 0, 8, 16, 0);
@@ -320,7 +320,7 @@ bool writePNG(Common::WriteStream &out, const Graphics::Surface &input) {
 		if (input.format == requiredFormat_4byte) {
 			surface = &input;
 		} else {
-			surface = tmp = input.convertTo(requiredFormat_4byte);
+			surface = tmp = input.convertTo(requiredFormat_4byte, palette);
 		}
 		colorType = PNG_COLOR_TYPE_RGB_ALPHA;
 	}
