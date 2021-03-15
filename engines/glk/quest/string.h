@@ -39,14 +39,7 @@ typedef Common::HashMap<String, Common::Array<String>, Common::IgnoreCase_Hash, 
 
 class String : public Common::String {
 public:
-	String() : Common::String() {}
-	String(const char *str) : Common::String(str) {}
-	String(const char *str, uint32 len) : Common::String(str, len) {}
-	String(const char *beginP, const char *endP) : Common::String(beginP, endP) {}
-	String(const String &str) : Common::String(str) {}
-	explicit String(char c) : Common::String(c) {}
-
-	String& operator=(const String &str) { this->Common::String::operator=(str); return *this; }
+	using Common::String::String;
 
 	char &operator[](int idx) {
 		assert(_str && idx >= 0 && idx < (int)_size);
