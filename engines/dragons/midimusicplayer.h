@@ -30,10 +30,9 @@ namespace Dragons {
 
 class MidiMusicPlayer : public Audio::MidiPlayer {
 private:
-	VabSound *_musicVab;
 	uint32 _midiDataSize;
 public:
-	MidiMusicPlayer(BigfileArchive *bigFileArchive, VabSound *musicVab);
+	MidiMusicPlayer(BigfileArchive *bigFileArchive);
 	~MidiMusicPlayer();
 
 	void setVolume(int volume) override;

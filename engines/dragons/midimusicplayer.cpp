@@ -31,7 +31,7 @@
 
 namespace Dragons {
 
-MidiMusicPlayer::MidiMusicPlayer(BigfileArchive *bigFileArchive, VabSound *musicVab): _musicVab(musicVab), _midiDataSize(0) {
+MidiMusicPlayer::MidiMusicPlayer(BigfileArchive *bigFileArchive): _midiDataSize(0) {
 	_midiData = nullptr;
 	MidiPlayer::createDriver(MDT_PREFER_FLUID | MDT_MIDI);
 
