@@ -73,8 +73,10 @@ private:
 	bool cmdShowScript(int32 argc, const char **argv);
 	bool cmdRunScript(int32 argc, const char **argv);
 	bool cmdChangeScene(int32 argc, const char **argv);
-	bool cmdRunEncounter(int32 argc, const char **argv);
 	bool cmdRunPuzzle(int32 argc, const char **argv);
+
+	bool cmdRunEncounter(int32 argc, const char **argv);
+	bool cmdShowEncounter(int32 argc, const char **argv);
 
 	bool cmdListItems(int32 argc, const char **argv);
 	bool cmdAddToInventory(int32 argc, const char **argv);
