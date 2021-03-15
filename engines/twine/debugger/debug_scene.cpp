@@ -31,6 +31,9 @@
 
 namespace TwinE {
 
+// TODO: render scene tracks
+// TODO: render actors and their bounding boxes
+
 DebugScene::DebugScene(TwinEEngine *engine) : _engine(engine) {}
 
 void DebugScene::drawClip(const Common::Rect& rect) {
@@ -95,7 +98,7 @@ int32 DebugScene::checkZoneType(int32 type) {
 			return 1;
 		break;
 	default:
-		break;
+		return 1;
 	}
 
 	return 0;
@@ -207,6 +210,14 @@ void DebugScene::displayZones() {
 		_engine->_interface->drawLine(backBottomLeftPoint2D.x, backBottomLeftPoint2D.y, backBottomRightPoint2D.x, backBottomRightPoint2D.y, color);
 		_engine->_interface->drawLine(backBottomRightPoint2D.x, backBottomRightPoint2D.y, frontBottomRightPoint2D.x, frontBottomRightPoint2D.y, color);
 		_engine->_interface->drawLine(frontBottomRightPoint2D.x, frontBottomRightPoint2D.y, frontBottomLeftPoint2D.x, frontBottomLeftPoint2D.y, color);
+		const int boxwidth = 150;
+		const int lineHeight = 14;
+		const int boxheight = 2 * lineHeight;
+		const Common::Rect filledRect(frontTopRightPoint2D.x, frontTopRightPoint2D.y, frontTopRightPoint2D.x + boxwidth, frontTopRightPoint2D.y + boxheight);
+		_engine->_interface->drawFilledRect(filledRect, COLOR_WHITE);
+		_engine->_menu->drawBox(filledRect);
+		_engine->drawText(frontTopRightPoint2D.x, frontTopRightPoint2D.y, Common::String::format("Type: %i (%i)", zonePtr->type, z), true, false, boxwidth);
+		_engine->drawText(frontTopRightPoint2D.x, frontTopRightPoint2D.y + lineHeight, Common::String::format("pos: %i:%i:%i", frontTopRightPoint.x, frontTopRightPoint.y, frontTopRightPoint.z), true, false, boxwidth);
 	}
 	_engine->flip();
 }

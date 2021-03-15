@@ -1128,17 +1128,15 @@ void TwinEEngine::readKeys() {
 	_input->readKeys();
 }
 
-void TwinEEngine::drawText(int32 x, int32 y, const char *string, int32 center) {
-	const Graphics::Font *font = FontMan.getFontByUsage(Graphics::FontManager::kGUIFont);
+void TwinEEngine::drawText(int32 x, int32 y, const Common::String &text, bool center, bool bigFont, int width) {
+	const Graphics::Font *font = FontMan.getFontByUsage(bigFont ? Graphics::FontManager::kBigGUIFont : Graphics::FontManager::kGUIFont);
 	if (!font) {
 		return;
 	}
-	int width = 180;
-	const Common::String text(string);
 	font->drawString(&frontVideoBuffer, text,
 	                 x, y, width,
 	                 frontVideoBuffer.format.RGBToColor(255, 255, 255),
-	                 center ? Graphics::kTextAlignCenter : Graphics::kTextAlignLeft, 0, false);
+	                 center ? Graphics::kTextAlignCenter : Graphics::kTextAlignLeft, 0, true);
 }
 
 const char *TwinEEngine::getGameId() const {

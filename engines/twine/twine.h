@@ -357,10 +357,10 @@ public:
 	 * Display text in screen
 	 * @param x X coordinate in screen
 	 * @param y Y coordinate in screen
-	 * @param string text to display
+	 * @param text text to display
 	 * @param center if the text should be centered accoding with the giving positions
 	 */
-	void drawText(int32 x, int32 y, const char *string, int32 center);
+	void drawText(int32 x, int32 y, const Common::String &text, bool center = false, bool bigFont = false, int width = 100);
 };
 
 inline int TwinEEngine::width() const {

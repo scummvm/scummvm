@@ -41,6 +41,7 @@ public:
 	DebugScene(TwinEEngine *engine);
 	bool showingZones = false;
 	bool showingClips = false;
+	bool useScenePatches = false;
 	int32 typeZones = 127; // all zones on as default
 	int16 onlyLoadActor = -1;
 

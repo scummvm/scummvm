@@ -62,6 +62,7 @@ TwinEConsole::TwinEConsole(TwinEEngine *engine) : _engine(engine), GUI::Debugger
 	registerCmd("set_holomap_flag", WRAP_METHOD(TwinEConsole, doSetHolomapFlag));
 	registerCmd("set_holomap_trajectory", WRAP_METHOD(TwinEConsole, doSetHolomapTrajectory));
 	registerCmd("show_holomap_flag", WRAP_METHOD(TwinEConsole, doPrintGameFlag));
+	registerCmd("toggle_scene_patches", WRAP_METHOD(TwinEConsole, doToggleScenePatches));
 }
 
 TwinEConsole::~TwinEConsole() {
@@ -81,6 +82,11 @@ TwinEConsole::~TwinEConsole() {
 
 bool TwinEConsole::doToggleZoneRendering(int argc, const char **argv) {
 	TOGGLE_DEBUG(_engine->_debugScene->showingZones, "zone rendering\n")
+	return true;
+}
+
+bool TwinEConsole::doToggleScenePatches(int argc, const char **argv) {
+	TOGGLE_DEBUG(_engine->_debugScene->useScenePatches, "use scene patches\n")
 	return true;
 }
 

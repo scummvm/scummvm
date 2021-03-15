@@ -393,26 +393,40 @@ bool Scene::loadSceneLBA1() {
 		point->z = stream.readUint16LE();
 	}
 
-#if 0
-	// TODO: these were found in the disassembly and might be some script fixes - check me and activate me
-	switch (currentSceneIdx) {
-	case LBA1SceneId::Hamalayi_Mountains_landing_place:
-		assert(sceneNumActors >= 22);
-		_sceneActors[21].x = _sceneActors[21].collisionX = 0x1b00;
-		_sceneActors[21].z = _sceneActors[21].collisionZ = 0x300;
-		break;
-	case Principal_Island_outside_the_fortress:
-		assert(sceneNumActors >= 30);
-		_sceneActors[29].z = _sceneActors[29].collisionZ = 0x703;
-		break;
-	case Tippet_Island_Secret_passage_scene_1:
-		(ushort*)puVar4[78] = 0xe20;
-		break;
-	case Principal_Island_inside_the_fortress:
-		(ushort*)puVar4[140] = 0x32;
-		break;
+	if (_engine->_debugScene->useScenePatches) {
+		switch (currentSceneIdx) {
+		case LBA1SceneId::Hamalayi_Mountains_landing_place:
+			assert(sceneNumActors >= 22);
+			_sceneActors[21].pos.x = _sceneActors[21].collisionPos.x = 0x1b00;
+			_sceneActors[21].pos.z = _sceneActors[21].collisionPos.z = 0x300;
+			break;
+		case LBA1SceneId::Principal_Island_outside_the_fortress:
+			assert(sceneNumActors >= 30);
+			_sceneActors[29].pos.z = _sceneActors[29].collisionPos.z = 0x703;
+			assert(sceneNumZones >= 23);
+			// each scene zone entry has 24 bytes
+			sceneZones[15].bottomLeft.y = 0x450; // [zone:15] 362 (mod:2) offset relative to sceneNumZones
+			sceneZones[15].type = 0x2ce0; // [zone:15] 372 (mod:12) offset relative to sceneNumZones
+			sceneZones[16].bottomLeft.y = 0x5270; // [zone:16] 386 (mod:2) offset relative to sceneNumZones
+			sceneZones[16].type = 0x1f90; // [zone:16] 396 (mod:12) offset relative to sceneNumZones
+			sceneZones[22].bottomLeft.y = 0x1800; // [zone:22] 530 (mod:2) offset relative to sceneNumZones
+			sceneZones[15].topRight.x = 0x10f0;
+			sceneZones[15].topRight.y = 0x2100; // [zone:15] 366 (mod:6) offset relative to sceneNumZones (4 bytes)
+			sceneZones[16].topRight.x = 0x5d10;
+			sceneZones[16].topRight.y = 0x1200; // [zone:16] 390 (mod:6) offset relative to sceneNumZones (4 bytes)
+			sceneZones[22].topRight.x = 0x22a1;
+			sceneZones[22].topRight.y = 0x1800; // [zone:22] 534 (mod:6) offset relative to sceneNumZones (4 bytes)
+			sceneZones[22].type = 0x1ae1; // [zone:22] 540 (mod:12) offset relative to sceneNumZones
+			break;
+		case LBA1SceneId::Tippet_Island_Secret_passage_scene_1:
+			// puVar4 is the position of sceneNumZones
+			//(ushort*)puVar4[78] = 0xe20;
+			break;
+		case LBA1SceneId::Principal_Island_inside_the_fortress:
+			//(ushort*)puVar4[140] = 0x32;
+			break;
+		}
 	}
-#endif
 
 	return true;
 }
