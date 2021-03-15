@@ -114,14 +114,6 @@ private:
 
 	bool heroAction = false;
 
-	/**
-	 * @brief This is a bitmask of 4 bits that is changed whenever a cursor key has changed. A set bit
-	 * does not mean that the cursor is pressed - but that a change has happened in this particular frame
-	 *
-	 * @note This value is reset with every single call to @c readKeys()
-	 */
-	uint8 cursorKeyMask = 0;
-
 public:
 	Movements(TwinEEngine *engine);
 
