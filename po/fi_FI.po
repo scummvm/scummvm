@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-03-15 14:53+0000\n"
+"POT-Creation-Date: 2021-03-16 01:50+0000\n"
 "PO-Revision-Date: 2021-02-21 19:36+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
@@ -4783,13 +4783,13 @@ msgid "Eye of Beholder support is not compiled in"
 msgstr "Eye of Beholder-tukea ei ole käännetty mukaan"
 
 #: engines/kyra/engine/eobcommon.cpp:367 engines/kyra/engine/lol.cpp:469
-#: engines/ultima/ultima4/meta_engine.cpp:233
+#: engines/ultima/ultima4/meta_engine.cpp:224
 #: engines/ultima/ultima8/meta_engine.cpp:195
 msgid "Interact via Left Click"
 msgstr "Interaktio vasemmalla hiirennapilla"
 
 #: engines/kyra/engine/eobcommon.cpp:368 engines/kyra/engine/lol.cpp:470
-#: engines/ultima/ultima4/meta_engine.cpp:239
+#: engines/ultima/ultima4/meta_engine.cpp:230
 #: engines/ultima/ultima8/meta_engine.cpp:201
 msgid "Interact via Right Click"
 msgstr "Interaktio oikealla hiirennapilla"

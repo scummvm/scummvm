@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-03-15 14:53+0000\n"
+"POT-Creation-Date: 2021-03-16 01:50+0000\n"
 "PO-Revision-Date: 2021-02-21 19:36+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
@@ -4792,13 +4792,13 @@ msgid "Eye of Beholder support is not compiled in"
 msgstr "Підтримку для Eye of Beholder не скомпільовано"
 
 #: engines/kyra/engine/eobcommon.cpp:367 engines/kyra/engine/lol.cpp:469
-#: engines/ultima/ultima4/meta_engine.cpp:233
+#: engines/ultima/ultima4/meta_engine.cpp:224
 #: engines/ultima/ultima8/meta_engine.cpp:195
 msgid "Interact via Left Click"
 msgstr "Взаємодія через лівий клік"
 
 #: engines/kyra/engine/eobcommon.cpp:368 engines/kyra/engine/lol.cpp:470
-#: engines/ultima/ultima4/meta_engine.cpp:239
+#: engines/ultima/ultima4/meta_engine.cpp:230
 #: engines/ultima/ultima8/meta_engine.cpp:201
 msgid "Interact via Right Click"
 msgstr "Взаємодія через правий клік"
