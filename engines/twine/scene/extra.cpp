@@ -361,7 +361,7 @@ int32 Extra::addExtraAimingAtKey(int32 actorIdx, int32 x, int32 y, int32 z, int3
 		extra->destPos.z = 4000;
 		extra->strengthOfHit = 0;
 		_engine->_movements->setActorAngle(ANGLE_0, 4000, ANGLE_17, &extra->trackActorMove);
-		extra->angle = _engine->_movements->getAngleAndSetTargetActorDistance(x, z, extraList[extraIdx].pos.x, extraList[extraIdx].pos.z);
+		extra->angle = _engine->_movements->getAngleAndSetTargetActorDistance(extra->pos, extraList[extraIdx].pos);
 
 		return i;
 	}
