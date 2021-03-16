@@ -280,10 +280,12 @@ void Process::removeScreenObject() {
 	auto object = screen->find(name);
 	if (object) {
 		if (object->alive()) {
-			if (name == _object->getName()) {
+			if (name == _object->getName() || object->locked()) {
 				debug("removeScreenObject: %s: removing object from its own body (sic)", name.c_str());
 				object->alive(false);
-			} else if (!screen || !screen->remove(name))
+			} else if (screen && screen->remove(name)) {
+				_engine->stopProcess(name);
+			} else
 				warning("removeScreenObject: object %s not found", name.c_str());
 		} else
 			warning("removeScreenObject: object %s already removed", name.c_str());

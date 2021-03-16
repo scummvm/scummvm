@@ -81,6 +81,7 @@ private:
 	uint							_useOnHandler;
 	int								_alpha;
 	int								_scale;
+	bool							_locked;
 	bool							_alive;
 	bool							_persistent;
 	bool							_allowInitialise;
@@ -274,6 +275,12 @@ public:
 	uint useOnHandler() const {
 		return _useOnHandler;
 	}
+
+	bool locked() const {
+		return _locked;
+	}
+	void lock() { _locked = true; }
+	void unlock() { _locked = false; }
 
 	bool alive() const
 	{ return _alive; }
