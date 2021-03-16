@@ -34,6 +34,7 @@
 class OSystem;
 
 namespace Common {
+struct ADGameDescription;
 class SeekableReadStream;
 class Serializer;
 class WriteStream;
@@ -41,8 +42,14 @@ class WriteStream;
 
 namespace Buried {
 
+enum {
+	GF_TRUECOLOR  = (1 << 1),
+	GF_WIN95      = (1 << 2),
+	GF_COMPRESSED = (1 << 3),
+	GF_TRIAL      = (1 << 4)
+};
+
 class BuriedConsole;
-struct BuriedGameDescription;
 class Database;
 struct GlobalFlags;
 class GraphicsManager;
@@ -57,11 +64,11 @@ protected:
 	Common::Error run();
 
 public:
-	BuriedEngine(OSystem *syst, const BuriedGameDescription *gamedesc);
+	BuriedEngine(OSystem *syst, const Common::ADGameDescription *gamedesc);
 	virtual ~BuriedEngine();
 
 	// Detection related functions
-	const BuriedGameDescription *_gameDescription;
+	const Common::ADGameDescription *_gameDescription;
 	bool isDemo() const;
 	bool isTrial() const;
 	bool isTrueColor() const;
