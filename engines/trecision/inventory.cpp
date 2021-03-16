@@ -61,7 +61,7 @@ void TrecisionEngine::refreshInventory(uint8 StartIcon, uint8 StartLine) {
 
 	// Arrows
 	if (StartIcon != 0) { // Copy left
-		LeftArrow = ICONMARGSX * ICONDY * 3;
+		int16 LeftArrow = ICONMARGSX * ICONDY * 3;
 		for (uint16 b = 0; b < (ICONDY - StartLine); b++) {
 			MCopy(g_vm->_video2 + (FIRSTLINE + b) * CurRoomMaxX + CurScrollPageDx,
 				  Arrows + LeftArrow + (b + StartLine) * ICONMARGSX, ICONMARGSX);
@@ -69,14 +69,12 @@ void TrecisionEngine::refreshInventory(uint8 StartIcon, uint8 StartLine) {
 	}
 
 	if ((StartIcon + ICONSHOWN) < g_vm->_inventorySize) { // Copy right
-		RightArrow = ICONMARGDX * ICONDY * 2;
+		int16 RightArrow = ICONMARGDX * ICONDY * 2;
 		for (uint16 b = 0; b < (ICONDY - StartLine); b++) {
 			MCopy(g_vm->_video2 + (FIRSTLINE + b) * CurRoomMaxX + CurScrollPageDx + SCREENLEN - ICONMARGDX,
 				  Arrows + RightArrow + ICONMARGSX * ICONDY * 2 + (b + StartLine) * ICONMARGSX, ICONMARGSX);
 		}
 	}
-	LeftArrow = 0;
-	RightArrow = 0;
 
 	//refreshSmkIcon( StartIcon, 2 );
 
@@ -105,7 +103,6 @@ void TrecisionEngine::moveInventoryLeft() {
 	if (_iconBase < _inventorySize - ICONSHOWN)
 		_iconBase++;
 	RegenInv(_iconBase, INVENTORY_SHOW);
-	RightArrow = 1;
 }
 
 /*-------------------------------------------------------------------------*/
@@ -115,7 +112,6 @@ void TrecisionEngine::moveInventoryRight() {
 	if (_iconBase > 0)
 		_iconBase--;
 	RegenInv(_iconBase, INVENTORY_SHOW);
-	LeftArrow = 1;
 }
 
 } // End of namespace Trecision
