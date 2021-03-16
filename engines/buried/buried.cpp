@@ -267,9 +267,10 @@ bool BuriedEngine::killTimer(uint timer) {
 }
 
 void BuriedEngine::removeAllTimers(Window *window) {
-	for (TimerMap::iterator it = _timers.begin(); it != _timers.end(); it++)
+	for (TimerMap::iterator it = _timers.begin(); it != _timers.end(); ++it) {
 		if (it->_value.owner == window)
 			_timers.erase(it);
+	}
 }
 
 void BuriedEngine::addVideo(VideoWindow *window) {
@@ -281,7 +282,7 @@ void BuriedEngine::removeVideo(VideoWindow *window) {
 }
 
 void BuriedEngine::updateVideos() {
-	for (VideoList::iterator it = _videos.begin(); it != _videos.end(); it++)
+	for (VideoList::iterator it = _videos.begin(); it != _videos.end(); ++it)
 		(*it)->updateVideo();
 }
 
@@ -307,7 +308,7 @@ void BuriedEngine::sendAllMessages() {
 		// Generate a timer message
 		bool ranTimer = false;
 
-		for (TimerMap::iterator it = _timers.begin(); it != _timers.end(); it++) {
+		for (TimerMap::iterator it = _timers.begin(); it != _timers.end(); ++it) {
 			uint32 time = g_system->getMillis();
 
 			if (time >= it->_value.nextTrigger) {
@@ -333,7 +334,7 @@ void BuriedEngine::removeMessages(Window *window, int messageBegin, int messageE
 			delete it->message;
 			it = _messageQueue.erase(it);
 		} else {
-			it++;
+			++it;
 		}
 	}
 }
@@ -352,7 +353,7 @@ void BuriedEngine::removeAllMessages(Window *window) {
 			delete it->message;
 			it = _messageQueue.erase(it);
 		} else {
-			it++;
+			++it;
 		}
 	}
 }
@@ -361,7 +362,7 @@ bool BuriedEngine::hasMessage(Window *window, int messageBegin, int messageEnd) 
 	// Implementation note: This doesn't currently handle timers, but would on real Windows.
 	// Buried doesn't check for timer messages being present, so it's skipped.
 
-	for (MessageQueue::const_iterator it = _messageQueue.begin(); it != _messageQueue.end(); it++)
+	for (MessageQueue::const_iterator it = _messageQueue.begin(); it != _messageQueue.end(); ++it)
 		if ((!window || it->dest == window) && it->message->getMessageType() >= messageBegin && it->message->getMessageType() <= messageEnd)
 			return true;
 
@@ -485,19 +486,19 @@ void BuriedEngine::pauseEngineIntern(bool pause) {
 	if (pause) {
 		_sound->pause(true);
 
-		for (VideoList::iterator it = _videos.begin(); it != _videos.end(); it++)
+		for (VideoList::iterator it = _videos.begin(); it != _videos.end(); ++it)
 			(*it)->pauseVideo();
 
 		_pauseStartTime = g_system->getMillis();
 	} else {
 		_sound->pause(false);
 
-		for (VideoList::iterator it = _videos.begin(); it != _videos.end(); it++)
+		for (VideoList::iterator it = _videos.begin(); it != _videos.end(); ++it)
 			(*it)->resumeVideo();
 
 		uint32 timeDiff = g_system->getMillis() - _pauseStartTime;
 
-		for (TimerMap::iterator it = _timers.begin(); it != _timers.end(); it++)
+		for (TimerMap::iterator it = _timers.begin(); it != _timers.end(); ++it)
 			it->_value.nextTrigger += timeDiff;
 	}
 }
