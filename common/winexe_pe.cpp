@@ -237,7 +237,7 @@ SeekableReadStream *PEResources::getResource(const WinResourceID &type, const Wi
 
 String PEResources::loadString(uint32 stringID) {
 	String string;
-	SeekableReadStream *stream = getResource(kPEString, (stringID >> 4) + 1);
+	SeekableReadStream *stream = getResource(kWinString, (stringID >> 4) + 1);
 
 	if (!stream)
 		return string;

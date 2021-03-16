@@ -199,12 +199,12 @@ void Window::loadEXE(const Common::String movie) {
 		for (uint i = 0; i < versions.size(); i++) {
 			Common::SeekableReadStream *res = exe->getResource(Common::kWinVersion, versions[i]);
 
-			Common::WinResources::VersionHash *versionMap = Common::WinResources::parseVersionInfo(res);
+			Common::WinResources::VersionInfo *info = Common::WinResources::parseVersionInfo(res);
 
-			for (Common::WinResources::VersionHash::const_iterator it = versionMap->begin(); it != versionMap->end(); ++it)
+			for (Common::WinResources::VersionHash::const_iterator it = info->hash.begin(); it != info->hash.end(); ++it)
 				warning("info <%s>: <%s>", it->_key.c_str(), it->_value.encode().c_str());
 
-			delete versionMap;
+			delete info;
 			delete res;
 
 		}

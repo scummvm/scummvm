@@ -142,7 +142,26 @@ public:
 
 	typedef Common::HashMap<Common::String, Common::U32String, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> VersionHash;
 
-	static VersionHash *parseVersionInfo(SeekableReadStream *stream);
+	/** The structure of the version resource inside an NE EXE */
+	struct VersionInfo {
+		VersionInfo();
+
+		uint16 fileVersion[4];
+		uint16 productVersion[4];
+		uint32 fileFlagsMask;
+		uint32 fileFlags;
+		uint32 fileOS;
+		uint32 fileType;
+		uint32 fileSubtype;
+		uint32 fileDate[2];
+
+		VersionHash hash;
+	};
+
+	static VersionInfo *parseVersionInfo(SeekableReadStream *stream);
+
+	/** Get a string from a string resource. */
+	virtual String loadString(uint32 stringID) = 0;
 };
 
 /** @} */
