@@ -96,12 +96,12 @@ struct StaticFlagsStruct {
 	uint32 bIsCarrierActor : 1;             // 0x004000
 	// take smaller value for bound, or if not set take average for bound
 	uint32 bUseMiniZv : 1;                  // 0x008000
-	uint32 bHasInvalidPosition : 1;          // 0x010000
-	uint32 bNoElectricShock : 1;             // 0x020000
-	uint32 bHasSpriteAnim3D : 1;             // 0x040000
-	uint32 bNoPreClipping : 1;               // 0x080000
-	uint32 bHasZBuffer : 1;                  // 0x100000
-	uint32 bHasZBufferInWater : 1;           // 0x200000
+	uint32 bHasInvalidPosition : 1;         // 0x010000
+	uint32 bNoElectricShock : 1;            // 0x020000
+	uint32 bHasSpriteAnim3D : 1;            // 0x040000
+	uint32 bNoPreClipping : 1;              // 0x080000
+	uint32 bHasZBuffer : 1;                 // 0x100000
+	uint32 bHasZBufferInWater : 1;          // 0x200000
 };
 
 /** Actors dynamic flags structure */

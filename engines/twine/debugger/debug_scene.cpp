@@ -180,11 +180,14 @@ bool DebugScene::drawBox(const ScenePositionsProjected &positions, uint8 color) 
 	return state;
 }
 
-// TODO: redrawing doesn't work properly yet for moving actors
 bool DebugScene::displayActors() {
 	bool state = false;
 	for (int i = 0; i < _engine->_scene->sceneNumActors; i++) {
 		const ActorStruct *actorPtr = _engine->_scene->getActor(i);
+		// TODO: redrawing doesn't work properly yet for moving actors
+		if (!actorPtr->staticFlags.bIsSpriteActor) {
+			continue;
+		}
 		const Vec3 &pos = actorPtr->pos;
 		const ZVBox &bbox = actorPtr->boudingBox;
 		const Vec3 mins(bbox.x.bottomLeft, bbox.y.bottomLeft, bbox.z.bottomLeft);
