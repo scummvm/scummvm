@@ -133,7 +133,7 @@ public:
 	bool canLoadGameStateCurrently();
 	bool canSaveGameStateCurrently();
 	Common::Error loadGameState(int slot);
-	Common::Error saveGameState(int slot, const Common::String &desc);
+	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave);
 	static Common::StringArray listSaveFiles();
 	bool loadState(Common::SeekableReadStream *saveFile, Location &location, GlobalFlags &flags, Common::Array<int> &inventoryItems);
 	bool saveState(Common::WriteStream *saveFile, Location &location, GlobalFlags &flags, Common::Array<int> &inventoryItems);

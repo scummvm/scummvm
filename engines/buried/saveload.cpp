@@ -61,7 +61,7 @@ Common::Error BuriedEngine::loadGameState(int slot) {
 	Common::StringArray fileNames = listSaveFiles();
 	Common::InSaveFile *loadFile = _saveFileMan->openForLoading(fileNames[slot]);
 	if (!loadFile)
-		return Common::kUnknownError;	
+		return Common::kUnknownError;
 
 	Location location;
 	GlobalFlags flags;
@@ -103,7 +103,7 @@ static bool isValidSaveFileName(const Common::String &desc) {
 	return true;
 }
 
-Common::Error BuriedEngine::saveGameState(int slot, const Common::String &desc) {
+Common::Error BuriedEngine::saveGameState(int slot, const Common::String &desc, bool isAutosave) {
 	if (!isValidSaveFileName(desc))
 		return Common::Error(Common::kCreatingFileFailed, _("Invalid save file name"));
 
@@ -230,7 +230,7 @@ bool BuriedEngine::syncLocation(Common::Serializer &s, Location &location) {
 	s.syncAsSint16LE(location.orientation);
 	s.syncAsSint16LE(location.depth);
 	return s.bytesSynced() == 12;
-} 
+}
 
 bool BuriedEngine::syncGlobalFlags(Common::Serializer &s, GlobalFlags &flags) {
 	uint32 startBytes = s.bytesSynced();
