@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-03-16 01:50+0000\n"
-"PO-Revision-Date: 2021-02-21 12:29+0000\n"
+"PO-Revision-Date: 2021-03-16 11:08+0000\n"
 "Last-Translator: Walter Agazzi <tag2015@gmail.com>\n"
 "Language-Team: Italian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/it/>\n"
@@ -311,17 +311,13 @@ msgid "Backend"
 msgstr "Backend"
 
 #: gui/editgamedialog.cpp:250
-#, fuzzy
-#| msgid "Override global audio settings"
 msgid "Override global backend settings"
-msgstr "Ignora le impostazioni audio globali"
+msgstr "Ignora impostazioni backend globali"
 
 #: gui/editgamedialog.cpp:252
-#, fuzzy
-#| msgid "Override global audio settings"
 msgctxt "lowres"
 msgid "Override global backend settings"
-msgstr "Ignora le impostazioni audio globali"
+msgstr "Ignora impostazioni backend globali"
 
 #: gui/editgamedialog.cpp:266 gui/options.cpp:1858 engines/dialogs.cpp:301
 msgid "Audio"
@@ -2796,16 +2792,12 @@ msgid "Decrease the scale factor"
 msgstr "Riduci fattore di scala"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:436
-#, fuzzy
-#| msgid "Switch to TV 2x scaling"
 msgid "Switch to the next scaler"
-msgstr "Passa a modalità (scaler) TV 2x"
+msgstr "Passa alla modalità (scaler) successiva"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:441
-#, fuzzy
-#| msgid "Switch to nearest neighbour scaling"
 msgid "Switch to the previous scaler"
-msgstr "Passa a modalità (scaler) nearest neighbour"
+msgstr "Passa alla modalità (scaler) precedente"
 
 #: backends/keymapper/hardware-input.cpp:245
 msgid "Left Mouse Button"
