@@ -130,12 +130,8 @@ bool Animations::setModelAnimation(int32 keyframeIdx, const AnimData &animData, 
 	const int32 deltaTime = _engine->lbaTime - remainingFrameTime;
 	if (deltaTime >= keyFrameLength) {
 		for (int32 i = 0; i < numOfBonesInAnim; ++i) {
-			const BoneFrame &boneframe = keyFrame->boneframes[i];
-			uint8 *bonesPtr = Model::getBonesStateData(bodyPtr, i);
-			WRITE_LE_UINT16(bonesPtr + 0, boneframe.type);
-			WRITE_LE_INT16(bonesPtr + 2, boneframe.x);
-			WRITE_LE_INT16(bonesPtr + 4, boneframe.y);
-			WRITE_LE_INT16(bonesPtr + 6, boneframe.z);
+			BoneFrame *boneState = Model::getBonesStateData(bodyPtr, i);
+			*boneState = keyFrame->boneframes[i];
 		}
 
 		animTimerDataPtr->ptr = keyFrame;
@@ -210,12 +206,8 @@ void Animations::setAnimAtKeyframe(int32 keyframeIdx, const AnimData &animData, 
 	}
 
 	for (int32 i = 0; i < numOfBonesInAnim; ++i) {
-		const BoneFrame &boneframe = keyFrame->boneframes[i];
-		uint8 *bonesPtr = Model::getBonesStateData(bodyPtr, i);
-		WRITE_LE_UINT16(bonesPtr + 0, boneframe.type);
-		WRITE_LE_INT16(bonesPtr + 2, boneframe.x);
-		WRITE_LE_INT16(bonesPtr + 4, boneframe.y);
-		WRITE_LE_INT16(bonesPtr + 6, boneframe.z);
+		BoneFrame *boneState = Model::getBonesStateData(bodyPtr, i);
+		*boneState = keyFrame->boneframes[i];
 	}
 
 	return;
@@ -238,14 +230,7 @@ void Animations::stockAnimation(const uint8 *bodyPtr, AnimTimerDataStruct *animT
 	keyframe->boneframes.reserve(numBones);
 
 	for (int32 i = 0; i < numBones; ++i) {
-		const uint16 *ptrToData = (const uint16*)Model::getBonesStateData(bodyPtr, i);
-		// these are 4 int16 values, type, x, y and z
-		BoneFrame boneFrame;
-		boneFrame.type = ptrToData[0];
-		boneFrame.x = ptrToData[1];
-		boneFrame.y = ptrToData[2];
-		boneFrame.z = ptrToData[3];
-		keyframe->boneframes.push_back(boneFrame);
+		keyframe->boneframes.push_back(*Model::getBonesStateData(bodyPtr, i));
 	}
 }
 
