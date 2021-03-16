@@ -1722,7 +1722,7 @@ void doInvInvUseWith() {
 	if (printsent)
 		CharacterSay(g_vm->_inventoryObj[g_vm->_useWith[USED]]._action);
 	if (updateinv)
-		RegenInv(g_vm->_iconBase, INVENTORY_SHOW);
+		g_vm->RegenInv(g_vm->_iconBase, INVENTORY_SHOW);
 }
 
 /*-------------------------------------------------------------------------*/
@@ -2853,7 +2853,7 @@ void doInvScrUseWith() {
 		CharacterSay(g_vm->_inventoryObj[g_vm->_useWith[USED]]._action);
 
 	if (updateinv)
-		RegenInv(g_vm->_iconBase, INVENTORY_SHOW);
+		g_vm->RegenInv(g_vm->_iconBase, INVENTORY_SHOW);
 }
 
 /*-------------------------------------------------------------------------*/

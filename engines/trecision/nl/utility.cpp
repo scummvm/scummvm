@@ -58,28 +58,6 @@ struct StackText {
 int16 TextStackTop = -1;
 
 /*-------------------------------------------------------------------------*/
-/*                            ONELEFTINVENTORY          				   */
-/*-------------------------------------------------------------------------*/
-void OneLeftInventory() {
-	extern short RightArrow;
-	if (g_vm->_iconBase < g_vm->_inventorySize - ICONSHOWN)
-		g_vm->_iconBase++;
-	RegenInv(g_vm->_iconBase, INVENTORY_SHOW);
-	RightArrow = 1;
-}
-
-/*-------------------------------------------------------------------------*/
-/*                            ONERIGHTINVENTORY          				   */
-/*-------------------------------------------------------------------------*/
-void OneRightInventory() {
-	extern short LeftArrow;
-	if (g_vm->_iconBase > 0)
-		g_vm->_iconBase--;
-	RegenInv(g_vm->_iconBase, INVENTORY_SHOW);
-	LeftArrow = 1;
-}
-
-/*-------------------------------------------------------------------------*/
 /*                                WHATICON           					   */
 /*-------------------------------------------------------------------------*/
 uint8 WhatIcon(uint16 invmx) {
@@ -152,14 +130,6 @@ void ReplaceIcon(uint8 oldicon, uint8 newicon) {
 	uint8 pos = IconPos(oldicon);
 
 	g_vm->_inventory[pos] = newicon;
-}
-
-/*-------------------------------------------------------------------------*/
-/*                                 REGENINV            					   */
-/*-------------------------------------------------------------------------*/
-void RegenInv(uint8 StartIcon, uint8 StartLine) {
-	g_vm->_regenInvStartIcon = StartIcon;
-	g_vm->_regenInvStartLine = StartLine;
 }
 
 /*-------------------------------------------------------------------------*/

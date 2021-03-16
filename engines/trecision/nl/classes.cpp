@@ -299,7 +299,7 @@ void doMouse() {
 					g_vm->_useWith[WITH] = 0;
 					g_vm->_curObj = 0;
 					g_vm->_lightIcon = 0xFF;
-					RegenInv(g_vm->_iconBase, INVENTORY_SHOW);
+					g_vm->RegenInv(g_vm->_iconBase, INVENTORY_SHOW);
 					if (g_vm->_curMessage->_event == ME_MRIGHT)
 						doEvent(MC_INVENTORY, ME_OPERATEICON, MP_DEFAULT, g_vm->_curMessage->_u16Param1, g_vm->_curMessage->_u16Param2, 0, 0);
 					else if (FlagUseWithStarted)
@@ -407,7 +407,7 @@ void doMouse() {
 						if (g_vm->_useWithInv[USED]) {
 							g_vm->_lightIcon = 0xFF;
 							g_vm->_animMgr->stopSmkAnim(g_vm->_inventoryObj[g_vm->_useWith[USED]]._anim);
-							RegenInv(g_vm->_regenInvStartIcon, INVENTORY_HIDE);
+							g_vm->RegenInv(g_vm->_regenInvStartIcon, INVENTORY_HIDE);
 							FlagInventoryLocked = false;
 						}
 						g_vm->_useWith[USED] = 0;
@@ -425,7 +425,7 @@ void doMouse() {
 						if (g_vm->_useWithInv[USED]) {
 							g_vm->_lightIcon = 0xFF;
 							g_vm->_animMgr->stopSmkAnim(g_vm->_inventoryObj[g_vm->_useWith[USED]]._anim);
-							RegenInv(g_vm->_regenInvStartIcon, INVENTORY_HIDE);
+							g_vm->RegenInv(g_vm->_regenInvStartIcon, INVENTORY_HIDE);
 							FlagInventoryLocked = false;
 						}
 						g_vm->_useWith[USED] = 0;
@@ -481,7 +481,7 @@ void doMouse() {
 				g_vm->_useWith[WITH] = 0;
 				g_vm->_curObj = 0;
 				g_vm->_lightIcon = 0xFF;
-				RegenInv(g_vm->_iconBase, INVENTORY_SHOW);
+				g_vm->RegenInv(g_vm->_iconBase, INVENTORY_SHOW);
 				if (g_vm->_curMessage->_event == ME_MRIGHT)
 					doEvent(MC_INVENTORY, ME_OPERATEICON, MP_DEFAULT, g_vm->_curMessage->_u16Param1, g_vm->_curMessage->_u16Param2, 0, 0);
 				else if (FlagUseWithStarted)
@@ -518,12 +518,12 @@ void doInventory() {
 
 	case ME_ONELEFT:
 		if (g_vm->_inventoryStatus == INV_INACTION)
-			OneLeftInventory();
+			g_vm->OneLeftInventory();
 		break;
 
 	case ME_ONERIGHT:
 		if (g_vm->_inventoryStatus == INV_INACTION)
-			OneRightInventory();
+			g_vm->OneRightInventory();
 		break;
 
 	case ME_OPERATEICON:
@@ -552,7 +552,7 @@ void doInventory() {
 			}
 			g_vm->_animMgr->startSmkAnim(g_vm->_inventoryObj[g_vm->_curInventory]._anim);
 			g_vm->_lightIcon = g_vm->_curInventory;
-			RegenInv(g_vm->_iconBase, INVENTORY_SHOW);
+			g_vm->RegenInv(g_vm->_iconBase, INVENTORY_SHOW);
 			FlagInventoryLocked = true;
 			FlagUseWithStarted = true;
 			g_vm->_useWith[USED] = g_vm->_curInventory;
@@ -591,7 +591,7 @@ void doInventory() {
 			ShowInvName(g_vm->_curInventory, true);
 
 			if (!FlagUseWithStarted && !FlagSomeOneSpeak) {
-				RegenInv(g_vm->_iconBase, INVENTORY_SHOW);
+				g_vm->RegenInv(g_vm->_iconBase, INVENTORY_SHOW);
 			}
 		} else {
 			if (!(INVAREA(my)))
@@ -599,7 +599,7 @@ void doInventory() {
 			ShowInvName(NO_OBJECTS, true);
 			if (!(FlagUseWithStarted)) {
 				g_vm->_lightIcon = 0xFF;
-				RegenInv(g_vm->_iconBase, INVENTORY_SHOW);
+				g_vm->RegenInv(g_vm->_iconBase, INVENTORY_SHOW);
 			}
 		}
 		break;
@@ -678,7 +678,7 @@ void doCharacter() {
 				extern uint16 lastobj;
 				lastobj = 0;
 				ShowObjName(g_vm->_curObj, true);
-				RegenInventory(g_vm->_regenInvStartIcon, g_vm->_regenInvStartLine);
+				g_vm->RegenInventory(g_vm->_regenInvStartIcon, g_vm->_regenInvStartLine);
 			}
 		}
 		break;
@@ -688,7 +688,7 @@ void doCharacter() {
 			REEVENT;
 		g_vm->_characterQueue.initQueue();
 		g_vm->_regenInvStartLine = INVENTORY_HIDE;
-		RegenInventory(g_vm->_regenInvStartIcon, INVENTORY_HIDE);
+		g_vm->RegenInventory(g_vm->_regenInvStartIcon, INVENTORY_HIDE);
 		g_vm->_inventoryStatus = INV_OFF;
 		if (g_vm->_curMessage->_u16Param1 > hLAST) {
 			g_vm->_animMgr->startSmkAnim(g_vm->_curMessage->_u16Param1);
@@ -771,7 +771,7 @@ void doSystem() {
 		FlagInventoryLocked = false;
 		g_vm->_regenInvStartLine = INVENTORY_HIDE;
 		g_vm->_inventoryCounter = INVENTORY_HIDE;
-		RegenInv(g_vm->_regenInvStartIcon, INVENTORY_HIDE);
+		g_vm->RegenInv(g_vm->_regenInvStartIcon, INVENTORY_HIDE);
 		FlagCharacterExist = true;
 		FlagShowCharacter = true;
 		CurRoomMaxX = SCREENLEN;
@@ -921,7 +921,7 @@ void RollInventory(uint8 status) {
 		g_vm->_inventoryCounter -= InvSpeed[InvSpeedIndex++];
 		if ((g_vm->_inventoryCounter <= INVENTORY_SHOW) || (InvSpeedIndex > 5)) {
 			InvSpeedIndex = 0;
-			RegenInv(g_vm->_iconBase, INVENTORY_SHOW);
+			g_vm->RegenInv(g_vm->_iconBase, INVENTORY_SHOW);
 			g_vm->_inventoryStatus = INV_INACTION;
 			g_vm->_inventoryCounter = INVENTORY_SHOW;
 			if (!(INVAREA(my))) doEvent(MC_INVENTORY, ME_CLOSE, MP_DEFAULT, 0, 0, 0, 0);
@@ -933,7 +933,7 @@ void RollInventory(uint8 status) {
 
 		if ((g_vm->_inventoryCounter > INVENTORY_HIDE) || (InvSpeedIndex > 5)) {
 			InvSpeedIndex = 0;
-			RegenInv(g_vm->_iconBase, INVENTORY_HIDE);
+			g_vm->RegenInv(g_vm->_iconBase, INVENTORY_HIDE);
 			g_vm->_inventoryStatus = INV_OFF;
 			g_vm->_inventoryCounter = INVENTORY_HIDE;
 			if ((INVAREA(my)) && !(FlagDialogActive || FlagDialogMenuActive))
@@ -943,7 +943,7 @@ void RollInventory(uint8 status) {
 			return ;
 		}
 	}
-	RegenInv(g_vm->_iconBase, g_vm->_inventoryCounter);
+	g_vm->RegenInv(g_vm->_iconBase, g_vm->_inventoryCounter);
 }
 
 /*-------------------------------------------------------------------------*/
@@ -1005,7 +1005,7 @@ void doIdle() {
 			DataSave();
 			ShowInvName(NO_OBJECTS, false);
 			doEvent(MC_INVENTORY, ME_SHOWICONNAME, MP_DEFAULT, mx, my, 0, 0);
-			RegenInventory(g_vm->_regenInvStartIcon, g_vm->_regenInvStartLine);
+			g_vm->RegenInventory(g_vm->_regenInvStartIcon, g_vm->_regenInvStartLine);
 		}
 		break;
 
@@ -1016,7 +1016,7 @@ void doIdle() {
 			if (!DataLoad()) {
 				ShowInvName(NO_OBJECTS, false);
 				doEvent(MC_INVENTORY, ME_SHOWICONNAME, MP_DEFAULT, mx, my, 0, 0);
-				RegenInventory(g_vm->_regenInvStartIcon, g_vm->_regenInvStartLine);
+				g_vm->RegenInventory(g_vm->_regenInvStartIcon, g_vm->_regenInvStartLine);
 			}
 		}
 		break;

@@ -5,6 +5,7 @@ MODULE_OBJS = \
 	metaengine.o \
 	graphics.o \
 	video.o \
+	inventory.o \
 	nl/classes.o \
 	nl/dialog.o \
 	nl/do.o \
@@ -15,7 +16,6 @@ MODULE_OBJS = \
 	nl/schedule.o \
 	nl/script.o \
 	nl/string.o \
-	nl/text.o \
 	nl/utility.o \
 	nl/3d/3dact.o \
 	nl/3d/3drend.o \

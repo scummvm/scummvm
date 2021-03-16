@@ -40,13 +40,18 @@ class TrecisionEngine : public Engine {
 private:
 	void initMain();
 	void InitMessageSystem();
-
+	void initNames();
+	
 public:
 	TrecisionEngine(OSystem *syst);
 	~TrecisionEngine() override;
 
 	Common::Error run() override;
 	void EventLoop();
+	void RegenInventory(uint8 StartIcon, uint8 StartLine);
+	void OneLeftInventory();
+	void OneRightInventory();
+	void RegenInv(uint8 StartIcon, uint8 StartLine);
 
 	uint16 _curRoom;
 	uint16 _oldRoom;
@@ -78,6 +83,8 @@ public:
 	uint16 _lastCurInventory;
 	uint16 _lastLightIcon;
 	int16 _inventoryCounter;
+	int16 LeftArrow;
+	int16 RightArrow;
 
 	bool _fastWalk;
 	bool _fastWalkLocked;
