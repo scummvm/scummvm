@@ -65,7 +65,7 @@ int32 Animations::getBodyAnimIndex(AnimationTypes animIdx, int32 actorIdx) {
 	return bodyAnimIndex;
 }
 
-void Animations::applyAnimStepRotation(uint8 *ptr, int32 deltaTime, int32 keyFrameLength, int16 newAngle1, int16 lastAngle1) {
+int16 Animations::applyAnimStepRotation(int32 deltaTime, int32 keyFrameLength, int16 newAngle1, int16 lastAngle1) const {
 	const int16 lastAngle = ClampAngle(lastAngle1);
 	const int16 newAngle = ClampAngle(newAngle1);
 
@@ -84,10 +84,10 @@ void Animations::applyAnimStepRotation(uint8 *ptr, int32 deltaTime, int32 keyFra
 		computedAngle = lastAngle;
 	}
 
-	*(int16 *)ptr = ClampAngle(computedAngle);
+	return ClampAngle(computedAngle);
 }
 
-void Animations::applyAnimStepTranslation(uint8 *ptr, int32 deltaTime, int32 keyFrameLength, int16 newPos, int16 lastPos) {
+int16 Animations::applyAnimStepTranslation(int32 deltaTime, int32 keyFrameLength, int16 newPos, int16 lastPos) const {
 	int16 distance = newPos - lastPos;
 
 	int16 computedPos;
@@ -97,12 +97,7 @@ void Animations::applyAnimStepTranslation(uint8 *ptr, int32 deltaTime, int32 key
 		computedPos = lastPos;
 	}
 
-	*(int16 *)ptr = computedPos;
-}
-
-int32 Animations::getAnimMode(uint8 *ptr, uint16 opcode) {
-	*(int16 *)ptr = opcode;
-	return opcode;
+	return computedPos;
 }
 
 bool Animations::setModelAnimation(int32 keyframeIdx, const AnimData &animData, uint8 *const bodyPtr, AnimTimerDataStruct *animTimerDataPtr) {
@@ -158,26 +153,25 @@ bool Animations::setModelAnimation(int32 keyframeIdx, const AnimData &animData, 
 	int16 boneIdx = 1;
 	int16 tmpNumOfPoints = numOfBonesInAnim - 1;
 	do {
-		uint8 *const bonesPtr = Model::getBonesStateData(bodyPtr, boneIdx);
+		BoneFrame *modelStateBoneFrame = (BoneFrame *)Model::getBonesStateData(bodyPtr, boneIdx);
 		const BoneFrame &boneFrame = keyFrame->boneframes[boneIdx];
 		const BoneFrame &lastBoneFrame = lastKeyFramePtr->boneframes[boneIdx];
 
-		const int16 animOpcode = getAnimMode(bonesPtr + 0, boneFrame.type);
-
-		switch (animOpcode) {
+		modelStateBoneFrame->type = boneFrame.type;
+		switch (boneFrame.type) {
 		case 0: // allow global rotate
-			applyAnimStepRotation(bonesPtr + 2, deltaTime, keyFrameLength, boneFrame.x, lastBoneFrame.x);
-			applyAnimStepRotation(bonesPtr + 4, deltaTime, keyFrameLength, boneFrame.y, lastBoneFrame.y);
-			applyAnimStepRotation(bonesPtr + 6, deltaTime, keyFrameLength, boneFrame.z, lastBoneFrame.z);
+			modelStateBoneFrame->x = applyAnimStepRotation(deltaTime, keyFrameLength, boneFrame.x, lastBoneFrame.x);
+			modelStateBoneFrame->y = applyAnimStepRotation(deltaTime, keyFrameLength, boneFrame.y, lastBoneFrame.y);
+			modelStateBoneFrame->z = applyAnimStepRotation(deltaTime, keyFrameLength, boneFrame.z, lastBoneFrame.z);
 			break;
 		case 1: // disallow global rotate
 		case 2: // disallow global rotate + hide
-			applyAnimStepTranslation(bonesPtr + 2, deltaTime, keyFrameLength, boneFrame.x, lastBoneFrame.x);
-			applyAnimStepTranslation(bonesPtr + 4, deltaTime, keyFrameLength, boneFrame.y, lastBoneFrame.y);
-			applyAnimStepTranslation(bonesPtr + 6, deltaTime, keyFrameLength, boneFrame.z, lastBoneFrame.z);
+			modelStateBoneFrame->x = applyAnimStepTranslation(deltaTime, keyFrameLength, boneFrame.x, lastBoneFrame.x);
+			modelStateBoneFrame->y = applyAnimStepTranslation(deltaTime, keyFrameLength, boneFrame.y, lastBoneFrame.y);
+			modelStateBoneFrame->z = applyAnimStepTranslation(deltaTime, keyFrameLength, boneFrame.z, lastBoneFrame.z);
 			break;
 		default:
-			error("Unsupported animation rotation mode %d", animOpcode);
+			error("Unsupported animation rotation mode %d", boneFrame.type);
 		}
 
 		++boneIdx;

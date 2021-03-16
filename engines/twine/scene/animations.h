@@ -34,9 +34,8 @@ class TwinEEngine;
 class Animations {
 private:
 	TwinEEngine *_engine;
-	void applyAnimStepRotation(uint8 *ptr, int32 deltaTime, int32 keyFrameLength, int16 newAngle1, int16 lastAngle1);
-	void applyAnimStepTranslation(uint8 *ptr, int32 deltaTime, int32 keyFrameLength, int16 newPos, int16 lastPos);
-	int32 getAnimMode(uint8 *ptr, uint16 opcode);
+	int16 applyAnimStepRotation(int32 deltaTime, int32 keyFrameLength, int16 newAngle1, int16 lastAngle1) const;
+	int16 applyAnimStepTranslation(int32 deltaTime, int32 keyFrameLength, int16 newPos, int16 lastPos) const;
 
 	/**
 	 * Verify animation at keyframe
