@@ -20,9 +20,6 @@
  *
  */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 #include "common/scummsys.h"
 #include "trecision/nl/sysdef.h"
 #include "trecision/nl/struct.h"
@@ -230,9 +227,9 @@ bool MessageQueue::testEmptyCharacterQueue4Script() {
 		return false;
 	}
 
-//	true quando:
-//	1) la coda e' vuota
-//	2) oppure c'e' una azione particolare in corso
+//	true when:
+//	1) the queue is empty
+//	2) or there's a particular action in progress
 
 	return true;
 }

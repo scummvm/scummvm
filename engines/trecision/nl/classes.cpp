@@ -407,7 +407,7 @@ void doMouse() {
 						if (g_vm->_useWithInv[USED]) {
 							g_vm->_lightIcon = 0xFF;
 							g_vm->_animMgr->stopSmkAnim(g_vm->_inventoryObj[g_vm->_useWith[USED]]._anim);
-							g_vm->RegenInv(g_vm->_regenInvStartIcon, INVENTORY_HIDE);
+							g_vm->RegenInv(g_vm->_inventoryRefreshStartIcon, INVENTORY_HIDE);
 							FlagInventoryLocked = false;
 						}
 						g_vm->_useWith[USED] = 0;
@@ -425,7 +425,7 @@ void doMouse() {
 						if (g_vm->_useWithInv[USED]) {
 							g_vm->_lightIcon = 0xFF;
 							g_vm->_animMgr->stopSmkAnim(g_vm->_inventoryObj[g_vm->_useWith[USED]]._anim);
-							g_vm->RegenInv(g_vm->_regenInvStartIcon, INVENTORY_HIDE);
+							g_vm->RegenInv(g_vm->_inventoryRefreshStartIcon, INVENTORY_HIDE);
 							FlagInventoryLocked = false;
 						}
 						g_vm->_useWith[USED] = 0;
@@ -518,12 +518,12 @@ void doInventory() {
 
 	case ME_ONELEFT:
 		if (g_vm->_inventoryStatus == INV_INACTION)
-			g_vm->OneLeftInventory();
+			g_vm->moveInventoryLeft();
 		break;
 
 	case ME_ONERIGHT:
 		if (g_vm->_inventoryStatus == INV_INACTION)
-			g_vm->OneRightInventory();
+			g_vm->moveInventoryRight();
 		break;
 
 	case ME_OPERATEICON:
@@ -678,7 +678,7 @@ void doCharacter() {
 				extern uint16 lastobj;
 				lastobj = 0;
 				ShowObjName(g_vm->_curObj, true);
-				g_vm->RegenInventory(g_vm->_regenInvStartIcon, g_vm->_regenInvStartLine);
+				g_vm->refreshInventory(g_vm->_inventoryRefreshStartIcon, g_vm->_inventoryRefreshStartLine);
 			}
 		}
 		break;
@@ -687,8 +687,8 @@ void doCharacter() {
 		if (FlagWaitRegen)
 			REEVENT;
 		g_vm->_characterQueue.initQueue();
-		g_vm->_regenInvStartLine = INVENTORY_HIDE;
-		g_vm->RegenInventory(g_vm->_regenInvStartIcon, INVENTORY_HIDE);
+		g_vm->_inventoryRefreshStartLine = INVENTORY_HIDE;
+		g_vm->refreshInventory(g_vm->_inventoryRefreshStartIcon, INVENTORY_HIDE);
 		g_vm->_inventoryStatus = INV_OFF;
 		if (g_vm->_curMessage->_u16Param1 > hLAST) {
 			g_vm->_animMgr->startSmkAnim(g_vm->_curMessage->_u16Param1);
@@ -769,9 +769,9 @@ void doSystem() {
 		g_vm->_inventoryStatus = INV_OFF;
 		g_vm->_lightIcon = 0xFF;
 		FlagInventoryLocked = false;
-		g_vm->_regenInvStartLine = INVENTORY_HIDE;
+		g_vm->_inventoryRefreshStartLine = INVENTORY_HIDE;
 		g_vm->_inventoryCounter = INVENTORY_HIDE;
-		g_vm->RegenInv(g_vm->_regenInvStartIcon, INVENTORY_HIDE);
+		g_vm->RegenInv(g_vm->_inventoryRefreshStartIcon, INVENTORY_HIDE);
 		FlagCharacterExist = true;
 		FlagShowCharacter = true;
 		CurRoomMaxX = SCREENLEN;
@@ -1005,7 +1005,7 @@ void doIdle() {
 			DataSave();
 			ShowInvName(NO_OBJECTS, false);
 			doEvent(MC_INVENTORY, ME_SHOWICONNAME, MP_DEFAULT, mx, my, 0, 0);
-			g_vm->RegenInventory(g_vm->_regenInvStartIcon, g_vm->_regenInvStartLine);
+			g_vm->refreshInventory(g_vm->_inventoryRefreshStartIcon, g_vm->_inventoryRefreshStartLine);
 		}
 		break;
 
@@ -1016,7 +1016,7 @@ void doIdle() {
 			if (!DataLoad()) {
 				ShowInvName(NO_OBJECTS, false);
 				doEvent(MC_INVENTORY, ME_SHOWICONNAME, MP_DEFAULT, mx, my, 0, 0);
-				g_vm->RegenInventory(g_vm->_regenInvStartIcon, g_vm->_regenInvStartLine);
+				g_vm->refreshInventory(g_vm->_inventoryRefreshStartIcon, g_vm->_inventoryRefreshStartLine);
 			}
 		}
 		break;

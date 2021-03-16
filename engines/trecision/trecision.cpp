@@ -71,7 +71,7 @@ TrecisionEngine::TrecisionEngine(OSystem *syst) : Engine(syst) {
 	_inventorySize = 0;
 	_cyberInventorySize = 0;
 	_iconBase = 0;
-	_regenInvStartIcon = 0;
+	_inventoryRefreshStartIcon = 0;
 	_lastCurInventory = 0;
 
 	_fastWalk = false;
@@ -99,7 +99,7 @@ TrecisionEngine::TrecisionEngine(OSystem *syst) : Engine(syst) {
 	_curObj = 1;
 	_inventoryStatus = INV_OFF;
 	_lightIcon = 0xFF;
-	_regenInvStartLine = INVENTORY_HIDE;
+	_inventoryRefreshStartLine = INVENTORY_HIDE;
 	_lastLightIcon = 0xFF;
 	_inventoryCounter = INVENTORY_HIDE;
 	LeftArrow = 0;
@@ -230,13 +230,8 @@ void TrecisionEngine::initMain() {
 
 	LoadAll();
 
-	InitMessageSystem();
-
-	_inventory[_inventorySize++] = iBANCONOTE;
-	_inventory[_inventorySize++] = iSAM;
-	_inventory[_inventorySize++] = iCARD03;
-	_inventory[_inventorySize++] = iPEN;
-	_inventory[_inventorySize++] = iKEY05;
+	initMessageSystem();
+	initInventory();
 
 	_curRoom = rINTRO;
 
@@ -248,7 +243,7 @@ void TrecisionEngine::initMain() {
 /*-------------------------------------------------------------------------*/
 /*                            INITMESSAGESYSTEM          				   */
 /*-------------------------------------------------------------------------*/
-void TrecisionEngine::InitMessageSystem() {
+void TrecisionEngine::initMessageSystem() {
 	_gameQueue.initQueue();
 	_animQueue.initQueue();
 	_characterQueue.initQueue();

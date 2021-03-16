@@ -39,8 +39,9 @@ class AnimManager;
 class TrecisionEngine : public Engine {
 private:
 	void initMain();
-	void InitMessageSystem();
+	void initMessageSystem();
 	void initNames();
+	void initInventory();
 	
 public:
 	TrecisionEngine(OSystem *syst);
@@ -48,9 +49,9 @@ public:
 
 	Common::Error run() override;
 	void EventLoop();
-	void RegenInventory(uint8 StartIcon, uint8 StartLine);
-	void OneLeftInventory();
-	void OneRightInventory();
+	void refreshInventory(uint8 StartIcon, uint8 StartLine);
+	void moveInventoryLeft();
+	void moveInventoryRight();
 	void RegenInv(uint8 StartIcon, uint8 StartLine);
 
 	uint16 _curRoom;
@@ -78,8 +79,8 @@ public:
 	uint8 _iconBase;
 	uint8 _inventoryStatus;
 	uint8 _lightIcon;
-	uint8 _regenInvStartIcon;
-	uint8 _regenInvStartLine;
+	uint8 _inventoryRefreshStartIcon;
+	uint8 _inventoryRefreshStartLine;
 	uint16 _lastCurInventory;
 	uint16 _lastLightIcon;
 	int16 _inventoryCounter;

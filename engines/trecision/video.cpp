@@ -434,7 +434,7 @@ void AnimManager::refreshSmkAnim(int num) {
 		return;
 
 	if (_animTab[num]._flag & SMKANIM_ICON) {
-		refreshSmkIcon(_vm->_regenInvStartIcon, num);
+		refreshSmkIcon(_vm->_inventoryRefreshStartIcon, num);
 		return;
 	}
 
