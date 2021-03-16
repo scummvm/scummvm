@@ -10,7 +10,6 @@ MODULE_OBJS = \
 	credits.o \
 	database.o \
 	death.o \
-	detection.o \
 	frame_window.o \
 	gameui.o \
 	graphics.o \
@@ -18,6 +17,7 @@ MODULE_OBJS = \
 	inventory_window.o \
 	livetext.o \
 	main_menu.o \
+	metaengine.o \
 	navarrow.o \
 	overview.o \
 	saveload.o \
@@ -48,3 +48,6 @@ endif
 
 # Include common rules
 include $(srcdir)/rules.mk
+
+# Detection objects
+DETECT_OBJS += $(MODULE)/detection.o
