@@ -2288,7 +2288,7 @@ void Actor::updateStatusEnabled() {
 
 						if (!getSharedData()->getFlag(kFlagActorUpdateEnabledCheck)) {
 							if (!isInActionArea(pt, area)) {
-								Common::Point polyPoint = poly.points[rnd(poly.count())];
+								Common::Point polyPoint = poly.points[rnd(poly.count() - 1)];
 								processStatus(polyPoint.x, polyPoint.y, false);
 							} else {
 								processStatus(pt.x, pt.y, false);
