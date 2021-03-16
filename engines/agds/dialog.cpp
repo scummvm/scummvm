@@ -21,7 +21,9 @@ void Dialog::parseDialogDefs(const Common::String &defs) {
 		char ch = defs[p];
 		if (ch == ' ') {
 			continue;
-		} else if (ch == '\n' || ch == '\r') {
+		} else if (ch == '\n' || ch == '\r' || p + 1 == size) {
+			if (p + 1 == size)
+				value += ch;
 			//debug("dialog definition: '%s' = '%s'", name.c_str(), value.c_str());
 			if (!name.empty() && !value.empty()) {
 				_dialogDefs[name] = atoi(value.c_str());
