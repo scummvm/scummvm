@@ -107,6 +107,34 @@ static const ADGameDescription gameDescriptions[] = {
 		GUIO0()
 	},
 
+	// English Windows 3.11 8BPP
+	// Not Installed
+	// v1.04
+	{
+		"buried",
+		"v1.04 8BPP",
+		AD_ENTRY2s("BIT816.EXE", "9055335a574d3b9418b8ddb9a5539829", 1168384,
+				   "BIT8LIB.DLL","31bcd9e5cc32df00b09ce626e6d9106e", 2420480),
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+		ADGF_NO_FLAGS,
+		GUIO0()
+	},
+
+	// English Windows 3.11 24BPP
+	// Not Installed
+	// v1.04
+	{
+		"buried",
+		"v1.04 24BPP",
+		AD_ENTRY2s("BIT2416.EXE", "782083ef765dcbe8e8ac11d025fba68d", 1163264,
+				   "BIT24LIB.DLL","74ac9dae92f415fea8cdbd220ba8795c", 5211648),
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+		GF_TRUECOLOR,
+		GUIO0()
+	},
+
 	// German Windows 3.11 8BPP
 	// Installed
 	// v1.05
