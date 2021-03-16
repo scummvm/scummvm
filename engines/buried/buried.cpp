@@ -48,7 +48,7 @@
 
 namespace Buried {
 
-BuriedEngine::BuriedEngine(OSystem *syst, const Common::ADGameDescription *gameDesc) : Engine(syst), _gameDescription(gameDesc) {
+BuriedEngine::BuriedEngine(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst), _gameDescription(gameDesc) {
 	_gfx = 0;
 	_mainEXE = 0;
 	_library = 0;
