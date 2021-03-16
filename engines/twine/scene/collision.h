@@ -37,10 +37,10 @@ private:
 public:
 	Collision(TwinEEngine *engine);
 	/** Actor collision coordinate */
-	Vec3 collision;
+	IVec3 collision;
 
 	/** Actor collision coordinate */
-	Vec3 processCollision;
+	IVec3 processCollision;
 
 	/** Cause damage in current processed actor */
 	int32 causeActorDamage = 0; //fieldCauseDamage

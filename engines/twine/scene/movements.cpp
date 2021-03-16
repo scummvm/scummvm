@@ -149,7 +149,7 @@ int32 Movements::getDistance2D(int32 x1, int32 z1, int32 x2, int32 z2) const {
 	return (int32)sqrt((float)((x2 - x1) * (x2 - x1) + (z2 - z1) * (z2 - z1)));
 }
 
-int32 Movements::getDistance2D(const Vec3 &v1, const Vec3 &v2) const {
+int32 Movements::getDistance2D(const IVec3 &v1, const IVec3 &v2) const {
 	return (int32)sqrt((float)((v2.x - v1.x) * (v2.x - v1.x) + (v2.z - v1.z) * (v2.z - v1.z)));
 }
 
@@ -157,7 +157,7 @@ int32 Movements::getDistance3D(int32 x1, int32 y1, int32 z1, int32 x2, int32 y2,
 	return (int32)sqrt((float)((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1) + (z2 - z1) * (z2 - z1)));
 }
 
-int32 Movements::getDistance3D(const Vec3 &v1, const Vec3 &v2) const {
+int32 Movements::getDistance3D(const IVec3 &v1, const IVec3 &v2) const {
 	return (int32)sqrt((float)((v2.x - v1.x) * (v2.x - v1.x) + (v2.y - v1.y) * (v2.y - v1.y) + (v2.z - v1.z) * (v2.z - v1.z)));
 }
 

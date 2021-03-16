@@ -128,10 +128,10 @@ public:
 	bool heroMoved = false; // twinsenMove
 
 	/** Process actor coordinate */
-	Vec3 processActor;
+	IVec3 processActor;
 
 	/** Previous process actor coordinate */
-	Vec3 previousActor;
+	IVec3 previousActor;
 
 	int32 targetActorDistance = 0; // DoTrackVar1
 
@@ -176,7 +176,7 @@ public:
 	 */
 	int32 getAngleAndSetTargetActorDistance(int32 x1, int32 z1, int32 x2, int32 z2);
 
-	inline int32 getAngleAndSetTargetActorDistance(const Vec3& v1, const Vec3 &v2) {
+	inline int32 getAngleAndSetTargetActorDistance(const IVec3& v1, const IVec3 &v2) {
 		return getAngleAndSetTargetActorDistance(v1.x, v1.z, v2.x, v2.z);
 	}
 
@@ -196,7 +196,7 @@ public:
 	 * @param z2 Actor 2 Z coordinate
 	 */
 	int32 getDistance2D(int32 x1, int32 z1, int32 x2, int32 z2) const;
-	int32 getDistance2D(const Vec3 &v1, const Vec3 &v2) const;
+	int32 getDistance2D(const IVec3 &v1, const IVec3 &v2) const;
 
 	/**
 	 * Get distance value in 3D
@@ -208,7 +208,7 @@ public:
 	 * @param z2 Actor 2 Z coordinate
 	 */
 	int32 getDistance3D(int32 x1, int32 y1, int32 z1, int32 x2, int32 y2, int32 z2) const;
-	int32 getDistance3D(const Vec3 &v1, const Vec3 &v2) const;
+	int32 getDistance3D(const IVec3 &v1, const IVec3 &v2) const;
 
 	/**
 	 * Move actor around the scene

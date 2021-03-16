@@ -45,7 +45,7 @@ private:
 	bool isTriangleVisible(const Vertex *vertices) const;
 
 	struct Location {
-		Vec3 angle;
+		IVec3 angle;
 		uint16 textIndex = 0;
 		char name[30] = "";
 	};
@@ -62,7 +62,7 @@ private:
 		HamalayiTransporter = 47
 	};
 
-	Vec3 _holomapSurface[561];
+	IVec3 _holomapSurface[561];
 
 	// original game size: 2244 (lba1)
 	struct HolomapSort {
@@ -84,7 +84,7 @@ private:
 		int16 locationIdx = -1;
 		int16 trajLocationIdx = -1;
 		int16 vehicleIdx = -1;
-		Vec3 pos;
+		IVec3 pos;
 		int16 numAnimFrames = 0;
 		struct TrajectoryPos {
 			int16 x = 0;

@@ -262,7 +262,7 @@ bool Scene::loadSceneLBA2() {
 
 	sceneNumTracks = stream.readUint16LE();
 	for (int32 i = 0; i < sceneNumTracks; i++) {
-		Vec3 *point = &sceneTracks[i];
+		IVec3 *point = &sceneTracks[i];
 		point->x = stream.readSint32LE();
 		point->y = stream.readSint32LE();
 		point->z = stream.readSint32LE();
@@ -387,7 +387,7 @@ bool Scene::loadSceneLBA1() {
 
 	sceneNumTracks = stream.readUint16LE();
 	for (int32 i = 0; i < sceneNumTracks; i++) {
-		Vec3 *point = &sceneTracks[i];
+		IVec3 *point = &sceneTracks[i];
 		point->x = stream.readUint16LE();
 		point->y = stream.readUint16LE();
 		point->z = stream.readUint16LE();

@@ -66,7 +66,7 @@ struct Matrix {
 	int32 row3[3]{0, 0, 0};
 };
 
-inline Matrix operator*(const Matrix &matrix, const Vec3 &vec) {
+inline Matrix operator*(const Matrix &matrix, const IVec3 &vec) {
 	Matrix out;
 	out.row1[0] = matrix.row1[0] * vec.x;
 	out.row1[1] = matrix.row1[1] * vec.x;
@@ -330,7 +330,7 @@ private:
 
 	// ---- variables ----
 
-	Vec3 baseTransPos;
+	IVec3 baseTransPos;
 
 	int32 cameraDepthOffset = 0; // cameraVar1
 	int32 cameraScaleY = 0; // cameraVar2
@@ -342,14 +342,14 @@ private:
 	int32 renderAngleY = 0; // _angleY
 	int32 renderAngleZ = 0; // _angleZ
 
-	Vec3 renderPos;
+	IVec3 renderPos;
 
 	// ---
 
 	Matrix baseMatrix;
 	Matrix matricesTable[30 + 1];
 	Matrix shadeMatrix;
-	Vec3 lightPos;
+	IVec3 lightPos;
 
 	RenderCommand _renderCmds[1000];
 	uint8 renderCoordinatesBuffer[10000]{0};
@@ -398,12 +398,12 @@ public:
 
 	void init(int32 w, int32 h);
 
-	Vec3 projPosScreen;
-	Vec3 projPos;
-	Vec3 baseRotPos;
-	Vec3 orthoProjPos;
-	Vec3 destPos;
-	Vec3 getHolomapRotation(const int32 angleX, const int32 angleY, const int32 angleZ) const;
+	IVec3 projPosScreen;
+	IVec3 projPos;
+	IVec3 baseRotPos;
+	IVec3 orthoProjPos;
+	IVec3 destPos;
+	IVec3 getHolomapRotation(const int32 angleX, const int32 angleY, const int32 angleZ) const;
 
 	void setLightVector(int32 angleX, int32 angleY, int32 angleZ);
 	void getBaseRotationPosition(int32 x, int32 y, int32 z);
@@ -411,13 +411,13 @@ public:
 	static void prepareIsoModel(uint8 *bodyPtr);
 	void renderPolygons(const CmdRenderPolygon &polygon, Vertex *vertices);
 
-	inline int32 projectPositionOnScreen(const Vec3& pos) {
+	inline int32 projectPositionOnScreen(const IVec3& pos) {
 		return projectPositionOnScreen(pos.x, pos.y, pos.z);
 	}
 
 	int32 projectPositionOnScreen(int32 cX, int32 cY, int32 cZ);
 
-	inline void projectXYPositionOnScreen(const Vec3& pos) {
+	inline void projectXYPositionOnScreen(const IVec3& pos) {
 		projectXYPositionOnScreen(pos.x, pos.y, pos.z);
 	}
 	void projectXYPositionOnScreen(int32 x,int32 y,int32 z);

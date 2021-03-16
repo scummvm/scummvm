@@ -197,10 +197,10 @@ public:
 	const uint8 *getBlockBufferGround(int32 x, int32 y, int32 z, int32 &ground);
 
 	/** New grid camera x, y and z coordinates */
-	Vec3 newCamera;
+	IVec3 newCamera;
 
 	/** Current grid camera x, y and z coordinates */
-	Vec3 camera;
+	IVec3 camera;
 
 	/** Flag to know if the engine is using celling grids */
 	int16 useCellingGrid = 0; // useAnotherGrm

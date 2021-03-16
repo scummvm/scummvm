@@ -247,8 +247,8 @@ void Actor::initModelActor(BodyType bodyIdx, int16 actorIdx) {
 		localActor->entity = -1;
 
 		BoundingBox &bbox = localActor->boudingBox;
-		bbox.mins = Vec3();
-		bbox.maxs = Vec3();
+		bbox.mins = IVec3();
+		bbox.maxs = IVec3();
 		debug("Failed to initialize body %i for actor %i", (int)bodyIdx, actorIdx);
 		return;
 	}
@@ -346,8 +346,8 @@ void Actor::resetActor(int16 actorIdx) {
 	actor->pos.z = 0;
 
 	BoundingBox &bbox = actor->boudingBox;
-	bbox.mins = Vec3();
-	bbox.maxs = Vec3();
+	bbox.mins = IVec3();
+	bbox.maxs = IVec3();
 
 	actor->angle = 0;
 	actor->speed = 40;

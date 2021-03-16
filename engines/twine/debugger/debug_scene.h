@@ -35,39 +35,39 @@ class DebugScene {
 private:
 	TwinEEngine *_engine;
 
-	void drawBoundingBoxProjectPoints(Vec3 *point3d, Vec3 *point3dProjected);
+	void drawBoundingBoxProjectPoints(IVec3 *point3d, IVec3 *point3dProjected);
 	int32 checkZoneType(int32 type) const;
 	bool displayZones();
 	bool displayActors();
 	bool displayTracks();
 
 	struct ScenePositionsProjected {
-		Vec3 frontBottomLeftPoint;
-		Vec3 frontBottomRightPoint;
+		IVec3 frontBottomLeftPoint;
+		IVec3 frontBottomRightPoint;
 
-		Vec3 frontTopLeftPoint;
-		Vec3 frontTopRightPoint;
+		IVec3 frontTopLeftPoint;
+		IVec3 frontTopRightPoint;
 
-		Vec3 backBottomLeftPoint;
-		Vec3 backBottomRightPoint;
+		IVec3 backBottomLeftPoint;
+		IVec3 backBottomRightPoint;
 
-		Vec3 backTopLeftPoint;
-		Vec3 backTopRightPoint;
+		IVec3 backTopLeftPoint;
+		IVec3 backTopRightPoint;
 
-		Vec3 frontBottomLeftPoint2D;
-		Vec3 frontBottomRightPoint2D;
+		IVec3 frontBottomLeftPoint2D;
+		IVec3 frontBottomRightPoint2D;
 
-		Vec3 frontTopLeftPoint2D;
-		Vec3 frontTopRightPoint2D;
+		IVec3 frontTopLeftPoint2D;
+		IVec3 frontTopRightPoint2D;
 
-		Vec3 backBottomLeftPoint2D;
-		Vec3 backBottomRightPoint2D;
+		IVec3 backBottomLeftPoint2D;
+		IVec3 backBottomRightPoint2D;
 
-		Vec3 backTopLeftPoint2D;
-		Vec3 backTopRightPoint2D;
+		IVec3 backTopLeftPoint2D;
+		IVec3 backTopRightPoint2D;
 	};
 
-	ScenePositionsProjected calculateBoxPositions(const Vec3 &bottomLeft, const Vec3 &topRight);
+	ScenePositionsProjected calculateBoxPositions(const IVec3 &bottomLeft, const IVec3 &topRight);
 	bool drawBox(const ScenePositionsProjected &positions, uint8 color);
 public:
 	DebugScene(TwinEEngine *engine);

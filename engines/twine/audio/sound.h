@@ -96,7 +96,7 @@ public:
 	 * @param actorIdx
 	 */
 	void playSample(int32 index, int32 repeat = 1, int32 x = 128, int32 y = 128, int32 z = 128, int32 actorIdx = -1);
-	void playSample(int32 index, int32 repeat, const Vec3 &pos, int32 actorIdx = -1) {
+	void playSample(int32 index, int32 repeat, const IVec3 &pos, int32 actorIdx = -1) {
 		playSample(index, repeat, pos.x, pos.y, pos.z, actorIdx);
 	}
 

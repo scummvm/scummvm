@@ -49,8 +49,8 @@ enum class ScenePositionType {
  * Special actions, like change scene, climbing a ladder, ...
  */
 struct ZoneStruct {
-	Vec3 mins;
-	Vec3 maxs;
+	IVec3 mins;
+	IVec3 maxs;
 	int16 type = 0;
 	int16 snap = 0;
 	union {
@@ -293,8 +293,8 @@ private:
 
 	int16 _sceneMusic = 0;
 
-	Vec3 _sceneHeroPos;
-	Vec3 _zoneHeroPos;
+	IVec3 _sceneHeroPos;
+	IVec3 _zoneHeroPos;
 
 	int32 _currentGameOverScene = 0;
 
@@ -317,7 +317,7 @@ public:
 	int32 alphaLight = ANGLE_0;
 	int32 betaLight = ANGLE_0;
 
-	Vec3 newHeroPos;
+	IVec3 newHeroPos;
 
 	/** Hero Y coordinate before fall */
 	int16 heroYBeforeFall = 0;
@@ -345,7 +345,7 @@ public:
 	// TRACKS Tell the actor where to go
 
 	int32 sceneNumTracks = 0;
-	Vec3 sceneTracks[NUM_MAX_TRACKS];
+	IVec3 sceneTracks[NUM_MAX_TRACKS];
 
 	bool enableGridTileRendering = true;
 

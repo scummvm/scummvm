@@ -53,9 +53,9 @@ enum ExtraType {
 
 struct ExtraListStruct {
 	int16 info0 = 0; /**< a value of -1 indicates that this instance is free to use */
-	Vec3 pos;
-	Vec3 lastPos;
-	Vec3 destPos;
+	IVec3 pos;
+	IVec3 lastPos;
+	IVec3 destPos;
 
 	ActorMoveStruct trackActorMove;
 

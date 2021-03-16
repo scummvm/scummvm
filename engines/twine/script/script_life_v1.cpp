@@ -1115,7 +1115,7 @@ static int32 lZOOM(TwinEEngine *engine, LifeScriptContext &ctx) {
 static int32 lPOS_POINT(TwinEEngine *engine, LifeScriptContext &ctx) {
 	int32 trackIdx = ctx.stream.readByte();
 
-	const Vec3 &sp = engine->_scene->sceneTracks[trackIdx];
+	const IVec3 &sp = engine->_scene->sceneTracks[trackIdx];
 	engine->_renderer->destPos.x = sp.x;
 	engine->_renderer->destPos.y = sp.y;
 	engine->_renderer->destPos.z = sp.z;

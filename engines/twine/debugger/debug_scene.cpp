@@ -41,7 +41,7 @@ void DebugScene::drawClip(const Common::Rect &rect) {
 	_engine->_menu->drawBox(rect);
 }
 
-void DebugScene::drawBoundingBoxProjectPoints(Vec3 *pPoint3d, Vec3 *pPoint3dProjected) {
+void DebugScene::drawBoundingBoxProjectPoints(IVec3 *pPoint3d, IVec3 *pPoint3dProjected) {
 	_engine->_renderer->projectPositionOnScreen(pPoint3d->x, pPoint3d->y, pPoint3d->z);
 
 	pPoint3dProjected->x = _engine->_renderer->projPos.x;
@@ -102,7 +102,7 @@ int32 DebugScene::checkZoneType(int32 type) const {
 	return 0;
 }
 
-DebugScene::ScenePositionsProjected DebugScene::calculateBoxPositions(const Vec3 &bottomLeft, const Vec3 &topRight) {
+DebugScene::ScenePositionsProjected DebugScene::calculateBoxPositions(const IVec3 &bottomLeft, const IVec3 &topRight) {
 	ScenePositionsProjected positions;
 	// compute the points in 3D
 	positions.frontBottomLeftPoint.x = bottomLeft.x - _engine->_grid->camera.x;
@@ -188,7 +188,7 @@ bool DebugScene::displayActors() {
 		if (!actorPtr->staticFlags.bIsSpriteActor) {
 			continue;
 		}
-		const Vec3 &pos = actorPtr->pos;
+		const IVec3 &pos = actorPtr->pos;
 		const BoundingBox &bbox = actorPtr->boudingBox;
 		const ScenePositionsProjected &positions = calculateBoxPositions(pos + bbox.mins, pos + bbox.maxs);
 		if (!drawBox(positions, COLOR_WHITE)) {

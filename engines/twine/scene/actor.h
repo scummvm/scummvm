@@ -186,7 +186,7 @@ public:
 	bool isJumpAnimationActive() const;
 
 	int16 actorIdx = 0; // own actor index
-	Vec3 pos;
+	IVec3 pos;
 	int32 strengthOfHit = 0; // field_66
 	int32 hitBy = 0;
 	BonusParameter bonusParameter; // field_10
@@ -208,7 +208,7 @@ public:
 
 	void setLife(int32 val);
 
-	Vec3 collisionPos;
+	IVec3 collisionPos;
 
 	int32 positionInMoveScript = 0;
 	uint8 *moveScript = nullptr;
@@ -228,7 +228,7 @@ public:
 	int32 zone = 0;
 
 	int32 lastRotationAngle = ANGLE_0;
-	Vec3 lastPos;
+	IVec3 lastPos;
 	int32 previousAnimIdx = 0;
 	int32 doorStatus = 0;
 	int32 animPosition = 0;
@@ -291,7 +291,7 @@ public:
 	ActorStruct *processActorPtr = nullptr;
 
 	/** Actor shadow coordinate */
-	Vec3 shadowCoord;
+	IVec3 shadowCoord;
 	/** Actor shadow collition type - brick shape */
 	ShapeType shadowCollisionType = ShapeType::kNone;
 
