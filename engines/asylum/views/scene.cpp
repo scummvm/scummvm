@@ -144,7 +144,8 @@ void Scene::enter(ResourcePackId packId) {
 		for (uint32 i = 1; i < _ws->actors.size(); i++) {
 			Actor *actor = _ws->actors[i];
 
-			actor->hide();
+			if (_ws->chapter == kChapter11) // DELETEME
+				actor->show();
 			actor->setDirection(kDirectionNW);
 			actor->enable();
 

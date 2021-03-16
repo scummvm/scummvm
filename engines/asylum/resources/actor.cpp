@@ -2328,6 +2328,16 @@ void Actor::updateStatusEnabled() {
 			break;
 		}
 	}
+
+	// XXX
+	if (getWorld()->chapter == kChapter11 && _index == 9)
+		// the following block is originally from updateStatus12_Chapter11_Actor1()
+		if (_vm->isGameFlagNotSet(kGameFlag1099)) {
+			_vm->setGameFlag(kGameFlag1099);
+			_reaction[0] = 1;
+			_reaction[1] = 2;
+			_reaction[2] = 3;
+		}
 }
 
 void Actor::updateStatusEnabledProcessStatus(int16 testX, int16 testY, uint32 counter, int16 setX, int16 setY) {
