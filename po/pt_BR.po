@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-03-16 01:50+0000\n"
-"PO-Revision-Date: 2021-02-21 19:36+0000\n"
+"PO-Revision-Date: 2021-03-17 04:24+0000\n"
 "Last-Translator: Marcel Souza Lemes <marcosoutsider@gmail.com>\n"
 "Language-Team: Portuguese (Brazil) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/pt_BR/>\n"
@@ -312,17 +312,13 @@ msgid "Backend"
 msgstr "Backend"
 
 #: gui/editgamedialog.cpp:250
-#, fuzzy
-#| msgid "Override global audio settings"
 msgid "Override global backend settings"
-msgstr "Sobrepor configuração global de áudio"
+msgstr "Substituir configurações globais de back-end"
 
 #: gui/editgamedialog.cpp:252
-#, fuzzy
-#| msgid "Override global audio settings"
 msgctxt "lowres"
 msgid "Override global backend settings"
-msgstr "Sobrepor configuração global de áudio"
+msgstr "Substituir configurações globais de back-end"
 
 #: gui/editgamedialog.cpp:266 gui/options.cpp:1858 engines/dialogs.cpp:301
 msgid "Audio"
@@ -2792,16 +2788,12 @@ msgid "Decrease the scale factor"
 msgstr "Diminuir o fator de redimensionamento"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:436
-#, fuzzy
-#| msgid "Switch to TV 2x scaling"
 msgid "Switch to the next scaler"
-msgstr "Alterar para redimensionamento TV 2x"
+msgstr "Alternar para o próximo redimensionador"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:441
-#, fuzzy
-#| msgid "Switch to nearest neighbour scaling"
 msgid "Switch to the previous scaler"
-msgstr "Alterar para redimensionamento sem filtro"
+msgstr "Alternar para o redimensionador anterior"
 
 #: backends/keymapper/hardware-input.cpp:245
 msgid "Left Mouse Button"
