@@ -205,7 +205,7 @@ Graphics::Font *GraphicsManager::createArialFont(int size, bool bold) const {
 	static const uint32 *codePageMapping = s_codePage1252;
 #endif
 
-	Graphics::Font *font = Graphics::loadTTFFont(*stream, size, 96, _vm->isTrueColor() ? Graphics::kTTFRenderModeLight : Graphics::kTTFRenderModeMonochrome, codePageMapping);
+	Graphics::Font *font = Graphics::loadTTFFont(*stream, size, Graphics::kTTFSizeModeCharacter, 96, _vm->isTrueColor() ? Graphics::kTTFRenderModeLight : Graphics::kTTFRenderModeMonochrome, codePageMapping);
 
 	if (!font)
 		error("Failed to load Arial%s font", bold ? " Bold" : "");
@@ -606,61 +606,14 @@ Common::SeekableReadStream *GraphicsManager::findArialStream(bool bold) const {
 	if (stream)
 		return stream;
 
-	// HACK: Try to load the system font
-#if defined(WIN32)
-	Common::FSNode fontPath("C:/WINDOWS/Fonts/" + defaultBaseName);
-
-	if (fontPath.exists() && !fontPath.isDirectory() && fontPath.isReadable())
-		stream = fontPath.createReadStream();
-
-	if (!stream) {
-		Common::FSNode win2kFontPath("C:/WINNT/Fonts/" + defaultBaseName);
-
-		if (win2kFontPath.exists() && !win2kFontPath.isDirectory() && win2kFontPath.isReadable())
-			stream = win2kFontPath.createReadStream();
-	}
-#elif defined(MACOSX)
-	// Attempt to load the font from the Arial.ttf font first
-	Common::String baseName = bold ? "Arial Bold" : "Arial";
-	Common::FSNode fontPath(Common::String::format("/Library/Fonts/%s.ttf", baseName.c_str()));
-
-	if (fontPath.exists() && !fontPath.isDirectory() && fontPath.isReadable())
-		stream = fontPath.createReadStream();
-
-	if (!stream) {
-		// Try the suitcase on the system
-		Common::FSNode fontDirectory("/Library/Fonts");
-		Common::MacResManager resFork;
-
-		// DOUBLE HACK WARNING: Just assume it's 0x1000
-		// (it should always be this, the first font, but parsing the FOND would be better)
-		if (fontDirectory.exists() && fontDirectory.isDirectory() && resFork.open(fontPath, "Arial") && resFork.hasResFork())
-			stream = resFork.getResource(MKTAG('s', 'f', 'n', 't'), baseName);
-
-		// ...and one last try
-		if (!stream) {
-			Common::FSNode msFontDirectory("/Library/Fonts/Microsoft");
-			if (fontDirectory.exists() && fontDirectory.isDirectory() && resFork.open(fontPath, "Arial") && resFork.hasResFork())
-				stream = resFork.getResource(MKTAG('s', 'f', 'n', 't'), baseName);
-		}
-	}
-#elif defined(__linux__)
-	// TODO: Could also check for other fonts, other paths, etc.
-	Common::String baseName = bold ? "arialbd.ttf" : "arial.ttf";
-	Common::FSNode fontPath("/usr/share/fonts/truetype/msttcorefonts/" + baseName);
-
-	if (fontPath.exists() && !fontPath.isDirectory() && fontPath.isReadable())
-		stream = fontPath.createReadStream();
-#endif
-
 	if (!stream) {
 		// TODO: It would really be nice to have "Liberation Sans", since it is metric
 		// compatible with Arial.
 
 		if (bold)
-			stream = getThemeFontStream("FreeSansBold.ttf");
+			stream = getThemeFontStream("LiberationSans-Bold.ttf");
 		else
-			stream = getThemeFontStream("FreeSans.ttf");
+			stream = getThemeFontStream("LiberationSans-Regular.ttf");
 	}
 
 	return stream;
@@ -710,7 +663,7 @@ Graphics::Font *GraphicsManager::createMSGothicFont(int size, bool bold) const {
 		error("Failed to find MS Gothic font");
 
 	switch (size) {
-	case 10:	
+	case 10:
 	case 11:
 		size = 8;
 		break;
@@ -727,7 +680,7 @@ Graphics::Font *GraphicsManager::createMSGothicFont(int size, bool bold) const {
 	// TODO: Fake a bold version
 
 	// Force monochrome, since the original uses the bitmap glyphs in the font
-	Graphics::Font *font = Graphics::loadTTFFont(*stream, size, 96, Graphics::kTTFRenderModeMonochrome);
+	Graphics::Font *font = Graphics::loadTTFFont(*stream, size, Graphics::kTTFSizeModeCharacter, 96, Graphics::kTTFRenderModeMonochrome);
 
 	if (!font)
 		error("Failed to load MS Gothic font");
