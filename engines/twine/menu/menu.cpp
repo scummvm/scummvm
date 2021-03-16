@@ -976,7 +976,8 @@ void Menu::drawBehaviour(int32 left, int32 top, HeroBehaviourType behaviour, int
 }
 
 void Menu::prepareAndDrawBehaviour(int32 left, int32 top, int32 angle, HeroBehaviourType behaviour, Common::Rect &dirtyRect) {
-	_engine->_animations->setAnimAtKeyframe(behaviourAnimState[(byte)behaviour], _engine->_resources->animTable[_engine->_actor->heroAnimIdx[(byte)behaviour]], behaviourEntity, &behaviourAnimData[(byte)behaviour]);
+	const int animIdx = _engine->_actor->heroAnimIdx[(byte)behaviour];
+	_engine->_animations->setAnimAtKeyframe(behaviourAnimState[(byte)behaviour], _engine->_resources->animData[animIdx], _engine->_resources->animTable[animIdx], behaviourEntity, &behaviourAnimData[(byte)behaviour]);
 	drawBehaviour(left, top, behaviour, angle, false, dirtyRect);
 }
 
@@ -1033,7 +1034,8 @@ void Menu::processBehaviourMenu() {
 
 	HeroBehaviourType tmpHeroBehaviour = _engine->_actor->heroBehaviour;
 
-	_engine->_animations->setAnimAtKeyframe(behaviourAnimState[(byte)_engine->_actor->heroBehaviour], _engine->_resources->animTable[_engine->_actor->heroAnimIdx[(byte)_engine->_actor->heroBehaviour]], behaviourEntity, &behaviourAnimData[(byte)_engine->_actor->heroBehaviour]);
+	const int animIdx = _engine->_actor->heroAnimIdx[(byte)_engine->_actor->heroBehaviour];
+	_engine->_animations->setAnimAtKeyframe(behaviourAnimState[(byte)_engine->_actor->heroBehaviour], _engine->_resources->animData[animIdx], _engine->_resources->animTable[animIdx], behaviourEntity, &behaviourAnimData[(byte)_engine->_actor->heroBehaviour]);
 
 	int32 tmpTime = _engine->lbaTime;
 
@@ -1078,7 +1080,8 @@ void Menu::processBehaviourMenu() {
 			drawBehaviour(left, top, tmpHeroBehaviour, _engine->_scene->sceneHero->angle, true, dirtyRect);
 			tmpHeroBehaviour = _engine->_actor->heroBehaviour;
 			_engine->_movements->setActorAngleSafe(_engine->_scene->sceneHero->angle, _engine->_scene->sceneHero->angle - ANGLE_90, ANGLE_17, &moveMenu);
-			_engine->_animations->setAnimAtKeyframe(behaviourAnimState[(byte)_engine->_actor->heroBehaviour], _engine->_resources->animTable[_engine->_actor->heroAnimIdx[(byte)_engine->_actor->heroBehaviour]], behaviourEntity, &behaviourAnimData[(byte)_engine->_actor->heroBehaviour]);
+			const int tmpAnimIdx = _engine->_actor->heroAnimIdx[(byte)_engine->_actor->heroBehaviour];
+			_engine->_animations->setAnimAtKeyframe(behaviourAnimState[(byte)_engine->_actor->heroBehaviour], _engine->_resources->animData[tmpAnimIdx], _engine->_resources->animTable[tmpAnimIdx], behaviourEntity, &behaviourAnimData[(byte)_engine->_actor->heroBehaviour]);
 		}
 
 		drawBehaviour(left, top, _engine->_actor->heroBehaviour, -1, true, dirtyRect);

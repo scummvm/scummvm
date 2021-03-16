@@ -202,13 +202,11 @@ bool Animations::setModelAnimation(int32 keyframeIdx, const AnimData &animData, 
 	return false;
 }
 
-void Animations::setAnimAtKeyframe(int32 keyframeIdx, const uint8 *animPtr, uint8 *const bodyPtr, AnimTimerDataStruct *animTimerDataPtr) {
+void Animations::setAnimAtKeyframe(int32 keyframeIdx, const AnimData &animData, const uint8 *animPtr, uint8 *const bodyPtr, AnimTimerDataStruct *animTimerDataPtr) {
 	if (!Model::isAnimated(bodyPtr)) {
 		return;
 	}
 
-	AnimData animData;
-	animData.loadFromBuffer(animPtr, 100000);
 	const int32 numOfKeyframeInAnim = animData.getKeyframes().size();
 	if (keyframeIdx < 0 || keyframeIdx >= numOfKeyframeInAnim) {
 		return;
@@ -473,7 +471,7 @@ bool Animations::initAnim(AnimationTypes newAnim, int16 animType, AnimationTypes
 
 	if (actor->previousAnimIdx == -1) {
 		// if no previous animation
-		setAnimAtKeyframe(0, _engine->_resources->animTable[animIndex], _engine->_actor->bodyTable[actor->entity], &actor->animTimerData);
+		setAnimAtKeyframe(0, _engine->_resources->animData[animIndex], _engine->_resources->animTable[animIndex], _engine->_actor->bodyTable[actor->entity], &actor->animTimerData);
 	} else {
 		// interpolation between animations
 		stockAnimation(_engine->_actor->bodyTable[actor->entity], &actor->animTimerData);
