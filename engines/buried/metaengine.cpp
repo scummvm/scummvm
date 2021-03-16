@@ -31,6 +31,13 @@
 
 namespace Buried {
 
+bool BuriedEngine::hasFeature(EngineFeature f) const {
+	return
+		(f == kSupportsReturnToLauncher)
+		|| (f == kSupportsLoadingDuringRuntime)
+		|| (f == kSupportsSavingDuringRuntime);
+}
+
 bool BuriedEngine::isDemo() const {
 	// The trial is a demo for the user's sake, but not internally.
 	return (_gameDescription->flags & ADGF_DEMO) != 0 && !isTrial();
