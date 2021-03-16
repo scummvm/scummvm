@@ -89,6 +89,7 @@ void Surface::init(uint16 width, uint16 height, uint16 newPitch, void *newPixels
 	pitch = newPitch;
 	pixels = newPixels;
 	format = f;
+	assert(pitch >= w * format.bytesPerPixel);
 }
 
 void Surface::copyFrom(const Surface &surf) {
