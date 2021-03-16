@@ -51,12 +51,11 @@ void ProcessTime() {
 			RollInventory(g_vm->_inventoryStatus);
 
 		if ((g_vm->_inventoryStatus != INV_OFF)
-			&& ((OldRegInvSI != g_vm->_inventoryRefreshStartIcon) || (OldRegInvSL != g_vm->_inventoryRefreshStartLine) || (OldLightIcon != g_vm->_lightIcon) || (FlagForceRegenInventory))) {
+			&& ((OldRegInvSI != g_vm->_inventoryRefreshStartIcon) || (OldRegInvSL != g_vm->_inventoryRefreshStartLine) || (OldLightIcon != g_vm->_lightIcon))) {
 			g_vm->refreshInventory(g_vm->_inventoryRefreshStartIcon, g_vm->_inventoryRefreshStartLine);
 			OldRegInvSI = g_vm->_inventoryRefreshStartIcon;
 			OldRegInvSL = g_vm->_inventoryRefreshStartLine;
 			OldLightIcon = g_vm->_lightIcon;
-			FlagForceRegenInventory = false;
 		}
 
 		PaintScreen(0);

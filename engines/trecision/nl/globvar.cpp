@@ -78,11 +78,7 @@ bool  FlagDialogSolitaire;
 bool  FlagCharacterExist = true;
 bool  FlagWalkNoInterrupt;
 bool  FlagNoPaintScreen;
-bool  FlagForceRegenInventory;
 bool  FlagWaitRegen;
-
-bool  FlagSaveInventory;
-bool  FlagLoadInventory;
 
 /*-------------------------------------------------------------------------*/
 /*                                  VARIE           					   */

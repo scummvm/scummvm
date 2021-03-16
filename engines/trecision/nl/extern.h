@@ -75,11 +75,7 @@ extern bool  FlagDialogSolitaire;
 extern bool  FlagCharacterExist;
 extern bool  FlagWalkNoInterrupt;
 extern bool  FlagNoPaintScreen;
-extern bool  FlagForceRegenInventory;
 extern bool  FlagWaitRegen;
-
-extern bool  FlagSaveInventory;
-extern bool  FlagLoadInventory;
 
 /*-------------------------------------------------------------------------*/
 /*                                  VARIE           					   */

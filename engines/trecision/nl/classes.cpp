@@ -1001,7 +1001,6 @@ void doIdle() {
 	case 0x3C:
 		if (!FlagSomeOneSpeak && !Flagscriptactive && !FlagDialogActive && !FlagDialogMenuActive && (_actor._curAction < hWALKIN) && !FlagUseWithStarted && g_vm->_animMgr->_playingAnims[1] == 0 && FlagShowCharacter) {
 			IconSnapShot();
-			FlagSaveInventory = true;
 			DataSave();
 			ShowInvName(NO_OBJECTS, false);
 			doEvent(MC_INVENTORY, ME_SHOWICONNAME, MP_DEFAULT, mx, my, 0, 0);

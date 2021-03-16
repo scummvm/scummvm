@@ -551,14 +551,14 @@ void doString() {
 		break;
 
 	case ME_SOMEONEWAIT2SPEAK:
-		if ((!g_vm->_curMessage->_u16Param1) /*FAB: || (AnimObj[_curMessage->_u16Param1]._flag & ONOFF)*/)
+		if (!g_vm->_curMessage->_u16Param1)
 			SomeOneContinueTalk();
 		else
 			REEVENT;
 		break;
 
 	case ME_SOMEONEWAIT2MUTE:
-		if ((!g_vm->_curMessage->_u16Param1) /*FAB: || (!(AnimObj[_curMessage->_u16Param1]._flag & ONOFF))*/)
+		if (!g_vm->_curMessage->_u16Param1)
 			SomeOneMute();
 		else
 			REEVENT;

@@ -316,7 +316,6 @@ void DoSys(uint16 curObj) {
 		if (g_vm->_oldRoom == rSYS)
 			break;
 		g_vm->_curRoom = g_vm->_obj[o00EXIT]._goRoom;
-		FlagSaveInventory = true;
 		if (!DataSave()) {
 			ShowInvName(NO_OBJECTS, false);
 			doEvent(MC_INVENTORY, ME_SHOWICONNAME, MP_DEFAULT, mx, my, 0, 0);
