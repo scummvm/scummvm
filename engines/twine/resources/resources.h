@@ -167,10 +167,6 @@ public:
 	uint32 spriteSizeTable[NUM_SPRITES] {0};
 	SpriteData spriteData[NUM_SPRITES];
 
-	/** Table with all loaded animations */
-	uint8 *animTable[NUM_ANIMS]{nullptr};
-	/** Table with all loaded animations sizes */
-	uint32 animSizeTable[NUM_ANIMS]{0};
 	AnimData animData[NUM_ANIMS];
 
 	/** Table with all loaded samples */

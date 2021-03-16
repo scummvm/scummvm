@@ -54,9 +54,6 @@ static const int32 magicLevelStrengthOfHit[] = {
 Animations::Animations(TwinEEngine *engine) : _engine(engine) {
 }
 
-Animations::~Animations() {
-}
-
 int32 Animations::getBodyAnimIndex(AnimationTypes animIdx, int32 actorIdx) {
 	ActorStruct *actor = _engine->_scene->getActor(actorIdx);
 	EntityData entityData;
@@ -66,11 +63,6 @@ int32 Animations::getBodyAnimIndex(AnimationTypes animIdx, int32 actorIdx) {
 		currentActorAnimExtraPtr = animIdx;
 	}
 	return bodyAnimIndex;
-}
-
-const uint8 *Animations::getKeyFrameData(int32 frameIdx, const uint8 *animPtr) {
-	const int16 numOfBonesInAnim = READ_LE_INT16(animPtr + 2);
-	return (const uint8 *)((numOfBonesInAnim * 8 + 8) * frameIdx + animPtr + 8);
 }
 
 void Animations::applyAnimStepRotation(uint8 *ptr, int32 deltaTime, int32 keyFrameLength, int16 newAngle1, int16 lastAngle1) {
@@ -113,7 +105,7 @@ int32 Animations::getAnimMode(uint8 *ptr, uint16 opcode) {
 	return opcode;
 }
 
-bool Animations::setModelAnimation(int32 keyframeIdx, const AnimData &animData, const uint8 *animPtr, uint8 *const bodyPtr, AnimTimerDataStruct *animTimerDataPtr) {
+bool Animations::setModelAnimation(int32 keyframeIdx, const AnimData &animData, uint8 *const bodyPtr, AnimTimerDataStruct *animTimerDataPtr) {
 	if (!Model::isAnimated(bodyPtr)) {
 		return false;
 	}
@@ -194,7 +186,7 @@ bool Animations::setModelAnimation(int32 keyframeIdx, const AnimData &animData, 
 	return false;
 }
 
-void Animations::setAnimAtKeyframe(int32 keyframeIdx, const AnimData &animData, const uint8 *animPtr, uint8 *const bodyPtr, AnimTimerDataStruct *animTimerDataPtr) {
+void Animations::setAnimAtKeyframe(int32 keyframeIdx, const AnimData &animData, uint8 *const bodyPtr, AnimTimerDataStruct *animTimerDataPtr) {
 	if (!Model::isAnimated(bodyPtr)) {
 		return;
 	}
@@ -263,7 +255,7 @@ void Animations::stockAnimation(const uint8 *bodyPtr, AnimTimerDataStruct *animT
 	}
 }
 
-bool Animations::verifyAnimAtKeyframe(int32 keyframeIdx, const AnimData &animData, const uint8 *animPtr, AnimTimerDataStruct *animTimerDataPtr) {
+bool Animations::verifyAnimAtKeyframe(int32 keyframeIdx, const AnimData &animData, AnimTimerDataStruct *animTimerDataPtr) {
 	const KeyFrame *keyFrame = animData.getKeyframe(keyframeIdx);
 	const int32 keyFrameLength = keyFrame->length;
 
@@ -463,7 +455,7 @@ bool Animations::initAnim(AnimationTypes newAnim, int16 animType, AnimationTypes
 
 	if (actor->previousAnimIdx == -1) {
 		// if no previous animation
-		setAnimAtKeyframe(0, _engine->_resources->animData[animIndex], _engine->_resources->animTable[animIndex], _engine->_actor->bodyTable[actor->entity], &actor->animTimerData);
+		setAnimAtKeyframe(0, _engine->_resources->animData[animIndex], _engine->_actor->bodyTable[actor->entity], &actor->animTimerData);
 	} else {
 		// interpolation between animations
 		stockAnimation(_engine->_actor->bodyTable[actor->entity], &actor->animTimerData);
@@ -593,11 +585,10 @@ void Animations::processActorAnimations(int32 actorIdx) { // DoAnim
 	} else { // 3D actor
 		if (actor->previousAnimIdx != -1) {
 			const AnimData &animData = _engine->_resources->animData[actor->previousAnimIdx];
-			const uint8 *animPtr = _engine->_resources->animTable[actor->previousAnimIdx];
 
 			bool keyFramePassed = false;
 			if (Model::isAnimated(_engine->_actor->bodyTable[actor->entity])) {
-				keyFramePassed = verifyAnimAtKeyframe(actor->animPosition, animData, animPtr, &actor->animTimerData);
+				keyFramePassed = verifyAnimAtKeyframe(actor->animPosition, animData, &actor->animTimerData);
 			}
 
 			if (processRotationByAnim) {

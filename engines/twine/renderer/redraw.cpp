@@ -342,9 +342,8 @@ void Redraw::processDrawListActors(const DrawListStruct &drawCmd, bool bgRedraw)
 	const int32 actorIdx = drawCmd.actorIdx;
 	ActorStruct *actor = _engine->_scene->getActor(actorIdx);
 	if (actor->previousAnimIdx >= 0) {
-		const uint8 *animPtr = _engine->_resources->animTable[actor->previousAnimIdx];
 		const AnimData &animData = _engine->_resources->animData[actor->previousAnimIdx];
-		_engine->_animations->setModelAnimation(actor->animPosition, animData, animPtr, _engine->_actor->bodyTable[actor->entity], &actor->animTimerData);
+		_engine->_animations->setModelAnimation(actor->animPosition, animData, _engine->_actor->bodyTable[actor->entity], &actor->animTimerData);
 	}
 
 	const int32 x = actor->pos.x - _engine->_grid->camera.x;

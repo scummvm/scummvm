@@ -40,9 +40,6 @@ Resources::~Resources() {
 	for (size_t i = 0; i < ARRAYSIZE(spriteTable); ++i) {
 		free(spriteTable[i]);
 	}
-	for (size_t i = 0; i < ARRAYSIZE(animTable); ++i) {
-		free(animTable[i]);
-	}
 	for (size_t i = 0; i < ARRAYSIZE(samplesTable); ++i) {
 		free(samplesTable[i]);
 	}
@@ -93,8 +90,7 @@ void Resources::preloadAnimations() {
 	}
 	debug("preload %i animations", numEntries);
 	for (int32 i = 0; i < numEntries; i++) {
-		animSizeTable[i] = HQR::getAllocEntry(&animTable[i], Resources::HQR_ANIM_FILE, i);
-		animData[i].loadFromBuffer(animTable[i], animSizeTable[i]);
+		animData[i].loadFromHQR(Resources::HQR_ANIM_FILE, i);
 	}
 }
 

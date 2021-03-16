@@ -42,10 +42,9 @@ private:
 	 * Verify animation at keyframe
 	 * @param keyframeIdx Animation key frame index
 	 * @param animData Animation data
-	 * @param animPtr Animation pointer
 	 * @param animTimerDataPtr Animation time data
 	 */
-	bool verifyAnimAtKeyframe(int32 keyframeIdx, const AnimData &animData, const uint8 *animPtr, AnimTimerDataStruct *animTimerDataPtr);
+	bool verifyAnimAtKeyframe(int32 keyframeIdx, const AnimData &animData, AnimTimerDataStruct *animTimerDataPtr);
 
 	int animKeyframeBufIdx = 0;
 	KeyFrame animKeyframeBuf[32];
@@ -64,7 +63,6 @@ private:
 
 public:
 	Animations(TwinEEngine *engine);
-	~Animations();
 
 	/** Current process actor index */
 	int16 currentlyProcessedActorIdx = 0;
@@ -74,22 +72,20 @@ public:
 	/**
 	 * Set animation keyframe
 	 * @param keyframIdx Animation keyframe index
-	 * @param animPtr Pointer to animation
+	 * @param animData Animation data
 	 * @param bodyPtr Body model poitner
 	 * @param animTimerDataPtr Animation time data
 	 */
-	void setAnimAtKeyframe(int32 keyframeIdx, const AnimData &animData,const uint8 *animPtr, uint8 *const bodyPtr, AnimTimerDataStruct *animTimerDataPtr);
-
-	const uint8 *getKeyFrameData(int32 frameIdx, const uint8 *animPtr);
+	void setAnimAtKeyframe(int32 keyframeIdx, const AnimData &animData, uint8 *const bodyPtr, AnimTimerDataStruct *animTimerDataPtr);
 
 	/**
 	 * Set new body animation
 	 * @param keyframeIdx Animation key frame index
-	 * @param animPtr Animation pointer
+	 * @param animData Animation data
 	 * @param bodyPtr Body model poitner
 	 * @param animTimerDataPtr Animation time data
 	 */
-	bool setModelAnimation(int32 keyframeIdx, const AnimData &animData, const uint8 *animPtr, uint8 *const bodyPtr, AnimTimerDataStruct *animTimerDataPtr);
+	bool setModelAnimation(int32 keyframeIdx, const AnimData &animData, uint8 *const bodyPtr, AnimTimerDataStruct *animTimerDataPtr);
 
 	/**
 	 * Get entity anim index (This is taken from File3D entities)
