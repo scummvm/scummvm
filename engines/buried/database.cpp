@@ -23,6 +23,7 @@
  *
  */
 
+#include "common/stream.h"
 #include "common/winexe.h"
 #include "common/winexe_ne.h"
 #include "common/winexe_pe.h"
@@ -90,8 +91,14 @@ Common::SeekableReadStream *DatabaseNE::getResourceStream(const Common::String &
 }
 
 uint32 DatabaseNE::getVersion() {
-	Common::NEResources::VersionInfo versionInfo = _exe->getVersionInfo();
-	return MAKEVERSION(versionInfo.fileVersion[0], versionInfo.fileVersion[1], versionInfo.fileVersion[2], versionInfo.fileVersion[3]);
+	Common::SeekableReadStream *res = _exe->getResource(Common::kWinVersion, 1);
+	Common::WinResources::VersionInfo *versionInfo = _exe->parseVersionInfo(res);
+
+	uint32 result = MAKEVERSION(versionInfo->fileVersion[0], versionInfo->fileVersion[1], versionInfo->fileVersion[2], versionInfo->fileVersion[3]);
+	delete versionInfo;
+	delete res;
+
+	return result;
 }
 
 bool DatabaseNECompressed::load(const Common::String &fileName) {
