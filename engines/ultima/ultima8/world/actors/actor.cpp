@@ -490,10 +490,11 @@ uint16 Actor::doAnim(Animation::Sequence anim, Direction dir, unsigned int steps
 				anim == Animation::kneelAndFireSmallWeapon ||
 				anim == Animation::kneelAndFireLargeWeapon ||
 				anim == Animation::kneelingAdvance ||
-				anim == Animation::kneelingRetreat)
+				anim == Animation::kneelingRetreat) {
 			setActorFlag(ACT_KNEELING);
-		else
+		} else if (anim != Animation::kneel) {
 			clearActorFlag(ACT_KNEELING);
+		}
 	}
 
 #if 1

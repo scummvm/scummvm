@@ -132,8 +132,9 @@ void CruAvatarMoverProcess::handleCombatMode() {
 			// Jump always ends out of combat
 			avatar->clearInCombat();
 		} else if (avatar->isKneeling()) {
-			nextanim = Animation::kneelEndCru;
+			avatar->doAnim(Animation::kneelEndCru, direction);
 			avatar->clearActorFlag(Actor::ACT_KNEELING);
+			return;
 		} else {
 			// moving forward from combat stows weapon
 			nextanim = Animation::walk;
