@@ -104,6 +104,7 @@ When Xcode is open, connect a device to install ScummVM onto. At the top of the 
 
 .. figure:: ../images/ios/choose_device.gif
 
+You may need to disable bitcode generation in the build settings. This should already be disabled by default when you make a build specifically for your device, but it is enabled by default when you build for a ''Generic iOS Device''.
 
 The last step before building ScummVM is to change the bundle identifier and manage signing. Click on the **scummvm** project in the left pane, and then click on **ScummVM - iOS** under **TARGETS**. On the menu bar above, click on **General**. Under **Identity** there is a field labeled **Bundle Identifier**. Enter a unique identifier in reverse-DNS format. This can be as simple as com.\ *yournamehere*.
 
