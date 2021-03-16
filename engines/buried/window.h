@@ -33,7 +33,7 @@ struct KeyState;
 namespace Buried {
 
 class BuriedEngine;
-struct Message;
+class Message;
 
 class Window {
 public:
