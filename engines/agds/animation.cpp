@@ -162,6 +162,7 @@ bool Animation::tick() {
 	if (!_process.empty()) {
 		if (!_phaseVar.empty()) {
 			_engine->setGlobal(_phaseVar, _phase - 1);
+			_engine->reactivate(_process, true);
 		}
 	}
 	return true;
