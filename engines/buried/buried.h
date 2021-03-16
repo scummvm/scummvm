@@ -33,8 +33,9 @@
 
 class OSystem;
 
-namespace Common {
 struct ADGameDescription;
+
+namespace Common {
 class SeekableReadStream;
 class Serializer;
 class WriteStream;
@@ -64,11 +65,11 @@ protected:
 	Common::Error run();
 
 public:
-	BuriedEngine(OSystem *syst, const Common::ADGameDescription *gamedesc);
+	BuriedEngine(OSystem *syst, const ADGameDescription *gamedesc);
 	virtual ~BuriedEngine();
 
 	// Detection related functions
-	const Common::ADGameDescription *_gameDescription;
+	const ADGameDescription *_gameDescription;
 	bool isDemo() const;
 	bool isTrial() const;
 	bool isTrueColor() const;

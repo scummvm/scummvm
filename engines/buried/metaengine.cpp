@@ -25,16 +25,11 @@
 #include "common/savefile.h"
 #include "common/system.h"
 
+#include "engines/advancedDetector.h"
+
 #include "buried/buried.h"
 
 namespace Buried {
-
-bool BuriedEngine::hasFeature(EngineFeature f) const {
-	return
-		(f == kSupportsRTL)
-		|| (f == kSupportsLoadingDuringRuntime)
-		|| (f == kSupportsSavingDuringRuntime);
-}
 
 bool BuriedEngine::isDemo() const {
 	// The trial is a demo for the user's sake, but not internally.
@@ -78,7 +73,7 @@ public:
 	}
 
 	virtual bool hasFeature(MetaEngineFeature f) const;
-	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
+	virtual Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
 	virtual SaveStateList listSaves(const char *target) const;
 	virtual int getMaximumSaveSlot() const { return 999; }
 	virtual void removeSaveState(const char *target, int slot) const;
@@ -116,13 +111,10 @@ void BuriedMetaEngine::removeSaveState(const char *target, int slot) const {
 	g_system->getSavefileManager()->removeSavefile(fileNames[slot].c_str());
 }
 
-bool BuriedMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
-	const Buried::BuriedGameDescription *gd = (const Buried::BuriedGameDescription *)desc;
+Common::Error BuriedMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
+	*engine = new Buried::BuriedEngine(syst, desc);
 
-	if (gd)
-		*engine = new Buried::BuriedEngine(syst, gd);
-
-	return (gd != 0);
+	return Common::kNoError;
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(BURIED)
