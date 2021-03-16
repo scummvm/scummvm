@@ -38,6 +38,7 @@ public:
 private:
 	bool load(int argc, const char **argv);
 	bool run(int argc, const char **argv);
+	bool stop(int argc, const char **argv);
 	bool activate(int argc, const char **argv);
 	bool info(int argc, const char **argv);
 	bool setGlobal(int argc, const char **argv);

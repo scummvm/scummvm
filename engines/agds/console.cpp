@@ -34,6 +34,7 @@ Console::Console(AGDSEngine *engine) : _engine(engine) {
 	registerCmd("info",			WRAP_METHOD(Console, info));
 	registerCmd("load",			WRAP_METHOD(Console, load));
 	registerCmd("run",			WRAP_METHOD(Console, run));
+	registerCmd("stop",			WRAP_METHOD(Console, stop));
 	registerCmd("set",			WRAP_METHOD(Console, setGlobal));
 }
 
@@ -64,6 +65,22 @@ bool Console::run(int argc, const char **argv) {
 	}
 	_engine->getCurrentScreen()->remove(object);
 	_engine->runObject(object);
+	detach();
+	return false;
+}
+
+bool Console::stop(int argc, const char **argv) {
+	if (argc < 2) {
+		debugPrintf("usage: %s object_id\n", argv[0]);
+		return true;
+	}
+	ObjectPtr object = _engine->getCurrentScreenObject(argv[1]);
+	if (!object) {
+		debugPrintf("no object %s\n", argv[1]);
+		return true;
+	}
+	_engine->getCurrentScreen()->remove(object);
+	_engine->stopProcess(argv[1]);
 	detach();
 	return false;
 }
