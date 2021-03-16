@@ -474,7 +474,7 @@ insave:
 		}
 	}
 
-	g_vm->RegenInventory(0, 0);
+	g_vm->refreshInventory(0, 0);
 
 	bool skipSave = false;
 	ch = 0;
@@ -800,7 +800,7 @@ bool DataLoad() {
 		}
 	}
 
-	g_vm->RegenInventory(0, 0);
+	g_vm->refreshInventory(0, 0);
 
 	bool skipLoad = false;
 

@@ -27,10 +27,20 @@
 #include "trecision/trecision.h"
 
 namespace Trecision {
+
+void TrecisionEngine::initInventory() {
+	_inventorySize = 0;
+	_inventory[_inventorySize++] = iBANCONOTE;
+	_inventory[_inventorySize++] = iSAM;
+	_inventory[_inventorySize++] = iCARD03;
+	_inventory[_inventorySize++] = iPEN;
+	_inventory[_inventorySize++] = iKEY05;
+}
+
 /*------------------------------------------------
-                    RegenInventory()
+                    refreshInventory()
 --------------------------------------------------*/
-void TrecisionEngine::RegenInventory(uint8 StartIcon, uint8 StartLine) {
+void TrecisionEngine::refreshInventory(uint8 StartIcon, uint8 StartLine) {
 	if (StartLine > ICONDY)
 		StartLine = ICONDY;
 
@@ -49,8 +59,8 @@ void TrecisionEngine::RegenInventory(uint8 StartIcon, uint8 StartLine) {
 		}
 	}
 
-	// frecce
-	if (StartIcon != 0) { // COPIA LA SINISTRA
+	// Arrows
+	if (StartIcon != 0) { // Copy left
 		LeftArrow = ICONMARGSX * ICONDY * 3;
 		for (uint16 b = 0; b < (ICONDY - StartLine); b++) {
 			MCopy(g_vm->_video2 + (FIRSTLINE + b) * CurRoomMaxX + CurScrollPageDx,
@@ -58,7 +68,7 @@ void TrecisionEngine::RegenInventory(uint8 StartIcon, uint8 StartLine) {
 		}
 	}
 
-	if ((StartIcon + ICONSHOWN) < g_vm->_inventorySize) { // COPIA LA DESTRA
+	if ((StartIcon + ICONSHOWN) < g_vm->_inventorySize) { // Copy right
 		RightArrow = ICONMARGDX * ICONDY * 2;
 		for (uint16 b = 0; b < (ICONDY - StartLine); b++) {
 			MCopy(g_vm->_video2 + (FIRSTLINE + b) * CurRoomMaxX + CurScrollPageDx + SCREENLEN - ICONMARGDX,
@@ -84,14 +94,14 @@ void TrecisionEngine::RegenInventory(uint8 StartIcon, uint8 StartLine) {
 /*                                 REGENINV            					   */
 /*-------------------------------------------------------------------------*/
 void TrecisionEngine::RegenInv(uint8 StartIcon, uint8 StartLine) {
-	_regenInvStartIcon = StartIcon;
-	_regenInvStartLine = StartLine;
+	_inventoryRefreshStartIcon = StartIcon;
+	_inventoryRefreshStartLine = StartLine;
 }
 
 /*-------------------------------------------------------------------------*/
-/*                            ONELEFTINVENTORY          				   */
+/*                            moveInventoryLeft          				   */
 /*-------------------------------------------------------------------------*/
-void TrecisionEngine::OneLeftInventory() {
+void TrecisionEngine::moveInventoryLeft() {
 	if (_iconBase < _inventorySize - ICONSHOWN)
 		_iconBase++;
 	RegenInv(_iconBase, INVENTORY_SHOW);
@@ -99,9 +109,9 @@ void TrecisionEngine::OneLeftInventory() {
 }
 
 /*-------------------------------------------------------------------------*/
-/*                            ONERIGHTINVENTORY          				   */
+/*                            moveInventoryRight          				   */
 /*-------------------------------------------------------------------------*/
-void TrecisionEngine::OneRightInventory() {
+void TrecisionEngine::moveInventoryRight() {
 	if (_iconBase > 0)
 		_iconBase--;
 	RegenInv(_iconBase, INVENTORY_SHOW);
