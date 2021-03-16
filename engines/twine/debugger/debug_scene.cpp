@@ -41,7 +41,7 @@ void DebugScene::drawClip(const Common::Rect &rect) {
 	_engine->_menu->drawBox(rect);
 }
 
-void DebugScene::drawBoundingBoxProjectPoints(IVec3 *pPoint3d, IVec3 *pPoint3dProjected) {
+void DebugScene::projectBoundingBoxPoints(IVec3 *pPoint3d, IVec3 *pPoint3dProjected) {
 	_engine->_renderer->projectPositionOnScreen(pPoint3d->x, pPoint3d->y, pPoint3d->z);
 
 	pPoint3dProjected->x = _engine->_renderer->projPos.x;
@@ -139,14 +139,14 @@ DebugScene::ScenePositionsProjected DebugScene::calculateBoxPositions(const IVec
 
 	// project all points
 
-	drawBoundingBoxProjectPoints(&positions.frontBottomLeftPoint, &positions.frontBottomLeftPoint2D);
-	drawBoundingBoxProjectPoints(&positions.frontBottomRightPoint, &positions.frontBottomRightPoint2D);
-	drawBoundingBoxProjectPoints(&positions.frontTopLeftPoint, &positions.frontTopLeftPoint2D);
-	drawBoundingBoxProjectPoints(&positions.frontTopRightPoint, &positions.frontTopRightPoint2D);
-	drawBoundingBoxProjectPoints(&positions.backBottomLeftPoint, &positions.backBottomLeftPoint2D);
-	drawBoundingBoxProjectPoints(&positions.backBottomRightPoint, &positions.backBottomRightPoint2D);
-	drawBoundingBoxProjectPoints(&positions.backTopLeftPoint, &positions.backTopLeftPoint2D);
-	drawBoundingBoxProjectPoints(&positions.backTopRightPoint, &positions.backTopRightPoint2D);
+	projectBoundingBoxPoints(&positions.frontBottomLeftPoint, &positions.frontBottomLeftPoint2D);
+	projectBoundingBoxPoints(&positions.frontBottomRightPoint, &positions.frontBottomRightPoint2D);
+	projectBoundingBoxPoints(&positions.frontTopLeftPoint, &positions.frontTopLeftPoint2D);
+	projectBoundingBoxPoints(&positions.frontTopRightPoint, &positions.frontTopRightPoint2D);
+	projectBoundingBoxPoints(&positions.backBottomLeftPoint, &positions.backBottomLeftPoint2D);
+	projectBoundingBoxPoints(&positions.backBottomRightPoint, &positions.backBottomRightPoint2D);
+	projectBoundingBoxPoints(&positions.backTopLeftPoint, &positions.backTopLeftPoint2D);
+	projectBoundingBoxPoints(&positions.backTopRightPoint, &positions.backTopRightPoint2D);
 
 	return positions;
 }
