@@ -55,7 +55,7 @@ TopOfTowerGuardEncounter::TopOfTowerGuardEncounter(BuriedEngine *vm, Window *vie
 	_showGuard = _staticData.location.timeZone != priorLocation.timeZone || _staticData.location.environment != priorLocation.environment;
 
 	if (((GameUIWindow *)viewWindow->getParent())->_inventoryWindow->isItemInInventory(kItemBloodyArrow))
-		_staticData.destForward.destinationScene.depth = 1;		
+		_staticData.destForward.destinationScene.depth = 1;
 }
 
 int TopOfTowerGuardEncounter::postEnterRoom(Window *viewWindow, const Location &priorLocation) {
@@ -138,7 +138,7 @@ int TowerStairsGuardEncounter::preExitRoom(Window *viewWindow, const Location &n
 class WallSlideDeath : public SceneBase {
 public:
 	WallSlideDeath(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
-	int postExitRoom(Window *viewWindow, const Location &newLocation);	
+	int postExitRoom(Window *viewWindow, const Location &newLocation);
 };
 
 WallSlideDeath::WallSlideDeath(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) :
@@ -171,7 +171,7 @@ public:
 
 private:
 	bool _timerStarted;
-	uint32 _startTime;
+	//uint32 _startTime;
 	bool _walkthrough;
 };
 
@@ -981,7 +981,7 @@ public:
 
 private:
 	uint32 _startingTime;
-	bool _finished;
+	//bool _finished;
 };
 
 KingsChamberGuardEncounter::KingsChamberGuardEncounter(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) :
