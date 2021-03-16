@@ -187,6 +187,7 @@ Console::Console(AsylumEngine *engine) : _vm(engine) {
     registerCmd("video",          WRAP_METHOD(Console, cmdPlayVideo));
     registerCmd("script",         WRAP_METHOD(Console, cmdRunScript));
     registerCmd("show_script",    WRAP_METHOD(Console, cmdShowScript));
+    registerCmd("kill_script",    WRAP_METHOD(Console, cmdKillScript));
 
     registerCmd("scene",          WRAP_METHOD(Console, cmdChangeScene));
     registerCmd("puzzle",         WRAP_METHOD(Console, cmdRunPuzzle));
@@ -251,6 +252,7 @@ bool Console::cmdHelp(int, const char **) {
     debugPrintf(" script      - run a script\n");
     debugPrintf(" scene       - change the scene\n");
     debugPrintf(" show_script - show script commands\n");
+    debugPrintf(" kill_script - terminate a script\n");
     debugPrintf(" puzzle      - run an puzzle\n");
     debugPrintf("\n");
     debugPrintf(" encounter   - run an encounter\n");
@@ -571,6 +573,24 @@ bool Console::cmdRunScript(int32 argc, const char **argv) {
 	}
 
 	getScript()->queueScript(index, actor);
+
+	return false;
+}
+
+bool Console::cmdKillScript(int32 argc, const char **argv) {
+	if (argc == 1) {
+		debugPrintf("Scripts running:\n");
+		for (uint32 i = 0; i < ARRAYSIZE(getScript()->_queue.entries); i++)
+			if (getScript()->_queue.entries[i].scriptIndex > 0)
+				debugPrintf(" %d\n", getScript()->_queue.entries[i].scriptIndex);
+
+		return true;
+	}
+
+	int32 index = atoi(argv[1]);
+
+	if (getScript()->isInQueue(index))
+		getScript()->updateQueue(index);
 
 	return false;
 }
