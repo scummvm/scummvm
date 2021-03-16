@@ -35,11 +35,11 @@ namespace Buried {
 
 AVIFrames::AVIFrames(const Common::String &fileName, uint cachedFrames) {
 	_maxCachedFrames = 0;
-	_video = 0;
+	_video = nullptr;
 	_cacheEnabled = false;
-	_lastFrame = 0;
+	_lastFrame = nullptr;
 	_lastFrameIndex = -1;
-	_tempFrame = 0;
+	_tempFrame = nullptr;
 
 	if (!fileName.empty())
 		open(fileName, cachedFrames);
@@ -85,25 +85,25 @@ bool AVIFrames::open(const Common::String &fileName, uint cachedFrames) {
 
 void AVIFrames::close() {
 	delete _video;
-	_video = 0;
+	_video = nullptr;
 
 	_fileName.clear();
 
 	flushFrameCache();
 
 	_lastFrameIndex = -1;
-	_lastFrame = 0;
+	_lastFrame = nullptr;
 
 	if (_tempFrame) {
 		_tempFrame->free();
 		delete _tempFrame;
-		_tempFrame = 0;
+		_tempFrame = nullptr;
 	}
 }
 
 const Graphics::Surface *AVIFrames::getFrame(int frameIndex) {
 	if (!_video)
-		return 0;
+		return nullptr;
 
 	if (frameIndex < 0 || frameIndex == _lastFrameIndex)
 		return _lastFrame;
@@ -115,11 +115,11 @@ const Graphics::Surface *AVIFrames::getFrame(int frameIndex) {
 	}
 
 	if (!_video->seekToFrame(frameIndex))
-		return 0;
+		return nullptr;
 
 	const Graphics::Surface *frame = _video->decodeNextFrame();
 	if (!frame)
-		return 0;
+		return nullptr;
 
 	Graphics::Surface *copy;
 	if (frame->format == g_system->getScreenFormat()) {
@@ -146,7 +146,7 @@ const Graphics::Surface *AVIFrames::getFrame(int frameIndex) {
 Graphics::Surface *AVIFrames::getFrameCopy(int frameIndex) {
 	const Graphics::Surface *frame = getFrame(frameIndex);
 	if (!frame)
-		return 0;
+		return nullptr;
 
 	Graphics::Surface *copy = new Graphics::Surface();
 	copy->copyFrom(*frame);
@@ -164,7 +164,7 @@ bool AVIFrames::flushFrameCache() {
 	if (_cachedFrames.empty())
 		return false;
 
-	for (FrameList::iterator it = _cachedFrames.begin(); it != _cachedFrames.end(); it++) {
+	for (FrameList::iterator it = _cachedFrames.begin(); it != _cachedFrames.end(); ++it) {
 		if (it->frame) {
 			it->frame->free();
 			delete it->frame;
@@ -175,11 +175,11 @@ bool AVIFrames::flushFrameCache() {
 }
 
 const Graphics::Surface *AVIFrames::retrieveFrameFromCache(int frameIndex) const {
-	for (FrameList::const_iterator it = _cachedFrames.begin(); it != _cachedFrames.end(); it++)
+	for (FrameList::const_iterator it = _cachedFrames.begin(); it != _cachedFrames.end(); ++it)
 		if (it->index == frameIndex)
 			return it->frame;
 
-	return 0;
+	return nullptr;
 }
 
 void AVIFrames::addFrameToCache(int frameIndex, Graphics::Surface *frame) {

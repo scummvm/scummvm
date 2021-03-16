@@ -30,7 +30,7 @@
 
 namespace Buried {
 
-const Window *kWindowPosTop = (const Window *)0;
+const Window *kWindowPosTop = (const Window *)nullptr;
 const Window *kWindowPosTopMost = (const Window *)-1;
 
 Window::Window(BuriedEngine *vm, Window *parent, bool visible) : _vm(vm), _parent(parent), _visible(visible) {
@@ -56,11 +56,11 @@ Window::~Window() {
 
 	// Make sure we're not the focused window
 	if (_vm->_focusedWindow == this)
-		_vm->_focusedWindow = 0;
+		_vm->_focusedWindow = nullptr;
 
 	// And also not captured
 	if (_vm->_captureWindow == this)
-		_vm->_captureWindow = 0;
+		_vm->_captureWindow = nullptr;
 
 	// Invalidate this window's rect as well
 	_vm->_gfx->invalidateRect(getAbsoluteRect());
@@ -142,11 +142,11 @@ void Window::updateWindow() {
 	onPaint();
 
 	// Draw children
-	for (WindowList::iterator it = _children.begin(); it != _children.end(); it++)
+	for (WindowList::iterator it = _children.begin(); it != _children.end(); ++it)
 		(*it)->updateWindow();
 
 	// Draw top-most children
-	for (WindowList::iterator it = _topMostChildren.begin(); it != _topMostChildren.end(); it++)
+	for (WindowList::iterator it = _topMostChildren.begin(); it != _topMostChildren.end(); ++it)
 		(*it)->updateWindow();
 }
 
@@ -252,9 +252,9 @@ Common::Rect Window::makeAbsoluteRect(const Common::Rect &rect) const {
 Window *Window::setFocus() {
 	// Don't allow focus to be acquired if the window is disabled
 	if (!isWindowEnabled())
-		return 0;
+		return nullptr;
 
-	Window *oldWindow = 0;
+	Window *oldWindow = nullptr;
 
 	// Notify the old window we just took its focus
 	if (_vm->_focusedWindow) {
@@ -268,11 +268,11 @@ Window *Window::setFocus() {
 }
 
 Window *Window::childWindowAtPoint(const Common::Point &point) {
-	for (WindowList::iterator it = _topMostChildren.reverse_begin(); it != _topMostChildren.end(); it--)
+	for (WindowList::iterator it = _topMostChildren.reverse_begin(); it != _topMostChildren.end(); --it)
 		if ((*it)->getAbsoluteRect().contains(point) && (*it)->isWindowEnabled())
 			return (*it)->childWindowAtPoint(point);
 
-	for (WindowList::iterator it = _children.reverse_begin(); it != _children.end(); it--)
+	for (WindowList::iterator it = _children.reverse_begin(); it != _children.end(); --it)
 		if ((*it)->getAbsoluteRect().contains(point) && (*it)->isWindowEnabled())
 			return (*it)->childWindowAtPoint(point);
 
