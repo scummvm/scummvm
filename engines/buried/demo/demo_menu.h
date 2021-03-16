@@ -53,7 +53,7 @@ private:
 	Common::Rect _gallery;
 	Common::Rect _quit;
 	int _curButton;
-	bool _buttonDrawnDown;
+	//bool _buttonDrawnDown;
 	Graphics::Surface *_background;
 };
 

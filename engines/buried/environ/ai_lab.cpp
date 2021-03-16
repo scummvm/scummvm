@@ -375,7 +375,7 @@ private:
 	int _firstStingerFileID;
 	int _lastStingerFileID;
 	int _stingerDelay;
-	int _timerFlagOffset;
+	//int _timerFlagOffset;
 };
 
 PlayArthurOffsetTimed::PlayArthurOffsetTimed(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
@@ -924,7 +924,7 @@ public:
 
 private:
 	Common::Rect _canister;
-}; 
+};
 
 TakeWaterCanister::TakeWaterCanister(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) :
 		BaseOxygenTimer(vm, viewWindow, sceneStaticData, priorLocation) {
@@ -956,7 +956,7 @@ int TakeWaterCanister::mouseDown(Window *viewWindow, const Common::Point &pointL
 
 	return SC_FALSE;
 }
-	
+
 int TakeWaterCanister::specifyCursor(Window *viewWindow, const Common::Point &pointLocation) {
 	if (_canister.contains(pointLocation) && ((SceneViewWindow *)viewWindow)->getGlobalFlags().aiICTakenWaterCanister == 0)
 		return kCursorOpenHand;
@@ -991,7 +991,7 @@ ScienceWingZoomIntoPanel::ScienceWingZoomIntoPanel(BuriedEngine *vm, Window *vie
 int ScienceWingZoomIntoPanel::mouseUp(Window *viewWindow, const Common::Point &pointLocation) {
 	if (_clickRegion.contains(pointLocation))
 		((SceneViewWindow *)viewWindow)->moveToDestination(_clickDestination);
-	
+
 	return SC_FALSE;
 }
 
@@ -1239,7 +1239,7 @@ public:
 	ScienceWingMachineRoomDoor(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
 	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
 	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
-	
+
 private:
 	int _cursorID;
 	Common::Rect _clickRegion;
@@ -1310,9 +1310,9 @@ public:
 	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
 
 private:
-	uint32 _entryStartTime;
+	//uint32 _entryStartTime;
 	Common::Rect _door;
-	bool _jumped;
+	//bool _jumped;
 };
 
 NexusDoor::NexusDoor(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) :
@@ -1448,7 +1448,7 @@ int NexusPuzzle::gdiPaint(Window *viewWindow) {
 
 	return SC_REPAINT;
 }
-	
+
 int NexusPuzzle::mouseDown(Window *viewWindow, const Common::Point &pointLocation) {
 	// Puzzle is only in adventure mode
 	if (((SceneViewWindow *)viewWindow)->getGlobalFlags().generalWalkthroughMode == 1)
