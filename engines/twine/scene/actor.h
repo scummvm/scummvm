@@ -135,16 +135,16 @@ struct DynamicFlagsStruct {
  * will be chosen randomly each time player uses Action.
  */
 struct BonusParameter {
-	uint32 unk1 : 1;
-	uint32 unk2 : 1;
-	uint32 unk3 : 1;
-	uint32 unk4 : 1;
-	uint32 kashes : 1;
-	uint32 lifepoints : 1;
-	uint32 magicpoints : 1;
-	uint32 key : 1;
-	uint32 cloverleaf : 1;
-	uint32 unused : 23;
+	uint16 unk1 : 1;
+	uint16 unk2 : 1;
+	uint16 unk3 : 1;
+	uint16 unk4 : 1;
+	uint16 kashes : 1;
+	uint16 lifepoints : 1;
+	uint16 magicpoints : 1;
+	uint16 key : 1;
+	uint16 cloverleaf : 1;
+	uint16 unused : 7;
 };
 
 #define kAnimationTypeLoop 0
@@ -271,19 +271,19 @@ private:
 	TwinEEngine *_engine;
 
 	/** Hero 3D entity for normal behaviour */
-	uint8 *heroEntityNORMAL = nullptr; // file3D0
+	uint8 *heroEntityNORMAL = nullptr;
 	int32 heroEntityNORMALSize = 0;
 	/** Hero 3D entity for athletic behaviour */
-	uint8 *heroEntityATHLETIC = nullptr; // file3D1
+	uint8 *heroEntityATHLETIC = nullptr;
 	int32 heroEntityATHLETICSize = 0;
 	/** Hero 3D entity for aggressive behaviour */
-	uint8 *heroEntityAGGRESSIVE = nullptr; // file3D2
+	uint8 *heroEntityAGGRESSIVE = nullptr;
 	int32 heroEntityAGGRESSIVESize = 0;
 	/** Hero 3D entity for discrete behaviour */
-	uint8 *heroEntityDISCRETE = nullptr; // file3D3
+	uint8 *heroEntityDISCRETE = nullptr;
 	int32 heroEntityDISCRETESize = 0;
 	/** Hero 3D entity for protopack behaviour */
-	uint8 *heroEntityPROTOPACK = nullptr; // file3D4
+	uint8 *heroEntityPROTOPACK = nullptr;
 	int32 heroEntityPROTOPACKSize = 0;
 
 	void initSpriteActor(int32 actorIdx);
@@ -301,12 +301,12 @@ public:
 	Actor(TwinEEngine *engine);
 	~Actor();
 
-	ActorStruct *processActorPtr = nullptr; // processActorVar1
+	ActorStruct *processActorPtr = nullptr;
 
 	/** Actor shadow coordinate */
 	Vec3 shadowCoord;
 	/** Actor shadow collition type - brick shape */
-	ShapeType shadowCollisionType = ShapeType::kNone; // shadowVar
+	ShapeType shadowCollisionType = ShapeType::kNone;
 
 	HeroBehaviourType heroBehaviour = HeroBehaviourType::kNormal;
 	/** Hero auto aggressive mode */
@@ -319,18 +319,18 @@ public:
 	int16 cropBottomScreen = 0;
 
 	/** Hero current anim for normal behaviour */
-	int16 heroAnimIdxNORMAL = 0; // TCos0Init
+	int16 heroAnimIdxNORMAL = 0;
 	/** Hero current anim for athletic behaviour */
-	int16 heroAnimIdxATHLETIC = 0; // TCos1Init
+	int16 heroAnimIdxATHLETIC = 0;
 	/** Hero current anim for aggressive behaviour */
-	int16 heroAnimIdxAGGRESSIVE = 0; // TCos2Init
+	int16 heroAnimIdxAGGRESSIVE = 0;
 	/** Hero current anim for discrete behaviour */
-	int16 heroAnimIdxDISCRETE = 0; // TCos3Init
+	int16 heroAnimIdxDISCRETE = 0;
 	/** Hero current anim for protopack behaviour */
-	int16 heroAnimIdxPROTOPACK = 0; // TCos4Init
+	int16 heroAnimIdxPROTOPACK = 0;
 
 	/** Hero anim for behaviour menu */
-	int16 heroAnimIdx[4]; // TCOS
+	int16 heroAnimIdx[4];
 
 	/** Actors 3D body table - size of NUM_BODIES */
 	uint8 *bodyTable[NUM_BODIES]{nullptr};
