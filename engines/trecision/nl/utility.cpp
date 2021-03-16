@@ -139,7 +139,7 @@ void EndScript() {
 	CurStack--;
 	if (CurStack == 0) {
 		Flagscriptactive = false;
-		FlagMouseEnabled = true;
+		g_vm->FlagMouseEnabled = true;
 		RepaintString();
 	}
 }
@@ -150,7 +150,7 @@ void EndScript() {
 void PlayScript(uint16 i) {
 	CurStack++;
 	Flagscriptactive = true;
-	FlagMouseEnabled = false;
+	g_vm->FlagMouseEnabled = false;
 	g_vm->CurScriptFrame[CurStack] = Script[i]._firstFrame;
 
 	SScriptFrame *curFrame = &ScriptFrame[g_vm->CurScriptFrame[CurStack]];
@@ -179,7 +179,7 @@ void PlayScript(uint16 i) {
 void EvalScript() {
 	if (g_vm->_characterQueue.testEmptyCharacterQueue4Script() && g_vm->_gameQueue.testEmptyQueue(MC_DIALOG) && FlagScreenRefreshed) {
 		g_vm->CurScriptFrame[CurStack]++;
-		FlagMouseEnabled = false;
+		g_vm->FlagMouseEnabled = false;
 
 		SScriptFrame *curFrame = &ScriptFrame[g_vm->CurScriptFrame[CurStack]];
 		if ((curFrame->_class == 0) && (curFrame->_event == 0)) {

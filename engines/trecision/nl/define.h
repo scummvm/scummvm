@@ -3346,5 +3346,10 @@
 #define dFLOG				64
 #define dFCRED				65
 
+enum MouseCmd {
+	MCMD_ON = 0x0001,
+	MCMD_OFF = 0x0002,
+	MCMD_UPDT = 0x0003
+};
 
 #endif

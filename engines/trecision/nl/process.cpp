@@ -44,7 +44,7 @@ void ProcessTime() {
 	TheTime = ReadTime();
 	g_vm->_animMgr->refreshAllAnimations();
 
-	if (TheTime >= g_vm->NextRefresh) {
+	if (TheTime >= g_vm->_nextRefresh) {
 		PaintString();
 
 		if ((g_vm->_inventoryStatus == INV_PAINT) || (g_vm->_inventoryStatus == INV_DEPAINT))
@@ -64,9 +64,9 @@ void ProcessTime() {
 		FlagScreenRefreshed = true;
 		uint32 PaintTime = ReadTime();
 		if ((PaintTime - TheTime) >= 5)
-			g_vm->NextRefresh = PaintTime + 1;
+			g_vm->_nextRefresh = PaintTime + 1;
 		else
-			g_vm->NextRefresh = TheTime + 5;
+			g_vm->_nextRefresh = TheTime + 5;
 		FlagMousePolling = true;
 	}
 }
@@ -80,20 +80,20 @@ void ProcessMouse() {
 	static uint16 oldmy;
 	static bool LastMouseON = true;
 
-	if ((LastMouseON == true) && (FlagMouseEnabled == false)) {
+	if ((LastMouseON == true) && (g_vm->FlagMouseEnabled == false)) {
 		oldmx = 0;    // Switch off
 		oldmy = 0;
-		Mouse(2);
-	} else if ((LastMouseON == false) && (FlagMouseEnabled == true)) {
+		Mouse(MCMD_OFF);
+	} else if ((LastMouseON == false) && (g_vm->FlagMouseEnabled == true)) {
 		oldmx = 0;    // Switch on
 		oldmy = 0;
-		Mouse(1);
+		Mouse(MCMD_ON);
 	}
 
-	LastMouseON = FlagMouseEnabled;
-	Mouse(3);
+	LastMouseON = g_vm->FlagMouseEnabled;
+	Mouse(MCMD_UPDT);
 
-	if (!FlagMouseEnabled)
+	if (!g_vm->FlagMouseEnabled)
 		return;
 
 	uint16 tmpMx = mx;

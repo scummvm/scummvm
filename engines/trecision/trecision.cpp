@@ -120,16 +120,18 @@ TrecisionEngine::TrecisionEngine(OSystem *syst) : Engine(syst) {
 
 	_limitsNum = 0;
 	_actorLimit = 0;
-	NextRefresh = 0;
+	_nextRefresh = 0;
 
-	CurKey = CurAscii = 0;
+	_curKey = _curAscii = 0;
 	wmx = wmy = 0;
 	wmleft = wmright = false;
 	omx = omy = 0;
-	KeybInput = false;
+	_keybInput = false;
 
 	_gamePaused = false;
+	FlagMouseEnabled = true;
 
+	_closeUpObj = 0;
 }
 
 TrecisionEngine::~TrecisionEngine() {
@@ -187,12 +189,12 @@ void TrecisionEngine::EventLoop() {
 			break;
 
 		case Common::EVENT_KEYUP:
-			CurKey = event.kbd.keycode;
-			CurAscii = event.kbd.ascii;
+			_curKey = event.kbd.keycode;
+			_curAscii = event.kbd.ascii;
 			switch (event.kbd.keycode) {
 			case Common::KEYCODE_p:
-				if (!_gamePaused && !KeybInput) {
-					CurKey = 0;
+				if (!_gamePaused && !_keybInput) {
+					_curKey = 0;
 					_gamePaused = true;
 					waitKey();
 				}

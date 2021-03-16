@@ -264,8 +264,8 @@ void OpenVideo() {
 
 	g_vm->_video2 = (uint16 *)(MemoryArea + GameBytePointer);
 
-	if (!FlagMouseEnabled)
-		Mouse(2); // Turn off
+	if (!g_vm->FlagMouseEnabled)
+		Mouse(MCMD_OFF);
 
 	wordset(g_vm->_video2, 0, 1280L * 480L);
 	g_vm->_graphicsMgr->showScreen(0, 0, 640, 480);

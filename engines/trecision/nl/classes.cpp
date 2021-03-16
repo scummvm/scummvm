@@ -616,13 +616,13 @@ void StartCharacterAction(uint16 Act, uint16 NewRoom, uint8 NewPos, uint16 sent)
 	if (Act > hLAST) {
 		g_vm->_animMgr->startSmkAnim(Act);
 		InitAtFrameHandler(Act, g_vm->_curObj);
-		FlagMouseEnabled = false;
+		g_vm->FlagMouseEnabled = false;
 		FlagShowCharacter = false;
 		doEvent(MC_CHARACTER, ME_CHARACTERCONTINUEACTION, MP_DEFAULT, Act, NewRoom, NewPos, g_vm->_curObj);
 	} else {
 		if ((Act == aWALKIN) || (Act == aWALKOUT))
 			g_vm->_curObj = 0;
-		FlagMouseEnabled = false;
+		g_vm->FlagMouseEnabled = false;
 		actorDoAction(Act);
 		nextStep();
 	}
@@ -665,7 +665,7 @@ void doCharacter() {
 		if (_characterInMovement)
 			REEVENT;
 		else {
-			FlagMouseEnabled = true;
+			g_vm->FlagMouseEnabled = true;
 
 			if (g_vm->_curMessage->_event == ME_CHARACTERGOTOACTION)
 				doEvent(MC_ACTION, ME_MOUSEOPERATE, g_vm->_curMessage->_priority, g_vm->_curMessage->_u16Param1, g_vm->_curMessage->_u16Param2, 0, g_vm->_curMessage->_u32Param);
@@ -693,7 +693,7 @@ void doCharacter() {
 		if (g_vm->_curMessage->_u16Param1 > hLAST) {
 			g_vm->_animMgr->startSmkAnim(g_vm->_curMessage->_u16Param1);
 			InitAtFrameHandler(g_vm->_curMessage->_u16Param1, g_vm->_curMessage->_u32Param);
-			FlagMouseEnabled = false;
+			g_vm->FlagMouseEnabled = false;
 			doEvent(MC_CHARACTER, ME_CHARACTERCONTINUEACTION, g_vm->_curMessage->_priority, g_vm->_curMessage->_u16Param1, g_vm->_curMessage->_u16Param2, g_vm->_curMessage->_u8Param, g_vm->_curMessage->_u32Param);
 		} else
 			actorDoAction(g_vm->_curMessage->_u16Param1);
@@ -707,7 +707,7 @@ void doCharacter() {
 		//	If the animation is over
 		if (!g_vm->_animMgr->_playingAnims[1]) {
 			extern uint16 lastobj;
-			FlagMouseEnabled = true;
+			g_vm->FlagMouseEnabled = true;
 			FlagShowCharacter = true;
 			_characterInMovement = false;
 			g_vm->_characterQueue.initQueue();
@@ -726,7 +726,7 @@ void doCharacter() {
 			&& !(g_vm->_obj[oBOTTIGLIA1D]._mode & OBJMODE_OBJSTATUS)
 			&& !(g_vm->_obj[oRETE17]._mode & OBJMODE_OBJSTATUS)) {
 				PlayDialog(dF181);
-				FlagMouseEnabled = false;
+				g_vm->FlagMouseEnabled = false;
 				setPosition(1);
 			}
 		} else
@@ -838,7 +838,7 @@ void doSystem() {
 		}
 
 		ReadLoc();
-		FlagMouseEnabled = true;
+		g_vm->FlagMouseEnabled = true;
 
 		if ((g_vm->_curRoom == r21) && ((g_vm->_oldRoom == r23A) || (g_vm->_oldRoom == r23B)))
 			SetRoom(r21, true);
@@ -972,8 +972,8 @@ void doIdle() {
 		} else if (!FlagSomeOneSpeak && !Flagscriptactive && !FlagDialogActive && !FlagDialogMenuActive && (_actor._curAction < hWALKIN) && !FlagUseWithStarted && g_vm->_animMgr->_playingAnims[1] == 0 && FlagShowCharacter) {
 			actorStop();
 			nextStep();
-			Mouse(1);
-			FlagMouseEnabled = true;
+			Mouse(MCMD_ON);
+			g_vm->FlagMouseEnabled = true;
 			g_vm->_obj[o00EXIT]._goRoom = g_vm->_curRoom;
 			doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, rSYS, 0, 0, c);
 			FlagShowCharacter = false;
@@ -987,8 +987,8 @@ void doIdle() {
 		if (!FlagSomeOneSpeak && !Flagscriptactive && !FlagDialogActive && !FlagDialogMenuActive && (_actor._curAction < hWALKIN) && !FlagUseWithStarted && g_vm->_animMgr->_playingAnims[1] == 0 && FlagShowCharacter) {
 			actorStop();
 			nextStep();
-			Mouse(1);
-			FlagMouseEnabled = true;
+			Mouse(MCMD_ON);
+			g_vm->FlagMouseEnabled = true;
 			g_vm->_obj[o00EXIT]._goRoom = g_vm->_curRoom;
 			doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, rSYS, 0, 0, c);
 			FlagShowCharacter = false;
