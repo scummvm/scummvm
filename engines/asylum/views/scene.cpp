@@ -1034,8 +1034,8 @@ void Scene::updateAdjustScreen() {
 
 void Scene::updateCoordinates() {
 	Actor *act = getActor();
-	int16 xLeft = _ws->xLeft;
-	int16 yTop  = _ws->yTop;
+	int16 xLeft = _ws->xLeft, oxLeft = xLeft;
+	int16 yTop  = _ws->yTop, oyTop = yTop;
 	int16 posX = act->getPoint1()->x - _ws->xLeft;
 	int16 posY = act->getPoint1()->y - _ws->yTop;
 	Common::Rect boundingRect = _ws->boundingRect;
@@ -1129,6 +1129,9 @@ void Scene::updateCoordinates() {
 
 	// XXX dword_44E1EC is set to 2 at this point if the scene coordinates
 	// have changed, but that variable is never used anywhere else
+	if ((_ws->motionStatus == 2 || _ws->motionStatus == 5) && (oxLeft != _ws->xLeft || oyTop != _ws->yTop))
+		debugC(kDebugLevelScene, "[Scene::updateCoordinates] (%d, %d) ~> (%d, %d), motionStatus = %d",
+				_ws->xLeft, _ws->yTop, _ws->coordinates[0], _ws->coordinates[1], _ws->motionStatus);
 }
 
 void Scene::updateCursor(ActorDirection direction, const Common::Rect &rect) {
