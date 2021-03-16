@@ -31,37 +31,4 @@ namespace Trecision {
 /*-------------------------------------------------------------------------*/
 /*                             INIT OBJ NAMES                              */
 /*-------------------------------------------------------------------------*/
-void initNames() {
-	g_vm->_sysText[1] = "NightLong was not properly installed!\nRun Autorun.exe from the CD-Rom."; // llscreen
-	g_vm->_sysText[2] = "Not enough memory!\nYou need %d bytes more.\n";                           // llscreen
-	g_vm->_sysText[3] = "Unknown error\n";                                                         // maindos
-	g_vm->_sysText[4] = "Please insert CD number %c and press return.";                            // llmouse
-	g_vm->_sysText[5] = "Unknown error";                                                           // llscreen
-	g_vm->_sysText[6] = "VESA Not Supported.\n";                                                   // maindos
-	g_vm->_sysText[7] = "Error reading file.";                                                     // lldec
-	g_vm->_sysText[8] = "Mouse not found error!\n";                                                // maindos
-	g_vm->_sysText[9] = "SAVE POSITION";                                                           // llmouse ###
-	g_vm->_sysText[10] = "EMPTY SLOT";                                                             // llmouse ###
-	g_vm->_sysText[11] = "LOAD POSITION";                                                          // llmouse ###
-	g_vm->_sysText[12] = "Error reading saved-game";                                               // llmouse
-	g_vm->_sysText[13] = "Are you sure that you want to quit (y/n)?";                              // llmouse ###
-	g_vm->_sysText[14] = "Unknown error\n";                                                        // soundw95
-	g_vm->_sysText[15] = "Sample handle not available\n";                                          // sounddos
-	g_vm->_sysText[16] = "Run NL to select an appropriate digital audio driver\n";                 // sounddos
-	g_vm->_sysText[17] = "This demo is over.";                                                     // llmouse ###
-	g_vm->_sysText[18] = "NightLong";                                                              // win name - mainw95
-	g_vm->_sysText[19] = "ERROR!";                                                                 // llmouse
-	g_vm->_sysText[20] = "Unsupported pixel format.";                                              // mainw95
-	g_vm->_sysText[21] = "DirectX Error";                                                          // mainw95
-	g_vm->_sysText[22] = "NightLong Warning";                                                      // mainw95
-	g_vm->_sysText[23] = "Use ";                                                                   // string
-	g_vm->_sysText[24] = " with ";                                                                 // string
-	g_vm->_sysText[25] = "Go to ";                                                                 // string
-	g_vm->_sysText[26] = "Go to ... ";                                                             // string
-	// The following are missing: FastFile, Init, Do, Utility
-
-	g_vm->_sentence[0] = "          "; // Use it like a buffer !!!!
-	g_vm->_objName[0] = " ";
-}
-
 } // End of namespace Trecision

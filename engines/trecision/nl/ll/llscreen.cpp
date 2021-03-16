@@ -106,8 +106,6 @@ uint8  TextStatus;
 char  CurCDSet = 1;
 // ALTERNATIVE SCROLLING
 int   ScrollBottle;
-short LeftArrow;
-short RightArrow;
 // FILEREF
 SFileEntry FileRef[MAXFILEREF];
 int NumFileRef;
@@ -854,59 +852,6 @@ void DrawObj(SDObj d) {
 			g_vm->_graphicsMgr->unlock();
 		}
 	}
-}
-
-/*-----------------27/02/95 22.16-------------------
-                    RegenInventory()
---------------------------------------------------*/
-void RegenInventory(uint8 StartIcon, uint8 StartLine) {
-	if (StartLine > ICONDY)
-		StartLine = ICONDY;
-
-	for (uint16 b = 0; b < ICONDY; b++)
-		wordset(g_vm->_video2 + (FIRSTLINE + b) * CurRoomMaxX + CurScrollPageDx, 0, SCREENLEN);
-
-	for (uint16 a = 0; a < ICONSHOWN; a++) {
-		if ((g_vm->_inventory[a + StartIcon] >= LASTICON) /*|| ( _inventory[a+StartIcon] == iEMPTYSLOT )*/) {
-			for (uint16 b = 0; b < (ICONDY - StartLine); b++)
-				MCopy(g_vm->_video2 + (FIRSTLINE + b) * CurRoomMaxX + a * (ICONDX) + ICONMARGSX + CurScrollPageDx,
-				      Icone + (g_vm->_inventory[a + StartIcon] - LASTICON + READICON + 1) * ICONDX * ICONDY + (b + StartLine) * ICONDX, ICONDX);
-		} else if (g_vm->_inventory[a + StartIcon] != g_vm->_lightIcon) {
-			for (uint16 b = 0; b < (ICONDY - StartLine); b++)
-				MCopy(g_vm->_video2 + (FIRSTLINE + b) * CurRoomMaxX + a * (ICONDX) + ICONMARGSX + CurScrollPageDx,
-				      Icone + g_vm->_inventory[a + StartIcon] * ICONDX * ICONDY + (b + StartLine) * ICONDX, ICONDX);
-		}
-	}
-
-	// frecce
-	if (StartIcon != 0) {							// COPIA LA SINISTRA
-		LeftArrow = ICONMARGSX * ICONDY * 3;
-		for (uint16 b = 0; b < (ICONDY - StartLine); b++) {
-			MCopy(g_vm->_video2 + (FIRSTLINE + b) * CurRoomMaxX + CurScrollPageDx,
-				  Arrows + LeftArrow + (b + StartLine)*ICONMARGSX, ICONMARGSX);
-		}
-	}
-
-	if ((StartIcon + ICONSHOWN) < g_vm->_inventorySize) { // COPIA LA DESTRA
-		RightArrow = ICONMARGDX * ICONDY * 2;
-		for (uint16 b = 0; b < (ICONDY - StartLine); b++) {
-			MCopy(g_vm->_video2 + (FIRSTLINE + b) * CurRoomMaxX + CurScrollPageDx + SCREENLEN - ICONMARGDX,
-				  Arrows + RightArrow + ICONMARGSX * ICONDY * 2 + (b + StartLine)*ICONMARGSX, ICONMARGSX);
-		}
-	}
-	LeftArrow = 0;
-	RightArrow = 0;
-
-	//refreshSmkIcon( StartIcon, 2 );
-
-	VMouseCopy();
-	for (uint16 a = 0; a < ICONDY; a++) {
-		g_vm->_graphicsMgr->vCopy((FIRSTLINE + a) * VirtualPageLen + VideoScrollPageDx,
-		     g_vm->_video2 + (FIRSTLINE + a) * CurRoomMaxX + CurScrollPageDx, SCREENLEN);
-	}
-	VMouseRestore();
-	//VMouseON();
-	g_vm->_graphicsMgr->unlock();
 }
 
 /* -----------------20/11/97 16.59-------------------

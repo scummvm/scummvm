@@ -52,7 +52,7 @@ void ProcessTime() {
 
 		if ((g_vm->_inventoryStatus != INV_OFF)
 			&& ((OldRegInvSI != g_vm->_regenInvStartIcon) || (OldRegInvSL != g_vm->_regenInvStartLine) || (OldLightIcon != g_vm->_lightIcon) || (FlagForceRegenInventory))) {
-			RegenInventory(g_vm->_regenInvStartIcon, g_vm->_regenInvStartLine);
+			g_vm->RegenInventory(g_vm->_regenInvStartIcon, g_vm->_regenInvStartLine);
 			OldRegInvSI = g_vm->_regenInvStartIcon;
 			OldRegInvSL = g_vm->_regenInvStartLine;
 			OldLightIcon = g_vm->_lightIcon;

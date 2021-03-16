@@ -102,6 +102,8 @@ TrecisionEngine::TrecisionEngine(OSystem *syst) : Engine(syst) {
 	_regenInvStartLine = INVENTORY_HIDE;
 	_lastLightIcon = 0xFF;
 	_inventoryCounter = INVENTORY_HIDE;
+	LeftArrow = 0;
+	RightArrow = 0;
 
 	for (int i = 0; i < 260; ++i) {
 		_newData[i] = 0;
@@ -255,6 +257,39 @@ void TrecisionEngine::InitMessageSystem() {
 		_characterQueue._event[i] = &_characterMsg[i];
 		_animQueue._event[i] = &_animMsg[i];
 	}
+}
+
+void TrecisionEngine::initNames() {
+	_sysText[1] = "NightLong was not properly installed!\nRun Autorun.exe from the CD-Rom."; // llscreen
+	_sysText[2] = "Not enough memory!\nYou need %d bytes more.\n";                           // llscreen
+	_sysText[3] = "Unknown error\n";                                                         // maindos
+	_sysText[4] = "Please insert CD number %c and press return.";                            // llmouse
+	_sysText[5] = "Unknown error";                                                           // llscreen
+	_sysText[6] = "VESA Not Supported.\n";                                                   // maindos
+	_sysText[7] = "Error reading file.";                                                     // lldec
+	_sysText[8] = "Mouse not found error!\n";                                                // maindos
+	_sysText[9] = "SAVE POSITION";                                                           // llmouse ###
+	_sysText[10] = "EMPTY SLOT";                                                             // llmouse ###
+	_sysText[11] = "LOAD POSITION";                                                          // llmouse ###
+	_sysText[12] = "Error reading saved-game";                                               // llmouse
+	_sysText[13] = "Are you sure that you want to quit (y/n)?";                              // llmouse ###
+	_sysText[14] = "Unknown error\n";                                                        // soundw95
+	_sysText[15] = "Sample handle not available\n";                                          // sounddos
+	_sysText[16] = "Run NL to select an appropriate digital audio driver\n";                 // sounddos
+	_sysText[17] = "This demo is over.";                                                     // llmouse ###
+	_sysText[18] = "NightLong";                                                              // win name - mainw95
+	_sysText[19] = "ERROR!";                                                                 // llmouse
+	_sysText[20] = "Unsupported pixel format.";                                              // mainw95
+	_sysText[21] = "DirectX Error";                                                          // mainw95
+	_sysText[22] = "NightLong Warning";                                                      // mainw95
+	_sysText[23] = "Use ";                                                                   // string
+	_sysText[24] = " with ";                                                                 // string
+	_sysText[25] = "Go to ";                                                                 // string
+	_sysText[26] = "Go to ... ";                                                             // string
+	// The following are missing: FastFile, Init, Do, Utility
+
+	_sentence[0] = "          "; // Use it like a buffer !!!!
+	_objName[0] = " ";
 }
 
 } // End of namespace Trecision

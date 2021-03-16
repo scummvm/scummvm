@@ -69,7 +69,6 @@ void ReadSounds();
 void RegenRoom();
 void PaintRegenRoom();
 void DrawObj(SDObj d);
-void RegenInventory(uint8 StartIcon, uint8 StartLine);
 uint16 ULaw2Linear(uint8 ulawbyte);
 void StartSoundSystem();
 void StopSoundSystem();
