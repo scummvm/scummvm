@@ -102,40 +102,40 @@ int32 DebugScene::checkZoneType(int32 type) const {
 	return 0;
 }
 
-DebugScene::ScenePositionsProjected DebugScene::calculateBoxPositions(const IVec3 &bottomLeft, const IVec3 &topRight) {
+DebugScene::ScenePositionsProjected DebugScene::calculateBoxPositions(const IVec3 &mins, const IVec3 &maxs) {
 	ScenePositionsProjected positions;
 	// compute the points in 3D
-	positions.frontBottomLeftPoint.x = bottomLeft.x - _engine->_grid->camera.x;
-	positions.frontBottomLeftPoint.y = bottomLeft.y - _engine->_grid->camera.y;
-	positions.frontBottomLeftPoint.z = topRight.z - _engine->_grid->camera.z;
+	positions.frontBottomLeftPoint.x = mins.x - _engine->_grid->camera.x;
+	positions.frontBottomLeftPoint.y = mins.y - _engine->_grid->camera.y;
+	positions.frontBottomLeftPoint.z = maxs.z - _engine->_grid->camera.z;
 
-	positions.frontBottomRightPoint.x = topRight.x - _engine->_grid->camera.x;
-	positions.frontBottomRightPoint.y = bottomLeft.y - _engine->_grid->camera.y;
-	positions.frontBottomRightPoint.z = topRight.z - _engine->_grid->camera.z;
+	positions.frontBottomRightPoint.x = maxs.x - _engine->_grid->camera.x;
+	positions.frontBottomRightPoint.y = mins.y - _engine->_grid->camera.y;
+	positions.frontBottomRightPoint.z = maxs.z - _engine->_grid->camera.z;
 
-	positions.frontTopLeftPoint.x = bottomLeft.x - _engine->_grid->camera.x;
-	positions.frontTopLeftPoint.y = topRight.y - _engine->_grid->camera.y;
-	positions.frontTopLeftPoint.z = topRight.z - _engine->_grid->camera.z;
+	positions.frontTopLeftPoint.x = mins.x - _engine->_grid->camera.x;
+	positions.frontTopLeftPoint.y = maxs.y - _engine->_grid->camera.y;
+	positions.frontTopLeftPoint.z = maxs.z - _engine->_grid->camera.z;
 
-	positions.frontTopRightPoint.x = topRight.x - _engine->_grid->camera.x;
-	positions.frontTopRightPoint.y = topRight.y - _engine->_grid->camera.y;
-	positions.frontTopRightPoint.z = topRight.z - _engine->_grid->camera.z;
+	positions.frontTopRightPoint.x = maxs.x - _engine->_grid->camera.x;
+	positions.frontTopRightPoint.y = maxs.y - _engine->_grid->camera.y;
+	positions.frontTopRightPoint.z = maxs.z - _engine->_grid->camera.z;
 
-	positions.backBottomLeftPoint.x = bottomLeft.x - _engine->_grid->camera.x;
-	positions.backBottomLeftPoint.y = bottomLeft.y - _engine->_grid->camera.y;
-	positions.backBottomLeftPoint.z = bottomLeft.z - _engine->_grid->camera.z;
+	positions.backBottomLeftPoint.x = mins.x - _engine->_grid->camera.x;
+	positions.backBottomLeftPoint.y = mins.y - _engine->_grid->camera.y;
+	positions.backBottomLeftPoint.z = mins.z - _engine->_grid->camera.z;
 
-	positions.backBottomRightPoint.x = topRight.x - _engine->_grid->camera.x;
-	positions.backBottomRightPoint.y = bottomLeft.y - _engine->_grid->camera.y;
-	positions.backBottomRightPoint.z = bottomLeft.z - _engine->_grid->camera.z;
+	positions.backBottomRightPoint.x = maxs.x - _engine->_grid->camera.x;
+	positions.backBottomRightPoint.y = mins.y - _engine->_grid->camera.y;
+	positions.backBottomRightPoint.z = mins.z - _engine->_grid->camera.z;
 
-	positions.backTopLeftPoint.x = bottomLeft.x - _engine->_grid->camera.x;
-	positions.backTopLeftPoint.y = topRight.y - _engine->_grid->camera.y;
-	positions.backTopLeftPoint.z = bottomLeft.z - _engine->_grid->camera.z;
+	positions.backTopLeftPoint.x = mins.x - _engine->_grid->camera.x;
+	positions.backTopLeftPoint.y = maxs.y - _engine->_grid->camera.y;
+	positions.backTopLeftPoint.z = mins.z - _engine->_grid->camera.z;
 
-	positions.backTopRightPoint.x = topRight.x - _engine->_grid->camera.x;
-	positions.backTopRightPoint.y = topRight.y - _engine->_grid->camera.y;
-	positions.backTopRightPoint.z = bottomLeft.z - _engine->_grid->camera.z;
+	positions.backTopRightPoint.x = maxs.x - _engine->_grid->camera.x;
+	positions.backTopRightPoint.y = maxs.y - _engine->_grid->camera.y;
+	positions.backTopRightPoint.z = mins.z - _engine->_grid->camera.z;
 
 	// project all points
 

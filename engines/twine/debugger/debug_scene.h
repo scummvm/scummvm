@@ -67,7 +67,7 @@ private:
 		IVec3 backTopRightPoint2D;
 	};
 
-	ScenePositionsProjected calculateBoxPositions(const IVec3 &bottomLeft, const IVec3 &topRight);
+	ScenePositionsProjected calculateBoxPositions(const IVec3 &mins, const IVec3 &maxs);
 	bool drawBox(const ScenePositionsProjected &positions, uint8 color);
 public:
 	DebugScene(TwinEEngine *engine);
