@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-03-16 01:50+0000\n"
-"PO-Revision-Date: 2021-02-21 19:36+0000\n"
+"PO-Revision-Date: 2021-03-17 04:24+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fi/>\n"
@@ -311,17 +311,13 @@ msgid "Backend"
 msgstr "Taustajärjestelmä"
 
 #: gui/editgamedialog.cpp:250
-#, fuzzy
-#| msgid "Override global audio settings"
 msgid "Override global backend settings"
-msgstr "Ohita globaalit ääniasetukset"
+msgstr "Ohita globaalit asetukset"
 
 #: gui/editgamedialog.cpp:252
-#, fuzzy
-#| msgid "Override global audio settings"
 msgctxt "lowres"
 msgid "Override global backend settings"
-msgstr "Ohita globaalit ääniasetukset"
+msgstr "Ohita globaalit taustajärjestelmäasetukset"
 
 #: gui/editgamedialog.cpp:266 gui/options.cpp:1858 engines/dialogs.cpp:301
 msgid "Audio"
@@ -2778,16 +2774,12 @@ msgid "Decrease the scale factor"
 msgstr "Pienennä skaalauskerrointa"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:436
-#, fuzzy
-#| msgid "Switch to TV 2x scaling"
 msgid "Switch to the next scaler"
-msgstr "Vaihda TV 2x-skaalaukseen"
+msgstr "Vaihda seuraavaan skaalaajaan"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:441
-#, fuzzy
-#| msgid "Switch to nearest neighbour scaling"
 msgid "Switch to the previous scaler"
-msgstr "Vaihda nearest neighbour-skaalaukseen"
+msgstr "Vaihda edelliseen skaalaajaan"
 
 #: backends/keymapper/hardware-input.cpp:245
 msgid "Left Mouse Button"
