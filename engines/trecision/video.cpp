@@ -264,7 +264,7 @@ void AnimManager::startSmkAnim(uint16 num) {
 		uint32 st = ReadTime();
 
 		openSmk(AnimFileOpen(_animTab[num]._name));
-		_vm->NextRefresh += (ReadTime() - st); // fixup opening time
+		_vm->_nextRefresh += (ReadTime() - st); // fixup opening time
 	}
 
 	_curSmkAction = SMACKNULL;
@@ -346,7 +346,7 @@ void AnimManager::startFullMotion(const char *name) {
 	_vm->_animQueue.initQueue();
 	_vm->_characterQueue.initQueue();
 	actorStop();
-	FlagMouseEnabled = false;
+	g_vm->FlagMouseEnabled = false;
 
 	openSmk(FmvFileOpen(name));
 
@@ -372,7 +372,7 @@ void AnimManager::stopFullMotion() {
 
 	FlagDialogActive = false;
 	FlagDialogMenuActive = false;
-	FlagMouseEnabled = true;
+	g_vm->FlagMouseEnabled = true;
 	FlagSomeOneSpeak = false;
 
 	_vm->_lightIcon = 0xFF;

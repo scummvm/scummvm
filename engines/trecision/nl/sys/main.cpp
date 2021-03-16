@@ -74,10 +74,10 @@ void CheckSystem() {
 					GetKey
 --------------------------------------------------*/
 char GetKey() {
-	int key = g_vm->CurKey;
-	int ascii = g_vm->CurAscii;
-	g_vm->CurKey = 0;
-	g_vm->CurAscii = 0;
+	int key = g_vm->_curKey;
+	int ascii = g_vm->_curAscii;
+	g_vm->_curKey = 0;
+	g_vm->_curAscii = 0;
 
 	switch (key) {
 	case Common::KEYCODE_SPACE:
@@ -96,9 +96,9 @@ char GetKey() {
 	default:
 		if (ascii) {
 			return ascii;
-		} else {
-			return 0;
 		}
+
+		return 0;
 	}
 }
 
@@ -106,11 +106,11 @@ char GetKey() {
 					waitKey
 --------------------------------------------------*/
 char waitKey() {
-	while (g_vm->CurKey == 0)
+	while (g_vm->_curKey == 0)
 		CheckSystem();
 
-	int t = g_vm->CurKey;
-	g_vm->CurKey = 0;
+	int t = g_vm->_curKey;
+	g_vm->_curKey = 0;
 
 	return t;
 }
@@ -119,7 +119,7 @@ char waitKey() {
 					FreeKey
 --------------------------------------------------*/
 void FreeKey() {
-	g_vm->CurKey = 0;
+	g_vm->_curKey = 0;
 }
 
 /*-----------------10/12/95 15.52-------------------
@@ -211,26 +211,20 @@ void NlDissolve(int val) {
 	g_vm->_graphicsMgr->clearScreen();
 }
 
-/*-----------------10/12/95 15.25-------------------
-				click_handler
---------------------------------------------------*/
-
 /*-----------------10/12/95 15.29-------------------
 					Mouse
 --------------------------------------------------*/
-void Mouse(uint8 opt) {
-	extern bool FlagMouseEnabled;
-
+void Mouse(MouseCmd opt) {
 	CheckSystem();
 
 	switch (opt) {
 	// Update mouse
-	case 3: {
-		if (g_vm->_mouseONOFF && !FlagMouseEnabled)
-			Mouse(2);
+	case MCMD_UPDT: {
+		if (g_vm->_mouseONOFF && !g_vm->FlagMouseEnabled)
+			Mouse(MCMD_OFF);
 
-		if (!g_vm->_mouseONOFF && FlagMouseEnabled)
-			Mouse(1);
+		if (!g_vm->_mouseONOFF && g_vm->FlagMouseEnabled)
+			Mouse(MCMD_ON);
 
 		if (g_vm->_mouseONOFF) {
 			mleft = g_vm->wmleft;
@@ -243,16 +237,14 @@ void Mouse(uint8 opt) {
 		}
 		break;
 	}
-	// Turn off mouse
-	case 2: {
+	case MCMD_OFF: {
 		if (!g_vm->_mouseONOFF)
 			break;
 		g_vm->_mouseONOFF = false;
 		VMouseOFF();
 		break;
 	}
-	// Turn on mouse
-	case 1: {
+	case MCMD_ON: {
 		if (g_vm->_mouseONOFF)
 			break;
 		g_vm->_mouseONOFF = true;

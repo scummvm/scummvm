@@ -116,15 +116,20 @@ public:
 	uint32 _newData2[260];
 	uint16 *_video2;
 
-	uint32 NextRefresh;
+	uint32 _nextRefresh;
 
-	int CurKey, CurAscii;
+	int _curKey, _curAscii;
 	int16 wmx, wmy;
 	bool wmleft, wmright;
 	int16 omx, omy;
-	bool KeybInput;
+	bool _keybInput;
 
 	bool _gamePaused = false;
+	// CloseUp12 and 13
+	uint16 _closeUpObj;
+
+	bool FlagMouseEnabled;
+
 
 	GraphicsManager *_graphicsMgr;
 	AnimManager *_animMgr;

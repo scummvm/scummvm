@@ -436,9 +436,9 @@ bool DataSave() {
 	FreeKey();
 
 	mleft = mright = false;
-	Mouse(3);
+	Mouse(MCMD_UPDT);
 	while (mleft || mright)
-		Mouse(3);
+		Mouse(MCMD_UPDT);
 
 	// ferma omino, animazioni, spegne scritte
 	memcpy(OldInv, g_vm->_inventory, MAXICON);
@@ -480,7 +480,7 @@ insave:
 	ch = 0;
 	for (; ;) {
 		CheckSystem();
-		Mouse(3);
+		Mouse(MCMD_UPDT);
 
 		GetKey();
 
@@ -544,13 +544,13 @@ insave:
 		}
 
 		for (; ;) {
-			g_vm->KeybInput = true;
+			g_vm->_keybInput = true;
 			CheckSystem();
 			ch = GetKey();
 			FreeKey();
 
-			Mouse(3);
-			g_vm->KeybInput = false;
+			Mouse(MCMD_UPDT);
+			g_vm->_keybInput = false;
 
 			if (ch == 0x1B) {
 				ch = 0;
@@ -626,7 +626,7 @@ insave:
 		fwrite(&OldIconBase,         sizeof(uint8), 1, fh);
 		fwrite(&Flagskiptalk,         sizeof(int16), 1, fh);
 		fwrite(&Flagskipenable,       sizeof(int16), 1, fh);
-		fwrite(&FlagMouseEnabled,     sizeof(int16), 1, fh);
+		fwrite(&g_vm->FlagMouseEnabled, sizeof(int16), 1, fh);
 		fwrite(&FlagScreenRefreshed,  sizeof(int16), 1, fh);
 		fwrite(&FlagPaintCharacter,        sizeof(int16), 1, fh);
 		fwrite(&FlagSomeOneSpeak,     sizeof(int16), 1, fh);
@@ -719,9 +719,9 @@ insave:
 	g_vm->_graphicsMgr->unlock();
 
 	mleft = mright = false;
-	Mouse(3);
+	Mouse(MCMD_UPDT);
 	while (mleft || mright)
-		Mouse(3);
+		Mouse(MCMD_UPDT);
 
 	return ret;
 }
@@ -741,9 +741,9 @@ bool DataLoad() {
 	for (int a = 0; a < TOP; a++)
 		wordset(g_vm->_video2 + CurRoomMaxX * a + CurScrollPageDx, 0, SCREENLEN);
 
-	if (!FlagMouseEnabled) {
-		FlagMouseEnabled = true;
-		Mouse(1);
+	if (!g_vm->FlagMouseEnabled) {
+		g_vm->FlagMouseEnabled = true;
+		Mouse(MCMD_ON);
 	}
 
 	SDText SText;
@@ -763,9 +763,9 @@ bool DataLoad() {
 	FreeKey();
 
 	mleft = mright = false;
-	Mouse(3);
+	Mouse(MCMD_UPDT);
 	while (mleft || mright)
-		Mouse(3);
+		Mouse(MCMD_UPDT);
 
 	// Stop character and animations, turn off writings
 
@@ -806,7 +806,7 @@ bool DataLoad() {
 
 	for (;;) {
 		CheckSystem();
-		Mouse(3);
+		Mouse(MCMD_UPDT);
 
 		GetKey();
 
@@ -882,7 +882,7 @@ bool DataLoad() {
 		fread(&OldIconBase,         sizeof(uint8), 1, fh);
 		fread(&Flagskiptalk,         sizeof(int16), 1, fh);
 		fread(&Flagskipenable,       sizeof(int16), 1, fh);
-		fread(&FlagMouseEnabled,     sizeof(int16), 1, fh);
+		fread(&g_vm->FlagMouseEnabled, sizeof(int16), 1, fh);
 		fread(&FlagScreenRefreshed,  sizeof(int16), 1, fh);
 		fread(&FlagPaintCharacter,        sizeof(int16), 1, fh);
 		fread(&FlagSomeOneSpeak,     sizeof(int16), 1, fh);
@@ -993,13 +993,13 @@ bool DataLoad() {
 	g_vm->_inventorySize = OldInvLen;
 
 	mleft = mright = false;
-	Mouse(3);
+	Mouse(MCMD_UPDT);
 	while (mleft || mright)
-		Mouse(3);
+		Mouse(MCMD_UPDT);
 
 	if (Flagscriptactive) {
-		FlagMouseEnabled = false;
-		Mouse(2);
+		g_vm->FlagMouseEnabled = false;
+		Mouse(MCMD_OFF);
 	}
 
 	return retval;
@@ -1027,9 +1027,9 @@ bool QuitGame() {
 	FreeKey();
 
 	mleft = mright = false;
-	Mouse(3);
+	Mouse(MCMD_UPDT);
 	while (mleft || mright)
-		Mouse(3);
+		Mouse(MCMD_UPDT);
 
 	char ch = waitKey();
 
@@ -1065,9 +1065,9 @@ void DemoOver() {
 	FreeKey();
 
 	mleft = mright = false;
-	Mouse(3);
+	Mouse(MCMD_UPDT);
 	while (mleft || mright)
-		Mouse(3);
+		Mouse(MCMD_UPDT);
 
 	waitKey();
 

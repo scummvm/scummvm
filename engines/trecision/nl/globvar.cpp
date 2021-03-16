@@ -64,7 +64,6 @@ bool  FlagDialogActive;
 bool  FlagDialogMenuActive;
 bool  Flagskiptalk;
 bool  Flagskipenable;
-bool  FlagMouseEnabled = true;
 bool  FlagScreenRefreshed;
 bool  FlagPaintCharacter;
 bool  FlagShowCharacter = true;

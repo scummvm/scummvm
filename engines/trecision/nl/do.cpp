@@ -45,14 +45,12 @@ uint16 Comb4CT[6];
 uint16 Comb58[6], Count58 = 0;
 // SlotMachine41
 uint16 Try41;
-// CloseUp12 e 13
-uint16 CloseUpObj;
 
 /*-------------------------------------------------------------------------*/
 /*                                 ROOMIN             					   */
 /*-------------------------------------------------------------------------*/
 void doRoomIn(uint16 curObj) {
-	FlagMouseEnabled = false;
+	g_vm->FlagMouseEnabled = false;
 
 	uint16 theAction = g_vm->_obj[curObj]._anim;
 	uint16 thePos = g_vm->_obj[curObj]._ninv;
@@ -68,13 +66,13 @@ void doRoomIn(uint16 curObj) {
 void doRoomOut(uint16 TheObj) {
 	uint16 TheAction, ThePos;
 
-	FlagMouseEnabled = false;
+	g_vm->FlagMouseEnabled = false;
 
 	switch (TheObj) {
 	case oSCALA32:
 		if (g_vm->_obj[oBOTOLAC32]._mode & OBJMODE_OBJSTATUS) {
 			CharacterSay(g_vm->_obj[TheObj]._action);
-			FlagMouseEnabled = true;
+			g_vm->FlagMouseEnabled = true;
 			TheAction = 0;
 			ThePos = 0;
 		} else {
@@ -99,7 +97,7 @@ void doRoomOut(uint16 TheObj) {
 /*                                 EXAMINE           					   */
 /*-------------------------------------------------------------------------*/
 void doMouseExamine(uint16 TheObj) {
-	bool printsent = false;
+	bool printSentence = false;
 
 	if (!TheObj)
 		warning("doMouseExamine");
@@ -110,12 +108,12 @@ void doMouseExamine(uint16 TheObj) {
 		_choice[4]._flag &= ~DLGCHOICE_HIDE;
 		_choice[18]._flag &= ~DLGCHOICE_HIDE;
 		_choice[33]._flag &= ~DLGCHOICE_HIDE;
-		printsent = false;
+		printSentence = false;
 		break;
 
 	case oPORTAA13:
 		g_vm->_obj[oBOX12]._mode |= OBJMODE_OBJSTATUS;
-		printsent = true;
+		printSentence = true;
 		break;
 
 	case oPANELA12:
@@ -125,7 +123,7 @@ void doMouseExamine(uint16 TheObj) {
 		else
 			g_vm->_obj[oFUSE12CU]._mode &= ~OBJMODE_OBJSTATUS;
 		doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, r12CU, 0, 0, TheObj);
-		CloseUpObj = TheObj;
+		g_vm->_closeUpObj = TheObj;
 		break;
 
 	case oLETTERA13:
@@ -135,12 +133,12 @@ void doMouseExamine(uint16 TheObj) {
 		else
 			g_vm->_obj[oLETTER13CU]._mode &= ~OBJMODE_OBJSTATUS;
 		doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, r13CU, 0, 0, TheObj);
-		CloseUpObj = TheObj;
+		g_vm->_closeUpObj = TheObj;
 		break;
 
 	case oCUCININO14:
 		doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a1413OSSERVAPIANOCOTTURA, 0, 0, TheObj);
-		printsent = false;
+		printSentence = false;
 		break;
 
 	case oSCAFFALE14:
@@ -148,158 +146,158 @@ void doMouseExamine(uint16 TheObj) {
 			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a145ESAMINASCAFFALE, 0, 0, TheObj);
 		else
 			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a145CESAMINASCAFFALE, 0, 0, TheObj);
-		printsent = false;
+		printSentence = false;
 		break;
 
 	case oTAVOLINOPP14:
 		doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a1412SPOSTASEDIA, 0, 0, TheObj);
-		printsent = false;
+		printSentence = false;
 		break;
 
 	case oBOCCETTE15:
 		doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a1510TOCCABOCCETTE, 0, 0, TheObj);
-		printsent = false;
+		printSentence = false;
 		break;
 
 	case oSPECCHIO15:
 		doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a1511SISPECCHIA, 0, 0, TheObj);
-		printsent = false;
+		printSentence = false;
 		break;
 
 	case oMONITORSA16:
 		doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a1614GUARDAMONITORS14, 0, 0, TheObj);
-		printsent = false;
+		printSentence = false;
 		break;
 
 	case oFINESTRAA15:
 		if (g_vm->_obj[oTAPPARELLAA15]._mode & OBJMODE_OBJSTATUS)
 			CharacterSay(1999);
 		else
-			printsent = true;
+			printSentence = true;
 		break;
 
 	case oMONITORSP16:
 		doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a1615GUARDAMONITORS15, 0, 0, TheObj);
-		printsent = false;
+		printSentence = false;
 		break;
 
 	case oCARTACCE16:
 		doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a1613GUARDACARTACCE, 0, 0, TheObj);
-		printsent = false;
+		printSentence = false;
 		break;
 
 	case oMAPPA16:
 		if (IconPos(iFOGLIO14) != MAXICON)
 			g_vm->_obj[oMAPPA16]._flag |= OBJFLAG_EXTRA;
-		printsent = true;
+		printSentence = true;
 		break;
 
 	case oSCATOLONE17:
 		doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a177SICHINA, 0, 0, TheObj);
-		printsent = false;
+		printSentence = false;
 		break;
 
 	case oMURALES17:
 		doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a179MUOVETESTA, 0, 0, TheObj);
-		printsent = false;
+		printSentence = false;
 		break;
 
 	case oSCHERMO18:
 		doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a181ESAMINACARTELLONE, 0, 0, TheObj);
-		printsent = false;
+		printSentence = false;
 		break;
 
 	case oVETRINA1A:
 		doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a1A1ESAMINAVETRINA, 0, 0, TheObj);
-		printsent = false;
+		printSentence = false;
 		break;
 
 	case oTESSERA1A:
 		if (((_choice[151]._flag & OBJFLAG_DONE) || (_choice[152]._flag & OBJFLAG_DONE)) && !(_choice[183]._flag & OBJFLAG_DONE))
 			_choice[183]._flag &= ~DLGCHOICE_HIDE;
 		g_vm->_obj[oTESSERA1A]._flag |= OBJFLAG_EXTRA;
-		printsent = true;
+		printSentence = true;
 		break;
 
 	case oCARTACCE1B:
 		doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a1B8FRUGACARTACCIE, 0, 0, TheObj);
-		printsent = false;
+		printSentence = false;
 		break;
 
 	case oBIDONE1B:
 		doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a1B10GUARDABIDONE, 0, 0, TheObj);
-		printsent = false;
+		printSentence = false;
 		break;
 
 	case oGRATA1C:
 		doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a1C2GUARDAGRATA, 0, 0, TheObj);
-		printsent = false;
+		printSentence = false;
 		break;
 
 	case oSCAFFALE1D:
 		doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a1D8SALESGABELLO, 0, 0, TheObj);
-		printsent = false;
+		printSentence = false;
 		break;
 
 	case oBARILOTTO1D:
 		doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a1D7SPINGEBARILOTTO, 0, 0, TheObj);
-		printsent = false;
+		printSentence = false;
 		break;
 
 	case oCASSA1D:
 		doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a1D10ESAMINABOTTIGLIE, 0, 0, TheObj);
-		printsent = false;
+		printSentence = false;
 		break;
 
 	case oSCATOLETTA23:
 		doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a2310, 0, 0, TheObj);
-		printsent = false;
+		printSentence = false;
 		break;
 
 	case oPALMA26:
 		doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a262, 0, 0, TheObj);
-		printsent = false;
+		printSentence = false;
 		break;
 
 	case oINSEGNA26:
 		doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a263, 0, 0, TheObj);
-		printsent = false;
+		printSentence = false;
 		break;
 
 	case oTEMPIO28:
 		doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a2810, 0, 0, TheObj);
-		printsent = false;
+		printSentence = false;
 		break;
 
 	case oSERPENTET28:
 	case oSERPENTEA28:
 		doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a2811, 0, 0, TheObj);
-		printsent = false;
+		printSentence = false;
 		break;
 
 	case oSERPENTE2B:
 		doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a2B11ESAMINASERPENTE, 0, 0, TheObj);
-		printsent = false;
+		printSentence = false;
 		break;
 
 	case oLEOPARDO2B:
 		doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a2B9ESAMINALEOPARDO, 0, 0, TheObj);
-		printsent = false;
+		printSentence = false;
 		break;
 
 	case oPELLICANO2B:
 		doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a2B10ESAMINAPELLICANO, 0, 0, TheObj);
-		printsent = false;
+		printSentence = false;
 		break;
 
 	case oBACHECA2B:
 		doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a2B13OSSERVAREFARFALLE, 0, 0, TheObj);
-		printsent = false;
+		printSentence = false;
 		break;
 
 	case oROBOT2F:
 		doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a2F6TOCCADINOSAURO, 0, 0, TheObj);
-		printsent = false;
+		printSentence = false;
 		break;
 
 	case oCREPACCIO2E:
@@ -307,12 +305,12 @@ void doMouseExamine(uint16 TheObj) {
 			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a2E7GUARDACREPACCIODILA, 0, 0, TheObj);
 		else
 			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a2E6GUARDACREPACCIODIQUA, 0, 0, TheObj);
-		printsent = false;
+		printSentence = false;
 		break;
 
 	case oGENERATORE34:
 		doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a347ESAMINAGENERATORE, 0, 0, TheObj);
-		printsent = false;
+		printSentence = false;
 		break;
 
 	case oTUBOF33:
@@ -320,7 +318,7 @@ void doMouseExamine(uint16 TheObj) {
 			CharacterSay(2000);
 		else
 			CharacterSay(g_vm->_obj[TheObj]._examine);
-		printsent = false;
+		printSentence = false;
 		break;
 
 	case oTUBOT33:
@@ -328,7 +326,7 @@ void doMouseExamine(uint16 TheObj) {
 			CharacterSay(2001);
 		else
 			CharacterSay(g_vm->_obj[TheObj]._examine);
-		printsent = false;
+		printSentence = false;
 		break;
 
 	case oTUBOA34:
@@ -336,7 +334,7 @@ void doMouseExamine(uint16 TheObj) {
 			CharacterSay(2002);
 		else
 			CharacterSay(g_vm->_obj[TheObj]._examine);
-		printsent = false;
+		printSentence = false;
 		break;
 
 	case oTUBOF34:
@@ -344,7 +342,7 @@ void doMouseExamine(uint16 TheObj) {
 			CharacterSay(2000);
 		else
 			CharacterSay(g_vm->_obj[TheObj]._examine);
-		printsent = false;
+		printSentence = false;
 		break;
 
 	case oTUBOFT34:
@@ -352,12 +350,12 @@ void doMouseExamine(uint16 TheObj) {
 			CharacterSay(2001);
 		else
 			CharacterSay(g_vm->_obj[TheObj]._examine);
-		printsent = false;
+		printSentence = false;
 		break;
 
 	case oCASSE35:
 		doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a3522ESAMINACASSE, 0, 0, TheObj);
-		printsent = false;
+		printSentence = false;
 		break;
 
 	case oSCAFFALE35:
@@ -365,34 +363,34 @@ void doMouseExamine(uint16 TheObj) {
 			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a3517ESAMINACIANFRUSAGLIE, 0, 0, TheObj);
 		else
 			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a3517AESAMINACIANFRUSAGLIE, 0, 0, TheObj);
-		printsent = false;
+		printSentence = false;
 		break;
 
 	case oGIORNALE35:
 		if (g_vm->_room[r35]._flag & OBJFLAG_EXTRA) {
 			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a3521LEGGEGIORNALE, 0, 0, TheObj);
-			printsent = false;
+			printSentence = false;
 		}
 		break;
 
 	case oSCAFFALE36:
 		doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, g_vm->_obj[oSCAFFALE36]._anim, 0, 0, TheObj);
-		printsent = false;
+		printSentence = false;
 		break;
 
 	case oFESSURA41:
 		doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a411, 0, 0, TheObj);
-		printsent = false;
+		printSentence = false;
 		break;
 
 	case oCARTELLOV42:
 		doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a424, 0, 0, TheObj);
-		printsent = false;
+		printSentence = false;
 		break;
 
 	case oCARTELLOF42:
 		doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a426, 0, 0, TheObj);
-		printsent = false;
+		printSentence = false;
 		break;
 
 	case oCAMPANAT43:
@@ -400,7 +398,7 @@ void doMouseExamine(uint16 TheObj) {
 			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a431R, 0, 0, TheObj);
 		else
 			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a431, 0, 0, TheObj);
-		printsent = false;
+		printSentence = false;
 		break;
 
 	case oTAMBURO43:
@@ -408,22 +406,22 @@ void doMouseExamine(uint16 TheObj) {
 			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a432R, 0, 0, TheObj);
 		else
 			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a432, 0, 0, TheObj);
-		printsent = false;
+		printSentence = false;
 		break;
 
 	case oRAGNATELA45:
 		doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a451, 0, 0, TheObj);
-		printsent = false;
+		printSentence = false;
 		break;
 
 	case oQUADROS4A:
 		doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a4A5, 0, 0, TheObj);
-		printsent = false;
+		printSentence = false;
 		break;
 
 	case oCARTELLO55:
 		doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a5511, 0, 0, TheObj);
-		printsent = false;
+		printSentence = false;
 		break;
 
 	case oEXIT12CU:
@@ -466,11 +464,11 @@ void doMouseExamine(uint16 TheObj) {
 		break;
 
 	default:
-		printsent = true;
+		printSentence = true;
 		break;
 	}
 
-	if ((printsent) && (g_vm->_obj[TheObj]._examine))
+	if ((printSentence) && (g_vm->_obj[TheObj]._examine))
 		CharacterSay(g_vm->_obj[TheObj]._examine);
 }
 
@@ -1441,7 +1439,8 @@ void doUseWith() {
 /*                          USE WITH / INV - INV         				   */
 /*-------------------------------------------------------------------------*/
 void doInvInvUseWith() {
-	bool updateinv = true, printsent = true;
+	bool updateInv = true;
+	bool printSentence = true;
 
 	if ((!g_vm->_useWith[USED]) || (!g_vm->_useWith[WITH]))
 		warning("doInvInvUseWith");
@@ -1455,7 +1454,7 @@ void doInvInvUseWith() {
 			KillIcon(iSTAGNOLA);
 			ReplaceIcon(iFUSE, iFUSES);
 			StartCharacterAction(hUSEGG, 0, 0, 1441);
-			printsent = false;
+			printSentence = false;
 		}
 		break;
 
@@ -1464,7 +1463,7 @@ void doInvInvUseWith() {
 			KillIcon(iSTAGNOLA);
 			ReplaceIcon(iFUSE, iFUSES);
 			StartCharacterAction(hUSEGG, 0, 0, 1441);
-			printsent = false;
+			printSentence = false;
 		}
 		break;
 
@@ -1475,7 +1474,7 @@ void doInvInvUseWith() {
 			KillIcon(iTOPO1C);
 			AddIcon(iTOPO1D);
 			StartCharacterAction(hUSEGG, 0, 0, 1497);
-			printsent = false;
+			printSentence = false;
 		}
 		break;
 
@@ -1485,7 +1484,7 @@ void doInvInvUseWith() {
 			KillIcon(iTOPO1C);
 			AddIcon(iTOPO1D);
 			StartCharacterAction(hUSEGG, 0, 0, 1497);
-			printsent = false;
+			printSentence = false;
 		}
 		break;
 
@@ -1495,7 +1494,7 @@ void doInvInvUseWith() {
 			KillIcon(iBAR11);
 			ReplaceIcon(iMAGNETE, iSBARRA21);
 			StartCharacterAction(hUSEGG, 0, 0, 1438);
-			printsent = false;
+			printSentence = false;
 		}
 		break;
 
@@ -1504,7 +1503,7 @@ void doInvInvUseWith() {
 			KillIcon(iBAR11);
 			ReplaceIcon(iMAGNETE, iSBARRA21);
 			StartCharacterAction(hUSEGG, 0, 0, 1533);
-			printsent = false;
+			printSentence = false;
 		}
 		break;
 
@@ -1513,7 +1512,7 @@ void doInvInvUseWith() {
 			KillIcon(iSCOPA27);
 			ReplaceIcon(iSIGARO, iTORCIA32);
 			StartCharacterAction(hUSEGG, 0, 0, 1575);
-			printsent = false;
+			printSentence = false;
 		}
 		break;
 
@@ -1522,7 +1521,7 @@ void doInvInvUseWith() {
 			KillIcon(iSCOPA27);
 			ReplaceIcon(iSIGARO, iTORCIA32);
 			StartCharacterAction(hUSEGG, 0, 0, 1546);
-			printsent = false;
+			printSentence = false;
 		}
 		break;
 
@@ -1531,7 +1530,7 @@ void doInvInvUseWith() {
 			KillIcon(iTRIPLA);
 			ReplaceIcon(iPROIETTORE31, iPROIETTORE35);
 			StartCharacterAction(hUSEGG, 0, 0, 0);
-			printsent = false;
+			printSentence = false;
 		}
 		break;
 
@@ -1540,7 +1539,7 @@ void doInvInvUseWith() {
 			KillIcon(iTRIPLA);
 			ReplaceIcon(iPROIETTORE31, iPROIETTORE35);
 			StartCharacterAction(hUSEGG, 0, 0, 0);
-			printsent = false;
+			printSentence = false;
 		}
 		break;
 
@@ -1570,7 +1569,7 @@ void doInvInvUseWith() {
 			if ((g_vm->_useWith[USED] >= iCARSAL) || (g_vm->_useWith[WITH] >= iCARSAL))
 				AddIcon(iPOLVERE48);
 			StartCharacterAction(hUSEGG, 0, 0, 1663);
-			printsent = false;
+			printSentence = false;
 		}
 		break;
 
@@ -1579,12 +1578,12 @@ void doInvInvUseWith() {
 			ReplaceIcon(iPOLVERE48, iPOLVERE4P);
 			ReplaceIcon(iPISTOLA4B, iPISTOLA4PC);
 			StartCharacterAction(hUSEGG, 0, 0, 1676);
-			printsent = false;
+			printSentence = false;
 		} else if (g_vm->_useWith[WITH] == iPOLVERE4P) {
 			KillIcon(iPOLVERE4P);
 			ReplaceIcon(iPISTOLA4B, iPISTOLA4PC);
 			StartCharacterAction(hUSEGG, 0, 0, 1700);
-			printsent = false;
+			printSentence = false;
 		}
 		break;
 
@@ -1593,7 +1592,7 @@ void doInvInvUseWith() {
 			ReplaceIcon(iPOLVERE48, iPOLVERE4P);
 			ReplaceIcon(iPISTOLA4B, iPISTOLA4PC);
 			StartCharacterAction(hUSEGG, 0, 0, 1676);
-			printsent = false;
+			printSentence = false;
 		}
 		break;
 
@@ -1602,7 +1601,7 @@ void doInvInvUseWith() {
 			KillIcon(iPOLVERE4P);
 			ReplaceIcon(iPISTOLA4B, iPISTOLA4PC);
 			StartCharacterAction(hUSEGG, 0, 0, 1700);
-			printsent = false;
+			printSentence = false;
 		}
 		break;
 
@@ -1613,13 +1612,13 @@ void doInvInvUseWith() {
 			ReplaceIcon(iPISTOLA4PC, iPISTOLA4PD);
 			StartCharacterAction(hUSEGG, 0, 0, 1683);
 			g_vm->_inventoryObj[iPISTOLA4PC]._flag |= OBJFLAG_EXTRA;
-			printsent = false;
+			printSentence = false;
 		} else if (g_vm->_useWith[WITH] == iPISTOLA4PC) {
 			CharacterSay(1688);
-			printsent = false;
+			printSentence = false;
 		} else if (g_vm->_useWith[WITH] == iPISTOLA4B) {
 			CharacterSay(2009);
-			printsent = false;
+			printSentence = false;
 		}
 		break;
 
@@ -1629,10 +1628,10 @@ void doInvInvUseWith() {
 			ReplaceIcon(iPISTOLA4PC, iPISTOLA4PD);
 			StartCharacterAction(hUSEGG, 0, 0, 1718);
 			g_vm->_inventoryObj[iPISTOLA4PD]._flag |= OBJFLAG_EXTRA;
-			printsent = false;
+			printSentence = false;
 		} else if (g_vm->_useWith[WITH] == iPISTOLA4B) {
 			CharacterSay(2011);
-			printsent = false;
+			printSentence = false;
 		}
 		break;
 
@@ -1641,7 +1640,7 @@ void doInvInvUseWith() {
 			KillIcon(iSIRINGA37);
 			ReplaceIcon(iFIALE, iSIRINGA59);
 			StartCharacterAction(hUSEGG, 0, 0, 1756);
-			printsent = false;
+			printSentence = false;
 		}
 		break;
 
@@ -1650,7 +1649,7 @@ void doInvInvUseWith() {
 			KillIcon(iSIRINGA37);
 			ReplaceIcon(iFIALE, iSIRINGA59);
 			StartCharacterAction(hUSEGG, 0, 0, 1756);
-			printsent = false;
+			printSentence = false;
 		}
 		break;
 
@@ -1659,12 +1658,12 @@ void doInvInvUseWith() {
 			KillIcon(iFILO);
 			ReplaceIcon(iGUANTI57, iGUANTI5A);
 			StartCharacterAction(hUSEGG, 0, 0, 1756);
-			printsent = false;
+			printSentence = false;
 		} else if (g_vm->_useWith[WITH] == iSIRINGA59) {
 			KillIcon(iFILO);
 			ReplaceIcon(iSIRINGA59, iSIRINGA5A);
 			StartCharacterAction(hUSEGG, 0, 0, 1756);
-			printsent = false;
+			printSentence = false;
 		}
 		break;
 
@@ -1673,12 +1672,12 @@ void doInvInvUseWith() {
 			KillIcon(iFILO);
 			ReplaceIcon(iGUANTI57, iGUANTI5A);
 			StartCharacterAction(hUSEGG, 0, 0, 1756);
-			printsent = false;
+			printSentence = false;
 		} else if (g_vm->_useWith[WITH] == iSIRINGA5A) {
 			KillIcon(iSIRINGA5A);
 			ReplaceIcon(iGUANTI57, iARMAEVA);
 			StartCharacterAction(hUSEGG, 0, 0, 1756);
-			printsent = false;
+			printSentence = false;
 		}
 		break;
 
@@ -1687,12 +1686,12 @@ void doInvInvUseWith() {
 			KillIcon(iFILO);
 			ReplaceIcon(iSIRINGA59, iSIRINGA5A);
 			StartCharacterAction(hUSEGG, 0, 0, 1756);
-			printsent = false;
+			printSentence = false;
 		} else if (g_vm->_useWith[WITH] == iGUANTI5A) {
 			KillIcon(iSIRINGA59);
 			ReplaceIcon(iGUANTI5A, iARMAEVA);
 			StartCharacterAction(hUSEGG, 0, 0, 1756);
-			printsent = false;
+			printSentence = false;
 		}
 		break;
 
@@ -1701,7 +1700,7 @@ void doInvInvUseWith() {
 			KillIcon(iSIRINGA59);
 			ReplaceIcon(iGUANTI5A, iARMAEVA);
 			StartCharacterAction(hUSEGG, 0, 0, 1756);
-			printsent = false;
+			printSentence = false;
 		}
 		break;
 
@@ -1710,18 +1709,18 @@ void doInvInvUseWith() {
 			KillIcon(iSIRINGA5A);
 			ReplaceIcon(iGUANTI57, iARMAEVA);
 			StartCharacterAction(hUSEGG, 0, 0, 1756);
-			printsent = false;
+			printSentence = false;
 		}
 		break;
 
 	default:
-		updateinv = false;
+		updateInv = false;
 		break;
 	}
 
-	if (printsent)
+	if (printSentence)
 		CharacterSay(g_vm->_inventoryObj[g_vm->_useWith[USED]]._action);
-	if (updateinv)
+	if (updateInv)
 		g_vm->RegenInv(g_vm->_iconBase, INVENTORY_SHOW);
 }
 
@@ -3133,7 +3132,7 @@ void doDoing() {
 	case ME_WAITOPENCLOSE:
 		RegenRoom();
 		if (_actor._curAction == hSTAND)
-			FlagMouseEnabled = true;
+			g_vm->FlagMouseEnabled = true;
 		break;
 	}
 }
@@ -3717,8 +3716,8 @@ void AtEndChangeRoom() {
 //	Sentence
 	if ((g_vm->_curRoom == r17) && (g_vm->_oldRoom == r18) && !(g_vm->_room[r17]._flag & OBJFLAG_DONE) && (g_vm->_obj[oRETE17]._mode & OBJMODE_OBJSTATUS))
 		CharacterSay(189);
-	if (((g_vm->_curRoom == r12CU) || (g_vm->_curRoom == r13CU)) && (CloseUpObj) && (g_vm->_obj[CloseUpObj]._examine))
-		CharacterSay(g_vm->_obj[CloseUpObj]._examine);
+	if (((g_vm->_curRoom == r12CU) || (g_vm->_curRoom == r13CU)) && (g_vm->_closeUpObj) && (g_vm->_obj[g_vm->_closeUpObj]._examine))
+		CharacterSay(g_vm->_obj[g_vm->_closeUpObj]._examine);
 	else if ((g_vm->_curRoom == r23A) && (g_vm->_oldRoom == r21) && (!(g_vm->_room[r23A]._flag & OBJFLAG_DONE))) {
 		FlagShowCharacter = true;
 		StartCharacterAction(aWALKIN, 0, 0, 361);
