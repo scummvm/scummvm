@@ -171,16 +171,19 @@ void Process::run() {
 		switch (code) {
 		case kExitCodeDestroy:
 			debug("process %s returned destroy exit code", getName().c_str());
-			//_engine->getCurrentScreen()->remove(_object); //remove if the last process exits
 			done();
 			break;
 		case kExitCodeLoadScreenObjectAs:
 		case kExitCodeLoadScreenObject:
+			_object->lock();
 			_engine->runObject(getExitArg1(), getExitArg2());
+			_object->unlock();
 			activate();
 			continue;
 		case kExitCodeRunDialog:
+			_object->lock();
 			_engine->runDialog(getName(), getExitArg1());
+			_object->unlock();
 			break;
 		case kExitCodeSetNextScreen:
 		case kExitCodeSetNextScreenSaveOrLoad:
@@ -193,12 +196,16 @@ void Process::run() {
 			activate();
 			continue;
 		case kExitCodeLoadInventoryObject:
+			_object->lock();
 			_engine->inventory().add(_engine->runObject(getExitArg1()));
+			_object->unlock();
 			activate();
 			continue;
 		case kExitCodeCloseInventory:
+			_object->lock();
 			_engine->inventory().enable(false);
 			updateWithCurrentMousePosition();
+			_object->unlock();
 			activate();
 			return; //some codes are special, they needed to exit loop and keep process active
 		case kExitCodeSuspend:
@@ -213,17 +220,21 @@ void Process::run() {
 			}
 			break;
 		case kExitCodeLoadGame:
+			_object->lock();
 			if (_engine->loadGameState(getExitIntArg1()).getCode() == Common::kNoError) {
 				done();
 			} else {
 				debug("save loading failed, resuming execution...");
 				activate(); //continue
 			}
+			_object->unlock();
 			break;
 		case kExitCodeSaveGame:
+			_object->lock();
 			if (_engine->saveGameState(getExitIntArg1(), "").getCode() != Common::kNoError) {
 				warning("failed to save game");
 			}
+			_object->unlock();
 			activate();
 			break;
 		default:
