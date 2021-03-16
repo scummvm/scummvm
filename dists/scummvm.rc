@@ -107,7 +107,7 @@ ultima.dat             FILE    "dists/engine-data/ultima.dat"
 wintermute.zip         FILE    "dists/engine-data/wintermute.zip"
 #endif
 #if PLUGIN_ENABLED_STATIC(XEEN)
-xeen.ccs               FILE    "dists/engine-data/xeen.ccs"
+xeen.ccs               FILE    "../dists/engine-data/xeen.ccs"
 #endif
 #if PLUGIN_ENABLED_STATIC(AGI)
 pred.dic               FILE    "dists/pred.dic"
