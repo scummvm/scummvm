@@ -51,12 +51,10 @@ static const int32 magicLevelStrengthOfHit[] = {
     MagicballStrengthType::kFireBallStrength,
     0};
 
-Animations::Animations(TwinEEngine *engine) : _engine(engine), animBuffer((uint8 *)malloc(5000 * sizeof(uint8))) {
-	animBufferPos = animBuffer;
+Animations::Animations(TwinEEngine *engine) : _engine(engine) {
 }
 
 Animations::~Animations() {
-	free(animBuffer);
 }
 
 int32 Animations::getBodyAnimIndex(AnimationTypes animIdx, int32 actorIdx) {
@@ -75,9 +73,9 @@ const uint8 *Animations::getKeyFrameData(int32 frameIdx, const uint8 *animPtr) {
 	return (const uint8 *)((numOfBonesInAnim * 8 + 8) * frameIdx + animPtr + 8);
 }
 
-void Animations::applyAnimStepRotation(uint8 *ptr, int32 deltaTime, int32 keyFrameLength, const uint8 *keyFramePtr, const uint8 *lastKeyFramePtr) {
-	const int16 lastAngle = ClampAngle(READ_LE_INT16(lastKeyFramePtr));
-	const int16 newAngle = ClampAngle(READ_LE_INT16(keyFramePtr));
+void Animations::applyAnimStepRotation(uint8 *ptr, int32 deltaTime, int32 keyFrameLength, int16 newAngle1, int16 lastAngle1) {
+	const int16 lastAngle = ClampAngle(lastAngle1);
+	const int16 newAngle = ClampAngle(newAngle1);
 
 	int16 angleDiff = newAngle - lastAngle;
 
@@ -97,10 +95,7 @@ void Animations::applyAnimStepRotation(uint8 *ptr, int32 deltaTime, int32 keyFra
 	*(int16 *)ptr = ClampAngle(computedAngle);
 }
 
-void Animations::applyAnimStepTranslation(uint8 *ptr, int32 deltaTime, int32 keyFrameLength, const uint8 *keyFramePtr, const uint8 *lastKeyFramePtr) {
-	int16 lastPos = READ_LE_INT16(lastKeyFramePtr);
-	int16 newPos = READ_LE_INT16(keyFramePtr);
-
+void Animations::applyAnimStepTranslation(uint8 *ptr, int32 deltaTime, int32 keyFrameLength, int16 newPos, int16 lastPos) {
 	int16 distance = newPos - lastPos;
 
 	int16 computedPos;
@@ -113,8 +108,7 @@ void Animations::applyAnimStepTranslation(uint8 *ptr, int32 deltaTime, int32 key
 	*(int16 *)ptr = computedPos;
 }
 
-int32 Animations::getAnimMode(uint8 *ptr, const uint8 *keyFramePtr) {
-	const int16 opcode = READ_LE_INT16(keyFramePtr);
+int32 Animations::getAnimMode(uint8 *ptr, uint16 opcode) {
 	*(int16 *)ptr = opcode;
 	return opcode;
 }
@@ -140,11 +134,10 @@ bool Animations::setModelAnimation(int32 keyframeIdx, const AnimData &animData, 
 	}
 	const int32 keyFrameLength = keyFrame->length;
 
-	const uint8 *keyFramePtr = getKeyFrameData(keyframeIdx, animPtr);
-	const uint8 *lastKeyFramePtr = animTimerDataPtr->ptr;
+	const KeyFrame *lastKeyFramePtr = animTimerDataPtr->ptr;
 	int32 remainingFrameTime = animTimerDataPtr->time;
 	if (lastKeyFramePtr == nullptr) {
-		lastKeyFramePtr = keyFramePtr;
+		lastKeyFramePtr = keyFrame;
 		remainingFrameTime = keyFrameLength;
 	}
 	const int32 deltaTime = _engine->lbaTime - remainingFrameTime;
@@ -158,44 +151,43 @@ bool Animations::setModelAnimation(int32 keyframeIdx, const AnimData &animData, 
 			WRITE_LE_INT16(bonesPtr + 6, boneframe.z);
 		}
 
-		animTimerDataPtr->ptr = keyFramePtr;
+		animTimerDataPtr->ptr = keyFrame;
 		animTimerDataPtr->time = _engine->lbaTime;
 		return true;
 	}
 
 	processLastRotationAngle = (processLastRotationAngle * deltaTime) / keyFrameLength;
 
-	lastKeyFramePtr += 16;
-	keyFramePtr += 16;
 
 	if (numOfBonesInAnim <= 1) {
 		return false;
 	}
 
+	int16 boneIdx = 1;
 	int16 tmpNumOfPoints = numOfBonesInAnim - 1;
-	int boneIdx = 1;
 	do {
 		uint8 *const bonesPtr = Model::getBonesStateData(bodyPtr, boneIdx);
-		const int16 animOpcode = getAnimMode(bonesPtr + 0, keyFramePtr + 0);
+		const BoneFrame &boneFrame = keyFrame->boneframes[boneIdx];
+		const BoneFrame &lastBoneFrame = lastKeyFramePtr->boneframes[boneIdx];
+
+		const int16 animOpcode = getAnimMode(bonesPtr + 0, boneFrame.type);
 
 		switch (animOpcode) {
 		case 0: // allow global rotate
-			applyAnimStepRotation(bonesPtr + 2, deltaTime, keyFrameLength, keyFramePtr + 2, lastKeyFramePtr + 2);
-			applyAnimStepRotation(bonesPtr + 4, deltaTime, keyFrameLength, keyFramePtr + 4, lastKeyFramePtr + 4);
-			applyAnimStepRotation(bonesPtr + 6, deltaTime, keyFrameLength, keyFramePtr + 6, lastKeyFramePtr + 6);
+			applyAnimStepRotation(bonesPtr + 2, deltaTime, keyFrameLength, boneFrame.x, lastBoneFrame.x);
+			applyAnimStepRotation(bonesPtr + 4, deltaTime, keyFrameLength, boneFrame.y, lastBoneFrame.y);
+			applyAnimStepRotation(bonesPtr + 6, deltaTime, keyFrameLength, boneFrame.z, lastBoneFrame.z);
 			break;
 		case 1: // disallow global rotate
 		case 2: // disallow global rotate + hide
-			applyAnimStepTranslation(bonesPtr + 2, deltaTime, keyFrameLength, keyFramePtr + 2, lastKeyFramePtr + 2);
-			applyAnimStepTranslation(bonesPtr + 4, deltaTime, keyFrameLength, keyFramePtr + 4, lastKeyFramePtr + 4);
-			applyAnimStepTranslation(bonesPtr + 6, deltaTime, keyFrameLength, keyFramePtr + 6, lastKeyFramePtr + 6);
+			applyAnimStepTranslation(bonesPtr + 2, deltaTime, keyFrameLength, boneFrame.x, lastBoneFrame.x);
+			applyAnimStepTranslation(bonesPtr + 4, deltaTime, keyFrameLength, boneFrame.y, lastBoneFrame.y);
+			applyAnimStepTranslation(bonesPtr + 6, deltaTime, keyFrameLength, boneFrame.z, lastBoneFrame.z);
 			break;
 		default:
 			error("Unsupported animation rotation mode %d", animOpcode);
 		}
 
-		lastKeyFramePtr += 8;
-		keyFramePtr += 8;
 		++boneIdx;
 	} while (--tmpNumOfPoints);
 
@@ -221,7 +213,7 @@ void Animations::setAnimAtKeyframe(int32 keyframeIdx, const AnimData &animData, 
 	processRotationByAnim = keyFrame->boneframes[0].type;
 	processLastRotationAngle = ToAngle(keyFrame->boneframes[0].y);
 
-	animTimerDataPtr->ptr = getKeyFrameData(keyframeIdx, animPtr);
+	animTimerDataPtr->ptr = animData.getKeyframe(keyframeIdx);
 	animTimerDataPtr->time = _engine->lbaTime;
 
 	const int16 numBones = Model::getNumBones(bodyPtr);
@@ -248,26 +240,26 @@ void Animations::stockAnimation(const uint8 *bodyPtr, AnimTimerDataStruct *animT
 		return;
 	}
 
+	if (animKeyframeBufIdx >= ARRAYSIZE(animKeyframeBuf)) {
+		animKeyframeBufIdx = 0;
+	}
 	animTimerDataPtr->time = _engine->lbaTime;
-	animTimerDataPtr->ptr = animBufferPos;
+	KeyFrame *keyframe = &animKeyframeBuf[animKeyframeBufIdx++];
+	keyframe->boneframes.clear();
+	animTimerDataPtr->ptr = keyframe;
 
 	const int32 numBones = Model::getNumBones(bodyPtr);
-
-	uint8 *bonesPtr = animBufferPos + 8;
+	keyframe->boneframes.reserve(numBones);
 
 	for (int32 i = 0; i < numBones; ++i) {
-		const uint8 *ptrToData = Model::getBonesStateData(bodyPtr, i);
+		const uint16 *ptrToData = (const uint16*)Model::getBonesStateData(bodyPtr, i);
 		// these are 4 int16 values, type, x, y and z
-		for (int32 j = 0; j < 8; j++) {
-			*bonesPtr++ = *ptrToData++;
-		}
-	}
-
-	// 8 = 4xint16 - firstpoint, numpoints, basepoint, baseelement - see elementEntry
-	animBufferPos += (numBones * 8) + 8;
-
-	if (animBuffer + (560 * 8) + 8 < animBufferPos) {
-		animBufferPos = animBuffer;
+		BoneFrame boneFrame;
+		boneFrame.type = ptrToData[0];
+		boneFrame.x = ptrToData[1];
+		boneFrame.y = ptrToData[2];
+		boneFrame.z = ptrToData[3];
+		keyframe->boneframes.push_back(boneFrame);
 	}
 }
 
@@ -291,7 +283,7 @@ bool Animations::verifyAnimAtKeyframe(int32 keyframeIdx, const AnimData &animDat
 	processLastRotationAngle = ToAngle(boneFrame.y);
 
 	if (deltaTime >= keyFrameLength) {
-		animTimerDataPtr->ptr = getKeyFrameData(keyframeIdx, animPtr);
+		animTimerDataPtr->ptr = animData.getKeyframe(keyframeIdx);
 		animTimerDataPtr->time = _engine->lbaTime;
 		return true;
 	}

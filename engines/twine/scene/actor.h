@@ -24,6 +24,7 @@
 #define TWINE_ACTOR_H
 
 #include "common/scummsys.h"
+#include "twine/parser/anim.h"
 #include "twine/parser/body.h"
 #include "twine/parser/entity.h"
 #include "twine/shared.h"
@@ -72,7 +73,7 @@ struct ZVBox {
 
 /** Actors animation timer structure */
 struct AnimTimerDataStruct {
-	const uint8 *ptr = nullptr;
+	const KeyFrame *ptr = nullptr;
 	int32 time = 0;
 };
 

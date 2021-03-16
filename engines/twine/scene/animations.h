@@ -34,9 +34,9 @@ class TwinEEngine;
 class Animations {
 private:
 	TwinEEngine *_engine;
-	void applyAnimStepRotation(uint8 *ptr, int32 deltaTime, int32 keyFrameLength, const uint8 *keyFramePtr, const uint8 *lastKeyFramePtr);
-	void applyAnimStepTranslation(uint8 *ptr, int32 deltaTime, int32 keyFrameLength, const uint8 *keyFramePtr, const uint8 *lastKeyFramePtr);
-	int32 getAnimMode(uint8 *ptr, const uint8 *keyFramePtr);
+	void applyAnimStepRotation(uint8 *ptr, int32 deltaTime, int32 keyFrameLength, int16 newAngle1, int16 lastAngle1);
+	void applyAnimStepTranslation(uint8 *ptr, int32 deltaTime, int32 keyFrameLength, int16 newPos, int16 lastPos);
+	int32 getAnimMode(uint8 *ptr, uint16 opcode);
 
 	/**
 	 * Verify animation at keyframe
@@ -47,8 +47,8 @@ private:
 	 */
 	bool verifyAnimAtKeyframe(int32 keyframeIdx, const AnimData &animData, const uint8 *animPtr, AnimTimerDataStruct *animTimerDataPtr);
 
-	uint8 *const animBuffer;
-	uint8 *animBufferPos = nullptr;
+	int animKeyframeBufIdx = 0;
+	KeyFrame animKeyframeBuf[32];
 
 	/** Rotation by anim and not by engine */
 	int16 processRotationByAnim = 0; // processActorVar5
@@ -78,7 +78,7 @@ public:
 	 * @param bodyPtr Body model poitner
 	 * @param animTimerDataPtr Animation time data
 	 */
-	void setAnimAtKeyframe(int32 keyframeIdx, const AnimData &animData, const uint8 *animPtr, uint8 *const bodyPtr, AnimTimerDataStruct *animTimerDataPtr);
+	void setAnimAtKeyframe(int32 keyframeIdx, const AnimData &animData,const uint8 *animPtr, uint8 *const bodyPtr, AnimTimerDataStruct *animTimerDataPtr);
 
 	const uint8 *getKeyFrameData(int32 frameIdx, const uint8 *animPtr);
 
