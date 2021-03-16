@@ -49,8 +49,8 @@ enum class ScenePositionType {
  * Special actions, like change scene, climbing a ladder, ...
  */
 struct ZoneStruct {
-	Vec3 bottomLeft;
-	Vec3 topRight;
+	Vec3 mins;
+	Vec3 maxs;
 	int16 type = 0;
 	int16 snap = 0;
 	union {

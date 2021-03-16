@@ -239,13 +239,13 @@ bool Scene::loadSceneLBA2() {
 	sceneNumZones = stream.readUint16LE();
 	for (int32 i = 0; i < sceneNumZones; i++) {
 		ZoneStruct *zone = &sceneZones[i];
-		zone->bottomLeft.x = stream.readSint32LE();
-		zone->bottomLeft.y = stream.readSint32LE();
-		zone->bottomLeft.z = stream.readSint32LE();
+		zone->mins.x = stream.readSint32LE();
+		zone->mins.y = stream.readSint32LE();
+		zone->mins.z = stream.readSint32LE();
 
-		zone->topRight.x = stream.readSint32LE();
-		zone->topRight.y = stream.readSint32LE();
-		zone->topRight.z = stream.readSint32LE();
+		zone->maxs.x = stream.readSint32LE();
+		zone->maxs.y = stream.readSint32LE();
+		zone->maxs.z = stream.readSint32LE();
 
 		zone->infoData.generic.info0 = stream.readSint32LE();
 		zone->infoData.generic.info1 = stream.readSint32LE();
@@ -367,13 +367,13 @@ bool Scene::loadSceneLBA1() {
 	sceneNumZones = stream.readUint16LE();
 	for (int32 i = 0; i < sceneNumZones; i++) {
 		ZoneStruct *zone = &sceneZones[i];
-		zone->bottomLeft.x = stream.readUint16LE();
-		zone->bottomLeft.y = stream.readUint16LE();
-		zone->bottomLeft.z = stream.readUint16LE();
+		zone->mins.x = stream.readUint16LE();
+		zone->mins.y = stream.readUint16LE();
+		zone->mins.z = stream.readUint16LE();
 
-		zone->topRight.x = stream.readUint16LE();
-		zone->topRight.y = stream.readUint16LE();
-		zone->topRight.z = stream.readUint16LE();
+		zone->maxs.x = stream.readUint16LE();
+		zone->maxs.y = stream.readUint16LE();
+		zone->maxs.z = stream.readUint16LE();
 
 		zone->type = stream.readUint16LE();
 
@@ -406,17 +406,17 @@ bool Scene::loadSceneLBA1() {
 			_sceneActors[29].pos.z = _sceneActors[29].collisionPos.z = 0x703;
 			assert(sceneNumZones >= 23);
 			// each scene zone entry has 24 bytes
-			sceneZones[15].bottomLeft.y = 0x450; // [zone:15] 362 (mod:2) offset relative to sceneNumZones
+			sceneZones[15].mins.y = 0x450; // [zone:15] 362 (mod:2) offset relative to sceneNumZones
 			sceneZones[15].type = 0x2ce0; // [zone:15] 372 (mod:12) offset relative to sceneNumZones
-			sceneZones[16].bottomLeft.y = 0x5270; // [zone:16] 386 (mod:2) offset relative to sceneNumZones
+			sceneZones[16].mins.y = 0x5270; // [zone:16] 386 (mod:2) offset relative to sceneNumZones
 			sceneZones[16].type = 0x1f90; // [zone:16] 396 (mod:12) offset relative to sceneNumZones
-			sceneZones[22].bottomLeft.y = 0x1800; // [zone:22] 530 (mod:2) offset relative to sceneNumZones
-			sceneZones[15].topRight.x = 0x10f0;
-			sceneZones[15].topRight.y = 0x2100; // [zone:15] 366 (mod:6) offset relative to sceneNumZones (4 bytes)
-			sceneZones[16].topRight.x = 0x5d10;
-			sceneZones[16].topRight.y = 0x1200; // [zone:16] 390 (mod:6) offset relative to sceneNumZones (4 bytes)
-			sceneZones[22].topRight.x = 0x22a1;
-			sceneZones[22].topRight.y = 0x1800; // [zone:22] 534 (mod:6) offset relative to sceneNumZones (4 bytes)
+			sceneZones[22].mins.y = 0x1800; // [zone:22] 530 (mod:2) offset relative to sceneNumZones
+			sceneZones[15].maxs.x = 0x10f0;
+			sceneZones[15].maxs.y = 0x2100; // [zone:15] 366 (mod:6) offset relative to sceneNumZones (4 bytes)
+			sceneZones[16].maxs.x = 0x5d10;
+			sceneZones[16].maxs.y = 0x1200; // [zone:16] 390 (mod:6) offset relative to sceneNumZones (4 bytes)
+			sceneZones[22].maxs.x = 0x22a1;
+			sceneZones[22].maxs.y = 0x1800; // [zone:22] 534 (mod:6) offset relative to sceneNumZones (4 bytes)
 			sceneZones[22].type = 0x1ae1; // [zone:22] 540 (mod:12) offset relative to sceneNumZones
 			break;
 		case LBA1SceneId::Tippet_Island_Secret_passage_scene_1:
@@ -649,8 +649,8 @@ void Scene::processZoneExtraBonus(ZoneStruct *zone) {
 	}
 
 	const int16 amount = zone->infoData.Bonus.amount;
-	const int32 angle = _engine->_movements->getAngleAndSetTargetActorDistance(ABS(zone->topRight.x + zone->bottomLeft.x) / 2, ABS(zone->topRight.z + zone->bottomLeft.z) / 2, sceneHero->pos.x, sceneHero->pos.z);
-	const int32 index = _engine->_extra->addExtraBonus(ABS(zone->topRight.x + zone->bottomLeft.x) / 2, zone->topRight.y, ABS(zone->topRight.z + zone->bottomLeft.z) / 2, ANGLE_63, angle, bonusSprite, amount);
+	const int32 angle = _engine->_movements->getAngleAndSetTargetActorDistance(ABS(zone->maxs.x + zone->mins.x) / 2, ABS(zone->maxs.z + zone->mins.z) / 2, sceneHero->pos.x, sceneHero->pos.z);
+	const int32 index = _engine->_extra->addExtraBonus(ABS(zone->maxs.x + zone->mins.x) / 2, zone->maxs.y, ABS(zone->maxs.z + zone->mins.z) / 2, ANGLE_63, angle, bonusSprite, amount);
 
 	if (index != -1) {
 		_engine->_extra->extraList[index].type |= ExtraType::TIME_IN;
@@ -676,16 +676,16 @@ void Scene::processActorZones(int32 actorIdx) {
 		ZoneStruct *zone = &sceneZones[z];
 
 		// check if actor is in zone
-		if ((currentX >= zone->bottomLeft.x && currentX <= zone->topRight.x) &&
-		    (currentY >= zone->bottomLeft.y && currentY <= zone->topRight.y) &&
-		    (currentZ >= zone->bottomLeft.z && currentZ <= zone->topRight.z)) {
+		if ((currentX >= zone->mins.x && currentX <= zone->maxs.x) &&
+		    (currentY >= zone->mins.y && currentY <= zone->maxs.y) &&
+		    (currentZ >= zone->mins.z && currentZ <= zone->maxs.z)) {
 			switch (zone->type) {
 			case ZoneType::kCube:
 				if (IS_HERO(actorIdx) && actor->life > 0) {
 					needChangeScene = zone->infoData.ChangeScene.newSceneIdx;
-					_zoneHeroPos.x = actor->pos.x - zone->bottomLeft.x + zone->infoData.ChangeScene.x;
-					_zoneHeroPos.y = actor->pos.y - zone->bottomLeft.y + zone->infoData.ChangeScene.y;
-					_zoneHeroPos.z = actor->pos.z - zone->bottomLeft.z + zone->infoData.ChangeScene.z;
+					_zoneHeroPos.x = actor->pos.x - zone->mins.x + zone->infoData.ChangeScene.x;
+					_zoneHeroPos.y = actor->pos.y - zone->mins.y + zone->infoData.ChangeScene.y;
+					_zoneHeroPos.z = actor->pos.z - zone->mins.z + zone->infoData.ChangeScene.z;
 					heroPositionType = ScenePositionType::kZone;
 				}
 				break;
@@ -736,14 +736,14 @@ void Scene::processActorZones(int32 actorIdx) {
 				break;
 			case ZoneType::kLadder:
 				if (IS_HERO(actorIdx) && _engine->_actor->heroBehaviour != HeroBehaviourType::kProtoPack && (actor->anim == AnimationTypes::kForward || actor->anim == AnimationTypes::kTopLadder || actor->anim == AnimationTypes::kClimbLadder)) {
-					_engine->_movements->rotateActor(actor->boudingBox.x.bottomLeft, actor->boudingBox.z.bottomLeft, actor->angle + ANGLE_360 + ANGLE_135);
+					_engine->_movements->rotateActor(actor->boudingBox.mins.x, actor->boudingBox.mins.z, actor->angle + ANGLE_360 + ANGLE_135);
 					_engine->_renderer->destPos.x += _engine->_movements->processActor.x;
 					_engine->_renderer->destPos.z += _engine->_movements->processActor.z;
 
 					if (_engine->_renderer->destPos.x >= 0 && _engine->_renderer->destPos.z >= 0 && _engine->_renderer->destPos.x <= 0x7E00 && _engine->_renderer->destPos.z <= 0x7E00) {
 						if (_engine->_grid->getBrickShape(_engine->_renderer->destPos.x, actor->pos.y + ANGLE_90, _engine->_renderer->destPos.z) != ShapeType::kNone) {
 							currentActorInZone = true;
-							if (actor->pos.y >= ABS(zone->bottomLeft.y + zone->topRight.y) / 2) {
+							if (actor->pos.y >= ABS(zone->mins.y + zone->maxs.y) / 2) {
 								_engine->_animations->initAnim(AnimationTypes::kTopLadder, kAnimationType_2, AnimationTypes::kStanding, actorIdx); // reached end of ladder
 							} else {
 								_engine->_animations->initAnim(AnimationTypes::kClimbLadder, kAnimationTypeLoop, AnimationTypes::kAnimInvalid, actorIdx); // go up in ladder

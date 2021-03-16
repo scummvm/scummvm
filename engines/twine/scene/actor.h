@@ -58,19 +58,6 @@ struct ActorMoveStruct {
 	int32 getRealValue(int32 time);
 };
 
-/** Actors zone volumique points structure */
-struct ZVPoint {
-	int16 bottomLeft = 0;
-	int16 topRight = 0;
-};
-
-/** Actors zone volumique box structure */
-struct ZVBox {
-	ZVPoint x;
-	ZVPoint y;
-	ZVPoint z;
-};
-
 /** Actors animation timer structure */
 struct AnimTimerDataStruct {
 	const KeyFrame *ptr = nullptr;
@@ -248,7 +235,7 @@ public:
 	int32 animType = kAnimationTypeLoop;   // field_78
 	int32 brickSound = 0; // field_7A
 
-	ZVBox boudingBox;
+	BoundingBox boudingBox;
 	ActorMoveStruct move;
 	AnimTimerDataStruct animTimerData;
 };

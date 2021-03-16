@@ -155,13 +155,7 @@ void Actor::initSpriteActor(int32 actorIdx) {
 	if (localActor->staticFlags.bIsSpriteActor && localActor->sprite != -1 && localActor->entity != localActor->sprite) {
 		const BoundingBox *spritebbox = _engine->_resources->spriteBoundingBox.bbox(localActor->sprite);
 		localActor->entity = localActor->sprite;
-		ZVBox &bbox = localActor->boudingBox;
-		bbox.x.bottomLeft = spritebbox->mins.x;
-		bbox.x.topRight = spritebbox->maxs.x;
-		bbox.y.bottomLeft = spritebbox->mins.y;
-		bbox.y.topRight = spritebbox->maxs.y;
-		bbox.z.bottomLeft = spritebbox->mins.z;
-		bbox.z.topRight = spritebbox->maxs.z;
+		localActor->boudingBox = *spritebbox;
 	}
 }
 
@@ -252,13 +246,9 @@ void Actor::initModelActor(BodyType bodyIdx, int16 actorIdx) {
 		localActor->body = BodyType::btNone;
 		localActor->entity = -1;
 
-		ZVBox &bbox = localActor->boudingBox;
-		bbox.x.bottomLeft = 0;
-		bbox.x.topRight = 0;
-		bbox.y.bottomLeft = 0;
-		bbox.y.topRight = 0;
-		bbox.z.bottomLeft = 0;
-		bbox.z.topRight = 0;
+		BoundingBox &bbox = localActor->boudingBox;
+		bbox.mins = Vec3();
+		bbox.maxs = Vec3();
 		debug("Failed to initialize body %i for actor %i", (int)bodyIdx, actorIdx);
 		return;
 	}
@@ -271,18 +261,18 @@ void Actor::initModelActor(BodyType bodyIdx, int16 actorIdx) {
 	localActor->body = bodyIdx;
 
 	if (actorBoundingBox.hasBoundingBox) {
-		ZVBox &bbox = localActor->boudingBox;
-		bbox.x.bottomLeft = actorBoundingBox.bottomLeftX;
-		bbox.x.topRight = actorBoundingBox.topRightX;
-		bbox.y.bottomLeft = actorBoundingBox.bottomLeftY;
-		bbox.y.topRight = actorBoundingBox.topRightY;
-		bbox.z.bottomLeft = actorBoundingBox.bottomLeftZ;
-		bbox.z.topRight = actorBoundingBox.topRightZ;
+		BoundingBox &bbox = localActor->boudingBox;
+		bbox.mins.x = actorBoundingBox.bottomLeftX;
+		bbox.maxs.x = actorBoundingBox.topRightX;
+		bbox.mins.y = actorBoundingBox.bottomLeftY;
+		bbox.maxs.y = actorBoundingBox.topRightY;
+		bbox.mins.z = actorBoundingBox.bottomLeftZ;
+		bbox.maxs.z = actorBoundingBox.topRightZ;
 	} else {
-		ZVBox &bbox = localActor->boudingBox;
+		BoundingBox &bbox = localActor->boudingBox;
 		const BodyData &bd = bodyData[localActor->entity];
-		bbox.y.bottomLeft = bd.minsy;
-		bbox.y.topRight = bd.maxsy;
+		bbox.mins.y = bd.minsy;
+		bbox.maxs.y = bd.maxsy;
 
 		int32 result = 0;
 		const int32 distX = bd.maxsx - bd.minsx;
@@ -300,10 +290,10 @@ void Actor::initModelActor(BodyType bodyIdx, int16 actorIdx) {
 			result >>= 2;
 		}
 
-		bbox.x.bottomLeft = -result;
-		bbox.x.topRight = result;
-		bbox.z.bottomLeft = -result;
-		bbox.z.topRight = result;
+		bbox.mins.x = -result;
+		bbox.maxs.x = result;
+		bbox.mins.z = -result;
+		bbox.maxs.z = result;
 	}
 }
 
@@ -355,13 +345,9 @@ void Actor::resetActor(int16 actorIdx) {
 	actor->pos.y = -1;
 	actor->pos.z = 0;
 
-	ZVBox &bbox = actor->boudingBox;
-	bbox.x.bottomLeft = 0;
-	bbox.x.topRight = 0;
-	bbox.y.bottomLeft = 0;
-	bbox.y.topRight = 0;
-	bbox.z.bottomLeft = 0;
-	bbox.z.topRight = 0;
+	BoundingBox &bbox = actor->boudingBox;
+	bbox.mins = Vec3();
+	bbox.maxs = Vec3();
 
 	actor->angle = 0;
 	actor->speed = 40;
@@ -467,8 +453,8 @@ void Actor::processActorExtraBonus(int32 actorIdx) { // GiveExtraBonus
 	} else {
 		ActorStruct *sceneHero = _engine->_scene->sceneHero;
 		const int32 angle = _engine->_movements->getAngleAndSetTargetActorDistance(actor->pos, sceneHero->pos);
-		_engine->_extra->addExtraBonus(actor->pos.x, actor->pos.y + actor->boudingBox.y.topRight, actor->pos.z, ANGLE_70, angle, bonusSprite, actor->bonusAmount);
-		_engine->_sound->playSample(Samples::ItemPopup, 1, actor->pos.x, actor->pos.y + actor->boudingBox.y.topRight, actor->pos.z, actorIdx);
+		_engine->_extra->addExtraBonus(actor->pos.x, actor->pos.y + actor->boudingBox.maxs.y, actor->pos.z, ANGLE_70, angle, bonusSprite, actor->bonusAmount);
+		_engine->_sound->playSample(Samples::ItemPopup, 1, actor->pos.x, actor->pos.y + actor->boudingBox.maxs.y, actor->pos.z, actorIdx);
 	}
 }
 

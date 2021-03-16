@@ -189,10 +189,8 @@ bool DebugScene::displayActors() {
 			continue;
 		}
 		const Vec3 &pos = actorPtr->pos;
-		const ZVBox &bbox = actorPtr->boudingBox;
-		const Vec3 mins(bbox.x.bottomLeft, bbox.y.bottomLeft, bbox.z.bottomLeft);
-		const Vec3 maxs(bbox.x.topRight, bbox.y.topRight, bbox.z.topRight);
-		const ScenePositionsProjected &positions = calculateBoxPositions(pos + mins, pos + maxs);
+		const BoundingBox &bbox = actorPtr->boudingBox;
+		const ScenePositionsProjected &positions = calculateBoxPositions(pos + bbox.mins, pos + bbox.maxs);
 		if (!drawBox(positions, COLOR_WHITE)) {
 			continue;
 		}
@@ -229,7 +227,7 @@ bool DebugScene::displayZones() {
 			continue;
 		}
 
-		const ScenePositionsProjected &positions = calculateBoxPositions(zonePtr->bottomLeft, zonePtr->topRight);
+		const ScenePositionsProjected &positions = calculateBoxPositions(zonePtr->mins, zonePtr->maxs);
 		const uint8 color = 15 * 3 + zonePtr->type * 16;
 		if (!drawBox(positions, color)) {
 			continue;

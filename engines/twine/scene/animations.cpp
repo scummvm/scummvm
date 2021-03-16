@@ -683,21 +683,21 @@ void Animations::processActorAnimations(int32 actorIdx) { // DoAnim
 
 		if (IS_HERO(actorIdx) && !actor->staticFlags.bComputeLowCollision) {
 			// check hero collisions with bricks
-			_engine->_collision->checkHeroCollisionWithBricks(actor->boudingBox.x.bottomLeft, actor->boudingBox.y.bottomLeft, actor->boudingBox.z.bottomLeft, 1);
-			_engine->_collision->checkHeroCollisionWithBricks(actor->boudingBox.x.topRight, actor->boudingBox.y.bottomLeft, actor->boudingBox.z.bottomLeft, 2);
-			_engine->_collision->checkHeroCollisionWithBricks(actor->boudingBox.x.topRight, actor->boudingBox.y.bottomLeft, actor->boudingBox.z.topRight, 4);
-			_engine->_collision->checkHeroCollisionWithBricks(actor->boudingBox.x.bottomLeft, actor->boudingBox.y.bottomLeft, actor->boudingBox.z.topRight, 8);
+			_engine->_collision->checkHeroCollisionWithBricks(actor->boudingBox.mins.x, actor->boudingBox.mins.y, actor->boudingBox.mins.z, 1);
+			_engine->_collision->checkHeroCollisionWithBricks(actor->boudingBox.maxs.x, actor->boudingBox.mins.y, actor->boudingBox.mins.z, 2);
+			_engine->_collision->checkHeroCollisionWithBricks(actor->boudingBox.maxs.x, actor->boudingBox.mins.y, actor->boudingBox.maxs.z, 4);
+			_engine->_collision->checkHeroCollisionWithBricks(actor->boudingBox.mins.x, actor->boudingBox.mins.y, actor->boudingBox.maxs.z, 8);
 		} else {
 			// check other actors collisions with bricks
-			_engine->_collision->checkActorCollisionWithBricks(actor->boudingBox.x.bottomLeft, actor->boudingBox.y.bottomLeft, actor->boudingBox.z.bottomLeft, 1);
-			_engine->_collision->checkActorCollisionWithBricks(actor->boudingBox.x.topRight, actor->boudingBox.y.bottomLeft, actor->boudingBox.z.bottomLeft, 2);
-			_engine->_collision->checkActorCollisionWithBricks(actor->boudingBox.x.topRight, actor->boudingBox.y.bottomLeft, actor->boudingBox.z.topRight, 4);
-			_engine->_collision->checkActorCollisionWithBricks(actor->boudingBox.x.bottomLeft, actor->boudingBox.y.bottomLeft, actor->boudingBox.z.topRight, 8);
+			_engine->_collision->checkActorCollisionWithBricks(actor->boudingBox.mins.x, actor->boudingBox.mins.y, actor->boudingBox.mins.z, 1);
+			_engine->_collision->checkActorCollisionWithBricks(actor->boudingBox.maxs.x, actor->boudingBox.mins.y, actor->boudingBox.mins.z, 2);
+			_engine->_collision->checkActorCollisionWithBricks(actor->boudingBox.maxs.x, actor->boudingBox.mins.y, actor->boudingBox.maxs.z, 4);
+			_engine->_collision->checkActorCollisionWithBricks(actor->boudingBox.mins.x, actor->boudingBox.mins.y, actor->boudingBox.maxs.z, 8);
 		}
 
 		// process wall hit while running
 		if (_engine->_collision->causeActorDamage && !actor->dynamicFlags.bIsFalling && !currentlyProcessedActorIdx && _engine->_actor->heroBehaviour == HeroBehaviourType::kAthletic && actor->anim == AnimationTypes::kForward) {
-			_engine->_movements->rotateActor(actor->boudingBox.x.bottomLeft, actor->boudingBox.z.bottomLeft, actor->angle + ANGLE_360 + ANGLE_135);
+			_engine->_movements->rotateActor(actor->boudingBox.mins.x, actor->boudingBox.mins.z, actor->angle + ANGLE_360 + ANGLE_135);
 
 			_engine->_renderer->destPos.x += _engine->_movements->processActor.x;
 			_engine->_renderer->destPos.z += _engine->_movements->processActor.z;

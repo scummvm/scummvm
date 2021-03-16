@@ -192,7 +192,7 @@ int32 Redraw::fillActorDrawingList(bool bgRedraw) {
 		ActorStruct *actor = _engine->_scene->getActor(modelActorPos);
 		actor->dynamicFlags.bIsVisible = 0; // reset visible state
 
-		if (_engine->_grid->useCellingGrid != -1 && actor->pos.y > _engine->_scene->sceneZones[_engine->_grid->cellingGridIdx].topRight.y) {
+		if (_engine->_grid->useCellingGrid != -1 && actor->pos.y > _engine->_scene->sceneZones[_engine->_grid->cellingGridIdx].maxs.y) {
 			continue;
 		}
 		// no redraw required
@@ -435,9 +435,9 @@ void Redraw::processDrawListActorSprites(const DrawListStruct &drawCmd, bool bgR
 			const int32 tmpZ = (actor->lastPos.z + BRICK_HEIGHT) / BRICK_SIZE;
 			_engine->_grid->drawOverSpriteActor(tmpX, tmpY, tmpZ);
 		} else {
-			const int32 tmpX = (actor->pos.x + actor->boudingBox.x.topRight + BRICK_HEIGHT) / BRICK_SIZE;
+			const int32 tmpX = (actor->pos.x + actor->boudingBox.maxs.x + BRICK_HEIGHT) / BRICK_SIZE;
 			int32 tmpY = actor->pos.y / BRICK_HEIGHT;
-			const int32 tmpZ = (actor->pos.z + actor->boudingBox.z.topRight + BRICK_HEIGHT) / BRICK_SIZE;
+			const int32 tmpZ = (actor->pos.z + actor->boudingBox.maxs.z + BRICK_HEIGHT) / BRICK_SIZE;
 			if (actor->brickShape() != ShapeType::kNone) {
 				tmpY++;
 			}
@@ -541,7 +541,7 @@ void Redraw::renderOverlays() {
 			case OverlayPosType::koFollowActor: {
 				ActorStruct *actor2 = _engine->_scene->getActor(overlay->info1);
 
-				_engine->_renderer->projectPositionOnScreen(actor2->pos.x - _engine->_grid->camera.x, actor2->pos.y + actor2->boudingBox.y.topRight - _engine->_grid->camera.y, actor2->pos.z - _engine->_grid->camera.z);
+				_engine->_renderer->projectPositionOnScreen(actor2->pos.x - _engine->_grid->camera.x, actor2->pos.y + actor2->boudingBox.maxs.y - _engine->_grid->camera.y, actor2->pos.z - _engine->_grid->camera.z);
 
 				overlay->x = _engine->_renderer->projPos.x;
 				overlay->y = _engine->_renderer->projPos.y;
@@ -746,7 +746,7 @@ void Redraw::drawBubble(int32 actorIdx) {
 	ActorStruct *actor = _engine->_scene->getActor(actorIdx);
 
 	// get actor position on screen
-	_engine->_renderer->projectPositionOnScreen(actor->pos.x - _engine->_grid->camera.x, actor->pos.y + actor->boudingBox.y.topRight - _engine->_grid->camera.y, actor->pos.z - _engine->_grid->camera.z);
+	_engine->_renderer->projectPositionOnScreen(actor->pos.x - _engine->_grid->camera.x, actor->pos.y + actor->boudingBox.maxs.y - _engine->_grid->camera.y, actor->pos.z - _engine->_grid->camera.z);
 
 	if (actorIdx != bubbleActor) {
 		bubbleSpriteIndex = bubbleSpriteIndex ^ 1;

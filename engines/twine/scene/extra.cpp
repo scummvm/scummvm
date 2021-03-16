@@ -125,7 +125,7 @@ int32 Extra::addExtra(int32 actorIdx, int32 x, int32 y, int32 z, int32 spriteIdx
 
 		_engine->_movements->setActorAngle(ANGLE_0, maxSpeed, ANGLE_17, &extra->trackActorMove);
 		const ActorStruct *actor = _engine->_scene->getActor(targetActor);
-		extra->angle = _engine->_movements->getAngleAndSetTargetActorDistance(x, z, actor->pos.x, actor->pos.z);
+		extra->angle = _engine->_movements->getAngleAndSetTargetActorDistance(extra->pos, actor->pos);
 		return i;
 	}
 	return -1;
@@ -324,7 +324,7 @@ int32 Extra::addExtraAiming(int32 actorIdx, int32 x, int32 y, int32 z, int32 spr
 		extra->strengthOfHit = strengthOfHit;
 		_engine->_movements->setActorAngle(ANGLE_0, finalAngle, ANGLE_17, &extra->trackActorMove);
 		const ActorStruct *actor = _engine->_scene->getActor(targetActorIdx);
-		extra->angle = _engine->_movements->getAngleAndSetTargetActorDistance(x, z, actor->pos.x, actor->pos.z);
+		extra->angle = _engine->_movements->getAngleAndSetTargetActorDistance(extra->pos, actor->pos);
 
 		return i;
 	}
@@ -637,7 +637,7 @@ void Extra::processExtras() {
 			currentExtraY = actor->pos.y + 1000;
 			currentExtraZ = actor->pos.z;
 
-			const int32 tmpAngle = _engine->_movements->getAngleAndSetTargetActorDistance(extra->pos.x, extra->pos.z, currentExtraX, currentExtraZ);
+			const int32 tmpAngle = _engine->_movements->getAngleAndSetTargetActorDistance(extra->pos, actor->pos);
 			const int32 angle = ClampAngle(tmpAngle - extra->angle);
 
 			if (angle > ANGLE_140 && angle < ANGLE_210) {
