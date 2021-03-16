@@ -258,11 +258,11 @@ int32 Extra::addExtraBonus(int32 x, int32 y, int32 z, int32 xAngle, int32 yAngle
 			continue;
 		}
 		extra->info0 = type;
-		extra->type = ExtraType::TIME_OUT | ExtraType::TAKABLE | ExtraType::FLASH | ExtraType::STOP_COL | ExtraType::BONUS;
+		extra->type = ExtraType::STOP_COL | ExtraType::TAKABLE | ExtraType::BONUS;
 
-		/*if(type == SPRITEHQR_KEY) {
-			extra->type = ExtraFlag::STOP_COL | ExtraFlag::TAKABLE | ExtraFlag::BONUS;
-		}*/
+		if (type != SPRITEHQR_KEY) {
+			extra->type = ExtraType::TIME_OUT | ExtraType::TAKABLE | ExtraType::FLASH | ExtraType::STOP_COL | ExtraType::BONUS;
+		}
 
 		extra->pos.x = x;
 		extra->pos.y = y;
