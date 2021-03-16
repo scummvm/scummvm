@@ -167,10 +167,9 @@ Graphics::Font *GraphicsManager::createFont(int size, bool bold) const {
 }
 
 Graphics::Font *GraphicsManager::createArialFont(int size, bool bold) const {
-	Common::SeekableReadStream *stream = findArialStream(bold);
+	Common::String defaultBaseName = bold ? "arialbd.ttf" : "arial.ttf";
 
-	if (!stream)
-		error("Failed to find Arial%s font", bold ? " Bold" : "");
+	Common::SeekableReadStream *stream = SearchMan.createReadStreamForMember(defaultBaseName);
 
 	// Map the heights needed to point sizes
 	if (bold) {
@@ -205,12 +204,25 @@ Graphics::Font *GraphicsManager::createArialFont(int size, bool bold) const {
 	static const uint32 *codePageMapping = s_codePage1252;
 #endif
 
-	Graphics::Font *font = Graphics::loadTTFFont(*stream, size, Graphics::kTTFSizeModeCharacter, 96, _vm->isTrueColor() ? Graphics::kTTFRenderModeLight : Graphics::kTTFRenderModeMonochrome, codePageMapping);
+	Graphics::Font *font;
+
+	if (stream) {
+		font = Graphics::loadTTFFont(*stream, size, Graphics::kTTFSizeModeCharacter, 96, _vm->isTrueColor() ? Graphics::kTTFRenderModeLight : Graphics::kTTFRenderModeMonochrome, codePageMapping);
+
+		delete stream;
+	} else {
+		const char *fname;
+		if (bold)
+			fname = "LiberationSans-Bold.ttf";
+		else
+			fname = "LiberationSans-Regular.ttf";
+
+		font = Graphics::loadTTFFontFromArchive(fname, size, Graphics::kTTFSizeModeCharacter, 96, _vm->isTrueColor() ? Graphics::kTTFRenderModeLight : Graphics::kTTFRenderModeMonochrome, codePageMapping);
+	}
 
 	if (!font)
 		error("Failed to load Arial%s font", bold ? " Bold" : "");
 
-	delete stream;
 	return font;
 }
 
@@ -597,28 +609,6 @@ Graphics::Surface *GraphicsManager::remapPalettedFrame(const Graphics::Surface *
 	return convertedSurface;
 }
 
-Common::SeekableReadStream *GraphicsManager::findArialStream(bool bold) const {
-	Common::SeekableReadStream *stream = 0;
-
-	// Try to see if the user supplied a font
-	Common::String defaultBaseName = bold ? "arialbd.ttf" : "arial.ttf";
-	stream = SearchMan.createReadStreamForMember(defaultBaseName);
-	if (stream)
-		return stream;
-
-	if (!stream) {
-		// TODO: It would really be nice to have "Liberation Sans", since it is metric
-		// compatible with Arial.
-
-		if (bold)
-			stream = getThemeFontStream("LiberationSans-Bold.ttf");
-		else
-			stream = getThemeFontStream("LiberationSans-Regular.ttf");
-	}
-
-	return stream;
-}
-
 int GraphicsManager::computeHPushOffset(int speed) {
 	switch (speed) {
 	case 3:
@@ -657,11 +647,6 @@ void GraphicsManager::crossBlit(Graphics::Surface *dst, int xDst, int yDst, int 
 }
 
 Graphics::Font *GraphicsManager::createMSGothicFont(int size, bool bold) const {
-	Common::SeekableReadStream *stream = findMSGothicStream();
-
-	if (!stream)
-		error("Failed to find MS Gothic font");
-
 	switch (size) {
 	case 10:
 	case 11:
@@ -677,78 +662,24 @@ Graphics::Font *GraphicsManager::createMSGothicFont(int size, bool bold) const {
 		error("Unknown MS Gothic font size %d", size);
 	}
 
-	// TODO: Fake a bold version
+	Graphics::Font *font;
 
-	// Force monochrome, since the original uses the bitmap glyphs in the font
-	Graphics::Font *font = Graphics::loadTTFFont(*stream, size, Graphics::kTTFSizeModeCharacter, 96, Graphics::kTTFRenderModeMonochrome);
+	// Try to see if the user supplied a font
+	Common::SeekableReadStream *stream = SearchMan.createReadStreamForMember("msgothic.ttc");
+
+	// TODO: Fake a bold version
+	if (stream) {
+		// Force monochrome, since the original uses the bitmap glyphs in the font
+		font = Graphics::loadTTFFont(*stream, size, Graphics::kTTFSizeModeCharacter, 96, Graphics::kTTFRenderModeMonochrome);
+	} else {
+		font = Graphics::loadTTFFontFromArchive("VL-Gothic-Regular.ttf", size, Graphics::kTTFSizeModeCharacter, 96, Graphics::kTTFRenderModeMonochrome);
+	}
 
 	if (!font)
 		error("Failed to load MS Gothic font");
 
 	delete stream;
 	return font;
-}
-
-Common::SeekableReadStream *GraphicsManager::findMSGothicStream() const {
-	Common::SeekableReadStream *stream = 0;
-
-	// Try to see if the user supplied a font
-	stream = SearchMan.createReadStreamForMember("msgothic.ttc");
-	if (stream)
-		return stream;
-
-	// HACK: Try to load the system font
-#if defined(WIN32)
-	Common::FSNode fontPath("C:/WINDOWS/Fonts/msgothic.ttc");
-
-	if (fontPath.exists() && !fontPath.isDirectory() && fontPath.isReadable())
-		stream = fontPath.createReadStream();
-
-	if (!stream) {
-		Common::FSNode win2kFontPath("C:/WINNT/Fonts/msgothic.ttc");
-
-		if (win2kFontPath.exists() && !win2kFontPath.isDirectory() && win2kFontPath.isReadable())
-			stream = win2kFontPath.createReadStream();
-	}
-#endif
-
-	if (!stream) {
-		// TODO: Find the equivalent free font (probably "VL Gothic", which is what Wine uses)
-		// "Ume Gothic" might be another alternative
-	}
-
-	return stream;
-}
-
-Common::SeekableReadStream *GraphicsManager::getThemeFontStream(const Common::String &fileName) const {
-	// Without needing to actually come out and say it, this is all one huge hack.
-	// OK, I said it anyway.
-
-	Common::SeekableReadStream *stream = 0;
-
-	// Code loosely based on the similar Wintermute code, minus the C++11 nullptr nonsense
-	// Attempt to load it from the theme
-
-	if (ConfMan.hasKey("themepath")) {
-		Common::SeekableReadStream *archiveStream = 0;
-		Common::FSNode themeFile(ConfMan.get("themepath") + "/scummmodern.zip");
-
-		if (themeFile.exists() && !themeFile.isDirectory() && themeFile.isReadable())
-			archiveStream = themeFile.createReadStream();
-
-		if (!archiveStream)
-			archiveStream = SearchMan.createReadStreamForMember("scummmodern.zip");
-
-		if (archiveStream) {
-			Common::Archive *archive = Common::makeZipArchive(archiveStream);
-			if (archive)
-				stream = archive->createReadStreamForMember(fileName);
-
-			delete archive;
-		}
-	}
-
-	return stream;
 }
 
 void GraphicsManager::renderText(Graphics::Surface *dst, Graphics::Font *font, const Common::String &text, int x, int y, int w, int h, uint32 color, int lineHeight, TextAlign textAlign, bool centerVertically) {
