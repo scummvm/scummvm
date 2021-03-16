@@ -64,7 +64,7 @@ PlaceCeramicBowl::PlaceCeramicBowl(BuriedEngine *vm, Window *viewWindow, const L
 int PlaceCeramicBowl::droppedItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags) {
 	if (pointLocation.x == -1 && pointLocation.y == -1)
 		return 0;
-	
+
 	if (itemID != kItemCeramicBowl)
 		return SIC_REJECT;
 
@@ -1914,8 +1914,6 @@ int DeathGodPuzzleBox::mouseUp(Window *viewWindow, const Common::Point &pointLoc
 			((SceneViewWindow *)viewWindow)->showDeathScene(12);
 			return SC_DEATH;
 		}
-
-		return SC_TRUE;
 	}
 
 	return SC_FALSE;
@@ -2222,7 +2220,7 @@ bool SceneViewWindow::startMayanAmbient(int oldTimeZone, int oldEnvironment, int
 		if (oldEnvironment == 2)
 			return _vm->_sound->setAmbientSound(_vm->getFilePath(2, environment, SF_AMBIENT), checkFade, 64);
 
-		return _vm->_sound->setAmbientSound(_vm->getFilePath(2, environment, SF_AMBIENT), checkFade, 16); 
+		return _vm->_sound->setAmbientSound(_vm->getFilePath(2, environment, SF_AMBIENT), checkFade, 16);
 	} else if (environment == 4) {
 		if (oldTimeZone == -2)
 			_vm->_sound->setAmbientSound(_vm->getFilePath(2, environment, SF_AMBIENT), fade, 64);

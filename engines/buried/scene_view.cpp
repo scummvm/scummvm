@@ -157,7 +157,7 @@ bool SceneViewWindow::startNewGameIntro(bool walkthrough) {
 	newLocation.depth = 0;
 
 	jumpToScene(newLocation);
-	
+
 	if (walkthrough) {
 		// Set the mode flag
 		_globalFlags.generalWalkthroughMode = 1;
@@ -240,7 +240,7 @@ bool SceneViewWindow::getSceneStaticData(const Location &location, LocationStati
 			locationStaticData.destUp.transitionData = resource->readSint16LE();
 			locationStaticData.destUp.transitionStartFrame = resource->readSint32LE();
 			locationStaticData.destUp.transitionLength = resource->readSint32LE();
-			
+
 			locationStaticData.destLeft.destinationScene.timeZone = resource->readSint16LE();
 			locationStaticData.destLeft.destinationScene.environment = resource->readSint16LE();
 			locationStaticData.destLeft.destinationScene.node = resource->readSint16LE();
@@ -251,7 +251,7 @@ bool SceneViewWindow::getSceneStaticData(const Location &location, LocationStati
 			locationStaticData.destLeft.transitionData = resource->readSint16LE();
 			locationStaticData.destLeft.transitionStartFrame = resource->readSint32LE();
 			locationStaticData.destLeft.transitionLength = resource->readSint32LE();
-			
+
 			locationStaticData.destRight.destinationScene.timeZone = resource->readSint16LE();
 			locationStaticData.destRight.destinationScene.environment = resource->readSint16LE();
 			locationStaticData.destRight.destinationScene.node = resource->readSint16LE();
@@ -262,7 +262,7 @@ bool SceneViewWindow::getSceneStaticData(const Location &location, LocationStati
 			locationStaticData.destRight.transitionData = resource->readSint16LE();
 			locationStaticData.destRight.transitionStartFrame = resource->readSint32LE();
 			locationStaticData.destRight.transitionLength = resource->readSint32LE();
-			
+
 			locationStaticData.destDown.destinationScene.timeZone = resource->readSint16LE();
 			locationStaticData.destDown.destinationScene.environment = resource->readSint16LE();
 			locationStaticData.destDown.destinationScene.node = resource->readSint16LE();
@@ -273,7 +273,7 @@ bool SceneViewWindow::getSceneStaticData(const Location &location, LocationStati
 			locationStaticData.destDown.transitionData = resource->readSint16LE();
 			locationStaticData.destDown.transitionStartFrame = resource->readSint32LE();
 			locationStaticData.destDown.transitionLength = resource->readSint32LE();
-			
+
 			locationStaticData.destForward.destinationScene.timeZone = resource->readSint16LE();
 			locationStaticData.destForward.destinationScene.environment = resource->readSint16LE();
 			locationStaticData.destForward.destinationScene.node = resource->readSint16LE();
@@ -885,7 +885,7 @@ bool SceneViewWindow::timeSuitJump(int destination) {
 
 	// Repaint the window
 	invalidateWindow(false);
-	
+
 	// Call the post-enter function
 	_currentScene->postEnterRoom(this, oldLocation);
 	_parent->invalidateWindow(false);
@@ -935,7 +935,6 @@ bool SceneViewWindow::playTransition(const DestinationScene &destinationData, in
 			delete newBackground;
 			return retVal;
 		}
-		break;
 	case TRANSITION_WALK:
 		if (_vm->isControlDown()) {
 			if (navFrame >= 0) {
@@ -966,7 +965,7 @@ bool SceneViewWindow::playTransition(const DestinationScene &destinationData, in
 				else
 					_demoSoundEffectHandle = _vm->_sound->playSoundEffect("CASTLE/CGBSDO.WAV");
 			}
-		
+
 			bool retVal = walkTransition(_currentScene->_staticData.location, destinationData, navFrame);
 
 			// And also a door close sound
@@ -983,7 +982,6 @@ bool SceneViewWindow::playTransition(const DestinationScene &destinationData, in
 
 			return retVal;
 		}
-		break;
 	case TRANSITION_VIDEO:
 		if (_vm->isControlDown() && false) { // TODO: debug mode check (maybe?)
 			if (navFrame >= 0) {
@@ -1002,7 +1000,6 @@ bool SceneViewWindow::playTransition(const DestinationScene &destinationData, in
 		} else {
 			return videoTransition(_currentScene->_staticData.location, destinationData, navFrame);
 		}
-		break;
 	}
 
 	return false;
@@ -1045,7 +1042,7 @@ bool SceneViewWindow::videoTransition(const Location &location, DestinationScene
 		_paused = false;
 		return false;
 	}
-	
+
 	changeStillFrameMovie(_vm->getFilePath(destinationStaticData.location.timeZone, destinationStaticData.location.environment, SF_STILLS));
 
 	Graphics::Surface *newBackground = 0;
@@ -2624,7 +2621,7 @@ bool SceneViewWindow::displayLiveText(const Common::String &text, bool notifyUse
 bool SceneViewWindow::displayTranslationText(const Common::String &text) {
 	if (((GameUIWindow *)_parent)->_liveTextWindow)
 		return ((GameUIWindow *)_parent)->_liveTextWindow->updateTranslationText(text);
-	
+
 	return false;
 }
 
@@ -2655,7 +2652,7 @@ Common::Array<AIComment> SceneViewWindow::getAICommentDatabase(int timeZone, int
 		return comments;
 
 	uint16 count = stream->readUint16LE();
-	
+
 	for (uint16 i = 0; i < count; i++) {
 		AIComment comment;
 		comment.location.timeZone = stream->readSint16LE();
