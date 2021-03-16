@@ -31,7 +31,7 @@ GPHGraphicsManager::GPHGraphicsManager(SdlEventSource *sdlEventSource, SdlWindow
 }
 
 void GPHGraphicsManager::initSize(uint w, uint h, const Graphics::PixelFormat *format) {
-	DownscaleSdlGraphicsManager::initSize(w, h, format);
+	SurfaceSdlGraphicsManager::initSize(w, h, format);
 
 	_videoMode.overlayWidth = 320;
 	_videoMode.overlayHeight = 240;
@@ -57,7 +57,7 @@ void GPHGraphicsManager::setupHardwareSize() {
 }
 
 bool GPHGraphicsManager::loadGFXMode() {
-	bool success = DownscaleSdlGraphicsManager::loadGFXMode();
+	bool success = SurfaceSdlGraphicsManager::loadGFXMode();
 
 	// The old GP2X hacked SDL needs this after any call to SDL_SetVideoMode
 	// and it does not hurt other devices.
