@@ -279,7 +279,16 @@ void ManagedSurface::blitFromInner(const Surface &src, const Common::Rect &srcRe
 		// For paletted format, assume the palette is the same and there is no transparency.
 		// We can thus do a straight copy of the pixels.
 		if (format.bytesPerPixel == 1 && noScale) {
-			Common::copy(srcP, srcP + srcRect.width() * format.bytesPerPixel, destP);
+			int width = srcRect.width();
+			if (destRect.left + width > w)
+				width = w - destRect.left;
+			if (destRect.left < 0) {
+				srcP -= destRect.left;
+				destP -= destRect.left;
+				width += destRect.left;
+			}
+			if (width > 0)
+				Common::copy(srcP, srcP + width, destP);
 			continue;
 		}
 
