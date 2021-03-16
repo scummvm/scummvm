@@ -65,41 +65,27 @@ void DebugScene::projectBoundingBoxPoints(IVec3 *pPoint3d, IVec3 *pPoint3dProjec
 	}
 }
 
-int32 DebugScene::checkZoneType(int32 type) const {
+bool DebugScene::checkZoneType(int32 type) const {
 	switch (type) {
 	case ZoneType::kCube:
-		if (typeZones & 0x01)
-			return 1;
-		break;
+		return (typeZones & 0x01) != 0;
 	case ZoneType::kCamera:
-		if (typeZones & 0x02)
-			return 1;
-		break;
+		return (typeZones & 0x02) != 0;
 	case ZoneType::kSceneric:
-		if (typeZones & 0x04)
-			return 1;
-		break;
+		return (typeZones & 0x04) != 0;
 	case ZoneType::kGrid:
-		if (typeZones & 0x08)
-			return 1;
-		break;
+		return (typeZones & 0x08) != 0;
 	case ZoneType::kObject:
-		if (typeZones & 0x10)
-			return 1;
-		break;
+		return (typeZones & 0x10) != 0;
 	case ZoneType::kText:
-		if (typeZones & 0x20)
-			return 1;
-		break;
+		return (typeZones & 0x20) != 0;
 	case ZoneType::kLadder:
-		if (typeZones & 0x40)
-			return 1;
-		break;
+		return (typeZones & 0x40) != 0;
 	default:
-		return 1;
+		return true;
 	}
 
-	return 0;
+	return false;
 }
 
 DebugScene::ScenePositionsProjected DebugScene::calculateBoxPositions(const IVec3 &mins, const IVec3 &maxs) {

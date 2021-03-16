@@ -36,7 +36,7 @@ private:
 	TwinEEngine *_engine;
 
 	void projectBoundingBoxPoints(IVec3 *point3d, IVec3 *point3dProjected);
-	int32 checkZoneType(int32 type) const;
+	bool checkZoneType(int32 type) const;
 	bool displayZones();
 	bool displayActors();
 	bool displayTracks();
