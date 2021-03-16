@@ -135,12 +135,27 @@ void SharedData::reset() {
 	_chapter2FrameIndexOffset = 1;
 }
 
+static const uint32 chapter2DataSizes[5] = {5, 9, 23, 18, 9};
 void SharedData::setChapter2Data(uint32 index, int32 offset, int32 val) {
-	error("[SharedData::setChapter2Data] Not implemented");
+	uint32 *chapter2Data[] = {_chapter2Data1, _chapter2Data2, (uint32 *)_chapter2Data3, _chapter2Data4, _chapter2Data5};
+
+	if (index == 0 || index > 5)
+		error("[SharedData::setChapter2Data] Invalid index (was: %d, valid: [1;5])", index);
+	if (offset >= chapter2DataSizes[index - 1])
+		error("[SharedData::setChapter2Data] Invalid offset (was: %d, valid: [0;%d])", offset, chapter2DataSizes[index - 1] - 1);
+
+	chapter2Data[index - 1][offset] = val;
 }
 
 int32 SharedData::getChapter2Data(uint32 index, int32 offset) {
-	error("[SharedData::getChapter2Data] Not implemented");
+	const uint32 *chapter2Data[] = {_chapter2Data1, _chapter2Data2, (uint32 *)_chapter2Data3, _chapter2Data4, _chapter2Data5};
+
+	if (index == 0 || index > 5)
+		error("[SharedData::getChapter2Data] Invalid index (was: %d, valid: [1;5])", index);
+	if (offset >= chapter2DataSizes[index - 1])
+		error("[SharedData::getChapter2Data] Invalid offset (was: %d, valid: [0;%d])", offset, chapter2DataSizes[index - 1] - 1);
+
+	return (int32)chapter2Data[index - 1][offset];
 }
 
 void SharedData::setChapter2Counter(uint32 index, int32 val) {
