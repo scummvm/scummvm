@@ -102,8 +102,6 @@ TrecisionEngine::TrecisionEngine(OSystem *syst) : Engine(syst) {
 	_inventoryRefreshStartLine = INVENTORY_HIDE;
 	_lastLightIcon = 0xFF;
 	_inventoryCounter = INVENTORY_HIDE;
-	LeftArrow = 0;
-	RightArrow = 0;
 
 	for (int i = 0; i < 260; ++i) {
 		_newData[i] = 0;

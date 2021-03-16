@@ -84,8 +84,6 @@ public:
 	uint16 _lastCurInventory;
 	uint16 _lastLightIcon;
 	int16 _inventoryCounter;
-	int16 LeftArrow;
-	int16 RightArrow;
 
 	bool _fastWalk;
 	bool _fastWalkLocked;
