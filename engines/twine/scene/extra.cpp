@@ -41,68 +41,40 @@
 namespace TwinE {
 
 /** Hit Stars shape info */
-static const int16 hitStarsShapeTable[] = {
-    10, // num entries of x and z rotation values
-    0,
-    -20,
-    4,
-    -6,
-    19,
-    -6,
-    7,
-    2,
-    12,
-    16,
-    0,
-    7,
-    -12,
-    16,
-    -7,
-    2,
-    -19,
-    -6,
-    -4,
-    -6};
+static const ShapeData hitStarsData[]{
+	{4, -6},
+	{19, -6},
+	{7, 2},
+	{12, 16},
+	{0, 7},
+	{-12, 16},
+	{-7, 2},
+	{-19, -6},
+	{-4, -6}};
 
 /** Explode Cloud shape info */
-static const int16 explodeCloudShapeTable[] = {
-    18, // num entries of x and z rotation values
-    0,
-    -20,
-    6,
-    -16,
-    8,
-    -10,
-    14,
-    -12,
-    20,
-    -4,
-    18,
-    4,
-    12,
-    4,
-    16,
-    8,
-    8,
-    16,
-    2,
-    12,
-    -4,
-    18,
-    -10,
-    16,
-    -12,
-    8,
-    -16,
-    10,
-    -20,
-    4,
-    -12,
-    -8,
-    -6,
-    -6,
-    -10,
-    -12};
+static const ShapeData explodeCloudData[]{
+	{0, -20},
+	{6, -16},
+	{8, -10},
+	{14, -12},
+	{20, -4},
+	{18, 4},
+	{12, 4},
+	{16, 8},
+	{8, 16},
+	{2, 12},
+	{-4, 18},
+	{-10, 16},
+	{-12, 8},
+	{-16, 10},
+	{-20, 4},
+	{-12, -8},
+	{-6, -6},
+	{-10, -12}};
+
+const ExtraShape hitStarsShape { ARRAYSIZE(hitStarsData), hitStarsData };
+const ExtraShape explodeCloudShape { ARRAYSIZE(explodeCloudData), explodeCloudData };
 
 Extra::Extra(TwinEEngine *engine) : _engine(engine) {}
 
@@ -430,11 +402,12 @@ void Extra::addExtraThrowMagicball(int32 x, int32 y, int32 z, int32 xAngle, int3
 	}
 }
 
-void Extra::drawSpecialShape(const int16 *shapeTable, int32 x, int32 y, int32 color, int32 angle, int32 size) {
-	int16 currentShapeTable = *shapeTable++;
+void Extra::drawSpecialShape(const ExtraShape &shapeTable, int32 x, int32 y, int32 color, int32 angle, int32 size) {
+	int shapeDataIndex = 0;
+	int16 var_x = shapeTable.data[shapeDataIndex].x * size / 16;
+	int16 var_z = shapeTable.data[shapeDataIndex].x * size / 16;
 
-	int16 var_x = (*shapeTable++) * size / 16;
-	int16 var_z = (*shapeTable++) * size / 16;
+	++shapeDataIndex;
 
 	_engine->_redraw->renderRect.left = 0x7D00;
 	_engine->_redraw->renderRect.right = -0x7D00;
@@ -465,9 +438,10 @@ void Extra::drawSpecialShape(const int16 *shapeTable, int32 x, int32 y, int32 co
 	int32 currentX = computedX;
 	int32 currentY = computedY;
 
-	for (int32 numEntries = 1; numEntries < currentShapeTable; ++numEntries) {
-		var_x = (*shapeTable++) * size / 16;
-		var_z = (*shapeTable++) * size / 16;
+	for (int32 numEntries = 1; numEntries < shapeTable.n; ++numEntries) {
+		var_x = shapeTable.data[shapeDataIndex].x * size / 16;
+		var_z = shapeTable.data[shapeDataIndex].x * size / 16;
+		++shapeDataIndex;
 
 		const int32 oldComputedX = currentX;
 		const int32 oldComputedY = currentY;
@@ -516,7 +490,7 @@ void Extra::drawExtraSpecial(int32 extraIdx, int32 x, int32 y) {
 
 	switch (specialType) {
 	case ExtraSpecialType::kHitStars:
-		drawSpecialShape(hitStarsShapeTable, x, y, COLOR_WHITE, (_engine->lbaTime * 32) & ANGLE_270, 4);
+		drawSpecialShape(hitStarsShape, x, y, COLOR_WHITE, (_engine->lbaTime * 32) & ANGLE_270, 4);
 		break;
 	case ExtraSpecialType::kExplodeCloud: {
 		int32 cloudTime = 1 + _engine->lbaTime - extra->spawnTime;
@@ -525,7 +499,7 @@ void Extra::drawExtraSpecial(int32 extraIdx, int32 x, int32 y) {
 			cloudTime = 32;
 		}
 
-		drawSpecialShape(explodeCloudShapeTable, x, y, COLOR_WHITE, 0, cloudTime);
+		drawSpecialShape(explodeCloudShape, x, y, COLOR_WHITE, 0, cloudTime);
 		break;
 	}
 	}

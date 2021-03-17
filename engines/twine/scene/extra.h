@@ -32,6 +32,16 @@ namespace TwinE {
 
 #define EXTRA_SPECIAL_MASK 0x8000
 
+struct ShapeData {
+	int16 x;
+	int16 z;
+};
+
+struct ExtraShape {
+	int n;
+	const ShapeData *data;
+};
+
 enum ExtraType {
 	TIME_OUT = 1 << 0,     // 0x0001
 	FLY = 1 << 1,          // 0x0002
@@ -82,7 +92,7 @@ private:
 	void processMagicballBounce(ExtraListStruct *extra, int32 x, int32 y, int32 z);
 	int32 findExtraKey();
 	int32 addExtraAimingAtKey(int32 actorIdx, int32 x, int32 y, int32 z, int32 spriteIdx, int32 extraIdx);
-	void drawSpecialShape(const int16 *shapeTable, int32 x, int32 y, int32 color, int32 angle, int32 size);
+	void drawSpecialShape(const ExtraShape &shapeTable, int32 x, int32 y, int32 color, int32 angle, int32 size);
 
 public:
 	Extra(TwinEEngine *engine);
