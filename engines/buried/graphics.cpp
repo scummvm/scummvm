@@ -62,7 +62,7 @@ GraphicsManager::GraphicsManager(BuriedEngine *vm) : _vm(vm) {
 
 	if (_vm->isTrueColor()) {
 		// No palette to deal with
-		_palette = 0;
+		_palette = nullptr;
 	} else {
 		// Grab the palette from our EXE bitmap
 		_palette = createDefaultPalette();
@@ -199,7 +199,7 @@ Graphics::Font *GraphicsManager::createArialFont(int size, bool bold) const {
 	// Enable code page mapping only if we don't have iconv. Otherwise, we'll
 	// let that handle mapping for us.
 #ifdef USE_ICONV
-	static const uint32 *codePageMapping = 0;
+	static const uint32 *codePageMapping = nullptr;
 #else
 	static const uint32 *codePageMapping = s_codePage1252;
 #endif
@@ -232,8 +232,8 @@ Cursor GraphicsManager::setCursor(Cursor newCursor) {
 		return _curCursor;
 
 	Cursor oldCursor = _curCursor;
-	Graphics::Cursor *cursor = 0;
-	Graphics::WinCursorGroup *cursorGroup = 0;
+	Graphics::Cursor *cursor = nullptr;
+	Graphics::WinCursorGroup *cursorGroup = nullptr;
 
 	if (newCursor == kCursorArrow) {
 		cursor = Graphics::makeDefaultWinCursor();
@@ -602,10 +602,11 @@ Graphics::Surface *GraphicsManager::remapPalettedFrame(const Graphics::Surface *
 	Graphics::Surface *convertedSurface = new Graphics::Surface();
 	convertedSurface->create(frame->w, frame->h, frame->format);
 
-	for (int y = 0; y < frame->h; y++)
+	for (int y = 0; y < frame->h; y++) {
 		for (int x = 0; x < frame->w; x++)
 			*((byte *)convertedSurface->getBasePtr(x, y)) = palMap[*((const byte *)frame->getBasePtr(x, y))];
-
+	}
+	
 	return convertedSurface;
 }
 
@@ -732,7 +733,7 @@ void GraphicsManager::drawEllipse(const Common::Rect &rect, uint32 color) {
 	static const int rows12[12] = { 7, 11, 13, 13, 15, 15, 15, 15, 13, 13, 11, 7 };
 	static const int rows15[15] = { 5, 9, 11, 13, 13, 15, 15, 15, 15, 15, 13, 13, 11, 9, 5 };
 
-	const int *table = 0;
+	const int *table = nullptr;
 	switch (rect.height()) {
 	case 7:
 		table = rows7;

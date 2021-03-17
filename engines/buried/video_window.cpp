@@ -33,7 +33,7 @@ namespace Buried {
 VideoWindow::VideoWindow(BuriedEngine *vm, Window *parent) : Window(vm, parent), _video(0), _mode(kModeClosed), _lastFrame(0) {
 	_vm->addVideo(this);
 	_needsPalConversion = false;
-	_ownedFrame = 0;
+	_ownedFrame = nullptr;
 }
 
 VideoWindow::~VideoWindow() {
@@ -125,14 +125,14 @@ bool VideoWindow::openVideo(const Common::String &fileName) {
 void VideoWindow::closeVideo() {
 	if (_video) {
 		delete _video;
-		_video = 0;
+		_video = nullptr;
 		_mode = kModeClosed;
-		_lastFrame = 0;
+		_lastFrame = nullptr;
 
 		if (_ownedFrame) {
 			_ownedFrame->free();
 			delete _ownedFrame;
-			_ownedFrame = 0;
+			_ownedFrame = nullptr;
 		}
 	}
 }
@@ -146,7 +146,7 @@ void VideoWindow::updateVideo() {
 				if (_ownedFrame) {
 					_ownedFrame->free();
 					delete _ownedFrame;
-					_ownedFrame = 0;
+					_ownedFrame = nullptr;
 				}
 
 				if (_vm->isTrueColor()) {

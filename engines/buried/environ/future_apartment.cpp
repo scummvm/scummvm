@@ -301,7 +301,7 @@ KitchenUnitAutoChef::~KitchenUnitAutoChef() {
 
 void KitchenUnitAutoChef::preDestructor() {
 	delete _textFont;
-	_textFont = 0;
+	_textFont = nullptr;
 }
 
 int KitchenUnitAutoChef::mouseUp(Window *viewWindow, const Common::Point &pointLocation) {
@@ -400,7 +400,7 @@ KitchenUnitShopNet::~KitchenUnitShopNet() {
 
 void KitchenUnitShopNet::preDestructor() {
 	delete _textFont;
-	_textFont = 0;
+	_textFont = nullptr;
 }
 
 int KitchenUnitShopNet::mouseUp(Window *viewWindow, const Common::Point &pointLocation) {
@@ -672,7 +672,7 @@ KitchenUnitPostBox::~KitchenUnitPostBox() {
 
 void KitchenUnitPostBox::preDestructor() {
 	delete _textFont;
-	_textFont = 0;
+	_textFont = nullptr;
 }
 
 int KitchenUnitPostBox::mouseUp(Window *viewWindow, const Common::Point &pointLocation) {

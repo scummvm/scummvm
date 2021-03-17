@@ -46,17 +46,17 @@
 namespace Buried {
 
 SceneViewWindow::SceneViewWindow(BuriedEngine *vm, Window *parent) : Window(vm, parent) {
-	_currentScene = 0;
-	_preBuffer = 0;
-	_walkMovie = 0;
+	_currentScene = nullptr;
+	_preBuffer = nullptr;
+	_walkMovie = nullptr;
 	_useScenePaint = true;
 	_timer = 0;
-	_currentSprite.image = 0;
+	_currentSprite.image = nullptr;
 	_useSprite = true;
 	_infoWindowDisplayed = false;
 	_bioChipWindowDisplayed = false;
 	_burnedLetterDisplayed = false;
-	_asyncMovie = 0;
+	_asyncMovie = nullptr;
 	_asyncMovieStartFrame = 0;
 	_loopAsyncMovie = false;
 	_paused = false;
@@ -370,7 +370,7 @@ bool SceneViewWindow::jumpToScene(const Location &newLocation) {
 	if (_currentScene) {
 		_currentScene->preDestructor();
 		delete _currentScene;
-		_currentScene = 0;
+		_currentScene = nullptr;
 	}
 
 	if (newLocation.timeZone != oldLocation.timeZone || newLocation.environment != oldLocation.environment || oldLocation.timeZone < 0)
@@ -450,7 +450,7 @@ bool SceneViewWindow::jumpToSceneRestore(const Location &newLocation) {
 	if (_currentScene) {
 		_currentScene->preDestructor();
 		delete _currentScene;
-		_currentScene = 0;
+		_currentScene = nullptr;
 	}
 
 	// Change the ambient music
@@ -1045,7 +1045,7 @@ bool SceneViewWindow::videoTransition(const Location &location, DestinationScene
 
 	changeStillFrameMovie(_vm->getFilePath(destinationStaticData.location.timeZone, destinationStaticData.location.environment, SF_STILLS));
 
-	Graphics::Surface *newBackground = 0;
+	Graphics::Surface *newBackground = nullptr;
 	if (destinationStaticData.navFrameIndex >= 0)
 		newBackground = getStillFrameCopy(navFrame);
 
@@ -1090,7 +1090,7 @@ bool SceneViewWindow::videoTransition(const Location &location, DestinationScene
 bool SceneViewWindow::walkTransition(const Location &location, const DestinationScene &destinationData, int navFrame) {
 	_paused = true;
 	TempCursorChange cursorChange(kCursorWait);
-	Graphics::Surface *newBackground = 0;
+	Graphics::Surface *newBackground = nullptr;
 
 	if (navFrame >= 0) {
 		changeStillFrameMovie(_vm->getFilePath(destinationData.destinationScene.timeZone, destinationData.destinationScene.environment, SF_STILLS));
@@ -1771,7 +1771,7 @@ bool SceneViewWindow::stopAsynchronousAnimation() {
 	_currentScene->movieCallback(this, _asyncMovie, 0, MOVIE_STOPPED);
 
 	delete _asyncMovie;
-	_asyncMovie = 0;
+	_asyncMovie = nullptr;
 	_asyncMovieFileName.clear();
 	_asyncMovieStartFrame = 0;
 	_asyncMovieFrameCount = 0;
@@ -1828,7 +1828,7 @@ bool SceneViewWindow::startPlacedAsynchronousAnimation(int left, int top, int wi
 
 	if (_walkMovie) {
 		delete _walkMovie;
-		_walkMovie = 0;
+		_walkMovie = nullptr;
 		_walkMovieFileName.clear();
 	}
 
@@ -1837,7 +1837,7 @@ bool SceneViewWindow::startPlacedAsynchronousAnimation(int left, int top, int wi
 	if (animDatabase.empty())
 		return false;
 
-	const AnimEvent *animData = 0;
+	const AnimEvent *animData = nullptr;
 
 	for (uint i = 0; i < animDatabase.size() && !animData; i++)
 		if (animDatabase[i].animationID == animationID)
@@ -1887,7 +1887,7 @@ bool SceneViewWindow::startPlacedAsynchronousAnimation(int left, int top, int wi
 
 	if (_walkMovie) {
 		delete _walkMovie;
-		_walkMovie = 0;
+		_walkMovie = nullptr;
 		_walkMovieFileName.clear();
 	}
 
@@ -1932,7 +1932,7 @@ bool SceneViewWindow::startPlacedAsynchronousAnimationExtern(int left, int top, 
 
 	if (_walkMovie) {
 		delete _walkMovie;
-		_walkMovie = 0;
+		_walkMovie = nullptr;
 		_walkMovieFileName.clear();
 	}
 
@@ -2315,7 +2315,7 @@ bool SceneViewWindow::checkForAIComment(const Location &commentLocation, int com
 bool SceneViewWindow::infoWindowDisplayed(bool flag) {
 	if (flag && !_walkMovie) {
 		delete _walkMovie;
-		_walkMovie = 0;
+		_walkMovie = nullptr;
 		_walkMovieFileName.clear();
 		changeCycleFrameMovie();
 	}
@@ -2337,7 +2337,7 @@ bool SceneViewWindow::infoWindowDisplayed(bool flag) {
 bool SceneViewWindow::bioChipWindowDisplayed(bool flag) {
 	if (flag && !_walkMovie) {
 		delete _walkMovie;
-		_walkMovie = 0;
+		_walkMovie = nullptr;
 		_walkMovieFileName.clear();
 		changeCycleFrameMovie();
 	}
@@ -2359,7 +2359,7 @@ bool SceneViewWindow::bioChipWindowDisplayed(bool flag) {
 bool SceneViewWindow::burnedLetterWindowDisplayed(bool flag) {
 	if (flag && !_walkMovie) {
 		delete _walkMovie;
-		_walkMovie = 0;
+		_walkMovie = nullptr;
 		_walkMovieFileName.clear();
 		changeCycleFrameMovie();
 	}

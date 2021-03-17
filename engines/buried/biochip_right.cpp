@@ -44,7 +44,7 @@ namespace Buried {
 BioChipRightWindow::BioChipRightWindow(BuriedEngine *vm, Window *parent) : Window(vm, parent) {
 	_curBioChip = kItemBioChipInterface;
 	_status = 0;
-	_bioChipViewWindow = 0;
+	_bioChipViewWindow = nullptr;
 	_forceHelp = false;
 	_forceComment = false;
 	_jumpInProgress = false;
@@ -103,7 +103,7 @@ bool BioChipRightWindow::destroyBioChipViewWindow() {
 
 	_vm->_sound->timerCallback();
 	delete _bioChipViewWindow;
-	_bioChipViewWindow = 0;
+	_bioChipViewWindow = nullptr;
 	_vm->_sound->timerCallback();
 
 	((GameUIWindow *)_parent)->_sceneViewWindow->bioChipWindowDisplayed(false);

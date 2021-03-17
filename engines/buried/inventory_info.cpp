@@ -133,7 +133,7 @@ BurnedLetterViewWindow::BurnedLetterViewWindow(BuriedEngine *vm, Window *parent,
 	_curView = 0;
 	_translatedTextResourceID = IDBD_BLETTER_TRANS_TEXT_BASE;
 	_curLineIndex = -1;
-	_preBuffer = 0;
+	_preBuffer = nullptr;
 
 	_rect = Common::Rect(0, 0, 432, 189);
 

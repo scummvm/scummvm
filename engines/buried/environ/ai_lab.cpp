@@ -1052,7 +1052,7 @@ ScienceWingPanelInterface::~ScienceWingPanelInterface() {
 
 void ScienceWingPanelInterface::preDestructor() {
 	delete _textFont;
-	_textFont = 0;
+	_textFont = nullptr;
 }
 
 int ScienceWingPanelInterface::mouseUp(Window *viewWindow, const Common::Point &pointLocation) {
@@ -2065,7 +2065,7 @@ CapacitancePanelInterface::~CapacitancePanelInterface() {
 
 void CapacitancePanelInterface::preDestructor() {
 	delete _textFont;
-	_textFont = 0;
+	_textFont = nullptr;
 }
 
 int CapacitancePanelInterface::mouseUp(Window *viewWindow, const Common::Point &pointLocation) {
@@ -2947,7 +2947,7 @@ ScanningRoomNexusDoorCodePad::~ScanningRoomNexusDoorCodePad() {
 
 void ScanningRoomNexusDoorCodePad::preDestructor() {
 	delete _textFont;
-	_textFont = 0;
+	_textFont = nullptr;
 }
 
 int ScanningRoomNexusDoorCodePad::postEnterRoom(Window *viewWindow, const Location &priorLocation) {

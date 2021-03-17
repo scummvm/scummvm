@@ -41,7 +41,7 @@ SceneBase::SceneBase(BuriedEngine *vm, Window *viewWindow, const LocationStaticD
 }
 
 int SceneBase::paint(Window *viewWindow, Graphics::Surface *preBuffer) {
-	const Graphics::Surface *newFrame = 0;
+	const Graphics::Surface *newFrame = nullptr;
 
 	if (_frameCycleCount >= 0) {
 		newFrame = ((SceneViewWindow *)viewWindow)->getCycleFrame(_frameCycleCount);
