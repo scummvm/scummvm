@@ -137,7 +137,7 @@ class Menu {
 private:
 	TwinEEngine *_engine;
 	/** Hero behaviour menu entity */
-	uint8 *behaviourEntity = 0;
+	uint8 *behaviourEntity = nullptr;
 	/** Behaviour menu anim state */
 	uint behaviourAnimState[4]; // winTab
 	/** Behaviour menu anim data pointer */
