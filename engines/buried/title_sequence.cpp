@@ -36,8 +36,8 @@ namespace Buried {
 
 TitleSequenceWindow::TitleSequenceWindow(BuriedEngine *vm, Window *parent) : Window(vm, parent) {
 	// Initialize member variables
-	_currentBackground = 0;
-	_currentMovie = 0;
+	_currentBackground = nullptr;
+	_currentMovie = nullptr;
 	_exitNow = false;
 	_currentAnimation = 0;
 
@@ -72,7 +72,7 @@ bool TitleSequenceWindow::playTitleSequence() {
 
 		if (!_currentMovie->openVideo(_vm->getFilePath(IDS_TITLE_SW_LOGO_FILENAME))) {
 			delete _currentMovie;
-			_currentMovie = 0;
+			_currentMovie = nullptr;
 			((FrameWindow *)_parent)->returnToMainMenu();
 			return false;
 		}
@@ -91,7 +91,7 @@ bool TitleSequenceWindow::playTitleSequence() {
 
 		if (!_currentMovie->openVideo(_vm->getFilePath(IDS_TITLE_PRESTO_LOGO_FILENAME))) {
 			delete _currentMovie;
-			_currentMovie = 0;
+			_currentMovie = nullptr;
 			((FrameWindow *)_parent)->returnToMainMenu();
 			return false;
 		}
@@ -109,7 +109,7 @@ bool TitleSequenceWindow::playTitleSequence() {
 
 		if (!_currentMovie->openVideo(_vm->getFilePath(IDS_TITLE_MOVIE_FILENAME))) {
 			delete _currentMovie;
-			_currentMovie = 0;
+			_currentMovie = nullptr;
 			((FrameWindow *)_parent)->returnToMainMenu();
 			return false;
 		}
@@ -161,11 +161,11 @@ void TitleSequenceWindow::onTimer(uint timer) {
 		if (_currentBackground) {
 			_currentBackground->free();
 			delete _currentBackground;
-			_currentBackground = 0;
+			_currentBackground = nullptr;
 		}
 
 		delete _currentMovie;
-		_currentMovie = 0;
+		_currentMovie = nullptr;
 
 		// Clean out the input queue
 		_exitNow = false;

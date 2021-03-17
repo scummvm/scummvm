@@ -43,7 +43,7 @@
 namespace Buried {
 
 InventoryWindow::InventoryWindow(BuriedEngine *vm, Window *parent) : Window(vm, parent) {
-	_background = 0;
+	_background = nullptr;
 	_magSelected = false;
 	_upSelected = false;
 	_downSelected = false;
@@ -51,7 +51,7 @@ InventoryWindow::InventoryWindow(BuriedEngine *vm, Window *parent) : Window(vm, 
 	_itemComesFromInventory = false;
 	_draggingObject = false;
 	_draggingItemID = -1;
-	_draggingItemSpriteData.image = 0;
+	_draggingItemSpriteData.image = nullptr;
 	_draggingIconIndex = 0;
 	_draggingItemInInventory = false;
 
@@ -71,8 +71,8 @@ InventoryWindow::InventoryWindow(BuriedEngine *vm, Window *parent) : Window(vm, 
 
 	_curItem = 0;
 
-	_infoWindow = 0;
-	_letterViewWindow = 0;
+	_infoWindow = nullptr;
+	_letterViewWindow = nullptr;
 
 	_scrollTimer = 0;
 
@@ -285,7 +285,7 @@ bool InventoryWindow::destroyBurnedLetterWindow() {
 		return false;
 
 	delete _letterViewWindow;
-	_letterViewWindow = 0;
+	_letterViewWindow = nullptr;
 
 	((GameUIWindow *)_parent)->_sceneViewWindow->burnedLetterWindowDisplayed(false);
 
@@ -589,7 +589,7 @@ void InventoryWindow::onLButtonUp(const Common::Point &point, uint flags) {
 				addItem(_draggingItemID);
 		}
 
-		_draggingItemSpriteData.image = 0;
+		_draggingItemSpriteData.image = nullptr;
 		((GameUIWindow *)getParent())->_sceneViewWindow->updatePrebufferWithSprite(_draggingItemSpriteData);
 		_itemComesFromInventory = false;
 
@@ -758,7 +758,7 @@ bool InventoryWindow::destroyInfoWindow() {
 		return false;
 
 	delete _infoWindow;
-	_infoWindow = 0;
+	_infoWindow = nullptr;
 
 	((GameUIWindow *)_parent)->_sceneViewWindow->infoWindowDisplayed(false);
 

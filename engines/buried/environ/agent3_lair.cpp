@@ -514,7 +514,7 @@ TransporterControls::~TransporterControls() {
 
 void TransporterControls::preDestructor() {
 	delete _textFont;
-	_textFont = 0;
+	_textFont = nullptr;
 }
 
 int TransporterControls::postExitRoom(Window *viewWindow, const Location &newLocation) {

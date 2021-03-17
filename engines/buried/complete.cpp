@@ -57,9 +57,9 @@ CompletionWindow::CompletionWindow(BuriedEngine *vm, Window *parent, GlobalFlags
 	_vm->_sound->setAmbientSound();
 
 	_status = 0;
-	_background = 0;
+	_background = nullptr;
 	_currentSoundEffectID = -1;
-	_gageVideo = 0;
+	_gageVideo = nullptr;
 
 	_rect = Common::Rect(0, 0, 640, 480);
 
@@ -238,7 +238,7 @@ void CompletionWindow::onTimer(uint timer) {
 	case 2:
 		if (!_gageVideo || _gageVideo->getMode() == VideoWindow::kModeStopped) {
 			delete _gageVideo;
-			_gageVideo = 0;
+			_gageVideo = nullptr;
 
 			_status = 3;
 			_background = _vm->_gfx->getBitmap(_vm->isTrueColor() ? "BITDATA/FUTAPT/ENDING24.BTS" : "BITDATA/FUTAPT/ENDING8.BTS");
@@ -259,7 +259,7 @@ void CompletionWindow::onLButtonUp(const Common::Point &point, uint flags) {
 		if (_background) {
 			_background->free();
 			delete _background;
-			_background = 0;
+			_background = nullptr;
 		}
 
 		invalidateWindow(false);
@@ -277,7 +277,7 @@ void CompletionWindow::onLButtonUp(const Common::Point &point, uint flags) {
 	case 2:
 		if (!_gageVideo || _gageVideo->getMode() == VideoWindow::kModeStopped) {
 			delete _gageVideo;
-			_gageVideo = 0;
+			_gageVideo = nullptr;
 
 			_status = 4;
 			_background = _vm->_gfx->getBitmap(_vm->isTrueColor() ? "BITDATA/FUTAPT/ENDING24.BTS" : "BITDATA/FUTAPT/ENDING8.BTS");

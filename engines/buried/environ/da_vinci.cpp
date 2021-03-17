@@ -1753,7 +1753,7 @@ AimBallistaAwayFromTower::~AimBallistaAwayFromTower() {
 
 void AimBallistaAwayFromTower::preDestructor() {
 	delete _viewFrameExtractor;
-	_viewFrameExtractor = 0;
+	_viewFrameExtractor = nullptr;
 }
 
 int AimBallistaAwayFromTower::paint(Window *viewWindow, Graphics::Surface *preBuffer) {
@@ -2130,7 +2130,7 @@ AimBallistaToTower::~AimBallistaToTower() {
 
 void AimBallistaToTower::preDestructor() {
 	delete _viewFrameExtractor;
-	_viewFrameExtractor = 0;
+	_viewFrameExtractor = nullptr;
 }
 
 int AimBallistaToTower::paint(Window *viewWindow, Graphics::Surface *preBuffer) {

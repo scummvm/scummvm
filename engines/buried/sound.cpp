@@ -680,8 +680,8 @@ void SoundManager::timerCallback() {
 }
 
 SoundManager::Sound::Sound() {
-	_soundData = 0;
-	_handle = 0;
+	_soundData = nullptr;
+	_handle = nullptr;
 
 	_volume = 127;
 	_loop = false;
@@ -749,7 +749,7 @@ bool SoundManager::Sound::stop() {
 
 	g_system->getMixer()->stopHandle(*_handle);
 	delete _handle;
-	_handle = 0;
+	_handle = nullptr;
 	return true;
 }
 

@@ -35,7 +35,7 @@
 namespace Buried {
 
 OverviewWindow::OverviewWindow(BuriedEngine *vm, Window *parent) : Window(vm, parent) {
-	_currentImage = 0;
+	_currentImage = nullptr;
 	_currentStatus = -1;
 	_timer = 0xFFFFFFFF;
 
@@ -119,7 +119,7 @@ void OverviewWindow::onTimer(uint timer) {
 	if (_currentImage) {
 		_currentImage->free();
 		delete _currentImage;
-		_currentImage = 0;
+		_currentImage = nullptr;
 	}
 
 	// Switch on the current status in order to determine which action to take next

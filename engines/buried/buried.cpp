@@ -49,15 +49,15 @@
 namespace Buried {
 
 BuriedEngine::BuriedEngine(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst), _gameDescription(gameDesc) {
-	_gfx = 0;
-	_mainEXE = 0;
-	_library = 0;
-	_sound = 0;
+	_gfx = nullptr;
+	_mainEXE = nullptr;
+	_library = nullptr;
+	_sound = nullptr;
 	_timerSeed = 0;
-	_mainWindow = 0;
-	_focusedWindow = 0;
-	_captureWindow = 0;
-	_console = 0;
+	_mainWindow = nullptr;
+	_focusedWindow = nullptr;
+	_captureWindow = nullptr;
+	_console = nullptr;
 	_pauseStartTime = 0;
 	_yielding = false;
 

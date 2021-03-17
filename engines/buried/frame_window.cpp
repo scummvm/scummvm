@@ -52,7 +52,7 @@ namespace Buried {
 
 FrameWindow::FrameWindow(BuriedEngine *vm) : Window(vm, 0) {
 	// Initialize member variables
-	_mainChildWindow = 0;
+	_mainChildWindow = nullptr;
 	_controlDown = false;
 	_cacheFrames = false;
 	_cycleDefault = true;
@@ -132,7 +132,7 @@ bool FrameWindow::showMainMenu() {
 
 	// If we still have a child window, delete it now
 	delete _mainChildWindow;
-	_mainChildWindow = 0;
+	_mainChildWindow = nullptr;
 
 	_vm->_sound->restart();
 
@@ -161,7 +161,7 @@ bool FrameWindow::returnToMainMenu() {
 
 	// If we still have a child window, delete it now
 	delete _mainChildWindow;
-	_mainChildWindow = 0;
+	_mainChildWindow = nullptr;
 
 	// Create and show the main menu window
 	if (_vm->isDemo()) {
@@ -205,7 +205,7 @@ bool FrameWindow::showClosingScreen() {
 
 	// If we still have a child window, delete it now
 	delete _mainChildWindow;
-	_mainChildWindow = 0;
+	_mainChildWindow = nullptr;
 
 	// Create the window
 	_mainChildWindow = new TitleSequenceWindow(_vm, this);
