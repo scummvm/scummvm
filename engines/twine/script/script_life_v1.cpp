@@ -1504,8 +1504,8 @@ static int32 lFADE_PAL_ALARM(TwinEEngine *engine, LifeScriptContext &ctx) {
  * @note Opcode @c 0x58
  */
 static int32 lEXPLODE_OBJ(TwinEEngine *engine, LifeScriptContext &ctx) {
-	int32 otherActorIdx = ctx.stream.readByte();
-	ActorStruct *otherActor = engine->_scene->getActor(otherActorIdx);
+	const int32 otherActorIdx = ctx.stream.readByte();
+	const ActorStruct *otherActor = engine->_scene->getActor(otherActorIdx);
 
 	engine->_extra->addExtraExplode(otherActor->pos.x, otherActor->pos.y, otherActor->pos.z); // RECHECK this
 
@@ -1535,8 +1535,8 @@ static int32 lBUBBLE_OFF(TwinEEngine *engine, LifeScriptContext &ctx) {
  * @note Opcode @c 0x5B
  */
 static int32 lASK_CHOICE_OBJ(TwinEEngine *engine, LifeScriptContext &ctx) {
-	int32 otherActorIdx = ctx.stream.readByte();
-	int32 choiceIdx = ctx.stream.readSint16LE();
+	const int32 otherActorIdx = ctx.stream.readByte();
+	const int32 choiceIdx = ctx.stream.readSint16LE();
 
 	engine->freezeTime();
 	if (engine->_text->showDialogueBubble) {
@@ -1557,6 +1557,7 @@ static int32 lASK_CHOICE_OBJ(TwinEEngine *engine, LifeScriptContext &ctx) {
  */
 static int32 lSET_DARK_PAL(TwinEEngine *engine, LifeScriptContext &ctx) {
 	ScopedEngineFreeze scoped(engine);
+	// TODO: allocation in the game frame... cache it in Resource class
 	HQR::getEntry(engine->_screens->palette, Resources::HQR_RESS_FILE, RESSHQR_DARKPAL);
 	if (!engine->_screens->lockPalette) {
 		engine->_screens->convertPalToRGBA(engine->_screens->palette, engine->_screens->paletteRGBA);
@@ -1609,7 +1610,7 @@ static int32 lMESSAGE_SENDELL(TwinEEngine *engine, LifeScriptContext &ctx) {
  * @note Opcode @c 0x5F
  */
 static int32 lANIM_SET(TwinEEngine *engine, LifeScriptContext &ctx) {
-	AnimationTypes animIdx = (AnimationTypes)ctx.stream.readByte();
+	const AnimationTypes animIdx = (AnimationTypes)ctx.stream.readByte();
 
 	ctx.actor->anim = AnimationTypes::kAnimNone;
 	ctx.actor->previousAnimIdx = -1;
@@ -1669,7 +1670,7 @@ static int32 lMIDI_OFF(TwinEEngine *engine, LifeScriptContext &ctx) {
  * @note Opcode @c 0x64
  */
 static int32 lPLAY_CD_TRACK(TwinEEngine *engine, LifeScriptContext &ctx) {
-	int32 track = ctx.stream.readByte();
+	const int32 track = ctx.stream.readByte();
 	engine->_music->playTrackMusic(track);
 	return 0;
 }
@@ -1719,9 +1720,9 @@ static int32 lTEXT(TwinEEngine *engine, LifeScriptContext &ctx) {
 
 		char textStr[256];
 		engine->_text->getMenuText(textIdx, textStr, sizeof(textStr));
-		int32 textSize = engine->_text->getTextSize(textStr);
+		const int32 textSize = engine->_text->getTextSize(textStr);
 		int32 textBoxRight = textSize;
-		int32 textBoxBottom = lTextYPos + textHeight;
+		const int32 textBoxBottom = lTextYPos + textHeight;
 		engine->_text->setFontColor(COLOR_WHITE);
 		engine->_text->drawText(0, lTextYPos, textStr);
 		if (textSize > engine->width() - 1) {
