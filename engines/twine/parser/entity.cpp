@@ -34,12 +34,12 @@ bool EntityData::loadBody(Common::SeekableReadStream &stream) {
 	body.actorBoundingBox.hasBoundingBox = stream.readByte();
 	if (body.actorBoundingBox.hasBoundingBox) {
 		if (stream.readByte() == ActionType::ACTION_ZV) {
-			body.actorBoundingBox.bottomLeftX = stream.readUint16LE();
-			body.actorBoundingBox.bottomLeftY = stream.readUint16LE();
-			body.actorBoundingBox.bottomLeftZ = stream.readUint16LE();
-			body.actorBoundingBox.topRightX = stream.readUint16LE();
-			body.actorBoundingBox.topRightY = stream.readUint16LE();
-			body.actorBoundingBox.topRightZ = stream.readUint16LE();
+			body.actorBoundingBox.minsx = stream.readUint16LE();
+			body.actorBoundingBox.minsy = stream.readUint16LE();
+			body.actorBoundingBox.minsz = stream.readUint16LE();
+			body.actorBoundingBox.maxsx = stream.readUint16LE();
+			body.actorBoundingBox.maxsy = stream.readUint16LE();
+			body.actorBoundingBox.maxsz = stream.readUint16LE();
 		}
 	}
 	_bodies.push_back(body);
