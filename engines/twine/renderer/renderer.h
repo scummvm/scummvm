@@ -114,10 +114,6 @@ struct Model {
 		return (bodyHeader & 2) != 0;
 	}
 
-	static inline bool isAnimated(const BodyData &bodyPtr) {
-		return bodyPtr.isAnimated();
-	}
-
 	static uint8 *getData(uint8 *bodyPtr) {
 		return bodyPtr + 0x1A;
 	}
@@ -128,10 +124,6 @@ struct Model {
 
 	static const uint8 *getVerticesBaseData(const uint8 *bodyPtr) {
 		return getData(bodyPtr) + 2;
-	}
-
-	static const Common::Array<BodyVertex> &getVerticesBaseData(const BodyData &bodyPtr) {
-		return bodyPtr.getVertices();
 	}
 
 	static uint8 *getBonesData(uint8 *bodyPtr) {
@@ -154,24 +146,12 @@ struct Model {
 		return (BoneFrame*)(getBonesBaseData(bodyPtr) + 8 + (boneIdx * 38));
 	}
 
-	static BoneFrame *getBonesStateData(BodyData &bodyPtr, int boneIdx) {
-		return bodyPtr.getBoneState(boneIdx);
-	}
-
-	static const BoneFrame *getBonesStateData(const BodyData &bodyPtr, int boneIdx) {
-		return bodyPtr.getBoneState(boneIdx);
-	}
-
 	static uint8 *getBonesBaseData(uint8 *bodyPtr) {
 		return getBonesData(bodyPtr) + 2;
 	}
 
 	static const uint8 *getBonesBaseData(const uint8 *bodyPtr, int boneIdx = 0) {
 		return getBonesData(bodyPtr) + 2 + (boneIdx * 38);
-	}
-
-	static const BoneFrame *getBonesBaseData(const BodyData &bodyPtr, int boneIdx = 0) {
-		return bodyPtr.getBoneState(boneIdx);
 	}
 
 	static int16 getNumBones(const uint8 *bodyPtr) {
@@ -181,17 +161,9 @@ struct Model {
 		return READ_LE_INT16(bonesBase);
 	}
 
-	static int16 getNumBones(const BodyData &bodyPtr) {
-		return bodyPtr.getNumBones();
-	}
-
 	static int16 getNumVertices(const uint8 *bodyPtr) {
 		const uint8 *verticesBase = getData(bodyPtr);
 		return READ_LE_INT16(verticesBase);
-	}
-
-	static int16 getNumVertices(const BodyData &bodyPtr) {
-		return bodyPtr.getNumVertices();
 	}
 
 	static uint8 *getShadesData(uint8 *bodyPtr) {
@@ -202,10 +174,6 @@ struct Model {
 
 	static const uint8 *getShadesBaseData(const uint8 *bodyPtr, int16 shadeIdx = 0) {
 		return getShadesData(bodyPtr) + 2 + (shadeIdx * 8);
-	}
-
-	static const BodyShade *getShadesBaseData(const BodyData &bodyPtr, int16 shadeIdx = 0) {
-		return bodyPtr.getShade(shadeIdx);
 	}
 
 	static const uint8 *getShadesData(const uint8 *bodyPtr) {
@@ -219,17 +187,9 @@ struct Model {
 		return READ_LE_INT16(shadesBase);
 	}
 
-	static int16 getNumShades(const BodyData &bodyPtr) {
-		return bodyPtr.getShades().size();
-	}
-
 	static int16 getNumShadesBone(const uint8 *bodyPtr, int boneIdx) {
 		const uint8 *bonesBase = getBonesBaseData(bodyPtr);
 		return READ_LE_INT16(bonesBase + (boneIdx * 38) + 18);
-	}
-
-	static int16 getNumShadesBone(const BodyData &bodyPtr, int boneIdx) {
-		return bodyPtr.getBone(boneIdx)->numOfShades;
 	}
 
 	static const uint8 *getPolygonData(const uint8 *bodyPtr) {
