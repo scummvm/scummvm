@@ -42,6 +42,7 @@ PuzzleWritings::PuzzleWritings(AsylumEngine *engine) : Puzzle(engine) {
 }
 
 PuzzleWritings::~PuzzleWritings() {
+	_textSurface.free();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -64,10 +65,34 @@ bool PuzzleWritings::init(const AsylumEvent &)  {
 		getCursor()->set(getWorld()->graphicResourceIds[61], -1, kCursorAnimationNone, 7);
 	}
 
+	_textSurface.create(640, 480, Graphics::PixelFormat::createFormatCLUT8());
+
+	// Draw background
+	getScreen()->draw(getWorld()->graphicResourceIds[5]);
+
+	// Draw all lines of text
+	getText()->loadFont(getWorld()->graphicResourceIds[42]);
+	getText()->draw(0, 99, kTextNormal, Common::Point( 70,  45), 16, 590, getText()->get(MAKE_RESOURCE(kResourcePackText, 1825)));
+	getText()->draw(0, 99, kTextNormal, Common::Point(130,  75), 16, 590, getText()->get(MAKE_RESOURCE(kResourcePackText, 1826)));
+	getText()->draw(0, 99, kTextNormal, Common::Point( 70, 105), 16, 590, getText()->get(MAKE_RESOURCE(kResourcePackText, 1827)));
+	getText()->draw(0, 99, kTextNormal, Common::Point(130, 135), 16, 590, getText()->get(MAKE_RESOURCE(kResourcePackText, 1828)));
+	getText()->draw(0, 99, kTextNormal, Common::Point( 70, 165), 16, 590, getText()->get(MAKE_RESOURCE(kResourcePackText, 1829)));
+	getText()->draw(0, 99, kTextNormal, Common::Point(130, 195), 16, 590, getText()->get(MAKE_RESOURCE(kResourcePackText, 1830)));
+	getText()->draw(0, 99, kTextNormal, Common::Point( 70, 225), 16, 590, getText()->get(MAKE_RESOURCE(kResourcePackText, 1831)));
+	getText()->draw(0, 99, kTextNormal, Common::Point(130, 255), 16, 590, getText()->get(MAKE_RESOURCE(kResourcePackText, 1832)));
+	getText()->draw(0, 99, kTextNormal, Common::Point( 70, 285), 16, 590, getText()->get(MAKE_RESOURCE(kResourcePackText, 1833)));
+	getText()->draw(0, 99, kTextNormal, Common::Point(130, 315), 16, 590, getText()->get(MAKE_RESOURCE(kResourcePackText, 1834)));
+	getText()->draw(0, 99, kTextCenter, Common::Point( 20, 375), 16, 590, getText()->get(MAKE_RESOURCE(kResourcePackText, 1835)));
+	getText()->draw(0, 99, kTextCenter, Common::Point( 20, 405), 16, 590, getText()->get(MAKE_RESOURCE(kResourcePackText, 1836)));
+
+	_textSurface.copyFrom(*getScreen()->getSurface());
+
 	return false;
 }
 
 bool PuzzleWritings::update(const AsylumEvent &)  {
+	int16 x1, y1, x2, y2;
+
 	// Adjust palette
 	if (rnd(10) < 7) {
 		getScreen()->setPalette(getWorld()->graphicResourceIds[6]);
@@ -88,16 +113,25 @@ bool PuzzleWritings::update(const AsylumEvent &)  {
 			--_frameIndex;
 	}
 
-	// TODO Compute rects to update
+	mousePos.x -= 50;
+	mousePos.y -= 50;
+	x1 = mousePos.x + 20;
+	y1 = mousePos.y + 20;
+	x2 = mousePos.x + 95;
+	y2 = mousePos.y + 90;
+	if (y1 < 0)
+		y1 = 0;
+	if (y2 > 480)
+		y2 = 480;
 
 	// Draw background
 	getScreen()->clearGraphicsInQueue();
 	getScreen()->draw(getWorld()->graphicResourceIds[4]);
 
 	if (_hasGlassMagnifier) {
-		drawBackground();
-
-		// The original blits part of the background onto the surface (9) and then adds it to the queue
+		getScreen()->copyToBackBuffer(
+				((byte *)_textSurface.getPixels()) + y1 * _textSurface.pitch + x1 * _textSurface.format.bytesPerPixel,
+				_textSurface.pitch, x1, y1, (uint16)(x2 - x1), (uint16)(y2 - y1));
 
 		getScreen()->addGraphicToQueueMasked(getWorld()->graphicResourceIds[9], 0, mousePos, getWorld()->graphicResourceIds[8], mousePos, kDrawFlagNone, 2);
 		getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[7], (uint32)_frameIndex, mousePos, kDrawFlagNone, 0, 1);
@@ -117,30 +151,6 @@ bool PuzzleWritings::mouseRightUp(const AsylumEvent &) {
 	_vm->switchEventHandler(getScene());
 
 	return false;
-}
-
-//////////////////////////////////////////////////////////////////////////
-// Helpers
-//////////////////////////////////////////////////////////////////////////
-
-void PuzzleWritings::drawBackground() {
-	// Draw background
-	getScreen()->draw(getWorld()->graphicResourceIds[5]);
-
-	// Draw all lines of text
-	getText()->loadFont(getWorld()->graphicResourceIds[42]);
-	getText()->draw(0, 99, kTextNormal, Common::Point( 70,  45), 16, 590, getText()->get(MAKE_RESOURCE(kResourcePackText, 1825)));
-	getText()->draw(0, 99, kTextNormal, Common::Point(130,  75), 16, 590, getText()->get(MAKE_RESOURCE(kResourcePackText, 1826)));
-	getText()->draw(0, 99, kTextNormal, Common::Point( 70, 105), 16, 590, getText()->get(MAKE_RESOURCE(kResourcePackText, 1827)));
-	getText()->draw(0, 99, kTextNormal, Common::Point(130, 135), 16, 590, getText()->get(MAKE_RESOURCE(kResourcePackText, 1828)));
-	getText()->draw(0, 99, kTextNormal, Common::Point( 70, 165), 16, 590, getText()->get(MAKE_RESOURCE(kResourcePackText, 1829)));
-	getText()->draw(0, 99, kTextNormal, Common::Point(130, 195), 16, 590, getText()->get(MAKE_RESOURCE(kResourcePackText, 1830)));
-	getText()->draw(0, 99, kTextNormal, Common::Point( 70, 225), 16, 590, getText()->get(MAKE_RESOURCE(kResourcePackText, 1831)));
-	getText()->draw(0, 99, kTextNormal, Common::Point(130, 255), 16, 590, getText()->get(MAKE_RESOURCE(kResourcePackText, 1832)));
-	getText()->draw(0, 99, kTextNormal, Common::Point( 70, 285), 16, 590, getText()->get(MAKE_RESOURCE(kResourcePackText, 1833)));
-	getText()->draw(0, 99, kTextNormal, Common::Point(130, 315), 16, 590, getText()->get(MAKE_RESOURCE(kResourcePackText, 1834)));
-	getText()->draw(0, 99, kTextCenter, Common::Point(320, 375), 16, 590, getText()->get(MAKE_RESOURCE(kResourcePackText, 1835)));
-	getText()->draw(0, 99, kTextCenter, Common::Point(320, 405), 16, 590, getText()->get(MAKE_RESOURCE(kResourcePackText, 1836)));
 }
 
 } // End of namespace Asylum
