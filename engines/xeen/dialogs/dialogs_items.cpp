@@ -20,6 +20,7 @@
  *
  */
 
+#include "common/config-manager.h"
 #include "xeen/dialogs/dialogs_items.h"
 #include "xeen/dialogs/dialogs_query.h"
 #include "xeen/dialogs/dialogs_quests.h"
@@ -889,6 +890,8 @@ int ItemsDialog::doItemOptions(Character &c, int actionIndex, int itemIndex, Ite
 				Common::String desc = c._items[category].getFullDescription(itemIndex);
 				Common::String msg = Common::String::format(Res.SELL_X_FOR_Y_GOLD,
 					desc.c_str(), cost);
+				if (Common::RU_RUS == Common::parseLanguage(ConfMan.get("language"))) 
+					msg += Res.RU_SELL_X_FOR_Y_GOLD_ENDINGS[cost % 10 == 1 ? 0 : 1];
 
 				if (Confirm::show(_vm, msg)) {
 					// Remove the sold item and add gold to the party's total
