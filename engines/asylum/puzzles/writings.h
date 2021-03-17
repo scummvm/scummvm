@@ -24,6 +24,7 @@
 #define ASYLUM_WRITINGS_H
 
 #include "asylum/puzzles/puzzle.h"
+#include "asylum/system/graphics.h"
 
 namespace Asylum {
 
@@ -38,6 +39,7 @@ private:
 	int32 _frameIndex;
 
 	bool _hasGlassMagnifier;
+	Graphics::Surface _textSurface;
 
 	//////////////////////////////////////////////////////////////////////////
 	// Event Handling
@@ -46,18 +48,6 @@ private:
 	bool update(const AsylumEvent &evt);
 	bool key(const AsylumEvent &evt) { return keyExit(evt); }
 	bool mouseRightUp(const AsylumEvent &evt);
-
-	//////////////////////////////////////////////////////////////////////////
-	// Helpers
-	//////////////////////////////////////////////////////////////////////////
-
-	/**
-	 * Draw the background.
-	 *
-	 * @note the original draws the background once during initialization
-	 * 		 and saves the resulting surface into the original background
-	 */
-	void drawBackground();
 };
 
 } // End of namespace Asylum

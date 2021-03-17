@@ -131,6 +131,9 @@ public:
 	void drawRect(const Common::Rect &rect, uint32 color = 0xFF);
 	void copyToBackBufferClipped(Graphics::Surface *surface, int16 x, int16 y);
 
+	// Used by Writings puzzle
+	const Graphics::Surface *getSurface() const { return &_backBuffer; };
+
 protected:
 	// Palette fading Timer
 	static void paletteFadeTimer(void *ptr);
