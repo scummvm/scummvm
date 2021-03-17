@@ -23,15 +23,15 @@
 
 namespace Snatcher {
 
-class SegaRenderer : public Renderer {
+class SCDRenderer : public Renderer {
 public:
-	SegaRenderer() : Renderer() {}
-	~SegaRenderer() override {}
+	SCDRenderer() : Renderer() {}
+	~SCDRenderer() override {}
 private:
 };
 
 Renderer *Renderer::createSegaRenderer() {
-	return new SegaRenderer();
+	return new SCDRenderer();
 }
 
 } // End of namespace Snatcher
