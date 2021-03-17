@@ -27,11 +27,9 @@
 #include "buried/frame_window.h"
 #include "buried/graphics.h"
 #include "buried/message.h"
-#include "buried/resources.h"
 #include "buried/sound.h"
 #include "buried/demo/demo_menu.h"
 
-#include "common/events.h"
 #include "common/system.h"
 #include "graphics/surface.h"
 
