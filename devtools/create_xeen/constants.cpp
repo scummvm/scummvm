@@ -1295,6 +1295,8 @@ static const char* const CHARACTER_DETAILS =
   "\x3""l\t131\f15%u\fd\t196\f%02u%s\fd"
   "\t245%s%s%s%s\fd";
 
+static const char *const RU_DAYS[3] = { "день", "дня", "дней" };
+
 static const char* const PARTY_GOLD = "Золото";
 
 static const char* const PLUS_14 = "\f14+";
@@ -1710,6 +1712,8 @@ static const char* const BUY_X_FOR_Y_GOLD =
 
 static const char* const SELL_X_FOR_Y_GOLD =
   "\x3""l\v000\t000\fdПродать %s\fd за %lu золот%s?";
+
+static const char *const RU_SELL_X_FOR_Y_GOLD_ENDINGS[2] = { "ой", "ых" };
 
 static const char* const NO_NEED_OF_THIS =
   "\v005\x3""c\fdНас не интересует %s\fd!";
@@ -2335,6 +2339,7 @@ void writeConstants(CCArchive& cc) {
   file.syncString(SWORDS_GAME_TEXT);
   file.syncStrings(WEEK_DAY_STRINGS, 10);
   file.syncString(CHARACTER_DETAILS);
+  file.syncStrings(RU_DAYS, 3);
   file.syncString(PARTY_GOLD);
   file.syncString(PLUS_14);
   file.syncString(CHARACTER_TEMPLATE);
@@ -2420,6 +2425,7 @@ void writeConstants(CCArchive& cc) {
   file.syncStrings(CATEGORY_BACKPACK_IS_FULL, 4);
   file.syncString(BUY_X_FOR_Y_GOLD);
   file.syncString(SELL_X_FOR_Y_GOLD);
+  file.syncStrings(RU_SELL_X_FOR_Y_GOLD_ENDINGS, 2);
   file.syncString(NO_NEED_OF_THIS);
   file.syncString(NOT_RECHARGABLE);
   file.syncString(SPELL_FAILED);
