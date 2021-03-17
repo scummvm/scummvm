@@ -28,9 +28,6 @@
 #ifdef USE_ICONV
 #include "common/iconv.h"
 #endif
-#ifdef MACOSX
-#include "common/macresman.h"
-#endif
 #include "common/str-array.h"
 #include "common/system.h"
 #include "common/unzip.h"
@@ -606,7 +603,7 @@ Graphics::Surface *GraphicsManager::remapPalettedFrame(const Graphics::Surface *
 		for (int x = 0; x < frame->w; x++)
 			*((byte *)convertedSurface->getBasePtr(x, y)) = palMap[*((const byte *)frame->getBasePtr(x, y))];
 	}
-	
+
 	return convertedSurface;
 }
 
