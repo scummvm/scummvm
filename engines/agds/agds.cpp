@@ -943,7 +943,7 @@ void AGDSEngine::tell(Process &process, const Common::String &regionName, Common
 	_tellTextTimer = _dialog.textDelay(text);
 	_textLayout.layout(*this, process.getName(), text, pos, font_id, npc);
 	if (!sound.empty()) {
-		playSoundSync(sound, process.phaseVar());
+		playSoundSync(sound);
 	} else {
 		_syncSoundId = -1;
 	}

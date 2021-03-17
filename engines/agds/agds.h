@@ -238,8 +238,8 @@ public:
 		return _soundManager.play(process, resource, filename, phaseVar, playing);
 	}
 
-	void playSoundSync(const Common::String &filename, const Common::String &phaseVar) {
-		_syncSoundId = playSound(Common::String(), Common::String(), filename, phaseVar);
+	void playSoundSync(const Common::String &filename) {
+		_syncSoundId = playSound(Common::String(), Common::String(), filename, Common::String());
 	}
 	void setAmbientSoundId(int id) { _ambientSoundId = id; }
 
