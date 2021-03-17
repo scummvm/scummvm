@@ -160,8 +160,20 @@ bool Dialog::tick() {
 			DialogDefsType::const_iterator it = _dialogDefs.find(line);
 			if (it != _dialogDefs.end()) {
 				int value = it->_value;
-				debug("dialog value %s = %d (0x%04x)", line.c_str(), value, value);
 				_currentDef = line;
+				if (!_currentDef.hasPrefix("vybervarianty") && !_currentDef.hasPrefix("varianta")) {
+					_currentSoundIndex = -1;
+
+					for(uint s = 0; s < _sounds.size(); ++s) {
+						auto & sound = _sounds[s];
+						if (_currentDef.hasPrefixIgnoreCase(sound.Name)) {
+							_currentSoundIndex = s;
+							break;
+						}
+					}
+				}
+				debug("dialog value %s = %d (0x%04x), sample index: %d", line.c_str(), value, value, _currentSoundIndex);
+
 				dialog_var->setInteger(value);
 				_engine->reactivate(_dialogProcessName);
 			} else
@@ -187,16 +199,11 @@ Common::String Dialog::getNextDialogSound() {
 	if (_currentDef.empty())
 		return Common::String();
 
-	uint it;
-	for(it = 0; it < _sounds.size(); ++it) {
-		auto & sound = _sounds[it];
-		if (_currentDef.hasPrefixIgnoreCase(sound.Name))
-			break;
-	}
-	if (it == _sounds.size())
+	debug("getNextDialogSound %s %d", _currentDef.c_str(), _currentSoundIndex);
+	if (_currentSoundIndex < 0)
 		return Common::String();
 
-	auto &sound = _sounds[it];
+	auto &sound = _sounds[_currentSoundIndex];
 	auto &sample = sound.Sample;
 	auto currentSample = sample;
 

@@ -58,11 +58,12 @@ private:
 
 	SoundsType					_sounds;
 	Common::String				_currentDef;
+	int							_currentSoundIndex;
 
 	void parseDialogDefs(const Common::String &defs);
 
 public:
-	Dialog(AGDSEngine *engine): _engine(engine), _dialogScriptPos(0) { }
+	Dialog(AGDSEngine *engine): _engine(engine), _dialogScriptPos(0), _currentSoundIndex(-1) { }
 	void run(const Common::String &dialogParent, const Common::String &dialogProcess);
 	int textDelay(const Common::String &str);
 	const Common::String &getNextDialogLine() const {
