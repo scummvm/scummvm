@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-03-17 16:34+0000\n"
-"PO-Revision-Date: 2021-02-21 19:36+0000\n"
+"PO-Revision-Date: 2021-03-17 22:37+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/uk/>\n"
@@ -314,17 +314,13 @@ msgid "Backend"
 msgstr "Бекенд"
 
 #: gui/editgamedialog.cpp:250
-#, fuzzy
-#| msgid "Override global audio settings"
 msgid "Override global backend settings"
-msgstr "Перекрити глобальні налаштування аудіо"
+msgstr "Перекрити глобальні налаштування бекенду"
 
 #: gui/editgamedialog.cpp:252
-#, fuzzy
-#| msgid "Override global audio settings"
 msgctxt "lowres"
 msgid "Override global backend settings"
-msgstr "Перекрити глобальні налаштування аудіо"
+msgstr "Перекрити глобальні налаштування бекенду"
 
 #: gui/editgamedialog.cpp:266 gui/options.cpp:1858 engines/dialogs.cpp:301
 msgid "Audio"
@@ -2789,16 +2785,12 @@ msgid "Decrease the scale factor"
 msgstr "Зменшити масштаб"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:436
-#, fuzzy
-#| msgid "Switch to TV 2x scaling"
 msgid "Switch to the next scaler"
-msgstr "Перемикання до фільтра TV 2x"
+msgstr "Перемикання до наступного фільтру"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:441
-#, fuzzy
-#| msgid "Switch to nearest neighbour scaling"
 msgid "Switch to the previous scaler"
-msgstr "Перемикання до фільтра nearest neighbour"
+msgstr "Перемикання до попереднього фільтру"
 
 #: backends/keymapper/hardware-input.cpp:245
 msgid "Left Mouse Button"
@@ -5442,10 +5434,8 @@ msgid "Display/Hide Pause Menu"
 msgstr "Показувати/Сховати меню паузи"
 
 #: engines/pegasus/pegasus.cpp:2795
-#, fuzzy
-#| msgid "Toggle fast mode"
 msgid "Toggle Chatty AI"
-msgstr "Перемикання швидкого режиму"
+msgstr "Перемикання балакучого ШІ"
 
 #: engines/pegasus/pegasus.cpp:2804 engines/wintermute/keymapper_tables.h:298
 #: engines/wintermute/keymapper_tables.h:325
