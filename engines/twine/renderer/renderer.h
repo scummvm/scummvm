@@ -82,33 +82,26 @@ inline Matrix operator*(const Matrix &matrix, const IVec3 &vec) {
 	return out;
 }
 
-struct Model {
-	struct BodyFlags {
-		uint16 unk1 : 1;            // 1 << 0
-		uint16 animated : 1;        // 1 << 1
-		uint16 unk3 : 1;            // 1 << 2
-		uint16 unk4 : 1;            // 1 << 3
-		uint16 unk5 : 1;            // 1 << 4
-		uint16 unk6 : 1;            // 1 << 5
-		uint16 unk7 : 1;            // 1 << 6
-		uint16 alreadyPrepared : 1; // 1 << 7
-		uint16 unk9 : 1;            // 1 << 8
-		uint16 unk10 : 1;           // 1 << 9
-		uint16 unk11 : 1;           // 1 << 10
-		uint16 unk12 : 1;           // 1 << 11
-		uint16 unk13 : 1;           // 1 << 12
-		uint16 unk14 : 1;           // 1 << 13
-		uint16 unk15 : 1;           // 1 << 14
-		uint16 unk16 : 1;           // 1 << 15
-	} bodyFlag;
-	int16 minsx = 0;
-	int16 maxsx = 0;
-	int16 minsy = 0;
-	int16 maxsy = 0;
-	int16 minsz = 0;
-	int16 maxsz = 0;
-	int16 offsetToData = 0;
+struct BodyFlags {
+	uint16 unk1 : 1;            // 1 << 0
+	uint16 animated : 1;        // 1 << 1
+	uint16 unk3 : 1;            // 1 << 2
+	uint16 unk4 : 1;            // 1 << 3
+	uint16 unk5 : 1;            // 1 << 4
+	uint16 unk6 : 1;            // 1 << 5
+	uint16 unk7 : 1;            // 1 << 6
+	uint16 alreadyPrepared : 1; // 1 << 7
+	uint16 unk9 : 1;            // 1 << 8
+	uint16 unk10 : 1;           // 1 << 9
+	uint16 unk11 : 1;           // 1 << 10
+	uint16 unk12 : 1;           // 1 << 11
+	uint16 unk13 : 1;           // 1 << 12
+	uint16 unk14 : 1;           // 1 << 13
+	uint16 unk15 : 1;           // 1 << 14
+	uint16 unk16 : 1;           // 1 << 15
+};
 
+struct Model {
 	static inline bool isAnimated(const uint8 *bodyPtr) {
 		const int16 bodyHeader = READ_LE_INT16(bodyPtr);
 		return (bodyHeader & 2) != 0;

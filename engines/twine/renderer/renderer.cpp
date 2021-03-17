@@ -1486,14 +1486,14 @@ bool Renderer::renderAnimatedModel(ModelData *modelData, const uint8 *bodyPtr, R
 }
 
 void Renderer::prepareIsoModel(uint8 *bodyPtr) { // loadGfxSub
-	Model *bodyHeader = (Model *)bodyPtr;
+	BodyFlags *bodyHeader = (BodyFlags *)bodyPtr;
 
 	// This function should only be called ONCE, otherwise it corrupts the model data.
 	// The following code implements an unused flag to indicate that a model was already processed.
-	if (bodyHeader->bodyFlag.alreadyPrepared) {
+	if (bodyHeader->alreadyPrepared) {
 		return;
 	}
-	bodyHeader->bodyFlag.alreadyPrepared = 1;
+	bodyHeader->alreadyPrepared = 1;
 
 	// no animation applicable
 	if (!Model::isAnimated(bodyPtr)) {
