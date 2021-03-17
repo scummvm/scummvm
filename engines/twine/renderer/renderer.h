@@ -227,9 +227,18 @@ private:
 	struct RenderCommand {
 		int16 depth = 0;
 		int16 renderType = 0;
+		/**
+		 * Pointer to the command data
+		 * @sa renderCoordinatesBuffer
+		 */
 		uint8 *dataPtr = nullptr;
 	};
 
+	/**
+	 * @brief A render command payload for drawing a line
+	 *
+	 * @sa RenderCommand
+	 */
 	struct CmdRenderLine {
 		uint8 colorIndex = 0;
 		uint8 unk1 = 0;
@@ -241,6 +250,11 @@ private:
 		int16 y2 = 0;
 	};
 
+	/**
+	 * @brief A render command payload for drawing a sphere
+	 *
+	 * @sa RenderCommand
+	 */
 	struct CmdRenderSphere {
 		int8 colorIndex = 0;
 		int16 x = 0;
@@ -305,6 +319,10 @@ private:
 	IVec3 lightPos;
 
 	RenderCommand _renderCmds[1000];
+	/**
+	 * @brief Raw buffer for holding the render commands. This is a type followed by the command data
+	 * that is needed to render the primitive.
+	 */
 	uint8 renderCoordinatesBuffer[10000]{0};
 
 	int32 _polyTabSize = 0;
