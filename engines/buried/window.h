@@ -24,7 +24,7 @@
 #define BURIED_WINDOW_H
 
 #include "common/rect.h"
-#include "common/queue.h"
+#include "common/list.h"
 
 namespace Common {
 struct KeyState;

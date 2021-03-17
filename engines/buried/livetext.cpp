@@ -23,8 +23,8 @@
  *
  */
 
-#include "graphics/font.h"
 #include "graphics/surface.h"
+#include "graphics/font.h"
 
 #include "buried/buried.h"
 #include "buried/gameui.h"
