@@ -36,13 +36,6 @@
 
 #include "graphics/font.h"
 
-// For some reason, the Win32 API thinks it's OK to define "_environ" in stdlib.h.
-// I refuse to give in and rename a variable on grounds that Windows is completely
-// wrong, so this shall remain.
-#ifdef WIN32
-#undef _environ
-#endif
-
 namespace Buried {
 
 class OvenDoor : public SceneBase {
@@ -1902,16 +1895,16 @@ public:
 	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
 
 private:
-	Common::Rect _environ;
+	Common::Rect _environRect;
 };
 
 MainEnvironSitDownClick::MainEnvironSitDownClick(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) :
 		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
-	_environ = Common::Rect(120, 0, 302, 189);
+	_environRect = Common::Rect(120, 0, 302, 189);
 }
 
 int MainEnvironSitDownClick::mouseUp(Window *viewWindow, const Common::Point &pointLocation) {
-	if (_environ.contains(pointLocation)) {
+	if (_environRect.contains(pointLocation)) {
 		DestinationScene newScene;
 		newScene.destinationScene = _staticData.location;
 		newScene.destinationScene.orientation = 1;
@@ -1928,7 +1921,7 @@ int MainEnvironSitDownClick::mouseUp(Window *viewWindow, const Common::Point &po
 }
 
 int MainEnvironSitDownClick::specifyCursor(Window *viewWindow, const Common::Point &pointLocation) {
-	if (_environ.contains(pointLocation))
+	if (_environRect.contains(pointLocation))
 		return kCursorFinger;
 
 	return kCursorArrow;
