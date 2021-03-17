@@ -113,18 +113,7 @@ struct BoundingBox {
 };
 
 struct ActorBoundingBox {
-	/** Bottom left X coordinate */
-	int16 minsx = 0;
-	/** Bottom left Y coordinate */
-	int16 minsy = 0;
-	/** Bottom left Z coordinate */
-	int16 minsz = 0;
-	/** Top left X coordinate */
-	int16 maxsx = 0;
-	/** Top left Y coordinate */
-	int16 maxsy = 0;
-	/** Top left Z coordinate */
-	int16 maxsz = 0;
+	BoundingBox bbox;
 	bool hasBoundingBox = false;
 };
 

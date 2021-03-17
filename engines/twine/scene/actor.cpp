@@ -213,13 +213,12 @@ int32 Actor::initBody(BodyType bodyIdx, int32 actorIdx, ActorBoundingBox &actorB
 					return index;
 				}
 
-				actorBoundingBox.minsx = stream.readUint16LE();
-				actorBoundingBox.minsy = stream.readUint16LE();
-				actorBoundingBox.minsz = stream.readUint16LE();
-
-				actorBoundingBox.maxsx = stream.readUint16LE();
-				actorBoundingBox.maxsy = stream.readUint16LE();
-				actorBoundingBox.maxsz = stream.readUint16LE();
+				actorBoundingBox.bbox.mins.x = stream.readSint16LE();
+				actorBoundingBox.bbox.mins.y = stream.readSint16LE();
+				actorBoundingBox.bbox.mins.z = stream.readSint16LE();
+				actorBoundingBox.bbox.maxs.x = stream.readSint16LE();
+				actorBoundingBox.bbox.maxs.y = stream.readSint16LE();
+				actorBoundingBox.bbox.maxs.z = stream.readSint16LE();
 
 				return index;
 			}
@@ -262,12 +261,12 @@ void Actor::initModelActor(BodyType bodyIdx, int16 actorIdx) {
 
 	if (actorBoundingBox.hasBoundingBox) {
 		BoundingBox &bbox = localActor->boudingBox;
-		bbox.mins.x = actorBoundingBox.minsx;
-		bbox.maxs.x = actorBoundingBox.maxsx;
-		bbox.mins.y = actorBoundingBox.minsy;
-		bbox.maxs.y = actorBoundingBox.maxsy;
-		bbox.mins.z = actorBoundingBox.minsz;
-		bbox.maxs.z = actorBoundingBox.maxsz;
+		bbox.mins.x = actorBoundingBox.bbox.mins.x;
+		bbox.maxs.x = actorBoundingBox.bbox.maxs.x;
+		bbox.mins.y = actorBoundingBox.bbox.mins.y;
+		bbox.maxs.y = actorBoundingBox.bbox.maxs.y;
+		bbox.mins.z = actorBoundingBox.bbox.mins.z;
+		bbox.maxs.z = actorBoundingBox.bbox.maxs.z;
 	} else {
 		BoundingBox &bbox = localActor->boudingBox;
 		const BodyData &bd = bodyData[localActor->entity];
