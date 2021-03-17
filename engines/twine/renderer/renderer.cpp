@@ -733,7 +733,7 @@ void Renderer::renderPolygonsTras(uint8 *out, int vtop, int32 vsize, uint8 color
 }
 
 // FIXME: buggy
-void Renderer::renderPolygonTrame(uint8 *out, int vtop, int32 vsize, uint8 color) const {
+void Renderer::renderPolygonsTrame(uint8 *out, int vtop, int32 vsize, uint8 color) const {
 	const int16 *ptr1 = &_polyTab[vtop];
 	unsigned char bh = 0;
 	const int screenWidth = _engine->width();
@@ -920,7 +920,7 @@ void Renderer::renderPolygonsDither(uint8 *out, int vtop, int32 vsize) const {
 				currentColor &= 0xFF;
 				currentColor += startColor;
 				if (currentXPos >= 0 && currentXPos < screenWidth) {
-					*(out2) = currentColor / 256;
+					*out2 = currentColor / 256;
 				}
 
 				currentColor &= 0xFF;
@@ -1042,7 +1042,7 @@ void Renderer::renderPolygons(const CmdRenderPolygon &polygon, Vertex *vertices)
 		renderPolygonsTras(out, vtop, vsize, polygon.colorIndex);
 		break;
 	case POLYGONTYPE_TRAME:
-		renderPolygonTrame(out, vtop, vsize, polygon.colorIndex);
+		renderPolygonsTrame(out, vtop, vsize, polygon.colorIndex);
 		break;
 	case POLYGONTYPE_GOURAUD:
 		renderPolygonsGouraud(out, vtop, vsize);

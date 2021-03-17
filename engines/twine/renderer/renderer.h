@@ -326,7 +326,7 @@ private:
 	void renderPolygonsFlat(uint8 *out, int vtop, int32 vsize, uint8 color) const;
 	void renderPolygonsTele(uint8 *out, int vtop, int32 vsize, uint8 color) const;
 	void renderPolygonsTras(uint8 *out, int vtop, int32 vsize, uint8 color) const;
-	void renderPolygonTrame(uint8 *out, int vtop, int32 vsize, uint8 color) const;
+	void renderPolygonsTrame(uint8 *out, int vtop, int32 vsize, uint8 color) const;
 	void renderPolygonsGouraud(uint8 *out, int vtop, int32 vsize) const;
 	void renderPolygonsDither(uint8 *out, int vtop, int32 vsize) const;
 	void renderPolygonsMarble(uint8 *out, int vtop, int32 vsize, uint8 color) const;
