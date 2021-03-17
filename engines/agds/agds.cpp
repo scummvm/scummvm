@@ -669,6 +669,7 @@ Common::Error AGDSEngine::run() {
 				skipFilm();
 			}
 		} else if (_currentScreen) {
+			_currentScreen->tick();
 			_currentScreen->paint(*backbuffer);
 		}
 
