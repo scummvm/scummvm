@@ -225,7 +225,7 @@ int16 findFileInBundle(const char *fileName) {
 		// Prefer current disk's resource file
 		Common::Array<VolumeResource> volRes = it->_value;
 		VolumeResource match = volRes[0];
-		for (int i = 0; i < volRes.size(); i++) {
+		for (uint i = 0; i < volRes.size(); i++) {
 			if (volRes[i].diskNum == currentDisk) {
 				match = volRes[i];
 				break;

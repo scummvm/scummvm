@@ -833,7 +833,7 @@ void MidiSoundDriverH32::selectInstrument2(int channel, int timbreGroup, int tim
 
 	byte checkSum = 0;
 
-	for (int i = 4; i < sizeof(sysEx) - 1; ++i)
+	for (uint i = 4; i < sizeof(sysEx) - 1; ++i)
 		checkSum += sysEx[i];
 
 	sysEx[sizeof(sysEx) - 1] = 0x80 - (checkSum & 0x7F);
@@ -872,7 +872,7 @@ void MidiSoundDriverH32::selectInstrument3(int channel, int offsetMode, int timb
 
 	byte checkSum = 0;
 
-	for (int i = 4; i < sizeof(sysEx) - 1; ++i)
+	for (uint i = 4; i < sizeof(sysEx) - 1; ++i)
 		checkSum += sysEx[i];
 
 	sysEx[sizeof(sysEx) - 1] = 0x80 - (checkSum & 0x7F);
@@ -934,7 +934,7 @@ void MidiSoundDriverH32::selectInstrument5(int messageNum) {
 
 	memset(sysEx + 7, 0x20, 20);
 
-	if (messageNum >= 0 && messageNum < g_cine->_messageTable.size()) {
+	if (messageNum >= 0 && messageNum < (int)g_cine->_messageTable.size()) {
 		Common::String msg = g_cine->_messageTable[messageNum];
 		memcpy(sysEx + 7, msg.c_str(), MIN<int>(20, msg.size()));
 	}
@@ -945,7 +945,7 @@ void MidiSoundDriverH32::selectInstrument5(int messageNum) {
 
 	byte checkSum = 0;
 
-	for (int i = 4; i < sizeof(sysEx) - 1; ++i)
+	for (uint i = 4; i < sizeof(sysEx) - 1; ++i)
 		checkSum += sysEx[i];
 
 	sysEx[sizeof(sysEx) - 1] = 0x80 - (checkSum & 0x7F);

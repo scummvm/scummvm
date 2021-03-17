@@ -410,7 +410,6 @@ void purgeSeqList() {
 }
 
 void CineEngine::mainLoop(int bootScriptIdx) {
-	bool playerAction;
 	byte di;
 
 	if (_preLoad == false) {
@@ -540,8 +539,6 @@ void CineEngine::mainLoop(int bootScriptIdx) {
 		removeMessages();
 
 		if (waitForPlayerClick) {
-			playerAction = false;
-
 			_messageLen <<= 3;
 			if (_messageLen < 800)
 				_messageLen = 800;

@@ -199,7 +199,7 @@ int loadSet(const char *resourceName, int16 idx, int16 frameIndex = -1);
 void checkAnimDataTableBounds(int entry) {
 	if (entry < 0) {
 		error("Out of free animation space");
-	} else if (entry >= g_cine->_animDataTable.size()) {
+	} else if (entry >= (int)g_cine->_animDataTable.size()) {
 		error("Animation entry (%d) out of bounds", entry);
 	}
 }
@@ -209,7 +209,7 @@ int16 fixAnimDataTableEndFrame(int entry, int16 startFrame, int16 endFrame) {
 
 	// Ensure that a non-empty range [entry, entry + endFrame - startFrame) stays in bounds
 	if (endFrame > startFrame &&
-		entry + (endFrame - startFrame - 1) >= g_cine->_animDataTable.size()) {
+		entry + (endFrame - startFrame - 1) >= (int)g_cine->_animDataTable.size()) {
 		warning("Restricting out of bounds animation data table write to in bounds");
 		return (int16)(g_cine->_animDataTable.size() - entry + startFrame);
 	} else {
