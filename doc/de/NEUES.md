@@ -24,6 +24,7 @@ Programmcodes finden Sie auf Englisch unter:
    - Die ScummVM-Benutzeroberfläche unterstützt nun UTF-32.
    - Code der Roland MT-32-Emulation auf mt32emu 2.4.2 des Munt-Projekts aktualisiert.
    - Unterstützung für die neue OAuth-Implementierung von Dropbox hinzugefügt.
+   - Umfangreiche Verbesserungen an den unterstützten Grafik-Scalern vorgenommen.
 
  AGOS:
    - Unterstützung für die japanische PC-98-Version von Elvira 1 hinzugefügt.
@@ -56,6 +57,9 @@ Programmcodes finden Sie auf Englisch unter:
    - Die Feuer-Animation im ersten Raum wird nun auch nach dem Laden eines Spielstands korrekt abgespielt.
    - Unterstützung für MT-32 korrigiert.
 
+ Pegasus:
+   - Unterstützung für die DVD-/GOG.com-Version hinzugefügt.
+
  SAGA:
    - Unterstützung für ITE GOG Mac CD v1.1 hinzugefügt.
    - Unterstützung für die japanische Version von ITE PC-98 hinzugefügt.
@@ -81,6 +85,7 @@ Programmcodes finden Sie auf Englisch unter:
    - Unterstützung für die Russobit-M-Versionen von Pajama2 und SpyOzone hinzugefügt.
    - Sprachausgabe in der Akella-Version von COMI korrigiert.
    - Unterstützung für die Discord- und Humble Bundle-Versionen von Indiana Jones and the Fate of Atlantis hinzugefügt
+   - Unterstützung für weiches Scrolling in verschiedenen FM-Towns-Spielen hinzugefügt.
 
  Tinsel:
    - Unterstützung für die Rückkehr zur ScummVM-Benutzeroberfläche hinzugefügt.
