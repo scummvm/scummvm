@@ -149,12 +149,12 @@ void BodyData::loadSpheres(Common::SeekableReadStream &stream) {
 
 bool BodyData::loadFromStream(Common::SeekableReadStream &stream) {
 	bodyFlag.value = stream.readUint16LE();
-	minsx = stream.readSint16LE();
-	maxsx = stream.readSint16LE();
-	minsy = stream.readSint16LE();
-	maxsy = stream.readSint16LE();
-	minsz = stream.readSint16LE();
-	maxsz = stream.readSint16LE();
+	bbox.mins.x = stream.readSint16LE();
+	bbox.maxs.x = stream.readSint16LE();
+	bbox.mins.y = stream.readSint16LE();
+	bbox.maxs.y = stream.readSint16LE();
+	bbox.mins.z = stream.readSint16LE();
+	bbox.maxs.z = stream.readSint16LE();
 
 	stream.seek(0x1A);
 	loadVertices(stream);

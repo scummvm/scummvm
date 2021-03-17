@@ -270,12 +270,12 @@ void Actor::initModelActor(BodyType bodyIdx, int16 actorIdx) {
 	} else {
 		BoundingBox &bbox = localActor->boudingBox;
 		const BodyData &bd = bodyData[localActor->entity];
-		bbox.mins.y = bd.minsy;
-		bbox.maxs.y = bd.maxsy;
+		bbox.mins.y = bd.bbox.mins.y;
+		bbox.maxs.y = bd.bbox.maxs.y;
 
 		int32 result = 0;
-		const int32 distX = bd.maxsx - bd.minsx;
-		const int32 distZ = bd.maxsz - bd.minsz;
+		const int32 distX = bd.bbox.maxs.x - bd.bbox.mins.x;
+		const int32 distZ = bd.bbox.maxs.z - bd.bbox.mins.z;
 		if (localActor->staticFlags.bUseMiniZv) {
 			// take smaller for bound
 			result = MIN(distX, distZ);
