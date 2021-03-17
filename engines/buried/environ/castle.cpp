@@ -171,7 +171,6 @@ public:
 
 private:
 	bool _timerStarted;
-	//uint32 _startTime;
 	bool _walkthrough;
 };
 
@@ -1141,7 +1140,7 @@ bool SceneViewWindow::checkCustomCastleAICommentDependencies(const Location &com
 		return _globalFlags.cgTRFoundSword == 0;
 	case 36: // If we do not have the key
 		return !((GameUIWindow *)getParent())->_inventoryWindow->isItemInInventory(kItemCopperKey);
-	case 37: // If we have not been in the keep and the hook is in our inventory (clone2727: ????????)
+	case 37: // If we have not been in the keep and the hook is in our inventory
 		return !((GameUIWindow *)getParent())->_inventoryWindow->isItemInInventory(kItemBloodyArrow);
 	}
 
