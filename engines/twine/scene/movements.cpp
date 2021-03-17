@@ -298,7 +298,7 @@ bool Movements::processAttackExecution(int actorIdx) {
 	return false;
 }
 
-void Movements::processMovementExecution(int actorIdx) {
+void Movements::processManualMovementExecution(int actorIdx) {
 	ActorStruct *actor = _engine->_scene->getActor(actorIdx);
 	if (_engine->_actor->autoAggressive && actor->isAttackAnimationActive()) {
 		return;
@@ -351,7 +351,7 @@ void Movements::processMovementExecution(int actorIdx) {
 	}
 }
 
-void Movements::processRotationExecution(int actorIdx) {
+void Movements::processManualRotationExecution(int actorIdx) {
 	ActorStruct *actor = _engine->_scene->getActor(actorIdx);
 	if (!_engine->_actor->autoAggressive && _engine->_actor->autoAggressive && actor->isAttackAnimationActive()) {
 		// it is allowed to rotate in auto aggressive mode - but not in manual mode.
@@ -386,8 +386,8 @@ void Movements::processManualAction(int actorIdx) {
 		}
 	}
 
-	processMovementExecution(actorIdx);
-	processRotationExecution(actorIdx);
+	processManualMovementExecution(actorIdx);
+	processManualRotationExecution(actorIdx);
 }
 
 void Movements::processFollowAction(int actorIdx) {

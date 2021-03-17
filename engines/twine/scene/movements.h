@@ -109,8 +109,8 @@ private:
 	 */
 	bool processBehaviourExecution(int actorIdx);
 	bool processAttackExecution(int actorIdx);
-	void processMovementExecution(int actorIdx);
-	void processRotationExecution(int actorIdx);
+	void processManualMovementExecution(int actorIdx);
+	void processManualRotationExecution(int actorIdx);
 
 	bool heroAction = false;
 
