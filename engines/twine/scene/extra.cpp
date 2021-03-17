@@ -324,7 +324,7 @@ int32 Extra::addExtraAimingAtKey(int32 actorIdx, int32 x, int32 y, int32 z, int3
 			continue;
 		}
 		extra->info0 = spriteIdx;
-		extra->type = ExtraType::UNK9;
+		extra->type = ExtraType::MAGIC_BALL_KEY;
 		extra->info1 = 0;
 		extra->pos.x = x;
 		extra->pos.y = y;
@@ -544,7 +544,7 @@ void Extra::processExtras() {
 			}
 		}
 		// reset extra
-		if (extra->type & ExtraType::UNK11) {
+		if (extra->type & ExtraType::RESET_EXTRA) {
 			extra->info0 = -1;
 			continue;
 		}
@@ -652,8 +652,8 @@ void Extra::processExtras() {
 			}
 		}
 		// process magic ball extra aiming for key
-		if (extra->type & ExtraType::UNK9) {
-			//				int32 actorIdxAttacked = extra->lifeTime;
+		if (extra->type & ExtraType::MAGIC_BALL_KEY) {
+			// int32 actorIdxAttacked = extra->lifeTime;
 			ExtraListStruct *extraKey = &extraList[extra->payload.extraIdx];
 			const int32 extraIdx = extra->payload.extraIdx;
 
