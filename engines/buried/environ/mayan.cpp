@@ -63,7 +63,7 @@ PlaceCeramicBowl::PlaceCeramicBowl(BuriedEngine *vm, Window *viewWindow, const L
 
 int PlaceCeramicBowl::droppedItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags) {
 	if (pointLocation.x == -1 && pointLocation.y == -1)
-		return 0;
+		return SIC_REJECT;
 
 	if (itemID != kItemCeramicBowl)
 		return SIC_REJECT;
@@ -604,7 +604,7 @@ int GenericCavernDoorOfferingHead::draggingItem(Window *viewWindow, int itemID, 
 
 int GenericCavernDoorOfferingHead::droppedItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags) {
 	if (pointLocation.x == -1 && pointLocation.y == -1)
-		return 0;
+		return SIC_REJECT;
 
 	if (!isValidItemToDrop(viewWindow, itemID))
 		return SIC_REJECT;
@@ -832,7 +832,7 @@ int DeathGodCavernDoorOfferingHead::draggingItem(Window *viewWindow, int itemID,
 
 int DeathGodCavernDoorOfferingHead::droppedItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags) {
 	if (pointLocation.x == -1 && pointLocation.y == -1)
-		return 0;
+		return SIC_REJECT;
 
 	if ((itemID == kItemJadeBlock || itemID == kItemLimestoneBlock || itemID == kItemObsidianBlock) && _dropRegion.contains(pointLocation)) {
 		byte &offerings = ((SceneViewWindow *)viewWindow)->getGlobalFlags().myMCDeathGodOfferings;
@@ -932,7 +932,7 @@ int WealthGodRopeDrop::draggingItem(Window *viewWindow, int itemID, const Common
 
 int WealthGodRopeDrop::droppedItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags) {
 	if (pointLocation.x == -1 && pointLocation.y == -1)
-		return 0;
+		return SIC_REJECT;
 
 	if (_dropRope.contains(pointLocation) && (itemID == kItemCoilOfRope || itemID == kItemGrapplingHook)) {
 		((SceneViewWindow *)viewWindow)->getGlobalFlags().myWGPlacedRope = 1;
@@ -1254,7 +1254,7 @@ int ArrowGodHead::droppedItem(Window *viewWindow, int itemID, const Common::Poin
 		return SIC_REJECT;
 
 	if (pointLocation.x == -1 && pointLocation.y == -1)
-		return 0;
+		return SIC_REJECT;
 
 	if ((itemID == kItemCavernSkull || itemID == kItemEntrySkull || itemID == kItemSpearSkull) && ((SceneViewWindow *)viewWindow)->getGlobalFlagByte(offsetof(GlobalFlags, myAGHeadAStatus) + _headID) == 1 && _skullRegion.contains(pointLocation)) {
 		((SceneViewWindow *)viewWindow)->setGlobalFlagByte(offsetof(GlobalFlags, myAGHeadAStatus) + _headID, 2);
@@ -1694,7 +1694,7 @@ int DeathGodAltar::draggingItem(Window *viewWindow, int itemID, const Common::Po
 
 int DeathGodAltar::droppedItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags) {
 	if (pointLocation.x == -1 && pointLocation.y == -1)
-		return 0;
+		return SIC_REJECT;
 
 	if (itemID == kItemPreservedHeart && ((SceneViewWindow *)viewWindow)->getGlobalFlags().myDGOfferedHeart == 0 && _heartPool.contains(pointLocation)) {
 		((SceneViewWindow *)viewWindow)->getGlobalFlags().myDGOfferedHeart = 1;

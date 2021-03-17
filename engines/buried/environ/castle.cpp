@@ -251,7 +251,7 @@ KeepInitialWallClimb::KeepInitialWallClimb(BuriedEngine *vm, Window *viewWindow,
 
 int KeepInitialWallClimb::droppedItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags) {
 	if (pointLocation.x == -1 && pointLocation.y == -1)
-		return 0;
+		return SIC_REJECT;
 
 	if (_windowRect.contains(pointLocation) && itemID == kItemGrapplingHook) {
 		((SceneViewWindow *)viewWindow)->playSynchronousAnimation(_vm->isDemo() ? 3 : 1);
@@ -509,7 +509,7 @@ int SmithyBench::draggingItem(Window *viewWindow, int itemID, const Common::Poin
 
 int SmithyBench::droppedItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags) {
 	if (pointLocation.x == -1 && pointLocation.y == -1)
-		return 0;
+		return SIC_REJECT;
 
 	if (_pan.contains(pointLocation) && itemID == kItemCopperMedallion && _status < 2) {
 		// Did we drop the medallion in the pan?

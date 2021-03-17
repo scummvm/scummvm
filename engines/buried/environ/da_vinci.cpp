@@ -541,7 +541,7 @@ int WheelAssemblyItemAcquire::mouseUp(Window *viewWindow, const Common::Point &p
 
 int WheelAssemblyItemAcquire::droppedItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags) {
 	if (pointLocation.x == -1 && pointLocation.y == -1)
-		return 0;
+		return SIC_REJECT;
 
 	if (_itemID == itemID && !_itemPresent && pointLocation.x >= 0 && pointLocation.y >= 0) {
 		_itemPresent = true;
@@ -660,7 +660,7 @@ int AssembleSiegeCycle::draggingItem(Window *viewWindow, int itemID, const Commo
 
 int AssembleSiegeCycle::droppedItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags) {
 	if (pointLocation.x == -1 && pointLocation.y == -1)
-		return 0;
+		return SIC_REJECT;
 
 	switch (itemID) {
 	case kItemDriveAssembly:
@@ -787,7 +787,7 @@ int UnlockCodexTowerDoor::draggingItem(Window *viewWindow, int itemID, const Com
 
 int UnlockCodexTowerDoor::droppedItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags) {
 	if (pointLocation.x == -1 && pointLocation.y == -1)
-		return 0;
+		return SIC_REJECT;
 
 	if (itemID == kItemBalconyKey && _dropRect.contains(pointLocation)) {
 		// Play the unlocking animation
@@ -868,7 +868,7 @@ int CodexTowerOutsideDoor::draggingItem(Window *viewWindow, int itemID, const Co
 
 int CodexTowerOutsideDoor::droppedItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags) {
 	if (pointLocation.x == -1 && pointLocation.y == -1)
-		return 0;
+		return SIC_REJECT;
 
 	if (itemID == kItemMetalBar && _dropRect.contains(pointLocation) && ((SceneViewWindow *)viewWindow)->getGlobalFlags().dsCTUnlockedDoor == 0 && ((SceneViewWindow *)viewWindow)->getGlobalFlags().dsCTViewedAgent3 == 0) {
 		// Move to the next scene
@@ -1128,7 +1128,7 @@ int CodexTowerGrabHeart::mouseUp(Window *viewWindow, const Common::Point &pointL
 
 int CodexTowerGrabHeart::droppedItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags) {
 	if (pointLocation.x == -1 && pointLocation.y == -1)
-		return 0;
+		return SIC_REJECT;
 
 	if (itemID == _itemID && !_itemPresent) {
 		// Redraw the background
@@ -1670,7 +1670,7 @@ int PlaceSiegeCycleOnTrack::draggingItem(Window *viewWindow, int itemID, const C
 
 int PlaceSiegeCycleOnTrack::droppedItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags) {
 	if (pointLocation.x == -1 && pointLocation.y == -1)
-		return 0;
+		return SIC_REJECT;
 
 	if (itemID == kItemSiegeCycle && _cycleRect.contains(pointLocation) && ((SceneViewWindow *)viewWindow)->getGlobalFlags().dsCYPlacedSiegeCycle == 0) {
 		_staticData.navFrameIndex = 229;

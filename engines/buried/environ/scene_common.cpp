@@ -154,7 +154,7 @@ int GenericItemAcquire::mouseDown(Window *viewWindow, const Common::Point &point
 
 int GenericItemAcquire::droppedItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags) {
 	if (pointLocation.x == -1 && pointLocation.y == -1)
-		return 0;
+		return SIC_REJECT;
 
 	if (itemID == _itemID && !_itemPresent) {
 		// Redraw the background

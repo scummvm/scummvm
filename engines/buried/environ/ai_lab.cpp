@@ -1925,7 +1925,7 @@ int CapacitanceToHabitatDoorClosed::draggingItem(Window *viewWindow, int itemID,
 
 int CapacitanceToHabitatDoorClosed::droppedItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags) {
 	if (pointLocation.x == -1 && pointLocation.y == -1)
-		return 0; // ???
+		return SIC_REJECT;
 
 	return SIC_REJECT;
 }
@@ -1999,7 +1999,7 @@ int CapacitanceToHabitatDoorOpen::draggingItem(Window *viewWindow, int itemID, c
 
 int CapacitanceToHabitatDoorOpen::droppedItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags) {
 	if (pointLocation.x == -1 && pointLocation.y == -1)
-		return 0; // ???
+		return SIC_REJECT;
 
 	if (itemID == kItemMetalBar && ((SceneViewWindow *)viewWindow)->getGlobalFlags().aiCRGrabbedMetalBar == 1) {
 		_staticData.navFrameIndex = 100;
