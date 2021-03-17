@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-03-17 16:34+0000\n"
-"PO-Revision-Date: 2021-03-15 23:24+0000\n"
+"PO-Revision-Date: 2021-03-17 22:38+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
@@ -5473,7 +5473,7 @@ msgstr "Mostrar/Ocultar menú de pausa"
 #, fuzzy
 #| msgid "Toggle fast mode"
 msgid "Toggle Chatty AI"
-msgstr "Modo rápido"
+msgstr "IA dicharachera"
 
 #: engines/pegasus/pegasus.cpp:2804 engines/wintermute/keymapper_tables.h:298
 #: engines/wintermute/keymapper_tables.h:325
