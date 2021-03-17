@@ -88,28 +88,30 @@ void TextLayout::layout(AGDSEngine &engine, const Common::String &process, const
 			engine.setGlobal(var, 1);
 		engine.reactivate(_process);
 	}
-	auto character = engine.currentCharacter();
-	if (character) {
-		if (!_charDirectionNotifyVar.empty()) {
-			if (!engine.getGlobal(_charDirectionNotifyVar))
-				engine.setGlobal(_charDirectionNotifyVar, character->direction());
-		} else {
-			switch(character->direction()) {
-				case 0:
-				case 1:
-				case 2:
-				case 3:
-				case 13:
-				case 14:
-				case 15:
-					break;
-				default:
-					character->animate(_process, Common::Point(), character->direction(), 100);
+	if (!_npc) {
+		auto character = engine.currentCharacter();
+		if (character) {
+			if (!_charDirectionNotifyVar.empty()) {
+				if (!engine.getGlobal(_charDirectionNotifyVar))
+					engine.setGlobal(_charDirectionNotifyVar, character->direction());
+			} else {
+				switch(character->direction()) {
+					case 0:
+					case 1:
+					case 2:
+					case 3:
+					case 13:
+					case 14:
+					case 15:
+						break;
+					default:
+						character->animate(_process, Common::Point(), character->direction(), 100);
+				}
 			}
-		}
-		engine.reactivate(_process);
-	} else
-		warning("no current character, skipping direction notification");
+			engine.reactivate(_process);
+		} else
+			warning("no current character, skipping direction notification");
+	}
 }
 
 }
