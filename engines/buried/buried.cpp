@@ -57,7 +57,6 @@ BuriedEngine::BuriedEngine(OSystem *syst, const ADGameDescription *gameDesc) : E
 	_mainWindow = nullptr;
 	_focusedWindow = nullptr;
 	_captureWindow = nullptr;
-	_console = nullptr;
 	_pauseStartTime = 0;
 	_yielding = false;
 
@@ -77,13 +76,12 @@ BuriedEngine::~BuriedEngine() {
 	delete _mainEXE;
 	delete _library;
 	delete _sound;
-	delete _console;
 
 	// The queue should be empty since all windows destroy their messages
 }
 
 Common::Error BuriedEngine::run() {
-	_console = new BuriedConsole(this);
+	setDebugger(new BuriedConsole(this));
 
 #ifndef USE_ICONV
 	// The Japanese version needs iconv support
@@ -160,10 +158,6 @@ Common::Error BuriedEngine::run() {
 	}
 
 	return Common::kNoError;
-}
-
-GUI::Debugger *BuriedEngine::getDebugger() {
-	return _console;
 }
 
 Common::String BuriedEngine::getString(uint32 stringID) {
@@ -403,14 +397,8 @@ void BuriedEngine::pollForEvents() {
 				_focusedWindow->postMessage(new KeyUpMessage(event.kbd, 0));
 			break;
 		case Common::EVENT_KEYDOWN:
-			if (event.kbd.keycode == Common::KEYCODE_d && (event.kbd.flags & Common::KBD_CTRL)) {
-				// Gobble up ctrl+d for the console
-				_console->attach();
-				_console->onFrame();
-			} else {
-				if (_focusedWindow)
-					_focusedWindow->postMessage(new KeyDownMessage(event.kbd, 0));
-			}
+			if (_focusedWindow)
+				_focusedWindow->postMessage(new KeyDownMessage(event.kbd, 0));
 			break;
 		case Common::EVENT_LBUTTONDOWN: {
 			Window *window = _captureWindow ? _captureWindow : _mainWindow->childWindowAtPoint(event.mouse);
