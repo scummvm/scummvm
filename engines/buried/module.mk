@@ -8,7 +8,6 @@ MODULE_OBJS = \
 	complete.o \
 	console.o \
 	credits.o \
-	database.o \
 	death.o \
 	frame_window.o \
 	gameui.o \

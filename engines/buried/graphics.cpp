@@ -40,7 +40,6 @@
 #include "image/bmp.h"
 
 #include "buried/buried.h"
-#include "buried/database.h"
 #include "buried/graphics.h"
 #include "buried/window.h"
 
@@ -237,7 +236,7 @@ Cursor GraphicsManager::setCursor(Cursor newCursor) {
 	} else if (newCursor == kCursorWait) {
 		cursor = Graphics::makeBusyWinCursor();
 	} else {
-		cursorGroup = _vm->_mainEXE->getCursorGroup(newCursor);
+		cursorGroup = _vm->getCursorGroup(newCursor);
 
 		if (!cursorGroup)
 			return kCursorNone;
