@@ -977,8 +977,8 @@ int InorganicPodTransDeath::specifyCursor(Window *viewWindow, const Common::Poin
 class CheeseGirlPod : public RetrieveFromPods {
 public:
 	CheeseGirlPod(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
-	int mouseDown(Window *viewWindow, const Common::Point &pointLocation);
-	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
+	int mouseDown(Window *viewWindow, const Common::Point &pointLocation) override;
+	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation) override;
 };
 
 CheeseGirlPod::CheeseGirlPod(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) :
