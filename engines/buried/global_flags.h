@@ -283,16 +283,14 @@ struct GlobalFlags {
 	byte scoreGotRainGodPiece;          // 313
 	byte scoreGotWarGodPiece;           // 314
 	byte scoreCompletedDeathGod;        // 315
-	byte scoreEliminatedAgent3;         // 316 (clone2727 refrains from commenting here)
+	byte scoreEliminatedAgent3;         // 316
 	byte scoreTransportToKrynn;         // 317
 	byte scoreGotKrynnArtifacts;        // 318
 	byte scoreDefeatedIcarus;           // 319
 
-	// clone2727 would like to take time away from his busy schedule
-	// to describe how broken this next section is. This data was modified
-	// between 1.01 and 1.03, without changing the saved game version
-	// field -- just to add the Louvre research boolean. That's really
-	// unacceptable. I'll have the 1.01 offsets in parentheses.
+	// This data was modified between 1.01 and 1.03, without changing
+	// the saved game version field just to add the Louvre research
+	// boolean. The 1.01 offsets are in parentheses.
 	byte scoreResearchINNLouvreReport;  // 320 (---)
 	byte scoreResearchINNHighBidder;    // 321 (320)
 	byte scoreResearchINNAppeal;        // 322 (321)
