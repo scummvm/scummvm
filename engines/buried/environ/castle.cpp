@@ -171,6 +171,7 @@ public:
 
 private:
 	bool _timerStarted;
+	//uint32 _startTime;
 	bool _walkthrough;
 };
 
