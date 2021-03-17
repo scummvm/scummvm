@@ -127,7 +127,7 @@ bool SoundManager::setAmbientSound(const Common::String &fileName, bool fade, by
 			_soundData[kAmbientIndexBase + _lastAmbient]->_timedEffectDelta = -(_soundData[kAmbientIndexBase + _lastAmbient]->_volume / 16);
 			_soundData[kAmbientIndexBase + _lastAmbient]->_timedEffectStart = g_system->getMillis();
 			_soundData[kAmbientIndexBase + _lastAmbient]->_timedEffectRemaining = 2000;
-	
+
 			// Reset parameters for the current ambient
 			g_system->getMixer()->setChannelVolume(*_soundData[kAmbientIndexBase + _lastAmbient]->_handle,
 					clipVolume(_soundData[kAmbientIndexBase + _lastAmbient]->_volume << 1));
@@ -323,7 +323,7 @@ uint32 SoundManager::getSecondaryAmbientPosition() {
 	// Here's the magic. We're assuming everything is 8-bit, mono.
 	return time.totalNumberOfFrames();
 }
-		
+
 bool SoundManager::restartSecondaryAmbientSound() {
 	int ambientTrack = (_lastAmbient == 0) ? 1 : 0;
 
@@ -514,7 +514,7 @@ bool SoundManager::adjustSoundEffectSoundVolume(int effectID, byte newVolumeLeve
 	// Return success
 	return true;
 }
-	
+
 bool SoundManager::playInterfaceSound(const Common::String &fileName) {
 	if (_paused)
 		return false;
@@ -538,7 +538,7 @@ bool SoundManager::playInterfaceSound(const Common::String &fileName) {
 bool SoundManager::stopInterfaceSound() {
 	if (_paused)
 		return false;
-			
+
 	// Stop the sound
 	delete _soundData[kInterfaceIndex];
 	_soundData[kInterfaceIndex] = new Sound();
@@ -571,7 +571,7 @@ bool SoundManager::startFootsteps(int footstepsID) {
 
 		// Load the footsteps sample data and modify the internal flags
 		_soundData[kFootstepsIndex]->load(_vm->getFilePath(IDS_FOOTSTEPS_FILENAME_BASE + footstepsID));
-    	_soundData[kFootstepsIndex]->_loop = true;
+		_soundData[kFootstepsIndex]->_loop = true;
 	}
 
 	// Play the footsteps
@@ -591,7 +591,7 @@ bool SoundManager::stopFootsteps() {
 	// Return success
 	return true;
 }
-	
+
 bool SoundManager::stop() {
 	if (_paused)
 		return true;
@@ -611,7 +611,7 @@ bool SoundManager::stop() {
 	_paused = true;
 	return true;
 }
-	
+
 bool SoundManager::restart() {
 	if (!_paused)
 		return true;
@@ -648,8 +648,8 @@ void SoundManager::timerCallback() {
 
 					// Update the start time, step counter, and remaining time
 					_soundData[i]->_timedEffectRemaining -= (_soundData[i]->_timedEffectRemaining / _soundData[i]->_timedEffectSteps);
-	                _soundData[i]->_timedEffectStart = g_system->getMillis();
-	                _soundData[i]->_timedEffectSteps--;
+					_soundData[i]->_timedEffectStart = g_system->getMillis();
+					_soundData[i]->_timedEffectSteps--;
 
 					// If the effect has finished, then remove the transition type
 					if (_soundData[i]->_timedEffectSteps == 0) {
@@ -658,7 +658,7 @@ void SoundManager::timerCallback() {
 							delete _soundData[i];
 							_soundData[i] = new Sound();
 						}
-	
+
 						// Reset effect data
 						_soundData[i]->_timedEffectIndex = TIMED_EFFECT_NONE;
 						_soundData[i]->_flags = 0;
