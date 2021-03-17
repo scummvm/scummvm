@@ -1927,12 +1927,13 @@ void ScriptManager::enableObject(ScriptEntry *cmd, ObjectTransparency type) {
 	}
 
 	// Update first set of objects
-	for (int i = 0; i < 7; i++) {
-		Object *object = getWorld()->getObjectById((ObjectId)cmd->param4);
+	int32 *param = &cmd->param4;
+	for (int i = 0; i < 6; i++) {
+		Object *object = getWorld()->getObjectById((ObjectId)*param);
 		if (object != NULL)
 			object->setTransparency(transparency);
 
-		++cmd->param4;
+		++param;
 	}
 
 	// Update per-chapter objects
@@ -1976,7 +1977,7 @@ void ScriptManager::enableObject(ScriptEntry *cmd, ObjectTransparency type) {
 
 		if (cmd->param1 == 2003) {
 			getWorld()->getObjectById(kObjectNPC066StatusQuo)->setTransparency(transparency);
-			getWorld()->getObjectById(kObject2507)->setTransparency(transparency);
+			/* getWorld()->getObjectById(kObject2507)->setTransparency(transparency); // XXX no such object */
 			getWorld()->getObjectById(kObjectBrokenPipe)->setTransparency(transparency);
 			getWorld()->getObjectById(kObjectEmberPopsOut)->setTransparency(transparency);
 			getWorld()->getObjectById(kObjectBugCarriesEmber)->setTransparency(transparency);
