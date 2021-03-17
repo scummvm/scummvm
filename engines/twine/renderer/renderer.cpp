@@ -721,6 +721,7 @@ void Renderer::renderPolygonsTras(uint8 *out, int vtop, int32 vsize, uint8 color
 				bx += color;
 				for (int32 j = 0; j < hsize; j++) {
 					*(out2) = (*(out2)&0x0F0F) | bx;
+					// TODO: check for potential out2++ here
 				}
 			} else {
 				*out2 = (*(out2)&0x0F) | color;
