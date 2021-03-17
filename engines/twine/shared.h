@@ -94,6 +94,30 @@ struct IVec3 {
 		z -= other.z;
 		return *this;
 	}
+
+	inline int32 &operator[](size_t idx) {
+		switch (idx) {
+		default:
+		case 0:
+			return x;
+		case 1:
+			return y;
+		case 2:
+			return z;
+		}
+	}
+
+	inline int32 operator[](size_t idx) const {
+		switch (idx) {
+		default:
+		case 0:
+			return x;
+		case 1:
+			return y;
+		case 2:
+			return z;
+		}
+	}
 };
 
 inline IVec3 operator+(const IVec3 &lhs, const IVec3 &rhs) {

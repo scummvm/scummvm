@@ -61,9 +61,9 @@ struct CmdRenderPolygon {
 };
 
 struct Matrix {
-	int32 row1[3]{0, 0, 0};
-	int32 row2[3]{0, 0, 0};
-	int32 row3[3]{0, 0, 0};
+	IVec3 row1;
+	IVec3 row2;
+	IVec3 row3;
 };
 
 inline Matrix operator*(const Matrix &matrix, const IVec3 &vec) {
