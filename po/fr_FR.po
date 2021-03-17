@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-03-16 01:50+0000\n"
-"PO-Revision-Date: 2021-02-23 01:27+0000\n"
-"Last-Translator: Thierry Crozat <criezy@scummvm.org>\n"
+"PO-Revision-Date: 2021-03-17 13:24+0000\n"
+"Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
 "Language: fr_FR\n"
@@ -312,17 +312,13 @@ msgid "Backend"
 msgstr "Back-end"
 
 #: gui/editgamedialog.cpp:250
-#, fuzzy
-#| msgid "Override global audio settings"
 msgid "Override global backend settings"
-msgstr "Utiliser des réglages audio spécifiques à ce jeu"
+msgstr "Utiliser des réglages back-end spécifiques à ce jeu"
 
 #: gui/editgamedialog.cpp:252
-#, fuzzy
-#| msgid "Override global audio settings"
 msgctxt "lowres"
 msgid "Override global backend settings"
-msgstr "Utiliser des réglages audio spécifiques à ce jeu"
+msgstr "Utiliser des réglages back-end spécifiques à ce jeu"
 
 #: gui/editgamedialog.cpp:266 gui/options.cpp:1858 engines/dialogs.cpp:301
 msgid "Audio"
@@ -2803,16 +2799,12 @@ msgid "Decrease the scale factor"
 msgstr "Diminuer le facteur d'échelle"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:436
-#, fuzzy
-#| msgid "Switch to TV 2x scaling"
 msgid "Switch to the next scaler"
-msgstr "Basculer vers l'échelle TV 2x"
+msgstr "Basculer vers l'échelle suivante"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:441
-#, fuzzy
-#| msgid "Switch to nearest neighbour scaling"
 msgid "Switch to the previous scaler"
-msgstr "Basculer vers l'échelle voisine la plus proche"
+msgstr "Basculer vers l'échelle précédente"
 
 #: backends/keymapper/hardware-input.cpp:245
 msgid "Left Mouse Button"
