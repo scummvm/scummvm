@@ -85,12 +85,6 @@ BuriedEngine::~BuriedEngine() {
 Common::Error BuriedEngine::run() {
 	_console = new BuriedConsole(this);
 
-#ifndef USE_ICONV
-	// The Japanese version needs iconv support
-	if (getLanguage() == Common::JA_JPN)
-		return Common::Error(Common::kUnknownError, "No iconv support available");
-#endif
-
 	if (isTrueColor()) {
 		initGraphics(640, 480, 0);
 
