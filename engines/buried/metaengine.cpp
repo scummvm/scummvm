@@ -114,7 +114,7 @@ SaveStateList BuriedMetaEngine::listSaves(const char *target) const {
 
 void BuriedMetaEngine::removeSaveState(const char *target, int slot) const {
 	// See listSaves() for info on the pattern
-	Common::StringArray fileNames = Buried::BuriedEngine::listSaveFiles();
+	const Common::StringArray &fileNames = Buried::BuriedEngine::listSaveFiles();
 	g_system->getSavefileManager()->removeSavefile(fileNames[slot].c_str());
 }
 
