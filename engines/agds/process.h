@@ -175,6 +175,9 @@ public:
 	void fail() {
 		_status = kStatusError;
 	}
+	void pause() {
+		_status = kStatusPassive;
+	}
 
 	bool finished() const {
 		return _status == kStatusDone || _status == kStatusError;

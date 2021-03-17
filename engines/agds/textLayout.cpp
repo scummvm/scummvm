@@ -3,6 +3,7 @@
 #include "agds/agds.h"
 #include "agds/character.h"
 #include "agds/object.h"
+#include "agds/process.h"
 #include "common/debug.h"
 
 namespace AGDS {
@@ -32,13 +33,14 @@ void TextLayout::reset(AGDSEngine &engine) {
 	}
 }
 
-void TextLayout::layout(AGDSEngine &engine, const Common::String &process, const Common::String &text, Common::Point pos, int fontId, bool npc) {
+void TextLayout::layout(AGDSEngine &engine, Process &process, const Common::String &text, Common::Point pos, int fontId, bool npc) {
 	if (text.empty()) {
 		_valid = false;
 		return;
 	}
 
-	_process = process;
+	_process = process.getName();
+	process.pause();
 	_fontId = fontId;
 	_npc = npc;
 	Font *font = engine.getFont(fontId);
@@ -86,7 +88,6 @@ void TextLayout::layout(AGDSEngine &engine, const Common::String &process, const
 	if (!var.empty()) {
 		if (!engine.getGlobal(var))
 			engine.setGlobal(var, 1);
-		engine.reactivate(_process);
 	}
 	if (!_npc) {
 		auto character = engine.currentCharacter();
@@ -108,7 +109,6 @@ void TextLayout::layout(AGDSEngine &engine, const Common::String &process, const
 						character->animate(_process, Common::Point(), character->direction(), 100);
 				}
 			}
-			engine.reactivate(_process);
 		} else
 			warning("no current character, skipping direction notification");
 	}

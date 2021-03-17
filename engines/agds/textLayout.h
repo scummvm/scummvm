@@ -35,6 +35,7 @@ namespace Graphics {
 namespace AGDS {
 
 class AGDSEngine;
+class Process;
 
 class TextLayout {
 	int				_fontId;
@@ -77,7 +78,7 @@ public:
 	}
 
 	void paint(AGDSEngine &engine, Graphics::Surface &backbuffer);
-	void layout(AGDSEngine &engine, const Common::String &process, const Common::String &text, Common::Point pos, int fontId, bool npc);
+	void layout(AGDSEngine &engine, Process &process, const Common::String &text, Common::Point pos, int fontId, bool npc);
 };
 
 } // End of namespace AGDS
