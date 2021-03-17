@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-03-16 01:50+0000\n"
+"POT-Creation-Date: 2021-03-17 16:34+0000\n"
 "PO-Revision-Date: 2021-03-07 12:24+0000\n"
 "Last-Translator: Joohan Lee <losernator@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -776,13 +776,13 @@ msgid "Search:"
 msgstr "검색:"
 
 #: gui/launcher.cpp:210 engines/dialogs.cpp:102 engines/engine.cpp:802
-#: engines/pegasus/pegasus.cpp:355 engines/tsage/scenes.cpp:601
+#: engines/pegasus/pegasus.cpp:384 engines/tsage/scenes.cpp:601
 #: engines/wage/saveload.cpp:742 engines/xeen/saves.cpp:256
 msgid "Load game:"
 msgstr "게임 불러오기:"
 
 #: gui/launcher.cpp:210 engines/dialogs.cpp:102 engines/engine.cpp:802
-#: engines/parallaction/saveload.cpp:194 engines/pegasus/pegasus.cpp:355
+#: engines/parallaction/saveload.cpp:194 engines/pegasus/pegasus.cpp:384
 #: engines/scumm/dialogs.cpp:178 engines/tsage/scenes.cpp:601
 #: engines/wage/saveload.cpp:742 engines/xeen/saves.cpp:256
 msgid "Load"
@@ -2110,7 +2110,7 @@ msgstr "런처로 돌아가기(~R~)"
 #: engines/gnap/menu.cpp:466 engines/hugo/file.cpp:298
 #: engines/illusions/menusystem.cpp:703 engines/kingdom/kingdom.cpp:739
 #: engines/lab/savegame.cpp:243 engines/mads/nebular/dialogs_nebular.cpp:350
-#: engines/neverhood/menumodule.cpp:890 engines/pegasus/pegasus.cpp:374
+#: engines/neverhood/menumodule.cpp:890 engines/pegasus/pegasus.cpp:403
 #: engines/prince/saveload.cpp:55 engines/sci/engine/guest_additions.cpp:688
 #: engines/sci/engine/kfile.cpp:1075 engines/sherlock/scalpel/scalpel.cpp:1250
 #: engines/sherlock/tattoo/widget_files.cpp:75 engines/startrek/saveload.cpp:43
@@ -2130,7 +2130,7 @@ msgstr "게임 저장:"
 #: engines/kingdom/kingdom.cpp:739 engines/lab/savegame.cpp:238
 #: engines/lab/savegame.cpp:243 engines/mads/nebular/dialogs_nebular.cpp:350
 #: engines/neverhood/menumodule.cpp:890 engines/parallaction/saveload.cpp:209
-#: engines/pegasus/pegasus.cpp:374 engines/prince/saveload.cpp:55
+#: engines/pegasus/pegasus.cpp:403 engines/prince/saveload.cpp:55
 #: engines/sci/engine/guest_additions.cpp:689 engines/sci/engine/kfile.cpp:1075
 #: engines/scumm/dialogs.cpp:177 engines/sherlock/scalpel/scalpel.cpp:1250
 #: engines/sherlock/tattoo/widget_files.cpp:75 engines/startrek/saveload.cpp:43
@@ -2150,7 +2150,7 @@ msgstr ""
 "이 게임은 현재 게임 내 도움말을 제공하지 않습니다. 기본적인 정보와 추가 지원"
 "을 얻기 위한 방법은 README 파일에서 참조해 주세요."
 
-#: engines/dialogs.cpp:217 engines/pegasus/pegasus.cpp:385
+#: engines/dialogs.cpp:217 engines/pegasus/pegasus.cpp:414
 #, c-format
 msgid ""
 "Failed to save game (%s)! Please consult the README for basic information, "
@@ -4773,13 +4773,13 @@ msgid "Move Right"
 msgstr "오른쪽으로 이동"
 
 #: engines/kyra/engine/eobcommon.cpp:373 engines/kyra/engine/lol.cpp:479
-#: engines/pegasus/pegasus.cpp:2497 engines/twine/metaengine.cpp:380
+#: engines/pegasus/pegasus.cpp:2725 engines/twine/metaengine.cpp:380
 #: engines/zvision/metaengine.cpp:141
 msgid "Turn Left"
 msgstr "왼쪽으로 회전"
 
 #: engines/kyra/engine/eobcommon.cpp:374 engines/kyra/engine/lol.cpp:480
-#: engines/pegasus/pegasus.cpp:2504 engines/twine/metaengine.cpp:373
+#: engines/pegasus/pegasus.cpp:2732 engines/twine/metaengine.cpp:373
 #: engines/zvision/metaengine.cpp:147
 msgid "Turn Right"
 msgstr "오른쪽으로 회전"
@@ -5279,7 +5279,7 @@ msgstr ""
 "업데이트는 다음에서 다운로드 할 수 있습니다:\n"
 "https://www.scummvm.org/frs/extras/patches/"
 
-#: engines/myst3/myst3.cpp:1575 engines/pegasus/pegasus.cpp:701
+#: engines/myst3/myst3.cpp:1575 engines/pegasus/pegasus.cpp:737
 #, fuzzy
 msgid "Invalid file name for saving"
 msgstr "저장할 파일명을 입력"
@@ -5358,41 +5358,46 @@ msgstr ""
 "\n"
 "팀에 보고해 주십시오."
 
-#: engines/pegasus/pegasus.cpp:2483
+#: engines/pegasus/pegasus.cpp:2711
 msgid "Up/Zoom In/Move Forward/Open Doors"
 msgstr "위로/확대/앞으로/문 열기"
 
-#: engines/pegasus/pegasus.cpp:2490
+#: engines/pegasus/pegasus.cpp:2718
 msgid "Down/Zoom Out"
 msgstr "아래로/축소"
 
-#: engines/pegasus/pegasus.cpp:2511
+#: engines/pegasus/pegasus.cpp:2739
 #, fuzzy
 msgid "Action/Select"
 msgstr "Select"
 
-#: engines/pegasus/pegasus.cpp:2531
+#: engines/pegasus/pegasus.cpp:2759
 msgid "Display/Hide Inventory Tray"
 msgstr "인벤토리 표시/숨김"
 
-#: engines/pegasus/pegasus.cpp:2538
+#: engines/pegasus/pegasus.cpp:2766
 msgid "Display/Hide Biochip Tray"
 msgstr "바이오칩 표시/숨김"
 
-#: engines/pegasus/pegasus.cpp:2546
+#: engines/pegasus/pegasus.cpp:2774
 #, fuzzy
 msgid "Toggle Center Data Display"
 msgstr "인벤토리/IQ 포인트 표시를 전환"
 
-#: engines/pegasus/pegasus.cpp:2553
+#: engines/pegasus/pegasus.cpp:2781
 msgid "Display/Hide Info Screen"
 msgstr "정보 화면 표시/숨김"
 
-#: engines/pegasus/pegasus.cpp:2560
+#: engines/pegasus/pegasus.cpp:2788
 msgid "Display/Hide Pause Menu"
 msgstr "정지 메뉴 표시/숨김"
 
-#: engines/pegasus/pegasus.cpp:2571 engines/wintermute/keymapper_tables.h:298
+#: engines/pegasus/pegasus.cpp:2795
+#, fuzzy
+msgid "Toggle Chatty AI"
+msgstr "드래그 모드 전환"
+
+#: engines/pegasus/pegasus.cpp:2804 engines/wintermute/keymapper_tables.h:298
 #: engines/wintermute/keymapper_tables.h:325
 #: engines/wintermute/keymapper_tables.h:429
 #: engines/wintermute/keymapper_tables.h:557
@@ -5407,11 +5412,11 @@ msgstr "정지 메뉴 표시/숨김"
 msgid "???"
 msgstr "???"
 
-#: engines/pegasus/pegasus.cpp:2577
+#: engines/pegasus/pegasus.cpp:2810
 msgid "Save Game"
 msgstr "게임 저장"
 
-#: engines/pegasus/pegasus.cpp:2583
+#: engines/pegasus/pegasus.cpp:2816
 msgid "Load Game"
 msgstr "게임 불러오기"
 

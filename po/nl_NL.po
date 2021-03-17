@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-03-16 01:50+0000\n"
+"POT-Creation-Date: 2021-03-17 16:34+0000\n"
 "PO-Revision-Date: 2020-11-29 17:10+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
@@ -784,13 +784,13 @@ msgid "Search:"
 msgstr "Zoeken:"
 
 #: gui/launcher.cpp:210 engines/dialogs.cpp:102 engines/engine.cpp:802
-#: engines/pegasus/pegasus.cpp:355 engines/tsage/scenes.cpp:601
+#: engines/pegasus/pegasus.cpp:384 engines/tsage/scenes.cpp:601
 #: engines/wage/saveload.cpp:742 engines/xeen/saves.cpp:256
 msgid "Load game:"
 msgstr "Laad spel:"
 
 #: gui/launcher.cpp:210 engines/dialogs.cpp:102 engines/engine.cpp:802
-#: engines/parallaction/saveload.cpp:194 engines/pegasus/pegasus.cpp:355
+#: engines/parallaction/saveload.cpp:194 engines/pegasus/pegasus.cpp:384
 #: engines/scumm/dialogs.cpp:178 engines/tsage/scenes.cpp:601
 #: engines/wage/saveload.cpp:742 engines/xeen/saves.cpp:256
 msgid "Load"
@@ -2137,7 +2137,7 @@ msgstr "S~t~artmenu"
 #: engines/gnap/menu.cpp:466 engines/hugo/file.cpp:298
 #: engines/illusions/menusystem.cpp:703 engines/kingdom/kingdom.cpp:739
 #: engines/lab/savegame.cpp:243 engines/mads/nebular/dialogs_nebular.cpp:350
-#: engines/neverhood/menumodule.cpp:890 engines/pegasus/pegasus.cpp:374
+#: engines/neverhood/menumodule.cpp:890 engines/pegasus/pegasus.cpp:403
 #: engines/prince/saveload.cpp:55 engines/sci/engine/guest_additions.cpp:688
 #: engines/sci/engine/kfile.cpp:1075 engines/sherlock/scalpel/scalpel.cpp:1250
 #: engines/sherlock/tattoo/widget_files.cpp:75 engines/startrek/saveload.cpp:43
@@ -2157,7 +2157,7 @@ msgstr "Spel opslaan:"
 #: engines/kingdom/kingdom.cpp:739 engines/lab/savegame.cpp:238
 #: engines/lab/savegame.cpp:243 engines/mads/nebular/dialogs_nebular.cpp:350
 #: engines/neverhood/menumodule.cpp:890 engines/parallaction/saveload.cpp:209
-#: engines/pegasus/pegasus.cpp:374 engines/prince/saveload.cpp:55
+#: engines/pegasus/pegasus.cpp:403 engines/prince/saveload.cpp:55
 #: engines/sci/engine/guest_additions.cpp:689 engines/sci/engine/kfile.cpp:1075
 #: engines/scumm/dialogs.cpp:177 engines/sherlock/scalpel/scalpel.cpp:1250
 #: engines/sherlock/tattoo/widget_files.cpp:75 engines/startrek/saveload.cpp:43
@@ -2178,7 +2178,7 @@ msgstr ""
 "README voor basisinformatie, en voor instructies voor het verkrijgen van "
 "verdere assistentie."
 
-#: engines/dialogs.cpp:217 engines/pegasus/pegasus.cpp:385
+#: engines/dialogs.cpp:217 engines/pegasus/pegasus.cpp:414
 #, c-format
 msgid ""
 "Failed to save game (%s)! Please consult the README for basic information, "
@@ -4842,13 +4842,13 @@ msgid "Move Right"
 msgstr "Verplaats naar rechts"
 
 #: engines/kyra/engine/eobcommon.cpp:373 engines/kyra/engine/lol.cpp:479
-#: engines/pegasus/pegasus.cpp:2497 engines/twine/metaengine.cpp:380
+#: engines/pegasus/pegasus.cpp:2725 engines/twine/metaengine.cpp:380
 #: engines/zvision/metaengine.cpp:141
 msgid "Turn Left"
 msgstr "Draai Linksom"
 
 #: engines/kyra/engine/eobcommon.cpp:374 engines/kyra/engine/lol.cpp:480
-#: engines/pegasus/pegasus.cpp:2504 engines/twine/metaengine.cpp:373
+#: engines/pegasus/pegasus.cpp:2732 engines/twine/metaengine.cpp:373
 #: engines/zvision/metaengine.cpp:147
 msgid "Turn Right"
 msgstr "Draai Rechtsom"
@@ -5357,7 +5357,7 @@ msgstr ""
 "De update kan gevonden worden op:\n"
 "https://www.scummvm.org/frs/extras/patches/"
 
-#: engines/myst3/myst3.cpp:1575 engines/pegasus/pegasus.cpp:701
+#: engines/myst3/myst3.cpp:1575 engines/pegasus/pegasus.cpp:737
 msgid "Invalid file name for saving"
 msgstr "Geef bestandsnaam voor bewaren"
 
@@ -5437,39 +5437,45 @@ msgstr ""
 "\n"
 "Meld dit a.u.b. bij de ontwikkelaars."
 
-#: engines/pegasus/pegasus.cpp:2483
+#: engines/pegasus/pegasus.cpp:2711
 msgid "Up/Zoom In/Move Forward/Open Doors"
 msgstr "Omhoog/Zoom In/Ga Vooruit/Open Deuren"
 
-#: engines/pegasus/pegasus.cpp:2490
+#: engines/pegasus/pegasus.cpp:2718
 msgid "Down/Zoom Out"
 msgstr "Naar beneden/Uitzoomen"
 
-#: engines/pegasus/pegasus.cpp:2511
+#: engines/pegasus/pegasus.cpp:2739
 msgid "Action/Select"
 msgstr "Actie/Selecteer"
 
-#: engines/pegasus/pegasus.cpp:2531
+#: engines/pegasus/pegasus.cpp:2759
 msgid "Display/Hide Inventory Tray"
 msgstr "Toon/Verberg Inventaris Blad"
 
-#: engines/pegasus/pegasus.cpp:2538
+#: engines/pegasus/pegasus.cpp:2766
 msgid "Display/Hide Biochip Tray"
 msgstr "Toon/Verberg Bioschip Blad"
 
-#: engines/pegasus/pegasus.cpp:2546
+#: engines/pegasus/pegasus.cpp:2774
 msgid "Toggle Center Data Display"
 msgstr "Centreren Datascherm Aan-/Uitzetten"
 
-#: engines/pegasus/pegasus.cpp:2553
+#: engines/pegasus/pegasus.cpp:2781
 msgid "Display/Hide Info Screen"
 msgstr "Toon/Verberg Infoscherm"
 
-#: engines/pegasus/pegasus.cpp:2560
+#: engines/pegasus/pegasus.cpp:2788
 msgid "Display/Hide Pause Menu"
 msgstr "Toon/Verberg Pauze-Menu"
 
-#: engines/pegasus/pegasus.cpp:2571 engines/wintermute/keymapper_tables.h:298
+#: engines/pegasus/pegasus.cpp:2795
+#, fuzzy
+#| msgid "Toggle fast mode"
+msgid "Toggle Chatty AI"
+msgstr "Snelle modus aan-/uitzetten"
+
+#: engines/pegasus/pegasus.cpp:2804 engines/wintermute/keymapper_tables.h:298
 #: engines/wintermute/keymapper_tables.h:325
 #: engines/wintermute/keymapper_tables.h:429
 #: engines/wintermute/keymapper_tables.h:557
@@ -5484,11 +5490,11 @@ msgstr "Toon/Verberg Pauze-Menu"
 msgid "???"
 msgstr "???"
 
-#: engines/pegasus/pegasus.cpp:2577
+#: engines/pegasus/pegasus.cpp:2810
 msgid "Save Game"
 msgstr "Spel Opslaan"
 
-#: engines/pegasus/pegasus.cpp:2583
+#: engines/pegasus/pegasus.cpp:2816
 msgid "Load Game"
 msgstr "Laad Spel"
 
