@@ -24,15 +24,10 @@
  */
 
 #include "buried/buried.h"
-#include "buried/frame_window.h"
 #include "buried/graphics.h"
 #include "buried/message.h"
-#include "buried/resources.h"
-#include "buried/sound.h"
 #include "buried/demo/features.h"
 
-#include "common/events.h"
-#include "common/system.h"
 #include "graphics/surface.h"
 
 namespace Buried {
@@ -72,7 +67,7 @@ void FeaturesDisplayWindow::onLButtonUp(const Common::Point &point, uint flags) 
 	if (_background) {
 		_background->free();
 		delete _background;
-		_background = 0;
+		_background = nullptr;
 	}
 
 	switch (_curBackground) {
