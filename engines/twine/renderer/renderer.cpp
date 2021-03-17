@@ -576,12 +576,11 @@ void Renderer::renderPolygonsBopper(uint8 *out, int vtop, int32 vsize, uint8 col
 		int16 start = ptr1[0];
 		int16 stop = ptr1[screenHeight];
 		ptr1++;
-		int32 hsize = stop - start;
+		const int32 hsize = stop - start;
 
 		if (start & 1) {
 			if (hsize >= 0) {
-				hsize++;
-				for (int32 j = start; j < hsize + start; j++) {
+				for (int32 j = start; j <= hsize + start; j++) {
 					if (j >= 0 && j < screenWidth) {
 						out[j] = color;
 					}
