@@ -321,15 +321,15 @@ private:
 
 	bool isUsingOrthoProjection = false;
 
-	void renderPolygonsCopper(uint8 *out, int vtop, int32 vsize, int32 color) const;
-	void renderPolygonsBopper(uint8 *out, int vtop, int32 vsize, int32 color) const;
-	void renderPolygonsFlat(uint8 *out, int vtop, int32 vsize, int32 color) const;
-	void renderPolygonsTele(uint8 *out, int vtop, int32 vsize, int32 color) const;
-	void renderPolygonsTras(uint8 *out, int vtop, int32 vsize, int32 color) const;
-	void renderPolygonTrame(uint8 *out, int vtop, int32 vsize, int32 color) const;
-	void renderPolygonsGouraud(uint8 *out, int vtop, int32 vsize, int32 color) const;
-	void renderPolygonsDither(uint8 *out, int vtop, int32 vsize, int32 color) const;
-	void renderPolygonsMarble(uint8 *out, int vtop, int32 vsize, int32 color) const;
+	void renderPolygonsCopper(uint8 *out, int vtop, int32 vsize, uint8 color) const;
+	void renderPolygonsBopper(uint8 *out, int vtop, int32 vsize, uint8 color) const;
+	void renderPolygonsFlat(uint8 *out, int vtop, int32 vsize, uint8 color) const;
+	void renderPolygonsTele(uint8 *out, int vtop, int32 vsize, uint8 color) const;
+	void renderPolygonsTras(uint8 *out, int vtop, int32 vsize, uint8 color) const;
+	void renderPolygonTrame(uint8 *out, int vtop, int32 vsize, uint8 color) const;
+	void renderPolygonsGouraud(uint8 *out, int vtop, int32 vsize) const;
+	void renderPolygonsDither(uint8 *out, int vtop, int32 vsize) const;
+	void renderPolygonsMarble(uint8 *out, int vtop, int32 vsize, uint8 color) const;
 
 	void computeBoundingBox(Vertex *vertices, int32 numVertices, int &vleft, int &vright, int &vtop, int &vbottom) const;
 	void computePolygons(int16 polyRenderType, const Vertex *vertices, int32 numVertices);

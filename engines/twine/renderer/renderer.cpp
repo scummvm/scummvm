@@ -519,7 +519,7 @@ void Renderer::computePolygons(int16 polyRenderType, const Vertex *vertices, int
 	}
 }
 
-void Renderer::renderPolygonsCopper(uint8 *out, int vtop, int32 vsize, int32 color) const {
+void Renderer::renderPolygonsCopper(uint8 *out, int vtop, int32 vsize, uint8 color) const {
 	const int16 *ptr1 = &_polyTab[vtop];
 	const int screenWidth = _engine->width();
 	const int screenHeight = _engine->height();
@@ -560,7 +560,7 @@ void Renderer::renderPolygonsCopper(uint8 *out, int vtop, int32 vsize, int32 col
 	}
 }
 
-void Renderer::renderPolygonsBopper(uint8 *out, int vtop, int32 vsize, int32 color) const {
+void Renderer::renderPolygonsBopper(uint8 *out, int vtop, int32 vsize, uint8 color) const {
 	const int16 *ptr1 = &_polyTab[vtop];
 	const int screenWidth = _engine->width();
 	const int screenHeight = _engine->height();
@@ -592,7 +592,7 @@ void Renderer::renderPolygonsBopper(uint8 *out, int vtop, int32 vsize, int32 col
 	}
 }
 
-void Renderer::renderPolygonsFlat(uint8 *out, int vtop, int32 vsize, int32 color) const {
+void Renderer::renderPolygonsFlat(uint8 *out, int vtop, int32 vsize, uint8 color) const {
 	const int16 *ptr1 = &_polyTab[vtop];
 	const int screenWidth = _engine->width();
 	const int screenHeight = _engine->height();
@@ -622,7 +622,7 @@ void Renderer::renderPolygonsFlat(uint8 *out, int vtop, int32 vsize, int32 color
 	}
 }
 
-void Renderer::renderPolygonsTele(uint8 *out, int vtop, int32 vsize, int32 color) const {
+void Renderer::renderPolygonsTele(uint8 *out, int vtop, int32 vsize, uint8 color) const {
 	const int16 *ptr1 = &_polyTab[vtop];
 	int bx = (uint16)color << 16;
 	const int screenWidth = _engine->width();
@@ -699,7 +699,7 @@ void Renderer::renderPolygonsTele(uint8 *out, int vtop, int32 vsize, int32 color
 }
 
 // FIXME: buggy
-void Renderer::renderPolygonsTras(uint8 *out, int vtop, int32 vsize, int32 color) const {
+void Renderer::renderPolygonsTras(uint8 *out, int vtop, int32 vsize, uint8 color) const {
 	const int16 *ptr1 = &_polyTab[vtop];
 	const int screenWidth = _engine->width();
 	const int screenHeight = _engine->height();
@@ -718,9 +718,9 @@ void Renderer::renderPolygonsTras(uint8 *out, int vtop, int32 vsize, int32 color
 			uint8 *out2 = start + out;
 
 			if (hsize / 2 < 0) {
-				bx = color & 0xFF;
+				bx = color;
 				bx = bx * 256;
-				bx += color & 0xFF;
+				bx += color;
 				for (int32 j = 0; j < hsize; j++) {
 					*(out2) = (*(out2)&0x0F0F) | bx;
 				}
@@ -734,7 +734,7 @@ void Renderer::renderPolygonsTras(uint8 *out, int vtop, int32 vsize, int32 color
 }
 
 // FIXME: buggy
-void Renderer::renderPolygonTrame(uint8 *out, int vtop, int32 vsize, int32 color) const {
+void Renderer::renderPolygonTrame(uint8 *out, int vtop, int32 vsize, uint8 color) const {
 	const int16 *ptr1 = &_polyTab[vtop];
 	unsigned char bh = 0;
 	const int screenWidth = _engine->width();
@@ -769,7 +769,7 @@ void Renderer::renderPolygonTrame(uint8 *out, int vtop, int32 vsize, int32 color
 				}
 
 				for (int32 j = 0; j < hsize; j++) {
-					*(out2) = (uint8)color;
+					*out2 = color;
 					out2 += 2;
 				}
 			}
@@ -778,7 +778,7 @@ void Renderer::renderPolygonTrame(uint8 *out, int vtop, int32 vsize, int32 color
 	}
 }
 
-void Renderer::renderPolygonsGouraud(uint8 *out, int vtop, int32 vsize, int32 color) const {
+void Renderer::renderPolygonsGouraud(uint8 *out, int vtop, int32 vsize) const {
 	const int16 *ptr1 = &_polyTab[vtop];
 	const int16 *ptr2 = &_polyTab2[vtop];
 	const int screenWidth = _engine->width();
@@ -846,7 +846,7 @@ void Renderer::renderPolygonsGouraud(uint8 *out, int vtop, int32 vsize, int32 co
 				if (hsize % 2) {
 					hsize /= 2;
 					if (currentXPos >= 0 && currentXPos < screenWidth) {
-						*(out2) = startColorByte;
+						*out2 = startColorByte;
 					}
 					out2++;
 					currentXPos++;
@@ -857,7 +857,7 @@ void Renderer::renderPolygonsGouraud(uint8 *out, int vtop, int32 vsize, int32 co
 
 				do {
 					if (currentXPos >= 0 && currentXPos < screenWidth) {
-						*(out2) = startColorByte;
+						*out2 = startColorByte;
 					}
 
 					currentXPos++;
@@ -877,7 +877,7 @@ void Renderer::renderPolygonsGouraud(uint8 *out, int vtop, int32 vsize, int32 co
 	}
 }
 
-void Renderer::renderPolygonsDither(uint8 *out, int vtop, int32 vsize, int32 color) const {
+void Renderer::renderPolygonsDither(uint8 *out, int vtop, int32 vsize) const {
 	const int16 *ptr1 = &_polyTab[vtop];
 	const int16 *ptr2 = &_polyTab2[vtop];
 	const int screenWidth = _engine->width();
@@ -909,7 +909,7 @@ void Renderer::renderPolygonsDither(uint8 *out, int vtop, int32 vsize, int32 col
 
 		if (hsize == 0) {
 			if (currentXPos >= 0 && currentXPos < screenWidth) {
-				*(out2) = (uint8)(((startColor + stopColor) / 2) / 256);
+				*out2 = (uint8)(((startColor + stopColor) / 2) / 256);
 			}
 		} else {
 			int16 colorSize = stopColor - startColor;
@@ -943,7 +943,7 @@ void Renderer::renderPolygonsDither(uint8 *out, int vtop, int32 vsize, int32 col
 				currentColor = ((currentColor & (0xFF00)) | ((((currentColor & 0xFF) << (hsize & 0xFF))) & 0xFF));
 				currentColor += startColor;
 				if (currentXPos >= 0 && currentXPos < screenWidth) {
-					*(out2) = currentColor / 256;
+					*out2 = currentColor / 256;
 				}
 
 				out2++;
@@ -954,7 +954,7 @@ void Renderer::renderPolygonsDither(uint8 *out, int vtop, int32 vsize, int32 col
 				currentColor += startColor;
 
 				if (currentXPos >= 0 && currentXPos < screenWidth) {
-					*(out2) = currentColor / 256;
+					*out2 = currentColor / 256;
 				}
 
 				currentColor &= 0xFF;
@@ -977,7 +977,7 @@ void Renderer::renderPolygonsDither(uint8 *out, int vtop, int32 vsize, int32 col
 					currentColor = ((currentColor & (0xFF00)) | ((((currentColor & 0xFF) << (hsize & 0xFF))) & 0xFF));
 					currentColor += startColor;
 					if (currentXPos >= 0 && currentXPos < screenWidth) {
-						*(out2) = currentColor / 256;
+						*out2 = currentColor / 256;
 					}
 					out2++;
 					currentXPos++;
@@ -989,7 +989,7 @@ void Renderer::renderPolygonsDither(uint8 *out, int vtop, int32 vsize, int32 col
 					currentColor &= 0xFF;
 					currentColor += startColor;
 					if (currentXPos >= 0 && currentXPos < screenWidth) {
-						*(out2) = currentColor / 256;
+						*out2 = currentColor / 256;
 					}
 					currentXPos++;
 					currentColor &= 0xFF;
@@ -1009,7 +1009,7 @@ void Renderer::renderPolygonsDither(uint8 *out, int vtop, int32 vsize, int32 col
 	}
 }
 
-void Renderer::renderPolygonsMarble(uint8 *out, int vtop, int32 vsize, int32 color) const {
+void Renderer::renderPolygonsMarble(uint8 *out, int vtop, int32 vsize, uint8 color) const {
 }
 
 void Renderer::renderPolygons(const CmdRenderPolygon &polygon, Vertex *vertices) {
@@ -1046,10 +1046,10 @@ void Renderer::renderPolygons(const CmdRenderPolygon &polygon, Vertex *vertices)
 		renderPolygonTrame(out, vtop, vsize, polygon.colorIndex);
 		break;
 	case POLYGONTYPE_GOURAUD:
-		renderPolygonsGouraud(out, vtop, vsize, polygon.colorIndex);
+		renderPolygonsGouraud(out, vtop, vsize);
 		break;
 	case POLYGONTYPE_DITHER:
-		renderPolygonsDither(out, vtop, vsize, polygon.colorIndex);
+		renderPolygonsDither(out, vtop, vsize);
 		break;
 	case POLYGONTYPE_MARBLE:
 		renderPolygonsMarble(out, vtop, vsize, polygon.colorIndex);
