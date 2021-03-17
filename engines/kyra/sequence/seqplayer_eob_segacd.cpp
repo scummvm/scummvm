@@ -120,7 +120,7 @@ SegaSequencePlayer::~SegaSequencePlayer() {
 }
 
 bool SegaSequencePlayer::play(int id) {
-	_renderer->render(0);
+	_renderer->renderToPage(0);
 	_screen->sega_fadeToBlack(2);
 	_screen->clearPage(0);
 
@@ -273,7 +273,7 @@ void SegaSequencePlayer::run(const uint8 *data) {
 			_scrollManager->fastForward();
 		} else {
 			_scrollManager->updateScrollTimers();
-			_renderer->render(0);
+			_renderer->renderToPage(0);
 			_screen->sega_updatePaletteFaders(-1);
 			_screen->updateScreen();
 		}
@@ -557,7 +557,7 @@ void SegaSequencePlayer::s_orbZoomEffect(const uint8*) {
 		_renderer->loadToVRAM(_scaleOutBuffer, 0x5800, 0x2AA0);
 
 		if (!_fastForward) {
-			_renderer->render(0);
+			_renderer->renderToPage(0);
 			_screen->updateScreen();
 			_vm->delayUntil(nextFrame);
 		}

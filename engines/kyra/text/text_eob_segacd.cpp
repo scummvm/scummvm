@@ -56,12 +56,12 @@ void TextDisplayer_SegaCD::printDialogueText(const char *str, bool wait) {
 	if (wait) {
 		printShadedText(str, 32, 12);
 		_engine->resetSkipFlag();
-		_renderer->render(0);
+		_renderer->renderToPage(0);
 		_screen->updateScreen();
 		_engine->delay(500);
 	} else {
 		printShadedText(str, 0, 0);
-		_renderer->render(0);
+		_renderer->renderToPage(0);
 		_screen->updateScreen();
 	}
 
@@ -169,7 +169,7 @@ void TextDisplayer_SegaCD::displayText(char *str, ...) {
 	if (tc != -1)
 		SWAP(_textColor, tc);
 
-	_renderer->render(Screen_EoB::kSegaRenderPage);
+	_renderer->renderToPage(Screen_EoB::kSegaRenderPage);
 	_screen->setFontStyles(Screen::FID_8_FNT, cs);
 	_screen->copyRegion(8, 176, 8, 176, 280, 24, Screen_EoB::kSegaRenderPage, 0, Screen::CR_NO_P_CHECK);
 	_screen->sega_setTextBuffer(0, 0);

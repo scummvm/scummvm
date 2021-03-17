@@ -31,10 +31,10 @@
 namespace Kyra {
 
 class EoBCoreEngine;
-class SegaRenderer;
+class SCDRenderer;
 class SegaAnimator;
 class Screen_EoB : public Screen {
-friend class SegaRenderer;
+friend class SCDRenderer;
 public:
 	// The purpose of this enum is to keep better track of which page is used
 	// when and for which purpose. We use the pages for more backup operations
@@ -159,7 +159,7 @@ public:
 	uint8 *sega_convertShape(const uint8 *src, int w, int h, int pal, int hOffs = 0);
 	void sega_encodeShapesFromSprites(const uint8 **dst, const uint8 *src, int numShapes, int w, int h, int pal, bool removeSprites = true);
 
-	SegaRenderer *sega_getRenderer() const { return _segaRenderer; }
+	SCDRenderer *sega_getRenderer() const { return _segaRenderer; }
 	SegaAnimator *sega_getAnimator() const { return _segaAnimator; }
 
 private:
@@ -223,7 +223,7 @@ private:
 
 	PaletteFader *_palFaders;
 	bool _specialColorReplace;
-	SegaRenderer *_segaRenderer;
+	SCDRenderer *_segaRenderer;
 	SegaAnimator *_segaAnimator;
 	uint16 _segaCurPalette[64];
 	uint16 *_segaCustomPalettes;
