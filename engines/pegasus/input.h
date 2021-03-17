@@ -53,6 +53,7 @@ enum PegasusAction {
 	kPegasusActionSaveGameState,
 	kPegasusActionLoadGameState,
 	kPegasusActionEnableEasterEgg,
+	kPegasusActionToggleChattyAI,
 
 	kPegasusActionCount
 };
@@ -76,6 +77,7 @@ protected:
 	// Keep track of which keys are down (= true) or not
 	bool _keysDown[kPegasusActionCount];
 	InputBits _lastRawBits;
+	bool _AKeyWasDown;
 };
 
 enum {
@@ -297,7 +299,7 @@ enum {
 };
 
 static const InputBits kHintInterruption = kFilterAllInputNoAuto;
-static const InputBits kWarningInterruption = kFilterNoInput;
+static const InputBits kWarningInterruption = kFilterAllInputNoAuto;
 static const InputBits kOpticalInterruption = kFilterAllInputNoAuto;
 
 /*
@@ -496,7 +498,7 @@ public:
 
 	static bool isRaiseInventoryInput(const Input &input) { return input.leftFireButtonDown(); }
 	static bool isRaiseBiochipsInput(const Input &input) { return input.rightFireButtonDown(); }
-	static InputBits getItemPanelsInputFilter() { return kFilterLeftFireButton | kFilterRightFireButton; }
+	static InputBits getItemPanelsInputFilter() { return kFilterFourButton | kFilterLeftFireButton | kFilterRightFireButton; }
 
 	static bool isToggleAIMiddleInput(const Input &input) { return input.threeButtonDown(); }
 

@@ -155,7 +155,10 @@ MainMenu::MainMenu() : GameMenu(kMainMenuID), _menuBackground(0), _overviewButto
 		else
 			_menuBackground.initFromPICTFile("Images/Demo/DemoMenu.pict");
 	} else {
-		_menuBackground.initFromPICTFile("Images/Main Menu/MainMenu.mac");
+		if (((PegasusEngine *)g_engine)->isDVD())
+			_menuBackground.initFromPICTFile("Images/Main Menu/MainMenu_hq.mac");
+		else
+			_menuBackground.initFromPICTFile("Images/Main Menu/MainMenu.mac");
 	}
 	_menuBackground.setDisplayOrder(0);
 	_menuBackground.startDisplaying();
@@ -453,9 +456,12 @@ static const CoordType kCreditsMainMenuSelectTop = 408;
 
 static const TimeValue kCoreTeamTime = 0;
 static const TimeValue kSupportTeamTime = 1920;
-static const TimeValue kOriginalTeamTime = 3000;
-static const TimeValue kTalentTime = 4440;
-static const TimeValue kOtherTitlesTime = 4680;
+static const TimeValue kOriginalTeamCDTime = 3000;
+static const TimeValue kOriginalTeamDVDTime = 3240;
+static const TimeValue kTalentCDTime = 4440;
+static const TimeValue kTalentDVDTime = 4680;
+static const TimeValue kOtherTitlesCDTime = 4680;
+static const TimeValue kOtherTitlesDVDTime = 4920;
 
 static const TimeValue kFrameIncrement = 120; // Three frames...
 
@@ -463,12 +469,18 @@ static const TimeValue kFrameIncrement = 120; // Three frames...
 CreditsMenu::CreditsMenu() : GameMenu(kCreditsMenuID), _menuBackground(0), _creditsMovie(0),
 		_mainMenuButton(0), _largeSelect(0), _smallSelect(0) {
 
-	_menuBackground.initFromPICTFile("Images/Credits/CredScrn.pict");
+	if (((PegasusEngine *)g_engine)->isDVD())
+		_menuBackground.initFromPICTFile("Images/Credits/CredScrnScummVM.pict");
+	else
+		_menuBackground.initFromPICTFile("Images/Credits/CredScrn.pict");
 	_menuBackground.setDisplayOrder(0);
 	_menuBackground.startDisplaying();
 	_menuBackground.show();
 
-	_creditsMovie.initFromMovieFile("Images/Credits/Credits.movie");
+	if (((PegasusEngine *)g_engine)->isDVD())
+		_creditsMovie.initFromMovieFile("Images/Credits/Credits_scummVM.movie");
+	else
+		_creditsMovie.initFromMovieFile("Images/Credits/Credits.movie");
 	_creditsMovie.setDisplayOrder(1);
 	_creditsMovie.moveElementTo(kCreditsMovieLeft, kCreditsMovieTop);
 	_creditsMovie.startDisplaying();
@@ -493,6 +505,38 @@ CreditsMenu::CreditsMenu() : GameMenu(kCreditsMenuID), _menuBackground(0), _cred
 	_menuSelection = -1;
 
 	newMenuSelection(kCreditsMenuCoreTeam);
+
+	if (((PegasusEngine *)g_engine)->isDVD()) {
+		_menuLoop.attachFader(&_menuFader);
+		_menuLoop.initFromAIFFFile("Sounds/Credits.aiff");
+		_menuFader.setMasterVolume(((PegasusEngine *)g_engine)->getAmbienceLevel());
+	}
+}
+
+CreditsMenu::~CreditsMenu() {
+	if (_menuLoop.isPlaying())
+		stopCreditsMenuLoop();
+}
+
+void CreditsMenu::startCreditsMenuLoop() {
+	if (((PegasusEngine *)g_engine)->isDVD()) {
+		FaderMoveSpec spec;
+
+		_menuLoop.loopSound();
+		spec.makeTwoKnotFaderSpec(30, 0, 0, 30, 255);
+
+		_menuFader.startFader(spec);
+	}
+}
+
+void CreditsMenu::stopCreditsMenuLoop() {
+	if (((PegasusEngine *)g_engine)->isDVD()) {
+		FaderMoveSpec spec;
+
+		spec.makeTwoKnotFaderSpec(30, 0, 255, 30, 0);
+		_menuFader.startFaderSync(spec);
+		_menuLoop.stopSound();
+	}
 }
 
 // Assumes the new selection is never more than one away from the old...
@@ -502,29 +546,33 @@ void CreditsMenu::newMenuSelection(const int newSelection) {
 		case kCreditsMenuCoreTeam:
 			_smallSelect.moveElementTo(kCoreTeamSelectLeft, kCoreTeamSelectTop);
 			_creditsMovie.setTime(kCoreTeamTime);
-			_creditsMovie.redrawMovieWorld();
 			break;
 		case kCreditsMenuSupportTeam:
 			_smallSelect.moveElementTo(kSupportTeamSelectLeft, kSupportTeamSelectTop);
 			_creditsMovie.setTime(kSupportTeamTime);
-			_creditsMovie.redrawMovieWorld();
 			break;
 		case kCreditsMenuOriginalTeam:
 			_smallSelect.moveElementTo(kOriginalTeamSelectLeft, kOriginalTeamSelectTop);
-			_creditsMovie.setTime(kOriginalTeamTime);
-			_creditsMovie.redrawMovieWorld();
+			if (((PegasusEngine *)g_engine)->isDVD())
+				_creditsMovie.setTime(kOriginalTeamDVDTime);
+			else
+				_creditsMovie.setTime(kOriginalTeamCDTime);
 			break;
 		case kCreditsMenuTalent:
 			_smallSelect.moveElementTo(kTalentSelectLeft, kTalentSelectTop);
-			_creditsMovie.setTime(kTalentTime);
-			_creditsMovie.redrawMovieWorld();
+			if (((PegasusEngine *)g_engine)->isDVD())
+				_creditsMovie.setTime(kTalentDVDTime);
+			else
+				_creditsMovie.setTime(kTalentCDTime);
 			break;
 		case kCreditsMenuOtherTitles:
 			_smallSelect.moveElementTo(kOtherTitlesSelectLeft, kOtherTitlesSelectTop);
 			_smallSelect.show();
 			_largeSelect.hide();
-			_creditsMovie.setTime(kOtherTitlesTime);
-			_creditsMovie.redrawMovieWorld();
+			if (((PegasusEngine *)g_engine)->isDVD())
+				_creditsMovie.setTime(kOtherTitlesDVDTime);
+			else
+				_creditsMovie.setTime(kOtherTitlesCDTime);
 			break;
 		case kCreditsMenuMainMenu:
 			_smallSelect.hide();
@@ -533,22 +581,26 @@ void CreditsMenu::newMenuSelection(const int newSelection) {
 		default:
 			break;
 		}
+		_creditsMovie.redrawMovieWorld();
 
 		_menuSelection = newSelection;
 	}
 }
 
 void CreditsMenu::newMovieTime(const TimeValue newTime) {
+	// The DVD credits have an extra frame in the support team section
+	bool isDVD = ((PegasusEngine *)g_engine)->isDVD();
+
 	if (newTime < kSupportTeamTime) {
 		_smallSelect.moveElementTo(kCoreTeamSelectLeft, kCoreTeamSelectTop);
 		_menuSelection = kCreditsMenuCoreTeam;
-	} else if (newTime < kOriginalTeamTime) {
+	} else if ((isDVD && newTime < kOriginalTeamDVDTime) || (!isDVD && newTime < kOriginalTeamCDTime)) {
 		_smallSelect.moveElementTo(kSupportTeamSelectLeft, kSupportTeamSelectTop);
 		_menuSelection = kCreditsMenuSupportTeam;
-	} else if (newTime < kTalentTime) {
+	} else if ((isDVD && newTime < kTalentDVDTime) || (!isDVD && newTime < kTalentCDTime)) {
 		_smallSelect.moveElementTo(kOriginalTeamSelectLeft, kOriginalTeamSelectTop);
 		_menuSelection = kCreditsMenuOriginalTeam;
-	} else if (newTime < kOtherTitlesTime) {
+	} else if ((isDVD && newTime < kOtherTitlesDVDTime) || (!isDVD && newTime < kOtherTitlesCDTime)) {
 		_smallSelect.moveElementTo(kTalentSelectLeft, kTalentSelectTop);
 		_smallSelect.show();
 		_largeSelect.hide();
@@ -675,10 +727,11 @@ DeathMenu::DeathMenu(const DeathReason deathReason) : GameMenu(kDeathMenuID), _d
 			"dAunmade", "dAbombed", "dAshot", "dAassass", "dAnuked",
 			"dTunmade", "dTshot", "dPfall", "dPdino", "dPstuck",
 			"dNchoke", "dNcaught", "dNcaught", "dNsub", "dNrobot1",
-			"dNrobot2", "dMfall", "dMcaught", "dMtracks", "dMrobot",
-			"dMtoast", "dMexplo1", "dMexplo2", "dMchoke1", "dMchoke2",
-			"dMdroid", "dMfall", "dMgears", "dMshutt1", "dMshutt2",
-			"dWpoison", "dWcaught", "dWplasma", "dWshot", "dAfinale"
+			"dNrobot2", "dMfall", "dMcaught", "dMcollision", "dMtracks",
+			"dMrobot", "dMtoast", "dMexplo1", "dMexplo2", "dMchoke1",
+			"dMchoke2", "dMdroid", "dMshaft", "dMgears", "dMshutt1",
+			"dMshutt2", "dWpoison", "dWcaught", "dWplasma", "dWshot",
+			"dAfinale"
 		};
 
 		imageName += fileNames[deathReason - 1];
@@ -746,7 +799,10 @@ DeathMenu::DeathMenu(const DeathReason deathReason) : GameMenu(kDeathMenuID), _d
 		_largeSelect.setDisplayOrder(2);
 		_largeSelect.startDisplaying();
 	} else {
-		_triumphSound.initFromQuickTime("Sounds/Caldoria/Galactic Triumph");
+		if (vm->isDVD()) // Updated file for the DVD version
+			_triumphSound.initFromAIFFFile("Sounds/Caldoria/Galactic Triumph.44K.aiff");
+		else
+			_triumphSound.initFromQuickTime("Sounds/Caldoria/Galactic Triumph");
 		_triumphSound.setVolume(((PegasusEngine *)g_engine)->getAmbienceLevel());
 		_triumphSound.playSound();
 	}
@@ -884,6 +940,7 @@ void DeathMenu::drawAllScores() {
 	case kDeathRobotSubControlRoom:
 	case kDeathWrongShuttleLock:
 	case kDeathArrestedInMars:
+	case kDeathCollidedWithPod:
 	case kDeathRunOverByPod:
 	case kDeathDidntGetOutOfWay:
 	case kDeathReactorBurn:

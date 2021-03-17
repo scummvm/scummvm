@@ -216,6 +216,7 @@ static const InteractionID kNoradElevatorInteractionID = 3;
 static const InteractionID kNoradPressureDoorInteractionID = 4;
 static const InteractionID kNoradSubControlRoomInteractionID = 5;
 static const InteractionID kNoradSubPlatformInteractionID = 6;
+static const InteractionID kNoradSubChaseInteractionID = 7;
 
 /////////////////////////////////////////////
 //
@@ -264,6 +265,12 @@ static const CoordType kNoradLowerDownTop = kNavAreaTop + 212;
 
 static const CoordType kNoradPlatformLeft = kNavAreaLeft + 36;
 static const CoordType kNoradPlatformTop = kNavAreaTop + 87;
+
+static const CoordType kNoradSubSteerLeft = 288;
+static const CoordType kNoradSubSteerTop = 28;
+
+static const CoordType kNoradSubHintLeft = 480;
+static const CoordType kNoradSubHintTop = 240;
 
 static const CoordType kNoradSubControlLeft = kNavAreaLeft + 0;
 static const CoordType kNoradSubControlTop = kNavAreaTop + 84;
@@ -385,8 +392,9 @@ static const DisplayElementID kClawMonitorGreenBallID = kSubControlCWID + 1;
 
 // Norad Delta display IDs.
 
-static const DisplayElementID kGlobeMonitorID = kNeighborhoodDisplayID;
-static const DisplayElementID kGlobeMovieID = kGlobeMonitorID + 14;
+static const DisplayElementID kGlobeRobotID = kNeighborhoodDisplayID;
+static const DisplayElementID kGlobeMonitorID = kGlobeRobotID + 1;
+static const DisplayElementID kGlobeMovieID = kGlobeMonitorID + 1;
 static const DisplayElementID kGlobeCircleLeftID = kGlobeMovieID + 1;
 static const DisplayElementID kGlobeCircleRightID = kGlobeCircleLeftID + 1;
 static const DisplayElementID kGlobeCircleUpID = kGlobeCircleRightID + 1;

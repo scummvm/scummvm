@@ -1025,7 +1025,7 @@ static const char *credits[] = {
 "C0""Jeroen Janssen",
 "C2""Numerous readability and bugfix patches",
 "C0""Keith Kaisershot",
-"C2""Several Pegasus Prime patches",
+"C2""Several Pegasus Prime patches and DVD additions",
 "C0""Andreas Karlsson",
 "C2""Initial port for SymbianOS",
 "C0""Stefan Kristiansson",

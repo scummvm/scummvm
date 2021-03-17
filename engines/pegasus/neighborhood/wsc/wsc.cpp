@@ -23,10 +23,12 @@
  *
  */
 
+#include "pegasus/cursor.h"
 #include "pegasus/energymonitor.h"
 #include "pegasus/gamestate.h"
 #include "pegasus/pegasus.h"
 #include "pegasus/ai/ai_area.h"
+#include "pegasus/items/biochips/arthurchip.h"
 #include "pegasus/items/biochips/opticalchip.h"
 #include "pegasus/items/biochips/shieldchip.h"
 #include "pegasus/neighborhood/wsc/wsc.h"
@@ -38,6 +40,12 @@ static const CanMoveForwardReason kCantMoveWatchingDiagnosis = kCantMoveLastReas
 static const CanTurnReason kCantTurnWatchingDiagnosis = kCantTurnLastReason + 1;
 static const CanTurnReason kCantTurnWatchingAnalysis = kCantTurnWatchingDiagnosis + 1;
 static const CanTurnReason kCantTurnInMoleculeGame = kCantTurnWatchingAnalysis + 1;
+
+static const ExtraID kImplantNoGun = 1000;
+static const ExtraID kImplantWithGun = 1001;
+static const ExtraID kEasterEggWalchek = 1002;
+
+static const HotSpotID kBiotechImplantHotSpotID = 10000;
 
 static const TimeScale kMoleculesMovieScale = 600;
 static const TimeValue kMoleculeLoopTime = 4 * kMoleculesMovieScale;
@@ -485,7 +493,7 @@ static const CoordType kMoleculesMovieLeft = kNavAreaLeft + 112;
 static const CoordType kMoleculesMovieTop = kNavAreaTop + 40;
 
 WSC::WSC(InputHandler *nextHandler, PegasusEngine *owner) : Neighborhood(nextHandler, owner, "WSC", kWSCID),
-		_moleculesMovie(kNoDisplayElement) {
+		_biotechImplantSpot(kBiotechImplantHotSpotID), _extraMovie(kNoDisplayElement), _moleculesMovie(kNoDisplayElement) {
 
 	_argonSprite = nullptr;
 	_cachedZoomSpot = nullptr;
@@ -504,6 +512,11 @@ WSC::WSC(InputHandler *nextHandler, PegasusEngine *owner) : Neighborhood(nextHan
 			GameState.isTakenItemID(kSinclairKey));
 }
 
+WSC::~WSC() {
+	if (_vm->isDVD())
+		_vm->getAllHotspots().remove(&_biotechImplantSpot);
+}
+
 uint16 WSC::getDateResID() const {
 	return kDate2310ID;
 }
@@ -511,12 +524,23 @@ uint16 WSC::getDateResID() const {
 void WSC::init() {
 	Neighborhood::init();
 
+	_extraMovieCallBack.setNotification(&_neighborhoodNotification);
+
 	_cachedZoomSpot = 0;
 	_argonSprite = 0;
 
 	// HACK: Fix the drag item for picking up the Sinclair Key Card
 	HotspotInfoTable::Entry *entry = findHotspotEntry(kWSC02SouthTakeArgonSpotID);
 	entry->hotspotItem = kArgonPickup;
+
+	if (_vm->isDVD()) {
+		Hotspot *aSpot = _vm->getAllHotspots().findHotspotByID(kW61TimeBendingSpotID);
+		aSpot->setArea(Common::Rect(97, 156, 275, 174));
+
+		_biotechImplantSpot.setArea(Common::Rect(kNavAreaLeft + 97, kNavAreaTop + 174, kNavAreaLeft + 275, kNavAreaTop + 182));
+		_biotechImplantSpot.setHotspotFlags(kNeighborhoodSpotFlag | kClickSpotFlag);
+		_vm->getAllHotspots().push_back(&_biotechImplantSpot);
+	}
 }
 
 void WSC::flushGameState() {
@@ -1032,27 +1056,27 @@ void WSC::getExtraEntry(const uint32 id, ExtraTable::Entry &extraEntry) {
 		break;
 	case kW61SouthScreenOnWithGun:
 		if (GameState.isTakenItemID(kMachineGun))
-			Neighborhood::getExtraEntry(id, extraEntry);
-		else
 			Neighborhood::getExtraEntry(kW61SouthScreenOnNoGun, extraEntry);
+		else
+			Neighborhood::getExtraEntry(id, extraEntry);
 		break;
 	case kW61SouthSmartAlloysWithGun:
 		if (GameState.isTakenItemID(kMachineGun))
-			Neighborhood::getExtraEntry(id, extraEntry);
-		else
 			Neighborhood::getExtraEntry(kW61SouthSmartAlloysNoGun, extraEntry);
+		else
+			Neighborhood::getExtraEntry(id, extraEntry);
 		break;
 	case kW61SouthMorphingWithGun:
 		if (GameState.isTakenItemID(kMachineGun))
-			Neighborhood::getExtraEntry(id, extraEntry);
-		else
 			Neighborhood::getExtraEntry(kW61SouthMorphingNoGun, extraEntry);
+		else
+			Neighborhood::getExtraEntry(id, extraEntry);
 		break;
 	case kW61SouthTimeBendingWithGun:
 		if (GameState.isTakenItemID(kMachineGun))
-			Neighborhood::getExtraEntry(id, extraEntry);
-		else
 			Neighborhood::getExtraEntry(kW61SouthTimeBendingNoGun, extraEntry);
+		else
+			Neighborhood::getExtraEntry(id, extraEntry);
 		break;
 	case kW98RobotHeadOpensLight:
 		if (GameState.getWSCCatwalkDark())
@@ -1118,6 +1142,21 @@ void WSC::bumpIntoWall() {
 	Neighborhood::bumpIntoWall();
 }
 
+void WSC::spotCompleted() {
+	Neighborhood::spotCompleted();
+	if (_vm->isDVD() && GameState.getCurrentRoomAndView() == MakeRoomView(kWSC58, kSouth) && g_arthurChip) {
+		g_AIArea->checkRules();
+		if (GameState.isTakenItemID(kCrowbar)) {
+			g_arthurChip->playArthurMovieForEvent("Images/AI/Globals/XGLOBA94", kArthurWSCSawBrokenDoor);
+		} else {
+			if (_vm->getRandomBit())
+				g_arthurChip->playArthurMovieForEvent("Images/AI/Globals/XGLOBA95", kArthurWSCSawBrokenDoorNoCrowBar);
+			else
+				g_arthurChip->playArthurMovieForEvent("Images/AI/Globals/XGLOBA39", kArthurWSCSawBrokenDoorNoCrowBar);
+		}
+	}
+}
+
 void WSC::closeDoorOffScreen(const RoomID room, const DirectionConstant) {
 	Item *keyCard;
 
@@ -1164,27 +1203,43 @@ void WSC::cantOpenDoor(CanOpenDoorReason reason) {
 	switch (GameState.getCurrentRoomAndView()) {
 	case MakeRoomView(kWSC22, kWest):
 		playSpotSoundSync(kNakamuraNotHomeIn, kNakamuraNotHomeOut);
+		if (g_arthurChip)
+			g_arthurChip->playArthurMovieForEvent("Images/AI/Globals/XGLOBA98", kArthurWSCAttemptedLockedDoor);
 		break;
 	case MakeRoomView(kWSC23, kEast):
 		playSpotSoundSync(kHernandezNotHomeIn, kHernandezNotHomeOut);
+		if (g_arthurChip)
+			g_arthurChip->playArthurMovieForEvent("Images/AI/Globals/XGLOBA98", kArthurWSCAttemptedLockedDoor);
 		break;
 	case MakeRoomView(kWSC26, kWest):
 		playSpotSoundSync(kGrailisNotHomeIn, kGrailisNotHomeOut);
+		if (g_arthurChip)
+			g_arthurChip->playArthurMovieForEvent("Images/AI/Globals/XGLOBA98", kArthurWSCAttemptedLockedDoor);
 		break;
 	case MakeRoomView(kWSC27, kEast):
 		playSpotSoundSync(kWashingtonNotHomeIn, kWashingtonNotHomeOut);
+		if (g_arthurChip)
+			g_arthurChip->playArthurMovieForEvent("Images/AI/Globals/XGLOBA98", kArthurWSCAttemptedLockedDoor);
 		break;
 	case MakeRoomView(kWSC32, kWest):
 		playSpotSoundSync(kTheriaultNotHomeIn, kTheriaultNotHomeOut);
+		if (g_arthurChip)
+			g_arthurChip->playArthurMovieForEvent("Images/AI/Globals/XGLOBA98", kArthurWSCAttemptedLockedDoor);
 		break;
 	case MakeRoomView(kWSC33, kEast):
 		playSpotSoundSync(kSullivanNotHomeIn, kSullivanNotHomeOut);
+		if (g_arthurChip)
+			g_arthurChip->playArthurMovieForEvent("Images/AI/Globals/XGLOBA98", kArthurWSCAttemptedLockedDoor);
 		break;
 	case MakeRoomView(kWSC41, kWest):
 		playSpotSoundSync(kGlennerNotHomeIn, kGlennerNotHomeOut);
+		if (g_arthurChip)
+			g_arthurChip->playArthurMovieForEvent("Images/AI/Globals/XGLOBA98", kArthurWSCAttemptedLockedDoor);
 		break;
 	case MakeRoomView(kWSC42, kEast):
 		playSpotSoundSync(kSinclairNotHomeIn, kSinclairNotHomeOut);
+		if (!GameState.isTakenItemID(kSinclairKey) && g_arthurChip)
+			g_arthurChip->playArthurMovieForEvent("Images/AI/Globals/XGLOBA91", kArthurWSCAttemptedSinclairDoorNoKey);
 		break;
 	case MakeRoomView(kWSC15, kWest):
 	case MakeRoomView(kWSC25, kWest):
@@ -1192,6 +1247,8 @@ void WSC::cantOpenDoor(CanOpenDoorReason reason) {
 	case MakeRoomView(kWSC41, kEast):
 	case MakeRoomView(kWSC46, kWest):
 		playSpotSoundSync(kWSCLabClosedIn, kWSCLabClosedOut);
+		if (g_arthurChip)
+			g_arthurChip->playArthurMovieForEvent("Images/AI/Globals/XGLOBA98", kArthurWSCAttemptedLockedDoor);
 		break;
 	default:
 		Neighborhood::cantOpenDoor(reason);
@@ -1338,10 +1395,87 @@ void WSC::zoomTo(const Hotspot *hotspot) {
 }
 
 void WSC::startExtraSequence(const ExtraID extraID, const NotificationFlags flags, const InputBits interruptionFilter) {
-	if (extraID == kW61Brochure)
-		loadLoopSound1("");
+	TimeValue segmentStart = 0, segmentStop = 0;
+	bool loopSequence = false;
+	Common::Rect pushBounds;
+	NotificationFlags extraFlags;
 
-	Neighborhood::startExtraSequence(extraID, flags, interruptionFilter);
+	switch (extraID) {
+	case kImplantNoGun:
+	case kImplantWithGun:
+	case kEasterEggWalchek:
+		_turnPush.getBounds(pushBounds);
+
+		switch (extraID) {
+		case kImplantNoGun:
+			_extraMovie.initFromMovieFile("Images/World Science Center/W61SNF.movie");
+			break;
+		case kImplantWithGun:
+			_extraMovie.initFromMovieFile("Images/World Science Center/W61SZF.movie");
+			break;
+		case kEasterEggWalchek:
+			_extraMovie.initFromMovieFile("Images/World Science Center/W61WZF.movie");
+			break;
+		default:
+			break;
+		}
+		segmentStart = 0;
+		segmentStop = _extraMovie.getDuration();
+		loopSequence = false;
+
+		_lastExtra = extraID;
+		_turnPush.hide();
+
+		if (!loopSequence && g_AIArea)
+			g_AIArea->lockAIOut();
+
+		extraFlags = flags;
+		_interruptionFilter = interruptionFilter;
+		// Stop the nav movie before doing anything else
+		_navMovie.stop();
+		_navMovie.stopDisplaying();
+
+		_extraMovie.setVolume(_vm->getSoundFXLevel());
+		_extraMovie.moveElementTo(pushBounds.left, pushBounds.top);
+		_extraMovie.setDisplayOrder(kNavMovieOrder + 1);
+		_extraMovie.startDisplaying();
+		_extraMovie.show();
+		_extraMovie.setFlags(0);
+		_extraMovie.setSegment(segmentStart, segmentStop);
+		_extraMovie.setTime(segmentStart);
+		if (loopSequence)
+			_extraMovie.setFlags(kLoopTimeBase);
+		else
+			extraFlags |= kNeighborhoodMovieCompletedFlag;
+		_extraMovieCallBack.cancelCallBack();
+		_extraMovieCallBack.initCallBack(&_extraMovie, kCallBackAtExtremes);
+		if (extraFlags != 0) {
+			_extraMovieCallBack.setCallBackFlag(extraFlags);
+			_extraMovieCallBack.scheduleCallBack(kTriggerAtStop, 0, 0);
+		}
+		_extraMovie.start();
+		break;
+	default:
+		switch (extraID) {
+		case kW61Brochure:
+			loadLoopSound1("");
+			break;
+		}
+		Neighborhood::startExtraSequence(extraID, flags, interruptionFilter);
+		if (extraID == kWSCSpinRobot && g_arthurChip) {
+			if (_vm->getRandomBit())
+				g_arthurChip->playArthurMovieForEvent("Images/AI/Globals/XGLOBA93", kArthurWSCSawAresHologram);
+			else
+				g_arthurChip->playArthurMovieForEvent("Images/AI/Globals/XGLOBB08", kArthurWSCSawAresHologram);
+		}
+		break;
+	}
+}
+
+void WSC::startDoorOpenMovie(const TimeValue startTime, const TimeValue stopTime) {
+	Neighborhood::startDoorOpenMovie(startTime, stopTime);
+	if (GameState.getCurrentRoomAndView() == MakeRoomView(kWSC58, kSouth) && g_arthurChip)
+		g_arthurChip->playArthurMovieForEvent("Images/AI/Globals/XGLOBA19", kArthurWSCUsedCrowBar);
 }
 
 int16 WSC::getStaticCompassAngle(const RoomID room, const DirectionConstant dir) {
@@ -1417,17 +1551,40 @@ void WSC::loadAmbientLoops() {
 	RoomID room = GameState.getCurrentRoom();
 
 	if (room >= kWSC01 && room <= kWSC04) {
-		if (GameState.getWSCSeenTimeStream())
-			loadLoopSound1("Sounds/World Science Center/WLabLoop.22K.AIFF", 0x100 / 2);
-	} else if ((room >= kWSC06 && room <= kWSC58) || (room >= kWSC62 && room <= kWSC63))
-		loadLoopSound1("Sounds/World Science Center/Organic Walls.22K.AIFF", 0x100 / 2);
-	else if (room >= kWSC82 && room <= kWSC92)
-		loadLoopSound1("Sounds/World Science Center/Creature Feature.22K.AIFF");
-	else if ((room >= kWSC60 && room <= kWSC61West) || (room >= kWSC64 && room <= kWSC81) ||
-			(room >= kWSC93 && room <= kWSC97))
-		loadLoopSound1("Sounds/World Science Center/The Other Side.22K.AIFF", 0x100 / 12);
-	else if (room == kWSC98)
-		loadLoopSound1("Sounds/World Science Center/WCatLoop.22K.AIFF");
+		if (GameState.getWSCSeenTimeStream()) {
+			if (_vm->isDVD())
+				loadLoopSound1("Sounds/World Science Center/WLabLoop.32K.AIFF", 0x100 / 4);
+			else
+				loadLoopSound1("Sounds/World Science Center/WLabLoop.22K.AIFF", 0x100 / 2);
+			if (_vm->isDVD()) {
+				if (GameState.getWSCPoisoned())
+					loadLoopSound2("Sounds/World Science Center/Poisoned.32K.16.AIFF", 0x100 / 4);
+				else
+					loadLoopSound2("");
+			}
+		}
+	} else {
+		if ((room >= kWSC06 && room <= kWSC58) || (room >= kWSC62 && room <= kWSC63)) {
+			if (_vm->isDVD()) // Updated for the DVD version
+				loadLoopSound1("Sounds/World Science Center/Organic Walls.32K.16.AIFF", 205); // ~80%
+			else
+				loadLoopSound1("Sounds/World Science Center/Organic Walls.22K.AIFF", 0x100 / 2);
+		} else if (room >= kWSC82 && room <= kWSC92) {
+			if (_vm->isDVD()) // Updated for the DVD version
+				loadLoopSound1("Sounds/World Science Center/Creature Feature.32K.16.AIFF");
+			else
+				loadLoopSound1("Sounds/World Science Center/Creature Feature.22K.AIFF");
+		} else if ((room >= kWSC60 && room <= kWSC61West) || (room >= kWSC64 && room <= kWSC81) ||
+					(room >= kWSC93 && room <= kWSC97)) {
+			if (_vm->isDVD()) // Updated for the DVD version
+				loadLoopSound1("Sounds/World Science Center/The Other Side.32K.16.AIFF", 51); // ~20%
+			else
+				loadLoopSound1("Sounds/World Science Center/The Other Side.22K.AIFF", 0x100 / 12);
+		} else if (room == kWSC98) {
+			loadLoopSound1("Sounds/World Science Center/WCatLoop.22K.AIFF");
+		}
+		loadLoopSound2("");
+	}
 }
 
 void WSC::checkContinuePoint(const RoomID room, const DirectionConstant direction) {
@@ -1548,11 +1705,20 @@ void WSC::arriveAt(const RoomID room, const DirectionConstant dir) {
 		if (GameState.getWSCDesignedAntidote() && !GameState.getWSCPickedUpAntidote())
 			setCurrentActivation(kActivationReadyForSynthesis);
 		break;
+	case MakeRoomView(kWSC19, kWest):
+		if (!(GameState.isTakenItemID(kSinclairKey) && GameState.isTakenItemID(kArgonCanister) &&
+			GameState.isTakenItemID(kNitrogenCanister)) && g_arthurChip)
+			g_arthurChip->playArthurMovieForEvent("Images/AI/Globals/XGLOBA34", kArthurWSCLeftLabNoKeyOrCanisters);
+		break;
 	case MakeRoomView(kWSC16, kNorth):
 		if (getCurrentAlternate() == kAltWSCPeopleAtW19North) {
 			setCurrentAlternate(kAltWSCNormal);
 			_privateFlags.setFlag(kWSCPrivateSeenPeopleAt19NorthFlag, true);
 		}
+		break;
+	case MakeRoomView(kWSC06, kNorth):
+		if (g_arthurChip)
+			g_arthurChip->playArthurMovieForEvent("Images/AI/Globals/XGLOBA81", kArthurWSCAtOppositeDoor);
 		break;
 	case MakeRoomView(kWSC07, kSouth):
 	case MakeRoomView(kWSC56, kNorth):
@@ -1564,6 +1730,12 @@ void WSC::arriveAt(const RoomID room, const DirectionConstant dir) {
 	case MakeRoomView(kWSC42, kEast):
 		_privateFlags.setFlag(kWSCPrivateSinclairOfficeOpenFlag, false);
 		setCurrentActivation(kActivationSinclairOfficeLocked);
+		if (g_arthurChip) {
+			if (GameState.isTakenItemID(kSinclairKey))
+				g_arthurChip->playArthurMovieForEvent("Images/AI/Globals/XGLOBA99", kArthurWSCSawSinclairDoor);
+			else
+				g_arthurChip->playArthurMovieForEvent("Images/AI/Globals/XGLOBA92", kArthurWSCSawSinclairDoorNoKey);
+		}
 		break;
 	case MakeRoomView(kWSC58, kSouth):
 		setCurrentActivation(kActivationW58SouthDoorLocked);
@@ -1572,8 +1744,14 @@ void WSC::arriveAt(const RoomID room, const DirectionConstant dir) {
 	case MakeRoomView(kWSC60, kEast):
 		GameState.setScoringEnteredSinclairOffice();
 		break;
+	case MakeRoomView(kWSC60East, kEast):
+		if (g_arthurChip)
+			g_arthurChip->playArthurMovieForEvent("Images/AI/Globals/XGLOBB03", kArthurWSCZoomedToSnake);
+		break;
 	case MakeRoomView(kWSC61West, kWest):
 		setCurrentActivation(kActivationW61MessagesOff);
+		if (g_arthurChip)
+			g_arthurChip->playArthurMovieForEvent("Images/AI/Globals/XGLOBB00", kArthurWSCZoomedToSinclairMessages);
 		break;
 	case MakeRoomView(kWSC61South, kSouth):
 		setCurrentActivation(kActivationW61SouthOff);
@@ -1581,11 +1759,20 @@ void WSC::arriveAt(const RoomID room, const DirectionConstant dir) {
 	case MakeRoomView(kWSC62, kSouth):
 		if (!GameState.getWSCDidPlasmaDodge()) {
 			g_AIArea->lockAIOut();
-			loadLoopSound1("Sounds/World Science Center/Plasma Rock.22K.AIFF");
+
+			if (_vm->isDVD())
+				loadLoopSound1("Sounds/World Science Center/Plasma Rock.44K.16.AIFF");
+			else
+				loadLoopSound1("Sounds/World Science Center/Plasma Rock.22K.AIFF");
+
 			requestExtraSequence(kW62SouthPlasmaRobotAppears, 0, kFilterNoInput);
 			requestExtraSequence(kW62ZoomToRobot, 0, kFilterNoInput);
 			requestExtraSequence(kW62ZoomOutFromRobot, kExtraCompletedFlag, kFilterNoInput);
 		}
+		break;
+	case MakeRoomView(kWSC64, kSouth):
+		if (g_arthurChip)
+			g_arthurChip->playArthurMovieForEvent("Images/AI/Globals/XGLOBB06", kArthurWSCEnteredAuditorium);
 		break;
 	case MakeRoomView(kWSC65Screen, kSouth):
 		if (!GameState.getWSCSeenSinclairLecture()) {
@@ -1614,11 +1801,33 @@ void WSC::arriveAt(const RoomID room, const DirectionConstant dir) {
 		if (getCurrentAlternate() == kAltWSCW0ZDoorOpen)
 			turnLeft();
 		break;
+	case MakeRoomView(kWSC82, kSouth):
+	case MakeRoomView(kWSC82, kEast):
+		if (g_arthurChip)
+			g_arthurChip->playArthurMovieForEvent("Images/AI/Globals/XGLOBB05", kArthurWSCEnteredPassage);
+		break;
+	case MakeRoomView(kWSC90, kEast):
+	case MakeRoomView(kWSC91, kEast):
+		if (g_arthurChip)
+			g_arthurChip->playArthurMovieForEvent("Images/AI/Globals/XGLOBA90", kArthurWSCInPassage);
+		break;
 	case MakeRoomView(kWSC93, kEast):
 		GameState.setWSCBeenAtWSC93(true);
+	case MakeRoomView(kWSC93, kNorth):
+		if (g_arthurChip)
+			g_arthurChip->playArthurMovieForEvent("Images/AI/Globals/XGLOBA38", kArthurWSCExitedPassage);
+		break;
+	case MakeRoomView(kWSC95, kWest):
+		if (g_arthurChip)
+			g_arthurChip->playArthurMovieForEvent("Images/AI/Globals/XGLOBA92", kArthurWSCSawCatwalkDoor);
 		break;
 	case MakeRoomView(kWSC98, kWest):
 		if (!GameState.getWSCRobotDead()) {
+			if (_vm->isDVD()) {
+				_welcomeSound.initFromAIFFFile("Sounds/World Science Center/Welcome Enrique.22K.AIFF");
+				_welcomeSound.setVolume(_vm->getSoundFXLevel());
+				_welcomeSound.playSound();
+			}
 			scheduleEvent(kGawkAtRobotTime2, 1, kTimerEventPlayerGawkingAtRobot2);
 			setCurrentActivation(kActivationRobotTurning);
 			if (g_AIArea)
@@ -1663,6 +1872,10 @@ void WSC::turnTo(const DirectionConstant direction) {
 		if (GameState.getWSCDesignedAntidote() && !GameState.getWSCPickedUpAntidote())
 			setCurrentActivation(kActivationReadyForSynthesis);
 		break;
+	case MakeRoomView(kWSC06, kNorth):
+		if (g_arthurChip)
+			g_arthurChip->playArthurMovieForEvent("Images/AI/Globals/XGLOBA81", kArthurWSCAtOppositeDoor);
+		break;
 	case MakeRoomView(kWSC07, kSouth):
 	case MakeRoomView(kWSC56, kNorth):
 		setCurrentActivation(kActivationReadyForMap);
@@ -1687,10 +1900,20 @@ void WSC::turnTo(const DirectionConstant direction) {
 	case MakeRoomView(kWSC42, kEast):
 		_privateFlags.setFlag(kWSCPrivateSinclairOfficeOpenFlag, false);
 		setCurrentActivation(kActivationSinclairOfficeLocked);
+		if (GameState.getCurrentRoom() == kWSC42 && g_arthurChip) {
+			if (GameState.isTakenItemID(kSinclairKey))
+				g_arthurChip->playArthurMovieForEvent("Images/AI/Globals/XGLOBA99", kArthurWSCSawSinclairDoor);
+			else
+				g_arthurChip->playArthurMovieForEvent("Images/AI/Globals/XGLOBA92", kArthurWSCSawSinclairDoorNoKey);
+		}
 		break;
 	case MakeRoomView(kWSC58, kSouth):
 		setCurrentActivation(kActivationW58SouthDoorLocked);
 		_privateFlags.setFlag(kWSCPrivate58SouthOpenFlag, false);
+		break;
+	case MakeRoomView(kWSC64, kSouth):
+		if (g_arthurChip)
+			g_arthurChip->playArthurMovieForEvent("Images/AI/Globals/XGLOBB06", kArthurWSCEnteredAuditorium);
 		break;
 	case MakeRoomView(kWSC73, kWest):
 		setCurrentAlternate(kAltWSCNormal);
@@ -1698,6 +1921,15 @@ void WSC::turnTo(const DirectionConstant direction) {
 	case MakeRoomView(kWSC0Z, kEast):
 		if (getCurrentAlternate() == kAltWSCW0ZDoorOpen)
 			startExtraSequence(kW0ZSpottedByWomen, kExtraCompletedFlag, kFilterNoInput);
+		break;
+	case MakeRoomView(kWSC82, kSouth):
+	case MakeRoomView(kWSC82, kEast):
+		if (g_arthurChip)
+			g_arthurChip->playArthurMovieForEvent("Images/AI/Globals/XGLOBB05", kArthurWSCEnteredPassage);
+		break;
+	case MakeRoomView(kWSC95, kWest):
+		if (g_arthurChip)
+			g_arthurChip->playArthurMovieForEvent("Images/AI/Globals/XGLOBA92", kArthurWSCSawCatwalkDoor);
 		break;
 	default:
 		break;
@@ -1722,6 +1954,7 @@ void WSC::receiveNotification(Notification *notification, const NotificationFlag
 			setCurrentActivation(kActivationShotByRobot);
 			GameState.setWSCPoisoned(true);
 			setUpPoison();
+			loadAmbientLoops();
 			makeContinuePoint();
 			break;
 		case kWSCDartScan2:
@@ -1729,14 +1962,18 @@ void WSC::receiveNotification(Notification *notification, const NotificationFlag
 			GameState.setScoringRemovedDart();
 			GameState.setWSCRemovedDart(true);
 			setUpPoison();
-			g_AIArea->playAIMovie(kRightAreaSignature, "Images/AI/WSC/XW1WB2", false, kHintInterruption);
-			// Fall through...
-		case kWSCDartScanNo:
+			if (_vm->isChattyAI())
+				g_AIArea->playAIMovie(kRightAreaSignature, "Images/AI/WSC/XW1WB2", false, kHintInterruption);
 			GameState.setWSCAnsweredAboutDart(true);
 			startExtraSequence(kWSCDartScan3, kExtraCompletedFlag, kFilterNoInput);
 			break;
 		case kWSCDartScan3:
 			setCurrentActivation(kActivateHotSpotAlways);
+			if (g_arthurChip)
+				g_arthurChip->playArthurMovieForEvent("Images/AI/Globals/XGLOBB02", kArthurWSCRemovedDart);
+			break;
+		case kWSCDartScanNo:
+			die(kDeathDidntStopPoison);
 			break;
 		case kWSCAnalyzerPowerUp:
 		case kWSCAnalyzerPowerUpWithDart:
@@ -1770,10 +2007,18 @@ void WSC::receiveNotification(Notification *notification, const NotificationFlag
 			break;
 		case kWSC02TurnOnMorphScreen:
 			setCurrentActivation(kActivationReadyForMorph);
+			if (g_arthurChip)
+				g_arthurChip->playArthurMovieForEvent("Images/AI/Globals/XGLOBA29", kArthurWSCLookAtMorphExperiment);
 			break;
 		case kWSC02DropToMorphExperiment:
 			loopExtraSequence(kWSC02MorphLoop, kExtraCompletedFlag);
 			setCurrentActivation(kActivationMorphLooping);
+			if (g_arthurChip) {
+				if (_vm->getRandomBit())
+					g_arthurChip->playArthurMovieForEvent("Images/AI/Globals/XGLOBA97", kArthurWSCStartMorphExperiment);
+				else
+					g_arthurChip->playArthurMovieForEvent("Images/AI/Globals/XGLOBB04", kArthurWSCStartMorphExperiment);
+			}
 			break;
 		case kWSC02MorphLoop:
 			if (_privateFlags.getFlag(kWSCPrivateInterruptedMorphFlag))
@@ -1788,6 +2033,8 @@ void WSC::receiveNotification(Notification *notification, const NotificationFlag
 		case kWSC02TurnOffMorphScreen:
 			setCurrentActivation(kActivationMorphScreenOff);
 			GameState.setWSCSawMorph(true);
+			if (!(GameState.isTakenItemID(kSinclairKey) && GameState.isTakenItemID(kArgonCanister)) && g_arthurChip)
+				g_arthurChip->playArthurMovieForEvent("Images/AI/Globals/XGLOBA96", kArthurWSCSawMorphExperiment);
 			break;
 		case kW03NorthActivate:
 			if (GameState.getWSCAnalyzedDart() && !GameState.getWSCDesignedAntidote())
@@ -1813,6 +2060,8 @@ void WSC::receiveNotification(Notification *notification, const NotificationFlag
 			_privateFlags.setFlag(kWSCPrivateInMoleculeGameFlag, false);
 			GameState.setWSCDesignedAntidote(true);
 			GameState.setScoringBuiltAntidote();
+			if (g_arthurChip)
+				g_arthurChip->playArthurMovieForEvent("Images/AI/Globals/XGLOBA02", kArthurWSCDesignedAntidote);
 			break;
 		case kW03SouthCreateAntidote:
 			setCurrentActivation(kActivationSynthesizerLooping);
@@ -1825,9 +2074,13 @@ void WSC::receiveNotification(Notification *notification, const NotificationFlag
 		case kWSC56SouthMap:
 			setCurrentActivation(kActivateHotSpotAlways);
 			GameState.setScoringSawWSCDirectory();
+			if (g_arthurChip)
+				g_arthurChip->playArthurMovieForEvent("Images/AI/Globals/XGLOBA33", kArthurWSCReadyForMap);
 			break;
 		case kNerdAtTheDoor1:
 			GameState.setWSCSeenNerd(true);
+			if (g_arthurChip)
+				g_arthurChip->playArthurMovieForEvent("Images/AI/Globals/XGLOBA28", kArthurWSCSeenNerd);
 			break;
 		case kNerdAtTheDoor2:
 			die(kDeathArrestedInWSC);
@@ -1848,6 +2101,13 @@ void WSC::receiveNotification(Notification *notification, const NotificationFlag
 		case kW61SouthTimeBendingNoGun:
 			GameState.setScoringSawSinclairEntry3();
 			break;
+		case kImplantWithGun:
+		case kImplantNoGun:
+		case kEasterEggWalchek:
+			_extraMovie.stopDisplaying();
+			_extraMovie.releaseMovie();
+			_navMovie.startDisplaying();
+			break;
 		case kW61MessagesOn:
 			GameState.setWSCOfficeMessagesOpen(true);
 			setCurrentActivation(kActivationW61MessagesOn);
@@ -1864,6 +2124,8 @@ void WSC::receiveNotification(Notification *notification, const NotificationFlag
 		case kW61SouthScreenOnNoGun:
 			_privateFlags.setFlag(kWSCPrivateOfficeLogOpenFlag, true);
 			setCurrentActivation(kActivationW61SouthOn);
+			if (g_arthurChip)
+				g_arthurChip->playArthurMovieForEvent("Images/AI/Globals/XGLOBA89", kArthurWSCActivatedComputer);
 			break;
 		case kW61SouthScreenOffWithGun:
 		case kW61SouthScreenOffNoGun:
@@ -1877,7 +2139,6 @@ void WSC::receiveNotification(Notification *notification, const NotificationFlag
 		case kW62ZoomOutFromRobot:
 			// Handle action queue before starting new movie sequences.
 			Neighborhood::receiveNotification(notification, flags);
-			_energyDrainRate = g_energyMonitor->getEnergyDrainRate();
 			g_energyMonitor->setEnergyDrainRate(0);
 			currentEnergy = g_energyMonitor->getCurrentEnergy();
 			_vm->setEnergyDeathReason(kDeathHitByPlasma);
@@ -1905,12 +2166,22 @@ void WSC::receiveNotification(Notification *notification, const NotificationFlag
 				g_energyMonitor->drainEnergy(kPlasmaEnergyNoShield);
 			}
 
-			g_energyMonitor->setEnergyDrainRate(_energyDrainRate);
+			setUpPoison();
 			g_AIArea->unlockAI();
 			GameState.setScoringFinishedPlasmaDodge();
 			GameState.setWSCDidPlasmaDodge(true);
 			restoreStriding(kWSC58, kSouth, kAltWSCNormal);
 			loadAmbientLoops();
+			if (g_arthurChip) {
+				if (_vm->getRandomBit())
+					g_arthurChip->playArthurMovieForEvent("Images/AI/Globals/XGLOBA11", kArthurWSCDidPlasmaDodge);
+				else
+					g_arthurChip->playArthurMovieForEvent("Images/AI/Globals/XGLOBB07", kArthurWSCDidPlasmaDodge);
+			}
+			break;
+		case kW65SouthSinclairLecture:
+			if (g_arthurChip)
+				g_arthurChip->playArthurMovieForEvent("Images/AI/Globals/XGLOBB29", kArthurWSCSawSinclairLecture);
 			break;
 		case kW0ZSpottedByWomen:
 			die(kDeathArrestedInWSC);
@@ -1974,8 +2245,9 @@ void WSC::receiveNotification(Notification *notification, const NotificationFlag
 			GameState.setWSCRobotDead(true);
 			GameState.setScoringStoppedWSCRobot();
 
-			// Video is not present
-			//g_AIArea->playAIMovie(kRightAreaSignature, "Images/AI/WSC/XN59WD", false, kWarningInterruption);
+			// Video is erroneously not present in the CD version
+			if (_vm->isDVD() && _vm->isChattyAI())
+				g_AIArea->playAIMovie(kRightAreaSignature, "Images/AI/WSC/XN59WD", false, kWarningInterruption);
 			break;
 		case kW98RobotGassed:
 			item = (Item *)_vm->getAllItems().findItemByID(kArgonCanister);
@@ -1984,23 +2256,47 @@ void WSC::receiveNotification(Notification *notification, const NotificationFlag
 			GameState.setWSCRobotDead(true);
 			GameState.setScoringStoppedWSCRobot();
 
-			// Video is not present
-			//g_AIArea->playAIMovie(kRightAreaSignature, "Images/AI/WSC/XN59WD", false, kWarningInterruption);
+			// Video is erroneously not present in the CD version
+			if (_vm->isDVD() && _vm->isChattyAI())
+				g_AIArea->playAIMovie(kRightAreaSignature, "Images/AI/WSC/XN59WD", false, kWarningInterruption);
 			break;
 		case kW98RobotHeadOpensLight:
 		case kW98RobotHeadOpensDark:
 			setCurrentActivation(kActivationWSCRobotHeadOpen);
 			_privateFlags.setFlag(kWSCPrivateRobotHeadOpenFlag, true);
+			if (g_arthurChip) {
+				switch (_vm->getRandomNumber(2)) {
+				case 0:
+					g_arthurChip->playArthurMovieForEvent("Images/AI/Globals/XGLOBA36", kArthurWSCRobotHeadOpen);
+					break;
+				case 1:
+					g_arthurChip->playArthurMovieForEvent("Images/AI/Globals/XGLOBA37", kArthurWSCRobotHeadOpen);
+					break;
+				case 2:
+					g_arthurChip->playArthurMovieForEvent("Images/AI/Globals/XGLOBA40", kArthurWSCRobotHeadOpen);
+					break;
+				}
+			}
 			break;
 		case kW98RobotHeadClosesDark:
 		case kW98RobotHeadClosesLight:
 			setCurrentActivation(kActivationRobotGone);
 			_privateFlags.setFlag(kWSCPrivateRobotHeadOpenFlag, false);
 			GameState.setWSCRobotGone(true);
+			if (GameState.isTakenItemID(kStunGun)) {
+				GameState.setWSCFinished(true);
+
+				if (!GameState.getWSCCatwalkDark())
+					GameState.setScoringWSCGandhi();
+
+				recallToTSASuccess();
+			}
 			break;
 		default:
 			break;
 		}
+		if ((_lastExtra == kW61WalchekEasterEgg1 || _lastExtra == kEasterEggWalchek) && g_arthurChip)
+			g_arthurChip->playArthurMovieForEvent("Images/AI/Globals/XGLOBA09", kArthurWSCPlayedEasterEggMessage);
 	}
 
 	Neighborhood::receiveNotification(notification, flags);
@@ -2071,6 +2367,8 @@ void WSC::startMoleculeGameLevel() {
 	}
 
 	_moleculesMovie.start();
+	if (_moleculeGameLevel == 3 && g_arthurChip)
+		g_arthurChip->playArthurMovieForEvent("Images/AI/Globals/XGLOBA90", kArthurWSCPoisonedDuringGame);
 }
 
 void WSC::moleculeGameClick(const HotSpotID id) {
@@ -2152,6 +2450,8 @@ void WSC::moleculeGameClick(const HotSpotID id) {
 
 		_moleculesMovie.stop();
 		startMoleculeGameLevel();
+		if (g_arthurChip)
+			g_arthurChip->playArthurMovieForEvent("Images/AI/Globals/XGLOBB38", kArthurWSCFailedMolecule);
 	}
 }
 
@@ -2197,27 +2497,44 @@ void WSC::activateOneHotspot(HotspotInfoTable::Entry &entry, Hotspot *hotspot) {
 }
 
 void WSC::activateHotspots() {
+	Input input;
+
 	Neighborhood::activateHotspots();
 
-	if (GameState.getCurrentRoomAndView() == MakeRoomView(kWSC98, kWest) && _privateFlags.getFlag(kWSCPrivateRobotHeadOpenFlag)) {
-		if (_privateFlags.getFlag(kWSCPrivateGotRetScanChipFlag))
-			_vm->getAllHotspots().deactivateOneHotspot(kW98RetinalChipSpotID);
-		else
-			_vm->getAllHotspots().activateOneHotspot(kW98RetinalChipSpotID);
+	switch (GameState.getCurrentRoomAndView()) {
+	case MakeRoomView(kWSC61South, kSouth):
+		if (_vm->isDVD()) {
+			InputDevice.getInput(input, kFilterAllInput);
+			if (_privateFlags.getFlag(kWSCPrivateOfficeLogOpenFlag) &&
+				JMPPPInput::isEasterEggModifierInput(input))
+				_vm->getAllHotspots().activateOneHotspot(kBiotechImplantHotSpotID);
+		}
+		break;
+	case MakeRoomView(kWSC98, kWest):
+		if (_privateFlags.getFlag(kWSCPrivateRobotHeadOpenFlag)) {
+			if (_privateFlags.getFlag(kWSCPrivateGotRetScanChipFlag))
+				_vm->getAllHotspots().deactivateOneHotspot(kW98RetinalChipSpotID);
+			else
+				_vm->getAllHotspots().activateOneHotspot(kW98RetinalChipSpotID);
 
-		if (_privateFlags.getFlag(kWSCPrivateGotMapChipFlag))
-			_vm->getAllHotspots().deactivateOneHotspot(kW98MapChipSpotID);
-		else
-			_vm->getAllHotspots().activateOneHotspot(kW98MapChipSpotID);
+			if (_privateFlags.getFlag(kWSCPrivateGotMapChipFlag))
+				_vm->getAllHotspots().deactivateOneHotspot(kW98MapChipSpotID);
+			else
+				_vm->getAllHotspots().activateOneHotspot(kW98MapChipSpotID);
 
-		if (_privateFlags.getFlag(kWSCPrivateGotOpticalChipFlag))
-			_vm->getAllHotspots().deactivateOneHotspot(kW98OpticalChipSpotID);
-		else
-			_vm->getAllHotspots().activateOneHotspot(kW98OpticalChipSpotID);
+			if (_privateFlags.getFlag(kWSCPrivateGotOpticalChipFlag))
+				_vm->getAllHotspots().deactivateOneHotspot(kW98OpticalChipSpotID);
+			else
+				_vm->getAllHotspots().activateOneHotspot(kW98OpticalChipSpotID);
+		}
+		break;
 	}
 }
 
 void WSC::clickInHotspot(const Input &input, const Hotspot *clickedSpot) {
+	Movie movie(kNoDisplayElement);
+	Input movieInput;
+
 	if (JMPPPInput::isEasterEggModifierInput(input))
 		GameState.setEasterEgg(true);
 
@@ -2262,6 +2579,18 @@ void WSC::clickInHotspot(const Input &input, const Hotspot *clickedSpot) {
 			}
 
 			_privateFlags.setFlag(kWSCPrivateClickedCatwalkCableFlag, true);
+			break;
+		case kBiotechImplantHotSpotID:
+			if (GameState.isTakenItemID(kMachineGun))
+				startExtraSequence(kImplantNoGun, kExtraCompletedFlag, kFilterNoInput);
+			else
+				startExtraSequence(kImplantWithGun, kExtraCompletedFlag, kFilterNoInput);
+			break;
+		case kW61WalchekMessageSpotID:
+			if (_vm->isDVD() && GameState.getEasterEgg() && _vm->getRandomBit())
+				startExtraSequence(kEasterEggWalchek, kExtraCompletedFlag, kFilterNoInput);
+			else
+				Neighborhood::clickInHotspot(input, clickedSpot);
 			break;
 		default:
 			Neighborhood::clickInHotspot(input, clickedSpot);
@@ -2414,10 +2743,19 @@ void WSC::pickedUpItem(Item *item) {
 		_privateFlags.setFlag(kWSCDraggingAntidoteFlag, false);
 		playSpotSoundSync(kDrinkAntidoteIn, kDrinkAntidoteOut);
 		setUpPoison();
+		loadAmbientLoops();
 
 		if (!GameState.getWSCPickedUpAntidote()) {
 			GameState.setWSCPickedUpAntidote(true);
 			startExtraSequence(kW03SouthDeactivate, kExtraCompletedFlag, kFilterNoInput);
+		}
+		break;
+	case kMachineGun:
+		if (g_arthurChip) {
+			if (_vm->getRandomBit())
+				g_arthurChip->playArthurMovieForEvent("Images/AI/Globals/XGLOBB01", kArthurWSCGotMachineGun);
+			else
+				g_arthurChip->playArthurMovieForEvent("Images/AI/Globals/XGLOBB09", kArthurWSCGotMachineGun);
 		}
 		break;
 	case kArgonPickup:
@@ -2609,6 +2947,15 @@ void WSC::doSolve() {
 		cancelEvent();
 		startExtraSequence(kW98RobotShocked, kExtraCompletedFlag, kFilterNoInput);
 	}
+}
+
+void WSC::setSoundFXLevel(const uint16 level) {
+	Neighborhood::setSoundFXLevel(level);
+
+	if (_extraMovie.isMovieValid())
+		_extraMovie.setVolume(level);
+	if (_welcomeSound.isSoundLoaded())
+		_welcomeSound.setVolume(level);
 }
 
 Common::String WSC::getNavMovieName() {

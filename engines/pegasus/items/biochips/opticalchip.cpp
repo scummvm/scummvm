@@ -127,7 +127,16 @@ void OpticalChip::playOpMemMovie(HotSpotID id) {
 	Common::String movieName;
 	switch (id) {
 	case kAriesSpotID:
-		movieName = "Images/AI/Globals/OMAI";
+		// WORKAROUND: The original CD release played the ares video even
+		// when you destroyed the shuttle. For the DVD release, we have
+		// some new videos that can be played instead to workaround a plot
+		// loophole.
+		if (!((PegasusEngine *)g_engine)->isDVD() || _opticalFlags.getFlag(kOpticalAriesExposed))
+			movieName = "Images/AI/Globals/OMAI";
+		else if (_itemOwnerID == kPlayerID)
+			movieName = "Images/AI/Globals/OMN1";
+		else
+			movieName = "Images/AI/Globals/OMN0";
 		break;
 	case kMercurySpotID:
 		movieName = "Images/AI/Globals/OMMI";

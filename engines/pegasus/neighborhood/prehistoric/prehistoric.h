@@ -140,6 +140,7 @@ protected:
 	int16 getStaticCompassAngle(const RoomID, const DirectionConstant) override;
 	void getExitCompassMove(const ExitTable::Entry &, FaderMoveSpec &) override;
 	void receiveNotification(Notification *, const NotificationFlags) override;
+	void spotCompleted() override;
 	void turnTo(const DirectionConstant) override;
 	void zoomToVault();
 	TimeValue getViewTime(const RoomID, const DirectionConstant) override;

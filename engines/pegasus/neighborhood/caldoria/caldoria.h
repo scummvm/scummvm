@@ -195,6 +195,7 @@ static const HotSpotID kCaldoriaRoofElevatorSpotID = 5065;
 static const HotSpotID kCaldoriaRoofDoorSpotID = 5066;
 static const HotSpotID kCaldoriaRoofCardDropSpotID = 5067;
 static const HotSpotID kCaldoria53EastSinclairTargetSpotID = 5068;
+static const HotSpotID kCaldoriaCornbread = 5069;
 
 // Extra sequence IDs.
 
@@ -383,6 +384,9 @@ static const DisplayElementID kCaldoriaUtilityID = kCaldoriaMessagesID + 1;
 static const DisplayElementID kCaldoriaBombGridID = kCaldoriaUtilityID + 1;
 static const DisplayElementID kCaldoriaBombTimerID = kCaldoriaBombGridID + 1;
 
+static const TimeValue kCaldoria4DInstructionsIn = 28013;
+static const TimeValue kCaldoria4DInstructionsOut = 29730;
+
 static const TimeValue kCaldoria4DBlankChoiceIn = 29730;
 static const TimeValue kCaldoria4DBlankChoiceOut = 33910;
 
@@ -422,6 +426,8 @@ public:
 
 	void checkContinuePoint(const RoomID, const DirectionConstant) override;
 
+	void setSoundFXLevel(const uint16) override;
+
 protected:
 	enum {
 		kCaldoriaPrivate4DSystemOpenFlag,
@@ -445,6 +451,7 @@ protected:
 
 	void init() override;
 	void start() override;
+	void throwAwayInterface() override;
 
 	void setUpRoofTop();
 
@@ -472,7 +479,10 @@ protected:
 	void arriveAtCaldoriaDeath();
 	void turnTo(const DirectionConstant) override;
 	void zoomTo(const Hotspot *) override;
+	void leftButton(const Input &) override;
+	void rightButton(const Input &) override;
 	void downButton(const Input &) override;
+	void startExtraSequence(const ExtraID, const NotificationFlags, const InputBits) override;
 	void receiveNotification(Notification *, const NotificationFlags) override;
 	InputBits getInputFilter() override;
 	void activateHotspots() override;
@@ -483,6 +493,7 @@ protected:
 
 	Hotspot *getItemScreenSpot(Item *, DisplayElement *) override;
 	void dropItemIntoRoom(Item *, Hotspot *) override;
+	void playMissingFloorSound();
 	void takeElevator(uint, uint);
 	void updateElevatorMovie();
 	void openElevatorMovie();
@@ -495,7 +506,9 @@ protected:
 	void zoomToSinclair();
 	void playEndMessage();
 	void checkInterruptSinclair();
+	void doArthurJoyride();
 
+	void cantMoveThatWay(CanMoveForwardReason) override;
 	CanOpenDoorReason canOpenDoor(DoorTable::Entry &) override;
 	void doorOpened() override;
 
@@ -504,6 +517,15 @@ protected:
 	FlagsArray<uint16, kNumCaldoriaPrivateFlags> _privateFlags;
 
 	const Hotspot *_zoomOutSpot;
+
+	Hotspot _laundryZoomInSpot;
+	Hotspot _laundryZoomOutSpot;
+	Hotspot _cornbreadSpot;
+
+	Movie _extraMovie;
+	NotificationCallBack _extraMovieCallBack;
+
+	bool _lookingAtLaundry;
 
 	FuseFunction _utilityFuse;
 

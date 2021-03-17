@@ -26,6 +26,7 @@
 #include "pegasus/gamestate.h"
 #include "pegasus/pegasus.h"
 #include "pegasus/ai/ai_area.h"
+#include "pegasus/items/biochips/arthurchip.h"
 #include "pegasus/neighborhood/norad/constants.h"
 #include "pegasus/neighborhood/norad/norad.h"
 #include "pegasus/neighborhood/norad/subplatform.h"
@@ -148,6 +149,8 @@ void SubPlatform::receiveNotification(Notification *notification, const Notifica
 			loop1Spec.insertFaderKnot(5080, 0);
 
 			owner->startExtraSequence(kNorad19ExitToSub, kExtraCompletedFlag, kFilterNoInput);
+			if (g_arthurChip)
+				g_arthurChip->playArthurMovieForEvent("Images/AI/Globals/XGLOBA07", kArthurNoradEnteredSub);
 
 			owner->startLoop1Fader(loop1Spec);
 			owner->startLoop2Fader(loop2Spec);
@@ -165,7 +168,7 @@ void SubPlatform::receiveNotification(Notification *notification, const Notifica
 		default:
 			break;
 		}
-	} else if (notification == _neighborhoodNotification) {
+	} else if (notification == _neighborhoodNotification && !((PegasusEngine *)g_engine)->isDVD()) {
 		allowInput(true);
 		((PegasusEngine *)g_engine)->jumpToNewEnvironment(kNoradSubChaseID, kNoRoomID, kNoDirection);
 		GameState.setScoringEnteredSub(true);

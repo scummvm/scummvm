@@ -25,6 +25,7 @@
 
 #include "pegasus/gamestate.h"
 #include "pegasus/pegasus.h"
+#include "pegasus/items/biochips/arthurchip.h"
 #include "pegasus/neighborhood/norad/constants.h"
 #include "pegasus/neighborhood/norad/norad.h"
 #include "pegasus/neighborhood/norad/subcontrolroom.h"
@@ -565,6 +566,8 @@ void SubControlRoom::receiveNotification(Notification *notification, const Notif
 		switch (flags) {
 		case kAlphaSplashFinished:
 			setControlMonitorToTime(kMainMenuTime * _subControlScale, kAlphaMainMenu, true);
+			if (g_arthurChip)
+				g_arthurChip->playArthurMovieForEvent("Images/AI/Globals/XGLOBA29", kArthurNoradSawClawMonitor);
 			break;
 		case kPrepHighlightFinished:
 			if (GameState.getNoradSubPrepState() == kSubDamaged)
@@ -660,6 +663,8 @@ void SubControlRoom::receiveNotification(Notification *notification, const Notif
 				hideEverything();
 				_robotState = kPlayerWon;
 				owner->startExtraSequence(kN60PlayerFollowsRobotToDoor, kExtraCompletedFlag, kFilterAllInput);
+				if (g_arthurChip)
+					g_arthurChip->playArthurMovieForEvent("Images/AI/Globals/XGLOBA67", kArthurNoradBeatRobotWithClaw);
 				break;
 			case kPlayerWon:
 				((NoradDelta *)owner)->playerBeatRobotWithClaw();

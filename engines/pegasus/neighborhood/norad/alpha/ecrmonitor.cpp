@@ -24,6 +24,7 @@
  */
 
 #include "pegasus/pegasus.h"
+#include "pegasus/items/biochips/arthurchip.h"
 #include "pegasus/neighborhood/norad/constants.h"
 #include "pegasus/neighborhood/norad/norad.h"
 #include "pegasus/neighborhood/norad/alpha/ecrmonitor.h"
@@ -216,6 +217,9 @@ void NoradAlphaECRMonitor::closeInteraction() {
 	_ecrPan.stopDisplaying();
 	_ecrPan.releasePanorama();
 	_ecrPanCallBack.releaseCallBack();
+
+	if (g_arthurChip)
+		g_arthurChip->playArthurMovieForEvent("Images/AI/Globals/XGLOBB33", kArthurNoradAtSecurityMonitor);
 }
 
 } // End of namespace Pegasus

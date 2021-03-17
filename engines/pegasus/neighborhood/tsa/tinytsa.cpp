@@ -28,6 +28,7 @@
 #include "pegasus/pegasus.h"
 #include "pegasus/ai/ai_area.h"
 #include "pegasus/items/biochips/aichip.h"
+#include "pegasus/items/biochips/arthurchip.h"
 #include "pegasus/items/biochips/opticalchip.h"
 #include "pegasus/neighborhood/mars/constants.h"
 #include "pegasus/neighborhood/norad/constants.h"
@@ -189,7 +190,10 @@ Common::String TinyTSA::getEnvScanMovie() {
 }
 
 void TinyTSA::loadAmbientLoops() {
-	loadLoopSound1("Sounds/TSA/T01NAE.NEW.22K.AIFF");
+	if (_vm->isDVD()) // Updated sound in the DVD version
+		loadLoopSound1("Sounds/TSA/T01NAE.NEW.32K.AIFF");
+	else
+		loadLoopSound1("Sounds/TSA/T01NAE.NEW.22K.AIFF");
 }
 
 int16 TinyTSA::getStaticCompassAngle(const RoomID room, const DirectionConstant dir) {
@@ -404,6 +408,11 @@ void TinyTSA::receiveNotification(Notification *notification, const Notification
 					break;
 				}
 			}
+			if (((GameState.getNoradFinished() && !(GameState.getMarsFinished() || GameState.getWSCFinished())) ||
+				(GameState.getMarsFinished() && !(GameState.getNoradFinished() || GameState.getWSCFinished())) ||
+				(GameState.getWSCFinished() && !(GameState.getNoradFinished() || GameState.getMarsFinished()))) &&
+				g_arthurChip)
+				g_arthurChip->playArthurMovieForEvent("Images/AI/Globals/XGLOBB43", kArthurTSASawFirstOpMemMovie);
 
 			requestExtraSequence(kTinyTSA37OpMemReviewToMainMenu, kExtraCompletedFlag, kFilterNoInput);
 			break;
@@ -412,6 +421,8 @@ void TinyTSA::receiveNotification(Notification *notification, const Notification
 			GameState.setTSAState(kPlayerLockedInPegasus);
 			showMainJumpMenu();
 			makeContinuePoint();
+			if (g_arthurChip)
+				g_arthurChip->playArthurMovieForEvent("Images/AI/Globals/XGLOBA22", kArthurTSAInPegasusNoVideo);
 			break;
 		case kTinyTSA37JumpToNoradMenu:
 			setCurrentActivation(kActivationTinyTSAJumpToNorad);

@@ -31,11 +31,13 @@
 namespace Pegasus {
 
 class Item;
+class SubChase;
 
 class NoradAlpha : public Norad {
+friend class SubChase;
 public:
 	NoradAlpha(InputHandler *, PegasusEngine *);
-	~NoradAlpha() override {}
+	~NoradAlpha() override;
 
 	void init() override;
 	void start() override;
@@ -77,6 +79,8 @@ public:
 
 	void checkContinuePoint(const RoomID, const DirectionConstant) override;
 
+	void setSoundFXLevel(const uint16) override;
+
 	bool canSolve() override;
 	void doSolve() override;
 
@@ -90,6 +94,9 @@ protected:
 	virtual void arriveAtNorad22();
 
 	void arriveAt(const RoomID, const DirectionConstant) override;
+	void turnTo(const DirectionConstant) override;
+
+	void startExtraSequence(const ExtraID, const NotificationFlags, const InputBits) override;
 
 	void getZoomEntry(const HotSpotID, ZoomTable::Entry &) override;
 	TimeValue getViewTime(const RoomID, const DirectionConstant) override;
@@ -101,6 +108,11 @@ protected:
 	Hotspot *getItemScreenSpot(Item *, DisplayElement *) override;
 
 	void bumpIntoWall() override;
+
+	Hotspot _thermalScanSpot;
+
+	Movie _extraMovie;
+	NotificationCallBack _extraMovieCallBack;
 
 	Item *_fillingStationItem;
 

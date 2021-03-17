@@ -98,6 +98,7 @@ public:
 
 	void disableLooping() { _isLooping = false; }
 
+	void setCommPicture();
 	void playEndMessage(DisplayElement *);
 
 protected:

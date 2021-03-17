@@ -1529,7 +1529,7 @@ begin_credits("Credits");
 				add_person("Janne Huttunen", "", "V3 actor mask support, Dig/FT SMUSH audio");
 				add_person("Kov&aacute;cs Endre J&aacute;nos", "", "Several fixes for Simon1");
 				add_person("Jeroen Janssen", "japj", "Numerous readability and bugfix patches");
-				add_person("Keith Kaisershot", "blitter", "Several Pegasus Prime patches");
+				add_person("Keith Kaisershot", "blitter", "Several Pegasus Prime patches and DVD additions");
 				add_person("Andreas Karlsson", "Sprawl", "Initial port for SymbianOS");
 				add_person("Stefan Kristiansson", "skristiansson", "Initial work on SDL2 support");
 				add_person("Claudio Matsuoka", "", "Daily Linux builds");

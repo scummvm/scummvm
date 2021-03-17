@@ -23,6 +23,7 @@
  *
  */
 
+#include "pegasus/pegasus.h"
 #include "pegasus/ai/ai_action.h"
 #include "pegasus/ai/ai_area.h"
 
@@ -45,7 +46,7 @@ AIPlayMessageAction::AIPlayMessageAction(const Common::String &movieName, bool k
 }
 
 void AIPlayMessageAction::performAIAction(AIRule *) {
-	if (g_AIArea) {
+	if (g_AIArea && ((PegasusEngine *)g_engine)->isChattyAI()) {
 		g_AIArea->checkMiddleArea();
 		g_AIArea->playAIMovie(kRightAreaSignature, _movieName, _keepLastFrame, _interruptionFilter);
 	}

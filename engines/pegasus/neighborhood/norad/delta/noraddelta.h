@@ -90,6 +90,7 @@ protected:
 	void arriveAt(const RoomID, const DirectionConstant) override;
 	void arriveAtNorad68West();
 	void arriveAtNorad79West();
+	void turnTo(const DirectionConstant) override;
 	TimeValue getViewTime(const RoomID, const DirectionConstant) override;
 	void openDoor() override;
 	void cantMoveThatWay(CanMoveForwardReason) override;

@@ -400,6 +400,7 @@ void Interface::raiseInventoryDrawer(const bool doCallBacks) {
 
 	if (((PegasusEngine *)g_engine)->isDVD()) {
 		_inventoryCloseSound.stopSound();
+		_inventoryOpenSound.setVolume(((PegasusEngine *)g_engine)->getSoundFXLevel());
 		_inventoryOpenSound.playSound();
 	}
 }
@@ -414,6 +415,15 @@ void Interface::playEndMessage() {
 
 void Interface::raiseInventoryDrawerForMessage() {
 	_inventoryPanel.disableLooping();
+
+	// The DVD version has a different image for the inventory
+	// for the end message.
+	if (((PegasusEngine *)g_engine)->isDVD()) {
+		_inventoryPanel.setCommPicture();
+		_inventoryPanel.throwAwayInventoryImage();
+		_inventoryPanel.initInventoryImage(&_inventoryPush);
+	}
+
 	raiseInventoryDrawerSync();
 }
 
@@ -466,6 +476,7 @@ void Interface::lowerInventoryDrawer(const bool doCallBacks) {
 
 		if (((PegasusEngine *)g_engine)->isDVD()) {
 			_inventoryOpenSound.stopSound();
+			_inventoryCloseSound.setVolume(((PegasusEngine *)g_engine)->getSoundFXLevel());
 			_inventoryCloseSound.playSound();
 		}
 	}
@@ -512,6 +523,7 @@ void Interface::raiseBiochipDrawer(const bool doCallBacks) {
 
 	if (((PegasusEngine *)g_engine)->isDVD()) {
 		_biochipCloseSound.stopSound();
+		_biochipOpenSound.setVolume(((PegasusEngine *)g_engine)->getSoundFXLevel());
 		_biochipOpenSound.playSound();
 	}
 }
@@ -551,6 +563,7 @@ void Interface::lowerBiochipDrawer(const bool doCallBacks) {
 
 		if (((PegasusEngine *)g_engine)->isDVD()) {
 			_biochipOpenSound.stopSound();
+			_biochipCloseSound.setVolume(((PegasusEngine *)g_engine)->getSoundFXLevel());
 			_biochipCloseSound.playSound();
 		}
 	}

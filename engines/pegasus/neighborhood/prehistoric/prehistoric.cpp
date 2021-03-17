@@ -31,6 +31,7 @@
 #include "pegasus/ai/ai_area.h"
 #include "pegasus/ai/ai_condition.h"
 #include "pegasus/ai/ai_rule.h"
+#include "pegasus/items/biochips/arthurchip.h"
 #include "pegasus/neighborhood/prehistoric/prehistoric.h"
 
 namespace Pegasus {
@@ -99,6 +100,9 @@ void Prehistoric::start() {
 	}
 
 	Neighborhood::start();
+
+	if (GameState.getCurrentRoomAndView() == MakeRoomView(kPrehistoric02, kSouth) && g_arthurChip)
+		g_arthurChip->playArthurMovieForEvent("Images/AI/Globals/XGLOBA01", kArthurGoToPrehistoric);
 }
 
 class FinishPrehistoricAction : public AIPlayMessageAction {
@@ -276,8 +280,16 @@ void Prehistoric::turnTo(const DirectionConstant newDirection) {
 	Neighborhood::turnTo(newDirection);
 
 	Item *keyCard;
+	bool doArthurFeelLikeYodelingMovie = false;
 
 	switch (GameState.getCurrentRoomAndView()) {
+	case MakeRoomView(kPrehistoric08, kEast):
+	case MakeRoomView(kPrehistoric10, kEast):
+	case MakeRoomView(kPrehistoric12, kEast):
+	case MakeRoomView(kPrehistoric14, kEast):
+	case MakeRoomView(kPrehistoric25, kWest):
+		doArthurFeelLikeYodelingMovie = true;
+		break;
 	case MakeRoomView(kPrehistoric18, kEast):
 		zoomToVault();
 		break;
@@ -291,6 +303,13 @@ void Prehistoric::turnTo(const DirectionConstant newDirection) {
 		// fall through
 	case MakeRoomView(kPrehistoric25, kEast):
 		setCurrentActivation(kActivationVaultClosed);
+		if (GameState.getCurrentRoomAndView() == MakeRoomView(kPrehistoric25, kEast) &&
+			!GameState.isTakenItemID(kHistoricalLog) && g_arthurChip)
+			g_arthurChip->playArthurMovieForEvent("Images/AI/Globals/XGLOBA60", kArthurPrehistoricCrossedBridge);
+		break;
+	case MakeRoomView(kPrehistoric23, kWest):
+		if (g_arthurChip)
+			g_arthurChip->playArthurMovieForEvent("Images/AI/Globals/XGLOBA59", kArthurPrehistoricSawEggs);
 		break;
 	case MakeRoomView(kPrehistoric16, kNorth):
 	case MakeRoomView(kPrehistoric21, kWest):
@@ -313,6 +332,8 @@ void Prehistoric::turnTo(const DirectionConstant newDirection) {
 	default:
 		break;
 	}
+	if (doArthurFeelLikeYodelingMovie && g_arthurChip)
+		g_arthurChip->playArthurMovieForEvent("Images/AI/Globals/XGLOBA15", kArthurPrehistoricAtCliffEdge);
 }
 
 void Prehistoric::zoomToVault() {
@@ -336,6 +357,7 @@ void Prehistoric::checkContinuePoint(const RoomID room, const DirectionConstant 
 
 void Prehistoric::arriveAt(const RoomID room, const DirectionConstant direction) {
 	Item *keyCard;
+	bool doArthurLetsSpreadOutMovie, doArthurFeelLikeYodelingMovie;
 
 	if (MakeRoomView(room, direction) == MakeRoomView(kPrehistoric25, kEast) &&
 			_privateFlags.getFlag(kPrehistoricPrivateExtendedBridgeFlag)) {
@@ -346,6 +368,8 @@ void Prehistoric::arriveAt(const RoomID room, const DirectionConstant direction)
 
 	Neighborhood::arriveAt(room, direction);
 
+	doArthurLetsSpreadOutMovie = false;
+	doArthurFeelLikeYodelingMovie = false;
 	switch (MakeRoomView(room, direction)) {
 	case MakeRoomView(kPrehistoricDeath, kNorth):
 	case MakeRoomView(kPrehistoricDeath, kSouth):
@@ -366,6 +390,20 @@ void Prehistoric::arriveAt(const RoomID room, const DirectionConstant direction)
 			startExtraSequence(kPreArrivalFromTSA, kExtraCompletedFlag, kFilterNoInput);
 		}
 		break;
+	case MakeRoomView(kPrehistoric06, kNorth):
+	case MakeRoomView(kPrehistoric13, kWest):
+		doArthurLetsSpreadOutMovie = true;
+		break;
+	case MakeRoomView(kPrehistoric22North, kNorth):
+		if (g_arthurChip)
+			g_arthurChip->playArthurMovieForEvent("Images/AI/Globals/XGLOBB44", kArthurPrehistoricSawBreaker);
+		break;
+	case MakeRoomView(kPrehistoric10, kEast):
+	case MakeRoomView(kPrehistoric12, kEast):
+	case MakeRoomView(kPrehistoric14, kEast):
+	case MakeRoomView(kPrehistoric25, kWest):
+		doArthurFeelLikeYodelingMovie = true;
+		break;
 	case MakeRoomView(kPrehistoric18, kEast):
 		zoomToVault();
 		break;
@@ -385,10 +423,11 @@ void Prehistoric::arriveAt(const RoomID room, const DirectionConstant direction)
 		if (g_AIArea)
 			g_AIArea->checkRules();
 		break;
+	case MakeRoomView(kPrehistoric13, kNorth):
+		doArthurLetsSpreadOutMovie = true;
 	case MakeRoomView(kPrehistoric08, kSouth):
 	case MakeRoomView(kPrehistoric10, kSouth):
 	case MakeRoomView(kPrehistoric12, kSouth):
-	case MakeRoomView(kPrehistoric13, kNorth):
 	case MakeRoomView(kPrehistoric14, kSouth):
 	case MakeRoomView(kPrehistoric15, kNorth):
 	case MakeRoomView(kPrehistoric16, kSouth):
@@ -406,9 +445,21 @@ void Prehistoric::arriveAt(const RoomID room, const DirectionConstant direction)
 		break;
 	case MakeRoomView(kPrehistoric25, kEast):
 		setCurrentActivation(kActivationVaultClosed);
+		if (!GameState.isTakenItemID(kHistoricalLog) && g_arthurChip)
+			g_arthurChip->playArthurMovieForEvent("Images/AI/Globals/XGLOBA60", kArthurPrehistoricCrossedBridge);
+		break;
+	case MakeRoomView(kPrehistoric23, kWest):
+		if (g_arthurChip)
+			g_arthurChip->playArthurMovieForEvent("Images/AI/Globals/XGLOBA59", kArthurPrehistoricSawEggs);
 		break;
 	default:
 		break;
+	}
+	if (g_arthurChip) {
+		if (doArthurLetsSpreadOutMovie)
+			g_arthurChip->playArthurMovieForEvent("Images/AI/Globals/XGLOBA20", kArthurPrehistoricReachedJunction);
+		else if (doArthurFeelLikeYodelingMovie)
+			g_arthurChip->playArthurMovieForEvent("Images/AI/Globals/XGLOBA15", kArthurPrehistoricAtCliffEdge);
 	}
 }
 
@@ -437,9 +488,9 @@ void Prehistoric::loadAmbientLoops() {
 	case kPrehistoric20:
 		// 1/4 volume.
 		if (_vm->isDVD()) // Updated sound for the DVD version
-			loadLoopSound1("Sounds/Prehistoric/P02SAL00.32k.AIFF", 64);
+			loadLoopSound1("Sounds/Prehistoric/P02SAL00.32K.AIFF", 64);
 		else
-			loadLoopSound1("Sounds/Prehistoric/P02SAL00.22k.AIFF", 64);
+			loadLoopSound1("Sounds/Prehistoric/P02SAL00.22K.AIFF", 64);
 		break;
 	case kPrehistoric08:
 	case kPrehistoric10:
@@ -450,16 +501,16 @@ void Prehistoric::loadAmbientLoops() {
 	case kPrehistoric21:
 		// 3/16 volume.
 		if (_vm->isDVD()) // Updated sound for the DVD version
-			loadLoopSound1("Sounds/Prehistoric/P02SAL00.32k.AIFF", 48);
+			loadLoopSound1("Sounds/Prehistoric/P02SAL00.32K.AIFF", 48);
 		else
-			loadLoopSound1("Sounds/Prehistoric/P02SAL00.22k.AIFF", 48);
+			loadLoopSound1("Sounds/Prehistoric/P02SAL00.22K.AIFF", 48);
 		break;
 	case kPrehistoric25:
 		// 1/8 volume.
 		if (_vm->isDVD()) // Updated sound for the DVD version
-			loadLoopSound1("Sounds/Prehistoric/P02SAL00.32k.AIFF", 32);
+			loadLoopSound1("Sounds/Prehistoric/P02SAL00.32K.AIFF", 32);
 		else
-			loadLoopSound1("Sounds/Prehistoric/P02SAL00.22k.AIFF", 32);
+			loadLoopSound1("Sounds/Prehistoric/P02SAL00.22K.AIFF", 32);
 		break;
 	case kPrehistoric22:
 	case kPrehistoric22North:
@@ -506,9 +557,9 @@ void Prehistoric::loadAmbientLoops() {
 	case kPrehistoric18:
 		if (_privateFlags.getFlag(kPrehistoricPrivateExtendedBridgeFlag)) {
 			if (_vm->isDVD()) // Updated sound for the DVD version
-				loadLoopSound2("Sounds/Prehistoric/P18EAL00.44K.aiff", 0x100, 0, 0);
+				loadLoopSound2("Sounds/Prehistoric/P18EAL00.44K.AIFF", 0x100, 0, 0);
 			else
-				loadLoopSound2("Sounds/Prehistoric/P18EAL00.22k.AIFF", 0x100, 0, 0);
+				loadLoopSound2("Sounds/Prehistoric/P18EAL00.22K.AIFF", 0x100, 0, 0);
 		} else {
 			loadLoopSound2("");
 		}
@@ -518,9 +569,9 @@ void Prehistoric::loadAmbientLoops() {
 	case kPrehistoric22:
 	case kPrehistoric22North:
 		if (_vm->isDVD()) // Updated sound for the DVD version
-			loadLoopSound2("Sounds/Prehistoric/P24NAL00.32k.AIFF", 64);
+			loadLoopSound2("Sounds/Prehistoric/P24NAL00.32K.AIFF", 64);
 		else
-			loadLoopSound2("Sounds/Prehistoric/P24NAL00.22k.AIFF", 64);
+			loadLoopSound2("Sounds/Prehistoric/P24NAL00.22K.aiff", 64);
 		break;
 	default:
 		break;
@@ -574,6 +625,8 @@ void Prehistoric::receiveNotification(Notification *notification, const Notifica
 			break;
 		case kPre18EastZoom:
 			startExtraSequence(kPre18EastZoomOut, kExtraCompletedFlag, kFilterNoInput);
+			if (g_arthurChip)
+				g_arthurChip->playArthurMovieForEvent("Images/AI/Globals/XGLOBA61", kArthurPrehistoricZoomedToVault);
 			break;
 		case kPre18EastZoomOut:
 			GameState.setPrehistoricSeenBridgeZoom(true);
@@ -584,26 +637,48 @@ void Prehistoric::receiveNotification(Notification *notification, const Notifica
 			GameState.setPrehistoricTriedToExtendBridge(false);
 			loadAmbientLoops();
 			GameState.setScoringExtendedBridge(true);
+			if (g_arthurChip) {
+				if (_vm->getRandomBit())
+					g_arthurChip->playArthurMovieForEvent("Images/AI/Globals/XGLOBA10", kArthurPrehistoricExtendedBridge);
+				else
+					g_arthurChip->playArthurMovieForEvent("Images/AI/Globals/XGLOBA56", kArthurPrehistoricExtendedBridge);
+			}
 			break;
 		case kPre18EastBridgeOut:
 			GameState.setPrehistoricTriedToExtendBridge(true);
+			if (g_arthurChip)
+				g_arthurChip->playArthurMovieForEvent("Images/AI/Globals/XGLOBA58", kArthurPrehistoricAttemptedBridge);
 			if (g_AIArea)
 				g_AIArea->checkMiddleArea();
 			break;
 		case kPre22ThrowBreaker:
 			GameState.setPrehistoricBreakerThrown(true);
 			GameState.setScoringThrewBreaker(true);
+			if (g_arthurChip)
+				g_arthurChip->playArthurMovieForEvent("Images/AI/Globals/XGLOBA57", kArthurPrehistoricBreakerThrown);
 			break;
 		case kPre25EastUnlockingVaultNoLog:
 		case kPre25EastUnlockingVaultWithLog:
+			if (!GameState.isTakenItemID(kHistoricalLog) && g_arthurChip)
+				g_arthurChip->playArthurMovieForEvent("Images/AI/Globals/XGLOBA05", kArthurPrehistoricUnlockedVault);
 			_vm->addItemToInventory((InventoryItem *)_vm->getAllItems().findItemByID(kJourneymanKey));
 			break;
 		default:
 			break;
 		}
+	} else if ((flags & kSpotCompletedFlag) != 0 &&
+				GameState.getCurrentRoomAndView() == MakeRoomView(kPrehistoric08, kEast)) {
+		if (g_arthurChip)
+			g_arthurChip->playArthurMovieForEvent("Images/AI/Globals/XGLOBA15", kArthurPrehistoricAtCliffEdge);
 	}
 
 	g_AIArea->checkMiddleArea();
+}
+
+void Prehistoric::spotCompleted() {
+	Neighborhood::spotCompleted();
+	if (GameState.getCurrentRoomAndView() == MakeRoomView(kPrehistoric08, kEast) && g_arthurChip)
+		g_arthurChip->playArthurMovieForEvent("Images/AI/Globals/XGLOBA15", kArthurPrehistoricAtCliffEdge);
 }
 
 Common::String Prehistoric::getBriefingMovie() {

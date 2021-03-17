@@ -155,6 +155,7 @@ void Cursor::loadCursorImage(CursorInfo &cursorInfo) {
 
 	cursorInfo.surface = new Graphics::Surface();
 
+	// The CD version uses (only) lower color cicn images for its cursors
 	Common::SeekableReadStream *cicnStream = vm->_resFork->getResource(MKTAG('c', 'i', 'c', 'n'), cursorInfo.tag);
 
 	if (!cicnStream)

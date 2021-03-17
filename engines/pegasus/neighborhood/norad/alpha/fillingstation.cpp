@@ -25,6 +25,7 @@
 
 #include "pegasus/gamestate.h"
 #include "pegasus/pegasus.h"
+#include "pegasus/items/biochips/arthurchip.h"
 #include "pegasus/items/inventory/airmask.h"
 #include "pegasus/neighborhood/norad/constants.h"
 #include "pegasus/neighborhood/norad/alpha/fillingstation.h"
@@ -194,6 +195,8 @@ void NoradAlphaFillingStation::splashFinished() {
 
 void NoradAlphaFillingStation::intakeWarningFinished() {
 	setStaticState(kFSMainMenu, kMainMenu);
+	if (g_arthurChip)
+		g_arthurChip->playArthurMovieForEvent("Images/AI/Globals/XGLOBA29", kArthurNoradSawIntakeWarning);
 }
 
 void NoradAlphaFillingStation::showIntakeInProgress(uint16 numSeconds) {

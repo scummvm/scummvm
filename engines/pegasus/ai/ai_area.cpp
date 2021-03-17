@@ -29,6 +29,7 @@
 #include "pegasus/pegasus.h"
 #include "pegasus/ai/ai_area.h"
 #include "pegasus/items/biochips/aichip.h"
+#include "pegasus/items/biochips/arthurchip.h"
 #include "pegasus/items/biochips/biochipitem.h"
 #include "pegasus/items/biochips/opticalchip.h"
 #include "pegasus/items/biochips/pegasuschip.h"
@@ -50,6 +51,7 @@ AIArea::AIArea(InputHandler *nextHandler) : InputHandler(nextHandler), _leftArea
 	_middleBiochipTime = 0xffffffff;
 	_rightBiochipTime = 0xffffffff;
 	_lockCount = 0;
+	((PegasusEngine *)g_engine)->requestToggle(false);
 	startIdling();
 }
 
@@ -458,6 +460,10 @@ void AIArea::activateHotspots() {
 			case kOpticalBiochip:
 				((OpticalChip *)currentBiochip)->activateOpticalHotspots();
 				break;
+			case kArthurBiochip:
+				if (vm->isDVD())
+					((ArthurChip *)currentBiochip)->activateArthurHotspots();
+				break;
 			default:
 				break;
 			}
@@ -495,6 +501,12 @@ void AIArea::clickInHotspot(const Input &input, const Hotspot *hotspot) {
 			case kOpticalBiochip:
 				if ((hotspot->getHotspotFlags() & kOpticalBiochipSpotFlag) != 0) {
 					((OpticalChip *)currentBiochip)->clickInOpticalHotspot(hotspot->getObjectID());
+					handled = true;
+				}
+				break;
+			case kArthurBiochip:
+				if (vm->isDVD() && (hotspot->getHotspotFlags() & kArthurBiochipSpotFlag) != 0) {
+					((ArthurChip *)currentBiochip)->clickInArthurHotspot(hotspot->getObjectID());
 					handled = true;
 				}
 				break;

@@ -25,6 +25,7 @@
 
 #include "common/system.h"
 #include "video/qt_decoder.h"
+#include "video/theora_decoder.h"
 
 #include "pegasus/cursor.h"
 #include "pegasus/energymonitor.h"
@@ -32,6 +33,7 @@
 #include "pegasus/interface.h"
 #include "pegasus/pegasus.h"
 #include "pegasus/ai/ai_area.h"
+#include "pegasus/items/biochips/arthurchip.h"
 #include "pegasus/items/biochips/biochipitem.h"
 #include "pegasus/neighborhood/caldoria/caldoria.h"
 #include "pegasus/neighborhood/caldoria/caldoria4dsystem.h"
@@ -51,6 +53,19 @@ enum {
 };
 
 enum {
+	kCreateCornbread = 1000,
+	kWashingMachineZoomIn = 1001,
+	kWashingMachineLoop = 1002,
+	kWashingMachineZoomOut = 1003
+};
+
+enum {
+	kCaldoriaLaundryZoomInHotSpotID = 10000,
+	kCaldoriaLaundryZoomOutHotSpotID = 10001,
+	kCaldoriaCornbreadHotSpotID = 10002
+};
+
+enum {
 	kSinclairInterruptionTime1 = 2955,
 	kSinclairInterruptionTime2 = 6835,
 	kSinclairInterruptionTime3 = 9835,
@@ -63,6 +78,12 @@ enum {
 };
 
 enum {
+	kCaldoriaLaundryIntro1In = 0,
+	kCaldoriaLaundryIntro1Out = 2645,
+
+	kCaldoriaLaundryIntro2In = 2645,
+	kCaldoriaLaundryIntro2Out = 4933,
+
 	kCaldoriaReplicatorIntroIn = 4933,
 	kCaldoriaReplicatorIntroOut = 6557,
 
@@ -98,9 +119,6 @@ enum {
 
 	kCaldoriaNoOtherFloorIn = 21469,
 	kCaldoriaNoOtherFloorOut = 28013,
-
-	kCaldoria4DInstructionsIn = 28013,
-	kCaldoria4DInstructionsOut = 29730,
 
 	kCaldoriaDrinkOJIn = 33910,
 	kCaldoriaDrinkOJOut = 35846,
@@ -169,7 +187,9 @@ void SinclairCallBack::callBack() {
 }
 
 Caldoria::Caldoria(InputHandler* nextHandler, PegasusEngine *owner)
-		: Neighborhood(nextHandler, owner, "Caldoria", kCaldoriaID), _sinclairInterrupt(this) {
+		: Neighborhood(nextHandler, owner, "Caldoria", kCaldoriaID), _extraMovie(kNoDisplayElement),
+		_laundryZoomInSpot(kCaldoriaLaundryZoomInHotSpotID), _laundryZoomOutSpot(kCaldoriaLaundryZoomOutHotSpotID),
+		_cornbreadSpot(kCaldoriaCornbreadHotSpotID), _sinclairInterrupt(this), _lookingAtLaundry(false) {
 	setIsItemTaken(kKeyCard);
 	setIsItemTaken(kOrangeJuiceGlassEmpty);
 	GameState.setTakenItemID(kOrangeJuiceGlassFull, GameState.isTakenItemID(kOrangeJuiceGlassEmpty));
@@ -179,13 +199,34 @@ Caldoria::Caldoria(InputHandler* nextHandler, PegasusEngine *owner)
 
 Caldoria::~Caldoria() {
 	_sinclairInterrupt.releaseCallBack();
+	if (_vm->isDVD()) {
+		_vm->getAllHotspots().remove(&_laundryZoomInSpot);
+		_vm->getAllHotspots().remove(&_laundryZoomOutSpot);
+		_vm->getAllHotspots().remove(&_cornbreadSpot);
+	}
 }
 
 void Caldoria::init() {
 	Neighborhood::init();
 
+	if (_vm->isDVD()) {
+		_laundryZoomInSpot.setArea(Common::Rect(384, 120, 576, 320));
+		_laundryZoomInSpot.setHotspotFlags(kNeighborhoodSpotFlag | kZoomInSpotFlag);
+		_vm->getAllHotspots().push_back(&_laundryZoomInSpot);
+
+		_laundryZoomOutSpot.setArea(Common::Rect(64, 64, 576, 320));
+		_laundryZoomOutSpot.setHotspotFlags(kNeighborhoodSpotFlag | kZoomOutSpotFlag);
+		_vm->getAllHotspots().push_back(&_laundryZoomOutSpot);
+
+		_cornbreadSpot.setArea(Common::Rect(270, 233, 381, 298));
+		_cornbreadSpot.setHotspotFlags(kNeighborhoodSpotFlag | kClickSpotFlag);
+		_vm->getAllHotspots().push_back(&_cornbreadSpot);
+	}
+
 	// We need this notification flag as well.
 	_neighborhoodNotification.notifyMe(this, kSinclairLoopDoneFlag, kSinclairLoopDoneFlag);
+
+	_extraMovieCallBack.setNotification(&_neighborhoodNotification);
 
 	_sinclairInterrupt.initCallBack(&_navMovie, kCallBackAtTime);
 
@@ -197,29 +238,66 @@ void Caldoria::start() {
 	g_energyMonitor->stopEnergyDraining();
 
 	if (!GameState.getCaldoriaSeenPullback()) {
+		Input input;
+		Common::String wakeModeMoviePath;
+		InputDevice.getInput(input, kPullbackInterruptFilter);
+		if (_vm->isDVD() && JMPPPInput::isEasterEggModifierInput(input)) {
+			wakeModeMoviePath = "Images/Caldoria/A00WM";
+		} else {
+			wakeModeMoviePath = "Images/Caldoria/A00WN";
+		}
+
 		_vm->_gfx->doFadeOutSync(kOneSecond * kFifteenTicksPerSecond, kFifteenTicksPerSecond);
 
-		g_system->delayMillis(2 * 1000);
+		Video::VideoDecoder *pullbackMovie = 0;
+		uint16 pullbackX, pullbackY;
 
-		Video::VideoDecoder *pullbackMovie = new Video::QuickTimeDecoder();
+#ifdef USE_THEORADEC
+		if (_vm->isDVD()) {
+			// Updated larger version
+			pullbackMovie = new Video::TheoraDecoder();
 
-		if (!pullbackMovie->loadFile("Images/Caldoria/Pullback.movie"))
-			error("Could not load pullback movie");
+			if (!pullbackMovie->loadFile("Images/Caldoria/Pullback.ogg")) {
+				delete pullbackMovie;
+			pullbackMovie = 0;
+			}
+		}
+#endif
+
+		if (!pullbackMovie) {
+			pullbackMovie = new Video::QuickTimeDecoder();
+
+			if (!pullbackMovie->loadFile("Images/Caldoria/Pullback.movie"))
+				error("Could not load Pullback.movie");
+		}
 
 		pullbackMovie->setVolume(MIN<uint>(_vm->getSoundFXLevel(), 0xFF));
 
 		// Draw the first frame so we can fade to it
-		const Graphics::Surface *frame = pullbackMovie->decodeNextFrame();
-		assert(frame);
-		assert(frame->format == g_system->getScreenFormat());
-		g_system->copyRectToScreen((const byte *)frame->getPixels(), frame->pitch, 64, 112, frame->w, frame->h);
-		_vm->_gfx->doFadeInSync(kTwoSeconds * kFifteenTicksPerSecond, kFifteenTicksPerSecond);
+		const Graphics::Surface *frame = 0;
+
+		if (_vm->isDVD()) {
+			uint16 newHeight = (uint16)((640.0f / (float)pullbackMovie->getWidth()) * (float)pullbackMovie->getHeight());
+			pullbackX = 0;
+			pullbackY = (480 - newHeight) / 2;
+
+			_vm->_gfx->enableUpdates();
+		} else {
+			pullbackX = 80;
+			pullbackY = 112;
+
+			// Draw the first frame so we can fade to it
+			frame = pullbackMovie->decodeNextFrame();
+			assert(frame);
+			assert(frame->format == g_system->getScreenFormat());
+			g_system->copyRectToScreen((const byte *)frame->getPixels(), frame->pitch, pullbackX, pullbackY, frame->w, frame->h);
+			_vm->_gfx->doFadeInSync(kTwoSeconds * kFifteenTicksPerSecond, kFifteenTicksPerSecond);
+		}
 
 		bool saveAllowed = _vm->swapSaveAllowed(false);
 		bool openAllowed = _vm->swapLoadAllowed(false);
 
 		bool skipped = false;
-		Input input;
 
 		pullbackMovie->start();
 
@@ -228,13 +306,13 @@ void Caldoria::start() {
 				frame = pullbackMovie->decodeNextFrame();
 
 				if (frame) {
-					g_system->copyRectToScreen((const byte *)frame->getPixels(), frame->pitch, 64, 112, frame->w, frame->h);
+					g_system->copyRectToScreen((const byte *)frame->getPixels(), frame->pitch, pullbackX, pullbackY, frame->w, frame->h);
 					g_system->updateScreen();
 				}
 			}
 
 			InputDevice.getInput(input, kPullbackInterruptFilter);
-			if (input.anyInput() || _vm->saveRequested() || _vm->loadRequested()) {
+			if ((input.anyInput() || _vm->saveRequested() || _vm->loadRequested()) && !GameState.getEasterEgg()) {
 				skipped = true;
 				break;
 			}
@@ -253,14 +331,58 @@ void Caldoria::start() {
 		ExtraTable::Entry entry;
 
 		if (!skipped) {
-			_vm->_gfx->doFadeOutSync(kThreeSeconds * kFifteenTicksPerSecond, kFifteenTicksPerSecond, false);
-			g_system->delayMillis(3 * 1000 / 2);
-			getExtraEntry(kCaldoria00WakeUp1, entry);
-			_navMovie.setTime(entry.movieStart);
-			_navMovie.redrawMovieWorld();
-			_navMovie.show();
-			_vm->refreshDisplay();
-			_vm->_gfx->doFadeInSync(kOneSecond * kFifteenTicksPerSecond, kFifteenTicksPerSecond, false);
+			if (_vm->isDVD()) {
+				Video::VideoDecoder* wakeModeMovie = 0;
+#ifdef USE_THEORADEC
+				wakeModeMovie = new Video::TheoraDecoder();
+				if (!wakeModeMovie->loadFile(wakeModeMoviePath + ".ogg")) {
+					delete wakeModeMovie;
+					wakeModeMovie = 0;
+				}
+#endif
+				if (!wakeModeMovie) {
+					wakeModeMovie = new Video::QuickTimeDecoder();
+					if (!wakeModeMovie->loadFile(wakeModeMoviePath + ".movie"))
+						error("Could not load Jonny Ego movie");
+				}
+
+				wakeModeMovie->setVolume(MIN<uint>(_vm->getSoundFXLevel(), 0xFF));
+
+				wakeModeMovie->start();
+
+				while (!_vm->shouldQuit() && !wakeModeMovie->endOfVideo()) {
+					if (wakeModeMovie->needsUpdate()) {
+						frame = wakeModeMovie->decodeNextFrame();
+
+						if (frame) {
+							g_system->copyRectToScreen((const byte *)frame->getPixels(), frame->pitch, 0, 0, frame->w, frame->h);
+							g_system->updateScreen();
+						}
+					}
+
+					InputDevice.getInput(input, kPullbackInterruptFilter);
+					if ((input.anyInput() || _vm->saveRequested() || _vm->loadRequested()) && !GameState.getEasterEgg()) {
+						skipped = true;
+						break;
+					}
+
+					g_system->delayMillis(10);
+				}
+
+				delete wakeModeMovie;
+
+				if (_vm->shouldQuit())
+					return;
+			} else {
+				_vm->_gfx->doFadeOutSync(kThreeSeconds * kFifteenTicksPerSecond, kFifteenTicksPerSecond, false);
+				g_system->delayMillis(3 * 1000 / 2);
+				getExtraEntry(kCaldoria00WakeUp1, entry);
+				_navMovie.setTime(entry.movieStart);
+				_navMovie.redrawMovieWorld();
+				_navMovie.show();
+				_vm->refreshDisplay();
+				_vm->_gfx->doFadeInSync(kOneSecond * kFifteenTicksPerSecond, kFifteenTicksPerSecond, false);
+			}
 		} else {
 			getExtraEntry(kCaldoria00WakeUp1, entry);
 			_navMovie.setTime(entry.movieStart);
@@ -272,6 +394,15 @@ void Caldoria::start() {
 	}
 
 	Neighborhood::start();
+}
+
+void Caldoria::throwAwayInterface() {
+	Neighborhood::throwAwayInterface();
+	if (_vm->isDVD()) {
+		_vm->getAllHotspots().remove(&_laundryZoomInSpot);
+		_vm->getAllHotspots().remove(&_laundryZoomOutSpot);
+		_vm->getAllHotspots().remove(&_cornbreadSpot);
+	}
 }
 
 void Caldoria::flushGameState() {
@@ -714,18 +845,34 @@ void Caldoria::getExtraCompassMove(const ExtraTable::Entry &entry, FaderMoveSpec
 void Caldoria::loadAmbientLoops() {
 	RoomID room = GameState.getCurrentRoom();
 
-	if (room == kCaldoria00 && GameState.getCaldoriaWokenUp())
-		loadLoopSound1("Sounds/Caldoria/Apartment Music.AIFF", 0x100 / 4);
-	else if (room >= kCaldoria01 && room <= kCaldoria14)
-		loadLoopSound1("Sounds/Caldoria/Apartment Music.AIFF", 0x100 / 4);
-	else if (room == kCaldoria27 || room == kCaldoria28 || room == kCaldoria45)
-		loadLoopSound1("Sounds/Caldoria/Elevator Loop.AIFF", 0x100 / 5);
-	else if (room == kCaldoria44)
-		loadLoopSound1("Sounds/Caldoria/TSA Hum Loop.AIFF");
-	else if (room >= kCaldoria15 && room <= kCaldoria48)
-		loadLoopSound1("Sounds/Caldoria/Industrial Nuage.aiff", 2 * 0x100 / 3);
-	else if (room >= kCaldoria49 && room <= kCaldoria56)
-		loadLoopSound1("Sounds/Caldoria/A50NLB00.22K.AIFF", 0x100 / 4);
+	if (_vm->isDVD()) {
+		// Updated sounds in the DVD version
+		if (room == kCaldoria00 && GameState.getCaldoriaWokenUp())
+			loadLoopSound1("Sounds/Caldoria/Apartment Music.32K.aiff", 0x100 / 4);
+		else if (room >= kCaldoria01 && room <= kCaldoria14)
+			loadLoopSound1("Sounds/Caldoria/Apartment Music.32K.aiff", 0x100 / 4);
+		else if (room == kCaldoria27 || room == kCaldoria28 || room == kCaldoria45)
+			loadLoopSound1("Sounds/Caldoria/Elevator Loop.32K.aiff", 0x100 / 5);
+		else if (room == kCaldoria44)
+			loadLoopSound1("Sounds/Caldoria/TSA Hum Loop.44K.aiff");
+		else if (room >= kCaldoria15 && room <= kCaldoria48)
+			loadLoopSound1("Sounds/Caldoria/Industrial Nuage.44K.aiff", 2 * 0x100 / 3);
+		else if (room >= kCaldoria49 && room <= kCaldoria56)
+			loadLoopSound1("Sounds/Caldoria/A50NLB00.32K.AIFF", 0x100 / 4);
+	} else {
+		if (room == kCaldoria00 && GameState.getCaldoriaWokenUp())
+			loadLoopSound1("Sounds/Caldoria/Apartment Music.AIFF", 0x100 / 4);
+		else if (room >= kCaldoria01 && room <= kCaldoria14)
+			loadLoopSound1("Sounds/Caldoria/Apartment Music.AIFF", 0x100 / 4);
+		else if (room == kCaldoria27 || room == kCaldoria28 || room == kCaldoria45)
+			loadLoopSound1("Sounds/Caldoria/Elevator Loop.AIFF", 0x100 / 5);
+		else if (room == kCaldoria44)
+			loadLoopSound1("Sounds/Caldoria/TSA Hum Loop.AIFF");
+		else if (room >= kCaldoria15 && room <= kCaldoria48)
+			loadLoopSound1("Sounds/Caldoria/Industrial Nuage.aiff", 2 * 0x100 / 3);
+		else if (room >= kCaldoria49 && room <= kCaldoria56)
+			loadLoopSound1("Sounds/Caldoria/A50NLB00.22K.AIFF", 0x100 / 4);
+	}
 }
 
 void Caldoria::checkContinuePoint(const RoomID room, const DirectionConstant direction) {
@@ -748,8 +895,15 @@ void Caldoria::checkContinuePoint(const RoomID room, const DirectionConstant dir
 
 void Caldoria::spotCompleted() {
 	Neighborhood::spotCompleted();
-	if (GameState.getCurrentRoom() == kCaldoriaBinoculars)
+	switch (GameState.getCurrentRoom()) {
+	case kCaldoriaBinoculars:
 		startExtraSequence(kBinocularsZoomInOnShip, kExtraCompletedFlag, kFilterNoInput);
+		break;
+	case kCaldoriaToilet:
+		if (g_arthurChip)
+			g_arthurChip->playArthurMovieForEvent("Images/AI/Globals/XGLOBA47", kArthurCaldoriaReadPaper);
+		break;
+	}
 }
 
 void Caldoria::arriveAt(const RoomID room, const DirectionConstant direction) {
@@ -773,6 +927,7 @@ void Caldoria::arriveAt(const RoomID room, const DirectionConstant direction) {
 
 	Neighborhood::arriveAt(room, direction);
 	Input dummy;
+	Sound flushSound;
 
 	switch (room) {
 	case kCaldoria00:
@@ -788,6 +943,27 @@ void Caldoria::arriveAt(const RoomID room, const DirectionConstant direction) {
 		break;
 	case kCaldoria09:
 		_lastExtra = 0xffffffff;
+		break;
+	case kCaldoria10:
+		if (_vm->isDVD() && direction == kWest) {
+			_vm->_cursor->hide();
+			flushSound.initFromAIFFFile("Sounds/Caldoria/Apartment Toilet.32K.aiff");
+			flushSound.setVolume(_vm->getSoundFXLevel());
+			flushSound.playSound();
+			while (flushSound.isPlaying() && !_vm->shouldQuit()) {
+				InputDevice.getInput(dummy, kFilterNoInput);
+
+				_vm->checkCallBacks();
+				_vm->refreshDisplay();
+				_vm->_system->delayMillis(10);
+			}
+			if (_vm->shouldQuit())
+				return;
+			_vm->_cursor->hideUntilMoved();
+		} else if (direction == kEast) {
+			if (g_arthurChip)
+				g_arthurChip->playArthurMovieForEvent("Images/AI/Globals/XGLOBA42", kArthurCaldoriaReachedToilet);
+		}
 		break;
 	case kCaldoriaToilet:
 		GameState.setScoringReadPaper(true);
@@ -844,6 +1020,10 @@ void Caldoria::arriveAt(const RoomID room, const DirectionConstant direction) {
 	case kCaldoria49:
 		arriveAtCaldoria49();
 		break;
+	case kCaldoria48:
+		if (direction == kNorth && !GameState.getCaldoriaDoorBombed() && GameState.isTakenItemID(kCardBomb) && g_arthurChip)
+			g_arthurChip->playArthurMovieForEvent("Images/AI/Globals/XGLOBA12", kArthurCaldoriaRoofDoor);
+		break;
 	case kCaldoria53:
 		if (direction == kEast && !GameState.getCaldoriaSinclairShot())
 			zoomToSinclair();
@@ -873,30 +1053,77 @@ void Caldoria::arriveAt(const RoomID room, const DirectionConstant direction) {
 void Caldoria::doAIRecalibration() {
 	GameState.setCaldoriaDidRecalibration(true);
 
-	if (!g_AIArea->playAIMovie(kRightAreaSignature, "Images/AI/Caldoria/XA01EB1", true, kRecalibrationInterruptFilter))
-		return;
+	Input input;
+	InputDevice.getInput(input, kPullbackInterruptFilter);
+	if (_vm->isDVD() && JMPPPInput::isEasterEggModifierInput(input)) {
+		Video::VideoDecoder *video = 0;
 
-	g_interface->calibrateEnergyBar();
-	if (!g_AIArea->playAIMovie(kRightAreaSignature, "Images/AI/Caldoria/XA01EB4", true, kRecalibrationInterruptFilter))
-		return;
+		_vm->_cursor->hide();
 
-	g_interface->raiseInventoryDrawerSync();
-	if (!g_AIArea->playAIMovie(kRightAreaSignature, "Images/AI/Caldoria/XA01EB6", true, kRecalibrationInterruptFilter)) {
+#ifdef USE_THEORADEC
+		video = new Video::TheoraDecoder();
+		if (!video->loadFile("Images/Caldoria/A00EA.ogg")) {
+			delete video;
+			video = 0;
+		}
+#endif
+
+		if (!video) {
+			video = new Video::QuickTimeDecoder();
+			if (!video->loadFile("Images/Caldoria/A00EA.movie"))
+				error("Could not load Month-O-Matic video");
+		}
+
+		video->setVolume(MIN<uint>(_vm->getSoundFXLevel(), 0xFF));
+		video->start();
+
+		while (!_vm->shouldQuit() && !video->endOfVideo()) {
+			if (video->needsUpdate()) {
+				const Graphics::Surface *frame = video->decodeNextFrame();
+
+				if (frame) {
+					g_system->copyRectToScreen((const byte *)frame->getPixels(), frame->pitch, kNavAreaLeft, kNavAreaTop, frame->w, frame->h);
+					g_system->updateScreen();
+				}
+			}
+
+			InputDevice.pumpEvents();
+
+			g_system->delayMillis(10);
+		}
+
+		delete video;
+
+		if (_vm->shouldQuit())
+			return;
+
+		arriveAt(kCaldoria01, kEast);
+	} else if (_vm->isChattyAI()) {
+		if (!g_AIArea->playAIMovie(kRightAreaSignature, "Images/AI/Caldoria/XA01EB1", true, kRecalibrationInterruptFilter))
+			return;
+
+		g_interface->calibrateEnergyBar();
+		if (!g_AIArea->playAIMovie(kRightAreaSignature, "Images/AI/Caldoria/XA01EB4", true, kRecalibrationInterruptFilter))
+			return;
+
+		g_interface->raiseInventoryDrawerSync();
+		if (!g_AIArea->playAIMovie(kRightAreaSignature, "Images/AI/Caldoria/XA01EB6", true, kRecalibrationInterruptFilter)) {
+			g_interface->lowerInventoryDrawerSync();
+			return;
+		}
+
 		g_interface->lowerInventoryDrawerSync();
-		return;
-	}
+		g_interface->raiseBiochipDrawerSync();
 
-	g_interface->lowerInventoryDrawerSync();
-	g_interface->raiseBiochipDrawerSync();
+		if (!g_AIArea->playAIMovie(kRightAreaSignature, "Images/AI/Caldoria/XA01EB5", true, kRecalibrationInterruptFilter)) {
+			g_interface->lowerBiochipDrawerSync();
+			return;
+		}
 
-	if (!g_AIArea->playAIMovie(kRightAreaSignature, "Images/AI/Caldoria/XA01EB5", true, kRecalibrationInterruptFilter)) {
 		g_interface->lowerBiochipDrawerSync();
-		return;
+
+		g_AIArea->playAIMovie(kRightAreaSignature, "Images/AI/Caldoria/XA01EB8", false, kRecalibrationInterruptFilter);
 	}
-
-	g_interface->lowerBiochipDrawerSync();
-
-	g_AIArea->playAIMovie(kRightAreaSignature, "Images/AI/Caldoria/XA01EB8", false, kRecalibrationInterruptFilter);
 }
 
 void Caldoria::arriveAtCaldoria00() {
@@ -1021,11 +1248,25 @@ void Caldoria::setUpRoofTop() {
 	}
 }
 
+void Caldoria::leftButton(const Input &input) {
+	if (!(GameState.getCurrentRoomAndView() == MakeRoomView(kCaldoria11, kWest) && _lookingAtLaundry))
+		Neighborhood::leftButton(input);
+}
+
+void Caldoria::rightButton(const Input &input) {
+	if (!(GameState.getCurrentRoomAndView() == MakeRoomView(kCaldoria11, kWest) && _lookingAtLaundry))
+		Neighborhood::rightButton(input);
+}
+
 void Caldoria::downButton(const Input &input) {
 	switch (GameState.getCurrentRoomAndView()) {
 	case MakeRoomView(kCaldoria01, kEast):
 		GameState.setCaldoriaWokenUp(true);
 		startExtraSequence(kCaldoria00SitDown, kExtraCompletedFlag, kFilterNoInput);
+		break;
+	case MakeRoomView(kCaldoria11, kWest):
+		if (_lookingAtLaundry)
+			startExtraSequence(kWashingMachineZoomOut, kExtraCompletedFlag, kFilterNoInput);
 		break;
 	default:
 		Neighborhood::downButton(input);
@@ -1062,6 +1303,10 @@ void Caldoria::turnTo(const DirectionConstant direction) {
 	case kCaldoria09:
 		_lastExtra = 0xffffffff;
 		break;
+	case kCaldoria10:
+		if (direction == kEast && g_arthurChip)
+			g_arthurChip->playArthurMovieForEvent("Images/AI/Globals/XGLOBA42", kArthurCaldoriaReachedToilet);
+		break;
 	case kCaldoria11:
 		if (direction == kEast && !GameState.getCaldoriaSeenMessages())
 			loopCroppedMovie("Images/Caldoria/A11 Message Machine Loop", kCaldoria11MessageLoopLeft, kCaldoria11MessageLoopTop);
@@ -1087,8 +1332,11 @@ void Caldoria::turnTo(const DirectionConstant direction) {
 			closeCroppedMovie();
 		break;
 	case kCaldoria48:
-		if (direction == kNorth && !GameState.getCaldoriaDoorBombed())
+		if (direction == kNorth && !GameState.getCaldoriaDoorBombed()) {
 			setCurrentActivation(kActivateRoofSlotEmpty);
+			if (GameState.isTakenItemID(kCardBomb) && g_arthurChip)
+				g_arthurChip->playArthurMovieForEvent("Images/AI/Globals/XGLOBA12", kArthurCaldoriaRoofDoor);
+		}
 		break;
 	case kCaldoria53:
 		if (GameState.getCurrentDirection() == kEast && !GameState.getCaldoriaSinclairShot())
@@ -1123,7 +1371,10 @@ void Caldoria::zoomTo(const Hotspot *zoomOutSpot) {
 	// that doesn't involve the ClickInHotSpot function.
 	_zoomOutSpot = zoomOutSpot;
 
-	if (zoomOutSpot->getObjectID() == kCaldoriaDrawersOutSpotID) {
+	if (_vm->isDVD() && zoomOutSpot->getObjectID() == kCaldoriaReplicatorOutSpotID) {
+		GameState.setEasterEgg(false);
+		Neighborhood::zoomTo(zoomOutSpot);
+	} else if (zoomOutSpot->getObjectID() == kCaldoriaDrawersOutSpotID) {
 		if (_privateFlags.getFlag(kCaloriaPrivateLeftDrawerOpenFlag)) {
 			_privateFlags.setFlag(kCaloriaPrivateLeftDrawerOpenFlag, false);
 			startExtraSequence(kLeftDrawerClose, kExtraCompletedFlag, kFilterNoInput);
@@ -1158,6 +1409,100 @@ void Caldoria::zoomToSinclair() {
 	getExtraEntry(kCa53EastZoomToSinclair, entry);
 	_sinclairInterrupt.scheduleCallBack(kTriggerTimeFwd, entry.movieStart + kSinclairInterruptionTime1, _navMovie.getScale());
 	startExtraSequence(kCa53EastZoomToSinclair, kExtraCompletedFlag, kFilterAllInput);
+}
+
+void Caldoria::startExtraSequence(const ExtraID extraID, const NotificationFlags flags, const InputBits interruptionFilter) {
+	short left = kNavAreaLeft, top = kNavAreaTop;
+	DisplayOrder displayOrder = kNavMovieOrder + 1;
+	TimeValue segmentStart = 0, segmentStop = 0;
+	bool loopSequence = false;
+	Common::Rect pushBounds;
+	NotificationFlags extraFlags;
+
+	switch (extraID) {
+	case kCreateCornbread:
+	case kWashingMachineZoomIn:
+	case kWashingMachineLoop:
+	case kWashingMachineZoomOut:
+		_turnPush.getBounds(pushBounds);
+
+		switch (extraID) {
+		case kCreateCornbread:
+			_extraMovie.initFromMovieFile("Images/Caldoria/A12RC.movie");
+			left = pushBounds.left;
+			top = pushBounds.top;
+			displayOrder = kNavMovieOrder + 1;
+			segmentStart = 0;
+			segmentStop = _extraMovie.getDuration();
+			loopSequence = false;
+			break;
+		case kWashingMachineZoomIn:
+			_extraMovie.initFromMovieFile("Images/Caldoria/A11WAS.movie");
+			left = pushBounds.left;
+			top = pushBounds.top;
+			displayOrder = kNavMovieOrder + 1;
+			segmentStart = 0;
+			segmentStop = 5480;
+			loopSequence = false;
+			break;
+		case kWashingMachineLoop:
+			// The washing machine movie will already be loaded after zooming in
+			left = pushBounds.left;
+			top = pushBounds.top;
+			displayOrder = kNavMovieOrder + 1;
+			segmentStart = 5480;
+			segmentStop = 9880;
+			loopSequence = true;
+			break;
+		case kWashingMachineZoomOut:
+			// The washing machine movie will still be loaded after looping
+			left = pushBounds.left;
+			top = pushBounds.top;
+			displayOrder = kNavMovieOrder + 1;
+			segmentStart = 9880;
+			segmentStop = 11200;
+			loopSequence = false;
+			break;
+		default:
+			break;
+		}
+
+		_lastExtra = extraID;
+		_turnPush.hide();
+
+		if (!loopSequence && g_AIArea)
+			g_AIArea->lockAIOut();
+
+		extraFlags = flags;
+		_interruptionFilter = interruptionFilter;
+		// Stop the nav movie before doing anything else
+		_navMovie.stop();
+		_navMovie.stopDisplaying();
+
+		_extraMovie.setVolume(_vm->getSoundFXLevel());
+		_extraMovie.moveElementTo(left, top);
+		_extraMovie.setDisplayOrder(displayOrder);
+		_extraMovie.startDisplaying();
+		_extraMovie.show();
+		_extraMovie.setFlags(0);
+		_extraMovie.setSegment(segmentStart, segmentStop);
+		_extraMovie.setTime(segmentStart);
+		if (loopSequence)
+			_extraMovie.setFlags(kLoopTimeBase);
+		else
+			extraFlags |= kNeighborhoodMovieCompletedFlag;
+		_extraMovieCallBack.cancelCallBack();
+		_extraMovieCallBack.initCallBack(&_extraMovie, kCallBackAtExtremes);
+		if (extraFlags != 0) {
+			_extraMovieCallBack.setCallBackFlag(extraFlags);
+			_extraMovieCallBack.scheduleCallBack(kTriggerAtStop, 0, 0);
+		}
+		_extraMovie.start();
+		break;
+	default:
+		Neighborhood::startExtraSequence(extraID, flags, interruptionFilter);
+		break;
+	}
 }
 
 void Caldoria::receiveNotification(Notification *notification, const NotificationFlags flags) {
@@ -1196,8 +1541,31 @@ void Caldoria::receiveNotification(Notification *notification, const Notificatio
 			}
 			break;
 		case kCreateOrangeJuice:
+			GameState.setCaldoriaMadeOJ(true);
 			setCurrentActivation(kActivateOJOnThePad);
-			requestSpotSound(kCaldoriaReplicatorOJChoiceIn, kCaldoriaReplicatorOJChoiceOut, kFilterNoInput, 0);
+			GameState.setEasterEgg(false);
+			break;
+		case kCreateCornbread:
+			_extraMovie.moveElementTo(0, 0);
+			_vm->_gfx->setCurSurface(_navMovie.getSurface());
+			_extraMovie.copyToCurrentPort();
+			_vm->_gfx->setCurSurface(_vm->_gfx->getWorkArea());
+			_extraMovie.stopDisplaying();
+			_extraMovie.releaseMovie();
+			_navMovie.startDisplaying();
+			GameState.setEasterEgg(true);
+			if (g_arthurChip)
+				g_arthurChip->playArthurMovieForEvent("Images/AI/Globals/XGLOBB39", kArthurCaldoriaCreatedCornbread);
+			break;
+		case kWashingMachineZoomIn:
+			_lookingAtLaundry = true;
+			startExtraSequence(kWashingMachineLoop, kExtraCompletedFlag, kFilterAllInput);
+			break;
+		case kWashingMachineZoomOut:
+			_extraMovie.stopDisplaying();
+			_extraMovie.releaseMovie();
+			_navMovie.startDisplaying();
+			_lookingAtLaundry = false;
 			break;
 		case kCaldoria00SitDown:
 			arriveAt(kCaldoria00, kEast);
@@ -1240,15 +1608,27 @@ void Caldoria::receiveNotification(Notification *notification, const Notificatio
 		case kCa48NorthExplosion:
 			// Current biochip must be the shield if we got here.
 			_vm->getCurrentBiochip()->setItemState(kShieldNormal);
+			if (g_arthurChip) {
+				if (_vm->getRandomBit())
+					g_arthurChip->playArthurMovieForEvent("Images/AI/Globals/XGLOBA41", kArthurCaldoriaBlownDoor);
+				else
+					g_arthurChip->playArthurMovieForEvent("Images/AI/Globals/XGLOBB42", kArthurCaldoriaBlownDoor);
+			}
 			break;
 		case kBinocularsZoomInOnShip:
 			setCurrentActivation(kActivateFocusedOnShip);
+			if (g_arthurChip)
+				g_arthurChip->playArthurMovieForEvent("Images/AI/Globals/XGLOBA03", kArthurCaldoriaLookThroughTelescope);
 			break;
 		case kCa49NorthVoiceAnalysis:
 			_utilityFuse.primeFuse(kSinclairShootsTimeLimit);
 			_utilityFuse.setFunctor(new Common::Functor0Mem<void, Caldoria>(this, &Caldoria::sinclairTimerExpired));
 			_utilityFuse.lightFuse();
 			GameState.setCaldoriaSawVoiceAnalysis(true);
+			if (_vm->isDVD() && g_AIArea)
+				g_AIArea->checkRules();
+			if (g_arthurChip)
+				g_arthurChip->playArthurMovieForEvent("Images/AI/Globals/XGLOBA20", kArthurCaldoriaSawVoiceAnalysis);
 			break;
 		case kCa53EastZoomToSinclair:
 			if (GameState.getCaldoriaSinclairShot()) {
@@ -1274,6 +1654,10 @@ void Caldoria::receiveNotification(Notification *notification, const Notificatio
 		}
 	} else if ((flags & kSpotSoundCompletedFlag) != 0) {
 		switch (GameState.getCurrentRoom()) {
+		case kCaldoria11:
+			if (g_arthurChip)
+				g_arthurChip->playArthurMovieForEvent("Images/AI/Globals/XGLOBA46", kArthurCaldoriaZoomedToLaundry);
+			break;
 		case kCaldoria20:
 		case kCaldoria21:
 		case kCaldoria26:
@@ -1281,6 +1665,8 @@ void Caldoria::receiveNotification(Notification *notification, const Notificatio
 		case kCaldoria34:
 		case kCaldoria35:
 			updateViewFrame();
+			if ((GameState.getCurrentRoom() == kCaldoria34 || GameState.getCurrentRoom() == kCaldoria35) && g_arthurChip)
+				g_arthurChip->playArthurMovieForEvent("Images/AI/Globals/XGLOBA44", kArthurCaldoriaSawVacantApartment);
 			break;
 		case kCaldoria27:
 		case kCaldoria28:
@@ -1288,7 +1674,14 @@ void Caldoria::receiveNotification(Notification *notification, const Notificatio
 			updateElevatorMovie();
 			break;
 		case kCaldoriaReplicator:
-			emptyOJGlass();
+			if (_spotSounds.getStart() == kCaldoriaReplicatorWrongChoiceIn) {
+				if (g_arthurChip)
+					g_arthurChip->playArthurMovieForEvent("Images/AI/Globals/XGLOBA16", kArthurCaldoriaSelectedStickyBuns);
+			} else {
+				emptyOJGlass();
+				if (g_arthurChip)
+					g_arthurChip->playArthurMovieForEvent("Images/AI/Globals/XGLOBA45", kArthurCaldoriaDrankOJ);
+			}
 			break;
 		default:
 			break;
@@ -1360,6 +1753,16 @@ void Caldoria::activateHotspots() {
 	case kCaldoriaReplicator:
 		if (GameState.getCaldoriaMadeOJ())
 			_vm->getAllHotspots().deactivateOneHotspot(kCaldoriaMakeOJSpotID);
+		if (GameState.getEasterEgg())
+			_vm->getAllHotspots().activateOneHotspot(kCaldoriaCornbreadHotSpotID);
+		break;
+	case kCaldoria11:
+		if (_vm->isDVD() && GameState.getCurrentDirection() == kWest) {
+			if (_lookingAtLaundry)
+				_vm->getAllHotspots().activateOneHotspot(kCaldoriaLaundryZoomOutHotSpotID);
+			else
+				_vm->getAllHotspots().activateOneHotspot(kCaldoriaLaundryZoomInHotSpotID);
+		}
 		break;
 	case kCaldoria27:
 		if (GameState.isCurrentDoorOpen()) {
@@ -1454,11 +1857,28 @@ void Caldoria::clickInHotspot(const Input &input, const Hotspot *spot) {
 		startExtraSequence(kRightDrawerCloseNoKeys, kExtraCompletedFlag, kFilterNoInput);
 		break;
 	case kCaldoriaMakeStickyBunsSpotID:
-		requestSpotSound(kCaldoriaReplicatorWrongChoiceIn, kCaldoriaReplicatorWrongChoiceOut, kFilterNoInput, 0);
+		requestSpotSound(kCaldoriaReplicatorWrongChoiceIn, kCaldoriaReplicatorWrongChoiceOut, kFilterNoInput, kSpotSoundCompletedFlag);
 		break;
 	case kCaldoriaMakeOJSpotID:
-		GameState.setCaldoriaMadeOJ(true);
-		startExtraSequence(kCreateOrangeJuice, kExtraCompletedFlag, kFilterNoInput);
+		if (_vm->isDVD() && JMPPPInput::isEasterEggModifierInput(input)) {
+			startExtraSequence(kCreateCornbread, kExtraCompletedFlag, kFilterNoInput);
+		} else {
+			requestSpotSound(kCaldoriaReplicatorOJChoiceIn, kCaldoriaReplicatorOJChoiceOut, kFilterNoInput, 0);
+			requestExtraSequence(kCreateOrangeJuice, kExtraCompletedFlag, kFilterNoInput);
+		}
+		break;
+	case kCaldoriaCornbreadHotSpotID:
+		doArthurJoyride();
+		break;
+	case kCaldoriaLaundryZoomInHotSpotID:
+		if (_vm->isDVD()) {
+			startExtraSequence(kWashingMachineZoomIn, kExtraCompletedFlag, kFilterNoInput);
+			requestDelay(30, 10, kFilterNoInput, kDelayCompletedFlag);
+			requestSpotSound(kCaldoriaLaundryIntro1In, kCaldoriaLaundryIntro2Out, kFilterNoInput, kSpotSoundCompletedFlag);
+		}
+		break;
+	case kCaldoriaLaundryZoomOutHotSpotID:
+		startExtraSequence(kWashingMachineZoomOut, kExtraCompletedFlag, kFilterNoInput);
 		break;
 	case kCaBedroomVidPhoneActivationSpotID:
 		newInteraction(kCaldoriaMessagesInteractionID);
@@ -1540,19 +1960,29 @@ void Caldoria::clickInHotspot(const Input &input, const Hotspot *spot) {
 
 void Caldoria::clickOnDoorbell(const HotSpotID doorBellSpotID) {
 	uint32 extra;
+	Sound doorbellSound;
 	ExtraTable::Entry entry;
+	Input input;
 
 	switch (doorBellSpotID) {
 	case kCaldoria20DoorbellSpotID:
+		if (_vm->isDVD())
+			doorbellSound.initFromAIFFFile("Sounds/Caldoria/AH5.AIFF");
 		extra = kCaldoria20Doorbell;
 		break;
 	case kCaldoria21DoorbellSpotID:
+		if (_vm->isDVD())
+			doorbellSound.initFromAIFFFile("Sounds/Caldoria/AH4.AIFF");
 		extra = kCaldoria21Doorbell;
 		break;
 	case kCaldoria26DoorbellSpotID:
+		if (_vm->isDVD())
+			doorbellSound.initFromAIFFFile("Sounds/Caldoria/AH3.AIFF");
 		extra = kCaldoria26Doorbell;
 		break;
 	case kCaldoria29DoorbellSpotID:
+		if (_vm->isDVD())
+			doorbellSound.initFromAIFFFile("Sounds/Caldoria/AH1.AIFF");
 		extra = kCaldoria29Doorbell;
 		break;
 	case kCaldoria34DoorbellSpotID:
@@ -1567,7 +1997,51 @@ void Caldoria::clickOnDoorbell(const HotSpotID doorBellSpotID) {
 
 	getExtraEntry(extra, entry);
 	showViewFrame(entry.movieStart);
-	requestSpotSound(kCaldoriaNobodyHomeIn, kCaldoriaNobodyHomeOut, kFilterNoInput, kSpotSoundCompletedFlag);
+	if (_vm->isDVD() && doorBellSpotID != kCaldoria34DoorbellSpotID && doorBellSpotID != kCaldoria35DoorbellSpotID) {
+		_vm->_cursor->hide();
+		doorbellSound.setVolume(_vm->getSoundFXLevel());
+		doorbellSound.playSound();
+		while (doorbellSound.isPlaying() && !_vm->shouldQuit()) {
+			InputDevice.getInput(input, kFilterNoInput);
+
+			_vm->checkCallBacks();
+			_vm->refreshDisplay();
+			_vm->_system->delayMillis(10);
+		}
+		if (_vm->shouldQuit())
+			return;
+		_vm->_cursor->hideUntilMoved();
+		updateViewFrame();
+	} else {
+		requestSpotSound(kCaldoriaNobodyHomeIn, kCaldoriaNobodyHomeOut, kFilterNoInput, kSpotSoundCompletedFlag);
+	}
+}
+
+void Caldoria::cantMoveThatWay(CanOpenDoorReason reason) {
+	switch (reason) {
+	case kCantMoveDoorClosed:
+	case kCantMoveDoorLocked:
+		openDoor();
+		break;
+	case kCantMoveBlocked:
+		switch (GameState.getCurrentRoomAndView()) {
+		case MakeRoomView(kCaldoria20, kWest):
+		case MakeRoomView(kCaldoria21, kEast):
+		case MakeRoomView(kCaldoria26, kSouth):
+		case MakeRoomView(kCaldoria29, kSouth):
+		case MakeRoomView(kCaldoria34, kWest):
+		case MakeRoomView(kCaldoria35, kEast):
+			cantOpenDoor(kCantOpenLocked);
+			break;
+		default:
+			zoomUpOrBump();
+			break;
+		}
+		break;
+	default:
+		bumpIntoWall();
+		break;
+	}
 }
 
 CanOpenDoorReason Caldoria::canOpenDoor(DoorTable::Entry &entry) {
@@ -1663,6 +2137,9 @@ void Caldoria::pickedUpItem(Item *item) {
 }
 
 void Caldoria::dropItemIntoRoom(Item *item, Hotspot *dropSpot) {
+	Input input;
+	Sound cardBombVoice;
+
 	switch (item->getObjectID()) {
 	case kKeyCard:
 		Neighborhood::dropItemIntoRoom(item, dropSpot);
@@ -1686,7 +2163,27 @@ void Caldoria::dropItemIntoRoom(Item *item, Hotspot *dropSpot) {
 		_utilityFuse.lightFuse();
 		GameState.setCaldoriaFuseTimeLimit(kCardBombCountDownTime);
 		loopCroppedMovie("Images/Caldoria/A48 Bomb Loop", kCaldoria48CardBombLoopLeft, kCaldoria48CardBombLoopTop);
+		if (_vm->isDVD()) {
+			InputDevice.getInput(input, kFilterAllInput);
+			if (JMPPPInput::isEasterEggModifierInput(input))
+				cardBombVoice.initFromAIFFFile("Sounds/Caldoria/Card Bomb.Geno.aiff");
+			else
+				cardBombVoice.initFromAIFFFile("Sounds/Caldoria/Card Bomb.44K.aiff");
+			cardBombVoice.setVolume(_vm->getSoundFXLevel());
+			cardBombVoice.playSound();
+			while (cardBombVoice.isPlaying() && !_vm->shouldQuit()) {
+				InputDevice.getInput(input, kFilterNoInput);
+
+				_vm->checkCallBacks();
+				_vm->refreshDisplay();
+				_vm->_system->delayMillis(10);
+			}
+			if (_vm->shouldQuit())
+				return;
+		}
 		GameState.setScoringUsedCardBomb(true);
+		if (g_arthurChip)
+			g_arthurChip->playArthurMovieForEvent("Images/AI/Globals/XGLOBA19", kArthurCaldoriaUsedCardBomb);
 		break;
 	case kStunGun:
 		GameState.setCaldoriaGunAimed(true);
@@ -1697,10 +2194,48 @@ void Caldoria::dropItemIntoRoom(Item *item, Hotspot *dropSpot) {
 		_gunSprite->moveElementTo(kCaldoriaGunSpriteLeft, kCaldoriaGunSpriteTop);
 		_gunSprite->startDisplaying();
 		_gunSprite->show();
+		if (g_arthurChip)
+			g_arthurChip->playArthurMovieForEvent("Images/AI/Globals/XGLOBA17", kArthurCaldoriaStunningSinclair);
 		break;
 	default:
 		Neighborhood::dropItemIntoRoom(item, dropSpot);
 		break;
+	}
+}
+
+void Caldoria::setSoundFXLevel(const uint16 level) {
+	Neighborhood::setSoundFXLevel(level);
+
+	if (_extraMovie.isMovieValid())
+		_extraMovie.setVolume(level);
+}
+
+void Caldoria::playMissingFloorSound() {
+	Input input;
+	Sound elevatorVoice;
+
+	InputDevice.getInput(input, kFilterAllInput);
+	if (_vm->isDVD() && JMPPPInput::isEasterEggModifierInput(input)) {
+		_vm->_cursor->hide();
+		elevatorVoice.initFromAIFFFile("Sounds/Caldoria/Elevator Denied.32K.aiff");
+		elevatorVoice.setVolume(_vm->getSoundFXLevel());
+		elevatorVoice.playSound();
+		while (elevatorVoice.isPlaying() && !_vm->shouldQuit()) {
+			InputDevice.getInput(input, kFilterNoInput);
+
+			_vm->checkCallBacks();
+			_vm->refreshDisplay();
+			_vm->_system->delayMillis(10);
+		}
+		if (_vm->shouldQuit())
+			return;
+		_vm->_cursor->hideUntilMoved();
+		updateElevatorMovie();
+	} else {
+		requestSpotSound(kCaldoriaNoOtherFloorIn,
+							kCaldoriaNoOtherFloorOut,
+							kFilterNoInput,
+							kSpotSoundCompletedFlag);
 	}
 }
 
@@ -1717,12 +2252,12 @@ void Caldoria::takeElevator(uint startFloor, uint endFloor) {
 		case 2:
 			_croppedMovie.setTime(k1To2Time);
 			_croppedMovie.redrawMovieWorld();
-			requestSpotSound(kCaldoriaNoOtherDestinationIn, kCaldoriaNoOtherDestinationOut, kFilterNoInput, kSpotSoundCompletedFlag);
+			playMissingFloorSound();
 			break;
 		case 3:
 			_croppedMovie.setTime(k1To3Time);
 			_croppedMovie.redrawMovieWorld();
-			requestSpotSound(kCaldoriaNoOtherDestinationIn, kCaldoriaNoOtherDestinationOut, kFilterNoInput, kSpotSoundCompletedFlag);
+			playMissingFloorSound();
 			break;
 		case 4:
 			_croppedMovie.setSegment(k1To4Start, k1To4Stop);
@@ -1751,12 +2286,12 @@ void Caldoria::takeElevator(uint startFloor, uint endFloor) {
 		case 2:
 			_croppedMovie.setTime(k4To2Time);
 			_croppedMovie.redrawMovieWorld();
-			requestSpotSound(kCaldoriaNoOtherDestinationIn, kCaldoriaNoOtherDestinationOut, kFilterNoInput, kSpotSoundCompletedFlag);
+			playMissingFloorSound();
 			break;
 		case 3:
 			_croppedMovie.setTime(k4To3Time);
 			_croppedMovie.redrawMovieWorld();
-			requestSpotSound(kCaldoriaNoOtherDestinationIn, kCaldoriaNoOtherDestinationOut, kFilterNoInput, kSpotSoundCompletedFlag);
+			playMissingFloorSound();
 			break;
 		case 4:
 			// Do nothing.
@@ -1782,12 +2317,12 @@ void Caldoria::takeElevator(uint startFloor, uint endFloor) {
 		case 2:
 			_croppedMovie.setTime(k5To2Time);
 			_croppedMovie.redrawMovieWorld();
-			requestSpotSound(kCaldoriaNoOtherDestinationIn, kCaldoriaNoOtherDestinationOut, kFilterNoInput, kSpotSoundCompletedFlag);
+			playMissingFloorSound();
 			break;
 		case 3:
 			_croppedMovie.setTime(k5To3Time);
 			_croppedMovie.redrawMovieWorld();
-			requestSpotSound(kCaldoriaNoOtherDestinationIn, kCaldoriaNoOtherDestinationOut, kFilterNoInput, kSpotSoundCompletedFlag);
+			playMissingFloorSound();
 			break;
 		case 4:
 			_croppedMovie.setSegment(k5To4Start, k5To4Stop);
@@ -2063,6 +2598,66 @@ Common::String Caldoria::getNavMovieName() {
 
 Common::String Caldoria::getSoundSpotsName() {
 	return "Sounds/Caldoria/Caldoria Spots";
+}
+
+void Caldoria::doArthurJoyride() {
+	Video::VideoDecoder *video = 0;
+	BiochipItem *item;
+
+	setNextHandler(_vm);
+	throwAwayInterface();
+	loadLoopSound1("");
+
+	_vm->_cursor->hide();
+
+#ifdef USE_THEORADEC
+	video = new Video::TheoraDecoder();
+	if (!video->loadFile("Images/Caldoria/A12RD.ogg")) {
+		delete video;
+		video = 0;
+	}
+#endif
+
+	if (!video) {
+		video = new Video::QuickTimeDecoder();
+		if (!video->loadFile("Images/Caldoria/A12RD.movie"))
+			error("Could not load joyride video");
+	}
+
+	video->setVolume(MIN<uint>(_vm->getSoundFXLevel(), 0xFF));
+	video->start();
+
+	while (!_vm->shouldQuit() && !video->endOfVideo()) {
+		if (video->needsUpdate()) {
+			const Graphics::Surface *frame = video->decodeNextFrame();
+
+			if (frame) {
+				g_system->copyRectToScreen((const byte *)frame->getPixels(), frame->pitch, 0, 0, frame->w, frame->h);
+				g_system->updateScreen();
+			}
+		}
+
+		InputDevice.pumpEvents();
+
+		g_system->delayMillis(10);
+	}
+
+	delete video;
+
+	if (_vm->shouldQuit())
+		return;
+
+	reinstateMonocleInterface();
+	loadAmbientLoops();
+	updateViewFrame();
+	if (!_vm->playerHasItemID(kArthurBiochip)) {
+		item = (BiochipItem *)_vm->getAllItems().findItemByID(kArthurBiochip);
+		_vm->addItemToBiochips(item);
+		if (g_arthurChip)
+			g_arthurChip->playArthurMovieForEvent("Images/AI/Globals/XGLOBA06", kArthurCaldoriaFinishedJoyride);
+	}
+	g_interface->setCurrentBiochipID(kArthurBiochip);
+	GameState.setEasterEgg(false);
 }
 
 } // End of namespace Pegasus

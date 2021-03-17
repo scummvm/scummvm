@@ -222,7 +222,8 @@ void Caldoria4DSystem::useIdleTime() {
 void Caldoria4DSystem::initInteraction() {
 	setSpritesMovie();
 
-	_owner->loadLoopSound1("Sounds/Caldoria/Rock.aiff");
+	playSound("Rock");
+	_owner->playSpotSoundSync(kCaldoria4DInstructionsIn, kCaldoria4DInstructionsOut);
 	loopExtra(k4DIslandLoop);
 }
 
@@ -255,8 +256,7 @@ void Caldoria4DSystem::handleInput(const Input &input, const Hotspot *cursorSpot
 
 void Caldoria4DSystem::activateHotspots() {
 	GameInteraction::activateHotspots();
-	if (_whichMenu == k4DAudioMenu)
-		g_allHotspots.activateOneHotspot(kCa4DChoice4SpotID);
+	g_allHotspots.activateOneHotspot(kCa4DChoice4SpotID);
 }
 
 void Caldoria4DSystem::clickInHotspot(const Input &input, const Hotspot *spot) {
@@ -347,7 +347,7 @@ void Caldoria4DSystem::makeRockChoice() {
 	if (_audioChoice != k4DRockChoice) {
 		_audioChoice = k4DRockChoice;
 		setSpritesMovie();
-		_owner->loadLoopSound1("Sounds/Caldoria/Rock.aiff");
+		playSound("Rock");
 	}
 }
 
@@ -355,7 +355,7 @@ void Caldoria4DSystem::makeOrchestralChoice() {
 	if (_audioChoice != k4DOrchestralChoice) {
 		_audioChoice = k4DOrchestralChoice;
 		setSpritesMovie();
-		_owner->loadLoopSound1("Sounds/Caldoria/Orchestral.aiff");
+		playSound("Orchestral");
 	}
 }
 
@@ -363,7 +363,7 @@ void Caldoria4DSystem::makeRhythmsChoice() {
 	if (_audioChoice != k4DRhythmsChoice) {
 		_audioChoice = k4DRhythmsChoice;
 		setSpritesMovie();
-		_owner->loadLoopSound1("Sounds/Caldoria/Rhythms.aiff");
+		playSound("Rhythms");
 	}
 }
 
@@ -371,12 +371,22 @@ void Caldoria4DSystem::makeAcousticChoice() {
 	if (_audioChoice != k4DAcousticChoice) {
 		_audioChoice = k4DAcousticChoice;
 		setSpritesMovie();
-		_owner->loadLoopSound1("Sounds/Caldoria/Acoustic.aiff");
+		playSound("Acoustic");
 	}
 }
 
 void Caldoria4DSystem::shutDown4DSystem() {
 	_whichMenu = k4DShuttingDown;
+}
+
+void Caldoria4DSystem::playSound(const Common::String &baseFileName) {
+	Common::String fileName = "Sounds/Caldoria/" + baseFileName;
+
+	// Updated DVD files
+	if (((PegasusEngine *)g_engine)->isDVD())
+		fileName += ".44K";
+
+	_owner->loadLoopSound1(fileName + ".aiff");
 }
 
 } // End of namespace Pegasus

@@ -265,10 +265,6 @@ void TimeBase::checkCallBacks() {
 			setTime(_stopTime, _stopScale);
 		else if (getRate() > 0 && time == stopTime)
 			setTime(_startTime, _startScale);
-	} else {
-		// Stop at the end
-		if ((getRate() > 0 && time == stopTime) || (getRate() < 0 && time == startTime))
-			stop();
 	}
 }
 

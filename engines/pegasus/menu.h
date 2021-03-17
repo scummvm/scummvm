@@ -97,9 +97,11 @@ protected:
 class CreditsMenu : public GameMenu {
 public:
 	CreditsMenu();
-	~CreditsMenu() override {}
+	~CreditsMenu() override;
 
 	void handleInput(const Input &input, const Hotspot *) override;
+	void startCreditsMenuLoop();
+	void stopCreditsMenuLoop();
 
 protected:
 	void newMenuSelection(const int);
@@ -111,6 +113,9 @@ protected:
 	Picture _mainMenuButton;
 	Picture _largeSelect;
 	Picture _smallSelect;
+
+	Sound _menuLoop;
+	SoundFader _menuFader;
 };
 
 class DeathMenu : public GameMenu {

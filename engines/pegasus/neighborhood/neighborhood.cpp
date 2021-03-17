@@ -36,6 +36,7 @@
 #include "pegasus/interface.h"
 #include "pegasus/pegasus.h"
 #include "pegasus/ai/ai_area.h"
+#include "pegasus/items/biochips/arthurchip.h"
 #include "pegasus/items/biochips/mapchip.h"
 #include "pegasus/neighborhood/neighborhood.h"
 #include "pegasus/neighborhood/tsa/fulltsa.h"
@@ -725,7 +726,15 @@ void Neighborhood::cantMoveThatWay(CanMoveForwardReason reason) {
 }
 
 void Neighborhood::cantOpenDoor(CanOpenDoorReason) {
+	bool firstLockedDoor;
+
 	bumpIntoWall();
+	if (g_arthurChip) {
+		firstLockedDoor = g_arthurChip->playArthurMovieForEvent("Images/AI/Globals/XGLOBA31", kArthurAttemptedLockedDoor);
+
+		if (!firstLockedDoor)
+			g_arthurChip->playArthurMovieForEvent("Images/AI/Globals/XGLOBA32", kArthurAttemptedLockedDoorAgain);
+	}
 }
 
 void Neighborhood::turnTo(const DirectionConstant direction) {
@@ -1010,9 +1019,9 @@ void Neighborhood::startExitMovie(const ExitTable::Entry &exitEntry) {
 	GameState.setNextDirection(exitEntry.exitDirection);
 
 	if (exitEntry.movieEnd == exitEntry.exitEnd) // Just a walk.
-		startMovieSequence(exitEntry.movieStart, exitEntry.movieEnd, kMoveForwardCompletedFlag, kFilterNoInput, false);
+		startMovieSequence(exitEntry.movieStart, exitEntry.movieEnd, kMoveForwardCompletedFlag, false, kFilterNoInput);
 	else // We're stridin'!
-		startMovieSequence(exitEntry.movieStart, exitEntry.exitEnd, kStrideCompletedFlag, kFilterNoInput, false, exitEntry.movieEnd);
+		startMovieSequence(exitEntry.movieStart, exitEntry.exitEnd, kStrideCompletedFlag, false, kFilterNoInput, exitEntry.movieEnd);
 
 	if (g_compass)
 		g_compass->startFader(compassMove);
@@ -1027,14 +1036,14 @@ void Neighborhood::startZoomMovie(const ZoomTable::Entry &zoomEntry) {
 	GameState.setNextRoom(zoomEntry.room);
 	GameState.setNextDirection(zoomEntry.direction);
 
-	startMovieSequence(zoomEntry.movieStart, zoomEntry.movieEnd, kMoveForwardCompletedFlag, kFilterNoInput, false);
+	startMovieSequence(zoomEntry.movieStart, zoomEntry.movieEnd, kMoveForwardCompletedFlag, false, kFilterNoInput);
 
 	if (g_compass)
 		g_compass->startFader(compassMove);
 }
 
 void Neighborhood::startDoorOpenMovie(const TimeValue startTime, const TimeValue stopTime) {
-	startMovieSequence(startTime, stopTime, kDoorOpenCompletedFlag, kFilterNoInput, false);
+	startMovieSequence(startTime, stopTime, kDoorOpenCompletedFlag, false, kFilterNoInput);
 }
 
 void Neighborhood::startTurnPush(const TurnDirection turnDirection, const TimeValue newView, const DirectionConstant nextDir) {
@@ -1195,7 +1204,7 @@ void Neighborhood::activateOneHotspot(HotspotInfoTable::Entry &entry, Hotspot *h
 
 void Neighborhood::startSpotOnceOnly(TimeValue startTime, TimeValue stopTime) {
 	_turnPush.hide();
-	startMovieSequence(startTime, stopTime, kSpotCompletedFlag, kFilterNoInput, false);
+	startMovieSequence(startTime, stopTime, kSpotCompletedFlag, false, kFilterNoInput);
 }
 
 void Neighborhood::startMovieSequence(const TimeValue startTime, const TimeValue stopTime, NotificationFlags flags, bool loopSequence,
@@ -1567,7 +1576,7 @@ void Neighborhood::startExtraLongSequence(const uint32 firstExtra, const uint32 
 		getExtraEntry(lastExtra, lastEntry);
 		_lastExtra = firstExtra;
 		_turnPush.hide();
-		startMovieSequence(firstEntry.movieStart, lastEntry.movieEnd, flags, kFilterNoInput, interruptionFilter);
+		startMovieSequence(firstEntry.movieStart, lastEntry.movieEnd, flags, false, interruptionFilter);
 	}
 }
 
@@ -1583,6 +1592,7 @@ void Neighborhood::openCroppedMovie(const Common::String &movieName, CoordType l
 
 void Neighborhood::loopCroppedMovie(const Common::String &movieName, CoordType left, CoordType top) {
 	openCroppedMovie(movieName, left, top);
+	_croppedMovie.setVolume(_vm->getSoundFXLevel());
 	_croppedMovie.redrawMovieWorld();
 	_croppedMovie.setFlags(kLoopTimeBase);
 	_croppedMovie.start();
@@ -1666,7 +1676,10 @@ void Neighborhood::handleInput(const Input &input, const Hotspot *cursorSpot) {
 		else if (input.rightButtonAnyDown())
 			rightButton(input);
 	}
-
+	if (_vm->toggleRequested()) {
+		_vm->requestToggle(false);
+		_vm->setChattyAI(!_vm->isChattyAI());
+	}
 	InputHandler::handleInput(input, cursorSpot);
 }
 

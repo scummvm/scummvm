@@ -139,11 +139,13 @@ protected:
 	void screenPointTo3DPoint(int16, int16, Point3D &);
 	bool lineHitsGlobe(const Line3D &, Point3D &);
 
+	Movie _robotMovie;
 	Movie _monitorMovie;
 	Movie _globeMovie;
 	Movie _upperNamesMovie;
 	Movie _lowerNamesMovie;
 	Notification _globeNotification;
+	NotificationCallBack _robotCallBack;
 	NotificationCallBack _monitorCallBack;
 	GlobeTracker _globeTracker;
 	Picture _globeCircleLeft;

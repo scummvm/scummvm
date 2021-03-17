@@ -68,6 +68,9 @@ public:
 
 	void checkContinuePoint(const RoomID, const DirectionConstant) override;
 
+	void setSoundFXLevel(const uint16) override;
+	void setAmbienceLevel(const uint16) override;
+
 	bool canSolve() override;
 	void doSolve() override;
 
@@ -99,9 +102,11 @@ protected:
 	void downButton(const Input &) override;
 	void startDoorOpenMovie(const TimeValue, const TimeValue) override;
 	TimeValue getViewTime(const RoomID, const DirectionConstant) override;
+	void showViewFrame(TimeValue) override;
 	void findSpotEntry(const RoomID, const DirectionConstant, SpotFlags, SpotTable::Entry &) override;
 	void turnTo(const DirectionConstant) override;
 	CanMoveForwardReason canMoveForward(ExitTable::Entry &) override;
+	void moveForward() override;
 	CanOpenDoorReason canOpenDoor(DoorTable::Entry &) override;
 	void bumpIntoWall() override;
 	void initializeTBPMonitor(const int, const ExtraID);
@@ -109,10 +114,13 @@ protected:
 	void getExtraCompassMove(const ExtraTable::Entry &, FaderMoveSpec &) override;
 	Hotspot *getItemScreenSpot(Item *, DisplayElement *) override;
 	void openDoor() override;
+	void doorOpened() override;
 	void turnRight() override;
 	void turnLeft() override;
 	void closeDoorOffScreen(const RoomID, const DirectionConstant) override;
+	void startExtraSequence(const ExtraID, const NotificationFlags, const InputBits) override;
 	void playExtraMovie(const ExtraTable::Entry &, const NotificationFlags, const InputBits interruptionInput) override;
+	void startTurnPush(const TurnDirection, const TimeValue, const DirectionConstant) override;
 	void handleInput(const Input &, const Hotspot *) override;
 	void arriveAtTSA25Red();
 	void startUpComparisonMonitor();
@@ -141,6 +149,15 @@ protected:
 	void receiveNotification(Notification *, const NotificationFlags) override;
 	void checkRobotLocations(const RoomID, const DirectionConstant);
 	void getExtraEntry(const uint32, ExtraTable::Entry &) override;
+
+	Movie _extraMovie;
+	NotificationCallBack _extraMovieCallBack;
+	Movie _blankMovie;
+
+	Sound _entranceMusic;
+	SoundFader _entranceFader;
+	bool _playedSolvedMusicCue;
+	Sound _solvedMusicCue;
 
 	Sprite _sprite1, _sprite2, _sprite3;
 	FuseFunction _utilityFuse;

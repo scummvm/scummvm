@@ -292,7 +292,7 @@ protected:
 
 	virtual void createNeighborhoodSpots();
 
-	void resetLastExtra() { _lastExtra = -1; }
+	void resetLastExtra() { _lastExtra = 0xffffffff; }
 
 	virtual void throwAwayInterface();
 
@@ -354,7 +354,7 @@ protected:
 	AlternateID _currentAlternate;
 	HotSpotActivationID _currentActivation;
 
-	int32 _lastExtra;
+	ExtraID _lastExtra;
 	DeathReason _extraDeathReason;
 
 	// Graphics

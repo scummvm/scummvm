@@ -42,7 +42,7 @@ static const RoomID kWSC62 = 62;
 class WSC : public Neighborhood {
 public:
 	WSC(InputHandler *, PegasusEngine *);
-	~WSC() override {}
+	~WSC() override;
 
 	void flushGameState() override;
 
@@ -56,6 +56,8 @@ public:
 
 	bool canSolve() override;
 	void doSolve() override;
+
+	void setSoundFXLevel(const uint16) override;
 
 	void prepareForAIHint(const Common::String &) override;
 	void cleanUpAfterAIHint(const Common::String &) override;
@@ -126,6 +128,7 @@ protected:
 	void pickedUpItem(Item *) override;
 	void doorOpened() override;
 	void startExtraSequence(const ExtraID, const NotificationFlags, const InputBits) override;
+	void startDoorOpenMovie(const TimeValue, const TimeValue) override;
 	void getExtraEntry(const uint32, ExtraTable::Entry &) override;
 	void takeItemFromRoom(Item *item) override;
 	void checkPeopleCrossing();
@@ -137,6 +140,7 @@ protected:
 	void getExitCompassMove(const ExitTable::Entry &exitEntry, FaderMoveSpec &compassMove) override;
 	void getExtraCompassMove(const ExtraTable::Entry &entry, FaderMoveSpec &compassMove) override;
 	void bumpIntoWall() override;
+	void spotCompleted() override;
 	void activateHotspots() override;
 	void setUpAIRules() override;
 	Common::String getBriefingMovie() override;
@@ -153,12 +157,15 @@ protected:
 
 	FlagsArray<byte, kNumWSCPrivateFlags> _privateFlags;
 	const Hotspot *_cachedZoomSpot;
+	Hotspot _biotechImplantSpot;
+	Movie _extraMovie;
+	NotificationCallBack _extraMovieCallBack;
 	MoleculeBin _moleculeBin;
 	int32 _moleculeGameLevel, _numCorrect;
 	Movie _moleculesMovie;
 	uint32 _levelArray[6];
-	Common::Rational _energyDrainRate;
 	Sprite *_argonSprite;
+	Sound _welcomeSound;
 };
 
 } // End of namespace Pegasus

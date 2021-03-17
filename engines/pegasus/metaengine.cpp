@@ -59,6 +59,10 @@ bool PegasusEngine::isWindows() const {
 	return _gameDescription->desc.platform == Common::kPlatformWindows;
 }
 
+bool PegasusEngine::isLinux() const {
+	return _gameDescription->desc.platform == Common::kPlatformLinux;
+}
+
 } // End of namespace Pegasus
 
 class PegasusMetaEngine : public AdvancedMetaEngine {

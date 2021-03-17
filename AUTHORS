@@ -847,7 +847,8 @@ Other contributions
                                       audio
      Kovacs Endre Janos             - Several fixes for Simon1
      Jeroen Janssen                 - Numerous readability and bugfix patches
-     Keith Kaisershot               - Several Pegasus Prime patches
+     Keith Kaisershot               - Several Pegasus Prime patches and DVD
+                                      additions
      Andreas Karlsson               - Initial port for SymbianOS
      Stefan Kristiansson            - Initial work on SDL2 support
      Claudio Matsuoka               - Daily Linux builds
@@ -1105,4 +1106,3 @@ Special thanks to
 
    Benjamin Haisch, for emimeshviewer, which our EMI code borrows heavily
    from.
-

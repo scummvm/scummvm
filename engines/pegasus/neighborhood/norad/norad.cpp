@@ -27,6 +27,7 @@
 #include "pegasus/gamestate.h"
 #include "pegasus/pegasus.h"
 #include "pegasus/ai/ai_area.h"
+#include "pegasus/items/biochips/arthurchip.h"
 #include "pegasus/items/inventory/airmask.h"
 #include "pegasus/neighborhood/norad/constants.h"
 #include "pegasus/neighborhood/norad/norad.h"
@@ -162,10 +163,14 @@ void Norad::arriveAtNoradElevator() {
 
 void Norad::arriveAtUpperPressureDoorRoom() {
 	newInteraction(kNoradPressureDoorInteractionID);
+	if (g_arthurChip)
+		g_arthurChip->playArthurMovieForEvent("Images/AI/Globals/XGLOBA69", kArthurNoradReachedPressureDoor);
 }
 
 void Norad::arriveAtLowerPressureDoorRoom() {
 	newInteraction(kNoradPressureDoorInteractionID);
+	if (g_arthurChip)
+		g_arthurChip->playArthurMovieForEvent("Images/AI/Globals/XGLOBA69", kArthurNoradReachedPressureDoor);
 }
 
 void Norad::arriveAtSubPlatformRoom() {
@@ -199,10 +204,18 @@ CanOpenDoorReason Norad::canOpenDoor(DoorTable::Entry &entry) {
 }
 
 void Norad::cantOpenDoor(CanOpenDoorReason reason) {
+	bool firstLockedDoor;
+
 	if (reason == kCantOpenBadPressure)
 		playSpotSoundSync(_pressureSoundIn, _pressureSoundOut);
 	else
 		playSpotSoundSync(_accessDeniedIn, _accessDeniedOut);
+	if (g_arthurChip) {
+		firstLockedDoor = g_arthurChip->playArthurMovieForEvent("Images/AI/Globals/XGLOBA65", kArthurNoradAttemptedLockedDoor);
+
+		if (!firstLockedDoor)
+			g_arthurChip->playArthurMovieForEvent("Images/AI/Globals/XGLOBA68", kArthurNoradAttemptedLockedDoorAgain);
+	}
 }
 
 void Norad::startExitMovie(const ExitTable::Entry &exitEntry) {

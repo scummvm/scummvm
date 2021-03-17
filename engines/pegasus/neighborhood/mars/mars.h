@@ -40,10 +40,16 @@
 
 namespace Pegasus {
 
+class CanyonChase;
 class InventoryItem;
 class Mars;
+class TunnelPod;
 
 enum MarsTimerCode {
+	kMarsPodCautionDisplayed,
+	kMarsPodCautionDismissed,
+	kMarsCanyonChaseExited,
+	kMarsCanyonChaseFaded,
 	kMarsLaunchTubeReached,
 	kMarsCanyonChaseFinished,
 	kMarsSpaceChaseFinished // Player ran out of time...
@@ -64,11 +70,14 @@ enum ShuttleWeaponSelection {
 };
 
 class Mars : public Neighborhood {
+friend class CanyonChase;
+friend class TunnelPod;
 friend struct MarsTimerEvent;
 public:
 	Mars(InputHandler *, PegasusEngine *);
 	~Mars() override;
 
+	GameInteraction *makeInteraction(const InteractionID) override;
 	void flushGameState() override;
 
 	uint16 getDateResID() const override;
@@ -94,6 +103,7 @@ public:
 	void checkContinuePoint(const RoomID, const DirectionConstant) override;
 
 	void setSoundFXLevel(const uint16) override;
+	void setAmbienceLevel(const uint16) override;
 
 	bool canSolve() override;
 	void doSolve() override;
@@ -133,12 +143,16 @@ protected:
 	CanOpenDoorReason canOpenDoor(DoorTable::Entry &) override;
 	void openDoor() override;
 	void closeDoorOffScreen(const RoomID, const DirectionConstant) override;
+	void startDoorOpenMovie(const TimeValue, const TimeValue) override;
+	void startExitMovie(const ExitTable::Entry &) override;
 	int16 getStaticCompassAngle(const RoomID, const DirectionConstant) override;
 	void getExitCompassMove(const ExitTable::Entry &, FaderMoveSpec &) override;
 	void getExtraCompassMove(const ExtraTable::Entry &, FaderMoveSpec &) override;
 	void turnTo(const DirectionConstant) override;
+	void startExtraSequence(const ExtraID, const NotificationFlags, const InputBits) override;
 	void receiveNotification(Notification *, const NotificationFlags) override;
 	void doorOpened() override;
+	void startUpFromFinishedTunnelPod();
 	void setUpReactorEnergyDrain();
 	Hotspot *getItemScreenSpot(Item *, DisplayElement *) override;
 	void lockThawed();
@@ -170,6 +184,7 @@ protected:
 	void launchMaze136Robot();
 	void launchMaze184Robot();
 	void timerExpired(const uint32) override;
+	void showRobotAtReactor();
 	void spotCompleted() override;
 
 	void doCanyonChase(void);
@@ -178,12 +193,16 @@ protected:
 	void throwAwayMarsShuttle();
 	void startUpFromFinishedSpaceChase();
 	void startUpFromSpaceChase();
-	void transportToRobotShip();
+	void transportOutFromSpaceChase(bool);
 	void spaceChaseClick(const Input &, const HotSpotID);
 	void updateCursor(const Common::Point, const Hotspot *) override;
+	void playSpaceAmbient();
 
 	Common::String getSoundSpotsName() override;
 	Common::String getNavMovieName() override;
+
+	Movie _extraMovie;
+	NotificationCallBack _extraMovieCallBack;
 
 	InventoryItem *_attackingItem;
 	FuseFunction _bombFuse;
@@ -202,6 +221,8 @@ protected:
 	Picture _shuttleInterface3;
 	Picture _shuttleInterface4;
 	Movie _canyonChaseMovie;
+	Sound _musicLoop;
+	SoundFader _musicFader;
 
 	MarsTimerEvent _marsEvent;
 

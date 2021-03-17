@@ -25,6 +25,7 @@
 
 #include "pegasus/cursor.h"
 #include "pegasus/pegasus.h"
+#include "pegasus/items/biochips/arthurchip.h"
 #include "pegasus/neighborhood/norad/constants.h"
 #include "pegasus/neighborhood/norad/delta/globegame.h"
 #include "pegasus/neighborhood/norad/delta/noraddelta.h"
@@ -396,10 +397,22 @@ static const TimeValue kGlobeMovieStartTime = 2 * 2 * kNumLongSlices * 600 / 15;
 static const TimeValue kTimePerGlobeFrame = 40;
 
 static const NotificationFlags kGlobeSplash1Finished = 1;
-static const NotificationFlags kGlobeTimerExpired = kGlobeSplash1Finished << 1;
+static const NotificationFlags kGlobeRobot1Finished = kGlobeSplash1Finished << 1;
+static const NotificationFlags kGlobeRobot2Finished = kGlobeRobot1Finished << 1;
+static const NotificationFlags kGlobeRobot3Finished = kGlobeRobot2Finished << 1;
+static const NotificationFlags kGlobeRobot4Finished = kGlobeRobot3Finished << 1;
+static const NotificationFlags kGlobeRobot5Finished = kGlobeRobot4Finished << 1;
+static const NotificationFlags kGlobeRobot6Finished = kGlobeRobot5Finished << 1;
+static const NotificationFlags kGlobeTimerExpired = kGlobeRobot6Finished << 1;
 static const NotificationFlags kMaxDeactivatedFinished = kGlobeTimerExpired << 1;
 
 static const NotificationFlags kGlobeNotificationFlags = kGlobeSplash1Finished |
+													kGlobeRobot1Finished |
+													kGlobeRobot2Finished |
+													kGlobeRobot3Finished |
+													kGlobeRobot4Finished |
+													kGlobeRobot5Finished |
+													kGlobeRobot6Finished |
 													kGlobeTimerExpired |
 													kMaxDeactivatedFinished;
 
@@ -451,10 +464,10 @@ float radiansToDegrees(float angle) {
 }
 
 GlobeGame::GlobeGame(Neighborhood *handler) : GameInteraction(kNoradGlobeGameInteractionID, handler),
-		_monitorMovie(kGlobeMonitorID), _globeMovie(kGlobeMovieID), _upperNamesMovie(kGlobeUpperNamesID),
-		_lowerNamesMovie(kGlobeLowerNamesID), _globeNotification(kNoradGlobeNotificationID, (PegasusEngine *)g_engine),
-		_globeCircleLeft(kGlobeCircleLeftID), _globeCircleRight(kGlobeCircleRightID),
-		_globeCircleUp(kGlobeCircleUpID), _globeCircleDown(kGlobeCircleDownID),
+		_robotMovie(kGlobeRobotID), _monitorMovie(kGlobeMonitorID), _globeMovie(kGlobeMovieID),
+		_upperNamesMovie(kGlobeUpperNamesID), _lowerNamesMovie(kGlobeLowerNamesID),
+		_globeNotification(kNoradGlobeNotificationID, (PegasusEngine *)g_engine), _globeCircleLeft(kGlobeCircleLeftID),
+		_globeCircleRight(kGlobeCircleRightID), _globeCircleUp(kGlobeCircleUpID), _globeCircleDown(kGlobeCircleDownID),
 		_motionHighlightLeft(kMotionHiliteLeftID), _motionHighlightRight(kMotionHiliteRightID),
 		_motionHighlightUp(kMotionHiliteUpID), _motionHighlightDown(kMotionHiliteDownID),
 		_targetHighlightUpperLeft(kTargetHiliteUpperLeftID), _targetHighlightUpperRight(kTargetHiliteUpperRightID),
@@ -469,6 +482,20 @@ void GlobeGame::setSoundFXLevel(const uint16 fxLevel) {
 }
 
 void GlobeGame::openInteraction() {
+	if (((PegasusEngine *)g_engine)->isDVD()) {
+		_robotMovie.initFromMovieFile("Images/Norad Delta/N79 Back Monitor1");
+		_robotMovie.setVolume(((PegasusEngine *)g_engine)->getSoundFXLevel());
+		_robotMovie.moveElementTo(kNavAreaLeft, kNavAreaTop);
+		_robotMovie.setDisplayOrder(kGlobeMonitorLayer);
+		_robotMovie.startDisplaying();
+		_robotMovie.show();
+
+		_robotCallBack.setNotification(&_globeNotification);
+		_robotCallBack.initCallBack(&_robotMovie, kCallBackAtExtremes);
+		_robotCallBack.setCallBackFlag(kGlobeRobot1Finished);
+		_robotCallBack.scheduleCallBack(kTriggerAtStop, 0, 0);
+	}
+
 	_monitorMovie.initFromMovieFile("Images/Norad Delta/N79 Left Monitor");
 	_monitorMovie.setVolume(((PegasusEngine *)g_engine)->getSoundFXLevel());
 	_monitorMovie.moveElementTo(kGlobeMonitorLeft, kGlobeMonitorTop);
@@ -579,11 +606,20 @@ void GlobeGame::openInteraction() {
 }
 
 void GlobeGame::initInteraction() {
+	if (((PegasusEngine *)g_engine)->isDVD())
+		_robotMovie.start();
 	_monitorMovie.start();
 	_monitorMovie.redrawMovieWorld();
 }
 
 void GlobeGame::closeInteraction() {
+	if (((PegasusEngine *)g_engine)->isDVD()) {
+		_robotMovie.stop();
+		_robotMovie.stopDisplaying();
+		_robotMovie.releaseMovie();
+		_robotCallBack.releaseCallBack();
+	}
+
 	_monitorMovie.stop();
 	_monitorMovie.stopDisplaying();
 	_monitorMovie.releaseMovie();
@@ -642,16 +678,18 @@ void GlobeGame::receiveNotification(Notification *notification, const Notificati
 	if (notification == _neighborhoodNotification) {
 		switch (_gameState) {
 		case kPlayingRobotIntro:
-			_monitorMovie.stop();
-			_monitorMovie.setSegment(0, _monitorMovie.getDuration());
-			_monitorMovie.setTime(kSplash2End * scale - 1);
-			_monitorMovie.redrawMovieWorld();
-			_monitorMovie.setFlags(0);
+			if (!((PegasusEngine *)g_engine)->isDVD()) {
+				_monitorMovie.stop();
+				_monitorMovie.setSegment(0, _monitorMovie.getDuration());
+				_monitorMovie.setTime(kSplash2End * scale - 1);
+				_monitorMovie.redrawMovieWorld();
+				_monitorMovie.setFlags(0);
 
-			_owner->requestDelay(1, 2, kFilterNoInput, 0);
-			_owner->requestSpotSound(kStrikeAuthorizedIn, kStrikeAuthorizedOut,
-					kFilterNoInput, kSpotSoundCompletedFlag);
-			_gameState = kPlayingStrikeAuthorized;
+				_owner->requestDelay(1, 2, kFilterNoInput, 0);
+				_owner->requestSpotSound(kStrikeAuthorizedIn, kStrikeAuthorizedOut,
+						kFilterNoInput, kSpotSoundCompletedFlag);
+				_gameState = kPlayingStrikeAuthorized;
+			}
 			break;
 		case kPlayingStrikeAuthorized:
 			_monitorMovie.setSegment(kSplash3Start * scale, kSplash3Stop * scale);
@@ -761,20 +799,80 @@ void GlobeGame::receiveNotification(Notification *notification, const Notificati
 
 			switch (_currentSiloIndex) {
 			case 3:
-				_owner->requestSpotSound(kYouCannotPossiblyIn, kYouCannotPossiblyOut,
-						kFilterNoInput, kSpotSoundCompletedFlag);
+				if (!((PegasusEngine *)g_engine)->isDVD()) {
+					_owner->requestSpotSound(kYouCannotPossiblyIn, kYouCannotPossiblyOut,
+							kFilterNoInput, kSpotSoundCompletedFlag);
+				} else {
+					_robotMovie.hide();
+					_robotMovie.stopDisplaying();
+					_robotMovie.releaseMovie();
+
+					_robotMovie.initFromMovieFile("Images/Norad Delta/N79 Back Monitor2");
+					_robotMovie.setVolume(((PegasusEngine *)g_engine)->getSoundFXLevel());
+					_robotMovie.moveElementTo(kNavAreaLeft, kNavAreaTop);
+					_robotMovie.startDisplaying();
+					_robotMovie.show();
+					_robotMovie.start();
+
+					_owner->requestDelay(_robotMovie.getDuration(), 0, kFilterNoInput, kDelayCompletedFlag);
+				}
 				break;
 			case 5:
-				_owner->requestSpotSound(kYouWillFailIn, kYouWillFailOut, kFilterNoInput,
-						kSpotSoundCompletedFlag);
+				if (!((PegasusEngine *)g_engine)->isDVD()) {
+					_owner->requestSpotSound(kYouWillFailIn, kYouWillFailOut, kFilterNoInput,
+							kSpotSoundCompletedFlag);
+				} else {
+					_robotMovie.hide();
+					_robotMovie.stopDisplaying();
+					_robotMovie.releaseMovie();
+
+					_robotMovie.initFromMovieFile("Images/Norad Delta/N79 Back Monitor3");
+					_robotMovie.setVolume(((PegasusEngine *)g_engine)->getSoundFXLevel());
+					_robotMovie.moveElementTo(kNavAreaLeft, kNavAreaTop);
+					_robotMovie.startDisplaying();
+					_robotMovie.show();
+					_robotMovie.start();
+
+					_owner->requestDelay(_robotMovie.getDuration(), 0, kFilterNoInput, kDelayCompletedFlag);
+				}
 				break;
 			case 7:
-				_owner->requestSpotSound(kGiveUpHumanIn, kGiveUpHumanOut, kFilterNoInput,
-						kSpotSoundCompletedFlag);
+				if (!((PegasusEngine *)g_engine)->isDVD()) {
+					_owner->requestSpotSound(kGiveUpHumanIn, kGiveUpHumanOut, kFilterNoInput,
+							kSpotSoundCompletedFlag);
+				} else {
+					_robotMovie.hide();
+					_robotMovie.stopDisplaying();
+					_robotMovie.releaseMovie();
+
+					_robotMovie.initFromMovieFile("Images/Norad Delta/N79 Back Monitor4");
+					_robotMovie.setVolume(((PegasusEngine *)g_engine)->getSoundFXLevel());
+					_robotMovie.moveElementTo(kNavAreaLeft, kNavAreaTop);
+					_robotMovie.startDisplaying();
+					_robotMovie.show();
+					_robotMovie.start();
+
+					_owner->requestDelay(_robotMovie.getDuration(), 0, kFilterNoInput, kDelayCompletedFlag);
+				}
 				break;
 			case 9:
-				_owner->requestSpotSound(kYouAreRunningIn, kYouAreRunningOut,
-						kFilterNoInput, kSpotSoundCompletedFlag);
+				if (!((PegasusEngine *)g_engine)->isDVD()) {
+					_owner->requestSpotSound(kYouAreRunningIn, kYouAreRunningOut,
+							kFilterNoInput, kSpotSoundCompletedFlag);
+				} else {
+					_robotMovie.hide();
+					_robotMovie.stopDisplaying();
+					_robotMovie.releaseMovie();
+
+					_robotMovie.initFromMovieFile("Images/Norad Delta/N79 Back Monitor5");
+					_robotMovie.setVolume(((PegasusEngine *)g_engine)->getSoundFXLevel());
+					_robotMovie.moveElementTo(kNavAreaLeft, kNavAreaTop);
+					_robotMovie.startDisplaying();
+					_robotMovie.show();
+					_robotMovie.start();
+
+					_owner->requestDelay(_robotMovie.getDuration(), 0, kFilterNoInput, kDelayCompletedFlag);
+				}
 				break;
 			default:
 				_owner->requestSpotSound(kNewLaunchSiloIn, kNewLaunchSiloOut,
@@ -786,7 +884,7 @@ void GlobeGame::receiveNotification(Notification *notification, const Notificati
 			}
 			break;
 		case kRobotTaunting:
-			_owner->requestDelay(1, 1, kFilterNoInput, 0);
+			_owner->requestDelay(1, 2, kFilterNoInput, 0);
 			_owner->requestSpotSound(kNewLaunchSiloIn, kNewLaunchSiloOut, kFilterNoInput, kSpotSoundCompletedFlag);
 			_monitorMovie.setTime(kNewLaunchSiloTime * scale);
 			_monitorMovie.redrawMovieWorld();
@@ -810,27 +908,69 @@ void GlobeGame::receiveNotification(Notification *notification, const Notificati
 
 		switch (flags) {
 		case kGlobeSplash1Finished:
-			_owner->getExtraEntry(kN79BrightView, entry);
 			_monitorMovie.stop();
 			_monitorMovie.setSegment(kSplash1End * scale, kSplash2End * scale);
 			_monitorMovie.setFlags(kLoopTimeBase);
 			_monitorMovie.start();
-			_owner->showViewFrame(entry.movieStart);
-			_owner->requestSpotSound(kIJustBrokeIn, kIJustBrokeOut, kFilterNoInput, 0);
-			_owner->requestDelay(1, 2, kFilterNoInput, kDelayCompletedFlag);
-			_gameState = kPlayingRobotIntro;
+			if (!((PegasusEngine *)g_engine)->isDVD()) {
+				_owner->getExtraEntry(kN79BrightView, entry);
+				_owner->showViewFrame(entry.movieStart);
+				_owner->requestSpotSound(kIJustBrokeIn, kIJustBrokeOut, kFilterNoInput, 0);
+				_owner->requestDelay(1, 2, kFilterNoInput, kDelayCompletedFlag);
+				_gameState = kPlayingRobotIntro;
+			}
+			break;
+		case kGlobeRobot1Finished:
+			if (((PegasusEngine *)g_engine)->isDVD()) {
+				_owner->getExtraEntry(kN79BrightView, entry);
+				_monitorMovie.stop();
+				_monitorMovie.setSegment(0, _monitorMovie.getDuration());
+				_monitorMovie.setTime(kSplash2End * scale - 1);
+				_monitorMovie.redrawMovieWorld();
+				_monitorMovie.setFlags(0);
+
+				_owner->showViewFrame(entry.movieStart);
+				_owner->requestDelay(1, 2, kFilterNoInput, 0);
+				_owner->requestSpotSound(kStrikeAuthorizedIn, kStrikeAuthorizedOut,
+						kFilterNoInput, kSpotSoundCompletedFlag);
+
+				_gameState = kPlayingStrikeAuthorized;
+			}
 			break;
 		case kGlobeTimerExpired:
 			// Missile launched, player loses.
+			_upperNamesMovie.hide();
+			_lowerNamesMovie.hide();
+			_countdown.hide();
+			_monitorMovie.setTime(kMissileLaunchedTime * scale);
+			_monitorMovie.redrawMovieWorld();
 			_owner->requestSpotSound(kMissileLaunchedIn, kMissileLaunchedOut, kFilterNoInput, kSpotSoundCompletedFlag);
 			_gameState = kPlayerLost1;
 			break;
 		case kMaxDeactivatedFinished:
 			_monitorMovie.stop();
 			_monitorMovie.setSegment(0, _monitorMovie.getDuration());
-			_owner->requestDelay(1, 2, kFilterNoInput, 0);
-			_owner->requestSpotSound(kTheOnlyGoodHumanIn, kTheOnlyGoodHumanOut, kFilterNoInput, 0);
-			_owner->requestDelay(1, 2, kFilterNoInput, kDelayCompletedFlag);
+			if (g_arthurChip)
+				g_arthurChip->playArthurMovieForEvent("Images/AI/Globals/XGLOBA02", kArthurNoradFinishedGlobeGame);
+			if (!((PegasusEngine *)g_engine)->isDVD()) {
+				_owner->requestDelay(1, 2, kFilterNoInput, 0);
+				_owner->requestSpotSound(kTheOnlyGoodHumanIn, kTheOnlyGoodHumanOut, kFilterNoInput, 0);
+				_owner->requestDelay(1, 2, kFilterNoInput, kDelayCompletedFlag);
+			} else {
+				_robotMovie.hide();
+				_robotMovie.stopDisplaying();
+				_robotMovie.releaseMovie();
+
+				_robotMovie.initFromMovieFile("Images/Norad Delta/N79 Back Monitor6");
+				_robotMovie.setVolume(((PegasusEngine *)g_engine)->getSoundFXLevel());
+				_robotMovie.moveElementTo(kNavAreaLeft, kNavAreaTop);
+				_robotMovie.setDisplayOrder(kGlobeCountdownLayer + 1);
+				_robotMovie.startDisplaying();
+				_robotMovie.show();
+				_robotMovie.start();
+
+				_owner->requestDelay(_robotMovie.getDuration(), 0, kFilterNoInput, kDelayCompletedFlag);
+			}
 			_gameState = kPlayerWon2;
 			break;
 		default:
@@ -894,56 +1034,89 @@ void GlobeGame::spinGlobe(const Input &input, const Hotspot *spot, GlobeTrackDir
 }
 
 void GlobeGame::clickGlobe(const Input &input) {
-	int16 newSilo = findClickedSilo(input);
+	Movie movie(kNoDisplayElement);
+	Input movieInput;
 
-	if (newSilo != -1) {
-		_targetHighlightUpperLeft.hide();
-		_targetHighlightUpperRight.hide();
-		_targetHighlightLowerLeft.hide();
-		_targetHighlightLowerRight.hide();
-		_lowerNamesMovie.show();
-		_lowerNamesMovie.setTime(newSilo * _lowerNamesMovie.getScale());
-		_lowerNamesMovie.redrawMovieWorld();
-		_owner->requestSpotSound(kSiloBeepIn, kSiloBeepOut, kFilterNoInput, 0);
+	if (((PegasusEngine *)g_engine)->isDVD() && JMPPPInput::isEasterEggModifierInput(input)) {
+		((PegasusEngine *)g_engine)->_cursor->hide();
 
-		if (newSilo == _targetSilo[_currentSiloIndex]) {
-			_currentSiloIndex++;
-			_countdown.stopCountdown();
-			_owner->requestSpotSound(kSiloDeactivatedIn, kSiloDeactivatedOut, kFilterNoInput, 0);
+		movie.initFromMovieFile("Images/Norad Delta/N79 Back Monitor7");
+		movie.setVolume(((PegasusEngine *)g_engine)->getSoundFXLevel());
+		movie.moveElementTo(kNavAreaLeft, kNavAreaTop);
+		movie.setDisplayOrder(kGlobeCountdownLayer + 1);
+		movie.startDisplaying();
+		movie.show();
+		movie.start();
 
-			if (_currentSiloIndex == kNumTargetSilos) {
-				// Player won.
-				_owner->requestDelay(1, 2, kFilterNoInput, 0);
-				_upperNamesMovie.hide();
-				_lowerNamesMovie.hide();
-				_countdown.hide();
-				_monitorMovie.setSegment(kMaxDeactivatedStart * _monitorMovie.getScale(),
-						kMaxDeactivatedStop * _monitorMovie.getScale());
-				_monitorMovie.setTime(kMaxDeactivatedStart * _monitorMovie.getScale());
-				_monitorCallBack.setCallBackFlag(kMaxDeactivatedFinished);
-				_monitorCallBack.scheduleCallBack(kTriggerAtStop, 0, 0);
-				_monitorMovie.start();
-				_owner->requestSpotSound(kMaximumDeactivationIn, kMaximumDeactivationOut,
-						kFilterNoInput, kSpotSoundCompletedFlag);
+		while (movie.isRunning() && !((PegasusEngine *)g_engine)->shouldQuit()) {
+			InputDevice.getInput(movieInput, kFilterNoInput);
 
-				// This sound was left out of the original.
-				_owner->requestSpotSound(kAllSilosDeactivatedIn, kAllSilosDeactivatedOut,
-						kFilterNoInput, kSpotSoundCompletedFlag);
+			((PegasusEngine *)g_engine)->checkCallBacks();
+			((PegasusEngine *)g_engine)->refreshDisplay();
+			((PegasusEngine *)g_engine)->_system->delayMillis(10);
+		}
 
-				_gameState = kPlayerWon1;
+		if (((PegasusEngine *)g_engine)->shouldQuit())
+			return;
+
+		movie.hide();
+		movie.stopDisplaying();
+		movie.releaseMovie();
+
+		((PegasusEngine *)g_engine)->_cursor->hideUntilMoved();
+	} else {
+		int16 newSilo = findClickedSilo(input);
+		if (newSilo != -1) {
+			_targetHighlightUpperLeft.hide();
+			_targetHighlightUpperRight.hide();
+			_targetHighlightLowerLeft.hide();
+			_targetHighlightLowerRight.hide();
+			_lowerNamesMovie.show();
+			_lowerNamesMovie.setTime(newSilo * _lowerNamesMovie.getScale());
+			_lowerNamesMovie.redrawMovieWorld();
+			_owner->requestSpotSound(kSiloBeepIn, kSiloBeepOut, kFilterNoInput, 0);
+
+			if (newSilo == _targetSilo[_currentSiloIndex]) {
+				_currentSiloIndex++;
+				_countdown.stopCountdown();
+				_owner->requestSpotSound(kSiloDeactivatedIn, kSiloDeactivatedOut, kFilterNoInput, 0);
+
+				if (_currentSiloIndex == kNumTargetSilos) {
+					// Player won.
+					_owner->requestDelay(1, 2, kFilterNoInput, 0);
+					_upperNamesMovie.hide();
+					_lowerNamesMovie.hide();
+					_countdown.hide();
+					_monitorMovie.setSegment(kMaxDeactivatedStart * _monitorMovie.getScale(),
+							kMaxDeactivatedStop * _monitorMovie.getScale());
+					_monitorMovie.setTime(kMaxDeactivatedStart * _monitorMovie.getScale());
+					_monitorCallBack.setCallBackFlag(kMaxDeactivatedFinished);
+					_monitorCallBack.scheduleCallBack(kTriggerAtStop, 0, 0);
+					_monitorMovie.start();
+					_owner->requestSpotSound(kMaximumDeactivationIn, kMaximumDeactivationOut,
+							kFilterNoInput, kSpotSoundCompletedFlag);
+
+					// This sound was left out of the original.
+					_owner->requestSpotSound(kAllSilosDeactivatedIn, kAllSilosDeactivatedOut,
+							kFilterNoInput, kSpotSoundCompletedFlag);
+
+					_gameState = kPlayerWon1;
+				} else {
+					_owner->requestDelay(1, 2, kFilterNoInput, kDelayCompletedFlag);
+					_upperNamesMovie.hide();
+					_lowerNamesMovie.hide();
+					_countdown.hide();
+					_monitorMovie.setTime(kSiloDeactivatedTime * _monitorMovie.getScale());
+					_monitorMovie.redrawMovieWorld();
+					_gameState = kSiloDeactivated;
+				}
 			} else {
-				_owner->requestDelay(2, 1, kFilterNoInput, kDelayCompletedFlag);
-				_upperNamesMovie.hide();
-				_lowerNamesMovie.hide();
-				_countdown.hide();
-				_monitorMovie.setTime(kSiloDeactivatedTime * _monitorMovie.getScale());
-				_monitorMovie.redrawMovieWorld();
-				_gameState = kSiloDeactivated;
+				_owner->requestDelay(5, 1, kFilterNoInput, kDelayCompletedFlag);
+				_gameState = kDelayingPlayer;
+				// Play "incorrect" sound?
+				if (g_arthurChip)
+					g_arthurChip->playArthurMovieForEvent("Images/AI/Globals/XGLOBB38", kArthurNoradSelectedIncorrectSilo);
 			}
-		} else {
-			_owner->requestDelay(5, 1, kFilterNoInput, kDelayCompletedFlag);
-			_gameState = kDelayingPlayer;
-			// Play "incorrect" sound?
 		}
 	}
 }

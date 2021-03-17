@@ -1,6 +1,7 @@
 MODULE := engines/pegasus
 
 MODULE_OBJS = \
+	chase.o \
 	compass.o \
 	console.o \
 	cursor.o \
@@ -34,6 +35,7 @@ MODULE_OBJS = \
 	items/itemdragger.o \
 	items/itemlist.o \
 	items/biochips/aichip.o \
+	items/biochips/arthurchip.o \
 	items/biochips/biochipitem.o \
 	items/biochips/mapchip.o \
 	items/biochips/mapimage.o \
@@ -59,6 +61,7 @@ MODULE_OBJS = \
 	neighborhood/caldoria/caldoriabomb.o \
 	neighborhood/caldoria/caldoriamessages.o \
 	neighborhood/caldoria/caldoriamirror.o \
+	neighborhood/mars/canyonchase.o \
 	neighborhood/mars/energybeam.o \
 	neighborhood/mars/gravitoncannon.o \
 	neighborhood/mars/hermite.o \
@@ -72,6 +75,7 @@ MODULE_OBJS = \
 	neighborhood/mars/spacechase3d.o \
 	neighborhood/mars/spacejunk.o \
 	neighborhood/mars/tractorbeam.o \
+	neighborhood/mars/tunnelpod.o \
 	neighborhood/norad/norad.o \
 	neighborhood/norad/noradelevator.o \
 	neighborhood/norad/pressuredoor.o \
@@ -83,6 +87,7 @@ MODULE_OBJS = \
 	neighborhood/norad/alpha/noradalpha.o \
 	neighborhood/norad/alpha/panorama.o \
 	neighborhood/norad/alpha/panoramascroll.o \
+	neighborhood/norad/alpha/subchase.o \
 	neighborhood/norad/delta/globegame.o \
 	neighborhood/norad/delta/noraddelta.o \
 	neighborhood/prehistoric/prehistoric.o \

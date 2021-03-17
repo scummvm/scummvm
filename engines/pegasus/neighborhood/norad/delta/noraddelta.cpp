@@ -28,6 +28,7 @@
 #include "pegasus/interface.h"
 #include "pegasus/pegasus.h"
 #include "pegasus/ai/ai_area.h"
+#include "pegasus/items/biochips/arthurchip.h"
 #include "pegasus/items/biochips/opticalchip.h"
 #include "pegasus/items/biochips/retscanchip.h"
 #include "pegasus/items/inventory/airmask.h"
@@ -267,21 +268,39 @@ void NoradDelta::loadAmbientLoops() {
 	if (GameState.getNoradArrivedFromSub()) {
 		RoomID room = GameState.getCurrentRoom();
 
-		if (room == kNorad79West) {
-			if (_privateFlags.getFlag(kNoradPrivateFinishedGlobeGameFlag))
-				loadLoopSound1("Sounds/Norad/GlobAmb2.22K.AIFF");
-			else
+		if (room >= kNorad78 && room <= kNorad79West) {
+			if (GameState.getNoradPlayedGlobeGame()) {
+				// blitter moved clone2727's globe room loop fix up here
+				// since the original didn't play the red alert sound during the
+				// globe game.
+
+				// clone2727 added this fix so we can play the correct sound
+				// with the DVD version. This originally loaded it into slot 2,
+				// which in addition to having the corrupted sound on the disk,
+				// caused it to never play.
+				if (_vm->isDVD())
+					loadLoopSound1("Sounds/Norad/GlobAmb2.32K.AIFF");
+				else
+					loadLoopSound1("Sounds/Norad/GlobAmb2.22K.AIFF");
+			} else
 				loadLoopSound1("Sounds/Norad/RedAlert.22K.AIFF");
-		} else if (room >= kNorad78 && room <= kNorad79) {
-			// clone2727 says: This looks like it should be loadLoopSound1...
-			loadLoopSound2("Sounds/Norad/RedAlert.22K.AIFF");
 		} else if (GameState.getNoradGassed()) {
-			if (room >= kNorad41 && room <= kNorad49South)
-				loadLoopSound1("Sounds/Norad/NEW SUB AMB.22K.AIFF", kNoradWarningVolume * 3);
-			else if (room >= kNorad59 && room <= kNorad60West)
-				loadLoopSound1("Sounds/Norad/SUB CONTRL LOOP.22K.AIFF", kNoradWarningVolume * 3);
-			else
-				loadLoopSound1("Sounds/Norad/WARNING LOOP.22K.AIFF", kNoradWarningVolume);
+			if (room >= kNorad41 && room <= kNorad49South) {
+				if (_vm->isDVD())
+					loadLoopSound1("Sounds/Norad/NEW SUB AMB.44K.AIFF", kNoradWarningVolume * 3);
+				else
+					loadLoopSound1("Sounds/Norad/NEW SUB AMB.22K.AIFF", kNoradWarningVolume * 3);
+			} else if (room >= kNorad59 && room <= kNorad60West) {
+				if (_vm->isDVD())
+					loadLoopSound1("Sounds/Norad/SUB CONTRL LOOP.32K.AIFF", kNoradWarningVolume * 3);
+				else
+					loadLoopSound1("Sounds/Norad/SUB CONTRL LOOP.22K.AIFF", kNoradWarningVolume * 3);
+			} else {
+				if (_vm->isDVD())
+					loadLoopSound1("Sounds/Norad/WARNING LOOP.32K.AIFF", kNoradWarningVolume);
+				else
+					loadLoopSound1("Sounds/Norad/WARNING LOOP.22K.AIFF", kNoradWarningVolume);
+			}
 		} else {
 			loadLoopSound1("");
 		}
@@ -292,15 +311,22 @@ void NoradDelta::loadAmbientLoops() {
 			else
 				loadLoopSound2("Sounds/Norad/SUCKING WIND.22K.AIFF", kNoradSuckWindVolume, 0, 0);
 		} else {
-			if (room == kNorad54North)
-				loadLoopSound2("Sounds/Norad/N54NAS.22K.AIFF", 0x100 / 2);
-			else
+			if (room == kNorad54North) {
+				if (_vm->isDVD())
+					loadLoopSound2("Sounds/Norad/N54NAS.32K.AIFF", 0x100 / 2);
+				else
+					loadLoopSound2("Sounds/Norad/N54NAS.22K.AIFF", 0x100 / 2);
+			} else
 				loadLoopSound2("");
 		}
 	} else {
 		// Start them off at zero...
-		if (GameState.getNoradGassed())
-			loadLoopSound1("Sounds/Norad/NEW SUB AMB.22K.AIFF", 0, 0, 0);
+		if (GameState.getNoradGassed()) {
+			if (_vm->isDVD())
+				loadLoopSound1("Sounds/Norad/NEW SUB AMB.44K.AIFF", 0, 0, 0);
+			else
+				loadLoopSound1("Sounds/Norad/NEW SUB AMB.22K.AIFF", 0, 0, 0);
+		}
 		if (!g_airMask->isAirFilterOn())
 			loadLoopSound2("Sounds/Norad/SUCKING WIND.22K.AIFF", 0, 0, 0);
 	}
@@ -332,32 +358,41 @@ void NoradDelta::arriveAt(const RoomID room, const DirectionConstant direction) 
 
 	switch (room) {
 	case kNorad41:
-		if (direction == kEast && !GameState.getNoradArrivedFromSub()) {
-			GameState.setNoradPlayedGlobeGame(false);
+		if (direction == kEast) {
+			if (!GameState.getNoradArrivedFromSub()) {
+				GameState.setNoradPlayedGlobeGame(false);
 
-			GameState.setNoradBeatRobotWithClaw(false);
-			GameState.setNoradBeatRobotWithDoor(false);
-			GameState.setNoradRetScanGood(false);
+				GameState.setNoradBeatRobotWithClaw(false);
+				GameState.setNoradBeatRobotWithDoor(false);
+				GameState.setNoradRetScanGood(false);
 
-			GameState.setScoringExitedSub(true);
+				GameState.setScoringExitedSub(true);
 
-			getExtraEntry(kArriveFromSubChase, entry);
+				getExtraEntry(kArriveFromSubChase, entry);
 
-			loop1Spec.makeTwoKnotFaderSpec(kNoradDeltaMovieScale, 0, 0, entry.movieEnd -
-					entry.movieStart, kNoradWarningVolume);
-			loop1Spec.insertFaderKnot(7320, 0);
-			loop1Spec.insertFaderKnot(7880, kNoradWarningVolume);
+				loop1Spec.makeTwoKnotFaderSpec(kNoradDeltaMovieScale, 0, 0, entry.movieEnd -
+						entry.movieStart, kNoradWarningVolume);
+				loop1Spec.insertFaderKnot(7320, 0);
+				loop1Spec.insertFaderKnot(7880, kNoradWarningVolume);
 
-			loop2Spec.makeTwoKnotFaderSpec(kNoradDeltaMovieScale, 0, 0, entry.movieEnd -
-					entry.movieStart, kNoradSuckWindVolume);
-			loop1Spec.insertFaderKnot(7320, 0);
-			loop1Spec.insertFaderKnot(7880, kNoradSuckWindVolume);
+				loop2Spec.makeTwoKnotFaderSpec(kNoradDeltaMovieScale, 0, 0, entry.movieEnd -
+						entry.movieStart, kNoradSuckWindVolume);
+				loop1Spec.insertFaderKnot(7320, 0);
+				loop1Spec.insertFaderKnot(7880, kNoradSuckWindVolume);
 
-			startExtraSequence(kArriveFromSubChase, kExtraCompletedFlag, kFilterNoInput);
+				startExtraSequence(kArriveFromSubChase, kExtraCompletedFlag, kFilterNoInput);
 
-			startLoop1Fader(loop1Spec);
-			startLoop2Fader(loop2Spec);
+				startLoop1Fader(loop1Spec);
+				startLoop2Fader(loop2Spec);
+			} else {
+				if (g_arthurChip)
+					g_arthurChip->playArthurMovieForEvent("Images/AI/Globals/XGLOBA08", kArthurNoradExitedSub);
+			}
 		}
+		break;
+	case kNorad54:
+		if (g_arthurChip)
+			g_arthurChip->playArthurMovieForEvent("Images/AI/Globals/XGLOBA71", kArthurNoradApproachedDamagedDoor);
 		break;
 	case kNorad54North:
 		GameState.setScoringSawRobotAt54North(true);
@@ -365,6 +400,8 @@ void NoradDelta::arriveAt(const RoomID room, const DirectionConstant direction) 
 	case kNorad68:
 		if (GameState.getNoradRetScanGood())
 			openDoor();
+		else if (!_vm->playerHasItemID(kRetinalScanBiochip) && g_arthurChip)
+			g_arthurChip->playArthurMovieForEvent("Images/AI/Globals/XGLOBA39", kArthurNoradAtRetScanNoBiochip);
 		break;
 	case kNorad68West:
 		arriveAtNorad68West();
@@ -400,6 +437,20 @@ void NoradDelta::arriveAtNorad79West() {
 		newInteraction(kNoradGlobeGameInteractionID);
 }
 
+void NoradDelta::turnTo(const DirectionConstant direction) {
+	Norad::turnTo(direction);
+	if (g_arthurChip) {
+		switch (GameState.getCurrentRoomAndView()) {
+		case MakeRoomView(kNorad54, kNorth):
+			g_arthurChip->playArthurMovieForEvent("Images/AI/Globals/XGLOBA71", kArthurNoradApproachedDamagedDoor);
+			break;
+		case MakeRoomView(kNorad68, kWest):
+			g_arthurChip->playArthurMovieForEvent("Images/AI/Globals/XGLOBA39", kArthurNoradApproachedDamagedDoor);
+			break;
+		}
+	}
+}
+
 void NoradDelta::bumpIntoWall() {
 	requestSpotSound(kDeltaBumpIntoWallIn, kDeltaBumpIntoWallOut, kFilterNoInput, 0);
 	Neighborhood::bumpIntoWall();
@@ -427,7 +478,11 @@ void NoradDelta::finishedGlobeGame() {
 	_privateFlags.setFlag(kNoradPrivateFinishedGlobeGameFlag, true);
 	GameState.setScoringFinishedGlobeGame(true);
 	loadAmbientLoops();
-	g_AIArea->playAIMovie(kRightAreaSignature, "Images/AI/Norad/XN60WD1", false, kWarningInterruption);
+	if (g_arthurChip)
+		g_arthurChip->playArthurMovieForEvent("Images/AI/Globals/XGLOBA63", kArthurNoradThreatenedByRobot);
+	if (_vm->isChattyAI())
+		g_AIArea->playAIMovie(kRightAreaSignature, "Images/AI/Norad/XN60WD1", false, kWarningInterruption);
+	updateViewFrame();
 }
 
 bool NoradDelta::playingAgainstRobot() {
@@ -455,7 +510,8 @@ void NoradDelta::playerBeatRobotWithDoor() {
 	GameState.setNoradBeatRobotWithDoor(true);
 	updateViewFrame();
 	GameState.setScoringStoppedNoradRobot(true);
-	g_AIArea->playAIMovie(kRightAreaSignature, "Images/AI/Norad/XN59WD", false, kWarningInterruption);
+	if (_vm->isChattyAI())
+		g_AIArea->playAIMovie(kRightAreaSignature, "Images/AI/Norad/XN59WD", false, kWarningInterruption);
 }
 
 void NoradDelta::playerBeatRobotWithClaw() {
@@ -463,7 +519,8 @@ void NoradDelta::playerBeatRobotWithClaw() {
 	updateViewFrame();
 	GameState.setScoringStoppedNoradRobot(true);
 	GameState.setScoringNoradGandhi(true);
-	g_AIArea->playAIMovie(kRightAreaSignature, "Images/AI/Norad/XN59WD", false, kWarningInterruption);
+	if (_vm->isChattyAI())
+		g_AIArea->playAIMovie(kRightAreaSignature, "Images/AI/Norad/XN59WD", false, kWarningInterruption);
 }
 
 TimeValue NoradDelta::getViewTime(const RoomID room, const DirectionConstant direction) {
@@ -619,12 +676,27 @@ void NoradDelta::receiveNotification(Notification *notification, const Notificat
 		case kN59RobotHeadOpens:
 		case kN60RobotHeadOpens:
 			_privateFlags.setFlag(kNoradPrivateRobotHeadOpenFlag, true);
+			if (g_arthurChip) {
+				switch (_vm->getRandomNumber(2)) {
+				case 0:
+					g_arthurChip->playArthurMovieForEvent("Images/AI/Globals/XGLOBA36", kArthurNoradRobotHeadOpen);
+					break;
+				case 1:
+					g_arthurChip->playArthurMovieForEvent("Images/AI/Globals/XGLOBA37", kArthurNoradRobotHeadOpen);
+					break;
+				case 2:
+					g_arthurChip->playArthurMovieForEvent("Images/AI/Globals/XGLOBA40", kArthurNoradRobotHeadOpen);
+					break;
+				}
+			}
 			break;
 		case kNoradDeltaRetinalScanBad:
 			retScan = (RetScanChip *)_vm->getCurrentBiochip();
 			retScan->setItemState(kNormalItem);
 			playSpotSoundSync(kRetinalScanFailedIn, kRetinalScanFailedOut);
 			downButton(dummy);
+			if (g_arthurChip)
+				g_arthurChip->playArthurMovieForEvent("Images/AI/Globals/XGLOBA13", kArthurNoradAtRetScanNoBiochip);
 			break;
 		case kNoradDeltaRetinalScanGood:
 			retScan = (RetScanChip *)_vm->getCurrentBiochip();
@@ -640,6 +712,9 @@ void NoradDelta::receiveNotification(Notification *notification, const Notificat
 		}
 
 		_interruptionFilter = kFilterAllInput;
+	} else if ((flags & kSpotSoundCompletedFlag) != 0) {
+		if (_spotSounds.getStart() == kToDeactivateIn && g_arthurChip)
+			g_arthurChip->playArthurMovieForEvent("Images/AI/Globals/XGLOBB41", kArthurNoradStartGlobeGame);
 	}
 
 	g_AIArea->checkMiddleArea();
