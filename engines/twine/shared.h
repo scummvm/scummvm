@@ -104,6 +104,9 @@ inline IVec3 operator-(const IVec3 &lhs, const IVec3 &rhs) {
 	return IVec3{lhs.x - rhs.x, lhs.y - rhs.y, lhs.z - rhs.z};
 }
 
+/**
+ * @brief Axis aligned bounding box
+ */
 struct BoundingBox {
 	IVec3 mins;
 	IVec3 maxs;
@@ -262,7 +265,7 @@ enum class ExtraSpecialType {
 	kExplodeCloud = 1
 };
 
-enum ZoneType {
+enum class ZoneType {
 	kCube = 0,     // Change to another scene
 	kCamera = 1,   // Binds camera view
 	kSceneric = 2, // For use in Life Script

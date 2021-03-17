@@ -103,13 +103,8 @@ DebugScene::ScenePositionsProjected DebugScene::calculateBoxPositions(const IVec
 	positions.frontTopLeftPoint.y = maxs.y - _engine->_grid->camera.y;
 	positions.frontTopLeftPoint.z = maxs.z - _engine->_grid->camera.z;
 
-	positions.frontTopRightPoint.x = maxs.x - _engine->_grid->camera.x;
-	positions.frontTopRightPoint.y = maxs.y - _engine->_grid->camera.y;
-	positions.frontTopRightPoint.z = maxs.z - _engine->_grid->camera.z;
-
-	positions.backBottomLeftPoint.x = mins.x - _engine->_grid->camera.x;
-	positions.backBottomLeftPoint.y = mins.y - _engine->_grid->camera.y;
-	positions.backBottomLeftPoint.z = mins.z - _engine->_grid->camera.z;
+	positions.frontTopRightPoint = maxs - _engine->_grid->camera;
+	positions.backBottomLeftPoint = mins - _engine->_grid->camera;
 
 	positions.backBottomRightPoint.x = maxs.x - _engine->_grid->camera.x;
 	positions.backBottomRightPoint.y = mins.y - _engine->_grid->camera.y;
@@ -214,7 +209,7 @@ bool DebugScene::displayZones() {
 		}
 
 		const ScenePositionsProjected &positions = calculateBoxPositions(zonePtr->mins, zonePtr->maxs);
-		const uint8 color = 15 * 3 + zonePtr->type * 16;
+		const uint8 color = 15 * 3 + (int)zonePtr->type * 16;
 		if (!drawBox(positions, color)) {
 			continue;
 		}
@@ -225,7 +220,7 @@ bool DebugScene::displayZones() {
 		const Common::Rect filledRect(positions.frontTopRightPoint2D.x, positions.frontTopRightPoint2D.y, positions.frontTopRightPoint2D.x + boxwidth, positions.frontTopRightPoint2D.y + boxheight);
 		_engine->_interface->drawFilledRect(filledRect, COLOR_WHITE);
 		_engine->_menu->drawBox(filledRect);
-		_engine->drawText(positions.frontTopRightPoint2D.x, positions.frontTopRightPoint2D.y, Common::String::format("Type: %i (%i)", zonePtr->type, i), true, false, boxwidth);
+		_engine->drawText(positions.frontTopRightPoint2D.x, positions.frontTopRightPoint2D.y, Common::String::format("Type: %i (%i)", (int)zonePtr->type, i), true, false, boxwidth);
 		_engine->drawText(positions.frontTopRightPoint2D.x, positions.frontTopRightPoint2D.y + lineHeight, Common::String::format("pos: %i:%i:%i", positions.frontTopRightPoint.x, positions.frontTopRightPoint.y, positions.frontTopRightPoint.z), true, false, boxwidth);
 		state = true;
 	}
