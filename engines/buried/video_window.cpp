@@ -30,7 +30,7 @@
 
 namespace Buried {
 
-VideoWindow::VideoWindow(BuriedEngine *vm, Window *parent) : Window(vm, parent), _video(0), _mode(kModeClosed), _lastFrame(0) {
+VideoWindow::VideoWindow(BuriedEngine *vm, Window *parent) : Window(vm, parent), _video(nullptr), _mode(kModeClosed), _lastFrame(0) {
 	_vm->addVideo(this);
 	_needsPalConversion = false;
 	_ownedFrame = nullptr;
