@@ -298,7 +298,7 @@ int SpaceDoorTimer::specifyCursor(Window *viewWindow, const Common::Point &point
 class UseCheeseGirlPropellant : public BaseOxygenTimer {
 public:
 	UseCheeseGirlPropellant(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
-	int postEnterRoom(Window *viewWindow, const Location &priorLocation);
+	int postEnterRoom(Window *viewWindow, const Location &priorLocation) override;
 	int draggingItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags);
 	int droppedItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags);
 
@@ -366,7 +366,7 @@ public:
 	PlayArthurOffsetTimed(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
 			int stingerVolume = 127, int lastStingerFlagOffset = -1, int effectIDFlagOffset = -1, int firstStingerFileID = -1,
 			int lastStingerFileID = -1, int stingerDelay = 1);
-	int postEnterRoom(Window *viewWindow, const Location &priorLocation);
+	int postEnterRoom(Window *viewWindow, const Location &priorLocation) override;
 
 private:
 	int _stingerVolume;
@@ -745,7 +745,7 @@ int IceteroidZoomInDispenser::specifyCursor(Window *viewWindow, const Common::Po
 class IceteroidDispenserControls : public BaseOxygenTimer {
 public:
 	IceteroidDispenserControls(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
-	int preExitRoom(Window *viewWindow, const Location &priorLocation);
+	int preExitRoom(Window *viewWindow, const Location &priorLocation) override;
 	int mouseDown(Window *viewWindow, const Common::Point &pointLocation);
 	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
 	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
@@ -1274,7 +1274,7 @@ int ScienceWingMachineRoomDoor::specifyCursor(Window *viewWindow, const Common::
 class ScienceWingStingersTimed : public BaseOxygenTimer {
 public:
 	ScienceWingStingersTimed(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
-	int postEnterRoom(Window *viewWindow, const Location &priorLocation);
+	int postEnterRoom(Window *viewWindow, const Location &priorLocation) override;
 };
 
 ScienceWingStingersTimed::ScienceWingStingersTimed(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) :
@@ -1305,7 +1305,7 @@ int ScienceWingStingersTimed::postEnterRoom(Window *viewWindow, const Location &
 class NexusDoor : public BaseOxygenTimer {
 public:
 	NexusDoor(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation);
-	int postEnterRoom(Window *viewWindow, const Location &priorLocation);
+	int postEnterRoom(Window *viewWindow, const Location &priorLocation) override;
 	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
 	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
 
@@ -2303,7 +2303,7 @@ public:
 	PlayArthurOffsetCapacitance(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
 			int stingerVolume = 127, int lastStingerFlagOffset = -1, int effectIDFlagOffset = -1, int firstStingerFileID = -1,
 			int lastStingerFileID = -1, int stingerDelay = 1, int flagOffset = -1, int newStill = -1, int newNavStart = -1, int newNavLength = -1);
-	int postEnterRoom(Window *viewWindow, const Location &priorLocation);
+	int postEnterRoom(Window *viewWindow, const Location &priorLocation) override;
 
 private:
 	int _stingerVolume;
