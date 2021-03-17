@@ -65,7 +65,7 @@ void DebugScene::projectBoundingBoxPoints(IVec3 *pPoint3d, IVec3 *pPoint3dProjec
 	}
 }
 
-bool DebugScene::checkZoneType(int32 type) const {
+bool DebugScene::checkZoneType(ZoneType type) const {
 	switch (type) {
 	case ZoneType::kCube:
 		return (typeZones & 0x01) != 0;

@@ -256,7 +256,7 @@ bool Scene::loadSceneLBA2() {
 		zone->infoData.generic.info6 = stream.readSint32LE();
 		zone->infoData.generic.info7 = stream.readSint32LE();
 
-		zone->type = stream.readUint16LE();
+		zone->type = (ZoneType)stream.readUint16LE();
 		zone->snap = stream.readUint16LE();
 	}
 
@@ -375,7 +375,7 @@ bool Scene::loadSceneLBA1() {
 		zone->maxs.y = stream.readUint16LE();
 		zone->maxs.z = stream.readUint16LE();
 
-		zone->type = stream.readUint16LE();
+		zone->type = (ZoneType)stream.readUint16LE();
 
 		zone->infoData.generic.info0 = stream.readUint16LE();
 		zone->infoData.generic.info1 = stream.readUint16LE();
@@ -401,6 +401,7 @@ bool Scene::loadSceneLBA1() {
 			_sceneActors[21].pos.x = _sceneActors[21].collisionPos.x = 0x1b00;
 			_sceneActors[21].pos.z = _sceneActors[21].collisionPos.z = 0x300;
 			break;
+#if 0
 		case LBA1SceneId::Principal_Island_outside_the_fortress:
 			assert(sceneNumActors >= 30);
 			_sceneActors[29].pos.z = _sceneActors[29].collisionPos.z = 0x703;
@@ -426,6 +427,7 @@ bool Scene::loadSceneLBA1() {
 		case LBA1SceneId::Principal_Island_inside_the_fortress:
 			//(ushort*)puVar4[140] = 0x32;
 			break;
+#endif
 		}
 	}
 
