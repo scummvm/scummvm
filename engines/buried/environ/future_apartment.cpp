@@ -974,7 +974,7 @@ int EnvironSystemControls::draggingItem(Window *viewWindow, int itemID, const Co
 
 int EnvironSystemControls::droppedItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags) {
 	if (pointLocation.x == -1 && pointLocation.y == -1)
-		return 0;
+		return SIC_REJECT;
 
 	if ((itemID == kItemGenoSingleCart || itemID == kItemEnvironCart || itemID == kItemClassicGamesCart) &&
 			((SceneViewWindow *)viewWindow)->getGlobalFlags().faERCurrentCartridge == 0) {

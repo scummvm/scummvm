@@ -788,7 +788,7 @@ int GeneratorCoreAcquire::draggingItem(Window *viewWindow, int itemID, const Com
 
 int GeneratorCoreAcquire::droppedItem(Window *viewWindow, int itemID, const Common::Point &pointLocation, int itemFlags) {
 	if (pointLocation.x == -1 && pointLocation.y == -1)
-		return 0;
+		return SIC_REJECT;
 
 	if (_currentStatus == 2 && (itemID == kItemGeneratorCore || itemID == kItemBurnedOutCore) && _closedEmpty.contains(pointLocation)) {
 		if (itemID == kItemBurnedOutCore) {
