@@ -80,7 +80,6 @@ public:
 	Common::Language getLanguage() const;
 
 	bool hasFeature(EngineFeature f) const;
-	GUI::Debugger *getDebugger();
 	void pauseEngineIntern(bool pause);
 
 	// Resources
@@ -108,7 +107,6 @@ public:
 	Window *_mainWindow; // Only one main window is supported.
 	Window *_focusedWindow;
 	Window *_captureWindow;
-	BuriedConsole *_console;
 
 	// Timers
 	uint createTimer(Window *window, uint period);
