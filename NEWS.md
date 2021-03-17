@@ -23,6 +23,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Switched ScummVM GUI output to UTF-32.
    - Updated the Roland MT-32 emulation code to the Munt project's mt32emu 2.4.2.
    - Updated Dropbox Cloud Storage to use the new Dropbox OAuth workflow.
+   - Major extension to the number of supported graphics scalers.
 
  AGOS:
    - Added support for the Japanese PC-98 version of Elvira 1.
@@ -54,6 +55,9 @@ For a more comprehensive changelog of the latest experimental code, see:
  Lure:
    - Fixed fire animation in first room when loading saves.
    - Fixed MT-32 support.
+
+ Pegasus:
+   - Added support for DVD/GOG.com release.
 
  SAGA:
    - Added support for ITE GOG Mac CD v1.1.
