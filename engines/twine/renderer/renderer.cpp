@@ -604,14 +604,13 @@ void Renderer::renderPolygonsFlat(uint8 *out, int vtop, int32 vsize, uint8 color
 		renderLoop = screenHeight;
 	}
 	for (int32 currentLine = 0; currentLine < renderLoop; ++currentLine) {
-		int16 start = ptr1[0];
-		int16 stop = ptr1[screenHeight];
+		const int16 start = ptr1[0];
+		const int16 stop = ptr1[screenHeight];
 		ptr1++;
-		int32 hsize = stop - start;
+		const int32 hsize = stop - start;
 
 		if (hsize >= 0) {
-			hsize++;
-			for (int32 j = start; j < hsize + start; j++) {
+			for (int32 j = start; j <= hsize + start; j++) {
 				if (j >= 0 && j < screenWidth) {
 					out[j] = color;
 				}
@@ -724,7 +723,7 @@ void Renderer::renderPolygonsTras(uint8 *out, int vtop, int32 vsize, uint8 color
 					*(out2) = (*(out2)&0x0F0F) | bx;
 				}
 			} else {
-				*(out2) = (*(out2)&0x0F) | color;
+				*out2 = (*(out2)&0x0F) | color;
 				out2++;
 			}
 		}
