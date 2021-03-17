@@ -60,14 +60,14 @@ struct CmdRenderPolygon {
 	// followed by Vertex array
 };
 
-struct Matrix {
+struct IMatrix3x3 {
 	IVec3 row1;
 	IVec3 row2;
 	IVec3 row3;
 };
 
-inline Matrix operator*(const Matrix &matrix, const IVec3 &vec) {
-	Matrix out;
+inline IMatrix3x3 operator*(const IMatrix3x3 &matrix, const IVec3 &vec) {
+	IMatrix3x3 out;
 	out.row1[0] = matrix.row1[0] * vec.x;
 	out.row1[1] = matrix.row1[1] * vec.x;
 	out.row1[2] = matrix.row1[2] * vec.x;
@@ -274,11 +274,11 @@ private:
 	void circleFill(int32 x, int32 y, int32 radius, uint8 color);
 	bool renderModelElements(int32 numOfPrimitives, const uint8 *polygonPtr, RenderCommand **renderCmds, ModelData *modelData);
 	void getCameraAnglePositions(int32 x, int32 y, int32 z);
-	void applyRotation(Matrix *targetMatrix, const Matrix *currentMatrix);
-	void applyPointsRotation(const pointTab *pointsPtr, int32 numPoints, pointTab *destPoints, const Matrix *rotationMatrix);
-	void processRotatedElement(Matrix *targetMatrix, const pointTab *pointsPtr, int32 rotZ, int32 rotY, int32 rotX, const elementEntry *elemPtr, ModelData *modelData);
-	void applyPointsTranslation(const pointTab *pointsPtr, int32 numPoints, pointTab *destPoints, const Matrix *translationMatrix);
-	void processTranslatedElement(Matrix *targetMatrix, const pointTab *pointsPtr, int32 rotX, int32 rotY, int32 rotZ, const elementEntry *elemPtr, ModelData *modelData);
+	void applyRotation(IMatrix3x3 *targetMatrix, const IMatrix3x3 *currentMatrix);
+	void applyPointsRotation(const pointTab *pointsPtr, int32 numPoints, pointTab *destPoints, const IMatrix3x3 *rotationMatrix);
+	void processRotatedElement(IMatrix3x3 *targetMatrix, const pointTab *pointsPtr, int32 rotZ, int32 rotY, int32 rotX, const elementEntry *elemPtr, ModelData *modelData);
+	void applyPointsTranslation(const pointTab *pointsPtr, int32 numPoints, pointTab *destPoints, const IMatrix3x3 *translationMatrix);
+	void processTranslatedElement(IMatrix3x3 *targetMatrix, const pointTab *pointsPtr, int32 rotX, int32 rotY, int32 rotZ, const elementEntry *elemPtr, ModelData *modelData);
 	void translateGroup(int32 x, int32 y, int32 z);
 
 	// ---- variables ----
@@ -299,9 +299,9 @@ private:
 
 	// ---
 
-	Matrix baseMatrix;
-	Matrix matricesTable[30 + 1];
-	Matrix shadeMatrix;
+	IMatrix3x3 baseMatrix;
+	IMatrix3x3 matricesTable[30 + 1];
+	IMatrix3x3 shadeMatrix;
 	IVec3 lightPos;
 
 	RenderCommand _renderCmds[1000];

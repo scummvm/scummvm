@@ -245,9 +245,9 @@ IVec3 Renderer::getHolomapRotation(const int32 angleX, const int32 angleY, const
 	return vec;
 }
 
-void Renderer::applyRotation(Matrix *targetMatrix, const Matrix *currentMatrix) {
-	Matrix matrix1;
-	Matrix matrix2;
+void Renderer::applyRotation(IMatrix3x3 *targetMatrix, const IMatrix3x3 *currentMatrix) {
+	IMatrix3x3 matrix1;
+	IMatrix3x3 matrix2;
 
 	if (renderAngleX) {
 		int32 angle = renderAngleX;
@@ -311,7 +311,7 @@ void Renderer::applyRotation(Matrix *targetMatrix, const Matrix *currentMatrix) 
 	}
 }
 
-void Renderer::applyPointsRotation(const pointTab *pointsPtr, int32 numPoints, pointTab *destPoints, const Matrix *rotationMatrix) {
+void Renderer::applyPointsRotation(const pointTab *pointsPtr, int32 numPoints, pointTab *destPoints, const IMatrix3x3 *rotationMatrix) {
 	int32 numOfPoints2 = numPoints;
 
 	do {
@@ -328,7 +328,7 @@ void Renderer::applyPointsRotation(const pointTab *pointsPtr, int32 numPoints, p
 	} while (--numOfPoints2);
 }
 
-void Renderer::processRotatedElement(Matrix *targetMatrix, const pointTab *pointsPtr, int32 rotZ, int32 rotY, int32 rotX, const elementEntry *elemPtr, ModelData *modelData) {
+void Renderer::processRotatedElement(IMatrix3x3 *targetMatrix, const pointTab *pointsPtr, int32 rotZ, int32 rotY, int32 rotX, const elementEntry *elemPtr, ModelData *modelData) {
 	int32 firstPoint = elemPtr->firstPoint / sizeof(pointTab);
 	int32 numOfPoints2 = elemPtr->numOfPoints;
 
@@ -336,7 +336,7 @@ void Renderer::processRotatedElement(Matrix *targetMatrix, const pointTab *point
 	renderAngleY = rotY;
 	renderAngleZ = rotZ;
 
-	const Matrix *currentMatrix;
+	const IMatrix3x3 *currentMatrix;
 	// if its the first point
 	if (elemPtr->baseElement == -1) {
 		currentMatrix = &baseMatrix;
@@ -364,7 +364,7 @@ void Renderer::processRotatedElement(Matrix *targetMatrix, const pointTab *point
 	applyPointsRotation(&pointsPtr[firstPoint], numOfPoints2, &modelData->computedPoints[firstPoint], targetMatrix);
 }
 
-void Renderer::applyPointsTranslation(const pointTab *pointsPtr, int32 numPoints, pointTab *destPoints, const Matrix *translationMatrix) {
+void Renderer::applyPointsTranslation(const pointTab *pointsPtr, int32 numPoints, pointTab *destPoints, const IMatrix3x3 *translationMatrix) {
 	int32 numOfPoints2 = numPoints;
 
 	do {
@@ -381,7 +381,7 @@ void Renderer::applyPointsTranslation(const pointTab *pointsPtr, int32 numPoints
 	} while (--numOfPoints2);
 }
 
-void Renderer::processTranslatedElement(Matrix *targetMatrix, const pointTab *pointsPtr, int32 rotX, int32 rotY, int32 rotZ, const elementEntry *elemPtr, ModelData *modelData) {
+void Renderer::processTranslatedElement(IMatrix3x3 *targetMatrix, const pointTab *pointsPtr, int32 rotX, int32 rotY, int32 rotZ, const elementEntry *elemPtr, ModelData *modelData) {
 	renderAngleX = rotX;
 	renderAngleY = rotY;
 	renderAngleZ = rotZ;
@@ -1310,7 +1310,7 @@ bool Renderer::renderAnimatedModel(ModelData *modelData, const uint8 *bodyPtr, R
 
 	const pointTab *pointsPtr = (const pointTab *)Model::getVerticesBaseData(bodyPtr);
 
-	Matrix *modelMatrix = &matricesTable[0];
+	IMatrix3x3 *modelMatrix = &matricesTable[0];
 
 	const elementEntry *bonesPtr0 = (const elementEntry *)Model::getBonesBaseData(bodyPtr, 0);
 	processRotatedElement(modelMatrix, pointsPtr, renderAngleX, renderAngleY, renderAngleZ, bonesPtr0, modelData);
@@ -1435,7 +1435,7 @@ bool Renderer::renderAnimatedModel(ModelData *modelData, const uint8 *bodyPtr, R
 
 	if (numOfShades) { // process normal data
 		uint16 *currentShadeDestination = (uint16 *)modelData->shadeTable;
-		Matrix *lightMatrix = &matricesTable[0];
+		IMatrix3x3 *lightMatrix = &matricesTable[0];
 
 		numOfPrimitives = numBones;
 
