@@ -542,16 +542,13 @@ void Renderer::renderPolygonsCopper(uint8 *out, int vtop, int32 vsize, int32 col
 		if (hsize >= 0) {
 			uint16 mask = 0x43DB;
 
-			uint16 dx = (uint8)color;
-			dx |= 0x300;
-
 			hsize++;
 			const int32 startCopy = start;
 
 			for (int32 j = startCopy; j < hsize + startCopy; j++) {
 				start += mask;
-				start = (start & 0xFF00) | ((start & 0xFF) & (uint8)(dx / 256));
-				start = (start & 0xFF00) | ((start & 0xFF) + (dx & 0xFF));
+				start = (start & 0xFF00) | ((start & 0xFF) & 3U);
+				start = (start & 0xFF00) | ((start & 0xFF) + color);
 				if (j >= 0 && j < screenWidth) {
 					out[j] = start & 0xFF;
 				}
