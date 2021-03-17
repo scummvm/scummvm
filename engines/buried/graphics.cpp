@@ -248,8 +248,6 @@ Cursor GraphicsManager::setCursor(Cursor newCursor) {
 	if (!cursor)
 		error("Failed to find cursor %d", newCursor);
 
-	// TODO: Fallback mode for platforms without cursor palettes in 8bpp mode?
-
 	CursorMan.replaceCursor(cursor->getSurface(), cursor->getWidth(), cursor->getHeight(),
 			cursor->getHotspotX(), cursor->getHotspotY(), cursor->getKeyColor());
 	CursorMan.replaceCursorPalette(cursor->getPalette(), cursor->getPaletteStartIndex(), cursor->getPaletteCount());
