@@ -1489,7 +1489,7 @@ IMPLEMENT_OPCODE(PlaySoundUpdateObject)
 		}
 	} else {
 		_vm->setGameFlag(kGameFlagScriptProcessing);
-		getSpeech()->play(MAKE_RESOURCE(kResourcePackSpeech, 515 + cmd->param1), MAKE_RESOURCE(kResourcePackShared, 1290 + cmd->param1));
+		getSpeech()->play(MAKE_RESOURCE(kResourcePackSpeech, 515 + cmd->param1), MAKE_RESOURCE(kResourcePackText, 1290 + cmd->param1));
 
 		if (cmd->param2) {
 			getScene()->getActor(cmd->param5)->updateStatus(kActorStatus8);
@@ -1500,8 +1500,10 @@ IMPLEMENT_OPCODE(PlaySoundUpdateObject)
 				if (cmd->param4)
 					getWorld()->getObjectById((ObjectId)cmd->param4)->disable();
 
-				if (cmd->param3)
-					getWorld()->getObjectById((ObjectId)cmd->param3)->setNextFrame(getWorld()->getObjectById((ObjectId)cmd->param4)->flags);
+				if (cmd->param3) {
+					Object *object = getWorld()->getObjectById((ObjectId)cmd->param3);
+					object->setNextFrame(object->flags);
+				}
 			}
 
 			cmd->param6 = 1;
