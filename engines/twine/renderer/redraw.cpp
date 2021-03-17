@@ -623,7 +623,7 @@ void Redraw::renderOverlays() {
 				_engine->_interface->drawFilledRect(rect, COLOR_BLACK);
 				_engine->_interface->setClip(rect);
 
-				uint8* bodyPtr = _engine->_resources->inventoryTable[item];
+				const uint8* bodyPtr = _engine->_resources->inventoryTable[item];
 				overlayRotation += 1; // overlayRotation += 8;
 				_engine->_renderer->renderInventoryItem(40, 40, bodyPtr, overlayRotation, 16000);
 				_engine->_menu->drawBox(rect);
