@@ -896,8 +896,8 @@ void Process::removeGapsFromInventory() {
 
 void Process::setObjectScale() {
 	int value = pop();
+	debug("setObjectScale %d", value);
 	_object->scale(value);
-	debug("setObjectScale stub %d", value);
 }
 
 void Process::disableMouseAreas() {
