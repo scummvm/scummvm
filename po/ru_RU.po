@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-03-16 01:50+0000\n"
-"PO-Revision-Date: 2021-02-21 19:36+0000\n"
+"PO-Revision-Date: 2021-03-17 17:08+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ru/>\n"
@@ -311,17 +311,13 @@ msgid "Backend"
 msgstr "Бэкенд"
 
 #: gui/editgamedialog.cpp:250
-#, fuzzy
-#| msgid "Override global audio settings"
 msgid "Override global backend settings"
-msgstr "Перекрыть глобальные настройки аудио"
+msgstr "Перекрыть глобальные настройки бекенда"
 
 #: gui/editgamedialog.cpp:252
-#, fuzzy
-#| msgid "Override global audio settings"
 msgctxt "lowres"
 msgid "Override global backend settings"
-msgstr "Перекрыть глобальные настройки аудио"
+msgstr "Перекрыть глобальные настройки бекенда"
 
 #: gui/editgamedialog.cpp:266 gui/options.cpp:1858 engines/dialogs.cpp:301
 msgid "Audio"
@@ -2787,16 +2783,12 @@ msgid "Decrease the scale factor"
 msgstr "Уменьшить масштаб"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:436
-#, fuzzy
-#| msgid "Switch to TV 2x scaling"
 msgid "Switch to the next scaler"
-msgstr "Переключить масштабирование на TV 2x"
+msgstr "Переключить на предыдущий фильтр масштабирования"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:441
-#, fuzzy
-#| msgid "Switch to nearest neighbour scaling"
 msgid "Switch to the previous scaler"
-msgstr "Переключить масштабирование на nearest neighbour"
+msgstr "Переключить на следующий фильтр масштабирования"
 
 #: backends/keymapper/hardware-input.cpp:245
 msgid "Left Mouse Button"
