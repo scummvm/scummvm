@@ -643,7 +643,7 @@ void Renderer::renderPolygonsTele(uint8 *out, int vtop, int32 vsize, uint8 color
 			}
 
 			uint8 *out2 = start + out;
-			*out2 = ((unsigned short)(bx / 24)) & 0x0F;
+			*out2 = ((uint16)(bx / 24)) & 0x0F;
 
 			color = *(out2 + 1);
 
@@ -657,7 +657,7 @@ void Renderer::renderPolygonsTele(uint8 *out, int vtop, int32 vsize, uint8 color
 
 		if (stop >= start) {
 			hsize++;
-			bx = (unsigned short)(color / 16);
+			bx = (uint16)(color / 16);
 			uint8 *out2 = start + out;
 
 			int ax = (bx & 0xF0) * 256;
