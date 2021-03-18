@@ -497,13 +497,8 @@ insave:
 
 				posx    = ICONMARGSX + ((CurPos) * (ICONDX)) + ICONDX / 2;
 				LenText  = TextLength(savename[CurPos], 0);
-				if (posx - (LenText / 2) < 2)
-					posx = 2;
-				else
-					posx = posx - (LenText / 2);
-				if ((posx + LenText) > SCREENLEN - 2)
-					posx = SCREENLEN - 2 - LenText;
 
+				posx = CLIP(posx - (LenText / 2), 2, SCREENLEN - 2 - LenText);
 				SText.set(posx, FIRSTLINE + ICONDY + 10, LenText, CARHEI, 0, 0, LenText, CARHEI, 0x7FFF, MASKCOL, savename[CurPos]);
 				SText.DText();
 
@@ -584,13 +579,8 @@ insave:
 
 			posx    = ICONMARGSX + ((CurPos) * (ICONDX)) + ICONDX / 2 ;
 			LenText  = TextLength(savename[CurPos], 0);
-			if (posx - (LenText / 2) < 2)
-				posx = 2;
-			else
-				posx = posx - (LenText / 2);
-			if ((posx + LenText) > SCREENLEN - 2)
-				posx = SCREENLEN - 2 - LenText;
 
+			posx = CLIP(posx - (LenText / 2), 2, SCREENLEN - 2 - LenText);
 			SText.set(posx, FIRSTLINE + ICONDY + 10, LenText, CARHEI, 0, 0, LenText, CARHEI, 0x7FFF, MASKCOL, savename[CurPos]);
 
 			if ((ReadTime() / 8) & 1)
