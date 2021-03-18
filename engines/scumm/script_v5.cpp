@@ -2304,7 +2304,7 @@ void ScummEngine_v5::o5_verbOps() {
 			vs->hicolor = getVarOrDirectByte(PARAM_1);
 			break;
 		case 5:		// SO_VERB_AT
-			vs->curRect.left = getVarOrDirectWord(PARAM_1);
+			vs->curRect.left = vs->origLeft = getVarOrDirectWord(PARAM_1);
 			vs->curRect.top = getVarOrDirectWord(PARAM_2);
 			// Macintosh version of indy3ega used different interface, so adjust values.
 			if ((_game.platform == Common::kPlatformMacintosh) && (_game.id == GID_INDY3)) {

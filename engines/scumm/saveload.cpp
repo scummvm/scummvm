@@ -815,7 +815,7 @@ static void syncWithSerializer(Common::Serializer &s, ObjectData &od) {
 }
 
 static void syncWithSerializer(Common::Serializer &s, VerbSlot &vs) {
-	s.syncAsSint16LE(vs.curRect.left, VER(8));
+	s.syncAsSint16LE(vs.origLeft, VER(8));
 	s.syncAsSint16LE(vs.curRect.top, VER(8));
 	s.syncAsSint16LE(vs.curRect.right, VER(8));
 	s.syncAsSint16LE(vs.curRect.bottom, VER(8));
@@ -837,6 +837,8 @@ static void syncWithSerializer(Common::Serializer &s, VerbSlot &vs) {
 	s.syncAsByte(vs.center, VER(8));
 	s.syncAsByte(vs.prep, VER(8));
 	s.syncAsUint16LE(vs.imgindex, VER(8));
+	if (s.isLoading() && s.getVersion() >= 8)
+		vs.curRect.left = vs.origLeft;
 }
 
 static void syncWithSerializer(Common::Serializer &s, ScriptSlot &ss) {
