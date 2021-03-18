@@ -476,7 +476,8 @@ bool MsgScroll::parse_token(MsgText *token) {
 			set_font(NUVIE_FONT_NORMAL); // english font
 			break;
 		}
-	// Note fall through. ;-) We fall through if we haven't already seen a '<' char
+		// falls through
+		// ...if we haven't already seen a '<' char
 
 	default   :
 		if (msg_line) {
