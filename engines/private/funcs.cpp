@@ -228,7 +228,28 @@ static void fDossierBitmap(ArgArray args) {
 }
 
 static void fDossierChgSheet(ArgArray args) {
-	debugC(1, kPrivateDebugScript, "WARNING: DossierChgSheet is not implemented");
+	assert(args.size() == 4);
+	debugC(1, kPrivateDebugScript, "DossierChgSheet(%s,%d,%d,%d)", args[0].u.str, args[1].u.val, args[2].u.val, args[3].u.val);
+	Common::String s(args[0].u.str);
+	MaskInfo m;
+
+	int p = args[1].u.val;
+	int x = args[2].u.val;
+	int y = args[3].u.val;
+
+	m.surf = g_private->loadMask(s, x, y, true);
+	m.cursor = "kExit";
+	m.nextSetting = "";
+	m.flag1 = NULL;
+	m.flag2 = NULL;
+	if (p == 0)
+		g_private->_dossierPrevSheetMask = m;
+	else if (p == 1)
+		g_private->_dossierNextSheetMask = m;
+	else
+		error("Invalid sheet number in DossierChgSheet %d", p);
+
+	g_private->_masks.push_front(m);
 }
 
 static void fDossierPrevSuspect(ArgArray args) {

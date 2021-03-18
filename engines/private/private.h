@@ -228,8 +228,12 @@ public:
 	unsigned int _dossierPage;
 	MaskInfo _dossierNextSuspectMask;
 	MaskInfo _dossierPrevSuspectMask;
+	MaskInfo _dossierNextSheetMask;
+	MaskInfo _dossierPrevSheetMask;
 	bool selectDossierNextSuspect(Common::Point);
 	bool selectDossierPrevSuspect(Common::Point);
+	bool selectDossierNextSheet(Common::Point);
+	bool selectDossierPrevSheet(Common::Point);
 	void loadDossier();
 
 	// Police Bust

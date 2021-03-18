@@ -105,6 +105,8 @@ PrivateEngine::PrivateEngine(OSystem *syst, const ADGameDescription *gd)
 	_dossierSuspect = 0;
 	_dossierNextSuspectMask.clear();
 	_dossierPrevSuspectMask.clear();
+	_dossierNextSheetMask.clear();
+	_dossierPrevSheetMask.clear();
 
 	// Diary
 	_diaryLocPrefix = "inface/diary/loclist/";
@@ -215,6 +217,10 @@ Common::Error PrivateEngine::run() {
 				if (selectDossierNextSuspect(mousePos))
 					break;
 				else if (selectDossierPrevSuspect(mousePos))
+					break;
+				else if (selectDossierNextSheet(mousePos))
+					break;
+				else if (selectDossierPrevSheet(mousePos))
 					break;
 
 				selectPauseMovie(mousePos);
@@ -338,6 +344,16 @@ void PrivateEngine::clearAreas() {
 		_dossierPrevSuspectMask.surf->free();
 	delete _dossierPrevSuspectMask.surf;
 	_dossierPrevSuspectMask.clear();
+
+	if (_dossierNextSheetMask.surf)
+		_dossierNextSheetMask.surf->free();
+	delete _dossierNextSheetMask.surf;
+	_dossierNextSheetMask.clear();
+
+	if (_dossierPrevSheetMask.surf)
+		_dossierPrevSheetMask.surf->free();
+	delete _dossierPrevSheetMask.surf;
+	_dossierPrevSheetMask.clear();
 }
 
 void PrivateEngine::startPoliceBust() {
@@ -615,6 +631,41 @@ bool PrivateEngine::selectDossierNextSuspect(Common::Point mousePos) {
 		if ((_dossierSuspect + 1) < _dossiers.size()) {
 			_dossierSuspect++;
 			_dossierPage = 0;
+			loadDossier();
+			drawMask(_dossierNextSuspectMask.surf);
+			drawMask(_dossierPrevSuspectMask.surf);
+			drawScreen();
+		}
+		return true;
+	}
+	return false;
+}
+
+bool PrivateEngine::selectDossierPrevSheet(Common::Point mousePos) {
+	if (_dossierNextSheetMask.surf == NULL)
+		return false;
+
+	if (inMask(_dossierPrevSheetMask.surf, mousePos)) {
+		if (_dossierPage == 1) {
+			_dossierPage = 0;
+			loadDossier();
+			drawMask(_dossierNextSuspectMask.surf);
+			drawMask(_dossierPrevSuspectMask.surf);
+			drawScreen();
+		}
+		return true;
+	}
+	return false;
+}
+
+bool PrivateEngine::selectDossierNextSheet(Common::Point mousePos) {
+	if (_dossierNextSheetMask.surf == NULL)
+		return false;
+
+	if (inMask(_dossierNextSheetMask.surf, mousePos)) {
+		DossierInfo m = _dossiers[_dossierSuspect];
+		if (_dossierPage == 0 && !m.page2.empty()) {
+			_dossierPage = 1;
 			loadDossier();
 			drawMask(_dossierNextSuspectMask.surf);
 			drawMask(_dossierPrevSuspectMask.surf);
