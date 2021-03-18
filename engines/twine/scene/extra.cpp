@@ -499,7 +499,7 @@ void Extra::drawExtraSpecial(int32 extraIdx, int32 x, int32 y) {
 			cloudTime = 32;
 		}
 
-		drawSpecialShape(explodeCloudShape, x, y, COLOR_WHITE, 0, cloudTime);
+		drawSpecialShape(explodeCloudShape, x, y, COLOR_WHITE, ANGLE_0, cloudTime);
 		break;
 	}
 	}
