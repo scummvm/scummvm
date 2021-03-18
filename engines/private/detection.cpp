@@ -37,7 +37,7 @@ static const ADGameDescription gameDescriptions[] = {
 		   "bklynlgo.bmp", "1dfb703349a46f8ec183de107992b7f5", 33118),
 		Common::EN_USA,
 		Common::kPlatformWindows,
-		ADGF_NO_FLAGS,
+		ADGF_TESTING,
 		GUIO1(GUIO_NOMIDI)
 	},
 	{
@@ -47,7 +47,7 @@ static const ADGameDescription gameDescriptions[] = {
 		   "bklynlgo.bmp", "1dfb703349a46f8ec183de107992b7f5", 33118),
 		Common::EN_USA,
 		Common::kPlatformWindows,
-		ADGF_DEMO,
+		ADGF_TESTING | ADGF_DEMO,
 		GUIO1(GUIO_NOMIDI)
 	},
 	{
@@ -77,7 +77,7 @@ static const ADGameDescription gameDescriptions[] = {
 		   "bklynlgo.bmp", "1dfb703349a46f8ec183de107992b7f5", 33118),
 		Common::EN_USA,
 		Common::kPlatformWindows,
-		ADGF_DEMO,
+		ADGF_TESTING | ADGF_DEMO,
 		GUIO1(GUIO_NOMIDI)
 	},
 	{
@@ -87,7 +87,7 @@ static const ADGameDescription gameDescriptions[] = {
 		   "bklynlgo.bmp", "1dfb703349a46f8ec183de107992b7f5", 33118),
 		Common::EN_USA,
 		Common::kPlatformWindows,
-		ADGF_DEMO,
+		ADGF_TESTING | ADGF_DEMO,
 		GUIO1(GUIO_NOMIDI)
 	},
 	{
