@@ -69,8 +69,8 @@ void QObjectBG::processMessage(const QMessage &msg) {
 
 			petka->setPos(Common::Point(petka->_x_, petka->_y_), false);
 			chapay->setPos(Common::Point(chapay->_x_, chapay->_y_), false);
-			break;
 		}
+		break;
 	}
 	case kMusic:
 		_musicId = msg.arg1;
