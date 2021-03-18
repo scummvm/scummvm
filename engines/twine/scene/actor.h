@@ -319,11 +319,6 @@ public:
 	/** Hero anim for behaviour menu */
 	int16 heroAnimIdx[4];
 
-	/** Actors 3D body table - size of NUM_BODIES */
-	uint8 *bodyTable[NUM_BODIES]{nullptr};
-	int32 bodyTableSize[NUM_BODIES]{0};
-	BodyData bodyData[NUM_BODIES];
-
 	/** Current position in body table */
 	int32 currentPositionInBodyPtrTab;
 	void clearBodyTable();

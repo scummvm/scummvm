@@ -321,7 +321,7 @@ void GameState::processFoundItem(int32 item) {
 	const int32 itemCameraY = _engine->_grid->newCamera.y * BRICK_HEIGHT;
 	const int32 itemCameraZ = _engine->_grid->newCamera.z * BRICK_SIZE;
 
-	uint8 *bodyPtr = _engine->_actor->bodyTable[_engine->_scene->sceneHero->entity];
+	uint8 *bodyPtr = _engine->_resources->bodyTable[_engine->_scene->sceneHero->entity];
 	const int32 bodyX = _engine->_scene->sceneHero->pos.x - itemCameraX;
 	const int32 bodyY = _engine->_scene->sceneHero->pos.y - itemCameraY;
 	const int32 bodyZ = _engine->_scene->sceneHero->pos.z - itemCameraZ;

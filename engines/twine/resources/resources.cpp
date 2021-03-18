@@ -43,6 +43,9 @@ Resources::~Resources() {
 	for (size_t i = 0; i < ARRAYSIZE(samplesTable); ++i) {
 		free(samplesTable[i]);
 	}
+	for (size_t i = 0; i < ARRAYSIZE(bodyTable); ++i) {
+		free(bodyTable[i]);
+	}
 	free(fontPtr);
 	free(spriteShadowPtr);
 	free(holomapSurfacePtr);

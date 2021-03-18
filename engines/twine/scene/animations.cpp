@@ -433,10 +433,10 @@ bool Animations::initAnim(AnimationTypes newAnim, int16 animType, AnimationTypes
 
 	if (actor->previousAnimIdx == -1) {
 		// if no previous animation
-		setAnimAtKeyframe(0, _engine->_resources->animData[animIndex], _engine->_actor->bodyTable[actor->entity], &actor->animTimerData);
+		setAnimAtKeyframe(0, _engine->_resources->animData[animIndex], _engine->_resources->bodyTable[actor->entity], &actor->animTimerData);
 	} else {
 		// interpolation between animations
-		stockAnimation(_engine->_actor->bodyTable[actor->entity], &actor->animTimerData);
+		stockAnimation(_engine->_resources->bodyTable[actor->entity], &actor->animTimerData);
 	}
 
 	actor->previousAnimIdx = animIndex;
@@ -565,7 +565,7 @@ void Animations::processActorAnimations(int32 actorIdx) { // DoAnim
 			const AnimData &animData = _engine->_resources->animData[actor->previousAnimIdx];
 
 			bool keyFramePassed = false;
-			if (Model::isAnimated(_engine->_actor->bodyTable[actor->entity])) {
+			if (Model::isAnimated(_engine->_resources->bodyTable[actor->entity])) {
 				keyFramePassed = verifyAnimAtKeyframe(actor->animPosition, animData, &actor->animTimerData);
 			}
 

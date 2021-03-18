@@ -343,13 +343,13 @@ void Redraw::processDrawListActors(const DrawListStruct &drawCmd, bool bgRedraw)
 	ActorStruct *actor = _engine->_scene->getActor(actorIdx);
 	if (actor->previousAnimIdx >= 0) {
 		const AnimData &animData = _engine->_resources->animData[actor->previousAnimIdx];
-		_engine->_animations->setModelAnimation(actor->animPosition, animData, _engine->_actor->bodyTable[actor->entity], &actor->animTimerData);
+		_engine->_animations->setModelAnimation(actor->animPosition, animData, _engine->_resources->bodyTable[actor->entity], &actor->animTimerData);
 	}
 
 	const int32 x = actor->pos.x - _engine->_grid->camera.x;
 	const int32 y = actor->pos.y - _engine->_grid->camera.y;
 	const int32 z = actor->pos.z - _engine->_grid->camera.z;
-	if (!_engine->_renderer->renderIsoModel(x, y, z, ANGLE_0, actor->angle, ANGLE_0, _engine->_actor->bodyTable[actor->entity])) {
+	if (!_engine->_renderer->renderIsoModel(x, y, z, ANGLE_0, actor->angle, ANGLE_0, _engine->_resources->bodyTable[actor->entity])) {
 		return;
 	}
 

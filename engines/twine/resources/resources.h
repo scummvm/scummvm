@@ -169,6 +169,11 @@ public:
 
 	AnimData animData[NUM_ANIMS];
 
+	/** Actors 3D body table - size of NUM_BODIES */
+	uint8 *bodyTable[NUM_BODIES]{nullptr};
+	int32 bodyTableSize[NUM_BODIES]{0};
+	BodyData bodyData[NUM_BODIES];
+
 	/** Table with all loaded samples */
 	uint8 *samplesTable[NUM_SAMPLES]{nullptr};
 	/** Table with all loaded samples sizes */

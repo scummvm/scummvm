@@ -1011,7 +1011,7 @@ void Menu::processBehaviourMenu() {
 		_engine->_actor->setBehaviour(HeroBehaviourType::kNormal);
 	}
 
-	behaviourEntity = _engine->_actor->bodyTable[_engine->_scene->sceneHero->entity];
+	behaviourEntity = _engine->_resources->bodyTable[_engine->_scene->sceneHero->entity];
 
 	_engine->_actor->heroAnimIdx[(byte)HeroBehaviourType::kNormal] = _engine->_actor->heroAnimIdxNORMAL;
 	_engine->_actor->heroAnimIdx[(byte)HeroBehaviourType::kAthletic] = _engine->_actor->heroAnimIdxATHLETIC;

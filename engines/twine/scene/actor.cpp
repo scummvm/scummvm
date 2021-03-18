@@ -50,10 +50,6 @@ Actor::~Actor() {
 	free(heroEntityAGGRESSIVE);
 	free(heroEntityDISCRETE);
 	free(heroEntityPROTOPACK);
-
-	for (size_t i = 0; i < ARRAYSIZE(bodyTable); ++i) {
-		free(bodyTable[i]);
-	}
 }
 
 void Actor::restartHeroScene() {
@@ -192,11 +188,11 @@ int32 Actor::initBody(BodyType bodyIdx, int32 actorIdx, ActorBoundingBox &actorB
 				if (!(bodyIndex & 0x8000)) {
 					index = currentPositionInBodyPtrTab;
 					currentPositionInBodyPtrTab++;
-					bodyTableSize[index] = HQR::getAllocEntry(&bodyTable[index], Resources::HQR_BODY_FILE, bodyIndex & 0xFFFF);
-					if (bodyTableSize[index] == 0) {
+					_engine->_resources->bodyTableSize[index] = HQR::getAllocEntry(&_engine->_resources->bodyTable[index], Resources::HQR_BODY_FILE, bodyIndex & 0xFFFF);
+					if (_engine->_resources->bodyTableSize[index] == 0) {
 						error("HQR ERROR: Loading body entities");
 					}
-					bodyData[index].loadFromBuffer(bodyTable[index], bodyTableSize[index]);
+					_engine->_resources->bodyData[index].loadFromBuffer(_engine->_resources->bodyTable[index], _engine->_resources->bodyTableSize[index]);
 					stream.seek(stream.pos() - sizeof(uint16));
 					stream.writeUint16LE(index + 0x8000);
 				} else {
@@ -268,7 +264,7 @@ void Actor::initModelActor(BodyType bodyIdx, int16 actorIdx) {
 		bbox.maxs.z = actorBoundingBox.bbox.maxs.z;
 	} else {
 		BoundingBox &bbox = localActor->boudingBox;
-		const BodyData &bd = bodyData[localActor->entity];
+		const BodyData &bd = _engine->_resources->bodyData[localActor->entity];
 		bbox.mins.y = bd.bbox.mins.y;
 		bbox.maxs.y = bd.bbox.maxs.y;
 
