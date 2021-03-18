@@ -34,12 +34,12 @@ namespace Trecision {
 					BattutaPrint
 --------------------------------------------------*/
 void BattutaPrint(int x, int y, int c, const char *txt) {
-	g_vm->osdt.set(g_vm->sdt);
+	g_vm->_oldSdText.set(g_vm->_sdText);
 
-	g_vm->sdt.x = x;
-	g_vm->sdt.y = y;
-	g_vm->sdt.tcol = c;
-	g_vm->sdt.sign = txt;
+	g_vm->_sdText.x = x;
+	g_vm->_sdText.y = y;
+	g_vm->_sdText.tcol = c;
+	g_vm->_sdText.sign = txt;
 }
 
 } // End of namespace Trecision

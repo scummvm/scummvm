@@ -264,7 +264,7 @@ void OpenVideo() {
 
 	g_vm->_video2 = (uint16 *)(MemoryArea + GameBytePointer);
 
-	if (!g_vm->FlagMouseEnabled)
+	if (!g_vm->_fagMouseEnabled)
 		Mouse(MCMD_OFF);
 
 	wordset(g_vm->_video2, 0, 1280L * 480L);

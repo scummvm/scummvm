@@ -66,7 +66,7 @@ void CheckSystem() {
 	//for ( int a=0; a<5; a++ )
 	{
 		g_vm->_animMgr->refreshAllAnimations();
-		g_vm->EventLoop();
+		g_vm->eventLoop();
 	}
 }
 
@@ -220,18 +220,18 @@ void Mouse(MouseCmd opt) {
 	switch (opt) {
 	// Update mouse
 	case MCMD_UPDT: {
-		if (g_vm->_mouseONOFF && !g_vm->FlagMouseEnabled)
+		if (g_vm->_mouseONOFF && !g_vm->_fagMouseEnabled)
 			Mouse(MCMD_OFF);
 
-		if (!g_vm->_mouseONOFF && g_vm->FlagMouseEnabled)
+		if (!g_vm->_mouseONOFF && g_vm->_fagMouseEnabled)
 			Mouse(MCMD_ON);
 
 		if (g_vm->_mouseONOFF) {
-			mleft = g_vm->wmleft;
-			mright = g_vm->wmright;
+			mleft = g_vm->_mouseLeftBtn;
+			mright = g_vm->_mouseRightBtn;
 
-			mx = CLIP<int16>(g_vm->wmx, 10, MAXX - 11);
-			my = CLIP<int16>(g_vm->wmy, 10, MAXY - 11);
+			mx = CLIP<int16>(g_vm->_mouseX, 10, MAXX - 11);
+			my = CLIP<int16>(g_vm->_mouseY, 10, MAXY - 11);
 
 			VMouseON();
 		}
@@ -249,11 +249,11 @@ void Mouse(MouseCmd opt) {
 			break;
 		g_vm->_mouseONOFF = true;
 
-		mleft = g_vm->wmleft;
-		mright = g_vm->wmright;
+		mleft = g_vm->_mouseLeftBtn;
+		mright = g_vm->_mouseRightBtn;
 
-		mx = CLIP<int16>(g_vm->wmx, 10, MAXX - 11);
-		my = CLIP<int16>(g_vm->wmy, 10, MAXY - 11);
+		mx = CLIP<int16>(g_vm->_mouseX, 10, MAXX - 11);
+		my = CLIP<int16>(g_vm->_mouseY, 10, MAXY - 11);
 
 		VMouseON();
 		break;

@@ -346,7 +346,7 @@ void AnimManager::startFullMotion(const char *name) {
 	_vm->_animQueue.initQueue();
 	_vm->_characterQueue.initQueue();
 	actorStop();
-	g_vm->FlagMouseEnabled = false;
+	g_vm->_fagMouseEnabled = false;
 
 	openSmk(FmvFileOpen(name));
 
@@ -372,7 +372,7 @@ void AnimManager::stopFullMotion() {
 
 	FlagDialogActive = false;
 	FlagDialogMenuActive = false;
-	g_vm->FlagMouseEnabled = true;
+	g_vm->_fagMouseEnabled = true;
 	FlagSomeOneSpeak = false;
 
 	_vm->_lightIcon = 0xFF;
@@ -598,34 +598,34 @@ void AnimManager::refreshFullMotion() {
 
 		DialogHandler(_curAnimFrame[pos]);
 
-		_vm->sdt.dx = TextLength(_vm->sdt.sign, 0);
+		_vm->_sdText.dx = TextLength(_vm->_sdText.sign, 0);
 
-		_vm->sdt.x = 20;
-		_vm->sdt.y = 380;
-		_vm->sdt.dx = MAXX - 40;
-		_vm->sdt.dy = _vm->sdt.checkDText();
-		_vm->sdt.l[0] = 0;
-		_vm->sdt.l[1] = 0;
-		_vm->sdt.l[2] = MAXX;
-		_vm->sdt.l[3] = MAXY;
-		_vm->sdt.scol = MASKCOL;
+		_vm->_sdText.x = 20;
+		_vm->_sdText.y = 380;
+		_vm->_sdText.dx = MAXX - 40;
+		_vm->_sdText.dy = _vm->_sdText.checkDText();
+		_vm->_sdText.l[0] = 0;
+		_vm->_sdText.l[1] = 0;
+		_vm->_sdText.l[2] = MAXX;
+		_vm->_sdText.l[3] = MAXY;
+		_vm->_sdText.scol = MASKCOL;
 
 		// If text was displayed, remove it
-		if (_vm->osdt.sign != nullptr) {
-			if ((_vm->osdt.y < _vm->sdt.y) || (_vm->osdt.y + _vm->osdt.dy > _vm->sdt.y + _vm->sdt.dy) || (_vm->sdt.sign == nullptr)) {
-				drawSmkBuffer(0, _vm->osdt.y - TOP, MAXX, _vm->osdt.dy);
-				_vm->_graphicsMgr->showScreen(0, _vm->osdt.y, MAXX, _vm->osdt.dy);
+		if (_vm->_oldSdText.sign != nullptr) {
+			if ((_vm->_oldSdText.y < _vm->_sdText.y) || (_vm->_oldSdText.y + _vm->_oldSdText.dy > _vm->_sdText.y + _vm->_sdText.dy) || (_vm->_sdText.sign == nullptr)) {
+				drawSmkBuffer(0, _vm->_oldSdText.y - TOP, MAXX, _vm->_oldSdText.dy);
+				_vm->_graphicsMgr->showScreen(0, _vm->_oldSdText.y, MAXX, _vm->_oldSdText.dy);
 			}
-			_vm->osdt.sign = nullptr;
+			_vm->_oldSdText.sign = nullptr;
 		}
 		// If there's text
-		if (_vm->sdt.sign != nullptr) {
-			drawSmkBuffer(0, _vm->sdt.y - TOP, MAXX, _vm->sdt.dy);
+		if (_vm->_sdText.sign != nullptr) {
+			drawSmkBuffer(0, _vm->_sdText.y - TOP, MAXX, _vm->_sdText.dy);
 			// Write string
 			if (ConfMan.getBool("subtitles"))
-				_vm->sdt.DText();
+				_vm->_sdText.DText();
 			// and show it
-			_vm->osdt.sign = nullptr;
+			_vm->_oldSdText.sign = nullptr;
 		}
 
 		if (_smkAnims[pos]->getHeight() > MAXY / 2)
@@ -636,9 +636,9 @@ void AnimManager::refreshFullMotion() {
 		while (const Common::Rect *lastRect = _smkAnims[pos]->getNextDirtyRect()) {
 			for (int32 a = 0; a < lastRect->height(); a++) {
 				// if it's already copied
-				if ((_vm->sdt.sign == nullptr) ||
-				    ((lastRect->top + a) * yfact < (_vm->sdt.y - TOP)) ||
-				    ((lastRect->top + a) * yfact >= (_vm->sdt.y + _vm->sdt.dy - TOP))) {
+				if ((_vm->_sdText.sign == nullptr) ||
+				    ((lastRect->top + a) * yfact < (_vm->_sdText.y - TOP)) ||
+				    ((lastRect->top + a) * yfact >= (_vm->_sdText.y + _vm->_sdText.dy - TOP))) {
 					// Decide to double or not...
 					// in height
 					if (_smkAnims[pos]->getHeight() > MAXY / 2) {
@@ -672,8 +672,8 @@ void AnimManager::refreshFullMotion() {
 				}
 			}
 		}
-		if (_vm->sdt.sign != nullptr)
-			_vm->_graphicsMgr->showScreen(0, _vm->sdt.y, MAXX, _vm->sdt.dy);
+		if (_vm->_sdText.sign != nullptr)
+			_vm->_graphicsMgr->showScreen(0, _vm->_sdText.y, MAXX, _vm->_sdText.dy);
 		_vm->_graphicsMgr->unlock();
 
 		if (_curAnimFrame[pos] == _fullMotionEnd) {
@@ -794,8 +794,8 @@ void AnimManager::playFullMotion(int start, int end) {
 	_fullMotionStart = start;
 	_fullMotionEnd = end;
 
-	_vm->sdt.clear();
-	_vm->osdt.clear();
+	_vm->_sdText.clear();
+	_vm->_oldSdText.clear();
 }
 
 /*-------------------------------------------------

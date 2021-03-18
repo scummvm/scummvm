@@ -21,10 +21,12 @@
  */
 
 #include "common/scummsys.h"
+#include "nl/extern.h"
 
 #include "trecision/graphics.h"
 #include "trecision/nl/define.h"
 #include "trecision/trecision.h"
+#include "video.h"
 
 namespace Trecision {
 
@@ -89,9 +91,9 @@ void TrecisionEngine::refreshInventory(uint8 StartIcon, uint8 StartLine) {
 }
 
 /*-------------------------------------------------------------------------*/
-/*                                 REGENINV            					   */
+/*                            setInventoryStart					  		   */
 /*-------------------------------------------------------------------------*/
-void TrecisionEngine::RegenInv(uint8 StartIcon, uint8 StartLine) {
+void TrecisionEngine::setInventoryStart(uint8 StartIcon, uint8 StartLine) {
 	_inventoryRefreshStartIcon = StartIcon;
 	_inventoryRefreshStartLine = StartLine;
 }
@@ -102,7 +104,7 @@ void TrecisionEngine::RegenInv(uint8 StartIcon, uint8 StartLine) {
 void TrecisionEngine::moveInventoryLeft() {
 	if (_iconBase < _inventorySize - ICONSHOWN)
 		_iconBase++;
-	RegenInv(_iconBase, INVENTORY_SHOW);
+	setInventoryStart(_iconBase, INVENTORY_SHOW);
 }
 
 /*-------------------------------------------------------------------------*/
@@ -111,7 +113,125 @@ void TrecisionEngine::moveInventoryLeft() {
 void TrecisionEngine::moveInventoryRight() {
 	if (_iconBase > 0)
 		_iconBase--;
-	RegenInv(_iconBase, INVENTORY_SHOW);
+	setInventoryStart(_iconBase, INVENTORY_SHOW);
+}
+
+/*-------------------------------------------------------------------------*/
+/*                                doInventory          					   */
+/*-------------------------------------------------------------------------*/
+void TrecisionEngine::doInventory() {
+	switch (_curMessage->_event) {
+	case ME_OPEN:
+		if ((!_flagInventoryLocked) && (_inventoryStatus == INV_OFF) && !(FlagDialogActive)) {
+			_inventoryCounter = INVENTORY_HIDE;
+			_inventorySpeedIndex = 0;
+			_inventoryStatus = INV_PAINT;
+		}
+		break;
+
+	case ME_CLOSE:
+		if ((!_flagInventoryLocked) && (_inventoryStatus == INV_INACTION) && !(FlagDialogActive)) {
+			_inventoryCounter = INVENTORY_SHOW;
+			_inventorySpeedIndex = 0;
+			_inventoryStatus = INV_DEPAINT;
+			_lightIcon = 0xFF;
+		}
+		break;
+
+	case ME_ONELEFT:
+		if (_inventoryStatus == INV_INACTION)
+			moveInventoryLeft();
+		break;
+
+	case ME_ONERIGHT:
+		if (_inventoryStatus == INV_INACTION)
+			moveInventoryRight();
+		break;
+
+	case ME_OPERATEICON:
+		_curInventory = WhatIcon(mx);
+		if (_curInventory == 0)
+			break;
+
+		if (FlagUseWithStarted) {
+			_flagInventoryLocked = false;
+			FlagUseWithStarted = false;
+			_useWith[WITH] = _curInventory;
+			_useWithInv[WITH] = true;
+
+			if (_useWith[USED] != _curInventory) {
+				doEvent(MC_ACTION, ME_USEWITH, MP_DEFAULT, 0, 0, 0, 0);
+				_lightIcon = 0xFF;
+			}
+			else {
+				_animMgr->stopSmkAnim(_inventoryObj[_useWith[USED]]._anim);
+				ShowInvName(_curInventory, true);
+				_lightIcon = _curInventory;
+			}
+		}
+		else if (_inventoryObj[_curInventory]._flag & OBJFLAG_USEWITH) {
+			if ((_curInventory == iCANDELOTTO) && (_curRoom == r29)) {
+				CharacterSay(1565);
+				return;
+			}
+			_animMgr->startSmkAnim(_inventoryObj[_curInventory]._anim);
+			_lightIcon = _curInventory;
+			setInventoryStart(_iconBase, INVENTORY_SHOW);
+			_flagInventoryLocked = true;
+			FlagUseWithStarted = true;
+			_useWith[USED] = _curInventory;
+			_useWithInv[USED] = true;
+			ShowInvName(_curInventory, true);
+		}
+		else
+			doEvent(MC_ACTION, ME_INVOPERATE, MP_DEFAULT, 0, 0, 0, _curInventory);
+		break;
+
+	case ME_EXAMINEICON:
+		_curInventory = WhatIcon(mx);
+		actorStop();
+		nextStep();
+		if (FlagUseWithStarted) {
+			_flagInventoryLocked = false;
+			FlagUseWithStarted = false;
+			_useWith[WITH] = _curInventory;
+			_useWithInv[WITH] = true;
+			if (_useWith[USED] != _curInventory) {
+				doEvent(MC_ACTION, ME_USEWITH, MP_DEFAULT, 0, 0, 0, 0);
+				_lightIcon = 0xFF;
+			}
+			else {
+				_animMgr->stopSmkAnim(_inventoryObj[_useWith[USED]]._anim);
+				ShowInvName(_curInventory, true);
+				_lightIcon = _curInventory;
+			}
+		}
+		else
+			doEvent(MC_ACTION, ME_INVEXAMINE, MP_DEFAULT, 0, 0, 0, _curInventory);
+		break;
+
+	case ME_SHOWICONNAME:
+		if (ICONAREA(mx, my)) {
+			if (_inventoryStatus != INV_ON)
+				doEvent(MC_INVENTORY, ME_OPEN, MP_DEFAULT, 0, 0, 0, 0);
+			_curInventory = WhatIcon(mx);
+			ShowInvName(_curInventory, true);
+
+			if (!FlagUseWithStarted && !FlagSomeOneSpeak) {
+				setInventoryStart(_iconBase, INVENTORY_SHOW);
+			}
+		}
+		else {
+			if (!(INVAREA(my)))
+				break;
+			ShowInvName(NO_OBJECTS, true);
+			if (!(FlagUseWithStarted)) {
+				_lightIcon = 0xFF;
+				setInventoryStart(_iconBase, INVENTORY_SHOW);
+			}
+		}
+		break;
+	}
 }
 
 } // End of namespace Trecision

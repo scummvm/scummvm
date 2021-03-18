@@ -48,30 +48,33 @@ public:
 	~TrecisionEngine() override;
 
 	Common::Error run() override;
-	void EventLoop();
+	void eventLoop();
 	void refreshInventory(uint8 StartIcon, uint8 StartLine);
 	void moveInventoryLeft();
 	void moveInventoryRight();
-	void RegenInv(uint8 StartIcon, uint8 StartLine);
+	void setInventoryStart(uint8 StartIcon, uint8 StartLine);
+	void doInventory();
 
 	uint16 _curRoom;
 	uint16 _oldRoom;
-	uint16 _curInventory;
-	int32 _curSortTableNum;
-	uint16 _curObj;
-	uint16 CurScriptFrame[10];
-
 	SRoom _room[MAXROOMS];
+
+	int32 _curSortTableNum;
+	uint16 _curScriptFrame[10];
+
+	uint16 _curObj;
 	SObject _obj[MAXOBJ];
-	SInvObject _inventoryObj[MAXINVENTORY];
+
 	uint8 _actionLen[MAXACTION];
 
-	SDText sdt, osdt;
+	SDText _sdText, _oldSdText;
 	int16 _limits[50][4];
 	uint16 _limitsNum;
 	int _actorLimit;
 
 	// Inventory
+	uint16 _curInventory;
+	SInvObject _inventoryObj[MAXINVENTORY];
 	uint8 _inventory[MAXICON];
 	uint8 _inventorySize;
 	uint8 _cyberInventory[MAXICON];
@@ -84,6 +87,11 @@ public:
 	uint16 _lastCurInventory;
 	uint16 _lastLightIcon;
 	int16 _inventoryCounter;
+	bool  _flagInventoryLocked;
+	int16 _inventorySpeed[8];
+	uint8 _inventorySpeedIndex;
+	uint32 _inventoryScrollTime;
+
 
 	bool _fastWalk;
 	bool _fastWalkLocked;
@@ -118,17 +126,18 @@ public:
 
 	uint32 _nextRefresh;
 
-	int _curKey, _curAscii;
-	int16 wmx, wmy;
-	bool wmleft, wmright;
-	int16 omx, omy;
+	int16 _mouseX, _mouseY;
+	int16 _oldMouseX, _oldMouseY;
+	bool _mouseLeftBtn, _mouseRightBtn;
+	int _curKey;
+	uint16 _curAscii;
 	bool _keybInput;
 
 	bool _gamePaused = false;
 	// CloseUp12 and 13
 	uint16 _closeUpObj;
 
-	bool FlagMouseEnabled;
+	bool _fagMouseEnabled;
 
 
 	GraphicsManager *_graphicsMgr;

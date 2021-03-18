@@ -20,6 +20,9 @@
  *
  */
 
+#ifndef TRECISION_EXTERN_H
+#define TRECISION_EXTERN_H
+
 #include "proto.h"
 
 namespace Trecision {
@@ -66,7 +69,6 @@ extern bool  FlagPaintCharacter;
 extern bool  FlagShowCharacter;
 extern bool  FlagSomeOneSpeak;
 extern bool  FlagCharacterSpeak;
-extern bool  FlagInventoryLocked;
 extern bool  FlagUseWithStarted;
 extern bool  FlagUseWithLocked;
 extern bool  FlagMousePolling;
@@ -99,3 +101,4 @@ extern char   *dBattuta[];
 extern uint16   _curDialog, _curChoice, _curSubTitle;
 
 } // End of namespace Trecision
+#endif

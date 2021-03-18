@@ -27,6 +27,8 @@
 #ifndef TRECISION_NL_STRUCT_H
 #define TRECISION_NL_STRUCT_H
 
+#include "trecision/nl/sysdef.h"
+
 namespace Trecision {
 
 struct SRoom {
