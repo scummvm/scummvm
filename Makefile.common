@@ -266,7 +266,7 @@ GIT_VER_MAJOR = $(shell git --version | sed 's/^git version //' | cut -d. -f 1)
 ifeq ($(GIT_VER_MAJOR),1)
 VER_DIRTY := $(shell cd $(srcdir); git update-index --refresh --unmerged 1>/dev/null 2>&1; git diff-index --quiet HEAD || echo "-dirty")
 else
-GIT_DIRTY_FLAG = --dirty
+#GIT_DIRTY_FLAG = --dirty
 endif
 # Get the working copy base revision
 VER_REV := $(shell cd $(srcdir); git describe $(GIT_DIRTY_FLAG) --long --match desc/\* | cut -d '-' -f 2-)$(VER_DIRTY)
