@@ -101,6 +101,26 @@ struct BodyFlags {
 	uint16 unk16 : 1;           // 1 << 15
 };
 
+#include "common/pack-start.h"
+struct BonesBaseData {
+	int16 firstPoint = 0;  // data1
+	int16 numOfPoints = 0; // data2
+	int16 basePoint = 0;   // data3
+	int16 baseElement = 0; // param
+	int16 flag = 0;
+	int16 rotateZ = 0;
+	int16 rotateY = 0;
+	int16 rotateX = 0;
+	int32 numOfShades = 0; // field_10
+	int32 field_14 = 0;
+	int32 field_18 = 0;
+	int32 y = 0;
+	int32 field_20 = 0;
+	int16 field_24 = 0;
+};
+#include "common/pack-end.h"
+static_assert(sizeof(BonesBaseData) == 38, "Unexpected elementEntry size");
+
 class Model {
 private:
 	static uint8 *getBonesData(uint8 *bodyPtr) {
@@ -133,19 +153,23 @@ public:
 	}
 
 	static const BoneFrame *getBonesStateData(const uint8 *bodyPtr, int boneIdx) {
-		return (const BoneFrame*)(getBonesBaseData(bodyPtr) + 8 + (boneIdx * 38));
+		assert(boneIdx <= getNumBones(bodyPtr));
+		return (const BoneFrame*)((const uint8*)getBonesBaseData(bodyPtr) + 8 + (boneIdx * sizeof(BonesBaseData)));
 	}
 
 	static BoneFrame *getBonesStateData(uint8 *bodyPtr, int boneIdx) {
-		return (BoneFrame*)(getBonesBaseData(bodyPtr) + 8 + (boneIdx * 38));
+		assert(boneIdx <= getNumBones(bodyPtr));
+		return (BoneFrame*)((uint8*)getBonesBaseData(bodyPtr) + 8 + (boneIdx * sizeof(BonesBaseData)));
 	}
 
-	static uint8 *getBonesBaseData(uint8 *bodyPtr) {
-		return getBonesData(bodyPtr) + 2;
+	static BonesBaseData *getBonesBaseData(uint8 *bodyPtr, int boneIdx = 0) {
+		assert(boneIdx <= getNumBones(bodyPtr));
+		return (BonesBaseData *)(getBonesData(bodyPtr) + 2 + (boneIdx * sizeof(BonesBaseData)));
 	}
 
-	static const uint8 *getBonesBaseData(const uint8 *bodyPtr, int boneIdx = 0) {
-		return getBonesData(bodyPtr) + 2 + (boneIdx * 38);
+	static const BonesBaseData *getBonesBaseData(const uint8 *bodyPtr, int boneIdx = 0) {
+		assert(boneIdx <= getNumBones(bodyPtr));
+		return (const BonesBaseData *)(getBonesData(bodyPtr) + 2 + (boneIdx * sizeof(BonesBaseData)));
 	}
 
 	static int16 getNumBones(const uint8 *bodyPtr) {
@@ -161,13 +185,14 @@ public:
 	}
 
 	static const uint8 *getShadesBaseData(const uint8 *bodyPtr, int16 shadeIdx = 0) {
+		assert(shadeIdx <= getNumShades(bodyPtr));
 		return getShadesData(bodyPtr) + 2 + (shadeIdx * 8);
 	}
 
 	static const uint8 *getShadesData(const uint8 *bodyPtr) {
-		const uint8 *bonesBase = getBonesBaseData(bodyPtr);
+		const uint8 *bonesBase = (const uint8 *)getBonesBaseData(bodyPtr);
 		const int16 numBones = getNumBones(bodyPtr);
-		return bonesBase + numBones * 38;
+		return bonesBase + numBones * sizeof(BonesBaseData);
 	}
 
 	static int16 getNumShades(const uint8 *bodyPtr) {
@@ -176,8 +201,8 @@ public:
 	}
 
 	static int16 getNumShadesBone(const uint8 *bodyPtr, int boneIdx) {
-		const uint8 *bonesBase = getBonesBaseData(bodyPtr);
-		return READ_LE_INT16(bonesBase + (boneIdx * 38) + 18);
+		const uint8 *bonesBase = (const uint8 *)getBonesBaseData(bodyPtr, boneIdx);
+		return READ_LE_INT16(bonesBase + 18);
 	}
 
 	static const uint8 *getPolygonData(const uint8 *bodyPtr) {
@@ -194,26 +219,6 @@ public:
 		return shades;
 	}
 };
-
-#include "common/pack-start.h"
-struct elementEntry {
-	int16 firstPoint = 0;  // data1
-	int16 numOfPoints = 0; // data2
-	int16 basePoint = 0;   // data3
-	int16 baseElement = 0; // param
-	int16 flag = 0;
-	int16 rotateZ = 0;
-	int16 rotateY = 0;
-	int16 rotateX = 0;
-	int32 numOfShades = 0; // field_10
-	int32 field_14 = 0;
-	int32 field_18 = 0;
-	int32 y = 0;
-	int32 field_20 = 0;
-	int16 field_24 = 0;
-};
-#include "common/pack-end.h"
-static_assert(sizeof(elementEntry) == 38, "Unexpected elementEntry size");
 
 class Renderer {
 private:
@@ -285,9 +290,9 @@ private:
 	void getCameraAnglePositions(int32 x, int32 y, int32 z);
 	void applyRotation(IMatrix3x3 *targetMatrix, const IMatrix3x3 *currentMatrix);
 	void applyPointsRotation(const pointTab *pointsPtr, int32 numPoints, pointTab *destPoints, const IMatrix3x3 *rotationMatrix);
-	void processRotatedElement(IMatrix3x3 *targetMatrix, const pointTab *pointsPtr, int32 rotZ, int32 rotY, int32 rotX, const elementEntry *elemPtr, ModelData *modelData);
+	void processRotatedElement(IMatrix3x3 *targetMatrix, const pointTab *pointsPtr, int32 rotZ, int32 rotY, int32 rotX, const BonesBaseData *elemPtr, ModelData *modelData);
 	void applyPointsTranslation(const pointTab *pointsPtr, int32 numPoints, pointTab *destPoints, const IMatrix3x3 *translationMatrix);
-	void processTranslatedElement(IMatrix3x3 *targetMatrix, const pointTab *pointsPtr, int32 rotX, int32 rotY, int32 rotZ, const elementEntry *elemPtr, ModelData *modelData);
+	void processTranslatedElement(IMatrix3x3 *targetMatrix, const pointTab *pointsPtr, int32 rotX, int32 rotY, int32 rotZ, const BonesBaseData *elemPtr, ModelData *modelData);
 	void translateGroup(int32 x, int32 y, int32 z);
 
 	// ---- variables ----

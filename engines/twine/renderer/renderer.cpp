@@ -328,7 +328,7 @@ void Renderer::applyPointsRotation(const pointTab *pointsPtr, int32 numPoints, p
 	} while (--numOfPoints2);
 }
 
-void Renderer::processRotatedElement(IMatrix3x3 *targetMatrix, const pointTab *pointsPtr, int32 rotZ, int32 rotY, int32 rotX, const elementEntry *elemPtr, ModelData *modelData) {
+void Renderer::processRotatedElement(IMatrix3x3 *targetMatrix, const pointTab *pointsPtr, int32 rotZ, int32 rotY, int32 rotX, const BonesBaseData *elemPtr, ModelData *modelData) {
 	int32 firstPoint = elemPtr->firstPoint / sizeof(pointTab);
 	int32 numOfPoints2 = elemPtr->numOfPoints;
 
@@ -381,7 +381,7 @@ void Renderer::applyPointsTranslation(const pointTab *pointsPtr, int32 numPoints
 	} while (--numOfPoints2);
 }
 
-void Renderer::processTranslatedElement(IMatrix3x3 *targetMatrix, const pointTab *pointsPtr, int32 rotX, int32 rotY, int32 rotZ, const elementEntry *elemPtr, ModelData *modelData) {
+void Renderer::processTranslatedElement(IMatrix3x3 *targetMatrix, const pointTab *pointsPtr, int32 rotX, int32 rotY, int32 rotZ, const BonesBaseData *elemPtr, ModelData *modelData) {
 	renderAngleX = rotX;
 	renderAngleY = rotY;
 	renderAngleZ = rotZ;
@@ -1308,7 +1308,7 @@ bool Renderer::renderAnimatedModel(ModelData *modelData, const uint8 *bodyPtr, R
 
 	IMatrix3x3 *modelMatrix = &matricesTable[0];
 
-	const elementEntry *bonesPtr0 = (const elementEntry *)Model::getBonesBaseData(bodyPtr, 0);
+	const BonesBaseData *bonesPtr0 = Model::getBonesBaseData(bodyPtr, 0);
 	processRotatedElement(modelMatrix, pointsPtr, renderAngleX, renderAngleY, renderAngleZ, bonesPtr0, modelData);
 
 	int32 numOfPrimitives = 0;
@@ -1319,7 +1319,7 @@ bool Renderer::renderAnimatedModel(ModelData *modelData, const uint8 *bodyPtr, R
 
 		int boneIdx = 1;
 		do {
-			const elementEntry *bonesPtr = (const elementEntry *)Model::getBonesBaseData(bodyPtr, boneIdx);
+			const BonesBaseData *bonesPtr = Model::getBonesBaseData(bodyPtr, boneIdx);
 			int16 boneType = bonesPtr->flag;
 
 			if (boneType == 0) {
@@ -1496,14 +1496,12 @@ void Renderer::prepareIsoModel(uint8 *bodyPtr) { // loadGfxSub
 		return;
 	}
 
-	uint8 *bonesBase = Model::getBonesBaseData(bodyPtr);
 	const int16 numBones = Model::getNumBones(bodyPtr);
 
 	// set up bone indices
 	for (int32 i = 0; i < numBones; i++) {
-		bonesBase += sizeof(elementEntry);
-		elementEntry *ee = (elementEntry *)bonesBase;
-		ee->baseElement = ee->baseElement / sizeof(elementEntry);
+		BonesBaseData *bonesBase = Model::getBonesBaseData(bodyPtr, i + 1);
+		bonesBase->baseElement /= sizeof(BonesBaseData);
 	}
 }
 
