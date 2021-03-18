@@ -1090,9 +1090,8 @@ void Scene::updateCoordinates() {
 			if (_ws->coordinates[1] != _ws->yTop)
 				xLeft = _ws->xLeft = getSharedData()->getSceneOffset() + getSharedData()->getSceneCoords().x;
 
-			xLeft = _ws->coordinates[2] + _ws->xLeft;
-			_ws->xLeft += _ws->coordinates[2];
-
+			yTop = _ws->coordinates[2] + _ws->yTop;
+			_ws->yTop += _ws->coordinates[2];
 		} else {
 			coord1 = _ws->coordinates[0];
 			coord2 = xLeft;
@@ -1100,8 +1099,8 @@ void Scene::updateCoordinates() {
 			if (_ws->coordinates[0] != _ws->xLeft)
 				yTop = _ws->yTop = getSharedData()->getSceneOffset() + getSharedData()->getSceneCoords().y;
 
-			yTop = _ws->coordinates[2] + _ws->yTop;
-			_ws->yTop += _ws->coordinates[2];
+			xLeft = _ws->coordinates[2] + _ws->xLeft;
+			_ws->xLeft += _ws->coordinates[2];
 		}
 
 		if (abs(coord2 - coord1) <= abs(_ws->coordinates[2])) {
@@ -2125,7 +2124,7 @@ bool Scene::updateSceneCoordinates(int32 tX, int32 tY, int32 A0, bool checkScene
 	if (*targetX + 640 > sr->right)
 		*targetX = sr->right - 640;
 
-	if (*targetY + 480 < sr->bottom)
+	if (*targetY + 480 > sr->bottom)
 		*targetY = sr->bottom - 480;
 
 	if (checkSceneCoords)
