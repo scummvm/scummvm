@@ -338,7 +338,6 @@ void AGDSEngine::loadScreen(const Common::String &name, ScreenLoadingType loadin
 	for(uint i = 0; i < _processes.size(); ++i) {
 		_processes[i].reset();
 	}
-	_animations.clear();
 
 	auto patch = getPatch(name);
 	bool doPatch = patch && loadingType != ScreenLoadingType::SaveOrLoad;
@@ -805,9 +804,6 @@ int AGDSEngine::getGlobal(const Common::String &name) const {
 
 Animation *AGDSEngine::loadAnimation(const Common::String &name) {
 	debug("loadAnimation %s", name.c_str());
-	AnimationsType::iterator i = _animations.find(name);
-	if (i != _animations.end())
-		return i->_value;
 
 	Common::SeekableReadStream *stream = _resourceManager.getResource(name);
 	if (!stream)
@@ -816,7 +812,6 @@ Animation *AGDSEngine::loadAnimation(const Common::String &name) {
 	if (!animation->load(stream, name))
 		error("could not load animation from %s", name.c_str());
 
-	_animations[name] = animation;
 	return animation;
 }
 

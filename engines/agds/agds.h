@@ -284,7 +284,6 @@ private:
 	typedef Common::Array<Common::String> SystemVariablesListType;
 	typedef Common::HashMap<Common::String, SystemVariable *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> SystemVariablesType;
 	typedef Common::HashMap<Common::String, int, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> GlobalsType;
-	typedef Common::HashMap<Common::String, Animation *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> AnimationsType;
 	typedef Common::HashMap<int, Font *> FontsType;
 	typedef Common::HashMap<Common::String, PatchPtr, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> PatchesType;
 	typedef Common::HashMap<Common::String, ObjectPatchPtr, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> ObjectPatchesType;
@@ -298,7 +297,6 @@ private:
 	PictureCacheLookup			_pictureCacheLookup;
 	int							_pictureCacheId;
 	FontsType					_fonts;
-	AnimationsType				_animations;
 	ProcessListType				_processes;
 	PatchesType					_patches;
 	ObjectPatchesType			_objectPatches;
