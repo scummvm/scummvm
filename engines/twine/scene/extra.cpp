@@ -405,7 +405,7 @@ void Extra::addExtraThrowMagicball(int32 x, int32 y, int32 z, int32 xAngle, int3
 void Extra::drawSpecialShape(const ExtraShape &shapeTable, int32 x, int32 y, int32 color, int32 angle, int32 size) {
 	int shapeDataIndex = 0;
 	int16 var_x = shapeTable.data[shapeDataIndex].x * size / 16;
-	int16 var_z = shapeTable.data[shapeDataIndex].x * size / 16;
+	int16 var_z = shapeTable.data[shapeDataIndex].z * size / 16;
 
 	++shapeDataIndex;
 
@@ -440,7 +440,7 @@ void Extra::drawSpecialShape(const ExtraShape &shapeTable, int32 x, int32 y, int
 
 	for (int32 numEntries = 1; numEntries < shapeTable.n; ++numEntries) {
 		var_x = shapeTable.data[shapeDataIndex].x * size / 16;
-		var_z = shapeTable.data[shapeDataIndex].x * size / 16;
+		var_z = shapeTable.data[shapeDataIndex].z * size / 16;
 		++shapeDataIndex;
 
 		const int32 oldComputedX = currentX;
