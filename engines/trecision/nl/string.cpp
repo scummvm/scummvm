@@ -24,7 +24,6 @@
 #include <stdio.h>
 #include "common/scummsys.h"
 #include "trecision/nl/3d/3dinc.h"
-#include "trecision/nl/sysdef.h"
 #include "trecision/nl/struct.h"
 #include "trecision/nl/define.h"
 #include "trecision/nl/message.h"
@@ -72,25 +71,18 @@ void RepaintString() {
 /*                                 POSITIONSTRING           			   */
 /*-------------------------------------------------------------------------*/
 void PositionString(uint16 x, uint16 y, const char *string, uint16 *posx, uint16 *posy, bool characterFl) {
-	uint16 TheVideoLen = MAXX;
+	uint16 lenText = TextLength(string, 0);
+	if (lenText > 960)
+		lenText = (lenText * 2 / 5);
+	else if (lenText > 320)
+		lenText = (lenText * 3 / 5);
 
-	uint16 LenText = TextLength(string, 0);
-	if (LenText > 960)
-		LenText = (LenText * 2 / 5);
-	else if (LenText > 320)
-		LenText = (LenText * 3 / 5);
-
-	if (x > (LenText >> 1))
-		x -= (LenText >> 1);
+	if (x > (lenText >> 1))
+		x -= (lenText >> 1);
 	else
 		x = 0;
 
-	if (x < 5)
-		*posx = 5;
-	else if ((LenText + x) > (TheVideoLen - 5))
-		*posx = TheVideoLen - LenText - 5;
-	else
-		*posx = x;
+	*posx = CLIP<uint16>(x, 5, MAXX - lenText - 5);
 
 	*posy = characterFl ? 0 : VIDEOTOP;
 	*posy += y - 1; //15
@@ -139,17 +131,11 @@ void ShowObjName(uint16 obj, bool showhide) {
 				locsent += g_vm->_objName[g_vm->_obj[obj]._name];
 		}
 
-		posx = 320;
-		posy = MAXY - CARHEI;
 		lastobj = (obj | 0x8000);
-		uint16 LenText = TextLength(locsent.c_str(), 0);
-		if (posx - (LenText / 2) < 2)
-			posx = 2;
-		else
-			posx = posx - (LenText / 2);
+		uint16 lenText = TextLength(locsent.c_str(), 0);
 
-		if ((posx + LenText) > SCREENLEN - 2)
-			posx = SCREENLEN - 2 - LenText;
+		posx = CLIP(320 - (lenText / 2), 2, SCREENLEN - 2 - lenText);
+		posy = MAXY - CARHEI;
 
 		if (lastobj)
 			ClearText();
@@ -177,17 +163,9 @@ void ShowObjName(uint16 obj, bool showhide) {
 		else
 			locsent = g_vm->_objName[g_vm->_obj[obj]._name];
 
-		switch (obj) {
-		case oRUOTE2C:
-			posx = (g_vm->_obj[obj]._lim[0] + g_vm->_obj[obj]._lim[2]) / 2;
-			posy = 187;
-			break;
+		posx = (g_vm->_obj[obj]._lim[0] + g_vm->_obj[obj]._lim[2]) / 2;
+		posy = (obj == oRUOTE2C) ? 187 : g_vm->_obj[obj]._lim[1];
 
-		default:
-			posx = (g_vm->_obj[obj]._lim[0] + g_vm->_obj[obj]._lim[2]) / 2;
-			posy = g_vm->_obj[obj]._lim[1];
-			break;
-		}
 		PositionString(posx, posy, locsent.c_str(), &posx, &posy, false);
 		if (lastobj)
 			ClearText();
@@ -242,19 +220,12 @@ void ShowInvName(uint16 obj, bool showhide) {
 			if (obj && (g_vm->_obj[g_vm->_useWith[USED]]._name != g_vm->_inventoryObj[obj]._name))
 				strcat(locsent, g_vm->_objName[g_vm->_inventoryObj[obj]._name]);
 		}
-		posx = 320;
-		//   	posx = ICONMARGSX+((IconPos(_useWith[USED])-_iconBase)*(ICONDX))+ICONDX/2;
-		posy = MAXY - CARHEI;
-		lastinv = (obj | 0x8000);
+
 		LenText = TextLength(locsent, 0);
-		if (posx - (LenText / 2) < 2)
-			posx = 2;
-		else
-			posx = posx - (LenText / 2);
+		posx = CLIP(320 - (LenText / 2), 2, SCREENLEN - 2 - LenText);
+		posy = MAXY - CARHEI;
 
-		if ((posx + LenText) > SCREENLEN - 2)
-			posx = SCREENLEN - 2 - LenText;
-
+		lastinv = (obj | 0x8000);
 		if (lastinv)
 			ClearText();
 		Text(posx, posy, locsent, COLOR_INVENTORY, MASKCOL);
@@ -271,14 +242,9 @@ void ShowInvName(uint16 obj, bool showhide) {
 		posy = MAXY - CARHEI;
 		lastinv = obj;
 		LenText = TextLength(g_vm->_objName[g_vm->_inventoryObj[obj]._name], 0);
-		if (posx - (LenText / 2) < 2)
-			posx = 2;
-		else
-			posx = posx - (LenText / 2);
 
-		if ((posx + LenText) > SCREENLEN - 2)
-			posx = SCREENLEN - 2 - LenText;
-
+		posx = CLIP(posx - (LenText / 2), 2, SCREENLEN - 2 - LenText);
+		
 		if (lastinv)
 			ClearText();
 
