@@ -2142,7 +2142,8 @@ bool Scene::updateSceneCoordinates(int32 tX, int32 tY, int32 A0, bool checkScene
 		if (_ws->yTop > *targetY)
 			*coord3 = -*coord3;
 
-		getSharedData()->setSceneOffsetAdd((int16)Common::Rational(*coord3 * diffX, diffY).toInt());
+		if (diffY)
+			getSharedData()->setSceneOffsetAdd((int16)Common::Rational(*coord3 * diffX, diffY).toInt());
 
 		if (param != NULL && abs(diffY) <= abs(*coord3)) {
 			*targetX = -1;
