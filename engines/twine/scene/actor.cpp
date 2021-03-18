@@ -190,9 +190,11 @@ int32 Actor::initBody(BodyType bodyIdx, int32 actorIdx, ActorBoundingBox &actorB
 					currentPositionInBodyPtrTab++;
 					_engine->_resources->bodyTableSize[index] = HQR::getAllocEntry(&_engine->_resources->bodyTable[index], Resources::HQR_BODY_FILE, bodyIndex & 0xFFFF);
 					if (_engine->_resources->bodyTableSize[index] == 0) {
-						error("HQR ERROR: Loading body entities");
+						error("HQR ERROR: Loading body entity for actor %i: %i", actorIdx, (int)bodyIdx);
 					}
-					_engine->_resources->bodyData[index].loadFromBuffer(_engine->_resources->bodyTable[index], _engine->_resources->bodyTableSize[index]);
+					if (!_engine->_resources->bodyData[index].loadFromBuffer(_engine->_resources->bodyTable[index], _engine->_resources->bodyTableSize[index])) {
+						error("HQR ERROR: Parsing body entity for actor %i: %i", actorIdx, (int)bodyIdx);
+					}
 					stream.seek(stream.pos() - sizeof(uint16));
 					stream.writeUint16LE(index + 0x8000);
 				} else {

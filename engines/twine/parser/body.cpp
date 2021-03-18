@@ -101,14 +101,14 @@ void BodyData::loadPolygons(Common::SeekableReadStream &stream) {
 
 		poly.color = stream.readUint16LE();
 		int16 intensity = -1;
-		if (poly.renderType >= 7 && poly.renderType < 9) {
+		if (poly.renderType == POLYGONTYPE_GOURAUD || poly.renderType == POLYGONTYPE_DITHER) {
 			intensity = stream.readSint16LE();
 		}
 
 		poly.indices.reserve(numVertex);
 		poly.intensities.reserve(numVertex);
 		for (int k = 0; k < numVertex; ++k) {
-			if (poly.renderType >= 9) {
+			if (poly.renderType >= POLYGONTYPE_UNKNOWN) {
 				intensity = stream.readSint16LE();
 			}
 			const uint16 vertexIndex = stream.readUint16LE() / 6;

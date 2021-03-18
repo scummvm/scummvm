@@ -38,6 +38,7 @@
 #define POLYGONTYPE_TRAME 6
 #define POLYGONTYPE_GOURAUD 7
 #define POLYGONTYPE_DITHER 8
+#define POLYGONTYPE_UNKNOWN 9
 
 namespace Common {
 class MemoryReadStream;
