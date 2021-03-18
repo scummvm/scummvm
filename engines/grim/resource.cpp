@@ -375,7 +375,7 @@ Font *ResourceLoader::loadFont(const Common::String &filename) {
 			Common::String line = stream->readLine();
 			Common::String font;
 			Common::String size;
-			for (int i = 0; i < line.size(); ++i) {
+			for (uint i = 0; i < line.size(); ++i) {
 				if (line[i] == ' ') {
 					font = "FontsHD/" + Common::String(line.c_str(), i);
 					size = Common::String(line.c_str() + i + 1, line.size() - i - 2);
