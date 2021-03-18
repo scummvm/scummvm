@@ -23,8 +23,10 @@
 #ifndef TRECISION_PROTO_H
 #define TRECISION_PROTO_H
 
-#include "Common/str.h"
-#include "define.h"
+#include "common/str.h"
+
+#include "trecision/nl/struct.h"
+#include "trecision/nl/define.h"
 
 void warning(const char *format, ...);
 
@@ -127,7 +129,6 @@ void sortPanel();
 void actorOrder();
 void doAction();
 void doMouse();
-void doInventory();
 void StartCharacterAction(uint16 Act, uint16 NewRoom, uint8 NewPos, uint16 sent);
 void doCharacter();
 void doSystem();

@@ -161,7 +161,7 @@ void ProcessTheMessage() {
 //F		case MC_ANIMATION: doAnimation(); break;
 
 	case MC_INVENTORY:
-		doInventory();
+		g_vm->doInventory();
 		break;
 
 	case MC_ACTION:

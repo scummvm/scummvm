@@ -60,7 +60,7 @@ TrecisionEngine::TrecisionEngine(OSystem *syst) : Engine(syst) {
 	_curSortTableNum = 0;
 
 	for (int i = 0; i < 10; ++i)
-		CurScriptFrame[i] = 0;
+		_curScriptFrame[i] = 0;
 
 	// Inventory
 	for (int i = 0; i < MAXICON; ++i) {
@@ -73,6 +73,15 @@ TrecisionEngine::TrecisionEngine(OSystem *syst) : Engine(syst) {
 	_iconBase = 0;
 	_inventoryRefreshStartIcon = 0;
 	_lastCurInventory = 0;
+	_flagInventoryLocked = false;
+	_inventorySpeed[0] = 20;
+	_inventorySpeed[1] = 10;
+	_inventorySpeed[2] = 5;
+	_inventorySpeed[3] = 3;
+	_inventorySpeed[4] = 2;
+	_inventorySpeed[5] = _inventorySpeed[6] = _inventorySpeed[7] = 0;
+	_inventorySpeedIndex = 0;
+	_inventoryScrollTime = 0;
 
 	_fastWalk = false;
 	_fastWalkLocked = false;
@@ -123,13 +132,13 @@ TrecisionEngine::TrecisionEngine(OSystem *syst) : Engine(syst) {
 	_nextRefresh = 0;
 
 	_curKey = _curAscii = 0;
-	wmx = wmy = 0;
-	wmleft = wmright = false;
-	omx = omy = 0;
+	_mouseX = _mouseY = 0;
+	_mouseLeftBtn = _mouseRightBtn = false;
+	_oldMouseX = _oldMouseY = 0;
 	_keybInput = false;
 
 	_gamePaused = false;
-	FlagMouseEnabled = true;
+	_fagMouseEnabled = true;
 
 	_closeUpObj = 0;
 }
@@ -148,36 +157,36 @@ Common::Error TrecisionEngine::run() {
 	initMain();
 
 	while (!g_engine->shouldQuit()) {
-		EventLoop();
+		eventLoop();
 		NextMessage();
 	}
 
 	return Common::kNoError;
 }
 
-void TrecisionEngine::EventLoop() {
+void TrecisionEngine::eventLoop() {
 	Common::Event event;
 	while (g_system->getEventManager()->pollEvent(event)) {
 		switch (event.type) {
 		case Common::EVENT_MOUSEMOVE:
-			wmx = event.mouse.x;
-			wmy = event.mouse.y;
+			_mouseX = event.mouse.x;
+			_mouseY = event.mouse.y;
 			break;
 
 		case Common::EVENT_LBUTTONDOWN:
-			wmleft = true;
+			_mouseLeftBtn = true;
 			break;
 
 		case Common::EVENT_LBUTTONUP:
-			wmleft = false;
+			_mouseLeftBtn = false;
 			break;
 
 		case Common::EVENT_RBUTTONDOWN:
-			wmright = true;
+			_mouseRightBtn = true;
 			break;
 
 		case Common::EVENT_RBUTTONUP:
-			wmright = false;
+			_mouseRightBtn = false;
 			break;
 
 		case Common::EVENT_KEYDOWN:

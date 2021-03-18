@@ -50,7 +50,7 @@ uint16 Try41;
 /*                                 ROOMIN             					   */
 /*-------------------------------------------------------------------------*/
 void doRoomIn(uint16 curObj) {
-	g_vm->FlagMouseEnabled = false;
+	g_vm->_fagMouseEnabled = false;
 
 	uint16 theAction = g_vm->_obj[curObj]._anim;
 	uint16 thePos = g_vm->_obj[curObj]._ninv;
@@ -66,13 +66,13 @@ void doRoomIn(uint16 curObj) {
 void doRoomOut(uint16 TheObj) {
 	uint16 TheAction, ThePos;
 
-	g_vm->FlagMouseEnabled = false;
+	g_vm->_fagMouseEnabled = false;
 
 	switch (TheObj) {
 	case oSCALA32:
 		if (g_vm->_obj[oBOTOLAC32]._mode & OBJMODE_OBJSTATUS) {
 			CharacterSay(g_vm->_obj[TheObj]._action);
-			g_vm->FlagMouseEnabled = true;
+			g_vm->_fagMouseEnabled = true;
 			TheAction = 0;
 			ThePos = 0;
 		} else {
@@ -1297,7 +1297,7 @@ void doMouseTake(uint16 TheObj) {
 	if (!TheObj)
 		warning("doMouseTake");
 
-// FlagMouseEnabled = false;
+// _fagMouseEnabled = false;
 	switch (TheObj) {
 	case oTINFOIL11:
 		del = false;
@@ -1721,7 +1721,7 @@ void doInvInvUseWith() {
 	if (printSentence)
 		CharacterSay(g_vm->_inventoryObj[g_vm->_useWith[USED]]._action);
 	if (updateInv)
-		g_vm->RegenInv(g_vm->_iconBase, INVENTORY_SHOW);
+		g_vm->setInventoryStart(g_vm->_iconBase, INVENTORY_SHOW);
 }
 
 /*-------------------------------------------------------------------------*/
@@ -2852,7 +2852,7 @@ void doInvScrUseWith() {
 		CharacterSay(g_vm->_inventoryObj[g_vm->_useWith[USED]]._action);
 
 	if (updateinv)
-		g_vm->RegenInv(g_vm->_iconBase, INVENTORY_SHOW);
+		g_vm->setInventoryStart(g_vm->_iconBase, INVENTORY_SHOW);
 }
 
 /*-------------------------------------------------------------------------*/
@@ -3132,7 +3132,7 @@ void doDoing() {
 	case ME_WAITOPENCLOSE:
 		RegenRoom();
 		if (_actor._curAction == hSTAND)
-			g_vm->FlagMouseEnabled = true;
+			g_vm->_fagMouseEnabled = true;
 		break;
 	}
 }
@@ -3593,7 +3593,7 @@ void AtEndChangeRoom() {
 	         (g_vm->_curRoom == r12CU) || (g_vm->_curRoom == r13CU)) { // Screens without inventory
 		FlagShowCharacter = false;
 		FlagCharacterExist = false;
-		FlagInventoryLocked = true;
+		g_vm->_flagInventoryLocked = true;
 	} else if ((g_vm->_curRoom == r31P) || (g_vm->_curRoom == r35P)) { // Screens with inventory
 		FlagShowCharacter = false;
 		FlagCharacterExist = false;

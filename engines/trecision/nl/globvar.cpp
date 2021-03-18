@@ -69,7 +69,6 @@ bool  FlagPaintCharacter;
 bool  FlagShowCharacter = true;
 bool  FlagSomeOneSpeak;
 bool  FlagCharacterSpeak;
-bool  FlagInventoryLocked;
 bool  FlagUseWithStarted;
 bool  FlagUseWithLocked;
 bool  FlagMousePolling;

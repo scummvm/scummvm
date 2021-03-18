@@ -80,20 +80,20 @@ void ProcessMouse() {
 	static uint16 oldmy;
 	static bool LastMouseON = true;
 
-	if ((LastMouseON == true) && (g_vm->FlagMouseEnabled == false)) {
+	if ((LastMouseON == true) && (g_vm->_fagMouseEnabled == false)) {
 		oldmx = 0;    // Switch off
 		oldmy = 0;
 		Mouse(MCMD_OFF);
-	} else if ((LastMouseON == false) && (g_vm->FlagMouseEnabled == true)) {
+	} else if ((LastMouseON == false) && (g_vm->_fagMouseEnabled == true)) {
 		oldmx = 0;    // Switch on
 		oldmy = 0;
 		Mouse(MCMD_ON);
 	}
 
-	LastMouseON = g_vm->FlagMouseEnabled;
+	LastMouseON = g_vm->_fagMouseEnabled;
 	Mouse(MCMD_UPDT);
 
-	if (!g_vm->FlagMouseEnabled)
+	if (!g_vm->_fagMouseEnabled)
 		return;
 
 	uint16 tmpMx = mx;

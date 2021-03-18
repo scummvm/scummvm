@@ -84,16 +84,16 @@ void VPix(int16 x, int16 y, uint16 col) {
 					VMouseOFF
 --------------------------------------------------*/
 void VMouseOFF() {
-	int16 comx = g_vm->omx;
+	int16 comx = g_vm->_oldMouseX;
 
 	bool vl = g_vm->_graphicsMgr->_locked;
 	if (!vl)
 		g_vm->_graphicsMgr->lock();
 
 	for (int16 i = (comx - 10); i <= (comx + 10); i++)
-		VPix(i, g_vm->omy, vr(i, g_vm->omy));
+		VPix(i, g_vm->_oldMouseY, vr(i, g_vm->_oldMouseY));
 
-	for (int16 i = (g_vm->omy - 10); i <= (g_vm->omy + 10); i++)
+	for (int16 i = (g_vm->_oldMouseY - 10); i <= (g_vm->_oldMouseY + 10); i++)
 		VPix(comx, i, vr(comx, i));
 
 	if (!vl)
@@ -107,7 +107,7 @@ void VMouseON() {
 	if (!g_vm->_mouseONOFF)
 		return ;
 
-	int16 comx = g_vm->omx;
+	int16 comx = g_vm->_oldMouseX;
 	int16 cmx = mx;
 	uint16 mc = g_vm->_graphicsMgr->palTo16bit(255, 255, 255);
 
@@ -116,11 +116,11 @@ void VMouseON() {
 		g_vm->_graphicsMgr->lock();
 
 	for (int16 i = (comx - 10); i <= (comx + 10); i++) {
-		if ((!(((i >= (cmx - 10)) && (i <= (cmx + 10))) && (g_vm->omy == my))))
-			VPix(i, g_vm->omy, vr(i, g_vm->omy));
+		if ((!(((i >= (cmx - 10)) && (i <= (cmx + 10))) && (g_vm->_oldMouseY == my))))
+			VPix(i, g_vm->_oldMouseY, vr(i, g_vm->_oldMouseY));
 	}
 
-	for (int16 i = (g_vm->omy - 10); i <= (g_vm->omy + 10); i++) {
+	for (int16 i = (g_vm->_oldMouseY - 10); i <= (g_vm->_oldMouseY + 10); i++) {
 		if ((!(((i >= (my - 10)) && (i <= (my + 10))) && (comx == cmx))))
 			VPix(comx, i, vr(comx, i));
 	}
@@ -147,8 +147,8 @@ void VMouseON() {
 	}
 
 	VPix(cmx, my, mc);
-	g_vm->omx = mx;
-	g_vm->omy = my;
+	g_vm->_oldMouseX = mx;
+	g_vm->_oldMouseY = my;
 
 	if (!vl)
 		g_vm->_graphicsMgr->unlock();
@@ -163,11 +163,11 @@ void VMouseRestore() {
 	if (!g_vm->_mouseONOFF)
 		return ;
 
-	for (int32 i = (g_vm->omx - 10); i <= (g_vm->omx + 10); i++)
-		g_vm->_video2[i + g_vm->omy * MAXX] = MouseBuf[c++];
+	for (int32 i = (g_vm->_oldMouseX - 10); i <= (g_vm->_oldMouseX + 10); i++)
+		g_vm->_video2[i + g_vm->_oldMouseY * MAXX] = MouseBuf[c++];
 
-	for (int32 i = (g_vm->omy - 10); i <= (g_vm->omy + 10); i++)
-		g_vm->_video2[g_vm->omx + i * MAXX] = MouseBuf[c++];
+	for (int32 i = (g_vm->_oldMouseY - 10); i <= (g_vm->_oldMouseY + 10); i++)
+		g_vm->_video2[g_vm->_oldMouseX + i * MAXX] = MouseBuf[c++];
 }
 
 /*-----------------05/03/98 11.21-------------------
@@ -180,19 +180,19 @@ void VMouseCopy() {
 	int32 c = 0;
 	uint16 mc = g_vm->_graphicsMgr->palTo16bit(255, 255, 255);
 
-	for (int32 i = (g_vm->omx - 10); i <= (g_vm->omx + 10); i++)
-		MouseBuf[c++] = g_vm->_video2[i + g_vm->omy * MAXX];
-	for (int32 i = (g_vm->omy - 10); i <= (g_vm->omy + 10); i++)
-		MouseBuf[c++] = g_vm->_video2[g_vm->omx + i * MAXX];
+	for (int32 i = (g_vm->_oldMouseX - 10); i <= (g_vm->_oldMouseX + 10); i++)
+		MouseBuf[c++] = g_vm->_video2[i + g_vm->_oldMouseY * MAXX];
+	for (int32 i = (g_vm->_oldMouseY - 10); i <= (g_vm->_oldMouseY + 10); i++)
+		MouseBuf[c++] = g_vm->_video2[g_vm->_oldMouseX + i * MAXX];
 
-	for (int32 i = (g_vm->omx - 10); i <= (g_vm->omx + 10); i++) {
-		if ((i != g_vm->omx - 2) && (i != g_vm->omx - 1) && (i != g_vm->omx + 1) && (i != g_vm->omx + 2))
-			g_vm->_video2[i + g_vm->omy * MAXX] = mc;
+	for (int32 i = (g_vm->_oldMouseX - 10); i <= (g_vm->_oldMouseX + 10); i++) {
+		if ((i != g_vm->_oldMouseX - 2) && (i != g_vm->_oldMouseX - 1) && (i != g_vm->_oldMouseX + 1) && (i != g_vm->_oldMouseX + 2))
+			g_vm->_video2[i + g_vm->_oldMouseY * MAXX] = mc;
 	}
 
-	for (int32 i = (g_vm->omy - 10); i <= (g_vm->omy + 10); i++) {
-		if ((i != g_vm->omy - 2) && (i != g_vm->omy - 1) && (i != g_vm->omy + 1) && (i != g_vm->omy + 2))
-			g_vm->_video2[g_vm->omx + i * MAXX] = mc;
+	for (int32 i = (g_vm->_oldMouseY - 10); i <= (g_vm->_oldMouseY + 10); i++) {
+		if ((i != g_vm->_oldMouseY - 2) && (i != g_vm->_oldMouseY - 1) && (i != g_vm->_oldMouseY + 1) && (i != g_vm->_oldMouseY + 2))
+			g_vm->_video2[g_vm->_oldMouseX + i * MAXX] = mc;
 	}
 }
 
@@ -616,12 +616,12 @@ insave:
 		fwrite(&OldIconBase,         sizeof(uint8), 1, fh);
 		fwrite(&Flagskiptalk,         sizeof(int16), 1, fh);
 		fwrite(&Flagskipenable,       sizeof(int16), 1, fh);
-		fwrite(&g_vm->FlagMouseEnabled, sizeof(int16), 1, fh);
+		fwrite(&g_vm->_fagMouseEnabled, sizeof(int16), 1, fh);
 		fwrite(&FlagScreenRefreshed,  sizeof(int16), 1, fh);
 		fwrite(&FlagPaintCharacter,        sizeof(int16), 1, fh);
 		fwrite(&FlagSomeOneSpeak,     sizeof(int16), 1, fh);
 		fwrite(&FlagCharacterSpeak,        sizeof(int16), 1, fh);
-		fwrite(&FlagInventoryLocked,  sizeof(int16), 1, fh);
+		fwrite(&g_vm->_flagInventoryLocked,  sizeof(int16), 1, fh);
 		fwrite(&FlagUseWithStarted,   sizeof(int16), 1, fh);
 		fwrite(&FlagMousePolling,     sizeof(int16), 1, fh);
 		fwrite(&FlagDialogSolitaire,  sizeof(int16), 1, fh);
@@ -731,8 +731,8 @@ bool DataLoad() {
 	for (int a = 0; a < TOP; a++)
 		wordset(g_vm->_video2 + CurRoomMaxX * a + CurScrollPageDx, 0, SCREENLEN);
 
-	if (!g_vm->FlagMouseEnabled) {
-		g_vm->FlagMouseEnabled = true;
+	if (!g_vm->_fagMouseEnabled) {
+		g_vm->_fagMouseEnabled = true;
 		Mouse(MCMD_ON);
 	}
 
@@ -872,12 +872,12 @@ bool DataLoad() {
 		fread(&OldIconBase,         sizeof(uint8), 1, fh);
 		fread(&Flagskiptalk,         sizeof(int16), 1, fh);
 		fread(&Flagskipenable,       sizeof(int16), 1, fh);
-		fread(&g_vm->FlagMouseEnabled, sizeof(int16), 1, fh);
+		fread(&g_vm->_fagMouseEnabled, sizeof(int16), 1, fh);
 		fread(&FlagScreenRefreshed,  sizeof(int16), 1, fh);
 		fread(&FlagPaintCharacter,        sizeof(int16), 1, fh);
 		fread(&FlagSomeOneSpeak,     sizeof(int16), 1, fh);
 		fread(&FlagCharacterSpeak,        sizeof(int16), 1, fh);
-		fread(&FlagInventoryLocked,  sizeof(int16), 1, fh);
+		fread(&g_vm->_flagInventoryLocked,  sizeof(int16), 1, fh);
 		fread(&FlagUseWithStarted,   sizeof(int16), 1, fh);
 		fread(&FlagMousePolling,     sizeof(int16), 1, fh);
 		fread(&FlagDialogSolitaire,  sizeof(int16), 1, fh);
@@ -988,7 +988,7 @@ bool DataLoad() {
 		Mouse(MCMD_UPDT);
 
 	if (Flagscriptactive) {
-		g_vm->FlagMouseEnabled = false;
+		g_vm->_fagMouseEnabled = false;
 		Mouse(MCMD_OFF);
 	}
 

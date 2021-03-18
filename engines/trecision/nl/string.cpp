@@ -57,7 +57,7 @@ const char *dunno = "?";
 /*                                 REPAINTSTRING         				   */
 /*-------------------------------------------------------------------------*/
 void RepaintString() {
-	if (!FlagDialogActive && !FlagDialogMenuActive && !FlagSomeOneSpeak && !Flagscriptactive && g_vm->FlagMouseEnabled) {
+	if (!FlagDialogActive && !FlagDialogMenuActive && !FlagSomeOneSpeak && !Flagscriptactive && g_vm->_fagMouseEnabled) {
 		if (INVAREA(my))
 			doEvent(MC_INVENTORY, ME_SHOWICONNAME, MP_DEFAULT, 0, 0, 0, 0);
 		else {

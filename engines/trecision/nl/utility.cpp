@@ -139,7 +139,7 @@ void EndScript() {
 	CurStack--;
 	if (CurStack == 0) {
 		Flagscriptactive = false;
-		g_vm->FlagMouseEnabled = true;
+		g_vm->_fagMouseEnabled = true;
 		RepaintString();
 	}
 }
@@ -150,10 +150,10 @@ void EndScript() {
 void PlayScript(uint16 i) {
 	CurStack++;
 	Flagscriptactive = true;
-	g_vm->FlagMouseEnabled = false;
-	g_vm->CurScriptFrame[CurStack] = Script[i]._firstFrame;
+	g_vm->_fagMouseEnabled = false;
+	g_vm->_curScriptFrame[CurStack] = Script[i]._firstFrame;
 
-	SScriptFrame *curFrame = &ScriptFrame[g_vm->CurScriptFrame[CurStack]];
+	SScriptFrame *curFrame = &ScriptFrame[g_vm->_curScriptFrame[CurStack]];
 	// If the event is empty, terminate the script
 	if ((curFrame->_class == 0) && (curFrame->_event == 0)) {
 		EndScript();
@@ -163,11 +163,11 @@ void PlayScript(uint16 i) {
 	bool loop = true;
 	while (loop) {
 		loop = false;
-		curFrame = &ScriptFrame[g_vm->CurScriptFrame[CurStack]];
-		SScriptFrame *nextFrame = &ScriptFrame[g_vm->CurScriptFrame[CurStack] + 1];
+		curFrame = &ScriptFrame[g_vm->_curScriptFrame[CurStack]];
+		SScriptFrame *nextFrame = &ScriptFrame[g_vm->_curScriptFrame[CurStack] + 1];
 		curFrame->sendFrame();
 		if (curFrame->_noWait && !((nextFrame->_class == 0) && (nextFrame->_event == 0))) {
-			g_vm->CurScriptFrame[CurStack]++;
+			g_vm->_curScriptFrame[CurStack]++;
 			loop = true;
 		}
 	}
@@ -178,10 +178,10 @@ void PlayScript(uint16 i) {
 /*-------------------------------------------------------------------------*/
 void EvalScript() {
 	if (g_vm->_characterQueue.testEmptyCharacterQueue4Script() && g_vm->_gameQueue.testEmptyQueue(MC_DIALOG) && FlagScreenRefreshed) {
-		g_vm->CurScriptFrame[CurStack]++;
-		g_vm->FlagMouseEnabled = false;
+		g_vm->_curScriptFrame[CurStack]++;
+		g_vm->_fagMouseEnabled = false;
 
-		SScriptFrame *curFrame = &ScriptFrame[g_vm->CurScriptFrame[CurStack]];
+		SScriptFrame *curFrame = &ScriptFrame[g_vm->_curScriptFrame[CurStack]];
 		if ((curFrame->_class == 0) && (curFrame->_event == 0)) {
 			EndScript();
 			return;
@@ -190,11 +190,11 @@ void EvalScript() {
 		bool loop = true;
 		while (loop) {
 			loop = false;
-			curFrame = &ScriptFrame[g_vm->CurScriptFrame[CurStack]];
-			SScriptFrame *nextFrame = &ScriptFrame[g_vm->CurScriptFrame[CurStack] + 1];
+			curFrame = &ScriptFrame[g_vm->_curScriptFrame[CurStack]];
+			SScriptFrame *nextFrame = &ScriptFrame[g_vm->_curScriptFrame[CurStack] + 1];
 			curFrame->sendFrame();
 			if (curFrame->_noWait && !((nextFrame->_class == 0) && (nextFrame->_event == 0))) {
-				g_vm->CurScriptFrame[CurStack]++;
+				g_vm->_curScriptFrame[CurStack]++;
 				loop = true;
 			}
 		}
