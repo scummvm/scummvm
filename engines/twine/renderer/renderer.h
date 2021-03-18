@@ -159,12 +159,6 @@ struct Model {
 		return READ_LE_INT16(verticesBase);
 	}
 
-	static uint8 *getShadesData(uint8 *bodyPtr) {
-		uint8 *bonesBase = getBonesBaseData(bodyPtr);
-		const int16 numBones = getNumBones(bodyPtr);
-		return bonesBase + numBones * 38;
-	}
-
 	static const uint8 *getShadesBaseData(const uint8 *bodyPtr, int16 shadeIdx = 0) {
 		return getShadesData(bodyPtr) + 2 + (shadeIdx * 8);
 	}
