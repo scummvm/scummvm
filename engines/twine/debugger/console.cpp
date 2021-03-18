@@ -50,6 +50,7 @@ TwinEConsole::TwinEConsole(TwinEEngine *engine) : _engine(engine), GUI::Debugger
 	registerCmd("toggle_debug", WRAP_METHOD(TwinEConsole, doToggleDebug));
 	registerCmd("toggle_zones", WRAP_METHOD(TwinEConsole, doToggleZoneRendering));
 	registerCmd("toggle_tracks", WRAP_METHOD(TwinEConsole, doToggleTrackRendering));
+	registerCmd("toggle_autoagressive", WRAP_METHOD(TwinEConsole, doToggleAutoAggressive));
 	registerCmd("toggle_actors", WRAP_METHOD(TwinEConsole, doToggleActorRendering));
 	registerCmd("toggle_clips", WRAP_METHOD(TwinEConsole, doToggleClipRendering));
 	registerCmd("toggle_freecamera", WRAP_METHOD(TwinEConsole, doToggleFreeCamera));
@@ -109,6 +110,11 @@ bool TwinEConsole::doToggleClipRendering(int argc, const char **argv) {
 
 bool TwinEConsole::doToggleSceneryView(int argc, const char **argv) {
 	TOGGLE_DEBUG(_engine->_redraw->inSceneryView, "scenery view\n")
+	return true;
+}
+
+bool TwinEConsole::doToggleAutoAggressive(int argc, const char **argv) {
+	TOGGLE_DEBUG(_engine->_actor->autoAggressive, "auto aggressive\n")
 	return true;
 }
 

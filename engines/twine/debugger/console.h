@@ -46,6 +46,7 @@ private:
 	bool doChangeScene(int argc, const char **argv);
 	bool doListMenuText(int argc, const char **argv);
 	bool doToggleDebug(int argc, const char **argv);
+	bool doToggleAutoAggressive(int argc, const char **argv);
 	bool doGiveKey(int argc, const char **argv);
 	bool doGiveGas(int argc, const char **argv);
 	bool doGiveKashes(int argc, const char **argv);
