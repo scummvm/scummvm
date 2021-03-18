@@ -2995,6 +2995,7 @@ void FullTSA::receiveNotification(Notification *notification, const Notification
 		case kTSA0BRobotsFromCommandCenterToFrontDoor:
 		case kTSA0BRobotsFromReadyRoomToFrontDoor:
 			doArthurRedirectedRobotsMovie = true;
+			// falls through
 		case kTSA0BRobotsFromCommandCenterToReadyRoom:
 		case kTSA0BRobotsFromReadyRoomToCommandCenter:
 		case kTSA0BRobotsFromFrontDoorToCommandCenter:

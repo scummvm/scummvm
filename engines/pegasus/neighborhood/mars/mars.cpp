@@ -1851,6 +1851,7 @@ void Mars::arriveAt(const RoomID room, const DirectionConstant direction) {
 	case MakeRoomView(kMars52, kEast):
 		if (g_arthurChip)
 			g_arthurChip->playArthurMovieForEvent("Images/AI/Globals/XGLOBA11", kArthurMarsEnteredReactor);
+		// falls through
 	case MakeRoomView(kMars52, kNorth):
 	case MakeRoomView(kMars52, kSouth):
 	case MakeRoomView(kMars52, kWest):

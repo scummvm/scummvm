@@ -1813,6 +1813,7 @@ void WSC::arriveAt(const RoomID room, const DirectionConstant dir) {
 		break;
 	case MakeRoomView(kWSC93, kEast):
 		GameState.setWSCBeenAtWSC93(true);
+		// falls through
 	case MakeRoomView(kWSC93, kNorth):
 		if (g_arthurChip)
 			g_arthurChip->playArthurMovieForEvent("Images/AI/Globals/XGLOBA38", kArthurWSCExitedPassage);

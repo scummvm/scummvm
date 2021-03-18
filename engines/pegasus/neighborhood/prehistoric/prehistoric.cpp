@@ -425,6 +425,7 @@ void Prehistoric::arriveAt(const RoomID room, const DirectionConstant direction)
 		break;
 	case MakeRoomView(kPrehistoric13, kNorth):
 		doArthurLetsSpreadOutMovie = true;
+		// falls through
 	case MakeRoomView(kPrehistoric08, kSouth):
 	case MakeRoomView(kPrehistoric10, kSouth):
 	case MakeRoomView(kPrehistoric12, kSouth):
