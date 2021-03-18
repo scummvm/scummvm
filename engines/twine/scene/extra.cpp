@@ -404,8 +404,8 @@ void Extra::addExtraThrowMagicball(int32 x, int32 y, int32 z, int32 xAngle, int3
 
 void Extra::drawSpecialShape(const ExtraShape &shapeTable, int32 x, int32 y, int32 color, int32 angle, int32 size) {
 	int shapeDataIndex = 0;
-	int16 var_x = shapeTable.data[shapeDataIndex].x * size / 16;
-	int16 var_z = shapeTable.data[shapeDataIndex].z * size / 16;
+	int16 shapeX = shapeTable.data[shapeDataIndex].x * size / 16;
+	int16 shapeZ = shapeTable.data[shapeDataIndex].z * size / 16;
 
 	++shapeDataIndex;
 
@@ -414,7 +414,7 @@ void Extra::drawSpecialShape(const ExtraShape &shapeTable, int32 x, int32 y, int
 	_engine->_redraw->renderRect.top = 0x7D00;
 	_engine->_redraw->renderRect.bottom = -0x7D00;
 
-	_engine->_movements->rotateActor(var_x, var_z, angle);
+	_engine->_movements->rotateActor(shapeX, shapeZ, angle);
 
 	const int32 computedX = _engine->_renderer->destPos.x + x;
 	const int32 computedY = _engine->_renderer->destPos.z + y;
@@ -439,8 +439,8 @@ void Extra::drawSpecialShape(const ExtraShape &shapeTable, int32 x, int32 y, int
 	int32 currentY = computedY;
 
 	for (int32 numEntries = 1; numEntries < shapeTable.n; ++numEntries) {
-		var_x = shapeTable.data[shapeDataIndex].x * size / 16;
-		var_z = shapeTable.data[shapeDataIndex].z * size / 16;
+		shapeX = shapeTable.data[shapeDataIndex].x * size / 16;
+		shapeZ = shapeTable.data[shapeDataIndex].z * size / 16;
 		++shapeDataIndex;
 
 		const int32 oldComputedX = currentX;
@@ -449,7 +449,7 @@ void Extra::drawSpecialShape(const ExtraShape &shapeTable, int32 x, int32 y, int
 		_engine->_renderer->projPos.x = currentX;
 		_engine->_renderer->projPos.y = currentY;
 
-		_engine->_movements->rotateActor(var_x, var_z, angle);
+		_engine->_movements->rotateActor(shapeX, shapeZ, angle);
 
 		currentX = _engine->_renderer->destPos.x + x;
 		currentY = _engine->_renderer->destPos.z + y;
