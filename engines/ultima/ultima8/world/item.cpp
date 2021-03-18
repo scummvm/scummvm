@@ -60,7 +60,10 @@
 namespace Ultima {
 namespace Ultima8 {
 
+// Shape for camera snap eggs.  Same in Remorse and Regret.
 static const uint32 SNAP_EGG_SHAPE = 0x4fe;
+
+// Shape for small spark where a bullet hits.  Same in Remorse and Regret.
 static const uint32 BULLET_SPLASH_SHAPE = 0x1d9;
 
 DEFINE_RUNTIME_CLASSTYPE_CODE(Item)
