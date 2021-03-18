@@ -116,7 +116,7 @@ int decompressLZSS(Common::SeekableReadStream &input, byte *output) {
 	}
 	delete[] data;
 
-	if (offset > input.size()) {
+	if ((int32)offset > input.size()) {
 		error("Read too far during decompression");
 	}
 

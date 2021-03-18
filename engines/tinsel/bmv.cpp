@@ -1105,7 +1105,7 @@ bool BMVPlayer::MaintainBuffer() {
 		return false;
 	}
 
-	if (stream.read(bigBuffer + nextReadSlot * slotSize, slotSize) != slotSize) {
+	if ((int)stream.read(bigBuffer + nextReadSlot * slotSize, slotSize) != slotSize) {
 		bFileEnd = true;
 	}
 
