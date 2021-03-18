@@ -831,7 +831,7 @@ void ScummEngine_v2::o2_verbOps() {
 		vs->imgindex = 0;
 		vs->prep = prep;
 
-		vs->curRect.left = x;
+		vs->curRect.left = vs->origLeft = x;
 		vs->curRect.top = y;
 
 		// FIXME: these keyboard map depends on the language of the game.

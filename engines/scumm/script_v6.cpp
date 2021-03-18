@@ -1946,7 +1946,7 @@ void ScummEngine_v6::o6_verbOps() {
 		break;
 	case 128:		// SO_VERB_AT
 		vs->curRect.top = pop();
-		vs->curRect.left = pop();
+		vs->curRect.left = vs->origLeft = pop();
 		break;
 	case 129:		// SO_VERB_ON
 		vs->curmode = 1;
