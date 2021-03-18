@@ -263,7 +263,7 @@ private:
 
 	ModelData _modelData;
 
-	bool renderAnimatedModel(ModelData *modelData, const uint8 *bodyPtr, RenderCommand *renderCmds, const IVec3 &angleVec);
+	bool renderAnimatedModel(ModelData *modelData, const uint8 *bodyPtr, RenderCommand *renderCmds, const IVec3 &angleVec, const IVec3 &renderPos);
 	void circleFill(int32 x, int32 y, int32 radius, uint8 color);
 	bool renderModelElements(int32 numOfPrimitives, const uint8 *polygonPtr, RenderCommand **renderCmds, ModelData *modelData);
 	void getCameraAnglePositions(int32 x, int32 y, int32 z);
@@ -274,15 +274,11 @@ private:
 	void processTranslatedElement(IMatrix3x3 *targetMatrix, const pointTab *pointsPtr, int32 rotX, int32 rotY, int32 rotZ, const BonesBaseData *boneData, ModelData *modelData);
 	void translateGroup(int32 x, int32 y, int32 z);
 
-	// ---- variables ----
-
 	IVec3 baseTransPos;
 
-	int32 cameraDepthOffset = 0; // cameraVar1
-	int32 cameraScaleY = 0; // cameraVar2
-	int32 cameraScaleZ = 0; // cameraVar3
-
-	IVec3 renderPos;
+	int32 cameraDepthOffset = 0;
+	int32 cameraScaleY = 0;
+	int32 cameraScaleZ = 0;
 
 	IMatrix3x3 baseMatrix;
 	IMatrix3x3 matricesTable[30 + 1];

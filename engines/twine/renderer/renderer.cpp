@@ -1303,7 +1303,7 @@ bool Renderer::renderModelElements(int32 numOfPrimitives, const uint8 *polygonPt
 	return true;
 }
 
-bool Renderer::renderAnimatedModel(ModelData *modelData, const uint8 *bodyPtr, RenderCommand *renderCmds, const IVec3 &angleVec) {
+bool Renderer::renderAnimatedModel(ModelData *modelData, const uint8 *bodyPtr, RenderCommand *renderCmds, const IVec3 &angleVec, const IVec3 &renderPos) {
 	const int32 numVertices = Model::getNumVertices(bodyPtr);
 	const int32 numBones = Model::getNumBones(bodyPtr);
 
@@ -1496,6 +1496,7 @@ bool Renderer::renderIsoModel(int32 x, int32 y, int32 z, int32 angleX, int32 ang
 	_engine->_redraw->renderRect.right = SCENE_SIZE_MIN;
 	_engine->_redraw->renderRect.bottom = SCENE_SIZE_MIN;
 
+	IVec3 renderPos;
 	if (isUsingOrthoProjection) {
 		renderPos.x = x;
 		renderPos.y = y;
@@ -1510,7 +1511,7 @@ bool Renderer::renderIsoModel(int32 x, int32 y, int32 z, int32 angleX, int32 ang
 		error("Unsupported unanimated model render!");
 	}
 	// restart at the beginning of the renderTable
-	return renderAnimatedModel(&_modelData, bodyPtr, _renderCmds, renderAngle);
+	return renderAnimatedModel(&_modelData, bodyPtr, _renderCmds, renderAngle, renderPos);
 }
 
 void Renderer::renderBehaviourModel(const Common::Rect &rect, int32 y, int32 angle, const uint8 *bodyPtr) {
