@@ -117,11 +117,6 @@ private:
 		const int16 numVertices = READ_LE_INT16(verticesBase);
 		return verticesBase + 2 + numVertices * 6;
 	}
-public:
-	static inline bool isAnimated(const uint8 *bodyPtr) {
-		const int16 bodyHeader = READ_LE_INT16(bodyPtr);
-		return (bodyHeader & 2) != 0;
-	}
 
 	static uint8 *getData(uint8 *bodyPtr) {
 		return bodyPtr + 0x1A;
@@ -129,6 +124,11 @@ public:
 
 	static const uint8 *getData(const uint8 *bodyPtr) {
 		return bodyPtr + 0x1A;
+	}
+public:
+	static inline bool isAnimated(const uint8 *bodyPtr) {
+		const int16 bodyHeader = READ_LE_INT16(bodyPtr);
+		return (bodyHeader & 2) != 0;
 	}
 
 	static const uint8 *getVerticesBaseData(const uint8 *bodyPtr) {

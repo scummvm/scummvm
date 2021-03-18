@@ -56,6 +56,7 @@ Animations::Animations(TwinEEngine *engine) : _engine(engine) {
 
 int32 Animations::getBodyAnimIndex(AnimationTypes animIdx, int32 actorIdx) {
 	ActorStruct *actor = _engine->_scene->getActor(actorIdx);
+	// TODO: cache this
 	EntityData entityData;
 	entityData.loadFromBuffer(actor->entityDataPtr, actor->entityDataSize);
 	const int32 bodyAnimIndex = entityData.getAnimIndex(animIdx);
@@ -272,6 +273,7 @@ void Animations::processAnimActions(int32 actorIdx) {
 		return;
 	}
 
+	// TODO: cache this
 	EntityData entityData;
 	entityData.loadFromBuffer(actor->entityDataPtr, actor->entityDataSize);
 	const Common::Array<EntityAnim::Action> *actions = entityData.getActions(actor->animExtraPtr);
