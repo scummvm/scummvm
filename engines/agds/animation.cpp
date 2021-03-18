@@ -141,31 +141,41 @@ bool Animation::tick() {
 		return true;
 	}
 
-	bool eov = _flic->endOfVideo();
-	if (eov) {
-		if (!_loop) {
-			if (!_phaseVar.empty())
-				_engine->setGlobal(_phaseVar, -1);
-		}
+	bool eov = _phase >= _frames;
+	if (_phaseVarControlled && eov) {
+		freeFrame();
+		_engine->setGlobal(_phaseVar, -1);
+		return true;
+	}
 
-		if (_phaseVarControlled) {
-			freeFrame();
-			_engine->reactivate(_process, true);
+	if (!eov)
+		decodeNextFrame();
+
+	eov = _phase >= _frames;
+
+	if (!_process.empty()) {
+		if (!_phaseVar.empty())
+			_engine->setGlobal(_phaseVar, _phase - 1);
+		if (_phase || _phaseVarControlled) {
+			if (eov && _random) {
+				rewind();
+				_delay = _engine->getRandomNumber(_random);
+				return true;
+			}
 			return true;
 		}
-		if (_loop)
-			rewind();
-		else
-			return false;
 	}
 
-	decodeNextFrame();
-	if (!_process.empty()) {
-		if (!_phaseVar.empty()) {
+	if (eov && (!_loop || --_cycles <= 0)) {
+		if (!_phaseVar.empty())
 			_engine->setGlobal(_phaseVar, _phase - 1);
+		else
 			_engine->reactivate(_process, true);
-		}
+		return false;
 	}
+
+	if (eov)
+		rewind();
 	return true;
 }
 
