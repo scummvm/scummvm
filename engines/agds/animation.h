@@ -37,6 +37,7 @@ class Object;
 
 class Animation {
 	AGDSEngine *		_engine;
+	Common::String		_name;
 	Video::FlicDecoder *_flic;
 	Graphics::TransparentSurface *_frame;
 	int					_frames;
@@ -55,7 +56,7 @@ class Animation {
 	float				_scale;
 
 public:
-	Animation(AGDSEngine *engine);
+	Animation(AGDSEngine *engine, const Common::String &name);
 	~Animation();
 
 	void freeFrame();
