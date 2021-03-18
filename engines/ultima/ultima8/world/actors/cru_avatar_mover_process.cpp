@@ -99,6 +99,11 @@ static bool _isAnimStartRunning(Animation::Sequence anim) {
 			anim == Animation::startRunLargeWeapon);
 }
 
+static bool _isAnimRunningWalking(Animation::Sequence anim) {
+	return (anim == Animation::run || anim == Animation::combatRunSmallWeapon ||
+			anim == Animation::walk);
+}
+
 void CruAvatarMoverProcess::handleCombatMode() {
 	Actor *avatar = getControlledActor();
 	MainActor *mainactor = dynamic_cast<MainActor *>(avatar);
@@ -259,7 +264,6 @@ void CruAvatarMoverProcess::handleNormalMode() {
 
 	// User toggled combat while in combatRun
 	if (avatar->isInCombat()) {
-		avatar->clearActorFlag(Actor::ACT_COMBATRUN);
 		if (mainactor)
 			mainactor->toggleInCombat();
 	}
@@ -269,7 +273,6 @@ void CruAvatarMoverProcess::handleNormalMode() {
 		// (even in stasis)
 		waitFor(avatar->doAnim(Animation::stopRunningAndDrawSmallWeapon, direction));
 		avatar->setInCombat(0);
-		avatar->clearActorFlag(Actor::ACT_COMBATRUN);
 		return;
 	}
 
@@ -296,11 +299,9 @@ void CruAvatarMoverProcess::handleNormalMode() {
 			|| lastanim == Animation::walk) {
 			// keep running
 			nextanim = Animation::run;
-			avatar->setActorFlag(Actor::ACT_COMBATRUN);
 		} else {
 			// start running
 			nextanim = Animation::startRun;
-			avatar->setActorFlag(Actor::ACT_COMBATRUN);
 		}
 	}
 
@@ -406,7 +407,7 @@ void CruAvatarMoverProcess::step(Animation::Sequence action, Direction direction
 		action = Animation::combatStand;
 	}
 
-	bool moving = (action == Animation::run || action == Animation::walk);
+	bool moving = _isAnimRunningWalking(action);
 
 	if (checkTurn(direction, moving))
 		return;

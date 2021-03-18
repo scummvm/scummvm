@@ -82,7 +82,9 @@ bool AvatarMoverProcess::checkTurn(Direction direction, bool moving) {
 
 		if (moving &&
 				(lastanim == Animation::walk || lastanim == Animation::run ||
-				 lastanim == Animation::combatStand) &&
+				 lastanim == Animation::combatStand ||
+				 (GAME_IS_CRUSADER && (lastanim == Animation::startRunSmallWeapon ||
+				 lastanim == Animation::combatRunSmallWeapon))) &&
 				(ABS(direction - curdir) + 2) % 16 <= 4) {
 			// don't need to explicitly do a turn animation
 			return false;
