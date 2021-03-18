@@ -30,7 +30,7 @@ namespace Hugo {
 
 bool ResourceArchive::splitName(const Common::String &name,
 		Common::String &filename, Common::String &resName) {
-	int commaIndex = name.findFirstOf(',');
+	size_t commaIndex = name.findFirstOf(',');
 	if (commaIndex == Common::String::npos)
 		return false;
 
