@@ -141,13 +141,12 @@ bool Animations::setModelAnimation(int32 keyframeIdx, const AnimData &animData, 
 
 	processLastRotationAngle = (processLastRotationAngle * deltaTime) / keyFrameLength;
 
-
 	if (numOfBonesInAnim <= 1) {
 		return false;
 	}
 
 	int16 boneIdx = 1;
-	int16 tmpNumOfPoints = numOfBonesInAnim - 1;
+	int16 tmpNumOfPoints = MIN<int16>(lastKeyFramePtr->boneframes.size() - 1, numOfBonesInAnim - 1);
 	do {
 		BoneFrame *modelStateBoneFrame = (BoneFrame *)Model::getBonesStateData(bodyPtr, boneIdx);
 		const BoneFrame &boneFrame = keyFrame->boneframes[boneIdx];
