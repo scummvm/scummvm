@@ -1302,7 +1302,7 @@ void Insane::smlayer_showStatusMsg(int32 arg_0, byte *renderBitmap, int32 codecp
 	// bit 2 - word wrap               0x04
 	// bit 3 - switchable              0x08
 	// bit 4 - fill background         0x10
-	if (flags & 4) {
+	if ((flags & 4) || _vm->_language == Common::HE_ISR) {
 		Common::Rect clipRect(0, 0, _player->_width, _player->_height);
 		sf->drawStringWrap(str, renderBitmap, clipRect, pos_x, pos_y, flags & 1);
 	} else {
