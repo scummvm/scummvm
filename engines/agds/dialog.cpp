@@ -175,7 +175,7 @@ bool Dialog::tick() {
 				debug("dialog value %s = %d (0x%04x), sample index: %d", line.c_str(), value, value, _currentSoundIndex);
 
 				dialog_var->setInteger(value);
-				_engine->reactivate(_dialogProcessName);
+				_engine->reactivate(_dialogProcessName, true);
 			} else
 				warning("invalid dialog directive: %s", line.c_str());
 		}
