@@ -812,7 +812,7 @@ Animation *AGDSEngine::loadAnimation(const Common::String &name) {
 	Common::SeekableReadStream *stream = _resourceManager.getResource(name);
 	if (!stream)
 		error("could not load animation from %s", name.c_str());
-	Animation *animation = new Animation(this);
+	Animation *animation = new Animation(this, name);
 	if (!animation->load(stream, name))
 		error("could not load animation from %s", name.c_str());
 

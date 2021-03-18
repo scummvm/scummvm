@@ -30,8 +30,8 @@
 
 namespace AGDS {
 
-Animation::Animation(AGDSEngine *engine) :
-	_engine(engine), _flic(), _frame(),
+Animation::Animation(AGDSEngine *engine, const Common::String &name) :
+	_engine(engine), _name(name), _flic(), _frame(),
 	_frames(0), _loop(false), _cycles(1), _phaseVarControlled(false),
 	_phase(0), _paused(false), _speed(100), _z(0),
 	_delay(0), _random(0), _scale(1) {
@@ -98,7 +98,8 @@ bool Animation::load(Common::SeekableReadStream *stream, const Common::String &f
 void Animation::decodeNextFrame() {
 	auto frame = _flic->decodeNextFrame();
 	if (!frame) {
-		warning("frame couldn't be decoded");
+		debug("frame of %s couldn't be decoded, process: %s, phase var: %s, at end: %d", _name.c_str(), _process.c_str(), _phaseVar.c_str(), _flic->endOfVideo());
+		warning("frame of %s couldn't be decoded, process: %s, phase var: %s, at end: %d", _name.c_str(), _process.c_str(), _phaseVar.c_str(), _flic->endOfVideo());
 		return;
 	}
 
