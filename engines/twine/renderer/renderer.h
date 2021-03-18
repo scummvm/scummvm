@@ -111,12 +111,13 @@ struct BonesBaseData {
 	int16 rotateZ = 0;
 	int16 rotateY = 0;
 	int16 rotateX = 0;
-	int32 numOfShades = 0; // field_10
-	int32 field_14 = 0;
+	int16 unk1 = 0; // field_10
+	int16 numOfShades = 0;
+	int16 unk2 = 0;
 	int32 field_18 = 0;
 	int32 y = 0;
 	int32 field_20 = 0;
-	int16 field_24 = 0;
+	int32 field_24 = 0;
 };
 #include "common/pack-end.h"
 static_assert(sizeof(BonesBaseData) == 38, "Unexpected elementEntry size");
@@ -173,9 +174,7 @@ public:
 	}
 
 	static int16 getNumBones(const uint8 *bodyPtr) {
-		const uint8 *verticesBase = getData(bodyPtr);
-		const int16 numVertices = READ_LE_INT16(verticesBase);
-		const uint8 *bonesBase = verticesBase + 2 + numVertices * 6;
+		const uint8 *bonesBase = getBonesData(bodyPtr);
 		return READ_LE_INT16(bonesBase);
 	}
 
@@ -190,9 +189,8 @@ public:
 	}
 
 	static const uint8 *getShadesData(const uint8 *bodyPtr) {
-		const uint8 *bonesBase = (const uint8 *)getBonesBaseData(bodyPtr);
 		const int16 numBones = getNumBones(bodyPtr);
-		return bonesBase + numBones * sizeof(BonesBaseData);
+		return (const uint8 *)getBonesBaseData(bodyPtr, numBones);
 	}
 
 	static int16 getNumShades(const uint8 *bodyPtr) {
@@ -201,8 +199,7 @@ public:
 	}
 
 	static int16 getNumShadesBone(const uint8 *bodyPtr, int boneIdx) {
-		const uint8 *bonesBase = (const uint8 *)getBonesBaseData(bodyPtr, boneIdx);
-		return READ_LE_INT16(bonesBase + 18);
+		return getBonesBaseData(bodyPtr, boneIdx)->numOfShades;
 	}
 
 	static const uint8 *getPolygonData(const uint8 *bodyPtr) {
