@@ -82,25 +82,6 @@ inline IMatrix3x3 operator*(const IMatrix3x3 &matrix, const IVec3 &vec) {
 	return out;
 }
 
-struct BodyFlags {
-	uint16 unk1 : 1;            // 1 << 0
-	uint16 animated : 1;        // 1 << 1
-	uint16 unk3 : 1;            // 1 << 2
-	uint16 unk4 : 1;            // 1 << 3
-	uint16 unk5 : 1;            // 1 << 4
-	uint16 unk6 : 1;            // 1 << 5
-	uint16 unk7 : 1;            // 1 << 6
-	uint16 alreadyPrepared : 1; // 1 << 7
-	uint16 unk9 : 1;            // 1 << 8
-	uint16 unk10 : 1;           // 1 << 9
-	uint16 unk11 : 1;           // 1 << 10
-	uint16 unk12 : 1;           // 1 << 11
-	uint16 unk13 : 1;           // 1 << 12
-	uint16 unk14 : 1;           // 1 << 13
-	uint16 unk15 : 1;           // 1 << 14
-	uint16 unk16 : 1;           // 1 << 15
-};
-
 #include "common/pack-start.h"
 struct BonesBaseData {
 	int16 firstPoint = 0;  // data1
@@ -210,7 +191,7 @@ public:
 		}
 		const int16 bones = getNumBones(bodyPtr);
 		for (int16 boneIdx = 0; boneIdx < bones; ++boneIdx) {
-			int16 numOfShades = Model::getNumShadesBone(bodyPtr, boneIdx);
+			int16 numOfShades = getNumShadesBone(bodyPtr, boneIdx);
 			shades += numOfShades * 8;
 		}
 		return shades;
@@ -287,9 +268,9 @@ private:
 	void getCameraAnglePositions(int32 x, int32 y, int32 z);
 	void applyRotation(IMatrix3x3 *targetMatrix, const IMatrix3x3 *currentMatrix);
 	void applyPointsRotation(const pointTab *pointsPtr, int32 numPoints, pointTab *destPoints, const IMatrix3x3 *rotationMatrix);
-	void processRotatedElement(IMatrix3x3 *targetMatrix, const pointTab *pointsPtr, int32 rotZ, int32 rotY, int32 rotX, const BonesBaseData *elemPtr, ModelData *modelData);
+	void processRotatedElement(IMatrix3x3 *targetMatrix, const pointTab *pointsPtr, int32 rotZ, int32 rotY, int32 rotX, const BonesBaseData *boneData, ModelData *modelData);
 	void applyPointsTranslation(const pointTab *pointsPtr, int32 numPoints, pointTab *destPoints, const IMatrix3x3 *translationMatrix);
-	void processTranslatedElement(IMatrix3x3 *targetMatrix, const pointTab *pointsPtr, int32 rotX, int32 rotY, int32 rotZ, const BonesBaseData *elemPtr, ModelData *modelData);
+	void processTranslatedElement(IMatrix3x3 *targetMatrix, const pointTab *pointsPtr, int32 rotX, int32 rotY, int32 rotZ, const BonesBaseData *boneData, ModelData *modelData);
 	void translateGroup(int32 x, int32 y, int32 z);
 
 	// ---- variables ----
@@ -376,7 +357,6 @@ public:
 	void setLightVector(int32 angleX, int32 angleY, int32 angleZ);
 	void getBaseRotationPosition(int32 x, int32 y, int32 z);
 
-	static void prepareIsoModel(uint8 *bodyPtr);
 	void renderPolygons(const CmdRenderPolygon &polygon, Vertex *vertices);
 
 	inline int32 projectPositionOnScreen(const IVec3& pos) {

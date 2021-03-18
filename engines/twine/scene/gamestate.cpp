@@ -500,7 +500,6 @@ void GameState::processGameoverAnimation() {
 		return;
 	}
 
-	Renderer::prepareIsoModel(gameOverPtr);
 	_engine->_sound->stopSamples();
 	_engine->_music->stopMidiMusic(); // stop fade music
 	_engine->_renderer->setCameraPosition(_engine->width() / 2, _engine->height() / 2, 128, 200, 200);

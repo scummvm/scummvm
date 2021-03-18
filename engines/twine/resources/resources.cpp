@@ -139,7 +139,6 @@ void Resources::preloadInventoryItems() {
 	debug("preload %i inventory items", numEntries);
 	for (int32 i = 0; i < numEntries; i++) {
 		inventorySizeTable[i] = HQR::getAllocEntry(&inventoryTable[i], Resources::HQR_INVOBJ_FILE, i);
-		Renderer::prepareIsoModel(_engine->_resources->inventoryTable[i]);
 	}
 }
 
@@ -180,25 +179,21 @@ void Resources::initResources() {
 	if (holomapTwinsenModelSize == 0) {
 		error("Failed to load holomap twinsen model");
 	}
-	Renderer::prepareIsoModel(holomapTwinsenModelPtr);
 
 	holomapPointModelSize = HQR::getAllocEntry(&holomapPointModelPtr, Resources::HQR_RESS_FILE, RESSHQR_HOLOPOINTMDL);
 	if (holomapPointModelSize == 0) {
 		error("Failed to load holomap point model");
 	}
-	Renderer::prepareIsoModel(holomapPointModelPtr);
 
 	holomapArrowSize = HQR::getAllocEntry(&holomapArrowPtr, Resources::HQR_RESS_FILE, RESSHQR_HOLOARROWMDL);
 	if (holomapArrowSize == 0) {
 		error("Failed to load holomap arrow model");
 	}
-	Renderer::prepareIsoModel(holomapArrowPtr);
 
 	holomapTwinsenArrowSize = HQR::getAllocEntry(&holomapTwinsenArrowPtr, Resources::HQR_RESS_FILE, RESSHQR_HOLOTWINARROWMDL);
 	if (holomapTwinsenArrowSize == 0) {
 		error("Failed to load holomap twinsen arrow model");
 	}
-	Renderer::prepareIsoModel(holomapTwinsenArrowPtr);
 
 	holomapPointAnimSize = HQR::getAllocEntry(&holomapPointAnimPtr, Resources::HQR_RESS_FILE, RESSHQR_HOLOPOINTANIM);
 	if (holomapPointAnimSize == 0) {

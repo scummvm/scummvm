@@ -197,7 +197,6 @@ int32 Actor::initBody(BodyType bodyIdx, int32 actorIdx, ActorBoundingBox &actorB
 						error("HQR ERROR: Loading body entities");
 					}
 					bodyData[index].loadFromBuffer(bodyTable[index], bodyTableSize[index]);
-					Renderer::prepareIsoModel(bodyTable[index]);
 					stream.seek(stream.pos() - sizeof(uint16));
 					stream.writeUint16LE(index + 0x8000);
 				} else {

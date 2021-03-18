@@ -328,9 +328,9 @@ void Renderer::applyPointsRotation(const pointTab *pointsPtr, int32 numPoints, p
 	} while (--numOfPoints2);
 }
 
-void Renderer::processRotatedElement(IMatrix3x3 *targetMatrix, const pointTab *pointsPtr, int32 rotZ, int32 rotY, int32 rotX, const BonesBaseData *elemPtr, ModelData *modelData) {
-	int32 firstPoint = elemPtr->firstPoint / sizeof(pointTab);
-	int32 numOfPoints2 = elemPtr->numOfPoints;
+void Renderer::processRotatedElement(IMatrix3x3 *targetMatrix, const pointTab *pointsPtr, int32 rotZ, int32 rotY, int32 rotX, const BonesBaseData *boneData, ModelData *modelData) {
+	int32 firstPoint = boneData->firstPoint / sizeof(pointTab);
+	int32 numOfPoints2 = boneData->numOfPoints;
 
 	renderAngleX = rotX;
 	renderAngleY = rotY;
@@ -338,15 +338,15 @@ void Renderer::processRotatedElement(IMatrix3x3 *targetMatrix, const pointTab *p
 
 	const IMatrix3x3 *currentMatrix;
 	// if its the first point
-	if (elemPtr->baseElement == -1) {
+	if (boneData->baseElement == -1) {
 		currentMatrix = &baseMatrix;
 
 		destPos.x = 0;
 		destPos.y = 0;
 		destPos.z = 0;
 	} else {
-		const int32 pointIdx = elemPtr->basePoint / sizeof(pointTab);
-		const int32 matrixIndex = elemPtr->baseElement;
+		const int32 pointIdx = boneData->basePoint / sizeof(pointTab);
+		const int32 matrixIndex = boneData->baseElement / sizeof(BonesBaseData);
 		assert(matrixIndex >= 0 && matrixIndex < ARRAYSIZE(matricesTable));
 		currentMatrix = &matricesTable[matrixIndex];
 
@@ -381,29 +381,29 @@ void Renderer::applyPointsTranslation(const pointTab *pointsPtr, int32 numPoints
 	} while (--numOfPoints2);
 }
 
-void Renderer::processTranslatedElement(IMatrix3x3 *targetMatrix, const pointTab *pointsPtr, int32 rotX, int32 rotY, int32 rotZ, const BonesBaseData *elemPtr, ModelData *modelData) {
+void Renderer::processTranslatedElement(IMatrix3x3 *targetMatrix, const pointTab *pointsPtr, int32 rotX, int32 rotY, int32 rotZ, const BonesBaseData *boneData, ModelData *modelData) {
 	renderAngleX = rotX;
 	renderAngleY = rotY;
 	renderAngleZ = rotZ;
 
-	if (elemPtr->baseElement == -1) { // base point
+	if (boneData->baseElement == -1) { // base point
 		destPos.x = 0;
 		destPos.y = 0;
 		destPos.z = 0;
 
 		*targetMatrix = baseMatrix;
 	} else { // dependent
-		const int pointsIdx = elemPtr->basePoint / 6;
+		const int32 pointsIdx = boneData->basePoint / sizeof(pointTab);
 		destPos.x = modelData->computedPoints[pointsIdx].x;
 		destPos.y = modelData->computedPoints[pointsIdx].y;
 		destPos.z = modelData->computedPoints[pointsIdx].z;
 
-		const int32 matrixIndex = elemPtr->baseElement;
+		const int32 matrixIndex = boneData->baseElement / sizeof(BonesBaseData);
 		assert(matrixIndex >= 0 && matrixIndex < ARRAYSIZE(matricesTable));
 		*targetMatrix = matricesTable[matrixIndex];
 	}
 
-	applyPointsTranslation(&pointsPtr[elemPtr->firstPoint / sizeof(pointTab)], elemPtr->numOfPoints, &modelData->computedPoints[elemPtr->firstPoint / sizeof(pointTab)], targetMatrix);
+	applyPointsTranslation(&pointsPtr[boneData->firstPoint / sizeof(pointTab)], boneData->numOfPoints, &modelData->computedPoints[boneData->firstPoint / sizeof(pointTab)], targetMatrix);
 }
 
 void Renderer::setLightVector(int32 angleX, int32 angleY, int32 angleZ) {
@@ -1308,8 +1308,8 @@ bool Renderer::renderAnimatedModel(ModelData *modelData, const uint8 *bodyPtr, R
 
 	IMatrix3x3 *modelMatrix = &matricesTable[0];
 
-	const BonesBaseData *bonesPtr0 = Model::getBonesBaseData(bodyPtr, 0);
-	processRotatedElement(modelMatrix, pointsPtr, renderAngleX, renderAngleY, renderAngleZ, bonesPtr0, modelData);
+	const BonesBaseData *boneData = Model::getBonesBaseData(bodyPtr, 0);
+	processRotatedElement(modelMatrix, pointsPtr, renderAngleX, renderAngleY, renderAngleZ, boneData, modelData);
 
 	int32 numOfPrimitives = 0;
 
@@ -1319,13 +1319,13 @@ bool Renderer::renderAnimatedModel(ModelData *modelData, const uint8 *bodyPtr, R
 
 		int boneIdx = 1;
 		do {
-			const BonesBaseData *bonesPtr = Model::getBonesBaseData(bodyPtr, boneIdx);
-			int16 boneType = bonesPtr->flag;
+			boneData = Model::getBonesBaseData(bodyPtr, boneIdx);
+			int16 boneType = boneData->flag;
 
 			if (boneType == 0) {
-				processRotatedElement(modelMatrix, pointsPtr, bonesPtr->rotateX, bonesPtr->rotateY, bonesPtr->rotateZ, bonesPtr, modelData);
+				processRotatedElement(modelMatrix, pointsPtr, boneData->rotateX, boneData->rotateY, boneData->rotateZ, boneData, modelData);
 			} else if (boneType == 1) {
-				processTranslatedElement(modelMatrix, pointsPtr, bonesPtr->rotateX, bonesPtr->rotateY, bonesPtr->rotateZ, bonesPtr, modelData);
+				processTranslatedElement(modelMatrix, pointsPtr, boneData->rotateX, boneData->rotateY, boneData->rotateZ, boneData, modelData);
 			}
 
 			++modelMatrix;
@@ -1479,30 +1479,6 @@ bool Renderer::renderAnimatedModel(ModelData *modelData, const uint8 *bodyPtr, R
 	}
 
 	return renderModelElements(numOfPrimitives, Model::getPolygonData(bodyPtr), &renderCmds, modelData);
-}
-
-void Renderer::prepareIsoModel(uint8 *bodyPtr) { // loadGfxSub
-	BodyFlags *bodyHeader = (BodyFlags *)bodyPtr;
-
-	// This function should only be called ONCE, otherwise it corrupts the model data.
-	// The following code implements an unused flag to indicate that a model was already processed.
-	if (bodyHeader->alreadyPrepared) {
-		return;
-	}
-	bodyHeader->alreadyPrepared = 1;
-
-	// no animation applicable
-	if (!Model::isAnimated(bodyPtr)) {
-		return;
-	}
-
-	const int16 numBones = Model::getNumBones(bodyPtr);
-
-	// set up bone indices
-	for (int32 i = 0; i < numBones; i++) {
-		BonesBaseData *bonesBase = Model::getBonesBaseData(bodyPtr, i + 1);
-		bonesBase->baseElement /= sizeof(BonesBaseData);
-	}
 }
 
 bool Renderer::renderIsoModel(int32 x, int32 y, int32 z, int32 angleX, int32 angleY, int32 angleZ, const uint8 *bodyPtr) {

@@ -324,7 +324,6 @@ void Holomap::drawHolomapTrajectory(int32 trajectoryIndex) {
 	animData.loadFromHQR(Resources::HQR_RESS_FILE, data.getAnimation());
 	uint8 *modelPtr = nullptr;
 	HQR::getAllocEntry(&modelPtr, Resources::HQR_RESS_FILE, data.getModel());
-	Renderer::prepareIsoModel(modelPtr);
 	uint frameNumber = 0;
 	int32 frameTime = _engine->lbaTime;
 	int16 trajAnimFrameIdx = 0;
