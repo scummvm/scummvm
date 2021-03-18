@@ -780,7 +780,7 @@ Common::Error PrivateEngine::loadGameStream(Common::SeekableReadStream *stream) 
 
 	// Restore a movie that was playing
 	_currentMovie = stream->readString();
-	int currentTime = stream->readUint32LE();
+	/* int currentTime = */ stream->readUint32LE();
 
 	if (!_currentMovie.empty()) {
 		_videoDecoder = new Video::SmackerDecoder();
