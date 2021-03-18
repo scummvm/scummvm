@@ -53,12 +53,13 @@ void BodyData::loadBones(Common::SeekableReadStream &stream) {
 		boneframe.x = stream.readSint16LE();
 		boneframe.y = stream.readSint16LE();
 		boneframe.z = stream.readSint16LE();
-		const int32 numOfShades = stream.readSint32LE();
-		/*int32 field_14 =*/ stream.readSint32LE();
+		/*int16 unk1 =*/ stream.readSint16LE();
+		const int16 numOfShades = stream.readSint16LE();
+		/*int16 unk2 =*/ stream.readSint16LE();
 		/*int32 field_18 =*/ stream.readSint32LE();
 		/*int32 y =*/ stream.readSint32LE();
 		/*int32 field_20 =*/ stream.readSint32LE();
-		/*int16 field_24 =*/ stream.readSint16LE();
+		/*int32 field_24 =*/ stream.readSint32LE();
 
 		BodyBone bone;
 		bone.parent = baseElementOffset == -1 ? 0xffff : baseElementOffset / 38;
