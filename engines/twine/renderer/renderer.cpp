@@ -245,12 +245,12 @@ IVec3 Renderer::getHolomapRotation(const int32 angleX, const int32 angleY, const
 	return vec;
 }
 
-void Renderer::applyRotation(IMatrix3x3 *targetMatrix, const IMatrix3x3 *currentMatrix) {
+void Renderer::applyRotation(IMatrix3x3 *targetMatrix, const IMatrix3x3 *currentMatrix, const IVec3 &angleVec) {
 	IMatrix3x3 matrix1;
 	IMatrix3x3 matrix2;
 
-	if (renderAngle.x) {
-		int32 angle = renderAngle.x;
+	if (angleVec.x) {
+		int32 angle = angleVec.x;
 		int32 angleVar2 = shadeAngleTable[ClampAngle(angle)];
 		angle += ANGLE_90;
 		int32 angleVar1 = shadeAngleTable[ClampAngle(angle)];
@@ -269,8 +269,8 @@ void Renderer::applyRotation(IMatrix3x3 *targetMatrix, const IMatrix3x3 *current
 		matrix1 = *currentMatrix;
 	}
 
-	if (renderAngle.z) {
-		int32 angle = renderAngle.z;
+	if (angleVec.z) {
+		int32 angle = angleVec.z;
 		int32 angleVar2 = shadeAngleTable[ClampAngle(angle)];
 		angle += ANGLE_90;
 		int32 angleVar1 = shadeAngleTable[ClampAngle(angle)];
@@ -289,8 +289,8 @@ void Renderer::applyRotation(IMatrix3x3 *targetMatrix, const IMatrix3x3 *current
 		matrix2 = matrix1;
 	}
 
-	if (renderAngle.y) {
-		int32 angle = renderAngle.y;
+	if (angleVec.y) {
+		int32 angle = angleVec.y;
 		int32 angleVar2 = shadeAngleTable[ClampAngle(angle)];
 		angle += ANGLE_90;
 		int32 angleVar1 = shadeAngleTable[ClampAngle(angle)];
@@ -332,6 +332,7 @@ void Renderer::processRotatedElement(IMatrix3x3 *targetMatrix, const pointTab *p
 	int32 firstPoint = boneData->firstPoint / sizeof(pointTab);
 	int32 numOfPoints2 = boneData->numOfPoints;
 
+	IVec3 renderAngle;
 	renderAngle.x = rotX;
 	renderAngle.y = rotY;
 	renderAngle.z = rotZ;
@@ -355,7 +356,7 @@ void Renderer::processRotatedElement(IMatrix3x3 *targetMatrix, const pointTab *p
 		destPos.z = modelData->computedPoints[pointIdx].z;
 	}
 
-	applyRotation(targetMatrix, currentMatrix);
+	applyRotation(targetMatrix, currentMatrix, renderAngle);
 
 	if (!numOfPoints2) {
 		warning("RENDER WARNING: No points in this model!");
@@ -364,13 +365,13 @@ void Renderer::processRotatedElement(IMatrix3x3 *targetMatrix, const pointTab *p
 	applyPointsRotation(&pointsPtr[firstPoint], numOfPoints2, &modelData->computedPoints[firstPoint], targetMatrix);
 }
 
-void Renderer::applyPointsTranslation(const pointTab *pointsPtr, int32 numPoints, pointTab *destPoints, const IMatrix3x3 *translationMatrix) {
+void Renderer::applyPointsTranslation(const pointTab *pointsPtr, int32 numPoints, pointTab *destPoints, const IMatrix3x3 *translationMatrix, const IVec3 &angleVec) {
 	int32 numOfPoints2 = numPoints;
 
 	do {
-		const int32 tmpX = pointsPtr->x + renderAngle.z;
-		const int32 tmpY = pointsPtr->y + renderAngle.y;
-		const int32 tmpZ = pointsPtr->z + renderAngle.x;
+		const int32 tmpX = pointsPtr->x + angleVec.z;
+		const int32 tmpY = pointsPtr->y + angleVec.y;
+		const int32 tmpZ = pointsPtr->z + angleVec.x;
 
 		destPoints->x = ((translationMatrix->row1[0] * tmpX + translationMatrix->row1[1] * tmpY + translationMatrix->row1[2] * tmpZ) / SCENE_SIZE_HALF) + destPos.x;
 		destPoints->y = ((translationMatrix->row2[0] * tmpX + translationMatrix->row2[1] * tmpY + translationMatrix->row2[2] * tmpZ) / SCENE_SIZE_HALF) + destPos.y;
@@ -382,6 +383,7 @@ void Renderer::applyPointsTranslation(const pointTab *pointsPtr, int32 numPoints
 }
 
 void Renderer::processTranslatedElement(IMatrix3x3 *targetMatrix, const pointTab *pointsPtr, int32 rotX, int32 rotY, int32 rotZ, const BonesBaseData *boneData, ModelData *modelData) {
+	IVec3 renderAngle;
 	renderAngle.x = rotX;
 	renderAngle.y = rotY;
 	renderAngle.z = rotZ;
@@ -403,7 +405,7 @@ void Renderer::processTranslatedElement(IMatrix3x3 *targetMatrix, const pointTab
 		*targetMatrix = matricesTable[matrixIndex];
 	}
 
-	applyPointsTranslation(&pointsPtr[boneData->firstPoint / sizeof(pointTab)], boneData->numOfPoints, &modelData->computedPoints[boneData->firstPoint / sizeof(pointTab)], targetMatrix);
+	applyPointsTranslation(&pointsPtr[boneData->firstPoint / sizeof(pointTab)], boneData->numOfPoints, &modelData->computedPoints[boneData->firstPoint / sizeof(pointTab)], targetMatrix, renderAngle);
 }
 
 void Renderer::setLightVector(int32 angleX, int32 angleY, int32 angleZ) {
@@ -412,11 +414,12 @@ void Renderer::setLightVector(int32 angleX, int32 angleY, int32 angleZ) {
 	_cameraAngleY = angleY;
 	_cameraAngleZ = angleZ;*/
 
+	IVec3 renderAngle;
 	renderAngle.x = angleX;
 	renderAngle.y = angleY;
 	renderAngle.z = angleZ;
 
-	applyRotation(&shadeMatrix, &baseMatrix);
+	applyRotation(&shadeMatrix, &baseMatrix, renderAngle);
 	translateGroup(0, 0, 59);
 
 	lightPos = destPos;
@@ -1300,7 +1303,7 @@ bool Renderer::renderModelElements(int32 numOfPrimitives, const uint8 *polygonPt
 	return true;
 }
 
-bool Renderer::renderAnimatedModel(ModelData *modelData, const uint8 *bodyPtr, RenderCommand *renderCmds) {
+bool Renderer::renderAnimatedModel(ModelData *modelData, const uint8 *bodyPtr, RenderCommand *renderCmds, const IVec3 &angleVec) {
 	const int32 numVertices = Model::getNumVertices(bodyPtr);
 	const int32 numBones = Model::getNumBones(bodyPtr);
 
@@ -1309,7 +1312,7 @@ bool Renderer::renderAnimatedModel(ModelData *modelData, const uint8 *bodyPtr, R
 	IMatrix3x3 *modelMatrix = &matricesTable[0];
 
 	const BonesBaseData *boneData = Model::getBonesBaseData(bodyPtr, 0);
-	processRotatedElement(modelMatrix, pointsPtr, renderAngle.x, renderAngle.y, renderAngle.z, boneData, modelData);
+	processRotatedElement(modelMatrix, pointsPtr, angleVec.x, angleVec.y, angleVec.z, boneData, modelData);
 
 	int32 numOfPrimitives = 0;
 
@@ -1482,6 +1485,7 @@ bool Renderer::renderAnimatedModel(ModelData *modelData, const uint8 *bodyPtr, R
 }
 
 bool Renderer::renderIsoModel(int32 x, int32 y, int32 z, int32 angleX, int32 angleY, int32 angleZ, const uint8 *bodyPtr) {
+	IVec3 renderAngle;
 	renderAngle.x = angleX;
 	renderAngle.y = angleY;
 	renderAngle.z = angleZ;
@@ -1506,7 +1510,7 @@ bool Renderer::renderIsoModel(int32 x, int32 y, int32 z, int32 angleX, int32 ang
 		error("Unsupported unanimated model render!");
 	}
 	// restart at the beginning of the renderTable
-	return renderAnimatedModel(&_modelData, bodyPtr, _renderCmds);
+	return renderAnimatedModel(&_modelData, bodyPtr, _renderCmds, renderAngle);
 }
 
 void Renderer::renderBehaviourModel(const Common::Rect &rect, int32 y, int32 angle, const uint8 *bodyPtr) {
