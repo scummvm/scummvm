@@ -257,10 +257,13 @@ bool Movements::processBehaviourExecution(int actorIdx) {
 		} else {
 			if (_engine->_input->isActionActive(TwinEActionType::TurnLeft)) {
 				_engine->_animations->initAnim(AnimationTypes::kLeftPunch, kAnimationType_1, AnimationTypes::kStanding, actorIdx);
+				heroMoved = true;
 			} else if (_engine->_input->isActionActive(TwinEActionType::TurnRight)) {
 				_engine->_animations->initAnim(AnimationTypes::kRightPunch, kAnimationType_1, AnimationTypes::kStanding, actorIdx);
+				heroMoved = true;
 			} else if (_engine->_input->isActionActive(TwinEActionType::MoveForward)) {
 				_engine->_animations->initAnim(AnimationTypes::kKick, kAnimationType_1, AnimationTypes::kStanding, actorIdx);
+				heroMoved = true;
 			}
 		}
 		break;
@@ -300,7 +303,7 @@ bool Movements::processAttackExecution(int actorIdx) {
 
 void Movements::processManualMovementExecution(int actorIdx) {
 	ActorStruct *actor = _engine->_scene->getActor(actorIdx);
-	if (_engine->_actor->autoAggressive && actor->isAttackAnimationActive()) {
+	if (actor->isAttackAnimationActive()) {
 		return;
 	}
 	if (actor->isJumpAnimationActive()) {
@@ -353,7 +356,7 @@ void Movements::processManualMovementExecution(int actorIdx) {
 
 void Movements::processManualRotationExecution(int actorIdx) {
 	ActorStruct *actor = _engine->_scene->getActor(actorIdx);
-	if (!_engine->_actor->autoAggressive && _engine->_actor->autoAggressive && actor->isAttackAnimationActive()) {
+	if (!_engine->_actor->autoAggressive && actor->isAttackAnimationActive()) {
 		// it is allowed to rotate in auto aggressive mode - but not in manual mode.
 		return;
 	}
