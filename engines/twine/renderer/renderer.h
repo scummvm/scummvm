@@ -284,9 +284,7 @@ private:
 
 	// ---
 
-	int32 renderAngleX = 0; // _angleX
-	int32 renderAngleY = 0; // _angleY
-	int32 renderAngleZ = 0; // _angleZ
+	IVec3 renderAngle;
 
 	IVec3 renderPos;
 

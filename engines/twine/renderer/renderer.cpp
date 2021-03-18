@@ -249,8 +249,8 @@ void Renderer::applyRotation(IMatrix3x3 *targetMatrix, const IMatrix3x3 *current
 	IMatrix3x3 matrix1;
 	IMatrix3x3 matrix2;
 
-	if (renderAngleX) {
-		int32 angle = renderAngleX;
+	if (renderAngle.x) {
+		int32 angle = renderAngle.x;
 		int32 angleVar2 = shadeAngleTable[ClampAngle(angle)];
 		angle += ANGLE_90;
 		int32 angleVar1 = shadeAngleTable[ClampAngle(angle)];
@@ -269,8 +269,8 @@ void Renderer::applyRotation(IMatrix3x3 *targetMatrix, const IMatrix3x3 *current
 		matrix1 = *currentMatrix;
 	}
 
-	if (renderAngleZ) {
-		int32 angle = renderAngleZ;
+	if (renderAngle.z) {
+		int32 angle = renderAngle.z;
 		int32 angleVar2 = shadeAngleTable[ClampAngle(angle)];
 		angle += ANGLE_90;
 		int32 angleVar1 = shadeAngleTable[ClampAngle(angle)];
@@ -289,8 +289,8 @@ void Renderer::applyRotation(IMatrix3x3 *targetMatrix, const IMatrix3x3 *current
 		matrix2 = matrix1;
 	}
 
-	if (renderAngleY) {
-		int32 angle = renderAngleY;
+	if (renderAngle.y) {
+		int32 angle = renderAngle.y;
 		int32 angleVar2 = shadeAngleTable[ClampAngle(angle)];
 		angle += ANGLE_90;
 		int32 angleVar1 = shadeAngleTable[ClampAngle(angle)];
@@ -332,9 +332,9 @@ void Renderer::processRotatedElement(IMatrix3x3 *targetMatrix, const pointTab *p
 	int32 firstPoint = boneData->firstPoint / sizeof(pointTab);
 	int32 numOfPoints2 = boneData->numOfPoints;
 
-	renderAngleX = rotX;
-	renderAngleY = rotY;
-	renderAngleZ = rotZ;
+	renderAngle.x = rotX;
+	renderAngle.y = rotY;
+	renderAngle.z = rotZ;
 
 	const IMatrix3x3 *currentMatrix;
 	// if its the first point
@@ -368,9 +368,9 @@ void Renderer::applyPointsTranslation(const pointTab *pointsPtr, int32 numPoints
 	int32 numOfPoints2 = numPoints;
 
 	do {
-		const int32 tmpX = pointsPtr->x + renderAngleZ;
-		const int32 tmpY = pointsPtr->y + renderAngleY;
-		const int32 tmpZ = pointsPtr->z + renderAngleX;
+		const int32 tmpX = pointsPtr->x + renderAngle.z;
+		const int32 tmpY = pointsPtr->y + renderAngle.y;
+		const int32 tmpZ = pointsPtr->z + renderAngle.x;
 
 		destPoints->x = ((translationMatrix->row1[0] * tmpX + translationMatrix->row1[1] * tmpY + translationMatrix->row1[2] * tmpZ) / SCENE_SIZE_HALF) + destPos.x;
 		destPoints->y = ((translationMatrix->row2[0] * tmpX + translationMatrix->row2[1] * tmpY + translationMatrix->row2[2] * tmpZ) / SCENE_SIZE_HALF) + destPos.y;
@@ -382,9 +382,9 @@ void Renderer::applyPointsTranslation(const pointTab *pointsPtr, int32 numPoints
 }
 
 void Renderer::processTranslatedElement(IMatrix3x3 *targetMatrix, const pointTab *pointsPtr, int32 rotX, int32 rotY, int32 rotZ, const BonesBaseData *boneData, ModelData *modelData) {
-	renderAngleX = rotX;
-	renderAngleY = rotY;
-	renderAngleZ = rotZ;
+	renderAngle.x = rotX;
+	renderAngle.y = rotY;
+	renderAngle.z = rotZ;
 
 	if (boneData->baseElement == -1) { // base point
 		destPos.x = 0;
@@ -412,9 +412,9 @@ void Renderer::setLightVector(int32 angleX, int32 angleY, int32 angleZ) {
 	_cameraAngleY = angleY;
 	_cameraAngleZ = angleZ;*/
 
-	renderAngleX = angleX;
-	renderAngleY = angleY;
-	renderAngleZ = angleZ;
+	renderAngle.x = angleX;
+	renderAngle.y = angleY;
+	renderAngle.z = angleZ;
 
 	applyRotation(&shadeMatrix, &baseMatrix);
 	translateGroup(0, 0, 59);
@@ -1309,7 +1309,7 @@ bool Renderer::renderAnimatedModel(ModelData *modelData, const uint8 *bodyPtr, R
 	IMatrix3x3 *modelMatrix = &matricesTable[0];
 
 	const BonesBaseData *boneData = Model::getBonesBaseData(bodyPtr, 0);
-	processRotatedElement(modelMatrix, pointsPtr, renderAngleX, renderAngleY, renderAngleZ, boneData, modelData);
+	processRotatedElement(modelMatrix, pointsPtr, renderAngle.x, renderAngle.y, renderAngle.z, boneData, modelData);
 
 	int32 numOfPrimitives = 0;
 
@@ -1482,9 +1482,9 @@ bool Renderer::renderAnimatedModel(ModelData *modelData, const uint8 *bodyPtr, R
 }
 
 bool Renderer::renderIsoModel(int32 x, int32 y, int32 z, int32 angleX, int32 angleY, int32 angleZ, const uint8 *bodyPtr) {
-	renderAngleX = angleX;
-	renderAngleY = angleY;
-	renderAngleZ = angleZ;
+	renderAngle.x = angleX;
+	renderAngle.y = angleY;
+	renderAngle.z = angleZ;
 
 	// model render size reset
 	_engine->_redraw->renderRect.left = SCENE_SIZE_MAX;
@@ -1499,9 +1499,7 @@ bool Renderer::renderIsoModel(int32 x, int32 y, int32 z, int32 angleX, int32 ang
 	} else {
 		getBaseRotationPosition(x, y, z);
 
-		renderPos.x = destPos.x - baseRotPos.x;
-		renderPos.y = destPos.y - baseRotPos.y; // RECHECK
-		renderPos.z = destPos.z - baseRotPos.z;
+		renderPos = destPos - baseRotPos; // RECHECK y
 	}
 
 	if (!Model::isAnimated(bodyPtr)) {
