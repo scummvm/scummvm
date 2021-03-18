@@ -486,7 +486,7 @@ void Extra::drawSpecialShape(const ExtraShape &shapeTable, int32 x, int32 y, int
 
 void Extra::drawExtraSpecial(int32 extraIdx, int32 x, int32 y) {
 	ExtraListStruct *extra = &extraList[extraIdx];
-	ExtraSpecialType specialType = (ExtraSpecialType)(extra->info0 & 0x7FFF);
+	ExtraSpecialType specialType = (ExtraSpecialType)(extra->info0 & (EXTRA_SPECIAL_MASK - 1));
 
 	switch (specialType) {
 	case ExtraSpecialType::kHitStars:
