@@ -312,7 +312,7 @@ void Process::resetMousePointer() {
 
 void Process::getRandomNumber() {
 	int max = pop();
-	int value = max > 0 ? _engine->_random.getRandomNumber(max - 1) : 0;
+	int value = _engine->getRandomNumber(max);
 	debug("random %d -> %d", max, value);
 	push(value);
 }

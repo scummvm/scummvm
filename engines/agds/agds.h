@@ -274,6 +274,7 @@ public:
 	void shadowIntensity(int intensity) {
 		_shadowIntensity = intensity;
 	}
+	int getRandomNumber(int max);
 
 private:
 	void loadPatches(Common::SeekableReadStream *file, Database & db);

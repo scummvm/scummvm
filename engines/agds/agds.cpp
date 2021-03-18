@@ -1342,4 +1342,8 @@ void AGDSEngine::returnToPreviousScreen() {
 	}
 }
 
+int AGDSEngine::getRandomNumber(int max) {
+	return max > 0 ? _random.getRandomNumber(max - 1) : 0;
+}
+
 } // End of namespace AGDS
