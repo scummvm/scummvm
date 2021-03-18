@@ -101,7 +101,20 @@ struct BodyFlags {
 	uint16 unk16 : 1;           // 1 << 15
 };
 
-struct Model {
+class Model {
+private:
+	static uint8 *getBonesData(uint8 *bodyPtr) {
+		uint8 *verticesBase = getData(bodyPtr);
+		const int16 numVertices = READ_LE_INT16(verticesBase);
+		return verticesBase + 2 + numVertices * 6;
+	}
+
+	static const uint8 *getBonesData(const uint8 *bodyPtr) {
+		const uint8 *verticesBase = getData(bodyPtr);
+		const int16 numVertices = READ_LE_INT16(verticesBase);
+		return verticesBase + 2 + numVertices * 6;
+	}
+public:
 	static inline bool isAnimated(const uint8 *bodyPtr) {
 		const int16 bodyHeader = READ_LE_INT16(bodyPtr);
 		return (bodyHeader & 2) != 0;
@@ -117,18 +130,6 @@ struct Model {
 
 	static const uint8 *getVerticesBaseData(const uint8 *bodyPtr) {
 		return getData(bodyPtr) + 2;
-	}
-
-	static uint8 *getBonesData(uint8 *bodyPtr) {
-		uint8 *verticesBase = getData(bodyPtr);
-		const int16 numVertices = READ_LE_INT16(verticesBase);
-		return verticesBase + 2 + numVertices * 6;
-	}
-
-	static const uint8 *getBonesData(const uint8 *bodyPtr) {
-		const uint8 *verticesBase = getData(bodyPtr);
-		const int16 numVertices = READ_LE_INT16(verticesBase);
-		return verticesBase + 2 + numVertices * 6;
 	}
 
 	static const BoneFrame *getBonesStateData(const uint8 *bodyPtr, int boneIdx) {
