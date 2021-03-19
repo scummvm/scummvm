@@ -673,7 +673,9 @@ void drawCharacter(uint8 flag) {
 		float e32 = _camera->_e3[2];
 
 		// Light directions
-		float l0, l1, l2;
+		float l0 = 0.0;
+		float l1 = 0.0;
+		float l2 = 0.0;
 
 		_actor._lim[0] =  32000;
 		_actor._lim[1] = -32000;
