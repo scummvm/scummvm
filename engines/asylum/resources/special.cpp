@@ -163,7 +163,7 @@ void Special::chapter2(Object *object, ActorIndex actorIndex) {
 			break;
 
 		case kObjectCrow1Pecks:
-			checkObject(object, kGameFlag447, kGameFlag448, kObjectNone);
+			checkObject(object, kGameFlag447, kGameFlag448, getWorld()->objects[0]->getId());
 			break;
 
 		case kObjectCrow2AmbientPecks:
@@ -1445,7 +1445,7 @@ uint32 Special::getCounter(ActorIndex index) const {
 }
 
 void Special::checkObject(Object *object, GameFlag flagToSet, GameFlag flagToClear, ObjectId objectId) {
-	if (objectId != kObjectInvalid && object->getFrameIndex() == 15) {
+	if (object->getFrameIndex() == 15) {
 		Object *otherObject = getWorld()->getObjectById(objectId);
 		debugC(kDebugLevelObjects, "[checkObject] %s -> %s (flags: set %d, clear %d)",
 				object->getName(), otherObject->getName(), flagToSet, flagToClear);
@@ -1454,9 +1454,9 @@ void Special::checkObject(Object *object, GameFlag flagToSet, GameFlag flagToCle
 		_vm->clearGameFlag(flagToClear);
 
 		if (objectId == kObjectNone)
-			otherObject->setFrameIndex(0);
-		else
 			object->setFrameIndex(0);
+		else
+			otherObject->setFrameIndex(0);
 	}
 }
 
