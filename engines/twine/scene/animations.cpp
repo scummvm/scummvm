@@ -473,7 +473,7 @@ void Animations::processActorAnimations(int32 actorIdx) { // DoAnim
 
 	_engine->_movements->previousActor = actor->collisionPos;
 
-	if (actor->staticFlags.bIsSpriteActor) { // is sprite actor
+	if (actor->staticFlags.bIsSpriteActor) {
 		if (actor->strengthOfHit) {
 			actor->dynamicFlags.bIsHitting = 1;
 		}
