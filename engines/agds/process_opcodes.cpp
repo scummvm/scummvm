@@ -638,8 +638,8 @@ void Process::stub102() {
 	debug("stub102: load picture? %s", name.c_str());
 }
 
-void Process::setAnimationPaused() {
-	debug("setAnimationPaused");
+void Process::setPhaseVarControlledFlag() {
+	debug("setPhaseVarControlledFlag");
 	_phaseVarControlled = true;
 }
 
