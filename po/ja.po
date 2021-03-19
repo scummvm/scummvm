@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-03-17 16:34+0000\n"
-"PO-Revision-Date: 2021-03-19 04:24+0000\n"
+"PO-Revision-Date: 2021-03-19 23:24+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ja/>\n"
@@ -6543,18 +6543,24 @@ msgid ""
 "files for Maniac Mansion have to be in the 'Maniac' directory inside the "
 "Tentacle game directory, and the game has to be added to ScummVM."
 msgstr ""
+"通常であれば、Maniac Mansionが起動します。しかしそれには、Tentacleのゲームディレクトリーの「Maniac」フォルダー内にゲームファイ"
+"ルを配置し、ゲームがScummVMに追加されていなければなりません。"
 
 #: engines/scumm/players/player_v3m.cpp:129
 msgid ""
 "Could not find the 'Loom' Macintosh executable to read the\n"
 "instruments from. Music will be disabled."
 msgstr ""
+"楽器をロードするためのMacintoshの実行ファイル「Loom」が見つかりません。\n"
+"音楽は無効になります。"
 
 #: engines/scumm/players/player_v5m.cpp:107
 msgid ""
 "Could not find the 'Monkey Island' Macintosh executable to read the\n"
 "instruments from. Music will be disabled."
 msgstr ""
+"楽器をロードするためのMacintoshの実行ファイル「Monkey Island」が見つかりません。\n"
+"音楽は無効になります。"
 
 #: engines/scumm/imuse/drivers/amiga.cpp:654
 msgid ""
@@ -6577,11 +6583,11 @@ msgstr ""
 
 #: engines/sherlock/detection.cpp:60
 msgid "Pixellated scene transitions"
-msgstr ""
+msgstr "ピクセル化されたシーン遷移"
 
 #: engines/sherlock/detection.cpp:61
 msgid "When changing scenes, a randomized pixel transition is done"
-msgstr ""
+msgstr "シーン切り替え時、ランダムなピクセル遷移を行う"
 
 #: engines/sherlock/detection.cpp:70
 msgid "Don't show hotspots when moving mouse"
@@ -6603,43 +6609,43 @@ msgstr "キャラクターのポートレートを表示する(会話中のみ)"
 
 #: engines/sherlock/detection.cpp:90
 msgid "Slide dialogs into view"
-msgstr ""
+msgstr "ダイアログをスライド表示"
 
 #: engines/sherlock/detection.cpp:91
 msgid "Slide UI dialogs into view, rather than simply showing them immediately"
-msgstr ""
+msgstr "UIダイアログをスライドさせて表示"
 
 #: engines/sherlock/detection.cpp:100
 msgid "Transparent windows"
-msgstr ""
+msgstr "ウィンドウを透明化"
 
 #: engines/sherlock/detection.cpp:101
 msgid "Show windows with a partially transparent background"
-msgstr ""
+msgstr "ウィンドウ背景を部分的に透明化"
 
 #: engines/sky/compact.cpp:142
 msgid "The \"sky.cpt\" engine data file has an incorrect size."
-msgstr ""
+msgstr "エンジンデータファイルsky.cptのサイズが正しくありません。"
 
 #: engines/sky/detection.cpp:37
 msgid "Floppy intro"
-msgstr ""
+msgstr "FD版イントロ"
 
 #: engines/sky/detection.cpp:38
 msgid "Use the floppy version's intro (CD version only)"
-msgstr ""
+msgstr "FD版のイントロを使用する(CD版のみ)"
 
 #: engines/sky/metaengine.cpp:76
 msgid "Walk / Look / Talk"
-msgstr ""
+msgstr "歩く / 見る / 話す"
 
 #: engines/sky/metaengine.cpp:94
 msgid "Skip / Close"
-msgstr ""
+msgstr "スキップ / 閉じる"
 
 #: engines/sky/metaengine.cpp:102
 msgid "Open control panel"
-msgstr ""
+msgstr "コントロールパネルを開く"
 
 #: engines/sky/metaengine.cpp:118
 msgid "Toggle fast mode"
@@ -6652,21 +6658,21 @@ msgstr "高速モードの切り替え"
 
 #: engines/stark/detection.cpp:322
 msgid "Load modded assets"
-msgstr ""
+msgstr "MODアセットをロード"
 
 #: engines/stark/detection.cpp:323
 msgid "Enable loading of external replacement assets."
-msgstr ""
+msgstr "外部の交換用アセットのロードを有効にします。"
 
 #: engines/stark/detection.cpp:331
 msgid "Enable linear filtering of the backgrounds images"
-msgstr ""
+msgstr "背景のリニアフィルタリングを有効化"
 
 #: engines/stark/detection.cpp:332
 msgid ""
 "When linear filtering is enabled the background graphics are smoother in "
 "full screen mode, at the cost of some details."
-msgstr ""
+msgstr "リニアフィルタリングを有効にすると、フルスクリーンで背景がより滑らかになりますが、一部のディテールは損なわれます。"
 
 #: engines/stark/detection.cpp:340 engines/ultima/ultima8/meta_engine.cpp:172
 #, fuzzy
@@ -6749,7 +6755,7 @@ msgstr "改善モード"
 #: engines/supernova/detection.cpp:36
 msgid ""
 "Removes some repetitive actions, adds possibility to change verbs by keyboard"
-msgstr ""
+msgstr "いくつかの反復操作を削除し、キーボードで動詞を変更可能にする"
 
 #: engines/sword1/animation.cpp:532
 #, c-format
