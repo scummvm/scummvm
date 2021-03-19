@@ -241,7 +241,7 @@ public:
 	void playSoundSync(const Common::String &filename) {
 		_syncSoundId = playSound(Common::String(), Common::String(), filename, Common::String());
 	}
-	void setAmbientSoundId(int id) { _ambientSoundId = id; }
+	void setAmbientSoundId(int id) { stopAmbientSound(); _ambientSoundId = id; }
 
 	void tell(Process &process, const Common::String &region, Common::String text, Common::String sound, bool npc);
 
@@ -277,6 +277,7 @@ public:
 	int getRandomNumber(int max);
 
 private:
+	void stopAmbientSound();
 	void loadPatches(Common::SeekableReadStream *file, Database & db);
 
 	typedef Common::HashMap<int, Graphics::TransparentSurface *> PictureCacheType;

@@ -943,6 +943,13 @@ void AGDSEngine::tell(Process &process, const Common::String &regionName, Common
 	}
 }
 
+void AGDSEngine::stopAmbientSound() {
+	if (_ambientSoundId >= 0) {
+		_mixer->stopID(_ambientSoundId);
+		_ambientSoundId = -1;
+	}
+}
+
 
 void AGDSEngine::initSystemVariables() {
 	addSystemVar("inventory_scr", new StringSystemVariable());
@@ -1047,7 +1054,6 @@ void AGDSEngine::loadPatches(Common::SeekableReadStream *file, Database & db) {
 	debug("done loading patches");
 }
 
-
 Common::Error AGDSEngine::loadGameState(int slot) {
 	//saveAutosaveIfEnabled();
 
@@ -1061,6 +1067,8 @@ Common::Error AGDSEngine::loadGameState(int slot) {
 	if (!db.open(fileName, saveFile))
 		return Common::kReadingFailed;
 
+	stopAmbientSound();
+	_syncSoundId = -1;
 	_soundManager.stopAll();
 
 	{
