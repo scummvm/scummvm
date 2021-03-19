@@ -21,6 +21,7 @@
  */
 
 #include "ags/plugins/ags_creditz/ags_creditz1.h"
+#include "ags/lib/allegro/surface.h"
 
 namespace AGS3 {
 namespace Plugins {
@@ -81,6 +82,26 @@ void AGSCreditz1::SetCredit(ScriptMethodParams &params) {
 	c._colorHeight = colour;
 }
 
+void AGSCreditz1::SetCreditImage(ScriptMethodParams &params) {
+	PARAMS5(int, ID, int, slot, int, center, int, xpos, int, pixtonext);
+
+	if (ID >= (int)_state->_credits[0].size())
+		_state->_credits[0].resize(ID + 1);
+
+	_state->_credits[0][ID]._image = true;
+	_state->_credits[0][ID]._isSet = true;
+	_state->_credits[0][ID]._x = xpos;
+	_state->_credits[0][ID]._center = center;
+	_state->_credits[0][ID]._fontSlot = slot;
+
+	if (pixtonext != -1) {
+		_state->_credits[0][ID]._colorHeight = pixtonext;
+	} else {
+		BITMAP *gfx = _engine->GetSpriteGraphic(slot);
+		_state->_credits[0][ID]._colorHeight = gfx->h;
+	}
+}
+
 void AGSCreditz1::ScrollCredits(ScriptMethodParams &params) {
 	PARAMS7(int, onoff, int, speed, int, fromY, int, toY, int, isautom, int, wait, int, resolution);
 
@@ -119,33 +140,45 @@ void AGSCreditz1::IsCreditScrollingFinished(ScriptMethodParams &params) {
 	params._result = true;
 }
 
-void AGSCreditz1::SetCreditImage(ScriptMethodParams &params) {
-	//PARAMS5(int, ID, int, Slot, int, center, int, xpos, int, pixtonext);
-}
-
 void AGSCreditz1::PauseScroll(ScriptMethodParams &params) {
-	//PARAMS1(int, onoff);
+	PARAMS1(bool, onoff);
+	_state->_paused = onoff;
 }
 
 void AGSCreditz1::ScrollReset(ScriptMethodParams &params) {
+	_state->_credits[0].clear();
 }
 
 void AGSCreditz1::SetEmptyLineHeight(ScriptMethodParams &params) {
-	//PARAMS1(int, Height);
+	PARAMS1(int, emptylineheight);
+	_state->_emptyLineHeight = emptylineheight;
 }
 
 void AGSCreditz1::GetEmptyLineHeight(ScriptMethodParams &params) {
-	params._result = 0;
+	params._result = _state->_emptyLineHeight;
 }
 
 void AGSCreditz1::SetStaticCredit(ScriptMethodParams &params) {
-	//PARAMS8(int, ID, int, x, int, y, int, creditfont, int, creditcolour, int, centered, int, generateoutline, string, credit);
+	PARAMS8(int, ID, int, x, int, y, int, creditfont, int, creditcolour, \
+		int, centered, int, generateoutline, string, credit);
 
+	if (ID >= (int)_state->_credits[0].size())
+		_state->_credits[0].resize(ID + 1);
+
+	StCredit &c = _state->_stCredits[0][ID];
+	c.credit = credit;
+	c.font = creditfont;
+	c.color = creditcolour;
+	c.x = x;
+	c.y = y;
+	c.outline = generateoutline;
+	c.centered = centered;
 }
 
 void AGSCreditz1::GetStaticCredit(ScriptMethodParams &params) {
-	//PARAMS1(int, ID);
-	params._result = NumberPtr();
+	PARAMS1(int, ID);
+	StCredit &c = _state->_stCredits[0][ID];
+	params._result = c.credit.c_str();
 }
 
 void AGSCreditz1::StartEndStaticCredits(ScriptMethodParams &params) {
@@ -153,19 +186,31 @@ void AGSCreditz1::StartEndStaticCredits(ScriptMethodParams &params) {
 }
 
 void AGSCreditz1::GetCurrentStaticCredit(ScriptMethodParams &params) {
-	params._result = 0;
+	params._result = _state->_currentStatic;
 }
 
 void AGSCreditz1::SetDefaultStaticDelay(ScriptMethodParams &params) {
-	//PARAMS1(int, Cyclesperchar);
+	PARAMS1(int, Cyclesperchar);
+	_state->_stSeqSettings[0].speed = Cyclesperchar;
 }
 
 void AGSCreditz1::SetStaticPause(ScriptMethodParams &params) {
-	//PARAMS2(int, ID, int, length);
+	PARAMS2(int, ID, int, length);
+	_state->_stCredits[0][ID].pause = length;
 }
 
 void AGSCreditz1::SetStaticCreditTitle(ScriptMethodParams &params) {
-	//PARAMS8(int, ID, int, x, int, y, int, titlefont, int, titlecolour, int, centered, int, generateoutline, string, title);
+	PARAMS8(int, ID, int, x, int, y, int, titlefont, int, titlecolour, \
+		int, centered, int, generateoutline, string, title);
+
+	StCredit &c = _state->_stCredits[0][ID];
+	c.title_x = x;
+	c.title_y = y;
+	c.title_font = titlefont;
+	c.title_color = titlecolour;
+	c.title_centered = centered;
+	c.title_outline = generateoutline;
+	c.title = title;
 }
 
 void AGSCreditz1::ShowStaticCredit(ScriptMethodParams &params) {
@@ -173,19 +218,33 @@ void AGSCreditz1::ShowStaticCredit(ScriptMethodParams &params) {
 }
 
 void AGSCreditz1::StaticReset(ScriptMethodParams &params) {
+	_state->_stCredits[0].clear();
 }
 
 void AGSCreditz1::GetStaticCreditTitle(ScriptMethodParams &params) {
-	//PARAMS1(int, ID);
-	params._result = NumberPtr();
+	PARAMS1(int, ID);
+
+	const StCredit &c = _state->_stCredits[0][ID];
+	params._result = c.title.c_str();
 }
 
 void AGSCreditz1::SetStaticCreditImage(ScriptMethodParams &params) {
-//int ID, int x, int y, int Slot, int Hcentered, int Vcentered, int time) {
+	PARAMS7(int, ID, int, x, int, y, int, slot, int, Hcentered, \
+		int, Vcentered, int, time);
+
+	StCredit &c = _state->_stCredits[0][ID];
+	c.credit = "I=M=A=G=E";
+	c.x = x;
+	c.y = y;
+	c.font = slot;
+	c.centered = Hcentered;
+	// TODO: Below seems *weird*
+	c.outline = Vcentered;
+	c.color = time;
 }
 
 void AGSCreditz1::IsStaticCreditsFinished(ScriptMethodParams &params) {
-	params._result = true;
+	params._result = _state->_stSeqSettings[0].finished;
 }
 
 } // namespace AGSCreditz

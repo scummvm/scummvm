@@ -60,18 +60,20 @@ struct StCredit {
 	Common::String title;
 	int x = 0;
 	int y = 0;
+	bool centered = false;
 	int font = 0;
 	int color = 0;
 	int title_x = 0;
 	int title_y = 0;
 	int title_font = 0;
 	int title_color = 0;
+	bool title_centered = false;
+	bool title_outline = false;
 	int pause = 0;
 	bool image = false;
 	int image_slot = 0;
 	int image_time = 0;
 	bool outline = false;
-	bool title_outline = false;
 };
 
 struct StSequenceSettings {
@@ -121,6 +123,7 @@ protected:
 	static Version _version;
 	static State *_state;
 	static IAGSEngine *_engine;
+
 public:
 	AGSCreditz();
 	~AGSCreditz();
