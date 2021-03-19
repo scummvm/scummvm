@@ -54,10 +54,7 @@ static const Nancy::NancyGameDescription gameDescriptions[] = {
 	{ // MD5 by fracturehill
 		{
 			"vampirediaries", 0,
-			{
-				{"vampire.exe", 0, "c6207f4bb7418b8a067ad75ed9f57bdf", 114688},
-				AD_LISTEND
-			},
+			AD_ENTRY1s("vampire.exe", "c6207f4bb7418b8a067ad75ed9f57bdf", 114688),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			Nancy::NGF_8BITCOLOR,
@@ -68,10 +65,7 @@ static const Nancy::NancyGameDescription gameDescriptions[] = {
 	{ // MD5 by waltervn
 		{
 			"nancy1", 0,
-			{
-				{"ciftree.dat", 0, "9f89e0b53717515ae0eb82d14ffe0e88", 4317962},
-				AD_LISTEND
-			},
+			AD_ENTRY1s("ciftree.dat", "9f89e0b53717515ae0eb82d14ffe0e88", 4317962),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
@@ -82,10 +76,7 @@ static const Nancy::NancyGameDescription gameDescriptions[] = {
 	{ // MD5 by waltervn
 		{
 			"nancy2", 0,
-			{
-				{"ciftree.dat", 0, "fa4293d728a1b31407961cd82e86a015", 7784516},
-				AD_LISTEND
-			},
+			AD_ENTRY1s("ciftree.dat", "fa4293d728a1b31407961cd82e86a015", 7784516),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
@@ -96,10 +87,7 @@ static const Nancy::NancyGameDescription gameDescriptions[] = {
 	{ // MD5 by waltervn
 		{
 			"nancy3", 0,
-			{
-				{"ciftree.dat", 0, "ee5f8832226567c3610556497c451b09", 16256355},
-				AD_LISTEND
-			},
+			AD_ENTRY1s("ciftree.dat", "ee5f8832226567c3610556497c451b09", 16256355),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
@@ -126,10 +114,7 @@ static const Nancy::NancyGameDescription gameDescriptions[] = {
 	{ // MD5 by waltervn
 		{
 			"nancy4", 0,
-			{
-				{"ciftree.dat", 0, "e9d45f7db453b0d8f37d202fc979537c", 8742289},
-				AD_LISTEND
-			},
+			AD_ENTRY1s("ciftree.dat", "e9d45f7db453b0d8f37d202fc979537c", 8742289),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
@@ -156,10 +141,7 @@ static const Nancy::NancyGameDescription gameDescriptions[] = {
 	{ // MD5 by waltervn
 		{
 			"nancy5", 0,
-			{
-				{"ciftree.dat", 0, "21fa81f322595c3100d8d58d100852d5", 8187692},
-				AD_LISTEND
-			},
+			AD_ENTRY1s("ciftree.dat", "21fa81f322595c3100d8d58d100852d5", 8187692),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
@@ -202,10 +184,7 @@ static const Nancy::NancyGameDescription gameDescriptions[] = {
 	{ // MD5 by Strangerke
 		{
 			"nancy6", 0,
-			{
-				{"ciftree.dat", 0, "a97b848651fdcf38f5cad7092d98e4a1", 28888006},
-				AD_LISTEND
-			},
+			AD_ENTRY1s("ciftree.dat", "a97b848651fdcf38f5cad7092d98e4a1", 28888006),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
