@@ -3141,87 +3141,87 @@ void doDoing() {
 /*                                doScript           					   */
 /*-------------------------------------------------------------------------*/
 void doScript() {
-	static uint32 me_pausestarttime = 0;
-	uint8 campo = g_vm->_curMessage->_u8Param;
-	uint16 indice = g_vm->_curMessage->_u16Param1;
-	uint16 indice2 = g_vm->_curMessage->_u16Param2;
-	uint32 valore = g_vm->_curMessage->_u32Param;
+	static uint32 pauseStartTime = 0;
+	uint8 scope = g_vm->_curMessage->_u8Param;
+	uint16 index = g_vm->_curMessage->_u16Param1;
+	uint16 index2 = g_vm->_curMessage->_u16Param2;
+	uint32 value = g_vm->_curMessage->_u32Param;
 
 	switch (g_vm->_curMessage->_event) {
 
 	case ME_PAUSE:
-		if (!me_pausestarttime) {
-			me_pausestarttime = TheTime;
+		if (!pauseStartTime) {
+			pauseStartTime = TheTime;
 			doEvent(g_vm->_curMessage->_class, g_vm->_curMessage->_event, g_vm->_curMessage->_priority, g_vm->_curMessage->_u16Param1, g_vm->_curMessage->_u16Param2, g_vm->_curMessage->_u8Param, g_vm->_curMessage->_u32Param);
 		} else {
-			if (TheTime >= (me_pausestarttime + g_vm->_curMessage->_u16Param1))
-				me_pausestarttime = 0;
+			if (TheTime >= (pauseStartTime + g_vm->_curMessage->_u16Param1))
+				pauseStartTime = 0;
 			else
 				doEvent(g_vm->_curMessage->_class, g_vm->_curMessage->_event, g_vm->_curMessage->_priority, g_vm->_curMessage->_u16Param1, g_vm->_curMessage->_u16Param2, g_vm->_curMessage->_u8Param, g_vm->_curMessage->_u32Param);
 		}
 		break;
 
 	case ME_SETOBJ:
-		switch (campo) {
+		switch (scope) {
 		case C_ONAME:
-			g_vm->_obj[indice]._name = (uint16)valore;
+			g_vm->_obj[index]._name = (uint16)value;
 			break;
 		case C_OEXAMINE:
-			g_vm->_obj[indice]._examine = (uint16)valore;
+			g_vm->_obj[index]._examine = (uint16)value;
 			break;
 		case C_OACTION:
-			g_vm->_obj[indice]._action = (uint16)valore;
+			g_vm->_obj[index]._action = (uint16)value;
 			break;
 		case C_OGOROOM:
-			g_vm->_obj[indice]._goRoom = (uint8)valore;
+			g_vm->_obj[index]._goRoom = (uint8)value;
 			break;
 		case C_OMODE:
-			if (valore)
-				g_vm->_obj[indice]._mode |= (uint8)indice2;
+			if (value)
+				g_vm->_obj[index]._mode |= (uint8)index2;
 			else
-				g_vm->_obj[indice]._mode &= ~(uint8)indice2;
+				g_vm->_obj[index]._mode &= ~(uint8)index2;
 			break;
 		case C_OFLAG:
-			if (valore)
-				g_vm->_obj[indice]._flag |= (uint8)indice2;
+			if (value)
+				g_vm->_obj[index]._flag |= (uint8)index2;
 			else
-				g_vm->_obj[indice]._flag &= ~(uint8)indice2;
+				g_vm->_obj[index]._flag &= ~(uint8)index2;
 			break;
 
 		}
 		break;
 
 	case ME_SETINVOBJ:
-		switch (campo) {
+		switch (scope) {
 		case C_INAME:
-			g_vm->_inventoryObj[indice]._name = (uint16)valore;
+			g_vm->_inventoryObj[index]._name = (uint16)value;
 			break;
 		case C_IEXAMINE:
-			g_vm->_inventoryObj[indice]._examine = (uint16)valore;
+			g_vm->_inventoryObj[index]._examine = (uint16)value;
 			break;
 		case C_IACTION:
-			g_vm->_inventoryObj[indice]._action = (uint16)valore;
+			g_vm->_inventoryObj[index]._action = (uint16)value;
 			break;
 		case C_IFLAG:
-			if (valore)
-				g_vm->_inventoryObj[indice]._flag |= (uint8)indice2;
+			if (value)
+				g_vm->_inventoryObj[index]._flag |= (uint8)index2;
 			else
-				g_vm->_inventoryObj[indice]._flag &= ~(uint8)indice2;
+				g_vm->_inventoryObj[index]._flag &= ~(uint8)index2;
 			break;
 
 		}
 		break;
 
 	case ME_ADDICON:
-		AddIcon(indice);
+		AddIcon(index);
 		break;
 
 	case ME_KILLICON:
-		KillIcon(indice);
+		KillIcon(index);
 		break;
 
 	case ME_PLAYDIALOG:
-		PlayDialog(indice);
+		PlayDialog(index);
 		break;
 
 	case ME_CHARACTERSAY:
@@ -3229,11 +3229,11 @@ void doScript() {
 		break;
 
 	case ME_PLAYSOUND:
-		NLPlaySound(indice);
+		NLPlaySound(index);
 		break;
 
 	case ME_STOPSOUND:
-		NLStopSound(indice);
+		NLStopSound(index);
 		break;
 
 	case ME_REGENROOM:
@@ -3241,7 +3241,7 @@ void doScript() {
 		break;
 
 	case ME_CHANGER:
-		doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, indice, indice2, valore, g_vm->_curObj);
+		doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, index, index2, value, g_vm->_curObj);
 		break;
 	}
 }

@@ -40,7 +40,6 @@
 
 namespace Trecision {
 
-
 uint16 BlinkLastDTextChar = MASKCOL;
 uint16 MouseBuf[50];
 
@@ -185,17 +184,13 @@ uint16 TextLength(const char *sign, uint16 num) {
 	if (sign == nullptr)
 		return 0;
 
-	uint16 Len;
-	if (num == 0)
-		Len = strlen(sign);
-	else
-		Len = num;
+	uint16 len = (num == 0) ? strlen(sign) : num;
 
-	uint16 b = 0;
-	for (uint16 c = 0; c < Len; c++)
-		b += Font[(uint8)sign[c] * 3 + 2];
+	uint16 retVal = 0;
+	for (uint16 c = 0; c < len; c++)
+		retVal += Font[(uint8)sign[c] * 3 + 2];
 
-	return b;
+	return retVal;
 }
 
 void SDText::set(SDText org) {
