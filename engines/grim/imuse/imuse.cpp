@@ -58,7 +58,7 @@ Imuse::Imuse(int fps, bool demo) {
 	for (int l = 0; l < MAX_IMUSE_TRACKS + MAX_IMUSE_FADETRACKS; l++) {
 		_track[l] = new Track;
 		assert(_track[l]);
-		memset(_track[l], 0, sizeof(Track));
+		_track[l]->clear();
 		_track[l]->trackId = l;
 	}
 	vimaInit(imuseDestTable);
@@ -99,7 +99,7 @@ void Imuse::restoreState(SaveGame *savedState) {
 
 	for (int l = 0; l < MAX_IMUSE_TRACKS + MAX_IMUSE_FADETRACKS; l++) {
 		Track *track = _track[l];
-		memset(track, 0, sizeof(Track));
+		track->clear();
 		track->trackId = l;
 		track->pan = savedState->readLESint32();
 		track->panFadeDest = savedState->readLESint32();
@@ -210,7 +210,7 @@ void Imuse::callback() {
 			// mark it as unused.
 			if (!track->stream) {
 				if (!track->soundDesc || !g_system->getMixer()->isSoundHandleActive(track->handle))
-					memset(track, 0, sizeof(Track));
+					track->clear();
 				continue;
 			}
 

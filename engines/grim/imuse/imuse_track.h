@@ -65,8 +65,41 @@ struct Track {
 	Audio::SoundHandle handle;
 	Audio::QueuingAudioStream *stream;
 
-	Track() : used(false), stream(NULL) {
-		soundName[0] = 0;
+	Track() {
+		clear();
+	}
+
+	void clear() {
+		trackId = 0;
+
+		pan = 0;
+		panFadeDest = 0;
+		panFadeStep = 0;
+		panFadeDelay = 0;
+		panFadeUsed = 0;
+		vol = 0;
+		volFadeDest = 0;
+		volFadeStep = 0;
+		volFadeDelay = 0;
+		volFadeUsed = 0;
+
+		for (uint i = 0; i < ARRAYSIZE(soundName); i++) {
+			soundName[i] = 0;
+		}
+		used = false;
+		toBeRemoved = false;
+		priority = 0;
+		regionOffset = 0;
+		dataOffset = 0;
+		curRegion = 0;
+		curHookId = 0;
+		volGroupId = 0;
+		feedSize = 0;
+		mixerFlags = 0;
+
+		soundDesc = nullptr;
+		// handle not cleared. FIXME: Clear by resetting _val to default (0xFFFFFFFF not 0)?
+		stream = nullptr;
 	}
 
 	/* getPan() returns -127 ... 127 */

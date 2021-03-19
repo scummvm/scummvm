@@ -61,7 +61,7 @@ int Imuse::allocSlot(int priority) {
 			}
 
 			// Mark it as unused
-			memset(track, 0, sizeof(Track));
+			track->clear();
 		} else {
 			return -1;
 		}
@@ -91,7 +91,7 @@ bool Imuse::startSound(const char *soundName, int volGroupId, int hookId, int vo
 			memcpy(track, fadeTrack, sizeof(Track));
 			track->trackId = i - MAX_IMUSE_TRACKS;
 			// Reset the track
-			memset(fadeTrack, 0, sizeof(Track));
+			fadeTrack->clear();
 			// Mark as used for now so the track won't be reused again this frame
 			track->used = true;
 
@@ -124,7 +124,7 @@ bool Imuse::startSound(const char *soundName, int volGroupId, int hookId, int vo
 
 	track = _track[l];
 	// Reset the track
-	memset(track, 0, sizeof(Track));
+	track->clear();
 
 	track->pan = pan * 1000;
 	track->vol = volume * 1000;
@@ -443,7 +443,7 @@ Track *Imuse::moveToFadeOutTrack(Track *track, int fadeDelay) {
 	fadeTrack->trackId = track->trackId + MAX_IMUSE_TRACKS;
 
 	// Reset the track
-	memset(track, 0, sizeof(Track));
+	track->clear();
 
 	// Mark as used for now so the track won't be reused again this frame
 	track->used = true;

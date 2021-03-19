@@ -45,7 +45,7 @@ void Imuse::flushTrack(Track *track) {
 	}
 
 	if (!g_system->getMixer()->isSoundHandleActive(track->handle)) {
-		memset(track, 0, sizeof(Track));
+		track->clear();
 	}
 }
 
@@ -54,7 +54,7 @@ void Imuse::flushTracks() {
 	for (int l = 0; l < MAX_IMUSE_TRACKS + MAX_IMUSE_FADETRACKS; l++) {
 		Track *track = _track[l];
 		if (track->used && track->toBeRemoved && !g_system->getMixer()->isSoundHandleActive(track->handle)) {
-			memset(track, 0, sizeof(Track));
+			track->clear();
 		}
 	}
 }
@@ -167,7 +167,7 @@ void Imuse::stopAllSounds() {
 			if (track->soundDesc) {
 				_sound->closeSound(track->soundDesc);
 			}
-			memset(track, 0, sizeof(Track));
+			track->clear();
 		}
 	}
 }
