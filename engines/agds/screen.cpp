@@ -307,6 +307,7 @@ void Screen::load(const PatchPtr &patch) {
 }
 
 void Screen::save(const PatchPtr &patch) {
+	patch->screenSaved = 1;
 	patch->prevScreenName = _previousScreen;
 	patch->loadingType = _loadingType;
 	patch->objects.clear();
