@@ -1202,7 +1202,7 @@ void Encounter::drawScreen() {
 					getScene()->updateScreen();
 					getScreen()->drawWideScreenBars(82);
 
-					getScreen()->updatePalette();
+					getScreen()->updatePalette(0);
 					getScreen()->setupPalette(NULL, 0, 0);
 
 					if (getSharedData()->getMattePlaySound() /* Scene::updateScreen() does script processing, so the value might have changed */
