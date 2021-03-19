@@ -27,8 +27,6 @@
 #include "common/keyboard.h"
 #include "graphics/pixelformat.h"
 
-#include "trecision/nl/message.h"
-#include "trecision/nl/sysdef.h"
 #include "trecision/nl/struct.h"
 #include "trecision/nl/ll/llinc.h"
 

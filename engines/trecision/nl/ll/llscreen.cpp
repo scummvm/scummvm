@@ -65,7 +65,6 @@ uint8 *IntroFont;
 uint16 *Arrows;
 uint8 *TextArea;
 uint8 *SpeechBuf[2];
-uint8 *MuLawBuf[2];
 uint16 *ExtraObj2C;
 uint16 *ExtraObj41D;
 // 3D AREA
@@ -104,8 +103,6 @@ SDText oldString;
 uint8  TextStatus;
 // AOT.CFG
 char  CurCDSet = 1;
-// ALTERNATIVE SCROLLING
-int   ScrollBottle;
 // FILEREF
 SFileEntry FileRef[MAXFILEREF];
 int NumFileRef;
@@ -229,13 +226,13 @@ void OpenVideo() {
 	TextArea = (uint8 *)(MemoryArea + GameBytePointer);
 	GameBytePointer += MAXTEXTAREA;
 
-	// icone area
+	// icon area
 	g_vm->_animMgr->_smkBuffer[2] = (uint8 *)(MemoryArea + GameBytePointer);
 	GameBytePointer += ICONDX * ICONDY;
 	// zbuffer
 	ZBuffer = (int16 *)(MemoryArea + GameBytePointer);
-	GameBytePointer += (ZBUFFERSIZE);
-	for (int c = 0; c < (ZBUFFERSIZE / 2); c++)
+	GameBytePointer += ZBUFFERSIZE;
+	for (int c = 0; c < ZBUFFERSIZE / 2; c++)
 		ZBuffer[c] = 0x7FFF;
 	// CDBuffer
 	SpeechBuf[0] = (uint8 *)(MemoryArea + GameBytePointer);
@@ -318,131 +315,129 @@ uint32 ReadActor(const char *filename, uint8 *Area) {
 	_actor._curAction = hSTAND;
 
 	// fixup Microprose head correction
-	{
 #define P1	306
 #define P2	348
 #define P3	288
-		extern float _vertsCorr[104][3];
-		extern int _vertsCorrList[84];
-		double v1[3], v2[3], v[3], q[3], m1[3][3], m2[3][3], s;
-		int c, d, f;
+	extern float _vertsCorr[104][3];
+	extern int _vertsCorrList[84];
+	double v1[3], v2[3], v[3], q[3], m1[3][3], m2[3][3], s;
+	int c, d, f;
 
-		v1[0] = _actor._vertex[P2]._x - _actor._vertex[P1]._x;
-		v1[1] = _actor._vertex[P2]._y - _actor._vertex[P1]._y;
-		v1[2] = _actor._vertex[P2]._z - _actor._vertex[P1]._z;
+	v1[0] = _actor._vertex[P2]._x - _actor._vertex[P1]._x;
+	v1[1] = _actor._vertex[P2]._y - _actor._vertex[P1]._y;
+	v1[2] = _actor._vertex[P2]._z - _actor._vertex[P1]._z;
+	s = sqrt(v1[0] * v1[0] + v1[1] * v1[1] + v1[2] * v1[2]);
+	v1[0] /= s;
+	v1[1] /= s;
+	v1[2] /= s;
+
+	v2[0] = _actor._vertex[P3]._x - _actor._vertex[P1]._x;
+	v2[1] = _actor._vertex[P3]._y - _actor._vertex[P1]._y;
+	v2[2] = _actor._vertex[P3]._z - _actor._vertex[P1]._z;
+	s = sqrt(v2[0] * v2[0] + v2[1] * v2[1] + v2[2] * v2[2]);
+	v2[0] /= s;
+	v2[1] /= s;
+	v2[2] /= s;
+
+	m1[1][0] = v2[1] * v1[2] - v1[1] * v2[2];
+	m1[1][1] = v2[2] * v1[0] - v1[2] * v2[0];
+	m1[1][2] = v2[0] * v1[1] - v1[0] * v2[1];
+	s = sqrt(m1[1][0] * m1[1][0] + m1[1][1] * m1[1][1] + m1[1][2] * m1[1][2]);
+	m1[1][0] /= s;
+	m1[1][1] /= s;
+	m1[1][2] /= s;
+
+	m1[2][0] = m1[1][1] * v1[2] - v1[1] * m1[1][2];
+	m1[2][1] = m1[1][2] * v1[0] - v1[2] * m1[1][0];
+	m1[2][2] = m1[1][0] * v1[1] - v1[0] * m1[1][1];
+	s = sqrt(m1[2][0] * m1[2][0] + m1[2][1] * m1[2][1] + m1[2][2] * m1[2][2]);
+	m1[2][0] /= s;
+	m1[2][1] /= s;
+	m1[2][2] /= s;
+
+	m1[0][0] = v1[0];
+	m1[0][1] = v1[1];
+	m1[0][2] = v1[2];
+
+	for (int b = 0; b < ActionNum; b++) {
+		SVertex *sv = (SVertex *)(_actor._vertex + b * VertexNum);
+
+		v1[0] = sv[P2]._x - sv[P1]._x;
+		v1[1] = sv[P2]._y - sv[P1]._y;
+		v1[2] = sv[P2]._z - sv[P1]._z;
 		s = sqrt(v1[0] * v1[0] + v1[1] * v1[1] + v1[2] * v1[2]);
 		v1[0] /= s;
 		v1[1] /= s;
 		v1[2] /= s;
 
-		v2[0] = _actor._vertex[P3]._x - _actor._vertex[P1]._x;
-		v2[1] = _actor._vertex[P3]._y - _actor._vertex[P1]._y;
-		v2[2] = _actor._vertex[P3]._z - _actor._vertex[P1]._z;
+		v2[0] = sv[P3]._x - sv[P1]._x;
+		v2[1] = sv[P3]._y - sv[P1]._y;
+		v2[2] = sv[P3]._z - sv[P1]._z;
 		s = sqrt(v2[0] * v2[0] + v2[1] * v2[1] + v2[2] * v2[2]);
 		v2[0] /= s;
 		v2[1] /= s;
 		v2[2] /= s;
 
-		m1[1][0] = v2[1] * v1[2] - v1[1] * v2[2];
-		m1[1][1] = v2[2] * v1[0] - v1[2] * v2[0];
-		m1[1][2] = v2[0] * v1[1] - v1[0] * v2[1];
-		s = sqrt(m1[1][0] * m1[1][0] + m1[1][1] * m1[1][1] + m1[1][2] * m1[1][2]);
-		m1[1][0] /= s;
-		m1[1][1] /= s;
-		m1[1][2] /= s;
+		m2[1][0] = v2[1] * v1[2] - v1[1] * v2[2];
+		m2[1][1] = v2[2] * v1[0] - v1[2] * v2[0];
+		m2[1][2] = v2[0] * v1[1] - v1[0] * v2[1];
+		s = sqrt(m2[1][0] * m2[1][0] + m2[1][1] * m2[1][1] + m2[1][2] * m2[1][2]);
+		m2[1][0] /= s;
+		m2[1][1] /= s;
+		m2[1][2] /= s;
 
-		m1[2][0] = m1[1][1] * v1[2] - v1[1] * m1[1][2];
-		m1[2][1] = m1[1][2] * v1[0] - v1[2] * m1[1][0];
-		m1[2][2] = m1[1][0] * v1[1] - v1[0] * m1[1][1];
-		s = sqrt(m1[2][0] * m1[2][0] + m1[2][1] * m1[2][1] + m1[2][2] * m1[2][2]);
-		m1[2][0] /= s;
-		m1[2][1] /= s;
-		m1[2][2] /= s;
+		m2[2][0] = m2[1][1] * v1[2] - v1[1] * m2[1][2];
+		m2[2][1] = m2[1][2] * v1[0] - v1[2] * m2[1][0];
+		m2[2][2] = m2[1][0] * v1[1] - v1[0] * m2[1][1];
+		s = sqrt(m2[2][0] * m2[2][0] + m2[2][1] * m2[2][1] + m2[2][2] * m2[2][2]);
+		m2[2][0] /= s;
+		m2[2][1] /= s;
+		m2[2][2] /= s;
 
-		m1[0][0] = v1[0];
-		m1[0][1] = v1[1];
-		m1[0][2] = v1[2];
+		m2[0][0] = v1[0];
+		m2[0][1] = v1[1];
+		m2[0][2] = v1[2];
 
-		for (int b = 0; b < ActionNum; b++) {
-			SVertex *sv = (SVertex *)(_actor._vertex + b * VertexNum);
+		v2[0] = sv[P1]._x;
+		v2[1] = sv[P1]._y;
+		v2[2] = sv[P1]._z;
 
-			v1[0] = sv[P2]._x - sv[P1]._x;
-			v1[1] = sv[P2]._y - sv[P1]._y;
-			v1[2] = sv[P2]._z - sv[P1]._z;
-			s = sqrt(v1[0] * v1[0] + v1[1] * v1[1] + v1[2] * v1[2]);
-			v1[0] /= s;
-			v1[1] /= s;
-			v1[2] /= s;
+		v1[0] = _actor._vertex[P1]._x;
+		v1[1] = _actor._vertex[P1]._y;
+		v1[2] = _actor._vertex[P1]._z;
 
-			v2[0] = sv[P3]._x - sv[P1]._x;
-			v2[1] = sv[P3]._y - sv[P1]._y;
-			v2[2] = sv[P3]._z - sv[P1]._z;
-			s = sqrt(v2[0] * v2[0] + v2[1] * v2[1] + v2[2] * v2[2]);
-			v2[0] /= s;
-			v2[1] /= s;
-			v2[2] /= s;
+		for (int e = 279; e < 383; e++) {
+			for (f = 0; f < 84; f++)
+				if (_vertsCorrList[f] == e)
+					break;
+			if (f == 84)
+				continue;
 
-			m2[1][0] = v2[1] * v1[2] - v1[1] * v2[2];
-			m2[1][1] = v2[2] * v1[0] - v1[2] * v2[0];
-			m2[1][2] = v2[0] * v1[1] - v1[0] * v2[1];
-			s = sqrt(m2[1][0] * m2[1][0] + m2[1][1] * m2[1][1] + m2[1][2] * m2[1][2]);
-			m2[1][0] /= s;
-			m2[1][1] /= s;
-			m2[1][2] /= s;
+			v[0] = _vertsCorr[e - 279][0];
+			v[1] = _vertsCorr[e - 279][2];
+			v[2] = _vertsCorr[e - 279][1];
 
-			m2[2][0] = m2[1][1] * v1[2] - v1[1] * m2[1][2];
-			m2[2][1] = m2[1][2] * v1[0] - v1[2] * m2[1][0];
-			m2[2][2] = m2[1][0] * v1[1] - v1[0] * m2[1][1];
-			s = sqrt(m2[2][0] * m2[2][0] + m2[2][1] * m2[2][1] + m2[2][2] * m2[2][2]);
-			m2[2][0] /= s;
-			m2[2][1] /= s;
-			m2[2][2] /= s;
+			q[0] = 0.0;
+			q[1] = 0.0;
+			q[2] = 0.0;
+			for (d = 0; d < 3; d++)
+				for (c = 0; c < 3; c++)
+					q[c] += m1[c][d] * v[d];
+			v[0] = 0.0;
+			v[1] = 0.0;
+			v[2] = 0.0;
+			for (d = 0; d < 3; d++)
+				for (c = 0; c < 3; c++)
+					v[c] += m2[d][c] * q[d];
 
-			m2[0][0] = v1[0];
-			m2[0][1] = v1[1];
-			m2[0][2] = v1[2];
-
-			v2[0] = sv[P1]._x;
-			v2[1] = sv[P1]._y;
-			v2[2] = sv[P1]._z;
-
-			v1[0] = _actor._vertex[P1]._x;
-			v1[1] = _actor._vertex[P1]._y;
-			v1[2] = _actor._vertex[P1]._z;
-
-			for (int e = 279; e < 383; e++) {
-				for (f = 0; f < 84; f++)
-					if (_vertsCorrList[f] == e)
-						break;
-				if (f == 84)
-					continue;
-
-				v[0] = _vertsCorr[e - 279][0];
-				v[1] = _vertsCorr[e - 279][2];
-				v[2] = _vertsCorr[e - 279][1];
-
-				q[0] = 0.0;
-				q[1] = 0.0;
-				q[2] = 0.0;
-				for (d = 0; d < 3; d++)
-					for (c = 0; c < 3; c++)
-						q[c] += m1[c][d] * v[d];
-				v[0] = 0.0;
-				v[1] = 0.0;
-				v[2] = 0.0;
-				for (d = 0; d < 3; d++)
-					for (c = 0; c < 3; c++)
-						v[c] += m2[d][c] * q[d];
-
-				if (b < 42) {
-					sv[e]._x += _vertsCorr[e - 279][0];
-					sv[e]._y += _vertsCorr[e - 279][2];
-					sv[e]._z += _vertsCorr[e - 279][1];
-				} else {
-					sv[e]._x += v[0];
-					sv[e]._y += v[1];
-					sv[e]._z += v[2];
-				}
+			if (b < 42) {
+				sv[e]._x += _vertsCorr[e - 279][0];
+				sv[e]._y += _vertsCorr[e - 279][2];
+				sv[e]._z += _vertsCorr[e - 279][1];
+			} else {
+				sv[e]._x += v[0];
+				sv[e]._y += v[1];
+				sv[e]._z += v[2];
 			}
 		}
 	}
@@ -469,12 +464,10 @@ int actionInRoom(int curA) {
 	return b;
 }
 
-int RoomReady = 0;
 /*-----------------17/02/95 10.19-------------------
 						ReadLoc
 --------------------------------------------------*/
 void ReadLoc() {
-	RoomReady = 0;
 	if ((g_vm->_curRoom == r11) && !(g_vm->_room[r11]._flag & OBJFLAG_DONE))
 		FlagShowCharacter = true;
 
@@ -537,7 +530,6 @@ void TendIn() {
 	PaintScreen(1);
 
 	g_vm->_graphicsMgr->showScreen(0, 0, MAXX, MAXY);
-	RoomReady = 1;
 }
 
 /*-----------------17/02/95 10.20-------------------
@@ -573,7 +565,7 @@ void ReadObj() {
 			b += (g_vm->_obj[c]._dx * g_vm->_obj[c]._dy);
 		}
 
-		if ((g_vm->_obj[c]._mode & OBJMODE_MASK)) {
+		if (g_vm->_obj[c]._mode & OBJMODE_MASK) {
 			wordcopy(&BmInfo, o + b, 4);
 			b += 4;
 			g_vm->_obj[c]._px = BmInfo.px;
@@ -627,7 +619,7 @@ void ReadExtraObj2C() {
 			b += (g_vm->_obj[c]._dx * g_vm->_obj[c]._dy);
 		}
 
-		if ((g_vm->_obj[c]._mode & OBJMODE_MASK)) {
+		if (g_vm->_obj[c]._mode & OBJMODE_MASK) {
 			wordcopy(&BmInfo, o + b, 4);
 			b += 4;
 			g_vm->_obj[c]._px = BmInfo.px;
@@ -763,7 +755,7 @@ void RegenRoom() {
 --------------------------------------------------*/
 void PaintRegenRoom() {
 	for (uint16 a = 0; a < MAXOBJINROOM; a++) {
-		if ((OldObjStatus[a]) && (!VideoObjStatus[a])) {
+		if (OldObjStatus[a] && !VideoObjStatus[a]) {
 			SortTable[g_vm->_curSortTableNum]._index = g_vm->_room[g_vm->_curRoom]._object[a];
 			SortTable[g_vm->_curSortTableNum]._roomIndex = a;
 			SortTable[g_vm->_curSortTableNum]._remove = false;
@@ -771,7 +763,7 @@ void PaintRegenRoom() {
 			SortTable[g_vm->_curSortTableNum]._typology = TYPO_BMP;
 			VideoObjStatus[a] = 1;
 			g_vm->_curSortTableNum++;
-		} else if ((!OldObjStatus[a]) && (VideoObjStatus[a])) {
+		} else if (!OldObjStatus[a] && VideoObjStatus[a]) {
 			SortTable[g_vm->_curSortTableNum]._index = g_vm->_room[g_vm->_curRoom]._object[a];
 			SortTable[g_vm->_curSortTableNum]._roomIndex = a;
 			SortTable[g_vm->_curSortTableNum]._remove = true;
@@ -782,6 +774,7 @@ void PaintRegenRoom() {
 		}
 
 	}
+	// CHECKME: Why setting VideoObjStatus in the loop if it's reset right after the loop?
 	memcpy(VideoObjStatus, OldObjStatus, MAXOBJINROOM);
 }
 /*-----------------16/05/95 11.03-------------------
@@ -789,10 +782,8 @@ void PaintRegenRoom() {
 --------------------------------------------------*/
 void DrawObj(SDObj d) {
 	for (uint16 a = 0; a < 4; a++) {
-		if (d.l[a] > (CurRoomMaxX)) {
-			//printf("%u %u %u %u\n",d.l[0],d.l[1],d.l[2],d.l[3]);
+		if (d.l[a] > CurRoomMaxX)
 			return;
-		}
 	}
 
 	uint16 *buf = d.buf;
@@ -852,23 +843,6 @@ void DrawObj(SDObj d) {
 			g_vm->_graphicsMgr->unlock();
 		}
 	}
-}
-
-/* -----------------20/11/97 16.59-------------------
- * 					ULaw2Linear
- * --------------------------------------------------*/
-uint16 ULaw2Linear(uint8 ulawbyte) {
-	static short exp_lut[8] = {0, 132, 396, 924, 1980, 4092, 8316, 16764};
-
-	ulawbyte = ~ulawbyte;
-	short sign = (ulawbyte & 0x80);
-	short exponent = (ulawbyte >> 4) & 0x07;
-	short mantissa = ulawbyte & 0x0F;
-	short sample = exp_lut[exponent] + (mantissa << (exponent + 3));
-	if (sign != 0)
-		sample = -sample;
-
-	return sample;
 }
 
 } // End of namespace Trecision

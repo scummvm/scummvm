@@ -20,26 +20,23 @@
  *
  */
 
-#include "common/scummsys.h"
+#include "trecision/trecision.h"
+#include "trecision/nl/define.h"
+#include "trecision/nl/extern.h"
+#include "trecision/nl/sysdef.h"
+#include "trecision/nl/message.h"
+#include "trecision/graphics.h"
+#include "trecision/video.h"
 
+#include "engines/util.h"
+#include "common/scummsys.h"
 #include "common/error.h"
 #include "common/system.h"
 #include "common/events.h"
-#include "graphics/pixelformat.h"
-#include "engines/util.h"
-
-#include "trecision/trecision.h"
-
 #include "common/archive.h"
 #include "common/config-manager.h"
 #include "common/file.h"
 #include "common/fs.h"
-#include "nl/define.h"
-
-#include "trecision/nl/extern.h"
-#include "trecision/nl/sysdef.h"
-#include "trecision/graphics.h"
-#include "trecision/video.h"
 
 namespace Common {
 class File;
