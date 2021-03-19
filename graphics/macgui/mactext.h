@@ -50,7 +50,8 @@ struct MacFontRun {
 	uint16 palinfo2;
 	uint16 palinfo3;
 	uint16 fgcolor;
-
+	// to determine whether the next word is part of this one
+	bool wordContinuation;
 	const Font *font;
 	MacWindowManager *wm;
 
@@ -59,11 +60,13 @@ struct MacFontRun {
 		fontId = textSlant = fontSize = 0;
 		palinfo1 = palinfo2  = palinfo3 = 0;
 		font = nullptr;
+		wordContinuation = false;
 	}
 
 	MacFontRun(MacWindowManager *wm_, uint16 fontId_, byte textSlant_, uint16 fontSize_,
 			uint16 palinfo1_, uint16 palinfo2_, uint16 palinfo3_) {
 		setValues(wm_, fontId_, textSlant_, fontSize_, palinfo1_, palinfo2_, palinfo3_);
+		wordContinuation = false;
 	}
 
 	void setValues(MacWindowManager *wm_, uint16 fontId_, byte textSlant_, uint16 fontSize_,
@@ -222,7 +225,7 @@ private:
 	void reshuffleParagraph(int *row, int *col);
 
 	void chopChunk(const Common::U32String &str, int *curLine);
-	void splitString(const Common::U32String &s, int curLine = -1);
+	void splitString(const Common::U32String &str, int curLine = -1);
 	void render(int from, int to);
 	void recalcDims();
 	void reallocSurface();
