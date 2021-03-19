@@ -346,7 +346,7 @@ void AnimManager::startFullMotion(const char *name) {
 	_vm->_animQueue.initQueue();
 	_vm->_characterQueue.initQueue();
 	actorStop();
-	g_vm->_fagMouseEnabled = false;
+	g_vm->_flagMouseEnabled = false;
 
 	openSmk(FmvFileOpen(name));
 
@@ -372,7 +372,7 @@ void AnimManager::stopFullMotion() {
 
 	FlagDialogActive = false;
 	FlagDialogMenuActive = false;
-	g_vm->_fagMouseEnabled = true;
+	g_vm->_flagMouseEnabled = true;
 	FlagSomeOneSpeak = false;
 
 	_vm->_lightIcon = 0xFF;

@@ -74,7 +74,7 @@ void MostraScelte(uint16 i) {
 	g_vm->_graphicsMgr->showScreen(0, 0, MAXX, TOP);
 
 	FlagDialogMenuActive = true;
-	g_vm->_fagMouseEnabled = true;
+	g_vm->_flagMouseEnabled = true;
 }
 
 /* -----------------28/07/97 22.12-------------------
@@ -366,8 +366,8 @@ void afterChoice(int numframe) {
 			break;
 
 		case dF231:
-			g_vm->_obj[od21ALLA23]._goRoom = r23B;
-			g_vm->_obj[od24ALLA23]._goRoom = r23B;
+			g_vm->_obj[od21TO23]._goRoom = r23B;
+			g_vm->_obj[od24TO23]._goRoom = r23B;
 			break;
 
 		case dF291:
@@ -612,7 +612,7 @@ void afterChoice(int numframe) {
 --------------------------------------------------*/
 void DialogHandler(int numframe) {
 	if ((FlagDialogActive) && (!(FlagDialogMenuActive))) {
-		g_vm->_fagMouseEnabled = false;
+		g_vm->_flagMouseEnabled = false;
 		if (numframe == _subTitles[_curSubTitle]._startFrame) {
 			int i = _curSubTitle++;
 			BattutaPrint(_subTitles[i]._x, _subTitles[i]._y, _subTitles[i]._color, g_vm->_sentence[_subTitles[i]._sentence]);
@@ -651,7 +651,7 @@ void PlayScelta(uint16 i) {
 	for (int c = _curSubTitle; c < EndBattuta; c++)
 		lens += _subTitles[c]._length;
 
-	g_vm->_fagMouseEnabled = false;
+	g_vm->_flagMouseEnabled = false;
 	g_vm->_animMgr->playFullMotion(ss->_startFrame, ss->_startFrame + lens - 1);
 }
 

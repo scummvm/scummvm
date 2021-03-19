@@ -50,7 +50,7 @@ uint16 Try41;
 /*                                 ROOMIN             					   */
 /*-------------------------------------------------------------------------*/
 void doRoomIn(uint16 curObj) {
-	g_vm->_fagMouseEnabled = false;
+	g_vm->_flagMouseEnabled = false;
 
 	uint16 theAction = g_vm->_obj[curObj]._anim;
 	uint16 thePos = g_vm->_obj[curObj]._ninv;
@@ -66,13 +66,13 @@ void doRoomIn(uint16 curObj) {
 void doRoomOut(uint16 TheObj) {
 	uint16 TheAction, ThePos;
 
-	g_vm->_fagMouseEnabled = false;
+	g_vm->_flagMouseEnabled = false;
 
 	switch (TheObj) {
 	case oSCALA32:
 		if (g_vm->_obj[oBOTOLAC32]._mode & OBJMODE_OBJSTATUS) {
 			CharacterSay(g_vm->_obj[TheObj]._action);
-			g_vm->_fagMouseEnabled = true;
+			g_vm->_flagMouseEnabled = true;
 			TheAction = 0;
 			ThePos = 0;
 		} else {
@@ -692,7 +692,7 @@ void doMouseOperate(uint16 TheObj) {
 		g_vm->_obj[oTRONCHESE25]._anim = a254;
 		break;
 
-	case oPASSAGGIO24:
+	case oPASSAGE24:
 		if (g_vm->_room[r24]._flag & OBJFLAG_EXTRA) {
 			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a244, 0, 14, TheObj);
 			SetRoom(r24, false);
@@ -1297,7 +1297,7 @@ void doMouseTake(uint16 TheObj) {
 	if (!TheObj)
 		warning("doMouseTake");
 
-// _fagMouseEnabled = false;
+// _flagMouseEnabled = false;
 	switch (TheObj) {
 	case oTINFOIL11:
 		del = false;
@@ -2239,7 +2239,7 @@ void doInvScrUseWith() {
 	case iTRONCHESE:
 		if ((g_vm->_useWith[WITH] == oCAVO2H) && (g_vm->_obj[oCARTELLONE2H]._mode & OBJMODE_OBJSTATUS)) {
 			PlayDialog(dF2H1);
-			g_vm->_obj[oPASSAGGIO24]._mode |= OBJMODE_OBJSTATUS;
+			g_vm->_obj[oPASSAGE24]._mode |= OBJMODE_OBJSTATUS;
 			g_vm->_obj[omPASSAGGIO24]._mode |= OBJMODE_OBJSTATUS;
 			g_vm->_obj[oCARTELLONE24]._mode &= ~OBJMODE_OBJSTATUS;
 			g_vm->_obj[oCARTELLONE2H]._mode &= ~OBJMODE_OBJSTATUS;
@@ -3132,7 +3132,7 @@ void doDoing() {
 	case ME_WAITOPENCLOSE:
 		RegenRoom();
 		if (_actor._curAction == hSTAND)
-			g_vm->_fagMouseEnabled = true;
+			g_vm->_flagMouseEnabled = true;
 		break;
 	}
 }
@@ -3459,11 +3459,11 @@ bool AtMouseClick(uint16 TheObj) {
 	}
 
 	if (g_vm->_room[g_vm->_curRoom]._flag & OBJFLAG_EXTRA) {
-		if ((TheObj == oTUBO21) || (TheObj == oCARTELLONE21) || (TheObj == oESSE21) || (TheObj == oRAMPINO21) || (TheObj == oCATENA21) || (TheObj == od21ALLA22) || (TheObj == oDOORC21) || (TheObj == oPORTAA21) || (TheObj == oCUNICOLO21) || (TheObj == od24ALLA23) || (TheObj == od2EALLA2C) || (TheObj == od2GVALLA26)) {
+		if ((TheObj == oTUBO21) || (TheObj == oCARTELLONE21) || (TheObj == oESSE21) || (TheObj == oRAMPINO21) || (TheObj == oCATENA21) || (TheObj == od21TO22) || (TheObj == oDOORC21) || (TheObj == oPORTAA21) || (TheObj == oCUNICOLO21) || (TheObj == od24TO23) || (TheObj == od2ETO2C) || (TheObj == od2GVALLA26)) {
 			_characterGoToPosition = -1;
 			ret = true;
 		}
-	} else if ((TheObj == od21ALLA23) || (TheObj == od24ALLA26) || (TheObj == oENTRANCE2E) || (TheObj == oCARTELLO2B) || (TheObj == oFRONTOFFICEC35) || (TheObj == oFRONTOFFICEA35) || (TheObj == oASCENSORE35) || (TheObj == oGIORNALE35)) {
+	} else if ((TheObj == od21TO23) || (TheObj == od24TO26) || (TheObj == oENTRANCE2E) || (TheObj == oCARTELLO2B) || (TheObj == oFRONTOFFICEC35) || (TheObj == oFRONTOFFICEA35) || (TheObj == oASCENSORE35) || (TheObj == oGIORNALE35)) {
 		_characterGoToPosition = -1;
 		ret = true;
 	}
