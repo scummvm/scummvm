@@ -65,18 +65,18 @@ void Renderer::init(int32 w, int32 h) {
 }
 
 void Renderer::projectXYPositionOnScreen(int32 x, int32 y, int32 z) {
-	if (isUsingOrthoProjection == 1) {
+	if (_isUsingOrthoProjection == 1) {
 		projPos.x = ((x - z) * 24) / BRICK_SIZE + orthoProjPos.x;
 		projPos.y = y;
 		return;
 	}
 	int32 cz = baseRotPos.z - z;
 	if (-1 < cz) {
-		int32 posZ = cz + cameraDepthOffset;
+		int32 posZ = cz + _cameraDepthOffset;
 		if (posZ < 0) {
 			posZ = 0x7FFF;
 		}
-		projPos.x = (cz * cameraScaleY) / posZ + orthoProjPos.x;
+		projPos.x = (cz * _cameraScaleY) / posZ + orthoProjPos.x;
 		projPos.y = y - baseRotPos.y;
 		return;
 	}
@@ -86,7 +86,7 @@ void Renderer::projectXYPositionOnScreen(int32 x, int32 y, int32 z) {
 }
 
 int32 Renderer::projectPositionOnScreen(int32 cX, int32 cY, int32 cZ) {
-	if (isUsingOrthoProjection) {
+	if (_isUsingOrthoProjection) {
 		projPos.x = ((cX - cZ) * 24) / BRICK_SIZE + orthoProjPos.x;
 		projPos.y = (((cX + cZ) * 12) - cY * 30) / BRICK_SIZE + orthoProjPos.y;
 		projPos.z = cZ - cY - cX;
@@ -104,13 +104,13 @@ int32 Renderer::projectPositionOnScreen(int32 cX, int32 cY, int32 cZ) {
 		return 0;
 	}
 
-	int32 posZ = cZ + cameraDepthOffset;
+	int32 posZ = cZ + _cameraDepthOffset;
 	if (posZ < 0) {
 		posZ = 0x7FFF;
 	}
 
-	projPos.x = (cX * cameraScaleY) / posZ + orthoProjPos.x;
-	projPos.y = (-cY * cameraScaleZ) / posZ + orthoProjPos.y;
+	projPos.x = (cX * _cameraScaleY) / posZ + orthoProjPos.x;
+	projPos.y = (-cY * _cameraScaleZ) / posZ + orthoProjPos.y;
 	projPos.z = posZ;
 	return -1;
 }
@@ -119,17 +119,17 @@ void Renderer::setCameraPosition(int32 x, int32 y, int32 depthOffset, int32 scal
 	orthoProjPos.x = x;
 	orthoProjPos.y = y;
 
-	cameraDepthOffset = depthOffset;
-	cameraScaleY = scaleY;
-	cameraScaleZ = scaleZ;
+	_cameraDepthOffset = depthOffset;
+	_cameraScaleY = scaleY;
+	_cameraScaleZ = scaleZ;
 
-	isUsingOrthoProjection = false;
+	_isUsingOrthoProjection = false;
 }
 
 void Renderer::setBaseTranslation(int32 x, int32 y, int32 z) {
-	baseTransPos.x = x;
-	baseTransPos.y = y;
-	baseTransPos.z = z;
+	_baseTransPos.x = x;
+	_baseTransPos.y = y;
+	_baseTransPos.z = z;
 }
 
 void Renderer::setOrthoProjection(int32 x, int32 y, int32 z) {
@@ -137,13 +137,13 @@ void Renderer::setOrthoProjection(int32 x, int32 y, int32 z) {
 	orthoProjPos.y = y;
 	orthoProjPos.z = z;
 
-	isUsingOrthoProjection = true;
+	_isUsingOrthoProjection = true;
 }
 
 void Renderer::baseMatrixTranspose() {
-	SWAP(baseMatrix.row1[1], baseMatrix.row2[0]);
-	SWAP(baseMatrix.row1[2], baseMatrix.row3[0]);
-	SWAP(baseMatrix.row2[2], baseMatrix.row3[1]);
+	SWAP(_baseMatrix.row1[1], _baseMatrix.row2[0]);
+	SWAP(_baseMatrix.row1[2], _baseMatrix.row3[0]);
+	SWAP(_baseMatrix.row2[2], _baseMatrix.row3[1]);
 }
 
 void Renderer::setBaseRotation(int32 x, int32 y, int32 z, bool transpose) {
@@ -151,28 +151,28 @@ void Renderer::setBaseRotation(int32 x, int32 y, int32 z, bool transpose) {
 	const double Yradians = (double)((ANGLE_90 - y) % ANGLE_360) * 2 * M_PI / ANGLE_360;
 	const double Zradians = (double)((ANGLE_90 - z) % ANGLE_360) * 2 * M_PI / ANGLE_360;
 
-	baseMatrix.row1[0] = (int32)(sin(Zradians) * sin(Yradians) * SCENE_SIZE_HALFF);
-	baseMatrix.row1[1] = (int32)(-cos(Zradians) * SCENE_SIZE_HALFF);
-	baseMatrix.row1[2] = (int32)(sin(Zradians) * cos(Yradians) * SCENE_SIZE_HALFF);
-	baseMatrix.row2[0] = (int32)(cos(Zradians) * sin(Xradians) * SCENE_SIZE_HALFF);
-	baseMatrix.row2[1] = (int32)(sin(Zradians) * sin(Xradians) * SCENE_SIZE_HALFF);
-	baseMatrix.row3[0] = (int32)(cos(Zradians) * cos(Xradians) * SCENE_SIZE_HALFF);
-	baseMatrix.row3[1] = (int32)(sin(Zradians) * cos(Xradians) * SCENE_SIZE_HALFF);
+	_baseMatrix.row1[0] = (int32)(sin(Zradians) * sin(Yradians) * SCENE_SIZE_HALFF);
+	_baseMatrix.row1[1] = (int32)(-cos(Zradians) * SCENE_SIZE_HALFF);
+	_baseMatrix.row1[2] = (int32)(sin(Zradians) * cos(Yradians) * SCENE_SIZE_HALFF);
+	_baseMatrix.row2[0] = (int32)(cos(Zradians) * sin(Xradians) * SCENE_SIZE_HALFF);
+	_baseMatrix.row2[1] = (int32)(sin(Zradians) * sin(Xradians) * SCENE_SIZE_HALFF);
+	_baseMatrix.row3[0] = (int32)(cos(Zradians) * cos(Xradians) * SCENE_SIZE_HALFF);
+	_baseMatrix.row3[1] = (int32)(sin(Zradians) * cos(Xradians) * SCENE_SIZE_HALFF);
 
-	int32 matrixElem = baseMatrix.row2[0];
+	int32 matrixElem = _baseMatrix.row2[0];
 
-	baseMatrix.row2[0] = (int32)(sin(Yradians) * matrixElem + SCENE_SIZE_HALFF * cos(Yradians) * cos(Xradians));
-	baseMatrix.row2[2] = (int32)(cos(Yradians) * matrixElem - SCENE_SIZE_HALFF * sin(Yradians) * cos(Xradians));
+	_baseMatrix.row2[0] = (int32)(sin(Yradians) * matrixElem + SCENE_SIZE_HALFF * cos(Yradians) * cos(Xradians));
+	_baseMatrix.row2[2] = (int32)(cos(Yradians) * matrixElem - SCENE_SIZE_HALFF * sin(Yradians) * cos(Xradians));
 
-	matrixElem = baseMatrix.row3[0];
+	matrixElem = _baseMatrix.row3[0];
 
-	baseMatrix.row3[0] = (int32)(sin(Yradians) * matrixElem - SCENE_SIZE_HALFF * sin(Xradians) * cos(Yradians));
-	baseMatrix.row3[2] = (int32)(cos(Yradians) * matrixElem + SCENE_SIZE_HALFF * sin(Xradians) * sin(Yradians));
+	_baseMatrix.row3[0] = (int32)(sin(Yradians) * matrixElem - SCENE_SIZE_HALFF * sin(Xradians) * cos(Yradians));
+	_baseMatrix.row3[2] = (int32)(cos(Yradians) * matrixElem + SCENE_SIZE_HALFF * sin(Xradians) * sin(Yradians));
 
 	if (transpose) {
 		baseMatrixTranspose();
 	}
-	getBaseRotationPosition(baseTransPos.x, baseTransPos.y, baseTransPos.z);
+	getBaseRotationPosition(_baseTransPos.x, _baseTransPos.y, _baseTransPos.z);
 
 	baseRotPos.x = destPos.x;
 	baseRotPos.y = destPos.y;
@@ -180,27 +180,27 @@ void Renderer::setBaseRotation(int32 x, int32 y, int32 z, bool transpose) {
 }
 
 void Renderer::getBaseRotationPosition(int32 x, int32 y, int32 z) {
-	destPos.x = (baseMatrix.row1[0] * x + baseMatrix.row1[1] * y + baseMatrix.row1[2] * z) / SCENE_SIZE_HALF;
-	destPos.y = (baseMatrix.row2[0] * x + baseMatrix.row2[1] * y + baseMatrix.row2[2] * z) / SCENE_SIZE_HALF;
-	destPos.z = (baseMatrix.row3[0] * x + baseMatrix.row3[1] * y + baseMatrix.row3[2] * z) / SCENE_SIZE_HALF;
+	destPos.x = (_baseMatrix.row1[0] * x + _baseMatrix.row1[1] * y + _baseMatrix.row1[2] * z) / SCENE_SIZE_HALF;
+	destPos.y = (_baseMatrix.row2[0] * x + _baseMatrix.row2[1] * y + _baseMatrix.row2[2] * z) / SCENE_SIZE_HALF;
+	destPos.z = (_baseMatrix.row3[0] * x + _baseMatrix.row3[1] * y + _baseMatrix.row3[2] * z) / SCENE_SIZE_HALF;
 }
 
 void Renderer::getCameraAnglePositions(int32 x, int32 y, int32 z) {
-	destPos.x = (baseMatrix.row1[0] * x + baseMatrix.row2[0] * y + baseMatrix.row3[0] * z) / SCENE_SIZE_HALF;
-	destPos.y = (baseMatrix.row1[1] * x + baseMatrix.row2[1] * y + baseMatrix.row3[1] * z) / SCENE_SIZE_HALF;
-	destPos.z = (baseMatrix.row1[2] * x + baseMatrix.row2[2] * y + baseMatrix.row3[2] * z) / SCENE_SIZE_HALF;
+	destPos.x = (_baseMatrix.row1[0] * x + _baseMatrix.row2[0] * y + _baseMatrix.row3[0] * z) / SCENE_SIZE_HALF;
+	destPos.y = (_baseMatrix.row1[1] * x + _baseMatrix.row2[1] * y + _baseMatrix.row3[1] * z) / SCENE_SIZE_HALF;
+	destPos.z = (_baseMatrix.row1[2] * x + _baseMatrix.row2[2] * y + _baseMatrix.row3[2] * z) / SCENE_SIZE_HALF;
 }
 
 void Renderer::translateGroup(int32 x, int32 y, int32 z) {
-	destPos.x = (shadeMatrix.row1[0] * x + shadeMatrix.row1[1] * y + shadeMatrix.row1[2] * z) / SCENE_SIZE_HALF;
-	destPos.y = (shadeMatrix.row2[0] * x + shadeMatrix.row2[1] * y + shadeMatrix.row2[2] * z) / SCENE_SIZE_HALF;
+	destPos.x = (_shadeMatrix.row1[0] * x + _shadeMatrix.row1[1] * y + _shadeMatrix.row1[2] * z) / SCENE_SIZE_HALF;
+	destPos.y = (_shadeMatrix.row2[0] * x + _shadeMatrix.row2[1] * y + _shadeMatrix.row2[2] * z) / SCENE_SIZE_HALF;
 	destPos.z = destPos.y;
 }
 
 void Renderer::setCameraAngle(int32 transPosX, int32 transPosY, int32 transPosZ, int32 rotPosX, int32 rotPosY, int32 rotPosZ, int32 param6) {
-	baseTransPos.x = transPosX;
-	baseTransPos.y = transPosY;
-	baseTransPos.z = transPosZ;
+	_baseTransPos.x = transPosX;
+	_baseTransPos.y = transPosY;
+	_baseTransPos.z = transPosZ;
 
 	setBaseRotation(rotPosX, rotPosY, rotPosZ);
 
@@ -208,7 +208,7 @@ void Renderer::setCameraAngle(int32 transPosX, int32 transPosY, int32 transPosZ,
 
 	getCameraAnglePositions(baseRotPos.x, baseRotPos.y, baseRotPos.z);
 
-	baseTransPos = destPos;
+	_baseTransPos = destPos;
 }
 
 IVec3 Renderer::getHolomapRotation(const int32 angleX, const int32 angleY, const int32 angleZ) const {
@@ -229,15 +229,15 @@ IVec3 Renderer::getHolomapRotation(const int32 angleX, const int32 angleY, const
 		rotZ = -shadeAngleTable[ClampAngle(angleZ)] * rotX / SCENE_SIZE_HALF;
 		rotX = shadeAngleTable[ClampAngle(angleZ + ANGLE_90)] * rotX / SCENE_SIZE_HALF;
 	}
-	const int32 row1X = baseMatrix.row1[0] * rotX;
-	const int32 row1Y = baseMatrix.row1[1] * rotY;
-	const int32 row1Z = baseMatrix.row1[2] * rotZ;
-	const int32 row2X = baseMatrix.row2[0] * rotX;
-	const int32 row2Y = baseMatrix.row2[1] * rotY;
-	const int32 row2Z = baseMatrix.row2[2] * rotZ;
-	const int32 row3X = baseMatrix.row3[0] * rotX;
-	const int32 row3Y = baseMatrix.row3[1] * rotY;
-	const int32 row3Z = baseMatrix.row3[2] * rotZ;
+	const int32 row1X = _baseMatrix.row1[0] * rotX;
+	const int32 row1Y = _baseMatrix.row1[1] * rotY;
+	const int32 row1Z = _baseMatrix.row1[2] * rotZ;
+	const int32 row2X = _baseMatrix.row2[0] * rotX;
+	const int32 row2Y = _baseMatrix.row2[1] * rotY;
+	const int32 row2Z = _baseMatrix.row2[2] * rotZ;
+	const int32 row3X = _baseMatrix.row3[0] * rotX;
+	const int32 row3Y = _baseMatrix.row3[1] * rotY;
+	const int32 row3Z = _baseMatrix.row3[2] * rotZ;
 	IVec3 vec;
 	vec.x = (row1X + row1Y + row1Z) / SCENE_SIZE_HALF;
 	vec.y = (row2X + row2Y + row2Z) / SCENE_SIZE_HALF;
@@ -340,7 +340,7 @@ void Renderer::processRotatedElement(IMatrix3x3 *targetMatrix, const pointTab *p
 	const IMatrix3x3 *currentMatrix;
 	// if its the first point
 	if (boneData->baseElement == -1) {
-		currentMatrix = &baseMatrix;
+		currentMatrix = &_baseMatrix;
 
 		destPos.x = 0;
 		destPos.y = 0;
@@ -348,8 +348,8 @@ void Renderer::processRotatedElement(IMatrix3x3 *targetMatrix, const pointTab *p
 	} else {
 		const int32 pointIdx = boneData->basePoint / sizeof(pointTab);
 		const int32 matrixIndex = boneData->baseElement / sizeof(BonesBaseData);
-		assert(matrixIndex >= 0 && matrixIndex < ARRAYSIZE(matricesTable));
-		currentMatrix = &matricesTable[matrixIndex];
+		assert(matrixIndex >= 0 && matrixIndex < ARRAYSIZE(_matricesTable));
+		currentMatrix = &_matricesTable[matrixIndex];
 
 		destPos.x = modelData->computedPoints[pointIdx].x;
 		destPos.y = modelData->computedPoints[pointIdx].y;
@@ -393,7 +393,7 @@ void Renderer::processTranslatedElement(IMatrix3x3 *targetMatrix, const pointTab
 		destPos.y = 0;
 		destPos.z = 0;
 
-		*targetMatrix = baseMatrix;
+		*targetMatrix = _baseMatrix;
 	} else { // dependent
 		const int32 pointsIdx = boneData->basePoint / sizeof(pointTab);
 		destPos.x = modelData->computedPoints[pointsIdx].x;
@@ -401,8 +401,8 @@ void Renderer::processTranslatedElement(IMatrix3x3 *targetMatrix, const pointTab
 		destPos.z = modelData->computedPoints[pointsIdx].z;
 
 		const int32 matrixIndex = boneData->baseElement / sizeof(BonesBaseData);
-		assert(matrixIndex >= 0 && matrixIndex < ARRAYSIZE(matricesTable));
-		*targetMatrix = matricesTable[matrixIndex];
+		assert(matrixIndex >= 0 && matrixIndex < ARRAYSIZE(_matricesTable));
+		*targetMatrix = _matricesTable[matrixIndex];
 	}
 
 	applyPointsTranslation(&pointsPtr[boneData->firstPoint / sizeof(pointTab)], boneData->numOfPoints, &modelData->computedPoints[boneData->firstPoint / sizeof(pointTab)], targetMatrix, renderAngle);
@@ -419,10 +419,10 @@ void Renderer::setLightVector(int32 angleX, int32 angleY, int32 angleZ) {
 	renderAngle.y = angleY;
 	renderAngle.z = angleZ;
 
-	applyRotation(&shadeMatrix, &baseMatrix, renderAngle);
+	applyRotation(&_shadeMatrix, &_baseMatrix, renderAngle);
 	translateGroup(0, 0, 59);
 
-	lightPos = destPos;
+	_lightPos = destPos;
 }
 
 FORCEINLINE int16 clamp(int16 x, int16 a, int16 b) {
@@ -1225,7 +1225,7 @@ bool Renderer::renderModelElements(int32 numOfPrimitives, const uint8 *polygonPt
 	// TODO: proper size
 	Common::MemoryReadStream stream(polygonPtr, 100000);
 
-	uint8 *renderBufferPtr = renderCoordinatesBuffer;
+	uint8 *renderBufferPtr = _renderCoordinatesBuffer;
 	renderBufferPtr = preparePolygons(stream, numOfPrimitives, renderCmds, renderBufferPtr, modelData);
 	renderBufferPtr = prepareLines(stream, numOfPrimitives, renderCmds, renderBufferPtr, modelData);
 	renderBufferPtr = prepareSpheres(stream, numOfPrimitives, renderCmds, renderBufferPtr, modelData);
@@ -1309,7 +1309,7 @@ bool Renderer::renderAnimatedModel(ModelData *modelData, const uint8 *bodyPtr, R
 
 	const pointTab *pointsPtr = (const pointTab *)Model::getVerticesBaseData(bodyPtr);
 
-	IMatrix3x3 *modelMatrix = &matricesTable[0];
+	IMatrix3x3 *modelMatrix = &_matricesTable[0];
 
 	const BonesBaseData *boneData = Model::getBonesBaseData(bodyPtr, 0);
 	processRotatedElement(modelMatrix, pointsPtr, angleVec.x, angleVec.y, angleVec.z, boneData, modelData);
@@ -1318,7 +1318,7 @@ bool Renderer::renderAnimatedModel(ModelData *modelData, const uint8 *bodyPtr, R
 
 	if (numBones - 1 != 0) {
 		numOfPrimitives = numBones - 1;
-		modelMatrix = &matricesTable[1];
+		modelMatrix = &_matricesTable[1];
 
 		int boneIdx = 1;
 		do {
@@ -1341,7 +1341,7 @@ bool Renderer::renderAnimatedModel(ModelData *modelData, const uint8 *bodyPtr, R
 	const pointTab *pointPtr = &modelData->computedPoints[0];
 	pointTab *pointPtrDest = &modelData->flattenPoints[0];
 
-	if (isUsingOrthoProjection) { // use standard projection
+	if (_isUsingOrthoProjection) { // use standard projection
 		do {
 			const int32 coX = pointPtr->x + renderPos.x;
 			const int32 coY = pointPtr->y + renderPos.y;
@@ -1374,7 +1374,7 @@ bool Renderer::renderAnimatedModel(ModelData *modelData, const uint8 *bodyPtr, R
 			int32 coY = pointPtr->y + renderPos.y;
 			int32 coZ = -(pointPtr->z + renderPos.z);
 
-			coZ += cameraDepthOffset;
+			coZ += _cameraDepthOffset;
 
 			if (coZ <= 0) {
 				coZ = 0x7FFFFFFF;
@@ -1382,7 +1382,7 @@ bool Renderer::renderAnimatedModel(ModelData *modelData, const uint8 *bodyPtr, R
 
 			// X projection
 			{
-				coX = orthoProjPos.x + ((coX * cameraScaleY) / coZ);
+				coX = orthoProjPos.x + ((coX * _cameraScaleY) / coZ);
 
 				if (coX > 0xFFFF) {
 					coX = 0x7FFF;
@@ -1401,7 +1401,7 @@ bool Renderer::renderAnimatedModel(ModelData *modelData, const uint8 *bodyPtr, R
 
 			// Y projection
 			{
-				coY = orthoProjPos.y + ((-coY * cameraScaleZ) / coZ);
+				coY = orthoProjPos.y + ((-coY * _cameraScaleZ) / coZ);
 
 				if (coY > 0xFFFF) {
 					coY = 0x7FFF;
@@ -1434,7 +1434,7 @@ bool Renderer::renderAnimatedModel(ModelData *modelData, const uint8 *bodyPtr, R
 
 	if (numOfShades) { // process normal data
 		uint16 *currentShadeDestination = (uint16 *)modelData->shadeTable;
-		IMatrix3x3 *lightMatrix = &matricesTable[0];
+		IMatrix3x3 *lightMatrix = &_matricesTable[0];
 
 		numOfPrimitives = numBones;
 
@@ -1446,7 +1446,7 @@ bool Renderer::renderAnimatedModel(ModelData *modelData, const uint8 *bodyPtr, R
 			if (numOfShades) {
 				int32 numShades = numOfShades;
 
-				shadeMatrix = *lightMatrix * lightPos;
+				_shadeMatrix = *lightMatrix * _lightPos;
 
 				do { // for each normal
 					const uint8 *shadePtr = Model::getShadesBaseData(bodyPtr, shadeIndex);
@@ -1457,9 +1457,9 @@ bool Renderer::renderAnimatedModel(ModelData *modelData, const uint8 *bodyPtr, R
 					const int16 col3 = *((const int16 *)colPtr++);
 
 					int32 color = 0;
-					color += shadeMatrix.row1[0] * col1 + shadeMatrix.row1[1] * col2 + shadeMatrix.row1[2] * col3;
-					color += shadeMatrix.row2[0] * col1 + shadeMatrix.row2[1] * col2 + shadeMatrix.row2[2] * col3;
-					color += shadeMatrix.row3[0] * col1 + shadeMatrix.row3[1] * col2 + shadeMatrix.row3[2] * col3;
+					color += _shadeMatrix.row1[0] * col1 + _shadeMatrix.row1[1] * col2 + _shadeMatrix.row1[2] * col3;
+					color += _shadeMatrix.row2[0] * col1 + _shadeMatrix.row2[1] * col2 + _shadeMatrix.row2[2] * col3;
+					color += _shadeMatrix.row3[0] * col1 + _shadeMatrix.row3[1] * col2 + _shadeMatrix.row3[2] * col3;
 
 					int32 shade = 0;
 
@@ -1497,7 +1497,7 @@ bool Renderer::renderIsoModel(int32 x, int32 y, int32 z, int32 angleX, int32 ang
 	_engine->_redraw->renderRect.bottom = SCENE_SIZE_MIN;
 
 	IVec3 renderPos;
-	if (isUsingOrthoProjection) {
+	if (_isUsingOrthoProjection) {
 		renderPos.x = x;
 		renderPos.y = y;
 		renderPos.z = z;

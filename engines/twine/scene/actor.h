@@ -258,20 +258,23 @@ private:
 	TwinEEngine *_engine;
 
 	/** Hero 3D entity for normal behaviour */
-	uint8 *heroEntityNORMAL = nullptr;
-	int32 heroEntityNORMALSize = 0;
+	uint8 *_heroEntityNORMAL = nullptr;
+	int32 _heroEntityNORMALSize = 0;
 	/** Hero 3D entity for athletic behaviour */
-	uint8 *heroEntityATHLETIC = nullptr;
-	int32 heroEntityATHLETICSize = 0;
+	uint8 *_heroEntityATHLETIC = nullptr;
+	int32 _heroEntityATHLETICSize = 0;
 	/** Hero 3D entity for aggressive behaviour */
-	uint8 *heroEntityAGGRESSIVE = nullptr;
-	int32 heroEntityAGGRESSIVESize = 0;
+	uint8 *_heroEntityAGGRESSIVE = nullptr;
+	int32 _heroEntityAGGRESSIVESize = 0;
 	/** Hero 3D entity for discrete behaviour */
-	uint8 *heroEntityDISCRETE = nullptr;
-	int32 heroEntityDISCRETESize = 0;
+	uint8 *_heroEntityDISCRETE = nullptr;
+	int32 _heroEntityDISCRETESize = 0;
 	/** Hero 3D entity for protopack behaviour */
-	uint8 *heroEntityPROTOPACK = nullptr;
-	int32 heroEntityPROTOPACKSize = 0;
+	uint8 *_heroEntityPROTOPACK = nullptr;
+	int32 _heroEntityPROTOPACKSize = 0;
+
+	/** Current position in body table */
+	int32 _currentPositionInBodyPtrTab;
 
 	void initSpriteActor(int32 actorIdx);
 
@@ -292,8 +295,6 @@ public:
 
 	/** Actor shadow coordinate */
 	IVec3 shadowCoord;
-	/** Actor shadow collition type - brick shape */
-	ShapeType shadowCollisionType = ShapeType::kNone;
 
 	HeroBehaviourType heroBehaviour = HeroBehaviourType::kNormal;
 	/** Hero auto aggressive mode */
@@ -319,8 +320,6 @@ public:
 	/** Hero anim for behaviour menu */
 	int16 heroAnimIdx[4];
 
-	/** Current position in body table */
-	int32 currentPositionInBodyPtrTab;
 	void clearBodyTable();
 
 	/** Restart hero variables while opening new scenes */

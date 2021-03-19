@@ -85,10 +85,10 @@ private:
 		DrawShadows = 0xC00
 	};
 
-	Common::Rect currentRedrawList[300];
-	Common::Rect nextRedrawList[300];
+	Common::Rect _currentRedrawList[300];
+	Common::Rect _nextRedrawList[300];
 
-	int16 overlayRotation = 0;
+	int16 _overlayRotation = 0;
 	/**
 	 * Add a certain region to the current redraw list array
 	 * @param redrawArea redraw the region

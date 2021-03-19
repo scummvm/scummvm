@@ -50,7 +50,7 @@ void Redraw::addRedrawCurrentArea(const Common::Rect &redrawArea) {
 	const int32 area = (redrawArea.right - redrawArea.left) * (redrawArea.bottom - redrawArea.top);
 
 	for (int32 i = 0; i < numOfRedrawBox; ++i) {
-		Common::Rect &rect = currentRedrawList[i];
+		Common::Rect &rect = _currentRedrawList[i];
 		const int32 leftValue = MIN<int32>(redrawArea.left, rect.left);
 		const int32 rightValue = MAX<int32>(redrawArea.right, rect.right);
 		const int32 topValue = MIN<int32>(redrawArea.top, rect.top);
@@ -70,7 +70,7 @@ void Redraw::addRedrawCurrentArea(const Common::Rect &redrawArea) {
 		}
 	}
 
-	Common::Rect &rect = currentRedrawList[numOfRedrawBox];
+	Common::Rect &rect = _currentRedrawList[numOfRedrawBox];
 	rect.left = redrawArea.left;
 	rect.top = redrawArea.top;
 	rect.right = redrawArea.right;
@@ -107,7 +107,7 @@ void Redraw::addRedrawArea(int32 left, int32 top, int32 right, int32 bottom) {
 		return;
 	}
 
-	Common::Rect &rect = nextRedrawList[currNumOfRedrawBox];
+	Common::Rect &rect = _nextRedrawList[currNumOfRedrawBox];
 	rect.left = left;
 	rect.top = top;
 	rect.right = right;
@@ -122,25 +122,25 @@ void Redraw::moveNextAreas() {
 	numOfRedrawBox = 0;
 
 	for (int32 i = 0; i < currNumOfRedrawBox; i++) {
-		addRedrawCurrentArea(nextRedrawList[i]);
+		addRedrawCurrentArea(_nextRedrawList[i]);
 	}
 }
 
 void Redraw::flipRedrawAreas() {
 	for (int32 i = 0; i < numOfRedrawBox; i++) { // redraw areas on screen
-		_engine->copyBlockPhys(currentRedrawList[i].left, currentRedrawList[i].top, currentRedrawList[i].right, currentRedrawList[i].bottom);
+		_engine->copyBlockPhys(_currentRedrawList[i].left, _currentRedrawList[i].top, _currentRedrawList[i].right, _currentRedrawList[i].bottom);
 	}
 
 	numOfRedrawBox = 0;
 
 	for (int32 i = 0; i < currNumOfRedrawBox; i++) { //setup the redraw areas for next display
-		addRedrawCurrentArea(nextRedrawList[i]);
+		addRedrawCurrentArea(_nextRedrawList[i]);
 	}
 }
 
 void Redraw::blitBackgroundAreas() {
 	for (int32 i = 0; i < numOfRedrawBox; i++) {
-		_engine->_interface->blitBox(currentRedrawList[i], _engine->workVideoBuffer, _engine->frontVideoBuffer);
+		_engine->_interface->blitBox(_currentRedrawList[i], _engine->workVideoBuffer, _engine->frontVideoBuffer);
 	}
 }
 
@@ -624,8 +624,8 @@ void Redraw::renderOverlays() {
 				_engine->_interface->setClip(rect);
 
 				const uint8* bodyPtr = _engine->_resources->inventoryTable[item];
-				overlayRotation += 1; // overlayRotation += 8;
-				_engine->_renderer->renderInventoryItem(40, 40, bodyPtr, overlayRotation, 16000);
+				_overlayRotation += 1; // overlayRotation += 8;
+				_engine->_renderer->renderInventoryItem(40, 40, bodyPtr, _overlayRotation, 16000);
 				_engine->_menu->drawBox(rect);
 				addRedrawArea(rect);
 				_engine->_gameState->initEngineProjections();

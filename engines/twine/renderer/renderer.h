@@ -274,23 +274,23 @@ private:
 	void processTranslatedElement(IMatrix3x3 *targetMatrix, const pointTab *pointsPtr, int32 rotX, int32 rotY, int32 rotZ, const BonesBaseData *boneData, ModelData *modelData);
 	void translateGroup(int32 x, int32 y, int32 z);
 
-	IVec3 baseTransPos;
+	IVec3 _baseTransPos;
 
-	int32 cameraDepthOffset = 0;
-	int32 cameraScaleY = 0;
-	int32 cameraScaleZ = 0;
+	int32 _cameraDepthOffset = 0;
+	int32 _cameraScaleY = 0;
+	int32 _cameraScaleZ = 0;
 
-	IMatrix3x3 baseMatrix;
-	IMatrix3x3 matricesTable[30 + 1];
-	IMatrix3x3 shadeMatrix;
-	IVec3 lightPos;
+	IMatrix3x3 _baseMatrix;
+	IMatrix3x3 _matricesTable[30 + 1];
+	IMatrix3x3 _shadeMatrix;
+	IVec3 _lightPos;
 
 	RenderCommand _renderCmds[1000];
 	/**
 	 * @brief Raw buffer for holding the render commands. This is a type followed by the command data
 	 * that is needed to render the primitive.
 	 */
-	uint8 renderCoordinatesBuffer[10000]{0};
+	uint8 _renderCoordinatesBuffer[10000]{0};
 
 	int32 _polyTabSize = 0;
 	int16 *_polyTab = nullptr;
@@ -304,7 +304,7 @@ private:
 	int16* _holomap_polytab_1_2_ptr = nullptr;
 	int16* _holomap_polytab_1_3_ptr = nullptr;
 
-	bool isUsingOrthoProjection = false;
+	bool _isUsingOrthoProjection = false;
 
 	void renderPolygonsCopper(uint8 *out, int vtop, int32 vsize, uint8 color) const;
 	void renderPolygonsBopper(uint8 *out, int vtop, int32 vsize, uint8 color) const;

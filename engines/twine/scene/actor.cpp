@@ -45,11 +45,11 @@ Actor::Actor(TwinEEngine *engine) : _engine(engine) {
 
 Actor::~Actor() {
 	_engine->_scene->getActor(OWN_ACTOR_SCENE_INDEX)->entityDataPtr = nullptr;
-	free(heroEntityNORMAL);
-	free(heroEntityATHLETIC);
-	free(heroEntityAGGRESSIVE);
-	free(heroEntityDISCRETE);
-	free(heroEntityPROTOPACK);
+	free(_heroEntityNORMAL);
+	free(_heroEntityATHLETIC);
+	free(_heroEntityAGGRESSIVE);
+	free(_heroEntityDISCRETE);
+	free(_heroEntityPROTOPACK);
 }
 
 void Actor::restartHeroScene() {
@@ -93,11 +93,11 @@ int32 Actor::loadBehaviourEntity(ActorStruct *sceneHero, uint8 **ptr, int16 &bod
 
 void Actor::loadHeroEntities() {
 	ActorStruct *sceneHero = _engine->_scene->sceneHero;
-	heroEntityATHLETICSize = loadBehaviourEntity(sceneHero, &heroEntityATHLETIC, heroAnimIdxATHLETIC, FILE3DHQR_HEROATHLETIC);
-	heroEntityAGGRESSIVESize = loadBehaviourEntity(sceneHero, &heroEntityAGGRESSIVE, heroAnimIdxAGGRESSIVE, FILE3DHQR_HEROAGGRESSIVE);
-	heroEntityDISCRETESize = loadBehaviourEntity(sceneHero, &heroEntityDISCRETE, heroAnimIdxDISCRETE, FILE3DHQR_HERODISCRETE);
-	heroEntityPROTOPACKSize = loadBehaviourEntity(sceneHero, &heroEntityPROTOPACK, heroAnimIdxPROTOPACK, FILE3DHQR_HEROPROTOPACK);
-	heroEntityNORMALSize = loadBehaviourEntity(sceneHero, &heroEntityNORMAL, heroAnimIdxNORMAL, FILE3DHQR_HERONORMAL);
+	_heroEntityATHLETICSize = loadBehaviourEntity(sceneHero, &_heroEntityATHLETIC, heroAnimIdxATHLETIC, FILE3DHQR_HEROATHLETIC);
+	_heroEntityAGGRESSIVESize = loadBehaviourEntity(sceneHero, &_heroEntityAGGRESSIVE, heroAnimIdxAGGRESSIVE, FILE3DHQR_HEROAGGRESSIVE);
+	_heroEntityDISCRETESize = loadBehaviourEntity(sceneHero, &_heroEntityDISCRETE, heroAnimIdxDISCRETE, FILE3DHQR_HERODISCRETE);
+	_heroEntityPROTOPACKSize = loadBehaviourEntity(sceneHero, &_heroEntityPROTOPACK, heroAnimIdxPROTOPACK, FILE3DHQR_HEROPROTOPACK);
+	_heroEntityNORMALSize = loadBehaviourEntity(sceneHero, &_heroEntityNORMAL, heroAnimIdxNORMAL, FILE3DHQR_HERONORMAL);
 
 	sceneHero->animExtraPtr = _engine->_animations->currentActorAnimExtraPtr;
 }
@@ -107,28 +107,28 @@ void Actor::setBehaviour(HeroBehaviourType behaviour) {
 	switch (behaviour) {
 	case HeroBehaviourType::kNormal:
 		heroBehaviour = behaviour;
-		sceneHero->entityDataPtr = heroEntityNORMAL;
-		sceneHero->entityDataSize = heroEntityNORMALSize;
+		sceneHero->entityDataPtr = _heroEntityNORMAL;
+		sceneHero->entityDataSize = _heroEntityNORMALSize;
 		break;
 	case HeroBehaviourType::kAthletic:
 		heroBehaviour = behaviour;
-		sceneHero->entityDataPtr = heroEntityATHLETIC;
-		sceneHero->entityDataSize = heroEntityATHLETICSize;
+		sceneHero->entityDataPtr = _heroEntityATHLETIC;
+		sceneHero->entityDataSize = _heroEntityATHLETICSize;
 		break;
 	case HeroBehaviourType::kAggressive:
 		heroBehaviour = behaviour;
-		sceneHero->entityDataPtr = heroEntityAGGRESSIVE;
-		sceneHero->entityDataSize = heroEntityAGGRESSIVESize;
+		sceneHero->entityDataPtr = _heroEntityAGGRESSIVE;
+		sceneHero->entityDataSize = _heroEntityAGGRESSIVESize;
 		break;
 	case HeroBehaviourType::kDiscrete:
 		heroBehaviour = behaviour;
-		sceneHero->entityDataPtr = heroEntityDISCRETE;
-		sceneHero->entityDataSize = heroEntityDISCRETESize;
+		sceneHero->entityDataPtr = _heroEntityDISCRETE;
+		sceneHero->entityDataSize = _heroEntityDISCRETESize;
 		break;
 	case HeroBehaviourType::kProtoPack:
 		heroBehaviour = behaviour;
-		sceneHero->entityDataPtr = heroEntityPROTOPACK;
-		sceneHero->entityDataSize = heroEntityPROTOPACKSize;
+		sceneHero->entityDataPtr = _heroEntityPROTOPACK;
+		sceneHero->entityDataSize = _heroEntityPROTOPACKSize;
 		break;
 	};
 
@@ -156,11 +156,11 @@ void Actor::initSpriteActor(int32 actorIdx) {
 }
 
 int32 Actor::getTextIdForBehaviour() const {
-	if (_engine->_actor->heroBehaviour == HeroBehaviourType::kAggressive && _engine->_actor->autoAggressive) {
+	if (heroBehaviour == HeroBehaviourType::kAggressive && autoAggressive) {
 		return TextId::kBehaviourAggressiveAuto;
 	}
 	// the other values are matching the text ids
-	return (int32)_engine->_actor->heroBehaviour;
+	return (int32)heroBehaviour;
 }
 
 // see Animations::getBodyAnimIndex
@@ -186,8 +186,8 @@ int32 Actor::initBody(BodyType bodyIdx, int32 actorIdx, ActorBoundingBox &actorB
 				// TODO: move into resources class
 				int32 index;
 				if (!(bodyIndex & 0x8000)) {
-					index = currentPositionInBodyPtrTab;
-					currentPositionInBodyPtrTab++;
+					index = _currentPositionInBodyPtrTab;
+					_currentPositionInBodyPtrTab++;
 					_engine->_resources->bodyTableSize[index] = HQR::getAllocEntry(&_engine->_resources->bodyTable[index], Resources::HQR_BODY_FILE, bodyIndex & 0xFFFF);
 					if (_engine->_resources->bodyTableSize[index] == 0) {
 						error("HQR ERROR: Loading body entity for actor %i: %i", actorIdx, (int)bodyIdx);
@@ -455,7 +455,7 @@ void Actor::processActorExtraBonus(int32 actorIdx) { // GiveExtraBonus
 }
 
 void Actor::clearBodyTable() {
-	currentPositionInBodyPtrTab = 0;
+	_currentPositionInBodyPtrTab = 0;
 }
 
 ActorStruct::~ActorStruct() {
