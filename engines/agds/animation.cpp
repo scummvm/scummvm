@@ -117,7 +117,6 @@ void Animation::decodeNextFrame() {
 }
 
 void Animation::rewind() {
-	freeFrame();
 	_phase = 0;
 	_flic->rewind();
 }
@@ -151,12 +150,10 @@ bool Animation::tick() {
 	if (!eov)
 		decodeNextFrame();
 
-	eov = _phase >= _frames;
-
 	if (!_process.empty()) {
 		if (!_phaseVar.empty())
 			_engine->setGlobal(_phaseVar, _phase - 1);
-		if (_phase || _phaseVarControlled) {
+		if (/*_phase || */_phaseVarControlled) {
 			if (eov && _random) {
 				rewind();
 				_delay = _engine->getRandomNumber(_random);
@@ -166,7 +163,7 @@ bool Animation::tick() {
 		}
 	}
 
-	if (eov && (!_loop || --_cycles <= 0)) {
+	if (eov && !_loop && --_cycles <= 0) {
 		if (!_phaseVar.empty())
 			_engine->setGlobal(_phaseVar, _phase - 1);
 		else
