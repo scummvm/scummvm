@@ -68,8 +68,6 @@ bool8 FxManager::Poll() {
 	if (noSoundEngine)
 		return TRUE8;
 
-	uint32 frequency;
-
 	// Update all buffers
 	for (int32 id = 0; id < MAX_FX; id++) {
 		switch (m_effects[id].flags) {
@@ -81,8 +79,8 @@ bool8 FxManager::Poll() {
 				g_icb->_mixer->setChannelVolume(m_effects[id]._handle, m_effects[id].volume * volumeConversion);
 				g_icb->_mixer->setChannelBalance(m_effects[id]._handle, m_effects[id].pan);
 
-				frequency = (m_effects[id].pitch * g_stub->cycle_speed) / 100;
 				// FIXME correct pitch control
+				//uint32 frequency = (m_effects[id].pitch * g_stub->cycle_speed) / 100;
 				//m_effects[id].buffer->SetFrequency( frequency ) ;
 				//alSourcef(m_effects[id].alStream.source, AL_PITCH, 1.0f);
 			}
@@ -99,13 +97,14 @@ bool8 FxManager::Poll() {
 			m_effects[id].delay--;
 			if (m_effects[id].delay != 0)
 				break;
+			// FIXME: fallthrough intentional?
 
 		// It's waiting to play
 		case Effect::QUEUED: {
 
 			// Apply current settings
-			frequency = (m_effects[id].pitch * g_stub->cycle_speed) / 100;
-			// FIXME corrent pitch control
+			// FIXME correct pitch control
+			//uint32 frequency = (m_effects[id].pitch * g_stub->cycle_speed) / 100;
 			//m_effects[id].buffer->SetFrequency( frequency ) ;
 			//alSourcef(m_effects[id].alStream.source, AL_PITCH, 1.0f);
 

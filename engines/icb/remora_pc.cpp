@@ -1081,7 +1081,7 @@ void _remora::DrawPulse() {
 	int32 nHighlightIndex;
 	int32 pnWholePulse[REMORA_PULSE_POINTS * REMORA_MAX_HEALTH][2];
 	float pfHighlightValues[REMORA_PULSE_POINTS * REMORA_MAX_HEALTH];
-	int32 nBaseX, nBaseY;
+	//int32 nBaseX, nBaseY;
 	int32 nX1, nY1, nX2, nY2;
 	_rgb oLineColour, oDrawColour;
 	uint32 nWholePulseIndex;
@@ -1092,8 +1092,8 @@ void _remora::DrawPulse() {
 	uint32 nHits, nHealth;
 
 	// Calculate a base drawing point for the whole thing.
-	nBaseX = REMORA_PULSE_X;
-	nBaseY = REMORA_PULSE_Y;
+	//nBaseX = REMORA_PULSE_X;
+	//nBaseY = REMORA_PULSE_Y;
 
 	// Work out player's health.
 	pPlayer = (c_game_object *)MS->objects->Fetch_item_by_name("player");
