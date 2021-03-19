@@ -611,7 +611,7 @@ void TwinEEngine::processInventoryAction() {
 				_actor->setBehaviour(HeroBehaviourType::kNormal);
 			}
 			_actor->initModelActor(BodyType::btSabre, OWN_ACTOR_SCENE_INDEX);
-			_animations->initAnim(AnimationTypes::kSabreUnknown, kAnimationType_1, AnimationTypes::kStanding, OWN_ACTOR_SCENE_INDEX);
+			_animations->initAnim(AnimationTypes::kSabreUnknown, AnimType::kAnimationType_1, AnimationTypes::kStanding, OWN_ACTOR_SCENE_INDEX);
 
 			_gameState->usingSabre = true;
 		}
@@ -861,7 +861,7 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 
 		if (actor->life == 0) {
 			if (IS_HERO(a)) {
-				_animations->initAnim(AnimationTypes::kLandDeath, kAnimationType_4, AnimationTypes::kStanding, 0);
+				_animations->initAnim(AnimationTypes::kLandDeath, AnimType::kAnimationType_4, AnimationTypes::kStanding, 0);
 				actor->controlMode = ControlMode::kNoMove;
 			} else {
 				_sound->playSample(Samples::Explode, 1, actor->pos, a);
@@ -909,7 +909,7 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 					if (IS_HERO(a)) {
 						if (_actor->heroBehaviour != HeroBehaviourType::kProtoPack || actor->anim != AnimationTypes::kForward) {
 							if (!_actor->cropBottomScreen) {
-								_animations->initAnim(AnimationTypes::kDrawn, kAnimationType_4, AnimationTypes::kStanding, 0);
+								_animations->initAnim(AnimationTypes::kDrawn, AnimType::kAnimationType_4, AnimationTypes::kStanding, 0);
 								_renderer->projectPositionOnScreen(actor->pos - _grid->camera);
 								_actor->cropBottomScreen = _renderer->projPos.y;
 							}

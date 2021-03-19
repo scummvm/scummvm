@@ -134,16 +134,18 @@ struct BonusParameter {
 	uint16 unused : 7;
 };
 
-#define kAnimationTypeLoop 0
-#define kAnimationType_1 1
-// play animation and let animExtra follow as next animation
-// if there is already a next animation set - replace the value
-#define kAnimationType_2 2
-// replace animation and let the current animation follow
-#define kAnimationType_3 3
-// play animation and let animExtra follow as next animation
-// but don't take the current state in account
-#define kAnimationType_4 4
+enum class AnimType {
+	kAnimationTypeLoop = 0,
+	kAnimationType_1 = 1,
+	// play animation and let animExtra follow as next animation
+	// if there is already a next animation set - replace the value
+	kAnimationType_2 = 2,
+	// replace animation and let the current animation follow
+	kAnimationType_3 = 3,
+	// play animation and let animExtra follow as next animation
+	// but don't take the current state in account
+	kAnimationType_4 = 4
+};
 
 #define kActorMaxLife 50
 
@@ -232,7 +234,7 @@ public:
 	int32 previousAnimIdx = 0;
 	int32 doorStatus = 0;
 	int32 animPosition = 0;
-	int32 animType = kAnimationTypeLoop;   // field_78
+	AnimType animType = AnimType::kAnimationTypeLoop;   // field_78
 	int32 spriteActorRotation = 0;
 	int32 brickSound = 0; // field_7A
 

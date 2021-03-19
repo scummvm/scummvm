@@ -390,7 +390,7 @@ void Animations::processAnimActions(int32 actorIdx) {
 	}
 }
 
-bool Animations::initAnim(AnimationTypes newAnim, int16 animType, AnimationTypes animExtra, int32 actorIdx) {
+bool Animations::initAnim(AnimationTypes newAnim, AnimType animType, AnimationTypes animExtra, int32 actorIdx) {
 	ActorStruct *actor = _engine->_scene->getActor(actorIdx);
 	if (actor->entity == -1) {
 		return false;
@@ -404,7 +404,7 @@ bool Animations::initAnim(AnimationTypes newAnim, int16 animType, AnimationTypes
 		return true;
 	}
 
-	if (animExtra == AnimationTypes::kAnimInvalid && actor->animType != kAnimationType_2) {
+	if (animExtra == AnimationTypes::kAnimInvalid && actor->animType != AnimType::kAnimationType_2) {
 		animExtra = actor->anim;
 	}
 
@@ -414,13 +414,13 @@ bool Animations::initAnim(AnimationTypes newAnim, int16 animType, AnimationTypes
 		animIndex = getBodyAnimIndex(AnimationTypes::kStanding, actorIdx);
 	}
 
-	if (animType != kAnimationType_4 && actor->animType == kAnimationType_2) {
+	if (animType != AnimType::kAnimationType_4 && actor->animType == AnimType::kAnimationType_2) {
 		actor->animExtra = newAnim;
 		return false;
 	}
 
-	if (animType == kAnimationType_3) {
-		animType = kAnimationType_2;
+	if (animType == AnimType::kAnimationType_3) {
+		animType = AnimType::kAnimationType_2;
 
 		animExtra = actor->anim;
 
@@ -429,8 +429,8 @@ bool Animations::initAnim(AnimationTypes newAnim, int16 animType, AnimationTypes
 		}
 	}
 
-	if (animType == kAnimationType_4) {
-		animType = kAnimationType_2;
+	if (animType == AnimType::kAnimationType_4) {
+		animType = AnimType::kAnimationType_2;
 	}
 
 	if (actor->previousAnimIdx == -1) {
@@ -606,7 +606,7 @@ void Animations::processActorAnimations(int32 actorIdx) { // DoAnim
 				if (numKeyframe == (int16)animData.getNumKeyframes()) {
 					actor->dynamicFlags.bIsHitting = 0;
 
-					if (actor->animType == kAnimationTypeLoop) {
+					if (actor->animType == AnimType::kAnimationTypeLoop) {
 						actor->animPosition = animData.getLoopFrame();
 					} else {
 						actor->anim = (AnimationTypes)actor->animExtra;
@@ -619,7 +619,7 @@ void Animations::processActorAnimations(int32 actorIdx) { // DoAnim
 
 						actor->animExtraPtr = currentActorAnimExtraPtr;
 
-						actor->animType = kAnimationTypeLoop;
+						actor->animType = AnimType::kAnimationTypeLoop;
 						actor->animPosition = 0;
 						actor->strengthOfHit = 0;
 					}
@@ -706,7 +706,7 @@ void Animations::processActorAnimations(int32 actorIdx) { // DoAnim
 			if (_engine->_renderer->destPos.x >= 0 && _engine->_renderer->destPos.z >= 0 && _engine->_renderer->destPos.x <= 0x7E00 && _engine->_renderer->destPos.z <= 0x7E00) {
 				if (_engine->_grid->getBrickShape(_engine->_renderer->destPos.x, _engine->_movements->processActor.y + BRICK_HEIGHT, _engine->_renderer->destPos.z) != ShapeType::kNone && _engine->cfgfile.WallCollision) { // avoid wall hit damage
 					_engine->_extra->addExtraSpecial(actor->pos.x, actor->pos.y + 1000, actor->pos.z, ExtraSpecialType::kHitStars);
-					initAnim(AnimationTypes::kBigHit, kAnimationType_2, AnimationTypes::kStanding, currentlyProcessedActorIdx);
+					initAnim(AnimationTypes::kBigHit, AnimType::kAnimationType_2, AnimationTypes::kStanding, currentlyProcessedActorIdx);
 
 					if (IS_HERO(currentlyProcessedActorIdx)) {
 						_engine->_movements->heroMoved = true;
@@ -728,7 +728,7 @@ void Animations::processActorAnimations(int32 actorIdx) { // DoAnim
 				} else {
 					if (IS_HERO(actorIdx) && _engine->_actor->heroBehaviour == HeroBehaviourType::kAthletic && actor->anim == AnimationTypes::kForward && _engine->cfgfile.WallCollision) { // avoid wall hit damage
 						_engine->_extra->addExtraSpecial(actor->pos.x, actor->pos.y + 1000, actor->pos.z, ExtraSpecialType::kHitStars);
-						initAnim(AnimationTypes::kBigHit, kAnimationType_2, AnimationTypes::kStanding, currentlyProcessedActorIdx);
+						initAnim(AnimationTypes::kBigHit, AnimType::kAnimationType_2, AnimationTypes::kStanding, currentlyProcessedActorIdx);
 						_engine->_movements->heroMoved = true;
 						actor->addLife(-1);
 					}
@@ -776,7 +776,7 @@ void Animations::processActorAnimations(int32 actorIdx) { // DoAnim
 							_engine->_scene->heroYBeforeFall = _engine->_movements->processActor.y;
 						}
 
-						initAnim(AnimationTypes::kFall, kAnimationTypeLoop, AnimationTypes::kAnimInvalid, actorIdx);
+						initAnim(AnimationTypes::kFall, AnimType::kAnimationTypeLoop, AnimationTypes::kAnimInvalid, actorIdx);
 					}
 				}
 			}
