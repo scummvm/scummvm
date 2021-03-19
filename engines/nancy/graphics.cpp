@@ -171,30 +171,36 @@ void GraphicsManager::copyToManaged(const Graphics::Surface &src, Graphics::Mana
 					const byte *srcP = (const byte *)src.getBasePtr(x, y);
 					uint dstX = x * 2;
 					uint dstY = verticalFlip ? (src.h - y - 1) * 2 : src.h - y - 1;
-					*((byte *)dst.getBasePtr(dstX, dstY)) = *srcP;
-					*((byte *)dst.getBasePtr(dstX + 1, dstY)) = *srcP;
-					*((byte *)dst.getBasePtr(dstX, dstY + 1)) = *srcP;
-					*((byte *)dst.getBasePtr(dstX + 1, dstY + 1)) = *srcP;
+					byte *dstP = ((byte *)dst.getBasePtr(dstX, dstY));
+					*dstP = *srcP;
+					*(dstP + 1) = *srcP;
+					dstP += dst.w;
+					*dstP = *srcP;
+					*(dstP + 1) = *srcP;
 					break;
 				}
 				case 2: {
 					const uint16 *srcP = (const uint16 *)src.getBasePtr(x, y);
 					uint dstX = x * 2;
 					uint dstY = verticalFlip ? (src.h - y - 1) * 2 : src.h - y - 1;
-					*((uint16 *)dst.getBasePtr(dstX, dstY)) = *srcP;
-					*((uint16 *)dst.getBasePtr(dstX + 1, dstY)) = *srcP;
-					*((uint16 *)dst.getBasePtr(dstX, dstY + 1)) = *srcP;
-					*((uint16 *)dst.getBasePtr(dstX + 1, dstY + 1)) = *srcP;
+					uint16 *dstP = ((uint16 *)dst.getBasePtr(dstX, dstY));
+					*dstP = *srcP;
+					*(dstP + 1) = *srcP;
+					dstP += dst.w;
+					*dstP = *srcP;
+					*(dstP + 1) = *srcP;
 					break;
 				}
 				case 4: {
 					const uint32 *srcP = (const uint32 *)src.getBasePtr(x, y);
 					uint dstX = x * 2;
 					uint dstY = verticalFlip ? (src.h - y - 1) * 2 : src.h - y - 1;
-					*((uint32 *)dst.getBasePtr(dstX, dstY)) = *srcP;
-					*((uint32 *)dst.getBasePtr(dstX + 1, dstY)) = *srcP;
-					*((uint32 *)dst.getBasePtr(dstX, dstY + 1)) = *srcP;
-					*((uint32 *)dst.getBasePtr(dstX + 1, dstY + 1)) = *srcP;
+					uint32 *dstP = ((uint32 *)dst.getBasePtr(dstX, dstY));
+					*dstP = *srcP;
+					*(dstP + 1) = *srcP;
+					dstP += dst.w;
+					*dstP = *srcP;
+					*(dstP + 1) = *srcP;
 					break;
 				}
 				default:
