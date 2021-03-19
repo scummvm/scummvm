@@ -26,9 +26,9 @@
 #include "common/scummsys.h"
 
 namespace Common {
-	class ReadStream;
-	class WriteStream;
-	class MemoryWriteStream;
+class ReadStream;
+class WriteStream;
+class MemoryWriteStream;
 }
 
 namespace Nancy {

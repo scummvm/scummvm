@@ -41,7 +41,7 @@ enum SoundType {
 };
 
 bool readWaveHeader(Common::SeekableReadStream *stream, SoundType &type, uint16 &numChannels,
-                    uint32 &samplesPerSec, uint16 &bitsPerSample, uint32 &size) {
+					uint32 &samplesPerSec, uint16 &bitsPerSample, uint32 &size) {
 	// The earliest HIS files are just WAVE files with the first 22 bytes of
 	// the file overwritten with a string, so most of this is copied from the
 	// standard WAVE decoder
@@ -72,7 +72,7 @@ bool readWaveHeader(Common::SeekableReadStream *stream, SoundType &type, uint16 
 }
 
 bool readHISHeader(Common::SeekableReadStream *stream, SoundType &type, uint16 &numChannels,
-                    uint32 &samplesPerSec, uint16 &bitsPerSample, uint32 &size) {
+					uint32 &samplesPerSec, uint16 &bitsPerSample, uint32 &size) {
 	uint32 ver;
 	ver = stream->readUint16LE() << 16;
 	ver |= stream->readUint16LE();
@@ -152,14 +152,14 @@ Audio::SeekableAudioStream *SoundManager::makeHISStream(Common::SeekableReadStre
 			warning("Unsupported bitsPerSample %d found in HIS file", bitsPerSample);
 			return 0;
 		}
-	
+
 		if (numChannels == 2)
 			flags |= Audio::FLAG_STEREO;
 		else if (numChannels != 1) {
 			warning("Unsupported number of channels %d found in HIS file", numChannels);
 			return 0;
 		}
-	
+
 		// Raw PCM, make sure the last packet is complete
 		uint sampleSize = (flags & Audio::FLAG_16BITS ? 2 : 1) * (flags & Audio::FLAG_STEREO ? 2 : 1);
 		if (size % sampleSize != 0) {
@@ -247,7 +247,7 @@ void SoundManager::pauseSound(const SoundDescription &description, bool pause) {
 bool SoundManager::isSoundPlaying(uint16 channelID) {
 	if (channelID > 32)
 		return false;
-	
+
 	return _mixer->isSoundHandleActive(_channels[channelID].handle);
 }
 
@@ -297,7 +297,7 @@ void SoundManager::initSoundChannels() {
 	_channels[7].type = Audio::Mixer::kSpeechSoundType;
 	_channels[8].type = Audio::Mixer::kSpeechSoundType;
 	_channels[30].type = Audio::Mixer::kSpeechSoundType;
-	
+
 	_channels[0].type = Audio::Mixer::kMusicSoundType;
 	_channels[1].type = Audio::Mixer::kMusicSoundType;
 	_channels[2].type = Audio::Mixer::kMusicSoundType;
@@ -305,7 +305,7 @@ void SoundManager::initSoundChannels() {
 	_channels[28].type = Audio::Mixer::kMusicSoundType;
 	_channels[29].type = Audio::Mixer::kMusicSoundType;
 	_channels[19].type = Audio::Mixer::kMusicSoundType;
-	
+
 	_channels[3].type = Audio::Mixer::kSFXSoundType;
 	_channels[4].type = Audio::Mixer::kSFXSoundType;
 	_channels[5].type = Audio::Mixer::kSFXSoundType;
@@ -320,7 +320,7 @@ void SoundManager::initSoundChannels() {
 	_channels[31].type = Audio::Mixer::kSFXSoundType;
 	_channels[18].type = Audio::Mixer::kSFXSoundType;
 	_channels[17].type = Audio::Mixer::kSFXSoundType;
-	
+
 	_channels[9].type = Audio::Mixer::kPlainSoundType;
 	_channels[10].type = Audio::Mixer::kPlainSoundType;
 	_channels[11].type = Audio::Mixer::kPlainSoundType;
@@ -329,7 +329,7 @@ void SoundManager::initSoundChannels() {
 	_channels[14].type = Audio::Mixer::kPlainSoundType;
 	_channels[15].type = Audio::Mixer::kPlainSoundType;
 	_channels[16].type = Audio::Mixer::kPlainSoundType;
-	
+
 }
 
 } // End of namespace Nancy

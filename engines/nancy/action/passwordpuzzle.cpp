@@ -35,207 +35,207 @@ namespace Nancy {
 namespace Action {
 
 void PasswordPuzzle::init() {
-    _drawSurface.create(_screenPosition.width(), _screenPosition.height(), GraphicsManager::getInputPixelFormat());
-    _drawSurface.clear(GraphicsManager::getTransColor());
-    
-    setTransparent(true);
+	_drawSurface.create(_screenPosition.width(), _screenPosition.height(), GraphicsManager::getInputPixelFormat());
+	_drawSurface.clear(GraphicsManager::getTransColor());
 
-    RenderObject::init();
+	setTransparent(true);
+
+	RenderObject::init();
 }
 
 void PasswordPuzzle::readData(Common::SeekableReadStream &stream) {
-    _fontID = stream.readUint16LE();
-    _cursorBlinkTime = stream.readUint16LE();
-    readRect(stream, _nameBounds);
-    readRect(stream, _passwordBounds);
-    readRect(stream, _screenPosition);
+	_fontID = stream.readUint16LE();
+	_cursorBlinkTime = stream.readUint16LE();
+	readRect(stream, _nameBounds);
+	readRect(stream, _passwordBounds);
+	readRect(stream, _screenPosition);
 
-    char buf[20];
-    stream.read(buf, 20);
-    buf[19] = '\0';
-    _name = buf;
-    stream.read(buf, 20);
-    buf[19] = '\0';
-    _password = buf;
-    _solveExitScene.readData(stream);
-    stream.skip(2);
-    _flagOnSolve.label = stream.readSint16LE();
-    _flagOnSolve.flag = (NancyFlag)stream.readByte();
-    _solveSound.read(stream, SoundDescription::kNormal);
-    _failExitScene.readData(stream);
-    stream.skip(2);
-    _flagOnFail.label = stream.readSint16LE();
-    _flagOnFail.flag = (NancyFlag)stream.readByte();
-    _failSound.read(stream, SoundDescription::kNormal);
-    _exitScene.readData(stream);
-    stream.skip(2);
-    _flagOnExit.label = stream.readSint16LE();
-    _flagOnExit.flag = (NancyFlag)stream.readByte();
-    readRect(stream, _exitHotspot);
+	char buf[20];
+	stream.read(buf, 20);
+	buf[19] = '\0';
+	_name = buf;
+	stream.read(buf, 20);
+	buf[19] = '\0';
+	_password = buf;
+	_solveExitScene.readData(stream);
+	stream.skip(2);
+	_flagOnSolve.label = stream.readSint16LE();
+	_flagOnSolve.flag = (NancyFlag)stream.readByte();
+	_solveSound.read(stream, SoundDescription::kNormal);
+	_failExitScene.readData(stream);
+	stream.skip(2);
+	_flagOnFail.label = stream.readSint16LE();
+	_flagOnFail.flag = (NancyFlag)stream.readByte();
+	_failSound.read(stream, SoundDescription::kNormal);
+	_exitScene.readData(stream);
+	stream.skip(2);
+	_flagOnExit.label = stream.readSint16LE();
+	_flagOnExit.flag = (NancyFlag)stream.readByte();
+	readRect(stream, _exitHotspot);
 }
 
 void PasswordPuzzle::execute() {
-    switch (_state) {
-    case kBegin:
-        init();
-        registerGraphics();
-        _nextBlinkTime = g_nancy->getTotalPlayTime() + _cursorBlinkTime;
-        _state = kRun;
-        // fall through
-    case kRun:
-        switch (_solveState) {
-        case kNotSolved: {
-            Common::String &activeField = _passwordFieldIsActive ? _playerPasswordInput : _playerNameInput;
-            Common::String &correctField = _passwordFieldIsActive ? _password : _name;
-            Time currentTime = g_nancy->getTotalPlayTime();
+	switch (_state) {
+	case kBegin:
+		init();
+		registerGraphics();
+		_nextBlinkTime = g_nancy->getTotalPlayTime() + _cursorBlinkTime;
+		_state = kRun;
+		// fall through
+	case kRun:
+		switch (_solveState) {
+		case kNotSolved: {
+			Common::String &activeField = _passwordFieldIsActive ? _playerPasswordInput : _playerNameInput;
+			Common::String &correctField = _passwordFieldIsActive ? _password : _name;
+			Time currentTime = g_nancy->getTotalPlayTime();
 
-            if (_playerHasHitReturn) {
-                _playerHasHitReturn = false;
+			if (_playerHasHitReturn) {
+				_playerHasHitReturn = false;
 
-                if (activeField.lastChar() == '-') {
-                    activeField.deleteLastChar();
-                    drawText();
-                }
+				if (activeField.lastChar() == '-') {
+					activeField.deleteLastChar();
+					drawText();
+				}
 
-                if (activeField.equalsIgnoreCase(correctField)) {
-                    if (!_passwordFieldIsActive) {
-                        _passwordFieldIsActive = true;
-                    } else {
-                        g_nancy->_sound->loadSound(_solveSound);
-                        g_nancy->_sound->playSound(_solveSound);
-                        _solveState = kSolved;
-                    }
-                } else {
-                    g_nancy->_sound->loadSound(_failSound);
-                    g_nancy->_sound->playSound(_failSound);
-                    _solveState = kFailed;
-                }
-                
-                
-            } else if (currentTime >= _nextBlinkTime) {
-                _nextBlinkTime = currentTime + _cursorBlinkTime;
+				if (activeField.equalsIgnoreCase(correctField)) {
+					if (!_passwordFieldIsActive) {
+						_passwordFieldIsActive = true;
+					} else {
+						g_nancy->_sound->loadSound(_solveSound);
+						g_nancy->_sound->playSound(_solveSound);
+						_solveState = kSolved;
+					}
+				} else {
+					g_nancy->_sound->loadSound(_failSound);
+					g_nancy->_sound->playSound(_failSound);
+					_solveState = kFailed;
+				}
 
-                if (activeField.size() && activeField.lastChar() == '-') {
-                    activeField.deleteLastChar();
-                } else {
-                    activeField += '-';
-                }
 
-                drawText();
-            }
+			} else if (currentTime >= _nextBlinkTime) {
+				_nextBlinkTime = currentTime + _cursorBlinkTime;
 
-            break;
-        }
-        case kFailed:
-            if (!g_nancy->_sound->isSoundPlaying(_failSound)) {
-                g_nancy->_sound->stopSound(_failSound);
-                _state = kActionTrigger;
-            }
+				if (activeField.size() && activeField.lastChar() == '-') {
+					activeField.deleteLastChar();
+				} else {
+					activeField += '-';
+				}
 
-            break;
-        case kSolved:
-            if (!g_nancy->_sound->isSoundPlaying(_solveSound)) {
-                g_nancy->_sound->stopSound(_solveSound);
-                _state = kActionTrigger;
-            }
+				drawText();
+			}
 
-            break;
-        }
+			break;
+		}
+		case kFailed:
+			if (!g_nancy->_sound->isSoundPlaying(_failSound)) {
+				g_nancy->_sound->stopSound(_failSound);
+				_state = kActionTrigger;
+			}
 
-        break;
-    case kActionTrigger:
-        switch (_solveState) {
-        case kNotSolved:
-            NancySceneState.changeScene(_exitScene);
-            NancySceneState.setEventFlag(_flagOnExit);
-            break;
-        case kFailed:
-            NancySceneState.changeScene(_failExitScene);
-            NancySceneState.setEventFlag(_flagOnFail.label);
-            break;
-        case kSolved:
-            NancySceneState.changeScene(_solveExitScene);
-            NancySceneState.setEventFlag(_flagOnSolve.label);
-            break;
-        }
+			break;
+		case kSolved:
+			if (!g_nancy->_sound->isSoundPlaying(_solveSound)) {
+				g_nancy->_sound->stopSound(_solveSound);
+				_state = kActionTrigger;
+			}
 
-        finishExecution();
-    }
+			break;
+		}
+
+		break;
+	case kActionTrigger:
+		switch (_solveState) {
+		case kNotSolved:
+			NancySceneState.changeScene(_exitScene);
+			NancySceneState.setEventFlag(_flagOnExit);
+			break;
+		case kFailed:
+			NancySceneState.changeScene(_failExitScene);
+			NancySceneState.setEventFlag(_flagOnFail.label);
+			break;
+		case kSolved:
+			NancySceneState.changeScene(_solveExitScene);
+			NancySceneState.setEventFlag(_flagOnSolve.label);
+			break;
+		}
+
+		finishExecution();
+	}
 }
 
 void PasswordPuzzle::handleInput(NancyInput &input) {
-    if (_solveState != kNotSolved) {
-        return;
-    }
+	if (_solveState != kNotSolved) {
+		return;
+	}
 
-    if (NancySceneState.getViewport().convertViewportToScreen(_exitHotspot).contains(input.mousePos)) {
-        g_nancy->_cursorManager->setCursorType(CursorManager::kExitArrow);
+	if (NancySceneState.getViewport().convertViewportToScreen(_exitHotspot).contains(input.mousePos)) {
+		g_nancy->_cursorManager->setCursorType(CursorManager::kExitArrow);
 
-        if (input.input & NancyInput::kLeftMouseButtonUp) {
-            _state = kActionTrigger;
-        }
-        
-        return;
-    }
+		if (input.input & NancyInput::kLeftMouseButtonUp) {
+			_state = kActionTrigger;
+		}
 
-    for (uint i = 0; i < input.otherKbdInput.size(); ++i) {
-        Common::KeyState &key = input.otherKbdInput[i];
-        Common::String &activeField = _passwordFieldIsActive ? _playerPasswordInput : _playerNameInput;
-        Common::String &correctField = _passwordFieldIsActive ? _password : _name;
-        if (key.keycode == Common::KEYCODE_BACKSPACE) {
-            if (activeField.size() && activeField.lastChar() == '-' ? activeField.size() > 1 : true) {
-                if (activeField.lastChar() == '-') {
-                    activeField.deleteChar(activeField.size() -2);
-                } else {
-                    activeField.deleteLastChar();
-                }
+		return;
+	}
 
-                drawText();
-            }
-        } else if (key.keycode == Common::KEYCODE_RETURN) {
-            _playerHasHitReturn = true;
-        } else if (Common::isAlnum(key.ascii) || Common::isSpace(key.ascii)) {
-            if (activeField.size() && activeField.lastChar() == '-') {
-                if (activeField.size() <= correctField.size() + 2) {
-                    activeField.deleteLastChar();
-                    activeField += key.ascii;
-                    activeField += '-';
-                }
-            } else {
-                if (activeField.size() <= correctField.size() + 1) {
-                    activeField += key.ascii;
-                }
-            }
+	for (uint i = 0; i < input.otherKbdInput.size(); ++i) {
+		Common::KeyState &key = input.otherKbdInput[i];
+		Common::String &activeField = _passwordFieldIsActive ? _playerPasswordInput : _playerNameInput;
+		Common::String &correctField = _passwordFieldIsActive ? _password : _name;
+		if (key.keycode == Common::KEYCODE_BACKSPACE) {
+			if (activeField.size() && activeField.lastChar() == '-' ? activeField.size() > 1 : true) {
+				if (activeField.lastChar() == '-') {
+					activeField.deleteChar(activeField.size() -2);
+				} else {
+					activeField.deleteLastChar();
+				}
 
-            drawText();
-        }
-    }
+				drawText();
+			}
+		} else if (key.keycode == Common::KEYCODE_RETURN) {
+			_playerHasHitReturn = true;
+		} else if (Common::isAlnum(key.ascii) || Common::isSpace(key.ascii)) {
+			if (activeField.size() && activeField.lastChar() == '-') {
+				if (activeField.size() <= correctField.size() + 2) {
+					activeField.deleteLastChar();
+					activeField += key.ascii;
+					activeField += '-';
+				}
+			} else {
+				if (activeField.size() <= correctField.size() + 1) {
+					activeField += key.ascii;
+				}
+			}
+
+			drawText();
+		}
+	}
 }
 
 void PasswordPuzzle::onPause(bool pause) {
-    if (pause) {
-        registerGraphics();
-    }
+	if (pause) {
+		registerGraphics();
+	}
 }
 
 void PasswordPuzzle::drawText() {
-    _drawSurface.clear(GraphicsManager::getTransColor());
-    Graphics::Font *font = g_nancy->_graphicsManager->getFont(_fontID);
+	_drawSurface.clear(GraphicsManager::getTransColor());
+	Graphics::Font *font = g_nancy->_graphicsManager->getFont(_fontID);
 
-    Common::Rect bounds = _nameBounds;
-    bounds = NancySceneState.getViewport().convertViewportToScreen(bounds);
-    bounds = convertToLocal(bounds);
-    Common::Point destPoint(bounds.left, bounds.bottom + 1 - font->getFontHeight());
-    font->drawString(&_drawSurface, _playerNameInput, destPoint.x, destPoint.y, bounds.width(), 0);
+	Common::Rect bounds = _nameBounds;
+	bounds = NancySceneState.getViewport().convertViewportToScreen(bounds);
+	bounds = convertToLocal(bounds);
+	Common::Point destPoint(bounds.left, bounds.bottom + 1 - font->getFontHeight());
+	font->drawString(&_drawSurface, _playerNameInput, destPoint.x, destPoint.y, bounds.width(), 0);
 
-    bounds = _passwordBounds;
-    bounds = NancySceneState.getViewport().convertViewportToScreen(bounds);
-    bounds = convertToLocal(bounds);
-    destPoint.x = bounds.left;
-    destPoint.y = bounds.bottom + 1 - font->getFontHeight();
-    font->drawString(&_drawSurface, _playerPasswordInput, destPoint.x, destPoint.y, bounds.width(), 0);
+	bounds = _passwordBounds;
+	bounds = NancySceneState.getViewport().convertViewportToScreen(bounds);
+	bounds = convertToLocal(bounds);
+	destPoint.x = bounds.left;
+	destPoint.y = bounds.bottom + 1 - font->getFontHeight();
+	font->drawString(&_drawSurface, _playerPasswordInput, destPoint.x, destPoint.y, bounds.width(), 0);
 
-    _needsRedraw = true;
+	_needsRedraw = true;
 }
 
 } // End of namespace Action

@@ -51,7 +51,7 @@ bool AVFDecoder::loadStream(Common::SeekableReadStream *stream) {
 
 	bool earlyHeaderFormat = false;
 
-	if (idString == "AVF WayneSikes") {	
+	if (idString == "AVF WayneSikes") {
 		stream->skip(1); // Unknown
 	} else if (idString.hasPrefix("ALG")) {
 		earlyHeaderFormat = true;
@@ -121,9 +121,9 @@ AVFDecoder::AVFVideoTrack::AVFVideoTrack(Common::SeekableReadStream *stream, uin
 			char buf[13];
 			stream->read(buf, 13);
 			info.name = buf;
-			
+
 			stream->skip(4); // unknown
-			
+
 			info.offset = stream->readUint32LE();
 			info.compressedSize = stream->readUint32LE();
 			info.size = _frameSize;
@@ -136,7 +136,7 @@ AVFDecoder::AVFVideoTrack::AVFVideoTrack(Common::SeekableReadStream *stream, uin
 			info.type = stream->readByte();
 			stream->skip(4); // Unknown;
 		}
-		
+
 		_chunkInfo.push_back(info);
 	}
 }

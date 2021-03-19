@@ -39,44 +39,44 @@ namespace Action {
 // different animations depending on whether the NPC is hovered by the mouse
 class PlaySecondaryVideo : public ActionRecord, public RenderObject {
 public:
-    enum HoverState { kNoHover, kHover, kEndHover };
+	enum HoverState { kNoHover, kHover, kEndHover };
 
-    PlaySecondaryVideo(uint chan, RenderObject &redrawFrom) : RenderObject(redrawFrom), channel(chan) {}
-    virtual ~PlaySecondaryVideo() { _decoder.close(); }
+	PlaySecondaryVideo(uint chan, RenderObject &redrawFrom) : RenderObject(redrawFrom), channel(chan) {}
+	virtual ~PlaySecondaryVideo() { _decoder.close(); }
 
-    virtual void init() override;
-    virtual void updateGraphics() override;
-    virtual void onPause(bool pause) override;
-    virtual void handleInput(NancyInput &input) override;
+	virtual void init() override;
+	virtual void updateGraphics() override;
+	virtual void onPause(bool pause) override;
+	virtual void handleInput(NancyInput &input) override;
 
-    virtual void readData(Common::SeekableReadStream &stream) override;
-    virtual void execute() override;
+	virtual void readData(Common::SeekableReadStream &stream) override;
+	virtual void execute() override;
 
-    Common::String _filename;
-    Common::String _paletteFilename;
-    uint16 _loopFirstFrame = 0; // 0x1E
-    uint16 _loopLastFrame = 0; // 0x20
-    uint16 _onHoverFirstFrame = 0; // 0x22
-    uint16 _onHoverLastFrame = 0; // 0x24
-    uint16 _onHoverEndFirstFrame = 0; // 0x26
-    uint16 _onHoverEndLastFrame = 0; // 0x28
-    SceneChangeDescription _sceneChange; // 0x2A
-    // unknown byte
-    Common::Array<SecondaryVideoDescription> _videoDescs; // 0x35
+	Common::String _filename;
+	Common::String _paletteFilename;
+	uint16 _loopFirstFrame = 0; // 0x1E
+	uint16 _loopLastFrame = 0; // 0x20
+	uint16 _onHoverFirstFrame = 0; // 0x22
+	uint16 _onHoverLastFrame = 0; // 0x24
+	uint16 _onHoverEndFirstFrame = 0; // 0x26
+	uint16 _onHoverEndLastFrame = 0; // 0x28
+	SceneChangeDescription _sceneChange; // 0x2A
+	// unknown byte
+	Common::Array<SecondaryVideoDescription> _videoDescs; // 0x35
 
 protected:
-    virtual Common::String getRecordTypeName() const override { return Common::String::format("PlaySecondaryVideoChan%i", channel); }
+	virtual Common::String getRecordTypeName() const override { return Common::String::format("PlaySecondaryVideoChan%i", channel); }
 
-    virtual uint16 getZOrder() const override { return 8; }
-    virtual bool isViewportRelative() const override { return true; }
+	virtual uint16 getZOrder() const override { return 8; }
+	virtual bool isViewportRelative() const override { return true; }
 
-    HoverState _hoverState = kNoHover;
-    AVFDecoder _decoder;
-    int _currentViewportFrame = -1;
-    bool _isPlaying = false;
-    bool _isHovered = false;
+	HoverState _hoverState = kNoHover;
+	AVFDecoder _decoder;
+	int _currentViewportFrame = -1;
+	bool _isPlaying = false;
+	bool _isHovered = false;
 
-    uint channel;
+	uint channel;
 };
 
 } // End of namespace Action

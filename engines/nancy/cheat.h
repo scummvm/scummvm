@@ -42,52 +42,52 @@ class NancyEngine;
 
 class CheatDialog : public GUI::Dialog {
 public:
-    CheatDialog();
+	CheatDialog();
 
 protected:
-    enum Commands {
-        kInputSceneNr = 'isnr',
-        kInputFrameNr = 'ifnr',
-        kInputScroll = 'iscr',
-        kInputHintsEasy = 'ihea',
-        kInputHintsMedium = 'ihme',
-        kInputHintsHard = 'ihha',
-        kInputPlayerTime = 'plti',
-        kInputDifficulty = 'diff',
-        kInputTimer = 'time'
-    };
+	enum Commands {
+		kInputSceneNr = 'isnr',
+		kInputFrameNr = 'ifnr',
+		kInputScroll = 'iscr',
+		kInputHintsEasy = 'ihea',
+		kInputHintsMedium = 'ihme',
+		kInputHintsHard = 'ihha',
+		kInputPlayerTime = 'plti',
+		kInputDifficulty = 'diff',
+		kInputTimer = 'time'
+	};
 
-    void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) override;
-    static void sanitizeInput(GUI::EditTextWidget *textWidget, int maxValue = -1);
+	void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) override;
+	static void sanitizeInput(GUI::EditTextWidget *textWidget, int maxValue = -1);
 
-    GUI::CheckboxWidget *_restartScene;
-    GUI::EditTextWidget *_scene;
-    GUI::EditTextWidget *_frame;
-    GUI::EditTextWidget *_offset;
+	GUI::CheckboxWidget *_restartScene;
+	GUI::EditTextWidget *_scene;
+	GUI::EditTextWidget *_frame;
+	GUI::EditTextWidget *_offset;
 
-    GUI::EditTextWidget *_hintsRemainingEasy;
-    GUI::EditTextWidget *_hintsRemainingMedium;
-    GUI::EditTextWidget *_hintsRemainingHard;
+	GUI::EditTextWidget *_hintsRemainingEasy;
+	GUI::EditTextWidget *_hintsRemainingMedium;
+	GUI::EditTextWidget *_hintsRemainingHard;
 
-    GUI::EditTextWidget *_playerTimeDays;
-    GUI::EditTextWidget *_playerTimeHours;
-    GUI::EditTextWidget *_playerTimeMinutes;
-    GUI::EditTextWidget *_difficulty;
+	GUI::EditTextWidget *_playerTimeDays;
+	GUI::EditTextWidget *_playerTimeHours;
+	GUI::EditTextWidget *_playerTimeMinutes;
+	GUI::EditTextWidget *_difficulty;
 
-    GUI::CheckboxWidget *_timerOn;
-    GUI::EditTextWidget *_timerHours;
-    GUI::EditTextWidget *_timerMinutes;
-    GUI::EditTextWidget *_timerSeconds;
+	GUI::CheckboxWidget *_timerOn;
+	GUI::EditTextWidget *_timerHours;
+	GUI::EditTextWidget *_timerMinutes;
+	GUI::EditTextWidget *_timerSeconds;
 
-    Common::Array<GUI::CheckboxWidget *> _inventory;
+	Common::Array<GUI::CheckboxWidget *> _inventory;
 };
 
 class EventFlagDialog : public GUI::Dialog {
 public:
-    EventFlagDialog();
+	EventFlagDialog();
 
 protected:
-    void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) override;
+	void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) override;
 };
 
 } // End of namespace Nancy

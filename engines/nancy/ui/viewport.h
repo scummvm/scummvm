@@ -40,59 +40,59 @@ namespace UI {
 
 class Viewport : public Nancy::RenderObject {
 public:
-    Viewport() :
-        RenderObject(),
-        _movementLastFrame(0),
-        _edgesMask(0) {}
-    virtual ~Viewport() { _decoder.close(); _fullFrame.free(); }
+	Viewport() :
+		RenderObject(),
+		_movementLastFrame(0),
+		_edgesMask(0) {}
+	virtual ~Viewport() { _decoder.close(); _fullFrame.free(); }
 
-    virtual void init() override;
-    void handleInput(NancyInput &input);
+	virtual void init() override;
+	void handleInput(NancyInput &input);
 
-    void loadVideo(const Common::String &filename, uint frameNr = 0, uint verticalScroll = 0, uint16 format = 2, const Common::String &palette = Common::String());
-    
-    void setFrame(uint frameNr);
-    void setNextFrame();
-    void setPreviousFrame();
+	void loadVideo(const Common::String &filename, uint frameNr = 0, uint verticalScroll = 0, uint16 format = 2, const Common::String &palette = Common::String());
 
-    void setVerticalScroll(uint scroll);
-    void scrollUp(uint delta);
-    void scrollDown(uint delta);
+	void setFrame(uint frameNr);
+	void setNextFrame();
+	void setPreviousFrame();
 
-    uint16 getFrameCount() const { return _decoder.isVideoLoaded() ? _decoder.getFrameCount() : 0; }
-    uint16 getCurFrame() const { return _currentFrame; }
-    uint16 getCurVerticalScroll() const { return _drawSurface.getOffsetFromOwner().y - 1; }
-    uint16 getMaxScroll() const { return _fullFrame.h - _drawSurface.h - 1; }
+	void setVerticalScroll(uint scroll);
+	void scrollUp(uint delta);
+	void scrollDown(uint delta);
 
-    Common::Rect getBoundsByFormat(uint format) const; // used by video
+	uint16 getFrameCount() const { return _decoder.isVideoLoaded() ? _decoder.getFrameCount() : 0; }
+	uint16 getCurFrame() const { return _currentFrame; }
+	uint16 getCurVerticalScroll() const { return _drawSurface.getOffsetFromOwner().y - 1; }
+	uint16 getMaxScroll() const { return _fullFrame.h - _drawSurface.h - 1; }
 
-    Common::Rect convertViewportToScreen(const Common::Rect &viewportRect) const;
-    Common::Rect convertScreenToViewport(const Common::Rect &viewportRect) const;
+	Common::Rect getBoundsByFormat(uint format) const; // used by video
 
-    // 0 is inactive, -1 is keep unchanged
-    void setEdgesSize(uint16 upSize, uint16 downSize, uint16 leftSize, uint16 rightSize);
-    void disableEdges(byte edges);
-    void enableEdges(byte edges);
+	Common::Rect convertViewportToScreen(const Common::Rect &viewportRect) const;
+	Common::Rect convertScreenToViewport(const Common::Rect &viewportRect) const;
+
+	// 0 is inactive, -1 is keep unchanged
+	void setEdgesSize(uint16 upSize, uint16 downSize, uint16 leftSize, uint16 rightSize);
+	void disableEdges(byte edges);
+	void enableEdges(byte edges);
 
 protected:
-    virtual uint16 getZOrder() const override { return 6; }
+	virtual uint16 getZOrder() const override { return 6; }
 
-    Common::Rect _upHotspot;
-    Common::Rect _downHotspot;
-    Common::Rect _leftHotspot;
-    Common::Rect _rightHotspot;
+	Common::Rect _upHotspot;
+	Common::Rect _downHotspot;
+	Common::Rect _leftHotspot;
+	Common::Rect _rightHotspot;
 
-    byte _edgesMask;
-    
-    byte _movementLastFrame;
-    Time _nextMovementTime;
+	byte _edgesMask;
 
-    AVFDecoder _decoder;
-    uint16 _currentFrame;
-    uint16 _videoFormat;
-    Graphics::ManagedSurface _fullFrame;
-    Common::Rect _format1Bounds;
-    Common::Rect _format2Bounds;
+	byte _movementLastFrame;
+	Time _nextMovementTime;
+
+	AVFDecoder _decoder;
+	uint16 _currentFrame;
+	uint16 _videoFormat;
+	Graphics::ManagedSurface _fullFrame;
+	Common::Rect _format1Bounds;
+	Common::Rect _format2Bounds;
 };
 
 } // End of namespace UI

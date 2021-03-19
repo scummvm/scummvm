@@ -37,39 +37,39 @@ namespace Nancy {
 class NancyEngine;
 
 namespace Action {
-    
+
 enum DependencyType : byte {
-    kNone               = 0,
-    kInventory          = 1,
-    kEventFlag          = 2,
-    kLogicCondition     = 3,
-    kTotalTime          = 4,
-    kSceneTime          = 5,
-    kPlayerTime         = 6,
-    // ...
-    kSceneCount         = 9,
-    kResetOnNewDay      = 10,
-    kUseItem            = 11,
-    kTimeOfDay          = 12,
-    kTimerNotDone       = 13,
-    kTimerDone          = 14,
-    kDifficultyLevel    = 15
+	kNone               = 0,
+	kInventory          = 1,
+	kEventFlag          = 2,
+	kLogicCondition     = 3,
+	kTotalTime          = 4,
+	kSceneTime          = 5,
+	kPlayerTime         = 6,
+	// ...
+	kSceneCount         = 9,
+	kResetOnNewDay      = 10,
+	kUseItem            = 11,
+	kTimeOfDay          = 12,
+	kTimerNotDone       = 13,
+	kTimerDone          = 14,
+	kDifficultyLevel    = 15
 };
 
 // Describes a condition that needs to be fulfilled before the
 // action record can be executed
 struct DependencyRecord {
-    DependencyType type;    // 0x00
-    byte label;             // 0x01
-    byte condition;         // 0x02
-    bool orFlag;            // 0x03
-    int16 hours;            // 0x04
-    int16 minutes;          // 0x06
-    int16 seconds;          // 0x08
-    int16 milliseconds;     // 0x0A
+	DependencyType type;    // 0x00
+	byte label;             // 0x01
+	byte condition;         // 0x02
+	bool orFlag;            // 0x03
+	int16 hours;            // 0x04
+	int16 minutes;          // 0x06
+	int16 seconds;          // 0x08
+	int16 milliseconds;     // 0x0A
 
-    bool satisfied;
-    Time timeData;
+	bool satisfied;
+	Time timeData;
 };
 
 // Describes a single action that will be performed on every update.
@@ -78,71 +78,71 @@ struct DependencyRecord {
 // Does _not_ support drawing to screen, records that need this functionality
 // will have to also subclass RenderObject.
 class ActionRecord {
-    friend class ActionManager;
+	friend class ActionManager;
 public:
-    enum ExecutionState { kBegin, kRun, kActionTrigger };
-    enum ExecutionType { kOneShot = 1, kRepeating = 2 };
-    ActionRecord() :
-        _type(0),
-        _execType(kOneShot),
-        _isActive(false),
-        _isDone(false),
-        _hasHotspot(false),
-        _state(ExecutionState::kBegin),
-        _days(-1),
-        _itemRequired(-1) {}
-    virtual ~ActionRecord() {}
+	enum ExecutionState { kBegin, kRun, kActionTrigger };
+	enum ExecutionType { kOneShot = 1, kRepeating = 2 };
+	ActionRecord() :
+		_type(0),
+		_execType(kOneShot),
+		_isActive(false),
+		_isDone(false),
+		_hasHotspot(false),
+		_state(ExecutionState::kBegin),
+		_days(-1),
+		_itemRequired(-1) {}
+	virtual ~ActionRecord() {}
 
-    virtual void readData(Common::SeekableReadStream &stream) =0;
-    virtual void execute() {}
-    virtual void onPause(bool pause) {}
+	virtual void readData(Common::SeekableReadStream &stream) =0;
+	virtual void execute() {}
+	virtual void onPause(bool pause) {}
 
-    virtual CursorManager::CursorType getHoverCursor() const { return CursorManager::kHotspot; }
-    virtual void handleInput(NancyInput &input) {}
+	virtual CursorManager::CursorType getHoverCursor() const { return CursorManager::kHotspot; }
+	virtual void handleInput(NancyInput &input) {}
 
-protected:   
-    void finishExecution() {
-        switch (_execType) {
-        case kOneShot:
-            _isDone = true;
-            _state = kBegin;
-            break;
-        case kRepeating:
-            _isDone = false;
-            _isActive = false;
-            _state = kBegin;
+protected:
+	void finishExecution() {
+		switch (_execType) {
+		case kOneShot:
+			_isDone = true;
+			_state = kBegin;
+			break;
+		case kRepeating:
+			_isDone = false;
+			_isActive = false;
+			_state = kBegin;
 
-            for (uint i = 0; i < _dependencies.size(); ++i) {
-                _dependencies[i].satisfied = false;
-            }
+			for (uint i = 0; i < _dependencies.size(); ++i) {
+				_dependencies[i].satisfied = false;
+			}
 
-            break;
-        default:
-            _state = kBegin;
-            break;
-        }
-    }
+			break;
+		default:
+			_state = kBegin;
+			break;
+		}
+	}
 
-    // Used for debugging
-    virtual Common::String getRecordTypeName() const =0;
+	// Used for debugging
+	virtual Common::String getRecordTypeName() const =0;
 
 public:
-    Common::String _description;                    // 0x00
-    byte _type;                                     // 0x30
-    ExecutionType _execType;                        // 0x31
-    // 0x32 data
-    Common::Array<DependencyRecord> _dependencies;  // 0x36
-    // 0x3A numDependencies
-    bool _isActive;                                 // 0x3B
-    // 0x3C satisfiedDependencies[] 
-    // 0x48 timers[]
-    // 0x78 orFlags[]
-    bool _isDone;                                   // 0x84
-    bool _hasHotspot;                               // 0x85
-    Common::Rect _hotspot;                          // 0x89
-    ExecutionState _state;                          // 0x91
-    int16 _days;                                    // 0x95
-    int8 _itemRequired;                             // 0x97
+	Common::String _description;                    // 0x00
+	byte _type;                                     // 0x30
+	ExecutionType _execType;                        // 0x31
+	// 0x32 data
+	Common::Array<DependencyRecord> _dependencies;  // 0x36
+	// 0x3A numDependencies
+	bool _isActive;                                 // 0x3B
+	// 0x3C satisfiedDependencies[]
+	// 0x48 timers[]
+	// 0x78 orFlags[]
+	bool _isDone;                                   // 0x84
+	bool _hasHotspot;                               // 0x85
+	Common::Rect _hotspot;                          // 0x89
+	ExecutionState _state;                          // 0x91
+	int16 _days;                                    // 0x95
+	int8 _itemRequired;                             // 0x97
 };
 
 } // End of namespace Action

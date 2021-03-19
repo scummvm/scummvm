@@ -33,105 +33,105 @@
 namespace Nancy {
 
 void CursorManager::init() {
-    Common::SeekableReadStream *chunk = g_nancy->getBootChunkStream("INV");
-    chunk->seek(0x1D2); // TODO
-    Common::String inventoryCursorsImageName = chunk->readString();
+	Common::SeekableReadStream *chunk = g_nancy->getBootChunkStream("INV");
+	chunk->seek(0x1D2); // TODO
+	Common::String inventoryCursorsImageName = chunk->readString();
 
-    chunk = g_nancy->getBootChunkStream("CURS");
-    for (uint i = 0; i < 56; ++i) {
-        _cursors.push_back(Cursor());
-        chunk->seek(i * 16, SEEK_SET);
-        readRect(*chunk, _cursors[i].bounds);
-        chunk->seek(0x380 + i * 8, SEEK_SET);
-        _cursors[i].hotspot.x = chunk->readUint32LE();
-        _cursors[i].hotspot.y = chunk->readUint32LE();
-    }
+	chunk = g_nancy->getBootChunkStream("CURS");
+	for (uint i = 0; i < 56; ++i) {
+		_cursors.push_back(Cursor());
+		chunk->seek(i * 16, SEEK_SET);
+		readRect(*chunk, _cursors[i].bounds);
+		chunk->seek(0x380 + i * 8, SEEK_SET);
+		_cursors[i].hotspot.x = chunk->readUint32LE();
+		_cursors[i].hotspot.y = chunk->readUint32LE();
+	}
 
-    readRect(*chunk, _primaryVideoInactiveZone);
-    _primaryVideoInitialPos.x = chunk->readUint16LE();
-    _primaryVideoInitialPos.y = chunk->readUint16LE();
+	readRect(*chunk, _primaryVideoInactiveZone);
+	_primaryVideoInitialPos.x = chunk->readUint16LE();
+	_primaryVideoInitialPos.y = chunk->readUint16LE();
 
-    g_nancy->_resource->loadImage(inventoryCursorsImageName, _invCursorsSurface);
+	g_nancy->_resource->loadImage(inventoryCursorsImageName, _invCursorsSurface);
 
-    setCursor(kNormalArrow, -1);
-    showCursor(false);
+	setCursor(kNormalArrow, -1);
+	showCursor(false);
 
-    _isInitialized = true;
+	_isInitialized = true;
 }
 
 void CursorManager::setCursor(CursorType type, int16 itemID) {
-    if (!_isInitialized) {
-        return;
-    }
+	if (!_isInitialized) {
+		return;
+	}
 
-    if (type == _curCursorType && itemID == _curItemID) {
-        return;
-    } else {
-        _curCursorType = type;
-        _curItemID = itemID;
-    }
+	if (type == _curCursorType && itemID == _curItemID) {
+		return;
+	} else {
+		_curCursorType = type;
+		_curItemID = itemID;
+	}
 
-    uint16 newID = 0;
-    bool hasItem = false;
+	uint16 newID = 0;
+	bool hasItem = false;
 
-    switch (type) {
-    case kNormalArrow:
-        newID = 4;
-        break;
-    case kHotspotArrow:
-        newID = 6;
-        break;
-    case kExitArrow:
-        newID = 3;
-        break;
-    default: {
-        if (itemID == -1) {
-            // No item held, set to eyeglass
-            itemID = 0;
-        } else {
-            // Item held
-            itemID += 3;
-            hasItem = true;
-        }
+	switch (type) {
+	case kNormalArrow:
+		newID = 4;
+		break;
+	case kHotspotArrow:
+		newID = 6;
+		break;
+	case kExitArrow:
+		newID = 3;
+		break;
+	default: {
+		if (itemID == -1) {
+			// No item held, set to eyeglass
+			itemID = 0;
+		} else {
+			// Item held
+			itemID += 3;
+			hasItem = true;
+		}
 
-        newID = itemID * 4 + type;
-    }
-    }
+		newID = itemID * 4 + type;
+	}
+	}
 
-    Graphics::ManagedSurface *surf;
-    Common::Rect bounds = _cursors[newID].bounds;
-    Common::Point hotspot = _cursors[newID].hotspot;
+	Graphics::ManagedSurface *surf;
+	Common::Rect bounds = _cursors[newID].bounds;
+	Common::Point hotspot = _cursors[newID].hotspot;
 
-    if (hasItem) {
-        surf = &_invCursorsSurface;
-        
-    } else {
-        surf = &g_nancy->_graphicsManager->_object0;
-    }
+	if (hasItem) {
+		surf = &_invCursorsSurface;
 
-    // TODO this is ridiculous, figure out why just calling
-    // GetBasePtr() results in garbage
-    Graphics::Surface s;
-    s.create(bounds.width(), bounds.height(), surf->format);
-    s.copyRectToSurface(*surf, 0, 0, bounds);
+	} else {
+		surf = &g_nancy->_graphicsManager->_object0;
+	}
 
-    // TODO hotspots are terrible for arrow cursors, fix that??
-    CursorMan.replaceCursor(s.getPixels(), s.w, s.h, hotspot.x, hotspot.y, GraphicsManager::getTransColor(), false, &GraphicsManager::getInputPixelFormat());
+	// TODO this is ridiculous, figure out why just calling
+	// GetBasePtr() results in garbage
+	Graphics::Surface s;
+	s.create(bounds.width(), bounds.height(), surf->format);
+	s.copyRectToSurface(*surf, 0, 0, bounds);
 
-    s.free();
+	// TODO hotspots are terrible for arrow cursors, fix that??
+	CursorMan.replaceCursor(s.getPixels(), s.w, s.h, hotspot.x, hotspot.y, GraphicsManager::getTransColor(), false, &GraphicsManager::getInputPixelFormat());
+
+	s.free();
 
 }
 
 void CursorManager::setCursorType(CursorType type) {
-    setCursor(type, _curItemID);
+	setCursor(type, _curItemID);
 }
 
 void CursorManager::setCursorItemID(int16 itemID) {
-    setCursor(_curCursorType, itemID);
+	setCursor(_curCursorType, itemID);
 }
 
 void CursorManager::showCursor(bool shouldShow) {
-    CursorMan.showMouse(shouldShow);
+	CursorMan.showMouse(shouldShow);
 }
 
 } // End of namespace Nancy

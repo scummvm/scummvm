@@ -42,79 +42,79 @@ namespace UI {
 
 class Textbox : public Nancy::RenderObject {
 public:
-    Textbox(RenderObject &redrawFrom) :
-        RenderObject(redrawFrom),
-        _firstLineOffset(0),
-        _lineHeight(0),
-        _borderWidth(0),
-        _needsTextRedraw(false),
-        _scrollbar(redrawFrom, this),
-        _scrollbarPos(0) {}
+	Textbox(RenderObject &redrawFrom) :
+		RenderObject(redrawFrom),
+		_firstLineOffset(0),
+		_lineHeight(0),
+		_borderWidth(0),
+		_needsTextRedraw(false),
+		_scrollbar(redrawFrom, this),
+		_scrollbarPos(0) {}
 
-    virtual ~Textbox() { _fullSurface.free(); }
-    
-    virtual void init() override;
-    virtual void registerGraphics() override;
-    virtual void updateGraphics() override;
-    void handleInput(NancyInput &input);
+	virtual ~Textbox() { _fullSurface.free(); }
 
-    void drawTextbox();
-    void clear();
+	virtual void init() override;
+	virtual void registerGraphics() override;
+	virtual void updateGraphics() override;
+	void handleInput(NancyInput &input);
 
-    void addTextLine(const Common::String &text);
-    void onScrollbarPositionChanged(float data);
+	void drawTextbox();
+	void clear();
 
-    static void assembleTextLine(char *rawCaption, Common::String &output, uint size);
+	void addTextLine(const Common::String &text);
+	void onScrollbarPositionChanged(float data);
+
+	static void assembleTextLine(char *rawCaption, Common::String &output, uint size);
 
 protected:
-    virtual uint16 getZOrder() const override { return 6; }
+	virtual uint16 getZOrder() const override { return 6; }
 
 private:
-    uint16 getInnerHeight() const;
-    void onScrollbarMove();
+	uint16 getInnerHeight() const;
+	void onScrollbarMove();
 
-    struct Response {
-        Common::String text;
-        Common::Rect hotspot;
-    };
+	struct Response {
+		Common::String text;
+		Common::Rect hotspot;
+	};
 
-    class TextboxScrollbar : public Scrollbar {
-    public:
-        TextboxScrollbar(RenderObject &redrawFrom, Textbox *parent) :
-            Scrollbar(redrawFrom),
-            _parent(parent) {}
-        ~TextboxScrollbar() =default;
+	class TextboxScrollbar : public Scrollbar {
+	public:
+		TextboxScrollbar(RenderObject &redrawFrom, Textbox *parent) :
+			Scrollbar(redrawFrom),
+			_parent(parent) {}
+		~TextboxScrollbar() =default;
 
-        virtual void init() override;
-        Textbox *_parent;
-    };
+		virtual void init() override;
+		Textbox *_parent;
+	};
 
-    Graphics::ManagedSurface _fullSurface;
+	Graphics::ManagedSurface _fullSurface;
 
-    TextboxScrollbar _scrollbar;
+	TextboxScrollbar _scrollbar;
 
-    Common::Array<Common::String> _textLines;
-    Common::Array<Common::Rect> _hotspots;
+	Common::Array<Common::String> _textLines;
+	Common::Array<Common::Rect> _hotspots;
 
-    Common::Rect _scrollbarSourceBounds;
-    Common::Point _scrollbarDefaultDest;
-    uint16 _firstLineOffset;
-    uint16 _lineHeight;
-    uint16 _borderWidth;
-    uint16 _numLines;
-    uint16 _fontID;
+	Common::Rect _scrollbarSourceBounds;
+	Common::Point _scrollbarDefaultDest;
+	uint16 _firstLineOffset;
+	uint16 _lineHeight;
+	uint16 _borderWidth;
+	uint16 _numLines;
+	uint16 _fontID;
 
-    bool _needsTextRedraw;
-    float _scrollbarPos;
+	bool _needsTextRedraw;
+	float _scrollbarPos;
 
-    static const char _CCBeginToken[];
-    static const char _CCEndToken[];
-    static const char _colorBeginToken[];
-    static const char _colorEndToken[];
-    static const char _hotspotToken[];
-    static const char _newLineToken[];
-    static const char _tabToken[];
-    static const char _telephoneEndToken[];
+	static const char _CCBeginToken[];
+	static const char _CCEndToken[];
+	static const char _colorBeginToken[];
+	static const char _colorEndToken[];
+	static const char _hotspotToken[];
+	static const char _newLineToken[];
+	static const char _tabToken[];
+	static const char _telephoneEndToken[];
 };
 
 } // End of namespace UI

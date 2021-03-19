@@ -43,47 +43,47 @@ namespace Action {
 
 class SliderPuzzle: public ActionRecord, public RenderObject {
 public:
-    enum SolveState { kNotSolved, kWaitForSound };
-    SliderPuzzle(RenderObject &redrawFrom) : RenderObject(redrawFrom) {}
-    virtual ~SliderPuzzle() {}
-    
-    virtual void init() override;
-    
-    virtual void readData(Common::SeekableReadStream &stream) override;
-    virtual void execute() override;
-    virtual void handleInput(NancyInput &input) override;
-    virtual void onPause(bool pause) override;
+	enum SolveState { kNotSolved, kWaitForSound };
+	SliderPuzzle(RenderObject &redrawFrom) : RenderObject(redrawFrom) {}
+	virtual ~SliderPuzzle() {}
 
-    static void synchronize(Common::Serializer &ser);
+	virtual void init() override;
 
-    Common::String _imageName; // 0x00
-    uint16 _width; // 0xA
-    uint16 _height; // 0xC
-    Common::Array<Common::Array<Common::Rect>> _srcRects; // 0x0E, size 0x240
-    Common::Array<Common::Array<Common::Rect>> _destRects; // 0x24E, size 0x240
-    Common::Array<Common::Array<int16>> _correctTileOrder; // 0x48E, size 0x48
-    SoundDescription _clickSound; // 0x4D6
-    SceneChangeDescription _solveExitScene; // 0x4F8
-    EventFlagDescription _flagOnSolve; // 0x502
-    SoundDescription _solveSound; // 0x505
-    SceneChangeDescription _exitScene; // 0x527
-    EventFlagDescription _flagOnExit; // 0x531
-    Common::Rect _exitHotspot; // 0x534
+	virtual void readData(Common::SeekableReadStream &stream) override;
+	virtual void execute() override;
+	virtual void handleInput(NancyInput &input) override;
+	virtual void onPause(bool pause) override;
 
-    SolveState _solveState = kNotSolved;
-    Graphics::ManagedSurface _image;
+	static void synchronize(Common::Serializer &ser);
 
-    static Common::Array<Common::Array<int16>> _playerTileOrder;
-    static bool _playerHasTriedPuzzle;
+	Common::String _imageName; // 0x00
+	uint16 _width; // 0xA
+	uint16 _height; // 0xC
+	Common::Array<Common::Array<Common::Rect>> _srcRects; // 0x0E, size 0x240
+	Common::Array<Common::Array<Common::Rect>> _destRects; // 0x24E, size 0x240
+	Common::Array<Common::Array<int16>> _correctTileOrder; // 0x48E, size 0x48
+	SoundDescription _clickSound; // 0x4D6
+	SceneChangeDescription _solveExitScene; // 0x4F8
+	EventFlagDescription _flagOnSolve; // 0x502
+	SoundDescription _solveSound; // 0x505
+	SceneChangeDescription _exitScene; // 0x527
+	EventFlagDescription _flagOnExit; // 0x531
+	Common::Rect _exitHotspot; // 0x534
+
+	SolveState _solveState = kNotSolved;
+	Graphics::ManagedSurface _image;
+
+	static Common::Array<Common::Array<int16>> _playerTileOrder;
+	static bool _playerHasTriedPuzzle;
 
 protected:
-    virtual Common::String getRecordTypeName() const override { return "SliderPuzzle"; }
+	virtual Common::String getRecordTypeName() const override { return "SliderPuzzle"; }
 
-    virtual uint16 getZOrder() const override { return 7; }
-    virtual bool isViewportRelative() const override { return true; }
+	virtual uint16 getZOrder() const override { return 7; }
+	virtual bool isViewportRelative() const override { return true; }
 
-    void drawTile(int tileID, uint posX, uint posY);
-    void undrawTile(uint posX, uint posY);
+	void drawTile(int tileID, uint posX, uint posY);
+	void undrawTile(uint posX, uint posY);
 };
 
 } // End of namespace Action

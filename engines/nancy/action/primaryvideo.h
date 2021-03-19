@@ -44,80 +44,80 @@ class PlayPrimaryVideoChan0 : public ActionRecord, public RenderObject {
 struct ConditionFlag {
 enum ConditionType : byte { kNone = 0, kEventFlags = 1, kInventory = 2 };
 
-    ConditionType type;
-    EventFlagDescription flag;
-    bool orFlag;
+	ConditionType type;
+	EventFlagDescription flag;
+	bool orFlag;
 
-    void read(Common::SeekableReadStream &stream);
-    bool isSatisfied() const;
-    void set() const;
+	void read(Common::SeekableReadStream &stream);
+	bool isSatisfied() const;
+	void set() const;
 };
 
 struct ConditionFlags {
-    Common::Array<ConditionFlag> conditionFlags;
+	Common::Array<ConditionFlag> conditionFlags;
 
-    void read(Common::SeekableReadStream &stream);
-    bool isSatisfied() const;
+	void read(Common::SeekableReadStream &stream);
+	bool isSatisfied() const;
 };
 
 struct ResponseStruct {
-    ConditionFlags conditionFlags; // 0x01
-    Common::String text; // 0x06
-    Common::String soundName; // 0x196
-    SceneChangeDescription _sceneChange; // 0x1A0
-    EventFlagDescription flagDesc; // 0x1A8
+	ConditionFlags conditionFlags; // 0x01
+	Common::String text; // 0x06
+	Common::String soundName; // 0x196
+	SceneChangeDescription _sceneChange; // 0x1A0
+	EventFlagDescription flagDesc; // 0x1A8
 };
 
 struct FlagsStruct {
-    ConditionFlags conditions;
-    ConditionFlag flagToSet;
+	ConditionFlags conditions;
+	ConditionFlag flagToSet;
 };
 
 public:
-    PlayPrimaryVideoChan0(RenderObject &redrawFrom) : RenderObject(redrawFrom) {}
-    virtual ~PlayPrimaryVideoChan0();
+	PlayPrimaryVideoChan0(RenderObject &redrawFrom) : RenderObject(redrawFrom) {}
+	virtual ~PlayPrimaryVideoChan0();
 
-    virtual void init() override;
-    virtual void updateGraphics() override;
-    virtual void onPause(bool pause) override;
+	virtual void init() override;
+	virtual void updateGraphics() override;
+	virtual void onPause(bool pause) override;
 
-    virtual void readData(Common::SeekableReadStream &stream) override;
-    virtual void execute() override;
-    
-    // Functions for handling the built-in dialogue responses found in the executable
-    void addConditionalResponses();
-    void addGoodbye();
+	virtual void readData(Common::SeekableReadStream &stream) override;
+	virtual void execute() override;
 
-    Common::String _videoName; // 0x00
-    Common::Rect _src; // 0x1D
-    // _screenPosition 0x2D
-    Common::String _text; // 0x3D
+	// Functions for handling the built-in dialogue responses found in the executable
+	void addConditionalResponses();
+	void addGoodbye();
 
-    SoundDescription _sound; // 0x619
-    SoundDescription _responseGenericSound; // 0x63B
+	Common::String _videoName; // 0x00
+	Common::Rect _src; // 0x1D
+	// _screenPosition 0x2D
+	Common::String _text; // 0x3D
 
-    byte _conditionalResponseCharacterID; // 0x65E
-    byte _goodbyeResponseCharacterID; // 0x65F
-    NancyFlag _isDialogueExitScene; // 0x660
-    NancyFlag _doNotPop; // 0x661
-    SceneChangeDescription _sceneChange; // 0x662
+	SoundDescription _sound; // 0x619
+	SoundDescription _responseGenericSound; // 0x63B
 
-    Common::Array<ResponseStruct> _responses; // 0x69E
-    Common::Array<FlagsStruct> _flagsStructs; // 0x6AA
+	byte _conditionalResponseCharacterID; // 0x65E
+	byte _goodbyeResponseCharacterID; // 0x65F
+	NancyFlag _isDialogueExitScene; // 0x660
+	NancyFlag _doNotPop; // 0x661
+	SceneChangeDescription _sceneChange; // 0x662
 
-    AVFDecoder _decoder;
+	Common::Array<ResponseStruct> _responses; // 0x69E
+	Common::Array<FlagsStruct> _flagsStructs; // 0x6AA
 
-    bool _hasDrawnTextbox = false;
-    int16 _pickedResponse = -1;
+	AVFDecoder _decoder;
 
-    // Used to avoid clashes between multiple instances in the same scene
+	bool _hasDrawnTextbox = false;
+	int16 _pickedResponse = -1;
+
+	// Used to avoid clashes between multiple instances in the same scene
 	static PlayPrimaryVideoChan0 *_activePrimaryVideo;
 
 protected:
-    virtual Common::String getRecordTypeName() const override { return "PlayPrimaryVideoChan0"; }
-    
-    virtual uint16 getZOrder() const override { return 8; }
-    virtual bool isViewportRelative() const override { return true; }
+	virtual Common::String getRecordTypeName() const override { return "PlayPrimaryVideoChan0"; }
+
+	virtual uint16 getZOrder() const override { return 8; }
+	virtual bool isViewportRelative() const override { return true; }
 };
 
 } // End of namespace Action

@@ -39,69 +39,69 @@ namespace Nancy {
 namespace State {
 
 void Help::process() {
-    switch (_state) {
-    case kInit:
-        init();
-        // fall through
-    case kBegin:       
-        begin();
-        // fall through
-    case kRun:
-        run();
-        break;
-    case kWaitForSound:
-        waitForSound();
-        break;
-    }
+	switch (_state) {
+	case kInit:
+		init();
+		// fall through
+	case kBegin:
+		begin();
+		// fall through
+	case kRun:
+		run();
+		break;
+	case kWaitForSound:
+		waitForSound();
+		break;
+	}
 }
 
 void Help::init() {
-    Common::SeekableReadStream *chunk = g_nancy->getBootChunkStream("HELP");
+	Common::SeekableReadStream *chunk = g_nancy->getBootChunkStream("HELP");
 
-    chunk->seek(0);
-    Common::String imageName;
-    readFilename(*chunk, imageName);
-    _image.init(imageName);
+	chunk->seek(0);
+	Common::String imageName;
+	readFilename(*chunk, imageName);
+	_image.init(imageName);
 
-    chunk->skip(20);
-    _hotspot.left = chunk->readUint16LE();
-    _hotspot.top = chunk->readUint16LE();
-    _hotspot.right = chunk->readUint16LE();
-    _hotspot.bottom = chunk->readUint16LE();
-    
-    chunk = g_nancy->getBootChunkStream("MSND");
-    chunk->seek(0);
+	chunk->skip(20);
+	_hotspot.left = chunk->readUint16LE();
+	_hotspot.top = chunk->readUint16LE();
+	_hotspot.right = chunk->readUint16LE();
+	_hotspot.bottom = chunk->readUint16LE();
+
+	chunk = g_nancy->getBootChunkStream("MSND");
+	chunk->seek(0);
 	_sound.read(*chunk, SoundDescription::kMenu);
 
-    _state = kBegin;
+	_state = kBegin;
 }
 
 void Help::begin() {
 	g_nancy->_sound->loadSound(_sound);
 	g_nancy->_sound->playSound(_sound);
-    
-    _image.registerGraphics();
-    _image.setVisible(true);
 
-    g_nancy->_cursorManager->setCursorType(CursorManager::kNormalArrow);
-    
-    _state = kRun;
+	_image.registerGraphics();
+	_image.setVisible(true);
+
+	g_nancy->_cursorManager->setCursorType(CursorManager::kNormalArrow);
+
+	_state = kRun;
 }
 
 void Help::run() {
-    NancyInput input = g_nancy->_input->getInput();
+	NancyInput input = g_nancy->_input->getInput();
 
-    if (_hotspot.contains(input.mousePos) && input.input & NancyInput::kLeftMouseButtonUp) {
-        g_nancy->_sound->playSound(0x18); // Hardcoded by original engine
-        _state = kWaitForSound;
-    }
+	if (_hotspot.contains(input.mousePos) && input.input & NancyInput::kLeftMouseButtonUp) {
+		g_nancy->_sound->playSound(0x18); // Hardcoded by original engine
+		_state = kWaitForSound;
+	}
 }
 
 void Help::waitForSound() {
-    if (!g_nancy->_sound->isSoundPlaying(18)) {
-	    g_nancy->_sound->stopSound(_sound);
-        g_nancy->setPreviousState();
-    }
+	if (!g_nancy->_sound->isSoundPlaying(18)) {
+		g_nancy->_sound->stopSound(_sound);
+		g_nancy->setPreviousState();
+	}
 }
 
 } // End of namespace State

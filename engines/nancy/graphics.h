@@ -37,43 +37,43 @@ class NancyEngine;
 // Graphics class that handles multilayered surface rendering with minimal redraw
 class GraphicsManager {
 public:
-    GraphicsManager() : _objects(objectComparator) {}
+	GraphicsManager() : _objects(objectComparator) {}
 
-    void init();
-    void draw();
+	void init();
+	void draw();
 
-    void addObject(RenderObject *object);
-    void removeObject(RenderObject *object);
-    void clearObjects();
+	void addObject(RenderObject *object);
+	void removeObject(RenderObject *object);
+	void clearObjects();
 
-    void redrawAll();
+	void redrawAll();
 
-    Font *getFont(uint id) { return id < _fonts.size() ? &_fonts[id] : nullptr; }
+	Font *getFont(uint id) { return id < _fonts.size() ? &_fonts[id] : nullptr; }
 
-    static void loadSurfacePalette(Graphics::ManagedSurface &inSurf, const Common::String paletteFilename);
-    static void copyToManaged(const Graphics::Surface &src, Graphics::ManagedSurface &dst, bool verticalFlip = false, bool doubleSize = false);
-    static void copyToManaged(void *src, Graphics::ManagedSurface &dst, uint srcW, uint srcH, const Graphics::PixelFormat &format, bool verticalFlip = false, bool doubleSize = false);
+	static void loadSurfacePalette(Graphics::ManagedSurface &inSurf, const Common::String paletteFilename);
+	static void copyToManaged(const Graphics::Surface &src, Graphics::ManagedSurface &dst, bool verticalFlip = false, bool doubleSize = false);
+	static void copyToManaged(void *src, Graphics::ManagedSurface &dst, uint srcW, uint srcH, const Graphics::PixelFormat &format, bool verticalFlip = false, bool doubleSize = false);
 
-    static const Graphics::PixelFormat &getInputPixelFormat();
-    static uint getTransColor();
+	static const Graphics::PixelFormat &getInputPixelFormat();
+	static uint getTransColor();
 
-    Graphics::ManagedSurface _object0;
-    
-    static const Graphics::PixelFormat _screenPixelFormat;
-    
+	Graphics::ManagedSurface _object0;
+
+	static const Graphics::PixelFormat _screenPixelFormat;
+
 private:
-    void loadFonts();
-    void blitToScreen(const RenderObject &src, Common::Rect dest);
+	void loadFonts();
+	void blitToScreen(const RenderObject &src, Common::Rect dest);
 
-    static int objectComparator(const void *a, const void *b);
+	static int objectComparator(const void *a, const void *b);
 
-    Common::SortedArray<RenderObject *> _objects;
+	Common::SortedArray<RenderObject *> _objects;
 
-    static const Graphics::PixelFormat _inputPixelFormat;
-    static const Graphics::PixelFormat _clut8Format;
+	static const Graphics::PixelFormat _inputPixelFormat;
+	static const Graphics::PixelFormat _clut8Format;
 
-    Graphics::Screen _screen;
-    Common::Array<Font> _fonts;
+	Graphics::Screen _screen;
+	Common::Array<Font> _fonts;
 };
 
 } // End of namespace Nancy

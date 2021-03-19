@@ -115,12 +115,12 @@ void NancyConsole::postEnter() {
 
 				g_system->delayMillis(10);
 			}
-			
+
 			g_nancy->_graphicsManager->redrawAll();
 		} else {
 			debugPrintf("Failed to load image '%s'\n", _imageFile.c_str());
 		}
-		
+
 		_imageFile.clear();
 	}
 
@@ -320,7 +320,7 @@ bool NancyConsole::Cmd_loadScene(int argc, const char **argv) {
 		debugPrintf("Usage: %s sceneID\n", argv[0]);
 		return true;
 	}
-	
+
 	if (g_nancy->_gameFlow.previousState != &NancySceneState) {
 		debugPrintf("Not in the kScene state\n");
 		return true;

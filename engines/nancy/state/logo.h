@@ -30,7 +30,7 @@
 #include "common/singleton.h"
 
 namespace Graphics {
-	struct Surface;
+struct Surface;
 }
 
 namespace Nancy {
@@ -42,10 +42,10 @@ namespace State {
 class Logo : public State, public Common::Singleton<Logo> {
 public:
 	Logo() : _state(kInit), _startTicks(0) { }
-		
+
 	// State API
-    virtual void process() override;
-    virtual bool onStateExit() override;
+	virtual void process() override;
+	virtual bool onStateExit() override;
 
 private:
 	void init();

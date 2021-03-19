@@ -35,53 +35,53 @@ namespace Nancy {
 namespace UI {
 
 void Button::handleInput(NancyInput &input) {
-    if (_screenPosition.contains(input.mousePos)) {
-        g_nancy->_cursorManager->setCursorType(CursorManager::kHotspotArrow);
+	if (_screenPosition.contains(input.mousePos)) {
+		g_nancy->_cursorManager->setCursorType(CursorManager::kHotspotArrow);
 
-        if (input.input & NancyInput::kLeftMouseButtonUp) {
-            onClick();
-        }
-    }
+		if (input.input & NancyInput::kLeftMouseButtonUp) {
+			onClick();
+		}
+	}
 }
 
 void MenuButton::init() {
-    Common::SeekableReadStream *bsum = g_nancy->getBootChunkStream("BSUM");
+	Common::SeekableReadStream *bsum = g_nancy->getBootChunkStream("BSUM");
 
-    bsum->seek(0x184, SEEK_SET);
-    Common::Rect src;
-    readRect(*bsum, src);
-    _drawSurface.create(g_nancy->_graphicsManager->_object0, src);
-    bsum->skip(16);
-    readRect(*bsum, _screenPosition);
-    setVisible(false);
+	bsum->seek(0x184, SEEK_SET);
+	Common::Rect src;
+	readRect(*bsum, src);
+	_drawSurface.create(g_nancy->_graphicsManager->_object0, src);
+	bsum->skip(16);
+	readRect(*bsum, _screenPosition);
+	setVisible(false);
 
-    RenderObject::init();
+	RenderObject::init();
 }
 
 void MenuButton::onClick() {
-    NancySceneState.requestStateChange(NancyEngine::kMainMenu);
-    g_nancy->_sound->playSound(0x18);
-    setVisible(true);
+	NancySceneState.requestStateChange(NancyEngine::kMainMenu);
+	g_nancy->_sound->playSound(0x18);
+	setVisible(true);
 }
 
 void HelpButton::init() {
-    Common::SeekableReadStream *bsum = g_nancy->getBootChunkStream("BSUM");
+	Common::SeekableReadStream *bsum = g_nancy->getBootChunkStream("BSUM");
 
-    bsum->seek(0x194, SEEK_SET);
-    Common::Rect src;
-    readRect(*bsum, src);
-    _drawSurface.create(g_nancy->_graphicsManager->_object0, src);
-    bsum->skip(16);
-    readRect(*bsum, _screenPosition);
-    setVisible(false);
+	bsum->seek(0x194, SEEK_SET);
+	Common::Rect src;
+	readRect(*bsum, src);
+	_drawSurface.create(g_nancy->_graphicsManager->_object0, src);
+	bsum->skip(16);
+	readRect(*bsum, _screenPosition);
+	setVisible(false);
 
-    RenderObject::init();
+	RenderObject::init();
 }
 
 void HelpButton::onClick() {
-    NancySceneState.requestStateChange(NancyEngine::kHelp);
-    g_nancy->_sound->playSound(0x18);
-    setVisible(true);
+	NancySceneState.requestStateChange(NancyEngine::kHelp);
+	g_nancy->_sound->playSound(0x18);
+	setVisible(true);
 }
 
 } // End of namespace UI

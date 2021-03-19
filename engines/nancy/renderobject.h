@@ -39,54 +39,54 @@ class NancyEngine;
 // but initialization needs to be done manually. Objects are expected to know which
 // object is below them at creation.
 class RenderObject {
-    friend class GraphicsManager;
+	friend class GraphicsManager;
 public:
-    RenderObject() :
-        _needsRedraw(true),
-        _isVisible(true),
-        _redrawFrom(nullptr) {}
+	RenderObject() :
+		_needsRedraw(true),
+		_isVisible(true),
+		_redrawFrom(nullptr) {}
 
-    RenderObject(RenderObject &redrawFrom) :
-        _needsRedraw(true),
-        _isVisible(true),
-        _redrawFrom(&redrawFrom) {}
+	RenderObject(RenderObject &redrawFrom) :
+		_needsRedraw(true),
+		_isVisible(true),
+		_redrawFrom(&redrawFrom) {}
 
-    virtual ~RenderObject();
+	virtual ~RenderObject();
 
-    virtual void init(); // Does not get called automatically
-    virtual void registerGraphics(); // Does not get called automatically
-    virtual void updateGraphics() {}
+	virtual void init(); // Does not get called automatically
+	virtual void registerGraphics(); // Does not get called automatically
+	virtual void updateGraphics() {}
 
-    void moveTo(Common::Point position);
-    void setVisible(bool visible);
-    void setTransparent(bool isTransparent);
+	void moveTo(Common::Point position);
+	void setVisible(bool visible);
+	void setTransparent(bool isTransparent);
 
-    bool hasMoved() const { return _previousScreenPosition != _screenPosition; }
-    Common::Rect getScreenPosition() const;
-    Common::Rect getPreviousScreenPosition() const;
+	bool hasMoved() const { return _previousScreenPosition != _screenPosition; }
+	Common::Rect getScreenPosition() const;
+	Common::Rect getPreviousScreenPosition() const;
 
-    // Given a screen-space rect, convert it to the source surface's local space
-    Common::Rect convertToLocal(const Common::Rect &screen) const;
-    // Given a local space rect, convert it to screen space
-    Common::Rect convertToScreen(const Common::Rect &rect) const;
+	// Given a screen-space rect, convert it to the source surface's local space
+	Common::Rect convertToLocal(const Common::Rect &screen) const;
+	// Given a local space rect, convert it to screen space
+	Common::Rect convertToScreen(const Common::Rect &rect) const;
 
 	Common::Rect getBounds() const { return Common::Rect(_drawSurface.w, _drawSurface.h); }
 
 protected:
-    // Z order and blit type are extracted directly from the corresponding
-    // ZRenderStruct from the original engine
-    virtual uint16 getZOrder() const =0;
+	// Z order and blit type are extracted directly from the corresponding
+	// ZRenderStruct from the original engine
+	virtual uint16 getZOrder() const =0;
 
-    // Needed for proper handling of objects inside the viewport
-    virtual bool isViewportRelative() const { return false; }
+	// Needed for proper handling of objects inside the viewport
+	virtual bool isViewportRelative() const { return false; }
 
-    RenderObject *_redrawFrom;
+	RenderObject *_redrawFrom;
 
-    Graphics::ManagedSurface _drawSurface;
-    Common::Rect _screenPosition;
-    bool _needsRedraw;
-    bool _isVisible;
-    Common::Rect _previousScreenPosition;
+	Graphics::ManagedSurface _drawSurface;
+	Common::Rect _screenPosition;
+	bool _needsRedraw;
+	bool _isVisible;
+	Common::Rect _previousScreenPosition;
 };
 
 } // End of namespace Nancy

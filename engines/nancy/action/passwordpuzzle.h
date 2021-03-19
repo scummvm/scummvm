@@ -37,52 +37,52 @@ namespace Action {
 
 class PasswordPuzzle : public ActionRecord, public RenderObject {
 public:
-    enum SolveState { kNotSolved, kFailed, kSolved };
-    PasswordPuzzle(RenderObject &redrawFrom) :
-        RenderObject(redrawFrom),
-        _passwordFieldIsActive(false),
-        _playerHasHitReturn(false),
-        _solveState(kNotSolved) {}
-    virtual ~PasswordPuzzle() {}
+	enum SolveState { kNotSolved, kFailed, kSolved };
+	PasswordPuzzle(RenderObject &redrawFrom) :
+		RenderObject(redrawFrom),
+		_passwordFieldIsActive(false),
+		_playerHasHitReturn(false),
+		_solveState(kNotSolved) {}
+	virtual ~PasswordPuzzle() {}
 
-    virtual void init() override;
-    
-    virtual void readData(Common::SeekableReadStream &stream) override;
-    virtual void execute() override;
-    virtual void handleInput(NancyInput &input) override;
-    virtual void onPause(bool pause) override;
+	virtual void init() override;
 
-    uint16 _fontID; // 0x00
-    Time _cursorBlinkTime; // 0x2
-    Common::Rect _nameBounds; // 0x4
-    Common::Rect _passwordBounds; // 0x14
-    // _screenPosition 0x24
-    Common::String _name; // 0x34, 20 bytes long
-    Common::String _password; // 0x48, 20 bytes long
-    SceneChangeDescription _solveExitScene; // 0x5A
-    EventFlagDescription _flagOnSolve; // 0x66
-    SoundDescription _solveSound; // 0x69
-    SceneChangeDescription _failExitScene; // 0x8B
-    EventFlagDescription _flagOnFail; // 0x95
-    SoundDescription _failSound; // 0x98
-    SceneChangeDescription _exitScene; // 0xBA
-    EventFlagDescription _flagOnExit; // 0xC4
-    Common::Rect _exitHotspot; // 0xC7
+	virtual void readData(Common::SeekableReadStream &stream) override;
+	virtual void execute() override;
+	virtual void handleInput(NancyInput &input) override;
+	virtual void onPause(bool pause) override;
 
-    Common::String _playerNameInput;
-    Common::String _playerPasswordInput;
-    Time _nextBlinkTime;
-    bool _passwordFieldIsActive;
-    bool _playerHasHitReturn;
-    SolveState _solveState;
+	uint16 _fontID; // 0x00
+	Time _cursorBlinkTime; // 0x2
+	Common::Rect _nameBounds; // 0x4
+	Common::Rect _passwordBounds; // 0x14
+	// _screenPosition 0x24
+	Common::String _name; // 0x34, 20 bytes long
+	Common::String _password; // 0x48, 20 bytes long
+	SceneChangeDescription _solveExitScene; // 0x5A
+	EventFlagDescription _flagOnSolve; // 0x66
+	SoundDescription _solveSound; // 0x69
+	SceneChangeDescription _failExitScene; // 0x8B
+	EventFlagDescription _flagOnFail; // 0x95
+	SoundDescription _failSound; // 0x98
+	SceneChangeDescription _exitScene; // 0xBA
+	EventFlagDescription _flagOnExit; // 0xC4
+	Common::Rect _exitHotspot; // 0xC7
+
+	Common::String _playerNameInput;
+	Common::String _playerPasswordInput;
+	Time _nextBlinkTime;
+	bool _passwordFieldIsActive;
+	bool _playerHasHitReturn;
+	SolveState _solveState;
 
 protected:
-    virtual Common::String getRecordTypeName() const override { return "PasswordPuzzle"; }
-    
-    virtual uint16 getZOrder() const override { return 7; }
-    virtual bool isViewportRelative() const override { return true; }
+	virtual Common::String getRecordTypeName() const override { return "PasswordPuzzle"; }
 
-    void drawText();
+	virtual uint16 getZOrder() const override { return 7; }
+	virtual bool isViewportRelative() const override { return true; }
+
+	void drawText();
 };
 
 } // End of namespace Action

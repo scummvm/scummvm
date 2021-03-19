@@ -47,81 +47,81 @@ class NancyEngine;
 namespace State {
 
 class Map : public State, public Common::Singleton<Map> {
-    friend class MapLabel;
-    friend class MapButton;
+	friend class MapLabel;
+	friend class MapButton;
 public:
-    enum State { kInit, kRun };
-    Map() : _state(kInit),
-            _mapID(0),
-            _mapButtonClicked(false),
-            _pickedLocationID(-1),
-            _viewport(),
-            _label(NancySceneState.getFrame(), this),
-            _button(NancySceneState.getFrame(), this) {}
+	enum State { kInit, kRun };
+	Map() : _state(kInit),
+			_mapID(0),
+			_mapButtonClicked(false),
+			_pickedLocationID(-1),
+			_viewport(),
+			_label(NancySceneState.getFrame(), this),
+			_button(NancySceneState.getFrame(), this) {}
 
-    // State API
-    virtual void process() override;
-    virtual bool onStateExit() override;
+	// State API
+	virtual void process() override;
+	virtual bool onStateExit() override;
 
 private:
-    struct Location {
-        struct SceneChange {
-            uint16 sceneID = 0;
-            uint16 frameID = 0;
-            uint16 verticalOffset = 0;
-        };
+	struct Location {
+		struct SceneChange {
+			uint16 sceneID = 0;
+			uint16 frameID = 0;
+			uint16 verticalOffset = 0;
+		};
 
-        bool isActive = false;
-        Common::Rect hotspot;
-        Common::Array<SceneChange> scenes;
+		bool isActive = false;
+		Common::Rect hotspot;
+		Common::Array<SceneChange> scenes;
 
-        Common::Rect labelSrc;
-        Common::Rect labelDest;
-    };
+		Common::Rect labelSrc;
+		Common::Rect labelDest;
+	};
 
-    class MapLabel : public Nancy::RenderObject {
-    public:
-        MapLabel(RenderObject &redrawFrom, Map *parent) : Nancy::RenderObject(redrawFrom), _parent(parent) {}
-        virtual ~MapLabel() =default;
+	class MapLabel : public Nancy::RenderObject {
+	public:
+		MapLabel(RenderObject &redrawFrom, Map *parent) : Nancy::RenderObject(redrawFrom), _parent(parent) {}
+		virtual ~MapLabel() =default;
 
-        virtual void init() override;
-        
-        void setLabel(int labelID);
+		virtual void init() override;
 
-    protected:
-        virtual uint16 getZOrder() const override { return 7; }
+		void setLabel(int labelID);
 
-        Map *_parent;
-    };
+	protected:
+		virtual uint16 getZOrder() const override { return 7; }
 
-    class MapButton : public UI::Button {
-    public:
-        MapButton(RenderObject &redrawFrom, Map *parent) : Button(redrawFrom), _parent(parent) {}
-        virtual ~MapButton() =default;
+		Map *_parent;
+	};
 
-        virtual void init() override;
-        virtual void onClick() override;
+	class MapButton : public UI::Button {
+	public:
+		MapButton(RenderObject &redrawFrom, Map *parent) : Button(redrawFrom), _parent(parent) {}
+		virtual ~MapButton() =default;
 
-    protected:
-        virtual uint16 getZOrder() const override { return 9; }
+		virtual void init() override;
+		virtual void onClick() override;
 
-        Map *_parent;
-    };
+	protected:
+		virtual uint16 getZOrder() const override { return 9; }
 
-    void init();
-    void run();
+		Map *_parent;
+	};
 
-    void registerGraphics();
+	void init();
+	void run();
 
-    Nancy::UI::Viewport _viewport;
-    MapLabel _label;
-    MapButton _button;
+	void registerGraphics();
 
-    State _state;
-    uint16 _mapID;
-    bool _mapButtonClicked;
-    int16 _pickedLocationID;
-    Common::Array<Location> _locations;
+	Nancy::UI::Viewport _viewport;
+	MapLabel _label;
+	MapButton _button;
+
+	State _state;
+	uint16 _mapID;
+	bool _mapButtonClicked;
+	int16 _pickedLocationID;
+	Common::Array<Location> _locations;
 };
 
 #define NancyMapState Nancy::State::Map::instance()

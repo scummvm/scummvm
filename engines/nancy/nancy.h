@@ -130,7 +130,7 @@ public:
 
 	// Chunks found in BOOT get extracted and cached at startup, this function lets other classes access them
 	Common::SeekableReadStream *getBootChunkStream(const Common::String &name);
-	
+
 	void setMouseEnabled(bool enabled);
 
 	void callCheatMenu(bool eventFlags);
@@ -141,11 +141,11 @@ public:
 	CursorManager *_cursorManager;
 	InputManager *_input;
 	SoundManager *_sound;
-	
+
 	Common::RandomSource *_randomSource;
 
 	bool _launchConsole;
-	
+
 	uint16 _firstSceneID;
 	uint16 _startTimeHours;
 
@@ -168,13 +168,13 @@ private:
 
 	bool addBootChunk(const Common::String &name, Common::SeekableReadStream *stream);
 	void clearBootChunks();
-	
+
 	void preloadCals(const IFF &boot);
 	void readChunkList(const IFF &boot, Common::Serializer &ser, const Common::String &prefix);
 
 	void readBootSummary(const IFF &boot);
 
-	Common::Error synchronize(Common::Serializer &serializer);	
+	Common::Error synchronize(Common::Serializer &serializer);
 
 	bool _cheatTypeIsEventFlag;
 

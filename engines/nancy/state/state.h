@@ -31,12 +31,12 @@ namespace State {
 // Base class for all states. Provides a simple API for handling state switching
 class State {
 public:
-    State() {}
-    virtual ~State() =default;
+	State() {}
+	virtual ~State() =default;
 
-    virtual void process() =0;
-    virtual void onStateEnter() {}
-    virtual bool onStateExit() { return true; } // Returns whether the object destroyed itself after exit
+	virtual void process() =0;
+	virtual void onStateEnter() {}
+	virtual bool onStateExit() { return true; } // Returns whether the object destroyed itself after exit
 };
 
 } // End of namespace State

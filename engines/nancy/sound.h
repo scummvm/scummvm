@@ -44,44 +44,44 @@ class NancyEngine;
 
 class SoundManager {
 public:
-    SoundManager();
-    ~SoundManager();
+	SoundManager();
+	~SoundManager();
 
-    // Load a sound into a channel without starting it
-    void loadSound(const SoundDescription &description);
+	// Load a sound into a channel without starting it
+	void loadSound(const SoundDescription &description);
 
-    void playSound(uint16 channelID);
-    void playSound(const SoundDescription &description);
+	void playSound(uint16 channelID);
+	void playSound(const SoundDescription &description);
 
-    void pauseSound(uint16 channelID, bool pause);
-    void pauseSound(const SoundDescription &description, bool pause);
+	void pauseSound(uint16 channelID, bool pause);
+	void pauseSound(const SoundDescription &description, bool pause);
 
-    bool isSoundPlaying(uint16 channelID);
-    bool isSoundPlaying(const SoundDescription &description);
+	bool isSoundPlaying(uint16 channelID);
+	bool isSoundPlaying(const SoundDescription &description);
 
-    void stopSound(uint16 channelID);
-    void stopSound(const SoundDescription &description);
-    void stopAllSounds();
-    
-    // Used when changing scenes
-    void stopAndUnloadSpecificSounds();
+	void stopSound(uint16 channelID);
+	void stopSound(const SoundDescription &description);
+	void stopAllSounds();
 
-    static Audio::SeekableAudioStream *makeHISStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse);
+	// Used when changing scenes
+	void stopAndUnloadSpecificSounds();
+
+	static Audio::SeekableAudioStream *makeHISStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse);
 
 protected:
-    struct Channel {
-        Common::String name;
-        Audio::Mixer::SoundType type;
-        uint16 numLoops = 0;
-        uint volume = 0;
-        Audio::SeekableAudioStream *stream = nullptr;
-        Audio::SoundHandle handle;
-    };
+	struct Channel {
+		Common::String name;
+		Audio::Mixer::SoundType type;
+		uint16 numLoops = 0;
+		uint volume = 0;
+		Audio::SeekableAudioStream *stream = nullptr;
+		Audio::SoundHandle handle;
+	};
 
-    void initSoundChannels();
-    Audio::Mixer *_mixer;
+	void initSoundChannels();
+	Audio::Mixer *_mixer;
 
-    Channel _channels[32];
+	Channel _channels[32];
 };
 
 } // End of namespace Nancy

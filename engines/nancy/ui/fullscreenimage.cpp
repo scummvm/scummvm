@@ -30,12 +30,12 @@ namespace Nancy {
 namespace UI {
 
 void FullScreenImage::init(const Common::String &imageName) {
-    g_nancy->_resource->loadImage(imageName, _drawSurface);
+	g_nancy->_resource->loadImage(imageName, _drawSurface);
 
-    Common::Rect srcBounds = Common::Rect(0,0, _drawSurface.w, _drawSurface.h);
-    _screenPosition = srcBounds;
+	Common::Rect srcBounds = Common::Rect(0,0, _drawSurface.w, _drawSurface.h);
+	_screenPosition = srcBounds;
 
-    RenderObject::init();
+	RenderObject::init();
 }
 
 } // End of namespace UI

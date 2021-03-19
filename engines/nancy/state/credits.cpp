@@ -40,78 +40,78 @@ namespace Nancy {
 namespace State {
 
 void Credits::process() {
-    switch (_state) {
-    case kInit:
-        init();
-        // fall through
-    case kRun:
-        run();
-        break;
-    }
+	switch (_state) {
+	case kInit:
+		init();
+		// fall through
+	case kRun:
+		run();
+		break;
+	}
 }
 
 void Credits::init() {
-    Common::SeekableReadStream *cred = g_nancy->getBootChunkStream("CRED");
-    cred->seek(0);
+	Common::SeekableReadStream *cred = g_nancy->getBootChunkStream("CRED");
+	cred->seek(0);
 
-    Common::String imageName;
-    readFilename(*cred, imageName);
-    _background.init(imageName);
+	Common::String imageName;
+	readFilename(*cred, imageName);
+	_background.init(imageName);
 
-    readFilename(*cred, imageName);
-    
-    cred->skip(0x20); // Skip the src and dest rectangles
-    readRect(*cred, _text._screenPosition);
-    cred->skip(0x10);
-    _updateTime = cred->readUint16LE();
-    _pixelsToScroll = cred->readUint16LE();
-    _sound.read(*cred, SoundDescription::kMenu);
+	readFilename(*cred, imageName);
 
-    g_nancy->_resource->loadImage(imageName, _fullTextSurface);
-    
-    Common::Rect src = _text._screenPosition;
-    src.moveTo(Common::Point());
-    _text._drawSurface.create(_fullTextSurface, src);
-    _text.setTransparent(true);
-    _text.init();
+	cred->skip(0x20); // Skip the src and dest rectangles
+	readRect(*cred, _text._screenPosition);
+	cred->skip(0x10);
+	_updateTime = cred->readUint16LE();
+	_pixelsToScroll = cred->readUint16LE();
+	_sound.read(*cred, SoundDescription::kMenu);
 
-    g_nancy->_sound->loadSound(_sound);
-    g_nancy->_sound->playSound(_sound);
+	g_nancy->_resource->loadImage(imageName, _fullTextSurface);
 
-    _background.registerGraphics();
-    _text.registerGraphics();
+	Common::Rect src = _text._screenPosition;
+	src.moveTo(Common::Point());
+	_text._drawSurface.create(_fullTextSurface, src);
+	_text.setTransparent(true);
+	_text.init();
 
-    g_nancy->_cursorManager->showCursor(false);
+	g_nancy->_sound->loadSound(_sound);
+	g_nancy->_sound->playSound(_sound);
 
-    _state = kRun;
+	_background.registerGraphics();
+	_text.registerGraphics();
+
+	g_nancy->_cursorManager->showCursor(false);
+
+	_state = kRun;
 }
 
 void Credits::run() {
-    NancyInput input = g_nancy->_input->getInput();
+	NancyInput input = g_nancy->_input->getInput();
 
-    if (input.input & NancyInput::kLeftMouseButtonDown) {
-        _state = kInit;
-        g_nancy->_sound->stopSound(_sound);
-        g_nancy->setState(NancyEngine::kMainMenu);
-        g_nancy->_cursorManager->showCursor(true);
-        _fullTextSurface.free();
-    }
+	if (input.input & NancyInput::kLeftMouseButtonDown) {
+		_state = kInit;
+		g_nancy->_sound->stopSound(_sound);
+		g_nancy->setState(NancyEngine::kMainMenu);
+		g_nancy->_cursorManager->showCursor(true);
+		_fullTextSurface.free();
+	}
 
-    Time currentTime = g_nancy->getTotalPlayTime();
-    if (currentTime >= _nextUpdateTime) {
-        _nextUpdateTime = currentTime + _updateTime;
+	Time currentTime = g_nancy->getTotalPlayTime();
+	if (currentTime >= _nextUpdateTime) {
+		_nextUpdateTime = currentTime + _updateTime;
 
-        Common::Rect newSrc = _text._screenPosition;
-        newSrc.moveTo(_text._drawSurface.getOffsetFromOwner());
-        newSrc.translate(0, _pixelsToScroll);
+		Common::Rect newSrc = _text._screenPosition;
+		newSrc.moveTo(_text._drawSurface.getOffsetFromOwner());
+		newSrc.translate(0, _pixelsToScroll);
 
-        if (newSrc.bottom > _fullTextSurface.h) {
-            newSrc.moveTo(Common::Point());
-        }
+		if (newSrc.bottom > _fullTextSurface.h) {
+			newSrc.moveTo(Common::Point());
+		}
 
-        _text._drawSurface.create(_fullTextSurface, newSrc);
-        _text._needsRedraw = true;
-    }
+		_text._drawSurface.create(_fullTextSurface, newSrc);
+		_text._needsRedraw = true;
+	}
 }
 
 } // End of namespace State
