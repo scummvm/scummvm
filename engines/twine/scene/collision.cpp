@@ -325,9 +325,7 @@ int32 Collision::checkCollisionWithActors(int32 actorIdx) {
 						}
 					} else {
 						if (!actor->dynamicFlags.bIsFalling) {
-							_engine->_movements->processActor.x = _engine->_movements->previousActor.x;
-							_engine->_movements->processActor.y = _engine->_movements->previousActor.y;
-							_engine->_movements->processActor.z = _engine->_movements->previousActor.z;
+							_engine->_movements->processActor = _engine->_movements->previousActor;
 						}
 					}
 				}

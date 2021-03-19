@@ -124,8 +124,7 @@ public:
 	 */
 	bool shouldTriggerZoneAction() const;
 
-	/** Hero moved */
-	bool heroMoved = false; // twinsenMove
+	bool heroMoved = false;
 
 	/** Process actor coordinate */
 	IVec3 processActor;
@@ -133,7 +132,7 @@ public:
 	/** Previous process actor coordinate */
 	IVec3 previousActor;
 
-	int32 targetActorDistance = 0; // DoTrackVar1
+	int32 targetActorDistance = 0;
 
 	/**
 	 * Get shadow position
