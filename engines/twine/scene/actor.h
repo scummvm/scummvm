@@ -336,9 +336,6 @@ public:
 	 */
 	void setBehaviour(HeroBehaviourType behaviour);
 
-	/** Preload all sprites */
-	void preloadSprites();
-
 	/**
 	 * Initialize 3D actor
 	 * @param bodyIdx 3D actor body index
