@@ -60,7 +60,7 @@ bool Decompressor::decompress(Common::ReadStream &input, Common::MemoryWriteStre
 	init(input, output);
 	uint16 bits = 0;
 
-	while(1) {
+	while (1) {
 		byte b;
 
 		bits >>= 1;

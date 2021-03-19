@@ -32,37 +32,37 @@ class NancyEngine;
 
 class CursorManager {
 public:
-    enum CursorType { kNormal = 0, kHotspot = 1, kMove = 2, kNormalArrow, kHotspotArrow, kExitArrow };
+	enum CursorType { kNormal = 0, kHotspot = 1, kMove = 2, kNormalArrow, kHotspotArrow, kExitArrow };
 
-    CursorManager() :
-        _isInitialized(false),
-        _curItemID(-1),
-        _curCursorType(kNormal) {}
+	CursorManager() :
+		_isInitialized(false),
+		_curItemID(-1),
+		_curCursorType(kNormal) {}
 
-    void init();
+	void init();
 
-    void setCursor(CursorType type, int16 itemID);
-    void setCursorType(CursorType type);
-    void setCursorItemID(int16 itemID);
-    void showCursor(bool shouldShow);
+	void setCursor(CursorType type, int16 itemID);
+	void setCursorType(CursorType type);
+	void setCursorItemID(int16 itemID);
+	void showCursor(bool shouldShow);
 
 private:
-    struct Cursor {
-        Common::Rect bounds;
-        Common::Point hotspot;
-    };
+	struct Cursor {
+		Common::Rect bounds;
+		Common::Point hotspot;
+	};
 
-    // CURS data
-    Common::Array<Cursor> _cursors;
+	// CURS data
+	Common::Array<Cursor> _cursors;
 
-    Common::Rect _primaryVideoInactiveZone;
-    Common::Point _primaryVideoInitialPos;
+	Common::Rect _primaryVideoInactiveZone;
+	Common::Point _primaryVideoInitialPos;
 
-    Graphics::ManagedSurface _invCursorsSurface;
+	Graphics::ManagedSurface _invCursorsSurface;
 
-    CursorType _curCursorType;
-    int16 _curItemID;
-    bool _isInitialized;
+	CursorType _curCursorType;
+	int16 _curItemID;
+	bool _isInitialized;
 };
 
 } // End of namespace Nancy

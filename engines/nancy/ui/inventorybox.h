@@ -44,113 +44,113 @@ class Scene;
 namespace UI {
 
 class InventoryBox : public RenderObject {
-    friend class InventoryScrollbar;
-    friend class Shades;
-    friend class Nancy::State::Scene;
+	friend class InventoryScrollbar;
+	friend class Shades;
+	friend class Nancy::State::Scene;
 
 public:
-    struct ItemDescription {
-        Common::String name; // 0x00
-        byte oneTimeUse = 0; // 0x14
-        Common::Rect sourceRect; // 0x16
-    };
+	struct ItemDescription {
+		Common::String name; // 0x00
+		byte oneTimeUse = 0; // 0x14
+		Common::Rect sourceRect; // 0x16
+	};
 
-    InventoryBox(RenderObject &redrawFrom) :
-        RenderObject(redrawFrom),
-        _scrollbar(redrawFrom, this),
-        _shades(*this, this),
-        _scrollbarPos(0) {}
+	InventoryBox(RenderObject &redrawFrom) :
+		RenderObject(redrawFrom),
+		_scrollbar(redrawFrom, this),
+		_shades(*this, this),
+		_scrollbarPos(0) {}
 
-    virtual ~InventoryBox() { _fullInventorySurface.free(); _iconsSurface.free(); }
+	virtual ~InventoryBox() { _fullInventorySurface.free(); _iconsSurface.free(); }
 
-    virtual void init() override;
-    virtual void updateGraphics() override;
-    virtual void registerGraphics() override;
-    void handleInput(NancyInput &input);
+	virtual void init() override;
+	virtual void updateGraphics() override;
+	virtual void registerGraphics() override;
+	void handleInput(NancyInput &input);
 
-    // To be called from Scene
-    void addItem(int16 itemID);
-    void removeItem(int16 itemID);
+	// To be called from Scene
+	void addItem(int16 itemID);
+	void removeItem(int16 itemID);
 
-    ItemDescription getItemDescription(uint id) { return _itemDescriptions[id]; }
+	ItemDescription getItemDescription(uint id) { return _itemDescriptions[id]; }
 
 protected:
-    virtual uint16 getZOrder() const override { return 6; }
+	virtual uint16 getZOrder() const override { return 6; }
 
-    void onScrollbarMove();
+	void onScrollbarMove();
 
 private:
-    void onReorder();
-    void setHotspots(uint pageNr);
+	void onReorder();
+	void setHotspots(uint pageNr);
 
-    class InventoryScrollbar : public Scrollbar {
-    public:
-        InventoryScrollbar(RenderObject &redrawFrom, InventoryBox *parent) :
-            Scrollbar(redrawFrom),
-            _parent(parent) {}
-        virtual ~InventoryScrollbar() =default;
+	class InventoryScrollbar : public Scrollbar {
+	public:
+		InventoryScrollbar(RenderObject &redrawFrom, InventoryBox *parent) :
+			Scrollbar(redrawFrom),
+			_parent(parent) {}
+		virtual ~InventoryScrollbar() =default;
 
-        virtual void init() override;
+		virtual void init() override;
 
-    protected:
-        InventoryBox *_parent;
-    };
+	protected:
+		InventoryBox *_parent;
+	};
 
-    class Shades : public RenderObject {
-    public:
-        Shades(RenderObject &redrawFrom, InventoryBox *parent) :
-            RenderObject(redrawFrom),
-            _parent(parent),
-            _soundTriggered(false),
-            _areOpen(false),
-            _curFrame(0) {}
-        virtual ~Shades() =default;
+	class Shades : public RenderObject {
+	public:
+		Shades(RenderObject &redrawFrom, InventoryBox *parent) :
+			RenderObject(redrawFrom),
+			_parent(parent),
+			_soundTriggered(false),
+			_areOpen(false),
+			_curFrame(0) {}
+		virtual ~Shades() =default;
 
-        virtual void init() override;
-        virtual void updateGraphics() override;
+		virtual void init() override;
+		virtual void updateGraphics() override;
 
-        void setOpen(bool open) { _areOpen = open; }
+		void setOpen(bool open) { _areOpen = open; }
 
-    protected:
-        virtual uint16 getZOrder() const override { return 9; }
+	protected:
+		virtual uint16 getZOrder() const override { return 9; }
 
-        void setAnimationFrame(uint frame);
+		void setAnimationFrame(uint frame);
 
-        InventoryBox *_parent;
+		InventoryBox *_parent;
 
-        uint _curFrame;
-        Time _nextFrameTime;
-        bool _areOpen;
-        bool _soundTriggered;
-    };
+		uint _curFrame;
+		Time _nextFrameTime;
+		bool _areOpen;
+		bool _soundTriggered;
+	};
 
-    struct ItemHotspot {
-        int16 itemID = -1;
-        Common::Rect hotspot; // in screen coordinates
-    };
+	struct ItemHotspot {
+		int16 itemID = -1;
+		Common::Rect hotspot; // in screen coordinates
+	};
 
-    Graphics::Surface _iconsSurface;
-    Graphics::ManagedSurface _fullInventorySurface;
+	Graphics::Surface _iconsSurface;
+	Graphics::ManagedSurface _fullInventorySurface;
 
-    InventoryScrollbar _scrollbar;
-    Shades _shades;
+	InventoryScrollbar _scrollbar;
+	Shades _shades;
 
-    float _scrollbarPos;
+	float _scrollbarPos;
 
-    Common::Array<int16> _order;
-    ItemHotspot _itemHotspots[4]; 
+	Common::Array<int16> _order;
+	ItemHotspot _itemHotspots[4];
 
-    // INV contents
-    Common::Rect _sliderSource; // 0x00
-    Common::Point _sliderDefaultDest; // 0x10
-    //...
-    Common::Rect _shadesSrc[14]; // 0xD6
-    // _screenPosition 0x1B6
-    uint16 _shadesFrameTime; // 0x1C6
-    Common::String _inventoryCursorsImageName; // 0x1D2, should this be here?
+	// INV contents
+	Common::Rect _sliderSource; // 0x00
+	Common::Point _sliderDefaultDest; // 0x10
+	//...
+	Common::Rect _shadesSrc[14]; // 0xD6
+	// _screenPosition 0x1B6
+	uint16 _shadesFrameTime; // 0x1C6
+	Common::String _inventoryCursorsImageName; // 0x1D2, should this be here?
 
-    Common::Rect _emptySpace; // 0x1E4
-    ItemDescription _itemDescriptions[11]; // 0x1F4
+	Common::Rect _emptySpace; // 0x1E4
+	ItemDescription _itemDescriptions[11]; // 0x1F4
 
 };
 

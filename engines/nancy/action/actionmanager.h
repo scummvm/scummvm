@@ -47,28 +47,28 @@ namespace Action {
 
 // The class that handles ActionRecords and their execution
 class ActionManager {
-    friend class Nancy::State::Scene;
+	friend class Nancy::State::Scene;
 
 public:
-    ActionManager() {}
-    virtual ~ActionManager() {}
+	ActionManager() {}
+	virtual ~ActionManager() {}
 
-    void handleInput(NancyInput &input);
+	void handleInput(NancyInput &input);
 
-    void processActionRecords();
-    bool addNewActionRecord(Common::SeekableReadStream &inputData);
-    Common::Array<ActionRecord *> &getActionRecords() { return _records; }
-    ActionRecord *getActionRecord(uint id) { if (id < _records.size()) return _records[id]; else return nullptr;}
-    void clearActionRecords();
+	void processActionRecords();
+	bool addNewActionRecord(Common::SeekableReadStream &inputData);
+	Common::Array<ActionRecord *> &getActionRecords() { return _records; }
+	ActionRecord *getActionRecord(uint id) { if (id < _records.size()) return _records[id]; else return nullptr;}
+	void clearActionRecords();
 
-    void onPause(bool pause);
+	void onPause(bool pause);
 
-    void synchronize(Common::Serializer &serializer);
+	void synchronize(Common::Serializer &serializer);
 
 protected:
-    virtual ActionRecord *createActionRecord(uint16 type);
+	virtual ActionRecord *createActionRecord(uint16 type);
 
-    Common::Array<ActionRecord *> _records;
+	Common::Array<ActionRecord *> _records;
 };
 
 } // End of namespace Action

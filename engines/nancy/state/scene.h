@@ -59,197 +59,197 @@ class NancyEngine;
 namespace State {
 
 struct SceneInfo {
-    uint16 sceneID = 0;
-    uint16 frameID = 0;
-    uint16 verticalOffset = 0;
+	uint16 sceneID = 0;
+	uint16 frameID = 0;
+	uint16 verticalOffset = 0;
 };
 
 // The game state that handles all of the gameplay
 class Scene : public State, public Common::Singleton<Scene> {
-    friend class Nancy::Action::ActionRecord;
-    friend class Nancy::Action::ActionManager;
-    friend class Nancy::NancyConsole;
-    friend class Nancy::NancyEngine;
-    friend class Nancy::CheatDialog;
+	friend class Nancy::Action::ActionRecord;
+	friend class Nancy::Action::ActionManager;
+	friend class Nancy::NancyConsole;
+	friend class Nancy::NancyEngine;
+	friend class Nancy::CheatDialog;
 
 public:
-    enum GameStateChange : byte {
-        kHelpMenu = 1 << 0,
-        kMainMenu = 1 << 1,
-        kSaveLoad = 1 << 2,
-        kReloadSave = 1 << 3,
-        kSetupMenu = 1 << 4,
-        kCredits = 1 << 5,
-        kMap = 1 << 6
-    };
+	enum GameStateChange : byte {
+		kHelpMenu = 1 << 0,
+		kMainMenu = 1 << 1,
+		kSaveLoad = 1 << 2,
+		kReloadSave = 1 << 3,
+		kSetupMenu = 1 << 4,
+		kCredits = 1 << 5,
+		kMap = 1 << 6
+	};
 
-    struct SceneSummary { // SSUM
-        Common::String description;
-        Common::String videoFile;
-        //
-        uint16 videoFormat;
-        Common::String videoPaletteFile;
-        Common::String audioFile;               
-        SoundDescription sound;
-        //
-        uint16 verticalScrollDelta;
-        uint16 horizontalEdgeSize;
-        uint16 verticalEdgeSize;
-        Time slowMoveTimeDelta;
-        Time fastMoveTimeDelta;
-        //
+	struct SceneSummary { // SSUM
+		Common::String description;
+		Common::String videoFile;
+		//
+		uint16 videoFormat;
+		Common::String videoPaletteFile;
+		Common::String audioFile;
+		SoundDescription sound;
+		//
+		uint16 verticalScrollDelta;
+		uint16 horizontalEdgeSize;
+		uint16 verticalEdgeSize;
+		Time slowMoveTimeDelta;
+		Time fastMoveTimeDelta;
+		//
 
-        void read(Common::SeekableReadStream &stream);
-    };
+		void read(Common::SeekableReadStream &stream);
+	};
 
-    Scene() :
-        _state (kInit),
-        _lastHint(-1),
-        _gameStateRequested(NancyEngine::kNone),
-        _frame(),
-        _viewport(),
-        _textbox(_frame),
-        _inventoryBox(_frame),
-        _menuButton(_frame),
-        _helpButton(_frame),
-        _actionManager() {}
+	Scene() :
+		_state (kInit),
+		_lastHint(-1),
+		_gameStateRequested(NancyEngine::kNone),
+		_frame(),
+		_viewport(),
+		_textbox(_frame),
+		_inventoryBox(_frame),
+		_menuButton(_frame),
+		_helpButton(_frame),
+		_actionManager() {}
 
-    // State API
-    virtual void process() override;
-    virtual void onStateEnter() override;
-    virtual bool onStateExit() override;
+	// State API
+	virtual void process() override;
+	virtual void onStateEnter() override;
+	virtual bool onStateExit() override;
 
-    void changeScene(uint16 id, uint16 frame, uint16 verticalOffset, bool noSound);
-    void changeScene(const SceneChangeDescription &sceneDescription);
-    void pushScene();
-    void popScene();
+	void changeScene(uint16 id, uint16 frame, uint16 verticalOffset, bool noSound);
+	void changeScene(const SceneChangeDescription &sceneDescription);
+	void pushScene();
+	void popScene();
 
-    void pauseSceneSpecificSounds();
-    void unpauseSceneSpecificSounds();
+	void pauseSceneSpecificSounds();
+	void unpauseSceneSpecificSounds();
 
-    void addItemToInventory(uint16 id);
-    void removeItemFromInventory(uint16 id, bool pickUp = true);
-    int16 getHeldItem() const { return _flags.heldItem; }
-    void setHeldItem(int16 id) { _flags.heldItem = id; g_nancy->_cursorManager->setCursorItemID(id); }
-    NancyFlag hasItem(int16 id) const { return _flags.items[id]; }
+	void addItemToInventory(uint16 id);
+	void removeItemFromInventory(uint16 id, bool pickUp = true);
+	int16 getHeldItem() const { return _flags.heldItem; }
+	void setHeldItem(int16 id) { _flags.heldItem = id; g_nancy->_cursorManager->setCursorItemID(id); }
+	NancyFlag hasItem(int16 id) const { return _flags.items[id]; }
 
-    void setEventFlag(int16 label, NancyFlag flag = kTrue);
-    void setEventFlag(EventFlagDescription eventFlag);
-    bool getEventFlag(int16 label, NancyFlag flag = kTrue) const;
-    bool getEventFlag(EventFlagDescription eventFlag) const;
+	void setEventFlag(int16 label, NancyFlag flag = kTrue);
+	void setEventFlag(EventFlagDescription eventFlag);
+	bool getEventFlag(int16 label, NancyFlag flag = kTrue) const;
+	bool getEventFlag(EventFlagDescription eventFlag) const;
 
-    void setLogicCondition(int16 label, NancyFlag flag = kTrue);
-    bool getLogicCondition(int16 label, NancyFlag flag = kTrue) const;
-    void clearLogicConditions();
+	void setLogicCondition(int16 label, NancyFlag flag = kTrue);
+	bool getLogicCondition(int16 label, NancyFlag flag = kTrue) const;
+	void clearLogicConditions();
 
-    void setDifficulty(uint difficulty) { _difficulty = difficulty; }
-    uint16 getDifficulty() const { return _difficulty; }
+	void setDifficulty(uint difficulty) { _difficulty = difficulty; }
+	uint16 getDifficulty() const { return _difficulty; }
 
-    byte getHintsRemaining() const { return _hintsRemaining[_difficulty]; }
-    void useHint(int hintID, int hintWeight);
+	byte getHintsRemaining() const { return _hintsRemaining[_difficulty]; }
+	void useHint(int hintID, int hintWeight);
 
-    void requestStateChange(NancyEngine::GameState state) { _gameStateRequested = state; }
-    void resetStateToInit() { _state = kInit; }
+	void requestStateChange(NancyEngine::GameState state) { _gameStateRequested = state; }
+	void resetStateToInit() { _state = kInit; }
 
-    void resetAndStartTimer() { _timers.timerIsActive = true; _timers.timerTime = 0; }
-    void stopTimer() { _timers.timerIsActive = false; _timers.timerTime = 0; }
+	void resetAndStartTimer() { _timers.timerIsActive = true; _timers.timerTime = 0; }
+	void stopTimer() { _timers.timerIsActive = false; _timers.timerTime = 0; }
 
-    Time getMovementTimeDelta(bool fast) const { return fast ? _sceneState.summary.fastMoveTimeDelta : _sceneState.summary.slowMoveTimeDelta; }
+	Time getMovementTimeDelta(bool fast) const { return fast ? _sceneState.summary.fastMoveTimeDelta : _sceneState.summary.slowMoveTimeDelta; }
 
-    void registerGraphics();
+	void registerGraphics();
 
-    void synchronize(Common::Serializer &serializer);
+	void synchronize(Common::Serializer &serializer);
 
-    void setShouldClearTextbox(bool shouldClear) { _shouldClearTextbox = shouldClear; }
+	void setShouldClearTextbox(bool shouldClear) { _shouldClearTextbox = shouldClear; }
 
-    UI::FullScreenImage &getFrame() { return _frame; }
-    UI::Viewport &getViewport() { return _viewport; }
-    UI::Textbox &getTextbox() { return _textbox; }
-    UI::InventoryBox &getInventoryBox() { return _inventoryBox; }
+	UI::FullScreenImage &getFrame() { return _frame; }
+	UI::Viewport &getViewport() { return _viewport; }
+	UI::Textbox &getTextbox() { return _textbox; }
+	UI::InventoryBox &getInventoryBox() { return _inventoryBox; }
 
-    Action::ActionManager &getActionManager() { return _actionManager; }
+	Action::ActionManager &getActionManager() { return _actionManager; }
 
-    SceneInfo &getSceneInfo() { return _sceneState.currentScene; }
-    const SceneSummary &getSceneSummary() const { return _sceneState.summary; }
+	SceneInfo &getSceneInfo() { return _sceneState.currentScene; }
+	const SceneSummary &getSceneSummary() const { return _sceneState.summary; }
 
 private:
-    void init();
-    void load();
-    void run();
+	void init();
+	void load();
+	void run();
 
-    void initStaticData();
+	void initStaticData();
 
-    void clearSceneData();
+	void clearSceneData();
 
-    enum State {
-        kInit,
-        kLoad,
-        kStartSound,
-        kRun
-    };
+	enum State {
+		kInit,
+		kLoad,
+		kStartSound,
+		kRun
+	};
 
-    struct SceneState {
-        SceneSummary summary;
-        SceneInfo currentScene;
-        SceneInfo nextScene;
-        SceneInfo pushedScene;
-        bool isScenePushed;
+	struct SceneState {
+		SceneSummary summary;
+		SceneInfo currentScene;
+		SceneInfo nextScene;
+		SceneInfo pushedScene;
+		bool isScenePushed;
 
-        bool doNotStartSound = false;
-    };
+		bool doNotStartSound = false;
+	};
 
-    struct Timers {
-        enum TimeOfDay { kDay = 0, kNight = 1, kDuskDawn = 2 };
-        Time pushedPlayTime;
-        Time lastTotalTime;
-        Time sceneTime;
-        Time timerTime;
-        bool timerIsActive = false;
-        Time playerTime; // In-game time of day, adds a minute every 5 seconds
-        Time playerTimeNextMinute; // Stores the next tick count until we add a minute to playerTime
-        TimeOfDay timeOfDay = kDay;
-    };
+	struct Timers {
+		enum TimeOfDay { kDay = 0, kNight = 1, kDuskDawn = 2 };
+		Time pushedPlayTime;
+		Time lastTotalTime;
+		Time sceneTime;
+		Time timerTime;
+		bool timerIsActive = false;
+		Time playerTime; // In-game time of day, adds a minute every 5 seconds
+		Time playerTimeNextMinute; // Stores the next tick count until we add a minute to playerTime
+		TimeOfDay timeOfDay = kDay;
+	};
 
-    struct PlayFlags {
-        struct LogicCondition {
-            NancyFlag flag = NancyFlag::kFalse;
-            Time timestamp;
-        };
+	struct PlayFlags {
+		struct LogicCondition {
+			NancyFlag flag = NancyFlag::kFalse;
+			Time timestamp;
+		};
 
-        LogicCondition logicConditions[30];
-        NancyFlag eventFlags[168];
-        uint16 sceneHitCount[2001];
-        NancyFlag items[11];
-        int16 heldItem = -1;
-        int16 primaryVideoResponsePicked = -1;
-    };
+		LogicCondition logicConditions[30];
+		NancyFlag eventFlags[168];
+		uint16 sceneHitCount[2001];
+		NancyFlag items[11];
+		int16 heldItem = -1;
+		int16 primaryVideoResponsePicked = -1;
+	};
 
-    // UI
-    UI::FullScreenImage _frame;
-    UI::Viewport _viewport;
-    UI::Textbox _textbox;
-    UI::InventoryBox _inventoryBox;
-    UI::MenuButton _menuButton;
-    UI::HelpButton _helpButton;
+	// UI
+	UI::FullScreenImage _frame;
+	UI::Viewport _viewport;
+	UI::Textbox _textbox;
+	UI::InventoryBox _inventoryBox;
+	UI::MenuButton _menuButton;
+	UI::HelpButton _helpButton;
 
-    // Data
-    SceneState _sceneState;
-    PlayFlags _flags;
-    Timers _timers;
-    uint16 _difficulty;
-    Common::Array<uint16> _hintsRemaining;
-    int16 _lastHint;
-    NancyEngine::GameState _gameStateRequested;
+	// Data
+	SceneState _sceneState;
+	PlayFlags _flags;
+	Timers _timers;
+	uint16 _difficulty;
+	Common::Array<uint16> _hintsRemaining;
+	int16 _lastHint;
+	NancyEngine::GameState _gameStateRequested;
 
-    Common::Rect _mapHotspot;
-    Common::Array<uint16> _mapAccessSceneIDs;
+	Common::Rect _mapHotspot;
+	Common::Array<uint16> _mapAccessSceneIDs;
 
-    Action::ActionManager _actionManager;
+	Action::ActionManager _actionManager;
 
-    State _state;
+	State _state;
 
-    bool _isComingFromMenu = true;
-    bool _shouldClearTextbox = true;
+	bool _isComingFromMenu = true;
+	bool _shouldClearTextbox = true;
 };
 
 #define NancySceneState Nancy::State::Scene::instance()

@@ -38,44 +38,44 @@ namespace Action {
 
 class LeverPuzzle : public ActionRecord, public RenderObject {
 public:
-    enum SolveState { kNotSolved, kPlaySound, kWaitForSound };
-    LeverPuzzle(RenderObject &redrawFrom) : RenderObject(redrawFrom) {}
-    virtual ~LeverPuzzle() {}
+	enum SolveState { kNotSolved, kPlaySound, kWaitForSound };
+	LeverPuzzle(RenderObject &redrawFrom) : RenderObject(redrawFrom) {}
+	virtual ~LeverPuzzle() {}
 
-    virtual void init() override;
-    
-    virtual void readData(Common::SeekableReadStream &stream) override;
-    virtual void execute() override;
-    virtual void handleInput(NancyInput &input) override;
-    virtual void onPause(bool pause) override;
+	virtual void init() override;
 
-    Common::String _imageName; // 0x0
-    Common::Array<Common::Array<Common::Rect>> _srcRects; // 0xA, 0xC0 bytes
-    Common::Array<Common::Rect> _destRects; // 0xCA, 0x30 bytes
-    Common::Array<byte> _correctSequence; // 0xFA, 3 bytes
-    SoundDescription _moveSound; // 0x100
-    SoundDescription _noMoveSound; // 0x122
-    SceneChangeDescription _solveExitScene; // 0x144
-    EventFlagDescription _flagOnSolve; // 0x14E
-    uint16 _solveSoundDelay; // 0x151
-    SoundDescription _solveSound; // 0x153
-    SceneChangeDescription _exitScene; // 0x175
-    EventFlagDescription _flagOnExit; // 0x17F
-    Common::Rect _exitHotspot; // 0x182
+	virtual void readData(Common::SeekableReadStream &stream) override;
+	virtual void execute() override;
+	virtual void handleInput(NancyInput &input) override;
+	virtual void onPause(bool pause) override;
 
-    Common::Array<byte> _playerSequence;
-    Common::Array<bool> _leverDirection;
-    Graphics::ManagedSurface _image;
-    Time _solveSoundPlayTime;
-    SolveState _solveState = kNotSolved;
+	Common::String _imageName; // 0x0
+	Common::Array<Common::Array<Common::Rect>> _srcRects; // 0xA, 0xC0 bytes
+	Common::Array<Common::Rect> _destRects; // 0xCA, 0x30 bytes
+	Common::Array<byte> _correctSequence; // 0xFA, 3 bytes
+	SoundDescription _moveSound; // 0x100
+	SoundDescription _noMoveSound; // 0x122
+	SceneChangeDescription _solveExitScene; // 0x144
+	EventFlagDescription _flagOnSolve; // 0x14E
+	uint16 _solveSoundDelay; // 0x151
+	SoundDescription _solveSound; // 0x153
+	SceneChangeDescription _exitScene; // 0x175
+	EventFlagDescription _flagOnExit; // 0x17F
+	Common::Rect _exitHotspot; // 0x182
+
+	Common::Array<byte> _playerSequence;
+	Common::Array<bool> _leverDirection;
+	Graphics::ManagedSurface _image;
+	Time _solveSoundPlayTime;
+	SolveState _solveState = kNotSolved;
 
 protected:
-    virtual Common::String getRecordTypeName() const override { return "LeverPuzzle"; }
+	virtual Common::String getRecordTypeName() const override { return "LeverPuzzle"; }
 
-    virtual uint16 getZOrder() const override { return 7; }
-    virtual bool isViewportRelative() const override { return true; }
+	virtual uint16 getZOrder() const override { return 7; }
+	virtual bool isViewportRelative() const override { return true; }
 
-    void drawLever(uint id);
+	void drawLever(uint id);
 };
 
 } // End of namespace Action

@@ -35,14 +35,14 @@
 
 class NancyMetaEngine : public AdvancedMetaEngine {
 public:
-    const char *getName() const override {
+	const char *getName() const override {
 		return "nancy";
 	}
 
-    bool hasFeature(MetaEngineFeature f) const override;
-    Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const override;
+	bool hasFeature(MetaEngineFeature f) const override;
+	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const override;
 
-    int getMaximumSaveSlot() const override;
+	int getMaximumSaveSlot() const override;
 
 	Common::KeymapArray initKeymaps(const char *target) const override;
 };
@@ -55,12 +55,12 @@ Common::KeymapArray NancyMetaEngine::initKeymaps(const char *target) const {
 
 bool NancyMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
-	    (f == kSupportsListSaves) ||
-	    (f == kSupportsLoadingDuringStartup) ||
-	    (f == kSupportsDeleteSave) ||
-	    (f == kSavesSupportMetaInfo) ||
-	    (f == kSavesSupportThumbnail) ||
-	    (f == kSavesSupportCreationDate) ||
+		(f == kSupportsListSaves) ||
+		(f == kSupportsLoadingDuringStartup) ||
+		(f == kSupportsDeleteSave) ||
+		(f == kSavesSupportMetaInfo) ||
+		(f == kSavesSupportThumbnail) ||
+		(f == kSavesSupportCreationDate) ||
 		(f == kSavesSupportPlayTime) ||
 		(f == kSavesUseExtendedFormat);
 }
@@ -78,7 +78,7 @@ Common::Error NancyMetaEngine::createInstance(OSystem *syst, Engine **engine, co
 int NancyMetaEngine::getMaximumSaveSlot() const { return 8; }
 
 #if PLUGIN_ENABLED_DYNAMIC(NANCY)
-    REGISTER_PLUGIN_DYNAMIC(NANCY, PLUGIN_TYPE_ENGINE, NancyMetaEngine);
+	REGISTER_PLUGIN_DYNAMIC(NANCY, PLUGIN_TYPE_ENGINE, NancyMetaEngine);
 #else
-    REGISTER_PLUGIN_STATIC(NANCY, PLUGIN_TYPE_ENGINE, NancyMetaEngine);
+	REGISTER_PLUGIN_STATIC(NANCY, PLUGIN_TYPE_ENGINE, NancyMetaEngine);
 #endif

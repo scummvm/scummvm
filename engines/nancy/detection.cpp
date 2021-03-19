@@ -50,7 +50,7 @@ static const PlainGameDescriptor nancyGames[] = {
 };
 
 static const Nancy::NancyGameDescription gameDescriptions[] = {
-	
+
 	{ // MD5 by fracturehill
 		{
 			"vampirediaries", 0,
@@ -230,11 +230,11 @@ public:
 	const char *getName() const override {
 		return "Nancy Drew";
 	}
-    
+
 	const char *getOriginalCopyright() const {
 		return "Nancy Drew Engine copyright Her Interactive, 1995-2012";
 	}
-	
+
 };
 
 REGISTER_PLUGIN_STATIC(NANCY_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, NancyMetaEngineDetection);

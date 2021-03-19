@@ -30,7 +30,7 @@
 #include "common/events.h"
 
 namespace Common {
-typedef class Array<Keymap*> KeymapArray;
+typedef class Array<Keymap *> KeymapArray;
 }
 
 namespace Nancy {
@@ -42,73 +42,73 @@ class State;
 }
 
 struct NancyInput {
-    enum InputType : uint16 {
-        kLeftMouseButtonDown    = 1 << 0,
-        kLeftMouseButtonHeld    = 1 << 1,
-        kLeftMouseButtonUp      = 1 << 2,
-        kRightMouseButtonDown   = 1 << 3,
-        kRightMouseButtonHeld   = 1 << 4,
-        kRightMouseButtonUp     = 1 << 5,
-        kMoveUp                 = 1 << 6,
-        kMoveDown               = 1 << 7,
-        kMoveLeft               = 1 << 8,
-        kMoveRight              = 1 << 9,
-        kMoveFastModifier       = 1 << 10,
+	enum InputType : uint16 {
+		kLeftMouseButtonDown    = 1 << 0,
+		kLeftMouseButtonHeld    = 1 << 1,
+		kLeftMouseButtonUp      = 1 << 2,
+		kRightMouseButtonDown   = 1 << 3,
+		kRightMouseButtonHeld   = 1 << 4,
+		kRightMouseButtonUp     = 1 << 5,
+		kMoveUp                 = 1 << 6,
+		kMoveDown               = 1 << 7,
+		kMoveLeft               = 1 << 8,
+		kMoveRight              = 1 << 9,
+		kMoveFastModifier       = 1 << 10,
 
-        kLeftMouseButton        = kLeftMouseButtonDown | kLeftMouseButtonHeld | kLeftMouseButtonUp,
-        kRightMouseButton       = kRightMouseButtonDown | kRightMouseButtonHeld | kRightMouseButtonUp   
-    };
+		kLeftMouseButton        = kLeftMouseButtonDown | kLeftMouseButtonHeld | kLeftMouseButtonUp,
+		kRightMouseButton       = kRightMouseButtonDown | kRightMouseButtonHeld | kRightMouseButtonUp
+	};
 
-    Common::Point mousePos;
-    uint16 input;
-    Common::Array<Common::KeyState> otherKbdInput;
-    
-    void eatMouseInput() { mousePos.x = -1; input &= ~(kLeftMouseButton | kRightMouseButton); }
+	Common::Point mousePos;
+	uint16 input;
+	Common::Array<Common::KeyState> otherKbdInput;
+
+	void eatMouseInput() { mousePos.x = -1; input &= ~(kLeftMouseButton | kRightMouseButton); }
 };
 
 // This class handles collecting events and translating them to a NancyInput object,
 // which can then be pulled by interested classes through getInput()
 class InputManager {
-    friend class NancyConsole;
+	friend class NancyConsole;
 
 enum NancyAction {
-    kNancyActionMoveUp,
-    kNancyActionMoveDown,
-    kNancyActionMoveLeft,
-    kNancyActionMoveRight,
-    kNancyActionMoveFast,
-    kNancyActionLeftClick,
-    kNancyActionRightClick,
-    kNancyActionFastConvoToggle,
-    kNancyActionEndConvoToggle,
-    kNancyActionReloadSave,
-    kNancyActionRequestMainMenu,
-    kNancyActionRequestSaveLoad,
-    kNancyActionRequestSetupMenu,
-    kNancyActionRequestCredits,
-    kNancyActionRequestMap,
-    kNancyActionRequestCheatMenu,
-    kNancyActionRequestEventMenu
+	kNancyActionMoveUp,
+	kNancyActionMoveDown,
+	kNancyActionMoveLeft,
+	kNancyActionMoveRight,
+	kNancyActionMoveFast,
+	kNancyActionLeftClick,
+	kNancyActionRightClick,
+	kNancyActionFastConvoToggle,
+	kNancyActionEndConvoToggle,
+	kNancyActionReloadSave,
+	kNancyActionRequestMainMenu,
+	kNancyActionRequestSaveLoad,
+	kNancyActionRequestSetupMenu,
+	kNancyActionRequestCredits,
+	kNancyActionRequestMap,
+	kNancyActionRequestCheatMenu,
+	kNancyActionRequestEventMenu
 };
 
 public:
-    InputManager() :
-        _inputs(0),
-        _mouseEnabled(true) {}
+	InputManager() :
+		_inputs(0),
+		_mouseEnabled(true) {}
 
-    void processEvents();
+	void processEvents();
 
-    NancyInput getInput() const;
-    void forceCleanInput();
-    void setMouseInputEnabled(bool enabled) { _mouseEnabled = enabled; }
+	NancyInput getInput() const;
+	void forceCleanInput();
+	void setMouseInputEnabled(bool enabled) { _mouseEnabled = enabled; }
 
-    static void initKeymaps(Common::KeymapArray &keymaps);
-    
+	static void initKeymaps(Common::KeymapArray &keymaps);
+
 private:
-    uint16 _inputs;
-    Common::Array<Common::KeyState> _otherKbdInput;
-    bool _mouseEnabled;
-    State::State *_inputBeginState;
+	uint16 _inputs;
+	Common::Array<Common::KeyState> _otherKbdInput;
+	bool _mouseEnabled;
+	State::State *_inputBeginState;
 };
 
 } // End of namespace Nancy

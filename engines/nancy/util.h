@@ -28,18 +28,18 @@
 namespace Nancy {
 
 inline void readRect(Common::SeekableReadStream &stream, Common::Rect &inRect) {
-    inRect.left = stream.readSint32LE();
-    inRect.top = stream.readSint32LE();
-    inRect.right = stream.readSint32LE();
-    inRect.bottom = stream.readSint32LE();
+	inRect.left = stream.readSint32LE();
+	inRect.top = stream.readSint32LE();
+	inRect.right = stream.readSint32LE();
+	inRect.bottom = stream.readSint32LE();
 }
 
 // Reads an 8-character filename from a 10-character source
 inline void readFilename(Common::SeekableReadStream &stream, Common::String &inString) {
-    char buf[10];
-    stream.read(buf, 10);
-    buf[9] = '\0';
-    inString = buf;
+	char buf[10];
+	stream.read(buf, 10);
+	buf[9] = '\0';
+	inString = buf;
 }
 
 } // End of namespace Nancy

@@ -170,7 +170,7 @@ void NancyEngine::setState(GameState state, GameState overridePrevious) {
 				_gameFlow.currentState = nullptr;
 			}
 		}
-		
+
 		// TODO until the game's own menus are implemented we simply open the GMM
 		openMainMenuDialog();
 
@@ -234,14 +234,14 @@ void NancyEngine::setMouseEnabled(bool enabled) {
 }
 
 void NancyEngine::callCheatMenu(bool eventFlags)
-{ 
+{
 	setState(kCheat), _cheatTypeIsEventFlag = eventFlags;
 }
 
 Common::Error NancyEngine::run() {
 	// Boot the engine
 	setState(kBoot);
-	
+
 	// Check if we need to load a save state from the launcher
 	if (ConfMan.hasKey("save_slot")) {
 		int saveSlot = ConfMan.getInt("save_slot");
@@ -255,7 +255,7 @@ Common::Error NancyEngine::run() {
 	while (!shouldQuit()) {
 		_cursorManager->setCursorType(CursorManager::kNormalArrow);
 		_input->processEvents();
-		
+
 		if (_gameFlow.currentState) {
 			_gameFlow.currentState->process();
 		}
@@ -289,17 +289,17 @@ void NancyEngine::bootGameEngine() {
 	SearchMan.addSubDirectoryMatching(gameDataDir, "iff");
 	SearchMan.addSubDirectoryMatching(gameDataDir, "art");
 	SearchMan.addSubDirectoryMatching(gameDataDir, "font");
-	
+
 	// Load archive
 	Common::SeekableReadStream *stream = SearchMan.createReadStreamForMember("data1.cab");
 	if (stream) {
 		Common::Archive *cab = Common::makeInstallShieldArchive(stream);
-		
+
 		if (cab) {
 			SearchMan.add("data1.hdr", cab);
 		}
 	}
-	
+
 	_resource = new ResourceManager();
 	_resource->initialize();
 
@@ -345,7 +345,7 @@ void NancyEngine::bootGameEngine() {
 	g_nancy->_sound->loadSound(desc);
 
 	delete boot;
-	
+
 	_graphicsManager->init();
 	_cursorManager->init();
 }
@@ -439,7 +439,7 @@ void NancyEngine::readBootSummary(const IFF &boot) {
 	ser.syncAsUint16LE(_firstSceneID);
 	ser.skip(4, kGameTypeNancy1, kGameTypeNancy2);
 	ser.syncAsUint16LE(_startTimeHours, kGameTypeNancy1, kGameTypeNancy2);
-	
+
 	ser.skip(0xB8, kGameTypeVampire, kGameTypeVampire);
 	ser.skip(0xA6, kGameTypeNancy1, kGameTypeNancy1);
 	ser.skip(0xA0, kGameTypeNancy2, kGameTypeNancy2);
@@ -459,14 +459,14 @@ void NancyEngine::readBootSummary(const IFF &boot) {
 	ser.syncAsSint16LE(time, kGameTypeNancy1, kGameTypeNancy1);
 	_playerTimeMinuteLength = time;
 	ser.skip(2, kGameTypeNancy1, kGameTypeNancy1);
-    ser.syncAsByte(_overrideMovementTimeDeltas, kGameTypeNancy1, kGameTypeNancy1);
+	ser.syncAsByte(_overrideMovementTimeDeltas, kGameTypeNancy1, kGameTypeNancy1);
 
-    if (_overrideMovementTimeDeltas) {
+	if (_overrideMovementTimeDeltas) {
 		ser.syncAsSint16LE(time, kGameTypeNancy1, kGameTypeNancy1);
 		_slowMovementTimeDelta = time;
 		ser.syncAsSint16LE(time, kGameTypeNancy1, kGameTypeNancy1);
 		_fastMovementTimeDelta = time;
-    }
+	}
 }
 
 Common::Error NancyEngine::synchronize(Common::Serializer &ser) {

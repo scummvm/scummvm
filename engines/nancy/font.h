@@ -39,51 +39,51 @@ class Font : public Graphics::Font {
 public:
 	Font() =default;
 	~Font() =default;
-    
-    void read(Common::SeekableReadStream &stream);
 
-    int getFontHeight() const override { return _fontHeight; }
+	void read(Common::SeekableReadStream &stream);
+
+	int getFontHeight() const override { return _fontHeight; }
 	int getMaxCharWidth() const override { return _maxCharWidth; }
 	int getCharWidth(uint32 chr) const override;
-    int getKerningOffset(uint32 left, uint32 right) const override { return 1; }
+	int getKerningOffset(uint32 left, uint32 right) const override { return 1; }
 
 	void drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint32 color) const override;
 
 private:
-    Common::Rect getCharacterSourceRect(char chr) const;
+	Common::Rect getCharacterSourceRect(char chr) const;
 
-    Common::String _description; // 0xA
-    Common::Point _colorCoordsOffset; // y is def at 0x34, x is just a guess
+	Common::String _description; // 0xA
+	Common::Point _colorCoordsOffset; // y is def at 0x34, x is just a guess
 
-    uint16 _spaceWidth;              // 0x38
-    
-    uint16 _uppercaseOffset;         // 0x3C
-    uint16 _lowercaseOffset;         // 0x3E
-    uint16 _digitOffset;             // 0x40
-    uint16 _periodOffset;            // 0x42
-    uint16 _commaOffset;             // 0x44
-    uint16 _equalitySignOffset;      // 0x46
-    uint16 _colonOffset;             // 0x48
-    uint16 _dashOffset;              // 0x4A
-    uint16 _questionMarkOffset;      // 0x4C
-    uint16 _exclamationMarkOffset;   // 0x4E
-    uint16 _percentOffset;           // 0x50
-    uint16 _ampersandOffset;         // 0x52
-    uint16 _asteriskOffset;          // 0x54
-    uint16 _leftBracketOffset;       // 0x56
-    uint16 _rightBracketOffset;      // 0x58
-    uint16 _plusOffset;              // 0x5A
-    uint16 _apostropheOffset;        // 0x5C
-    uint16 _semicolonOffset;         // 0x5E
-    uint16 _slashOffset;             // 0x60
+	uint16 _spaceWidth;              // 0x38
 
-    Common::Array<Common::Rect> _symbolRects; // 0x62
-    
-    Graphics::Surface _image;
+	uint16 _uppercaseOffset;         // 0x3C
+	uint16 _lowercaseOffset;         // 0x3E
+	uint16 _digitOffset;             // 0x40
+	uint16 _periodOffset;            // 0x42
+	uint16 _commaOffset;             // 0x44
+	uint16 _equalitySignOffset;      // 0x46
+	uint16 _colonOffset;             // 0x48
+	uint16 _dashOffset;              // 0x4A
+	uint16 _questionMarkOffset;      // 0x4C
+	uint16 _exclamationMarkOffset;   // 0x4E
+	uint16 _percentOffset;           // 0x50
+	uint16 _ampersandOffset;         // 0x52
+	uint16 _asteriskOffset;          // 0x54
+	uint16 _leftBracketOffset;       // 0x56
+	uint16 _rightBracketOffset;      // 0x58
+	uint16 _plusOffset;              // 0x5A
+	uint16 _apostropheOffset;        // 0x5C
+	uint16 _semicolonOffset;         // 0x5E
+	uint16 _slashOffset;             // 0x60
 
-    int _fontHeight;
-    int _maxCharWidth;
-    uint _transColor;
+	Common::Array<Common::Rect> _symbolRects; // 0x62
+
+	Graphics::Surface _image;
+
+	int _fontHeight;
+	int _maxCharWidth;
+	uint _transColor;
 };
 
 } // End of namespace Nancy

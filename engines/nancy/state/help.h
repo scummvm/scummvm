@@ -40,23 +40,23 @@ namespace State {
 
 class Help : public State, public Common::Singleton<Help> {
 public:
-    enum State { kInit, kBegin, kRun, kWaitForSound };
-    Help() : _state(kInit), _image() {}
+	enum State { kInit, kBegin, kRun, kWaitForSound };
+	Help() : _state(kInit), _image() {}
 
-    // State API
-    virtual void process() override;
-    virtual bool onStateExit() override { destroy(); return true; };
+	// State API
+	virtual void process() override;
+	virtual bool onStateExit() override { destroy(); return true; };
 
 private:
-    void init();
-    void begin();
-    void run();
-    void waitForSound();
+	void init();
+	void begin();
+	void run();
+	void waitForSound();
 
-    State _state;
-    UI::FullScreenImage _image;
-    Common::Rect _hotspot; // Can be an array, but isn't in nancy1
-    SoundDescription _sound;
+	State _state;
+	UI::FullScreenImage _image;
+	Common::Rect _hotspot; // Can be an array, but isn't in nancy1
+	SoundDescription _sound;
 };
 
 #define NancyHelpState Nancy::State::Help::instance()

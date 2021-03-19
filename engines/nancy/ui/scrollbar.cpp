@@ -35,54 +35,54 @@ namespace Nancy {
 namespace UI {
 
 void Scrollbar::init() {
-    setTransparent(true);
-    RenderObject::init();
+	setTransparent(true);
+	RenderObject::init();
 }
 
 void Scrollbar::handleInput(NancyInput &input) {
-    if (_screenPosition.contains(input.mousePos)) {
-        g_nancy->_cursorManager->setCursorType(CursorManager::kHotspotArrow);
+	if (_screenPosition.contains(input.mousePos)) {
+		g_nancy->_cursorManager->setCursorType(CursorManager::kHotspotArrow);
 
-        if (input.input & NancyInput::kLeftMouseButtonDown && !_isClicked) {
-            // Begin click and hold
-            _isClicked = true;
-            _mousePosOnClick = input.mousePos - Common::Point(_screenPosition.left, _screenPosition.top);
-        }
+		if (input.input & NancyInput::kLeftMouseButtonDown && !_isClicked) {
+			// Begin click and hold
+			_isClicked = true;
+			_mousePosOnClick = input.mousePos - Common::Point(_screenPosition.left, _screenPosition.top);
+		}
 
-        if (input.input & NancyInput::kRightMouseButtonUp) {
-            // Right click, reset position
-            resetPosition();
-        }
+		if (input.input & NancyInput::kRightMouseButtonUp) {
+			// Right click, reset position
+			resetPosition();
+		}
 
-        if (_isClicked) {
-            // Is currently clicked, handle movement
-            Common::Point newMousePos = input.mousePos - Common::Point(_screenPosition.left, _screenPosition.top);
+		if (_isClicked) {
+			// Is currently clicked, handle movement
+			Common::Point newMousePos = input.mousePos - Common::Point(_screenPosition.left, _screenPosition.top);
 
-            if (newMousePos != _mousePosOnClick) {
-                uint16 minY = _startPosition.y;
-                uint16 maxY = minY + _maxDist;
-                uint16 newTop = CLIP<uint16>((_screenPosition.top + newMousePos.y - _mousePosOnClick.y), minY, maxY);
-                moveTo(Common::Point(_screenPosition.left, newTop));
+			if (newMousePos != _mousePosOnClick) {
+				uint16 minY = _startPosition.y;
+				uint16 maxY = minY + _maxDist;
+				uint16 newTop = CLIP<uint16>((_screenPosition.top + newMousePos.y - _mousePosOnClick.y), minY, maxY);
+				moveTo(Common::Point(_screenPosition.left, newTop));
 
-                calculatePosition();
-            }   
-        }
-    }
+				calculatePosition();
+			}
+		}
+	}
 
-    if (input.input & NancyInput::kLeftMouseButtonUp) {
-        _isClicked = false;
-    }
+	if (input.input & NancyInput::kLeftMouseButtonUp) {
+		_isClicked = false;
+	}
 }
 
 void Scrollbar::calculatePosition() {
-    uint16 scrollY = _screenPosition.top - _startPosition.y;
+	uint16 scrollY = _screenPosition.top - _startPosition.y;
 
-    _currentPosition = scrollY != 0 ? (float)scrollY / (float)_maxDist : 0;
+	_currentPosition = scrollY != 0 ? (float)scrollY / (float)_maxDist : 0;
 }
 
 void Scrollbar::resetPosition() {
-    moveTo(Common::Point(_screenPosition.left, _startPosition.y));
-    calculatePosition();
+	moveTo(Common::Point(_screenPosition.left, _startPosition.y));
+	calculatePosition();
 }
 
 } // End of namespace UI

@@ -31,41 +31,41 @@
 namespace Nancy {
 
 void SceneChangeDescription::readData(Common::SeekableReadStream &stream) {
-    sceneID = stream.readUint16LE();
-    frameID = stream.readUint16LE();
-    verticalOffset = stream.readUint16LE();
-    doNotStartSound = (bool)(stream.readUint16LE());
+	sceneID = stream.readUint16LE();
+	frameID = stream.readUint16LE();
+	verticalOffset = stream.readUint16LE();
+	doNotStartSound = (bool)(stream.readUint16LE());
 }
 
 void HotspotDescription::readData(Common::SeekableReadStream &stream) {
-    frameID = stream.readUint16LE();
-    readRect(stream, coords);
+	frameID = stream.readUint16LE();
+	readRect(stream, coords);
 }
 
 void BitmapDescription::readData(Common::SeekableReadStream &stream) {
-    frameID = stream.readUint16LE();
-    readRect(stream, src);
-    readRect(stream, dest);
+	frameID = stream.readUint16LE();
+	readRect(stream, src);
+	readRect(stream, dest);
 }
 
 void MultiEventFlagDescription::readData(Common::SeekableReadStream &stream) {
-    for (uint i = 0; i < 10; ++i) {
-        descs[i].label = stream.readSint16LE();
-        descs[i].flag = (NancyFlag)stream.readUint16LE();
-    }
+	for (uint i = 0; i < 10; ++i) {
+		descs[i].label = stream.readSint16LE();
+		descs[i].flag = (NancyFlag)stream.readUint16LE();
+	}
 }
 
 void MultiEventFlagDescription::execute() {
-    for (uint i = 0; i < 10; ++i) {
-        NancySceneState.setEventFlag(descs[i]);
-    }
+	for (uint i = 0; i < 10; ++i) {
+		NancySceneState.setEventFlag(descs[i]);
+	}
 }
 
 void SecondaryVideoDescription::readData(Common::SeekableReadStream &stream) {
-    frameID = stream.readUint16LE();
-    readRect(stream, srcRect);
-    readRect(stream, destRect);
-    stream.skip(0x20);
+	frameID = stream.readUint16LE();
+	readRect(stream, srcRect);
+	readRect(stream, destRect);
+	stream.skip(0x20);
 }
 
 void SoundDescription::read(Common::SeekableReadStream &stream, Type type) {
@@ -85,7 +85,7 @@ void SoundDescription::read(Common::SeekableReadStream &stream, Type type) {
 		stream.skip(8);
 		break;
 	case kMenu:
-		stream.skip(6);	
+		stream.skip(6);
 		break;
 	case kScene:
 		// fall through

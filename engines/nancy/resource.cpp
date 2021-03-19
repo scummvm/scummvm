@@ -728,7 +728,7 @@ bool ResourceManager::exportCif(const Common::String &treeName, const Common::St
 byte *ResourceManager::loadData(const Common::String &name, uint &size) {
 	CifInfo info;
 	byte *buf = getCifData(name, info, &size);
-	
+
 	if (!buf) {
 		// Data was not found inside a cif tree or a cif file, try to open an .iff file
 		// This is used by The Vampire Diaries

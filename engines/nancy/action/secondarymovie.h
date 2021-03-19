@@ -37,50 +37,50 @@ namespace Action {
 
 class PlaySecondaryMovie : public ActionRecord, public RenderObject {
 public:
-    struct FlagAtFrame {
-        int16 frameID;
-        EventFlagDescription flagDesc;
-    };
+	struct FlagAtFrame {
+		int16 frameID;
+		EventFlagDescription flagDesc;
+	};
 
-    PlaySecondaryMovie(RenderObject &redrawFrom) :
-        RenderObject(redrawFrom),
-        _curViewportFrame(-1),
-        _isFinished(false) {}
-    virtual ~PlaySecondaryMovie();
+	PlaySecondaryMovie(RenderObject &redrawFrom) :
+		RenderObject(redrawFrom),
+		_curViewportFrame(-1),
+		_isFinished(false) {}
+	virtual ~PlaySecondaryMovie();
 
-    virtual void init() override;
-    virtual void updateGraphics() override;
-    virtual void onPause(bool pause) override;
+	virtual void init() override;
+	virtual void updateGraphics() override;
+	virtual void onPause(bool pause) override;
 
-    virtual void readData(Common::SeekableReadStream &stream) override;
-    virtual void execute() override;
+	virtual void readData(Common::SeekableReadStream &stream) override;
+	virtual void execute() override;
 
-    Common::String _videoName; // 0x00
+	Common::String _videoName; // 0x00
 
-    uint16 _unknown; // 0x1C
-    NancyFlag _hideMouse; // 0x1E
-    NancyFlag _isReverse; // 0x20
-    uint16 _firstFrame; // 0x22
-    uint16 _lastFrame; // 0x24
-    FlagAtFrame _frameFlags[15]; // 0x26
-    MultiEventFlagDescription _triggerFlags; // 0x80
+	uint16 _unknown; // 0x1C
+	NancyFlag _hideMouse; // 0x1E
+	NancyFlag _isReverse; // 0x20
+	uint16 _firstFrame; // 0x22
+	uint16 _lastFrame; // 0x24
+	FlagAtFrame _frameFlags[15]; // 0x26
+	MultiEventFlagDescription _triggerFlags; // 0x80
 
-    SoundDescription _sound; // 0xA8
+	SoundDescription _sound; // 0xA8
 
-    SceneChangeDescription _sceneChange; // 0xCA
-    Common::Array<SecondaryVideoDescription> _videoDescs; // 0xD4
+	SceneChangeDescription _sceneChange; // 0xCA
+	Common::Array<SecondaryVideoDescription> _videoDescs; // 0xD4
 
 protected:
-    virtual Common::String getRecordTypeName() const override { return "PlaySecondaryMovie"; }
+	virtual Common::String getRecordTypeName() const override { return "PlaySecondaryMovie"; }
 
-    virtual uint16 getZOrder() const override { return 8; }
-    virtual bool isViewportRelative() const override { return true; }
+	virtual uint16 getZOrder() const override { return 8; }
+	virtual bool isViewportRelative() const override { return true; }
 
-    AVFDecoder _decoder;
-    int _curViewportFrame;
-    bool _isFinished;
+	AVFDecoder _decoder;
+	int _curViewportFrame;
+	bool _isFinished;
 };
-    
+
 } // End of namespace Action
 } // End of namespace Nancy
 

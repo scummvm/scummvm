@@ -40,64 +40,64 @@ enum MovementDirection : byte { kUp = 1, kDown = 2, kLeft = 4, kRight = 8, kMove
 
 // Describes a scene transition
 struct SceneChangeDescription {
-    uint16 sceneID = 0;
-    uint16 frameID = 0;
-    uint16 verticalOffset = 0;
-    bool doNotStartSound = false;
+	uint16 sceneID = 0;
+	uint16 frameID = 0;
+	uint16 verticalOffset = 0;
+	bool doNotStartSound = false;
 
-    void readData(Common::SeekableReadStream &stream);
+	void readData(Common::SeekableReadStream &stream);
 };
 
 // Describes a single event flag change or comparison
 struct EventFlagDescription {
-    int16 label;
-    NancyFlag flag;
+	int16 label;
+	NancyFlag flag;
 };
 
 // Describes a hotspot
 struct HotspotDescription {
-    uint16 frameID = 0;
-    Common::Rect coords;
+	uint16 frameID = 0;
+	Common::Rect coords;
 
-    void readData(Common::SeekableReadStream &stream);
+	void readData(Common::SeekableReadStream &stream);
 };
 
 // Describes a single bitmap draw
 struct BitmapDescription {
-    uint16 frameID = 0;
-    Common::Rect src;
-    Common::Rect dest;
+	uint16 frameID = 0;
+	Common::Rect src;
+	Common::Rect dest;
 
-    void readData(Common::SeekableReadStream &stream);
+	void readData(Common::SeekableReadStream &stream);
 };
 
 // Describes 10 event flag changes to be executed when an action is triggered
 struct MultiEventFlagDescription {
-    EventFlagDescription descs[10];
+	EventFlagDescription descs[10];
 
-    void readData(Common::SeekableReadStream &stream);
-    void execute();
+	void readData(Common::SeekableReadStream &stream);
+	void execute();
 };
 
 struct SecondaryVideoDescription {
-    int16 frameID;
-    Common::Rect srcRect;
-    Common::Rect destRect;
-    // 2 unknown/empty rects
+	int16 frameID;
+	Common::Rect srcRect;
+	Common::Rect destRect;
+	// 2 unknown/empty rects
 
-    void readData(Common::SeekableReadStream &stream);
+	void readData(Common::SeekableReadStream &stream);
 };
 
 // Descrbes a single sound. Combines four different structs found in the data in one
 struct SoundDescription {
-    enum Type { kNormal, kMenu, kDIGI, kScene };
+	enum Type { kNormal, kMenu, kDIGI, kScene };
 
-    Common::String name;
-    uint16 channelID;
-    uint16 numLoops;
-    uint16 volume;
+	Common::String name;
+	uint16 channelID;
+	uint16 numLoops;
+	uint16 volume;
 
-    void read(Common::SeekableReadStream &stream, Type type);
+	void read(Common::SeekableReadStream &stream, Type type);
 };
 
 } // End of namespace Nancy

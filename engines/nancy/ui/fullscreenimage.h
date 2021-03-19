@@ -30,14 +30,14 @@ namespace UI {
 
 class FullScreenImage : public RenderObject {
 public:
-    FullScreenImage() : RenderObject() {}
-    virtual ~FullScreenImage() =default;
+	FullScreenImage() : RenderObject() {}
+	virtual ~FullScreenImage() =default;
 
-    void init(const Common::String &imageName);
+	void init(const Common::String &imageName);
 
 protected:
-    virtual void init() override {}
-    virtual uint16 getZOrder() const override { return 0; }
+	virtual void init() override {}
+	virtual uint16 getZOrder() const override { return 0; }
 };
 
 } // End of namespace UI

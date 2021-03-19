@@ -43,36 +43,36 @@ namespace State {
 
 class Credits : public State, public Common::Singleton<Credits> {
 public:
-    enum State { kInit, kRun };
-    Credits() : _state(kInit), _background(), _text(_background) {}
+	enum State { kInit, kRun };
+	Credits() : _state(kInit), _background(), _text(_background) {}
 
-    // State API
-    virtual void process() override;
-    virtual bool onStateExit() override { destroy(); return true; };
+	// State API
+	virtual void process() override;
+	virtual bool onStateExit() override { destroy(); return true; };
 
 protected:
-    void init();
-    void run();
+	void init();
+	void run();
 
-    class CreditsText : public RenderObject {
-        friend class Credits;
-    public:
-        CreditsText(RenderObject &redrawFrom) : RenderObject(redrawFrom) {}
-        virtual ~CreditsText() =default;
+	class CreditsText : public RenderObject {
+		friend class Credits;
+	public:
+		CreditsText(RenderObject &redrawFrom) : RenderObject(redrawFrom) {}
+		virtual ~CreditsText() =default;
 
-    protected:
-        virtual uint16 getZOrder() const override { return 1; }
-    };
+	protected:
+		virtual uint16 getZOrder() const override { return 1; }
+	};
 
-    State _state;
-    UI::FullScreenImage _background;
-    CreditsText _text;
-    Time _nextUpdateTime;
-    Graphics::ManagedSurface _fullTextSurface;
+	State _state;
+	UI::FullScreenImage _background;
+	CreditsText _text;
+	Time _nextUpdateTime;
+	Graphics::ManagedSurface _fullTextSurface;
 
-    Time _updateTime; // 0x54
-    uint16 _pixelsToScroll; // 0x56
-    SoundDescription _sound; // 0x58, kMenu?
+	Time _updateTime; // 0x54
+	uint16 _pixelsToScroll; // 0x56
+	SoundDescription _sound; // 0x58, kMenu?
 };
 
 #define NancyCreditsState Nancy::State::Credits::instance()
