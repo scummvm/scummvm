@@ -136,7 +136,7 @@ enum Opcode {
 	kStub116						= 116,
 	kLoadAnimation					= 117,
 	kLoadSample						= 118,
-	kSetAnimationPaused				= 119,
+	kSetPhaseVarControlledFlag		= 119,
 	kPlayerSay120					= 120,
 	kStub121						= 121,
 	kPlayerSay122					= 122,
@@ -363,7 +363,7 @@ enum Opcode {
 	OP(kScreenRemoveObject, removeScreenObject) \
 	OP(kLoadAnimation, loadAnimation) \
 	OP(kLoadSample, loadSample) \
-	OP(kSetAnimationPaused, setAnimationPaused) \
+	OP(kSetPhaseVarControlledFlag, setPhaseVarControlledFlag) \
 	OP(kPlayerSay120, playerSay120) \
 	OP(kPlayerSay122, playerSay122) \
 	OP(kPlayerSay125, playerSay125) \
