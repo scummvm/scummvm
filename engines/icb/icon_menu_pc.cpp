@@ -139,7 +139,7 @@ void _icon_menu::Activate(const _icon_list *pIconList, const _icon_menu_duplicat
 		surface_manager->Unlock_surface(m_pnIconSurfaceIDs[i]);
 
 		// Create a surface for the icons hilite
-		sprintf(pcIconName, "%sH", pcIconName);
+		sprintf(pcIconName + strlen(pcIconName), "H");
 		m_pnHiLiteSurfaceIDs[i] = surface_manager->Create_new_surface(pcIconName, ICON_X_SIZE, ICON_Y_SIZE, EITHER);
 		surface_manager->Set_transparent_colour_key(m_pnHiLiteSurfaceIDs[i], m_nTransparentKey);
 		pyHiLiteBitmap = surface_manager->Lock_surface(m_pnHiLiteSurfaceIDs[i]);
@@ -227,7 +227,7 @@ void _icon_menu::ReActivate() {
 		surface_manager->Unlock_surface(m_pnIconSurfaceIDs[i]);
 
 		// Create a surface for the icons hilite
-		sprintf(pcIconName, "%sH", pcIconName);
+		sprintf(pcIconName + strlen(pcIconName), "H");
 		m_pnHiLiteSurfaceIDs[i] = surface_manager->Create_new_surface(pcIconName, ICON_X_SIZE, ICON_Y_SIZE, EITHER);
 		uint8 *pyHiLiteBitmap = surface_manager->Lock_surface(m_pnHiLiteSurfaceIDs[i]);
 		nPitch = surface_manager->Get_pitch(m_pnHiLiteSurfaceIDs[i]);
@@ -608,7 +608,6 @@ void _icon_menu::SetUpOffScreenArrows() {
 	uint32 nPitch;
 	uint32 nFullIconNameHash;
 	_pxBitmap *psIconBitmap;
-	uint32 nBufferCount;
 	char pcArrowIconName[MAXLEN_URL];
 	char pcIconPath[MAXLEN_URL];
 
@@ -626,7 +625,7 @@ void _icon_menu::SetUpOffScreenArrows() {
 
 	// Open the icon (contains both the highlighted and normal frames).
 	sprintf(pcIconPath, ICON_PATH);
-	nBufferCount = sprintf(pcArrowIconName, "%s%s.%s", pcIconPath, ICON_MENU_OFF_SCREEN_LEFT, PX_BITMAP_PC_EXT);
+	/*uint32 nBufferCount =*/ sprintf(pcArrowIconName, "%s%s.%s", pcIconPath, ICON_MENU_OFF_SCREEN_LEFT, PX_BITMAP_PC_EXT);
 
 	nFullIconNameHash = NULL_HASH;
 
@@ -656,7 +655,7 @@ void _icon_menu::SetUpOffScreenArrows() {
 	nPitch = surface_manager->Get_pitch(m_nRightArrowID);
 
 	// Open the icon (contains both the highlighted and normal frames).
-	nBufferCount = sprintf(pcArrowIconName, "%s%s.%s", pcIconPath, ICON_MENU_OFF_SCREEN_RIGHT, PX_BITMAP_PC_EXT);
+	/*uint32 nBufferCount =*/ sprintf(pcArrowIconName, "%s%s.%s", pcIconPath, ICON_MENU_OFF_SCREEN_RIGHT, PX_BITMAP_PC_EXT);
 
 	nFullIconNameHash = NULL_HASH;
 

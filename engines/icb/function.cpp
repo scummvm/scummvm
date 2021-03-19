@@ -3339,12 +3339,10 @@ mcodeFunctionReturnCodes _game_session::fn_set_to_floor(int32 &, int32 *params) 
 
 	//	params[0]    ascii name of floor
 
-	_floor *floor;
-
-	const char *floor_name = (const char *)MemoryUtil::resolvePtr(params[0]);
+	//const char *floor_name = (const char *)MemoryUtil::resolvePtr(params[0]);
 
 	// get the floor
-	floor = (_floor *)floor_def->Fetch_named_floor(floor_name);
+	//_floor *floor = (_floor *)floor_def->Fetch_named_floor(floor_name);
 
 	return IR_CONT;
 }

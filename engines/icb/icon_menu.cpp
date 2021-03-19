@@ -136,7 +136,7 @@ bool8 _icon_menu::CycleIconMenu(const _input &sKeyboardState) {
 
 		lastInventoryPress = 0;
 	}
-	// CONVESATION QUIT: remora is not activem m_bAllowEscape is probabily true
+	// CONVERSATION QUIT: remora is not active m_bAllowEscape is probably true
 	// no key lock, inventory was pressed and has now been released...
 	// and we have a quit!
 	else if ((!g_oRemora->IsActive()) && (!m_bAllowEscape) && (!m_nKeyLock) && (!inventoryPress) && (lastInventoryPress) && (found != -1)) {

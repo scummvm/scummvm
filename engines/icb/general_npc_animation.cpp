@@ -375,7 +375,6 @@ void _game_session::Animate_turn_to_pan(__mega_set_names anim_type, uint32 speed
 	// restore x,z
 
 	PXreal xnext, znext;
-	PXreal x, z;
 	uint32 next_pc, info_pc;
 	PXfloat this_pan_change;
 
@@ -388,7 +387,7 @@ void _game_session::Animate_turn_to_pan(__mega_set_names anim_type, uint32 speed
 	PXanim *pAnim = (PXanim *)rs_anims->Res_open(L->voxel_info->get_info_name(anim_type), L->voxel_info->info_name_hash[anim_type], L->voxel_info->base_path,
 	                                             L->voxel_info->base_path_hash); //
 
-	// anim pc may be illegal so nutralise it
+	// anim pc may be illegal so neutralise it
 	L->anim_pc = (L->anim_pc) % (pAnim->frame_qty - 1);
 
 	// adjust the frame PC in the direction we're going to turn
@@ -481,9 +480,10 @@ void _game_session::Animate_turn_to_pan(__mega_set_names anim_type, uint32 speed
 	PXfloat cang = (PXfloat)PXcos(ang);
 	PXfloat sang = (PXfloat)PXsin(ang);
 
-	x = M->actor_xyz.x + PXfloat2PXreal(xnext * cang + znext * sang);
-	z = M->actor_xyz.z + PXfloat2PXreal(znext * cang - xnext * sang);
+	PXreal x = M->actor_xyz.x + PXfloat2PXreal(xnext * cang + znext * sang);
+	PXreal z = M->actor_xyz.z + PXfloat2PXreal(znext * cang - xnext * sang);
 	// x and z are the new coordinates
+	// FIXME: x and z are not used currently...
 
 	if (L->pan >= HALF_TURN)
 		L->pan -= FULL_TURN;

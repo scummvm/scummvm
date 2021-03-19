@@ -232,6 +232,7 @@ scriptInterpreterReturnCodes RunScript(const char *&scriptData, // A pointer to 
 		// isInExpression starts off at false as it is set every loop of the while...
 		case CP_CALL_MCODE_EXPR:
 			isInExpression = TRUE8; // set to true and carry on running this code...
+			// falls through
 		case CP_CALL_MCODE: {           // 10:  Call an mcode routine
 			// Get the mcode number
 			int16 fnNumber;
