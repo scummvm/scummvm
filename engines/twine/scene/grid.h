@@ -147,36 +147,36 @@ private:
 	void copyGridMask(int32 index, int32 x, int32 y, const Graphics::ManagedSurface &buffer);
 
 	/** Table with all loaded bricks */
-	uint8 *brickTable[NUM_BRICKS]{nullptr};
+	uint8 *_brickTable[NUM_BRICKS]{nullptr};
 	/** Table with all loaded bricks masks */
-	uint8 *brickMaskTable[NUM_BRICKS]{nullptr};
+	uint8 *_brickMaskTable[NUM_BRICKS]{nullptr};
 	/** Table with all loaded bricks sizes */
-	uint32 brickSizeTable[NUM_BRICKS]{0};
+	uint32 _brickSizeTable[NUM_BRICKS]{0};
 	/** Table with all loaded bricks usage */
-	uint8 brickUsageTable[NUM_BRICKS]{0};
+	uint8 _brickUsageTable[NUM_BRICKS]{0};
 
 	/** Current grid pointer */
-	int32 currentGridSize = 0;
-	uint8 *currentGrid = nullptr;
+	int32 _currentGridSize = 0;
+	uint8 *_currentGrid = nullptr;
 	/** Current block library pointer */
-	uint8 *currentBll = nullptr;
+	uint8 *_currentBll = nullptr;
 	/** Number of block libraries */
-	int32 numberOfBll = 0;
+	int32 _numberOfBll = 0;
 
 	/** Brick data buffer */
-	BrickEntry *bricksDataBuffer = nullptr;
+	BrickEntry *_bricksDataBuffer = nullptr;
 	/** Brick info buffer */
-	int16 *brickInfoBuffer = nullptr;
+	int16 *_brickInfoBuffer = nullptr;
 	int32 _brickInfoBufferSize = 0;
 
 	/** Current brick pixel X position */
-	int32 brickPixelPosX = 0;
+	int32 _brickPixelPosX = 0;
 	/** Current brick pixel Y position */
-	int32 brickPixelPosY = 0;
+	int32 _brickPixelPosY = 0;
 
 	/** Celling grid brick block buffer */
-	int32 blockBufferSize = 0;
-	uint8 *blockBuffer = nullptr;
+	int32 _blockBufferSize = 0;
+	uint8 *_blockBuffer = nullptr;
 
 	uint8 *getBlockBuffer(int32 x, int32 y, int32 z);
 	const BrickEntry* getBrickEntry(int32 j, int32 i) const;
@@ -269,7 +269,7 @@ public:
 	 * @param index block library index
 	 * @return pointer to the current block index
 	 */
-	const uint8 *getBlockLibrary(int32 index);
+	const uint8 *getBlockLibrary(int32 index) const;
 
 	/** Create grid map from current grid to block library buffer */
 	void createGridMap();

@@ -305,9 +305,9 @@ int32 Extra::addExtraAiming(int32 actorIdx, int32 x, int32 y, int32 z, int32 spr
 }
 
 // cseg01:00018168
-int32 Extra::findExtraKey() {
+int32 Extra::findExtraKey() const {
 	for (int32 i = 0; i < EXTRA_MAX_ENTRIES; i++) {
-		ExtraListStruct *extra = &extraList[i];
+		const ExtraListStruct *extra = &extraList[i];
 		if (extra->info0 == SPRITEHQR_KEY) {
 			return i;
 		}

@@ -535,17 +535,17 @@ int TwinEEngine::getRandomNumber(uint max) {
 }
 
 void TwinEEngine::freezeTime() {
-	if (!isTimeFreezed) {
-		saveFreezedTime = lbaTime;
+	if (!_isTimeFreezed) {
+		_saveFreezedTime = lbaTime;
 		_pauseToken = pauseEngine();
 	}
-	isTimeFreezed++;
+	_isTimeFreezed++;
 }
 
 void TwinEEngine::unfreezeTime() {
-	--isTimeFreezed;
-	if (isTimeFreezed == 0) {
-		lbaTime = saveFreezedTime;
+	--_isTimeFreezed;
+	if (_isTimeFreezed == 0) {
+		lbaTime = _saveFreezedTime;
 		_pauseToken.clear();
 	}
 }
@@ -835,12 +835,12 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 		}
 	}
 
-	loopActorStep = loopMovePtr.getRealValue(lbaTime);
+	loopActorStep = _loopMovePtr.getRealValue(lbaTime);
 	if (!loopActorStep) {
 		loopActorStep = 1;
 	}
 
-	_movements->setActorAngle(ANGLE_0, -ANGLE_90, ANGLE_1, &loopMovePtr);
+	_movements->setActorAngle(ANGLE_0, -ANGLE_90, ANGLE_1, &_loopMovePtr);
 	disableScreenRecenter = false;
 
 	_scene->processEnvironmentSound();
@@ -1005,7 +1005,7 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 bool TwinEEngine::gameEngineLoop() {
 	_redraw->reqBgRedraw = true;
 	_screens->lockPalette = true;
-	_movements->setActorAngle(ANGLE_0, -ANGLE_90, ANGLE_1, &loopMovePtr);
+	_movements->setActorAngle(ANGLE_0, -ANGLE_90, ANGLE_1, &_loopMovePtr);
 
 	while (quitGame == -1) {
 		uint32 start = g_system->getMillis();

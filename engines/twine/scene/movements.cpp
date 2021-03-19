@@ -215,11 +215,11 @@ void Movements::ChangedCursorKeys::update(TwinEEngine *engine) {
 }
 
 void Movements::update() {
-	previousChangedCursorKeys = changedCursorKeys;
-	previousLoopActionKey = heroActionKey;
+	_previousChangedCursorKeys = _changedCursorKeys;
+	_previousLoopActionKey = _heroActionKey;
 
-	heroActionKey = _engine->_input->isHeroActionActive();
-	changedCursorKeys.update(_engine);
+	_heroActionKey = _engine->_input->isHeroActionActive();
+	_changedCursorKeys.update(_engine);
 }
 
 bool Movements::processBehaviourExecution(int actorIdx) {
@@ -240,7 +240,7 @@ bool Movements::processBehaviourExecution(int actorIdx) {
 			heroMoved = true;
 			actor->angle = actor->move.getRealAngle(_engine->lbaTime);
 			// TODO: previousLoopActionKey must be handled properly
-			if (!previousLoopActionKey || actor->anim == AnimationTypes::kStanding) {
+			if (!_previousLoopActionKey || actor->anim == AnimationTypes::kStanding) {
 				const int32 aggresiveMode = _engine->getRandomNumber(3);
 
 				switch (aggresiveMode) {
@@ -313,10 +313,10 @@ void Movements::processManualMovementExecution(int actorIdx) {
 	if (actor->isAttackWeaponAnimationActive()) {
 		return;
 	}
-	if (!changedCursorKeys || heroAction) {
+	if (!_changedCursorKeys || heroAction) {
 		// if walking should get stopped
 		if (!_engine->_input->isActionActive(TwinEActionType::MoveForward) && !_engine->_input->isActionActive(TwinEActionType::MoveBackward)) {
-			if (heroMoved && (heroActionKey != previousLoopActionKey || changedCursorKeys != previousChangedCursorKeys)) {
+			if (heroMoved && (_heroActionKey != _previousLoopActionKey || _changedCursorKeys != _previousChangedCursorKeys)) {
 				_engine->_animations->initAnim(AnimationTypes::kStanding, AnimType::kAnimationTypeLoop, AnimationTypes::kAnimInvalid, actorIdx);
 			}
 		}

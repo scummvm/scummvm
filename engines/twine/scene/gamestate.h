@@ -82,7 +82,7 @@ private:
 	void initGameStateVars();
 	void initHeroVars();
 
-	MenuSettings gameChoicesSettings;
+	MenuSettings _gameChoicesSettings;
 
 	/**
 	 * LBA engine game flags to save quest states

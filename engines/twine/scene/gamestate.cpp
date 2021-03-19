@@ -452,18 +452,18 @@ void GameState::processFoundItem(int32 item) {
 void GameState::processGameChoices(int32 choiceIdx) {
 	_engine->_screens->copyScreen(_engine->frontVideoBuffer, _engine->workVideoBuffer);
 
-	gameChoicesSettings.reset();
-	gameChoicesSettings.setTextBankId(_engine->_scene->sceneTextBank + TextBankId::Citadel_Island);
+	_gameChoicesSettings.reset();
+	_gameChoicesSettings.setTextBankId(_engine->_scene->sceneTextBank + TextBankId::Citadel_Island);
 
 	// filled via script
 	for (int32 i = 0; i < numChoices; i++) {
-		gameChoicesSettings.addButton(gameChoices[i], 0);
+		_gameChoicesSettings.addButton(gameChoices[i], 0);
 	}
 
 	_engine->_text->drawAskQuestion(choiceIdx);
 
-	_engine->_menu->processMenu(&gameChoicesSettings, false);
-	const int16 activeButton = gameChoicesSettings.getActiveButton();
+	_engine->_menu->processMenu(&_gameChoicesSettings, false);
+	const int16 activeButton = _gameChoicesSettings.getActiveButton();
 	choiceAnswer = gameChoices[activeButton];
 
 	// get right VOX entry index

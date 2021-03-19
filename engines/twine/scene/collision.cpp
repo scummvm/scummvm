@@ -40,7 +40,7 @@ namespace TwinE {
 Collision::Collision(TwinEEngine *engine) : _engine(engine) {
 }
 
-bool Collision::standingOnActor(int32 actorIdx1, int32 actorIdx2) {
+bool Collision::standingOnActor(int32 actorIdx1, int32 actorIdx2) const {
 	const ActorStruct *actor1 = _engine->_scene->getActor(actorIdx1);
 	const ActorStruct *actor2 = _engine->_scene->getActor(actorIdx2);
 
@@ -91,7 +91,7 @@ bool Collision::standingOnActor(int32 actorIdx1, int32 actorIdx2) {
 	return true; // standing
 }
 
-int32 Collision::getAverageValue(int32 start, int32 end, int32 maxDelay, int32 delay) {
+int32 Collision::getAverageValue(int32 start, int32 end, int32 maxDelay, int32 delay) const {
 	if (delay <= 0) {
 		return start;
 	}

@@ -112,8 +112,8 @@ private:
 	int32 _numLocations = 0;
 	Location _locations[NUM_LOCATIONS];
 
-	int32 holomapPaletteIndex = 0;
-	uint8 paletteHolomap[NUMOFCOLORS * 3]{0};
+	int32 _holomapPaletteIndex = 0;
+	uint8 _paletteHolomap[NUMOFCOLORS * 3]{0};
 
 	void drawHolomapText(int32 centerx, int32 top, const char *title);
 	int32 getNextHolomapLocation(int32 currentLocation, int32 dir) const;

@@ -182,13 +182,14 @@ public:
 
 class TwinEEngine : public Engine {
 private:
-	int32 isTimeFreezed = 0;
-	int32 saveFreezedTime = 0;
+	int32 _isTimeFreezed = 0;
+	int32 _saveFreezedTime = 0;
 	int32 _mouseCursorState = 0;
-	ActorMoveStruct loopMovePtr; // mainLoopVar1
+	ActorMoveStruct _loopMovePtr; // mainLoopVar1
 	PauseToken _pauseToken;
 	TwineGameType _gameType;
 	EngineState _state = EngineState::Menu;
+	Common::String _queuedFlaMovie;
 
 	void processBookOfBu();
 	void processBonusList();
@@ -202,9 +203,6 @@ private:
 	void processActorSamplePosition(int32 actorIdx);
 	/** Allocate video memory, both front and back buffers */
 	void allocVideoMemory(int32 w, int32 h);
-
-	Common::String _queuedFlaMovie;
-
 public:
 	TwinEEngine(OSystem *system, Common::Language language, uint32 flagsTwineGameType, TwineGameType gameType);
 	~TwinEEngine() override;

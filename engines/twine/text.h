@@ -170,15 +170,15 @@ private:
 	void fadeInCharacters(int32 counter, int32 fontColor);
 
 	// RECHECK THIS LATER
-	int32 currentBankIdx = TextBankId::None; // textVar1
+	int32 _currentBankIdx = TextBankId::None; // textVar1
 
 	/** Dialogue text pointer */
-	char *dialTextPtr = nullptr; // bufText
+	char *_dialTextPtr = nullptr; // bufText
 	/** Dialogue entry order pointer */
-	int32 dialOrderSize = 0;
-	char *dialOrderPtr = nullptr; // bufOrder
+	int32 _dialOrderSize = 0;
+	char *_dialOrderPtr = nullptr; // bufOrder
 	/** Number of dialogues text entries */
-	int16 numDialTextEntries = 0;
+	int16 _numDialTextEntries = 0;
 
 	// TODO: refactor all this variables and related functions
 	char _progressiveTextBuffer[256] {'\0'};
@@ -204,9 +204,9 @@ private:
 	/** Current dialogue text size */
 	int32 _currDialTextSize = 0;
 
-	char currMenuTextBuffer[256];
-	int32 currMenuTextBank = TextBankId::None;
-	int32 currMenuTextIndex = -1;
+	char _currMenuTextBuffer[256];
+	int32 _currMenuTextBank = TextBankId::None;
+	int32 _currMenuTextIndex = -1;
 
 	/** Pixel size between dialogue text */
 	int32 _dialSpaceBetween = 0;

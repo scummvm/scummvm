@@ -60,11 +60,11 @@ private:
 	};
 
 	// enter, space, ...
-	int16 heroActionKey = 0;
-	int32 previousLoopActionKey = 0;
+	int16 _heroActionKey = 0;
+	int32 _previousLoopActionKey = 0;
 	// cursor keys
-	ChangedCursorKeys changedCursorKeys;
-	ChangedCursorKeys previousChangedCursorKeys;
+	ChangedCursorKeys _changedCursorKeys;
+	ChangedCursorKeys _previousChangedCursorKeys;
 
 	/**
 	 * The Actor is controlled by the player. This works well only for the Hero Actor in general.

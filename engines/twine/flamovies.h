@@ -66,23 +66,23 @@ class FlaMovies {
 private:
 	TwinEEngine *_engine;
 
-	Common::File file;
+	Common::File _file;
 
 	/** Auxiliar FLA fade out variable */
 	int32 _fadeOut = 0;
 	/** Auxiliar FLA fade out variable to count frames between the fade */
-	int32 fadeOutFrames = 0;
+	int32 _fadeOutFrames = 0;
 	bool _flaPaletteVar = false;
 
 	/** FLA movie file buffer */
-	uint8 flaBuffer[FLASCREEN_WIDTH * FLASCREEN_HEIGHT] {0};
+	uint8 _flaBuffer[FLASCREEN_WIDTH * FLASCREEN_HEIGHT] {0};
 
 	/** Number of samples in FLA movie */
-	int32 samplesInFla = 0;
+	int32 _samplesInFla = 0;
 	/** FLA movie header data */
-	FLAHeaderStruct flaHeaderData;
+	FLAHeaderStruct _flaHeaderData;
 	/** FLA movie header data */
-	FLAFrameDataStruct frameData;
+	FLAFrameDataStruct _frameData;
 
 	void drawKeyFrame(Common::MemoryReadStream &stream, int32 width, int32 height);
 	void drawDeltaFrame(Common::MemoryReadStream &stream, int32 width);

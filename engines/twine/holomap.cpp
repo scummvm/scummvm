@@ -96,21 +96,21 @@ void Holomap::loadHolomapGFX() {
 
 	int32 j = 576;
 	for (int32 i = 0; i < 96; i += 3, j += 3) {
-		paletteHolomap[i + 0] = _engine->_screens->palette[j + 0];
-		paletteHolomap[i + 1] = _engine->_screens->palette[j + 1];
-		paletteHolomap[i + 2] = _engine->_screens->palette[j + 2];
+		_paletteHolomap[i + 0] = _engine->_screens->palette[j + 0];
+		_paletteHolomap[i + 1] = _engine->_screens->palette[j + 1];
+		_paletteHolomap[i + 2] = _engine->_screens->palette[j + 2];
 	}
 
 	j = 576;
 	for (int32 i = 96; i < 189; i += 3, j += 3) {
-		paletteHolomap[i + 0] = _engine->_screens->palette[j + 0];
-		paletteHolomap[i + 1] = _engine->_screens->palette[j + 1];
-		paletteHolomap[i + 2] = _engine->_screens->palette[j + 2];
+		_paletteHolomap[i + 0] = _engine->_screens->palette[j + 0];
+		_paletteHolomap[i + 1] = _engine->_screens->palette[j + 1];
+		_paletteHolomap[i + 2] = _engine->_screens->palette[j + 2];
 	}
 
 	prepareHolomapProjectedPositions();
 	prepareHolomapSurface();
-	holomapPaletteIndex = 0;
+	_holomapPaletteIndex = 0;
 }
 
 static int sortHolomapSurfaceCoordsByDepth(const void *a1, const void *a2) {
@@ -341,11 +341,11 @@ void Holomap::drawHolomapTrajectory(int32 trajectoryIndex) {
 		if (!fadeInPalette && local18 < _engine->lbaTime) {
 			//const Common::Rect rect(170, 50, 470, 330);
 			//_engine->_interface->setClip(rect);
-			_engine->setPalette(192, 32, &paletteHolomap[3 * holomapPaletteIndex++]);
+			_engine->setPalette(192, 32, &_paletteHolomap[3 * _holomapPaletteIndex++]);
 			//_engine->copyBlockPhys(rect);
 			//_engine->_interface->resetClip();
-			if (holomapPaletteIndex == 32) {
-				holomapPaletteIndex = 0;
+			if (_holomapPaletteIndex == 32) {
+				_holomapPaletteIndex = 0;
 			}
 			local18 = _engine->lbaTime + 3;
 		}
@@ -576,11 +576,11 @@ void Holomap::processHolomap() {
 		if (!fadeInPalette && local18 < _engine->lbaTime) {
 			//const Common::Rect rect(170, 50, 470, 330);
 			//_engine->_interface->setClip(rect);
-			_engine->setPalette(192, 32, &paletteHolomap[3 * holomapPaletteIndex++]);
+			_engine->setPalette(192, 32, &_paletteHolomap[3 * _holomapPaletteIndex++]);
 			//_engine->copyBlockPhys(rect);
 			//_engine->_interface->resetClip();
-			if (holomapPaletteIndex == 32) {
-				holomapPaletteIndex = 0;
+			if (_holomapPaletteIndex == 32) {
+				_holomapPaletteIndex = 0;
 			}
 			local18 = _engine->lbaTime + 3;
 			redraw = true;

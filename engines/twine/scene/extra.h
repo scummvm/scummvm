@@ -90,7 +90,7 @@ private:
 
 	void throwExtra(ExtraListStruct *extra, int32 xAngle, int32 yAngle, int32 x, int32 extraAngle);
 	void processMagicballBounce(ExtraListStruct *extra, int32 x, int32 y, int32 z);
-	int32 findExtraKey();
+	int32 findExtraKey() const;
 	int32 addExtraAimingAtKey(int32 actorIdx, int32 x, int32 y, int32 z, int32 spriteIdx, int32 extraIdx);
 	void drawSpecialShape(const ExtraShape &shapeTable, int32 x, int32 y, int32 color, int32 angle, int32 size);
 

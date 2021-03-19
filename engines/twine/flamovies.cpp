@@ -68,7 +68,7 @@ struct FLASampleStruct {
 #define FLA_EXT ".fla"
 
 void FlaMovies::drawKeyFrame(Common::MemoryReadStream &stream, int32 width, int32 height) {
-	uint8 *destPtr = (uint8 *)flaBuffer;
+	uint8 *destPtr = (uint8 *)_flaBuffer;
 	uint8 *startOfLine = destPtr;
 
 	for (int32 y = 0; y < height; ++y) {
@@ -97,7 +97,7 @@ void FlaMovies::drawDeltaFrame(Common::MemoryReadStream &stream, int32 width) {
 	const uint16 skip = stream.readUint16LE() * width;
 	const int32 height = stream.readSint16LE();
 
-	uint8 *destPtr = (uint8 *)flaBuffer + skip;
+	uint8 *destPtr = (uint8 *)_flaBuffer + skip;
 	uint8 *startOfLine = destPtr;
 	for (int32 y = 0; y < height; ++y) {
 		const int8 lineEntryCount = stream.readByte();
@@ -123,7 +123,7 @@ void FlaMovies::drawDeltaFrame(Common::MemoryReadStream &stream, int32 width) {
 }
 
 void FlaMovies::scaleFla2x() {
-	uint8 *source = (uint8 *)flaBuffer;
+	uint8 *source = (uint8 *)_flaBuffer;
 	uint8 *dest = (uint8 *)_engine->imageBuffer.getPixels();
 
 	if (_engine->cfgfile.Movie == CONF_MOVIE_FLAWIDE) {
@@ -159,23 +159,23 @@ void FlaMovies::scaleFla2x() {
 void FlaMovies::processFrame() {
 	FLASampleStruct sample;
 
-	file.read(&frameData.videoSize, 1);
-	file.read(&frameData.dummy, 1);
-	file.read(&frameData.frameVar0, 4);
-	if (frameData.frameVar0 > _engine->imageBuffer.w * _engine->imageBuffer.h) {
-		warning("Skipping video frame - it would exceed the screen buffer: %i", frameData.frameVar0);
+	_file.read(&_frameData.videoSize, 1);
+	_file.read(&_frameData.dummy, 1);
+	_file.read(&_frameData.frameVar0, 4);
+	if (_frameData.frameVar0 > _engine->imageBuffer.w * _engine->imageBuffer.h) {
+		warning("Skipping video frame - it would exceed the screen buffer: %i", _frameData.frameVar0);
 		return;
 	}
 
 	uint8 *outBuf = (uint8 *)_engine->imageBuffer.getPixels();
-	file.read(outBuf, frameData.frameVar0);
+	_file.read(outBuf, _frameData.frameVar0);
 
-	if ((int32)frameData.videoSize <= 0) {
+	if ((int32)_frameData.videoSize <= 0) {
 		return;
 	}
 
-	Common::MemoryReadStream stream(outBuf, frameData.frameVar0);
-	for (int32 frame = 0; frame < frameData.videoSize; ++frame) {
+	Common::MemoryReadStream stream(outBuf, _frameData.frameVar0);
+	for (int32 frame = 0; frame < _frameData.videoSize; ++frame) {
 		const uint16 opcode = stream.readUint16LE();
 		const uint16 opcodeBlockSize = stream.readUint16LE();
 		const int32 pos = stream.pos();
@@ -229,7 +229,7 @@ void FlaMovies::processFrame() {
 		case kDeltaFrame: {
 			drawDeltaFrame(stream, FLASCREEN_WIDTH);
 			if (_fadeOut == 1) {
-				++fadeOutFrames;
+				++_fadeOutFrames;
 			}
 			break;
 		}
@@ -358,29 +358,29 @@ void FlaMovies::playFlaMovie(const char *flaName) {
 	fileNamePath += FLA_EXT;
 
 	_fadeOut = -1;
-	fadeOutFrames = 0;
+	_fadeOutFrames = 0;
 
-	file.close();
-	if (!file.open(fileNamePath)) {
+	_file.close();
+	if (!_file.open(fileNamePath)) {
 		warning("Failed to open fla movie '%s'", fileNamePath.c_str());
 		return;
 	}
 
-	file.read(&flaHeaderData.version, 6);
-	flaHeaderData.numOfFrames = file.readUint32LE();
-	flaHeaderData.speed = file.readByte();
-	flaHeaderData.var1 = file.readByte();
-	debug(2, "Unknown byte in fla file: %i", flaHeaderData.var1);
-	flaHeaderData.xsize = file.readUint16LE();
-	flaHeaderData.ysize = file.readUint16LE();
+	_file.read(&_flaHeaderData.version, 6);
+	_flaHeaderData.numOfFrames = _file.readUint32LE();
+	_flaHeaderData.speed = _file.readByte();
+	_flaHeaderData.var1 = _file.readByte();
+	debug(2, "Unknown byte in fla file: %i", _flaHeaderData.var1);
+	_flaHeaderData.xsize = _file.readUint16LE();
+	_flaHeaderData.ysize = _file.readUint16LE();
 
-	samplesInFla = file.readUint16LE();
-	const uint16 unk2 = file.readUint16LE();
+	_samplesInFla = _file.readUint16LE();
+	const uint16 unk2 = _file.readUint16LE();
 	debug(2, "Unknown uint16 in fla file: %i", unk2);
 
-	file.skip(4 * samplesInFla);
+	_file.skip(4 * _samplesInFla);
 
-	if (!strcmp((const char *)flaHeaderData.version, "V1.3")) {
+	if (!strcmp((const char *)_flaHeaderData.version, "V1.3")) {
 		int32 currentFrame = 0;
 
 		debug("Play fla: %s", flaName);
@@ -390,12 +390,12 @@ void FlaMovies::playFlaMovie(const char *flaName) {
 		_flaPaletteVar = true;
 		do {
 			FrameMarker frame;
-			ScopedFPS scopedFps(flaHeaderData.speed);
+			ScopedFPS scopedFps(_flaHeaderData.speed);
 			_engine->readKeys();
 			if (_engine->shouldQuit()) {
 				break;
 			}
-			if (currentFrame == flaHeaderData.numOfFrames) {
+			if (currentFrame == _flaHeaderData.numOfFrames) {
 				break;
 			}
 			processFrame();
@@ -415,12 +415,12 @@ void FlaMovies::playFlaMovie(const char *flaName) {
 			}
 
 			// TRICKY: fade in tricky
-			if (fadeOutFrames >= 2) {
+			if (_fadeOutFrames >= 2) {
 				_engine->flip();
 				_engine->_screens->convertPalToRGBA(_engine->_screens->palette, _engine->_screens->paletteRGBACustom);
 				_engine->_screens->fadeToPal(_engine->_screens->paletteRGBACustom);
 				_fadeOut = -1;
-				fadeOutFrames = 0;
+				_fadeOutFrames = 0;
 			}
 
 			currentFrame++;

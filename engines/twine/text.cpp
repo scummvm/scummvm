@@ -50,12 +50,12 @@ namespace TwinE {
 static const int32 PADDING = 8;
 
 Text::Text(TwinEEngine *engine) : _engine(engine) {
-	Common::fill(&currMenuTextBuffer[0], &currMenuTextBuffer[256], 0);
+	Common::fill(&_currMenuTextBuffer[0], &_currMenuTextBuffer[256], 0);
 }
 
 Text::~Text() {
-	free(dialTextPtr);
-	free(dialOrderPtr);
+	free(_dialTextPtr);
+	free(_dialOrderPtr);
 }
 
 void Text::initVoxBank(int32 bankIdx) {
@@ -95,9 +95,9 @@ bool Text::initVoxToPlay(int32 index) { // setVoxFileAtDigit
 		return false;
 	}
 
-	Common::MemoryReadStream stream((const byte *)dialOrderPtr, dialOrderSize);
+	Common::MemoryReadStream stream((const byte *)_dialOrderPtr, _dialOrderSize);
 	// choose right text from order index
-	for (int32 i = 0; i < numDialTextEntries; i++) {
+	for (int32 i = 0; i < _numDialTextEntries; i++) {
 		const int32 orderIdx = stream.readSint16LE();
 		if (orderIdx == index) {
 			currDialTextEntry = i;
@@ -140,26 +140,26 @@ bool Text::stopVox(int32 index) {
 
 void Text::initTextBank(int32 bankIdx) {
 	// don't load if we already have the dialogue text bank loaded
-	if (bankIdx == currentBankIdx) {
+	if (bankIdx == _currentBankIdx) {
 		return;
 	}
 
-	currentBankIdx = bankIdx;
+	_currentBankIdx = bankIdx;
 
 	// get index according with language
 	const int32 size = _engine->isLBA1() ? 28 : 30;
 	// the text banks indices are split into index and dialogs - each entry thus consists of two entries in the hqr
 	// every 28 entries starts a new language
 	const int32 languageIndex = _engine->cfgfile.LanguageId * size + (int)bankIdx * 2;
-	dialOrderSize = HQR::getAllocEntry((uint8 **)&dialOrderPtr, Resources::HQR_TEXT_FILE, languageIndex + INDEXOFFSET);
-	if (dialOrderSize == 0) {
+	_dialOrderSize = HQR::getAllocEntry((uint8 **)&_dialOrderPtr, Resources::HQR_TEXT_FILE, languageIndex + INDEXOFFSET);
+	if (_dialOrderSize == 0) {
 		warning("Failed to initialize text bank %i from file %s", languageIndex, Resources::HQR_TEXT_FILE);
 		return;
 	}
 
-	numDialTextEntries = dialOrderSize / 2;
+	_numDialTextEntries = _dialOrderSize / 2;
 
-	if (HQR::getAllocEntry((uint8 **)&dialTextPtr, Resources::HQR_TEXT_FILE, languageIndex + DIALOGSOFFSET) == 0) {
+	if (HQR::getAllocEntry((uint8 **)&_dialTextPtr, Resources::HQR_TEXT_FILE, languageIndex + DIALOGSOFFSET) == 0) {
 		warning("Failed to initialize additional text bank %i from file %s", languageIndex + 1, Resources::HQR_TEXT_FILE);
 		return;
 	}
@@ -694,10 +694,10 @@ void Text::setTextCrossColor(int32 stopColor, int32 startColor, int32 stepSize) 
 }
 
 bool Text::getText(int32 index) {
-	const int16 *localTextBuf = (const int16 *)dialTextPtr;
-	const int16 *localOrderBuf = (const int16 *)dialOrderPtr;
+	const int16 *localTextBuf = (const int16 *)_dialTextPtr;
+	const int16 *localOrderBuf = (const int16 *)_dialOrderPtr;
 
-	const int32 numEntries = numDialTextEntries;
+	const int32 numEntries = _numDialTextEntries;
 	int32 currIdx = 0;
 	// choose right text from order index
 	do {
@@ -716,7 +716,7 @@ bool Text::getText(int32 index) {
 	const int32 ptrCurrentEntry = READ_LE_INT16(&localTextBuf[currIdx]);
 	const int32 ptrNextEntry = READ_LE_INT16(&localTextBuf[currIdx + 1]);
 
-	_currDialTextPtr = dialTextPtr + ptrCurrentEntry;
+	_currDialTextPtr = _dialTextPtr + ptrCurrentEntry;
 	_currDialTextSize = ptrNextEntry - ptrCurrentEntry;
 
 	// RECHECK: this was added for vox playback
@@ -726,9 +726,9 @@ bool Text::getText(int32 index) {
 }
 
 bool Text::getMenuText(int32 index, char *text, uint32 textSize) {
-	if (index == currMenuTextIndex) {
-		if (currMenuTextBank == _engine->_scene->sceneTextBank) {
-			Common::strlcpy(text, currMenuTextBuffer, textSize);
+	if (index == _currMenuTextIndex) {
+		if (_currMenuTextBank == _engine->_scene->sceneTextBank) {
+			Common::strlcpy(text, _currMenuTextBuffer, textSize);
 			return true;
 		}
 	}
@@ -744,10 +744,10 @@ bool Text::getMenuText(int32 index, char *text, uint32 textSize) {
 
 	Common::strlcpy(text, _currDialTextPtr, MIN<int32>(textSize, _currDialTextSize + 1));
 	_currDialTextSize++;
-	Common::strlcpy(currMenuTextBuffer, text, MIN<int32>(sizeof(currMenuTextBuffer), _currDialTextSize));
+	Common::strlcpy(_currMenuTextBuffer, text, MIN<int32>(sizeof(_currMenuTextBuffer), _currDialTextSize));
 
-	currMenuTextIndex = index;
-	currMenuTextBank = _engine->_scene->sceneTextBank;
+	_currMenuTextIndex = index;
+	_currMenuTextBank = _engine->_scene->sceneTextBank;
 	return true;
 }
 
