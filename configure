@@ -965,7 +965,7 @@ Usage: $0 [OPTIONS]...
 Configuration:
   -h, --help              display this help and exit
   --backend=BACKEND       backend to build (3ds, android, dc, dingux, ds, gcw0,
-                          gph, iphone, ios7, maemo, n64, null, openpandora,
+                          gph, iphone, ios7, ios7-arm64, maemo, n64, null, openpandora,
                           psp, psp2, samsungtv, sdl, switch, wii) [sdl]
 
 Installation directories:
@@ -1009,6 +1009,7 @@ Special configuration feature:
                                            gp2xwiz for GP2X Wiz
                                            iphone for Apple iPhone (iOS <= 6)
                                            ios7 for Apple iPhone / iPad (iOS >= 7)
+                                           ios7-arm64 for Apple iPhone / iPad (iOS >= 7, 64-bit)
                                            maemo for Nokia Maemo
                                            n64 for Nintendo 64
                                            openpandora for OpenPandora
@@ -1762,6 +1763,12 @@ ios7)
 	_host_os=iphone
 	_host_cpu=arm
 	_host_alias=arm-apple-darwin11
+	;;
+ios7-arm64)
+	_host_os=iphone
+	# Remaining of configure don't known about arm64
+	_host_cpu=aarch64
+	_host_alias=arm64-apple-darwin11
 	;;
 maemo)
 	_host_os=maemo
@@ -3523,7 +3530,7 @@ if test -n "$_host"; then
 			_seq_midi=no
 			_timidity=no
 			;;
-		ios7)
+		ios7*)
 			add_line_to_config_mk 'IPHONE = 1'
 			append_var DEFINES "-DIPHONE -DIPHONE_IOS7 -DIPHONE_SANDBOXED"
 			_backend="ios7"
@@ -3768,9 +3775,15 @@ case $_backend in
 		append_var LIBS "-lobjc -framework UIKit -framework CoreGraphics -framework OpenGLES"
 		append_var LIBS "-framework QuartzCore -framework CoreFoundation -framework Foundation"
 		append_var LIBS "-framework AudioToolbox -framework CoreAudio -framework SystemConfiguration "
-		append_var LDFLAGS "-miphoneos-version-min=7.1 -arch armv7"
-		append_var CFLAGS "-miphoneos-version-min=7.1 -arch armv7"
-		append_var CXXFLAGS "-miphoneos-version-min=7.1 -arch armv7"
+		if [ $_host_cpu = 'aarch64' ]; then
+			append_var LDFLAGS "-miphoneos-version-min=7.1 -arch arm64"
+			append_var CFLAGS "-miphoneos-version-min=7.1 -arch arm64"
+			append_var CXXFLAGS "-miphoneos-version-min=7.1 -arch arm64"
+		else
+			append_var LDFLAGS "-miphoneos-version-min=7.1 -arch armv7"
+			append_var CFLAGS "-miphoneos-version-min=7.1 -arch armv7"
+			append_var CXXFLAGS "-miphoneos-version-min=7.1 -arch armv7"
+		fi
 		if test -n "$SDKROOT"; then
 			append_var LDFLAGS "-mlinker-version=134.9 -B/usr/local/bin/arm-apple-darwin11-"
 			append_var CFLAGS "-isysroot $SDKROOT -F$SDKROOT/System/Library/Frameworks"
