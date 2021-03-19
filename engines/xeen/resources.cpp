@@ -20,6 +20,7 @@
  *
  */
 
+#include "common/config-manager.h"
 #include "common/scummsys.h"
 #include "xeen/resources.h"
 #include "xeen/files.h"
@@ -60,7 +61,8 @@ Resources::Resources() {
 }
 
 void Resources::loadData() {
-	ResFile file(_buffer);
+	Common::Language lang = Common::parseLanguage(ConfMan.get("language"));
+	ResFile file(_buffer, lang);
 	file.syncString(CLOUDS_CREDITS);
 	file.syncString(DARK_SIDE_CREDITS);
 	file.syncString(SWORDS_CREDITS1);
@@ -212,7 +214,7 @@ void Resources::loadData() {
 	file.syncString(SWORDS_GAME_TEXT);
 	file.syncStrings(WEEK_DAY_STRINGS, 10);
 	file.syncString(CHARACTER_DETAILS);
-	file.syncStrings(RU_DAYS, 3);
+	file.syncStrings(DAYS, 3);
 	file.syncString(PARTY_GOLD);
 	file.syncString(PLUS_14);
 	file.syncString(CHARACTER_TEMPLATE);

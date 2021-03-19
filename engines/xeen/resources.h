@@ -48,7 +48,7 @@ class Resources {
 		char *_buffer;
 		char *_buffStart;
 	public:
-		ResFile(char *buffer) : File("CONSTANTS"), _buffer(buffer), _buffStart(buffer) {}
+		ResFile(char *buffer, int num) : File("CONSTANTS_" + Common::String::format("%i", num)), _buffer(buffer), _buffStart(buffer) {}
 
 		void syncString(const char *&str) {
 			str = _buffer;
@@ -116,6 +116,7 @@ public:
 	const char **ITEM_NAMES[4];
 
 	// Data loaded from xeen.ccs
+	int RES_LANGUAGE;
 	const char *CLOUDS_CREDITS;
 	const char *DARK_SIDE_CREDITS;
 	const char *SWORDS_CREDITS1;
@@ -267,7 +268,7 @@ public:
 	const char *SWORDS_GAME_TEXT;
 	const char *WEEK_DAY_STRINGS[10];
 	const char *CHARACTER_DETAILS;
-	const char *RU_DAYS[3];
+	const char *DAYS[3];
 	const char *PARTY_GOLD;
 	const char *PLUS_14;
 	const char *CHARACTER_TEMPLATE;
