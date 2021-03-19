@@ -491,7 +491,7 @@ void Animations::processActorAnimations(int32 actorIdx) { // DoAnim
 					}
 				}
 
-				_engine->_movements->rotateActor(xAxisRotation, 0, actor->animType);
+				_engine->_movements->rotateActor(xAxisRotation, 0, actor->spriteActorRotation);
 
 				_engine->_movements->processActor.y = actor->pos.y - _engine->_renderer->destPos.z;
 

@@ -233,6 +233,7 @@ public:
 	int32 doorStatus = 0;
 	int32 animPosition = 0;
 	int32 animType = kAnimationTypeLoop;   // field_78
+	int32 spriteActorRotation = 0;
 	int32 brickSound = 0; // field_7A
 
 	BoundingBox boudingBox;
