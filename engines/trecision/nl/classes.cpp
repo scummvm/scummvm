@@ -52,7 +52,7 @@ int NlVer = 102;
 /*-------------------------------------------------------------------------*/
 void doAction() {
 	if ((g_vm->_curMessage->_event == ME_MOUSEOPERATE) || (g_vm->_curMessage->_event == ME_MOUSEEXAMINE)) {
-		//		Azione sulla zona GAME
+		// Action in the game area
 		g_vm->_curObj = g_vm->_curMessage->_u32Param;
 		if (g_vm->_curObj == oLASTLEV5)
 			CharacterSay(2003);
@@ -72,7 +72,7 @@ void doAction() {
 			g_vm->_useWithInv[WITH] = false;
 			g_vm->_lightIcon = 0xFF;
 
-			if ((!g_vm->_useWithInv[USED]) && (g_vm->_curObj == g_vm->_useWith[USED])) {
+			if (!g_vm->_useWithInv[USED] && (g_vm->_curObj == g_vm->_useWith[USED])) {
 				g_vm->_useWith[USED] = 0;
 				g_vm->_useWith[WITH] = 0;
 				g_vm->_useWithInv[USED] = false;
@@ -147,11 +147,9 @@ void doMouse() {
 #define POSGAME 1
 #define POSINV 2
 
-	static int8 lastpos;
-	int8 curpos;
-
 	switch (g_vm->_curMessage->_event) {
 	case ME_MMOVE:
+		int8 curpos;
 		if (GAMEAREA(g_vm->_curMessage->_u16Param2))
 			curpos = POSGAME;
 		else if (INVAREA(g_vm->_curMessage->_u16Param2))
@@ -159,15 +157,16 @@ void doMouse() {
 		else
 			curpos = POSUP;
 
-//			Zona GAME
 		if (curpos == POSGAME) {
-			lastpos = POSGAME;
-			if ((FlagSomeOneSpeak) || (FlagDialogMenuActive) || (FlagDialogActive) || (FlagUseWithLocked)) break;
+		// Game area
+			if (FlagSomeOneSpeak || FlagDialogMenuActive || FlagDialogActive || FlagUseWithLocked)
+				break;
+
 			CheckMask(g_vm->_curMessage->_u16Param1, g_vm->_curMessage->_u16Param2);
-			//				per la ruota della 2C
+			// For the wheel in 2C
 			if ((g_vm->_curObj >= oRUOTA1A2C) && (g_vm->_curObj <= oRUOTA12C2C))
 				ShowObjName((oRUOTA1A2C % 3) + oRUOTAA2C, true);
-//				per il dislocatore
+			// For the displacer
 			else if (g_vm->_curRoom == r41D) {
 				if ((g_vm->_curObj >= oPULSANTE1AD) && (g_vm->_curObj <= oPULSANTE33AD)) {
 					if (!(g_vm->_obj[oROOM41 + g_vm->_obj[g_vm->_curObj]._goRoom - r41]._mode & OBJMODE_OBJSTATUS)) {
@@ -194,18 +193,16 @@ void doMouse() {
 				}
 				ShowObjName(g_vm->_curObj, true);
 			} else
-//				fine ruota e dislocatore
+			// not a wheel nor the displacer
 				ShowObjName(g_vm->_curObj, true);
 
 			if (g_vm->_inventoryStatus == INV_INACTION)
 				doEvent(MC_INVENTORY, ME_CLOSE, MP_DEFAULT, 0, 0, 0, 0);
-		}
-//			Zona INVENTORY
-		else if (curpos == POSINV) {
-			lastpos = POSINV;
-			if ((!FlagCharacterExist) && ((g_vm->_curRoom != r31P) && (g_vm->_curRoom != r35P)))
-				break; // Se sono in stanze senza omino tipo la mappa
-			if (((FlagSomeOneSpeak) && !(FlagCharacterSpeak)) || (FlagDialogMenuActive) || (FlagDialogActive) || (FlagUseWithLocked))
+		} else if (curpos == POSINV) {
+		// Inventory area
+			if (!FlagCharacterExist && ((g_vm->_curRoom != r31P) && (g_vm->_curRoom != r35P)))
+				break; // When it's in a room without a character, such as the map
+			if ((FlagSomeOneSpeak && !FlagCharacterSpeak) || FlagDialogMenuActive || FlagDialogActive || FlagUseWithLocked)
 				break;
 			if (g_vm->_animMgr->_playingAnims[1])
 				break;
@@ -214,17 +211,13 @@ void doMouse() {
 				doEvent(MC_INVENTORY, ME_OPEN, MP_DEFAULT, 0, 0, 0, 0);
 			else if (g_vm->_inventoryStatus == INV_INACTION)
 				doEvent(MC_INVENTORY, ME_SHOWICONNAME, MP_DEFAULT, g_vm->_curMessage->_u16Param1, g_vm->_curMessage->_u16Param2, 0, 0);
-		}
-//			Zona UP
-		else {
+		}	else {
+		// Up area
 			if (g_vm->_curRoom == rSYS)
 				break;
 
 			g_vm->_curObj = 0;
 			ShowObjName(g_vm->_curObj, true);
-//				if( lastpos != POSUP )
-//					ShowObjName(0,false);
-			lastpos = POSUP;
 
 			if (FlagDialogMenuActive)
 				UpdateScelte(g_vm->_curMessage->_u16Param1, g_vm->_curMessage->_u16Param2);
@@ -233,7 +226,6 @@ void doMouse() {
 
 	case ME_MRIGHT:
 	case ME_MLEFT:
-		// if(Flagskiptalk) break;
 		if (FlagSomeOneSpeak) {
 			Flagskiptalk = Flagskipenable;
 			break;
@@ -269,36 +261,32 @@ void doMouse() {
 		}
 		// end of displacer
 
-		// snake escape 52
 		if (g_vm->_curRoom == r52) {
-			if (g_vm->_obj[oSNAKEU52]._mode & OBJMODE_OBJSTATUS)
+		// snake escape 52
+			if (g_vm->_obj[oSNAKEU52]._mode & OBJMODE_OBJSTATUS) {
 				if (GAMEAREA(g_vm->_curMessage->_u16Param2) && !FlagUseWithStarted && (g_vm->_curObj != oSNAKEU52)) {
 					StartCharacterAction(a526, 0, 1, 0);
 					g_vm->_obj[oSCAVO51]._anim = a516;
 					memcpy(&g_vm->_snake52, g_vm->_curMessage, sizeof(g_vm->_snake52));
 					break;
 				}
-		}
-		// end snake escape 52
-		// sys
-		else if (g_vm->_curRoom == rSYS) {
+			}
+		} else if (g_vm->_curRoom == rSYS) {
+		// Sys
 			CheckMask(g_vm->_curMessage->_u16Param1, g_vm->_curMessage->_u16Param2);
 			DoSys(g_vm->_curObj);
 			break;
 		}
-		// end sys
 
-		// Se sono in stanze senza omino tipo la mappa o libro
-		if ((FlagCharacterExist == false)/* && (GAMEAREA(_curMessage->_u16Param2))*/) {
+		// If it's in a room without a character, like a map or a book
+		if (FlagCharacterExist == false) {
 			if ((INVAREA(g_vm->_curMessage->_u16Param2)) && ((g_vm->_curRoom == r31P) || (g_vm->_curRoom == r35P))) {
 				if (ICONAREA(g_vm->_curMessage->_u16Param1, g_vm->_curMessage->_u16Param2) && (WhatIcon(g_vm->_curMessage->_u16Param1)) && (g_vm->_inventoryStatus == INV_INACTION)) {
 					g_vm->_useWith[WITH] = 0;
 					g_vm->_curObj = 0;
 					g_vm->_lightIcon = 0xFF;
 					g_vm->setInventoryStart(g_vm->_iconBase, INVENTORY_SHOW);
-					if (g_vm->_curMessage->_event == ME_MRIGHT)
-						doEvent(MC_INVENTORY, ME_OPERATEICON, MP_DEFAULT, g_vm->_curMessage->_u16Param1, g_vm->_curMessage->_u16Param2, 0, 0);
-					else if (FlagUseWithStarted)
+					if (g_vm->_curMessage->_event == ME_MRIGHT || FlagUseWithStarted)
 						doEvent(MC_INVENTORY, ME_OPERATEICON, MP_DEFAULT, g_vm->_curMessage->_u16Param1, g_vm->_curMessage->_u16Param2, 0, 0);
 					else
 						doEvent(MC_INVENTORY, ME_EXAMINEICON, MP_DEFAULT, g_vm->_curMessage->_u16Param1, g_vm->_curMessage->_u16Param2, 0, 0);
@@ -314,7 +302,7 @@ void doMouse() {
 			break;
 		}
 
-//			gestione particolare ruote 2C
+		// Special management for 2C wheels
 		if ((g_vm->_obj[oBASERUOTE2C]._mode & OBJMODE_OBJSTATUS) && (g_vm->_curRoom == r2C)) {
 			if (CheckMask(g_vm->_curMessage->_u16Param1, g_vm->_curMessage->_u16Param2)) {
 				if ((g_vm->_curObj >= oRUOTA1A2C) && (g_vm->_curObj <= oRUOTA12C2C))
@@ -348,7 +336,7 @@ void doMouse() {
 					memcpy(SmackImagePointer, ImagePointer, MAXX * AREA * 2);
 					g_vm->_animMgr->startSmkAnim(g_vm->_room[g_vm->_curRoom]._bkgAnim);
 
-					// combinazione giusta
+					// right combination
 					if ((ruotepos[0] == 7) && (ruotepos[1] == 5) && (ruotepos[2] == 11)) {
 						doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a2C6PREMEPULSANTEAPERTURA, 0, 0, g_vm->_curObj);
 						g_vm->_obj[oSFINGE2C]._flag &= ~OBJFLAG_PERSON;
@@ -371,9 +359,8 @@ void doMouse() {
 			}
 			break;
 		}
-//			fine gestione particolare
 
-//			Zona GAME
+		//	Game area
 		if (GAMEAREA(g_vm->_curMessage->_u16Param2) && (!g_vm->_animMgr->_playingAnims[1])) {
 			if (Flagscriptactive)
 				g_vm->_curObj = g_vm->_curMessage->_u32Param;
@@ -463,13 +450,12 @@ void doMouse() {
 					doEvent(MC_CHARACTER, ME_CHARACTERGOTOEXAMINE, MP_DEFAULT, g_vm->_curMessage->_u16Param1, g_vm->_curMessage->_u16Param2, 0, g_vm->_curObj);
 			} else
 				doEvent(MC_CHARACTER, ME_CHARACTERGOTO, MP_DEFAULT, g_vm->_curMessage->_u16Param1, g_vm->_curMessage->_u16Param2, 0, 0);
-		}
-		// Inventory Zone
-		else if (INVAREA(g_vm->_curMessage->_u16Param2)) {
+		} else if (INVAREA(g_vm->_curMessage->_u16Param2)) {
+			// Inventory area
 			if (g_vm->_animMgr->_playingAnims[1] || FlagDialogActive || g_vm->_curRoom == rSYS)
 				break;
 
-			if (ICONAREA(g_vm->_curMessage->_u16Param1, g_vm->_curMessage->_u16Param2) && (WhatIcon(g_vm->_curMessage->_u16Param1)) && (g_vm->_inventoryStatus == INV_INACTION)) {
+			if (ICONAREA(g_vm->_curMessage->_u16Param1, g_vm->_curMessage->_u16Param2) && WhatIcon(g_vm->_curMessage->_u16Param1) && (g_vm->_inventoryStatus == INV_INACTION)) {
 				g_vm->_characterQueue.initQueue();
 				actorStop();
 				nextStep();
@@ -478,9 +464,7 @@ void doMouse() {
 				g_vm->_curObj = 0;
 				g_vm->_lightIcon = 0xFF;
 				g_vm->setInventoryStart(g_vm->_iconBase, INVENTORY_SHOW);
-				if (g_vm->_curMessage->_event == ME_MRIGHT)
-					doEvent(MC_INVENTORY, ME_OPERATEICON, MP_DEFAULT, g_vm->_curMessage->_u16Param1, g_vm->_curMessage->_u16Param2, 0, 0);
-				else if (FlagUseWithStarted)
+				if (g_vm->_curMessage->_event == ME_MRIGHT || FlagUseWithStarted)
 					doEvent(MC_INVENTORY, ME_OPERATEICON, MP_DEFAULT, g_vm->_curMessage->_u16Param1, g_vm->_curMessage->_u16Param2, 0, 0);
 				else
 					doEvent(MC_INVENTORY, ME_EXAMINEICON, MP_DEFAULT, g_vm->_curMessage->_u16Param1, g_vm->_curMessage->_u16Param2, 0, 0);
@@ -616,6 +600,8 @@ void doCharacter() {
 		} else
 			REEVENT;
 		break;
+	default:
+		break;
 	}
 }
 
@@ -636,7 +622,7 @@ void doSystem() {
 		if (g_vm->_curRoom == 0)
 			return ;
 
-		// if regen still have to occur
+		// if regen still has to occur
 		if (FlagWaitRegen)
 			REEVENT;
 
@@ -781,6 +767,8 @@ void doSystem() {
 		drawCharacter(CALCPOINTS);			// for right _actorPos entrance
 
 		break;
+	default:
+		break;
 	}
 }
 
@@ -791,7 +779,7 @@ void doScrollInventory(uint16 mousex) {
 	if ((g_vm->_inventoryStatus == INV_PAINT) || (g_vm->_inventoryStatus == INV_DEPAINT))
 		return;
 
-	if ((mousex <= ICONMARGSX) && (g_vm->_iconBase))
+	if ((mousex <= ICONMARGSX) && g_vm->_iconBase)
 		doEvent(MC_INVENTORY, ME_ONERIGHT, MP_DEFAULT, 0, 0, 0, 0);
 	else if (BETWEEN(SCREENLEN - ICONMARGDX, mousex, SCREENLEN) && (g_vm->_iconBase + ICONSHOWN < g_vm->_inventorySize))
 		doEvent(MC_INVENTORY, ME_ONELEFT, MP_DEFAULT, 0, 0, 0, 0);
@@ -904,6 +892,8 @@ void doIdle() {
 			}
 		}
 		break;
+	default:
+		break;
 	}
 
 	if (GAMEAREA(my) && ((g_vm->_inventoryStatus == INV_ON) || (g_vm->_inventoryStatus == INV_INACTION)))
@@ -912,7 +902,7 @@ void doIdle() {
 	if (g_vm->_inventoryScrollTime > TheTime)
 		g_vm->_inventoryScrollTime = TheTime;
 
-	if ((INVAREA(my)) && (TheTime > (INVSCROLLSP + g_vm->_inventoryScrollTime))) {
+	if (INVAREA(my) && (TheTime > (INVSCROLLSP + g_vm->_inventoryScrollTime))) {
 		doScrollInventory(mx);
 		g_vm->_inventoryScrollTime = TheTime;
 	}
