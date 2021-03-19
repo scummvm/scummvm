@@ -275,6 +275,7 @@ private:
 	void translateGroup(int32 x, int32 y, int32 z);
 
 	IVec3 _baseTransPos;
+	IVec3 _orthoProjPos;
 
 	int32 _cameraDepthOffset = 0;
 	int32 _cameraScaleY = 0;
@@ -339,7 +340,6 @@ public:
 	IVec3 projPosScreen;
 	IVec3 projPos;
 	IVec3 baseRotPos;
-	IVec3 orthoProjPos;
 	IVec3 destPos;
 	IVec3 getHolomapRotation(const int32 angleX, const int32 angleY, const int32 angleZ) const;
 
