@@ -22,6 +22,7 @@ void Patch::load(Common::ReadStream *stream) {
 	byte extended = stream->readByte();
 	screenRegionName = readString(stream);
 	prevScreenName = readString(stream);
+	debug("patch screen region: %s, prev: %s", screenRegionName.c_str(), prevScreenName.c_str());
 	if (extended == 0)
 		return;
 
@@ -43,6 +44,7 @@ void Patch::load(Common::ReadStream *stream) {
 	for(uint i = 0; i < object_count; ++i) {
 		int flag = stream->readSint16LE();
 		Common::String name = readString(stream);
+		debug("patch object %s %d", name.c_str(), flag);
 		objects.push_back(Object(name, flag));
 	}
 }
