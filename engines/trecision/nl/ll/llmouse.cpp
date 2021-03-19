@@ -62,24 +62,6 @@ uint16 vr(int16 x, int16 y) {
 	return g_vm->_video2[b];
 }
 
-/*-----------------10/12/95 15.26-------------------
-					VPix
---------------------------------------------------*/
-void VPix(int16 x, int16 y, uint16 col) {
-	if (g_vm->_graphicsMgr->_screenPtr == nullptr)
-		return ;
-
-	if (g_vm->_graphicsMgr->_linearMode && ((g_vm->_graphicsMgr->_pitch == 0) || (g_vm->_graphicsMgr->_pitch == SCREENLEN * 2))) {
-		uint32 a = ((uint32)x + MAXX * (uint32)y);
-		if ((x >= 0) && (y >= 0) && (x < CurRoomMaxX) && (y < MAXY))
-			g_vm->_graphicsMgr->_screenPtr[a] = col;
-		return ;
-	}
-
-	if ((x >= 0) && (y >= 0) && (x < CurRoomMaxX) && (y < MAXY))
-		g_vm->_graphicsMgr->_screenPtr[x + y * (g_vm->_graphicsMgr->_pitch / 2)] = col;
-}
-
 /*-----------------10/12/95 15.27-------------------
 					VMouseOFF
 --------------------------------------------------*/
@@ -91,10 +73,10 @@ void VMouseOFF() {
 		g_vm->_graphicsMgr->lock();
 
 	for (int16 i = (comx - 10); i <= (comx + 10); i++)
-		VPix(i, g_vm->_oldMouseY, vr(i, g_vm->_oldMouseY));
+		g_vm->_graphicsMgr->VPix(i, g_vm->_oldMouseY, vr(i, g_vm->_oldMouseY));
 
 	for (int16 i = (g_vm->_oldMouseY - 10); i <= (g_vm->_oldMouseY + 10); i++)
-		VPix(comx, i, vr(comx, i));
+		g_vm->_graphicsMgr->VPix(comx, i, vr(comx, i));
 
 	if (!vl)
 		g_vm->_graphicsMgr->unlock();
@@ -117,36 +99,36 @@ void VMouseON() {
 
 	for (int16 i = (comx - 10); i <= (comx + 10); i++) {
 		if ((!(((i >= (cmx - 10)) && (i <= (cmx + 10))) && (g_vm->_oldMouseY == my))))
-			VPix(i, g_vm->_oldMouseY, vr(i, g_vm->_oldMouseY));
+			g_vm->_graphicsMgr->VPix(i, g_vm->_oldMouseY, vr(i, g_vm->_oldMouseY));
 	}
 
 	for (int16 i = (g_vm->_oldMouseY - 10); i <= (g_vm->_oldMouseY + 10); i++) {
 		if ((!(((i >= (my - 10)) && (i <= (my + 10))) && (comx == cmx))))
-			VPix(comx, i, vr(comx, i));
+			g_vm->_graphicsMgr->VPix(comx, i, vr(comx, i));
 	}
 
 	for (int16 i = (cmx - 10); i <= (cmx - 3); i++)
-		VPix(i, my, mc);
+		g_vm->_graphicsMgr->VPix(i, my, mc);
 	for (int16 i = (cmx + 3); i <= (cmx + 10); i++)
-		VPix(i, my, mc);
+		g_vm->_graphicsMgr->VPix(i, my, mc);
 
 	for (int16 i = (my - 10); i <= (my - 3); i++)
-		VPix(cmx, i, mc);
+		g_vm->_graphicsMgr->VPix(cmx, i, mc);
 	for (int16 i = (my + 3); i <= (my + 10); i++)
-		VPix(cmx, i, mc);
+		g_vm->_graphicsMgr->VPix(cmx, i, mc);
 
 	for (int16 i = (cmx - 2); i <= (cmx + 2); i++) {
 		if (cmx == i)
 			i++;
-		VPix(i, my, vr(i, my));
+		g_vm->_graphicsMgr->VPix(i, my, vr(i, my));
 	}
 	for (int16 i = (my - 2); i <= (my + 2); i++) {
 		if (i == my)
 			i++;
-		VPix(cmx, i, vr(cmx, i));
+		g_vm->_graphicsMgr->VPix(cmx, i, vr(cmx, i));
 	}
 
-	VPix(cmx, my, mc);
+	g_vm->_graphicsMgr->VPix(cmx, my, mc);
 	g_vm->_oldMouseX = mx;
 	g_vm->_oldMouseY = my;
 

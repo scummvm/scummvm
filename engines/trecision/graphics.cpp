@@ -302,4 +302,22 @@ uint16 GraphicsManager::aliasing(uint32 val1, uint32 val2, uint8 num) {
 			((((val1 & _bitMask[0]) * num + (val2 & _bitMask[0]) * (8 - num)) >> 3) & _bitMask[0]));
 }
 
+/*------------------------------------------------
+					VPix
+--------------------------------------------------*/
+void GraphicsManager::VPix(int16 x, int16 y, uint16 col) {
+	if (_screenPtr == nullptr)
+		return;
+
+	if (_linearMode && ((_pitch == 0) || (_pitch == SCREENLEN * 2))) {
+		uint32 a = ((uint32)x + MAXX * (uint32)y);
+		if ((x >= 0) && (y >= 0) && (x < CurRoomMaxX) && (y < MAXY))
+			_screenPtr[a] = col;
+		return;
+	}
+
+	if ((x >= 0) && (y >= 0) && (x < CurRoomMaxX) && (y < MAXY))
+		_screenPtr[x + y * (_pitch / 2)] = col;
+}
+
 } // end of namespace

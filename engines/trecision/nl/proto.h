@@ -54,7 +54,6 @@ void RedrawRoom();
 void decompress(const uint8 *src, unsigned int src_len, uint8 *dst, unsigned int dst_len);
 uint32 DecCR(Common::String FileName, uint8 *DestArea, uint8 *DecArea);
 uint16 vr(int16 x, int16 y);
-void VPix(int16 x, int16 y, uint16 col);
 void VMouseOFF();
 void VMouseON();
 void VMouseRestore();

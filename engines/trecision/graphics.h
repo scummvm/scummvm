@@ -65,6 +65,8 @@ public:
 	uint16 shadow(uint32 val, uint8 num);
 	uint16 aliasing(uint32 val1, uint32 val2, uint8 num);
 
+	void VPix(int16 x, int16 y, uint16 col);
+
 }; // end of class
 
 } // end of namespace
