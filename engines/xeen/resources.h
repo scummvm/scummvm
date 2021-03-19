@@ -116,7 +116,6 @@ public:
 	const char **ITEM_NAMES[4];
 
 	// Data loaded from xeen.ccs
-	int RES_LANGUAGE;
 	const char *CLOUDS_CREDITS;
 	const char *DARK_SIDE_CREDITS;
 	const char *SWORDS_CREDITS1;
