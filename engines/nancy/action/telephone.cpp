@@ -33,6 +33,8 @@
 
 #include "engines/nancy/ui/textbox.h"
 
+#include "common/translation.h"
+
 namespace Nancy {
 namespace Action {
 
@@ -134,7 +136,7 @@ void Telephone::execute() {
 			// Long phone numbers start with 1
 			if (_calledNumber.size() >= 11 || (_calledNumber.size() >= 7 && (_calledNumber[0] != 1))) {
 				NancySceneState.getTextbox().clear();
-				NancySceneState.getTextbox().addTextLine("ringing...<n><e>"); // Hardcoded in the original engine
+				NancySceneState.getTextbox().addTextLine(_("ringing...<n><e>")); // Hardcoded in the original engine
 				g_nancy->_sound->loadSound(_ringSound);
 				g_nancy->_sound->playSound(_ringSound);
 				_callState = kRinging;

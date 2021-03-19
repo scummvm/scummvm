@@ -24,6 +24,8 @@
 
 #include "engines/nancy/nancy.h"
 
+#include "common/translation.h"
+
 #include "backends/keymapper/action.h"
 #include "backends/keymapper/keymap.h"
 #include "backends/keymapper/standard-actions.h"
@@ -165,45 +167,45 @@ void InputManager::initKeymaps(Common::KeymapArray &keymaps) {
 	Keymap *debugKeymap = new Keymap(Keymap::kKeymapTypeGame, "nancy-debug", "Nancy Drew - Debug/Cheat Shortcuts");
 	Action *act;
 
-	act = new Action(kStandardActionInteract, U32String("Left Click Interact"));
+	act = new Action(kStandardActionInteract, _("Left Click Interact"));
 	act->setLeftClickEvent();
 	act->setCustomEngineActionEvent(kNancyActionLeftClick);
 	act->addDefaultInputMapping("MOUSE_LEFT");
 	act->addDefaultInputMapping("JOY_A");
 	mainKeymap->addAction(act);
 
-	act = new Action("RCLK", U32String("Right Click Interact"));
+	act = new Action("RCLK", _("Right Click Interact"));
 	act->setRightClickEvent();
 	act->setCustomEngineActionEvent(kNancyActionRightClick);
 	act->addDefaultInputMapping("MOUSE_RIGHT");
 	act->addDefaultInputMapping("JOY_B");
 	mainKeymap->addAction(act);
 
-	act = new Action(kStandardActionMoveUp, U32String("Move up"));
+	act = new Action(kStandardActionMoveUp, _("Move up"));
 	act->setCustomEngineActionEvent(kNancyActionMoveUp);
 	act->addDefaultInputMapping("UP");
 	act->addDefaultInputMapping("JOY_UP");
 	mainKeymap->addAction(act);
 
-	act = new Action(kStandardActionMoveDown, U32String("Move down"));
+	act = new Action(kStandardActionMoveDown, _("Move down"));
 	act->setCustomEngineActionEvent(kNancyActionMoveDown);
 	act->addDefaultInputMapping("DOWN");
 	act->addDefaultInputMapping("JOY_DOWN");
 	mainKeymap->addAction(act);
 
-	act = new Action(kStandardActionMoveLeft, U32String("Move left"));
+	act = new Action(kStandardActionMoveLeft, _("Move left"));
 	act->setCustomEngineActionEvent(kNancyActionMoveLeft);
 	act->addDefaultInputMapping("LEFT");
 	act->addDefaultInputMapping("JOY_LEFT");
 	mainKeymap->addAction(act);
 
-	act = new Action(kStandardActionMoveRight, U32String("Move right"));
+	act = new Action(kStandardActionMoveRight, _("Move right"));
 	act->setCustomEngineActionEvent(kNancyActionMoveRight);
 	act->addDefaultInputMapping("RIGHT");
 	act->addDefaultInputMapping("JOY_RIGHT");
 	mainKeymap->addAction(act);
 
-	act = new Action("FASTM", U32String("Fast move modifier"));
+	act = new Action("FASTM", _("Fast move modifier"));
 	act->setCustomEngineActionEvent(kNancyActionMoveFast);
 	act->addDefaultInputMapping("LCTRL");
 	act->addDefaultInputMapping("JOY_LEFT_SHOULDER");
@@ -211,53 +213,53 @@ void InputManager::initKeymaps(Common::KeymapArray &keymaps) {
 
 	// Debug shortcuts
 
-	act = new Action("FASTC", U32String("Toggle fast conversation mode"));
+	act = new Action("FASTC", _("Toggle fast conversation mode"));
 	act->setCustomEngineActionEvent(kNancyActionFastConvoToggle);
 	act->addDefaultInputMapping("C+S+TAB+f");
 	debugKeymap->addAction(act);
 
-	act = new Action("ENDC", U32String("Toggle end conversation mode"));
+	act = new Action("ENDC", _("Toggle end conversation mode"));
 	act->setCustomEngineActionEvent(kNancyActionEndConvoToggle);
 	act->addDefaultInputMapping("C+S+TAB+e");
 	debugKeymap->addAction(act);
 
-	act = new Action("MMENU", U32String("Go to main menu"));
+	act = new Action("MMENU", _("Go to main menu"));
 	act->setCustomEngineActionEvent(kNancyActionRequestMainMenu);
 	act->addDefaultInputMapping("C+S+TAB+F2");
 	debugKeymap->addAction(act);
 
-	act = new Action("LDSV", U32String("Go to save/load menu"));
+	act = new Action("LDSV", _("Go to save/load menu"));
 	act->setCustomEngineActionEvent(kNancyActionRequestSaveLoad);
 	act->addDefaultInputMapping("C+S+TAB+F3");
 	debugKeymap->addAction(act);
 
-	act = new Action("RLDSV", U32String("Reload last save"));
+	act = new Action("RLDSV", _("Reload last save"));
 	act->setCustomEngineActionEvent(kNancyActionReloadSave);
 	act->addDefaultInputMapping("C+S+TAB+F4");
 	debugKeymap->addAction(act);
 
-	act = new Action("SETUP", U32String("Go to setup menu"));
+	act = new Action("SETUP", _("Go to setup menu"));
 	act->setCustomEngineActionEvent(kNancyActionRequestSetupMenu);
 	act->addDefaultInputMapping("C+S+TAB+F6");
 	debugKeymap->addAction(act);
 
-	act = new Action("CRED", U32String("Show credits"));
+	act = new Action("CRED", _("Show credits"));
 	act->setCustomEngineActionEvent(kNancyActionRequestCredits);
 	act->addDefaultInputMapping("C+S+TAB+F7");
 	debugKeymap->addAction(act);
 
-	act = new Action("MAP", U32String("Go to map screen"));
+	act = new Action("MAP", _("Go to map screen"));
 	act->setCustomEngineActionEvent(kNancyActionRequestMap);
 	act->addDefaultInputMapping("C+S+TAB+F8");
 	act->addDefaultInputMapping("C+S+TAB+m");
 	debugKeymap->addAction(act);
 
-	act = new Action("CHEAT", U32String("Open general cheat menu"));
+	act = new Action("CHEAT", _("Open general cheat menu"));
 	act->setCustomEngineActionEvent(kNancyActionRequestCheatMenu);
 	act->addDefaultInputMapping("C+S+TAB+c");
 	debugKeymap->addAction(act);
 
-	act = new Action("EVENT", U32String("Open event flags cheat menu"));
+	act = new Action("EVENT", _("Open event flags cheat menu"));
 	act->setCustomEngineActionEvent(kNancyActionRequestEventMenu);
 	act->addDefaultInputMapping("C+S+TAB+v");
 	debugKeymap->addAction(act);
