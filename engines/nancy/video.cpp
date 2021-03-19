@@ -118,9 +118,11 @@ AVFDecoder::AVFVideoTrack::AVFVideoTrack(Common::SeekableReadStream *stream, uin
 		ChunkInfo info;
 
 		if (formatHi == 1) {
-			char buf[13];
-			stream->read(buf, 13);
+			char buf[9];
+			stream->read(buf, 9);
+			buf[8] = '\0';
 			info.name = buf;
+			info.index = stream->readUint32LE();
 
 			stream->skip(4); // unknown
 
