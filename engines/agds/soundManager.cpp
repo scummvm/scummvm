@@ -134,7 +134,8 @@ int SoundManager::play(const Common::String &process, const Common::String &reso
 		id = _nextId++;
 
 	_sounds.push_back(Sound(id, process, resource, filename, phaseVar, handle));
-	_mixer->playStream(Audio::Mixer::kPlainSoundType, &handle, stream, id);
+	if (startPlaying)
+		_mixer->playStream(Audio::Mixer::kPlainSoundType, &handle, stream, id);
 	//if (sound_off)
 	//	setPhaseVar(_sounds.back(), 1);
 	return id;
