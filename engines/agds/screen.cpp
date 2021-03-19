@@ -260,12 +260,12 @@ void Screen::paint(Graphics::Surface &backbuffer) const {
 }
 
 Common::Array<ObjectPtr> Screen::find(Common::Point pos) const {
-	pos += _scroll;
 	Common::Array<ObjectPtr> objects;
 	objects.reserve(_children.size());
 	for (ChildrenType::const_iterator i = _children.begin(); i != _children.end(); ++i) {
 		ObjectPtr object = *i;
-		if (object->pointIn(pos) && object->alive()) {
+		auto visiblePos = (object->scale() >= 0)? pos + _scroll: pos;
+		if (object->pointIn(visiblePos) && object->alive()) {
 			objects.insert_at(0, object);
 		}
 	}
