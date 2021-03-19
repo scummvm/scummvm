@@ -272,8 +272,8 @@ void FormattingOneString() {
 	uint16 i;
 	memset(SubString[SubStringUsed], '\0', MAXLENSUBSTRING);
 
-	uint16 SpazioRimasto = (SuperStringLen - SubStringStart);
-	for (i = 0; i < SpazioRimasto; i++) {
+	const uint16 available = (SuperStringLen - SubStringStart);
+	for (i = 0; i < available; i++) {
 		switch (SuperString[i + SubStringStart]) {
 		case '\0':
 			substringagain = false;
@@ -489,8 +489,6 @@ void SomeOneMute() {
 
 	RepaintString();
 	StopTalk();
-
-	//F	if(FlagDialogActive) doEvent(MC_DIALOG,ME_FINEBATTUTA,MP_DEFAULT,0,0,0,0);
 }
 
 /*-------------------------------------------------------------------------*/

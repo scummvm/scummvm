@@ -21,12 +21,13 @@
  */
 
 #include "common/scummsys.h"
-#include "nl/extern.h"
 
+#include "trecision/nl/message.h"
+#include "trecision/nl/extern.h"
 #include "trecision/graphics.h"
 #include "trecision/nl/define.h"
 #include "trecision/trecision.h"
-#include "video.h"
+#include "trecision/video.h"
 
 namespace Trecision {
 

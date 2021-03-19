@@ -58,14 +58,7 @@ Game Structure
 Null Objects
 ******************************************************************************/
 #define NO_OBJECTS        		0
-#define NO_FRAME          		0
 
-/******************************************************************************
-******************************************************************************/
-#define SET_BITS_ON(var,bits)        (var) |=  (bits)
-#define SET_BITS_OFF(var,bits)       (var) &= ~(bits)
-#define TEST_BITS_ON(var, bits)  (  ((var) &   (bits)) )
-#define TEST_BITS_OFF(var,bits)  ( !((var) &   (bits)) )
 
 /******************************************************************************
 Screen management
@@ -78,13 +71,7 @@ Screen management
 #define TOP         	((MAXY-AREA)/2)             // Coordinate y of game screen
 #define VIDEOTOP		TOP
 #define ZBUFFERSIZE		200000L
-#define MAXSFXSIZE		951000L
 #define SPEECHSIZE		300000L
-/******************************************************************************
-Time Management
-******************************************************************************/
-#define ONESECOND       60
-#define TIMETOSPEAK     (3*ONESECOND)   // Timing for the dialogs
 
 /******************************************************************************
 Low level text and color management
@@ -97,23 +84,12 @@ Low level text and color management
 #define MAXLENSUBSTRING 128
 #define MAXSUBSTRING    16
 
-#define MOUSECOL    0x7FFF
-#define HRED        0x7C00
-#define HBLUE       0x001F
-#define HGREEN      0x03E0
-#define HCYAN       0x03FF
-#define HMAGENTA    0x7C1F
-#define HYELLOW     0x7FE0
-#define HWHITE      0x7777
-#define HGRAYLT     0x2108
-#define HGRAYDK     0x4210
-#define HBLUELT     0x0010
 /******************************************************************************
 High level color management
 ******************************************************************************/
-#define COLOR_HOMO      HYELLOW
-#define COLOR_OBJECT    HWHITE
-#define COLOR_INVENTORY HBLUE
+#define COLOR_CHARACTER   HYELLOW
+#define COLOR_OBJECT      HWHITE
+#define COLOR_INVENTORY   HBLUE
 
 /******************************************************************************
 Inventory
@@ -147,7 +123,7 @@ Management of "Use with"
 /******************************************************************************
 Management of cards for Regen
 ******************************************************************************/
-#define TYPO_ANI 1
+//#define TYPO_ANI 1
 #define TYPO_BMP 2
 
 //uint32 ReadTime();

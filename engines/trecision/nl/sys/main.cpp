@@ -20,21 +20,12 @@
  *
  */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 #include "common/scummsys.h"
-#include "trecision/nl/sysdef.h"
 #include "trecision/nl/define.h"
 #include "trecision/trecision.h"
 
-#include "common/config-manager.h"
 #include "common/events.h"
 #include "common/system.h"
-#include "engines/engine.h"
-#include "graphics/colormasks.h"
-#include "graphics/pixelformat.h"
-#include "graphics/surface.h"
 #include "trecision/graphics.h"
 #include "trecision/video.h"
 
@@ -46,7 +37,6 @@ extern uint8		*SoundStartBuffer;
 extern uint8		*MemoryArea;
 extern const char 		*_sysSentence[];
 extern int			ForceQuit;
-extern int			RoomReady;
 
 void NextMessage();
 void longset(void *dest, uint32 value, uint32 len);
