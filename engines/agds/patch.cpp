@@ -19,12 +19,10 @@ void ObjectPatch::save(Common::WriteStream *stream) const {
 }
 
 void Patch::load(Common::ReadStream *stream) {
-	byte extended = stream->readByte();
+	screenSaved = stream->readByte();
 	screenRegionName = readString(stream);
 	prevScreenName = readString(stream);
-	debug("patch screen region: %s, prev: %s", screenRegionName.c_str(), prevScreenName.c_str());
-	if (extended == 0)
-		return;
+	debug("patch screen, valid: %d region: %s, prev: %s", screenSaved, screenRegionName.c_str(), prevScreenName.c_str());
 
 	loadingType = static_cast<ScreenLoadingType>(stream->readUint32LE());
 	characterPosition.x = stream->readUint32LE();
@@ -50,18 +48,14 @@ void Patch::load(Common::ReadStream *stream) {
 }
 
 void Patch::save(Common::WriteStream *stream) {
-	int extended = 1;
-	stream->writeByte(extended);
+	stream->writeByte(screenSaved);
 	writeString(stream, screenRegionName);
 	writeString(stream, prevScreenName);
-
-	if (extended == 0)
-		return;
 
 	stream->writeUint32LE(static_cast<uint>(loadingType));
 	stream->writeUint32LE(characterPosition.x);
 	stream->writeUint32LE(characterPosition.y);
-	stream->writeUint32LE(characterDirection);
+	stream->writeSint32LE(characterDirection);
 	stream->writeUint32LE(characterPresent);
 
 	stream->writeUint32LE(objects.size());

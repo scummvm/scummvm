@@ -341,7 +341,7 @@ void AGDSEngine::loadScreen(const Common::String &name, ScreenLoadingType loadin
 
 	auto patch = getPatch(name);
 	bool doPatch = patch && loadingType != ScreenLoadingType::SaveOrLoad;
-	bool hasScreenPatch = patch && !patch->screenRegionName.empty();
+	bool hasScreenPatch = doPatch && patch->screenSaved;
 
 	_currentScreenName = name;
 	auto screenObject = loadObject(name, Common::String(), !hasScreenPatch);

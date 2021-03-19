@@ -54,6 +54,7 @@ struct Patch {
 		Object(const Common::String &n, int f): name(n), flag(f) {}
 	};
 
+	bool screenSaved = false;
 	Common::String screenRegionName;
 	Common::String prevScreenName;
 
