@@ -151,7 +151,7 @@ void ActionMenu::onRender() {
 
 	for (uint i = 0; i < ARRAYSIZE(_buttons); i++) {
 		if (_buttons[i].enabled) {
-			VisualImageXMG *visual = StarkGameInterface->getActionImage(_buttons[i].action, i == _activeMenuType);
+			VisualImageXMG *visual = StarkGameInterface->getActionImage(_buttons[i].action, (int32)i == _activeMenuType);
 			visual->render(Common::Point(_buttons[i].rect.left, _buttons[i].rect.top), false);
 		}
 	}
