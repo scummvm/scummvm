@@ -950,5 +950,5 @@ static const HintDesc nancy1Hints[] {
 	}
 };
 
-}// End of namespace Action
-} // End of namespace Nancy::Action
+} // End of namespace Action
+} // End of namespace Nancy

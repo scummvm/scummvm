@@ -609,5 +609,5 @@ void HintSystem::getHint(uint hint, uint difficulty) {
 	_sceneChange.readData(file);
 }
 
-}
+} // End of namespace Action
 } // End of namespace Nancy
