@@ -2,6 +2,7 @@ MODULE := engines/nancy
 
 MODULE_OBJS = \
   action/actionmanager.o \
+  action/actionrecord.o \
   action/arfactory.o \
   action/leverpuzzle.o \
   action/orderingpuzzle.o \

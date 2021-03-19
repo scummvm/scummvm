@@ -101,27 +101,7 @@ public:
 	virtual void handleInput(NancyInput &input) {}
 
 protected:
-	void finishExecution() {
-		switch (_execType) {
-		case kOneShot:
-			_isDone = true;
-			_state = kBegin;
-			break;
-		case kRepeating:
-			_isDone = false;
-			_isActive = false;
-			_state = kBegin;
-
-			for (uint i = 0; i < _dependencies.size(); ++i) {
-				_dependencies[i].satisfied = false;
-			}
-
-			break;
-		default:
-			_state = kBegin;
-			break;
-		}
-	}
+	void finishExecution();
 
 	// Used for debugging
 	virtual Common::String getRecordTypeName() const =0;
