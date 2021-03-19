@@ -233,8 +233,7 @@ void NancyEngine::setMouseEnabled(bool enabled) {
 	_cursorManager->showCursor(enabled); _input->setMouseInputEnabled(enabled);
 }
 
-void NancyEngine::callCheatMenu(bool eventFlags)
-{
+void NancyEngine::callCheatMenu(bool eventFlags) {
 	setState(kCheat), _cheatTypeIsEventFlag = eventFlags;
 }
 
