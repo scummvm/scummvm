@@ -47,6 +47,7 @@ private:
 	ObjectPtr		_object;
 	StackType		_stack;
 	unsigned		_ip, _lastIp;
+	bool			_stopping;
 	Status			_status;
 	ProcessExitCode	_exitCode;
 	Common::String	_exitArg1, _exitArg2;
@@ -116,27 +117,9 @@ private:
 
 	Common::String getCloneVarName(const Common::String & arg1, const Common::String & arg2);
 
-	void suspend(ProcessExitCode exitCode, const Common::String &arg1, const Common::String &arg2 = Common::String()) {
-		debug("suspend %d", exitCode);
-		if (active())
-			_status = kStatusPassive;
-		_exitCode = exitCode;
-		_exitIntArg1 = 0;
-		_exitIntArg2 = 0;
-		_exitArg1 = arg1;
-		_exitArg2 = arg2;
-	}
+	void suspend(ProcessExitCode exitCode, const Common::String &arg1, const Common::String &arg2 = Common::String());
 
-	void suspend(ProcessExitCode exitCode, int arg1 = 0, int arg2 = 0) {
-		debug("suspend %d", exitCode);
-		if (active())
-			_status = kStatusPassive;
-		_exitCode = exitCode;
-		_exitIntArg1 = arg1;
-		_exitIntArg2 = arg2;
-		_exitArg1.clear();
-		_exitArg2.clear();
-	}
+	void suspend(ProcessExitCode exitCode, int arg1 = 0, int arg2 = 0);
 
 	ProcessExitCode resume();
 	void setupAnimation(Animation *animation);
@@ -177,6 +160,9 @@ public:
 	}
 	void pause() {
 		_status = kStatusPassive;
+	}
+	void stopOnSuspend() {
+		_stopping = true;
 	}
 
 	bool finished() const {

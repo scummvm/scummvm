@@ -28,15 +28,17 @@
 
 namespace AGDS {
 
-Process::Process(AGDSEngine *engine, ObjectPtr object, unsigned ip) : _engine(engine), _parentScreen(engine->getCurrentScreenName()), _object(object), _ip(ip),
-                                                                                       _status(kStatusActive), _exitCode(kExitCodeDestroy),
-                                                                                       _tileWidth(16), _tileHeight(16), _tileResource(0), _tileIndex(0),
-                                                                                       _timer(0),
-                                                                                       _animationCycles(1), _animationLoop(false), _animationZ(0), _animationDelay(-1), _animationRandom(0),
-																					   _phaseVarControlled(false), _animationSpeed(100),
-																					   _samplePeriodic(false), _sampleAmbient(false),
-																					   _filmSubtitlesResource(-1)
-                                                                                       {
+Process::Process(AGDSEngine *engine, ObjectPtr object, unsigned ip) :
+	_engine(engine), _parentScreen(engine->getCurrentScreenName()), _object(object),
+	_ip(ip), _lastIp(ip), _stopping(false),
+	_status(kStatusActive), _exitCode(kExitCodeDestroy),
+	_tileWidth(16), _tileHeight(16), _tileResource(0), _tileIndex(0),
+	_timer(0),
+	_animationCycles(1), _animationLoop(false), _animationZ(0), _animationDelay(-1), _animationRandom(0),
+	_phaseVarControlled(false), _animationSpeed(100),
+	_samplePeriodic(false), _sampleAmbient(false),
+	_filmSubtitlesResource(-1)
+	{
 	updateWithCurrentMousePosition();
 }
 
@@ -71,6 +73,37 @@ void Process::error(const char *str, ...) {
 	va_end(va);
 	_status = kStatusError;
 }
+
+void Process::suspend(ProcessExitCode exitCode, const Common::String &arg1, const Common::String &arg2) {
+	debug("suspend %d", exitCode);
+	if (active())
+		_status = kStatusPassive;
+	if (_stopping && exitCode == kExitCodeSuspend) {
+		debug("stopping process of removed object");
+		done();
+	}
+	_exitCode = exitCode;
+	_exitIntArg1 = 0;
+	_exitIntArg2 = 0;
+	_exitArg1 = arg1;
+	_exitArg2 = arg2;
+}
+
+void Process::suspend(ProcessExitCode exitCode, int arg1, int arg2) {
+	debug("suspend %d", exitCode);
+	if (active())
+		_status = kStatusPassive;
+	if (_stopping && exitCode == kExitCodeSuspend) {
+		debug("stopping process of removed object");
+		done();
+	}
+	_exitCode = exitCode;
+	_exitIntArg1 = arg1;
+	_exitIntArg2 = arg2;
+	_exitArg1.clear();
+	_exitArg2.clear();
+}
+
 
 uint8 Process::next() {
 	const Object::CodeType & code = _object->getCode();
