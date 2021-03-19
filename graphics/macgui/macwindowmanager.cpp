@@ -267,6 +267,9 @@ void MacWindowManager::setMode(uint32 mode) {
 }
 
 void MacWindowManager::setActiveWidget(MacWidget *widget) {
+	if (_activeWidget == widget)
+		return;
+
 	if (_activeWidget)
 		_activeWidget->setActive(false);
 
