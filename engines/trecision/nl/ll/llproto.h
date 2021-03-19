@@ -42,7 +42,6 @@ char waitKey();
 void FreeKey();
 char *GetNextSent();
 uint16 vr(int16 x, int16 y);
-void VPix(int16 x, int16 y, uint16 col);
 void VMouseOFF();
 void VMouseON();
 void VMouseRestore();
