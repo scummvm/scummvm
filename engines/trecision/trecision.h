@@ -24,7 +24,7 @@
 #define TRECISION_TRECISION_H
 
 #include "engines/engine.h"
-
+#include "common/keyboard.h"
 #include "graphics/pixelformat.h"
 
 #include "trecision/nl/message.h"
@@ -42,7 +42,9 @@ private:
 	void initMessageSystem();
 	void initNames();
 	void initInventory();
-	
+	void initScript();
+	void LoadAll();
+
 public:
 	TrecisionEngine(OSystem *syst);
 	~TrecisionEngine() override;
@@ -67,6 +69,7 @@ public:
 
 	uint8 _actionLen[MAXACTION];
 
+	char *TextPtr;
 	SDText _sdText, _oldSdText;
 	int16 _limits[50][4];
 	uint16 _limitsNum;
@@ -111,14 +114,12 @@ public:
 	Message _characterMsg[MAXMESSAGE];
 	Message _animMsg[MAXMESSAGE];
 	Message _idleMsg;
-
-	// Snake management
-	Message _snake52;
 	Message *_curMessage;
-
 	MessageQueue _gameQueue;
 	MessageQueue _animQueue;
 	MessageQueue _characterQueue;
+	// Snake management
+	Message _snake52;
 
 	uint16 _newData[260];
 	uint32 _newData2[260];
@@ -129,7 +130,7 @@ public:
 	int16 _mouseX, _mouseY;
 	int16 _oldMouseX, _oldMouseY;
 	bool _mouseLeftBtn, _mouseRightBtn;
-	int _curKey;
+	Common::KeyCode _curKey;
 	uint16 _curAscii;
 	bool _keybInput;
 
@@ -137,7 +138,10 @@ public:
 	// CloseUp12 and 13
 	uint16 _closeUpObj;
 
-	bool _fagMouseEnabled;
+	bool _flagMouseEnabled;
+
+	SScriptFrame _scriptFrame[MAXSCRIPTFRAME];
+	SScript _script[MAXSCRIPT];
 
 
 	GraphicsManager *_graphicsMgr;

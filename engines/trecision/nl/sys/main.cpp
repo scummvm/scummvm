@@ -74,9 +74,9 @@ void CheckSystem() {
 					GetKey
 --------------------------------------------------*/
 char GetKey() {
-	int key = g_vm->_curKey;
-	int ascii = g_vm->_curAscii;
-	g_vm->_curKey = 0;
+	Common::KeyCode key = g_vm->_curKey;
+	uint16 ascii = g_vm->_curAscii;
+	g_vm->_curKey = Common::KEYCODE_INVALID;
 	g_vm->_curAscii = 0;
 
 	switch (key) {
@@ -106,11 +106,11 @@ char GetKey() {
 					waitKey
 --------------------------------------------------*/
 char waitKey() {
-	while (g_vm->_curKey == 0)
+	while (g_vm->_curKey == Common::KEYCODE_INVALID)
 		CheckSystem();
 
-	int t = g_vm->_curKey;
-	g_vm->_curKey = 0;
+	Common::KeyCode t = g_vm->_curKey;
+	g_vm->_curKey = Common::KEYCODE_INVALID;
 
 	return t;
 }
@@ -119,7 +119,7 @@ char waitKey() {
 					FreeKey
 --------------------------------------------------*/
 void FreeKey() {
-	g_vm->_curKey = 0;
+	g_vm->_curKey = Common::KEYCODE_INVALID;
 }
 
 /*-----------------10/12/95 15.52-------------------
@@ -220,10 +220,10 @@ void Mouse(MouseCmd opt) {
 	switch (opt) {
 	// Update mouse
 	case MCMD_UPDT: {
-		if (g_vm->_mouseONOFF && !g_vm->_fagMouseEnabled)
+		if (g_vm->_mouseONOFF && !g_vm->_flagMouseEnabled)
 			Mouse(MCMD_OFF);
 
-		if (!g_vm->_mouseONOFF && g_vm->_fagMouseEnabled)
+		if (!g_vm->_mouseONOFF && g_vm->_flagMouseEnabled)
 			Mouse(MCMD_ON);
 
 		if (g_vm->_mouseONOFF) {

@@ -616,7 +616,7 @@ insave:
 		fwrite(&OldIconBase,         sizeof(uint8), 1, fh);
 		fwrite(&Flagskiptalk,         sizeof(int16), 1, fh);
 		fwrite(&Flagskipenable,       sizeof(int16), 1, fh);
-		fwrite(&g_vm->_fagMouseEnabled, sizeof(int16), 1, fh);
+		fwrite(&g_vm->_flagMouseEnabled, sizeof(int16), 1, fh);
 		fwrite(&FlagScreenRefreshed,  sizeof(int16), 1, fh);
 		fwrite(&FlagPaintCharacter,        sizeof(int16), 1, fh);
 		fwrite(&FlagSomeOneSpeak,     sizeof(int16), 1, fh);
@@ -731,8 +731,8 @@ bool DataLoad() {
 	for (int a = 0; a < TOP; a++)
 		wordset(g_vm->_video2 + CurRoomMaxX * a + CurScrollPageDx, 0, SCREENLEN);
 
-	if (!g_vm->_fagMouseEnabled) {
-		g_vm->_fagMouseEnabled = true;
+	if (!g_vm->_flagMouseEnabled) {
+		g_vm->_flagMouseEnabled = true;
 		Mouse(MCMD_ON);
 	}
 
@@ -872,7 +872,7 @@ bool DataLoad() {
 		fread(&OldIconBase,         sizeof(uint8), 1, fh);
 		fread(&Flagskiptalk,         sizeof(int16), 1, fh);
 		fread(&Flagskipenable,       sizeof(int16), 1, fh);
-		fread(&g_vm->_fagMouseEnabled, sizeof(int16), 1, fh);
+		fread(&g_vm->_flagMouseEnabled, sizeof(int16), 1, fh);
 		fread(&FlagScreenRefreshed,  sizeof(int16), 1, fh);
 		fread(&FlagPaintCharacter,        sizeof(int16), 1, fh);
 		fread(&FlagSomeOneSpeak,     sizeof(int16), 1, fh);
@@ -988,7 +988,7 @@ bool DataLoad() {
 		Mouse(MCMD_UPDT);
 
 	if (Flagscriptactive) {
-		g_vm->_fagMouseEnabled = false;
+		g_vm->_flagMouseEnabled = false;
 		Mouse(MCMD_OFF);
 	}
 

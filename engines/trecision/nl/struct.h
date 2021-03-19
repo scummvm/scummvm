@@ -28,6 +28,7 @@
 #define TRECISION_NL_STRUCT_H
 
 #include "trecision/nl/sysdef.h"
+#include "common/scummsys.h"
 
 namespace Trecision {
 

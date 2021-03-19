@@ -6,6 +6,7 @@ MODULE_OBJS = \
 	graphics.o \
 	video.o \
 	inventory.o \
+	logicnl.o \
 	nl/classes.o \
 	nl/dialog.o \
 	nl/do.o \
@@ -14,7 +15,6 @@ MODULE_OBJS = \
 	nl/process.o \
 	nl/regen.o \
 	nl/schedule.o \
-	nl/script.o \
 	nl/string.o \
 	nl/utility.o \
 	nl/3d/3dact.o \
@@ -24,7 +24,6 @@ MODULE_OBJS = \
 	nl/ll/llanim.o \
 	nl/ll/llasm.o \
 	nl/ll/lldec.o \
-	nl/ll/llkbd.o \
 	nl/ll/llmouse.o \
 	nl/ll/llscreen.o \
 	nl/ll/llvideo.o \

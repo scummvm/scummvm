@@ -33,12 +33,6 @@ namespace Trecision {
 extern struct SSound     GSample[];
 
 /*-------------------------------------------------------------------------*/
-/*                                 SCRIPT           					   */
-/*-------------------------------------------------------------------------*/
-extern struct SScriptFrame ScriptFrame[];
-extern struct SScript Script[];
-
-/*-------------------------------------------------------------------------*/
 /*                            VARIABILI ATTUALI          				   */
 /*-------------------------------------------------------------------------*/
 extern bool _characterInMovement;

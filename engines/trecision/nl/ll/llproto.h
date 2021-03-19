@@ -41,7 +41,6 @@ void decompress(const uint8 *src, unsigned int src_len, uint8 *dst, unsigned int
 char waitKey();
 void FreeKey();
 char *GetNextSent();
-void LoadAll();
 uint16 vr(int16 x, int16 y);
 void VPix(int16 x, int16 y, uint16 col);
 void VMouseOFF();

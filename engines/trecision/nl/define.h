@@ -452,13 +452,13 @@
 #define oBARILOTTO1D			213
 #define oMASKBOTTIGLIE1D		214
 #define oLASTLEV1				215
-#define od21ALLA23				216
+#define od21TO23				216
 #define oUSCITA21				217
 #define oBINARIO21				218
 #define oTUBO21					219
 #define oCATENAT21				220
 #define oCUNICOLO21				221
-#define od21ALLA22				222
+#define od21TO22				222
 #define om21ALLA22				223
 #define oPORTAA21				224
 #define oDOORC21				225
@@ -508,9 +508,9 @@
 #define oPANNELLOB23			269
 #define oCAVIB23				270
 #define od23BALLA21				271
-#define od24ALLA23				272
+#define od24TO23				272
 #define om24ALLA23				273
-#define od24ALLA26				274
+#define od24TO26				274
 #define om24ALLA26				275
 #define od24ALLA25				276
 #define oPASSERELLA24			277
@@ -520,7 +520,7 @@
 #define oVIDEOTELEFONO24		281
 #define oINSEGNA24				282
 #define oCARTELLONE24			283
-#define oPASSAGGIO24			284
+#define oPASSAGE24			284
 #define omPASSAGGIO24			285
 #define omSCALASX24				286
 #define omSCALADX24				287
@@ -762,7 +762,7 @@
 #define oDINOSAURO2E			523
 #define oCARTELLOS2E			524
 #define oCARTELLOA2E			525
-#define od2EALLA2C				526
+#define od2ETO2C				526
 #define oDUMMY2E				527
 #define oCATWALKA2E			528
 #define oCAMPO2E				529
@@ -1787,8 +1787,8 @@
 #define a163PROVAPASSAREBINARI		            140
 #define a164OPERAMACCHINABIGLIETTI              141
 #define a165USABANCONOTA	                    142
-#define a166USACREDITCARD			            143
-#define a167USAMONETA			                144
+#define a166USECREDITCARD			            143
+#define a167USEMONEY			                144
 #define a168SOLLEVACESTINO			            145
 #define a169PREMEFINGERPAD		                146
 #define a1611TASTOASCENSORE	                    147

@@ -32,6 +32,7 @@
 
 #include "common/archive.h"
 #include "common/config-manager.h"
+#include "common/file.h"
 #include "common/fs.h"
 #include "nl/define.h"
 
@@ -39,6 +40,10 @@
 #include "trecision/nl/sysdef.h"
 #include "trecision/graphics.h"
 #include "trecision/video.h"
+
+namespace Common {
+class File;
+}
 
 namespace Trecision {
 
@@ -131,16 +136,19 @@ TrecisionEngine::TrecisionEngine(OSystem *syst) : Engine(syst) {
 	_actorLimit = 0;
 	_nextRefresh = 0;
 
-	_curKey = _curAscii = 0;
+	_curKey = Common::KEYCODE_INVALID;
+	_curAscii = 0;
 	_mouseX = _mouseY = 0;
 	_mouseLeftBtn = _mouseRightBtn = false;
 	_oldMouseX = _oldMouseY = 0;
 	_keybInput = false;
 
 	_gamePaused = false;
-	_fagMouseEnabled = true;
+	_flagMouseEnabled = true;
 
 	_closeUpObj = 0;
+	TextPtr = nullptr;
+
 }
 
 TrecisionEngine::~TrecisionEngine() {
@@ -203,7 +211,7 @@ void TrecisionEngine::eventLoop() {
 			switch (event.kbd.keycode) {
 			case Common::KEYCODE_p:
 				if (!_gamePaused && !_keybInput) {
-					_curKey = 0;
+					_curKey = Common::KEYCODE_INVALID;
 					_gamePaused = true;
 					waitKey();
 				}
@@ -296,4 +304,168 @@ void TrecisionEngine::initNames() {
 	_objName[0] = " ";
 }
 
+/* --------------------------------------------------
+ * 						LoadAll
+ * --------------------------------------------------*/
+void TrecisionEngine::LoadAll() {
+	Common::File dataNl;
+	if (!dataNl.open("DATA.NL"))
+		error("LoadAll : Couldn't open DATA.NL");
+
+	for (int i = 0; i < MAXROOMS; ++i) {
+		dataNl.read(&g_vm->_room[i]._baseName, ARRAYSIZE(g_vm->_room[i]._baseName));
+		g_vm->_room[i]._flag = dataNl.readByte();
+		dataNl.readByte(); // Padding
+		g_vm->_room[i]._bkgAnim = dataNl.readUint16LE();
+		for (int j = 0; j < MAXOBJINROOM; ++j)
+			g_vm->_room[i]._object[j] = dataNl.readUint16LE();
+		for (int j = 0; j < MAXSOUNDSINROOM; ++j)
+			g_vm->_room[i]._sounds[j] = dataNl.readUint16LE();
+		for (int j = 0; j < MAXACTIONINROOM; ++j)
+			g_vm->_room[i]._actions[j] = dataNl.readUint16LE();
+	}
+
+	for (int i = 0; i < MAXOBJ; ++i) {
+		g_vm->_obj[i]._dx = dataNl.readUint16LE();
+		g_vm->_obj[i]._dy = dataNl.readUint16LE();
+		g_vm->_obj[i]._px = dataNl.readUint16LE();
+		g_vm->_obj[i]._py = dataNl.readUint16LE();
+
+		for (int j = 0; j < 4; ++j)
+			g_vm->_obj[i]._lim[j] = dataNl.readUint16LE();
+
+		g_vm->_obj[i]._position = dataNl.readSByte();
+		dataNl.readByte(); // Padding
+		g_vm->_obj[i]._name = dataNl.readUint16LE();
+		g_vm->_obj[i]._examine = dataNl.readUint16LE();
+		g_vm->_obj[i]._action = dataNl.readUint16LE();
+		g_vm->_obj[i]._goRoom = dataNl.readByte();
+		g_vm->_obj[i]._nbox = dataNl.readByte();
+		g_vm->_obj[i]._ninv = dataNl.readByte();
+		g_vm->_obj[i]._mode = dataNl.readByte();
+		g_vm->_obj[i]._flag = dataNl.readByte();
+		dataNl.readByte(); // Padding
+		g_vm->_obj[i]._anim = dataNl.readUint16LE();
+	}
+
+	for (int i = 0; i < MAXINVENTORY; ++i) {
+		g_vm->_inventoryObj[i]._name = dataNl.readUint16LE();
+		g_vm->_inventoryObj[i]._examine = dataNl.readUint16LE();
+		g_vm->_inventoryObj[i]._action = dataNl.readUint16LE();
+		g_vm->_inventoryObj[i]._flag = dataNl.readByte();
+		dataNl.readByte(); // Padding
+		g_vm->_inventoryObj[i]._anim = dataNl.readUint16LE();
+	}
+
+	for (int i = 0; i < MAXSAMPLE; ++i) {
+		dataNl.read(&GSample[i]._name, ARRAYSIZE(GSample[i]._name));
+		GSample[i]._volume = dataNl.readByte();
+		GSample[i]._flag = dataNl.readByte();
+		GSample[i]._panning = dataNl.readSByte();
+	}
+
+	for (int i = 0; i < MAXSCRIPTFRAME; ++i) {
+		g_vm->_scriptFrame[i]._class = dataNl.readByte();
+		g_vm->_scriptFrame[i]._event = dataNl.readByte();
+		g_vm->_scriptFrame[i]._u8Param = dataNl.readByte();
+		dataNl.readByte(); // Padding
+		g_vm->_scriptFrame[i]._u16Param1 = dataNl.readUint16LE();
+		g_vm->_scriptFrame[i]._u16Param2 = dataNl.readUint16LE();
+		g_vm->_scriptFrame[i]._u32Param = dataNl.readUint16LE();
+		g_vm->_scriptFrame[i]._noWait = !(dataNl.readSint16LE() == 0);
+	}
+
+	for (int i = 0; i < MAXSCRIPT; ++i) {
+		g_vm->_script[i]._firstFrame = dataNl.readUint16LE();
+		g_vm->_script[i]._flag = dataNl.readByte();
+		dataNl.readByte(); // Padding
+	}
+
+	for (int i = 0; i < MAXANIM; ++i) {
+		dataNl.read(&g_vm->_animMgr->_animTab[i]._name, ARRAYSIZE(g_vm->_animMgr->_animTab[i]._name));
+
+		g_vm->_animMgr->_animTab[i]._flag = dataNl.readUint16LE();
+
+		for (int j = 0; j < MAXCHILD; ++j) {
+			g_vm->_animMgr->_animTab[i]._lim[j][0] = dataNl.readUint16LE();
+			g_vm->_animMgr->_animTab[i]._lim[j][1] = dataNl.readUint16LE();
+			g_vm->_animMgr->_animTab[i]._lim[j][2] = dataNl.readUint16LE();
+			g_vm->_animMgr->_animTab[i]._lim[j][3] = dataNl.readUint16LE();
+		}
+
+		g_vm->_animMgr->_animTab[i]._nbox = dataNl.readByte();
+		dataNl.readByte(); // Padding
+
+		for (int j = 0; j < MAXATFRAME; ++j) {
+			g_vm->_animMgr->_animTab[i]._atFrame[j]._type = dataNl.readByte();
+			g_vm->_animMgr->_animTab[i]._atFrame[j]._child = dataNl.readByte();
+			g_vm->_animMgr->_animTab[i]._atFrame[j]._numFrame = dataNl.readUint16LE();
+			g_vm->_animMgr->_animTab[i]._atFrame[j]._index = dataNl.readUint16LE();
+		}
+	}
+
+	for (int i = 0; i < MAXDIALOG; ++i) {
+		_dialog[i]._flag = dataNl.readUint16LE();
+		_dialog[i]._interlocutor = dataNl.readUint16LE();
+
+		dataNl.read(&_dialog[i]._startAnim, ARRAYSIZE(_dialog[i]._startAnim));
+
+		_dialog[i]._startLen = dataNl.readUint16LE();
+		_dialog[i]._firstChoice = dataNl.readUint16LE();
+		_dialog[i]._choiceNumb = dataNl.readUint16LE();
+
+		for (int j = 0; j < MAXNEWSMKPAL; ++j)
+			_dialog[i]._newPal[j] = dataNl.readUint16LE();
+	}
+
+	for (int i = 0; i < MAXCHOICE; ++i) {
+		_choice[i]._flag = dataNl.readUint16LE();
+		_choice[i]._sentenceIndex = dataNl.readUint16LE();
+		_choice[i]._firstSubTitle = dataNl.readUint16LE();
+		_choice[i]._subTitleNumb = dataNl.readUint16LE();
+
+		for (int j = 0; j < MAXDISPSCELTE; ++j)
+			_choice[i]._on[j] = dataNl.readUint16LE();
+
+		for (int j = 0; j < MAXDISPSCELTE; ++j)
+			_choice[i]._off[j] = dataNl.readUint16LE();
+
+		_choice[i]._startFrame = dataNl.readUint16LE();
+		_choice[i]._nextDialog = dataNl.readUint16LE();
+	}
+
+	for (int i = 0; i < MAXSUBTITLES; ++i) {
+		_subTitles[i]._sentence = dataNl.readUint16LE();
+		_subTitles[i]._x = dataNl.readUint16LE();
+		_subTitles[i]._y = dataNl.readUint16LE();
+		_subTitles[i]._color = dataNl.readUint16LE();
+		_subTitles[i]._startFrame = dataNl.readUint16LE();
+		_subTitles[i]._length = dataNl.readUint16LE();
+	}
+
+	for (int i = 0; i < MAXACTION; ++i)
+		g_vm->_actionLen[i] = dataNl.readByte();
+
+	NumFileRef = dataNl.readSint32LE();
+
+	for (int i = 0; i < NumFileRef; ++i) {
+		dataNl.read(&FileRef[i].name, ARRAYSIZE(FileRef[i].name));
+		FileRef[i].offset = dataNl.readSint32LE();
+	}
+
+	dataNl.read(TextArea, MAXTEXTAREA);
+
+	TextPtr = (char *)TextArea;
+
+	for (int a = 0; a < MAXOBJNAME; a++)
+		g_vm->_objName[a] = GetNextSent();
+
+	for (int a = 0; a < MAXSENTENCE; a++)
+		g_vm->_sentence[a] = GetNextSent();
+
+	for (int a = 0; a < MAXSYSTEXT; a++)
+		g_vm->_sysText[a] = GetNextSent();
+
+	dataNl.close();
+}
 } // End of namespace Trecision

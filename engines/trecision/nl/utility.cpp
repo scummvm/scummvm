@@ -139,7 +139,7 @@ void EndScript() {
 	CurStack--;
 	if (CurStack == 0) {
 		Flagscriptactive = false;
-		g_vm->_fagMouseEnabled = true;
+		g_vm->_flagMouseEnabled = true;
 		RepaintString();
 	}
 }
@@ -150,10 +150,10 @@ void EndScript() {
 void PlayScript(uint16 i) {
 	CurStack++;
 	Flagscriptactive = true;
-	g_vm->_fagMouseEnabled = false;
-	g_vm->_curScriptFrame[CurStack] = Script[i]._firstFrame;
+	g_vm->_flagMouseEnabled = false;
+	g_vm->_curScriptFrame[CurStack] = g_vm->_script[i]._firstFrame;
 
-	SScriptFrame *curFrame = &ScriptFrame[g_vm->_curScriptFrame[CurStack]];
+	SScriptFrame *curFrame = &g_vm->_scriptFrame[g_vm->_curScriptFrame[CurStack]];
 	// If the event is empty, terminate the script
 	if ((curFrame->_class == 0) && (curFrame->_event == 0)) {
 		EndScript();
@@ -163,8 +163,8 @@ void PlayScript(uint16 i) {
 	bool loop = true;
 	while (loop) {
 		loop = false;
-		curFrame = &ScriptFrame[g_vm->_curScriptFrame[CurStack]];
-		SScriptFrame *nextFrame = &ScriptFrame[g_vm->_curScriptFrame[CurStack] + 1];
+		curFrame = &g_vm->_scriptFrame[g_vm->_curScriptFrame[CurStack]];
+		SScriptFrame *nextFrame = &g_vm->_scriptFrame[g_vm->_curScriptFrame[CurStack] + 1];
 		curFrame->sendFrame();
 		if (curFrame->_noWait && !((nextFrame->_class == 0) && (nextFrame->_event == 0))) {
 			g_vm->_curScriptFrame[CurStack]++;
@@ -179,9 +179,9 @@ void PlayScript(uint16 i) {
 void EvalScript() {
 	if (g_vm->_characterQueue.testEmptyCharacterQueue4Script() && g_vm->_gameQueue.testEmptyQueue(MC_DIALOG) && FlagScreenRefreshed) {
 		g_vm->_curScriptFrame[CurStack]++;
-		g_vm->_fagMouseEnabled = false;
+		g_vm->_flagMouseEnabled = false;
 
-		SScriptFrame *curFrame = &ScriptFrame[g_vm->_curScriptFrame[CurStack]];
+		SScriptFrame *curFrame = &g_vm->_scriptFrame[g_vm->_curScriptFrame[CurStack]];
 		if ((curFrame->_class == 0) && (curFrame->_event == 0)) {
 			EndScript();
 			return;
@@ -190,8 +190,8 @@ void EvalScript() {
 		bool loop = true;
 		while (loop) {
 			loop = false;
-			curFrame = &ScriptFrame[g_vm->_curScriptFrame[CurStack]];
-			SScriptFrame *nextFrame = &ScriptFrame[g_vm->_curScriptFrame[CurStack] + 1];
+			curFrame = &g_vm->_scriptFrame[g_vm->_curScriptFrame[CurStack]];
+			SScriptFrame *nextFrame = &g_vm->_scriptFrame[g_vm->_curScriptFrame[CurStack] + 1];
 			curFrame->sendFrame();
 			if (curFrame->_noWait && !((nextFrame->_class == 0) && (nextFrame->_event == 0))) {
 				g_vm->_curScriptFrame[CurStack]++;
@@ -453,18 +453,18 @@ void SetRoom(unsigned short r, bool b) {
 			// if we can go beyond
 			if (((IconPos(iSBARRA21) != MAXICON) && ((_choice[436]._flag & OBJFLAG_DONE) || (_choice[466]._flag & OBJFLAG_DONE)))
 					|| ((_choice[451]._flag & OBJFLAG_DONE) || (_choice[481]._flag & OBJFLAG_DONE))) {
-				g_vm->_obj[od21ALLA23]._flag |= OBJFLAG_ROOMOUT;
-				g_vm->_obj[od21ALLA23]._flag &= ~OBJFLAG_EXAMINE;
+				g_vm->_obj[od21TO23]._flag |= OBJFLAG_ROOMOUT;
+				g_vm->_obj[od21TO23]._flag &= ~OBJFLAG_EXAMINE;
 			} else {
-				g_vm->_obj[od21ALLA23]._flag &= ~OBJFLAG_ROOMOUT;
-				g_vm->_obj[od21ALLA23]._flag |= OBJFLAG_EXAMINE;
+				g_vm->_obj[od21TO23]._flag &= ~OBJFLAG_ROOMOUT;
+				g_vm->_obj[od21TO23]._flag |= OBJFLAG_EXAMINE;
 			}
-			g_vm->_obj[od21ALLA23]._anim = 0;
+			g_vm->_obj[od21TO23]._anim = 0;
 			g_vm->_obj[oUSCITA21]._mode |= OBJMODE_OBJSTATUS;
 
-			g_vm->_obj[od21ALLA22]._flag |= OBJFLAG_ROOMOUT;
-			g_vm->_obj[od21ALLA22]._flag &= ~OBJFLAG_EXAMINE;
-			g_vm->_obj[od21ALLA22]._anim = aWALKOUT;
+			g_vm->_obj[od21TO22]._flag |= OBJFLAG_ROOMOUT;
+			g_vm->_obj[od21TO22]._flag &= ~OBJFLAG_EXAMINE;
+			g_vm->_obj[od21TO22]._anim = aWALKOUT;
 			g_vm->_obj[oPORTAA21]._anim = a212;
 			g_vm->_obj[oDOORC21]._anim = a219;
 
@@ -477,23 +477,23 @@ void SetRoom(unsigned short r, bool b) {
 			g_vm->_obj[oCATENAT21]._position = 6;
 			g_vm->_obj[oUSCITA21]._position = 21;
 
-			g_vm->_obj[od21ALLA23]._flag |= OBJFLAG_ROOMOUT;
-			g_vm->_obj[od21ALLA23]._flag &= ~OBJFLAG_EXAMINE;
-			g_vm->_obj[od21ALLA23]._anim = aWALKOUT;
+			g_vm->_obj[od21TO23]._flag |= OBJFLAG_ROOMOUT;
+			g_vm->_obj[od21TO23]._flag &= ~OBJFLAG_EXAMINE;
+			g_vm->_obj[od21TO23]._anim = aWALKOUT;
 			g_vm->_obj[oUSCITA21]._mode |= OBJMODE_OBJSTATUS;
 
 			// If we can go beyond
 			if (((IconPos(iSBARRA21) != MAXICON) && ((_choice[436]._flag & OBJFLAG_DONE) || (_choice[466]._flag & OBJFLAG_DONE)))
 					|| ((_choice[451]._flag & OBJFLAG_DONE) || (_choice[481]._flag & OBJFLAG_DONE))) {
-				g_vm->_obj[od21ALLA22]._flag |= OBJFLAG_ROOMOUT;
-				g_vm->_obj[od21ALLA22]._flag &= ~OBJFLAG_EXAMINE;
+				g_vm->_obj[od21TO22]._flag |= OBJFLAG_ROOMOUT;
+				g_vm->_obj[od21TO22]._flag &= ~OBJFLAG_EXAMINE;
 			} else {
-				g_vm->_obj[od21ALLA22]._flag &= ~OBJFLAG_ROOMOUT;
-				g_vm->_obj[od21ALLA22]._flag |= OBJFLAG_EXAMINE;
+				g_vm->_obj[od21TO22]._flag &= ~OBJFLAG_ROOMOUT;
+				g_vm->_obj[od21TO22]._flag |= OBJFLAG_EXAMINE;
 			}
-			g_vm->_obj[od21ALLA22]._anim = 0;
-			g_vm->_obj[od21ALLA22]._examine = 335;
-			g_vm->_obj[od21ALLA22]._action = 335;
+			g_vm->_obj[od21TO22]._anim = 0;
+			g_vm->_obj[od21TO22]._examine = 335;
+			g_vm->_obj[od21TO22]._action = 335;
 			g_vm->_obj[oPORTAA21]._anim = 0;
 			g_vm->_obj[oDOORC21]._anim = 0;
 
@@ -505,15 +505,15 @@ void SetRoom(unsigned short r, bool b) {
 		if (!b) {
 			read3D("24.3d");
 			g_vm->_room[r24]._flag &= ~OBJFLAG_EXTRA;
-			g_vm->_obj[oPASSAGGIO24]._position = 3;
+			g_vm->_obj[oPASSAGE24]._position = 3;
 			g_vm->_obj[oMACERIE24]._position = 3;
 			g_vm->_obj[oDUMMY24]._mode &= ~OBJMODE_OBJSTATUS;
 			g_vm->_obj[oDUMMY24A]._mode |= OBJMODE_OBJSTATUS;
 		} else {
 			read3D("242.3d");
 			g_vm->_room[r24]._flag |= OBJFLAG_EXTRA;
-			g_vm->_obj[od24ALLA26]._mode |= OBJMODE_OBJSTATUS;
-			g_vm->_obj[oPASSAGGIO24]._position = 4;
+			g_vm->_obj[od24TO26]._mode |= OBJMODE_OBJSTATUS;
+			g_vm->_obj[oPASSAGE24]._position = 4;
 			g_vm->_obj[oMACERIE24]._position = 4;
 			g_vm->_obj[oDUMMY24A]._mode &= ~OBJMODE_OBJSTATUS;
 			g_vm->_obj[oDUMMY24]._mode |= OBJMODE_OBJSTATUS;
@@ -590,6 +590,19 @@ void SetRoom(unsigned short r, bool b) {
 	}
 
 	RegenRoom();
+}
+
+/* -----------------19/01/98 11.11-------------------
+ * 					GetNextSent
+ * --------------------------------------------------*/
+char *GetNextSent() {
+	while (*g_vm->TextPtr) {
+		*g_vm->TextPtr = ~(*g_vm->TextPtr);
+		g_vm->TextPtr++;
+	}
+
+	g_vm->TextPtr++;
+	return g_vm->TextPtr;
 }
 
 } // End of namespace Trecision
