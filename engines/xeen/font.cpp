@@ -35,36 +35,25 @@ byte FontData::_bgColor;
 bool FontData::_fontReduced;
 Justify FontData::_fontJustify;
 
-Common::Language lang;
-int offset_fntEn;
-int offset_fntEnReduced;
-int offset_fntNonEn;
-int offset_fntNonEnReduced;
-int offset_fntEnW;
-int offset_fntEnReducedW;
-int offset_fntNonEnW;
-int offset_fntNonEnReducedW;
-
-
 FontSurface::FontSurface() : XSurface(), _msgWraps(false), _displayString(nullptr),
 		_writePos(*FontData::_fontWritePos) {
 	setTextColor(0);
 
 	lang = Common::parseLanguage(ConfMan.get("language"));
 	if (Common::RU_RUS == lang) {
-		offset_fntEn            = 0x0000;
-		offset_fntNonEn         = 0x0800;
-		offset_fntEnReduced     = 0x1000;
-		offset_fntNonEnReduced  = 0x1800;
-		offset_fntEnW           = 0x2000;
-		offset_fntNonEnW        = 0x2080;
-		offset_fntEnReducedW    = 0x2100;
-		offset_fntNonEnReducedW = 0x2180;
+		_fntEnOffset            = 0x0000;
+		_fntNonEnOffset         = 0x0800;
+		_fntEnReducedOffset     = 0x1000;
+		_fntNonEnReducedOffset  = 0x1800;
+		_fntEnWOffset           = 0x2000;
+		_fntNonEnWOffset        = 0x2080;
+		_fntEnReducedWOffset    = 0x2100;
+		_fntNonEnReducedWOffset = 0x2180;
 	} else {
-		offset_fntEn            = 0x0000;
-		offset_fntEnReduced     = 0x0800;
-		offset_fntEnW           = 0x1000;
-		offset_fntEnReducedW    = 0x1080;
+		_fntEnOffset            = 0x0000;
+		_fntEnReducedOffset     = 0x0800;
+		_fntEnWOffset           = 0x1000;
+		_fntEnReducedWOffset    = 0x1080;
 	}
 }
 
@@ -75,19 +64,19 @@ FontSurface::FontSurface(int wv, int hv) : XSurface(wv, hv),
 
 	lang = Common::parseLanguage(ConfMan.get("language"));
 	if (Common::RU_RUS == lang) {
-		offset_fntEn            = 0x0000;
-		offset_fntNonEn         = 0x0800;
-		offset_fntEnReduced     = 0x1000;
-		offset_fntNonEnReduced  = 0x1800;
-		offset_fntEnW           = 0x2000;
-		offset_fntNonEnW        = 0x2080;
-		offset_fntEnReducedW    = 0x2100;
-		offset_fntNonEnReducedW = 0x2180;
+		_fntEnOffset            = 0x0000;
+		_fntNonEnOffset         = 0x0800;
+		_fntEnReducedOffset     = 0x1000;
+		_fntNonEnReducedOffset  = 0x1800;
+		_fntEnWOffset           = 0x2000;
+		_fntNonEnWOffset        = 0x2080;
+		_fntEnReducedWOffset    = 0x2100;
+		_fntNonEnReducedWOffset = 0x2180;
 	} else {
-		offset_fntEn            = 0x0000;
-		offset_fntEnReduced     = 0x0800;
-		offset_fntEnW           = 0x1000;
-		offset_fntEnReducedW    = 0x1080;
+		_fntEnOffset            = 0x0000;
+		_fntEnReducedOffset     = 0x0800;
+		_fntEnWOffset           = 0x1000;
+		_fntEnReducedWOffset    = 0x1080;
 	}
 }
 
@@ -240,8 +229,8 @@ const char *FontSurface::writeString(const Common::String &s, const Common::Rect
 					if (c == 6)
 						c = ' ';
 					int offset_charW = c < 0 ?
-						(_fontReduced ? offset_fntNonEnReducedW : offset_fntNonEnW) + (int)(0x80 + c) :
-						(_fontReduced ? offset_fntEnReducedW : offset_fntEnW) + (int)c;
+						(_fontReduced ? _fntNonEnReducedWOffset : _fntNonEnWOffset) + (int)(0x80 + c) :
+						(_fontReduced ? _fntEnReducedWOffset : _fntEnWOffset) + (int)c;
 					byte charSize = _fontData[offset_charW];
 
 					_writePos.x -= charSize;
@@ -316,10 +305,10 @@ char FontSurface::getNextChar() {
 }
 
 bool FontSurface::getNextCharWidth(int &total) {
- 	char c = getNextChar();
+	char c = getNextChar();
 
 	if (c > ' ') {
-		total += _fontData[(_fontReduced ? offset_fntEnReducedW : offset_fntEnW) + (int)c];
+		total += _fontData[(_fontReduced ? _fntEnReducedWOffset : _fntEnWOffset) + (int)c];
 		return false;
 	} else if (c == ' ') {
 		total += 4;
@@ -339,7 +328,7 @@ bool FontSurface::getNextCharWidth(int &total) {
 			getNextChar();
 		return false;
 	} else if (Common::RU_RUS == lang && c < 0) {
-		total += _fontData[(_fontReduced ? offset_fntNonEnReducedW : offset_fntNonEnW) + (int)(0x80 + c)];
+		total += _fontData[(_fontReduced ? _fntNonEnReducedWOffset : _fntNonEnWOffset) + (int)(0x80 + c)];
 		return false;
 	} else {
 		--_displayString;
@@ -394,11 +383,11 @@ void FontSurface::writeChar(char c, const Common::Rect &clipRect) {
 	int offset_charData;
 	int offset_charW;
 	if (Common::RU_RUS == lang && c < 0) {
-		offset_charData = (_fontReduced ? offset_fntNonEnReduced : offset_fntNonEn) + (int)(0x80 + c) * 16;
-		offset_charW = (_fontReduced ? offset_fntNonEnReducedW : offset_fntNonEnW) + (int)(0x80 + c);
+		offset_charData = (_fontReduced ? _fntNonEnReducedOffset : _fntNonEnOffset) + (int)(0x80 + c) * 16;
+		offset_charW = (_fontReduced ? _fntNonEnReducedWOffset : _fntNonEnWOffset) + (int)(0x80 + c);
 	} else {
-		offset_charData = (_fontReduced ? offset_fntEnReduced : offset_fntEn) + (int)c * 16;
-		offset_charW = (_fontReduced ? offset_fntEnReducedW : offset_fntEnW) + (int)c;
+		offset_charData = (_fontReduced ? _fntEnReducedOffset : _fntEnOffset) + (int)c * 16;
+		offset_charW = (_fontReduced ? _fntEnReducedWOffset : _fntEnWOffset) + (int)c;
 	}
 	const byte *srcP = &_fontData[offset_charData];
 
