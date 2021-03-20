@@ -3389,7 +3389,7 @@ const int eob2AmigaNeed[] = {
 
 	-1
 };
-
+/*
 const int eob2PC98Need[] = {
 	kEoBBaseChargenStrings1,
 	kEoBBaseChargenStrings2,
@@ -3716,7 +3716,7 @@ const int eob2PC98Need[] = {
 	kEoBBaseSoundFilesFinale,
 
 	-1
-};
+};*/
 
 const int eob2FMTownsNeed[] = {
 	kEoBBaseChargenStrings1,
