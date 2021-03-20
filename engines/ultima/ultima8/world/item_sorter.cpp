@@ -29,6 +29,7 @@
 #include "ultima/ultima8/graphics/render_surface.h"
 #include "ultima/ultima8/misc/rect.h"
 #include "ultima/ultima8/games/game_data.h"
+#include "ultima/ultima8/ultima8.h"
 
 // temp
 #include "ultima/ultima8/world/actors/weapon_overlay.h"
@@ -49,7 +50,7 @@ struct SortItem {
 			_syTop(0), _sxBot(0), _syBot(0),_f32x32(false), _flat(false),
 			_occl(false), _solid(false), _draw(false), _roof(false),
 			_noisy(false), _anim(false), _trans(false), _fixed(false),
-			_land(false), _occluded(false), _clipped(0) { }
+			_land(false), _occluded(false), _clipped(false), _sprite(false) { }
 
 	SortItem                *_next;
 	SortItem                *_prev;
@@ -107,10 +108,10 @@ struct SortItem {
 	bool    _trans : 1;          // Needs 1 bit  8
 	bool    _fixed : 1;
 	bool    _land : 1;
+	bool 	_sprite : 1;         // Always-on-top sprite, for Crusader (U8 sprites appear in z order)
 
 	bool    _occluded : 1;       // Set true if occluded
-
-	int16   _clipped;            // Clipped to RenderSurface
+	bool  	_clipped : 1;        // Clipped to RenderSurface
 
 	int32   _order;      // Rendering _order. -1 is not yet drawn
 
@@ -141,7 +142,7 @@ struct SortItem {
 				n = n->_next;
 				return *this;
 			}
-			bool operator != (const iterator &o) {
+			bool operator != (const iterator &o) const {
 				return n != o.n;
 			}
 		};
@@ -229,8 +230,8 @@ struct SortItem {
 	// Operator less than
 	inline bool operator<(const SortItem &si2) const;
 
-	// Operator left shift (ok, what this does it output the comparisons)
-	inline bool operator<<(const SortItem &si2) const;
+	// Operator left shift (outputs the comparison result)
+	bool operator<<(const SortItem &si2) const;
 
 	// Comparison for the sorted lists
 	inline bool ListLessThan(const SortItem *other) const {
@@ -309,6 +310,9 @@ inline bool SortItem::occludes(const SortItem &si2) const {
 
 inline bool SortItem::operator<(const SortItem &si2) const {
 	const SortItem &si1 = *this;
+
+	if (si1._sprite != si2._sprite)
+		return si1._sprite < si2._sprite;
 
 	// Specialist z flat handling
 	if (si1._flat && si2._flat) {
@@ -432,7 +436,8 @@ inline bool SortItem::operator<(const SortItem &si2) const {
 	}                                                           \
 	pout << tab"}" << Std::endl;
 
-inline bool SortItem::operator<<(const SortItem &si2) const {
+
+bool SortItem::operator<<(const SortItem &si2) const {
 	const SortItem &si1 = *this;
 
 	if (si2.overlap(si1)) pout << "Overlaping" << Std::endl;
@@ -683,10 +688,12 @@ void ItemSorter::AddItem(int32 x, int32 y, int32 z, uint32 shapeNum, uint32 fram
 	si->_sy2 = si->_sy + _frame->_height;   // Bottom
 
 	// Do Clipping here
-	si->_clipped = _surf->CheckClipped(Rect(si->_sx, si->_sy, si->_sx + _frame->_width, si->_sy + _frame->_height));
-	if (si->_clipped < 0)
+	int16 clipped = _surf->CheckClipped(Rect(si->_sx, si->_sy, si->_sx + _frame->_width, si->_sy + _frame->_height));
+	if (clipped < 0)
 		// Clipped away entirely - don't add to the list.
 		return;
+
+	si->_clipped = (clipped != 0);
 
 	// These help out with sorting. We calc them now, so it will be faster
 	si->_f32x32 = xd == 128 && yd == 128;
@@ -702,6 +709,7 @@ void ItemSorter::AddItem(int32 x, int32 y, int32 z, uint32 shapeNum, uint32 fram
 	si->_trans = info->is_translucent();
 	si->_fixed = info->is_fixed();
 	si->_land = info->is_land();
+	si->_sprite = GAME_IS_CRUSADER && (si->_extFlags & Item::EXT_SPRITE);
 
 	si->_occluded = false;
 	si->_order = -1;
