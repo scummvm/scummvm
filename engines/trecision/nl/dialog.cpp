@@ -202,7 +202,7 @@ void afterChoice(int numframe) {
 			g_vm->_obj[ocBARBONE17]._mode &= ~OBJMODE_OBJSTATUS;
 			g_vm->_obj[oBARBONED17]._mode |= OBJMODE_OBJSTATUS;
 			g_vm->_room[r17]._bkgAnim = aBKG17B;
-			AddIcon(iPATTINO);
+			g_vm->addIcon(iPATTINO);
 		} else if (_curChoice == 137) {
 			g_vm->_obj[ocBARBONE17]._flag |= OBJFLAG_PERSON;
 		}
@@ -240,7 +240,7 @@ void afterChoice(int numframe) {
 		break;
 
 	case dF321:
-		KillIcon(iTORCIA32);
+		g_vm->removeIcon(iTORCIA32);
 		FlagShowCharacter = false;
 		break;
 
@@ -385,7 +385,7 @@ void afterChoice(int numframe) {
 
 		case dF2G2:
 			g_vm->_obj[od26ALLA2G]._goRoom = r2GV;
-			ReplaceIcon(iSAM, iSAMROTTO);
+			g_vm->replaceIcon(iSAM, iSAMROTTO);
 			break;
 
 		case dF321:
@@ -442,7 +442,7 @@ void afterChoice(int numframe) {
 					break;
 				}
 			}
-			KillIcon(iASTA);
+			g_vm->removeIcon(iASTA);
 			PlayDialog(dC4A1);
 			setPosition(12);
 			break;
@@ -458,26 +458,26 @@ void afterChoice(int numframe) {
 			memcpy(g_vm->_inventory, g_vm->_cyberInventory, MAXICON);
 			g_vm->_inventorySize = g_vm->_cyberInventorySize;
 			g_vm->_iconBase = 0;
-			KillIcon(iCARD03);
-			KillIcon(iPEN);
-			KillIcon(iKEY05);
-			KillIcon(iLETTER12);
-			KillIcon(iCARD14);
-			KillIcon(iFOTO);
-			KillIcon(iPISTOLA15);
-			KillIcon(iRAPPORTO);
-			KillIcon(iTESSERA);
-			KillIcon(iFUCILE);
-			KillIcon(iLAMPADINA29);
-			KillIcon(iTELECOMANDO2G);
-			KillIcon(iCARD36);
-			KillIcon(iFOGLIO36);
-			KillIcon(iSTETOSCOPIO);
-			KillIcon(iREFERTO);
-			KillIcon(iLIBRO);
-			AddIcon(iMAPPA50);
-			AddIcon(iCUTTER);
-			AddIcon(iWALKY);
+			g_vm->removeIcon(iCARD03);
+			g_vm->removeIcon(iPEN);
+			g_vm->removeIcon(iKEY05);
+			g_vm->removeIcon(iLETTER12);
+			g_vm->removeIcon(iCARD14);
+			g_vm->removeIcon(iFOTO);
+			g_vm->removeIcon(iPISTOLA15);
+			g_vm->removeIcon(iRAPPORTO);
+			g_vm->removeIcon(iTESSERA);
+			g_vm->removeIcon(iFUCILE);
+			g_vm->removeIcon(iLAMPADINA29);
+			g_vm->removeIcon(iTELECOMANDO2G);
+			g_vm->removeIcon(iCARD36);
+			g_vm->removeIcon(iFOGLIO36);
+			g_vm->removeIcon(iSTETOSCOPIO);
+			g_vm->removeIcon(iREFERTO);
+			g_vm->removeIcon(iLIBRO);
+			g_vm->addIcon(iMAPPA50);
+			g_vm->addIcon(iCUTTER);
+			g_vm->addIcon(iWALKY);
 			StartCharacterAction(a511, 0, 1, 0);
 			break;
 
@@ -514,7 +514,7 @@ void afterChoice(int numframe) {
 
 		case dC582:
 			g_vm->_obj[oFINESTRAA58]._mode |= OBJMODE_OBJSTATUS;
-			AddIcon(iCODICE);
+			g_vm->addIcon(iCODICE);
 			break;
 
 		case dC5A1:

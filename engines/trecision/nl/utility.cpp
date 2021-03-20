@@ -24,7 +24,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include "common/scummsys.h"
-#include "trecision/nl/sysdef.h"
 #include "trecision/nl/struct.h"
 #include "trecision/nl/define.h"
 #include "trecision/nl/message.h"
@@ -56,81 +55,6 @@ struct StackText {
 } TextStack[MAXTEXTSTACK];
 
 int16 TextStackTop = -1;
-
-/*-------------------------------------------------------------------------*/
-/*                                WHATICON           					   */
-/*-------------------------------------------------------------------------*/
-uint8 WhatIcon(uint16 invmx) {
-	if (invmx < ICONMARGSX || invmx > SCREENLEN - ICONMARGDX)
-		return 0;
-
-	return g_vm->_inventory[(g_vm->_iconBase + ((invmx - ICONMARGSX) / (ICONDX)))];
-}
-
-/*-------------------------------------------------------------------------*/
-/*                                 ICONPOS           					   */
-/*-------------------------------------------------------------------------*/
-uint8 IconPos(uint8 icon) {
-	uint8 i;
-
-	for (i = 0; i < MAXICON; i++) {
-		if (g_vm->_inventory[i] == icon)
-			break;
-	}
-
-	return i;
-}
-
-/*-------------------------------------------------------------------------*/
-/*                                KILLICON           					   */
-/*-------------------------------------------------------------------------*/
-void KillIcon(uint8 icon) {
-	uint8 pos = IconPos(icon);
-
-	if (pos == MAXICON)
-		return;
-	g_vm->_inventory[pos] = iNULL;
-	for (; pos < g_vm->_inventorySize; pos++)
-		g_vm->_inventory[pos] = g_vm->_inventory[pos + 1];
-	g_vm->_inventorySize--;
-
-	if (g_vm->_inventorySize < ICONSHOWN)
-		g_vm->_iconBase = 0;
-
-	if (g_vm->_iconBase && (g_vm->_inventorySize > ICONSHOWN) && (g_vm->_inventory[g_vm->_iconBase + ICONSHOWN] == iNULL))
-		//		_iconBase--;
-		g_vm->_iconBase = g_vm->_inventorySize - ICONSHOWN;
-
-	RepaintString();
-}
-
-/*-------------------------------------------------------------------------*/
-/*                                 ADDICON           					   */
-/*-------------------------------------------------------------------------*/
-void AddIcon(uint8 icon) {
-	if (IconPos(icon) != MAXICON)
-		return;
-	g_vm->_inventory[g_vm->_inventorySize++] = icon;
-	if (g_vm->_inventorySize >= MAXICON)
-		warning("AddIcon overflow");
-
-	if (g_vm->_iconBase < g_vm->_inventorySize - ICONSHOWN)
-		g_vm->_iconBase = g_vm->_inventorySize - ICONSHOWN;
-
-//	To show the icon that enters the inventory
-//	doEvent(MC_INVENTORY,ME_OPEN,MP_DEFAULT,0,0,0,0);
-//	FlagForceRegenInventory = true;
-	RepaintString();
-}
-
-/*-------------------------------------------------------------------------*/
-/*                               REPLACEICON          					   */
-/*-------------------------------------------------------------------------*/
-void ReplaceIcon(uint8 oldicon, uint8 newicon) {
-	uint8 pos = IconPos(oldicon);
-
-	g_vm->_inventory[pos] = newicon;
-}
 
 /*-------------------------------------------------------------------------*/
 /*                                ENDSCRIPT           					   */
@@ -317,7 +241,7 @@ void DoSys(uint16 curObj) {
 			break;
 		g_vm->_curRoom = g_vm->_obj[o00EXIT]._goRoom;
 		if (!DataSave()) {
-			ShowInvName(NO_OBJECTS, false);
+			g_vm->showInventoryName(NO_OBJECTS, false);
 			doEvent(MC_INVENTORY, ME_SHOWICONNAME, MP_DEFAULT, mx, my, 0, 0);
 			doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, g_vm->_obj[o00EXIT]._goRoom, 0, 0, 0);
 		}
@@ -326,7 +250,7 @@ void DoSys(uint16 curObj) {
 
 	case o00LOAD:
 		if (!DataLoad()) {
-			ShowInvName(NO_OBJECTS, false);
+			g_vm->showInventoryName(NO_OBJECTS, false);
 			doEvent(MC_INVENTORY, ME_SHOWICONNAME, MP_DEFAULT, mx, my, 0, 0);
 		}
 		break;
@@ -451,7 +375,7 @@ void SetRoom(unsigned short r, bool b) {
 			g_vm->_obj[oUSCITA21]._position = 11;
 
 			// if we can go beyond
-			if (((IconPos(iSBARRA21) != MAXICON) && ((_choice[436]._flag & OBJFLAG_DONE) || (_choice[466]._flag & OBJFLAG_DONE)))
+			if (((g_vm->iconPos(iSBARRA21) != MAXICON) && ((_choice[436]._flag & OBJFLAG_DONE) || (_choice[466]._flag & OBJFLAG_DONE)))
 					|| ((_choice[451]._flag & OBJFLAG_DONE) || (_choice[481]._flag & OBJFLAG_DONE))) {
 				g_vm->_obj[od21TO23]._flag |= OBJFLAG_ROOMOUT;
 				g_vm->_obj[od21TO23]._flag &= ~OBJFLAG_EXAMINE;
@@ -483,7 +407,7 @@ void SetRoom(unsigned short r, bool b) {
 			g_vm->_obj[oUSCITA21]._mode |= OBJMODE_OBJSTATUS;
 
 			// If we can go beyond
-			if (((IconPos(iSBARRA21) != MAXICON) && ((_choice[436]._flag & OBJFLAG_DONE) || (_choice[466]._flag & OBJFLAG_DONE)))
+			if (((g_vm->iconPos(iSBARRA21) != MAXICON) && ((_choice[436]._flag & OBJFLAG_DONE) || (_choice[466]._flag & OBJFLAG_DONE)))
 					|| ((_choice[451]._flag & OBJFLAG_DONE) || (_choice[481]._flag & OBJFLAG_DONE))) {
 				g_vm->_obj[od21TO22]._flag |= OBJFLAG_ROOMOUT;
 				g_vm->_obj[od21TO22]._flag &= ~OBJFLAG_EXAMINE;
@@ -590,19 +514,6 @@ void SetRoom(unsigned short r, bool b) {
 	}
 
 	RegenRoom();
-}
-
-/* -----------------19/01/98 11.11-------------------
- * 					GetNextSent
- * --------------------------------------------------*/
-char *GetNextSent() {
-	while (*g_vm->TextPtr) {
-		*g_vm->TextPtr = ~(*g_vm->TextPtr);
-		g_vm->TextPtr++;
-	}
-
-	g_vm->TextPtr++;
-	return g_vm->TextPtr;
 }
 
 } // End of namespace Trecision

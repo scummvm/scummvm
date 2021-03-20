@@ -36,7 +36,7 @@
 namespace Trecision {
 
 // Variabili di servizio comuni a piu' funzioni di string.c
-uint16 CurS, lastinv, lastobj;
+uint16 CurS;
 
 uint16 SpeakSomeOneAnimation;
 uint16 SpeakSomeOnePerson;
@@ -100,15 +100,16 @@ void ShowObjName(uint16 obj, bool showhide) {
 
 	if (FlagSomeOneSpeak)
 		return;
-	if (lastinv) {
+
+	if (g_vm->lastinv) {
 		ClearText();
-		lastinv = 0;
+		g_vm->lastinv = 0;
 	}
 
 	if (FlagUseWithStarted && !FlagUseWithLocked) {
 		if (!showhide) {
 			ClearText();
-			lastobj = obj;
+			g_vm->lastobj = obj;
 			return;
 		}
 
@@ -131,23 +132,23 @@ void ShowObjName(uint16 obj, bool showhide) {
 				locsent += g_vm->_objName[g_vm->_obj[obj]._name];
 		}
 
-		lastobj = (obj | 0x8000);
+		g_vm->lastobj = (obj | 0x8000);
 		uint16 lenText = TextLength(locsent.c_str(), 0);
 
 		posx = CLIP(320 - (lenText / 2), 2, SCREENLEN - 2 - lenText);
 		posy = MAXY - CARHEI;
 
-		if (lastobj)
+		if (g_vm->lastobj)
 			ClearText();
 		Text(posx, posy, locsent.c_str(), COLOR_INVENTORY, MASKCOL);
 	} else {
 		if ((!obj) || (!showhide)) {
 			ClearText();
-			lastobj = obj;
+			g_vm->lastobj = obj;
 			return;
 		}
 
-		if (obj == lastobj)
+		if (obj == g_vm->lastobj)
 			return;
 		if (!(g_vm->_obj[obj]._flag & OBJFLAG_EXAMINE)) {
 			if ((g_vm->_obj[obj]._flag & OBJFLAG_DONE) || (g_vm->_room[g_vm->_obj[obj]._goRoom]._flag & OBJFLAG_DONE)) {
@@ -167,89 +168,10 @@ void ShowObjName(uint16 obj, bool showhide) {
 		posy = (obj == oRUOTE2C) ? 187 : g_vm->_obj[obj]._lim[1];
 
 		PositionString(posx, posy, locsent.c_str(), &posx, &posy, false);
-		if (lastobj)
+		if (g_vm->lastobj)
 			ClearText();
-		lastobj = obj;
+		g_vm->lastobj = obj;
 		Text(posx, posy, locsent.c_str(), COLOR_OBJECT, MASKCOL);
-	}
-}
-
-/*-------------------------------------------------------------------------*/
-/*                                 SHOWINVNAME           				   */
-/*-------------------------------------------------------------------------*/
-void ShowInvName(uint16 obj, bool showhide) {
-	uint16 posx;
-	uint16 posy;
-	uint16 LenText;
-
-	if ((g_vm->_curRoom == r2BL) || (g_vm->_curRoom == r36F) || (g_vm->_curRoom == r41D) || (g_vm->_curRoom == r49M) || (g_vm->_curRoom == r4CT)
-		|| (g_vm->_curRoom == r58T) || (g_vm->_curRoom == r58M) || (g_vm->_curRoom == r59L) || (g_vm->_curRoom == rSYS) || (g_vm->_curRoom == r12CU)
-		|| (g_vm->_curRoom == r13CU))
-		return;
-
-	if (FlagSomeOneSpeak)
-		return;
-
-	if (lastobj) {
-		ClearText();
-		lastobj = 0;
-	}
-
-	if (FlagUseWithStarted && !FlagUseWithLocked) {
-		if (/*(!obj) ||*/ (!showhide)) {
-			ClearText();
-			lastinv = 0;
-			return;
-		}
-		if ((obj | 0x8000) == lastinv)
-			return;
-
-		char locsent[256];
-		strcpy(locsent, g_vm->_sysText[23]);
-		if (g_vm->_useWithInv[USED]) {
-			strcat(locsent, g_vm->_objName[g_vm->_inventoryObj[g_vm->_useWith[USED]]._name]);
-			strcat(locsent, g_vm->_sysText[24]);
-			if (obj && (g_vm->_inventoryObj[g_vm->_useWith[USED]]._name != g_vm->_inventoryObj[obj]._name))
-				strcat(locsent, g_vm->_objName[g_vm->_inventoryObj[obj]._name]);
-		} else {
-			if (g_vm->_obj[g_vm->_useWith[USED]]._mode & OBJMODE_HIDDEN)
-				strcat(locsent, dunno);
-			else
-				strcat(locsent, g_vm->_objName[g_vm->_obj[g_vm->_useWith[USED]]._name]);
-			strcat(locsent, g_vm->_sysText[24]);
-			if (obj && (g_vm->_obj[g_vm->_useWith[USED]]._name != g_vm->_inventoryObj[obj]._name))
-				strcat(locsent, g_vm->_objName[g_vm->_inventoryObj[obj]._name]);
-		}
-
-		LenText = TextLength(locsent, 0);
-		posx = CLIP(320 - (LenText / 2), 2, SCREENLEN - 2 - LenText);
-		posy = MAXY - CARHEI;
-
-		lastinv = (obj | 0x8000);
-		if (lastinv)
-			ClearText();
-		Text(posx, posy, locsent, COLOR_INVENTORY, MASKCOL);
-	} else {
-		if (obj == lastinv)
-			return;
-
-		if (!obj || !showhide) {
-			ClearText();
-			lastinv = 0;
-			return;
-		}
-		posx = ICONMARGSX + ((IconPos(g_vm->_curInventory) - g_vm->_iconBase) * (ICONDX)) + ICONDX / 2;
-		posy = MAXY - CARHEI;
-		lastinv = obj;
-		LenText = TextLength(g_vm->_objName[g_vm->_inventoryObj[obj]._name], 0);
-
-		posx = CLIP(posx - (LenText / 2), 2, SCREENLEN - 2 - LenText);
-		
-		if (lastinv)
-			ClearText();
-
-		if (g_vm->_inventoryObj[obj]._name)
-			Text(posx, posy, g_vm->_objName[g_vm->_inventoryObj[obj]._name], COLOR_INVENTORY, MASKCOL);
 	}
 }
 
@@ -403,8 +325,8 @@ void CharacterMute() {
 	CharacterSpeakTime = 0L;
 
 	ClearText();
-	lastobj = 0;
-	lastinv = 0;
+	g_vm->lastobj = 0;
+	g_vm->lastinv = 0;
 
 	RepaintString();
 	StopTalk();
@@ -484,8 +406,8 @@ void SomeOneMute() {
 	SomeOneSpeakTime = 0L;
 
 	ClearText();
-	lastobj = 0;
-	lastinv = 0;
+	g_vm->lastobj = 0;
+	g_vm->lastinv = 0;
 
 	RepaintString();
 	StopTalk();

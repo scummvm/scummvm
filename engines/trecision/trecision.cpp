@@ -54,7 +54,7 @@ TrecisionEngine::TrecisionEngine(OSystem *syst) : Engine(syst) {
 
 	syncSoundSettings();
 
-	g_vm = this;
+	g_vm = nullptr;
 
 	_curRoom = 0;
 	_oldRoom = 0;
@@ -144,8 +144,11 @@ TrecisionEngine::TrecisionEngine(OSystem *syst) : Engine(syst) {
 	_flagMouseEnabled = true;
 
 	_closeUpObj = 0;
-	TextPtr = nullptr;
+	_textPtr = nullptr;
+	lastinv = 0;
+	lastobj = 0;
 
+	_slotMachine41Counter = 0;
 }
 
 TrecisionEngine::~TrecisionEngine() {
@@ -154,6 +157,8 @@ TrecisionEngine::~TrecisionEngine() {
 }
 
 Common::Error TrecisionEngine::run() {
+	g_vm = this;
+	
 	_graphicsMgr = new GraphicsManager(this);
 	if (!_graphicsMgr->initScreen())
 		return Common::kUnsupportedColorMode;
@@ -452,24 +457,24 @@ void TrecisionEngine::LoadAll() {
 
 	dataNl.read(TextArea, MAXTEXTAREA);
 
-	TextPtr = (char *)TextArea;
+	_textPtr = (char *)TextArea;
 
 	for (int a = 0; a < MAXOBJNAME; a++)
-		g_vm->_objName[a] = GetNextSent();
+		g_vm->_objName[a] = getNextSentence();
 
 	for (int a = 0; a < MAXSENTENCE; a++)
-		g_vm->_sentence[a] = GetNextSent();
+		g_vm->_sentence[a] = getNextSentence();
 
 	for (int a = 0; a < MAXSYSTEXT; a++)
-		g_vm->_sysText[a] = GetNextSent();
+		g_vm->_sysText[a] = getNextSentence();
 
 	dataNl.close();
 }
 
 /*-------------------------------------------------
-					CheckSystem
+					checkSystem
  --------------------------------------------------*/
-void TrecisionEngine::CheckSystem() {
+void TrecisionEngine::checkSystem() {
 	_animMgr->refreshAllAnimations();
 	eventLoop();
 }

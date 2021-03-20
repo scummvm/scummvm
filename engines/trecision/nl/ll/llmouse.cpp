@@ -51,7 +51,6 @@ extern uint16 Comb49[4];
 extern uint16 Comb4CT[6];
 extern uint16 Comb58[6], Count58;
 extern uint16 ruotepos[3], ruota;
-extern uint16 Try41;
 
 /*-----------------10/12/95 15.26-------------------
 						vr
@@ -456,7 +455,7 @@ insave:
 	bool skipSave = false;
 	ch = 0;
 	for (;;) {
-		g_vm->CheckSystem();
+		g_vm->checkSystem();
 		Mouse(MCMD_UPDT);
 
 		GetKey();
@@ -517,7 +516,7 @@ insave:
 
 		for (; ;) {
 			g_vm->_keybInput = true;
-			g_vm->CheckSystem();
+			g_vm->checkSystem();
 			ch = GetKey();
 			FreeKey();
 
@@ -662,7 +661,7 @@ insave:
 		fwrite(&ruota,       sizeof(uint16), 1, fh);
 		fwrite(&Count35,     sizeof(uint16), 1, fh);
 		fwrite(&Count58,     sizeof(uint16), 1, fh);
-		fwrite(&Try41,       sizeof(uint16), 1, fh);
+		fwrite(&g_vm->_slotMachine41Counter, sizeof(uint16), 1, fh);
 
 		fclose(fh);
 	}
@@ -772,7 +771,7 @@ bool DataLoad() {
 	bool skipLoad = false;
 
 	for (;;) {
-		g_vm->CheckSystem();
+		g_vm->checkSystem();
 		Mouse(MCMD_UPDT);
 
 		GetKey();
@@ -919,7 +918,7 @@ bool DataLoad() {
 		fread(&ruota,       sizeof(uint16), 1, fh);
 		fread(&Count35,     sizeof(uint16), 1, fh);
 		fread(&Count58,     sizeof(uint16), 1, fh);
-		fread(&Try41,       sizeof(uint16), 1, fh);
+		fread(&g_vm->_slotMachine41Counter, sizeof(uint16), 1, fh);
 
 		fclose(fh);
 
@@ -941,7 +940,7 @@ bool DataLoad() {
 
 	actorStop();
 	nextStep();
-	g_vm->CheckSystem();
+	g_vm->checkSystem();
 
 	for (int a = FIRSTLINE; a < MAXY; a++)
 		wordset(g_vm->_video2 + CurRoomMaxX * a + CurScrollPageDx, 0, SCREENLEN);

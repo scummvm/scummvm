@@ -281,7 +281,7 @@ void doMouse() {
 		// If it's in a room without a character, like a map or a book
 		if (FlagCharacterExist == false) {
 			if ((INVAREA(g_vm->_curMessage->_u16Param2)) && ((g_vm->_curRoom == r31P) || (g_vm->_curRoom == r35P))) {
-				if (ICONAREA(g_vm->_curMessage->_u16Param1, g_vm->_curMessage->_u16Param2) && (WhatIcon(g_vm->_curMessage->_u16Param1)) && (g_vm->_inventoryStatus == INV_INACTION)) {
+				if (ICONAREA(g_vm->_curMessage->_u16Param1, g_vm->_curMessage->_u16Param2) && (g_vm->whatIcon(g_vm->_curMessage->_u16Param1)) && (g_vm->_inventoryStatus == INV_INACTION)) {
 					g_vm->_useWith[WITH] = 0;
 					g_vm->_curObj = 0;
 					g_vm->_lightIcon = 0xFF;
@@ -455,7 +455,7 @@ void doMouse() {
 			if (g_vm->_animMgr->_playingAnims[1] || FlagDialogActive || g_vm->_curRoom == rSYS)
 				break;
 
-			if (ICONAREA(g_vm->_curMessage->_u16Param1, g_vm->_curMessage->_u16Param2) && WhatIcon(g_vm->_curMessage->_u16Param1) && (g_vm->_inventoryStatus == INV_INACTION)) {
+			if (ICONAREA(g_vm->_curMessage->_u16Param1, g_vm->_curMessage->_u16Param2) && g_vm->whatIcon(g_vm->_curMessage->_u16Param1) && (g_vm->_inventoryStatus == INV_INACTION)) {
 				g_vm->_characterQueue.initQueue();
 				actorStop();
 				nextStep();
@@ -543,8 +543,7 @@ void doCharacter() {
 				FlagShowCharacter = false;
 				doEvent(MC_SYSTEM, ME_CHANGEROOM, g_vm->_curMessage->_priority, g_vm->_curMessage->_u16Param1, g_vm->_curMessage->_u16Param2, g_vm->_curMessage->_u8Param, g_vm->_curMessage->_u32Param);
 			} else if (g_vm->_curMessage->_event == ME_CHARACTERDOACTION) {
-				extern uint16 lastobj;
-				lastobj = 0;
+				g_vm->lastobj = 0;
 				ShowObjName(g_vm->_curObj, true);
 				g_vm->refreshInventory(g_vm->_inventoryRefreshStartIcon, g_vm->_inventoryRefreshStartLine);
 			}
@@ -574,14 +573,13 @@ void doCharacter() {
 		AtFrameHandler(CHARACTER_ANIM);
 		//	If the animation is over
 		if (!g_vm->_animMgr->_playingAnims[1]) {
-			extern uint16 lastobj;
 			g_vm->_flagMouseEnabled = true;
 			FlagShowCharacter = true;
 			_characterInMovement = false;
 			g_vm->_characterQueue.initQueue();
 			AtFrameEnd(CHARACTER_ANIM);
 			FlagWaitRegen = true;
-			lastobj = 0;
+			g_vm->lastobj = 0;
 			ShowObjName(g_vm->_curObj, true);
 			//	If the room changes at the end
 			if (g_vm->_curMessage->_u16Param2) {
@@ -875,7 +873,7 @@ void doIdle() {
 		if (!FlagSomeOneSpeak && !Flagscriptactive && !FlagDialogActive && !FlagDialogMenuActive && (_actor._curAction < hWALKIN) && !FlagUseWithStarted && g_vm->_animMgr->_playingAnims[1] == 0 && FlagShowCharacter) {
 			IconSnapShot();
 			DataSave();
-			ShowInvName(NO_OBJECTS, false);
+			g_vm->showInventoryName(NO_OBJECTS, false);
 			doEvent(MC_INVENTORY, ME_SHOWICONNAME, MP_DEFAULT, mx, my, 0, 0);
 			g_vm->refreshInventory(g_vm->_inventoryRefreshStartIcon, g_vm->_inventoryRefreshStartLine);
 		}
@@ -886,7 +884,7 @@ void doIdle() {
 		if (!FlagSomeOneSpeak && !Flagscriptactive && !FlagDialogActive && !FlagDialogMenuActive && (_actor._curAction < hWALKIN) && !FlagUseWithStarted && g_vm->_animMgr->_playingAnims[1] == 0 && FlagShowCharacter) {
 			IconSnapShot();
 			if (!DataLoad()) {
-				ShowInvName(NO_OBJECTS, false);
+				g_vm->showInventoryName(NO_OBJECTS, false);
 				doEvent(MC_INVENTORY, ME_SHOWICONNAME, MP_DEFAULT, mx, my, 0, 0);
 				g_vm->refreshInventory(g_vm->_inventoryRefreshStartIcon, g_vm->_inventoryRefreshStartLine);
 			}
