@@ -49,13 +49,27 @@ public:
 
 	Common::Error run() override;
 	void eventLoop();
+
+	// Inventory
 	void refreshInventory(uint8 StartIcon, uint8 StartLine);
 	void moveInventoryLeft();
 	void moveInventoryRight();
 	void setInventoryStart(uint8 StartIcon, uint8 StartLine);
 	void doInventory();
+	void showInventoryName(uint16 obj, bool showhide);
+	uint8 whatIcon(uint16 mx);
+	uint8 iconPos(uint8 icon);
+	void removeIcon(uint8 icon);
+	void addIcon(uint8 icon);
+	void replaceIcon(uint8 oldIcon, uint8 newIcon);
+	void doInventoryUseWithInventory();
+	void doInventoryUseWithScreen();
 
-	void CheckSystem();
+	// Utils
+	char *getNextSentence();
+
+	// Others
+	void checkSystem();
 
 
 	uint16 _curRoom;
@@ -70,7 +84,7 @@ public:
 
 	uint8 _actionLen[MAXACTION];
 
-	char *TextPtr;
+	char *_textPtr;
 	SDText _sdText, _oldSdText;
 	int16 _limits[50][4];
 	uint16 _limitsNum;
@@ -95,7 +109,8 @@ public:
 	int16 _inventorySpeed[8];
 	uint8 _inventorySpeedIndex;
 	uint32 _inventoryScrollTime;
-
+	uint16 lastinv;
+	uint16 lastobj;
 
 	bool _fastWalk;
 	bool _fastWalkLocked;
@@ -144,6 +159,8 @@ public:
 	SScriptFrame _scriptFrame[MAXSCRIPTFRAME];
 	SScript _script[MAXSCRIPT];
 
+	// SlotMachine41
+	uint16 _slotMachine41Counter;
 
 	GraphicsManager *_graphicsMgr;
 	AnimManager *_animMgr;

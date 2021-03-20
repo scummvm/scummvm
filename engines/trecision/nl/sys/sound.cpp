@@ -275,7 +275,7 @@ void WaitSoundFadEnd() {
 	}
 
 	while ((SoundFadInVal != (GSample[playing[StepChannel]]._volume * FADMULT)) && (playing[StepChannel] != 0) && (SoundFadOutVal != 0))
-		g_vm->CheckSystem();
+		g_vm->checkSystem();
 	SoundFadStatus = 0;
 
 	g_system->getMixer()->stopHandle(smp[BackChannel]);

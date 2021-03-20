@@ -86,7 +86,7 @@ char GetKey() {
 --------------------------------------------------*/
 char waitKey() {
 	while (g_vm->_curKey == Common::KEYCODE_INVALID)
-		g_vm->CheckSystem();
+		g_vm->checkSystem();
 
 	Common::KeyCode t = g_vm->_curKey;
 	g_vm->_curKey = Common::KEYCODE_INVALID;
@@ -115,7 +115,7 @@ void NlDelay(uint32 val) {
 	uint32 sv = ReadTime();
 
 	while ((sv + val) > ReadTime())
-		g_vm->CheckSystem();
+		g_vm->checkSystem();
 }
 
 /* -----------------24/06/98 15.00-------------------
@@ -127,7 +127,7 @@ void NlDissolve(int val) {
 
 	int lastv = 9000;
 	while ((sv + val) > (cv = ReadTime())) {
-		g_vm->CheckSystem();
+		g_vm->checkSystem();
 		if (lastv < (sv + val - cv))
 			continue;
 
@@ -194,7 +194,7 @@ void NlDissolve(int val) {
 					Mouse
 --------------------------------------------------*/
 void Mouse(MouseCmd opt) {
-	g_vm->CheckSystem();
+	g_vm->checkSystem();
 
 	switch (opt) {
 	// Update mouse
