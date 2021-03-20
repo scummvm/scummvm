@@ -54,8 +54,6 @@ public:
 	virtual void handleInput(NancyInput &input) override;
 	virtual void onPause(bool pause) override;
 
-	static void synchronize(Common::Serializer &ser);
-
 	Common::String _imageName; // 0x00
 	uint16 _width; // 0xA
 	uint16 _height; // 0xC
@@ -72,9 +70,6 @@ public:
 
 	SolveState _solveState = kNotSolved;
 	Graphics::ManagedSurface _image;
-
-	static Common::Array<Common::Array<int16>> _playerTileOrder;
-	static bool _playerHasTriedPuzzle;
 
 protected:
 	virtual Common::String getRecordTypeName() const override { return "SliderPuzzle"; }

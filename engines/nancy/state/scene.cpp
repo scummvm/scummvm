@@ -339,6 +339,30 @@ void Scene::synchronize(Common::Serializer &ser) {
 	ser.syncAsUint16LE(_difficulty);
 	ser.syncArray<uint16>(_hintsRemaining.data(), _hintsRemaining.size(), Common::Serializer::Uint16LE);
 	ser.syncAsSint16LE(_lastHint);
+
+	// Synchronize SliderPuzzle static data
+	ser.syncAsByte(_sliderPuzzleState.playerHasTriedPuzzle);
+
+	byte x = 0, y = 0;
+
+	if (ser.isSaving()) {
+		y = _sliderPuzzleState.playerTileOrder.size();
+		if (y) {
+			x = _sliderPuzzleState.playerTileOrder.back().size();
+		} else {
+			x = 0;
+		}
+	}
+
+	ser.syncAsByte(x);
+	ser.syncAsByte(y);
+
+	_sliderPuzzleState.playerTileOrder.resize(y);
+
+	for (int i = 0; i < y; ++i) {
+		_sliderPuzzleState.playerTileOrder[i].resize(x);
+		ser.syncArray(_sliderPuzzleState.playerTileOrder[i].data(), x, Common::Serializer::Sint16LE);
+	}
 }
 
 void Scene::init() {
@@ -380,7 +404,7 @@ void Scene::init() {
 		_lastHint = -1;
 	}
 
-	Action::SliderPuzzle::_playerHasTriedPuzzle = false;
+	_sliderPuzzleState.playerHasTriedPuzzle = false;
 
 	initStaticData();
 

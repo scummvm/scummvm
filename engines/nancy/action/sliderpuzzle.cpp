@@ -34,9 +34,6 @@
 namespace Nancy {
 namespace Action {
 
-Common::Array<Common::Array<int16>> SliderPuzzle::_playerTileOrder = Common::Array<Common::Array<int16>>();
-bool SliderPuzzle::_playerHasTriedPuzzle = false;
-
 void SliderPuzzle::init() {
 	_drawSurface.create(_screenPosition.width(), _screenPosition.height(), GraphicsManager::getInputPixelFormat());
 	_drawSurface.clear(GraphicsManager::getTransColor());
@@ -108,26 +105,26 @@ void SliderPuzzle::execute() {
 	case kBegin:
 		init();
 		registerGraphics();
-		if (!_playerHasTriedPuzzle) {
+		if (!NancySceneState._sliderPuzzleState.playerHasTriedPuzzle) {
 			Common::SeekableReadStream *spuz = g_nancy->getBootChunkStream("SPUZ");
-			_playerTileOrder.clear();
+			NancySceneState._sliderPuzzleState.playerTileOrder.clear();
 			spuz->seek(NancySceneState.getDifficulty() * 0x48);
 			for (uint y = 0; y < _height; ++y) {
-				_playerTileOrder.push_back(Common::Array<int16>());
+				NancySceneState._sliderPuzzleState.playerTileOrder.push_back(Common::Array<int16>());
 
 				for (uint x = 0; x < _width; ++x) {
-					_playerTileOrder.back().push_back(spuz->readSint16LE());
+					NancySceneState._sliderPuzzleState.playerTileOrder.back().push_back(spuz->readSint16LE());
 				}
 
 				spuz->skip((6 - _width) * 2);
 			}
 
-			_playerHasTriedPuzzle = true;
+			NancySceneState._sliderPuzzleState.playerHasTriedPuzzle = true;
 		}
 
 		for (uint y = 0; y < _height; ++y) {
 			for (uint x = 0; x < _width; ++x) {
-				drawTile(_playerTileOrder[y][x], x, y);
+				drawTile(NancySceneState._sliderPuzzleState.playerTileOrder[y][x], x, y);
 			}
 		}
 
@@ -139,7 +136,7 @@ void SliderPuzzle::execute() {
 		case kNotSolved:
 			for (uint y = 0; y < _height; ++y) {
 				for (uint x = 0; x < _width; ++x) {
-					if (_playerTileOrder[y][x] != _correctTileOrder[y][x]) {
+					if (NancySceneState._sliderPuzzleState.playerTileOrder[y][x] != _correctTileOrder[y][x]) {
 						return;
 					}
 				}
@@ -168,7 +165,7 @@ void SliderPuzzle::execute() {
 		case kWaitForSound:
 			NancySceneState.changeScene(_solveExitScene);
 			NancySceneState.setEventFlag(_flagOnSolve);
-			_playerHasTriedPuzzle = false;
+			NancySceneState._sliderPuzzleState.playerHasTriedPuzzle = false;
 			break;
 		}
 
@@ -198,7 +195,7 @@ void SliderPuzzle::handleInput(NancyInput &input) {
 	for (uint y = 0; y < _height; ++y) {
 		bool shouldBreak = false;
 		for (uint x = 0; x < _width; ++x) {
-			if (x > 0 && _playerTileOrder[y][x - 1] < 0) {
+			if (x > 0 && NancySceneState._sliderPuzzleState.playerTileOrder[y][x - 1] < 0) {
 				if (NancySceneState.getViewport().convertViewportToScreen(_destRects[y][x]).contains(input.mousePos)) {
 					currentTileX = x;
 					currentTileY = y;
@@ -206,7 +203,7 @@ void SliderPuzzle::handleInput(NancyInput &input) {
 					shouldBreak = true;
 					break;
 				}
-			} else if ((int)x < _width - 1 && _playerTileOrder[y][x + 1] < 0) {
+			} else if ((int)x < _width - 1 && NancySceneState._sliderPuzzleState.playerTileOrder[y][x + 1] < 0) {
 				if (NancySceneState.getViewport().convertViewportToScreen(_destRects[y][x]).contains(input.mousePos)) {
 					currentTileX = x;
 					currentTileY = y;
@@ -214,7 +211,7 @@ void SliderPuzzle::handleInput(NancyInput &input) {
 					shouldBreak = true;
 					break;
 				}
-			} else if (y > 0 && _playerTileOrder[y - 1][x] < 0) {
+			} else if (y > 0 && NancySceneState._sliderPuzzleState.playerTileOrder[y - 1][x] < 0) {
 				if (NancySceneState.getViewport().convertViewportToScreen(_destRects[y][x]).contains(input.mousePos)) {
 					currentTileX = x;
 					currentTileY = y;
@@ -222,7 +219,7 @@ void SliderPuzzle::handleInput(NancyInput &input) {
 					shouldBreak = true;
 					break;
 				}
-			} else if ((int)y < _height - 1 && _playerTileOrder[y + 1][x] < 0) {
+			} else if ((int)y < _height - 1 && NancySceneState._sliderPuzzleState.playerTileOrder[y + 1][x] < 0) {
 				if (NancySceneState.getViewport().convertViewportToScreen(_destRects[y][x]).contains(input.mousePos)) {
 					currentTileX = x;
 					currentTileY = y;
@@ -245,35 +242,35 @@ void SliderPuzzle::handleInput(NancyInput &input) {
 			g_nancy->_sound->playSound(_clickSound);
 			switch (direction) {
 			case kUp: {
-				uint curTileID = _playerTileOrder[currentTileY][currentTileX];
+				uint curTileID = NancySceneState._sliderPuzzleState.playerTileOrder[currentTileY][currentTileX];
 				drawTile(curTileID, currentTileX, currentTileY - 1);
 				undrawTile(currentTileX, currentTileY);
-				_playerTileOrder[currentTileY - 1][currentTileX] = curTileID;
-				_playerTileOrder[currentTileY][currentTileX] = -10;
+				NancySceneState._sliderPuzzleState.playerTileOrder[currentTileY - 1][currentTileX] = curTileID;
+				NancySceneState._sliderPuzzleState.playerTileOrder[currentTileY][currentTileX] = -10;
 				break;
 			}
 			case kDown: {
-				uint curTileID = _playerTileOrder[currentTileY][currentTileX];
+				uint curTileID = NancySceneState._sliderPuzzleState.playerTileOrder[currentTileY][currentTileX];
 				drawTile(curTileID, currentTileX, currentTileY + 1);
 				undrawTile(currentTileX, currentTileY);
-				_playerTileOrder[currentTileY + 1][currentTileX] = curTileID;
-				_playerTileOrder[currentTileY][currentTileX] = -10;
+				NancySceneState._sliderPuzzleState.playerTileOrder[currentTileY + 1][currentTileX] = curTileID;
+				NancySceneState._sliderPuzzleState.playerTileOrder[currentTileY][currentTileX] = -10;
 				break;
 			}
 			case kLeft: {
-				uint curTileID = _playerTileOrder[currentTileY][currentTileX];
+				uint curTileID = NancySceneState._sliderPuzzleState.playerTileOrder[currentTileY][currentTileX];
 				drawTile(curTileID, currentTileX - 1, currentTileY);
 				undrawTile(currentTileX, currentTileY);
-				_playerTileOrder[currentTileY][currentTileX - 1] = curTileID;
-				_playerTileOrder[currentTileY][currentTileX] = -10;
+				NancySceneState._sliderPuzzleState.playerTileOrder[currentTileY][currentTileX - 1] = curTileID;
+				NancySceneState._sliderPuzzleState.playerTileOrder[currentTileY][currentTileX] = -10;
 				break;
 			}
 			case kRight: {
-				uint curTileID = _playerTileOrder[currentTileY][currentTileX];
+				uint curTileID = NancySceneState._sliderPuzzleState.playerTileOrder[currentTileY][currentTileX];
 				drawTile(curTileID, currentTileX + 1, currentTileY);
 				undrawTile(currentTileX, currentTileY);
-				_playerTileOrder[currentTileY][currentTileX + 1] = curTileID;
-				_playerTileOrder[currentTileY][currentTileX] = -10;
+				NancySceneState._sliderPuzzleState.playerTileOrder[currentTileY][currentTileX + 1] = curTileID;
+				NancySceneState._sliderPuzzleState.playerTileOrder[currentTileY][currentTileX] = -10;
 				break;
 			}
 			}
@@ -284,29 +281,6 @@ void SliderPuzzle::handleInput(NancyInput &input) {
 void SliderPuzzle::onPause(bool pause) {
 	if (pause) {
 		registerGraphics();
-	}
-}
-
-void SliderPuzzle::synchronize(Common::Serializer &ser) {
-	ser.syncAsByte(_playerHasTriedPuzzle);
-
-	byte x, y;
-
-	if (ser.isSaving()) {
-		y = _playerTileOrder.size();
-		if (y) {
-			x = _playerTileOrder.back().size();
-		}
-	}
-
-	ser.syncAsByte(x);
-	ser.syncAsByte(y);
-
-	_playerTileOrder.resize(y);
-
-	for (int i = 0; i < y; ++i) {
-		_playerTileOrder[i].resize(x);
-		ser.syncArray(_playerTileOrder[i].data(), x, Common::Serializer::Sint16LE);
 	}
 }
 
