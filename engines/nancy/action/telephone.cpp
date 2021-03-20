@@ -117,7 +117,7 @@ void Telephone::readData(Common::SeekableReadStream &stream) {
 		stream.read(textBuf, 200);
 		textBuf[199] = '\0';
 		call.text = textBuf;
-		call._sceneChange.readData(stream);
+		call.sceneChange.readData(stream);
 		stream.skip(2);
 		call.flag.label = stream.readSint16LE();
 		call.flag.flag = (NancyFlag)stream.readUint16LE();
@@ -237,7 +237,7 @@ void Telephone::execute() {
 			break;
 		case kCall: {
 			PhoneCall &call = _calls[_selected];
-			NancySceneState.changeScene(call._sceneChange);
+			NancySceneState.changeScene(call.sceneChange);
 			NancySceneState.setEventFlag(call.flag);
 
 			break;

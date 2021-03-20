@@ -64,7 +64,7 @@ struct ResponseStruct {
 	ConditionFlags conditionFlags; // 0x01
 	Common::String text; // 0x06
 	Common::String soundName; // 0x196
-	SceneChangeDescription _sceneChange; // 0x1A0
+	SceneChangeDescription sceneChange; // 0x1A0
 	EventFlagDescription flagDesc; // 0x1A8
 };
 

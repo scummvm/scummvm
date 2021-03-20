@@ -43,7 +43,7 @@ public:
 		Common::Array<byte> phoneNumber; // 0x0, 11 bytes
 		Common::String soundName; // 0xB
 		Common::String text; // 0x15, 0xC8 bytes
-		SceneChangeDescription _sceneChange; // 0xDD
+		SceneChangeDescription sceneChange; // 0xDD
 		// shouldStopRendering
 		EventFlagDescription flag; // 0xE7
 	};
