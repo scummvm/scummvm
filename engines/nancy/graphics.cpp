@@ -137,12 +137,12 @@ void GraphicsManager::loadSurfacePalette(Graphics::ManagedSurface &inSurf, const
 }
 
 void GraphicsManager::copyToManaged(const Graphics::Surface &src, Graphics::ManagedSurface &dst, bool verticalFlip, bool doubleSize) {
-	if (dst.w != doubleSize ? src.w * 2 : src.w || dst.h != doubleSize ? src.h * 2 : src.h) {
+	if (dst.w != (doubleSize ? src.w * 2 : src.w) || dst.h != (doubleSize ? src.h * 2 : src.h)) {
 		const uint32 *palette = dst.getPalette();
 		bool hasTransColor = dst.hasTransparentColor();
 		dst.create(doubleSize ? src.w * 2 : src.w, doubleSize ? src.h * 2 : src.h, src.format);
 
-		if (palette) {
+		if (palette && g_nancy->getGameFlags() & NGF_8BITCOLOR) {
 			// free() clears the _hasPalette flag but doesn't clear the palette itself, so
 			// we just set it to itself; hopefully this doesn't cause any issues
 			dst.setPalette(palette, 0, 256);
