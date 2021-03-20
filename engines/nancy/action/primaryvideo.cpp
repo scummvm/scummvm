@@ -190,7 +190,7 @@ void PlayPrimaryVideoChan0::readData(Common::SeekableReadStream &stream) {
 		UI::Textbox::assembleTextLine(rawText, response.text, 400);
 		readFilename(stream, response.soundName);
 		stream.skip(1);
-		response._sceneChange.readData(stream);
+		response.sceneChange.readData(stream);
 		response.flagDesc.label = stream.readSint16LE();
 		response.flagDesc.flag = (NancyFlag)stream.readByte();
 
@@ -297,7 +297,7 @@ void PlayPrimaryVideoChan0::execute() {
 			g_nancy->_sound->stopSound(_responseGenericSound);
 
 			if (_pickedResponse != -1) {
-				NancySceneState.changeScene(_responses[_pickedResponse]._sceneChange);
+				NancySceneState.changeScene(_responses[_pickedResponse].sceneChange);
 			} else {
 				// Evaluate scene branch structs here
 
@@ -344,8 +344,8 @@ void PlayPrimaryVideoChan0::addConditionalResponses() {
 				ResponseStruct &newResponse = _responses.back();
 				newResponse.soundName = snd;
 				newResponse.text = file.readString();
-				newResponse._sceneChange.sceneID = res.sceneID;
-				newResponse._sceneChange.doNotStartSound = true;
+				newResponse.sceneChange.sceneID = res.sceneID;
+				newResponse.sceneChange.doNotStartSound = true;
 
 				file.close();
 			}
@@ -369,8 +369,8 @@ void PlayPrimaryVideoChan0::addGoodbye() {
 			newResponse.soundName = snd;
 			newResponse.text = file.readString();
 			// response is picked randomly
-			newResponse._sceneChange.sceneID = res.sceneIDs[g_nancy->_randomSource->getRandomNumber(3)];
-			newResponse._sceneChange.doNotStartSound = true;
+			newResponse.sceneChange.sceneID = res.sceneIDs[g_nancy->_randomSource->getRandomNumber(3)];
+			newResponse.sceneChange.doNotStartSound = true;
 
 			file.close();
 		}
