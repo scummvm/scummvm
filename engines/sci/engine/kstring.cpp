@@ -499,31 +499,6 @@ reg_t kMessage(EngineState *s, int argc, reg_t *argv) {
 	if (argc >= 6)
 		tuple = MessageTuple(argv[2].toUint16(), argv[3].toUint16(), argv[4].toUint16(), argv[5].toUint16());
 
-	// WORKAROUND for a script bug in Pepper. When using objects together,
-	// there is code inside script 894 that shows appropriate messages.
-	// In the case of the jar of cabbage (noun 26), the relevant message
-	// shown when using any object with it is missing. This leads to the
-	// script code being triggered, which modifies the jar's noun and
-	// message selectors, and renders it useless. Thus, when using any
-	// object with the jar of cabbage, it's effectively corrupted, and
-	// can't be used on the goat to empty it, therefore the game reaches
-	// an unsolvable state. It's almost impossible to patch the offending
-	// script, as it is used in many cases. But we can prevent the
-	// corruption of the jar here: if the message is found, the offending
-	// code is never reached and the jar is never corrupted. To do this,
-	// we substitute all verbs on the cabbage jar with the default verb,
-	// which shows the "Cannot use this object with the jar" message, and
-	// never triggers the offending script code that corrupts the object.
-	// This only affects the jar of cabbage - any other object, including
-	// the empty jar has a different noun, thus it's unaffected.
-	// Fixes bug #6232.
-	// NOTE: To fix a corrupted jar object, type "send Glass_Jar message 52"
-	// in the debugger.
-	if (g_sci->getGameId() == GID_PEPPER && func == 0 && argc >= 6 && module == 894 &&
-		tuple.noun == 26 && tuple.cond == 0 && tuple.seq == 1 &&
-		!s->_msgState->getMessage(module, tuple, NULL_REG))
-		tuple.verb = 0;
-
 	switch (func) {
 	case K_MESSAGE_GET:
 		return make_reg(0, s->_msgState->getMessage(module, tuple, (argc == 7 ? argv[6] : NULL_REG)));

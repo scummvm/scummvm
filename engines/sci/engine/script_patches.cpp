@@ -10596,8 +10596,84 @@ static const SciScriptPatcherEntry phantasmagoria2Signatures[] = {
 // ===========================================================================
 // Pepper's Adventures in Time
 
+// Using items on the jar of cabbage leaves it in a broken state that prevents
+//  feeding it to the goat and completing the game.
+//
+// As the jar progresses through states to become a Leyden jar, its noun and
+//  message (verb) properties change. When a non-Leyden item is used on the jar,
+//  Glass Jar:doVerb tests to see if a message resource exists for the current
+//  noun and incoming verb. If there's no such message then the jar's noun is
+//  set to 30 and its message property is set to 125, a verb that no screens
+//  respond to. The jar can no longer be clicked on anything, but the damage is
+//  limited until the next time the player returns to the inventory screen and
+//  Glass Jar:show recalculates the properties that it should have already had.
+//  This recalculation fails to take into account the initial state so if the
+//  jar has cabbage then it is permanently broken instead of just temporarily.
+//
+// We fix this so that the jar is never placed in a broken state. The existing
+//  code attempts to fall back on message resources for noun 30 which refer the
+//  unfinished Leyden jar. The problem is that it doesn't restore the noun after
+//  displaying the message, which can cause subsequent missing message errors,
+//  and it mangles the message property even though that doesn't affect which
+//  message it's about to display. We rewrite this so that noun 30 is only set
+//  temporarily, and only when the jar is an unfinished Leyden jar, and without
+//  altering the message (verb) property. This also fixes several messages.
+//
+// Applies to: All versions
+// Responsible method: Glass Jar:doVerb
+// Fixes bug: #6232
+static const uint16 pepperSignatureGlassJar[] = {
+	SIG_MAGICDWORD,
+	0x31, 0x08,                      // bnt 08 [ skip if message exists ]
+	0x35, 0x1e,                      // ldi 1e
+	0x65, 0x36,                      // aTop noun [ noun = 30 ]
+	0x35, 0x7d,                      // ldi 7d
+	0x65, 0x26,                      // aTop message [ message = 125 ]
+	0x38, SIG_SELECTOR16(doVerb),    // pushi doVerb
+	0x78,                            // push1
+	0x8f, 0x01,                      // lsp 01
+	0x59, 0x02,                      // &rest 02
+	0x57, 0x87, 0x06,                // super TWInvItem 06 [ super doVerb: param1 &rest ]
+	0x39, 0x04,                      // pushi 04
+	0x8f, 0x01,                      // lsp 01
+	0x39, 0x32,                      // pushi 32
+	0x39, 0x33,                      // pushi 33
+	0x39, 0x2f,                      // pushi 2f
+	0x46, SIG_UINT16(0x03e7),        // calle proc999_5 [ OneOf param1 50 51 47, always false ]
+	      SIG_UINT16(0x0005), 0x08,
+	0x31, 0x09,                      // bnt 09 [ branch always taken ]
+	SIG_END
+};
+
+static const uint16 pepperPatchGlassJar[] = {
+	0x67, 0x36,                      // pTos noun [ save noun ]
+	0x31, 0x16,                      // bnt 16 [ skip if message exists ]
+	0x3c,                            // dup
+	0x35, 0x1a,                      // ldi 1a
+	0x1a,                            // eq?
+	0x2f, 0x10,                      // bt 10 [ skip if noun == 26 (cabbage) ]
+	0x3c,                            // dup
+	0x35, 0x1d,                      // ldi 1d
+	0x1a,                            // eq?
+	0x2f, 0x0a,                      // bt 0a [ skip if noun == 29 (Leyden jar) ]
+	0x3c,                            // dup
+	0x35, 0x1b,                      // ldi 1b
+	0x1a,                            // eq?
+	0x2f, 0x04,                      // bt 04 [ skip if noun == 27 (charged Leyden jar) ]
+	0x35, 0x1e,                      // ldi 1e
+	0x65, 0x36,                      // aTop noun [ noun = 30 (unfinished Leyden jar) ]
+	0x38, PATCH_SELECTOR16(doVerb),  // pushi doVerb
+	0x76,                            // push0
+	0x59, 0x01,                      // &rest 01
+	0x57, 0x87, 0x04,                // super TWInvItem 04 [ super doVerb: &rest ]
+	0x69, 0x36,                      // sTop noun [ restore noun ]
+	0x33, 0x09,                      // jmp 09
+	PATCH_END
+};
+
 //          script, description,                                         signature                            patch
 static const SciScriptPatcherEntry pepperSignatures[] = {
+	{  true,   894, "glass jar fix",                                  1, pepperSignatureGlassJar,             pepperPatchGlassJar },
 	{  true,   928, "Narrator lockup fix",                            1, sciNarratorLockupSignature,          sciNarratorLockupPatch },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
