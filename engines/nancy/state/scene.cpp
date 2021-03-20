@@ -397,6 +397,7 @@ void Scene::init() {
 
 		_hintsRemaining.clear();
 
+		_hintsRemaining.reserve(3);
 		for (uint i = 0; i < 3; ++i) {
 			_hintsRemaining.push_back(chunk->readByte());
 		}
@@ -575,6 +576,7 @@ void Scene::initStaticData() {
 
 	// Hardcoded by original engine
 	_mapAccessSceneIDs.clear();
+	_mapAccessSceneIDs.reserve(8);
 	_mapAccessSceneIDs.push_back(9);
 	_mapAccessSceneIDs.push_back(10);
 	_mapAccessSceneIDs.push_back(11);

@@ -69,11 +69,13 @@ void PlayStaticBitmapAnimation::readData(Common::SeekableReadStream &stream) {
 	_sound.read(stream, SoundDescription::kNormal);
 	uint numViewportFrames = stream.readUint16LE();
 
+	_srcRects.reserve(_loopLastFrame - _firstFrame);
 	for (uint i = _firstFrame; i <= _loopLastFrame; ++i) {
 		_srcRects.push_back(Common::Rect());
 		readRect(stream, _srcRects[i]);
 	}
 
+	_bitmaps.reserve(numViewportFrames);
 	for (uint i = 0; i < numViewportFrames; ++i) {
 		_bitmaps.push_back(BitmapDescription());
 		BitmapDescription &rects = _bitmaps.back();

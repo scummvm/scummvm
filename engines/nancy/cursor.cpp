@@ -38,6 +38,7 @@ void CursorManager::init() {
 	Common::String inventoryCursorsImageName = chunk->readString();
 
 	chunk = g_nancy->getBootChunkStream("CURS");
+	_cursors.reserve(56);
 	for (uint i = 0; i < 56; ++i) {
 		_cursors.push_back(Cursor());
 		chunk->seek(i * 16, SEEK_SET);

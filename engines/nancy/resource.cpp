@@ -233,6 +233,7 @@ bool CifTree::initialize() {
 	if (f.eos())
 		error("Error reading CifTree '%s'", _name.c_str());
 
+	_cifInfo.reserve(infoBlockCount);
 	for (int i = 0; i < infoBlockCount; i++) {
 		CifInfoChain chain;
 		readCifInfo(f, chain);

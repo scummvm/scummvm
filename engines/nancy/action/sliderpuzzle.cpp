@@ -49,19 +49,26 @@ void SliderPuzzle::readData(Common::SeekableReadStream &stream) {
 	_width = stream.readUint16LE();
 	_height = stream.readUint16LE();
 
+	_srcRects.reserve(_height);
 	for (uint y = 0; y < _height; ++y) {
 		_srcRects.push_back(Common::Array<Common::Rect>());
+		_srcRects.back().reserve(_width);
+		
 		for (uint x = 0; x < _width; ++x) {
 			_srcRects.back().push_back(Common::Rect());
 			readRect(stream, _srcRects.back().back());
 		}
+		
 		stream.skip((6 - _width) * 16);
 	}
 
 	stream.skip((6 - _height) * 6 * 16);
 
+	_destRects.reserve(_height);
 	for (uint y = 0; y < _height; ++y) {
 		_destRects.push_back(Common::Array<Common::Rect>());
+		_destRects.back().reserve(_width);
+
 		for (uint x = 0; x < _width; ++x) {
 			_destRects.back().push_back(Common::Rect());
 			readRect(stream, _destRects.back().back());
@@ -77,11 +84,15 @@ void SliderPuzzle::readData(Common::SeekableReadStream &stream) {
 
 	stream.skip((6 - _height) * 6 * 16);
 
+	_correctTileOrder.reserve(_height);
 	for (uint y = 0; y < _height; ++y) {
 		_correctTileOrder.push_back(Common::Array<int16>());
+		_correctTileOrder.back().reserve(_width);
+
 		for (uint x = 0; x < _width; ++x) {
 			_correctTileOrder.back().push_back(stream.readSint16LE());
 		}
+
 		stream.skip((6 - _width) * 2);
 	}
 

@@ -84,6 +84,7 @@ void Map::init() {
 
 	_locations.clear();
 
+	_locations.reserve(4);
 	for (uint i = 0; i < 4; ++i) {
 		chunk->seek(0x162 + i * 16, SEEK_SET);
 		_locations.push_back(Location());
@@ -96,6 +97,7 @@ void Map::init() {
 			loc.isActive = true;
 		}
 
+		loc.scenes.reserve(2);
 		for (uint j = 0; j < 2; ++j) {
 			loc.scenes.push_back(Location::SceneChange());
 			Location::SceneChange &sc = loc.scenes[j];

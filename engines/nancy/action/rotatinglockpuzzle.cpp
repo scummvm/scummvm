@@ -48,11 +48,13 @@ void RotatingLockPuzzle::readData(Common::SeekableReadStream &stream) {
 
 	uint numDials = stream.readUint16LE();
 
+	_srcRects.reserve(10);
 	for (uint i = 0; i < 10; ++i) {
 		_srcRects.push_back(Common::Rect());
 		readRect(stream, _srcRects.back());
 	}
 
+	_destRects.reserve(numDials);
 	for (uint i = 0; i < numDials; ++i) {
 		_destRects.push_back(Common::Rect());
 		readRect(stream, _destRects.back());
@@ -66,11 +68,13 @@ void RotatingLockPuzzle::readData(Common::SeekableReadStream &stream) {
 
 	stream.skip((8 - numDials) * 16);
 
+	_upHotspots.reserve(numDials);
 	for (uint i = 0; i < numDials; ++i) {
 		_upHotspots.push_back(Common::Rect());
 		readRect(stream, _upHotspots.back());
 	}
 
+	_downHotspots.reserve(numDials);
 	stream.skip((8 - numDials) * 16);
 
 	for (uint i = 0; i < numDials; ++i) {
@@ -80,6 +84,7 @@ void RotatingLockPuzzle::readData(Common::SeekableReadStream &stream) {
 
 	stream.skip((8 - numDials) * 16);
 
+	_correctSequence.reserve(numDials);
 	for (uint i = 0; i < numDials; ++i) {
 		_correctSequence.push_back(stream.readByte());
 	}

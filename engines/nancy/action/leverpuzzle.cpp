@@ -44,14 +44,17 @@ void LeverPuzzle::init() {
 void LeverPuzzle::readData(Common::SeekableReadStream &stream) {
 	readFilename(stream, _imageName);
 
+	_srcRects.reserve(3);	
 	for (uint leverID = 0; leverID < 3; ++leverID) {
 		_srcRects.push_back(Common::Array<Common::Rect>());
+		_srcRects.back().reserve(3);
 		for (uint i = 0; i < 4; ++i) {
 			_srcRects.back().push_back(Common::Rect());
 			readRect(stream, _srcRects.back().back());
 		}
 	}
 
+	_destRects.reserve(3);
 	for (uint leverID = 0; leverID < 3; ++leverID) {
 		_destRects.push_back(Common::Rect());
 		readRect(stream, _destRects.back());
@@ -63,11 +66,14 @@ void LeverPuzzle::readData(Common::SeekableReadStream &stream) {
 		}
 	}
 
+	_playerSequence.reserve(3);
+	_leverDirection.reserve(3);
 	for (uint leverID = 0; leverID < 3; ++leverID) {
 		_playerSequence.push_back(stream.readByte());
 		_leverDirection.push_back(true);
 	}
 
+	_correctSequence.reserve(3);
 	for (uint leverID = 0; leverID < 3; ++leverID) {
 		_correctSequence.push_back(stream.readByte());
 	}

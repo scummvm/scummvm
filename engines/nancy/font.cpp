@@ -70,6 +70,7 @@ void Font::read(Common::SeekableReadStream &stream) {
 	_semicolonOffset = stream.readUint16LE();
 	_slashOffset = stream.readUint16LE();
 
+	_symbolRects.reserve(78);
 	for (uint i = 0; i < 78; ++i) {
 		_symbolRects.push_back(Common::Rect());
 		Common::Rect &cur = _symbolRects[i];

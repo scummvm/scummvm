@@ -53,6 +53,7 @@ void HotMultiframeSceneChange::readData(Common::SeekableReadStream &stream) {
 	SceneChange::readData(stream);
 	uint16 numHotspots = stream.readUint16LE();
 
+	_hotspots.reserve(numHotspots);
 	for (uint i = 0; i < numHotspots; ++i) {
 		_hotspots.push_back(HotspotDescription());
 		HotspotDescription &newDesc = _hotspots[i];
@@ -152,6 +153,7 @@ void MapCallHot1Fr::execute() {
 
 void MapCallHotMultiframe::readData(Common::SeekableReadStream &stream) {
 	uint16 numDescs = stream.readUint16LE();
+	_hotspots.reserve(numDescs);
 	for (uint i = 0; i < numDescs; ++i) {
 		_hotspots.push_back(HotspotDescription());
 		_hotspots[i].readData(stream);
@@ -254,6 +256,7 @@ void EventFlagsMultiHS::readData(Common::SeekableReadStream &stream) {
 	EventFlags::readData(stream);
 	uint16 numHotspots = stream.readUint16LE();
 
+	_hotspots.reserve(numHotspots);
 	for (uint16 i = 0; i < numHotspots; ++i) {
 		_hotspots.push_back(HotspotDescription());
 		HotspotDescription &newDesc = _hotspots[i];
@@ -360,6 +363,7 @@ void ShowInventoryItem::readData(Common::SeekableReadStream &stream) {
 
 	uint16 numFrames = stream.readUint16LE();
 
+	_bitmaps.reserve(numFrames);
 	for (uint i = 0; i < numFrames; ++i) {
 		_bitmaps.push_back(BitmapDescription());
 		_bitmaps[i].readData(stream);
@@ -462,6 +466,7 @@ void PlaySoundMultiHS::readData(Common::SeekableReadStream &stream) {
 	stream.skip(2);
 	uint16 numHotspots = stream.readUint16LE();
 
+	_hotspots.reserve(numHotspots);
 	for (uint i = 0; i < numHotspots; ++i) {
 		_hotspots.push_back(HotspotDescription());
 		_hotspots.back().frameID = stream.readUint16LE();
