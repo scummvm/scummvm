@@ -74,6 +74,7 @@ AGSEngine::AGSEngine(OSystem *syst, const AGSGameDescription *gameDesc) : Engine
 	g_vm = this;
 	DebugMan.addDebugChannel(kDebugGraphics, "Graphics", "Graphics debug level");
 	DebugMan.addDebugChannel(kDebugPath, "Path", "Pathfinding debug level");
+	DebugMan.addDebugChannel(kDebugFilePath, "FilePath", "File path debug level");
 	DebugMan.addDebugChannel(kDebugScan, "Scan", "Scan for unrecognised games");
 
 	_events = new EventsManager();

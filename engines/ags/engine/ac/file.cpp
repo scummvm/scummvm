@@ -52,6 +52,7 @@
 #include "ags/globals.h"
 #include "ags/ags.h"
 #include "common/config-manager.h"
+#include "common/debug.h"
 
 namespace AGS3 {
 
@@ -261,6 +262,7 @@ String MakeAppDataPath() {
 }
 
 bool ResolveScriptPath(const String &orig_sc_path, bool read_only, ResolvedPath &rp) {
+	debugC(::AGS::kDebugFilePath, "ResolveScriptPath(%s)", orig_sc_path.GetCStr());
 	rp = ResolvedPath();
 
 	bool is_absolute = !is_relative_filename(orig_sc_path);
@@ -271,6 +273,7 @@ bool ResolveScriptPath(const String &orig_sc_path, bool read_only, ResolvedPath 
 
 	if (is_absolute) {
 		rp.FullPath = orig_sc_path;
+		debugC(::AGS::kDebugFilePath, "Full path detected");
 		return true;
 	}
 	/*
@@ -309,6 +312,7 @@ bool ResolveScriptPath(const String &orig_sc_path, bool read_only, ResolvedPath 
 		// Remap "agsgame.*"
 		const char  *agsSavePrefix = "/agssave.";
 		if (child_path.CompareLeft(agsSavePrefix) == 0) {
+			debugC(::AGS::kDebugFilePath, "Remapping agssave.* to ScummVM savegame files");
 			String suffix = child_path.Mid(strlen(agsSavePrefix));
 			if (suffix.CompareLeft("*") == 0) {
 				Common::String file_name = ::AGS::g_vm->getSaveStateName(999);
@@ -346,6 +350,7 @@ bool ResolveScriptPath(const String &orig_sc_path, bool read_only, ResolvedPath 
 	// For files on savepath, always ensure it starts with the game target prefix to avoid
 	// conflicts (as we usually have the same save dir for all games).
 	if (parent_dir == SAVE_FOLDER_PREFIX) {
+		debugC(::AGS::kDebugFilePath, "Adding ScummVM game target prefix");
 		String gameTarget = ConfMan.getActiveDomainName();
 		if (child_path.CompareLeft(gameTarget) != 0)
 			child_path = String::FromFormat("%s-%s", gameTarget.GetCStr(), child_path.GetCStr());
@@ -363,6 +368,10 @@ bool ResolveScriptPath(const String &orig_sc_path, bool read_only, ResolvedPath 
 	rp.BaseDir = parent_dir;
 	rp.FullPath = full_path;
 	rp.AltPath = alt_path;
+
+	debugC(::AGS::kDebugFilePath, "Resolved path: %s", full_path.GetCStr());
+	if (!alt_path.IsEmpty())
+		debugC(::AGS::kDebugFilePath, "Alternative path: %s", alt_path.GetCStr());
 
 	return true;
 }
