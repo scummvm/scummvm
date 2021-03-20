@@ -58,11 +58,11 @@ template<> void unknownKeyError(::Common::String key) {
 }
 
 template<> void unknownKeyError(signed char key) {
-	error("Unknown key \"%hhi\"", key);
+	error("Unknown key \"%i\"", key);
 }
 
 template<> void unknownKeyError(unsigned char key) {
-	error("Unknown key \"%hhu\"", key);
+	error("Unknown key \"%u\"", key);
 }
 
 template<> void unknownKeyError(short signed key) {
@@ -89,14 +89,6 @@ void unknownKeyError(signed int key) {
 template<>
 void unknownKeyError(unsigned int key) {
 	error("Unknown key \"%u\"", key);
-}
-
-template<> void unknownKeyError(long long signed key) {
-	error("Unknown key \"%lli\"", key);
-}
-
-template<> void unknownKeyError(long long unsigned key) {
-	error("Unknown key \"%llu\"", key);
 }
 
 template<> void unknownKeyError(void *key) {

@@ -330,10 +330,6 @@ void NORETURN_PRE unknownKeyError(signed int key) NORETURN_POST;
 template<>
 void NORETURN_PRE unknownKeyError(unsigned int key) NORETURN_POST;
 template<>
-void NORETURN_PRE unknownKeyError(long long signed key) NORETURN_POST;
-template<>
-void NORETURN_PRE unknownKeyError(long long unsigned key) NORETURN_POST;
-template<>
 void NORETURN_PRE unknownKeyError(void *key) NORETURN_POST;
 template<>
 void NORETURN_PRE unknownKeyError(const char *key) NORETURN_POST;
@@ -733,6 +729,11 @@ void HashMap<Key, Val, HashFunc, EqualFunc>::erase(const Key &key) {
 #undef HASHMAP_DUMMY_NODE
 
 /** @} */
+
+template<class Val, class HashFunc, class EqualFunc>
+class HashMap<signed long long, Val, HashFunc, EqualFunc>;
+template<class Val, class HashFunc, class EqualFunc>
+class HashMap<unsigned long long, Val, HashFunc, EqualFunc>;
 
 } // End of namespace Common
 
