@@ -170,6 +170,7 @@ void PlaySecondaryVideo::readData(Common::SeekableReadStream &stream) {
 	}
 
 	uint16 numVideoDescs = stream.readUint16LE();
+	_videoDescs.reserve(numVideoDescs);
 	for (uint i = 0; i < numVideoDescs; ++i) {
 		_videoDescs.push_back(SecondaryVideoDescription());
 		_videoDescs[i].readData(stream);

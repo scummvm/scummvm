@@ -59,6 +59,7 @@ void PlaySecondaryMovie::readData(Common::SeekableReadStream &stream) {
 	_sceneChange.readData(stream);
 
 	uint16 numVideoDescs = stream.readUint16LE();
+	_videoDescs.reserve(numVideoDescs);
 	for (uint i = 0; i < numVideoDescs; ++i) {
 		_videoDescs.push_back(SecondaryVideoDescription());
 		_videoDescs[i].readData(stream);

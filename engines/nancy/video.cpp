@@ -114,6 +114,7 @@ AVFDecoder::AVFVideoTrack::AVFVideoTrack(Common::SeekableReadStream *stream, uin
 	_surface->create(_width, _height, _pixelFormat);
 	_frameSize = _width * _height * _pixelFormat.bytesPerPixel;
 
+	_chunkInfo.reserve(_frameCount);
 	for (uint i = 0; i < _frameCount; i++) {
 		ChunkInfo info;
 

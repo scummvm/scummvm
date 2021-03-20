@@ -56,6 +56,7 @@ void OrderingPuzzle::readData(Common::SeekableReadStream &stream) {
 	readFilename(stream, _imageName);
 	uint16 numElements = stream.readUint16LE();
 
+	_srcRects.reserve(numElements);
 	for (uint i = 0; i < numElements; ++i) {
 		_srcRects.push_back(Common::Rect());
 		readRect(stream, _srcRects.back());
@@ -63,6 +64,8 @@ void OrderingPuzzle::readData(Common::SeekableReadStream &stream) {
 
 	stream.skip(16 * (15 - numElements));
 
+	_destRects.reserve(numElements);
+	_drawnElements.reserve(numElements);
 	for (uint i = 0; i < numElements; ++i) {
 		_destRects.push_back(Common::Rect());
 		readRect(stream, _destRects.back());
@@ -80,6 +83,7 @@ void OrderingPuzzle::readData(Common::SeekableReadStream &stream) {
 
 	_sequenceLength = stream.readUint16LE();
 
+	_correctSequence.reserve(15);
 	for (uint i = 0; i < 15; ++i) {
 		_correctSequence.push_back(stream.readByte());
 	}

@@ -52,11 +52,13 @@ void Telephone::init() {
 void Telephone::readData(Common::SeekableReadStream &stream) {
 	readFilename(stream, _imageName);
 
+	_srcRects.reserve(12);
 	for (uint i = 0; i < 12; ++i) {
 		_srcRects.push_back(Common::Rect());
 		readRect(stream, _srcRects.back());
 	}
 
+	_destRects.reserve(12);
 	for (uint i = 0; i < 12; ++i) {
 		_destRects.push_back(Common::Rect());
 		readRect(stream, _destRects.back());
@@ -75,6 +77,7 @@ void Telephone::readData(Common::SeekableReadStream &stream) {
 	_dialAgainSound.read(stream, SoundDescription::kNormal);
 	_hangUpSound.read(stream, SoundDescription::kNormal);
 
+	_buttonSoundNames.reserve(12);
 	for (uint i = 0; i < 12; ++i) {
 		Common::String buttonSoundName;
 		readFilename(stream, buttonSoundName);
@@ -100,10 +103,12 @@ void Telephone::readData(Common::SeekableReadStream &stream) {
 
 	uint numCalls = stream.readUint16LE();
 
+	_calls.reserve(numCalls);
 	for (uint i = 0; i < numCalls; ++i) {
 		_calls.push_back(PhoneCall());
 		PhoneCall &call = _calls.back();
 
+		call.phoneNumber.reserve(11);
 		for (uint j = 0; j < 11; ++j) {
 			call.phoneNumber.push_back(stream.readByte());
 		}

@@ -127,6 +127,7 @@ bool ActionManager::addNewActionRecord(Common::SeekableReadStream &inputData) {
 
 		// Initialize the dependencies data
 		inputData.seek(localChunkSize);
+		newRecord->_dependencies.reserve(numDependencies);
 		for (uint16 i = 0; i < numDependencies; ++i) {
 			newRecord->_dependencies.push_back(DependencyRecord());
 			DependencyRecord &dep = newRecord->_dependencies.back();

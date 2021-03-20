@@ -78,6 +78,7 @@ void PlayPrimaryVideoChan0::ConditionFlag::set() const {
 void PlayPrimaryVideoChan0::ConditionFlags::read(Common::SeekableReadStream &stream) {
 	uint16 numFlags = stream.readUint16LE();
 
+	conditionFlags.reserve(numFlags);
 	for (uint i = 0; i < numFlags; ++i) {
 		conditionFlags.push_back(ConditionFlag());
 		conditionFlags.back().read(stream);
@@ -180,21 +181,20 @@ void PlayPrimaryVideoChan0::readData(Common::SeekableReadStream &stream) {
 	uint16 numResponses = stream.readUint16LE();
 	rawText = new char[400];
 
-	if (numResponses > 0) {
-		for (uint i = 0; i < numResponses; ++i) {
-			_responses.push_back(ResponseStruct());
-			ResponseStruct &response = _responses[i];
-			response.conditionFlags.read(stream);
-			stream.read(rawText, 400);
-			UI::Textbox::assembleTextLine(rawText, response.text, 400);
-			readFilename(stream, response.soundName);
-			stream.skip(1);
-			response._sceneChange.readData(stream);
-			response.flagDesc.label = stream.readSint16LE();
-			response.flagDesc.flag = (NancyFlag)stream.readByte();
+	_responses.reserve(numResponses);
+	for (uint i = 0; i < numResponses; ++i) {
+		_responses.push_back(ResponseStruct());
+		ResponseStruct &response = _responses[i];
+		response.conditionFlags.read(stream);
+		stream.read(rawText, 400);
+		UI::Textbox::assembleTextLine(rawText, response.text, 400);
+		readFilename(stream, response.soundName);
+		stream.skip(1);
+		response._sceneChange.readData(stream);
+		response.flagDesc.label = stream.readSint16LE();
+		response.flagDesc.flag = (NancyFlag)stream.readByte();
 
-			stream.skip(0x32);
-		}
+		stream.skip(0x32);
 	}
 
 	delete[] rawText;
@@ -205,15 +205,14 @@ void PlayPrimaryVideoChan0::readData(Common::SeekableReadStream &stream) {
 	}
 
 	uint16 numFlagsStructs = stream.readUint16LE();
-	if (numFlagsStructs > 0) {
-		for (uint16 i = 0; i < numFlagsStructs; ++i) {
-			_flagsStructs.push_back(FlagsStruct());
-			FlagsStruct &flagsStruct = _flagsStructs.back();
-			flagsStruct.conditions.read(stream);
-			flagsStruct.flagToSet.type = (ConditionFlag::ConditionType)stream.readByte();
-			flagsStruct.flagToSet.flag.label = stream.readSint16LE();
-			flagsStruct.flagToSet.flag.flag = (NancyFlag)stream.readByte();
-		}
+	_flagsStructs.reserve(numFlagsStructs);
+	for (uint16 i = 0; i < numFlagsStructs; ++i) {
+		_flagsStructs.push_back(FlagsStruct());
+		FlagsStruct &flagsStruct = _flagsStructs.back();
+		flagsStruct.conditions.read(stream);
+		flagsStruct.flagToSet.type = (ConditionFlag::ConditionType)stream.readByte();
+		flagsStruct.flagToSet.flag.label = stream.readSint16LE();
+		flagsStruct.flagToSet.flag.flag = (NancyFlag)stream.readByte();
 	}
 }
 
