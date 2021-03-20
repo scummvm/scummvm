@@ -187,7 +187,7 @@ int Net::joinSession(int sessionIndex) {
 	}
 
 	if (sessionIndex >= (int)_sessions->countChildren()) {
-		warning("Net::joinSession(): session number too big: %d >= %lu", sessionIndex, _sessions->countChildren());
+		warning("Net::joinSession(): session number too big: %d >= %d", sessionIndex, (int)_sessions->countChildren());
 		return 0;
 	}
 
@@ -327,13 +327,13 @@ int32 Net::startQuerySessions() {
 	if (!_sessions)
 		return 0;
 
-	debug(1, "Net::startQuerySessions(): got %lu", _sessions->countChildren());
+	debug(1, "Net::startQuerySessions(): got %d", (int)_sessions->countChildren());
 
 	return _sessions->countChildren();
 }
 
 void Net::startQuerySessionsCallback(Common::JSONValue *response) {
-	debug(1, "startQuerySessions: Got: '%s' which is %lu", response->stringify().c_str(), response->countChildren());
+	debug(1, "startQuerySessions: Got: '%s' which is %d", response->stringify().c_str(), (int)response->countChildren());
 
 	_sessionsBeingQueried = false;
 
@@ -557,7 +557,7 @@ void Net::getSessionName(int sessionNumber, char *buffer, int length) {
 
 	if (sessionNumber >= (int)_sessions->countChildren()) {
 		*buffer = '\0';
-		warning("Net::getSessionName(): session number too big: %d >= %lu", sessionNumber, _sessions->countChildren());
+		warning("Net::getSessionName(): session number too big: %d >= %d", sessionNumber, (int)_sessions->countChildren());
 		return;
 	}
 
@@ -573,7 +573,7 @@ int Net::getSessionPlayerCount(int sessionNumber) {
 	}
 
 	if (sessionNumber >= (int)_sessions->countChildren()) {
-		warning("Net::getSessionPlayerCount(): session number too big: %d >= %lu", sessionNumber, _sessions->countChildren());
+		warning("Net::getSessionPlayerCount(): session number too big: %d >= %d", sessionNumber, (int)_sessions->countChildren());
 		return 0;
 	}
 
