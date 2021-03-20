@@ -199,7 +199,7 @@ void TextBoxWrite::readData(Common::SeekableReadStream &stream) {
 	stream.skip(size);
 
 	if (size > 10000) {
-		error("Action Record atTextboxWrite has too many text box chars: %d", size);;
+		error("Action Record atTextboxWrite has too many text box chars: %d", size);
 	}
 }
 
