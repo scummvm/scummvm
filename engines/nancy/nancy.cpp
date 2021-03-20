@@ -482,9 +482,6 @@ Common::Error NancyEngine::synchronize(Common::Serializer &ser) {
 	NancySceneState.synchronize(ser);
 	NancySceneState._actionManager.synchronize(ser);
 
-	// Sync any action record-related data
-	Action::SliderPuzzle::synchronize(ser);
-
 	return Common::kNoError;
 }
 

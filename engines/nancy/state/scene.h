@@ -56,6 +56,10 @@ namespace Nancy {
 
 class NancyEngine;
 
+namespace Action {
+class SliderPuzzle;
+}
+
 namespace State {
 
 struct SceneInfo {
@@ -68,6 +72,7 @@ struct SceneInfo {
 class Scene : public State, public Common::Singleton<Scene> {
 	friend class Nancy::Action::ActionRecord;
 	friend class Nancy::Action::ActionManager;
+	friend class Nancy::Action::SliderPuzzle;
 	friend class Nancy::NancyConsole;
 	friend class Nancy::NancyEngine;
 	friend class Nancy::CheatDialog;
@@ -224,6 +229,11 @@ private:
 		int16 primaryVideoResponsePicked = -1;
 	};
 
+	struct SliderPuzzleState {
+		Common::Array<Common::Array<int16>> playerTileOrder;
+		bool playerHasTriedPuzzle;
+	};
+
 	// UI
 	UI::FullScreenImage _frame;
 	UI::Viewport _viewport;
@@ -236,6 +246,7 @@ private:
 	SceneState _sceneState;
 	PlayFlags _flags;
 	Timers _timers;
+	SliderPuzzleState _sliderPuzzleState;
 	uint16 _difficulty;
 	Common::Array<uint16> _hintsRemaining;
 	int16 _lastHint;
