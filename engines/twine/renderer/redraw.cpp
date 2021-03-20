@@ -737,7 +737,7 @@ void Redraw::redrawEngineActions(bool bgRedraw) {
 		_engine->_screens->lockPalette = false;
 	}
 
-	if (_engine->_redraw->inSceneryView) {
+	if (inSceneryView) {
 		zoomScreenScale();
 	}
 }
