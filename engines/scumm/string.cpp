@@ -1076,28 +1076,9 @@ void ScummEngine::drawString(int a, const byte *msg) {
 	} else if (_game.version >= 4 && _game.version < 7 && _game.heversion == 0 && _game.id != GID_SAMNMAX && _language == Common::HE_ISR) {
 		// Ignore INDY4 verbs (but allow dialogue)
 		if (_game.id != GID_INDY4 || buf[0] == 127) {
-			int ll = 0;
-			if (_game.id == GID_INDY4 && buf[0] == 127) {
+			if (_game.id == GID_INDY4)
 				buf[0] = 32;
-				ll++;
-			}
-
-			// Skip control characters as they might contain '\0' which results in incorrect string width.
-			byte *ltext = buf;
-			while (ltext[ll] == 0xFF) {
-				ll += 4;
-			}
-			byte lenbuf[270];
-			memset(lenbuf, 0, sizeof(lenbuf));
-			int pos = ll;
-			while (ltext[pos]) {
-				if ((ltext[pos] == 0xFF || (_game.version <= 6 && ltext[pos] == 0xFE)) && ltext[pos+1] == 8) {
-					break;
-				}
-				pos++;
-			}
-			memcpy(lenbuf, ltext, pos);
-			_charset->_left = _screenWidth - _charset->_startLeft - _charset->getStringWidth(a, lenbuf);
+			_charset->_left = _screenWidth - _charset->_startLeft - _charset->getStringWidth(a, buf);
 		}
 	}
 
@@ -1142,24 +1123,7 @@ void ScummEngine::drawString(int a, const byte *msg) {
 				if (_charset->_center) {
 					_charset->_left = _charset->_startLeft - _charset->getStringWidth(a, buf + i);
 				} else if (_game.version >= 4 && _game.version < 7 && _game.heversion == 0 && _language == Common::HE_ISR) {
-					// Skip control characters as they might contain '\0' which results in incorrect string width.
-					int ll = 0;
-					byte *ltext = buf + i;
-					while (ltext[ll] == 0xFF) {
-						ll += 4;
-					}
-					byte lenbuf[270];
-					memset(lenbuf, 0, sizeof(lenbuf));
-					memcpy(lenbuf, ltext, ll);
-					int u = ll;
-					while (ltext[u]) {
-						if ((ltext[u] == 0xFF || (_game.version <= 6 && ltext[u] == 0xFE)) && ltext[u + 1] == 8) {
-							break;
-						}
-						u++;
-					}
-					memcpy(lenbuf, ltext, u);
-					_charset->_left = _screenWidth - _charset->_startLeft - _charset->getStringWidth(a, lenbuf);
+					_charset->_left = _screenWidth - _charset->_startLeft - _charset->getStringWidth(a, buf);
 				} else {
 					_charset->_left = _charset->_startLeft;
 				}
