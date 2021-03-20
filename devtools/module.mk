@@ -36,11 +36,11 @@ devtools/convbdf$(EXEEXT): $(srcdir)/devtools/convbdf.cpp
 	$(QUIET)$(MKDIR) devtools/$(DEPDIR)
 	+$(QUIET_LINK)$(LD) $(CXXFLAGS) -Wall -o $@ $<
 
-devtools/md5table$(EXEEXT): $(srcdir)/devtools/md5table.c
+devtools/md5table$(EXEEXT): $(srcdir)/devtools/md5table.cpp
 	$(QUIET)$(MKDIR) devtools/$(DEPDIR)
 	+$(QUIET_LINK)$(LD) $(CFLAGS) -Wall -o $@ $<
 
-devtools/make-scumm-fontdata$(EXEEXT): $(srcdir)/devtools/make-scumm-fontdata.c
+devtools/make-scumm-fontdata$(EXEEXT): $(srcdir)/devtools/make-scumm-fontdata.cpp
 	$(QUIET)$(MKDIR) devtools/$(DEPDIR)
 	+$(QUIET_LINK)$(LD) $(CFLAGS) -Wall -o $@ $<
 

@@ -850,7 +850,7 @@ void compressCharset(const unsigned char *data, const char *var, const char *nam
 	printf("};\n\n");
 }
 
-int main() {
+int main(int /*argc*/, char ** /*argv*/) {
 	int i, j;
 
 	printf("// These replacement character tables have been created using the\n");
