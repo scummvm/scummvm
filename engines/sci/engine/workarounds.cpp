@@ -485,6 +485,7 @@ const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
 	{ GID_MOTHERGOOSEHIRES,-1,64950, -1,               "View", "handleEvent",                     NULL,     0,     0, { WORKAROUND_FAKE,   0 } }, // see above
 	{ GID_PEPPER,         -1,   894,  0,            "Package", "doVerb",                          NULL,     3,     3, { WORKAROUND_FAKE,   0 } }, // using the hand on the book in the inventory - bug #5154
 	{ GID_PEPPER,        150,   928,  0,           "Narrator", "startText",                       NULL,     0,     0, { WORKAROUND_FAKE,   0 } }, // happens during the non-interactive demo of Pepper
+	{ GID_PEPPER,        260,   260,  0,            "glutton", "doVerb",                          NULL,     0,     0, { WORKAROUND_FAKE,   0 } }, // using tomato on General Lee
 	{ GID_PHANTASMAGORIA, -1, 64921, -1,              "Print", "addEdit",                         NULL,     1,     1, { WORKAROUND_FAKE,   0 } }, // When trying to use the game debugger's flag setting command
 	{ GID_PQ4,            -1,    25,  0,         "iconToggle", "select",                          NULL,     1,     1, { WORKAROUND_FAKE,   0 } }, // when toggling the icon bar to auto-hide or not
 	{ GID_PQ4,           170,   170, -1,        "hideAndSeek", "handleEvent",                     NULL,     1,     1, { WORKAROUND_FAKE,   0 } }, // when clicking to move right while still moving left during the Emo shootout - bug #9847
