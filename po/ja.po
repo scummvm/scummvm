@@ -6543,8 +6543,9 @@ msgid ""
 "files for Maniac Mansion have to be in the 'Maniac' directory inside the "
 "Tentacle game directory, and the game has to be added to ScummVM."
 msgstr ""
-"通常であれば、Maniac Mansionが起動します。しかしそれには、Tentacleのゲームディレクトリーの「Maniac」フォルダー内にゲームファイ"
-"ルを配置し、ゲームがScummVMに追加されていなければなりません。"
+"通常であれば、Maniac Mansionが起動します。しかしそれには、Tentacleのゲーム"
+"ディレクトリーの「Maniac」フォルダー内にゲームファイルを配置し、ゲームが"
+"ScummVMに追加されていなければなりません。"
 
 #: engines/scumm/players/player_v3m.cpp:129
 msgid ""
@@ -6559,7 +6560,8 @@ msgid ""
 "Could not find the 'Monkey Island' Macintosh executable to read the\n"
 "instruments from. Music will be disabled."
 msgstr ""
-"楽器をロードするためのMacintoshの実行ファイル「Monkey Island」が見つかりません。\n"
+"楽器をロードするためのMacintoshの実行ファイル「Monkey Island」が見つかりませ"
+"ん。\n"
 "音楽は無効になります。"
 
 #: engines/scumm/imuse/drivers/amiga.cpp:654
@@ -6672,7 +6674,9 @@ msgstr "背景のリニアフィルタリングを有効化"
 msgid ""
 "When linear filtering is enabled the background graphics are smoother in "
 "full screen mode, at the cost of some details."
-msgstr "リニアフィルタリングを有効にすると、フルスクリーンで背景がより滑らかになりますが、一部のディテールは損なわれます。"
+msgstr ""
+"リニアフィルタリングを有効にすると、フルスクリーンで背景がより滑らかになりま"
+"すが、一部のディテールは損なわれます。"
 
 #: engines/stark/detection.cpp:340 engines/ultima/ultima8/meta_engine.cpp:172
 #, fuzzy
