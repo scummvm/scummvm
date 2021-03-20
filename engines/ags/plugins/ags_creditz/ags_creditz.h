@@ -112,6 +112,8 @@ struct State {
 	// Version 1.1 specific
 	bool _resolutionFlag = false;
 	int32 _screenWidth = 0, _screenHeight = 0, _screenColorDepth = 0;
+	int32 _staticScreenWidth = 0;
+	bool _staticWidthMatches = false;
 };
 
 class AGSCreditz : public PluginBase {

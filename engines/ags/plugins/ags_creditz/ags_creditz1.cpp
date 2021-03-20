@@ -182,7 +182,22 @@ void AGSCreditz1::GetStaticCredit(ScriptMethodParams &params) {
 }
 
 void AGSCreditz1::StartEndStaticCredits(ScriptMethodParams &params) {
-	//PARAMS2(int, onoff, int, res);
+	PARAMS2(bool, onoff, int, res);
+
+	if (!onoff) {
+		_state->_staticCredits = false;
+
+	} else if (res != 1 && res != 2) {
+		_engine->AbortGame("StartEndStaticCredits: Wrong resolution");
+
+	} else {
+		_state->_currentStatic = 0;
+		_engine->GetScreenDimensions(&_state->_screenWidth,
+			&_state->_screenHeight, &_state->_screenColorDepth);
+
+		_state->_staticScreenWidth = (res == 1) ? 320 : 640;
+		_state->_staticWidthMatches = _state->_screenWidth == _state->_staticScreenWidth;
+	}
 }
 
 void AGSCreditz1::GetCurrentStaticCredit(ScriptMethodParams &params) {
@@ -214,7 +229,31 @@ void AGSCreditz1::SetStaticCreditTitle(ScriptMethodParams &params) {
 }
 
 void AGSCreditz1::ShowStaticCredit(ScriptMethodParams &params) {
-	//PARAMS6(int, ID, int, time, int, style, int, transtime, int, sound, int, resolution);
+	PARAMS6(int, ID, int, time, int, style, int, transtime, \
+		int, sound, int, res);
+	const StCredit &c = _state->_stCredits[0][ID];
+
+	if (!_state->_staticCredits) {
+		if (c.credit.empty() && c.title.empty()) {
+			_engine->AbortGame("ShowStaticCredit: Credit not set!");
+		} else if (res == 1 || (res == 2 && c.credit != "P=A=U=S=E")) {
+			if (style == 1) {
+				// TODO: style 1 setup
+				warning("TODO: Use %d %d", transtime, sound);
+			}
+
+			_engine->GetScreenDimensions(&_state->_screenWidth,
+				&_state->_screenHeight, &_state->_screenColorDepth);
+
+			_state->_staticScreenWidth = (res == 1) ? 320 : 640;
+			_state->_staticWidthMatches = _state->_screenWidth == _state->_staticScreenWidth;
+			_state->_currentStatic = ID;
+
+			// TODO: Final static setup
+		}
+	}
+
+	params._result = 0;
 }
 
 void AGSCreditz1::StaticReset(ScriptMethodParams &params) {
