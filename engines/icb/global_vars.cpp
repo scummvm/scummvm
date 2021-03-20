@@ -60,7 +60,7 @@ namespace ICB {
 
 void Init_globals() {
 	int32 len, index;
-	uint8 *mem;
+	uint8 *mem_tmp;
 	char buf[ENGINE_STRING_LEN];
 	char cluster[ENGINE_STRING_LEN];
 	char input[256];
@@ -77,7 +77,7 @@ void Init_globals() {
 
 		Tdebug("globals.txt", "found globals file - %s", (const char *)buf);
 
-		mem = rs_bg->Res_open(buf, fn_hash, cluster, cluster_hash);
+		mem_tmp = rs_bg->Res_open(buf, fn_hash, cluster, cluster_hash);
 
 		Tdebug("globals.txt", "loaded");
 
@@ -88,8 +88,8 @@ void Init_globals() {
 			// get name
 			i = 0;
 
-			while (ISGRAPH(mem[index]))
-				input[i++] = mem[index++];
+			while (ISGRAPH(mem_tmp[index]))
+				input[i++] = mem_tmp[index++];
 
 			input[i] = 0; // NULL terminate
 
@@ -98,7 +98,7 @@ void Init_globals() {
 			}
 
 			// ship white
-			while (!ISGRAPH(mem[index]))
+			while (!ISGRAPH(mem_tmp[index]))
 				index++;
 
 			if (index >= len) {
@@ -108,13 +108,13 @@ void Init_globals() {
 			// get value
 			i = 0;
 
-			while ((index < len) && (ISNUMBER(mem[index]))) // 0-9
-				value[i++] = mem[index++];              // toupper(buf[index++]);
+			while ((index < len) && (ISNUMBER(mem_tmp[index]))) // 0-9
+				value[i++] = mem_tmp[index++];              // toupper(buf[index++]);
 
 			value[i] = 0; // NULL terminate
 
 			// ship white
-			while ((index < len) && (!ISGRAPH(mem[index])))
+			while ((index < len) && (!ISGRAPH(mem_tmp[index])))
 				index++;
 
 			i = atoi(value);

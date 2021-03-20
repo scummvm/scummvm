@@ -89,12 +89,10 @@ void Init_play_movie(const char *param0, bool8 param1) {
 
 	pxString fullname;
 
-	// Non-global movies are streamed from the CD
-	char *_root;
-
 #ifndef PC_DEMO
 #if 1 // was #ifdef FROM_PC_CD
-	_root = g_theClusterManager->GetCDRoot();
+	// Non-global movies are streamed from the CD
+	// char *_root = g_theClusterManager->GetCDRoot();
 #endif
 #endif
 

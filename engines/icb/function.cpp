@@ -2391,7 +2391,7 @@ mcodeFunctionReturnCodes _game_session::fn_set_watch(int32 &, int32 *params) {
 				g_mission->remora_save_mode = (int32)g_oRemora->GetMode();
 				g_oRemora->SetMode(_remora::MOTION_SCAN);
 				g_oRemora->DeactivateRemora(TRUE8);
-				sInputState.UnSetButton((const ButtonEnums)(0xff));
+				sInputState.UnSetButton(__UNUSEDBUTTON);
 				g_oRemora->CycleRemoraLogic(sInputState);
 				MS->player.Pop_control_mode();
 				MS->player.Set_player_status(STOOD);

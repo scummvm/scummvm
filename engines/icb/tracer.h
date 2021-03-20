@@ -68,8 +68,8 @@ private:
 	uint8 m_nPadding[1];
 
 	// Here I block the use of the default '='.
-	_tracer(const _tracer &) { ; }
-	void operator=(const _tracer &) { ; }
+	_tracer(const _tracer &t) : _game_volume(t) { ; }
+	void operator=(const _tracer &t) { ; }
 
 	// Private functions used only by this class.
 	void GetBarriersForCube(const _XYZ_index &oCubeIndices, uint32 *oThisCubesBarriers, int32 &nNumBarriers, int32 nExtraSliceIndex) const;

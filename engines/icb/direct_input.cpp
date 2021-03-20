@@ -78,7 +78,7 @@ bool8 Read_DI_once_keys(uint32 key) {
 	//      1 pressed down
 
 	if (key >= Common::KEYCODE_LAST)
-		FALSE8;
+		return FALSE8;
 
 	// set repeat
 	if (keyboard_buf_scancodes[key] && (repeats_scancodes[key]))
@@ -98,7 +98,7 @@ bool8 Read_DI_keys(uint32 key) {
 	//      1 pressed down
 
 	if (key >= Common::KEYCODE_LAST)
-		FALSE8;
+		return FALSE8;
 
 	// set repeat
 	repeats_scancodes[key] = keyboard_buf_scancodes[key];

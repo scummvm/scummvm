@@ -468,7 +468,7 @@ mcodeFunctionReturnCodes _game_session::fn_remora_script_deactivate(int32 &, int
 	// Deactivate the Remora.
 	g_oRemora->SetMode(_remora::MOTION_SCAN);
 	g_oRemora->DeactivateRemora(TRUE8);
-	sInputState.UnSetButton((const ButtonEnums)(0xff));
+	sInputState.UnSetButton(__UNUSEDBUTTON);
 	g_oRemora->CycleRemoraLogic(sInputState);
 
 	// This tells the UI that the Remora is now gone and the player is back.

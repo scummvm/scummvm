@@ -502,7 +502,7 @@ int32 JpegHuffmanDecoder::Decode(JpegDecoder &decoder) {
 
 	// Here we are taking advantage of the fact that 1 bits are used as
 	// a prefix to the longer codes.
-	for (codelength = 0; (code > maxcode[codelength] && codelength < JpegMaxHuffmanCodeLength); ++codelength) {
+	for (codelength = 0; (code > maxcode[codelength] && codelength < (int32) JpegMaxHuffmanCodeLength); ++codelength) {
 		code = (uint16)((code << 1) | decoder.NextBit());
 	}
 
