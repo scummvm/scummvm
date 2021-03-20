@@ -376,8 +376,9 @@ bool NancyEngine::addBootChunk(const Common::String &name, Common::SeekableReadS
 Common::SeekableReadStream *NancyEngine::getBootChunkStream(const Common::String &name) {
 	if (_bootChunks.contains(name)) {
 		return _bootChunks[name];
+	} else {
+		return nullptr;
 	}
-	else return nullptr;
 }
 
 void NancyEngine::clearBootChunks() {

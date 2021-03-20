@@ -69,10 +69,12 @@ Common::Error NancyMetaEngine::createInstance(OSystem *syst, Engine **engine, co
 	if (gd) {
 		*engine = Nancy::NancyEngine::create(((const Nancy::NancyGameDescription *)gd)->gameType, syst, (const Nancy::NancyGameDescription *)gd);
 	}
+	
 	if (gd) {
 		return Common::kNoError;
+	} else {
+		return Common::Error();
 	}
-	else return Common::Error();
 }
 
 int NancyMetaEngine::getMaximumSaveSlot() const { return 8; }
