@@ -72,11 +72,12 @@ void Renderer::projectXYPositionOnScreen(int32 x, int32 y, int32 z) {
 	}
 	int32 cz = baseRotPos.z - z;
 	if (-1 < cz) {
+		const int32 xdelta = x - baseRotPos.x;
 		int32 posZ = cz + _cameraDepthOffset;
 		if (posZ < 0) {
 			posZ = 0x7FFF;
 		}
-		projPos.x = (cz * _cameraScaleY) / posZ + _orthoProjPos.x;
+		projPos.x = (xdelta * _cameraScaleY) / posZ + _orthoProjPos.x;
 		projPos.y = y - baseRotPos.y;
 		return;
 	}
