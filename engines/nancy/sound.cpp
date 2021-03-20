@@ -40,6 +40,42 @@ enum SoundType {
 	kSoundTypeOgg
 };
 
+// Table extracted from nancy1, could be (and probably is) different between games
+static const Audio::Mixer::SoundType channelSoundTypes[] = {
+	Audio::Mixer::kMusicSoundType, // channel 0
+	Audio::Mixer::kMusicSoundType,
+	Audio::Mixer::kMusicSoundType,
+	Audio::Mixer::kSFXSoundType,
+	Audio::Mixer::kSFXSoundType,
+	Audio::Mixer::kSFXSoundType, // 5
+	Audio::Mixer::kSFXSoundType,
+	Audio::Mixer::kSpeechSoundType,
+	Audio::Mixer::kSpeechSoundType,
+	Audio::Mixer::kPlainSoundType,
+	Audio::Mixer::kPlainSoundType, // 10
+	Audio::Mixer::kPlainSoundType,
+	Audio::Mixer::kPlainSoundType,
+	Audio::Mixer::kPlainSoundType,
+	Audio::Mixer::kPlainSoundType,
+	Audio::Mixer::kPlainSoundType, // 15
+	Audio::Mixer::kPlainSoundType,
+	Audio::Mixer::kSFXSoundType,
+	Audio::Mixer::kSFXSoundType,
+	Audio::Mixer::kMusicSoundType,
+	Audio::Mixer::kSFXSoundType, // 20
+	Audio::Mixer::kSFXSoundType,
+	Audio::Mixer::kSFXSoundType,
+	Audio::Mixer::kSFXSoundType,
+	Audio::Mixer::kSFXSoundType,
+	Audio::Mixer::kSFXSoundType, // 25
+	Audio::Mixer::kSFXSoundType,
+	Audio::Mixer::kMusicSoundType,
+	Audio::Mixer::kMusicSoundType,
+	Audio::Mixer::kMusicSoundType,
+	Audio::Mixer::kSpeechSoundType, // 30
+	Audio::Mixer::kSFXSoundType
+};
+
 bool readWaveHeader(Common::SeekableReadStream *stream, SoundType &type, uint16 &numChannels,
 					uint32 &samplesPerSec, uint16 &bitsPerSample, uint32 &size) {
 	// The earliest HIS files are just WAVE files with the first 22 bytes of
@@ -293,43 +329,10 @@ void SoundManager::stopAndUnloadSpecificSounds() {
 }
 
 void SoundManager::initSoundChannels() {
-	// Original engine hardcoded these and so do we
-	_channels[7].type = Audio::Mixer::kSpeechSoundType;
-	_channels[8].type = Audio::Mixer::kSpeechSoundType;
-	_channels[30].type = Audio::Mixer::kSpeechSoundType;
-
-	_channels[0].type = Audio::Mixer::kMusicSoundType;
-	_channels[1].type = Audio::Mixer::kMusicSoundType;
-	_channels[2].type = Audio::Mixer::kMusicSoundType;
-	_channels[27].type = Audio::Mixer::kMusicSoundType;
-	_channels[28].type = Audio::Mixer::kMusicSoundType;
-	_channels[29].type = Audio::Mixer::kMusicSoundType;
-	_channels[19].type = Audio::Mixer::kMusicSoundType;
-
-	_channels[3].type = Audio::Mixer::kSFXSoundType;
-	_channels[4].type = Audio::Mixer::kSFXSoundType;
-	_channels[5].type = Audio::Mixer::kSFXSoundType;
-	_channels[6].type = Audio::Mixer::kSFXSoundType;
-	_channels[20].type = Audio::Mixer::kSFXSoundType;
-	_channels[21].type = Audio::Mixer::kSFXSoundType;
-	_channels[25].type = Audio::Mixer::kSFXSoundType;
-	_channels[26].type = Audio::Mixer::kSFXSoundType;
-	_channels[24].type = Audio::Mixer::kSFXSoundType;
-	_channels[23].type = Audio::Mixer::kSFXSoundType;
-	_channels[22].type = Audio::Mixer::kSFXSoundType;
-	_channels[31].type = Audio::Mixer::kSFXSoundType;
-	_channels[18].type = Audio::Mixer::kSFXSoundType;
-	_channels[17].type = Audio::Mixer::kSFXSoundType;
-
-	_channels[9].type = Audio::Mixer::kPlainSoundType;
-	_channels[10].type = Audio::Mixer::kPlainSoundType;
-	_channels[11].type = Audio::Mixer::kPlainSoundType;
-	_channels[12].type = Audio::Mixer::kPlainSoundType;
-	_channels[13].type = Audio::Mixer::kPlainSoundType;
-	_channels[14].type = Audio::Mixer::kPlainSoundType;
-	_channels[15].type = Audio::Mixer::kPlainSoundType;
-	_channels[16].type = Audio::Mixer::kPlainSoundType;
-
+	// Channel types are hardcoded in the original engine
+	for (uint i = 0; i < 32; ++i) {
+		_channels[i].type = channelSoundTypes[i];
+	}
 }
 
 } // End of namespace Nancy
