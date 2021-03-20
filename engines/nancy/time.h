@@ -32,8 +32,8 @@ struct Time {
 public:
 	Time() { _milliseconds = 0; }
 	Time(const uint32 &t) { _milliseconds = t; }
-	Time(const Time &t) =default;
-	~Time() =default;
+	Time(const Time &t) = default;
+	~Time() = default;
 	explicit operator uint32() const { return _milliseconds; }
 	Time &operator=(const Time &t)                          { if (this != &t) _milliseconds = t._milliseconds; return *this; }
 	Time &operator=(const uint32 &t)                        { _milliseconds = t; return *this; }

@@ -75,7 +75,7 @@ public:
 protected:
 	// Z order and blit type are extracted directly from the corresponding
 	// ZRenderStruct from the original engine
-	virtual uint16 getZOrder() const =0;
+	virtual uint16 getZOrder() const = 0;
 
 	// Needed for proper handling of objects inside the viewport
 	virtual bool isViewportRelative() const { return false; }

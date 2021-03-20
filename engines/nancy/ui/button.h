@@ -34,9 +34,9 @@ namespace UI {
 class Button : public RenderObject {
 public:
 	Button(RenderObject &redrawFrom) : RenderObject(redrawFrom) {}
-	virtual ~Button() =default;
+	virtual ~Button() = default;
 
-	virtual void onClick() =0;
+	virtual void onClick() = 0;
 
 	void handleInput(NancyInput &input);
 
@@ -47,7 +47,7 @@ protected:
 class MenuButton : public Button {
 public:
 	MenuButton(RenderObject &redrawFrom) : Button(redrawFrom) {}
-	virtual ~MenuButton() =default;
+	virtual ~MenuButton() = default;
 
 	virtual void init() override;
 	virtual void onClick() override;
@@ -56,7 +56,7 @@ public:
 class HelpButton : public Button {
 public:
 	HelpButton(RenderObject &redrawFrom) : Button(redrawFrom) {}
-	virtual ~HelpButton() =default;
+	virtual ~HelpButton() = default;
 
 	virtual void init() override;
 	virtual void onClick() override;

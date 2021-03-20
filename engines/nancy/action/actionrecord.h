@@ -93,7 +93,7 @@ public:
 		_itemRequired(-1) {}
 	virtual ~ActionRecord() {}
 
-	virtual void readData(Common::SeekableReadStream &stream) =0;
+	virtual void readData(Common::SeekableReadStream &stream) = 0;
 	virtual void execute() {}
 	virtual void onPause(bool pause) {}
 
@@ -104,7 +104,7 @@ protected:
 	void finishExecution();
 
 	// Used for debugging
-	virtual Common::String getRecordTypeName() const =0;
+	virtual Common::String getRecordTypeName() const = 0;
 
 public:
 	Common::String _description;                    // 0x00
