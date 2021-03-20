@@ -465,4 +465,13 @@ void TrecisionEngine::LoadAll() {
 
 	dataNl.close();
 }
+
+/*-------------------------------------------------
+					CheckSystem
+ --------------------------------------------------*/
+void TrecisionEngine::CheckSystem() {
+	_animMgr->refreshAllAnimations();
+	eventLoop();
+}
+
 } // End of namespace Trecision

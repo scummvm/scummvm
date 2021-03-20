@@ -49,17 +49,6 @@ void VMouseOFF();
 char waitKey();
 void wordset(void *dest, uint16 value, uint32 len);
 
-/* -----------------25/10/97 15.12-------------------
-					CheckSystem
- --------------------------------------------------*/
-void CheckSystem() {
-	//for ( int a=0; a<5; a++ )
-	{
-		g_vm->_animMgr->refreshAllAnimations();
-		g_vm->eventLoop();
-	}
-}
-
 /*-----------------16/01/97 20.53-------------------
 					GetKey
 --------------------------------------------------*/
@@ -97,7 +86,7 @@ char GetKey() {
 --------------------------------------------------*/
 char waitKey() {
 	while (g_vm->_curKey == Common::KEYCODE_INVALID)
-		CheckSystem();
+		g_vm->CheckSystem();
 
 	Common::KeyCode t = g_vm->_curKey;
 	g_vm->_curKey = Common::KEYCODE_INVALID;
@@ -126,7 +115,7 @@ void NlDelay(uint32 val) {
 	uint32 sv = ReadTime();
 
 	while ((sv + val) > ReadTime())
-		CheckSystem();
+		g_vm->CheckSystem();
 }
 
 /* -----------------24/06/98 15.00-------------------
@@ -138,7 +127,7 @@ void NlDissolve(int val) {
 
 	int lastv = 9000;
 	while ((sv + val) > (cv = ReadTime())) {
-		CheckSystem();
+		g_vm->CheckSystem();
 		if (lastv < (sv + val - cv))
 			continue;
 
@@ -205,7 +194,7 @@ void NlDissolve(int val) {
 					Mouse
 --------------------------------------------------*/
 void Mouse(MouseCmd opt) {
-	CheckSystem();
+	g_vm->CheckSystem();
 
 	switch (opt) {
 	// Update mouse

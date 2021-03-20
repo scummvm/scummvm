@@ -72,13 +72,12 @@ int16 SoundFadInVal;
 int16 SoundFadOutVal;
 
 extern uint8 *SpeechBuf[2];
-extern uint8  SpeechTrackEnabled;
+extern bool  SpeechTrackEnabled;
 void CloseSys(const char *str);
-void CheckSystem();
 void ReadExtraObj41D();
 void StopTalk();
 
-extern uint8 SoundSystemActive;
+extern bool SoundSystemActive;
 extern const char *_sysSentence[];
 int SpeechFileLen(const char *name);
 int SpeechFileRead(const char *name, unsigned char *buf);
@@ -148,7 +147,7 @@ void soundtimefunct() {
  --------------------------------------------------*/
 void StartSoundSystem() {
 	if (g_system->getMixer()->isReady())
-		SoundSystemActive = SOUND_ON;
+		SoundSystemActive = true;
 }
 
 /* -----------------05/08/97 16.35-------------------
@@ -157,9 +156,8 @@ void StartSoundSystem() {
 void StopSoundSystem() {
 	if (!SoundSystemActive)
 		return;
-	else if (SoundSystemActive == SOUND_ON) {
-		g_system->getMixer()->stopAll();
-	}
+
+	g_system->getMixer()->stopAll();
 }
 
 /* -----------------14/08/97 12.06-------------------
@@ -188,41 +186,37 @@ short LoadAudioWav(int num, uint8 *wav, int len) {
 					NLPlaySound
  --------------------------------------------------*/
 void NLPlaySound(int num) {
-	int channel;
 
 	if (!SoundSystemActive)
 		return;
-	else if (SoundSystemActive == SOUND_ON) {
-		channel = 2;
-		if (g_system->getMixer()->isSoundHandleActive(smp[channel])) {
-			g_system->getMixer()->stopHandle(smp[channel]);
-			playing[channel] = 0;
-		}
 
-		int volume = VOLUME(GSample[num]._volume);
-
-		if (GSample[num]._flag & SOUNDFLAG_SON) {
-			volume = 0;
-			smpvol[channel] = 0;
-		}
-
-		Audio::AudioStream *stream = NLSample[num].stream;
-		if (stream != nullptr && GSample[num]._flag & SOUNDFLAG_SLOOP)
-			stream = Audio::makeLoopingAudioStream(NLSample[num].stream, 0);
-
-		g_system->getMixer()->playStream(NLSample[num].type, &smp[channel], stream, -1, volume, 0, DisposeAfterUse::NO);
-
-		playing[channel] = num;
-
-		return;
+	int channel = 2;
+	if (g_system->getMixer()->isSoundHandleActive(smp[channel])) {
+		g_system->getMixer()->stopHandle(smp[channel]);
+		playing[channel] = 0;
 	}
+
+	int volume = VOLUME(GSample[num]._volume);
+
+	if (GSample[num]._flag & SOUNDFLAG_SON) {
+		volume = 0;
+		smpvol[channel] = 0;
+	}
+
+	Audio::AudioStream *stream = NLSample[num].stream;
+	if (stream != nullptr && GSample[num]._flag & SOUNDFLAG_SLOOP)
+		stream = Audio::makeLoopingAudioStream(NLSample[num].stream, 0);
+
+	g_system->getMixer()->playStream(NLSample[num].type, &smp[channel], stream, -1, volume, 0, DisposeAfterUse::NO);
+
+	playing[channel] = num;
 }
 
 /* -----------------14/08/97 16.30-------------------
 					NLStopSound
  --------------------------------------------------*/
 void NLStopSound(int num) {
-	if (!SoundSystemActive || SoundSystemActive != SOUND_ON)
+	if (!SoundSystemActive)
 		return;
 
 	for (int a = 2; a < SpeechChannel; a++) {
@@ -237,7 +231,7 @@ void NLStopSound(int num) {
 					SoundFadOut
  --------------------------------------------------*/
 void SoundFadOut() {
-	if (!SoundSystemActive || SoundSystemActive != SOUND_ON)
+	if (!SoundSystemActive)
 		return;
 
 	for (int a = 0; a < SAMPLEVOICES; a++) {	// spegne tutti i canali eccetto il background
@@ -255,7 +249,7 @@ void SoundFadOut() {
 					SoundFadIn
  --------------------------------------------------*/
 void SoundFadIn(int num) {
-	if (!SoundSystemActive || SoundSystemActive != SOUND_ON)
+	if (!SoundSystemActive)
 		return;
 
 	Audio::AudioStream *stream = NLSample[num].stream;
@@ -281,7 +275,7 @@ void WaitSoundFadEnd() {
 	}
 
 	while ((SoundFadInVal != (GSample[playing[StepChannel]]._volume * FADMULT)) && (playing[StepChannel] != 0) && (SoundFadOutVal != 0))
-		CheckSystem();
+		g_vm->CheckSystem();
 	SoundFadStatus = 0;
 
 	g_system->getMixer()->stopHandle(smp[BackChannel]);
@@ -395,21 +389,21 @@ int32 Talk(const char *name) {
 	StopTalk();
 
 	int Len = SpeechFileLen(name);
-	if ((Len > SPEECHSIZE) || (SoundSystemActive == SOUND_OFF)) {
-		SpeechTrackEnabled = 0;
-		return ((Len * 60L) / (11025));
+	if (Len > SPEECHSIZE || !SoundSystemActive) {
+		SpeechTrackEnabled = false;
+		return (Len * 60L) / 11025;
 	}
 	if (SpeechFileRead(name, SpeechBuf[0]) == 0) {
-		SpeechTrackEnabled = 0;
-		return ((Len * 60L) / (11025));
+		SpeechTrackEnabled = false;
+		return (Len * 60L) / 11025;
 	}
 
-	SpeechTrackEnabled = 1;
+	SpeechTrackEnabled = true;
 	if (LoadAudioWav(0xFFFF, SpeechBuf[0], Len))
 		Len *= 2;
 
-	if ((SoundSystemActive == SOUND_OFF))
-		SpeechTrackEnabled = 0;
+	if (!SoundSystemActive)
+		SpeechTrackEnabled = false;
 	else {
 		extern uint32 CharacterSpeakTime;
 		g_system->getMixer()->playStream(SpeechSample.type, &smp[SpeechChannel], SpeechSample.stream);
@@ -423,7 +417,7 @@ void StopTalk() {
 	if (SoundSystemActive)
 		g_system->getMixer()->stopHandle(smp[SpeechChannel]);
 
-	SpeechTrackEnabled = 0;
+	SpeechTrackEnabled = false;
 }
 
 } // End of namespace Trecision

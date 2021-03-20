@@ -205,7 +205,6 @@ void PaintString();
 void DoClearText();
 void DoSys(uint16 curObj);
 void SetRoom(uint16 r, bool b);
-void CheckSystem();
 char GetKey();
 char waitKey();
 void FreeKey();
