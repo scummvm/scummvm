@@ -46,9 +46,6 @@ int VertexNum, FaceNum, MatNum, LightNum;
 #define MAXLIGHT	40
 #define MAXMAT		20
 
-#define SOUND_OFF		0
-#define SOUND_ON		1
-
 int MaxMemory = 0;
 // GAME POINTER
 uint16 *ImagePointer;
@@ -91,8 +88,8 @@ STexture FTexture[MAXMAT];
 uint8 *MemoryArea;
 uint32 CurBufferSize;
 // SOUND
-uint8 SoundSystemActive;
-uint8 SpeechTrackEnabled = 0;
+bool SoundSystemActive;
+bool SpeechTrackEnabled = false;
 uint8 *SoundStartBuffer;
 // Temporary variables
 Common::SeekableReadStream *ff;
@@ -126,7 +123,7 @@ void openSys() {
 		}
 	}
 
-	SoundSystemActive = SOUND_OFF;
+	SoundSystemActive = false;
 
 	StartSoundSystem();
 

@@ -455,8 +455,8 @@ insave:
 
 	bool skipSave = false;
 	ch = 0;
-	for (; ;) {
-		CheckSystem();
+	for (;;) {
+		g_vm->CheckSystem();
 		Mouse(MCMD_UPDT);
 
 		GetKey();
@@ -517,7 +517,7 @@ insave:
 
 		for (; ;) {
 			g_vm->_keybInput = true;
-			CheckSystem();
+			g_vm->CheckSystem();
 			ch = GetKey();
 			FreeKey();
 
@@ -772,7 +772,7 @@ bool DataLoad() {
 	bool skipLoad = false;
 
 	for (;;) {
-		CheckSystem();
+		g_vm->CheckSystem();
 		Mouse(MCMD_UPDT);
 
 		GetKey();
@@ -941,7 +941,7 @@ bool DataLoad() {
 
 	actorStop();
 	nextStep();
-	CheckSystem();
+	g_vm->CheckSystem();
 
 	for (int a = FIRSTLINE; a < MAXY; a++)
 		wordset(g_vm->_video2 + CurRoomMaxX * a + CurScrollPageDx, 0, SCREENLEN);

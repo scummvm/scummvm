@@ -135,8 +135,8 @@ extern uint32 CurBufferSize;
 extern uint8 *MemoryArea;
 extern uint8 *SoundStartBuffer;
 // SOUND
-extern uint8 SoundSystemActive;
-extern uint8 SpeechTrackEnabled;
+extern bool SoundSystemActive;
+extern bool SpeechTrackEnabled;
 // MOUSE
 extern SDText curString;
 extern SDText oldString;

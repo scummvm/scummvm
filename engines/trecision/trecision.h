@@ -55,6 +55,9 @@ public:
 	void setInventoryStart(uint8 StartIcon, uint8 StartLine);
 	void doInventory();
 
+	void CheckSystem();
+
+
 	uint16 _curRoom;
 	uint16 _oldRoom;
 	SRoom _room[MAXROOMS];
