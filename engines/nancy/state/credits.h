@@ -58,7 +58,7 @@ protected:
 		friend class Credits;
 	public:
 		CreditsText(RenderObject &redrawFrom) : RenderObject(redrawFrom) {}
-		virtual ~CreditsText() =default;
+		virtual ~CreditsText() = default;
 
 	protected:
 		virtual uint16 getZOrder() const override { return 1; }

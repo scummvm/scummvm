@@ -83,7 +83,7 @@ private:
 		TextboxScrollbar(RenderObject &redrawFrom, Textbox *parent) :
 			Scrollbar(redrawFrom),
 			_parent(parent) {}
-		~TextboxScrollbar() =default;
+		~TextboxScrollbar() = default;
 
 		virtual void init() override;
 		Textbox *_parent;

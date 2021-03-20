@@ -31,7 +31,7 @@ namespace UI {
 class FullScreenImage : public RenderObject {
 public:
 	FullScreenImage() : RenderObject() {}
-	virtual ~FullScreenImage() =default;
+	virtual ~FullScreenImage() = default;
 
 	void init(const Common::String &imageName);
 

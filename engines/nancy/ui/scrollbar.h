@@ -40,7 +40,7 @@ public:
 		_isClicked(false),
 		_currentPosition(0),
 		_maxDist(0) {}
-	virtual ~Scrollbar() =default;
+	virtual ~Scrollbar() = default;
 
 	virtual void init() override;
 

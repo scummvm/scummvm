@@ -37,8 +37,8 @@ class NancyEngine;
 
 class Font : public Graphics::Font {
 public:
-	Font() =default;
-	~Font() =default;
+	Font() = default;
+	~Font() = default;
 
 	void read(Common::SeekableReadStream &stream);
 

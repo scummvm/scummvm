@@ -88,7 +88,7 @@ private:
 		InventoryScrollbar(RenderObject &redrawFrom, InventoryBox *parent) :
 			Scrollbar(redrawFrom),
 			_parent(parent) {}
-		virtual ~InventoryScrollbar() =default;
+		virtual ~InventoryScrollbar() = default;
 
 		virtual void init() override;
 
@@ -104,7 +104,7 @@ private:
 			_soundTriggered(false),
 			_areOpen(false),
 			_curFrame(0) {}
-		virtual ~Shades() =default;
+		virtual ~Shades() = default;
 
 		virtual void init() override;
 		virtual void updateGraphics() override;

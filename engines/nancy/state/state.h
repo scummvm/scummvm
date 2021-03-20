@@ -32,9 +32,9 @@ namespace State {
 class State {
 public:
 	State() {}
-	virtual ~State() =default;
+	virtual ~State() = default;
 
-	virtual void process() =0;
+	virtual void process() = 0;
 	virtual void onStateEnter() {}
 	virtual bool onStateExit() { return true; } // Returns whether the object destroyed itself after exit
 };

@@ -82,7 +82,7 @@ private:
 	class MapLabel : public Nancy::RenderObject {
 	public:
 		MapLabel(RenderObject &redrawFrom, Map *parent) : Nancy::RenderObject(redrawFrom), _parent(parent) {}
-		virtual ~MapLabel() =default;
+		virtual ~MapLabel() = default;
 
 		virtual void init() override;
 
@@ -97,7 +97,7 @@ private:
 	class MapButton : public UI::Button {
 	public:
 		MapButton(RenderObject &redrawFrom, Map *parent) : Button(redrawFrom), _parent(parent) {}
-		virtual ~MapButton() =default;
+		virtual ~MapButton() = default;
 
 		virtual void init() override;
 		virtual void onClick() override;
