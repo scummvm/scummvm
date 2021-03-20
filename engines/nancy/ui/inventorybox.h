@@ -72,7 +72,7 @@ public:
 	void addItem(int16 itemID);
 	void removeItem(int16 itemID);
 
-	ItemDescription getItemDescription(uint id) { return _itemDescriptions[id]; }
+	ItemDescription getItemDescription(uint id) const { return _itemDescriptions[id]; }
 
 protected:
 	virtual uint16 getZOrder() const override { return 6; }

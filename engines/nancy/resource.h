@@ -71,16 +71,16 @@ public:
 	byte *loadData(const Common::String &name, uint &size);
 
 	// Debugger functions
-	void list(const Common::String &treeName, Common::Array<Common::String> &nameList, uint type);
+	void list(const Common::String &treeName, Common::Array<Common::String> &nameList, uint type) const;
 	byte *loadCif(const Common::String &treeName, const Common::String &name, uint &size);
 	bool exportCif(const Common::String &treeName, const Common::String &name);
-	Common::String getCifDescription(const Common::String &treeName, const Common::String &name);
+	Common::String getCifDescription(const Common::String &treeName, const Common::String &name) const;
 
 private:
-	byte *getCifData(const Common::String &name, CifInfo &info, uint *size = nullptr);
-	byte *getCifData(const Common::String &treeName, const Common::String &name, CifInfo &info, uint *size = nullptr);
-	bool getCifInfo(const Common::String &name, CifInfo &info);
-	bool getCifInfo(const Common::String &treeName, const Common::String &name, CifInfo &info);
+	byte *getCifData(const Common::String &name, CifInfo &info, uint *size = nullptr) const;
+	byte *getCifData(const Common::String &treeName, const Common::String &name, CifInfo &info, uint *size = nullptr) const;
+	bool getCifInfo(const Common::String &name, CifInfo &info) const;
+	bool getCifInfo(const Common::String &treeName, const Common::String &name, CifInfo &info) const;
 	const CifTree *findCifTree(const Common::String &name) const;
 
 	Common::Array<const CifTree *> _cifTrees;

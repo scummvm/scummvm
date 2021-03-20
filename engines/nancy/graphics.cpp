@@ -94,7 +94,7 @@ void GraphicsManager::draw() {
 }
 
 void GraphicsManager::addObject(RenderObject *object) {
-	for (auto &r : _objects) {
+	for (const auto &r : _objects) {
 		if (r == object) {
 			return;
 		}

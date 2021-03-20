@@ -56,8 +56,8 @@ public:
 	void pauseSound(uint16 channelID, bool pause);
 	void pauseSound(const SoundDescription &description, bool pause);
 
-	bool isSoundPlaying(uint16 channelID);
-	bool isSoundPlaying(const SoundDescription &description);
+	bool isSoundPlaying(uint16 channelID) const;
+	bool isSoundPlaying(const SoundDescription &description) const;
 
 	void stopSound(uint16 channelID);
 	void stopSound(const SoundDescription &description);

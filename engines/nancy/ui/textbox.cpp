@@ -126,7 +126,7 @@ void Textbox::drawTextbox() {
 
 	_numLines = 0;
 
-	Font *font = g_nancy->_graphicsManager->getFont(_fontID);
+	const Font *font = g_nancy->_graphicsManager->getFont(_fontID);
 
 	uint maxWidth = _fullSurface.w - _borderWidth * 2;
 	uint lineDist = _lineHeight + _lineHeight / 4;

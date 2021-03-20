@@ -48,7 +48,7 @@ public:
 
 	void redrawAll();
 
-	Font *getFont(uint id) { return id < _fonts.size() ? &_fonts[id] : nullptr; }
+	const Font *getFont(uint id) const { return id < _fonts.size() ? &_fonts[id] : nullptr; }
 
 	static void loadSurfacePalette(Graphics::ManagedSurface &inSurf, const Common::String paletteFilename);
 	static void copyToManaged(const Graphics::Surface &src, Graphics::ManagedSurface &dst, bool verticalFlip = false, bool doubleSize = false);

@@ -48,7 +48,7 @@ public:
 	Common::SeekableReadStream *getChunkStream(const Common::String &id, uint index = 0) const;
 
 	// Debugger functions
-	void list(Common::Array<Common::String> &nameList);
+	void list(Common::Array<Common::String> &nameList) const;
 
 private:
 	static Common::String idToString(uint32 id);

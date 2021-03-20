@@ -145,7 +145,7 @@ uint32 IFF::stringToId(const Common::String &s) {
 	return id;
 }
 
-void IFF::list(Common::Array<Common::String> &nameList) {
+void IFF::list(Common::Array<Common::String> &nameList) const {
 	nameList.reserve(_chunks.size());
 	for (uint i = 0; i < _chunks.size(); ++i) {
 		nameList.push_back(idToString(_chunks[i].id));
