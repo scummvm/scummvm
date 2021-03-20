@@ -35,15 +35,20 @@
 
 namespace Common {
 
-UnicodeBiDiText::UnicodeBiDiText(const Common::U32String &str) : logical(str), _log_to_vis_index(NULL), _vis_to_log_index(NULL) {
+UnicodeBiDiText::UnicodeBiDiText(const Common::U32String &str) :
+	logical(str), _pbase_dir(FRIBIDI_PAR_ON),
+	_log_to_vis_index(NULL), _vis_to_log_index(NULL) {
 	initWithU32String(str);
 }
 
-UnicodeBiDiText::UnicodeBiDiText(const Common::String &str, const Common::CodePage page) : logical(str), _log_to_vis_index(NULL), _vis_to_log_index(NULL) {
+UnicodeBiDiText::UnicodeBiDiText(const Common::String &str, const Common::CodePage page) :
+	logical(str), _pbase_dir(FRIBIDI_PAR_ON),
+	_log_to_vis_index(NULL), _vis_to_log_index(NULL) {
 	initWithU32String(str.decode(page));
 }
 
-UnicodeBiDiText::UnicodeBiDiText(const Common::String &str, const Common::CodePage page, uint32 *pbase_dir) : logical(str), _log_to_vis_index(NULL), _vis_to_log_index(NULL) {
+UnicodeBiDiText::UnicodeBiDiText(const Common::String &str, const Common::CodePage page,
+		uint32 *pbase_dir) : logical(str), _log_to_vis_index(NULL), _vis_to_log_index(NULL) {
 	_pbase_dir = *pbase_dir;
 	initWithU32String(str.decode(page));
 	*pbase_dir = _pbase_dir;
@@ -54,7 +59,7 @@ UnicodeBiDiText::~UnicodeBiDiText() {
 	delete[] _vis_to_log_index;
 }
 
-uint32 UnicodeBiDiText::getVisualPosition(uint32 logicalPos) const { 
+uint32 UnicodeBiDiText::getVisualPosition(uint32 logicalPos) const {
 	if (NULL != _log_to_vis_index && logicalPos < size()) {
 		return _log_to_vis_index[logicalPos];
 	}
