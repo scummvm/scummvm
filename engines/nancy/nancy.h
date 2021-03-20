@@ -129,7 +129,7 @@ public:
 	void setPreviousState();
 
 	// Chunks found in BOOT get extracted and cached at startup, this function lets other classes access them
-	Common::SeekableReadStream *getBootChunkStream(const Common::String &name);
+	Common::SeekableReadStream *getBootChunkStream(const Common::String &name) const;
 
 	void setMouseEnabled(bool enabled);
 
@@ -164,7 +164,7 @@ private:
 
 	void bootGameEngine();
 
-	State::State *getStateObject(GameState state);
+	State::State *getStateObject(GameState state) const;
 
 	bool addBootChunk(const Common::String &name, Common::SeekableReadStream *stream);
 	void clearBootChunks();

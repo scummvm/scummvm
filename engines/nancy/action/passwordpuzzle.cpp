@@ -220,7 +220,7 @@ void PasswordPuzzle::onPause(bool pause) {
 
 void PasswordPuzzle::drawText() {
 	_drawSurface.clear(GraphicsManager::getTransColor());
-	Graphics::Font *font = g_nancy->_graphicsManager->getFont(_fontID);
+	const Graphics::Font *font = g_nancy->_graphicsManager->getFont(_fontID);
 
 	Common::Rect bounds = _nameBounds;
 	bounds = NancySceneState.getViewport().convertViewportToScreen(bounds);

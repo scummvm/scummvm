@@ -244,14 +244,14 @@ void SoundManager::pauseSound(const SoundDescription &description, bool pause) {
 	}
 }
 
-bool SoundManager::isSoundPlaying(uint16 channelID) {
+bool SoundManager::isSoundPlaying(uint16 channelID) const {
 	if (channelID > 32)
 		return false;
 
 	return _mixer->isSoundHandleActive(_channels[channelID].handle);
 }
 
-bool SoundManager::isSoundPlaying(const SoundDescription &description) {
+bool SoundManager::isSoundPlaying(const SoundDescription &description) const {
 	if (description.name == "NO SOUND") {
 		return false;
 	} else {

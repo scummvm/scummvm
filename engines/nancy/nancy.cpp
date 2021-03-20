@@ -349,7 +349,7 @@ void NancyEngine::bootGameEngine() {
 	_cursorManager->init();
 }
 
-State::State *NancyEngine::getStateObject(GameState state) {
+State::State *NancyEngine::getStateObject(GameState state) const {
 	switch (state) {
 	case kLogo:
 		return &State::Logo::instance();
@@ -373,7 +373,7 @@ bool NancyEngine::addBootChunk(const Common::String &name, Common::SeekableReadS
 	return true;
 }
 
-Common::SeekableReadStream *NancyEngine::getBootChunkStream(const Common::String &name) {
+Common::SeekableReadStream *NancyEngine::getBootChunkStream(const Common::String &name) const {
 	if (_bootChunks.contains(name)) {
 		return _bootChunks[name];
 	} else {

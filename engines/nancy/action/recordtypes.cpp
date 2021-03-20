@@ -545,14 +545,14 @@ void HintSystem::execute() {
 }
 
 void HintSystem::selectHint() {
-	for (auto &hint : nancy1Hints) {
+	for (const auto &hint : nancy1Hints) {
 		if (hint.characterID != _characterID) {
 			continue;
 		}
 
 		bool satisfied = true;
 
-		for (auto &flag : hint.flagConditions) {
+		for (const auto &flag : hint.flagConditions) {
 			if (flag.label == -1) {
 				break;
 			}
@@ -563,7 +563,7 @@ void HintSystem::selectHint() {
 			}
 		}
 
-		for (auto &inv : hint.inventoryCondition) {
+		for (const auto &inv : hint.inventoryCondition) {
 			if (inv.label == -1) {
 				break;
 			}

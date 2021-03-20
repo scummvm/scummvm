@@ -317,10 +317,10 @@ void PlayPrimaryVideoChan0::execute() {
 }
 
 void PlayPrimaryVideoChan0::addConditionalResponses() {
-	for (auto &res : nancy1ConditionalResponses) {
+	for (const auto &res : nancy1ConditionalResponses) {
 		if (res.characterID == _conditionalResponseCharacterID) {
 			bool isSatisfied = true;
-			for (auto & cond : res.conditions) {
+			for (const auto & cond : res.conditions) {
 				if (cond.label == -1) {
 					break;
 				}
@@ -354,7 +354,7 @@ void PlayPrimaryVideoChan0::addConditionalResponses() {
 }
 
 void PlayPrimaryVideoChan0::addGoodbye() {
-	for (auto &res : nancy1Goodbyes) {
+	for (const auto &res : nancy1Goodbyes) {
 		if (res.characterID == _goodbyeResponseCharacterID) {
 			Common::File file;
 			char snd[9];

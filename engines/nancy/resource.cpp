@@ -305,7 +305,7 @@ byte *CifTree::getCifData(const Common::String &name, ResourceManager::CifInfo &
 	return buf;
 }
 
-byte *ResourceManager::getCifData(const Common::String &treeName, const Common::String &name, CifInfo &info, uint *size) {
+byte *ResourceManager::getCifData(const Common::String &treeName, const Common::String &name, CifInfo &info, uint *size) const {
 	const CifFile *cifFile = CifFile::load(name);
 	byte *buf;
 
@@ -635,8 +635,8 @@ void ResourceManager::initialize() {
 	loadCifTree("ciftree", "dat");
 }
 
-bool ResourceManager::getCifInfo(const Common::String &name, CifInfo &info) {
-	for (auto &tree : _cifTrees) {
+bool ResourceManager::getCifInfo(const Common::String &name, CifInfo &info) const {
+	for (const auto &tree : _cifTrees) {
 		if (getCifInfo(tree->getName(), name, info)) {
 			return true;
 		}
@@ -645,7 +645,7 @@ bool ResourceManager::getCifInfo(const Common::String &name, CifInfo &info) {
 	return false;
 }
 
-bool ResourceManager::getCifInfo(const Common::String &treeName, const Common::String &name, CifInfo &info) {
+bool ResourceManager::getCifInfo(const Common::String &treeName, const Common::String &name, CifInfo &info) const {
 	const CifFile *cifFile = CifFile::load(name);
 
 	if (cifFile) {
@@ -662,7 +662,7 @@ bool ResourceManager::getCifInfo(const Common::String &treeName, const Common::S
 	return cifTree->getCifInfo(name, info);
 }
 
-byte *ResourceManager::getCifData(const Common::String &name, CifInfo &info, uint *size) {
+byte *ResourceManager::getCifData(const Common::String &name, CifInfo &info, uint *size) const {
 	// Try to open name.cif
 	const CifFile *cifFile = CifFile::load(name);
 	byte *buf = nullptr;
@@ -835,7 +835,7 @@ bool ResourceManager::loadImage(const Common::String &name, Graphics::ManagedSur
 	}
 }
 
-void ResourceManager::list(const Common::String &treeName, Common::Array<Common::String> &nameList, uint type) {
+void ResourceManager::list(const Common::String &treeName, Common::Array<Common::String> &nameList, uint type) const {
 	const CifTree *cifTree = findCifTree(treeName);
 
 	if (!cifTree)
@@ -844,7 +844,7 @@ void ResourceManager::list(const Common::String &treeName, Common::Array<Common:
 	cifTree->list(nameList, type);
 }
 
-Common::String ResourceManager::getCifDescription(const Common::String &treeName, const Common::String &name) {
+Common::String ResourceManager::getCifDescription(const Common::String &treeName, const Common::String &name) const {
 	CifInfo info;
 	if (!getCifInfo(treeName, name, info))
 		return Common::String::format("Couldn't find '%s' in CifTree '%s'\n", name.c_str(), treeName.c_str());
