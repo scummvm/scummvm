@@ -81,7 +81,7 @@ Win32DialogManager::~Win32DialogManager() {
 HRESULT winCreateItemFromParsingName(PCWSTR pszPath, IBindCtx *pbc, REFIID riid, void **ppv) {
 	typedef HRESULT(WINAPI *SHFunc)(PCWSTR, IBindCtx *, REFIID, void **);
 
-	SHFunc func = (SHFunc)GetProcAddress(GetModuleHandle(TEXT("shell32.dll")), "SHCreateItemFromParsingName");
+	SHFunc func = (SHFunc)(void *)GetProcAddress(GetModuleHandle(TEXT("shell32.dll")), "SHCreateItemFromParsingName");
 	if (func == NULL)
 		return E_NOTIMPL;
 
