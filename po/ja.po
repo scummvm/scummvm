@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-03-17 16:34+0000\n"
-"PO-Revision-Date: 2021-03-19 23:24+0000\n"
+"PO-Revision-Date: 2021-03-21 22:24+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ja/>\n"
@@ -6990,71 +6990,71 @@ msgstr "ゲームの音声を有効にする"
 
 #: engines/twine/metaengine.cpp:225
 msgid "Debug Next Room"
-msgstr ""
+msgstr "次のルームをデバッグ"
 
 #: engines/twine/metaengine.cpp:230
 msgid "Debug Previous Room"
-msgstr ""
+msgstr "前のルームをデバッグ"
 
 #: engines/twine/metaengine.cpp:235
 msgid "Debug Apply Celling Grid"
-msgstr ""
+msgstr "天井グリッドを適用"
 
 #: engines/twine/metaengine.cpp:240
 msgid "Debug Increase Celling Grid Index"
-msgstr ""
+msgstr "天井グリッドのインデックスを増やす"
 
 #: engines/twine/metaengine.cpp:245
 msgid "Debug Decrease Celling Grid Index"
-msgstr ""
+msgstr "天井グリッドのインデックスを減らす"
 
 #: engines/twine/metaengine.cpp:250
 msgid "Debug Grid Camera Up"
-msgstr ""
+msgstr "グリッドカメラを上へ"
 
 #: engines/twine/metaengine.cpp:255
 msgid "Debug Grid Camera Down"
-msgstr ""
+msgstr "グリッドカメラを下へ"
 
 #: engines/twine/metaengine.cpp:260
 msgid "Debug Grid Camera Left"
-msgstr ""
+msgstr "グリッドカメラを左へ"
 
 #: engines/twine/metaengine.cpp:266
 msgid "Debug Grid Camera Right"
-msgstr ""
+msgstr "グリッドカメラを右へ"
 
 #: engines/twine/metaengine.cpp:271
 msgid "Debug Menu"
-msgstr ""
+msgstr "デバッグメニュー"
 
 #: engines/twine/metaengine.cpp:276
 msgid "Debug Menu Execute"
-msgstr ""
+msgstr "デバッグメニューを実行"
 
 #: engines/twine/metaengine.cpp:281 engines/twine/metaengine.cpp:301
 msgid "Normal Behaviour"
-msgstr ""
+msgstr "通常の行動"
 
 #: engines/twine/metaengine.cpp:286 engines/twine/metaengine.cpp:306
 msgid "Athletic Behaviour"
-msgstr ""
+msgstr "競技用の行動"
 
 #: engines/twine/metaengine.cpp:291 engines/twine/metaengine.cpp:311
 msgid "Aggressive Behaviour"
-msgstr ""
+msgstr "攻撃的な行動"
 
 #: engines/twine/metaengine.cpp:296 engines/twine/metaengine.cpp:316
 msgid "Discreet Behaviour"
-msgstr ""
+msgstr "慎重な行動"
 
 #: engines/twine/metaengine.cpp:321
 msgid "Behaviour Action"
-msgstr ""
+msgstr "行動を実行"
 
 #: engines/twine/metaengine.cpp:327
 msgid "Change Behaviour"
-msgstr ""
+msgstr "行動を変更"
 
 #: engines/twine/metaengine.cpp:334
 msgid "Options Menu"
@@ -7062,11 +7062,11 @@ msgstr "設定"
 
 #: engines/twine/metaengine.cpp:346
 msgid "Use Selected Object"
-msgstr ""
+msgstr "選択したオブジェクトを使用"
 
 #: engines/twine/metaengine.cpp:352
 msgid "Throw Magic Ball"
-msgstr ""
+msgstr "マジックボールを投げる"
 
 #: engines/twine/metaengine.cpp:366
 #, fuzzy
@@ -7075,11 +7075,11 @@ msgstr "去る"
 
 #: engines/twine/metaengine.cpp:387
 msgid "Use Protopack"
-msgstr ""
+msgstr "プロトパックを使用"
 
 #: engines/twine/metaengine.cpp:392
 msgid "Open Holomap"
-msgstr ""
+msgstr "ホログラムマップを開く"
 
 #: engines/twine/metaengine.cpp:405
 #, fuzzy
@@ -7088,16 +7088,16 @@ msgstr "自発的"
 
 #: engines/twine/metaengine.cpp:411 engines/wintermute/keymapper_tables.h:61
 msgid "Escape"
-msgstr ""
+msgstr "脱出"
 
 #: engines/twine/metaengine.cpp:424
 msgid "Accept"
-msgstr ""
+msgstr "受け入れる"
 
 #: engines/twine/metaengine.cpp:432 engines/twine/metaengine.cpp:484
 #: engines/twine/metaengine.cpp:500
 msgid "Abort"
-msgstr ""
+msgstr "停止"
 
 #: engines/twine/metaengine.cpp:470
 #, fuzzy
@@ -7118,43 +7118,43 @@ msgstr "次の行動"
 
 #: engines/ultima/shared/early/ultima_early.cpp:71
 msgid "Could not find correct ultima.dat datafile"
-msgstr ""
+msgstr "正しいデータファイルultima.datが見つかりません"
 
 #: engines/ultima/shared/engine/data_archive.cpp:81
 #, c-format
 msgid "Could not locate engine data %s"
-msgstr ""
+msgstr "エンジンデータ%sが見つかりません"
 
 #: engines/ultima/shared/engine/data_archive.cpp:99
 #, c-format
 msgid "Out of date engine data. Expected %d.%d, but got version %d.%d"
-msgstr ""
+msgstr "最新のエンジンデータではありません。想定されたのは%d.%dですが、実際のバージョンは%d.%dです"
 
 #: engines/ultima/nuvie/nuvie.cpp:382
 #, c-format
 msgid "loading quick save %d"
-msgstr ""
+msgstr "クイックセーブ%dをロードしています"
 
 #: engines/ultima/nuvie/nuvie.cpp:387
 #, c-format
 msgid "saving quick save %d"
-msgstr ""
+msgstr "%dにクイックセーブしています"
 
 #: engines/ultima/nuvie/meta_engine.cpp:39
 msgid "Original Save"
-msgstr ""
+msgstr "オリジナルセーブ"
 
 #: engines/ultima/nuvie/save/save_game.cpp:212
 msgid "Transfer Character"
-msgstr ""
+msgstr "キャラクターを転送"
 
 #: engines/ultima/ultima8/meta_engine.cpp:126
 msgid "Enable frame skipping"
-msgstr ""
+msgstr "フレームスキップを有効化"
 
 #: engines/ultima/ultima8/meta_engine.cpp:127
 msgid "Allow the game to skip animation frames when running too slow."
-msgstr ""
+msgstr "ゲームが遅い場合、アニメーションフレームをスキップできます。"
 
 #: engines/ultima/ultima8/meta_engine.cpp:132
 #, fuzzy
