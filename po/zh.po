@@ -9,7 +9,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-03-17 16:34+0000\n"
 "PO-Revision-Date: 2021-03-21 08:24+0000\n"
-"Last-Translator: Crane yang <1173886760@qq.com>\n"
+"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Chinese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/zh/>\n"
 "Language: zh\n"
@@ -31,7 +31,7 @@ msgstr "特性编译于："
 
 #: gui/about.cpp:118
 msgid "Available engines:"
-msgstr ""
+msgstr "可用引擎："
 
 #: gui/browser.cpp:75 backends/dialogs/macosx/macosx-dialogs.mm:78
 msgid "Show hidden files"
