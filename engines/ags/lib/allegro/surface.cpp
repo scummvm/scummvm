@@ -223,13 +223,6 @@ void BITMAP::draw(const BITMAP *srcBitmap, const Common::Rect &srcRect,
 }
 
 void BITMAP::blendPixel(uint8 aSrc, uint8 rSrc, uint8 gSrc, uint8 bSrc, uint8 &aDest, uint8 &rDest, uint8 &gDest, uint8 &bDest, uint32 alpha) const {
-	if (IS_TRANSPARENT(rDest, gDest, bDest)) {
-		aDest = aSrc;
-		rDest = rSrc;
-		gDest = gSrc;
-		bDest = bSrc;
-		return;
-	}
 	switch(_G(_blender_mode)) {
 	case kSourceAlphaBlender:
 		blendSourceAlpha(aSrc, rSrc, gSrc, bSrc, aDest, rDest, gDest, bDest, alpha);
