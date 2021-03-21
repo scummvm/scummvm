@@ -7128,7 +7128,9 @@ msgstr "エンジンデータ%sが見つかりません"
 #: engines/ultima/shared/engine/data_archive.cpp:99
 #, c-format
 msgid "Out of date engine data. Expected %d.%d, but got version %d.%d"
-msgstr "最新のエンジンデータではありません。想定されたのは%d.%dですが、実際のバージョンは%d.%dです"
+msgstr ""
+"最新のエンジンデータではありません。想定されたのは%d.%dですが、実際のバージョ"
+"ンは%d.%dです"
 
 #: engines/ultima/nuvie/nuvie.cpp:382
 #, c-format
