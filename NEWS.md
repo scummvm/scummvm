@@ -47,7 +47,6 @@ For a more comprehensive changelog of the latest experimental code, see:
 
  Grim:
    - Added support for Brazillian Portuguese Grim Fandango.
-   - Added support for Russian EMI.
 
  Kyra:
    - Added support for the Japanese Sega-CD version of Eye of the Beholder.
