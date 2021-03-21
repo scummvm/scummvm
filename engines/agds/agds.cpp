@@ -1292,7 +1292,7 @@ void AGDSEngine::reactivate(const Common::String &name, bool runNow) {
 	for(uint i = 0; i < _processes.size(); ++i) {
 		ProcessPtr &process = _processes[i];
 		if (process && process->getName() == name) {
-			debug("reactivate %s", name.c_str());
+			debug("reactivate %s now: %d", name.c_str(), runNow);
 			process->activate();
 			if (runNow)
 				process->run();
