@@ -64,8 +64,10 @@ void RedrawRoom() {
 	}
 
 	g_vm->_curSortTableNum = 0;
-	memset(OldObjStatus, 0, MAXOBJINROOM);
-	memset(VideoObjStatus, 0, MAXOBJINROOM);
+	for (int i = 0; i < MAXOBJINROOM; ++i) {
+		OldObjStatus[i] = false;
+		VideoObjStatus[i] = false;
+	}
 
 	wordset(g_vm->_video2, 0, CurRoomMaxX * MAXY);
 	if (g_vm->_room[g_vm->_curRoom]._bkgAnim)

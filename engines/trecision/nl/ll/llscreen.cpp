@@ -264,8 +264,10 @@ void OpenVideo() {
 	wordset(g_vm->_video2, 0, 1280L * 480L);
 	g_vm->_graphicsMgr->showScreen(0, 0, 640, 480);
 
-	memset(OldObjStatus, 0, MAXOBJINROOM);
-	memset(VideoObjStatus, 0, MAXOBJINROOM);
+	for (int i = 0; i < MAXOBJINROOM; ++i) {
+		OldObjStatus[i] = false;
+		VideoObjStatus[i] = false;
+	}
 }
 
 /*-----------------13/09/95 11.59-------------------
@@ -494,8 +496,10 @@ void ReadLoc() {
 	MCopy(g_vm->_video2 + TOP * CurRoomMaxX, ImagePointer, CurRoomMaxX * AREA);
 
 	g_vm->_curSortTableNum = 0;
-	memset(OldObjStatus, 0, MAXOBJINROOM);
-	memset(VideoObjStatus, 0, MAXOBJINROOM);
+	for (int i = 0; i < MAXOBJINROOM; ++i) {
+		OldObjStatus[i] = false;
+		VideoObjStatus[i] = false;
+	}
 
 	RegenRoom();
 
@@ -739,11 +743,11 @@ void RegenRoom() {
 		int status = (g_vm->_obj[g_vm->_room[g_vm->_curRoom]._object[a]]._mode & OBJMODE_OBJSTATUS);
 
 		if (status) {
-			if ((!OldObjStatus[a]) && (g_vm->_obj[g_vm->_room[g_vm->_curRoom]._object[a]]._mode & (OBJMODE_MASK | OBJMODE_FULL))) {
-				OldObjStatus[a] = 1;
+			if (!OldObjStatus[a] && (g_vm->_obj[g_vm->_room[g_vm->_curRoom]._object[a]]._mode & (OBJMODE_MASK | OBJMODE_FULL))) {
+				OldObjStatus[a] = true;
 			}
-		} else if ((OldObjStatus[a]) && (g_vm->_obj[g_vm->_room[g_vm->_curRoom]._object[a]]._mode & (OBJMODE_MASK | OBJMODE_FULL)))
-			OldObjStatus[a] = 0;
+		} else if (OldObjStatus[a] && (g_vm->_obj[g_vm->_room[g_vm->_curRoom]._object[a]]._mode & (OBJMODE_MASK | OBJMODE_FULL)))
+			OldObjStatus[a] = false;
 	}
 }
 
@@ -758,7 +762,7 @@ void PaintRegenRoom() {
 			SortTable[g_vm->_curSortTableNum]._remove = false;
 			SortTable[g_vm->_curSortTableNum]._curFrame = 0;
 			SortTable[g_vm->_curSortTableNum]._typology = TYPO_BMP;
-			VideoObjStatus[a] = 1;
+			VideoObjStatus[a] = true;
 			g_vm->_curSortTableNum++;
 		} else if (!OldObjStatus[a] && VideoObjStatus[a]) {
 			SortTable[g_vm->_curSortTableNum]._index = g_vm->_room[g_vm->_curRoom]._object[a];
@@ -766,13 +770,14 @@ void PaintRegenRoom() {
 			SortTable[g_vm->_curSortTableNum]._remove = true;
 			SortTable[g_vm->_curSortTableNum]._curFrame = 0;
 			SortTable[g_vm->_curSortTableNum]._typology = TYPO_BMP;
-			VideoObjStatus[a] = 0;
+			VideoObjStatus[a] = false;
 			g_vm->_curSortTableNum++;
 		}
 
 	}
 	// CHECKME: Why setting VideoObjStatus in the loop if it's reset right after the loop?
-	memcpy(VideoObjStatus, OldObjStatus, MAXOBJINROOM);
+	for (int i = 0; i < MAXOBJINROOM; ++i)
+		VideoObjStatus[i] = OldObjStatus[i];
 }
 /*-----------------16/05/95 11.03-------------------
                               DrawObj

@@ -41,8 +41,8 @@ extern int8 _characterGoToPosition;
 /*-------------------------------------------------------------------------*/
 /*                          VARIABILI DI SERVIZIO         				   */
 /*-------------------------------------------------------------------------*/
-extern int8 OldObjStatus[];
-extern int8 VideoObjStatus[];
+extern bool OldObjStatus[];
+extern bool VideoObjStatus[];
 
 extern struct ScreenRect VideoTop;
 extern struct ScreenRect VideoCent;
@@ -89,10 +89,6 @@ extern Dialog _dialog[];
 extern DialogChoice  _choice [];
 extern DialogSubTitle _subTitles[];
 
-extern char   *dScelta [];
-extern char   *dBattuta[];
-
 extern uint16   _curDialog, _curChoice, _curSubTitle;
-
 } // End of namespace Trecision
 #endif
