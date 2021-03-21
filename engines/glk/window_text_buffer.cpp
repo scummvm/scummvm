@@ -1606,8 +1606,8 @@ void TextBufferWindow::scrollResize() {
 		_lines[i]._rHyper = 0;
 		_lines[i]._len = 0;
 		_lines[i]._newLine = 0;
-		memset(_lines[i]._chars, ' ', sizeof _lines[i]._chars);
-		memset(_lines[i]._attrs, 0, sizeof _lines[i]._attrs);
+		*(_lines[i]._chars) = 0;
+		_lines[i]._attrs->clear();
 	}
 
 	_scrollBack += SCROLLBACK;

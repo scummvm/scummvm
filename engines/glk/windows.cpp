@@ -773,11 +773,12 @@ WindowStyle::WindowStyle(const WindowStyleStatic &src) : font(src.font), reverse
 void Attributes::clear() {
 	fgset = false;
 	bgset = false;
+	reverse = false;
+	unused = false;
+	style = 0;
 	fgcolor = 0;
 	bgcolor = 0;
-	reverse = false;
 	hyper = 0;
-	style = 0;
 }
 
 uint Attributes::attrBg(const WindowStyle *styles) {

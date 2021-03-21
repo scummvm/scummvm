@@ -324,7 +324,7 @@ struct Attributes {
 	bool fgset      : 1;
 	bool bgset      : 1;
 	bool reverse    : 1;
-	unsigned        : 1;
+	unsigned unused : 1; // needed to pad structure
 	unsigned style  : 4;
 	uint fgcolor;
 	uint bgcolor;
