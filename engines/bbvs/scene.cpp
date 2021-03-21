@@ -100,8 +100,8 @@ void BbvsEngine::initScene(bool sounds) {
 
 	memset(_backgroundSoundsActive, 0, sizeof(_backgroundSoundsActive));
 
-	memset(_sceneObjects, 0, sizeof(_sceneObjects));
 	for (int i = 0; i < kSceneObjectsCount; ++i) {
+		_sceneObjects[i].clear();
 		_sceneObjects[i].walkDestPt.x = -1;
 		_sceneObjects[i].walkDestPt.y = -1;
 	}

@@ -172,7 +172,27 @@ struct SceneObject {
 	int xIncr, yIncr;
 	int turnValue, turnCount, turnTicks;
 	Common::Point walkDestPt;
-	SceneObject() : sceneObjectDef(0), anim(0) {
+
+	SceneObject() {
+		clear();
+	}
+
+	void clear() {
+		x = 0;
+		y = 0;
+		sceneObjectDef = nullptr;
+		anim = nullptr;
+		animIndex = 0;
+		frameIndex = 0;
+		frameTicks = 0;
+		walkCount = 0;
+		xIncr = 0;
+		yIncr = 0;
+		turnValue = 0;
+		turnCount = 0;
+		turnTicks = 0;
+		walkDestPt.x = 0;
+		walkDestPt.y = 0;
 	}
 };
 
