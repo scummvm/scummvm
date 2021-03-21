@@ -89,7 +89,7 @@ inline String get_filename(const String &pathAndName) {
 	size_t p = pathAndName.FindCharReverse('/');
 	if (p != String::npos)
 		return String(pathAndName.GetNullableCStr() + p + 1);
-	return Common::FSNode(pathAndName).getName();
+	return pathAndName;
 }
 
 } // namespace Path
