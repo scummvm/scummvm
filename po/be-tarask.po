@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-03-17 16:34+0000\n"
-"PO-Revision-Date: 2021-03-13 15:33+0000\n"
+"PO-Revision-Date: 2021-03-21 08:24+0000\n"
 "Last-Translator: Kastuś K. <oakum2334@gmail.com>\n"
 "Language-Team: Belarusian (Taraškievica) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/be-tarask/>\n"
@@ -460,9 +460,8 @@ msgid "Select additional game directory"
 msgstr ""
 
 #: gui/editgamedialog.cpp:601 gui/options.cpp:2530
-#, fuzzy
 msgid "Select directory for saved games"
-msgstr "Выберыце тэчку для захаваньняў"
+msgstr "Выберыце тэчку для заховаў"
 
 #: gui/editgamedialog.cpp:607
 msgid ""
