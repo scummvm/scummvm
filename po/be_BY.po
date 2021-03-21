@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-03-17 16:34+0000\n"
-"PO-Revision-Date: 2020-09-26 21:13+0000\n"
+"PO-Revision-Date: 2021-03-21 08:24+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Belarusian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/be/>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
 "%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
-"X-Generator: Weblate 4.0.4\n"
+"X-Generator: Weblate 4.4\n"
 "X-Language-name: Беларуская\n"
 
 #: gui/about.cpp:102
@@ -1049,9 +1049,8 @@ msgid "Aspect ratio correction"
 msgstr "Карэкцыя суадносін бакоў"
 
 #: gui/options.cpp:1356
-#, fuzzy
 msgid "Correct aspect ratio for games"
-msgstr "Карэктаваць суадносіны бакоў для гульняў з адрозненнем 320x200"
+msgstr "Карэктаваць суадносіны бакоў для гульняў"
 
 #: gui/options.cpp:1364
 msgid "Preferred device:"
