@@ -15,6 +15,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added support for Crimson Crown
    - Added support for OO-Topos
    - Added support for Glulx interactive fiction games
+   - Added support for Private Eye (US release)
 
  New ports:
    - The Nintendo DS port got a major rewrite.
