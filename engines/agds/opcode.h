@@ -347,6 +347,7 @@ enum Opcode {
 	OP_U(kObjectRegisterUseObjectHandler, onObjectUse) \
 	OP(kObjectPatchSetText, objectPatchSetText) \
 	OP(kObjectPatchSetRegionName, objectPatchSetRegionName) \
+	OP(kScreenPatchSetRegionName, screenPatchSetRegionName) \
 	OP(kAnimateCharacter, animateCharacter) \
 	OP(kLoadCharacter, loadCharacter) \
 	OP(kAssociateCharacter, associateCharacter) \

@@ -724,6 +724,25 @@ void Process::objectPatchSetRegionName() {
 	patch->region = regionName;
 }
 
+void Process::screenPatchSetRegionName() {
+	Common::String regionName = popString();
+	Common::String screenName = popString();
+	debug("screenPatchSetRegionName: %s %s", screenName.c_str(), regionName.c_str());
+	auto screen = _engine->getCurrentScreen();
+	if (!screen) {
+		warning("no screen");
+		return;
+	}
+	if (screen->getName() == screenName) {
+		auto object = screen->getObject();
+		RegionPtr region = _engine->loadRegion(regionName);
+		debug("region: %s", region->toString().c_str());
+		object->region(region);
+	}
+	auto patch = _engine->createPatch(screenName);
+	patch->screenRegionName = regionName;
+}
+
 void Process::screenObjectPatchIncRef() {
 	Common::String objectName = popString();
 	Common::String screenName = popString();
