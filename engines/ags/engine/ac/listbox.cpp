@@ -76,16 +76,19 @@ void ListBox_Clear(GUIListBox *listbox) {
 void FillDirList(std::set<String> &files, const String &path) {
 	String dirName = Path::GetDirectoryPath(path);
 	String filePattern = Path::get_filename(path);
+
 	if (dirName.CompareLeftNoCase(get_install_dir()) == 0) {
 		String subDir = dirName.Mid(get_install_dir().GetLength());
 		if (!subDir.IsEmpty() && subDir[0u] == '/')
 			subDir.ClipLeft(1);
 		dirName = ConfMan.get("path");
 	} else if (dirName.CompareLeftNoCase(get_save_game_directory()) == 0) {
-		String subDir = dirName.Mid(get_save_game_directory().GetLength());
-		if (!subDir.IsEmpty() && subDir[0u] == '/')
-			subDir.ClipLeft(1);
-		dirName = Path::ConcatPaths(ConfMan.get("savepath"), subDir);
+		// Save files listing
+		Common::StringArray matches = g_system->getSavefileManager()->listSavefiles(filePattern);
+		for (uint idx = 0; idx < matches.size(); ++idx)
+			files.insert(matches[idx]);
+		return;
+
 	}
 
 	Common::FSDirectory dir(dirName);
@@ -101,7 +104,6 @@ void ListBox_FillDirList(GUIListBox *listbox, const char *filemask) {
 	_G(guis_need_update) = 1;
 
 	ResolvedPath rp;
-	ResolveScriptPath("$SAVEGAMEDIR$/agssave.*", true, rp);
 	if (!ResolveScriptPath(filemask, true, rp))
 		return;
 
