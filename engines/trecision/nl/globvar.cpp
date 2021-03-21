@@ -41,8 +41,8 @@ int8 _characterGoToPosition = -1;
 /*-------------------------------------------------------------------------*/
 /*                          VARIABILI DI SERVIZIO         				   */
 /*-------------------------------------------------------------------------*/
-int8 OldObjStatus[MAXOBJINROOM];
-int8 VideoObjStatus[MAXOBJINROOM];
+bool OldObjStatus[MAXOBJINROOM];
+bool VideoObjStatus[MAXOBJINROOM];
 
 ScreenRect VideoTop = {  0,  0,   0, TOP - 1};
 ScreenRect VideoCent = {0, TOP, MAXX - 1, (TOP + AREA) - 1};

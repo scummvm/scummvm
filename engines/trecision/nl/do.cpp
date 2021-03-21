@@ -24,7 +24,6 @@
 #include <string.h>
 #include "common/scummsys.h"
 #include "trecision/nl/3d/3dinc.h"
-#include "trecision/nl/sysdef.h"
 #include "trecision/nl/struct.h"
 #include "trecision/nl/ll/llinc.h"
 #include "trecision/nl/message.h"
@@ -1828,8 +1827,6 @@ void doScript() {
 /*                               AtMouseClick           				   */
 /*-------------------------------------------------------------------------*/
 bool AtMouseClick(uint16 TheObj) {
-	bool ret = true;
-
 	if ((g_vm->_curRoom == r1D) && !(g_vm->_room[r1D]._flag & OBJFLAG_EXTRA) && (TheObj != oSCALA1D)) {
 		g_vm->_curObj = oDONNA1D;
 		goToPosition(g_vm->_obj[oDONNA1D]._position);
@@ -1842,6 +1839,7 @@ bool AtMouseClick(uint16 TheObj) {
 		return true;
 	}
 
+	bool ret = true;
 	switch (TheObj) {
 	case oPORTAA13:
 		if (mright && (g_vm->_room[r14]._flag & OBJFLAG_DONE)) {
