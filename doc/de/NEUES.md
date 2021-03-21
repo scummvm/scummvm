@@ -48,7 +48,6 @@ Programmcodes finden Sie auf Englisch unter:
 
  Grim:
    - Unterstützung für die Version in brasilianischem Portugiesisch von Grim Fandango hinzugefügt.
-   - Unterstützung für die russische Version von Escape from Monkey Island hinzugefügt.
 
  Kyra:
    - Unterstützung für die japanische Sega-CD-Version von Eye of the Beholder hinzugefügt.
