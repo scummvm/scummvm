@@ -844,6 +844,15 @@ Prince
    * - Kamil Zbróg
      -
 
+Private
+^^^^^^^
+
+.. list-table::
+   :widths: 35 65
+
+   * - Gustavo Grieco
+     -
+
 Queen
 ^^^^^
 
@@ -2109,7 +2118,7 @@ Code contributions
    * - Jeroen Janssen
      - Numerous readability and bugfix patches
    * - Keith Kaisershot
-     - Several Pegasus Prime patches
+     - Several Pegasus Prime patches and DVD additions
    * - Andreas Karlsson
      - Initial port for SymbianOS
    * - Stefan Kristiansson

@@ -951,6 +951,10 @@ begin_credits("Credits");
 				add_person("Kamil Zbr&oacute;g", "", "");
 			end_section();
 
+			begin_section("Private");
+				add_person("Gustavo Grieco", "neuromancer", "");
+			end_section();
+
 			begin_section("Queen");
 				add_person("David Eriksson", "twogood", "(retired)");
 				add_person("Gregory Montoir", "cyx", "(retired)");
