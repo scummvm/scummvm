@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-03-17 16:34+0000\n"
-"PO-Revision-Date: 2020-09-22 20:50+0000\n"
+"PO-Revision-Date: 2021-03-21 08:24+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Danish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/da/>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.0.4\n"
+"X-Generator: Weblate 4.4\n"
 "X-Language-name: Dansk\n"
 
 #: gui/about.cpp:102
@@ -2302,11 +2302,12 @@ msgid "This game is not supported."
 msgstr "Spil-id ikke understøttet"
 
 #: engines/engine.cpp:659
-#, fuzzy
 msgid ""
 "This game is not supported for the following reason:\n"
 "\n"
-msgstr "Spillet understøtter ikke indlæsning af spil fra oversigten."
+msgstr ""
+"Det spil er ikke understøttet af følgende årsag:\n"
+"\n"
 
 #: engines/engine.cpp:798
 msgid "Loading game is currently unavailable"
@@ -2571,26 +2572,20 @@ msgid "Download failed."
 msgstr "Download mislykkedes."
 
 #: backends/events/default/default-events.cpp:185
-#, fuzzy
-#| msgid ""
-#| "Are you sure you want to start a new game? All unsaved progress will be "
-#| "lost."
 msgid ""
 "Do you really want to return to the Launcher?\n"
 "Any unsaved progress will be lost."
 msgstr ""
-"Er du sikker på, at du vil starte et nyt spil? Al fremgang som ikke er gemt "
-"vil gå tabt."
+"Vil du vende tilbage til oversigten?\n"
+"Alle fremskridt som ikke er gemt vil gå tabt."
 
 #: backends/events/default/default-events.cpp:209
-#, fuzzy
-#| msgid "Are you sure you want to quit? All unsaved progress will be lost."
 msgid ""
 "Do you really want to quit?\n"
 "Any unsaved progress will be lost."
 msgstr ""
-"Er du sikker på, at du vil afslutte? Al fremgang som ikke er gemt vil gå "
-"tabt."
+"Er du sikker på, at du vil afslutte?\n"
+"Alle fremskridt som ikke er gemt vil gå tabt."
 
 #: backends/events/default/default-events.cpp:209
 #: backends/events/default/default-events.cpp:326
