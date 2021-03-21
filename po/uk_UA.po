@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-03-17 16:34+0000\n"
+"POT-Creation-Date: 2021-03-21 23:12+0000\n"
 "PO-Revision-Date: 2021-03-17 22:37+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
@@ -132,8 +132,8 @@ msgstr ""
 #: gui/options.cpp:2717 gui/options.cpp:2755
 #: backends/events/default/default-events.cpp:185
 #: backends/events/symbiansdl/symbiansdl-events.cpp:191
-#: engines/grim/grim.cpp:353 engines/kyra/gui/saveload_eob.cpp:596
-#: engines/kyra/gui/saveload_eob.cpp:629
+#: engines/buried/buried.cpp:504 engines/grim/grim.cpp:353
+#: engines/kyra/gui/saveload_eob.cpp:596 engines/kyra/gui/saveload_eob.cpp:629
 #: engines/sci/graphics/controls32.cpp:928
 msgid "Yes"
 msgstr "Так"
@@ -143,8 +143,8 @@ msgstr "Так"
 #: gui/launcher.cpp:390 gui/launcher.cpp:411 gui/launcher.cpp:454
 #: gui/options.cpp:2717 gui/options.cpp:2755
 #: backends/events/symbiansdl/symbiansdl-events.cpp:191
-#: engines/grim/grim.cpp:353 engines/kyra/gui/saveload_eob.cpp:596
-#: engines/kyra/gui/saveload_eob.cpp:629
+#: engines/buried/buried.cpp:504 engines/grim/grim.cpp:353
+#: engines/kyra/gui/saveload_eob.cpp:596 engines/kyra/gui/saveload_eob.cpp:629
 #: engines/sci/graphics/controls32.cpp:928
 msgid "No"
 msgstr "Ні"
@@ -783,15 +783,17 @@ msgid "Search:"
 msgstr "Пошук:"
 
 #: gui/launcher.cpp:210 engines/dialogs.cpp:102 engines/engine.cpp:802
-#: engines/pegasus/pegasus.cpp:384 engines/tsage/scenes.cpp:601
-#: engines/wage/saveload.cpp:742 engines/xeen/saves.cpp:256
+#: engines/buried/saveload.cpp:515 engines/pegasus/pegasus.cpp:384
+#: engines/tsage/scenes.cpp:601 engines/wage/saveload.cpp:742
+#: engines/xeen/saves.cpp:256
 msgid "Load game:"
 msgstr "Завантажити гру:"
 
 #: gui/launcher.cpp:210 engines/dialogs.cpp:102 engines/engine.cpp:802
-#: engines/parallaction/saveload.cpp:194 engines/pegasus/pegasus.cpp:384
-#: engines/scumm/dialogs.cpp:178 engines/tsage/scenes.cpp:601
-#: engines/wage/saveload.cpp:742 engines/xeen/saves.cpp:256
+#: engines/buried/saveload.cpp:515 engines/parallaction/saveload.cpp:194
+#: engines/pegasus/pegasus.cpp:384 engines/scumm/dialogs.cpp:178
+#: engines/tsage/scenes.cpp:601 engines/wage/saveload.cpp:742
+#: engines/xeen/saves.cpp:256
 msgid "Load"
 msgstr "Завантажити"
 
@@ -2135,12 +2137,13 @@ msgid "~R~eturn to Launcher"
 msgstr "~П~овер.в головне меню"
 
 #: engines/dialogs.cpp:103 engines/engine.cpp:831 engines/agi/saveload.cpp:768
-#: engines/avalanche/parser.cpp:1919 engines/cine/various.cpp:350
-#: engines/dm/loadsave.cpp:199 engines/drascula/saveload.cpp:383
-#: engines/dreamweb/saveload.cpp:262 engines/glk/streams.cpp:1433
-#: engines/gnap/menu.cpp:466 engines/hugo/file.cpp:298
-#: engines/illusions/menusystem.cpp:703 engines/kingdom/kingdom.cpp:739
-#: engines/lab/savegame.cpp:243 engines/mads/nebular/dialogs_nebular.cpp:350
+#: engines/avalanche/parser.cpp:1919 engines/buried/saveload.cpp:534
+#: engines/cine/various.cpp:350 engines/dm/loadsave.cpp:199
+#: engines/drascula/saveload.cpp:383 engines/dreamweb/saveload.cpp:262
+#: engines/glk/streams.cpp:1433 engines/gnap/menu.cpp:466
+#: engines/hugo/file.cpp:298 engines/illusions/menusystem.cpp:703
+#: engines/kingdom/kingdom.cpp:739 engines/lab/savegame.cpp:243
+#: engines/mads/nebular/dialogs_nebular.cpp:350
 #: engines/neverhood/menumodule.cpp:890 engines/pegasus/pegasus.cpp:403
 #: engines/prince/saveload.cpp:55 engines/sci/engine/guest_additions.cpp:688
 #: engines/sci/engine/kfile.cpp:1075 engines/sherlock/scalpel/scalpel.cpp:1250
@@ -2154,12 +2157,13 @@ msgstr "Зберегти гру:"
 #: engines/dialogs.cpp:103 engines/engine.cpp:831
 #: backends/platform/symbian/src/SymbianActions.cpp:46
 #: engines/agi/saveload.cpp:768 engines/avalanche/parser.cpp:1919
-#: engines/cine/various.cpp:350 engines/dm/loadsave.cpp:199
-#: engines/drascula/saveload.cpp:383 engines/dreamweb/saveload.cpp:262
-#: engines/glk/streams.cpp:1433 engines/gnap/menu.cpp:466
-#: engines/hugo/file.cpp:298 engines/illusions/menusystem.cpp:703
-#: engines/kingdom/kingdom.cpp:739 engines/lab/savegame.cpp:238
-#: engines/lab/savegame.cpp:243 engines/mads/nebular/dialogs_nebular.cpp:350
+#: engines/buried/saveload.cpp:534 engines/cine/various.cpp:350
+#: engines/dm/loadsave.cpp:199 engines/drascula/saveload.cpp:383
+#: engines/dreamweb/saveload.cpp:262 engines/glk/streams.cpp:1433
+#: engines/gnap/menu.cpp:466 engines/hugo/file.cpp:298
+#: engines/illusions/menusystem.cpp:703 engines/kingdom/kingdom.cpp:739
+#: engines/lab/savegame.cpp:238 engines/lab/savegame.cpp:243
+#: engines/mads/nebular/dialogs_nebular.cpp:350
 #: engines/neverhood/menumodule.cpp:890 engines/parallaction/saveload.cpp:209
 #: engines/pegasus/pegasus.cpp:403 engines/prince/saveload.cpp:55
 #: engines/sci/engine/guest_additions.cpp:689 engines/sci/engine/kfile.cpp:1075
@@ -3968,6 +3972,22 @@ msgid ""
 "The fan translator does not wish his translation to be incorporated into "
 "ScummVM."
 msgstr "Автор перекладу проти того, щоб його переклад був у ScummVM."
+
+#: engines/buried/biochip_view.cpp:623
+#, fuzzy
+#| msgid "The game is paused. Press any key to continue."
+msgid "Your game is now Paused.  Click OK to continue."
+msgstr "Ігру призупинено. Натисніть будь-яку клавішу для продовження."
+
+#: engines/buried/buried.cpp:504
+#, fuzzy
+#| msgid "   Are you sure you want to quit ?   "
+msgid "Are you sure you want to quit?"
+msgstr "   Ви упевнені, що хочете вийти?   "
+
+#: engines/buried/saveload.cpp:108
+msgid "Invalid save file name"
+msgstr "Неправильна назва файлу збереження стану"
 
 #: engines/cge/detection.cpp:48 engines/cge/detection.cpp:54
 #: engines/kyra/detection_tables.h:224 engines/kyra/detection_tables.h:237
@@ -8180,9 +8200,6 @@ msgstr ""
 #~ msgid "Cursor Right"
 #~ msgstr "Курсор направо"
 
-#~ msgid "   Are you sure you want to quit ?   "
-#~ msgstr "   Ви упевнені, що хочете вийти?   "
-
 #~ msgid "Keyboard"
 #~ msgstr "Клавіатура"
 
@@ -8369,9 +8386,6 @@ msgstr ""
 #~ msgstr ""
 #~ "Файл 'toon.dat' має невірну версію. Очікувана %d.%d, а отрімана %d.%d. "
 #~ "Завантажте його с веб-сайту ScummVM"
-
-#~ msgid "Invalid save file name"
-#~ msgstr "Неправильна назва файлу збереження стану"
 
 #~ msgid "Use original savegame dialog"
 #~ msgstr "Використовувати оригінальний екран збереження"
