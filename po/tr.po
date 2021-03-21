@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-03-17 16:34+0000\n"
-"PO-Revision-Date: 2021-02-13 18:41+0000\n"
+"PO-Revision-Date: 2021-03-21 08:24+0000\n"
 "Last-Translator: mdenizdemirci <mdenizdemirci@gmail.com>\n"
 "Language-Team: Turkish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/tr/>\n"
@@ -1490,11 +1490,11 @@ msgstr ""
 
 #: gui/options.cpp:2223
 msgid "Sync now"
-msgstr "Şimdi Senkronize et"
+msgstr "Şimdi Senkroniz"
 
 #: gui/options.cpp:2223
 msgid "Start saved games sync"
-msgstr "Kayıtlı oyunların senk. başlat"
+msgstr "Seçilen oyunu başlatın"
 
 #: gui/options.cpp:2226
 msgctxt "lowres"
