@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.7.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-03-17 16:34+0000\n"
-"PO-Revision-Date: 2020-12-03 23:07+0000\n"
+"PO-Revision-Date: 2021-03-21 08:24+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Czech <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/cs/>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
-"X-Generator: Weblate 4.0.4\n"
+"X-Generator: Weblate 4.4\n"
 "X-Poedit-SourceCharset: iso-8859-2\n"
 "X-Poedit-Basepath: ..\n"
 "X-Language-name: Český\n"
@@ -1020,7 +1020,7 @@ msgstr "V-Sync ve 3D hrách"
 
 #: gui/options.cpp:1326
 msgid "Wait for the vertical sync to refresh the screen in 3D renderer"
-msgstr ""
+msgstr "Čekejte až vertikální synchronizace obnoví obrazovku ve 3D vykreslení"
 
 #: gui/options.cpp:1328
 #, fuzzy
