@@ -73,6 +73,9 @@ public:
 
 	void load(const Common::String &dialogScript, const Common::String & defs);
 	bool tick();
+private:
+	void processSoundDirective(const Common::String &line);
+	void processDirective(Common::String line);
 };
 
 

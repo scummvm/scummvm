@@ -121,68 +121,12 @@ bool Dialog::tick() {
 
 	debug("dialog line: %s", line.c_str());
 	if (line[0] == '@') {
-		if (line.size() < 2 || line[1] == '@') //comment
-			return true;
-
-		line.erase(0, 1);
-
-		if (line.hasPrefix("sound")) {
-			debug("sound: %s", line.c_str());
-			auto arg1 = line.find('(');
-			if (arg1 == line.npos) {
-				warning("invalid sound directive");
-				return true;
-			}
-			++arg1;
-
-			auto comma1 = line.find(',', arg1);
-			if (comma1 == line.npos) {
-				warning("invalid sound directive, missing arg2");
-				return true;
-			}
-			auto comma2 = line.find(',', comma1 + 1);
-			if (comma2 == line.npos) {
-				warning("invalid sound directive, missing arg3");
-				return true;
-			}
-			auto end = line.find(')', comma2 + 1);
-			if (end == line.npos) {
-				warning("invalid sound directive");
-				return true;
-			}
-			--end;
-			Common::String name = line.substr(arg1, comma1 - arg1 - 1);
-			Common::String sample = line.substr(comma1 + 1, comma2 - comma1 - 1);
-			Common::String step = line.substr(comma2 + 1, end - comma2);
-			debug("sound args = %s,%s,%s", name.c_str(), sample.c_str(), step.c_str());
-			_sounds.push_back(Sound(name, sample, atoi(step.c_str())));
-		} else {
-			DialogDefsType::const_iterator it = _dialogDefs.find(line);
-			if (it != _dialogDefs.end()) {
-				int value = it->_value;
-				_currentDef = line;
-				if (!_currentDef.hasPrefix("vybervarianty") && !_currentDef.hasPrefix("varianta")) {
-					_currentSoundIndex = -1;
-
-					for(uint s = 0; s < _sounds.size(); ++s) {
-						auto & sound = _sounds[s];
-						if (_currentDef.hasPrefixIgnoreCase(sound.Name)) {
-							_currentSoundIndex = s;
-							break;
-						}
-					}
-				}
-				debug("dialog value %s = %d (0x%04x), sample index: %d", line.c_str(), value, value, _currentSoundIndex);
-
-				dialog_var->setInteger(value);
-				_engine->reactivate(_dialogProcessName, true);
-			} else
-				warning("invalid dialog directive: %s", line.c_str());
-		}
+		processDirective(line);
 	} else if (line[0] == ' ') {
 		debug("text: %s", line.c_str() + 1);
 		dialog_var->setInteger(-3);
 	}
+
 	if (_dialogScriptPos >= n && !_dialogProcessName.empty()) {
 		_dialogProcessName.clear();
 
@@ -193,6 +137,72 @@ bool Dialog::tick() {
 		return false;
 	}
 	return true;
+}
+
+void Dialog::processSoundDirective(const Common::String &line) {
+	debug("sound: %s", line.c_str());
+	auto arg1 = line.find('(');
+	if (arg1 == line.npos) {
+		warning("invalid sound directive");
+		return;
+	}
+	++arg1;
+
+	auto comma1 = line.find(',', arg1);
+	if (comma1 == line.npos) {
+		warning("invalid sound directive, missing arg2");
+		return;
+	}
+	auto comma2 = line.find(',', comma1 + 1);
+	if (comma2 == line.npos) {
+		warning("invalid sound directive, missing arg3");
+		return;
+	}
+	auto end = line.find(')', comma2 + 1);
+	if (end == line.npos) {
+		warning("invalid sound directive");
+		return;
+	}
+	--end;
+	Common::String name = line.substr(arg1, comma1 - arg1 - 1);
+	Common::String sample = line.substr(comma1 + 1, comma2 - comma1 - 1);
+	Common::String step = line.substr(comma2 + 1, end - comma2);
+	debug("sound args = %s,%s,%s", name.c_str(), sample.c_str(), step.c_str());
+	_sounds.push_back(Sound(name, sample, atoi(step.c_str())));
+}
+
+void Dialog::processDirective(Common::String line) {
+	if (line.size() < 2 || line[1] == '@') {
+		debug("comment, bailing out");
+		return;
+	}
+
+	line.erase(0, 1);
+
+	if (line.hasPrefix("sound")) {
+		processSoundDirective(line);
+	} else {
+		DialogDefsType::const_iterator it = _dialogDefs.find(line);
+		if (it != _dialogDefs.end()) {
+			int value = it->_value;
+			_currentDef = line;
+			if (!_currentDef.hasPrefix("vybervarianty") && !_currentDef.hasPrefix("varianta")) {
+				_currentSoundIndex = -1;
+
+				for(uint s = 0; s < _sounds.size(); ++s) {
+					auto & sound = _sounds[s];
+					if (_currentDef.hasPrefixIgnoreCase(sound.Name)) {
+						_currentSoundIndex = s;
+						break;
+					}
+				}
+			}
+			debug("dialog value %s = %d (0x%04x), sample index: %d", line.c_str(), value, value, _currentSoundIndex);
+			_engine->getSystemVariable("dialog_var")->setInteger(value);
+			_engine->reactivate(_dialogProcessName, true);
+		} else
+			warning("invalid dialog directive: %s", line.c_str());
+	}
 }
 
 Common::String Dialog::getNextDialogSound() {
