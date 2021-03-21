@@ -491,7 +491,11 @@ void CGEEngine::loadHeroXY() {
 	EncryptedStream cf(this, "CGE.HXY");
 	uint16 x, y;
 
-	memset(_heroXY, 0, sizeof(_heroXY));
+	for (uint i = 0; i < ARRAYSIZE(_heroXY); i++) {
+		_heroXY[i].x = 0;
+		_heroXY[i].y = 0;
+	}
+
 	if (!cf.err()) {
 		for (int i = 0; i < kSceneMax; ++i) {
 			cf.read((byte *)&x, 2);
