@@ -9,7 +9,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-03-17 16:34+0000\n"
 "PO-Revision-Date: 2021-03-21 08:24+0000\n"
-"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
+"Last-Translator: Aashwin Vaish <aashwin.vaish@research.iiit.ac.in>\n"
 "Language-Team: Hindi <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/hi/>\n"
 "Language: hi\n"
@@ -48,7 +48,7 @@ msgstr "ऊपर जाएँ"
 #: gui/browser.cpp:79 gui/browser.cpp:81 gui/remotebrowser.cpp:57
 #: gui/remotebrowser.cpp:59
 msgid "Go to previous directory level"
-msgstr "पिछले फोल्डर स्तर पे जाएँ "
+msgstr "पिछले फोल्डर स्तर पे जाएँ"
 
 #: gui/browser.cpp:81 gui/remotebrowser.cpp:59
 msgctxt "lowres"
@@ -89,11 +89,11 @@ msgstr "चुनें"
 
 #: gui/downloaddialog.cpp:49
 msgid "Select directory where to download game data"
-msgstr "उस फोल्डर को चुने जहाँ गेम डेटा डाउनलोड करना है "
+msgstr "उस फोल्डर को चुने जहाँ गेम डेटा डाउनलोड करना है"
 
 #: gui/downloaddialog.cpp:50 gui/editgamedialog.cpp:569 gui/launcher.cpp:207
 msgid "Select directory with game data"
-msgstr "उस फोल्डर को चुने जिसमे गेम डाटा है"
+msgstr "उस फोल्डर को चुने जिसमे गेम डेटा है"
 
 #: gui/downloaddialog.cpp:52 gui/downloaddialog.cpp:227
 msgid "From: "
@@ -105,16 +105,16 @@ msgstr "गंतव्य: "
 
 #: gui/downloaddialog.cpp:64
 msgid "Cancel download"
-msgstr "Download रद्द करदो"
+msgstr "डाउनलोड रद्द करें"
 
 #: gui/downloaddialog.cpp:66
 msgctxt "lowres"
 msgid "Cancel download"
-msgstr "Download रद्द करदो"
+msgstr "डाउनलोड रद्द करें"
 
 #: gui/downloaddialog.cpp:68
 msgid "Hide"
-msgstr "छिपादो"
+msgstr "छिपाएं"
 
 #: gui/downloaddialog.cpp:118
 msgid ""
@@ -148,14 +148,15 @@ msgstr "नहीं"
 
 #: gui/downloaddialog.cpp:137 gui/launcher.cpp:559
 msgid "ScummVM couldn't open the specified directory!"
-msgstr "ScummVM ये directory खोल नहीं पाया!"
+msgstr "ScummVM यह फोल्डर नहीं खोल पाया!"
 
 #: gui/downloaddialog.cpp:147
 msgid ""
 "Cannot create a directory to download - the specified directory has a file "
 "with the same name."
 msgstr ""
-"डाउनलोड के लिए फोल्डर नहीं बना सकते - इस फोल्डर में पहले से ही इस नाम की एक फाइल है।."
+"डाउनलोड के लिए फोल्डर नहीं बना सकते - इस फोल्डर में पहले से ही इस नाम की एक "
+"फाइल है।"
 
 #: gui/downloaddialog.cpp:147 gui/editgamedialog.cpp:377
 #: gui/fluidsynth-dialog.cpp:154 gui/KeysDialog.cpp:43 gui/launcher.cpp:509
@@ -188,7 +189,7 @@ msgstr ""
 #: gui/downloaddialog.cpp:215
 #, c-format
 msgid "Downloaded %s %S / %s %S"
-msgstr "डौन्लोडे कर दिया %s %S / %s %S"
+msgstr "%s %S / %s %S डाउनलोड कर लिया"
 
 #: gui/downloaddialog.cpp:222
 #, c-format
@@ -197,7 +198,7 @@ msgstr "डाउनलोड की गति: %s %S"
 
 #: gui/editgamedialog.cpp:142 engines/dialogs.cpp:285
 msgid "Game"
-msgstr "खेल"
+msgstr "गेम"
 
 #: gui/editgamedialog.cpp:146
 msgid "ID:"
@@ -222,7 +223,7 @@ msgstr "नाम:"
 #: gui/editgamedialog.cpp:153 gui/editgamedialog.cpp:155
 #: gui/editgamedialog.cpp:156
 msgid "Full title of the game"
-msgstr "खेल का पूरा नाम"
+msgstr "गेम का पूरा नाम"
 
 #: gui/editgamedialog.cpp:155
 msgctxt "lowres"
@@ -245,7 +246,7 @@ msgstr "गेम की भाषा। यह आपके स्पैनि�
 #: gui/options.cpp:1330 gui/options.cpp:1339 gui/options.cpp:2135
 #: gui/options.cpp:2307 audio/null.cpp:41 engines/ags/detection.cpp:90
 msgid "<default>"
-msgstr "<अनुपस्थिति>"
+msgstr "<default>"
 
 #: gui/editgamedialog.cpp:171
 msgid "Platform:"
@@ -269,7 +270,7 @@ msgstr "इंजन"
 #: backends/graphics/sdl/sdl-graphics.cpp:382
 #: backends/graphics3d/sdl/sdl-graphics3d.cpp:132
 msgid "Graphics"
-msgstr "ग्राफिक्स"
+msgstr "ग्राफ़िक्स"
 
 #: gui/editgamedialog.cpp:203 gui/options.cpp:1659 gui/options.cpp:1792
 msgid "GFX"
@@ -277,7 +278,7 @@ msgstr "GFX"
 
 #: gui/editgamedialog.cpp:209
 msgid "Override global graphic settings"
-msgstr "वैश्विक ग्राफिक्स विकल्प अधिलेखित करे"
+msgstr "ग्लोबल ग्राफ़िक सेटिंग्स को ओवरराइड करें"
 
 #: gui/editgamedialog.cpp:211
 msgctxt "lowres"
@@ -598,7 +599,7 @@ msgstr ""
 #: engines/scumm/help.cpp:165 engines/scumm/help.cpp:191
 #: engines/scumm/help.cpp:209
 msgid "Close"
-msgstr "बंद करे"
+msgstr "बंद करें"
 
 #: gui/gui-manager.cpp:128 engines/metaengine.cpp:108
 #: backends/platform/symbian/src/SymbianActions.cpp:40
@@ -634,7 +635,7 @@ msgstr "नीचे"
 #: engines/wintermute/keymapper_tables.h:1570
 #: engines/wintermute/keymapper_tables.h:1692
 msgid "Left"
-msgstr "बाएं"
+msgstr "बाएँ"
 
 #: gui/gui-manager.cpp:143 engines/metaengine.cpp:123
 #: backends/platform/symbian/src/SymbianActions.cpp:43
@@ -646,7 +647,7 @@ msgstr "बाएं"
 #: engines/wintermute/keymapper_tables.h:1578
 #: engines/wintermute/keymapper_tables.h:1698
 msgid "Right"
-msgstr "दाहिने"
+msgstr "दाएँ"
 
 #: gui/KeysDialog.cpp:42
 msgid "Map"
@@ -659,11 +660,11 @@ msgstr ""
 #: gui/KeysDialog.cpp:81 gui/KeysDialog.cpp:103 gui/KeysDialog.cpp:138
 #, c-format
 msgid "Associated key : %s"
-msgstr "संबंधी key : %s"
+msgstr "सम्बंधित कुंजी : %s"
 
 #: gui/KeysDialog.cpp:83 gui/KeysDialog.cpp:105 gui/KeysDialog.cpp:140
 msgid "Associated key : none"
-msgstr "संबंधी key : कुछ नहीं"
+msgstr "सम्बंधित कुंजी : कुछ नहीं"
 
 #: gui/KeysDialog.cpp:91
 msgid "Please select an action"
@@ -679,11 +680,11 @@ msgstr ""
 
 #: gui/launcher.cpp:140 engines/dialogs.cpp:99
 msgid "~Q~uit"
-msgstr "बाहर जाइये (Q)"
+msgstr "बंद करें (Q)"
 
 #: gui/launcher.cpp:140 backends/platform/sdl/macosx/appmenu_osx.mm:215
 msgid "Quit ScummVM"
-msgstr "ScummVM छोड़ डे"
+msgstr "ScummVM बंद करें"
 
 #: gui/launcher.cpp:141
 msgid "A~b~out..."
@@ -699,15 +700,15 @@ msgstr "विकल्प(O)..."
 
 #: gui/launcher.cpp:142
 msgid "Change global ScummVM options"
-msgstr "ScummVM के सारे विकल्प बदले"
+msgstr "ScummVM के ग्लोबल विकल्प बदलें"
 
 #: gui/launcher.cpp:144
 msgid "~S~tart"
-msgstr "शुरू करे(S)"
+msgstr "शुरू करें (S)"
 
 #: gui/launcher.cpp:144
 msgid "Start selected game"
-msgstr "इस चयनित खेल को शुरू करें"
+msgstr "चयनित गेम को शुरू करें"
 
 #: gui/launcher.cpp:147
 msgid "~L~oad..."
@@ -724,7 +725,7 @@ msgstr ""
 
 #: gui/launcher.cpp:156
 msgid "~A~dd Game..."
-msgstr "खेल add करे..."
+msgstr "नया गेम जोड़ें (A)..."
 
 #: gui/launcher.cpp:156 gui/launcher.cpp:166
 msgid "Add games to the list"
@@ -732,7 +733,7 @@ msgstr ""
 
 #: gui/launcher.cpp:157
 msgid "Mass Add..."
-msgstr "अनेक खेल add करे..."
+msgstr "अनेक गेम जोड़ें..."
 
 #: gui/launcher.cpp:161
 #, fuzzy
@@ -741,15 +742,15 @@ msgstr "खेल add करे..."
 
 #: gui/launcher.cpp:161 gui/launcher.cpp:171
 msgid "Change game options"
-msgstr "खेल के विकल्प चुनें"
+msgstr "गेम के विकल्प चुनें"
 
 #: gui/launcher.cpp:163
 msgid "~R~emove Game"
-msgstr "खेल हटा डे (R)"
+msgstr "गेम हटाएँ (R)"
 
 #: gui/launcher.cpp:163 gui/launcher.cpp:173
 msgid "Remove game from the list. The game data files stay intact"
-msgstr "खेल list से हटा दे. गेम की फाइलें बरकरार रहे गी"
+msgstr "गेम सूचि से हटा दें। गेम की फाइलें नहीं हटेंगी"
 
 #: gui/launcher.cpp:166
 #, fuzzy
@@ -781,7 +782,7 @@ msgstr ""
 
 #: gui/launcher.cpp:185 gui/launcher.cpp:778
 msgid "Search:"
-msgstr "तलाश:"
+msgstr "तलाशें:"
 
 #: gui/launcher.cpp:210 engines/dialogs.cpp:102 engines/engine.cpp:802
 #: engines/pegasus/pegasus.cpp:384 engines/tsage/scenes.cpp:601
@@ -881,7 +882,7 @@ msgstr ""
 
 #: gui/options.cpp:136 common/updates.cpp:56
 msgid "Never"
-msgstr "कभी नहीँ"
+msgstr "कभी नहीं"
 
 #: gui/options.cpp:136
 msgid "Every 5 mins"
@@ -998,9 +999,8 @@ msgid "Different shaders give different visual effects"
 msgstr ""
 
 #: gui/options.cpp:1286
-#, fuzzy
 msgid "Graphics mode:"
-msgstr "ग्राफिक्स"
+msgstr "ग्राफिक्स मोड:"
 
 #: gui/options.cpp:1300
 msgid "Render mode:"
@@ -1764,9 +1764,8 @@ msgstr ""
 
 #: gui/recorderdialog.cpp:84 gui/recorderdialog.cpp:240
 #: gui/recorderdialog.cpp:250
-#, fuzzy
 msgid "Author: "
-msgstr "लेखक:"
+msgstr "लेखक: "
 
 #: gui/recorderdialog.cpp:85 gui/recorderdialog.cpp:241
 #: gui/recorderdialog.cpp:251
@@ -2499,9 +2498,8 @@ msgid ""
 msgstr ""
 
 #: backends/cloud/storage.cpp:350
-#, fuzzy
 msgid "Download complete."
-msgstr "डाउनलोड की गति: %s %S"
+msgstr "डाउनलोड पूरा हुआ।"
 
 #: backends/cloud/storage.cpp:360
 msgid "Download failed."
@@ -3015,9 +3013,8 @@ msgid "Parent directory"
 msgstr ""
 
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:218
-#, fuzzy
 msgid "ScummVM couldn't list the directory you specified."
-msgstr "ScummVM ये directory खोल नहीं पाया!"
+msgstr "ScummVM यह फोल्डर नहीं खोल पाया।"
 
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:232
 msgid "Index of"
@@ -5061,11 +5058,11 @@ msgstr "दायें मुड़िए"
 
 #: engines/mohawk/riven.cpp:900
 msgid "Look up"
-msgstr "ऊपर देखो"
+msgstr "ऊपर देखें"
 
 #: engines/mohawk/riven.cpp:905
 msgid "Look down"
-msgstr "नीचे देखो"
+msgstr "नीचे देखें"
 
 #: engines/mohawk/riven.cpp:911
 msgid "Play intro videos"
@@ -5522,6 +5519,18 @@ msgid ""
 "In that case you may need to apply the original Sierra patch.\n"
 "\n"
 msgstr ""
+"\n"
+"\n"
+"कुछ ऑडियो ड्राइवर (कम से कम कुछ गेम के लिए) गेम के प्रकाशन के बाद\n"
+"Sierra द्वारा पैच के रूप में दिए गए थे, अतः यह हो सकता है की ये\n"
+"गेम के साथ इनस्टॉल न हुए हों।\n"
+"\n"
+"कृपया इन फाइलों को अपने गेम डेटा फोल्डर में कॉपी करें।\n"
+"\n"
+"हालाँकि, ध्यान दें की कुछ फाइलें अलग से नहीं बल्कि सिर्फ\n"
+"(पैच लगे हुए) रिसोर्स बंडलों के भाग के रूप में उपलब्ध हैं।\n"
+"अगर ऐसा हो तो आपको असली Sierra पैच को अप्लाई करना पड़ सकता है।\n"
+"\n"
 
 #: engines/scumm/detection.cpp:158
 msgid "Show Object Line"
@@ -7548,6 +7557,13 @@ msgid ""
 "LiberationSans and LiberationSerif, or FreeMono, FreeSans and FreeSerif "
 "respectively."
 msgstr ""
+"इस गेम को खेलने से पहले, आपको आवश्यक फॉन्ट को ScummVM के extras फोल्डर, या "
+"अपने गेम फोल्डर में कॉपी करना होगा। Windows पर आपको Windows font फोल्डर से "
+"इन फॉन्ट की आवश्यकता है: Times New Roman, Century Schoolbook, Garamond, "
+"Courier New और Arial। इसके अलावा, आप Liberation fonts या GNU FreeFont पैकेज "
+"को डाउनलोड कर सकते हैं। आपको अपने चुने पैकेज के सारे फॉन्ट की आवश्यकता होगी, "
+"यानी की Liberation fonts से LiberationMono, LiberationSans और "
+"LiberationSerif, या GNU FreeFont से FreeMono, FreeSans और FreeSerif."
 
 #, fuzzy
 #~ msgid "Pad Left"
