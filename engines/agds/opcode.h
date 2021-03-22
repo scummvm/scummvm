@@ -176,7 +176,7 @@ enum Opcode {
 	kLoadGame						= 156,
 	kSaveGame						= 157,
 	kQuit							= 158,
-	kExitProcessCreatePatch			= 159,
+	kStartNewGame					= 159,
 	kLoadSaveSlotNamePicture		= 160,
 	kGetSaveGameName				= 161,
 	kDisableInventory				= 162,
@@ -416,7 +416,7 @@ enum Opcode {
 	OP(kStub174, stub174) \
 	OP(kStub192, stub192) \
 	OP(kQuit, quit) \
-	OP(kExitProcessCreatePatch, exitProcessCreatePatch) \
+	OP(kStartNewGame, startNewGame) \
 	OP(kDisableInventory, disableInventory) \
 	OP(kEnableInventory, enableInventory) \
 	OP(kLoadPreviousScreen, loadPreviousScreen) \
