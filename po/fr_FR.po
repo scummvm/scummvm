@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-03-21 23:12+0000\n"
-"PO-Revision-Date: 2021-03-17 13:24+0000\n"
+"PO-Revision-Date: 2021-03-23 04:24+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
@@ -3993,16 +3993,12 @@ msgstr ""
 "dans ScummVM."
 
 #: engines/buried/biochip_view.cpp:623
-#, fuzzy
-#| msgid "The game is paused. Press any key to continue."
 msgid "Your game is now Paused.  Click OK to continue."
-msgstr "Jeu en pause. Appuyer sur une touche pour reprendre."
+msgstr "Votre jeu est maintenant en pause. Cliquez sur OK pour continuer."
 
 #: engines/buried/buried.cpp:504
-#, fuzzy
-#| msgid "   Are you sure you want to quit ?   "
 msgid "Are you sure you want to quit?"
-msgstr "   Voulez-vous vraiment quitter ?   "
+msgstr "Voulez-vous vraiment quitter ?"
 
 #: engines/buried/saveload.cpp:108
 msgid "Invalid save file name"
@@ -5492,10 +5488,8 @@ msgid "Display/Hide Pause Menu"
 msgstr "Montrer/Cacher le Menu de Pause"
 
 #: engines/pegasus/pegasus.cpp:2795
-#, fuzzy
-#| msgid "Toggle fast mode"
 msgid "Toggle Chatty AI"
-msgstr "Act./Désact. mode rapide"
+msgstr "Act./Désact. IA bavarde"
 
 #: engines/pegasus/pegasus.cpp:2804 engines/wintermute/keymapper_tables.h:298
 #: engines/wintermute/keymapper_tables.h:325
