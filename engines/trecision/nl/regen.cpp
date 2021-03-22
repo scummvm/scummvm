@@ -21,12 +21,9 @@
  */
 
 #include "common/util.h"
-#include <stdio.h>
-#include <stdlib.h>
 #include "common/scummsys.h"
 
 #include "trecision/nl/3d/3dinc.h"
-#include "trecision/nl/sysdef.h"
 #include "trecision/nl/struct.h"
 #include "trecision/nl/define.h"
 #include "trecision/nl/ll/llinc.h"

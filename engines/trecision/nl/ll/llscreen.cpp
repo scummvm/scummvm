@@ -20,10 +20,6 @@
  *
  */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <math.h>
 #include "common/scummsys.h"
 #include "trecision/trecision.h"
 #include "trecision/nl/3d/3dinc.h"

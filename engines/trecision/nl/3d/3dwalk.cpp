@@ -21,13 +21,7 @@
  */
 
 #include "common/util.h"
-#include <stdio.h>
-#include <stdlib.h>
-#include <math.h>
-#include <string.h>
-#include <stdarg.h>
 #include "common/scummsys.h"
-#include "trecision/nl/sysdef.h"
 #include "trecision/nl/struct.h"
 #include "trecision/nl/ll/llinc.h"
 #include "trecision/nl/extern.h"

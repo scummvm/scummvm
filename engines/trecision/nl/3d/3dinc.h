@@ -21,7 +21,6 @@
  */
 
 #include "trecision/nl/3d/3drend.h"
-#include "trecision/nl/sysdef.h"
 
 /*--------------------------------------------------
 Useful global variables:
