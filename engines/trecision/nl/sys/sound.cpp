@@ -397,8 +397,7 @@ int32 Talk(const char *name) {
 	}
 
 	SpeechTrackEnabled = true;
-	if (LoadAudioWav(0xFFFF, SpeechBuf[0], Len))
-		Len *= 2;
+	LoadAudioWav(0xFFFF, SpeechBuf[0], Len);
 
 	if (!SoundSystemActive)
 		SpeechTrackEnabled = false;
