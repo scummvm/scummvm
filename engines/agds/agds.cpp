@@ -574,7 +574,7 @@ Common::Error AGDSEngine::run() {
 
 					for(auto & object : objects) {
 						debug("found object %s", object->getName().c_str());
-						uint ip;
+						uint ip = 0;
 						if (lclick) {
 							if (_currentInventoryObject) {
 								ip = object->getUseHandler(_currentInventoryObject->getName());
@@ -585,7 +585,8 @@ Common::Error AGDSEngine::run() {
 								}
 								if (ip)
 									debug("found use handler for current inventory object %s", _currentInventoryObject->getName().c_str());
-							} else {
+							}
+							if (!ip) {
 								ip = object->getClickHandler();
 								if (ip)
 									debug("found click handler");
