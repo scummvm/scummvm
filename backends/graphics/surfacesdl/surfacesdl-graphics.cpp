@@ -795,7 +795,7 @@ void SurfaceSdlGraphicsManager::initSize(uint w, uint h, const Graphics::PixelFo
 			// 0 will currently always be Normal1x scaling
 			setGraphicsMode(0);
 		} else {
-			g_system->setGraphicsMode(ConfMan.get("gfx_mode").c_str());
+			setGraphicsMode(getGraphicsModeIdByName(ConfMan.get("gfx_mode")));
 		}
 	}
 
