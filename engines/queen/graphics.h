@@ -83,6 +83,7 @@ struct BobSlot {
 
 	void scaleWalkSpeed(uint16 ms);
 
+	void clear();
 	void clear(const Box *defaultBox);
 };
 

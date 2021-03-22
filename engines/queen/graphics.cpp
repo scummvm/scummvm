@@ -175,6 +175,37 @@ void BobSlot::scaleWalkSpeed(uint16 ms) {
 	}
 }
 
+void BobSlot::clear() {
+	active = false;
+	x = 0;
+	y = 0;
+	box = Box();
+	xflip = false;
+	scale = 0;
+	frameNum = 0;
+	frameDir = 0;
+
+	animating = false;
+	anim.speed = 0;
+	anim.speedBak = 0;
+	anim.string.buffer = nullptr;
+	anim.string.curPos = nullptr;
+	anim.normal.rebound = false;
+	anim.normal.firstFrame = 0;
+	anim.normal.lastFrame = 0;
+
+	moving = false;
+	speed = 0;
+	xmajor = false;
+	xdir = 0;
+	ydir = 0;
+	endx = 0;
+	endy = 0;
+	dx = 0;
+	dy = 0;
+	total = 0;
+}
+
 void BobSlot::clear(const Box *defaultBox) {
 	active = false;
 	xflip = false;
@@ -203,8 +234,12 @@ Graphics::Graphics(QueenEngine *vm)
 	_defaultBox(-1, -1, -1, -1),
 	_gameScreenBox(0, 0, GAME_SCREEN_WIDTH - 1, ROOM_ZONE_HEIGHT - 1),
 	_fullScreenBox(0, 0, GAME_SCREEN_WIDTH - 1, GAME_SCREEN_HEIGHT - 1) {
-	memset(_bobs, 0, sizeof(_bobs));
-	memset(_sortedBobs, 0, sizeof(_sortedBobs));
+	for (uint i = 0; i < ARRAYSIZE(_bobs); i++) {
+		_bobs[i].clear();
+	}
+	for (uint i = 0; i < ARRAYSIZE(_sortedBobs); i++) {
+		_sortedBobs[i] = nullptr;
+	}
 	_sortedBobsCount = 0;
 	_shrinkBuffer.data = new uint8[ BOB_SHRINK_BUF_SIZE ];
 }

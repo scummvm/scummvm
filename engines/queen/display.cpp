@@ -73,9 +73,11 @@ Display::Display(QueenEngine *vm, OSystem *system)
 	_imageExt = (_vm->resource()->getPlatform() == Common::kPlatformAmiga) ? "LBM" : "PCX";
 
 	_curTextColor = 0;
-	memset(_texts, 0, sizeof(_texts));
+	for (uint i = 0; i < ARRAYSIZE(_texts); i++) {
+		_texts[i].clear();
+	}
 
-	memset(&_dynalum, 0, sizeof(_dynalum));
+	_dynalum.clear();
 
 	setupInkColors();
 }

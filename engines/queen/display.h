@@ -212,6 +212,15 @@ private:
 		int8 *lumBuf;
 		uint32 lumSize;
 		uint8 prevColMask;
+
+		void clear() {
+			valid = false;
+			mskBuf = nullptr;
+			mskSize = 0;
+			lumBuf = nullptr;
+			lumSize = 0;
+			prevColMask = 0;
+		}
 	};
 
 	struct TextSlot {
@@ -219,6 +228,13 @@ private:
 		uint8 color;
 		Common::String text;
 		bool outlined;
+
+		void clear() {
+			x = 0;
+			color = 0;
+			text = "";
+			outlined = false;
+		}
 	};
 
 	uint8 *_screenBuf;
