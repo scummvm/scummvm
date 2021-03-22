@@ -21,7 +21,6 @@
  */
 
 #include "common/util.h"
-#include <stdlib.h>
 #include "common/scummsys.h"
 #include "trecision/nl/3d/3dinc.h"
 #include "trecision/trecision.h"

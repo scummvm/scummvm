@@ -20,19 +20,12 @@
  *
  */
 
-#include "common/util.h"
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 #include "common/scummsys.h"
-#include "trecision/nl/sysdef.h"
 #include "trecision/nl/struct.h"
 #include "trecision/nl/ll/llinc.h"
 #include "trecision/nl/extern.h"
 #include "trecision/nl/define.h"
 #include "trecision/trecision.h"
-
-#include "graphics/pixelformat.h"
 
 namespace Trecision {
 

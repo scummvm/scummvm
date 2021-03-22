@@ -20,9 +20,6 @@
  *
  */
 
-#include <string.h>
-#include "common/scummsys.h"
-#include "trecision/nl/sysdef.h"
 #include "trecision/nl/struct.h"
 #include "trecision/nl/define.h"
 #include "trecision/nl/message.h"

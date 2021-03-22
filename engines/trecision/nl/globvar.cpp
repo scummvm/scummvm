@@ -21,7 +21,6 @@
  */
 
 #include "common/scummsys.h"
-#include "trecision/nl/sysdef.h"
 #include "trecision/nl/struct.h"
 
 namespace Trecision {
