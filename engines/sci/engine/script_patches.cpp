@@ -127,6 +127,7 @@ static const char *const selectorNameTable[] = {
 	"has",          // King's Quest 6, GK1
 	"modeless",     // King's Quest 6 CD
 	"message",      // King's Quest 6
+	"forceUpd",     // Police Quest 3
 	"cycler",       // Space Quest 4 / system selector
 	"setCel",       // Space Quest 4, Phant2, GK1
 	"addToPic",     // Space Quest 4
@@ -251,6 +252,7 @@ enum ScriptPatcherSelectors {
 	SELECTOR_has,
 	SELECTOR_modeless,
 	SELECTOR_message,
+	SELECTOR_forceUpd,
 	SELECTOR_cycler,
 	SELECTOR_setCel,
 	SELECTOR_addToPic,
@@ -11098,8 +11100,41 @@ static const uint16 pq3PatchHouseFireRepeats[] = {
 	PATCH_END
 };
 
+// When driving at high speeds, road signs don't always update. The scripts
+//  implicitly depend on the sign being already hidden before showing it, as
+//  they don't redraw the view. roadSignScript sets a three second timer before
+//  hiding a sign, so this usually works, except at high speeds. We fix this by
+//  calling View:forceUpd to set kSignalForceUpdate when showing each sign.
+//
+// Applies to: All versions
+// Responsible method: roadSignScript:changeState(0)
+// Fixes bug: #10254
+static const uint16 pq3SignatureRoadSignUpdates[] = {
+	0x3c,                                // dup
+	0x35, 0x00,                          // ldi 00
+	0x1a,                                // eq?
+	0x30, SIG_UINT16(0x0007),            // bnt 0007 [ state 1 ]
+	SIG_MAGICDWORD,
+	0x63, 0x1a,                          // pToa register
+	0x65, 0x12,                          // aTop seconds [ seconds = register ]
+	0x32, SIG_UINT16(0x0019),            // jmp 0019
+	SIG_END
+};
+
+static const uint16 pq3PatchRoadSignUpdates[] = {
+	0x2f, 0x0c,                          // bt 0c [ state 1 ]
+	0x63, 0x1a,                          // pToa register
+	0x65, 0x12,                          // aTop seconds [ seconds = register ]
+	0x38, PATCH_SELECTOR16(forceUpd),    // pushi forceUpd
+	0x76,                                // push0
+	0x63, 0x08,                          // pToa client
+	0x4a, 0x04,                          // send 04 [ client forceUpd: ]
+	PATCH_END
+};
+
 //          script, description,                                 signature                     patch
 static const SciScriptPatcherEntry pq3Signatures[] = {
+	{  true, 25, "fix road sign updates",                     1, pq3SignatureRoadSignUpdates,  pq3PatchRoadSignUpdates },
 	{  true, 33, "prevent house fire repeating",              1, pq3SignatureHouseFireRepeats, pq3PatchHouseFireRepeats },
 	{  true, 36, "give locket missing points",                1, pq3SignatureGiveLocketPoints, pq3PatchGiveLocketPoints },
 	{  true, 36, "doctor mouth speed",                        1, pq3SignatureDoctorMouthSpeed, pq3PatchDoctorMouthSpeed },
