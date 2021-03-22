@@ -428,17 +428,19 @@ bool ScriptManager::process() {
 						continue;
 
 label_processNextEntry:
-					entryIndex = nextIndex;
-
-					if (!nextIndex)
-						goto label_exit_processing;
-
-					nextIndex = _queue.entries[nextIndex].next;
-					scriptIndex = _queue.entries[nextIndex].scriptIndex;
-
-					if (scriptIndex == -1)
-						goto label_exit_processing;
+					break;
 				}
+
+				entryIndex = nextIndex;
+
+				if (!nextIndex)
+					goto label_exit_processing;
+
+				scriptIndex = _queue.entries[nextIndex].scriptIndex;
+				nextIndex = _queue.entries[nextIndex].next;
+
+				if (scriptIndex == -1)
+						goto label_exit_processing;
 			}
 		}
 	}
