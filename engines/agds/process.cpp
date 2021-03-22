@@ -30,8 +30,8 @@ namespace AGDS {
 
 Process::Process(AGDSEngine *engine, ObjectPtr object, unsigned ip) :
 	_engine(engine), _parentScreen(engine->getCurrentScreenName()), _object(object),
-	_ip(ip), _lastIp(ip), _stopping(false),
-	_status(kStatusActive), _exitCode(kExitCodeDestroy),
+	_ip(ip), _lastIp(ip),
+	_exited(false), _status(kStatusActive), _exitCode(kExitCodeDestroy),
 	_tileWidth(16), _tileHeight(16), _tileResource(0), _tileIndex(0),
 	_timer(0),
 	_animationCycles(1), _animationLoop(false), _animationZ(0), _animationDelay(-1), _animationRandom(0),
@@ -76,12 +76,7 @@ void Process::error(const char *str, ...) {
 
 void Process::suspend(ProcessExitCode exitCode, const Common::String &arg1, const Common::String &arg2) {
 	debug("suspend %d", exitCode);
-	if (active())
-		_status = kStatusPassive;
-	if (_stopping && exitCode == kExitCodeSuspend) {
-		debug("stopping process of removed object");
-		done();
-	}
+	_exited = true;
 	_exitCode = exitCode;
 	_exitIntArg1 = 0;
 	_exitIntArg2 = 0;
@@ -91,12 +86,7 @@ void Process::suspend(ProcessExitCode exitCode, const Common::String &arg1, cons
 
 void Process::suspend(ProcessExitCode exitCode, int arg1, int arg2) {
 	debug("suspend %d", exitCode);
-	if (active())
-		_status = kStatusPassive;
-	if (_stopping && exitCode == kExitCodeSuspend) {
-		debug("stopping process of removed object");
-		done();
-	}
+	_exited = true;
 	_exitCode = exitCode;
 	_exitIntArg1 = arg1;
 	_exitIntArg2 = arg2;
@@ -197,9 +187,23 @@ void Process::activate() {
 	}
 }
 
+void Process::deactivate() {
+	switch(status()) {
+	case kStatusActive:
+		_status = Process::kStatusPassive;
+		break;
+	case kStatusDone:
+	case kStatusError:
+		break;
+	default:
+		break;
+	}
+}
 
 void Process::run() {
-	while(status() == kStatusActive) {
+	bool restart = true;
+	while(_status != kStatusDone && _status != kStatusError && restart) {
+		restart = false;
 		ProcessExitCode code = resume();
 		switch (code) {
 		case kExitCodeDestroy:
@@ -208,67 +212,73 @@ void Process::run() {
 			break;
 		case kExitCodeLoadScreenObjectAs:
 		case kExitCodeLoadScreenObject:
+			_status = kStatusPassive;
 			_object->lock();
 			_engine->runObject(getExitArg1(), getExitArg2());
 			_object->unlock();
 			activate();
-			continue;
+			restart = true;
+			break;
 		case kExitCodeRunDialog:
+			_status = kStatusPassive;
 			_object->lock();
 			_engine->runDialog(getName(), getExitArg1());
 			_object->unlock();
+			deactivate();
 			break;
 		case kExitCodeSetNextScreen:
 		case kExitCodeSetNextScreenSaveOrLoad:
+			done();
 			debug("process %s launches screen: %s, saveorload: ", getName().c_str(), getExitArg1().c_str(), code == kExitCodeSetNextScreenSaveOrLoad);
 			_engine->setNextScreenName(getExitArg1(), code == kExitCodeSetNextScreenSaveOrLoad? ScreenLoadingType::SaveOrLoad: ScreenLoadingType::Normal);
-			done();
 			break;
 		case kExitCodeMouseAreaChange:
+			_status = kStatusPassive;
+			_object->lock();
 			_engine->changeMouseArea(getExitIntArg1(), getExitIntArg2());
-			activate();
-			continue;
+			_object->unlock();
+			deactivate();
+			restart = true;
+			break;
 		case kExitCodeLoadInventoryObject:
+			_status = kStatusPassive;
 			_object->lock();
 			_engine->inventory().add(_engine->runObject(getExitArg1()));
 			_object->unlock();
-			activate();
-			continue;
+			deactivate();
+			restart = true;
+			break;
 		case kExitCodeCloseInventory:
 			_object->lock();
 			_engine->inventory().enable(false);
 			updateWithCurrentMousePosition();
 			_object->unlock();
-			activate();
-			return; //some codes are special, they needed to exit loop and keep process active
+			break;
 		case kExitCodeSuspend:
 			updateWithCurrentMousePosition();
-			activate();
-			return; //some codes are special, they needed to exit loop and keep process active
-		case kExitCodeCreatePatchLoadResources:
-			{
-				debug("exitProcessCreatePatch");
-				_engine->newGame();
-				activate();
-			}
+			break;
+		case kExitCodeNewGame:
+			suspend();
+			_object->lock();
+			debug("exitProcessNewGame");
+			_engine->newGame();
 			break;
 		case kExitCodeLoadGame:
+			_status = kStatusPassive;
 			_object->lock();
 			if (_engine->loadGameState(getExitIntArg1()).getCode() == Common::kNoError) {
 				done();
 			} else {
 				debug("save loading failed, resuming execution...");
-				activate(); //continue
 			}
 			_object->unlock();
+			_status = kStatusActive;
+			restart = true;
 			break;
 		case kExitCodeSaveGame:
-			_object->lock();
 			if (_engine->saveGameState(getExitIntArg1(), "").getCode() != Common::kNoError) {
 				warning("failed to save game");
 			}
-			_object->unlock();
-			activate();
 			break;
 		default:
 			error("unknown process exit code %d", code);
@@ -358,7 +368,7 @@ ProcessExitCode Process::resume() {
 	}
 
 	const Object::CodeType &code = _object->getCode();
-	while (active() && _ip < code.size()) {
+	while (!_exited && _ip < code.size()) {
 		if (_timer) {
 			return kExitCodeSuspend;
 		}
@@ -378,10 +388,7 @@ ProcessExitCode Process::resume() {
 			break;
 		}
 	}
-
-	if (active()) {
-		debug("code ended, exiting...");
-	}
+	_exited = false;
 
 	return _exitCode;
 }

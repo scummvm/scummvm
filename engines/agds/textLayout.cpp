@@ -40,7 +40,7 @@ void TextLayout::layout(AGDSEngine &engine, Process &process, const Common::Stri
 	}
 
 	_process = process.getName();
-	process.pause();
+	process.deactivate();
 	_fontId = fontId;
 	_npc = npc;
 	Font *font = engine.getFont(fontId);
