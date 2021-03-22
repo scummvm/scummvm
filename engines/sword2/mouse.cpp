@@ -96,7 +96,9 @@ Mouse::Mouse(Sword2Engine *vm) {
 
 	_totalMasters = 0;
 	memset(_masterMenuList, 0, sizeof(_masterMenuList));
-	memset(_mouseList, 0, sizeof(_mouseList));
+	for (uint i = 0; i < ARRAYSIZE(_mouseList); i++) {
+		_mouseList[i].clear();
+	}
 	memset(_subjectList, 0, sizeof(_subjectList));
 
 	_defaultResponseId = 0;

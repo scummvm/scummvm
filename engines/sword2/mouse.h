@@ -106,6 +106,17 @@ struct MouseUnit {
 
 	int32 id;
 	int32 pointer_text;
+
+	void clear() {
+		rect.top = 0;
+		rect.left = 0;
+		rect.bottom = 0;
+		rect.right = 0;
+		priority = 0;
+		pointer = 0;
+		id = 0;
+		pointer_text = 0;
+	}
 };
 
 // Array of these for subject menu build up
