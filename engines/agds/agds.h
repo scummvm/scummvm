@@ -265,7 +265,6 @@ public:
 		return _hintMode;
 	}
 
-	void reAddInventory();
 	PatchPtr getPatch(const Common::String &screenName) const;
 	PatchPtr createPatch(const Common::String &screenName);
 	ObjectPatchPtr getObjectPatch(const Common::String &screenName) const;
