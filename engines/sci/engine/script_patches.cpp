@@ -620,6 +620,52 @@ static const uint16 ecoquest1Sq4CdNarratorLockupPatch[] = {
 	PATCH_END
 };
 
+// Several SCI Version 1 games use a Timer class that doesn't handle kGetTime
+//  rollover correctly. When Timer:set60ths is called with a tick value that
+//  elapses after kGetTime rolls over from 65535 to 0, the timer instantly cues.
+//  The CD versions of KQ5 and Mixed Up Mother Goose set a timer this way when
+//  playing speech that can't be skipped. As rollover approaches every 18
+//  minutes and 12 seconds, these messages can instantly complete and cause
+//  entire scenes to randomly skip. For example, this can happen in KQ5CD's
+//  Harpy and Hermit cutscenes.
+//
+// We fix this by replacing the Timer's tick calculation with the correct logic
+//  that appears in later versions when set60ths was renamed to setTicks.
+//
+// Applies to: Games that use Timer:set60ths
+// Responsible methods: Timer:doit, SpeakTimer:doit in KQ5CD
+static const uint16 sciSignatureTimerRollover[] = {
+	0x67, SIG_ADDTOOFFSET(+1),       // pTos ticksToDo
+	0x63, SIG_ADDTOOFFSET(+1),       // pToa lastTime
+	0x02,                            // add
+	0x36,                            // push
+	0x76,                            // push0
+	SIG_MAGICDWORD,
+	0x43, 0x42, 0x00,                // callk GetTime 00
+	0x2a,                            // ult? [ ticksToDo + lastTime u< kGetTime ]
+	0x2e, SIG_UINT16(0x0013),        // bt 0013
+	0x67, SIG_ADDTOOFFSET(+1),       // pTos lastTime
+	0x76,                            // push0
+	SIG_ADDTOOFFSET(+16),
+	0x30,                            // bnt [ cue client if acc == true ]
+	SIG_END
+};
+
+static const uint16 sciPatchTimerRollover[] = {
+	0x76,                            // push0
+	0x43, 0x42, 0x00,                // callk GetTime 00
+	0x36,                            // push
+	0x67, PATCH_GETORIGINALBYTE(+1), // pTos ticksToDo
+	0x63, PATCH_GETORIGINALBYTE(+3), // pToa lastTime
+	0x02,                            // add
+	0x04,                            // sub
+	0x36,                            // push
+	0x35, 0x00,                      // ldi 00
+	0x1e,                            // gt? [ kGetTime - (ticksToDo + lastTime) > 0 ]
+	0x33, 0x10,                      // jmp 10 [ cue client if acc == true ]
+	PATCH_END
+};
+
 // ===========================================================================
 // Conquests of Camelot
 // At the bazaar in Jerusalem, it's possible to see a girl taking a shower.
@@ -4918,10 +4964,12 @@ static const uint16 kq5PatchCrispinIntroSignal[] = {
 //          script, description,                                      signature                  patch
 static const SciScriptPatcherEntry kq5Signatures[] = {
 	{  true,     0, "CD: harpy volume change",                     1, kq5SignatureCdHarpyVolume,            kq5PatchCdHarpyVolume },
+	{  true,     0, "timer rollover",                              1, sciSignatureTimerRollover,            sciPatchTimerRollover },
 	{ false,   109, "Crispin intro signal",                        1, kq5SignatureCrispinIntroSignal,       kq5PatchCrispinIntroSignal },
 	{  true,   124, "Multilingual: Ending glitching out",          3, kq5SignatureMultilingualEndingGlitch, kq5PatchMultilingualEndingGlitch },
 	{ false,   124, "Win: GM Music signal checks",                 4, kq5SignatureWinGMSignals,             kq5PatchWinGMSignals },
 	{  true,   200, "CD: witch cage init",                         1, kq5SignatureWitchCageInit,            kq5PatchWitchCageInit },
+	{  true,   973, "timer rollover",                              1, sciSignatureTimerRollover,            sciPatchTimerRollover },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
@@ -9540,6 +9588,7 @@ static const SciScriptPatcherEntry mothergoose256Signatures[] = {
 	{  true,     0, "save limit dialog (SCI1.1)",                  1, mothergoose256SignatureSaveLimit,     mothergoose256PatchSaveLimit },
 	{  true,   994, "save limit dialog (SCI1)",                    1, mothergoose256SignatureSaveLimit,     mothergoose256PatchSaveLimit },
 	{  true,    90, "main menu button crash",                      1, mothergoose256SignatureMainMenuCrash, mothergoose256PatchMainMenuCrash },
+	{  true,   999, "timer rollover",                              1, sciSignatureTimerRollover,            sciPatchTimerRollover },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
