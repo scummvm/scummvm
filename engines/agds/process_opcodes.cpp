@@ -1114,8 +1114,8 @@ void Process::exitProcess() {
 	_exitCode = kExitCodeDestroy;
 }
 
-void Process::exitProcessCreatePatch() {
-	suspend(kExitCodeCreatePatchLoadResources);
+void Process::startNewGame() {
+	suspend(kExitCodeNewGame);
 }
 
 void Process::clearScreen() {
