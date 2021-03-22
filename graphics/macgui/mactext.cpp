@@ -364,6 +364,10 @@ void MacText::splitString(const Common::U32String &str, int curLine) {
 
 	D(9, "** splitString(\"%s\")", toPrintable(str.encode()).c_str());
 
+	// TODO::code is not elegant, we need to figure out a way which include all situations
+	if (curLine == -1)
+		curLine = _textLines.size() - 1;
+
 	if (_textLines.empty()) {
 		_textLines.resize(1);
 		_textLines[0].chunks.push_back(_defaultFormatting);
@@ -490,7 +494,7 @@ void MacText::splitString(const Common::U32String &str, int curLine) {
 
 			int cur_width = getLineWidth(curLine, true);
 
-			D(0, "curWidth %d word_width %d", cur_width, word_width);
+			D(9, "curWidth %d word_width %d", cur_width, word_width);
 			// if cur_width == 0 but there`s chunks, meaning there must be empty string here
 			// if cur_width == 0, then you don`t have to add a newline for it
 			if (cur_width + word_width > _maxWidth && cur_width != 0) {
@@ -839,7 +843,6 @@ void MacText::resize(int w, int h) {
 
 void MacText::appendText(const Common::U32String &str, int fontId, int fontSize, int fontSlant, bool skipAdd) {
 	appendTextDefault(str, skipAdd);
-
 	uint oldLen = _textLines.size();
 
 	MacFontRun fontRun = MacFontRun(_wm, fontId, fontSlant, fontSize, 0, 0, 0);
@@ -881,7 +884,6 @@ void MacText::appendTextDefault(const Common::U32String &str, bool skipAdd) {
 		_str += _defaultFormatting.toString();
 		_str += str;
 	}
-
 	splitString(str);
 	recalcDims();
 
