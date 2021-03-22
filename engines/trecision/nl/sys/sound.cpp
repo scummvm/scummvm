@@ -298,34 +298,33 @@ void WaitSoundFadEnd() {
  --------------------------------------------------*/
 void SoundPasso(int midx, int midz, int act, int frame, unsigned short *list) {
 	extern unsigned char _defActionLen[];
-	int b;
 
 	if (!SoundSystemActive)
 		return;
 
-	int StepRight = 0;
-	int StepLeft = 0;
+	bool stepRight = false;
+	bool stepLeft = false;
 
 	switch (act) {
 	case hWALK:
 		if (frame == 3)
-			StepLeft = 1;
+			stepLeft = true;
 		else if (frame == 8)
-			StepRight = 1;
+			stepRight = true;
 		break;
 
 	case hWALKIN:
 		if (frame == 3)
-			StepLeft = 1;
+			stepLeft = true;
 		else if (frame == 9)
-			StepRight = 1;
+			stepRight = true;
 		break;
 
 	case hWALKOUT:
 		if (frame == 5)
-			StepLeft = 1;
+			stepLeft = true;
 		else if (frame == 10)
-			StepRight = 1;
+			stepRight = true;
 		break;
 
 	case hSTOP0:
@@ -333,27 +332,30 @@ void SoundPasso(int midx, int midz, int act, int frame, unsigned short *list) {
 	case hSTOP2:
 	case hSTOP3:
 	case hSTOP9:
-		if (frame >= (_defActionLen[act] - 1))
-			StepLeft = 1;
+		if (frame >= _defActionLen[act] - 1)
+			stepLeft = true;
 	case hSTOP4:
 	case hSTOP5:
 	case hSTOP6:
 	case hSTOP7:
 	case hSTOP8:
-		if (frame >= (_defActionLen[act] - 1))
-			StepRight = 1;
+		if (frame >= _defActionLen[act] - 1)
+			stepRight = true;
+		break;
+	default:
 		break;
 	}
 
-	if (!(StepRight) && !(StepLeft))
+	if (!stepRight && !stepLeft)
 		return;
 
+	int b;
 	for (int a = 0; a < MAXSOUNDSINROOM; a++) {
 		b = list[a];
 
-		if ((StepRight) && (GSample[b]._flag & SOUNDFLAG_SPDX))
+		if (stepRight && (GSample[b]._flag & SOUNDFLAG_STEPRIGHTX))
 			break;
-		if ((StepLeft) && (GSample[b]._flag & SOUNDFLAG_SPSX))
+		if (stepLeft && (GSample[b]._flag & SOUNDFLAG_STEPLEFTX))
 			break;
 		if (b == 0)
 			return;

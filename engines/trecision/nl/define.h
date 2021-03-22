@@ -49,8 +49,8 @@
 #define SOUNDFLAG_SON     		1
 #define SOUNDFLAG_SLOOP    		2
 #define SOUNDFLAG_SBACK    		4
-#define SOUNDFLAG_SPSX    		8
-#define SOUNDFLAG_SPDX    		16
+#define SOUNDFLAG_STEPLEFTX    	8
+#define SOUNDFLAG_STEPRIGHTX    16
 
 
 #define CHARACTER_ANIM  	0

@@ -20,9 +20,6 @@
  *
  */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 #include "common/scummsys.h"
 #include "trecision/nl/struct.h"
 #include "trecision/nl/define.h"
@@ -131,7 +128,7 @@ void EvalScript() {
 void Text(uint16 x, uint16 y, const char *sign, uint16 tcol, uint16 scol) {
 	TextStackTop++;
 	if (TextStackTop >= MAXTEXTSTACK) {
-		warning("MaxTextStackReached!");
+		warning("MAXTEXTSTACK Reached!");
 		return;
 	}
 
@@ -149,7 +146,7 @@ void Text(uint16 x, uint16 y, const char *sign, uint16 tcol, uint16 scol) {
 void ClearText() {
 	if (TextStackTop >= 0) {
 	// The stack isn't empty
-		if (! TextStack[TextStackTop].Clear)
+		if (!TextStack[TextStackTop].Clear)
 		// The previous is a string to write, return
 			TextStackTop--;
 	} else {
