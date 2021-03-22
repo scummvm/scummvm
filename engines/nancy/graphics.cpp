@@ -39,9 +39,11 @@
 
 namespace Nancy {
 
-const Graphics::PixelFormat GraphicsManager::_inputPixelFormat = Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0);
-const Graphics::PixelFormat GraphicsManager::_screenPixelFormat = Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0);
-const Graphics::PixelFormat GraphicsManager::_clut8Format = Graphics::PixelFormat::createFormatCLUT8();
+GraphicsManager::GraphicsManager() :
+	_objects(objectComparator),
+	_inputPixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0),
+	_screenPixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0), 
+	_clut8Format(Graphics::PixelFormat::createFormatCLUT8()) {}
 
 void GraphicsManager::init() {
 	initGraphics(640, 480, &_screenPixelFormat);
@@ -230,6 +232,10 @@ const Graphics::PixelFormat &GraphicsManager::getInputPixelFormat() {
 	} else {
 		return _inputPixelFormat;
 	}
+}
+
+const Graphics::PixelFormat &GraphicsManager::getScreenPixelFormat() {
+	return _screenPixelFormat;
 }
 
 uint GraphicsManager::getTransColor() {

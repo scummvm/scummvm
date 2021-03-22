@@ -117,7 +117,7 @@ void CursorManager::setCursor(CursorType type, int16 itemID) {
 	s.copyRectToSurface(*surf, 0, 0, bounds);
 
 	// TODO hotspots are terrible for arrow cursors, fix that??
-	CursorMan.replaceCursor(s.getPixels(), s.w, s.h, hotspot.x, hotspot.y, GraphicsManager::getTransColor(), false, &GraphicsManager::getInputPixelFormat());
+	CursorMan.replaceCursor(s.getPixels(), s.w, s.h, hotspot.x, hotspot.y, g_nancy->_graphicsManager->getTransColor(), false, &g_nancy->_graphicsManager->getInputPixelFormat());
 
 	s.free();
 

@@ -33,8 +33,8 @@ namespace Nancy {
 namespace Action {
 
 void LeverPuzzle::init() {
-	_drawSurface.create(_screenPosition.width(), _screenPosition.height(), GraphicsManager::getInputPixelFormat());
-	_drawSurface.clear(GraphicsManager::getTransColor());
+	_drawSurface.create(_screenPosition.width(), _screenPosition.height(), g_nancy->_graphicsManager->getInputPixelFormat());
+	_drawSurface.clear(g_nancy->_graphicsManager->getTransColor());
 
 	setTransparent(true);
 

@@ -35,8 +35,8 @@ namespace Nancy {
 namespace Action {
 
 void SliderPuzzle::init() {
-	_drawSurface.create(_screenPosition.width(), _screenPosition.height(), GraphicsManager::getInputPixelFormat());
-	_drawSurface.clear(GraphicsManager::getTransColor());
+	_drawSurface.create(_screenPosition.width(), _screenPosition.height(), g_nancy->_graphicsManager->getInputPixelFormat());
+	_drawSurface.clear(g_nancy->_graphicsManager->getTransColor());
 
 	setTransparent(true);
 
@@ -310,7 +310,7 @@ void SliderPuzzle::drawTile(int tileID, uint posX, uint posY) {
 void SliderPuzzle::undrawTile(uint posX, uint posY) {
 	Common::Rect bounds = _destRects[posY][posX];
 	bounds.translate(-_screenPosition.left, -_screenPosition.top);
-	_drawSurface.fillRect(bounds, GraphicsManager::getTransColor());
+	_drawSurface.fillRect(bounds, g_nancy->_graphicsManager->getTransColor());
 
 	_needsRedraw = true;
 }
