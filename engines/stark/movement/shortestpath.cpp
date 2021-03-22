@@ -69,7 +69,7 @@ ShortestPath::NodeList ShortestPath::rebuildPath(const Resources::FloorEdge *sta
 	path.push_front(goal);
 
 	while (current && current != start) {
-		current = cameFrom[current];
+		current = cameFrom.getValOrDefault(current, nullptr);
 		path.push_front(current);
 	}
 
