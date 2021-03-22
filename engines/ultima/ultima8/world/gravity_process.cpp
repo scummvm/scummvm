@@ -80,6 +80,9 @@ void GravityProcess::run() {
 		return;
 	}
 
+	// There should never be more than one gravity on an object
+	assert(item->getGravityPID() == _pid);
+
 	Actor *actor = dynamic_cast<Actor *>(item);
 	if (actor && actor->getFallStart() < actor->getZ()) {
 		actor->setFallStart(actor->getZ());
@@ -96,40 +99,18 @@ void GravityProcess::run() {
 
 	int32 ix, iy, iz;
 	item->getLocation(ix, iy, iz);
-	int32 ixd, iyd, izd;
-	item->getFootpadWorld(ixd, iyd, izd);
+
+	if (iz < -1000) {
+		// Shouldn't happen as item should always hit the floor.
+		warning("Item %d fell too far, stopping GravityProcess", _itemNum);
+		terminate();
+		return;
+	}
 
 	int32 tx, ty, tz;
 	tx = ix + _xSpeed;
 	ty = iy + _ySpeed;
 	tz = iz + _zSpeed;
-
-	bool clipped = false;
-
-	// Clip to region. This doesn't work
-#if 0
-	if (tx < 0 && ix >= 0) {
-		int32 scale = (ix - tx) >> 0x8;
-		tx = 0;
-		ty = iy + ((_ySpeed * scale) >> 0x2000);
-		tz = iz + ((_zSpeed * scale) >> 0x2000);
-		clipped = true;
-	}
-	if (ty < 0 && iy >= 0) {
-		int32 scale = (iy - ty) >> 0x8;
-		tx = ix + ((_xSpeed * scale) >> 0x2000);
-		ty = 0;
-		tz = iz + ((_zSpeed * scale) >> 0x2000);
-		clipped = true;
-	}
-	if (tz < 0 && iz >= 0) {
-		int32 scale = (iz - tz) >> 0x8;
-		tx = ix + ((_xSpeed * scale) >> 0x2000);
-		ty = iy + ((_ySpeed * scale) >> 0x2000);
-		tz = 0;
-		clipped = true;
-	}
-#endif
 
 //#define BOUNCE_DIAG
 
@@ -137,8 +118,8 @@ void GravityProcess::run() {
 	uint8 dirs;
 	int32 dist = item->collideMove(tx, ty, tz, false, false, &hititemid, &dirs);
 
-	if (dist == 0x4000 && !clipped) {
-		// normal move
+	if (dist == 0x4000 && !hititemid) {
+		// didn't hit anything.
 		_zSpeed -= _gravity;
 		return;
 	}
@@ -173,7 +154,7 @@ void GravityProcess::run() {
 			     << "]: hit " << hititem->getObjId() << Std::endl;
 #endif
 
-			if (!hititem->getShapeInfo()->is_land() || _zSpeed < -2 * _gravity) {
+			if (GAME_IS_U8 && (!hititem->getShapeInfo()->is_land() || _zSpeed < -2 * _gravity)) {
 				// Bounce!
 				termFlag = false;
 #ifdef BOUNCE_DIAG
@@ -284,6 +265,7 @@ void GravityProcess::terminate() {
 	//signal item GravityProcess is gone
 	Item *item = getItem(_itemNum);
 	if (item) {
+		assert(item->getGravityPID() == 0 || item->getGravityPID() == _pid);
 		item->setGravityPID(0);
 
 		// no longer bouncing
