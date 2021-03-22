@@ -1647,7 +1647,7 @@ void Encounter::runScript() {
 			break;
 
 		case kOpcodeSetCounterFromActorReactions:
-			_scriptData.counter = getScene()->getActor()->hasMoreReactions(getVariableInv(entry.param2), _scriptData.vars[1]) ? 1 : 0;
+			_scriptData.counter = getScene()->getActor()->hasMoreReactions(getVariableInv(entry.param2), _scriptData.vars[1]) ? 0 : 1;
 			break;
 
 		case kOpcodePrepareMovie:
