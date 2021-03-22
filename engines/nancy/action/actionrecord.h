@@ -46,7 +46,8 @@ enum DependencyType : byte {
 	kTotalTime          = 4,
 	kSceneTime          = 5,
 	kPlayerTime         = 6,
-	// ...
+	kUnknownType7       = 7,
+	kUnknownType8       = 8,
 	kSceneCount         = 9,
 	kResetOnNewDay      = 10,
 	kUseItem            = 11,

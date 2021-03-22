@@ -313,12 +313,12 @@ void ActionManager::processActionRecords() {
 						}
 
 						break;
-					/*case 7:
-						// TODO
+					case kUnknownType7:
+						warning("Unknown Dependency type 7");
 						break;
-					case 8:
-						// TODO
-						break;*/
+					case kUnknownType8:
+						warning("Unknown Dependency type 8");
+						break;
 					case kSceneCount:
 						// This dependency type keeps its data in the time variables
 						// Also, I'm pretty sure it never gets used
@@ -407,6 +407,7 @@ void ActionManager::processActionRecords() {
 
 						break;
 					default:
+						warning("Unknown Dependency type %i", (int)dep.type);
 						break;
 					}
 				}
