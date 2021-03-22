@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-03-21 23:12+0000\n"
-"PO-Revision-Date: 2021-03-21 22:24+0000\n"
+"PO-Revision-Date: 2021-03-23 04:24+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ja/>\n"
@@ -3969,10 +3969,8 @@ msgid "Your game is now Paused.  Click OK to continue."
 msgstr "ゲームはポーズされます。何かキーを押すと続行します。"
 
 #: engines/buried/buried.cpp:504
-#, fuzzy
-#| msgid "Are you sure you want to quit?  (Y/N)Y"
 msgid "Are you sure you want to quit?"
-msgstr "終了してもよろしいですか?  (Y/N)Y"
+msgstr "終了してもよろしいですか?"
 
 #: engines/buried/saveload.cpp:108
 #, fuzzy
@@ -7186,7 +7184,7 @@ msgstr "3Dアンチエイリアス："
 
 #: engines/ultima/ultima8/meta_engine.cpp:133
 msgid "Limits the speed of the game to prevent running too fast."
-msgstr ""
+msgstr "ゲームスピードに制限を設け、速すぎないようにします。"
 
 #: engines/ultima/ultima8/meta_engine.cpp:138
 #, fuzzy
@@ -7195,15 +7193,15 @@ msgstr "マウス操作を有効にする"
 
 #: engines/ultima/ultima8/meta_engine.cpp:139
 msgid "Allow cheats by commands and a menu when player is clicked."
-msgstr ""
+msgstr "プレイヤーがクリックされた時、コマンドやメニューでチートが行えます。"
 
 #: engines/ultima/ultima8/meta_engine.cpp:148
 msgid "Play foot step sounds"
-msgstr ""
+msgstr "フットステップサウンドを再生"
 
 #: engines/ultima/ultima8/meta_engine.cpp:149
 msgid "Plays sound when the player moves."
-msgstr ""
+msgstr "プレイヤーが動いた時に音を再生します。"
 
 #: engines/ultima/ultima8/meta_engine.cpp:154
 #, fuzzy
@@ -7214,7 +7212,7 @@ msgstr "マウスでのUI操作を有効にする"
 #: engines/ultima/ultima8/meta_engine.cpp:155
 msgid ""
 "Jumping while not moving targets the mouse cursor rather than direction only."
-msgstr ""
+msgstr "静止中のジャンプは、一方向ではなくマウスカーソルをターゲットします。"
 
 #: engines/ultima/ultima8/meta_engine.cpp:166
 #, fuzzy
@@ -7223,7 +7221,7 @@ msgstr "3Dアンチエイリアス："
 
 #: engines/ultima/ultima8/meta_engine.cpp:167
 msgid "Replaces game fonts with rendered fonts"
-msgstr ""
+msgstr "ゲームフォントをレンダリングフォントで置き換える"
 
 #: engines/ultima/ultima8/meta_engine.cpp:188
 msgid "Ultima VIII"
@@ -7231,7 +7229,7 @@ msgstr "ウルティマ VIII"
 
 #: engines/ultima/ultima8/meta_engine.cpp:188
 msgid "Crusader"
-msgstr ""
+msgstr "クルセイダー"
 
 #: engines/ultima/ultima8/meta_engine.cpp:235
 #, fuzzy
@@ -7245,31 +7243,31 @@ msgstr "ウルティマ VIII"
 
 #: engines/ultima/ultima8/gumps/u8_save_gump.cpp:297
 msgid "[corrupt]"
-msgstr ""
+msgstr "[堕落した]"
 
 #: engines/ultima/ultima8/gumps/u8_save_gump.cpp:300
 msgid "[outdated]"
-msgstr ""
+msgstr "[廃れた]"
 
 #: engines/ultima/ultima8/gumps/u8_save_gump.cpp:303
 msgid "[too modern]"
-msgstr ""
+msgstr "[新しすぎる]"
 
 #: engines/wintermute/detection.cpp:42
 msgid "Show FPS-counter"
-msgstr ""
+msgstr "FPSカウンターを表示"
 
 #: engines/wintermute/detection.cpp:43
 msgid "Show the current number of frames per second in the upper left corner"
-msgstr ""
+msgstr "左上にfpsを表示"
 
 #: engines/wintermute/detection.cpp:52
 msgid "Sprite bilinear filtering (SLOW)"
-msgstr ""
+msgstr "スプライトバイリニアフィルタリング(低速)"
 
 #: engines/wintermute/detection.cpp:53
 msgid "Apply bilinear filtering to individual sprites"
-msgstr ""
+msgstr "スプライト単位でバイリニアフィルタリングを適用"
 
 #: engines/wintermute/metaengine.cpp:65
 #, fuzzy
@@ -7293,30 +7291,30 @@ msgstr "未対応のゲームID。"
 
 #: engines/wintermute/wintermute.cpp:187
 msgid "This game requires the FoxTail subengine, which is not compiled in."
-msgstr ""
+msgstr "このゲームはFoxTailサブエンジンが必要ですが、コンパイルされていません。"
 
 #: engines/wintermute/wintermute.cpp:198
 msgid "This game requires the HeroCraft subengine, which is not compiled in."
-msgstr ""
+msgstr "このゲームはHeroCraftサブエンジンが必要ですが、コンパイルされていません。"
 
 #: engines/wintermute/wintermute.cpp:209
 msgid ""
 "This game requires 3D capabilities that are out ScummVM scope. As such, it "
 "is likely to be unplayable totally or partially."
-msgstr ""
+msgstr "このゲームは、ScummVMの範囲外の3D機能を必要とします。そのため、全部または一部がプレイできない可能性があります。"
 
 #: engines/wintermute/keymapper_tables.h:147
 #: engines/wintermute/keymapper_tables.h:510
 #: engines/wintermute/keymapper_tables.h:1666
 #: engines/wintermute/keymapper_tables.h:1761
 msgid "Walk forward"
-msgstr ""
+msgstr "前に歩く"
 
 #: engines/wintermute/keymapper_tables.h:153
 #: engines/wintermute/keymapper_tables.h:515
 #: engines/wintermute/keymapper_tables.h:1768
 msgid "Walk backward"
-msgstr ""
+msgstr "後ろに歩く"
 
 #: engines/wintermute/keymapper_tables.h:171
 #: engines/wintermute/keymapper_tables.h:468
@@ -7398,7 +7396,7 @@ msgstr "未認識バージョン"
 #: engines/wintermute/keymapper_tables.h:352
 #: engines/wintermute/keymapper_tables.h:866
 msgid "Phone cancel button"
-msgstr ""
+msgstr "通話終了ボタン"
 
 #: engines/wintermute/keymapper_tables.h:281
 #: engines/wintermute/keymapper_tables.h:357
@@ -7411,7 +7409,7 @@ msgstr "マウスの左ボタン"
 #: engines/wintermute/keymapper_tables.h:363
 #: engines/wintermute/keymapper_tables.h:877
 msgid "Phone down button"
-msgstr ""
+msgstr "電話の上ボタン"
 
 #: engines/wintermute/keymapper_tables.h:369
 #: engines/wintermute/keymapper_tables.h:883
@@ -7502,7 +7500,7 @@ msgstr "地図を表示"
 #: engines/wintermute/keymapper_tables.h:1523
 #: engines/wintermute/keymapper_tables.h:1721
 msgid "Scroll up"
-msgstr ""
+msgstr "上にスクロール"
 
 #: engines/wintermute/keymapper_tables.h:461
 #: engines/wintermute/keymapper_tables.h:628
@@ -7520,7 +7518,7 @@ msgstr "下"
 
 #: engines/wintermute/keymapper_tables.h:473
 msgid "Change shadow type"
-msgstr ""
+msgstr "影の付き方を変更"
 
 #: engines/wintermute/keymapper_tables.h:483
 #: engines/wintermute/keymapper_tables.h:570
@@ -7530,7 +7528,7 @@ msgstr "音量"
 
 #: engines/wintermute/keymapper_tables.h:488
 msgid "Show debug parser"
-msgstr ""
+msgstr "デバッグパーサーを表示"
 
 #: engines/wintermute/keymapper_tables.h:495
 #: engines/wintermute/keymapper_tables.h:603
@@ -7543,11 +7541,11 @@ msgstr "画像"
 #: engines/wintermute/keymapper_tables.h:500
 #: engines/wintermute/keymapper_tables.h:1407
 msgid "Exit"
-msgstr ""
+msgstr "終了"
 
 #: engines/wintermute/keymapper_tables.h:505
 msgid "Light helper window"
-msgstr ""
+msgstr "ヘルパーウィンドウを明るくする"
 
 #: engines/wintermute/keymapper_tables.h:530
 #, fuzzy
@@ -7571,7 +7569,7 @@ msgstr "右へ"
 
 #: engines/wintermute/keymapper_tables.h:550
 msgid "Show blueprint"
-msgstr ""
+msgstr "設計図を表示"
 
 #: engines/wintermute/keymapper_tables.h:577
 #, fuzzy
@@ -7580,7 +7578,7 @@ msgstr "音量"
 
 #: engines/wintermute/keymapper_tables.h:591
 msgid "Change font size"
-msgstr ""
+msgstr "フォントサイズの変更"
 
 #: engines/wintermute/keymapper_tables.h:670
 #, fuzzy
@@ -7589,23 +7587,23 @@ msgstr "ゲームをセーブ："
 
 #: engines/wintermute/keymapper_tables.h:680
 msgid "Quick save"
-msgstr ""
+msgstr "クイックセーブ"
 
 #: engines/wintermute/keymapper_tables.h:685
 msgid "Walking speed: Low"
-msgstr ""
+msgstr "歩く速さ：ゆっくり"
 
 #: engines/wintermute/keymapper_tables.h:690
 msgid "Walking speed: Medium"
-msgstr ""
+msgstr "歩く速さ：ふつう"
 
 #: engines/wintermute/keymapper_tables.h:695
 msgid "Walking speed: High"
-msgstr ""
+msgstr "歩く速さ：せかせか"
 
 #: engines/wintermute/keymapper_tables.h:700
 msgid "Quick load"
-msgstr ""
+msgstr "クイックロード"
 
 #: engines/wintermute/keymapper_tables.h:705
 #: engines/wintermute/keymapper_tables.h:1035
@@ -7626,19 +7624,19 @@ msgstr "次のページ"
 
 #: engines/wintermute/keymapper_tables.h:727
 msgid "Walking speed: Ultra Super Mega Fast"
-msgstr ""
+msgstr "歩く速さ：超ド級極限最高速"
 
 #: engines/wintermute/keymapper_tables.h:743
 msgid "Show game credits"
-msgstr ""
+msgstr "ゲームクレジットを表示"
 
 #: engines/wintermute/keymapper_tables.h:748
 msgid "Play selected music record"
-msgstr ""
+msgstr "選択したレコードを再生"
 
 #: engines/wintermute/keymapper_tables.h:753
 msgid "Select next music record"
-msgstr ""
+msgstr "次のレコードを選択"
 
 #: engines/wintermute/keymapper_tables.h:758
 msgid "Play note 1: A"
@@ -7670,35 +7668,35 @@ msgstr "音の再生：B"
 
 #: engines/wintermute/keymapper_tables.h:801
 msgid "Ability: Telekinesis"
-msgstr ""
+msgstr "アビリティ：念動"
 
 #: engines/wintermute/keymapper_tables.h:806
 msgid "Ability: Push"
-msgstr ""
+msgstr "アビリティ：押す"
 
 #: engines/wintermute/keymapper_tables.h:811
 msgid "Ability: Lightning"
-msgstr ""
+msgstr "アビリティ：電撃"
 
 #: engines/wintermute/keymapper_tables.h:816
 msgid "Ability: Light"
-msgstr ""
+msgstr "アビリティ：光"
 
 #: engines/wintermute/keymapper_tables.h:821
 msgid "Ability: Wind"
-msgstr ""
+msgstr "アビリティ：風"
 
 #: engines/wintermute/keymapper_tables.h:826
 msgid "Ability: Sound"
-msgstr ""
+msgstr "アビリティ：音"
 
 #: engines/wintermute/keymapper_tables.h:831
 msgid "Ability: Esence"
-msgstr ""
+msgstr "アビリティ：エッセンス"
 
 #: engines/wintermute/keymapper_tables.h:836
 msgid "Ability: Exorcist"
-msgstr ""
+msgstr "アビリティ：祈祷師"
 
 #: engines/wintermute/keymapper_tables.h:841
 msgid "Skip minigame"
@@ -7706,7 +7704,7 @@ msgstr "ミニゲームをスキップ"
 
 #: engines/wintermute/keymapper_tables.h:949
 msgid "Show hints / Dance move"
-msgstr ""
+msgstr "ヒントを表示 / ダンスの動き"
 
 #: engines/wintermute/keymapper_tables.h:956
 #, fuzzy
@@ -7735,7 +7733,7 @@ msgstr "キャンセル"
 
 #: engines/wintermute/keymapper_tables.h:1114
 msgid "Shift"
-msgstr ""
+msgstr "シフト"
 
 #: engines/wintermute/keymapper_tables.h:1214
 msgid "Use Chapayev"
@@ -7860,13 +7858,13 @@ msgstr "iキー"
 
 #: engines/xeen/detection.cpp:47
 msgid "Show item costs in standard inventory mode"
-msgstr ""
+msgstr "スタンダードインベントリーでアイテムコストを表示"
 
 #: engines/xeen/detection.cpp:48
 msgid ""
 "Shows item costs in standard inventory mode, allowing the value of items to "
 "be compared"
-msgstr ""
+msgstr "スタンダードインベントリーでアイテムコストを表示し、その価値を比較できます"
 
 #: engines/xeen/detection.cpp:57
 msgid "More durable armor"
@@ -7874,7 +7872,7 @@ msgstr "アーマーの耐久力を増加"
 
 #: engines/xeen/detection.cpp:58
 msgid "Armor won't break until character is at -80HP, rather than merely -10HP"
-msgstr ""
+msgstr "アーマーが壊れるHPを、-10から-80へ変更します"
 
 #: engines/xeen/saves.cpp:291
 msgid "Failed to autosave"
@@ -7882,7 +7880,7 @@ msgstr "オートセーブに失敗しました"
 
 #: engines/zvision/detection_tables.h:60
 msgid "Double FPS"
-msgstr ""
+msgstr "FPSを倍にする"
 
 #: engines/zvision/detection_tables.h:61
 msgid "Increase framerate from 30 to 60 FPS"
