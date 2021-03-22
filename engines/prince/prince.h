@@ -88,7 +88,16 @@ struct Text {
 	uint16 _time;
 	uint32 _color;
 
-	Text() : _str(nullptr), _x(0), _y(0), _time(0), _color(255){
+	Text() {
+		clear();
+	}
+
+	void clear() {
+		_str = nullptr;
+		_x = 0;
+		_y = 0;
+		_time = 0;
+		_color = 255;
 	}
 };
 

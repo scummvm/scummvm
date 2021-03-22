@@ -93,7 +93,10 @@ bool PrinceEngine::loadLocation(uint16 locationNr) {
 
 	_flicPlayer.close();
 
-	memset(_textSlots, 0, sizeof(_textSlots));
+	for (uint i = 0; i < ARRAYSIZE(_textSlots); i++) {
+		_textSlots[i].clear();
+		_textSlots[i]._color = 0; // FIXME: Can be left at default of 255?
+	}
 	freeAllSamples();
 
 	debugEngine("PrinceEngine::loadLocation %d", locationNr);
