@@ -47,8 +47,8 @@ private:
 	ObjectPtr		_object;
 	StackType		_stack;
 	unsigned		_ip, _lastIp;
-	bool			_stopping;
 	Status			_status;
+	bool			_exited;
 	ProcessExitCode	_exitCode;
 	Common::String	_exitArg1, _exitArg2;
 	int				_exitIntArg1, _exitIntArg2;
@@ -152,17 +152,12 @@ public:
 		return _status == kStatusPassive;
 	}
 	void activate();
+	void deactivate();
 	void done() {
 		_status = kStatusDone;
 	}
 	void fail() {
 		_status = kStatusError;
-	}
-	void pause() {
-		_status = kStatusPassive;
-	}
-	void stopOnSuspend() {
-		_stopping = true;
 	}
 
 	bool finished() const {

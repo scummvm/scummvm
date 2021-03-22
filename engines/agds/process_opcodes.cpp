@@ -1112,6 +1112,7 @@ void Process::exitProcess() {
 	debug("exitProcess");
 	done();
 	_exitCode = kExitCodeDestroy;
+	_exited = true;
 }
 
 void Process::startNewGame() {

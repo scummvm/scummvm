@@ -123,7 +123,7 @@ public:
 	ObjectPtr runObject(const Common::String & name, const Common::String &prototype = Common::String(), bool allowInitialise = true);
 	void runObject(const ObjectPtr &object);
 	void runProcess(const ObjectPtr &object, uint ip = 0);
-	void stopProcess(const Common::String & name, bool stopNow = false);
+	void stopProcess(const Common::String & name);
 	void reactivate(const Common::String &name, bool runNow = false);
 
 	void resetCurrentScreen();
