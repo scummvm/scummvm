@@ -42,7 +42,10 @@ void StarTrekEngine::initStarfield(int16 x, int16 y, int16 width, int16 height, 
 	_starfieldRect.top = _starfieldYVar1 - _starfieldYVar2;
 	_starfieldRect.bottom = _starfieldYVar1 + _starfieldYVar2;
 
-	memset(_starList, 0, sizeof(_starList));
+	for (uint i = 0; i < ARRAYSIZE(_starList); i++) {
+		_starList[i].active = false;
+		_starList[i].pos = Point3(0, 0, 0);
+	}
 	_starfieldPointDivisor = 150;
 	_flt_50898 = 50.0;
 }
