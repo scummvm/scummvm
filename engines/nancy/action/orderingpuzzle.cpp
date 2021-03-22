@@ -40,7 +40,7 @@ namespace Action {
 void OrderingPuzzle::init() {
 	// Screen position is initialized in readData and fits exactly the bounds of all elements on screen.
 	// This is a hacky way to make this particular action record work with this implementation's graphics manager
-	_drawSurface.create(_screenPosition.width(), _screenPosition.height(), GraphicsManager::getInputPixelFormat());
+	_drawSurface.create(_screenPosition.width(), _screenPosition.height(), g_nancy->_graphicsManager->getInputPixelFormat());
 	clearAllElements();
 
 	setTransparent(true);
@@ -223,12 +223,12 @@ void OrderingPuzzle::undrawElement(uint id) {
 	Common::Rect bounds = _destRects[id];
 	bounds.translate(-_screenPosition.left, -_screenPosition.top);
 
-	_drawSurface.fillRect(bounds, GraphicsManager::getTransColor());
+	_drawSurface.fillRect(bounds, g_nancy->_graphicsManager->getTransColor());
 	_needsRedraw = true;
 }
 
 void OrderingPuzzle::clearAllElements() {
-	_drawSurface.clear(GraphicsManager::getTransColor());
+	_drawSurface.clear(g_nancy->_graphicsManager->getTransColor());
 	setVisible(false);
 	_clickedSequence.clear();
 	return;

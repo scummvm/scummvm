@@ -789,7 +789,7 @@ bool ResourceManager::loadImage(const Common::String &name, Graphics::Surface &s
 	surf.h = info.height;
 	surf.pitch = info.pitch;
 	surf.setPixels(buf);
-	surf.format = GraphicsManager::getInputPixelFormat();
+	surf.format = g_nancy->_graphicsManager->getInputPixelFormat();
 	return true;
 }
 
@@ -830,7 +830,7 @@ bool ResourceManager::loadImage(const Common::String &name, Graphics::ManagedSur
 			return false;
 		}
 
-		GraphicsManager::copyToManaged(buf, surf, info.width, info.height, GraphicsManager::getInputPixelFormat());
+		GraphicsManager::copyToManaged(buf, surf, info.width, info.height, g_nancy->_graphicsManager->getInputPixelFormat());
 		return true;
 	}
 }

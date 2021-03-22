@@ -60,7 +60,7 @@ void RenderObject::setVisible(bool visible) {
 
 void RenderObject::setTransparent(bool isTransparent) {
 	if (isTransparent) {
-		_drawSurface.setTransparentColor(GraphicsManager::getTransColor());
+		_drawSurface.setTransparentColor(g_nancy->_graphicsManager->getTransColor());
 	} else {
 		_drawSurface.clearTransparentColor();
 	}

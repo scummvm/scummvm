@@ -23,6 +23,7 @@
 #include "engines/nancy/video.h"
 #include "engines/nancy/decompress.h"
 #include "engines/nancy/graphics.h"
+#include "engines/nancy/nancy.h"
 
 #include "common/endian.h"
 #include "common/stream.h"
@@ -110,7 +111,7 @@ AVFDecoder::AVFVideoTrack::AVFVideoTrack(Common::SeekableReadStream *stream, uin
 		error("Unknown compression type %d found in AVF", comp);
 
 	_surface = new Graphics::Surface();
-	_pixelFormat = GraphicsManager::getInputPixelFormat();
+	_pixelFormat = g_nancy->_graphicsManager->getInputPixelFormat();
 	_surface->create(_width, _height, _pixelFormat);
 	_frameSize = _width * _height * _pixelFormat.bytesPerPixel;
 

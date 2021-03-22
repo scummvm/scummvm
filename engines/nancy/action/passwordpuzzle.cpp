@@ -35,8 +35,8 @@ namespace Nancy {
 namespace Action {
 
 void PasswordPuzzle::init() {
-	_drawSurface.create(_screenPosition.width(), _screenPosition.height(), GraphicsManager::getInputPixelFormat());
-	_drawSurface.clear(GraphicsManager::getTransColor());
+	_drawSurface.create(_screenPosition.width(), _screenPosition.height(), g_nancy->_graphicsManager->getInputPixelFormat());
+	_drawSurface.clear(g_nancy->_graphicsManager->getTransColor());
 
 	setTransparent(true);
 
@@ -219,7 +219,7 @@ void PasswordPuzzle::onPause(bool pause) {
 }
 
 void PasswordPuzzle::drawText() {
-	_drawSurface.clear(GraphicsManager::getTransColor());
+	_drawSurface.clear(g_nancy->_graphicsManager->getTransColor());
 	const Graphics::Font *font = g_nancy->_graphicsManager->getFont(_fontID);
 
 	Common::Rect bounds = _nameBounds;

@@ -39,8 +39,8 @@ namespace Nancy {
 namespace Action {
 
 void Telephone::init() {
-	_drawSurface.create(_screenPosition.width(), _screenPosition.height(), GraphicsManager::getInputPixelFormat());
-	_drawSurface.clear(GraphicsManager::getTransColor());
+	_drawSurface.create(_screenPosition.width(), _screenPosition.height(), g_nancy->_graphicsManager->getInputPixelFormat());
+	_drawSurface.clear(g_nancy->_graphicsManager->getTransColor());
 
 	setTransparent(true);
 
@@ -316,7 +316,7 @@ void Telephone::undrawButton(uint id) {
 	Common::Rect bounds = _destRects[id];
 	bounds.translate(-_screenPosition.left, -_screenPosition.top);
 
-	_drawSurface.fillRect(bounds, GraphicsManager::getTransColor());
+	_drawSurface.fillRect(bounds, g_nancy->_graphicsManager->getTransColor());
 	_needsRedraw = true;
 }
 

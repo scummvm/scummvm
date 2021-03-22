@@ -30,7 +30,7 @@
 namespace Nancy {
 
 void Font::read(Common::SeekableReadStream &stream) {
-	_transColor = GraphicsManager::getTransColor();
+	_transColor = g_nancy->_graphicsManager->getTransColor();
 	_maxCharWidth = 0;
 	_fontHeight = 0;
 
@@ -97,7 +97,7 @@ void Font::drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint32 col
 
 	for (uint curY = 0; curY < height; ++curY) {
 		for (uint curX = 0; curX < width; ++curX) {
-			switch (GraphicsManager::getInputPixelFormat().bytesPerPixel) {
+			switch (g_nancy->_graphicsManager->getInputPixelFormat().bytesPerPixel) {
 			case 1:
 				// TODO
 				break;
