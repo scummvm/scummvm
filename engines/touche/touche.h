@@ -192,6 +192,20 @@ struct AnimationEntry {
 	int16 delayCounter;
 	int16 displayCounter;
 	Common::Rect displayRect;
+
+	void clear() {
+		num = 0;
+		x = 0;
+		y = 0;
+		dx = 0;
+		dy = 0;
+		posNum = 0;
+		delayCounter = 0;
+		displayRect.top = 0;
+		displayRect.left = 0;
+		displayRect.bottom = 0;
+		displayRect.right = 0;
+	}
 };
 
 struct SequenceEntry {

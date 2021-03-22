@@ -3320,7 +3320,9 @@ void ToucheEngine::processAnimationTable() {
 }
 
 void ToucheEngine::clearAnimationTable() {
-	memset(_animationTable, 0, sizeof(_animationTable));
+	for (uint i = 0; i < ARRAYSIZE(_animationTable); i++) {
+		_animationTable[i].clear();
+	}
 }
 
 void ToucheEngine::addToDirtyRect(const Common::Rect &r) {
