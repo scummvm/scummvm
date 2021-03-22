@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-03-21 23:12+0000\n"
-"PO-Revision-Date: 2021-03-11 19:10+0000\n"
+"PO-Revision-Date: 2021-03-22 08:49+0000\n"
 "Last-Translator: Lothar Serra Mari <serra@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/de/>\n"
@@ -315,17 +315,13 @@ msgid "Backend"
 msgstr "Backend"
 
 #: gui/editgamedialog.cpp:250
-#, fuzzy
-#| msgid "Override global audio settings"
 msgid "Override global backend settings"
-msgstr "Globale Audio-Einstellungen übergehen"
+msgstr "Globale Backend-Einstellungen übergehen"
 
 #: gui/editgamedialog.cpp:252
-#, fuzzy
-#| msgid "Override global audio settings"
 msgctxt "lowres"
 msgid "Override global backend settings"
-msgstr "Globale Audio-Einstellungen übergehen"
+msgstr "Globale Backend-Einstellungen übergehen"
 
 #: gui/editgamedialog.cpp:266 gui/options.cpp:1858 engines/dialogs.cpp:301
 msgid "Audio"
@@ -2801,16 +2797,12 @@ msgid "Decrease the scale factor"
 msgstr "Skalier-Faktor verringern"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:436
-#, fuzzy
-#| msgid "Switch to TV 2x scaling"
 msgid "Switch to the next scaler"
-msgstr "Zu Skalierung mit TV 2x wechseln"
+msgstr "Zum nächsten Skaliermodus wechseln"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:441
-#, fuzzy
-#| msgid "Switch to nearest neighbour scaling"
 msgid "Switch to the previous scaler"
-msgstr "Nearest-Neighbour-Skalierung"
+msgstr "Zum vorherigen Skaliermodus wechseln"
 
 #: backends/keymapper/hardware-input.cpp:245
 msgid "Left Mouse Button"
@@ -4000,16 +3992,12 @@ msgstr ""
 "wird."
 
 #: engines/buried/biochip_view.cpp:623
-#, fuzzy
-#| msgid "The game is paused. Press any key to continue."
 msgid "Your game is now Paused.  Click OK to continue."
-msgstr "Das Spiel ist pausiert. Zum Weiterspielen beliebige Taste drücken."
+msgstr "Dein Spiel ist pausiert.  Klicke OK, um weiterzuspielen."
 
 #: engines/buried/buried.cpp:504
-#, fuzzy
-#| msgid "   Are you sure you want to quit ?   "
 msgid "Are you sure you want to quit?"
-msgstr "   Möchten Sie wirklich beenden?   "
+msgstr "Bist du sicher, dass du das Spiel verlassen möchtest?"
 
 #: engines/buried/saveload.cpp:108
 msgid "Invalid save file name"
