@@ -494,7 +494,7 @@ void MacText::splitString(const Common::U32String &str, int curLine) {
 
 			for (int i = 1; i < (int)word.size(); i++) {
 				word_width += word[i].getFont()->getStringWidth(word[i].text);
-				debugN(9, "\"%s\"", Common::toPrintable(word[i].text.encode()).c_str());
+				D(9, "** word \"%s\" textslant [%d]", Common::toPrintable(word[i].text.encode()).c_str(), word[i].textSlant);
 			}
 
 			int cur_width = getLineWidth(curLine, true);
@@ -868,10 +868,12 @@ void MacText::appendText(const Common::U32String &str, int fontId, int fontSize,
 		_str += fontRun.toString();
 		_str += str;
 	}
+
 	splitString(str);
 	recalcDims();
 
 	render(oldLen - 1, _textLines.size());
+
 	_contentIsDirty = true;
 
 	if (_editable) {
