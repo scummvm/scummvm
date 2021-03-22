@@ -394,7 +394,7 @@ void Actor::update() {
 						Actor *player = getScene()->getActor();
 
 						getSpeech()->playPlayer(453);
-						hide();
+						getScene()->getActor(11)->hide();
 
 						player->updateStatus(kActorStatus3);
 						player->setResourceId(player->getResourcesId(35));
@@ -428,7 +428,7 @@ void Actor::update() {
 
 						_vm->setGameFlag(kGameFlag1131);
 					} else {
-						updateGraphicData(25);
+						getScene()->getActor(11)->updateGraphicData(25);
 						_vm->setGameFlag(kGameFlag556);
 					}
 				}
