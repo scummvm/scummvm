@@ -353,8 +353,9 @@ public:
 	//! Hurl the item in the given direction
 	void hurl(int xs, int ys, int zs, int grav);
 
-	//! Set the PID of the GravityProcess for this Item
+	//! Set the PID of the GravityProcess for this Item.  There should be only one.
 	void setGravityPID(ProcId pid) {
+		assert(_gravityPid == 0 || pid == 0);
 		_gravityPid = pid;
 	}
 

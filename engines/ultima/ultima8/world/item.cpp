@@ -27,6 +27,7 @@
 #include "ultima/ultima8/usecode/uc_list.h"
 #include "ultima/ultima8/world/world.h"
 #include "ultima/ultima8/kernel/kernel.h"
+#include "ultima/ultima8/kernel/delay_process.h"
 #include "ultima/ultima8/world/get_object.h"
 #include "ultima/ultima8/graphics/main_shape_archive.h"
 #include "ultima/ultima8/graphics/gump_shape_archive.h"
@@ -1989,16 +1990,16 @@ GravityProcess *Item::ensureGravityProcess() {
 
 void Item::fall() {
 	const ShapeInfo *info = getShapeInfo();
-	if (_flags & FLG_HANGING || info->is_fixed() ||
-		(info->_weight == 0 && GAME_IS_CRUSADER)) {
+	bool hanging = GAME_IS_U8 && (_flags & FLG_HANGING);
+
+	if (hanging || info->is_fixed() || info->_weight == 0) {
 		// can't fall
 		return;
 	}
 
 	int gravity = GAME_IS_CRUSADER ? 2 : 4; //!! constants
 
-	GravityProcess *p = ensureGravityProcess();
-	p->setGravity(gravity);
+	hurl(0, 0, 0, gravity);
 }
 
 void Item::grab() {
@@ -2031,9 +2032,16 @@ void Item::grab() {
 
 
 void Item::hurl(int xs, int ys, int zs, int grav) {
+	// crusader sleeps existing gravity at first
+	bool do_sleep = GAME_IS_CRUSADER && (_gravityPid == 0);
 	GravityProcess *p = ensureGravityProcess();
 	p->setGravity(grav);
 	p->move(xs, ys, zs);
+	if (do_sleep) {
+		Process *delayProc = new DelayProcess(0x14);
+		ProcId pid = Kernel::get_instance()->addProcess(delayProc);
+		p->waitFor(pid);
+	}
 }
 
 
