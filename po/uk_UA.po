@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-03-21 23:12+0000\n"
-"PO-Revision-Date: 2021-03-17 22:37+0000\n"
+"PO-Revision-Date: 2021-03-22 00:15+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/uk/>\n"
@@ -3974,16 +3974,12 @@ msgid ""
 msgstr "Автор перекладу проти того, щоб його переклад був у ScummVM."
 
 #: engines/buried/biochip_view.cpp:623
-#, fuzzy
-#| msgid "The game is paused. Press any key to continue."
 msgid "Your game is now Paused.  Click OK to continue."
-msgstr "Ігру призупинено. Натисніть будь-яку клавішу для продовження."
+msgstr "Ігру призупинено. Натисніть OK для продовження."
 
 #: engines/buried/buried.cpp:504
-#, fuzzy
-#| msgid "   Are you sure you want to quit ?   "
 msgid "Are you sure you want to quit?"
-msgstr "   Ви упевнені, що хочете вийти?   "
+msgstr "Ви упевнені, що хочете вийти?"
 
 #: engines/buried/saveload.cpp:108
 msgid "Invalid save file name"
