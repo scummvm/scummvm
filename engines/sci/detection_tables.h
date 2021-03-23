@@ -4397,6 +4397,15 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::RU_RUS, Common::kPlatformDOS, 0, GUIO_STD16	},
 
+	// Quest for Glory 1 VGA Remake - Hebrew fan translation - by https://github.com/adventurebrew/HebrewAdventure
+	// Executable scanning reports "2.000.411"
+	{ "qfg1vga", "VGA", {
+		{"resource.map", 0, "a731fb6c9c0b282443f7027bc8694d4c", 8469},
+		{"resource.000", 0, "ecace1a2771846b1a8aa1afdd44111a0", 6570147},
+		{"PATCHES/300.fon", 0, "3cc38f11c31709a6c860f8d3be4c8bbe", 2964},
+		AD_LISTEND},
+		Common::HE_ISR, Common::kPlatformDOS, 0, GUIO_STD16 },
+
 	// Quest for Glory 1 VGA Remake - English DOS Non-Interactive Demo (from FRG)
 	// SCI interpreter version 1.001.029
 	{"qfg1vga", "VGA/Demo", {
