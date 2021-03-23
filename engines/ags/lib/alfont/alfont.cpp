@@ -59,6 +59,8 @@ size_t alfont_text_height(ALFONT_FONT *font) {
 }
 
 void alfont_textout(BITMAP *bmp, ALFONT_FONT *font, const char *text, int x, int y, uint32 color) {
+	// The original alfont changes the y based on the font height and ascent.
+	y += (font->_size - font->getFont()->getFontAscent());
 	Graphics::ManagedSurface &surf = **bmp;
 	font->getFont()->drawString(&surf, text, x, y, bmp->w - x, color);
 }
