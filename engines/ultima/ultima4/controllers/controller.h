@@ -156,6 +156,10 @@ public:
 	virtual ~TurnCompleter() {
 	}
 	virtual void finishTurn() = 0;
+
+	virtual void finishTurnAfterCombatEnds() {
+		finishTurn();
+	}
 };
 
 } // End of namespace Ultima4

@@ -53,7 +53,9 @@ static const MouseArea MOUSE_AREAS[] = {
 	{ 0, { { 0, 0 }, { 0, 0 }, { 0, 0 } }, MC_NORTH, DIR_NONE }
 };
 
-GameController::GameController() : _mapArea(BORDER_WIDTH, BORDER_HEIGHT, VIEWPORT_W, VIEWPORT_H), _paused(false), _pausedTimer(0) {
+GameController::GameController() :
+		_mapArea(BORDER_WIDTH, BORDER_HEIGHT, VIEWPORT_W, VIEWPORT_H),
+		_paused(false), _combatFinished(false), _pausedTimer(0) {
 	g_game = this;
 }
 
@@ -215,19 +217,26 @@ void GameController::finishTurn() {
 			// apply effects from tile avatar is standing on
 			g_context->_party->applyEffect(g_context->_location->_map->tileTypeAt(g_context->_location->_coords, WITH_GROUND_OBJECTS)->getEffect());
 
-			// Move creatures and see if something is attacking the avatar
-			attacker = g_context->_location->_map->moveObjects(g_context->_location->_coords);
+			// WORKAROUND: This fixes infinite combat loop at the Shrine of Humility.
+			// I presume the original had code to show the game screen after combat
+			// without doing all the end turn logic
+			if (!_combatFinished) {
+				// Move creatures and see if something is attacking the avatar
+				attacker = g_context->_location->_map->moveObjects(g_context->_location->_coords);
 
-			// Something's attacking!  Start combat!
-			if (attacker) {
-				gameCreatureAttack(attacker);
-				return;
+				// Something's attacking!  Start combat!
+				if (attacker) {
+					gameCreatureAttack(attacker);
+					return;
+				}
+
+				// cleanup old creatures and spawn new ones
+				creatureCleanup();
+				checkRandomCreatures();
+				checkBridgeTrolls();
+			} else {
+				_combatFinished = false;
 			}
-
-			// cleanup old creatures and spawn new ones
-			creatureCleanup();
-			checkRandomCreatures();
-			checkBridgeTrolls();
 		}
 
 		/* update map annotations */

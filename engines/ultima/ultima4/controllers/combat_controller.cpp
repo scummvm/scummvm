@@ -320,10 +320,8 @@ void CombatController::end(bool adjustKarma) {
 			g_context->_location->_map->removeObject(_creature);
 
 		g_death->start(5);
-	}
 
-	else {
-
+	} else {
 		/* need to get this here because when we exit to the parent map, all the monsters are cleared */
 		bool won = isWon();
 
@@ -396,8 +394,8 @@ void CombatController::end(bool adjustKarma) {
 			g_context->_location->_map->removeObject(_creature);
 
 		/* Make sure finishturn only happens if a new combat has not begun */
-		if (! eventHandler->getController()->isCombatController())
-			g_context->_location->_turnCompleter->finishTurn();
+		if (!eventHandler->getController()->isCombatController())
+			g_context->_location->_turnCompleter->finishTurnAfterCombatEnds();
 	}
 
 	delete this;

@@ -106,6 +106,7 @@ public:
 	TileView _mapArea;
 	bool _paused;
 	int _pausedTimer;
+	bool _combatFinished;
 public:
 	GameController();
 
@@ -143,6 +144,16 @@ public:
 	 * such as the map, map position, etc. (such as exiting a city)
 	 **/
 	int exitToParentMap();
+
+	/**
+	 * Finishes the game turn after combat ends. It suppresses monster
+	 * movement to prevent issues, such as infinite combat at the
+	 * Shrine of Humility
+	 */
+	void finishTurnAfterCombatEnds() override {
+		_combatFinished = true;
+		finishTurn();
+	}
 
 	/**
 	 * Terminates a game turn.  This performs the post-turn housekeeping
