@@ -84,7 +84,8 @@ enum {
 	kWMModeManualDrawWidgets= (1 << 5),
 	kWMModeFullscreen       = (1 << 6),
 	kWMModeButtonDialogStyle= (1 << 7),
-	kWMMode32bpp			= (1 << 8)
+	kWMMode32bpp			= (1 << 8),
+	kWMNoScummVMWallpaper   = (1 << 9)
 };
 
 }
