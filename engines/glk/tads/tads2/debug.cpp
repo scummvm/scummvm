@@ -224,7 +224,7 @@ static void dbgpbval(dbgcxdef *ctx, dattyp typ, const uchar *val,
         while (len)
         {
             dbgpbval(ctx, (dattyp)*p, (const uchar *)(p + 1), dispfn, dispctx);
-            lstadv((uchar **)&p, &len);
+            lstadv((uchar **)const_cast<char **>(&p), &len);
             if (len) (*dispfn)(dispctx, " ", 1);
         }
         (*dispfn)(dispctx, "]", 1);
