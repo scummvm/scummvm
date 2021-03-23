@@ -1541,7 +1541,9 @@ int re_compile_and_search(re_context *ctx,
     re_save_search_str(ctx, searchstr, searchlen);
 
     /* clear the group registers */
-    memset(ctx->regs, 0, sizeof(ctx->regs));
+    for (uint i = 0; i < ARRAYSIZE(ctx->regs); i++) {
+        ctx->regs[i].clear();
+    }
 
     /* 
      *   search for the pattern in our copy of the string - use the copy
@@ -1573,7 +1575,9 @@ int re_compile_and_match(re_context *ctx,
     re_save_search_str(ctx, searchstr, searchlen);
 
     /* clear the group registers */
-    memset(ctx->regs, 0, sizeof(ctx->regs));
+    for (uint i = 0; i < ARRAYSIZE(ctx->regs); i++) {
+        ctx->regs[i].clear();
+    }
 
     /* match the string */
     return re_match(ctx, ctx->strbuf, ctx->strbuf, ctx->curlen,

@@ -52,6 +52,11 @@ typedef struct _re_group_register
     const char *end_ofs;
 
     _re_group_register() : start_ofs(nullptr), end_ofs(nullptr) {}
+
+    void clear() {
+        start_ofs = nullptr;
+        end_ofs = nullptr;
+    }
 } re_group_register;
 
 /* number of group registers we keep */
