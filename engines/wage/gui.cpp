@@ -93,6 +93,7 @@ Gui::Gui(WageEngine *engine) {
 	_sceneDirty = true;
 	_screen.create(g_system->getWidth(), g_system->getHeight(), Graphics::PixelFormat::createFormatCLUT8());
 
+	_wm._mode |= Graphics::kWMNoScummVMWallpaper;
 	_wm.setScreen(&_screen);
 
 	_menu = _wm.addMenu();
