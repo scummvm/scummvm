@@ -662,10 +662,18 @@ struct LuaT {
 	char luaFuncAction[32];
 	char luaFuncUse[32];
 
-	LuaT() : x(0), y(0), value1(0), value2(0) {
-		luaFuncInit[0] = 0;
-		luaFuncAction[0] = 0;
-		luaFuncUse[0] = 0;
+	LuaT() {
+		clear();
+	}
+
+	void clear() {
+		x = 0;
+		y = 0;
+		value1 = 0;
+		value2 = 0;
+		for (uint i = 0; i < ARRAYSIZE(luaFuncInit); i++) luaFuncInit[i] = 0;
+		for (uint i = 0; i < ARRAYSIZE(luaFuncAction); i++) luaFuncAction[i] = 0;
+		for (uint i = 0; i < ARRAYSIZE(luaFuncUse); i++) luaFuncUse[i] = 0;
 	}
 };
 
@@ -676,10 +684,18 @@ struct ActionInfo {
 	char luaFuncUse[32];
 	char entityName[32];
 
-	ActionInfo() : x1(0), y1(0), x2(0), y2(0) {
-		luaFuncInit[0] = 0;
-		luaFuncUse[0] = 0;
-		entityName[0] = 0;
+	ActionInfo() {
+		clear();
+	}
+
+	void clear() {
+		x1 = 0;
+		y1 = 0;
+		x2 = 0;
+		y2 = 0;
+		for (uint i = 0; i < ARRAYSIZE(luaFuncInit); i++) luaFuncInit[i] = 0;
+		for (uint i = 0; i < ARRAYSIZE(luaFuncUse); i++) luaFuncUse[i] = 0;
+		for (uint i = 0; i < ARRAYSIZE(entityName); i++) entityName[i] = 0;
 	}
 };
 
@@ -694,9 +710,25 @@ struct TeleInfo {
 	char luaFuncUse1[32];
 	char luaFuncUse2[32];
 
-	TeleInfo() : x1(0), y1(0), x2(0), y2(0), dir1(DIR_NONE), dir2(DIR_NONE), level1(0), level2(0), usable1(0), usable2(0), anim1(0), anim2(0) {
-		luaFuncUse1[0] = 0;
-		luaFuncUse2[0] = 0;
+	TeleInfo() {
+		clear();
+	}
+
+	void clear() {
+		x1 = 0;
+		y1 = 0;
+		x2 = 0;
+		y2 = 0;
+		dir1 = DIR_NONE;
+		dir2 = DIR_NONE;
+		level1 = 0;
+		level2 = 0;
+		usable1 = 0;
+		usable2 = 0;
+		anim1 = 0;
+		anim2 = 0;
+		for (uint i = 0; i < ARRAYSIZE(luaFuncUse1); i++) luaFuncUse1[i] = 0;
+		for (uint i = 0; i < ARRAYSIZE(luaFuncUse2); i++) luaFuncUse2[i] = 0;
 	}
 };
 
@@ -714,10 +746,17 @@ struct AutoAction {
 	char luaFuncUse[32];
 	char entityName[32];
 
-	AutoAction() : x(0), y(0), activated(false) {
-		luaFuncInit[0] = 0;
-		luaFuncUse[0] = 0;
-		entityName[0] = 0;
+	AutoAction() {
+		clear();
+	}
+
+	void clear() {
+		x = 0;
+		y = 0;
+		activated = false;
+		for (uint i = 0; i < ARRAYSIZE(luaFuncInit); i++) luaFuncInit[i] = 0;
+		for (uint i = 0; i < ARRAYSIZE(luaFuncUse); i++) luaFuncUse[i] = 0;
+		for (uint i = 0; i < ARRAYSIZE(entityName); i++) entityName[i] = 0;
 	}
 };
 
@@ -758,7 +797,16 @@ struct Callback {
 	uint16 x, y;
 	uint16 delay;
 
-	Callback() : type(NO_FUNCTION), x(0), y(0), delay(0) {}
+	Callback() {
+		clear();
+	}
+
+	void clear() {
+		type = NO_FUNCTION;
+		x = 0;
+		y = 0;
+		delay = 0;
+	}
 };
 
 struct Fairystone {

@@ -1277,17 +1277,25 @@ void AI::restartSystem() {
 	_player = nullptr;
 
 	// Clear the Action list
-	memset(_actions, 0, sizeof(_actions));
+	for (uint i = 0; i < ARRAYSIZE(_actions); i++) {
+		_actions[i].clear();
+	}
 
 	// Clear Teleporter list
-	memset(_teleporters, 0, sizeof(_teleporters));
+	for (uint i = 0; i < ARRAYSIZE(_teleporters); i++) {
+		_teleporters[i].clear();
+	}
 	_numTeleporters = 0;
 
 	// Clear the Auto-Action list
-	memset(_autoActions, 0, sizeof(_autoActions));
+	for (uint i = 0; i < ARRAYSIZE(_autoActions); i++) {
+		_autoActions[i].clear();
+	}
 
 	// Clear the Callback List
-	memset(_callbacks, 0, sizeof(_callbacks));
+	for (uint i = 0; i < ARRAYSIZE(_callbacks); i++) {
+		_callbacks[i].clear();
+	}
 
 	// Clear the Entity List
 	_ents->clear();
@@ -1296,7 +1304,9 @@ void AI::restartSystem() {
 	_floats->clear();
 
 	// Clear the Lua List
-	memset(_luaList, 0, sizeof(_luaList));
+	for (uint i = 0; i < ARRAYSIZE(_luaList); i++) {
+		_luaList[i].clear();
+	}
 	_numLuaList = 0;
 
 	// Clear Anim Targets List
