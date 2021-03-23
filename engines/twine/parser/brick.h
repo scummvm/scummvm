@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef TWINE_BRICK_H
-#define TWINE_BRICK_H
+#ifndef TWINE_PARSER_BRICK_H
+#define TWINE_PARSER_BRICK_H
 
 #include "common/memstream.h"
 #include "common/stream.h"

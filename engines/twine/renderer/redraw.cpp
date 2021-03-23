@@ -457,13 +457,13 @@ void Redraw::processDrawListActorSprites(const DrawListStruct &drawCmd, bool bgR
 }
 
 void Redraw::processDrawListExtras(const DrawListStruct &drawCmd) {
-	int32 actorIdx = drawCmd.actorIdx;
-	ExtraListStruct *extra = &_engine->_extra->extraList[actorIdx];
+	int32 extraIdx = drawCmd.actorIdx;
+	ExtraListStruct *extra = &_engine->_extra->extraList[extraIdx];
 
 	_engine->_renderer->projectPositionOnScreen(extra->pos - _engine->_grid->camera);
 
 	if (extra->info0 & EXTRA_SPECIAL_MASK) {
-		_engine->_extra->drawExtraSpecial(actorIdx, _engine->_renderer->projPos.x, _engine->_renderer->projPos.y);
+		_engine->_extra->drawExtraSpecial(extraIdx, _engine->_renderer->projPos.x, _engine->_renderer->projPos.y);
 	} else {
 		const SpriteData &spritePtr = _engine->_resources->spriteData[extra->info0];
 		const int32 spriteWidth = spritePtr.surface().w;

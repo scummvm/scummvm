@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef TWINE_ENTITY_H
-#define TWINE_ENTITY_H
+#ifndef TWINE_PARSER_ENTITY_H
+#define TWINE_PARSER_ENTITY_H
 
 #include "common/array.h"
 #include "common/memstream.h"

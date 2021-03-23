@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef TWINE_BODY_H
-#define TWINE_BODY_H
+#ifndef TWINE_PARSER_BODY_H
+#define TWINE_PARSER_BODY_H
 
 #include "common/array.h"
 #include "common/memstream.h"

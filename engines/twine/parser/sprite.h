@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef TWINE_SPRITE_H
-#define TWINE_SPRITE_H
+#ifndef TWINE_PARSER_SPRITE_H
+#define TWINE_PARSER_SPRITE_H
 
 #include "common/array.h"
 #include "common/memstream.h"
