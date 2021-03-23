@@ -40,7 +40,9 @@ GameSetupStruct::GameSetupStruct()
 	, roomNames(nullptr)
 	, scoreClipID(0) {
 	memset(invinfo, 0, sizeof(invinfo));
-	memset(mcurs, 0, sizeof(mcurs));
+	for (uint i = 0; i < ARRAYSIZE(mcurs); i++) {
+		mcurs[i].clear();
+	}
 	memset(lipSyncFrameLetters, 0, sizeof(lipSyncFrameLetters));
 	memset(guid, 0, sizeof(guid));
 	memset(saveGameFileExtension, 0, sizeof(saveGameFileExtension));

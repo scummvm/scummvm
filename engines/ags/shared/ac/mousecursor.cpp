@@ -37,6 +37,15 @@ MouseCursor::MouseCursor() {
 	view = -1;
 }
 
+void MouseCursor::clear() {
+	pic = 0;
+	hotx = 0;
+	hoty = 0;
+	view = 0;
+	for (uint i = 0; i < ARRAYSIZE(name); i++) name[i] = 0;
+	flags = 0;
+}
+
 void MouseCursor::ReadFromFile(Stream *in) {
 	pic = in->ReadInt32();
 	hotx = in->ReadInt16();

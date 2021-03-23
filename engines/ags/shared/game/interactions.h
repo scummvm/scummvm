@@ -64,6 +64,7 @@ namespace AGS {
 namespace Shared {
 
 enum InterValType {
+	kInterValInvalid = 0,
 	kInterValLiteralInt = 1,
 	kInterValVariable = 2,
 	kInterValBoolean = 3,
@@ -81,6 +82,7 @@ struct InteractionValue {
 	int          Extra;
 
 	InteractionValue();
+	void clear();
 
 	void Read(Stream *in);
 	void Write(Stream *out) const;

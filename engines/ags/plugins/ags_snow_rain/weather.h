@@ -49,6 +49,18 @@ struct Drop {
 	int drift = 0;
 	float drift_speed = 0;
 	float drift_offset = 0;
+
+	void clear() {
+		x = 0;
+		y = 0;
+		alpha = 0;
+		speed = 0;
+		max_y = 0;
+		kind_id = 0;
+		drift = 0;
+		drift_speed = 0;
+		drift_offset = 0;
+	}
 };
 
 class Weather {

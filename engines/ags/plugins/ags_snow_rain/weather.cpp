@@ -236,9 +236,8 @@ void Weather::Initialize() {
 }
 
 void Weather::InitializeParticles() {
-	memset(_mParticles, 0, sizeof(Drop) * 2000);
-	int i;
-	for (i = 0; i < 2000; i++) {
+	for (uint i = 0; i < ARRAYSIZE(_mParticles); i++) {
+		_mParticles[i].clear();
 		_mParticles[i].kind_id = ::AGS::g_vm->getRandomNumber(0x7fffffff) % 5;
 		_mParticles[i].y = ::AGS::g_vm->getRandomNumber(0x7fffffff) % (_screenHeight * 2) - _screenHeight;
 		_mParticles[i].x = ::AGS::g_vm->getRandomNumber(0x7fffffff) % _screenWidth;

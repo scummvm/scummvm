@@ -38,6 +38,12 @@ InteractionValue::InteractionValue() {
 	Extra = 0;
 }
 
+void InteractionValue::clear() {
+	Type = kInterValInvalid; // FIXME: can this be kInterValLiteralInt?
+	Value = 0;
+	Extra = 0;
+}
+
 void InteractionValue::Read(Stream *in) {
 	Type = (InterValType)in->ReadInt8();
 	Value = in->ReadInt32();
@@ -70,7 +76,9 @@ void InteractionCommand::Assign(const InteractionCommand &ic, InteractionCommand
 
 void InteractionCommand::Reset() {
 	Type = 0;
-	memset(Data, 0, sizeof(Data));
+	for (uint i = 0; i < ARRAYSIZE(Data); i++) {
+		Data[i].clear();
+	}
 	Children.reset();
 	Parent = nullptr;
 }
