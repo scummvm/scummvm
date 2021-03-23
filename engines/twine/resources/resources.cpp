@@ -51,6 +51,7 @@ Resources::~Resources() {
 	free(holomapSurfacePtr);
 	free(holomapImagePtr);
 	free(holomapTwinsenModelPtr);
+	free(holomapPointModelPtr);
 	free(holomapTwinsenArrowPtr);
 	free(holomapArrowPtr);
 	free(_engine->_screens->mainPalette);
@@ -198,10 +199,10 @@ void Resources::initResources() {
 		error("Failed to load holomap twinsen arrow model");
 	}
 
-	holomapPointAnimSize = HQR::getAllocEntry(&holomapPointAnimPtr, Resources::HQR_RESS_FILE, RESSHQR_HOLOPOINTANIM);
-	if (holomapPointAnimSize == 0) {
-		error("Failed to load holomap point anim data");
+	if (!_trajectories.loadFromHQR(Resources::HQR_RESS_FILE, RESSHQR_HOLOPOINTANIM)) {
+		error("Failed to parse trajectory data");
 	}
+	debug("preload %i trajectories", (int)_trajectories.getTrajectories().size());
 
 	preloadSprites();
 	preloadAnimations();
@@ -209,6 +210,10 @@ void Resources::initResources() {
 	preloadInventoryItems();
 
 	loadFlaInfo();
+}
+
+const Trajectory *Resources::getTrajectory(int index) const {
+	return _trajectories.getTrajectory(index);
 }
 
 void Resources::loadFlaInfo() {

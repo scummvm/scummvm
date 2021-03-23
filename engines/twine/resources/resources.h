@@ -26,6 +26,7 @@
 #include "common/hashmap.h"
 #include "common/scummsys.h"
 #include "twine/parser/sprite.h"
+#include "twine/parser/holomap.h"
 #include "twine/scene/gamestate.h"
 #include "twine/resources/hqr.h"
 #include "twine/scene/scene.h"
@@ -150,6 +151,8 @@ private:
 	using MovieInfoMap = Common::HashMap<Common::String, Common::Array<int32>>;
 	MovieInfoMap _flaMovieFrames;
 
+	TrajectoryData _trajectories;
+
 public:
 	Resources(TwinEEngine *engine) : _engine(engine) {}
 	~Resources();
@@ -199,11 +202,11 @@ public:
 	uint8 *holomapTwinsenArrowPtr = nullptr;
 	uint32 holomapArrowSize = 0;
 	uint8 *holomapArrowPtr = nullptr;
-	uint32 holomapPointAnimSize = 0;
-	uint8 *holomapPointAnimPtr = nullptr;
 
 	/** Initialize resource pointers */
 	void initResources();
+
+	const Trajectory* getTrajectory(int index) const;
 
 	// main palette
 	static constexpr const char *HQR_RESS_FILE = "ress.hqr";
