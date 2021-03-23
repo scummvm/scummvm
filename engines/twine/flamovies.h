@@ -53,9 +53,7 @@ struct FLAHeaderStruct {
 /** FLA movie frame structure */
 struct FLAFrameDataStruct {
 	/** Current frame size */
-	int8 videoSize = 0;
-	/** Dummy variable */
-	int8 dummy = 0;
+	int16 videoSize = 0;
 	/** Unknown frameVar0 */
 	int32 frameVar0 = 0;
 };

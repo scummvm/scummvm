@@ -159,8 +159,7 @@ void FlaMovies::scaleFla2x() {
 void FlaMovies::processFrame() {
 	FLASampleStruct sample;
 
-	_file.read(&_frameData.videoSize, 1);
-	_file.read(&_frameData.dummy, 1);
+	_file.read(&_frameData.videoSize, 2);
 	_file.read(&_frameData.frameVar0, 4);
 	if (_frameData.frameVar0 > _engine->imageBuffer.w * _engine->imageBuffer.h) {
 		warning("Skipping video frame - it would exceed the screen buffer: %i", _frameData.frameVar0);
