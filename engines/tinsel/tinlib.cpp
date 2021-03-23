@@ -1551,6 +1551,8 @@ static void Play(CORO_PARAM, SCNHANDLE hFilm, int x, int y, int compit, int acto
  * Play a film
  */
 static void Play(CORO_PARAM, SCNHANDLE hFilm, int x, int y, int compit, int myEscape, bool bTop, TINSEL_EVENT event, HPOLYGON hPoly, int taggedActor) {
+	OBJECT** playfield = nullptr;
+
 	CORO_BEGIN_CONTEXT;
 	CORO_END_CONTEXT(_ctx);
 
@@ -1589,10 +1591,8 @@ static void Play(CORO_PARAM, SCNHANDLE hFilm, int x, int y, int compit, int myEs
 		_vm->_actor->SetActorTalkFilm(actor, hFilm);
 	}
 
-	OBJECT** playfield;
 	bool bComplete;
 
-	playfield = nullptr;
 	bComplete = compit;
 
 	if (TinselV3) {
