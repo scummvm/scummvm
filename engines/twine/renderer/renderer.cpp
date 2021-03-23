@@ -213,23 +213,24 @@ void Renderer::setCameraAngle(int32 transPosX, int32 transPosY, int32 transPosZ,
 }
 
 IVec3 Renderer::getHolomapRotation(const int32 angleX, const int32 angleY, const int32 angleZ) const {
-	int32 rotX;
-	int32 rotY;
-	int32 rotZ;
+	int32 rotX = angleX * 2 + 1000;
 
-	rotX = angleX * 2 + 1000;
+	int32 rotY;
 	if (angleY == ANGLE_0) {
 		rotY = ANGLE_0;
 	} else {
 		rotY = -shadeAngleTable[ClampAngle(angleY)] * rotX / SCENE_SIZE_HALF;
 		rotX = shadeAngleTable[ClampAngle(angleY + ANGLE_90)] * rotX / SCENE_SIZE_HALF;
 	}
+
+	int32 rotZ;
 	if (angleZ == ANGLE_0) {
 		rotZ = ANGLE_0;
 	} else {
 		rotZ = -shadeAngleTable[ClampAngle(angleZ)] * rotX / SCENE_SIZE_HALF;
 		rotX = shadeAngleTable[ClampAngle(angleZ + ANGLE_90)] * rotX / SCENE_SIZE_HALF;
 	}
+
 	const int32 row1X = _baseMatrix.row1[0] * rotX;
 	const int32 row1Y = _baseMatrix.row1[1] * rotY;
 	const int32 row1Z = _baseMatrix.row1[2] * rotZ;
@@ -1559,7 +1560,7 @@ void Renderer::computeHolomapPolygon(int32 top, int32 x1, int32 bottom, int32 x2
 	if (minX < x2) {
 		const uint32 deltaX = (x2 - minX) * 0x10000;
 		const uint32 deltaRatio = deltaX / deltaY;
-		int32 iVar01 = (deltaRatio % deltaY >> 1) + 0x7fff;
+		uint32 iVar01 = (deltaRatio % deltaY >> 1) + 0x7fff;
 		for (uint32 y = 0; y <= deltaY; ++y) {
 			if (currentPolygonTabEntry < _polyTab || currentPolygonTabEntry >= _polyTab + _polyTabSize) {
 				currentPolygonTabEntry++;
@@ -1576,7 +1577,7 @@ void Renderer::computeHolomapPolygon(int32 top, int32 x1, int32 bottom, int32 x2
 	} else {
 		const uint32 deltaX = (minX - x2) * 0x10000;
 		const uint32 deltaRatio = deltaX / deltaY;
-		int32 iVar01 = (deltaX % deltaY >> 1) + 0x7fff;
+		uint32 iVar01 = (deltaX % deltaY >> 1) + 0x7fff;
 		for (uint32 y = 0; y <= deltaY; ++y) {
 			if (currentPolygonTabEntry < _polyTab || currentPolygonTabEntry >= _polyTab + _polyTabSize) {
 				currentPolygonTabEntry++;
