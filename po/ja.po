@@ -7291,17 +7291,21 @@ msgstr "未対応のゲームID。"
 
 #: engines/wintermute/wintermute.cpp:187
 msgid "This game requires the FoxTail subengine, which is not compiled in."
-msgstr "このゲームはFoxTailサブエンジンが必要ですが、コンパイルされていません。"
+msgstr ""
+"このゲームはFoxTailサブエンジンが必要ですが、コンパイルされていません。"
 
 #: engines/wintermute/wintermute.cpp:198
 msgid "This game requires the HeroCraft subengine, which is not compiled in."
-msgstr "このゲームはHeroCraftサブエンジンが必要ですが、コンパイルされていません。"
+msgstr ""
+"このゲームはHeroCraftサブエンジンが必要ですが、コンパイルされていません。"
 
 #: engines/wintermute/wintermute.cpp:209
 msgid ""
 "This game requires 3D capabilities that are out ScummVM scope. As such, it "
 "is likely to be unplayable totally or partially."
-msgstr "このゲームは、ScummVMの範囲外の3D機能を必要とします。そのため、全部または一部がプレイできない可能性があります。"
+msgstr ""
+"このゲームは、ScummVMの範囲外の3D機能を必要とします。そのため、全部または一部"
+"がプレイできない可能性があります。"
 
 #: engines/wintermute/keymapper_tables.h:147
 #: engines/wintermute/keymapper_tables.h:510
@@ -7864,7 +7868,8 @@ msgstr "スタンダードインベントリーでアイテムコストを表示
 msgid ""
 "Shows item costs in standard inventory mode, allowing the value of items to "
 "be compared"
-msgstr "スタンダードインベントリーでアイテムコストを表示し、その価値を比較できます"
+msgstr ""
+"スタンダードインベントリーでアイテムコストを表示し、その価値を比較できます"
 
 #: engines/xeen/detection.cpp:57
 msgid "More durable armor"
