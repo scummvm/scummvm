@@ -1826,16 +1826,16 @@ void Actor::addReactionHive(int32 reactionIndex, int32 numberValue01Add) {
 	if (reactionIndex > 16)
 		return;
 
-	uint32 count = 0;
-	for (int i = 0; i < 8; i++)
-		if (_reaction[i])
-			count++;
+	uint32 i;
+	for (i = 0; i < 8; i++)
+		if (!_reaction[i])
+			break;
 
-	if (count == 8)
+	if (i == 8)
 		return;
 
-	if (!numberValue01Add || !_numberValue01)
-		_reaction[count] = reactionIndex;
+	if (!hasMoreReactions(reactionIndex, 0))
+		_reaction[i] = reactionIndex;
 
 	if (numberValue01Add)
 		_numberValue01 += numberValue01Add;
@@ -1876,12 +1876,12 @@ bool Actor::hasMoreReactions(int32 reactionIndex, int32 testNumberValue01) const
 	if (reactionIndex > 16)
 		return false;
 
-	uint32 count = 0;
-	for (int i = 0; i < 8; i++)
-		if (_reaction[i])
-			count++;
+	uint32 i;
+	for (i = 0; i < 8; i++)
+		if (_reaction[i] == reactionIndex)
+			break;
 
-	if (count == 8)
+	if (i == 8)
 		return false;
 
 	if (testNumberValue01)
