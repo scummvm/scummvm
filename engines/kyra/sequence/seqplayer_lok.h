@@ -102,6 +102,15 @@ protected:
 		int16 frame;
 		int16 numFrames;
 		Common::Point pos;
+
+		void clear() {
+			movie = nullptr;
+			page = 0;
+			frame = 0;
+			numFrames = 0;
+			pos.x = 0;
+			pos.y = 0;
+		}
 	};
 
 	const uint8 *_seqData;

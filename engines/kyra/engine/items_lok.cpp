@@ -57,7 +57,12 @@ void KyraEngine_LoK::addToNoDropRects(int x, int y, int w, int h) {
 }
 
 void KyraEngine_LoK::clearNoDropRects() {
-	memset(_noDropRects, -1, sizeof(_noDropRects));
+	for (uint i = 0; i < ARRAYSIZE(_noDropRects); i++) {
+		_noDropRects[i].left = -1;
+		_noDropRects[i].top = -1;
+		_noDropRects[i].right = -1;
+		_noDropRects[i].bottom = -1;
+	}
 }
 
 byte KyraEngine_LoK::findFreeItemInScene(int scene) {

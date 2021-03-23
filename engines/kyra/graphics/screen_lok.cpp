@@ -55,7 +55,12 @@ bool Screen_LoK::init() {
 	if (!Screen::init())
 		return false;
 
-	memset(_bitBlitRects, 0, sizeof(_bitBlitRects));
+	for (uint i = 0; i < ARRAYSIZE(_bitBlitRects); i++) {
+		_bitBlitRects[i].left = 0;
+		_bitBlitRects[i].top = 0;
+		_bitBlitRects[i].right = 0;
+		_bitBlitRects[i].bottom = 0;
+	}
 	_bitBlitNum = 0;
 	memset(_saveLoadPage, 0, sizeof(_saveLoadPage));
 	memset(_saveLoadPageOvl, 0, sizeof(_saveLoadPageOvl));

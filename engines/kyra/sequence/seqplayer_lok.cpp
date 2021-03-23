@@ -599,7 +599,9 @@ bool SeqPlayer::playSequence(const uint8 *seqData, bool skipSeq) {
 		_seqLoopTable[i].count = 0xFFFF;
 	}
 
-	memset(_seqMovies, 0, sizeof(_seqMovies));
+	for (uint i = 0; i < ARRAYSIZE(_seqMovies); i++) {
+		_seqMovies[i].clear();
+	}
 
 	_screen->_curPage = 0;
 	char revBuffer[384];
