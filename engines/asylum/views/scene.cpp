@@ -1545,7 +1545,7 @@ bool Scene::hitTestPixel(ResourceId resourceId, uint32 frameIndex, int16 x, int1
 		pixel = (byte *)frame->surface.getBasePtr(x - left, y - frame->y);
 	}
 
-	if (pixel == 0)
+	if (*pixel == 0)
 		goto cleanup;
 
 	delete resource;
