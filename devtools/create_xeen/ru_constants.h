@@ -26,81 +26,43 @@
 
 class RU : public LangConstants {
 public:
-	/*
-	"\v012\t000\x3"
-	"c\f35Идея и руководство проектом:\n"
-	"\f17Джон Ван Канегем\x3"
-	"l\n"
-	"\n"
-	"\t025\f35Программисты:\n"
-	"\t035\f17Марк Колдуэлл\n"
-	"\t035Дейв Хэтэуэй\n"
-	"\n"
-	"\t025\f35Аудиосистема и звук:\n"
-	"\t035\f17Тодд Хендрикс\n"
-	"\n"
-	"\t025\f35Музыка и речь:\n"
-	"\t035\f17Тим Талли\n"
-	"\n"
-	"\t025\f35Сценарий:\n"
-	"\t035\f17Пол Ратнер\n"
-	"\t035Дебби Мёрфи\n"
-	"\t035Джон Ван Канегем\v012\n"
-	"\n"
-	"\n"
-	"\t180\f35Художники:\n"
-	"\t190\f17Луи Джонсон\n"
-	"\t190Джонатан П. Гвин\n"
-	"\t190Бонита Лонг-Хемсат\n"
-	"\t190Джулия Улано\n"
-	"\t190Рикардо Баррера\n"
-	"\n"
-	"\t180\f35Тестеры:\n"
-	"\t190\f17Бенджамин Бент\n"
-	"\t190Марио Эскамилла\n"
-	"\t190Ричард Эспи\n"
-	"\t190Скотт Макдэниел\n"
-	"\t190Клейтон Ретзер\n"
-	"\t190Майкл Суарес\x3"
-	"c";
-	*/
 	const char *CLOUDS_CREDITS() {
-		return "\v012\t000\x3"
-			   "c\f35\x88\xA4\xA5\xEF \xA8 \xE0\xE3\xAA\xAE\xA2\xAE\xA4\xE1\xE2\xA2\xAE \xAF\xE0\xAE\xA5\xAA\xE2\xAE\xAC:\n"
-			   "\f17\x84\xA6\xAE\xAD \x82\xA0\xAD \x8A\xA0\xAD\xA5\xA3\xA5\xAC\x3"
-			   "l\n"
-			   "\n"
-			   "\t025\f35\x8F\xE0\xAE\xA3\xE0\xA0\xAC\xAC\xA8\xE1\xE2\xEB:\n"
-			   "\t035\f17\x8C\xA0\xE0\xAA \x8A\xAE\xAB\xA4\xE3\xED\xAB\xAB\n"
-			   "\t035\x84\xA5\xA9\xA2 \x95\xED\xE2\xED\xE3\xED\xA9\n"
-			   "\n"
-			   "\t025\f35\x80\xE3\xA4\xA8\xAE\xE1\xA8\xE1\xE2\xA5\xAC\xA0 \xA8 \xA7\xA2\xE3\xAA:\n"
-			   "\t035\f17\x92\xAE\xA4\xA4 \x95\xA5\xAD\xA4\xE0\xA8\xAA\xE1\n"
-			   "\n"
-			   "\t025\f35\x8C\xE3\xA7\xEB\xAA\xA0 \xA8 \xE0\xA5\xE7\xEC:\n"
-			   "\t035\f17\x92\xA8\xAC \x92\xA0\xAB\xAB\xA8\n"
-			   "\n"
-			   "\t025\f35\x91\xE6\xA5\xAD\xA0\xE0\xA8\xA9:\n"
-			   "\t035\f17\x8F\xAE\xAB \x90\xA0\xE2\xAD\xA5\xE0\n"
-			   "\t035\x84\xA5\xA1\xA1\xA8 \x8C\xF1\xE0\xE4\xA8\n"
-			   "\t035\x84\xA6\xAE\xAD \x82\xA0\xAD \x8A\xA0\xAD\xA5\xA3\xA5\xAC\v012\n"
-			   "\n"
-			   "\n"
-			   "\t180\f35\x95\xE3\xA4\xAE\xA6\xAD\xA8\xAA\xA8:\n"
-			   "\t190\f17\x8B\xE3\xA8 \x84\xA6\xAE\xAD\xE1\xAE\xAD\n"
-			   "\t190\x84\xA6\xAE\xAD\xA0\xE2\xA0\xAD \x8F. \x83\xA2\xA8\xAD\n"
-			   "\t190\x81\xAE\xAD\xA8\xE2\xA0 \x8B\xAE\xAD\xA3-\x95\xA5\xAC\xE1\xA0\xE2\n"
-			   "\t190\x84\xA6\xE3\xAB\xA8\xEF \x93\xAB\xA0\xAD\xAE\n"
-			   "\t190\x90\xA8\xAA\xA0\xE0\xA4\xAE \x81\xA0\xE0\xE0\xA5\xE0\xA0\n"
-			   "\n"
-			   "\t180\f35\x92\xA5\xE1\xE2\xA5\xE0\xEB:\n"
-			   "\t190\f17\x81\xA5\xAD\xA4\xA6\xA0\xAC\xA8\xAD \x81\xA5\xAD\xE2\n"
-			   "\t190\x8C\xA0\xE0\xA8\xAE \x9D\xE1\xAA\xA0\xAC\xA8\xAB\xAB\xA0\n"
-			   "\t190\x90\xA8\xE7\xA0\xE0\xA4 \x9D\xE1\xAF\xA8\n"
-			   "\t190\x91\xAA\xAE\xE2\xE2 \x8C\xA0\xAA\xA4\xED\xAD\xA8\xA5\xAB\n"
-			   "\t190\x8A\xAB\xA5\xA9\xE2\xAE\xAD \x90\xA5\xE2\xA7\xA5\xE0\n"
-			   "\t190\x8C\xA0\xA9\xAA\xAB \x91\xE3\xA0\xE0\xA5\xE1\x3"
-			   "c";
+		return "\v012\t000\x3"																								 // "\v012\t000\x3"  
+			   "c\f35\x88\xA4\xA5\xEF \xA8 \xE0\xE3\xAA\xAE\xA2\xAE\xA4\xE1\xE2\xA2\xAE \xAF\xE0\xAE\xA5\xAA\xE2\xAE\xAC:\n" // "c\f35РРґРµСЏ Рё СЂСѓРєРѕРІРѕРґСЃС‚РІРѕ РїСЂРѕРµРєС‚РѕРј:\n"
+			   "\f17\x84\xA6\xAE\xAD \x82\xA0\xAD \x8A\xA0\xAD\xA5\xA3\xA5\xAC\x3"                                           // "\f17Р”Р¶РѕРЅ Р’Р°РЅ РљР°РЅРµРіРµРј\x3"
+			   "l\n"                                                                                                         // "l\n"
+			   "\n"                                                                                                          // "\n"
+			   "\t025\f35\x8F\xE0\xAE\xA3\xE0\xA0\xAC\xAC\xA8\xE1\xE2\xEB:\n"                                                // "\t025\f35РџСЂРѕРіСЂР°РјРјРёСЃС‚С‹:\n"
+			   "\t035\f17\x8C\xA0\xE0\xAA \x8A\xAE\xAB\xA4\xE3\xED\xAB\xAB\n"                                                // "\t035\f17РњР°СЂРє РљРѕР»РґСѓСЌР»Р»\n"
+			   "\t035\x84\xA5\xA9\xA2 \x95\xED\xE2\xED\xE3\xED\xA9\n"                                                        // "\t035Р”РµР№РІ РҐСЌС‚СЌСѓСЌР№\n"
+			   "\n"                                                                                                          // "\n"
+			   "\t025\f35\x80\xE3\xA4\xA8\xAE\xE1\xA8\xE1\xE2\xA5\xAC\xA0 \xA8 \xA7\xA2\xE3\xAA:\n"                          // "\t025\f35РђСѓРґРёРѕСЃРёСЃС‚РµРјР° Рё Р·РІСѓРє:\n"
+			   "\t035\f17\x92\xAE\xA4\xA4 \x95\xA5\xAD\xA4\xE0\xA8\xAA\xE1\n"                                                // "\t035\f17РўРѕРґРґ РҐРµРЅРґСЂРёРєСЃ\n"
+			   "\n"                                                                                                          // "\n"
+			   "\t025\f35\x8C\xE3\xA7\xEB\xAA\xA0 \xA8 \xE0\xA5\xE7\xEC:\n"                                                  // "\t025\f35РњСѓР·С‹РєР° Рё СЂРµС‡СЊ:\n"
+			   "\t035\f17\x92\xA8\xAC \x92\xA0\xAB\xAB\xA8\n"                                                                // "\t035\f17РўРёРј РўР°Р»Р»Рё\n"
+			   "\n"                                                                                                          // "\n"
+			   "\t025\f35\x91\xE6\xA5\xAD\xA0\xE0\xA8\xA9:\n"                                                                // "\t025\f35РЎС†РµРЅР°СЂРёР№:\n"
+			   "\t035\f17\x8F\xAE\xAB \x90\xA0\xE2\xAD\xA5\xE0\n"                                                            // "\t035\f17РџРѕР» Р Р°С‚РЅРµСЂ\n"
+			   "\t035\x84\xA5\xA1\xA1\xA8 \x8C\xF1\xE0\xE4\xA8\n"                                                            // "\t035Р”РµР±Р±Рё РњС‘СЂС„Рё\n"
+			   "\t035\x84\xA6\xAE\xAD \x82\xA0\xAD \x8A\xA0\xAD\xA5\xA3\xA5\xAC\v012\n"                                      // "\t035Р”Р¶РѕРЅ Р’Р°РЅ РљР°РЅРµРіРµРј\v012\n"
+			   "\n"                                                                                                          // "\n"
+			   "\n"                                                                                                          // "\n"
+			   "\t180\f35\x95\xE3\xA4\xAE\xA6\xAD\xA8\xAA\xA8:\n"                                                            // "\t180\f35РҐСѓРґРѕР¶РЅРёРєРё:\n"
+			   "\t190\f17\x8B\xE3\xA8 \x84\xA6\xAE\xAD\xE1\xAE\xAD\n"                                                        // "\t190\f17Р›СѓРё Р”Р¶РѕРЅСЃРѕРЅ\n"
+			   "\t190\x84\xA6\xAE\xAD\xA0\xE2\xA0\xAD \x8F. \x83\xA2\xA8\xAD\n"                                              // "\t190Р”Р¶РѕРЅР°С‚Р°РЅ Рџ. Р“РІРёРЅ\n"
+			   "\t190\x81\xAE\xAD\xA8\xE2\xA0 \x8B\xAE\xAD\xA3-\x95\xA5\xAC\xE1\xA0\xE2\n"                                   // "\t190Р‘РѕРЅРёС‚Р° Р›РѕРЅРі-РҐРµРјСЃР°С‚\n"
+			   "\t190\x84\xA6\xE3\xAB\xA8\xEF \x93\xAB\xA0\xAD\xAE\n"                                                        // "\t190Р”Р¶СѓР»РёСЏ РЈР»Р°РЅРѕ\n"
+			   "\t190\x90\xA8\xAA\xA0\xE0\xA4\xAE \x81\xA0\xE0\xE0\xA5\xE0\xA0\n"                                            // "\t190Р РёРєР°СЂРґРѕ Р‘Р°СЂСЂРµСЂР°\n"
+			   "\n"                                                                                                          // "\n"
+			   "\t180\f35\x92\xA5\xE1\xE2\xA5\xE0\xEB:\n"                                                                    // "\t180\f35РўРµСЃС‚РµСЂС‹:\n"
+			   "\t190\f17\x81\xA5\xAD\xA4\xA6\xA0\xAC\xA8\xAD \x81\xA5\xAD\xE2\n"                                            // "\t190\f17Р‘РµРЅРґР¶Р°РјРёРЅ Р‘РµРЅС‚\n"
+			   "\t190\x8C\xA0\xE0\xA8\xAE \x9D\xE1\xAA\xA0\xAC\xA8\xAB\xAB\xA0\n"                                            // "\t190РњР°СЂРёРѕ Р­СЃРєР°РјРёР»Р»Р°\n"
+			   "\t190\x90\xA8\xE7\xA0\xE0\xA4 \x9D\xE1\xAF\xA8\n"                                                            // "\t190Р РёС‡Р°СЂРґ Р­СЃРїРё\n"
+			   "\t190\x91\xAA\xAE\xE2\xE2 \x8C\xA0\xAA\xA4\xED\xAD\xA8\xA5\xAB\n"                                            // "\t190РЎРєРѕС‚С‚ РњР°РєРґСЌРЅРёРµР»\n"
+			   "\t190\x8A\xAB\xA5\xA9\xE2\xAE\xAD \x90\xA5\xE2\xA7\xA5\xE0\n"                                                // "\t190РљР»РµР№С‚РѕРЅ Р РµС‚Р·РµСЂ\n"
+			   "\t190\x8C\xA0\xA9\xAA\xAB \x91\xE3\xA0\xE0\xA5\xE1\x3"                                                       // "\t190РњР°Р№РєР» РЎСѓР°СЂРµСЃ\x3"
+			   "c";                                                                                                          // "c"
 	}
 
 	const char *DARK_SIDE_CREDITS() {
@@ -178,34 +140,22 @@ public:
 			   "\t110Jack Nalls\n";
 	}
 
-	/*
-	"\r\x1\x3"
-	"c\fdМеч и Магия\n"
-	"%s Ксина\x2\n"
-	"\v%.3dCopyright (c) %d NWC, Inc.\n"
-	"All Rights Reserved\x1";
-	*/
 	const char *OPTIONS_MENU() {
-		return "\r\x1\x3"
-			   "c\fd\x8C\xA5\xE7 \xA8 \x8C\xA0\xA3\xA8\xEF\n"
-			   "%s \x8A\xE1\xA8\xAD\xA0\x2\n"
-			   "\v%.3dCopyright (c) %d NWC, Inc.\n"
-			   "All Rights Reserved\x1";
+		return "\r\x1\x3"									  // "\r\x1\x3"
+			   "c\fd\x8C\xA5\xE7 \xA8 \x8C\xA0\xA3\xA8\xEF\n" // "c\fdРњРµС‡ Рё РњР°РіРёСЏ\n"
+			   "%s \x8A\xE1\xA8\xAD\xA0\x2\n"                 // "%s РљСЃРёРЅР°\x2\n"
+			   "\v%.3dCopyright (c) %d NWC, Inc.\n"           // "\v%.3dCopyright (c) %d NWC, Inc.\n"
+			   "All Rights Reserved\x1";                      // "All Rights Reserved\x1"
 	}
-	/*
-	"Облака", "Darkside", "World"
-	*/
+
 	const char **GAME_NAMES() {
 		delete[] _gameNames;
-		_gameNames = new const char *[3] { "\x8E\xA1\xAB\xA0\xAA\xA0", "Darkside", "World" };
+		_gameNames = new const char *[3] { "\x8E\xA1\xAB\xA0\xAA\xA0", "Darkside", "World" }; // "РћР±Р»Р°РєР°", "Darkside", "World"
 		return _gameNames;
 	}
 
-	/*
-	"\v012Отряд нуждается в отдыхе!"
-	*/
 	const char *THE_PARTY_NEEDS_REST() {
-		return "\v012\x8E\xE2\xE0\xEF\xA4 \xAD\xE3\xA6\xA4\xA0\xA5\xE2\xE1\xEF \xA2 \xAE\xE2\xA4\xEB\xE5\xA5!";
+		return "\v012\x8E\xE2\xE0\xEF\xA4 \xAD\xE3\xA6\xA4\xA0\xA5\xE2\xE1\xEF \xA2 \xAE\xE2\xA4\xEB\xE5\xA5!"; // "\v012РћС‚СЂСЏРґ РЅСѓР¶РґР°РµС‚СЃСЏ РІ РѕС‚РґС‹С…Рµ!"
 	}
 
 	const char *WHO_WILL() {
@@ -213,12 +163,8 @@ public:
 			   "c\v000\t000%s\n\n%s?\n\v055F1 - F%d";
 	}
 
-	/*
-	"\x3""cСколько\n\n"
-	*/
 	const char *HOW_MUCH() {
-		return "\x3"
-			   "c\x91\xAA\xAE\xAB\xEC\xAA\xAE\n\n";
+		return "\x3""c\x91\xAA\xAE\xAB\xEC\xAA\xAE\n\n"; // "\x3""cРЎРєРѕР»СЊРєРѕ\n\n"
 	}
 
 	const char *WHATS_THE_PASSWORD() {
@@ -238,107 +184,60 @@ public:
 			   "\f32Incorrect!\fd";
 	}
 
-	/*
-	"\v007%s не в состоянии что-либо сделать!"
-	*/
 	const char *IN_NO_CONDITION() {
-		return "\v007%s \xAD\xA5 \xA2 \xE1\xAE\xE1\xE2\xAE\xEF\xAD\xA8\xA8 \xE7\xE2\xAE-\xAB\xA8\xA1\xAE \xE1\xA4\xA5\xAB\xA0\xE2\xEC!";
+		return "\v007%s \xAD\xA5 \xA2 \xE1\xAE\xE1\xE2\xAE\xEF\xAD\xA8\xA8 \xE7\xE2\xAE-\xAB\xA8\xA1\xAE \xE1\xA4\xA5\xAB\xA0\xE2\xEC!"; // "\v007%s РЅРµ РІ СЃРѕСЃС‚РѕСЏРЅРёРё С‡С‚Рѕ-Р»РёР±Рѕ СЃРґРµР»Р°С‚СЊ!"
 	}
 
-	/*
-	"\x3""c\v010Здесь ничего нет."
-	*/
 	const char *NOTHING_HERE() {
-		return "\x3"
-			   "c\v010\x87\xA4\xA5\xE1\xEC \xAD\xA8\xE7\xA5\xA3\xAE \xAD\xA5\xE2.";
+		return "\x3""c\v010\x87\xA4\xA5\xE1\xEC \xAD\xA8\xE7\xA5\xA3\xAE \xAD\xA5\xE2."; // "\x3""c\v010Р—РґРµСЃСЊ РЅРёС‡РµРіРѕ РЅРµС‚."
 	}
 
-	/*
-	"Кто обыщет",
-	"Кто откроет",
-	"Кто выпьет",
-	"Кто будет копать",
-	"Кто потрогает",
-	"Кто прочтёт",
-	"Кого научить",
-	"Кто возьмёт",
-	"Кто ударит",
-	"Кто украдёт",
-	"Кто даст взятку",
-	"Кто заплатит",
-	"Кто присядет",
-	"Кто попробует",
-	"Кто его повернёт",
-	"Кто искупнётся",
-	"Кто его уничтожит",
-	"Кто выдернет",
-	"Кто спустится",
-	"Кто бросит монетку",
-	"pray",
-	"Кто станет членом",
-	"act",
-	"Кто хочет сыграть",
-	"Кто нажмёт",
-	"rub",
-	"pick",
-	"eat",
-	"sign",
-	"close",
-	"look",
-	"try"
-	*/
 	const char **WHO_ACTIONS() {
 		delete[] _whoActions;
 		_whoActions = new const char *[32] {
-			"\x8A\xE2\xAE \xAE\xA1\xEB\xE9\xA5\xE2",
-				"\x8A\xE2\xAE \xAE\xE2\xAA\xE0\xAE\xA5\xE2",
-				"\x8A\xE2\xAE \xA2\xEB\xAF\xEC\xA5\xE2",
-				"\x8A\xE2\xAE \xA1\xE3\xA4\xA5\xE2 \xAA\xAE\xAF\xA0\xE2\xEC",
-				"\x8A\xE2\xAE \xAF\xAE\xE2\xE0\xAE\xA3\xA0\xA5\xE2",
-				"\x8A\xE2\xAE \xAF\xE0\xAE\xE7\xE2\xF1\xE2",
-				"\x8A\xAE\xA3\xAE \xAD\xA0\xE3\xE7\xA8\xE2\xEC",
-				"\x8A\xE2\xAE \xA2\xAE\xA7\xEC\xAC\xF1\xE2",
-				"\x8A\xE2\xAE \xE3\xA4\xA0\xE0\xA8\xE2",
-				"\x8A\xE2\xAE \xE3\xAA\xE0\xA0\xA4\xF1\xE2",
-				"\x8A\xE2\xAE \xA4\xA0\xE1\xE2 \xA2\xA7\xEF\xE2\xAA\xE3",
-				"\x8A\xE2\xAE \xA7\xA0\xAF\xAB\xA0\xE2\xA8\xE2",
-				"\x8A\xE2\xAE \xAF\xE0\xA8\xE1\xEF\xA4\xA5\xE2",
-				"\x8A\xE2\xAE \xAF\xAE\xAF\xE0\xAE\xA1\xE3\xA5\xE2",
-				"\x8A\xE2\xAE \xA5\xA3\xAE \xAF\xAE\xA2\xA5\xE0\xAD\xF1\xE2",
-				"\x8A\xE2\xAE \xA8\xE1\xAA\xE3\xAF\xAD\xF1\xE2\xE1\xEF",
-				"\x8A\xE2\xAE \xA5\xA3\xAE \xE3\xAD\xA8\xE7\xE2\xAE\xA6\xA8\xE2",
-				"\x8A\xE2\xAE \xA2\xEB\xA4\xA5\xE0\xAD\xA5\xE2",
-				"\x8A\xE2\xAE \xE1\xAF\xE3\xE1\xE2\xA8\xE2\xE1\xEF",
-				"\x8A\xE2\xAE \xA1\xE0\xAE\xE1\xA8\xE2 \xAC\xAE\xAD\xA5\xE2\xAA\xE3",
-				"pray",
-				"\x8A\xE2\xAE \xE1\xE2\xA0\xAD\xA5\xE2 \xE7\xAB\xA5\xAD\xAE\xAC",
-				"act",
-				"\x8A\xE2\xAE \xE5\xAE\xE7\xA5\xE2 \xE1\xEB\xA3\xE0\xA0\xE2\xEC",
-				"\x8A\xE2\xAE \xAD\xA0\xA6\xAC\xF1\xE2",
-				"rub",
-				"pick",
-				"eat",
-				"sign",
-				"close",
-				"look",
-				"try"
+			"\x8A\xE2\xAE \xAE\xA1\xEB\xE9\xA5\xE2",                              // "РљС‚Рѕ РѕР±С‹С‰РµС‚",
+			"\x8A\xE2\xAE \xAE\xE2\xAA\xE0\xAE\xA5\xE2",						  // "РљС‚Рѕ РѕС‚РєСЂРѕРµС‚",
+			"\x8A\xE2\xAE \xA2\xEB\xAF\xEC\xA5\xE2",							  // "РљС‚Рѕ РІС‹РїСЊРµС‚",
+			"\x8A\xE2\xAE \xA1\xE3\xA4\xA5\xE2 \xAA\xAE\xAF\xA0\xE2\xEC",		  // "РљС‚Рѕ Р±СѓРґРµС‚ РєРѕРїР°С‚СЊ",
+			"\x8A\xE2\xAE \xAF\xAE\xE2\xE0\xAE\xA3\xA0\xA5\xE2",				  // "РљС‚Рѕ РїРѕС‚СЂРѕРіР°РµС‚",
+			"\x8A\xE2\xAE \xAF\xE0\xAE\xE7\xE2\xF1\xE2",						  // "РљС‚Рѕ РїСЂРѕС‡С‚С‘С‚",
+			"\x8A\xAE\xA3\xAE \xAD\xA0\xE3\xE7\xA8\xE2\xEC",					  // "РљРѕРіРѕ РЅР°СѓС‡РёС‚СЊ",
+			"\x8A\xE2\xAE \xA2\xAE\xA7\xEC\xAC\xF1\xE2",						  // "РљС‚Рѕ РІРѕР·СЊРјС‘С‚",
+			"\x8A\xE2\xAE \xE3\xA4\xA0\xE0\xA8\xE2",							  // "РљС‚Рѕ СѓРґР°СЂРёС‚",
+			"\x8A\xE2\xAE \xE3\xAA\xE0\xA0\xA4\xF1\xE2",						  // "РљС‚Рѕ СѓРєСЂР°РґС‘С‚",
+			"\x8A\xE2\xAE \xA4\xA0\xE1\xE2 \xA2\xA7\xEF\xE2\xAA\xE3",			  // "РљС‚Рѕ РґР°СЃС‚ РІР·СЏС‚РєСѓ",
+			"\x8A\xE2\xAE \xA7\xA0\xAF\xAB\xA0\xE2\xA8\xE2",					  // "РљС‚Рѕ Р·Р°РїР»Р°С‚РёС‚",
+			"\x8A\xE2\xAE \xAF\xE0\xA8\xE1\xEF\xA4\xA5\xE2",					  // "РљС‚Рѕ РїСЂРёСЃСЏРґРµС‚",
+			"\x8A\xE2\xAE \xAF\xAE\xAF\xE0\xAE\xA1\xE3\xA5\xE2",				  // "РљС‚Рѕ РїРѕРїСЂРѕР±СѓРµС‚",
+			"\x8A\xE2\xAE \xA5\xA3\xAE \xAF\xAE\xA2\xA5\xE0\xAD\xF1\xE2",		  // "РљС‚Рѕ РµРіРѕ РїРѕРІРµСЂРЅС‘С‚",
+			"\x8A\xE2\xAE \xA8\xE1\xAA\xE3\xAF\xAD\xF1\xE2\xE1\xEF",			  // "РљС‚Рѕ РёСЃРєСѓРїРЅС‘С‚СЃСЏ",
+			"\x8A\xE2\xAE \xA5\xA3\xAE \xE3\xAD\xA8\xE7\xE2\xAE\xA6\xA8\xE2",	  // "РљС‚Рѕ РµРіРѕ СѓРЅРёС‡С‚РѕР¶РёС‚",
+			"\x8A\xE2\xAE \xA2\xEB\xA4\xA5\xE0\xAD\xA5\xE2",					  // "РљС‚Рѕ РІС‹РґРµСЂРЅРµС‚",
+			"\x8A\xE2\xAE \xE1\xAF\xE3\xE1\xE2\xA8\xE2\xE1\xEF",				  // "РљС‚Рѕ СЃРїСѓСЃС‚РёС‚СЃСЏ",
+			"\x8A\xE2\xAE \xA1\xE0\xAE\xE1\xA8\xE2 \xAC\xAE\xAD\xA5\xE2\xAA\xE3", // "РљС‚Рѕ Р±СЂРѕСЃРёС‚ РјРѕРЅРµС‚РєСѓ",
+			"pray",																  // "pray",
+			"\x8A\xE2\xAE \xE1\xE2\xA0\xAD\xA5\xE2 \xE7\xAB\xA5\xAD\xAE\xAC",	  // "РљС‚Рѕ СЃС‚Р°РЅРµС‚ С‡Р»РµРЅРѕРј",
+			"act",																  // "act",
+			"\x8A\xE2\xAE \xE5\xAE\xE7\xA5\xE2 \xE1\xEB\xA3\xE0\xA0\xE2\xEC",	  // "РљС‚Рѕ С…РѕС‡РµС‚ СЃС‹РіСЂР°С‚СЊ",
+			"\x8A\xE2\xAE \xAD\xA0\xA6\xAC\xF1\xE2",							  // "РљС‚Рѕ РЅР°Р¶РјС‘С‚",
+			"rub",																  // "rub",
+			"pick",																  // "pick",
+			"eat",																  // "eat",
+			"sign",																  // "sign",
+			"close",															  // "close",
+			"look",																  // "look",
+			"try"																  // "try"
 		};
 		return _whoActions;
 	}
 
-	/*
-	"Открыть решётку",
-	"Открыть дверь",
-	"Раскрыть свиток",
-	"Выберите персонажа"
-	*/
 	const char **WHO_WILL_ACTIONS() {
 		delete[] _whoWillActions;
 		_whoWillActions = new const char *[4] {
-			"\x8E\xE2\xAA\xE0\xEB\xE2\xEC \xE0\xA5\xE8\xF1\xE2\xAA\xE3",
-				"\x8E\xE2\xAA\xE0\xEB\xE2\xEC \xA4\xA2\xA5\xE0\xEC",
-				"\x90\xA0\xE1\xAA\xE0\xEB\xE2\xEC \xE1\xA2\xA8\xE2\xAE\xAA",
-				"\x82\xEB\xA1\xA5\xE0\xA8\xE2\xA5 \xAF\xA5\xE0\xE1\xAE\xAD\xA0\xA6\xA0"
+			"\x8E\xE2\xAA\xE0\xEB\xE2\xEC \xE0\xA5\xE8\xF1\xE2\xAA\xE3",			// "РћС‚РєСЂС‹С‚СЊ СЂРµС€С‘С‚РєСѓ",
+			"\x8E\xE2\xAA\xE0\xEB\xE2\xEC \xA4\xA2\xA5\xE0\xEC",                    // "РћС‚РєСЂС‹С‚СЊ РґРІРµСЂСЊ",
+			"\x90\xA0\xE1\xAA\xE0\xEB\xE2\xEC \xE1\xA2\xA8\xE2\xAE\xAA",            // "Р Р°СЃРєСЂС‹С‚СЊ СЃРІРёС‚РѕРє",
+			"\x82\xEB\xA1\xA5\xE0\xA8\xE2\xA5 \xAF\xA5\xE0\xE1\xAE\xAD\xA0\xA6\xA0" // "Р’С‹Р±РµСЂРёС‚Рµ РїРµСЂСЃРѕРЅР°Р¶Р°"
 		};
 		return _whoWillActions;
 	}
@@ -349,229 +248,137 @@ public:
 		return _directionTextUpper;
 	}
 
-	/*
-	"Север",
-	"Восток",
-	"Юг",
-	"Запад"
-	*/
 	const char **DIRECTION_TEXT() {
 		delete[] _directionText;
 		_directionText = new const char *[4] {
-			"\x91\xA5\xA2\xA5\xE0",
-				"\x82\xAE\xE1\xE2\xAE\xAA",
-				"\x9E\xA3",
-				"\x87\xA0\xAF\xA0\xA4"
+			"\x91\xA5\xA2\xA5\xE0",		// "РЎРµРІРµСЂ",
+			"\x82\xAE\xE1\xE2\xAE\xAA", // "Р’РѕСЃС‚РѕРє",
+			"\x9E\xA3",                 // "Р®Рі",
+			"\x87\xA0\xAF\xA0\xA4"      // "Р—Р°РїР°Рґ"
 		};
 		return _directionText;
 	}
 
-	/*
-	"Человек",
-	"Эльф",
-	"Дворф",
-	"Гном",
-	"Полуорк"
-	*/
 	const char **RACE_NAMES() {
 		delete[] _raceNames;
 		_raceNames = new const char *[5] {
-			"\x97\xA5\xAB\xAE\xA2\xA5\xAA",
-				"\x9D\xAB\xEC\xE4",
-				"\x84\xA2\xAE\xE0\xE4",
-				"\x83\xAD\xAE\xAC",
-				"\x8F\xAE\xAB\xE3\xAE\xE0\xAA"
+			"\x97\xA5\xAB\xAE\xA2\xA5\xAA", // "Р§РµР»РѕРІРµРє",
+			"\x9D\xAB\xEC\xE4",				// "Р­Р»СЊС„",
+			"\x84\xA2\xAE\xE0\xE4",			// "Р”РІРѕСЂС„",
+			"\x83\xAD\xAE\xAC",				// "Р“РЅРѕРј",
+			"\x8F\xAE\xAB\xE3\xAE\xE0\xAA"	// "РџРѕР»СѓРѕСЂРє"
 		};
 		return _raceNames;
 	}
 
-	/*
-	"Хороший",
-	"Нейтрал",
-	"Злой(-ая)"
-	*/
 	const char **ALIGNMENT_NAMES() {
 		delete[] _alignmentNames;
 		_alignmentNames = new const char *[3] {
-			"\x95\xAE\xE0\xAE\xE8\xA8\xA9",
-				"\x8D\xA5\xA9\xE2\xE0\xA0\xAB",
-				"\x87\xAB\xAE\xA9(-\xA0\xEF)"
+			"\x95\xAE\xE0\xAE\xE8\xA8\xA9", // "РҐРѕСЂРѕС€РёР№",
+			"\x8D\xA5\xA9\xE2\xE0\xA0\xAB",	// "РќРµР№С‚СЂР°Р»",
+			"\x87\xAB\xAE\xA9(-\xA0\xEF)"	// "Р—Р»РѕР№(-Р°СЏ)"
 		};
 		return _alignmentNames;
 	}
 
-	/*
-	"Мужчина",
-	"Женщина"
-	*/
 	const char **SEX_NAMES() {
 		delete[] _sexNames;
 		_sexNames = new const char *[2] {
-			"\x8C\xE3\xA6\xE7\xA8\xAD\xA0",
-				"\x86\xA5\xAD\xE9\xA8\xAD\xA0"
+			"\x8C\xE3\xA6\xE7\xA8\xAD\xA0", // "РњСѓР¶С‡РёРЅР°",
+			"\x86\xA5\xAD\xE9\xA8\xAD\xA0"  // "Р–РµРЅС‰РёРЅР°"
 		};
 		return _sexNames;
 	}
 
-	/*
-	"Воровство\t100",
-	"Оружейник",
-	"Астролог",
-	"Атлет",
-	"Картограф",
-	"Крестоносец",
-	"Чувство направления",
-	"Языковед",
-	"Купец",
-	"Скалолаз",
-	"Штурман",
-	"Следопыт",
-	"Магистр молитвы",
-	"Ловкость пальцев",
-	"Пловец",
-	"Охотник",
-	"Восприятие",
-	"Чувство опасности"
-	*/
 	const char **SKILL_NAMES() {
 		delete[] _skillNames;
 		_skillNames = new const char *[18] {
-			"\x82\xAE\xE0\xAE\xA2\xE1\xE2\xA2\xAE\t100",
-				"\x8E\xE0\xE3\xA6\xA5\xA9\xAD\xA8\xAA",
-				"\x80\xE1\xE2\xE0\xAE\xAB\xAE\xA3",
-				"\x80\xE2\xAB\xA5\xE2",
-				"\x8A\xA0\xE0\xE2\xAE\xA3\xE0\xA0\xE4",
-				"\x8A\xE0\xA5\xE1\xE2\xAE\xAD\xAE\xE1\xA5\xE6",
-				"\x97\xE3\xA2\xE1\xE2\xA2\xAE \xAD\xA0\xAF\xE0\xA0\xA2\xAB\xA5\xAD\xA8\xEF",
-				"\x9F\xA7\xEB\xAA\xAE\xA2\xA5\xA4",
-				"\x8A\xE3\xAF\xA5\xE6",
-				"\x91\xAA\xA0\xAB\xAE\xAB\xA0\xA7",
-				"\x98\xE2\xE3\xE0\xAC\xA0\xAD",
-				"\x91\xAB\xA5\xA4\xAE\xAF\xEB\xE2",
-				"\x8C\xA0\xA3\xA8\xE1\xE2\xE0 \xAC\xAE\xAB\xA8\xE2\xA2\xEB",
-				"\x8B\xAE\xA2\xAA\xAE\xE1\xE2\xEC \xAF\xA0\xAB\xEC\xE6\xA5\xA2",
-				"\x8F\xAB\xAE\xA2\xA5\xE6",
-				"\x8E\xE5\xAE\xE2\xAD\xA8\xAA",
-				"\x82\xAE\xE1\xAF\xE0\xA8\xEF\xE2\xA8\xA5",
-				"\x97\xE3\xA2\xE1\xE2\xA2\xAE \xAE\xAF\xA0\xE1\xAD\xAE\xE1\xE2\xA8"
+			"\x82\xAE\xE0\xAE\xA2\xE1\xE2\xA2\xAE\t100",								// "Р’РѕСЂРѕРІСЃС‚РІРѕ\t100",
+			"\x8E\xE0\xE3\xA6\xA5\xA9\xAD\xA8\xAA",                                      // "РћСЂСѓР¶РµР№РЅРёРє",
+			"\x80\xE1\xE2\xE0\xAE\xAB\xAE\xA3",                                          // "РђСЃС‚СЂРѕР»РѕРі",
+			"\x80\xE2\xAB\xA5\xE2",                                                      // "РђС‚Р»РµС‚",
+			"\x8A\xA0\xE0\xE2\xAE\xA3\xE0\xA0\xE4",                                      // "РљР°СЂС‚РѕРіСЂР°С„",
+			"\x8A\xE0\xA5\xE1\xE2\xAE\xAD\xAE\xE1\xA5\xE6",                              // "РљСЂРµСЃС‚РѕРЅРѕСЃРµС†",
+			"\x97\xE3\xA2\xE1\xE2\xA2\xAE \xAD\xA0\xAF\xE0\xA0\xA2\xAB\xA5\xAD\xA8\xEF", // "Р§СѓРІСЃС‚РІРѕ РЅР°РїСЂР°РІР»РµРЅРёСЏ",
+			"\x9F\xA7\xEB\xAA\xAE\xA2\xA5\xA4",                                          // "РЇР·С‹РєРѕРІРµРґ",
+			"\x8A\xE3\xAF\xA5\xE6",                                                      // "РљСѓРїРµС†",
+			"\x91\xAA\xA0\xAB\xAE\xAB\xA0\xA7",                                          // "РЎРєР°Р»РѕР»Р°Р·",
+			"\x98\xE2\xE3\xE0\xAC\xA0\xAD",                                              // "РЁС‚СѓСЂРјР°РЅ",
+			"\x91\xAB\xA5\xA4\xAE\xAF\xEB\xE2",                                          // "РЎР»РµРґРѕРїС‹С‚",
+			"\x8C\xA0\xA3\xA8\xE1\xE2\xE0 \xAC\xAE\xAB\xA8\xE2\xA2\xEB",                 // "РњР°РіРёСЃС‚СЂ РјРѕР»РёС‚РІС‹",
+			"\x8B\xAE\xA2\xAA\xAE\xE1\xE2\xEC \xAF\xA0\xAB\xEC\xE6\xA5\xA2",             // "Р›РѕРІРєРѕСЃС‚СЊ РїР°Р»СЊС†РµРІ",
+			"\x8F\xAB\xAE\xA2\xA5\xE6",                                                  // "РџР»РѕРІРµС†",
+			"\x8E\xE5\xAE\xE2\xAD\xA8\xAA",                                              // "РћС…РѕС‚РЅРёРє",
+			"\x82\xAE\xE1\xAF\xE0\xA8\xEF\xE2\xA8\xA5",                                  // "Р’РѕСЃРїСЂРёСЏС‚РёРµ",
+			"\x97\xE3\xA2\xE1\xE2\xA2\xAE \xAE\xAF\xA0\xE1\xAD\xAE\xE1\xE2\xA8"          // "Р§СѓРІСЃС‚РІРѕ РѕРїР°СЃРЅРѕСЃС‚Рё"
 		};
 		return _skillNames;
 	}
 
-	/*
-	"Рыцарь",
-	"Паладин",
-	"Лучник",
-	"Клирик",
-	"Маг",
-	"Вор",
-	"Ниндзя",
-	"Варвар",
-	"Друид",
-	"Следопыт",
-	nullptr
-	*/
 	const char **CLASS_NAMES() {
 		delete[] _classNames;
 		_classNames = new const char *[11] {
-			"\x90\xEB\xE6\xA0\xE0\xEC",
-				"\x8F\xA0\xAB\xA0\xA4\xA8\xAD",
-				"\x8B\xE3\xE7\xAD\xA8\xAA",
-				"\x8A\xAB\xA8\xE0\xA8\xAA",
-				"\x8C\xA0\xA3",
-				"\x82\xAE\xE0",
-				"\x8D\xA8\xAD\xA4\xA7\xEF",
-				"\x82\xA0\xE0\xA2\xA0\xE0",
-				"\x84\xE0\xE3\xA8\xA4",
-				"\x91\xAB\xA5\xA4\xAE\xAF\xEB\xE2",
-				nullptr
+			"\x90\xEB\xE6\xA0\xE0\xEC",			// "Р С‹С†Р°СЂСЊ",
+			"\x8F\xA0\xAB\xA0\xA4\xA8\xAD",     // "РџР°Р»Р°РґРёРЅ",
+			"\x8B\xE3\xE7\xAD\xA8\xAA",         // "Р›СѓС‡РЅРёРє",
+			"\x8A\xAB\xA8\xE0\xA8\xAA",         // "РљР»РёСЂРёРє",
+			"\x8C\xA0\xA3",                     // "РњР°Рі",
+			"\x82\xAE\xE0",                     // "Р’РѕСЂ",
+			"\x8D\xA8\xAD\xA4\xA7\xEF",         // "РќРёРЅРґР·СЏ",
+			"\x82\xA0\xE0\xA2\xA0\xE0",         // "Р’Р°СЂРІР°СЂ",
+			"\x84\xE0\xE3\xA8\xA4",             // "Р”СЂСѓРёРґ",
+			"\x91\xAB\xA5\xA4\xAE\xAF\xEB\xE2", // "РЎР»РµРґРѕРїС‹С‚",
+			nullptr                             // nullptr
 		};
 		return _classNames;
 	}
 
-	/*
-	"Проклятие",
-	"Heart Broken",
-	"Слабость",
-	"Отравление",
-	"Болезнь",
-	"Безумие",
-	"Влюблён(-а)",
-	"Навеселе",
-	"Сон",
-	"В унынии",
-	"В смятении",
-	"Паралич",
-	"Б.сознания",
-	"Мертв",
-	"Камень",
-	"Уничтожен",
-	"Хорошее"
-	*/
 	const char **CONDITION_NAMES() {
 		delete[] _conditionNames;
 		_conditionNames = new const char *[17] {
-			"\x8F\xE0\xAE\xAA\xAB\xEF\xE2\xA8\xA5",
-				"Heart Broken",
-				"\x91\xAB\xA0\xA1\xAE\xE1\xE2\xEC",
-				"\x8E\xE2\xE0\xA0\xA2\xAB\xA5\xAD\xA8\xA5",
-				"\x81\xAE\xAB\xA5\xA7\xAD\xEC",
-				"\x81\xA5\xA7\xE3\xAC\xA8\xA5",
-				"\x82\xAB\xEE\xA1\xAB\xF1\xAD(-\xA0)",
-				"\x8D\xA0\xA2\xA5\xE1\xA5\xAB\xA5",
-				"\x91\xAE\xAD",
-				"\x82 \xE3\xAD\xEB\xAD\xA8\xA8",
-				"\x82 \xE1\xAC\xEF\xE2\xA5\xAD\xA8\xA8",
-				"\x8F\xA0\xE0\xA0\xAB\xA8\xE7",
-				"\x81.\xE1\xAE\xA7\xAD\xA0\xAD\xA8\xEF",
-				"\x8C\xA5\xE0\xE2\xA2",
-				"\x8A\xA0\xAC\xA5\xAD\xEC",
-				"\x93\xAD\xA8\xE7\xE2\xAE\xA6\xA5\xAD",
-				"\x95\xAE\xE0\xAE\xE8\xA5\xA5"
+			"\x8F\xE0\xAE\xAA\xAB\xEF\xE2\xA8\xA5",		// "РџСЂРѕРєР»СЏС‚РёРµ",
+			"Heart Broken",                             // "Heart Broken",
+			"\x91\xAB\xA0\xA1\xAE\xE1\xE2\xEC",         // "РЎР»Р°Р±РѕСЃС‚СЊ",
+			"\x8E\xE2\xE0\xA0\xA2\xAB\xA5\xAD\xA8\xA5", // "РћС‚СЂР°РІР»РµРЅРёРµ",
+			"\x81\xAE\xAB\xA5\xA7\xAD\xEC",             // "Р‘РѕР»РµР·РЅСЊ",
+			"\x81\xA5\xA7\xE3\xAC\xA8\xA5",             // "Р‘РµР·СѓРјРёРµ",
+			"\x82\xAB\xEE\xA1\xAB\xF1\xAD(-\xA0)",      // "Р’Р»СЋР±Р»С‘РЅ(-Р°)",
+			"\x8D\xA0\xA2\xA5\xE1\xA5\xAB\xA5",         // "РќР°РІРµСЃРµР»Рµ",
+			"\x91\xAE\xAD",                             // "РЎРѕРЅ",
+			"\x82 \xE3\xAD\xEB\xAD\xA8\xA8",            // "Р’ СѓРЅС‹РЅРёРё",
+			"\x82 \xE1\xAC\xEF\xE2\xA5\xAD\xA8\xA8",    // "Р’ СЃРјСЏС‚РµРЅРёРё",
+			"\x8F\xA0\xE0\xA0\xAB\xA8\xE7",             // "РџР°СЂР°Р»РёС‡",
+			"\x81.\xE1\xAE\xA7\xAD\xA0\xAD\xA8\xEF",    // "Р‘.СЃРѕР·РЅР°РЅРёСЏ",
+			"\x8C\xA5\xE0\xE2\xA2",                     // "РњРµСЂС‚РІ",
+			"\x8A\xA0\xAC\xA5\xAD\xEC",                 // "РљР°РјРµРЅСЊ",
+			"\x93\xAD\xA8\xE7\xE2\xAE\xA6\xA5\xAD",     // "РЈРЅРёС‡С‚РѕР¶РµРЅ",
+			"\x95\xAE\xE0\xAE\xE8\xA5\xA5"              // "РҐРѕСЂРѕС€РµРµ"
 		};
 		return _conditionNames;
 	}
 
-	/*
-	"Хорошее"
-	*/
 	const char *GOOD() {
-		return "\x95\xAE\xE0\xAE\xE8\xA5\xA5";
+		return "\x95\xAE\xE0\xAE\xE8\xA5\xA5"; // "РҐРѕСЂРѕС€РµРµ"
 	}
 
-	/*
-	"\n\t014Благословение\t095%+d"
-	*/
 	const char *BLESSED() {
-		return "\n\t014\x81\xAB\xA0\xA3\xAE\xE1\xAB\xAE\xA2\xA5\xAD\xA8\xA5\t095%+d";
+		return "\n\t014\x81\xAB\xA0\xA3\xAE\xE1\xAB\xAE\xA2\xA5\xAD\xA8\xA5\t095%+d"; // "\n\t014Р‘Р»Р°РіРѕСЃР»РѕРІРµРЅРёРµ\t095%+d"
 	}
 
-	/*
-	"\n\t014Силовой щит\t095%+d";
-	*/
 	const char *POWER_SHIELD() {
-		return "\n\t014\x91\xA8\xAB\xAE\xA2\xAE\xA9 \xE9\xA8\xE2\t095%+d";
+		return "\n\t014\x91\xA8\xAB\xAE\xA2\xAE\xA9 \xE9\xA8\xE2\t095%+d"; // "\n\t014РЎРёР»РѕРІРѕР№ С‰РёС‚\t095%+d";
 	}
 
-	/*
-	"\n\t014Святой дар\t095%+d"
-	*/
 	const char *HOLY_BONUS() {
-		return "\n\t014\x91\xA2\xEF\xE2\xAE\xA9 \xA4\xA0\xE0\t095%+d";
+		return "\n\t014\x91\xA2\xEF\xE2\xAE\xA9 \xA4\xA0\xE0\t095%+d"; // "\n\t014РЎРІСЏС‚РѕР№ РґР°СЂ\t095%+d"
 	}
 
-	/*
-	"\n\t014Мужество\t095%+d"
-	*/
 	const char *HEROISM() {
-		return "\n\t014\x8C\xE3\xA6\xA5\xE1\xE2\xA2\xAE\t095%+d";
+		return "\n\t014\x8C\xE3\xA6\xA5\xE1\xE2\xA2\xAE\t095%+d"; // "\n\t014РњСѓР¶РµСЃС‚РІРѕ\t095%+d"
 	}
 
-	/*
-	"\f15В отряде\fd"
-	*/
 	const char *IN_PARTY() {
-		return "\f15\x82 \xAE\xE2\xE0\xEF\xA4\xA5\fd";
+		return "\f15\x82 \xAE\xE2\xE0\xEF\xA4\xA5\fd"; // "\f15Р’ РѕС‚СЂСЏРґРµ\fd"
 	}
 
 	const char *PARTY_DETAILS() {
@@ -643,443 +450,211 @@ public:
 			   "136%s";
 	}
 
-	/*
-	"%s\x2\x3""c\v106\t013Вверх\t048Вниз\t083\f37У\fdдал\t118\f37В\fdыгн"
-	"\t153\f37С\fdозд\t188В\f37ы\fdход\x1";
-	*/
 	const char *PARTY_DIALOG_TEXT() {
-		return "%s\x2\x3"
-			   "c\v106\t013\x82\xA2\xA5\xE0\xE5\t048\x82\xAD\xA8\xA7\t083\f37\x93\fd\xA4\xA0\xAB\t118\f37\x82\fd\xEB\xA3\xAD"
-			   "\t153\f37\x91\fd\xAE\xA7\xA4\t188\x82\f37\xEB\fd\xE5\xAE\xA4\x1";
+		return "%s\x2\x3""c\v106\t013\x82\xA2\xA5\xE0\xE5\t048\x82\xAD\xA8\xA7\t083\f37\x93\fd\xA4\xA0\xAB\t118\f37\x82\fd\xEB\xA3\xAD" // "%s\x2\x3""c\v106\t013Р’РІРµСЂС…\t048Р’РЅРёР·\t083\f37РЈ\fdРґР°Р»\t118\f37Р’\fdС‹РіРЅ"
+			   "\t153\f37\x91\fd\xAE\xA7\xA4\t188\x82\f37\xEB\fd\xE5\xAE\xA4\x1";                                                       // "\t153\f37РЎ\fdРѕР·Рґ\t188Р’\f37С‹\fdС…РѕРґ\x1";
 	}
 
-	/*
-	"Вам не с кем путешествовать"
-	*/
 	const char *NO_ONE_TO_ADVENTURE_WITH() {
-		return "\x82\xA0\xAC \xAD\xA5 \xE1 \xAA\xA5\xAC \xAF\xE3\xE2\xA5\xE8\xA5\xE1\xE2\xA2\xAE\xA2\xA0\xE2\xEC";
+		return "\x82\xA0\xAC \xAD\xA5 \xE1 \xAA\xA5\xAC \xAF\xE3\xE2\xA5\xE8\xA5\xE1\xE2\xA2\xAE\xA2\xA0\xE2\xEC"; // "Р’Р°Рј РЅРµ СЃ РєРµРј РїСѓС‚РµС€РµСЃС‚РІРѕРІР°С‚СЊ"
 	}
 
-	/*
-	"Ваш список полон!"
-	*/
 	const char *YOUR_ROSTER_IS_FULL() {
-		return "\x82\xA0\xE8 \xE1\xAF\xA8\xE1\xAE\xAA \xAF\xAE\xAB\xAE\xAD!";
+		return "\x82\xA0\xE8 \xE1\xAF\xA8\xE1\xAE\xAA \xAF\xAE\xAB\xAE\xAD!"; // "Р’Р°С€ СЃРїРёСЃРѕРє РїРѕР»РѕРЅ!"
 	}
 
-	/*
-	"\fd\x3""c\t000\v002Подождите..."
-	*/
 	const char *PLEASE_WAIT() {
-		return "\fd\x3"
-			   "c\t000\v002\x8F\xAE\xA4\xAE\xA6\xA4\xA8\xE2\xA5...";
+		return "\fd\x3""c\t000\v002\x8F\xAE\xA4\xAE\xA6\xA4\xA8\xE2\xA5..."; // "\fd\x3""c\t000\v002РџРѕРґРѕР¶РґРёС‚Рµ..."
 	}
 
-	/*
-	"\x3""c\t000\v002Упс..."
-	*/
 	const char *OOPS() {
-		return "\x3"
-			   "c\t000\v002\x93\xAF\xE1...";
+		return "\x3""c\t000\v002\x93\xAF\xE1..."; // "\x3""c\t000\v002РЈРїСЃ..."
 	}
 
-	/*
-	"\r\x2\x3""c\v122\t013"
-	"\f37В\fdкл\t040\f37С\fdн\t067ESC"
-	"\x1\t000\v000Банк Ксина\v015\n"
-	"Банк\x3""l\n"
-	"Зол\x3""r\t000%s\x3""l\n"
-	"Алмз\x3""r\t000%s\x3""c\n"
-	"\n"
-	"Отряд\x3""l\n"
-	"Зол\x3""r\t000%s\x3""l\n"
-	"Алмз\x3""r\t000%s";
-	*/
 	const char *BANK_TEXT() {
-		return "\r\x2\x3"
-			   "c\v122\t013"
-			   "\f37\x82\fd\xAA\xAB\t040\f37\x91\fd\xAD\t067ESC"
-			   "\x1\t000\v000\x81\xA0\xAD\xAA \x8A\xE1\xA8\xAD\xA0\v015\n"
-			   "\x81\xA0\xAD\xAA\x3"
-			   "l\n"
-			   "\x87\xAE\xAB\x3"
-			   "r\t000%s\x3"
-			   "l\n"
-			   "\x80\xAB\xAC\xA7\x3"
-			   "r\t000%s\x3"
-			   "c\n"
-			   "\n"
-			   "\x8E\xE2\xE0\xEF\xA4\x3"
-			   "l\n"
-			   "\x87\xAE\xAB\x3"
-			   "r\t000%s\x3"
-			   "l\n"
-			   "\x80\xAB\xAC\xA7\x3"
-			   "r\t000%s";
+		return "\r\x2\x3""c\v122\t013"									   // "\r\x2\x3""c\v122\t013"
+			   "\f37\x82\fd\xAA\xAB\t040\f37\x91\fd\xAD\t067ESC"		   // "\f37Р’\fdРєР»\t040\f37РЎ\fdРЅ\t067ESC"
+			   "\x1\t000\v000\x81\xA0\xAD\xAA \x8A\xE1\xA8\xAD\xA0\v015\n" // "\x1\t000\v000Р‘Р°РЅРє РљСЃРёРЅР°\v015\n"
+			   "\x81\xA0\xAD\xAA\x3""l\n"								   // "Р‘Р°РЅРє\x3""l\n"
+			   "\x87\xAE\xAB\x3""r\t000%s\x3""l\n"						   // "Р—РѕР»\x3""r\t000%s\x3""l\n"
+			   "\x80\xAB\xAC\xA7\x3""r\t000%s\x3""c\n"					   // "РђР»РјР·\x3""r\t000%s\x3""c\n"
+			   "\n"														   // "\n"
+			   "\x8E\xE2\xE0\xEF\xA4\x3""l\n"							   // "РћС‚СЂСЏРґ\x3""l\n"
+			   "\x87\xAE\xAB\x3""r\t000%s\x3""l\n"						   // "Р—РѕР»\x3""r\t000%s\x3""l\n"
+			   "\x80\xAB\xAC\xA7\x3""r\t000%s";							   // "РђР»РјР·\x3""r\t000%s";
 	}
 
-	/*
-	"\x1\r\x3""c\v000\t000"
-	"Лавка\t039\v027%s\x3""l\v046\n"
-	"\t011\f37С\fdмотреть\n"
-	"\t000\v090Зол\x3""r\t000%s"
-	"\x2\x3""c\v122\t040ESC\x1";
-	*/
 	const char *BLACKSMITH_TEXT() {
-		return "\x1\r\x3"
-			   "c\v000\t000"
-			   "\x8B\xA0\xA2\xAA\xA0\t039\v027%s\x3"
-			   "l\v046\n"
-			   "\t011\f37\x91\fd\xAC\xAE\xE2\xE0\xA5\xE2\xEC\n"
-			   "\t000\v090\x87\xAE\xAB\x3"
-			   "r\t000%s"
-			   "\x2\x3"
-			   "c\v122\t040ESC\x1";
+		return "\x1\r\x3""c\v000\t000"							// "\x1\r\x3""c\v000\t000"
+			   "\x8B\xA0\xA2\xAA\xA0\t039\v027%s\x3""l\v046\n"  // "Р›Р°РІРєР°\t039\v027%s\x3""l\v046\n"
+			   "\t011\f37\x91\fd\xAC\xAE\xE2\xE0\xA5\xE2\xEC\n" // "\t011\f37РЎ\fdРјРѕС‚СЂРµС‚СЊ\n"
+			   "\t000\v090\x87\xAE\xAB\x3""r\t000%s"            // "\t000\v090Р—РѕР»\x3""r\t000%s"
+			   "\x2\x3""c\v122\t040ESC\x1";                     // "\x2\x3""c\v122\t040ESC\x1";
 	}
 
-	/*
-	"\nВы должны быть членом гильдии, чтобы покупать заклинания."
-	*/
 	const char *GUILD_NOT_MEMBER_TEXT() {
-		return "\n\x82\xEB \xA4\xAE\xAB\xA6\xAD\xEB \xA1\xEB\xE2\xEC \xE7\xAB\xA5\xAD\xAE\xAC \xA3\xA8\xAB\xEC\xA4\xA8\xA8, \xE7\xE2\xAE\xA1\xEB \xAF\xAE\xAA\xE3\xAF\xA0\xE2\xEC \xA7\xA0\xAA\xAB\xA8\xAD\xA0\xAD\xA8\xEF.";
+		return "\n\x82\xEB \xA4\xAE\xAB\xA6\xAD\xEB \xA1\xEB\xE2\xEC \xE7\xAB\xA5\xAD\xAE\xAC \xA3\xA8\xAB\xEC\xA4\xA8\xA8, \xE7\xE2\xAE\xA1\xEB \xAF\xAE\xAA\xE3\xAF\xA0\xE2\xEC \xA7\xA0\xAA\xAB\xA8\xAD\xA0\xAD\xA8\xEF."; // "\nР’С‹ РґРѕР»Р¶РЅС‹ Р±С‹С‚СЊ С‡Р»РµРЅРѕРј РіРёР»СЊРґРёРё, С‡С‚РѕР±С‹ РїРѕРєСѓРїР°С‚СЊ Р·Р°РєР»РёРЅР°РЅРёСЏ."
 	}
 
-	/*
-	"\x3""c\v027\t039%s"
-	"\x3""l\v046\n"
-	"\t012\f37К\fdупить\n"
-	"\t012\f37О\fdписания";
-	*/
 	const char *GUILD_TEXT() {
-		return "\x3"
-			   "c\v027\t039%s"
-			   "\x3"
-			   "l\v046\n"
-			   "\t012\f37\x8A\fd\xE3\xAF\xA8\xE2\xEC\n"
-			   "\t012\f37\x8E\fd\xAF\xA8\xE1\xA0\xAD\xA8\xEF";
+		return "\x3""c\v027\t039%s"							   // "\x3""c\v027\t039%s"
+			   "\x3""l\v046\n"                                 // "\x3""l\v046\n"
+			   "\t012\f37\x8A\fd\xE3\xAF\xA8\xE2\xEC\n"        // "\t012\f37Рљ\fdСѓРїРёС‚СЊ\n"
+			   "\t012\f37\x8E\fd\xAF\xA8\xE1\xA0\xAD\xA8\xEF"; // "\t012\f37Рћ\fdРїРёСЃР°РЅРёСЏ";
 	}
 
-	/*
-	"\r\x3""c\v000\t000Таверна\t039"
-	"\v027%s%s\x3""l\t000"
-	"\v090Зол\x3""r\t000%s\x2\x3""c\v122"
-	"\t021\f37О\fdтдых\t060ESC\x1";
-	*/
 	const char *TAVERN_TEXT() {
-		return "\r\x3"
-			   "c\v000\t000\x92\xA0\xA2\xA5\xE0\xAD\xA0\t039"
-			   "\v027%s%s\x3"
-			   "l\t000"
-			   "\v090\x87\xAE\xAB\x3"
-			   "r\t000%s\x2\x3"
-			   "c\v122"
-			   "\t021\f37\x8E\fd\xE2\xA4\xEB\xE5\t060ESC\x1";
+		return "\r\x3""c\v000\t000\x92\xA0\xA2\xA5\xE0\xAD\xA0\t039" // "\r\x3""c\v000\t000РўР°РІРµСЂРЅР°\t039"
+			   "\v027%s%s\x3""l\t000"                                // "\v027%s%s\x3""l\t000"
+			   "\v090\x87\xAE\xAB\x3""r\t000%s\x2\x3""c\v122"        // "\v090Р—РѕР»\x3""r\t000%s\x2\x3""c\v122"
+			   "\t021\f37\x8E\fd\xE2\xA4\xEB\xE5\t060ESC\x1";        // "\t021\f37Рћ\fdС‚РґС‹С…\t060ESC\x1";
 	}
 
-	/*
-	"\x3""l\t017\v046\f37В\fdыпить\n"
-	"\t017\f37Е\fdда\n"
-	"\t017\f37Ч\fdаевые\n"
-	"\t017\f37С\fdлухи";
-	*/
 	const char *FOOD_AND_DRINK() {
-		return "\x3"
-			   "l\t017\v046\f37\x82\fd\xEB\xAF\xA8\xE2\xEC\n"
-			   "\t017\f37\x85\fd\xA4\xA0\n"
-			   "\t017\f37\x97\fd\xA0\xA5\xA2\xEB\xA5\n"
-			   "\t017\f37\x91\fd\xAB\xE3\xE5\xA8";
+		return "\x3""l\t017\v046\f37\x82\fd\xEB\xAF\xA8\xE2\xEC\n" // "\x3""l\t017\v046\f37Р’\fdС‹РїРёС‚СЊ\n"
+			   "\t017\f37\x85\fd\xA4\xA0\n"                        // "\t017\f37Р•\fdРґР°\n"
+			   "\t017\f37\x97\fd\xA0\xA5\xA2\xEB\xA5\n"            // "\t017\f37Р§\fdР°РµРІС‹Рµ\n"
+			   "\t017\f37\x91\fd\xAB\xE3\xE5\xA8";                 // "\t017\f37РЎ\fdР»СѓС…Рё";
 	}
 
-	/*
-	"\n"
-	"\n"
-	"Недурно\n"
-	"\n"
-	"Нажмите клавишу!";
-	*/
 	const char *GOOD_STUFF() {
-		return "\n"
-			   "\n"
-			   "\x8D\xA5\xA4\xE3\xE0\xAD\xAE\n"
-			   "\n"
-			   "\x8D\xA0\xA6\xAC\xA8\xE2\xA5 \xAA\xAB\xA0\xA2\xA8\xE8\xE3!";
+		return "\n"															 // "\n"
+			   "\n"                                                          // "\n"
+			   "\x8D\xA5\xA4\xE3\xE0\xAD\xAE\n"                              // "РќРµРґСѓСЂРЅРѕ\n"
+			   "\n"                                                          // "\n"
+			   "\x8D\xA0\xA6\xAC\xA8\xE2\xA5 \xAA\xAB\xA0\xA2\xA8\xE8\xE3!"; // "РќР°Р¶РјРёС‚Рµ РєР»Р°РІРёС€Сѓ!";
 	}
 
-	/*
-	"\nСперва выпейте\n\nНажмите клавишу!"
-	*/
 	const char *HAVE_A_DRINK() {
-		return "\n\x91\xAF\xA5\xE0\xA2\xA0 \xA2\xEB\xAF\xA5\xA9\xE2\xA5\n\n\x8D\xA0\xA6\xAC\xA8\xE2\xA5 \xAA\xAB\xA0\xA2\xA8\xE8\xE3!";
+		return "\n\x91\xAF\xA5\xE0\xA2\xA0 \xA2\xEB\xAF\xA5\xA9\xE2\xA5\n\n\x8D\xA0\xA6\xAC\xA8\xE2\xA5 \xAA\xAB\xA0\xA2\xA8\xE8\xE3!"; // "\nРЎРїРµСЂРІР° РІС‹РїРµР№С‚Рµ\n\nРќР°Р¶РјРёС‚Рµ РєР»Р°РІРёС€Сѓ!"
 	}
 
-	/*
-	"\n\nВы пьяны\n\nНажмите клавишу!"
-	*/
 	const char *YOURE_DRUNK() {
-		return "\n\n\x82\xEB \xAF\xEC\xEF\xAD\xEB\n\n\x8D\xA0\xA6\xAC\xA8\xE2\xA5 \xAA\xAB\xA0\xA2\xA8\xE8\xE3!";
+		return "\n\n\x82\xEB \xAF\xEC\xEF\xAD\xEB\n\n\x8D\xA0\xA6\xAC\xA8\xE2\xA5 \xAA\xAB\xA0\xA2\xA8\xE8\xE3!"; // "\n\nР’С‹ РїСЊСЏРЅС‹\n\nРќР°Р¶РјРёС‚Рµ РєР»Р°РІРёС€Сѓ!"
 	}
 
-	/*
-	"\r\x3""c\v000\t000Храм"
-	"\t039\v027%s\x3""l\t000\v046"
-	"\f37Л\fdечить\x3""r\t000%lu\x3""l\n"
-	"\f37Д\fdар\x3""r\t000%lu\x3""l\n"
-	"\f37С\fdнПрокл\x3""r\t000%s"
-	"\x3""l\t000\v090Зол\x3""r\t000%s"
-	"\x2\x3""c\v122\t040ESC\x1";
-	*/
 	const char *TEMPLE_TEXT() {
-		return "\r\x3"
-			   "c\v000\t000\x95\xE0\xA0\xAC"
-			   "\t039\v027%s\x3"
-			   "l\t000\v046"
-			   "\f37\x8B\fd\xA5\xE7\xA8\xE2\xEC\x3"
-			   "r\t000%lu\x3"
-			   "l\n"
-			   "\f37\x84\fd\xA0\xE0\x3"
-			   "r\t000%lu\x3"
-			   "l\n"
-			   "\f37\x91\fd\xAD\x8F\xE0\xAE\xAA\xAB\x3"
-			   "r\t000%s"
-			   "\x3"
-			   "l\t000\v090\x87\xAE\xAB\x3"
-			   "r\t000%s"
-			   "\x2\x3"
-			   "c\v122\t040ESC\x1";
+		return "\r\x3""c\v000\t000\x95\xE0\xA0\xAC"					   // "\r\x3""c\v000\t000РҐСЂР°Рј"
+			   "\t039\v027%s\x3""l\t000\v046"                          // "\t039\v027%s\x3""l\t000\v046"
+			   "\f37\x8B\fd\xA5\xE7\xA8\xE2\xEC\x3""r\t000%lu\x3""l\n" // "\f37Р›\fdРµС‡РёС‚СЊ\x3""r\t000%lu\x3""l\n"
+			   "\f37\x84\fd\xA0\xE0\x3""r\t000%lu\x3""l\n"             // "\f37Р”\fdР°СЂ\x3""r\t000%lu\x3""l\n"
+			   "\f37\x91\fd\xAD\x8F\xE0\xAE\xAA\xAB\x3""r\t000%s"      // "\f37РЎ\fdРЅРџСЂРѕРєР»\x3""r\t000%s"
+			   "\x3""l\t000\v090\x87\xAE\xAB\x3""r\t000%s"             // "\x3""l\t000\v090Р—РѕР»\x3""r\t000%s"
+			   "\x2\x3""c\v122\t040ESC\x1";                            // "\x2\x3""c\v122\t040ESC\x1";
 	}
 
-	/*
-	"%s\nНужно %lu очков опыта для уровня %u."
-	*/
 	const char *EXPERIENCE_FOR_LEVEL() {
-		return "%s\n\x8D\xE3\xA6\xAD\xAE %lu \xAE\xE7\xAA\xAE\xA2 \xAE\xAF\xEB\xE2\xA0 \xA4\xAB\xEF \xE3\xE0\xAE\xA2\xAD\xEF %u.";
+		return "%s\n\x8D\xE3\xA6\xAD\xAE %lu \xAE\xE7\xAA\xAE\xA2 \xAE\xAF\xEB\xE2\xA0 \xA4\xAB\xEF \xE3\xE0\xAE\xA2\xAD\xEF %u."; // "%s\nРќСѓР¶РЅРѕ %lu РѕС‡РєРѕРІ РѕРїС‹С‚Р° РґР»СЏ СѓСЂРѕРІРЅСЏ %u."
 	}
 
-	/*
-	"%s\nВы уже знаете всё, чему мы можем вас научить!"
-	*/
 	const char *TRAINING_LEARNED_ALL() {
-		return "%s\n\x82\xEB \xE3\xA6\xA5 \xA7\xAD\xA0\xA5\xE2\xA5 \xA2\xE1\xF1, \xE7\xA5\xAC\xE3 \xAC\xEB \xAC\xAE\xA6\xA5\xAC \xA2\xA0\xE1 \xAD\xA0\xE3\xE7\xA8\xE2\xEC!";
+		return "%s\n\x82\xEB \xE3\xA6\xA5 \xA7\xAD\xA0\xA5\xE2\xA5 \xA2\xE1\xF1, \xE7\xA5\xAC\xE3 \xAC\xEB \xAC\xAE\xA6\xA5\xAC \xA2\xA0\xE1 \xAD\xA0\xE3\xE7\xA8\xE2\xEC!"; // "%s\nР’С‹ СѓР¶Рµ Р·РЅР°РµС‚Рµ РІСЃС‘, С‡РµРјСѓ РјС‹ РјРѕР¶РµРј РІР°СЃ РЅР°СѓС‡РёС‚СЊ!"
 	}
 
-	/*
-	"%s может обучаться до уровня %d.\x3""l\n"
-	"\v081Цена\x3""r\t000%lu";
-	*/
 	const char *ELIGIBLE_FOR_LEVEL() {
-		return "%s \xAC\xAE\xA6\xA5\xE2 \xAE\xA1\xE3\xE7\xA0\xE2\xEC\xE1\xEF \xA4\xAE \xE3\xE0\xAE\xA2\xAD\xEF %d.\x3"
-			   "l\n"
-			   "\v081\x96\xA5\xAD\xA0\x3"
-			   "r\t000%lu";
+		return "%s \xAC\xAE\xA6\xA5\xE2 \xAE\xA1\xE3\xE7\xA0\xE2\xEC\xE1\xEF \xA4\xAE \xE3\xE0\xAE\xA2\xAD\xEF %d.\x3" // "%s РјРѕР¶РµС‚ РѕР±СѓС‡Р°С‚СЊСЃСЏ РґРѕ СѓСЂРѕРІРЅСЏ %d.\x3""l\n"
+			   "l\n""\v081\x96\xA5\xAD\xA0\x3""r\t000%lu";                                                             // "\v081Р¦РµРЅР°\x3""r\t000%lu";
 	}
 
-	/*
-	"\r\x3""cОбучение\n"
-	"\n"
-	"%s\x3""l\v090\t000Зол\x3""r\t000%s\x2\x3""c\v122\t021"
-	"\f37О\fdбучение\t060ESC\x1";
-	*/
 	const char *TRAINING_TEXT() {
-		return "\r\x3"
-			   "c\x8E\xA1\xE3\xE7\xA5\xAD\xA8\xA5\n"
-			   "\n"
-			   "%s\x3"
-			   "l\v090\t000\x87\xAE\xAB\x3"
-			   "r\t000%s\x2\x3"
-			   "c\v122\t021"
-			   "\f37\x8E\fd\xA1\xE3\xE7\xA5\xAD\xA8\xA5\t060ESC\x1";
+		return "\r\x3""c\x8E\xA1\xE3\xE7\xA5\xAD\xA8\xA5\n"						// "\r\x3""cРћР±СѓС‡РµРЅРёРµ\n"
+			   "\n"                                                             // "\n"
+			   "%s\x3""l\v090\t000\x87\xAE\xAB\x3""r\t000%s\x2\x3""c\v122\t021" // "%s\x3""l\v090\t000Р—РѕР»\x3""r\t000%s\x2\x3""c\v122\t021"
+			   "\f37\x8E\fd\xA1\xE3\xE7\xA5\xAD\xA8\xA5\t060ESC\x1";            // "\f37Рћ\fdР±СѓС‡РµРЅРёРµ\t060ESC\x1";
 	}
 
-	/*
-	"\x3""c\v000\t000%s\x3""l\n"
-	"\n"
-	"Зол\x3""r\t000%s\x3""l\n"
-	"Алмз\x3""r\t000%s\x2\x3""c\v096\t007\f37А\fdлмз\t035\f37З\fdол\t067ESC\x1";
-	*/
 	const char *GOLD_GEMS() {
-		return "\x3"
-			   "c\v000\t000%s\x3"
-			   "l\n"
-			   "\n"
-			   "\x87\xAE\xAB\x3"
-			   "r\t000%s\x3"
-			   "l\n"
-			   "\x80\xAB\xAC\xA7\x3"
-			   "r\t000%s\x2\x3"
-			   "c\v096\t007\f37\x80\fd\xAB\xAC\xA7\t035\f37\x87\fd\xAE\xAB\t067ESC\x1";
+		return "\x3""c\v000\t000%s\x3""l\n"																					 // "\x3""c\v000\t000%s\x3""l\n"
+			   "\n"																											 // "\n"
+			   "\x87\xAE\xAB\x3""r\t000%s\x3""l\n"																			 // "Р—РѕР»\x3""r\t000%s\x3""l\n"
+			   "\x80\xAB\xAC\xA7\x3""r\t000%s\x2\x3""c\v096\t007\f37\x80\fd\xAB\xAC\xA7\t035\f37\x87\fd\xAE\xAB\t067ESC\x1"; // "РђР»РјР·\x3""r\t000%s\x2\x3""c\v096\t007\f37Рђ\fdР»РјР·\t035\f37Р—\fdРѕР»\t067ESC\x1";
 	}
 
-	/*
-	"\t000\v000\x3""c%s\x3""l\n"
-	"\n"
-	"\x4""077Зол\x3""r\t000%s\x3""l\n"
-	"\x4""077Алмз\x3""r\t000%s\x3""l\t000\v051\x4""077\n"
-	"\x4""077";
-	*/
 	const char *GOLD_GEMS_2() {
-		return "\t000\v000\x3"
-			   "c%s\x3"
-			   "l\n"
-			   "\n"
-			   "\x4"
-			   "077\x87\xAE\xAB\x3"
-			   "r\t000%s\x3"
-			   "l\n"
-			   "\x4"
-			   "077\x80\xAB\xAC\xA7\x3"
-			   "r\t000%s\x3"
-			   "l\t000\v051\x4"
-			   "077\n"
-			   "\x4"
-			   "077";
+		return "\t000\v000\x3""c%s\x3""l\n"										 // "\t000\v000\x3""c%s\x3""l\n"
+			   "\n"                                                              // "\n"
+			   "\x4""077\x87\xAE\xAB\x3""r\t000%s\x3""l\n"                       // "\x4""077Р—РѕР»\x3""r\t000%s\x3""l\n"
+			   "\x4""077\x80\xAB\xAC\xA7\x3""r\t000%s\x3""l\t000\v051\x4""077\n" // "\x4""077РђР»РјР·\x3""r\t000%s\x3""l\t000\v051\x4""077\n"
+			   "\x4""077";                                                       // "\x4""077";
 	}
 
-	/*
-	"Положить на счёт", "Снять со счёта"
-	*/
 	const char **DEPOSIT_WITHDRAWL() {
 		delete[] _depositWithdrawl;
-		_depositWithdrawl = new const char *[2] { "\x8F\xAE\xAB\xAE\xA6\xA8\xE2\xEC \xAD\xA0 \xE1\xE7\xF1\xE2", "\x91\xAD\xEF\xE2\xEC \xE1\xAE \xE1\xE7\xF1\xE2\xA0" };
+		_depositWithdrawl = new const char *[2] { "\x8F\xAE\xAB\xAE\xA6\xA8\xE2\xEC \xAD\xA0 \xE1\xE7\xF1\xE2", "\x91\xAD\xEF\xE2\xEC \xE1\xAE \xE1\xE7\xF1\xE2\xA0" }; // "РџРѕР»РѕР¶РёС‚СЊ РЅР° СЃС‡С‘С‚", "РЎРЅСЏС‚СЊ СЃРѕ СЃС‡С‘С‚Р°"
 		return _depositWithdrawl;
 	}
 
-	/*
-	"\x3""c\v012Недостаточно %s %s!\x3""l"
-	*/
 	const char *NOT_ENOUGH_X_IN_THE_Y() {
-		return "\x3"
-			   "c\v012\x8D\xA5\xA4\xAE\xE1\xE2\xA0\xE2\xAE\xE7\xAD\xAE %s %s!\x3"
-			   "l";
+		return "\x3""c\v012\x8D\xA5\xA4\xAE\xE1\xE2\xA0\xE2\xAE\xE7\xAD\xAE %s %s!\x3""l"; // "\x3""c\v012РќРµРґРѕСЃС‚Р°С‚РѕС‡РЅРѕ %s %s!\x3""l"
 	}
 
-	/*
-	"\x3""c\v012Нет %s %s!\x3""l"
-	*/
 	const char *NO_X_IN_THE_Y() {
-		return "\x3"
-			   "c\v012\x8D\xA5\xE2 %s %s!\x3"
-			   "l";
+		return "\x3""c\v012\x8D\xA5\xE2 %s %s!\x3""l"; // "\x3""c\v012РќРµС‚ %s %s!\x3""l"
 	}
 
-	/*
-	"Сила", "Интеллект", "Сила духа", "Сложение", "Скорость",
-	"Меткость", "Удача", "Возраст", "Уровень", "Класс защиты", "Здоровье",
-	"Очки магии", "Устойчивости", "Навыки", "Награды", "Опыт"
-	*/
 	const char **STAT_NAMES() {
 		delete[] _statNames;
 		_statNames = new const char *[16] {
-			"\x91\xA8\xAB\xA0", "\x88\xAD\xE2\xA5\xAB\xAB\xA5\xAA\xE2", "\x91\xA8\xAB\xA0 \xA4\xE3\xE5\xA0", "\x91\xAB\xAE\xA6\xA5\xAD\xA8\xA5", "\x91\xAA\xAE\xE0\xAE\xE1\xE2\xEC",
-				"\x8C\xA5\xE2\xAA\xAE\xE1\xE2\xEC", "\x93\xA4\xA0\xE7\xA0", "\x82\xAE\xA7\xE0\xA0\xE1\xE2", "\x93\xE0\xAE\xA2\xA5\xAD\xEC", "\x8A\xAB\xA0\xE1\xE1 \xA7\xA0\xE9\xA8\xE2\xEB", "\x87\xA4\xAE\xE0\xAE\xA2\xEC\xA5",
-				"\x8E\xE7\xAA\xA8 \xAC\xA0\xA3\xA8\xA8", "\x93\xE1\xE2\xAE\xA9\xE7\xA8\xA2\xAE\xE1\xE2\xA8", "\x8D\xA0\xA2\xEB\xAA\xA8", "\x8D\xA0\xA3\xE0\xA0\xA4\xEB", "\x8E\xAF\xEB\xE2"
+			"\x91\xA8\xAB\xA0", "\x88\xAD\xE2\xA5\xAB\xAB\xA5\xAA\xE2", "\x91\xA8\xAB\xA0 \xA4\xE3\xE5\xA0", "\x91\xAB\xAE\xA6\xA5\xAD\xA8\xA5", "\x91\xAA\xAE\xE0\xAE\xE1\xE2\xEC",	 // "РЎРёР»Р°", "РРЅС‚РµР»Р»РµРєС‚", "РЎРёР»Р° РґСѓС…Р°", "РЎР»РѕР¶РµРЅРёРµ", "РЎРєРѕСЂРѕСЃС‚СЊ",
+			"\x8C\xA5\xE2\xAA\xAE\xE1\xE2\xEC", "\x93\xA4\xA0\xE7\xA0", "\x82\xAE\xA7\xE0\xA0\xE1\xE2", "\x93\xE0\xAE\xA2\xA5\xAD\xEC", "\x8A\xAB\xA0\xE1\xE1 \xA7\xA0\xE9\xA8\xE2\xEB", // "РњРµС‚РєРѕСЃС‚СЊ", "РЈРґР°С‡Р°", "Р’РѕР·СЂР°СЃС‚", "РЈСЂРѕРІРµРЅСЊ", "РљР»Р°СЃСЃ Р·Р°С‰РёС‚С‹", "Р—РґРѕСЂРѕРІСЊРµ", "\x87\xA4\xAE\xE0\xAE\xA2\xEC\xA5",
+			"\x8E\xE7\xAA\xA8 \xAC\xA0\xA3\xA8\xA8", "\x93\xE1\xE2\xAE\xA9\xE7\xA8\xA2\xAE\xE1\xE2\xA8", "\x8D\xA0\xA2\xEB\xAA\xA8", "\x8D\xA0\xA3\xE0\xA0\xA4\xEB", "\x8E\xAF\xEB\xE2"  // "РћС‡РєРё РјР°РіРёРё", "РЈСЃС‚РѕР№С‡РёРІРѕСЃС‚Рё", "РќР°РІС‹РєРё", "РќР°РіСЂР°РґС‹", "РћРїС‹С‚"
 		};
 		return _statNames;
 	}
 
-	/*
-	"Золото", "Алмазы", "Пища", "Состояние"
-	*/
 	const char **CONSUMABLE_NAMES() {
 		delete[] _consumableNames;
-		_consumableNames = new const char *[4] { "\x87\xAE\xAB\xAE\xE2\xAE", "\x80\xAB\xAC\xA0\xA7\xEB", "\x8F\xA8\xE9\xA0", "\x91\xAE\xE1\xE2\xAE\xEF\xAD\xA8\xA5" };
+		_consumableNames = new const char *[4] { "\x87\xAE\xAB\xAE\xE2\xAE", "\x80\xAB\xAC\xA0\xA7\xEB", "\x8F\xA8\xE9\xA0", "\x91\xAE\xE1\xE2\xAE\xEF\xAD\xA8\xA5" }; // "Р—РѕР»РѕС‚Рѕ", "РђР»РјР°Р·С‹", "РџРёС‰Р°", "РЎРѕСЃС‚РѕСЏРЅРёРµ"
 		return _consumableNames;
 	}
 
-	/*
-	"у отряда", "в банке"
-	*/
 	const char **WHERE_NAMES() {
 		delete[] _whereNames;
-		_whereNames = new const char *[2] { "\xE3 \xAE\xE2\xE0\xEF\xA4\xA0", "\xA2 \xA1\xA0\xAD\xAA\xA5" };
+		_whereNames = new const char *[2] { "\xE3 \xAE\xE2\xE0\xEF\xA4\xA0", "\xA2 \xA1\xA0\xAD\xAA\xA5" }; // "Сѓ РѕС‚СЂСЏРґР°", "РІ Р±Р°РЅРєРµ"
 		return _whereNames;
 	}
 
-	/*
-	"\x3""c\t000\v051Сколько\x3""l\n"
-	*/
 	const char *AMOUNT() {
-		return "\x3"
-			   "c\t000\v051\x91\xAA\xAE\xAB\xEC\xAA\xAE\x3"
-			   "l\n";
+		return "\x3""c\t000\v051\x91\xAA\xAE\xAB\xEC\xAA\xAE\x3""l\n"; // "\x3""c\t000\v051РЎРєРѕР»СЊРєРѕ\x3""l\n"
 	}
 
-	/*
-	"\v007Ваши рюкзаки уже наполнены!"
-	*/
 	const char *FOOD_PACKS_FULL() {
-		return "\v007\x82\xA0\xE8\xA8 \xE0\xEE\xAA\xA7\xA0\xAA\xA8 \xE3\xA6\xA5 \xAD\xA0\xAF\xAE\xAB\xAD\xA5\xAD\xEB!";
+		return "\v007\x82\xA0\xE8\xA8 \xE0\xEE\xAA\xA7\xA0\xAA\xA8 \xE3\xA6\xA5 \xAD\xA0\xAF\xAE\xAB\xAD\xA5\xAD\xEB!"; // "\v007Р’Р°С€Рё СЂСЋРєР·Р°РєРё СѓР¶Рµ РЅР°РїРѕР»РЅРµРЅС‹!"
 	}
 
-	/*
-	"\x3""c\v027\t039%s\x3""l\v046\n"
-	"\t012\f37К\fdупить\n"
-	"\t012\f37О\fdписания";
-	*/
 	const char *BUY_SPELLS() {
-		return "\x3"
-			   "c\v027\t039%s\x3"
-			   "l\v046\n"
-			   "\t012\f37\x8A\fd\xE3\xAF\xA8\xE2\xEC\n"
-			   "\t012\f37\x8E\fd\xAF\xA8\xE1\xA0\xAD\xA8\xEF";
+		return "\x3""c\v027\t039%s\x3""l\v046\n"			   // "\x3""c\v027\t039%s\x3""l\v046\n"
+			   "\t012\f37\x8A\fd\xE3\xAF\xA8\xE2\xEC\n"        // "\t012\f37Рљ\fdСѓРїРёС‚СЊ\n"
+			   "\t012\f37\x8E\fd\xAF\xA8\xE1\xA0\xAD\xA8\xEF"; // "\t012\f37Рћ\fdРїРёСЃР°РЅРёСЏ";
 	}
 
-	/*
-	"\x1\r\f00\x3""c\v000\t000Гильдия\n"
-	"%s\x3""l\t000\v090Зол"
-	"\x3""r\t000%s\x2\x3""c\v122\t040ESC\x1";
-	*/
 	const char *GUILD_OPTIONS() {
-		return "\x1\r\f00\x3"
-			   "c\v000\t000\x83\xA8\xAB\xEC\xA4\xA8\xEF\n"
-			   "%s\x3"
-			   "l\t000\v090\x87\xAE\xAB"
-			   "\x3"
-			   "r\t000%s\x2\x3"
-			   "c\v122\t040ESC\x1";
+		return "\x1\r\f00\x3""c\v000\t000\x83\xA8\xAB\xEC\xA4\xA8\xEF\n" // "\x1\r\f00\x3""c\v000\t000Р“РёР»СЊРґРёСЏ\n"
+			   "%s\x3""l\t000\v090\x87\xAE\xAB"							 // "%s\x3""l\t000\v090Р—РѕР»"
+			   "\x3""r\t000%s\x2\x3""c\v122\t040ESC\x1";				 // "\x3""r\t000%s\x2\x3""c\v122\t040ESC\x1";
 	}
 
-	/*
-	"Вы не заклинатель..."
-	*/
 	const char *NOT_A_SPELL_CASTER() {
-		return "\x82\xEB \xAD\xA5 \xA7\xA0\xAA\xAB\xA8\xAD\xA0\xE2\xA5\xAB\xEC...";
+		return "\x82\xEB \xAD\xA5 \xA7\xA0\xAA\xAB\xA8\xAD\xA0\xE2\xA5\xAB\xEC..."; // "Р’С‹ РЅРµ Р·Р°РєР»РёРЅР°С‚РµР»СЊ..."
 	}
 
-	/*
-	"Вы уже знаете всё,\n"
-	"\t010чему мы можем вас\n"
-	"\t010научить!\n"
-	"\n"
-	"\n"
-	"\n"
-	"\n"
-	"\n"
-	"\n"
-	"\n"
-	"\n"
-	"\n";
-	*/
 	const char *SPELLS_LEARNED_ALL() {
-		return "\x82\xEB \xE3\xA6\xA5 \xA7\xAD\xA0\xA5\xE2\xA5 \xA2\xE1\xF1,\n"
-			   "\t010\xE7\xA5\xAC\xE3 \xAC\xEB \xAC\xAE\xA6\xA5\xAC \xA2\xA0\xE1\n"
-			   "\t010\xAD\xA0\xE3\xE7\xA8\xE2\xEC!\n"
-			   "\n"
-			   "\n"
-			   "\n"
-			   "\n"
-			   "\n"
-			   "\n"
-			   "\n"
-			   "\n"
-			   "\n";
+		return "\x82\xEB \xE3\xA6\xA5 \xA7\xAD\xA0\xA5\xE2\xA5 \xA2\xE1\xF1,\n"		// "Р’С‹ СѓР¶Рµ Р·РЅР°РµС‚Рµ РІСЃС‘,\n"
+			   "\t010\xE7\xA5\xAC\xE3 \xAC\xEB \xAC\xAE\xA6\xA5\xAC \xA2\xA0\xE1\n" // "\t010С‡РµРјСѓ РјС‹ РјРѕР¶РµРј РІР°СЃ\n"
+			   "\t010\xAD\xA0\xE3\xE7\xA8\xE2\xEC!\n"                               // "\t010РЅР°СѓС‡РёС‚СЊ!\n"
+			   "\n"                                                                 // "\n"
+			   "\n"                                                                 // "\n"
+			   "\n"                                                                 // "\n"
+			   "\n"                                                                 // "\n"
+			   "\n"                                                                 // "\n"
+			   "\n"                                                                 // "\n"
+			   "\n"                                                                 // "\n"
+			   "\n"                                                                 // "\n"
+			   "\n";                                                                // "\n";
 	}
 
-	/*
-	"\r\fd%s\x2\x3""c\t000\v002Заклинания"
-	*/
 	const char *SPELLS_FOR() {
-		return "\r\fd%s\x2\x3"
-			   "c\t000\v002\x87\xA0\xAA\xAB\xA8\xAD\xA0\xAD\xA8\xEF";
+		return "\r\fd%s\x2\x3""c\t000\v002\x87\xA0\xAA\xAB\xA8\xAD\xA0\xAD\xA8\xEF"; // "\r\fd%s\x2\x3""c\t000\v002Р—Р°РєР»РёРЅР°РЅРёСЏ"
 	}
 
 	const char *SPELL_LINES_0_TO_9() {
@@ -1101,131 +676,70 @@ public:
 			   "\t004\v110%s - %u\x1";
 	}
 
-	/*
-	"Мана"
-	*/
 	const char *SPELL_PTS() {
-		return "\x8C\xA0\xAD\xA0";
+		return "\x8C\xA0\xAD\xA0"; // "РњР°РЅР°"
 	}
 
-	/*
-	"Зол"
-	*/
 	const char *GOLD() {
-		return "\x87\xAE\xAB";
+		return "\x87\xAE\xAB"; // "Р—РѕР»"
 	}
 
-	/*
-	"\x3""c\f09%s\fd\x3""l\n"
-	"\n"
-	"%s\x3""c\t000\v110Н. клавишу!";
-	*/
 	const char *SPELL_INFO() {
-		return "\x3"
-			   "c\f09%s\fd\x3"
-			   "l\n"
-			   "\n"
-			   "%s\x3"
-			   "c\t000\v110\x8D. \xAA\xAB\xA0\xA2\xA8\xE8\xE3!";
+		return "\x3""c\f09%s\fd\x3""l\n"								// "\x3""c\f09%s\fd\x3""l\n"
+			   "\n"                                                     // "\n"
+			   "%s\x3""c\t000\v110\x8D. \xAA\xAB\xA0\xA2\xA8\xE8\xE3!"; // "%s\x3""c\t000\v110Рќ. РєР»Р°РІРёС€Сѓ!";
 	}
 
-	/*
-	"\x3""l\v000\t000\fd%s  Желаете приобрести "
-	"\f09%s\fd за %u?";
-	*/
 	const char *SPELL_PURCHASE() {
-		return "\x3"
-			   "l\v000\t000\fd%s  \x86\xA5\xAB\xA0\xA5\xE2\xA5 \xAF\xE0\xA8\xAE\xA1\xE0\xA5\xE1\xE2\xA8 "
-			   "\f09%s\fd \xA7\xA0 %u?";
+		return "\x3""l\v000\t000\fd%s  \x86\xA5\xAB\xA0\xA5\xE2\xA5 \xAF\xE0\xA8\xAE\xA1\xE0\xA5\xE1\xE2\xA8 " // "\x3""l\v000\t000\fd%s  Р–РµР»Р°РµС‚Рµ РїСЂРёРѕР±СЂРµСЃС‚Рё "
+			   "\f09%s\fd \xA7\xA0 %u?";                                                                       // "\f09%s\fd Р·Р° %u?";
 	}
 
-	/*
-	"\x3""c\v000\t000%s\x3l\v139"
-	"\t000X = %d\x3r\t000Y = %d\x3""c\t000%s";
-	*/
 	const char *MAP_TEXT() {
-		return "\x3"
-			   "c\v000\t000%s\x3l\v139"
-			   "\t000X = %d\x3r\t000Y = %d\x3"
-			   "c\t000%s";
+		return "\x3""c\v000\t000%s\x3l\v139"			  // "\x3""c\v000\t000%s\x3l\v139"
+			   "\t000X = %d\x3r\t000Y = %d\x3""c\t000%s"; // "\t000X = %d\x3r\t000Y = %d\x3""c\t000%s";
 	}
 
-	/*
-	"\x3""l\n\n\t024Свет\x3""r\t124%u";
-	*/
 	const char *LIGHT_COUNT_TEXT() {
-		return "\x3"
-			   "l\n\n\t024\x91\xA2\xA5\xE2\x3"
-			   "r\t124%u";
+		return "\x3""l\n\n\t024\x91\xA2\xA5\xE2\x3""r\t124%u"; // "\x3""l\n\n\t024РЎРІРµС‚\x3""r\t124%u";
 	}
 
-	/*
-	"%c%sОгонь%s%u"
-	*/
 	const char *FIRE_RESISTENCE_TEXT() {
-		return "%c%s\x8E\xA3\xAE\xAD\xEC%s%u";
+		return "%c%s\x8E\xA3\xAE\xAD\xEC%s%u"; // "%c%sРћРіРѕРЅСЊ%s%u"
 	}
 
-	/*
-	"%c%sГром%s%u"
-	*/
 	const char *ELECRICITY_RESISTENCE_TEXT() {
-		return "%c%s\x83\xE0\xAE\xAC%s%u";
+		return "%c%s\x83\xE0\xAE\xAC%s%u"; // "%c%sР“СЂРѕРј%s%u"
 	}
 
-	/*
-	"%c%sХолод%s%u"
-	*/
 	const char *COLD_RESISTENCE_TEXT() {
-		return "%c%s\x95\xAE\xAB\xAE\xA4%s%u";
+		return "%c%s\x95\xAE\xAB\xAE\xA4%s%u"; // "%c%sРҐРѕР»РѕРґ%s%u"
 	}
 
-	/*
-	"%c%sЯд/Кислота%s%u"
-	*/
 	const char *POISON_RESISTENCE_TEXT() {
-		return "%c%s\x9F\xA4/\x8A\xA8\xE1\xAB\xAE\xE2\xA0%s%u";
+		return "%c%s\x9F\xA4/\x8A\xA8\xE1\xAB\xAE\xE2\xA0%s%u"; // "%c%sРЇРґ/РљРёСЃР»РѕС‚Р°%s%u"
 	}
 
-	/*
-	"%c%sЯсновидение%s"
-	*/
 	const char *CLAIRVOYANCE_TEXT() {
-		return "%c%s\x9F\xE1\xAD\xAE\xA2\xA8\xA4\xA5\xAD\xA8\xA5%s";
+		return "%c%s\x9F\xE1\xAD\xAE\xA2\xA8\xA4\xA5\xAD\xA8\xA5%s"; // "%c%sРЇСЃРЅРѕРІРёРґРµРЅРёРµ%s"
 	}
 
-	/*
-	"%c%sЛевитация%s"
-	*/
 	const char *LEVITATE_TEXT() {
-		return "%c%s\x8B\xA5\xA2\xA8\xE2\xA0\xE6\xA8\xEF%s";
+		return "%c%s\x8B\xA5\xA2\xA8\xE2\xA0\xE6\xA8\xEF%s"; // "%c%sР›РµРІРёС‚Р°С†РёСЏ%s"
 	}
 
-	/*
-	"%c%sХождение по воде"
-	*/
 	const char *WALK_ON_WATER_TEXT() {
-		return "%c%s\x95\xAE\xA6\xA4\xA5\xAD\xA8\xA5 \xAF\xAE \xA2\xAE\xA4\xA5";
+		return "%c%s\x95\xAE\xA6\xA4\xA5\xAD\xA8\xA5 \xAF\xAE \xA2\xAE\xA4\xA5"; // "%c%sРҐРѕР¶РґРµРЅРёРµ РїРѕ РІРѕРґРµ"
 	}
 
-	/*
-	"\r\x3""c\t000\v001\f37%s Ксина\fd\n"
-	"Игровая информация\n"
-	"\n"
-	"Сегодня \f37%s\fd\n"
-	"\n"
-	"\t032Время\t072День\t112Год\n"
-	"\t032\f37%d:%02d%c\t072%u\t112%u\fd%s";
-	*/
 	const char *GAME_INFORMATION() {
-		return "\r\x3"
-			   "c\t000\v001\f37%s \x8A\xE1\xA8\xAD\xA0\fd\n"
-			   "\x88\xA3\xE0\xAE\xA2\xA0\xEF \xA8\xAD\xE4\xAE\xE0\xAC\xA0\xE6\xA8\xEF\n"
-			   "\n"
-			   "\x91\xA5\xA3\xAE\xA4\xAD\xEF \f37%s\fd\n"
-			   "\n"
-			   "\t032\x82\xE0\xA5\xAC\xEF\t072\x84\xA5\xAD\xEC\t112\x83\xAE\xA4\n"
-			   "\t032\f37%d:%02d%c\t072%u\t112%u\fd%s";
+		return "\r\x3""c\t000\v001\f37%s \x8A\xE1\xA8\xAD\xA0\fd\n"						 // "\r\x3""c\t000\v001\f37%s РљСЃРёРЅР°\fd\n"
+			   "\x88\xA3\xE0\xAE\xA2\xA0\xEF \xA8\xAD\xE4\xAE\xE0\xAC\xA0\xE6\xA8\xEF\n" // "РРіСЂРѕРІР°СЏ РёРЅС„РѕСЂРјР°С†РёСЏ\n"
+			   "\n"                                                                      // "\n"
+			   "\x91\xA5\xA3\xAE\xA4\xAD\xEF \f37%s\fd\n"                                // "РЎРµРіРѕРґРЅСЏ \f37%s\fd\n"
+			   "\n"                                                                      // "\n"
+			   "\t032\x82\xE0\xA5\xAC\xEF\t072\x84\xA5\xAD\xEC\t112\x83\xAE\xA4\n"       // "\t032Р’СЂРµРјСЏ\t072Р”РµРЅСЊ\t112Р“РѕРґ\n"
+			   "\t032\f37%d:%02d%c\t072%u\t112%u\fd%s";                                  // "\t032\f37%d:%02d%c\t072%u\t112%u\fd%s";
 	}
 
 	const char *WORLD_GAME_TEXT() {
@@ -1236,26 +750,19 @@ public:
 		return "Darkside";
 	}
 
-	/*
-	"Облака"
-	*/
 	const char *CLOUDS_GAME_TEXT() {
-		return "\x8E\xA1\xAB\xA0\xAA\xA0";
+		return "\x8E\xA1\xAB\xA0\xAA\xA0"; // "РћР±Р»Р°РєР°"
 	}
 
 	const char *SWORDS_GAME_TEXT() {
 		return "Swords";
 	}
 
-	/*
-	"десятидень", "перводень", "втородень", "третьедень", "четверодень",
-	"пятидень",   "шестидень", "семидень",  "восьмидень", "девятидень"
-	*/
 	const char **WEEK_DAY_STRINGS() {
 		delete[] _weekDayStrings;
 		_weekDayStrings = new const char *[10] {
-			"\xA4\xA5\xE1\xEF\xE2\xA8\xA4\xA5\xAD\xEC", "\xAF\xA5\xE0\xA2\xAE\xA4\xA5\xAD\xEC", "\xA2\xE2\xAE\xE0\xAE\xA4\xA5\xAD\xEC", "\xE2\xE0\xA5\xE2\xEC\xA5\xA4\xA5\xAD\xEC", "\xE7\xA5\xE2\xA2\xA5\xE0\xAE\xA4\xA5\xAD\xEC",
-				"\xAF\xEF\xE2\xA8\xA4\xA5\xAD\xEC", "\xE8\xA5\xE1\xE2\xA8\xA4\xA5\xAD\xEC", "\xE1\xA5\xAC\xA8\xA4\xA5\xAD\xEC", "\xA2\xAE\xE1\xEC\xAC\xA8\xA4\xA5\xAD\xEC", "\xA4\xA5\xA2\xEF\xE2\xA8\xA4\xA5\xAD\xEC"
+			"\xA4\xA5\xE1\xEF\xE2\xA8\xA4\xA5\xAD\xEC", "\xAF\xA5\xE0\xA2\xAE\xA4\xA5\xAD\xEC", "\xA2\xE2\xAE\xE0\xAE\xA4\xA5\xAD\xEC", "\xE2\xE0\xA5\xE2\xEC\xA5\xA4\xA5\xAD\xEC", "\xE7\xA5\xE2\xA2\xA5\xE0\xAE\xA4\xA5\xAD\xEC", // "РґРµСЃСЏС‚РёРґРµРЅСЊ", "РїРµСЂРІРѕРґРµРЅСЊ", "РІС‚РѕСЂРѕРґРµРЅСЊ", "С‚СЂРµС‚СЊРµРґРµРЅСЊ", "С‡РµС‚РІРµСЂРѕРґРµРЅСЊ",
+			"\xAF\xEF\xE2\xA8\xA4\xA5\xAD\xEC", "\xE8\xA5\xE1\xE2\xA8\xA4\xA5\xAD\xEC", "\xE1\xA5\xAC\xA8\xA4\xA5\xAD\xEC", "\xA2\xAE\xE1\xEC\xAC\xA8\xA4\xA5\xAD\xEC", "\xA4\xA5\xA2\xEF\xE2\xA8\xA4\xA5\xAD\xEC"                  // "РїСЏС‚РёРґРµРЅСЊ",   "С€РµСЃС‚РёРґРµРЅСЊ", "СЃРµРјРёРґРµРЅСЊ",  "РІРѕСЃСЊРјРёРґРµРЅСЊ", "РґРµРІСЏС‚РёРґРµРЅСЊ"
 		};
 		return _weekDayStrings;
 	}
@@ -1286,217 +793,110 @@ public:
 			   "\t245%s%s%s%s\fd";
 	}
 
-	/*
-	"день", "дня", "дней"
-	*/
 	const char **DAYS() {
 		delete[] _days;
-		_days = new const char *[3] { "\xA4\xA5\xAD\xEC", "\xA4\xAD\xEF", "\xA4\xAD\xA5\xA9" };
+		_days = new const char *[3] { "\xA4\xA5\xAD\xEC", "\xA4\xAD\xEF", "\xA4\xAD\xA5\xA9" }; // "РґРµРЅСЊ", "РґРЅСЏ", "РґРЅРµР№"
 		return _days;
 	}
 
-	/*
-	"Золото"
-	*/
 	const char *PARTY_GOLD() {
-		return "\x87\xAE\xAB\xAE\xE2\xAE";
+		return "\x87\xAE\xAB\xAE\xE2\xAE"; // "Р—РѕР»РѕС‚Рѕ"
 	}
 
 	const char *PLUS_14() {
 		return "\f14+";
 	}
 
-	/*
-	"\x1\f00\r\x3""l\t029\v018Сил\t080Мтк\t131Здор\t196Опыт"
-	"\t029\v041Инт\t080Удч\t131ОМ\t029\v064Дух\t080Взр"
-	"\t131Уст\t196Алмазы\t029\v087Слж\t080Урв\t131Нвк"
-	"\t196Пища\t029\v110Скр\t080КЗ\t131Нагр\t196Состояние"
-	"\x3""c\t290\v025\f37В\fdещи\t290\v057\f37Б"
-	"\fdстр\t290\v089\f37С\fdмен\t290\v121Выход\x3""l%s";
-	*/
 	const char *CHARACTER_TEMPLATE() {
-		return "\x1\f00\r\x3"
-			   "l\t029\v018\x91\xA8\xAB\t080\x8C\xE2\xAA\t131\x87\xA4\xAE\xE0\t196\x8E\xAF\xEB\xE2"
-			   "\t029\v041\x88\xAD\xE2\t080\x93\xA4\xE7\t131\x8E\x8C\t029\v064\x84\xE3\xE5\t080\x82\xA7\xE0"
-			   "\t131\x93\xE1\xE2\t196\x80\xAB\xAC\xA0\xA7\xEB\t029\v087\x91\xAB\xA6\t080\x93\xE0\xA2\t131\x8D\xA2\xAA"
-			   "\t196\x8F\xA8\xE9\xA0\t029\v110\x91\xAA\xE0\t080\x8A\x87\t131\x8D\xA0\xA3\xE0\t196\x91\xAE\xE1\xE2\xAE\xEF\xAD\xA8\xA5"
-			   "\x3"
-			   "c\t290\v025\f37\x82\fd\xA5\xE9\xA8\t290\v057\f37\x81"
-			   "\fd\xE1\xE2\xE0\t290\v089\f37\x91\fd\xAC\xA5\xAD\t290\v121\x82\xEB\xE5\xAE\xA4\x3"
-			   "l%s";
+		return "\x1\f00\r\x3""l\t029\v018\x91\xA8\xAB\t080\x8C\xE2\xAA\t131\x87\xA4\xAE\xE0\t196\x8E\xAF\xEB\xE2"						// "\x1\f00\r\x3""l\t029\v018РЎРёР»\t080РњС‚Рє\t131Р—РґРѕСЂ\t196РћРїС‹С‚"
+			   "\t029\v041\x88\xAD\xE2\t080\x93\xA4\xE7\t131\x8E\x8C\t029\v064\x84\xE3\xE5\t080\x82\xA7\xE0"                            // "\t029\v041РРЅС‚\t080РЈРґС‡\t131РћРњ\t029\v064Р”СѓС…\t080Р’Р·СЂ"
+			   "\t131\x93\xE1\xE2\t196\x80\xAB\xAC\xA0\xA7\xEB\t029\v087\x91\xAB\xA6\t080\x93\xE0\xA2\t131\x8D\xA2\xAA"                 // "\t131РЈСЃС‚\t196РђР»РјР°Р·С‹\t029\v087РЎР»Р¶\t080РЈСЂРІ\t131РќРІРє"
+			   "\t196\x8F\xA8\xE9\xA0\t029\v110\x91\xAA\xE0\t080\x8A\x87\t131\x8D\xA0\xA3\xE0\t196\x91\xAE\xE1\xE2\xAE\xEF\xAD\xA8\xA5" // "\t196РџРёС‰Р°\t029\v110РЎРєСЂ\t080РљР—\t131РќР°РіСЂ\t196РЎРѕСЃС‚РѕСЏРЅРёРµ"
+			   "\x3""c\t290\v025\f37\x82\fd\xA5\xE9\xA8\t290\v057\f37\x81"                                                              // "\x3""c\t290\v025\f37Р’\fdРµС‰Рё\t290\v057\f37Р‘"
+			   "\fd\xE1\xE2\xE0\t290\v089\f37\x91\fd\xAC\xA5\xAD\t290\v121\x82\xEB\xE5\xAE\xA4\x3""l%s";                                // "\fdСЃС‚СЂ\t290\v089\f37РЎ\fdРјРµРЅ\t290\v121Р’С‹С…РѕРґ\x3""l%s";
 	}
 
-	/*
-	"\x3""c\v007\t000Во время битвы запрещено меняться местами!"
-	*/
 	const char *EXCHANGING_IN_COMBAT() {
-		return "\x3"
-			   "c\v007\t000\x82\xAE \xA2\xE0\xA5\xAC\xEF \xA1\xA8\xE2\xA2\xEB \xA7\xA0\xAF\xE0\xA5\xE9\xA5\xAD\xAE \xAC\xA5\xAD\xEF\xE2\xEC\xE1\xEF \xAC\xA5\xE1\xE2\xA0\xAC\xA8!";
+		return "\x3""c\v007\t000\x82\xAE \xA2\xE0\xA5\xAC\xEF \xA1\xA8\xE2\xA2\xEB \xA7\xA0\xAF\xE0\xA5\xE9\xA5\xAD\xAE \xAC\xA5\xAD\xEF\xE2\xEC\xE1\xEF \xAC\xA5\xE1\xE2\xA0\xAC\xA8!"; // "\x3""c\v007\t000Р’Рѕ РІСЂРµРјСЏ Р±РёС‚РІС‹ Р·Р°РїСЂРµС‰РµРЅРѕ РјРµРЅСЏС‚СЊСЃСЏ РјРµСЃС‚Р°РјРё!"
 	}
 
-	/*
-	"\x2\x3""c%s\n"
-	"Сейчас / Максимум\n"
-	"\x3""r\t054%lu\x3""l\t058/ %lu\n"
-	"\x3""cРанг: %s\x1";
-	*/
 	const char *CURRENT_MAXIMUM_RATING_TEXT() {
-		return "\x2\x3"
-			   "c%s\n"
-			   "\x91\xA5\xA9\xE7\xA0\xE1 / \x8C\xA0\xAA\xE1\xA8\xAC\xE3\xAC\n"
-			   "\x3"
-			   "r\t054%lu\x3"
-			   "l\t058/ %lu\n"
-			   "\x3"
-			   "c\x90\xA0\xAD\xA3: %s\x1";
+		return "\x2\x3""c%s\n"												   // "\x2\x3""c%s\n"
+			   "\x91\xA5\xA9\xE7\xA0\xE1 / \x8C\xA0\xAA\xE1\xA8\xAC\xE3\xAC\n" // "РЎРµР№С‡Р°СЃ / РњР°РєСЃРёРјСѓРј\n"
+			   "\x3" "r\t054%lu\x3""l\t058/ %lu\n"                             // "\x3""r\t054%lu\x3""l\t058/ %lu\n"
+			   "\x3""c\x90\xA0\xAD\xA3: %s\x1";                                // "\x3""cР Р°РЅРі: %s\x1";
 	}
 
-	/*
-	"\x2\x3""c%s\n"
-	"Сейчас / Максимум\n"
-	"\x3""r\t054%d\x3""l\t058/ %lu";
-	*/
 	const char *CURRENT_MAXIMUM_TEXT() {
-		return "\x2\x3"
-			   "c%s\n"
-			   "\x91\xA5\xA9\xE7\xA0\xE1 / \x8C\xA0\xAA\xE1\xA8\xAC\xE3\xAC\n"
-			   "\x3"
-			   "r\t054%d\x3"
-			   "l\t058/ %lu";
+		return "\x2\x3""c%s\n"                                                 // "\x2\x3""c%s\n"
+			   "\x91\xA5\xA9\xE7\xA0\xE1 / \x8C\xA0\xAA\xE1\xA8\xAC\xE3\xAC\n" // "РЎРµР№С‡Р°СЃ / РњР°РєСЃРёРјСѓРј\n"
+			   "\x3""r\t054%d\x3""l\t058/ %lu";                                // "\x3""r\t054%d\x3""l\t058/ %lu";
 	}
 
-	/*
-	"Нет", "Мизерный", "Жалкий", "Оч.низкий", "Низкий", "Средний", "Хороший",
-	"Отличный", "Высокий", "Высоченный", "Большой", "Огромный", "Удивительный",
-	"Невероятный", "Гигантский", "Фантастичный", "Изумительный", "Поразительный",
-	"Грандиозный", "Громадный", "Колоссальный", "Потрясающий", "Чудовищный",
-	"Высочайший"
-	*/
 	const char **RATING_TEXT() {
 		delete[] _ratingText;
 		_ratingText = new const char *[24] {
-			"\x8D\xA5\xE2", "\x8C\xA8\xA7\xA5\xE0\xAD\xEB\xA9", "\x86\xA0\xAB\xAA\xA8\xA9", "\x8E\xE7.\xAD\xA8\xA7\xAA\xA8\xA9", "\x8D\xA8\xA7\xAA\xA8\xA9", "\x91\xE0\xA5\xA4\xAD\xA8\xA9", "\x95\xAE\xE0\xAE\xE8\xA8\xA9",
-				"\x8E\xE2\xAB\xA8\xE7\xAD\xEB\xA9", "\x82\xEB\xE1\xAE\xAA\xA8\xA9", "\x82\xEB\xE1\xAE\xE7\xA5\xAD\xAD\xEB\xA9", "\x81\xAE\xAB\xEC\xE8\xAE\xA9", "\x8E\xA3\xE0\xAE\xAC\xAD\xEB\xA9", "\x93\xA4\xA8\xA2\xA8\xE2\xA5\xAB\xEC\xAD\xEB\xA9",
-				"\x8D\xA5\xA2\xA5\xE0\xAE\xEF\xE2\xAD\xEB\xA9", "\x83\xA8\xA3\xA0\xAD\xE2\xE1\xAA\xA8\xA9", "\x94\xA0\xAD\xE2\xA0\xE1\xE2\xA8\xE7\xAD\xEB\xA9", "\x88\xA7\xE3\xAC\xA8\xE2\xA5\xAB\xEC\xAD\xEB\xA9", "\x8F\xAE\xE0\xA0\xA7\xA8\xE2\xA5\xAB\xEC\xAD\xEB\xA9",
-				"\x83\xE0\xA0\xAD\xA4\xA8\xAE\xA7\xAD\xEB\xA9", "\x83\xE0\xAE\xAC\xA0\xA4\xAD\xEB\xA9", "\x8A\xAE\xAB\xAE\xE1\xE1\xA0\xAB\xEC\xAD\xEB\xA9", "\x8F\xAE\xE2\xE0\xEF\xE1\xA0\xEE\xE9\xA8\xA9", "\x97\xE3\xA4\xAE\xA2\xA8\xE9\xAD\xEB\xA9",
-				"\x82\xEB\xE1\xAE\xE7\xA0\xA9\xE8\xA8\xA9"
+			"\x8D\xA5\xE2", "\x8C\xA8\xA7\xA5\xE0\xAD\xEB\xA9", "\x86\xA0\xAB\xAA\xA8\xA9", "\x8E\xE7.\xAD\xA8\xA7\xAA\xA8\xA9", "\x8D\xA8\xA7\xAA\xA8\xA9", "\x91\xE0\xA5\xA4\xAD\xA8\xA9", "\x95\xAE\xE0\xAE\xE8\xA8\xA9",											// "РќРµС‚", "РњРёР·РµСЂРЅС‹Р№", "Р–Р°Р»РєРёР№", "РћС‡.РЅРёР·РєРёР№", "РќРёР·РєРёР№", "РЎСЂРµРґРЅРёР№", "РҐРѕСЂРѕС€РёР№",
+			"\x8E\xE2\xAB\xA8\xE7\xAD\xEB\xA9", "\x82\xEB\xE1\xAE\xAA\xA8\xA9", "\x82\xEB\xE1\xAE\xE7\xA5\xAD\xAD\xEB\xA9", "\x81\xAE\xAB\xEC\xE8\xAE\xA9", "\x8E\xA3\xE0\xAE\xAC\xAD\xEB\xA9", "\x93\xA4\xA8\xA2\xA8\xE2\xA5\xAB\xEC\xAD\xEB\xA9",                     // "РћС‚Р»РёС‡РЅС‹Р№", "Р’С‹СЃРѕРєРёР№", "Р’С‹СЃРѕС‡РµРЅРЅС‹Р№", "Р‘РѕР»СЊС€РѕР№", "РћРіСЂРѕРјРЅС‹Р№", "РЈРґРёРІРёС‚РµР»СЊРЅС‹Р№",
+			"\x8D\xA5\xA2\xA5\xE0\xAE\xEF\xE2\xAD\xEB\xA9", "\x83\xA8\xA3\xA0\xAD\xE2\xE1\xAA\xA8\xA9", "\x94\xA0\xAD\xE2\xA0\xE1\xE2\xA8\xE7\xAD\xEB\xA9", "\x88\xA7\xE3\xAC\xA8\xE2\xA5\xAB\xEC\xAD\xEB\xA9", "\x8F\xAE\xE0\xA0\xA7\xA8\xE2\xA5\xAB\xEC\xAD\xEB\xA9", // "РќРµРІРµСЂРѕСЏС‚РЅС‹Р№", "Р“РёРіР°РЅС‚СЃРєРёР№", "Р¤Р°РЅС‚Р°СЃС‚РёС‡РЅС‹Р№", "РР·СѓРјРёС‚РµР»СЊРЅС‹Р№", "РџРѕСЂР°Р·РёС‚РµР»СЊРЅС‹Р№",
+			"\x83\xE0\xA0\xAD\xA4\xA8\xAE\xA7\xAD\xEB\xA9", "\x83\xE0\xAE\xAC\xA0\xA4\xAD\xEB\xA9", "\x8A\xAE\xAB\xAE\xE1\xE1\xA0\xAB\xEC\xAD\xEB\xA9", "\x8F\xAE\xE2\xE0\xEF\xE1\xA0\xEE\xE9\xA8\xA9", "\x97\xE3\xA4\xAE\xA2\xA8\xE9\xAD\xEB\xA9",                     // "Р“СЂР°РЅРґРёРѕР·РЅС‹Р№", "Р“СЂРѕРјР°РґРЅС‹Р№", "РљРѕР»РѕСЃСЃР°Р»СЊРЅС‹Р№", "РџРѕС‚СЂСЏСЃР°СЋС‰РёР№", "Р§СѓРґРѕРІРёС‰РЅС‹Р№",
+			"\x82\xEB\xE1\xAE\xE7\xA0\xA9\xE8\xA8\xA9"                                                                                                                                                                                                                  // "Р’С‹СЃРѕС‡Р°Р№С€РёР№"
 		};
 		return _ratingText;
 	}
 
-	/*
-	"\x2\x3""c%s\n"
-	"Текущий / Настоящий\n"
-	"\x3""r\t057%u\x3""l\t061/ %u\n"
-	"\x3""cРодил%s: %u / %u\x1";
-	*/
 	const char *AGE_TEXT() {
-		return "\x2\x3"
-			   "c%s\n"
-			   "\x92\xA5\xAA\xE3\xE9\xA8\xA9 / \x8D\xA0\xE1\xE2\xAE\xEF\xE9\xA8\xA9\n"
-			   "\x3"
-			   "r\t057%u\x3"
-			   "l\t061/ %u\n"
-			   "\x3"
-			   "c\x90\xAE\xA4\xA8\xAB%s: %u / %u\x1";
+		return "\x2\x3""c%s\n"														   // "\x2\x3""c%s\n"
+			   "\x92\xA5\xAA\xE3\xE9\xA8\xA9 / \x8D\xA0\xE1\xE2\xAE\xEF\xE9\xA8\xA9\n" // "РўРµРєСѓС‰РёР№ / РќР°СЃС‚РѕСЏС‰РёР№\n"
+			   "\x3""r\t057%u\x3""l\t061/ %u\n"                                        // "\x3""r\t057%u\x3""l\t061/ %u\n"
+			   "\x3""c\x90\xAE\xA4\xA8\xAB%s: %u / %u\x1";                             // "\x3""cР РѕРґРёР»%s: %u / %u\x1";
 	}
 
-	/*
-	"\x2\x3""c%s\n"
-	"Текущий / Максимум\n"
-	"\x3""r\t054%u\x3""l\t058/ %u\n"
-	"\x3""c%u Атак%s/Раунд\x1";
-	*/
 	const char *LEVEL_TEXT() {
-		return "\x2\x3"
-			   "c%s\n"
-			   "\x92\xA5\xAA\xE3\xE9\xA8\xA9 / \x8C\xA0\xAA\xE1\xA8\xAC\xE3\xAC\n"
-			   "\x3"
-			   "r\t054%u\x3"
-			   "l\t058/ %u\n"
-			   "\x3"
-			   "c%u \x80\xE2\xA0\xAA%s/\x90\xA0\xE3\xAD\xA4\x1";
+		return "\x2\x3""c%s\n"													   // "\x2\x3""c%s\n"
+			   "\x92\xA5\xAA\xE3\xE9\xA8\xA9 / \x8C\xA0\xAA\xE1\xA8\xAC\xE3\xAC\n" // "РўРµРєСѓС‰РёР№ / РњР°РєСЃРёРјСѓРј\n"
+			   "\x3""r\t054%u\x3""l\t058/ %u\n"                                    // "\x3""r\t054%u\x3""l\t058/ %u\n"
+			   "\x3""c%u \x80\xE2\xA0\xAA%s/\x90\xA0\xE3\xAD\xA4\x1";              // "\x3""c%u РђС‚Р°Рє%s/Р Р°СѓРЅРґ\x1";
 	}
 
-	/*
-	"\x2\x3""c%s\x3""l\n"
-	"\t020Огонь\t100%u\n"
-	"\t020Холод\t100%u\n"
-	"\t020Гром\t100%u\n"
-	"\t020Яд\t100%u\n"
-	"\t020Энергия\t100%u\n"
-	"\t020Магия\t100%u";
-	*/
 	const char *RESISTENCES_TEXT() {
-		return "\x2\x3"
-			   "c%s\x3"
-			   "l\n"
-			   "\t020\x8E\xA3\xAE\xAD\xEC\t100%u\n"
-			   "\t020\x95\xAE\xAB\xAE\xA4\t100%u\n"
-			   "\t020\x83\xE0\xAE\xAC\t100%u\n"
-			   "\t020\x9F\xA4\t100%u\n"
-			   "\t020\x9D\xAD\xA5\xE0\xA3\xA8\xEF\t100%u\n"
-			   "\t020\x8C\xA0\xA3\xA8\xEF\t100%u";
+		return "\x2\x3""c%s\x3""l\n"						// "\x2\x3""c%s\x3""l\n"
+			   "\t020\x8E\xA3\xAE\xAD\xEC\t100%u\n"         // "\t020РћРіРѕРЅСЊ\t100%u\n"
+			   "\t020\x95\xAE\xAB\xAE\xA4\t100%u\n"         // "\t020РҐРѕР»РѕРґ\t100%u\n"
+			   "\t020\x83\xE0\xAE\xAC\t100%u\n"             // "\t020Р“СЂРѕРј\t100%u\n"
+			   "\t020\x9F\xA4\t100%u\n"                     // "\t020РЇРґ\t100%u\n"
+			   "\t020\x9D\xAD\xA5\xE0\xA3\xA8\xEF\t100%u\n" // "\t020Р­РЅРµСЂРіРёСЏ\t100%u\n"
+			   "\t020\x8C\xA0\xA3\xA8\xEF\t100%u";          // "\t020РњР°РіРёСЏ\t100%u";
 	}
 
-	/*
-	"\n\t012Нет"
-	*/
 	const char *NONE() {
-		return "\n\t012\x8D\xA5\xE2";
+		return "\n\t012\x8D\xA5\xE2"; // "\n\t012РќРµС‚"
 	}
 
-	/*
-	"\x2\x3""c%s\x3""l\n"
-	"\t005Текущий:\t070%lu\n"
-	"\t005Сл. уровень:\t070%s\x1";
-	*/
 	const char *EXPERIENCE_TEXT() {
-		return "\x2\x3"
-			   "c%s\x3"
-			   "l\n"
-			   "\t005\x92\xA5\xAA\xE3\xE9\xA8\xA9:\t070%lu\n"
-			   "\t005\x91\xAB. \xE3\xE0\xAE\xA2\xA5\xAD\xEC:\t070%s\x1";
+		return "\x2\x3""c%s\x3""l\n"									 // "\x2\x3""c%s\x3""l\n"
+			   "\t005\x92\xA5\xAA\xE3\xE9\xA8\xA9:\t070%lu\n"            // "\t005РўРµРєСѓС‰РёР№:\t070%lu\n"
+			   "\t005\x91\xAB. \xE3\xE0\xAE\xA2\xA5\xAD\xEC:\t070%s\x1"; // "\t005РЎР». СѓСЂРѕРІРµРЅСЊ:\t070%s\x1";
 	}
 
-	/*
-	"\f12Доступен\fd"
-	*/
 	const char *ELIGIBLE() {
-		return "\f12\x84\xAE\xE1\xE2\xE3\xAF\xA5\xAD\fd";
+		return "\f12\x84\xAE\xE1\xE2\xE3\xAF\xA5\xAD\fd"; // "\f12Р”РѕСЃС‚СѓРїРµРЅ\fd"
 	}
 
-	/*
-	"\x2\x3""c%s\n"
-	"%lu с собой\n"
-	"%lu в банке\x1\x3""l";
-	*/
 	const char *IN_PARTY_IN_BANK() {
-		return "\x2\x3"
-			   "c%s\n"
-			   "%lu \xE1 \xE1\xAE\xA1\xAE\xA9\n"
-			   "%lu \xA2 \xA1\xA0\xAD\xAA\xA5\x1\x3"
-			   "l";
+		return "\x2\x3""c%s\n"							 // "\x2\x3""c%s\n"
+			   "%lu \xE1 \xE1\xAE\xA1\xAE\xA9\n"         // "%lu СЃ СЃРѕР±РѕР№\n"
+			   "%lu \xA2 \xA1\xA0\xAD\xAA\xA5\x1\x3""l"; // "%lu РІ Р±Р°РЅРєРµ\x1\x3""l";
 	}
 
-	/*
-	"\x2\x3""c%s\n"
-	"%u порци%c\n"
-	"Хватит на %u %s\x1\x3""l";
-	*/
 	const char *FOOD_TEXT() {
-		return "\x2\x3"
-			   "c%s\n"
-			   "%u \xAF\xAE\xE0\xE6\xA8%c\n"
-			   "\x95\xA2\xA0\xE2\xA8\xE2 \xAD\xA0 %u %s\x1\x3"
-			   "l";
+		return "\x2\x3""c%s\n"									   // "\x2\x3""c%s\n"
+			   "%u \xAF\xAE\xE0\xE6\xA8%c\n"                       // "%u РїРѕСЂС†Рё%c\n"
+			   "\x95\xA2\xA0\xE2\xA8\xE2 \xAD\xA0 %u %s\x1\x3""l"; // "РҐРІР°С‚РёС‚ РЅР° %u %s\x1\x3""l";
 	}
 
-	/*
-	"\t010\v005Поменяться с кем?"
-	*/
 	const char *EXCHANGE_WITH_WHOM() {
-		return "\t010\v005\x8F\xAE\xAC\xA5\xAD\xEF\xE2\xEC\xE1\xEF \xE1 \xAA\xA5\xAC?";
+		return "\t010\v005\x8F\xAE\xAC\xA5\xAD\xEF\xE2\xEC\xE1\xEF \xE1 \xAA\xA5\xAC?"; // "\t010\v005РџРѕРјРµРЅСЏС‚СЊСЃСЏ СЃ РєРµРј?"
 	}
 
 	const char *QUICK_REF_LINE() {
@@ -1505,502 +905,286 @@ public:
 			   "%02u%u\fd\t270\f%02u%c%c%c%c\fd";
 	}
 
-	/*
-	"\r\x3""cБыстрая cправка\v012\x3""l"
-	"\t007#\t027Имя\t110Клс\t147Урв\t174Здор"
-	"\t214ОМ\t242КЗ\t270Сост"
-	"%s%s%s%s%s%s%s%s"
-	"\v110\t064\x3""cЗолото\t144Алмазы\t224Пища\v119"
-	"\t064\f15%lu\t144%lu\t224%u %s\fd";
-	*/
 	const char *QUICK_REFERENCE() {
-		return "\r\x3"
-			   "c\x81\xEB\xE1\xE2\xE0\xA0\xEF c\xAF\xE0\xA0\xA2\xAA\xA0\v012\x3"
-			   "l"
-			   "\t007#\t027\x88\xAC\xEF\t110\x8A\xAB\xE1\t147\x93\xE0\xA2\t174\x87\xA4\xAE\xE0"
-			   "\t214\x8E\x8C\t242\x8A\x87\t270\x91\xAE\xE1\xE2"
-			   "%s%s%s%s%s%s%s%s"
-			   "\v110\t064\x3"
-			   "c\x87\xAE\xAB\xAE\xE2\xAE\t144\x80\xAB\xAC\xA0\xA7\xEB\t224\x8F\xA8\xE9\xA0\v119"
-			   "\t064\f15%lu\t144%lu\t224%u %s\fd";
+		return "\r\x3""c\x81\xEB\xE1\xE2\xE0\xA0\xEF c\xAF\xE0\xA0\xA2\xAA\xA0\v012\x3""l"						 // "\r\x3""cР‘С‹СЃС‚СЂР°СЏ cРїСЂР°РІРєР°\v012\x3""l"
+			   "\t007#\t027\x88\xAC\xEF\t110\x8A\xAB\xE1\t147\x93\xE0\xA2\t174\x87\xA4\xAE\xE0"                  // "\t007#\t027РРјСЏ\t110РљР»СЃ\t147РЈСЂРІ\t174Р—РґРѕСЂ"
+			   "\t214\x8E\x8C\t242\x8A\x87\t270\x91\xAE\xE1\xE2"                                                 // "\t214РћРњ\t242РљР—\t270РЎРѕСЃС‚"
+			   "%s%s%s%s%s%s%s%s"                                                                                // "%s%s%s%s%s%s%s%s"
+			   "\v110\t064\x3""c\x87\xAE\xAB\xAE\xE2\xAE\t144\x80\xAB\xAC\xA0\xA7\xEB\t224\x8F\xA8\xE9\xA0\v119" // "\v110\t064\x3""cР—РѕР»РѕС‚Рѕ\t144РђР»РјР°Р·С‹\t224РџРёС‰Р°\v119"
+			   "\t064\f15%lu\t144%lu\t224%u %s\fd";                                                              //"\t064\f15%lu\t144%lu\t224%u %s\fd";
 	}
 
-	/*
-	"\r\x2\x3""c\v021\t017Ору\f37ж\fd\t051\f37Б\fdроня\t085"
-	"\f37У\fdкраш\t119\f37Р\fdазн\t153%s\t187%s\t221%s\t255%s\t289Выход";
-	*/
 	const char *ITEMS_DIALOG_TEXT1() {
-		return "\r\x2\x3"
-			   "c\v021\t017\x8E\xE0\xE3\f37\xA6\fd\t051\f37\x81\fd\xE0\xAE\xAD\xEF\t085"
-			   "\f37\x93\fd\xAA\xE0\xA0\xE8\t119\f37\x90\fd\xA0\xA7\xAD\t153%s\t187%s\t221%s\t255%s\t289\x82\xEB\xE5\xAE\xA4";
+		return "\r\x2\x3""c\v021\t017\x8E\xE0\xE3\f37\xA6\fd\t051\f37\x81\fd\xE0\xAE\xAD\xEF\t085"							   // "\r\x2\x3""c\v021\t017РћСЂСѓ\f37Р¶\fd\t051\f37Р‘\fdСЂРѕРЅСЏ\t085"
+			   "\f37\x93\fd\xAA\xE0\xA0\xE8\t119\f37\x90\fd\xA0\xA7\xAD\t153%s\t187%s\t221%s\t255%s\t289\x82\xEB\xE5\xAE\xA4"; // "\f37РЈ\fdРєСЂР°С€\t119\f37Р \fdР°Р·РЅ\t153%s\t187%s\t221%s\t255%s\t289Р’С‹С…РѕРґ";
 	}
 
-	/*
-	"\r\x2\x3""c\v021\t017Ору\f37ж\fd\t051\f37Б\fdроня\t085"
-	"\f37У\fdкраш\t119\f37Р\fdазн\t153\f37%s\t289Выход";
-	*/
 	const char *ITEMS_DIALOG_TEXT2() {
-		return "\r\x2\x3"
-			   "c\v021\t017\x8E\xE0\xE3\f37\xA6\fd\t051\f37\x81\fd\xE0\xAE\xAD\xEF\t085"
-			   "\f37\x93\fd\xAA\xE0\xA0\xE8\t119\f37\x90\fd\xA0\xA7\xAD\t153\f37%s\t289\x82\xEB\xE5\xAE\xA4";
+		return "\r\x2\x3""c\v021\t017\x8E\xE0\xE3\f37\xA6\fd\t051\f37\x81\fd\xE0\xAE\xAD\xEF\t085"			  // "\r\x2\x3""c\v021\t017РћСЂСѓ\f37Р¶\fd\t051\f37Р‘\fdСЂРѕРЅСЏ\t085"
+			   "\f37\x93\fd\xAA\xE0\xA0\xE8\t119\f37\x90\fd\xA0\xA7\xAD\t153\f37%s\t289\x82\xEB\xE5\xAE\xA4"; // "\f37РЈ\fdРєСЂР°С€\t119\f37Р \fdР°Р·РЅ\t153\f37%s\t289Р’С‹С…РѕРґ";
 	}
 
-	/*
-	"\x3r\f%02u\t023%2d)\x3l\t028%s\n"
-	*/
 	const char *ITEMS_DIALOG_LINE1() {
-		return "\x3r\f%02u\t023%2d)\x3l\t028%s\n";
+		return "\x3r\f%02u\t023%2d)\x3l\t028%s\n"; // "\x3r\f%02u\t023%2d)\x3l\t028%s\n"
 	}
 
-	/*
-	"\x3r\f%02u\t023%2d)\x3l\t028%s\x3r\t000%u\n"
-	*/
 	const char *ITEMS_DIALOG_LINE2() {
-		return "\x3r\f%02u\t023%2d)\x3l\t028%s\x3r\t000%u\n";
+		return "\x3r\f%02u\t023%2d)\x3l\t028%s\x3r\t000%u\n"; // "\x3r\f%02u\t023%2d)\x3l\t028%s\x3r\t000%u\n"
 	}
 
-	/*
-	"\f37К\fdуп"
-	*/
 	const char *BTN_BUY() {
-		return "\f37\x8A\fd\xE3\xAF";
+		return "\f37\x8A\fd\xE3\xAF"; // "\f37Рљ\fdСѓРї"
 	}
 
-	/*
-	"\f37П\fdрод"
-	*/
 	const char *BTN_SELL() {
-		return "\f37\x8F\fd\xE0\xAE\xA4";
+		return "\f37\x8F\fd\xE0\xAE\xA4"; // "\f37Рџ\fdСЂРѕРґ"
 	}
 
-	/*
-	"\f37О\fdпозн"
-	*/
 	const char *BTN_IDENTIFY() {
-		return "\f37\x8E\fd\xAF\xAE\xA7\xAD";
+		return "\f37\x8E\fd\xAF\xAE\xA7\xAD"; // "\f37Рћ\fdРїРѕР·РЅ"
 	}
 
-	/*
-	"\f37Ч\fdинить"
-	*/
 	const char *BTN_FIX() {
-		return "\f37\x97\fd\xA8\xAD\xA8\xE2\xEC";
+		return "\f37\x97\fd\xA8\xAD\xA8\xE2\xEC"; // "\f37Р§\fdРёРЅРёС‚СЊ"
 	}
 
-	/*
-	"\f37И\fdсп"
-	*/
 	const char *BTN_USE() {
-		return "\f37\x88\fd\xE1\xAF";
+		return "\f37\x88\fd\xE1\xAF"; // "\f37Р\fdСЃРї"
 	}
 
-	/*
-	"\f37Н\fdад"
-	*/
 	const char *BTN_EQUIP() {
-		return "\f37\x8D\fd\xA0\xA4";
+		return "\f37\x8D\fd\xA0\xA4"; // "\f37Рќ\fdР°Рґ"
 	}
 
-	/*
-	"\f37С\fdнять"
-	*/
 	const char *BTN_REMOVE() {
-		return "\f37\x91\fd\xAD\xEF\xE2\xEC";
+		return "\f37\x91\fd\xAD\xEF\xE2\xEC"; // "\f37РЎ\fdРЅСЏС‚СЊ"
 	}
 
-	/*
-	"\f37В\fdыбр"
-	*/
 	const char *BTN_DISCARD() {
-		return "\f37\x82\fd\xEB\xA1\xE0";
+		return "\f37\x82\fd\xEB\xA1\xE0"; // "\f37Р’\fdС‹Р±СЂ"
 	}
 
-	/*
-	"\f37З\fdадан"
-	*/
 	const char *BTN_QUEST() {
-		return "\f37\x87\fd\xA0\xA4\xA0\xAD";
+		return "\f37\x87\fd\xA0\xA4\xA0\xAD"; // "\f37Р—\fdР°РґР°РЅ"
 	}
 
-	/*
-	"З\fdачар"
-	*/
 	const char *BTN_ENCHANT() {
-		return "\x87\fd\xA0\xE7\xA0\xE0";
+		return "\x87\fd\xA0\xE7\xA0\xE0"; // "Р—\fdР°С‡Р°СЂ"
 	}
 
-	/*
-	"П\fdерезр"
-	*/
 	const char *BTN_RECHARGE() {
-		return "\x8F\fd\xA5\xE0\xA5\xA7\xE0";
+		return "\x8F\fd\xA5\xE0\xA5\xA7\xE0"; // "Рџ\fdРµСЂРµР·СЂ"
 	}
 
-	/*
-	"З\fdолото"
-	*/
 	const char *BTN_GOLD() {
-		return "\x87\fd\xAE\xAB\xAE\xE2\xAE";
+		return "\x87\fd\xAE\xAB\xAE\xE2\xAE"; // "Р—\fdРѕР»РѕС‚Рѕ"
 	}
 
-	/*
-	"\f32сломано "
-	*/
 	const char *ITEM_BROKEN() {
-		return "\f32\xE1\xAB\xAE\xAC\xA0\xAD\xAE ";
+		return "\f32\xE1\xAB\xAE\xAC\xA0\xAD\xAE "; // "\f32СЃР»РѕРјР°РЅРѕ "
 	}
 
-	/*
-	"\f09проклято "
-	*/
 	const char *ITEM_CURSED() {
-		return "\f09\xAF\xE0\xAE\xAA\xAB\xEF\xE2\xAE ";
+		return "\f09\xAF\xE0\xAE\xAA\xAB\xEF\xE2\xAE "; // "\f09РїСЂРѕРєР»СЏС‚Рѕ "
 	}
 
 	const char *ITEM_OF() {
 		return "";
 	}
 
-	/*
-	"", "Убийцы драконов", "Изгоняющего мёртвых", "Крушителя големов",
-	"Давителя насекомых", "Убийцы монстров", "Убийцы зверей"
-	*/
 	const char **BONUS_NAMES() {
 		delete[] _bonusNames;
 		_bonusNames = new const char *[7] {
-			"", "\x93\xA1\xA8\xA9\xE6\xEB \xA4\xE0\xA0\xAA\xAE\xAD\xAE\xA2", "\x88\xA7\xA3\xAE\xAD\xEF\xEE\xE9\xA5\xA3\xAE \xAC\xF1\xE0\xE2\xA2\xEB\xE5", "\x8A\xE0\xE3\xE8\xA8\xE2\xA5\xAB\xEF \xA3\xAE\xAB\xA5\xAC\xAE\xA2",
-				"\x84\xA0\xA2\xA8\xE2\xA5\xAB\xEF \xAD\xA0\xE1\xA5\xAA\xAE\xAC\xEB\xE5", "\x93\xA1\xA8\xA9\xE6\xEB \xAC\xAE\xAD\xE1\xE2\xE0\xAE\xA2", "\x93\xA1\xA8\xA9\xE6\xEB \xA7\xA2\xA5\xE0\xA5\xA9"
+			"", "\x93\xA1\xA8\xA9\xE6\xEB \xA4\xE0\xA0\xAA\xAE\xAD\xAE\xA2", "\x88\xA7\xA3\xAE\xAD\xEF\xEE\xE9\xA5\xA3\xAE \xAC\xF1\xE0\xE2\xA2\xEB\xE5", "\x8A\xE0\xE3\xE8\xA8\xE2\xA5\xAB\xEF \xA3\xAE\xAB\xA5\xAC\xAE\xA2", // "", "РЈР±РёР№С†С‹ РґСЂР°РєРѕРЅРѕРІ", "РР·РіРѕРЅСЏСЋС‰РµРіРѕ РјС‘СЂС‚РІС‹С…", "РљСЂСѓС€РёС‚РµР»СЏ РіРѕР»РµРјРѕРІ",
+			"\x84\xA0\xA2\xA8\xE2\xA5\xAB\xEF \xAD\xA0\xE1\xA5\xAA\xAE\xAC\xEB\xE5", "\x93\xA1\xA8\xA9\xE6\xEB \xAC\xAE\xAD\xE1\xE2\xE0\xAE\xA2", "\x93\xA1\xA8\xA9\xE6\xEB \xA7\xA2\xA5\xE0\xA5\xA9"                          // "Р”Р°РІРёС‚РµР»СЏ РЅР°СЃРµРєРѕРјС‹С…", "РЈР±РёР№С†С‹ РјРѕРЅСЃС‚СЂРѕРІ", "РЈР±РёР№С†С‹ Р·РІРµСЂРµР№"
 		};
 		return _bonusNames;
 	}
 
-	/*
-	nullptr, "меч ", "гладиус ", "палаш ", "ятаган ",
-	"кортик ", "сабля ", "дубина ", "топор ", "катана ", "нунчаки ",
-	"вакидзаси ", "кинжал ", "булава ", "цеп ", "жезл ", "молот ", "копьё ",
-	"бердыш ", "глефа ", "алебарда ", "пика ", "фламберг ", "трезубец ",
-	"посох ", "боевой молот ", "нагината ", "боевой топор ", "секира ",
-	"топор палача ", "лук ", "большой лук ", "арбалет ", "праща ",
-	"Меч - убийца Ксина ",
-	"Elder LongSword ", "Elder Dagger ", "Elder Mace ", "Elder Spear ",
-	"Elder Staff ", "Elder LongBow "
-	*/
 	const char **WEAPON_NAMES() {
 		delete[] _weaponNames;
 		_weaponNames = new const char *[41] {
-			nullptr, "\xAC\xA5\xE7 ", "\xA3\xAB\xA0\xA4\xA8\xE3\xE1 ", "\xAF\xA0\xAB\xA0\xE8 ", "\xEF\xE2\xA0\xA3\xA0\xAD ",
-				"\xAA\xAE\xE0\xE2\xA8\xAA ", "\xE1\xA0\xA1\xAB\xEF ", "\xA4\xE3\xA1\xA8\xAD\xA0 ", "\xE2\xAE\xAF\xAE\xE0 ", "\xAA\xA0\xE2\xA0\xAD\xA0 ", "\xAD\xE3\xAD\xE7\xA0\xAA\xA8 ",
-				"\xA2\xA0\xAA\xA8\xA4\xA7\xA0\xE1\xA8 ", "\xAA\xA8\xAD\xA6\xA0\xAB ", "\xA1\xE3\xAB\xA0\xA2\xA0 ", "\xE6\xA5\xAF ", "\xA6\xA5\xA7\xAB ", "\xAC\xAE\xAB\xAE\xE2 ", "\xAA\xAE\xAF\xEC\xF1 ",
-				"\xA1\xA5\xE0\xA4\xEB\xE8 ", "\xA3\xAB\xA5\xE4\xA0 ", "\xA0\xAB\xA5\xA1\xA0\xE0\xA4\xA0 ", "\xAF\xA8\xAA\xA0 ", "\xE4\xAB\xA0\xAC\xA1\xA5\xE0\xA3 ", "\xE2\xE0\xA5\xA7\xE3\xA1\xA5\xE6 ",
-				"\xAF\xAE\xE1\xAE\xE5 ", "\xA1\xAE\xA5\xA2\xAE\xA9 \xAC\xAE\xAB\xAE\xE2 ", "\xAD\xA0\xA3\xA8\xAD\xA0\xE2\xA0 ", "\xA1\xAE\xA5\xA2\xAE\xA9 \xE2\xAE\xAF\xAE\xE0 ", "\xE1\xA5\xAA\xA8\xE0\xA0 ",
-				"\xE2\xAE\xAF\xAE\xE0 \xAF\xA0\xAB\xA0\xE7\xA0 ", "\xAB\xE3\xAA ", "\xA1\xAE\xAB\xEC\xE8\xAE\xA9 \xAB\xE3\xAA ", "\xA0\xE0\xA1\xA0\xAB\xA5\xE2 ", "\xAF\xE0\xA0\xE9\xA0 ",
-				"\x8C\xA5\xE7 - \xE3\xA1\xA8\xA9\xE6\xA0 \x8A\xE1\xA8\xAD\xA0 ",
-				"Elder LongSword ", "Elder Dagger ", "Elder Mace ", "Elder Spear ",
-				"Elder Staff ", "Elder LongBow "
+			nullptr, "\xAC\xA5\xE7 ", "\xA3\xAB\xA0\xA4\xA8\xE3\xE1 ", "\xAF\xA0\xAB\xA0\xE8 ", "\xEF\xE2\xA0\xA3\xA0\xAD ",																			   // nullptr, "РјРµС‡ ", "РіР»Р°РґРёСѓСЃ ", "РїР°Р»Р°С€ ", "СЏС‚Р°РіР°РЅ ",
+			"\xAA\xAE\xE0\xE2\xA8\xAA ", "\xE1\xA0\xA1\xAB\xEF ", "\xA4\xE3\xA1\xA8\xAD\xA0 ", "\xE2\xAE\xAF\xAE\xE0 ", "\xAA\xA0\xE2\xA0\xAD\xA0 ", "\xAD\xE3\xAD\xE7\xA0\xAA\xA8 ",                      // "РєРѕСЂС‚РёРє ", "СЃР°Р±Р»СЏ ", "РґСѓР±РёРЅР° ", "С‚РѕРїРѕСЂ ", "РєР°С‚Р°РЅР° ", "РЅСѓРЅС‡Р°РєРё ",
+			"\xA2\xA0\xAA\xA8\xA4\xA7\xA0\xE1\xA8 ", "\xAA\xA8\xAD\xA6\xA0\xAB ", "\xA1\xE3\xAB\xA0\xA2\xA0 ", "\xE6\xA5\xAF ", "\xA6\xA5\xA7\xAB ", "\xAC\xAE\xAB\xAE\xE2 ", "\xAA\xAE\xAF\xEC\xF1 ",     // "РІР°РєРёРґР·Р°СЃРё ", "РєРёРЅР¶Р°Р» ", "Р±СѓР»Р°РІР° ", "С†РµРї ", "Р¶РµР·Р» ", "РјРѕР»РѕС‚ ", "РєРѕРїСЊС‘ ",
+			"\xA1\xA5\xE0\xA4\xEB\xE8 ", "\xA3\xAB\xA5\xE4\xA0 ", "\xA0\xAB\xA5\xA1\xA0\xE0\xA4\xA0 ", "\xAF\xA8\xAA\xA0 ", "\xE4\xAB\xA0\xAC\xA1\xA5\xE0\xA3 ", "\xE2\xE0\xA5\xA7\xE3\xA1\xA5\xE6 ",      // "Р±РµСЂРґС‹С€ ", "РіР»РµС„Р° ", "Р°Р»РµР±Р°СЂРґР° ", "РїРёРєР° ", "С„Р»Р°РјР±РµСЂРі ", "С‚СЂРµР·СѓР±РµС† ",
+			"\xAF\xAE\xE1\xAE\xE5 ", "\xA1\xAE\xA5\xA2\xAE\xA9 \xAC\xAE\xAB\xAE\xE2 ", "\xAD\xA0\xA3\xA8\xAD\xA0\xE2\xA0 ", "\xA1\xAE\xA5\xA2\xAE\xA9 \xE2\xAE\xAF\xAE\xE0 ", "\xE1\xA5\xAA\xA8\xE0\xA0 ", // "РїРѕСЃРѕС… ", "Р±РѕРµРІРѕР№ РјРѕР»РѕС‚ ", "РЅР°РіРёРЅР°С‚Р° ", "Р±РѕРµРІРѕР№ С‚РѕРїРѕСЂ ", "СЃРµРєРёСЂР° ",
+			"\xE2\xAE\xAF\xAE\xE0 \xAF\xA0\xAB\xA0\xE7\xA0 ", "\xAB\xE3\xAA ", "\xA1\xAE\xAB\xEC\xE8\xAE\xA9 \xAB\xE3\xAA ", "\xA0\xE0\xA1\xA0\xAB\xA5\xE2 ", "\xAF\xE0\xA0\xE9\xA0 ",                     // "С‚РѕРїРѕСЂ РїР°Р»Р°С‡Р° ", "Р»СѓРє ", "Р±РѕР»СЊС€РѕР№ Р»СѓРє ", "Р°СЂР±Р°Р»РµС‚ ", "РїСЂР°С‰Р° ",
+			"\x8C\xA5\xE7 - \xE3\xA1\xA8\xA9\xE6\xA0 \x8A\xE1\xA8\xAD\xA0 ",                                                                                                                               // "РњРµС‡ - СѓР±РёР№С†Р° РљСЃРёРЅР° ",
+			"Elder LongSword ", "Elder Dagger ", "Elder Mace ", "Elder Spear ",                                                                                                                            // "Elder LongSword ", "Elder Dagger ", "Elder Mace ", "Elder Spear ",
+			"Elder Staff ", "Elder LongBow "                                                                                                                                                               // "Elder Staff ", "Elder LongBow "
 		};
 		return _weaponNames;
 	}
 
-	/*
-	nullptr, "мантия ", "чешуя ", "панцирь ", "кольчуга ",
-	"юшман ", "бехтерец ", "латы ", "щит ",
-	"шлем ", "сапоги ", "плащ ", "накидка ", "перчатки "
-	*/
 	const char **ARMOR_NAMES() {
 		delete[] _armorNames;
 		_armorNames = new const char *[14] {
-			nullptr, "\xAC\xA0\xAD\xE2\xA8\xEF ", "\xE7\xA5\xE8\xE3\xEF ", "\xAF\xA0\xAD\xE6\xA8\xE0\xEC ", "\xAA\xAE\xAB\xEC\xE7\xE3\xA3\xA0 ",
-				"\xEE\xE8\xAC\xA0\xAD ", "\xA1\xA5\xE5\xE2\xA5\xE0\xA5\xE6 ", "\xAB\xA0\xE2\xEB ", "\xE9\xA8\xE2 ",
-				"\xE8\xAB\xA5\xAC ", "\xE1\xA0\xAF\xAE\xA3\xA8 ", "\xAF\xAB\xA0\xE9 ", "\xAD\xA0\xAA\xA8\xA4\xAA\xA0 ", "\xAF\xA5\xE0\xE7\xA0\xE2\xAA\xA8 "
+			nullptr, "\xAC\xA0\xAD\xE2\xA8\xEF ", "\xE7\xA5\xE8\xE3\xEF ", "\xAF\xA0\xAD\xE6\xA8\xE0\xEC ", "\xAA\xAE\xAB\xEC\xE7\xE3\xA3\xA0 ",		// nullptr, "РјР°РЅС‚РёСЏ ", "С‡РµС€СѓСЏ ", "РїР°РЅС†РёСЂСЊ ", "РєРѕР»СЊС‡СѓРіР° ",
+			"\xEE\xE8\xAC\xA0\xAD ", "\xA1\xA5\xE5\xE2\xA5\xE0\xA5\xE6 ", "\xAB\xA0\xE2\xEB ", "\xE9\xA8\xE2 ",                                         // "СЋС€РјР°РЅ ", "Р±РµС…С‚РµСЂРµС† ", "Р»Р°С‚С‹ ", "С‰РёС‚ ",
+			"\xE8\xAB\xA5\xAC ", "\xE1\xA0\xAF\xAE\xA3\xA8 ", "\xAF\xAB\xA0\xE9 ", "\xAD\xA0\xAA\xA8\xA4\xAA\xA0 ", "\xAF\xA5\xE0\xE7\xA0\xE2\xAA\xA8 " // "С€Р»РµРј ", "СЃР°РїРѕРіРё ", "РїР»Р°С‰ ", "РЅР°РєРёРґРєР° ", "РїРµСЂС‡Р°С‚РєРё "
 		};
 		return _armorNames;
 	}
 
-	/*
-	nullptr, "кольцо ", "пояс ", "брошь ", "медаль ", "талисман ", "камея ",
-	"скарабей ", "кулон ", "ожерелье ", "амулет "
-	*/
 	const char **ACCESSORY_NAMES() {
 		delete[] _accessoryNames;
 		_accessoryNames = new const char *[11] {
-			nullptr, "\xAA\xAE\xAB\xEC\xE6\xAE ", "\xAF\xAE\xEF\xE1 ", "\xA1\xE0\xAE\xE8\xEC ", "\xAC\xA5\xA4\xA0\xAB\xEC ", "\xE2\xA0\xAB\xA8\xE1\xAC\xA0\xAD ", "\xAA\xA0\xAC\xA5\xEF ",
-				"\xE1\xAA\xA0\xE0\xA0\xA1\xA5\xA9 ", "\xAA\xE3\xAB\xAE\xAD ", "\xAE\xA6\xA5\xE0\xA5\xAB\xEC\xA5 ", "\xA0\xAC\xE3\xAB\xA5\xE2 "
+			nullptr, "\xAA\xAE\xAB\xEC\xE6\xAE ", "\xAF\xAE\xEF\xE1 ", "\xA1\xE0\xAE\xE8\xEC ", "\xAC\xA5\xA4\xA0\xAB\xEC ", "\xE2\xA0\xAB\xA8\xE1\xAC\xA0\xAD ", "\xAA\xA0\xAC\xA5\xEF ", // nullptr, "РєРѕР»СЊС†Рѕ ", "РїРѕСЏСЃ ", "Р±СЂРѕС€СЊ ", "РјРµРґР°Р»СЊ ", "С‚Р°Р»РёСЃРјР°РЅ ", "РєР°РјРµСЏ ",
+			"\xE1\xAA\xA0\xE0\xA0\xA1\xA5\xA9 ", "\xAA\xE3\xAB\xAE\xAD ", "\xAE\xA6\xA5\xE0\xA5\xAB\xEC\xA5 ", "\xA0\xAC\xE3\xAB\xA5\xE2 "                                                 // "СЃРєР°СЂР°Р±РµР№ ", "РєСѓР»РѕРЅ ", "РѕР¶РµСЂРµР»СЊРµ ", "Р°РјСѓР»РµС‚ "
 		};
 		return _accessoryNames;
 	}
 
-	/*
-	nullptr, "скипетр ", "самоцвет ", "камень ", "шкатулка ", "сфера ", "рог ",
-	"монетка ", "жезл ", "свисток ", "зелье ", "свиток ", "подделка", "подделка",
-	"подделка", "подделка", "подделка", "подделка", "подделка", "подделка",
-	"подделка", "подделка"
-	*/
 	const char **MISC_NAMES() {
 		delete[] _miscNames;
 		_miscNames = new const char *[22] {
-			nullptr, "\xE1\xAA\xA8\xAF\xA5\xE2\xE0 ", "\xE1\xA0\xAC\xAE\xE6\xA2\xA5\xE2 ", "\xAA\xA0\xAC\xA5\xAD\xEC ", "\xE8\xAA\xA0\xE2\xE3\xAB\xAA\xA0 ", "\xE1\xE4\xA5\xE0\xA0 ", "\xE0\xAE\xA3 ",
-				"\xAC\xAE\xAD\xA5\xE2\xAA\xA0 ", "\xA6\xA5\xA7\xAB ", "\xE1\xA2\xA8\xE1\xE2\xAE\xAA ", "\xA7\xA5\xAB\xEC\xA5 ", "\xE1\xA2\xA8\xE2\xAE\xAA ", "\xAF\xAE\xA4\xA4\xA5\xAB\xAA\xA0", "\xAF\xAE\xA4\xA4\xA5\xAB\xAA\xA0",
-				"\xAF\xAE\xA4\xA4\xA5\xAB\xAA\xA0", "\xAF\xAE\xA4\xA4\xA5\xAB\xAA\xA0", "\xAF\xAE\xA4\xA4\xA5\xAB\xAA\xA0", "\xAF\xAE\xA4\xA4\xA5\xAB\xAA\xA0", "\xAF\xAE\xA4\xA4\xA5\xAB\xAA\xA0", "\xAF\xAE\xA4\xA4\xA5\xAB\xAA\xA0",
-				"\xAF\xAE\xA4\xA4\xA5\xAB\xAA\xA0", "\xAF\xAE\xA4\xA4\xA5\xAB\xAA\xA0"
+			nullptr, "\xE1\xAA\xA8\xAF\xA5\xE2\xE0 ", "\xE1\xA0\xAC\xAE\xE6\xA2\xA5\xE2 ", "\xAA\xA0\xAC\xA5\xAD\xEC ", "\xE8\xAA\xA0\xE2\xE3\xAB\xAA\xA0 ", "\xE1\xE4\xA5\xE0\xA0 ", "\xE0\xAE\xA3 ",								// nullptr, "СЃРєРёРїРµС‚СЂ ", "СЃР°РјРѕС†РІРµС‚ ", "РєР°РјРµРЅСЊ ", "С€РєР°С‚СѓР»РєР° ", "СЃС„РµСЂР° ", "СЂРѕРі ",
+			"\xAC\xAE\xAD\xA5\xE2\xAA\xA0 ", "\xA6\xA5\xA7\xAB ", "\xE1\xA2\xA8\xE1\xE2\xAE\xAA ", "\xA7\xA5\xAB\xEC\xA5 ", "\xE1\xA2\xA8\xE2\xAE\xAA ", "\xAF\xAE\xA4\xA4\xA5\xAB\xAA\xA0", "\xAF\xAE\xA4\xA4\xA5\xAB\xAA\xA0",    // "РјРѕРЅРµС‚РєР° ", "Р¶РµР·Р» ", "СЃРІРёСЃС‚РѕРє ", "Р·РµР»СЊРµ ", "СЃРІРёС‚РѕРє ", "РїРѕРґРґРµР»РєР°", "РїРѕРґРґРµР»РєР°",
+			"\xAF\xAE\xA4\xA4\xA5\xAB\xAA\xA0", "\xAF\xAE\xA4\xA4\xA5\xAB\xAA\xA0", "\xAF\xAE\xA4\xA4\xA5\xAB\xAA\xA0", "\xAF\xAE\xA4\xA4\xA5\xAB\xAA\xA0", "\xAF\xAE\xA4\xA4\xA5\xAB\xAA\xA0", "\xAF\xAE\xA4\xA4\xA5\xAB\xAA\xA0", // "РїРѕРґРґРµР»РєР°", "РїРѕРґРґРµР»РєР°", "РїРѕРґРґРµР»РєР°", "РїРѕРґРґРµР»РєР°", "РїРѕРґРґРµР»РєР°", "РїРѕРґРґРµР»РєР°",
+			"\xAF\xAE\xA4\xA4\xA5\xAB\xAA\xA0", "\xAF\xAE\xA4\xA4\xA5\xAB\xAA\xA0"                                                                                                                                                  // "РїРѕРґРґРµР»РєР°", "РїРѕРґРґРµР»РєР°"
 		};
 		return _miscNames;
 	}
 
-	/*
-	nullptr, "света", "пробуждения", "волшебных стрел", "первой помощи",
-	"кулаков", "энергетического взрыва", "усыпления", "лечения слабости",
-	"лечения", "искр", "шрапнели", "репеллента", "ядовитых облаков",
-	"защиты от стихий", "боли", "прыжков", "контроля над монстрами",
-	"ясновидения", "изгнания нежити", "левитации", "волшебного глаза",
-	"благословения", "опознания монстров", "молний", "святых даров", "исцеления",
-	"природного лечения", "маяков", "щита", "мужества", "гипноза",
-	"хождения по воде", "обжигающего холода", "поиска монстров",
-	"огненных шаров", "лучей холода", "противоядия", "распыления кислоты",
-	"временного искажения", "усыпления драконов", "вакцинации", "телепортации",
-	"смерти", "свободного движения", "остановки голема", "ядовитых залпов",
-	"смертельного роя", "убежища", "дня защиты", "дня магии", "пира",
-	"огненного цепа", "перезарядки", "мороза", "городских порталов",
-	"снятия окаменения", "оживления мёртвых", "дематериализации",
-	"танцующих клинков", "лунных лучей", "изменения веса",
-	"призматического света", "чар", "испепеления", "святых слов", "воскрешения",
-	"бурь", "мегавольт", "инферно", "солнечных лучей", "имплозий",
-	"взрыва звезды", "БОГОВ!"
-	*/
 	const char **SPECIAL_NAMES() {
 		delete[] _specialNames;
 		_specialNames = new const char *[74] {
-			nullptr, "\xE1\xA2\xA5\xE2\xA0", "\xAF\xE0\xAE\xA1\xE3\xA6\xA4\xA5\xAD\xA8\xEF", "\xA2\xAE\xAB\xE8\xA5\xA1\xAD\xEB\xE5 \xE1\xE2\xE0\xA5\xAB", "\xAF\xA5\xE0\xA2\xAE\xA9 \xAF\xAE\xAC\xAE\xE9\xA8",
-				"\xAA\xE3\xAB\xA0\xAA\xAE\xA2", "\xED\xAD\xA5\xE0\xA3\xA5\xE2\xA8\xE7\xA5\xE1\xAA\xAE\xA3\xAE \xA2\xA7\xE0\xEB\xA2\xA0", "\xE3\xE1\xEB\xAF\xAB\xA5\xAD\xA8\xEF", "\xAB\xA5\xE7\xA5\xAD\xA8\xEF \xE1\xAB\xA0\xA1\xAE\xE1\xE2\xA8",
-				"\xAB\xA5\xE7\xA5\xAD\xA8\xEF", "\xA8\xE1\xAA\xE0", "\xE8\xE0\xA0\xAF\xAD\xA5\xAB\xA8", "\xE0\xA5\xAF\xA5\xAB\xAB\xA5\xAD\xE2\xA0", "\xEF\xA4\xAE\xA2\xA8\xE2\xEB\xE5 \xAE\xA1\xAB\xA0\xAA\xAE\xA2",
-				"\xA7\xA0\xE9\xA8\xE2\xEB \xAE\xE2 \xE1\xE2\xA8\xE5\xA8\xA9", "\xA1\xAE\xAB\xA8", "\xAF\xE0\xEB\xA6\xAA\xAE\xA2", "\xAA\xAE\xAD\xE2\xE0\xAE\xAB\xEF \xAD\xA0\xA4 \xAC\xAE\xAD\xE1\xE2\xE0\xA0\xAC\xA8",
-				"\xEF\xE1\xAD\xAE\xA2\xA8\xA4\xA5\xAD\xA8\xEF", "\xA8\xA7\xA3\xAD\xA0\xAD\xA8\xEF \xAD\xA5\xA6\xA8\xE2\xA8", "\xAB\xA5\xA2\xA8\xE2\xA0\xE6\xA8\xA8", "\xA2\xAE\xAB\xE8\xA5\xA1\xAD\xAE\xA3\xAE \xA3\xAB\xA0\xA7\xA0",
-				"\xA1\xAB\xA0\xA3\xAE\xE1\xAB\xAE\xA2\xA5\xAD\xA8\xEF", "\xAE\xAF\xAE\xA7\xAD\xA0\xAD\xA8\xEF \xAC\xAE\xAD\xE1\xE2\xE0\xAE\xA2", "\xAC\xAE\xAB\xAD\xA8\xA9", "\xE1\xA2\xEF\xE2\xEB\xE5 \xA4\xA0\xE0\xAE\xA2", "\xA8\xE1\xE6\xA5\xAB\xA5\xAD\xA8\xEF",
-				"\xAF\xE0\xA8\xE0\xAE\xA4\xAD\xAE\xA3\xAE \xAB\xA5\xE7\xA5\xAD\xA8\xEF", "\xAC\xA0\xEF\xAA\xAE\xA2", "\xE9\xA8\xE2\xA0", "\xAC\xE3\xA6\xA5\xE1\xE2\xA2\xA0", "\xA3\xA8\xAF\xAD\xAE\xA7\xA0",
-				"\xE5\xAE\xA6\xA4\xA5\xAD\xA8\xEF \xAF\xAE \xA2\xAE\xA4\xA5", "\xAE\xA1\xA6\xA8\xA3\xA0\xEE\xE9\xA5\xA3\xAE \xE5\xAE\xAB\xAE\xA4\xA0", "\xAF\xAE\xA8\xE1\xAA\xA0 \xAC\xAE\xAD\xE1\xE2\xE0\xAE\xA2",
-				"\xAE\xA3\xAD\xA5\xAD\xAD\xEB\xE5 \xE8\xA0\xE0\xAE\xA2", "\xAB\xE3\xE7\xA5\xA9 \xE5\xAE\xAB\xAE\xA4\xA0", "\xAF\xE0\xAE\xE2\xA8\xA2\xAE\xEF\xA4\xA8\xEF", "\xE0\xA0\xE1\xAF\xEB\xAB\xA5\xAD\xA8\xEF \xAA\xA8\xE1\xAB\xAE\xE2\xEB",
-				"\xA2\xE0\xA5\xAC\xA5\xAD\xAD\xAE\xA3\xAE \xA8\xE1\xAA\xA0\xA6\xA5\xAD\xA8\xEF", "\xE3\xE1\xEB\xAF\xAB\xA5\xAD\xA8\xEF \xA4\xE0\xA0\xAA\xAE\xAD\xAE\xA2", "\xA2\xA0\xAA\xE6\xA8\xAD\xA0\xE6\xA8\xA8", "\xE2\xA5\xAB\xA5\xAF\xAE\xE0\xE2\xA0\xE6\xA8\xA8",
-				"\xE1\xAC\xA5\xE0\xE2\xA8", "\xE1\xA2\xAE\xA1\xAE\xA4\xAD\xAE\xA3\xAE \xA4\xA2\xA8\xA6\xA5\xAD\xA8\xEF", "\xAE\xE1\xE2\xA0\xAD\xAE\xA2\xAA\xA8 \xA3\xAE\xAB\xA5\xAC\xA0", "\xEF\xA4\xAE\xA2\xA8\xE2\xEB\xE5 \xA7\xA0\xAB\xAF\xAE\xA2",
-				"\xE1\xAC\xA5\xE0\xE2\xA5\xAB\xEC\xAD\xAE\xA3\xAE \xE0\xAE\xEF", "\xE3\xA1\xA5\xA6\xA8\xE9\xA0", "\xA4\xAD\xEF \xA7\xA0\xE9\xA8\xE2\xEB", "\xA4\xAD\xEF \xAC\xA0\xA3\xA8\xA8", "\xAF\xA8\xE0\xA0",
-				"\xAE\xA3\xAD\xA5\xAD\xAD\xAE\xA3\xAE \xE6\xA5\xAF\xA0", "\xAF\xA5\xE0\xA5\xA7\xA0\xE0\xEF\xA4\xAA\xA8", "\xAC\xAE\xE0\xAE\xA7\xA0", "\xA3\xAE\xE0\xAE\xA4\xE1\xAA\xA8\xE5 \xAF\xAE\xE0\xE2\xA0\xAB\xAE\xA2",
-				"\xE1\xAD\xEF\xE2\xA8\xEF \xAE\xAA\xA0\xAC\xA5\xAD\xA5\xAD\xA8\xEF", "\xAE\xA6\xA8\xA2\xAB\xA5\xAD\xA8\xEF \xAC\xF1\xE0\xE2\xA2\xEB\xE5", "\xA4\xA5\xAC\xA0\xE2\xA5\xE0\xA8\xA0\xAB\xA8\xA7\xA0\xE6\xA8\xA8",
-				"\xE2\xA0\xAD\xE6\xE3\xEE\xE9\xA8\xE5 \xAA\xAB\xA8\xAD\xAA\xAE\xA2", "\xAB\xE3\xAD\xAD\xEB\xE5 \xAB\xE3\xE7\xA5\xA9", "\xA8\xA7\xAC\xA5\xAD\xA5\xAD\xA8\xEF \xA2\xA5\xE1\xA0",
-				"\xAF\xE0\xA8\xA7\xAC\xA0\xE2\xA8\xE7\xA5\xE1\xAA\xAE\xA3\xAE \xE1\xA2\xA5\xE2\xA0", "\xE7\xA0\xE0", "\xA8\xE1\xAF\xA5\xAF\xA5\xAB\xA5\xAD\xA8\xEF", "\xE1\xA2\xEF\xE2\xEB\xE5 \xE1\xAB\xAE\xA2", "\xA2\xAE\xE1\xAA\xE0\xA5\xE8\xA5\xAD\xA8\xEF",
-				"\xA1\xE3\xE0\xEC", "\xAC\xA5\xA3\xA0\xA2\xAE\xAB\xEC\xE2", "\xA8\xAD\xE4\xA5\xE0\xAD\xAE", "\xE1\xAE\xAB\xAD\xA5\xE7\xAD\xEB\xE5 \xAB\xE3\xE7\xA5\xA9", "\xA8\xAC\xAF\xAB\xAE\xA7\xA8\xA9",
-				"\xA2\xA7\xE0\xEB\xA2\xA0 \xA7\xA2\xA5\xA7\xA4\xEB", "\x81\x8E\x83\x8E\x82!"
+			nullptr, "\xE1\xA2\xA5\xE2\xA0", "\xAF\xE0\xAE\xA1\xE3\xA6\xA4\xA5\xAD\xA8\xEF", "\xA2\xAE\xAB\xE8\xA5\xA1\xAD\xEB\xE5 \xE1\xE2\xE0\xA5\xAB", "\xAF\xA5\xE0\xA2\xAE\xA9 \xAF\xAE\xAC\xAE\xE9\xA8",														  // nullptr, "СЃРІРµС‚Р°", "РїСЂРѕР±СѓР¶РґРµРЅРёСЏ", "РІРѕР»С€РµР±РЅС‹С… СЃС‚СЂРµР»", "РїРµСЂРІРѕР№ РїРѕРјРѕС‰Рё",
+			"\xAA\xE3\xAB\xA0\xAA\xAE\xA2", "\xED\xAD\xA5\xE0\xA3\xA5\xE2\xA8\xE7\xA5\xE1\xAA\xAE\xA3\xAE \xA2\xA7\xE0\xEB\xA2\xA0", "\xE3\xE1\xEB\xAF\xAB\xA5\xAD\xA8\xEF", "\xAB\xA5\xE7\xA5\xAD\xA8\xEF \xE1\xAB\xA0\xA1\xAE\xE1\xE2\xA8",                         // "РєСѓР»Р°РєРѕРІ", "СЌРЅРµСЂРіРµС‚РёС‡РµСЃРєРѕРіРѕ РІР·СЂС‹РІР°", "СѓСЃС‹РїР»РµРЅРёСЏ", "Р»РµС‡РµРЅРёСЏ СЃР»Р°Р±РѕСЃС‚Рё",
+			"\xAB\xA5\xE7\xA5\xAD\xA8\xEF", "\xA8\xE1\xAA\xE0", "\xE8\xE0\xA0\xAF\xAD\xA5\xAB\xA8", "\xE0\xA5\xAF\xA5\xAB\xAB\xA5\xAD\xE2\xA0", "\xEF\xA4\xAE\xA2\xA8\xE2\xEB\xE5 \xAE\xA1\xAB\xA0\xAA\xAE\xA2",                                                      // "Р»РµС‡РµРЅРёСЏ", "РёСЃРєСЂ", "С€СЂР°РїРЅРµР»Рё", "СЂРµРїРµР»Р»РµРЅС‚Р°", "СЏРґРѕРІРёС‚С‹С… РѕР±Р»Р°РєРѕРІ",
+			"\xA7\xA0\xE9\xA8\xE2\xEB \xAE\xE2 \xE1\xE2\xA8\xE5\xA8\xA9", "\xA1\xAE\xAB\xA8", "\xAF\xE0\xEB\xA6\xAA\xAE\xA2", "\xAA\xAE\xAD\xE2\xE0\xAE\xAB\xEF \xAD\xA0\xA4 \xAC\xAE\xAD\xE1\xE2\xE0\xA0\xAC\xA8",                                                   // "Р·Р°С‰РёС‚С‹ РѕС‚ СЃС‚РёС…РёР№", "Р±РѕР»Рё", "РїСЂС‹Р¶РєРѕРІ", "РєРѕРЅС‚СЂРѕР»СЏ РЅР°Рґ РјРѕРЅСЃС‚СЂР°РјРё",
+			"\xEF\xE1\xAD\xAE\xA2\xA8\xA4\xA5\xAD\xA8\xEF", "\xA8\xA7\xA3\xAD\xA0\xAD\xA8\xEF \xAD\xA5\xA6\xA8\xE2\xA8", "\xAB\xA5\xA2\xA8\xE2\xA0\xE6\xA8\xA8", "\xA2\xAE\xAB\xE8\xA5\xA1\xAD\xAE\xA3\xAE \xA3\xAB\xA0\xA7\xA0",                                     // "СЏСЃРЅРѕРІРёРґРµРЅРёСЏ", "РёР·РіРЅР°РЅРёСЏ РЅРµР¶РёС‚Рё", "Р»РµРІРёС‚Р°С†РёРё", "РІРѕР»С€РµР±РЅРѕРіРѕ РіР»Р°Р·Р°",
+			"\xA1\xAB\xA0\xA3\xAE\xE1\xAB\xAE\xA2\xA5\xAD\xA8\xEF", "\xAE\xAF\xAE\xA7\xAD\xA0\xAD\xA8\xEF \xAC\xAE\xAD\xE1\xE2\xE0\xAE\xA2", "\xAC\xAE\xAB\xAD\xA8\xA9", "\xE1\xA2\xEF\xE2\xEB\xE5 \xA4\xA0\xE0\xAE\xA2", "\xA8\xE1\xE6\xA5\xAB\xA5\xAD\xA8\xEF",     // "Р±Р»Р°РіРѕСЃР»РѕРІРµРЅРёСЏ", "РѕРїРѕР·РЅР°РЅРёСЏ РјРѕРЅСЃС‚СЂРѕРІ", "РјРѕР»РЅРёР№", "СЃРІСЏС‚С‹С… РґР°СЂРѕРІ", "РёСЃС†РµР»РµРЅРёСЏ",
+			"\xAF\xE0\xA8\xE0\xAE\xA4\xAD\xAE\xA3\xAE \xAB\xA5\xE7\xA5\xAD\xA8\xEF", "\xAC\xA0\xEF\xAA\xAE\xA2", "\xE9\xA8\xE2\xA0", "\xAC\xE3\xA6\xA5\xE1\xE2\xA2\xA0", "\xA3\xA8\xAF\xAD\xAE\xA7\xA0",                                                              // "РїСЂРёСЂРѕРґРЅРѕРіРѕ Р»РµС‡РµРЅРёСЏ", "РјР°СЏРєРѕРІ", "С‰РёС‚Р°", "РјСѓР¶РµСЃС‚РІР°", "РіРёРїРЅРѕР·Р°",
+			"\xE5\xAE\xA6\xA4\xA5\xAD\xA8\xEF \xAF\xAE \xA2\xAE\xA4\xA5", "\xAE\xA1\xA6\xA8\xA3\xA0\xEE\xE9\xA5\xA3\xAE \xE5\xAE\xAB\xAE\xA4\xA0", "\xAF\xAE\xA8\xE1\xAA\xA0 \xAC\xAE\xAD\xE1\xE2\xE0\xAE\xA2",                                                       // "С…РѕР¶РґРµРЅРёСЏ РїРѕ РІРѕРґРµ", "РѕР±Р¶РёРіР°СЋС‰РµРіРѕ С…РѕР»РѕРґР°", "РїРѕРёСЃРєР° РјРѕРЅСЃС‚СЂРѕРІ",
+			"\xAE\xA3\xAD\xA5\xAD\xAD\xEB\xE5 \xE8\xA0\xE0\xAE\xA2", "\xAB\xE3\xE7\xA5\xA9 \xE5\xAE\xAB\xAE\xA4\xA0", "\xAF\xE0\xAE\xE2\xA8\xA2\xAE\xEF\xA4\xA8\xEF", "\xE0\xA0\xE1\xAF\xEB\xAB\xA5\xAD\xA8\xEF \xAA\xA8\xE1\xAB\xAE\xE2\xEB",                        // "РѕРіРЅРµРЅРЅС‹С… С€Р°СЂРѕРІ", "Р»СѓС‡РµР№ С…РѕР»РѕРґР°", "РїСЂРѕС‚РёРІРѕСЏРґРёСЏ", "СЂР°СЃРїС‹Р»РµРЅРёСЏ РєРёСЃР»РѕС‚С‹",
+			"\xA2\xE0\xA5\xAC\xA5\xAD\xAD\xAE\xA3\xAE \xA8\xE1\xAA\xA0\xA6\xA5\xAD\xA8\xEF", "\xE3\xE1\xEB\xAF\xAB\xA5\xAD\xA8\xEF \xA4\xE0\xA0\xAA\xAE\xAD\xAE\xA2", "\xA2\xA0\xAA\xE6\xA8\xAD\xA0\xE6\xA8\xA8", "\xE2\xA5\xAB\xA5\xAF\xAE\xE0\xE2\xA0\xE6\xA8\xA8", // "РІСЂРµРјРµРЅРЅРѕРіРѕ РёСЃРєР°Р¶РµРЅРёСЏ", "СѓСЃС‹РїР»РµРЅРёСЏ РґСЂР°РєРѕРЅРѕРІ", "РІР°РєС†РёРЅР°С†РёРё", "С‚РµР»РµРїРѕСЂС‚Р°С†РёРё",
+			"\xE1\xAC\xA5\xE0\xE2\xA8", "\xE1\xA2\xAE\xA1\xAE\xA4\xAD\xAE\xA3\xAE \xA4\xA2\xA8\xA6\xA5\xAD\xA8\xEF", "\xAE\xE1\xE2\xA0\xAD\xAE\xA2\xAA\xA8 \xA3\xAE\xAB\xA5\xAC\xA0", "\xEF\xA4\xAE\xA2\xA8\xE2\xEB\xE5 \xA7\xA0\xAB\xAF\xAE\xA2",                    // "СЃРјРµСЂС‚Рё", "СЃРІРѕР±РѕРґРЅРѕРіРѕ РґРІРёР¶РµРЅРёСЏ", "РѕСЃС‚Р°РЅРѕРІРєРё РіРѕР»РµРјР°", "СЏРґРѕРІРёС‚С‹С… Р·Р°Р»РїРѕРІ",
+			"\xE1\xAC\xA5\xE0\xE2\xA5\xAB\xEC\xAD\xAE\xA3\xAE \xE0\xAE\xEF", "\xE3\xA1\xA5\xA6\xA8\xE9\xA0", "\xA4\xAD\xEF \xA7\xA0\xE9\xA8\xE2\xEB", "\xA4\xAD\xEF \xAC\xA0\xA3\xA8\xA8", "\xAF\xA8\xE0\xA0",                                                        // "СЃРјРµСЂС‚РµР»СЊРЅРѕРіРѕ СЂРѕСЏ", "СѓР±РµР¶РёС‰Р°", "РґРЅСЏ Р·Р°С‰РёС‚С‹", "РґРЅСЏ РјР°РіРёРё", "РїРёСЂР°",
+			"\xAE\xA3\xAD\xA5\xAD\xAD\xAE\xA3\xAE \xE6\xA5\xAF\xA0", "\xAF\xA5\xE0\xA5\xA7\xA0\xE0\xEF\xA4\xAA\xA8", "\xAC\xAE\xE0\xAE\xA7\xA0", "\xA3\xAE\xE0\xAE\xA4\xE1\xAA\xA8\xE5 \xAF\xAE\xE0\xE2\xA0\xAB\xAE\xA2",                                             // "РѕРіРЅРµРЅРЅРѕРіРѕ С†РµРїР°", "РїРµСЂРµР·Р°СЂСЏРґРєРё", "РјРѕСЂРѕР·Р°", "РіРѕСЂРѕРґСЃРєРёС… РїРѕСЂС‚Р°Р»РѕРІ",
+			"\xE1\xAD\xEF\xE2\xA8\xEF \xAE\xAA\xA0\xAC\xA5\xAD\xA5\xAD\xA8\xEF", "\xAE\xA6\xA8\xA2\xAB\xA5\xAD\xA8\xEF \xAC\xF1\xE0\xE2\xA2\xEB\xE5", "\xA4\xA5\xAC\xA0\xE2\xA5\xE0\xA8\xA0\xAB\xA8\xA7\xA0\xE6\xA8\xA8",                                             // "СЃРЅСЏС‚РёСЏ РѕРєР°РјРµРЅРµРЅРёСЏ", "РѕР¶РёРІР»РµРЅРёСЏ РјС‘СЂС‚РІС‹С…", "РґРµРјР°С‚РµСЂРёР°Р»РёР·Р°С†РёРё",
+			"\xE2\xA0\xAD\xE6\xE3\xEE\xE9\xA8\xE5 \xAA\xAB\xA8\xAD\xAA\xAE\xA2", "\xAB\xE3\xAD\xAD\xEB\xE5 \xAB\xE3\xE7\xA5\xA9", "\xA8\xA7\xAC\xA5\xAD\xA5\xAD\xA8\xEF \xA2\xA5\xE1\xA0",                                                                            // "С‚Р°РЅС†СѓСЋС‰РёС… РєР»РёРЅРєРѕРІ", "Р»СѓРЅРЅС‹С… Р»СѓС‡РµР№", "РёР·РјРµРЅРµРЅРёСЏ РІРµСЃР°",
+			"\xAF\xE0\xA8\xA7\xAC\xA0\xE2\xA8\xE7\xA5\xE1\xAA\xAE\xA3\xAE \xE1\xA2\xA5\xE2\xA0", "\xE7\xA0\xE0", "\xA8\xE1\xAF\xA5\xAF\xA5\xAB\xA5\xAD\xA8\xEF", "\xE1\xA2\xEF\xE2\xEB\xE5 \xE1\xAB\xAE\xA2", "\xA2\xAE\xE1\xAA\xE0\xA5\xE8\xA5\xAD\xA8\xEF",         // "РїСЂРёР·РјР°С‚РёС‡РµСЃРєРѕРіРѕ СЃРІРµС‚Р°", "С‡Р°СЂ", "РёСЃРїРµРїРµР»РµРЅРёСЏ", "СЃРІСЏС‚С‹С… СЃР»РѕРІ", "РІРѕСЃРєСЂРµС€РµРЅРёСЏ",
+			"\xA1\xE3\xE0\xEC", "\xAC\xA5\xA3\xA0\xA2\xAE\xAB\xEC\xE2", "\xA8\xAD\xE4\xA5\xE0\xAD\xAE", "\xE1\xAE\xAB\xAD\xA5\xE7\xAD\xEB\xE5 \xAB\xE3\xE7\xA5\xA9", "\xA8\xAC\xAF\xAB\xAE\xA7\xA8\xA9",                                                              // "Р±СѓСЂСЊ", "РјРµРіР°РІРѕР»СЊС‚", "РёРЅС„РµСЂРЅРѕ", "СЃРѕР»РЅРµС‡РЅС‹С… Р»СѓС‡РµР№", "РёРјРїР»РѕР·РёР№",
+			"\xA2\xA7\xE0\xEB\xA2\xA0 \xA7\xA2\xA5\xA7\xA4\xEB", "\x81\x8E\x83\x8E\x82!"                                                                                                                                                                              // "РІР·СЂС‹РІР° Р·РІРµР·РґС‹", "Р‘РћР“РћР’!"
 		};
 		return _specialNames;
 	}
 
-	/*
-	"Огня", "Грома", "Холода", "Кислоты/Яда", "Энергии", "Магии"
-	*/
 	const char **ELEMENTAL_NAMES() {
 		delete[] _elementalNames;
 		_elementalNames = new const char *[6] {
-			"\x8E\xA3\xAD\xEF", "\x83\xE0\xAE\xAC\xA0", "\x95\xAE\xAB\xAE\xA4\xA0", "\x8A\xA8\xE1\xAB\xAE\xE2\xEB/\x9F\xA4\xA0", "\x9D\xAD\xA5\xE0\xA3\xA8\xA8", "\x8C\xA0\xA3\xA8\xA8"
+			"\x8E\xA3\xAD\xEF", "\x83\xE0\xAE\xAC\xA0", "\x95\xAE\xAB\xAE\xA4\xA0", "\x8A\xA8\xE1\xAB\xAE\xE2\xEB/\x9F\xA4\xA0", "\x9D\xAD\xA5\xE0\xA3\xA8\xA8", "\x8C\xA0\xA3\xA8\xA8" // "РћРіРЅСЏ", "Р“СЂРѕРјР°", "РҐРѕР»РѕРґР°", "РљРёСЃР»РѕС‚С‹/РЇРґР°", "Р­РЅРµСЂРіРёРё", "РњР°РіРёРё"
 		};
 		return _elementalNames;
 	}
 
-	/*
-	"Сила", "Интеллект", "Сила духа", "Скорость", "Меткость", "Удача",
-	"Здоровье", "Очки магии", "Класс защиты", "Воровство"
-	*/
 	const char **ATTRIBUTE_NAMES() {
 		delete[] _attributeNames;
 		_attributeNames = new const char *[10] {
-			"\x91\xA8\xAB\xA0", "\x88\xAD\xE2\xA5\xAB\xAB\xA5\xAA\xE2", "\x91\xA8\xAB\xA0 \xA4\xE3\xE5\xA0", "\x91\xAA\xAE\xE0\xAE\xE1\xE2\xEC", "\x8C\xA5\xE2\xAA\xAE\xE1\xE2\xEC", "\x93\xA4\xA0\xE7\xA0",
-				"\x87\xA4\xAE\xE0\xAE\xA2\xEC\xA5", "\x8E\xE7\xAA\xA8 \xAC\xA0\xA3\xA8\xA8", "\x8A\xAB\xA0\xE1\xE1 \xA7\xA0\xE9\xA8\xE2\xEB", "\x82\xAE\xE0\xAE\xA2\xE1\xE2\xA2\xAE"
+			"\x91\xA8\xAB\xA0", "\x88\xAD\xE2\xA5\xAB\xAB\xA5\xAA\xE2", "\x91\xA8\xAB\xA0 \xA4\xE3\xE5\xA0", "\x91\xAA\xAE\xE0\xAE\xE1\xE2\xEC", "\x8C\xA5\xE2\xAA\xAE\xE1\xE2\xEC", "\x93\xA4\xA0\xE7\xA0", // "РЎРёР»Р°", "РРЅС‚РµР»Р»РµРєС‚", "РЎРёР»Р° РґСѓС…Р°", "РЎРєРѕСЂРѕСЃС‚СЊ", "РњРµС‚РєРѕСЃС‚СЊ", "РЈРґР°С‡Р°",
+			"\x87\xA4\xAE\xE0\xAE\xA2\xEC\xA5", "\x8E\xE7\xAA\xA8 \xAC\xA0\xA3\xA8\xA8", "\x8A\xAB\xA0\xE1\xE1 \xA7\xA0\xE9\xA8\xE2\xEB", "\x82\xAE\xE0\xAE\xA2\xE1\xE2\xA2\xAE"                             // "Р—РґРѕСЂРѕРІСЊРµ", "РћС‡РєРё РјР°РіРёРё", "РљР»Р°СЃСЃ Р·Р°С‰РёС‚С‹", "Р’РѕСЂРѕРІСЃС‚РІРѕ"
 		};
 		return _attributeNames;
 	}
 
-	/*
-	nullptr, "Драконов", "Мёртвых", "Големов", "Насекомых", "Монстров", "Зверей"
-	*/
 	const char **EFFECTIVENESS_NAMES() {
 		delete[] _effectivenessNames;
 		_effectivenessNames = new const char *[7] {
-			nullptr, "\x84\xE0\xA0\xAA\xAE\xAD\xAE\xA2", "\x8C\xF1\xE0\xE2\xA2\xEB\xE5", "\x83\xAE\xAB\xA5\xAC\xAE\xA2", "\x8D\xA0\xE1\xA5\xAA\xAE\xAC\xEB\xE5", "\x8C\xAE\xAD\xE1\xE2\xE0\xAE\xA2", "\x87\xA2\xA5\xE0\xA5\xA9"
+			nullptr, "\x84\xE0\xA0\xAA\xAE\xAD\xAE\xA2", "\x8C\xF1\xE0\xE2\xA2\xEB\xE5", "\x83\xAE\xAB\xA5\xAC\xAE\xA2", "\x8D\xA0\xE1\xA5\xAA\xAE\xAC\xEB\xE5", "\x8C\xAE\xAD\xE1\xE2\xE0\xAE\xA2", "\x87\xA2\xA5\xE0\xA5\xA9" // nullptr, "Р”СЂР°РєРѕРЅРѕРІ", "РњС‘СЂС‚РІС‹С…", "Р“РѕР»РµРјРѕРІ", "РќР°СЃРµРєРѕРјС‹С…", "РњРѕРЅСЃС‚СЂРѕРІ", "Р—РІРµСЂРµР№"
 		};
 		return _effectivenessNames;
 	}
 
-	/*
-	"Право владения Ньюкаслом",
-	"Хрустальный ключ от Ведьминой башни",
-	"Отмычка для башни Дарзога",
-	"Ключ от Башни высшей магии",
-	"Драгоценный амулет Северного Сфинкса",
-	"Камень Тысячи Ужасов",
-	"Отпирающий камень големов",
-	"Отпирающий камень Яка",
-	"Скипетр Временного Искажения",
-	"Рог Фалисты",
-	"Эликсир Восстановления",
-	"Волшебный жезл фей",
-	"Диадема принцессы Роксаны",
-	"Священная Книга Эльфов",
-	"Скарабей Воплощения",
-	"Кристаллы Пьезоэлектричества",
-	"Свиток Мудрости",
-	"Корень фирны",
-	"Костяной свисток Орофина",
-	"Волшебный кулон Барока",
-	"Пропавший череп Лигоно",
-	"Последний цветок лета",
-	"Последняя дождевая капелька весны",
-	"Последняя снежинка зимы",
-	"Последний лист осени",
-	"Вечно горячий кусок пемзы",
-	"Мегакредит короля",
-	"Разрешение на раскопки",
-	"Куколка",
-	"Кукла Силы",
-	"Кукла Скорости",
-	"Кукла Сложения",
-	"Кукла Меткости",
-	"Кукла Удачи",
-	"Устройство",
-	"Pass to Castleview",
-	"Pass to Sandcaster",
-	"Pass to Lakeside",
-	"Pass to Necropolis",
-	"Pass to Olympus",
-	"Key to Great Western Tower",
-	"Key to Great Southern Tower",
-	"Key to Great Eastern Tower",
-	"Key to Great Northern Tower",
-	"Key to Ellinger's Tower",
-	"Key to Dragon Tower",
-	"Key to Darkstone Tower",
-	"Key to Temple of Bark",
-	"Key to Dungeon of Lost Souls",
-	"Key to Ancient Pyramid",
-	"Key to Dungeon of Death",
-	"Amulet of the Southern Sphinx",
-	"Dragon Pharoah's Orb",
-	"Cube of Power",
-	"Chime of Opening",
-	"Gold ID Card",
-	"Silver ID Card",
-	"Vulture Repellant",
-	"Bridle",
-	"Enchanted Bridle",
-	"Treasure Map (Goto E1 x1, y11)",
-	"",
-	"Fake Map",
-	"Onyx Necklace",
-	"Dragon Egg",
-	"Tribble",
-	"Golden Pegasus Statuette",
-	"Golden Dragon Statuette",
-	"Golden Griffin Statuette",
-	"Chalice of Protection",
-	"Jewel of Ages",
-	"Songbird of Serenity",
-	"Sandro's Heart",
-	"Ector's Ring",
-	"Vespar's Emerald Handle",
-	"Queen Kalindra's Crown",
-	"Caleb's Magnifying Glass",
-	"Soul Box",
-	"Soul Box with Corak inside",
-	"Ruby Rock",
-	"Emerald Rock",
-	"Sapphire Rock",
-	"Diamond Rock",
-	"Monga Melon",
-	"Energy Disk"
-	*/
 	const char **QUEST_ITEM_NAMES() {
 		delete[] _questItemNames;
 		_questItemNames = new const char *[85] {
-			"\x8F\xE0\xA0\xA2\xAE \xA2\xAB\xA0\xA4\xA5\xAD\xA8\xEF \x8D\xEC\xEE\xAA\xA0\xE1\xAB\xAE\xAC",
-				"\x95\xE0\xE3\xE1\xE2\xA0\xAB\xEC\xAD\xEB\xA9 \xAA\xAB\xEE\xE7 \xAE\xE2 \x82\xA5\xA4\xEC\xAC\xA8\xAD\xAE\xA9 \xA1\xA0\xE8\xAD\xA8",
-				"\x8E\xE2\xAC\xEB\xE7\xAA\xA0 \xA4\xAB\xEF \xA1\xA0\xE8\xAD\xA8 \x84\xA0\xE0\xA7\xAE\xA3\xA0",
-				"\x8A\xAB\xEE\xE7 \xAE\xE2 \x81\xA0\xE8\xAD\xA8 \xA2\xEB\xE1\xE8\xA5\xA9 \xAC\xA0\xA3\xA8\xA8",
-				"\x84\xE0\xA0\xA3\xAE\xE6\xA5\xAD\xAD\xEB\xA9 \xA0\xAC\xE3\xAB\xA5\xE2 \x91\xA5\xA2\xA5\xE0\xAD\xAE\xA3\xAE \x91\xE4\xA8\xAD\xAA\xE1\xA0",
-				"\x8A\xA0\xAC\xA5\xAD\xEC \x92\xEB\xE1\xEF\xE7\xA8 \x93\xA6\xA0\xE1\xAE\xA2",
-				"\x8E\xE2\xAF\xA8\xE0\xA0\xEE\xE9\xA8\xA9 \xAA\xA0\xAC\xA5\xAD\xEC \xA3\xAE\xAB\xA5\xAC\xAE\xA2",
-				"\x8E\xE2\xAF\xA8\xE0\xA0\xEE\xE9\xA8\xA9 \xAA\xA0\xAC\xA5\xAD\xEC \x9F\xAA\xA0",
-				"\x91\xAA\xA8\xAF\xA5\xE2\xE0 \x82\xE0\xA5\xAC\xA5\xAD\xAD\xAE\xA3\xAE \x88\xE1\xAA\xA0\xA6\xA5\xAD\xA8\xEF",
-				"\x90\xAE\xA3 \x94\xA0\xAB\xA8\xE1\xE2\xEB",
-				"\x9D\xAB\xA8\xAA\xE1\xA8\xE0 \x82\xAE\xE1\xE1\xE2\xA0\xAD\xAE\xA2\xAB\xA5\xAD\xA8\xEF",
-				"\x82\xAE\xAB\xE8\xA5\xA1\xAD\xEB\xA9 \xA6\xA5\xA7\xAB \xE4\xA5\xA9",
-				"\x84\xA8\xA0\xA4\xA5\xAC\xA0 \xAF\xE0\xA8\xAD\xE6\xA5\xE1\xE1\xEB \x90\xAE\xAA\xE1\xA0\xAD\xEB",
-				"\x91\xA2\xEF\xE9\xA5\xAD\xAD\xA0\xEF \x8A\xAD\xA8\xA3\xA0 \x9D\xAB\xEC\xE4\xAE\xA2",
-				"\x91\xAA\xA0\xE0\xA0\xA1\xA5\xA9 \x82\xAE\xAF\xAB\xAE\xE9\xA5\xAD\xA8\xEF",
-				"\x8A\xE0\xA8\xE1\xE2\xA0\xAB\xAB\xEB \x8F\xEC\xA5\xA7\xAE\xED\xAB\xA5\xAA\xE2\xE0\xA8\xE7\xA5\xE1\xE2\xA2\xA0",
-				"\x91\xA2\xA8\xE2\xAE\xAA \x8C\xE3\xA4\xE0\xAE\xE1\xE2\xA8",
-				"\x8A\xAE\xE0\xA5\xAD\xEC \xE4\xA8\xE0\xAD\xEB",
-				"\x8A\xAE\xE1\xE2\xEF\xAD\xAE\xA9 \xE1\xA2\xA8\xE1\xE2\xAE\xAA \x8E\xE0\xAE\xE4\xA8\xAD\xA0",
-				"\x82\xAE\xAB\xE8\xA5\xA1\xAD\xEB\xA9 \xAA\xE3\xAB\xAE\xAD \x81\xA0\xE0\xAE\xAA\xA0",
-				"\x8F\xE0\xAE\xAF\xA0\xA2\xE8\xA8\xA9 \xE7\xA5\xE0\xA5\xAF \x8B\xA8\xA3\xAE\xAD\xAE",
-				"\x8F\xAE\xE1\xAB\xA5\xA4\xAD\xA8\xA9 \xE6\xA2\xA5\xE2\xAE\xAA \xAB\xA5\xE2\xA0",
-				"\x8F\xAE\xE1\xAB\xA5\xA4\xAD\xEF\xEF \xA4\xAE\xA6\xA4\xA5\xA2\xA0\xEF \xAA\xA0\xAF\xA5\xAB\xEC\xAA\xA0 \xA2\xA5\xE1\xAD\xEB",
-				"\x8F\xAE\xE1\xAB\xA5\xA4\xAD\xEF\xEF \xE1\xAD\xA5\xA6\xA8\xAD\xAA\xA0 \xA7\xA8\xAC\xEB",
-				"\x8F\xAE\xE1\xAB\xA5\xA4\xAD\xA8\xA9 \xAB\xA8\xE1\xE2 \xAE\xE1\xA5\xAD\xA8",
-				"\x82\xA5\xE7\xAD\xAE \xA3\xAE\xE0\xEF\xE7\xA8\xA9 \xAA\xE3\xE1\xAE\xAA \xAF\xA5\xAC\xA7\xEB",
-				"\x8C\xA5\xA3\xA0\xAA\xE0\xA5\xA4\xA8\xE2 \xAA\xAE\xE0\xAE\xAB\xEF",
-				"\x90\xA0\xA7\xE0\xA5\xE8\xA5\xAD\xA8\xA5 \xAD\xA0 \xE0\xA0\xE1\xAA\xAE\xAF\xAA\xA8",
-				"\x8A\xE3\xAA\xAE\xAB\xAA\xA0",
-				"\x8A\xE3\xAA\xAB\xA0 \x91\xA8\xAB\xEB",
-				"\x8A\xE3\xAA\xAB\xA0 \x91\xAA\xAE\xE0\xAE\xE1\xE2\xA8",
-				"\x8A\xE3\xAA\xAB\xA0 \x91\xAB\xAE\xA6\xA5\xAD\xA8\xEF",
-				"\x8A\xE3\xAA\xAB\xA0 \x8C\xA5\xE2\xAA\xAE\xE1\xE2\xA8",
-				"\x8A\xE3\xAA\xAB\xA0 \x93\xA4\xA0\xE7\xA8",
-				"\x93\xE1\xE2\xE0\xAE\xA9\xE1\xE2\xA2\xAE",
-				"Pass to Castleview",
-				"Pass to Sandcaster",
-				"Pass to Lakeside",
-				"Pass to Necropolis",
-				"Pass to Olympus",
-				"Key to Great Western Tower",
-				"Key to Great Southern Tower",
-				"Key to Great Eastern Tower",
-				"Key to Great Northern Tower",
-				"Key to Ellinger's Tower",
-				"Key to Dragon Tower",
-				"Key to Darkstone Tower",
-				"Key to Temple of Bark",
-				"Key to Dungeon of Lost Souls",
-				"Key to Ancient Pyramid",
-				"Key to Dungeon of Death",
-				"Amulet of the Southern Sphinx",
-				"Dragon Pharoah's Orb",
-				"Cube of Power",
-				"Chime of Opening",
-				"Gold ID Card",
-				"Silver ID Card",
-				"Vulture Repellant",
-				"Bridle",
-				"Enchanted Bridle",
-				"Treasure Map (Goto E1 x1, y11)",
-				"",
-				"Fake Map",
-				"Onyx Necklace",
-				"Dragon Egg",
-				"Tribble",
-				"Golden Pegasus Statuette",
-				"Golden Dragon Statuette",
-				"Golden Griffin Statuette",
-				"Chalice of Protection",
-				"Jewel of Ages",
-				"Songbird of Serenity",
-				"Sandro's Heart",
-				"Ector's Ring",
-				"Vespar's Emerald Handle",
-				"Queen Kalindra's Crown",
-				"Caleb's Magnifying Glass",
-				"Soul Box",
-				"Soul Box with Corak inside",
-				"Ruby Rock",
-				"Emerald Rock",
-				"Sapphire Rock",
-				"Diamond Rock",
-				"Monga Melon",
-				"Energy Disk"
+			"\x8F\xE0\xA0\xA2\xAE \xA2\xAB\xA0\xA4\xA5\xAD\xA8\xEF \x8D\xEC\xEE\xAA\xA0\xE1\xAB\xAE\xAC",											   // "РџСЂР°РІРѕ РІР»Р°РґРµРЅРёСЏ РќСЊСЋРєР°СЃР»РѕРј",
+			"\x95\xE0\xE3\xE1\xE2\xA0\xAB\xEC\xAD\xEB\xA9 \xAA\xAB\xEE\xE7 \xAE\xE2 \x82\xA5\xA4\xEC\xAC\xA8\xAD\xAE\xA9 \xA1\xA0\xE8\xAD\xA8",        // "РҐСЂСѓСЃС‚Р°Р»СЊРЅС‹Р№ РєР»СЋС‡ РѕС‚ Р’РµРґСЊРјРёРЅРѕР№ Р±Р°С€РЅРё",
+			"\x8E\xE2\xAC\xEB\xE7\xAA\xA0 \xA4\xAB\xEF \xA1\xA0\xE8\xAD\xA8 \x84\xA0\xE0\xA7\xAE\xA3\xA0",                                             // "РћС‚РјС‹С‡РєР° РґР»СЏ Р±Р°С€РЅРё Р”Р°СЂР·РѕРіР°",
+			"\x8A\xAB\xEE\xE7 \xAE\xE2 \x81\xA0\xE8\xAD\xA8 \xA2\xEB\xE1\xE8\xA5\xA9 \xAC\xA0\xA3\xA8\xA8",                                            // "РљР»СЋС‡ РѕС‚ Р‘Р°С€РЅРё РІС‹СЃС€РµР№ РјР°РіРёРё",
+			"\x84\xE0\xA0\xA3\xAE\xE6\xA5\xAD\xAD\xEB\xA9 \xA0\xAC\xE3\xAB\xA5\xE2 \x91\xA5\xA2\xA5\xE0\xAD\xAE\xA3\xAE \x91\xE4\xA8\xAD\xAA\xE1\xA0", // "Р”СЂР°РіРѕС†РµРЅРЅС‹Р№ Р°РјСѓР»РµС‚ РЎРµРІРµСЂРЅРѕРіРѕ РЎС„РёРЅРєСЃР°",
+			"\x8A\xA0\xAC\xA5\xAD\xEC \x92\xEB\xE1\xEF\xE7\xA8 \x93\xA6\xA0\xE1\xAE\xA2",                                                              // "РљР°РјРµРЅСЊ РўС‹СЃСЏС‡Рё РЈР¶Р°СЃРѕРІ",
+			"\x8E\xE2\xAF\xA8\xE0\xA0\xEE\xE9\xA8\xA9 \xAA\xA0\xAC\xA5\xAD\xEC \xA3\xAE\xAB\xA5\xAC\xAE\xA2",                                          // "РћС‚РїРёСЂР°СЋС‰РёР№ РєР°РјРµРЅСЊ РіРѕР»РµРјРѕРІ",
+			"\x8E\xE2\xAF\xA8\xE0\xA0\xEE\xE9\xA8\xA9 \xAA\xA0\xAC\xA5\xAD\xEC \x9F\xAA\xA0",                                                          // "РћС‚РїРёСЂР°СЋС‰РёР№ РєР°РјРµРЅСЊ РЇРєР°",
+			"\x91\xAA\xA8\xAF\xA5\xE2\xE0 \x82\xE0\xA5\xAC\xA5\xAD\xAD\xAE\xA3\xAE \x88\xE1\xAA\xA0\xA6\xA5\xAD\xA8\xEF",                              // "РЎРєРёРїРµС‚СЂ Р’СЂРµРјРµРЅРЅРѕРіРѕ РСЃРєР°Р¶РµРЅРёСЏ",
+			"\x90\xAE\xA3 \x94\xA0\xAB\xA8\xE1\xE2\xEB",                                                                                               // "Р РѕРі Р¤Р°Р»РёСЃС‚С‹",
+			"\x9D\xAB\xA8\xAA\xE1\xA8\xE0 \x82\xAE\xE1\xE1\xE2\xA0\xAD\xAE\xA2\xAB\xA5\xAD\xA8\xEF",                                                   // "Р­Р»РёРєСЃРёСЂ Р’РѕСЃСЃС‚Р°РЅРѕРІР»РµРЅРёСЏ",
+			"\x82\xAE\xAB\xE8\xA5\xA1\xAD\xEB\xA9 \xA6\xA5\xA7\xAB \xE4\xA5\xA9",                                                                      // "Р’РѕР»С€РµР±РЅС‹Р№ Р¶РµР·Р» С„РµР№",
+			"\x84\xA8\xA0\xA4\xA5\xAC\xA0 \xAF\xE0\xA8\xAD\xE6\xA5\xE1\xE1\xEB \x90\xAE\xAA\xE1\xA0\xAD\xEB",                                          // "Р”РёР°РґРµРјР° РїСЂРёРЅС†РµСЃСЃС‹ Р РѕРєСЃР°РЅС‹",
+			"\x91\xA2\xEF\xE9\xA5\xAD\xAD\xA0\xEF \x8A\xAD\xA8\xA3\xA0 \x9D\xAB\xEC\xE4\xAE\xA2",                                                      // "РЎРІСЏС‰РµРЅРЅР°СЏ РљРЅРёРіР° Р­Р»СЊС„РѕРІ",
+			"\x91\xAA\xA0\xE0\xA0\xA1\xA5\xA9 \x82\xAE\xAF\xAB\xAE\xE9\xA5\xAD\xA8\xEF",                                                               // "РЎРєР°СЂР°Р±РµР№ Р’РѕРїР»РѕС‰РµРЅРёСЏ",
+			"\x8A\xE0\xA8\xE1\xE2\xA0\xAB\xAB\xEB \x8F\xEC\xA5\xA7\xAE\xED\xAB\xA5\xAA\xE2\xE0\xA8\xE7\xA5\xE1\xE2\xA2\xA0",                           // "РљСЂРёСЃС‚Р°Р»Р»С‹ РџСЊРµР·РѕСЌР»РµРєС‚СЂРёС‡РµСЃС‚РІР°",
+			"\x91\xA2\xA8\xE2\xAE\xAA \x8C\xE3\xA4\xE0\xAE\xE1\xE2\xA8",                                                                               // "РЎРІРёС‚РѕРє РњСѓРґСЂРѕСЃС‚Рё",
+			"\x8A\xAE\xE0\xA5\xAD\xEC \xE4\xA8\xE0\xAD\xEB",                                                                                           // "РљРѕСЂРµРЅСЊ С„РёСЂРЅС‹",
+			"\x8A\xAE\xE1\xE2\xEF\xAD\xAE\xA9 \xE1\xA2\xA8\xE1\xE2\xAE\xAA \x8E\xE0\xAE\xE4\xA8\xAD\xA0",                                              // "РљРѕСЃС‚СЏРЅРѕР№ СЃРІРёСЃС‚РѕРє РћСЂРѕС„РёРЅР°",
+			"\x82\xAE\xAB\xE8\xA5\xA1\xAD\xEB\xA9 \xAA\xE3\xAB\xAE\xAD \x81\xA0\xE0\xAE\xAA\xA0",                                                      // "Р’РѕР»С€РµР±РЅС‹Р№ РєСѓР»РѕРЅ Р‘Р°СЂРѕРєР°",
+			"\x8F\xE0\xAE\xAF\xA0\xA2\xE8\xA8\xA9 \xE7\xA5\xE0\xA5\xAF \x8B\xA8\xA3\xAE\xAD\xAE",                                                      // "РџСЂРѕРїР°РІС€РёР№ С‡РµСЂРµРї Р›РёРіРѕРЅРѕ",
+			"\x8F\xAE\xE1\xAB\xA5\xA4\xAD\xA8\xA9 \xE6\xA2\xA5\xE2\xAE\xAA \xAB\xA5\xE2\xA0",                                                          // "РџРѕСЃР»РµРґРЅРёР№ С†РІРµС‚РѕРє Р»РµС‚Р°",
+			"\x8F\xAE\xE1\xAB\xA5\xA4\xAD\xEF\xEF \xA4\xAE\xA6\xA4\xA5\xA2\xA0\xEF \xAA\xA0\xAF\xA5\xAB\xEC\xAA\xA0 \xA2\xA5\xE1\xAD\xEB",             // "РџРѕСЃР»РµРґРЅСЏСЏ РґРѕР¶РґРµРІР°СЏ РєР°РїРµР»СЊРєР° РІРµСЃРЅС‹",
+			"\x8F\xAE\xE1\xAB\xA5\xA4\xAD\xEF\xEF \xE1\xAD\xA5\xA6\xA8\xAD\xAA\xA0 \xA7\xA8\xAC\xEB",                                                  // "РџРѕСЃР»РµРґРЅСЏСЏ СЃРЅРµР¶РёРЅРєР° Р·РёРјС‹",
+			"\x8F\xAE\xE1\xAB\xA5\xA4\xAD\xA8\xA9 \xAB\xA8\xE1\xE2 \xAE\xE1\xA5\xAD\xA8",                                                              // "РџРѕСЃР»РµРґРЅРёР№ Р»РёСЃС‚ РѕСЃРµРЅРё",
+			"\x82\xA5\xE7\xAD\xAE \xA3\xAE\xE0\xEF\xE7\xA8\xA9 \xAA\xE3\xE1\xAE\xAA \xAF\xA5\xAC\xA7\xEB",                                             // "Р’РµС‡РЅРѕ РіРѕСЂСЏС‡РёР№ РєСѓСЃРѕРє РїРµРјР·С‹",
+			"\x8C\xA5\xA3\xA0\xAA\xE0\xA5\xA4\xA8\xE2 \xAA\xAE\xE0\xAE\xAB\xEF",                                                                       // "РњРµРіР°РєСЂРµРґРёС‚ РєРѕСЂРѕР»СЏ",
+			"\x90\xA0\xA7\xE0\xA5\xE8\xA5\xAD\xA8\xA5 \xAD\xA0 \xE0\xA0\xE1\xAA\xAE\xAF\xAA\xA8",                                                      // "Р Р°Р·СЂРµС€РµРЅРёРµ РЅР° СЂР°СЃРєРѕРїРєРё",
+			"\x8A\xE3\xAA\xAE\xAB\xAA\xA0",                                                                                                            // "РљСѓРєРѕР»РєР°",
+			"\x8A\xE3\xAA\xAB\xA0 \x91\xA8\xAB\xEB",                                                                                                   // "РљСѓРєР»Р° РЎРёР»С‹",
+			"\x8A\xE3\xAA\xAB\xA0 \x91\xAA\xAE\xE0\xAE\xE1\xE2\xA8",                                                                                   // "РљСѓРєР»Р° РЎРєРѕСЂРѕСЃС‚Рё",
+			"\x8A\xE3\xAA\xAB\xA0 \x91\xAB\xAE\xA6\xA5\xAD\xA8\xEF",                                                                                   // "РљСѓРєР»Р° РЎР»РѕР¶РµРЅРёСЏ",
+			"\x8A\xE3\xAA\xAB\xA0 \x8C\xA5\xE2\xAA\xAE\xE1\xE2\xA8",                                                                                   // "РљСѓРєР»Р° РњРµС‚РєРѕСЃС‚Рё",
+			"\x8A\xE3\xAA\xAB\xA0 \x93\xA4\xA0\xE7\xA8",                                                                                               // "РљСѓРєР»Р° РЈРґР°С‡Рё",
+			"\x93\xE1\xE2\xE0\xAE\xA9\xE1\xE2\xA2\xAE",                                                                                                // "РЈСЃС‚СЂРѕР№СЃС‚РІРѕ",
+			"Pass to Castleview",                                                                                                                      // "Pass to Castleview",
+			"Pass to Sandcaster",                                                                                                                      // "Pass to Sandcaster",
+			"Pass to Lakeside",                                                                                                                        // "Pass to Lakeside",
+			"Pass to Necropolis",                                                                                                                      // "Pass to Necropolis",
+			"Pass to Olympus",                                                                                                                         // "Pass to Olympus",
+			"Key to Great Western Tower",                                                                                                              // "Key to Great Western Tower",
+			"Key to Great Southern Tower",                                                                                                             // "Key to Great Southern Tower",
+			"Key to Great Eastern Tower",                                                                                                              // "Key to Great Eastern Tower",
+			"Key to Great Northern Tower",                                                                                                             // "Key to Great Northern Tower",
+			"Key to Ellinger's Tower",                                                                                                                 // "Key to Ellinger's Tower",
+			"Key to Dragon Tower",                                                                                                                     // "Key to Dragon Tower",
+			"Key to Darkstone Tower",                                                                                                                  // "Key to Darkstone Tower",
+			"Key to Temple of Bark",                                                                                                                   // "Key to Temple of Bark",
+			"Key to Dungeon of Lost Souls",                                                                                                            // "Key to Dungeon of Lost Souls",
+			"Key to Ancient Pyramid",                                                                                                                  // "Key to Ancient Pyramid",
+			"Key to Dungeon of Death",                                                                                                                 // "Key to Dungeon of Death",
+			"Amulet of the Southern Sphinx",                                                                                                           // "Amulet of the Southern Sphinx",
+			"Dragon Pharoah's Orb",                                                                                                                    // "Dragon Pharoah's Orb",
+			"Cube of Power",                                                                                                                           // "Cube of Power",
+			"Chime of Opening",                                                                                                                        // "Chime of Opening",
+			"Gold ID Card",                                                                                                                            // "Gold ID Card",
+			"Silver ID Card",                                                                                                                          // "Silver ID Card",
+			"Vulture Repellant",                                                                                                                       // "Vulture Repellant",
+			"Bridle",                                                                                                                                  // "Bridle",
+			"Enchanted Bridle",                                                                                                                        // "Enchanted Bridle",
+			"Treasure Map (Goto E1 x1, y11)",                                                                                                          // "Treasure Map (Goto E1 x1, y11)",
+			"",                                                                                                                                        // "",
+			"Fake Map",                                                                                                                                // "Fake Map",
+			"Onyx Necklace",                                                                                                                           // "Onyx Necklace",
+			"Dragon Egg",                                                                                                                              // "Dragon Egg",
+			"Tribble",                                                                                                                                 // "Tribble",
+			"Golden Pegasus Statuette",                                                                                                                // "Golden Pegasus Statuette",
+			"Golden Dragon Statuette",                                                                                                                 // "Golden Dragon Statuette",
+			"Golden Griffin Statuette",                                                                                                                // "Golden Griffin Statuette",
+			"Chalice of Protection",                                                                                                                   // "Chalice of Protection",
+			"Jewel of Ages",                                                                                                                           // "Jewel of Ages",
+			"Songbird of Serenity",                                                                                                                    // "Songbird of Serenity",
+			"Sandro's Heart",                                                                                                                          // "Sandro's Heart",
+			"Ector's Ring",                                                                                                                            // "Ector's Ring",
+			"Vespar's Emerald Handle",                                                                                                                 // "Vespar's Emerald Handle",
+			"Queen Kalindra's Crown",                                                                                                                  // "Queen Kalindra's Crown",
+			"Caleb's Magnifying Glass",                                                                                                                // "Caleb's Magnifying Glass",
+			"Soul Box",                                                                                                                                // "Soul Box",
+			"Soul Box with Corak inside",                                                                                                              // "Soul Box with Corak inside",
+			"Ruby Rock",                                                                                                                               // "Ruby Rock",
+			"Emerald Rock",                                                                                                                            // "Emerald Rock",
+			"Sapphire Rock",                                                                                                                           // "Sapphire Rock",
+			"Diamond Rock",                                                                                                                            // "Diamond Rock",
+			"Monga Melon",                                                                                                                             // "Monga Melon",
+			"Energy Disk"                                                                                                                              // "Energy Disk"
 		};
 		return _questItemNames;
 	}
@@ -2024,28 +1208,17 @@ public:
 		return _questItemNamesSwords;
 	}
 
-	/*
-	"\t000\v007\x3""c%s не может использовать %s!"
-	*/
 	const char *NOT_PROFICIENT() {
-		return "\t000\v007\x3"
-			   "c%s \xAD\xA5 \xAC\xAE\xA6\xA5\xE2 \xA8\xE1\xAF\xAE\xAB\xEC\xA7\xAE\xA2\xA0\xE2\xEC %s!";
+		return "\t000\v007\x3""c%s \xAD\xA5 \xAC\xAE\xA6\xA5\xE2 \xA8\xE1\xAF\xAE\xAB\xEC\xA7\xAE\xA2\xA0\xE2\xEC %s!"; // "\t000\v007\x3""c%s РЅРµ РјРѕР¶РµС‚ РёСЃРїРѕР»СЊР·РѕРІР°С‚СЊ %s!"
 	}
 
-	/*
-	"\x3""c\n\t000Нет вещей."
-	*/
 	const char *NO_ITEMS_AVAILABLE() {
-		return "\x3"
-			   "c\n\t000\x8D\xA5\xE2 \xA2\xA5\xE9\xA5\xA9.";
+		return "\x3""c\n\t000\x8D\xA5\xE2 \xA2\xA5\xE9\xA5\xA9."; // "\x3""c\n\t000РќРµС‚ РІРµС‰РµР№."
 	}
 
-	/*
-	"Оружие", "Броня", "Украшения", "Разное"
-	*/
 	const char **CATEGORY_NAMES() {
 		delete[] _categoryNames;
-		_categoryNames = new const char *[4] { "\x8E\xE0\xE3\xA6\xA8\xA5", "\x81\xE0\xAE\xAD\xEF", "\x93\xAA\xE0\xA0\xE8\xA5\xAD\xA8\xEF", "\x90\xA0\xA7\xAD\xAE\xA5" };
+		_categoryNames = new const char *[4] { "\x8E\xE0\xE3\xA6\xA8\xA5", "\x81\xE0\xAE\xAD\xEF", "\x93\xAA\xE0\xA0\xE8\xA5\xAD\xA8\xEF", "\x90\xA0\xA7\xAD\xAE\xA5" }; // "РћСЂСѓР¶РёРµ", "Р‘СЂРѕРЅСЏ", "РЈРєСЂР°С€РµРЅРёСЏ", "Р Р°Р·РЅРѕРµ"
 		return _categoryNames;
 	}
 
@@ -2061,358 +1234,196 @@ public:
 			   "\x2%s%s%s%s%s%s%s%s%s\x1\fd";
 	}
 
-	/*
-	"\x1\fd\r\x3""l\v000\t000%s - %s\t150Золото - %lu%s\x3""l\v011"
-	"\x2%s%s%s%s%s%s%s%s%s\x1\fd";
-	*/
 	const char *X_FOR_Y_GOLD() {
-		return "\x1\fd\r\x3"
-			   "l\v000\t000%s - %s\t150\x87\xAE\xAB\xAE\xE2\xAE - %lu%s\x3"
-			   "l\v011"
-			   "\x2%s%s%s%s%s%s%s%s%s\x1\fd";
+		return "\x1\fd\r\x3""l\v000\t000%s - %s\t150\x87\xAE\xAB\xAE\xE2\xAE - %lu%s\x3""l\v011" // "\x1\fd\r\x3""l\v000\t000%s - %s\t150Р—РѕР»РѕС‚Рѕ - %lu%s\x3""l\v011"
+			   "\x2%s%s%s%s%s%s%s%s%s\x1\fd";                                                    // "\x2%s%s%s%s%s%s%s%s%s\x1\fd";
 	}
 
-	/*
-	"\x3""r\t000Зарядов\x3""l"
-	*/
 	const char *FMT_CHARGES() {
-		return "\x3"
-			   "r\t000\x87\xA0\xE0\xEF\xA4\xAE\xA2\x3"
-			   "l";
+		return "\x3""r\t000\x87\xA0\xE0\xEF\xA4\xAE\xA2\x3""l"; // "\x3""r\t000Р—Р°СЂСЏРґРѕРІ\x3""l"
 	}
 
-	/*
-	"\x1\fd\r\x3""l\v000\t000%s\t150Золото - %lu\x3""r\t000Цена"
-	"\x3""l\v011\x2%s%s%s%s%s%s%s%s%s\x1\fd";
-	*/
 	const char *AVAILABLE_GOLD_COST() {
-		return "\x1\fd\r\x3"
-			   "l\v000\t000%s\t150\x87\xAE\xAB\xAE\xE2\xAE - %lu\x3"
-			   "r\t000\x96\xA5\xAD\xA0"
-			   "\x3"
-			   "l\v011\x2%s%s%s%s%s%s%s%s%s\x1\fd";
+		return "\x1\fd\r\x3""l\v000\t000%s\t150\x87\xAE\xAB\xAE\xE2\xAE - %lu\x3""r\t000\x96\xA5\xAD\xA0" // "\x1\fd\r\x3""l\v000\t000%s\t150Р—РѕР»РѕС‚Рѕ - %lu\x3""r\t000Р¦РµРЅР°"
+			   "\x3""l\v011\x2%s%s%s%s%s%s%s%s%s\x1\fd";												  // "\x3""l\v011\x2%s%s%s%s%s%s%s%s%s\x1\fd";
 	}
 
-	/*
-	"Зарядов"
-	*/
 	const char *CHARGES() {
-		return "\x87\xA0\xE0\xEF\xA4\xAE\xA2";
+		return "\x87\xA0\xE0\xEF\xA4\xAE\xA2"; // "Р—Р°СЂСЏРґРѕРІ"
 	}
 
-	/*
-	"Цена"
-	*/
 	const char *COST() {
-		return "\x96\xA5\xAD\xA0";
+		return "\x96\xA5\xAD\xA0"; // "Р¦РµРЅР°"
 	}
 
-	/*
-	"надеть", "снять", "использовать", "выкинуть", "зачаровать", "перезарядить",
-	"Превратить в золото"
-	*/
 	const char **ITEM_ACTIONS() {
 		delete[] _itemActions;
 		_itemActions = new const char *[7] {
-			"\xAD\xA0\xA4\xA5\xE2\xEC", "\xE1\xAD\xEF\xE2\xEC", "\xA8\xE1\xAF\xAE\xAB\xEC\xA7\xAE\xA2\xA0\xE2\xEC", "\xA2\xEB\xAA\xA8\xAD\xE3\xE2\xEC", "\xA7\xA0\xE7\xA0\xE0\xAE\xA2\xA0\xE2\xEC", "\xAF\xA5\xE0\xA5\xA7\xA0\xE0\xEF\xA4\xA8\xE2\xEC",
-				"\x8F\xE0\xA5\xA2\xE0\xA0\xE2\xA8\xE2\xEC \xA2 \xA7\xAE\xAB\xAE\xE2\xAE"
+			"\xAD\xA0\xA4\xA5\xE2\xEC", "\xE1\xAD\xEF\xE2\xEC", "\xA8\xE1\xAF\xAE\xAB\xEC\xA7\xAE\xA2\xA0\xE2\xEC", "\xA2\xEB\xAA\xA8\xAD\xE3\xE2\xEC", "\xA7\xA0\xE7\xA0\xE0\xAE\xA2\xA0\xE2\xEC", "\xAF\xA5\xE0\xA5\xA7\xA0\xE0\xEF\xA4\xA8\xE2\xEC", // "РЅР°РґРµС‚СЊ", "СЃРЅСЏС‚СЊ", "РёСЃРїРѕР»СЊР·РѕРІР°С‚СЊ", "РІС‹РєРёРЅСѓС‚СЊ", "Р·Р°С‡Р°СЂРѕРІР°С‚СЊ", "РїРµСЂРµР·Р°СЂСЏРґРёС‚СЊ",
+			"\x8F\xE0\xA5\xA2\xE0\xA0\xE2\xA8\xE2\xEC \xA2 \xA7\xAE\xAB\xAE\xE2\xAE"                                                                                                                                                                    // "РџСЂРµРІСЂР°С‚РёС‚СЊ РІ Р·РѕР»РѕС‚Рѕ"
 		};
 		return _itemActions;
 	}
 
-	/*
-	"\v000Какой предмет вы желаете %s?"
-	*/
 	const char *WHICH_ITEM() {
-		return "\v000\x8A\xA0\xAA\xAE\xA9 \xAF\xE0\xA5\xA4\xAC\xA5\xE2 \xA2\xEB \xA6\xA5\xAB\xA0\xA5\xE2\xA5 %s?";
+		return "\v000\x8A\xA0\xAA\xAE\xA9 \xAF\xE0\xA5\xA4\xAC\xA5\xE2 \xA2\xEB \xA6\xA5\xAB\xA0\xA5\xE2\xA5 %s?"; // "\v000РљР°РєРѕР№ РїСЂРµРґРјРµС‚ РІС‹ Р¶РµР»Р°РµС‚Рµ %s?"
 	}
 
-	/*
-	"\v007Чего торопишься?\n"
-	"Подожди, пока не выберешься отсюда!";
-	*/
 	const char *WHATS_YOUR_HURRY() {
-		return "\v007\x97\xA5\xA3\xAE \xE2\xAE\xE0\xAE\xAF\xA8\xE8\xEC\xE1\xEF?\n"
-			   "\x8F\xAE\xA4\xAE\xA6\xA4\xA8, \xAF\xAE\xAA\xA0 \xAD\xA5 \xA2\xEB\xA1\xA5\xE0\xA5\xE8\xEC\xE1\xEF ®вбо¤ !";
+		return "\v007\x97\xA5\xA3\xAE \xE2\xAE\xE0\xAE\xAF\xA8\xE8\xEC\xE1\xEF?\n"															 // "\v007Р§РµРіРѕ С‚РѕСЂРѕРїРёС€СЊСЃСЏ?\n"
+			   "\x8F\xAE\xA4\xAE\xA6\xA4\xA8, \xAF\xAE\xAA\xA0 \xAD\xA5 \xA2\xEB\xA1\xA5\xE0\xA5\xE8\xEC\xE1\xEF \xA2\xE2\xE1\xEE\xA4\xA0!"; // "РџРѕРґРѕР¶РґРё, РїРѕРєР° РЅРµ РІС‹Р±РµСЂРµС€СЊСЃСЏ РѕС‚СЃСЋРґР°!";
 	}
 
-	/*
-	"\v007Чтобы использовать предмет в битве, нажмите на кнопку 'Исп' на боковой панели."
-	*/
 	const char *USE_ITEM_IN_COMBAT() {
-		return "\v007\x97\xE2\xAE\xA1\xEB \xA8\xE1\xAF\xAE\xAB\xEC\xA7\xAE\xA2\xA0\xE2\xEC \xAF\xE0\xA5\xA4\xAC\xA5\xE2 \xA2 \xA1\xA8\xE2\xA2\xA5, \xAD\xA0\xA6\xAC\xA8\xE2\xA5 \xAD\xA0 \xAA\xAD\xAE\xAF\xAA\xE3 '\x88\xE1\xAF' \xAD\xA0 \xA1\xAE\xAA\xAE\xA2\xAE\xA9 \xAF\xA0\xAD\xA5\xAB\xA8.";
+		return "\v007\x97\xE2\xAE\xA1\xEB \xA8\xE1\xAF\xAE\xAB\xEC\xA7\xAE\xA2\xA0\xE2\xEC \xAF\xE0\xA5\xA4\xAC\xA5\xE2 \xA2 \xA1\xA8\xE2\xA2\xA5, \xAD\xA0\xA6\xAC\xA8\xE2\xA5 \xAD\xA0 \xAA\xAD\xAE\xAF\xAA\xE3 '\x88\xE1\xAF' \xAD\xA0 \xA1\xAE\xAA\xAE\xA2\xAE\xA9 \xAF\xA0\xAD\xA5\xAB\xA8."; // "\v007Р§С‚РѕР±С‹ РёСЃРїРѕР»СЊР·РѕРІР°С‚СЊ РїСЂРµРґРјРµС‚ РІ Р±РёС‚РІРµ, РЅР°Р¶РјРёС‚Рµ РЅР° РєРЅРѕРїРєСѓ 'РСЃРї' РЅР° Р±РѕРєРѕРІРѕР№ РїР°РЅРµР»Рё."
 	}
 
-	/*
-	"\v005\x3""c%s\fdне имеет особых свойств!"
-	*/
 	const char *NO_SPECIAL_ABILITIES() {
-		return "\v005\x3"
-			   "c%s\fd\xAD\xA5 \xA8\xAC\xA5\xA5\xE2 \xAE\xE1\xAE\xA1\xEB\xE5 \xE1\xA2\xAE\xA9\xE1\xE2\xA2!";
+		return "\v005\x3""c%s\fd\xAD\xA5 \xA8\xAC\xA5\xA5\xE2 \xAE\xE1\xAE\xA1\xEB\xE5 \xE1\xA2\xAE\xA9\xE1\xE2\xA2!"; // "\v005\x3""c%s\fdРЅРµ РёРјРµРµС‚ РѕСЃРѕР±С‹С… СЃРІРѕР№СЃС‚РІ!"
 	}
 
-	/*
-	"\x3""c\v007Заклинание %s нельзя использовать в битве!"
-	*/
 	const char *CANT_CAST_WHILE_ENGAGED() {
-		return "\x3"
-			   "c\v007\x87\xA0\xAA\xAB\xA8\xAD\xA0\xAD\xA8\xA5 %s \xAD\xA5\xAB\xEC\xA7\xEF \xA8\xE1\xAF\xAE\xAB\xEC\xA7\xAE\xA2\xA0\xE2\xEC \xA2 \xA1\xA8\xE2\xA2\xA5!";
+		return "\x3""c\v007\x87\xA0\xAA\xAB\xA8\xAD\xA0\xAD\xA8\xA5 %s \xAD\xA5\xAB\xEC\xA7\xEF \xA8\xE1\xAF\xAE\xAB\xEC\xA7\xAE\xA2\xA0\xE2\xEC \xA2 \xA1\xA8\xE2\xA2\xA5!"; // "\x3""c\v007Р—Р°РєР»РёРЅР°РЅРёРµ %s РЅРµР»СЊР·СЏ РёСЃРїРѕР»СЊР·РѕРІР°С‚СЊ РІ Р±РёС‚РІРµ!"
 	}
 
-	/*
-	"\x3""c\v007Вы не можете надеть больше двух %s!"
-	*/
 	const char *EQUIPPED_ALL_YOU_CAN() {
-		return "\x3"
-			   "c\v007\x82\xEB \xAD\xA5 \xAC\xAE\xA6\xA5\xE2\xA5 \xAD\xA0\xA4\xA5\xE2\xEC \xA1\xAE\xAB\xEC\xE8\xA5 \xA4\xA2\xE3\xE5 %s!";
+		return "\x3""c\v007\x82\xEB \xAD\xA5 \xAC\xAE\xA6\xA5\xE2\xA5 \xAD\xA0\xA4\xA5\xE2\xEC \xA1\xAE\xAB\xEC\xE8\xA5 \xA4\xA2\xE3\xE5 %s!"; // "\x3""c\v007Р’С‹ РЅРµ РјРѕР¶РµС‚Рµ РЅР°РґРµС‚СЊ Р±РѕР»СЊС€Рµ РґРІСѓС… %s!"
 	}
 
-	/*
-	"\x3""c\v007Вам нужно снять %sчтобы надеть %s\b!"
-	*/
 	const char *REMOVE_X_TO_EQUIP_Y() {
-		return "\x3"
-			   "c\v007\x82\xA0\xAC \xAD\xE3\xA6\xAD\xAE \xE1\xAD\xEF\xE2\xEC %s\xE7\xE2\xAE\xA1\xEB \xAD\xA0\xA4\xA5\xE2\xEC %s\b!";
+		return "\x3""c\v007\x82\xA0\xAC \xAD\xE3\xA6\xAD\xAE \xE1\xAD\xEF\xE2\xEC %s\xE7\xE2\xAE\xA1\xEB \xAD\xA0\xA4\xA5\xE2\xEC %s\b!"; // "\x3""c\v007Р’Р°Рј РЅСѓР¶РЅРѕ СЃРЅСЏС‚СЊ %sС‡С‚РѕР±С‹ РЅР°РґРµС‚СЊ %s\b!"
 	}
 
-	/*
-	"колец"
-	*/
 	const char *RING() {
-		return "\xAA\xAE\xAB\xA5\xE6";
+		return "\xAA\xAE\xAB\xA5\xE6"; // "РєРѕР»РµС†"
 	}
 
-	/*
-	"медалей"
-	*/
 	const char *MEDAL() {
-		return "\xAC\xA5\xA4\xA0\xAB\xA5\xA9";
+		return "\xAC\xA5\xA4\xA0\xAB\xA5\xA9"; // "РјРµРґР°Р»РµР№"
 	}
 
-	/*
-	"\x3""cВы не можете снять проклятую вещь!"
-	*/
 	const char *CANNOT_REMOVE_CURSED_ITEM() {
-		return "\x3"
-			   "c\x82\xEB \xAD\xA5 \xAC\xAE\xA6\xA5\xE2\xA5 \xE1\xAD\xEF\xE2\xEC \xAF\xE0\xAE\xAA\xAB\xEF\xE2\xE3\xEE \xA2\xA5\xE9\xEC!";
+		return "\x3""c\x82\xEB \xAD\xA5 \xAC\xAE\xA6\xA5\xE2\xA5 \xE1\xAD\xEF\xE2\xEC \xAF\xE0\xAE\xAA\xAB\xEF\xE2\xE3\xEE \xA2\xA5\xE9\xEC!"; // "\x3""cР’С‹ РЅРµ РјРѕР¶РµС‚Рµ СЃРЅСЏС‚СЊ РїСЂРѕРєР»СЏС‚СѓСЋ РІРµС‰СЊ!"
 	}
 
-	/*
-	"\x3""cВы не можете выкинуть проклятую вещь!"
-	*/
 	const char *CANNOT_DISCARD_CURSED_ITEM() {
-		return "\x3"
-			   "c\x82\xEB \xAD\xA5 \xAC\xAE\xA6\xA5\xE2\xA5 \xA2\xEB\xAA\xA8\xAD\xE3\xE2\xEC \xAF\xE0\xAE\xAA\xAB\xEF\xE2\xE3\xEE \xA2\xA5\xE9\xEC!";
+		return "\x3""c\x82\xEB \xAD\xA5 \xAC\xAE\xA6\xA5\xE2\xA5 \xA2\xEB\xAA\xA8\xAD\xE3\xE2\xEC \xAF\xE0\xAE\xAA\xAB\xEF\xE2\xE3\xEE \xA2\xA5\xE9\xEC!"; // "\x3""cР’С‹ РЅРµ РјРѕР¶РµС‚Рµ РІС‹РєРёРЅСѓС‚СЊ РїСЂРѕРєР»СЏС‚СѓСЋ РІРµС‰СЊ!"
 	}
 
-	/*
-	"\v000\t000\x3""lВыкинуть навсегда? %s"
-	*/
 	const char *PERMANENTLY_DISCARD() {
-		return "\v000\t000\x3"
-			   "l\x82\xEB\xAA\xA8\xAD\xE3\xE2\xEC \xAD\xA0\xA2\xE1\xA5\xA3\xA4\xA0? %s";
+		return "\v000\t000\x3""l\x82\xEB\xAA\xA8\xAD\xE3\xE2\xEC \xAD\xA0\xA2\xE1\xA5\xA3\xA4\xA0? %s"; // "\v000\t000\x3""lР’С‹РєРёРЅСѓС‚СЊ РЅР°РІСЃРµРіРґР°? %s"
 	}
 
-	/*
-	"\v005\x3""c\fd%s! Ваш рюкзак полон."
-	*/
 	const char *BACKPACK_IS_FULL() {
-		return "\v005\x3"
-			   "c\fd%s! \x82\xA0\xE8 \xE0\xEE\xAA\xA7\xA0\xAA \xAF\xAE\xAB\xAE\xAD.";
+		return "\v005\x3""c\fd%s! \x82\xA0\xE8 \xE0\xEE\xAA\xA7\xA0\xAA \xAF\xAE\xAB\xAE\xAD."; // "\v005\x3""c\fd%s! Р’Р°С€ СЂСЋРєР·Р°Рє РїРѕР»РѕРЅ."
 	}
 
-	/*
-	"\v010\t000\x3""c%s! Ваш рюкзак полон.",
-	"\v010\t000\x3""c%s! Ваш рюкзак полон.",
-	"\v010\t000\x3""c%s! Ваш рюкзак полон.",
-	"\v010\t000\x3""c%s! Ваш рюкзак полон."
-	*/
 	const char **CATEGORY_BACKPACK_IS_FULL() {
 		delete[] _categoryBackpackIsFull;
 		_categoryBackpackIsFull = new const char *[4] {
-			"\v010\t000\x3"
-			"c%s! \x82\xA0\xE8 \xE0\xEE\xAA\xA7\xA0\xAA \xAF\xAE\xAB\xAE\xAD.",
-				"\v010\t000\x3"
-				"c%s! \x82\xA0\xE8 \xE0\xEE\xAA\xA7\xA0\xAA \xAF\xAE\xAB\xAE\xAD.",
-				"\v010\t000\x3"
-				"c%s! \x82\xA0\xE8 \xE0\xEE\xAA\xA7\xA0\xAA \xAF\xAE\xAB\xAE\xAD.",
-				"\v010\t000\x3"
-				"c%s! \x82\xA0\xE8 \xE0\xEE\xAA\xA7\xA0\xAA \xAF\xAE\xAB\xAE\xAD."
+			"\v010\t000\x3""c%s! \x82\xA0\xE8 \xE0\xEE\xAA\xA7\xA0\xAA \xAF\xAE\xAB\xAE\xAD.", // "\v010\t000\x3""c%s! Р’Р°С€ СЂСЋРєР·Р°Рє РїРѕР»РѕРЅ.",
+			"\v010\t000\x3""c%s! \x82\xA0\xE8 \xE0\xEE\xAA\xA7\xA0\xAA \xAF\xAE\xAB\xAE\xAD.", // "\v010\t000\x3""c%s! Р’Р°С€ СЂСЋРєР·Р°Рє РїРѕР»РѕРЅ.",
+			"\v010\t000\x3""c%s! \x82\xA0\xE8 \xE0\xEE\xAA\xA7\xA0\xAA \xAF\xAE\xAB\xAE\xAD.", // "\v010\t000\x3""c%s! Р’Р°С€ СЂСЋРєР·Р°Рє РїРѕР»РѕРЅ.",
+			"\v010\t000\x3""c%s! \x82\xA0\xE8 \xE0\xEE\xAA\xA7\xA0\xAA \xAF\xAE\xAB\xAE\xAD."  // "\v010\t000\x3""c%s! Р’Р°С€ СЂСЋРєР·Р°Рє РїРѕР»РѕРЅ."
 		};
 		return _categoryBackpackIsFull;
 	}
 
-	/*
-	"\x3""l\v000\t000\fdКупить %s\fd за %lu золот%s?"
-	*/
 	const char *BUY_X_FOR_Y_GOLD() {
-		return "\x3"
-			   "l\v000\t000\fd\x8A\xE3\xAF\xA8\xE2\xEC %s\fd \xA7\xA0 %lu \xA7\xAE\xAB\xAE\xE2%s?";
+		return "\x3""l\v000\t000\fd\x8A\xE3\xAF\xA8\xE2\xEC %s\fd \xA7\xA0 %lu \xA7\xAE\xAB\xAE\xE2%s?"; // "\x3""l\v000\t000\fdРљСѓРїРёС‚СЊ %s\fd Р·Р° %lu Р·РѕР»РѕС‚%s?"
 	}
 
-	/*
-	"\x3""l\v000\t000\fdПродать %s\fd за %lu золот%s?"
-	*/
 	const char *SELL_X_FOR_Y_GOLD() {
-		return "\x3"
-			   "l\v000\t000\fd\x8F\xE0\xAE\xA4\xA0\xE2\xEC %s\fd \xA7\xA0 %lu \xA7\xAE\xAB\xAE\xE2%s?";
+		return "\x3""l\v000\t000\fd\x8F\xE0\xAE\xA4\xA0\xE2\xEC %s\fd \xA7\xA0 %lu \xA7\xAE\xAB\xAE\xE2%s?"; // "\x3""l\v000\t000\fdРџСЂРѕРґР°С‚СЊ %s\fd Р·Р° %lu Р·РѕР»РѕС‚%s?"
 	}
 
-	/*
-	"ой", "ых"
-	*/
 	const char **SELL_X_FOR_Y_GOLD_ENDINGS() {
 		delete[] _sellXForYGoldEndings;
-		_sellXForYGoldEndings = new const char *[2] { "\xAE\xA9", "\xEB\xE5" };
+		_sellXForYGoldEndings = new const char *[2] { "\xAE\xA9", "\xEB\xE5" }; // "РѕР№", "С‹С…"
 		return _sellXForYGoldEndings;
 	}
 
-	/*
-	"\v005\x3""c\fdНас не интересует %s\fd!"
-	*/
 	const char *NO_NEED_OF_THIS() {
-		return "\v005\x3"
-			   "c\fd\x8D\xA0\xE1 \xAD\xA5 \xA8\xAD\xE2\xA5\xE0\xA5\xE1\xE3\xA5\xE2 %s\fd!";
+		return "\v005\x3""c\fd\x8D\xA0\xE1 \xAD\xA5 \xA8\xAD\xE2\xA5\xE0\xA5\xE1\xE3\xA5\xE2 %s\fd!"; // "\v005\x3""c\fdРќР°СЃ РЅРµ РёРЅС‚РµСЂРµСЃСѓРµС‚ %s\fd!"
 	}
 
-	/*
-	"\v007\x3""c\fdНевозможно перезарядить.\n%s"
-	*/
 	const char *NOT_RECHARGABLE() {
-		return "\v007\x3"
-			   "c\fd\x8D\xA5\xA2\xAE\xA7\xAC\xAE\xA6\xAD\xAE \xAF\xA5\xE0\xA5\xA7\xA0\xE0\xEF\xA4\xA8\xE2\xEC.\n%s";
+		return "\v007\x3""c\fd\x8D\xA5\xA2\xAE\xA7\xAC\xAE\xA6\xAD\xAE \xAF\xA5\xE0\xA5\xA7\xA0\xE0\xEF\xA4\xA8\xE2\xEC.\n%s"; // "\v007\x3""c\fdРќРµРІРѕР·РјРѕР¶РЅРѕ РїРµСЂРµР·Р°СЂСЏРґРёС‚СЊ.\n%s"
 	}
 
-	/*
-	"\v007\t000\x3""cНевозможно зачаровать.\n%s"
-	*/
 	const char *NOT_ENCHANTABLE() {
-		return "\v007\t000\x3"
-			   "c\x8D\xA5\xA2\xAE\xA7\xAC\xAE\xA6\xAD\xAE \xA7\xA0\xE7\xA0\xE0\xAE\xA2\xA0\xE2\xEC.\n%s";
+		return "\v007\t000\x3""c\x8D\xA5\xA2\xAE\xA7\xAC\xAE\xA6\xAD\xAE \xA7\xA0\xE7\xA0\xE0\xAE\xA2\xA0\xE2\xEC.\n%s"; // "\v007\t000\x3""cРќРµРІРѕР·РјРѕР¶РЅРѕ Р·Р°С‡Р°СЂРѕРІР°С‚СЊ.\n%s"
 	}
 
-	/*
-	"Заклинание не сработало!"
-	*/
 	const char *SPELL_FAILED() {
-		return "\x87\xA0\xAA\xAB\xA8\xAD\xA0\xAD\xA8\xA5 \xAD\xA5 \xE1\xE0\xA0\xA1\xAE\xE2\xA0\xAB\xAE!";
+		return "\x87\xA0\xAA\xAB\xA8\xAD\xA0\xAD\xA8\xA5 \xAD\xA5 \xE1\xE0\xA0\xA1\xAE\xE2\xA0\xAB\xAE!"; // "Р—Р°РєР»РёРЅР°РЅРёРµ РЅРµ СЃСЂР°Р±РѕС‚Р°Р»Рѕ!"
 	}
 
-	/*
-	"\fdЭтот предмет не сломан!"
-	*/
 	const char *ITEM_NOT_BROKEN() {
-		return "\fd\x9D\xE2\xAE\xE2 \xAF\xE0\xA5\xA4\xAC\xA5\xE2 \xAD\xA5 \xE1\xAB\xAE\xAC\xA0\xAD!";
+		return "\fd\x9D\xE2\xAE\xE2 \xAF\xE0\xA5\xA4\xAC\xA5\xE2 \xAD\xA5 \xE1\xAB\xAE\xAC\xA0\xAD!"; // "\fdР­С‚РѕС‚ РїСЂРµРґРјРµС‚ РЅРµ СЃР»РѕРјР°РЅ!"
 	}
 
-	/*
-	"Починить", "Опознать"
-	*/
 	const char **FIX_IDENTIFY() {
 		delete[] _fixIdentify;
-		_fixIdentify = new const char *[2] { "\x8F\xAE\xE7\xA8\xAD\xA8\xE2\xEC", "\x8E\xAF\xAE\xA7\xAD\xA0\xE2\xEC" };
+		_fixIdentify = new const char *[2] { "\x8F\xAE\xE7\xA8\xAD\xA8\xE2\xEC", "\x8E\xAF\xAE\xA7\xAD\xA0\xE2\xEC" }; // "РџРѕС‡РёРЅРёС‚СЊ", "РћРїРѕР·РЅР°С‚СЊ"
 		return _fixIdentify;
 	}
 
-	/*
-	"\x3""l\v000\t000%s %s\fd за %lu золот%s?"
-	*/
 	const char *FIX_IDENTIFY_GOLD() {
-		return "\x3"
-			   "l\v000\t000%s %s\fd \xA7\xA0 %lu \xA7\xAE\xAB\xAE\xE2%s?";
+		return "\x3""l\v000\t000%s %s\fd \xA7\xA0 %lu \xA7\xAE\xAB\xAE\xE2%s?"; // "\x3""l\v000\t000%s %s\fd Р·Р° %lu Р·РѕР»РѕС‚%s?"
 	}
 
-	/*
-	"\fd\v000\t000\x3""cОпознать предмет\x3""l\n"
-	"\n"
-	"\v012%s\fd\n"
-	"\n"
-	"%s";
-	*/
 	const char *IDENTIFY_ITEM_MSG() {
-		return "\fd\v000\t000\x3"
-			   "c\x8E\xAF\xAE\xA7\xAD\xA0\xE2\xEC \xAF\xE0\xA5\xA4\xAC\xA5\xE2\x3"
-			   "l\n"
-			   "\n"
-			   "\v012%s\fd\n"
-			   "\n"
-			   "%s";
+		return "\fd\v000\t000\x3""c\x8E\xAF\xAE\xA7\xAD\xA0\xE2\xEC \xAF\xE0\xA5\xA4\xAC\xA5\xE2\x3""l\n" // "\fd\v000\t000\x3""cРћРїРѕР·РЅР°С‚СЊ РїСЂРµРґРјРµС‚\x3""l\n"
+			   "\n"                                                                                       // "\n"
+			   "\v012%s\fd\n"                                                                             // "\v012%s\fd\n"
+			   "\n"                                                                                       // "\n"
+			   "%s";                                                                                      // "%s";
 	}
 
-	/*
-	"Используют классы\t132:\t140%s\n"
-	"Модификатор урона\t132:\t140%s\n"
-	"Физический урон\t132:\t140%s\n"
-	"Урон от Стихий\t132:\t140%s\n"
-	"Защита от Стихий\t132:\t140%s\n"
-	"Класс защиты\t132:\t140%s\n"
-	"Бонус свойства\t132:\t140%s\n"
-	"Особое свойство\t132:\t140%s";
-	*/
 	const char *ITEM_DETAILS() {
-		return "\x88\xE1\xAF\xAE\xAB\xEC\xA7\xE3\xEE\xE2 \xAA\xAB\xA0\xE1\xE1\xEB\t132:\t140%s\n"
-			   "\x8C\xAE\xA4\xA8\xE4\xA8\xAA\xA0\xE2\xAE\xE0 \xE3\xE0\xAE\xAD\xA0\t132:\t140%s\n"
-			   "\x94\xA8\xA7\xA8\xE7\xA5\xE1\xAA\xA8\xA9 \xE3\xE0\xAE\xAD\t132:\t140%s\n"
-			   "\x93\xE0\xAE\xAD \xAE\xE2 \x91\xE2\xA8\xE5\xA8\xA9\t132:\t140%s\n"
-			   "\x87\xA0\xE9\xA8\xE2\xA0 \xAE\xE2 \x91\xE2\xA8\xE5\xA8\xA9\t132:\t140%s\n"
-			   "\x8A\xAB\xA0\xE1\xE1 \xA7\xA0\xE9\xA8\xE2\xEB\t132:\t140%s\n"
-			   "\x81\xAE\xAD\xE3\xE1 \xE1\xA2\xAE\xA9\xE1\xE2\xA2\xA0\t132:\t140%s\n"
-			   "\x8E\xE1\xAE\xA1\xAE\xA5 \xE1\xA2\xAE\xA9\xE1\xE2\xA2\xAE\t132:\t140%s";
+		return "\x88\xE1\xAF\xAE\xAB\xEC\xA7\xE3\xEE\xE2 \xAA\xAB\xA0\xE1\xE1\xEB\t132:\t140%s\n" // "РСЃРїРѕР»СЊР·СѓСЋС‚ РєР»Р°СЃСЃС‹\t132:\t140%s\n"
+			   "\x8C\xAE\xA4\xA8\xE4\xA8\xAA\xA0\xE2\xAE\xE0 \xE3\xE0\xAE\xAD\xA0\t132:\t140%s\n" // "РњРѕРґРёС„РёРєР°С‚РѕСЂ СѓСЂРѕРЅР°\t132:\t140%s\n"
+			   "\x94\xA8\xA7\xA8\xE7\xA5\xE1\xAA\xA8\xA9 \xE3\xE0\xAE\xAD\t132:\t140%s\n"         // "Р¤РёР·РёС‡РµСЃРєРёР№ СѓСЂРѕРЅ\t132:\t140%s\n"
+			   "\x93\xE0\xAE\xAD \xAE\xE2 \x91\xE2\xA8\xE5\xA8\xA9\t132:\t140%s\n"                // "РЈСЂРѕРЅ РѕС‚ РЎС‚РёС…РёР№\t132:\t140%s\n"
+			   "\x87\xA0\xE9\xA8\xE2\xA0 \xAE\xE2 \x91\xE2\xA8\xE5\xA8\xA9\t132:\t140%s\n"        // "Р—Р°С‰РёС‚Р° РѕС‚ РЎС‚РёС…РёР№\t132:\t140%s\n"
+			   "\x8A\xAB\xA0\xE1\xE1 \xA7\xA0\xE9\xA8\xE2\xEB\t132:\t140%s\n"                     // "РљР»Р°СЃСЃ Р·Р°С‰РёС‚С‹\t132:\t140%s\n"
+			   "\x81\xAE\xAD\xE3\xE1 \xE1\xA2\xAE\xA9\xE1\xE2\xA2\xA0\t132:\t140%s\n"             // "Р‘РѕРЅСѓСЃ СЃРІРѕР№СЃС‚РІР°\t132:\t140%s\n"
+			   "\x8E\xE1\xAE\xA1\xAE\xA5 \xE1\xA2\xAE\xA9\xE1\xE2\xA2\xAE\t132:\t140%s";          // "РћСЃРѕР±РѕРµ СЃРІРѕР№СЃС‚РІРѕ\t132:\t140%s";
 	}
 
-	/*
-	"Все"
-	*/
 	const char *ALL() {
-		return "\x82\xE1\xA5";
+		return "\x82\xE1\xA5"; // "Р’СЃРµ"
 	}
 
-	/*
-	"Нет"
-	*/
 	const char *FIELD_NONE() {
-		return "\x8D\xA5\xE2";
+		return "\x8D\xA5\xE2"; // "РќРµС‚"
 	}
 
 	const char *DAMAGE_X_TO_Y() {
 		return "%d-%d";
 	}
 
-	/*
-	%+d урона от %s"
-	*/
 	const char *ELEMENTAL_XY_DAMAGE() {
-		return "%+d \xE3\xE0\xAE\xAD\xA0 \xAE\xE2 %s";
+		return "%+d \xE3\xE0\xAE\xAD\xA0 \xAE\xE2 %s"; // %+d СѓСЂРѕРЅР° РѕС‚ %s"
 	}
 
 	const char *ATTR_XY_BONUS() {
 		return "%+d %s";
 	}
 
-	/*
-	"x3 против %s"
-	*/
 	const char *EFFECTIVE_AGAINST() {
-		return "x3 \xAF\xE0\xAE\xE2\xA8\xA2 %s";
+		return "x3 \xAF\xE0\xAE\xE2\xA8\xA2 %s"; // "x3 РїСЂРѕС‚РёРІ %s"
 	}
 
-	/*
-	"\r\x2\x3""c\v021\t017\f37В\fdещи\t085\f37З\fdадания\t153"
-	"З\f37а\fdметки\t221Вверх\t255Вниз"
-	"\t289Выход";
-	*/
 	const char *QUESTS_DIALOG_TEXT() {
-		return "\r\x2\x3"
-			   "c\v021\t017\f37\x82\fd\xA5\xE9\xA8\t085\f37\x87\fd\xA0\xA4\xA0\xAD\xA8\xEF\t153"
-			   "\x87\f37\xA0\fd\xAC\xA5\xE2\xAA\xA8\t221\x82\xA2\xA5\xE0\xE5\t255\x82\xAD\xA8\xA7"
-			   "\t289\x82\xEB\xE5\xAE\xA4";
+		return "\r\x2\x3""c\v021\t017\f37\x82\fd\xA5\xE9\xA8\t085\f37\x87\fd\xA0\xA4\xA0\xAD\xA8\xEF\t153" // "\r\x2\x3""c\v021\t017\f37Р’\fdРµС‰Рё\t085\f37Р—\fdР°РґР°РЅРёСЏ\t153"
+			   "\x87\f37\xA0\fd\xAC\xA5\xE2\xAA\xA8\t221\x82\xA2\xA5\xE0\xE5\t255\x82\xAD\xA8\xA7"         // "Р—\f37Р°\fdРјРµС‚РєРё\t221Р’РІРµСЂС…\t255Р’РЅРёР·"
+			   "\t289\x82\xEB\xE5\xAE\xA4";                                                                // "\t289Р’С‹С…РѕРґ";
 	}
 
-	/*
-	"\b \b*-- \f04Облака Ксина\fd --"
-	*/
 	const char *CLOUDS_OF_XEEN_LINE() {
-		return "\b \b*-- \f04\x8E\xA1\xAB\xA0\xAA\xA0 \x8A\xE1\xA8\xAD\xA0\fd --";
+		return "\b \b*-- \f04\x8E\xA1\xAB\xA0\xAA\xA0 \x8A\xE1\xA8\xAD\xA0\fd --"; // "\b \b*-- \f04РћР±Р»Р°РєР° РљСЃРёРЅР°\fd --"
 	}
 
 	const char *DARKSIDE_OF_XEEN_LINE() {
@@ -2423,374 +1434,185 @@ public:
 		return "\b \b*-- \f04Swords of Xeen\fd --";
 	}
 
-	/*
-	"\r\x1\fd\x3""c\v000\t000Предметы заданий\x3""l\x2\n"
-	"\n"
-	"\x3""cНет предметов";
-	*/
 	const char *NO_QUEST_ITEMS() {
-		return "\r\x1\fd\x3"
-			   "c\v000\t000\x8F\xE0\xA5\xA4\xAC\xA5\xE2\xEB \xA7\xA0\xA4\xA0\xAD\xA8\xA9\x3"
-			   "l\x2\n"
-			   "\n"
-			   "\x3"
-			   "c\x8D\xA5\xE2 \xAF\xE0\xA5\xA4\xAC\xA5\xE2\xAE\xA2";
+		return "\r\x1\fd\x3""c\v000\t000\x8F\xE0\xA5\xA4\xAC\xA5\xE2\xEB \xA7\xA0\xA4\xA0\xAD\xA8\xA9\x3""l\x2\n" // "\r\x1\fd\x3""c\v000\t000РџСЂРµРґРјРµС‚С‹ Р·Р°РґР°РЅРёР№\x3""l\x2\n"
+			   "\n"                                                                                               // "\n"
+			   "\x3""c\x8D\xA5\xE2 \xAF\xE0\xA5\xA4\xAC\xA5\xE2\xAE\xA2";                                         // "\x3""cРќРµС‚ РїСЂРµРґРјРµС‚РѕРІ";
 	}
 
-	/*
-	"\x3""c\v000\t000\n"
-	"\n"
-	"Нет заданий";
-	*/
 	const char *NO_CURRENT_QUESTS() {
-		return "\x3"
-			   "c\v000\t000\n"
-			   "\n"
-			   "\x8D\xA5\xE2 \xA7\xA0\xA4\xA0\xAD\xA8\xA9";
+		return "\x3""c\v000\t000\n"							// "\x3""c\v000\t000\n"
+			   "\n"                                         // "\n"
+			   "\x8D\xA5\xE2 \xA7\xA0\xA4\xA0\xAD\xA8\xA9"; // "РќРµС‚ Р·Р°РґР°РЅРёР№";
 	}
 
-	/*
-	"\x3""cЗаметок нет"
-	*/
 	const char *NO_AUTO_NOTES() {
-		return "\x3"
-			   "c\x87\xA0\xAC\xA5\xE2\xAE\xAA \xAD\xA5\xE2";
+		return "\x3""c\x87\xA0\xAC\xA5\xE2\xAE\xAA \xAD\xA5\xE2"; // "\x3""cР—Р°РјРµС‚РѕРє РЅРµС‚"
 	}
 
-	/*
-	"\r\x1\fd\x3""c\v000\t000Предметы заданий\x3""l\x2\n"
-	"\f04 * \fd%s\n"
-	"\f04 * \fd%s\n"
-	"\f04 * \fd%s\n"
-	"\f04 * \fd%s\n"
-	"\f04 * \fd%s\n"
-	"\f04 * \fd%s\n"
-	"\f04 * \fd%s\n"
-	"\f04 * \fd%s\n"
-	"\f04 * \fd%s";
-	*/
 	const char *QUEST_ITEMS_DATA() {
-		return "\r\x1\fd\x3"
-			   "c\v000\t000\x8F\xE0\xA5\xA4\xAC\xA5\xE2\xEB \xA7\xA0\xA4\xA0\xAD\xA8\xA9\x3"
-			   "l\x2\n"
-			   "\f04 * \fd%s\n"
-			   "\f04 * \fd%s\n"
-			   "\f04 * \fd%s\n"
-			   "\f04 * \fd%s\n"
-			   "\f04 * \fd%s\n"
-			   "\f04 * \fd%s\n"
-			   "\f04 * \fd%s\n"
-			   "\f04 * \fd%s\n"
-			   "\f04 * \fd%s";
+		return "\r\x1\fd\x3""c\v000\t000\x8F\xE0\xA5\xA4\xAC\xA5\xE2\xEB \xA7\xA0\xA4\xA0\xAD\xA8\xA9\x3""l\x2\n" // "\r\x1\fd\x3""c\v000\t000РџСЂРµРґРјРµС‚С‹ Р·Р°РґР°РЅРёР№\x3""l\x2\n"
+			   "\f04 * \fd%s\n"                                                                                   // "\f04 * \fd%s\n"
+			   "\f04 * \fd%s\n"                                                                                   // "\f04 * \fd%s\n"
+			   "\f04 * \fd%s\n"                                                                                   // "\f04 * \fd%s\n"
+			   "\f04 * \fd%s\n"                                                                                   // "\f04 * \fd%s\n"
+			   "\f04 * \fd%s\n"                                                                                   // "\f04 * \fd%s\n"
+			   "\f04 * \fd%s\n"                                                                                   // "\f04 * \fd%s\n"
+			   "\f04 * \fd%s\n"                                                                                   // "\f04 * \fd%s\n"
+			   "\f04 * \fd%s\n"                                                                                   // "\f04 * \fd%s\n"
+			   "\f04 * \fd%s";                                                                                    // "\f04 * \fd%s";
 	}
 
-	/*
-	"\r\x1\fd\x3""c\t000\v000Задания\x3""l\x2\n"
-	"%s\n"
-	"\n"
-	"%s\n"
-	"\n"
-	"%s";
-	*/
 	const char *CURRENT_QUESTS_DATA() {
-		return "\r\x1\fd\x3"
-			   "c\t000\v000\x87\xA0\xA4\xA0\xAD\xA8\xEF\x3"
-			   "l\x2\n"
-			   "%s\n"
-			   "\n"
-			   "%s\n"
-			   "\n"
-			   "%s";
+		return "\r\x1\fd\x3""c\t000\v000\x87\xA0\xA4\xA0\xAD\xA8\xEF\x3""l\x2\n" // "\r\x1\fd\x3""c\t000\v000Р—Р°РґР°РЅРёСЏ\x3""l\x2\n"
+			   "%s\n"                                                            // "%s\n"
+			   "\n"                                                              // "\n"
+			   "%s\n"                                                            // "%s\n"
+			   "\n"                                                              // "\n"
+			   "%s";                                                             // "%s";
 	}
 
-	/*
-	"\r\x1\fd\x3""c\t000\v000Заметки\x3""l\x2\n"
-	"%s\x3""l\n"
-	"%s\x3""l\n"
-	"%s\x3""l\n"
-	"%s\x3""l\n"
-	"%s\x3""l\n"
-	"%s\x3""l\n"
-	"%s\x3""l\n"
-	"%s\x3""l\n"
-	"%s\x3""l";
-	*/
 	const char *AUTO_NOTES_DATA() {
-		return "\r\x1\fd\x3"
-			   "c\t000\v000\x87\xA0\xAC\xA5\xE2\xAA\xA8\x3"
-			   "l\x2\n"
-			   "%s\x3"
-			   "l\n"
-			   "%s\x3"
-			   "l\n"
-			   "%s\x3"
-			   "l\n"
-			   "%s\x3"
-			   "l\n"
-			   "%s\x3"
-			   "l\n"
-			   "%s\x3"
-			   "l\n"
-			   "%s\x3"
-			   "l\n"
-			   "%s\x3"
-			   "l\n"
-			   "%s\x3"
-			   "l";
+		return "\r\x1\fd\x3""c\t000\v000\x87\xA0\xAC\xA5\xE2\xAA\xA8\x3""l\x2\n" // "\r\x1\fd\x3""c\t000\v000Р—Р°РјРµС‚РєРё\x3""l\x2\n"
+			   "%s\x3""l\n"														 // "%s\x3""l\n"
+			   "%s\x3""l\n"														 // "%s\x3""l\n"
+			   "%s\x3""l\n"														 // "%s\x3""l\n"
+			   "%s\x3""l\n"														 // "%s\x3""l\n"
+			   "%s\x3""l\n"														 // "%s\x3""l\n"
+			   "%s\x3""l\n"														 // "%s\x3""l\n"
+			   "%s\x3""l\n"														 // "%s\x3""l\n"
+			   "%s\x3""l\n"														 // "%s\x3""l\n"
+			   "%s\x3""l";														 // "%s\x3""l";
 	}
 
-	/*
-	"\v000\t000Прошло 8 часов. Отдых закончен\n"
-	"%s\n"
-	"Было съедено %d пищи.";
-	*/
 	const char *REST_COMPLETE() {
-		return "\v000\t000\x8F\xE0\xAE\xE8\xAB\xAE 8 \xE7\xA0\xE1\xAE\xA2. \x8E\xE2\xA4\xEB\xE5 \xA7\xA0\xAA\xAE\xAD\xE7\xA5\xAD\n"
-			   "%s\n"
-			   "\x81\xEB\xAB\xAE \xE1\xEA\xA5\xA4\xA5\xAD\xAE %d \xAF\xA8\xE9\xA8.";
+		return "\v000\t000\x8F\xE0\xAE\xE8\xAB\xAE 8 \xE7\xA0\xE1\xAE\xA2. \x8E\xE2\xA4\xEB\xE5 \xA7\xA0\xAA\xAE\xAD\xE7\xA5\xAD\n" // "\v000\t000РџСЂРѕС€Р»Рѕ 8 С‡Р°СЃРѕРІ. РћС‚РґС‹С… Р·Р°РєРѕРЅС‡РµРЅ\n"
+			   "%s\n"                                                                                                               // "%s\n"
+			   "\x81\xEB\xAB\xAE \xE1\xEA\xA5\xA4\xA5\xAD\xAE %d \xAF\xA8\xE9\xA8.";                                                // "Р‘С‹Р»Рѕ СЃСЉРµРґРµРЅРѕ %d РїРёС‰Рё.";
 	}
 
-	/*
-	"\f07Отряд голодает!\fd"
-	*/
 	const char *PARTY_IS_STARVING() {
-		return "\f07\x8E\xE2\xE0\xEF\xA4 \xA3\xAE\xAB\xAE\xA4\xA0\xA5\xE2!\fd";
+		return "\f07\x8E\xE2\xE0\xEF\xA4 \xA3\xAE\xAB\xAE\xA4\xA0\xA5\xE2!\fd"; // "\f07РћС‚СЂСЏРґ РіРѕР»РѕРґР°РµС‚!\fd"
 	}
 
-	/*
-	"Здоровье и мана восстановлены"
-	*/
 	const char *HIT_SPELL_POINTS_RESTORED() {
-		return "\x87\xA4\xAE\xE0\xAE\xA2\xEC\xA5 \xA8 \xAC\xA0\xAD\xA0 \xA2\xAE\xE1\xE1\xE2\xA0\xAD\xAE\xA2\xAB\xA5\xAD\xEB";
+		return "\x87\xA4\xAE\xE0\xAE\xA2\xEC\xA5 \xA8 \xAC\xA0\xAD\xA0 \xA2\xAE\xE1\xE1\xE2\xA0\xAD\xAE\xA2\xAB\xA5\xAD\xEB"; // "Р—РґРѕСЂРѕРІСЊРµ Рё РјР°РЅР° РІРѕСЃСЃС‚Р°РЅРѕРІР»РµРЅС‹"
 	}
 
-	/*
-	"Здесь слишком опасно отдыхать!"
-	*/
 	const char *TOO_DANGEROUS_TO_REST() {
-		return "\x87\xA4\xA5\xE1\xEC \xE1\xAB\xA8\xE8\xAA\xAE\xAC \xAE\xAF\xA0\xE1\xAD\xAE \xAE\xE2\xA4\xEB\xE5\xA0\xE2\xEC!";
+		return "\x87\xA4\xA5\xE1\xEC \xE1\xAB\xA8\xE8\xAA\xAE\xAC \xAE\xAF\xA0\xE1\xAD\xAE \xAE\xE2\xA4\xEB\xE5\xA0\xE2\xEC!"; // "Р—РґРµСЃСЊ СЃР»РёС€РєРѕРј РѕРїР°СЃРЅРѕ РѕС‚РґС‹С…Р°С‚СЊ!"
 	}
 
-	/*
-	"Кто-то из отряда может умереть. Вы всё равно желаете отдохнуть?"
-	*/
 	const char *SOME_CHARS_MAY_DIE() {
-		return "\x8A\xE2\xAE-\xE2\xAE \xA8\xA7 \xAE\xE2\xE0\xEF\xA4\xA0 \xAC\xAE\xA6\xA5\xE2 \xE3\xAC\xA5\xE0\xA5\xE2\xEC. \x82\xEB \xA2\xE1\xF1 \xE0\xA0\xA2\xAD\xAE \xA6\xA5\xAB\xA0\xA5\xE2\xA5 \xAE\xE2\xA4\xAE\xE5\xAD\xE3\xE2\xEC?";
+		return "\x8A\xE2\xAE-\xE2\xAE \xA8\xA7 \xAE\xE2\xE0\xEF\xA4\xA0 \xAC\xAE\xA6\xA5\xE2 \xE3\xAC\xA5\xE0\xA5\xE2\xEC. \x82\xEB \xA2\xE1\xF1 \xE0\xA0\xA2\xAD\xAE \xA6\xA5\xAB\xA0\xA5\xE2\xA5 \xAE\xE2\xA4\xAE\xE5\xAD\xE3\xE2\xEC?"; // "РљС‚Рѕ-С‚Рѕ РёР· РѕС‚СЂСЏРґР° РјРѕР¶РµС‚ СѓРјРµСЂРµС‚СЊ. Р’С‹ РІСЃС‘ СЂР°РІРЅРѕ Р¶РµР»Р°РµС‚Рµ РѕС‚РґРѕС…РЅСѓС‚СЊ?"
 	}
 
-	/*
-	"\r\t010\v005Кого выгнать?"
-	*/
 	const char *DISMISS_WHOM() {
-		return "\r\t010\v005\x8A\xAE\xA3\xAE \xA2\xEB\xA3\xAD\xA0\xE2\xEC?";
+		return "\r\t010\v005\x8A\xAE\xA3\xAE \xA2\xEB\xA3\xAD\xA0\xE2\xEC?"; // "\r\t010\v005РљРѕРіРѕ РІС‹РіРЅР°С‚СЊ?"
 	}
 
-	/*
-	"Вы не можете выгнать своего последнего персонажа!"
-	*/
 	const char *CANT_DISMISS_LAST_CHAR() {
-		return "\x82\xEB \xAD\xA5 \xAC\xAE\xA6\xA5\xE2\xA5 \xA2\xEB\xA3\xAD\xA0\xE2\xEC \xE1\xA2\xAE\xA5\xA3\xAE \xAF\xAE\xE1\xAB\xA5\xA4\xAD\xA5\xA3\xAE \xAF\xA5\xE0\xE1\xAE\xAD\xA0\xA6\xA0!";
+		return "\x82\xEB \xAD\xA5 \xAC\xAE\xA6\xA5\xE2\xA5 \xA2\xEB\xA3\xAD\xA0\xE2\xEC \xE1\xA2\xAE\xA5\xA3\xAE \xAF\xAE\xE1\xAB\xA5\xA4\xAD\xA5\xA3\xAE \xAF\xA5\xE0\xE1\xAE\xAD\xA0\xA6\xA0!"; // "Р’С‹ РЅРµ РјРѕР¶РµС‚Рµ РІС‹РіРЅР°С‚СЊ СЃРІРѕРµРіРѕ РїРѕСЃР»РµРґРЅРµРіРѕ РїРµСЂСЃРѕРЅР°Р¶Р°!"
 	}
 
 	const char *DELETE_CHAR_WITH_ELDER_WEAPON() {
 		return "\v000\t000This character has an Elder Weapon and cannot be deleted!";
 	}
 
-	/*
-	"Выгнать", "удалить"
-	*/
 	const char **REMOVE_DELETE() {
 		delete[] _removeDelete;
-		_removeDelete = new const char *[2] { "\x82\xEB\xA3\xAD\xA0\xE2\xEC", "\xE3\xA4\xA0\xAB\xA8\xE2\xEC" };
+		_removeDelete = new const char *[2] { "\x82\xEB\xA3\xAD\xA0\xE2\xEC", "\xE3\xA4\xA0\xAB\xA8\xE2\xEC" }; // "Р’С‹РіРЅР°С‚СЊ", "СѓРґР°Р»РёС‚СЊ"
 		return _removeDelete;
 	}
 
-	/*
-	"\x3""l\t010\v005Кого %s?"
-	*/
 	const char *REMOVE_OR_DELETE_WHICH() {
-		return "\x3"
-			   "l\t010\v005\x8A\xAE\xA3\xAE %s?";
+		return "\x3""l\t010\v005\x8A\xAE\xA3\xAE %s?"; // "\x3""l\t010\v005РљРѕРіРѕ %s?"
 	}
 
-	/*
-	"\v007Ваш отряд полон!"
-	*/
 	const char *YOUR_PARTY_IS_FULL() {
-		return "\v007\x82\xA0\xE8 \xAE\xE2\xE0\xEF\xA4 \xAF\xAE\xAB\xAE\xAD!";
+		return "\v007\x82\xA0\xE8 \xAE\xE2\xE0\xEF\xA4 \xAF\xAE\xAB\xAE\xAD!"; // "\v007Р’Р°С€ РѕС‚СЂСЏРґ РїРѕР»РѕРЅ!"
 	}
 
-	/*
-	"\v000\t000Этот персонаж не может быть удалён, так как у него Меч-убийца Ксина!"
-	*/
 	const char *HAS_SLAYER_SWORD() {
-		return "\v000\t000\x9D\xE2\xAE\xE2 \xAF\xA5\xE0\xE1\xAE\xAD\xA0\xA6 \xAD\xA5 \xAC\xAE\xA6\xA5\xE2 \xA1\xEB\xE2\xEC \xE3\xA4\xA0\xAB\xF1\xAD, \xE2\xA0\xAA \xAA\xA0\xAA \xE3 \xAD\xA5\xA3\xAE \x8C\xA5\xE7-\xE3\xA1\xA8\xA9\xE6\xA0 \x8A\xE1\xA8\xAD\xA0!";
+		return "\v000\t000\x9D\xE2\xAE\xE2 \xAF\xA5\xE0\xE1\xAE\xAD\xA0\xA6 \xAD\xA5 \xAC\xAE\xA6\xA5\xE2 \xA1\xEB\xE2\xEC \xE3\xA4\xA0\xAB\xF1\xAD, \xE2\xA0\xAA \xAA\xA0\xAA \xE3 \xAD\xA5\xA3\xAE \x8C\xA5\xE7-\xE3\xA1\xA8\xA9\xE6\xA0 \x8A\xE1\xA8\xAD\xA0!"; // "\v000\t000Р­С‚РѕС‚ РїРµСЂСЃРѕРЅР°Р¶ РЅРµ РјРѕР¶РµС‚ Р±С‹С‚СЊ СѓРґР°Р»С‘РЅ, С‚Р°Рє РєР°Рє Сѓ РЅРµРіРѕ РњРµС‡-СѓР±РёР№С†Р° РљСЃРёРЅР°!"
 	}
 
-	/*
-	"%s %s. Вы уверены, что хотите удалить этого героя?"
-	*/
 	const char *SURE_TO_DELETE_CHAR() {
-		return "%s %s. \x82\xEB \xE3\xA2\xA5\xE0\xA5\xAD\xEB, \xE7\xE2\xAE \xE5\xAE\xE2\xA8\xE2\xA5 \xE3\xA4\xA0\xAB\xA8\xE2\xEC \xED\xE2\xAE\xA3\xAE \xA3\xA5\xE0\xAE\xEF?";
+		return "%s %s. \x82\xEB \xE3\xA2\xA5\xE0\xA5\xAD\xEB, \xE7\xE2\xAE \xE5\xAE\xE2\xA8\xE2\xA5 \xE3\xA4\xA0\xAB\xA8\xE2\xEC \xED\xE2\xAE\xA3\xAE \xA3\xA5\xE0\xAE\xEF?"; // "%s %s. Р’С‹ СѓРІРµСЂРµРЅС‹, С‡С‚Рѕ С…РѕС‚РёС‚Рµ СѓРґР°Р»РёС‚СЊ СЌС‚РѕРіРѕ РіРµСЂРѕСЏ?"
 	}
 
-	/*
-	"\f04\x3""c\x2\t144\v119\f37Б\f04росок\t144\v149\f37С\f04озд"
-	"\t144\v179\f37ESC\f04\x3""l\x1\t195\v021Си\f37л\f04"
-	"\t195\v045\f37И\f04нт\t195\v069\f37Д\f04ух\t195\v093Сл\f37ж\f04"
-	"\t195\v116С\f37к\f04р\t195\v140\f37М\f04тк\t195\v164\f37У\f04дч%s";
-	*/
 	const char *CREATE_CHAR_DETAILS() {
-		return "\f04\x3"
-			   "c\x2\t144\v119\f37\x81\f04\xE0\xAE\xE1\xAE\xAA\t144\v149\f37\x91\f04\xAE\xA7\xA4"
-			   "\t144\v179\f37ESC\f04\x3"
-			   "l\x1\t195\v021\x91\xA8\f37\xAB\f04"
-			   "\t195\v045\f37\x88\f04\xAD\xE2\t195\v069\f37\x84\f04\xE3\xE5\t195\v093\x91\xAB\f37\xA6\f04"
-			   "\t195\v116\x91\f37\xAA\f04\xE0\t195\v140\f37\x8C\f04\xE2\xAA\t195\v164\f37\x93\f04\xA4\xE7%s";
+		return "\f04\x3""c\x2\t144\v119\f37\x81\f04\xE0\xAE\xE1\xAE\xAA\t144\v149\f37\x91\f04\xAE\xA7\xA4"		// "\f04\x3""c\x2\t144\v119\f37Р‘\f04СЂРѕСЃРѕРє\t144\v149\f37РЎ\f04РѕР·Рґ"
+			   "\t144\v179\f37ESC\f04\x3""l\x1\t195\v021\x91\xA8\f37\xAB\f04"									// "\t144\v179\f37ESC\f04\x3""l\x1\t195\v021РЎРё\f37Р»\f04"
+			   "\t195\v045\f37\x88\f04\xAD\xE2\t195\v069\f37\x84\f04\xE3\xE5\t195\v093\x91\xAB\f37\xA6\f04"		// "\t195\v045\f37Р\f04РЅС‚\t195\v069\f37Р”\f04СѓС…\t195\v093РЎР»\f37Р¶\f04"
+			   "\t195\v116\x91\f37\xAA\f04\xE0\t195\v140\f37\x8C\f04\xE2\xAA\t195\v164\f37\x93\f04\xA4\xE7%s";	// "\t195\v116РЎ\f37Рє\f04СЂ\t195\v140\f37Рњ\f04С‚Рє\t195\v164\f37РЈ\f04РґС‡%s";
 	}
 
-	/*
-	"\f04\x3""l\t017\v148Раса\t055: %s\n"
-	"\t017Пол\t055: %s\n"
-	"\t017Класс\t055:\n"
-	"\x3""r\t215\v031%d\t215\v055%d\t215\v079%d\t215\v103%d\t215\v127%d"
-	"\t215\v151%d\t215\v175%d\x3""l\t242\v020\f%2dРыцарь\t242\v031\f%2d"
-	"Паладин\t242\v042\f%2dЛучник\t242\v053\f%2dКлирик\t242\v064\f%2d"
-	"Маг\t242\v075\f%2dВор\t242\v086\f%2dНиндзя\t242\v097\f%2d"
-	"Варвар\t242\v108\f%2dДруид\t242\v119\f%2dСледопыт\f04\x3""c"
-	"\t265\v142Навыки\x2\x3""l\t223\v155%s\t223\v170%s%s\x1";
-	*/
 	const char *NEW_CHAR_STATS() {
-		return "\f04\x3"
-			   "l\t017\v148\x90\xA0\xE1\xA0\t055: %s\n"
-			   "\t017\x8F\xAE\xAB\t055: %s\n"
-			   "\t017\x8A\xAB\xA0\xE1\xE1\t055:\n"
-			   "\x3"
-			   "r\t215\v031%d\t215\v055%d\t215\v079%d\t215\v103%d\t215\v127%d"
-			   "\t215\v151%d\t215\v175%d\x3"
-			   "l\t242\v020\f%2d\x90\xEB\xE6\xA0\xE0\xEC\t242\v031\f%2d"
-			   "\x8F\xA0\xAB\xA0\xA4\xA8\xAD\t242\v042\f%2d\x8B\xE3\xE7\xAD\xA8\xAA\t242\v053\f%2d\x8A\xAB\xA8\xE0\xA8\xAA\t242\v064\f%2d"
-			   "\x8C\xA0\xA3\t242\v075\f%2d\x82\xAE\xE0\t242\v086\f%2d\x8D\xA8\xAD\xA4\xA7\xEF\t242\v097\f%2d"
-			   "\x82\xA0\xE0\xA2\xA0\xE0\t242\v108\f%2d\x84\xE0\xE3\xA8\xA4\t242\v119\f%2d\x91\xAB\xA5\xA4\xAE\xAF\xEB\xE2\f04\x3"
-			   "c"
-			   "\t265\v142\x8D\xA0\xA2\xEB\xAA\xA8\x2\x3"
-			   "l\t223\v155%s\t223\v170%s%s\x1";
+		return "\f04\x3""l\t017\v148\x90\xA0\xE1\xA0\t055: %s\n"																			// "\f04\x3""l\t017\v148Р Р°СЃР°\t055: %s\n"
+			   "\t017\x8F\xAE\xAB\t055: %s\n"																								// "\t017РџРѕР»\t055: %s\n"
+			   "\t017\x8A\xAB\xA0\xE1\xE1\t055:\n"																							// "\t017РљР»Р°СЃСЃ\t055:\n"
+			   "\x3""r\t215\v031%d\t215\v055%d\t215\v079%d\t215\v103%d\t215\v127%d"															// "\x3""r\t215\v031%d\t215\v055%d\t215\v079%d\t215\v103%d\t215\v127%d"
+			   "\t215\v151%d\t215\v175%d\x3""l\t242\v020\f%2d\x90\xEB\xE6\xA0\xE0\xEC\t242\v031\f%2d"										// "\t215\v151%d\t215\v175%d\x3""l\t242\v020\f%2dР С‹С†Р°СЂСЊ\t242\v031\f%2d"
+			   "\x8F\xA0\xAB\xA0\xA4\xA8\xAD\t242\v042\f%2d\x8B\xE3\xE7\xAD\xA8\xAA\t242\v053\f%2d\x8A\xAB\xA8\xE0\xA8\xAA\t242\v064\f%2d"	// "РџР°Р»Р°РґРёРЅ\t242\v042\f%2dР›СѓС‡РЅРёРє\t242\v053\f%2dРљР»РёСЂРёРє\t242\v064\f%2d"
+			   "\x8C\xA0\xA3\t242\v075\f%2d\x82\xAE\xE0\t242\v086\f%2d\x8D\xA8\xAD\xA4\xA7\xEF\t242\v097\f%2d"								// "РњР°Рі\t242\v075\f%2dР’РѕСЂ\t242\v086\f%2dРќРёРЅРґР·СЏ\t242\v097\f%2d"
+			   "\x82\xA0\xE0\xA2\xA0\xE0\t242\v108\f%2d\x84\xE0\xE3\xA8\xA4\t242\v119\f%2d\x91\xAB\xA5\xA4\xAE\xAF\xEB\xE2\f04\x3""c"		// "Р’Р°СЂРІР°СЂ\t242\v108\f%2dР”СЂСѓРёРґ\t242\v119\f%2dРЎР»РµРґРѕРїС‹С‚\f04\x3""c"
+			   "\t265\v142\x8D\xA0\xA2\xEB\xAA\xA8\x2\x3""l\t223\v155%s\t223\v170%s%s\x1";													// "\t265\v142РќР°РІС‹РєРё\x2\x3""l\t223\v155%s\t223\v170%s%s\x1";
 	}
 
-	/*
-	"\x3""cВведите имя персонажа\n\n"
-	*/
 	const char *NAME_FOR_NEW_CHARACTER() {
-		return "\x3"
-			   "c\x82\xA2\xA5\xA4\xA8\xE2\xA5 \xA8\xAC\xEF \xAF\xA5\xE0\xE1\xAE\xAD\xA0\xA6\xA0\n\n";
+		return "\x3""c\x82\xA2\xA5\xA4\xA8\xE2\xA5 \xA8\xAC\xEF \xAF\xA5\xE0\xE1\xAE\xAD\xA0\xA6\xA0\n\n"; // "\x3""cР’РІРµРґРёС‚Рµ РёРјСЏ РїРµСЂСЃРѕРЅР°Р¶Р°\n\n"
 	}
 
-	/*
-	"\v003\x3""cПеред сохранением выберите класс.\x3""l"
-	*/
 	const char *SELECT_CLASS_BEFORE_SAVING() {
-		return "\v003\x3"
-			   "c\x8F\xA5\xE0\xA5\xA4 \xE1\xAE\xE5\xE0\xA0\xAD\xA5\xAD\xA8\xA5\xAC \xA2\xEB\xA1\xA5\xE0\xA8\xE2\xA5 \xAA\xAB\xA0\xE1\xE1.\x3"
-			   "l";
+		return "\v003\x3""c\x8F\xA5\xE0\xA5\xA4 \xE1\xAE\xE5\xE0\xA0\xAD\xA5\xAD\xA8\xA5\xAC \xA2\xEB\xA1\xA5\xE0\xA8\xE2\xA5 \xAA\xAB\xA0\xE1\xE1.\x3""l"; // "\v003\x3""cРџРµСЂРµРґ СЃРѕС…СЂР°РЅРµРЅРёРµРј РІС‹Р±РµСЂРёС‚Рµ РєР»Р°СЃСЃ.\x3""l"
 	}
 
-	/*
-	"Поменять %s с..."
-	*/
 	const char *EXCHANGE_ATTR_WITH() {
-		return "\x8F\xAE\xAC\xA5\xAD\xEF\xE2\xEC %s \xE1...";
+		return "\x8F\xAE\xAC\xA5\xAD\xEF\xE2\xEC %s \xE1..."; // "РџРѕРјРµРЅСЏС‚СЊ %s СЃ..."
 	}
 
-	/*
-	"\r\f00\x3""c\v000\t000\x2%s%s%s\x1"
-	*/
 	const char *COMBAT_DETAILS() {
-		return "\r\f00\x3"
-			   "c\v000\t000\x2%s%s%s\x1";
+		return "\r\f00\x3""c\v000\t000\x2%s%s%s\x1"; // "\r\f00\x3""c\v000\t000\x2%s%s%s\x1"
 	}
 
-	/*
-	"\x3""c\v000Недостаточно %s, чтобы заклинать %s"
-	*/
 	const char *NOT_ENOUGH_TO_CAST() {
-		return "\x3"
-			   "c\v000\x8D\xA5\xA4\xAE\xE1\xE2\xA0\xE2\xAE\xE7\xAD\xAE %s, \xE7\xE2\xAE\xA1\xEB \xA7\xA0\xAA\xAB\xA8\xAD\xA0\xE2\xEC %s";
+		return "\x3""c\v000\x8D\xA5\xA4\xAE\xE1\xE2\xA0\xE2\xAE\xE7\xAD\xAE %s, \xE7\xE2\xAE\xA1\xEB \xA7\xA0\xAA\xAB\xA8\xAD\xA0\xE2\xEC %s"; // "\x3""c\v000РќРµРґРѕСЃС‚Р°С‚РѕС‡РЅРѕ %s, С‡С‚РѕР±С‹ Р·Р°РєР»РёРЅР°С‚СЊ %s"
 	}
 
-	/*
-	"очков магии", "алмазов"
-	*/
 	const char **SPELL_CAST_COMPONENTS() {
 		delete[] _spellCastComponents;
-		_spellCastComponents = new const char *[2] { "\xAE\xE7\xAA\xAE\xA2 \xAC\xA0\xA3\xA8\xA8", "\xA0\xAB\xAC\xA0\xA7\xAE\xA2" };
+		_spellCastComponents = new const char *[2] { "\xAE\xE7\xAA\xAE\xA2 \xAC\xA0\xA3\xA8\xA8", "\xA0\xAB\xAC\xA0\xA7\xAE\xA2" }; // "РѕС‡РєРѕРІ РјР°РіРёРё", "Р°Р»РјР°Р·РѕРІ"
 		return _spellCastComponents;
 	}
 
-	/*
-	"\r\x2\x3""c\v122\t013\f37З\fdакл\t040\f37Н\fdов"
-	"\t067ESC\x1\t000\v000\x3""cЗаклинание\n"
-	"\n"
-	"%s\x3""c\n"
-	"\n"
-	"     Готовое:\x3""c\n"
-	"\n"
-	"\f09%s\fd\x2\x3""l\n"
-	"\v082Цена\x3""r\t000%u/%u\x3""l\n"
-	"Тек ОМ\x3""r\t000%u\x1";
-	*/
 	const char *CAST_SPELL_DETAILS() {
-		return "\r\x2\x3"
-			   "c\v122\t013\f37\x87\fd\xA0\xAA\xAB\t040\f37\x8D\fd\xAE\xA2"
-			   "\t067ESC\x1\t000\v000\x3"
-			   "c\x87\xA0\xAA\xAB\xA8\xAD\xA0\xAD\xA8\xA5\n"
-			   "\n"
-			   "%s\x3"
-			   "c\n"
-			   "\n"
-			   "     \x83\xAE\xE2\xAE\xA2\xAE\xA5:\x3"
-			   "c\n"
-			   "\n"
-			   "\f09%s\fd\x2\x3"
-			   "l\n"
-			   "\v082\x96\xA5\xAD\xA0\x3"
-			   "r\t000%u/%u\x3"
-			   "l\n"
-			   "\x92\xA5\xAA \x8E\x8C\x3"
-			   "r\t000%u\x1";
+		return "\r\x2\x3""c\v122\t013\f37\x87\fd\xA0\xAA\xAB\t040\f37\x8D\fd\xAE\xA2"  // "\r\x2\x3""c\v122\t013\f37Р—\fdР°РєР»\t040\f37Рќ\fdРѕРІ"
+			   "\t067ESC\x1\t000\v000\x3""c\x87\xA0\xAA\xAB\xA8\xAD\xA0\xAD\xA8\xA5\n" // "\t067ESC\x1\t000\v000\x3""cР—Р°РєР»РёРЅР°РЅРёРµ\n"
+			   "\n"																	   // "\n"
+			   "%s\x3""c\n"															   // "%s\x3""c\n"
+			   "\n"																	   // "\n"
+			   "     \x83\xAE\xE2\xAE\xA2\xAE\xA5:\x3""c\n"							   // "     Р“РѕС‚РѕРІРѕРµ:\x3""c\n"
+			   "\n"																	   // "\n"
+			   "\f09%s\fd\x2\x3""l\n"												   // "\f09%s\fd\x2\x3""l\n"
+			   "\v082\x96\xA5\xAD\xA0\x3""r\t000%u/%u\x3""l\n"						   // "\v082Р¦РµРЅР°\x3""r\t000%u/%u\x3""l\n"
+			   "\x92\xA5\xAA \x8E\x8C\x3""r\t000%u\x1";								   // "РўРµРє РћРњ\x3""r\t000%u\x1";
 	}
 
-	/*
-	"\x3""cНайдено:\n"
-	"\n"
-	"\x3""r\t000%lu Зол\n"
-	"%lu Алмз";
-	*/
 	const char *PARTY_FOUND() {
-		return "\x3"
-			   "c\x8D\xA0\xA9\xA4\xA5\xAD\xAE:\n"
-			   "\n"
-			   "\x3"
-			   "r\t000%lu \x87\xAE\xAB\n"
-			   "%lu \x80\xAB\xAC\xA7";
+		return "\x3""c\x8D\xA0\xA9\xA4\xA5\xAD\xAE:\n" // "\x3""cРќР°Р№РґРµРЅРѕ:\n"
+			   "\n"									   // "\n"
+			   "\x3""r\t000%lu \x87\xAE\xAB\n"		   // "\x3""r\t000%lu Р—РѕР»\n"
+			   "%lu \x80\xAB\xAC\xA7";				   // "%lu РђР»РјР·";
 	}
 
-	/*
-	"\v007\f12Внимание! Рюкзаки переполнены!\fd\n"
-	"Нажмите клавишу";
-	*/
 	const char *BACKPACKS_FULL_PRESS_KEY() {
-		return "\v007\f12\x82\xAD\xA8\xAC\xA0\xAD\xA8\xA5! \x90\xEE\xAA\xA7\xA0\xAA\xA8 \xAF\xA5\xE0\xA5\xAF\xAE\xAB\xAD\xA5\xAD\xEB!\fd\n"
-			   "\x8D\xA0\xA6\xAC\xA8\xE2\xA5 \xAA\xAB\xA0\xA2\xA8\xE8\xE3";
+		return "\v007\f12\x82\xAD\xA8\xAC\xA0\xAD\xA8\xA5! \x90\xEE\xAA\xA7\xA0\xAA\xA8 \xAF\xA5\xE0\xA5\xAF\xAE\xAB\xAD\xA5\xAD\xEB!\fd\n" // "\v007\f12Р’РЅРёРјР°РЅРёРµ! Р СЋРєР·Р°РєРё РїРµСЂРµРїРѕР»РЅРµРЅС‹!\fd\n"
+			   "\x8D\xA0\xA6\xAC\xA8\xE2\xA5 \xAA\xAB\xA0\xA2\xA8\xE8\xE3";                                                                 // "РќР°Р¶РјРёС‚Рµ РєР»Р°РІРёС€Сѓ";
 	}
 
-	/*
-	"\x3""l\v120\t000\x4""077\x3""c\f37Н. клавишу\fd"
-	*/
 	const char *HIT_A_KEY() {
-		return "\x3"
-			   "l\v120\t000\x4"
-			   "077\x3"
-			   "c\f37\x8D. \xAA\xAB\xA0\xA2\xA8\xE8\xE3\fd";
+		return "\x3""l\v120\t000\x4""077\x3""c\f37\x8D. \xAA\xAB\xA0\xA2\xA8\xE8\xE3\fd"; // "\x3""l\v120\t000\x4""077\x3""c\f37Рќ. РєР»Р°РІРёС€Сѓ\fd"
 	}
 
 	const char *GIVE_TREASURE_FORMATTING() {
@@ -2808,105 +1630,53 @@ public:
 			   "077";
 	}
 
-	/*
-	"\v060\t000\x3""c%s наш%s: %s"
-	*/
 	const char *X_FOUND_Y() {
-		return "\v060\t000\x3"
-			   "c%s \xAD\xA0\xE8%s: %s";
+		return "\v060\t000\x3""c%s \xAD\xA0\xE8%s: %s"; // "\v060\t000\x3""c%s РЅР°С€%s: %s"
 	}
 
-	/*
-	"\x3""c\v009Кого?"
-	*/
 	const char *ON_WHO() {
-		return "\x3"
-			   "c\v009\x8A\xAE\xA3\xAE?";
+		return "\x3""c\v009\x8A\xAE\xA3\xAE?"; // "\x3""c\v009РљРѕРіРѕ?"
 	}
 
-	/*
-	"\r\x3""c\x1Какая Стихия?\x2\v034\t014\f15О\fdгонь\t044"
-	"\f15Г\fdром\t074\f15Х\fdолод\t104\f15Я\fdд\x1";
-	*/
 	const char *WHICH_ELEMENT1() {
-		return "\r\x3"
-			   "c\x1\x8A\xA0\xAA\xA0\xEF \x91\xE2\xA8\xE5\xA8\xEF?\x2\v034\t014\f15\x8E\fd\xA3\xAE\xAD\xEC\t044"
-			   "\f15\x83\fd\xE0\xAE\xAC\t074\f15\x95\fd\xAE\xAB\xAE\xA4\t104\f15\x9F\fd\xA4\x1";
+		return "\r\x3""c\x1\x8A\xA0\xAA\xA0\xEF \x91\xE2\xA8\xE5\xA8\xEF?\x2\v034\t014\f15\x8E\fd\xA3\xAE\xAD\xEC\t044" // "\r\x3""c\x1РљР°РєР°СЏ РЎС‚РёС…РёСЏ?\x2\v034\t014\f15Рћ\fdРіРѕРЅСЊ\t044"
+			   "\f15\x83\fd\xE0\xAE\xAC\t074\f15\x95\fd\xAE\xAB\xAE\xA4\t104\f15\x9F\fd\xA4\x1";					    // "\f15Р“\fdСЂРѕРј\t074\f15РҐ\fdРѕР»РѕРґ\t104\f15РЇ\fdРґ\x1";
 	}
 
-	/*
-	"\r\x3""cКакая Стихия?\x2\v034\t014\f15О\fdгонь\t044"
-	"\f15Г\fdром\t074\f15Х\fdолод\t104\f15Я\fdд\x1";
-	*/
 	const char *WHICH_ELEMENT2() {
-		return "\r\x3"
-			   "c\x8A\xA0\xAA\xA0\xEF \x91\xE2\xA8\xE5\xA8\xEF?\x2\v034\t014\f15\x8E\fd\xA3\xAE\xAD\xEC\t044"
-			   "\f15\x83\fd\xE0\xAE\xAC\t074\f15\x95\fd\xAE\xAB\xAE\xA4\t104\f15\x9F\fd\xA4\x1";
+		return "\r\x3""c\x8A\xA0\xAA\xA0\xEF \x91\xE2\xA8\xE5\xA8\xEF?\x2\v034\t014\f15\x8E\fd\xA3\xAE\xAD\xEC\t044" // "\r\x3""cРљР°РєР°СЏ РЎС‚РёС…РёСЏ?\x2\v034\t014\f15Рћ\fdРіРѕРЅСЊ\t044"
+			   "\f15\x83\fd\xE0\xAE\xAC\t074\f15\x95\fd\xAE\xAB\xAE\xA4\t104\f15\x9F\fd\xA4\x1";					 // "\f15Р“\fdСЂРѕРј\t074\f15РҐ\fdРѕР»РѕРґ\t104\f15РЇ\fdРґ\x1";
 	}
 
-	/*
-	"\x3""cПоиск монстров"
-	*/
 	const char *DETECT_MONSTERS() {
-		return "\x3"
-			   "c\x8F\xAE\xA8\xE1\xAA \xAC\xAE\xAD\xE1\xE2\xE0\xAE\xA2";
+		return "\x3""c\x8F\xAE\xA8\xE1\xAA \xAC\xAE\xAD\xE1\xE2\xE0\xAE\xA2"; // "\x3""cРџРѕРёСЃРє РјРѕРЅСЃС‚СЂРѕРІ"
 	}
 
-	/*
-	"\r\x3""c\v000\t000\x1Маяк Ллойда\n"
-	"\n"
-	"Последнее место\n"
-	"\n"
-	"%s\x3""l\n"
-	"x = %d\x3""r\t000y = %d\x3""c\x2\v122\t021\f15У\fdстан\t060\f15В\fdерн\x1";
-	*/
 	const char *LLOYDS_BEACON() {
-		return "\r\x3"
-			   "c\v000\t000\x1\x8C\xA0\xEF\xAA \x8B\xAB\xAE\xA9\xA4\xA0\n"
-			   "\n"
-			   "\x8F\xAE\xE1\xAB\xA5\xA4\xAD\xA5\xA5 \xAC\xA5\xE1\xE2\xAE\n"
-			   "\n"
-			   "%s\x3"
-			   "l\n"
-			   "x = %d\x3"
-			   "r\t000y = %d\x3"
-			   "c\x2\v122\t021\f15\x93\fd\xE1\xE2\xA0\xAD\t060\f15\x82\fd\xA5\xE0\xAD\x1";
+		return "\r\x3""c\v000\t000\x1\x8C\xA0\xEF\xAA \x8B\xAB\xAE\xA9\xA4\xA0\n"									   // "\r\x3""c\v000\t000\x1РњР°СЏРє Р›Р»РѕР№РґР°\n"
+			   "\n"																									   // "\n"
+			   "\x8F\xAE\xE1\xAB\xA5\xA4\xAD\xA5\xA5 \xAC\xA5\xE1\xE2\xAE\n"										   // "РџРѕСЃР»РµРґРЅРµРµ РјРµСЃС‚Рѕ\n"
+			   "\n"																									   // "\n"
+			   "%s\x3""l\n"																							   // "%s\x3""l\n"
+			   "x = %d\x3""r\t000y = %d\x3""c\x2\v122\t021\f15\x93\fd\xE1\xE2\xA0\xAD\t060\f15\x82\fd\xA5\xE0\xAD\x1"; // "x = %d\x3""r\t000y = %d\x3""c\x2\v122\t021\f15РЈ\fdСЃС‚Р°РЅ\t060\f15Р’\fdРµСЂРЅ\x1";
 	}
 
-	/*
-	"\x3""cТелепорт\nСколько клеток на %s (1-9)\n"
-	*/
 	const char *HOW_MANY_SQUARES() {
-		return "\x3"
-			   "c\x92\xA5\xAB\xA5\xAF\xAE\xE0\xE2\n\x91\xAA\xAE\xAB\xEC\xAA\xAE \xAA\xAB\xA5\xE2\xAE\xAA \xAD\xA0 %s (1-9)\n";
+		return "\x3""c\x92\xA5\xAB\xA5\xAF\xAE\xE0\xE2\n\x91\xAA\xAE\xAB\xEC\xAA\xAE \xAA\xAB\xA5\xE2\xAE\xAA \xAD\xA0 %s (1-9)\n"; // "\x3""cРўРµР»РµРїРѕСЂС‚\nРЎРєРѕР»СЊРєРѕ РєР»РµС‚РѕРє РЅР° %s (1-9)\n"
 	}
 
-	/*
-	"\x3""cГородской портал\x3""l\n"
-	"\n"
-	"\t0101. %s\n"
-	"\t0102. %s\n"
-	"\t0103. %s\n"
-	"\t0104. %s\n"
-	"\t0105. %s\x3""c\n"
-	"\n"
-	"В какой город (1-5)\n"
-	"\n";
-	*/
 	const char *TOWN_PORTAL() {
-		return "\x3"
-			   "c\x83\xAE\xE0\xAE\xA4\xE1\xAA\xAE\xA9 \xAF\xAE\xE0\xE2\xA0\xAB\x3"
-			   "l\n"
-			   "\n"
-			   "\t0101. %s\n"
-			   "\t0102. %s\n"
-			   "\t0103. %s\n"
-			   "\t0104. %s\n"
-			   "\t0105. %s\x3"
-			   "c\n"
-			   "\n"
-			   "\x82 \xAA\xA0\xAA\xAE\xA9 \xA3\xAE\xE0\xAE\xA4 (1-5)\n"
-			   "\n";
+		return "\x3""c\x83\xAE\xE0\xAE\xA4\xE1\xAA\xAE\xA9 \xAF\xAE\xE0\xE2\xA0\xAB\x3""l\n" // "\x3""cР“РѕСЂРѕРґСЃРєРѕР№ РїРѕСЂС‚Р°Р»\x3""l\n"
+			   "\n"																			 // "\n"
+			   "\t0101. %s\n"																 // "\t0101. %s\n"
+			   "\t0102. %s\n"																 // "\t0102. %s\n"
+			   "\t0103. %s\n"																 // "\t0103. %s\n"
+			   "\t0104. %s\n"																 // "\t0104. %s\n"
+			   "\t0105. %s\x3"																 // "\t0105. %s\x3""c\n"
+			   "c\n"																		 // "\n"
+			   "\n"																			 // "Р’ РєР°РєРѕР№ РіРѕСЂРѕРґ (1-5)\n"
+			   "\x82 \xAA\xA0\xAA\xAE\xA9 \xA3\xAE\xE0\xAE\xA4 (1-5)\n"						 // "\n";
+			   "\n";																		 // 
 	}
 
 	const char *TOWN_PORTAL_SWORDS() {
@@ -2928,126 +1698,68 @@ public:
 			   "c\t100%s\t140%u\t180%u\x3r\t000%s";
 	}
 
-	/*
-	"Нет", "Магия", "Огня", "Грома", "Холода", "Отравление", "Энергии",
-	"Болезнь", "Безумие", "Сон", "ПрклПрдм", "Влюбл", "ОсушЗдор", "Проклятие",
-	"Паралич", "Бессозн", "Смятение", "ЛомБрон", "Слабость", "Уничтож",
-	"Возраст+5", "Мертв", "Камень"
-	*/
 	const char **MONSTER_SPECIAL_ATTACKS() {
 		delete[] _monsterSpecialAttacks;
 		_monsterSpecialAttacks = new const char *[23] {
-			"\x8D\xA5\xE2", "\x8C\xA0\xA3\xA8\xEF", "\x8E\xA3\xAD\xEF", "\x83\xE0\xAE\xAC\xA0", "\x95\xAE\xAB\xAE\xA4\xA0", "\x8E\xE2\xE0\xA0\xA2\xAB\xA5\xAD\xA8\xA5", "\x9D\xAD\xA5\xE0\xA3\xA8\xA8",
-				"\x81\xAE\xAB\xA5\xA7\xAD\xEC", "\x81\xA5\xA7\xE3\xAC\xA8\xA5", "\x91\xAE\xAD", "\x8F\xE0\xAA\xAB\x8F\xE0\xA4\xAC", "\x82\xAB\xEE\xA1\xAB", "\x8E\xE1\xE3\xE8\x87\xA4\xAE\xE0", "\x8F\xE0\xAE\xAA\xAB\xEF\xE2\xA8\xA5",
-				"\x8F\xA0\xE0\xA0\xAB\xA8\xE7", "\x81\xA5\xE1\xE1\xAE\xA7\xAD", "\x91\xAC\xEF\xE2\xA5\xAD\xA8\xA5", "\x8B\xAE\xAC\x81\xE0\xAE\xAD", "\x91\xAB\xA0\xA1\xAE\xE1\xE2\xEC", "\x93\xAD\xA8\xE7\xE2\xAE\xA6",
-				"\x82\xAE\xA7\xE0\xA0\xE1\xE2+5", "\x8C\xA5\xE0\xE2\xA2", "\x8A\xA0\xAC\xA5\xAD\xEC"
+			"\x8D\xA5\xE2", "\x8C\xA0\xA3\xA8\xEF", "\x8E\xA3\xAD\xEF", "\x83\xE0\xAE\xAC\xA0", "\x95\xAE\xAB\xAE\xA4\xA0", "\x8E\xE2\xE0\xA0\xA2\xAB\xA5\xAD\xA8\xA5", "\x9D\xAD\xA5\xE0\xA3\xA8\xA8",								// "РќРµС‚", "РњР°РіРёСЏ", "РћРіРЅСЏ", "Р“СЂРѕРјР°", "РҐРѕР»РѕРґР°", "РћС‚СЂР°РІР»РµРЅРёРµ", "Р­РЅРµСЂРіРёРё",
+			"\x81\xAE\xAB\xA5\xA7\xAD\xEC", "\x81\xA5\xA7\xE3\xAC\xA8\xA5", "\x91\xAE\xAD", "\x8F\xE0\xAA\xAB\x8F\xE0\xA4\xAC", "\x82\xAB\xEE\xA1\xAB", "\x8E\xE1\xE3\xE8\x87\xA4\xAE\xE0", "\x8F\xE0\xAE\xAA\xAB\xEF\xE2\xA8\xA5",	// "Р‘РѕР»РµР·РЅСЊ", "Р‘РµР·СѓРјРёРµ", "РЎРѕРЅ", "РџСЂРєР»РџСЂРґРј", "Р’Р»СЋР±Р»", "РћСЃСѓС€Р—РґРѕСЂ", "РџСЂРѕРєР»СЏС‚РёРµ",
+			"\x8F\xA0\xE0\xA0\xAB\xA8\xE7", "\x81\xA5\xE1\xE1\xAE\xA7\xAD", "\x91\xAC\xEF\xE2\xA5\xAD\xA8\xA5", "\x8B\xAE\xAC\x81\xE0\xAE\xAD", "\x91\xAB\xA0\xA1\xAE\xE1\xE2\xEC", "\x93\xAD\xA8\xE7\xE2\xAE\xA6",					// "РџР°СЂР°Р»РёС‡", "Р‘РµСЃСЃРѕР·РЅ", "РЎРјСЏС‚РµРЅРёРµ", "Р›РѕРјР‘СЂРѕРЅ", "РЎР»Р°Р±РѕСЃС‚СЊ", "РЈРЅРёС‡С‚РѕР¶",
+			"\x82\xAE\xA7\xE0\xA0\xE1\xE2+5", "\x8C\xA5\xE0\xE2\xA2", "\x8A\xA0\xAC\xA5\xAD\xEC"																																	// "Р’РѕР·СЂР°СЃС‚+5", "РњРµСЂС‚РІ", "РљР°РјРµРЅСЊ"
 		};
 		return _monsterSpecialAttacks;
 	}
 
-	/*
-	"Монстр\x3""c\t155ОЗ\t195КЗ\t233#Атак\x3""r\t000Особое%s%s%s"
-	*/
 	const char *IDENTIFY_MONSTERS() {
-		return "\x8C\xAE\xAD\xE1\xE2\xE0\x3"
-			   "c\t155\x8E\x87\t195\x8A\x87\t233#\x80\xE2\xA0\xAA\x3"
-			   "r\t000\x8E\xE1\xAE\xA1\xAE\xA5%s%s%s";
+		return "\x8C\xAE\xAD\xE1\xE2\xE0\x3""c\t155\x8E\x87\t195\x8A\x87\t233#\x80\xE2\xA0\xAA\x3""r\t000\x8E\xE1\xAE\xA1\xAE\xA5%s%s%s"; // "РњРѕРЅСЃС‚СЂ\x3""c\t155РћР—\t195РљР—\t233#РђС‚Р°Рє\x3""r\t000РћСЃРѕР±РѕРµ%s%s%s"
 	}
 
-	/*
-	"\x3""c\v012\t000Пока луны не встанут в ряд, вы не сможете перейти на Тёмную сторону Ксина"
-	*/
 	const char *MOONS_NOT_ALIGNED() {
-		return "\x3"
-			   "c\v012\t000\x8F\xAE\xAA\xA0 \xAB\xE3\xAD\xEB \xAD\xA5 \xA2\xE1\xE2\xA0\xAD\xE3\xE2 \xA2 \xE0\xEF\xA4, \xA2\xEB \xAD\xA5 \xE1\xAC\xAE\xA6\xA5\xE2\xA5 \xAF\xA5\xE0\xA5\xA9\xE2\xA8 \xAD\xA0 \x92\xF1\xAC\xAD\xE3\xEE \xE1\xE2\xAE\xE0\xAE\xAD\xE3 \x8A\xE1\xA8\xAD\xA0";
+		return "\x3""c\v012\t000\x8F\xAE\xAA\xA0 \xAB\xE3\xAD\xEB \xAD\xA5 \xA2\xE1\xE2\xA0\xAD\xE3\xE2 \xA2 \xE0\xEF\xA4, \xA2\xEB \xAD\xA5 \xE1\xAC\xAE\xA6\xA5\xE2\xA5 \xAF\xA5\xE0\xA5\xA9\xE2\xA8 \xAD\xA0 \x92\xF1\xAC\xAD\xE3\xEE \xE1\xE2\xAE\xE0\xAE\xAD\xE3 \x8A\xE1\xA8\xAD\xA0"; // "\x3""c\v012\t000РџРѕРєР° Р»СѓРЅС‹ РЅРµ РІСЃС‚Р°РЅСѓС‚ РІ СЂСЏРґ, РІС‹ РЅРµ СЃРјРѕР¶РµС‚Рµ РїРµСЂРµР№С‚Рё РЅР° РўС‘РјРЅСѓСЋ СЃС‚РѕСЂРѕРЅСѓ РљСЃРёРЅР°"
 	}
 
-	/*
-	"\r\x1\fd\x3""c\v000\t000%s %s: Награды \x3""l\x2\n"
-	"%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\x1";
-	*/
 	const char *AWARDS_FOR() {
-		return "\r\x1\fd\x3"
-			   "c\v000\t000%s %s: \x8D\xA0\xA3\xE0\xA0\xA4\xEB \x3"
-			   "l\x2\n"
-			   "%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\x1";
+		return "\r\x1\fd\x3""c\v000\t000%s %s: \x8D\xA0\xA3\xE0\xA0\xA4\xEB \x3""l\x2\n" // "\r\x1\fd\x3""c\v000\t000%s %s: РќР°РіСЂР°РґС‹ \x3""l\x2\n"
+			   "%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\x1";									 // "%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\x1";
 	}
 
-	/*
-	"\r\x2\x3""c\v021\t221Вверх\t255Вниз\t289Выход"
-	*/
 	const char *AWARDS_TEXT() {
-		return "\r\x2\x3"
-			   "c\v021\t221\x82\xA2\xA5\xE0\xE5\t255\x82\xAD\xA8\xA7\t289\x82\xEB\xE5\xAE\xA4";
+		return "\r\x2\x3""c\v021\t221\x82\xA2\xA5\xE0\xE5\t255\x82\xAD\xA8\xA7\t289\x82\xEB\xE5\xAE\xA4"; // "\r\x2\x3""c\v021\t221Р’РІРµСЂС…\t255Р’РЅРёР·\t289Р’С‹С…РѕРґ"
 	}
 
-	/*
-	"\x3""cУ персонажа нет наград"
-	*/
 	const char *NO_AWARDS() {
-		return "\x3"
-			   "c\x93 \xAF\xA5\xE0\xE1\xAE\xAD\xA0\xA6\xA0 \xAD\xA5\xE2 \xAD\xA0\xA3\xE0\xA0\xA4";
+		return "\x3""c\x93 \xAF\xA5\xE0\xE1\xAE\xAD\xA0\xA6\xA0 \xAD\xA5\xE2 \xAD\xA0\xA3\xE0\xA0\xA4"; // "\x3""cРЈ РїРµСЂСЃРѕРЅР°Р¶Р° РЅРµС‚ РЅР°РіСЂР°Рґ"
 	}
 
-	/*
-	"Арена\n\t125Мастер битвы"
-	*/
 	const char *WARZONE_BATTLE_MASTER() {
-		return "\x80\xE0\xA5\xAD\xA0\n\t125\x8C\xA0\xE1\xE2\xA5\xE0 \xA1\xA8\xE2\xA2\xEB";
+		return "\x80\xE0\xA5\xAD\xA0\n\t125\x8C\xA0\xE1\xE2\xA5\xE0 \xA1\xA8\xE2\xA2\xEB"; // "РђСЂРµРЅР°\n\t125РњР°СЃС‚РµСЂ Р±РёС‚РІС‹"
 	}
 
-	/*
-	"Что!  Опять вы?  Не приставайте к тем, кто не может дать сдачи!"
-	*/
 	const char *WARZONE_MAXED() {
-		return "\x97\xE2\xAE!  \x8E\xAF\xEF\xE2\xEC \xA2\xEB?  \x8D\xA5 \xAF\xE0\xA8\xE1\xE2\xA0\xA2\xA0\xA9\xE2\xA5 \xAA \xE2\xA5\xAC, \xAA\xE2\xAE \xAD\xA5 \xAC\xAE\xA6\xA5\xE2 \xA4\xA0\xE2\xEC \xE1\xA4\xA0\xE7\xA8!";
+		return "\x97\xE2\xAE!  \x8E\xAF\xEF\xE2\xEC \xA2\xEB?  \x8D\xA5 \xAF\xE0\xA8\xE1\xE2\xA0\xA2\xA0\xA9\xE2\xA5 \xAA \xE2\xA5\xAC, \xAA\xE2\xAE \xAD\xA5 \xAC\xAE\xA6\xA5\xE2 \xA4\xA0\xE2\xEC \xE1\xA4\xA0\xE7\xA8!"; // "Р§С‚Рѕ!  РћРїСЏС‚СЊ РІС‹?  РќРµ РїСЂРёСЃС‚Р°РІР°Р№С‚Рµ Рє С‚РµРј, РєС‚Рѕ РЅРµ РјРѕР¶РµС‚ РґР°С‚СЊ СЃРґР°С‡Рё!"
 	}
 
-	/*
-	"Какой уровень монстров? (1-10)\n"
-	*/
 	const char *WARZONE_LEVEL() {
-		return "\x8A\xA0\xAA\xAE\xA9 \xE3\xE0\xAE\xA2\xA5\xAD\xEC \xAC\xAE\xAD\xE1\xE2\xE0\xAE\xA2? (1-10)\n";
+		return "\x8A\xA0\xAA\xAE\xA9 \xE3\xE0\xAE\xA2\xA5\xAD\xEC \xAC\xAE\xAD\xE1\xE2\xE0\xAE\xA2? (1-10)\n"; // "РљР°РєРѕР№ СѓСЂРѕРІРµРЅСЊ РјРѕРЅСЃС‚СЂРѕРІ? (1-10)\n"
 	}
 
-	/*
-	"Сколько монстров? (1-20)\n"
-	*/
 	const char *WARZONE_HOW_MANY() {
-		return "\x91\xAA\xAE\xAB\xEC\xAA\xAE \xAC\xAE\xAD\xE1\xE2\xE0\xAE\xA2? (1-20)\n";
+		return "\x91\xAA\xAE\xAB\xEC\xAA\xAE \xAC\xAE\xAD\xE1\xE2\xE0\xAE\xA2? (1-20)\n"; // "РЎРєРѕР»СЊРєРѕ РјРѕРЅСЃС‚СЂРѕРІ? (1-20)\n"
 	}
 
-	/*
-	"\x3""c\v010%s взломал%s замок!\nНажмите клавишу."
-	*/
 	const char *PICKS_THE_LOCK() {
-		return "\x3"
-			   "c\v010%s \xA2\xA7\xAB\xAE\xAC\xA0\xAB%s \xA7\xA0\xAC\xAE\xAA!\n\x8D\xA0\xA6\xAC\xA8\xE2\xA5 \xAA\xAB\xA0\xA2\xA8\xE8\xE3.";
+		return "\x3""c\v010%s \xA2\xA7\xAB\xAE\xAC\xA0\xAB%s \xA7\xA0\xAC\xAE\xAA!\n\x8D\xA0\xA6\xAC\xA8\xE2\xA5 \xAA\xAB\xA0\xA2\xA8\xE8\xE3."; // "\x3""c\v010%s РІР·Р»РѕРјР°Р»%s Р·Р°РјРѕРє!\nРќР°Р¶РјРёС‚Рµ РєР»Р°РІРёС€Сѓ."
 	}
 
-	/*
-	"\x3""c\v010%s не смог%s взломать замок!\nНажмите клавишу."
-	*/
 	const char *UNABLE_TO_PICK_LOCK() {
-		return "\x3"
-			   "c\v010%s \xAD\xA5 \xE1\xAC\xAE\xA3%s \xA2\xA7\xAB\xAE\xAC\xA0\xE2\xEC \xA7\xA0\xAC\xAE\xAA!\n\x8D\xA0\xA6\xAC\xA8\xE2\xA5 \xAA\xAB\xA0\xA2\xA8\xE8\xE3.";
+		return "\x3""c\v010%s \xAD\xA5 \xE1\xAC\xAE\xA3%s \xA2\xA7\xAB\xAE\xAC\xA0\xE2\xEC \xA7\xA0\xAC\xAE\xAA!\n\x8D\xA0\xA6\xAC\xA8\xE2\xA5 \xAA\xAB\xA0\xA2\xA8\xE8\xE3."; // "\x3""c\v010%s РЅРµ СЃРјРѕРі%s РІР·Р»РѕРјР°С‚СЊ Р·Р°РјРѕРє!\nРќР°Р¶РјРёС‚Рµ РєР»Р°РІРёС€Сѓ."
 	}
 
-	/*
-	"\x1\f00\x3""c\v000\t000Панель управления\x3""r"
-	"\v022\t045Зв\f06у\fdк:\t124\f06С\fdохр:"
-	"\v041\t045\f06М\fdуз.:\t124С\f06о\fdхр:\v060\t045\f06З\fdагр:"
-	"\t124\f06В\fdыход"
-	"\v080\t084\f06П\fdомощь %s\t137Мага\t000\x1";
-	*/
 	const char *CONTROL_PANEL_TEXT() {
-		return "\x1\f00\x3"
-			   "c\v000\t000\x8F\xA0\xAD\xA5\xAB\xEC \xE3\xAF\xE0\xA0\xA2\xAB\xA5\xAD\xA8\xEF\x3"
-			   "r"
-			   "\v022\t045\x87\xA2\f06\xE3\fd\xAA:\t124\f06\x91\fd\xAE\xE5\xE0:"
-			   "\v041\t045\f06\x8C\fd\xE3\xA7.:\t124\x91\f06\xAE\fd\xE5\xE0:\v060\t045\f06\x87\fd\xA0\xA3\xE0:"
-			   "\t124\f06\x82\fd\xEB\xE5\xAE\xA4"
-			   "\v080\t084\f06\x8F\fd\xAE\xAC\xAE\xE9\xEC %s\t137\x8C\xA0\xA3\xA0\t000\x1";
+		return "\x1\f00\x3""c\v000\t000\x8F\xA0\xAD\xA5\xAB\xEC \xE3\xAF\xE0\xA0\xA2\xAB\xA5\xAD\xA8\xEF\x3""r" // "\x1\f00\x3""c\v000\t000РџР°РЅРµР»СЊ СѓРїСЂР°РІР»РµРЅРёСЏ\x3""r"
+			   "\v022\t045\x87\xA2\f06\xE3\fd\xAA:\t124\f06\x91\fd\xAE\xE5\xE0:"                                // "\v022\t045Р—РІ\f06Сѓ\fdРє:\t124\f06РЎ\fdРѕС…СЂ:"
+			   "\v041\t045\f06\x8C\fd\xE3\xA7.:\t124\x91\f06\xAE\fd\xE5\xE0:\v060\t045\f06\x87\fd\xA0\xA3\xE0:" // "\v041\t045\f06Рњ\fdСѓР·.:\t124РЎ\f06Рѕ\fdС…СЂ:\v060\t045\f06Р—\fdР°РіСЂ:"
+			   "\t124\f06\x82\fd\xEB\xE5\xAE\xA4"                                                               // "\t124\f06Р’\fdС‹С…РѕРґ"
+			   "\v080\t084\f06\x8F\fd\xAE\xAC\xAE\xE9\xEC %s\t137\x8C\xA0\xA3\xA0\t000\x1";                     // "\v080\t084\f06Рџ\fdРѕРјРѕС‰СЊ %s\t137РњР°РіР°\t000\x1";
 	}
 
 	const char *CONTROL_PANEL_BUTTONS() {
@@ -3059,71 +1771,40 @@ public:
 			   "\v079\t102Help\fd";
 	}
 
-	/*
-	"\f15вкл\f11"
-	*/
 	const char *ON() {
-		return "\f15\xA2\xAA\xAB\f11";
+		return "\f15\xA2\xAA\xAB\f11"; // "\f15РІРєР»\f11"
 	}
 
-	/*
-	"\f32вык\f11"
-	*/
 	const char *OFF() {
-		return "\f32\xA2\xEB\xAA\f11";
+		return "\f32\xA2\xEB\xAA\f11"; // "\f32РІС‹Рє\f11"
 	}
 
-	/*
-	"Вы уверены, что хотите выйти?"
-	*/
 	const char *CONFIRM_QUIT() {
-		return "\x82\xEB \xE3\xA2\xA5\xE0\xA5\xAD\xEB, \xE7\xE2\xAE \xE5\xAE\xE2\xA8\xE2\xA5 \xA2\xEB\xA9\xE2\xA8?";
+		return "\x82\xEB \xE3\xA2\xA5\xE0\xA5\xAD\xEB, \xE7\xE2\xAE \xE5\xAE\xE2\xA8\xE2\xA5 \xA2\xEB\xA9\xE2\xA8?"; // "Р’С‹ СѓРІРµСЂРµРЅС‹, С‡С‚Рѕ С…РѕС‚РёС‚Рµ РІС‹Р№С‚Рё?"
 	}
 
-	/*
-	"Вы точно хотите воспользоваться помощью Мр. Мага?"
-	*/
 	const char *MR_WIZARD() {
-		return "\x82\xEB \xE2\xAE\xE7\xAD\xAE \xE5\xAE\xE2\xA8\xE2\xA5 \xA2\xAE\xE1\xAF\xAE\xAB\xEC\xA7\xAE\xA2\xA0\xE2\xEC\xE1\xEF \xAF\xAE\xAC\xAE\xE9\xEC\xEE \x8C\xE0. \x8C\xA0\xA3\xA0?";
+		return "\x82\xEB \xE2\xAE\xE7\xAD\xAE \xE5\xAE\xE2\xA8\xE2\xA5 \xA2\xAE\xE1\xAF\xAE\xAB\xEC\xA7\xAE\xA2\xA0\xE2\xEC\xE1\xEF \xAF\xAE\xAC\xAE\xE9\xEC\xEE \x8C\xE0. \x8C\xA0\xA3\xA0?"; // "Р’С‹ С‚РѕС‡РЅРѕ С…РѕС‚РёС‚Рµ РІРѕСЃРїРѕР»СЊР·РѕРІР°С‚СЊСЃСЏ РїРѕРјРѕС‰СЊСЋ РњСЂ. РњР°РіР°?"
 	}
 
-	/*
-	"Никаких загрузок во время битвы!"
-	*/
 	const char *NO_LOADING_IN_COMBAT() {
-		return "\x8D\xA8\xAA\xA0\xAA\xA8\xE5 \xA7\xA0\xA3\xE0\xE3\xA7\xAE\xAA \xA2\xAE \xA2\xE0\xA5\xAC\xEF \xA1\xA8\xE2\xA2\xEB!";
+		return "\x8D\xA8\xAA\xA0\xAA\xA8\xE5 \xA7\xA0\xA3\xE0\xE3\xA7\xAE\xAA \xA2\xAE \xA2\xE0\xA5\xAC\xEF \xA1\xA8\xE2\xA2\xEB!"; // "РќРёРєР°РєРёС… Р·Р°РіСЂСѓР·РѕРє РІРѕ РІСЂРµРјСЏ Р±РёС‚РІС‹!"
 	}
 
-	/*
-	"Никаких сохранений во время битвы!"
-	*/
 	const char *NO_SAVING_IN_COMBAT() {
-		return "\x8D\xA8\xAA\xA0\xAA\xA8\xE5 \xE1\xAE\xE5\xE0\xA0\xAD\xA5\xAD\xA8\xA9 \xA2\xAE \xA2\xE0\xA5\xAC\xEF \xA1\xA8\xE2\xA2\xEB!";
+		return "\x8D\xA8\xAA\xA0\xAA\xA8\xE5 \xE1\xAE\xE5\xE0\xA0\xAD\xA5\xAD\xA8\xA9 \xA2\xAE \xA2\xE0\xA5\xAC\xEF \xA1\xA8\xE2\xA2\xEB!"; // "РќРёРєР°РєРёС… СЃРѕС…СЂР°РЅРµРЅРёР№ РІРѕ РІСЂРµРјСЏ Р±РёС‚РІС‹!"
 	}
 
-	/*
-	"\r\fd\x3""c\v000\t000Быстрое действие\n\n"
-	"%s\x3""l\n\n"
-	"Текущее\x3""r\n"
-	"\t000%s\x2\x3""c\v122\t019\f37С\f04лед\t055Выход\x1";
-	*/
 	const char *QUICK_FIGHT_TEXT() {
-		return "\r\fd\x3"
-			   "c\v000\t000\x81\xEB\xE1\xE2\xE0\xAE\xA5 \xA4\xA5\xA9\xE1\xE2\xA2\xA8\xA5\n\n"
-			   "%s\x3"
-			   "l\n\n"
-			   "\x92\xA5\xAA\xE3\xE9\xA5\xA5\x3"
-			   "r\n"
-			   "\t000%s\x2\x3"
-			   "c\v122\t019\f37\x91\f04\xAB\xA5\xA4\t055\x82\xEB\xE5\xAE\xA4\x1";
+		return "\r\fd\x3""c\v000\t000\x81\xEB\xE1\xE2\xE0\xAE\xA5 \xA4\xA5\xA9\xE1\xE2\xA2\xA8\xA5\n\n" // "\r\fd\x3""c\v000\t000Р‘С‹СЃС‚СЂРѕРµ РґРµР№СЃС‚РІРёРµ\n\n"
+			   "%s\x3""l\n\n"																		    // "%s\x3""l\n\n"
+			   "\x92\xA5\xAA\xE3\xE9\xA5\xA5\x3""r\n"												    // "РўРµРєСѓС‰РµРµ\x3""r\n"
+			   "\t000%s\x2\x3""c\v122\t019\f37\x91\f04\xAB\xA5\xA4\t055\x82\xEB\xE5\xAE\xA4\x1";	    // "\t000%s\x2\x3""c\v122\t019\f37РЎ\f04Р»РµРґ\t055Р’С‹С…РѕРґ\x1";
 	}
 
-	/*
-	"Атака", "Заклинание", "Блок", "Бегство"
-	*/
 	const char **QUICK_FIGHT_OPTIONS() {
 		delete[] _quickFightOptions;
-		_quickFightOptions = new const char *[4] { "\x80\xE2\xA0\xAA\xA0", "\x87\xA0\xAA\xAB\xA8\xAD\xA0\xAD\xA8\xA5", "\x81\xAB\xAE\xAA", "\x81\xA5\xA3\xE1\xE2\xA2\xAE" };
+		_quickFightOptions = new const char *[4] { "\x80\xE2\xA0\xAA\xA0", "\x87\xA0\xAA\xAB\xA8\xAD\xA0\xAD\xA8\xA5", "\x81\xAB\xAE\xAA", "\x81\xA5\xA3\xE1\xE2\xA2\xAE" }; // "РђС‚Р°РєР°", "Р—Р°РєР»РёРЅР°РЅРёРµ", "Р‘Р»РѕРє", "Р‘РµРіСЃС‚РІРѕ"
 		return _quickFightOptions;
 	}
 
@@ -3195,22 +1876,13 @@ public:
 		return _goober;
 	}
 
-	/*
-	"\v000\t000\x3""cВыберите игровой режим"
-	*/
 	const char *DIFFICULTY_TEXT() {
-		return "\v000\t000\x3"
-			   "c\x82\xEB\xA1\xA5\xE0\xA8\xE2\xA5 \xA8\xA3\xE0\xAE\xA2\xAE\xA9 \xE0\xA5\xA6\xA8\xAC";
+		return "\v000\t000\x3""c\x82\xEB\xA1\xA5\xE0\xA8\xE2\xA5 \xA8\xA3\xE0\xAE\xA2\xAE\xA9 \xE0\xA5\xA6\xA8\xAC"; // "\v000\t000\x3""cР’С‹Р±РµСЂРёС‚Рµ РёРіСЂРѕРІРѕР№ СЂРµР¶РёРј"
 	}
 
-	/*
-	"\x3""c\v002\t000Боги Восстановления Игр считают это место запретным!\n"
-	"Увы, здесь нельзя сохраняться";
-	*/
 	const char *SAVE_OFF_LIMITS() {
-		return "\x3"
-			   "c\v002\t000\x81\xAE\xA3\xA8 \x82\xAE\xE1\xE1\xE2\xA0\xAD\xAE\xA2\xAB\xA5\xAD\xA8\xEF \x88\xA3\xE0 \xE1\xE7\xA8\xE2\xA0\xEE\xE2 \xED\xE2\xAE \xAC\xA5\xE1\xE2\xAE \xA7\xA0\xAF\xE0\xA5\xE2\xAD\xEB\xAC!\n"
-			   "\x93\xA2\xEB, \xA7\xA4\xA5\xE1\xEC \xAD\xA5\xAB\xEC\xA7\xEF \xE1\xAE\xE5\xE0\xA0\xAD\xEF\xE2\xEC\xE1\xEF";
+		return "\x3""c\v002\t000\x81\xAE\xA3\xA8 \x82\xAE\xE1\xE1\xE2\xA0\xAD\xAE\xA2\xAB\xA5\xAD\xA8\xEF \x88\xA3\xE0 \xE1\xE7\xA8\xE2\xA0\xEE\xE2 \xED\xE2\xAE \xAC\xA5\xE1\xE2\xAE \xA7\xA0\xAF\xE0\xA5\xE2\xAD\xEB\xAC!\n" // "\x3""c\v002\t000Р‘РѕРіРё Р’РѕСЃСЃС‚Р°РЅРѕРІР»РµРЅРёСЏ РРіСЂ СЃС‡РёС‚Р°СЋС‚ СЌС‚Рѕ РјРµСЃС‚Рѕ Р·Р°РїСЂРµС‚РЅС‹Рј!\n"
+			   "\x93\xA2\xEB, \xA7\xA4\xA5\xE1\xEC \xAD\xA5\xAB\xEC\xA7\xEF \xE1\xAE\xE5\xE0\xA0\xAD\xEF\xE2\xEC\xE1\xEF";																									   // "РЈРІС‹, Р·РґРµСЃСЊ РЅРµР»СЊР·СЏ СЃРѕС…СЂР°РЅСЏС‚СЊСЃСЏ";
 	}
 
 	const char *CLOUDS_INTRO1() {
@@ -3261,5 +1933,3 @@ public:
 			   "l\fd";
 	}
 };
-
-
