@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-03-21 23:12+0000\n"
+"POT-Creation-Date: 2021-03-23 06:58+0000\n"
 "PO-Revision-Date: 2021-03-22 00:15+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
@@ -3989,8 +3989,8 @@ msgstr "Неправильна назва файлу збереження ста
 #: engines/kyra/detection_tables.h:224 engines/kyra/detection_tables.h:237
 #: engines/kyra/detection_tables.h:593 engines/kyra/detection_tables.h:1777
 #: engines/saga/detection_tables.h:187 engines/saga/detection_tables.h:608
-#: engines/saga/detection_tables.h:936 engines/sci/detection_tables.h:4824
-#: engines/sci/detection_tables.h:4832
+#: engines/saga/detection_tables.h:936 engines/sci/detection_tables.h:4833
+#: engines/sci/detection_tables.h:4841
 msgid "Missing game code"
 msgstr "Відсутній код для гри"
 
