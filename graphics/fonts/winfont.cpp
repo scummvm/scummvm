@@ -183,7 +183,7 @@ bool WinFont::loadFromFNT(Common::SeekableReadStream &stream) {
 	/* uint16 points = */ stream.readUint16LE();
 	/* uint16 vertRes = */ stream.readUint16LE();
 	/* uint16 horizRes = */ stream.readUint16LE();
-	/* uint16 ascent = */ stream.readUint16LE();
+	_ascent = stream.readUint16LE();
 	/* uint16 internalLeading = */ stream.readUint16LE();
 	/* uint16 externalLeading = */ stream.readUint16LE();
 	/* byte italic = */ stream.readByte();

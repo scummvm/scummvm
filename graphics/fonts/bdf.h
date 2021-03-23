@@ -64,6 +64,7 @@ public:
 	~BdfFont();
 
 	virtual int getFontHeight() const;
+	virtual int getFontAscent() const;
 	virtual int getMaxCharWidth() const;
 
 	virtual int getCharWidth(uint32 chr) const;
