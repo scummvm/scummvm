@@ -1013,7 +1013,7 @@ bool CurrentMap::sweepTest(const int32 start[3], const int32 end[3],
                            const int32 dims[3], uint32 shapeflags,
                            ObjId item, bool blocking_only,
                            Std::list<SweepItem> *hit) const {
-	const uint32 blockflagmask = (ShapeInfo::SI_SOLID | ShapeInfo::SI_DAMAGING);
+	const uint32 blockflagmask = (ShapeInfo::SI_SOLID | ShapeInfo::SI_DAMAGING | ShapeInfo::SI_LAND);
 
 	int minx = ((start[0] - dims[0]) / _mapChunkSize) - 1;
 	int maxx = (start[0] / _mapChunkSize) + 1;
