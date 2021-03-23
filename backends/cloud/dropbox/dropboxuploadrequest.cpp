@@ -91,7 +91,7 @@ void DropboxUploadRequest::uploadNextPart() {
 			url += "finish";
 			Common::JSONObject jsonCursor, jsonCommit;
 			jsonCursor.setVal("session_id", new Common::JSONValue(_sessionId));
-			jsonCursor.setVal("offset", new Common::JSONValue((long long int)_contentsStream->pos()));
+			jsonCursor.setVal("offset", new Common::JSONValue(_contentsStream->pos()));
 			jsonCommit.setVal("path", new Common::JSONValue(_savePath));
 			jsonCommit.setVal("mode", new Common::JSONValue("overwrite"));
 			jsonCommit.setVal("autorename", new Common::JSONValue(false));
@@ -102,7 +102,7 @@ void DropboxUploadRequest::uploadNextPart() {
 			url += "append_v2";
 			Common::JSONObject jsonCursor;
 			jsonCursor.setVal("session_id", new Common::JSONValue(_sessionId));
-			jsonCursor.setVal("offset", new Common::JSONValue((long long int)_contentsStream->pos()));
+			jsonCursor.setVal("offset", new Common::JSONValue(_contentsStream->pos()));
 			jsonRequestParameters.setVal("cursor", new Common::JSONValue(jsonCursor));
 			jsonRequestParameters.setVal("close", new Common::JSONValue(false));
 		}

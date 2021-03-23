@@ -90,13 +90,17 @@ enum JSONType { JSONType_Null, JSONType_String, JSONType_Bool, JSONType_Number, 
 class JSONValue {
 	friend class JSON;
 
+private:
+	// Not implemented, and should not be used.
+	JSONValue(long long int numberValue);
+
 public:
 	JSONValue(/*NULL*/);
 	JSONValue(const char *charValue);
 	JSONValue(const String &stringValue);
 	JSONValue(bool boolValue);
 	JSONValue(double numberValue);
-	JSONValue(long long int numberValue);
+	JSONValue(int32 numberValue);
 	JSONValue(const JSONArray &arrayValue);
 	JSONValue(const JSONObject &objectValue);
 	JSONValue(const JSONValue &source);
@@ -113,7 +117,7 @@ public:
 	const String &asString() const;
 	bool asBool() const;
 	double asNumber() const;
-	long long int asIntegerNumber() const;
+	int32 asIntegerNumber() const;
 	const JSONArray &asArray() const;
 	const JSONObject &asObject() const;
 
@@ -140,7 +144,7 @@ private:
 	union {
 		bool _boolValue;
 		double _numberValue;
-		long long int _integerValue;
+		int32 _integerValue;
 		String *_stringValue;
 		JSONArray *_arrayValue;
 		JSONObject *_objectValue;
