@@ -55,7 +55,7 @@ size_t alfont_text_length(ALFONT_FONT *font, const char *text) {
 }
 
 size_t alfont_text_height(ALFONT_FONT *font) {
-	return font->getFont()->getFontHeight();
+	return font->_size;
 }
 
 void alfont_textout(BITMAP *bmp, ALFONT_FONT *font, const char *text, int x, int y, uint32 color) {
