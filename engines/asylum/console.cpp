@@ -192,6 +192,9 @@ Console::Console(AsylumEngine *engine) : _vm(engine) {
     registerCmd("scene",          WRAP_METHOD(Console, cmdChangeScene));
     registerCmd("puzzle",         WRAP_METHOD(Console, cmdRunPuzzle));
 
+    registerCmd("get_status",     WRAP_METHOD(Console, cmdGetStatus));
+    registerCmd("set_status",     WRAP_METHOD(Console, cmdSetStatus));
+
     registerCmd("encounter",      WRAP_METHOD(Console, cmdRunEncounter));
     registerCmd("show_enc",       WRAP_METHOD(Console, cmdShowEncounter));
 
@@ -254,6 +257,9 @@ bool Console::cmdHelp(int, const char **) {
     debugPrintf(" show_script - show script commands\n");
     debugPrintf(" kill_script - terminate a script\n");
     debugPrintf(" puzzle      - run an puzzle\n");
+    debugPrintf("\n");
+    debugPrintf(" get_status  - get actor's status\n");
+    debugPrintf(" set_status  - set actor's status\n");
     debugPrintf("\n");
     debugPrintf(" encounter   - run an encounter\n");
     debugPrintf(" show_enc    - show encounter commands\n");
@@ -329,9 +335,14 @@ bool Console::cmdListActors(int32 argc, const char **argv) {
 	}
 
 	if (argc == 1) {
-		for (uint32 i = 0; i < getWorld()->actors.size(); i++)
-			debugPrintf("%s\n", getWorld()->actors[i]->toString().c_str());
+		Actor *player = getScene()->getActor();
 
+		for (uint32 i = 0; i < getWorld()->actors.size(); i++) {
+			Actor *actor = getWorld()->actors[i];
+
+			debugPrintf("%c", actor == player ? '*' : ' ');
+			debugPrintf("%s\n", actor->toString().c_str());
+		}
 	} else if (argc == 2 || argc == 4) {
 		int index = atoi(argv[1]);
 		int maxIndex = getWorld()->actors.size() - 1;
@@ -523,6 +534,60 @@ bool Console::cmdPlayVideo(int32 argc, const char **argv) {
 
 	_vm->_delayedVideoIndex = index;
 
+	return false;
+}
+
+bool Console::cmdGetStatus(int32 argc, const char **argv) {
+	Actor *actor;
+
+	if (argc == 1) {
+		actor = getScene()->getActor();
+	} else if (argc == 2) {
+		int32 index = atoi(argv[1]);
+
+		if (index < 0 || index >= (int32)getWorld()->actors.size()) {
+			debugPrintf("[Error] Invalid actor index (was: %d - valid: [0-%d])\n", index, getWorld()->actors.size() - 1);
+			return true;
+		}
+
+		actor = getScene()->getActor(index);
+	} else {
+		debugPrintf("Syntax: %s (<actor index>)\n", argv[0]);
+		return true;
+	}
+
+	debugPrintf("%s's status = %d\n", actor->getName(), actor->getStatus());
+	return true;
+}
+
+bool Console::cmdSetStatus(int32 argc, const char **argv) {
+	Actor *actor;
+	int32 status;
+
+	if (argc == 2) {
+		actor = getScene()->getActor();
+		status = atoi(argv[1]);
+	} else if (argc == 3) {
+		int32 index = atoi(argv[1]);
+
+		if (index < 0 || index >= (int32)getWorld()->actors.size()) {
+			debugPrintf("[Error] Invalid actor index (was: %d - valid: [0-%d])\n", index, getWorld()->actors.size() - 1);
+			return true;
+		}
+
+		actor = getScene()->getActor(index);
+		status = atoi(argv[2]);
+	} else {
+		debugPrintf("Syntax: %s (<actor index>) <status>\n", argv[0]);
+		return true;
+	}
+
+	if (status <= 0 || status > 21) {
+		debugPrintf("[Error] Invalid status (was: %d - valid: [1-21])\n", status);
+		return true;
+	}
+
+	actor->updateStatus((ActorStatus)status);
 	return false;
 }
 

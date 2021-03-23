@@ -76,6 +76,9 @@ private:
 	bool cmdChangeScene(int32 argc, const char **argv);
 	bool cmdRunPuzzle(int32 argc, const char **argv);
 
+	bool cmdGetStatus(int32 argc, const char **argv);
+	bool cmdSetStatus(int32 argc, const char **argv);
+
 	bool cmdRunEncounter(int32 argc, const char **argv);
 	bool cmdShowEncounter(int32 argc, const char **argv);
 
