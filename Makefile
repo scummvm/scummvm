@@ -100,7 +100,7 @@ ifneq ($(SAVED_PKG_CONFIG_LIBDIR),unset)
 endif
 
 # check if configure has been run or has been changed since last run
-config.h: $(srcdir)/configure $(ENGINE_SUBDIRS_CONFIGURE)
+configure.stamp: $(srcdir)/configure $(ENGINE_SUBDIRS_CONFIGURE)
 ifeq "$(findstring config.mk,$(MAKEFILE_LIST))" "config.mk"
 	@echo "Running $(srcdir)/configure with the last specified parameters"
 	@sleep 2
@@ -111,12 +111,10 @@ else
 	$(error You need to run $(srcdir)/configure before you can run make. Check $(srcdir)/configure --help for a list of parameters)
 endif
 
-config.mk engines/plugins_table.h engines/engines.mk: config.h
-	@if test -f $@; then \
-		touch $@; \
-	else \
-		rm -f config.h; \
-		$(MAKE) config.h; \
+config.h config.mk engines/plugins_table.h engines/detection_table.h engines/engines.mk: configure.stamp
+	@if ! test -f $@; then \
+		rm -f configure.stamp; \
+		$(MAKE) configure.stamp; \
 	fi
 
 ifneq ($(origin port_mk), undefined)

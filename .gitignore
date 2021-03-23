@@ -15,6 +15,7 @@ lib*.a
 /ScummVMDockTilePlugin*
 /config.h
 /config.mk
+/configure.stamp
 /.gdb_history
 /dumps
 /Credits.rtf
