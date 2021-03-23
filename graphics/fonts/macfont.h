@@ -150,6 +150,7 @@ public:
 	virtual ~MacFONTFont();
 
 	virtual int getFontHeight() const { return _data._fRectHeight; }
+	virtual int getFontAscent() const { return _data._ascent; }
 	virtual int getMaxCharWidth() const { return _data._maxWidth; }
 	virtual int getCharWidth(uint32 chr) const;
 	virtual void drawChar(Surface *dst, uint32 chr, int x, int y, uint32 color) const;

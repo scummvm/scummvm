@@ -58,6 +58,10 @@ int BdfFont::getFontHeight() const {
 	return _data.height;
 }
 
+int BdfFont::getFontAscent() const {
+	return _data.ascent;
+}
+
 int BdfFont::getFontSize() const {
 	return _data.size;
 }

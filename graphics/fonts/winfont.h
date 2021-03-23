@@ -63,6 +63,7 @@ public:
 
 	// Font API
 	int getFontHeight() const { return _pixHeight; }
+	int getFontAscent() const { return _ascent; }
 	int getMaxCharWidth() const { return _maxWidth; }
 	int getCharWidth(uint32 chr) const;
 	void drawChar(Surface *dst, uint32 chr, int x, int y, uint32 color) const;
@@ -77,6 +78,7 @@ private:
 
 	uint16 _pixHeight;
 	uint16 _maxWidth;
+	uint16 _ascent;
 	byte _firstChar;
 	byte _lastChar;
 	byte _defaultChar;

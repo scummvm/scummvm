@@ -149,6 +149,8 @@ public:
 
 	virtual int getFontHeight() const;
 
+	virtual int getFontAscent() const;
+
 	virtual int getMaxCharWidth() const;
 
 	virtual int getCharWidth(uint32 chr) const;
@@ -524,6 +526,10 @@ int TTFFont::computePointSizeFromHeaders(int height) const {
 
 int TTFFont::getFontHeight() const {
 	return _height;
+}
+
+int TTFFont::getFontAscent() const {
+	return _ascent;
 }
 
 int TTFFont::getMaxCharWidth() const {

@@ -28,6 +28,10 @@
 
 namespace Graphics {
 
+int Font::getFontAscent() const {
+	return -1;
+}
+
 int Font::getKerningOffset(uint32 left, uint32 right) const {
 	return 0;
 }
