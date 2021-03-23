@@ -215,7 +215,9 @@ MacWindowManager::MacWindowManager(uint32 mode, MacPatterns *patterns) {
 	CursorMan.showMouse(true);
 
 	loadDataBundle();
-	loadDesktop();
+	if (!(_mode & Graphics::kWMNoScummVMWallpaper)) {
+		loadDesktop();
+	}
 }
 
 MacWindowManager::~MacWindowManager() {
