@@ -185,7 +185,7 @@ SynthFile *VGMColl::CreateSynthFile(VGMInstrSet *theInstrSet) {
 				newRgn->SetWaveLinkInfo(0, 0, 1, (uint32) realSampNum);
 
 				if (realSampNum >= finalSamps.size()) {
-					debug("Sample %u does not exist", unsigned(realSampNum));
+					debug("Sample %u does not exist", (uint32) realSampNum);
 					realSampNum = finalSamps.size() - 1;
 				}
 
