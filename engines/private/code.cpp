@@ -205,7 +205,7 @@ int add() {
 
 int negate() {
 	Datum d = pop();
-	int v;
+	int v = 0;
 	if (d.type == NAME) {
 		//debug("negating %s", d.u.sym->name->c_str());
 		v = d.u.sym->u.val;
