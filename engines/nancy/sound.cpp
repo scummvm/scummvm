@@ -246,7 +246,7 @@ void SoundManager::loadSound(const SoundDescription &description) {
 }
 
 void SoundManager::playSound(uint16 channelID) {
-	if (channelID > 32 || _channels[channelID].stream == 0)
+	if (channelID > 31 || _channels[channelID].stream == 0)
 		return;
 
 	_channels[channelID].stream->seek(0);
@@ -266,7 +266,7 @@ void SoundManager::playSound(const SoundDescription &description) {
 }
 
 void SoundManager::pauseSound(uint16 channelID, bool pause) {
-	if (channelID > 32)
+	if (channelID > 31)
 		return;
 
 	if (isSoundPlaying(channelID)) {
@@ -281,7 +281,7 @@ void SoundManager::pauseSound(const SoundDescription &description, bool pause) {
 }
 
 bool SoundManager::isSoundPlaying(uint16 channelID) const {
-	if (channelID > 32)
+	if (channelID > 31)
 		return false;
 
 	return _mixer->isSoundHandleActive(_channels[channelID].handle);
@@ -296,7 +296,7 @@ bool SoundManager::isSoundPlaying(const SoundDescription &description) const {
 }
 
 void SoundManager::stopSound(uint16 channelID) {
-	if (channelID > 32)
+	if (channelID > 31)
 		return;
 
 	if (isSoundPlaying(channelID)) {
@@ -315,7 +315,7 @@ void SoundManager::stopSound(const SoundDescription &description) {
 
 // Returns whether the exception was skipped
 void SoundManager::stopAllSounds() {
-	for (uint i = 0; i < 32; ++i) {
+	for (uint i = 0; i < 31; ++i) {
 		stopSound(i);
 	}
 }
@@ -330,7 +330,7 @@ void SoundManager::stopAndUnloadSpecificSounds() {
 
 void SoundManager::initSoundChannels() {
 	// Channel types are hardcoded in the original engine
-	for (uint i = 0; i < 32; ++i) {
+	for (uint i = 0; i < 31; ++i) {
 		_channels[i].type = channelSoundTypes[i];
 	}
 }
