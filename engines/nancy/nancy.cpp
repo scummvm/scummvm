@@ -322,26 +322,31 @@ void NancyEngine::bootGameEngine() {
 		"MAP", "CD", "TBOX", "CURS", "VIEW", "MSND",
 		"BUOK", "BUDE", "BULS", "GLOB", "SLID",
 		"SET", "CURT", "CANT", "TH1", "TH2",
-		"QUOT", "TMOD" };
+		"QUOT", "TMOD",
+		// Used in nancy2
+		"FR", "LG", "OB", "CRED", "CLOK",
+		"SPEC"
+	};
+
+	Common::String persistentSounds[] = {
+		"BUOK", "BUDE", "BULS", "GLOB", "CURT",
+		"CANT"
+	};
+	
+	SoundDescription desc;
 
 	for (auto const &n : names) {
 		addBootChunk(n, boot->getChunkStream(n));
 	}
 
 	// Persistent sounds that are used across the engine. These originally get loaded inside Logo
-	SoundDescription desc;
-	desc.read(*g_nancy->getBootChunkStream("BUOK"), SoundDescription::kNormal);
-	g_nancy->_sound->loadSound(desc);
-	desc.read(*g_nancy->getBootChunkStream("BUDE"), SoundDescription::kNormal);
-	g_nancy->_sound->loadSound(desc);
-	desc.read(*g_nancy->getBootChunkStream("BULS"), SoundDescription::kNormal);
-	g_nancy->_sound->loadSound(desc);
-	desc.read(*g_nancy->getBootChunkStream("GLOB"), SoundDescription::kNormal);
-	g_nancy->_sound->loadSound(desc);
-	desc.read(*g_nancy->getBootChunkStream("CURT"), SoundDescription::kNormal);
-	g_nancy->_sound->loadSound(desc);
-	desc.read(*g_nancy->getBootChunkStream("CANT"), SoundDescription::kNormal);
-	g_nancy->_sound->loadSound(desc);
+	for (auto const &s : persistentSounds) {
+		Common::SeekableReadStream *str = g_nancy->getBootChunkStream(s);
+		if (str) {
+			desc.read(*str, SoundDescription::kNormal);
+			g_nancy->_sound->loadSound(desc);
+		}
+	}
 
 	delete boot;
 
