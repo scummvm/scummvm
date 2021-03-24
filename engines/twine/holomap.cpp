@@ -115,7 +115,7 @@ void Holomap::loadHolomapGFX() {
 }
 
 static int sortHolomapSurfaceCoordsByDepth(const void *a1, const void *a2) {
-	return *(const int16 *)a1 - *(const int16 *)a2;
+	return (int)*(const int16 *)a1 - (int)*(const int16 *)a2;
 }
 
 // verified with disassembly
@@ -167,7 +167,6 @@ void Holomap::prepareHolomapPolygons() {
 	int holomapSortArrayIdx = 0;
 	int holomapSurfaceArrayIdx = 0;
 	_projectedSurfaceIndex = 0;
-	_engine->_renderer->setBaseRotation(0, 0, 0);
 	for (int32 angle = -ANGLE_90; angle <= ANGLE_90; angle += ANGLE_11_25) {
 		int rotation = 0;
 		for (int32 stepWidth = 0; stepWidth < ANGLE_11_25; ++stepWidth) {

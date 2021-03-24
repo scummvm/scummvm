@@ -1560,7 +1560,7 @@ void Renderer::computeHolomapPolygon(int32 top, int32 x1, int32 bottom, int32 x2
 	if (minX < x2) {
 		const uint32 deltaX = (x2 - minX) * 0x10000;
 		const uint32 deltaRatio = deltaX / deltaY;
-		uint32 iVar01 = (deltaRatio % deltaY >> 1) + 0x7fff;
+		uint32 iVar01 = (deltaRatio % deltaY >> 1) + 0x7fffU;
 		for (uint32 y = 0; y <= deltaY; ++y) {
 			if (currentPolygonTabEntry < _polyTab || currentPolygonTabEntry >= _polyTab + _polyTabSize) {
 				currentPolygonTabEntry++;
@@ -1568,16 +1568,16 @@ void Renderer::computeHolomapPolygon(int32 top, int32 x1, int32 bottom, int32 x2
 			}
 			*currentPolygonTabEntry++ = (int16)x2;
 			x2 -= (deltaRatio >> 0x10);
-			if ((iVar01 & 0xffff0000) != 0) {
+			if ((iVar01 & 0xffff0000U) != 0) {
 				x2 += (iVar01 >> 0x10);
-				iVar01 = iVar01 & 0xffff;
+				iVar01 = iVar01 & 0xffffU;
 			}
-			iVar01 -= (deltaRatio & 0xffff);
+			iVar01 -= (deltaRatio & 0xffffU);
 		}
 	} else {
 		const uint32 deltaX = (minX - x2) * 0x10000;
 		const uint32 deltaRatio = deltaX / deltaY;
-		uint32 iVar01 = (deltaX % deltaY >> 1) + 0x7fff;
+		uint32 iVar01 = (deltaX % deltaY >> 1) + 0x7fffU;
 		for (uint32 y = 0; y <= deltaY; ++y) {
 			if (currentPolygonTabEntry < _polyTab || currentPolygonTabEntry >= _polyTab + _polyTabSize) {
 				currentPolygonTabEntry++;
@@ -1585,11 +1585,11 @@ void Renderer::computeHolomapPolygon(int32 top, int32 x1, int32 bottom, int32 x2
 			}
 			*currentPolygonTabEntry++ = (int16)x2;
 			x2 += (deltaRatio >> 0x10);
-			if ((iVar01 & 0xffff0000) != 0) {
+			if ((iVar01 & 0xffff0000U) != 0) {
 				x2 += (iVar01 >> 0x10);
-				iVar01 = iVar01 & 0xffff;
+				iVar01 = iVar01 & 0xffffU;
 			}
-			iVar01 += (deltaRatio & 0xffff);
+			iVar01 += (deltaRatio & 0xffffU);
 		}
 	}
 }
