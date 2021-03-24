@@ -1102,7 +1102,7 @@ END_OPCODE
 IMPLEMENT_OPCODE(ResetSceneRect)
 	getWorld()->sceneRectIdx = (uint8)LOBYTE(cmd->param1);
 	getScreen()->paletteFade(0, 25, 10);
-	getSharedData()->setFlag(kFlagSceneRectChanged, true);
+	getSharedData()->setFlag(kFlagScene1, true);
 
 	getWorld()->xLeft = getWorld()->sceneRects[getWorld()->sceneRectIdx].left;
 	getWorld()->yTop  = getWorld()->sceneRects[getWorld()->sceneRectIdx].top;
