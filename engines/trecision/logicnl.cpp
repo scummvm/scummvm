@@ -1769,24 +1769,15 @@ void LogicManager::useWithScreen(bool *updateinv, bool *printsent) {
 	}
 }
 
-void LogicManager::roomOut(uint16 TheObj, uint16 *action, uint16 *pos) {
-	switch (TheObj) {
-	case oSCALA32:
-		if (g_vm->_obj[oBOTOLAC32]._mode & OBJMODE_OBJSTATUS) {
-			CharacterSay(g_vm->_obj[TheObj]._action);
-			g_vm->_flagMouseEnabled = true;
-			*action = 0;
-			*pos = 0;
-		} else {
-			*action = g_vm->_obj[TheObj]._anim;
-			*pos = g_vm->_obj[TheObj]._ninv;
-		}
-		break;
-
-	default:
-		*action = g_vm->_obj[TheObj]._anim;
-		*pos = g_vm->_obj[TheObj]._ninv;
-		break;
+void LogicManager::roomOut(uint16 curObj, uint16 *action, uint16 *pos) {
+	if (curObj == oSCALA32 && g_vm->_obj[oBOTOLAC32]._mode & OBJMODE_OBJSTATUS) {
+		CharacterSay(g_vm->_obj[curObj]._action);
+		g_vm->_flagMouseEnabled = true;
+		*action = 0;
+		*pos = 0;
+	} else {
+		*action = g_vm->_obj[curObj]._anim;
+		*pos = g_vm->_obj[curObj]._ninv;
 	}
 }
 

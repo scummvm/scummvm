@@ -48,10 +48,10 @@ uint16 Comb58[6], Count58 = 0;
 void doRoomIn(uint16 curObj) {
 	g_vm->_flagMouseEnabled = false;
 
-	uint16 theAction = g_vm->_obj[curObj]._anim;
-	uint16 thePos = g_vm->_obj[curObj]._ninv;
+	uint16 curAction = g_vm->_obj[curObj]._anim;
+	uint16 curPos = g_vm->_obj[curObj]._ninv;
 
-	doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, g_vm->_obj[curObj]._goRoom, theAction, thePos, curObj);
+	doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, g_vm->_obj[curObj]._goRoom, curAction, curPos, curObj);
 
 	g_vm->_obj[curObj]._flag |= OBJFLAG_DONE;
 }
@@ -60,13 +60,13 @@ void doRoomIn(uint16 curObj) {
 /*                                 ROOMOUT         						   */
 /*-------------------------------------------------------------------------*/
 void doRoomOut(uint16 TheObj) {
-	uint16 TheAction, ThePos;
-
 	g_vm->_flagMouseEnabled = false;
-	g_vm->_logicMgr->roomOut(TheObj, &TheAction, &ThePos);
+
+	uint16 curAction, curPos;
+	g_vm->_logicMgr->roomOut(TheObj, &curAction, &curPos);
 	
-	if (TheAction)
-		doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, TheAction, g_vm->_obj[TheObj]._goRoom, ThePos, TheObj);
+	if (curAction)
+		doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, curAction, g_vm->_obj[TheObj]._goRoom, curPos, TheObj);
 
 	g_vm->_obj[TheObj]._flag |= OBJFLAG_DONE;
 }
