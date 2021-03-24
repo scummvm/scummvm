@@ -155,14 +155,12 @@ void TrecisionEngine::doInventory() {
 			if (_useWith[USED] != _curInventory) {
 				doEvent(MC_ACTION, ME_USEWITH, MP_DEFAULT, 0, 0, 0, 0);
 				_lightIcon = 0xFF;
-			}
-			else {
+			} else {
 				_animMgr->stopSmkAnim(_inventoryObj[_useWith[USED]]._anim);
 				showInventoryName(_curInventory, true);
 				_lightIcon = _curInventory;
 			}
-		}
-		else if (_inventoryObj[_curInventory]._flag & OBJFLAG_USEWITH) {
+		} else if (_inventoryObj[_curInventory]._flag & OBJFLAG_USEWITH) {
 			if ((_curInventory == iCANDELOTTO) && (_curRoom == r29)) {
 				CharacterSay(1565);
 				return;
@@ -175,8 +173,7 @@ void TrecisionEngine::doInventory() {
 			_useWith[USED] = _curInventory;
 			_useWithInv[USED] = true;
 			showInventoryName(_curInventory, true);
-		}
-		else
+		} else
 			doEvent(MC_ACTION, ME_INVOPERATE, MP_DEFAULT, 0, 0, 0, _curInventory);
 		break;
 
@@ -192,14 +189,12 @@ void TrecisionEngine::doInventory() {
 			if (_useWith[USED] != _curInventory) {
 				doEvent(MC_ACTION, ME_USEWITH, MP_DEFAULT, 0, 0, 0, 0);
 				_lightIcon = 0xFF;
-			}
-			else {
+			} else {
 				_animMgr->stopSmkAnim(_inventoryObj[_useWith[USED]]._anim);
 				showInventoryName(_curInventory, true);
 				_lightIcon = _curInventory;
 			}
-		}
-		else
+		} else
 			doEvent(MC_ACTION, ME_INVEXAMINE, MP_DEFAULT, 0, 0, 0, _curInventory);
 		break;
 
@@ -213,8 +208,7 @@ void TrecisionEngine::doInventory() {
 			if (!FlagUseWithStarted && !FlagSomeOneSpeak) {
 				setInventoryStart(_iconBase, INVENTORY_SHOW);
 			}
-		}
-		else {
+		} else {
 			if (!(isInventoryArea(my)))
 				break;
 			showInventoryName(NO_OBJECTS, true);
@@ -386,285 +380,17 @@ void TrecisionEngine::replaceIcon(uint8 oldIcon, uint8 newIcon) {
 /*                          USE WITH / INV - INV         				   */
 /*-------------------------------------------------------------------------*/
 void TrecisionEngine::doInventoryUseWithInventory() {
-	bool updateInv = true;
-	bool printSentence = true;
-
 	if (!_useWith[USED] || !_useWith[WITH])
 		warning("doInventoryUseWithInventory");
 
 	_animMgr->stopSmkAnim(_inventoryObj[_useWith[USED]]._anim);
 
-	switch (_useWith[USED]) {
-	case iSTAGNOLA:
-		if (_useWith[WITH] == iFUSE) {
-			removeIcon(iSTAGNOLA);
-			replaceIcon(iFUSE, iFUSES);
-			StartCharacterAction(hUSEGG, 0, 0, 1441);
-			printSentence = false;
-		}
-		break;
-
-	case iFUSE:
-		if (_useWith[WITH] == iSTAGNOLA) {
-			removeIcon(iSTAGNOLA);
-			replaceIcon(iFUSE, iFUSES);
-			StartCharacterAction(hUSEGG, 0, 0, 1441);
-			printSentence = false;
-		}
-		break;
-
-	case iTOPO1C:
-		if (_useWith[WITH] == iPATTINO) {
-			removeIcon(iPATTINO);
-			removeIcon(iTOPO1C);
-			addIcon(iTOPO1D);
-			StartCharacterAction(hUSEGG, 0, 0, 1497);
-			printSentence = false;
-		}
-		break;
-
-	case iPATTINO:
-		if (_useWith[WITH] == iTOPO1C) {
-			removeIcon(iPATTINO);
-			removeIcon(iTOPO1C);
-			addIcon(iTOPO1D);
-			StartCharacterAction(hUSEGG, 0, 0, 1497);
-			printSentence = false;
-		}
-		break;
-
-	case iBAR11:
-		if (_useWith[WITH] == iMAGNETE) {
-			removeIcon(iBAR11);
-			replaceIcon(iMAGNETE, iSBARRA21);
-			StartCharacterAction(hUSEGG, 0, 0, 1438);
-			printSentence = false;
-		}
-		break;
-
-	case iMAGNETE:
-		if (_useWith[WITH] == iBAR11) {
-			removeIcon(iBAR11);
-			replaceIcon(iMAGNETE, iSBARRA21);
-			StartCharacterAction(hUSEGG, 0, 0, 1533);
-			printSentence = false;
-		}
-		break;
-
-	case iSIGARO:
-		if (_useWith[WITH] == iSCOPA27) {
-			removeIcon(iSCOPA27);
-			replaceIcon(iSIGARO, iTORCIA32);
-			StartCharacterAction(hUSEGG, 0, 0, 1575);
-			printSentence = false;
-		}
-		break;
-
-	case iSCOPA27:
-		if (_useWith[WITH] == iSIGARO) {
-			removeIcon(iSCOPA27);
-			replaceIcon(iSIGARO, iTORCIA32);
-			StartCharacterAction(hUSEGG, 0, 0, 1546);
-			printSentence = false;
-		}
-		break;
-
-	case iPROIETTORE31:
-		if (_useWith[WITH] == iTRIPLA) {
-			removeIcon(iTRIPLA);
-			replaceIcon(iPROIETTORE31, iPROIETTORE35);
-			StartCharacterAction(hUSEGG, 0, 0, 0);
-			printSentence = false;
-		}
-		break;
-
-	case iTRIPLA:
-		if (_useWith[WITH] == iPROIETTORE31) {
-			removeIcon(iTRIPLA);
-			replaceIcon(iPROIETTORE31, iPROIETTORE35);
-			StartCharacterAction(hUSEGG, 0, 0, 0);
-			printSentence = false;
-		}
-		break;
-
-	case iSALNITRO:
-	case iCARBONE:
-	case iZOLFO:
-	case iCARSAL:
-	case iCARZOL:
-	case iSALZOL:
-		if ((_useWith[WITH] == iSALNITRO) || (_useWith[WITH] == iCARBONE) || (_useWith[WITH] == iZOLFO) ||
-			(_useWith[WITH] == iCARSAL) || (_useWith[WITH] == iCARZOL) || (_useWith[WITH] == iSALZOL)) {
-			removeIcon(_useWith[USED]);
-			removeIcon(_useWith[WITH]);
-
-			if (((_useWith[USED] == iSALNITRO) && (_useWith[WITH] == iCARBONE)) ||
-				((_useWith[WITH] == iSALNITRO) && (_useWith[USED] == iCARBONE)))
-				addIcon(iCARSAL);
-			if (((_useWith[USED] == iZOLFO) && (_useWith[WITH] == iCARBONE)) ||
-				((_useWith[WITH] == iZOLFO) && (_useWith[USED] == iCARBONE)))
-				addIcon(iCARZOL);
-			if (((_useWith[USED] == iZOLFO) && (_useWith[WITH] == iSALNITRO)) ||
-				((_useWith[WITH] == iZOLFO) && (_useWith[USED] == iSALNITRO)))
-				addIcon(iSALZOL);
-
-			if ((_useWith[USED] == iZOLFO) || (_useWith[WITH] == iZOLFO))
-				addIcon(iBARATTOLO);
-			if ((_useWith[USED] >= iCARSAL) || (_useWith[WITH] >= iCARSAL))
-				addIcon(iPOLVERE48);
-			StartCharacterAction(hUSEGG, 0, 0, 1663);
-			printSentence = false;
-		}
-		break;
-
-	case iPISTOLA4B:
-		if (_useWith[WITH] == iPOLVERE48) {
-			replaceIcon(iPOLVERE48, iPOLVERE4P);
-			replaceIcon(iPISTOLA4B, iPISTOLA4PC);
-			StartCharacterAction(hUSEGG, 0, 0, 1676);
-			printSentence = false;
-		} else if (_useWith[WITH] == iPOLVERE4P) {
-			removeIcon(iPOLVERE4P);
-			replaceIcon(iPISTOLA4B, iPISTOLA4PC);
-			StartCharacterAction(hUSEGG, 0, 0, 1700);
-			printSentence = false;
-		}
-		break;
-
-	case iPOLVERE48:
-		if (_useWith[WITH] == iPISTOLA4B) {
-			replaceIcon(iPOLVERE48, iPOLVERE4P);
-			replaceIcon(iPISTOLA4B, iPISTOLA4PC);
-			StartCharacterAction(hUSEGG, 0, 0, 1676);
-			printSentence = false;
-		}
-		break;
-
-	case iPOLVERE4P:
-		if (_useWith[WITH] == iPISTOLA4B) {
-			removeIcon(iPOLVERE4P);
-			replaceIcon(iPISTOLA4B, iPISTOLA4PC);
-			StartCharacterAction(hUSEGG, 0, 0, 1700);
-			printSentence = false;
-		}
-		break;
-
-	case iBIGLIAA:
-	case iBIGLIAB:
-		if ((_useWith[WITH] == iPISTOLA4PC) && !(_inventoryObj[iPISTOLA4PC]._flag & OBJFLAG_EXTRA)) {
-			removeIcon(_useWith[USED]);
-			replaceIcon(iPISTOLA4PC, iPISTOLA4PD);
-			StartCharacterAction(hUSEGG, 0, 0, 1683);
-			_inventoryObj[iPISTOLA4PC]._flag |= OBJFLAG_EXTRA;
-			printSentence = false;
-		} else if (_useWith[WITH] == iPISTOLA4PC) {
-			CharacterSay(1688);
-			printSentence = false;
-		} else if (_useWith[WITH] == iPISTOLA4B) {
-			CharacterSay(2009);
-			printSentence = false;
-		}
-		break;
-
-	case iBIGLIA4U:
-		if (_useWith[WITH] == iPISTOLA4PC) {
-			removeIcon(iBIGLIA4U);
-			replaceIcon(iPISTOLA4PC, iPISTOLA4PD);
-			StartCharacterAction(hUSEGG, 0, 0, 1718);
-			_inventoryObj[iPISTOLA4PD]._flag |= OBJFLAG_EXTRA;
-			printSentence = false;
-		} else if (_useWith[WITH] == iPISTOLA4B) {
-			CharacterSay(2011);
-			printSentence = false;
-		}
-		break;
-
-	case iSIRINGA37:
-		if (_useWith[WITH] == iFIALE) {
-			removeIcon(iSIRINGA37);
-			replaceIcon(iFIALE, iSIRINGA59);
-			StartCharacterAction(hUSEGG, 0, 0, 1756);
-			printSentence = false;
-		}
-		break;
-
-	case iFIALE:
-		if (_useWith[WITH] == iSIRINGA37) {
-			removeIcon(iSIRINGA37);
-			replaceIcon(iFIALE, iSIRINGA59);
-			StartCharacterAction(hUSEGG, 0, 0, 1756);
-			printSentence = false;
-		}
-		break;
-
-	case iFILO:
-		if (_useWith[WITH] == iGUANTI57) {
-			removeIcon(iFILO);
-			replaceIcon(iGUANTI57, iGUANTI5A);
-			StartCharacterAction(hUSEGG, 0, 0, 1756);
-			printSentence = false;
-		} else if (_useWith[WITH] == iSIRINGA59) {
-			removeIcon(iFILO);
-			replaceIcon(iSIRINGA59, iSIRINGA5A);
-			StartCharacterAction(hUSEGG, 0, 0, 1756);
-			printSentence = false;
-		}
-		break;
-
-	case iGUANTI57:
-		if (_useWith[WITH] == iFILO) {
-			removeIcon(iFILO);
-			replaceIcon(iGUANTI57, iGUANTI5A);
-			StartCharacterAction(hUSEGG, 0, 0, 1756);
-			printSentence = false;
-		} else if (_useWith[WITH] == iSIRINGA5A) {
-			removeIcon(iSIRINGA5A);
-			replaceIcon(iGUANTI57, iARMAEVA);
-			StartCharacterAction(hUSEGG, 0, 0, 1756);
-			printSentence = false;
-		}
-		break;
-
-	case iSIRINGA59:
-		if (_useWith[WITH] == iFILO) {
-			removeIcon(iFILO);
-			replaceIcon(iSIRINGA59, iSIRINGA5A);
-			StartCharacterAction(hUSEGG, 0, 0, 1756);
-			printSentence = false;
-		} else if (_useWith[WITH] == iGUANTI5A) {
-			removeIcon(iSIRINGA59);
-			replaceIcon(iGUANTI5A, iARMAEVA);
-			StartCharacterAction(hUSEGG, 0, 0, 1756);
-			printSentence = false;
-		}
-		break;
-
-	case iGUANTI5A:
-		if (_useWith[WITH] == iSIRINGA59) {
-			removeIcon(iSIRINGA59);
-			replaceIcon(iGUANTI5A, iARMAEVA);
-			StartCharacterAction(hUSEGG, 0, 0, 1756);
-			printSentence = false;
-		}
-		break;
-
-	case iSIRINGA5A:
-		if (_useWith[WITH] == iGUANTI57) {
-			removeIcon(iSIRINGA5A);
-			replaceIcon(iGUANTI57, iARMAEVA);
-			StartCharacterAction(hUSEGG, 0, 0, 1756);
-			printSentence = false;
-		}
-		break;
-
-	default:
-		updateInv = false;
-		break;
-	}
+	bool refreshInventory, printSentence;
+	_logicMgr->useWithInventory(&refreshInventory, &printSentence);
 
 	if (printSentence)
 		CharacterSay(_inventoryObj[_useWith[USED]]._action);
-	if (updateInv)
+	if (refreshInventory)
 		setInventoryStart(_iconBase, INVENTORY_SHOW);
 }
 

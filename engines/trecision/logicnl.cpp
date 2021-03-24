@@ -383,6 +383,279 @@ void LogicManager::initInventory() {
 	_vm->_inventory[_vm->_inventorySize++] = iKEY05;
 }
 
+void LogicManager::useWithInventory(bool *updateInv, bool *printSentence) {
+	*updateInv = true;
+	*printSentence = true;
+
+	switch (_vm->_useWith[USED]) {
+	case iSTAGNOLA:
+		if (_vm->_useWith[WITH] == iFUSE) {
+			_vm->removeIcon(iSTAGNOLA);
+			_vm->replaceIcon(iFUSE, iFUSES);
+			StartCharacterAction(hUSEGG, 0, 0, 1441);
+			*printSentence = false;
+		}
+		break;
+
+	case iFUSE:
+		if (_vm->_useWith[WITH] == iSTAGNOLA) {
+			_vm->removeIcon(iSTAGNOLA);
+			_vm->replaceIcon(iFUSE, iFUSES);
+			StartCharacterAction(hUSEGG, 0, 0, 1441);
+			*printSentence = false;
+		}
+		break;
+
+	case iTOPO1C:
+		if (_vm->_useWith[WITH] == iPATTINO) {
+			_vm->removeIcon(iPATTINO);
+			_vm->removeIcon(iTOPO1C);
+			_vm->addIcon(iTOPO1D);
+			StartCharacterAction(hUSEGG, 0, 0, 1497);
+			*printSentence = false;
+		}
+		break;
+
+	case iPATTINO:
+		if (_vm->_useWith[WITH] == iTOPO1C) {
+			_vm->removeIcon(iPATTINO);
+			_vm->removeIcon(iTOPO1C);
+			_vm->addIcon(iTOPO1D);
+			StartCharacterAction(hUSEGG, 0, 0, 1497);
+			*printSentence = false;
+		}
+		break;
+
+	case iBAR11:
+		if (_vm->_useWith[WITH] == iMAGNETE) {
+			_vm->removeIcon(iBAR11);
+			_vm->replaceIcon(iMAGNETE, iSBARRA21);
+			StartCharacterAction(hUSEGG, 0, 0, 1438);
+			*printSentence = false;
+		}
+		break;
+
+	case iMAGNETE:
+		if (_vm->_useWith[WITH] == iBAR11) {
+			_vm->removeIcon(iBAR11);
+			_vm->replaceIcon(iMAGNETE, iSBARRA21);
+			StartCharacterAction(hUSEGG, 0, 0, 1533);
+			*printSentence = false;
+		}
+		break;
+
+	case iSIGARO:
+		if (_vm->_useWith[WITH] == iSCOPA27) {
+			_vm->removeIcon(iSCOPA27);
+			_vm->replaceIcon(iSIGARO, iTORCIA32);
+			StartCharacterAction(hUSEGG, 0, 0, 1575);
+			*printSentence = false;
+		}
+		break;
+
+	case iSCOPA27:
+		if (_vm->_useWith[WITH] == iSIGARO) {
+			_vm->removeIcon(iSCOPA27);
+			_vm->replaceIcon(iSIGARO, iTORCIA32);
+			StartCharacterAction(hUSEGG, 0, 0, 1546);
+			*printSentence = false;
+		}
+		break;
+
+	case iPROIETTORE31:
+		if (_vm->_useWith[WITH] == iTRIPLA) {
+			_vm->removeIcon(iTRIPLA);
+			_vm->replaceIcon(iPROIETTORE31, iPROIETTORE35);
+			StartCharacterAction(hUSEGG, 0, 0, 0);
+			*printSentence = false;
+		}
+		break;
+
+	case iTRIPLA:
+		if (_vm->_useWith[WITH] == iPROIETTORE31) {
+			_vm->removeIcon(iTRIPLA);
+			_vm->replaceIcon(iPROIETTORE31, iPROIETTORE35);
+			StartCharacterAction(hUSEGG, 0, 0, 0);
+			*printSentence = false;
+		}
+		break;
+
+	case iSALNITRO:
+	case iCARBONE:
+	case iZOLFO:
+	case iCARSAL:
+	case iCARZOL:
+	case iSALZOL:
+		if ((_vm->_useWith[WITH] == iSALNITRO) || (_vm->_useWith[WITH] == iCARBONE) || (_vm->_useWith[WITH] == iZOLFO) ||
+			(_vm->_useWith[WITH] == iCARSAL) || (_vm->_useWith[WITH] == iCARZOL) || (_vm->_useWith[WITH] == iSALZOL)) {
+			_vm->removeIcon(_vm->_useWith[USED]);
+			_vm->removeIcon(_vm->_useWith[WITH]);
+
+			if (((_vm->_useWith[USED] == iSALNITRO) && (_vm->_useWith[WITH] == iCARBONE)) ||
+				((_vm->_useWith[WITH] == iSALNITRO) && (_vm->_useWith[USED] == iCARBONE)))
+				_vm->addIcon(iCARSAL);
+			if (((_vm->_useWith[USED] == iZOLFO) && (_vm->_useWith[WITH] == iCARBONE)) ||
+				((_vm->_useWith[WITH] == iZOLFO) && (_vm->_useWith[USED] == iCARBONE)))
+				_vm->addIcon(iCARZOL);
+			if (((_vm->_useWith[USED] == iZOLFO) && (_vm->_useWith[WITH] == iSALNITRO)) ||
+				((_vm->_useWith[WITH] == iZOLFO) && (_vm->_useWith[USED] == iSALNITRO)))
+				_vm->addIcon(iSALZOL);
+
+			if ((_vm->_useWith[USED] == iZOLFO) || (_vm->_useWith[WITH] == iZOLFO))
+				_vm->addIcon(iBARATTOLO);
+			if ((_vm->_useWith[USED] >= iCARSAL) || (_vm->_useWith[WITH] >= iCARSAL))
+				_vm->addIcon(iPOLVERE48);
+			StartCharacterAction(hUSEGG, 0, 0, 1663);
+			*printSentence = false;
+		}
+		break;
+
+	case iPISTOLA4B:
+		if (_vm->_useWith[WITH] == iPOLVERE48) {
+			_vm->replaceIcon(iPOLVERE48, iPOLVERE4P);
+			_vm->replaceIcon(iPISTOLA4B, iPISTOLA4PC);
+			StartCharacterAction(hUSEGG, 0, 0, 1676);
+			*printSentence = false;
+		} else if (_vm->_useWith[WITH] == iPOLVERE4P) {
+			_vm->removeIcon(iPOLVERE4P);
+			_vm->replaceIcon(iPISTOLA4B, iPISTOLA4PC);
+			StartCharacterAction(hUSEGG, 0, 0, 1700);
+			*printSentence = false;
+		}
+		break;
+
+	case iPOLVERE48:
+		if (_vm->_useWith[WITH] == iPISTOLA4B) {
+			_vm->replaceIcon(iPOLVERE48, iPOLVERE4P);
+			_vm->replaceIcon(iPISTOLA4B, iPISTOLA4PC);
+			StartCharacterAction(hUSEGG, 0, 0, 1676);
+			*printSentence = false;
+		}
+		break;
+
+	case iPOLVERE4P:
+		if (_vm->_useWith[WITH] == iPISTOLA4B) {
+			_vm->removeIcon(iPOLVERE4P);
+			_vm->replaceIcon(iPISTOLA4B, iPISTOLA4PC);
+			StartCharacterAction(hUSEGG, 0, 0, 1700);
+			*printSentence = false;
+		}
+		break;
+
+	case iBIGLIAA:
+	case iBIGLIAB:
+		if ((_vm->_useWith[WITH] == iPISTOLA4PC) && !(_vm->_inventoryObj[iPISTOLA4PC]._flag & OBJFLAG_EXTRA)) {
+			_vm->removeIcon(_vm->_useWith[USED]);
+			_vm->replaceIcon(iPISTOLA4PC, iPISTOLA4PD);
+			StartCharacterAction(hUSEGG, 0, 0, 1683);
+			_vm->_inventoryObj[iPISTOLA4PC]._flag |= OBJFLAG_EXTRA;
+			*printSentence = false;
+		} else if (_vm->_useWith[WITH] == iPISTOLA4PC) {
+			CharacterSay(1688);
+			*printSentence = false;
+		} else if (_vm->_useWith[WITH] == iPISTOLA4B) {
+			CharacterSay(2009);
+			*printSentence = false;
+		}
+		break;
+
+	case iBIGLIA4U:
+		if (_vm->_useWith[WITH] == iPISTOLA4PC) {
+			_vm->removeIcon(iBIGLIA4U);
+			_vm->replaceIcon(iPISTOLA4PC, iPISTOLA4PD);
+			StartCharacterAction(hUSEGG, 0, 0, 1718);
+			_vm->_inventoryObj[iPISTOLA4PD]._flag |= OBJFLAG_EXTRA;
+			*printSentence = false;
+		} else if (_vm->_useWith[WITH] == iPISTOLA4B) {
+			CharacterSay(2011);
+			*printSentence = false;
+		}
+		break;
+
+	case iSIRINGA37:
+		if (_vm->_useWith[WITH] == iFIALE) {
+			_vm->removeIcon(iSIRINGA37);
+			_vm->replaceIcon(iFIALE, iSIRINGA59);
+			StartCharacterAction(hUSEGG, 0, 0, 1756);
+			*printSentence = false;
+		}
+		break;
+
+	case iFIALE:
+		if (_vm->_useWith[WITH] == iSIRINGA37) {
+			_vm->removeIcon(iSIRINGA37);
+			_vm->replaceIcon(iFIALE, iSIRINGA59);
+			StartCharacterAction(hUSEGG, 0, 0, 1756);
+			*printSentence = false;
+		}
+		break;
+
+	case iFILO:
+		if (_vm->_useWith[WITH] == iGUANTI57) {
+			_vm->removeIcon(iFILO);
+			_vm->replaceIcon(iGUANTI57, iGUANTI5A);
+			StartCharacterAction(hUSEGG, 0, 0, 1756);
+			*printSentence = false;
+		} else if (_vm->_useWith[WITH] == iSIRINGA59) {
+			_vm->removeIcon(iFILO);
+			_vm->replaceIcon(iSIRINGA59, iSIRINGA5A);
+			StartCharacterAction(hUSEGG, 0, 0, 1756);
+			*printSentence = false;
+		}
+		break;
+
+	case iGUANTI57:
+		if (_vm->_useWith[WITH] == iFILO) {
+			_vm->removeIcon(iFILO);
+			_vm->replaceIcon(iGUANTI57, iGUANTI5A);
+			StartCharacterAction(hUSEGG, 0, 0, 1756);
+			*printSentence = false;
+		} else if (_vm->_useWith[WITH] == iSIRINGA5A) {
+			_vm->removeIcon(iSIRINGA5A);
+			_vm->replaceIcon(iGUANTI57, iARMAEVA);
+			StartCharacterAction(hUSEGG, 0, 0, 1756);
+			*printSentence = false;
+		}
+		break;
+
+	case iSIRINGA59:
+		if (_vm->_useWith[WITH] == iFILO) {
+			_vm->removeIcon(iFILO);
+			_vm->replaceIcon(iSIRINGA59, iSIRINGA5A);
+			StartCharacterAction(hUSEGG, 0, 0, 1756);
+			*printSentence = false;
+		} else if (_vm->_useWith[WITH] == iGUANTI5A) {
+			_vm->removeIcon(iSIRINGA59);
+			_vm->replaceIcon(iGUANTI5A, iARMAEVA);
+			StartCharacterAction(hUSEGG, 0, 0, 1756);
+			*printSentence = false;
+		}
+		break;
+
+	case iGUANTI5A:
+		if (_vm->_useWith[WITH] == iSIRINGA59) {
+			_vm->removeIcon(iSIRINGA59);
+			_vm->replaceIcon(iGUANTI5A, iARMAEVA);
+			StartCharacterAction(hUSEGG, 0, 0, 1756);
+			*printSentence = false;
+		}
+		break;
+
+	case iSIRINGA5A:
+		if (_vm->_useWith[WITH] == iGUANTI57) {
+			_vm->removeIcon(iSIRINGA5A);
+			_vm->replaceIcon(iGUANTI57, iARMAEVA);
+			StartCharacterAction(hUSEGG, 0, 0, 1756);
+			*printSentence = false;
+		}
+		break;
+
+	default:
+		*updateInv = false;
+		break;
+	}
+}
+
 void LogicManager::useWithScreen(bool *updateinv, bool *printsent) {
 	*updateinv = true;
 	*printsent = true;
