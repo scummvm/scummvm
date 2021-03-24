@@ -876,7 +876,8 @@ END_OPCODE
 IMPLEMENT_OPCODE(HasMoreReaction)
 	Actor *actor = getScene()->getActor(cmd->param4 ? cmd->param4 : _currentQueueEntry->actorIndex);
 
-	actor->hasMoreReactions(cmd->param1, (bool)cmd->param3);
+	if (!actor->hasMoreReactions(cmd->param1, cmd->param3))
+		_currentQueueEntry->currentLine = cmd->param2;
 END_OPCODE
 
 //////////////////////////////////////////////////////////////////////////
