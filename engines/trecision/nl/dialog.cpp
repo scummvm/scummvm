@@ -62,9 +62,9 @@ void MostraScelte(uint16 i) {
 
 	CurDispScelte = 0;
 	for (int c = d->_firstChoice; c < (d->_firstChoice + d->_choiceNumb); c++) {
-		if (!(_choice[c]._flag & DLGCHOICE_HIDE)) {
+		if (!(g_vm->_choice[c]._flag & DLGCHOICE_HIDE)) {
 			DispScelte[CurDispScelte++] = c;
-			DialogPrint(x, y, HWHITE, g_vm->_sentence[_choice[c]._sentenceIndex]);
+			DialogPrint(x, y, HWHITE, g_vm->_sentence[g_vm->_choice[c]._sentenceIndex]);
 			y += CARHEI;
 		}
 	}
@@ -88,9 +88,9 @@ void UpdateScelte(int16 dmx, int16 dmy) {
 		for (int c = 0; c < MAXDISPSCELTE; c++) {
 			if (DispScelte[c] != 0) {
 				if (c == CurPos)
-					DialogPrint(10, 5 + c * CARHEI, HGREEN, g_vm->_sentence[_choice[DispScelte[c]]._sentenceIndex]);
+					DialogPrint(10, 5 + c * CARHEI, HGREEN, g_vm->_sentence[g_vm->_choice[DispScelte[c]]._sentenceIndex]);
 				else
-					DialogPrint(10, 5 + c * CARHEI, HWHITE, g_vm->_sentence[_choice[DispScelte[c]]._sentenceIndex]);
+					DialogPrint(10, 5 + c * CARHEI, HWHITE, g_vm->_sentence[g_vm->_choice[DispScelte[c]]._sentenceIndex]);
 			}
 		}
 		g_vm->_graphicsMgr->showScreen(0, 5, MAXX, (CurDispScelte)*CARHEI + 5);
@@ -136,10 +136,10 @@ void PlayDialog(uint16 i) {
 	int skip = 0;
 	int curChoice = 0;
 	for (int c = _dialog[_curDialog]._firstChoice; c < (_dialog[_curDialog]._firstChoice + _dialog[_curDialog]._choiceNumb); c++)
-		if (!(_choice[c]._flag & DLGCHOICE_HIDE))
+		if (!(g_vm->_choice[c]._flag & DLGCHOICE_HIDE))
 			curChoice++;
 
-	if ((_curDialog == dC581) && !(_choice[262]._flag & DLGCHOICE_HIDE))
+	if ((_curDialog == dC581) && !(g_vm->_choice[262]._flag & DLGCHOICE_HIDE))
 		skip++;
 	if ((_curDialog == dC581) && (curChoice == 1))
 		skip++;
@@ -211,13 +211,13 @@ void afterChoice(int numframe) {
 			g_vm->_inventoryObj[iFOTO]._action = 1465;
 			g_vm->_obj[oTESSERA1A]._action = 238;
 			if (g_vm->_obj[oTESSERA1A]._flag & OBJFLAG_EXTRA) {
-				_choice[154]._flag &= ~DLGCHOICE_HIDE;
-				_choice[153]._flag |= DLGCHOICE_HIDE;
+				g_vm->_choice[154]._flag &= ~DLGCHOICE_HIDE;
+				g_vm->_choice[153]._flag |= DLGCHOICE_HIDE;
 			} else
-				_choice[153]._flag &= ~DLGCHOICE_HIDE;
+				g_vm->_choice[153]._flag &= ~DLGCHOICE_HIDE;
 		} else if (_curChoice == 154) {
 			if (g_vm->_obj[oTESSERA1A]._flag & OBJFLAG_EXTRA)
-				_choice[183]._flag &= ~DLGCHOICE_HIDE;
+				g_vm->_choice[183]._flag &= ~DLGCHOICE_HIDE;
 		} else if (_curChoice == 155)
 			g_vm->_obj[ocGUARD18]._action = 228;
 		break;
@@ -229,12 +229,12 @@ void afterChoice(int numframe) {
 	*/
 	case dF213B:
 	case dF213:
-		SetRoom(r21, true);
+		g_vm->setRoom(r21, true);
 		break;
 
 	case dF212B:
 	case dF212:
-		SetRoom(r21, false);
+		g_vm->setRoom(r21, false);
 		break;
 
 	case dF321:
@@ -268,7 +268,7 @@ void afterChoice(int numframe) {
 		break;
 	}
 	// Se ultima scelta era un esci dialogo
-	if (_choice[_curChoice]._flag & DLGCHOICE_EXITDLG) {
+	if (g_vm->_choice[_curChoice]._flag & DLGCHOICE_EXITDLG) {
 		g_vm->_animMgr->stopFullMotion();
 
 		switch (_curDialog) {
@@ -294,7 +294,7 @@ void afterChoice(int numframe) {
 		break;
 		*/
 		case dPOLIZIOTTO16:
-			if ((_choice[61]._flag & OBJFLAG_DONE) && (_choice[62]._flag & OBJFLAG_DONE) && (g_vm->_obj[ocPOLIZIOTTO16]._flag & OBJFLAG_EXTRA))
+			if ((g_vm->_choice[61]._flag & OBJFLAG_DONE) && (g_vm->_choice[62]._flag & OBJFLAG_DONE) && (g_vm->_obj[ocPOLIZIOTTO16]._flag & OBJFLAG_EXTRA))
 				g_vm->_obj[ocPOLIZIOTTO16]._mode &= ~OBJMODE_OBJSTATUS;
 			break;
 
@@ -500,11 +500,11 @@ void afterChoice(int numframe) {
 			g_vm->_obj[oFINESTRA58P55]._action = 1291;
 			g_vm->_obj[oFINESTRAA5A]._action = 1403;
 			g_vm->_obj[oGUARDIA58]._mode |= OBJMODE_OBJSTATUS;
-			_choice[286]._flag |= OBJFLAG_DONE;
+			g_vm->_choice[286]._flag |= OBJFLAG_DONE;
 			break;
 
 		case dC581:
-			if (!(_choice[886]._flag & OBJFLAG_DONE) && (_choice[258]._flag & OBJFLAG_DONE)) {
+			if (!(g_vm->_choice[886]._flag & OBJFLAG_DONE) && (g_vm->_choice[258]._flag & OBJFLAG_DONE)) {
 				setPosition(1);
 				PlayDialog(dF581);
 			}
@@ -541,8 +541,8 @@ void afterChoice(int numframe) {
 	}
 
 	// se parte altro dialogo
-	if (_choice[_curChoice]._nextDialog != 0) {
-		_curDialog = _choice[_curChoice]._nextDialog;
+	if (g_vm->_choice[_curChoice]._nextDialog != 0) {
+		_curDialog = g_vm->_choice[_curChoice]._nextDialog;
 		FlagDialogActive = true;
 		_curChoice = 0;
 
@@ -560,7 +560,7 @@ void afterChoice(int numframe) {
 
 	// fa partire subito tutte le prevarica
 	for (int c = d->_firstChoice; c < (d->_firstChoice + d->_choiceNumb); c++) {
-		if ((_choice[c]._flag & DLGCHOICE_FRAUD) && (!(_choice[c]._flag & DLGCHOICE_HIDE))) {
+		if ((g_vm->_choice[c]._flag & DLGCHOICE_FRAUD) && (!(g_vm->_choice[c]._flag & DLGCHOICE_HIDE))) {
 			PlayScelta(c);
 			return;
 		}
@@ -569,8 +569,8 @@ void afterChoice(int numframe) {
 	// se c'e' una sola partisubito la fa partire altrimenti mostra le scelte
 	int res = 0;
 	for (int c = d->_firstChoice; c < (d->_firstChoice + d->_choiceNumb); c++) {
-		if (!(_choice[c]._flag & DLGCHOICE_HIDE)) {
-			if (_choice[c]._flag & DLGCHOICE_EXITNOW) {
+		if (!(g_vm->_choice[c]._flag & DLGCHOICE_HIDE)) {
+			if (g_vm->_choice[c]._flag & DLGCHOICE_EXITNOW) {
 				if (res == 0)
 					res = c;
 				else {
@@ -591,7 +591,7 @@ void afterChoice(int numframe) {
 	// se sono tutte hidate esce dal dialogo
 	res = 0;
 	for (int c = d->_firstChoice; c < (d->_firstChoice + d->_choiceNumb); c++) {
-		if (!(_choice[c]._flag & DLGCHOICE_HIDE))
+		if (!(g_vm->_choice[c]._flag & DLGCHOICE_HIDE))
 			res++;
 	}
 
@@ -622,7 +622,7 @@ void DialogHandler(int numframe) {
 						PlayScelta
 --------------------------------------------------*/
 void PlayScelta(uint16 i) {
-	DialogChoice *ss = &_choice[i];
+	DialogChoice *ss = &g_vm->_choice[i];
 
 	wordset(g_vm->_video2, 0, MAXX * TOP);
 	g_vm->_graphicsMgr->showScreen(0, 0, MAXX, TOP);
@@ -640,10 +640,10 @@ void PlayScelta(uint16 i) {
 
 	// disattiva le altre scelte
 	for (int c = 0; c < MAXDISPSCELTE; c++)
-		_choice[ss->_off[c]]._flag |= DLGCHOICE_HIDE;
+		g_vm->_choice[ss->_off[c]]._flag |= DLGCHOICE_HIDE;
 	// attiva le altre scelte
 	for (int c = 0; c < MAXDISPSCELTE; c++)
-		_choice[ss->_on[c]]._flag &= ~DLGCHOICE_HIDE;
+		g_vm->_choice[ss->_on[c]]._flag &= ~DLGCHOICE_HIDE;
 
 	int lens = 0;
 	for (int c = _curSubTitle; c < EndBattuta; c++)

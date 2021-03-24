@@ -31,16 +31,15 @@
 #include "trecision/nl/ll/llinc.h"
 
 namespace Trecision {
-class GraphicsManager;
 class AnimManager;
+class GraphicsManager;
+class LogicManager;
 
 class TrecisionEngine : public Engine {
 private:
 	void initMain();
 	void initMessageSystem();
 	void initNames();
-	void initInventory();
-	void initScript();
 	void LoadAll();
 
 public:
@@ -72,6 +71,7 @@ public:
 
 	// Utils
 	char *getNextSentence();
+	void setRoom(uint16 r, bool b);
 
 	// Text
 	void addText(uint16 x, uint16 y, const char *sign, uint16 tcol, uint16 scol);
@@ -180,10 +180,15 @@ public:
 	// SlotMachine41
 	uint16 _slotMachine41Counter;
 
+	//Dialogs
+	DialogChoice _choice[MAXCHOICE];
+
 	bool _flagScreenRefreshed;
 
-	GraphicsManager *_graphicsMgr;
 	AnimManager *_animMgr;
+	GraphicsManager *_graphicsMgr;
+	LogicManager *_logicMgr;
+
 };
 
 extern TrecisionEngine *g_vm;
