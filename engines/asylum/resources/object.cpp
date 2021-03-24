@@ -373,7 +373,7 @@ void Object::update() {
 		if (BYTE1(flags) & kObjectFlag2) {
 			if (_frameIndex == _frameCount - 1) {
 				_frameIndex--;
-				flags = (BYTE1(flags) & 0xFD) | kObjectFlag4;
+				BYTE1(flags) = (BYTE1(flags) & 0xFD) | kObjectFlag4;
 			} else {
 				_frameIndex++;
 			}
@@ -381,8 +381,8 @@ void Object::update() {
 			if (_frameIndex) {
 				_frameIndex--;
 			} else {
-				_frameIndex++;
-				flags = (BYTE1(flags) & 0xFB) | kObjectFlag2;
+				_frameIndex = 1;
+				BYTE1(flags) = (BYTE1(flags) & 0xFB) | kObjectFlag2;
 			}
 		}
 	}
