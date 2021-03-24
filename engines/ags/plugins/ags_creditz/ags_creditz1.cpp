@@ -34,6 +34,7 @@ AGSCreditz1::AGSCreditz1() : AGSCreditz() {
 
 	DLL_METHOD(AGS_GetPluginName);
 	DLL_METHOD(AGS_EngineStartup);
+	DLL_METHOD(AGS_EngineOnEvent);
 }
 
 const char *AGSCreditz1::AGS_GetPluginName() {
@@ -42,6 +43,7 @@ const char *AGSCreditz1::AGS_GetPluginName() {
 
 void AGSCreditz1::AGS_EngineStartup(IAGSEngine *engine) {
 	_engine = engine;
+	engine->RequestEventHook(AGSE_POSTSCREENDRAW);
 
 	SCRIPT_METHOD(SetCredit);
 	SCRIPT_METHOD(ScrollCredits);
@@ -64,6 +66,13 @@ void AGSCreditz1::AGS_EngineStartup(IAGSEngine *engine) {
 	SCRIPT_METHOD(GetStaticCreditTitle);
 	SCRIPT_METHOD(SetStaticCreditImage);
 	SCRIPT_METHOD(IsStaticCreditsFinished);
+}
+
+int64 AGSCreditz1::AGS_EngineOnEvent(int event, NumberPtr data) {
+	if (event & AGSE_POSTSCREENDRAW)
+		draw();
+
+	return 0;
 }
 
 void AGSCreditz1::SetCredit(ScriptMethodParams &params) {
@@ -239,7 +248,7 @@ void AGSCreditz1::ShowStaticCredit(ScriptMethodParams &params) {
 		} else if (res == 1 || (res == 2 && c.credit != "P=A=U=S=E")) {
 			if (style == 1) {
 				// TODO: style 1 setup
-				warning("TODO: Use %d %d", transtime, sound);
+				warning("TODO: Use %d %d %d", transtime, time, sound);
 			}
 
 			_engine->GetScreenDimensions(&_state->_screenWidth,
@@ -284,6 +293,10 @@ void AGSCreditz1::SetStaticCreditImage(ScriptMethodParams &params) {
 
 void AGSCreditz1::IsStaticCreditsFinished(ScriptMethodParams &params) {
 	params._result = _state->_stSeqSettings[0].finished;
+}
+
+void AGSCreditz1::draw() {
+	// TODO
 }
 
 } // namespace AGSCreditz
