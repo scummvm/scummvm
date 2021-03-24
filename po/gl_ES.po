@@ -3,11 +3,19 @@
 # This file is distributed under the same license as the ScummVM package.
 # Santiago G. Sanz <s.sanz@uvigo.es>, 2013.
 #
+#: engines/nancy/cheat.cpp:59 engines/nancy/cheat.cpp:60
+#: engines/nancy/cheat.cpp:62 engines/nancy/cheat.cpp:64
+#: engines/nancy/cheat.cpp:69 engines/nancy/cheat.cpp:71
+#: engines/nancy/cheat.cpp:73 engines/nancy/cheat.cpp:77
+#: engines/nancy/cheat.cpp:79 engines/nancy/cheat.cpp:81
+#: engines/nancy/cheat.cpp:83 engines/nancy/cheat.cpp:87
+#: engines/nancy/cheat.cpp:89 engines/nancy/cheat.cpp:91
+#: engines/nancy/cheat.cpp:93
 msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-03-23 06:58+0000\n"
+"POT-Creation-Date: 2021-03-24 16:21+0000\n"
 "PO-Revision-Date: 2020-09-26 21:13+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Galician <https://translations.scummvm.org/projects/scummvm/"
@@ -73,7 +81,7 @@ msgstr "Arriba"
 #: engines/mohawk/myst_stacks/menu.cpp:319
 #: engines/mohawk/riven_stacks/aspit.cpp:350
 #: engines/mohawk/riven_stacks/aspit.cpp:372
-#: engines/mohawk/riven_stacks/aspit.cpp:456
+#: engines/mohawk/riven_stacks/aspit.cpp:456 engines/nancy/cheat.cpp:53
 #: engines/parallaction/saveload.cpp:271 engines/scumm/dialogs.cpp:180
 #: engines/sword1/control.cpp:889 engines/wintermute/wintermute.cpp:210
 msgid "Cancel"
@@ -484,6 +492,7 @@ msgid "Notes:"
 msgstr "Notas:"
 
 #: gui/editrecorddialog.cpp:68 gui/predictivedialog.cpp:70
+#: engines/nancy/cheat.cpp:54
 msgid "Ok"
 msgstr "Aceptar"
 
@@ -604,9 +613,9 @@ msgid "Interact"
 msgstr "Interpolación:"
 
 #: gui/gui-manager.cpp:122 gui/unknown-game-dialog.cpp:54
-#: engines/scumm/help.cpp:125 engines/scumm/help.cpp:140
-#: engines/scumm/help.cpp:165 engines/scumm/help.cpp:191
-#: engines/scumm/help.cpp:209
+#: engines/nancy/cheat.cpp:266 engines/scumm/help.cpp:125
+#: engines/scumm/help.cpp:140 engines/scumm/help.cpp:165
+#: engines/scumm/help.cpp:191 engines/scumm/help.cpp:209
 msgid "Close"
 msgstr "Pechar"
 
@@ -4166,10 +4175,10 @@ msgstr ""
 
 #: engines/dragons/metaengine.cpp:152 engines/griffon/metaengine.cpp:127
 #: engines/grim/grim.cpp:491 engines/grim/grim.cpp:583
-#: engines/hdb/metaengine.cpp:231 engines/scumm/help.cpp:225
-#: engines/scumm/help.cpp:234 engines/scumm/help.cpp:241
-#: engines/scumm/help.cpp:249 engines/twine/metaengine.cpp:397
-#: engines/zvision/metaengine.cpp:164
+#: engines/hdb/metaengine.cpp:231 engines/nancy/cheat.cpp:96
+#: engines/scumm/help.cpp:225 engines/scumm/help.cpp:234
+#: engines/scumm/help.cpp:241 engines/scumm/help.cpp:249
+#: engines/twine/metaengine.cpp:397 engines/zvision/metaengine.cpp:164
 msgid "Inventory"
 msgstr "Inventario"
 
@@ -4740,22 +4749,22 @@ msgstr "Activa o modo Helio."
 msgid "Debug info and level selection becomes available"
 msgstr ""
 
-#: engines/hdb/metaengine.cpp:193
+#: engines/hdb/metaengine.cpp:193 engines/nancy/input.cpp:184
 #, fuzzy
 msgid "Move up"
 msgstr "Mover cara atrás"
 
-#: engines/hdb/metaengine.cpp:199
+#: engines/hdb/metaengine.cpp:199 engines/nancy/input.cpp:190
 #, fuzzy
 msgid "Move down"
 msgstr "Cancelar descarga"
 
-#: engines/hdb/metaengine.cpp:205
+#: engines/hdb/metaengine.cpp:205 engines/nancy/input.cpp:196
 #, fuzzy
 msgid "Move left"
 msgstr "Mover á esquerda"
 
-#: engines/hdb/metaengine.cpp:211
+#: engines/hdb/metaengine.cpp:211 engines/nancy/input.cpp:202
 #, fuzzy
 msgid "Move right"
 msgstr "Mover á dereita"
@@ -5417,6 +5426,175 @@ msgstr ""
 #: engines/myst3/myst3.cpp:1575 engines/pegasus/pegasus.cpp:737
 msgid "Invalid file name for saving"
 msgstr "Nome de ficheiro de gardado non válido"
+
+#: engines/nancy/action/telephone.cpp:144
+msgid "ringing...<n><e>"
+msgstr ""
+
+#: engines/nancy/cheat.cpp:56
+msgid "General"
+msgstr ""
+
+#: engines/nancy/cheat.cpp:56
+msgid "Cheat.General"
+msgstr ""
+
+#: engines/nancy/cheat.cpp:58
+msgid "Scene Data"
+msgstr ""
+
+#: engines/nancy/cheat.cpp:59
+#, fuzzy
+#| msgid "Start the debugger"
+msgid "Restart the Scene"
+msgstr "Iniciar o depurador"
+
+#: engines/nancy/cheat.cpp:61
+msgid "Scene Number"
+msgstr ""
+
+#: engines/nancy/cheat.cpp:63
+msgid "Frame Number"
+msgstr ""
+
+#: engines/nancy/cheat.cpp:65
+msgid "Background Top (Y)"
+msgstr ""
+
+#: engines/nancy/cheat.cpp:67
+msgid "Hints Remaining"
+msgstr ""
+
+#: engines/nancy/cheat.cpp:68
+msgid "Easy"
+msgstr ""
+
+#: engines/nancy/cheat.cpp:70
+msgid "Medium"
+msgstr ""
+
+#: engines/nancy/cheat.cpp:72
+msgid "Hard"
+msgstr ""
+
+#: engines/nancy/cheat.cpp:75 engines/nancy/cheat.cpp:86
+#, fuzzy
+msgid "Player Data"
+msgstr "Tempo de xogo: "
+
+#: engines/nancy/cheat.cpp:76
+#, fuzzy
+#| msgid "Playtime: "
+msgid "Player Time:"
+msgstr "Tempo de xogo: "
+
+#: engines/nancy/cheat.cpp:78
+msgid "Days"
+msgstr ""
+
+#: engines/nancy/cheat.cpp:80 engines/nancy/cheat.cpp:90
+msgid "Hours"
+msgstr ""
+
+#: engines/nancy/cheat.cpp:82 engines/nancy/cheat.cpp:92
+msgid "Minutes"
+msgstr ""
+
+#: engines/nancy/cheat.cpp:84
+msgid "Player Difficulty Level"
+msgstr ""
+
+#: engines/nancy/cheat.cpp:87
+#, fuzzy
+#| msgid "Time: "
+msgid "Timer On"
+msgstr "Hora: "
+
+#: engines/nancy/cheat.cpp:94
+#, fuzzy
+#| msgid "Second kid"
+msgid "Seconds"
+msgstr "Rapaz 2"
+
+#: engines/nancy/cheat.cpp:96
+#, fuzzy
+#| msgid "Inventory"
+msgid "Cheat.Inventory"
+msgstr "Inventario"
+
+#: engines/nancy/cheat.cpp:163
+#, fuzzy
+msgid "Invalid Scene ID!"
+msgstr "Código non válido"
+
+#: engines/nancy/input.cpp:170
+#, fuzzy
+#| msgid "Left Click"
+msgid "Left Click Interact"
+msgstr "Botón primario"
+
+#: engines/nancy/input.cpp:177
+#, fuzzy
+#| msgid "Right Click Once"
+msgid "Right Click Interact"
+msgstr "Botón secundario unha vez"
+
+#: engines/nancy/input.cpp:208
+#, fuzzy
+#| msgid "Fast mode"
+msgid "Fast move modifier"
+msgstr "Modo Rápido"
+
+#: engines/nancy/input.cpp:216
+#, fuzzy
+msgid "Toggle fast conversation mode"
+msgstr "Modo Rápido"
+
+#: engines/nancy/input.cpp:221
+#, fuzzy
+msgid "Toggle end conversation mode"
+msgstr "Modo Rápido"
+
+#: engines/nancy/input.cpp:226
+#, fuzzy
+msgid "Go to main menu"
+msgstr "~V~olver ao Iniciador"
+
+#: engines/nancy/input.cpp:231
+#, fuzzy
+#| msgid "Insert save/load game disk"
+msgid "Go to save/load menu"
+msgstr "Inserir disco de gardado/carga"
+
+#: engines/nancy/input.cpp:236
+#, fuzzy
+#| msgid "No date saved"
+msgid "Reload last save"
+msgstr "Non hai data gardada"
+
+#: engines/nancy/input.cpp:241
+#, fuzzy
+msgid "Go to setup menu"
+msgstr "Opcións"
+
+#: engines/nancy/input.cpp:246
+#, fuzzy
+msgid "Show credits"
+msgstr "Mostrar cursor do rato"
+
+#: engines/nancy/input.cpp:251
+#, fuzzy
+msgid "Go to map screen"
+msgstr "Axuste de desprazamento SI"
+
+#: engines/nancy/input.cpp:257
+#, fuzzy
+msgid "Open general cheat menu"
+msgstr "Activa o modo Helio."
+
+#: engines/nancy/input.cpp:262
+msgid "Open event flags cheat menu"
+msgstr ""
 
 #: engines/neverhood/detection.cpp:119
 msgid "Skip the Hall of Records storyboard scenes"
@@ -8134,10 +8312,6 @@ msgstr ""
 #~ msgstr "Ampliar"
 
 #, fuzzy
-#~ msgid "Swap screens"
-#~ msgstr "Axuste de desprazamento SI"
-
-#, fuzzy
 #~ msgid "Indiana Jones Fight controls:"
 #~ msgstr "Controis de combate de ~I~ndy"
 
@@ -8221,9 +8395,6 @@ msgstr ""
 
 #~ msgid "Swipe three fingers to the right to toggle."
 #~ msgstr "Arrastra tres dedos á dereita para cambiar o estado."
-
-#~ msgid "Right Click Once"
-#~ msgstr "Botón secundario unha vez"
 
 #~ msgid "Move Only"
 #~ msgstr "Mover unicamente"

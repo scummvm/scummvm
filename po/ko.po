@@ -3,11 +3,19 @@
 # This file is distributed under the same license as the ScummVM package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
+#: engines/nancy/cheat.cpp:59 engines/nancy/cheat.cpp:60
+#: engines/nancy/cheat.cpp:62 engines/nancy/cheat.cpp:64
+#: engines/nancy/cheat.cpp:69 engines/nancy/cheat.cpp:71
+#: engines/nancy/cheat.cpp:73 engines/nancy/cheat.cpp:77
+#: engines/nancy/cheat.cpp:79 engines/nancy/cheat.cpp:81
+#: engines/nancy/cheat.cpp:83 engines/nancy/cheat.cpp:87
+#: engines/nancy/cheat.cpp:89 engines/nancy/cheat.cpp:91
+#: engines/nancy/cheat.cpp:93
 msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-03-23 06:58+0000\n"
+"POT-Creation-Date: 2021-03-24 16:21+0000\n"
 "PO-Revision-Date: 2021-03-07 12:24+0000\n"
 "Last-Translator: Joohan Lee <losernator@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -73,7 +81,7 @@ msgstr "위로"
 #: engines/mohawk/myst_stacks/menu.cpp:319
 #: engines/mohawk/riven_stacks/aspit.cpp:350
 #: engines/mohawk/riven_stacks/aspit.cpp:372
-#: engines/mohawk/riven_stacks/aspit.cpp:456
+#: engines/mohawk/riven_stacks/aspit.cpp:456 engines/nancy/cheat.cpp:53
 #: engines/parallaction/saveload.cpp:271 engines/scumm/dialogs.cpp:180
 #: engines/sword1/control.cpp:889 engines/wintermute/wintermute.cpp:210
 msgid "Cancel"
@@ -476,6 +484,7 @@ msgid "Notes:"
 msgstr "메모:"
 
 #: gui/editrecorddialog.cpp:68 gui/predictivedialog.cpp:70
+#: engines/nancy/cheat.cpp:54
 msgid "Ok"
 msgstr "확인"
 
@@ -592,9 +601,9 @@ msgid "Interact"
 msgstr "상호작용"
 
 #: gui/gui-manager.cpp:122 gui/unknown-game-dialog.cpp:54
-#: engines/scumm/help.cpp:125 engines/scumm/help.cpp:140
-#: engines/scumm/help.cpp:165 engines/scumm/help.cpp:191
-#: engines/scumm/help.cpp:209
+#: engines/nancy/cheat.cpp:266 engines/scumm/help.cpp:125
+#: engines/scumm/help.cpp:140 engines/scumm/help.cpp:165
+#: engines/scumm/help.cpp:191 engines/scumm/help.cpp:209
 msgid "Close"
 msgstr "닫기"
 
@@ -4054,10 +4063,10 @@ msgstr "변경 명령"
 
 #: engines/dragons/metaengine.cpp:152 engines/griffon/metaengine.cpp:127
 #: engines/grim/grim.cpp:491 engines/grim/grim.cpp:583
-#: engines/hdb/metaengine.cpp:231 engines/scumm/help.cpp:225
-#: engines/scumm/help.cpp:234 engines/scumm/help.cpp:241
-#: engines/scumm/help.cpp:249 engines/twine/metaengine.cpp:397
-#: engines/zvision/metaengine.cpp:164
+#: engines/hdb/metaengine.cpp:231 engines/nancy/cheat.cpp:96
+#: engines/scumm/help.cpp:225 engines/scumm/help.cpp:234
+#: engines/scumm/help.cpp:241 engines/scumm/help.cpp:249
+#: engines/twine/metaengine.cpp:397 engines/zvision/metaengine.cpp:164
 msgid "Inventory"
 msgstr "인벤토리"
 
@@ -4630,19 +4639,19 @@ msgstr "치트 모드 활성화"
 msgid "Debug info and level selection becomes available"
 msgstr "디버그 정보와 레벨 선택이 가능해집니다"
 
-#: engines/hdb/metaengine.cpp:193
+#: engines/hdb/metaengine.cpp:193 engines/nancy/input.cpp:184
 msgid "Move up"
 msgstr "위로 이동"
 
-#: engines/hdb/metaengine.cpp:199
+#: engines/hdb/metaengine.cpp:199 engines/nancy/input.cpp:190
 msgid "Move down"
 msgstr "아래로 이동"
 
-#: engines/hdb/metaengine.cpp:205
+#: engines/hdb/metaengine.cpp:205 engines/nancy/input.cpp:196
 msgid "Move left"
 msgstr "왼쪽으로 이동"
 
-#: engines/hdb/metaengine.cpp:211
+#: engines/hdb/metaengine.cpp:211 engines/nancy/input.cpp:202
 msgid "Move right"
 msgstr "오른쪽으로 이동"
 
@@ -5304,6 +5313,183 @@ msgstr ""
 #, fuzzy
 msgid "Invalid file name for saving"
 msgstr "저장할 파일명을 입력"
+
+#: engines/nancy/action/telephone.cpp:144
+msgid "ringing...<n><e>"
+msgstr ""
+
+#: engines/nancy/cheat.cpp:56
+msgid "General"
+msgstr ""
+
+#: engines/nancy/cheat.cpp:56
+msgid "Cheat.General"
+msgstr ""
+
+#: engines/nancy/cheat.cpp:58
+msgid "Scene Data"
+msgstr ""
+
+#: engines/nancy/cheat.cpp:59
+#, fuzzy
+#| msgid "Start the debugger"
+msgid "Restart the Scene"
+msgstr "디버거를 시작"
+
+#: engines/nancy/cheat.cpp:61
+msgid "Scene Number"
+msgstr ""
+
+#: engines/nancy/cheat.cpp:63
+msgid "Frame Number"
+msgstr ""
+
+#: engines/nancy/cheat.cpp:65
+msgid "Background Top (Y)"
+msgstr ""
+
+#: engines/nancy/cheat.cpp:67
+msgid "Hints Remaining"
+msgstr ""
+
+#: engines/nancy/cheat.cpp:68
+msgid "Easy"
+msgstr ""
+
+#: engines/nancy/cheat.cpp:70
+msgid "Medium"
+msgstr ""
+
+#: engines/nancy/cheat.cpp:72
+msgid "Hard"
+msgstr ""
+
+#: engines/nancy/cheat.cpp:75 engines/nancy/cheat.cpp:86
+#, fuzzy
+#| msgid "Player 1: Left"
+msgid "Player Data"
+msgstr "플레이어 1:왼쪽"
+
+#: engines/nancy/cheat.cpp:76
+#, fuzzy
+#| msgid "Playtime: "
+msgid "Player Time:"
+msgstr "플레이 시간: "
+
+#: engines/nancy/cheat.cpp:78
+msgid "Days"
+msgstr ""
+
+#: engines/nancy/cheat.cpp:80 engines/nancy/cheat.cpp:90
+msgid "Hours"
+msgstr ""
+
+#: engines/nancy/cheat.cpp:82 engines/nancy/cheat.cpp:92
+#, fuzzy
+#| msgid "Minus"
+msgid "Minutes"
+msgstr "Minus"
+
+#: engines/nancy/cheat.cpp:84
+msgid "Player Difficulty Level"
+msgstr ""
+
+#: engines/nancy/cheat.cpp:87
+#, fuzzy
+#| msgid "Time: "
+msgid "Timer On"
+msgstr "시각: "
+
+#: engines/nancy/cheat.cpp:94
+#, fuzzy
+#| msgid "Second kid"
+msgid "Seconds"
+msgstr "두 번째 캐릭터"
+
+#: engines/nancy/cheat.cpp:96
+#, fuzzy
+#| msgid "Inventory"
+msgid "Cheat.Inventory"
+msgstr "인벤토리"
+
+#: engines/nancy/cheat.cpp:163
+#, fuzzy
+#| msgid "Invalid path!"
+msgid "Invalid Scene ID!"
+msgstr "잘못된 경로입니다!"
+
+#: engines/nancy/input.cpp:170
+#, fuzzy
+#| msgid "Left Click"
+msgid "Left Click Interact"
+msgstr "왼쪽 클릭"
+
+#: engines/nancy/input.cpp:177
+#, fuzzy
+#| msgid "Right Click"
+msgid "Right Click Interact"
+msgstr "오른쪽 클릭"
+
+#: engines/nancy/input.cpp:208
+#, fuzzy
+#| msgid "Fast mode"
+msgid "Fast move modifier"
+msgstr "고속 모드"
+
+#: engines/nancy/input.cpp:216
+#, fuzzy
+msgid "Toggle fast conversation mode"
+msgstr "드래그 모드 전환"
+
+#: engines/nancy/input.cpp:221
+#, fuzzy
+msgid "Toggle end conversation mode"
+msgstr "드래그 모드 전환"
+
+#: engines/nancy/input.cpp:226
+#, fuzzy
+#| msgid "Open main menu"
+msgid "Go to main menu"
+msgstr "메인 메뉴 열기"
+
+#: engines/nancy/input.cpp:231
+#, fuzzy
+#| msgid "Insert save/load game disk"
+msgid "Go to save/load menu"
+msgstr "저장하거나 불러올 디스크를 넣어 주세요"
+
+#: engines/nancy/input.cpp:236
+#, fuzzy
+#| msgid "No date saved"
+msgid "Reload last save"
+msgstr "날짜가 기록되지 않음"
+
+#: engines/nancy/input.cpp:241
+#, fuzzy
+#| msgid "Show options menu"
+msgid "Go to setup menu"
+msgstr "옵션 메뉴 보이기"
+
+#: engines/nancy/input.cpp:246
+#, fuzzy
+#| msgid "Show game credits"
+msgid "Show credits"
+msgstr "게임 크레딧 표시"
+
+#: engines/nancy/input.cpp:251
+#, fuzzy
+msgid "Go to map screen"
+msgstr "스크린샷 저장"
+
+#: engines/nancy/input.cpp:257
+#, fuzzy
+#| msgid "Enable cheat mode"
+msgid "Open general cheat menu"
+msgstr "치트 모드 활성화"
+
+#: engines/nancy/input.cpp:262
+msgid "Open event flags cheat menu"
+msgstr ""
 
 #: engines/neverhood/detection.cpp:119
 msgid "Skip the Hall of Records storyboard scenes"
@@ -7889,10 +8075,6 @@ msgstr ""
 #, fuzzy
 #~ msgid "Show/hide debug console"
 #~ msgstr "콘솔을 보이기/숨기기"
-
-#, fuzzy
-#~ msgid "Swap screens"
-#~ msgstr "스크린샷 저장"
 
 #, fuzzy
 #~ msgid "Indiana Jones Fight controls:"

@@ -2,11 +2,19 @@
 # Copyright (C) 2010-2017 The ScummVM Team
 # This file is distributed under the same license as the ScummVM package.
 # George Kormendi <grubycza@hotmail.com>, 2010, 2016.
+#: engines/nancy/cheat.cpp:59 engines/nancy/cheat.cpp:60
+#: engines/nancy/cheat.cpp:62 engines/nancy/cheat.cpp:64
+#: engines/nancy/cheat.cpp:69 engines/nancy/cheat.cpp:71
+#: engines/nancy/cheat.cpp:73 engines/nancy/cheat.cpp:77
+#: engines/nancy/cheat.cpp:79 engines/nancy/cheat.cpp:81
+#: engines/nancy/cheat.cpp:83 engines/nancy/cheat.cpp:87
+#: engines/nancy/cheat.cpp:89 engines/nancy/cheat.cpp:91
+#: engines/nancy/cheat.cpp:93
 msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-03-23 06:58+0000\n"
+"POT-Creation-Date: 2021-03-24 16:21+0000\n"
 "PO-Revision-Date: 2021-03-22 08:50+0000\n"
 "Last-Translator: George Kormendi <grubycza@hotmail.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
@@ -73,7 +81,7 @@ msgstr "Feljebb"
 #: engines/mohawk/myst_stacks/menu.cpp:319
 #: engines/mohawk/riven_stacks/aspit.cpp:350
 #: engines/mohawk/riven_stacks/aspit.cpp:372
-#: engines/mohawk/riven_stacks/aspit.cpp:456
+#: engines/mohawk/riven_stacks/aspit.cpp:456 engines/nancy/cheat.cpp:53
 #: engines/parallaction/saveload.cpp:271 engines/scumm/dialogs.cpp:180
 #: engines/sword1/control.cpp:889 engines/wintermute/wintermute.cpp:210
 msgid "Cancel"
@@ -476,6 +484,7 @@ msgid "Notes:"
 msgstr "Megjegyzés:"
 
 #: gui/editrecorddialog.cpp:68 gui/predictivedialog.cpp:70
+#: engines/nancy/cheat.cpp:54
 msgid "Ok"
 msgstr "Ok"
 
@@ -593,9 +602,9 @@ msgid "Interact"
 msgstr "Interakció"
 
 #: gui/gui-manager.cpp:122 gui/unknown-game-dialog.cpp:54
-#: engines/scumm/help.cpp:125 engines/scumm/help.cpp:140
-#: engines/scumm/help.cpp:165 engines/scumm/help.cpp:191
-#: engines/scumm/help.cpp:209
+#: engines/nancy/cheat.cpp:266 engines/scumm/help.cpp:125
+#: engines/scumm/help.cpp:140 engines/scumm/help.cpp:165
+#: engines/scumm/help.cpp:191 engines/scumm/help.cpp:209
 msgid "Close"
 msgstr "Bezár"
 
@@ -4064,10 +4073,10 @@ msgstr "Utasítás Változtatás"
 
 #: engines/dragons/metaengine.cpp:152 engines/griffon/metaengine.cpp:127
 #: engines/grim/grim.cpp:491 engines/grim/grim.cpp:583
-#: engines/hdb/metaengine.cpp:231 engines/scumm/help.cpp:225
-#: engines/scumm/help.cpp:234 engines/scumm/help.cpp:241
-#: engines/scumm/help.cpp:249 engines/twine/metaengine.cpp:397
-#: engines/zvision/metaengine.cpp:164
+#: engines/hdb/metaengine.cpp:231 engines/nancy/cheat.cpp:96
+#: engines/scumm/help.cpp:225 engines/scumm/help.cpp:234
+#: engines/scumm/help.cpp:241 engines/scumm/help.cpp:249
+#: engines/twine/metaengine.cpp:397 engines/zvision/metaengine.cpp:164
 msgid "Inventory"
 msgstr "Tárgylista"
 
@@ -4643,19 +4652,19 @@ msgstr "Csaló mód engedélyezés"
 msgid "Debug info and level selection becomes available"
 msgstr "Hibakeresési információ és szintválasztás elérhetõvé válik"
 
-#: engines/hdb/metaengine.cpp:193
+#: engines/hdb/metaengine.cpp:193 engines/nancy/input.cpp:184
 msgid "Move up"
 msgstr "Mozgás fel"
 
-#: engines/hdb/metaengine.cpp:199
+#: engines/hdb/metaengine.cpp:199 engines/nancy/input.cpp:190
 msgid "Move down"
 msgstr "Mozgás le"
 
-#: engines/hdb/metaengine.cpp:205
+#: engines/hdb/metaengine.cpp:205 engines/nancy/input.cpp:196
 msgid "Move left"
 msgstr "Mozgás balra"
 
-#: engines/hdb/metaengine.cpp:211
+#: engines/hdb/metaengine.cpp:211 engines/nancy/input.cpp:202
 msgid "Move right"
 msgstr "Mozgás jobbra"
 
@@ -5319,6 +5328,188 @@ msgstr ""
 #: engines/myst3/myst3.cpp:1575 engines/pegasus/pegasus.cpp:737
 msgid "Invalid file name for saving"
 msgstr "Érvénytelen fájlnév a mentéshez"
+
+#: engines/nancy/action/telephone.cpp:144
+msgid "ringing...<n><e>"
+msgstr ""
+
+#: engines/nancy/cheat.cpp:56
+msgid "General"
+msgstr "Általános"
+
+#: engines/nancy/cheat.cpp:56
+#, fuzzy
+#| msgid "General"
+msgid "Cheat.General"
+msgstr "Általános"
+
+#: engines/nancy/cheat.cpp:58
+msgid "Scene Data"
+msgstr ""
+
+#: engines/nancy/cheat.cpp:59
+#, fuzzy
+#| msgid "Start the debugger"
+msgid "Restart the Scene"
+msgstr "Hibakeresõ indítása"
+
+#: engines/nancy/cheat.cpp:61
+msgid "Scene Number"
+msgstr ""
+
+#: engines/nancy/cheat.cpp:63
+msgid "Frame Number"
+msgstr ""
+
+#: engines/nancy/cheat.cpp:65
+msgid "Background Top (Y)"
+msgstr ""
+
+#: engines/nancy/cheat.cpp:67
+msgid "Hints Remaining"
+msgstr ""
+
+#: engines/nancy/cheat.cpp:68
+msgid "Easy"
+msgstr ""
+
+#: engines/nancy/cheat.cpp:70
+msgid "Medium"
+msgstr ""
+
+#: engines/nancy/cheat.cpp:72
+msgid "Hard"
+msgstr ""
+
+#: engines/nancy/cheat.cpp:75 engines/nancy/cheat.cpp:86
+#, fuzzy
+#| msgid "Player 1: Left"
+msgid "Player Data"
+msgstr "1.Játékos: Bal"
+
+#: engines/nancy/cheat.cpp:76
+#, fuzzy
+#| msgid "Playtime: "
+msgid "Player Time:"
+msgstr "Játékidõ: "
+
+#: engines/nancy/cheat.cpp:78
+msgid "Days"
+msgstr ""
+
+#: engines/nancy/cheat.cpp:80 engines/nancy/cheat.cpp:90
+msgid "Hours"
+msgstr ""
+
+#: engines/nancy/cheat.cpp:82 engines/nancy/cheat.cpp:92
+#, fuzzy
+#| msgid "Minus"
+msgid "Minutes"
+msgstr "Minusz"
+
+#: engines/nancy/cheat.cpp:84
+msgid "Player Difficulty Level"
+msgstr ""
+
+#: engines/nancy/cheat.cpp:87
+#, fuzzy
+#| msgid "Time: "
+msgid "Timer On"
+msgstr "Idõ: "
+
+#: engines/nancy/cheat.cpp:94
+#, fuzzy
+#| msgid "Second kid"
+msgid "Seconds"
+msgstr "Második gyerek"
+
+#: engines/nancy/cheat.cpp:96
+#, fuzzy
+#| msgid "Inventory"
+msgid "Cheat.Inventory"
+msgstr "Tárgylista"
+
+#: engines/nancy/cheat.cpp:163
+#, fuzzy
+#| msgid "Invalid path!"
+msgid "Invalid Scene ID!"
+msgstr "Érvénytelen útvonal!"
+
+#: engines/nancy/input.cpp:170
+#, fuzzy
+#| msgid "Left Click"
+msgid "Left Click Interact"
+msgstr "Bal katt"
+
+#: engines/nancy/input.cpp:177
+#, fuzzy
+#| msgid "Right Click Once"
+msgid "Right Click Interact"
+msgstr "Jobb katt egyszer"
+
+#: engines/nancy/input.cpp:208
+#, fuzzy
+#| msgid "Fast mode"
+msgid "Fast move modifier"
+msgstr "Gyors mód"
+
+#: engines/nancy/input.cpp:216
+#, fuzzy
+#| msgid "Toggle fast mode"
+msgid "Toggle fast conversation mode"
+msgstr "Váltás a gyors módra"
+
+#: engines/nancy/input.cpp:221
+#, fuzzy
+#| msgid "Toggle fast mode"
+msgid "Toggle end conversation mode"
+msgstr "Váltás a gyors módra"
+
+#: engines/nancy/input.cpp:226
+#, fuzzy
+#| msgid "Return to main menu"
+msgid "Go to main menu"
+msgstr "Visszatérés a fõmenübe"
+
+#: engines/nancy/input.cpp:231
+#, fuzzy
+#| msgid "Insert save/load game disk"
+msgid "Go to save/load menu"
+msgstr "Helyezd be a játékmentés lemezt"
+
+#: engines/nancy/input.cpp:236
+#, fuzzy
+#| msgid "No date saved"
+msgid "Reload last save"
+msgstr "Dátum nincs mentve"
+
+#: engines/nancy/input.cpp:241
+#, fuzzy
+#| msgid "Show options menu"
+msgid "Go to setup menu"
+msgstr "Opciók menü megjelenítése"
+
+#: engines/nancy/input.cpp:246
+#, fuzzy
+#| msgid "Show game credits"
+msgid "Show credits"
+msgstr "Játék stáblista megjelenítése"
+
+#: engines/nancy/input.cpp:251
+#, fuzzy
+#| msgid "Swap screens"
+msgid "Go to map screen"
+msgstr "Képernyők cseréje"
+
+#: engines/nancy/input.cpp:257
+#, fuzzy
+#| msgid "Enable cheat mode"
+msgid "Open general cheat menu"
+msgstr "Csaló mód engedélyezés"
+
+#: engines/nancy/input.cpp:262
+msgid "Open event flags cheat menu"
+msgstr ""
 
 #: engines/neverhood/detection.cpp:119
 msgid "Skip the Hall of Records storyboard scenes"
@@ -7910,9 +8101,6 @@ msgstr ""
 #~ msgid "Brightness:"
 #~ msgstr "Fényerõ:"
 
-#~ msgid "General"
-#~ msgstr "Általános"
-
 #~ msgid "High quality audio (slower) (reboot)"
 #~ msgstr "Jóminõségü audió (lassabb)(újraindítás)"
 
@@ -7972,9 +8160,6 @@ msgstr ""
 
 #~ msgid "DS Controls (left handed):"
 #~ msgstr "DS vezérlők (balkezes):"
-
-#~ msgid "Swap screens"
-#~ msgstr "Képernyők cseréje"
 
 #~ msgid "Indiana Jones Fight controls:"
 #~ msgstr "Indiana Jones Harc irányítás:"
@@ -8081,9 +8266,6 @@ msgstr ""
 #~ msgid "Swipe three fingers to the right to toggle."
 #~ msgstr "Üsd három újjal hogy biztosan váltson."
 
-#~ msgid "Right Click Once"
-#~ msgstr "Jobb katt egyszer"
-
 #~ msgid "Move Only"
 #~ msgstr "Csak lépés"
 
@@ -8116,9 +8298,6 @@ msgstr ""
 #~ msgstr ""
 #~ "Ehhez a játékhoz 3D karakter támogatás szükséges, ami a ScummVM hatókörén "
 #~ "kívül esik."
-
-#~ msgid "Return to main menu"
-#~ msgstr "Visszatérés a fõmenübe"
 
 #~ msgid "C-Pad Sensitivity:"
 #~ msgstr "C-Pad érzékenység:"
