@@ -34,7 +34,6 @@ namespace Trecision {
 /*-------------------------------------------------------------------------*/
 void ProcessTime() {
 #define SCR 2
-	extern int16  TextStackTop;
 
 	static uint8 OldRegInvSI  = 0xFF;
 	static uint8 OldRegInvSL  = 0xFF;
@@ -44,7 +43,7 @@ void ProcessTime() {
 	g_vm->_animMgr->refreshAllAnimations();
 
 	if (TheTime >= g_vm->_nextRefresh) {
-		PaintString();
+		g_vm->drawString();
 
 		if ((g_vm->_inventoryStatus == INV_PAINT) || (g_vm->_inventoryStatus == INV_DEPAINT))
 			RollInventory(g_vm->_inventoryStatus);
@@ -58,9 +57,9 @@ void ProcessTime() {
 		}
 
 		PaintScreen(0);
-		TextStackTop = -1;
+		g_vm->_textStackTop = -1;
 
-		FlagScreenRefreshed = true;
+		g_vm->_flagScreenRefreshed = true;
 		uint32 PaintTime = ReadTime();
 		if ((PaintTime - TheTime) >= 5)
 			g_vm->_nextRefresh = PaintTime + 1;
@@ -106,7 +105,7 @@ void ProcessMouse() {
 		MaskMouse = false;
 
 	if (!(mright || mleft)) {
-		if (!Flagscriptactive) {
+		if (!g_vm->_flagscriptactive) {
 			if ((tmpMx != oldmx) || (my != oldmy)) {
 				doEvent(MC_MOUSE, ME_MMOVE, MP_DEFAULT, tmpMx, my, 0, 0);
 				oldmx = tmpMx;

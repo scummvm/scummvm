@@ -52,12 +52,10 @@ SSortTable SortTable[200];
 /*-------------------------------------------------------------------------*/
 /*                             FLAGS DI STATO          					   */
 /*-------------------------------------------------------------------------*/
-bool  Flagscriptactive;
 bool  FlagDialogActive;
 bool  FlagDialogMenuActive;
 bool  Flagskiptalk;
 bool  Flagskipenable;
-bool  FlagScreenRefreshed;
 bool  FlagPaintCharacter;
 bool  FlagShowCharacter = true;
 bool  FlagSomeOneSpeak;

@@ -277,7 +277,7 @@ void PaintScreen(uint8 flag) {
 	// gestione papaverina ritardata
 	if ((g_vm->_curRoom == r4A) && (g_vm->_obj[oCIOCCOLATINI4A]._flag & OBJFLAG_EXTRA)) {
 		if (g_vm->_animMgr->_curAnimFrame[0] > 480) {
-			PlayScript(s4AHELLEN);
+			g_vm->PlayScript(s4AHELLEN);
 			g_vm->_obj[oCIOCCOLATINI4A]._flag &= ~OBJFLAG_EXTRA;
 		}
 		return;

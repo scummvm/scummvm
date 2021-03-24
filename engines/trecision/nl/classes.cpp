@@ -75,7 +75,7 @@ void doAction() {
 				g_vm->_useWithInv[USED] = false;
 				g_vm->_useWithInv[WITH] = false;
 				FlagUseWithStarted = false;
-				ClearText();
+				g_vm->clearText();
 			} else
 				doEvent(MC_ACTION, ME_USEWITH, MP_SYSTEM, 0, 0, 0, 0);
 			g_vm->_curObj = 0;
@@ -359,7 +359,7 @@ void doMouse() {
 
 		//	Game area
 		if (GAMEAREA(g_vm->_curMessage->_u16Param2) && (!g_vm->_animMgr->_playingAnims[1])) {
-			if (Flagscriptactive)
+			if (g_vm->_flagscriptactive)
 				g_vm->_curObj = g_vm->_curMessage->_u32Param;
 
 			int pmousex = g_vm->_curMessage->_u16Param1;
@@ -380,7 +380,7 @@ void doMouse() {
 				if ((g_vm->_curRoom == r1D) && !(g_vm->_room[r1D]._flag & OBJFLAG_EXTRA) && (g_vm->_curObj != oSCALA1D))
 					g_vm->_curObj = oDONNA1D;
 				else if ((g_vm->_curRoom == r2B) && (g_vm->_room[r2B]._flag & OBJFLAG_EXTRA) && (g_vm->_curObj != oCARTELLO2B) && (g_vm->_curObj != od2BALLA28)) {
-					ClearText();
+					g_vm->clearText();
 					g_vm->_curObj = oPORTA2B;
 					StartCharacterAction(a2B1PROVAAPRIREPORTA, 0, 0, 0);
 					if (FlagUseWithStarted) {
@@ -395,7 +395,7 @@ void doMouse() {
 						g_vm->_useWithInv[USED] = false;
 						g_vm->_useWithInv[WITH] = false;
 						FlagUseWithStarted = false;
-						ClearText();
+						g_vm->clearText();
 					}
 					break;
 				} else if ((g_vm->_curRoom == r35) && !(g_vm->_room[r35]._flag & OBJFLAG_EXTRA) && ((g_vm->_curObj == oFRONTOFFICEC35) || (g_vm->_curObj == oFRONTOFFICEA35) || (g_vm->_curObj == oASCENSORE35) || (g_vm->_curObj == oMONITOR35) || (g_vm->_curObj == oSEDIA35) || (g_vm->_curObj == oRIBELLEA35) || (g_vm->_curObj == oCOMPUTER35) || (g_vm->_curObj == oGIORNALE35))) {
@@ -413,7 +413,7 @@ void doMouse() {
 						g_vm->_useWithInv[USED] = false;
 						g_vm->_useWithInv[WITH] = false;
 						FlagUseWithStarted = false;
-						ClearText();
+						g_vm->clearText();
 					}
 					break;
 				} else if ((g_vm->_curMessage->_event == ME_MLEFT) &&
@@ -495,7 +495,7 @@ void StartCharacterAction(uint16 Act, uint16 NewRoom, uint8 NewPos, uint16 sent)
 	if (sent)
 		CharacterTalkInAction(sent);
 	else
-		ClearText();
+		g_vm->clearText();
 }
 
 /*-------------------------------------------------------------------------*/
@@ -562,7 +562,7 @@ void doCharacter() {
 		} else
 			actorDoAction(g_vm->_curMessage->_u16Param1);
 
-		ClearText();
+		g_vm->clearText();
 		break;
 
 	case ME_CHARACTERCONTINUEACTION:
@@ -793,7 +793,7 @@ void RollInventory(uint8 status) {
 			g_vm->_inventoryCounter = INVENTORY_SHOW;
 			if (!(INVAREA(my)))
 				doEvent(MC_INVENTORY, ME_CLOSE, MP_DEFAULT, 0, 0, 0, 0);
-			RepaintString();
+			g_vm->redrawString();
 			return ;
 		}
 	} else if (status == INV_DEPAINT) {
@@ -807,7 +807,7 @@ void RollInventory(uint8 status) {
 			if (INVAREA(my) && !(FlagDialogActive || FlagDialogMenuActive))
 				doEvent(MC_INVENTORY, ME_OPEN, MP_DEFAULT, 0, 0, 0, 0);
 			else
-				RepaintString();
+				g_vm->redrawString();
 			return ;
 		}
 	}
@@ -837,7 +837,7 @@ void doIdle() {
 		if (FlagDialogActive) {
 			if (g_vm->_animMgr->_fullMotionEnd != g_vm->_animMgr->_curAnimFrame[1])
 				g_vm->_animMgr->_fullMotionEnd = g_vm->_animMgr->_curAnimFrame[1] + 1;
-		} else if (!FlagSomeOneSpeak && !Flagscriptactive && !FlagDialogActive && !FlagDialogMenuActive && (_actor._curAction < hWALKIN) && !FlagUseWithStarted && g_vm->_animMgr->_playingAnims[1] == 0 && FlagShowCharacter) {
+		} else if (!FlagSomeOneSpeak && !g_vm->_flagscriptactive && !FlagDialogActive && !FlagDialogMenuActive && (_actor._curAction < hWALKIN) && !FlagUseWithStarted && g_vm->_animMgr->_playingAnims[1] == 0 && FlagShowCharacter) {
 			actorStop();
 			nextStep();
 			Mouse(MCMD_ON);
@@ -852,7 +852,7 @@ void doIdle() {
 
 	// Sys
 	case 0x3B:
-		if (!FlagSomeOneSpeak && !Flagscriptactive && !FlagDialogActive && !FlagDialogMenuActive && (_actor._curAction < hWALKIN) && !FlagUseWithStarted && g_vm->_animMgr->_playingAnims[1] == 0 && FlagShowCharacter) {
+		if (!FlagSomeOneSpeak && !g_vm->_flagscriptactive && !FlagDialogActive && !FlagDialogMenuActive && (_actor._curAction < hWALKIN) && !FlagUseWithStarted && g_vm->_animMgr->_playingAnims[1] == 0 && FlagShowCharacter) {
 			actorStop();
 			nextStep();
 			Mouse(MCMD_ON);
@@ -867,7 +867,7 @@ void doIdle() {
 
 	// Save
 	case 0x3C:
-		if (!FlagSomeOneSpeak && !Flagscriptactive && !FlagDialogActive && !FlagDialogMenuActive && (_actor._curAction < hWALKIN) && !FlagUseWithStarted && g_vm->_animMgr->_playingAnims[1] == 0 && FlagShowCharacter) {
+		if (!FlagSomeOneSpeak && !g_vm->_flagscriptactive && !FlagDialogActive && !FlagDialogMenuActive && (_actor._curAction < hWALKIN) && !FlagUseWithStarted && g_vm->_animMgr->_playingAnims[1] == 0 && FlagShowCharacter) {
 			IconSnapShot();
 			DataSave();
 			g_vm->showInventoryName(NO_OBJECTS, false);
@@ -878,7 +878,7 @@ void doIdle() {
 
 	// Load
 	case 0x3D:
-		if (!FlagSomeOneSpeak && !Flagscriptactive && !FlagDialogActive && !FlagDialogMenuActive && (_actor._curAction < hWALKIN) && !FlagUseWithStarted && g_vm->_animMgr->_playingAnims[1] == 0 && FlagShowCharacter) {
+		if (!FlagSomeOneSpeak && !g_vm->_flagscriptactive && !FlagDialogActive && !FlagDialogMenuActive && (_actor._curAction < hWALKIN) && !FlagUseWithStarted && g_vm->_animMgr->_playingAnims[1] == 0 && FlagShowCharacter) {
 			IconSnapShot();
 			if (!DataLoad()) {
 				g_vm->showInventoryName(NO_OBJECTS, false);

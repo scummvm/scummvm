@@ -386,18 +386,18 @@ void ContinueTalk() {
 int32 Talk(const char *name) {
 	StopTalk();
 
-	int Len = SpeechFileLen(name);
-	if (Len > SPEECHSIZE || !SoundSystemActive) {
+	int speechLen = SpeechFileLen(name);
+	if (speechLen > SPEECHSIZE || !SoundSystemActive) {
 		SpeechTrackEnabled = false;
-		return (Len * 60L) / 11025;
+		return (speechLen * 60L) / 11025;
 	}
 	if (SpeechFileRead(name, SpeechBuf[0]) == 0) {
 		SpeechTrackEnabled = false;
-		return (Len * 60L) / 11025;
+		return (speechLen * 60L) / 11025;
 	}
 
 	SpeechTrackEnabled = true;
-	LoadAudioWav(0xFFFF, SpeechBuf[0], Len);
+	LoadAudioWav(0xFFFF, SpeechBuf[0], speechLen);
 
 	if (!SoundSystemActive)
 		SpeechTrackEnabled = false;

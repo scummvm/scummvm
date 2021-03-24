@@ -124,8 +124,8 @@ void PlayDialog(uint16 i) {
 	g_vm->_characterQueue.initQueue();
 	g_vm->_inventoryStatus = INV_OFF;
 	g_vm->_inventoryCounter = INVENTORY_HIDE;
-	ClearText();
-	PaintString();
+	g_vm->clearText();
+	g_vm->drawString();
 	PaintScreen(1);
 
 	wordset(g_vm->_video2, 0, MAXX * TOP);

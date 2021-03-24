@@ -42,6 +42,7 @@ Game Structure
 
 #define MAXSCRIPTFRAME 			50
 #define MAXSCRIPT  				15
+#define MAXTEXTSTACK			3
 
 #define MAXDIALOG   			70
 #define MAXCHOICE  				1000

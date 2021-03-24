@@ -45,8 +45,8 @@ void NextMessage() {
 
 	ProcessTheMessage();
 
-	if (Flagscriptactive)
-		EvalScript();
+	if (g_vm->_flagscriptactive)
+		g_vm->EvalScript();
 }
 
 } // End of namespace Trecision

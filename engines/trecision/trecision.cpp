@@ -149,6 +149,12 @@ TrecisionEngine::TrecisionEngine(OSystem *syst) : Engine(syst) {
 	lastobj = 0;
 
 	_slotMachine41Counter = 0;
+
+	_curStack = 0;
+	_textStackTop = -1;
+	
+	_flagscriptactive = false;
+	_flagScreenRefreshed = false;
 }
 
 TrecisionEngine::~TrecisionEngine() {
