@@ -324,8 +324,7 @@ void NancyEngine::bootGameEngine() {
 		"SET", "CURT", "CANT", "TH1", "TH2",
 		"QUOT", "TMOD",
 		// Used in nancy2
-		"FR", "LG", "OB", "CRED", "CLOK",
-		"SPEC"
+		"FR", "LG", "OB", "CLOK", "SPEC"
 	};
 
 	Common::String persistentSounds[] = {
