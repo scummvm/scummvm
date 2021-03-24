@@ -71,7 +71,9 @@ void PlaySecondaryMovie::init() {
 		_decoder.close();
 	}
 
-	_decoder.loadFile(_videoName + ".avf");
+	if (!_decoder.loadFile(_videoName + ".avf")) {
+		error("Couldn't load video file %s", _videoName.c_str());
+	}
 	_drawSurface.create(_decoder.getWidth(), _decoder.getHeight(), g_nancy->_graphicsManager->getInputPixelFormat());
 	_screenPosition = _drawSurface.getBounds();
 

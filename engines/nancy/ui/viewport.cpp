@@ -184,7 +184,10 @@ void Viewport::loadVideo(const Common::String &filename, uint frameNr, uint vert
 	if (_decoder.isVideoLoaded()) {
 		_decoder.close();
 	}
-	_decoder.loadFile(filename + ".avf");
+	
+	if (!_decoder.loadFile(filename + ".avf")) {
+		error("Couldn't load video file %s", filename.c_str());
+	}
 
 	_videoFormat = format;
 

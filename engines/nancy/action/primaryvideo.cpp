@@ -119,7 +119,10 @@ PlayPrimaryVideoChan0::~PlayPrimaryVideoChan0() {
 }
 
 void PlayPrimaryVideoChan0::init() {
-	_decoder.loadFile(_videoName + ".avf");
+	if (!_decoder.loadFile(_videoName + ".avf")) {
+		error("Couldn't load video file %s", _videoName.c_str());
+	}
+
 	_drawSurface.create(_src.width(), _src.height(), _decoder.getPixelFormat());
 
 	RenderObject::init();

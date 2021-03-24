@@ -45,7 +45,10 @@ void PlaySecondaryVideo::init() {
 		_decoder.close();
 	}
 
-	_decoder.loadFile(_filename + ".avf");
+	if (!_decoder.loadFile(_filename + ".avf")) {
+		error("Couldn't load video file %s", _filename.c_str());
+	}
+
 	// Every secondary video frame (in nancy1) plays exactly 12ms slower than what its metadata says.
 	// I'm still not sure how/why that happens so for now I'm using this hack to fix the timings
 	_decoder.addFrameTime(12);
