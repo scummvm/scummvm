@@ -590,7 +590,7 @@ insave:
 		fwrite(&Flagskiptalk,         sizeof(int16), 1, fh);
 		fwrite(&Flagskipenable,       sizeof(int16), 1, fh);
 		fwrite(&g_vm->_flagMouseEnabled, sizeof(int16), 1, fh);
-		fwrite(&FlagScreenRefreshed,  sizeof(int16), 1, fh);
+		fwrite(&g_vm->_flagScreenRefreshed,  sizeof(int16), 1, fh);
 		fwrite(&FlagPaintCharacter,        sizeof(int16), 1, fh);
 		fwrite(&FlagSomeOneSpeak,     sizeof(int16), 1, fh);
 		fwrite(&FlagCharacterSpeak,        sizeof(int16), 1, fh);
@@ -694,7 +694,6 @@ insave:
 --------------------------------------------------*/
 bool DataLoad() {
 	extern char CurCDSet;
-	extern uint8 CurStack;
 	FILE *fh;
 	uint8 OldInv[MAXICON], OldIconBase, OldInvLen;
 	char tempname[20];
@@ -846,7 +845,7 @@ bool DataLoad() {
 		fread(&Flagskiptalk,         sizeof(int16), 1, fh);
 		fread(&Flagskipenable,       sizeof(int16), 1, fh);
 		fread(&g_vm->_flagMouseEnabled, sizeof(int16), 1, fh);
-		fread(&FlagScreenRefreshed,  sizeof(int16), 1, fh);
+		fread(&g_vm->_flagScreenRefreshed,  sizeof(int16), 1, fh);
 		fread(&FlagPaintCharacter,        sizeof(int16), 1, fh);
 		fread(&FlagSomeOneSpeak,     sizeof(int16), 1, fh);
 		fread(&FlagCharacterSpeak,        sizeof(int16), 1, fh);
@@ -920,8 +919,8 @@ bool DataLoad() {
 		fclose(fh);
 
 		FlagNoPaintScreen = true;
-		CurStack = 0;
-		Flagscriptactive = false;
+		g_vm->_curStack = 0;
+		g_vm->_flagscriptactive = false;
 
 		g_vm->_oldRoom = g_vm->_curRoom;
 		doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, g_vm->_curRoom, 0, 0, 0);
@@ -960,7 +959,7 @@ bool DataLoad() {
 	while (mleft || mright)
 		Mouse(MCMD_UPDT);
 
-	if (Flagscriptactive) {
+	if (g_vm->_flagscriptactive) {
 		g_vm->_flagMouseEnabled = false;
 		Mouse(MCMD_OFF);
 	}

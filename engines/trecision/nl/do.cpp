@@ -1030,7 +1030,7 @@ void doMouseOperate(uint16 TheObj) {
 			g_vm->_curObj = oAGENDA49;
 			//FlagShowCharacter=true;
 			//doEvent(MC_SYSTEM,ME_CHANGEROOM,MP_SYSTEM,r4A,0,1,TheObj);
-			PlayScript(s49SUNDIAL);
+			g_vm->PlayScript(s49SUNDIAL);
 		}
 		printsent = false;
 		break;
@@ -2236,10 +2236,10 @@ void AtEndChangeRoom() {
 		WaitSoundFadEnd();
 		g_vm->_room[r32]._flag &= ~OBJFLAG_EXTRA;
 	} else if ((g_vm->_curRoom == r19) && !(g_vm->_room[r19]._flag & OBJFLAG_DONE)) {
-		PlayScript(s19EVA);
+		g_vm->PlayScript(s19EVA);
 		FlagNoPaintScreen = false;
-		ClearText();
-		RepaintString();
+		g_vm->clearText();
+		g_vm->redrawString();
 		WaitSoundFadEnd();
 	}
 	// CHECKME: This check is identical to the 3rd one, thus it's always false
@@ -2247,8 +2247,8 @@ void AtEndChangeRoom() {
 		setPosition(10);
 		TendIn();
 		FlagNoPaintScreen = false;
-		ClearText();
-		RepaintString();
+		g_vm->clearText();
+		g_vm->redrawString();
 	} else if ((g_vm->_curRoom == r46) && (g_vm->_oldRoom == r43) && !(g_vm->_inventoryObj[iDISLOCATORE]._flag & OBJFLAG_EXTRA)) {
 		PlayDialog(dF431);
 		WaitSoundFadEnd();
@@ -2278,13 +2278,13 @@ void AtEndChangeRoom() {
 		} else {
 			TendIn();
 			FlagNoPaintScreen = false;
-			RepaintString();
+			g_vm->redrawString();
 		}
 	} else {
 		TendIn();
 		FlagNoPaintScreen = false;
-		ClearText();
-		RepaintString();
+		g_vm->clearText();
+		g_vm->redrawString();
 	}
 
 //	Sentence

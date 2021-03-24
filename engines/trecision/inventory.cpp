@@ -278,13 +278,13 @@ void TrecisionEngine::showInventoryName(uint16 obj, bool showhide) {
 		return;
 
 	if (lastobj) {
-		ClearText();
+		clearText();
 		lastobj = 0;
 	}
 
 	if (FlagUseWithStarted && !FlagUseWithLocked) {
 		if (!showhide) {
-			ClearText();
+			clearText();
 			lastinv = 0;
 			return;
 		}
@@ -314,14 +314,14 @@ void TrecisionEngine::showInventoryName(uint16 obj, bool showhide) {
 
 		lastinv = (obj | 0x8000);
 		if (lastinv)
-			ClearText();
-		Text(posx, posy, locsent, COLOR_INVENTORY, MASKCOL);
+			clearText();
+		addText(posx, posy, locsent, COLOR_INVENTORY, MASKCOL);
 	} else {
 		if (obj == lastinv)
 			return;
 
 		if (!obj || !showhide) {
-			ClearText();
+			clearText();
 			lastinv = 0;
 			return;
 		}
@@ -333,10 +333,10 @@ void TrecisionEngine::showInventoryName(uint16 obj, bool showhide) {
 		posx = CLIP(posx - (LenText / 2), 2, SCREENLEN - 2 - LenText);
 
 		if (lastinv)
-			ClearText();
+			clearText();
 
 		if (_inventoryObj[obj]._name)
-			Text(posx, posy, _objName[_inventoryObj[obj]._name], COLOR_INVENTORY, MASKCOL);
+			addText(posx, posy, _objName[_inventoryObj[obj]._name], COLOR_INVENTORY, MASKCOL);
 	}
 }
 
@@ -359,7 +359,7 @@ void TrecisionEngine::removeIcon(uint8 icon) {
 	if (_iconBase && (_inventorySize > ICONSHOWN) && (_inventory[_iconBase + ICONSHOWN] == iNULL))
 		_iconBase = _inventorySize - ICONSHOWN;
 
-	RepaintString();
+	redrawString();
 }
 
 /*-------------------------------------------------------------------------*/
@@ -378,7 +378,7 @@ void TrecisionEngine::addIcon(uint8 icon) {
 	//	To show the icon that enters the inventory
 	//	doEvent(MC_INVENTORY,ME_OPEN,MP_DEFAULT,0,0,0,0);
 	//	FlagForceRegenInventory = true;
-	RepaintString();
+	redrawString();
 }
 
 /*-------------------------------------------------------------------------*/

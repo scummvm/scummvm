@@ -65,8 +65,20 @@ public:
 	void doInventoryUseWithInventory();
 	void doInventoryUseWithScreen();
 
+	// Script
+	void EndScript();
+	void PlayScript(uint16 i);
+	void EvalScript();
+
 	// Utils
 	char *getNextSentence();
+
+	// Text
+	void addText(uint16 x, uint16 y, const char *sign, uint16 tcol, uint16 scol);
+	void clearText();
+	void drawString();
+	void doClearText();
+	void redrawString();
 
 	// Others
 	void checkSystem();
@@ -156,11 +168,19 @@ public:
 
 	bool _flagMouseEnabled;
 
+	bool _flagscriptactive;
 	SScriptFrame _scriptFrame[MAXSCRIPTFRAME];
 	SScript _script[MAXSCRIPT];
+	uint8 _curStack;
+
+	// Text
+	int16 _textStackTop;
+	StackText _textStack[MAXTEXTSTACK];
 
 	// SlotMachine41
 	uint16 _slotMachine41Counter;
+
+	bool _flagScreenRefreshed;
 
 	GraphicsManager *_graphicsMgr;
 	AnimManager *_animMgr;

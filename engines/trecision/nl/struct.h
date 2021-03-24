@@ -184,6 +184,16 @@ struct SScript {
 	uint8 _flag;         // 0 - BREAKABLE - If it may be stopped by a mouse click
 };                       // 1 - DIALOGEXITNOANIM - If the script is launched from a dialogue at the last choice it exits the dialogue without link anim and by default
 
+struct StackText {
+	uint16 x;
+	uint16 y;
+	uint16 tcol, scol;
+	char sign[256];
+	bool Clear;
+
+	void DoText();
+};
+
 struct SSound {
 	char  _name[14];
 	uint8 _volume;

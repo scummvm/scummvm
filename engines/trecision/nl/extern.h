@@ -53,12 +53,10 @@ extern struct SSortTable SortTable[];
 /*-------------------------------------------------------------------------*/
 /*                             FLAGS DI STATO          					   */
 /*-------------------------------------------------------------------------*/
-extern bool  Flagscriptactive;
 extern bool  FlagDialogActive;
 extern bool  FlagDialogMenuActive;
 extern bool  Flagskiptalk;
 extern bool  Flagskipenable;
-extern bool  FlagScreenRefreshed;
 extern bool  FlagPaintCharacter;
 extern bool  FlagShowCharacter;
 extern bool  FlagSomeOneSpeak;

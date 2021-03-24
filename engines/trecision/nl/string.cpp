@@ -52,20 +52,6 @@ uint32 TalkTime;
 const char *dunno = "?";
 
 /*-------------------------------------------------------------------------*/
-/*                                 REPAINTSTRING         				   */
-/*-------------------------------------------------------------------------*/
-void RepaintString() {
-	if (!FlagDialogActive && !FlagDialogMenuActive && !FlagSomeOneSpeak && !Flagscriptactive && g_vm->_flagMouseEnabled) {
-		if (INVAREA(my))
-			doEvent(MC_INVENTORY, ME_SHOWICONNAME, MP_DEFAULT, 0, 0, 0, 0);
-		else {
-			CheckMask(mx, my);
-			ShowObjName(g_vm->_curObj, true);
-		}
-	}
-}
-
-/*-------------------------------------------------------------------------*/
 /*                                 POSITIONSTRING           			   */
 /*-------------------------------------------------------------------------*/
 void PositionString(uint16 x, uint16 y, const char *string, uint16 *posx, uint16 *posy, bool characterFl) {
@@ -100,13 +86,13 @@ void ShowObjName(uint16 obj, bool showhide) {
 		return;
 
 	if (g_vm->lastinv) {
-		ClearText();
+		g_vm->clearText();
 		g_vm->lastinv = 0;
 	}
 
 	if (FlagUseWithStarted && !FlagUseWithLocked) {
 		if (!showhide) {
-			ClearText();
+			g_vm->clearText();
 			g_vm->lastobj = obj;
 			return;
 		}
@@ -137,11 +123,11 @@ void ShowObjName(uint16 obj, bool showhide) {
 		posy = MAXY - CARHEI;
 
 		if (g_vm->lastobj)
-			ClearText();
-		Text(posx, posy, locsent.c_str(), COLOR_INVENTORY, MASKCOL);
+			g_vm->clearText();
+		g_vm->addText(posx, posy, locsent.c_str(), COLOR_INVENTORY, MASKCOL);
 	} else {
 		if ((!obj) || (!showhide)) {
-			ClearText();
+			g_vm->clearText();
 			g_vm->lastobj = obj;
 			return;
 		}
@@ -167,9 +153,9 @@ void ShowObjName(uint16 obj, bool showhide) {
 
 		PositionString(posx, posy, locsent.c_str(), &posx, &posy, false);
 		if (g_vm->lastobj)
-			ClearText();
+			g_vm->clearText();
 		g_vm->lastobj = obj;
-		Text(posx, posy, locsent.c_str(), COLOR_OBJECT, MASKCOL);
+		g_vm->addText(posx, posy, locsent.c_str(), COLOR_OBJECT, MASKCOL);
 	}
 }
 
@@ -293,9 +279,9 @@ void CharacterContinueTalk() {
 	else
 		PositionString(MAXX / 2, 30, SubString[CurSubString], &posx, &posy, false);
 
-	ClearText();
+	g_vm->clearText();
 	if (ConfMan.getBool("subtitles"))
-		Text(posx, posy, SubString[CurSubString], COLOR_OBJECT, MASKCOL);
+		g_vm->addText(posx, posy, SubString[CurSubString], COLOR_OBJECT, MASKCOL);
 
 	if (!FlagDialogActive) {
 		if (CurSubString)
@@ -322,11 +308,11 @@ void CharacterMute() {
 	Flagskiptalk = false;
 	CharacterSpeakTime = 0L;
 
-	ClearText();
+	g_vm->clearText();
 	g_vm->lastobj = 0;
 	g_vm->lastinv = 0;
 
-	RepaintString();
+	g_vm->redrawString();
 	StopTalk();
 
 	if ((g_vm->_curRoom == r12CU) || (g_vm->_curRoom == r13CU))
@@ -377,9 +363,9 @@ void SomeOneContinueTalk() {
 	else
 		PositionString(_actor._lim[0], _actor._lim[2], SubString[CurSubString], &posx, &posy, true);
 
-	ClearText();
+	g_vm->clearText();
 	if (ConfMan.getBool("subtitles"))
-		Text(posx, posy, SubString[CurSubString], HYELLOW, MASKCOL);
+		g_vm->addText(posx, posy, SubString[CurSubString], HYELLOW, MASKCOL);
 
 	if (CurSubString)
 		sprintf(sn, "s%04d%c.wav", CurS, CurSubString + 'a');
@@ -403,11 +389,11 @@ void SomeOneMute() {
 	FlagSomeOneSpeak = false;
 	SomeOneSpeakTime = 0L;
 
-	ClearText();
+	g_vm->clearText();
 	g_vm->lastobj = 0;
 	g_vm->lastinv = 0;
 
-	RepaintString();
+	g_vm->redrawString();
 	StopTalk();
 }
 
