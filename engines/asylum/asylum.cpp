@@ -111,7 +111,6 @@ AsylumEngine::~AsylumEngine() {
 	delete _video;
 	delete _menu;
 	delete _resource;
-	delete _console;
 
 	_previousScene = NULL;
 
