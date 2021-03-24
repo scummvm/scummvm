@@ -36,6 +36,7 @@ public:
 	void initScript();
 	void setRoom(uint16 r, bool b);
 	void initInventory();
+	void useWithInventory(bool *updateInv, bool *printSentence);
 	void useWithScreen(bool *updateinv, bool *printsent);
 };
 ; // end of class
