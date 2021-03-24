@@ -29,6 +29,7 @@
 #include "trecision/nl/define.h"
 #include "trecision/trecision.h"
 #include "trecision/video.h"
+#include "trecision/logic.h"
 
 namespace Trecision {
 
@@ -62,26 +63,8 @@ void doRoomOut(uint16 TheObj) {
 	uint16 TheAction, ThePos;
 
 	g_vm->_flagMouseEnabled = false;
-
-	switch (TheObj) {
-	case oSCALA32:
-		if (g_vm->_obj[oBOTOLAC32]._mode & OBJMODE_OBJSTATUS) {
-			CharacterSay(g_vm->_obj[TheObj]._action);
-			g_vm->_flagMouseEnabled = true;
-			TheAction = 0;
-			ThePos = 0;
-		} else {
-			TheAction = g_vm->_obj[TheObj]._anim;
-			ThePos = g_vm->_obj[TheObj]._ninv;
-		}
-		break;
-
-	default:
-		TheAction = g_vm->_obj[TheObj]._anim;
-		ThePos = g_vm->_obj[TheObj]._ninv;
-		break;
-	}
-
+	g_vm->_logicMgr->roomOut(TheObj, &TheAction, &ThePos);
+	
 	if (TheAction)
 		doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, TheAction, g_vm->_obj[TheObj]._goRoom, ThePos, TheObj);
 
