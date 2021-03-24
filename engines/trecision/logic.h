@@ -23,6 +23,8 @@
 #ifndef TRECISION_LOGIC_H
 #define TRECISION_LOGIC_H
 
+#include "common/scummsys.h"
+
 namespace Trecision {
 class TrecisionEngine;
 
@@ -34,10 +36,12 @@ public:
 	~LogicManager();
 
 	void initScript();
-	void setRoom(uint16 r, bool b);
 	void initInventory();
+
+	void setRoom(uint16 r, bool b);
 	void useWithInventory(bool *updateInv, bool *printSentence);
 	void useWithScreen(bool *updateinv, bool *printsent);
+	void roomOut(uint16 TheObj, uint16 *action, uint16 *pos);
 };
 ; // end of class
 

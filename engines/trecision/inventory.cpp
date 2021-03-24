@@ -20,9 +20,7 @@
  *
  */
 
-#include "common/scummsys.h"
-#include "logic.h"
-
+#include "trecision/logic.h"
 #include "trecision/nl/message.h"
 #include "trecision/nl/extern.h"
 #include "trecision/graphics.h"
@@ -249,10 +247,6 @@ uint8 TrecisionEngine::iconPos(uint8 icon) {
 /*                            showInventoryName           				   */
 /*-------------------------------------------------------------------------*/
 void TrecisionEngine::showInventoryName(uint16 obj, bool showhide) {
-	uint16 posx;
-	uint16 posy;
-	uint16 LenText;
-
 	static const char *dunno = "?";
 
 	if ((_curRoom == r2BL) || (_curRoom == r36F) || (_curRoom == r41D) || (_curRoom == r49M)
@@ -294,14 +288,14 @@ void TrecisionEngine::showInventoryName(uint16 obj, bool showhide) {
 				strcat(locsent, _objName[_inventoryObj[obj]._name]);
 		}
 
-		LenText = TextLength(locsent, 0);
-		posx = CLIP(320 - (LenText / 2), 2, SCREENLEN - 2 - LenText);
-		posy = MAXY - CARHEI;
+		uint16 lenText = TextLength(locsent, 0);
+		uint16 posX = CLIP(320 - (lenText / 2), 2, SCREENLEN - 2 - lenText);
+		uint16 posY = MAXY - CARHEI;
 
 		lastinv = (obj | 0x8000);
 		if (lastinv)
 			clearText();
-		addText(posx, posy, locsent, COLOR_INVENTORY, MASKCOL);
+		addText(posX, posY, locsent, COLOR_INVENTORY, MASKCOL);
 	} else {
 		if (obj == lastinv)
 			return;
@@ -311,18 +305,18 @@ void TrecisionEngine::showInventoryName(uint16 obj, bool showhide) {
 			lastinv = 0;
 			return;
 		}
-		posx = ICONMARGSX + ((iconPos(_curInventory) - _iconBase) * (ICONDX)) + ICONDX / 2;
-		posy = MAXY - CARHEI;
+		uint16 posX = ICONMARGSX + ((iconPos(_curInventory) - _iconBase) * (ICONDX)) + ICONDX / 2;
+		uint16 posY = MAXY - CARHEI;
 		lastinv = obj;
-		LenText = TextLength(_objName[_inventoryObj[obj]._name], 0);
+		uint16 lenText = TextLength(_objName[_inventoryObj[obj]._name], 0);
 
-		posx = CLIP(posx - (LenText / 2), 2, SCREENLEN - 2 - LenText);
+		posX = CLIP(posX - (lenText / 2), 2, SCREENLEN - 2 - lenText);
 
 		if (lastinv)
 			clearText();
 
 		if (_inventoryObj[obj]._name)
-			addText(posx, posy, _objName[_inventoryObj[obj]._name], COLOR_INVENTORY, MASKCOL);
+			addText(posX, posY, _objName[_inventoryObj[obj]._name], COLOR_INVENTORY, MASKCOL);
 	}
 }
 
@@ -381,7 +375,7 @@ void TrecisionEngine::replaceIcon(uint8 oldIcon, uint8 newIcon) {
 /*-------------------------------------------------------------------------*/
 void TrecisionEngine::doInventoryUseWithInventory() {
 	if (!_useWith[USED] || !_useWith[WITH])
-		warning("doInventoryUseWithInventory");
+		warning("doInventoryUseWithInventory - _useWith not set properly");
 
 	_animMgr->stopSmkAnim(_inventoryObj[_useWith[USED]]._anim);
 
@@ -399,7 +393,7 @@ void TrecisionEngine::doInventoryUseWithInventory() {
 /*-------------------------------------------------------------------------*/
 void TrecisionEngine::doInventoryUseWithScreen() {
 	if (!_useWith[USED] || !_useWith[WITH])
-		warning("doInventoryUseWithScreen - useWith not set properly");
+		warning("doInventoryUseWithScreen - _useWith not set properly");
 
 	_animMgr->stopSmkAnim(_inventoryObj[_useWith[USED]]._anim);
 	if (_characterInMovement)
