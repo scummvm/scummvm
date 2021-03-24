@@ -37,6 +37,7 @@
 #include "common/config-manager.h"
 #include "common/file.h"
 #include "common/fs.h"
+#include "logic.h"
 
 namespace Common {
 class File;
@@ -120,8 +121,9 @@ TrecisionEngine::TrecisionEngine(OSystem *syst) : Engine(syst) {
 	}
 
 	_video2 = nullptr;
-	_graphicsMgr = nullptr;
 	_animMgr = nullptr;
+	_graphicsMgr = nullptr;
+	_logicMgr = nullptr;
 
 	for (int i = 0; i < 50; ++i) {
 		for (int j = 0; j < 4; ++j) {
@@ -160,6 +162,7 @@ TrecisionEngine::TrecisionEngine(OSystem *syst) : Engine(syst) {
 TrecisionEngine::~TrecisionEngine() {
 	delete _animMgr;
 	delete _graphicsMgr;
+	delete _logicMgr;
 }
 
 Common::Error TrecisionEngine::run() {
@@ -169,6 +172,7 @@ Common::Error TrecisionEngine::run() {
 	if (!_graphicsMgr->initScreen())
 		return Common::kUnsupportedColorMode;
 	_animMgr = new AnimManager(this);
+	_logicMgr = new LogicManager(this);
 
 	initMain();
 
@@ -250,13 +254,13 @@ void TrecisionEngine::initMain() {
 		_obj[c]._position = -1;
 
 	initNames();
-	initScript();
+	_logicMgr->initScript();
 	openSys();
 
 	LoadAll();
 
 	initMessageSystem();
-	initInventory();
+	_logicMgr->initInventory();
 
 	_curRoom = rINTRO;
 
@@ -277,38 +281,6 @@ void TrecisionEngine::initMessageSystem() {
 		_characterQueue._event[i] = &_characterMsg[i];
 		_animQueue._event[i] = &_animMsg[i];
 	}
-}
-
-void TrecisionEngine::initNames() {
-	_sysText[1] = "NightLong was not properly installed!\nRun Autorun.exe from the CD-Rom.";
-	_sysText[2] = "Not enough memory!\nYou need %d bytes more.\n";
-	_sysText[3] = "Unknown error\n";
-	_sysText[4] = "Please insert CD number %c and press return.";
-	_sysText[5] = "Unknown error";
-	_sysText[6] = "VESA Not Supported.\n";
-	_sysText[7] = "Error reading file.";
-	_sysText[8] = "Mouse not found error!\n";
-	_sysText[9] = "SAVE POSITION";
-	_sysText[10] = "EMPTY SLOT";
-	_sysText[11] = "LOAD POSITION";
-	_sysText[12] = "Error reading saved-game";
-	_sysText[13] = "Are you sure that you want to quit (y/n)?";
-	_sysText[14] = "Unknown error\n";
-	_sysText[15] = "Sample handle not available\n";
-	_sysText[16] = "Run NL to select an appropriate digital audio driver\n";
-	_sysText[17] = "This demo is over.";
-	_sysText[18] = "NightLong";
-	_sysText[19] = "ERROR!";
-	_sysText[20] = "Unsupported pixel format.";
-	_sysText[21] = "DirectX Error";
-	_sysText[22] = "NightLong Warning";
-	_sysText[23] = "Use ";
-	_sysText[24] = " with ";
-	_sysText[25] = "Go to ";
-	_sysText[26] = "Go to ... ";
-
-	_sentence[0] = "          "; // Use it like a buffer !!!!
-	_objName[0] = " ";
 }
 
 /* --------------------------------------------------

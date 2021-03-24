@@ -21,12 +21,47 @@
  */
 
 #include "trecision/trecision.h"
+#include "trecision/nl/struct.h"
+#include "trecision/nl/extern.h"
+#include "trecision/nl/message.h"
 
 #include "common/textconsole.h"
-#include "nl/extern.h"
-#include "nl/message.h"
+#include "logic.h"
 
 namespace Trecision {
+
+void TrecisionEngine::initNames() {
+	_sysText[1] = "NightLong was not properly installed!\nRun Autorun.exe from the CD-Rom.";
+	_sysText[2] = "Not enough memory!\nYou need %d bytes more.\n";
+	_sysText[3] = "Unknown error\n";
+	_sysText[4] = "Please insert CD number %c and press return.";
+	_sysText[5] = "Unknown error";
+	_sysText[6] = "VESA Not Supported.\n";
+	_sysText[7] = "Error reading file.";
+	_sysText[8] = "Mouse not found error!\n";
+	_sysText[9] = "SAVE POSITION";
+	_sysText[10] = "EMPTY SLOT";
+	_sysText[11] = "LOAD POSITION";
+	_sysText[12] = "Error reading saved-game";
+	_sysText[13] = "Are you sure that you want to quit (y/n)?";
+	_sysText[14] = "Unknown error\n";
+	_sysText[15] = "Sample handle not available\n";
+	_sysText[16] = "Run NL to select an appropriate digital audio driver\n";
+	_sysText[17] = "This demo is over.";
+	_sysText[18] = "NightLong";
+	_sysText[19] = "ERROR!";
+	_sysText[20] = "Unsupported pixel format.";
+	_sysText[21] = "DirectX Error";
+	_sysText[22] = "NightLong Warning";
+	_sysText[23] = "Use ";
+	_sysText[24] = " with ";
+	_sysText[25] = "Go to ";
+	_sysText[26] = "Go to ... ";
+
+	_sentence[0] = "          "; // Use it like a buffer !!!!
+	_objName[0] = " ";
+}
+
 /* --------------------------------------------------
  * 					getNextSentence
  * --------------------------------------------------*/
@@ -41,7 +76,7 @@ char *TrecisionEngine::getNextSentence() {
 }
 
 /*-------------------------------------------------------------------------*/
-/*                                   TEXT              					   */
+/*                                   addText           					   */
 /*-------------------------------------------------------------------------*/
 void TrecisionEngine::addText(uint16 x, uint16 y, const char *sign, uint16 tcol, uint16 scol) {
 	_textStackTop++;
@@ -58,7 +93,7 @@ void TrecisionEngine::addText(uint16 x, uint16 y, const char *sign, uint16 tcol,
 	strcpy(_textStack[_textStackTop].sign, sign);
 }
 
-/* -----------------08/07/97 22.13-------------------
+/* ------------------------------------------------
 						clearText
  --------------------------------------------------*/
 void TrecisionEngine::clearText() {
@@ -74,7 +109,7 @@ void TrecisionEngine::clearText() {
 	}
 }
 
-/* -----------------08/07/97 22.14-------------------
+/* ------------------------------------------------
 					drawString
  --------------------------------------------------*/
 void TrecisionEngine::drawString() {
@@ -82,7 +117,7 @@ void TrecisionEngine::drawString() {
 		if (_textStack[i].Clear)
 			doClearText();
 		else
-			_textStack[i].DoText();
+			_textStack[i].doText();
 	}
 }
 
@@ -91,7 +126,7 @@ void TrecisionEngine::drawString() {
 /*-------------------------------------------------------------------------*/
 void TrecisionEngine::redrawString() {
 	if (!FlagDialogActive && !FlagDialogMenuActive && !FlagSomeOneSpeak && !_flagscriptactive && _flagMouseEnabled) {
-		if (INVAREA(my))
+		if (isInventoryArea(my))
 			doEvent(MC_INVENTORY, ME_SHOWICONNAME, MP_DEFAULT, 0, 0, 0, 0);
 		else {
 			CheckMask(mx, my);
@@ -100,10 +135,10 @@ void TrecisionEngine::redrawString() {
 	}
 }
 
-/* -----------------08/07/97 22.15-------------------
-						DoText
+/* ------------------------------------------------
+						doText
  --------------------------------------------------*/
-void StackText::DoText() {
+void StackText::doText() {
 	curString.x = x;
 	curString.y = y;
 	curString.dx = TextLength(sign, 0);
@@ -135,8 +170,8 @@ void StackText::DoText() {
 	TextStatus |= TEXT_DRAW;
 }
 
-/* -----------------08/07/97 22.15-------------------
-					DoClearString
+/* ------------------------------------------------
+					doClearText
  --------------------------------------------------*/
 void TrecisionEngine::doClearText() {
 	if ((oldString.sign == nullptr) && (curString.sign)) {
@@ -146,5 +181,14 @@ void TrecisionEngine::doClearText() {
 		TextStatus |= TEXT_DEL;
 	}
 }
+
+/* --------------------------------------------------
+ * 					setRoom
+ * --------------------------------------------------*/
+void TrecisionEngine::setRoom(uint16 r, bool b) {
+	_logicMgr->setRoom(r, b);
+	RegenRoom();
+}
+
 
 } // End of namespace Trecision

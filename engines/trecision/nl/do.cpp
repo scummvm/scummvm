@@ -100,9 +100,9 @@ void doMouseExamine(uint16 TheObj) {
 	switch (TheObj) {
 	case oMAPPA12:
 		doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a1211OSSERVAMAPPAPALAZZO, 0, 0, TheObj);
-		_choice[4]._flag &= ~DLGCHOICE_HIDE;
-		_choice[18]._flag &= ~DLGCHOICE_HIDE;
-		_choice[33]._flag &= ~DLGCHOICE_HIDE;
+		g_vm->_choice[4]._flag &= ~DLGCHOICE_HIDE;
+		g_vm->_choice[18]._flag &= ~DLGCHOICE_HIDE;
+		g_vm->_choice[33]._flag &= ~DLGCHOICE_HIDE;
 		printSentence = false;
 		break;
 
@@ -208,8 +208,8 @@ void doMouseExamine(uint16 TheObj) {
 		break;
 
 	case oTESSERA1A:
-		if (((_choice[151]._flag & OBJFLAG_DONE) || (_choice[152]._flag & OBJFLAG_DONE)) && !(_choice[183]._flag & OBJFLAG_DONE))
-			_choice[183]._flag &= ~DLGCHOICE_HIDE;
+		if (((g_vm->_choice[151]._flag & OBJFLAG_DONE) || (g_vm->_choice[152]._flag & OBJFLAG_DONE)) && !(g_vm->_choice[183]._flag & OBJFLAG_DONE))
+			g_vm->_choice[183]._flag &= ~DLGCHOICE_HIDE;
 		g_vm->_obj[oTESSERA1A]._flag |= OBJFLAG_EXTRA;
 		printSentence = true;
 		break;
@@ -490,7 +490,7 @@ void doMouseOperate(uint16 TheObj) {
 	case oSCALA16:
 		if (!(g_vm->_obj[oSCALA16]._flag & OBJFLAG_EXTRA)) {
 			g_vm->_obj[oSCALA16]._flag |= OBJFLAG_EXTRA;
-			_choice[61]._flag &= ~DLGCHOICE_HIDE;
+			g_vm->_choice[61]._flag &= ~DLGCHOICE_HIDE;
 			PlayDialog(dPOLIZIOTTO16);
 			g_vm->_obj[oSCALA16]._action = 166;
 			g_vm->_obj[ocPOLIZIOTTO16]._action = 166;
@@ -580,8 +580,8 @@ void doMouseOperate(uint16 TheObj) {
 
 	case oPORTAC18:
 		if (g_vm->_obj[ocGUARD18]._flag & OBJFLAG_PERSON) {
-			_choice[151]._flag |= DLGCHOICE_HIDE;
-			_choice[152]._flag &= ~DLGCHOICE_HIDE;
+			g_vm->_choice[151]._flag |= DLGCHOICE_HIDE;
+			g_vm->_choice[152]._flag &= ~DLGCHOICE_HIDE;
 			PlayDialog(dGUARDIANO18);
 			g_vm->_obj[ocGUARD18]._flag &= ~OBJFLAG_PERSON;
 			g_vm->_obj[ocGUARD18]._action = 227;
@@ -623,13 +623,13 @@ void doMouseOperate(uint16 TheObj) {
 		break;
 
 	case oCATENAT21:
-		if ((g_vm->iconPos(iSBARRA21) != MAXICON) && ((_choice[436]._flag & OBJFLAG_DONE) || (_choice[466]._flag & OBJFLAG_DONE))) {
+		if ((g_vm->iconPos(iSBARRA21) != MAXICON) && ((g_vm->_choice[436]._flag & OBJFLAG_DONE) || (g_vm->_choice[466]._flag & OBJFLAG_DONE))) {
 			if (g_vm->_room[g_vm->_curRoom]._flag & OBJFLAG_EXTRA) // va a destra
 				PlayDialog(dF212);				// 436
 			else									// va a sinistra
 				PlayDialog(dF213);				// 466
 			printsent = false;
-		} else if ((_choice[451]._flag & OBJFLAG_DONE) || (_choice[481]._flag & OBJFLAG_DONE)) {
+		} else if ((g_vm->_choice[451]._flag & OBJFLAG_DONE) || (g_vm->_choice[481]._flag & OBJFLAG_DONE)) {
 			if (g_vm->_room[g_vm->_curRoom]._flag & OBJFLAG_EXTRA) // va a destra
 				PlayDialog(dF212B);				// 451
 			else									// va a sinistra
@@ -690,11 +690,11 @@ void doMouseOperate(uint16 TheObj) {
 	case oPASSAGE24:
 		if (g_vm->_room[r24]._flag & OBJFLAG_EXTRA) {
 			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a244, 0, 14, TheObj);
-			SetRoom(r24, false);
+			g_vm->setRoom(r24, false);
 			printsent = false;
 		} else {
 			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a243, 0, 13, TheObj);
-			SetRoom(r24, true);
+			g_vm->setRoom(r24, true);
 			printsent = false;
 		}
 		break;
@@ -891,7 +891,7 @@ void doMouseOperate(uint16 TheObj) {
 		break;
 
 	case oCOMPUTER36:
-		if (!(_choice[646]._flag & OBJFLAG_DONE)) {
+		if (!(g_vm->_choice[646]._flag & OBJFLAG_DONE)) {
 			PlayDialog(dF361);
 			g_vm->_obj[oCOMPUTER36]._action = 2004;
 			printsent = false;
@@ -1100,8 +1100,8 @@ void doMouseOperate(uint16 TheObj) {
 		break;
 
 	case oPORTAC4A:
-		if (!(_choice[245]._flag & OBJFLAG_DONE)  && !(_choice[766]._flag & OBJFLAG_DONE)) {
-			_choice[245]._flag &= ~DLGCHOICE_HIDE;
+		if (!(g_vm->_choice[245]._flag & OBJFLAG_DONE)  && !(g_vm->_choice[766]._flag & OBJFLAG_DONE)) {
+			g_vm->_choice[245]._flag &= ~DLGCHOICE_HIDE;
 			PlayDialog(dC4A1);
 			setPosition(14);
 			g_vm->_obj[oPORTAC4A]._action = 1117;
@@ -1114,8 +1114,8 @@ void doMouseOperate(uint16 TheObj) {
 	case oPULSANTE4A:
 		if (g_vm->_obj[TheObj]._anim)
 			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, g_vm->_obj[TheObj]._anim, 0, 0, TheObj);
-		else if (!(_choice[244]._flag & OBJFLAG_DONE)) {
-			_choice[244]._flag &= ~DLGCHOICE_HIDE;
+		else if (!(g_vm->_choice[244]._flag & OBJFLAG_DONE)) {
+			g_vm->_choice[244]._flag &= ~DLGCHOICE_HIDE;
 			PlayDialog(dC4A1);
 			g_vm->_obj[oPULSANTE4A]._examine = 1108;
 			g_vm->_obj[oPULSANTE4A]._action = 1109;
@@ -1152,7 +1152,7 @@ void doMouseOperate(uint16 TheObj) {
 		break;
 
 	case oPORTAC54:
-		if (!(_choice[826]._flag & OBJFLAG_DONE)) {
+		if (!(g_vm->_choice[826]._flag & OBJFLAG_DONE)) {
 			PlayDialog(dF541);
 			printsent = false;
 		} else
@@ -1160,7 +1160,7 @@ void doMouseOperate(uint16 TheObj) {
 		break;
 
 	case oLAVATRICEL54:
-		if ((g_vm->_obj[TheObj]._anim) && (g_vm->_obj[oSECCHIOS54]._flag & OBJFLAG_EXTRA) && (g_vm->_obj[oGRATAC54]._mode & OBJMODE_OBJSTATUS) && !(_choice[841]._flag & OBJFLAG_DONE))
+		if ((g_vm->_obj[TheObj]._anim) && (g_vm->_obj[oSECCHIOS54]._flag & OBJFLAG_EXTRA) && (g_vm->_obj[oGRATAC54]._mode & OBJMODE_OBJSTATUS) && !(g_vm->_choice[841]._flag & OBJFLAG_DONE))
 			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, g_vm->_obj[TheObj]._anim, 0, 0, TheObj);
 		else
 			printsent = true;
@@ -1175,7 +1175,7 @@ void doMouseOperate(uint16 TheObj) {
 		break;
 
 	case oTASTIERA56:
-		if (_choice[262]._flag & OBJFLAG_DONE) {
+		if (g_vm->_choice[262]._flag & OBJFLAG_DONE) {
 			if (g_vm->_obj[od56ALLA59]._mode & OBJMODE_OBJSTATUS)
 				CharacterSay(g_vm->_obj[TheObj]._action);
 			else
@@ -1210,7 +1210,7 @@ void doMouseOperate(uint16 TheObj) {
 		break;
 
 	case oFINESTRAA5A:
-		if ((_choice[871]._flag & OBJFLAG_DONE) && !(_choice[286]._flag & OBJFLAG_DONE)) {
+		if ((g_vm->_choice[871]._flag & OBJFLAG_DONE) && !(g_vm->_choice[286]._flag & OBJFLAG_DONE)) {
 			PlayDialog(dC5A1);
 			printsent = false;
 		} else
@@ -1218,7 +1218,7 @@ void doMouseOperate(uint16 TheObj) {
 		break;
 
 	case oFINESTRAB5A:
-		if (!(_choice[256]._flag & OBJFLAG_DONE)) {
+		if (!(g_vm->_choice[256]._flag & OBJFLAG_DONE)) {
 			CharacterSay(1999);
 			printsent = false;
 		} else
@@ -1361,24 +1361,24 @@ void doMouseTalk(uint16 TheObj) {
 
 	switch (TheObj) {
 	case oTICKETOFFICE16:
-		if ((g_vm->_obj[oFINGERPADP16]._flag & OBJFLAG_ROOMOUT) && (_choice[50]._flag & OBJFLAG_DONE)) {
+		if ((g_vm->_obj[oFINGERPADP16]._flag & OBJFLAG_ROOMOUT) && (g_vm->_choice[50]._flag & OBJFLAG_DONE)) {
 			CharacterSay(147);
 			return ;
 		}
 
-		if ((_choice[49]._flag & DLGCHOICE_HIDE) && (_choice[50]._flag & DLGCHOICE_HIDE)) {
+		if ((g_vm->_choice[49]._flag & DLGCHOICE_HIDE) && (g_vm->_choice[50]._flag & DLGCHOICE_HIDE)) {
 			if (g_vm->_obj[oMAPPA16]._flag & OBJFLAG_EXTRA) {
-				_choice[46]._flag &= ~DLGCHOICE_HIDE;
-				_choice[48]._flag &= ~DLGCHOICE_HIDE;
+				g_vm->_choice[46]._flag &= ~DLGCHOICE_HIDE;
+				g_vm->_choice[48]._flag &= ~DLGCHOICE_HIDE;
 				g_vm->_obj[oTICKETOFFICE16]._flag |= OBJFLAG_EXTRA;
 			} else {
-				if (_choice[46]._flag & OBJFLAG_DONE) {
+				if (g_vm->_choice[46]._flag & OBJFLAG_DONE) {
 					CharacterSay(g_vm->_obj[oTICKETOFFICE16]._action);
 					return ;
 				}
 
-				_choice[46]._flag &= ~DLGCHOICE_HIDE;
-				_choice[47]._flag &= ~DLGCHOICE_HIDE;
+				g_vm->_choice[46]._flag &= ~DLGCHOICE_HIDE;
+				g_vm->_choice[47]._flag &= ~DLGCHOICE_HIDE;
 			}
 		}
 		break;
@@ -1392,7 +1392,7 @@ void doMouseTalk(uint16 TheObj) {
 	case ocNEGOZIANTE1A: {
 		int c;
 		for (c = _dialog[dNEGOZIANTE1A]._firstChoice; c < (_dialog[dNEGOZIANTE1A]._firstChoice + _dialog[dNEGOZIANTE1A]._choiceNumb); c++)
-			if (!(_choice[c]._flag & DLGCHOICE_HIDE)) {
+			if (!(g_vm->_choice[c]._flag & DLGCHOICE_HIDE)) {
 				PlayDialog(g_vm->_obj[TheObj]._goRoom);
 				return;
 			}
@@ -1447,7 +1447,7 @@ void doScrScrUseWith() {
 	case oRAMPINO21:
 		if (g_vm->_useWith[WITH] == oTUBO21) {
 			PlayDialog(dF211);
-			SetRoom(r21, true);
+			g_vm->setRoom(r21, true);
 			g_vm->_animMgr->_animTab[aBKG21]._flag &= ~SMKANIM_OFF1;
 			g_vm->_obj[oRAMPINO21]._mode &= ~OBJMODE_OBJSTATUS;
 			g_vm->_obj[oTUBO21]._mode &= ~OBJMODE_OBJSTATUS;
@@ -1555,59 +1555,59 @@ void doInvOperate() {
 
 	switch (g_vm->_curInventory) {
 	case iSAM:
-		if ((_choice[166]._flag & OBJFLAG_DONE) && ((g_vm->_curRoom == r17) || (g_vm->_curRoom == r1B) || (g_vm->_curRoom == r1C) || (g_vm->_curRoom == r1D))) {
+		if ((g_vm->_choice[166]._flag & OBJFLAG_DONE) && ((g_vm->_curRoom == r17) || (g_vm->_curRoom == r1B) || (g_vm->_curRoom == r1C) || (g_vm->_curRoom == r1D))) {
 			if (g_vm->_obj[oNUMERO17]._mode & OBJMODE_OBJSTATUS) {
-				if (!(_choice[196]._flag & OBJFLAG_DONE)) {
+				if (!(g_vm->_choice[196]._flag & OBJFLAG_DONE)) {
 					if (g_vm->_curRoom == r17) {
-						if (_choice[198]._flag & OBJFLAG_DONE) {
+						if (g_vm->_choice[198]._flag & OBJFLAG_DONE) {
 							g_vm->_inventoryObj[iSAM]._action = 1787;
 							printsent = true;
 						} else {
-							_choice[197]._flag |= DLGCHOICE_HIDE;
-							_choice[198]._flag &= ~DLGCHOICE_HIDE;
+							g_vm->_choice[197]._flag |= DLGCHOICE_HIDE;
+							g_vm->_choice[198]._flag &= ~DLGCHOICE_HIDE;
 							PlayDialog(dSAM17);
 							printsent = false;
 							g_vm->_obj[oFAX17]._mode |= OBJMODE_OBJSTATUS;
 						}
 					} else {
-						if (_choice[199]._flag & OBJFLAG_DONE) {
+						if (g_vm->_choice[199]._flag & OBJFLAG_DONE) {
 							g_vm->_inventoryObj[iSAM]._action = 1787;
 							printsent = true;
 						} else {
-							_choice[197]._flag |= DLGCHOICE_HIDE;
-							_choice[199]._flag &= ~DLGCHOICE_HIDE;
+							g_vm->_choice[197]._flag |= DLGCHOICE_HIDE;
+							g_vm->_choice[199]._flag &= ~DLGCHOICE_HIDE;
 							PlayDialog(dSAM17);
 							printsent = false;
 							g_vm->_obj[oFAX17]._mode |= OBJMODE_OBJSTATUS;
 						}
 					}
 				} else {
-					if ((_choice[198]._flag & OBJFLAG_DONE) || (_choice[199]._flag & OBJFLAG_DONE)) {
+					if ((g_vm->_choice[198]._flag & OBJFLAG_DONE) || (g_vm->_choice[199]._flag & OBJFLAG_DONE)) {
 						g_vm->_inventoryObj[iSAM]._action = 1787;
 						printsent = true;
 					} else if (g_vm->_curRoom == r17) {
-						if (_choice[201]._flag & OBJFLAG_DONE) {
+						if (g_vm->_choice[201]._flag & OBJFLAG_DONE) {
 							g_vm->_inventoryObj[iSAM]._action = 1787;
 							printsent = true;
 						} else {
-							_choice[201]._flag &= ~DLGCHOICE_HIDE;
+							g_vm->_choice[201]._flag &= ~DLGCHOICE_HIDE;
 							PlayDialog(dSAM17);
 							printsent = false;
 							g_vm->_obj[oFAX17]._mode |= OBJMODE_OBJSTATUS;
 						}
 					} else {
-						if (_choice[200]._flag & OBJFLAG_DONE) {
+						if (g_vm->_choice[200]._flag & OBJFLAG_DONE) {
 							g_vm->_inventoryObj[iSAM]._action = 1787;
 							printsent = true;
 						} else {
-							_choice[200]._flag &= ~DLGCHOICE_HIDE;
+							g_vm->_choice[200]._flag &= ~DLGCHOICE_HIDE;
 							PlayDialog(dSAM17);
 							printsent = false;
 							g_vm->_obj[oFAX17]._mode |= OBJMODE_OBJSTATUS;
 						}
 					}
 				}
-			} else if (_choice[197]._flag & OBJFLAG_DONE) {
+			} else if (g_vm->_choice[197]._flag & OBJFLAG_DONE) {
 				g_vm->_inventoryObj[iSAM]._action = 1786;
 				printsent = true;
 			} else {
@@ -2375,7 +2375,7 @@ void ExecuteATFDO(ATFHandle *h, int doit, int obj) {
 		doEvent(MC_MOUSE, ME_MLEFT, MP_DEFAULT, 336, 263 + TOP, true, 0);
 		break;
 	case fVALVOLAON34:
-		if (!(_choice[616]._flag & OBJFLAG_DONE) &&		// if the fmv is not done
+		if (!(g_vm->_choice[616]._flag & OBJFLAG_DONE) &&		// if the fmv is not done
 		    (g_vm->_obj[oTUBOA34]._mode & OBJMODE_OBJSTATUS) && // if there's a cut pipe
 		    !(g_vm->_obj[oTUBOFT34]._mode & OBJMODE_OBJSTATUS)) // if there's not tube outside
 			g_vm->_animMgr->smkVolumePan(0, 2, 1);
@@ -2530,10 +2530,10 @@ void ProcessATF(ATFHandle *h, int type, int atf) {
 		RegenRoom();
 		break;
 	case ATFSETROOMT:
-		SetRoom(h->curanim->_atFrame[atf]._index, true);
+		g_vm->setRoom(h->curanim->_atFrame[atf]._index, true);
 		break;
 	case ATFSETROOMF:
-		SetRoom(h->curanim->_atFrame[atf]._index, false);
+		g_vm->setRoom(h->curanim->_atFrame[atf]._index, false);
 		break;
 	case ATFREADBOX:
 		if (h->curanim->_atFrame[atf]._index == 1) {

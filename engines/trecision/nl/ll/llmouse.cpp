@@ -645,7 +645,7 @@ insave:
 			fwrite(&GSample[a]._flag,    sizeof(uint8), 1, fh);
 		}
 		for (int a = 0; a < MAXCHOICE; a++)
-			fwrite(&_choice[a],           sizeof(DialogChoice), 1, fh);
+			fwrite(&g_vm->_choice[a],           sizeof(DialogChoice), 1, fh);
 
 		for (int a = 0; a < MAXDIALOG; a++)
 			fwrite(&_dialog[a],          sizeof(Dialog), 1, fh);
@@ -901,7 +901,7 @@ bool DataLoad() {
 		}
 
 		for (int a = 0; a < MAXCHOICE; a++)
-			fread(&_choice[a],           sizeof(DialogChoice), 1, fh);
+			fread(&g_vm->_choice[a],           sizeof(DialogChoice), 1, fh);
 
 		for (int a = 0; a < MAXDIALOG; a++)
 			fread(&_dialog[a],          sizeof(Dialog), 1, fh);

@@ -83,7 +83,6 @@ uint32 SomeOneSpeakTime;
 /*                                 DIALOGHI           					   */
 /*-------------------------------------------------------------------------*/
 Dialog _dialog[MAXDIALOG];
-DialogChoice  _choice [MAXCHOICE];
 DialogSubTitle _subTitles[MAXSUBTITLES];
 
 uint16  _curDialog, _curChoice, _curSubTitle;

@@ -187,7 +187,6 @@ void SomeOneContinueTalk();
 void SomeOneMute();
 void doString();
 void DoSys(uint16 curObj);
-void SetRoom(uint16 r, bool b);
 char GetKey();
 char waitKey();
 void FreeKey();

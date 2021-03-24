@@ -249,10 +249,10 @@ void AnimManager::startSmkAnim(uint16 num) {
 			smkVolumePan(0, 1, 0);
 		else if ((num == aBKG2E) && (_animTab[num]._flag & SMKANIM_OFF2))
 			smkVolumePan(0, 2, 0);
-		else if ((num == aBKG2G) && (_choice[556]._flag & OBJFLAG_DONE))
+		else if ((num == aBKG2G) && (g_vm->_choice[556]._flag & OBJFLAG_DONE))
 			smkVolumePan(0, 2, 0);
 		else if ((num == aBKG34) &&                                     // If it's BKG 34 and
-		         ((_choice[616]._flag & OBJFLAG_DONE) ||                // if the FMV is already done or
+		         ((g_vm->_choice[616]._flag & OBJFLAG_DONE) ||          // if the FMV is already done or
 		          (_vm->_obj[oTUBOT34]._mode & OBJMODE_OBJSTATUS) ||    // if the whole tube is available or
 		          (_vm->_obj[oTUBOFT34]._mode & OBJMODE_OBJSTATUS) ||   // if the outside of the tube is available or
 		          (_vm->_obj[oVALVOLAC34]._mode & OBJMODE_OBJSTATUS)))  // if the valve is closed
@@ -384,7 +384,7 @@ void AnimManager::stopFullMotion() {
 
 	if (!((_curDialog == dNEGOZIANTE1A) && (_curChoice == 185))) {
 		if ((_curDialog == dF582) || (_curDialog == dFLOG) || (_curDialog == dINTRO) || (_curDialog == dF362) || (_curDialog == dC381) || (_curDialog == dF381) ||
-		    (_curDialog == dF491) || ((_curDialog == dC581) && !(_choice[886]._flag & OBJFLAG_DONE) && (_choice[258]._flag & OBJFLAG_DONE)) ||
+		    (_curDialog == dF491) || ((_curDialog == dC581) && !(g_vm->_choice[886]._flag & OBJFLAG_DONE) && (g_vm->_choice[258]._flag & OBJFLAG_DONE)) ||
 		    ((_curDialog == dC5A1) && (_vm->_room[r5A]._flag & OBJFLAG_EXTRA)))
 			FlagShowCharacter = false;
 		else

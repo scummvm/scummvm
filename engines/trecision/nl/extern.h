@@ -84,7 +84,6 @@ extern uint32 SomeOneSpeakTime;
 /*                                 DIALOGHI           					   */
 /*-------------------------------------------------------------------------*/
 extern Dialog _dialog[];
-extern DialogChoice  _choice [];
 extern DialogSubTitle _subTitles[];
 
 extern uint16   _curDialog, _curChoice, _curSubTitle;

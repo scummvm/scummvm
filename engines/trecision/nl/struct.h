@@ -191,7 +191,7 @@ struct StackText {
 	char sign[256];
 	bool Clear;
 
-	void DoText();
+	void doText();
 };
 
 struct SSound {

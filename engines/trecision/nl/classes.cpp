@@ -149,7 +149,7 @@ void doMouse() {
 		int8 curpos;
 		if (GAMEAREA(g_vm->_curMessage->_u16Param2))
 			curpos = POSGAME;
-		else if (INVAREA(g_vm->_curMessage->_u16Param2))
+		else if (isInventoryArea(g_vm->_curMessage->_u16Param2))
 			curpos = POSINV;
 		else
 			curpos = POSUP;
@@ -277,7 +277,7 @@ void doMouse() {
 
 		// If it's in a room without a character, like a map or a book
 		if (FlagCharacterExist == false) {
-			if ((INVAREA(g_vm->_curMessage->_u16Param2)) && ((g_vm->_curRoom == r31P) || (g_vm->_curRoom == r35P))) {
+			if ((isInventoryArea(g_vm->_curMessage->_u16Param2)) && ((g_vm->_curRoom == r31P) || (g_vm->_curRoom == r35P))) {
 				if (ICONAREA(g_vm->_curMessage->_u16Param1, g_vm->_curMessage->_u16Param2) && (g_vm->whatIcon(g_vm->_curMessage->_u16Param1)) && (g_vm->_inventoryStatus == INV_INACTION)) {
 					g_vm->_useWith[WITH] = 0;
 					g_vm->_curObj = 0;
@@ -447,7 +447,7 @@ void doMouse() {
 					doEvent(MC_CHARACTER, ME_CHARACTERGOTOEXAMINE, MP_DEFAULT, g_vm->_curMessage->_u16Param1, g_vm->_curMessage->_u16Param2, 0, g_vm->_curObj);
 			} else
 				doEvent(MC_CHARACTER, ME_CHARACTERGOTO, MP_DEFAULT, g_vm->_curMessage->_u16Param1, g_vm->_curMessage->_u16Param2, 0, 0);
-		} else if (INVAREA(g_vm->_curMessage->_u16Param2)) {
+		} else if (isInventoryArea(g_vm->_curMessage->_u16Param2)) {
 			// Inventory area
 			if (g_vm->_animMgr->_playingAnims[1] || FlagDialogActive || g_vm->_curRoom == rSYS)
 				break;
@@ -656,20 +656,20 @@ void doSystem() {
 		// Handle exit velocity in dual rooms level 2
 		if (g_vm->_room[g_vm->_oldRoom]._flag & OBJFLAG_EXTRA) {
 			if (g_vm->_curObj == od2ETO2C)
-				SetRoom(r2E, false);
+				g_vm->setRoom(r2E, false);
 			if (g_vm->_curObj == od24TO23)
-				SetRoom(r24, false);
+				g_vm->setRoom(r24, false);
 			if (g_vm->_curObj == od21TO22)
-				SetRoom(r21, false);
+				g_vm->setRoom(r21, false);
 			if (g_vm->_curObj == od2GVALLA26)
-				SetRoom(r2GV, false);
+				g_vm->setRoom(r2GV, false);
 		} else {
 			if (g_vm->_curObj == oENTRANCE2E)
-				SetRoom(r2E, true);
+				g_vm->setRoom(r2E, true);
 			if (g_vm->_curObj == od24TO26)
-				SetRoom(r24, true);
+				g_vm->setRoom(r24, true);
 			if (g_vm->_curObj == od21TO23)
-				SetRoom(r21, true);
+				g_vm->setRoom(r21, true);
 		}
 
 		if ((g_vm->_curRoom == r12) && (g_vm->_oldRoom == r11))
@@ -706,21 +706,21 @@ void doSystem() {
 		g_vm->_flagMouseEnabled = true;
 
 		if ((g_vm->_curRoom == r21) && ((g_vm->_oldRoom == r23A) || (g_vm->_oldRoom == r23B)))
-			SetRoom(r21, true);
+			g_vm->setRoom(r21, true);
 		else if ((g_vm->_curRoom == r21) && (g_vm->_oldRoom == r22))
-			SetRoom(r21, false);
+			g_vm->setRoom(r21, false);
 		else if ((g_vm->_curRoom == r24) && ((g_vm->_oldRoom == r23A) || (g_vm->_oldRoom == r23B)))
-			SetRoom(r24, false);
+			g_vm->setRoom(r24, false);
 		else if ((g_vm->_curRoom == r24) && (g_vm->_oldRoom == r26))
-			SetRoom(r24, true);
+			g_vm->setRoom(r24, true);
 		else if ((g_vm->_curRoom == r2A) && (g_vm->_oldRoom == r25))
-			SetRoom(r2A, true);
+			g_vm->setRoom(r2A, true);
 		else if ((g_vm->_curRoom == r2A) && ((g_vm->_oldRoom == r2B) || (g_vm->_oldRoom == r29) || (g_vm->_oldRoom == r29L)))
-			SetRoom(r2A, false);
+			g_vm->setRoom(r2A, false);
 		else if ((g_vm->_curRoom == r2B) && (g_vm->_oldRoom == r28))
-			SetRoom(r2B, true);
+			g_vm->setRoom(r2B, true);
 		else if ((g_vm->_curRoom == r2B) && (g_vm->_oldRoom == r2A))
-			SetRoom(r2B, false);
+			g_vm->setRoom(r2B, false);
 		//			for save/load
 		else if ((g_vm->_curRoom == r15) && (g_vm->_room[g_vm->_curRoom]._flag & OBJFLAG_EXTRA))
 			read3D("152.3d");
@@ -791,7 +791,7 @@ void RollInventory(uint8 status) {
 			g_vm->setInventoryStart(g_vm->_iconBase, INVENTORY_SHOW);
 			g_vm->_inventoryStatus = INV_INACTION;
 			g_vm->_inventoryCounter = INVENTORY_SHOW;
-			if (!(INVAREA(my)))
+			if (!(isInventoryArea(my)))
 				doEvent(MC_INVENTORY, ME_CLOSE, MP_DEFAULT, 0, 0, 0, 0);
 			g_vm->redrawString();
 			return ;
@@ -804,7 +804,7 @@ void RollInventory(uint8 status) {
 			g_vm->setInventoryStart(g_vm->_iconBase, INVENTORY_HIDE);
 			g_vm->_inventoryStatus = INV_OFF;
 			g_vm->_inventoryCounter = INVENTORY_HIDE;
-			if (INVAREA(my) && !(FlagDialogActive || FlagDialogMenuActive))
+			if (isInventoryArea(my) && !(FlagDialogActive || FlagDialogMenuActive))
 				doEvent(MC_INVENTORY, ME_OPEN, MP_DEFAULT, 0, 0, 0, 0);
 			else
 				g_vm->redrawString();
@@ -897,7 +897,7 @@ void doIdle() {
 	if (g_vm->_inventoryScrollTime > TheTime)
 		g_vm->_inventoryScrollTime = TheTime;
 
-	if (INVAREA(my) && (TheTime > (INVSCROLLSP + g_vm->_inventoryScrollTime))) {
+	if (isInventoryArea(my) && (TheTime > (INVSCROLLSP + g_vm->_inventoryScrollTime))) {
 		doScrollInventory(mx);
 		g_vm->_inventoryScrollTime = TheTime;
 	}
