@@ -32,7 +32,7 @@ namespace State {
 class State {
 public:
 	State() {}
-	virtual ~State() = default;
+	virtual ~State() {};
 
 	virtual void process() = 0;
 	virtual void onStateEnter() {}
