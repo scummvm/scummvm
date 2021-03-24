@@ -90,6 +90,7 @@ NancyEngine::~NancyEngine() {
 	delete _randomSource;
 
 	delete _graphicsManager;
+	delete _cursorManager;
 	delete _input;
 	delete _sound;
 }
