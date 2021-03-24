@@ -156,6 +156,17 @@ struct VirtScreen : Graphics::Surface {
 	 */
 	uint16 bdirty[80 + 1];
 
+	void clear() {
+		// FIXME: Call Graphics::Surface clear / constructor?
+		number = kMainVirtScreen;
+		topline = 0;
+		xstart = 0;
+		hasTwoBuffers = false;
+		backBuf = nullptr;
+		for (uint i = 0; i < ARRAYSIZE(tdirty); i++) tdirty[i] = 0;
+		for (uint i = 0; i < ARRAYSIZE(bdirty); i++) bdirty[i] = 0;
+	}
+
 	/**
 	 * Convenience method to set the whole tdirty and bdirty arrays to one
 	 * specific value each. This is mostly used to mark every as dirty in

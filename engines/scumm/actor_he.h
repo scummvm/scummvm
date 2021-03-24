@@ -37,6 +37,12 @@ struct AuxBlock {
 		r.left = r.top = 0;
 		r.right = r.bottom = -1;
 	}
+
+	void clear() {
+		reset();
+		r.right = 0;
+		r.bottom = 0;
+	}
 };
 
 struct AuxEntry {

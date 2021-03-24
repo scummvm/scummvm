@@ -1850,7 +1850,9 @@ struct PolygonDrawData {
 	int pAreasNum;
 
 	PolygonDrawData(int n) {
-		memset(mat, 0, sizeof(mat));
+		for (uint i = 0; i < ARRAYSIZE(mat); i++) {
+			mat[i] = Common::Point();
+		}
 		pa = new PolygonArea[n];
 		for (int i = 0; i < n; ++i) {
 			pa[i].xmin = 0x7FFFFFFF;

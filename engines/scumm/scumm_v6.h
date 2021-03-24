@@ -54,6 +54,14 @@ protected:
 		byte color;
 		byte charset;
 		byte text[256];
+
+		void clear() {
+			xpos = 0;
+			ypos = 0;
+			color = 0;
+			charset = 0;
+			for (uint i = 0; i < ARRAYSIZE(text); i++) text[i] = 0;
+		}
 	};
 
 	/** BlastObjects to draw */
@@ -63,6 +71,15 @@ protected:
 		uint16 scaleX, scaleY;
 		uint16 image;
 		uint16 mode;
+
+		void clear() {
+			number = 0;
+			rect = Common::Rect();
+			scaleX = 0;
+			scaleY = 0;
+			image = 0;
+			mode = 0;
+		}
 	};
 
 	int _blastObjectQueuePos;
@@ -71,6 +88,12 @@ protected:
 	struct BlastText : TextObject {
 		Common::Rect rect;
 		bool center;
+
+		void clear() {
+			this->TextObject::clear();
+			rect = Common::Rect();
+			center = false;
+		}
 	};
 
 	int _blastTextQueuePos;
