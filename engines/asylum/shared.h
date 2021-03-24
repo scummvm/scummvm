@@ -132,6 +132,7 @@ enum GameFlag {
 	kGameFlag635                  = 635,
 	kGameFlag636                  = 636,
 	kGameFlag637                  = 637,
+	kGameFlagSolveHiveControl     = 640,
 	kGameFlag724                  = 724,
 	kGameFlag727                  = 727,
 	kGameFlag730                  = 730,

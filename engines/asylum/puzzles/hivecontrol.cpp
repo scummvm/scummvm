@@ -246,6 +246,7 @@ bool PuzzleHiveControl::mouseLeftDown(const AsylumEvent &) {
 					getScreen()->setupTransTables(3, getWorld()->cellShadeMask1, getWorld()->cellShadeMask2, getWorld()->cellShadeMask3);
 					getScreen()->selectTransTable(1);
 
+					_vm->setGameFlag(kGameFlagSolveHiveControl);
 					_vm->switchEventHandler(getScene());
 				}
 			}
@@ -270,6 +271,7 @@ bool PuzzleHiveControl::mouseLeftDown(const AsylumEvent &) {
 					getScreen()->setupTransTables(3, getWorld()->cellShadeMask1, getWorld()->cellShadeMask2, getWorld()->cellShadeMask3);
 					getScreen()->selectTransTable(1);
 
+					_vm->setGameFlag(kGameFlagSolveHiveControl);
 					_vm->switchEventHandler(getScene());
 				}
 			}
