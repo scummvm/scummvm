@@ -60,7 +60,7 @@ static const Nancy::NancyGameDescription gameDescriptions[] = {
 			Nancy::NGF_8BITCOLOR,
 			GUIO0()
 		},
-		Nancy::GameType::kGameTypeVampire
+		Nancy::kGameTypeVampire
 	},
 	{ // MD5 by waltervn
 		{
@@ -71,7 +71,7 @@ static const Nancy::NancyGameDescription gameDescriptions[] = {
 			ADGF_NO_FLAGS,
 			GUIO0()
 		},
-		Nancy::GameType::kGameTypeNancy1
+		Nancy::kGameTypeNancy1
 	},
 	{ // MD5 by waltervn
 		{
@@ -82,7 +82,7 @@ static const Nancy::NancyGameDescription gameDescriptions[] = {
 			ADGF_NO_FLAGS,
 			GUIO0()
 		},
-		Nancy::GameType::kGameTypeNancy2
+		Nancy::kGameTypeNancy2
 	},
 	{ // MD5 by waltervn
 		{
@@ -93,7 +93,7 @@ static const Nancy::NancyGameDescription gameDescriptions[] = {
 			ADGF_NO_FLAGS,
 			GUIO0()
 		},
-		Nancy::GameType::kGameTypeNancy3
+		Nancy::kGameTypeNancy3
 	},
 	{ // MD5 by waltervn
 		{
@@ -109,7 +109,7 @@ static const Nancy::NancyGameDescription gameDescriptions[] = {
 			ADGF_NO_FLAGS,
 			GUIO0()
 		},
-		Nancy::GameType::kGameTypeNancy3
+		Nancy::kGameTypeNancy3
 	},
 	{ // MD5 by waltervn
 		{
@@ -120,7 +120,7 @@ static const Nancy::NancyGameDescription gameDescriptions[] = {
 			ADGF_NO_FLAGS,
 			GUIO0()
 		},
-		Nancy::GameType::kGameTypeNancy3
+		Nancy::kGameTypeNancy3
 	},
 	{ // MD5 by waltervn
 		{
@@ -136,7 +136,7 @@ static const Nancy::NancyGameDescription gameDescriptions[] = {
 			ADGF_NO_FLAGS,
 			GUIO0()
 		},
-		Nancy::GameType::kGameTypeNancy3
+		Nancy::kGameTypeNancy3
 	},
 	{ // MD5 by waltervn
 		{
@@ -147,7 +147,7 @@ static const Nancy::NancyGameDescription gameDescriptions[] = {
 			ADGF_NO_FLAGS,
 			GUIO0()
 		},
-		Nancy::GameType::kGameTypeNancy3
+		Nancy::kGameTypeNancy3
 	},
 	{ // MD5 by waltervn
 		{
@@ -163,7 +163,7 @@ static const Nancy::NancyGameDescription gameDescriptions[] = {
 			ADGF_NO_FLAGS,
 			GUIO0()
 		},
-		Nancy::GameType::kGameTypeNancy3
+		Nancy::kGameTypeNancy3
 	},
 	{ // MD5 by clone2727
 		{
@@ -179,7 +179,7 @@ static const Nancy::NancyGameDescription gameDescriptions[] = {
 			ADGF_NO_FLAGS,
 			GUIO0()
 		},
-		Nancy::GameType::kGameTypeNancy3
+		Nancy::kGameTypeNancy3
 	},
 	{ // MD5 by Strangerke
 		{
@@ -190,9 +190,9 @@ static const Nancy::NancyGameDescription gameDescriptions[] = {
 			ADGF_NO_FLAGS,
 			GUIO0()
 		},
-		Nancy::GameType::kGameTypeNancy3
+		Nancy::kGameTypeNancy3
 	},
-	{AD_TABLE_END_MARKER, Nancy::GameType::kGameTypeNone}
+	{AD_TABLE_END_MARKER, Nancy::kGameTypeNone}
 };
 
 class NancyMetaEngineDetection : public AdvancedMetaEngineDetection {
