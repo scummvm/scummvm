@@ -582,7 +582,7 @@ void HintSystem::selectHint() {
 }
 
 void HintSystem::getHint(uint hint, uint difficulty) {
-	uint fileOffset;
+	uint fileOffset = 0;
 	if (_characterID < 3) {
 		fileOffset = nancy1HintOffsets[_characterID];
 	}

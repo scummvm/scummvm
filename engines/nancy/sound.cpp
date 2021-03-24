@@ -164,9 +164,9 @@ Audio::SeekableAudioStream *SoundManager::makeHISStream(Common::SeekableReadStre
 	stream->read(buf, 22);
 	buf[21] = 0;
 
-	uint16 numChannels, bitsPerSample;
-	uint32 samplesPerSec, size;
-	SoundType type;
+	uint16 numChannels = 0, bitsPerSample = 0;
+	uint32 samplesPerSec = 0, size = 0;
+	SoundType type = kSoundTypeRaw;
 
 	if (Common::String(buf) == "Her Interactive Sound") {
 		// Early HIS file
