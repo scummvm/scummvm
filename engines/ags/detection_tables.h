@@ -886,6 +886,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "mordy2", "Mordy2" },
 	{ "mothersday", "Mothers Day" },
 	{ "motlpaa", "MOTLPAA" },
+	{ "mountainofmadness", "Mountain of Madness" },
 	{ "mourirenmer", "Mourir en mer" },
 	{ "mrbee", "Mr Bee" },
 	{ "mrdangerscontest", "Mr. Danger's Contest" },
@@ -2531,6 +2532,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("mordy2", "Mordy2.exe", "0710e2ec71042617f565c01824f0cf3c", 5186329),
 	GAME_ENTRY("mothersday", "mothersday.exe", "0b7529a76f38283d6e850b8d56526fc1", 1816363),
 	GAME_ENTRY("motlpaa", "MOTLPAA.exe", "0710e2ec71042617f565c01824f0cf3c", 1575258),
+	GAME_ENTRY("mountainofmadness", "MountainsOfMadness.exe", "95822b7957b8f239d3216b9209cfb1f5", 337894184), // Steam
 	GAME_ENTRY("mourirenmer", "Mourir.exe", "e88fd6a23a5e498d7b0d50e3bb914085", 2519706),
 	GAME_ENTRY("mrbee", "BEE.exe", "95dcf736be87cf7d40bf64d5b078c4b7", 45542087),
 	GAME_ENTRY("mrdangerscontest", "Danger.exe", "06a03fe35791b0578068ab1873455463", 7096987),
