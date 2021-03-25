@@ -1036,8 +1036,7 @@ int WaterGodBridgeJump::preExitRoom(Window *viewWindow, const Location &newLocat
 
 int WaterGodBridgeJump::postExitRoom(Window *viewWindow, const Location &newLocation) {
 	if (newLocation.facing == _staticData.location.facing && newLocation.timeZone == _staticData.location.timeZone &&
-			newLocation.facing == _staticData.location.facing && newLocation.timeZone == _staticData.location.timeZone &&
-			newLocation.facing == _staticData.location.facing && newLocation.timeZone == _staticData.location.timeZone) {
+			newLocation.environment == _staticData.location.environment) {
 		if (_jumpMidCycle) {
 			int diff = (_finalFrameIndex - _playingStartingFrame) % (_framesPerCycle * 2);
 			int diffB = (_finalFrameIndex - _playingStartingFrame - _framesPerCycle) % _framesPerCycle;

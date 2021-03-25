@@ -80,7 +80,7 @@ int BasicDoor::mouseUp(Window *viewWindow, const Common::Point &pointLocation) {
 			_vm->_sound->playSoundEffect(_vm->getFilePath(_staticData.location.timeZone, _staticData.location.environment, _openingSoundID));
 
 		if (_clickable.contains(pointLocation))
-			((SceneViewWindow *)viewWindow)->moveToDestination(_destData);		
+			((SceneViewWindow *)viewWindow)->moveToDestination(_destData);
 	}
 
 	return SC_TRUE;
@@ -566,7 +566,7 @@ int InteractiveNewsNetwork::mouseUp(Window *viewWindow, const Common::Point &poi
 				}
 
 				// If we are in Agent 3's lair, and we clicked on the symbiotry talks, change the destination
-				if (_staticData.location.timeZone == 3 && _currentMovieFrame == 8 && _currentMovieFrame == 8 && oldMovieFrame != 7) {
+				if (_staticData.location.timeZone == 3 && _currentMovieFrame == 8 && oldMovieFrame != 7) {
 					_currentMovieFrame = 7;
 					((SceneViewWindow *)viewWindow)->getGlobalFlags().scoreResearchINNUpdate = 1;
 				}
@@ -642,7 +642,7 @@ int InteractiveNewsNetwork::mouseUp(Window *viewWindow, const Common::Point &poi
 					((SceneViewWindow *)viewWindow)->getGlobalFlags().scoreResearchINNLouvreReport = 1;
 					break;
 				}
-	
+
 				return SC_TRUE;
 			}
 		}
@@ -894,7 +894,7 @@ int ClickPlayVideoSwitch::specifyCursor(Window *viewWindow, const Common::Point 
 ClickPlayVideo::ClickPlayVideo(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
 		int animID, int cursorID, int left, int top, int right, int bottom)
 		: SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
-	
+
 	_cursorID = cursorID;
 	_animID = animID;
 	_clickRegion = Common::Rect(left, top, right, bottom);

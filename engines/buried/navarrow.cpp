@@ -156,10 +156,10 @@ void NavArrowWindow::onLButtonDown(const Common::Point &point, uint flags) {
 
 				if (_vm->_gfx->checkPointAgainstMaskedBitmap(centerArrow, 39, 49, point, 255, 255, 255)) {
 					if (_arrowStatus[4] == BUTTON_ENABLED)
-						((GameUIWindow *)_parent)->_sceneViewWindow->moveInDirection(4);
+						retVal = ((GameUIWindow *)_parent)->_sceneViewWindow->moveInDirection(4);
 				} else {
 					if (_arrowStatus[2] == BUTTON_ENABLED)
-						((GameUIWindow *)_parent)->_sceneViewWindow->moveInDirection(2);
+						retVal = ((GameUIWindow *)_parent)->_sceneViewWindow->moveInDirection(2);
 				}
 
 				centerArrow->free();
@@ -171,10 +171,10 @@ void NavArrowWindow::onLButtonDown(const Common::Point &point, uint flags) {
 
 				if (_vm->_gfx->checkPointAgainstMaskedBitmap(centerArrow, 39, 49, point, 255, 255, 255)) {
 					if (_arrowStatus[4] == BUTTON_ENABLED)
-						((GameUIWindow *)_parent)->_sceneViewWindow->moveInDirection(4);
+						retVal = ((GameUIWindow *)_parent)->_sceneViewWindow->moveInDirection(4);
 				} else {
 					if (_arrowStatus[3] == BUTTON_ENABLED)
-						((GameUIWindow *)_parent)->_sceneViewWindow->moveInDirection(3);
+						retVal = ((GameUIWindow *)_parent)->_sceneViewWindow->moveInDirection(3);
 				}
 
 				centerArrow->free();
@@ -183,16 +183,16 @@ void NavArrowWindow::onLButtonDown(const Common::Point &point, uint flags) {
 		}
 	} else {
 		if (upButton.contains(point) && _arrowStatus[0] == BUTTON_ENABLED)
-			((GameUIWindow *)_parent)->_sceneViewWindow->moveInDirection(0);
+			retVal = ((GameUIWindow *)_parent)->_sceneViewWindow->moveInDirection(0);
 
 		if (leftButton.contains(point) && _arrowStatus[1] == BUTTON_ENABLED)
-			((GameUIWindow *)_parent)->_sceneViewWindow->moveInDirection(1);
+			retVal = ((GameUIWindow *)_parent)->_sceneViewWindow->moveInDirection(1);
 
 		if (rightButton.contains(point) && _arrowStatus[2] == BUTTON_ENABLED)
-			((GameUIWindow *)_parent)->_sceneViewWindow->moveInDirection(2);
+			retVal = ((GameUIWindow *)_parent)->_sceneViewWindow->moveInDirection(2);
 
 		if (downButton.contains(point) && _arrowStatus[3] == BUTTON_ENABLED)
-			((GameUIWindow *)_parent)->_sceneViewWindow->moveInDirection(3);
+			retVal = ((GameUIWindow *)_parent)->_sceneViewWindow->moveInDirection(3);
 	}
 
 	if (retVal) {
