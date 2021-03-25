@@ -1791,7 +1791,8 @@ bool SceneViewWindow::stopAsynchronousAnimation() {
 
 	_asyncMovie->stopVideo();
 
-	_currentScene->movieCallback(this, _asyncMovie, 0, MOVIE_STOPPED);
+	if (!_currentScene->movieCallback(this, _asyncMovie, 0, MOVIE_STOPPED))
+		return false;
 
 	delete _asyncMovie;
 	_asyncMovie = nullptr;
