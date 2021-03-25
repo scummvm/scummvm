@@ -39,7 +39,6 @@ extern const char 		*_sysSentence[];
 extern int			ForceQuit;
 
 void NextMessage();
-void longset(void *dest, uint32 value, uint32 len);
 void StopSoundSystem();
 void FastFileFinish();
 void AnimFileFinish();

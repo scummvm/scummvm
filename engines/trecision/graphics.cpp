@@ -94,14 +94,7 @@ void GraphicsManager::unlock() {
 					clearScreen
 --------------------------------------------------*/
 void GraphicsManager::clearScreen() {
-	lock();
-	if (_screenPtr == nullptr)
-		return;
-	if ((_pitch == 0) || (_pitch == SCREENLEN * 2))
-		longset(_screenPtr, 0x00000000, 320 * 480);
-	else
-		longset(_screenPtr, 0x00000000, (_pitch / 4) * 480);
-	unlock();
+	g_system->fillScreen(0);
 }
 
 /*------------------------------------------------
