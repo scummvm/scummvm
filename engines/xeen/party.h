@@ -269,6 +269,8 @@ public:
 
 	int subtract(ConsumableType consumableId, uint amount, PartyBank whereId, MessageWaitType wait = WT_FREEZE_WAIT);
 
+	int getConsumableForm(ConsumableType consumableId);
+
 	void notEnough(ConsumableType consumableId, PartyBank whereId, bool mode, MessageWaitType wait);
 
 	void checkPartyDead();
