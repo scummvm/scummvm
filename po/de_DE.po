@@ -16,7 +16,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-03-24 23:24+0000\n"
-"PO-Revision-Date: 2021-03-22 08:49+0000\n"
+"PO-Revision-Date: 2021-03-25 12:28+0000\n"
 "Last-Translator: Lothar Serra Mari <serra@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/de/>\n"
@@ -5394,35 +5394,31 @@ msgstr "Dateiname zum Speichern eingeben"
 
 #: engines/nancy/action/telephone.cpp:144
 msgid "ringing...<n><e>"
-msgstr ""
+msgstr "ringing...<n><e>"
 
 #: engines/nancy/cheat.cpp:56
 msgid "General"
 msgstr "Allgemein"
 
 #: engines/nancy/cheat.cpp:56
-#, fuzzy
-#| msgid "General"
 msgid "Cheat.General"
-msgstr "Allgemein"
+msgstr "Cheat.General"
 
 #: engines/nancy/cheat.cpp:58
 msgid "Scene Data"
-msgstr ""
+msgstr "Szenerie-Daten"
 
 #: engines/nancy/cheat.cpp:59
-#, fuzzy
-#| msgid "Start the debugger"
 msgid "Restart the Scene"
-msgstr "Debugger starten"
+msgstr "Szene neu starten"
 
 #: engines/nancy/cheat.cpp:61
 msgid "Scene Number"
-msgstr ""
+msgstr "Szenen-Nummer"
 
 #: engines/nancy/cheat.cpp:63
 msgid "Frame Number"
-msgstr ""
+msgstr "Frame-Nummer"
 
 #: engines/nancy/cheat.cpp:65
 msgid "Background Top (Y)"
@@ -5430,73 +5426,59 @@ msgstr ""
 
 #: engines/nancy/cheat.cpp:67
 msgid "Hints Remaining"
-msgstr ""
+msgstr "verbleibende Hinweise"
 
 #: engines/nancy/cheat.cpp:68
 msgid "Easy"
-msgstr ""
+msgstr "Leicht"
 
 #: engines/nancy/cheat.cpp:70
 msgid "Medium"
-msgstr ""
+msgstr "Mittel"
 
 #: engines/nancy/cheat.cpp:72
 msgid "Hard"
-msgstr ""
+msgstr "Schwer"
 
 #: engines/nancy/cheat.cpp:75 engines/nancy/cheat.cpp:86
-#, fuzzy
-#| msgid "Player 1: Left"
 msgid "Player Data"
-msgstr "Spieler 1: Links"
+msgstr "Spieler-Daten"
 
 #: engines/nancy/cheat.cpp:76
-#, fuzzy
-#| msgid "Playtime: "
 msgid "Player Time:"
-msgstr "Spieldauer: "
+msgstr "Spielzeit:"
 
 #: engines/nancy/cheat.cpp:78
 msgid "Days"
-msgstr ""
+msgstr "Tage"
 
 #: engines/nancy/cheat.cpp:80 engines/nancy/cheat.cpp:90
 msgid "Hours"
-msgstr ""
+msgstr "Stunden"
 
 #: engines/nancy/cheat.cpp:82 engines/nancy/cheat.cpp:92
-#, fuzzy
-#| msgid "Minus"
 msgid "Minutes"
-msgstr "Minus"
+msgstr "Minuten"
 
 #: engines/nancy/cheat.cpp:84
 msgid "Player Difficulty Level"
-msgstr ""
+msgstr "Schwierigkeitsgrad"
 
 #: engines/nancy/cheat.cpp:87
-#, fuzzy
-#| msgid "Time: "
 msgid "Timer On"
-msgstr "Zeit: "
+msgstr "Timer aktiviert"
 
 #: engines/nancy/cheat.cpp:94
-#, fuzzy
-#| msgid "Second kid"
 msgid "Seconds"
-msgstr "Zweites Kind"
+msgstr "Sekunden"
 
 #: engines/nancy/cheat.cpp:96
-#, fuzzy
-#| msgid "Inventory"
 msgid "Cheat.Inventory"
-msgstr "Inventar"
+msgstr "Cheat.Inventory"
 
 #: engines/nancy/cheat.cpp:163
-#, fuzzy
-#| msgid "Invalid path!"
 msgid "Invalid Scene ID!"
-msgstr "Pfad ungültig!"
+msgstr "Ungültige Szenen-ID!"
 
 #: engines/nancy/input.cpp:170
 #, fuzzy
