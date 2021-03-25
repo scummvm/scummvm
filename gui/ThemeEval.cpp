@@ -169,6 +169,14 @@ ThemeEval &ThemeEval::addSpace(int size) {
 	return *this;
 }
 
+#define SCALEVALUE(val) (val > 0 ? val * _scaleFactor : val)
+
+ThemeEval &ThemeEval::addPadding(int16 l, int16 r, int16 t, int16 b) {
+	_curLayout.top()->setPadding(SCALEVALUE(l), SCALEVALUE(r), SCALEVALUE(t), SCALEVALUE(b));
+
+	return *this;
+}
+
 bool ThemeEval::hasDialog(const Common::String &name) {
 	Common::StringTokenizer tokenizer(name, ".");
 

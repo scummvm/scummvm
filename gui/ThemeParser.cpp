@@ -892,7 +892,7 @@ bool ThemeParser::parserCallback_layout(ParserNode *node) {
 		if (!parseIntegerKey(node->values["padding"], 4, &paddingL, &paddingR, &paddingT, &paddingB))
 			return false;
 
-		_theme->getEvaluator()->addPadding(SCALEVALUE(paddingL), SCALEVALUE(paddingR), SCALEVALUE(paddingT), SCALEVALUE(paddingB));
+		_theme->getEvaluator()->addPadding(paddingL, paddingR, paddingT, paddingB);
 	}
 
 	return true;

@@ -195,6 +195,7 @@ ThemeEngine::ThemeEngine(Common::String id, GraphicsMode mode) :
 	_system = g_system;
 	_parser = new ThemeParser(this);
 	_themeEval = new GUI::ThemeEval();
+	_themeEval->setScaleFactor(_scaleFactor);
 
 	_useCursor = false;
 
@@ -316,6 +317,7 @@ void ThemeEngine::setBaseResolution(int w, int h, float s) {
 	_scaleFactor = s;
 
 	_parser->setBaseResolution(w, h, s);
+	_themeEval->setScaleFactor(s);
 }
 
 /**********************************************************
