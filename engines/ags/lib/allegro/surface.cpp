@@ -106,7 +106,6 @@ void BITMAP::floodfill(int x, int y, int color) {
 }
 
 const int SCALE_THRESHOLD = 0x100;
-#define IS_TRANSPARENT(R, G, B) ((R) == 255 && (G) == 0 && (B) == 255)
 #define VGA_COLOR_TRANS(x) ((x) * 255 / 63)
 
 void BITMAP::draw(const BITMAP *srcBitmap, const Common::Rect &srcRect,
@@ -139,23 +138,25 @@ void BITMAP::draw(const BITMAP *srcBitmap, const Common::Rect &srcRect,
 	const int scaleY = SCALE_THRESHOLD * srcRect.height() / dstRect.height();
 	const int xDir = horizFlip ? -1 : 1;
 	bool useTint = (tintRed >= 0 && tintGreen >= 0 && tintBlue >= 0);
+	bool sameFormat = (src.format == format);
 
 	byte rSrc, gSrc, bSrc, aSrc;
 	byte rDest = 0, gDest = 0, bDest = 0, aDest = 0;
-	uint32 pal[PALETTE_COUNT];
 
-	Graphics::PixelFormat srcFormat = src.format;
-	if (srcFormat.bytesPerPixel == 1) {
-		for (int i = 0; i < PALETTE_COUNT; ++i)
-			pal[i] = format.RGBToColor(
-				VGA_COLOR_TRANS(_G(current_palette)[i].r),
-				VGA_COLOR_TRANS(_G(current_palette)[i].g),
-				VGA_COLOR_TRANS(_G(current_palette)[i].b));
-		srcFormat = format;
-		// If we are skipping transparency, color 0 is skipped.
-		// Set it to transparent color to simplify the check below.
-		if (skipTrans)
-			pal[0] = format.RGBToColor(0xff, 0, 0xff);
+	PALETTE palette;
+	if (src.format.bytesPerPixel == 1 && format.bytesPerPixel != 1) {
+		for (int i = 0; i < PAL_SIZE; ++i) {
+			palette[i].r = VGA_COLOR_TRANS(_G(current_palette)[i].r);
+			palette[i].g = VGA_COLOR_TRANS(_G(current_palette)[i].g);
+			palette[i].b = VGA_COLOR_TRANS(_G(current_palette)[i].b);
+		}
+	}
+
+	uint32 transColor = 0, alphaMask = 0xff;
+	if (skipTrans && src.format.bytesPerPixel != 1) {
+		transColor = src.format.ARGBToColor(0, 255, 0, 255);
+		alphaMask = src.format.ARGBToColor(255, 0, 0, 0);
+		alphaMask = ~alphaMask;
 	}
 
 	int xStart = (dstRect.left < destRect.left) ? dstRect.left - destRect.left : 0;
@@ -178,17 +179,35 @@ void BITMAP::draw(const BITMAP *srcBitmap, const Common::Rect &srcRect,
 				continue;
 
 			const byte *srcVal = srcP + xDir * (scaleXCtr / SCALE_THRESHOLD * src.format.bytesPerPixel);
+			uint32 srcCol = getColor(srcVal, src.format.bytesPerPixel);
+
+			// Check if this is a transparent color we should skip
+			if (skipTrans && ((srcCol & alphaMask) == transColor))
+				continue;
+
 			byte *destVal = (byte *)&destP[destX * format.bytesPerPixel];
 
-			if (src.format.bytesPerPixel == 1 && format.bytesPerPixel == 1) {
-				if (!skipTrans || *srcVal != 0)
-					*destVal = *srcVal;
+			// When blitting to the same format we can just copy the color
+			if (format.bytesPerPixel == 1) {
+				*destVal = srcCol;
+				continue;
+			} else if (sameFormat && srcAlpha == -1) {
+				if (format.bytesPerPixel == 4)
+					*(uint32 *)destVal = srcCol;
+				else
+					*(uint16 *)destVal = srcCol;
 				continue;
 			}
-			srcFormat.colorToARGB(getColor(srcVal, src.format.bytesPerPixel, pal), aSrc, rSrc, gSrc, bSrc);
 
-			if (skipTrans && IS_TRANSPARENT(rSrc, gSrc, bSrc))
-				continue;
+			// We need the rgb values to do blending and/or convert between formats
+			if (src.format.bytesPerPixel == 1) {
+				const RGB& rgb = palette[srcCol];
+				aSrc = 0xff;
+				rSrc = rgb.r;
+				gSrc = rgb.g;
+				bSrc = rgb.b;
+			} else
+				src.format.colorToARGB(srcCol, aSrc, rSrc, gSrc, bSrc);
 
 			if (srcAlpha == -1) {
 				// This means we don't use blending.
@@ -208,7 +227,7 @@ void BITMAP::draw(const BITMAP *srcBitmap, const Common::Rect &srcRect,
 					aSrc = srcAlpha;
 				} else {
 					// TODO: move this to blendPixel to only do it when needed?
-					format.colorToARGB(getColor(destVal, format.bytesPerPixel, nullptr), aDest, rDest, gDest, bDest);
+					format.colorToARGB(getColor(destVal, format.bytesPerPixel), aDest, rDest, gDest, bDest);
 				}
 				blendPixel(aSrc, rSrc, gSrc, bSrc, aDest, rDest, gDest, bDest, srcAlpha);
 			}
