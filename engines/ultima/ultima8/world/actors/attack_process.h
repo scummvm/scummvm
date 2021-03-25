@@ -63,12 +63,20 @@ public:
 	void setField97() {
 		_field97 = true;
 	}
+	void setField7F() {
+		_field7f = true;
+	}
 
 	void setTimer3();
+
+	uint16 getTarget() const {
+		return _target;
+	}
 
 	bool loadData(Common::ReadStream *rs, uint32 version);
 	void saveData(Common::WriteStream *ws) override;
 
+	static const uint16 ATTACK_PROCESS_TYPE;
 private:
 	/** Set the current tactic in use from the combat.dat file.  If 0,
 	 * will use the genericAttack function. */

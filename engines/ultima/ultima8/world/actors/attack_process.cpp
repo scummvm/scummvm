@@ -36,7 +36,7 @@
 #include "ultima/ultima8/world/loop_script.h"
 #include "ultima/ultima8/world/actors/combat_dat.h"
 #include "ultima/ultima8/world/actors/loiter_process.h"
-#include "ultima/ultima8/world/actors/pathfinder_process.h"
+#include "ultima/ultima8/world/actors/cru_pathfinder_process.h"
 #include "ultima/ultima8/misc/direction_util.h"
 
 namespace Ultima {
@@ -58,6 +58,7 @@ static const int16 ATTACK_SFX_7[] = {0x9B, 0x9C, 0x9D, 0x9E, 0x9F};
 // read from the data array.
 static const int MAGIC_DATA_OFF = 33000;
 
+const uint16 AttackProcess::ATTACK_PROCESS_TYPE = 0x259;
 
 static uint16 someSleepGlobal = 0;
 
@@ -65,7 +66,6 @@ static uint16 someSleepGlobal = 0;
 static bool World_FinishedAvatarMoveTimeout() {
 	return true;
 }
-
 
 static inline int32 randomOf(int32 max) {
 	return (max > 0 ? getRandom() % max : 0);
@@ -141,7 +141,7 @@ _soundTimestamp(0), _fireTimestamp(0) {
 		}
 	}
 
-	_type = 0x0259; // CONSTANT !
+	_type = ATTACK_PROCESS_TYPE;
 
 	setTacticNo(actor->getCombatTactic());
 }
@@ -242,7 +242,7 @@ void AttackProcess::run() {
 			int32 x, y, z;
 			a->getHomePosition(x, y, z);
 			ProcId pid = Kernel::get_instance()->addProcess(
-					   new PathfinderProcess(a, x, y, z));
+					   new CruPathfinderProcess(a, x, y, z, 100, 0x40, true));
 			waitFor(pid);
 			return;
 		}
@@ -252,7 +252,7 @@ void AttackProcess::run() {
 			int32 x, y, z;
 			target->getLocation(x, y, z);
 			ProcId pid = Kernel::get_instance()->addProcess(
-					   new PathfinderProcess(a, x, y, z));
+					   new CruPathfinderProcess(a, x, y, z, 12, 0x40, true));
 			waitFor(pid);
 			return;
 		}
@@ -267,7 +267,7 @@ void AttackProcess::run() {
 			int32 y = (ty + ay) / 2;
 			int32 z = (tz + az) / 2;
 			ProcId pid = Kernel::get_instance()->addProcess(
-					   new PathfinderProcess(a, x, y, z));
+					   new CruPathfinderProcess(a, x, y, z, 12, 0x40, true));
 			waitFor(pid);
 			return;
 		}
@@ -395,7 +395,7 @@ void AttackProcess::run() {
 
 				if (itemFrame == targetFrame && (targetQ == 0 || itemQlo == targetQ)) {
 					ProcId pid = Kernel::get_instance()->addProcess(
-						 new PathfinderProcess(a, founditem->getObjId()));
+						 new CruPathfinderProcess(a, founditem, 100, 0x40, true));
 					waitFor(pid);
 					break;
 				}
@@ -551,7 +551,7 @@ void AttackProcess::genericAttack() {
 			y += -0x1ff + randomOf(0x400);
 			_field96 = true;
 			const ProcId pid = Kernel::get_instance()->addProcess(
-								new PathfinderProcess(a, x, y, z));
+								new CruPathfinderProcess(a, x, y, z, 12, 0x40, true));
 			// add a tiny delay to avoid tight loops
 			Process *delayproc = new DelayProcess(2);
 			Kernel::get_instance()->addProcess(delayproc);
@@ -831,7 +831,7 @@ void AttackProcess::pathfindToItemInNPCData() {
 	Actor *a = getActor(_itemNum);
 	Actor *target = getActor(_target);
 
-	Process *pathproc = new PathfinderProcess(a, target->getObjId());
+	Process *pathproc = new CruPathfinderProcess(a, target, 12, 0x40, false);
 	// In case pathfinding fails delay for a bit to ensure we don't get
 	// stuck in a tight loop using all the cpu
 	Process *delayproc = new DelayProcess(10);

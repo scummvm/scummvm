@@ -555,6 +555,7 @@ MODULE_OBJS := \
 	ultima8/world/actors/clear_feign_death_process.o \
 	ultima8/world/actors/cru_avatar_mover_process.o \
 	ultima8/world/actors/cru_healer_process.o \
+	ultima8/world/actors/cru_pathfinder_process.o \
 	ultima8/world/actors/combat_dat.o \
 	ultima8/world/actors/combat_process.o \
 	ultima8/world/actors/grant_peace_process.o \

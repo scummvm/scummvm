@@ -617,6 +617,9 @@ uint16 Actor::turnTowardDir(Direction targetdir) {
 		}
 	}
 
+	if (targetdir == curdir)
+		return 0; // nothing to do.
+
 	if (combat) {
 		turnanim = Animation::combatStand;
 		standanim = Animation::combatStand;

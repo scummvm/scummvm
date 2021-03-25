@@ -20,24 +20,30 @@
  *
  */
 
-#ifndef WORLD_ACTORS_PATHFINDERPROCESS_H
-#define WORLD_ACTORS_PATHFINDERPROCESS_H
+#ifndef WORLD_ACTORS_CRU_PATHFINDERPROCESS_H
+#define WORLD_ACTORS_CRU_PATHFINDERPROCESS_H
 
 #include "ultima/ultima8/kernel/process.h"
-
-#include "ultima/ultima8/world/actors/pathfinder.h"
+#include "ultima/ultima8/misc/direction.h"
 
 namespace Ultima {
 namespace Ultima8 {
 
 class Actor;
+class Item;
 
-class PathfinderProcess : public Process {
+/**
+ * A simplified pathfinder used in Crusader for the AttackProcess.
+ *
+ * The code and variable names for this are not very well written as
+ * they are are based on the disassembly.
+ */
+class CruPathfinderProcess : public Process {
 public:
-	PathfinderProcess();
-	PathfinderProcess(Actor *actor, ObjId item, bool hit = false);
-	PathfinderProcess(Actor *actor, int32 x, int32 y, int32 z);
-	~PathfinderProcess() override;
+	CruPathfinderProcess();
+	CruPathfinderProcess(Actor *actor, Item *item, int maxsteps, int stopdistance, bool turnatend);
+	CruPathfinderProcess(Actor *actor, int32 x, int32 y, int32 z, int maxsteps, int stopdistance, bool turnatend);
+	~CruPathfinderProcess() override;
 
 	ENABLE_RUNTIME_CLASSTYPE()
 
@@ -47,16 +53,29 @@ public:
 	bool loadData(Common::ReadStream *rs, uint32 version);
 	void saveData(Common::WriteStream *ws) override;
 
-protected:
+private:
+
+	Direction nextDirFromPoint(struct Point3 &npcpt);
+
 	int32 _targetX, _targetY, _targetZ;
 	ObjId _targetItem;
-	bool _hitMode;
+	int _currentDistance;
+	bool _randomFlag;
+	bool _nextTurn;
+	bool _turnAtEnd;
 
-	Std::vector<PathfindingAction> _path;
+	Direction _lastDir;
+	Direction _nextDir;
+	Direction _nextDir2;
+
+	bool _solidObject;
+	bool _directPathBlocked;
+	bool _noShotAvailable;
+	bool _dir16Flag;
+
 	unsigned int _currentStep;
-
-public:
-	static const uint16 PATHFINDER_PROC_TYPE;
+	unsigned int _maxSteps;
+	int _stopDistance;
 };
 
 } // End of namespace Ultima8
