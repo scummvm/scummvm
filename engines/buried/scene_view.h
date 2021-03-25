@@ -79,7 +79,7 @@ public:
 	bool playTransition(const DestinationScene &destinationData, int navFrame);
 	bool videoTransition(const Location &location, DestinationScene destinationData, int navFrame);
 	bool walkTransition(const Location &location, const DestinationScene &destinationData, int navFrame);
-	bool pushTransition(Graphics::Surface *curBackground, Graphics::Surface *newBackground, int direction, int stripSize, int totalTime);
+	bool pushTransition(Graphics::Surface *curBackground, Graphics::Surface *newBackground, int direction, uint stripSize, int totalTime);
 	bool pushNewTransition(Graphics::Surface *newBackground, int direction, int stripSize, int totalTime);
 	bool slideInTransition(Graphics::Surface *newBackground, int direction, int stripSize, int totalTime);
 	bool slideOutTransition(Graphics::Surface *newBackground, int direction, int stripSize, int totalTime);

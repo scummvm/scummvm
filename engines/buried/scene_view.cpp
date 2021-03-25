@@ -1146,7 +1146,7 @@ bool SceneViewWindow::walkTransition(const Location &location, const Destination
 	return true;
 }
 
-bool SceneViewWindow::pushTransition(Graphics::Surface *curBackground, Graphics::Surface *newBackground, int direction, int stripSize, int totalTime) {
+bool SceneViewWindow::pushTransition(Graphics::Surface *curBackground, Graphics::Surface *newBackground, int direction, uint stripSize, int totalTime) {
 	// Check the validity of the parameters
 	if (!curBackground || !newBackground || direction < 0 || direction > 4 || stripSize <= 0 || totalTime < 0)
 		return false;
@@ -1228,8 +1228,8 @@ bool SceneViewWindow::slideInTransition(Graphics::Surface *newBackground, int di
 
 	switch (direction) {
 	case 0: // Push down
-		for (int i = stripSize; i <= DIB_FRAME_HEIGHT; i += stripSize) {
-			for (int j = 0; j < i; j++)
+		for (uint i = stripSize; i <= DIB_FRAME_HEIGHT; i += stripSize) {
+			for (uint j = 0; j < i; j++)
 				memcpy(_preBuffer->getBasePtr(0, j), newBackground->getBasePtr(0, DIB_FRAME_HEIGHT - j), newBackground->w * newBackground->format.bytesPerPixel);
 
 			invalidateWindow(false);
@@ -1237,8 +1237,8 @@ bool SceneViewWindow::slideInTransition(Graphics::Surface *newBackground, int di
 		}
 		break;
 	case 1: // Push right
-		for (int i = stripSize; i <= DIB_FRAME_WIDTH; i += stripSize) {
-			for (int j = 0; j < DIB_FRAME_HEIGHT; j++)
+		for (uint i = stripSize; i <= DIB_FRAME_WIDTH; i += stripSize) {
+			for (uint j = 0; j < DIB_FRAME_HEIGHT; j++)
 				memcpy(_preBuffer->getBasePtr(0, j), newBackground->getBasePtr(DIB_FRAME_WIDTH - i, j), i * newBackground->format.bytesPerPixel);
 
 			invalidateWindow(false);
@@ -1246,8 +1246,8 @@ bool SceneViewWindow::slideInTransition(Graphics::Surface *newBackground, int di
 		}
 		break;
 	case 2: // Push left
-		for (int i = stripSize; i <= DIB_FRAME_WIDTH; i += stripSize) {
-			for (int j = 0; j < DIB_FRAME_HEIGHT; j++)
+		for (uint i = stripSize; i <= DIB_FRAME_WIDTH; i += stripSize) {
+			for (uint j = 0; j < DIB_FRAME_HEIGHT; j++)
 				memcpy(_preBuffer->getBasePtr(0, DIB_FRAME_WIDTH - i), newBackground->getBasePtr(0, j), i * newBackground->format.bytesPerPixel);
 
 			invalidateWindow(false);
@@ -1255,8 +1255,8 @@ bool SceneViewWindow::slideInTransition(Graphics::Surface *newBackground, int di
 		}
 		break;
 	case 3: // Push up
-		for (int i = stripSize; i <= DIB_FRAME_HEIGHT; i += stripSize) {
-			for (int j = 0; j < i; j++)
+		for (uint i = stripSize; i <= DIB_FRAME_HEIGHT; i += stripSize) {
+			for (uint j = 0; j < i; j++)
 				memcpy(_preBuffer->getBasePtr(0, DIB_FRAME_HEIGHT - j), newBackground->getBasePtr(0, j), newBackground->w * newBackground->format.bytesPerPixel);
 
 			invalidateWindow(false);
