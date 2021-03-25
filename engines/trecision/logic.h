@@ -59,6 +59,8 @@ public:
 	void roomOut(uint16 curObj, uint16 *action, uint16 *pos);
 	bool mouseExamine(uint16 curObj);
 	bool mouseOperate(uint16 curObj);
+	bool mouseTake(uint16 curObj);
+	bool mouseTalk(uint16 curObj);
 };
 ; // end of class
 
