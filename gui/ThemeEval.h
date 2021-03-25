@@ -41,7 +41,7 @@ class ThemeEval {
 	typedef Common::HashMap<Common::String, ThemeLayout *> LayoutsMap;
 
 public:
-	ThemeEval() {
+	ThemeEval() : _scaleFactor(1.0f) {
 		buildBuiltinVars();
 	}
 
@@ -70,6 +70,8 @@ public:
 		return def;
 	}
 
+	void setScaleFactor(float s) { _scaleFactor = s; }
+
 	void setVar(const Common::String &name, int val) { _vars[name] = val; }
 
 	bool hasVar(const Common::String &name) { return _vars.contains(name) || _builtin.contains(name); }
@@ -80,7 +82,7 @@ public:
 	ThemeEval &addImportedLayout(const Common::String &name);
 	ThemeEval &addSpace(int size = -1);
 
-	ThemeEval &addPadding(int16 l, int16 r, int16 t, int16 b) { _curLayout.top()->setPadding(l, r, t, b); return *this; }
+	ThemeEval &addPadding(int16 l, int16 r, int16 t, int16 b);
 
 	ThemeEval &closeLayout() { _curLayout.pop(); return *this; }
 	ThemeEval &closeDialog() { _curLayout.pop(); _curDialog.clear(); return *this; }
@@ -108,6 +110,8 @@ private:
 	LayoutsMap _layouts;
 	Common::Stack<ThemeLayout *> _curLayout;
 	Common::String _curDialog;
+
+	float _scaleFactor;
 };
 
 } // End of namespace GUI
