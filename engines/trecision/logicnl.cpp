@@ -2975,4 +2975,104 @@ bool LogicManager::mouseOperate(uint16 curObj) {
 	return retVal;
 }
 
+bool LogicManager::mouseTake(uint16 curObj) {
+	bool retVal;
+
+	switch (curObj) {
+	case oTINFOIL11:
+		retVal = false;
+		break;
+	case oNASTRO15:
+		g_vm->_obj[oNASTRO15]._flag |= OBJFLAG_EXTRA;
+		retVal = false;
+		break;
+	case oMONETA13:
+		if (!(g_vm->_obj[oLATTINA13]._mode & OBJMODE_OBJSTATUS))
+			g_vm->_obj[curObj]._anim = a133CPRENDEMONETA;
+		retVal = true;
+		break;
+	case oFOGLIETTO14:
+		g_vm->_obj[oFOGLIETTO14]._flag |= OBJFLAG_EXTRA;
+		g_vm->_obj[oMAPPA16]._examine = 152;
+		retVal = false;
+		break;
+	case oPOSTERC22:
+		g_vm->_obj[oARMADIETTOCC22]._anim = a221;
+		g_vm->_obj[oARMADIETTOCA22]._anim = a222;
+		retVal = true;
+		break;
+	case oKEY22:
+		g_vm->_obj[oARMADIETTORA22]._examine = 2013;
+		retVal = true;
+		break;
+	default:
+		retVal = true;
+		break;
+	}
+
+	return retVal;
+}
+
+bool LogicManager::mouseTalk(uint16 curObj) {
+	bool retVal = true;
+
+	switch (curObj) {
+	case oTICKETOFFICE16:
+		if ((g_vm->_obj[oFINGERPADP16]._flag & OBJFLAG_ROOMOUT) && (g_vm->_choice[50]._flag & OBJFLAG_DONE)) {
+			CharacterSay(147);
+			retVal = false;
+			break;
+		}
+
+		if ((g_vm->_choice[49]._flag & DLGCHOICE_HIDE) && (g_vm->_choice[50]._flag & DLGCHOICE_HIDE)) {
+			if (g_vm->_obj[oMAPPA16]._flag & OBJFLAG_EXTRA) {
+				g_vm->_choice[46]._flag &= ~DLGCHOICE_HIDE;
+				g_vm->_choice[48]._flag &= ~DLGCHOICE_HIDE;
+				g_vm->_obj[oTICKETOFFICE16]._flag |= OBJFLAG_EXTRA;
+			}
+			else {
+				if (g_vm->_choice[46]._flag & OBJFLAG_DONE) {
+					CharacterSay(g_vm->_obj[oTICKETOFFICE16]._action);
+					retVal = false;
+					break;
+				}
+
+				g_vm->_choice[46]._flag &= ~DLGCHOICE_HIDE;
+				g_vm->_choice[47]._flag &= ~DLGCHOICE_HIDE;
+			}
+		}
+		break;
+
+	case ocGUARD18:
+		g_vm->_obj[ocGUARD18]._flag &= ~OBJFLAG_PERSON;
+		g_vm->_obj[ocGUARD18]._action = 227;
+		g_vm->_obj[oPORTAC18]._action = 220;
+		break;
+
+	case ocNEGOZIANTE1A:
+		for (int c = _dialog[dNEGOZIANTE1A]._firstChoice; c < (_dialog[dNEGOZIANTE1A]._firstChoice + _dialog[dNEGOZIANTE1A]._choiceNumb); c++) {
+			if (!(g_vm->_choice[c]._flag & DLGCHOICE_HIDE)) {
+				PlayDialog(g_vm->_obj[curObj]._goRoom);
+				retVal = false;
+				return retVal;
+			}
+		}
+
+		if (g_vm->_obj[ocNEGOZIANTE1A]._action) {
+			CharacterSay(g_vm->_obj[ocNEGOZIANTE1A]._action);
+			retVal = false;
+		}
+		break;
+
+	case ocEVA19:
+		g_vm->_inventoryObj[iSAM]._action = 1415;
+		break;
+
+	default:
+		break;
+	}
+
+	return retVal;
+}
+
 } // End of namespace Trecision

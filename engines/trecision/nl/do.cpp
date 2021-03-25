@@ -34,7 +34,7 @@
 namespace Trecision {
 
 /*-------------------------------------------------------------------------*/
-/*                                 ROOMIN             					   */
+/*                                 doRoomIn            					   */
 /*-------------------------------------------------------------------------*/
 void doRoomIn(uint16 curObj) {
 	g_vm->_flagMouseEnabled = false;
@@ -48,7 +48,7 @@ void doRoomIn(uint16 curObj) {
 }
 
 /*-------------------------------------------------------------------------*/
-/*                                 ROOMOUT         						   */
+/*                              doRoomOut         						   */
 /*-------------------------------------------------------------------------*/
 void doRoomOut(uint16 curObj) {
 	g_vm->_flagMouseEnabled = false;
@@ -63,92 +63,64 @@ void doRoomOut(uint16 curObj) {
 }
 
 /*-------------------------------------------------------------------------*/
-/*                                 EXAMINE           					   */
+/*                            doMouseExamine           					   */
 /*-------------------------------------------------------------------------*/
 void doMouseExamine(uint16 curObj) {
 	if (!curObj)
-		warning("doMouseExamine");
+		warning("doMouseExamine - curObj not set");
 
 	bool printSentence = g_vm->_logicMgr->mouseExamine(curObj);
 
-	if ((printSentence) && (g_vm->_obj[curObj]._examine))
+	if (printSentence && (g_vm->_obj[curObj]._examine))
 		CharacterSay(g_vm->_obj[curObj]._examine);
 }
 
 /*-------------------------------------------------------------------------*/
-/*                                 OPERATE           					   */
+/*                            doMouseOperate           					   */
 /*-------------------------------------------------------------------------*/
-void doMouseOperate(uint16 TheObj) {
-	if (!TheObj)
-		warning("doMouseOperate");
+void doMouseOperate(uint16 curObj) {
+	if (!curObj)
+		warning("doMouseOperate - curObj not set");
 
-	bool printSentence = g_vm->_logicMgr->mouseOperate(TheObj);
+	bool printSentence = g_vm->_logicMgr->mouseOperate(curObj);
 
-	if ((printSentence) && (g_vm->_obj[TheObj]._action))
-		CharacterSay(g_vm->_obj[TheObj]._action);
+	if (printSentence && (g_vm->_obj[curObj]._action))
+		CharacterSay(g_vm->_obj[curObj]._action);
 }
 
 /*-------------------------------------------------------------------------*/
-/*                                  TAKE           						   */
+/*                           doMouseTake           						   */
 /*-------------------------------------------------------------------------*/
-void doMouseTake(uint16 TheObj) {
-	bool del = true;
+void doMouseTake(uint16 curObj) {
+	if (!curObj)
+		warning("doMouseTake - curObj not set");
 
-	if (!TheObj)
-		warning("doMouseTake");
+	// _flagMouseEnabled = false;
 
-// _flagMouseEnabled = false;
-	switch (TheObj) {
-	case oTINFOIL11:
-		del = false;
-		break;
-	case oNASTRO15:
-		g_vm->_obj[oNASTRO15]._flag |= OBJFLAG_EXTRA;
-		del = false;
-		break;
-	case oMONETA13:
-		if (!(g_vm->_obj[oLATTINA13]._mode & OBJMODE_OBJSTATUS))
-			g_vm->_obj[TheObj]._anim = a133CPRENDEMONETA;
-		break;
-	case oFOGLIETTO14:
-		g_vm->_obj[oFOGLIETTO14]._flag |= OBJFLAG_EXTRA;
-		g_vm->_obj[oMAPPA16]._examine = 152;
-		del = false;
-		break;
-	case oPOSTERC22:
-		g_vm->_obj[oARMADIETTOCC22]._anim = a221;
-		g_vm->_obj[oARMADIETTOCA22]._anim = a222;
-		break;
-	case oKEY22:
-		g_vm->_obj[oARMADIETTORA22]._examine = 2013;
-		del = true;
-		break;
-	default:
-		del = true;
-		break;
-	}
-	uint16 TheAction = g_vm->_obj[TheObj]._anim;
+	bool del = g_vm->_logicMgr->mouseTake(curObj);
+	
+	uint16 curAction = g_vm->_obj[curObj]._anim;
 
-	if (TheAction)
-		doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, TheAction, 0, 0, TheObj);
+	if (curAction)
+		doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, curAction, 0, 0, curObj);
 
-	// spegne oggetto che viene preso
+	// Remove object being taken
 	if (del) {
-		if (TheAction) {
+		if (curAction) {
 			for (uint16 j = 0; j < MAXATFRAME; j++) {
-				if ((g_vm->_animMgr->_animTab[TheAction]._atFrame[j]._type == ATFCLR) && (g_vm->_animMgr->_animTab[TheAction]._atFrame[j]._index == TheObj))
+				if ((g_vm->_animMgr->_animTab[curAction]._atFrame[j]._type == ATFCLR) && (g_vm->_animMgr->_animTab[curAction]._atFrame[j]._index == curObj))
 					break;
 
-				if (g_vm->_animMgr->_animTab[TheAction]._atFrame[j]._type == 0) {
-					g_vm->_animMgr->_animTab[TheAction]._atFrame[j]._child = 0;
-					g_vm->_animMgr->_animTab[TheAction]._atFrame[j]._numFrame = 1;
-					g_vm->_animMgr->_animTab[TheAction]._atFrame[j]._type = ATFCLR;
-					g_vm->_animMgr->_animTab[TheAction]._atFrame[j]._index = TheObj;
+				if (g_vm->_animMgr->_animTab[curAction]._atFrame[j]._type == 0) {
+					g_vm->_animMgr->_animTab[curAction]._atFrame[j]._child = 0;
+					g_vm->_animMgr->_animTab[curAction]._atFrame[j]._numFrame = 1;
+					g_vm->_animMgr->_animTab[curAction]._atFrame[j]._type = ATFCLR;
+					g_vm->_animMgr->_animTab[curAction]._atFrame[j]._index = curObj;
 					break;
 				}
 			}
 		} else {
-			g_vm->_obj[TheObj]._mode &= ~OBJMODE_OBJSTATUS;
+			g_vm->_obj[curObj]._mode &= ~OBJMODE_OBJSTATUS;
 			RegenRoom();
 		}
 	}
@@ -158,62 +130,14 @@ void doMouseTake(uint16 TheObj) {
 /*-------------------------------------------------------------------------*/
 /*                                  TALK           						   */
 /*-------------------------------------------------------------------------*/
-void doMouseTalk(uint16 TheObj) {
-	extern int16 TextStackTop;
+void doMouseTalk(uint16 curObj) {
+	if (!curObj)
+		warning("doMouseTalk - curObj not set");
 
-	if (!TheObj)
-		warning("doMouseTalk");
+	bool printSentence = g_vm->_logicMgr->mouseTalk(curObj);
 
-	switch (TheObj) {
-	case oTICKETOFFICE16:
-		if ((g_vm->_obj[oFINGERPADP16]._flag & OBJFLAG_ROOMOUT) && (g_vm->_choice[50]._flag & OBJFLAG_DONE)) {
-			CharacterSay(147);
-			return ;
-		}
-
-		if ((g_vm->_choice[49]._flag & DLGCHOICE_HIDE) && (g_vm->_choice[50]._flag & DLGCHOICE_HIDE)) {
-			if (g_vm->_obj[oMAPPA16]._flag & OBJFLAG_EXTRA) {
-				g_vm->_choice[46]._flag &= ~DLGCHOICE_HIDE;
-				g_vm->_choice[48]._flag &= ~DLGCHOICE_HIDE;
-				g_vm->_obj[oTICKETOFFICE16]._flag |= OBJFLAG_EXTRA;
-			} else {
-				if (g_vm->_choice[46]._flag & OBJFLAG_DONE) {
-					CharacterSay(g_vm->_obj[oTICKETOFFICE16]._action);
-					return ;
-				}
-
-				g_vm->_choice[46]._flag &= ~DLGCHOICE_HIDE;
-				g_vm->_choice[47]._flag &= ~DLGCHOICE_HIDE;
-			}
-		}
-		break;
-
-	case ocGUARD18:
-		g_vm->_obj[ocGUARD18]._flag &= ~OBJFLAG_PERSON;
-		g_vm->_obj[ocGUARD18]._action = 227;
-		g_vm->_obj[oPORTAC18]._action = 220;
-		break;
-
-	case ocNEGOZIANTE1A: {
-		int c;
-		for (c = _dialog[dNEGOZIANTE1A]._firstChoice; c < (_dialog[dNEGOZIANTE1A]._firstChoice + _dialog[dNEGOZIANTE1A]._choiceNumb); c++)
-			if (!(g_vm->_choice[c]._flag & DLGCHOICE_HIDE)) {
-				PlayDialog(g_vm->_obj[TheObj]._goRoom);
-				return;
-			}
-		if (g_vm->_obj[ocNEGOZIANTE1A]._action) {
-			CharacterSay(g_vm->_obj[ocNEGOZIANTE1A]._action);
-			return;
-		}
-	}
-	break;
-
-	case ocEVA19:
-		g_vm->_inventoryObj[iSAM]._action = 1415;
-		break;
-	}
-
-	PlayDialog(g_vm->_obj[TheObj]._goRoom);
+	if (printSentence)
+		PlayDialog(g_vm->_obj[curObj]._goRoom);
 }
 
 /*-------------------------------------------------------------------------*/
