@@ -22,12 +22,12 @@
  -->
 <layout_info resolution = 'y>399'>
 	<globals>
-		<def var = 'Line.Height' value = '16' />
-		<def var = 'Font.Height' value = '16' />
+		<def var = 'Line.Height' value = '16' scalable = 'yes'/>
+		<def var = 'Font.Height' value = '16' scalable = 'yes'/>
 
-		<def var = 'About.OuterBorder' value = '80'/>
+		<def var = 'About.OuterBorder' value = '80' scalable = 'yes'/>
 
-		<def var = 'Layout.Spacing' value = '8' />
+		<def var = 'Layout.Spacing' value = '8' scalable = 'yes'/>
 		<def var = 'ShowLauncherLogo' value = '0'/>
 		<def var = 'ShowGlobalMenuLogo' value = '0'/>
 		<def var = 'ShowSearchPic' value = '0'/>
@@ -40,18 +40,18 @@
 
 		<def var = 'OnScreenDialog.ShowPics' value = '0'/>
 
-		<def var = 'KeyMapper.Spacing' value = '10'/>
-		<def var = 'KeyMapper.ButtonWidth' value = '140'/>
-		<def var = 'KeyMapper.ResetWidth' value = '80'/>
+		<def var = 'KeyMapper.Spacing' value = '10' scalable = 'yes'/>
+		<def var = 'KeyMapper.ButtonWidth' value = '140' scalable = 'yes'/>
+		<def var = 'KeyMapper.ResetWidth' value = '80' scalable = 'yes'/>
 
-		<def var = 'Tooltip.MaxWidth' value = '200'/>
-		<def var = 'Tooltip.XDelta' value = '16'/> <!-- basically cursor size -->
-		<def var = 'Tooltip.YDelta' value = '16'/>
+		<def var = 'Tooltip.MaxWidth' value = '200' scalable = 'yes'/>
+		<def var = 'Tooltip.XDelta' value = '16' scalable = 'yes'/> <!-- basically cursor size -->
+		<def var = 'Tooltip.YDelta' value = '16' scalable = 'yes'/>
 
-		<def var = 'Predictive.Button.Width' value = '60' />
+		<def var = 'Predictive.Button.Width' value = '60' scalable = 'yes'/>
 		<def var = 'Predictive.ShowDeletePic' value = '0'/>
 
-		<def var = 'DropdownButton.Width' value = '17'/>
+		<def var = 'DropdownButton.Width' value = '17' scalable = 'yes'/>
 
 		<widget name = 'OptionsLabel'
 				size = '120, Globals.Line.Height'
