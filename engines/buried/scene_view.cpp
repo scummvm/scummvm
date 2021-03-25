@@ -448,8 +448,12 @@ bool SceneViewWindow::jumpToSceneRestore(const Location &newLocation) {
 	SceneBase *newScene = constructSceneObject(this, newSceneStaticData, passedLocation);
 
 	// Call the post-transition function
-	if (_currentScene && _currentScene->postExitRoom(this, passedLocation) == SC_DEATH)
+	if (_currentScene && _currentScene->postExitRoom(this, passedLocation) == SC_DEATH) {
+		newScene->preDestructor();
+		delete newScene;
+
 		return false;
+	}
 
 	if (_currentScene) {
 		_currentScene->preDestructor();
