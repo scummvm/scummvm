@@ -1018,9 +1018,9 @@
 					radius = '6'
 					stroke = '0'
 					fill = 'gradient'
-					gradient_start = 'dialog_background'
+					gradient_start = 'lightgray2'
 					gradient_end = 'dialog_background'
-					gradient_factor = '4'
+					gradient_factor = '50'
 					shadow = '7'
 		/>
 	</drawdata>
