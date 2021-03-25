@@ -661,10 +661,19 @@ int Party::subtract(ConsumableType consumableId, uint amount, PartyBank whereId,
 	return true;
 }
 
+int Party::getConsumableForm(ConsumableType consumableId) {
+	switch (consumableId) {
+	case CONS_GOLD: return 4;
+	case CONS_GEMS: return 5;
+	}
+	return consumableId;
+}
+
 void Party::notEnough(ConsumableType consumableId, PartyBank whereId, bool mode, MessageWaitType wait) {
+	int _tmpConsumableId = getConsumableForm(consumableId);
 	Common::String msg = Common::String::format(
 		mode ? Res.NO_X_IN_THE_Y : Res.NOT_ENOUGH_X_IN_THE_Y,
-		Res.CONSUMABLE_NAMES[consumableId], Res.WHERE_NAMES[whereId]);
+		Res.CONSUMABLE_NAMES[_tmpConsumableId], Res.WHERE_NAMES[whereId]);
 	ErrorScroll::show(_vm, msg, wait);
 }
 

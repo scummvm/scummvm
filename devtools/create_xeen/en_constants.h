@@ -263,14 +263,24 @@ public:
 		return _classNames;
 	}
 
-	const char **CONDITION_NAMES() {
-		delete[] _conditionNames;
-		_conditionNames = new const char *[17] {
+	const char **CONDITION_NAMES_M() {
+		delete[] _conditionNamesM;
+		_conditionNamesM = new const char *[17] {
 			"Cursed", "Heart Broken", "Weak", "Poisoned", "Diseased",
 				"Insane", "In Love", "Drunk", "Asleep", "Depressed", "Confused",
 				"Paralyzed", "Unconscious", "Dead", "Stone", "Eradicated", "Good"
 		};
-		return _conditionNames;
+		return _conditionNamesM;
+	}
+
+	const char **CONDITION_NAMES_F() {
+		delete[] _conditionNamesF;
+		_conditionNamesF = new const char *[17] {
+			"Cursed", "Heart Broken", "Weak", "Poisoned", "Diseased",
+				"Insane", "In Love", "Drunk", "Asleep", "Depressed", "Confused",
+				"Paralyzed", "Unconscious", "Dead", "Stone", "Eradicated", "Good"
+		};
+		return _conditionNamesF;
 	}
 
 	const char *GOOD() {
@@ -551,7 +561,7 @@ public:
 
 	const char **CONSUMABLE_NAMES() {
 		delete[] _consumableNames;
-		_consumableNames = new const char *[4] { "Gold", "Gems", "Food", "Condition" };
+		_consumableNames = new const char *[6] { "Gold", "Gems", "Food", "Condition", "", "" };
 		return _consumableNames;
 	}
 
@@ -1282,16 +1292,16 @@ public:
 	}
 
 	const char *BUY_X_FOR_Y_GOLD() {
-		return "\x3l\v000\t000\fdBuy %s\fd for %u gold?";
+		return "\x3l\v000\t000\fdBuy %s\fd for %u %s?";
 	}
 
 	const char *SELL_X_FOR_Y_GOLD() {
-		return "\x3l\v000\t000\fdSell %s\fd for %u gold?";
+		return "\x3l\v000\t000\fdSell %s\fd for %u %s?";
 	}
 
-	const char **SELL_X_FOR_Y_GOLD_ENDINGS() {
+	const char **GOLDS() {
 		delete[] _sellXForYGoldEndings;
-		_sellXForYGoldEndings = new const char *[2] { "", "" };
+		_sellXForYGoldEndings = new const char *[2] { "gold", "" };
 		return _sellXForYGoldEndings;
 	}
 

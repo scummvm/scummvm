@@ -64,6 +64,11 @@ private:
 	int calcItemCost(Character *c, int itemIndex, ItemsMode mode, int skillLevel,
 		ItemCategory category);
 
+	/**
+	 * Get plural gold form
+	*/
+	Common::String getGoldPlurals(int val);
+
 	int doItemOptions(Character &c, int actionIndex, int itemIndex,
 		ItemCategory category, ItemsMode mode);
 

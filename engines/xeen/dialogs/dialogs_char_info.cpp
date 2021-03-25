@@ -309,6 +309,7 @@ Common::String CharacterInfo::loadCharacterDetails(const Character &c) {
 		c._poisonResistence._permanent + c.itemScan(14) + c._poisonResistence._temporary +
 		c._energyResistence._permanent + c.itemScan(15) + c._energyResistence._temporary +
 		c._magicResistence._permanent + c.itemScan(16) + c._magicResistence._temporary;
+	const char **_tmpConditions = c._sex == FEMALE ? (const char **)Res.CONDITION_NAMES_F : (const char **)Res.CONDITION_NAMES_M;
 
 	return Common::String::format(Res.CHARACTER_DETAILS,
 		Res.PARTY_GOLD, c._name.c_str(), Res.SEX_NAMES[c._sex],
@@ -333,7 +334,7 @@ Common::String CharacterInfo::loadCharacterDetails(const Character &c) {
 		c.statColor(c.getStat(SPEED), c.getStat(SPEED, true)), c.getStat(SPEED),
 		c.statColor(c.getArmorClass(), c.getArmorClass(true)), c.getArmorClass(),
 		c.getNumAwards(),
-		Res.CONDITION_COLORS[condition], Res.CONDITION_NAMES[condition],
+		Res.CONDITION_COLORS[condition], _tmpConditions[condition],
 		condition == NO_CONDITION && party._blessed ? Res.PLUS_14 : "",
 		condition == NO_CONDITION && party._powerShield ? Res.PLUS_14 : "",
 		condition == NO_CONDITION && party._holyBonus ? Res.PLUS_14 : "",
@@ -526,15 +527,16 @@ bool CharacterInfo::expandStat(int attrib, const Character &c) {
 	case 19: {
 		// Conditions
 		Common::String lines[20];
+		const char **_tmpConditions = c._sex == FEMALE ? (const char **)Res.CONDITION_NAMES_F : (const char **)Res.CONDITION_NAMES_M;
 		int total = 0;
 		for (int condition = CURSED; condition <= ERADICATED; ++condition) {
 			if (c._conditions[condition]) {
 				if (condition >= UNCONSCIOUS) {
 					lines[condition] = Common::String::format("\n\t020%s",
-						Res.CONDITION_NAMES[condition]);
+					_tmpConditions[condition]);
 				} else {
 					lines[condition] = Common::String::format("\n\t020%s\t095-%d",
-						Res.CONDITION_NAMES[condition], c._conditions[condition]);
+					_tmpConditions[condition], c._conditions[condition]);
 				}
 
 				++total;

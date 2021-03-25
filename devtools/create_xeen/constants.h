@@ -118,7 +118,8 @@ protected:
 	const char **_alignmentNames = NULL;
 	const char **_skillNames = NULL;
 	const char **_classNames = NULL;
-	const char **_conditionNames = NULL;
+	const char **_conditionNamesM = NULL;
+	const char **_conditionNamesF = NULL;
 	const char **_depositWithdrawl = NULL;
 	const char **_statNames = NULL;
 	const char **_whereNames = NULL;
@@ -412,7 +413,8 @@ public:
 		1500, 2000, 2000, 1500, 2000, 1000, 1500, 1500, 1500, 2000
 	};
 
-	virtual const char **CONDITION_NAMES() = 0;
+	virtual const char **CONDITION_NAMES_M() = 0;
+	virtual const char **CONDITION_NAMES_F() = 0;
 
 	const int CONDITION_COLORS[17] = {
 		9, 9, 9, 9, 9, 9, 9, 9, 32, 32, 32, 32, 6, 6, 6, 6, 15
@@ -1075,7 +1077,7 @@ public:
 	virtual const char **CATEGORY_BACKPACK_IS_FULL() = 0;
 	virtual const char  *BUY_X_FOR_Y_GOLD() = 0;
 	virtual const char  *SELL_X_FOR_Y_GOLD() = 0;
-	virtual const char **SELL_X_FOR_Y_GOLD_ENDINGS() = 0;
+	virtual const char **GOLDS() = 0;
 	virtual const char  *NO_NEED_OF_THIS() = 0;
 	virtual const char  *NOT_RECHARGABLE() = 0;
 	virtual const char  *NOT_ENCHANTABLE() = 0;
