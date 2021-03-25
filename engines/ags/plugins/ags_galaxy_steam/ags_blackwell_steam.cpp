@@ -34,9 +34,14 @@ void AGSBlackwellSteam::AddAchievement(ScriptMethodParams &params) {
 	params._result = 0;
 }
 
+void AGSBlackwellSteam::AddStat(ScriptMethodParams &params) {
+	params._result = 0;
+}
+
 void AGSBlackwellSteam::AGS_EngineStartup(IAGSEngine *engine) {
 	AGSSteam::AGS_EngineStartup(engine);
 	SCRIPT_METHOD_EXT(Steam::AddAchievement^1, AddAchievement);
+	SCRIPT_METHOD_EXT(Steam::AddStat^2, AddStat);
 	SCRIPT_METHOD_EXT(Steam::IsAchievementAchieved^1, IsAchievementAchieved);
 	SCRIPT_METHOD_EXT(Steam::SetAchievementAchieved^1, SetAchievementAchieved);
 	SCRIPT_METHOD_EXT(Steam::ResetAchievement^1, ResetAchievement);

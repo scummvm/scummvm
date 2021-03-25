@@ -33,6 +33,7 @@ class AGSBlackwellSteam : public AGSSteam {
 private:
 	static void AGS_EngineStartup(IAGSEngine *engine);
 	static void AddAchievement(ScriptMethodParams &params);
+	static void AddStat(ScriptMethodParams &params);
     
 public:
 	AGSBlackwellSteam();
