@@ -396,7 +396,7 @@ void LogicManager::initInventory() {
 	_vm->_inventory[_vm->_inventorySize++] = iKEY05;
 }
 
-void LogicManager::useWithInventory(bool *updateInventory, bool *printSentence) {
+void LogicManager::useInventoryWithInventory(bool *updateInventory, bool *printSentence) {
 	*updateInventory = true;
 	*printSentence = true;
 
@@ -669,7 +669,7 @@ void LogicManager::useWithInventory(bool *updateInventory, bool *printSentence) 
 	}
 }
 
-void LogicManager::useWithScreen(bool *updateInventory, bool *printSentence) {
+void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSentence) {
 	*updateInventory = true;
 	*printSentence = true;
 
