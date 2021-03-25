@@ -71,8 +71,8 @@ void Credits::init() {
 
 	Common::Rect src = _text._screenPosition;
 	src.moveTo(Common::Point());
+	_fullTextSurface.setTransparentColor(g_nancy->_graphicsManager->getTransColor());
 	_text._drawSurface.create(_fullTextSurface, src);
-	_text.setTransparent(true);
 	_text.init();
 
 	g_nancy->_sound->loadSound(_sound);
