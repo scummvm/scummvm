@@ -96,7 +96,7 @@ InventoryWindow::InventoryWindow(BuriedEngine *vm, Window *parent) : Window(vm, 
 	} else {
 		// The full version uses bitmaps
 		_dragFrames = NULL;
-	}	
+	}
 }
 
 InventoryWindow::~InventoryWindow() {
@@ -114,7 +114,7 @@ InventoryWindow::~InventoryWindow() {
 	}
 
 	if (_scrollTimer != 0)
-		killTimer(_scrollTimer);	
+		killTimer(_scrollTimer);
 
 	delete _textFont;
 	delete _dragFrames;
@@ -145,6 +145,8 @@ bool InventoryWindow::rebuildPreBuffer() {
 		// Draw the icon for the current item
 		Graphics::Surface *icon = _vm->_gfx->getBitmap(IDB_PICON_BITMAP_BASE + _itemArray[_curItem]);
 		_vm->_gfx->crossBlit(_background, 17, 8, icon->w, icon->h, icon, 0, 0);
+		icon->free();
+		delete icon;
 	}
 
 	return true;
@@ -386,7 +388,7 @@ void InventoryWindow::onLButtonDown(const Common::Point &point, uint flags) {
 					((GameUIWindow *)_parent)->_sceneViewWindow->getGlobalFlags().lensFilterActivated = 1;
 					return;
 				}
-	
+
 				if (((GameUIWindow *)_parent)->_sceneViewWindow->getGlobalFlags().lensFilterActivated == 0) {
 					((GameUIWindow *)_parent)->_sceneViewWindow->getGlobalFlags().lensFilterActivated = 1;
 					((GameUIWindow *)_parent)->_sceneViewWindow->displayLiveText(_vm->getString(IDS_LENS_FILTER_ATTACHED));
@@ -394,7 +396,7 @@ void InventoryWindow::onLButtonDown(const Common::Point &point, uint flags) {
 					// Deny removing the filter in the alien space ship
 					Location currentLocation;
 					((GameUIWindow *)_parent)->_sceneViewWindow->getCurrentSceneLocation(currentLocation);
-			
+
 					if (currentLocation.timeZone == 7) {
 						((GameUIWindow *)_parent)->_sceneViewWindow->displayLiveText(_vm->getString(IDS_LENS_FILTER_DENY_REMOVAL));
 					} else {
