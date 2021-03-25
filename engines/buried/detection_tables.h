@@ -25,6 +25,34 @@ namespace Buried {
 static const ADGameDescription gameDescriptions[] = {
 	// English Windows 3.11 8BPP
 	// Installed
+	// v1.00
+	{
+		"buried",
+		"v1.00 8BPP",
+		AD_ENTRY2s("BIT816.EXE", "da3c191bd4384950c17a19b9ea06cd7c", 1166336,
+				   "BIT8LIB.DLL","31bcd9e5cc32df00b09ce626e6d9106e", 2420480),
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+		ADGF_NO_FLAGS,
+		GUIO0()
+	},
+
+	// English Windows 3.11 24BPP
+	// Installed
+	// v1.01
+	{
+		"buried",
+		"v1.00 24BPP",
+		AD_ENTRY2s("BIT2416.EXE", "e661f758d191150cbdf6781bb2565acb", 1162752,
+				   "BIT24LIB.DLL","74ac9dae92f415fea8cdbd220ba8795c", 5211648),
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+		GF_TRUECOLOR,
+		GUIO0()
+	},
+
+	// English Windows 3.11 8BPP
+	// Installed
 	// v1.01
 	{
 		"buried",
@@ -76,6 +104,34 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::JA_JPN,
 		Common::kPlatformWindows,
 		GF_TRUECOLOR,
+		GUIO0()
+	},
+
+	// English Windows 3.11 8BPP
+	// Not Installed
+	// v1.00
+	{
+		"buried",
+		"v1.01 8BPP",
+		AD_ENTRY2s("BIT816.EX_", "e385901182f4eafe0a8a157e4f24fc1f", 366069,
+				   "BIT8LIB.DL_","8a345993f60f6bed7c17fa9e7f2bc37d", 908854),
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+		GF_COMPRESSED,
+		GUIO0()
+	},
+
+	// English Windows 3.11 24BPP
+	// Not Installed
+	// v1.00
+	{
+		"buried",
+		"v1.01 24BPP",
+		AD_ENTRY2s("BIT2416.EX_", "144ad890ad0ded4262438c3ef37b88f4", 363601,
+				   "BIT24LIB.DL_","00e6eedbcef824988fbb01a87ca8f7fd", 2269314),
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+		GF_COMPRESSED | GF_TRUECOLOR,
 		GUIO0()
 	},
 
