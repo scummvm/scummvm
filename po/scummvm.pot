@@ -5,18 +5,18 @@
 #
 #: engines/nancy/cheat.cpp:59 engines/nancy/cheat.cpp:60
 #: engines/nancy/cheat.cpp:62 engines/nancy/cheat.cpp:64
-#: engines/nancy/cheat.cpp:69 engines/nancy/cheat.cpp:71
-#: engines/nancy/cheat.cpp:73 engines/nancy/cheat.cpp:77
-#: engines/nancy/cheat.cpp:79 engines/nancy/cheat.cpp:81
-#: engines/nancy/cheat.cpp:83 engines/nancy/cheat.cpp:87
-#: engines/nancy/cheat.cpp:89 engines/nancy/cheat.cpp:91
-#: engines/nancy/cheat.cpp:93
+#: engines/nancy/cheat.cpp:71 engines/nancy/cheat.cpp:73
+#: engines/nancy/cheat.cpp:75 engines/nancy/cheat.cpp:79
+#: engines/nancy/cheat.cpp:81 engines/nancy/cheat.cpp:83
+#: engines/nancy/cheat.cpp:85 engines/nancy/cheat.cpp:89
+#: engines/nancy/cheat.cpp:91 engines/nancy/cheat.cpp:93
+#: engines/nancy/cheat.cpp:95
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-03-25 14:31+0000\n"
+"POT-Creation-Date: 2021-03-25 17:54+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -588,7 +588,7 @@ msgid "Interact"
 msgstr ""
 
 #: gui/gui-manager.cpp:122 gui/unknown-game-dialog.cpp:54
-#: engines/nancy/cheat.cpp:266 engines/scumm/help.cpp:125
+#: engines/nancy/cheat.cpp:268 engines/scumm/help.cpp:125
 #: engines/scumm/help.cpp:140 engines/scumm/help.cpp:165
 #: engines/scumm/help.cpp:191 engines/scumm/help.cpp:209
 msgid "Close"
@@ -3911,7 +3911,7 @@ msgstr ""
 
 #: engines/dragons/metaengine.cpp:152 engines/griffon/metaengine.cpp:127
 #: engines/grim/grim.cpp:491 engines/grim/grim.cpp:583
-#: engines/hdb/metaengine.cpp:231 engines/nancy/cheat.cpp:96
+#: engines/hdb/metaengine.cpp:231 engines/nancy/cheat.cpp:98
 #: engines/scumm/help.cpp:225 engines/scumm/help.cpp:234
 #: engines/scumm/help.cpp:241 engines/scumm/help.cpp:249
 #: engines/twine/metaengine.cpp:397 engines/zvision/metaengine.cpp:164
@@ -5052,10 +5052,6 @@ msgstr ""
 msgid "Invalid file name for saving"
 msgstr ""
 
-#: engines/nancy/action/telephone.cpp:144
-msgid "ringing...<n><e>"
-msgstr ""
-
 #: engines/nancy/cheat.cpp:56
 msgid "General"
 msgstr ""
@@ -5080,63 +5076,64 @@ msgstr ""
 msgid "Frame Number"
 msgstr ""
 
-#: engines/nancy/cheat.cpp:65
+#. I18N: The Y position (a.k.a vertical scroll) of the background
+#: engines/nancy/cheat.cpp:67
 msgid "Background Top (Y)"
 msgstr ""
 
-#: engines/nancy/cheat.cpp:67
+#: engines/nancy/cheat.cpp:69
 msgid "Hints Remaining"
 msgstr ""
 
-#: engines/nancy/cheat.cpp:68
+#: engines/nancy/cheat.cpp:70
 msgid "Easy"
 msgstr ""
 
-#: engines/nancy/cheat.cpp:70
+#: engines/nancy/cheat.cpp:72
 msgid "Medium"
 msgstr ""
 
-#: engines/nancy/cheat.cpp:72
+#: engines/nancy/cheat.cpp:74
 msgid "Hard"
 msgstr ""
 
-#: engines/nancy/cheat.cpp:75 engines/nancy/cheat.cpp:86
+#: engines/nancy/cheat.cpp:77 engines/nancy/cheat.cpp:88
 msgid "Player Data"
 msgstr ""
 
-#: engines/nancy/cheat.cpp:76
+#: engines/nancy/cheat.cpp:78
 msgid "Player Time:"
 msgstr ""
 
-#: engines/nancy/cheat.cpp:78
+#: engines/nancy/cheat.cpp:80
 msgid "Days"
 msgstr ""
 
-#: engines/nancy/cheat.cpp:80 engines/nancy/cheat.cpp:90
+#: engines/nancy/cheat.cpp:82 engines/nancy/cheat.cpp:92
 msgid "Hours"
 msgstr ""
 
-#: engines/nancy/cheat.cpp:82 engines/nancy/cheat.cpp:92
+#: engines/nancy/cheat.cpp:84 engines/nancy/cheat.cpp:94
 msgid "Minutes"
 msgstr ""
 
-#: engines/nancy/cheat.cpp:84
+#: engines/nancy/cheat.cpp:86
 msgid "Player Difficulty Level"
 msgstr ""
 
-#: engines/nancy/cheat.cpp:87
+#: engines/nancy/cheat.cpp:89
 msgid "Timer On"
 msgstr ""
 
-#: engines/nancy/cheat.cpp:94
+#: engines/nancy/cheat.cpp:96
 msgid "Seconds"
 msgstr ""
 
-#: engines/nancy/cheat.cpp:96
+#: engines/nancy/cheat.cpp:98
 msgid "Cheat.Inventory"
 msgstr ""
 
-#: engines/nancy/cheat.cpp:163
+#: engines/nancy/cheat.cpp:165
 msgid "Invalid Scene ID!"
 msgstr ""
 
