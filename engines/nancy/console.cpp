@@ -21,6 +21,12 @@
  */
 
 #include "engines/nancy/console.h"
+
+#include "common/system.h"
+#include "common/events.h"
+
+#include "audio/audiostream.h"
+
 #include "engines/nancy/nancy.h"
 #include "engines/nancy/resource.h"
 #include "engines/nancy/video.h"
@@ -29,13 +35,6 @@
 #include "engines/nancy/state/scene.h"
 #include "engines/nancy/input.h"
 #include "engines/nancy/graphics.h"
-
-#include "common/system.h"
-#include "common/events.h"
-
-#include "graphics/surface.h"
-
-#include "audio/audiostream.h"
 
 namespace Nancy {
 

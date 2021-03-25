@@ -23,16 +23,16 @@
 #ifndef NANCY_GRAPHICS_H
 #define NANCY_GRAPHICS_H
 
-#include "engines/nancy/renderobject.h"
-#include "engines/nancy/font.h"
-
 #include "common/array.h"
 
 #include "graphics/screen.h"
 
+#include "engines/nancy/font.h"
+
 namespace Nancy {
 
 class NancyEngine;
+class RenderObject;
 
 // Graphics class that handles multilayered surface rendering with minimal redraw
 class GraphicsManager {

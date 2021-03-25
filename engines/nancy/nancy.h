@@ -23,13 +23,14 @@
 #ifndef NANCY_H
 #define NANCY_H
 
-#include "nancy/console.h"
-#include "nancy/detection.h"
-#include "nancy/time.h"
-
-#include "engines/engine.h"
 #include "common/file.h"
 #include "common/str.h"
+
+#include "engines/engine.h"
+
+#include "nancy/detection.h"
+#include "nancy/time.h"
+#include "nancy/commontypes.h"
 
 namespace Common {
 class RandomSource;
@@ -69,6 +70,7 @@ class SoundManager;
 class GraphicsManager;
 class CursorManager;
 class CheatDialog;
+class NancyConsole;
 
 namespace State {
 class State;
@@ -82,27 +84,6 @@ class Credits;
 class NancyEngine : public Engine {
 public:
 	friend class NancyConsole;
-
-	enum GameState {
-		kBoot,
-		kPartnerLogo,
-		kLogo,
-		kCredits,
-		kMap,
-		kMainMenu,
-		kLoadSave,
-		kSetup,
-		// unknown/invalid
-		kHelp,
-		kScene,
-		// CD change
-		kCheat,
-		kQuit,
-		// regain focus
-		kNone,
-		kPause, // only used when the GMM is on screen
-		kReloadSave
-	};
 
 	NancyEngine(OSystem *syst, const NancyGameDescription *gd);
 	~NancyEngine();
@@ -124,7 +105,7 @@ public:
 	GameType getGameType() const;
 	Common::Platform getPlatform() const;
 
-	void setState(GameState state, GameState overridePrevious = kNone);
+	void setState(NancyState::NancyState state, NancyState::NancyState overridePrevious = NancyState::kNone);
 	State::State *getState() { return _gameFlow.currentState; }
 	void setPreviousState();
 
@@ -164,7 +145,7 @@ private:
 
 	void bootGameEngine();
 
-	State::State *getStateObject(GameState state) const;
+	State::State *getStateObject(NancyState::NancyState state) const;
 
 	bool addBootChunk(const Common::String &name, Common::SeekableReadStream *stream);
 	void clearBootChunks();

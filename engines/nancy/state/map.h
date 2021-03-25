@@ -23,22 +23,15 @@
 #ifndef NANCY_STATE_MAP_H
 #define NANCY_STATE_MAP_H
 
+#include "common/array.h"
+#include "common/singleton.h"
+
 #include "engines/nancy/state/state.h"
 
 #include "engines/nancy/ui/viewport.h"
 #include "engines/nancy/ui/button.h"
 
-#include "engines/nancy/state/scene.h"
-
-#include "engines/nancy/video.h"
 #include "engines/nancy/renderobject.h"
-
-#include "common/str.h"
-#include "common/array.h"
-#include "common/rect.h"
-#include "common/singleton.h"
-
-#include "graphics/surface.h"
 
 namespace Nancy {
 
@@ -51,13 +44,7 @@ class Map : public State, public Common::Singleton<Map> {
 	friend class MapButton;
 public:
 	enum State { kInit, kRun };
-	Map() : _state(kInit),
-			_mapID(0),
-			_mapButtonClicked(false),
-			_pickedLocationID(-1),
-			_viewport(),
-			_label(NancySceneState.getFrame(), this),
-			_button(NancySceneState.getFrame(), this) {}
+	Map();
 
 	// State API
 	virtual void process() override;

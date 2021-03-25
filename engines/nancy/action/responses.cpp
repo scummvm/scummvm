@@ -20,8 +20,7 @@
  *
  */
 
-#include "engines/nancy/action/recordtypes.h"
-#include "common/array.h"
+#include "engines/nancy/commontypes.h"
 
 namespace Nancy {
 namespace Action {

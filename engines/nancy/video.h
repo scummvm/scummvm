@@ -23,9 +23,7 @@
 #ifndef NANCY_VIDEO_H
 #define NANCY_VIDEO_H
 
-#include "graphics/pixelformat.h"
 #include "video/video_decoder.h"
-#include "common/rational.h"
 
 namespace Common {
 class ReadStream;

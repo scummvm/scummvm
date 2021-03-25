@@ -20,14 +20,13 @@
  *
  */
 
-#include "engines/nancy/nancy.h"
 #include "engines/nancy/iff.h"
-#include "engines/nancy/resource.h"
 
 #include "common/memstream.h"
 #include "common/iff_container.h"
-#include "common/debug.h"
-#include "common/endian.h"
+
+#include "engines/nancy/nancy.h"
+#include "engines/nancy/resource.h"
 
 namespace Nancy {
 

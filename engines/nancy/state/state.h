@@ -23,8 +23,6 @@
 #ifndef NANCY_STATE_STATE_H
 #define NANCY_STATE_STATE_H
 
-#include "common/types.h"
-
 namespace Nancy {
 namespace State {
 

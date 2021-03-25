@@ -23,14 +23,12 @@
 #ifndef NANCY_UI_INVENTORYBOX_H
 #define NANCY_UI_INVENTORYBOX_H
 
-#include "engines/nancy/renderobject.h"
-
-#include "engines/nancy/ui/scrollbar.h"
-#include "engines/nancy/time.h"
-
 #include "common/array.h"
 #include "common/str.h"
-#include "common/rect.h"
+
+#include "engines/nancy/time.h"
+
+#include "engines/nancy/ui/scrollbar.h"
 
 namespace Nancy {
 

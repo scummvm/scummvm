@@ -23,19 +23,16 @@
 #ifndef NANCY_INPUT_H
 #define NANCY_INPUT_H
 
-#include "engines/nancy/commontypes.h"
-
 #include "common/rect.h"
 #include "common/array.h"
-#include "common/events.h"
+#include "common/keyboard.h"
 
 namespace Common {
+class Keymap;
 typedef class Array<Keymap *> KeymapArray;
 }
 
 namespace Nancy {
-
-class NancyEngine;
 
 namespace State {
 class State;

@@ -28,8 +28,9 @@
 #include "engines/nancy/video.h"
 #include "engines/nancy/time.h"
 
-#include "common/str.h"
-#include "common/rect.h"
+namespace Common {
+class String;
+}
 
 namespace Nancy {
 

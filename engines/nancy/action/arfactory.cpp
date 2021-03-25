@@ -36,8 +36,6 @@
 
 #include "engines/nancy/state/scene.h"
 
-#include "engines/nancy/nancy.h"
-
 namespace Nancy {
 namespace Action {
 

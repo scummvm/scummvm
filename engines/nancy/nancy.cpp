@@ -20,17 +20,23 @@
  *
  */
 
+#include "engines/nancy/nancy.h"
+
+#include "common/system.h"
+#include "common/random.h"
+#include "common/debug-channels.h"
+#include "common/config-manager.h"
+#include "common/memstream.h"
+#include "common/installshield_cab.h"
+#include "common/savefile.h"
+#include "common/serializer.h"
+
 #include "engines/nancy/state/logo.h"
 #include "engines/nancy/state/scene.h"
 #include "engines/nancy/state/help.h"
 #include "engines/nancy/state/map.h"
 #include "engines/nancy/state/credits.h"
 
-#include "engines/nancy/action/sliderpuzzle.h"
-#include "engines/nancy/action/primaryvideo.h"
-#include "engines/nancy/action/secondarymovie.h"
-
-#include "engines/nancy/nancy.h"
 #include "engines/nancy/resource.h"
 #include "engines/nancy/iff.h"
 #include "engines/nancy/sound.h"
@@ -39,26 +45,9 @@
 #include "engines/nancy/graphics.h"
 #include "engines/nancy/cursor.h"
 #include "engines/nancy/cheat.h"
+#include "engines/nancy/console.h"
 
-#include "common/system.h"
-#include "common/random.h"
-#include "common/error.h"
-#include "common/events.h"
-#include "common/debug-channels.h"
-#include "common/config-manager.h"
-#include "common/textconsole.h"
-#include "common/memstream.h"
-#include "common/installshield_cab.h"
-#include "common/str.h"
-#include "common/savefile.h"
-#include "common/serializer.h"
-
-#include "graphics/surface.h"
-
-#include "audio/mixer.h"
-#include "audio/audiostream.h"
-
-#include "engines/util.h"
+#include "engines/nancy/action/primaryvideo.h"
 
 namespace Nancy {
 
@@ -164,14 +153,14 @@ Common::Platform NancyEngine::getPlatform() const {
 	return _gameDescription->desc.platform;
 }
 
-void NancyEngine::setState(GameState state, GameState overridePrevious) {
+void NancyEngine::setState(NancyState::NancyState state, NancyState::NancyState overridePrevious) {
 	// Handle special cases first
 	switch (state) {
-	case kBoot:
+	case NancyState::kBoot:
 		bootGameEngine();
-		setState(kLogo);
+		setState(NancyState::kLogo);
 		return;
-	case kMainMenu:
+	case NancyState::kMainMenu:
 		if (_gameFlow.currentState) {
 			if (_gameFlow.currentState->onStateExit()) {
 				_gameFlow.currentState = nullptr;
@@ -190,7 +179,7 @@ void NancyEngine::setState(GameState state, GameState overridePrevious) {
 		}
 
 		return;
-	case kCheat:
+	case NancyState::kCheat:
 		if (_cheatTypeIsEventFlag) {
 			EventFlagDialog *dialog = new EventFlagDialog();
 			runDialog(*dialog);
@@ -219,7 +208,7 @@ void NancyEngine::setState(GameState state, GameState overridePrevious) {
 		_gameFlow.currentState->onStateEnter();
 	}
 
-	if (overridePrevious != kNone) {
+	if (overridePrevious != NancyState::kNone) {
 		_gameFlow.previousState = getStateObject(state);
 	}
 }
@@ -241,19 +230,19 @@ void NancyEngine::setMouseEnabled(bool enabled) {
 }
 
 void NancyEngine::callCheatMenu(bool eventFlags) {
-	setState(kCheat), _cheatTypeIsEventFlag = eventFlags;
+	setState(NancyState::kCheat), _cheatTypeIsEventFlag = eventFlags;
 }
 
 Common::Error NancyEngine::run() {
 	// Boot the engine
-	setState(kBoot);
+	setState(NancyState::kBoot);
 
 	// Check if we need to load a save state from the launcher
 	if (ConfMan.hasKey("save_slot")) {
 		int saveSlot = ConfMan.getInt("save_slot");
 		if (saveSlot >= 0 && saveSlot <= getMetaEngine().getMaximumSaveSlot()) {
 			// Set to Scene but do not do the loading yet
-			setState(kScene);
+			setState(NancyState::kScene);
 		}
 	}
 
@@ -360,17 +349,17 @@ void NancyEngine::bootGameEngine() {
 	_cursorManager->init();
 }
 
-State::State *NancyEngine::getStateObject(GameState state) const {
+State::State *NancyEngine::getStateObject(NancyState::NancyState state) const {
 	switch (state) {
-	case kLogo:
+	case NancyState::kLogo:
 		return &State::Logo::instance();
-	case kCredits:
+	case NancyState::kCredits:
 		return &State::Credits::instance();
-	case kMap:
+	case NancyState::kMap:
 		return &State::Map::instance();
-	case kHelp:
+	case NancyState::kHelp:
 		return &State::Help::instance();
-	case kScene:
+	case NancyState::kScene:
 		return &State::Scene::instance();
 	default:
 		return nullptr;

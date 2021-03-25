@@ -25,13 +25,9 @@
 
 #include "engines/nancy/action/actionrecord.h"
 
-#include "common/str.h"
-#include "common/stream.h"
-#include "common/array.h"
-#include "common/func.h"
-
 namespace Common {
 class Serializer;
+class SeekableReadStream;
 }
 
 namespace Nancy {

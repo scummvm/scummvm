@@ -23,19 +23,8 @@
 #include "engines/nancy/state/logo.h"
 
 #include "engines/nancy/nancy.h"
-#include "engines/nancy/resource.h"
 #include "engines/nancy/sound.h"
 #include "engines/nancy/input.h"
-
-#include "common/error.h"
-#include "common/system.h"
-#include "common/events.h"
-#include "common/str.h"
-
-#include "audio/audiostream.h"
-#include "audio/mixer.h"
-
-#include "graphics/surface.h"
 
 namespace Common {
 DECLARE_SINGLETON(Nancy::State::Logo);
@@ -81,12 +70,12 @@ void Logo::startSound() {
 	g_nancy->_sound->loadSound(_msnd);
 	g_nancy->_sound->playSound(_msnd);
 
-	_startTicks = g_system->getMillis();
+	_startTicks = g_nancy->getTotalPlayTime();
 	_state = kRun;
 }
 
 void Logo::run() {
-	if (g_system->getMillis() - _startTicks >= 7000 || (g_nancy->_input->getInput().input & NancyInput::kLeftMouseButtonDown)) {
+	if (g_nancy->getTotalPlayTime() - _startTicks >= 7000 || (g_nancy->_input->getInput().input & NancyInput::kLeftMouseButtonDown)) {
 		_state = kStop;
 	}
 }
@@ -98,7 +87,7 @@ void Logo::stop() {
 
 	g_nancy->_sound->stopSound(_msnd);
 
-	g_nancy->setState(NancyEngine::kScene);
+	g_nancy->setState(NancyState::kScene);
 }
 
 } // End of namespace State

@@ -24,7 +24,6 @@
 
 #include "engines/nancy/state/scene.h"
 
-#include "engines/nancy/resource.h"
 #include "engines/nancy/sound.h"
 #include "engines/nancy/input.h"
 #include "engines/nancy/nancy.h"
@@ -32,15 +31,20 @@
 #include "engines/nancy/cursor.h"
 #include "engines/nancy/graphics.h"
 
-#include "common/stream.h"
-#include "common/str.h"
-
 namespace Common {
 DECLARE_SINGLETON(Nancy::State::Map);
 }
 
 namespace Nancy {
 namespace State {
+
+Map::Map() : _state(kInit),
+			_mapID(0),
+			_mapButtonClicked(false),
+			_pickedLocationID(-1),
+			_viewport(),
+			_label(NancySceneState.getFrame(), this),
+			_button(NancySceneState.getFrame(), this) {}
 
 void Map::process() {
 	switch (_state) {
@@ -134,7 +138,7 @@ void Map::run() {
 	_button.handleInput(input);
 
 	if (_mapButtonClicked) {
-		g_nancy->setState(NancyEngine::kScene);
+		g_nancy->setState(NancyState::kScene);
 		return;
 	}
 
@@ -147,7 +151,7 @@ void Map::run() {
 
 			if (input.input & NancyInput::kLeftMouseButtonUp) {
 				_pickedLocationID = i;
-				g_nancy->setState(NancyEngine::kScene);
+				g_nancy->setState(NancyState::kScene);
 			}
 
 			return;
@@ -162,7 +166,7 @@ bool Map::onStateExit() {
 	sound.read(*chunk, SoundDescription::kMenu);
 	g_nancy->_sound->stopSound(sound);
 
-	g_nancy->setState(NancyEngine::kScene);
+	g_nancy->setState(NancyState::kScene);
 
 	if (_pickedLocationID != -1) {
 		auto &loc = _locations[_pickedLocationID];

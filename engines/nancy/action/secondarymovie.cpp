@@ -22,10 +22,12 @@
 
 #include "engines/nancy/action/secondarymovie.h"
 
+#include "engines/nancy/state/scene.h"
+
 #include "engines/nancy/graphics.h"
 #include "engines/nancy/nancy.h"
 #include "engines/nancy/util.h"
-#include "engines/nancy/state/scene.h"
+#include "engines/nancy/sound.h"
 
 namespace Nancy {
 namespace Action {

@@ -25,6 +25,7 @@
 #include "engines/nancy/nancy.h"
 
 #include "common/translation.h"
+#include "common/events.h"
 
 #include "backends/keymapper/action.h"
 #include "backends/keymapper/keymap.h"

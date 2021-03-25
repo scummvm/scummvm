@@ -23,16 +23,14 @@
 #ifndef NANCY_RENDEROBJECT_H
 #define NANCY_RENDEROBJECT_H
 
-#include "engines/nancy/commontypes.h"
-
 #include "common/rect.h"
-#include "common/keyboard.h"
 
 #include "graphics/managed_surface.h"
 
 namespace Nancy {
 
 class NancyEngine;
+class GraphicsManager;
 
 // Loosely equivalent to the original engine's ZRenderStructs.
 // A subclass of this will be automatically updated and drawn from the graphics manager,

@@ -22,17 +22,15 @@
 
 #include "engines/nancy/action/orderingpuzzle.h"
 
+#include "engines/nancy/state/scene.h"
+
 #include "engines/nancy/util.h"
 #include "engines/nancy/nancy.h"
-#include "engines/nancy/state/scene.h"
-#include "engines/nancy/ui/viewport.h"
 #include "engines/nancy/graphics.h"
 #include "engines/nancy/resource.h"
 #include "engines/nancy/input.h"
 #include "engines/nancy/cursor.h"
 #include "engines/nancy/sound.h"
-
-#include "graphics/surface.h"
 
 namespace Nancy {
 namespace Action {

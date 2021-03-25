@@ -28,12 +28,6 @@
 
 #include "engines/nancy/commontypes.h"
 
-#include "common/str.h"
-#include "common/array.h"
-#include "common/rect.h"
-
-#include "graphics/managed_surface.h"
-
 namespace Nancy {
 namespace Action {
 

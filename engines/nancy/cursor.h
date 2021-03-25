@@ -23,7 +23,8 @@
 #ifndef NANCY_CURSOR_H
 #define NANCY_CURSOR_H
 
-#include "graphics/cursorman.h"
+#include "common/array.h"
+
 #include "graphics/managed_surface.h"
 
 namespace Nancy {

@@ -22,20 +22,13 @@
 
 #include "engines/nancy/graphics.h"
 
-#include "engines/nancy/renderobject.h"
-#include "engines/nancy/resource.h"
-#include "engines/nancy/nancy.h"
-#include "engines/nancy/resource.h"
-#include "engines/nancy/cursor.h"
-#include "engines/nancy/state/scene.h"
-#include "engines/nancy/ui/viewport.h"
-
-#include "common/file.h"
-#include "common/system.h"
-
 #include "image/bmp.h"
 
 #include "engines/util.h"
+
+#include "engines/nancy/renderobject.h"
+#include "engines/nancy/resource.h"
+#include "engines/nancy/nancy.h"
 
 namespace Nancy {
 

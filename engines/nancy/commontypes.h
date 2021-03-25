@@ -23,7 +23,6 @@
 #ifndef NANCY_COMMONYPES_H
 #define NANCY_COMMONYPES_H
 
-#include "common/scummsys.h"
 #include "common/rect.h"
 #include "common/str.h"
 
@@ -37,6 +36,30 @@ class NancyEngine;
 
 enum NancyFlag : byte { kFalse = 1, kTrue = 2 };
 enum MovementDirection : byte { kUp = 1, kDown = 2, kLeft = 4, kRight = 8, kMoveFast = 16 };
+
+// Separate namespace to remove possible clashes
+namespace NancyState {
+enum NancyState {
+	kBoot,
+	kPartnerLogo,
+	kLogo,
+	kCredits,
+	kMap,
+	kMainMenu,
+	kLoadSave,
+	kSetup,
+	// unknown/invalid
+	kHelp,
+	kScene,
+	// CD change
+	kCheat,
+	kQuit,
+	// regain focus
+	kNone,
+	kPause, // only used when the GMM is on screen
+	kReloadSave
+};
+}
 
 // Describes a scene transition
 struct SceneChangeDescription {

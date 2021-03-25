@@ -22,17 +22,15 @@
 
 #include "engines/nancy/action/primaryvideo.h"
 
-#include "engines/nancy/action/responses.cpp"
-#include "engines/nancy/action/actionmanager.h"
+#include "common/random.h"
 
-#include "engines/nancy/nancy.h"
+#include "engines/nancy/action/responses.cpp"
+
 #include "engines/nancy/state/scene.h"
+
 #include "engines/nancy/nancy.h"
 #include "engines/nancy/sound.h"
 #include "engines/nancy/util.h"
-
-#include "common/file.h"
-#include "common/random.h"
 
 namespace Nancy {
 namespace Action {

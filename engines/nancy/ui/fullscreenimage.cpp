@@ -24,7 +24,6 @@
 
 #include "engines/nancy/nancy.h"
 #include "engines/nancy/resource.h"
-#include "engines/nancy/graphics.h"
 
 namespace Nancy {
 namespace UI {

@@ -27,11 +27,6 @@
 #include "engines/nancy/renderobject.h"
 
 #include "engines/nancy/commontypes.h"
-#include "engines/nancy/time.h"
-
-#include "common/str.h"
-#include "common/array.h"
-#include "common/rect.h"
 
 namespace Nancy {
 namespace Action {

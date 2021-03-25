@@ -23,14 +23,10 @@
 #ifndef NANCY_UI_TEXTBOX_H
 #define NANCY_UI_TEXTBOX_H
 
-#include "engines/nancy/renderobject.h"
-
-#include "engines/nancy/ui/scrollbar.h"
-
 #include "common/str.h"
 #include "common/array.h"
 
-#include "graphics/managed_surface.h"
+#include "engines/nancy/ui/scrollbar.h"
 
 namespace Nancy {
 

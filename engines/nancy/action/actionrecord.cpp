@@ -20,7 +20,7 @@
  *
  */
 
-#include "engines/nancy/action/actionmanager.h"
+#include "engines/nancy/action/actionrecord.h"
 
 namespace Nancy {
 namespace Action {

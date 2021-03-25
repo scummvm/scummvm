@@ -22,26 +22,16 @@
 
 #include "engines/nancy/state/scene.h"
 
+#include "common/serializer.h"
+#include "common/config-manager.h"
+
 #include "engines/nancy/nancy.h"
-#include "engines/nancy/resource.h"
 #include "engines/nancy/iff.h"
 #include "engines/nancy/input.h"
 #include "engines/nancy/sound.h"
 #include "engines/nancy/graphics.h"
 #include "engines/nancy/cursor.h"
-#include "engines/nancy/time.h"
 #include "engines/nancy/util.h"
-
-#include "engines/nancy/action/actionmanager.h"
-#include "engines/nancy/action/sliderpuzzle.h"
-
-#include "common/memstream.h"
-#include "common/rect.h"
-#include "common/func.h"
-#include "common/serializer.h"
-#include "common/config-manager.h"
-
-#include "graphics/surface.h"
 
 namespace Common {
 DECLARE_SINGLETON(Nancy::State::Scene);
@@ -138,7 +128,7 @@ bool Scene::onStateExit() {
 	_timers.pushedPlayTime = g_nancy->getTotalPlayTime();
 	_actionManager.onPause(true);
 	pauseSceneSpecificSounds();
-	_gameStateRequested = NancyEngine::kNone;
+	_gameStateRequested = NancyState::kNone;
 
 	return false;
 }
@@ -200,6 +190,10 @@ void Scene::removeItemFromInventory(uint16 id, bool pickUp) {
 	}
 
 	_inventoryBox.removeItem(id);
+}
+
+void Scene::setHeldItem(int16 id)  {
+	_flags.heldItem = id; g_nancy->_cursorManager->setCursorItemID(id);
 }
 
 void Scene::setEventFlag(int16 label, NancyFlag flag) {
@@ -509,7 +503,7 @@ void Scene::run() {
 	_isComingFromMenu = false;
 
 
-	if (_gameStateRequested != NancyEngine::kNone) {
+	if (_gameStateRequested != NancyState::kNone) {
 		g_nancy->setState(_gameStateRequested);
 
 		return;
@@ -560,7 +554,7 @@ void Scene::run() {
 				g_nancy->_cursorManager->setCursorType(CursorManager::kHotspotArrow);
 
 				if (input.input & NancyInput::kLeftMouseButtonUp) {
-					requestStateChange(NancyEngine::kMap);
+					requestStateChange(NancyState::kMap);
 				}
 			}
 		}

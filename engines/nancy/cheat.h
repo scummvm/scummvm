@@ -23,17 +23,14 @@
 #ifndef NANCY_CHEAT_H
 #define NANCY_CHEAT_H
 
-#include "engines/nancy/commontypes.h"
-
 #include "gui/dialog.h"
-#include "gui/widget.h"
 
 #include "common/str.h"
 #include "common/array.h"
 
 namespace GUI {
-class TabWidget;
 class EditTextWidget;
+class CheckboxWidget;
 }
 
 namespace Nancy {

@@ -28,8 +28,7 @@
 #include "engines/nancy/graphics.h"
 #include "engines/nancy/cursor.h"
 #include "engines/nancy/util.h"
-
-#include "graphics/transparent_surface.h"
+#include "engines/nancy/input.h"
 
 namespace Nancy {
 namespace UI {

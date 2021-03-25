@@ -23,18 +23,19 @@
 #ifndef NANCY_ACTION_ACTIONRECORD_H
 #define NANCY_ACTION_ACTIONRECORD_H
 
-#include "engines/nancy/input.h"
+#include "common/str.h"
 
 #include "engines/nancy/time.h"
 #include "engines/nancy/cursor.h"
 
-#include "common/str.h"
-#include "common/stream.h"
-#include "common/rect.h"
+namespace Common {
+class SeekableReadStream;
+}
 
 namespace Nancy {
 
 class NancyEngine;
+struct NancyInput;
 
 namespace Action {
 

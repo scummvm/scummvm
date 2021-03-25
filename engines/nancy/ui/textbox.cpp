@@ -22,18 +22,15 @@
 
 #include "engines/nancy/ui/textbox.h"
 
-#include "engines/nancy/nancy.h"
-#include "engines/nancy/resource.h"
+#include "common/util.h"
+
 #include "engines/nancy/state/scene.h"
+
+#include "engines/nancy/nancy.h"
 #include "engines/nancy/graphics.h"
 #include "engines/nancy/util.h"
 #include "engines/nancy/cursor.h"
 #include "engines/nancy/input.h"
-
-#include "common/error.h"
-#include "common/util.h"
-#include "common/events.h"
-#include "common/util.h"
 
 namespace Nancy {
 namespace UI {

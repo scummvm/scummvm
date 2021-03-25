@@ -20,18 +20,10 @@
  *
  */
 
+#include "engines/advancedDetector.h"
+
 #include "engines/nancy/nancy.h"
 #include "engines/nancy/input.h"
-
-#include "common/config-manager.h"
-#include "common/savefile.h"
-#include "common/system.h"
-
-#include "graphics/thumbnail.h"
-
-#include "base/plugins.h"
-
-#include "engines/advancedDetector.h"
 
 class NancyMetaEngine : public AdvancedMetaEngine {
 public:

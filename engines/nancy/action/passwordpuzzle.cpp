@@ -22,14 +22,14 @@
 
 #include "engines/nancy/action/passwordpuzzle.h"
 
+#include "engines/nancy/state/scene.h"
+
 #include "engines/nancy/util.h"
 #include "engines/nancy/graphics.h"
 #include "engines/nancy/nancy.h"
 #include "engines/nancy/cursor.h"
 #include "engines/nancy/sound.h"
-#include "engines/nancy/state/scene.h"
-
-#include "graphics/font.h"
+#include "engines/nancy/input.h"
 
 namespace Nancy {
 namespace Action {

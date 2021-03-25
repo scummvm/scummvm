@@ -23,9 +23,6 @@
 #ifndef NANCY_SOUND_H
 #define NANCY_SOUND_H
 
-#include "engines/nancy/commontypes.h"
-
-#include "common/types.h"
 #include "common/str.h"
 
 #include "audio/mixer.h"
@@ -41,6 +38,7 @@ class SeekableAudioStream;
 namespace Nancy {
 
 class NancyEngine;
+struct SoundDescription;
 
 class SoundManager {
 public:

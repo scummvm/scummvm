@@ -23,18 +23,15 @@
 #ifndef NANCY_STATE_HELP_H
 #define NANCY_STATE_HELP_H
 
+#include "common/singleton.h"
+
 #include "engines/nancy/state/state.h"
 
 #include "engines/nancy/ui/fullscreenimage.h"
 
 #include "engines/nancy/commontypes.h"
 
-#include "common/rect.h"
-#include "common/singleton.h"
-
 namespace Nancy {
-
-class NancyEngine;
 
 namespace State {
 

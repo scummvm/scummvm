@@ -21,17 +21,15 @@
  */
 
 #include "engines/nancy/sound.h"
-#include "engines/nancy/nancy.h"
 
 #include "common/system.h"
-#include "common/debug.h"
-#include "common/textconsole.h"
-#include "common/stream.h"
 #include "common/substream.h"
 
 #include "audio/audiostream.h"
 #include "audio/decoders/raw.h"
 #include "audio/decoders/vorbis.h"
+
+#include "engines/nancy/nancy.h"
 
 namespace Nancy {
 

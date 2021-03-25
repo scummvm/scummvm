@@ -25,8 +25,6 @@
 
 #include "engines/nancy/renderobject.h"
 
-#include "common/rect.h"
-
 namespace Nancy {
 
 struct NancyInput;

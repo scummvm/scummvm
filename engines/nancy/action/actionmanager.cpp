@@ -20,20 +20,16 @@
  *
  */
 
-#include "engines/nancy/commontypes.h"
 #include "engines/nancy/action/actionmanager.h"
+
 
 #include "engines/nancy/state/scene.h"
 
 #include "engines/nancy/nancy.h"
 #include "engines/nancy/cursor.h"
 #include "engines/nancy/input.h"
-#include "engines/nancy/state/scene.h"
-#include "engines/nancy/ui/viewport.h"
+#include "engines/nancy/sound.h"
 
-#include "common/memstream.h"
-#include "common/events.h"
-#include "common/str.h"
 #include "common/serializer.h"
 
 namespace Nancy {

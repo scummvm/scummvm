@@ -20,22 +20,19 @@
  *
  */
 
+#include "engines/nancy/action/recordtypes.h"
+
 #include "engines/nancy/action/actionrecord.h"
-#include "engines/nancy/action/actionmanager.h"
+#include "engines/nancy/action/responses.cpp"
 
 #include "engines/nancy/state/scene.h"
 
-#include "engines/nancy/nancy.h"
 #include "engines/nancy/nancy.h"
 #include "engines/nancy/graphics.h"
 #include "engines/nancy/sound.h"
 #include "engines/nancy/input.h"
 #include "engines/nancy/resource.h"
 #include "engines/nancy/util.h"
-
-#include "engines/nancy/action/responses.cpp"
-
-#include "common/str.h"
 
 namespace Nancy {
 namespace Action {
@@ -126,7 +123,7 @@ void MapCall::readData(Common::SeekableReadStream &stream) {
 
 void MapCall::execute() {
 	_execType = kRepeating;
-	NancySceneState.requestStateChange(NancyEngine::kMap);
+	NancySceneState.requestStateChange(NancyState::kMap);
 	finishExecution();
 }
 
@@ -295,7 +292,7 @@ void LoseGame::readData(Common::SeekableReadStream &stream) {
 
 void LoseGame::execute() {
 	g_nancy->_sound->stopAndUnloadSpecificSounds();
-	g_nancy->setState(NancyEngine::kMainMenu);
+	g_nancy->setState(NancyState::kMainMenu);
 	NancySceneState.resetStateToInit();
 	_isDone = true;
 }
@@ -314,7 +311,7 @@ void WinGame::readData(Common::SeekableReadStream &stream) {
 
 void WinGame::execute() {
 	g_nancy->_sound->stopAndUnloadSpecificSounds();
-	g_nancy->setState(NancyEngine::kCredits, NancyEngine::kMainMenu);
+	g_nancy->setState(NancyState::kCredits, NancyState::kMainMenu);
 
 	// TODO replace with destroy()?
 	NancySceneState.resetStateToInit();

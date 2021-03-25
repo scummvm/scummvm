@@ -23,6 +23,8 @@
 #ifndef NANCY_STATE_CREDITS_H
 #define NANCY_STATE_CREDITS_H
 
+#include "common/singleton.h"
+
 #include "engines/nancy/state/state.h"
 
 #include "engines/nancy/ui/fullscreenimage.h"
@@ -30,14 +32,7 @@
 #include "engines/nancy/time.h"
 #include "engines/nancy/commontypes.h"
 
-#include "common/rect.h"
-#include "common/singleton.h"
-
-#include "graphics/managed_surface.h"
-
 namespace Nancy {
-
-class NancyEngine;
 
 namespace State {
 

@@ -23,13 +23,10 @@
 #include "engines/nancy/state/help.h"
 
 #include "engines/nancy/nancy.h"
-#include "engines/nancy/commontypes.h"
 #include "engines/nancy/sound.h"
 #include "engines/nancy/input.h"
 #include "engines/nancy/cursor.h"
 #include "engines/nancy/util.h"
-
-#include "common/stream.h"
 
 namespace Common {
 DECLARE_SINGLETON(Nancy::State::Help);

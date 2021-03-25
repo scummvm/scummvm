@@ -22,14 +22,14 @@
 
 #include "engines/nancy/ui/button.h"
 
+#include "engines/nancy/state/scene.h"
+
 #include "engines/nancy/input.h"
 #include "engines/nancy/cursor.h"
 #include "engines/nancy/nancy.h"
 #include "engines/nancy/util.h"
 #include "engines/nancy/graphics.h"
-#include "engines/nancy/state/scene.h"
-
-#include "common/stream.h"
+#include "engines/nancy/sound.h"
 
 namespace Nancy {
 namespace UI {
@@ -59,7 +59,7 @@ void MenuButton::init() {
 }
 
 void MenuButton::onClick() {
-	NancySceneState.requestStateChange(NancyEngine::kMainMenu);
+	NancySceneState.requestStateChange(NancyState::kMainMenu);
 	g_nancy->_sound->playSound(0x18);
 	setVisible(true);
 }
@@ -79,7 +79,7 @@ void HelpButton::init() {
 }
 
 void HelpButton::onClick() {
-	NancySceneState.requestStateChange(NancyEngine::kHelp);
+	NancySceneState.requestStateChange(NancyState::kHelp);
 	g_nancy->_sound->playSound(0x18);
 	setVisible(true);
 }

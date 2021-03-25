@@ -24,14 +24,9 @@
 #define NANCY_ACTION_RECORDTYPES_H
 
 #include "engines/nancy/action/actionrecord.h"
-#include "engines/nancy/commontypes.h"
 #include "engines/nancy/renderobject.h"
 
 #include "engines/nancy/commontypes.h"
-
-#include "common/stream.h"
-#include "common/array.h"
-#include "common/str.h"
 
 namespace Nancy {
 

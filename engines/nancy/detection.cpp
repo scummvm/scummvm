@@ -22,15 +22,6 @@
 
 #include "engines/nancy/detection.h"
 
-#include "common/system.h"
-#include "common/savefile.h"
-#include "common/textconsole.h"
-
-#include "graphics/thumbnail.h"
-#include "graphics/surface.h"
-
-#include "engines/advancedDetector.h"
-
 const char *const directoryGlobs[] = {
 	"game",
 	"datafiles",

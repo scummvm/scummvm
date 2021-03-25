@@ -22,14 +22,11 @@
 
 #include "engines/nancy/ui/scrollbar.h"
 
+#include "common/stream.h"
+
 #include "engines/nancy/nancy.h"
-#include "engines/nancy/commontypes.h"
 #include "engines/nancy/input.h"
 #include "engines/nancy/cursor.h"
-
-#include "common/stream.h"
-#include "common/random.h"
-#include "common/events.h"
 
 namespace Nancy {
 namespace UI {

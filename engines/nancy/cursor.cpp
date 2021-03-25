@@ -22,13 +22,12 @@
 
 #include "engines/nancy/cursor.h"
 
+#include "graphics/cursorman.h"
+
 #include "engines/nancy/nancy.h"
 #include "engines/nancy/graphics.h"
 #include "engines/nancy/resource.h"
 #include "engines/nancy/util.h"
-
-#include "common/stream.h"
-#include "common/str.h"
 
 namespace Nancy {
 

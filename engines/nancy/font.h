@@ -22,14 +22,14 @@
 #ifndef NANCY_FONT_H
 #define NANCY_FONT_H
 
-#include "graphics/font.h"
+#include "common/array.h"
 
+#include "graphics/font.h"
 #include "graphics/surface.h"
 
-#include "common/stream.h"
-#include "common/array.h"
-#include "common/rect.h"
-#include "common/str.h"
+namespace Common {
+class SeekableReadStream;
+}
 
 namespace Nancy {
 

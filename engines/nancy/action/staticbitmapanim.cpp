@@ -22,14 +22,14 @@
 
 #include "engines/nancy/action/staticbitmapanim.h"
 
-#include "engines/nancy/sound.h"
+#include "common/rational.h"
+
 #include "engines/nancy/state/scene.h"
 
+#include "engines/nancy/sound.h"
 #include "engines/nancy/nancy.h"
 #include "engines/nancy/util.h"
 #include "engines/nancy/resource.h"
-
-#include "common/rational.h"
 
 namespace Nancy {
 namespace Action {

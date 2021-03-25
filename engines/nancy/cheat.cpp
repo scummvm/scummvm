@@ -22,17 +22,15 @@
 
 #include "engines/nancy/cheat.h"
 
-#include "engines/nancy/nancy.h"
-#include "engines/nancy/iff.h"
-#include "engines/nancy/state/scene.h"
-
 #include "common/winexe.h"
-#include "common/stream.h"
 #include "common/translation.h"
-#include "common/ustr.h"
+#include "common/stream.h"
 
 #include "gui/widgets/tab.h"
 #include "gui/widgets/edittext.h"
+
+#include "engines/nancy/iff.h"
+#include "engines/nancy/state/scene.h"
 
 namespace Nancy {
 

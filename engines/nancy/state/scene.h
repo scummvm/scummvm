@@ -23,7 +23,12 @@
 #ifndef NANCY_STATE_SCENE_H
 #define NANCY_STATE_SCENE_H
 
+#include "common/singleton.h"
+
 #include "engines/nancy/state/state.h"
+
+#include "engines/nancy/time.h"
+#include "engines/nancy/commontypes.h"
 
 #include "engines/nancy/action/actionmanager.h"
 
@@ -33,20 +38,6 @@
 #include "engines/nancy/ui/inventorybox.h"
 #include "engines/nancy/ui/button.h"
 
-#include "engines/nancy/time.h"
-#include "engines/nancy/commontypes.h"
-#include "engines/nancy/nancy.h"
-#include "engines/nancy/sound.h"
-
-#include "common/scummsys.h"
-#include "common/array.h"
-#include "common/str.h"
-#include "common/singleton.h"
-
-namespace Graphics {
-	struct Surface;
-}
-
 namespace Common {
 class SeekableReadStream;
 class Serializer;
@@ -55,6 +46,9 @@ class Serializer;
 namespace Nancy {
 
 class NancyEngine;
+class NancyConsole;
+class CheatDialog;
+struct SceneChangeDescription;
 
 namespace Action {
 class SliderPuzzle;
@@ -110,7 +104,7 @@ public:
 	Scene() :
 		_state (kInit),
 		_lastHint(-1),
-		_gameStateRequested(NancyEngine::kNone),
+		_gameStateRequested(NancyState::kNone),
 		_frame(),
 		_viewport(),
 		_textbox(_frame),
@@ -136,7 +130,7 @@ public:
 	void addItemToInventory(uint16 id);
 	void removeItemFromInventory(uint16 id, bool pickUp = true);
 	int16 getHeldItem() const { return _flags.heldItem; }
-	void setHeldItem(int16 id) { _flags.heldItem = id; g_nancy->_cursorManager->setCursorItemID(id); }
+	void setHeldItem(int16 id);
 	NancyFlag hasItem(int16 id) const { return _flags.items[id]; }
 
 	void setEventFlag(int16 label, NancyFlag flag = kTrue);
@@ -154,7 +148,7 @@ public:
 	byte getHintsRemaining() const { return _hintsRemaining[_difficulty]; }
 	void useHint(int hintID, int hintWeight);
 
-	void requestStateChange(NancyEngine::GameState state) { _gameStateRequested = state; }
+	void requestStateChange(NancyState::NancyState state) { _gameStateRequested = state; }
 	void resetStateToInit() { _state = kInit; }
 
 	void resetAndStartTimer() { _timers.timerIsActive = true; _timers.timerTime = 0; }
@@ -251,7 +245,7 @@ private:
 	uint16 _difficulty;
 	Common::Array<uint16> _hintsRemaining;
 	int16 _lastHint;
-	NancyEngine::GameState _gameStateRequested;
+	NancyState::NancyState _gameStateRequested;
 
 	Common::Rect _mapHotspot;
 	Common::Array<uint16> _mapAccessSceneIDs;

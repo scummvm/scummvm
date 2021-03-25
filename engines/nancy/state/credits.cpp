@@ -30,8 +30,6 @@
 #include "engines/nancy/input.h"
 #include "engines/nancy/cursor.h"
 
-#include "common/stream.h"
-
 namespace Common {
 DECLARE_SINGLETON(Nancy::State::Credits);
 }
@@ -92,7 +90,7 @@ void Credits::run() {
 	if (input.input & NancyInput::kLeftMouseButtonDown) {
 		_state = kInit;
 		g_nancy->_sound->stopSound(_sound);
-		g_nancy->setState(NancyEngine::kMainMenu);
+		g_nancy->setState(NancyState::kMainMenu);
 		g_nancy->_cursorManager->showCursor(true);
 		_fullTextSurface.free();
 	}
