@@ -66,6 +66,7 @@ BaseOxygenTimer::BaseOxygenTimer(BuriedEngine *vm, Window *viewWindow, const Loc
 		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
 	_deathID = 41;
 	_jumped = false;
+	_entryStartTime = g_system->getMillis();
 }
 
 int BaseOxygenTimer::postEnterRoom(Window *viewWindow, const Location &priorLocation) {
@@ -1690,6 +1691,7 @@ protected:
 BaseOxygenTimerCapacitance::BaseOxygenTimerCapacitance(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation) :
 		SceneBase(vm, viewWindow, sceneStaticData, priorLocation) {
 	_jumped = false;
+	_entryStartTime = g_system->getMillis();
 }
 
 int BaseOxygenTimerCapacitance::postEnterRoom(Window *viewWindow, const Location &priorLocation) {
