@@ -339,7 +339,11 @@
 //
 #ifndef GCC_PRINTF
 	#if defined(__GNUC__) || defined(__INTEL_COMPILER)
-		#define GCC_PRINTF(x,y) __attribute__((__format__(__printf__, x, y)))
+		#if __USE_MINGW_ANSI_STDIO && !defined(__clang__)
+			#define GCC_PRINTF(x,y) __attribute__((__format__(__gnu_printf__, x, y)))
+		#else
+			#define GCC_PRINTF(x,y) __attribute__((__format__(__printf__, x, y)))
+		#endif
 	#else
 		#define GCC_PRINTF(x,y)
 	#endif
