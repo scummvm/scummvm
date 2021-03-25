@@ -15,7 +15,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.7.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-03-24 16:21+0000\n"
+"POT-Creation-Date: 2021-03-24 23:24+0000\n"
 "PO-Revision-Date: 2021-03-21 08:24+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Czech <https://translations.scummvm.org/projects/scummvm/"
@@ -177,7 +177,7 @@ msgstr ""
 #: engines/drascula/saveload.cpp:49 engines/groovie/script.cpp:484
 #: engines/parallaction/saveload.cpp:271 engines/sci/engine/kgraphics.cpp:75
 #: engines/sci/graphics/controls32.cpp:925 engines/scumm/dialogs.cpp:182
-#: engines/scumm/scumm.cpp:1936 engines/scumm/players/player_v3m.cpp:130
+#: engines/scumm/scumm.cpp:1944 engines/scumm/players/player_v3m.cpp:130
 #: engines/scumm/players/player_v5m.cpp:108 engines/sky/compact.cpp:142
 #: engines/sword1/animation.cpp:532 engines/sword1/animation.cpp:553
 #: engines/sword1/animation.cpp:569 engines/sword1/animation.cpp:577
@@ -3862,7 +3862,7 @@ msgstr "Obnovit"
 msgid "Quick load or save game isn't supported in this location"
 msgstr ""
 
-#: engines/agos/saveload.cpp:159 engines/scumm/scumm.cpp:2505
+#: engines/agos/saveload.cpp:159 engines/scumm/scumm.cpp:2513
 #, c-format
 msgid ""
 "Failed to load saved game from file:\n"
@@ -3873,7 +3873,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/agos/saveload.cpp:194 engines/scumm/scumm.cpp:2495
+#: engines/agos/saveload.cpp:194 engines/scumm/scumm.cpp:2503
 #, c-format
 msgid ""
 "Failed to save game to file:\n"
@@ -3884,7 +3884,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/agos/saveload.cpp:202 engines/scumm/scumm.cpp:2518
+#: engines/agos/saveload.cpp:202 engines/scumm/scumm.cpp:2526
 #, c-format
 msgid ""
 "Successfully saved game in file:\n"
@@ -6668,7 +6668,7 @@ msgstr "Zakompilované funkce:"
 msgid "SCUMM v7-8 support is not compiled in"
 msgstr "Zakompilované funkce:"
 
-#: engines/scumm/scumm.cpp:1934
+#: engines/scumm/scumm.cpp:1942
 #, c-format
 msgid ""
 "Native MIDI support requires the Roland Upgrade from LucasArts,\n"
@@ -6677,7 +6677,7 @@ msgstr ""
 "Přirozená podpora MIDI vyžaduje Aktualizaci Roland od LucasArts,\n"
 "ale %s chybí. Místo toho je použit AdLib."
 
-#: engines/scumm/scumm.cpp:2803
+#: engines/scumm/scumm.cpp:2811
 msgid ""
 "Usually, Maniac Mansion would start now. But for that to work, the game "
 "files for Maniac Mansion have to be in the 'Maniac' directory inside the "

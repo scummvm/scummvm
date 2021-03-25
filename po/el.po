@@ -14,7 +14,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-03-24 16:21+0000\n"
+"POT-Creation-Date: 2021-03-24 23:24+0000\n"
 "PO-Revision-Date: 2021-02-23 01:24+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
@@ -174,7 +174,7 @@ msgstr ""
 #: engines/drascula/saveload.cpp:49 engines/groovie/script.cpp:484
 #: engines/parallaction/saveload.cpp:271 engines/sci/engine/kgraphics.cpp:75
 #: engines/sci/graphics/controls32.cpp:925 engines/scumm/dialogs.cpp:182
-#: engines/scumm/scumm.cpp:1936 engines/scumm/players/player_v3m.cpp:130
+#: engines/scumm/scumm.cpp:1944 engines/scumm/players/player_v3m.cpp:130
 #: engines/scumm/players/player_v5m.cpp:108 engines/sky/compact.cpp:142
 #: engines/sword1/animation.cpp:532 engines/sword1/animation.cpp:553
 #: engines/sword1/animation.cpp:569 engines/sword1/animation.cpp:577
@@ -3890,7 +3890,7 @@ msgstr ""
 "Η γρήγορη φόρτωση ή αποθήκευση παιχνιδιού δεν υποστηρίζεται σε αυτή την "
 "περιοχή"
 
-#: engines/agos/saveload.cpp:159 engines/scumm/scumm.cpp:2505
+#: engines/agos/saveload.cpp:159 engines/scumm/scumm.cpp:2513
 #, c-format
 msgid ""
 "Failed to load saved game from file:\n"
@@ -3901,7 +3901,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/agos/saveload.cpp:194 engines/scumm/scumm.cpp:2495
+#: engines/agos/saveload.cpp:194 engines/scumm/scumm.cpp:2503
 #, c-format
 msgid ""
 "Failed to save game to file:\n"
@@ -3912,7 +3912,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/agos/saveload.cpp:202 engines/scumm/scumm.cpp:2518
+#: engines/agos/saveload.cpp:202 engines/scumm/scumm.cpp:2526
 #, c-format
 msgid ""
 "Successfully saved game in file:\n"
@@ -6828,7 +6828,7 @@ msgstr "Η υποστήριξη του HE v71+ δεν έχει ενσωματω�
 msgid "SCUMM v7-8 support is not compiled in"
 msgstr "Η υποστήριξη για SCUMM v7-8 δεν έχει ενσωματωθεί στο εκτελέσιμο"
 
-#: engines/scumm/scumm.cpp:1934
+#: engines/scumm/scumm.cpp:1942
 #, c-format
 msgid ""
 "Native MIDI support requires the Roland Upgrade from LucasArts,\n"
@@ -6837,7 +6837,7 @@ msgstr ""
 "Η υποστήριξη native MIDI απαιτεί την Αναβάθμιση Roland από τη LucasArts,\n"
 "αλλά το %s λείπει. Γίνεται χρήση AdLib αντ 'αυτού."
 
-#: engines/scumm/scumm.cpp:2803
+#: engines/scumm/scumm.cpp:2811
 msgid ""
 "Usually, Maniac Mansion would start now. But for that to work, the game "
 "files for Maniac Mansion have to be in the 'Maniac' directory inside the "
