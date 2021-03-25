@@ -184,8 +184,6 @@ private:
 	NancyConsole *_console;
 
 	const NancyGameDescription *_gameDescription;
-	GameType _gameType;
-	Common::Platform _platform;
 
 	Common::HashMap<Common::String, Common::SeekableReadStream *> _bootChunks;
 };

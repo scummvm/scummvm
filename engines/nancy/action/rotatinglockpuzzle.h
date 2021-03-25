@@ -59,7 +59,7 @@ public:
 	Nancy::SoundDescription _clickSound; // 0x234, kNormal
 	SceneChangeDescription _solveExitScene; // 0x256
 	EventFlagDescription _flagOnSolve; // 0x260
-	uint16 _solveSoundDelay; // 0x263
+	uint16 _solveSoundDelay = 0; // 0x263
 	Nancy::SoundDescription _solveSound; // 0x265
 	SceneChangeDescription _exitScene; // 0x287
 	EventFlagDescription _flagOnExit; // 0x291

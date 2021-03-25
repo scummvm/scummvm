@@ -81,6 +81,12 @@ NancyEngine::NancyEngine(OSystem *syst, const NancyGameDescription *gd) : Engine
 	_cursorManager = new CursorManager();
 
 	_launchConsole = false;
+
+	_resource = nullptr;
+	_firstSceneID = 0;
+	_startTimeHours = 0;
+	_overrideMovementTimeDeltas = false;
+	_cheatTypeIsEventFlag = false;
 }
 
 NancyEngine::~NancyEngine() {

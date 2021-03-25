@@ -44,7 +44,7 @@ namespace State {
 class Credits : public State, public Common::Singleton<Credits> {
 public:
 	enum State { kInit, kRun };
-	Credits() : _state(kInit), _background(), _text(_background) {}
+	Credits() : _state(kInit), _background(), _text(_background), _pixelsToScroll(0) {}
 
 	// State API
 	virtual void process() override;

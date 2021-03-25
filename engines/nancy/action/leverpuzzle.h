@@ -57,7 +57,7 @@ public:
 	SoundDescription _noMoveSound; // 0x122
 	SceneChangeDescription _solveExitScene; // 0x144
 	EventFlagDescription _flagOnSolve; // 0x14E
-	uint16 _solveSoundDelay; // 0x151
+	uint16 _solveSoundDelay = 0; // 0x151
 	SoundDescription _solveSound; // 0x153
 	SceneChangeDescription _exitScene; // 0x175
 	EventFlagDescription _flagOnExit; // 0x17F

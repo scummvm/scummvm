@@ -117,7 +117,8 @@ public:
 		_inventoryBox(_frame),
 		_menuButton(_frame),
 		_helpButton(_frame),
-		_actionManager() {}
+		_actionManager(),
+		_difficulty(0) {}
 
 	// State API
 	virtual void process() override;

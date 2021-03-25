@@ -55,7 +55,7 @@ static void readCifInfo20(Common::File &f, ResourceManager::CifInfo &info, uint3
 
 class CifFile {
 public:
-	CifFile(const Common::String &name, Common::File *f) : _name(name), _f(f) { };
+	CifFile(const Common::String &name, Common::File *f) : _name(name), _f(f), _dataOffset(0) { };
 	virtual ~CifFile();
 
 	bool initialize();

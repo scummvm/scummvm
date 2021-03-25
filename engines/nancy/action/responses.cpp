@@ -850,7 +850,9 @@ static const HintDesc nancy1Hints[] {
 			{ 0x4A, kTrue },
 			EMPTY_DESC
 		},
-		EMPTY_DESC
+		{
+			EMPTY_DESC
+		}
 	},
 
 	{
@@ -860,7 +862,9 @@ static const HintDesc nancy1Hints[] {
 			{ 0x5B, kFalse },
 			EMPTY_DESC
 		},
-		EMPTY_DESC
+		{
+			EMPTY_DESC
+		}
 	},
 
 	{

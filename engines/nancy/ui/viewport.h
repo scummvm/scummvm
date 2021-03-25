@@ -43,7 +43,10 @@ public:
 	Viewport() :
 		RenderObject(),
 		_movementLastFrame(0),
-		_edgesMask(0) {}
+		_edgesMask(0),
+		_currentFrame(0),
+		_videoFormat(0) {}
+		
 	virtual ~Viewport() { _decoder.close(); _fullFrame.free(); }
 
 	virtual void init() override;

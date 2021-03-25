@@ -49,7 +49,8 @@ public:
 		_borderWidth(0),
 		_needsTextRedraw(false),
 		_scrollbar(redrawFrom, this),
-		_scrollbarPos(0) {}
+		_scrollbarPos(0),
+		_numLines(0) {}
 
 	virtual ~Textbox() { _fullSurface.free(); }
 

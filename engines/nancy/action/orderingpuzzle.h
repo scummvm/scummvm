@@ -53,12 +53,12 @@ public:
 	Common::String _imageName; // 0x00
 	Common::Array<Common::Rect> _srcRects; // 0xC, 15
 	Common::Array<Common::Rect> _destRects; // 0xFC, 15
-	uint16 _sequenceLength; // 0x1EC;
+	uint16 _sequenceLength = 0; // 0x1EC;
 	Common::Array<byte> _correctSequence; // 0x1EE, 15 bytes
 	Nancy::SoundDescription _clickSound; // 0x1FD, kNormal
 	SceneChangeDescription _solveExitScene; // 0x21F
 	EventFlagDescription _flagOnSolve; // 0x229
-	uint16 _solveSoundDelay; // 0x22C
+	uint16 _solveSoundDelay = 0; // 0x22C
 	Nancy::SoundDescription _solveSound; // 0x22E
 	SceneChangeDescription _exitScene; // 0x250
 	EventFlagDescription _flagOnExit; // 0x25A

@@ -80,7 +80,7 @@ struct MultiEventFlagDescription {
 };
 
 struct SecondaryVideoDescription {
-	int16 frameID;
+	int16 frameID = -1;
 	Common::Rect srcRect;
 	Common::Rect destRect;
 	// 2 unknown/empty rects
@@ -93,9 +93,9 @@ struct SoundDescription {
 	enum Type { kNormal, kMenu, kDIGI, kScene };
 
 	Common::String name;
-	uint16 channelID;
-	uint16 numLoops;
-	uint16 volume;
+	uint16 channelID = 0;
+	uint16 numLoops = 0;
+	uint16 volume = 0;
 
 	void read(Common::SeekableReadStream &stream, Type type);
 };

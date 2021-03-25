@@ -55,8 +55,8 @@ public:
 	virtual void onPause(bool pause) override;
 
 	Common::String _imageName; // 0x00
-	uint16 _width; // 0xA
-	uint16 _height; // 0xC
+	uint16 _width = 0; // 0xA
+	uint16 _height = 0; // 0xC
 	Common::Array<Common::Array<Common::Rect>> _srcRects; // 0x0E, size 0x240
 	Common::Array<Common::Array<Common::Rect>> _destRects; // 0x24E, size 0x240
 	Common::Array<Common::Array<int16>> _correctTileOrder; // 0x48E, size 0x48

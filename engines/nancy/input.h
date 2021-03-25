@@ -94,7 +94,8 @@ enum NancyAction {
 public:
 	InputManager() :
 		_inputs(0),
-		_mouseEnabled(true) {}
+		_mouseEnabled(true),
+		_inputBeginState(nullptr) {}
 
 	void processEvents();
 

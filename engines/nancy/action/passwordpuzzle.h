@@ -38,11 +38,7 @@ namespace Action {
 class PasswordPuzzle : public ActionRecord, public RenderObject {
 public:
 	enum SolveState { kNotSolved, kFailed, kSolved };
-	PasswordPuzzle(RenderObject &redrawFrom) :
-		RenderObject(redrawFrom),
-		_passwordFieldIsActive(false),
-		_playerHasHitReturn(false),
-		_solveState(kNotSolved) {}
+	PasswordPuzzle(RenderObject &redrawFrom) : RenderObject(redrawFrom) {}
 	virtual ~PasswordPuzzle() {}
 
 	virtual void init() override;
@@ -52,7 +48,7 @@ public:
 	virtual void handleInput(NancyInput &input) override;
 	virtual void onPause(bool pause) override;
 
-	uint16 _fontID; // 0x00
+	uint16 _fontID = 0; // 0x00
 	Time _cursorBlinkTime; // 0x2
 	Common::Rect _nameBounds; // 0x4
 	Common::Rect _passwordBounds; // 0x14
@@ -72,9 +68,9 @@ public:
 	Common::String _playerNameInput;
 	Common::String _playerPasswordInput;
 	Time _nextBlinkTime;
-	bool _passwordFieldIsActive;
-	bool _playerHasHitReturn;
-	SolveState _solveState;
+	bool _passwordFieldIsActive = false;
+	bool _playerHasHitReturn = false;
+	SolveState _solveState = kNotSolved;
 
 protected:
 	virtual Common::String getRecordTypeName() const override { return "PasswordPuzzle"; }

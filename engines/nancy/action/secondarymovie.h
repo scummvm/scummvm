@@ -42,10 +42,7 @@ public:
 		EventFlagDescription flagDesc;
 	};
 
-	PlaySecondaryMovie(RenderObject &redrawFrom) :
-		RenderObject(redrawFrom),
-		_curViewportFrame(-1),
-		_isFinished(false) {}
+	PlaySecondaryMovie(RenderObject &redrawFrom) : RenderObject(redrawFrom) {}
 	virtual ~PlaySecondaryMovie();
 
 	virtual void init() override;
@@ -57,11 +54,11 @@ public:
 
 	Common::String _videoName; // 0x00
 
-	uint16 _unknown; // 0x1C
-	NancyFlag _hideMouse; // 0x1E
-	NancyFlag _isReverse; // 0x20
-	uint16 _firstFrame; // 0x22
-	uint16 _lastFrame; // 0x24
+	uint16 _unknown = 0; // 0x1C
+	NancyFlag _hideMouse = NancyFlag::kFalse; // 0x1E
+	NancyFlag _isReverse = NancyFlag::kFalse; // 0x20
+	uint16 _firstFrame = 0; // 0x22
+	uint16 _lastFrame = 0; // 0x24
 	FlagAtFrame _frameFlags[15]; // 0x26
 	MultiEventFlagDescription _triggerFlags; // 0x80
 
@@ -77,8 +74,8 @@ protected:
 	virtual bool isViewportRelative() const override { return true; }
 
 	AVFDecoder _decoder;
-	int _curViewportFrame;
-	bool _isFinished;
+	int _curViewportFrame = -1;
+	bool _isFinished = false;
 };
 
 } // End of namespace Action

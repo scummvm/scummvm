@@ -59,7 +59,8 @@ public:
 		RenderObject(redrawFrom),
 		_scrollbar(redrawFrom, this),
 		_shades(*this, this),
-		_scrollbarPos(0) {}
+		_scrollbarPos(0),
+		_shadesFrameTime(0) {}
 
 	virtual ~InventoryBox() { _fullInventorySurface.free(); _iconsSurface.free(); }
 

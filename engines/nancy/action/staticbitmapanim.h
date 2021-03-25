@@ -51,15 +51,15 @@ public:
 
 	Common::String _imageName;
 
-	NancyFlag _isTransparent; // 0xC
-	NancyFlag _doNotChangeScene; // 0xE
-	NancyFlag _isReverse; // 0x10
-	NancyFlag _isLooping; // 0x12
-	uint16 _firstFrame; // 0x14
-	uint16 _loopFirstFrame; // 0x16
-	uint16 _loopLastFrame; // 0x18
+	NancyFlag _isTransparent = NancyFlag::kFalse; // 0xC
+	NancyFlag _doNotChangeScene = NancyFlag::kFalse; // 0xE
+	NancyFlag _isReverse = NancyFlag::kFalse; // 0x10
+	NancyFlag _isLooping = NancyFlag::kFalse; // 0x12
+	uint16 _firstFrame = 0; // 0x14
+	uint16 _loopFirstFrame = 0; // 0x16
+	uint16 _loopLastFrame = 0; // 0x18
 	Time _frameTime;
-	uint16 _zOrder; // 0x1C
+	uint16 _zOrder = 0; // 0x1C
 	EventFlagDescription _interruptCondition; // 0x1E
 	SceneChangeDescription _sceneChange;
 	MultiEventFlagDescription _triggerFlags; // 0x2A

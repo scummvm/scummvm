@@ -96,10 +96,10 @@ public:
 	SoundDescription _sound; // 0x619
 	SoundDescription _responseGenericSound; // 0x63B
 
-	byte _conditionalResponseCharacterID; // 0x65E
-	byte _goodbyeResponseCharacterID; // 0x65F
-	NancyFlag _isDialogueExitScene; // 0x660
-	NancyFlag _doNotPop; // 0x661
+	byte _conditionalResponseCharacterID = 0; // 0x65E
+	byte _goodbyeResponseCharacterID = 0; // 0x65F
+	NancyFlag _isDialogueExitScene = NancyFlag::kFalse; // 0x660
+	NancyFlag _doNotPop = NancyFlag::kFalse; // 0x661
 	SceneChangeDescription _sceneChange; // 0x662
 
 	Common::Array<ResponseStruct> _responses; // 0x69E
