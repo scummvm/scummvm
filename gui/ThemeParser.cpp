@@ -764,7 +764,9 @@ bool ThemeParser::parserCallback_widget(ParserNode *node) {
 			if (_theme->getEvaluator()->hasVar(node->values["width"]) == true)
 				width = _theme->getEvaluator()->getVar(node->values["width"]);
 
-			else if (!parseIntegerKey(node->values["width"], 1, &width))
+			else if (parseIntegerKey(node->values["width"], 1, &width))
+				width = SCALEVALUE(width);
+			else
 				return parserError("Corrupted width value in key for " + var);
 		}
 
@@ -772,7 +774,9 @@ bool ThemeParser::parserCallback_widget(ParserNode *node) {
 			if (_theme->getEvaluator()->hasVar(node->values["height"]) == true)
 				height = _theme->getEvaluator()->getVar(node->values["height"]);
 
-			else if (!parseIntegerKey(node->values["height"], 1, &height))
+			else if (parseIntegerKey(node->values["height"], 1, &height))
+				height = SCALEVALUE(height);
+			else
 				return parserError("Corrupted height value in key for " + var);
 		}
 
@@ -786,7 +790,7 @@ bool ThemeParser::parserCallback_widget(ParserNode *node) {
 		if (node->values.contains("rtl"))
 			useRTL = parseBoolean(node->values["rtl"]);
 
-		_theme->getEvaluator()->addWidget(var, node->values["type"], SCALEVALUE(width), SCALEVALUE(height), alignH, useRTL);
+		_theme->getEvaluator()->addWidget(var, node->values["type"], width, height, alignH, useRTL);
 	}
 
 	return true;
@@ -901,11 +905,13 @@ bool ThemeParser::parserCallback_space(ParserNode *node) {
 		if (_theme->getEvaluator()->hasVar(node->values["size"]))
 			size = _theme->getEvaluator()->getVar(node->values["size"]);
 
-		else if (!parseIntegerKey(node->values["size"], 1, &size))
+		else if (parseIntegerKey(node->values["size"], 1, &size))
+			size = SCALEVALUE(size);
+		else
 			return parserError("Invalid value for Spacing size.");
 	}
 
-	_theme->getEvaluator()->addSpace(SCALEVALUE(size));
+	_theme->getEvaluator()->addSpace(size);
 	return true;
 }
 
@@ -922,7 +928,10 @@ bool ThemeParser::parseCommonLayoutProps(ParserNode *node, const Common::String 
 	if (node->values.contains("size")) {
 		int width, height;
 
-		if (!parseIntegerKey(node->values["size"], 2, &width, &height)) {
+		if (parseIntegerKey(node->values["size"], 2, &width, &height)) {
+			width = SCALEVALUE(width);
+			height = SCALEVALUE(height);
+		} else {
 			Common::StringTokenizer tokenizer(node->values["size"], " ,");
 			Common::String wtoken, htoken;
 			char *parseEnd;
@@ -939,6 +948,8 @@ bool ThemeParser::parseCommonLayoutProps(ParserNode *node, const Common::String 
 
 				if (wtoken.lastChar() == '%')
 					width = _baseWidth * width / 100;
+				else
+					width = SCALEVALUE(width);
 			}
 
 			htoken = tokenizer.nextToken();
@@ -953,20 +964,25 @@ bool ThemeParser::parseCommonLayoutProps(ParserNode *node, const Common::String 
 
 				if (htoken.lastChar() == '%')
 					height = _baseHeight * height / 100;
+				else
+					height = SCALEVALUE(height);
 			}
 
 			if (!tokenizer.empty())
 				return false;
 		}
 
-		_theme->getEvaluator()->setVar(var + "Width", SCALEVALUE(width));
-		_theme->getEvaluator()->setVar(var + "Height", SCALEVALUE(height));
+		_theme->getEvaluator()->setVar(var + "Width", width);
+		_theme->getEvaluator()->setVar(var + "Height", height);
 	}
 
 	if (node->values.contains("pos")) {
 		int x, y;
 
-		if (!parseIntegerKey(node->values["pos"], 2, &x, &y)) {
+		if (parseIntegerKey(node->values["pos"], 2, &x, &y)) {
+			x = SCALEVALUE(x);
+			y = SCALEVALUE(y);
+		} else {
 			Common::StringTokenizer tokenizer(node->values["pos"], " ,");
 			Common::String xpos, ypos;
 			char *parseEnd;
@@ -983,6 +999,7 @@ bool ThemeParser::parseCommonLayoutProps(ParserNode *node, const Common::String 
 				x = _theme->getEvaluator()->getVar(xpos);
 			} else {
 				x = strtol(xpos.c_str(), &parseEnd, 10);
+				x = SCALEVALUE(x);
 
 				if (*parseEnd != 0 && !(*parseEnd == 'r' && *(parseEnd + 1) == 0))
 					return false;
@@ -1003,6 +1020,7 @@ bool ThemeParser::parseCommonLayoutProps(ParserNode *node, const Common::String 
 				y = _theme->getEvaluator()->getVar(ypos);
 			} else {
 				y = strtol(ypos.c_str(), &parseEnd, 10);
+				y = SCALEVALUE(y);
 
 				if (*parseEnd != 0 && !(*parseEnd == 'b' && *(parseEnd + 1) == 0))
 					return false;
@@ -1015,8 +1033,8 @@ bool ThemeParser::parseCommonLayoutProps(ParserNode *node, const Common::String 
 				return false;
 		}
 
-		_theme->getEvaluator()->setVar(var + "X", SCALEVALUE(x));
-		_theme->getEvaluator()->setVar(var + "Y", SCALEVALUE(y));
+		_theme->getEvaluator()->setVar(var + "X", x);
+		_theme->getEvaluator()->setVar(var + "Y", y);
 	}
 
 	if (node->values.contains("padding")) {
