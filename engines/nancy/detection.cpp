@@ -210,7 +210,7 @@ public:
 		return "Nancy Drew";
 	}
 
-	const char *getOriginalCopyright() const {
+	const char *getOriginalCopyright() const override {
 		return "Nancy Drew Engine copyright Her Interactive, 1995-2012";
 	}
 
