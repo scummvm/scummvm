@@ -95,7 +95,6 @@ int32 FastFileLen(Common::SeekableReadStream *stream);
 void wordcopy(void *dest, void *src, uint32 len);
 void longcopy(void *dest, void *src, uint32 len);
 void wordset(void *dest, uint16 value, uint32 len);
-void longset(void *dest, uint32 value, uint32 len);
 void byte2word(void *dest, void *src, void *data, uint32 len);
 void byte2long(void *dest, void *src, void *data, uint32 len);
 void byte2wordm(void *dest, void *src, void *data, uint32 len);
