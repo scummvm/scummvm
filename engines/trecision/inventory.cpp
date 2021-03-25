@@ -380,7 +380,7 @@ void TrecisionEngine::doInventoryUseWithInventory() {
 	_animMgr->stopSmkAnim(_inventoryObj[_useWith[USED]]._anim);
 
 	bool refreshInventory, printSentence;
-	_logicMgr->useWithInventory(&refreshInventory, &printSentence);
+	_logicMgr->useInventoryWithInventory(&refreshInventory, &printSentence);
 
 	if (printSentence)
 		CharacterSay(_inventoryObj[_useWith[USED]]._action);
@@ -400,7 +400,7 @@ void TrecisionEngine::doInventoryUseWithScreen() {
 		return;
 	
 	bool refreshInventory, printSentence;
-	_logicMgr->useWithScreen(&refreshInventory, &printSentence);
+	_logicMgr->useInventoryWithScreen(&refreshInventory, &printSentence);
 
 	if (printSentence)
 		CharacterSay(_inventoryObj[_useWith[USED]]._action);
