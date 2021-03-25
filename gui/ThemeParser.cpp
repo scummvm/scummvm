@@ -107,6 +107,20 @@ static GUI::ThemeEngine::TextAlignVertical parseTextVAlign(const Common::String 
 		return GUI::ThemeEngine::kTextAlignVInvalid;
 }
 
+bool parseBoolean(const Common::String &val) {
+	if (val == "true")
+		return true;
+	else if (val == "yes")
+		return true;
+	else if (val == "false")
+		return false;
+	else if (val == "no")
+		return false;
+	else
+		warning("Incorrect boolean value %s", val.c_str());
+
+	return false;
+}
 
 ThemeParser::ThemeParser(ThemeEngine *parent) : XMLParser() {
 	_defaultStepGlobal = defaultDrawStep();
@@ -752,9 +766,8 @@ bool ThemeParser::parserCallback_widget(ParserNode *node) {
 				return parserError("Invalid value for text alignment.");
 		}
 
-		if (node->values.contains("rtl")) {
-			useRTL = false;
-		}
+		if (node->values.contains("rtl"))
+			useRTL = parseBoolean(node->values["rtl"]);
 
 		_theme->getEvaluator()->addWidget(var, node->values["type"], width, height, alignH, useRTL);
 	}
