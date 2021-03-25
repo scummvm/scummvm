@@ -15,7 +15,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-03-25 17:54+0000\n"
+"POT-Creation-Date: 2021-03-25 19:52+0000\n"
 "PO-Revision-Date: 2021-03-07 12:24+0000\n"
 "Last-Translator: Joohan Lee <losernator@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -136,7 +136,7 @@ msgstr "인터넷 연결에 제한이 있는 것 같습니다. 다운로드를 �
 #: gui/options.cpp:2717 gui/options.cpp:2755
 #: backends/events/default/default-events.cpp:185
 #: backends/events/symbiansdl/symbiansdl-events.cpp:191
-#: engines/buried/buried.cpp:492 engines/grim/grim.cpp:353
+#: engines/buried/buried.cpp:539 engines/grim/grim.cpp:353
 #: engines/kyra/gui/saveload_eob.cpp:596 engines/kyra/gui/saveload_eob.cpp:629
 #: engines/sci/graphics/controls32.cpp:928
 msgid "Yes"
@@ -147,7 +147,7 @@ msgstr "예"
 #: gui/launcher.cpp:390 gui/launcher.cpp:411 gui/launcher.cpp:454
 #: gui/options.cpp:2717 gui/options.cpp:2755
 #: backends/events/symbiansdl/symbiansdl-events.cpp:191
-#: engines/buried/buried.cpp:492 engines/grim/grim.cpp:353
+#: engines/buried/buried.cpp:539 engines/grim/grim.cpp:353
 #: engines/kyra/gui/saveload_eob.cpp:596 engines/kyra/gui/saveload_eob.cpp:629
 #: engines/sci/graphics/controls32.cpp:928
 msgid "No"
@@ -3953,7 +3953,7 @@ msgstr "패치 제작자가 번역물이 ScummVM에서 구동되길 원하지 �
 msgid "Your game is now Paused.  Click OK to continue."
 msgstr "게임이 일시 중지되었습니다. 아무 키나 눌러 다시 시작합니다."
 
-#: engines/buried/buried.cpp:492
+#: engines/buried/buried.cpp:539
 #, fuzzy
 #| msgid "Are you sure you want to quit?  (Y/N)Y"
 msgid "Are you sure you want to quit?"

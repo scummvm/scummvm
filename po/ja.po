@@ -15,7 +15,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-03-25 17:54+0000\n"
+"POT-Creation-Date: 2021-03-25 19:52+0000\n"
 "PO-Revision-Date: 2021-03-23 04:24+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
@@ -138,7 +138,7 @@ msgstr ""
 #: gui/options.cpp:2717 gui/options.cpp:2755
 #: backends/events/default/default-events.cpp:185
 #: backends/events/symbiansdl/symbiansdl-events.cpp:191
-#: engines/buried/buried.cpp:492 engines/grim/grim.cpp:353
+#: engines/buried/buried.cpp:539 engines/grim/grim.cpp:353
 #: engines/kyra/gui/saveload_eob.cpp:596 engines/kyra/gui/saveload_eob.cpp:629
 #: engines/sci/graphics/controls32.cpp:928
 msgid "Yes"
@@ -149,7 +149,7 @@ msgstr "はい"
 #: gui/launcher.cpp:390 gui/launcher.cpp:411 gui/launcher.cpp:454
 #: gui/options.cpp:2717 gui/options.cpp:2755
 #: backends/events/symbiansdl/symbiansdl-events.cpp:191
-#: engines/buried/buried.cpp:492 engines/grim/grim.cpp:353
+#: engines/buried/buried.cpp:539 engines/grim/grim.cpp:353
 #: engines/kyra/gui/saveload_eob.cpp:596 engines/kyra/gui/saveload_eob.cpp:629
 #: engines/sci/graphics/controls32.cpp:928
 msgid "No"
@@ -3977,7 +3977,7 @@ msgstr "ファンの翻訳者は、ScummVMに翻訳が組み込まれる事を�
 msgid "Your game is now Paused.  Click OK to continue."
 msgstr "ゲームはポーズされます。何かキーを押すと続行します。"
 
-#: engines/buried/buried.cpp:492
+#: engines/buried/buried.cpp:539
 msgid "Are you sure you want to quit?"
 msgstr "終了してもよろしいですか?"
 
