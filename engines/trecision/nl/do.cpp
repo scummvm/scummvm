@@ -33,13 +33,6 @@
 
 namespace Trecision {
 
-// puzzle pannello 35
-uint16 Comb35[7], Count35 = 0;
-// puzzle meridiana 49
-uint16 Comb49[4];
-// puzzle meridiana 4CT
-uint16 Comb4CT[6];
-
 /*-------------------------------------------------------------------------*/
 /*                                 ROOMIN             					   */
 /*-------------------------------------------------------------------------*/
@@ -89,9 +82,9 @@ void doMouseOperate(uint16 TheObj) {
 	if (!TheObj)
 		warning("doMouseOperate");
 
-	bool printsent = g_vm->_logicMgr->mouseOperate(TheObj);
+	bool printSentence = g_vm->_logicMgr->mouseOperate(TheObj);
 
-	if ((printsent) && (g_vm->_obj[TheObj]._action))
+	if ((printSentence) && (g_vm->_obj[TheObj]._action))
 		CharacterSay(g_vm->_obj[TheObj]._action);
 }
 
