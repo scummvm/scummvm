@@ -263,7 +263,7 @@ bool FrameWindow::startNewGame(bool walkthrough, bool introMovie) {
 	return true;
 }
 
-bool FrameWindow::showDeathScene(int deathSceneIndex, GlobalFlags globalFlags, Common::Array<int> itemArray) {
+bool FrameWindow::showDeathScene(int deathSceneIndex, GlobalFlags &globalFlags, Common::Array<int> itemArray) {
 	_gameInProgress = false;
 	_atMainMenu = false;
 
@@ -277,7 +277,7 @@ bool FrameWindow::showDeathScene(int deathSceneIndex, GlobalFlags globalFlags, C
 	return true;
 }
 
-bool FrameWindow::showCompletionScene(GlobalFlags globalFlags) {
+bool FrameWindow::showCompletionScene(GlobalFlags &globalFlags) {
 	_gameInProgress = false;
 	_atMainMenu = false;
 
@@ -348,7 +348,7 @@ void FrameWindow::onKeyDown(const Common::KeyState &key, uint flags) {
 
 	if (key.keycode == Common::KEYCODE_ESCAPE) {
 		if (_gameInProgress || !_atMainMenu) {
-			// Ask if the player wants to return 
+			// Ask if the player wants to return
 			if (_vm->runQuitDialog())
 				showMainMenu();
 		} else {
@@ -383,7 +383,7 @@ void FrameWindow::setTransitionSpeed(int newSpeed) {
 	ConfMan.setInt(_vm->isDemo() ? "TransitionSpeed" : _vm->getString(IDS_INI_KEY_TRANS_SPEED), newSpeed);
 }
 
-void FrameWindow::loadFromState(const Location &location, GlobalFlags flags, Common::Array<int> inventoryItems) {
+void FrameWindow::loadFromState(const Location &location, GlobalFlags &flags, Common::Array<int> inventoryItems) {
 	if (!_gameInProgress) {
 		// Make the game in progress
 		_atMainMenu = false;
