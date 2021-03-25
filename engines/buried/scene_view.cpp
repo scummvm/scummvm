@@ -486,7 +486,7 @@ bool SceneViewWindow::jumpToSceneRestore(const Location &newLocation) {
 	return true;
 }
 
-bool SceneViewWindow::moveInDirection(int direction) {
+bool SceneViewWindow::moveInDirection(Direction direction) {
 	if (!_currentScene)
 		return false;
 
@@ -495,19 +495,19 @@ bool SceneViewWindow::moveInDirection(int direction) {
 	DestinationScene destinationData;
 
 	switch (direction) {
-	case 0: // Up
+	case kDirectionUp: // Up
 		destinationData = _currentScene->_staticData.destUp;
 		break;
-	case 1: // Left
+	case kDirectionLeft: // Left
 		destinationData = _currentScene->_staticData.destLeft;
 		break;
-	case 2: // Right
+	case kDirectionRight: // Right
 		destinationData = _currentScene->_staticData.destRight;
 		break;
-	case 3: // Down
+	case kDirectionDown: // Down
 		destinationData = _currentScene->_staticData.destDown;
 		break;
-	case 4: // Forward
+	case kDirectionForward: // Forward
 		destinationData = _currentScene->_staticData.destForward;
 		break;
 	}

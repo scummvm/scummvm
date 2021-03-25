@@ -44,6 +44,14 @@ class AVIFrames;
 class SceneBase;
 class VideoWindow;
 
+enum Direction {
+	kDirectionUp = 0,
+	kDirectionLeft = 1,
+	kDirectionRight = 2,
+	kDirectionDown = 3,
+	kDirectionForward = 4
+};
+
 class SceneViewWindow : public Window {
 public:
 	SceneViewWindow(BuriedEngine *vm, Window *parent);
@@ -64,7 +72,7 @@ public:
 
 	bool jumpToScene(const Location &newLocation);
 	bool jumpToSceneRestore(const Location &newLocation);
-	bool moveInDirection(int direction);
+	bool moveInDirection(Direction direction);
 	bool moveToDestination(const DestinationScene &destinationData);
 	bool timeSuitJump(int destination);
 
@@ -140,7 +148,7 @@ public:
 	void onMouseMove(const Common::Point &point, uint flags);
 
 	void onKeyUp(const Common::KeyState &key, uint flags);
-	
+
 	bool isScenePresent() { return _currentScene != 0; }
 	int draggingItem(int itemID, const Common::Point &pointLocation, int itemFlags);
 	int droppedItem(int itemID, const Common::Point &pointLocation, int itemFlags);
