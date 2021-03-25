@@ -361,8 +361,12 @@ bool SceneViewWindow::jumpToScene(const Location &newLocation) {
 
 	SceneBase *newScene = constructSceneObject(this, newSceneStaticData, passedLocation);
 
-	if (_currentScene && _currentScene->postExitRoom(this, passedLocation) == SC_DEATH)
+	if (_currentScene && _currentScene->postExitRoom(this, passedLocation) == SC_DEATH) {
+		newScene->preDestructor();
+		delete newScene;
+
 		return false;
+	}
 
 	if (!newScene)
 		error("Failed to create scene");
@@ -608,8 +612,11 @@ bool SceneViewWindow::moveToDestination(const DestinationScene &destinationData)
 	// Call the post-exit function
 	retVal = _currentScene->postExitRoom(this, destinationData.destinationScene);
 
-	if (retVal == SC_DEATH)
+	if (retVal == SC_DEATH) {
+		newScene->preDestructor();
+		delete newScene;
 		return false;
+	}
 
 	if (retVal != SC_TRUE) {
 		newScene->preDestructor();
@@ -814,8 +821,12 @@ bool SceneViewWindow::timeSuitJump(int destination) {
 
 	if (_currentScene) {
 		// Post-transition function
-		if (_currentScene->postExitRoom(this, specOldLocation) == SC_DEATH)
+		if (_currentScene->postExitRoom(this, specOldLocation) == SC_DEATH) {
+			newScene->preDestructor();
+			delete newScene;
+
 			return false;
+		}
 
 		// Delete the old scene
 		_currentScene->preDestructor();
