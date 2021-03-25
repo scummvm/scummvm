@@ -15,7 +15,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-03-24 23:24+0000\n"
-"PO-Revision-Date: 2021-03-22 00:15+0000\n"
+"PO-Revision-Date: 2021-03-25 12:28+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ru/>\n"
@@ -5354,184 +5354,143 @@ msgstr "Неверное имя файла для записи"
 
 #: engines/nancy/action/telephone.cpp:144
 msgid "ringing...<n><e>"
-msgstr ""
+msgstr "звонок...<n><e>"
 
 #: engines/nancy/cheat.cpp:56
 msgid "General"
 msgstr "Общие"
 
 #: engines/nancy/cheat.cpp:56
-#, fuzzy
-#| msgid "General"
 msgid "Cheat.General"
-msgstr "Общие"
+msgstr "Читы.Общие"
 
 #: engines/nancy/cheat.cpp:58
 msgid "Scene Data"
-msgstr ""
+msgstr "Данные Сцены"
 
 #: engines/nancy/cheat.cpp:59
-#, fuzzy
-#| msgid "Start the debugger"
 msgid "Restart the Scene"
-msgstr "Запуск отладчика"
+msgstr "Перезапуск сцены"
 
 #: engines/nancy/cheat.cpp:61
 msgid "Scene Number"
-msgstr ""
+msgstr "Номер Сцены"
 
 #: engines/nancy/cheat.cpp:63
 msgid "Frame Number"
-msgstr ""
+msgstr "Номер Кадра"
 
 #: engines/nancy/cheat.cpp:65
 msgid "Background Top (Y)"
-msgstr ""
+msgstr "Верх Фона (Y)"
 
 #: engines/nancy/cheat.cpp:67
 msgid "Hints Remaining"
-msgstr ""
+msgstr "Осталось Подсказок"
 
 #: engines/nancy/cheat.cpp:68
 msgid "Easy"
-msgstr ""
+msgstr "Лёгкий"
 
 #: engines/nancy/cheat.cpp:70
 msgid "Medium"
-msgstr ""
+msgstr "Средний"
 
 #: engines/nancy/cheat.cpp:72
 msgid "Hard"
-msgstr ""
+msgstr "Сложный"
 
 #: engines/nancy/cheat.cpp:75 engines/nancy/cheat.cpp:86
-#, fuzzy
-#| msgid "Player 1: Left"
 msgid "Player Data"
-msgstr "Игрок 1: Влево"
+msgstr "Данные Игрока"
 
 #: engines/nancy/cheat.cpp:76
-#, fuzzy
-#| msgid "Playtime: "
 msgid "Player Time:"
-msgstr "Время игры: "
+msgstr "Время Игрока:"
 
 #: engines/nancy/cheat.cpp:78
 msgid "Days"
-msgstr ""
+msgstr "Дней"
 
 #: engines/nancy/cheat.cpp:80 engines/nancy/cheat.cpp:90
 msgid "Hours"
-msgstr ""
+msgstr "Часов"
 
 #: engines/nancy/cheat.cpp:82 engines/nancy/cheat.cpp:92
-#, fuzzy
-#| msgid "Minus"
 msgid "Minutes"
-msgstr "Минус"
+msgstr "Минут"
 
 #: engines/nancy/cheat.cpp:84
 msgid "Player Difficulty Level"
-msgstr ""
+msgstr "Уровень Сложности"
 
 #: engines/nancy/cheat.cpp:87
-#, fuzzy
-#| msgid "Time: "
 msgid "Timer On"
-msgstr "Время: "
+msgstr "Таймер вкл"
 
 #: engines/nancy/cheat.cpp:94
-#, fuzzy
-#| msgid "Second kid"
 msgid "Seconds"
-msgstr "Второй герой"
+msgstr "Секунд"
 
 #: engines/nancy/cheat.cpp:96
-#, fuzzy
-#| msgid "Inventory"
 msgid "Cheat.Inventory"
-msgstr "Инвентарь"
+msgstr "Читы.Инвентарь"
 
 #: engines/nancy/cheat.cpp:163
-#, fuzzy
-#| msgid "Invalid path!"
 msgid "Invalid Scene ID!"
-msgstr "Неверный путь!"
+msgstr "Неверный ID сцены!"
 
 #: engines/nancy/input.cpp:170
-#, fuzzy
-#| msgid "Left Click"
 msgid "Left Click Interact"
-msgstr "Левый щелчок"
+msgstr "Действие Левым Щелчком"
 
 #: engines/nancy/input.cpp:177
-#, fuzzy
-#| msgid "Right Click Once"
 msgid "Right Click Interact"
-msgstr "Один правый щелчок"
+msgstr "Действие Правым Щелчком"
 
 #: engines/nancy/input.cpp:208
-#, fuzzy
-#| msgid "Fast mode"
 msgid "Fast move modifier"
-msgstr "Быстрый режим"
+msgstr "Переключатель быстрого режима"
 
 #: engines/nancy/input.cpp:216
-#, fuzzy
-#| msgid "Toggle fast mode"
 msgid "Toggle fast conversation mode"
-msgstr "Переключить быстрый режим"
+msgstr "Переключить режим быстрой беседы"
 
 #: engines/nancy/input.cpp:221
-#, fuzzy
-#| msgid "Toggle fast mode"
 msgid "Toggle end conversation mode"
-msgstr "Переключить быстрый режим"
+msgstr "Переключить режим конца беседы"
 
 #: engines/nancy/input.cpp:226
-#, fuzzy
 msgid "Go to main menu"
-msgstr "~В~ыйти в главное меню"
+msgstr "Выйти в главное меню"
 
 #: engines/nancy/input.cpp:231
-#, fuzzy
-#| msgid "Insert save/load game disk"
 msgid "Go to save/load menu"
-msgstr "Вставьте диск с сохранениями"
+msgstr "Перейти в меню загрузки/сохранения"
 
 #: engines/nancy/input.cpp:236
-#, fuzzy
-#| msgid "No date saved"
 msgid "Reload last save"
-msgstr "Дата не записана"
+msgstr "Прочитать последнее сохранение игры"
 
 #: engines/nancy/input.cpp:241
-#, fuzzy
-#| msgid "Show options menu"
 msgid "Go to setup menu"
-msgstr "Показать меню опций"
+msgstr "Перейти в меню опций"
 
 #: engines/nancy/input.cpp:246
-#, fuzzy
-#| msgid "Show game credits"
 msgid "Show credits"
-msgstr "Показать авторов игры"
+msgstr "Показать авторов"
 
 #: engines/nancy/input.cpp:251
-#, fuzzy
-#| msgid "Swap screens"
 msgid "Go to map screen"
-msgstr "Обменять экраны местами"
+msgstr "Перейти на экран карты"
 
 #: engines/nancy/input.cpp:257
-#, fuzzy
-#| msgid "Enable cheat mode"
 msgid "Open general cheat menu"
-msgstr "Включить чит-режим"
+msgstr "Открыть общее чит-меню"
 
 #: engines/nancy/input.cpp:262
 msgid "Open event flags cheat menu"
-msgstr ""
+msgstr "Открыть чит-меню флагов событий"
 
 #: engines/neverhood/detection.cpp:119
 msgid "Skip the Hall of Records storyboard scenes"
