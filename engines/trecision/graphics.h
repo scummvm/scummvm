@@ -41,7 +41,6 @@ public:
 	GraphicsManager(TrecisionEngine *vm);
 	~GraphicsManager();
 	
-	bool _linearMode;
 	bool _locked;
 	uint16 _pitch;
 

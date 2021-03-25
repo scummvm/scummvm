@@ -33,7 +33,6 @@ namespace Trecision {
 const Graphics::PixelFormat GraphicsManager::kImageFormat(2, 5, 5, 5, 0, 10, 5, 0, 0); // RGB555
 
 GraphicsManager::GraphicsManager(TrecisionEngine *vm) : _vm(vm) {
-	_linearMode = true;
 	_locked = false;
 	_pitch = 0;
 	_screenPtr = nullptr;
@@ -105,7 +104,7 @@ void GraphicsManager::vCopy(uint32 Sco, uint16 *Src, uint32 Len) {
 	if ((_screenPtr == nullptr) || (Len == 0))
 		return;
 
-	if (_linearMode && ((_pitch == 0) || (_pitch == SCREENLEN * 2))) {
+	if (_pitch == 0 || _pitch == SCREENLEN * 2) {
 		MCopy(_screenPtr + Sco, Src, Len);
 		return;
 	}
@@ -144,7 +143,7 @@ void GraphicsManager::BCopy(uint32 Sco, uint8 *Src, uint32 Len) {
 	if ((_screenPtr == nullptr) || (Len == 0))
 		return;
 
-	if (_vm->_graphicsMgr->_linearMode && ((_pitch == 0) || (_pitch == SCREENLEN * 2))) {
+	if (_pitch == 0 || _pitch == SCREENLEN * 2) {
 		byte2word(_screenPtr + Sco, Src, _vm->_newData, Len);
 		return;
 	}
@@ -184,7 +183,7 @@ void GraphicsManager::DCopy(uint32 Sco, uint8 *Src, uint32 Len) {
 	if ((_screenPtr == nullptr) || (Len == 0))
 		return;
 
-	if (_vm->_graphicsMgr->_linearMode && ((_pitch == 0) || (_pitch == SCREENLEN * 2))) {
+	if (_pitch == 0 || _pitch == SCREENLEN * 2) {
 		byte2long(_screenPtr + Sco, Src, _vm->_newData2, Len / 2);
 		return;
 	}
@@ -300,7 +299,7 @@ void GraphicsManager::VPix(int16 x, int16 y, uint16 col) {
 	if (_screenPtr == nullptr)
 		return;
 
-	if (_linearMode && ((_pitch == 0) || (_pitch == SCREENLEN * 2))) {
+	if (_pitch == 0 || _pitch == SCREENLEN * 2) {
 		uint32 a = ((uint32)x + MAXX * (uint32)y);
 		if ((x >= 0) && (y >= 0) && (x < CurRoomMaxX) && (y < MAXY))
 			_screenPtr[a] = col;
