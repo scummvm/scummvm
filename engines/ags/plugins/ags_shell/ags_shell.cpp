@@ -49,6 +49,9 @@ void AGSShell::AGS_EngineStartup(IAGSEngine *engine) {
 }
 
 void AGSShell::ShellExecute(ScriptMethodParams &params) {
+	PARAMS3(const char *, operation, const char *, filename, const char *, parameters);
+	warning("Unsupported ShellExecute(%s, %s, %s) command", operation, filename, parameters);
+
 	params._result = 0;
 }
 
