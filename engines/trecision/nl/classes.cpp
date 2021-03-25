@@ -38,9 +38,6 @@ extern int32 CurRoomMaxX;
 // inventory
 #define COUNTERSTEP 6
 
-// gestioni particolari
-uint16 ruota = -1, ruotepos[3];
-
 int ForceQuit = 0;
 int NlVer = 102;
 
@@ -303,7 +300,7 @@ void doMouse() {
 		if ((g_vm->_obj[oBASERUOTE2C]._mode & OBJMODE_OBJSTATUS) && (g_vm->_curRoom == r2C)) {
 			if (CheckMask(g_vm->_curMessage->_u16Param1, g_vm->_curMessage->_u16Param2)) {
 				if ((g_vm->_curObj >= oRUOTA1A2C) && (g_vm->_curObj <= oRUOTA12C2C))
-					ruota = (g_vm->_curObj - oRUOTA1A2C) % 3;
+					g_vm->ruota = (g_vm->_curObj - oRUOTA1A2C) % 3;
 				else if (g_vm->_curObj == oPULSANTE2C) {
 					extern uint16 *SmackImagePointer, *ImagePointer;
 					if (g_vm->_curMessage->_event == ME_MLEFT) {
@@ -314,9 +311,9 @@ void doMouse() {
 					g_vm->_obj[oBASERUOTE2C]._mode &= ~OBJMODE_OBJSTATUS;
 					g_vm->_obj[omRUOTE2C]._mode &= ~OBJMODE_OBJSTATUS;
 					g_vm->_obj[oPULSANTE2C]._mode &= ~OBJMODE_OBJSTATUS;
-					g_vm->_obj[ruotepos[0] * 3 + 0 + oRUOTA1A2C]._mode &= ~OBJMODE_OBJSTATUS;
-					g_vm->_obj[ruotepos[1] * 3 + 1 + oRUOTA1A2C]._mode &= ~OBJMODE_OBJSTATUS;
-					g_vm->_obj[ruotepos[2] * 3 + 2 + oRUOTA1A2C]._mode &= ~OBJMODE_OBJSTATUS;
+					g_vm->_obj[g_vm->ruotepos[0] * 3 + 0 + oRUOTA1A2C]._mode &= ~OBJMODE_OBJSTATUS;
+					g_vm->_obj[g_vm->ruotepos[1] * 3 + 1 + oRUOTA1A2C]._mode &= ~OBJMODE_OBJSTATUS;
+					g_vm->_obj[g_vm->ruotepos[2] * 3 + 2 + oRUOTA1A2C]._mode &= ~OBJMODE_OBJSTATUS;
 
 					g_vm->_obj[oCAMPO2C]._mode |= OBJMODE_OBJSTATUS;
 					g_vm->_obj[oTEMPIO2C]._mode |= OBJMODE_OBJSTATUS;
@@ -334,7 +331,7 @@ void doMouse() {
 					g_vm->_animMgr->startSmkAnim(g_vm->_room[g_vm->_curRoom]._bkgAnim);
 
 					// right combination
-					if ((ruotepos[0] == 7) && (ruotepos[1] == 5) && (ruotepos[2] == 11)) {
+					if ((g_vm->ruotepos[0] == 7) && (g_vm->ruotepos[1] == 5) && (g_vm->ruotepos[2] == 11)) {
 						doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a2C6PREMEPULSANTEAPERTURA, 0, 0, g_vm->_curObj);
 						g_vm->_obj[oSFINGE2C]._flag &= ~OBJFLAG_PERSON;
 					} else
@@ -345,13 +342,13 @@ void doMouse() {
 					break;
 
 				if (g_vm->_curMessage->_event == ME_MLEFT)
-					ruotepos[ruota] = (ruotepos[ruota] > 10) ? 0 : ruotepos[ruota] + 1;
+					g_vm->ruotepos[g_vm->ruota] = (g_vm->ruotepos[g_vm->ruota] > 10) ? 0 : g_vm->ruotepos[g_vm->ruota] + 1;
 				if (g_vm->_curMessage->_event == ME_MRIGHT)
-					ruotepos[ruota] = (ruotepos[ruota] < 1) ? 11 : ruotepos[ruota] - 1;
+					g_vm->ruotepos[g_vm->ruota] = (g_vm->ruotepos[g_vm->ruota] < 1) ? 11 : g_vm->ruotepos[g_vm->ruota] - 1;
 
 				NLPlaySound(wRUOTE2C);
 				g_vm->_obj[g_vm->_curObj]._mode &= ~OBJMODE_OBJSTATUS;
-				g_vm->_obj[ruotepos[ruota] * 3 + ruota + oRUOTA1A2C]._mode |= OBJMODE_OBJSTATUS;
+				g_vm->_obj[g_vm->ruotepos[g_vm->ruota] * 3 + g_vm->ruota + oRUOTA1A2C]._mode |= OBJMODE_OBJSTATUS;
 				RegenRoom();
 			}
 			break;

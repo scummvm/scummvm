@@ -21,6 +21,8 @@
  */
 
 #define FORBIDDEN_SYMBOL_ALLOW_ALL // TODO: remove file operations
+#include <trecision/logic.h>
+
 #include "common/scummsys.h"
 #include "trecision/nl/3d/3dinc.h"
 #include "trecision/nl/struct.h"
@@ -41,13 +43,6 @@ uint16 BlinkLastDTextChar = MASKCOL;
 uint16 MouseBuf[50];
 
 extern int NlVer;
-
-// joint management
-extern uint16 Comb35[7], Count35;
-extern uint16 Comb49[4];
-extern uint16 Comb4CT[6];
-extern uint16 Comb58[6], Count58;
-extern uint16 ruotepos[3], ruota;
 
 /*-----------------10/12/95 15.26-------------------
 						vr
@@ -650,14 +645,14 @@ insave:
 		for (int a = 0; a < MAXDIALOG; a++)
 			fwrite(&_dialog[a],          sizeof(Dialog), 1, fh);
 
-		fwrite(&Comb35,      sizeof(uint16), 7, fh);
-		fwrite(&Comb49,      sizeof(uint16), 4, fh);
-		fwrite(&Comb4CT,     sizeof(uint16), 6, fh);
-		fwrite(&Comb58,      sizeof(uint16), 6, fh);
-		fwrite(&ruotepos,    sizeof(uint16), 3, fh);
-		fwrite(&ruota,       sizeof(uint16), 1, fh);
-		fwrite(&Count35,     sizeof(uint16), 1, fh);
-		fwrite(&Count58,     sizeof(uint16), 1, fh);
+		fwrite(&g_vm->_logicMgr->Comb35,      sizeof(uint16), 7, fh);
+		fwrite(&g_vm->_logicMgr->Comb49, sizeof(uint16), 4, fh);
+		fwrite(&g_vm->_logicMgr->Comb4CT, sizeof(uint16), 6, fh);
+		fwrite(&g_vm->_logicMgr->Comb58, sizeof(uint16), 6, fh);
+		fwrite(&g_vm->ruotepos, sizeof(uint16), 3, fh);
+		fwrite(&g_vm->ruota, sizeof(uint16), 1, fh);
+		fwrite(&g_vm->_logicMgr->Count35, sizeof(uint16), 1, fh);
+		fwrite(&g_vm->_logicMgr->Count58, sizeof(uint16), 1, fh);
 		fwrite(&g_vm->_slotMachine41Counter, sizeof(uint16), 1, fh);
 
 		fclose(fh);
@@ -906,14 +901,14 @@ bool DataLoad() {
 		for (int a = 0; a < MAXDIALOG; a++)
 			fread(&_dialog[a],          sizeof(Dialog), 1, fh);
 
-		fread(&Comb35,      sizeof(uint16), 7, fh);
-		fread(&Comb49,      sizeof(uint16), 4, fh);
-		fread(&Comb4CT,     sizeof(uint16), 6, fh);
-		fread(&Comb58,      sizeof(uint16), 6, fh);
-		fread(&ruotepos,    sizeof(uint16), 3, fh);
-		fread(&ruota,       sizeof(uint16), 1, fh);
-		fread(&Count35,     sizeof(uint16), 1, fh);
-		fread(&Count58,     sizeof(uint16), 1, fh);
+		fread(&g_vm->_logicMgr->Comb35, sizeof(uint16), 7, fh);
+		fread(&g_vm->_logicMgr->Comb49, sizeof(uint16), 4, fh);
+		fread(&g_vm->_logicMgr->Comb4CT, sizeof(uint16), 6, fh);
+		fread(&g_vm->_logicMgr->Comb58, sizeof(uint16), 6, fh);
+		fread(&g_vm->ruotepos, sizeof(uint16), 3, fh);
+		fread(&g_vm->ruota, sizeof(uint16), 1, fh);
+		fread(&g_vm->_logicMgr->Count35, sizeof(uint16), 1, fh);
+		fread(&g_vm->_logicMgr->Count58, sizeof(uint16), 1, fh);
 		fread(&g_vm->_slotMachine41Counter, sizeof(uint16), 1, fh);
 
 		fclose(fh);

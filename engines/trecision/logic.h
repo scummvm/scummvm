@@ -31,7 +31,22 @@ class TrecisionEngine;
 class LogicManager {
 private:
 	TrecisionEngine *_vm;
+
 public:
+	// panel puzzle 35
+	uint16 Comb35[7];
+	uint16 Count35 = 0;
+
+	// sundial puzzle 49
+	uint16 Comb49[4];
+
+	// sundial puzzle 4CT
+	uint16 Comb4CT[6];
+
+	// keyboard puzzle 58
+	uint16 Comb58[6];
+	uint16 Count58;
+
 	LogicManager(TrecisionEngine *vm);
 	~LogicManager();
 
@@ -40,8 +55,10 @@ public:
 
 	void setRoom(uint16 r, bool b);
 	void useWithInventory(bool *updateInv, bool *printSentence);
-	void useWithScreen(bool *updateinv, bool *printsent);
-	void roomOut(uint16 TheObj, uint16 *action, uint16 *pos);
+	void useWithScreen(bool *updateInv, bool *printSentence);
+	void roomOut(uint16 curObj, uint16 *action, uint16 *pos);
+	bool mouseExamine(uint16 curObj);
+	bool mouseOperate(uint16 curObj);
 };
 ; // end of class
 
