@@ -251,7 +251,9 @@ void BioChipRightWindow::onLButtonUp(const Common::Point &point, uint flags) {
 
 				VideoWindow *video = new VideoWindow(_vm, this);
 				video->setWindowPos(0, 2, 22, 0, 0, kWindowPosNoSize | kWindowPosNoZOrder | kWindowPosHideWindow);
-				video->openVideo(_vm->getFilePath(IDS_BC_CLOAKING_MOVIE_FILENAME));
+				if (!video->openVideo(_vm->getFilePath(IDS_BC_CLOAKING_MOVIE_FILENAME))) {
+					error("Failed to load cloaking video");
+				}
 				video->enableWindow(false);
 				video->showWindow(kWindowShow);
 
@@ -285,7 +287,9 @@ void BioChipRightWindow::onLButtonUp(const Common::Point &point, uint flags) {
 
 				VideoWindow *video = new VideoWindow(_vm, this);
 				video->setWindowPos(0, 2, 22, 0, 0, kWindowPosNoSize | kWindowPosNoZOrder | kWindowPosHideWindow);
-				video->openVideo(_vm->getFilePath(IDS_BC_CLOAKING_MOVIE_FILENAME));
+				if (!video->openVideo(_vm->getFilePath(IDS_BC_CLOAKING_MOVIE_FILENAME))) {
+					error("Failed to load cloaking video");
+				}
 				video->seekToFrame(24);
 				video->enableWindow(false);
 				video->showWindow(kWindowShow);
