@@ -31,6 +31,7 @@
 #include "ags/plugins/ags_joy/ags_joy.h"
 #include "ags/plugins/ags_nickenstien_gfx/ags_nickenstien_gfx.h"
 #include "ags/plugins/ags_pal_render/ags_pal_render.h"
+#include "ags/plugins/ags_shell/ags_shell.h"
 #include "ags/plugins/ags_snow_rain/ags_snow_rain.h"
 #include "ags/plugins/ags_sprite_font/ags_sprite_font.h"
 #include "ags/plugins/ags_sprite_font/ags_sprite_font_clifftop.h"
@@ -76,6 +77,9 @@ void *pluginOpen(const char *filename) {
 
 	if (fname.equalsIgnoreCase("AGSPalRender"))
 		return new AGSPalRender::AGSPalRender();
+
+	if (fname.equalsIgnoreCase("ags_shell"))
+		return new AGSShell::AGSShell();
 
 	if (fname.equalsIgnoreCase("AGSSnowRain") || fname.equalsIgnoreCase("ags_snowrain"))
 		return new AGSSnowRain::AGSSnowRain();
