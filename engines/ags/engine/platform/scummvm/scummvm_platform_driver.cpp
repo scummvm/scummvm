@@ -110,7 +110,7 @@ const char *ScummVMPlatformDriver::GetAllegroFailUserHint() {
 }
 
 eScriptSystemOSID ScummVMPlatformDriver::GetSystemOSID() {
-	return eOS_Linux;
+	return eOS_Win;
 }
 
 int ScummVMPlatformDriver::InitializeCDPlayer() {
