@@ -1131,8 +1131,12 @@ bool SceneViewWindow::walkTransition(const Location &location, const Destination
 		_vm->_sound->timerCallback();
 	}
 
-	if (_vm->shouldQuit())
+	if (_vm->shouldQuit()) {
+		newBackground->free();
+		delete newBackground;
+
 		return true;
+	}
 
 	_vm->_sound->stopFootsteps();
 
