@@ -721,12 +721,19 @@ bool ThemeParser::parserCallback_def(ParserNode *node) {
 
 	Common::String var = "Globals." + node->values["var"];
 	int value;
+	bool scalable = false;
 
 	if (_theme->getEvaluator()->hasVar(node->values["value"]) == true)
 		value = _theme->getEvaluator()->getVar(node->values["value"]);
 
 	else if (!parseIntegerKey(node->values["value"], 1, &value))
 		return parserError("Invalid definition for '" + var + "'.");
+
+	if (node->values.contains("scalable"))
+		scalable = parseBoolean(node->values["scalable"]);
+
+	if (scalable)
+		value = SCALEVALUE(value);
 
 	_theme->getEvaluator()->setVar(var, value);
 	return true;
