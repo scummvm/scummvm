@@ -1130,6 +1130,8 @@ int BrowseBook::mouseUp(Window *viewWindow, const Common::Point &pointLocation) 
 		// Perform the transition
 		Graphics::Surface *newBackground = ((SceneViewWindow *)viewWindow)->getStillFrameCopy(_staticData.navFrameIndex);
 		((SceneViewWindow *)viewWindow)->pushNewTransition(newBackground, 0, _vm->_gfx->computeVPushOffset(_vm->getTransitionSpeed()), 0);
+		newBackground->free();
+		delete newBackground;
 		_curLineIndex = -1;
 		viewWindow->invalidateWindow(false);
 		pageChanged(viewWindow);
@@ -1142,6 +1144,8 @@ int BrowseBook::mouseUp(Window *viewWindow, const Common::Point &pointLocation) 
 		// Perform the transition
 		Graphics::Surface *newBackground = ((SceneViewWindow *)viewWindow)->getStillFrameCopy(_staticData.navFrameIndex);
 		((SceneViewWindow *)viewWindow)->pushNewTransition(newBackground, 3, _vm->_gfx->computeVPushOffset(_vm->getTransitionSpeed()), 0);
+		newBackground->free();
+		delete newBackground;
 		_curLineIndex = -1;
 		viewWindow->invalidateWindow(false);
 		pageChanged(viewWindow);
@@ -1154,6 +1158,8 @@ int BrowseBook::mouseUp(Window *viewWindow, const Common::Point &pointLocation) 
 		// Perform the transition
 		Graphics::Surface *newBackground = ((SceneViewWindow *)viewWindow)->getStillFrameCopy(_staticData.navFrameIndex);
 		((SceneViewWindow *)viewWindow)->pushNewTransition(newBackground, 1, _vm->_gfx->computeHPushOffset(_vm->getTransitionSpeed()), 0);
+		newBackground->free();
+		delete newBackground;
 		_curLineIndex = -1;
 		viewWindow->invalidateWindow(false);
 		pageChanged(viewWindow);
@@ -1166,6 +1172,8 @@ int BrowseBook::mouseUp(Window *viewWindow, const Common::Point &pointLocation) 
 		// Perform the transition
 		Graphics::Surface *newBackground = ((SceneViewWindow *)viewWindow)->getStillFrameCopy(_staticData.navFrameIndex);
 		((SceneViewWindow *)viewWindow)->pushNewTransition(newBackground, 1, _vm->_gfx->computeHPushOffset(_vm->getTransitionSpeed()), 0);
+		newBackground->free();
+		delete newBackground;
 		_curLineIndex = -1;
 		viewWindow->invalidateWindow(false);
 		pageChanged(viewWindow);
