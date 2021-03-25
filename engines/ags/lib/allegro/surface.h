@@ -106,9 +106,15 @@ public:
 	 * Draws the passed surface onto this one
 	 */
 	void draw(const BITMAP *srcBitmap, const Common::Rect &srcRect,
-		const Common::Rect &destRect, bool horizFlip, bool vertFlip,
+		int dstX, int dstY, bool horizFlip, bool vertFlip,
 		bool skipTrans, int srcAlpha, int tintRed = -1, int tintGreen = -1,
 		int tintBlue = -1);
+
+	/**
+	 * Stretches and draws the passed surface onto this one
+	 */
+	void stretchDraw(const BITMAP *srcBitmap, const Common::Rect &srcRect,
+		const Common::Rect &destRect, bool skipTrans, int srcAlpha);
 
 private:
 	// True color blender functions

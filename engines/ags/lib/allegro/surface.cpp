@@ -109,7 +109,7 @@ const int SCALE_THRESHOLD = 0x100;
 #define VGA_COLOR_TRANS(x) ((x) * 255 / 63)
 
 void BITMAP::draw(const BITMAP *srcBitmap, const Common::Rect &srcRect,
-		const Common::Rect &dstRect, bool horizFlip, bool vertFlip,
+		int dstX, int dstY, bool horizFlip, bool vertFlip,
 		bool skipTrans, int srcAlpha, int tintRed, int tintGreen,
 		int tintBlue) {
 	assert(format.bytesPerPixel == 2 || format.bytesPerPixel == 4 ||
@@ -121,6 +121,7 @@ void BITMAP::draw(const BITMAP *srcBitmap, const Common::Rect &srcRect,
 		return;
 
 	// Figure out the dest area that will be updated
+	Common::Rect dstRect(dstX, dstY, dstX + srcRect.width(), dstY + srcRect.height());
 	Common::Rect destRect = dstRect.findIntersectingRect(
 		Common::Rect(cl, ct, cr, cb));
 	if (destRect.isEmpty())
@@ -134,8 +135,6 @@ void BITMAP::draw(const BITMAP *srcBitmap, const Common::Rect &srcRect,
 	Graphics::Surface destArea = dest.getSubArea(destRect);
 
 	// Define scaling and other stuff used by the drawing loops
-	const int scaleX = SCALE_THRESHOLD * srcRect.width() / dstRect.width();
-	const int scaleY = SCALE_THRESHOLD * srcRect.height() / dstRect.height();
 	const int xDir = horizFlip ? -1 : 1;
 	bool useTint = (tintRed >= 0 && tintGreen >= 0 && tintBlue >= 0);
 	bool sameFormat = (src.format == format);
@@ -162,23 +161,21 @@ void BITMAP::draw(const BITMAP *srcBitmap, const Common::Rect &srcRect,
 	int xStart = (dstRect.left < destRect.left) ? dstRect.left - destRect.left : 0;
 	int yStart = (dstRect.top < destRect.top) ? dstRect.top - destRect.top : 0;
 
-	for (int destY = yStart, yCtr = 0, scaleYCtr = 0; yCtr < dstRect.height();
-			++destY, ++yCtr, scaleYCtr += scaleY) {
+	for (int destY = yStart, yCtr = 0; yCtr < dstRect.height(); ++destY, ++yCtr) {
 		if (destY < 0 || destY >= destArea.h)
 			continue;
 		byte *destP = (byte *)destArea.getBasePtr(0, destY);
 		const byte *srcP = (const byte *)src.getBasePtr(
 			horizFlip ? srcRect.right - 1 : srcRect.left,
-			vertFlip ? srcRect.bottom - 1 - scaleYCtr / SCALE_THRESHOLD :
-			srcRect.top + scaleYCtr / SCALE_THRESHOLD);
+			vertFlip ? srcRect.bottom - 1 - yCtr :
+			srcRect.top + yCtr);
 
 		// Loop through the pixels of the row
-		for (int destX = xStart, xCtr = 0, scaleXCtr = 0; xCtr < dstRect.width();
-				++destX, ++xCtr, scaleXCtr += scaleX) {
+		for (int destX = xStart, xCtr = 0, xCtrBpp = 0; xCtr < dstRect.width(); ++destX, ++xCtr, xCtrBpp += src.format.bytesPerPixel) {
 			if (destX < 0 || destX >= destArea.w)
 				continue;
 
-			const byte *srcVal = srcP + xDir * (scaleXCtr / SCALE_THRESHOLD * src.format.bytesPerPixel);
+			const byte *srcVal = srcP + xDir * xCtrBpp;
 			uint32 srcCol = getColor(srcVal, src.format.bytesPerPixel);
 
 			// Check if this is a transparent color we should skip
@@ -229,6 +226,122 @@ void BITMAP::draw(const BITMAP *srcBitmap, const Common::Rect &srcRect,
 					// TODO: move this to blendPixel to only do it when needed?
 					format.colorToARGB(getColor(destVal, format.bytesPerPixel), aDest, rDest, gDest, bDest);
 				}
+				blendPixel(aSrc, rSrc, gSrc, bSrc, aDest, rDest, gDest, bDest, srcAlpha);
+			}
+
+			uint32 pixel = format.ARGBToColor(aDest, rDest, gDest, bDest);
+			if (format.bytesPerPixel == 4)
+				*(uint32 *)destVal = pixel;
+			else
+				*(uint16 *)destVal = pixel;
+		}
+	}
+}
+
+void BITMAP::stretchDraw(const BITMAP *srcBitmap, const Common::Rect &srcRect,
+		const Common::Rect &dstRect, bool skipTrans, int srcAlpha) {
+	assert(format.bytesPerPixel == 2 || format.bytesPerPixel == 4 ||
+		(format.bytesPerPixel == 1 && srcBitmap->format.bytesPerPixel == 1));
+
+	// Allegro disables draw when the clipping rect has negative width/height.
+	// Common::Rect instead asserts, which we don't want.
+	if (cr <= cl || cb <= ct)
+		return;
+
+	// Figure out the dest area that will be updated
+	Common::Rect destRect = dstRect.findIntersectingRect(
+		Common::Rect(cl, ct, cr, cb));
+	if (destRect.isEmpty())
+		// Area is entirely outside the clipping area, so nothing to draw
+		return;
+
+	// Get source and dest surface. Note that for the destination we create
+	// a temporary sub-surface based on the allowed clipping area
+	const Graphics::ManagedSurface &src = **srcBitmap;
+	Graphics::ManagedSurface &dest = *_owner;
+	Graphics::Surface destArea = dest.getSubArea(destRect);
+
+	// Define scaling and other stuff used by the drawing loops
+	const int scaleX = SCALE_THRESHOLD * srcRect.width() / dstRect.width();
+	const int scaleY = SCALE_THRESHOLD * srcRect.height() / dstRect.height();
+	bool sameFormat = (src.format == format);
+
+	byte rSrc, gSrc, bSrc, aSrc;
+	byte rDest = 0, gDest = 0, bDest = 0, aDest = 0;
+
+	PALETTE palette;
+	if (src.format.bytesPerPixel == 1 && format.bytesPerPixel != 1) {
+		for (int i = 0; i < PAL_SIZE; ++i) {
+			palette[i].r = VGA_COLOR_TRANS(_G(current_palette)[i].r);
+			palette[i].g = VGA_COLOR_TRANS(_G(current_palette)[i].g);
+			palette[i].b = VGA_COLOR_TRANS(_G(current_palette)[i].b);
+		}
+	}
+
+	uint32 transColor = 0, alphaMask = 0xff;
+	if (skipTrans && src.format.bytesPerPixel != 1) {
+		transColor = src.format.ARGBToColor(0, 255, 0, 255);
+		alphaMask = src.format.ARGBToColor(255, 0, 0, 0);
+		alphaMask = ~alphaMask;
+	}
+
+	int xStart = (dstRect.left < destRect.left) ? dstRect.left - destRect.left : 0;
+	int yStart = (dstRect.top < destRect.top) ? dstRect.top - destRect.top : 0;
+
+	for (int destY = yStart, yCtr = 0, scaleYCtr = 0; yCtr < dstRect.height();
+			++destY, ++yCtr, scaleYCtr += scaleY) {
+		if (destY < 0 || destY >= destArea.h)
+			continue;
+		byte *destP = (byte *)destArea.getBasePtr(0, destY);
+		const byte *srcP = (const byte *)src.getBasePtr(
+			srcRect.left, srcRect.top + scaleYCtr / SCALE_THRESHOLD);
+
+		// Loop through the pixels of the row
+		for (int destX = xStart, xCtr = 0, scaleXCtr = 0; xCtr < dstRect.width();
+				++destX, ++xCtr, scaleXCtr += scaleX) {
+			if (destX < 0 || destX >= destArea.w)
+				continue;
+
+			const byte *srcVal = srcP + scaleXCtr / SCALE_THRESHOLD * src.format.bytesPerPixel;
+			uint32 srcCol = getColor(srcVal, src.format.bytesPerPixel);
+
+			// Check if this is a transparent color we should skip
+			if (skipTrans && ((srcCol & alphaMask) == transColor))
+				continue;
+
+			byte *destVal = (byte *)&destP[destX * format.bytesPerPixel];
+
+			// When blitting to the same format we can just copy the color
+			if (format.bytesPerPixel == 1) {
+				*destVal = srcCol;
+				continue;
+			} else if (sameFormat && srcAlpha == -1) {
+				if (format.bytesPerPixel == 4)
+					*(uint32 *)destVal = srcCol;
+				else
+					*(uint16 *)destVal = srcCol;
+				continue;
+			}
+
+			// We need the rgb values to do blending and/or convert between formats
+			if (src.format.bytesPerPixel == 1) {
+				const RGB& rgb = palette[srcCol];
+				aSrc = 0xff;
+				rSrc = rgb.r;
+				gSrc = rgb.g;
+				bSrc = rgb.b;
+			} else
+				src.format.colorToARGB(srcCol, aSrc, rSrc, gSrc, bSrc);
+
+			if (srcAlpha == -1) {
+				// This means we don't use blending.
+				aDest = aSrc;
+				rDest = rSrc;
+				gDest = gSrc;
+				bDest = bSrc;
+			} else {
+				// TODO: move this to blendPixel to only do it when needed?
+				format.colorToARGB(getColor(destVal, format.bytesPerPixel), aDest, rDest, gDest, bDest);
 				blendPixel(aSrc, rSrc, gSrc, bSrc, aDest, rDest, gDest, bDest, srcAlpha);
 			}
 
