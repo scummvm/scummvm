@@ -22,15 +22,15 @@
  -->
 <layout_info resolution = 'y>399'>
 	<globals>
-		<def var = 'Line.Height' value = '16' />
-		<def var = 'Font.Height' value = '16' />
+		<def var = 'Line.Height' value = '16' scalable = 'yes'/>
+		<def var = 'Font.Height' value = '16' scalable = 'yes'/>
 
-		<def var = 'Padding.Bottom' value = '16' />
-		<def var = 'Padding.Left' value = '16' />
-		<def var = 'Padding.Right' value = '16' />
-		<def var = 'Padding.Top' value = '16' />
+		<def var = 'Padding.Bottom' value = '16' scalable = 'yes'/>
+		<def var = 'Padding.Left' value = '16' scalable = 'yes'/>
+		<def var = 'Padding.Right' value = '16' scalable = 'yes'/>
+		<def var = 'Padding.Top' value = '16' scalable = 'yes'/>
 
-		<def var = 'About.OuterBorder' value = '80'/>
+		<def var = 'About.OuterBorder' value = '80' scalable = 'yes'/>
 
 		<def var = 'ListWidget.hlLeftPadding' value = '0'/>
 		<def var = 'ListWidget.hlRightPadding' value = '0'/>
@@ -47,18 +47,18 @@
 
 		<def var = 'OnScreenDialog.ShowPics' value = '1'/>
 
-		<def var = 'KeyMapper.Spacing' value = '10'/>
-		<def var = 'KeyMapper.ButtonWidth' value = '140'/>
-		<def var = 'KeyMapper.ResetWidth' value = '80'/>
+		<def var = 'KeyMapper.Spacing' value = '10' scalable = 'yes'/>
+		<def var = 'KeyMapper.ButtonWidth' value = '140' scalable = 'yes'/>
+		<def var = 'KeyMapper.ResetWidth' value = '80' scalable = 'yes'/>
 
-		<def var = 'Tooltip.MaxWidth' value = '200'/>
-		<def var = 'Tooltip.XDelta' value = '16'/> <!-- basically cursor size -->
-		<def var = 'Tooltip.YDelta' value = '32'/>
+		<def var = 'Tooltip.MaxWidth' value = '200' scalable = 'yes'/>
+		<def var = 'Tooltip.XDelta' value = '16' scalable = 'yes'/> <!-- basically cursor size -->
+		<def var = 'Tooltip.YDelta' value = '32' scalable = 'yes'/>
 
-		<def var = 'Predictive.Button.Width' value = '60' />
+		<def var = 'Predictive.Button.Width' value = '60' scalable = 'yes'/>
 		<def var = 'Predictive.ShowDeletePic' value = '1'/>
 
-		<def var = 'DropdownButton.Width' value = '13'/>
+		<def var = 'DropdownButton.Width' value = '13' scalable = 'yes'/>
 
 		<widget name = 'OptionsLabel'
 				size = '115, Globals.Line.Height'
