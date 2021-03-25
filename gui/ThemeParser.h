@@ -180,6 +180,7 @@ protected:
 					XML_PROP(var, true)
 					XML_PROP(value, true)
 					XML_PROP(resolution, false)
+					XML_PROP(scalable, false)
 				KEY_END()
 
 				XML_KEY(widget)
