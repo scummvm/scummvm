@@ -157,6 +157,10 @@ TrecisionEngine::TrecisionEngine(OSystem *syst) : Engine(syst) {
 	
 	_flagscriptactive = false;
 	_flagScreenRefreshed = false;
+
+	ruota = 0xFFFF;
+	for (int i = 0; i < 3; ++i)
+		ruotepos[i] = 0;
 }
 
 TrecisionEngine::~TrecisionEngine() {
@@ -270,7 +274,7 @@ void TrecisionEngine::initMain() {
 }
 
 /*-------------------------------------------------------------------------*/
-/*                            INITMESSAGESYSTEM          				   */
+/*                            initMessageSystem          				   */
 /*-------------------------------------------------------------------------*/
 void TrecisionEngine::initMessageSystem() {
 	_gameQueue.initQueue();

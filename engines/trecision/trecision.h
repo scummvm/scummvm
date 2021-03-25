@@ -185,6 +185,10 @@ public:
 
 	bool _flagScreenRefreshed;
 
+	// special management
+	uint16 ruota;
+	uint16 ruotepos[3];
+
 	AnimManager *_animMgr;
 	GraphicsManager *_graphicsMgr;
 	LogicManager *_logicMgr;
