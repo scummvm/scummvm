@@ -1079,8 +1079,12 @@ bool SceneViewWindow::videoTransition(const Location &location, DestinationScene
 		_vm->_sound->timerCallback();
 	}
 
-	if (_vm->shouldQuit())
+	if (_vm->shouldQuit()) {
+		newBackground->free();
+		delete newBackground;
+
 		return true;
+	}
 
 	animationMovie.reset();
 
