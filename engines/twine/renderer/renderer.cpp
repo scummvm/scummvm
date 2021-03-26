@@ -1451,12 +1451,11 @@ bool Renderer::renderAnimatedModel(ModelData *modelData, const uint8 *bodyPtr, R
 				_shadeMatrix = *lightMatrix * _lightPos;
 
 				do { // for each normal
-					const uint8 *shadePtr = Model::getShadesBaseData(bodyPtr, shadeIndex);
-					const int16 *colPtr = (const int16 *)shadePtr;
+					const BodyShade *shadePtr = Model::getShadesBaseData(bodyPtr, shadeIndex);
 
-					const int16 col1 = *((const int16 *)colPtr++);
-					const int16 col2 = *((const int16 *)colPtr++);
-					const int16 col3 = *((const int16 *)colPtr++);
+					const int16 col1 = shadePtr->col1;
+					const int16 col2 = shadePtr->col2;
+					const int16 col3 = shadePtr->col3;
 
 					int32 color = 0;
 					color += _shadeMatrix.row1[0] * col1 + _shadeMatrix.row1[1] * col2 + _shadeMatrix.row1[2] * col3;
@@ -1467,8 +1466,7 @@ bool Renderer::renderAnimatedModel(ModelData *modelData, const uint8 *bodyPtr, R
 
 					if (color > 0) {
 						color >>= 14;
-						const uint8 *tmpShadePtr = (const uint8 *)shadePtr;
-						color /= *((const uint16 *)(tmpShadePtr + 6));
+						color /= shadePtr->unk4;
 						shade = (uint16)color;
 					}
 

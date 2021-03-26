@@ -54,7 +54,7 @@ struct BodyShade {
 	int16 col1;
 	int16 col2;
 	int16 col3;
-	int16 unk4;
+	uint16 unk4;
 };
 
 struct BodyPolygon {
