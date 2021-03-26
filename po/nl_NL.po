@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-03-26 08:25+0000\n"
+"POT-Creation-Date: 2021-03-26 08:39+0000\n"
 "PO-Revision-Date: 2020-11-29 17:10+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
@@ -74,7 +74,7 @@ msgstr "Ga omhoog"
 #: engines/mohawk/myst_stacks/menu.cpp:319
 #: engines/mohawk/riven_stacks/aspit.cpp:350
 #: engines/mohawk/riven_stacks/aspit.cpp:372
-#: engines/mohawk/riven_stacks/aspit.cpp:456 engines/nancy/cheat.cpp:51
+#: engines/mohawk/riven_stacks/aspit.cpp:456 engines/nancy/cheat.cpp:52
 #: engines/parallaction/saveload.cpp:271 engines/scumm/dialogs.cpp:180
 #: engines/sword1/control.cpp:889 engines/wintermute/wintermute.cpp:210
 msgid "Cancel"
@@ -482,7 +482,7 @@ msgid "Notes:"
 msgstr "Notities:"
 
 #: gui/editrecorddialog.cpp:68 gui/predictivedialog.cpp:70
-#: engines/nancy/cheat.cpp:52
+#: engines/nancy/cheat.cpp:53
 msgid "Ok"
 msgstr "Ok"
 
@@ -601,7 +601,7 @@ msgid "Interact"
 msgstr "Interactie"
 
 #: gui/gui-manager.cpp:122 gui/unknown-game-dialog.cpp:54
-#: engines/nancy/cheat.cpp:266 engines/scumm/help.cpp:125
+#: engines/nancy/cheat.cpp:267 engines/scumm/help.cpp:125
 #: engines/scumm/help.cpp:140 engines/scumm/help.cpp:165
 #: engines/scumm/help.cpp:191 engines/scumm/help.cpp:209
 msgid "Close"
@@ -4113,7 +4113,7 @@ msgstr "Verander Commando"
 
 #: engines/dragons/metaengine.cpp:152 engines/griffon/metaengine.cpp:127
 #: engines/grim/grim.cpp:491 engines/grim/grim.cpp:583
-#: engines/hdb/metaengine.cpp:231 engines/nancy/cheat.cpp:96
+#: engines/hdb/metaengine.cpp:231 engines/nancy/cheat.cpp:97
 #: engines/scumm/help.cpp:225 engines/scumm/help.cpp:234
 #: engines/scumm/help.cpp:241 engines/scumm/help.cpp:249
 #: engines/twine/metaengine.cpp:397 engines/zvision/metaengine.cpp:164
@@ -5382,92 +5382,92 @@ msgstr ""
 msgid "Invalid file name for saving"
 msgstr "Geef bestandsnaam voor bewaren"
 
-#: engines/nancy/cheat.cpp:54
+#: engines/nancy/cheat.cpp:55
 msgid "General"
 msgstr "Algemeen"
 
-#: engines/nancy/cheat.cpp:56
+#: engines/nancy/cheat.cpp:57
 msgid "Scene Data"
 msgstr ""
 
-#: engines/nancy/cheat.cpp:57
+#: engines/nancy/cheat.cpp:58
 #, fuzzy
 #| msgid "Start the debugger"
 msgid "Restart the Scene"
 msgstr "Start de debugger"
 
-#: engines/nancy/cheat.cpp:59
+#: engines/nancy/cheat.cpp:60
 msgid "Scene Number"
 msgstr ""
 
-#: engines/nancy/cheat.cpp:61
+#: engines/nancy/cheat.cpp:62
 msgid "Frame Number"
 msgstr ""
 
 #. I18N: The Y position (a.k.a vertical scroll) of the background
-#: engines/nancy/cheat.cpp:65
+#: engines/nancy/cheat.cpp:66
 msgid "Background Top (Y)"
 msgstr ""
 
-#: engines/nancy/cheat.cpp:67
+#: engines/nancy/cheat.cpp:68
 msgid "Hints Remaining"
 msgstr ""
 
-#: engines/nancy/cheat.cpp:68
+#: engines/nancy/cheat.cpp:69
 msgid "Easy"
 msgstr ""
 
-#: engines/nancy/cheat.cpp:70
+#: engines/nancy/cheat.cpp:71
 msgid "Medium"
 msgstr ""
 
-#: engines/nancy/cheat.cpp:72
+#: engines/nancy/cheat.cpp:73
 msgid "Hard"
 msgstr ""
 
-#: engines/nancy/cheat.cpp:75 engines/nancy/cheat.cpp:86
+#: engines/nancy/cheat.cpp:76 engines/nancy/cheat.cpp:87
 #, fuzzy
 #| msgid "Player 1: Left"
 msgid "Player Data"
 msgstr "Speler 1: Links"
 
-#: engines/nancy/cheat.cpp:76
+#: engines/nancy/cheat.cpp:77
 #, fuzzy
 #| msgid "Playtime: "
 msgid "Player Time:"
 msgstr "Speeltijd: "
 
-#: engines/nancy/cheat.cpp:78
+#: engines/nancy/cheat.cpp:79
 msgid "Days"
 msgstr ""
 
-#: engines/nancy/cheat.cpp:80 engines/nancy/cheat.cpp:90
+#: engines/nancy/cheat.cpp:81 engines/nancy/cheat.cpp:91
 msgid "Hours"
 msgstr ""
 
-#: engines/nancy/cheat.cpp:82 engines/nancy/cheat.cpp:92
+#: engines/nancy/cheat.cpp:83 engines/nancy/cheat.cpp:93
 #, fuzzy
 #| msgid "Minus"
 msgid "Minutes"
 msgstr "Min"
 
-#: engines/nancy/cheat.cpp:84
+#: engines/nancy/cheat.cpp:85
 msgid "Player Difficulty Level"
 msgstr ""
 
-#: engines/nancy/cheat.cpp:87
+#: engines/nancy/cheat.cpp:88
 #, fuzzy
 #| msgid "Time: "
 msgid "Timer On"
 msgstr "Tijd: "
 
-#: engines/nancy/cheat.cpp:94
+#: engines/nancy/cheat.cpp:95
 #, fuzzy
 #| msgid "Second kid"
 msgid "Seconds"
 msgstr "Tweede kind"
 
-#: engines/nancy/cheat.cpp:163
+#: engines/nancy/cheat.cpp:164
 #, fuzzy
 #| msgid "Invalid path!"
 msgid "Invalid Scene ID!"

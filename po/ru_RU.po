@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-03-26 08:25+0000\n"
+"POT-Creation-Date: 2021-03-26 08:39+0000\n"
 "PO-Revision-Date: 2021-03-25 12:28+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
@@ -73,7 +73,7 @@ msgstr "Вверх"
 #: engines/mohawk/myst_stacks/menu.cpp:319
 #: engines/mohawk/riven_stacks/aspit.cpp:350
 #: engines/mohawk/riven_stacks/aspit.cpp:372
-#: engines/mohawk/riven_stacks/aspit.cpp:456 engines/nancy/cheat.cpp:51
+#: engines/mohawk/riven_stacks/aspit.cpp:456 engines/nancy/cheat.cpp:52
 #: engines/parallaction/saveload.cpp:271 engines/scumm/dialogs.cpp:180
 #: engines/sword1/control.cpp:889 engines/wintermute/wintermute.cpp:210
 msgid "Cancel"
@@ -478,7 +478,7 @@ msgid "Notes:"
 msgstr "Примечания:"
 
 #: gui/editrecorddialog.cpp:68 gui/predictivedialog.cpp:70
-#: engines/nancy/cheat.cpp:52
+#: engines/nancy/cheat.cpp:53
 msgid "Ok"
 msgstr "Ok"
 
@@ -597,7 +597,7 @@ msgid "Interact"
 msgstr "Взаимодействие"
 
 #: gui/gui-manager.cpp:122 gui/unknown-game-dialog.cpp:54
-#: engines/nancy/cheat.cpp:266 engines/scumm/help.cpp:125
+#: engines/nancy/cheat.cpp:267 engines/scumm/help.cpp:125
 #: engines/scumm/help.cpp:140 engines/scumm/help.cpp:165
 #: engines/scumm/help.cpp:191 engines/scumm/help.cpp:209
 msgid "Close"
@@ -4084,7 +4084,7 @@ msgstr "Изменить команду"
 
 #: engines/dragons/metaengine.cpp:152 engines/griffon/metaengine.cpp:127
 #: engines/grim/grim.cpp:491 engines/grim/grim.cpp:583
-#: engines/hdb/metaengine.cpp:231 engines/nancy/cheat.cpp:96
+#: engines/hdb/metaengine.cpp:231 engines/nancy/cheat.cpp:97
 #: engines/scumm/help.cpp:225 engines/scumm/help.cpp:234
 #: engines/scumm/help.cpp:241 engines/scumm/help.cpp:249
 #: engines/twine/metaengine.cpp:397 engines/zvision/metaengine.cpp:164
@@ -5344,80 +5344,80 @@ msgstr ""
 msgid "Invalid file name for saving"
 msgstr "Неверное имя файла для записи"
 
-#: engines/nancy/cheat.cpp:54
+#: engines/nancy/cheat.cpp:55
 msgid "General"
 msgstr "Общие"
 
-#: engines/nancy/cheat.cpp:56
+#: engines/nancy/cheat.cpp:57
 msgid "Scene Data"
 msgstr "Данные Сцены"
 
-#: engines/nancy/cheat.cpp:57
+#: engines/nancy/cheat.cpp:58
 msgid "Restart the Scene"
 msgstr "Перезапуск сцены"
 
-#: engines/nancy/cheat.cpp:59
+#: engines/nancy/cheat.cpp:60
 msgid "Scene Number"
 msgstr "Номер Сцены"
 
-#: engines/nancy/cheat.cpp:61
+#: engines/nancy/cheat.cpp:62
 msgid "Frame Number"
 msgstr "Номер Кадра"
 
 #. I18N: The Y position (a.k.a vertical scroll) of the background
-#: engines/nancy/cheat.cpp:65
+#: engines/nancy/cheat.cpp:66
 msgid "Background Top (Y)"
 msgstr "Верх Фона (Y)"
 
-#: engines/nancy/cheat.cpp:67
+#: engines/nancy/cheat.cpp:68
 msgid "Hints Remaining"
 msgstr "Осталось Подсказок"
 
-#: engines/nancy/cheat.cpp:68
+#: engines/nancy/cheat.cpp:69
 msgid "Easy"
 msgstr "Лёгкий"
 
-#: engines/nancy/cheat.cpp:70
+#: engines/nancy/cheat.cpp:71
 msgid "Medium"
 msgstr "Средний"
 
-#: engines/nancy/cheat.cpp:72
+#: engines/nancy/cheat.cpp:73
 msgid "Hard"
 msgstr "Сложный"
 
-#: engines/nancy/cheat.cpp:75 engines/nancy/cheat.cpp:86
+#: engines/nancy/cheat.cpp:76 engines/nancy/cheat.cpp:87
 msgid "Player Data"
 msgstr "Данные Игрока"
 
-#: engines/nancy/cheat.cpp:76
+#: engines/nancy/cheat.cpp:77
 msgid "Player Time:"
 msgstr "Время Игрока:"
 
-#: engines/nancy/cheat.cpp:78
+#: engines/nancy/cheat.cpp:79
 msgid "Days"
 msgstr "Дней"
 
-#: engines/nancy/cheat.cpp:80 engines/nancy/cheat.cpp:90
+#: engines/nancy/cheat.cpp:81 engines/nancy/cheat.cpp:91
 msgid "Hours"
 msgstr "Часов"
 
-#: engines/nancy/cheat.cpp:82 engines/nancy/cheat.cpp:92
+#: engines/nancy/cheat.cpp:83 engines/nancy/cheat.cpp:93
 msgid "Minutes"
 msgstr "Минут"
 
-#: engines/nancy/cheat.cpp:84
+#: engines/nancy/cheat.cpp:85
 msgid "Player Difficulty Level"
 msgstr "Уровень Сложности"
 
-#: engines/nancy/cheat.cpp:87
+#: engines/nancy/cheat.cpp:88
 msgid "Timer On"
 msgstr "Таймер вкл"
 
-#: engines/nancy/cheat.cpp:94
+#: engines/nancy/cheat.cpp:95
 msgid "Seconds"
 msgstr "Секунд"
 
-#: engines/nancy/cheat.cpp:163
+#: engines/nancy/cheat.cpp:164
 msgid "Invalid Scene ID!"
 msgstr "Неверный ID сцены!"
 
