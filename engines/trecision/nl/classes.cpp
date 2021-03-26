@@ -38,7 +38,7 @@ extern int32 CurRoomMaxX;
 // inventory
 #define COUNTERSTEP 6
 
-int ForceQuit = 0;
+bool ForceQuit = false;
 int NlVer = 102;
 
 /*-------------------------------------------------------------------------*/

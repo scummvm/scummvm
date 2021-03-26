@@ -243,17 +243,15 @@ void doScript() {
 	uint32 value = g_vm->_curMessage->_u32Param;
 
 	switch (g_vm->_curMessage->_event) {
-
 	case ME_PAUSE:
 		if (!pauseStartTime) {
 			pauseStartTime = TheTime;
 			doEvent(g_vm->_curMessage->_class, g_vm->_curMessage->_event, g_vm->_curMessage->_priority, g_vm->_curMessage->_u16Param1, g_vm->_curMessage->_u16Param2, g_vm->_curMessage->_u8Param, g_vm->_curMessage->_u32Param);
-		} else {
-			if (TheTime >= (pauseStartTime + g_vm->_curMessage->_u16Param1))
-				pauseStartTime = 0;
-			else
-				doEvent(g_vm->_curMessage->_class, g_vm->_curMessage->_event, g_vm->_curMessage->_priority, g_vm->_curMessage->_u16Param1, g_vm->_curMessage->_u16Param2, g_vm->_curMessage->_u8Param, g_vm->_curMessage->_u32Param);
-		}
+		} else if (TheTime >= (pauseStartTime + g_vm->_curMessage->_u16Param1))
+			pauseStartTime = 0;
+		else
+			doEvent(g_vm->_curMessage->_class, g_vm->_curMessage->_event, g_vm->_curMessage->_priority, g_vm->_curMessage->_u16Param1, g_vm->_curMessage->_u16Param2, g_vm->_curMessage->_u8Param, g_vm->_curMessage->_u32Param);
+
 		break;
 
 	case ME_SETOBJ:
@@ -282,7 +280,8 @@ void doScript() {
 			else
 				g_vm->_obj[index]._flag &= ~(uint8)index2;
 			break;
-
+		default:
+			break;
 		}
 		break;
 
@@ -303,7 +302,8 @@ void doScript() {
 			else
 				g_vm->_inventoryObj[index]._flag &= ~(uint8)index2;
 			break;
-
+		default:
+			break;
 		}
 		break;
 
@@ -338,230 +338,19 @@ void doScript() {
 	case ME_CHANGER:
 		doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, index, index2, value, g_vm->_curObj);
 		break;
+
+	default:
+		break;
 	}
 }
 
 /*-------------------------------------------------------------------------*/
 /*                               AtMouseClick           				   */
 /*-------------------------------------------------------------------------*/
-bool AtMouseClick(uint16 TheObj) {
-	if ((g_vm->_curRoom == r1D) && !(g_vm->_room[r1D]._flag & OBJFLAG_EXTRA) && (TheObj != oSCALA1D)) {
-		g_vm->_curObj = oDONNA1D;
-		goToPosition(g_vm->_obj[oDONNA1D]._position);
-		return true;
-	}
+bool AtMouseClick(uint16 curObj) {
+	bool retVal = g_vm->_logicMgr->mouseClick(curObj);
 
-	if ((g_vm->_curRoom == r2B) && (g_vm->_room[r2B]._flag & OBJFLAG_EXTRA) && (TheObj != oCARTELLO2B) && (TheObj != od2BALLA28)) {
-		g_vm->_curObj = oPORTA2B;
-		goToPosition(g_vm->_obj[oCARTELLO2B]._position);
-		return true;
-	}
-
-	bool ret = true;
-	switch (TheObj) {
-	case oPORTAA13:
-		if (mright && (g_vm->_room[r14]._flag & OBJFLAG_DONE)) {
-			if (_characterGoToPosition != 4)
-				goToPosition(4);
-		} else if (_characterGoToPosition != g_vm->_obj[TheObj]._position)
-			goToPosition(g_vm->_obj[TheObj]._position);
-
-		ret = true;
-		break;
-
-	case oDIVANO14:
-		if (mleft) {
-			if (_characterGoToPosition != 2)
-				goToPosition(2);
-		} else if (_characterGoToPosition != g_vm->_obj[TheObj]._position)
-			goToPosition(g_vm->_obj[TheObj]._position);
-
-		ret = true;
-		break;
-
-	case oSCAFFALE1D:
-		if (mright) {
-			if (_characterGoToPosition != 9)
-				goToPosition(9);
-		} else if (_characterGoToPosition != g_vm->_obj[TheObj]._position)
-			goToPosition(g_vm->_obj[TheObj]._position);
-
-		ret = true;
-		break;
-
-	case oDIVANOR4A:
-		if (mright) {
-			if (_characterGoToPosition != 1)
-				goToPosition(1);
-		} else if (_characterGoToPosition != g_vm->_obj[TheObj]._position)
-			goToPosition(g_vm->_obj[TheObj]._position);
-
-		ret = true;
-		break;
-
-	case oDOORC21:
-		if ((g_vm->_useWith[USED] == iPISTOLA15) && (FlagUseWithStarted)) {
-			if (_characterGoToPosition != 1)
-				goToPosition(1);
-		} else if (_characterGoToPosition != g_vm->_obj[TheObj]._position)
-			goToPosition(g_vm->_obj[TheObj]._position);
-
-		ret = true;
-		break;
-
-	case oTUBO21:
-		if ((g_vm->_useWith[USED] == oRAMPINO21) && (FlagUseWithStarted)) {
-			if (_characterGoToPosition != 4)
-				goToPosition(4);
-		} else if (_characterGoToPosition != g_vm->_obj[TheObj]._position)
-			goToPosition(g_vm->_obj[TheObj]._position);
-
-		ret = true;
-		break;
-
-	case oCAMPO23:
-		if ((g_vm->_useWith[USED] == oCAVIE23) && (FlagUseWithStarted)) {
-			if (_characterGoToPosition != 2)
-				goToPosition(2);
-		} else if (_characterGoToPosition != g_vm->_obj[TheObj]._position)
-			goToPosition(g_vm->_obj[TheObj]._position);
-
-		ret = true;
-		break;
-
-	case oTASTO2F:
-		if ((g_vm->_useWith[USED] == iTELECOMANDO2G) && (FlagUseWithStarted)) {
-			if (_characterGoToPosition != 9)
-				goToPosition(9);
-		} else if (_characterGoToPosition != g_vm->_obj[TheObj]._position)
-			goToPosition(g_vm->_obj[TheObj]._position);
-
-		ret = true;
-		break;
-
-	case oSAMA33:
-	case oSERRATURA33:
-		if ((g_vm->_useWith[USED] == oTUBOT33) && (g_vm->_obj[oVALVOLA34]._mode & OBJMODE_OBJSTATUS) && (g_vm->_obj[oSAMA33]._mode & OBJMODE_OBJSTATUS) && (FlagUseWithStarted)) {
-			if (_characterGoToPosition != 4)
-				goToPosition(4);
-		} else if (_characterGoToPosition != g_vm->_obj[TheObj]._position)
-			goToPosition(g_vm->_obj[TheObj]._position);
-
-		ret = true;
-		break;
-
-	case oFINESTRA33:
-		if (mleft) {
-			if (_characterGoToPosition != 7)
-				goToPosition(7);
-		} else if (_characterGoToPosition != g_vm->_obj[TheObj]._position)
-			goToPosition(g_vm->_obj[TheObj]._position);
-
-		ret = true;
-		break;
-
-	case oPRESA35:
-		if (!(FlagUseWithStarted)) {
-			if (_characterGoToPosition != 2)
-				goToPosition(2);
-		} else if (_characterGoToPosition != g_vm->_obj[TheObj]._position)
-			goToPosition(g_vm->_obj[TheObj]._position);
-
-		ret = true;
-		break;
-
-	case oTRIPLA35:
-		if (!FlagUseWithStarted && mleft) {
-			if (_characterGoToPosition != 2)
-				goToPosition(2);
-		} else if (_characterGoToPosition != g_vm->_obj[TheObj]._position)
-			goToPosition(g_vm->_obj[TheObj]._position);
-
-		ret = true;
-		break;
-
-	case oPORTALC36:
-		if ((g_vm->_useWith[USED] == iSTETOSCOPIO) && (FlagUseWithStarted)) {
-			if (_characterGoToPosition != 8)
-				goToPosition(8);
-		} else if (_characterGoToPosition != g_vm->_obj[TheObj]._position)
-			goToPosition(g_vm->_obj[TheObj]._position);
-
-		ret = true;
-		break;
-
-	case oSERBATOIOA2G:
-		if ((g_vm->_useWith[USED] == iCANDELOTTO) && (g_vm->_inventoryObj[iBOMBOLA]._flag & OBJFLAG_EXTRA) && (g_vm->_inventoryObj[iLATTINA28]._flag & OBJFLAG_EXTRA) && (FlagUseWithStarted)) {
-			if (_characterGoToPosition != 6)
-				goToPosition(6);
-		} else if (_characterGoToPosition != g_vm->_obj[TheObj]._position)
-			goToPosition(g_vm->_obj[TheObj]._position);
-
-		ret = true;
-		break;
-
-	case oRAGNO41:
-		if ((g_vm->_useWith[USED] == iMARTELLO) && (FlagUseWithStarted)) {
-			if (_characterGoToPosition != 1)
-				goToPosition(1);
-		} else if (_characterGoToPosition != g_vm->_obj[TheObj]._position)
-			goToPosition(g_vm->_obj[TheObj]._position);
-
-		ret = true;
-		break;
-
-	case oTAMBURO43:
-		if ((g_vm->_useWith[USED] == iMAZZA) && (FlagUseWithStarted)) {
-			if (_characterGoToPosition != 5)
-				goToPosition(5);
-		} else if (_characterGoToPosition != g_vm->_obj[TheObj]._position)
-			goToPosition(g_vm->_obj[TheObj]._position);
-
-		ret = true;
-		break;
-
-	case oLUCCHETTO53:
-		if ((g_vm->_useWith[USED] == iLASER35) && (FlagUseWithStarted)) {
-			if (_characterGoToPosition != 2)
-				goToPosition(2);
-		} else if (_characterGoToPosition != g_vm->_obj[TheObj]._position)
-			goToPosition(g_vm->_obj[TheObj]._position);
-
-		ret = true;
-		break;
-
-	case oPORTA58C55:
-		if ((g_vm->_useWith[USED] == iCHIAVI) && (FlagUseWithStarted)) {
-			if (_characterGoToPosition != 2)
-				goToPosition(2);
-		} else if (_characterGoToPosition != g_vm->_obj[TheObj]._position)
-			goToPosition(g_vm->_obj[TheObj]._position);
-
-		ret = true;
-		break;
-
-	default:
-		if (g_vm->_obj[TheObj]._position == -1) {
-			_characterGoToPosition = -1;
-			ret = false;
-		} else {
-			if (_characterGoToPosition != g_vm->_obj[TheObj]._position)
-				goToPosition(g_vm->_obj[TheObj]._position);
-			ret = true;
-		}
-		break;
-	}
-
-	if (g_vm->_room[g_vm->_curRoom]._flag & OBJFLAG_EXTRA) {
-		if ((TheObj == oTUBO21) || (TheObj == oCARTELLONE21) || (TheObj == oESSE21) || (TheObj == oRAMPINO21) || (TheObj == oCATENA21) || (TheObj == od21TO22) || (TheObj == oDOORC21) || (TheObj == oPORTAA21) || (TheObj == oCUNICOLO21) || (TheObj == od24TO23) || (TheObj == od2ETO2C) || (TheObj == od2GVALLA26)) {
-			_characterGoToPosition = -1;
-			ret = true;
-		}
-	} else if ((TheObj == od21TO23) || (TheObj == od24TO26) || (TheObj == oENTRANCE2E) || (TheObj == oCARTELLO2B) || (TheObj == oFRONTOFFICEC35) || (TheObj == oFRONTOFFICEA35) || (TheObj == oASCENSORE35) || (TheObj == oGIORNALE35)) {
-		_characterGoToPosition = -1;
-		ret = true;
-	}
-	return ret;
+	return retVal;
 }
 
 /* -----------------26/11/97 10.37-------------------
