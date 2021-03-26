@@ -109,13 +109,13 @@ private:
 	static uint8 *getBonesData(uint8 *bodyPtr) {
 		uint8 *verticesBase = getData(bodyPtr);
 		const int16 numVertices = READ_LE_INT16(verticesBase);
-		return verticesBase + 2 + numVertices * 6;
+		return verticesBase + 2 + numVertices * sizeof(I16Vec3);
 	}
 
 	static const uint8 *getBonesData(const uint8 *bodyPtr) {
 		const uint8 *verticesBase = getData(bodyPtr);
 		const int16 numVertices = READ_LE_INT16(verticesBase);
-		return verticesBase + 2 + numVertices * 6;
+		return verticesBase + 2 + numVertices * sizeof(I16Vec3);
 	}
 
 	static uint8 *getData(uint8 *bodyPtr) {
@@ -172,7 +172,7 @@ public:
 
 	static const BodyShade *getBodyShadesData(const uint8 *bodyPtr, int16 shadeIdx = 0) {
 		assert(shadeIdx <= getNumShades(bodyPtr));
-		return (const BodyShade*)(getShadesData(bodyPtr) + 2 + (shadeIdx * 8));
+		return (const BodyShade*)(getShadesData(bodyPtr) + 2 + (shadeIdx * sizeof(BodyShade)));
 	}
 
 	static int16 getNumShades(const uint8 *bodyPtr) {
