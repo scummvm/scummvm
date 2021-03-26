@@ -1451,7 +1451,7 @@ bool Renderer::renderAnimatedModel(ModelData *modelData, const uint8 *bodyPtr, R
 				_shadeMatrix = *lightMatrix * _lightPos;
 
 				do { // for each normal
-					const BodyShade *shadePtr = Model::getShadesBaseData(bodyPtr, shadeIndex);
+					const BodyShade *shadePtr = Model::getBodyShadesData(bodyPtr, shadeIndex);
 
 					const int16 col1 = shadePtr->col1;
 					const int16 col2 = shadePtr->col2;

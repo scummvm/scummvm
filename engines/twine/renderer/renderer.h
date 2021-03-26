@@ -170,7 +170,7 @@ public:
 		return READ_LE_INT16(verticesBase);
 	}
 
-	static const BodyShade *getShadesBaseData(const uint8 *bodyPtr, int16 shadeIdx = 0) {
+	static const BodyShade *getBodyShadesData(const uint8 *bodyPtr, int16 shadeIdx = 0) {
 		assert(shadeIdx <= getNumShades(bodyPtr));
 		return (const BodyShade*)(getShadesData(bodyPtr) + 2 + (shadeIdx * 8));
 	}
@@ -185,7 +185,7 @@ public:
 	}
 
 	static const uint8 *getPolygonData(const uint8 *bodyPtr) {
-		const uint8 *shades = (const uint8*)getShadesBaseData(bodyPtr);
+		const uint8 *shades = (const uint8*)getBodyShadesData(bodyPtr);
 		const int16 numShades = getNumShades(bodyPtr);
 		if (numShades <= 0) {
 			return shades;
