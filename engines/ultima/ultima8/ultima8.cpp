@@ -71,6 +71,7 @@
 #include "ultima/ultima8/world/actors/pathfinder_process.h"
 #include "ultima/ultima8/world/actors/u8_avatar_mover_process.h"
 #include "ultima/ultima8/world/actors/cru_avatar_mover_process.h"
+#include "ultima/ultima8/world/actors/cru_pathfinder_process.h"
 #include "ultima/ultima8/world/actors/resurrection_process.h"
 #include "ultima/ultima8/world/actors/clear_feign_death_process.h"
 #include "ultima/ultima8/world/actors/loiter_process.h"
@@ -224,6 +225,8 @@ bool Ultima8Engine::startup() {
 		ProcessLoader<QuickAvatarMoverProcess>::load);
 	_kernel->addProcessLoader("PathfinderProcess",
 		ProcessLoader<PathfinderProcess>::load);
+	_kernel->addProcessLoader("CruPathfinderProcess",
+		ProcessLoader<CruPathfinderProcess>::load);
 	_kernel->addProcessLoader("SpriteProcess",
 		ProcessLoader<SpriteProcess>::load);
 	_kernel->addProcessLoader("CameraProcess",

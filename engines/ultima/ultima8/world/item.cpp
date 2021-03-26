@@ -1300,7 +1300,7 @@ uint16 Item::fireWeapon(int32 x, int32 y, int32 z, Direction dir, int firetype, 
 	return spriteprocpid;
 }
 
-uint16 Item::fireDistance(Item *other, Direction dir, int16 xoff, int16 yoff, int16 zoff) {
+uint16 Item::fireDistance(const Item *other, Direction dir, int16 xoff, int16 yoff, int16 zoff) {
 	if (!other)
 		return 0;
 
@@ -1413,7 +1413,7 @@ uint16 Item::fireDistance(Item *other, Direction dir, int16 xoff, int16 yoff, in
 	return dist / 32;
 }
 
-int32 Item::getTargetZRelativeToAttackerZ(int32 otherz) {
+int32 Item::getTargetZRelativeToAttackerZ(int32 otherz) const {
 	int32 tsx, tsy, tsz;
 	getFootpadData(tsx, tsy, tsz);
 

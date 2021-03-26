@@ -395,7 +395,7 @@ public:
 
 	//! get the distance (in map tiles) if we were to fire in this direction to "other"
 	//! and could hit, otherwise return 0.
-	uint16 fireDistance(Item *other, Direction dir, int16 xoff, int16 yoff, int16 zoff);
+	uint16 fireDistance(const Item *other, Direction dir, int16 xoff, int16 yoff, int16 zoff);
 
 	//! get damage points, used in Crusader for item damage.
 	uint8 getDamagePoints() const {
@@ -662,7 +662,7 @@ private:
 
 	//! Get the right Z which an attacker should aim for, given the attacker's z.
 	//! (Crusader only)
-	int32 getTargetZRelativeToAttackerZ(int32 attackerz);
+	int32 getTargetZRelativeToAttackerZ(int32 attackerz) const;
 
 public:
 	enum statusflags {
