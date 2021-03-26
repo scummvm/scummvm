@@ -67,7 +67,7 @@
 		/>
 
 		<widget name = 'OptionsLabel'
-				size = '110, Globals.Line.Height'
+				size = '120, Globals.Line.Height'
 				textalign = 'end'
 		/>
 		<widget name = 'SmallLabel'
