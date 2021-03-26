@@ -3,19 +3,11 @@
 # This file is distributed under the same license as the ScummVM package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
-#: engines/nancy/cheat.cpp:57 engines/nancy/cheat.cpp:58
-#: engines/nancy/cheat.cpp:60 engines/nancy/cheat.cpp:62
-#: engines/nancy/cheat.cpp:69 engines/nancy/cheat.cpp:71
-#: engines/nancy/cheat.cpp:73 engines/nancy/cheat.cpp:77
-#: engines/nancy/cheat.cpp:79 engines/nancy/cheat.cpp:81
-#: engines/nancy/cheat.cpp:83 engines/nancy/cheat.cpp:87
-#: engines/nancy/cheat.cpp:89 engines/nancy/cheat.cpp:91
-#: engines/nancy/cheat.cpp:93
 msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-03-25 23:18+0000\n"
+"POT-Creation-Date: 2021-03-26 08:25+0000\n"
 "PO-Revision-Date: 2021-03-07 12:24+0000\n"
 "Last-Translator: Joohan Lee <losernator@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -5318,10 +5310,6 @@ msgstr "저장할 파일명을 입력"
 msgid "General"
 msgstr ""
 
-#: engines/nancy/cheat.cpp:54
-msgid "Cheat.General"
-msgstr ""
-
 #: engines/nancy/cheat.cpp:56
 msgid "Scene Data"
 msgstr ""
@@ -5402,12 +5390,6 @@ msgstr "시각: "
 #| msgid "Second kid"
 msgid "Seconds"
 msgstr "두 번째 캐릭터"
-
-#: engines/nancy/cheat.cpp:96
-#, fuzzy
-#| msgid "Inventory"
-msgid "Cheat.Inventory"
-msgstr "인벤토리"
 
 #: engines/nancy/cheat.cpp:163
 #, fuzzy
@@ -7984,6 +7966,11 @@ msgstr ""
 "니다. 선택한 글꼴 패키지의 모든 글꼴이 필요 할 수 있습니다. 예: "
 "LiberationMono, LiberationSans 및 LiberationSerif 또는 FreeMono, FreeSans 및 "
 "FreeSerif가 각각 필요함."
+
+#, fuzzy
+#~| msgid "Inventory"
+#~ msgid "Cheat.Inventory"
+#~ msgstr "인벤토리"
 
 #~ msgid "Normal (no scaling)"
 #~ msgstr "일반 (확대 없음)"

@@ -3,19 +3,11 @@
 # This file is distributed under the same license as the ScummVM package.
 # Matthew Duggan <mgithub@guarana.org>, 2020.
 #
-#: engines/nancy/cheat.cpp:57 engines/nancy/cheat.cpp:58
-#: engines/nancy/cheat.cpp:60 engines/nancy/cheat.cpp:62
-#: engines/nancy/cheat.cpp:69 engines/nancy/cheat.cpp:71
-#: engines/nancy/cheat.cpp:73 engines/nancy/cheat.cpp:77
-#: engines/nancy/cheat.cpp:79 engines/nancy/cheat.cpp:81
-#: engines/nancy/cheat.cpp:83 engines/nancy/cheat.cpp:87
-#: engines/nancy/cheat.cpp:89 engines/nancy/cheat.cpp:91
-#: engines/nancy/cheat.cpp:93
 msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-03-25 23:18+0000\n"
+"POT-Creation-Date: 2021-03-26 08:25+0000\n"
 "PO-Revision-Date: 2021-03-23 04:24+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
@@ -5380,10 +5372,6 @@ msgstr "セーブデータの名前を入力してください"
 msgid "General"
 msgstr ""
 
-#: engines/nancy/cheat.cpp:54
-msgid "Cheat.General"
-msgstr ""
-
 #: engines/nancy/cheat.cpp:56
 msgid "Scene Data"
 msgstr ""
@@ -5464,12 +5452,6 @@ msgstr "時間： "
 #| msgid "Second kid"
 msgid "Seconds"
 msgstr "2人目の子供"
-
-#: engines/nancy/cheat.cpp:96
-#, fuzzy
-#| msgid "Inventory"
-msgid "Cheat.Inventory"
-msgstr "インベントリ"
 
 #: engines/nancy/cheat.cpp:163
 #, fuzzy
@@ -8153,6 +8135,11 @@ msgstr ""
 "Arialが必要です。LiberationFontsを使用する場合、LiberationMono、"
 "LiberationSans、LiberationSerifが必要です。GNUFreeFontを使用する場合、"
 "FreeMono、FreeSans、FreeSerifが必要です。"
+
+#, fuzzy
+#~| msgid "Inventory"
+#~ msgid "Cheat.Inventory"
+#~ msgstr "インベントリ"
 
 #~ msgid "Normal (no scaling)"
 #~ msgstr "標準比率"

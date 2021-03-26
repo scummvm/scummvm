@@ -3,19 +3,11 @@
 # This file is distributed under the same license as the ScummVM package.
 # Jordi Vilalta Prat <jvprat@jvprat.com>, 2007-2011.
 #
-#: engines/nancy/cheat.cpp:57 engines/nancy/cheat.cpp:58
-#: engines/nancy/cheat.cpp:60 engines/nancy/cheat.cpp:62
-#: engines/nancy/cheat.cpp:69 engines/nancy/cheat.cpp:71
-#: engines/nancy/cheat.cpp:73 engines/nancy/cheat.cpp:77
-#: engines/nancy/cheat.cpp:79 engines/nancy/cheat.cpp:81
-#: engines/nancy/cheat.cpp:83 engines/nancy/cheat.cpp:87
-#: engines/nancy/cheat.cpp:89 engines/nancy/cheat.cpp:91
-#: engines/nancy/cheat.cpp:93
 msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-03-25 23:18+0000\n"
+"POT-Creation-Date: 2021-03-26 08:25+0000\n"
 "PO-Revision-Date: 2021-03-21 08:24+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
@@ -5382,10 +5374,6 @@ msgstr "Nom de partida desada incorrecte"
 msgid "General"
 msgstr ""
 
-#: engines/nancy/cheat.cpp:54
-msgid "Cheat.General"
-msgstr ""
-
 #: engines/nancy/cheat.cpp:56
 msgid "Scene Data"
 msgstr ""
@@ -5463,12 +5451,6 @@ msgstr "Hora: "
 #| msgid "Second kid"
 msgid "Seconds"
 msgstr "Segon noi"
-
-#: engines/nancy/cheat.cpp:96
-#, fuzzy
-#| msgid "Inventory"
-msgid "Cheat.Inventory"
-msgstr "Inventari"
 
 #: engines/nancy/cheat.cpp:163
 msgid "Invalid Scene ID!"
@@ -8141,6 +8123,11 @@ msgid ""
 "LiberationSans and LiberationSerif, or FreeMono, FreeSans and FreeSerif "
 "respectively."
 msgstr ""
+
+#, fuzzy
+#~| msgid "Inventory"
+#~ msgid "Cheat.Inventory"
+#~ msgstr "Inventari"
 
 #~ msgid "Normal (no scaling)"
 #~ msgstr "Normal (sense escalar)"

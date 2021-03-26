@@ -2,19 +2,11 @@
 # Copyright (C) 2010-2017 The ScummVM Team
 # This file is distributed under the same license as the ScummVM package.
 # Eugene Sandulenko <sev@scummvm.org>, 2010-2017
-#: engines/nancy/cheat.cpp:57 engines/nancy/cheat.cpp:58
-#: engines/nancy/cheat.cpp:60 engines/nancy/cheat.cpp:62
-#: engines/nancy/cheat.cpp:69 engines/nancy/cheat.cpp:71
-#: engines/nancy/cheat.cpp:73 engines/nancy/cheat.cpp:77
-#: engines/nancy/cheat.cpp:79 engines/nancy/cheat.cpp:81
-#: engines/nancy/cheat.cpp:83 engines/nancy/cheat.cpp:87
-#: engines/nancy/cheat.cpp:89 engines/nancy/cheat.cpp:91
-#: engines/nancy/cheat.cpp:93
 msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-03-25 23:18+0000\n"
+"POT-Creation-Date: 2021-03-26 08:25+0000\n"
 "PO-Revision-Date: 2021-03-25 12:28+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
@@ -5356,10 +5348,6 @@ msgstr "Неверное имя файла для записи"
 msgid "General"
 msgstr "Общие"
 
-#: engines/nancy/cheat.cpp:54
-msgid "Cheat.General"
-msgstr "Читы.Общие"
-
 #: engines/nancy/cheat.cpp:56
 msgid "Scene Data"
 msgstr "Данные Сцены"
@@ -5428,10 +5416,6 @@ msgstr "Таймер вкл"
 #: engines/nancy/cheat.cpp:94
 msgid "Seconds"
 msgstr "Секунд"
-
-#: engines/nancy/cheat.cpp:96
-msgid "Cheat.Inventory"
-msgstr "Читы.Инвентарь"
 
 #: engines/nancy/cheat.cpp:163
 msgid "Invalid Scene ID!"
@@ -8028,6 +8012,12 @@ msgstr ""
 "понадобятся все шрифты из выбранного вами пакета, то есть, LiberationMono, "
 "LiberationSans и LiberationSerif, либо FreeMono, FreeSans и FreeSerif "
 "соответственно."
+
+#~ msgid "Cheat.General"
+#~ msgstr "Читы.Общие"
+
+#~ msgid "Cheat.Inventory"
+#~ msgstr "Читы.Инвентарь"
 
 #~ msgid "ringing...<n><e>"
 #~ msgstr "звонок...<n><e>"

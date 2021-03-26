@@ -3,19 +3,11 @@
 # This file is distributed under the same license as the ScummVM package.
 # Matteo 'Maff' Angelino <matteo.maff at gmail dot com>, 2010.
 #
-#: engines/nancy/cheat.cpp:57 engines/nancy/cheat.cpp:58
-#: engines/nancy/cheat.cpp:60 engines/nancy/cheat.cpp:62
-#: engines/nancy/cheat.cpp:69 engines/nancy/cheat.cpp:71
-#: engines/nancy/cheat.cpp:73 engines/nancy/cheat.cpp:77
-#: engines/nancy/cheat.cpp:79 engines/nancy/cheat.cpp:81
-#: engines/nancy/cheat.cpp:83 engines/nancy/cheat.cpp:87
-#: engines/nancy/cheat.cpp:89 engines/nancy/cheat.cpp:91
-#: engines/nancy/cheat.cpp:93
 msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-03-25 23:18+0000\n"
+"POT-Creation-Date: 2021-03-26 08:25+0000\n"
 "PO-Revision-Date: 2021-03-22 20:45+0000\n"
 "Last-Translator: Walter Agazzi <tag2015@gmail.com>\n"
 "Language-Team: Italian <https://translations.scummvm.org/projects/scummvm/"
@@ -5395,12 +5387,6 @@ msgstr "Nome salvataggio non valido"
 msgid "General"
 msgstr "Generali"
 
-#: engines/nancy/cheat.cpp:54
-#, fuzzy
-#| msgid "General"
-msgid "Cheat.General"
-msgstr "Generali"
-
 #: engines/nancy/cheat.cpp:56
 msgid "Scene Data"
 msgstr ""
@@ -5481,12 +5467,6 @@ msgstr "Ora: "
 #| msgid "Second kid"
 msgid "Seconds"
 msgstr "Secondo ragazzo"
-
-#: engines/nancy/cheat.cpp:96
-#, fuzzy
-#| msgid "Inventory"
-msgid "Cheat.Inventory"
-msgstr "Inventario"
 
 #: engines/nancy/cheat.cpp:163
 #, fuzzy
@@ -8147,6 +8127,16 @@ msgstr ""
 "GNU. Ti serviranno tutti i font presenti nel pacchetto di tua preferenza, "
 "precisamente: LiberationMono, LiberationSans e LiberationSerif; oppure "
 "FreeMono, FreeSans e FreeSerif."
+
+#, fuzzy
+#~| msgid "General"
+#~ msgid "Cheat.General"
+#~ msgstr "Generali"
+
+#, fuzzy
+#~| msgid "Inventory"
+#~ msgid "Cheat.Inventory"
+#~ msgstr "Inventario"
 
 #~ msgid "Normal (no scaling)"
 #~ msgstr "Normale (nessun ridimensionamento)"

@@ -3,19 +3,11 @@
 # This file is distributed under the same license as the ScummVM package.
 # Tomás Maidagan, 2011.
 #
-#: engines/nancy/cheat.cpp:57 engines/nancy/cheat.cpp:58
-#: engines/nancy/cheat.cpp:60 engines/nancy/cheat.cpp:62
-#: engines/nancy/cheat.cpp:69 engines/nancy/cheat.cpp:71
-#: engines/nancy/cheat.cpp:73 engines/nancy/cheat.cpp:77
-#: engines/nancy/cheat.cpp:79 engines/nancy/cheat.cpp:81
-#: engines/nancy/cheat.cpp:83 engines/nancy/cheat.cpp:87
-#: engines/nancy/cheat.cpp:89 engines/nancy/cheat.cpp:91
-#: engines/nancy/cheat.cpp:93
 msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-03-25 23:18+0000\n"
+"POT-Creation-Date: 2021-03-26 08:25+0000\n"
 "PO-Revision-Date: 2021-03-25 12:28+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
@@ -5392,10 +5384,6 @@ msgstr "Nombre del archivo de partida inválido"
 msgid "General"
 msgstr "General"
 
-#: engines/nancy/cheat.cpp:54
-msgid "Cheat.General"
-msgstr "Cheat.General"
-
 #: engines/nancy/cheat.cpp:56
 msgid "Scene Data"
 msgstr "Datos de escena"
@@ -5464,10 +5452,6 @@ msgstr "Cronómetro activado"
 #: engines/nancy/cheat.cpp:94
 msgid "Seconds"
 msgstr "Segundos"
-
-#: engines/nancy/cheat.cpp:96
-msgid "Cheat.Inventory"
-msgstr "Cheat.Inventory"
 
 #: engines/nancy/cheat.cpp:163
 msgid "Invalid Scene ID!"
@@ -8087,6 +8071,12 @@ msgstr ""
 "Necesitarás todas las fuentes del paquete que prefieras, por ejemplo, "
 "LiberationMono, LiberationSans y LiberationSerif, o FreeMono, FreeSans y "
 "FreeSerif respectivamente."
+
+#~ msgid "Cheat.General"
+#~ msgstr "Cheat.General"
+
+#~ msgid "Cheat.Inventory"
+#~ msgstr "Cheat.Inventory"
 
 #~ msgid "ringing...<n><e>"
 #~ msgstr "Llamando...<n><e>"

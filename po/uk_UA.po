@@ -4,19 +4,11 @@
 # Lubomyr Lisen, 2010.
 # Eugene Sandulenko <sev@scummvm.org>, 2010-2017
 #
-#: engines/nancy/cheat.cpp:57 engines/nancy/cheat.cpp:58
-#: engines/nancy/cheat.cpp:60 engines/nancy/cheat.cpp:62
-#: engines/nancy/cheat.cpp:69 engines/nancy/cheat.cpp:71
-#: engines/nancy/cheat.cpp:73 engines/nancy/cheat.cpp:77
-#: engines/nancy/cheat.cpp:79 engines/nancy/cheat.cpp:81
-#: engines/nancy/cheat.cpp:83 engines/nancy/cheat.cpp:87
-#: engines/nancy/cheat.cpp:89 engines/nancy/cheat.cpp:91
-#: engines/nancy/cheat.cpp:93
 msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-03-25 23:18+0000\n"
+"POT-Creation-Date: 2021-03-26 08:25+0000\n"
 "PO-Revision-Date: 2021-03-25 12:28+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
@@ -5357,10 +5349,6 @@ msgstr "Неправильне ім'я файлу для запису"
 msgid "General"
 msgstr "Загальні"
 
-#: engines/nancy/cheat.cpp:54
-msgid "Cheat.General"
-msgstr "Чіти.Загальне"
-
 #: engines/nancy/cheat.cpp:56
 msgid "Scene Data"
 msgstr "Дані Сцен"
@@ -5429,10 +5417,6 @@ msgstr "Таймер увімкнуто"
 #: engines/nancy/cheat.cpp:94
 msgid "Seconds"
 msgstr "Секунд"
-
-#: engines/nancy/cheat.cpp:96
-msgid "Cheat.Inventory"
-msgstr "Чіти.Інвентар"
 
 #: engines/nancy/cheat.cpp:163
 msgid "Invalid Scene ID!"
@@ -8021,6 +8005,12 @@ msgstr ""
 "завантажити Liberation Fonts, або пакет GNU FreeFont. Вам будуть потрібні "
 "всі шрифти з пакету, який ви оберете, тобто, LiberationMono, LiberationSans "
 "та LiberationSerif, або FreeMono, FreeSans та FreeSerif відповідно."
+
+#~ msgid "Cheat.General"
+#~ msgstr "Чіти.Загальне"
+
+#~ msgid "Cheat.Inventory"
+#~ msgstr "Чіти.Інвентар"
 
 #~ msgid "ringing...<n><e>"
 #~ msgstr "дзвінок..<n><e>"

@@ -3,19 +3,11 @@
 # This file is distributed under the same license as the ScummVM package.
 # Hampus Flink <hampus.flink@gmail.com>, 2011.
 #
-#: engines/nancy/cheat.cpp:57 engines/nancy/cheat.cpp:58
-#: engines/nancy/cheat.cpp:60 engines/nancy/cheat.cpp:62
-#: engines/nancy/cheat.cpp:69 engines/nancy/cheat.cpp:71
-#: engines/nancy/cheat.cpp:73 engines/nancy/cheat.cpp:77
-#: engines/nancy/cheat.cpp:79 engines/nancy/cheat.cpp:81
-#: engines/nancy/cheat.cpp:83 engines/nancy/cheat.cpp:87
-#: engines/nancy/cheat.cpp:89 engines/nancy/cheat.cpp:91
-#: engines/nancy/cheat.cpp:93
 msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.5.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-03-25 23:18+0000\n"
+"POT-Creation-Date: 2021-03-26 08:25+0000\n"
 "PO-Revision-Date: 2020-10-26 22:27+0000\n"
 "Last-Translator: anonymous <noreply@weblate.org>\n"
 "Language-Team: Swedish <https://translations.scummvm.org/projects/scummvm/"
@@ -5375,10 +5367,6 @@ msgstr "Ogiltigt namn på sparfilen"
 msgid "General"
 msgstr ""
 
-#: engines/nancy/cheat.cpp:54
-msgid "Cheat.General"
-msgstr ""
-
 #: engines/nancy/cheat.cpp:56
 msgid "Scene Data"
 msgstr ""
@@ -5456,12 +5444,6 @@ msgstr "Tid: "
 #| msgid "Second kid"
 msgid "Seconds"
 msgstr "Andra ungen"
-
-#: engines/nancy/cheat.cpp:96
-#, fuzzy
-#| msgid "Inventory"
-msgid "Cheat.Inventory"
-msgstr "Inventarie"
 
 #: engines/nancy/cheat.cpp:163
 #, fuzzy
@@ -8143,6 +8125,11 @@ msgid ""
 "LiberationSans and LiberationSerif, or FreeMono, FreeSans and FreeSerif "
 "respectively."
 msgstr ""
+
+#, fuzzy
+#~| msgid "Inventory"
+#~ msgid "Cheat.Inventory"
+#~ msgstr "Inventarie"
 
 #~ msgid "Normal (no scaling)"
 #~ msgstr "Normalt (ingen skalning)"
