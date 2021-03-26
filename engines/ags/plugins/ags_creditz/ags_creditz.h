@@ -41,7 +41,6 @@ struct Credit {
 	int _y = 0;
 	int _fontSlot = 0;
 	int _colorHeight = 0;
-	int _center = 0;
 	bool _isSet = false;
 	bool _image = false;
 	bool _outline = false;
@@ -63,7 +62,6 @@ struct StCredit {
 	Common::String title;
 	int x = 0;
 	int y = 0;
-	bool centered = false;
 	int font = 0;
 	int color = 0;
 	int title_x = 0;

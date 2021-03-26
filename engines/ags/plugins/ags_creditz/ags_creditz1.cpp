@@ -44,6 +44,8 @@ const char *AGSCreditz1::AGS_GetPluginName() {
 void AGSCreditz1::AGS_EngineStartup(IAGSEngine *engine) {
 	_engine = engine;
 	engine->RequestEventHook(AGSE_POSTSCREENDRAW);
+	_engine->GetScreenDimensions(&_state->_screenWidth,
+		&_state->_screenHeight, &_state->_screenColorDepth);
 
 	SCRIPT_METHOD(SetCredit);
 	SCRIPT_METHOD(ScrollCredits);
@@ -76,15 +78,20 @@ int64 AGSCreditz1::AGS_EngineOnEvent(int event, NumberPtr data) {
 }
 
 void AGSCreditz1::SetCredit(ScriptMethodParams &params) {
-	PARAMS7(int, ID, string, credit, int, colour, int, font, int, center, int, xpos, int, generateoutline);
+	PARAMS7(int, ID, string, credit, int, colour, int, font, bool, center, int, xpos, int, generateoutline);
 
 	if (ID >= (int)_state->_credits[0].size())
 		_state->_credits[0].resize(ID + 1);
 
+	if (center) {
+		int32 creditW, creditH;
+		_engine->GetTextExtent(font, credit, &creditW, &creditH);
+		xpos = (_state->_screenWidth - creditW) / 2;
+	}
+
 	Credit &c = _state->_credits[0][ID];
 	c._text = credit;
 	c._fontSlot = font;
-	c._center = center;
 	c._x = xpos;
 	c._isSet = true;
 	c._outline = generateoutline;
@@ -92,21 +99,23 @@ void AGSCreditz1::SetCredit(ScriptMethodParams &params) {
 }
 
 void AGSCreditz1::SetCreditImage(ScriptMethodParams &params) {
-	PARAMS5(int, ID, int, slot, int, center, int, xpos, int, pixtonext);
+	PARAMS5(int, ID, int, slot, bool, center, int, xpos, int, pixtonext);
 
 	if (ID >= (int)_state->_credits[0].size())
 		_state->_credits[0].resize(ID + 1);
 
+	BITMAP *gfx = _engine->GetSpriteGraphic(slot);
+	if (center)
+		xpos = (_state->_screenWidth - gfx->w) / 2;
+
 	_state->_credits[0][ID]._image = true;
 	_state->_credits[0][ID]._isSet = true;
 	_state->_credits[0][ID]._x = xpos;
-	_state->_credits[0][ID]._center = center;
 	_state->_credits[0][ID]._fontSlot = slot;
 
 	if (pixtonext != -1) {
 		_state->_credits[0][ID]._colorHeight = pixtonext;
 	} else {
-		BITMAP *gfx = _engine->GetSpriteGraphic(slot);
 		_state->_credits[0][ID]._colorHeight = gfx->h;
 	}
 }
@@ -121,8 +130,6 @@ void AGSCreditz1::ScrollCredits(ScriptMethodParams &params) {
 		_state->_seqSettings[0].endpoint = toY;
 		_state->_seqSettings[0].automatic = isautom;
 
-		_engine->GetScreenDimensions(&_state->_screenWidth,
-			&_state->_screenHeight, &_state->_screenColorDepth);
 		if (_state->_screenWidth == 320) {
 			_state->_resolutionFlag = (resolution != 2) ? 1 : 0;
 		} else if (_state->_screenWidth == 640) {
@@ -169,20 +176,25 @@ void AGSCreditz1::GetEmptyLineHeight(ScriptMethodParams &params) {
 }
 
 void AGSCreditz1::SetStaticCredit(ScriptMethodParams &params) {
-	PARAMS8(int, ID, int, x, int, y, int, creditfont, int, creditcolour, \
-		int, centered, int, generateoutline, string, credit);
+	PARAMS8(int, ID, int, x, int, y, int, font, int, creditcolour, \
+		bool, center, int, generateoutline, string, credit);
 
 	if (ID >= (int)_state->_credits[0].size())
 		_state->_credits[0].resize(ID + 1);
 
+	if (center) {
+		int32 creditW, creditH;
+		_engine->GetTextExtent(font, credit, &creditW, &creditH);
+		x = (_state->_screenWidth - creditW) / 2;
+	}
+
 	StCredit &c = _state->_stCredits[0][ID];
 	c.credit = credit;
-	c.font = creditfont;
+	c.font = font;
 	c.color = creditcolour;
 	c.x = x;
 	c.y = y;
 	c.outline = generateoutline;
-	c.centered = centered;
 }
 
 void AGSCreditz1::GetStaticCredit(ScriptMethodParams &params) {
@@ -279,14 +291,19 @@ void AGSCreditz1::GetStaticCreditTitle(ScriptMethodParams &params) {
 
 void AGSCreditz1::SetStaticCreditImage(ScriptMethodParams &params) {
 	PARAMS7(int, ID, int, x, int, y, int, slot, int, Hcentered, \
-		int, Vcentered, int, time);
+		bool, Vcentered, int, time);
+
+	if (Hcentered) {
+		BITMAP *gfx = _engine->GetSpriteGraphic(slot);
+		if (Hcentered)
+			x = (_state->_screenWidth - gfx->w) / 2;
+	}
 
 	StCredit &c = _state->_stCredits[0][ID];
 	c.credit = "I=M=A=G=E";
 	c.x = x;
 	c.y = y;
 	c.font = slot;
-	c.centered = Hcentered;
 	// TODO: Below seems *weird*
 	c.outline = Vcentered;
 	c.color = time;
