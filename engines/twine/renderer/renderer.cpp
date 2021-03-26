@@ -313,7 +313,7 @@ void Renderer::applyRotation(IMatrix3x3 *targetMatrix, const IMatrix3x3 *current
 	}
 }
 
-void Renderer::applyPointsRotation(const pointTab *pointsPtr, int32 numPoints, pointTab *destPoints, const IMatrix3x3 *rotationMatrix) {
+void Renderer::applyPointsRotation(const I16Vec3 *pointsPtr, int32 numPoints, I16Vec3 *destPoints, const IMatrix3x3 *rotationMatrix) {
 	int32 numOfPoints2 = numPoints;
 
 	do {
@@ -330,8 +330,8 @@ void Renderer::applyPointsRotation(const pointTab *pointsPtr, int32 numPoints, p
 	} while (--numOfPoints2);
 }
 
-void Renderer::processRotatedElement(IMatrix3x3 *targetMatrix, const pointTab *pointsPtr, int32 rotZ, int32 rotY, int32 rotX, const BonesBaseData *boneData, ModelData *modelData) {
-	int32 firstPoint = boneData->firstPoint / sizeof(pointTab);
+void Renderer::processRotatedElement(IMatrix3x3 *targetMatrix, const I16Vec3 *pointsPtr, int32 rotZ, int32 rotY, int32 rotX, const BonesBaseData *boneData, ModelData *modelData) {
+	int32 firstPoint = boneData->firstPoint / sizeof(I16Vec3);
 	int32 numOfPoints2 = boneData->numOfPoints;
 
 	IVec3 renderAngle;
@@ -348,7 +348,7 @@ void Renderer::processRotatedElement(IMatrix3x3 *targetMatrix, const pointTab *p
 		destPos.y = 0;
 		destPos.z = 0;
 	} else {
-		const int32 pointIdx = boneData->basePoint / sizeof(pointTab);
+		const int32 pointIdx = boneData->basePoint / sizeof(I16Vec3);
 		const int32 matrixIndex = boneData->baseElement / sizeof(BonesBaseData);
 		assert(matrixIndex >= 0 && matrixIndex < ARRAYSIZE(_matricesTable));
 		currentMatrix = &_matricesTable[matrixIndex];
@@ -367,7 +367,7 @@ void Renderer::processRotatedElement(IMatrix3x3 *targetMatrix, const pointTab *p
 	applyPointsRotation(&pointsPtr[firstPoint], numOfPoints2, &modelData->computedPoints[firstPoint], targetMatrix);
 }
 
-void Renderer::applyPointsTranslation(const pointTab *pointsPtr, int32 numPoints, pointTab *destPoints, const IMatrix3x3 *translationMatrix, const IVec3 &angleVec) {
+void Renderer::applyPointsTranslation(const I16Vec3 *pointsPtr, int32 numPoints, I16Vec3 *destPoints, const IMatrix3x3 *translationMatrix, const IVec3 &angleVec) {
 	int32 numOfPoints2 = numPoints;
 
 	do {
@@ -384,7 +384,7 @@ void Renderer::applyPointsTranslation(const pointTab *pointsPtr, int32 numPoints
 	} while (--numOfPoints2);
 }
 
-void Renderer::processTranslatedElement(IMatrix3x3 *targetMatrix, const pointTab *pointsPtr, int32 rotX, int32 rotY, int32 rotZ, const BonesBaseData *boneData, ModelData *modelData) {
+void Renderer::processTranslatedElement(IMatrix3x3 *targetMatrix, const I16Vec3 *pointsPtr, int32 rotX, int32 rotY, int32 rotZ, const BonesBaseData *boneData, ModelData *modelData) {
 	IVec3 renderAngle;
 	renderAngle.x = rotX;
 	renderAngle.y = rotY;
@@ -397,7 +397,7 @@ void Renderer::processTranslatedElement(IMatrix3x3 *targetMatrix, const pointTab
 
 		*targetMatrix = _baseMatrix;
 	} else { // dependent
-		const int32 pointsIdx = boneData->basePoint / sizeof(pointTab);
+		const int32 pointsIdx = boneData->basePoint / sizeof(I16Vec3);
 		destPos.x = modelData->computedPoints[pointsIdx].x;
 		destPos.y = modelData->computedPoints[pointsIdx].y;
 		destPos.z = modelData->computedPoints[pointsIdx].z;
@@ -407,7 +407,7 @@ void Renderer::processTranslatedElement(IMatrix3x3 *targetMatrix, const pointTab
 		*targetMatrix = _matricesTable[matrixIndex];
 	}
 
-	applyPointsTranslation(&pointsPtr[boneData->firstPoint / sizeof(pointTab)], boneData->numOfPoints, &modelData->computedPoints[boneData->firstPoint / sizeof(pointTab)], targetMatrix, renderAngle);
+	applyPointsTranslation(&pointsPtr[boneData->firstPoint / sizeof(I16Vec3)], boneData->numOfPoints, &modelData->computedPoints[boneData->firstPoint / sizeof(I16Vec3)], targetMatrix, renderAngle);
 }
 
 void Renderer::setLightVector(int32 angleX, int32 angleY, int32 angleZ) {
@@ -1173,7 +1173,7 @@ uint8 *Renderer::preparePolygons(Common::MemoryReadStream &stream, int32 &numOfP
 
 				const int16 vertexOffset = stream.readSint16LE();
 				const int16 vertexIndex = vertexOffset / 6;
-				const pointTab *point = &modelData->flattenPoints[vertexIndex];
+				const I16Vec3 *point = &modelData->flattenPoints[vertexIndex];
 
 				vertex->colorIndex = shadeValue;
 				vertex->x = point->x;
@@ -1197,7 +1197,7 @@ uint8 *Renderer::preparePolygons(Common::MemoryReadStream &stream, int32 &numOfP
 			do {
 				const int16 vertexOffset = stream.readSint16LE();
 				const int16 vertexIndex = vertexOffset / 6;
-				const pointTab *point = &modelData->flattenPoints[vertexIndex];
+				const I16Vec3 *point = &modelData->flattenPoints[vertexIndex];
 
 				vertex->colorIndex = destinationPolygon->colorIndex;
 				vertex->x = point->x;
@@ -1309,7 +1309,7 @@ bool Renderer::renderAnimatedModel(ModelData *modelData, const uint8 *bodyPtr, R
 	const int32 numVertices = Model::getNumVertices(bodyPtr);
 	const int32 numBones = Model::getNumBones(bodyPtr);
 
-	const pointTab *pointsPtr = (const pointTab *)Model::getVerticesBaseData(bodyPtr);
+	const I16Vec3 *pointsPtr = (const I16Vec3 *)Model::getVerticesBaseData(bodyPtr);
 
 	IMatrix3x3 *modelMatrix = &_matricesTable[0];
 
@@ -1340,8 +1340,8 @@ bool Renderer::renderAnimatedModel(ModelData *modelData, const uint8 *bodyPtr, R
 
 	numOfPrimitives = numVertices;
 
-	const pointTab *pointPtr = &modelData->computedPoints[0];
-	pointTab *pointPtrDest = &modelData->flattenPoints[0];
+	const I16Vec3 *pointPtr = &modelData->computedPoints[0];
+	I16Vec3 *pointPtrDest = &modelData->flattenPoints[0];
 
 	if (_isUsingOrthoProjection) { // use standard projection
 		do {

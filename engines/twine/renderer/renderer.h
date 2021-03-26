@@ -242,13 +242,13 @@ private:
 	};
 
 #include "common/pack-start.h"
-	struct pointTab {
+	struct I16Vec3 {
 		int16 x = 0;
 		int16 y = 0;
 		int16 z = 0;
 	};
 #include "common/pack-end.h"
-	static_assert(sizeof(pointTab) == 6, "Unexpected pointTab size");
+	static_assert(sizeof(I16Vec3) == 6, "Unexpected pointTab size");
 
 	struct polyVertexHeader {
 		int16 shadeEntry = 0;
@@ -256,8 +256,8 @@ private:
 	};
 
 	struct ModelData {
-		pointTab computedPoints[800];
-		pointTab flattenPoints[800];
+		I16Vec3 computedPoints[800];
+		I16Vec3 flattenPoints[800];
 		int16 shadeTable[500]{0};
 	};
 
@@ -268,10 +268,10 @@ private:
 	bool renderModelElements(int32 numOfPrimitives, const uint8 *polygonPtr, RenderCommand **renderCmds, ModelData *modelData);
 	void getCameraAnglePositions(int32 x, int32 y, int32 z);
 	void applyRotation(IMatrix3x3 *targetMatrix, const IMatrix3x3 *currentMatrix, const IVec3 &angleVec);
-	void applyPointsRotation(const pointTab *pointsPtr, int32 numPoints, pointTab *destPoints, const IMatrix3x3 *rotationMatrix);
-	void processRotatedElement(IMatrix3x3 *targetMatrix, const pointTab *pointsPtr, int32 rotZ, int32 rotY, int32 rotX, const BonesBaseData *boneData, ModelData *modelData);
-	void applyPointsTranslation(const pointTab *pointsPtr, int32 numPoints, pointTab *destPoints, const IMatrix3x3 *translationMatrix, const IVec3 &angleVec);
-	void processTranslatedElement(IMatrix3x3 *targetMatrix, const pointTab *pointsPtr, int32 rotX, int32 rotY, int32 rotZ, const BonesBaseData *boneData, ModelData *modelData);
+	void applyPointsRotation(const I16Vec3 *pointsPtr, int32 numPoints, I16Vec3 *destPoints, const IMatrix3x3 *rotationMatrix);
+	void processRotatedElement(IMatrix3x3 *targetMatrix, const I16Vec3 *pointsPtr, int32 rotZ, int32 rotY, int32 rotX, const BonesBaseData *boneData, ModelData *modelData);
+	void applyPointsTranslation(const I16Vec3 *pointsPtr, int32 numPoints, I16Vec3 *destPoints, const IMatrix3x3 *translationMatrix, const IVec3 &angleVec);
+	void processTranslatedElement(IMatrix3x3 *targetMatrix, const I16Vec3 *pointsPtr, int32 rotX, int32 rotY, int32 rotZ, const BonesBaseData *boneData, ModelData *modelData);
 	void translateGroup(int32 x, int32 y, int32 z);
 
 	IVec3 _baseTransPos;
