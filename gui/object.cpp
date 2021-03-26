@@ -47,11 +47,16 @@ GuiObject::~GuiObject() {
 	_firstWidget = nullptr;
 }
 
-void GuiObject::resize(int x, int y, int w, int h) {
-	_x = SCALEVALUE(x);
-	_y = SCALEVALUE(y);
-	_w = SCALEVALUE(w);
-	_h = SCALEVALUE(h);
+void GuiObject::resize(int x, int y, int w, int h, bool scale) {
+	if (scale) {
+		_x = SCALEVALUE(x);
+		_y = SCALEVALUE(y);
+		_w = SCALEVALUE(w);
+		_h = SCALEVALUE(h);
+	} else {
+		_x = x; _y = y;
+		_w = w; _h = h;
+	}
 }
 
 void GuiObject::reflowLayout() {
