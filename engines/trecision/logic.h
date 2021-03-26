@@ -62,6 +62,7 @@ public:
 	bool mouseOperate(uint16 curObj);
 	bool mouseTake(uint16 curObj);
 	bool mouseTalk(uint16 curObj);
+	bool mouseClick(uint16 curObj);
 	bool operateInventory();
 };
 ; // end of class

@@ -36,7 +36,7 @@ extern bool mleft, mright;
 extern uint8		*SoundStartBuffer;
 extern uint8		*MemoryArea;
 extern const char 		*_sysSentence[];
-extern int			ForceQuit;
+extern bool	ForceQuit;
 
 void NextMessage();
 void StopSoundSystem();

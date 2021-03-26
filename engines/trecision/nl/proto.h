@@ -152,7 +152,7 @@ void doInvExamine();
 void doInvOperate();
 void doDoing();
 void doScript();
-bool AtMouseClick(uint16 TheObj);
+bool AtMouseClick(uint16 curObj);
 void AtEndChangeRoom();
 void ExecuteATFDO(ATFHandle *h, int doit, int32 obj);
 void ProcessATF(ATFHandle *h, int type, int atf);

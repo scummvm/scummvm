@@ -3169,65 +3169,283 @@ bool LogicManager::mouseTalk(uint16 curObj) {
 	return retVal;
 }
 
+bool LogicManager::mouseClick(uint16 curObj) {
+	bool retVal;
+	if ((_vm->_curRoom == r1D) && !(_vm->_room[r1D]._flag & OBJFLAG_EXTRA) && (curObj != oSCALA1D)) {
+		_vm->_curObj = oDONNA1D;
+		goToPosition(_vm->_obj[oDONNA1D]._position);
+		retVal = true;
+	} else if ((_vm->_curRoom == r2B) && (_vm->_room[r2B]._flag & OBJFLAG_EXTRA) && (curObj != oCARTELLO2B) && (curObj != od2BALLA28)) {
+		_vm->_curObj = oPORTA2B;
+		goToPosition(_vm->_obj[oCARTELLO2B]._position);
+		retVal = true;
+	} else {
+		switch (curObj) {
+		case oPORTAA13:
+			if (mright && (_vm->_room[r14]._flag & OBJFLAG_DONE)) {
+				if (_characterGoToPosition != 4)
+					goToPosition(4);
+			} else if (_characterGoToPosition != _vm->_obj[curObj]._position)
+				goToPosition(_vm->_obj[curObj]._position);
+
+			retVal = true;
+			break;
+
+		case oDIVANO14:
+			if (mleft) {
+				if (_characterGoToPosition != 2)
+					goToPosition(2);
+			} else if (_characterGoToPosition != _vm->_obj[curObj]._position)
+				goToPosition(_vm->_obj[curObj]._position);
+
+			retVal = true;
+			break;
+
+		case oSCAFFALE1D:
+			if (mright) {
+				if (_characterGoToPosition != 9)
+					goToPosition(9);
+			} else if (_characterGoToPosition != _vm->_obj[curObj]._position)
+				goToPosition(_vm->_obj[curObj]._position);
+
+			retVal = true;
+			break;
+
+		case oDIVANOR4A:
+			if (mright) {
+				if (_characterGoToPosition != 1)
+					goToPosition(1);
+			} else if (_characterGoToPosition != _vm->_obj[curObj]._position)
+				goToPosition(_vm->_obj[curObj]._position);
+
+			retVal = true;
+			break;
+
+		case oDOORC21:
+			if ((_vm->_useWith[USED] == iPISTOLA15) && (FlagUseWithStarted)) {
+				if (_characterGoToPosition != 1)
+					goToPosition(1);
+			} else if (_characterGoToPosition != _vm->_obj[curObj]._position)
+				goToPosition(_vm->_obj[curObj]._position);
+
+			retVal = true;
+			break;
+
+		case oTUBO21:
+			if ((_vm->_useWith[USED] == oRAMPINO21) && (FlagUseWithStarted)) {
+				if (_characterGoToPosition != 4)
+					goToPosition(4);
+			} else if (_characterGoToPosition != _vm->_obj[curObj]._position)
+				goToPosition(_vm->_obj[curObj]._position);
+
+			retVal = true;
+			break;
+
+		case oCAMPO23:
+			if ((_vm->_useWith[USED] == oCAVIE23) && (FlagUseWithStarted)) {
+				if (_characterGoToPosition != 2)
+					goToPosition(2);
+			} else if (_characterGoToPosition != _vm->_obj[curObj]._position)
+				goToPosition(_vm->_obj[curObj]._position);
+
+			retVal = true;
+			break;
+
+		case oTASTO2F:
+			if ((_vm->_useWith[USED] == iTELECOMANDO2G) && (FlagUseWithStarted)) {
+				if (_characterGoToPosition != 9)
+					goToPosition(9);
+			} else if (_characterGoToPosition != _vm->_obj[curObj]._position)
+				goToPosition(_vm->_obj[curObj]._position);
+
+			retVal = true;
+			break;
+
+		case oSAMA33:
+		case oSERRATURA33:
+			if ((_vm->_useWith[USED] == oTUBOT33) && (_vm->_obj[oVALVOLA34]._mode & OBJMODE_OBJSTATUS) && (_vm->_obj[oSAMA33]._mode & OBJMODE_OBJSTATUS) && (FlagUseWithStarted)) {
+				if (_characterGoToPosition != 4)
+					goToPosition(4);
+			} else if (_characterGoToPosition != _vm->_obj[curObj]._position)
+				goToPosition(_vm->_obj[curObj]._position);
+
+			retVal = true;
+			break;
+
+		case oFINESTRA33:
+			if (mleft) {
+				if (_characterGoToPosition != 7)
+					goToPosition(7);
+			} else if (_characterGoToPosition != _vm->_obj[curObj]._position)
+				goToPosition(_vm->_obj[curObj]._position);
+
+			retVal = true;
+			break;
+
+		case oPRESA35:
+			if (!(FlagUseWithStarted)) {
+				if (_characterGoToPosition != 2)
+					goToPosition(2);
+			} else if (_characterGoToPosition != _vm->_obj[curObj]._position)
+				goToPosition(_vm->_obj[curObj]._position);
+
+			retVal = true;
+			break;
+
+		case oTRIPLA35:
+			if (!FlagUseWithStarted && mleft) {
+				if (_characterGoToPosition != 2)
+					goToPosition(2);
+			} else if (_characterGoToPosition != _vm->_obj[curObj]._position)
+				goToPosition(_vm->_obj[curObj]._position);
+
+			retVal = true;
+			break;
+
+		case oPORTALC36:
+			if ((_vm->_useWith[USED] == iSTETOSCOPIO) && (FlagUseWithStarted)) {
+				if (_characterGoToPosition != 8)
+					goToPosition(8);
+			} else if (_characterGoToPosition != _vm->_obj[curObj]._position)
+				goToPosition(_vm->_obj[curObj]._position);
+
+			retVal = true;
+			break;
+
+		case oSERBATOIOA2G:
+			if ((_vm->_useWith[USED] == iCANDELOTTO) && (_vm->_inventoryObj[iBOMBOLA]._flag & OBJFLAG_EXTRA) && (_vm->_inventoryObj[iLATTINA28]._flag & OBJFLAG_EXTRA) && (FlagUseWithStarted)) {
+				if (_characterGoToPosition != 6)
+					goToPosition(6);
+			} else if (_characterGoToPosition != _vm->_obj[curObj]._position)
+				goToPosition(_vm->_obj[curObj]._position);
+
+			retVal = true;
+			break;
+
+		case oRAGNO41:
+			if ((_vm->_useWith[USED] == iMARTELLO) && (FlagUseWithStarted)) {
+				if (_characterGoToPosition != 1)
+					goToPosition(1);
+			} else if (_characterGoToPosition != _vm->_obj[curObj]._position)
+				goToPosition(_vm->_obj[curObj]._position);
+
+			retVal = true;
+			break;
+
+		case oTAMBURO43:
+			if ((_vm->_useWith[USED] == iMAZZA) && (FlagUseWithStarted)) {
+				if (_characterGoToPosition != 5)
+					goToPosition(5);
+			} else if (_characterGoToPosition != _vm->_obj[curObj]._position)
+				goToPosition(_vm->_obj[curObj]._position);
+
+			retVal = true;
+			break;
+
+		case oLUCCHETTO53:
+			if ((_vm->_useWith[USED] == iLASER35) && (FlagUseWithStarted)) {
+				if (_characterGoToPosition != 2)
+					goToPosition(2);
+			} else if (_characterGoToPosition != _vm->_obj[curObj]._position)
+				goToPosition(_vm->_obj[curObj]._position);
+
+			retVal = true;
+			break;
+
+		case oPORTA58C55:
+			if ((_vm->_useWith[USED] == iCHIAVI) && (FlagUseWithStarted)) {
+				if (_characterGoToPosition != 2)
+					goToPosition(2);
+			} else if (_characterGoToPosition != _vm->_obj[curObj]._position)
+				goToPosition(_vm->_obj[curObj]._position);
+
+			retVal = true;
+			break;
+
+		default:
+			if (_vm->_obj[curObj]._position == -1) {
+				_characterGoToPosition = -1;
+				retVal = false;
+			} else {
+				if (_characterGoToPosition != _vm->_obj[curObj]._position)
+					goToPosition(_vm->_obj[curObj]._position);
+				retVal = true;
+			}
+			break;
+		}
+
+		if (_vm->_room[_vm->_curRoom]._flag & OBJFLAG_EXTRA) {
+			if ((curObj == oTUBO21) || (curObj == oCARTELLONE21) || (curObj == oESSE21) || (curObj == oRAMPINO21) || (curObj == oCATENA21) || (curObj == od21TO22) || (curObj == oDOORC21) || (curObj == oPORTAA21) || (curObj == oCUNICOLO21) || (curObj == od24TO23) || (curObj == od2ETO2C) || (curObj == od2GVALLA26)) {
+				_characterGoToPosition = -1;
+				retVal = true;
+			}
+		} else if ((curObj == od21TO23) || (curObj == od24TO26) || (curObj == oENTRANCE2E) || (curObj == oCARTELLO2B) || (curObj == oFRONTOFFICEC35) || (curObj == oFRONTOFFICEA35) || (curObj == oASCENSORE35) || (curObj == oGIORNALE35)) {
+			_characterGoToPosition = -1;
+			retVal = true;
+		}
+	}
+	return retVal;
+}
+
 bool LogicManager::operateInventory() {
 	bool printSentence = true;
 
-	switch (g_vm->_curInventory) {
+	switch (_vm->_curInventory) {
 	case iSAM:
-		if ((g_vm->_choice[166]._flag & OBJFLAG_DONE) && ((g_vm->_curRoom == r17) || (g_vm->_curRoom == r1B) || (g_vm->_curRoom == r1C) || (g_vm->_curRoom == r1D))) {
-			if (g_vm->_obj[oNUMERO17]._mode & OBJMODE_OBJSTATUS) {
-				if (!(g_vm->_choice[196]._flag & OBJFLAG_DONE)) {
-					if (g_vm->_curRoom == r17) {
-						if (g_vm->_choice[198]._flag & OBJFLAG_DONE) {
-							g_vm->_inventoryObj[iSAM]._action = 1787;
+		if ((_vm->_choice[166]._flag & OBJFLAG_DONE) && ((_vm->_curRoom == r17) || (_vm->_curRoom == r1B) || (_vm->_curRoom == r1C) || (_vm->_curRoom == r1D))) {
+			if (_vm->_obj[oNUMERO17]._mode & OBJMODE_OBJSTATUS) {
+				if (!(_vm->_choice[196]._flag & OBJFLAG_DONE)) {
+					if (_vm->_curRoom == r17) {
+						if (_vm->_choice[198]._flag & OBJFLAG_DONE) {
+							_vm->_inventoryObj[iSAM]._action = 1787;
 							printSentence = true;
 						} else {
-							g_vm->_choice[197]._flag |= DLGCHOICE_HIDE;
-							g_vm->_choice[198]._flag &= ~DLGCHOICE_HIDE;
+							_vm->_choice[197]._flag |= DLGCHOICE_HIDE;
+							_vm->_choice[198]._flag &= ~DLGCHOICE_HIDE;
 							PlayDialog(dSAM17);
 							printSentence = false;
-							g_vm->_obj[oFAX17]._mode |= OBJMODE_OBJSTATUS;
+							_vm->_obj[oFAX17]._mode |= OBJMODE_OBJSTATUS;
 						}
 					} else {
-						if (g_vm->_choice[199]._flag & OBJFLAG_DONE) {
-							g_vm->_inventoryObj[iSAM]._action = 1787;
+						if (_vm->_choice[199]._flag & OBJFLAG_DONE) {
+							_vm->_inventoryObj[iSAM]._action = 1787;
 							printSentence = true;
 						} else {
-							g_vm->_choice[197]._flag |= DLGCHOICE_HIDE;
-							g_vm->_choice[199]._flag &= ~DLGCHOICE_HIDE;
+							_vm->_choice[197]._flag |= DLGCHOICE_HIDE;
+							_vm->_choice[199]._flag &= ~DLGCHOICE_HIDE;
 							PlayDialog(dSAM17);
 							printSentence = false;
-							g_vm->_obj[oFAX17]._mode |= OBJMODE_OBJSTATUS;
+							_vm->_obj[oFAX17]._mode |= OBJMODE_OBJSTATUS;
 						}
 					}
 				} else {
-					if ((g_vm->_choice[198]._flag & OBJFLAG_DONE) || (g_vm->_choice[199]._flag & OBJFLAG_DONE)) {
-						g_vm->_inventoryObj[iSAM]._action = 1787;
+					if ((_vm->_choice[198]._flag & OBJFLAG_DONE) || (_vm->_choice[199]._flag & OBJFLAG_DONE)) {
+						_vm->_inventoryObj[iSAM]._action = 1787;
 						printSentence = true;
-					} else if (g_vm->_curRoom == r17) {
-						if (g_vm->_choice[201]._flag & OBJFLAG_DONE) {
-							g_vm->_inventoryObj[iSAM]._action = 1787;
+					} else if (_vm->_curRoom == r17) {
+						if (_vm->_choice[201]._flag & OBJFLAG_DONE) {
+							_vm->_inventoryObj[iSAM]._action = 1787;
 							printSentence = true;
 						} else {
-							g_vm->_choice[201]._flag &= ~DLGCHOICE_HIDE;
+							_vm->_choice[201]._flag &= ~DLGCHOICE_HIDE;
 							PlayDialog(dSAM17);
 							printSentence = false;
-							g_vm->_obj[oFAX17]._mode |= OBJMODE_OBJSTATUS;
+							_vm->_obj[oFAX17]._mode |= OBJMODE_OBJSTATUS;
 						}
 					} else {
-						if (g_vm->_choice[200]._flag & OBJFLAG_DONE) {
-							g_vm->_inventoryObj[iSAM]._action = 1787;
+						if (_vm->_choice[200]._flag & OBJFLAG_DONE) {
+							_vm->_inventoryObj[iSAM]._action = 1787;
 							printSentence = true;
 						} else {
-							g_vm->_choice[200]._flag &= ~DLGCHOICE_HIDE;
+							_vm->_choice[200]._flag &= ~DLGCHOICE_HIDE;
 							PlayDialog(dSAM17);
 							printSentence = false;
-							g_vm->_obj[oFAX17]._mode |= OBJMODE_OBJSTATUS;
+							_vm->_obj[oFAX17]._mode |= OBJMODE_OBJSTATUS;
 						}
 					}
 				}
-			} else if (g_vm->_choice[197]._flag & OBJFLAG_DONE) {
-				g_vm->_inventoryObj[iSAM]._action = 1786;
+			} else if (_vm->_choice[197]._flag & OBJFLAG_DONE) {
+				_vm->_inventoryObj[iSAM]._action = 1786;
 				printSentence = true;
 			} else {
 				PlayDialog(dSAM17);
@@ -3237,7 +3455,7 @@ bool LogicManager::operateInventory() {
 		break;
 
 	case iMAPPA17:
-		if (g_vm->_curRoom == r23A) {
+		if (_vm->_curRoom == r23A) {
 			CharacterSay(361);
 			printSentence = false;
 		} else
@@ -3245,16 +3463,16 @@ bool LogicManager::operateInventory() {
 		break;
 
 	case iLIBRO:
-		doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, r2BL, 0, 0, g_vm->_useWith[WITH]);
-		g_vm->_obj[oEXIT2BL]._goRoom = g_vm->_curRoom;
+		doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, r2BL, 0, 0, _vm->_useWith[WITH]);
+		_vm->_obj[oEXIT2BL]._goRoom = _vm->_curRoom;
 		actorStop();
 		nextStep();
 		printSentence = false;
 		break;
 
 	case iFOGLIO36:
-		doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, r36F, 0, 0, g_vm->_useWith[WITH]);
-		g_vm->_obj[oEXIT36F]._goRoom = g_vm->_curRoom;
+		doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, r36F, 0, 0, _vm->_useWith[WITH]);
+		_vm->_obj[oEXIT36F]._goRoom = _vm->_curRoom;
 		actorStop();
 		nextStep();
 		printSentence = false;
@@ -3262,33 +3480,33 @@ bool LogicManager::operateInventory() {
 
 	case iDISLOCATORE:
 		for (int a = oROOM41; a <= oROOM45B; a++)
-			g_vm->_obj[a]._mode &= ~OBJMODE_OBJSTATUS;
-		doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, r41D, 0, 0, g_vm->_useWith[WITH]);
-		g_vm->_obj[oEXIT41D]._goRoom = g_vm->_curRoom;
-		g_vm->_inventoryObj[iDISLOCATORE]._flag &= ~OBJFLAG_EXTRA;
+			_vm->_obj[a]._mode &= ~OBJMODE_OBJSTATUS;
+		doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, r41D, 0, 0, _vm->_useWith[WITH]);
+		_vm->_obj[oEXIT41D]._goRoom = _vm->_curRoom;
+		_vm->_inventoryObj[iDISLOCATORE]._flag &= ~OBJFLAG_EXTRA;
 		actorStop();
 		nextStep();
 		printSentence = false;
 		break;
 
 	case iCODICE:
-		g_vm->_obj[oEXIT58M]._goRoom = g_vm->_curRoom;
-		doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, r58M, 0, 0, g_vm->_useWith[WITH]);
+		_vm->_obj[oEXIT58M]._goRoom = _vm->_curRoom;
+		doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, r58M, 0, 0, _vm->_useWith[WITH]);
 		actorStop();
 		nextStep();
 		printSentence = false;
 		break;
 
 	case iTELECOMANDO44:
-		if ((_actor._px < 5057.6) && (g_vm->_obj[oPUPAZZO44]._mode & OBJMODE_OBJSTATUS) && (g_vm->_curRoom == r43)) {
-			doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, r46, 0, 7, g_vm->_useWith[WITH]);
+		if ((_actor._px < 5057.6) && (_vm->_obj[oPUPAZZO44]._mode & OBJMODE_OBJSTATUS) && (_vm->_curRoom == r43)) {
+			doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, r46, 0, 7, _vm->_useWith[WITH]);
 			printSentence = false;
 		}
 		break;
 
 	case iMAPPA50:
-		if ((g_vm->_curRoom >= r51) && (g_vm->_curRoom <= r5A))
-			g_vm->_inventoryObj[iMAPPA50]._action = 1725 + (g_vm->_curRoom - r51);
+		if ((_vm->_curRoom >= r51) && (_vm->_curRoom <= r5A))
+			_vm->_inventoryObj[iMAPPA50]._action = 1725 + (_vm->_curRoom - r51);
 		printSentence = true;
 		break;
 	default:
