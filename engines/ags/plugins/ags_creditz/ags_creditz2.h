@@ -24,17 +24,12 @@
 #define AGS_PLUGINS_AGSCREDITZ_AGSCREDITZ2_H
 
 #include "ags/plugins/ags_creditz/ags_creditz.h"
-#include "ags/plugins/ags_creditz/drawing.h"
 
 namespace AGS3 {
 namespace Plugins {
 namespace AGSCreditz {
 
-typedef int (*IntFunction)(int val1);
-
-class AGSCreditz2 : public AGSCreditz, public Drawing {
-private:
-	static IntFunction _playSound;
+class AGSCreditz2 : public AGSCreditz {
 private:
 	static const char *AGS_GetPluginName();
 	static void AGS_EngineStartup(IAGSEngine *engine);
@@ -59,20 +54,6 @@ private:
 	static void SetStaticImage(ScriptMethodParams &params);
 	static void GetCurrentStaticCredit(ScriptMethodParams &params);
 
-	static void makeMask(int sequence);
-	static void drawMask(int sequence, int getput);
-	static int drawCredit(int sequence, int credit);
-	static void doCredits();
-	static int countLines(const Common::String &text);
-	static Common::String extractParameter(Common::String &line, const Common::String &separator);
-	static void specialEffect(int sequence, int credit, const Common::String &text,
-		int font, int color, int32 x_pos);
-	static void drawStEffects(int sequence, int id, int style);
-	static void speeder(int sequence);
-private:
-	static void calculateSequenceHeight(int sequence);
-	static int VGACheck(int value);
-	static void draw();
 public:
 	AGSCreditz2();
 };

@@ -57,9 +57,6 @@ private:
 	static void SetStaticCreditImage(ScriptMethodParams &params);
 	static void IsStaticCreditsFinished(ScriptMethodParams &params);
 
-	static void draw();
-	static void drawStaticCredits();
-
 public:
 	AGSCreditz1();
 };

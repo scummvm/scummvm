@@ -115,7 +115,6 @@ void AGSCreditz1::ScrollCredits(ScriptMethodParams &params) {
 	PARAMS7(int, onoff, int, speed, int, fromY, int, toY, int, isautom, int, wait, int, resolution);
 
 	if (onoff == 1) {
-		_state->_creditsRunning = true;
 		_state->_seqSettings[0].speed = speed;
 		_state->_seqSettings[0].endwait = wait;
 		_state->_seqSettings[0].startpoint = fromY;
@@ -129,6 +128,8 @@ void AGSCreditz1::ScrollCredits(ScriptMethodParams &params) {
 		} else if (_state->_screenWidth == 640) {
 			_state->_resolutionFlag = (resolution != 1) ? 1 : 0;
 		}
+
+		startSequence(0);
 
 	} else if (onoff == 0) {
 		_state->_creditsRunning = false;
@@ -146,7 +147,7 @@ void AGSCreditz1::GetCredit(ScriptMethodParams &params) {
 }
 
 void AGSCreditz1::IsCreditScrollingFinished(ScriptMethodParams &params) {
-	params._result = true;
+	params._result = _state->_seqSettings[0].finished;
 }
 
 void AGSCreditz1::PauseScroll(ScriptMethodParams &params) {
@@ -293,10 +294,6 @@ void AGSCreditz1::SetStaticCreditImage(ScriptMethodParams &params) {
 
 void AGSCreditz1::IsStaticCreditsFinished(ScriptMethodParams &params) {
 	params._result = _state->_stSeqSettings[0].finished;
-}
-
-void AGSCreditz1::draw() {
-	// TODO
 }
 
 } // namespace AGSCreditz
