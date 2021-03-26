@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-03-26 08:59+0000\n"
-"PO-Revision-Date: 2021-03-23 04:24+0000\n"
+"PO-Revision-Date: 2021-03-27 00:24+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fi/>\n"
@@ -5338,166 +5338,128 @@ msgstr "Yleinen"
 
 #: engines/nancy/cheat.cpp:55
 msgid "Scene Data"
-msgstr ""
+msgstr "Näkymädata"
 
 #: engines/nancy/cheat.cpp:56
-#, fuzzy
-#| msgid "Start the debugger"
 msgid "Restart the Scene"
-msgstr "Käynnistä debuggeri"
+msgstr "Uudelleenkäynnistä näkymä"
 
 #: engines/nancy/cheat.cpp:58
 msgid "Scene Number"
-msgstr ""
+msgstr "Näkymän numero"
 
 #: engines/nancy/cheat.cpp:60
 msgid "Frame Number"
-msgstr ""
+msgstr "Framen numero"
 
 #. I18N: The Y position (a.k.a vertical scroll) of the background
 #: engines/nancy/cheat.cpp:64
 msgid "Background Top (Y)"
-msgstr ""
+msgstr "Taustan yläosaan (Y)"
 
 #: engines/nancy/cheat.cpp:66
 msgid "Hints Remaining"
-msgstr ""
+msgstr "Vihjeitä jäljellä"
 
 #: engines/nancy/cheat.cpp:67
 msgid "Easy"
-msgstr ""
+msgstr "Helppo"
 
 #: engines/nancy/cheat.cpp:69
 msgid "Medium"
-msgstr ""
+msgstr "Normaali"
 
 #: engines/nancy/cheat.cpp:71
 msgid "Hard"
-msgstr ""
+msgstr "Vaikea"
 
 #: engines/nancy/cheat.cpp:74 engines/nancy/cheat.cpp:85
-#, fuzzy
-#| msgid "Player 1: Left"
 msgid "Player Data"
-msgstr "Pelaaja 1: Vasemmalle"
+msgstr "Pelaajadata"
 
 #: engines/nancy/cheat.cpp:75
-#, fuzzy
-#| msgid "Playtime: "
 msgid "Player Time:"
-msgstr "Peliaika: "
+msgstr "Peliaika:"
 
 #: engines/nancy/cheat.cpp:77
 msgid "Days"
-msgstr ""
+msgstr "Päivää"
 
 #: engines/nancy/cheat.cpp:79 engines/nancy/cheat.cpp:89
 msgid "Hours"
-msgstr ""
+msgstr "Tuntia"
 
 #: engines/nancy/cheat.cpp:81 engines/nancy/cheat.cpp:91
-#, fuzzy
-#| msgid "Minus"
 msgid "Minutes"
-msgstr "Miinus"
+msgstr "Minuuttia"
 
 #: engines/nancy/cheat.cpp:83
 msgid "Player Difficulty Level"
-msgstr ""
+msgstr "Pelaajan vaikeusaste"
 
 #: engines/nancy/cheat.cpp:86
-#, fuzzy
-#| msgid "Time: "
 msgid "Timer On"
-msgstr "Aika: "
+msgstr "Ajastin päällä"
 
 #: engines/nancy/cheat.cpp:93
-#, fuzzy
-#| msgid "Second kid"
 msgid "Seconds"
-msgstr "Toinen lapsi"
+msgstr "Sekuntia"
 
 #: engines/nancy/cheat.cpp:162
-#, fuzzy
-#| msgid "Invalid path!"
 msgid "Invalid Scene ID!"
-msgstr "Polku ei kelpaa!"
+msgstr "Viallinen näkymän ID!"
 
 #: engines/nancy/input.cpp:171
-#, fuzzy
-#| msgid "Left Click"
 msgid "Left Click Interact"
-msgstr "Vasen klikkaus"
+msgstr "Interaktio vasemmalla hiirennapilla"
 
 #: engines/nancy/input.cpp:178
-#, fuzzy
-#| msgid "Right Click Once"
 msgid "Right Click Interact"
-msgstr "Klikkaa oikealla kerran"
+msgstr "Interaktio oikealla hiirennapilla"
 
 #: engines/nancy/input.cpp:209
-#, fuzzy
-#| msgid "Fast mode"
 msgid "Fast move modifier"
-msgstr "Nopea tila"
+msgstr "Nopea liike"
 
 #: engines/nancy/input.cpp:217
-#, fuzzy
-#| msgid "Toggle fast mode"
 msgid "Toggle fast conversation mode"
-msgstr "Nopea tila päälle / pois"
+msgstr "Nopea puhe päälle / pois"
 
 #: engines/nancy/input.cpp:222
-#, fuzzy
-#| msgid "Toggle fast mode"
 msgid "Toggle end conversation mode"
-msgstr "Nopea tila päälle / pois"
+msgstr "Puheenlopetustila päälle / pois"
 
 #: engines/nancy/input.cpp:227
-#, fuzzy
-#| msgid "Return to main menu"
 msgid "Go to main menu"
-msgstr "Palaa päävalikkoon"
+msgstr "Mene päävalikkoon"
 
 #: engines/nancy/input.cpp:232
-#, fuzzy
-#| msgid "Insert save/load game disk"
 msgid "Go to save/load menu"
-msgstr "Laita tallennus/lataus levyke asemaan"
+msgstr "Mene tallennus/lataus valikkoon"
 
 #: engines/nancy/input.cpp:237
-#, fuzzy
-#| msgid "No date saved"
 msgid "Reload last save"
-msgstr "Päiväystä ei ole tallennettu"
+msgstr "Lataa viimeisin tallennus"
 
 #: engines/nancy/input.cpp:242
-#, fuzzy
-#| msgid "Show options menu"
 msgid "Go to setup menu"
-msgstr "Näytä asetusvalikko"
+msgstr "Mene asetusvalikkoon"
 
 #: engines/nancy/input.cpp:247
-#, fuzzy
-#| msgid "Show game credits"
 msgid "Show credits"
-msgstr "Näytä pelin lopputekstit"
+msgstr "Näytä lopputekstit"
 
 #: engines/nancy/input.cpp:252
-#, fuzzy
-#| msgid "Swap screens"
 msgid "Go to map screen"
-msgstr "Vaihda näytöt päittäin"
+msgstr "Mene karttanäkymään"
 
 #: engines/nancy/input.cpp:258
-#, fuzzy
-#| msgid "Enable cheat mode"
 msgid "Open general cheat menu"
-msgstr "Salli huijaustila"
+msgstr "Avaa huijausvalikko"
 
 #: engines/nancy/input.cpp:263
 msgid "Open event flags cheat menu"
-msgstr ""
+msgstr "Avaa tapahtumavipujen huijausvalikko"
 
 #: engines/neverhood/detection.cpp:119
 msgid "Skip the Hall of Records storyboard scenes"
