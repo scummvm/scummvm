@@ -39,6 +39,8 @@ static const RendererTypeDescription rendererTypes[] = {
 	{ 0, 0, kRendererTypeDefault }
 };
 
+DECLARE_TRANSLATION_ADDITIONAL_CONTEXT("OpenGL with shaders", "lowres")
+
 const RendererTypeDescription *listRendererTypes() {
 	return rendererTypes;
 }
