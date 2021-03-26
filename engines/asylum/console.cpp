@@ -83,6 +83,7 @@ static const struct EncounterData {
 		{ 0, kObjectPreAlphaNut,  kObjectPreAlphaNut,  kActorMax},
 		{ 1, kObjectPreAlphaNut2, kObjectPreAlphaNut2, kActorMax},
 		{ 2, kObjectRocker,       kObjectRocker,       kActorMax},
+		{73, kObjectNone,         kObjectNone,         kActorMax},
 		{-1, kObjectNone, kObjectNone, kActorMax}
 	},
 	// InnocentAbandoned
@@ -741,7 +742,7 @@ bool Console::cmdShowEncounter(int32 argc, const char **argv) {
 
 		if (entry.opcode > 25)
 			break;
-		debugPrintf("%2d %s\n", i, entry.toString().c_str());
+		debugPrintf("%3d %s\n", i, entry.toString().c_str());
 	} while (++i);
 
 	return true;
