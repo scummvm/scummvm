@@ -149,22 +149,22 @@ bool Animations::setModelAnimation(int32 keyframeIdx, const AnimData &animData, 
 	int16 boneIdx = 1;
 	int16 tmpNumOfPoints = MIN<int16>(lastKeyFramePtr->boneframes.size() - 1, numOfBonesInAnim - 1);
 	do {
-		BoneFrame *modelStateBoneFrame = (BoneFrame *)Model::getBonesStateData(bodyPtr, boneIdx);
+		BoneFrame *boneState = Model::getBonesStateData(bodyPtr, boneIdx);
 		const BoneFrame &boneFrame = keyFrame->boneframes[boneIdx];
 		const BoneFrame &lastBoneFrame = lastKeyFramePtr->boneframes[boneIdx];
 
-		modelStateBoneFrame->type = boneFrame.type;
+		boneState->type = boneFrame.type;
 		switch (boneFrame.type) {
 		case 0: // allow global rotate
-			modelStateBoneFrame->x = applyAnimStepRotation(deltaTime, keyFrameLength, boneFrame.x, lastBoneFrame.x);
-			modelStateBoneFrame->y = applyAnimStepRotation(deltaTime, keyFrameLength, boneFrame.y, lastBoneFrame.y);
-			modelStateBoneFrame->z = applyAnimStepRotation(deltaTime, keyFrameLength, boneFrame.z, lastBoneFrame.z);
+			boneState->x = applyAnimStepRotation(deltaTime, keyFrameLength, boneFrame.x, lastBoneFrame.x);
+			boneState->y = applyAnimStepRotation(deltaTime, keyFrameLength, boneFrame.y, lastBoneFrame.y);
+			boneState->z = applyAnimStepRotation(deltaTime, keyFrameLength, boneFrame.z, lastBoneFrame.z);
 			break;
 		case 1: // disallow global rotate
 		case 2: // disallow global rotate + hide
-			modelStateBoneFrame->x = applyAnimStepTranslation(deltaTime, keyFrameLength, boneFrame.x, lastBoneFrame.x);
-			modelStateBoneFrame->y = applyAnimStepTranslation(deltaTime, keyFrameLength, boneFrame.y, lastBoneFrame.y);
-			modelStateBoneFrame->z = applyAnimStepTranslation(deltaTime, keyFrameLength, boneFrame.z, lastBoneFrame.z);
+			boneState->x = applyAnimStepTranslation(deltaTime, keyFrameLength, boneFrame.x, lastBoneFrame.x);
+			boneState->y = applyAnimStepTranslation(deltaTime, keyFrameLength, boneFrame.y, lastBoneFrame.y);
+			boneState->z = applyAnimStepTranslation(deltaTime, keyFrameLength, boneFrame.z, lastBoneFrame.z);
 			break;
 		default:
 			error("Unsupported animation rotation mode %d", boneFrame.type);
@@ -230,7 +230,8 @@ void Animations::stockAnimation(const uint8 *bodyPtr, AnimTimerDataStruct *animT
 	keyframe->boneframes.reserve(numBones);
 
 	for (int32 i = 0; i < numBones; ++i) {
-		keyframe->boneframes.push_back(*Model::getBonesStateData(bodyPtr, i));
+		const BoneFrame *boneState = Model::getBonesStateData(bodyPtr, i);
+		keyframe->boneframes.push_back(*boneState);
 	}
 }
 
