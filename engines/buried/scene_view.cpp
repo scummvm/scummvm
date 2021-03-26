@@ -1183,7 +1183,7 @@ bool SceneViewWindow::pushTransition(Graphics::Surface *curBackground, Graphics:
 		for (int i = 0; i < DIB_FRAME_HEIGHT; i += stripSize) {
 			curBackground->move(0, stripSize, curBackground->h);
 
-			for (int j = 0; j < stripSize; j++)
+			for (uint j = 0; j < stripSize; j++)
 				memcpy(curBackground->getBasePtr(0, j), newBackground->getBasePtr(0, curBackground->h - (i + stripSize) + j), newBackground->w * newBackground->format.bytesPerPixel);
 
 			invalidateWindow(false);
@@ -1216,7 +1216,7 @@ bool SceneViewWindow::pushTransition(Graphics::Surface *curBackground, Graphics:
 		for (int i = 0; i < DIB_FRAME_HEIGHT; i += stripSize) {
 			curBackground->move(0, -stripSize, curBackground->h);
 
-			for (int j = 0; j < stripSize; j++)
+			for (uint j = 0; j < stripSize; j++)
 				memcpy(curBackground->getBasePtr(0, curBackground->h - stripSize + j), newBackground->getBasePtr(0, i + j), newBackground->w * newBackground->format.bytesPerPixel);
 
 			invalidateWindow(false);

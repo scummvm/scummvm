@@ -290,7 +290,7 @@ void GraphicsManager::blit(const Graphics::Surface *surface, int x, int y) {
 void GraphicsManager::blit(const Graphics::Surface *surface, int x, int y, uint width, uint height) {
 	assert(surface->format.bytesPerPixel == _screen->format.bytesPerPixel);
 
-	for (int i = 0; i < height; i++)
+	for (uint i = 0; i < height; i++)
 		memcpy(_screen->getBasePtr(x, y + i), surface->getBasePtr(0, i), width * surface->format.bytesPerPixel);
 }
 
@@ -300,7 +300,7 @@ void GraphicsManager::blit(const Graphics::Surface *surface, const Common::Rect 
 	uint width = MIN(srcRect.width(), dstRect.width());
 	uint height = MIN(srcRect.height(), dstRect.height());
 
-	for (int i = 0; i < height; i++)
+	for (uint i = 0; i < height; i++)
 		memcpy(_screen->getBasePtr(dstRect.left, dstRect.top + i), surface->getBasePtr(srcRect.left, srcRect.top + i), width * surface->format.bytesPerPixel);
 }
 
@@ -548,7 +548,7 @@ int GraphicsManager::computeVPushOffset(int speed) {
 void GraphicsManager::crossBlit(Graphics::Surface *dst, int xDst, int yDst, uint w, uint h, const Graphics::Surface *src, int xSrc, int ySrc) {
 	assert(dst->format.bytesPerPixel == src->format.bytesPerPixel);
 
-	for (int y = 0; y < h; y++)
+	for (uint y = 0; y < h; y++)
 		memcpy(dst->getBasePtr(xDst, yDst + y), src->getBasePtr(xSrc, ySrc + y), w * src->format.bytesPerPixel);
 }
 
