@@ -250,7 +250,8 @@ void Encounter::initDrawStructs() {
 // Run
 //////////////////////////////////////////////////////////////////////////
 void Encounter::run(int32 encounterIndex, ObjectId objectId1, ObjectId objectId2, ActorIndex actorIndex) {
-	debugC(kDebugLevelEncounter, "[Encounter] Running Encounter %d", encounterIndex);
+	debugC(kDebugLevelEncounter, "[Encounter] Running Encounter %d: object1 = %d object2 = %d actor = %d",
+			encounterIndex, objectId1, objectId2, actorIndex);
 
 	if (!_speechResourceId) {
 		_item = &_items[0];
@@ -462,12 +463,9 @@ bool Encounter::update() {
 
 		if (doScript
 		 && !getSharedData()->getMatteBarHeight()
-		 && _isScriptRunning) {
-			if (getSpeech()->getTextData() && _objectId1)
-				setupSpeechTest(id);
-			else
-				runScript();
-		}
+		 && _isScriptRunning
+		 && !setupSpeechTest(id))
+			runScript();
 	}
 
 	// Redraw screen
@@ -829,12 +827,15 @@ bool Encounter::setupSpeechTest(ResourceId id) {
 
 	setupEntities(false);
 
+	if (id == kResourceNone)
+		id = getSpeech()->getTextResourceId();
+
 	char *text = getText()->get(id);
-	if (text[strlen(text) - 2] == 1) {
+	if (text[strlen(text) - 1] == 1) {
 		setupEntities(true);
 		getSpeech()->setTextResourceId(kResourceNone);
-		getSpeech()->setTextData(0);
-		getSpeech()->setTextDataPos(0);
+		getSpeech()->setTextData(NULL);
+		getSpeech()->setTextDataPos(NULL);
 
 		_data_455BCC = false;
 		_data_455B3C = 1;
@@ -897,10 +898,10 @@ bool Encounter::drawBackground() {
 	}
 
 	if (_shouldCloseBackground) {
-		--_background.frameIndex;
-
 		if (_background.frameIndex == 0)
 			exitEncounter();
+		else
+			--_background.frameIndex;
 
 		return false;
 	}
@@ -1129,7 +1130,7 @@ void Encounter::drawDialogOptions() {
 			                     _point.y + (int16)(16 * (counter / 3)));
 
 			if (getKeywordIndex() == keywordIndex)
-				getScreen()->fillRect(coords.x - 1, coords.y + 5, getText()->getWidth(MAKE_RESOURCE(kResourcePackText, 3681 + (keyword & KEYWORD_MASK))), 18, 0);
+				getScreen()->fillRect(coords.x - 1, coords.y + 5, getText()->getWidth(MAKE_RESOURCE(kResourcePackText, 3681 + (keyword & KEYWORD_MASK))) + 2, 18, 0);
 
 			getText()->setPosition(coords);
 			getText()->draw(MAKE_RESOURCE(kResourcePackText, 3681 + (keyword & KEYWORD_MASK)));
@@ -1416,8 +1417,8 @@ bool Encounter::updateScreen() {
 			updateDrawingStatus();
 			drawStructs();
 
-			if (_rectIndex == -1 && findRect() == -1)
-				updateFromRect(-1);
+			if (_rectIndex != -1 && findRect() == _rectIndex)
+				updateFromRect(_rectIndex);
 
 			return false;
 		}
@@ -1485,11 +1486,10 @@ void Encounter::runScript() {
 		default:
 			break;
 
-		case kOpcodeReturn:
+		case kOpcodeEncounterReturn:
 			_isScriptRunning = false;
 			done = true;
 			_value1 = 0;
-			getSpeech()->resetTextData();
 			break;
 
 		case kOpcodeSetScriptVariable:
@@ -1676,7 +1676,7 @@ void Encounter::runScript() {
 			break;
 
 		case kOpcodeSetCounterFromGameFlag:
-			_scriptData.counter = _vm->isGameFlagSet((GameFlag)getVariableInv(entry.param2)) ?  1 : 0;
+			_scriptData.counter = _vm->isGameFlagSet((GameFlag)getVariableInv(entry.param2)) ? 1 : 0;
 			break;
 		}
 
