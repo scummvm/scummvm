@@ -632,7 +632,8 @@ void AnimManager::refreshFullMotion() {
 		else
 			yfact = 2;
 
-		while (const Common::Rect *lastRect = _smkAnims[pos]->getNextDirtyRect()) {
+		Common::Rect dirtyRect = Common::Rect(0, 0, _smkAnims[pos]->getWidth(), _smkAnims[pos]->getHeight());
+		if (const Common::Rect *lastRect = &dirtyRect) {
 			for (int32 a = 0; a < lastRect->height(); a++) {
 				// if it's already copied
 				if ((_vm->_sdText.sign == nullptr) ||
@@ -719,7 +720,8 @@ void AnimManager::refreshSmkIcon(int StartIcon, int num) {
 		}
 	}
 
-	while (const Common::Rect *lastRect = _smkAnims[pos]->getNextDirtyRect()) {
+	Common::Rect dirtyRect = Common::Rect(0, 0, _smkAnims[pos]->getWidth(), _smkAnims[pos]->getHeight());
+	if (const Common::Rect *lastRect = &dirtyRect) {
 		for (a = 0; a < ICONDY - lastRect->top; a++) {
 			byte2word(_vm->_video2 + lastRect->left + stx + (lastRect->top + a + FIRSTLINE) * SCREENLEN,
 			          _smkBuffer[pos] + lastRect->left + (lastRect->top + a) * _smkAnims[pos]->getWidth(),
