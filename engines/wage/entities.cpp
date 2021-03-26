@@ -141,7 +141,7 @@ Scene::~Scene() {
 }
 
 void Scene::paint(Graphics::ManagedSurface *surface, int x, int y) {
-	Common::Rect r(x + 5, y + 5, _design->getBounds()->width() + x - 10, _design->getBounds()->height() + y - 10);
+	Common::Rect r(x, y, surface->w + x, surface->h + y);
 	surface->fillRect(r, kColorWhite);
 
 	_design->paint(surface, *((WageEngine *)g_engine)->_world->_patterns, x, y);
