@@ -407,7 +407,7 @@ ButtonWidget *addClearButton(GuiObject *boss, const Common::String &name, uint32
 		else
 			button = new PicButtonWidget(boss, x, y, w, h, _("Clear value"), cmd);
 		((PicButtonWidget *)button)->useThemeTransparency(true);
-		((PicButtonWidget *)button)->setGfx(g_gui.theme()->getImageSurface(ThemeEngine::kImageEraser));
+		((PicButtonWidget *)button)->setGfx(g_gui.theme()->getImageSurface(ThemeEngine::kImageEraser), kPicButtonStateEnabled, false);
 	} else
 #endif
 		if (!name.empty())
@@ -576,7 +576,7 @@ PicButtonWidget::~PicButtonWidget() {
 		_gfx[i].free();
 }
 
-void PicButtonWidget::setGfx(const Graphics::Surface *gfx, int statenum) {
+void PicButtonWidget::setGfx(const Graphics::Surface *gfx, int statenum, bool scale) {
 	_gfx[statenum].free();
 
 	if (!gfx || !gfx->getPixels())
@@ -587,7 +587,15 @@ void PicButtonWidget::setGfx(const Graphics::Surface *gfx, int statenum) {
 		return;
 	}
 
-	_gfx[statenum].copyFrom(*gfx);
+	float sf = g_gui.getScaleFactor();
+	if (scale && sf != 1.0) {
+		Graphics::Surface *tmp2 = gfx->scale(gfx->w * sf, gfx->h * sf, false);
+		_gfx[statenum].copyFrom(*tmp2);
+		tmp2->free();
+		delete tmp2;
+	} else {
+		_gfx[statenum].copyFrom(*gfx);
+	}
 }
 
 void PicButtonWidget::setGfx(int w, int h, int r, int g, int b, int statenum) {
