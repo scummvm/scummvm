@@ -241,15 +241,6 @@ private:
 		int16 radius = 0;
 	};
 
-#include "common/pack-start.h"
-	struct I16Vec3 {
-		int16 x = 0;
-		int16 y = 0;
-		int16 z = 0;
-	};
-#include "common/pack-end.h"
-	static_assert(sizeof(I16Vec3) == 6, "Unexpected pointTab size");
-
 	struct polyVertexHeader {
 		int16 shadeEntry = 0;
 		int16 dataOffset = 0;
