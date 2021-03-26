@@ -128,7 +128,7 @@ void doMouseTake(uint16 curObj) {
 }
 
 /*-------------------------------------------------------------------------*/
-/*                                  TALK           						   */
+/*                           doMouseTalk           						   */
 /*-------------------------------------------------------------------------*/
 void doMouseTalk(uint16 curObj) {
 	if (!curObj)
@@ -141,7 +141,7 @@ void doMouseTalk(uint16 curObj) {
 }
 
 /*-------------------------------------------------------------------------*/
-/*                                USE WITH           					   */
+/*                                doUseWith           					   */
 /*-------------------------------------------------------------------------*/
 void doUseWith() {
 	if (g_vm->_useWithInv[USED]) {
@@ -150,7 +150,7 @@ void doUseWith() {
 		else
 			g_vm->doInventoryUseWithScreen();
 	} else
-		doScrScrUseWith();
+		doScreenUseWithScreen();
 
 	g_vm->_useWith[USED] = 0;
 	g_vm->_useWith[WITH] = 0;
@@ -160,251 +160,42 @@ void doUseWith() {
 }
 
 /*-------------------------------------------------------------------------*/
-/*                          USE WITH / SCR - SCR         				   */
+/*                          doScreenUseWithScreen         				   */
 /*-------------------------------------------------------------------------*/
-void doScrScrUseWith() {
-	bool printsent = true;
-
-	if ((!g_vm->_useWith[USED]) || (!g_vm->_useWith[WITH]))
-		warning("doScrScrUseWith");
+void doScreenUseWithScreen() {
+	if (!g_vm->_useWith[USED] || !g_vm->_useWith[WITH])
+		warning("doScreenUseWithScreen - _useWith not set properly");
 
 //	stopSmkAnim(_inventoryObj[_useWith[USED]]._anim);
 	if (_characterInMovement)
 		return;
 
-	switch (g_vm->_useWith[USED]) {
-	case oRAMPINO21:
-		if (g_vm->_useWith[WITH] == oTUBO21) {
-			PlayDialog(dF211);
-			g_vm->setRoom(r21, true);
-			g_vm->_animMgr->_animTab[aBKG21]._flag &= ~SMKANIM_OFF1;
-			g_vm->_obj[oRAMPINO21]._mode &= ~OBJMODE_OBJSTATUS;
-			g_vm->_obj[oTUBO21]._mode &= ~OBJMODE_OBJSTATUS;
-			g_vm->_obj[oCATENAT21]._mode |= OBJMODE_OBJSTATUS;
-			printsent = false;
-		}
-		break;
+	bool printSentence = g_vm->_logicMgr->useScreenWithScreen();
 
-	case oCAVIE23:
-		if (g_vm->_useWith[WITH] == oCAMPO23) {
-			doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, r23B, 0, 0, g_vm->_useWith[WITH]);
-			printsent = false;
-		} else {
-			StartCharacterAction(hBOH, 0, 0, 0);
-			printsent = false;
-		}
-		break;
-
-	case oTUBOP33:
-		if (g_vm->_useWith[WITH] == oTUBOF33) {
-			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a337PRENDETUBO, 0, 0, g_vm->_useWith[WITH]);
-			g_vm->_obj[oTUBOF34]._examine = 1832;
-			g_vm->_obj[oTUBOFT34]._examine = 773;
-			//g_vm->_obj[oVALVOLAC34]._anim = a344APREVALVOLA;
-			printsent = false;
-		}
-		break;
-
-	case oTUBOT33:
-		if (((g_vm->_useWith[WITH] == oSAMA33) || (g_vm->_useWith[WITH] == oSERRATURA33 && g_vm->_obj[oSAMA33]._mode & OBJMODE_OBJSTATUS)) && (g_vm->_obj[oVALVOLA34]._mode & OBJMODE_OBJSTATUS)) {
-			PlayDialog(dF331);
-			setPosition(10);
-			g_vm->_obj[oBOTOLAC33]._mode &= ~OBJMODE_OBJSTATUS;
-			g_vm->_obj[oSERRATURA33]._mode &= ~OBJMODE_OBJSTATUS;
-			g_vm->_obj[oBOTOLAA33]._mode |= OBJMODE_OBJSTATUS;
-			g_vm->_obj[oBRUCIATURA33]._mode |= OBJMODE_OBJSTATUS;
-			g_vm->_obj[oSERRATURAF33]._mode |= OBJMODE_OBJSTATUS;
-			g_vm->_obj[oSAMD33]._mode |= OBJMODE_OBJSTATUS;
-			g_vm->_obj[oTUBOS33]._mode |= OBJMODE_OBJSTATUS;
-
-			g_vm->_obj[oBOTOLAC32]._mode &= ~OBJMODE_OBJSTATUS;
-			g_vm->_obj[oBOTOLAB32]._mode |= OBJMODE_OBJSTATUS;
-			g_vm->_obj[oBOTOLAA32]._mode |= OBJMODE_OBJSTATUS;
-			g_vm->_obj[oPULSANTI32]._anim = 0;
-
-			g_vm->_obj[oSIGARO31]._mode |= OBJMODE_OBJSTATUS;
-			g_vm->_obj[oPANNELLOM31]._anim = a314APREPANNELLO;
-			g_vm->_obj[oPANNELLOM31]._examine = 713;
-			g_vm->_obj[oPANNELLOM31]._action = 714;
-			g_vm->_obj[oPANNELLOM31]._flag |= OBJFLAG_ROOMOUT;
-			g_vm->_obj[oPANNELLON31]._mode |= OBJMODE_OBJSTATUS;
-
-			g_vm->_obj[oMANOMETROC34]._mode |= OBJMODE_OBJSTATUS;
-			g_vm->_obj[oMANOMETRO34]._mode &= ~OBJMODE_OBJSTATUS;
-			g_vm->_obj[oMANOMETROC34]._examine = 804;
-			g_vm->_obj[oVALVOLAC34]._anim = 0;
-			g_vm->_obj[oVALVOLA34]._anim = 0;
-			g_vm->_obj[oVALVOLAC34]._action = 1831;
-			g_vm->_obj[oVALVOLA34]._action = 1831;
-
-			g_vm->_obj[oTUBOF34]._examine = 1832;
-			g_vm->_obj[oTUBOFT34]._examine = 784;
-
-			printsent = false;
-		}
-		break;
-
-	case oFILOS31:
-		if (g_vm->_useWith[WITH] == oCONTATTOP31) {
-			g_vm->_obj[oFILOS31]._mode &= ~OBJMODE_OBJSTATUS;
-			g_vm->_obj[oCONTATTOP31]._mode &= ~OBJMODE_OBJSTATUS;
-			g_vm->_obj[oFILOTC31]._mode |= OBJMODE_OBJSTATUS;
-			CharacterSay(746);
-			RegenRoom();
-
-			printsent = false;
-		}
-		break;
-
-	}
-
-	if (printsent)
+	if (printSentence)
 		CharacterSay(g_vm->_obj[g_vm->_useWith[USED]]._action);
 }
 
 /*-------------------------------------------------------------------------*/
-/*                               EXAMINE INV          					   */
+/*                               doInvExamine          					   */
 /*-------------------------------------------------------------------------*/
 void doInvExamine() {
 	if (!g_vm->_curInventory)
-		warning("doInvExamine");
+		warning("doInvExamine - _curInventory not set properly");
 
 	if (g_vm->_inventoryObj[g_vm->_curInventory]._examine)
 		CharacterSay(g_vm->_inventoryObj[g_vm->_curInventory]._examine);
 }
 
 /*-------------------------------------------------------------------------*/
-/*                               OPERATE INV          					   */
+/*                               doInvOperate          					   */
 /*-------------------------------------------------------------------------*/
 void doInvOperate() {
-	bool printsent = true;
-
 	if (!g_vm->_curInventory)
-		warning("doInvOperate");
+		warning("doInvOperate - _curInventory not set properly");
 
-	switch (g_vm->_curInventory) {
-	case iSAM:
-		if ((g_vm->_choice[166]._flag & OBJFLAG_DONE) && ((g_vm->_curRoom == r17) || (g_vm->_curRoom == r1B) || (g_vm->_curRoom == r1C) || (g_vm->_curRoom == r1D))) {
-			if (g_vm->_obj[oNUMERO17]._mode & OBJMODE_OBJSTATUS) {
-				if (!(g_vm->_choice[196]._flag & OBJFLAG_DONE)) {
-					if (g_vm->_curRoom == r17) {
-						if (g_vm->_choice[198]._flag & OBJFLAG_DONE) {
-							g_vm->_inventoryObj[iSAM]._action = 1787;
-							printsent = true;
-						} else {
-							g_vm->_choice[197]._flag |= DLGCHOICE_HIDE;
-							g_vm->_choice[198]._flag &= ~DLGCHOICE_HIDE;
-							PlayDialog(dSAM17);
-							printsent = false;
-							g_vm->_obj[oFAX17]._mode |= OBJMODE_OBJSTATUS;
-						}
-					} else {
-						if (g_vm->_choice[199]._flag & OBJFLAG_DONE) {
-							g_vm->_inventoryObj[iSAM]._action = 1787;
-							printsent = true;
-						} else {
-							g_vm->_choice[197]._flag |= DLGCHOICE_HIDE;
-							g_vm->_choice[199]._flag &= ~DLGCHOICE_HIDE;
-							PlayDialog(dSAM17);
-							printsent = false;
-							g_vm->_obj[oFAX17]._mode |= OBJMODE_OBJSTATUS;
-						}
-					}
-				} else {
-					if ((g_vm->_choice[198]._flag & OBJFLAG_DONE) || (g_vm->_choice[199]._flag & OBJFLAG_DONE)) {
-						g_vm->_inventoryObj[iSAM]._action = 1787;
-						printsent = true;
-					} else if (g_vm->_curRoom == r17) {
-						if (g_vm->_choice[201]._flag & OBJFLAG_DONE) {
-							g_vm->_inventoryObj[iSAM]._action = 1787;
-							printsent = true;
-						} else {
-							g_vm->_choice[201]._flag &= ~DLGCHOICE_HIDE;
-							PlayDialog(dSAM17);
-							printsent = false;
-							g_vm->_obj[oFAX17]._mode |= OBJMODE_OBJSTATUS;
-						}
-					} else {
-						if (g_vm->_choice[200]._flag & OBJFLAG_DONE) {
-							g_vm->_inventoryObj[iSAM]._action = 1787;
-							printsent = true;
-						} else {
-							g_vm->_choice[200]._flag &= ~DLGCHOICE_HIDE;
-							PlayDialog(dSAM17);
-							printsent = false;
-							g_vm->_obj[oFAX17]._mode |= OBJMODE_OBJSTATUS;
-						}
-					}
-				}
-			} else if (g_vm->_choice[197]._flag & OBJFLAG_DONE) {
-				g_vm->_inventoryObj[iSAM]._action = 1786;
-				printsent = true;
-			} else {
-				PlayDialog(dSAM17);
-				printsent = false;
-			}
-		}
-		break;
-
-	case iMAPPA17:
-		if (g_vm->_curRoom == r23A) {
-			CharacterSay(361);
-			printsent = false;
-		} else
-			printsent = true;
-		break;
-
-	case iLIBRO:
-		doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, r2BL, 0, 0, g_vm->_useWith[WITH]);
-		g_vm->_obj[oEXIT2BL]._goRoom = g_vm->_curRoom;
-		actorStop();
-		nextStep();
-		printsent = false;
-		break;
-
-	case iFOGLIO36:
-		doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, r36F, 0, 0, g_vm->_useWith[WITH]);
-		g_vm->_obj[oEXIT36F]._goRoom = g_vm->_curRoom;
-		actorStop();
-		nextStep();
-		printsent = false;
-		break;
-
-	case iDISLOCATORE:
-		for (int a = oROOM41; a <= oROOM45B; a++)
-			g_vm->_obj[a]._mode &= ~OBJMODE_OBJSTATUS;
-		doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, r41D, 0, 0, g_vm->_useWith[WITH]);
-		g_vm->_obj[oEXIT41D]._goRoom = g_vm->_curRoom;
-		g_vm->_inventoryObj[iDISLOCATORE]._flag &= ~OBJFLAG_EXTRA;
-		actorStop();
-		nextStep();
-		printsent = false;
-		break;
-
-	case iCODICE:
-		g_vm->_obj[oEXIT58M]._goRoom = g_vm->_curRoom;
-		doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, r58M, 0, 0, g_vm->_useWith[WITH]);
-		actorStop();
-		nextStep();
-		printsent = false;
-		break;
-
-	case iTELECOMANDO44:
-		if ((_actor._px < 5057.6) && (g_vm->_obj[oPUPAZZO44]._mode & OBJMODE_OBJSTATUS) && (g_vm->_curRoom == r43)) {
-			doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, r46, 0, 7, g_vm->_useWith[WITH]);
-			printsent = false;
-		}
-		break;
-
-	case iMAPPA50:
-		if ((g_vm->_curRoom >= r51) && (g_vm->_curRoom <= r5A))
-			g_vm->_inventoryObj[iMAPPA50]._action = 1725 + (g_vm->_curRoom - r51);
-		printsent = true;
-		break;
-
-	}
-
-	if (g_vm->_inventoryObj[g_vm->_curInventory]._action && printsent)
+	bool printSentence = g_vm->_logicMgr->operateInventory();
+	if (g_vm->_inventoryObj[g_vm->_curInventory]._action && printSentence)
 		CharacterSay(g_vm->_inventoryObj[g_vm->_curInventory]._action);
 }
 

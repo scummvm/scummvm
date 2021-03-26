@@ -147,7 +147,7 @@ void doMouseOperate(uint16 curObj);
 void doMouseTake(uint16 curObj);
 void doMouseTalk(uint16 curObj);
 void doUseWith();
-void doScrScrUseWith();
+void doScreenUseWithScreen();
 void doInvExamine();
 void doInvOperate();
 void doDoing();

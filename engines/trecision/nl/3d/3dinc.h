@@ -19,6 +19,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  */
+#ifndef TRECISION_3DINC_H
+#define TRECISION_3DINC_H
 
 #include "trecision/nl/3d/3drend.h"
 
@@ -170,3 +172,4 @@ extern bool   _shadowSplit;
 
 #include "trecision/nl/3d/3dproto.h"
 
+#endif

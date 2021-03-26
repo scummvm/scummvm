@@ -27,6 +27,7 @@
 #include "trecision/nl/define.h"
 #include "trecision/nl/message.h"
 #include "trecision/video.h"
+#include "trecision/nl/3d/3dinc.h"
 
 namespace Trecision {
 
@@ -1782,6 +1783,99 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 	}
 }
 
+bool LogicManager::useScreenWithScreen() {
+	bool printSentence = true;
+
+	switch (_vm->_useWith[USED]) {
+	case oRAMPINO21:
+		if (_vm->_useWith[WITH] == oTUBO21) {
+			PlayDialog(dF211);
+			_vm->setRoom(r21, true);
+			_vm->_animMgr->_animTab[aBKG21]._flag &= ~SMKANIM_OFF1;
+			_vm->_obj[oRAMPINO21]._mode &= ~OBJMODE_OBJSTATUS;
+			_vm->_obj[oTUBO21]._mode &= ~OBJMODE_OBJSTATUS;
+			_vm->_obj[oCATENAT21]._mode |= OBJMODE_OBJSTATUS;
+			printSentence = false;
+		}
+		break;
+
+	case oCAVIE23:
+		if (_vm->_useWith[WITH] == oCAMPO23) {
+			doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, r23B, 0, 0, _vm->_useWith[WITH]);
+			printSentence = false;
+		} else {
+			StartCharacterAction(hBOH, 0, 0, 0);
+			printSentence = false;
+		}
+		break;
+
+	case oTUBOP33:
+		if (_vm->_useWith[WITH] == oTUBOF33) {
+			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a337PRENDETUBO, 0, 0, _vm->_useWith[WITH]);
+			_vm->_obj[oTUBOF34]._examine = 1832;
+			_vm->_obj[oTUBOFT34]._examine = 773;
+			//_vm->_obj[oVALVOLAC34]._anim = a344APREVALVOLA;
+			printSentence = false;
+		}
+		break;
+
+	case oTUBOT33:
+		if (((_vm->_useWith[WITH] == oSAMA33) || (_vm->_useWith[WITH] == oSERRATURA33 && _vm->_obj[oSAMA33]._mode & OBJMODE_OBJSTATUS)) && (_vm->_obj[oVALVOLA34]._mode & OBJMODE_OBJSTATUS)) {
+			PlayDialog(dF331);
+			setPosition(10);
+			_vm->_obj[oBOTOLAC33]._mode &= ~OBJMODE_OBJSTATUS;
+			_vm->_obj[oSERRATURA33]._mode &= ~OBJMODE_OBJSTATUS;
+			_vm->_obj[oBOTOLAA33]._mode |= OBJMODE_OBJSTATUS;
+			_vm->_obj[oBRUCIATURA33]._mode |= OBJMODE_OBJSTATUS;
+			_vm->_obj[oSERRATURAF33]._mode |= OBJMODE_OBJSTATUS;
+			_vm->_obj[oSAMD33]._mode |= OBJMODE_OBJSTATUS;
+			_vm->_obj[oTUBOS33]._mode |= OBJMODE_OBJSTATUS;
+
+			_vm->_obj[oBOTOLAC32]._mode &= ~OBJMODE_OBJSTATUS;
+			_vm->_obj[oBOTOLAB32]._mode |= OBJMODE_OBJSTATUS;
+			_vm->_obj[oBOTOLAA32]._mode |= OBJMODE_OBJSTATUS;
+			_vm->_obj[oPULSANTI32]._anim = 0;
+
+			_vm->_obj[oSIGARO31]._mode |= OBJMODE_OBJSTATUS;
+			_vm->_obj[oPANNELLOM31]._anim = a314APREPANNELLO;
+			_vm->_obj[oPANNELLOM31]._examine = 713;
+			_vm->_obj[oPANNELLOM31]._action = 714;
+			_vm->_obj[oPANNELLOM31]._flag |= OBJFLAG_ROOMOUT;
+			_vm->_obj[oPANNELLON31]._mode |= OBJMODE_OBJSTATUS;
+
+			_vm->_obj[oMANOMETROC34]._mode |= OBJMODE_OBJSTATUS;
+			_vm->_obj[oMANOMETRO34]._mode &= ~OBJMODE_OBJSTATUS;
+			_vm->_obj[oMANOMETROC34]._examine = 804;
+			_vm->_obj[oVALVOLAC34]._anim = 0;
+			_vm->_obj[oVALVOLA34]._anim = 0;
+			_vm->_obj[oVALVOLAC34]._action = 1831;
+			_vm->_obj[oVALVOLA34]._action = 1831;
+
+			_vm->_obj[oTUBOF34]._examine = 1832;
+			_vm->_obj[oTUBOFT34]._examine = 784;
+
+			printSentence = false;
+		}
+		break;
+
+	case oFILOS31:
+		if (_vm->_useWith[WITH] == oCONTATTOP31) {
+			_vm->_obj[oFILOS31]._mode &= ~OBJMODE_OBJSTATUS;
+			_vm->_obj[oCONTATTOP31]._mode &= ~OBJMODE_OBJSTATUS;
+			_vm->_obj[oFILOTC31]._mode |= OBJMODE_OBJSTATUS;
+			CharacterSay(746);
+			RegenRoom();
+
+			printSentence = false;
+		}
+		break;
+	default:
+		break;
+	}
+
+	return printSentence;
+}
+
 void LogicManager::roomOut(uint16 curObj, uint16 *action, uint16 *pos) {
 	if (curObj == oSCALA32 && _vm->_obj[oBOTOLAC32]._mode & OBJMODE_OBJSTATUS) {
 		CharacterSay(_vm->_obj[curObj]._action);
@@ -2983,26 +3077,26 @@ bool LogicManager::mouseTake(uint16 curObj) {
 		retVal = false;
 		break;
 	case oNASTRO15:
-		g_vm->_obj[oNASTRO15]._flag |= OBJFLAG_EXTRA;
+		_vm->_obj[oNASTRO15]._flag |= OBJFLAG_EXTRA;
 		retVal = false;
 		break;
 	case oMONETA13:
-		if (!(g_vm->_obj[oLATTINA13]._mode & OBJMODE_OBJSTATUS))
-			g_vm->_obj[curObj]._anim = a133CPRENDEMONETA;
+		if (!(_vm->_obj[oLATTINA13]._mode & OBJMODE_OBJSTATUS))
+			_vm->_obj[curObj]._anim = a133CPRENDEMONETA;
 		retVal = true;
 		break;
 	case oFOGLIETTO14:
-		g_vm->_obj[oFOGLIETTO14]._flag |= OBJFLAG_EXTRA;
-		g_vm->_obj[oMAPPA16]._examine = 152;
+		_vm->_obj[oFOGLIETTO14]._flag |= OBJFLAG_EXTRA;
+		_vm->_obj[oMAPPA16]._examine = 152;
 		retVal = false;
 		break;
 	case oPOSTERC22:
-		g_vm->_obj[oARMADIETTOCC22]._anim = a221;
-		g_vm->_obj[oARMADIETTOCA22]._anim = a222;
+		_vm->_obj[oARMADIETTOCC22]._anim = a221;
+		_vm->_obj[oARMADIETTOCA22]._anim = a222;
 		retVal = true;
 		break;
 	case oKEY22:
-		g_vm->_obj[oARMADIETTORA22]._examine = 2013;
+		_vm->_obj[oARMADIETTORA22]._examine = 2013;
 		retVal = true;
 		break;
 	default:
@@ -3018,54 +3112,54 @@ bool LogicManager::mouseTalk(uint16 curObj) {
 
 	switch (curObj) {
 	case oTICKETOFFICE16:
-		if ((g_vm->_obj[oFINGERPADP16]._flag & OBJFLAG_ROOMOUT) && (g_vm->_choice[50]._flag & OBJFLAG_DONE)) {
+		if ((_vm->_obj[oFINGERPADP16]._flag & OBJFLAG_ROOMOUT) && (_vm->_choice[50]._flag & OBJFLAG_DONE)) {
 			CharacterSay(147);
 			retVal = false;
 			break;
 		}
 
-		if ((g_vm->_choice[49]._flag & DLGCHOICE_HIDE) && (g_vm->_choice[50]._flag & DLGCHOICE_HIDE)) {
-			if (g_vm->_obj[oMAPPA16]._flag & OBJFLAG_EXTRA) {
-				g_vm->_choice[46]._flag &= ~DLGCHOICE_HIDE;
-				g_vm->_choice[48]._flag &= ~DLGCHOICE_HIDE;
-				g_vm->_obj[oTICKETOFFICE16]._flag |= OBJFLAG_EXTRA;
+		if ((_vm->_choice[49]._flag & DLGCHOICE_HIDE) && (_vm->_choice[50]._flag & DLGCHOICE_HIDE)) {
+			if (_vm->_obj[oMAPPA16]._flag & OBJFLAG_EXTRA) {
+				_vm->_choice[46]._flag &= ~DLGCHOICE_HIDE;
+				_vm->_choice[48]._flag &= ~DLGCHOICE_HIDE;
+				_vm->_obj[oTICKETOFFICE16]._flag |= OBJFLAG_EXTRA;
 			}
 			else {
-				if (g_vm->_choice[46]._flag & OBJFLAG_DONE) {
-					CharacterSay(g_vm->_obj[oTICKETOFFICE16]._action);
+				if (_vm->_choice[46]._flag & OBJFLAG_DONE) {
+					CharacterSay(_vm->_obj[oTICKETOFFICE16]._action);
 					retVal = false;
 					break;
 				}
 
-				g_vm->_choice[46]._flag &= ~DLGCHOICE_HIDE;
-				g_vm->_choice[47]._flag &= ~DLGCHOICE_HIDE;
+				_vm->_choice[46]._flag &= ~DLGCHOICE_HIDE;
+				_vm->_choice[47]._flag &= ~DLGCHOICE_HIDE;
 			}
 		}
 		break;
 
 	case ocGUARD18:
-		g_vm->_obj[ocGUARD18]._flag &= ~OBJFLAG_PERSON;
-		g_vm->_obj[ocGUARD18]._action = 227;
-		g_vm->_obj[oPORTAC18]._action = 220;
+		_vm->_obj[ocGUARD18]._flag &= ~OBJFLAG_PERSON;
+		_vm->_obj[ocGUARD18]._action = 227;
+		_vm->_obj[oPORTAC18]._action = 220;
 		break;
 
 	case ocNEGOZIANTE1A:
 		for (int c = _dialog[dNEGOZIANTE1A]._firstChoice; c < (_dialog[dNEGOZIANTE1A]._firstChoice + _dialog[dNEGOZIANTE1A]._choiceNumb); c++) {
-			if (!(g_vm->_choice[c]._flag & DLGCHOICE_HIDE)) {
-				PlayDialog(g_vm->_obj[curObj]._goRoom);
+			if (!(_vm->_choice[c]._flag & DLGCHOICE_HIDE)) {
+				PlayDialog(_vm->_obj[curObj]._goRoom);
 				retVal = false;
 				return retVal;
 			}
 		}
 
-		if (g_vm->_obj[ocNEGOZIANTE1A]._action) {
-			CharacterSay(g_vm->_obj[ocNEGOZIANTE1A]._action);
+		if (_vm->_obj[ocNEGOZIANTE1A]._action) {
+			CharacterSay(_vm->_obj[ocNEGOZIANTE1A]._action);
 			retVal = false;
 		}
 		break;
 
 	case ocEVA19:
-		g_vm->_inventoryObj[iSAM]._action = 1415;
+		_vm->_inventoryObj[iSAM]._action = 1415;
 		break;
 
 	default:
@@ -3073,6 +3167,135 @@ bool LogicManager::mouseTalk(uint16 curObj) {
 	}
 
 	return retVal;
+}
+
+bool LogicManager::operateInventory() {
+	bool printSentence = true;
+
+	switch (g_vm->_curInventory) {
+	case iSAM:
+		if ((g_vm->_choice[166]._flag & OBJFLAG_DONE) && ((g_vm->_curRoom == r17) || (g_vm->_curRoom == r1B) || (g_vm->_curRoom == r1C) || (g_vm->_curRoom == r1D))) {
+			if (g_vm->_obj[oNUMERO17]._mode & OBJMODE_OBJSTATUS) {
+				if (!(g_vm->_choice[196]._flag & OBJFLAG_DONE)) {
+					if (g_vm->_curRoom == r17) {
+						if (g_vm->_choice[198]._flag & OBJFLAG_DONE) {
+							g_vm->_inventoryObj[iSAM]._action = 1787;
+							printSentence = true;
+						} else {
+							g_vm->_choice[197]._flag |= DLGCHOICE_HIDE;
+							g_vm->_choice[198]._flag &= ~DLGCHOICE_HIDE;
+							PlayDialog(dSAM17);
+							printSentence = false;
+							g_vm->_obj[oFAX17]._mode |= OBJMODE_OBJSTATUS;
+						}
+					} else {
+						if (g_vm->_choice[199]._flag & OBJFLAG_DONE) {
+							g_vm->_inventoryObj[iSAM]._action = 1787;
+							printSentence = true;
+						} else {
+							g_vm->_choice[197]._flag |= DLGCHOICE_HIDE;
+							g_vm->_choice[199]._flag &= ~DLGCHOICE_HIDE;
+							PlayDialog(dSAM17);
+							printSentence = false;
+							g_vm->_obj[oFAX17]._mode |= OBJMODE_OBJSTATUS;
+						}
+					}
+				} else {
+					if ((g_vm->_choice[198]._flag & OBJFLAG_DONE) || (g_vm->_choice[199]._flag & OBJFLAG_DONE)) {
+						g_vm->_inventoryObj[iSAM]._action = 1787;
+						printSentence = true;
+					} else if (g_vm->_curRoom == r17) {
+						if (g_vm->_choice[201]._flag & OBJFLAG_DONE) {
+							g_vm->_inventoryObj[iSAM]._action = 1787;
+							printSentence = true;
+						} else {
+							g_vm->_choice[201]._flag &= ~DLGCHOICE_HIDE;
+							PlayDialog(dSAM17);
+							printSentence = false;
+							g_vm->_obj[oFAX17]._mode |= OBJMODE_OBJSTATUS;
+						}
+					} else {
+						if (g_vm->_choice[200]._flag & OBJFLAG_DONE) {
+							g_vm->_inventoryObj[iSAM]._action = 1787;
+							printSentence = true;
+						} else {
+							g_vm->_choice[200]._flag &= ~DLGCHOICE_HIDE;
+							PlayDialog(dSAM17);
+							printSentence = false;
+							g_vm->_obj[oFAX17]._mode |= OBJMODE_OBJSTATUS;
+						}
+					}
+				}
+			} else if (g_vm->_choice[197]._flag & OBJFLAG_DONE) {
+				g_vm->_inventoryObj[iSAM]._action = 1786;
+				printSentence = true;
+			} else {
+				PlayDialog(dSAM17);
+				printSentence = false;
+			}
+		}
+		break;
+
+	case iMAPPA17:
+		if (g_vm->_curRoom == r23A) {
+			CharacterSay(361);
+			printSentence = false;
+		} else
+			printSentence = true;
+		break;
+
+	case iLIBRO:
+		doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, r2BL, 0, 0, g_vm->_useWith[WITH]);
+		g_vm->_obj[oEXIT2BL]._goRoom = g_vm->_curRoom;
+		actorStop();
+		nextStep();
+		printSentence = false;
+		break;
+
+	case iFOGLIO36:
+		doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, r36F, 0, 0, g_vm->_useWith[WITH]);
+		g_vm->_obj[oEXIT36F]._goRoom = g_vm->_curRoom;
+		actorStop();
+		nextStep();
+		printSentence = false;
+		break;
+
+	case iDISLOCATORE:
+		for (int a = oROOM41; a <= oROOM45B; a++)
+			g_vm->_obj[a]._mode &= ~OBJMODE_OBJSTATUS;
+		doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, r41D, 0, 0, g_vm->_useWith[WITH]);
+		g_vm->_obj[oEXIT41D]._goRoom = g_vm->_curRoom;
+		g_vm->_inventoryObj[iDISLOCATORE]._flag &= ~OBJFLAG_EXTRA;
+		actorStop();
+		nextStep();
+		printSentence = false;
+		break;
+
+	case iCODICE:
+		g_vm->_obj[oEXIT58M]._goRoom = g_vm->_curRoom;
+		doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, r58M, 0, 0, g_vm->_useWith[WITH]);
+		actorStop();
+		nextStep();
+		printSentence = false;
+		break;
+
+	case iTELECOMANDO44:
+		if ((_actor._px < 5057.6) && (g_vm->_obj[oPUPAZZO44]._mode & OBJMODE_OBJSTATUS) && (g_vm->_curRoom == r43)) {
+			doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, r46, 0, 7, g_vm->_useWith[WITH]);
+			printSentence = false;
+		}
+		break;
+
+	case iMAPPA50:
+		if ((g_vm->_curRoom >= r51) && (g_vm->_curRoom <= r5A))
+			g_vm->_inventoryObj[iMAPPA50]._action = 1725 + (g_vm->_curRoom - r51);
+		printSentence = true;
+		break;
+	default:
+		break;
+	}
+
+	return printSentence;
 }
 
 } // End of namespace Trecision

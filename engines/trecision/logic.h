@@ -56,11 +56,13 @@ public:
 	void setRoom(uint16 r, bool b);
 	void useInventoryWithInventory(bool *updateInv, bool *printSentence);
 	void useInventoryWithScreen(bool *updateInv, bool *printSentence);
+	bool useScreenWithScreen();
 	void roomOut(uint16 curObj, uint16 *action, uint16 *pos);
 	bool mouseExamine(uint16 curObj);
 	bool mouseOperate(uint16 curObj);
 	bool mouseTake(uint16 curObj);
 	bool mouseTalk(uint16 curObj);
+	bool operateInventory();
 };
 ; // end of class
 
