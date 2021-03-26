@@ -29,6 +29,15 @@
 
 namespace GUI {
 
+#define SCALEVALUE(val) (val > 0 ? val * g_gui.getScaleFactor() : val)
+
+GuiObject::GuiObject(int x, int y, int w, int h) : _useRTL(true), _firstWidget(nullptr) {
+	_x = SCALEVALUE(x);
+	_y = SCALEVALUE(y);
+	_w = SCALEVALUE(w);
+	_h = SCALEVALUE(h);
+}
+
 GuiObject::GuiObject(const Common::String &name)
 	: _x(-1000), _y(-1000), _w(0), _h(0), _useRTL(true), _name(name), _firstWidget(nullptr) {
 }
@@ -36,6 +45,13 @@ GuiObject::GuiObject(const Common::String &name)
 GuiObject::~GuiObject() {
 	delete _firstWidget;
 	_firstWidget = nullptr;
+}
+
+void GuiObject::resize(int x, int y, int w, int h) {
+	_x = SCALEVALUE(x);
+	_y = SCALEVALUE(y);
+	_w = SCALEVALUE(w);
+	_h = SCALEVALUE(h);
 }
 
 void GuiObject::reflowLayout() {

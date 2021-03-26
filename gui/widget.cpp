@@ -61,13 +61,6 @@ Widget::~Widget() {
 	_next = nullptr;
 }
 
-void Widget::resize(int x, int y, int w, int h) {
-	_x = x;
-	_y = y;
-	_w = w;
-	_h = h;
-}
-
 void Widget::setFlags(int flags) {
 	updateState(_flags, _flags | flags);
 	_flags |= flags;

@@ -120,7 +120,6 @@ public:
 	~Widget() override;
 
 	void init();
-	void resize(int x, int y, int w, int h);
 
 	void setNext(Widget *w) { _next = w; }
 	Widget *next() { return _next; }
