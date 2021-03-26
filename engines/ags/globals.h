@@ -221,6 +221,15 @@ public:
 	/**@}*/
 
 	/**
+	 * \defgroup agsplugin globals
+	 * @{
+	 */
+
+	AGS::Shared::Bitmap *_glVirtualScreenWrap;
+
+	/**@}*/
+
+	/**
 	 * \defgroup agsstaticobject globals
 	 * @{
 	 */

@@ -100,6 +100,9 @@ Globals *g_globals;
 Globals::Globals() {
 	g_globals = this;
 
+	// agsplugin.cpp globals
+	_glVirtualScreenWrap = new AGS::Shared::Bitmap();
+
 	// agsstaticobject.cpp globals
 	_GlobalStaticManager = new AGSStaticObject();
 	_GameStaticManager = new StaticGame();
@@ -330,6 +333,9 @@ Globals::Globals() {
 
 Globals::~Globals() {
 	g_globals = nullptr;
+
+	// agsplugin.cpp globals
+	delete _glVirtualScreenWrap;
 
 	// agsstaticobject.cpp globals
 	delete _GlobalStaticManager;
