@@ -3,19 +3,19 @@
 # This file is distributed under the same license as the ScummVM package.
 # Saulo Benigno <saulobenigno@gmail.com>, 2010.
 #
-#: engines/nancy/cheat.cpp:59 engines/nancy/cheat.cpp:60
-#: engines/nancy/cheat.cpp:62 engines/nancy/cheat.cpp:64
-#: engines/nancy/cheat.cpp:71 engines/nancy/cheat.cpp:73
-#: engines/nancy/cheat.cpp:75 engines/nancy/cheat.cpp:79
-#: engines/nancy/cheat.cpp:81 engines/nancy/cheat.cpp:83
-#: engines/nancy/cheat.cpp:85 engines/nancy/cheat.cpp:89
-#: engines/nancy/cheat.cpp:91 engines/nancy/cheat.cpp:93
-#: engines/nancy/cheat.cpp:95
+#: engines/nancy/cheat.cpp:57 engines/nancy/cheat.cpp:58
+#: engines/nancy/cheat.cpp:60 engines/nancy/cheat.cpp:62
+#: engines/nancy/cheat.cpp:69 engines/nancy/cheat.cpp:71
+#: engines/nancy/cheat.cpp:73 engines/nancy/cheat.cpp:77
+#: engines/nancy/cheat.cpp:79 engines/nancy/cheat.cpp:81
+#: engines/nancy/cheat.cpp:83 engines/nancy/cheat.cpp:87
+#: engines/nancy/cheat.cpp:89 engines/nancy/cheat.cpp:91
+#: engines/nancy/cheat.cpp:93
 msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-03-25 19:53+0000\n"
+"POT-Creation-Date: 2021-03-25 23:18+0000\n"
 "PO-Revision-Date: 2021-03-25 01:37+0000\n"
 "Last-Translator: Marcel Souza Lemes <marcosoutsider@gmail.com>\n"
 "Language-Team: Portuguese (Brazil) <https://translations.scummvm.org/"
@@ -84,7 +84,7 @@ msgstr "Para cima"
 #: engines/mohawk/myst_stacks/menu.cpp:319
 #: engines/mohawk/riven_stacks/aspit.cpp:350
 #: engines/mohawk/riven_stacks/aspit.cpp:372
-#: engines/mohawk/riven_stacks/aspit.cpp:456 engines/nancy/cheat.cpp:53
+#: engines/mohawk/riven_stacks/aspit.cpp:456 engines/nancy/cheat.cpp:51
 #: engines/parallaction/saveload.cpp:271 engines/scumm/dialogs.cpp:180
 #: engines/sword1/control.cpp:889 engines/wintermute/wintermute.cpp:210
 msgid "Cancel"
@@ -487,7 +487,7 @@ msgid "Notes:"
 msgstr "Notas:"
 
 #: gui/editrecorddialog.cpp:68 gui/predictivedialog.cpp:70
-#: engines/nancy/cheat.cpp:54
+#: engines/nancy/cheat.cpp:52
 msgid "Ok"
 msgstr "Ok"
 
@@ -607,7 +607,7 @@ msgid "Interact"
 msgstr "Interagir"
 
 #: gui/gui-manager.cpp:122 gui/unknown-game-dialog.cpp:54
-#: engines/nancy/cheat.cpp:268 engines/scumm/help.cpp:125
+#: engines/nancy/cheat.cpp:266 engines/scumm/help.cpp:125
 #: engines/scumm/help.cpp:140 engines/scumm/help.cpp:165
 #: engines/scumm/help.cpp:191 engines/scumm/help.cpp:209
 msgid "Close"
@@ -4104,7 +4104,7 @@ msgstr "Alterar Comando"
 
 #: engines/dragons/metaengine.cpp:152 engines/griffon/metaengine.cpp:127
 #: engines/grim/grim.cpp:491 engines/grim/grim.cpp:583
-#: engines/hdb/metaengine.cpp:231 engines/nancy/cheat.cpp:98
+#: engines/hdb/metaengine.cpp:231 engines/nancy/cheat.cpp:96
 #: engines/scumm/help.cpp:225 engines/scumm/help.cpp:234
 #: engines/scumm/help.cpp:241 engines/scumm/help.cpp:249
 #: engines/twine/metaengine.cpp:397 engines/zvision/metaengine.cpp:164
@@ -4682,19 +4682,19 @@ msgstr "Habilitar modo de trapaça"
 msgid "Debug info and level selection becomes available"
 msgstr "Informação de depuração e seleção de nível ficam disponíveis"
 
-#: engines/hdb/metaengine.cpp:193 engines/nancy/input.cpp:184
+#: engines/hdb/metaengine.cpp:193 engines/nancy/input.cpp:185
 msgid "Move up"
 msgstr "Mover para cima"
 
-#: engines/hdb/metaengine.cpp:199 engines/nancy/input.cpp:190
+#: engines/hdb/metaengine.cpp:199 engines/nancy/input.cpp:191
 msgid "Move down"
 msgstr "Mover para baixo"
 
-#: engines/hdb/metaengine.cpp:205 engines/nancy/input.cpp:196
+#: engines/hdb/metaengine.cpp:205 engines/nancy/input.cpp:197
 msgid "Move left"
 msgstr "Mover para esquerda"
 
-#: engines/hdb/metaengine.cpp:211 engines/nancy/input.cpp:202
+#: engines/hdb/metaengine.cpp:211 engines/nancy/input.cpp:203
 msgid "Move right"
 msgstr "Mover para direita"
 
@@ -5369,140 +5369,140 @@ msgstr ""
 msgid "Invalid file name for saving"
 msgstr "Nome de arquivo inválido para salvar"
 
-#: engines/nancy/cheat.cpp:56
+#: engines/nancy/cheat.cpp:54
 msgid "General"
 msgstr "Geral"
 
-#: engines/nancy/cheat.cpp:56
+#: engines/nancy/cheat.cpp:54
 msgid "Cheat.General"
 msgstr "Trapaças.Geral"
 
-#: engines/nancy/cheat.cpp:58
+#: engines/nancy/cheat.cpp:56
 msgid "Scene Data"
 msgstr "Dados de Cena"
 
-#: engines/nancy/cheat.cpp:59
+#: engines/nancy/cheat.cpp:57
 msgid "Restart the Scene"
 msgstr "Reiniciar a Cena"
 
-#: engines/nancy/cheat.cpp:61
+#: engines/nancy/cheat.cpp:59
 msgid "Scene Number"
 msgstr "Número da Cena"
 
-#: engines/nancy/cheat.cpp:63
+#: engines/nancy/cheat.cpp:61
 msgid "Frame Number"
 msgstr "Número do Quadro"
 
 #. I18N: The Y position (a.k.a vertical scroll) of the background
-#: engines/nancy/cheat.cpp:67
+#: engines/nancy/cheat.cpp:65
 msgid "Background Top (Y)"
 msgstr "Fundo ao Topo (Y)"
 
-#: engines/nancy/cheat.cpp:69
+#: engines/nancy/cheat.cpp:67
 msgid "Hints Remaining"
 msgstr "Dicas Restantes"
 
-#: engines/nancy/cheat.cpp:70
+#: engines/nancy/cheat.cpp:68
 msgid "Easy"
 msgstr "Fácil"
 
-#: engines/nancy/cheat.cpp:72
+#: engines/nancy/cheat.cpp:70
 msgid "Medium"
 msgstr "Média"
 
-#: engines/nancy/cheat.cpp:74
+#: engines/nancy/cheat.cpp:72
 msgid "Hard"
 msgstr "Difícil"
 
-#: engines/nancy/cheat.cpp:77 engines/nancy/cheat.cpp:88
+#: engines/nancy/cheat.cpp:75 engines/nancy/cheat.cpp:86
 msgid "Player Data"
 msgstr "Dados do Jogador"
 
-#: engines/nancy/cheat.cpp:78
+#: engines/nancy/cheat.cpp:76
 msgid "Player Time:"
 msgstr "Tempo do Jogador:"
 
-#: engines/nancy/cheat.cpp:80
+#: engines/nancy/cheat.cpp:78
 msgid "Days"
 msgstr "Dias"
 
-#: engines/nancy/cheat.cpp:82 engines/nancy/cheat.cpp:92
+#: engines/nancy/cheat.cpp:80 engines/nancy/cheat.cpp:90
 msgid "Hours"
 msgstr "Horas"
 
-#: engines/nancy/cheat.cpp:84 engines/nancy/cheat.cpp:94
+#: engines/nancy/cheat.cpp:82 engines/nancy/cheat.cpp:92
 msgid "Minutes"
 msgstr "Minutos"
 
-#: engines/nancy/cheat.cpp:86
+#: engines/nancy/cheat.cpp:84
 msgid "Player Difficulty Level"
 msgstr "Nível de Dificuldade do Jogador"
 
-#: engines/nancy/cheat.cpp:89
+#: engines/nancy/cheat.cpp:87
 msgid "Timer On"
 msgstr "Timer Ligado"
 
-#: engines/nancy/cheat.cpp:96
+#: engines/nancy/cheat.cpp:94
 msgid "Seconds"
 msgstr "Segundos"
 
-#: engines/nancy/cheat.cpp:98
+#: engines/nancy/cheat.cpp:96
 msgid "Cheat.Inventory"
 msgstr "Trapaças.Inventário"
 
-#: engines/nancy/cheat.cpp:165
+#: engines/nancy/cheat.cpp:163
 msgid "Invalid Scene ID!"
 msgstr "ID de Cena Inválido!"
 
-#: engines/nancy/input.cpp:170
+#: engines/nancy/input.cpp:171
 msgid "Left Click Interact"
 msgstr "Interagir com Clique Esquerdo"
 
-#: engines/nancy/input.cpp:177
+#: engines/nancy/input.cpp:178
 msgid "Right Click Interact"
 msgstr "Interagir com Clique Direito"
 
-#: engines/nancy/input.cpp:208
+#: engines/nancy/input.cpp:209
 msgid "Fast move modifier"
 msgstr "Modificador de movimento rápido"
 
-#: engines/nancy/input.cpp:216
+#: engines/nancy/input.cpp:217
 msgid "Toggle fast conversation mode"
 msgstr "Alternar modo de conversa rápida"
 
-#: engines/nancy/input.cpp:221
+#: engines/nancy/input.cpp:222
 msgid "Toggle end conversation mode"
 msgstr "Alternar modo de encerramento de conversa"
 
-#: engines/nancy/input.cpp:226
+#: engines/nancy/input.cpp:227
 msgid "Go to main menu"
 msgstr "Voltar ao menu principal"
 
-#: engines/nancy/input.cpp:231
+#: engines/nancy/input.cpp:232
 msgid "Go to save/load menu"
 msgstr "Ir para menu de salvar/carregar"
 
-#: engines/nancy/input.cpp:236
+#: engines/nancy/input.cpp:237
 msgid "Reload last save"
 msgstr "Recarregar o último salvamento"
 
-#: engines/nancy/input.cpp:241
+#: engines/nancy/input.cpp:242
 msgid "Go to setup menu"
 msgstr "Ir para menu de configuração"
 
-#: engines/nancy/input.cpp:246
+#: engines/nancy/input.cpp:247
 msgid "Show credits"
 msgstr "Exibir créditos"
 
-#: engines/nancy/input.cpp:251
+#: engines/nancy/input.cpp:252
 msgid "Go to map screen"
 msgstr "Ir para tela do mapa"
 
-#: engines/nancy/input.cpp:257
+#: engines/nancy/input.cpp:258
 msgid "Open general cheat menu"
 msgstr "Abrir menu geral de trapaças"
 
-#: engines/nancy/input.cpp:262
+#: engines/nancy/input.cpp:263
 msgid "Open event flags cheat menu"
 msgstr "Abrir menu de truques de sinalizadores de evento"
 

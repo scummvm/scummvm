@@ -2,19 +2,19 @@
 # Copyright (C) 2010-2017 The ScummVM Team
 # This file is distributed under the same license as the ScummVM package.
 # Eugene Sandulenko <sev@scummvm.org>, 2010-2017
-#: engines/nancy/cheat.cpp:59 engines/nancy/cheat.cpp:60
-#: engines/nancy/cheat.cpp:62 engines/nancy/cheat.cpp:64
-#: engines/nancy/cheat.cpp:71 engines/nancy/cheat.cpp:73
-#: engines/nancy/cheat.cpp:75 engines/nancy/cheat.cpp:79
-#: engines/nancy/cheat.cpp:81 engines/nancy/cheat.cpp:83
-#: engines/nancy/cheat.cpp:85 engines/nancy/cheat.cpp:89
-#: engines/nancy/cheat.cpp:91 engines/nancy/cheat.cpp:93
-#: engines/nancy/cheat.cpp:95
+#: engines/nancy/cheat.cpp:57 engines/nancy/cheat.cpp:58
+#: engines/nancy/cheat.cpp:60 engines/nancy/cheat.cpp:62
+#: engines/nancy/cheat.cpp:69 engines/nancy/cheat.cpp:71
+#: engines/nancy/cheat.cpp:73 engines/nancy/cheat.cpp:77
+#: engines/nancy/cheat.cpp:79 engines/nancy/cheat.cpp:81
+#: engines/nancy/cheat.cpp:83 engines/nancy/cheat.cpp:87
+#: engines/nancy/cheat.cpp:89 engines/nancy/cheat.cpp:91
+#: engines/nancy/cheat.cpp:93
 msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-03-25 19:53+0000\n"
+"POT-Creation-Date: 2021-03-25 23:18+0000\n"
 "PO-Revision-Date: 2021-03-25 12:28+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
@@ -81,7 +81,7 @@ msgstr "Вверх"
 #: engines/mohawk/myst_stacks/menu.cpp:319
 #: engines/mohawk/riven_stacks/aspit.cpp:350
 #: engines/mohawk/riven_stacks/aspit.cpp:372
-#: engines/mohawk/riven_stacks/aspit.cpp:456 engines/nancy/cheat.cpp:53
+#: engines/mohawk/riven_stacks/aspit.cpp:456 engines/nancy/cheat.cpp:51
 #: engines/parallaction/saveload.cpp:271 engines/scumm/dialogs.cpp:180
 #: engines/sword1/control.cpp:889 engines/wintermute/wintermute.cpp:210
 msgid "Cancel"
@@ -486,7 +486,7 @@ msgid "Notes:"
 msgstr "Примечания:"
 
 #: gui/editrecorddialog.cpp:68 gui/predictivedialog.cpp:70
-#: engines/nancy/cheat.cpp:54
+#: engines/nancy/cheat.cpp:52
 msgid "Ok"
 msgstr "Ok"
 
@@ -605,7 +605,7 @@ msgid "Interact"
 msgstr "Взаимодействие"
 
 #: gui/gui-manager.cpp:122 gui/unknown-game-dialog.cpp:54
-#: engines/nancy/cheat.cpp:268 engines/scumm/help.cpp:125
+#: engines/nancy/cheat.cpp:266 engines/scumm/help.cpp:125
 #: engines/scumm/help.cpp:140 engines/scumm/help.cpp:165
 #: engines/scumm/help.cpp:191 engines/scumm/help.cpp:209
 msgid "Close"
@@ -4092,7 +4092,7 @@ msgstr "Изменить команду"
 
 #: engines/dragons/metaengine.cpp:152 engines/griffon/metaengine.cpp:127
 #: engines/grim/grim.cpp:491 engines/grim/grim.cpp:583
-#: engines/hdb/metaengine.cpp:231 engines/nancy/cheat.cpp:98
+#: engines/hdb/metaengine.cpp:231 engines/nancy/cheat.cpp:96
 #: engines/scumm/help.cpp:225 engines/scumm/help.cpp:234
 #: engines/scumm/help.cpp:241 engines/scumm/help.cpp:249
 #: engines/twine/metaengine.cpp:397 engines/zvision/metaengine.cpp:164
@@ -4671,19 +4671,19 @@ msgstr "Включить чит-режим"
 msgid "Debug info and level selection becomes available"
 msgstr "Отладочная информация и выбор уровня становятся доступными"
 
-#: engines/hdb/metaengine.cpp:193 engines/nancy/input.cpp:184
+#: engines/hdb/metaengine.cpp:193 engines/nancy/input.cpp:185
 msgid "Move up"
 msgstr "Идти вверх"
 
-#: engines/hdb/metaengine.cpp:199 engines/nancy/input.cpp:190
+#: engines/hdb/metaengine.cpp:199 engines/nancy/input.cpp:191
 msgid "Move down"
 msgstr "Идти вниз"
 
-#: engines/hdb/metaengine.cpp:205 engines/nancy/input.cpp:196
+#: engines/hdb/metaengine.cpp:205 engines/nancy/input.cpp:197
 msgid "Move left"
 msgstr "Идти влево"
 
-#: engines/hdb/metaengine.cpp:211 engines/nancy/input.cpp:202
+#: engines/hdb/metaengine.cpp:211 engines/nancy/input.cpp:203
 msgid "Move right"
 msgstr "Идти вправо"
 
@@ -5352,140 +5352,140 @@ msgstr ""
 msgid "Invalid file name for saving"
 msgstr "Неверное имя файла для записи"
 
-#: engines/nancy/cheat.cpp:56
+#: engines/nancy/cheat.cpp:54
 msgid "General"
 msgstr "Общие"
 
-#: engines/nancy/cheat.cpp:56
+#: engines/nancy/cheat.cpp:54
 msgid "Cheat.General"
 msgstr "Читы.Общие"
 
-#: engines/nancy/cheat.cpp:58
+#: engines/nancy/cheat.cpp:56
 msgid "Scene Data"
 msgstr "Данные Сцены"
 
-#: engines/nancy/cheat.cpp:59
+#: engines/nancy/cheat.cpp:57
 msgid "Restart the Scene"
 msgstr "Перезапуск сцены"
 
-#: engines/nancy/cheat.cpp:61
+#: engines/nancy/cheat.cpp:59
 msgid "Scene Number"
 msgstr "Номер Сцены"
 
-#: engines/nancy/cheat.cpp:63
+#: engines/nancy/cheat.cpp:61
 msgid "Frame Number"
 msgstr "Номер Кадра"
 
 #. I18N: The Y position (a.k.a vertical scroll) of the background
-#: engines/nancy/cheat.cpp:67
+#: engines/nancy/cheat.cpp:65
 msgid "Background Top (Y)"
 msgstr "Верх Фона (Y)"
 
-#: engines/nancy/cheat.cpp:69
+#: engines/nancy/cheat.cpp:67
 msgid "Hints Remaining"
 msgstr "Осталось Подсказок"
 
-#: engines/nancy/cheat.cpp:70
+#: engines/nancy/cheat.cpp:68
 msgid "Easy"
 msgstr "Лёгкий"
 
-#: engines/nancy/cheat.cpp:72
+#: engines/nancy/cheat.cpp:70
 msgid "Medium"
 msgstr "Средний"
 
-#: engines/nancy/cheat.cpp:74
+#: engines/nancy/cheat.cpp:72
 msgid "Hard"
 msgstr "Сложный"
 
-#: engines/nancy/cheat.cpp:77 engines/nancy/cheat.cpp:88
+#: engines/nancy/cheat.cpp:75 engines/nancy/cheat.cpp:86
 msgid "Player Data"
 msgstr "Данные Игрока"
 
-#: engines/nancy/cheat.cpp:78
+#: engines/nancy/cheat.cpp:76
 msgid "Player Time:"
 msgstr "Время Игрока:"
 
-#: engines/nancy/cheat.cpp:80
+#: engines/nancy/cheat.cpp:78
 msgid "Days"
 msgstr "Дней"
 
-#: engines/nancy/cheat.cpp:82 engines/nancy/cheat.cpp:92
+#: engines/nancy/cheat.cpp:80 engines/nancy/cheat.cpp:90
 msgid "Hours"
 msgstr "Часов"
 
-#: engines/nancy/cheat.cpp:84 engines/nancy/cheat.cpp:94
+#: engines/nancy/cheat.cpp:82 engines/nancy/cheat.cpp:92
 msgid "Minutes"
 msgstr "Минут"
 
-#: engines/nancy/cheat.cpp:86
+#: engines/nancy/cheat.cpp:84
 msgid "Player Difficulty Level"
 msgstr "Уровень Сложности"
 
-#: engines/nancy/cheat.cpp:89
+#: engines/nancy/cheat.cpp:87
 msgid "Timer On"
 msgstr "Таймер вкл"
 
-#: engines/nancy/cheat.cpp:96
+#: engines/nancy/cheat.cpp:94
 msgid "Seconds"
 msgstr "Секунд"
 
-#: engines/nancy/cheat.cpp:98
+#: engines/nancy/cheat.cpp:96
 msgid "Cheat.Inventory"
 msgstr "Читы.Инвентарь"
 
-#: engines/nancy/cheat.cpp:165
+#: engines/nancy/cheat.cpp:163
 msgid "Invalid Scene ID!"
 msgstr "Неверный ID сцены!"
 
-#: engines/nancy/input.cpp:170
+#: engines/nancy/input.cpp:171
 msgid "Left Click Interact"
 msgstr "Действие Левым Щелчком"
 
-#: engines/nancy/input.cpp:177
+#: engines/nancy/input.cpp:178
 msgid "Right Click Interact"
 msgstr "Действие Правым Щелчком"
 
-#: engines/nancy/input.cpp:208
+#: engines/nancy/input.cpp:209
 msgid "Fast move modifier"
 msgstr "Переключатель быстрого режима"
 
-#: engines/nancy/input.cpp:216
+#: engines/nancy/input.cpp:217
 msgid "Toggle fast conversation mode"
 msgstr "Переключить режим быстрой беседы"
 
-#: engines/nancy/input.cpp:221
+#: engines/nancy/input.cpp:222
 msgid "Toggle end conversation mode"
 msgstr "Переключить режим конца беседы"
 
-#: engines/nancy/input.cpp:226
+#: engines/nancy/input.cpp:227
 msgid "Go to main menu"
 msgstr "Выйти в главное меню"
 
-#: engines/nancy/input.cpp:231
+#: engines/nancy/input.cpp:232
 msgid "Go to save/load menu"
 msgstr "Перейти в меню загрузки/сохранения"
 
-#: engines/nancy/input.cpp:236
+#: engines/nancy/input.cpp:237
 msgid "Reload last save"
 msgstr "Прочитать последнее сохранение игры"
 
-#: engines/nancy/input.cpp:241
+#: engines/nancy/input.cpp:242
 msgid "Go to setup menu"
 msgstr "Перейти в меню опций"
 
-#: engines/nancy/input.cpp:246
+#: engines/nancy/input.cpp:247
 msgid "Show credits"
 msgstr "Показать авторов"
 
-#: engines/nancy/input.cpp:251
+#: engines/nancy/input.cpp:252
 msgid "Go to map screen"
 msgstr "Перейти на экран карты"
 
-#: engines/nancy/input.cpp:257
+#: engines/nancy/input.cpp:258
 msgid "Open general cheat menu"
 msgstr "Открыть общее чит-меню"
 
-#: engines/nancy/input.cpp:262
+#: engines/nancy/input.cpp:263
 msgid "Open event flags cheat menu"
 msgstr "Открыть чит-меню флагов событий"
 
