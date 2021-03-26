@@ -125,6 +125,11 @@ private:
 	static const uint8 *getData(const uint8 *bodyPtr) {
 		return bodyPtr + 0x1A;
 	}
+
+	static const uint8 *getShadesData(const uint8 *bodyPtr) {
+		const int16 numBones = getNumBones(bodyPtr);
+		return (const uint8 *)getBonesBaseData(bodyPtr, numBones);
+	}
 public:
 	static inline bool isAnimated(const uint8 *bodyPtr) {
 		const int16 bodyHeader = READ_LE_INT16(bodyPtr);
@@ -168,11 +173,6 @@ public:
 	static const BodyShade *getShadesBaseData(const uint8 *bodyPtr, int16 shadeIdx = 0) {
 		assert(shadeIdx <= getNumShades(bodyPtr));
 		return (const BodyShade*)(getShadesData(bodyPtr) + 2 + (shadeIdx * 8));
-	}
-
-	static const uint8 *getShadesData(const uint8 *bodyPtr) {
-		const int16 numBones = getNumBones(bodyPtr);
-		return (const uint8 *)getBonesBaseData(bodyPtr, numBones);
 	}
 
 	static int16 getNumShades(const uint8 *bodyPtr) {
