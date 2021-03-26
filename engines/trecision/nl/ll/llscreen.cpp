@@ -736,14 +736,11 @@ void RegenRoom() {
 		if (g_vm->_room[g_vm->_curRoom]._object[a] == 0)
 			break;
 
-		int status = (g_vm->_obj[g_vm->_room[g_vm->_curRoom]._object[a]]._mode & OBJMODE_OBJSTATUS);
-
-		if (status) {
-			if (!OldObjStatus[a] && (g_vm->_obj[g_vm->_room[g_vm->_curRoom]._object[a]]._mode & (OBJMODE_MASK | OBJMODE_FULL))) {
-				OldObjStatus[a] = true;
-			}
-		} else if (OldObjStatus[a] && (g_vm->_obj[g_vm->_room[g_vm->_curRoom]._object[a]]._mode & (OBJMODE_MASK | OBJMODE_FULL)))
-			OldObjStatus[a] = false;
+		if (g_vm->_obj[g_vm->_room[g_vm->_curRoom]._object[a]]._mode & (OBJMODE_MASK | OBJMODE_FULL)) {
+			bool status = (g_vm->_obj[g_vm->_room[g_vm->_curRoom]._object[a]]._mode & OBJMODE_OBJSTATUS);
+			if (status != OldObjStatus[a])
+				OldObjStatus[a] = status;
+		}
 	}
 }
 
@@ -752,28 +749,16 @@ void RegenRoom() {
 --------------------------------------------------*/
 void PaintRegenRoom() {
 	for (uint16 a = 0; a < MAXOBJINROOM; a++) {
-		if (OldObjStatus[a] && !VideoObjStatus[a]) {
+		if (OldObjStatus[a] != VideoObjStatus[a]) {
 			SortTable[g_vm->_curSortTableNum]._index = g_vm->_room[g_vm->_curRoom]._object[a];
 			SortTable[g_vm->_curSortTableNum]._roomIndex = a;
-			SortTable[g_vm->_curSortTableNum]._remove = false;
+			SortTable[g_vm->_curSortTableNum]._remove = VideoObjStatus[a];
 			SortTable[g_vm->_curSortTableNum]._curFrame = 0;
 			SortTable[g_vm->_curSortTableNum]._typology = TYPO_BMP;
-			VideoObjStatus[a] = true;
-			g_vm->_curSortTableNum++;
-		} else if (!OldObjStatus[a] && VideoObjStatus[a]) {
-			SortTable[g_vm->_curSortTableNum]._index = g_vm->_room[g_vm->_curRoom]._object[a];
-			SortTable[g_vm->_curSortTableNum]._roomIndex = a;
-			SortTable[g_vm->_curSortTableNum]._remove = true;
-			SortTable[g_vm->_curSortTableNum]._curFrame = 0;
-			SortTable[g_vm->_curSortTableNum]._typology = TYPO_BMP;
-			VideoObjStatus[a] = false;
+			VideoObjStatus[a] = OldObjStatus[a];
 			g_vm->_curSortTableNum++;
 		}
-
 	}
-	// CHECKME: Why setting VideoObjStatus in the loop if it's reset right after the loop?
-	for (int i = 0; i < MAXOBJINROOM; ++i)
-		VideoObjStatus[i] = OldObjStatus[i];
 }
 /*-----------------16/05/95 11.03-------------------
                               DrawObj
