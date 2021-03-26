@@ -126,6 +126,11 @@ private:
 		return bodyPtr + 0x1A;
 	}
 
+	static BonesBaseData *getBonesBaseData(uint8 *bodyPtr, int boneIdx = 0) {
+		assert(boneIdx <= getNumBones(bodyPtr));
+		return (BonesBaseData *)(getBonesData(bodyPtr) + 2 + (boneIdx * sizeof(BonesBaseData)));
+	}
+
 	static const uint8 *getShadesData(const uint8 *bodyPtr) {
 		const int16 numBones = getNumBones(bodyPtr);
 		return (const uint8 *)getBonesBaseData(bodyPtr, numBones);
@@ -148,11 +153,6 @@ public:
 	static BoneFrame *getBonesStateData(uint8 *bodyPtr, int boneIdx) {
 		assert(boneIdx <= getNumBones(bodyPtr));
 		return (BoneFrame*)((uint8*)getBonesBaseData(bodyPtr) + 8 + (boneIdx * sizeof(BonesBaseData)));
-	}
-
-	static BonesBaseData *getBonesBaseData(uint8 *bodyPtr, int boneIdx = 0) {
-		assert(boneIdx <= getNumBones(bodyPtr));
-		return (BonesBaseData *)(getBonesData(bodyPtr) + 2 + (boneIdx * sizeof(BonesBaseData)));
 	}
 
 	static const BonesBaseData *getBonesBaseData(const uint8 *bodyPtr, int boneIdx = 0) {
