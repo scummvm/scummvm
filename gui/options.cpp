@@ -1325,13 +1325,20 @@ void OptionsDialog::addGraphicControls(GuiObject *boss, const Common::String &pr
 
 	_vsyncCheckbox = new CheckboxWidget(boss, prefix + "grVSyncCheckbox", _("V-Sync in 3D Games"), _("Wait for the vertical sync to refresh the screen in 3D renderer"));
 
-	_rendererTypePopUpDesc = new StaticTextWidget(boss, prefix + "grRendererTypePopupDesc", _("Game 3D Renderer:"));
+	if (g_system->getOverlayWidth() > 320)
+		_rendererTypePopUpDesc = new StaticTextWidget(boss, prefix + "grRendererTypePopupDesc", _("Game 3D Renderer:"));
+	else
+		_rendererTypePopUpDesc = new StaticTextWidget(boss, prefix + "grRendererTypePopupDesc", _c("Game 3D Renderer:", "lowres"));
+
 	_rendererTypePopUp = new PopUpWidget(boss, prefix + "grRendererTypePopup");
 	_rendererTypePopUp->appendEntry(_("<default>"), Graphics::kRendererTypeDefault);
 	_rendererTypePopUp->appendEntry("");
 	const Graphics::RendererTypeDescription *rt = Graphics::listRendererTypes();
 	for (; rt->code; ++rt) {
-		_rendererTypePopUp->appendEntry(_(rt->description), rt->id);
+		if (g_system->getOverlayWidth() > 320)
+			_rendererTypePopUp->appendEntry(_(rt->description), rt->id);
+		else
+			_rendererTypePopUp->appendEntry(_c(rt->description, "lowres"), rt->id);
 	}
 
 	_antiAliasPopUpDesc = new StaticTextWidget(boss, prefix + "grAntiAliasPopupDesc", _("3D Anti-aliasing:"));
