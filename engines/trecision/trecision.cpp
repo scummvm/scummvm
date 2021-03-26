@@ -296,48 +296,48 @@ void TrecisionEngine::LoadAll() {
 		error("LoadAll : Couldn't open DATA.NL");
 
 	for (int i = 0; i < MAXROOMS; ++i) {
-		dataNl.read(&g_vm->_room[i]._baseName, ARRAYSIZE(g_vm->_room[i]._baseName));
-		g_vm->_room[i]._flag = dataNl.readByte();
+		dataNl.read(&_room[i]._baseName, ARRAYSIZE(_room[i]._baseName));
+		_room[i]._flag = dataNl.readByte();
 		dataNl.readByte(); // Padding
-		g_vm->_room[i]._bkgAnim = dataNl.readUint16LE();
+		_room[i]._bkgAnim = dataNl.readUint16LE();
 		for (int j = 0; j < MAXOBJINROOM; ++j)
-			g_vm->_room[i]._object[j] = dataNl.readUint16LE();
+			_room[i]._object[j] = dataNl.readUint16LE();
 		for (int j = 0; j < MAXSOUNDSINROOM; ++j)
-			g_vm->_room[i]._sounds[j] = dataNl.readUint16LE();
+			_room[i]._sounds[j] = dataNl.readUint16LE();
 		for (int j = 0; j < MAXACTIONINROOM; ++j)
-			g_vm->_room[i]._actions[j] = dataNl.readUint16LE();
+			_room[i]._actions[j] = dataNl.readUint16LE();
 	}
 
 	for (int i = 0; i < MAXOBJ; ++i) {
-		g_vm->_obj[i]._dx = dataNl.readUint16LE();
-		g_vm->_obj[i]._dy = dataNl.readUint16LE();
-		g_vm->_obj[i]._px = dataNl.readUint16LE();
-		g_vm->_obj[i]._py = dataNl.readUint16LE();
+		_obj[i]._dx = dataNl.readUint16LE();
+		_obj[i]._dy = dataNl.readUint16LE();
+		_obj[i]._px = dataNl.readUint16LE();
+		_obj[i]._py = dataNl.readUint16LE();
 
 		for (int j = 0; j < 4; ++j)
-			g_vm->_obj[i]._lim[j] = dataNl.readUint16LE();
+			_obj[i]._lim[j] = dataNl.readUint16LE();
 
-		g_vm->_obj[i]._position = dataNl.readSByte();
+		_obj[i]._position = dataNl.readSByte();
 		dataNl.readByte(); // Padding
-		g_vm->_obj[i]._name = dataNl.readUint16LE();
-		g_vm->_obj[i]._examine = dataNl.readUint16LE();
-		g_vm->_obj[i]._action = dataNl.readUint16LE();
-		g_vm->_obj[i]._goRoom = dataNl.readByte();
-		g_vm->_obj[i]._nbox = dataNl.readByte();
-		g_vm->_obj[i]._ninv = dataNl.readByte();
-		g_vm->_obj[i]._mode = dataNl.readByte();
-		g_vm->_obj[i]._flag = dataNl.readByte();
+		_obj[i]._name = dataNl.readUint16LE();
+		_obj[i]._examine = dataNl.readUint16LE();
+		_obj[i]._action = dataNl.readUint16LE();
+		_obj[i]._goRoom = dataNl.readByte();
+		_obj[i]._nbox = dataNl.readByte();
+		_obj[i]._ninv = dataNl.readByte();
+		_obj[i]._mode = dataNl.readByte();
+		_obj[i]._flag = dataNl.readByte();
 		dataNl.readByte(); // Padding
-		g_vm->_obj[i]._anim = dataNl.readUint16LE();
+		_obj[i]._anim = dataNl.readUint16LE();
 	}
 
 	for (int i = 0; i < MAXINVENTORY; ++i) {
-		g_vm->_inventoryObj[i]._name = dataNl.readUint16LE();
-		g_vm->_inventoryObj[i]._examine = dataNl.readUint16LE();
-		g_vm->_inventoryObj[i]._action = dataNl.readUint16LE();
-		g_vm->_inventoryObj[i]._flag = dataNl.readByte();
+		_inventoryObj[i]._name = dataNl.readUint16LE();
+		_inventoryObj[i]._examine = dataNl.readUint16LE();
+		_inventoryObj[i]._action = dataNl.readUint16LE();
+		_inventoryObj[i]._flag = dataNl.readByte();
 		dataNl.readByte(); // Padding
-		g_vm->_inventoryObj[i]._anim = dataNl.readUint16LE();
+		_inventoryObj[i]._anim = dataNl.readUint16LE();
 	}
 
 	for (int i = 0; i < MAXSAMPLE; ++i) {
@@ -348,42 +348,42 @@ void TrecisionEngine::LoadAll() {
 	}
 
 	for (int i = 0; i < MAXSCRIPTFRAME; ++i) {
-		g_vm->_scriptFrame[i]._class = dataNl.readByte();
-		g_vm->_scriptFrame[i]._event = dataNl.readByte();
-		g_vm->_scriptFrame[i]._u8Param = dataNl.readByte();
+		_scriptFrame[i]._class = dataNl.readByte();
+		_scriptFrame[i]._event = dataNl.readByte();
+		_scriptFrame[i]._u8Param = dataNl.readByte();
 		dataNl.readByte(); // Padding
-		g_vm->_scriptFrame[i]._u16Param1 = dataNl.readUint16LE();
-		g_vm->_scriptFrame[i]._u16Param2 = dataNl.readUint16LE();
-		g_vm->_scriptFrame[i]._u32Param = dataNl.readUint16LE();
-		g_vm->_scriptFrame[i]._noWait = !(dataNl.readSint16LE() == 0);
+		_scriptFrame[i]._u16Param1 = dataNl.readUint16LE();
+		_scriptFrame[i]._u16Param2 = dataNl.readUint16LE();
+		_scriptFrame[i]._u32Param = dataNl.readUint16LE();
+		_scriptFrame[i]._noWait = !(dataNl.readSint16LE() == 0);
 	}
 
 	for (int i = 0; i < MAXSCRIPT; ++i) {
-		g_vm->_script[i]._firstFrame = dataNl.readUint16LE();
-		g_vm->_script[i]._flag = dataNl.readByte();
+		_script[i]._firstFrame = dataNl.readUint16LE();
+		_script[i]._flag = dataNl.readByte();
 		dataNl.readByte(); // Padding
 	}
 
 	for (int i = 0; i < MAXANIM; ++i) {
-		dataNl.read(&g_vm->_animMgr->_animTab[i]._name, ARRAYSIZE(g_vm->_animMgr->_animTab[i]._name));
+		dataNl.read(&_animMgr->_animTab[i]._name, ARRAYSIZE(_animMgr->_animTab[i]._name));
 
-		g_vm->_animMgr->_animTab[i]._flag = dataNl.readUint16LE();
+		_animMgr->_animTab[i]._flag = dataNl.readUint16LE();
 
 		for (int j = 0; j < MAXCHILD; ++j) {
-			g_vm->_animMgr->_animTab[i]._lim[j][0] = dataNl.readUint16LE();
-			g_vm->_animMgr->_animTab[i]._lim[j][1] = dataNl.readUint16LE();
-			g_vm->_animMgr->_animTab[i]._lim[j][2] = dataNl.readUint16LE();
-			g_vm->_animMgr->_animTab[i]._lim[j][3] = dataNl.readUint16LE();
+			_animMgr->_animTab[i]._lim[j][0] = dataNl.readUint16LE();
+			_animMgr->_animTab[i]._lim[j][1] = dataNl.readUint16LE();
+			_animMgr->_animTab[i]._lim[j][2] = dataNl.readUint16LE();
+			_animMgr->_animTab[i]._lim[j][3] = dataNl.readUint16LE();
 		}
 
-		g_vm->_animMgr->_animTab[i]._nbox = dataNl.readByte();
+		_animMgr->_animTab[i]._nbox = dataNl.readByte();
 		dataNl.readByte(); // Padding
 
 		for (int j = 0; j < MAXATFRAME; ++j) {
-			g_vm->_animMgr->_animTab[i]._atFrame[j]._type = dataNl.readByte();
-			g_vm->_animMgr->_animTab[i]._atFrame[j]._child = dataNl.readByte();
-			g_vm->_animMgr->_animTab[i]._atFrame[j]._numFrame = dataNl.readUint16LE();
-			g_vm->_animMgr->_animTab[i]._atFrame[j]._index = dataNl.readUint16LE();
+			_animMgr->_animTab[i]._atFrame[j]._type = dataNl.readByte();
+			_animMgr->_animTab[i]._atFrame[j]._child = dataNl.readByte();
+			_animMgr->_animTab[i]._atFrame[j]._numFrame = dataNl.readUint16LE();
+			_animMgr->_animTab[i]._atFrame[j]._index = dataNl.readUint16LE();
 		}
 	}
 
@@ -427,7 +427,7 @@ void TrecisionEngine::LoadAll() {
 	}
 
 	for (int i = 0; i < MAXACTION; ++i)
-		g_vm->_actionLen[i] = dataNl.readByte();
+		_actionLen[i] = dataNl.readByte();
 
 	NumFileRef = dataNl.readSint32LE();
 
@@ -441,13 +441,13 @@ void TrecisionEngine::LoadAll() {
 	_textPtr = (char *)TextArea;
 
 	for (int a = 0; a < MAXOBJNAME; a++)
-		g_vm->_objName[a] = getNextSentence();
+		_objName[a] = getNextSentence();
 
 	for (int a = 0; a < MAXSENTENCE; a++)
-		g_vm->_sentence[a] = getNextSentence();
+		_sentence[a] = getNextSentence();
 
 	for (int a = 0; a < MAXSYSTEXT; a++)
-		g_vm->_sysText[a] = getNextSentence();
+		_sysText[a] = getNextSentence();
 
 	dataNl.close();
 }
