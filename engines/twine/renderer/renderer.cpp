@@ -1309,7 +1309,7 @@ bool Renderer::renderAnimatedModel(ModelData *modelData, const uint8 *bodyPtr, R
 	const int32 numVertices = Model::getNumVertices(bodyPtr);
 	const int32 numBones = Model::getNumBones(bodyPtr);
 
-	const I16Vec3 *pointsPtr = (const I16Vec3 *)Model::getVerticesBaseData(bodyPtr);
+	const I16Vec3 *pointsPtr = Model::getVerticesBaseData(bodyPtr);
 
 	IMatrix3x3 *modelMatrix = &_matricesTable[0];
 

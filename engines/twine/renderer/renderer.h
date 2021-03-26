@@ -131,8 +131,8 @@ public:
 		return (bodyHeader & 2) != 0;
 	}
 
-	static const uint8 *getVerticesBaseData(const uint8 *bodyPtr) {
-		return getData(bodyPtr) + 2;
+	static const I16Vec3 *getVerticesBaseData(const uint8 *bodyPtr) {
+		return (const I16Vec3*)(getData(bodyPtr) + 2);
 	}
 
 	static const BoneFrame *getBonesStateData(const uint8 *bodyPtr, int boneIdx) {
