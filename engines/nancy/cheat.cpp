@@ -22,6 +22,7 @@
 
 #include "engines/nancy/cheat.h"
 
+#include "common/scummsys.h"
 #include "common/winexe.h"
 #include "common/translation.h"
 #include "common/stream.h"
