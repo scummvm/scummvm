@@ -130,11 +130,7 @@ bool Animations::setModelAnimation(int32 keyframeIdx, const AnimData &animData, 
 	}
 	const int32 deltaTime = _engine->lbaTime - remainingFrameTime;
 	if (deltaTime >= keyFrameLength) {
-		for (int32 i = 0; i < numOfBonesInAnim; ++i) {
-			BoneFrame *boneState = Model::getBonesStateData(bodyPtr, i);
-			*boneState = keyFrame->boneframes[i];
-		}
-
+		copyKeyFrameToState(keyFrame, bodyPtr, numOfBonesInAnim);
 		animTimerDataPtr->ptr = keyFrame;
 		animTimerDataPtr->time = _engine->lbaTime;
 		return true;
@@ -205,12 +201,7 @@ void Animations::setAnimAtKeyframe(int32 keyframeIdx, const AnimData &animData, 
 		numOfBonesInAnim = numBones;
 	}
 
-	for (int32 i = 0; i < numOfBonesInAnim; ++i) {
-		BoneFrame *boneState = Model::getBonesStateData(bodyPtr, i);
-		*boneState = keyFrame->boneframes[i];
-	}
-
-	return;
+	copyKeyFrameToState(keyFrame, bodyPtr, numOfBonesInAnim);
 }
 
 void Animations::stockAnimation(const uint8 *bodyPtr, AnimTimerDataStruct *animTimerDataPtr) {
@@ -223,15 +214,24 @@ void Animations::stockAnimation(const uint8 *bodyPtr, AnimTimerDataStruct *animT
 	}
 	animTimerDataPtr->time = _engine->lbaTime;
 	KeyFrame *keyframe = &animKeyframeBuf[animKeyframeBufIdx++];
-	keyframe->boneframes.clear();
 	animTimerDataPtr->ptr = keyframe;
+	copyStateToKeyFrame(keyframe, bodyPtr);
+}
 
+void Animations::copyStateToKeyFrame(KeyFrame *keyframe, const uint8 *bodyPtr) const {
 	const int32 numBones = Model::getNumBones(bodyPtr);
+	keyframe->boneframes.clear();
 	keyframe->boneframes.reserve(numBones);
-
 	for (int32 i = 0; i < numBones; ++i) {
 		const BoneFrame *boneState = Model::getBonesStateData(bodyPtr, i);
 		keyframe->boneframes.push_back(*boneState);
+	}
+}
+
+void Animations::copyKeyFrameToState(const KeyFrame *keyframe, uint8 *bodyPtr, int32 numBones) const {
+	for (int32 i = 0; i < numBones; ++i) {
+		BoneFrame *boneState = Model::getBonesStateData(bodyPtr, i);
+		*boneState = keyframe->boneframes[i];
 	}
 }
 

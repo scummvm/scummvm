@@ -45,6 +45,9 @@ private:
 	 */
 	bool verifyAnimAtKeyframe(int32 keyframeIdx, const AnimData &animData, AnimTimerDataStruct *animTimerDataPtr);
 
+	void copyKeyFrameToState(const KeyFrame *keyframe, uint8 *bodyPtr, int32 numBones) const;
+	void copyStateToKeyFrame(KeyFrame *keyframe, const uint8 *bodyPtr) const;
+
 	int animKeyframeBufIdx = 0;
 	KeyFrame animKeyframeBuf[32];
 
