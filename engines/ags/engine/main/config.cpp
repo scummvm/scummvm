@@ -265,13 +265,6 @@ void read_game_data_location(const ConfigTree &cfg) {
 
 void read_legacy_graphics_config(const ConfigTree &cfg) {
 	// Pre-3.* game resolution setup
-	int default_res = INIreadint(cfg, "misc", "defaultres", 0);
-	int screen_res = INIreadint(cfg, "misc", "screenres", 0);
-	if ((default_res == kGameResolution_320x200 ||
-		default_res == kGameResolution_320x240) && screen_res > 0) {
-		_GP(usetup).override_upscale = true; // run low-res game in high-res mode
-	}
-
 	_GP(usetup).Screen.DisplayMode.Windowed = INIreadint(cfg, "misc", "windowed") > 0;
 	_GP(usetup).Screen.DriverID = INIreadstring(cfg, "misc", "gfxdriver", _GP(usetup).Screen.DriverID);
 
