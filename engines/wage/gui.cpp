@@ -93,10 +93,10 @@ Gui::Gui(WageEngine *engine) {
 	_sceneDirty = true;
 	_screen.create(g_system->getWidth(), g_system->getHeight(), Graphics::PixelFormat::createFormatCLUT8());
 
-	_wm._mode |= Graphics::kWMNoScummVMWallpaper;
-	_wm.setScreen(&_screen);
+	_wm = new Graphics::MacWindowManager(Graphics::kWMNoScummVMWallpaper);
+	_wm->setScreen(&_screen);
 
-	_menu = _wm.addMenu();
+	_menu = _wm->addMenu();
 
 	_menu->setCommandsCallback(menuCommandsCallback, this);
 
@@ -121,7 +121,7 @@ Gui::Gui(WageEngine *engine) {
 		_menu->enableCommand(kMenuEdit, kMenuActionPaste, true);
 	}
 
-	_sceneWindow = _wm.addWindow(false, false, false);
+	_sceneWindow = _wm->addWindow(false, false, false);
 	_sceneWindow->setCallback(sceneWindowCallback, this);
 
 	//TODO: Make the font we use here work
@@ -131,7 +131,7 @@ Gui::Gui(WageEngine *engine) {
 
 	uint maxWidth = _screen.w;
 
-	_consoleWindow = _wm.addTextWindow(font, kColorBlack, kColorWhite, maxWidth, Graphics::kTextAlignLeft, _menu);
+	_consoleWindow = _wm->addTextWindow(font, kColorBlack, kColorWhite, maxWidth, Graphics::kTextAlignLeft, _menu);
 
 	loadBorders();
 }
@@ -139,11 +139,12 @@ Gui::Gui(WageEngine *engine) {
 Gui::~Gui() {
 	_screen.free();
 	_console.free();
+	delete _wm;
 }
 
 void Gui::draw() {
 	if (_engine->_isGameOver) {
-		_wm.draw();
+		_wm->draw();
 
 		return;
 	}
@@ -160,12 +161,12 @@ void Gui::draw() {
 		_sceneWindow->setTitle(_scene->_name);
 		_consoleWindow->setDimensions(*_scene->_textBounds);
 
-		_wm.setFullRefresh(true);
+		_wm->setFullRefresh(true);
 	}
 
 	drawScene();
 
-	_wm.draw();
+	_wm->draw();
 
 	_sceneDirty = false;
 }
@@ -252,7 +253,7 @@ bool Gui::processEvent(Common::Event &event) {
 		_menu->enableCommand(kMenuEdit, kMenuActionPaste, true);
 	}
 
-	return _wm.processEvent(event);
+	return _wm->processEvent(event);
 }
 
 void menuCommandsCallback(int action, Common::String &text, void *data) {
@@ -350,7 +351,7 @@ const Graphics::MacFont *Gui::getConsoleMacFont() {
 }
 
 const Graphics::Font *Gui::getConsoleFont() {
-	return _wm._fontMan->getFont(*getConsoleMacFont());
+	return _wm->_fontMan->getFont(*getConsoleMacFont());
 }
 
 void Gui::appendText(const char *s) {
