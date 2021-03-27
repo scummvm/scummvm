@@ -56,10 +56,7 @@ Animations::Animations(TwinEEngine *engine) : _engine(engine) {
 
 int32 Animations::getBodyAnimIndex(AnimationTypes animIdx, int32 actorIdx) {
 	ActorStruct *actor = _engine->_scene->getActor(actorIdx);
-	// TODO: cache this
-	EntityData entityData;
-	entityData.loadFromBuffer(actor->entityDataPtr, actor->entityDataSize);
-	const int32 bodyAnimIndex = entityData.getAnimIndex(animIdx);
+	const int32 bodyAnimIndex = actor->entityData->getAnimIndex(animIdx);
 	if (bodyAnimIndex != -1) {
 		currentActorAnimExtraPtr = animIdx;
 	}
@@ -270,14 +267,11 @@ bool Animations::verifyAnimAtKeyframe(int32 keyframeIdx, const AnimData &animDat
 
 void Animations::processAnimActions(int32 actorIdx) {
 	ActorStruct *actor = _engine->_scene->getActor(actorIdx);
-	if (actor->entityDataPtr == nullptr || actor->animExtraPtr == AnimationTypes::kAnimNone) {
+	if (actor->entityData == nullptr || actor->animExtraPtr == AnimationTypes::kAnimNone) {
 		return;
 	}
 
-	// TODO: cache this
-	EntityData entityData;
-	entityData.loadFromBuffer(actor->entityDataPtr, actor->entityDataSize);
-	const Common::Array<EntityAnim::Action> *actions = entityData.getActions(actor->animExtraPtr);
+	const Common::Array<EntityAnim::Action> *actions = actor->entityData->getActions(actor->animExtraPtr);
 	if (actions == nullptr) {
 		return;
 	}

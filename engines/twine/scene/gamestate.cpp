@@ -82,8 +82,6 @@ void GameState::initGameStateVars() {
 	_engine->_scene->initSceneVars();
 
 	Common::fill(&holomapFlags[0], &holomapFlags[NUM_LOCATIONS], 0);
-
-	_engine->_actor->clearBodyTable();
 }
 
 void GameState::initHeroVars() {

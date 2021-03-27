@@ -159,9 +159,8 @@ private:
 	ShapeType _brickShape = ShapeType::kNone; // field_3
 	bool _brickCausesDamage = false;
 
+	EntityData _entityData;
 public:
-	~ActorStruct();
-
 	StaticFlagsStruct staticFlags;
 	DynamicFlagsStruct dynamicFlags;
 
@@ -180,8 +179,7 @@ public:
 	AnimationTypes animExtra = AnimationTypes::kStanding; //field_2
 	AnimationTypes animExtraPtr = AnimationTypes::kAnimNone;
 	int32 sprite = 0; // field_8
-	uint8 *entityDataPtr = nullptr;
-	int32 entityDataSize = 0;
+	EntityData *entityData = nullptr;
 
 	bool isAttackWeaponAnimationActive() const;
 	bool isAttackAnimationActive() const;
@@ -261,23 +259,15 @@ private:
 	TwinEEngine *_engine;
 
 	/** Hero 3D entity for normal behaviour */
-	uint8 *_heroEntityNORMAL = nullptr;
-	int32 _heroEntityNORMALSize = 0;
+	EntityData _heroEntityNORMAL;
 	/** Hero 3D entity for athletic behaviour */
-	uint8 *_heroEntityATHLETIC = nullptr;
-	int32 _heroEntityATHLETICSize = 0;
+	EntityData _heroEntityATHLETIC;
 	/** Hero 3D entity for aggressive behaviour */
-	uint8 *_heroEntityAGGRESSIVE = nullptr;
-	int32 _heroEntityAGGRESSIVESize = 0;
+	EntityData _heroEntityAGGRESSIVE;
 	/** Hero 3D entity for discrete behaviour */
-	uint8 *_heroEntityDISCRETE = nullptr;
-	int32 _heroEntityDISCRETESize = 0;
+	EntityData _heroEntityDISCRETE;
 	/** Hero 3D entity for protopack behaviour */
-	uint8 *_heroEntityPROTOPACK = nullptr;
-	int32 _heroEntityPROTOPACKSize = 0;
-
-	/** Current position in body table */
-	int32 _currentPositionInBodyPtrTab;
+	EntityData _heroEntityPROTOPACK;
 
 	void initSpriteActor(int32 actorIdx);
 
@@ -288,11 +278,10 @@ private:
 	 */
 	int32 initBody(BodyType bodyIdx, int32 actorIdx, ActorBoundingBox &actorBoundingBox);
 
-	int32 loadBehaviourEntity(ActorStruct *sceneHero, uint8 **ptr, int16 &bodyAnimIndex, int32 index);
+	void loadBehaviourEntity(ActorStruct *actor, EntityData &entityData, int16 &bodyAnimIndex, int32 index);
 
 public:
 	Actor(TwinEEngine *engine);
-	~Actor();
 
 	ActorStruct *processActorPtr = nullptr;
 
@@ -322,8 +311,6 @@ public:
 
 	/** Hero anim for behaviour menu */
 	int16 heroAnimIdx[4];
-
-	void clearBodyTable();
 
 	/** Restart hero variables while opening new scenes */
 	void restartHeroScene();

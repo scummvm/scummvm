@@ -43,15 +43,6 @@ namespace TwinE {
 Actor::Actor(TwinEEngine *engine) : _engine(engine) {
 }
 
-Actor::~Actor() {
-	_engine->_scene->getActor(OWN_ACTOR_SCENE_INDEX)->entityDataPtr = nullptr;
-	free(_heroEntityNORMAL);
-	free(_heroEntityATHLETIC);
-	free(_heroEntityAGGRESSIVE);
-	free(_heroEntityDISCRETE);
-	free(_heroEntityPROTOPACK);
-}
-
 void Actor::restartHeroScene() {
 	ActorStruct *sceneHero = _engine->_scene->sceneHero;
 	sceneHero->controlMode = ControlMode::kManual;
@@ -77,28 +68,27 @@ void Actor::restartHeroScene() {
 	cropBottomScreen = 0;
 }
 
-int32 Actor::loadBehaviourEntity(ActorStruct *sceneHero, uint8 **ptr, int16 &bodyAnimIndex, int32 index) {
-	const int32 size = HQR::getAllocEntry(ptr, Resources::HQR_FILE3D_FILE, index);
-	if (size == 0) {
+void Actor::loadBehaviourEntity(ActorStruct *actor, EntityData &entityData, int16 &bodyAnimIndex, int32 index) {
+	if (!entityData.loadFromHQR(Resources::HQR_FILE3D_FILE, index)) {
 		error("Failed to load actor 3d data for index: %i", index);
 	}
-	sceneHero->entityDataPtr = *ptr;
-	sceneHero->entityDataSize = size;
-	bodyAnimIndex = _engine->_animations->getBodyAnimIndex(AnimationTypes::kStanding);
+
+	actor->entityData = &entityData;
+	bodyAnimIndex = entityData.getAnimIndex(AnimationTypes::kStanding);
 	if (bodyAnimIndex == -1) {
 		error("Could not find animation data for 3d data with index %i", index);
 	}
-	return size;
 }
 
 void Actor::loadHeroEntities() {
 	ActorStruct *sceneHero = _engine->_scene->sceneHero;
-	_heroEntityATHLETICSize = loadBehaviourEntity(sceneHero, &_heroEntityATHLETIC, heroAnimIdxATHLETIC, FILE3DHQR_HEROATHLETIC);
-	_heroEntityAGGRESSIVESize = loadBehaviourEntity(sceneHero, &_heroEntityAGGRESSIVE, heroAnimIdxAGGRESSIVE, FILE3DHQR_HEROAGGRESSIVE);
-	_heroEntityDISCRETESize = loadBehaviourEntity(sceneHero, &_heroEntityDISCRETE, heroAnimIdxDISCRETE, FILE3DHQR_HERODISCRETE);
-	_heroEntityPROTOPACKSize = loadBehaviourEntity(sceneHero, &_heroEntityPROTOPACK, heroAnimIdxPROTOPACK, FILE3DHQR_HEROPROTOPACK);
-	_heroEntityNORMALSize = loadBehaviourEntity(sceneHero, &_heroEntityNORMAL, heroAnimIdxNORMAL, FILE3DHQR_HERONORMAL);
+	loadBehaviourEntity(sceneHero, _heroEntityATHLETIC, heroAnimIdxATHLETIC, FILE3DHQR_HEROATHLETIC);
+	loadBehaviourEntity(sceneHero, _heroEntityAGGRESSIVE, heroAnimIdxAGGRESSIVE, FILE3DHQR_HEROAGGRESSIVE);
+	loadBehaviourEntity(sceneHero, _heroEntityDISCRETE, heroAnimIdxDISCRETE, FILE3DHQR_HERODISCRETE);
+	loadBehaviourEntity(sceneHero, _heroEntityPROTOPACK, heroAnimIdxPROTOPACK, FILE3DHQR_HEROPROTOPACK);
+	loadBehaviourEntity(sceneHero, _heroEntityNORMAL, heroAnimIdxNORMAL, FILE3DHQR_HERONORMAL);
 
+	_engine->_animations->currentActorAnimExtraPtr = AnimationTypes::kStanding;
 	sceneHero->animExtraPtr = _engine->_animations->currentActorAnimExtraPtr;
 }
 
@@ -107,28 +97,23 @@ void Actor::setBehaviour(HeroBehaviourType behaviour) {
 	switch (behaviour) {
 	case HeroBehaviourType::kNormal:
 		heroBehaviour = behaviour;
-		sceneHero->entityDataPtr = _heroEntityNORMAL;
-		sceneHero->entityDataSize = _heroEntityNORMALSize;
+		sceneHero->entityData = &_heroEntityNORMAL;
 		break;
 	case HeroBehaviourType::kAthletic:
 		heroBehaviour = behaviour;
-		sceneHero->entityDataPtr = _heroEntityATHLETIC;
-		sceneHero->entityDataSize = _heroEntityATHLETICSize;
+		sceneHero->entityData = &_heroEntityATHLETIC;
 		break;
 	case HeroBehaviourType::kAggressive:
 		heroBehaviour = behaviour;
-		sceneHero->entityDataPtr = _heroEntityAGGRESSIVE;
-		sceneHero->entityDataSize = _heroEntityAGGRESSIVESize;
+		sceneHero->entityData = &_heroEntityAGGRESSIVE;
 		break;
 	case HeroBehaviourType::kDiscrete:
 		heroBehaviour = behaviour;
-		sceneHero->entityDataPtr = _heroEntityDISCRETE;
-		sceneHero->entityDataSize = _heroEntityDISCRETESize;
+		sceneHero->entityData = &_heroEntityDISCRETE;
 		break;
 	case HeroBehaviourType::kProtoPack:
 		heroBehaviour = behaviour;
-		sceneHero->entityDataPtr = _heroEntityPROTOPACK;
-		sceneHero->entityDataSize = _heroEntityPROTOPACKSize;
+		sceneHero->entityData = &_heroEntityPROTOPACK;
 		break;
 	};
 
@@ -163,61 +148,17 @@ int32 Actor::getTextIdForBehaviour() const {
 	return (int32)heroBehaviour;
 }
 
-// see Animations::getBodyAnimIndex
 int32 Actor::initBody(BodyType bodyIdx, int32 actorIdx, ActorBoundingBox &actorBoundingBox) {
 	if (bodyIdx == BodyType::btNone) {
 		return -1;
 	}
 	ActorStruct *actor = _engine->_scene->getActor(actorIdx);
-	Common::MemorySeekableReadWriteStream stream(actor->entityDataPtr, actor->entityDataSize);
-	do {
-		const uint8 type = stream.readByte();
-		if (type == 0xFF) {
-			return -1;
-		}
-
-		BodyType idx = (BodyType)stream.readByte();
-		const int32 pos = stream.pos();
-		const uint8 size = stream.readByte();
-		if (type == 1) { // 1 = body data - 3 is animdata
-			if (idx == bodyIdx) {
-				const int16 bodyIndex = stream.readUint16LE();
-
-				// TODO: move into resources class
-				int32 index;
-				if (!(bodyIndex & 0x8000)) {
-					index = _currentPositionInBodyPtrTab;
-					_currentPositionInBodyPtrTab++;
-					if (!_engine->_resources->bodyData[index].loadFromHQR(Resources::HQR_BODY_FILE, bodyIndex & 0xFFFF)) {
-						error("HQR ERROR: Parsing body entity for actor %i: %i", actorIdx, (int)bodyIdx);
-					}
-					stream.seek(stream.pos() - sizeof(uint16));
-					stream.writeUint16LE(index + 0x8000);
-				} else {
-					index = bodyIndex & 0x7FFF;
-				}
-
-				actorBoundingBox.hasBoundingBox = stream.readByte();
-				if (!actorBoundingBox.hasBoundingBox) {
-					return index;
-				}
-
-				if (stream.readByte() != ActionType::ACTION_ZV) {
-					return index;
-				}
-
-				actorBoundingBox.bbox.mins.x = stream.readSint16LE();
-				actorBoundingBox.bbox.mins.y = stream.readSint16LE();
-				actorBoundingBox.bbox.mins.z = stream.readSint16LE();
-				actorBoundingBox.bbox.maxs.x = stream.readSint16LE();
-				actorBoundingBox.bbox.maxs.y = stream.readSint16LE();
-				actorBoundingBox.bbox.maxs.z = stream.readSint16LE();
-
-				return index;
-			}
-		}
-		stream.seek(pos + size);
-	} while (1);
+	const EntityBody* body = actor->entityData->getBody((int)bodyIdx);
+	if (body == nullptr) {
+		return -1;
+	}
+	actorBoundingBox = body->actorBoundingBox;
+	return body->bodyIndex;
 }
 
 void Actor::initModelActor(BodyType bodyIdx, int16 actorIdx) {
@@ -450,23 +391,16 @@ void Actor::processActorExtraBonus(int32 actorIdx) { // GiveExtraBonus
 	}
 }
 
-void Actor::clearBodyTable() {
-	_currentPositionInBodyPtrTab = 0;
-}
-
-ActorStruct::~ActorStruct() {
-	free(entityDataPtr);
-}
-
 void ActorStruct::loadModel(int32 modelIndex) {
 	entity = modelIndex;
 	if (!staticFlags.bIsSpriteActor) {
 		debug(1, "Init actor with model %i", modelIndex);
-		entityDataSize = HQR::getAllocEntry(&entityDataPtr, Resources::HQR_FILE3D_FILE, modelIndex);
+		if (!_entityData.loadFromHQR(Resources::HQR_FILE3D_FILE, modelIndex)) {
+			error("Failed to load entity data for index %i",  modelIndex);
+		}
+		entityData = &_entityData;
 	} else {
-		entityDataSize = 0;
-		free(entityDataPtr);
-		entityDataPtr = nullptr;
+		entityData = nullptr;
 	}
 }
 

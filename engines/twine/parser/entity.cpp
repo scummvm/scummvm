@@ -156,6 +156,8 @@ bool EntityData::loadAnim(Common::SeekableReadStream &stream) {
 }
 
 bool EntityData::loadFromStream(Common::SeekableReadStream &stream) {
+	_animations.clear();
+	_bodies.clear();
 	do {
 		const uint8 opcode = stream.readByte();
 		if (opcode == 1) {

@@ -195,6 +195,13 @@ void Resources::initResources() {
 	preloadSamples();
 	preloadInventoryItems();
 
+	const int32 bodyCount = HQR::numEntries(Resources::HQR_BODY_FILE);
+	for (int32 i = 0; i < bodyCount; ++i) {
+		if (!bodyData[i].loadFromHQR(Resources::HQR_BODY_FILE, i)) {
+			error("HQR ERROR: Parsing body entity for model %i failed", i);
+		}
+	}
+
 	loadFlaInfo();
 }
 
