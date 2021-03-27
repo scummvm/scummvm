@@ -51,7 +51,7 @@ void Tinsel_ADPCMStream::readBufferTinselHeader() {
 		// Truncate
 		start &= 0x1F;
 
-		_status.predictor = ((double) 1.0) / ((uuint64)1 << start);
+		_status.predictor = ((double) 1.0) / ((uint64)1 << start);
 	}
 
 	_status.K0 = TinselFilterTable[filterVal][0];
