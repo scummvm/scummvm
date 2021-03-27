@@ -850,7 +850,6 @@ void MacText::resize(int w, int h) {
 }
 
 void MacText::appendText(const Common::U32String &str, int fontId, int fontSize, int fontSlant, bool skipAdd) {
-//	appendTextDefault(str, skipAdd);
 	uint oldLen = _textLines.size();
 
 	MacFontRun fontRun = MacFontRun(_wm, fontId, fontSlant, fontSize, 0, 0, 0);
