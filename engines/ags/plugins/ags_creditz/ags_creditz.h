@@ -106,7 +106,6 @@ struct State {
 	SequenceSettings _seqSettings[10];
 	StSequenceSettings _stSeqSettings[10];
 	SingleStatic _singleStatic;
-	BITMAP *_virtScreen = nullptr;
 
 	// Version 1.1 specific
 	bool _resolutionFlag = false;

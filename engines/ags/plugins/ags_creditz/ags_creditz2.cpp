@@ -26,8 +26,6 @@ namespace AGS3 {
 namespace Plugins {
 namespace AGSCreditz {
 
-IntFunction AGSCreditz2::_playSound;
-
 AGSCreditz2::AGSCreditz2() : AGSCreditz() {
 	_version = VERSION_20;
 

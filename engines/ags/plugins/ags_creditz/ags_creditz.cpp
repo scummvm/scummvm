@@ -30,6 +30,7 @@ namespace AGSCreditz {
 AGSCreditz::Version AGSCreditz::_version;
 State *AGSCreditz::_state;
 IAGSEngine *AGSCreditz::_engine;
+IntFunction AGSCreditz::_playSound;
 
 AGSCreditz::AGSCreditz() {
 	_state = new State();
@@ -44,7 +45,6 @@ void AGSCreditz::draw() {
 	int endPoint;
 
 	if (_state->_creditsRunning) {
-		_state->_virtScreen = _engine->GetVirtualScreen();
 		_engine->PollSystem();
 
 		if (!_state->_staticCredits) {
