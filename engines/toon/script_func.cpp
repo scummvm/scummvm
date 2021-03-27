@@ -714,6 +714,10 @@ int32 ScriptFunc::sys_Cmd_Query_Scene_Anim_Loaded(EMCState *state) {
 }
 
 int32 ScriptFunc::sys_Cmd_Play_Flux_Anim(EMCState *state) {
+	if (!_vm->getFlux()->getFlag()) {
+		_vm->getFlux()->playAnim(stackPos(0), 0, stackPos(1));
+		_vm->getFlux()->setFlag(4);
+	}
 	return 0;
 }
 
