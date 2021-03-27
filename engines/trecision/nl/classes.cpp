@@ -158,8 +158,8 @@ void doMouse() {
 
 			CheckMask(g_vm->_curMessage->_u16Param1, g_vm->_curMessage->_u16Param2);
 			// For the wheel in 2C
-			if ((g_vm->_curObj >= oRUOTA1A2C) && (g_vm->_curObj <= oRUOTA12C2C))
-				ShowObjName((oRUOTA1A2C % 3) + oRUOTAA2C, true);
+			if ((g_vm->_curObj >= oWHEEL1A2C) && (g_vm->_curObj <= oWHEEL12C2C))
+				ShowObjName((oWHEEL1A2C % 3) + oWHEELA2C, true);
 			// For the displacer
 			else if (g_vm->_curRoom == r41D) {
 				if ((g_vm->_curObj >= oPULSANTE1AD) && (g_vm->_curObj <= oPULSANTE33AD)) {
@@ -297,10 +297,10 @@ void doMouse() {
 		}
 
 		// Special management for 2C wheels
-		if ((g_vm->_obj[oBASERUOTE2C]._mode & OBJMODE_OBJSTATUS) && (g_vm->_curRoom == r2C)) {
+		if ((g_vm->_obj[oBASEWHEELS2C]._mode & OBJMODE_OBJSTATUS) && (g_vm->_curRoom == r2C)) {
 			if (CheckMask(g_vm->_curMessage->_u16Param1, g_vm->_curMessage->_u16Param2)) {
-				if ((g_vm->_curObj >= oRUOTA1A2C) && (g_vm->_curObj <= oRUOTA12C2C))
-					g_vm->ruota = (g_vm->_curObj - oRUOTA1A2C) % 3;
+				if ((g_vm->_curObj >= oWHEEL1A2C) && (g_vm->_curObj <= oWHEEL12C2C))
+					g_vm->_wheel = (g_vm->_curObj - oWHEEL1A2C) % 3;
 				else if (g_vm->_curObj == oPULSANTE2C) {
 					extern uint16 *SmackImagePointer, *ImagePointer;
 					if (g_vm->_curMessage->_event == ME_MLEFT) {
@@ -308,12 +308,12 @@ void doMouse() {
 						break;
 					}
 					g_vm->_animMgr->_animTab[aBKG2C]._flag &= ~SMKANIM_OFF1;
-					g_vm->_obj[oBASERUOTE2C]._mode &= ~OBJMODE_OBJSTATUS;
-					g_vm->_obj[omRUOTE2C]._mode &= ~OBJMODE_OBJSTATUS;
+					g_vm->_obj[oBASEWHEELS2C]._mode &= ~OBJMODE_OBJSTATUS;
+					g_vm->_obj[omWHEELS2C]._mode &= ~OBJMODE_OBJSTATUS;
 					g_vm->_obj[oPULSANTE2C]._mode &= ~OBJMODE_OBJSTATUS;
-					g_vm->_obj[g_vm->ruotepos[0] * 3 + 0 + oRUOTA1A2C]._mode &= ~OBJMODE_OBJSTATUS;
-					g_vm->_obj[g_vm->ruotepos[1] * 3 + 1 + oRUOTA1A2C]._mode &= ~OBJMODE_OBJSTATUS;
-					g_vm->_obj[g_vm->ruotepos[2] * 3 + 2 + oRUOTA1A2C]._mode &= ~OBJMODE_OBJSTATUS;
+					g_vm->_obj[g_vm->_wheelPos[0] * 3 + 0 + oWHEEL1A2C]._mode &= ~OBJMODE_OBJSTATUS;
+					g_vm->_obj[g_vm->_wheelPos[1] * 3 + 1 + oWHEEL1A2C]._mode &= ~OBJMODE_OBJSTATUS;
+					g_vm->_obj[g_vm->_wheelPos[2] * 3 + 2 + oWHEEL1A2C]._mode &= ~OBJMODE_OBJSTATUS;
 
 					g_vm->_obj[oCAMPO2C]._mode |= OBJMODE_OBJSTATUS;
 					g_vm->_obj[oTEMPIO2C]._mode |= OBJMODE_OBJSTATUS;
@@ -324,14 +324,14 @@ void doMouse() {
 					g_vm->_obj[od2CALLA2E]._mode |= OBJMODE_OBJSTATUS;
 					g_vm->_obj[oCARTELLOA2C]._mode |= OBJMODE_OBJSTATUS;
 					g_vm->_obj[od2CALLA26]._mode |= OBJMODE_OBJSTATUS;
-					g_vm->_obj[oRUOTE2C]._mode |= OBJMODE_OBJSTATUS;
+					g_vm->_obj[oWHEELS2C]._mode |= OBJMODE_OBJSTATUS;
 					FlagShowCharacter = true;
 					RegenRoom();
 					memcpy(SmackImagePointer, ImagePointer, MAXX * AREA * 2);
 					g_vm->_animMgr->startSmkAnim(g_vm->_room[g_vm->_curRoom]._bkgAnim);
 
 					// right combination
-					if ((g_vm->ruotepos[0] == 7) && (g_vm->ruotepos[1] == 5) && (g_vm->ruotepos[2] == 11)) {
+					if ((g_vm->_wheelPos[0] == 7) && (g_vm->_wheelPos[1] == 5) && (g_vm->_wheelPos[2] == 11)) {
 						doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a2C6PREMEPULSANTEAPERTURA, 0, 0, g_vm->_curObj);
 						g_vm->_obj[oSFINGE2C]._flag &= ~OBJFLAG_PERSON;
 					} else
@@ -342,13 +342,13 @@ void doMouse() {
 					break;
 
 				if (g_vm->_curMessage->_event == ME_MLEFT)
-					g_vm->ruotepos[g_vm->ruota] = (g_vm->ruotepos[g_vm->ruota] > 10) ? 0 : g_vm->ruotepos[g_vm->ruota] + 1;
+					g_vm->_wheelPos[g_vm->_wheel] = (g_vm->_wheelPos[g_vm->_wheel] > 10) ? 0 : g_vm->_wheelPos[g_vm->_wheel] + 1;
 				if (g_vm->_curMessage->_event == ME_MRIGHT)
-					g_vm->ruotepos[g_vm->ruota] = (g_vm->ruotepos[g_vm->ruota] < 1) ? 11 : g_vm->ruotepos[g_vm->ruota] - 1;
+					g_vm->_wheelPos[g_vm->_wheel] = (g_vm->_wheelPos[g_vm->_wheel] < 1) ? 11 : g_vm->_wheelPos[g_vm->_wheel] - 1;
 
-				NLPlaySound(wRUOTE2C);
+				NLPlaySound(wWHEELS2C);
 				g_vm->_obj[g_vm->_curObj]._mode &= ~OBJMODE_OBJSTATUS;
-				g_vm->_obj[g_vm->ruotepos[g_vm->ruota] * 3 + g_vm->ruota + oRUOTA1A2C]._mode |= OBJMODE_OBJSTATUS;
+				g_vm->_obj[g_vm->_wheelPos[g_vm->_wheel] * 3 + g_vm->_wheel + oWHEEL1A2C]._mode |= OBJMODE_OBJSTATUS;
 				RegenRoom();
 			}
 			break;

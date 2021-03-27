@@ -149,7 +149,7 @@ void ShowObjName(uint16 obj, bool showhide) {
 			locsent = g_vm->_objName[g_vm->_obj[obj]._name];
 
 		posx = (g_vm->_obj[obj]._lim[0] + g_vm->_obj[obj]._lim[2]) / 2;
-		posy = (obj == oRUOTE2C) ? 187 : g_vm->_obj[obj]._lim[1];
+		posy = (obj == oWHEELS2C) ? 187 : g_vm->_obj[obj]._lim[1];
 
 		PositionString(posx, posy, locsent.c_str(), &posx, &posy, false);
 		if (g_vm->lastobj)
