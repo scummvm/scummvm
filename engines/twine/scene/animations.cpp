@@ -580,13 +580,9 @@ void Animations::processActorAnimations(int32 actorIdx) { // DoAnim
 			currentStep.x = _engine->_renderer->destPos.x;
 			currentStep.z = _engine->_renderer->destPos.z;
 
-			_engine->_movements->processActor.x = actor->pos.x + currentStep.x - actor->lastPos.x;
-			_engine->_movements->processActor.y = actor->pos.y + currentStep.y - actor->lastPos.y;
-			_engine->_movements->processActor.z = actor->pos.z + currentStep.z - actor->lastPos.z;
+			_engine->_movements->processActor = actor->pos + currentStep - actor->lastPos;
 
-			actor->lastPos.x = currentStep.x;
-			actor->lastPos.y = currentStep.y;
-			actor->lastPos.z = currentStep.z;
+			actor->lastPos = currentStep;
 
 			actor->dynamicFlags.bAnimEnded = 0;
 			actor->dynamicFlags.bAnimFrameReached = 0;

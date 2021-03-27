@@ -57,7 +57,7 @@ private:
 	int16 processLastRotationAngle = ANGLE_0; // processActorVar6
 
 	/** Current step coordinates */
-	I16Vec3 currentStep;
+	IVec3 currentStep;
 
 public:
 	Animations(TwinEEngine *engine);
