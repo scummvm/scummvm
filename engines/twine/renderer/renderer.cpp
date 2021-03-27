@@ -143,9 +143,9 @@ void Renderer::setOrthoProjection(int32 x, int32 y, int32 z) {
 }
 
 void Renderer::baseMatrixTranspose() {
-	SWAP(_baseMatrix.row1[1], _baseMatrix.row2[0]);
-	SWAP(_baseMatrix.row1[2], _baseMatrix.row3[0]);
-	SWAP(_baseMatrix.row2[2], _baseMatrix.row3[1]);
+	SWAP(_baseMatrix.row1.y, _baseMatrix.row2.x);
+	SWAP(_baseMatrix.row1.z, _baseMatrix.row3.x);
+	SWAP(_baseMatrix.row2.z, _baseMatrix.row3.y);
 }
 
 void Renderer::setBaseRotation(int32 x, int32 y, int32 z, bool transpose) {
@@ -153,23 +153,23 @@ void Renderer::setBaseRotation(int32 x, int32 y, int32 z, bool transpose) {
 	const double Yradians = (double)((ANGLE_90 - y) % ANGLE_360) * 2 * M_PI / ANGLE_360;
 	const double Zradians = (double)((ANGLE_90 - z) % ANGLE_360) * 2 * M_PI / ANGLE_360;
 
-	_baseMatrix.row1[0] = (int32)(sin(Zradians) * sin(Yradians) * SCENE_SIZE_HALFF);
-	_baseMatrix.row1[1] = (int32)(-cos(Zradians) * SCENE_SIZE_HALFF);
-	_baseMatrix.row1[2] = (int32)(sin(Zradians) * cos(Yradians) * SCENE_SIZE_HALFF);
-	_baseMatrix.row2[0] = (int32)(cos(Zradians) * sin(Xradians) * SCENE_SIZE_HALFF);
-	_baseMatrix.row2[1] = (int32)(sin(Zradians) * sin(Xradians) * SCENE_SIZE_HALFF);
-	_baseMatrix.row3[0] = (int32)(cos(Zradians) * cos(Xradians) * SCENE_SIZE_HALFF);
-	_baseMatrix.row3[1] = (int32)(sin(Zradians) * cos(Xradians) * SCENE_SIZE_HALFF);
+	_baseMatrix.row1.x = (int32)(sin(Zradians) * sin(Yradians) * SCENE_SIZE_HALFF);
+	_baseMatrix.row1.y = (int32)(-cos(Zradians) * SCENE_SIZE_HALFF);
+	_baseMatrix.row1.z = (int32)(sin(Zradians) * cos(Yradians) * SCENE_SIZE_HALFF);
+	_baseMatrix.row2.x = (int32)(cos(Zradians) * sin(Xradians) * SCENE_SIZE_HALFF);
+	_baseMatrix.row2.y = (int32)(sin(Zradians) * sin(Xradians) * SCENE_SIZE_HALFF);
+	_baseMatrix.row3.x = (int32)(cos(Zradians) * cos(Xradians) * SCENE_SIZE_HALFF);
+	_baseMatrix.row3.y = (int32)(sin(Zradians) * cos(Xradians) * SCENE_SIZE_HALFF);
 
-	int32 matrixElem = _baseMatrix.row2[0];
+	int32 matrixElem = _baseMatrix.row2.x;
 
-	_baseMatrix.row2[0] = (int32)(sin(Yradians) * matrixElem + SCENE_SIZE_HALFF * cos(Yradians) * cos(Xradians));
-	_baseMatrix.row2[2] = (int32)(cos(Yradians) * matrixElem - SCENE_SIZE_HALFF * sin(Yradians) * cos(Xradians));
+	_baseMatrix.row2.x = (int32)(sin(Yradians) * matrixElem + SCENE_SIZE_HALFF * cos(Yradians) * cos(Xradians));
+	_baseMatrix.row2.z = (int32)(cos(Yradians) * matrixElem - SCENE_SIZE_HALFF * sin(Yradians) * cos(Xradians));
 
-	matrixElem = _baseMatrix.row3[0];
+	matrixElem = _baseMatrix.row3.x;
 
-	_baseMatrix.row3[0] = (int32)(sin(Yradians) * matrixElem - SCENE_SIZE_HALFF * sin(Xradians) * cos(Yradians));
-	_baseMatrix.row3[2] = (int32)(cos(Yradians) * matrixElem + SCENE_SIZE_HALFF * sin(Xradians) * sin(Yradians));
+	_baseMatrix.row3.x = (int32)(sin(Yradians) * matrixElem - SCENE_SIZE_HALFF * sin(Xradians) * cos(Yradians));
+	_baseMatrix.row3.z = (int32)(cos(Yradians) * matrixElem + SCENE_SIZE_HALFF * sin(Xradians) * sin(Yradians));
 
 	if (transpose) {
 		baseMatrixTranspose();
@@ -182,20 +182,20 @@ void Renderer::setBaseRotation(int32 x, int32 y, int32 z, bool transpose) {
 }
 
 void Renderer::getBaseRotationPosition(int32 x, int32 y, int32 z) {
-	destPos.x = (_baseMatrix.row1[0] * x + _baseMatrix.row1[1] * y + _baseMatrix.row1[2] * z) / SCENE_SIZE_HALF;
-	destPos.y = (_baseMatrix.row2[0] * x + _baseMatrix.row2[1] * y + _baseMatrix.row2[2] * z) / SCENE_SIZE_HALF;
-	destPos.z = (_baseMatrix.row3[0] * x + _baseMatrix.row3[1] * y + _baseMatrix.row3[2] * z) / SCENE_SIZE_HALF;
+	destPos.x = (_baseMatrix.row1.x * x + _baseMatrix.row1.y * y + _baseMatrix.row1.z * z) / SCENE_SIZE_HALF;
+	destPos.y = (_baseMatrix.row2.x * x + _baseMatrix.row2.y * y + _baseMatrix.row2.z * z) / SCENE_SIZE_HALF;
+	destPos.z = (_baseMatrix.row3.x * x + _baseMatrix.row3.y * y + _baseMatrix.row3.z * z) / SCENE_SIZE_HALF;
 }
 
 void Renderer::getCameraAnglePositions(int32 x, int32 y, int32 z) {
-	destPos.x = (_baseMatrix.row1[0] * x + _baseMatrix.row2[0] * y + _baseMatrix.row3[0] * z) / SCENE_SIZE_HALF;
-	destPos.y = (_baseMatrix.row1[1] * x + _baseMatrix.row2[1] * y + _baseMatrix.row3[1] * z) / SCENE_SIZE_HALF;
-	destPos.z = (_baseMatrix.row1[2] * x + _baseMatrix.row2[2] * y + _baseMatrix.row3[2] * z) / SCENE_SIZE_HALF;
+	destPos.x = (_baseMatrix.row1.x * x + _baseMatrix.row2.x * y + _baseMatrix.row3.x * z) / SCENE_SIZE_HALF;
+	destPos.y = (_baseMatrix.row1.y * x + _baseMatrix.row2.y * y + _baseMatrix.row3.y * z) / SCENE_SIZE_HALF;
+	destPos.z = (_baseMatrix.row1.z * x + _baseMatrix.row2.z * y + _baseMatrix.row3.z * z) / SCENE_SIZE_HALF;
 }
 
 void Renderer::translateGroup(int32 x, int32 y, int32 z) {
-	destPos.x = (_shadeMatrix.row1[0] * x + _shadeMatrix.row1[1] * y + _shadeMatrix.row1[2] * z) / SCENE_SIZE_HALF;
-	destPos.y = (_shadeMatrix.row2[0] * x + _shadeMatrix.row2[1] * y + _shadeMatrix.row2[2] * z) / SCENE_SIZE_HALF;
+	destPos.x = (_shadeMatrix.row1.x * x + _shadeMatrix.row1.y * y + _shadeMatrix.row1.z * z) / SCENE_SIZE_HALF;
+	destPos.y = (_shadeMatrix.row2.x * x + _shadeMatrix.row2.y * y + _shadeMatrix.row2.z * z) / SCENE_SIZE_HALF;
 	destPos.z = destPos.y;
 }
 
@@ -232,15 +232,15 @@ IVec3 Renderer::getHolomapRotation(const int32 angleX, const int32 angleY, const
 		rotX = shadeAngleTable[ClampAngle(angleZ + ANGLE_90)] * rotX / SCENE_SIZE_HALF;
 	}
 
-	const int32 row1X = _baseMatrix.row1[0] * rotX;
-	const int32 row1Y = _baseMatrix.row1[1] * rotY;
-	const int32 row1Z = _baseMatrix.row1[2] * rotZ;
-	const int32 row2X = _baseMatrix.row2[0] * rotX;
-	const int32 row2Y = _baseMatrix.row2[1] * rotY;
-	const int32 row2Z = _baseMatrix.row2[2] * rotZ;
-	const int32 row3X = _baseMatrix.row3[0] * rotX;
-	const int32 row3Y = _baseMatrix.row3[1] * rotY;
-	const int32 row3Z = _baseMatrix.row3[2] * rotZ;
+	const int32 row1X = _baseMatrix.row1.x * rotX;
+	const int32 row1Y = _baseMatrix.row1.y * rotY;
+	const int32 row1Z = _baseMatrix.row1.z * rotZ;
+	const int32 row2X = _baseMatrix.row2.x * rotX;
+	const int32 row2Y = _baseMatrix.row2.y * rotY;
+	const int32 row2Z = _baseMatrix.row2.z * rotZ;
+	const int32 row3X = _baseMatrix.row3.x * rotX;
+	const int32 row3Y = _baseMatrix.row3.y * rotY;
+	const int32 row3Z = _baseMatrix.row3.z * rotZ;
 	IVec3 vec;
 	vec.x = (row1X + row1Y + row1Z) / SCENE_SIZE_HALF;
 	vec.y = (row2X + row2Y + row2Z) / SCENE_SIZE_HALF;
@@ -258,16 +258,16 @@ void Renderer::applyRotation(IMatrix3x3 *targetMatrix, const IMatrix3x3 *current
 		angle += ANGLE_90;
 		int32 angleVar1 = shadeAngleTable[ClampAngle(angle)];
 
-		matrix1.row1[0] = currentMatrix->row1[0];
-		matrix1.row2[0] = currentMatrix->row2[0];
-		matrix1.row3[0] = currentMatrix->row3[0];
+		matrix1.row1.x = currentMatrix->row1.x;
+		matrix1.row2.x = currentMatrix->row2.x;
+		matrix1.row3.x = currentMatrix->row3.x;
 
-		matrix1.row1[1] = (currentMatrix->row1[2] * angleVar2 + currentMatrix->row1[1] * angleVar1) / SCENE_SIZE_HALF;
-		matrix1.row1[2] = (currentMatrix->row1[2] * angleVar1 - currentMatrix->row1[1] * angleVar2) / SCENE_SIZE_HALF;
-		matrix1.row2[1] = (currentMatrix->row2[2] * angleVar2 + currentMatrix->row2[1] * angleVar1) / SCENE_SIZE_HALF;
-		matrix1.row2[2] = (currentMatrix->row2[2] * angleVar1 - currentMatrix->row2[1] * angleVar2) / SCENE_SIZE_HALF;
-		matrix1.row3[1] = (currentMatrix->row3[2] * angleVar2 + currentMatrix->row3[1] * angleVar1) / SCENE_SIZE_HALF;
-		matrix1.row3[2] = (currentMatrix->row3[2] * angleVar1 - currentMatrix->row3[1] * angleVar2) / SCENE_SIZE_HALF;
+		matrix1.row1.y = (currentMatrix->row1.z * angleVar2 + currentMatrix->row1.y * angleVar1) / SCENE_SIZE_HALF;
+		matrix1.row1.z = (currentMatrix->row1.z * angleVar1 - currentMatrix->row1.y * angleVar2) / SCENE_SIZE_HALF;
+		matrix1.row2.y = (currentMatrix->row2.z * angleVar2 + currentMatrix->row2.y * angleVar1) / SCENE_SIZE_HALF;
+		matrix1.row2.z = (currentMatrix->row2.z * angleVar1 - currentMatrix->row2.y * angleVar2) / SCENE_SIZE_HALF;
+		matrix1.row3.y = (currentMatrix->row3.z * angleVar2 + currentMatrix->row3.y * angleVar1) / SCENE_SIZE_HALF;
+		matrix1.row3.z = (currentMatrix->row3.z * angleVar1 - currentMatrix->row3.y * angleVar2) / SCENE_SIZE_HALF;
 	} else {
 		matrix1 = *currentMatrix;
 	}
@@ -278,16 +278,16 @@ void Renderer::applyRotation(IMatrix3x3 *targetMatrix, const IMatrix3x3 *current
 		angle += ANGLE_90;
 		int32 angleVar1 = shadeAngleTable[ClampAngle(angle)];
 
-		matrix2.row1[2] = matrix1.row1[2];
-		matrix2.row2[2] = matrix1.row2[2];
-		matrix2.row3[2] = matrix1.row3[2];
+		matrix2.row1.z = matrix1.row1.z;
+		matrix2.row2.z = matrix1.row2.z;
+		matrix2.row3.z = matrix1.row3.z;
 
-		matrix2.row1[0] = (matrix1.row1[1] * angleVar2 + matrix1.row1[0] * angleVar1) / SCENE_SIZE_HALF;
-		matrix2.row1[1] = (matrix1.row1[1] * angleVar1 - matrix1.row1[0] * angleVar2) / SCENE_SIZE_HALF;
-		matrix2.row2[0] = (matrix1.row2[1] * angleVar2 + matrix1.row2[0] * angleVar1) / SCENE_SIZE_HALF;
-		matrix2.row2[1] = (matrix1.row2[1] * angleVar1 - matrix1.row2[0] * angleVar2) / SCENE_SIZE_HALF;
-		matrix2.row3[0] = (matrix1.row3[1] * angleVar2 + matrix1.row3[0] * angleVar1) / SCENE_SIZE_HALF;
-		matrix2.row3[1] = (matrix1.row3[1] * angleVar1 - matrix1.row3[0] * angleVar2) / SCENE_SIZE_HALF;
+		matrix2.row1.x = (matrix1.row1.y * angleVar2 + matrix1.row1.x * angleVar1) / SCENE_SIZE_HALF;
+		matrix2.row1.y = (matrix1.row1.y * angleVar1 - matrix1.row1.x * angleVar2) / SCENE_SIZE_HALF;
+		matrix2.row2.x = (matrix1.row2.y * angleVar2 + matrix1.row2.x * angleVar1) / SCENE_SIZE_HALF;
+		matrix2.row2.y = (matrix1.row2.y * angleVar1 - matrix1.row2.x * angleVar2) / SCENE_SIZE_HALF;
+		matrix2.row3.x = (matrix1.row3.y * angleVar2 + matrix1.row3.x * angleVar1) / SCENE_SIZE_HALF;
+		matrix2.row3.y = (matrix1.row3.y * angleVar1 - matrix1.row3.x * angleVar2) / SCENE_SIZE_HALF;
 	} else {
 		matrix2 = matrix1;
 	}
@@ -298,17 +298,17 @@ void Renderer::applyRotation(IMatrix3x3 *targetMatrix, const IMatrix3x3 *current
 		angle += ANGLE_90;
 		int32 angleVar1 = shadeAngleTable[ClampAngle(angle)];
 
-		targetMatrix->row1[1] = matrix2.row1[1];
-		targetMatrix->row2[1] = matrix2.row2[1];
-		targetMatrix->row3[1] = matrix2.row3[1];
+		targetMatrix->row1.y = matrix2.row1.y;
+		targetMatrix->row2.y = matrix2.row2.y;
+		targetMatrix->row3.y = matrix2.row3.y;
 
-		targetMatrix->row1[0] = (matrix2.row1[0] * angleVar1 - matrix2.row1[2] * angleVar2) / SCENE_SIZE_HALF;
-		targetMatrix->row1[2] = (matrix2.row1[0] * angleVar2 + matrix2.row1[2] * angleVar1) / SCENE_SIZE_HALF;
-		targetMatrix->row2[0] = (matrix2.row2[0] * angleVar1 - matrix2.row2[2] * angleVar2) / SCENE_SIZE_HALF;
-		targetMatrix->row2[2] = (matrix2.row2[0] * angleVar2 + matrix2.row2[2] * angleVar1) / SCENE_SIZE_HALF;
+		targetMatrix->row1.x = (matrix2.row1.x * angleVar1 - matrix2.row1.z * angleVar2) / SCENE_SIZE_HALF;
+		targetMatrix->row1.z = (matrix2.row1.x * angleVar2 + matrix2.row1.z * angleVar1) / SCENE_SIZE_HALF;
+		targetMatrix->row2.x = (matrix2.row2.x * angleVar1 - matrix2.row2.z * angleVar2) / SCENE_SIZE_HALF;
+		targetMatrix->row2.z = (matrix2.row2.x * angleVar2 + matrix2.row2.z * angleVar1) / SCENE_SIZE_HALF;
 
-		targetMatrix->row3[0] = (matrix2.row3[0] * angleVar1 - matrix2.row3[2] * angleVar2) / SCENE_SIZE_HALF;
-		targetMatrix->row3[2] = (matrix2.row3[0] * angleVar2 + matrix2.row3[2] * angleVar1) / SCENE_SIZE_HALF;
+		targetMatrix->row3.x = (matrix2.row3.x * angleVar1 - matrix2.row3.z * angleVar2) / SCENE_SIZE_HALF;
+		targetMatrix->row3.z = (matrix2.row3.x * angleVar2 + matrix2.row3.z * angleVar1) / SCENE_SIZE_HALF;
 	} else {
 		*targetMatrix = matrix2;
 	}
@@ -317,13 +317,9 @@ void Renderer::applyRotation(IMatrix3x3 *targetMatrix, const IMatrix3x3 *current
 void Renderer::applyPointsRotation(const Common::Array<BodyVertex> &vertices, int32 firstPoint, int32 numPoints, I16Vec3 *destPoints, const IMatrix3x3 *rotationMatrix) {
 	for (int32 i = 0; i < numPoints; ++i) {
 		const BodyVertex &vertex = vertices[i + firstPoint];
-		const int32 tmpX = vertex.x;
-		const int32 tmpY = vertex.y;
-		const int32 tmpZ = vertex.z;
-
-		destPoints->x = ((rotationMatrix->row1[0] * tmpX + rotationMatrix->row1[1] * tmpY + rotationMatrix->row1[2] * tmpZ) / SCENE_SIZE_HALF) + destPos.x;
-		destPoints->y = ((rotationMatrix->row2[0] * tmpX + rotationMatrix->row2[1] * tmpY + rotationMatrix->row2[2] * tmpZ) / SCENE_SIZE_HALF) + destPos.y;
-		destPoints->z = ((rotationMatrix->row3[0] * tmpX + rotationMatrix->row3[1] * tmpY + rotationMatrix->row3[2] * tmpZ) / SCENE_SIZE_HALF) + destPos.z;
+		destPoints->x = ((rotationMatrix->row1.x * vertex.x + rotationMatrix->row1.y * vertex.y + rotationMatrix->row1.z * vertex.z) / SCENE_SIZE_HALF) + destPos.x;
+		destPoints->y = ((rotationMatrix->row2.x * vertex.x + rotationMatrix->row2.y * vertex.y + rotationMatrix->row2.z * vertex.z) / SCENE_SIZE_HALF) + destPos.y;
+		destPoints->z = ((rotationMatrix->row3.x * vertex.x + rotationMatrix->row3.y * vertex.y + rotationMatrix->row3.z * vertex.z) / SCENE_SIZE_HALF) + destPos.z;
 
 		destPoints++;
 	}
@@ -332,11 +328,7 @@ void Renderer::applyPointsRotation(const Common::Array<BodyVertex> &vertices, in
 void Renderer::processRotatedElement(IMatrix3x3 *targetMatrix, const Common::Array<BodyVertex> &vertices, int32 rotX, int32 rotY, int32 rotZ, const BodyBone &bone, ModelData *modelData) {
 	const int32 firstPoint = bone.firstVertex;
 	const int32 numOfPoints = bone.numVertices;
-
-	IVec3 renderAngle;
-	renderAngle.x = rotX;
-	renderAngle.y = rotY;
-	renderAngle.z = rotZ;
+	const IVec3 renderAngle(rotX, rotY, rotZ);
 
 	const IMatrix3x3 *currentMatrix;
 	// if its the first point
@@ -373,9 +365,9 @@ void Renderer::applyPointsTranslation(const Common::Array<BodyVertex> &vertices,
 		const int32 tmpY = vertex.y + angleVec.y;
 		const int32 tmpZ = vertex.z + angleVec.x;
 
-		destPoints->x = ((translationMatrix->row1[0] * tmpX + translationMatrix->row1[1] * tmpY + translationMatrix->row1[2] * tmpZ) / SCENE_SIZE_HALF) + destPos.x;
-		destPoints->y = ((translationMatrix->row2[0] * tmpX + translationMatrix->row2[1] * tmpY + translationMatrix->row2[2] * tmpZ) / SCENE_SIZE_HALF) + destPos.y;
-		destPoints->z = ((translationMatrix->row3[0] * tmpX + translationMatrix->row3[1] * tmpY + translationMatrix->row3[2] * tmpZ) / SCENE_SIZE_HALF) + destPos.z;
+		destPoints->x = ((translationMatrix->row1.x * tmpX + translationMatrix->row1.y * tmpY + translationMatrix->row1.z * tmpZ) / SCENE_SIZE_HALF) + destPos.x;
+		destPoints->y = ((translationMatrix->row2.x * tmpX + translationMatrix->row2.y * tmpY + translationMatrix->row2.z * tmpZ) / SCENE_SIZE_HALF) + destPos.y;
+		destPoints->z = ((translationMatrix->row3.x * tmpX + translationMatrix->row3.y * tmpY + translationMatrix->row3.z * tmpZ) / SCENE_SIZE_HALF) + destPos.z;
 
 		destPoints++;
 	}
@@ -1411,9 +1403,9 @@ bool Renderer::renderAnimatedModel(ModelData *modelData, const BodyData &bodyDat
 					const int16 col3 = shadePtr.col3;
 
 					int32 color = 0;
-					color += _shadeMatrix.row1[0] * col1 + _shadeMatrix.row1[1] * col2 + _shadeMatrix.row1[2] * col3;
-					color += _shadeMatrix.row2[0] * col1 + _shadeMatrix.row2[1] * col2 + _shadeMatrix.row2[2] * col3;
-					color += _shadeMatrix.row3[0] * col1 + _shadeMatrix.row3[1] * col2 + _shadeMatrix.row3[2] * col3;
+					color += _shadeMatrix.row1.x * col1 + _shadeMatrix.row1.y * col2 + _shadeMatrix.row1.z * col3;
+					color += _shadeMatrix.row2.x * col1 + _shadeMatrix.row2.y * col2 + _shadeMatrix.row2.z * col3;
+					color += _shadeMatrix.row3.x * col1 + _shadeMatrix.row3.y * col2 + _shadeMatrix.row3.z * col3;
 
 					int32 shade = 0;
 

@@ -71,17 +71,17 @@ struct IMatrix3x3 {
 
 inline IMatrix3x3 operator*(const IMatrix3x3 &matrix, const IVec3 &vec) {
 	IMatrix3x3 out;
-	out.row1[0] = matrix.row1[0] * vec.x;
-	out.row1[1] = matrix.row1[1] * vec.x;
-	out.row1[2] = matrix.row1[2] * vec.x;
+	out.row1.x = matrix.row1.x * vec.x;
+	out.row1.y = matrix.row1.y * vec.x;
+	out.row1.z = matrix.row1.z * vec.x;
 
-	out.row2[0] = matrix.row2[0] * vec.y;
-	out.row2[1] = matrix.row2[1] * vec.y;
-	out.row2[2] = matrix.row2[2] * vec.y;
+	out.row2.x = matrix.row2.x * vec.y;
+	out.row2.y = matrix.row2.y * vec.y;
+	out.row2.z = matrix.row2.z * vec.y;
 
-	out.row3[0] = matrix.row3[0] * vec.z;
-	out.row3[1] = matrix.row3[1] * vec.z;
-	out.row3[2] = matrix.row3[2] * vec.z;
+	out.row3.x = matrix.row3.x * vec.z;
+	out.row3.y = matrix.row3.y * vec.z;
+	out.row3.z = matrix.row3.z * vec.z;
 	return out;
 }
 
