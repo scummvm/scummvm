@@ -58,6 +58,8 @@ struct CmdRenderPolygon {
 	uint8 renderType = 0;
 	uint8 numVertices = 0;
 	int16 colorIndex = 0;
+	int16 top = 0;
+	int16 bottom = 0;
 	// followed by Vertex array
 };
 
@@ -192,7 +194,6 @@ private:
 	void renderPolygonsDither(uint8 *out, int vtop, int32 vsize) const;
 	void renderPolygonsMarble(uint8 *out, int vtop, int32 vsize, uint8 color) const;
 
-	void computeBoundingBox(Vertex *vertices, int32 numVertices, int &vleft, int &vright, int &vtop, int &vbottom) const;
 	void computePolygons(int16 polyRenderType, const Vertex *vertices, int32 numVertices);
 
 	const RenderCommand *depthSortRenderCommands(int32 numOfPrimitives);
@@ -221,7 +222,7 @@ public:
 	void setLightVector(int32 angleX, int32 angleY, int32 angleZ);
 	void getBaseRotationPosition(int32 x, int32 y, int32 z);
 
-	void renderPolygons(const CmdRenderPolygon &polygon, Vertex *vertices);
+	void renderPolygons(const CmdRenderPolygon &polygon, Vertex *vertices, int vtop, int vbottom);
 
 	inline int32 projectPositionOnScreen(const IVec3& pos) {
 		return projectPositionOnScreen(pos.x, pos.y, pos.z);

@@ -424,25 +424,8 @@ void Renderer::setLightVector(int32 angleX, int32 angleY, int32 angleZ) {
 	_lightPos = destPos;
 }
 
-FORCEINLINE int16 clamp(int16 x, int16 a, int16 b) {
+static FORCEINLINE int16 clamp(int16 x, int16 a, int16 b) {
 	return x < a ? a : (x > b ? b : x);
-}
-
-void Renderer::computeBoundingBox(Vertex *vertices, int32 numVertices, int &vleft, int &vright, int &vtop, int &vbottom) const {
-	vleft = vtop = SCENE_SIZE_MAX;
-	vright = vbottom = SCENE_SIZE_MIN;
-	const int16 maxWidth = _engine->width() - 1;
-	const int16 maxHeight = _engine->height() - 1;
-
-	for (int32 i = 0; i < numVertices; i++) {
-		vertices[i].x = clamp(vertices[i].x, 0, maxWidth);
-		vleft = MIN<int>(vleft, vertices[i].x);
-		vright = MAX<int>(vright, vertices[i].x);
-
-		vertices[i].y = clamp(vertices[i].y, 0, maxHeight);
-		vtop = MIN<int>(vtop, vertices[i].y);
-		vbottom = MAX<int>(vbottom, vertices[i].y);
-	}
 }
 
 void Renderer::computePolygons(int16 polyRenderType, const Vertex *vertices, int32 numVertices) {
@@ -1013,15 +996,7 @@ void Renderer::renderPolygonsDither(uint8 *out, int vtop, int32 vsize) const {
 void Renderer::renderPolygonsMarble(uint8 *out, int vtop, int32 vsize, uint8 color) const {
 }
 
-void Renderer::renderPolygons(const CmdRenderPolygon &polygon, Vertex *vertices) {
-	int vleft = 0;
-	int vright = 0;
-	int vtop = 0;
-	int vbottom = 0;
-
-	if (polygon.numVertices > 0) {
-		computeBoundingBox(vertices, polygon.numVertices, vleft, vright, vtop, vbottom);
-	}
+void Renderer::renderPolygons(const CmdRenderPolygon &polygon, Vertex *vertices, int vtop, int vbottom) {
 	computePolygons(polygon.renderType, vertices, polygon.numVertices);
 
 	uint8 *out = (uint8 *)_engine->frontVideoBuffer.getBasePtr(0, vtop);
@@ -1119,6 +1094,9 @@ uint8 *Renderer::prepareLines(const Common::Array<BodyLine> &lines, int32 &numOf
 }
 
 uint8 *Renderer::preparePolygons(const Common::Array<BodyPolygon> &polygons, int32 &numOfPrimitives, RenderCommand **renderCmds, uint8 *renderBufferPtr, ModelData *modelData) {
+	const int16 maxHeight = _engine->height() - 1;
+	const int16 maxWidth = _engine->width() - 1;
+
 	for (const BodyPolygon &polygon : polygons) {
 		const uint8 renderType = polygon.renderType;
 		const uint8 numVertices = polygon.indices.size();
@@ -1129,6 +1107,8 @@ uint8 *Renderer::preparePolygons(const Common::Array<BodyPolygon> &polygons, int
 
 		CmdRenderPolygon *destinationPolygon = (CmdRenderPolygon *)renderBufferPtr;
 		destinationPolygon->numVertices = numVertices;
+		destinationPolygon->top = SCENE_SIZE_MAX;
+		destinationPolygon->bottom = SCENE_SIZE_MIN;
 
 		renderBufferPtr += sizeof(CmdRenderPolygon);
 
@@ -1149,8 +1129,10 @@ uint8 *Renderer::preparePolygons(const Common::Array<BodyPolygon> &polygons, int
 				const I16Vec3 *point = &modelData->flattenPoints[vertexIndex];
 
 				vertex->colorIndex = shadeValue;
-				vertex->x = point->x;
-				vertex->y = point->y;
+				vertex->x = clamp(point->x, 0, maxWidth);
+				vertex->y = clamp(point->y, 0, maxHeight);
+				destinationPolygon->top = MIN<int>(destinationPolygon->top, vertex->y);
+				destinationPolygon->bottom = MAX<int>(destinationPolygon->bottom, vertex->y);
 				bestDepth = MAX(bestDepth, point->z);
 				++vertex;
 			}
@@ -1172,8 +1154,10 @@ uint8 *Renderer::preparePolygons(const Common::Array<BodyPolygon> &polygons, int
 				const I16Vec3 *point = &modelData->flattenPoints[vertexIndex];
 
 				vertex->colorIndex = destinationPolygon->colorIndex;
-				vertex->x = point->x;
-				vertex->y = point->y;
+				vertex->x = clamp(point->x, 0, maxWidth);
+				vertex->y = clamp(point->y, 0, maxHeight);
+				destinationPolygon->top = MIN<int>(destinationPolygon->top, vertex->y);
+				destinationPolygon->bottom = MAX<int>(destinationPolygon->bottom, vertex->y);
 				bestDepth = MAX(bestDepth, point->z);
 				++vertex;
 			}
@@ -1229,7 +1213,7 @@ bool Renderer::renderModelElements(int32 numOfPrimitives, const BodyData &bodyDa
 		case RENDERTYPE_DRAWPOLYGON: {
 			const CmdRenderPolygon *header = (const CmdRenderPolygon *)pointer;
 			Vertex *vertices = (Vertex *)(pointer + sizeof(CmdRenderPolygon));
-			renderPolygons(*header, vertices);
+			renderPolygons(*header, vertices, header->top, header->bottom);
 			break;
 		}
 		case RENDERTYPE_DRAWSPHERE: {

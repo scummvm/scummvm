@@ -489,7 +489,7 @@ void Text::renderContinueReadingTriangle() {
 	polygon.numVertices = ARRAYSIZE(vertices);
 	polygon.colorIndex = _dialTextStopColor;
 	polygon.renderType = POLYGONTYPE_FLAT;
-	_engine->_renderer->renderPolygons(polygon, vertices);
+	_engine->_renderer->renderPolygons(polygon, vertices, top, bottom);
 
 	_engine->copyBlockPhys(Common::Rect(left, top, right, bottom));
 }
