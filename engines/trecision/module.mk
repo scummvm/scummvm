@@ -6,7 +6,7 @@ MODULE_OBJS = \
 	graphics.o \
 	video.o \
 	inventory.o \
-	logicnl.o \
+	logic.o \
 	script.o \
 	utils.o \
 	nl/classes.o \
