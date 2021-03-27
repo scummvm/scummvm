@@ -159,7 +159,7 @@ public:
 
 	Scene *_scene;
 
-	Graphics::MacWindowManager _wm;
+	Graphics::MacWindowManager *_wm;
 	Graphics::MacWindow *_sceneWindow;
 	Graphics::MacTextWindow *_consoleWindow;
 

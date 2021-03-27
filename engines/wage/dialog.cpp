@@ -93,11 +93,11 @@ Dialog::~Dialog() {
 }
 
 const Graphics::Font *Dialog::getDialogFont() {
-	return _gui->_wm._fontMan->getFont(Graphics::MacFont(Graphics::kMacFontChicago, 12));
+	return _gui->_wm->_fontMan->getFont(Graphics::MacFont(Graphics::kMacFontChicago, 12));
 }
 
 void Dialog::paint() {
-	Design::drawFilledRect(&_gui->_screen, _bbox, kColorWhite, _gui->_wm.getPatterns(), kPatternSolid);
+	Design::drawFilledRect(&_gui->_screen, _bbox, kColorWhite, _gui->_wm->getPatterns(), kPatternSolid);
 	_font->drawString(&_gui->_screen, _text, _bbox.left + 24, _bbox.top + 16, _bbox.width(), kColorBlack);
 
 	static int boxOutline[] = { 1, 0, 0, 1, 1 };
@@ -119,7 +119,7 @@ void Dialog::paint() {
 			Common::Rect bb(button->bounds.left + 5, button->bounds.top + 5,
 				button->bounds.right - 5, button->bounds.bottom - 5);
 
-			Design::drawFilledRect(&_gui->_screen, bb, kColorBlack, _gui->_wm.getPatterns(), kPatternSolid);
+			Design::drawFilledRect(&_gui->_screen, bb, kColorBlack, _gui->_wm->getPatterns(), kPatternSolid);
 
 			color = kColorWhite;
 		}
@@ -142,7 +142,7 @@ void Dialog::drawOutline(Common::Rect &bounds, int *spec, int speclen) {
 	for (int i = 0; i < speclen; i++)
 		if (spec[i] != 0)
 			Design::drawRect(&_gui->_screen, bounds.left + i, bounds.top + i, bounds.right - i, bounds.bottom - i,
-						1, kColorBlack, _gui->_wm.getPatterns(), kPatternSolid);
+						1, kColorBlack, _gui->_wm->getPatterns(), kPatternSolid);
 }
 
 int Dialog::run() {
@@ -150,7 +150,7 @@ int Dialog::run() {
 	Common::Rect r(_bbox);
 
 	_tempSurface.copyRectToSurface(_gui->_screen.getBasePtr(_bbox.left, _bbox.top), _gui->_screen.pitch, 0, 0, _bbox.width() + 1, _bbox.height() + 1);
-	_gui->_wm.pushArrowCursor();
+	_gui->_wm->pushArrowCursor();
 
 	while (!shouldQuit) {
 		Common::Event event;
@@ -194,7 +194,7 @@ int Dialog::run() {
 	_gui->_screen.copyRectToSurface(_tempSurface.getBasePtr(0, 0), _tempSurface.pitch, _bbox.left, _bbox.top, _bbox.width() + 1, _bbox.height() + 1);
 	g_system->copyRectToScreen(_gui->_screen.getBasePtr(r.left, r.top), _gui->_screen.pitch, r.left, r.top, r.width() + 1, r.height() + 1);
 
-	_gui->_wm.popCursor();
+	_gui->_wm->popCursor();
 
 	return _pressedButton;
 }
