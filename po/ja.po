@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-03-26 14:34+0000\n"
-"PO-Revision-Date: 2021-03-23 04:24+0000\n"
+"PO-Revision-Date: 2021-03-27 07:42+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ja/>\n"
@@ -308,17 +308,13 @@ msgid "Backend"
 msgstr "バックエンド"
 
 #: gui/editgamedialog.cpp:250
-#, fuzzy
-#| msgid "Override global audio settings"
 msgid "Override global backend settings"
-msgstr "全般のオーディオ設定を上書きする"
+msgstr "バックエンドのグローバル設定を上書き"
 
 #: gui/editgamedialog.cpp:252
-#, fuzzy
-#| msgid "Override global audio settings"
 msgctxt "lowres"
 msgid "Override global backend settings"
-msgstr "全般のオーディオ設定を上書きする"
+msgstr "バックエンドのグローバル設定を上書き"
 
 #: gui/editgamedialog.cpp:266 gui/options.cpp:1865 engines/dialogs.cpp:301
 msgid "Audio"
@@ -2642,14 +2638,12 @@ msgid "Decreasing Volume"
 msgstr "音量を小さく"
 
 #: backends/events/maemosdl/maemosdl-events.cpp:101
-#, fuzzy
 msgid "Clicking Enabled"
-msgstr "フィルター適用"
+msgstr "クリックを有効化"
 
 #: backends/events/maemosdl/maemosdl-events.cpp:101
-#, fuzzy
 msgid "Clicking Disabled"
-msgstr "フィルター無効"
+msgstr "クリックを無効化"
 
 #: backends/events/openpandora/op-events.cpp:163
 msgid "Touchscreen 'Tap Mode' - Hover (DPad Clicks)"
@@ -2759,9 +2753,8 @@ msgid "Toggle aspect ratio correction"
 msgstr "縦横比修正の切替"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:411
-#, fuzzy
 msgid "Toggle linear filtered scaling"
-msgstr "線形フィルターによる画像を拡大する"
+msgstr "線形フィルタースケーリングの切り替え"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:418
 msgid "Cycle through stretch modes"
@@ -2776,16 +2769,12 @@ msgid "Decrease the scale factor"
 msgstr "スケールを縮小する"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:436
-#, fuzzy
-#| msgid "Switch to TV 2x scaling"
 msgid "Switch to the next scaler"
-msgstr "TV 2xに切り替える"
+msgstr "次のスケーラーに切り替え"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:441
-#, fuzzy
-#| msgid "Switch to nearest neighbour scaling"
 msgid "Switch to the previous scaler"
-msgstr "最近傍補間に切り替える"
+msgstr "前のスケーラーに切り替え"
 
 #: backends/keymapper/hardware-input.cpp:245
 msgid "Left Mouse Button"
@@ -3342,23 +3331,20 @@ msgid "Touchpad mode disabled."
 msgstr "タッチパッド操作が無効になりました。"
 
 #: backends/platform/maemo/maemo.cpp:158
-#, fuzzy
 msgid "Click Mode"
-msgstr "色覚特性モード"
+msgstr "クリックモード"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:211
-#, fuzzy
 msgid "Hide ScummVM"
-msgstr "ScummVMを終了(~Q~)"
+msgstr "ScummVMを隠す"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:212
 msgid "Hide Others"
 msgstr "他を隠す"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:213
-#, fuzzy
 msgid "Show All"
-msgstr "地図を表示"
+msgstr "すべて表示"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:218
 msgid "Window"
@@ -3374,9 +3360,8 @@ msgid "Help"
 msgstr "ヘルプ"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:228
-#, fuzzy
 msgid "User Manual"
-msgstr "キャンセルされました"
+msgstr "ユーザーマニュアル"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:230
 msgid "General Information"
@@ -3481,24 +3466,20 @@ msgid "Skip text"
 msgstr "テキストをスキップ"
 
 #: backends/platform/symbian/src/SymbianActions.cpp:53
-#, fuzzy
 msgid "Fast mode"
-msgstr "高速モードの切り替え"
+msgstr "高速モード"
 
 #: backends/platform/symbian/src/SymbianActions.cpp:55
-#, fuzzy
 msgid "Debugger"
-msgstr "デバッガーを開く"
+msgstr "デバッガー"
 
 #: backends/platform/symbian/src/SymbianActions.cpp:56
-#, fuzzy
 msgid "Global menu"
-msgstr "メインメニュー"
+msgstr "総合メニュー"
 
 #: backends/platform/symbian/src/SymbianActions.cpp:57
-#, fuzzy
 msgid "Virtual keyboard"
-msgstr "キーボードの表示"
+msgstr "仮想キーボード"
 
 #: backends/platform/symbian/src/SymbianActions.cpp:58
 msgid "Key mapper"
@@ -3509,9 +3490,8 @@ msgid "Video"
 msgstr "ビデオ"
 
 #: backends/platform/wii/options.cpp:54
-#, fuzzy
 msgid "Current video mode:"
-msgstr "レンダー："
+msgstr "現在の映像モード："
 
 #: backends/platform/wii/options.cpp:56
 msgid "Double-strike"
@@ -3546,9 +3526,8 @@ msgid "Status:"
 msgstr "ステータス："
 
 #: backends/platform/wii/options.cpp:90 backends/platform/wii/options.cpp:102
-#, fuzzy
 msgid "Unknown"
-msgstr "不明なエラー"
+msgstr "不明"
 
 #: backends/platform/wii/options.cpp:93
 msgid "Mount DVD"
@@ -3615,14 +3594,12 @@ msgid ", share not mounted"
 msgstr "、共有フォルダーはマウントされませんでした"
 
 #: backends/platform/wii/options.cpp:174
-#, fuzzy
 msgid "Network down"
-msgstr "下を見る"
+msgstr "ネットワークが停止中"
 
 #: backends/platform/wii/options.cpp:178
-#, fuzzy
 msgid "Initializing network"
-msgstr "MT-32エミュレーター起動中"
+msgstr "ネットワークを初期化中"
 
 #: backends/platform/wii/options.cpp:182
 msgid "Timeout while initializing network"
@@ -3679,9 +3656,8 @@ msgid "Emulate composite output to an NTSC TV"
 msgstr "コンポジット出力(NTSC)を再現する"
 
 #: engines/adl/detection.cpp:58 engines/adl/detection.cpp:68
-#, fuzzy
 msgid "Color graphics"
-msgstr "画像フィルター"
+msgstr "カラーグラフィック"
 
 #: engines/adl/detection.cpp:59 engines/adl/detection.cpp:69
 msgid "Use color graphics instead of monochrome"
@@ -3742,9 +3718,8 @@ msgstr ""
 "マウスのサポートを有効にします。移動やゲームメニューでマウスを使用できます。"
 
 #: engines/agi/detection.cpp:102
-#, fuzzy
 msgid "Use Hercules hires font"
-msgstr "Herculesの緑"
+msgstr "高解像度のHerculesフォントを使用"
 
 #: engines/agi/detection.cpp:103
 msgid "Uses Hercules hires font, when font file is available."
@@ -3858,9 +3833,8 @@ msgid "Cutscene file '%s' not found!"
 msgstr "カットシーンファイル'%s'が見つかりません!"
 
 #: engines/agos/metaengine.cpp:104
-#, fuzzy
 msgid "AGOS 2 support is not compiled in"
-msgstr "含まれた機能："
+msgstr "AGOS 2のサポートはコンパイルされていません"
 
 #: engines/agos/midi.cpp:157 engines/kyra/sound/sound_pc_midi.cpp:76
 msgid ""
@@ -3877,16 +3851,12 @@ msgstr ""
 "一部のトラックは正しく聞こえない事があります。"
 
 #: engines/ags/detection.cpp:86
-#, fuzzy
-#| msgid "GUI language:"
 msgid "Game language:"
-msgstr "GUIの言語："
+msgstr "ゲームの言語："
 
 #: engines/ags/detection.cpp:86
-#, fuzzy
-#| msgid "AdLib is used for music in many games"
 msgid "Language to use for multilingual games"
-msgstr "多くのゲームがAdLibで音楽を再生します"
+msgstr "多言語ゲームで使用する言語"
 
 #: engines/bladerunner/bladerunner.cpp:363
 msgid "Failed to initialize resources"
@@ -3921,18 +3891,16 @@ msgid "Continue"
 msgstr "つづく"
 
 #: engines/bladerunner/detection.cpp:48
-#, fuzzy
 msgid "Sitcom mode"
-msgstr "拡大モード："
+msgstr "シットコムモード"
 
 #: engines/bladerunner/detection.cpp:49
 msgid "Game will add laughter after actor's line or narration"
 msgstr "ゲームは、俳優のセリフやナレーションの後ろに笑いを追加します"
 
 #: engines/bladerunner/detection.cpp:57
-#, fuzzy
 msgid "Shorty mode"
-msgstr "拡大モード："
+msgstr "ショーティーモード"
 
 #: engines/bladerunner/detection.cpp:58
 msgid "Game will shrink the actors and make their voices high pitched"
@@ -3978,19 +3946,16 @@ msgid ""
 msgstr "ファンの翻訳者は、ScummVMに翻訳が組み込まれる事を望んでいません。"
 
 #: engines/buried/biochip_view.cpp:623
-#, fuzzy
-#| msgid "The game is paused. Press any key to continue."
 msgid "Your game is now Paused.  Click OK to continue."
-msgstr "ゲームはポーズされます。何かキーを押すと続行します。"
+msgstr "ゲームが一時停止しました。OKをクリックして続行してください。"
 
 #: engines/buried/buried.cpp:533
 msgid "Are you sure you want to quit?"
 msgstr "終了してもよろしいですか?"
 
 #: engines/buried/saveload.cpp:108
-#, fuzzy
 msgid "Invalid save file name"
-msgstr "セーブデータの名前を入力してください"
+msgstr "無効なセーブファイル名です"
 
 #: engines/cge/detection.cpp:48 engines/cge/detection.cpp:54
 #: engines/kyra/detection_tables.h:224 engines/kyra/detection_tables.h:237
@@ -4006,9 +3971,8 @@ msgid "Color Blind Mode"
 msgstr "色覚特性モード"
 
 #: engines/cge/detection.cpp:100
-#, fuzzy
 msgid "Enable Color Blind Mode by default"
-msgstr "色覚特性モード"
+msgstr "デフォルトで色覚多様性モードを有効化"
 
 #: engines/cine/detection.cpp:52
 msgid "Use transparent dialog boxes in 16 color scenes"
@@ -4023,19 +3987,16 @@ msgstr ""
 "クスを使用する"
 
 #: engines/cine/metaengine.cpp:136
-#, fuzzy
 msgid "Unnamed autosave"
-msgstr "無名のセーブ"
+msgstr "無名のオートセーブ"
 
 #: engines/cine/metaengine.cpp:138 engines/cine/metaengine.cpp:213
-#, fuzzy
 msgid "Unnamed savegame"
 msgstr "無名のセーブ"
 
 #: engines/cine/metaengine.cpp:156 engines/cine/metaengine.cpp:226
-#, fuzzy
 msgid "Empty autosave"
-msgstr "自動セーブ"
+msgstr "オートセーブを初期化"
 
 #: engines/cine/saveload.cpp:861
 msgid ""
@@ -4048,14 +4009,12 @@ msgstr ""
 "検討してください。"
 
 #: engines/cine/saveload.cpp:864
-#, fuzzy
 msgid "Load anyway"
-msgstr "承知して追加する"
+msgstr "とにかくロードする"
 
 #: engines/cryomni3d/metaengine.cpp:142
-#, fuzzy
 msgid "Versailles 1685 support is not compiled in"
-msgstr "含まれた機能："
+msgstr "Versailles 1685のサポートはコンパイルされていません"
 
 #: engines/dragons/dragons.cpp:1803
 #, c-format
@@ -5384,11 +5343,11 @@ msgstr "セーブデータの名前を入力してください"
 
 #: engines/nancy/cheat.cpp:53
 msgid "General"
-msgstr ""
+msgstr "全般"
 
 #: engines/nancy/cheat.cpp:55
 msgid "Scene Data"
-msgstr ""
+msgstr "シーンデータ"
 
 #: engines/nancy/cheat.cpp:56
 #, fuzzy
@@ -5398,32 +5357,32 @@ msgstr "デバッガーを起動"
 
 #: engines/nancy/cheat.cpp:58
 msgid "Scene Number"
-msgstr ""
+msgstr "シーン番号"
 
 #: engines/nancy/cheat.cpp:60
 msgid "Frame Number"
-msgstr ""
+msgstr "フレーム番号"
 
 #. I18N: The Y position (a.k.a vertical scroll) of the background
 #: engines/nancy/cheat.cpp:64
 msgid "Background Top (Y)"
-msgstr ""
+msgstr "背景の上端(縦方向)"
 
 #: engines/nancy/cheat.cpp:66
 msgid "Hints Remaining"
-msgstr ""
+msgstr "残りのヒント"
 
 #: engines/nancy/cheat.cpp:67
 msgid "Easy"
-msgstr ""
+msgstr "イージー"
 
 #: engines/nancy/cheat.cpp:69
 msgid "Medium"
-msgstr ""
+msgstr "ミディアム"
 
 #: engines/nancy/cheat.cpp:71
 msgid "Hard"
-msgstr ""
+msgstr "ハード"
 
 #: engines/nancy/cheat.cpp:74 engines/nancy/cheat.cpp:85
 #, fuzzy
@@ -5432,34 +5391,28 @@ msgid "Player Data"
 msgstr "1P：左"
 
 #: engines/nancy/cheat.cpp:75
-#, fuzzy
-#| msgid "Playtime: "
 msgid "Player Time:"
-msgstr "再生時間： "
+msgstr "プレイ時間："
 
 #: engines/nancy/cheat.cpp:77
 msgid "Days"
-msgstr ""
+msgstr "日"
 
 #: engines/nancy/cheat.cpp:79 engines/nancy/cheat.cpp:89
 msgid "Hours"
-msgstr ""
+msgstr "時"
 
 #: engines/nancy/cheat.cpp:81 engines/nancy/cheat.cpp:91
-#, fuzzy
-#| msgid "Minus"
 msgid "Minutes"
-msgstr "マイナス"
+msgstr "分"
 
 #: engines/nancy/cheat.cpp:83
 msgid "Player Difficulty Level"
-msgstr ""
+msgstr "プレイヤーの難易度"
 
 #: engines/nancy/cheat.cpp:86
-#, fuzzy
-#| msgid "Time: "
 msgid "Timer On"
-msgstr "時間： "
+msgstr "タイマー"
 
 #: engines/nancy/cheat.cpp:93
 #, fuzzy
@@ -5542,7 +5495,7 @@ msgstr "マウス操作を有効にする"
 
 #: engines/nancy/input.cpp:263
 msgid "Open event flags cheat menu"
-msgstr ""
+msgstr "イベントフラグのチートメニューを開く"
 
 #: engines/neverhood/detection.cpp:119
 msgid "Skip the Hall of Records storyboard scenes"
