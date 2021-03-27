@@ -449,9 +449,7 @@ bool Animations::initAnim(AnimationTypes newAnim, AnimType animType, AnimationTy
 	processAnimActions(actorIdx);
 
 	actor->lastRotationAngle = ANGLE_0;
-	actor->lastPos.x = 0;
-	actor->lastPos.y = 0;
-	actor->lastPos.z = 0;
+	actor->lastPos = IVec3();
 
 	return true;
 }
@@ -600,7 +598,7 @@ void Animations::processActorAnimations(int32 actorIdx) { // DoAnim
 					if (actor->animType == AnimType::kAnimationTypeLoop) {
 						actor->animPosition = animData.getLoopFrame();
 					} else {
-						actor->anim = (AnimationTypes)actor->animExtra;
+						actor->anim = actor->animExtra;
 						actor->previousAnimIdx = getBodyAnimIndex(actor->anim, actorIdx);
 
 						if (actor->previousAnimIdx == -1) {
