@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-03-26 14:34+0000\n"
-"PO-Revision-Date: 2021-02-23 01:24+0000\n"
+"PO-Revision-Date: 2021-03-28 02:24+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/el/>\n"
@@ -312,17 +312,13 @@ msgid "Backend"
 msgstr "Backend"
 
 #: gui/editgamedialog.cpp:250
-#, fuzzy
-#| msgid "Override global audio settings"
 msgid "Override global backend settings"
-msgstr "Παράκαμψη καθολικών ρυθμίσεων ήχου"
+msgstr "Παράκαμψη καθολικών ρυθμίσεων backend"
 
 #: gui/editgamedialog.cpp:252
-#, fuzzy
-#| msgid "Override global audio settings"
 msgctxt "lowres"
 msgid "Override global backend settings"
-msgstr "Παράκαμψη καθολικών ρυθμίσεων ήχου"
+msgstr "Παράκαμψη καθολικών ρυθμίσεων backend"
 
 #: gui/editgamedialog.cpp:266 gui/options.cpp:1865 engines/dialogs.cpp:301
 msgid "Audio"
@@ -1050,11 +1046,9 @@ msgid "Game 3D Renderer:"
 msgstr "Απόδοση εικόνας σε παιχνίδια 3D:"
 
 #: gui/options.cpp:1331
-#, fuzzy
-#| msgid "Game 3D Renderer:"
 msgctxt "lowres"
 msgid "Game 3D Renderer:"
-msgstr "Απόδοση εικόνας σε παιχνίδια 3D:"
+msgstr "Απόδοση εικόνας 3D παιχνιδιού:"
 
 #: gui/options.cpp:1344
 msgid "3D Anti-aliasing:"
@@ -2468,8 +2462,6 @@ msgid "OpenGL with shaders"
 msgstr "OpenGL με σκιαστές"
 
 #: graphics/renderer.cpp:42
-#, fuzzy
-#| msgid "OpenGL with shaders"
 msgctxt "lowres"
 msgid "OpenGL with shaders"
 msgstr "OpenGL με σκιαστές"
@@ -2855,16 +2847,12 @@ msgid "Decrease the scale factor"
 msgstr "Μείωση συντελεστή κλίμακας"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:436
-#, fuzzy
-#| msgid "Switch to TV 2x scaling"
 msgid "Switch to the next scaler"
-msgstr "Χρήση κλιμάκωσης TV 2x"
+msgstr "Χρήση επόμενου κλιμακωτή"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:441
-#, fuzzy
-#| msgid "Switch to nearest neighbour scaling"
 msgid "Switch to the previous scaler"
-msgstr "Χρήση κλιμάκωσης nearest neighbour"
+msgstr "Χρήση προηγούμενου κλιμακωτή"
 
 #: backends/keymapper/hardware-input.cpp:245
 msgid "Left Mouse Button"
@@ -4061,23 +4049,16 @@ msgstr ""
 "ScummVM."
 
 #: engines/buried/biochip_view.cpp:623
-#, fuzzy
-#| msgid "The game is paused. Press any key to continue."
 msgid "Your game is now Paused.  Click OK to continue."
-msgstr ""
-"Το παιχνίδι βρίσκεται σε παύση. Πατήστε οποιοδήποτε κουμπί για να συνεχίσετε."
+msgstr "Το παιχνίδι βρίσκεται σε Παύση.  Πατήστε τo OK για να συνεχίσετε."
 
 #: engines/buried/buried.cpp:533
-#, fuzzy
-#| msgid "   Are you sure you want to quit ?   "
 msgid "Are you sure you want to quit?"
-msgstr "   Είστε σίγουροι ότι θέλετε να βγείτε από το πρόγραμμα ;   "
+msgstr "Σίγουρα επιθυμείτε έξοδο;"
 
 #: engines/buried/saveload.cpp:108
-#, fuzzy
-#| msgid "Invalid file name for saving"
 msgid "Invalid save file name"
-msgstr "Εσφαλμένο όνομα αρχείου για αποθήκευση"
+msgstr "Μη έγκυρο όνομα αρχείου αποθήκευσης"
 
 #: engines/cge/detection.cpp:48 engines/cge/detection.cpp:54
 #: engines/kyra/detection_tables.h:224 engines/kyra/detection_tables.h:237
@@ -5473,165 +5454,128 @@ msgstr "Γενικά"
 
 #: engines/nancy/cheat.cpp:55
 msgid "Scene Data"
-msgstr ""
+msgstr "Δεδομένα Σκηνής"
 
 #: engines/nancy/cheat.cpp:56
-#, fuzzy
-#| msgid "Start the debugger"
 msgid "Restart the Scene"
-msgstr "Εκκίνηση του εντοπισμού σφαλμάτων"
+msgstr "Επανεκκίνηση Σκηνής"
 
 #: engines/nancy/cheat.cpp:58
 msgid "Scene Number"
-msgstr ""
+msgstr "Αριθμός Σκηνής"
 
 #: engines/nancy/cheat.cpp:60
 msgid "Frame Number"
-msgstr ""
+msgstr "Αριθμός Καρέ"
 
 #. I18N: The Y position (a.k.a vertical scroll) of the background
 #: engines/nancy/cheat.cpp:64
 msgid "Background Top (Y)"
-msgstr ""
+msgstr "Κορυφή Παρασκηνίου (Y)"
 
 #: engines/nancy/cheat.cpp:66
 msgid "Hints Remaining"
-msgstr ""
+msgstr "Εναπομένουσες Βοήθειες"
 
 #: engines/nancy/cheat.cpp:67
 msgid "Easy"
-msgstr ""
+msgstr "Εύκολο"
 
 #: engines/nancy/cheat.cpp:69
 msgid "Medium"
-msgstr ""
+msgstr "Μεσαίο"
 
 #: engines/nancy/cheat.cpp:71
 msgid "Hard"
-msgstr ""
+msgstr "Δύσκολο"
 
 #: engines/nancy/cheat.cpp:74 engines/nancy/cheat.cpp:85
-#, fuzzy
-#| msgid "Player 1: Left"
 msgid "Player Data"
-msgstr "Πακτης 1: Αριστερά"
+msgstr "Δεδομένα Παίκτη"
 
 #: engines/nancy/cheat.cpp:75
-#, fuzzy
-#| msgid "Playtime: "
 msgid "Player Time:"
-msgstr "Ώρα παιχνιδιού: "
+msgstr "Χρόνος Παιχνιδιού:"
 
 #: engines/nancy/cheat.cpp:77
 msgid "Days"
-msgstr ""
+msgstr "Μέρες"
 
 #: engines/nancy/cheat.cpp:79 engines/nancy/cheat.cpp:89
 msgid "Hours"
-msgstr ""
+msgstr "Ώρες"
 
 #: engines/nancy/cheat.cpp:81 engines/nancy/cheat.cpp:91
-#, fuzzy
-#| msgid "Minus"
 msgid "Minutes"
-msgstr "Μείον"
+msgstr "Λεπτά"
 
 #: engines/nancy/cheat.cpp:83
 msgid "Player Difficulty Level"
-msgstr ""
+msgstr "Επίπεδο Δυσκολίας"
 
 #: engines/nancy/cheat.cpp:86
-#, fuzzy
-#| msgid "Time: "
 msgid "Timer On"
-msgstr "Ώρα: "
+msgstr "Ενεργοποίηση Χρονομετρητή"
 
 #: engines/nancy/cheat.cpp:93
-#, fuzzy
-#| msgid "Second kid"
 msgid "Seconds"
-msgstr "Δεύτερο παιδί"
+msgstr "Δευτερόλεπτα"
 
 #: engines/nancy/cheat.cpp:162
-#, fuzzy
-#| msgid "Invalid path!"
 msgid "Invalid Scene ID!"
-msgstr "Εσφαλμένη διαδρομή!"
+msgstr "Άκυρο Αναγνωριστικό Σκηνής!"
 
 #: engines/nancy/input.cpp:171
-#, fuzzy
-#| msgid "Left Click"
 msgid "Left Click Interact"
-msgstr "Αριστερό Click"
+msgstr "Αριστερό Κλικ για Αλληλεπίδραση"
 
 #: engines/nancy/input.cpp:178
-#, fuzzy
-#| msgid "Right Click Once"
 msgid "Right Click Interact"
-msgstr "Δεξί Click Μια Φορά"
+msgstr "Δεξί Κλικ για αλληλεπίδραση"
 
 #: engines/nancy/input.cpp:209
-#, fuzzy
-#| msgid "Fast mode"
 msgid "Fast move modifier"
-msgstr "Γρήγορη λειτουργία"
+msgstr "Ρύθμιση γρήγορης κίνησης"
 
 #: engines/nancy/input.cpp:217
-#, fuzzy
-#| msgid "Toggle fast mode"
 msgid "Toggle fast conversation mode"
-msgstr "Εναλλαγή γρήγορης λειτουργίας"
+msgstr "Εναλλαγή λειτουργίας γρήγορων διαλόγων"
 
 #: engines/nancy/input.cpp:222
-#, fuzzy
-#| msgid "Toggle fast mode"
 msgid "Toggle end conversation mode"
-msgstr "Εναλλαγή γρήγορης λειτουργίας"
+msgstr "Εναλλαγή λειτουργίας τερματισμού διαλόγων"
 
 #: engines/nancy/input.cpp:227
-#, fuzzy
 msgid "Go to main menu"
-msgstr "Επισ~τ~ροφή στο Launcher"
+msgstr "Επιστροφή στο κεντρικό μενού"
 
 #: engines/nancy/input.cpp:232
-#, fuzzy
-#| msgid "Insert save/load game disk"
 msgid "Go to save/load menu"
-msgstr "Εισάγετε δισκέτα αποθήκευσης/φόρτωσης παιχνιδιού"
+msgstr "Άνοιγμα μενού απόθήκευσης/φόρτωσης"
 
 #: engines/nancy/input.cpp:237
-#, fuzzy
-#| msgid "No date saved"
 msgid "Reload last save"
-msgstr "Χωρίς αποθηκ. ημ/νία"
+msgstr "Φόρτωση τελευταίου αποθηκευμένου παιχνιδιού"
 
 #: engines/nancy/input.cpp:242
-#, fuzzy
-#| msgid "Show options menu"
 msgid "Go to setup menu"
-msgstr "Προβολή μενού επιλογών"
+msgstr "Άνοιγμα μενού ρυθμίσεων"
 
 #: engines/nancy/input.cpp:247
-#, fuzzy
-#| msgid "Show game credits"
 msgid "Show credits"
-msgstr "Προβολή συντελεστών παιχνιδιού"
+msgstr "Προβολή συντελεστών"
 
 #: engines/nancy/input.cpp:252
-#, fuzzy
-#| msgid "Swap screens"
 msgid "Go to map screen"
-msgstr "Εναλλαγή οθονών"
+msgstr "Άνοιγμα οθόνης χάρτη"
 
 #: engines/nancy/input.cpp:258
-#, fuzzy
-#| msgid "Enable cheat mode"
 msgid "Open general cheat menu"
-msgstr "Ενεργοποίηση cheat"
+msgstr "Άνοιγμα μενού γενικών cheat"
 
 #: engines/nancy/input.cpp:263
 msgid "Open event flags cheat menu"
-msgstr ""
+msgstr "Άνοιγμα μενού cheat συμβάντων"
 
 #: engines/neverhood/detection.cpp:119
 msgid "Skip the Hall of Records storyboard scenes"
@@ -5742,10 +5686,8 @@ msgid "Display/Hide Pause Menu"
 msgstr "Προβολή/Απόκρυψη Μενού Παύσης"
 
 #: engines/pegasus/pegasus.cpp:2795
-#, fuzzy
-#| msgid "Toggle fast mode"
 msgid "Toggle Chatty AI"
-msgstr "Εναλλαγή γρήγορης λειτουργίας"
+msgstr "Εναλλαγή Φλύαρου AI"
 
 #: engines/pegasus/pegasus.cpp:2804 engines/wintermute/keymapper_tables.h:298
 #: engines/wintermute/keymapper_tables.h:325
