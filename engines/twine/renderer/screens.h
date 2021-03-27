@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef TWINE_SCREENS_H
-#define TWINE_SCREENS_H
+#ifndef TWINE_RENDERER_SCREENS_H
+#define TWINE_RENDERER_SCREENS_H
 
 #include "common/scummsys.h"
 #include "graphics/managed_surface.h"

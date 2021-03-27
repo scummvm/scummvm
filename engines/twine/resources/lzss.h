@@ -20,6 +20,9 @@
  *
  */
 
+#ifndef TWINE_RESOURCES_LZSS_H
+#define TWINE_RESOURCES_LZSS_H
+
 #include "common/stream.h"
 
 namespace TwinE {
@@ -48,3 +51,5 @@ public:
 };
 
 } // namespace TwinE
+
+#endif

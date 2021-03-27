@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef TWINE_HQR_H
-#define TWINE_HQR_H
+#ifndef TWINE_RESOURCES_HQR_H
+#define TWINE_RESOURCES_HQR_H
 
 #include "common/scummsys.h"
 #include "common/stream.h"

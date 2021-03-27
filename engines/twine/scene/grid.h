@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef TWINE_GRID_H
-#define TWINE_GRID_H
+#ifndef TWINE_SCENE_GRID_H
+#define TWINE_SCENE_GRID_H
 
 #include "common/scummsys.h"
 #include "twine/parser/sprite.h"

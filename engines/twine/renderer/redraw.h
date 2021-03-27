@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef TWINE_REDRAW_H
-#define TWINE_REDRAW_H
+#ifndef TWINE_RENDERER_REDRAW_H
+#define TWINE_RENDERER_REDRAW_H
 
 #include "common/scummsys.h"
 #include "common/rect.h"

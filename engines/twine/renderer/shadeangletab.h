@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef TWINE_SHADEANGLETAB_H
-#define TWINE_SHADEANGLETAB_H
+#ifndef TWINE_RENDERER_SHADEANGLETAB_H
+#define TWINE_RENDERER_SHADEANGLETAB_H
 
 #include "common/scummsys.h"
 #include "twine/shared.h"

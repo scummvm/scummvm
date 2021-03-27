@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef TWINE_RENDERER_H
-#define TWINE_RENDERER_H
+#ifndef TWINE_RENDERER_RENDERER_H
+#define TWINE_RENDERER_RENDERER_H
 
 #include "common/endian.h"
 #include "common/rect.h"

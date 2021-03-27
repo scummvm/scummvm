@@ -20,11 +20,11 @@
  *
  */
 
+#ifndef TWINE_SCENE_EXTRA_H
+#define TWINE_SCENE_EXTRA_H
+
 #include "common/scummsys.h"
 #include "twine/scene/actor.h"
-
-#ifndef TWINE_EXTRA_H
-#define TWINE_EXTRA_H
 
 namespace TwinE {
 

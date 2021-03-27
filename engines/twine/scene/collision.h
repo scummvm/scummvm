@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef TWINE_COLLISION_H
-#define TWINE_COLLISION_H
+#ifndef TWINE_SCENE_COLLISION_H
+#define TWINE_SCENE_COLLISION_H
 
 #include "common/scummsys.h"
 #include "twine/scene/extra.h"

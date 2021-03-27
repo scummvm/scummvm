@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef TWINE_RESOURCES_H
-#define TWINE_RESOURCES_H
+#ifndef TWINE_RESOURCES_RESOURCES_H
+#define TWINE_RESOURCES_RESOURCES_H
 
 #include "common/hashmap.h"
 #include "common/scummsys.h"

@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef TWINE_ANIMATIONS_H
-#define TWINE_ANIMATIONS_H
+#ifndef TWINE_SCENE_ANIMATIONS_H
+#define TWINE_SCENE_ANIMATIONS_H
 
 #include "common/scummsys.h"
 #include "twine/scene/actor.h"
