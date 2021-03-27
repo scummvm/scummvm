@@ -104,9 +104,9 @@ bool Animations::setModelAnimation(int32 keyframeIdx, const AnimData &animData, 
 	}
 	const KeyFrame *keyFrame = animData.getKeyframe(keyframeIdx);
 
-	currentStepX = keyFrame->x;
-	currentStepY = keyFrame->y;
-	currentStepZ = keyFrame->z;
+	currentStep.x = keyFrame->x;
+	currentStep.y = keyFrame->y;
+	currentStep.z = keyFrame->z;
 
 	processRotationByAnim = keyFrame->boneframes[0].type;
 	processLastRotationAngle = ToAngle(keyFrame->boneframes[0].y);
@@ -181,9 +181,9 @@ void Animations::setAnimAtKeyframe(int32 keyframeIdx, const AnimData &animData, 
 
 	const KeyFrame *keyFrame = animData.getKeyframe(keyframeIdx);
 
-	currentStepX = keyFrame->x;
-	currentStepY = keyFrame->y;
-	currentStepZ = keyFrame->z;
+	currentStep.x = keyFrame->x;
+	currentStep.y = keyFrame->y;
+	currentStep.z = keyFrame->z;
 
 	processRotationByAnim = keyFrame->boneframes[0].type;
 	processLastRotationAngle = ToAngle(keyFrame->boneframes[0].y);
@@ -243,9 +243,9 @@ bool Animations::verifyAnimAtKeyframe(int32 keyframeIdx, const AnimData &animDat
 
 	const int32 deltaTime = _engine->lbaTime - remainingFrameTime;
 
-	currentStepX = keyFrame->x;
-	currentStepY = keyFrame->y;
-	currentStepZ = keyFrame->z;
+	currentStep.x = keyFrame->x;
+	currentStep.y = keyFrame->y;
+	currentStep.z = keyFrame->z;
 
 	const BoneFrame &boneFrame = keyFrame->boneframes[0];
 	processRotationByAnim = boneFrame.type;
@@ -258,9 +258,9 @@ bool Animations::verifyAnimAtKeyframe(int32 keyframeIdx, const AnimData &animDat
 	}
 
 	processLastRotationAngle = (processLastRotationAngle * deltaTime) / keyFrameLength;
-	currentStepX = (currentStepX * deltaTime) / keyFrameLength;
-	currentStepY = (currentStepY * deltaTime) / keyFrameLength;
-	currentStepZ = (currentStepZ * deltaTime) / keyFrameLength;
+	currentStep.x = (currentStep.x * deltaTime) / keyFrameLength;
+	currentStep.y = (currentStep.y * deltaTime) / keyFrameLength;
+	currentStep.z = (currentStep.z * deltaTime) / keyFrameLength;
 
 	return false;
 }
@@ -575,18 +575,18 @@ void Animations::processActorAnimations(int32 actorIdx) { // DoAnim
 			actor->angle = ClampAngle(actor->angle + processLastRotationAngle - actor->lastRotationAngle);
 			actor->lastRotationAngle = processLastRotationAngle;
 
-			_engine->_movements->rotateActor(currentStepX, currentStepZ, actor->angle);
+			_engine->_movements->rotateActor(currentStep.x, currentStep.z, actor->angle);
 
-			currentStepX = _engine->_renderer->destPos.x;
-			currentStepZ = _engine->_renderer->destPos.z;
+			currentStep.x = _engine->_renderer->destPos.x;
+			currentStep.z = _engine->_renderer->destPos.z;
 
-			_engine->_movements->processActor.x = actor->pos.x + currentStepX - actor->lastPos.x;
-			_engine->_movements->processActor.y = actor->pos.y + currentStepY - actor->lastPos.y;
-			_engine->_movements->processActor.z = actor->pos.z + currentStepZ - actor->lastPos.z;
+			_engine->_movements->processActor.x = actor->pos.x + currentStep.x - actor->lastPos.x;
+			_engine->_movements->processActor.y = actor->pos.y + currentStep.y - actor->lastPos.y;
+			_engine->_movements->processActor.z = actor->pos.z + currentStep.z - actor->lastPos.z;
 
-			actor->lastPos.x = currentStepX;
-			actor->lastPos.y = currentStepY;
-			actor->lastPos.z = currentStepZ;
+			actor->lastPos.x = currentStep.x;
+			actor->lastPos.y = currentStep.y;
+			actor->lastPos.z = currentStep.z;
 
 			actor->dynamicFlags.bAnimEnded = 0;
 			actor->dynamicFlags.bAnimFrameReached = 0;
