@@ -178,10 +178,7 @@ void Actor::initModelActor(BodyType bodyIdx, int16 actorIdx) {
 	if (entityIdx == -1) {
 		localActor->body = BodyType::btNone;
 		localActor->entity = -1;
-
-		BoundingBox &bbox = localActor->boudingBox;
-		bbox.mins = IVec3();
-		bbox.maxs = IVec3();
+		localActor->boudingBox = BoundingBox();
 		debug("Failed to initialize body %i for actor %i", (int)bodyIdx, actorIdx);
 		return;
 	}
@@ -194,22 +191,14 @@ void Actor::initModelActor(BodyType bodyIdx, int16 actorIdx) {
 	localActor->body = bodyIdx;
 
 	if (actorBoundingBox.hasBoundingBox) {
-		BoundingBox &bbox = localActor->boudingBox;
-		bbox.mins.x = actorBoundingBox.bbox.mins.x;
-		bbox.maxs.x = actorBoundingBox.bbox.maxs.x;
-		bbox.mins.y = actorBoundingBox.bbox.mins.y;
-		bbox.maxs.y = actorBoundingBox.bbox.maxs.y;
-		bbox.mins.z = actorBoundingBox.bbox.mins.z;
-		bbox.maxs.z = actorBoundingBox.bbox.maxs.z;
+		localActor->boudingBox = actorBoundingBox.bbox;
 	} else {
-		BoundingBox &bbox = localActor->boudingBox;
 		const BodyData &bd = _engine->_resources->bodyData[localActor->entity];
-		bbox.mins.y = bd.bbox.mins.y;
-		bbox.maxs.y = bd.bbox.maxs.y;
+		localActor->boudingBox = bd.bbox;
 
 		int32 result = 0;
-		const int32 distX = bd.bbox.maxs.x - bd.bbox.mins.x;
-		const int32 distZ = bd.bbox.maxs.z - bd.bbox.mins.z;
+		const int32 distX = localActor->boudingBox.maxs.x - localActor->boudingBox.mins.x;
+		const int32 distZ = localActor->boudingBox.maxs.z - localActor->boudingBox.mins.z;
 		if (localActor->staticFlags.bUseMiniZv) {
 			// take smaller for bound
 			result = MIN(distX, distZ);
@@ -223,10 +212,10 @@ void Actor::initModelActor(BodyType bodyIdx, int16 actorIdx) {
 			result >>= 2;
 		}
 
-		bbox.mins.x = -result;
-		bbox.maxs.x = result;
-		bbox.mins.z = -result;
-		bbox.maxs.z = result;
+		localActor->boudingBox.mins.x = -result;
+		localActor->boudingBox.maxs.x = result;
+		localActor->boudingBox.mins.z = -result;
+		localActor->boudingBox.maxs.z = result;
 	}
 }
 
@@ -274,13 +263,9 @@ void Actor::resetActor(int16 actorIdx) {
 	actor->actorIdx = actorIdx;
 	actor->body = BodyType::btNormal;
 	actor->anim = AnimationTypes::kStanding;
-	actor->pos.x = 0;
-	actor->pos.y = -1;
-	actor->pos.z = 0;
+	actor->pos = IVec3(0, -1, 0);
 
-	BoundingBox &bbox = actor->boudingBox;
-	bbox.mins = IVec3();
-	bbox.maxs = IVec3();
+	actor->boudingBox = BoundingBox();
 
 	actor->angle = 0;
 	actor->speed = 40;
@@ -304,9 +289,7 @@ void Actor::resetActor(int16 actorIdx) {
 	actor->armor = 1;
 	actor->hitBy = -1;
 	actor->lastRotationAngle = ANGLE_0;
-	actor->lastPos.x = 0;
-	actor->lastPos.y = 0;
-	actor->lastPos.z = 0;
+	actor->lastPos = IVec3();
 	actor->entity = -1;
 	actor->previousAnimIdx = -1;
 	actor->animType = AnimType::kAnimationTypeLoop;
