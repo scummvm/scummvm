@@ -366,7 +366,7 @@ void MacText::splitString(const Common::U32String &str, int curLine) {
 
 	// TODO::code is not elegant, we need to figure out a way which include all situations
 	if (curLine == -1)
-		curLine = _textLines.size() - 1;
+		curLine = _textLines.size();
 
 	if (_textLines.empty()) {
 		_textLines.resize(1);
@@ -850,7 +850,7 @@ void MacText::resize(int w, int h) {
 }
 
 void MacText::appendText(const Common::U32String &str, int fontId, int fontSize, int fontSlant, bool skipAdd) {
-	appendTextDefault(str, skipAdd);
+//	appendTextDefault(str, skipAdd);
 	uint oldLen = _textLines.size();
 
 	MacFontRun fontRun = MacFontRun(_wm, fontId, fontSlant, fontSize, 0, 0, 0);
@@ -929,7 +929,6 @@ void MacText::removeLastLine() {
 void MacText::draw(ManagedSurface *g, int x, int y, int w, int h, int xoff, int yoff) {
 	if (_textLines.empty())
 		return;
-
 	render();
 
 	if (x + w < _surface->w || y + h < _surface->h)

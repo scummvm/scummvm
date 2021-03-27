@@ -465,9 +465,6 @@ void MacTextWindow::undrawInput() {
 	for (uint i = 0; i < _inputTextHeight; i++)
 		_mactext->removeLastLine();
 
-	if (_inputTextHeight)
-		appendText("\n", _font, true);
-
 	_inputTextHeight = 0;
 }
 
