@@ -42,6 +42,8 @@ struct BodyVertex {
 struct BodyBone {
 	uint16 parent;
 	uint16 vertex;
+	int16 firstVertex;
+	int16 numVertices;
 	int32 numOfShades;
 	BoneFrame initalBoneState;
 
@@ -61,20 +63,22 @@ struct BodyPolygon {
 	Common::Array<uint16> indices;
 	Common::Array<uint16> intensities;
 	int8 renderType = 0;
-	uint16 color = 0;
+	int16 color = 0;
 };
 
 struct BodyLine {
-	uint16 unk1;
-	uint16 color;
+	uint8 color;
+	uint8 unk1;
+	uint16 unk2;
 	uint16 vertex1;
 	uint16 vertex2;
 };
 
 struct BodySphere {
+	uint8 unk1;
+	uint8 color;
+	uint16 unk2;
 	uint16 radius;
-	uint16 color;
-	uint16 size;
 	uint16 vertex;
 };
 
@@ -134,44 +138,44 @@ public:
 		return _vertices.size();
 	}
 
-	BoneFrame* getBoneState(int16 boneIdx) {
+	BoneFrame *getBoneState(int16 boneIdx) {
 		return &_boneStates[boneIdx];
 	}
 
-	const BoneFrame* getBoneState(int16 boneIdx) const {
+	const BoneFrame *getBoneState(int16 boneIdx) const {
 		return &_boneStates[boneIdx];
 	}
 
-	const Common::Array<BodyPolygon>& getPolygons() const {
+	const Common::Array<BodyPolygon> &getPolygons() const {
 		return _polygons;
 	}
 
-	const Common::Array<BodyVertex>& getVertices() const {
+	const Common::Array<BodyVertex> &getVertices() const {
 		return _vertices;
 	}
 
-	const Common::Array<BodySphere>& getSpheres() const {
+	const Common::Array<BodySphere> &getSpheres() const {
 		return _spheres;
 	}
 
-	const Common::Array<BodyShade>& getShades() const {
+	const Common::Array<BodyShade> &getShades() const {
 		return _shades;
 	}
 
-	const BodyShade* getShade(int16 shadeIdx) const {
-		return &_shades[shadeIdx];
+	const BodyShade &getShade(int16 shadeIdx) const {
+		return _shades[shadeIdx];
 	}
 
-	const Common::Array<BodyLine>& getLines() const {
+	const Common::Array<BodyLine> &getLines() const {
 		return _lines;
 	}
 
-	const Common::Array<BodyBone>& getBones() const {
+	const Common::Array<BodyBone> &getBones() const {
 		return _bones;
 	}
 
-	const BodyBone* getBone(int16 boneIdx) const {
-		return &_bones[boneIdx];
+	const BodyBone &getBone(int16 boneIdx) const {
+		return _bones[boneIdx];
 	}
 
 	bool loadFromStream(Common::SeekableReadStream &stream) override;

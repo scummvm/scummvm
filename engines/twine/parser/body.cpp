@@ -64,6 +64,8 @@ void BodyData::loadBones(Common::SeekableReadStream &stream) {
 		BodyBone bone;
 		bone.parent = baseElementOffset == -1 ? 0xffff : baseElementOffset / 38;
 		bone.vertex = basePoint;
+		bone.firstVertex = firstPoint;
+		bone.numVertices = numPoints;
 		bone.initalBoneState = boneframe;
 		bone.numOfShades = numOfShades;
 
@@ -73,6 +75,7 @@ void BodyData::loadBones(Common::SeekableReadStream &stream) {
 		}
 
 		_bones.push_back(bone);
+		_boneStates[i] = bone.initalBoneState;
 	}
 }
 
@@ -96,18 +99,18 @@ void BodyData::loadPolygons(Common::SeekableReadStream &stream) {
 	_polygons.reserve(numPolygons);
 	for (uint16 i = 0; i < numPolygons; ++i) {
 		BodyPolygon poly;
-		poly.renderType = stream.readSByte();
-		const int8 numVertex = stream.readSByte();
+		poly.renderType = stream.readByte();
+		const uint8 numVertices = stream.readByte();
 
-		poly.color = stream.readUint16LE();
+		poly.color = stream.readSint16LE();
 		int16 intensity = -1;
 		if (poly.renderType == POLYGONTYPE_GOURAUD || poly.renderType == POLYGONTYPE_DITHER) {
 			intensity = stream.readSint16LE();
 		}
 
-		poly.indices.reserve(numVertex);
-		poly.intensities.reserve(numVertex);
-		for (int k = 0; k < numVertex; ++k) {
+		poly.indices.reserve(numVertices);
+		poly.intensities.reserve(numVertices);
+		for (int k = 0; k < numVertices; ++k) {
 			if (poly.renderType >= POLYGONTYPE_UNKNOWN) {
 				intensity = stream.readSint16LE();
 			}
@@ -126,8 +129,9 @@ void BodyData::loadLines(Common::SeekableReadStream &stream) {
 	_lines.reserve(numLines);
 	for (uint16 i = 0; i < numLines; ++i) {
 		BodyLine line;
-		line.unk1 = stream.readUint16LE();
-		line.color = stream.readUint16LE();
+		line.color = stream.readByte();
+		line.unk1 = stream.readByte();
+		line.unk2 = stream.readUint16LE();
 		line.vertex1 = stream.readUint16LE() / 6;
 		line.vertex2 = stream.readUint16LE() / 6;
 		_lines.push_back(line);
@@ -140,9 +144,10 @@ void BodyData::loadSpheres(Common::SeekableReadStream &stream) {
 	_spheres.reserve(numSpheres);
 	for (uint16 i = 0; i < numSpheres; ++i) {
 		BodySphere sphere;
+		sphere.unk1 = stream.readByte();
+		sphere.color = stream.readByte();
+		sphere.unk2 = stream.readUint16LE();
 		sphere.radius = stream.readUint16LE();
-		sphere.color = stream.readUint16LE();
-		sphere.size = stream.readUint16LE();
 		sphere.vertex = stream.readUint16LE() / 6;
 		_spheres.push_back(sphere);
 	}

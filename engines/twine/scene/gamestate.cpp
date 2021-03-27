@@ -321,11 +321,11 @@ void GameState::processFoundItem(int32 item) {
 	const int32 itemCameraY = _engine->_grid->newCamera.y * BRICK_HEIGHT;
 	const int32 itemCameraZ = _engine->_grid->newCamera.z * BRICK_SIZE;
 
-	uint8 *bodyPtr = _engine->_resources->bodyTable[_engine->_scene->sceneHero->entity];
+	BodyData &bodyData = _engine->_resources->bodyData[_engine->_scene->sceneHero->entity];
 	const int32 bodyX = _engine->_scene->sceneHero->pos.x - itemCameraX;
 	const int32 bodyY = _engine->_scene->sceneHero->pos.y - itemCameraY;
 	const int32 bodyZ = _engine->_scene->sceneHero->pos.z - itemCameraZ;
-	_engine->_renderer->renderIsoModel(bodyX, bodyY, bodyZ, ANGLE_0, ANGLE_45, ANGLE_0, bodyPtr);
+	_engine->_renderer->renderIsoModel(bodyX, bodyY, bodyZ, ANGLE_0, ANGLE_45, ANGLE_0, bodyData);
 	_engine->_interface->setClip(_engine->_redraw->renderRect);
 
 	const int32 itemX = (_engine->_scene->sceneHero->pos.x + BRICK_HEIGHT) / BRICK_SIZE;
@@ -365,7 +365,7 @@ void GameState::processFoundItem(int32 item) {
 
 	AnimTimerDataStruct tmpAnimTimer = _engine->_scene->sceneHero->animTimerData;
 
-	_engine->_animations->stockAnimation(bodyPtr, &_engine->_scene->sceneHero->animTimerData);
+	_engine->_animations->stockAnimation(bodyData, &_engine->_scene->sceneHero->animTimerData);
 
 	uint currentAnimState = 0;
 
@@ -391,14 +391,14 @@ void GameState::processFoundItem(int32 item) {
 		_engine->_interface->resetClip();
 		initEngineProjections();
 
-		if (_engine->_animations->setModelAnimation(currentAnimState, currentAnimData, bodyPtr, &_engine->_scene->sceneHero->animTimerData)) {
+		if (_engine->_animations->setModelAnimation(currentAnimState, currentAnimData, bodyData, &_engine->_scene->sceneHero->animTimerData)) {
 			currentAnimState++; // keyframe
 			if (currentAnimState >= currentAnimData.getNumKeyframes()) {
 				currentAnimState = currentAnimData.getLoopFrame();
 			}
 		}
 
-		_engine->_renderer->renderIsoModel(bodyX, bodyY, bodyZ, ANGLE_0, ANGLE_45, ANGLE_0, bodyPtr);
+		_engine->_renderer->renderIsoModel(bodyX, bodyY, bodyZ, ANGLE_0, ANGLE_45, ANGLE_0, bodyData);
 		_engine->_interface->setClip(_engine->_redraw->renderRect);
 		_engine->_grid->drawOverModelActor(itemX, itemY, itemZ);
 		_engine->_redraw->addRedrawArea(_engine->_redraw->renderRect);
@@ -495,8 +495,8 @@ void GameState::processGameoverAnimation() {
 	_engine->setPalette(_engine->_screens->paletteRGBA);
 	_engine->flip();
 	_engine->_screens->copyScreen(_engine->frontVideoBuffer, _engine->workVideoBuffer);
-	uint8 *gameOverPtr = nullptr;
-	if (HQR::getAllocEntry(&gameOverPtr, Resources::HQR_RESS_FILE, RESSHQR_GAMEOVERMDL) == 0) {
+	BodyData gameOverPtr;
+	if (!gameOverPtr.loadFromHQR(Resources::HQR_RESS_FILE, RESSHQR_GAMEOVERMDL)) {
 		return;
 	}
 
@@ -512,7 +512,6 @@ void GameState::processGameoverAnimation() {
 		ScopedFPS scopedFps(66);
 		_engine->readKeys();
 		if (_engine->shouldQuit()) {
-			free(gameOverPtr);
 			return;
 		}
 
@@ -536,7 +535,6 @@ void GameState::processGameoverAnimation() {
 	_engine->delaySkip(2000);
 
 	_engine->_interface->resetClip();
-	free(gameOverPtr);
 	_engine->_screens->copyScreen(_engine->workVideoBuffer, _engine->frontVideoBuffer);
 	_engine->flip();
 	initEngineProjections();

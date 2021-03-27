@@ -160,9 +160,7 @@ public:
 	const Common::Array<int32>& getFlaMovieInfo(const Common::String &name) const;
 
 	/** Table with all loaded samples */
-	uint8 *inventoryTable[NUM_INVENTORY_ITEMS] {nullptr};
-	/** Table with all loaded samples sizes */
-	uint32 inventorySizeTable[NUM_INVENTORY_ITEMS] {0};
+	BodyData inventoryTable[NUM_INVENTORY_ITEMS];
 
 	/** Table with all loaded sprites */
 	uint8 *spriteTable[NUM_SPRITES] {nullptr};
@@ -173,8 +171,6 @@ public:
 	AnimData animData[NUM_ANIMS];
 
 	/** Actors 3D body table - size of NUM_BODIES */
-	uint8 *bodyTable[NUM_BODIES]{nullptr};
-	int32 bodyTableSize[NUM_BODIES]{0};
 	BodyData bodyData[NUM_BODIES];
 
 	/** Table with all loaded samples */
@@ -194,14 +190,11 @@ public:
 	uint8 *holomapSurfacePtr = nullptr;
 	uint32 holomapImageSize = 0;
 	uint8 *holomapImagePtr = nullptr;
-	uint32 holomapPointModelSize = 0;
-	uint8 *holomapPointModelPtr = nullptr;
-	uint32 holomapTwinsenModelSize = 0;
-	uint8 *holomapTwinsenModelPtr = nullptr;
-	uint32 holomapTwinsenArrowSize = 0;
-	uint8 *holomapTwinsenArrowPtr = nullptr;
-	uint32 holomapArrowSize = 0;
-	uint8 *holomapArrowPtr = nullptr;
+
+	BodyData holomapPointModelPtr;
+	BodyData holomapTwinsenModelPtr;
+	BodyData holomapTwinsenArrowPtr;
+	BodyData holomapArrowPtr;
 
 	/** Initialize resource pointers */
 	void initResources();

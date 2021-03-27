@@ -27,6 +27,7 @@
 #include "common/util.h"
 #include "twine/menu/interface.h"
 #include "twine/menu/menu.h"
+#include "twine/parser/body.h"
 #include "twine/renderer/redraw.h"
 #include "twine/renderer/shadeangletab.h"
 #include "twine/resources/resources.h"
@@ -313,26 +314,24 @@ void Renderer::applyRotation(IMatrix3x3 *targetMatrix, const IMatrix3x3 *current
 	}
 }
 
-void Renderer::applyPointsRotation(const I16Vec3 *pointsPtr, int32 numPoints, I16Vec3 *destPoints, const IMatrix3x3 *rotationMatrix) {
-	int32 numOfPoints2 = numPoints;
-
-	do {
-		const int32 tmpX = pointsPtr->x;
-		const int32 tmpY = pointsPtr->y;
-		const int32 tmpZ = pointsPtr->z;
+void Renderer::applyPointsRotation(const Common::Array<BodyVertex> &vertices, int32 firstPoint, int32 numPoints, I16Vec3 *destPoints, const IMatrix3x3 *rotationMatrix) {
+	for (int32 i = 0; i < numPoints; ++i) {
+		const BodyVertex &vertex = vertices[i + firstPoint];
+		const int32 tmpX = vertex.x;
+		const int32 tmpY = vertex.y;
+		const int32 tmpZ = vertex.z;
 
 		destPoints->x = ((rotationMatrix->row1[0] * tmpX + rotationMatrix->row1[1] * tmpY + rotationMatrix->row1[2] * tmpZ) / SCENE_SIZE_HALF) + destPos.x;
 		destPoints->y = ((rotationMatrix->row2[0] * tmpX + rotationMatrix->row2[1] * tmpY + rotationMatrix->row2[2] * tmpZ) / SCENE_SIZE_HALF) + destPos.y;
 		destPoints->z = ((rotationMatrix->row3[0] * tmpX + rotationMatrix->row3[1] * tmpY + rotationMatrix->row3[2] * tmpZ) / SCENE_SIZE_HALF) + destPos.z;
 
 		destPoints++;
-		pointsPtr++;
-	} while (--numOfPoints2);
+	}
 }
 
-void Renderer::processRotatedElement(IMatrix3x3 *targetMatrix, const I16Vec3 *pointsPtr, int32 rotZ, int32 rotY, int32 rotX, const BonesBaseData *boneData, ModelData *modelData) {
-	int32 firstPoint = boneData->firstPoint / sizeof(I16Vec3);
-	int32 numOfPoints2 = boneData->numOfPoints;
+void Renderer::processRotatedElement(IMatrix3x3 *targetMatrix, const Common::Array<BodyVertex> &vertices, int32 rotX, int32 rotY, int32 rotZ, const BodyBone &bone, ModelData *modelData) {
+	const int32 firstPoint = bone.firstVertex;
+	const int32 numOfPoints = bone.numVertices;
 
 	IVec3 renderAngle;
 	renderAngle.x = rotX;
@@ -341,15 +340,15 @@ void Renderer::processRotatedElement(IMatrix3x3 *targetMatrix, const I16Vec3 *po
 
 	const IMatrix3x3 *currentMatrix;
 	// if its the first point
-	if (boneData->baseElement == -1) {
+	if (bone.isRoot()) {
 		currentMatrix = &_baseMatrix;
 
 		destPos.x = 0;
 		destPos.y = 0;
 		destPos.z = 0;
 	} else {
-		const int32 pointIdx = boneData->basePoint / sizeof(I16Vec3);
-		const int32 matrixIndex = boneData->baseElement / sizeof(BonesBaseData);
+		const int32 pointIdx = bone.vertex;
+		const int32 matrixIndex = bone.parent;
 		assert(matrixIndex >= 0 && matrixIndex < ARRAYSIZE(_matricesTable));
 		currentMatrix = &_matricesTable[matrixIndex];
 
@@ -360,54 +359,52 @@ void Renderer::processRotatedElement(IMatrix3x3 *targetMatrix, const I16Vec3 *po
 
 	applyRotation(targetMatrix, currentMatrix, renderAngle);
 
-	if (!numOfPoints2) {
+	if (!numOfPoints) {
 		warning("RENDER WARNING: No points in this model!");
 	}
 
-	applyPointsRotation(&pointsPtr[firstPoint], numOfPoints2, &modelData->computedPoints[firstPoint], targetMatrix);
+	applyPointsRotation(vertices, firstPoint, numOfPoints, &modelData->computedPoints[firstPoint], targetMatrix);
 }
 
-void Renderer::applyPointsTranslation(const I16Vec3 *pointsPtr, int32 numPoints, I16Vec3 *destPoints, const IMatrix3x3 *translationMatrix, const IVec3 &angleVec) {
-	int32 numOfPoints2 = numPoints;
-
-	do {
-		const int32 tmpX = pointsPtr->x + angleVec.z;
-		const int32 tmpY = pointsPtr->y + angleVec.y;
-		const int32 tmpZ = pointsPtr->z + angleVec.x;
+void Renderer::applyPointsTranslation(const Common::Array<BodyVertex> &vertices, int32 firstPoint, int32 numPoints, I16Vec3 *destPoints, const IMatrix3x3 *translationMatrix, const IVec3 &angleVec) {
+	for (int32 i = 0; i < numPoints; ++i) {
+		const BodyVertex &vertex = vertices[i + firstPoint];
+		const int32 tmpX = vertex.x + angleVec.z;
+		const int32 tmpY = vertex.y + angleVec.y;
+		const int32 tmpZ = vertex.z + angleVec.x;
 
 		destPoints->x = ((translationMatrix->row1[0] * tmpX + translationMatrix->row1[1] * tmpY + translationMatrix->row1[2] * tmpZ) / SCENE_SIZE_HALF) + destPos.x;
 		destPoints->y = ((translationMatrix->row2[0] * tmpX + translationMatrix->row2[1] * tmpY + translationMatrix->row2[2] * tmpZ) / SCENE_SIZE_HALF) + destPos.y;
 		destPoints->z = ((translationMatrix->row3[0] * tmpX + translationMatrix->row3[1] * tmpY + translationMatrix->row3[2] * tmpZ) / SCENE_SIZE_HALF) + destPos.z;
 
 		destPoints++;
-		pointsPtr++;
-	} while (--numOfPoints2);
+	}
 }
 
-void Renderer::processTranslatedElement(IMatrix3x3 *targetMatrix, const I16Vec3 *pointsPtr, int32 rotX, int32 rotY, int32 rotZ, const BonesBaseData *boneData, ModelData *modelData) {
+void Renderer::processTranslatedElement(IMatrix3x3 *targetMatrix, const Common::Array<BodyVertex> &vertices, int32 rotX, int32 rotY, int32 rotZ, const BodyBone &bone, ModelData *modelData) {
 	IVec3 renderAngle;
 	renderAngle.x = rotX;
 	renderAngle.y = rotY;
 	renderAngle.z = rotZ;
 
-	if (boneData->baseElement == -1) { // base point
+	if (bone.isRoot()) { // base point
 		destPos.x = 0;
 		destPos.y = 0;
 		destPos.z = 0;
 
 		*targetMatrix = _baseMatrix;
 	} else { // dependent
-		const int32 pointsIdx = boneData->basePoint / sizeof(I16Vec3);
+		const int32 pointsIdx = bone.vertex;
 		destPos.x = modelData->computedPoints[pointsIdx].x;
 		destPos.y = modelData->computedPoints[pointsIdx].y;
 		destPos.z = modelData->computedPoints[pointsIdx].z;
 
-		const int32 matrixIndex = boneData->baseElement / sizeof(BonesBaseData);
+		const int32 matrixIndex = bone.parent;
 		assert(matrixIndex >= 0 && matrixIndex < ARRAYSIZE(_matricesTable));
 		*targetMatrix = _matricesTable[matrixIndex];
 	}
 
-	applyPointsTranslation(&pointsPtr[boneData->firstPoint / sizeof(I16Vec3)], boneData->numOfPoints, &modelData->computedPoints[boneData->firstPoint / sizeof(I16Vec3)], targetMatrix, renderAngle);
+	applyPointsTranslation(vertices, bone.firstVertex, bone.numVertices, &modelData->computedPoints[bone.firstVertex], targetMatrix, renderAngle);
 }
 
 void Renderer::setLightVector(int32 angleX, int32 angleY, int32 angleZ) {
@@ -1080,22 +1077,14 @@ void Renderer::circleFill(int32 x, int32 y, int32 radius, uint8 color) {
 	}
 }
 
-uint8 *Renderer::prepareSpheres(Common::MemoryReadStream &stream, int32 &numOfPrimitives, RenderCommand **renderCmds, uint8 *renderBufferPtr, ModelData *modelData) {
-	int16 numSpheres = stream.readSint16LE();
-	if (numSpheres <= 0) {
-		return renderBufferPtr;
-	}
-	numOfPrimitives += numSpheres;
-	do {
-		CmdRenderSphere *sphere = (CmdRenderSphere *)renderBufferPtr;
-		stream.skip(1);
-		sphere->colorIndex = stream.readByte();
-		stream.skip(2);
-		sphere->radius = stream.readUint16LE();
-		const int16 centerOffset = stream.readUint16LE();
-		const int16 centerIndex = centerOffset / 6;
-		sphere->x = modelData->flattenPoints[centerIndex].x;
-		sphere->y = modelData->flattenPoints[centerIndex].y;
+uint8 *Renderer::prepareSpheres(const Common::Array<BodySphere> &spheres, int32 &numOfPrimitives, RenderCommand **renderCmds, uint8 *renderBufferPtr, ModelData *modelData) {
+	for (const BodySphere &sphere : spheres) {
+		CmdRenderSphere *cmd = (CmdRenderSphere *)renderBufferPtr;
+		cmd->colorIndex = sphere.color;
+		cmd->radius = sphere.radius;
+		const int16 centerIndex = sphere.vertex;
+		cmd->x = modelData->flattenPoints[centerIndex].x;
+		cmd->y = modelData->flattenPoints[centerIndex].y;
 
 		(*renderCmds)->depth = modelData->flattenPoints[centerIndex].z;
 		(*renderCmds)->renderType = RENDERTYPE_DRAWSPHERE;
@@ -1103,51 +1092,38 @@ uint8 *Renderer::prepareSpheres(Common::MemoryReadStream &stream, int32 &numOfPr
 		(*renderCmds)++;
 
 		renderBufferPtr += sizeof(CmdRenderSphere);
-	} while (--numSpheres);
-
+	}
+	numOfPrimitives += spheres.size();
 	return renderBufferPtr;
 }
 
-uint8 *Renderer::prepareLines(Common::MemoryReadStream &stream, int32 &numOfPrimitives, RenderCommand **renderCmds, uint8 *renderBufferPtr, ModelData *modelData) {
-	int16 numLines = stream.readSint16LE();
-	if (numLines <= 0) {
-		return renderBufferPtr;
-	}
-	numOfPrimitives += numLines;
-
-	do {
-		CmdRenderLine *lineCoordinatesPtr = (CmdRenderLine *)renderBufferPtr;
-		lineCoordinatesPtr->colorIndex = stream.readByte();
-		stream.skip(3);
-		const int32 point1Index = stream.readSint16LE() / 6;
-		const int32 point2Index = stream.readSint16LE() / 6;
-		lineCoordinatesPtr->x1 = modelData->flattenPoints[point1Index].x;
-		lineCoordinatesPtr->y1 = modelData->flattenPoints[point1Index].y;
-		lineCoordinatesPtr->x2 = modelData->flattenPoints[point2Index].x;
-		lineCoordinatesPtr->y2 = modelData->flattenPoints[point2Index].y;
+uint8 *Renderer::prepareLines(const Common::Array<BodyLine> &lines, int32 &numOfPrimitives, RenderCommand **renderCmds, uint8 *renderBufferPtr, ModelData *modelData) {
+	for (const BodyLine &line : lines) {
+		CmdRenderLine *cmd = (CmdRenderLine *)renderBufferPtr;
+		cmd->colorIndex = line.color;
+		const int32 point1Index = line.vertex1;
+		const int32 point2Index = line.vertex2;
+		cmd->x1 = modelData->flattenPoints[point1Index].x;
+		cmd->y1 = modelData->flattenPoints[point1Index].y;
+		cmd->x2 = modelData->flattenPoints[point2Index].x;
+		cmd->y2 = modelData->flattenPoints[point2Index].y;
 		(*renderCmds)->depth = MAX(modelData->flattenPoints[point1Index].z, modelData->flattenPoints[point2Index].z);
 		(*renderCmds)->renderType = RENDERTYPE_DRAWLINE;
 		(*renderCmds)->dataPtr = renderBufferPtr;
 		(*renderCmds)++;
 
 		renderBufferPtr += sizeof(CmdRenderLine);
-	} while (--numLines);
-
+	}
+	numOfPrimitives += lines.size();
 	return renderBufferPtr;
 }
 
-uint8 *Renderer::preparePolygons(Common::MemoryReadStream &stream, int32 &numOfPrimitives, RenderCommand **renderCmds, uint8 *renderBufferPtr, ModelData *modelData) {
-	int16 numPolygons = stream.readSint16LE();
-	if (numPolygons <= 0) {
-		return renderBufferPtr;
-	}
-	int16 primitiveCounter = numPolygons; // the number of primitives = the number of polygons
-
-	do { // loop that load all the polygons
-		const uint8 renderType = stream.readByte();
-		const uint8 numVertices = stream.readByte();
+uint8 *Renderer::preparePolygons(const Common::Array<BodyPolygon> &polygons, int32 &numOfPrimitives, RenderCommand **renderCmds, uint8 *renderBufferPtr, ModelData *modelData) {
+	for (const BodyPolygon &polygon : polygons) {
+		const uint8 renderType = polygon.renderType;
+		const uint8 numVertices = polygon.indices.size();
 		assert(numVertices <= 16);
-		const int16 colorIndex = stream.readSint16LE();
+		const int16 colorIndex = polygon.color;
 
 		int16 bestDepth = -32000;
 
@@ -1160,19 +1136,16 @@ uint8 *Renderer::preparePolygons(Common::MemoryReadStream &stream, int32 &numOfP
 		renderBufferPtr += destinationPolygon->numVertices * sizeof(Vertex);
 
 		Vertex *vertex = vertices;
-		int16 counter = destinationPolygon->numVertices;
 
 		// TODO: RECHECK coordinates axis
-		if (renderType >= 9) {
-			destinationPolygon->renderType = renderType - 2;
-			destinationPolygon->colorIndex = colorIndex;
+		if (renderType >= POLYGONTYPE_UNKNOWN) {
+			destinationPolygon->renderType = polygon.renderType - 2;
+			destinationPolygon->colorIndex = polygon.color;
 
-			do {
-				const int16 shadeEntry = stream.readSint16LE();
+			for (int16 idx = 0; idx < numVertices; ++idx) {
+				const int16 shadeEntry = polygon.intensities[idx];
 				const int16 shadeValue = colorIndex + modelData->shadeTable[shadeEntry];
-
-				const int16 vertexOffset = stream.readSint16LE();
-				const int16 vertexIndex = vertexOffset / 6;
+				const int16 vertexIndex = polygon.indices[idx];
 				const I16Vec3 *point = &modelData->flattenPoints[vertexIndex];
 
 				vertex->colorIndex = shadeValue;
@@ -1180,12 +1153,12 @@ uint8 *Renderer::preparePolygons(Common::MemoryReadStream &stream, int32 &numOfP
 				vertex->y = point->y;
 				bestDepth = MAX(bestDepth, point->z);
 				++vertex;
-			} while (--counter > 0);
+			}
 		} else {
 			if (renderType >= POLYGONTYPE_GOURAUD) {
 				// only 1 shade value is used
 				destinationPolygon->renderType = renderType - POLYGONTYPE_GOURAUD;
-				const int16 shadeEntry = stream.readSint16LE();
+				const int16 shadeEntry = polygon.intensities[0];
 				const int16 shadeValue = colorIndex + modelData->shadeTable[shadeEntry];
 				destinationPolygon->colorIndex = shadeValue;
 			} else {
@@ -1194,9 +1167,8 @@ uint8 *Renderer::preparePolygons(Common::MemoryReadStream &stream, int32 &numOfP
 				destinationPolygon->colorIndex = colorIndex;
 			}
 
-			do {
-				const int16 vertexOffset = stream.readSint16LE();
-				const int16 vertexIndex = vertexOffset / 6;
+			for (int16 idx = 0; idx < numVertices; ++idx) {
+				const int16 vertexIndex = polygon.indices[idx];
 				const I16Vec3 *point = &modelData->flattenPoints[vertexIndex];
 
 				vertex->colorIndex = destinationPolygon->colorIndex;
@@ -1204,7 +1176,7 @@ uint8 *Renderer::preparePolygons(Common::MemoryReadStream &stream, int32 &numOfP
 				vertex->y = point->y;
 				bestDepth = MAX(bestDepth, point->z);
 				++vertex;
-			} while (--counter > 0);
+			}
 		}
 
 		numOfPrimitives++;
@@ -1213,7 +1185,7 @@ uint8 *Renderer::preparePolygons(Common::MemoryReadStream &stream, int32 &numOfP
 		(*renderCmds)->renderType = RENDERTYPE_DRAWPOLYGON;
 		(*renderCmds)->dataPtr = (uint8 *)destinationPolygon;
 		(*renderCmds)++;
-	} while (--primitiveCounter);
+	}
 
 	return renderBufferPtr;
 }
@@ -1223,14 +1195,11 @@ const Renderer::RenderCommand *Renderer::depthSortRenderCommands(int32 numOfPrim
 	return _renderCmds;
 }
 
-bool Renderer::renderModelElements(int32 numOfPrimitives, const uint8 *polygonPtr, RenderCommand **renderCmds, ModelData *modelData) {
-	// TODO: proper size
-	Common::MemoryReadStream stream(polygonPtr, 100000);
-
+bool Renderer::renderModelElements(int32 numOfPrimitives, const BodyData &bodyData, RenderCommand **renderCmds, ModelData *modelData) {
 	uint8 *renderBufferPtr = _renderCoordinatesBuffer;
-	renderBufferPtr = preparePolygons(stream, numOfPrimitives, renderCmds, renderBufferPtr, modelData);
-	renderBufferPtr = prepareLines(stream, numOfPrimitives, renderCmds, renderBufferPtr, modelData);
-	renderBufferPtr = prepareSpheres(stream, numOfPrimitives, renderCmds, renderBufferPtr, modelData);
+	renderBufferPtr = preparePolygons(bodyData.getPolygons(), numOfPrimitives, renderCmds, renderBufferPtr, modelData);
+	renderBufferPtr = prepareLines(bodyData.getLines(), numOfPrimitives, renderCmds, renderBufferPtr, modelData);
+	renderBufferPtr = prepareSpheres(bodyData.getSpheres(), numOfPrimitives, renderCmds, renderBufferPtr, modelData);
 
 	if (numOfPrimitives == 0) {
 		_engine->_redraw->renderRect.right = -1;
@@ -1268,7 +1237,7 @@ bool Renderer::renderModelElements(int32 numOfPrimitives, const uint8 *polygonPt
 			int32 radius = sphere->radius;
 
 			//if (isUsingOrthoProjection) {
-				radius = (radius * 34) / 512;
+			radius = (radius * 34) / 512;
 			//} else {
 			//	radius = (radius * cameraScaleY) / (cameraDepthOffset + *(const int16 *)pointer); // TODO: this does not make sense.
 			//}
@@ -1305,32 +1274,32 @@ bool Renderer::renderModelElements(int32 numOfPrimitives, const uint8 *polygonPt
 	return true;
 }
 
-bool Renderer::renderAnimatedModel(ModelData *modelData, const uint8 *bodyPtr, RenderCommand *renderCmds, const IVec3 &angleVec, const IVec3 &renderPos) {
-	const int32 numVertices = Model::getNumVertices(bodyPtr);
-	const int32 numBones = Model::getNumBones(bodyPtr);
+bool Renderer::renderAnimatedModel(ModelData *modelData, const BodyData &bodyData, RenderCommand *renderCmds, const IVec3 &angleVec, const IVec3 &renderPos) {
+	const int32 numVertices = bodyData.getNumVertices();
+	const int32 numBones = bodyData.getNumBones();
 
-	const I16Vec3 *pointsPtr = Model::getVerticesBaseData(bodyPtr);
+	const Common::Array<BodyVertex> &vertices = bodyData.getVertices();
 
 	IMatrix3x3 *modelMatrix = &_matricesTable[0];
 
-	const BonesBaseData *boneData = Model::getBonesBaseData(bodyPtr, 0);
-	processRotatedElement(modelMatrix, pointsPtr, angleVec.x, angleVec.y, angleVec.z, boneData, modelData);
+	const BodyBone &firstBone = bodyData.getBone(0);
+	processRotatedElement(modelMatrix, vertices, angleVec.x, angleVec.y, angleVec.z, firstBone, modelData);
 
 	int32 numOfPrimitives = 0;
 
 	if (numBones - 1 != 0) {
 		numOfPrimitives = numBones - 1;
-		modelMatrix = &_matricesTable[1];
-
 		int boneIdx = 1;
-		do {
-			boneData = Model::getBonesBaseData(bodyPtr, boneIdx);
-			int16 boneType = boneData->flag;
+		modelMatrix = &_matricesTable[boneIdx];
 
-			if (boneType == 0) {
-				processRotatedElement(modelMatrix, pointsPtr, boneData->rotateX, boneData->rotateY, boneData->rotateZ, boneData, modelData);
-			} else if (boneType == 1) {
-				processTranslatedElement(modelMatrix, pointsPtr, boneData->rotateX, boneData->rotateY, boneData->rotateZ, boneData, modelData);
+		do {
+			const BodyBone &bone = bodyData.getBone(boneIdx);
+			const BoneFrame *boneData = bodyData.getBoneState(boneIdx);
+
+			if (boneData->type == 0) {
+				processRotatedElement(modelMatrix, vertices, boneData->x, boneData->y, boneData->z, bone, modelData);
+			} else if (boneData->type == 1) {
+				processTranslatedElement(modelMatrix, vertices, boneData->x, boneData->y, boneData->z, bone, modelData);
 			}
 
 			++modelMatrix;
@@ -1432,7 +1401,7 @@ bool Renderer::renderAnimatedModel(ModelData *modelData, const uint8 *bodyPtr, R
 		} while (--numOfPrimitives);
 	}
 
-	int32 numOfShades = Model::getNumShades(bodyPtr);
+	int32 numOfShades = bodyData.getShades().size();
 
 	if (numOfShades) { // process normal data
 		uint16 *currentShadeDestination = (uint16 *)modelData->shadeTable;
@@ -1443,7 +1412,7 @@ bool Renderer::renderAnimatedModel(ModelData *modelData, const uint8 *bodyPtr, R
 		int shadeIndex = 0;
 		int boneIdx = 0;
 		do { // for each element
-			numOfShades = Model::getNumShadesBone(bodyPtr, boneIdx);
+			numOfShades = bodyData.getBone(boneIdx).numOfShades;
 
 			if (numOfShades) {
 				int32 numShades = numOfShades;
@@ -1451,11 +1420,11 @@ bool Renderer::renderAnimatedModel(ModelData *modelData, const uint8 *bodyPtr, R
 				_shadeMatrix = *lightMatrix * _lightPos;
 
 				do { // for each normal
-					const BodyShade *shadePtr = Model::getBodyShadesData(bodyPtr, shadeIndex);
+					const BodyShade &shadePtr = bodyData.getShade(shadeIndex);
 
-					const int16 col1 = shadePtr->col1;
-					const int16 col2 = shadePtr->col2;
-					const int16 col3 = shadePtr->col3;
+					const int16 col1 = shadePtr.col1;
+					const int16 col2 = shadePtr.col2;
+					const int16 col3 = shadePtr.col3;
 
 					int32 color = 0;
 					color += _shadeMatrix.row1[0] * col1 + _shadeMatrix.row1[1] * col2 + _shadeMatrix.row1[2] * col3;
@@ -1466,7 +1435,7 @@ bool Renderer::renderAnimatedModel(ModelData *modelData, const uint8 *bodyPtr, R
 
 					if (color > 0) {
 						color >>= 14;
-						color /= shadePtr->unk4;
+						color /= shadePtr.unk4;
 						shade = (uint16)color;
 					}
 
@@ -1481,10 +1450,10 @@ bool Renderer::renderAnimatedModel(ModelData *modelData, const uint8 *bodyPtr, R
 		} while (--numOfPrimitives);
 	}
 
-	return renderModelElements(numOfPrimitives, Model::getPolygonData(bodyPtr), &renderCmds, modelData);
+	return renderModelElements(numOfPrimitives, bodyData, &renderCmds, modelData);
 }
 
-bool Renderer::renderIsoModel(int32 x, int32 y, int32 z, int32 angleX, int32 angleY, int32 angleZ, const uint8 *bodyPtr) {
+bool Renderer::renderIsoModel(int32 x, int32 y, int32 z, int32 angleX, int32 angleY, int32 angleZ, const BodyData &bodyData) {
 	IVec3 renderAngle;
 	renderAngle.x = angleX;
 	renderAngle.y = angleY;
@@ -1507,18 +1476,18 @@ bool Renderer::renderIsoModel(int32 x, int32 y, int32 z, int32 angleX, int32 ang
 		renderPos = destPos - baseRotPos; // RECHECK y
 	}
 
-	if (!Model::isAnimated(bodyPtr)) {
+	if (!bodyData.isAnimated()) {
 		error("Unsupported unanimated model render!");
 	}
 	// restart at the beginning of the renderTable
-	return renderAnimatedModel(&_modelData, bodyPtr, _renderCmds, renderAngle, renderPos);
+	return renderAnimatedModel(&_modelData, bodyData, _renderCmds, renderAngle, renderPos);
 }
 
-void Renderer::renderBehaviourModel(const Common::Rect &rect, int32 y, int32 angle, const uint8 *bodyPtr) {
-	renderBehaviourModel(rect.left, rect.top, rect.right, rect.bottom, y, angle, bodyPtr);
+void Renderer::renderBehaviourModel(const Common::Rect &rect, int32 y, int32 angle, const BodyData &bodyData) {
+	renderBehaviourModel(rect.left, rect.top, rect.right, rect.bottom, y, angle, bodyData);
 }
 
-void Renderer::renderBehaviourModel(int32 boxLeft, int32 boxTop, int32 boxRight, int32 boxBottom, int32 y, int32 angle, const uint8 *bodyPtr) {
+void Renderer::renderBehaviourModel(int32 boxLeft, int32 boxTop, int32 boxRight, int32 boxBottom, int32 y, int32 angle, const BodyData &bodyData) {
 	const int32 ypos = (boxBottom + boxTop) / 2;
 	const int32 xpos = (boxRight + boxLeft) / 2;
 
@@ -1531,17 +1500,17 @@ void Renderer::renderBehaviourModel(int32 boxLeft, int32 boxTop, int32 boxRight,
 		if (move.numOfStep == 0) {
 			_engine->_movements->setActorAngleSafe(newAngle, newAngle - ANGLE_90, ANGLE_17, &move);
 		}
-		renderIsoModel(0, y, 0, ANGLE_0, newAngle, ANGLE_0, bodyPtr);
+		renderIsoModel(0, y, 0, ANGLE_0, newAngle, ANGLE_0, bodyData);
 	} else {
-		renderIsoModel(0, y, 0, ANGLE_0, angle, ANGLE_0, bodyPtr);
+		renderIsoModel(0, y, 0, ANGLE_0, angle, ANGLE_0, bodyData);
 	}
 }
 
-void Renderer::renderInventoryItem(int32 x, int32 y, const uint8 *bodyPtr, int32 angle, int32 param) {
+void Renderer::renderInventoryItem(int32 x, int32 y, const BodyData &bodyData, int32 angle, int32 param) {
 	setCameraPosition(x, y, 128, 200, 200);
 	setCameraAngle(0, 0, 0, 60, 0, 0, param);
 
-	renderIsoModel(0, 0, 0, ANGLE_0, angle, ANGLE_0, bodyPtr);
+	renderIsoModel(0, 0, 0, ANGLE_0, angle, ANGLE_0, bodyData);
 }
 
 void Renderer::computeHolomapPolygon(int32 top, int32 x1, int32 bottom, int32 x2, int16 *polygonTabPtr) {

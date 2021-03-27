@@ -34,26 +34,16 @@
 namespace TwinE {
 
 Resources::~Resources() {
-	for (size_t i = 0; i < ARRAYSIZE(inventoryTable); ++i) {
-		free(inventoryTable[i]);
-	}
 	for (size_t i = 0; i < ARRAYSIZE(spriteTable); ++i) {
 		free(spriteTable[i]);
 	}
 	for (size_t i = 0; i < ARRAYSIZE(samplesTable); ++i) {
 		free(samplesTable[i]);
 	}
-	for (size_t i = 0; i < ARRAYSIZE(bodyTable); ++i) {
-		free(bodyTable[i]);
-	}
 	free(fontPtr);
 	free(spriteShadowPtr);
 	free(holomapSurfacePtr);
 	free(holomapImagePtr);
-	free(holomapTwinsenModelPtr);
-	free(holomapPointModelPtr);
-	free(holomapTwinsenArrowPtr);
-	free(holomapArrowPtr);
 	free(_engine->_screens->mainPalette);
 }
 
@@ -142,7 +132,7 @@ void Resources::preloadInventoryItems() {
 	}
 	debug("preload %i inventory items", numEntries);
 	for (int32 i = 0; i < numEntries; i++) {
-		inventorySizeTable[i] = HQR::getAllocEntry(&inventoryTable[i], Resources::HQR_INVOBJ_FILE, i);
+		inventoryTable[i].loadFromHQR(Resources::HQR_INVOBJ_FILE, i);
 	}
 }
 
@@ -179,23 +169,19 @@ void Resources::initResources() {
 		error("Failed to load holomap image");
 	}
 
-	holomapTwinsenModelSize = HQR::getAllocEntry(&holomapTwinsenModelPtr, Resources::HQR_RESS_FILE, RESSHQR_HOLOTWINMDL);
-	if (holomapTwinsenModelSize == 0) {
+	if (!holomapTwinsenModelPtr.loadFromHQR(Resources::HQR_RESS_FILE, RESSHQR_HOLOTWINMDL)) {
 		error("Failed to load holomap twinsen model");
 	}
 
-	holomapPointModelSize = HQR::getAllocEntry(&holomapPointModelPtr, Resources::HQR_RESS_FILE, RESSHQR_HOLOPOINTMDL);
-	if (holomapPointModelSize == 0) {
+	if (!holomapPointModelPtr.loadFromHQR(Resources::HQR_RESS_FILE, RESSHQR_HOLOPOINTMDL)) {
 		error("Failed to load holomap point model");
 	}
 
-	holomapArrowSize = HQR::getAllocEntry(&holomapArrowPtr, Resources::HQR_RESS_FILE, RESSHQR_HOLOARROWMDL);
-	if (holomapArrowSize == 0) {
+	if (!holomapArrowPtr.loadFromHQR(Resources::HQR_RESS_FILE, RESSHQR_HOLOARROWMDL)) {
 		error("Failed to load holomap arrow model");
 	}
 
-	holomapTwinsenArrowSize = HQR::getAllocEntry(&holomapTwinsenArrowPtr, Resources::HQR_RESS_FILE, RESSHQR_HOLOTWINARROWMDL);
-	if (holomapTwinsenArrowSize == 0) {
+	if (!holomapTwinsenArrowPtr.loadFromHQR(Resources::HQR_RESS_FILE, RESSHQR_HOLOTWINARROWMDL)) {
 		error("Failed to load holomap twinsen arrow model");
 	}
 

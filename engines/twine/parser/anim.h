@@ -31,6 +31,11 @@
 namespace TwinE {
 
 struct BoneFrame {
+	/**
+	 * 0 = allow global rotate
+	 * 1 = disallow global rotate
+	 * 2 = disallow global rotate and hide
+	 */
 	uint16 type = 0;
 	int16 x = 0;
 	int16 y = 0;

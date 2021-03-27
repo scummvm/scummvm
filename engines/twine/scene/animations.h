@@ -45,8 +45,8 @@ private:
 	 */
 	bool verifyAnimAtKeyframe(int32 keyframeIdx, const AnimData &animData, AnimTimerDataStruct *animTimerDataPtr);
 
-	void copyKeyFrameToState(const KeyFrame *keyframe, uint8 *bodyPtr, int32 numBones) const;
-	void copyStateToKeyFrame(KeyFrame *keyframe, const uint8 *bodyPtr) const;
+	void copyKeyFrameToState(const KeyFrame *keyframe, BodyData &bodyData, int32 numBones) const;
+	void copyStateToKeyFrame(KeyFrame *keyframe, const BodyData &bodyData) const;
 
 	int animKeyframeBufIdx = 0;
 	KeyFrame animKeyframeBuf[32];
@@ -75,19 +75,19 @@ public:
 	 * Set animation keyframe
 	 * @param keyframIdx Animation keyframe index
 	 * @param animData Animation data
-	 * @param bodyPtr Body model poitner
+	 * @param bodyData Body model data
 	 * @param animTimerDataPtr Animation time data
 	 */
-	void setAnimAtKeyframe(int32 keyframeIdx, const AnimData &animData, uint8 *const bodyPtr, AnimTimerDataStruct *animTimerDataPtr);
+	void setAnimAtKeyframe(int32 keyframeIdx, const AnimData &animData, BodyData &bodyData, AnimTimerDataStruct *animTimerDataPtr);
 
 	/**
 	 * Set new body animation
 	 * @param keyframeIdx Animation key frame index
 	 * @param animData Animation data
-	 * @param bodyPtr Body model poitner
+	 * @param bodyData Body model data
 	 * @param animTimerDataPtr Animation time data
 	 */
-	bool setModelAnimation(int32 keyframeIdx, const AnimData &animData, uint8 *const bodyPtr, AnimTimerDataStruct *animTimerDataPtr);
+	bool setModelAnimation(int32 keyframeIdx, const AnimData &animData, BodyData &bodyData, AnimTimerDataStruct *animTimerDataPtr);
 
 	/**
 	 * Get entity anim index (This is taken from File3D entities)
@@ -98,10 +98,10 @@ public:
 
 	/**
 	 * Stock animation - copy the next keyFrame from a different buffer
-	 * @param bodyPtr Body model poitner
+	 * @param bodyData Body model data
 	 * @param animTimerDataPtr Animation time data
 	 */
-	void stockAnimation(const uint8 *bodyPtr, AnimTimerDataStruct *animTimerDataPtr);
+	void stockAnimation(const BodyData &bodyData, AnimTimerDataStruct *animTimerDataPtr);
 
 	/**
 	 * Initialize animation

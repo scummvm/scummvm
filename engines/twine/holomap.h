@@ -79,7 +79,7 @@ private:
 
 	void renderLocations(int xRot, int yRot, int zRot, bool lower);
 
-	void renderHolomapModel(const uint8 *bodyPtr, int32 x, int32 y, int32 zPos);
+	void renderHolomapModel(const BodyData &bodyData, int32 x, int32 y, int32 zPos);
 
 	void prepareHolomapSurface();
 	void prepareHolomapProjectedPositions();
