@@ -44,12 +44,11 @@ void AGSCreditz::draw() {
 	int endPoint;
 
 	if (_state->_creditsRunning) {
+		_state->_virtScreen = _engine->GetVirtualScreen();
 		_engine->PollSystem();
 
 		if (!_state->_staticCredits) {
 			// Scrolling credits
-			drawMask(_state->_creditSequence, 0);
-
 			if (_state->_seqSettings[_state->_creditSequence].automatic == 1)
 				endPoint = 0 - _state->_calculatedSequenceHeight;
 			else
@@ -71,7 +70,7 @@ void AGSCreditz::draw() {
 				}
 			}
 
-			drawMask(_state->_creditSequence, 1);
+			_engine->MarkRegionDirty(0, 0, _state->_screenWidth, _state->_screenHeight);
 		} else {
 			// Static credits
 			if (!_state->_singleStatic.bool_) {
@@ -144,36 +143,6 @@ void AGSCreditz::draw() {
 				}
 			}
 		}
-	}
-}
-
-void AGSCreditz::makeMask(int sequence) {
-	int32 wid, hei, cold;
-	_engine->GetBitmapDimensions(_state->_maskScreen, &wid, &hei, &cold);
-
-	int ys = _state->_seqSettings[sequence].topmask,
-		ye = _state->_seqSettings[sequence].bottommask;
-	// See if ys/ye is ever non-zero
-	assert(ys == 0 && ye == 0);
-
-	_engine->MarkRegionDirty(0, 0, wid, hei);
-}
-
-void AGSCreditz::drawMask(int sequence, int getput) {
-	int32 wid, hei, col;
-
-	if (getput == 0) {
-		_engine->GetScreenDimensions(&wid, &hei, &col);
-		_engine->FreeBitmap(_state->_maski);
-		_state->_maski = _engine->CreateBlankBitmap(wid, hei, col);
-		_engine->FreeBitmap(_state->_creditScreen);
-		_state->_creditScreen = _engine->CreateBlankBitmap(wid, hei, col);
-		_state->_maskScreen = _engine->GetBackgroundScene(_engine->GetCurrentBackground());
-
-	} else if (getput == 1) {
-		_engine->SetVirtualScreen(_state->_maski);
-		makeMask(sequence);
-		_engine->ReleaseBitmapSurface(_state->_maskScreen);
 	}
 }
 

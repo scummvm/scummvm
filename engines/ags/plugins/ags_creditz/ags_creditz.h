@@ -106,9 +106,7 @@ struct State {
 	SequenceSettings _seqSettings[10];
 	StSequenceSettings _stSeqSettings[10];
 	SingleStatic _singleStatic;
-	BITMAP *_maskScreen = nullptr;
-	BITMAP *_maski = nullptr;
-	BITMAP *_creditScreen = nullptr;
+	BITMAP *_virtScreen = nullptr;
 
 	// Version 1.1 specific
 	bool _resolutionFlag = false;
@@ -119,8 +117,6 @@ struct State {
 
 class AGSCreditz : public PluginBase, public Drawing {
 private:
-	static void makeMask(int sequence);
-	static void drawMask(int sequence, int getput);
 	static int drawCredit(int sequence, int credit);
 	static void doCredits();
 	static int countLines(const Common::String &text);
