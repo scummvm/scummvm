@@ -649,8 +649,8 @@ insave:
 		fwrite(&g_vm->_logicMgr->Comb49, sizeof(uint16), 4, fh);
 		fwrite(&g_vm->_logicMgr->Comb4CT, sizeof(uint16), 6, fh);
 		fwrite(&g_vm->_logicMgr->Comb58, sizeof(uint16), 6, fh);
-		fwrite(&g_vm->ruotepos, sizeof(uint16), 3, fh);
-		fwrite(&g_vm->ruota, sizeof(uint16), 1, fh);
+		fwrite(&g_vm->_wheelPos, sizeof(uint16), 3, fh);
+		fwrite(&g_vm->_wheel, sizeof(uint16), 1, fh);
 		fwrite(&g_vm->_logicMgr->Count35, sizeof(uint16), 1, fh);
 		fwrite(&g_vm->_logicMgr->Count58, sizeof(uint16), 1, fh);
 		fwrite(&g_vm->_slotMachine41Counter, sizeof(uint16), 1, fh);
@@ -905,8 +905,8 @@ bool DataLoad() {
 		fread(&g_vm->_logicMgr->Comb49, sizeof(uint16), 4, fh);
 		fread(&g_vm->_logicMgr->Comb4CT, sizeof(uint16), 6, fh);
 		fread(&g_vm->_logicMgr->Comb58, sizeof(uint16), 6, fh);
-		fread(&g_vm->ruotepos, sizeof(uint16), 3, fh);
-		fread(&g_vm->ruota, sizeof(uint16), 1, fh);
+		fread(&g_vm->_wheelPos, sizeof(uint16), 3, fh);
+		fread(&g_vm->_wheel, sizeof(uint16), 1, fh);
 		fread(&g_vm->_logicMgr->Count35, sizeof(uint16), 1, fh);
 		fread(&g_vm->_logicMgr->Count58, sizeof(uint16), 1, fh);
 		fread(&g_vm->_slotMachine41Counter, sizeof(uint16), 1, fh);

@@ -2559,23 +2559,23 @@ bool LogicManager::mouseOperate(uint16 curObj) {
 
 		break;
 
-	case oRUOTE2C:
+	case oWHEELS2C:
 		if (!(_vm->_obj[od2CALLA2D]._mode & OBJMODE_OBJSTATUS)) {
 			_vm->_animMgr->stopSmkAnim(_vm->_room[_vm->_curRoom]._bkgAnim);
 			_vm->_animMgr->_animTab[aBKG2C]._flag |= SMKANIM_OFF1;
-			_vm->_obj[oBASERUOTE2C]._mode |= OBJMODE_OBJSTATUS;
-			_vm->_obj[omRUOTE2C]._mode |= OBJMODE_OBJSTATUS;
+			_vm->_obj[oBASEWHEELS2C]._mode |= OBJMODE_OBJSTATUS;
+			_vm->_obj[omWHEELS2C]._mode |= OBJMODE_OBJSTATUS;
 			_vm->_obj[oPULSANTE2C]._mode |= OBJMODE_OBJSTATUS;
-			_vm->_obj[_vm->ruotepos[0] * 3 + 0 + oRUOTA1A2C]._mode |= OBJMODE_OBJSTATUS;
-			_vm->_obj[_vm->ruotepos[1] * 3 + 1 + oRUOTA1A2C]._mode |= OBJMODE_OBJSTATUS;
-			_vm->_obj[_vm->ruotepos[2] * 3 + 2 + oRUOTA1A2C]._mode |= OBJMODE_OBJSTATUS;
+			_vm->_obj[_vm->_wheelPos[0] * 3 + 0 + oWHEEL1A2C]._mode |= OBJMODE_OBJSTATUS;
+			_vm->_obj[_vm->_wheelPos[1] * 3 + 1 + oWHEEL1A2C]._mode |= OBJMODE_OBJSTATUS;
+			_vm->_obj[_vm->_wheelPos[2] * 3 + 2 + oWHEEL1A2C]._mode |= OBJMODE_OBJSTATUS;
 			_vm->_obj[oCAMPO2C]._mode &= ~OBJMODE_OBJSTATUS;
 			_vm->_obj[oTEMPIO2C]._mode &= ~OBJMODE_OBJSTATUS;
 			_vm->_obj[oLEONE2C]._mode &= ~OBJMODE_OBJSTATUS;
 			_vm->_obj[od2CALLA2D]._mode &= ~OBJMODE_OBJSTATUS;
 			_vm->_obj[oSFINGE2C]._mode &= ~OBJMODE_OBJSTATUS;
 			_vm->_obj[oSTATUA2C]._mode &= ~OBJMODE_OBJSTATUS;
-			_vm->_obj[oRUOTE2C]._mode &= ~OBJMODE_OBJSTATUS;
+			_vm->_obj[oWHEELS2C]._mode &= ~OBJMODE_OBJSTATUS;
 			_vm->_obj[od2CALLA2E]._mode &= ~OBJMODE_OBJSTATUS;
 			_vm->_obj[oCARTELLOS2C]._mode &= ~OBJMODE_OBJSTATUS;
 			_vm->_obj[oCARTELLOA2C]._mode &= ~OBJMODE_OBJSTATUS;
