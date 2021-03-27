@@ -32,9 +32,9 @@
 namespace TwinE {
 
 struct EntityBody {
-	int index;		/**< index in file3d.hqr */
+	int index; /**< index in file3d.hqr */
 	ActorBoundingBox actorBoundingBox;
-	int bodyIndex;	/**< index in body.hqr */
+	int bodyIndex; /**< index in body.hqr */
 };
 
 struct EntityAnim {
@@ -64,6 +64,9 @@ struct EntityAnim {
 	Common::Array<Action> _actions;
 };
 
+/**
+ * @brief Associate 3d models from body hqr with animations from anim.hqr for the game characters
+ */
 class EntityData : public Parser {
 private:
 	Common::Array<EntityBody> _bodies;
