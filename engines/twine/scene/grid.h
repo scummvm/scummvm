@@ -294,6 +294,18 @@ public:
 	ShapeType getBrickShapeFull(int32 x, int32 y, int32 z, int32 y2);
 
 	int32 getBrickSoundType(int32 x, int32 y, int32 z);
+
+	inline ShapeType getBrickShape(const IVec3 &pos) {
+		return getBrickShape(pos.x, pos.y, pos.z);
+	}
+
+	inline ShapeType getBrickShapeFull(const IVec3 &pos, int32 y2) {
+		return getBrickShapeFull(pos.x, pos.y, pos.z, y2);
+	}
+
+	inline int32 getBrickSoundType(const IVec3 &pos) {
+		return getBrickSoundType(pos.x, pos.y, pos.z);
+	}
 };
 
 } // namespace TwinE
