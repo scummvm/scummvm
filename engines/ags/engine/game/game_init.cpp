@@ -311,7 +311,7 @@ HGameInitError InitGameState(const LoadedGameEntities &ents, GameDataVersion dat
 	// itself still supports it, technically.
 	// This overriding option re-enables "upscaling". It works ONLY for low-res
 	// resolutions, such as 320x200 and 320x240.
-	if (_GP(usetup).override_upscale) {
+	if (_G(loaded_game_file_version) < kGameVersion_310 && _GP(usetup).override_upscale) {
 		if (_GP(game).GetResolutionType() == kGameResolution_320x200)
 			_GP(game).SetGameResolution(kGameResolution_640x400);
 		else if (_GP(game).GetResolutionType() == kGameResolution_320x240)
