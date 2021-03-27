@@ -90,6 +90,13 @@ struct IVec3 {
 	int32 y;
 	int32 z;
 
+	inline IVec3 &operator=(const I16Vec3& other) {
+		x = other.x;
+		y = other.y;
+		z = other.z;
+		return *this;
+	}
+
 	inline IVec3& operator+=(const IVec3 &other) {
 		x += other.x;
 		y += other.y;
@@ -105,11 +112,11 @@ struct IVec3 {
 	}
 };
 
-inline IVec3 operator+(const IVec3 &lhs, const IVec3 &rhs) {
+inline constexpr IVec3 operator+(const IVec3 &lhs, const IVec3 &rhs) {
 	return IVec3{lhs.x + rhs.x, lhs.y + rhs.y, lhs.z + rhs.z};
 }
 
-inline IVec3 operator-(const IVec3 &lhs, const IVec3 &rhs) {
+inline constexpr IVec3 operator-(const IVec3 &lhs, const IVec3 &rhs) {
 	return IVec3{lhs.x - rhs.x, lhs.y - rhs.y, lhs.z - rhs.z};
 }
 

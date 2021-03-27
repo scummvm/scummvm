@@ -344,9 +344,7 @@ void Renderer::processRotatedElement(IMatrix3x3 *targetMatrix, const Common::Arr
 		assert(matrixIndex >= 0 && matrixIndex < ARRAYSIZE(_matricesTable));
 		currentMatrix = &_matricesTable[matrixIndex];
 
-		destPos.x = modelData->computedPoints[pointIdx].x;
-		destPos.y = modelData->computedPoints[pointIdx].y;
-		destPos.z = modelData->computedPoints[pointIdx].z;
+		destPos = modelData->computedPoints[pointIdx];
 	}
 
 	applyRotation(targetMatrix, currentMatrix, renderAngle);
@@ -387,9 +385,7 @@ void Renderer::processTranslatedElement(IMatrix3x3 *targetMatrix, const Common::
 		*targetMatrix = _baseMatrix;
 	} else { // dependent
 		const int32 pointsIdx = bone.vertex;
-		destPos.x = modelData->computedPoints[pointsIdx].x;
-		destPos.y = modelData->computedPoints[pointsIdx].y;
-		destPos.z = modelData->computedPoints[pointsIdx].z;
+		destPos = modelData->computedPoints[pointsIdx];
 
 		const int32 matrixIndex = bone.parent;
 		assert(matrixIndex >= 0 && matrixIndex < ARRAYSIZE(_matricesTable));
@@ -405,11 +401,7 @@ void Renderer::setLightVector(int32 angleX, int32 angleY, int32 angleZ) {
 	_cameraAngleY = angleY;
 	_cameraAngleZ = angleZ;*/
 
-	IVec3 renderAngle;
-	renderAngle.x = angleX;
-	renderAngle.y = angleY;
-	renderAngle.z = angleZ;
-
+	const IVec3 renderAngle(angleX, angleY, angleZ);
 	applyRotation(&_shadeMatrix, &_baseMatrix, renderAngle);
 	translateGroup(0, 0, 59);
 
@@ -1356,10 +1348,12 @@ bool Renderer::renderAnimatedModel(ModelData *modelData, const BodyData &bodyDat
 
 				pointPtrDest->y = coY;
 
-				if (pointPtrDest->y < _engine->_redraw->renderRect.top)
+				if (pointPtrDest->y < _engine->_redraw->renderRect.top) {
 					_engine->_redraw->renderRect.top = pointPtrDest->y;
-				if (pointPtrDest->y > _engine->_redraw->renderRect.bottom)
+				}
+				if (pointPtrDest->y > _engine->_redraw->renderRect.bottom) {
 					_engine->_redraw->renderRect.bottom = pointPtrDest->y;
+				}
 			}
 
 			// Z projection
@@ -1398,9 +1392,9 @@ bool Renderer::renderAnimatedModel(ModelData *modelData, const BodyData &bodyDat
 				do { // for each normal
 					const BodyShade &shadePtr = bodyData.getShade(shadeIndex);
 
-					const int16 col1 = shadePtr.col1;
-					const int16 col2 = shadePtr.col2;
-					const int16 col3 = shadePtr.col3;
+					const int32 col1 = (int32)shadePtr.col1;
+					const int32 col2 = (int32)shadePtr.col2;
+					const int32 col3 = (int32)shadePtr.col3;
 
 					int32 color = 0;
 					color += _shadeMatrix.row1.x * col1 + _shadeMatrix.row1.y * col2 + _shadeMatrix.row1.z * col3;

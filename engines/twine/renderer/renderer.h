@@ -40,10 +40,6 @@
 #define POLYGONTYPE_DITHER 8
 #define POLYGONTYPE_UNKNOWN 9
 
-namespace Common {
-class MemoryReadStream;
-}
-
 namespace TwinE {
 
 class TwinEEngine;
@@ -95,6 +91,9 @@ private:
 		/**
 		 * Pointer to the command data
 		 * @sa renderCoordinatesBuffer
+		 * @sa CmdRenderLine
+		 * @sa CmdRenderSphere
+		 * @sa CmdRenderPolygon
 		 */
 		uint8 *dataPtr = nullptr;
 	};
@@ -125,11 +124,6 @@ private:
 		int16 x = 0;
 		int16 y = 0;
 		int16 radius = 0;
-	};
-
-	struct polyVertexHeader {
-		int16 shadeEntry = 0;
-		int16 dataOffset = 0;
 	};
 
 	struct ModelData {
