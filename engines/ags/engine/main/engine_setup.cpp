@@ -53,7 +53,7 @@ using namespace AGS::Engine;
 // Convert guis position and size to proper game resolution.
 // Necessary for pre 3.1.0 games only to sync with modern engine.
 void convert_gui_to_game_resolution(GameDataVersion filever) {
-	if (filever > kGameVersion_310)
+	if (filever >= kGameVersion_310)
 		return;
 
 	const int mul = _GP(game).GetDataUpscaleMult();
