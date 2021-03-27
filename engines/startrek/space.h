@@ -106,11 +106,6 @@ public:
 			for (int j = 0; j < 3; j++)
 				m[i][j] = 0;
 	}
-	TMatrix(const TMatrix<T> &mat) {
-		m[0] = mat.m[0];
-		m[1] = mat.m[1];
-		m[2] = mat.m[2];
-	}
 	T &operator[](int i) {
 		return m[i];
 	};
