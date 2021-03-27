@@ -88,7 +88,7 @@ bool waitingForNextTick() {
 	if (is_lagging) {
 #if AGS_PLATFORM_DEBUG && defined (__GNUC__)
 		auto missed_ticks = ((now - _G(last_tick_time)) / _G(tick_duration));
-		warning("Lagging! Missed %lld ticks!\n", (long long)missed_ticks);
+		warning("Lagging! Missed %lld ticks!\n", (int64)missed_ticks);
 /*		void *array[10];
 		auto size = backtrace(array, 10);
 		backtrace_symbols_fd(array, size, STDOUT_FILENO);
