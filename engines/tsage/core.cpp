@@ -2144,6 +2144,48 @@ SceneObject::~SceneObject() {
 	delete _objectWrapper;
 }
 
+SceneObject& SceneObject::operator=(const SceneObject &so) {
+	this->SceneHotspot::operator=(so);
+
+	_visageImages = so._visageImages;
+
+	_updateStartFrame = so._updateStartFrame;
+	_walkStartFrame = so._walkStartFrame;
+	_oldPosition = so._oldPosition;
+	_percent = so._percent;
+	_priority = so._priority;
+	_angle = so._angle;
+	_flags = so._flags;
+	_xs = so._xs;
+	_xe = so._xe;
+	for (uint i = 0; i < ARRAYSIZE(_paneRects); i++) _paneRects[i] = so._paneRects[i];
+	_visage = so._visage;
+	_objectWrapper = so._objectWrapper;
+	_strip = so._strip;
+	_animateMode = so._animateMode;
+	_frame = so._frame;
+	_endFrame = so._endFrame;
+	_loopCount = so._loopCount;
+	_frameChange = so._frameChange;
+	_numFrames = so._numFrames;
+	_regionIndex = so._regionIndex;
+	_mover = so._mover;
+	_moveDiff = so._moveDiff;
+
+	_moveRate = so._moveRate;
+	_actorDestPos = so._actorDestPos;
+	_endAction = so._endAction;
+	_regionBitList = so._regionBitList;
+
+	_shadowMap = so._shadowMap;
+	_shade = so._shade;
+	_oldShade = so._oldShade;
+	_effect = so._effect;
+	_linkedActor = so._linkedActor;
+
+	return *this;
+}
+
 int SceneObject::getNewFrame() {
 	int frameNum = _frame + _frameChange;
 

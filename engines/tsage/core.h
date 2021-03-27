@@ -561,6 +561,8 @@ public:
 	SceneObject(const SceneObject &so);
 	~SceneObject() override;
 
+	SceneObject& operator=(const SceneObject &so);
+
 	void setPosition(const Common::Point &p, int yDiff = 0);
 	void setStrip(int frameNum);
 	void setStrip2(int frameNum);
