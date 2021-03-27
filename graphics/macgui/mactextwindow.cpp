@@ -154,15 +154,13 @@ bool MacTextWindow::draw(bool forceRedraw) {
 	_cursorDirty = false;
 
 	// Compose
-	_mactext->draw(_composeSurface, 0, _scrollPos, _composeSurface->w - 2, _scrollPos + _composeSurface->h - 2, kConWOverlap - 2, kConWOverlap - 2);
+	_mactext->draw(_composeSurface, 0, _scrollPos, _composeSurface->w - 2, _scrollPos + _composeSurface->h - 2, 1, 1);
 
 	if (_cursorState)
 		_composeSurface->blitFrom(*_cursorSurface, *_cursorRect, Common::Point(_cursorX + kConWOverlap - 2, _cursorY + kConHOverlap - 2));
 
 	if (_selectedText.endY != -1)
 		drawSelection();
-
-	_composeSurface->transBlitFrom(_borderSurface, _wm->_colorGreen);
 
 	return true;
 }
@@ -171,7 +169,9 @@ bool MacTextWindow::draw(ManagedSurface *g, bool forceRedraw) {
 	if (!draw(forceRedraw))
 		return false;
 
-	g->transBlitFrom(*_composeSurface, _composeSurface->getBounds(), Common::Point(_dims.left - 2, _dims.top - 2), _wm->_colorGreen2);
+	g->blitFrom(*_composeSurface, Common::Rect(0, 0, _composeSurface->w, _composeSurface->h), Common::Point(_innerDims.left, _innerDims.top));
+	uint32 transcolor = (_wm->_pixelformat.bytesPerPixel == 1) ? _wm->_colorGreen : 0;
+	g->transBlitFrom(_borderSurface, Common::Rect(0, 0, _borderSurface.w, _borderSurface.h), Common::Point(_dims.left, _dims.top), transcolor);
 
 	return true;
 }
