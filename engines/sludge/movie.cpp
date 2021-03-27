@@ -56,12 +56,12 @@ typedef struct audioQueue {
 
 audioQueue audioQ;
 
-Uint32 movieStartTick, movieCurrentTime;
+uint32 movieStartTick, movieCurrentTime;
 
-long long audioNsPerByte;
-long long audioNsPlayed;
-long long audioNsBuffered;
-long long audioBufferLen;
+int64 audioNsPerByte;
+int64 audioNsPlayed;
+int64 audioNsBuffered;
+int64 audioBufferLen;
 bool movieSoundPlaying = false;
 int movieAudioIndex;
 GLuint yTextureName = 0;
@@ -93,7 +93,7 @@ void audio_queue_init(audioQueue *q) {
 	q->cond = SDL_CreateCond();
 
 }
-int audio_queue_put(audioQueue *q, char *buffer, uint size, long long time_ms) {
+int audio_queue_put(audioQueue *q, char *buffer, uint size, int64 time_ms) {
 
 	audioBuffers *audioBuf = new audioBuffers;
 	if (!audioBuf)
@@ -155,7 +155,7 @@ int video_queue_put(videoQueue *q, GLubyte *ytex,
 		GLubyte *utex,
 		GLubyte *vtex,
 		GLsizei w, GLsizei h,
-		long long time_ms) {
+		int64 time_ms) {
 
 	videoBuffers *videoBuf = new videoBuffers;
 	if (!videoBuf)
@@ -266,7 +266,7 @@ static uint64_t xiph_lace_value(byte **np) {
 }
 
 vorbis_dsp_state vorbisDspState;
-long long audioChannels;
+int64 audioChannels;
 
 bool fakeAudio = false;
 
@@ -341,7 +341,7 @@ int playMovie(int fileNumber) {
 		return 0;
 	}
 
-	long long pos = 0;
+	int64 pos = 0;
 
 	EBMLHeader ebmlHeader;
 
@@ -349,7 +349,7 @@ int playMovie(int fileNumber) {
 
 	mkvparser::Segment *pSegment;
 
-	long long ret = mkvparser::Segment::CreateInstance(&reader, pos, pSegment);
+	int64 ret = mkvparser::Segment::CreateInstance(&reader, pos, pSegment);
 	if (ret) {
 		fatal("Movie error: Segment::CreateInstance() failed.\n");
 	}
@@ -360,21 +360,21 @@ int playMovie(int fileNumber) {
 	}
 
 	//const SegmentInfo* const pSegmentInfo = pSegment->GetInfo();
-	//const long long timeCodeScale = pSegmentInfo->GetTimeCodeScale();
-	//const long long duration_ns = pSegmentInfo->GetDuration();
+	//const int64 timeCodeScale = pSegmentInfo->GetTimeCodeScale();
+	//const int64 duration_ns = pSegmentInfo->GetDuration();
 	//const char* const pTitle = pSegmentInfo->GetTitleAsUTF8();
 	//const char* const pMuxingApp = pSegmentInfo->GetMuxingAppAsUTF8();
 	//const char* const pWritingApp = pSegmentInfo->GetWritingAppAsUTF8();
 
 	const mkvparser::Tracks *pTracks = pSegment->GetTracks();
 
-	unsigned long i = 0;
-	const unsigned long j = pTracks->GetTracksCount();
+	uint32 i = 0;
+	const uint32 j = pTracks->GetTracksCount();
 
 	enum {VIDEO_TRACK = 1, AUDIO_TRACK = 2};
 	int videoTrack = -1;
 	int audioTrack = -1;
-	long long audioBitDepth;
+	int64 audioBitDepth;
 	double audioSampleRate;
 	ogg_packet oggPacket;
 	vorbis_info vorbisInfo;
@@ -387,8 +387,8 @@ int playMovie(int fileNumber) {
 		if (pTrack == NULL)
 		continue;
 
-		const long long trackType = pTrack->GetType();
-		//const unsigned long long trackUid = pTrack->GetUid();
+		const int64 trackType = pTrack->GetType();
+		//const unsigned int64 trackUid = pTrack->GetUid();
 		//const char* pTrackName = pTrack->GetNameAsUTF8();
 
 		if (trackType == VIDEO_TRACK && videoTrack < 0) {
@@ -396,8 +396,8 @@ int playMovie(int fileNumber) {
 			const VideoTrack *const pVideoTrack =
 			static_cast<const VideoTrack *>(pTrack);
 
-			const long long width = pVideoTrack->GetWidth();
-			const long long height = pVideoTrack->GetHeight();
+			const int64 width = pVideoTrack->GetWidth();
+			const int64 height = pVideoTrack->GetHeight();
 
 			const double rate = pVideoTrack->GetFrameRate();
 
@@ -515,8 +515,8 @@ int playMovie(int fileNumber) {
 	glDepthMask(GL_FALSE);
 	glDisable(GL_DEPTH_TEST);
 
-	//const long long timeCode = pCluster->GetTimeCode();
-	long long time_ns = pCluster->GetTime();
+	//const int64 timeCode = pCluster->GetTimeCode();
+	int64 time_ns = pCluster->GetTime();
 
 	const BlockEntry *pBlockEntry = pCluster->GetFirst();
 
@@ -528,10 +528,10 @@ int playMovie(int fileNumber) {
 		pBlockEntry = pCluster->GetFirst();
 	}
 	const Block *pBlock = pBlockEntry->GetBlock();
-	long long trackNum = pBlock->GetTrackNumber();
+	int64 trackNum = pBlock->GetTrackNumber();
 	unsigned long tn = static_cast<unsigned long>(trackNum);
 	const Track *pTrack = pTracks->GetTrackByNumber(tn);
-	long long trackType = pTrack->GetType();
+	int64 trackType = pTrack->GetType();
 	int frameCount = pBlock->GetFrameCount();
 	time_ns = pBlock->GetTime(pCluster);
 
@@ -616,7 +616,7 @@ int playMovie(int fileNumber) {
 
 				const Block::Frame &theFrame = pBlock->GetFrame(frameCounter);
 				const long size = theFrame.len;
-				//                const long long offset = theFrame.pos;
+				//                const int64 offset = theFrame.pos;
 
 				if (size > sizeof(frame)) {
 					if (frame) delete [] frame;
