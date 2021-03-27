@@ -101,7 +101,7 @@ bool Console::Cmd_Text(int argc, const char **argv) {
 	
 	do {
 		uint16 offset = textList[index].offsetEnglishCD;
-		debugPrintf("%i - %i: %s\n", textList[index].id, offset, rdfData[offset]);
+		debugPrintf("%i - %i: %s\n", textList[index].id, offset, rdfData+offset);
 		index++;
 	} while (textList[index].id != -1);
 
