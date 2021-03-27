@@ -157,7 +157,7 @@ bool MacTextWindow::draw(bool forceRedraw) {
 	_mactext->draw(_composeSurface, 0, _scrollPos, _composeSurface->w - 2, _scrollPos + _composeSurface->h - 2, 1, 1);
 
 	if (_cursorState)
-		_composeSurface->blitFrom(*_cursorSurface, *_cursorRect, Common::Point(_cursorX + kConWOverlap - 2, _cursorY + kConHOverlap - 2));
+		_composeSurface->blitFrom(*_cursorSurface, *_cursorRect, Common::Point(_cursorX + 1, _cursorY + 1));
 
 	if (_selectedText.endY != -1)
 		drawSelection();
@@ -229,7 +229,7 @@ void MacTextWindow::drawSelection() {
 			numLines--;
 		}
 
-		byte *ptr = (byte *)_composeSurface->getBasePtr(x1 + kConWOverlap - 2, y + kConWOverlap - 2);
+		byte *ptr = (byte *)_composeSurface->getBasePtr(x1 + 1, y + 1);
 
 		for (int x = x1; x < x2; x++, ptr++)
 			if (*ptr == _wm->_colorBlack)
@@ -318,6 +318,7 @@ bool MacTextWindow::processEvent(Common::Event &event) {
 
 		case Common::KEYCODE_RETURN:
 			undrawInput();
+			_inputIsDirty = true; // we force it to redraw input
 			return false; // Pass it to the higher level for processing
 
 		default:
