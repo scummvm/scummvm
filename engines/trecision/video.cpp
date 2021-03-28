@@ -85,7 +85,6 @@ bool NightlongSmackerDecoder::forceSeekToFrame(uint frame) {
 AnimManager::AnimManager(TrecisionEngine *vm) : _vm(vm) {
 	for (int i = 0; i < MAXSMACK; ++i) {
 		_smkBuffer[i] = nullptr;
-		_smkTempBuffer[i] = nullptr;
 		_smkAnims[i] = nullptr;
 		_playingAnims[i] = 0;
 		_curAnimFrame[i] = 0;
@@ -779,10 +778,9 @@ void AnimManager::playFullMotion(int start, int end) {
 					drawSmkBuffer
  --------------------------------------------------*/
 void AnimManager::drawSmkBuffer(int px, int py, int dx, int dy) {
-	int pos = 1;
 	for (int a = 0; a < dy; a++) {
 		byte2word(_vm->_video2 + (a + py + TOP) * MAXX + px,
-				  _smkBuffer[pos] + (a + py) * _smkAnims[pos]->getWidth() + px, _vm->_newData, dx);		
+				  _smkBuffer[1] + (a + py) * _smkAnims[1]->getWidth() + px, _vm->_newData, dx);		
 	}
 }
 

@@ -240,13 +240,10 @@ void OpenVideo() {
 	ExtraObj41D = (uint16 *)g_vm->_animMgr->_smkBuffer[1]; // for room 41D
 	GameBytePointer += SCREENLEN * AREA;
 	// omino buffer
-	g_vm->_animMgr->_smkTempBuffer[1] = (uint8 *)(MemoryArea + GameBytePointer);
 	GameBytePointer += SMKANBUFFER;
 	// background buffer
-	g_vm->_animMgr->_smkTempBuffer[0] = (uint8 *)(MemoryArea + GameBytePointer);
 	GameBytePointer += SMKBKGBUFFER;
 	// icone buffer
-	g_vm->_animMgr->_smkTempBuffer[2] = (uint8 *)(MemoryArea + GameBytePointer);
 	GameBytePointer += SMKICONBUFFER;
 	// background area
 	g_vm->_animMgr->_smkBuffer[0] = (uint8 *)(MemoryArea + GameBytePointer);
