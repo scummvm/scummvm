@@ -334,10 +334,10 @@ void AnimManager::startFullMotion(const char *name) {
 	_fullMotionStart = 0;
 	_fullMotionEnd = 0;
 	TextStatus = TEXT_OFF;
-	wordset(_vm->_video2, 0, TOP * MAXX);
+	memset(_vm->_video2, 0, TOP * MAXX * 2);
 	_vm->_graphicsMgr->showScreen(0, 0, MAXX, TOP);
-	wordset(_vm->_video2 + (TOP + AREA) * MAXX, 0, TOP * MAXX);
-	wordset(_vm->_video2, 0, MAXX * MAXY);
+	memset(_vm->_video2 + (TOP + AREA) * MAXX, 0, TOP * MAXX * 2);
+	memset(_vm->_video2, 0, MAXX * MAXY * 2);
 	_vm->_graphicsMgr->showScreen(0, AREA + TOP, MAXX, TOP);
 	_vm->_graphicsMgr->unlock();
 

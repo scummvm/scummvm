@@ -67,7 +67,7 @@ void RedrawRoom() {
 		VideoObjStatus[i] = false;
 	}
 
-	wordset(g_vm->_video2, 0, CurRoomMaxX * MAXY);
+	memset(g_vm->_video2, 0, CurRoomMaxX * MAXY * 2);
 	if (g_vm->_room[g_vm->_curRoom]._bkgAnim)
 		MCopy(ImagePointer, SmackImagePointer, CurRoomMaxX * AREA);
 	MCopy(g_vm->_video2 + TOP * CurRoomMaxX, ImagePointer, CurRoomMaxX * AREA);

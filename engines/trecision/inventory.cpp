@@ -38,7 +38,7 @@ void TrecisionEngine::refreshInventory(uint8 StartIcon, uint8 StartLine) {
 		StartLine = ICONDY;
 
 	for (uint16 b = 0; b < ICONDY; b++)
-		wordset(_video2 + (FIRSTLINE + b) * CurRoomMaxX + CurScrollPageDx, 0, SCREENLEN);
+		memset(_video2 + (FIRSTLINE + b) * CurRoomMaxX + CurScrollPageDx, 0, SCREENLEN * 2);
 
 	for (uint16 a = 0; a < ICONSHOWN; a++) {
 		if (_inventory[a + StartIcon] >= LASTICON) {

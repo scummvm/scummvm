@@ -55,7 +55,7 @@ void MostraScelte(uint16 i) {
 	int x = 10;
 	CurPos = -1;
 	LastPos = -1;
-	wordset(g_vm->_video2, 0, MAXX * TOP);
+	memset(g_vm->_video2, 0, MAXX * TOP * 2);
 
 	for (int c = 0; c < MAXDISPSCELTE; c++)
 		DispScelte[c] = 0;
@@ -128,7 +128,7 @@ void PlayDialog(uint16 i) {
 	g_vm->drawString();
 	PaintScreen(1);
 
-	wordset(g_vm->_video2, 0, MAXX * TOP);
+	memset(g_vm->_video2, 0, MAXX * TOP * 2);
 	g_vm->_graphicsMgr->showScreen(0, 0, MAXX, TOP);
 
 	g_vm->_animMgr->startFullMotion((const char *)_dialog[i]._startAnim);
@@ -160,7 +160,7 @@ void PlayDialog(uint16 i) {
 void afterChoice(int numframe) {
 	Dialog *d = &_dialog[_curDialog];
 
-	wordset(g_vm->_video2, 0, MAXX * TOP);
+	memset(g_vm->_video2, 0, MAXX * TOP * 2);
 	g_vm->_graphicsMgr->showScreen(0, 0, MAXX, TOP);
 
 	switch (_curDialog) {
@@ -624,7 +624,7 @@ void DialogHandler(int numframe) {
 void PlayScelta(uint16 i) {
 	DialogChoice *ss = &g_vm->_choice[i];
 
-	wordset(g_vm->_video2, 0, MAXX * TOP);
+	memset(g_vm->_video2, 0, MAXX * TOP * 2);
 	g_vm->_graphicsMgr->showScreen(0, 0, MAXX, TOP);
 
 	_curChoice = i;

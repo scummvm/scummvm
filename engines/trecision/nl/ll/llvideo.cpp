@@ -40,7 +40,9 @@ void ResetZB(int x1, int y1, int x2, int y2) {
 	if (size * 2 > ZBUFFERSIZE)
 		warning("Warning: ZBuffer size %d!\n", size * 2);
 
-	wordset(ZBuffer, 0x7FFF, size);
+	uint16 *d = (uint16 *)ZBuffer;
+	for (uint32 i = 0; i < size; i++)
+		*d++ = 0x7FFF;
 }
 
 /*-----------------10/12/95 15.51-------------------
