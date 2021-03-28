@@ -356,7 +356,7 @@ void GameState::processFoundItem(int32 item) {
 
 	ProgressiveTextState textState = ProgressiveTextState::ContinueRunning;
 
-	_engine->_text->initVoxToPlayTextId(100 + item);
+	_engine->_text->initVoxToPlayTextId(item);
 
 	const int32 bodyAnimIdx = _engine->_animations->getBodyAnimIndex(AnimationTypes::kFoundItem);
 	const AnimData &currentAnimData = _engine->_resources->animData[bodyAnimIdx];
