@@ -68,16 +68,7 @@ int16 SoundFadInVal;
 int16 SoundFadOutVal;
 
 extern uint8 *SpeechBuf[2];
-extern bool  SpeechTrackEnabled;
-void CloseSys(const char *str);
-void ReadExtraObj41D();
-void StopTalk();
-
-extern bool SoundSystemActive;
 extern const char *_sysSentence[];
-int SpeechFileLen(const char *name);
-int SpeechFileRead(const char *name, unsigned char *buf);
-uint32 ReadTime();
 
 #define VOLUME(a)	( (a*255)/127 )
 #define TIME(a)		( (a*3)/50 )
