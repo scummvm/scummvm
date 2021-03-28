@@ -173,13 +173,13 @@ enum TextColor {
 
 class LangExtraFont {
 public:
-	LangExtraFont(TextData textId, Common::Array<Common::Language> &lngs, const Common::String &file, const Common::String &scalableFile, int ps) : _langs(lngs) {
-		storeFileNames(textId, file, scalableFile, ps);
+	LangExtraFont(TextData textId, Common::Array<Common::Language> &lngs, const Common::String &filename, const Common::String &scalableFile, int ps) : _langs(lngs) {
+		storeFileNames(textId, filename, scalableFile, ps);
 	}
 
-	void storeFileNames(TextData textId, const Common::String &file, const Common::String &scalableFile, int ps) {
+	void storeFileNames(TextData textId, const Common::String &filename, const Common::String &scalableFile, int ps) {
 		assert(textId < kTextDataMAX);
-		_fontFilesStd[textId] = file;
+		_fontFilesStd[textId] = filename;
 		_fontFilesScalable[textId] = scalableFile;
 		_fontSize[textId] = ps;
 	}
