@@ -133,7 +133,7 @@ void Design::paint(Graphics::ManagedSurface *surface, Graphics::MacPatterns &pat
 		render(patterns);
 
 	if (_bounds->width() && _bounds->height()) {
-		const int padding = 20;
+		const int padding = 14;
 //		Common::Rect from(padding, padding, _bounds->width() - 2 * padding, _bounds->height() - 2 * padding);
 		// in order to restore the design, we just cut the left and top part of that
 		Common::Rect from(padding, padding, _bounds->width(), _bounds->height());
