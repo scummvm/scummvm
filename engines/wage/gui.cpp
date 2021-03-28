@@ -190,8 +190,7 @@ static bool sceneWindowCallback(WindowClick click, Common::Event &event, void *g
 
 bool Gui::processSceneEvents(WindowClick click, Common::Event &event) {
 	if (click == kBorderInner && event.type == Common::EVENT_LBUTTONUP) {
-		Designed *obj = _scene->lookUpEntity(event.mouse.x - _sceneWindow->getDimensions().left,
-												  event.mouse.y - _sceneWindow->getDimensions().top);
+		Designed *obj = _scene->lookUpEntity(event.mouse.x, event.mouse.y);
 
 		if (obj != nullptr)
 			_engine->processTurn(NULL, obj);
