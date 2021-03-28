@@ -90,8 +90,6 @@ public:
 
 	static NancyEngine *create(GameType type, OSystem *syst, const NancyGameDescription *gd);
 
-	virtual GUI::Debugger *getDebugger() override;
-
 	virtual bool hasFeature(EngineFeature f) const override;
 
 	virtual Common::Error loadGameStream(Common::SeekableReadStream *stream) override;
@@ -124,8 +122,6 @@ public:
 	SoundManager *_sound;
 
 	Common::RandomSource *_randomSource;
-
-	bool _launchConsole;
 
 	uint16 _firstSceneID;
 	uint16 _startTimeHours;
@@ -161,8 +157,6 @@ private:
 
 	GameFlow _gameFlow;
 	OSystem *_system;
-
-	NancyConsole *_console;
 
 	const NancyGameDescription *_gameDescription;
 

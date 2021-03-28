@@ -60,7 +60,6 @@ NancyEngine::NancyEngine(OSystem *syst, const NancyGameDescription *gd) : Engine
 	DebugMan.addDebugChannel(kDebugActionRecord, "ActionRecord", "Action Record debug level");
 	DebugMan.addDebugChannel(kDebugScene, "Scene", "Scene debug level");
 
-	_console = new NancyConsole();
 	_randomSource = new Common::RandomSource("Nancy");
 	_randomSource->setSeed(_randomSource->getSeed());
 
@@ -68,8 +67,6 @@ NancyEngine::NancyEngine(OSystem *syst, const NancyGameDescription *gd) : Engine
 	_sound = new SoundManager();
 	_graphicsManager = new GraphicsManager();
 	_cursorManager = new CursorManager();
-
-	_launchConsole = false;
 
 	_resource = nullptr;
 	_firstSceneID = 0;
@@ -81,7 +78,6 @@ NancyEngine::NancyEngine(OSystem *syst, const NancyGameDescription *gd) : Engine
 NancyEngine::~NancyEngine() {
 	clearBootChunks();
 	DebugMan.clearAllDebugChannels();
-	delete _console;
 	delete _randomSource;
 
 	delete _graphicsManager;
@@ -103,10 +99,6 @@ NancyEngine *NancyEngine::create(GameType type, OSystem *syst, const NancyGameDe
 	default:
 		error("Unknown GameType");
 	}
-}
-
-GUI::Debugger *NancyEngine::getDebugger() {
-	return _console;
 }
 
 Common::Error NancyEngine::loadGameStream(Common::SeekableReadStream *stream) {
@@ -234,6 +226,8 @@ void NancyEngine::callCheatMenu(bool eventFlags) {
 }
 
 Common::Error NancyEngine::run() {
+	setDebugger(new NancyConsole());
+
 	// Boot the engine
 	setState(NancyState::kBoot);
 
@@ -256,12 +250,6 @@ Common::Error NancyEngine::run() {
 		}
 
 		_graphicsManager->draw();
-
-		if (_launchConsole) {
-			_console->attach();
-			_launchConsole = false;
-		}
-		_console->onFrame();
 
 		_system->updateScreen();
 		_system->delayMillis(16);
