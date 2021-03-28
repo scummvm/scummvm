@@ -243,8 +243,8 @@ void afterChoice(int numframe) {
 		break;
 
 	case dF4A3:
-		g_vm->_obj[oCIOCCOLATINI4A]._examine = 1105;
-		g_vm->_obj[oCIOCCOLATINI4A]._action = 1106;
+		g_vm->_obj[oCHOCOLATES4A]._examine = 1105;
+		g_vm->_obj[oCHOCOLATES4A]._action = 1106;
 		g_vm->_obj[oPORTAC4A]._action = 1118;
 		g_vm->_animMgr->_animTab[aBKG4A]._flag |= SMKANIM_OFF1;
 		g_vm->_obj[ocHELLEN4A]._mode &= ~OBJMODE_OBJSTATUS;

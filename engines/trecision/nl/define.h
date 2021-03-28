@@ -1152,7 +1152,7 @@
 #define omPORTAC4A		   		912
 #define oDISPOSITIVO4A			913
 #define oSTATUA4A		   		914
-#define oCIOCCOLATINI4A			915
+#define oCHOCOLATES4A			915
 #define oHELLENA4A		   		916
 #define ocHELLEN4A		   		917
 #define oPULSANTE4A		   		918

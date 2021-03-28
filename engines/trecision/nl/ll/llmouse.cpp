@@ -982,7 +982,7 @@ bool DataLoad() {
 --------------------------------------------------*/
 bool QuitGame() {
 	for (int a = 0; a < TOP; a++)
-		memcpy(ZBuffer + a * CurRoomMaxX, g_vm->_video2 + CurRoomMaxX * a + CurScrollPageDx, SCREENLEN * 2);
+		memcpy(g_vm->ZBuffer + a * CurRoomMaxX, g_vm->_video2 + CurRoomMaxX * a + CurScrollPageDx, SCREENLEN * 2);
 
 	for (int a = 0; a < TOP; a++)
 		memset(g_vm->_video2 + CurRoomMaxX * a + CurScrollPageDx, 0, SCREENLEN * 2);
@@ -1008,7 +1008,7 @@ bool QuitGame() {
 	bool exitFl = ((ch == 'y') || (ch == 'Y'));
 
 	for (int a = 0; a < TOP; a++)
-		memcpy(g_vm->_video2 + CurRoomMaxX * a + CurScrollPageDx, ZBuffer + a * CurRoomMaxX, SCREENLEN * 2);
+		memcpy(g_vm->_video2 + CurRoomMaxX * a + CurScrollPageDx, g_vm->ZBuffer + a * CurRoomMaxX, SCREENLEN * 2);
 
 	for (int a = 0; a < TOP; a++)
 		g_vm->_graphicsMgr->vCopy(a * VirtualPageLen + VideoScrollPageDx, g_vm->_video2 + a * CurRoomMaxX + CurScrollPageDx, SCREENLEN);
