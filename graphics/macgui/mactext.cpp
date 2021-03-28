@@ -747,6 +747,12 @@ int MacText::getLineCharWidth(int line, bool enforce) {
 	return width;
 }
 
+int MacText::getLastLineWidth() {
+	if (_textLines.size() == 0)
+		return 0;
+	return getLineWidth(_textLines.size() - 1, true);
+}
+
 int MacText::getLineHeight(int line) {
 	if ((uint)line >= _textLines.size())
 		return 0;
