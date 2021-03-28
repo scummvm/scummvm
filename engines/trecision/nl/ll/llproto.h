@@ -80,7 +80,7 @@ void SoundPasso(int midx, int midz, int act, int frame, uint16 *list);
 void ContinueTalk();
 int32 Talk(const char *name);
 void StopTalk();
-void ResetZB(int x1, int y1, int x2, int y2);
+void resetZBuffer(int x1, int y1, int x2, int y2);
 void MCopy(uint16 *Dest, uint16 *Src, uint32 Len);
 uint32 ReadTime();
 void NlDelay(uint32 val);

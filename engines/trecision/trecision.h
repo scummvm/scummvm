@@ -197,6 +197,7 @@ public:
 	uint16 *Arrows;
 	uint8 *TextureArea;
 	uint16 *Icone;
+	int16 *ZBuffer;
 };
 
 extern TrecisionEngine *g_vm;

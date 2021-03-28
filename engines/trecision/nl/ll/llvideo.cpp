@@ -29,10 +29,10 @@
 
 namespace Trecision {
 
-/*-----------------07/11/95 15.18-------------------
-					ResetZB
+/*------------------------------------------------
+					resetZBuffer
 --------------------------------------------------*/
-void ResetZB(int x1, int y1, int x2, int y2) {
+void resetZBuffer(int x1, int y1, int x2, int y2) {
 	if (x1 > x2 || y1 > y2)
 		return;
 
@@ -40,13 +40,13 @@ void ResetZB(int x1, int y1, int x2, int y2) {
 	if (size * 2 > ZBUFFERSIZE)
 		warning("Warning: ZBuffer size %d!\n", size * 2);
 
-	uint16 *d = (uint16 *)ZBuffer;
+	uint16 *d = (uint16 *)g_vm->ZBuffer;
 	for (uint32 i = 0; i < size; i++)
 		*d++ = 0x7FFF;
 }
 
-/*-----------------10/12/95 15.51-------------------
-		MCopy - Esegue copia veloce in memoria
+/*------------------------------------------------
+		MCopy - Performs quick copy in memory
 --------------------------------------------------*/
 void MCopy(uint16 *Dest, uint16 *Src, uint32 Len) {
 	if (Len & 1) {

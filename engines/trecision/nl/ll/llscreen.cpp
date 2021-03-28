@@ -57,7 +57,6 @@ uint8 *SpeechBuf[2];
 uint16 *ExtraObj2C;
 uint16 *ExtraObj41D;
 // 3D AREA
-int16  *ZBuffer;
 uint8 *_characterArea;
 // MEMORY
 uint32 GameBytePointer;
@@ -189,7 +188,7 @@ void OpenVideo() {
 	FTexture[hh]._palette = nullptr;
 	FTexture[hh]._flag = TEXTUREACTIVE + TEXTURECYLIND;
 
-	// corpo
+	// body
 	hh = 1;
 	FTexture[hh]._dx = 300;
 	FTexture[hh]._dy = 300;
@@ -198,7 +197,7 @@ void OpenVideo() {
 	FTexture[hh]._palette = nullptr;
 	FTexture[hh]._flag = TEXTUREACTIVE + TEXTURECYLIND;
 
-	// braccia
+	// arms
 	hh = 2;
 	FTexture[hh]._dx = 300;
 	FTexture[hh]._dy = 150;
@@ -223,11 +222,13 @@ void OpenVideo() {
 	// icon area
 	g_vm->_animMgr->_smkBuffer[2] = (uint8 *)(MemoryArea + GameBytePointer);
 	GameBytePointer += ICONDX * ICONDY;
+
 	// zbuffer
-	ZBuffer = (int16 *)(MemoryArea + GameBytePointer);
-	GameBytePointer += ZBUFFERSIZE;
-	for (int c = 0; c < ZBUFFERSIZE / 2; c++)
-		ZBuffer[c] = 0x7FFF;
+	size = ZBUFFERSIZE / 2;
+	g_vm->ZBuffer = new int16[size];
+	for (int c = 0; c < size; ++c)
+		g_vm->ZBuffer[c] = 0x7FFF;
+	
 	// CDBuffer
 	SpeechBuf[0] = (uint8 *)(MemoryArea + GameBytePointer);
 	SpeechBuf[1] = (uint8 *)(MemoryArea + GameBytePointer);
@@ -279,7 +280,7 @@ uint32 ReadActor(const char *filename, uint8 *Area) {
 	g_vm->_graphicsMgr->updatePixelFormat((uint16 *)_textureMat, 256 * 91);
 
 	ff = FastFileOpen(filename);
-	if (ff == NULL)
+	if (ff == nullptr)
 		CloseSys(g_vm->_sysText[1]);
 
 	FastFileRead(ff, &ActionNum, 4);

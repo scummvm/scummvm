@@ -226,7 +226,7 @@ void PaintScreen(uint8 flag) {
 
 	} else if (TextStatus & TEXT_DRAW) {
 		curString.DText();
-		g_vm->_limits[g_vm->_limitsNum][0] = curString.x; // aggiunge rettangolo
+		g_vm->_limits[g_vm->_limitsNum][0] = curString.x; // Add rectangle
 		g_vm->_limits[g_vm->_limitsNum][1] = curString.y;
 		g_vm->_limits[g_vm->_limitsNum][2] = curString.x + curString.dx;
 		g_vm->_limits[g_vm->_limitsNum][3] = curString.y + curString.dy;
@@ -234,7 +234,7 @@ void PaintScreen(uint8 flag) {
 		Tlim = g_vm->_limitsNum;
 		g_vm->_limitsNum++;
 
-		TextStatus = TEXT_DRAW;                 // attiva aggiornamento scritta
+		TextStatus = TEXT_DRAW;                 // Activate text update
 	}
 
 	SoundPasso((_actor._lim[1] + _actor._lim[0]) / 2, (_actor._lim[5] + _actor._lim[4]) / 2, _actor._curAction, _actor._curFrame, g_vm->_room[g_vm->_curRoom]._sounds);
@@ -246,12 +246,12 @@ void PaintScreen(uint8 flag) {
 	}
 
 	if (!flag && !FlagDialogActive) {
-		// sorta i blocchi da copiare ed elimina quelli inutili
+		// Sort the blocks to copy and remove the useless ones
 		SortBlock();
 		VMouseCopy();
-		for (a = 0; a < BlockCount; a++) {
+		for (a = 0; a < BlockCount; a++)
 			g_vm->_graphicsMgr->vCopy((PaintBlock[a] & 0xFFFFF), g_vm->_video2 + (PaintBlock[a] & 0xFFFFF), ((PaintBlock[a] & 0xFFF00000) >> 20) & 0xFFF);
-		}
+
 		VMouseRestore();
 		g_vm->_graphicsMgr->unlock();
 
@@ -271,13 +271,12 @@ void PaintScreen(uint8 flag) {
 	FlagPaintCharacter = false;
 	FlagWaitRegen = false;
 
-	// gestione papaverina ritardata
-	if ((g_vm->_curRoom == r4A) && (g_vm->_obj[oCIOCCOLATINI4A]._flag & OBJFLAG_EXTRA)) {
+	// Handle papaverine delayed action
+	if ((g_vm->_curRoom == r4A) && (g_vm->_obj[oCHOCOLATES4A]._flag & OBJFLAG_EXTRA)) {
 		if (g_vm->_animMgr->_curAnimFrame[0] > 480) {
 			g_vm->PlayScript(s4AHELLEN);
-			g_vm->_obj[oCIOCCOLATINI4A]._flag &= ~OBJFLAG_EXTRA;
+			g_vm->_obj[oCHOCOLATES4A]._flag &= ~OBJFLAG_EXTRA;
 		}
-		return;
 	}
 	//
 }
@@ -469,7 +468,7 @@ void PaintObjAnm(uint16 CurBox) {
 		if (g_vm->_limits[g_vm->_actorLimit][3] < _actor._lim[3])
 			g_vm->_limits[g_vm->_actorLimit][3] = _actor._lim[3];
 
-		ResetZB(_actor._lim[0], _actor._lim[2], _actor._lim[1], _actor._lim[3]);
+		resetZBuffer(_actor._lim[0], _actor._lim[2], _actor._lim[1], _actor._lim[3]);
 		drawCharacter(DRAWFACES);
 
 		//FlagPaintCharacter = false;

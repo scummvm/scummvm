@@ -166,6 +166,7 @@ TrecisionEngine::TrecisionEngine(OSystem *syst) : Engine(syst) {
 	Arrows = nullptr;
 	TextureArea = nullptr;
 	Icone = nullptr;
+	ZBuffer = nullptr;
 }
 
 TrecisionEngine::~TrecisionEngine() {
@@ -176,6 +177,7 @@ TrecisionEngine::~TrecisionEngine() {
 	delete[] Arrows;
 	delete[] TextureArea;
 	delete[] Icone;
+	delete[] ZBuffer;
 }
 
 Common::Error TrecisionEngine::run() {
