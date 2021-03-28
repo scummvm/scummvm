@@ -179,7 +179,7 @@ uint16 TextLength(const char *sign, uint16 num) {
 
 	uint16 retVal = 0;
 	for (uint16 c = 0; c < len; c++)
-		retVal += Font[(uint8)sign[c] * 3 + 2];
+		retVal += g_vm->Font[(uint8)sign[c] * 3 + 2];
 
 	return retVal;
 }
@@ -311,9 +311,9 @@ void SDText::DText() {
 		for (uint16 c = 0; c < len; c++) {
 			uint8 curCar = curSign[c]; /* legge prima parte del font */
 
-			uint16 carSco = (uint16)(Font[curCar * 3]) + (uint16)(Font[curCar * 3 + 1] << 8);
+			uint16 carSco = (uint16)(g_vm->Font[curCar * 3]) + (uint16)(g_vm->Font[curCar * 3 + 1] << 8);
 			uint16 DataSco = 768;                       /* Scostamento */
-			uint16 CarWid = Font[curCar * 3 + 2];        /* Larghezza   */
+			uint16 CarWid = g_vm->Font[curCar * 3 + 2]; /* Larghezza   */
 
 			if ((c == (len - 1)) && (BlinkLastDTextChar != MASKCOL))
 				tmpTCol = BlinkLastDTextChar;
@@ -324,9 +324,9 @@ void SDText::DText() {
 
 				while (CarCounter <= (CarWid - 1)) {
 					if ((a >= l[1]) && (a < l[3])) {
-						if ((CurColor != MASKCOL) && (Font[carSco + DataSco])) {
+						if ((CurColor != MASKCOL) && (g_vm->Font[carSco + DataSco])) {
 							uint16 FirstLim = inc + CarCounter;
-							uint16 EndLim = FirstLim + Font[carSco + DataSco];
+							uint16 EndLim = FirstLim + g_vm->Font[carSco + DataSco];
 
 							if ((FirstLim >= l[0]) && (EndLim < l[2]))
 								wordset(g_vm->_video2 + (x + FirstLim) + (y + a) * CurRoomMaxX, CurColor, EndLim - FirstLim);
@@ -339,7 +339,7 @@ void SDText::DText() {
 						}
 					}
 
-					CarCounter += Font[carSco + DataSco];
+					CarCounter += g_vm->Font[carSco + DataSco];
 					DataSco++;
 
 					if (CurColor == tmpSCol)

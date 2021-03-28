@@ -53,9 +53,6 @@ uint8 *_actionPointer[MAXACTIONFRAMESINROOM];		// puntatore progressivo ai frame
 uint16 _actionPosition[MAXACTIONINROOM];			// Starting position of each action in the room
 // DATA POINTER
 uint16 *Icone;
-uint8 *Font;
-uint8 *IntroFont;
-uint16 *Arrows;
 uint8 *TextArea;
 uint8 *SpeechBuf[2];
 uint16 *ExtraObj2C;
@@ -147,21 +144,18 @@ void OpenVideo() {
 
 	g_vm->_video2 = (uint16 *)MemoryArea + 2000000L;
 
-	Font = (uint8 *)MemoryArea + GameBytePointer;
 	ff = FastFileOpen("NlFont.fnt");
-	GameBytePointer += FastFileRead(ff, (void *)Font, FastFileLen(ff));
+	g_vm->Font = new uint8[ff->size()];
+	ff->read(g_vm->Font, ff->size());
 	FastFileClose(ff);
 
-	IntroFont = (uint8 *)MemoryArea + GameBytePointer;
-	ff = FastFileOpen("NlIntro.fnt");
-	GameBytePointer += FastFileRead(ff, (void *)IntroFont, FastFileLen(ff));
-	FastFileClose(ff);
-
-	Arrows = (uint16 *)(MemoryArea + GameBytePointer);
 	ff = FastFileOpen("frecc.bm");
-	GameBytePointer += FastFileRead(ff, (void *)Arrows, FastFileLen(ff));
+	int size = ff->size() / 2;
+	g_vm->Arrows = new uint16[size];
+	for (int i = 0; i < size; ++i)
+		g_vm->Arrows[i] = ff->readUint16BE();
 	FastFileClose(ff);
-	g_vm->_graphicsMgr->updatePixelFormat(Arrows, 64000);
+	g_vm->_graphicsMgr->updatePixelFormat(g_vm->Arrows, size);
 
 	Icone = (uint16 *)(MemoryArea + GameBytePointer);
 	wordset(Icone, 0, ICONDX * ICONDY);

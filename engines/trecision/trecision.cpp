@@ -161,12 +161,17 @@ TrecisionEngine::TrecisionEngine(OSystem *syst) : Engine(syst) {
 	_wheel = 0xFFFF;
 	for (int i = 0; i < 3; ++i)
 		_wheelPos[i] = 0;
+
+	Font = nullptr;
+	Arrows = nullptr;
 }
 
 TrecisionEngine::~TrecisionEngine() {
 	delete _animMgr;
 	delete _graphicsMgr;
 	delete _logicMgr;
+	delete Font;
+	delete Arrows;
 }
 
 Common::Error TrecisionEngine::run() {

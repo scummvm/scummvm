@@ -193,6 +193,8 @@ public:
 	GraphicsManager *_graphicsMgr;
 	LogicManager *_logicMgr;
 
+	uint8 *Font;
+	uint16 *Arrows;
 };
 
 extern TrecisionEngine *g_vm;
