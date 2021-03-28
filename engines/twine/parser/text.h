@@ -1,0 +1,52 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ */
+
+#ifndef TWINE_PARSER_TEXT_H
+#define TWINE_PARSER_TEXT_H
+
+#include "common/array.h"
+#include "common/memstream.h"
+#include "common/stream.h"
+#include "twine/parser/parser.h"
+#include "twine/shared.h"
+
+namespace TwinE {
+
+struct TextEntry {
+	Common::String string;	/**< The real string behind the text id */
+	int index;				/**< The index in the text index hqr file. This is also the index in the corresponding vox hqr file */
+	int textIndex;			/**< The text identifier */
+};
+
+class TextData {
+private:
+	// 30 is the max for lba2, lba1 uses 28
+	Common::Array<TextEntry> _texts[30];
+public:
+	bool loadFromHQR(const char *name, int textBankId, int language, int entryCount);
+
+	const TextEntry *getText(int textBankId, int textIndex) const;
+};
+
+} // End of namespace TwinE
+
+#endif

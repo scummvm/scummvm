@@ -20,6 +20,7 @@ MODULE_OBJS := \
 	parser/holomap.o \
 	parser/parser.o \
 	parser/sprite.o \
+	parser/text.o \
 	\
 	renderer/redraw.o \
 	renderer/renderer.o \
