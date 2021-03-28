@@ -52,7 +52,6 @@ uint8 *SoundPointer[MAXSOUNDSINROOM];
 uint8 *_actionPointer[MAXACTIONFRAMESINROOM];		// puntatore progressivo ai frame
 uint16 _actionPosition[MAXACTIONINROOM];			// Starting position of each action in the room
 // DATA POINTER
-uint16 *Icone;
 uint8 *TextArea;
 uint8 *SpeechBuf[2];
 uint16 *ExtraObj2C;
@@ -149,22 +148,24 @@ void OpenVideo() {
 	FastFileClose(ff);
 
 	ff = FastFileOpen("frecc.bm");
-	int size = ff->size() / 2;
+	int size = ceil(ff->size() / 2.0);
 	g_vm->Arrows = new uint16[size];
 	for (int i = 0; i < size; ++i)
-		g_vm->Arrows[i] = ff->readUint16BE();
+		g_vm->Arrows[i] = ff->readUint16LE();
 	FastFileClose(ff);
 	g_vm->_graphicsMgr->updatePixelFormat(g_vm->Arrows, size);
 
-	Icone = (uint16 *)(MemoryArea + GameBytePointer);
-	wordset(Icone, 0, ICONDX * ICONDY);
-	GameBytePointer += (ICONDX * ICONDY * 2);
 	ff = FastFileOpen("icone.bm");
-	GameBytePointer += FastFileRead(ff, (void *)(Icone + ICONDX * ICONDY), FastFileLen(ff));
+	size = ceil(ff->size() / 2.0);
+	int iconSize = ICONDX * ICONDY;
+	g_vm->Icone = new uint16[iconSize + size];
+	for (int i = 0; i < iconSize; ++i)
+		g_vm->Icone[i] = 0;
+	for (int i = 0; i < size; ++i)
+		g_vm->Icone[iconSize + i] = ff->readUint16LE();
 	FastFileClose(ff);
-	g_vm->_graphicsMgr->updatePixelFormat(Icone + ICONDX * ICONDY, 500000);
-	GameBytePointer += (ICONDX * ICONDY * 2 * INVICONNUM);
-	
+	g_vm->_graphicsMgr->updatePixelFormat(&g_vm->Icone[iconSize], size);
+
 	//
 	ff = FastFileOpen("textur.bm");
 	size = ff->size();
@@ -187,7 +188,7 @@ void OpenVideo() {
 	FTexture[hh]._dy = 300;
 	FTexture[hh]._angle = 0;
 	FTexture[hh]._texture = FTexture[0]._texture + (300 * 208) / 4;
-	FTexture[hh]._palette = NULL;
+	FTexture[hh]._palette = nullptr;
 	FTexture[hh]._flag = TEXTUREACTIVE + TEXTURECYLIND;
 
 	// braccia
@@ -196,7 +197,7 @@ void OpenVideo() {
 	FTexture[hh]._dy = 150;
 	FTexture[hh]._angle = 0;
 	FTexture[hh]._texture = FTexture[1]._texture + 300 * 300;
-	FTexture[hh]._palette = NULL;
+	FTexture[hh]._palette = nullptr;
 	FTexture[hh]._flag = TEXTUREACTIVE + TEXTURECYLIND;
 
 	_characterArea = (uint8 *)(MemoryArea + GameBytePointer);

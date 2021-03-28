@@ -165,15 +165,17 @@ TrecisionEngine::TrecisionEngine(OSystem *syst) : Engine(syst) {
 	Font = nullptr;
 	Arrows = nullptr;
 	TextureArea = nullptr;
+	Icone = nullptr;
 }
 
 TrecisionEngine::~TrecisionEngine() {
 	delete _animMgr;
 	delete _graphicsMgr;
 	delete _logicMgr;
-	delete Font;
-	delete Arrows;
-	delete TextureArea;
+	delete[] Font;
+	delete[] Arrows;
+	delete[] TextureArea;
+	delete[] Icone;
 }
 
 Common::Error TrecisionEngine::run() {

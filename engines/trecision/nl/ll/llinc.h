@@ -106,7 +106,6 @@ extern uint8 *SoundPointer[];
 extern uint8 *_actionPointer[];
 extern uint16 _actionPosition[];
 // DATA POINTER
-extern uint16 *Icone;
 extern uint8 *TextArea;
 // 3D AREA
 extern int16  *ZBuffer;
