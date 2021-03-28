@@ -515,6 +515,7 @@ public:
 	INTRINSIC(I_setFrame);
 	INTRINSIC(I_getQuality);
 	INTRINSIC(I_getUnkEggType);
+	INTRINSIC(I_setUnkEggType);
 	INTRINSIC(I_getQuantity);
 	INTRINSIC(I_getContainer);
 	INTRINSIC(I_getRootContainer);

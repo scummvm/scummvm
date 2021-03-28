@@ -250,6 +250,21 @@ uint32 MovieGump::I_playMovieCutsceneAlt(const uint8 *args, unsigned int /*argsi
 	return 0;
 }
 
+uint32 MovieGump::I_playMovieCutsceneRegret(const uint8 *args, unsigned int /*argsize*/) {
+	ARG_STRING(name);
+	ARG_UINT8(fade);
+
+	warning("MovieGump::I_playMovieCutsceneRegret: TODO: use fade argument %d", fade);
+
+	Common::SeekableReadStream *rs = _tryLoadCruMovie(name);
+	if (rs) {
+		Gump *gump = new MovieGump(640, 480, rs, false, false);
+		gump->InitGump(nullptr, true);
+		gump->setRelativePosition(CENTER);
+	}
+
+	return 0;
+}
 
 } // End of namespace Ultima8
 } // End of namespace Ultima

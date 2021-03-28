@@ -2694,6 +2694,17 @@ uint32 Item::I_getUnkEggType(const uint8 *args, unsigned int /*argsize*/) {
 	}
 }
 
+uint32 Item::I_setUnkEggType(const uint8 *args, unsigned int /*argsize*/) {
+	ARG_ITEM_FROM_PTR(item);
+	ARG_UINT16(val);
+	if (!item) return 0;
+
+	if (item->getFamily() == ShapeInfo::SF_UNKEGG) {
+		item->setQuality(val);
+	}
+	return 0;
+}
+
 uint32 Item::I_getQuantity(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_ITEM_FROM_PTR(item);
 	if (!item) return 0;
