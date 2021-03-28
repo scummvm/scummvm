@@ -501,7 +501,7 @@ void ReadLoc() {
 	RegenRoom();
 
 	if (g_vm->_room[g_vm->_curRoom]._bkgAnim) {
-		wordcopy(SmackImagePointer, ImagePointer, MAXX * AREA);
+		memcpy(SmackImagePointer, ImagePointer, MAXX * AREA * 2);
 		g_vm->_animMgr->startSmkAnim(g_vm->_room[g_vm->_curRoom]._bkgAnim);
 	} else
 		g_vm->_animMgr->stopSmkAnim(g_vm->_animMgr->_playingAnims[0]);

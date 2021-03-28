@@ -488,9 +488,9 @@ void AnimManager::refreshSmkAnim(int num) {
 
 					AddLine(lastRect->left, lastRect->right, lastRect->top + a + TOP);
 
-					wordcopy(ImagePointer + lastRect->left + (lastRect->top + a) * MAXX,
+					memcpy(ImagePointer + lastRect->left + (lastRect->top + a) * MAXX,
 					         _vm->_video2 + lastRect->left + (lastRect->top + a + TOP) * MAXX,
-					         lastRect->width());
+					         lastRect->width() * 2);
 				}
 			} else if (_curAnimFrame[pos] > 1) {
 				_animMinX = MIN((uint16)lastRect->left, _animMinX);
