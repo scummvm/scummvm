@@ -558,6 +558,7 @@ ProgressiveTextState Text::updateProgressiveText() {
 }
 
 bool Text::displayText(int32 index, bool showText, bool playVox, bool loop) {
+	debug(3, "displayText(%i, %s)", index, showText ? "true" : "false");
 	if (playVox) {
 		// get right VOX entry index
 		initVoxToPlay(index);
