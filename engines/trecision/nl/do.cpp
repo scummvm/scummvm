@@ -683,13 +683,13 @@ void ExecuteATFDO(ATFHandle *h, int doit, int obj) {
 	case fHELLEN:
 		doEvent(MC_MOUSE, ME_MLEFT, MP_DEFAULT, 336, 263 + TOP, true, 0);
 		break;
-	case fVALVOLAON34:
+	case fVALVEON34:
 		if (!(g_vm->_choice[616]._flag & OBJFLAG_DONE) &&		// if the fmv is not done
 		    (g_vm->_obj[oTUBOA34]._mode & OBJMODE_OBJSTATUS) && // if there's a cut pipe
 		    !(g_vm->_obj[oTUBOFT34]._mode & OBJMODE_OBJSTATUS)) // if there's not tube outside
 			g_vm->_animMgr->smkVolumePan(0, 2, 1);
 		break;
-	case fVALVOLAOFF34:
+	case fVALVEOFF34:
 		g_vm->_animMgr->smkVolumePan(0, 2, 0);
 		break;
 

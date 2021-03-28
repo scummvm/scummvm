@@ -129,8 +129,8 @@
 #define fCHARACTERFOREGROUND	24
 #define fCHARACTERBACKGROUND	25
 #define fCHARACTERNORM		26
-#define fVALVOLAON34		27
-#define fVALVOLAOFF34		28
+#define fVALVEON34		27
+#define fVALVEOFF34		28
 
 /*-------------------------------------------------------------------------*/
 /*                                 ROOMS             					   */
