@@ -23,7 +23,6 @@
 #include "ultima/ultima8/audio/audio_process.h"
 #include "ultima/ultima8/world/actors/surrender_process.h"
 #include "ultima/ultima8/world/actors/main_actor.h"
-#include "ultima/ultima8/world/actors/actor_anim_process.h"
 #include "ultima/ultima8/kernel/kernel.h"
 #include "ultima/ultima8/world/get_object.h"
 
@@ -62,15 +61,9 @@ void SurrenderProcess::run() {
 		return;
 	}
 
-	// do nothing while we are not in the fast area
-	if (!a->hasFlags(Item::FLG_FASTAREA))
+	// do nothing while we are not in the fast area or busy
+	if (!a->hasFlags(Item::FLG_FASTAREA) || a->isBusy())
 		return;
-
-	int animating = Kernel::get_instance()->getNumProcesses(_itemNum, ActorAnimProcess::ACTOR_ANIM_PROC_TYPE);
-	if (animating) {
-		// already busy.
-		return;
-	}
 
 	a->setActorFlag(Actor::ACT_SURRENDERED);
 

@@ -29,7 +29,6 @@
 #include "ultima/ultima8/kernel/delay_process.h"
 #include "ultima/ultima8/usecode/uc_list.h"
 #include "ultima/ultima8/world/actors/actor.h"
-#include "ultima/ultima8/world/actors/actor_anim_process.h"
 #include "ultima/ultima8/world/current_map.h"
 #include "ultima/ultima8/world/get_object.h"
 #include "ultima/ultima8/world/world.h"
@@ -516,8 +515,7 @@ void AttackProcess::genericAttack() {
 	Actor *a = getActor(_itemNum);
 	assert(a);
 
-	if (Kernel::get_instance()->getNumProcesses(_itemNum, ActorAnimProcess::ACTOR_ANIM_PROC_TYPE)
-		|| a->hasActorFlags(Actor::ACT_PATHFINDING)) {
+	if (a->isBusy() || a->hasActorFlags(Actor::ACT_PATHFINDING)) {
 		return;
 	}
 

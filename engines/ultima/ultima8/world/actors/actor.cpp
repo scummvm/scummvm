@@ -512,6 +512,11 @@ uint16 Actor::doAnim(Animation::Sequence anim, Direction dir, unsigned int steps
 	return Kernel::get_instance()->addProcess(p);
 }
 
+bool Actor::isBusy() const {
+	uint32 count = Kernel::get_instance()->getNumProcesses(_objId, ActorAnimProcess::ACTOR_ANIM_PROC_TYPE);
+	return count != 0;
+}
+
 bool Actor::hasAnim(Animation::Sequence anim) {
 	AnimationTracker tracker;
 
@@ -1270,7 +1275,7 @@ ProcId Actor::killAllButFallAnims(bool death) {
 
 	if (death) {
 		// if dead, we want to kill everything but animations
-		kernel->killProcessesNotOfType(_objId, 0xF0, true);
+		kernel->killProcessesNotOfType(_objId, ActorAnimProcess::ACTOR_ANIM_PROC_TYPE, true);
 	} else {
 		// otherwise, need to focus on combat, so kill everything else
 		killAllButCombatProcesses();
@@ -2108,11 +2113,9 @@ uint32 Actor::I_areEnemiesNear(const uint8 *args, unsigned int /*argsize*/) {
 }
 
 uint32 Actor::I_isBusy(const uint8 *args, unsigned int /*argsize*/) {
-	ARG_UC_PTR(ptr);
-	uint16 id = UCMachine::ptrToObject(ptr);
+	ARG_ACTOR_FROM_PTR(actor);
 
-	uint32 count = Kernel::get_instance()->getNumProcesses(id, ActorAnimProcess::ACTOR_ANIM_PROC_TYPE);
-	if (count > 0)
+	if (actor->isBusy())
 		return 1;
 	else
 		return 0;

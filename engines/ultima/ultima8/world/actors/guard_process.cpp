@@ -50,8 +50,7 @@ void GuardProcess::run() {
 	}
 
 	// Do nothing if busy
-	int activeanim = Kernel::get_instance()->getNumProcesses(a->getObjId(), ActorAnimProcess::ACTOR_ANIM_PROC_TYPE);
-	if (activeanim > 0)
+	if (a->isBusy())
 		return;
 
 	Actor *mainactor = getMainActor();

@@ -40,16 +40,14 @@ AvatarMoverProcess::~AvatarMoverProcess() {
 }
 
 void AvatarMoverProcess::run() {
-	Kernel *kernel = Kernel::get_instance();
+	MainActor *avatar = getMainActor();
+	assert(avatar);
 
 	// busy, so don't move
-	if (kernel->getNumProcesses(1, ActorAnimProcess::ACTOR_ANIM_PROC_TYPE) > 0) {
+	if (avatar->isBusy()) {
 		_idleTime = 0;
 		return;
 	}
-
-	MainActor *avatar = getMainActor();
-	assert(avatar);
 
 	if (avatar->getLastAnim() == Animation::hang) {
 		handleHangingMode();

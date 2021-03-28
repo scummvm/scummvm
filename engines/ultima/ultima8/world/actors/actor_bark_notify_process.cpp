@@ -23,7 +23,6 @@
 #include "ultima/ultima8/world/actors/actor_bark_notify_process.h"
 #include "ultima/ultima8/kernel/delay_process.h"
 #include "ultima/ultima8/world/actors/actor.h"
-#include "ultima/ultima8/world/actors/actor_anim_process.h"
 #include "ultima/ultima8/kernel/kernel.h"
 #include "ultima/ultima8/world/get_object.h"
 
@@ -57,7 +56,7 @@ void ActorBarkNotifyProcess::run() {
 	Animation::Sequence lastanim = a->getLastAnim();
 	if (lastanim != Animation::stand && lastanim != Animation::talk)
 		doAnim = false;
-	else if (Kernel::get_instance()->getNumProcesses(_itemNum, ActorAnimProcess::ACTOR_ANIM_PROC_TYPE) > 0)
+	else if (a->isBusy())
 		// if busy, don't do talk animation
 		doAnim = false;
 

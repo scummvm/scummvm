@@ -248,6 +248,9 @@ public:
 	//! Get the number of directions supported by a given animation
 	DirectionMode animDirMode(Animation::Sequence anim) const;
 
+	//! True if the actor is currently doing an animation.
+	bool isBusy() const;
+
 	//! overrides the standard item collideMove so we  can notify nearby objects.
 	int32 collideMove(int32 x, int32 y, int32 z, bool teleport, bool force,
 	                  ObjId *hititem = 0, uint8 *dirs = 0) override;

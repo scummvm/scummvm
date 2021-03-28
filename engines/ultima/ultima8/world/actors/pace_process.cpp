@@ -22,7 +22,6 @@
 
 #include "ultima/ultima8/world/actors/pace_process.h"
 #include "ultima/ultima8/world/actors/main_actor.h"
-#include "ultima/ultima8/world/actors/actor_anim_process.h"
 #include "ultima/ultima8/misc/direction_util.h"
 #include "ultima/ultima8/kernel/kernel.h"
 #include "ultima/ultima8/kernel/delay_process.h"
@@ -76,7 +75,7 @@ void PaceProcess::run() {
 	if (maybeStartDefaultActivity1(a))
 		return;
 
-	if (kernel->getNumProcesses(a->getObjId(), ActorAnimProcess::ACTOR_ANIM_PROC_TYPE)) {
+	if (a->isBusy()) {
 		return;
 	}
 
