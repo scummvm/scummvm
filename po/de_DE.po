@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-03-26 14:34+0000\n"
-"PO-Revision-Date: 2021-03-27 07:41+0000\n"
+"PO-Revision-Date: 2021-03-28 14:52+0000\n"
 "Last-Translator: Lothar Serra Mari <serra@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/de/>\n"
@@ -1034,11 +1034,9 @@ msgid "Game 3D Renderer:"
 msgstr "3D-Renderer:"
 
 #: gui/options.cpp:1331
-#, fuzzy
-#| msgid "Game 3D Renderer:"
 msgctxt "lowres"
 msgid "Game 3D Renderer:"
-msgstr "3D-Renderer:"
+msgstr "Spiele-3D-Renderer:"
 
 #: gui/options.cpp:1344
 msgid "3D Anti-aliasing:"
@@ -2427,11 +2425,9 @@ msgid "OpenGL with shaders"
 msgstr "OpenGL mit Shader"
 
 #: graphics/renderer.cpp:42
-#, fuzzy
-#| msgid "OpenGL with shaders"
 msgctxt "lowres"
 msgid "OpenGL with shaders"
-msgstr "OpenGL mit Shader"
+msgstr "OpenGL mit Shadern"
 
 #: audio/adlib.cpp:2293
 msgid "AdLib emulator"
