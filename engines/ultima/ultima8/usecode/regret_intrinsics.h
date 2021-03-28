@@ -263,7 +263,7 @@ Intrinsic RegretIntrinsics[] = {
 	Actor::I_getDefaultActivity1, // Intrinsic0D8()
 	Actor::I_getDefaultActivity2, // Intrinsic0D9()
 	Actor::I_getLastAnimSet, // Intrinsic0DA()
-	0, // Actor::I_isFalling()
+	Actor::I_isFalling, // Actor::I_isFalling()
 	Item::I_getQLo, // Intrinsic0DC()
 	Item::I_getQHi, // Intrinsic0DD()
 	Actor::I_getNpcNum, // Intrinsic0DE()

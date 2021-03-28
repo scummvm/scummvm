@@ -73,6 +73,10 @@ public:
 		return _target;
 	}
 
+	void setTarget(uint16 target) {
+		_target = target;
+	}
+
 	bool loadData(Common::ReadStream *rs, uint32 version);
 	void saveData(Common::WriteStream *ws) override;
 

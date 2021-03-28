@@ -284,7 +284,7 @@ const char* const ConvertUsecodeCrusader::_intrinsics[] = {
 	"int16 Actor::I_getDefaultActivity1(Actor *)",
 	"int16 Actor::I_getDefaultActivity2(Actor *)",
 	"int16 Actor::I_getLastAnimSet(4 bytes)", // part of same coff set 01D, 05A, 0B9, 0D7, 0E4, 124
-	"void Actor::I_attack(Actor *, uint16 target)",
+	"void Actor::I_setTarget(Actor *, uint16 target)",
 	"void Actor::I_SetNPCDataField0x63_0E6(Actor *, int)",
 	"void Actor::I_setDead(4 bytes)", // part of same coff set 021, 060, 073, 0A0, 0A8, 0D8, 0E7, 135
 	"int16 Item::I_cast(6 bytes)",

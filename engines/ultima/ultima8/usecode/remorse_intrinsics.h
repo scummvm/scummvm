@@ -278,7 +278,7 @@ Intrinsic RemorseIntrinsics[] = {
 	Actor::I_getDefaultActivity1, // void Intrinsic0E2(4 bytes)
 	Actor::I_getDefaultActivity2, // void Intrinsic0E3(4 bytes)
 	Actor::I_getLastAnimSet, // void Intrinsic0E4(4 bytes)
-	0, // TODO: Actor::I_attack(Actor *, uint16 target) (implement me)
+	Actor::I_setTarget,
 	Actor::I_setUnkByte, // void Intrinsic0E6(6 bytes)
 	Actor::I_setDead,
 	Item::I_cast, // void Intrinsic0E8(6 bytes)

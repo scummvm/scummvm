@@ -88,6 +88,8 @@ public:
 		return (_actorFlags & ACT_KNEELING) != 0;
 	}
 
+	bool isFalling() const;
+
 	CombatProcess *getCombatProcess(); 	// in U8
 	AttackProcess *getAttackProcess();	// in Crusader
 	virtual void setInCombat(int activity);
@@ -357,6 +359,7 @@ public:
 	INTRINSIC(I_getCurrentActivityNo);
 	INTRINSIC(I_turnToward);
 	INTRINSIC(I_isKneeling);
+	INTRINSIC(I_isFalling);
 
 	enum ActorFlags {
 		ACT_INVINCIBLE     = 0x000001, // flags from npcdata byte 0x1B

@@ -55,6 +55,7 @@
 #include "ultima/ultima8/world/loop_script.h"
 #include "ultima/ultima8/audio/audio_process.h"
 #include "ultima/ultima8/audio/music_process.h"
+#include "ultima/ultima8/world/gravity_process.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -1405,6 +1406,17 @@ int Actor::calculateAttackDamage(uint16 other, int damage, uint16 damage_type) {
 	return damage;
 }
 
+bool Actor::isFalling() const {
+	ProcId gravitypid = getGravityPID();
+	if (!gravitypid)
+		return false;
+
+	// TODO: this is not exactly the same as the Crusader implementation,
+	// but pretty close.  Is that ok?
+	GravityProcess *proc = dynamic_cast<GravityProcess *>(Kernel::get_instance()->getProcess(gravitypid));
+	return (proc && proc->is_active());
+}
+
 CombatProcess *Actor::getCombatProcess() {
 	Process *p = Kernel::get_instance()->findProcess(_objId, 0xF2); // CONSTANT!
 	if (!p)
@@ -1888,20 +1900,30 @@ uint32 Actor::I_setTarget(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_UINT16(target);
 	if (!actor) return 0;
 
-	assert(GAME_IS_U8);
+	if (GAME_IS_U8) {
+		CombatProcess *cp = actor->getCombatProcess();
+		if (!cp) {
+			actor->setInCombatU8();
+			cp = actor->getCombatProcess();
+		}
+		if (!cp) {
+			warning("Actor::I_setTarget: failed to enter combat mode");
+			return 0;
+		}
 
-	CombatProcess *cp = actor->getCombatProcess();
-	if (!cp) {
-		actor->setInCombatU8();
-		cp = actor->getCombatProcess();
-	}
-	if (!cp) {
-		perr << "Actor::I_setTarget: failed to enter combat mode"
-		     << Std::endl;
-		return 0;
-	}
+		cp->setTarget(target);
+	} else {
+		if (actor->isDead() || actor->getObjId() == 1)
+			return 0;
 
-	cp->setTarget(target);
+		actor->setActivityCru(5);
+		AttackProcess *ap = actor->getAttackProcess();
+		if (!ap) {
+			warning("Actor::I_setTarget: failed to enter attack mode");
+			return 0;
+		}
+		ap->setTarget(target);
+	}
 
 	return 0;
 }
@@ -2414,6 +2436,13 @@ uint32 Actor::I_isKneeling(const uint8 *args, unsigned int /*argsize*/) {
 	if (!actor) return 0;
 
 	return actor->isKneeling() ? 1 : 0;
+}
+
+uint32 Actor::I_isFalling(const uint8 *args, unsigned int /*argsize*/) {
+	ARG_ACTOR_FROM_PTR(actor);
+	if (!actor) return 0;
+
+	return actor->isFalling() ? 1 : 0;
 }
 
 } // End of namespace Ultima8
