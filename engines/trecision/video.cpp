@@ -148,8 +148,10 @@ void AnimManager::smkNextFrame() {
 	if (_smkAnims[_curSmackBuffer] == nullptr)
 		return;
 
-	if (_smkAnims[_curSmackBuffer]->getCurFrame() == (int)_smkAnims[_curSmackBuffer]->getFrameCount() - 1) {
+	// Loop
+	if (_smkAnims[_curSmackBuffer]->getCurFrame() >= (int)_smkAnims[_curSmackBuffer]->getFrameCount() - 1) {
 		_smkAnims[_curSmackBuffer]->rewind();
+		_smkAnims[_curSmackBuffer]->decodeNextFrame(); // Skip frame 0
 	}
 
 	const Graphics::Surface *surface = _smkAnims[_curSmackBuffer]->decodeNextFrame();
