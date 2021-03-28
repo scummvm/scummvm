@@ -31,6 +31,10 @@
 #include <servprov.h>
 
 #include <sapi.h>
+#if _SAPI_VER < 0x53
+#define SPF_PARSE_SAPI 0x80
+#endif
+
 #include "backends/platform/sdl/win32/win32_wrapper.h"
 
 #include "backends/text-to-speech/windows/windows-text-to-speech.h"
@@ -48,7 +52,7 @@ ISpAudio *_audio;
 
 WindowsTextToSpeechManager::WindowsTextToSpeechManager()
 	: _speechState(BROKEN){
-	init();
+	init();	
 	_threadParams.queue = &_speechQueue;
 	_threadParams.state = &_speechState;
 	_threadParams.mutex = &_speechMutex;
