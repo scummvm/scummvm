@@ -60,7 +60,6 @@ uint16 *ExtraObj41D;
 // 3D AREA
 int16  *ZBuffer;
 uint8 *_characterArea;
-uint8 *TextureArea;
 // MEMORY
 uint32 GameBytePointer;
 uint32 GameWordPointer;
@@ -165,12 +164,12 @@ void OpenVideo() {
 	FastFileClose(ff);
 	g_vm->_graphicsMgr->updatePixelFormat(Icone + ICONDX * ICONDY, 500000);
 	GameBytePointer += (ICONDX * ICONDY * 2 * INVICONNUM);
-
+	
 	//
-	TextureArea = (uint8 *)MemoryArea + GameBytePointer;
-
 	ff = FastFileOpen("textur.bm");
-	GameBytePointer += FastFileRead(ff, TextureArea, FastFileLen(ff));
+	size = ff->size();
+	g_vm->TextureArea = new uint8[size];
+	ff->read(g_vm->TextureArea, size);
 	FastFileClose(ff);
 
 	// head
@@ -178,8 +177,8 @@ void OpenVideo() {
 	FTexture[hh]._dx = 300 / 2;
 	FTexture[hh]._dy = 208 / 2;
 	FTexture[hh]._angle = 0;
-	FTexture[hh]._texture = TextureArea;
-	FTexture[hh]._palette = NULL;
+	FTexture[hh]._texture = g_vm->TextureArea;
+	FTexture[hh]._palette = nullptr;
 	FTexture[hh]._flag = TEXTUREACTIVE + TEXTURECYLIND;
 
 	// corpo

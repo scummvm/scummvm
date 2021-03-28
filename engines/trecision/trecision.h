@@ -195,6 +195,7 @@ public:
 
 	uint8 *Font;
 	uint16 *Arrows;
+	uint8 *TextureArea;
 };
 
 extern TrecisionEngine *g_vm;
