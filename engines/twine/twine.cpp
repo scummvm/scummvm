@@ -462,9 +462,6 @@ void TwinEEngine::queueMovie(const char *filename) {
 }
 
 void TwinEEngine::initEngine() {
-	// getting configuration file
-	initConfigurations();
-
 	_screens->clearScreen();
 
 	// Check if LBA CD-Rom is on drive
@@ -521,6 +518,9 @@ void TwinEEngine::initAll() {
 	_redraw->renderRect = rect();
 	// Set clip to fullscreen by default, allows main menu to render properly after load
 	_interface->resetClip();
+
+	// getting configuration file
+	initConfigurations();
 
 	_resources->initResources();
 
