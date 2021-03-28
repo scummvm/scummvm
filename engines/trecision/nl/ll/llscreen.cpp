@@ -98,6 +98,13 @@ int NumFileRef;
 // info for Toc BmData
 struct SBmInfo {
 	uint16 px, py, dx, dy;
+
+	void read(uint16 *buf) {
+		px = *buf++;
+		py = *buf++;
+		dx = *buf++;
+		dy = *buf++;
+	}
 } BmInfo;
 
 #define NL_REQUIREDMEMORY	6100000L
@@ -544,7 +551,7 @@ void ReadObj() {
 			break;
 
 		if (g_vm->_obj[c]._mode & OBJMODE_FULL) {
-			wordcopy(&BmInfo, o + b, 4);
+			BmInfo.read(o + b);
 			b += 4;
 			g_vm->_obj[c]._px = BmInfo.px;
 			g_vm->_obj[c]._py = BmInfo.py;
@@ -557,7 +564,7 @@ void ReadObj() {
 		}
 
 		if (g_vm->_obj[c]._mode & OBJMODE_MASK) {
-			wordcopy(&BmInfo, o + b, 4);
+			BmInfo.read(o + b);
 			b += 4;
 			g_vm->_obj[c]._px = BmInfo.px;
 			g_vm->_obj[c]._py = BmInfo.py;
@@ -598,7 +605,7 @@ void ReadExtraObj2C() {
 			break;
 
 		if (g_vm->_obj[c]._mode & OBJMODE_FULL) {
-			wordcopy(&BmInfo, o + b, 4);
+			BmInfo.read(o + b);
 			b += 4;
 			g_vm->_obj[c]._px = BmInfo.px;
 			g_vm->_obj[c]._py = BmInfo.py;
@@ -611,7 +618,7 @@ void ReadExtraObj2C() {
 		}
 
 		if (g_vm->_obj[c]._mode & OBJMODE_MASK) {
-			wordcopy(&BmInfo, o + b, 4);
+			BmInfo.read(o + b);
 			b += 4;
 			g_vm->_obj[c]._px = BmInfo.px;
 			g_vm->_obj[c]._py = BmInfo.py;
@@ -652,7 +659,7 @@ void ReadExtraObj41D() {
 			break;
 
 		if (g_vm->_obj[c]._mode & OBJMODE_FULL) {
-			wordcopy(&BmInfo, o + b, 4);
+			BmInfo.read(o + b);
 			b += 4;
 			g_vm->_obj[c]._px = BmInfo.px;
 			g_vm->_obj[c]._py = BmInfo.py;
@@ -665,7 +672,7 @@ void ReadExtraObj41D() {
 		}
 
 		if ((g_vm->_obj[c]._mode & OBJMODE_MASK)) {
-			wordcopy(&BmInfo, o + b, 4);
+			BmInfo.read(o + b);
 			b += 4;
 			g_vm->_obj[c]._px = BmInfo.px;
 			g_vm->_obj[c]._py = BmInfo.py;
