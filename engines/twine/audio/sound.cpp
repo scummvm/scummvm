@@ -109,15 +109,9 @@ void Sound::playSample(int32 index, int32 repeat, int32 x, int32 y, int32 z, int
 	playSample(channelIdx, index, sampPtr, sampSize, repeat, Resources::HQR_SAMPLES_FILE, Audio::Mixer::kSFXSoundType, DisposeAfterUse::NO);
 }
 
-void Sound::playVoxSample(int32 index) {
+bool Sound::playVoxSample(int32 index) {
 	if (!_engine->cfgfile.Sound) {
-		return;
-	}
-
-	int channelIdx = getFreeSampleChannelIndex();
-	if (channelIdx == -1) {
-		warning("Failed to play vox sample for index: %i - no free channel", index);
-		return;
+		return false;
 	}
 
 	uint8 *sampPtr = nullptr;
@@ -131,13 +125,19 @@ void Sound::playVoxSample(int32 index) {
 				const TextEntry *text = _engine->_resources->getText(_engine->_text->textBank(), index);
 				if (text) {
 					ttsMan->say(text->string);
+					return true;
 				}
-				return;
 			}
 		}
 #endif
 		warning("Failed to get vox sample for index: %i", index);
-		return;
+		return false;
+	}
+
+	int channelIdx = getFreeSampleChannelIndex();
+	if (channelIdx == -1) {
+		warning("Failed to play vox sample for index: %i - no free channel", index);
+		return false;
 	}
 
 	// Fix incorrect sample files first byte
@@ -147,7 +147,7 @@ void Sound::playVoxSample(int32 index) {
 		*sampPtr = 'C';
 	}
 
-	playSample(channelIdx, index, sampPtr, sampSize, 1, _engine->_text->currentVoxBankFile.c_str(), Audio::Mixer::kSpeechSoundType);
+	return playSample(channelIdx, index, sampPtr, sampSize, 1, _engine->_text->currentVoxBankFile.c_str(), Audio::Mixer::kSpeechSoundType);
 }
 
 bool Sound::playSample(int channelIdx, int index, uint8 *sampPtr, int32 sampSize, int32 loop, const char *name, Audio::Mixer::SoundType soundType, DisposeAfterUse::Flag disposeFlag) {

@@ -93,9 +93,7 @@ bool Text::initVoxToPlay(int32 index) { // setVoxFileAtDigit
 
 	const TextEntry *textEntry = _engine->_resources->getText(_currentBankIdx, index);
 	currDialTextEntry = textEntry ? textEntry->index : 0;
-	_engine->_sound->playVoxSample(currDialTextEntry);
-
-	return true;
+	return _engine->_sound->playVoxSample(currDialTextEntry);
 }
 
 bool Text::playVox(int32 index) {

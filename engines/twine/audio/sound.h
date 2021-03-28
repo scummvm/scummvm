@@ -119,7 +119,7 @@ public:
 	int32 isSamplePlaying(int32 index);
 
 	/** Play VOX sample */
-	void playVoxSample(int32 index);
+	bool playVoxSample(int32 index);
 };
 
 } // namespace TwinE
