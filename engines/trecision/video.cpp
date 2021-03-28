@@ -695,8 +695,6 @@ void AnimManager::refreshSmkIcon(int StartIcon, int num) {
 					playFullMotion
 --------------------------------------------------*/
 void AnimManager::playFullMotion(int start, int end) {
-	extern unsigned short _curDialog;
-
 	int pos = 1;
 	_curSmackBuffer = pos;
 

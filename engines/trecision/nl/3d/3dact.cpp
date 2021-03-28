@@ -36,8 +36,6 @@ namespace Trecision {
 --------------------------------------------------*/
 void actorDoAction(int whatAction) {
 	int len;
-	extern uint8 *_actionPointer[];
-	extern uint16 _actionPosition[];
 
 	_curStep = 1;
 	float px = _actor._px + _actor._dx;

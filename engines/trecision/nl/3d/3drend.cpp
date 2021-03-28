@@ -615,8 +615,6 @@ int8 clockWise(int16 x1, int16 y1, int16 x2, int16 y2, int16 x3, int16 y3) {
 	Draw the character
 --------------------------------------------------*/
 void drawCharacter(uint8 flag) {
-	extern uint8 *_characterArea;
-
 	// Compute pointer to frame
 	if (flag & CALCPOINTS) {
 		if (_actor._curAction <= hLAST) {
@@ -635,9 +633,6 @@ void drawCharacter(uint8 flag) {
 
 			_actor._vertex = (SVertex *)_characterArea + cfp * _actor._vertexNum;
 		} else {
-			extern uint8 *_actionPointer[];
-			extern uint16 _actionPosition[];
-
 			_actor._vertex = (SVertex *)(_actionPointer[_actionPosition[actionInRoom(_actor._curAction)] + _actor._curFrame]);
 
 			if (_actor._vertex == NULL)

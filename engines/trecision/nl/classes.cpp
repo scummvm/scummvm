@@ -33,8 +33,6 @@
 
 namespace Trecision {
 
-extern int32 CurRoomMaxX;
-
 // inventory
 #define COUNTERSTEP 6
 

@@ -113,12 +113,6 @@ Common::SeekableReadStream *FastFile::createReadStreamForMember(const Common::St
 
 FastFile dataFile;
 
-void CheckFileInCD(Common::String name);
-void CloseSys(const char *str);
-void FastFileFinish();
-void AnimFileFinish();
-void SpeechFileFinish();
-
 /* -----------------19/01/98 17.13-------------------
  * FastFileInit
  *

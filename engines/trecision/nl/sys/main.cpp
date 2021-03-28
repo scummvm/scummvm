@@ -33,19 +33,10 @@ namespace Trecision {
 
 extern int16 mx, my;
 extern bool mleft, mright;
-extern uint8		*SoundStartBuffer;
-extern uint8		*MemoryArea;
 extern const char 		*_sysSentence[];
 extern bool	ForceQuit;
 
 void NextMessage();
-void StopSoundSystem();
-void FastFileFinish();
-void AnimFileFinish();
-void SpeechFileFinish();
-void VMouseON();
-void VMouseOFF();
-char waitKey();
 
 /*-----------------16/01/97 20.53-------------------
 					GetKey
