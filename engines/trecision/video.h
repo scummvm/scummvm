@@ -63,7 +63,6 @@ private:
 	TrecisionEngine *_vm;
 
 	uint16 _smkPal[MAXSMACK][256];
-	uint8 _curSmkAction;
 	NightlongSmackerDecoder *_smkAnims[MAXSMACK];
 
 	void openSmk(Common::SeekableReadStream *stream);
