@@ -152,6 +152,15 @@ static const ExtraGuiOption OptHighRes = {
 	false
 };
 
+#ifdef USE_TTS
+static const ExtraGuiOption OptTextToSpeech = {
+	_s("TTS Narrator"),
+	_s("Use TTS to read the descriptions (if TTS is available)"),
+	"tts_narrator",
+	false
+};
+#endif
+
 const ExtraGuiOptions TwinEMetaEngine::getExtraGuiOptions(const Common::String &target) const {
 	ExtraGuiOptions options;
 	options.push_back(OptWallCollision);
@@ -167,6 +176,9 @@ const ExtraGuiOptions TwinEMetaEngine::getExtraGuiOptions(const Common::String &
 	options.push_back(OptVoices);
 	options.push_back(OptText);
 	options.push_back(OptDebug);
+#ifdef USE_TTS
+	options.push_back(OptTextToSpeech);
+#endif
 	return options;
 }
 

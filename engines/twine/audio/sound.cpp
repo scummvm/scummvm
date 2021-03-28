@@ -25,6 +25,7 @@
 #include "audio/decoders/voc.h"
 #include "common/memstream.h"
 #include "common/system.h"
+#include "common/text-to-speech.h"
 #include "common/types.h"
 #include "common/util.h"
 #include "twine/scene/collision.h"
@@ -122,6 +123,19 @@ void Sound::playVoxSample(int32 index) {
 	uint8 *sampPtr = nullptr;
 	int32 sampSize = HQR::getAllocVoxEntry(&sampPtr, _engine->_text->currentVoxBankFile.c_str(), index, _engine->_text->voxHiddenIndex);
 	if (sampSize == 0) {
+#ifdef USE_TTS
+		if (ConfMan.getBool("tts_narrator")) {
+			Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+			if (ttsMan != nullptr) {
+				ttsMan->stop();
+				const TextEntry *text = _engine->_resources->getText(_engine->_text->textBank(), index);
+				if (text) {
+					ttsMan->say(text->string);
+				}
+				return;
+			}
+		}
+#endif
 		warning("Failed to get vox sample for index: %i", index);
 		return;
 	}
