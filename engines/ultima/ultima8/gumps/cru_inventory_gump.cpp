@@ -32,18 +32,14 @@
 namespace Ultima {
 namespace Ultima8 {
 
-static const int INVENTORY_GUMP_SHAPE = 5;
 static const int INVENTORY_TEXT_FONT = 12;
 
 DEFINE_RUNTIME_CLASSTYPE_CODE(CruInventoryGump)
-CruInventoryGump::CruInventoryGump() : CruStatGump(), _inventoryShape(nullptr),
-	_inventoryItemGump(nullptr), _inventoryText(nullptr) {
-
+CruInventoryGump::CruInventoryGump() : CruStatGump(), _inventoryItemGump(nullptr), _inventoryText(nullptr) {
 }
 
 CruInventoryGump::CruInventoryGump(Shape *shape, int x)
-	: CruStatGump(shape, x), _inventoryShape(nullptr), _inventoryItemGump(nullptr),
-		_inventoryText(nullptr) {
+	: CruStatGump(shape, x), _inventoryItemGump(nullptr), _inventoryText(nullptr) {
 	_frameNum = 0;
 }
 
@@ -59,11 +55,6 @@ void CruInventoryGump::InitGump(Gump *newparent, bool take_focus) {
 		return;
 	}
 
-	_inventoryShape = gumpshapes->getShape(INVENTORY_GUMP_SHAPE);
-	if (!_inventoryShape || !_inventoryShape->getFrame(0)) {
-		warning("failed to init stat gump: no inventory shape");
-		return;
-	}
 	_inventoryItemGump = new Gump();
 	_inventoryItemGump->InitGump(this, false);
 	// we'll set the shape for this gump later.
@@ -119,8 +110,19 @@ void CruInventoryGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool sc
 		if (!item) {
 			_inventoryItemGump->SetShape(0, 0);
 		} else {
-			uint16 frame = getDisplayFrameForShape(item->getShape());
-			_inventoryItemGump->SetShape(_inventoryShape, frame);
+			GumpShapeArchive *gumpshapes = GameData::get_instance()->getGumps();
+			if (!gumpshapes) {
+				warning("failed to paint stat gump: no gump shape archive");
+				return;
+			}
+
+			const ShapeInfo *shapeinfo = item->getShapeInfo();
+			if (!shapeinfo->_weaponInfo) {
+				warning("no weapon info for active inventory item %d", item->getShape());
+				return;
+			}
+			Shape *invshape = gumpshapes->getShape(shapeinfo->_weaponInfo->_displayGumpShape);
+			_inventoryItemGump->SetShape(invshape, shapeinfo->_weaponInfo->_displayGumpFrame);
 			_inventoryItemGump->UpdateDimsFromShape();
 			_inventoryItemGump->setRelativePosition(CENTER);
 

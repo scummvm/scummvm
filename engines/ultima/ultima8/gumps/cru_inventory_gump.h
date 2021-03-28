@@ -52,7 +52,6 @@ public:
 	void saveData(Common::WriteStream *ws) override;
 
 private:
-	Shape *_inventoryShape;
 	Gump *_inventoryItemGump;
 	TextWidget *_inventoryText;
 };
