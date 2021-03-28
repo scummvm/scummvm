@@ -172,14 +172,6 @@ private:
 	// RECHECK THIS LATER
 	int32 _currentBankIdx = TextBankId::None; // textVar1
 
-	/** Dialogue text pointer */
-	char *_dialTextPtr = nullptr; // bufText
-	/** Dialogue entry order pointer */
-	int32 _dialOrderSize = 0;
-	char *_dialOrderPtr = nullptr; // bufOrder
-	/** Number of dialogues text entries */
-	int16 _numDialTextEntries = 0;
-
 	// TODO: refactor all this variables and related functions
 	char _progressiveTextBuffer[256] {'\0'};
 	const char *_currentTextPosition = nullptr;
@@ -200,7 +192,7 @@ private:
 	int32 _fadeInCharactersPos = 0;
 
 	/** Current dialogue text pointer */
-	char *_currDialTextPtr = nullptr;
+	const char *_currDialTextPtr = nullptr;
 	/** Current dialogue text size */
 	int32 _currDialTextSize = 0;
 

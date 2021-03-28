@@ -32,6 +32,7 @@
 #include "twine/input.h"
 #include "twine/menu/interface.h"
 #include "twine/menu/menu.h"
+#include "twine/parser/text.h"
 #include "twine/renderer/renderer.h"
 #include "twine/renderer/screens.h"
 #include "twine/resources/hqr.h"
@@ -44,9 +45,6 @@ namespace TwinE {
 /** FLA movie extension */
 #define VOX_EXT ".vox"
 
-#define INDEXOFFSET 0
-#define DIALOGSOFFSET 1
-
 static const int32 PADDING = 8;
 
 Text::Text(TwinEEngine *engine) : _engine(engine) {
@@ -54,8 +52,6 @@ Text::Text(TwinEEngine *engine) : _engine(engine) {
 }
 
 Text::~Text() {
-	free(_dialTextPtr);
-	free(_dialOrderPtr);
 }
 
 void Text::initVoxBank(int32 bankIdx) {
@@ -95,16 +91,8 @@ bool Text::initVoxToPlay(int32 index) { // setVoxFileAtDigit
 		return false;
 	}
 
-	Common::MemoryReadStream stream((const byte *)_dialOrderPtr, _dialOrderSize);
-	// choose right text from order index
-	for (int32 i = 0; i < _numDialTextEntries; i++) {
-		const int32 orderIdx = stream.readSint16LE();
-		if (orderIdx == index) {
-			currDialTextEntry = i;
-			break;
-		}
-	}
-
+	const TextEntry *textEntry = _engine->_resources->getText(_currentBankIdx, index);
+	currDialTextEntry = textEntry ? textEntry->index : 0;
 	_engine->_sound->playVoxSample(currDialTextEntry);
 
 	return true;
@@ -145,24 +133,6 @@ void Text::initTextBank(int32 bankIdx) {
 	}
 
 	_currentBankIdx = bankIdx;
-
-	// get index according with language
-	const int32 size = _engine->isLBA1() ? 28 : 30;
-	// the text banks indices are split into index and dialogs - each entry thus consists of two entries in the hqr
-	// every 28 entries starts a new language
-	const int32 languageIndex = _engine->cfgfile.LanguageId * size + (int)bankIdx * 2;
-	_dialOrderSize = HQR::getAllocEntry((uint8 **)&_dialOrderPtr, Resources::HQR_TEXT_FILE, languageIndex + INDEXOFFSET);
-	if (_dialOrderSize == 0) {
-		warning("Failed to initialize text bank %i from file %s", languageIndex, Resources::HQR_TEXT_FILE);
-		return;
-	}
-
-	_numDialTextEntries = _dialOrderSize / 2;
-
-	if (HQR::getAllocEntry((uint8 **)&_dialTextPtr, Resources::HQR_TEXT_FILE, languageIndex + DIALOGSOFFSET) == 0) {
-		warning("Failed to initialize additional text bank %i from file %s", languageIndex + 1, Resources::HQR_TEXT_FILE);
-		return;
-	}
 	initVoxBank(bankIdx);
 }
 
@@ -694,35 +664,17 @@ void Text::setTextCrossColor(int32 stopColor, int32 startColor, int32 stepSize) 
 }
 
 bool Text::getText(int32 index) {
-	const int16 *localTextBuf = (const int16 *)_dialTextPtr;
-	const int16 *localOrderBuf = (const int16 *)_dialOrderPtr;
-
-	const int32 numEntries = _numDialTextEntries;
-	int32 currIdx = 0;
-	// choose right text from order index
-	do {
-		const int16 orderIdx = READ_LE_UINT16(localOrderBuf);
-		if (orderIdx == index) {
-			break;
-		}
-		currIdx++;
-		localOrderBuf++;
-	} while (currIdx < numEntries);
-
-	if (currIdx >= numEntries) {
+	const TextEntry *textEntry = _engine->_resources->getText(_currentBankIdx, index);
+	if (textEntry == nullptr) {
 		return false;
 	}
-
-	const int32 ptrCurrentEntry = READ_LE_INT16(&localTextBuf[currIdx]);
-	const int32 ptrNextEntry = READ_LE_INT16(&localTextBuf[currIdx + 1]);
-
-	_currDialTextPtr = _dialTextPtr + ptrCurrentEntry;
-	_currDialTextSize = ptrNextEntry - ptrCurrentEntry;
+	_currDialTextPtr = textEntry->string.c_str();
+	_currDialTextSize = textEntry->string.size();
 
 	// RECHECK: this was added for vox playback
-	currDialTextEntry = currIdx;
+	currDialTextEntry = textEntry->index;
 
-	debug(3, "text for bank %i with index %i (currIndex: %i): %s", _currentBankIdx, index, currIdx, _currDialTextPtr);
+	debug(3, "text for bank %i with index %i (currIndex: %i): %s", _currentBankIdx, textEntry->index, textEntry->textIndex, _currDialTextPtr);
 	return true;
 }
 

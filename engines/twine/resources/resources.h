@@ -27,6 +27,7 @@
 #include "common/scummsys.h"
 #include "twine/parser/holomap.h"
 #include "twine/parser/sprite.h"
+#include "twine/parser/text.h"
 #include "twine/resources/hqr.h"
 #include "twine/scene/gamestate.h"
 #include "twine/scene/scene.h"
@@ -153,6 +154,8 @@ private:
 
 	TrajectoryData _trajectories;
 
+	TextData _textData;
+
 public:
 	Resources(TwinEEngine *engine) : _engine(engine) {}
 	~Resources();
@@ -200,6 +203,8 @@ public:
 	void initResources();
 
 	const Trajectory *getTrajectory(int index) const;
+
+	const TextEntry *getText(int textBankId, int index) const;
 
 	// main palette
 	static constexpr const char *HQR_RESS_FILE = "ress.hqr";

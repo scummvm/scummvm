@@ -203,6 +203,18 @@ void Resources::initResources() {
 	}
 
 	loadFlaInfo();
+
+	const int32 textEntryCount = _engine->isLBA1() ? 28 : 30;
+	for (int32 i = 0; i < textEntryCount / 2; ++i) {
+		if (!_textData.loadFromHQR(Resources::HQR_TEXT_FILE, i, _engine->cfgfile.LanguageId, textEntryCount)) {
+			error("HQR ERROR: Parsing textbank %i failed", i);
+		}
+	}
+	debug("Loaded %i text banks", textEntryCount / 2);
+}
+
+const TextEntry *Resources::getText(int textBankId, int index) const {
+	return _textData.getText(textBankId, index);
 }
 
 const Trajectory *Resources::getTrajectory(int index) const {
