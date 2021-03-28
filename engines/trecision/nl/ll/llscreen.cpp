@@ -258,7 +258,7 @@ void OpenVideo() {
 	if (!g_vm->_flagMouseEnabled)
 		Mouse(MCMD_OFF);
 
-	wordset(g_vm->_video2, 0, 1280L * 480L);
+	memset(g_vm->_video2, 0, 1280L * 480L * 2);
 	g_vm->_graphicsMgr->showScreen(0, 0, 640, 480);
 
 	for (int i = 0; i < MAXOBJINROOM; ++i) {
@@ -489,7 +489,7 @@ void ReadLoc() {
 	Common::String fname = Common::String::format("%s.3d", g_vm->_room[g_vm->_curRoom]._baseName);
 	GameWordPointer += read3D(fname) / 2;
 
-	wordset(g_vm->_video2, 0, CurRoomMaxX * MAXY);
+	memset(g_vm->_video2, 0, CurRoomMaxX * MAXY * 2);
 	MCopy(g_vm->_video2 + TOP * CurRoomMaxX, ImagePointer, CurRoomMaxX * AREA);
 
 	g_vm->_curSortTableNum = 0;

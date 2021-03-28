@@ -325,17 +325,32 @@ void SDText::DText() {
 				while (CarCounter <= (CarWid - 1)) {
 					if ((a >= l[1]) && (a < l[3])) {
 						if ((CurColor != MASKCOL) && (g_vm->Font[carSco + DataSco])) {
-							uint16 FirstLim = inc + CarCounter;
-							uint16 EndLim = FirstLim + g_vm->Font[carSco + DataSco];
+							uint16 firstLim = inc + CarCounter;
+							uint16 lastLim = firstLim + g_vm->Font[carSco + DataSco];
+							uint16 *dst1 = g_vm->_video2 + (x + firstLim) + (y + a) * CurRoomMaxX;
+							uint16 *dst2 = g_vm->_video2 + (x + l[0]) + (y + a) * CurRoomMaxX;
+							uint16 *dst = nullptr;
+							uint16 size = 0;
+							
+							if (firstLim >= l[0] && lastLim < l[2]) {
+								dst = dst1;
+								size = lastLim - firstLim;
+							} else if (firstLim < l[0] && lastLim < l[2] && lastLim > l[0]) {
+								dst = dst2;
+								size = lastLim - l[0];
+							} else if (firstLim >= l[0] && lastLim >= l[2] && l[2] > firstLim) {
+								dst = dst1;
+								size = l[2] - firstLim;
+							} else if (firstLim < l[0] && lastLim >= l[2] && l[2] > firstLim) {
+								dst = dst2;
+								size = l[2] - l[0];
+							}
 
-							if ((FirstLim >= l[0]) && (EndLim < l[2]))
-								wordset(g_vm->_video2 + (x + FirstLim) + (y + a) * CurRoomMaxX, CurColor, EndLim - FirstLim);
-							else if ((FirstLim < l[0]) && (EndLim < l[2]) && (EndLim > l[0]))
-								wordset(g_vm->_video2 + (x + l[0]) + (y + a) * CurRoomMaxX, CurColor, EndLim - l[0]);
-							else if ((FirstLim >= l[0]) && (EndLim >= l[2]) && (l[2] > FirstLim))
-								wordset(g_vm->_video2 + (x + FirstLim) + (y + a) * CurRoomMaxX, CurColor, l[2] - FirstLim);
-							else if ((FirstLim < l[0]) && (EndLim >= l[2]) && (l[2] > FirstLim))
-								wordset(g_vm->_video2 + (x + l[0]) + (y + a) * CurRoomMaxX, CurColor, l[2] - l[0]);
+							if (dst && size > 0) {
+								uint16 *d = (uint16 *)dst;
+								for (uint32 i = 0; i < size; i++)
+									*d++ = CurColor;
+							}
 						}
 					}
 
@@ -385,7 +400,7 @@ bool DataSave() {
 	nextStep();
 
 	for (int a = 0; a < TOP; a++)
-		wordset(g_vm->_video2 + CurRoomMaxX * a + CurScrollPageDx, 0, SCREENLEN);
+		memset(g_vm->_video2 + CurRoomMaxX * a + CurScrollPageDx, 0, SCREENLEN * 2);
 
 	SDText SText;
 	SText.set(CurScrollPageDx, TOP - 20, SCREENLEN, CARHEI, 0, 0, SCREENLEN, CARHEI, 0x7FFF, MASKCOL, g_vm->_sysText[9]);
@@ -394,7 +409,7 @@ bool DataSave() {
 	g_vm->_graphicsMgr->showScreen(0, 0, MAXX, TOP);
 
 	for (int a = TOP + AREA; a < AREA + 2 * TOP; a++)
-		wordset(g_vm->_video2 + CurRoomMaxX * a + CurScrollPageDx, 0, SCREENLEN);
+		memset(g_vm->_video2 + CurRoomMaxX * a + CurScrollPageDx, 0, SCREENLEN * 2);
 	g_vm->_graphicsMgr->showScreen(0, TOP + AREA, MAXX, TOP);
 
 	g_vm->_gameQueue.initQueue();
@@ -461,7 +476,7 @@ insave:
 
 			if (OldPos != CurPos) {
 				for (int a = FIRSTLINE + ICONDY + 10; a < FIRSTLINE + ICONDY + 10 + CARHEI; a++)
-					wordset(g_vm->_video2 + CurRoomMaxX * a + CurScrollPageDx, 0, SCREENLEN);
+					memset(g_vm->_video2 + CurRoomMaxX * a + CurScrollPageDx, 0, SCREENLEN * 2);
 
 				posx    = ICONMARGSX + ((CurPos) * (ICONDX)) + ICONDX / 2;
 				LenText  = TextLength(savename[CurPos], 0);
@@ -478,7 +493,7 @@ insave:
 		} else {
 			if (OldPos != -1) {
 				for (int a = FIRSTLINE + ICONDY + 10; a < FIRSTLINE + ICONDY + 10 + CARHEI; a++)
-					wordset(g_vm->_video2 + CurRoomMaxX * a + CurScrollPageDx, 0, SCREENLEN);
+					memset(g_vm->_video2 + CurRoomMaxX * a + CurScrollPageDx, 0, SCREENLEN * 2);
 
 				g_vm->_graphicsMgr->showScreen(0, FIRSTLINE + ICONDY + 10, MAXX, CARHEI);
 			}
@@ -501,7 +516,7 @@ insave:
 			savename[CurPos][0] = '\0';
 
 			for (int a = FIRSTLINE + ICONDY + 10; a < FIRSTLINE + ICONDY + 10 + CARHEI; a++)
-				wordset(g_vm->_video2 + CurRoomMaxX * a + CurScrollPageDx, 0, SCREENLEN);
+				memset(g_vm->_video2 + CurRoomMaxX * a + CurScrollPageDx, 0, SCREENLEN * 2);
 
 			g_vm->_graphicsMgr->showScreen(0, FIRSTLINE + ICONDY + 10, MAXX, CARHEI);
 		}
@@ -518,7 +533,7 @@ insave:
 			if (ch == 0x1B) {
 				ch = 0;
 				for (int a = FIRSTLINE + ICONDY + 10; a < FIRSTLINE + ICONDY + 10 + CARHEI; a++)
-					wordset(g_vm->_video2 + CurRoomMaxX * a + CurScrollPageDx, 0, SCREENLEN);
+					memset(g_vm->_video2 + CurRoomMaxX * a + CurScrollPageDx, 0, SCREENLEN * 2);
 
 				g_vm->_graphicsMgr->showScreen(0, FIRSTLINE + ICONDY + 10, MAXX, CARHEI);
 
@@ -539,7 +554,7 @@ insave:
 				ch = 0;
 
 			for (int a = FIRSTLINE + ICONDY + 10; a < FIRSTLINE + ICONDY + 10 + CARHEI; a++)
-				wordset(g_vm->_video2 + CurRoomMaxX * a + CurScrollPageDx, 0, SCREENLEN);
+				memset(g_vm->_video2 + CurRoomMaxX * a + CurScrollPageDx, 0, SCREENLEN * 2);
 
 			int endStr = strlen(savename[CurPos]);
 			savename[CurPos][endStr] = '_';
@@ -564,7 +579,7 @@ insave:
 		}
 
 		for (int a = FIRSTLINE; a < MAXY; a++)
-			wordset(g_vm->_video2 + CurRoomMaxX * a + CurScrollPageDx, 0, SCREENLEN);
+			memset(g_vm->_video2 + CurRoomMaxX * a + CurScrollPageDx, 0, SCREENLEN * 2);
 
 		strcpy(tempname, "SaveGame._X_");
 		tempname[10] = 'A' + CurPos;
@@ -659,12 +674,12 @@ insave:
 	}
 
 	for (int a = FIRSTLINE; a < MAXY; a++)
-		wordset(g_vm->_video2 + CurRoomMaxX * a + CurScrollPageDx, 0, SCREENLEN);
+		memset(g_vm->_video2 + CurRoomMaxX * a + CurScrollPageDx, 0, SCREENLEN * 2);
 
 	g_vm->_graphicsMgr->showScreen(0, FIRSTLINE, MAXX, TOP);
 
 	for (int a = TOP - 20; a < TOP - 20 + CARHEI; a++)
-		wordset(g_vm->_video2 + CurRoomMaxX * a + CurScrollPageDx, 0, SCREENLEN);
+		memset(g_vm->_video2 + CurRoomMaxX * a + CurScrollPageDx, 0, SCREENLEN * 2);
 
 	g_vm->_graphicsMgr->showScreen(0, 0, MAXX, TOP);
 	g_vm->_curInventory = 0;
@@ -696,7 +711,7 @@ bool DataLoad() {
 	bool retval = true;
 
 	for (int a = 0; a < TOP; a++)
-		wordset(g_vm->_video2 + CurRoomMaxX * a + CurScrollPageDx, 0, SCREENLEN);
+		memset(g_vm->_video2 + CurRoomMaxX * a + CurScrollPageDx, 0, SCREENLEN * 2);
 
 	if (!g_vm->_flagMouseEnabled) {
 		g_vm->_flagMouseEnabled = true;
@@ -710,7 +725,7 @@ bool DataLoad() {
 	g_vm->_graphicsMgr->showScreen(0, 0, MAXX, TOP);
 
 	for (int a = TOP + AREA; a < AREA + 2 * TOP; a++)
-		wordset(g_vm->_video2 + CurRoomMaxX * a + CurScrollPageDx, 0, SCREENLEN);
+		memset(g_vm->_video2 + CurRoomMaxX * a + CurScrollPageDx, 0, SCREENLEN * 2);
 	g_vm->_graphicsMgr->showScreen(0, TOP + AREA, MAXX, TOP);
 
 	g_vm->_gameQueue.initQueue();
@@ -776,7 +791,7 @@ bool DataLoad() {
 
 			if (OldPos != CurPos) {
 				for (int a = FIRSTLINE + ICONDY + 10; a < FIRSTLINE + ICONDY + 10 + CARHEI; a++)
-					wordset(g_vm->_video2 + CurRoomMaxX * a + CurScrollPageDx, 0, SCREENLEN);
+					memset(g_vm->_video2 + CurRoomMaxX * a + CurScrollPageDx, 0, SCREENLEN * 2);
 
 				uint16 posX = ICONMARGSX + ((CurPos) * (ICONDX)) + ICONDX / 2;
 				uint16 lenText = TextLength(savename[CurPos], 0);
@@ -798,7 +813,7 @@ bool DataLoad() {
 		} else {
 			if (OldPos != -1) {
 				for (int a = FIRSTLINE + ICONDY + 10; a < FIRSTLINE + ICONDY + 10 + CARHEI; a++)
-					wordset(g_vm->_video2 + CurRoomMaxX * a + CurScrollPageDx, 0, SCREENLEN);
+					memset(g_vm->_video2 + CurRoomMaxX * a + CurScrollPageDx, 0, SCREENLEN * 2);
 
 				g_vm->_graphicsMgr->showScreen(0, FIRSTLINE + ICONDY + 10, MAXX, CARHEI);
 			}
@@ -816,7 +831,7 @@ bool DataLoad() {
 
 	if (!skipLoad) {
 		for (int a = FIRSTLINE; a < MAXY; a++)
-			wordset(g_vm->_video2 + CurRoomMaxX * a + CurScrollPageDx, 0, SCREENLEN);
+			memset(g_vm->_video2 + CurRoomMaxX * a + CurScrollPageDx, 0, SCREENLEN * 2);
 
 		strcpy(tempname, "SaveGame._X_");
 		tempname[10] = 'A' + CurPos;
@@ -934,12 +949,12 @@ bool DataLoad() {
 	g_vm->checkSystem();
 
 	for (int a = FIRSTLINE; a < MAXY; a++)
-		wordset(g_vm->_video2 + CurRoomMaxX * a + CurScrollPageDx, 0, SCREENLEN);
+		memset(g_vm->_video2 + CurRoomMaxX * a + CurScrollPageDx, 0, SCREENLEN * 2);
 
 	g_vm->_graphicsMgr->showScreen(0, FIRSTLINE, MAXX, TOP);
 
 	for (int a = TOP - 20; a < TOP - 20 + CARHEI; a++)
-		wordset(g_vm->_video2 + CurRoomMaxX * a + CurScrollPageDx, 0, SCREENLEN);
+		memset(g_vm->_video2 + CurRoomMaxX * a + CurScrollPageDx, 0, SCREENLEN * 2);
 
 	g_vm->_graphicsMgr->showScreen(0, 0, MAXX, TOP);
 
@@ -970,7 +985,7 @@ bool QuitGame() {
 		memcpy(ZBuffer + a * CurRoomMaxX, g_vm->_video2 + CurRoomMaxX * a + CurScrollPageDx, SCREENLEN * 2);
 
 	for (int a = 0; a < TOP; a++)
-		wordset(g_vm->_video2 + CurRoomMaxX * a + CurScrollPageDx, 0, SCREENLEN);
+		memset(g_vm->_video2 + CurRoomMaxX * a + CurScrollPageDx, 0, SCREENLEN * 2);
 
 	SDText SText;
 	SText.set(CurScrollPageDx, TOP - 20, SCREENLEN, CARHEI, 0, 0, SCREENLEN, CARHEI, 0x7FFF, MASKCOL, g_vm->_sysText[13]);
@@ -1008,7 +1023,7 @@ bool QuitGame() {
 --------------------------------------------------*/
 void DemoOver() {
 	for (int a = 0; a < TOP; a++)
-		wordset(g_vm->_video2 + CurRoomMaxX * a + CurScrollPageDx, 0, SCREENLEN);
+		memset(g_vm->_video2 + CurRoomMaxX * a + CurScrollPageDx, 0, SCREENLEN * 2);
 
 	SDText SText;
 	SText.set(CurScrollPageDx, TOP - 20, SCREENLEN, CARHEI, 0, 0, SCREENLEN, CARHEI, 0x7FFF, MASKCOL, g_vm->_sysText[17]);
@@ -1065,11 +1080,11 @@ void CheckFileInCD(Common::String name) {
 	else if (pfe->offset & 4)
 		ncd = 3;
 
-	wordset(g_vm->_video2, 0, MAXX * MAXY);
+	memset(g_vm->_video2, 0, MAXX * MAXY * 2);
 	VMouseOFF();
 
 	for (int a = 0; a < TOP; a++)
-		wordset(g_vm->_video2 + MAXX * a, 0, MAXX);
+		memset(g_vm->_video2 + MAXX * a, 0, MAXX * 2);
 
 	sprintf(str, "CD%c.bm", ncd + '0');
 	ff = FastFileOpen(str);
@@ -1099,7 +1114,7 @@ void CheckFileInCD(Common::String name) {
 	testCD.close();
 
 	for (int a = 0; a < TOP; a++)
-		wordset(g_vm->_video2 + MAXX * a, 0, MAXX);
+		memset(g_vm->_video2 + MAXX * a, 0, MAXX * 2);
 	for (int a = 0; a < TOP; a++)
 		g_vm->_graphicsMgr->vCopy(a * MAXX, g_vm->_video2 + a * MAXX, MAXX);
 	g_vm->_graphicsMgr->unlock();
