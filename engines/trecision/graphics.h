@@ -41,9 +41,7 @@ public:
 	GraphicsManager(TrecisionEngine *vm);
 	~GraphicsManager();
 	
-	bool _locked;
 	uint16 _pitch;
-
 	uint16 *_screenPtr;
 
 	bool initScreen();

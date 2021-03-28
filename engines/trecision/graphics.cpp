@@ -33,7 +33,6 @@ namespace Trecision {
 const Graphics::PixelFormat GraphicsManager::kImageFormat(2, 5, 5, 5, 0, 10, 5, 0, 0); // RGB555
 
 GraphicsManager::GraphicsManager(TrecisionEngine *vm) : _vm(vm) {
-	_locked = false;
 	_pitch = 0;
 	_screenPtr = nullptr;
 }
@@ -68,12 +67,10 @@ bool GraphicsManager::initScreen() {
 					lock
 --------------------------------------------------*/
 void GraphicsManager::lock() {
-	if (!_locked) {
+	if (!_screenPtr) {
 		Graphics::Surface *surface = g_system->lockScreen();
 		_screenPtr = (uint16 *)surface->getPixels();
 		_pitch = surface->pitch;
-
-		_locked = true;
 	}
 }
 
@@ -81,9 +78,8 @@ void GraphicsManager::lock() {
 					unlock
 --------------------------------------------------*/
 void GraphicsManager::unlock() {
-	if (_locked) {
+	if (_screenPtr) {
 		g_system->unlockScreen();
-		_locked = false;
 		_pitch = 0;
 		_screenPtr = nullptr;
 	}
