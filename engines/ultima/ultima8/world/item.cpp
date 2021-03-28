@@ -3613,7 +3613,6 @@ uint32 Item::I_shoot(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_UINT16(gravity); // either 2 (fish) or 1 (death disk, dart)
 	if (!item) return 0;
 
-	assert(GAME_IS_U8);
 	MissileTracker tracker(item, point.getX(), point.getY(), point.getZ(),
 	                       speed, gravity);
 	tracker.launchItem();

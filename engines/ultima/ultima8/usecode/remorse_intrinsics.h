@@ -181,7 +181,7 @@ Intrinsic RemorseIntrinsics[] = {
 	CameraProcess::I_getCameraY, // void Intrinsic087(void)
 	Item::I_setMapArray,
 	Item::I_getNpcNum, // based on same coff as 102 (-> variable name in TRIGGER::ordinal21)
-	0, // void Intrinsic08A(12 bytes)
+	Item::I_shoot, // void Intrinsic08A(12 bytes)
 	Item::I_enterFastArea, // void Intrinsic08B(4 bytes)
 	Item::I_setBroken, // void Intrinsic08C(4 bytes)
 	Item::I_hurl, // void Intrinsic08D(12 bytes)
