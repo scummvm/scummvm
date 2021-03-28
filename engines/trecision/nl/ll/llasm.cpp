@@ -24,11 +24,6 @@
 
 namespace Trecision {
 
-void wordcopy(void *dest, void *src, uint32 len) {
-	uint16 *d = (uint16 *)dest, *s = (uint16 *)src;
-	for (uint32 i = 0; i < len; i++)
-		*d++ = *s++;
-}
 void wordset(void *dest, uint16 value, uint32 len) {
 	uint16 *d = (uint16 *)dest;
 	for (uint32 i = 0; i < len; i++)
