@@ -63,5 +63,23 @@ void Palette::load(Common::ReadStream &rs) {
 	_transform = Transform_None;
 }
 
+void Palette::transformRGB(int &r_, int &g_, int &b_) const {
+	const int r = r_;
+	const int g = g_;
+	const int b = b_;
+
+	r_ = (r * _matrix[0] + g * _matrix[1] + b * _matrix[2]  + 255 * _matrix[3]) / 2048;
+	if (r_ < 0) r_ = 0;
+	if (r_ > 0xFF) r_ = 0xFF;
+
+	g_ = (r * _matrix[4] + g * _matrix[5] + b * _matrix[6]  + 255 * _matrix[7]) / 2048;
+	if (g_ < 0) g_ = 0;
+	if (g_ > 0xFF) g_ = 0xFF;
+
+	b_ = (r * _matrix[8] + g * _matrix[9] + b * _matrix[10] + 255 * _matrix[11]) / 2048;
+	if (b_ < 0) b_ = 0;
+	if (b_ > 0xFF) b_ = 0xFF;
+}
+
 } // End of namespace Ultima8
 } // End of namespace Ultima

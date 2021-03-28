@@ -58,6 +58,10 @@ struct Palette {
 	void load(Common::ReadStream &rs, Common::ReadStream &xformrs);
 	void load(Common::ReadStream &rs);
 
+	// Transform a single set of rgb values based on the current matrix.
+	// Not designed for speed - just useful for one-offs.
+	void transformRGB(int &r, int &g, int &b) const;
+
 	// 256 rgb entries
 	uint8 _palette[768];
 

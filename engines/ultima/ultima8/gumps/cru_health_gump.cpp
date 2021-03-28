@@ -23,13 +23,16 @@
 #include "ultima/ultima8/gumps/cru_health_gump.h"
 
 #include "ultima/ultima8/world/actors/main_actor.h"
+#include "ultima/ultima8/graphics/palette_manager.h"
 #include "ultima/ultima8/graphics/render_surface.h"
 #include "ultima/ultima8/world/get_object.h"
 
 namespace Ultima {
 namespace Ultima8 {
 
-static const uint32 HEALTH_BAR_COLOR = 0xFF003071; // RGB = (154, 4, 4)
+static const uint32 HEALTH_BAR_R = 0;
+static const uint32 HEALTH_BAR_G = 48;
+static const uint32 HEALTH_BAR_B = 113;
 
 DEFINE_RUNTIME_CLASSTYPE_CODE(CruHealthGump)
 
@@ -62,7 +65,17 @@ void CruHealthGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scale
 	int max_hp = a->getMaxHP();
 	// max width = 67
 	int width = max_hp ? ((current_hp * 67) / max_hp) : 67;
-	surf->Fill32(HEALTH_BAR_COLOR, 34, 7, width, 14);
+
+	const Palette *gamepal = PaletteManager::get_instance()->getPalette(PaletteManager::Pal_Game);
+	if (!gamepal)
+		return;
+
+	int r = HEALTH_BAR_R;
+	int g = HEALTH_BAR_G;
+	int b = HEALTH_BAR_B;
+	gamepal->transformRGB(r, g, b);
+	uint32 fillcolor = (r << 16) | (g << 8) | b;
+	surf->Fill32(fillcolor, 34, 7, width, 14);
 }
 
 void CruHealthGump::saveData(Common::WriteStream *ws) {
