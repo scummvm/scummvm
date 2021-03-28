@@ -71,7 +71,7 @@ static const ADGameDescription gameDescriptions[] = {
 		GUIO1(GUIO_NOMIDI)
 	},
 	{
-		"private-eye", // Demo from archive.org
+		"private-eye", // Demo from PCGamer Disc 2.6 JULY 1996
 		"Demo",
 		AD_ENTRY2s("pvteye.z", "8ef908e212bb9c1e10f5e3c81f56682c", 263893,
 		   "bklynlgo.bmp", "1dfb703349a46f8ec183de107992b7f5", 33118),
@@ -118,6 +118,16 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::FR_FRA,
 		Common::kPlatformWindows,
 		ADGF_UNSUPPORTED,
+		GUIO1(GUIO_NOMIDI)
+	},
+	{
+		"private-eye", // Demo from the EU release
+		"Demo",
+		AD_ENTRY2s("Private Eye Demo", "", 284129,
+		   "bklynlgo.bmp", "1dfb703349a46f8ec183de107992b7f5", 33118),
+		Common::EN_GRB,
+		Common::kPlatformWindows,
+		ADGF_DEMO | ADGF_UNSUPPORTED,
 		GUIO1(GUIO_NOMIDI)
 	},
 	/*
