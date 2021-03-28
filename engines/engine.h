@@ -322,7 +322,7 @@ public:
 	/**
 	 * Return the engine's debugger instance, if any.
 	 */
-	virtual GUI::Debugger *getDebugger() { return _debugger; }
+	virtual GUI::Debugger *getDebugger() final { return _debugger; }
 
 	/**
 	 * Set the engine's debugger.
