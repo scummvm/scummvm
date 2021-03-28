@@ -236,11 +236,11 @@ void CruAvatarMoverProcess::handleCombatMode() {
 		idleanim = Animation::stopRunningAndDrawSmallWeapon;
 	}
 
-	// not doing anything in particular? stand.  Always do the anim here as we
-	// may need to switch from small wpn to large wpn
-	Animation::Sequence nextanim = Animation::checkWeapon(idleanim, lastanim);
-	waitFor(avatar->doAnim(nextanim, direction));
-
+	// Not doing anything in particular? stand.
+	if (lastanim != idleanim) {
+		Animation::Sequence nextanim = Animation::checkWeapon(idleanim, lastanim);
+		waitFor(avatar->doAnim(nextanim, direction));
+	}
 }
 
 void CruAvatarMoverProcess::handleNormalMode() {
@@ -330,7 +330,7 @@ void CruAvatarMoverProcess::handleNormalMode() {
 		return;
 
 	// doing another animation?
-	if (Kernel::get_instance()->getNumProcesses(1, ActorAnimProcess::ACTOR_ANIM_PROC_TYPE))
+	if (avatar->isBusy())
 		return;
 
 	// not doing anything in particular? stand

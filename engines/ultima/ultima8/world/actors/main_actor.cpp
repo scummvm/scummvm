@@ -44,6 +44,7 @@
 #include "ultima/ultima8/world/fire_type.h"
 #include "ultima/ultima8/world/sprite_process.h"
 #include "ultima/ultima8/world/actors/avatar_gravity_process.h"
+#include "ultima/ultima8/world/actors/actor_anim_process.h"
 #include "ultima/ultima8/audio/music_process.h"
 #include "ultima/ultima8/world/actors/anim_action.h"
 
@@ -672,6 +673,16 @@ void MainActor::nextWeapon() {
 	Std::vector<Item *> weapons;
 	getItemsWithShapeFamily(weapons, ShapeInfo::SF_CRUWEAPON, true);
 	_activeWeapon = getIdOfNextItemInList(weapons, _activeWeapon);
+
+	// Update combat stance in case we switched big/small weapon.
+	if (_lastAnim == Animation::combatStand) {
+		if (isBusy()) {
+			// Corner case - need to stop active "stand"
+			// animation to correct it.
+			Kernel::get_instance()->killProcesses(_objId, ActorAnimProcess::ACTOR_ANIM_PROC_TYPE, true);
+		}
+		doAnim(Animation::combatStand, dir_current);
+	}
 }
 
 void MainActor::nextInvItem() {
