@@ -164,8 +164,9 @@ void OpenVideo() {
 	ff = FastFileOpen("icone.bm");
 	size = ceil(ff->size() / 2.0);
 	int iconSize = ICONDX * ICONDY;
-	g_vm->Icone = new uint16[iconSize + size];
-	for (int i = 0; i < iconSize; ++i)
+	int arraySize = size + iconSize * (INVICONNUM + 1);
+	g_vm->Icone = new uint16[arraySize];
+	for (int i = 0; i < arraySize; ++i)
 		g_vm->Icone[i] = 0;
 	for (int i = 0; i < size; ++i)
 		g_vm->Icone[iconSize + i] = ff->readUint16LE();
