@@ -677,6 +677,7 @@ void MainActor::nextWeapon() {
 void MainActor::nextInvItem() {
 	Std::vector<Item *> items;
 	getItemsWithShapeFamily(items, ShapeInfo::SF_CRUINVITEM, true);
+	getItemsWithShapeFamily(items, ShapeInfo::SF_CRUBOMB, true);
 	_activeInvItem = getIdOfNextItemInList(items, _activeInvItem);
 }
 
