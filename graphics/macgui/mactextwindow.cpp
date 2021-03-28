@@ -91,9 +91,13 @@ void MacTextWindow::resize(int w, int h, bool inner) {
 }
 
 void MacTextWindow::appendText(const Common::U32String &str, const MacFont *macFont, bool skipAdd) {
+	// the reason we put undrawInput here before appendText, is we don't want the appended text affect our input
+	// thus, we first delete all of out input, and we append new text, and we redraw the input
+	undrawInput();
 	_mactext->appendText(str, macFont->getId(), macFont->getSize(), macFont->getSlant(), skipAdd);
 
 	_contentIsDirty = true;
+	_inputIsDirty = true;	//force it to redraw input
 
 	if (_editable) {
 		_scrollPos = MAX(0, _mactext->getTextHeight() - getInnerDimensions().height());
@@ -470,18 +474,15 @@ void MacTextWindow::undrawInput() {
 }
 
 void MacTextWindow::drawInput() {
-	undrawInput();
+	int oldLen = _mactext->getLineCount() - _inputTextHeight;
 
-	Common::Array<Common::U32String> text;
-
-	// Now recalc new text height
-	_fontRef->wordWrapText(_inputText, _maxWidth, text);
-	_inputTextHeight = MAX((uint)1, text.size()); // We always have line to clean
-
-	// And add new input line to the text
+	// add new input line to the text
 	appendText(_inputText, _font, true);
 
-	_cursorX = _inputText.empty() ? 0 : _fontRef->getStringWidth(text[_inputTextHeight - 1]);
+	// Now recalc new text height
+	int newLen = _mactext->getLineCount();
+	_inputTextHeight = newLen - oldLen;
+	_cursorX = _inputText.empty() ? 0 : _mactext->getLastLineWidth();
 
 	updateCursorPos();
 

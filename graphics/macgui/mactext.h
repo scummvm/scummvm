@@ -181,6 +181,7 @@ public:
 	void removeLastLine();
 	int getLineCount() { return _textLines.size(); }
 	int getLineCharWidth(int line, bool enforce = false);
+	int getLastLineWidth();
 	int getTextHeight() { return _textMaxHeight; }
 	int getLineHeight(int line);
 
