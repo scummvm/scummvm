@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-03-26 14:34+0000\n"
+"POT-Creation-Date: 2021-03-28 16:58+0000\n"
 "PO-Revision-Date: 2021-03-25 12:28+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
@@ -607,8 +607,8 @@ msgstr "Закрыть"
 #: backends/platform/symbian/src/SymbianActions.cpp:40
 #: engines/dragons/metaengine.cpp:163 engines/glk/scott/scott.cpp:412
 #: engines/griffon/metaengine.cpp:96 engines/grim/grim.cpp:451
-#: engines/grim/grim.cpp:528 engines/twine/metaengine.cpp:440
-#: engines/twine/metaengine.cpp:507 engines/wintermute/keymapper_tables.h:1011
+#: engines/grim/grim.cpp:528 engines/twine/metaengine.cpp:452
+#: engines/twine/metaengine.cpp:519 engines/wintermute/keymapper_tables.h:1011
 #: engines/wintermute/keymapper_tables.h:1100
 #: engines/wintermute/keymapper_tables.h:1474
 #: engines/wintermute/keymapper_tables.h:1704
@@ -619,8 +619,8 @@ msgstr "Вверх"
 #: backends/platform/symbian/src/SymbianActions.cpp:41
 #: engines/dragons/metaengine.cpp:169 engines/glk/scott/scott.cpp:412
 #: engines/griffon/metaengine.cpp:102 engines/grim/grim.cpp:456
-#: engines/grim/grim.cpp:533 engines/twine/metaengine.cpp:447
-#: engines/twine/metaengine.cpp:515 engines/wintermute/keymapper_tables.h:1017
+#: engines/grim/grim.cpp:533 engines/twine/metaengine.cpp:459
+#: engines/twine/metaengine.cpp:527 engines/wintermute/keymapper_tables.h:1017
 #: engines/wintermute/keymapper_tables.h:1107
 #: engines/wintermute/keymapper_tables.h:1480
 #: engines/wintermute/keymapper_tables.h:1710
@@ -631,7 +631,7 @@ msgstr "Вниз"
 #: backends/platform/symbian/src/SymbianActions.cpp:42
 #: engines/dragons/metaengine.cpp:175 engines/griffon/metaengine.cpp:108
 #: engines/grim/grim.cpp:461 engines/grim/grim.cpp:538
-#: engines/twine/metaengine.cpp:462 engines/twine/metaengine.cpp:530
+#: engines/twine/metaengine.cpp:474 engines/twine/metaengine.cpp:542
 #: engines/wintermute/keymapper_tables.h:1023
 #: engines/wintermute/keymapper_tables.h:1462
 #: engines/wintermute/keymapper_tables.h:1570
@@ -643,7 +643,7 @@ msgstr "Влево"
 #: backends/platform/symbian/src/SymbianActions.cpp:43
 #: engines/dragons/metaengine.cpp:181 engines/griffon/metaengine.cpp:114
 #: engines/grim/grim.cpp:466 engines/grim/grim.cpp:543
-#: engines/twine/metaengine.cpp:454 engines/twine/metaengine.cpp:523
+#: engines/twine/metaengine.cpp:466 engines/twine/metaengine.cpp:535
 #: engines/wintermute/keymapper_tables.h:1029
 #: engines/wintermute/keymapper_tables.h:1468
 #: engines/wintermute/keymapper_tables.h:1578
@@ -2375,7 +2375,7 @@ msgstr "Правый щелчок"
 #: backends/platform/symbian/src/SymbianActions.cpp:52
 #: engines/hdb/metaengine.cpp:238 engines/mohawk/myst.cpp:593
 #: engines/mohawk/riven.cpp:863 engines/sky/metaengine.cpp:113
-#: engines/twine/metaengine.cpp:220 engines/wintermute/keymapper_tables.h:1255
+#: engines/twine/metaengine.cpp:232 engines/wintermute/keymapper_tables.h:1255
 msgid "Pause"
 msgstr "Пауза"
 
@@ -2689,7 +2689,7 @@ msgstr "Вы действительно хотите выйти?"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:244
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:73
-#: engines/twine/metaengine.cpp:339
+#: engines/twine/metaengine.cpp:351
 msgid "Center"
 msgstr "По центру"
 
@@ -4101,7 +4101,7 @@ msgstr "Изменить команду"
 #: engines/hdb/metaengine.cpp:231 engines/nancy/cheat.cpp:95
 #: engines/scumm/help.cpp:225 engines/scumm/help.cpp:234
 #: engines/scumm/help.cpp:241 engines/scumm/help.cpp:249
-#: engines/twine/metaengine.cpp:397 engines/zvision/metaengine.cpp:164
+#: engines/twine/metaengine.cpp:409 engines/zvision/metaengine.cpp:164
 msgid "Inventory"
 msgstr "Инвентарь"
 
@@ -4824,7 +4824,7 @@ msgid "Interact via Right Click"
 msgstr "Взаимодействовать через правый щелчок"
 
 #: engines/kyra/engine/eobcommon.cpp:369 engines/kyra/engine/lol.cpp:475
-#: engines/twine/metaengine.cpp:359
+#: engines/twine/metaengine.cpp:371
 msgid "Move Forward"
 msgstr "Идти вперёд"
 
@@ -4841,13 +4841,13 @@ msgid "Move Right"
 msgstr "Идти вправо"
 
 #: engines/kyra/engine/eobcommon.cpp:373 engines/kyra/engine/lol.cpp:479
-#: engines/pegasus/pegasus.cpp:2725 engines/twine/metaengine.cpp:380
+#: engines/pegasus/pegasus.cpp:2725 engines/twine/metaengine.cpp:392
 #: engines/zvision/metaengine.cpp:141
 msgid "Turn Left"
 msgstr "Поворот налево"
 
 #: engines/kyra/engine/eobcommon.cpp:374 engines/kyra/engine/lol.cpp:480
-#: engines/pegasus/pegasus.cpp:2732 engines/twine/metaengine.cpp:373
+#: engines/pegasus/pegasus.cpp:2732 engines/twine/metaengine.cpp:385
 #: engines/zvision/metaengine.cpp:147
 msgid "Turn Right"
 msgstr "Поворот направо"
@@ -5059,12 +5059,12 @@ msgid "This puzzle is not available in the trial version of the game"
 msgstr "Эта головоломка недоступна в пробной версии игры"
 
 #: engines/lure/detection.cpp:44 engines/mads/detection.cpp:106
-#: engines/sherlock/detection.cpp:111
+#: engines/sherlock/detection.cpp:111 engines/twine/metaengine.cpp:157
 msgid "TTS Narrator"
 msgstr "Комментатор TTS"
 
 #: engines/lure/detection.cpp:45 engines/mads/detection.cpp:107
-#: engines/sherlock/detection.cpp:112
+#: engines/sherlock/detection.cpp:112 engines/twine/metaengine.cpp:158
 msgid "Use TTS to read the descriptions (if TTS is available)"
 msgstr "Использовать TTS для чтения описаний вслух (если TTS доступна)"
 
@@ -7113,124 +7113,124 @@ msgstr "Включить отображение высокого разреше�
 msgid "Enable a higher resolution for the game"
 msgstr "Включить отображение высокого разрешения в игре"
 
-#: engines/twine/metaengine.cpp:225
+#: engines/twine/metaengine.cpp:237
 msgid "Debug Next Room"
 msgstr "Отладка: Следующая комната"
 
-#: engines/twine/metaengine.cpp:230
+#: engines/twine/metaengine.cpp:242
 msgid "Debug Previous Room"
 msgstr "Отладка: Предыдущая комната"
 
-#: engines/twine/metaengine.cpp:235
+#: engines/twine/metaengine.cpp:247
 msgid "Debug Apply Celling Grid"
 msgstr "Отладка: Наложить сетку на потолок"
 
-#: engines/twine/metaengine.cpp:240
+#: engines/twine/metaengine.cpp:252
 msgid "Debug Increase Celling Grid Index"
 msgstr "Отладка: Увеличить индекс сетки на потолке"
 
-#: engines/twine/metaengine.cpp:245
+#: engines/twine/metaengine.cpp:257
 msgid "Debug Decrease Celling Grid Index"
 msgstr "Отладка: Уменьшить индекс сетки на потолке"
 
-#: engines/twine/metaengine.cpp:250
+#: engines/twine/metaengine.cpp:262
 msgid "Debug Grid Camera Up"
 msgstr "Отладка: Камеру сетки вверх"
 
-#: engines/twine/metaengine.cpp:255
+#: engines/twine/metaengine.cpp:267
 msgid "Debug Grid Camera Down"
 msgstr "Отладка: Камеру сетки вниз"
 
-#: engines/twine/metaengine.cpp:260
+#: engines/twine/metaengine.cpp:272
 msgid "Debug Grid Camera Left"
 msgstr "Отладка: Камеру сетки влево"
 
-#: engines/twine/metaengine.cpp:266
+#: engines/twine/metaengine.cpp:278
 msgid "Debug Grid Camera Right"
 msgstr "Отладка: Камеру сетки вправо"
 
-#: engines/twine/metaengine.cpp:271
+#: engines/twine/metaengine.cpp:283
 msgid "Debug Menu"
 msgstr "Меню отладки"
 
-#: engines/twine/metaengine.cpp:276
+#: engines/twine/metaengine.cpp:288
 msgid "Debug Menu Execute"
 msgstr "Выполнить меню отладки"
 
-#: engines/twine/metaengine.cpp:281 engines/twine/metaengine.cpp:301
+#: engines/twine/metaengine.cpp:293 engines/twine/metaengine.cpp:313
 msgid "Normal Behaviour"
 msgstr "Нормальное поведение"
 
-#: engines/twine/metaengine.cpp:286 engines/twine/metaengine.cpp:306
+#: engines/twine/metaengine.cpp:298 engines/twine/metaengine.cpp:318
 msgid "Athletic Behaviour"
 msgstr "Атлетичное поведение"
 
-#: engines/twine/metaengine.cpp:291 engines/twine/metaengine.cpp:311
+#: engines/twine/metaengine.cpp:303 engines/twine/metaengine.cpp:323
 msgid "Aggressive Behaviour"
 msgstr "Агрессивное поведение"
 
-#: engines/twine/metaengine.cpp:296 engines/twine/metaengine.cpp:316
+#: engines/twine/metaengine.cpp:308 engines/twine/metaengine.cpp:328
 msgid "Discreet Behaviour"
 msgstr "Рассудительное поведение"
 
-#: engines/twine/metaengine.cpp:321
+#: engines/twine/metaengine.cpp:333
 msgid "Behaviour Action"
 msgstr "Поведенческое действие"
 
-#: engines/twine/metaengine.cpp:327
+#: engines/twine/metaengine.cpp:339
 msgid "Change Behaviour"
 msgstr "Изменить поведение"
 
-#: engines/twine/metaengine.cpp:334
+#: engines/twine/metaengine.cpp:346
 msgid "Options Menu"
 msgstr "Меню опций"
 
-#: engines/twine/metaengine.cpp:346
+#: engines/twine/metaengine.cpp:358
 msgid "Use Selected Object"
 msgstr "Использовать выбранный объект"
 
-#: engines/twine/metaengine.cpp:352
+#: engines/twine/metaengine.cpp:364
 msgid "Throw Magic Ball"
 msgstr "Метнуть магический шар"
 
-#: engines/twine/metaengine.cpp:366
+#: engines/twine/metaengine.cpp:378
 msgid "Move Backward"
 msgstr "Идти назад"
 
-#: engines/twine/metaengine.cpp:387
+#: engines/twine/metaengine.cpp:399
 msgid "Use Protopack"
 msgstr "Использовать протопак"
 
-#: engines/twine/metaengine.cpp:392
+#: engines/twine/metaengine.cpp:404
 msgid "Open Holomap"
 msgstr "Открыть голокарту"
 
-#: engines/twine/metaengine.cpp:405
+#: engines/twine/metaengine.cpp:417
 msgid "Special Action"
 msgstr "Специальное действие"
 
-#: engines/twine/metaengine.cpp:411 engines/wintermute/keymapper_tables.h:61
+#: engines/twine/metaengine.cpp:423 engines/wintermute/keymapper_tables.h:61
 msgid "Escape"
 msgstr "Клавиша Esc"
 
-#: engines/twine/metaengine.cpp:424
+#: engines/twine/metaengine.cpp:436
 msgid "Accept"
 msgstr "Принять"
 
-#: engines/twine/metaengine.cpp:432 engines/twine/metaengine.cpp:484
-#: engines/twine/metaengine.cpp:500
+#: engines/twine/metaengine.cpp:444 engines/twine/metaengine.cpp:496
+#: engines/twine/metaengine.cpp:512
 msgid "Abort"
 msgstr "Прервать"
 
-#: engines/twine/metaengine.cpp:470
+#: engines/twine/metaengine.cpp:482
 msgid "Next Page"
 msgstr "Следующая страница"
 
-#: engines/twine/metaengine.cpp:537
+#: engines/twine/metaengine.cpp:549
 msgid "Previous location"
 msgstr "Предыдущая локация"
 
-#: engines/twine/metaengine.cpp:542
+#: engines/twine/metaengine.cpp:554
 msgid "Next location"
 msgstr "Следующая локация"
 

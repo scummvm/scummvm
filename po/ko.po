@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-03-26 14:34+0000\n"
+"POT-Creation-Date: 2021-03-28 16:58+0000\n"
 "PO-Revision-Date: 2021-03-07 12:24+0000\n"
 "Last-Translator: Joohan Lee <losernator@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -603,8 +603,8 @@ msgstr "닫기"
 #: backends/platform/symbian/src/SymbianActions.cpp:40
 #: engines/dragons/metaengine.cpp:163 engines/glk/scott/scott.cpp:412
 #: engines/griffon/metaengine.cpp:96 engines/grim/grim.cpp:451
-#: engines/grim/grim.cpp:528 engines/twine/metaengine.cpp:440
-#: engines/twine/metaengine.cpp:507 engines/wintermute/keymapper_tables.h:1011
+#: engines/grim/grim.cpp:528 engines/twine/metaengine.cpp:452
+#: engines/twine/metaengine.cpp:519 engines/wintermute/keymapper_tables.h:1011
 #: engines/wintermute/keymapper_tables.h:1100
 #: engines/wintermute/keymapper_tables.h:1474
 #: engines/wintermute/keymapper_tables.h:1704
@@ -615,8 +615,8 @@ msgstr "위"
 #: backends/platform/symbian/src/SymbianActions.cpp:41
 #: engines/dragons/metaengine.cpp:169 engines/glk/scott/scott.cpp:412
 #: engines/griffon/metaengine.cpp:102 engines/grim/grim.cpp:456
-#: engines/grim/grim.cpp:533 engines/twine/metaengine.cpp:447
-#: engines/twine/metaengine.cpp:515 engines/wintermute/keymapper_tables.h:1017
+#: engines/grim/grim.cpp:533 engines/twine/metaengine.cpp:459
+#: engines/twine/metaengine.cpp:527 engines/wintermute/keymapper_tables.h:1017
 #: engines/wintermute/keymapper_tables.h:1107
 #: engines/wintermute/keymapper_tables.h:1480
 #: engines/wintermute/keymapper_tables.h:1710
@@ -627,7 +627,7 @@ msgstr "아래"
 #: backends/platform/symbian/src/SymbianActions.cpp:42
 #: engines/dragons/metaengine.cpp:175 engines/griffon/metaengine.cpp:108
 #: engines/grim/grim.cpp:461 engines/grim/grim.cpp:538
-#: engines/twine/metaengine.cpp:462 engines/twine/metaengine.cpp:530
+#: engines/twine/metaengine.cpp:474 engines/twine/metaengine.cpp:542
 #: engines/wintermute/keymapper_tables.h:1023
 #: engines/wintermute/keymapper_tables.h:1462
 #: engines/wintermute/keymapper_tables.h:1570
@@ -639,7 +639,7 @@ msgstr "왼쪽"
 #: backends/platform/symbian/src/SymbianActions.cpp:43
 #: engines/dragons/metaengine.cpp:181 engines/griffon/metaengine.cpp:114
 #: engines/grim/grim.cpp:466 engines/grim/grim.cpp:543
-#: engines/twine/metaengine.cpp:454 engines/twine/metaengine.cpp:523
+#: engines/twine/metaengine.cpp:466 engines/twine/metaengine.cpp:535
 #: engines/wintermute/keymapper_tables.h:1029
 #: engines/wintermute/keymapper_tables.h:1468
 #: engines/wintermute/keymapper_tables.h:1578
@@ -2345,7 +2345,7 @@ msgstr "오른쪽 클릭"
 #: backends/platform/symbian/src/SymbianActions.cpp:52
 #: engines/hdb/metaengine.cpp:238 engines/mohawk/myst.cpp:593
 #: engines/mohawk/riven.cpp:863 engines/sky/metaengine.cpp:113
-#: engines/twine/metaengine.cpp:220 engines/wintermute/keymapper_tables.h:1255
+#: engines/twine/metaengine.cpp:232 engines/wintermute/keymapper_tables.h:1255
 msgid "Pause"
 msgstr "일시정지"
 
@@ -2659,7 +2659,7 @@ msgstr "종료하시겠습니까?"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:244
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:73
-#: engines/twine/metaengine.cpp:339
+#: engines/twine/metaengine.cpp:351
 msgid "Center"
 msgstr "중앙"
 
@@ -4072,7 +4072,7 @@ msgstr "변경 명령"
 #: engines/hdb/metaengine.cpp:231 engines/nancy/cheat.cpp:95
 #: engines/scumm/help.cpp:225 engines/scumm/help.cpp:234
 #: engines/scumm/help.cpp:241 engines/scumm/help.cpp:249
-#: engines/twine/metaengine.cpp:397 engines/zvision/metaengine.cpp:164
+#: engines/twine/metaengine.cpp:409 engines/zvision/metaengine.cpp:164
 msgid "Inventory"
 msgstr "인벤토리"
 
@@ -4792,7 +4792,7 @@ msgid "Interact via Right Click"
 msgstr "오른쪽 클릭으로 상호 작용"
 
 #: engines/kyra/engine/eobcommon.cpp:369 engines/kyra/engine/lol.cpp:475
-#: engines/twine/metaengine.cpp:359
+#: engines/twine/metaengine.cpp:371
 msgid "Move Forward"
 msgstr "앞으로 이동"
 
@@ -4809,13 +4809,13 @@ msgid "Move Right"
 msgstr "오른쪽으로 이동"
 
 #: engines/kyra/engine/eobcommon.cpp:373 engines/kyra/engine/lol.cpp:479
-#: engines/pegasus/pegasus.cpp:2725 engines/twine/metaengine.cpp:380
+#: engines/pegasus/pegasus.cpp:2725 engines/twine/metaengine.cpp:392
 #: engines/zvision/metaengine.cpp:141
 msgid "Turn Left"
 msgstr "왼쪽으로 회전"
 
 #: engines/kyra/engine/eobcommon.cpp:374 engines/kyra/engine/lol.cpp:480
-#: engines/pegasus/pegasus.cpp:2732 engines/twine/metaengine.cpp:373
+#: engines/pegasus/pegasus.cpp:2732 engines/twine/metaengine.cpp:385
 #: engines/zvision/metaengine.cpp:147
 msgid "Turn Right"
 msgstr "오른쪽으로 회전"
@@ -5021,12 +5021,12 @@ msgid "This puzzle is not available in the trial version of the game"
 msgstr "게임 평가판에서는 현재 퍼즐을 이용할 수 없습니다"
 
 #: engines/lure/detection.cpp:44 engines/mads/detection.cpp:106
-#: engines/sherlock/detection.cpp:111
+#: engines/sherlock/detection.cpp:111 engines/twine/metaengine.cpp:157
 msgid "TTS Narrator"
 msgstr "TTS 나레이터"
 
 #: engines/lure/detection.cpp:45 engines/mads/detection.cpp:107
-#: engines/sherlock/detection.cpp:112
+#: engines/sherlock/detection.cpp:112 engines/twine/metaengine.cpp:158
 msgid "Use TTS to read the descriptions (if TTS is available)"
 msgstr "TTS를 사용하여 설명 읽기 (TTS를 사용할 수있는 경우)"
 
@@ -7038,128 +7038,128 @@ msgstr "고해상도 사용"
 msgid "Enable a higher resolution for the game"
 msgstr "게임의 전체 이름"
 
-#: engines/twine/metaengine.cpp:225
+#: engines/twine/metaengine.cpp:237
 msgid "Debug Next Room"
 msgstr ""
 
-#: engines/twine/metaengine.cpp:230
+#: engines/twine/metaengine.cpp:242
 msgid "Debug Previous Room"
 msgstr ""
 
-#: engines/twine/metaengine.cpp:235
+#: engines/twine/metaengine.cpp:247
 msgid "Debug Apply Celling Grid"
 msgstr ""
 
-#: engines/twine/metaengine.cpp:240
+#: engines/twine/metaengine.cpp:252
 msgid "Debug Increase Celling Grid Index"
 msgstr ""
 
-#: engines/twine/metaengine.cpp:245
+#: engines/twine/metaengine.cpp:257
 msgid "Debug Decrease Celling Grid Index"
 msgstr ""
 
-#: engines/twine/metaengine.cpp:250
+#: engines/twine/metaengine.cpp:262
 msgid "Debug Grid Camera Up"
 msgstr ""
 
-#: engines/twine/metaengine.cpp:255
+#: engines/twine/metaengine.cpp:267
 msgid "Debug Grid Camera Down"
 msgstr ""
 
-#: engines/twine/metaengine.cpp:260
+#: engines/twine/metaengine.cpp:272
 msgid "Debug Grid Camera Left"
 msgstr ""
 
-#: engines/twine/metaengine.cpp:266
+#: engines/twine/metaengine.cpp:278
 msgid "Debug Grid Camera Right"
 msgstr ""
 
-#: engines/twine/metaengine.cpp:271
+#: engines/twine/metaengine.cpp:283
 msgid "Debug Menu"
 msgstr ""
 
-#: engines/twine/metaengine.cpp:276
+#: engines/twine/metaengine.cpp:288
 msgid "Debug Menu Execute"
 msgstr ""
 
-#: engines/twine/metaengine.cpp:281 engines/twine/metaengine.cpp:301
+#: engines/twine/metaengine.cpp:293 engines/twine/metaengine.cpp:313
 msgid "Normal Behaviour"
 msgstr ""
 
-#: engines/twine/metaengine.cpp:286 engines/twine/metaengine.cpp:306
+#: engines/twine/metaengine.cpp:298 engines/twine/metaengine.cpp:318
 msgid "Athletic Behaviour"
 msgstr ""
 
-#: engines/twine/metaengine.cpp:291 engines/twine/metaengine.cpp:311
+#: engines/twine/metaengine.cpp:303 engines/twine/metaengine.cpp:323
 msgid "Aggressive Behaviour"
 msgstr ""
 
-#: engines/twine/metaengine.cpp:296 engines/twine/metaengine.cpp:316
+#: engines/twine/metaengine.cpp:308 engines/twine/metaengine.cpp:328
 msgid "Discreet Behaviour"
 msgstr ""
 
-#: engines/twine/metaengine.cpp:321
+#: engines/twine/metaengine.cpp:333
 msgid "Behaviour Action"
 msgstr ""
 
-#: engines/twine/metaengine.cpp:327
+#: engines/twine/metaengine.cpp:339
 msgid "Change Behaviour"
 msgstr ""
 
-#: engines/twine/metaengine.cpp:334
+#: engines/twine/metaengine.cpp:346
 #, fuzzy
 msgid "Options Menu"
 msgstr "옵션(~O~)"
 
-#: engines/twine/metaengine.cpp:346
+#: engines/twine/metaengine.cpp:358
 msgid "Use Selected Object"
 msgstr ""
 
-#: engines/twine/metaengine.cpp:352
+#: engines/twine/metaengine.cpp:364
 msgid "Throw Magic Ball"
 msgstr ""
 
-#: engines/twine/metaengine.cpp:366
+#: engines/twine/metaengine.cpp:378
 #, fuzzy
 msgid "Move Backward"
 msgstr "뒤로 이동"
 
-#: engines/twine/metaengine.cpp:387
+#: engines/twine/metaengine.cpp:399
 msgid "Use Protopack"
 msgstr ""
 
-#: engines/twine/metaengine.cpp:392
+#: engines/twine/metaengine.cpp:404
 msgid "Open Holomap"
 msgstr ""
 
-#: engines/twine/metaengine.cpp:405
+#: engines/twine/metaengine.cpp:417
 msgid "Special Action"
 msgstr ""
 
-#: engines/twine/metaengine.cpp:411 engines/wintermute/keymapper_tables.h:61
+#: engines/twine/metaengine.cpp:423 engines/wintermute/keymapper_tables.h:61
 msgid "Escape"
 msgstr ""
 
-#: engines/twine/metaengine.cpp:424
+#: engines/twine/metaengine.cpp:436
 msgid "Accept"
 msgstr ""
 
-#: engines/twine/metaengine.cpp:432 engines/twine/metaengine.cpp:484
-#: engines/twine/metaengine.cpp:500
+#: engines/twine/metaengine.cpp:444 engines/twine/metaengine.cpp:496
+#: engines/twine/metaengine.cpp:512
 msgid "Abort"
 msgstr ""
 
-#: engines/twine/metaengine.cpp:470
+#: engines/twine/metaengine.cpp:482
 #, fuzzy
 msgid "Next Page"
 msgstr "다음"
 
-#: engines/twine/metaengine.cpp:537
+#: engines/twine/metaengine.cpp:549
 #, fuzzy
 msgid "Previous location"
 msgstr "이전(~P~)"
 
-#: engines/twine/metaengine.cpp:542
+#: engines/twine/metaengine.cpp:554
 msgid "Next location"
 msgstr ""
 
