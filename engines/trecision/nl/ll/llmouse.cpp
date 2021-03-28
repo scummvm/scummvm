@@ -365,8 +365,8 @@ void IconSnapShot() {
 
 	for (int b = 0; b < ICONDY; b++) {
 		for (a = 0; a < (ICONDX - 1); a++)
-			Icone[(READICON + 13) * ICONDX * ICONDY + b * ICONDX + a] = g_vm->_graphicsMgr->restorePixelFormat(g_vm->_video2[CurRoomMaxX * b * 10 + a * (CurRoomMaxX / ICONDX)]);
-		Icone[(READICON + 13)*ICONDX * ICONDY + b * ICONDX + a] = blackPixel;
+			g_vm->Icone[(READICON + 13) * ICONDX * ICONDY + b * ICONDX + a] = g_vm->_graphicsMgr->restorePixelFormat(g_vm->_video2[CurRoomMaxX * b * 10 + a * (CurRoomMaxX / ICONDX)]);
+		g_vm->Icone[(READICON + 13)*ICONDX * ICONDY + b * ICONDX + a] = blackPixel;
 	}
 }
 
@@ -429,9 +429,9 @@ insave:
 		// Check the existence of savegames
 		if ((fh = fopen(tempname, "rb")) && (fgetc(fh) == NlVer)) {
 			fread(&savename[a], 1, 40, fh);
-			fread(Icone + (READICON + 1 + a)*ICONDX * ICONDY, 2, ICONDX * ICONDY, fh);
+			fread(g_vm->Icone + (READICON + 1 + a)*ICONDX * ICONDY, 2, ICONDX * ICONDY, fh);
 			fclose(fh);
-			g_vm->_graphicsMgr->updatePixelFormat(Icone + (READICON + 1 + a) * ICONDX * ICONDY, ICONDX * ICONDY);
+			g_vm->_graphicsMgr->updatePixelFormat(g_vm->Icone + (READICON + 1 + a) * ICONDX * ICONDY, ICONDX * ICONDY);
 
 			g_vm->_inventory[a] = LASTICON + a;
 		} else {
@@ -576,7 +576,7 @@ insave:
 		fputc(NlVer, fh);
 		fwrite(&savename[CurPos], 1, 40, fh);
 
-		fwrite(Icone + (READICON + 13)*ICONDX * ICONDY, 2, ICONDX * ICONDY, fh);
+		fwrite(g_vm->Icone + (READICON + 13)*ICONDX * ICONDY, 2, ICONDX * ICONDY, fh);
 
 		fwrite(&g_vm->_curRoom, sizeof(uint16), 1, fh);
 		fwrite(&OldInvLen,           sizeof(uint8), 1, fh);
@@ -743,9 +743,9 @@ bool DataLoad() {
 		// Check if savegames exist
 		if ((fh = fopen(tempname, "rb")) && (fgetc(fh) == NlVer)) {
 			fread(&savename[a], 1, 40, fh);
-			fread(Icone + (READICON + 1 + a)*ICONDX * ICONDY, 2, ICONDX * ICONDY, fh);
+			fread(g_vm->Icone + (READICON + 1 + a)*ICONDX * ICONDY, 2, ICONDX * ICONDY, fh);
 			fclose(fh);
-			g_vm->_graphicsMgr->updatePixelFormat(Icone + (READICON + 1 + a) * ICONDX * ICONDY, ICONDX * ICONDY);
+			g_vm->_graphicsMgr->updatePixelFormat(g_vm->Icone + (READICON + 1 + a) * ICONDX * ICONDY, ICONDX * ICONDY);
 
 			g_vm->_inventory[a] = LASTICON + a;
 		} else {
@@ -830,8 +830,8 @@ bool DataLoad() {
 
 		fgetc(fh);
 		fread(&savename[0], 1, 40, fh);
-		fread(Icone + (READICON + 1)*ICONDX * ICONDY, 2, ICONDX * ICONDY, fh);
-		g_vm->_graphicsMgr->updatePixelFormat(Icone + (READICON + 1) * ICONDX * ICONDY, ICONDX * ICONDY);
+		fread(g_vm->Icone + (READICON + 1) * ICONDX * ICONDY, 2, ICONDX * ICONDY, fh);
+		g_vm->_graphicsMgr->updatePixelFormat(g_vm->Icone + (READICON + 1) * ICONDX * ICONDY, ICONDX * ICONDY);
 
 		fread(&g_vm->_curRoom, sizeof(uint16), 1, fh);
 		fread(&OldInvLen,           sizeof(uint8), 1, fh);
