@@ -136,7 +136,7 @@ public:
 	}
 
 	inline uint8 hasGameFlag(uint8 index) const {
-		debug(3, "Query gameStateFlags[%u]=%u", index, _gameStateFlags[index]);
+		debug(6, "Query gameStateFlags[%u]=%u", index, _gameStateFlags[index]);
 		return _gameStateFlags[index];
 	}
 
