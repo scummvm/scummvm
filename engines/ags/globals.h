@@ -1196,7 +1196,7 @@ public:
 	 * @{
 	 */
 
-	int _pluginSimulatedClick = 0;
+	int _pluginSimulatedClick = -1;
 	int _mouse_z_was = 0;
 
 	/**@}*/
