@@ -1368,7 +1368,7 @@ static int32 lSAY_MESSAGE(TwinEEngine *engine, LifeScriptContext &ctx) {
 	engine->_redraw->addOverlay(OverlayType::koText, textEntry, 0, 0, ctx.actorIdx, OverlayPosType::koFollowActor, 2);
 
 	ScopedEngineFreeze scoped(engine);
-	engine->_text->initVoxToPlay(textEntry);
+	engine->_text->initVoxToPlayTextId(textEntry);
 
 	return 0;
 }
@@ -1384,13 +1384,13 @@ static int32 lSAY_MESSAGE_OBJ(TwinEEngine *engine, LifeScriptContext &ctx) {
 	engine->_redraw->addOverlay(OverlayType::koText, textEntry, 0, 0, otherActorIdx, OverlayPosType::koFollowActor, 2);
 
 	ScopedEngineFreeze scoped(engine);
-	engine->_text->initVoxToPlay(textEntry);
+	engine->_text->initVoxToPlayTextId(textEntry);
 
 	return 0;
 }
 
 /**
- * Set Twinsen life point as full.
+ * Set Twinsen life point as full
  * @note Opcode @c 0x4F
  */
 static int32 lFULL_POINT(TwinEEngine *engine, LifeScriptContext &ctx) {

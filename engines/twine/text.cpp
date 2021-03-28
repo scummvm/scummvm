@@ -27,6 +27,7 @@
 #include "common/scummsys.h"
 #include "common/str.h"
 #include "common/system.h"
+#include "common/text-to-speech.h"
 #include "common/util.h"
 #include "twine/audio/sound.h"
 #include "twine/input.h"
@@ -82,45 +83,68 @@ void Text::initVoxBank(int32 bankIdx) {
 	// TODO check the rest to reverse
 }
 
-bool Text::initVoxToPlay(int32 index) { // setVoxFileAtDigit
-	currDialTextEntry = 0;
+bool Text::initVoxToPlayTextId(int textId) {
+	const TextEntry *text = _engine->_resources->getText(_currentBankIdx, textId);
+	return initVoxToPlay(text);
+}
+
+bool Text::initVoxToPlay(const TextEntry *text) {
+	currDialTextEntry = text;
 	voxHiddenIndex = 0;
 	hasHiddenVox = false;
 
-	if (!_engine->cfgfile.Voice) {
+	if (text == nullptr) {
 		return false;
 	}
 
-	const TextEntry *textEntry = _engine->_resources->getText(_currentBankIdx, index);
-	currDialTextEntry = textEntry ? textEntry->index : 0;
+	if (!_engine->cfgfile.Voice) {
+		debug(3, "Voices are disabled");
+		return false;
+	}
+
 	return _engine->_sound->playVoxSample(currDialTextEntry);
 }
 
-bool Text::playVox(int32 index) {
+bool Text::playVox(const TextEntry *text) {
 	if (!_engine->cfgfile.Voice) {
 		return false;
 	}
-	if (hasHiddenVox && !_engine->_sound->isSamplePlaying(index)) {
-		_engine->_sound->playVoxSample(index);
+	if (text == nullptr) {
+		return false;
+	}
+	if (hasHiddenVox && !_engine->_sound->isSamplePlaying(text->index)) {
+		_engine->_sound->playVoxSample(text);
 		return true;
 	}
 
 	return false;
 }
 
-bool Text::playVoxSimple(int32 index) {
-	if (_engine->_sound->isSamplePlaying(index)) {
+bool Text::playVoxSimple(const TextEntry *text) {
+	if (text == nullptr) {
+		return false;
+	}
+	if (_engine->_sound->isSamplePlaying(text->index)) {
 		return true;
 	}
-	return playVox(index);
+	return playVox(text);
 }
 
-bool Text::stopVox(int32 index) {
-	if (!_engine->_sound->isSamplePlaying(index)) {
+bool Text::stopVox(const TextEntry *text) {
+#ifdef USE_TTS
+	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+	if (ttsMan != nullptr) {
+		ttsMan->stop();
+	}
+#endif
+	if (text == nullptr) {
+		return false;
+	}
+	if (!_engine->_sound->isSamplePlaying(text->index)) {
 		return false;
 	}
 	hasHiddenVox = false;
-	_engine->_sound->stopSample(index);
+	_engine->_sound->stopSample(text->index);
 	return true;
 }
 
@@ -556,10 +580,12 @@ ProgressiveTextState Text::updateProgressiveText() {
 }
 
 bool Text::displayText(int32 index, bool showText, bool playVox, bool loop) {
-	debug(3, "displayText(%i, %s)", index, showText ? "true" : "false");
+	debug(3, "displayText(index = %i, showText = %s, playVox = %s)",
+		index, showText ? "true" : "false", playVox ? "true" : "false");
 	if (playVox) {
+		const TextEntry *textEntry = _engine->_resources->getText(_currentBankIdx, index);
 		// get right VOX entry index
-		initVoxToPlay(index);
+		initVoxToPlay(textEntry);
 	}
 
 	bool aborted = false;
@@ -671,7 +697,7 @@ bool Text::getText(int32 index) {
 	_currDialTextSize = textEntry->string.size();
 
 	// RECHECK: this was added for vox playback
-	currDialTextEntry = textEntry->index;
+	currDialTextEntry = textEntry;
 
 	debug(3, "text for bank %i with index %i (currIndex: %i): %s", _currentBankIdx, textEntry->index, textEntry->textIndex, _currDialTextPtr);
 	return true;

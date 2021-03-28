@@ -397,8 +397,8 @@ void TwinEEngine::initConfigurations() {
 
 	const char *lng = Common::getLanguageDescription(_gameLang);
 	cfgfile.LanguageId = getLanguageTypeIndex(lng);
-	cfgfile.Voice = ConfGetIntOrDefault("voice", 1) == 1;
-	cfgfile.FlagDisplayText = ConfGetIntOrDefault("displaytext", 1) == 1;
+	cfgfile.Voice = ConfGetBoolOrDefault("voice", true);
+	cfgfile.FlagDisplayText = ConfGetBoolOrDefault("displaytext", true);
 	const Common::String midiType = ConfGetOrDefault("miditype", "auto");
 	if (midiType == "None") {
 		cfgfile.MidiType = MIDIFILE_NONE;

@@ -29,6 +29,8 @@
 
 namespace TwinE {
 
+class TextEntry;
+
 // lba
 namespace TextBankId {
 enum _TextBankId {
@@ -241,7 +243,7 @@ public:
 	int32 voxHiddenIndex = 0;
 	// ---
 
-	int32 currDialTextEntry = 0; // ordered entry
+	const TextEntry *currDialTextEntry = nullptr; // ordered entry
 	Common::String currentVoxBankFile;
 
 	bool showDialogueBubble = true;
@@ -331,10 +333,11 @@ public:
 	void drawAskQuestion(int32 index);
 	void drawHolomapLocation(int32 index);
 
-	bool playVox(int32 index);
-	bool playVoxSimple(int32 index);
-	bool stopVox(int32 index);
-	bool initVoxToPlay(int32 index);
+	bool playVox(const TextEntry *text);
+	bool playVoxSimple(const TextEntry *text);
+	bool stopVox(const TextEntry *text);
+	bool initVoxToPlay(const TextEntry *text);
+	bool initVoxToPlayTextId(int textId);
 };
 
 } // namespace TwinE

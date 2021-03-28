@@ -28,6 +28,7 @@
 #include "common/text-to-speech.h"
 #include "common/types.h"
 #include "common/util.h"
+#include "twine/parser/text.h"
 #include "twine/scene/collision.h"
 #include "twine/flamovies.h"
 #include "twine/scene/grid.h"
@@ -109,34 +110,32 @@ void Sound::playSample(int32 index, int32 repeat, int32 x, int32 y, int32 z, int
 	playSample(channelIdx, index, sampPtr, sampSize, repeat, Resources::HQR_SAMPLES_FILE, Audio::Mixer::kSFXSoundType, DisposeAfterUse::NO);
 }
 
-bool Sound::playVoxSample(int32 index) {
-	if (!_engine->cfgfile.Sound) {
+bool Sound::playVoxSample(const TextEntry *text) {
+	if (!_engine->cfgfile.Sound || text == nullptr) {
 		return false;
 	}
 
 	uint8 *sampPtr = nullptr;
-	int32 sampSize = HQR::getAllocVoxEntry(&sampPtr, _engine->_text->currentVoxBankFile.c_str(), index, _engine->_text->voxHiddenIndex);
+	int32 sampSize = HQR::getAllocVoxEntry(&sampPtr, _engine->_text->currentVoxBankFile.c_str(), text->index, _engine->_text->voxHiddenIndex);
 	if (sampSize == 0) {
 #ifdef USE_TTS
-		if (ConfMan.getBool("tts_narrator")) {
+		if (ConfMan.hasKey("tts_narrator") && ConfMan.getBool("tts_narrator")) {
 			Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
 			if (ttsMan != nullptr) {
 				ttsMan->stop();
-				const TextEntry *text = _engine->_resources->getText(_engine->_text->textBank(), index);
-				if (text) {
-					ttsMan->say(text->string);
-					return true;
-				}
+				return ttsMan->say(text->string);
 			}
+		} else {
+			debug(4, "TTS disabled");
 		}
 #endif
-		warning("Failed to get vox sample for index: %i", index);
+		warning("Failed to get vox sample for index: %i", text->index);
 		return false;
 	}
 
 	int channelIdx = getFreeSampleChannelIndex();
 	if (channelIdx == -1) {
-		warning("Failed to play vox sample for index: %i - no free channel", index);
+		warning("Failed to play vox sample for index: %i - no free channel", text->index);
 		return false;
 	}
 
@@ -147,7 +146,7 @@ bool Sound::playVoxSample(int32 index) {
 		*sampPtr = 'C';
 	}
 
-	return playSample(channelIdx, index, sampPtr, sampSize, 1, _engine->_text->currentVoxBankFile.c_str(), Audio::Mixer::kSpeechSoundType);
+	return playSample(channelIdx, text->index, sampPtr, sampSize, 1, _engine->_text->currentVoxBankFile.c_str(), Audio::Mixer::kSpeechSoundType);
 }
 
 bool Sound::playSample(int channelIdx, int index, uint8 *sampPtr, int32 sampSize, int32 loop, const char *name, Audio::Mixer::SoundType soundType, DisposeAfterUse::Flag disposeFlag) {

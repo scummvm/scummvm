@@ -356,7 +356,7 @@ void GameState::processFoundItem(int32 item) {
 
 	ProgressiveTextState textState = ProgressiveTextState::ContinueRunning;
 
-	_engine->_text->initVoxToPlay(item);
+	_engine->_text->initVoxToPlayTextId(100 + item);
 
 	const int32 bodyAnimIdx = _engine->_animations->getBodyAnimIndex(AnimationTypes::kFoundItem);
 	const AnimData &currentAnimData = _engine->_resources->animData[bodyAnimIdx];
@@ -465,7 +465,7 @@ void GameState::processGameChoices(int32 choiceIdx) {
 	choiceAnswer = gameChoices[activeButton];
 
 	// get right VOX entry index
-	if (_engine->_text->initVoxToPlay(choiceAnswer)) {
+	if (_engine->_text->initVoxToPlayTextId(choiceAnswer)) {
 		while (_engine->_text->playVoxSimple(_engine->_text->currDialTextEntry)) {
 			FrameMarker frame;
 			ScopedFPS scopedFps;

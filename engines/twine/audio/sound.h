@@ -30,6 +30,8 @@
 
 namespace TwinE {
 
+class TextEntry;
+
 #define NUM_CHANNELS 32
 
 namespace Samples {
@@ -119,7 +121,7 @@ public:
 	int32 isSamplePlaying(int32 index);
 
 	/** Play VOX sample */
-	bool playVoxSample(int32 index);
+	bool playVoxSample(const TextEntry *text);
 };
 
 } // namespace TwinE
