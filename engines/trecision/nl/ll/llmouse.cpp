@@ -58,9 +58,7 @@ uint16 vr(int16 x, int16 y) {
 void VMouseOFF() {
 	int16 comx = g_vm->_oldMouseX;
 
-	bool vl = g_vm->_graphicsMgr->_locked;
-	if (!vl)
-		g_vm->_graphicsMgr->lock();
+	g_vm->_graphicsMgr->lock();
 
 	for (int16 i = (comx - 10); i <= (comx + 10); i++)
 		g_vm->_graphicsMgr->VPix(i, g_vm->_oldMouseY, vr(i, g_vm->_oldMouseY));
@@ -68,8 +66,7 @@ void VMouseOFF() {
 	for (int16 i = (g_vm->_oldMouseY - 10); i <= (g_vm->_oldMouseY + 10); i++)
 		g_vm->_graphicsMgr->VPix(comx, i, vr(comx, i));
 
-	if (!vl)
-		g_vm->_graphicsMgr->unlock();
+	g_vm->_graphicsMgr->unlock();
 }
 
 /*-----------------10/12/95 15.29-------------------
@@ -83,9 +80,7 @@ void VMouseON() {
 	int16 cmx = mx;
 	uint16 mc = g_vm->_graphicsMgr->palTo16bit(255, 255, 255);
 
-	bool vl = g_vm->_graphicsMgr->_locked;
-	if (!vl)
-		g_vm->_graphicsMgr->lock();
+	g_vm->_graphicsMgr->lock();
 
 	for (int16 i = (comx - 10); i <= (comx + 10); i++) {
 		if ((!(((i >= (cmx - 10)) && (i <= (cmx + 10))) && (g_vm->_oldMouseY == my))))
@@ -122,8 +117,7 @@ void VMouseON() {
 	g_vm->_oldMouseX = mx;
 	g_vm->_oldMouseY = my;
 
-	if (!vl)
-		g_vm->_graphicsMgr->unlock();
+	g_vm->_graphicsMgr->unlock();
 }
 
 /*-----------------05/03/98 11.21------------------
