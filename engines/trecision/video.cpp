@@ -101,7 +101,6 @@ AnimManager::AnimManager(TrecisionEngine *vm) : _vm(vm) {
 	_animMaxX = _animMinX = 0;
 	_animMaxY = _animMinY = 0;
 
-	_curSmkAction = 0;
 	_curSmackBuffer = 0;
 
 	_fullMotionStart = _fullMotionEnd = 0;
@@ -197,8 +196,6 @@ void AnimManager::smkSoundOnOff(int pos, bool on) {
 void AnimManager::startSmkAnim(uint16 num) {
 	int pos;
 
-	_curSmkAction = SMACKOPEN;
-
 	// choose the buffer to use
 	if (_animTab[num]._flag & SMKANIM_BKG)
 		pos = 0;
@@ -216,9 +213,7 @@ void AnimManager::startSmkAnim(uint16 num) {
 	_curSmackBuffer = pos;
 
 	if (_playingAnims[pos] != 0) {
-		_curSmkAction = SMACKNULL;
 		stopSmkAnim(_playingAnims[pos]);
-		_curSmkAction = SMACKOPEN;
 	}
 
 	_playingAnims[pos] = num;
@@ -266,8 +261,6 @@ void AnimManager::startSmkAnim(uint16 num) {
 		openSmk(AnimFileOpen(_animTab[num]._name));
 		_vm->_nextRefresh += (ReadTime() - st); // fixup opening time
 	}
-
-	_curSmkAction = SMACKNULL;
 }
 
 /*------------------------------------------------
@@ -276,8 +269,6 @@ void AnimManager::startSmkAnim(uint16 num) {
 void AnimManager::stopSmkAnim(uint16 num) {
 	if (num == 0)
 		return;
-
-	_curSmkAction = SMACKCLOSE;
 
 	int pos = 0;
 
@@ -299,8 +290,6 @@ void AnimManager::stopSmkAnim(uint16 num) {
 	_curSmackBuffer = pos;
 	closeSmk();
 
-	_curSmkAction = SMACKNULL;
-
 	_vm->_lightIcon = 0xFF;
 }
 
@@ -321,11 +310,9 @@ void AnimManager::startFullMotion(const char *name) {
 	// Stops all the other animations
 	for (int pos = 0; pos < MAXSMACK; pos++) {
 		if (_playingAnims[pos] != 0) {
-			_curSmkAction = SMACKNULL;
 			stopSmkAnim(_playingAnims[pos]);
 		}
 	}
-	_curSmkAction = SMACKOPEN;
 	_curSmackBuffer = 1;
 
 	_playingAnims[_curSmackBuffer] = FULLMOTIONANIM;
@@ -349,15 +336,12 @@ void AnimManager::startFullMotion(const char *name) {
 	g_vm->_flagMouseEnabled = false;
 
 	openSmk(FmvFileOpen(name));
-
-	_curSmkAction = SMACKNULL;
 }
 
 /*------------------------------------------------
 				stopFullMotion
 --------------------------------------------------*/
 void AnimManager::stopFullMotion() {
-	_curSmkAction = SMACKCLOSE;
 	_curSmackBuffer = 1;
 
 	if (_playingAnims[_curSmackBuffer] == 0)
@@ -367,8 +351,6 @@ void AnimManager::stopFullMotion() {
 	_curAnimFrame[_curSmackBuffer] = 0;
 
 	closeSmk();
-
-	_curSmkAction = SMACKNULL;
 
 	FlagDialogActive = false;
 	FlagDialogMenuActive = false;
