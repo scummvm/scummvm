@@ -195,8 +195,8 @@ void Window::inkBlitShape(DirectorPlotData *pd, Common::Rect &srcRect) {
 		break;
 	}
 
-	Common::Rect fillRect((int)srcRect.width(), (int)srcRect.height());
-	fillRect.moveTo(srcRect.left, srcRect.top);
+	Common::Rect fillAreaRect((int)srcRect.width(), (int)srcRect.height());
+	fillAreaRect.moveTo(srcRect.left, srcRect.top);
 	Graphics::MacPlotData plotFill(pd->dst, nullptr, &g_director->getPatterns(), pd->ms->pattern, srcRect.left, srcRect.top, 1, pd->ms->backColor);
 
 	Common::Rect strokeRect(MAX((int)srcRect.width() - pd->ms->lineSize, 0), MAX((int)srcRect.height() - pd->ms->lineSize, 0));
@@ -206,7 +206,7 @@ void Window::inkBlitShape(DirectorPlotData *pd, Common::Rect &srcRect) {
 	switch (pd->ms->spriteType) {
 	case kRectangleSprite:
 		pd->ms->pd = &plotFill;
-		Graphics::drawFilledRect(fillRect, pd->ms->foreColor, g_director->getInkDrawPixel(), pd);
+		Graphics::drawFilledRect(fillAreaRect, pd->ms->foreColor, g_director->getInkDrawPixel(), pd);
 		// fall through
 	case kOutlinedRectangleSprite:
 		pd->ms->pd = &plotStroke;
@@ -214,7 +214,7 @@ void Window::inkBlitShape(DirectorPlotData *pd, Common::Rect &srcRect) {
 		break;
 	case kRoundedRectangleSprite:
 		pd->ms->pd = &plotFill;
-		Graphics::drawRoundRect(fillRect, 12, pd->ms->foreColor, true, g_director->getInkDrawPixel(), pd);
+		Graphics::drawRoundRect(fillAreaRect, 12, pd->ms->foreColor, true, g_director->getInkDrawPixel(), pd);
 		// fall through
 	case kOutlinedRoundedRectangleSprite:
 		pd->ms->pd = &plotStroke;
@@ -222,7 +222,7 @@ void Window::inkBlitShape(DirectorPlotData *pd, Common::Rect &srcRect) {
 		break;
 	case kOvalSprite:
 		pd->ms->pd = &plotFill;
-		Graphics::drawEllipse(fillRect.left, fillRect.top, fillRect.right, fillRect.bottom, pd->ms->foreColor, true, g_director->getInkDrawPixel(), pd);
+		Graphics::drawEllipse(fillAreaRect.left, fillAreaRect.top, fillAreaRect.right, fillAreaRect.bottom, pd->ms->foreColor, true, g_director->getInkDrawPixel(), pd);
 		// fall through
 	case kOutlinedOvalSprite:
 		pd->ms->pd = &plotStroke;
