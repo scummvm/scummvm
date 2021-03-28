@@ -60,7 +60,7 @@ void Popup::hide() {
 	_parentView->setDirty();
 }
 
-bool Popup::ShowMsg(CShowMsg &msg) {
+bool Popup::ShowMsg(CShowMsg *msg) {
 	CPopupShownMsg shownMsg(this);
 	shownMsg.execute(_respondTo, nullptr, 0);
 	return true;

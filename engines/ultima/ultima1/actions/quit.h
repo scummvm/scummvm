@@ -34,7 +34,7 @@ using Shared::CQuitMsg;
 
 class Quit : public Action {
 	DECLARE_MESSAGE_MAP;
-	bool QuitMsg(CQuitMsg &msg);
+	bool QuitMsg(CQuitMsg *msg);
 public:
 	CLASSDEF;
 

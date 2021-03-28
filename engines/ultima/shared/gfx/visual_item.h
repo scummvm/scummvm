@@ -40,8 +40,8 @@ class Popup;
 class VisualItem : public NamedItem {
 	friend class VisualSurface;
 	DECLARE_MESSAGE_MAP;
-	bool ShowMsg(CShowMsg &msg);
-	bool HideMsg(CHideMsg &msg);
+	bool ShowMsg(CShowMsg *msg);
+	bool HideMsg(CHideMsg *msg);
 private:
 	/**
 	 * Common initialization method used by the constructors

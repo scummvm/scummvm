@@ -36,7 +36,7 @@ using Shared::CCharacterInputMsg;
  */
 class Transports : public BuySellDialog {
 	DECLARE_MESSAGE_MAP;
-	bool CharacterInputMsg(CCharacterInputMsg &msg) override;
+	bool CharacterInputMsg(CCharacterInputMsg *msg) override;
 private:
 	uint _water, _woods, _grass;
 	bool _hasFreeTiles, _hasShuttle, _isClosed;

@@ -53,7 +53,7 @@ void ViewportMap::draw() {
 	Shared::ViewportMap::draw();
 }
 
-bool ViewportMap::FrameMsg(CFrameMsg &msg) {
+bool ViewportMap::FrameMsg(CFrameMsg *msg) {
 	// To allow map to animate, on each frame mark the map as dirty again
 	setDirty(true);
 	return true;

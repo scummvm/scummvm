@@ -38,8 +38,8 @@ using Shared::CCharacterInputMsg;
  */
 class Stats : public FullScreenDialog {
 	DECLARE_MESSAGE_MAP;
-	bool ShowMsg(CShowMsg &msg);
-	bool CharacterInputMsg(CCharacterInputMsg &msg);
+	bool ShowMsg(CShowMsg *msg);
+	bool CharacterInputMsg(CCharacterInputMsg *msg);
 public:
 	/**
 	 * Contains the data for a single stat entry to display

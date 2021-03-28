@@ -37,7 +37,7 @@ using Shared::CCharacterInputMsg;
  */
 class KillMagicMIssile : public Spell {
 	DECLARE_MESSAGE_MAP;
-	bool CharacterInputMsg(CCharacterInputMsg &msg);
+	bool CharacterInputMsg(CCharacterInputMsg *msg);
 public:
 	CLASSDEF;
 

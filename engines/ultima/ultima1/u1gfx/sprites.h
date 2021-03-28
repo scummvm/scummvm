@@ -39,7 +39,7 @@ using Shared::CFrameMsg;
  */
 class Sprites : public Shared::Gfx::Sprites, public Shared::TreeItem {
 	DECLARE_MESSAGE_MAP;
-	bool FrameMsg(CFrameMsg &msg);
+	bool FrameMsg(CFrameMsg *msg);
 private:
 	bool _isOverworld;
 	uint _frameCtr;

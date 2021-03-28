@@ -34,9 +34,9 @@ BEGIN_MESSAGE_MAP(AttackFire, Action)
 	ON_MESSAGE(CharacterInputMsg)
 END_MESSAGE_MAP()
 
-bool AttackFire::CharacterInputMsg(CCharacterInputMsg &msg) {
+bool AttackFire::CharacterInputMsg(CCharacterInputMsg *msg) {
 	Ultima1Game *game = static_cast<Ultima1Game *>(getGame());
-	Shared::Maps::Direction dir = Shared::Maps::MapWidget::directionFromKey(msg._keyState.keycode);
+	Shared::Maps::Direction dir = Shared::Maps::MapWidget::directionFromKey(msg->_keyState.keycode);
 
 	if (dir == Shared::Maps::DIR_NONE) {
 		addInfoMsg(game->_res->NOTHING);
@@ -57,14 +57,14 @@ BEGIN_MESSAGE_MAP(Attack, AttackFire)
 	ON_MESSAGE(CharacterInputMsg)
 END_MESSAGE_MAP()
 
-bool Attack::AttackMsg(CAttackMsg &msg) {
+bool Attack::AttackMsg(CAttackMsg *msg) {
 	Ultima1Game *game = static_cast<Ultima1Game *>(getGame());
 	Maps::Ultima1Map *map = static_cast<Maps::Ultima1Map *>(getMap());
 	const Shared::Character &c = *game->_party;
 	const Shared::Weapon &weapon = *c._weapons[c._equippedWeapon];
 
 	addInfoMsg(Common::String::format("%s %s", game->_res->ACTION_NAMES[0], weapon._shortName.c_str()), false);
-	
+
 	if (weapon._distance == 0) {
 		addInfoMsg("?");
 		game->playFX(1);
@@ -73,16 +73,16 @@ bool Attack::AttackMsg(CAttackMsg &msg) {
 		// In the dungeons, attacks always are straight ahead
 		addInfoMsg("");
 		doAttack(Shared::Maps::DIR_UP);
-	} else if (msg._direction == Shared::Maps::DIR_NONE) {
+	} else if (msg->_direction == Shared::Maps::DIR_NONE) {
 		// Prompt user for direction
 		addInfoMsg(": ", false);
 		Shared::CInfoGetKeypress keyMsg(this);
 		keyMsg.execute(getGame());
 	} else {
 		addInfoMsg(": ", false);
-		addInfoMsg(game->_res->DIRECTION_NAMES[(int)msg._direction - 1]);
+		addInfoMsg(game->_res->DIRECTION_NAMES[(int)msg->_direction - 1]);
 
-		getMap()->attack(msg._direction, 7);
+		getMap()->attack(msg->_direction, 7);
 	}
 
 	return true;
@@ -98,7 +98,7 @@ BEGIN_MESSAGE_MAP(Fire, AttackFire)
 	ON_MESSAGE(FireMsg)
 END_MESSAGE_MAP()
 
-bool Fire::FireMsg(CFireMsg &msg) {
+bool Fire::FireMsg(CFireMsg *msg) {
 	Ultima1Game *game = static_cast<Ultima1Game *>(getGame());
 	Maps::Ultima1Map *map = static_cast<Maps::Ultima1Map *>(getMap());
 	addInfoMsg(game->_res->ACTION_NAMES[5], false);

@@ -50,11 +50,11 @@ Info::~Info() {
 	delete _textInput;
 }
 
-bool Info::InfoMsg(CInfoMsg &msg) {
+bool Info::InfoMsg(CInfoMsg *msg) {
 	// Iterate through text, dealing with lines one at a time
-	StringArray lines = String(msg._text).split("\r\n");
+	StringArray lines = String(msg->_text).split("\r\n");
 
-	if (!_lines.empty() && msg._replaceLine)
+	if (!_lines.empty() && msg->_replaceLine)
 		_lines.back() = _lines.back().firstChar();
 
 	for (uint idx = 0; idx < lines.size(); ++idx) {
@@ -65,7 +65,7 @@ bool Info::InfoMsg(CInfoMsg &msg) {
 	}
 
 	// Add newline if necessary
-	if (msg._newLine)
+	if (msg->_newLine)
 		_lines.push_back(" ");
 
 	setDirty();
@@ -78,7 +78,7 @@ bool Info::InfoMsg(CInfoMsg &msg) {
 	return true;
 }
 
-bool Info::InfoGetCommandKeypress(CInfoGetCommandKeypress &msg) {
+bool Info::InfoGetCommandKeypress(CInfoGetCommandKeypress *msg) {
 	if (_lines.empty() || _lines.back() != " ")
 		_lines.push_back("");
 	_lines.back() = PROMPT_CHAR;
@@ -87,34 +87,34 @@ bool Info::InfoGetCommandKeypress(CInfoGetCommandKeypress &msg) {
 	textCursor->setVisible(true);
 	textCursor->setPosition(Point(8, _bounds.bottom - 8));
 
-	_commandRespondTo = msg._responder;
+	_commandRespondTo = msg->_responder;
 	return true;
 }
 
-bool Info::InfoGetKeypress(CInfoGetKeypress &msg) {
+bool Info::InfoGetKeypress(CInfoGetKeypress *msg) {
 	Game *game = getGame();
 	Point pt(_bounds.left + _lines.back().size() * 8, _bounds.bottom - 8);
-	_characterInput->show(pt, game->_textColor, msg._responder);
+	_characterInput->show(pt, game->_textColor, msg->_responder);
 
 	return true;
 }
 
-bool Info::InfoGetInput(CInfoGetInput &msg) {
+bool Info::InfoGetInput(CInfoGetInput *msg) {
 	Game *game = getGame();
 	Point pt(_bounds.left + _lines.back().size() * 8, _bounds.bottom - 8);
-	_textInput->show(pt, msg._isNumeric, msg._maxCharacters, game->_textColor, msg._responder);
+	_textInput->show(pt, msg->_isNumeric, msg->_maxCharacters, game->_textColor, msg->_responder);
 
 	return true;
 }
 
-bool Info::KeypressMsg(CKeypressMsg &msg) {
+bool Info::KeypressMsg(CKeypressMsg *msg) {
 	// If waiting for a command, dispatch the key to the respond, and hide the cursor
 	if (_commandRespondTo) {
 		TreeItem *target = _commandRespondTo;
 		_commandRespondTo = nullptr;
 
 		getGame()->_textCursor->setVisible(false);
-		CCharacterInputMsg cMsg(msg._keyState);
+		CCharacterInputMsg cMsg(msg->_keyState);
 		cMsg.execute(target);
 		return true;
 	}

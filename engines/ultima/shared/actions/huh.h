@@ -32,7 +32,7 @@ namespace Actions {
 
 class Huh : public Action {
 	DECLARE_MESSAGE_MAP;
-	bool HuhMsg(CHuhMsg &msg);
+	bool HuhMsg(CHuhMsg *msg);
 private:
 	const char *&_text;
 public:

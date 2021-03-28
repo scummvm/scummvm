@@ -39,7 +39,7 @@ void VisualItem::init(TreeItem *parent) {
 		addUnder(parent);
 }
 
-bool VisualItem::ShowMsg(CShowMsg &msg) {
+bool VisualItem::ShowMsg(CShowMsg *msg) {
 	// When a view is shown, mark it to be redrawn
 	_isDirty = true;
 	//	Font *font = Font::getActiveFont();
@@ -48,7 +48,7 @@ bool VisualItem::ShowMsg(CShowMsg &msg) {
 	return false;
 }
 
-bool VisualItem::HideMsg(CHideMsg &msg) {
+bool VisualItem::HideMsg(CHideMsg *msg) {
 	// When view is hidden, mark it as not dirty
 	_isDirty = false;
 	return false;

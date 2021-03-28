@@ -34,7 +34,7 @@ using Shared::CReadyMsg;
 
 class Ready : public Action {
 	DECLARE_MESSAGE_MAP;
-	bool ReadyMsg(CReadyMsg &msg);
+	bool ReadyMsg(CReadyMsg *msg);
 public:
 	CLASSDEF;
 

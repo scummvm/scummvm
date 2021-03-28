@@ -43,8 +43,8 @@ void KillMagicMIssile::cast(Maps::MapBase *map) {
 	keyMsg.execute(_game);
 }
 
-bool KillMagicMIssile::CharacterInputMsg(CCharacterInputMsg &msg) {
-	Shared::Maps::Direction dir = Shared::Maps::MapWidget::directionFromKey(msg._keyState.keycode);
+bool KillMagicMIssile::CharacterInputMsg(CCharacterInputMsg *msg) {
+	Shared::Maps::Direction dir = Shared::Maps::MapWidget::directionFromKey(msg->_keyState.keycode);
 	Character &c = *static_cast<Party *>(_game->_party);
 
 	if (dir == Shared::Maps::DIR_NONE) {

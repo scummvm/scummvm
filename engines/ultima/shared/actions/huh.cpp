@@ -30,7 +30,7 @@ BEGIN_MESSAGE_MAP(Huh, Action)
 	ON_MESSAGE(HuhMsg)
 END_MESSAGE_MAP()
 
-bool Huh::HuhMsg(CHuhMsg &msg) {
+bool Huh::HuhMsg(CHuhMsg *msg) {
 	addInfoMsg(_text);
 	endOfTurn();
 	return true;

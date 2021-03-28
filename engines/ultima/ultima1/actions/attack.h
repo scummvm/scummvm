@@ -40,7 +40,7 @@ using Shared::CFireMsg;
  */
 class AttackFire : public Action {
 	DECLARE_MESSAGE_MAP;
-	bool CharacterInputMsg(CCharacterInputMsg &msg);
+	bool CharacterInputMsg(CCharacterInputMsg *msg);
 protected:
 	/**
 	 * Do the attack in a given direction
@@ -61,7 +61,7 @@ public:
  */
 class Attack : public AttackFire {
 	DECLARE_MESSAGE_MAP;
-	bool AttackMsg(CAttackMsg &msg);
+	bool AttackMsg(CAttackMsg *msg);
 protected:
 	/**
 	 * Do the attack in a given direction
@@ -81,7 +81,7 @@ public:
  */
 class Fire : public AttackFire {
 	DECLARE_MESSAGE_MAP;
-	bool FireMsg(CFireMsg &msg);
+	bool FireMsg(CFireMsg *msg);
 protected:
 	/**
 	 * Do the attack in a given direction

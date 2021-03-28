@@ -40,7 +40,7 @@ King::King(Ultima1Game *game, uint kingIndex) : Dialog(game), _kingIndex(kingInd
 	_bounds = Rect(31, 23, 287, 127);
 }
 
-bool King::ShowMsg(CShowMsg &msg) {
+bool King::ShowMsg(CShowMsg *msg) {
 	addInfoMsg(_game->_res->KING_TEXT[0], false);
 	getKeypress();
 	return true;
@@ -139,12 +139,12 @@ void King::setMode(KingMode mode) {
 	setDirty();
 }
 
-bool King::CharacterInputMsg(CCharacterInputMsg &msg) {
+bool King::CharacterInputMsg(CCharacterInputMsg *msg) {
 	switch (_mode) {
 	case SELECT:
-		if (msg._keyState.keycode == Common::KEYCODE_p)
+		if (msg->_keyState.keycode == Common::KEYCODE_p)
 			setMode(PENCE);
-		else if (msg._keyState.keycode == Common::KEYCODE_s)
+		else if (msg->_keyState.keycode == Common::KEYCODE_s)
 			setMode(SERVICE);
 		else
 			neither();
@@ -163,12 +163,12 @@ bool King::CharacterInputMsg(CCharacterInputMsg &msg) {
 	return true;
 }
 
-bool King::TextInputMsg(CTextInputMsg &msg) {
+bool King::TextInputMsg(CTextInputMsg *msg) {
 	assert(_mode == PENCE);
 	const Shared::Character &c = *_game->_party;
-	uint amount = atoi(msg._text.c_str());
+	uint amount = atoi(msg->_text.c_str());
 
-	if (msg._escaped || !amount) {
+	if (msg->_escaped || !amount) {
 		none();
 	} else if (amount > c._coins) {
 		notThatMuch();

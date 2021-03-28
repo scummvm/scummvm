@@ -33,7 +33,7 @@ BEGIN_MESSAGE_MAP(Ready, Action)
 	ON_MESSAGE(ReadyMsg)
 END_MESSAGE_MAP()
 
-bool Ready::ReadyMsg(CReadyMsg &msg) {
+bool Ready::ReadyMsg(CReadyMsg *msg) {
 	Ultima1Game *game = static_cast<Ultima1Game *>(getGame());
 	addInfoMsg(game->_res->ACTION_NAMES[17], false);
 

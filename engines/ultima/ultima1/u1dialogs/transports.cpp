@@ -166,13 +166,13 @@ void Transports::drawSell() {
 	centerText(String(_game->_res->TRANSPORTS_TEXT[0]).split("\r\n"), titleLines + 2);
 }
 
-bool Transports::CharacterInputMsg(CCharacterInputMsg &msg) {
+bool Transports::CharacterInputMsg(CCharacterInputMsg *msg) {
 	Shared::Character &c = *_game->_party;
-	int transportIndex = msg._keyState.keycode - Common::KEYCODE_a;
+	int transportIndex = msg->_keyState.keycode - Common::KEYCODE_a;
 
 	if (_mode == BUY) {
-		if (msg._keyState.keycode >= Common::KEYCODE_a &&
-				msg._keyState.keycode <= Common::KEYCODE_f &&
+		if (msg->_keyState.keycode >= Common::KEYCODE_a &&
+				msg->_keyState.keycode <= Common::KEYCODE_f &&
 				_transports[transportIndex]) {
 			uint cost = getBuyCost(transportIndex + 1);
 			if (cost <= c._coins) {

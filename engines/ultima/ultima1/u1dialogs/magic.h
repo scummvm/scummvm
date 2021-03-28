@@ -36,7 +36,7 @@ using Shared::CCharacterInputMsg;
  */
 class Magic : public BuySellDialog {
 	DECLARE_MESSAGE_MAP;
-	bool CharacterInputMsg(CCharacterInputMsg &msg) override;
+	bool CharacterInputMsg(CCharacterInputMsg *msg) override;
 private:
 //	uint _magicNum;
 	uint _startIndex, _endIndex;

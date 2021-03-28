@@ -43,9 +43,9 @@ using Shared::CCharacterInputMsg;
   */
 class BuySellDialog : public Dialog {
 	DECLARE_MESSAGE_MAP;
-	bool ShowMsg(CShowMsg &msg);
-	bool FrameMsg(CFrameMsg &msg);
-	virtual bool CharacterInputMsg(CCharacterInputMsg &msg);
+	bool ShowMsg(CShowMsg *msg);
+	bool FrameMsg(CFrameMsg *msg);
+	virtual bool CharacterInputMsg(CCharacterInputMsg *msg);
 private:
 	Shared::Gfx::CharacterInput _charInput;
 protected:

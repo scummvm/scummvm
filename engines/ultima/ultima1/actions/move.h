@@ -34,7 +34,7 @@ using Shared::CMoveMsg;
 
 class Move : public Action {
 	DECLARE_MESSAGE_MAP;
-	bool MoveMsg(CMoveMsg &msg);
+	bool MoveMsg(CMoveMsg *msg);
 private:
 	/**
 	 * Turn left

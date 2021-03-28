@@ -44,10 +44,10 @@ using Shared::CTextInputMsg;
  */
 class ViewCharacterGeneration : public Shared::Gfx::VisualItem {
 	DECLARE_MESSAGE_MAP;
-	bool KeypressMsg(CKeypressMsg &msg);
-	bool ShowMsg(CShowMsg &msg);
-	bool HideMsg(CHideMsg &msg);
-	bool TextInputMsg(CTextInputMsg &msg);
+	bool KeypressMsg(CKeypressMsg *msg);
+	bool ShowMsg(CShowMsg *msg);
+	bool HideMsg(CHideMsg *msg);
+	bool TextInputMsg(CTextInputMsg *msg);
 private:
 	enum Flag {
 		FLAG_FRAME = 1, FLAG_POINTS = 2, FLAG_ATTRIBUTES = 4, FLAG_ATTR_POINTERS = 8, FLAG_HELP = 16,

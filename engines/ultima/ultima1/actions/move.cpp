@@ -34,11 +34,11 @@ BEGIN_MESSAGE_MAP(Move, Action)
 	ON_MESSAGE(MoveMsg)
 END_MESSAGE_MAP()
 
-bool Move::MoveMsg(CMoveMsg &msg) {
+bool Move::MoveMsg(CMoveMsg *msg) {
 	Maps::Ultima1Map *map = getMap();
 	
 	if (map->_mapType == Maps::MAP_DUNGEON) {
-		switch (msg._direction) {
+		switch (msg->_direction) {
 		case Shared::Maps::DIR_LEFT:
 			dungeonTurnLeft();
 			break;
@@ -58,7 +58,7 @@ bool Move::MoveMsg(CMoveMsg &msg) {
 
 		// Figure out the new position
 		Point delta;
-		switch (msg._direction) {
+		switch (msg->_direction) {
 		case Shared::Maps::DIR_WEST:
 			delta = Point(-1, 0);
 			break;
@@ -81,7 +81,7 @@ bool Move::MoveMsg(CMoveMsg &msg) {
 
 			// Move to the new position
 			player->moveTo(newPos);
-			addInfoMsg(getRes()->DIRECTION_NAMES[msg._direction - 1]);
+			addInfoMsg(getRes()->DIRECTION_NAMES[msg->_direction - 1]);
 		} else {
 			// Nope, so show a blocked message
 			addInfoMsg(getRes()->BLOCKED);

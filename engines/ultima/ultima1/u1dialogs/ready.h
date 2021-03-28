@@ -37,8 +37,8 @@ using Shared::CCharacterInputMsg;
  */
 class Ready : public FullScreenDialog {
 	DECLARE_MESSAGE_MAP;
-	bool ShowMsg(CShowMsg &msg);
-	bool CharacterInputMsg(CCharacterInputMsg &msg);
+	bool ShowMsg(CShowMsg *msg);
+	bool CharacterInputMsg(CCharacterInputMsg *msg);
 
 	enum Mode { SELECT, READY_WEAPON, READY_armour, READY_SPELL };
 private:

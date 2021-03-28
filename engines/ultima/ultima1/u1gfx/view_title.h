@@ -41,9 +41,9 @@ using Shared::CFrameMsg;
  */
 class ViewTitle : public Shared::Gfx::VisualItem {
 	DECLARE_MESSAGE_MAP;
-	bool ShowMsg(CShowMsg &msg);
-	bool KeypressMsg(CKeypressMsg &msg);
-	bool FrameMsg(CFrameMsg &msg);
+	bool ShowMsg(CShowMsg *msg);
+	bool KeypressMsg(CKeypressMsg *msg);
+	bool FrameMsg(CFrameMsg *msg);
 private:
 	Graphics::ManagedSurface _logo, _castle;
 	Graphics::ManagedSurface _flags[3];

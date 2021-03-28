@@ -36,7 +36,7 @@ using Shared::CFrameMsg;
  */
 class Status : public Shared::Gfx::VisualItem {
 	DECLARE_MESSAGE_MAP;
-	bool FrameMsg(CFrameMsg &msg);
+	bool FrameMsg(CFrameMsg *msg);
 private:
 	uint _hitPoints, _food, _experience, _coins;
 private:

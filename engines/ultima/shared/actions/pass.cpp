@@ -30,7 +30,7 @@ BEGIN_MESSAGE_MAP(Pass, Action)
 	ON_MESSAGE(PassMsg)
 END_MESSAGE_MAP()
 
-bool Pass::PassMsg(CPassMsg &msg) {
+bool Pass::PassMsg(CPassMsg *msg) {
 	addInfoMsg(_text);
 	endOfTurn();
 	return true;

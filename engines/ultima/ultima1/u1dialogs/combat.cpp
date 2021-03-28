@@ -39,9 +39,9 @@ Combat::Combat(Ultima1Game *game, Shared::Maps::Direction direction, int weaponT
 	const Common::String weaponName) : FullScreenDialog(game), _direction(direction) {
 }
 
-bool Combat::KeypressMsg(CKeypressMsg &msg) {
+bool Combat::KeypressMsg(CKeypressMsg *msg) {
 	if (_direction == Shared::Maps::DIR_NONE) {
-		switch (msg._keyState.keycode) {
+		switch (msg->_keyState.keycode) {
 		case Common::KEYCODE_LEFT:
 		case Common::KEYCODE_KP4:
 			_direction = Shared::Maps::DIR_LEFT;

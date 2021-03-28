@@ -65,7 +65,7 @@ void Tavern::setMode(BuySell mode) {
 	}
 }
 
-bool Tavern::FrameMsg(CFrameMsg &msg) {
+bool Tavern::FrameMsg(CFrameMsg *msg) {
 	Shared::Character &c = *_game->_party;
 
 	if (_countdown > 0 && --_countdown == 0) {

@@ -129,13 +129,13 @@ void Armoury::drawSell() {
 	}
 }
 
-bool Armoury::CharacterInputMsg(CCharacterInputMsg &msg) {
+bool Armoury::CharacterInputMsg(CCharacterInputMsg *msg) {
 	Shared::Character &c = *_game->_party;
 
 	if (_mode == BUY) {
-		if (msg._keyState.keycode >= (int)(Common::KEYCODE_a + _startIndex) &&
-			msg._keyState.keycode <= (int)(Common::KEYCODE_a + _endIndex)) {
-			uint armourNum = msg._keyState.keycode - Common::KEYCODE_a;
+		if (msg->_keyState.keycode >= (int)(Common::KEYCODE_a + _startIndex) &&
+			msg->_keyState.keycode <= (int)(Common::KEYCODE_a + _endIndex)) {
+			uint armourNum = msg->_keyState.keycode - Common::KEYCODE_a;
 			Armour &armour = *static_cast<Armour *>(c._armour[armourNum]);
 
 			if (armour.getBuyCost() <= c._coins) {
@@ -155,9 +155,9 @@ bool Armoury::CharacterInputMsg(CCharacterInputMsg &msg) {
 		nothing();
 		return true;
 	} else if (_mode == SELL && !c._armour.hasNothing()) {
-		if (msg._keyState.keycode >= Common::KEYCODE_b &&
-			msg._keyState.keycode < (Common::KEYCODE_a + (int)c._armour.size())) {
-			uint armourNum = msg._keyState.keycode - Common::KEYCODE_a;
+		if (msg->_keyState.keycode >= Common::KEYCODE_b &&
+			msg->_keyState.keycode < (Common::KEYCODE_a + (int)c._armour.size())) {
+			uint armourNum = msg->_keyState.keycode - Common::KEYCODE_a;
 			Armour &armour = *static_cast<Armour *>(c._armour[armourNum]);
 
 			if (!armour.empty()) {

@@ -42,7 +42,7 @@ class Map;
  */
 class Game : public GameBase {
 	DECLARE_MESSAGE_MAP;
-	bool EndOfTurnMsg(CEndOfTurnMsg &msg);
+	bool EndOfTurnMsg(CEndOfTurnMsg *msg);
 protected:
 	GameView *_gameView;
 	FontResources *_fontResources;

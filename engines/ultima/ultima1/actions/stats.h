@@ -34,7 +34,7 @@ using Shared::CStatsMsg;
 
 class Stats : public Action {
 	DECLARE_MESSAGE_MAP;
-	bool StatsMsg(CStatsMsg &msg);
+	bool StatsMsg(CStatsMsg *msg);
 public:
 	CLASSDEF;
 

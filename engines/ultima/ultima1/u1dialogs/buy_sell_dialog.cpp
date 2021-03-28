@@ -42,13 +42,13 @@ BuySellDialog::BuySellDialog(Ultima1Game *game, const Common::String &title) :
 	_bounds = Rect(31, 23, 287, 127);
 }
 
-bool BuySellDialog::ShowMsg(CShowMsg &msg) {
+bool BuySellDialog::ShowMsg(CShowMsg *msg) {
 	addInfoMsg(_game->_res->BUY_SELL, false);
 	getKeypress();
 	return true;
 }
 
-bool BuySellDialog::FrameMsg(CFrameMsg &msg) {
+bool BuySellDialog::FrameMsg(CFrameMsg *msg) {
 	if (_closeCounter > 0 && --_closeCounter == 0) {
 		_game->endOfTurn();
 		hide();
@@ -57,12 +57,12 @@ bool BuySellDialog::FrameMsg(CFrameMsg &msg) {
 	return true;
 }
 
-bool BuySellDialog::CharacterInputMsg(CCharacterInputMsg &msg) {
+bool BuySellDialog::CharacterInputMsg(CCharacterInputMsg *msg) {
 	switch (_mode) {
 	case SELECT:
-		if (msg._keyState.keycode == Common::KEYCODE_b)
+		if (msg->_keyState.keycode == Common::KEYCODE_b)
 			setMode(BUY);
-		else if (msg._keyState.keycode == Common::KEYCODE_s)
+		else if (msg->_keyState.keycode == Common::KEYCODE_s)
 			setMode(SELL);
 		else
 			nothing();

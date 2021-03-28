@@ -43,7 +43,7 @@ void Sprites::load(bool isOverworld) {
 		Shared::Gfx::Sprites::load("t1ktown.bin", 4, 8, 8);
 }
 
-bool Sprites::FrameMsg(CFrameMsg &msg) {
+bool Sprites::FrameMsg(CFrameMsg *msg) {
 	if (!empty() && _isOverworld) {
 		animateWater();
 	}

@@ -42,10 +42,10 @@ void CharacterInput::show(const Point &pt, byte color, TreeItem *respondTo) {
 	_game->_textCursor->setVisible(true);
 }
 
-bool CharacterInput::KeypressMsg(CKeypressMsg &msg) {
+bool CharacterInput::KeypressMsg(CKeypressMsg *msg) {
 	hide();
 
-	CCharacterInputMsg inputMsg(msg._keyState);
+	CCharacterInputMsg inputMsg(msg->_keyState);
 	inputMsg.execute(_respondTo);
 
 	return true;

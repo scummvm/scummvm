@@ -60,28 +60,28 @@ void TextInput::draw() {
 	s.writeString(text, TextPoint(0, 0), _color);
 }
 
-bool TextInput::KeypressMsg(CKeypressMsg &msg) {
-	uint16 c = msg._keyState.ascii;
+bool TextInput::KeypressMsg(CKeypressMsg *msg) {
+	uint16 c = msg->_keyState.ascii;
 	//TreeItem *respondTo = _respondTo;
 
 	if (c >= ' ' && c <= 0x7f) {
 		// Printable character
 		if (_text.size() < _maxCharacters && (!_isNumeric || (c >= '0' && c <= '9'))) {
-			_text += msg._keyState.ascii;
+			_text += msg->_keyState.ascii;
 			setDirty();
 		}
-	} else if (msg._keyState.keycode == Common::KEYCODE_BACKSPACE || msg._keyState.keycode == Common::KEYCODE_LEFT) {
+	} else if (msg->_keyState.keycode == Common::KEYCODE_BACKSPACE || msg->_keyState.keycode == Common::KEYCODE_LEFT) {
 		if (!_text.empty()) {
 			_text.deleteLastChar();
 			setDirty();
 		}
-	} else if (msg._keyState.keycode == Common::KEYCODE_RETURN || msg._keyState.keycode == Common::KEYCODE_KP_ENTER) {
+	} else if (msg->_keyState.keycode == Common::KEYCODE_RETURN || msg->_keyState.keycode == Common::KEYCODE_KP_ENTER) {
 		_game->_textCursor->setVisible(false);
 		hide();
 
 		CTextInputMsg inputMsg(_text, false);
 		inputMsg.execute(_respondTo);
-	} else if (msg._keyState.keycode == Common::KEYCODE_ESCAPE) {
+	} else if (msg->_keyState.keycode == Common::KEYCODE_ESCAPE) {
 		_game->_textCursor->setVisible(false);
 		hide();
 

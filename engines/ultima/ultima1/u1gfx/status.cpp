@@ -36,7 +36,7 @@ Status::Status(Shared::TreeItem *parent) : Shared::Gfx::VisualItem("Status", Tex
 		_hitPoints(0), _food(0), _experience(0), _coins(0) {
 }
 
-bool Status::FrameMsg(CFrameMsg &msg) {
+bool Status::FrameMsg(CFrameMsg *msg) {
 	// If any of the figures have changed, mark the display as dirty
 	const Ultima1Game *game = static_cast<const Ultima1Game *>(getGame());
 	const Shared::Character &c = *game->_party;

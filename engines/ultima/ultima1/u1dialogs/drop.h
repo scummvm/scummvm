@@ -39,9 +39,9 @@ using Shared::CTextInputMsg;
  */
 class Drop : public FullScreenDialog {
 	DECLARE_MESSAGE_MAP;
-	bool ShowMsg(CShowMsg &msg);
-	bool CharacterInputMsg(CCharacterInputMsg &msg);
-	bool TextInputMsg(CTextInputMsg &msg);
+	bool ShowMsg(CShowMsg *msg);
+	bool CharacterInputMsg(CCharacterInputMsg *msg);
+	bool TextInputMsg(CTextInputMsg *msg);
 
 	enum Mode { SELECT, DROP_PENCE, DROP_WEAPON, DROP_armour };
 private:

@@ -34,7 +34,7 @@ namespace Gfx {
  */
 class CharacterInput : public Popup {
 	DECLARE_MESSAGE_MAP;
-	bool KeypressMsg(CKeypressMsg &msg);
+	bool KeypressMsg(CKeypressMsg *msg);
 private:
 	byte _color;
 public:

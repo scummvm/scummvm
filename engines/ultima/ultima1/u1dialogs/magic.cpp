@@ -100,14 +100,14 @@ void Magic::drawBuy() {
 	}
 }
 
-bool Magic::CharacterInputMsg(CCharacterInputMsg &msg) {
+bool Magic::CharacterInputMsg(CCharacterInputMsg *msg) {
 	Shared::Character &c = *_game->_party;
 
 	if (_mode == BUY) {
-		if (msg._keyState.keycode >= (int)(Common::KEYCODE_a + _startIndex) &&
-			msg._keyState.keycode <= (int)(Common::KEYCODE_a + _endIndex) &&
-			(int)(msg._keyState.keycode - Common::KEYCODE_a - _startIndex) % 2 == 0) {
-			uint magicNum = msg._keyState.keycode - Common::KEYCODE_a;
+		if (msg->_keyState.keycode >= (int)(Common::KEYCODE_a + _startIndex) &&
+			msg->_keyState.keycode <= (int)(Common::KEYCODE_a + _endIndex) &&
+			(int)(msg->_keyState.keycode - Common::KEYCODE_a - _startIndex) % 2 == 0) {
+			uint magicNum = msg->_keyState.keycode - Common::KEYCODE_a;
 			Spells::Spell &spell = *static_cast<Spells::Spell *>(c._spells[magicNum]);
 
 			if (spell.getBuyCost() <= c._coins) {

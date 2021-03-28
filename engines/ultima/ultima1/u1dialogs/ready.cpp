@@ -39,18 +39,18 @@ END_MESSAGE_MAP()
 Ready::Ready(Ultima1Game *game) : FullScreenDialog(game), _mode(SELECT) {
 }
 
-bool Ready::ShowMsg(CShowMsg &msg) {
+bool Ready::ShowMsg(CShowMsg *msg) {
 	addInfoMsg(_game->_res->READY_WEAPON_armour_SPELL, false);
 	getKeypress();
 	return true;
 }
 
-bool Ready::CharacterInputMsg(CCharacterInputMsg &msg) {
+bool Ready::CharacterInputMsg(CCharacterInputMsg *msg) {
 	Shared::Character &c = *_game->_party;
 
 	switch (_mode) {
 	case SELECT:
-		switch (msg._keyState.keycode) {
+		switch (msg->_keyState.keycode) {
 		case Common::KEYCODE_w:
 			setMode(READY_WEAPON);
 			break;
@@ -68,8 +68,8 @@ bool Ready::CharacterInputMsg(CCharacterInputMsg &msg) {
 		break;
 
 	case READY_WEAPON:
-		if (msg._keyState.keycode >= Common::KEYCODE_a && msg._keyState.keycode < (Common::KEYCODE_a + (int)c._weapons.size())) {
-			int index = msg._keyState.keycode - Common::KEYCODE_a;
+		if (msg->_keyState.keycode >= Common::KEYCODE_a && msg->_keyState.keycode < (Common::KEYCODE_a + (int)c._weapons.size())) {
+			int index = msg->_keyState.keycode - Common::KEYCODE_a;
 			if (!c._weapons[index]->empty())
 				c._equippedWeapon = index;
 		}
@@ -81,8 +81,8 @@ bool Ready::CharacterInputMsg(CCharacterInputMsg &msg) {
 		break;
 
 	case READY_armour:
-		if (msg._keyState.keycode >= Common::KEYCODE_a && msg._keyState.keycode < (Common::KEYCODE_a + (int)c._armour.size())) {
-			int index = msg._keyState.keycode - Common::KEYCODE_a;
+		if (msg->_keyState.keycode >= Common::KEYCODE_a && msg->_keyState.keycode < (Common::KEYCODE_a + (int)c._armour.size())) {
+			int index = msg->_keyState.keycode - Common::KEYCODE_a;
 			if (!c._armour[index]->empty())
 				c._equippedArmour = index;
 		}
@@ -94,8 +94,8 @@ bool Ready::CharacterInputMsg(CCharacterInputMsg &msg) {
 		break;
 
 	case READY_SPELL:
-		if (msg._keyState.keycode >= Common::KEYCODE_a && msg._keyState.keycode < (Common::KEYCODE_a + (int)c._spells.size())) {
-			int index = msg._keyState.keycode - Common::KEYCODE_a;
+		if (msg->_keyState.keycode >= Common::KEYCODE_a && msg->_keyState.keycode < (Common::KEYCODE_a + (int)c._spells.size())) {
+			int index = msg->_keyState.keycode - Common::KEYCODE_a;
 			if (!c._spells[index]->empty())
 				c._equippedSpell = index;
 		}

@@ -37,7 +37,7 @@ using Shared::CKeypressMsg;
  */
 class Combat : public FullScreenDialog {
 	DECLARE_MESSAGE_MAP;
-	bool KeypressMsg(CKeypressMsg &msg);
+	bool KeypressMsg(CKeypressMsg *msg);
 private:
 	Common::String _weaponName;
 	int _direction;

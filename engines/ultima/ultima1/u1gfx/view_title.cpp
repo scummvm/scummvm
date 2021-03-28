@@ -214,7 +214,7 @@ void ViewTitle::setCastlePalette() {
 	getGame()->setEGAPalette(PALETTE);
 }
 
-bool ViewTitle::FrameMsg(CFrameMsg &msg) {
+bool ViewTitle::FrameMsg(CFrameMsg *msg) {
 	uint32 time = getGame()->getMillis();
 	if (time < _expiryTime)
 		return true;
@@ -281,7 +281,7 @@ void ViewTitle::setMode(TitleMode mode) {
 	}
 }
 
-bool ViewTitle::ShowMsg(CShowMsg &msg) {
+bool ViewTitle::ShowMsg(CShowMsg *msg) {
 	Shared::Gfx::VisualItem::ShowMsg(msg);
 
 	if (_mode == TITLEMODE_MAIN_MENU) {
@@ -292,16 +292,16 @@ bool ViewTitle::ShowMsg(CShowMsg &msg) {
 	return true;
 }
 
-bool ViewTitle::KeypressMsg(CKeypressMsg &msg) {
+bool ViewTitle::KeypressMsg(CKeypressMsg *msg) {
 	uint32 time = getGame()->getMillis();
 
 	if (_mode == TITLEMODE_MAIN_MENU) {
-		if (msg._keyState.keycode == Common::KEYCODE_a || msg._keyState.keycode == Common::KEYCODE_b) {
+		if (msg->_keyState.keycode == Common::KEYCODE_a || msg->_keyState.keycode == Common::KEYCODE_b) {
 			// Hide the cursor
 			Shared::Gfx::TextCursor *textCursor = getGame()->_textCursor;
 			textCursor->setVisible(false);
 
-			if (msg._keyState.keycode == Common::KEYCODE_a) {
+			if (msg->_keyState.keycode == Common::KEYCODE_a) {
 				setView("CharGen");
 			} else {
 				if (!g_vm->loadGameDialog())

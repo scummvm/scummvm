@@ -34,7 +34,7 @@ namespace Gfx {
  */
 class TextInput : public Popup {
 	DECLARE_MESSAGE_MAP;
-	bool KeypressMsg(CKeypressMsg &msg);
+	bool KeypressMsg(CKeypressMsg *msg);
 private:
 	bool _isNumeric;
 	size_t _maxCharacters;

@@ -41,11 +41,11 @@ using Shared::CKeypressMsg;
  */
 class Info : public Gfx::VisualItem {
 	DECLARE_MESSAGE_MAP;
-	bool InfoMsg(CInfoMsg &msg);
-	bool InfoGetCommandKeypress(CInfoGetCommandKeypress &msg);
-	bool InfoGetKeypress(CInfoGetKeypress &msg);
-	bool InfoGetInput(CInfoGetInput &msg);
-	bool KeypressMsg(CKeypressMsg &msg);
+	bool InfoMsg(CInfoMsg *msg);
+	bool InfoGetCommandKeypress(CInfoGetCommandKeypress *msg);
+	bool InfoGetKeypress(CInfoGetKeypress *msg);
+	bool InfoGetInput(CInfoGetInput *msg);
+	bool KeypressMsg(CKeypressMsg *msg);
 private:
 	Common::StringArray _lines;
 	Gfx::TextInput *_textInput;

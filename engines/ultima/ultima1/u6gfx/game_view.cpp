@@ -99,8 +99,8 @@ void GameView::draw() {
 	_status->draw();
 }
 
-bool GameView::KeypressMsg(CKeypressMsg &msg) {
-	switch (msg._keyState.keycode) {
+bool GameView::KeypressMsg(CKeypressMsg *msg) {
+	switch (msg->_keyState.keycode) {
 	case Common::KEYCODE_LEFT:
 	case Common::KEYCODE_KP4: {
 		Shared::CMoveMsg move(Shared::Maps::DIR_LEFT);

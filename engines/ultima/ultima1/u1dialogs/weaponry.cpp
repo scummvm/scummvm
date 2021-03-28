@@ -135,14 +135,14 @@ void Weaponry::drawSell() {
 	}
 }
 
-bool Weaponry::CharacterInputMsg(CCharacterInputMsg &msg) {
+bool Weaponry::CharacterInputMsg(CCharacterInputMsg *msg) {
 	Shared::Character &c = *_game->_party;
 
 	if (_mode == BUY) {
-		if (msg._keyState.keycode >= (int)(Common::KEYCODE_a + _startIndex) &&
-			msg._keyState.keycode <= (int)(Common::KEYCODE_a + _endIndex) &&
-			(int)(msg._keyState.keycode - Common::KEYCODE_a - _startIndex) % 2 == 0) {
-			uint weaponNum = msg._keyState.keycode - Common::KEYCODE_a;
+		if (msg->_keyState.keycode >= (int)(Common::KEYCODE_a + _startIndex) &&
+			msg->_keyState.keycode <= (int)(Common::KEYCODE_a + _endIndex) &&
+			(int)(msg->_keyState.keycode - Common::KEYCODE_a - _startIndex) % 2 == 0) {
+			uint weaponNum = msg->_keyState.keycode - Common::KEYCODE_a;
 			Weapon &weapon = *static_cast<Weapon *>(c._weapons[weaponNum]);
 
 			if (weapon.getBuyCost() <= c._coins) {
@@ -162,9 +162,9 @@ bool Weaponry::CharacterInputMsg(CCharacterInputMsg &msg) {
 		nothing();
 		return true;
 	} else if (_mode == SELL && !c._weapons.hasNothing()) {
-		if (msg._keyState.keycode >= Common::KEYCODE_b &&
-			msg._keyState.keycode < (Common::KEYCODE_a + (int)c._weapons.size())) {
-			uint weaponNum = msg._keyState.keycode - Common::KEYCODE_a;
+		if (msg->_keyState.keycode >= Common::KEYCODE_b &&
+			msg->_keyState.keycode < (Common::KEYCODE_a + (int)c._weapons.size())) {
+			uint weaponNum = msg->_keyState.keycode - Common::KEYCODE_a;
 			Weapon &weapon = *static_cast<Weapon *>(c._weapons[weaponNum]);
 
 			if (!weapon.empty()) {

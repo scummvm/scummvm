@@ -84,18 +84,18 @@ void Grocery::draw() {
 	}
 }
 
-bool Grocery::TextInputMsg(CTextInputMsg &msg) {
+bool Grocery::TextInputMsg(CTextInputMsg *msg) {
 	assert(_mode == BUY);
 	Shared::Character &c = *_game->_party;
-	uint amount = atoi(msg._text.c_str());
+	uint amount = atoi(msg->_text.c_str());
 	uint cost = amount * _costPerPack;
 
-	if (msg._escaped || !amount) {
+	if (msg->_escaped || !amount) {
 		nothing();
 	} else if (cost > c._coins) {
 		cantAfford();
 	} else {
-		addInfoMsg(msg._text);
+		addInfoMsg(msg->_text);
 
 		c._coins -= cost;
 		c._food += amount * 10;

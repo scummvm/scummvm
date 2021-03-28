@@ -126,7 +126,7 @@ void Game::synchronize(Common::Serializer &s) {
 	_map->synchronize(s);
 }
 
-bool Game::EndOfTurnMsg(CEndOfTurnMsg &msg) {
+bool Game::EndOfTurnMsg(CEndOfTurnMsg *msg) {
 	// Update things on the map
 	_map->update();
 	return false;

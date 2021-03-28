@@ -33,7 +33,7 @@ BEGIN_MESSAGE_MAP(Stats, Action)
 	ON_MESSAGE(StatsMsg)
 END_MESSAGE_MAP()
 
-bool Stats::StatsMsg(CStatsMsg &msg) {
+bool Stats::StatsMsg(CStatsMsg *msg) {
 	Ultima1Game *game = static_cast<Ultima1Game *>(getGame());
 	addInfoMsg(game->_res->ACTION_NAMES[25]);
 

@@ -272,46 +272,46 @@ void ViewCharacterGeneration::setClass(int classNum) {
 	setMode(FLAG_NAME | FLAG_ATTRIBUTES);
 }
 
-bool ViewCharacterGeneration::ShowMsg(CShowMsg &msg) {
+bool ViewCharacterGeneration::ShowMsg(CShowMsg *msg) {
 	Shared::Gfx::VisualItem::ShowMsg(msg);
 	setMode(FLAG_INITIAL);
 	return true;
 }
 
-bool ViewCharacterGeneration::HideMsg(CHideMsg &msg) {
+bool ViewCharacterGeneration::HideMsg(CHideMsg *msg) {
 	Shared::Gfx::VisualItem::HideMsg(msg);
 	getGame()->_textCursor->setVisible(false);
 	return true;
 }
 
-bool ViewCharacterGeneration::KeypressMsg(CKeypressMsg &msg) {
+bool ViewCharacterGeneration::KeypressMsg(CKeypressMsg *msg) {
 	Ultima1Game *game = static_cast<Ultima1Game *>(getGame());
 
 	if (_flags & FLAG_RACE) {
-		if (msg._keyState.keycode >= Common::KEYCODE_a && msg._keyState.keycode <= Common::KEYCODE_d)
-			setRace(msg._keyState.keycode - Common::KEYCODE_a);
+		if (msg->_keyState.keycode >= Common::KEYCODE_a && msg->_keyState.keycode <= Common::KEYCODE_d)
+			setRace(msg->_keyState.keycode - Common::KEYCODE_a);
 	} else if (_flags & FLAG_SEX) {
-		if (msg._keyState.keycode >= Common::KEYCODE_a && msg._keyState.keycode <= Common::KEYCODE_b)
-			setSex(msg._keyState.keycode - Common::KEYCODE_a);
+		if (msg->_keyState.keycode >= Common::KEYCODE_a && msg->_keyState.keycode <= Common::KEYCODE_b)
+			setSex(msg->_keyState.keycode - Common::KEYCODE_a);
 	} else if (_flags & FLAG_CLASS) {
-		if (msg._keyState.keycode >= Common::KEYCODE_a && msg._keyState.keycode <= Common::KEYCODE_d)
-			setClass(msg._keyState.keycode - Common::KEYCODE_a);
+		if (msg->_keyState.keycode >= Common::KEYCODE_a && msg->_keyState.keycode <= Common::KEYCODE_d)
+			setClass(msg->_keyState.keycode - Common::KEYCODE_a);
 	} else if (_flags & FLAG_NAME) {
 		// Shouldn't reach here, since during name entry, keypresses go to text input
 	} else if (_flags & FLAG_SAVE) {
-		if (msg._keyState.keycode == Common::KEYCODE_y) {
+		if (msg->_keyState.keycode == Common::KEYCODE_y) {
 			// Save the game
 			if (save())
 				setView("Game");
 			else
 				setView("Title");
-		} else if (msg._keyState.keycode == Common::KEYCODE_n) {
+		} else if (msg->_keyState.keycode == Common::KEYCODE_n) {
 			// Start at the beginning again
 			setMode(FLAG_INITIAL);
 		}
 	} else {
 		// Initial attributes allocation
-		switch (msg._keyState.keycode) {
+		switch (msg->_keyState.keycode) {
 		case Common::KEYCODE_UP:
 		case Common::KEYCODE_KP8:
 			_selectedAttribute = (_selectedAttribute == 0) ? ATTRIBUTE_COUNT - 1 : _selectedAttribute - 1;
@@ -366,10 +366,10 @@ bool ViewCharacterGeneration::KeypressMsg(CKeypressMsg &msg) {
 	return true;
 }
 
-bool ViewCharacterGeneration::TextInputMsg(CTextInputMsg &msg) {
-	if (!msg._escaped && !msg._text.empty()) {
+bool ViewCharacterGeneration::TextInputMsg(CTextInputMsg *msg) {
+	if (!msg->_escaped && !msg->_text.empty()) {
 		// Name provided
-		_character->_name = msg._text;
+		_character->_name = msg->_text;
 		
 		_textInput->hide();
 		setMode(FLAG_SAVE);

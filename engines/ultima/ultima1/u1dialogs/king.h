@@ -39,9 +39,9 @@ using Shared::CTextInputMsg;
   */
 class King : public Dialog {
 	DECLARE_MESSAGE_MAP;
-	bool ShowMsg(CShowMsg &msg);
-	bool CharacterInputMsg(CCharacterInputMsg &msg);
-	bool TextInputMsg(CTextInputMsg &msg);
+	bool ShowMsg(CShowMsg *msg);
+	bool CharacterInputMsg(CCharacterInputMsg *msg);
+	bool TextInputMsg(CTextInputMsg *msg);
 	enum KingMode { SELECT, PENCE, SERVICE };
 private:
 	KingMode _mode;

@@ -32,7 +32,7 @@ namespace Actions {
 
 class Pass : public Action {
 	DECLARE_MESSAGE_MAP;
-	bool PassMsg(CPassMsg &msg);
+	bool PassMsg(CPassMsg *msg);
 private:
 	const char *&_text;
 public:

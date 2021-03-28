@@ -39,13 +39,13 @@ BEGIN_MESSAGE_MAP(Stats, FullScreenDialog)
 END_MESSAGE_MAP()
 
 
-bool Stats::ShowMsg(CShowMsg &msg) {
+bool Stats::ShowMsg(CShowMsg *msg) {
 	addInfoMsg(_game->_res->PRESS_SPACE_TO_CONTINUE, false);
 	getKeypress();
 	return true;
 }
 
-bool Stats::CharacterInputMsg(CCharacterInputMsg &msg) {
+bool Stats::CharacterInputMsg(CCharacterInputMsg *msg) {
 	if ((_startingIndex + 26U) < _stats.size()) {
 		_startingIndex += 26U;
 		setDirty();
