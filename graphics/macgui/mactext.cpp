@@ -170,6 +170,7 @@ MacText::MacText(const Common::U32String &s, MacWindowManager *wm, const MacFont
 	_textAlignment = textAlignment;
 	_interLinear = interlinear;
 	_maxWidth = maxWidth;
+	_textShadow = 0;
 
 	if (macFont) {
 		_defaultFormatting = MacFontRun(_wm, macFont->getId(), macFont->getSlant(), macFont->getSize(), 0, 0, 0);
@@ -198,6 +199,7 @@ MacText::MacText(const Common::String &s, MacWindowManager *wm, const MacFont *m
 	_textAlignment = textAlignment;
 	_interLinear = interlinear;
 	_maxWidth = maxWidth;
+	_textShadow = 0;
 
 	if (macFont) {
 		_defaultFormatting = MacFontRun(_wm, macFont->getId(), macFont->getSlant(), macFont->getSize(), 0, 0, 0);
