@@ -722,6 +722,7 @@ bool Text::getText(int32 index) {
 	// RECHECK: this was added for vox playback
 	currDialTextEntry = currIdx;
 
+	debug(3, "text for bank %i with index %i (currIndex: %i): %s", _currentBankIdx, index, currIdx, _currDialTextPtr);
 	return true;
 }
 
