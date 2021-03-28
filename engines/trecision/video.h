@@ -76,7 +76,6 @@ private:
 
 public:
 	uint8 *_smkBuffer[MAXSMACK];
-	uint8 *_smkTempBuffer[MAXSMACK];
 
 	uint8 _curSmackBuffer;
 	uint16 _playingAnims[MAXSMACK];
