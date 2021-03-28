@@ -25,10 +25,10 @@
 
 #include "common/hashmap.h"
 #include "common/scummsys.h"
-#include "twine/parser/sprite.h"
 #include "twine/parser/holomap.h"
-#include "twine/scene/gamestate.h"
+#include "twine/parser/sprite.h"
 #include "twine/resources/hqr.h"
+#include "twine/scene/gamestate.h"
 #include "twine/scene/scene.h"
 
 namespace TwinE {
@@ -60,8 +60,8 @@ namespace TwinE {
 #define RESSHQR_ALARMREDPAL 22
 #define RESSHQR_FLAINFO 23
 #define RESSHQR_DARKPAL 24
-#define RESSHQR_TWINSEN_ZOE_SENDELLIMG  25
-#define RESSHQR_TWINSEN_ZOE_SENDELLPAL  26
+#define RESSHQR_TWINSEN_ZOE_SENDELLIMG 25
+#define RESSHQR_TWINSEN_ZOE_SENDELLPAL 26
 #define RESSHQR_ADELINEIMG 27
 #define RESSHQR_ADELINEPAL 28
 
@@ -148,7 +148,7 @@ private:
 	void preloadSamples();
 	void loadFlaInfo();
 
-	using MovieInfoMap = Common::HashMap<Common::String, Common::Array<int32>>;
+	using MovieInfoMap = Common::HashMap<Common::String, Common::Array<int32> >;
 	MovieInfoMap _flaMovieFrames;
 
 	TrajectoryData _trajectories;
@@ -157,15 +157,15 @@ public:
 	Resources(TwinEEngine *engine) : _engine(engine) {}
 	~Resources();
 
-	const Common::Array<int32>& getFlaMovieInfo(const Common::String &name) const;
+	const Common::Array<int32> &getFlaMovieInfo(const Common::String &name) const;
 
 	/** Table with all loaded samples */
 	BodyData inventoryTable[NUM_INVENTORY_ITEMS];
 
 	/** Table with all loaded sprites */
-	uint8 *spriteTable[NUM_SPRITES] {nullptr};
+	uint8 *spriteTable[NUM_SPRITES]{nullptr};
 	/** Table with all loaded sprite sizes */
-	uint32 spriteSizeTable[NUM_SPRITES] {0};
+	uint32 spriteSizeTable[NUM_SPRITES]{0};
 	SpriteData spriteData[NUM_SPRITES];
 
 	AnimData animData[NUM_ANIMS];
@@ -199,7 +199,7 @@ public:
 	/** Initialize resource pointers */
 	void initResources();
 
-	const Trajectory* getTrajectory(int index) const;
+	const Trajectory *getTrajectory(int index) const;
 
 	// main palette
 	static constexpr const char *HQR_RESS_FILE = "ress.hqr";
