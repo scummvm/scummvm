@@ -52,7 +52,7 @@ void MCopy(uint16 *Dest, uint16 *Src, uint32 Len) {
 		Len --;
 	}
 
-	longcopy(Dest, Src, (Len >> 1));
+	memcpy(Dest, Src, Len * 2);
 }
 
 /*-----------------10/12/95 15.53-------------------
