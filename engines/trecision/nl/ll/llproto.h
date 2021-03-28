@@ -93,7 +93,6 @@ bool FastFileClose(Common::SeekableReadStream *stream);
 int FastFileRead(Common::SeekableReadStream *stream, void *ptr, int size);
 int32 FastFileLen(Common::SeekableReadStream *stream);
 void byte2word(void *dest, void *src, void *data, uint32 len);
-void byte2long(void *dest, void *src, void *data, uint32 len);
 void byte2wordm(void *dest, void *src, void *data, uint32 len);
 void byte2wordn(void *dest, void *src, void *data, uint32 len);
 
