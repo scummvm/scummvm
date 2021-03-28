@@ -858,7 +858,9 @@ bool ThemeParser::parserCallback_layout(ParserNode *node) {
 	int spacing = -1;
 
 	if (node->values.contains("spacing")) {
-		if (!parseIntegerKey(node->values["spacing"], 1, &spacing))
+		if (parseIntegerKey(node->values["spacing"], 1, &spacing))
+			spacing = SCALEVALUE(spacing);
+		else
 			return false;
 	}
 
@@ -892,6 +894,7 @@ bool ThemeParser::parserCallback_layout(ParserNode *node) {
 		if (!parseIntegerKey(node->values["padding"], 4, &paddingL, &paddingR, &paddingT, &paddingB))
 			return false;
 
+		// values are scaled inside this method
 		_theme->getEvaluator()->addPadding(paddingL, paddingR, paddingT, paddingB);
 	}
 
