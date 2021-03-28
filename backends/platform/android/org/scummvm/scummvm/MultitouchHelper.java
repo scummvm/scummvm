@@ -35,7 +35,7 @@ public class MultitouchHelper {
 	// Similarly we do not support upgrading a level, ie. if we are already handling a two finger multitouch,
 	// then putting down another finger will void the session,
 	// rather than upgrade it to three fingers multitouch.
-	// TODO for this purpose we need to allow some limited time limit (delay _kLevelDecisionDelayMs) before deciding
+	// INFO for this purpose we need to allow some limited time limit (delay _kLevelDecisionDelayMs) before deciding
 	//      if the user did a two finger multitouch or intents to do a three finger multitouch
 	// Valid values for _multitouchLevel: 0, 2, 3
 	private int     _multitouchLevel;
@@ -116,6 +116,7 @@ public class MultitouchHelper {
 		if (event.getPointerCount() > 1 && event.getPointerCount() < 4) {
 			// a multi-touch event
 			if (_candidateStartOfMultitouchSession && event.getPointerCount() > 1) {
+				_candidateStartOfMultitouchSession = false; // reset this flag
 				setMultitouchMode(true);
 			}
 
@@ -124,6 +125,7 @@ public class MultitouchHelper {
 					pointerIndex = event.getActionIndex();
 					if (event.getPointerCount() == 2) {
 						_secondPointerId = event.getPointerId(pointerIndex);
+
 						if (getMultitouchLevel() == 0) {
 							_multiTouchLevelUpgradeHandler.removeMessages(MSG_MT_UPGRADE_TO_LEVEL_3_TIMEDOUT);
 							if (pointerIndex != -1) {
@@ -133,9 +135,19 @@ public class MultitouchHelper {
 								_cachedActionEventOnPointer2DownX = -1;
 								_cachedActionEventOnPointer2DownY = -1;
 							}
+							// Allow for some time before deciding a two finger touch event, since the user might be going for a three finger touch event
 							_multiTouchLevelUpgradeHandler.sendMessageDelayed(_multiTouchLevelUpgradeHandler.obtainMessage(MSG_MT_UPGRADE_TO_LEVEL_3_TIMEDOUT), _kLevelDecisionDelayMs);
+							// Return as event "handled" here
+							// while we wait for the decision to be made for the level of multitouch (two or three)
+							//
+							return true;
 						}
-						return true;
+						// Don't return here
+						// We want to handle the case whereby we were in multitouch level 2, and we got a new pointer down event with 2 pointers count
+						// This is the case where the user keeps one finger down and taps the second finger
+						// This behavior should count as multiple right clicks (one for each new "tap" (ACTION_POINTER_DOWN event))
+						// for user friendliness / control intuitiveness
+
 					} else  if (event.getPointerCount() == 3) {
 						_thirdPointerId = event.getPointerId(pointerIndex);
 						if (getMultitouchLevel() == 0) {
@@ -206,8 +218,10 @@ public class MultitouchHelper {
 			return true;
 
 		} else if (event.getPointerCount() == 1 && isMultitouchMode() ) {
-			// keep ignoring events until we exit multitouch mode "session"
-			// this is to catch the case of progressively lifting fingers and being left with only one finger still touching the surface
+			// We were already in a Multitouch session, but we're left with one finger down now
+			// Keep ignoring events for single pointer until we exit multitouch mode "session"
+			// this is to catch the case of being left with only one finger still touching the surface
+			// after lifting the rest of the fingers that were touching the surface
 			return true;
 		} else {
 			// one finger, no active multitouch mode "session". Mark as unhandled.
