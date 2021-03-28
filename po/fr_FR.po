@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-03-26 14:34+0000\n"
-"PO-Revision-Date: 2021-03-23 04:24+0000\n"
+"PO-Revision-Date: 2021-03-28 14:24+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
@@ -1035,11 +1035,9 @@ msgid "Game 3D Renderer:"
 msgstr "Rendu 3D des jeux :"
 
 #: gui/options.cpp:1331
-#, fuzzy
-#| msgid "Game 3D Renderer:"
 msgctxt "lowres"
 msgid "Game 3D Renderer:"
-msgstr "Rendu 3D des jeux :"
+msgstr "Moteur de rendu 3D du jeu :"
 
 #: gui/options.cpp:1344
 msgid "3D Anti-aliasing:"
@@ -2432,8 +2430,6 @@ msgid "OpenGL with shaders"
 msgstr "OpenGL avec shaders"
 
 #: graphics/renderer.cpp:42
-#, fuzzy
-#| msgid "OpenGL with shaders"
 msgctxt "lowres"
 msgid "OpenGL with shaders"
 msgstr "OpenGL avec shaders"
@@ -5399,166 +5395,128 @@ msgstr "Général"
 
 #: engines/nancy/cheat.cpp:55
 msgid "Scene Data"
-msgstr ""
+msgstr "Données de la scène"
 
 #: engines/nancy/cheat.cpp:56
-#, fuzzy
-#| msgid "Start the debugger"
 msgid "Restart the Scene"
-msgstr "Ouvrir le débugger"
+msgstr "Redémarrer la scène"
 
 #: engines/nancy/cheat.cpp:58
 msgid "Scene Number"
-msgstr ""
+msgstr "Numéro de la scène"
 
 #: engines/nancy/cheat.cpp:60
 msgid "Frame Number"
-msgstr ""
+msgstr "Numéro de l'image"
 
 #. I18N: The Y position (a.k.a vertical scroll) of the background
 #: engines/nancy/cheat.cpp:64
 msgid "Background Top (Y)"
-msgstr ""
+msgstr "Position haute (Y) de l'arrière-plan"
 
 #: engines/nancy/cheat.cpp:66
 msgid "Hints Remaining"
-msgstr ""
+msgstr "Indices restants"
 
 #: engines/nancy/cheat.cpp:67
 msgid "Easy"
-msgstr ""
+msgstr "Facile"
 
 #: engines/nancy/cheat.cpp:69
 msgid "Medium"
-msgstr ""
+msgstr "Moyen"
 
 #: engines/nancy/cheat.cpp:71
 msgid "Hard"
-msgstr ""
+msgstr "Difficile"
 
 #: engines/nancy/cheat.cpp:74 engines/nancy/cheat.cpp:85
-#, fuzzy
-#| msgid "Player 1: Left"
 msgid "Player Data"
-msgstr "Joueur 1 : Gauche"
+msgstr "Données du joueur"
 
 #: engines/nancy/cheat.cpp:75
-#, fuzzy
-#| msgid "Playtime: "
 msgid "Player Time:"
-msgstr "Durée de jeu : "
+msgstr "Temps du joueur :"
 
 #: engines/nancy/cheat.cpp:77
 msgid "Days"
-msgstr ""
+msgstr "Jours"
 
 #: engines/nancy/cheat.cpp:79 engines/nancy/cheat.cpp:89
 msgid "Hours"
-msgstr ""
+msgstr "Heures"
 
 #: engines/nancy/cheat.cpp:81 engines/nancy/cheat.cpp:91
-#, fuzzy
-#| msgid "Minus"
 msgid "Minutes"
-msgstr "Moins"
+msgstr "Minutes"
 
 #: engines/nancy/cheat.cpp:83
 msgid "Player Difficulty Level"
-msgstr ""
+msgstr "Niveau du difficulté"
 
 #: engines/nancy/cheat.cpp:86
-#, fuzzy
-#| msgid "Time: "
 msgid "Timer On"
-msgstr "Heure : "
+msgstr "Timer activé"
 
 #: engines/nancy/cheat.cpp:93
-#, fuzzy
-#| msgid "Second kid"
 msgid "Seconds"
-msgstr "Second enfant"
+msgstr "Secondes"
 
 #: engines/nancy/cheat.cpp:162
-#, fuzzy
-#| msgid "Invalid path!"
 msgid "Invalid Scene ID!"
-msgstr "Chemin invalide !"
+msgstr "ID de la scène invalide !"
 
 #: engines/nancy/input.cpp:171
-#, fuzzy
-#| msgid "Left Click"
 msgid "Left Click Interact"
-msgstr "Clic Gauche"
+msgstr "Interaction Clic gauche"
 
 #: engines/nancy/input.cpp:178
-#, fuzzy
-#| msgid "Right Click Once"
 msgid "Right Click Interact"
-msgstr "Simple Clic Droit"
+msgstr "Interaction Clic droit"
 
 #: engines/nancy/input.cpp:209
-#, fuzzy
-#| msgid "Fast mode"
 msgid "Fast move modifier"
-msgstr "Mode rapide"
+msgstr "Modificateur Mouvement rapide"
 
 #: engines/nancy/input.cpp:217
-#, fuzzy
-#| msgid "Toggle fast mode"
 msgid "Toggle fast conversation mode"
-msgstr "Act./Désact. mode rapide"
+msgstr "Act./Désact. mode conversation rapide"
 
 #: engines/nancy/input.cpp:222
-#, fuzzy
-#| msgid "Toggle fast mode"
 msgid "Toggle end conversation mode"
-msgstr "Act./Désact. mode rapide"
+msgstr "Act./Désact. mode fin de conversation"
 
 #: engines/nancy/input.cpp:227
-#, fuzzy
-#| msgid "Return to main menu"
 msgid "Go to main menu"
-msgstr "Retour au menu principal"
+msgstr "Vers le menu principal"
 
 #: engines/nancy/input.cpp:232
-#, fuzzy
-#| msgid "Insert save/load game disk"
 msgid "Go to save/load menu"
-msgstr "Insérer le disque de sauvegarde/chargement"
+msgstr "Vers le menu sauvegarder/charger"
 
 #: engines/nancy/input.cpp:237
-#, fuzzy
-#| msgid "No date saved"
 msgid "Reload last save"
-msgstr "Date inconnue"
+msgstr "Chargement de la dernière sauvegarde"
 
 #: engines/nancy/input.cpp:242
-#, fuzzy
-#| msgid "Show options menu"
 msgid "Go to setup menu"
-msgstr "Afficher le menu des options"
+msgstr "Vers le menu paramètres"
 
 #: engines/nancy/input.cpp:247
-#, fuzzy
-#| msgid "Show game credits"
 msgid "Show credits"
-msgstr "Afficher les crédits du jeu"
+msgstr "Afficher les crédits"
 
 #: engines/nancy/input.cpp:252
-#, fuzzy
-#| msgid "Swap screens"
 msgid "Go to map screen"
-msgstr "Échanger les écrans"
+msgstr "Vers l'écran carte"
 
 #: engines/nancy/input.cpp:258
-#, fuzzy
-#| msgid "Enable cheat mode"
 msgid "Open general cheat menu"
-msgstr "Activer le mode Triche"
+msgstr "Ouvrir le menu triches principal"
 
 #: engines/nancy/input.cpp:263
 msgid "Open event flags cheat menu"
-msgstr ""
+msgstr "Ouvrir le menu triches - marqueurs d'évenements"
 
 #: engines/neverhood/detection.cpp:119
 msgid "Skip the Hall of Records storyboard scenes"
