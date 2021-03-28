@@ -33,7 +33,6 @@ namespace Trecision {
 const Graphics::PixelFormat GraphicsManager::kImageFormat(2, 5, 5, 5, 0, 10, 5, 0, 0); // RGB555
 
 GraphicsManager::GraphicsManager(TrecisionEngine *vm) : _vm(vm) {
-	_pitch = 0;
 	_screenPtr = nullptr;
 }
 
@@ -70,7 +69,6 @@ void GraphicsManager::lock() {
 	if (!_screenPtr) {
 		Graphics::Surface *surface = g_system->lockScreen();
 		_screenPtr = (uint16 *)surface->getPixels();
-		_pitch = surface->pitch;
 	}
 }
 
@@ -80,7 +78,6 @@ void GraphicsManager::lock() {
 void GraphicsManager::unlock() {
 	if (_screenPtr) {
 		g_system->unlockScreen();
-		_pitch = 0;
 		_screenPtr = nullptr;
 	}
 }
@@ -97,119 +94,21 @@ void GraphicsManager::clearScreen() {
 --------------------------------------------------*/
 void GraphicsManager::vCopy(uint32 Sco, uint16 *Src, uint32 Len) {
 	lock();
-	if ((_screenPtr == nullptr) || (Len == 0))
+	if (_screenPtr == nullptr || Len == 0)
 		return;
 
-	if (_pitch == 0 || _pitch == SCREENLEN * 2) {
-		MCopy(_screenPtr + Sco, Src, Len);
-		return;
-	}
-
-	int32 x1 = Sco % SCREENLEN;
-	int32 y1 = Sco / SCREENLEN;
-
-	uint32 endSco = Sco + Len;
-	int32 y2 = endSco / SCREENLEN;
-
-	uint32 srcSco = 0;
-	uint32 copyNow = MIN<uint32>(Len, SCREENLEN - x1);
-
-	MCopy(_screenPtr + y1 * (_pitch / 2) + x1, Src + srcSco, copyNow);
-	srcSco += copyNow;
-	Len -= copyNow;
-
-	for (int32 i = (y1 + 1); i <= (y2 - 1); i++) {
-		copyNow = SCREENLEN;
-		MCopy(_screenPtr + i * (_pitch / 2), Src + srcSco, copyNow);
-		srcSco += copyNow;
-		Len -= copyNow;
-	}
-
-	if (Len > 0) {
-		copyNow = Len;
-		MCopy(_screenPtr + y2 * (_pitch / 2), Src + srcSco, copyNow);
-	}
+	MCopy(_screenPtr + Sco, Src, Len);
 }
 
 /*------------------------------------------------
 					BCopy
 --------------------------------------------------*/
 void GraphicsManager::BCopy(uint32 Sco, uint8 *Src, uint32 Len) {
-	_vm->_graphicsMgr->lock();
-	if ((_screenPtr == nullptr) || (Len == 0))
-		return;
-
-	if (_pitch == 0 || _pitch == SCREENLEN * 2) {
-		byte2word(_screenPtr + Sco, Src, _vm->_newData, Len);
-		return;
-	}
-
-	int32 x1 = Sco % SCREENLEN;
-	int32 y1 = Sco / SCREENLEN;
-
-	uint32 EndSco = Sco + Len;
-
-	int32 y2 = EndSco / SCREENLEN;
-
-	uint32 SrcSco = 0;
-
-	uint32 CopyNow = MIN<uint32>(Len, SCREENLEN - x1);
-
-	byte2word(_screenPtr + y1 * (_pitch / 2) + x1, Src + SrcSco, _vm->_newData, CopyNow);
-	SrcSco += CopyNow;
-	Len -= CopyNow;
-
-	for (int32 i = (y1 + 1); i <= (y2 - 1); i++) {
-		CopyNow = SCREENLEN;
-		byte2word(_screenPtr + i * (_pitch / 2), Src + SrcSco, _vm->_newData, CopyNow);
-		SrcSco += CopyNow;
-		Len -= CopyNow;
-	}
-
-	if (Len > 0) {
-		CopyNow = Len;
-		byte2word(_screenPtr + y2 * (_pitch / 2), Src + SrcSco, _vm->_newData, CopyNow);
-	}
-}
-/*------------------------------------------------
-					DCopy
---------------------------------------------------*/
-void GraphicsManager::DCopy(uint32 Sco, uint8 *Src, uint32 Len) {
 	lock();
 	if ((_screenPtr == nullptr) || (Len == 0))
 		return;
 
-	if (_pitch == 0 || _pitch == SCREENLEN * 2) {
-		byte2long(_screenPtr + Sco, Src, _vm->_newData2, Len / 2);
-		return;
-	}
-
-	int32 x1 = Sco % SCREENLEN;
-	int32 y1 = Sco / SCREENLEN;
-
-	uint32 EndSco = Sco + Len;
-
-	int32 y2 = EndSco / SCREENLEN;
-
-	uint32 SrcSco = 0;
-
-	uint32 CopyNow = MIN<uint32>(Len, SCREENLEN - x1);
-
-	byte2long(_screenPtr + y1 * (_pitch / 2) + x1, Src + SrcSco, _vm->_newData2, CopyNow / 2);
-	SrcSco += CopyNow;
-	Len -= CopyNow;
-
-	for (int32 i = (y1 + 1); i <= (y2 - 1); i++) {
-		CopyNow = SCREENLEN;
-		byte2long(_screenPtr + i * (_pitch / 2), Src + SrcSco, _vm->_newData2, CopyNow / 2);
-		SrcSco += CopyNow;
-		Len -= CopyNow;
-	}
-
-	if (Len > 0) {
-		CopyNow = Len;
-		byte2long(_screenPtr + y2 * (_pitch / 2), Src + SrcSco, _vm->_newData2, CopyNow / 2);
-	}
+	byte2word(_screenPtr + Sco, Src, _vm->_newData, Len);
 }
 
 /*------------------------------------------------
@@ -295,15 +194,9 @@ void GraphicsManager::VPix(int16 x, int16 y, uint16 col) {
 	if (_screenPtr == nullptr)
 		return;
 
-	if (_pitch == 0 || _pitch == SCREENLEN * 2) {
-		uint32 a = ((uint32)x + MAXX * (uint32)y);
-		if ((x >= 0) && (y >= 0) && (x < CurRoomMaxX) && (y < MAXY))
-			_screenPtr[a] = col;
-		return;
-	}
-
+	uint32 a = ((uint32)x + MAXX * (uint32)y);
 	if ((x >= 0) && (y >= 0) && (x < CurRoomMaxX) && (y < MAXY))
-		_screenPtr[x + y * (_pitch / 2)] = col;
+		_screenPtr[a] = col;
 }
 
 } // end of namespace

@@ -41,7 +41,6 @@ public:
 	GraphicsManager(TrecisionEngine *vm);
 	~GraphicsManager();
 	
-	uint16 _pitch;
 	uint16 *_screenPtr;
 
 	bool initScreen();
@@ -53,7 +52,6 @@ public:
 
 	void vCopy(uint32 Sco, uint16 *Src, uint32 Len);
 	void BCopy(uint32 Sco, uint8 *Src, uint32 Len);
-	void DCopy(uint32 Sco, uint8 *Src, uint32 Len);
 
 	uint16 palTo16bit(uint8 r, uint8 g, uint8 b) const;
 	void updatePixelFormat(uint16 *p, uint32 len) const;

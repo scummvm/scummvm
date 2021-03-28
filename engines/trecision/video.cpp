@@ -641,36 +641,10 @@ void AnimManager::refreshFullMotion() {
 				if ((_vm->_sdText.sign == nullptr) ||
 				    ((lastRect->top + a) * yfact < (_vm->_sdText.y - TOP)) ||
 				    ((lastRect->top + a) * yfact >= (_vm->_sdText.y + _vm->_sdText.dy - TOP))) {
-					// Decide to double or not...
-					// in height
-					if (_smkAnims[pos]->getHeight() > MAXY / 2) {
-						// in width
-						if (_smkAnims[pos]->getWidth() > MAXX / 2) {
-							_vm->_graphicsMgr->BCopy(lastRect->left + (lastRect->top + a) * MAXX + ((MAXY - _smkAnims[pos]->getHeight()) / 2) * MAXX,
-							                          _smkBuffer[pos] + lastRect->left + (lastRect->top + a) * _smkAnims[pos]->getWidth(),
-							                          lastRect->width());
-						} else {
-							_vm->_graphicsMgr->DCopy(lastRect->left * 2 + (lastRect->top + a) * MAXX + ((MAXY - _smkAnims[pos]->getHeight()) / 2) * MAXX,
-							                          _smkBuffer[pos] + lastRect->left + (lastRect->top + a) * _smkAnims[pos]->getWidth(),
-							                          lastRect->width());
-						}
-					} else {
-						if (_smkAnims[pos]->getWidth() > MAXX / 2) {
-							_vm->_graphicsMgr->BCopy(lastRect->left + ((lastRect->top + a) * 2) * MAXX + ((MAXY - _smkAnims[pos]->getHeight() * 2) / 2) * MAXX,
-							                          _smkBuffer[pos] + lastRect->left + (lastRect->top + a) * _smkAnims[pos]->getWidth(),
-							                          lastRect->width());
-							_vm->_graphicsMgr->BCopy(lastRect->left + ((lastRect->top + a) * 2 + 1) * MAXX + ((MAXY - _smkAnims[pos]->getHeight() * 2) / 2) * MAXX,
-							                          _smkBuffer[pos] + lastRect->left + (lastRect->top + a) * _smkAnims[pos]->getWidth(),
-							                          lastRect->width());
-						} else {
-							_vm->_graphicsMgr->DCopy(lastRect->left * 2 + ((lastRect->top + a) * 2) * MAXX + ((MAXY - _smkAnims[pos]->getHeight() * 2) / 2) * MAXX,
-							                          _smkBuffer[pos] + lastRect->left + (lastRect->top + a) * _smkAnims[pos]->getWidth(),
-							                          lastRect->width());
-							_vm->_graphicsMgr->DCopy(lastRect->left * 2 + ((lastRect->top + a) * 2 + 1) * MAXX + ((MAXY - _smkAnims[pos]->getHeight() * 2) / 2) * MAXX,
-							                          _smkBuffer[pos] + lastRect->left + (lastRect->top + a) * _smkAnims[pos]->getWidth(),
-							                          lastRect->width());
-						}
-					}
+
+					_vm->_graphicsMgr->BCopy(lastRect->left + (lastRect->top + a) * MAXX + ((MAXY - _smkAnims[pos]->getHeight()) / 2) * MAXX,
+									 _smkBuffer[pos] + lastRect->left + (lastRect->top + a) * _smkAnims[pos]->getWidth(),
+									 lastRect->width());					
 				}
 			}
 		}
@@ -807,21 +781,8 @@ void AnimManager::playFullMotion(int start, int end) {
 void AnimManager::drawSmkBuffer(int px, int py, int dx, int dy) {
 	int pos = 1;
 	for (int a = 0; a < dy; a++) {
-		if (_smkAnims[pos]->getHeight() > MAXY / 2) {
-			if (_smkAnims[pos]->getWidth() > MAXX / 2)
-				byte2word(_vm->_video2 + (a + py + TOP) * MAXX + px,
-				          _smkBuffer[pos] + (a + py) * _smkAnims[pos]->getWidth() + px, _vm->_newData, dx);
-			else
-				byte2long(_vm->_video2 + (a + py + TOP) * MAXX + px,
-				          _smkBuffer[pos] + (a + py) * _smkAnims[pos]->getWidth() + px / 2, _vm->_newData2, dx / 2);
-		} else {
-			if (_smkAnims[pos]->getWidth() > MAXX / 2)
-				byte2word(_vm->_video2 + (a + py + TOP) * MAXX + px,
-				          _smkBuffer[pos] + ((a + py) / 2) * _smkAnims[pos]->getWidth() + px, _vm->_newData, dx);
-			else
-				byte2long(_vm->_video2 + (a + py + TOP) * MAXX + px,
-				          _smkBuffer[pos] + ((a + py) / 2) * _smkAnims[pos]->getWidth() + px / 2, _vm->_newData2, dx / 2);
-		}
+		byte2word(_vm->_video2 + (a + py + TOP) * MAXX + px,
+				  _smkBuffer[pos] + (a + py) * _smkAnims[pos]->getWidth() + px, _vm->_newData, dx);		
 	}
 }
 
