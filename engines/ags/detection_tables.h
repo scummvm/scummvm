@@ -166,6 +166,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "danewguys2", "Da New Guys: Day of the Jackass" },
 	{ "detectivegallo", "Detective Gallo" },
 	{ "docapocalypse", "Doc Apocalypse" },
+	{ "donticeyourcool", "Don't Ice Your COol" },
 	{ "downfall2009", "Downfall (2009)" },
 	{ "downfall2016", "Downfall (2016)" },
 	{ "dustbowl", "Dustbowl" },
@@ -226,6 +227,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "6daysasacrifice", "6 Days A Sacrifice" },
 	{ "6mornings", "6mornings" },
 	{ "7daysaskeptic", "7 Days A Skeptic" },
+	{ "9monthsin", "9 Months In" },
 	{ "aazor", "Aazor" },
 	{ "abducted", "Abducted" },
 	{ "absent", "Absent" },
@@ -406,6 +408,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "calsoon2", "Calsoon 2" },
 	{ "capricorn", "CAPRICORN" },
 	{ "captaincringe", "Captain Cringe" },
+	{ "captaindisastermoon", "Captain Disaster In: The Dark Side of the Moon" },
 	{ "carrin", "Carrin" },
 	{ "carrotbobinzxspeccyworld", "Carrot Bob in ZX speccy world" },
 	{ "casablancathedayafter", "Casablanca The Day After" },
@@ -830,6 +833,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "magsjune2017", "MAGS june 2017" },
 	{ "magssep2007", "MAGS Sep 2007" },
 	{ "manboy", "Man Boy" },
+	{ "maniacland", "Maniacland" },
 	{ "maniacmansiondeluxe", "Maniac Mansion Deluxe" },
 	{ "maniacmansionmania1", "Maniac Mansion Mania" },
 	{ "maniacmansionmania2", "Maniac Mansion Mania 02" },
@@ -899,6 +903,8 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "mysterioushouse", "Mysterious house" },
 	{ "mysticseer", "Mystic Seer" },
 	{ "mythicalgambitflawlessfatality", "Mythical Gambit: Flawless Fatality" },
+	{ "mzi", "Mission Zukunftia" },
+	{ "mzi2", "Mission Zukunftia 2" },
 	{ "nanobots", "Nanobots" },
 	{ "necroquest", "Necroquest" },
 	{ "nedysadventure", "Nedy's adventure" },
@@ -1672,6 +1678,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("detectivegallo", "dgbuild.exe", "2e0678b5642c64e057022a79742743fb", 90740554), // Steam
 	GAME_ENTRY("detectivegallo", "dgbuild.exe", "2e0678b5642c64e057022a79742743fb", 90740772), //GOG
 	GAME_ENTRY("docapocalypse", "doc_apocalypse.exe", "1a7dfeb7797720111f9e40b5cbfea4c4", 47961989), // Steam
+	GAME_ENTRY("donticeyourcool", "Don't Ice Your Cool.exe", "2321081ba51d1869ebe11b9ba126911b", 5979469),
 	GAME_ENTRY("downfall2009", "downfall.exe", "aabdafae8b57dfc48fdf158a72326c23", 183357927), // Steam
 	GAME_ENTRY("downfall2009", "downfall.exe", "aabdafae8b57dfc48fdf158a72326c23", 279342949), // 1.4, Steam
 	GAME_ENTRY_LANG("downfall2016", "downfall.exe", "10212624b951711c4b44f5cb9eecbf0a", 143360, Common::RU_RUS), // GOG
@@ -1866,6 +1873,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("6mornings", "project2.exe", "e7dac058b9bc0b42d489e474c2ddec84", 11595240),
 	GAME_ENTRY("7daysaskeptic", "7days.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 4863356),
 	GAME_ENTRY("7daysaskeptic", "7days.exe", "465f972675db2da6040518221af5b0ba", 4693374),
+	GAME_ENTRY("9monthsin", "9 Months In.exe", "7407eea3a8a88cca77c59f0a3a400f36", 33372910),
 	GAME_ENTRY("aazor", "aazor.exe", "465f972675db2da6040518221af5b0ba", 4956212),
 	GAME_ENTRY("abducted", "10 minutes.exe", "465f972675db2da6040518221af5b0ba", 2687034),
 	GAME_ENTRY("absent", "absent.exe", "aabdafae8b57dfc48fdf158a72326c23", 39284149),
@@ -2051,6 +2059,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("capricorn", "capricorn.exe", "06a03fe35791b0578068ab1873455463", 4817076),
 	GAME_ENTRY("captaincringe", "captain_cringe.exe", "dd8586ebefd5c457e29b6b9845a576ea", 2631464),
 	GAME_ENTRY("captaindisaster", "cd-dhamsb-demo-1-3-0.exe", "9d991dd1f9e7fee653d3a9bb2546f968", 153646768),
+	GAME_ENTRY("captaindisastermoon", "CDiTDSotM.exe", "134528bfbb398455d06fa1dc1db5ca85", 44284638),
 	GAME_ENTRY("carrin", "carrin.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 2376923),
 	GAME_ENTRY("carrotbobinzxspeccyworld", "carrotbob.exe", "949f7440e3692b7366c2029979dee9a0", 914509),
 	GAME_ENTRY("casablancathedayafter", "casablanca.exe", "e88fd6a23a5e498d7b0d50e3bb914085", 4238105),
@@ -2474,6 +2483,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("magsjune2017", "MAGS june 2017.exe", "e3962995a70923a8d5a8f1cf8f932eee", 304129558),
 	GAME_ENTRY("magssep2007", "MAGS Sep 2007.exe", "f120690b506dd63cd7d1112ea6af2f77", 6007305),
 	GAME_ENTRY("manboy", "Man Boy.exe", "1275885401b7d2ece491e704535707d9", 3038532),
+	GAME_ENTRY("maniacland", "AliceInManiacland.exe", "74203c62b4604c4463f1c53db2d47c01", 6570499),
 	GAME_ENTRY("maniacmansiondeluxe", "Maniac.exe", "465f972675db2da6040518221af5b0ba", 10409172),
 	GAME_ENTRY("maniacmansionmania1", "MMM.exe", "465f972675db2da6040518221af5b0ba", 5476481),
 	GAME_ENTRY("maniacmansionmania1", "MMM.exe", "137a2bc940f033beab257b2fa88526ba", 10917227),
@@ -2547,6 +2557,8 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("mysterioushouse", "mh.exe", "495d45fb8adfd49690ae3b97921feec6", 42400316),
 	GAME_ENTRY("mysticseer", "NickOfTime.exe", "f120690b506dd63cd7d1112ea6af2f77", 4460113),
 	GAME_ENTRY("mythicalgambitflawlessfatality", "MGFF.exe", "4887d3dca056a0772741b42f66e018fb", 59711760),
+	GAME_ENTRY("mzi", "MissionZukunftia.exe", "0564de07d3fd5c16e6947a647061913c", 4305024),
+	GAME_ENTRY("mzi2", "MissionZukunftia2.exe", "839a7cbaa6c287ca35cf46a2505b48eb", 6672476),
 	GAME_ENTRY("nanobots", "Nanobots.exe", "95dcf736be87cf7d40bf64d5b078c4b7", 41977727),
 	GAME_ENTRY("necroquest", "necroquest01.exe", "2d111a69de0723f337bad661cb006239", 9545924),
 	GAME_ENTRY("necroquest", "necroquest01.exe", "6d4adcef07a14b53369d23edf5117252", 12389204),
