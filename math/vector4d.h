@@ -27,6 +27,7 @@
 #include "common/endian.h"
 
 #include "math/vector.h"
+#include "math/vector3d.h"
 #include "math/angle.h"
 
 namespace Math {
@@ -51,7 +52,7 @@ public:
 	Matrix(const float *data);
 
 	void set(float lx, float ly, float lz, float lw);
-
+	Vector3d getXYZ() const;
 };
 
 } // end of namespace Math
