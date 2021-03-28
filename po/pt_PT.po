@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-03-28 16:58+0000\n"
+"POT-Creation-Date: 2021-03-28 18:36+0000\n"
 "PO-Revision-Date: 2020-09-18 03:43+0000\n"
 "Last-Translator: Daniel <supsuper@gmail.com>\n"
 "Language-Team: Portuguese (Portugal) <https://translations.scummvm.org/"
@@ -4623,19 +4623,19 @@ msgstr "Ativa batotas"
 msgid "Debug info and level selection becomes available"
 msgstr ""
 
-#: engines/hdb/metaengine.cpp:193 engines/nancy/input.cpp:185
+#: engines/hdb/metaengine.cpp:193 engines/nancy/input.cpp:182
 msgid "Move up"
 msgstr "Mover para cima"
 
-#: engines/hdb/metaengine.cpp:199 engines/nancy/input.cpp:191
+#: engines/hdb/metaengine.cpp:199 engines/nancy/input.cpp:188
 msgid "Move down"
 msgstr "Mover para baixo"
 
-#: engines/hdb/metaengine.cpp:205 engines/nancy/input.cpp:197
+#: engines/hdb/metaengine.cpp:205 engines/nancy/input.cpp:194
 msgid "Move left"
 msgstr "Mover para a esquerda"
 
-#: engines/hdb/metaengine.cpp:211 engines/nancy/input.cpp:203
+#: engines/hdb/metaengine.cpp:211 engines/nancy/input.cpp:200
 msgid "Move right"
 msgstr "Mover para a direita"
 
@@ -5366,76 +5366,76 @@ msgstr ""
 msgid "Invalid Scene ID!"
 msgstr "Caminho inválido!"
 
-#: engines/nancy/input.cpp:171
+#: engines/nancy/input.cpp:168
 #, fuzzy
 #| msgid "Left Click"
 msgid "Left Click Interact"
 msgstr "Clique esquerdo"
 
-#: engines/nancy/input.cpp:178
+#: engines/nancy/input.cpp:175
 #, fuzzy
 #| msgid "Right Click Once"
 msgid "Right Click Interact"
 msgstr "Clique direito único"
 
-#: engines/nancy/input.cpp:209
+#: engines/nancy/input.cpp:206
 #, fuzzy
 #| msgid "Fast mode"
 msgid "Fast move modifier"
 msgstr "Modo rápido"
 
-#: engines/nancy/input.cpp:217
+#: engines/nancy/input.cpp:214
 #, fuzzy
 #| msgid "Toggle fast mode"
 msgid "Toggle fast conversation mode"
 msgstr "Alternar modo rápido"
 
-#: engines/nancy/input.cpp:222
+#: engines/nancy/input.cpp:219
 #, fuzzy
 #| msgid "Toggle fast mode"
 msgid "Toggle end conversation mode"
 msgstr "Alternar modo rápido"
 
-#: engines/nancy/input.cpp:227
+#: engines/nancy/input.cpp:224
 #, fuzzy
 msgid "Go to main menu"
 msgstr "~M~enu principal"
 
-#: engines/nancy/input.cpp:232
+#: engines/nancy/input.cpp:229
 #, fuzzy
 msgid "Go to save/load menu"
 msgstr "Iniciar sincronização de jogos guardados"
 
-#: engines/nancy/input.cpp:237
+#: engines/nancy/input.cpp:234
 #, fuzzy
 #| msgid "No date saved"
 msgid "Reload last save"
 msgstr "Nenhuma data guardada"
 
-#: engines/nancy/input.cpp:242
+#: engines/nancy/input.cpp:239
 #, fuzzy
 msgid "Go to setup menu"
 msgstr "Menu de Opções da DS"
 
-#: engines/nancy/input.cpp:247
+#: engines/nancy/input.cpp:244
 #, fuzzy
 #| msgid "Show game credits"
 msgid "Show credits"
 msgstr "Mostrar créditos do jogo"
 
-#: engines/nancy/input.cpp:252
+#: engines/nancy/input.cpp:249
 #, fuzzy
 #| msgid "Swap screens"
 msgid "Go to map screen"
 msgstr "Trocar ecrãs"
 
-#: engines/nancy/input.cpp:258
+#: engines/nancy/input.cpp:255
 #, fuzzy
 #| msgid "Enable cheat mode"
 msgid "Open general cheat menu"
 msgstr "Ativa batotas"
 
-#: engines/nancy/input.cpp:263
+#: engines/nancy/input.cpp:260
 msgid "Open event flags cheat menu"
 msgstr ""
 

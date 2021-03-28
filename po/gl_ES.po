@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-03-28 16:58+0000\n"
+"POT-Creation-Date: 2021-03-28 18:36+0000\n"
 "PO-Revision-Date: 2020-09-26 21:13+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Galician <https://translations.scummvm.org/projects/scummvm/"
@@ -4752,22 +4752,22 @@ msgstr "Activa o modo Helio."
 msgid "Debug info and level selection becomes available"
 msgstr ""
 
-#: engines/hdb/metaengine.cpp:193 engines/nancy/input.cpp:185
+#: engines/hdb/metaengine.cpp:193 engines/nancy/input.cpp:182
 #, fuzzy
 msgid "Move up"
 msgstr "Mover cara atrás"
 
-#: engines/hdb/metaengine.cpp:199 engines/nancy/input.cpp:191
+#: engines/hdb/metaengine.cpp:199 engines/nancy/input.cpp:188
 #, fuzzy
 msgid "Move down"
 msgstr "Cancelar descarga"
 
-#: engines/hdb/metaengine.cpp:205 engines/nancy/input.cpp:197
+#: engines/hdb/metaengine.cpp:205 engines/nancy/input.cpp:194
 #, fuzzy
 msgid "Move left"
 msgstr "Mover á esquerda"
 
-#: engines/hdb/metaengine.cpp:211 engines/nancy/input.cpp:203
+#: engines/hdb/metaengine.cpp:211 engines/nancy/input.cpp:200
 #, fuzzy
 msgid "Move right"
 msgstr "Mover á dereita"
@@ -5517,72 +5517,72 @@ msgstr "Rapaz 2"
 msgid "Invalid Scene ID!"
 msgstr "Código non válido"
 
-#: engines/nancy/input.cpp:171
+#: engines/nancy/input.cpp:168
 #, fuzzy
 #| msgid "Left Click"
 msgid "Left Click Interact"
 msgstr "Botón primario"
 
-#: engines/nancy/input.cpp:178
+#: engines/nancy/input.cpp:175
 #, fuzzy
 #| msgid "Right Click Once"
 msgid "Right Click Interact"
 msgstr "Botón secundario unha vez"
 
-#: engines/nancy/input.cpp:209
+#: engines/nancy/input.cpp:206
 #, fuzzy
 #| msgid "Fast mode"
 msgid "Fast move modifier"
 msgstr "Modo Rápido"
 
-#: engines/nancy/input.cpp:217
+#: engines/nancy/input.cpp:214
 #, fuzzy
 msgid "Toggle fast conversation mode"
 msgstr "Modo Rápido"
 
-#: engines/nancy/input.cpp:222
+#: engines/nancy/input.cpp:219
 #, fuzzy
 msgid "Toggle end conversation mode"
 msgstr "Modo Rápido"
 
-#: engines/nancy/input.cpp:227
+#: engines/nancy/input.cpp:224
 #, fuzzy
 msgid "Go to main menu"
 msgstr "~V~olver ao Iniciador"
 
-#: engines/nancy/input.cpp:232
+#: engines/nancy/input.cpp:229
 #, fuzzy
 #| msgid "Insert save/load game disk"
 msgid "Go to save/load menu"
 msgstr "Inserir disco de gardado/carga"
 
-#: engines/nancy/input.cpp:237
+#: engines/nancy/input.cpp:234
 #, fuzzy
 #| msgid "No date saved"
 msgid "Reload last save"
 msgstr "Non hai data gardada"
 
-#: engines/nancy/input.cpp:242
+#: engines/nancy/input.cpp:239
 #, fuzzy
 msgid "Go to setup menu"
 msgstr "Opcións"
 
-#: engines/nancy/input.cpp:247
+#: engines/nancy/input.cpp:244
 #, fuzzy
 msgid "Show credits"
 msgstr "Mostrar cursor do rato"
 
-#: engines/nancy/input.cpp:252
+#: engines/nancy/input.cpp:249
 #, fuzzy
 msgid "Go to map screen"
 msgstr "Axuste de desprazamento SI"
 
-#: engines/nancy/input.cpp:258
+#: engines/nancy/input.cpp:255
 #, fuzzy
 msgid "Open general cheat menu"
 msgstr "Activa o modo Helio."
 
-#: engines/nancy/input.cpp:263
+#: engines/nancy/input.cpp:260
 msgid "Open event flags cheat menu"
 msgstr ""
 

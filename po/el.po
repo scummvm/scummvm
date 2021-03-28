@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-03-28 16:58+0000\n"
+"POT-Creation-Date: 2021-03-28 18:36+0000\n"
 "PO-Revision-Date: 2021-03-28 02:24+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
@@ -4753,19 +4753,19 @@ msgstr "Ενεργοποίηση cheat"
 msgid "Debug info and level selection becomes available"
 msgstr "Γίνεται διαθέσιμη πληροφορία και επιλογή επιπέδου αποσφαλμάτωσης"
 
-#: engines/hdb/metaengine.cpp:193 engines/nancy/input.cpp:185
+#: engines/hdb/metaengine.cpp:193 engines/nancy/input.cpp:182
 msgid "Move up"
 msgstr "Κίνηση πάνω"
 
-#: engines/hdb/metaengine.cpp:199 engines/nancy/input.cpp:191
+#: engines/hdb/metaengine.cpp:199 engines/nancy/input.cpp:188
 msgid "Move down"
 msgstr "Κίνηση κάτω"
 
-#: engines/hdb/metaengine.cpp:205 engines/nancy/input.cpp:197
+#: engines/hdb/metaengine.cpp:205 engines/nancy/input.cpp:194
 msgid "Move left"
 msgstr "Κίνηση αριστερά"
 
-#: engines/hdb/metaengine.cpp:211 engines/nancy/input.cpp:203
+#: engines/hdb/metaengine.cpp:211 engines/nancy/input.cpp:200
 msgid "Move right"
 msgstr "Κίνηση δεξιά"
 
@@ -5525,55 +5525,55 @@ msgstr "Δευτερόλεπτα"
 msgid "Invalid Scene ID!"
 msgstr "Άκυρο Αναγνωριστικό Σκηνής!"
 
-#: engines/nancy/input.cpp:171
+#: engines/nancy/input.cpp:168
 msgid "Left Click Interact"
 msgstr "Αριστερό Κλικ για Αλληλεπίδραση"
 
-#: engines/nancy/input.cpp:178
+#: engines/nancy/input.cpp:175
 msgid "Right Click Interact"
 msgstr "Δεξί Κλικ για αλληλεπίδραση"
 
-#: engines/nancy/input.cpp:209
+#: engines/nancy/input.cpp:206
 msgid "Fast move modifier"
 msgstr "Ρύθμιση γρήγορης κίνησης"
 
-#: engines/nancy/input.cpp:217
+#: engines/nancy/input.cpp:214
 msgid "Toggle fast conversation mode"
 msgstr "Εναλλαγή λειτουργίας γρήγορων διαλόγων"
 
-#: engines/nancy/input.cpp:222
+#: engines/nancy/input.cpp:219
 msgid "Toggle end conversation mode"
 msgstr "Εναλλαγή λειτουργίας τερματισμού διαλόγων"
 
-#: engines/nancy/input.cpp:227
+#: engines/nancy/input.cpp:224
 msgid "Go to main menu"
 msgstr "Επιστροφή στο κεντρικό μενού"
 
-#: engines/nancy/input.cpp:232
+#: engines/nancy/input.cpp:229
 msgid "Go to save/load menu"
 msgstr "Άνοιγμα μενού απόθήκευσης/φόρτωσης"
 
-#: engines/nancy/input.cpp:237
+#: engines/nancy/input.cpp:234
 msgid "Reload last save"
 msgstr "Φόρτωση τελευταίου αποθηκευμένου παιχνιδιού"
 
-#: engines/nancy/input.cpp:242
+#: engines/nancy/input.cpp:239
 msgid "Go to setup menu"
 msgstr "Άνοιγμα μενού ρυθμίσεων"
 
-#: engines/nancy/input.cpp:247
+#: engines/nancy/input.cpp:244
 msgid "Show credits"
 msgstr "Προβολή συντελεστών"
 
-#: engines/nancy/input.cpp:252
+#: engines/nancy/input.cpp:249
 msgid "Go to map screen"
 msgstr "Άνοιγμα οθόνης χάρτη"
 
-#: engines/nancy/input.cpp:258
+#: engines/nancy/input.cpp:255
 msgid "Open general cheat menu"
 msgstr "Άνοιγμα μενού γενικών cheat"
 
-#: engines/nancy/input.cpp:263
+#: engines/nancy/input.cpp:260
 msgid "Open event flags cheat menu"
 msgstr "Άνοιγμα μενού cheat συμβάντων"
 
