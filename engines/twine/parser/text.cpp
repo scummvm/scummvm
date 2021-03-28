@@ -74,7 +74,7 @@ const TextEntry *TextData::getText(int textBankId, int textIndex) const {
 			return &entries[i];
 		}
 	}
-	warning("Failed to find text entry for bank id %i with text index %i", textBankId, textIndex);
+	debug(1, "Failed to find text entry for bank id %i with text index %i", textBankId, textIndex);
 	return nullptr;
 }
 
