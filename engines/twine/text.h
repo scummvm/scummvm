@@ -252,6 +252,9 @@ public:
 	 */
 	void initTextBank(int32 bankIdx);
 	void initSceneTextBank();
+	inline int textBank() const {
+		return _currentBankIdx;
+	}
 
 	/**
 	 * Display a certain dialogue text in the screen
