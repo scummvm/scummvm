@@ -45,6 +45,18 @@
 #include "ApplicationServices/ApplicationServices.h"	// for LSOpenFSRef
 #include "CoreFoundation/CoreFoundation.h"	// for CF* stuff
 
+// For querying number of MIDI devices
+#include <pthread.h>
+#include <CoreMIDI/CoreMIDI.h>
+
+void *coreMIDIthread(void *threadarg) {
+	(void)MIDIGetNumberOfDestinations();
+
+	pthread_exit(NULL);
+
+	return NULL;
+}
+
 OSystem_MacOSX::~OSystem_MacOSX() {
 	releaseMenu();
 }
@@ -63,6 +75,15 @@ void OSystem_MacOSX::init() {
 	// Initialize dialog manager
 	_dialogManager = new MacOSXDialogManager();
 #endif
+
+	// The call to query the number of MIDI devices is ubiquitously slow
+	// on the first run. This is apparent when opening Options in GUI,
+	// which takes 2-3 secs.
+	//
+	// Thus, we are launching it now, in a separate thread, so
+	// the subsequent calls are instantaneous
+	pthread_t thread;
+	pthread_create(&thread, NULL, coreMIDIthread, NULL);
 
 	// Invoke parent implementation of this method
 	OSystem_POSIX::init();
