@@ -93,7 +93,6 @@ void GraphicsManager::clearScreen() {
 	vCopy - Execute fast copy to video 
 --------------------------------------------------*/
 void GraphicsManager::vCopy(uint32 Sco, uint16 *Src, uint32 Len) {
-	lock();
 	if (_screenPtr == nullptr || Len == 0)
 		return;
 
@@ -115,10 +114,12 @@ void GraphicsManager::BCopy(uint32 Sco, uint8 *Src, uint32 Len) {
 					showScreen
 --------------------------------------------------*/
 void GraphicsManager::showScreen(int px, int py, int dx, int dy) {
+	lock();
+
 	for (int a = 0; a < dy; a++) {
-		vCopy(px + (py + a) * VirtualPageLen + VideoScrollPageDx,
+		memcpy(_screenPtr + px + (py + a) * VirtualPageLen + VideoScrollPageDx,
 		      _vm->_screenBuffer + px + (py + a) * CurRoomMaxX + CurScrollPageDx,
-		      dx);
+		      dx * 2);
 	}
 
 	unlock();

@@ -69,12 +69,9 @@ void TrecisionEngine::refreshInventory(uint8 StartIcon, uint8 StartLine) {
 		}
 	}
 
-	//refreshSmkIcon( StartIcon, 2 );
-
 	VMouseCopy();
-	for (uint16 a = 0; a < ICONDY; a++) {
-		_graphicsMgr->vCopy((FIRSTLINE + a) * VirtualPageLen + VideoScrollPageDx, _screenBuffer + (FIRSTLINE + a) * CurRoomMaxX + CurScrollPageDx, SCREENLEN);
-	}
+
+	_graphicsMgr->showScreen(0, FIRSTLINE, SCREENLEN, ICONDY);
 
 	VMouseRestore();
 	//VMouseON();

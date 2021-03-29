@@ -327,7 +327,6 @@ void AnimManager::startFullMotion(const char *name) {
 	memset(_vm->_screenBuffer + (TOP + AREA) * MAXX, 0, TOP * MAXX * 2);
 	memset(_vm->_screenBuffer, 0, MAXX * MAXY * 2);
 	_vm->_graphicsMgr->showScreen(0, AREA + TOP, MAXX, TOP);
-	_vm->_graphicsMgr->unlock();
 
 	_vm->_gameQueue.initQueue();
 	_vm->_animQueue.initQueue();
