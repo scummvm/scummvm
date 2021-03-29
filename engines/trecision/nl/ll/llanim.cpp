@@ -69,8 +69,8 @@ void RedrawRoom() {
 
 	memset(g_vm->_screenBuffer, 0, CurRoomMaxX * MAXY * 2);
 	if (g_vm->_room[g_vm->_curRoom]._bkgAnim)
-		MCopy(ImagePointer, SmackImagePointer, CurRoomMaxX * AREA);
-	MCopy(g_vm->_screenBuffer + TOP * CurRoomMaxX, ImagePointer, CurRoomMaxX * AREA);
+		memcpy(ImagePointer, SmackImagePointer, CurRoomMaxX * AREA * 2);
+	memcpy(g_vm->_screenBuffer + TOP * CurRoomMaxX, ImagePointer, CurRoomMaxX * AREA * 2);
 
 	if (g_vm->_room[g_vm->_curRoom]._bkgAnim)
 		g_vm->_animMgr->startSmkAnim(g_vm->_room[g_vm->_curRoom]._bkgAnim);

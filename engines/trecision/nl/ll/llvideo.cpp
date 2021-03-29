@@ -45,18 +45,6 @@ void resetZBuffer(int x1, int y1, int x2, int y2) {
 		*d++ = 0x7FFF;
 }
 
-/*------------------------------------------------
-		MCopy - Performs quick copy in memory
---------------------------------------------------*/
-void MCopy(uint16 *Dest, uint16 *Src, uint32 Len) {
-	if (Len & 1) {
-		*Dest++ = *Src++;
-		Len --;
-	}
-
-	memcpy(Dest, Src, Len * 2);
-}
-
 /*-----------------10/12/95 15.53-------------------
 				CheckMask - Compreso
 --------------------------------------------------*/

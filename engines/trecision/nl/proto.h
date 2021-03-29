@@ -79,7 +79,6 @@ void RegenRoom();
 void PaintRegenRoom();
 void DrawObj(SDObj);
 void resetZBuffer(int x1, int y1, int x2, int y2);
-void MCopy(uint16 *Dest, uint16 *Src, uint32 Len);
 bool CheckMask(uint16 MX, uint16 MY);
 void actorDoAction(int whatAction);
 void actorStop();

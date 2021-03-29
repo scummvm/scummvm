@@ -96,7 +96,7 @@ void GraphicsManager::vCopy(uint32 Sco, uint16 *Src, uint32 Len) {
 	if (_screenPtr == nullptr || Len == 0)
 		return;
 
-	MCopy(_screenPtr + Sco, Src, Len);
+	memcpy(_screenPtr + Sco, Src, Len * 2);
 }
 
 /*------------------------------------------------
