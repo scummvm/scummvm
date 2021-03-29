@@ -130,6 +130,7 @@ public:
 		#endif
 		#if defined(MACOSX)
 		LINK_PLUGIN(COREAUDIO)
+		LINK_PLUGIN(COREMIDI)
 		#endif
 		#ifdef USE_FLUIDSYNTH
 		LINK_PLUGIN(FLUIDSYNTH)
@@ -154,11 +155,6 @@ public:
 		LINK_PLUGIN(SEGACD)
 		#if defined(USE_TIMIDITY)
 		LINK_PLUGIN(TIMIDITY)
-		#endif
-		#if defined(MACOSX)
-		// Keep this at the end of the list - it takes a long time to enumerate
-		// and is only for hardware midi devices
-		LINK_PLUGIN(COREMIDI)
 		#endif
 
 		// Scaler plugins
