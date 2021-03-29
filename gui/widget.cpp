@@ -862,7 +862,7 @@ void GraphicsWidget::setGfx(const Graphics::Surface *gfx) {
 		return;
 	}
 
-	if (_w != gfx->w || _h != gfx->h) {
+	if ((_w != gfx->w || _h != gfx->h) && _w && _h) {
 		Graphics::Surface *tmp = scaleGfx(gfx, _w, _h);
 		_gfx.copyFrom(*tmp);
 		tmp->free();
