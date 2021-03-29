@@ -985,10 +985,7 @@ bool QuitGame() {
 	SText.set(CurScrollPageDx, TOP - 20, SCREENLEN, CARHEI, 0, 0, SCREENLEN, CARHEI, 0x7FFF, MASKCOL, g_vm->_sysText[13]);
 	SText.DText();
 
-	for (int a = 0; a < TOP; a++)
-		g_vm->_graphicsMgr->vCopy(a * VirtualPageLen + VideoScrollPageDx, g_vm->_screenBuffer + a * CurRoomMaxX + CurScrollPageDx, SCREENLEN);
-
-	g_vm->_graphicsMgr->unlock();
+	g_vm->_graphicsMgr->showScreen(0, 0, SCREENLEN, TOP);
 
 	FreeKey();
 
@@ -1004,10 +1001,7 @@ bool QuitGame() {
 	for (int a = 0; a < TOP; a++)
 		memcpy(g_vm->_screenBuffer + CurRoomMaxX * a + CurScrollPageDx, g_vm->ZBuffer + a * CurRoomMaxX, SCREENLEN * 2);
 
-	for (int a = 0; a < TOP; a++)
-		g_vm->_graphicsMgr->vCopy(a * VirtualPageLen + VideoScrollPageDx, g_vm->_screenBuffer + a * CurRoomMaxX + CurScrollPageDx, SCREENLEN);
-
-	g_vm->_graphicsMgr->unlock();
+	g_vm->_graphicsMgr->showScreen(0, 0, SCREENLEN, TOP);
 
 	return exitFl;
 }
@@ -1023,10 +1017,7 @@ void DemoOver() {
 	SText.set(CurScrollPageDx, TOP - 20, SCREENLEN, CARHEI, 0, 0, SCREENLEN, CARHEI, 0x7FFF, MASKCOL, g_vm->_sysText[17]);
 	SText.DText();
 
-	for (int a = 0; a < TOP; a++)
-		g_vm->_graphicsMgr->vCopy(a * VirtualPageLen + VideoScrollPageDx, g_vm->_screenBuffer + a * CurRoomMaxX + CurScrollPageDx, SCREENLEN);
-
-	g_vm->_graphicsMgr->unlock();
+	g_vm->_graphicsMgr->showScreen(0, 0, SCREENLEN, TOP);
 
 	FreeKey();
 
@@ -1091,6 +1082,7 @@ void CheckFileInCD(Common::String name) {
 	SText.set(0, TOP - 20, SCREENLEN, CARHEI, 0, 0, SCREENLEN, CARHEI, g_vm->_graphicsMgr->palTo16bit(255, 255, 255), MASKCOL, str);
 	SText.DText();
 
+	g_vm->_graphicsMgr->lock();
 	for (int a = 0; a < TOP; a++)
 		g_vm->_graphicsMgr->vCopy(a * MAXX, g_vm->_screenBuffer + a * MAXX, MAXX);
 	g_vm->_graphicsMgr->unlock();
@@ -1109,6 +1101,8 @@ void CheckFileInCD(Common::String name) {
 
 	for (int a = 0; a < TOP; a++)
 		memset(g_vm->_screenBuffer + MAXX * a, 0, MAXX * 2);
+
+	g_vm->_graphicsMgr->lock();
 	for (int a = 0; a < TOP; a++)
 		g_vm->_graphicsMgr->vCopy(a * MAXX, g_vm->_screenBuffer + a * MAXX, MAXX);
 	g_vm->_graphicsMgr->unlock();
