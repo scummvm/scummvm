@@ -136,7 +136,7 @@ void PaintScreen(uint8 flag) {
 			DrawObj(DObj);
 		} else {
 			for (a = (DObj.l[1] + TOP); a < (DObj.l[3] + TOP); a++)
-				memset(g_vm->_video2 + DObj.l[0] + a * CurRoomMaxX, 0x0000, (DObj.l[2] - DObj.l[0]) * 2);
+				memset(g_vm->_screenBuffer + DObj.l[0] + a * CurRoomMaxX, 0x0000, (DObj.l[2] - DObj.l[0]) * 2);
 		}
 		oldString.sign = NULL;
 
@@ -250,7 +250,7 @@ void PaintScreen(uint8 flag) {
 		SortBlock();
 		VMouseCopy();
 		for (a = 0; a < BlockCount; a++)
-			g_vm->_graphicsMgr->vCopy((PaintBlock[a] & 0xFFFFF), g_vm->_video2 + (PaintBlock[a] & 0xFFFFF), ((PaintBlock[a] & 0xFFF00000) >> 20) & 0xFFF);
+			g_vm->_graphicsMgr->vCopy((PaintBlock[a] & 0xFFFFF), g_vm->_screenBuffer + (PaintBlock[a] & 0xFFFFF), ((PaintBlock[a] & 0xFFF00000) >> 20) & 0xFFF);
 
 		VMouseRestore();
 		g_vm->_graphicsMgr->unlock();

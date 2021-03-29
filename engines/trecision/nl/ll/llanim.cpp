@@ -67,10 +67,10 @@ void RedrawRoom() {
 		VideoObjStatus[i] = false;
 	}
 
-	memset(g_vm->_video2, 0, CurRoomMaxX * MAXY * 2);
+	memset(g_vm->_screenBuffer, 0, CurRoomMaxX * MAXY * 2);
 	if (g_vm->_room[g_vm->_curRoom]._bkgAnim)
 		MCopy(ImagePointer, SmackImagePointer, CurRoomMaxX * AREA);
-	MCopy(g_vm->_video2 + TOP * CurRoomMaxX, ImagePointer, CurRoomMaxX * AREA);
+	MCopy(g_vm->_screenBuffer + TOP * CurRoomMaxX, ImagePointer, CurRoomMaxX * AREA);
 
 	if (g_vm->_room[g_vm->_curRoom]._bkgAnim)
 		g_vm->_animMgr->startSmkAnim(g_vm->_room[g_vm->_curRoom]._bkgAnim);

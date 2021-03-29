@@ -120,7 +120,7 @@ TrecisionEngine::TrecisionEngine(OSystem *syst) : Engine(syst) {
 		_newData2[i] = 0;
 	}
 
-	_video2 = nullptr;
+	_screenBuffer = nullptr;
 	_animMgr = nullptr;
 	_graphicsMgr = nullptr;
 	_logicMgr = nullptr;
