@@ -195,7 +195,6 @@ void NlDelay(uint32 val);
 void NlDissolve(int val);
 void Mouse(MouseCmd opt);
 void CloseSys(const char *str);
-void BattutaPrint(int x, int y, int c, const char *txt);
 void soundtimefunct();
 void StartSoundSystem();
 void StopSoundSystem();
