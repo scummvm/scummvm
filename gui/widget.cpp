@@ -546,6 +546,15 @@ Graphics::Surface *scaleGfx(const Graphics::Surface *gfx, int w, int h) {
 	const Graphics::PixelFormat &requiredFormat = g_gui.theme()->getPixelFormat();
 	Graphics::Surface tmp;
 
+	// Maintain aspect ratio
+	float xRatio = 1.0f * w / gfx->w;
+	float yRatio = 1.0f * h / gfx->h;
+
+	if (xRatio < yRatio)
+		h = gfx->h * xRatio;
+	else
+		w = gfx->w * yRatio;
+
 	tmp.create(gfx->w, gfx->h, g_gui.theme()->getPixelFormat());
 	tmp.copyFrom(*gfx);
 	tmp.convertToInPlace(requiredFormat);
