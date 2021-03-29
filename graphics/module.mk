@@ -36,6 +36,7 @@ MODULE_OBJS := \
 	scaler/normal.o \
 	sjis.o \
 	surface.o \
+	svg.o \
 	transform_struct.o \
 	transform_tools.o \
 	transparent_surface.o \

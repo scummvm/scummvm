@@ -1,0 +1,103 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ */
+
+#include "common/scummsys.h"
+#include "common/stream.h"
+#include "common/textconsole.h"
+
+#include "graphics/managed_surface.h"
+#include "graphics/pixelformat.h"
+
+#include "graphics/svg.h"
+
+
+#define NANOSVG_IMPLEMENTATION
+#include "graphics/nanosvg/nanosvg.h"
+#define NANOSVGRAST_IMPLEMENTATION
+#include "graphics/nanosvg/nanosvgrast.h"
+
+namespace Graphics {
+
+SVGBitmap::SVGBitmap(Common::SeekableReadStream *in) {
+	int32 size = in->size();
+	char *data = (char *)malloc(size + 1);
+
+	in->read(data, size);
+	data[size] = '\0';
+
+	_svg = nsvgParse(data, "px", 96);
+
+	if (_svg == NULL)
+		error("Cannot parse SVG image");
+
+	_rasterizer = NULL;
+	_cachedW = _cachedH = 0;
+	_cache = NULL;
+	_render = NULL;
+
+	_pixelformat = new Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
+}
+
+SVGBitmap::~SVGBitmap() {
+	if (_rasterizer)
+		nsvgDeleteRasterizer(_rasterizer);
+
+	nsvgDelete(_svg);
+
+	if (_cache)
+		free(_cache);
+
+	delete _render;
+}
+
+void SVGBitmap::render(Graphics::Surface &target, int dw, int dh) {
+	if (_rasterizer == NULL)
+		_rasterizer = nsvgCreateRasterizer();
+
+	if (_cachedW != dw || _cachedH != dh) {
+		if (_cache)
+			free(_cache);
+
+		_cache = (byte *)malloc(dw * dh * 4);
+
+		nsvgRasterize(_rasterizer, _svg, 0, 0, 1, _cache, dw, dh, dw * 4);
+
+		_cachedW = dw;
+		_cachedH = dh;
+
+		if (_render)
+			delete _render;
+
+		Graphics::Surface tmp;;
+		tmp.init(dw, dh, dw * 4, _cache, *_pixelformat);
+
+		_render = new ManagedSurface(dw, dh, *_pixelformat);
+		_render->clear(_pixelformat->ARGBToColor(255, 255, 0, 255));
+
+		_render->blitFrom(tmp);
+
+		tmp.free();
+	}
+
+	target.copyFrom(_render->rawSurface());
+}
+
+} // end of namespace Graphics
