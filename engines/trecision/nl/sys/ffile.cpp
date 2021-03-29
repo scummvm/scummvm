@@ -124,7 +124,6 @@ char FastFileInit(const char *fname) {
 
 	if (!dataFile.open(fname)) {
 		warning("FastFileInit: failed to open %s", fname);
-		FastFileFinish();
 		CloseSys(g_vm->_sysText[1]);
 		return false;
 	}
