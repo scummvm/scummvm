@@ -115,10 +115,7 @@ TrecisionEngine::TrecisionEngine(OSystem *syst) : Engine(syst) {
 	_lastLightIcon = 0xFF;
 	_inventoryCounter = INVENTORY_HIDE;
 
-	for (int i = 0; i < 260; ++i) {
-		_newData[i] = 0;
-		_newData2[i] = 0;
-	}
+	memset(_newData, 0, 260);
 
 	_screenBuffer = nullptr;
 	_animMgr = nullptr;

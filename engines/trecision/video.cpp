@@ -101,7 +101,7 @@ AnimManager::AnimManager(TrecisionEngine *vm) : _vm(vm) {
 	_animMaxX = _animMinX = 0;
 	_animMaxY = _animMinY = 0;
 
-	_curSmackBuffer = 0;
+	_curSmackBuffer = kSmackerBackground;
 
 	_fullMotionStart = _fullMotionEnd = 0;
 }
@@ -162,7 +162,7 @@ void AnimManager::smkNextFrame() {
 void AnimManager::smkGoto(int buf, int num) {
 	_curSmackBuffer = buf;
 
-	if (_smkAnims[_curSmackBuffer] == NULL)
+	if (_smkAnims[_curSmackBuffer] == nullptr)
 		return;
 
 	_smkAnims[_curSmackBuffer]->forceSeekToFrame(num);
@@ -198,11 +198,11 @@ void AnimManager::startSmkAnim(uint16 num) {
 
 	// choose the buffer to use
 	if (_animTab[num]._flag & SMKANIM_BKG)
-		pos = 0;
+		pos = kSmackerBackground;
 	else if (_animTab[num]._flag & SMKANIM_ICON)
-		pos = 2;
+		pos = kSmackerIcon;
 	else {
-		pos = 1;
+		pos = kSmackerFullMotion;
 
 		_animMaxX = 0;
 		_animMinX = MAXX;
@@ -270,18 +270,18 @@ void AnimManager::stopSmkAnim(uint16 num) {
 	if (num == 0)
 		return;
 
-	int pos = 0;
+	int pos = kSmackerBackground;
 
 	while ((pos < MAXSMACK) && (_playingAnims[pos] != num))
 		pos++;
 
 	if (pos >= MAXSMACK) {
 		if (_animTab[num]._flag & SMKANIM_BKG)
-			pos = 0;
+			pos = kSmackerBackground;
 		else if (_animTab[num]._flag & SMKANIM_ICON)
-			pos = 2;
+			pos = kSmackerIcon;
 		else
-			pos = 1;
+			pos = kSmackerFullMotion;
 	}
 
 	_playingAnims[pos] = 0;
@@ -307,13 +307,9 @@ void AnimManager::stopAllSmkAnims() {
 				startFullMotion
 --------------------------------------------------*/
 void AnimManager::startFullMotion(const char *name) {
-	// Stops all the other animations
-	for (int pos = 0; pos < MAXSMACK; pos++) {
-		if (_playingAnims[pos] != 0) {
-			stopSmkAnim(_playingAnims[pos]);
-		}
-	}
-	_curSmackBuffer = 1;
+	stopAllSmkAnims();
+
+	_curSmackBuffer = kSmackerFullMotion;
 
 	_playingAnims[_curSmackBuffer] = FULLMOTIONANIM;
 	_curAnimFrame[_curSmackBuffer] = 0;
@@ -341,7 +337,7 @@ void AnimManager::startFullMotion(const char *name) {
 				stopFullMotion
 --------------------------------------------------*/
 void AnimManager::stopFullMotion() {
-	_curSmackBuffer = 1;
+	_curSmackBuffer = kSmackerFullMotion;
 
 	if (_playingAnims[_curSmackBuffer] == 0)
 		return;
@@ -407,6 +403,22 @@ void AnimManager::refreshAllAnimations() {
 	#endif
 }
 
+void AnimManager::refreshPalette(int num, bool updateNewData) {
+	if (_smkAnims[num]->hasDirtyPalette()) {
+		const byte *pal = _smkAnims[num]->getPalette();
+		for (int32 a = 0; a < 256; a++) {
+			_smkPal[num][a] = _vm->_graphicsMgr->palTo16bit(
+				pal[a * 3 + 0],
+				pal[a * 3 + 1],
+				pal[a * 3 + 2]);
+
+			if (updateNewData) {
+				_vm->_newData[a] = _smkPal[1][a];
+			}
+		}
+	}
+}
+
 /*------------------------------------------------
 					refreshSmkAnim
 --------------------------------------------------*/
@@ -425,11 +437,11 @@ void AnimManager::refreshSmkAnim(int num) {
 
 	if (pos >= MAXSMACK) {
 		if (_animTab[num]._flag & SMKANIM_BKG)
-			pos = 0;
+			pos = kSmackerBackground;
 		else if (_animTab[num]._flag & SMKANIM_ICON)
-			pos = 2;
+			pos = kSmackerIcon;
 		else
-			pos = 1;
+			pos = kSmackerFullMotion;
 	}
 
 	_curSmackBuffer = pos;
@@ -439,13 +451,7 @@ void AnimManager::refreshSmkAnim(int num) {
 
 	_curAnimFrame[pos]++;
 
-	if (_smkAnims[pos]->hasDirtyPalette()) {
-		for (int32 a = 0; a < 256; a++) {
-			_smkPal[pos][a] = _vm->_graphicsMgr->palTo16bit(_smkAnims[pos]->getPalette()[a * 3 + 0],
-			                                                   _smkAnims[pos]->getPalette()[a * 3 + 1],
-			                                                   _smkAnims[pos]->getPalette()[a * 3 + 2]);
-		}
-	}
+	refreshPalette(pos, false);
 
 	while (const Common::Rect *lastRect = _smkAnims[pos]->getNextDirtyRect()) {
 		int inters = 0;
@@ -484,7 +490,7 @@ void AnimManager::refreshSmkAnim(int num) {
 		}
 	}
 
-	if (pos == 0) {
+	if (pos == kSmackerBackground) {
 		// If it's a background
 		for (int32 a = 0; a < MAXCHILD; a++) {
 			if (!(_animTab[num]._flag & (SMKANIM_OFF1 << a)) && (_animTab[num]._lim[a][3] != 0)) {
@@ -495,7 +501,7 @@ void AnimManager::refreshSmkAnim(int num) {
 				_vm->_limitsNum++;
 			}
 		}
-	} else if (pos == 1) {
+	} else if (pos == kSmackerFullMotion) {
 		// Only for the character
 		if (_curAnimFrame[pos] == 1) {
 			for (uint16 b = 0; b < AREA; b++) {
@@ -560,24 +566,14 @@ void AnimManager::refreshSmkAnim(int num) {
 void AnimManager::refreshFullMotion() {
 	int32 yfact;
 
-	int pos = 1;
-	_curSmackBuffer = pos;
+	_curSmackBuffer = kSmackerFullMotion;
 
-	if (((_curAnimFrame[pos] + 1) >= _fullMotionStart) && ((_curAnimFrame[pos] + 1) <= _fullMotionEnd)) {
-		_curAnimFrame[pos]++;
+	if (((_curAnimFrame[kSmackerFullMotion] + 1) >= _fullMotionStart) && (_curAnimFrame[kSmackerFullMotion] + 1 <= _fullMotionEnd)) {
+		_curAnimFrame[kSmackerFullMotion]++;
 
-		if (_smkAnims[pos]->hasDirtyPalette()) {
-			for (int32 a = 0; a < 256; a++) {
-				_smkPal[pos][a] = _vm->_graphicsMgr->palTo16bit(_smkAnims[pos]->getPalette()[a * 3 + 0],
-				                                                  _smkAnims[pos]->getPalette()[a * 3 + 1],
-				                                                  _smkAnims[pos]->getPalette()[a * 3 + 2]);
+		refreshPalette(kSmackerFullMotion, true);
 
-				_vm->_newData[a] = _smkPal[pos][a];
-				_vm->_newData2[a] = (uint32)((uint32)_smkPal[pos][a] + (((uint32)_smkPal[pos][a]) << 16));
-			}
-		}
-
-		DialogHandler(_curAnimFrame[pos]);
+		DialogHandler(_curAnimFrame[kSmackerFullMotion]);
 
 		_vm->_sdText.dx = TextLength(_vm->_sdText.sign, 0);
 
@@ -609,37 +605,43 @@ void AnimManager::refreshFullMotion() {
 			_vm->_oldSdText.sign = nullptr;
 		}
 
-		if (_smkAnims[pos]->getHeight() > MAXY / 2)
+		if (_smkAnims[kSmackerFullMotion]->getHeight() > MAXY / 2)
 			yfact = 1;
 		else
 			yfact = 2;
 
-		Common::Rect dirtyRect = Common::Rect(0, 0, _smkAnims[pos]->getWidth(), _smkAnims[pos]->getHeight());
+		Common::Rect dirtyRect = Common::Rect(0, 0, _smkAnims[kSmackerFullMotion]->getWidth(), _smkAnims[kSmackerFullMotion]->getHeight());
 		if (const Common::Rect *lastRect = &dirtyRect) {
+			_vm->_graphicsMgr->lock();
+
 			for (int32 a = 0; a < lastRect->height(); a++) {
 				// if it's already copied
 				if ((_vm->_sdText.sign == nullptr) ||
 				    ((lastRect->top + a) * yfact < (_vm->_sdText.y - TOP)) ||
 				    ((lastRect->top + a) * yfact >= (_vm->_sdText.y + _vm->_sdText.dy - TOP))) {
 
-					_vm->_graphicsMgr->BCopy(lastRect->left + (lastRect->top + a) * MAXX + ((MAXY - _smkAnims[pos]->getHeight()) / 2) * MAXX,
-									 _smkBuffer[pos] + lastRect->left + (lastRect->top + a) * _smkAnims[pos]->getWidth(),
-									 lastRect->width());					
+					_vm->_graphicsMgr->BCopy(
+						lastRect->left + (lastRect->top + a) * MAXX + ((MAXY - _smkAnims[kSmackerFullMotion]->getHeight()) / 2) * MAXX,
+						_smkBuffer[kSmackerFullMotion] + lastRect->left + (lastRect->top + a) * _smkAnims[kSmackerFullMotion]->getWidth(),
+						lastRect->width()
+					);
 				}
 			}
+
+			_vm->_graphicsMgr->unlock();
 		}
+
 		if (_vm->_sdText.sign != nullptr)
 			_vm->_graphicsMgr->showScreen(0, _vm->_sdText.y, MAXX, _vm->_sdText.dy);
-		_vm->_graphicsMgr->unlock();
 
-		if (_curAnimFrame[pos] == _fullMotionEnd) {
+		if (_curAnimFrame[1] == _fullMotionEnd) {
 			drawSmkBuffer(0, 0, MAXX, AREA);
-			doEvent(MC_DIALOG, ME_ENDCHOICE, MP_HIGH, _curAnimFrame[pos], 0, 0, 0);
-			smkSoundOnOff(pos, false);
+			doEvent(MC_DIALOG, ME_ENDCHOICE, MP_HIGH, _curAnimFrame[kSmackerFullMotion], 0, 0, 0);
+			smkSoundOnOff(kSmackerFullMotion, false);
 		} else {
 			smkNextFrame();
 
-			if (_curAnimFrame[pos] >= _smkAnims[pos]->getFrameCount())
+			if (_curAnimFrame[1] >= _smkAnims[kSmackerFullMotion]->getFrameCount())
 				stopFullMotion();
 		}
 	}
@@ -649,10 +651,9 @@ void AnimManager::refreshFullMotion() {
 			Refresh Smacker Icons
 --------------------------------------------------*/
 void AnimManager::refreshSmkIcon(int StartIcon, int num) {
-	int pos = MAXSMACK - 1;
-	_curAnimFrame[pos]++;
+	_curAnimFrame[kSmackerIcon]++;
 
-	_curSmackBuffer = pos;
+	_curSmackBuffer = kSmackerIcon;
 
 	if (_smkAnims[_curSmackBuffer] == nullptr)
 		return;
@@ -668,20 +669,14 @@ void AnimManager::refreshSmkIcon(int StartIcon, int num) {
 	if (a == ICONSHOWN)
 		return;
 
-	if (_smkAnims[pos]->hasDirtyPalette()) {
-		for (a = 0; a < 256; a++) {
-			_smkPal[pos][a] = _vm->_graphicsMgr->palTo16bit(_smkAnims[pos]->getPalette()[a * 3 + 0],
-			                                                  _smkAnims[pos]->getPalette()[a * 3 + 1],
-			                                                  _smkAnims[pos]->getPalette()[a * 3 + 2]);
-		}
-	}
+	refreshPalette(kSmackerIcon, false);
 
-	Common::Rect dirtyRect = Common::Rect(0, 0, _smkAnims[pos]->getWidth(), _smkAnims[pos]->getHeight());
+	Common::Rect dirtyRect = Common::Rect(0, 0, _smkAnims[kSmackerIcon]->getWidth(), _smkAnims[kSmackerIcon]->getHeight());
 	if (const Common::Rect *lastRect = &dirtyRect) {
 		for (a = 0; a < ICONDY - lastRect->top; a++) {
 			byte2word(_vm->_screenBuffer + lastRect->left + stx + (lastRect->top + a + FIRSTLINE) * SCREENLEN,
-			          _smkBuffer[pos] + lastRect->left + (lastRect->top + a) * _smkAnims[pos]->getWidth(),
-			          _smkPal[pos], lastRect->width());
+					  _smkBuffer[kSmackerIcon] + lastRect->left + (lastRect->top + a) * _smkAnims[kSmackerIcon]->getWidth(),
+					  _smkPal[kSmackerIcon], lastRect->width());
 
 			AddLine(lastRect->left + stx, lastRect->right + stx, lastRect->top + a + FIRSTLINE);
 		}
@@ -694,34 +689,17 @@ void AnimManager::refreshSmkIcon(int StartIcon, int num) {
 					playFullMotion
 --------------------------------------------------*/
 void AnimManager::playFullMotion(int start, int end) {
-	int pos = 1;
-	_curSmackBuffer = pos;
+	_curSmackBuffer = kSmackerFullMotion;
 
-	if (start < 1)
-		start = 1;
-	if (end < 1)
-		end = 1;
-
-	if (start > _smkAnims[pos]->getFrameCount()) {
-		start = _smkAnims[pos]->getFrameCount() - 1;
-	}
-	if (end > _smkAnims[pos]->getFrameCount()) {
-		end = _smkAnims[pos]->getFrameCount();
-	}
-
+	start = CLIP<int32>(start, 1, _smkAnims[kSmackerFullMotion]->getFrameCount() - 1);
+	end = CLIP<int32>(end, 1, _smkAnims[kSmackerFullMotion]->getFrameCount());
+	
 	//	If choices are attached
-	if (_curAnimFrame[pos] != (start - 1)) {
+	if (_curAnimFrame[kSmackerFullMotion] != (start - 1)) {
 		for (int a = 0; a < MAXNEWSMKPAL; a++) {
 			if (((_dialog[_curDialog]._newPal[a] > start) || !(_dialog[_curDialog]._newPal[a])) && (a)) {
-				smkGoto(pos, _dialog[_curDialog]._newPal[a - 1]);
-				for (a = 0; a < 256; a++) {
-					_smkPal[pos][a] = _vm->_graphicsMgr->palTo16bit(_smkAnims[pos]->getPalette()[a * 3 + 0],
-					                                                  _smkAnims[pos]->getPalette()[a * 3 + 1],
-					                                                  _smkAnims[pos]->getPalette()[a * 3 + 2]);
-
-					_vm->_newData[a] = _smkPal[pos][a];
-					_vm->_newData2[a] = (uint32)((uint32)_smkPal[pos][a] + (((uint32)_smkPal[pos][a]) << 16));
-				}
+				smkGoto(kSmackerFullMotion, _dialog[_curDialog]._newPal[a - 1]);
+				refreshPalette(kSmackerFullMotion, true);
 				break;
 			}
 
@@ -729,22 +707,22 @@ void AnimManager::playFullMotion(int start, int end) {
 				break;
 		}
 
-		if ((end - start) > 2) {
+		if (end - start > 2) {
 			if (start > 10)
-				smkGoto(pos, start - 10);
+				smkGoto(kSmackerFullMotion, start - 10);
 			else
-				smkGoto(pos, 1);
+				smkGoto(kSmackerFullMotion, 1);
 
-			while (_smkAnims[pos]->getCurFrame() < start - 1) {
+			while (_smkAnims[kSmackerFullMotion]->getCurFrame() < start - 1) {
 				smkNextFrame();
 			}
 		} else
-			smkGoto(pos, start);
+			smkGoto(kSmackerFullMotion, start);
 
-		_curAnimFrame[pos] = start - 1;
+		_curAnimFrame[kSmackerFullMotion] = start - 1;
 	}
 	if ((end - start) > 2)
-		smkSoundOnOff(pos, true);
+		smkSoundOnOff(kSmackerFullMotion, true);
 
 	_fullMotionStart = start;
 	_fullMotionEnd = end;

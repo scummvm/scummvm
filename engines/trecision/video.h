@@ -25,9 +25,11 @@
 
 #include "video/smk_decoder.h"
 
-#define SMACKNULL 0
-#define SMACKOPEN 1
-#define SMACKCLOSE 2
+enum SmackerType {
+	kSmackerBackground = 0,
+	kSmackerFullMotion = 1,
+	kSmackerIcon = 2
+};
 
 #define FULLMOTIONANIM 620
 #define MAXSMACK 3
@@ -93,6 +95,7 @@ public:
 	void refreshAllAnimations();
 	void refreshAnim(int box);
 	void refreshSmkAnim(int num);
+	void refreshPalette(int num, bool updateNewData);
 	void startFullMotion(const char *name);
 	void startSmkAnim(uint16 num);
 	void stopAllSmkAnims();

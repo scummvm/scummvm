@@ -103,7 +103,6 @@ void GraphicsManager::vCopy(uint32 Sco, uint16 *Src, uint32 Len) {
 					BCopy
 --------------------------------------------------*/
 void GraphicsManager::BCopy(uint32 Sco, uint8 *Src, uint32 Len) {
-	lock();
 	if ((_screenPtr == nullptr) || (Len == 0))
 		return;
 
