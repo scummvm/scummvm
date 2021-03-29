@@ -127,7 +127,7 @@ public:
 
 protected:
 	// Called after graphics driver was initialized for use for the first time
-	virtual void OnInit(volatile int *loopTimer);
+	virtual void OnInit();
 	// Called just before graphics mode is going to be uninitialized and its
 	// resources released
 	virtual void OnUnInit();

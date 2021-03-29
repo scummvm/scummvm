@@ -166,7 +166,7 @@ void ALScummVMGraphicsDriver::SetTintMethod(TintMethod method) {
 	// TODO: support new D3D-style tint method
 }
 
-bool ALScummVMGraphicsDriver::SetDisplayMode(const DisplayMode &mode, volatile int *loopTimer) {
+bool ALScummVMGraphicsDriver::SetDisplayMode(const DisplayMode &mode) {
 	ReleaseDisplayMode();
 
 	const int driver = GetAllegroGfxDriverID(mode.Windowed);
@@ -179,7 +179,7 @@ bool ALScummVMGraphicsDriver::SetDisplayMode(const DisplayMode &mode, volatile i
 	if (!IsModeSupported(mode) || set_gfx_mode(driver, mode.Width, mode.Height, 0, 0) != 0)
 		return false;
 
-	OnInit(loopTimer);
+	OnInit();
 	OnModeSet(mode);
 
 	// set_gfx_mode is an allegro function that creates screen bitmap;

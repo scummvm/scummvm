@@ -93,7 +93,7 @@ public:
 	virtual const char *GetDriverID() = 0;
 	virtual void SetTintMethod(TintMethod method) = 0;
 	// Initialize given display mode
-	virtual bool SetDisplayMode(const DisplayMode &mode, volatile int *loopTimer) = 0;
+	virtual bool SetDisplayMode(const DisplayMode &mode) = 0;
 	// Gets if a graphics mode was initialized
 	virtual bool IsModeSet() const = 0;
 	// Set the size of the native image size
