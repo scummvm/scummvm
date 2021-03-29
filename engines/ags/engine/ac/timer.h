@@ -36,6 +36,7 @@ using AGS_Clock = std::conditional<
 	std::chrono::high_resolution_clock, std::chrono::steady_clock
 >::type;
 
+// Sleeps for time remaining until the next game frame, updates next frame timestamp
 extern void WaitForNextFrame();
 
 // Sets real FPS to the given number of frames per second; pass 1000+ for maxed FPS mode
