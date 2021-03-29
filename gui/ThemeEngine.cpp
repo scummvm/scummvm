@@ -692,8 +692,12 @@ bool ThemeEngine::addTextColor(TextColor colorId, int r, int g, int b) {
 bool ThemeEngine::addBitmap(const Common::String &filename) {
 	// Nothing has to be done if the bitmap already has been loaded.
 	Graphics::Surface *surf = _bitmaps[filename];
-	if (surf)
-		return true;
+	if (surf) {
+		surf->free();
+		delete surf;
+
+		_bitmaps.erase(filename);
+	}
 
 	const Graphics::Surface *srcSurface = nullptr;
 
