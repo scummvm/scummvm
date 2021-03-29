@@ -76,38 +76,6 @@ void WaitForNextFrame() {
 	::AGS::g_vm->_rawScreen->update();
 }
 
-bool waitingForNextTick() {
-	auto now = AGS_Clock::now();
-
-	if (_G(framerate_maxed)) {
-		_G(last_tick_time) = now;
-		return false;
-	}
-
-	auto is_lagging = (now - _G(last_tick_time)) > (MAXIMUM_FALL_BEHIND * _G(tick_duration));
-	if (is_lagging) {
-#if AGS_PLATFORM_DEBUG && defined (__GNUC__)
-		auto missed_ticks = ((now - _G(last_tick_time)) / _G(tick_duration));
-		warning("Lagging! Missed %lld ticks!\n", (int64)missed_ticks);
-/*		void *array[10];
-		auto size = backtrace(array, 10);
-		backtrace_symbols_fd(array, size, STDOUT_FILENO);
-*/
-		warning("\n");
-#endif
-		_G(last_tick_time) = now;
-		return false;
-	}
-
-	auto next_tick_time = _G(last_tick_time) + _G(tick_duration);
-	if (next_tick_time <= now) {
-		_G(last_tick_time) = next_tick_time;
-		return false;
-	}
-
-	return true;
-}
-
 void skipMissedTicks() {
 	_G(last_tick_time) = AGS_Clock::now();
 	_G(next_frame_timestamp) = AGS_Clock::now();

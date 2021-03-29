@@ -43,8 +43,8 @@ extern void WaitForNextFrame();
 extern void setTimerFps(int new_fps);
 // Tells whether maxed FPS mode is currently set
 extern bool isTimerFpsMaxed();
-extern bool waitingForNextTick();  // store last tick time.
-extern void skipMissedTicks();  // if more than N frames, just skip all, start a fresh.
+// if more than N frames, just skip all, start a fresh.
+extern void skipMissedTicks();
 
 } // namespace AGS3
 
