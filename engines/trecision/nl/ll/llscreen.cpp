@@ -270,7 +270,6 @@ void OpenVideo() {
 					ReadActor
 --------------------------------------------------*/
 uint32 ReadActor(const char *filename, uint8 *Area) {
-	int32 ActionNum;
 
 	extern uint16 _textureMat[256][91];
 	extern int16  _textureCoord[MAXFACE][3][2];
@@ -281,12 +280,11 @@ uint32 ReadActor(const char *filename, uint8 *Area) {
 	if (ff == nullptr)
 		CloseSys(g_vm->_sysText[1]);
 
-	FastFileRead(ff, &ActionNum, 4);
-
-	FastFileRead(ff, &VertexNum, 4);
+	int32 ActionNum = ff->readSint32LE();
+	VertexNum = ff->readSint32LE();
 	_actor._vertexNum = VertexNum;
 
-	_actor._vertex = (SVertex *)(Area);
+	_actor._vertex = (SVertex *)Area;
 	_characterArea = Area;
 
 	int32 Read = FastFileRead(ff, _actor._vertex, sizeof(SVertex) * VertexNum * ActionNum);
@@ -295,7 +293,7 @@ uint32 ReadActor(const char *filename, uint8 *Area) {
 	_actor._faceNum = FaceNum;
 
 	Area += Read;
-	_actor._face = (SFace *)(Area);
+	_actor._face = (SFace *)Area;
 	Read += FastFileRead(ff, _actor._face, sizeof(SFace) * FaceNum);
 	FastFileClose(ff);
 
@@ -402,9 +400,10 @@ uint32 ReadActor(const char *filename, uint8 *Area) {
 		v1[2] = _actor._vertex[P1]._z;
 
 		for (int e = 279; e < 383; e++) {
-			for (f = 0; f < 84; f++)
+			for (f = 0; f < 84; f++) {
 				if (_vertsCorrList[f] == e)
 					break;
+			}
 			if (f == 84)
 				continue;
 
@@ -415,15 +414,17 @@ uint32 ReadActor(const char *filename, uint8 *Area) {
 			q[0] = 0.0;
 			q[1] = 0.0;
 			q[2] = 0.0;
-			for (d = 0; d < 3; d++)
+			for (d = 0; d < 3; d++) {
 				for (c = 0; c < 3; c++)
 					q[c] += m1[c][d] * v[d];
+			}
 			v[0] = 0.0;
 			v[1] = 0.0;
 			v[2] = 0.0;
-			for (d = 0; d < 3; d++)
+			for (d = 0; d < 3; d++) {
 				for (c = 0; c < 3; c++)
 					v[c] += m2[d][c] * q[d];
+			}
 
 			if (b < 42) {
 				sv[e]._x += _vertsCorr[e - 279][0];
@@ -453,7 +454,7 @@ int actionInRoom(int curA) {
 
 	if (b >= MAXACTIONINROOM) {
 		warning("Action %d not found in room %d", curA, g_vm->_curRoom);
-		return (0) ;
+		return 0 ;
 	}
 
 	return b;
@@ -481,7 +482,7 @@ void ReadLoc() {
 	g_vm->_graphicsMgr->updatePixelFormat(ImagePointer, BmInfo.dx * BmInfo.dy);
 
 	ReadObj();
-	if ((g_vm->_room[g_vm->_curRoom]._sounds[0] != 0))
+	if (g_vm->_room[g_vm->_curRoom]._sounds[0] != 0)
 		ReadSounds();
 
 	_actionPointer[0] = (uint8 *)(g_vm->_video2 + GameWordPointer);
