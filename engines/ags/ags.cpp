@@ -135,6 +135,9 @@ Common::Error AGSEngine::run() {
 #endif
 	_G(debug_flags) = 0;
 
+	if (ConfMan.hasKey("display_fps"))
+		_G(display_fps) = ConfMan.getBool("display_fps") ? AGS3::kFPS_Forced : AGS3::kFPS_Hide;
+
 	AGS3::ConfigTree startup_opts;
 	int res = AGS3::main_process_cmdline(startup_opts, ARGC, ARGV);
 	if (res != 0)
