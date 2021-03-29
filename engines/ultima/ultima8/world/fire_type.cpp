@@ -83,7 +83,7 @@ void FireType::makeBulletSplashShapeAndPlaySound(int32 x, int32 y, int32 z) cons
 			sfxno = RANDOM_ELEM(FIRESOUND_3);
 			break;
 		case 5:
-			shape = 0x573;
+			shape = 0x537;
 			break;
 		case 6:
 			shape = 0x578;
@@ -126,7 +126,7 @@ void FireType::makeBulletSplashShapeAndPlaySound(int32 x, int32 y, int32 z) cons
 		lastframe = 10;
 		break;
 	case 0x578:
-		firstframe = (getRandom() % 3) * 6;
+		firstframe = (getRandom() % 3) * 5;
 		lastframe = firstframe + 4;
 		break;
 	case 0x59b:

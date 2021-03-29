@@ -91,6 +91,8 @@ public:
 	bool loadData(Common::ReadStream *rs, uint32 version);
 	void saveData(Common::WriteStream *ws) override;
 
+	void terminate() override;
+
 protected:
 	bool areaSearch();
 	void advanceFrame();

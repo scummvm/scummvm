@@ -230,7 +230,7 @@ void SuperSpriteProcess::run() {
 
 	_counter++;
 
-	if (!_itemNum && _counter > 1) {
+	if (!_spriteNo && _counter > 1) {
 		Item *sprite = ItemFactory::createItem(_shape, _frame, 0, Item::FLG_DISPOSABLE,
 			0, 0, Item::EXT_SPRITE, true);
 		_spriteNo = sprite->getObjId();
@@ -362,6 +362,16 @@ void SuperSpriteProcess::hitAndFinish() {
 	destroyItemOrTerminate();
 }
 
+void SuperSpriteProcess::terminate() {
+	if (_spriteNo) {
+		Item *sprite = getItem(_spriteNo);
+		if (sprite)
+			sprite->destroy();
+		_spriteNo = 0;
+	}
+	Process::terminate();
+}
+
 void SuperSpriteProcess::destroyItemOrTerminate() {
 	if (_itemNum) {
 		Item *item = getItem(_itemNum);
@@ -377,21 +387,22 @@ void SuperSpriteProcess::destroyItemOrTerminate() {
 void SuperSpriteProcess::advanceFrame() {
 	_nextpt = _pt3;
 
-	if (_itemNum) {
-		warning("TODO: SuperSpriteProcess::advanceFrame: Implement area search 10e0_123a");
-		// TODO: do an area search for something here.
-		// AreaSearch_10e0_123a
+	Item *item = getItem(_itemNum);
+	if (item) {
+		item->collideMove(_pt3.x, _pt3.y, _pt3.z, false, false);
 	}
 
 	if (_spriteNo) {
 		Item *sprite = getItem(_spriteNo);
 		assert(sprite);
 		sprite->move(_nextpt);
-		uint32 frame = sprite->getFrame();
-		frame++;
-		if (frame > 0x4b)
-			frame = 0x47;
-		sprite->setFrame(frame);
+		if (_fireType == 0xe) {
+			uint32 frame = sprite->getFrame();
+			frame++;
+			if (frame > 0x4b)
+				frame = 0x47;
+			sprite->setFrame(frame);
+		}
 	}
 
 	if (_fireType == 3) {
@@ -405,22 +416,25 @@ void SuperSpriteProcess::advanceFrame() {
 }
 
 bool SuperSpriteProcess::areaSearch() {
-	// int x1, int y1, int z1, int x2, int y2, int z2
 	CurrentMap *map = World::get_instance()->getCurrentMap();
 
-	warning("TODO: SuperSpriteProcess::areaSearch: Implement area search 1138_0ee8");
-	// TODO: Implement SuperSprite_AreaSearch_1138_0ee8
-	uint16 lsrange = _pt3.maxDistXYZ(_nextpt);
-	UCList uclist(2);
-	LOOPSCRIPT(script, LS_TOKEN_TRUE); // we want all items
-	map->areaSearch(&uclist, script, sizeof(script), nullptr,
-					lsrange, true, _nextpt.x, _nextpt.y);
-	for (unsigned int i = 0; i < uclist.getSize(); ++i) {
-		Item *searchitem = getItem(uclist.getuint16(i));
-		assert(searchitem);
+	int32 start[3] = {_nowpt.x, _nowpt.y, _nowpt.z};
+	int32 end[3] = {_pt3.x, _pt3.y, _pt3.z};
+	int32 dims[3] = {1, 1, 1};
+
+	Item *item = getItem(_itemNum);
+	if (item)
+		item->getLocation(start[0], start[1], start[2]);
+
+	Std::list<CurrentMap::SweepItem> hits;
+	bool collision = map->sweepTest(start, end, dims, ShapeInfo::SI_SOLID,
+							   _source, true, &hits);
+
+	if (hits.size() > 0) {
+		_item0x77 = hits.front()._item;
 	}
 
-	return false;
+	return !collision;
 }
 
 
