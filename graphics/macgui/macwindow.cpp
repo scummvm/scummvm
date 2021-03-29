@@ -273,11 +273,8 @@ void MacWindow::drawBorder() {
 		titleHeight = _macBorder.getOffset().top - titleY - _macBorder.getOffset().titleBottom;
 		sidesWidth = _macBorder.getOffset().left + _macBorder.getOffset().right;
 	} else {
-		drawSimpleBorder(g);
-		titleColor = _wm->_colorBlack;
-		titleY = 0;
-		titleHeight = _borderWidth;
-		sidesWidth = _borderWidth * 2;
+		warning("MacWindow: No Border Loaded");
+		setBorderType(0xff);
 	}
 
 	if (!_title.empty()) {
@@ -299,93 +296,14 @@ void MacWindow::drawBorder() {
 	}
 }
 
-void MacWindow::prepareBorderSurface(ManagedSurface *g) {
-	if (_wm->_pixelformat.bytesPerPixel == 1) {
-		// We draw rect with outer _wm->_colorGreen2 and inner _wm->_colorGreen, so on 2 passes we cut out
-		// scene by external shape of the border
-		int sz = kBorderWidth / 2;
-		int width = g->w;
-		int height = g->h;
-		g->clear(_wm->_colorGreen2);
-		g->fillRect(Common::Rect(sz, sz, width - sz, height - sz), _wm->_colorGreen);
-	} else {
-		g->clear(0);	// Full transparency
-	}
-}
-
 void MacWindow::drawBorderFromSurface(ManagedSurface *g) {
 	if (_wm->_pixelformat.bytesPerPixel == 1) {
-		g->clear(_wm->_colorGreen2);
-		Common::Rect inside = _innerDims;
-		inside.moveTo(_macBorder.getOffset().left, _macBorder.getOffset().top);
-		g->fillRect(inside, _wm->_colorGreen);
+		g->clear(_wm->_colorGreen);
 	}
 
 	_macBorder.blitBorderInto(*g, _active, _wm);
 }
 
-void MacWindow::drawSimpleBorder(ManagedSurface *g) {
-	bool active = _active, scrollable = _scrollable, closeable = _active;
-	const int size = kBorderWidth;
-	int x = 0;
-	int y = 0;
-	int width = _borderSurface.w;
-	int height = _borderSurface.h;
-
-	prepareBorderSurface(g);
-
-	drawBox(g, x,                    y,                     size,                 size);
-	drawBox(g, x + width - size - 1, y,                     size,                 size);
-	drawBox(g, x + width - size - 1, y + height - size - 1, size,                 size);
-	drawBox(g, x,                    y + height - size - 1, size,                 size);
-	drawBox(g, x + size,             y + 2,                 width - 2 * size - 1, size - 4);
-	drawBox(g, x + size,             y + height - size + 1, width - 2 * size - 1, size - 4);
-	drawBox(g, x + 2,                y + size,              size - 4,             height - 2 * size - 1);
-	drawBox(g, x + width - size + 1, y + size,              size - 4,             height - 2 * size - 1);
-
-	if (active) {
-		fillRect(g, x + size, y + 5,           width - 2 * size - 1, 8, _wm->_colorBlack);
-		fillRect(g, x + size, y + height - 13, width - 2 * size - 1, 8, _wm->_colorBlack);
-		fillRect(g, x + 5,    y + size,        8,                    height - 2 * size - 1, _wm->_colorBlack);
-		if (!scrollable) {
-			fillRect(g, x + width - 13, y + size, 8, height - 2 * size - 1, _wm->_colorBlack);
-		} else {
-			int x1 = x + width - 15;
-			int y1 = y + size + 1;
-
-			for (int yy = 0; yy < ARROW_H; yy++) {
-				for (int xx = 0; xx < ARROW_W; xx++)
-					g->hLine(x1 + xx, y1 + yy, x1 + xx, (arrowPixels[yy][xx] != 0 ? _wm->_colorBlack : _wm->_colorWhite));
-			}
-
-			fillRect(g, x + width - 13, y + size + ARROW_H, 8, height - 2 * size - 1 - ARROW_H * 2, _wm->_colorBlack);
-
-			y1 += height - 2 * size - ARROW_H - 2;
-			for (int yy = 0; yy < ARROW_H; yy++) {
-				for (int xx = 0; xx < ARROW_W; xx++)
-					g->hLine(x1 + xx, y1 + yy, x1 + xx, (arrowPixels[ARROW_H - yy - 1][xx] != 0 ? _wm->_colorBlack : _wm->_colorWhite));
-			}
-
-			if (_highlightedPart == kBorderScrollUp || _highlightedPart == kBorderScrollDown) {
-				int rx1 = x + width - kBorderWidth + 2;
-				int ry1 = y + size + _dims.height() * _scrollPos;
-				int rx2 = rx1 + size - 4;
-				int ry2 = ry1 + _dims.height() * _scrollSize;
-				Common::Rect rr(rx1, ry1, rx2, ry2);
-
-				MacPlotData pd(g, nullptr,  &_wm->getPatterns(), 1, 0, 0, 1, _wm->_colorBlack, true);
-				Graphics::drawFilledRect(rr, _wm->_colorBlack, _wm->getDrawPixel(), &pd);
-			}
-		}
-		if (closeable) {
-			if (_highlightedPart == kBorderCloseButton) {
-				fillRect(g, x + 6, y + 6, 6, 6, _wm->_colorBlack);
-			} else {
-				drawBox(g, x + 5, y + 5, 7, 7);
-			}
-		}
-	}
-}
 
 void MacWindow::drawPattern() {
 	byte *pat = _wm->getPatterns()[_pattern - 1];

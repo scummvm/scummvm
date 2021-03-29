@@ -332,8 +332,6 @@ public:
 	virtual bool isDirty() override { return _borderIsDirty || _contentIsDirty; }
 
 private:
-	void prepareBorderSurface(ManagedSurface *g);
-	void drawSimpleBorder(ManagedSurface *g);
 	void drawBorderFromSurface(ManagedSurface *g);
 	void drawPattern();
 	void drawBox(ManagedSurface *g, int x, int y, int w, int h);
