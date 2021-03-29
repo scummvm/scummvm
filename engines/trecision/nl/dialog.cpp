@@ -32,23 +32,16 @@
 
 namespace Trecision {
 
-int EndBattuta = 0;
 uint16 DispScelte[MAXDISPSCELTE], CurDispScelte;
 int16 CurPos, LastPos;
 
-/* -----------------28/07/97 22.11-------------------
-					DialogPrint
---------------------------------------------------*/
 void DialogPrint(int x, int y, int c, const char *txt) {
 	SDText curChoice;
 	curChoice.set(x, y, TextLength(txt, 0), 0, 0, 0, MAXX, MAXY, c, MASKCOL, txt);
 	curChoice.DText();
 }
 
-/* -----------------28/07/97 22.11-------------------
-					MostraScelte
---------------------------------------------------*/
-void MostraScelte(uint16 i) {
+void ShowChoices(uint16 i) {
 	Dialog *d = &_dialog[i];
 
 	int y = 5;
@@ -75,10 +68,7 @@ void MostraScelte(uint16 i) {
 	g_vm->_flagMouseEnabled = true;
 }
 
-/* -----------------28/07/97 22.12-------------------
-					UpdateScelte
---------------------------------------------------*/
-void UpdateScelte(int16 dmx, int16 dmy) {
+void UpdateChoices(int16 dmx, int16 dmy) {
 	if ((dmy >= MAXDISPSCELTE) && (dmy < (CARHEI * (CurDispScelte) + 5)))
 		CurPos = (dmy - 5) / CARHEI;
 	else
@@ -98,22 +88,16 @@ void UpdateScelte(int16 dmx, int16 dmy) {
 	LastPos = CurPos;
 }
 
-/* -----------------28/07/97 22.12-------------------
-					ScegliScelta
---------------------------------------------------*/
-void ScegliScelta(int16 dmx, int16 dmy) {
-	UpdateScelte(dmx, dmy);
+void SelectChoice(int16 dmx, int16 dmy) {
+	UpdateChoices(dmx, dmy);
 
 	if (CurPos != -1) {
 		FlagDialogMenuActive = false;
 
-		PlayScelta(DispScelte[CurPos]);
+		PlayChoice(DispScelte[CurPos]);
 	}
 }
 
-/* -----------------28/07/97 22.08-------------------
-					PlayDialog
---------------------------------------------------*/
 void PlayDialog(uint16 i) {
 	_curDialog = i;
 	FlagDialogActive = true;
@@ -154,9 +138,6 @@ void PlayDialog(uint16 i) {
 	}
 }
 
-/* -----------------28/07/97 22.08-------------------
-					afterChoice
---------------------------------------------------*/
 void afterChoice(int numframe) {
 	Dialog *d = &_dialog[_curDialog];
 
@@ -221,12 +202,6 @@ void afterChoice(int numframe) {
 		} else if (_curChoice == 155)
 			g_vm->_obj[ocGUARD18]._action = 228;
 		break;
-
-	/*		case dSAM17:
-				if( ( _curChoice == 198 ) && ( _curRoom == r17 ) )
-					setPosition(4);
-			break;
-	*/
 	case dF213B:
 	case dF213:
 		g_vm->setRoom(r21, true);
@@ -267,32 +242,11 @@ void afterChoice(int numframe) {
 		g_vm->_obj[od54ALLA55]._mode |= OBJMODE_OBJSTATUS;
 		break;
 	}
-	// Se ultima scelta era un esci dialogo
+	// If the player chose to exit the dialog
 	if (g_vm->_choice[_curChoice]._flag & DLGCHOICE_EXITDLG) {
 		g_vm->_animMgr->stopFullMotion();
 
 		switch (_curDialog) {
-		/*			case dASCENSORE12:
-			if( _curChoice == 3 )
-				StartCharacterAction(a129PARLACOMPUTERESCENDE,r13,20,0);
-			else if( _curChoice == 4 )
-				StartCharacterAction(a129PARLACOMPUTERESCENDE,r16,20,0);
-		break;
-
-		case dASCENSORE13:
-			if( _curChoice == 17 )
-				StartCharacterAction(a139CHIUDONOPORTESU,r12,20,0);
-			else if( _curChoice == 18 )
-				StartCharacterAction(a1316CHIUDONOPORTEGIU,r16,20,0);
-		break;
-
-		case dASCENSORE16:
-			if( _curChoice == 32 )
-				StartCharacterAction(a1616SALECONASCENSORE,r12,20,0);
-			else if( _curChoice == 33 )
-				StartCharacterAction(a1616SALECONASCENSORE,r13,20,0);
-		break;
-		*/
 		case dPOLIZIOTTO16:
 			if ((g_vm->_choice[61]._flag & OBJFLAG_DONE) && (g_vm->_choice[62]._flag & OBJFLAG_DONE) && (g_vm->_obj[ocPOLIZIOTTO16]._flag & OBJFLAG_EXTRA))
 				g_vm->_obj[ocPOLIZIOTTO16]._mode &= ~OBJMODE_OBJSTATUS;
@@ -561,12 +515,12 @@ void afterChoice(int numframe) {
 	// fa partire subito tutte le prevarica
 	for (int c = d->_firstChoice; c < (d->_firstChoice + d->_choiceNumb); c++) {
 		if ((g_vm->_choice[c]._flag & DLGCHOICE_FRAUD) && (!(g_vm->_choice[c]._flag & DLGCHOICE_HIDE))) {
-			PlayScelta(c);
+			PlayChoice(c);
 			return;
 		}
 	}
 
-	// se c'e' una sola partisubito la fa partire altrimenti mostra le scelte
+	// If there's only one option, show it immediately, otherwise show available choices
 	int res = 0;
 	for (int c = d->_firstChoice; c < (d->_firstChoice + d->_choiceNumb); c++) {
 		if (!(g_vm->_choice[c]._flag & DLGCHOICE_HIDE)) {
@@ -584,11 +538,11 @@ void afterChoice(int numframe) {
 		}
 	}
 	if (res != 0) {
-		PlayScelta(res);
+		PlayChoice(res);
 		return;
 	}
 
-	// se sono tutte hidate esce dal dialogo
+	// If no option is visible, close the dialog
 	res = 0;
 	for (int c = d->_firstChoice; c < (d->_firstChoice + d->_choiceNumb); c++) {
 		if (!(g_vm->_choice[c]._flag & DLGCHOICE_HIDE))
@@ -602,12 +556,9 @@ void afterChoice(int numframe) {
 		return;
 	}
 
-	MostraScelte(_curDialog);
+	ShowChoices(_curDialog);
 }
 
-/* -----------------28/07/97 22.08-------------------
-					DialogHandler
---------------------------------------------------*/
 void DialogHandler(int numframe) {
 	if ((FlagDialogActive) && (!(FlagDialogMenuActive))) {
 		g_vm->_flagMouseEnabled = false;
@@ -622,10 +573,7 @@ void DialogHandler(int numframe) {
 	}
 }
 
-/* -----------------28/07/97 22.11-------------------
-						PlayScelta
---------------------------------------------------*/
-void PlayScelta(uint16 i) {
+void PlayChoice(uint16 i) {
 	DialogChoice *ss = &g_vm->_choice[i];
 
 	memset(g_vm->_screenBuffer, 0, MAXX * TOP * 2);
@@ -633,7 +581,6 @@ void PlayScelta(uint16 i) {
 
 	_curChoice = i;
 	_curSubTitle = ss->_firstSubTitle;
-	EndBattuta = (ss->_firstSubTitle + ss->_subTitleNumb);
 	FlagDialogMenuActive = false;
 
 	ss->_flag |= OBJFLAG_DONE;
@@ -642,24 +589,21 @@ void PlayScelta(uint16 i) {
 	if (ss->_flag & DLGCHOICE_ONETIME)
 		ss->_flag |= DLGCHOICE_HIDE;
 
-	// disattiva le altre scelte
-	for (int c = 0; c < MAXDISPSCELTE; c++)
+	// Disable other choices
+	for (int c = 0; c < MAXDISPSCELTE; c++) {
 		g_vm->_choice[ss->_off[c]]._flag |= DLGCHOICE_HIDE;
-	// attiva le altre scelte
-	for (int c = 0; c < MAXDISPSCELTE; c++)
 		g_vm->_choice[ss->_on[c]]._flag &= ~DLGCHOICE_HIDE;
+	}
 
-	int lens = 0;
-	for (int c = _curSubTitle; c < EndBattuta; c++)
-		lens += _subTitles[c]._length;
+	int totalLength = 0;
+	int subtitleCount = ss->_firstSubTitle + ss->_subTitleNumb;
+	for (int c = _curSubTitle; c < subtitleCount; c++)
+		totalLength += _subTitles[c]._length;
 
 	g_vm->_flagMouseEnabled = false;
-	g_vm->_animMgr->playFullMotion(ss->_startFrame, ss->_startFrame + lens - 1);
+	g_vm->_animMgr->playFullMotion(ss->_startFrame, ss->_startFrame + totalLength - 1);
 }
 
-/* -----------------28/07/97 22.15-------------------
-						DoDialog
- --------------------------------------------------*/
 void doDialog() {
 	switch (g_vm->_curMessage->_event) {
 	case ME_ENDCHOICE:

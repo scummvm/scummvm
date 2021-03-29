@@ -212,7 +212,7 @@ void doMouse() {
 			ShowObjName(g_vm->_curObj, true);
 
 			if (FlagDialogMenuActive)
-				UpdateScelte(g_vm->_curMessage->_u16Param1, g_vm->_curMessage->_u16Param2);
+				UpdateChoices(g_vm->_curMessage->_u16Param1, g_vm->_curMessage->_u16Param2);
 		}
 		break;
 
@@ -228,7 +228,7 @@ void doMouse() {
 			break;
 
 		if ((FlagDialogActive) && (FlagDialogMenuActive)) {
-			ScegliScelta(g_vm->_curMessage->_u16Param1, g_vm->_curMessage->_u16Param2);
+			SelectChoice(g_vm->_curMessage->_u16Param1, g_vm->_curMessage->_u16Param2);
 			break;
 		}
 		//  for the displacer
