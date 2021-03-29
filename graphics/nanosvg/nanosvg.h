@@ -281,7 +281,7 @@ static void nsvg__parseElement(char* s,
 
 	// Get attribs
 	while (!end && *s && nattr < NSVG_XML_MAX_ATTRIBS-3) {
-		char* name = NULL;
+		char* name_ = NULL;
 		char* value = NULL;
 
 		// Skip white space before the attrib name
@@ -291,7 +291,7 @@ static void nsvg__parseElement(char* s,
 			end = 1;
 			break;
 		}
-		name = s;
+		name_ = s;
 		// Find end of the attrib name.
 		while (*s && !nsvg__isspace(*s) && *s != '=') s++;
 		if (*s) { *s++ = '\0'; }
@@ -306,8 +306,8 @@ static void nsvg__parseElement(char* s,
 		if (*s) { *s++ = '\0'; }
 
 		// Store only well formed attributes
-		if (name && value) {
-			attr[nattr++] = name;
+		if (name_ && value) {
+			attr[nattr++] = name_;
 			attr[nattr++] = value;
 		}
 	}
@@ -1095,7 +1095,7 @@ error:
 // We roll our own string to float because the std library one uses locale and messes things up.
 static double nsvg__atof(const char* s)
 {
-	char* cur = (char*)s;
+	const char* cur = s;
 	char* end = NULL;
 	double res = 0.0, sign = 1.0;
 	long long intPart = 0, fracPart = 0;
