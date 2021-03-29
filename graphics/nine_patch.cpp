@@ -208,7 +208,7 @@ bad_bitmap:
 	}
 }
 
-void NinePatchBitmap::blit(Graphics::Surface &target, int dx, int dy, int dw, int dh, byte *palette, int numColors, MacWindowManager *wm) {
+void NinePatchBitmap::blit(Graphics::Surface &target, int dx, int dy, int dw, int dh, byte *palette, int numColors, MacWindowManager *wm, uint32 transColor) {
 	/* don't draw bitmaps that are smaller than the fixed area */
 	if (dw < _h._fix || dh < _v._fix)
 		return;
@@ -249,7 +249,7 @@ void NinePatchBitmap::blit(Graphics::Surface &target, int dx, int dy, int dw, in
 			for (uint i = 0; i < srf->w; ++i) {
 				for (uint j = 0; j < srf->h; ++j) {
 					uint32 color = *(uint32*)srf->getBasePtr(i, j);
-					if (color > 0) {
+					if (color != transColor) {
 						*((byte *)target.getBasePtr(i, j)) = closestGrayscale(color, palette, numColors);
 					}
 				}
@@ -258,9 +258,9 @@ void NinePatchBitmap::blit(Graphics::Surface &target, int dx, int dy, int dw, in
 			for (uint i = 0; i < srf->w; ++i) {
 				for (uint j = 0; j < srf->h; ++j) {
 					uint32 color = *(uint32*)srf->getBasePtr(i, j);
-					byte r, g, b;
-					_bmp->format.colorToRGB(color, r, g, b);
-					if (color > 0) {
+					byte a, r, g, b;
+					_bmp->format.colorToARGB(color, a, r, g, b);
+					if (a > 0 && color != transColor) {
 						*((byte *)target.getBasePtr(i, j)) = wm->findBestColor(r, g, b);
 					}
 				}

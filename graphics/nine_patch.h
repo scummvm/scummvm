@@ -89,7 +89,7 @@ public:
 	NinePatchBitmap(Graphics::TransparentSurface *bmp, bool owns_bitmap);
 	~NinePatchBitmap();
 
-	void blit(Graphics::Surface &target, int dx, int dy, int dw, int dh, byte *palette = NULL, int numColors = 0, MacWindowManager *wm = NULL);
+	void blit(Graphics::Surface &target, int dx, int dy, int dw, int dh, byte *palette = NULL, int numColors = 0, MacWindowManager *wm = NULL, uint32 transColor = 0);
 	void blitClip(Graphics::Surface &target, Common::Rect clip, int dx, int dy, int dw, int dh);
 
 	int getWidth() { return _width; }
