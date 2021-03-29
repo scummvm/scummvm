@@ -117,7 +117,7 @@ void GraphicsManager::BCopy(uint32 Sco, uint8 *Src, uint32 Len) {
 void GraphicsManager::showScreen(int px, int py, int dx, int dy) {
 	for (int a = 0; a < dy; a++) {
 		vCopy(px + (py + a) * VirtualPageLen + VideoScrollPageDx,
-		      _vm->_video2 + px + (py + a) * CurRoomMaxX + CurScrollPageDx,
+		      _vm->_screenBuffer + px + (py + a) * CurRoomMaxX + CurScrollPageDx,
 		      dx);
 	}
 

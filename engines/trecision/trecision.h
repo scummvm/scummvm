@@ -151,7 +151,7 @@ public:
 
 	uint16 _newData[260];
 	uint32 _newData2[260];
-	uint16 *_video2;
+	uint16 *_screenBuffer;
 
 	uint32 _nextRefresh;
 

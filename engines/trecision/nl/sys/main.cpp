@@ -129,9 +129,9 @@ void NlDissolve(int val) {
 		float y = b;
 
 		if ((CenterY - (int)y) > TOP)
-			memset(g_vm->_video2 + (TOP)*MAXX, 0, ((CenterY - (int)y) - TOP) * MAXX * 2);
+			memset(g_vm->_screenBuffer + (TOP)*MAXX, 0, ((CenterY - (int)y) - TOP) * MAXX * 2);
 		if ((AREA + TOP) > (CenterY + (int)y))
-			memset(g_vm->_video2 + (CenterY + (int)y) * MAXX, 0, (AREA + TOP - (CenterY + (int)y)) * MAXX * 2);
+			memset(g_vm->_screenBuffer + (CenterY + (int)y) * MAXX, 0, (AREA + TOP - (CenterY + (int)y)) * MAXX * 2);
 
 		float d1 = b * b - a * a * b + a * a / 4.0f;
 		while (a * a * (y - 0.5f) > b * b * (x + 1.0f)) {
@@ -144,13 +144,13 @@ void NlDissolve(int val) {
 			x += 1.0f;
 
 			if ((CenterX + (int)x) < MAXX)
-				memset(g_vm->_video2 + CenterX + (int)x + (CenterY + (int)y) * MAXX, 0, (MAXX - (CenterX + (int)x)) * 2);
+				memset(g_vm->_screenBuffer + CenterX + (int)x + (CenterY + (int)y) * MAXX, 0, (MAXX - (CenterX + (int)x)) * 2);
 			if ((CenterX + (int)x) < MAXX)
-				memset(g_vm->_video2 + CenterX + (int)x + (CenterY - (int)y) * MAXX, 0, (MAXX - (CenterX + (int)x)) * 2);
+				memset(g_vm->_screenBuffer + CenterX + (int)x + (CenterY - (int)y) * MAXX, 0, (MAXX - (CenterX + (int)x)) * 2);
 			if ((CenterX - (int)x) > 0)
-				memset(g_vm->_video2 + (CenterY + (int)y) * MAXX, 0, (CenterX - (int)x) * 2);
+				memset(g_vm->_screenBuffer + (CenterY + (int)y) * MAXX, 0, (CenterX - (int)x) * 2);
 			if ((CenterX - (int)x) > 0)
-				memset(g_vm->_video2 + (CenterY - (int)y) * MAXX, 0, (CenterX - (int)x) * 2);
+				memset(g_vm->_screenBuffer + (CenterY - (int)y) * MAXX, 0, (CenterX - (int)x) * 2);
 		}
 
 		float d2 = b * b * (x + 0.5f) * (x + 0.5f) + a * a * (y - 1.0f) * (y - 1.0f) - a * a * b * b;
@@ -163,13 +163,13 @@ void NlDissolve(int val) {
 			y -= 1.0f;
 
 			if ((CenterX + (int)x) < MAXX)
-				memset(g_vm->_video2 + CenterX + (int)x + (CenterY + (int)y) * MAXX, 0, (MAXX - (CenterX + (int)x)) * 2);
+				memset(g_vm->_screenBuffer + CenterX + (int)x + (CenterY + (int)y) * MAXX, 0, (MAXX - (CenterX + (int)x)) * 2);
 			if ((CenterX + (int)x) < MAXX)
-				memset(g_vm->_video2 + CenterX + (int)x + (CenterY - (int)y) * MAXX, 0, (MAXX - (CenterX + (int)x)) * 2);
+				memset(g_vm->_screenBuffer + CenterX + (int)x + (CenterY - (int)y) * MAXX, 0, (MAXX - (CenterX + (int)x)) * 2);
 			if ((CenterX - (int)x) > 0)
-				memset(g_vm->_video2 + (CenterY + (int)y) * MAXX, 0, (CenterX - (int)x) * 2);
+				memset(g_vm->_screenBuffer + (CenterY + (int)y) * MAXX, 0, (CenterX - (int)x) * 2);
 			if ((CenterX - (int)x) > 0)
-				memset(g_vm->_video2 + (CenterY - (int)y) * MAXX, 0, (CenterX - (int)x) * 2);
+				memset(g_vm->_screenBuffer + (CenterY - (int)y) * MAXX, 0, (CenterX - (int)x) * 2);
 		}
 
 

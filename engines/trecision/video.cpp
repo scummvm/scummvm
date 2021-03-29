@@ -322,10 +322,10 @@ void AnimManager::startFullMotion(const char *name) {
 	_fullMotionStart = 0;
 	_fullMotionEnd = 0;
 	TextStatus = TEXT_OFF;
-	memset(_vm->_video2, 0, TOP * MAXX * 2);
+	memset(_vm->_screenBuffer, 0, TOP * MAXX * 2);
 	_vm->_graphicsMgr->showScreen(0, 0, MAXX, TOP);
-	memset(_vm->_video2 + (TOP + AREA) * MAXX, 0, TOP * MAXX * 2);
-	memset(_vm->_video2, 0, MAXX * MAXY * 2);
+	memset(_vm->_screenBuffer + (TOP + AREA) * MAXX, 0, TOP * MAXX * 2);
+	memset(_vm->_screenBuffer, 0, MAXX * MAXY * 2);
 	_vm->_graphicsMgr->showScreen(0, AREA + TOP, MAXX, TOP);
 	_vm->_graphicsMgr->unlock();
 
@@ -465,14 +465,14 @@ void AnimManager::refreshSmkAnim(int num) {
 		if ((_curAnimFrame[pos] > 0) && (inters == 0)) {
 			if (pos == 0) {
 				for (int32 a = 0; a < lastRect->height(); a++) {
-					byte2wordn(_vm->_video2 + lastRect->left + (lastRect->top + a + TOP) * MAXX,
+					byte2wordn(_vm->_screenBuffer + lastRect->left + (lastRect->top + a + TOP) * MAXX,
 					           _smkBuffer[pos] + lastRect->left + (lastRect->top + a) * _smkAnims[pos]->getWidth(),
 					           _smkPal[pos], lastRect->width());
 
 					AddLine(lastRect->left, lastRect->right, lastRect->top + a + TOP);
 
 					memcpy(ImagePointer + lastRect->left + (lastRect->top + a) * MAXX,
-					         _vm->_video2 + lastRect->left + (lastRect->top + a + TOP) * MAXX,
+					         _vm->_screenBuffer + lastRect->left + (lastRect->top + a + TOP) * MAXX,
 					         lastRect->width() * 2);
 				}
 			} else if (_curAnimFrame[pos] > 1) {
@@ -516,7 +516,7 @@ void AnimManager::refreshSmkAnim(int num) {
 		}
 
 		for (int32 a = 0; a < _animMaxY - _animMinY; a++) {
-			byte2wordm(_vm->_video2 + _animMinX + (_animMinY + a + TOP) * MAXX,
+			byte2wordm(_vm->_screenBuffer + _animMinX + (_animMinY + a + TOP) * MAXX,
 			           _smkBuffer[pos] + _animMinX + (_animMinY + a) * _smkAnims[pos]->getWidth(),
 			           _smkPal[pos], _animMaxX - _animMinX);
 
@@ -680,7 +680,7 @@ void AnimManager::refreshSmkIcon(int StartIcon, int num) {
 	Common::Rect dirtyRect = Common::Rect(0, 0, _smkAnims[pos]->getWidth(), _smkAnims[pos]->getHeight());
 	if (const Common::Rect *lastRect = &dirtyRect) {
 		for (a = 0; a < ICONDY - lastRect->top; a++) {
-			byte2word(_vm->_video2 + lastRect->left + stx + (lastRect->top + a + FIRSTLINE) * SCREENLEN,
+			byte2word(_vm->_screenBuffer + lastRect->left + stx + (lastRect->top + a + FIRSTLINE) * SCREENLEN,
 			          _smkBuffer[pos] + lastRect->left + (lastRect->top + a) * _smkAnims[pos]->getWidth(),
 			          _smkPal[pos], lastRect->width());
 
@@ -759,7 +759,7 @@ void AnimManager::playFullMotion(int start, int end) {
  --------------------------------------------------*/
 void AnimManager::drawSmkBuffer(int px, int py, int dx, int dy) {
 	for (int a = 0; a < dy; a++) {
-		byte2word(_vm->_video2 + (a + py + TOP) * MAXX + px,
+		byte2word(_vm->_screenBuffer + (a + py + TOP) * MAXX + px,
 				  _smkBuffer[1] + (a + py) * _smkAnims[1]->getWidth() + px, _vm->_newData, dx);		
 	}
 }

@@ -128,7 +128,7 @@ void openSys() {
 	MemoryArea = (uint8 *)malloc(CurBufferSize);
 
 	memset(MemoryArea, 0, CurBufferSize);
-	g_vm->_video2 = (uint16 *)MemoryArea;
+	g_vm->_screenBuffer = (uint16 *)MemoryArea;
 
 	TotalMemory = CurBufferSize;
 
@@ -146,7 +146,7 @@ void OpenVideo() {
 	Common::String filename = Common::String::format("NlAnim.cd%c", CurCDSet + '0');
 	AnimFileInit(filename);
 
-	g_vm->_video2 = (uint16 *)MemoryArea + 2000000L;
+	g_vm->_screenBuffer = (uint16 *)MemoryArea + 2000000L;
 
 	ff = FastFileOpen("NlFont.fnt");
 	g_vm->Font = new uint8[ff->size()];
@@ -252,12 +252,12 @@ void OpenVideo() {
 	SmackImagePointer = (uint16 *)(MemoryArea + GameBytePointer);
 	GameBytePointer += SCREENLEN * AREA * 2;
 
-	g_vm->_video2 = (uint16 *)(MemoryArea + GameBytePointer);
+	g_vm->_screenBuffer = (uint16 *)(MemoryArea + GameBytePointer);
 
 	if (!g_vm->_flagMouseEnabled)
 		Mouse(MCMD_OFF);
 
-	memset(g_vm->_video2, 0, 1280L * 480L * 2);
+	memset(g_vm->_screenBuffer, 0, 1280L * 480L * 2);
 	g_vm->_graphicsMgr->showScreen(0, 0, 640, 480);
 
 	for (int i = 0; i < MAXOBJINROOM; ++i) {
@@ -469,14 +469,14 @@ void ReadLoc() {
 
 	SoundFadOut();
 
-	memset(g_vm->_video2, 0, TotalMemory - GameBytePointer);
+	memset(g_vm->_screenBuffer, 0, TotalMemory - GameBytePointer);
 
-	GameWordPointer = (CurRoomMaxX * MAXY);           // space for _video2
+	GameWordPointer = (CurRoomMaxX * MAXY);           // space for _screenBuffer
 
 	Common::String filename = Common::String::format("%s.cr", g_vm->_room[g_vm->_curRoom]._baseName);
-	ImagePointer = (uint16 *)g_vm->_video2 + GameWordPointer - 4;
+	ImagePointer = (uint16 *)g_vm->_screenBuffer + GameWordPointer - 4;
 
-	GameWordPointer += (DecCR(filename, (uint8 *)ImagePointer, (uint8 *)g_vm->_video2) + 1) / 2;
+	GameWordPointer += (DecCR(filename, (uint8 *)ImagePointer, (uint8 *)g_vm->_screenBuffer) + 1) / 2;
 	memcpy(&BmInfo, (SBmInfo *)ImagePointer, sizeof(SBmInfo));
 	ImagePointer += 4;
 	g_vm->_graphicsMgr->updatePixelFormat(ImagePointer, BmInfo.dx * BmInfo.dy);
@@ -485,12 +485,12 @@ void ReadLoc() {
 	if (g_vm->_room[g_vm->_curRoom]._sounds[0] != 0)
 		ReadSounds();
 
-	_actionPointer[0] = (uint8 *)(g_vm->_video2 + GameWordPointer);
+	_actionPointer[0] = (uint8 *)(g_vm->_screenBuffer + GameWordPointer);
 	Common::String fname = Common::String::format("%s.3d", g_vm->_room[g_vm->_curRoom]._baseName);
 	GameWordPointer += read3D(fname) / 2;
 
-	memset(g_vm->_video2, 0, CurRoomMaxX * MAXY * 2);
-	MCopy(g_vm->_video2 + TOP * CurRoomMaxX, ImagePointer, CurRoomMaxX * AREA);
+	memset(g_vm->_screenBuffer, 0, CurRoomMaxX * MAXY * 2);
+	MCopy(g_vm->_screenBuffer + TOP * CurRoomMaxX, ImagePointer, CurRoomMaxX * AREA);
 
 	g_vm->_curSortTableNum = 0;
 	for (int i = 0; i < MAXOBJINROOM; ++i) {
@@ -707,7 +707,7 @@ void ReadSounds() {
 		if (b == 0)
 			break;
 
-		SoundPointer[a] = (uint8 *)(g_vm->_video2 + GameWordPointer);
+		SoundPointer[a] = (uint8 *)(g_vm->_screenBuffer + GameWordPointer);
 
 		if (!scumm_stricmp(GSample[b]._name, "RUOTE2C.WAV"))
 			break;
@@ -789,16 +789,16 @@ void DrawObj(SDObj d) {
 
 						if ((Now != 0) && (b >= (d.y + d.l[1])) && (b < (d.y + d.l[3]))) {
 							if ((Sco >= d.l[0]) && ((Sco + Now) < d.l[2]))
-								MCopy(g_vm->_video2 + (b * CurRoomMaxX) + Sco + d.x, buf, Now);
+								MCopy(g_vm->_screenBuffer + (b * CurRoomMaxX) + Sco + d.x, buf, Now);
 
 							else if ((Sco < d.l[0]) && ((Sco + Now) < d.l[2]) && ((Sco + Now) >= d.l[0]))
-								MCopy(g_vm->_video2 + (b * CurRoomMaxX) + d.l[0] + d.x, buf + d.l[0] - Sco, (Now + Sco - d.l[0]));
+								MCopy(g_vm->_screenBuffer + (b * CurRoomMaxX) + d.l[0] + d.x, buf + d.l[0] - Sco, (Now + Sco - d.l[0]));
 
 							else if ((Sco >= d.l[0]) && ((Sco + Now) >= d.l[2]) && (Sco < d.l[2]))
-								MCopy(g_vm->_video2 + (b * CurRoomMaxX) + Sco + d.x, buf, (d.l[2] - Sco));
+								MCopy(g_vm->_screenBuffer + (b * CurRoomMaxX) + Sco + d.x, buf, (d.l[2] - Sco));
 
 							else if ((Sco < d.l[0]) && ((Sco + Now) >= d.l[2]))
-								MCopy(g_vm->_video2 + (b * CurRoomMaxX) + d.l[0] + d.x, buf + d.l[0] - Sco, (d.l[2] - d.l[0]));
+								MCopy(g_vm->_screenBuffer + (b * CurRoomMaxX) + d.l[0] + d.x, buf + d.l[0] - Sco, (d.l[2] - d.l[0]));
 						}
 						Sco += *mask;
 						buf += *mask++;
@@ -813,7 +813,7 @@ void DrawObj(SDObj d) {
 	} else {
 		if (d.flag & COPYTORAM) {
 			for (uint16 b = d.l[1]; b < d.l[3]; b++) {
-				MCopy(g_vm->_video2 + (d.y + b) * CurRoomMaxX + (d.x + d.l[0]),
+				MCopy(g_vm->_screenBuffer + (d.y + b) * CurRoomMaxX + (d.x + d.l[0]),
 					  buf + (b * d.dx) + d.l[0], (d.l[2] - d.l[0]));
 			}
 		}

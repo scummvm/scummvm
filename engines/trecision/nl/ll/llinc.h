@@ -77,7 +77,7 @@ struct SDObj {
 	uint8 *mask;
 	uint8 flag;         /* 0 - with mask
                             1 - copy to _screenPtr
-                            2 - copy to _video2 */
+                            2 - copy to _screenBuffer */
 
 };
 
