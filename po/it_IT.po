@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-03-28 18:36+0000\n"
-"PO-Revision-Date: 2021-03-26 16:55+0000\n"
+"PO-Revision-Date: 2021-03-29 19:08+0000\n"
 "Last-Translator: Walter Agazzi <tag2015@gmail.com>\n"
 "Language-Team: Italian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/it/>\n"
@@ -1034,8 +1034,6 @@ msgid "Game 3D Renderer:"
 msgstr "Renderer 3D:"
 
 #: gui/options.cpp:1331
-#, fuzzy
-#| msgid "Game 3D Renderer:"
 msgctxt "lowres"
 msgid "Game 3D Renderer:"
 msgstr "Renderer 3D:"
@@ -2425,8 +2423,6 @@ msgid "OpenGL with shaders"
 msgstr "OpenGL con shaders"
 
 #: graphics/renderer.cpp:42
-#, fuzzy
-#| msgid "OpenGL with shaders"
 msgctxt "lowres"
 msgid "OpenGL with shaders"
 msgstr "OpenGL con shaders"
