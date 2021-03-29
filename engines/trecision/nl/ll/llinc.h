@@ -115,14 +115,8 @@ extern uint8 AddObjectMaterial;
 extern uint32 GameBytePointer;
 extern uint32 GameWordPointer;
 extern uint32 TotalMemory;
-// VESA
-extern int32  CurRoomMaxX;
 // DTEXT
 extern int8 DTextLines[MAXDTEXTLINES][MAXDTEXTCHARS];
-// SCROLL
-extern int32 VirtualPageLen;
-extern int32 CurScrollPageDx;
-extern int32 VideoScrollPageDx;
 // ANIMATION
 extern uint8 *SoundBuffer;
 extern uint32 CurBufferSize;

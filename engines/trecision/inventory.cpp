@@ -38,16 +38,16 @@ void TrecisionEngine::refreshInventory(uint8 StartIcon, uint8 StartLine) {
 		StartLine = ICONDY;
 
 	for (uint16 b = 0; b < ICONDY; b++)
-		memset(_screenBuffer + (FIRSTLINE + b) * CurRoomMaxX + CurScrollPageDx, 0, SCREENLEN * 2);
+		memset(_screenBuffer + (FIRSTLINE + b) * SCREENLEN, 0, SCREENLEN * 2);
 
 	for (uint16 a = 0; a < ICONSHOWN; a++) {
 		if (_inventory[a + StartIcon] >= LASTICON) {
 			for (uint16 b = 0; b < (ICONDY - StartLine); b++)
-				memcpy(_screenBuffer + (FIRSTLINE + b) * CurRoomMaxX + a * (ICONDX) + ICONMARGSX + CurScrollPageDx,
+				memcpy(_screenBuffer + (FIRSTLINE + b) * SCREENLEN + a * (ICONDX) + ICONMARGSX,
 					  Icone + (_inventory[a + StartIcon] - LASTICON + READICON + 1) * ICONDX * ICONDY + (b + StartLine) * ICONDX, ICONDX * 2);
 		} else if (_inventory[a + StartIcon] != _lightIcon) {
 			for (uint16 b = 0; b < (ICONDY - StartLine); b++)
-				memcpy(_screenBuffer + (FIRSTLINE + b) * CurRoomMaxX + a * (ICONDX) + ICONMARGSX + CurScrollPageDx,
+				memcpy(_screenBuffer + (FIRSTLINE + b) * SCREENLEN + a * (ICONDX) + ICONMARGSX,
 					  Icone + _inventory[a + StartIcon] * ICONDX * ICONDY + (b + StartLine) * ICONDX, ICONDX * 2);
 		}
 	}
@@ -56,7 +56,7 @@ void TrecisionEngine::refreshInventory(uint8 StartIcon, uint8 StartLine) {
 	if (StartIcon != 0) { // Copy left
 		int16 LeftArrow = ICONMARGSX * ICONDY * 3;
 		for (uint16 b = 0; b < (ICONDY - StartLine); b++) {
-			memcpy(_screenBuffer + (FIRSTLINE + b) * CurRoomMaxX + CurScrollPageDx,
+			memcpy(_screenBuffer + (FIRSTLINE + b) * SCREENLEN,
 				  Arrows + LeftArrow + (b + StartLine) * ICONMARGSX, ICONMARGSX * 2);
 		}
 	}
@@ -64,7 +64,7 @@ void TrecisionEngine::refreshInventory(uint8 StartIcon, uint8 StartLine) {
 	if ((StartIcon + ICONSHOWN) < _inventorySize) { // Copy right
 		int16 RightArrow = ICONMARGDX * ICONDY * 2;
 		for (uint16 b = 0; b < (ICONDY - StartLine); b++) {
-			memcpy(_screenBuffer + (FIRSTLINE + b) * CurRoomMaxX + CurScrollPageDx + SCREENLEN - ICONMARGDX,
+			memcpy(_screenBuffer + (FIRSTLINE + b) * SCREENLEN + SCREENLEN - ICONMARGDX,
 				  Arrows + RightArrow + ICONMARGSX * ICONDY * 2 + (b + StartLine) * ICONMARGSX, ICONMARGSX * 2);
 		}
 	}

@@ -634,7 +634,6 @@ void doSystem() {
 		g_vm->setInventoryStart(g_vm->_inventoryRefreshStartIcon, INVENTORY_HIDE);
 		FlagCharacterExist = true;
 		FlagShowCharacter = true;
-		CurRoomMaxX = SCREENLEN;
 		g_vm->_animMgr->stopSmkAnim(g_vm->_inventoryObj[g_vm->_useWith[USED]]._anim);
 		g_vm->_useWith[USED] = 0;
 		g_vm->_useWith[WITH] = 0;

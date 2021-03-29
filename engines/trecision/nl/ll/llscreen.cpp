@@ -62,14 +62,8 @@ uint8 *_characterArea;
 uint32 GameBytePointer;
 uint32 GameWordPointer;
 uint32 TotalMemory;
-// VESA
-int32  CurRoomMaxX = 640L;
 // DTEXT
 int8 DTextLines[MAXDTEXTLINES][MAXDTEXTCHARS];
-// SCROLL
-int32 VirtualPageLen = 640L;
-int32 CurScrollPageDx = 0L;
-int32 VideoScrollPageDx = 0L;
 // 3D
 SLight  VLight[MAXLIGHT];
 SCamera FCamera;
@@ -471,7 +465,7 @@ void ReadLoc() {
 
 	memset(g_vm->_screenBuffer, 0, TotalMemory - GameBytePointer);
 
-	GameWordPointer = (CurRoomMaxX * MAXY);           // space for _screenBuffer
+	GameWordPointer = (SCREENLEN * MAXY);           // space for _screenBuffer
 
 	Common::String filename = Common::String::format("%s.cr", g_vm->_room[g_vm->_curRoom]._baseName);
 	ImagePointer = (uint16 *)g_vm->_screenBuffer + GameWordPointer - 4;
@@ -489,8 +483,8 @@ void ReadLoc() {
 	Common::String fname = Common::String::format("%s.3d", g_vm->_room[g_vm->_curRoom]._baseName);
 	GameWordPointer += read3D(fname) / 2;
 
-	memset(g_vm->_screenBuffer, 0, CurRoomMaxX * MAXY * 2);
-	memcpy(g_vm->_screenBuffer + TOP * CurRoomMaxX, ImagePointer, CurRoomMaxX * AREA * 2);
+	memset(g_vm->_screenBuffer, 0, SCREENLEN * MAXY * 2);
+	memcpy(g_vm->_screenBuffer + TOP * SCREENLEN, ImagePointer, SCREENLEN * AREA * 2);
 
 	g_vm->_curSortTableNum = 0;
 	for (int i = 0; i < MAXOBJINROOM; ++i) {
@@ -766,7 +760,7 @@ void PaintRegenRoom() {
 --------------------------------------------------*/
 void DrawObj(SDObj d) {
 	for (uint16 a = 0; a < 4; a++) {
-		if (d.l[a] > CurRoomMaxX)
+		if (d.l[a] > SCREENLEN)
 			return;
 	}
 
@@ -789,16 +783,16 @@ void DrawObj(SDObj d) {
 
 						if ((maskOffset != 0) && (b >= (d.y + d.l[1])) && (b < (d.y + d.l[3]))) {
 							if ((Sco >= d.l[0]) && ((Sco + maskOffset) < d.l[2]))
-								memcpy(g_vm->_screenBuffer + (b * CurRoomMaxX) + Sco + d.x, buf, maskOffset * 2);
+								memcpy(g_vm->_screenBuffer + (b * SCREENLEN) + Sco + d.x, buf, maskOffset * 2);
 
 							else if ((Sco < d.l[0]) && ((Sco + maskOffset) < d.l[2]) && ((Sco + maskOffset) >= d.l[0]))
-								memcpy(g_vm->_screenBuffer + (b * CurRoomMaxX) + d.l[0] + d.x, buf + d.l[0] - Sco, (maskOffset + Sco - d.l[0]) * 2);
+								memcpy(g_vm->_screenBuffer + (b * SCREENLEN) + d.l[0] + d.x, buf + d.l[0] - Sco, (maskOffset + Sco - d.l[0]) * 2);
 
 							else if ((Sco >= d.l[0]) && ((Sco + maskOffset) >= d.l[2]) && (Sco < d.l[2]))
-								memcpy(g_vm->_screenBuffer + (b * CurRoomMaxX) + Sco + d.x, buf, (d.l[2] - Sco) * 2);
+								memcpy(g_vm->_screenBuffer + (b * SCREENLEN) + Sco + d.x, buf, (d.l[2] - Sco) * 2);
 
 							else if ((Sco < d.l[0]) && ((Sco + maskOffset) >= d.l[2]))
-								memcpy(g_vm->_screenBuffer + (b * CurRoomMaxX) + d.l[0] + d.x, buf + d.l[0] - Sco, (d.l[2] - d.l[0]) * 2);
+								memcpy(g_vm->_screenBuffer + (b * SCREENLEN) + d.l[0] + d.x, buf + d.l[0] - Sco, (d.l[2] - d.l[0]) * 2);
 						}
 						Sco += *mask;
 						buf += *mask++;
@@ -813,7 +807,7 @@ void DrawObj(SDObj d) {
 	} else {
 		if (d.flag & COPYTORAM) {
 			for (uint16 b = d.l[1]; b < d.l[3]; b++) {
-				memcpy(g_vm->_screenBuffer + (d.y + b) * CurRoomMaxX + (d.x + d.l[0]),
+				memcpy(g_vm->_screenBuffer + (d.y + b) * SCREENLEN + (d.x + d.l[0]),
 					  buf + (b * d.dx) + d.l[0], (d.l[2] - d.l[0]) * 2);
 			}
 		}
@@ -821,7 +815,7 @@ void DrawObj(SDObj d) {
 		if (d.flag & COPYTOVIDEO) {
 			g_vm->_graphicsMgr->lock();
 			for (uint16 b = d.l[1]; b < d.l[3]; b++) {
-				g_vm->_graphicsMgr->vCopy((d.y + b) * VirtualPageLen + (d.x + d.l[0]),
+				g_vm->_graphicsMgr->vCopy((d.y + b) * SCREENLEN + (d.x + d.l[0]),
 					  buf + (b * d.dx) + d.l[0], d.l[2] - d.l[0]);
 			}
 			g_vm->_graphicsMgr->unlock();

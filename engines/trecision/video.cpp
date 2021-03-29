@@ -620,9 +620,10 @@ void AnimManager::refreshFullMotion() {
 				    ((lastRect->top + a) * yfact < (_vm->_sdText.y - TOP)) ||
 				    ((lastRect->top + a) * yfact >= (_vm->_sdText.y + _vm->_sdText.dy - TOP))) {
 
-					_vm->_graphicsMgr->BCopy(
-						lastRect->left + (lastRect->top + a) * MAXX + ((MAXY - _smkAnims[kSmackerFullMotion]->getHeight()) / 2) * MAXX,
+					byte2word(
+						_vm->_graphicsMgr->_screenPtr + lastRect->left + (lastRect->top + a) * MAXX + (MAXY - _smkAnims[kSmackerFullMotion]->getHeight()) / 2 * MAXX,
 						_smkBuffer[kSmackerFullMotion] + lastRect->left + (lastRect->top + a) * _smkAnims[kSmackerFullMotion]->getWidth(),
+						_vm->_newData,
 						lastRect->width()
 					);
 				}
@@ -662,7 +663,7 @@ void AnimManager::refreshSmkIcon(int StartIcon, int num) {
 	int32 a;
 	for (a = 0; a < ICONSHOWN; a++) {
 		if (_vm->_inventory[a + StartIcon] == (num - aiBANCONOTE + 1)) {
-			stx = a * ICONDX + ICONMARGSX + CurScrollPageDx;
+			stx = a * ICONDX + ICONMARGSX;
 			break;
 		}
 	}
