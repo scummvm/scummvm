@@ -7,3 +7,4 @@
 /po/el.po encoding=iso-8859-7
 /po/he.po encoding=iso-8859-8
 *.lingo	encoding=MacRoman
+/engines.awk eol=lf

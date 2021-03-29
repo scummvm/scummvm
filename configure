@@ -21,11 +21,11 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 #
 
+set -a
+
 # NLS nuisances.
 LC_ALL=C
-export LC_ALL
 LANGUAGE=C
-export LANGUAGE
 
 # Save the current environment variables for next runs
 SAVED_CONFIGFLAGS=$@
@@ -65,7 +65,6 @@ if test "$ac_emxsupport" != "no" -a "$ac_emxsupport" != "NO"; then
 		fi
 	done
 	PATH="$ac_TEMP_PATH"
-	export PATH
 	unset ac_TEMP_PATH
 fi
 
@@ -607,27 +606,6 @@ Try \`$0 --help' for more information." >&2
 
 
 #
-# Feature handling functions
-#
-
-# Get the name of the feature
-get_feature_name() {
-	get_var _feature_$1_name
-}
-
-# Check whether the feature is enabled
-get_feature_state() {
-	for i in `get_var _feature_$1_settings`; do
-		if test `get_var $i` = "yes"; then
-			echo "yes"
-			return
-		fi
-	done
-	echo "no"
-}
-
-
-#
 # Engine handling functions
 #
 
@@ -649,16 +627,6 @@ get_engine_build_default() {
 # Get the subengines
 get_engine_subengines() {
 	get_var _engine_$1_subengines
-}
-
-# Get the dependencies
-get_engine_dependencies() {
-	get_var _engine_$1_deps
-}
-
-# Get the base engine game support description
-get_engine_base() {
-	get_var _engine_$1_base
 }
 
 # Ask if this is a subengine
@@ -760,29 +728,6 @@ engine_disable() {
 	fi
 }
 
-# Check whether the engine's dependencies are met
-# If that is not the case disable the engine
-check_engine_deps() {
-	unmet_deps=""
-
-	# Check whether the engine is enabled
-	if test `get_engine_build $1` != "no" ; then
-		# Collect unmet dependencies
-		for dep in `get_engine_dependencies $1`; do
-			if test `get_feature_state $dep` = "no"; then
-				feature_name=`get_feature_name $dep`
-				unmet_deps="${unmet_deps}${feature_name} "
-			fi
-		done
-
-		# Check whether there is any unmet dependency
-		if test -n "$unmet_deps"; then
-			echo "WARNING: Disabling engine "`get_engine_name $1`" because the following dependencies are unmet: "$unmet_deps
-			engine_disable $1
-		fi
-	fi
-}
-
 # Show the configure help line for a given engine
 show_engine_help() {
 	name=`get_engine_name $1`
@@ -797,148 +742,6 @@ show_subengine_help() {
 	name=`get_engine_name $1`
 	parent=`get_engine_name $2`
 	option_help "- ${1}" "${name} in ${parent} engine" "  "
-}
-
-# Prepare the strings about the engines to build
-prepare_engine_build_strings() {
-	string=`get_engine_build_string $1 static`
-	if test -n "$string" ; then
-		_engines_built_static="${_engines_built_static}#$string@"
-	fi
-
-	string=`get_engine_build_string $1 dynamic`
-	if test -n "$string" ; then
-		_engines_built_dynamic="${_engines_built_dynamic}#$string@"
-	fi
-
-	string=`get_engine_build_string $1 no`
-	if test -n "$string" ; then
-		_engines_skipped="${_engines_skipped}#$string@"
-	fi
-
-	string=`get_engine_build_string $1 wip`
-	if test -n "$string" ; then
-		_engines_built_wip="${_engines_built_wip}#$string@"
-	fi
-
-}
-
-# Get the string about building an engine
-get_engine_build_string() {
-	engine=$1
-	request_status=$2
-	engine_string=""
-	engine_build=`get_engine_build $1`
-	engine_build_default=`get_engine_build_default $engine`
-	show=no
-
-	# Convert static/dynamic to yes to ease the check of subengines
-	if test $engine_build = no; then
-		subengine_filter=no
-	else
-		subengine_filter=yes
-	fi
-
-	# Check if the current engine should be shown for the current status
-	if test $engine_build = $request_status ; then
-		show=yes
-	else
-		# Test for disabled sub-engines
-		if test $request_status = no ; then
-			for subeng in `get_engine_subengines $engine` ; do
-				if test `get_engine_build $subeng` = no ; then
-					# In this case we to display _disabled_ subengines
-					subengine_filter=no
-					show=yes
-				fi
-			done
-		fi
-		# Test for enabled wip sub-engines
-		if test $request_status = wip ; then
-			for subeng in `get_engine_subengines $engine` ; do
-				if test `get_engine_build $subeng` != no -a `get_engine_build_default $subeng` = no ; then
-					show=yes
-				fi
-			done
-		fi
-	fi
-
-
-	# Check if it is a wip engine
-	if test "$request_status" = "wip" -a "$engine_build" != "no" -a  "$engine_build_default" = no; then
-		show=yes
-	fi
-
-	# The engine should be shown, build the string
-	if test $show = yes ; then
-		engine_string=`get_subengines_build_string $engine $subengine_filter $request_status`
-		engine_string="`get_engine_name $engine` $engine_string"
-	fi
-
-	echo "$engine_string"
-}
-
-# Get the string about building subengines
-get_subengines_build_string() {
-	parent_engine=$1
-	subengine_filter=$2
-	request_status=$3
-	parent_engine_build_default=`get_engine_build_default $parent_engine`
-	subengine_string=""
-
-	# If the base engine isn't built at all, no need to list subengines
-	# in any of the possible categories.
-	if test `get_engine_build $parent_engine` = no; then
-		return
-	fi
-
-	all=yes
-	# If there are no subengines, never display "[all games]" (for brevity).
-	if test -z "`get_engine_subengines $parent_engine`"; then
-		all=no
-	fi
-	# If the base engine does not fit the category we're displaying here
-	# (WIP or Skipped), we should never show "[all games]"
-	if test "$request_status" = wip; then
-		if test $parent_engine_build_default = yes; then
-			all=no
-		fi
-	fi
-	if test "$request_status" = no; then
-		# If we're here, the parent engine is built, so no need to check that.
-		all=no
-	fi
-
-
-	# In the static/dynamic categories, also display the engine's base games.
-	if test -n "`get_engine_subengines $parent_engine`" -a $request_status != no -a $request_status != wip; then
-		subengine_string="[`get_engine_base $parent_engine`]"
-	fi
-
-	for subeng in `get_engine_subengines $parent_engine` ; do
-		subengine_build=`get_engine_build $subeng`
-		subengine_build_default=`get_engine_build_default $subeng`
-
-		# Display this subengine if it matches the filter, unless it is
-		# a stable subengine in the WIP request.
-		if test $subengine_build = $subengine_filter -a \! \( "$request_status" = wip -a "$subengine_build_default" = yes \) ; then
-			s="[`get_engine_name $subeng`]"
-			if test -n "$subengine_string"; then
-				subengine_string="$subengine_string $s"
-			else
-				subengine_string="$s"
-			fi
-		else
-			all=no
-		fi
-	done
-
-	# Summarize the full list, where applicable
-	if test $all = yes ; then
-		subengine_string="[all games]"
-	fi
-
-	echo "$subengine_string"
 }
 
 # Copy first argument to second one if they are different. Otherwise, delete the first one.
@@ -2095,7 +1898,7 @@ if test "$_host_os" = android; then
 		STRINGS="$_android_toolchain/bin/$_host_alias-strings"
 	fi
 	if test -z "$PKG_CONFIG_LIBDIR"; then
-		export PKG_CONFIG_LIBDIR="$_android_toolchain/sysroot/usr/lib/$_host_alias/$_android_version/pkgconfig"
+		PKG_CONFIG_LIBDIR="$_android_toolchain/sysroot/usr/lib/$_host_alias/$_android_version/pkgconfig"
 	fi
 	_libcurlpath="$_android_toolchain/sysroot/usr/bin/$_host_alias/$_android_version:$_libcurlpath"
 fi
@@ -3206,7 +3009,7 @@ EOF
 		_optimization_level=-O2
 		_freetypepath="$PSPDEV/psp/bin"
 		if test -z "$PKG_CONFIG_LIBDIR"; then
-			export PKG_CONFIG_LIBDIR="$PSPDEV/psp/lib/pkgconfig"
+			PKG_CONFIG_LIBDIR="$PSPDEV/psp/lib/pkgconfig"
 		fi
 		append_var CXXFLAGS "-I$PSPSDK/include"
 		# FIXME: Why is the following in CXXFLAGS and not in DEFINES? Change or document this.
@@ -6153,134 +5956,8 @@ _engines_built_static=""
 _engines_built_dynamic=""
 _engines_skipped=""
 
-# Show a message if looping over engines takes longer than 5 secs
-sh -c "
-	touch config.gnomes
-	sleep 5
-	if test -f config.gnomes; then
-		printf 'Employing little gnomes...'
-		rm -f config.gnomes
-	fi" 2>/dev/null &
+awk -f "$_srcdir/engines.awk" < /dev/null
 
-for engine in $_engines; do
-	# Check whether all dependencies are available
-	check_engine_deps $engine
-
-	if test "`get_engine_sub $engine`" = "no" ; then
-		# It's a main engine
-		if test `get_engine_build $engine` = no ; then
-			isbuilt=no
-		else
-			# If dynamic plugins aren't supported, mark
-			# all the engines as static
-			if test $_dynamic_modules = no ; then
-				set_var _engine_${engine}_build "static"
-			else
-				# If it wasn't explicitly marked as static or
-				# dynamic, use the configured default
-				if test `get_engine_build $engine` = yes ; then
-					set_var _engine_${engine}_build "${_plugins_default}"
-				fi
-			fi
-
-			# Prepare the defines
-			if test `get_engine_build $engine` = dynamic ; then
-				isbuilt=DYNAMIC_PLUGIN
-			else
-				set_var _engine_${engine}_build "static"
-				isbuilt=STATIC_PLUGIN
-			fi
-		fi
-	else
-		# It's a subengine, just say yes or no
-		if test "`get_engine_build $engine`" = "no" ; then
-			isbuilt=no
-		else
-			isbuilt=1
-		fi
-	fi
-
-	# Save the settings
-	defname="ENABLE_`echo $engine | tr '[a-z]' '[A-Z]'`"
-	if test "$isbuilt" = "no" ; then
-		add_line_to_config_mk "# $defname"
-	else
-		add_line_to_config_mk "$defname = $isbuilt"
-	fi
-done
-
-# Sort engines to place our headline engine at start...
-# No technical reason, just historical convention
-headline_engine=scumm
-_sorted_engines="${headline_engine}"
-for engine in $_engines; do
-	if test "${engine}" != "${headline_engine}" ; then
-		_sorted_engines="${_sorted_engines} ${engine}"
-	fi
-done
-
-# Prepare the information to be shown
-for engine in $_sorted_engines; do
-	if test "`get_engine_sub $engine`" = "no" ; then
-		# It's a main engine
-		prepare_engine_build_strings $engine
-	fi
-done
-
-#
-# Detection of WIP/unstable engines
-#
-for engine in $_engines; do
-	engine_build=`get_engine_build $engine`
-	engine_build_default=`get_engine_build_default $engine`
-	if test $engine_build != no -a $engine_build_default = no ; then
-		set_var _tainted_build "yes"
-	fi
-done
-
-add_to_config_h_if_yes `get_var _tainted_build` '#define TAINTED_BUILD'
-
-# Complete the message on slow systems
-if test -f config.gnomes ; then
-	# Kill does not work well here as it produces nasty 'Killed' message
-	rm -rf config.gnomes
-else
-	echo " work is done"
-fi
-
-#
-# Show which engines ("frontends") are to be built
-#
-echo
-if test -n "$_engines_built_static" ; then
-	echo "Engines (builtin):"
-	echo "$_engines_built_static" | sed 's/@/\
-/g
-s/#/    /g'
-fi
-
-if test -n "$_engines_built_dynamic" ; then
-	echo "Engines (plugins):"
-	echo "$_engines_built_dynamic" | sed 's/@/\
-/g
-s/#/    /g'
-fi
-
-if test -n "$_engines_skipped" ; then
-	echo "Engines Skipped:"
-	echo "$_engines_skipped" | sed 's/@/\
-/g
-s/#/    /g'
-fi
-
-if test -n "$_engines_built_wip" ; then
-	echo "WARNING: This ScummVM build contains the following UNSTABLE engines:"
-	echo "$_engines_built_wip" | sed 's/@/\
-/g
-s/#/    /g'
-fi
-
-echo
 echo "Creating config.h"
 cat > config.h.new << EOF
 /* This file is automatically generated by configure */
@@ -6290,6 +5967,7 @@ cat > config.h.new << EOF
 #define CONFIG_H
 
 $_config_h_data
+$(cat config.h.engines)
 
 /* Data types */
 #ifndef SCUMMVM_DONT_DEFINE_TYPES
@@ -6315,6 +5993,7 @@ typedef $type_ptr  uintptr;
 
 #endif /* CONFIG_H */
 EOF
+rm -f config.h.engines
 copy_if_changed config.h.new config.h
 
 
@@ -6385,6 +6064,7 @@ mandir = $mandir
 docdir = $docdir
 
 $_config_mk_data
+$(cat config.mk.engines)
 
 INCLUDES += $INCLUDES
 OBJS += $OBJS
@@ -6395,6 +6075,7 @@ $_mak_plugins
 
 port_mk = $_port_mk
 EOF
+rm -f config.mk.engines
 copy_if_changed config.mk.new config.mk
 
 #
@@ -6423,86 +6104,8 @@ copy_if_changed Makefile.new Makefile
 
 fi
 
-# Ensure engines folder exists prior to trying to generate
-# files into it (used for out-of-tree-builds)
-mkdir -p engines
-
-echo "Creating engines/engines.mk"
-cat > engines/engines.mk.new << EOF
-# This file is automatically generated by configure
-# DO NOT EDIT MANUALLY
-# This file is being included by "Makefile.common"
-EOF
-
-for engine in $_sorted_engines; do
-	j=`echo $engine | tr '[:lower:]' '[:upper:]'`
-	if test "`get_engine_sub $engine`" = "no" ; then
-		# main engine
-		cat >> engines/engines.mk.new << EOF
-
-ifdef ENABLE_$j
-DEFINES += -DENABLE_$j=\$(ENABLE_$j)
-MODULES += engines/$engine
-EOF
-
-	for subeng in `get_engine_subengines $engine` ; do
-		k=`echo $subeng | tr '[:lower:]' '[:upper:]'`
-		cat >> engines/engines.mk.new << EOF
-
-ifdef ENABLE_$k
-DEFINES += -DENABLE_$k
-endif
-EOF
-	done
-
-	cat >> engines/engines.mk.new << EOF
-endif
-EOF
-	fi
-done
 copy_if_changed engines/engines.mk.new engines/engines.mk
-
-# Name which is suffixed to each detection plugin
-detectId="_DETECTION"
-
-echo "Creating engines/detection_table.h"
-cat > engines/detection_table.h.new << EOF
-/* This file is automatically generated by configure */
-/* DO NOT EDIT MANUALLY */
-// This file is being included by "base/plugins.cpp"
-EOF
-
-for engine in $_sorted_engines; do
-	if test "`get_engine_sub $engine`" = "no" ; then
-		j=`echo $engine | tr '[:lower:]' '[:upper:]'`
-		detectEngine="${j}${detectId}"
-		cat >> engines/detection_table.h.new << EOF
-#if defined(ENABLE_$j) || defined(DETECTION_FULL)
-LINK_PLUGIN($detectEngine)
-#endif
-EOF
-	fi
-done
 copy_if_changed engines/detection_table.h.new engines/detection_table.h
-
-
-echo "Creating engines/plugins_table.h"
-cat > engines/plugins_table.h.new << EOF
-/* This file is automatically generated by configure */
-/* DO NOT EDIT MANUALLY */
-// This file is being included by "base/plugins.cpp"
-EOF
-
-for engine in $_sorted_engines; do
-	if test "`get_engine_sub $engine`" = "no" ; then
-		j=`echo $engine | tr '[:lower:]' '[:upper:]'`
-		cat >> engines/plugins_table.h.new << EOF
-#if PLUGIN_ENABLED_STATIC($j)
-LINK_PLUGIN($j)
-#endif
-EOF
-	fi
-done
 copy_if_changed engines/plugins_table.h.new engines/plugins_table.h
 
 touch configure.stamp
