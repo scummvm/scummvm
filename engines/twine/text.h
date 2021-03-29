@@ -29,7 +29,7 @@
 
 namespace TwinE {
 
-class TextEntry;
+struct TextEntry;
 
 // lba
 namespace TextBankId {

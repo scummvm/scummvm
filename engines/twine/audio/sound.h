@@ -30,7 +30,7 @@
 
 namespace TwinE {
 
-class TextEntry;
+struct TextEntry;
 
 #define NUM_CHANNELS 32
 
