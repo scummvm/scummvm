@@ -93,8 +93,8 @@ int read3D(Common::String c) {
 
 	initSortPan();
 
-	init3DRoom(CurRoomMaxX, g_vm->_screenBuffer, g_vm->ZBuffer);
-	setClipping(0, TOP, CurRoomMaxX, AREA + TOP);
+	init3DRoom(SCREENLEN, g_vm->_screenBuffer, g_vm->ZBuffer);
+	setClipping(0, TOP, SCREENLEN, AREA + TOP);
 
 	return 10L;
 }
@@ -1219,10 +1219,10 @@ void putPix(int x, int y, uint16 c) {
 	extern uint16 *ImagePointer;
 	extern uint16 *SmackImagePointer;
 
-	if ((x >  0) && (x < CurRoomMaxX) && (y > 60) && (y < 420)) {
-		g_vm->_screenBuffer[x + CurRoomMaxX * y] = c;
-		ImagePointer[x + CurRoomMaxX * (y - 60)] = c;
-		SmackImagePointer[x + CurRoomMaxX * (y - 60)] = c;
+	if ((x >  0) && (x < SCREENLEN) && (y > 60) && (y < 420)) {
+		g_vm->_screenBuffer[x + SCREENLEN * y] = c;
+		ImagePointer[x + SCREENLEN * (y - 60)] = c;
+		SmackImagePointer[x + SCREENLEN * (y - 60)] = c;
 	}
 }
 

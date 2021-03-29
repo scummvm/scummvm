@@ -100,28 +100,13 @@ void GraphicsManager::vCopy(uint32 Sco, uint16 *Src, uint32 Len) {
 }
 
 /*------------------------------------------------
-					BCopy
---------------------------------------------------*/
-void GraphicsManager::BCopy(uint32 Sco, uint8 *Src, uint32 Len) {
-	if ((_screenPtr == nullptr) || (Len == 0))
-		return;
-
-	byte2word(_screenPtr + Sco, Src, _vm->_newData, Len);
-}
-
-/*------------------------------------------------
 					showScreen
 --------------------------------------------------*/
 void GraphicsManager::showScreen(int px, int py, int dx, int dy) {
-	lock();
-
-	for (int a = 0; a < dy; a++) {
-		memcpy(_screenPtr + px + (py + a) * VirtualPageLen + VideoScrollPageDx,
-		      _vm->_screenBuffer + px + (py + a) * CurRoomMaxX + CurScrollPageDx,
-		      dx * 2);
-	}
-
-	unlock();
+	g_system->copyRectToScreen(
+		_vm->_screenBuffer + px + py * SCREENLEN,
+		MAXX * 2, px, py, dx, dy
+	);
 }
 
 /* ------------------------------------------------
@@ -195,7 +180,7 @@ void GraphicsManager::VPix(int16 x, int16 y, uint16 col) {
 		return;
 
 	uint32 a = ((uint32)x + MAXX * (uint32)y);
-	if ((x >= 0) && (y >= 0) && (x < CurRoomMaxX) && (y < MAXY))
+	if ((x >= 0) && (y >= 0) && (x < SCREENLEN) && (y < MAXY))
 		_screenPtr[a] = col;
 }
 

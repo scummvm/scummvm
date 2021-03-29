@@ -79,7 +79,7 @@ void PaintScreen(uint8 flag) {
 		// cancello omino
 		DObj.x    = 0;
 		DObj.y    = TOP;
-		DObj.dx   = CurRoomMaxX;
+		DObj.dx   = SCREENLEN;
 		DObj.dy   = AREA;
 		DObj.l[0] = _actor._lim[0];
 		DObj.l[1] = _actor._lim[2] - TOP;
@@ -99,7 +99,7 @@ void PaintScreen(uint8 flag) {
 	} else if (g_vm->_animMgr->_animMinX != MAXX) {
 		DObj.x    = 0;
 		DObj.y    = TOP;
-		DObj.dx   = CurRoomMaxX;
+		DObj.dx   = SCREENLEN;
 		DObj.dy   = AREA;
 		DObj.l[0] = g_vm->_animMgr->_animMinX;
 		DObj.l[1] = g_vm->_animMgr->_animMinY;
@@ -123,7 +123,7 @@ void PaintScreen(uint8 flag) {
 		// cancello scritta
 		DObj.x    = 0;
 		DObj.y    = TOP;
-		DObj.dx   = CurRoomMaxX;
+		DObj.dx   = SCREENLEN;
 		DObj.dy   = 480;
 		DObj.l[0] = oldString.x;
 		DObj.l[1] = oldString.y - TOP;
@@ -136,7 +136,7 @@ void PaintScreen(uint8 flag) {
 			DrawObj(DObj);
 		} else {
 			for (a = (DObj.l[1] + TOP); a < (DObj.l[3] + TOP); a++)
-				memset(g_vm->_screenBuffer + DObj.l[0] + a * CurRoomMaxX, 0x0000, (DObj.l[2] - DObj.l[0]) * 2);
+				memset(g_vm->_screenBuffer + DObj.l[0] + a * SCREENLEN, 0x0000, (DObj.l[2] - DObj.l[0]) * 2);
 		}
 		oldString.sign = NULL;
 
@@ -160,7 +160,7 @@ void PaintScreen(uint8 flag) {
 		if (SortTable[a]._remove) {
 			DObj.x    = 0;
 			DObj.y    = TOP;
-			DObj.dx   = CurRoomMaxX;
+			DObj.dx   = SCREENLEN;
 			DObj.dy   = 480;
 
 			if (SortTable[a]._typology == TYPO_BMP) {
@@ -290,7 +290,7 @@ void AddLine(int16 x1, int16 x2, int16 y) {
 		SWAP(x1, x2);
 	}
 
-	PaintBlock[BlockCount++] = (uint32)((uint32)(y * CurRoomMaxX + x1) & 0xFFFFF) + ((((uint32)(x2 - x1) & 0xFFF) << 20) & 0xFFF00000);
+	PaintBlock[BlockCount++] = (uint32)((uint32)(y * SCREENLEN + x1) & 0xFFFFF) + ((((uint32)(x2 - x1) & 0xFFF) << 20) & 0xFFF00000);
 
 	if (BlockCount >= MAXBLOCK) {
 		warning(g_vm->_sysText[19]);
