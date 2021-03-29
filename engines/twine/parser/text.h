@@ -31,7 +31,8 @@
 
 namespace TwinE {
 
-struct TextEntry {
+class TextEntry {
+public:
 	Common::String string;	/**< The real string behind the text id */
 	int index;				/**< The index in the text index hqr file. This is also the index in the corresponding vox hqr file */
 	int textIndex;			/**< The text identifier */
