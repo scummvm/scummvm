@@ -613,7 +613,11 @@ void DialogHandler(int numframe) {
 		g_vm->_flagMouseEnabled = false;
 		if (numframe == _subTitles[_curSubTitle]._startFrame) {
 			int i = _curSubTitle++;
-			BattutaPrint(_subTitles[i]._x, _subTitles[i]._y, _subTitles[i]._color, g_vm->_sentence[_subTitles[i]._sentence]);
+			g_vm->_oldSdText.set(g_vm->_sdText);
+			g_vm->_sdText.x = _subTitles[i]._x;
+			g_vm->_sdText.y = _subTitles[i]._y;
+			g_vm->_sdText.tcol = _subTitles[i]._color;
+			g_vm->_sdText.sign = g_vm->_sentence[_subTitles[i]._sentence];
 		}
 	}
 }

@@ -29,7 +29,6 @@ MODULE_OBJS = \
 	nl/ll/llmouse.o \
 	nl/ll/llscreen.o \
 	nl/ll/llvideo.o \
-	nl/sys/anim.o \
 	nl/sys/ffile.o \
 	nl/sys/main.o \
 	nl/sys/sound.o
