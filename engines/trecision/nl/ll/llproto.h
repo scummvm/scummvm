@@ -81,7 +81,6 @@ void ContinueTalk();
 int32 Talk(const char *name);
 void StopTalk();
 void resetZBuffer(int x1, int y1, int x2, int y2);
-void MCopy(uint16 *Dest, uint16 *Src, uint32 Len);
 uint32 ReadTime();
 void NlDelay(uint32 val);
 void NlDissolve(int val);

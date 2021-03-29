@@ -43,12 +43,12 @@ void TrecisionEngine::refreshInventory(uint8 StartIcon, uint8 StartLine) {
 	for (uint16 a = 0; a < ICONSHOWN; a++) {
 		if (_inventory[a + StartIcon] >= LASTICON) {
 			for (uint16 b = 0; b < (ICONDY - StartLine); b++)
-				MCopy(_screenBuffer + (FIRSTLINE + b) * CurRoomMaxX + a * (ICONDX) + ICONMARGSX + CurScrollPageDx,
-					  Icone + (_inventory[a + StartIcon] - LASTICON + READICON + 1) * ICONDX * ICONDY + (b + StartLine) * ICONDX, ICONDX);
+				memcpy(_screenBuffer + (FIRSTLINE + b) * CurRoomMaxX + a * (ICONDX) + ICONMARGSX + CurScrollPageDx,
+					  Icone + (_inventory[a + StartIcon] - LASTICON + READICON + 1) * ICONDX * ICONDY + (b + StartLine) * ICONDX, ICONDX * 2);
 		} else if (_inventory[a + StartIcon] != _lightIcon) {
 			for (uint16 b = 0; b < (ICONDY - StartLine); b++)
-				MCopy(_screenBuffer + (FIRSTLINE + b) * CurRoomMaxX + a * (ICONDX) + ICONMARGSX + CurScrollPageDx,
-					  Icone + _inventory[a + StartIcon] * ICONDX * ICONDY + (b + StartLine) * ICONDX, ICONDX);
+				memcpy(_screenBuffer + (FIRSTLINE + b) * CurRoomMaxX + a * (ICONDX) + ICONMARGSX + CurScrollPageDx,
+					  Icone + _inventory[a + StartIcon] * ICONDX * ICONDY + (b + StartLine) * ICONDX, ICONDX * 2);
 		}
 	}
 
@@ -56,16 +56,16 @@ void TrecisionEngine::refreshInventory(uint8 StartIcon, uint8 StartLine) {
 	if (StartIcon != 0) { // Copy left
 		int16 LeftArrow = ICONMARGSX * ICONDY * 3;
 		for (uint16 b = 0; b < (ICONDY - StartLine); b++) {
-			MCopy(_screenBuffer + (FIRSTLINE + b) * CurRoomMaxX + CurScrollPageDx,
-				  Arrows + LeftArrow + (b + StartLine) * ICONMARGSX, ICONMARGSX);
+			memcpy(_screenBuffer + (FIRSTLINE + b) * CurRoomMaxX + CurScrollPageDx,
+				  Arrows + LeftArrow + (b + StartLine) * ICONMARGSX, ICONMARGSX * 2);
 		}
 	}
 
 	if ((StartIcon + ICONSHOWN) < _inventorySize) { // Copy right
 		int16 RightArrow = ICONMARGDX * ICONDY * 2;
 		for (uint16 b = 0; b < (ICONDY - StartLine); b++) {
-			MCopy(_screenBuffer + (FIRSTLINE + b) * CurRoomMaxX + CurScrollPageDx + SCREENLEN - ICONMARGDX,
-				  Arrows + RightArrow + ICONMARGSX * ICONDY * 2 + (b + StartLine) * ICONMARGSX, ICONMARGSX);
+			memcpy(_screenBuffer + (FIRSTLINE + b) * CurRoomMaxX + CurScrollPageDx + SCREENLEN - ICONMARGDX,
+				  Arrows + RightArrow + ICONMARGSX * ICONDY * 2 + (b + StartLine) * ICONMARGSX, ICONMARGSX * 2);
 		}
 	}
 

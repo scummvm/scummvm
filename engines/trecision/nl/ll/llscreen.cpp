@@ -490,7 +490,7 @@ void ReadLoc() {
 	GameWordPointer += read3D(fname) / 2;
 
 	memset(g_vm->_screenBuffer, 0, CurRoomMaxX * MAXY * 2);
-	MCopy(g_vm->_screenBuffer + TOP * CurRoomMaxX, ImagePointer, CurRoomMaxX * AREA);
+	memcpy(g_vm->_screenBuffer + TOP * CurRoomMaxX, ImagePointer, CurRoomMaxX * AREA * 2);
 
 	g_vm->_curSortTableNum = 0;
 	for (int i = 0; i < MAXOBJINROOM; ++i) {
@@ -785,20 +785,20 @@ void DrawObj(SDObj d) {
 
 						c = 1;
 					} else {                 // copia
-						uint16 Now = *mask;
+						uint16 maskOffset = *mask;
 
-						if ((Now != 0) && (b >= (d.y + d.l[1])) && (b < (d.y + d.l[3]))) {
-							if ((Sco >= d.l[0]) && ((Sco + Now) < d.l[2]))
-								MCopy(g_vm->_screenBuffer + (b * CurRoomMaxX) + Sco + d.x, buf, Now);
+						if ((maskOffset != 0) && (b >= (d.y + d.l[1])) && (b < (d.y + d.l[3]))) {
+							if ((Sco >= d.l[0]) && ((Sco + maskOffset) < d.l[2]))
+								memcpy(g_vm->_screenBuffer + (b * CurRoomMaxX) + Sco + d.x, buf, maskOffset * 2);
 
-							else if ((Sco < d.l[0]) && ((Sco + Now) < d.l[2]) && ((Sco + Now) >= d.l[0]))
-								MCopy(g_vm->_screenBuffer + (b * CurRoomMaxX) + d.l[0] + d.x, buf + d.l[0] - Sco, (Now + Sco - d.l[0]));
+							else if ((Sco < d.l[0]) && ((Sco + maskOffset) < d.l[2]) && ((Sco + maskOffset) >= d.l[0]))
+								memcpy(g_vm->_screenBuffer + (b * CurRoomMaxX) + d.l[0] + d.x, buf + d.l[0] - Sco, (maskOffset + Sco - d.l[0]) * 2);
 
-							else if ((Sco >= d.l[0]) && ((Sco + Now) >= d.l[2]) && (Sco < d.l[2]))
-								MCopy(g_vm->_screenBuffer + (b * CurRoomMaxX) + Sco + d.x, buf, (d.l[2] - Sco));
+							else if ((Sco >= d.l[0]) && ((Sco + maskOffset) >= d.l[2]) && (Sco < d.l[2]))
+								memcpy(g_vm->_screenBuffer + (b * CurRoomMaxX) + Sco + d.x, buf, (d.l[2] - Sco) * 2);
 
-							else if ((Sco < d.l[0]) && ((Sco + Now) >= d.l[2]))
-								MCopy(g_vm->_screenBuffer + (b * CurRoomMaxX) + d.l[0] + d.x, buf + d.l[0] - Sco, (d.l[2] - d.l[0]));
+							else if ((Sco < d.l[0]) && ((Sco + maskOffset) >= d.l[2]))
+								memcpy(g_vm->_screenBuffer + (b * CurRoomMaxX) + d.l[0] + d.x, buf + d.l[0] - Sco, (d.l[2] - d.l[0]) * 2);
 						}
 						Sco += *mask;
 						buf += *mask++;
@@ -813,8 +813,8 @@ void DrawObj(SDObj d) {
 	} else {
 		if (d.flag & COPYTORAM) {
 			for (uint16 b = d.l[1]; b < d.l[3]; b++) {
-				MCopy(g_vm->_screenBuffer + (d.y + b) * CurRoomMaxX + (d.x + d.l[0]),
-					  buf + (b * d.dx) + d.l[0], (d.l[2] - d.l[0]));
+				memcpy(g_vm->_screenBuffer + (d.y + b) * CurRoomMaxX + (d.x + d.l[0]),
+					  buf + (b * d.dx) + d.l[0], (d.l[2] - d.l[0]) * 2);
 			}
 		}
 
