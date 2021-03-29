@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-03-28 18:36+0000\n"
-"PO-Revision-Date: 2021-03-27 00:24+0000\n"
+"PO-Revision-Date: 2021-03-30 01:24+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fi/>\n"
@@ -1027,11 +1027,9 @@ msgid "Game 3D Renderer:"
 msgstr "Pelin 3d-renderöijä:"
 
 #: gui/options.cpp:1331
-#, fuzzy
-#| msgid "Game 3D Renderer:"
 msgctxt "lowres"
 msgid "Game 3D Renderer:"
-msgstr "Pelin 3d-renderöijä:"
+msgstr "Pelin 3D-renderöijä:"
 
 #: gui/options.cpp:1344
 msgid "3D Anti-aliasing:"
@@ -2409,8 +2407,6 @@ msgid "OpenGL with shaders"
 msgstr "OpenGL sävyttimillä"
 
 #: graphics/renderer.cpp:42
-#, fuzzy
-#| msgid "OpenGL with shaders"
 msgctxt "lowres"
 msgid "OpenGL with shaders"
 msgstr "OpenGL sävyttimillä"
