@@ -403,7 +403,7 @@ bool ScriptManager::process() {
 						error("[ScriptManager::process] Invalid opcode index (was: %d, max: %d)", cmd->opcode, _opcodes.size() - 1);
 
 					if (_lastProcessedCmd != cmd)
-						debugC(kDebugLevelScripts, "[Script idx: %d] %2d: %s (%d, %d, %d, %d, %d, %d, %d, %d, %d)",
+						debugC(kDebugLevelCommands, "[Script idx: %d] %2d: %s (%d, %d, %d, %d, %d, %d, %d, %d, %d)",
 							scriptIndex, cmdIndex, _opcodes[cmd->opcode]->name,
 							cmd->param1, cmd->param2, cmd->param3, cmd->param4, cmd->param5,
 							cmd->param6, cmd->param7, cmd->param8, cmd->param9);

@@ -88,6 +88,7 @@ AsylumEngine::AsylumEngine(OSystem *system, const ADGameDescription *gd) : Engin
 	DebugMan.addDebugChannel(kDebugLevelActor,     "Actor",     "Debug Actor");
 	DebugMan.addDebugChannel(kDebugLevelEncounter, "Encounter", "Debug Encounter");
 	DebugMan.addDebugChannel(kDebugLevelVideo,     "Video",     "Debug Video");
+	DebugMan.addDebugChannel(kDebugLevelCommands,  "Commands",  "Script commands debugging");
 
 	// Initialize random number source
 	_rnd = new Common::RandomSource("asylum");

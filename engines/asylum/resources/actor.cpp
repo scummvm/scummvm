@@ -3314,7 +3314,7 @@ void Actor::updateFinish() {
 		debugC(kDebugLevelScripts, "[Script] Entered ActionArea (idx: %d, name: %s)", areaIndex, area->name);
 		debugC(kDebugLevelScripts, "[Script] Queuing Script #1 (idx: %d) for Actor (idx: %d)", actorArea->scriptIndex2, _index);
 		getScript()->queueScript(actorArea->scriptIndex2, _index);
-		debugC(kDebugLevelScripts, "[Script] Queuing Script #2 (idx: %d) for Actor (idx: %d)", actorArea->scriptIndex, _index);
+		debugC(kDebugLevelScripts, "[Script] Queuing Script #2 (idx: %d) for Actor (idx: %d)", area->scriptIndex, _index);
 		getScript()->queueScript(area->scriptIndex, _index);
 	}
 
