@@ -34,9 +34,9 @@ class InPAKSave : public Common::InSaveFile {
 private:
 	PAKFILE *fd;
 
-	uint32 read(void *buf, uint32 cnt);
-	bool skip(uint32 offset);
-	bool seek(int32 offs, int whence);
+	uint32 read(void *buf, uint32 cnt) override;
+	bool skip(uint32 offset) override;
+	bool seek(int32 offs, int whence) override;
 
 public:
 	InPAKSave() : fd(NULL) { }
@@ -46,16 +46,16 @@ public:
 			pakfs_close(fd);
 	}
 
-	bool eos() const {
+	bool eos() const override {
 		return pakfs_eof(fd);
 	}
-	void clearErr() {
+	void clearErr() override {
 		pakfs_clearerr(fd);
 	}
-	int32 pos() const {
+	int32 pos() const override {
 		return pakfs_tell(fd);
 	}
-	int32 size() const {
+	int32 size() const override {
 		return fd->size;
 	}
 

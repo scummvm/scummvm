@@ -34,9 +34,9 @@ class InFRAMSave : public Common::InSaveFile {
 private:
 	FRAMFILE *fd;
 
-	uint32 read(void *buf, uint32 cnt);
-	bool skip(uint32 offset);
-	bool seek(int32 offs, int whence);
+	uint32 read(void *buf, uint32 cnt) override;
+	bool skip(uint32 offset) override;
+	bool seek(int32 offs, int whence) override;
 
 public:
 	InFRAMSave() : fd(NULL) { }
@@ -46,16 +46,16 @@ public:
 			framfs_close(fd);
 	}
 
-	bool eos() const {
+	bool eos() const override {
 		return framfs_eof(fd);
 	}
-	void clearErr() {
+	void clearErr() override {
 		framfs_clearerr(fd);
 	}
-	int32 pos() const {
+	int32 pos() const override {
 		return framfs_tell(fd);
 	}
-	int32 size() const {
+	int32 size() const override {
 		return fd->size;
 	}
 

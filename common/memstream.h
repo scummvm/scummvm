@@ -91,12 +91,12 @@ public:
 	MemoryReadStreamEndian(const byte *buf, uint32 len, bool bigEndian, DisposeAfterUse::Flag disposeMemory = DisposeAfterUse::NO)
 		: MemoryReadStream(buf, len, disposeMemory), SeekableReadStreamEndian(bigEndian), ReadStreamEndian(bigEndian) {}
 
-	int32 pos() const { return MemoryReadStream::pos(); }
-	int32 size() const { return MemoryReadStream::size(); }
+	int32 pos() const override { return MemoryReadStream::pos(); }
+	int32 size() const override { return MemoryReadStream::size(); }
 
-	bool seek(int32 offs, int whence = SEEK_SET) { return MemoryReadStream::seek(offs, whence); }
+	bool seek(int32 offs, int whence = SEEK_SET) override { return MemoryReadStream::seek(offs, whence); }
 
-	bool skip(uint32 offset) { return MemoryReadStream::seek(offset, SEEK_CUR); }
+	bool skip(uint32 offset) override { return MemoryReadStream::seek(offset, SEEK_CUR); }
 };
 
 /**

@@ -103,12 +103,12 @@ public:
 		  ReadStreamEndian(bigEndian) {
 	}
 
-	virtual int32 pos() const { return SeekableSubReadStream::pos(); }
-	virtual int32 size() const { return SeekableSubReadStream::size(); }
+	virtual int32 pos() const override { return SeekableSubReadStream::pos(); }
+	virtual int32 size() const override { return SeekableSubReadStream::size(); }
 
-	virtual bool seek(int32 offset, int whence = SEEK_SET) { return SeekableSubReadStream::seek(offset, whence); }
+	virtual bool seek(int32 offset, int whence = SEEK_SET) override { return SeekableSubReadStream::seek(offset, whence); }
 	void hexdump(int len, int bytesPerLine = 16, int startOffset = 0) { SeekableSubReadStream::hexdump(len, bytesPerLine, startOffset); }
-	bool skip(uint32 offset) { return SeekableSubReadStream::seek(offset, SEEK_CUR); }
+	bool skip(uint32 offset) override { return SeekableSubReadStream::seek(offset, SEEK_CUR); }
 };
 
 /**
