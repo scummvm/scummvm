@@ -119,7 +119,6 @@ void openSys() {
 	MemoryArea = (uint8 *)malloc(NL_REQUIREDMEMORY);
 
 	memset(MemoryArea, 0, NL_REQUIREDMEMORY);
-	g_vm->_screenBuffer = (uint16 *)MemoryArea;
 
 	OpenVideo();
 }
@@ -134,8 +133,6 @@ void OpenVideo() {
 	SpeechFileInit("NlSpeech.cd0");
 	Common::String filename = Common::String::format("NlAnim.cd%c", CurCDSet + '0');
 	AnimFileInit(filename);
-
-	g_vm->_screenBuffer = (uint16 *)MemoryArea + 2000000L;
 
 	ff = FastFileOpen("NlFont.fnt");
 	g_vm->Font = new uint8[ff->size()];
