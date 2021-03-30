@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-03-28 18:36+0000\n"
-"PO-Revision-Date: 2021-03-25 12:28+0000\n"
+"PO-Revision-Date: 2021-03-30 15:11+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/uk/>\n"
@@ -1031,11 +1031,9 @@ msgid "Game 3D Renderer:"
 msgstr "3D рендерер ігор:"
 
 #: gui/options.cpp:1331
-#, fuzzy
-#| msgid "Game 3D Renderer:"
 msgctxt "lowres"
 msgid "Game 3D Renderer:"
-msgstr "3D рендерер ігор:"
+msgstr "3D рендерер гри:"
 
 #: gui/options.cpp:1344
 msgid "3D Anti-aliasing:"
@@ -2420,8 +2418,6 @@ msgid "OpenGL with shaders"
 msgstr "OpenGL з шейдерами"
 
 #: graphics/renderer.cpp:42
-#, fuzzy
-#| msgid "OpenGL with shaders"
 msgctxt "lowres"
 msgid "OpenGL with shaders"
 msgstr "OpenGL з шейдерами"
