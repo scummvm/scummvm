@@ -1082,11 +1082,7 @@ void CheckFileInCD(Common::String name) {
 	SText.set(0, TOP - 20, SCREENLEN, CARHEI, 0, 0, SCREENLEN, CARHEI, g_vm->_graphicsMgr->palTo16bit(255, 255, 255), MASKCOL, str);
 	SText.DText();
 
-	g_vm->_graphicsMgr->lock();
-	for (int a = 0; a < TOP; a++)
-		g_vm->_graphicsMgr->vCopy(a * MAXX, g_vm->_screenBuffer + a * MAXX, MAXX);
-	g_vm->_graphicsMgr->unlock();
-
+	g_vm->_graphicsMgr->showScreen(0, 0, MAXX, TOP);
 
 	Common::String filename = Common::String::format("NlAnim.cd%c", ncd + '0');
 	Common::File testCD;
@@ -1102,10 +1098,7 @@ void CheckFileInCD(Common::String name) {
 	for (int a = 0; a < TOP; a++)
 		memset(g_vm->_screenBuffer + MAXX * a, 0, MAXX * 2);
 
-	g_vm->_graphicsMgr->lock();
-	for (int a = 0; a < TOP; a++)
-		g_vm->_graphicsMgr->vCopy(a * MAXX, g_vm->_screenBuffer + a * MAXX, MAXX);
-	g_vm->_graphicsMgr->unlock();
+	g_vm->_graphicsMgr->showScreen(0, 0, MAXX, TOP);
 
 	CurCDSet = ncd;
 

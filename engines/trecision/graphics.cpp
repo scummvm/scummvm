@@ -99,9 +99,6 @@ void GraphicsManager::vCopy(uint32 Sco, uint16 *Src, uint32 Len) {
 	memcpy(_screenPtr + Sco, Src, Len * 2);
 }
 
-/*------------------------------------------------
-					showScreen
---------------------------------------------------*/
 void GraphicsManager::showScreen(int px, int py, int dx, int dy) {
 	g_system->copyRectToScreen(
 		_vm->_screenBuffer + px + py * SCREENLEN,

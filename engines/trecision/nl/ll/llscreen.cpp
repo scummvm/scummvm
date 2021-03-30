@@ -801,24 +801,12 @@ void DrawObj(SDObj d) {
 				}
 			}
 		}
-
-		if (d.flag & COPYTOVIDEO)
-			CloseSys(g_vm->_sysText[5]);
 	} else {
 		if (d.flag & COPYTORAM) {
 			for (uint16 b = d.l[1]; b < d.l[3]; b++) {
 				memcpy(g_vm->_screenBuffer + (d.y + b) * SCREENLEN + (d.x + d.l[0]),
 					  buf + (b * d.dx) + d.l[0], (d.l[2] - d.l[0]) * 2);
 			}
-		}
-
-		if (d.flag & COPYTOVIDEO) {
-			g_vm->_graphicsMgr->lock();
-			for (uint16 b = d.l[1]; b < d.l[3]; b++) {
-				g_vm->_graphicsMgr->vCopy((d.y + b) * SCREENLEN + (d.x + d.l[0]),
-					  buf + (b * d.dx) + d.l[0], d.l[2] - d.l[0]);
-			}
-			g_vm->_graphicsMgr->unlock();
 		}
 	}
 }
