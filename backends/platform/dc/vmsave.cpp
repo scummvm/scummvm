@@ -243,9 +243,9 @@ private:
   int _pos, _size;
   bool _eos;
 
-  uint32 read(void *buf, uint32 cnt);
-  bool skip(uint32 offset);
-  bool seek(int32 offs, int whence);
+  uint32 read(void *buf, uint32 cnt) override;
+  bool skip(uint32 offset) override;
+  bool seek(int32 offs, int whence) override;
 
 public:
   InVMSave()
@@ -257,10 +257,10 @@ public:
     delete[] buffer;
   }
 
-  bool eos() const { return _eos; }
-  void clearErr() { _eos = false; }
-  int32 pos() const { return _pos; }
-  int32 size() const { return _size; }
+  bool eos() const override { return _eos; }
+  void clearErr() override { _eos = false; }
+  int32 pos() const override { return _pos; }
+  int32 size() const override { return _size; }
 
   bool readSaveGame(const char *filename)
   { return ::readSaveGame(buffer, _size, filename); }
