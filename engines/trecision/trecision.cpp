@@ -256,7 +256,7 @@ void TrecisionEngine::eventLoop() {
 			break;
 		}
 	}
-	//g_system->delayMillis(10);
+	g_system->delayMillis(10);
 	g_system->updateScreen();
 }
 
