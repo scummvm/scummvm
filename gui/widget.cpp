@@ -995,7 +995,7 @@ void OptionsContainerWidget::reflowLayout() {
 	}
 
 	if (_scrollContainer) {
-		_scrollContainer->resize(_x, _y, _w, _h);
+		_scrollContainer->resize(_x, _y, _w, _h, false);
 	}
 
 	Widget *w = _firstWidget;

@@ -379,8 +379,8 @@ void TabWidget::reflowLayout() {
 
 	int x = _w - _butRP - _butW * 2 - 2;
 	int y = _butTP - _tabHeight;
-	_navLeft->resize(x, y, _butW, _butH);
-	_navRight->resize(x + _butW + 2, y, _butW, _butH);
+	_navLeft->resize(x, y, _butW, _butH, false);
+	_navRight->resize(x + _butW + 2, y, _butW, _butH, false);
 }
 
 void TabWidget::drawWidget() {
