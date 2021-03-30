@@ -69,13 +69,7 @@ void TrecisionEngine::refreshInventory(uint8 StartIcon, uint8 StartLine) {
 		}
 	}
 
-	VMouseCopy();
-
-	_graphicsMgr->showScreen(0, FIRSTLINE, SCREENLEN, ICONDY);
-
-	VMouseRestore();
-	//VMouseON();
-	_graphicsMgr->unlock();
+	_graphicsMgr->copyToScreen(0, FIRSTLINE, SCREENLEN, ICONDY);
 }
 
 /*-------------------------------------------------------------------------*/

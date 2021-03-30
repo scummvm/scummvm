@@ -82,7 +82,7 @@ public:
 
 	// Others
 	void checkSystem();
-
+	void initCursor();
 
 	uint16 _curRoom;
 	uint16 _oldRoom;

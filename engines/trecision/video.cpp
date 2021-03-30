@@ -319,10 +319,10 @@ void AnimManager::startFullMotion(const char *name) {
 	_fullMotionEnd = 0;
 	TextStatus = TEXT_OFF;
 	memset(_vm->_screenBuffer, 0, TOP * MAXX * 2);
-	_vm->_graphicsMgr->showScreen(0, 0, MAXX, TOP);
+	_vm->_graphicsMgr->copyToScreen(0, 0, MAXX, TOP);
 	memset(_vm->_screenBuffer + (TOP + AREA) * MAXX, 0, TOP * MAXX * 2);
 	memset(_vm->_screenBuffer, 0, MAXX * MAXY * 2);
-	_vm->_graphicsMgr->showScreen(0, AREA + TOP, MAXX, TOP);
+	_vm->_graphicsMgr->copyToScreen(0, AREA + TOP, MAXX, TOP);
 
 	_vm->_gameQueue.initQueue();
 	_vm->_animQueue.initQueue();
@@ -591,7 +591,7 @@ void AnimManager::refreshFullMotion() {
 		if (_vm->_oldSdText.sign != nullptr) {
 			if ((_vm->_oldSdText.y < _vm->_sdText.y) || (_vm->_oldSdText.y + _vm->_oldSdText.dy > _vm->_sdText.y + _vm->_sdText.dy) || (_vm->_sdText.sign == nullptr)) {
 				drawSmkBuffer(0, _vm->_oldSdText.y - TOP, MAXX, _vm->_oldSdText.dy);
-				_vm->_graphicsMgr->showScreen(0, _vm->_oldSdText.y, MAXX, _vm->_oldSdText.dy);
+				_vm->_graphicsMgr->copyToScreen(0, _vm->_oldSdText.y, MAXX, _vm->_oldSdText.dy);
 			}
 			_vm->_oldSdText.sign = nullptr;
 		}
@@ -633,7 +633,7 @@ void AnimManager::refreshFullMotion() {
 		}
 
 		if (_vm->_sdText.sign != nullptr)
-			_vm->_graphicsMgr->showScreen(0, _vm->_sdText.y, MAXX, _vm->_sdText.dy);
+			_vm->_graphicsMgr->copyToScreen(0, _vm->_sdText.y, MAXX, _vm->_sdText.dy);
 
 		if (_curAnimFrame[1] == _fullMotionEnd) {
 			drawSmkBuffer(0, 0, MAXX, AREA);

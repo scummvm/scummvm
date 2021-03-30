@@ -99,7 +99,7 @@ void GraphicsManager::vCopy(uint32 Sco, uint16 *Src, uint32 Len) {
 	memcpy(_screenPtr + Sco, Src, Len * 2);
 }
 
-void GraphicsManager::showScreen(int px, int py, int dx, int dy) {
+void GraphicsManager::copyToScreen(int px, int py, int dx, int dy) {
 	g_system->copyRectToScreen(
 		_vm->_screenBuffer + px + py * SCREENLEN,
 		MAXX * 2, px, py, dx, dy
@@ -167,18 +167,6 @@ uint16 GraphicsManager::aliasing(uint32 val1, uint32 val2, uint8 num) {
 	return (((((val1 & _bitMask[2]) * num + (val2 & _bitMask[2]) * (8 - num)) >> 3) & _bitMask[2]) |
 			((((val1 & _bitMask[1]) * num + (val2 & _bitMask[1]) * (8 - num)) >> 3) & _bitMask[1]) |
 			((((val1 & _bitMask[0]) * num + (val2 & _bitMask[0]) * (8 - num)) >> 3) & _bitMask[0]));
-}
-
-/*------------------------------------------------
-					VPix
---------------------------------------------------*/
-void GraphicsManager::VPix(int16 x, int16 y, uint16 col) {
-	if (_screenPtr == nullptr)
-		return;
-
-	uint32 a = ((uint32)x + MAXX * (uint32)y);
-	if ((x >= 0) && (y >= 0) && (x < SCREENLEN) && (y < MAXY))
-		_screenPtr[a] = col;
 }
 
 } // end of namespace

@@ -85,7 +85,7 @@ void RedrawRoom() {
 	TextStatus = TEXT_OFF;
 	FlagPaintCharacter = true;
 	PaintScreen(1);
-	g_vm->_graphicsMgr->showScreen(0, 0, 640, 480);
+	g_vm->_graphicsMgr->copyToScreen(0, 0, 640, 480);
 }
 
 } // End of namespace Trecision

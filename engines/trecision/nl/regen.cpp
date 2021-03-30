@@ -248,14 +248,11 @@ void PaintScreen(uint8 flag) {
 	if (!flag && !FlagDialogActive) {
 		// Sort the blocks to copy and remove the useless ones
 		SortBlock();
-		VMouseCopy();
 
 		g_vm->_graphicsMgr->lock();
 		for (a = 0; a < BlockCount; a++)
 			g_vm->_graphicsMgr->vCopy((PaintBlock[a] & 0xFFFFF), g_vm->_screenBuffer + (PaintBlock[a] & 0xFFFFF), ((PaintBlock[a] & 0xFFF00000) >> 20) & 0xFFF);
 		g_vm->_graphicsMgr->unlock();
-		
-		VMouseRestore();
 	}
 
 	framenum ++;

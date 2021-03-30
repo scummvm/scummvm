@@ -38,6 +38,7 @@
 #include "common/file.h"
 #include "common/fs.h"
 #include "logic.h"
+#include "graphics/cursorman.h"
 
 namespace Common {
 class File;
@@ -187,7 +188,8 @@ Common::Error TrecisionEngine::run() {
 	_logicMgr = new LogicManager(this);
 
 	initMain();
-
+	initCursor();
+	
 	while (!g_engine->shouldQuit()) {
 		eventLoop();
 		NextMessage();
@@ -466,6 +468,25 @@ void TrecisionEngine::LoadAll() {
 void TrecisionEngine::checkSystem() {
 	_animMgr->refreshAllAnimations();
 	eventLoop();
+}
+
+void TrecisionEngine::initCursor() {
+	const int cw = 21, ch = 21;
+	const int cx = 10, cy = 10;
+	uint16 cursor[cw * ch];
+	memset(cursor, 0, ARRAYSIZE(cursor) * 2);
+
+	const uint16 cursorColor = g_vm->_graphicsMgr->palTo16bit(255, 255, 255);
+
+	for (int i = 0; i < cw; i++) {
+		if (i >= 8 && i <= 12 && i != 10)
+			continue;
+		cursor[cx * cw + i] = cursorColor;	// horizontal
+		cursor[cx + cw * i] = cursorColor;	// vertical
+	}
+
+	Graphics::PixelFormat format = g_system->getScreenFormat();
+	CursorMan.pushCursor(cursor, cw, ch, cx, cy, 0, false, &format);
 }
 
 } // End of namespace Trecision
