@@ -337,8 +337,8 @@ void Scene::activate() {
 	if (player->getStatus() == kActorStatusWalking)
 		player->updateStatus(kActorStatusEnabled);
 
-	if (player->getStatus() == kActorStatus12)
-		player->updateStatus(kActorStatus14);
+	if (player->getStatus() == kActorStatusWalking2)
+		player->updateStatus(kActorStatusEnabled2);
 }
 
 bool Scene::init() {
@@ -536,7 +536,7 @@ bool Scene::clickDown(const AsylumEvent &evt) {
 		if (getSpeech()->getSoundResourceId())
 			stopSpeech();
 
-		if (player->getStatus() == kActorStatus6 || player->getStatus() == kActorStatus10) {
+		if (player->getStatus() == kActorStatusShowingInventory || player->getStatus() == kActorStatus10) {
 			player->updateStatus(kActorStatusEnabled);
 			getSound()->playSound(MAKE_RESOURCE(kResourcePackSound, 5));
 		} else if (player->getStatus() != kActorStatusDisabled) {
@@ -546,10 +546,10 @@ bool Scene::clickDown(const AsylumEvent &evt) {
 
 	case Common::EVENT_MBUTTONDOWN:
 		if (player->getStatus() != kActorStatusDisabled) {
-			if (player->getStatus() == kActorStatus6 || player->getStatus() == kActorStatus10)
+			if (player->getStatus() == kActorStatusShowingInventory || player->getStatus() == kActorStatus10)
 				player->updateStatus(kActorStatusEnabled);
 			else
-				player->updateStatus(kActorStatus6);
+				player->updateStatus(kActorStatusShowingInventory);
 		}
 		break;
 
@@ -581,7 +581,7 @@ bool Scene::clickDown(const AsylumEvent &evt) {
 		}
 
 		if (!hitTestPlayer() || player->getStatus() >= kActorStatus11 || !player->getReactionValue(0)) {
-			if (player->getStatus() == kActorStatus6 || player->getStatus() == kActorStatus10) {
+			if (player->getStatus() == kActorStatusShowingInventory || player->getStatus() == kActorStatus10) {
 				playerReaction();
 			} else {
 				HitType type = kHitNone;
@@ -592,12 +592,12 @@ bool Scene::clickDown(const AsylumEvent &evt) {
 			return true;
 		}
 
-		if (player->getStatus() == kActorStatus6 || player->getStatus() == kActorStatus10) {
+		if (player->getStatus() == kActorStatusShowingInventory || player->getStatus() == kActorStatus10) {
 			getSound()->playSound(MAKE_RESOURCE(kResourcePackSound, 5));
 			player->updateStatus(kActorStatusEnabled);
 		} else {
 			getSound()->playSound(MAKE_RESOURCE(kResourcePackSound, 2));
-			player->updateStatus(kActorStatus6);
+			player->updateStatus(kActorStatusShowingInventory);
 		}
 		break;
 	}
@@ -811,7 +811,7 @@ void Scene::updateMouse() {
 	updateCursor(newDirection, actorRect);
 
 	if (newDirection >= kDirectionN)
-		if (player->getStatus() == kActorStatusWalking || player->getStatus() == kActorStatus12)
+		if (player->getStatus() == kActorStatusWalking || player->getStatus() == kActorStatusWalking2)
 			player->updateFromDirection(newDirection);
 }
 
@@ -1148,7 +1148,7 @@ void Scene::updateCursor(ActorDirection direction, const Common::Rect &rect) {
 	}
 
 	if (getCursor()->getState() & kCursorStateRight) {
-		if (player->getStatus() == kActorStatusWalking || player->getStatus() == kActorStatus12) {
+		if (player->getStatus() == kActorStatusWalking || player->getStatus() == kActorStatusWalking2) {
 
 			ResourceId resourceId =_ws->cursorResources[direction];
 
@@ -1159,7 +1159,7 @@ void Scene::updateCursor(ActorDirection direction, const Common::Rect &rect) {
 		return;
 	}
 
-	if (player->getStatus() == kActorStatus6 || player->getStatus() == kActorStatus10) {
+	if (player->getStatus() == kActorStatusShowingInventory || player->getStatus() == kActorStatus10) {
 		if (getCursor()->getResourceId() != _ws->cursorResources[kCursorResourceHand])
 			getCursor()->set(_ws->cursorResources[kCursorResourceHand]);
 
@@ -1755,12 +1755,12 @@ void Scene::hitActorChapter2(ActorIndex index) {
 
 	Actor *player = getActor();
 
-	if (player->getStatus() != kActorStatus14 && player->getStatus() != kActorStatus12)
+	if (player->getStatus() != kActorStatusEnabled2 && player->getStatus() != kActorStatusWalking2)
 		return;
 
 	if (index == 11) {
 		player->faceTarget((uint32)(index + 9), kDirectionFromActor);
-		player->updateStatus(kActorStatus15);
+		player->updateStatus(kActorStatusAttacking);
 
 		Actor *actor11 = getActor(index);
 
@@ -1768,18 +1768,18 @@ void Scene::hitActorChapter2(ActorIndex index) {
 		Common::Point pointActor11(actor11->getPoint1()->x + actor11->getPoint2()->x, actor11->getPoint1()->y + actor11->getPoint2()->y);
 
 		if (Actor::euclidianDistance(pointPlayer, pointActor11) < 150) {
-			if (actor11->getStatus() == kActorStatus12)
+			if (actor11->getStatus() == kActorStatusWalking2)
 				actor11->updateStatus(kActorStatus18);
 
 			if (actor11->getStatus() == kActorStatusEnabled)
-				actor11->updateStatus(kActorStatus14);
+				actor11->updateStatus(kActorStatusEnabled2);
 		}
 
 		getSharedData()->setChapter2ActorIndex(index);
 
 	} else if (index > 12) {
 		player->faceTarget((uint32)(index + 9), kDirectionFromActor);
-		player->updateStatus(kActorStatus15);
+		player->updateStatus(kActorStatusAttacking);
 		getSharedData()->setChapter2ActorIndex(index);
 	}
 }
@@ -2430,7 +2430,7 @@ bool Scene::drawScene() {
 		_ws->objects[i]->draw();
 
 	Actor *player = getActor();
-	if (player->getStatus() == kActorStatus6 || player->getStatus() == kActorStatus10)
+	if (player->getStatus() == kActorStatusShowingInventory || player->getStatus() == kActorStatus10)
 		player->updateAndDraw();
 	else
 		player->setNumberFlag01(0);

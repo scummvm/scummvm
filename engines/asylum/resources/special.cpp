@@ -206,7 +206,7 @@ void Special::chapter2(Object *object, ActorIndex actorIndex) {
 		}
 
 		for (int i = 13; i < 22; i++)
-			getScene()->getActor(i)->updateStatus(kActorStatus15);
+			getScene()->getActor(i)->updateStatus(kActorStatusAttacking);
 	}
 
 	// Play chapter sound
@@ -448,12 +448,12 @@ void Special::chapter7(Object *object, ActorIndex actorIndex) {
 			if (_vm->isGameFlagSet(kGameFlag1021)) {
 				if (player->getReactionValue(0)) {
 
-					if (player->getStatus() == kActorStatus6 || player->getStatus() == kActorStatus10) {
+					if (player->getStatus() == kActorStatusShowingInventory || player->getStatus() == kActorStatus10) {
 						getSound()->playSound(MAKE_RESOURCE(kResourcePackSound, 2));
 						player->enable();
 					} else {
 						getSound()->playSound(MAKE_RESOURCE(kResourcePackSound, 5));
-						player->updateStatus(kActorStatus6);
+						player->updateStatus(kActorStatusShowingInventory);
 					}
 
 					_vm->setGameFlag(kGameFlag1023);
@@ -469,7 +469,7 @@ void Special::chapter7(Object *object, ActorIndex actorIndex) {
 					getScript()->queueScript(getWorld()->actions[getWorld()->getActionAreaIndexById(player->getField638() == 3 ? 2447 : 2448)]->scriptIndex,
 					                         getSharedData()->getPlayerIndex());
 					_vm->clearGameFlag(kGameFlag1023);
-				} else if (player->getStatus() != kActorStatus6) {
+				} else if (player->getStatus() != kActorStatusShowingInventory) {
 					_vm->clearGameFlag(kGameFlag1023);
 					_vm->setGameFlag(kGameFlag1022);
 				}

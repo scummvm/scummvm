@@ -391,27 +391,27 @@ enum ActorIndexes {
 
 enum ActorStatus {
 	kActorStatusNone    = 0,
-	kActorStatusWalking = 1, // Walking
-	kActorStatusWalkingTo,   // Auto-walking to target
-	kActorStatus3,
-	kActorStatusEnabled,     // Standing Still
-	kActorStatusDisabled,    // 5
-	kActorStatus6,
+	kActorStatusWalking = 1,      // Walking
+	kActorStatusWalkingTo,        // Auto-walking to target
+	kActorStatusInteracting,
+	kActorStatusEnabled,          // Standing Still
+	kActorStatusDisabled,         // 5
+	kActorStatusShowingInventory,
 	kActorStatusPickupItem,
 	kActorStatus8,
 	kActorStatusFidget,
 	kActorStatus10,
 	kActorStatus11,
-	kActorStatus12,
-	kActorStatus13,
-	kActorStatus14,
-	kActorStatus15,
-	kActorStatus16,
-	kActorStatus17,
+	kActorStatusWalking2,
+	kActorStatusWalkingTo2,
+	kActorStatusEnabled2,
+	kActorStatusAttacking,        // 15
+	kActorStatusGettingHurt,
+	kActorStatusRestarting,
 	kActorStatus18,
-	kActorStatus19,
+	kActorStatusHittingPumpkin,
 	kActorStatus20,
-	kActorStatus21
+	kActorStatusMorphingInto
 };
 
 enum ActorDirection {
