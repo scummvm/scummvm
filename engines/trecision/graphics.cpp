@@ -89,6 +89,7 @@ void GraphicsManager::clearScreen() {
 	g_system->fillScreen(0);
 }
 
+#if USE_DIRTY_RECTS
 /*------------------------------------------------
 	vCopy - Execute fast copy to video 
 --------------------------------------------------*/
@@ -98,6 +99,7 @@ void GraphicsManager::vCopy(uint32 Sco, uint16 *Src, uint32 Len) {
 
 	memcpy(_screenPtr + Sco, Src, Len * 2);
 }
+#endif
 
 void GraphicsManager::copyToScreen(int px, int py, int dx, int dy) {
 	g_system->copyRectToScreen(

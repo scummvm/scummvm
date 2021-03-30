@@ -27,6 +27,7 @@
 
 #include "trecision/nl/struct.h"
 #include "trecision/nl/define.h"
+#include "trecision/trecision.h"	// for USE_DIRTY_RECTS
 
 void warning(const char *format, ...);
 
@@ -160,9 +161,11 @@ void NextMessage();
 void ProcessTime();
 void ProcessMouse();
 void PaintScreen(uint8 flag);
+#if USE_DIRTY_RECTS
 void AddLine(int16 x1, int16 x2, int16 y);
 int BlockCompare(const void *arg1, const void *arg2);
 void SortBlock();
+#endif
 void PaintObjAnm(uint16 CurBox);
 int IntersecateRect(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4);
 void doEvent(uint8 cls, uint8 event, uint8 priority, uint16 u16Param1, uint16 u16Param2, uint8 u8Param, uint32 u32Param);
