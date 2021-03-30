@@ -25,7 +25,6 @@
 
 #define DRAWMASK        1
 #define COPYTORAM       2
-#define COPYTOVIDEO     4
 
 #define TEXT_OFF	0
 #define TEXT_ON     1
