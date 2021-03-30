@@ -283,7 +283,7 @@ uint32 ReadActor(const char *filename, uint8 *Area) {
 
 	int32 Read = FastFileRead(ff, _actor._vertex, sizeof(SVertex) * VertexNum * ActionNum);
 
-	FastFileRead(ff, &FaceNum, 4);
+	FaceNum = ff->readUint32LE();
 	_actor._faceNum = FaceNum;
 
 	Area += Read;
@@ -292,10 +292,27 @@ uint32 ReadActor(const char *filename, uint8 *Area) {
 	FastFileClose(ff);
 
 	ff = FastFileOpen("mat.tex");
-	FastFileRead(ff, _textureMat, 2 * 91 * 256);
+	for (int i = 0; i < 256; ++i) {
+		for (int j = 0; j < 91; ++j)
+			_textureMat[i][j] = ff->readUint16LE();
+	}
+
 	g_vm->_graphicsMgr->updatePixelFormat((uint16 *)_textureMat, 91 * 256);
-	FastFileRead(ff, _textureCoord, 2 * MAXFACE * 3 * 2);
-	FastFileRead(ff, _actor._face, sizeof(SFace)*FaceNum);
+
+	for (int i = 0; i < MAXFACE; ++i) {
+		for (int j = 0; j < 3; ++j) {
+			_textureCoord[i][j][0] = ff->readSint16LE();
+			_textureCoord[i][j][1] = ff->readSint16LE();
+		}
+	}
+
+	for (int i = 0; i < FaceNum; ++i) {
+		_actor._face[i]._a = ff->readSint16LE();
+		_actor._face[i]._b = ff->readSint16LE();
+		_actor._face[i]._c = ff->readSint16LE();
+		_actor._face[i]._mat = ff->readSint16LE();
+	}
+
 	FastFileClose(ff);
 
 	_actor._curFrame  = 0;
