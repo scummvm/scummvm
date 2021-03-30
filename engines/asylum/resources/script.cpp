@@ -712,7 +712,7 @@ END_OPCODE
 IMPLEMENT_OPCODE(JumpAndSetDirection)
 	Actor *actor = getScene()->getActor(cmd->param1);
 
-	if (actor->getStatus() != kActorStatusWalkingTo && actor->getStatus() != kActorStatus13) {
+	if (actor->getStatus() != kActorStatusWalkingTo && actor->getStatus() != kActorStatusWalkingTo2) {
 		if (cmd->param5 != 2) {
 
 			if (cmd->param2 == -1 || cmd->param3 == -1) {
@@ -980,12 +980,12 @@ IMPLEMENT_OPCODE(UpdateActor)
 			actor->enable();
 			break;
 
-		case kActorStatus16:
+		case kActorStatusGettingHurt:
 			// We want to continue processing and not go into the default case
 			break;
 
 		case kActorStatus20:
-			actor->updateStatus(kActorStatus14);
+			actor->updateStatus(kActorStatusEnabled2);
 		}
 
 		cmd->param3 = 0;
@@ -1013,7 +1013,7 @@ IMPLEMENT_OPCODE(UpdateActor)
 		actor->setFrameCount(GraphicResource::getFrameCount(_vm, id));
 		actor->setFrameIndex(0);
 		actor->setDirection(direction);
-		actor->updateStatus(actor->getStatus() <= kActorStatus11 ? kActorStatus3 : kActorStatus19);
+		actor->updateStatus(actor->getStatus() <= kActorStatus11 ? kActorStatusInteracting : kActorStatusHittingPumpkin);
 
 		cmd->param3 = 2;
 		_processNextEntry = true;
@@ -1587,7 +1587,7 @@ IMPLEMENT_OPCODE(ChangeActorStatus)
 
 	if (cmd->param2) {
 		if (actor->getStatus() < kActorStatus11)
-			actor->setStatus(kActorStatus14);
+			actor->setStatus(kActorStatusEnabled2);
 	} else {
 		actor->setStatus(kActorStatusEnabled);
 	}
@@ -1720,7 +1720,7 @@ END_OPCODE
 IMPLEMENT_OPCODE(Interact)
 	Actor *actor = getScene()->getActor(cmd->param2 == 2 ? kActorInvalid : cmd->param1);
 
-	if (actor->getStatus() == kActorStatusWalkingTo || actor->getStatus() == kActorStatus13) {
+	if (actor->getStatus() == kActorStatusWalkingTo || actor->getStatus() == kActorStatusWalkingTo2) {
 		if (cmd->param2 == 2)
 			_processNextEntry = true;
 
