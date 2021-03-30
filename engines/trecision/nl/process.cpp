@@ -33,8 +33,6 @@ namespace Trecision {
 /*                               PROCESSTIME          					   */
 /*-------------------------------------------------------------------------*/
 void ProcessTime() {
-#define SCR 2
-
 	static uint8 OldRegInvSI  = 0xFF;
 	static uint8 OldRegInvSL  = 0xFF;
 	static uint8 OldLightIcon = 0xFF;
