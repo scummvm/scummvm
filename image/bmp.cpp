@@ -29,6 +29,12 @@
 #include "graphics/surface.h"
 #include "image/codecs/codec.h"
 
+// NOTE: This decoder understands only so called BMP Win3.x old format
+// In order to produce files suitable for it, use ImageMagick:
+//
+// convert input.file BMP3:output.bmp
+//
+
 namespace Image {
 
 BitmapDecoder::BitmapDecoder() {
