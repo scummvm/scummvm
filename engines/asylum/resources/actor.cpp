@@ -507,13 +507,15 @@ void Actor::update() {
 
 	case kActorStatusWalking2:
 		if (getWorld()->chapter == kChapter2) {
-			if (_index > 12)
+			if (_index > 12) {
 				updateStatus12_Chapter2();
+				return;
+			}
 
-			if (_index == 11)
+			if (_index == 11) {
 				updateStatus12_Chapter2_Actor11();
-
-			return;
+				return;
+			}
 		} else if (getWorld()->chapter == kChapter11) {
 			switch (_index) {
 			default:
