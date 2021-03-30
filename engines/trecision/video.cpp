@@ -33,7 +33,7 @@
 namespace Trecision {
 
 bool NightlongSmackerDecoder::loadStream(Common::SeekableReadStream *stream) {
-	if (Video::SmackerDecoder::loadStream(stream)) {
+	if (SmackerDecoder::loadStream(stream)) {
 		// Map audio tracks to sound types
 		for (uint32 i = 0; i < 8; i++) {
 			Track *t = getTrack(i);
@@ -474,7 +474,9 @@ void AnimManager::refreshSmkAnim(int num) {
 					           _smkBuffer[pos] + lastRect->left + (lastRect->top + a) * _smkAnims[pos]->getWidth(),
 					           _smkPal[pos], lastRect->width());
 
+#if USE_DIRTY_RECTS
 					AddLine(lastRect->left, lastRect->right, lastRect->top + a + TOP);
+#endif
 
 					memcpy(ImagePointer + lastRect->left + (lastRect->top + a) * MAXX,
 					         _vm->_screenBuffer + lastRect->left + (lastRect->top + a + TOP) * MAXX,
@@ -525,7 +527,9 @@ void AnimManager::refreshSmkAnim(int num) {
 			           _smkBuffer[pos] + _animMinX + (_animMinY + a) * _smkAnims[pos]->getWidth(),
 			           _smkPal[pos], _animMaxX - _animMinX);
 
+#if USE_DIRTY_RECTS
 			AddLine(_animMinX, _animMaxX, _animMinY + a + TOP);
+#endif
 		}
 
 		_vm->_limits[_vm->_limitsNum][0] = _animMinX;
@@ -679,7 +683,9 @@ void AnimManager::refreshSmkIcon(int StartIcon, int num) {
 					  _smkBuffer[kSmackerIcon] + lastRect->left + (lastRect->top + a) * _smkAnims[kSmackerIcon]->getWidth(),
 					  _smkPal[kSmackerIcon], lastRect->width());
 
+#if USE_DIRTY_RECTS
 			AddLine(lastRect->left + stx, lastRect->right + stx, lastRect->top + a + FIRSTLINE);
+#endif
 		}
 	}
 

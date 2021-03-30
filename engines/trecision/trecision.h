@@ -35,8 +35,9 @@ class AnimManager;
 class GraphicsManager;
 class LogicManager;
 
+#define USE_DIRTY_RECTS 0
+
 class TrecisionEngine : public Engine {
-private:
 	void initMain();
 	void initMessageSystem();
 	void initNames();

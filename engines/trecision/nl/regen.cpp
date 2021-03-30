@@ -34,45 +34,37 @@
 
 namespace Trecision {
 
-uint16 _curSortTableIndex = 0;
-
+#if USE_DIRTY_RECTS
 #define MAXBLOCK 5000
 uint32 PaintBlock[MAXBLOCK];
 int16 BlockCount;
+#endif
 
 int xr1, xr2, yr1, yr2;
-int Tlim;
 int VisualRef[50];
 
 SDObj DObj;
-int sflag;
-int fillviola = 0;
-
-uint32 DislVar = 0;
 
 void PaintScreen(uint8 flag) {
 	int a, liv;
-	static int framenum;
 
 	AtFrameNext();
-
 	ContinueTalk();
-
-	sflag = flag;
-
 	PaintRegenRoom();
 
 //	if( ( !FlagPaintCharacter) && ( _curSortTableNum == 0 ) &&  ( curString.sign == NULL ) && ( oldString.sign == NULL ) )
 //		return;
 
 	g_vm->_actorLimit = 255;
-	Tlim = 255;
 	for (a = 0; a < 20; a++)
 		VisualRef[a] = 255;
 
 	g_vm->_limitsNum = 0;
 	FlagPaintCharacter = true;                      // ridisegna sempre l'omino
+
+#if USE_DIRTY_RECTS	
 	AddLine(0, 0, 0);
+#endif
 
 // CANCELLA L'OMINO
 	if (FlagShowCharacter) {                    // se c'era una scritta
@@ -145,7 +137,6 @@ void PaintScreen(uint8 flag) {
 		g_vm->_limits[g_vm->_limitsNum][2] = DObj.l[2];
 		g_vm->_limits[g_vm->_limitsNum][3] = DObj.l[3] + TOP;
 
-		Tlim = g_vm->_limitsNum;
 		g_vm->_limitsNum++;
 
 		if (!(TextStatus & TEXT_DRAW))        // se non c'e' nuova scritta
@@ -187,8 +178,10 @@ void PaintScreen(uint8 flag) {
 		}
 	}
 
-	// azzera variabili
+#if USE_DIRTY_RECTS
 	BlockCount = 0;
+#endif
+
 	// trova la posizione dell'omino
 	actorOrder();
 	// disegna gli oggetti che intersecano nel box di sfondo
@@ -231,7 +224,6 @@ void PaintScreen(uint8 flag) {
 		g_vm->_limits[g_vm->_limitsNum][2] = curString.x + curString.dx;
 		g_vm->_limits[g_vm->_limitsNum][3] = curString.y + curString.dy;
 
-		Tlim = g_vm->_limitsNum;
 		g_vm->_limitsNum++;
 
 		TextStatus = TEXT_DRAW;                 // Activate text update
@@ -239,23 +231,33 @@ void PaintScreen(uint8 flag) {
 
 	SoundPasso((_actor._lim[1] + _actor._lim[0]) / 2, (_actor._lim[5] + _actor._lim[4]) / 2, _actor._curAction, _actor._curFrame, g_vm->_room[g_vm->_curRoom]._sounds);
 
+#if USE_DIRTY_RECTS
 	for (liv = 0; liv < g_vm->_limitsNum; liv++) {
 		for (int b = g_vm->_limits[liv][1]; b < g_vm->_limits[liv][3]; b++) {
 			AddLine(g_vm->_limits[liv][0], g_vm->_limits[liv][2], b);
 		}
 	}
+#endif
 
 	if (!flag && !FlagDialogActive) {
+#if USE_DIRTY_RECTS
+
 		// Sort the blocks to copy and remove the useless ones
 		SortBlock();
 
 		g_vm->_graphicsMgr->lock();
-		for (a = 0; a < BlockCount; a++)
-			g_vm->_graphicsMgr->vCopy((PaintBlock[a] & 0xFFFFF), g_vm->_screenBuffer + (PaintBlock[a] & 0xFFFFF), ((PaintBlock[a] & 0xFFF00000) >> 20) & 0xFFF);
+		for (a = 0; a < BlockCount; a++) {
+			uint32 screenOffset = PaintBlock[a] & 0xFFFFF;
+			uint32 bufferLength = ((PaintBlock[a] & 0xFFF00000) >> 20) & 0xFFF;
+			g_vm->_graphicsMgr->vCopy(screenOffset, g_vm->_screenBuffer + screenOffset, bufferLength);
+		}
 		g_vm->_graphicsMgr->unlock();
-	}
+#else
 
-	framenum ++;
+	g_vm->_graphicsMgr->copyToScreen(0, 0, MAXX, MAXY);
+
+#endif
+	}
 
 	for (a = 0; a < g_vm->_curSortTableNum; a++) {
 		SortTable[a]._index = 0;
@@ -279,6 +281,7 @@ void PaintScreen(uint8 flag) {
 	//
 }
 
+#if USE_DIRTY_RECTS
 /* -----------------12/06/97 21.35-------------------
 			Aggiunge linea a buffer da copiare
  --------------------------------------------------*/
@@ -359,6 +362,7 @@ void SortBlock() {
 
 	BlockCount = c;
 }
+#endif
 
 /* -----------------12/06/97 21.35-------------------
  Disegna tutti gli oggetti e le animazioni che intersecano i limiti

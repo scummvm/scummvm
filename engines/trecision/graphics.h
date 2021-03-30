@@ -24,12 +24,12 @@
 #define TRECISION_GRAPHICS_H
 
 #include "graphics/pixelformat.h"
+#include "trecision/trecision.h"	// for USE_DIRTY_RECTS
 
 namespace Trecision {
 class TrecisionEngine;
 
 class GraphicsManager {
-private:
 	TrecisionEngine *_vm;
 
 	Graphics::PixelFormat _screenFormat;
@@ -50,7 +50,9 @@ public:
 	void clearScreen();
 	void copyToScreen(int px, int py, int dx, int dy);
 
+#if USE_DIRTY_RECTS
 	void vCopy(uint32 Sco, uint16 *Src, uint32 Len);
+#endif
 
 	uint16 palTo16bit(uint8 r, uint8 g, uint8 b) const;
 	void updatePixelFormat(uint16 *p, uint32 len) const;
