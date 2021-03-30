@@ -58,7 +58,8 @@ script:
   - export PATH="/usr/local/opt/ccache/libexec:/usr/lib/ccache:$PATH"
   - export CCACHE_COMPRESS=1
   - ./configure --enable-all-engines $CONFIGFLAGS
-  - make -j 2
+  - nproc
+  - make -j $(nproc)
   - make test
   - make devtools
   - ccache --show-stats > /tmp/ccache_after
