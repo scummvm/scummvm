@@ -95,7 +95,7 @@ public:
 	void refreshAllAnimations();
 	void refreshAnim(int box);
 	void refreshSmkAnim(int num);
-	void refreshPalette(int num, bool updateNewData);
+	void refreshPalette(int num);
 	void startFullMotion(const char *name);
 	void startSmkAnim(uint16 num);
 	void stopAllSmkAnims();

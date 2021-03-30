@@ -150,7 +150,6 @@ public:
 	// Snake management
 	Message _snake52;
 
-	uint16 _newData[260];
 	uint16 *_screenBuffer;
 
 	uint32 _nextRefresh;
