@@ -723,7 +723,7 @@ void ListWidget::reflowLayout() {
 	assert(_entriesPerPage > 0);
 
 	if (_scrollBar) {
-		_scrollBar->resize(_w - _scrollBarWidth, 0, _scrollBarWidth, _h);
+		_scrollBar->resize(_w - _scrollBarWidth, 0, _scrollBarWidth, _h, false);
 		scrollBarRecalc();
 		scrollToCurrent();
 	}
