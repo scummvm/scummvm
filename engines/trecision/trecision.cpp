@@ -116,8 +116,6 @@ TrecisionEngine::TrecisionEngine(OSystem *syst) : Engine(syst) {
 	_lastLightIcon = 0xFF;
 	_inventoryCounter = INVENTORY_HIDE;
 
-	memset(_newData, 0, 260);
-
 	_screenBuffer = nullptr;
 	_animMgr = nullptr;
 	_graphicsMgr = nullptr;

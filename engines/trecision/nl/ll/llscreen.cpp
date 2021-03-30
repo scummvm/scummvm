@@ -61,7 +61,6 @@ uint8 *_characterArea;
 // MEMORY
 uint32 GameBytePointer;
 uint32 GameWordPointer;
-uint32 TotalMemory;
 // DTEXT
 int8 DTextLines[MAXDTEXTLINES][MAXDTEXTCHARS];
 // 3D
@@ -70,7 +69,6 @@ SCamera FCamera;
 STexture FTexture[MAXMAT];
 // ANIMATION
 uint8 *MemoryArea;
-uint32 CurBufferSize;
 // SOUND
 bool SoundSystemActive;
 bool SpeechTrackEnabled = false;
@@ -118,13 +116,10 @@ void openSys() {
 
 	StartSoundSystem();
 
-	CurBufferSize = NL_REQUIREDMEMORY;
-	MemoryArea = (uint8 *)malloc(CurBufferSize);
+	MemoryArea = (uint8 *)malloc(NL_REQUIREDMEMORY);
 
-	memset(MemoryArea, 0, CurBufferSize);
+	memset(MemoryArea, 0, NL_REQUIREDMEMORY);
 	g_vm->_screenBuffer = (uint16 *)MemoryArea;
-
-	TotalMemory = CurBufferSize;
 
 	OpenVideo();
 }
@@ -480,7 +475,7 @@ void ReadLoc() {
 
 	SoundFadOut();
 
-	memset(g_vm->_screenBuffer, 0, TotalMemory - GameBytePointer);
+	memset(g_vm->_screenBuffer, 0, NL_REQUIREDMEMORY - GameBytePointer);
 
 	GameWordPointer = (SCREENLEN * MAXY);           // space for _screenBuffer
 

@@ -113,12 +113,10 @@ extern uint8 AddObjectMaterial;
 // MEMORY
 extern uint32 GameBytePointer;
 extern uint32 GameWordPointer;
-extern uint32 TotalMemory;
 // DTEXT
 extern int8 DTextLines[MAXDTEXTLINES][MAXDTEXTCHARS];
 // ANIMATION
 extern uint8 *SoundBuffer;
-extern uint32 CurBufferSize;
 extern uint8 *MemoryArea;
 extern uint8 *SoundStartBuffer;
 // SOUND
