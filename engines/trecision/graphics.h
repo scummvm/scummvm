@@ -48,7 +48,7 @@ public:
 	void lock();
 	void unlock();
 	void clearScreen();
-	void showScreen(int px, int py, int dx, int dy);
+	void copyToScreen(int px, int py, int dx, int dy);
 
 	void vCopy(uint32 Sco, uint16 *Src, uint32 Len);
 
@@ -58,9 +58,6 @@ public:
 
 	uint16 shadow(uint32 val, uint8 num);
 	uint16 aliasing(uint32 val1, uint32 val2, uint8 num);
-
-	void VPix(int16 x, int16 y, uint16 col);
-
 }; // end of class
 
 } // end of namespace

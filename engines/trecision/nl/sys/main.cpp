@@ -173,7 +173,7 @@ void NlDissolve(int val) {
 		}
 
 
-		g_vm->_graphicsMgr->showScreen(0, 0, MAXX, MAXY);
+		g_vm->_graphicsMgr->copyToScreen(0, 0, MAXX, MAXY);
 	}
 
 	g_vm->_graphicsMgr->clearScreen();

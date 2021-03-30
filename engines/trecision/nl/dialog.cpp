@@ -62,7 +62,7 @@ void ShowChoices(uint16 i) {
 		}
 	}
 
-	g_vm->_graphicsMgr->showScreen(0, 0, MAXX, TOP);
+	g_vm->_graphicsMgr->copyToScreen(0, 0, MAXX, TOP);
 
 	FlagDialogMenuActive = true;
 	g_vm->_flagMouseEnabled = true;
@@ -83,7 +83,7 @@ void UpdateChoices(int16 dmx, int16 dmy) {
 					DialogPrint(10, 5 + c * CARHEI, HWHITE, g_vm->_sentence[g_vm->_choice[DispScelte[c]]._sentenceIndex]);
 			}
 		}
-		g_vm->_graphicsMgr->showScreen(0, 5, MAXX, (CurDispScelte)*CARHEI + 5);
+		g_vm->_graphicsMgr->copyToScreen(0, 5, MAXX, (CurDispScelte)*CARHEI + 5);
 	}
 	LastPos = CurPos;
 }
@@ -113,7 +113,7 @@ void PlayDialog(uint16 i) {
 	PaintScreen(1);
 
 	memset(g_vm->_screenBuffer, 0, MAXX * TOP * 2);
-	g_vm->_graphicsMgr->showScreen(0, 0, MAXX, TOP);
+	g_vm->_graphicsMgr->copyToScreen(0, 0, MAXX, TOP);
 
 	g_vm->_animMgr->startFullMotion((const char *)_dialog[i]._startAnim);
 
@@ -142,7 +142,7 @@ void afterChoice(int numframe) {
 	Dialog *d = &_dialog[_curDialog];
 
 	memset(g_vm->_screenBuffer, 0, MAXX * TOP * 2);
-	g_vm->_graphicsMgr->showScreen(0, 0, MAXX, TOP);
+	g_vm->_graphicsMgr->copyToScreen(0, 0, MAXX, TOP);
 
 	switch (_curDialog) {
 	case dBARBONE171:
@@ -577,7 +577,7 @@ void PlayChoice(uint16 i) {
 	DialogChoice *ss = &g_vm->_choice[i];
 
 	memset(g_vm->_screenBuffer, 0, MAXX * TOP * 2);
-	g_vm->_graphicsMgr->showScreen(0, 0, MAXX, TOP);
+	g_vm->_graphicsMgr->copyToScreen(0, 0, MAXX, TOP);
 
 	_curChoice = i;
 	_curSubTitle = ss->_firstSubTitle;

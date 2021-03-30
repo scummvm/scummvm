@@ -252,7 +252,7 @@ void OpenVideo() {
 		Mouse(MCMD_OFF);
 
 	memset(g_vm->_screenBuffer, 0, 1280L * 480L * 2);
-	g_vm->_graphicsMgr->showScreen(0, 0, 640, 480);
+	g_vm->_graphicsMgr->copyToScreen(0, 0, 640, 480);
 
 	for (int i = 0; i < MAXOBJINROOM; ++i) {
 		OldObjStatus[i] = false;
@@ -521,7 +521,7 @@ void TendIn() {
 	WaitSoundFadEnd();
 	PaintScreen(1);
 
-	g_vm->_graphicsMgr->showScreen(0, 0, MAXX, MAXY);
+	g_vm->_graphicsMgr->copyToScreen(0, 0, MAXX, MAXY);
 }
 
 /*-----------------17/02/95 10.20-------------------
