@@ -1071,6 +1071,7 @@ void ScummEngine::drawString(int a, const byte *msg) {
 			*space = '\0';
 	}
 
+	bool isRTL = false;
 	if (_charset->_center) {
 		_charset->_left -= _charset->getStringWidth(a, buf) / 2;
 	} else if (_game.version >= 4 && _game.version < 7 && _game.heversion == 0 && _game.id != GID_SAMNMAX && _language == Common::HE_ISR) {
@@ -1078,6 +1079,7 @@ void ScummEngine::drawString(int a, const byte *msg) {
 		if (_game.id != GID_INDY4 || buf[0] == 127) {
 			if (_game.id == GID_INDY4)
 				buf[0] = 32;
+			isRTL = true;
 			_charset->_left = _screenWidth - _charset->_startLeft - _charset->getStringWidth(a, buf);
 		}
 	}
@@ -1181,6 +1183,8 @@ void ScummEngine::drawString(int a, const byte *msg) {
 		_string[a]._default.xpos = _string[a].xpos;
 		_string[a]._default.ypos = _string[a].ypos;
 	}
+	if (isRTL)
+		_charset->_str.right = _screenWidth - 1 - _charset->_str.left;
 }
 
 int ScummEngine::convertMessageToString(const byte *msg, byte *dst, int dstSize) {

@@ -963,7 +963,14 @@ int ScummEngine::findVerbAtPos(int x, int y) const {
 			if (x < -(vs->curRect.right - 2 * vs->curRect.left) || x >= vs->curRect.right)
 				continue;
 		} else {
-			if (x < vs->curRect.left || x >= vs->curRect.right)
+			int left = vs->curRect.left;
+			int right = vs->curRect.right;
+			if (_language == Common::HE_ISR) {
+				const int newLeft = _screenWidth - 1 - right;
+				right = _screenWidth - left;
+				left = newLeft;
+			}
+			if (x < left || x >= right)
 				continue;
 		}
 
@@ -1028,6 +1035,7 @@ void ScummEngine_v7::drawVerb(int verb, int mode) {
 		vs->oldRect = vs->curRect;
 
 		const int maxWidth = _language == Common::HE_ISR ? vs->curRect.right + 1 : _screenWidth - vs->curRect.left;
+		int16 leftPos = vs->curRect.left;
 		if (_game.version == 8 && _charset->getStringWidth(0, buf) > maxWidth) {
 			byte tmpBuf[384];
 			memcpy(tmpBuf, msg, 384);
@@ -1042,24 +1050,21 @@ void ScummEngine_v7::drawVerb(int verb, int mode) {
 				}
 				--len;
 			}
-			int16 leftPos = vs->curRect.left;
+			vs->curRect.right = leftPos + _charset->getStringWidth(0, tmpBuf);
 			if (_language == Common::HE_ISR)
-				vs->curRect.left = leftPos = vs->curRect.right - _charset->getStringWidth(0, tmpBuf);
-			else
-				vs->curRect.right = vs->curRect.left + _charset->getStringWidth(0, tmpBuf);
+				leftPos = _screenWidth - vs->curRect.left - 1 - _charset->getStringWidth(0, tmpBuf);
 			enqueueText(tmpBuf, leftPos, vs->curRect.top, color, vs->charset_nr, vs->center);
 			if (len >= 0) {
 				if (_language == Common::HE_ISR)
-					leftPos = vs->curRect.right - _charset->getStringWidth(0, &msg[len + 1]);
+					leftPos = _screenWidth - vs->curRect.left - 1 - _charset->getStringWidth(0, &msg[len + 1]);
 				enqueueText(&msg[len + 1], leftPos, vs->curRect.top + _verbLineSpacing, color, vs->charset_nr, vs->center);
 				vs->curRect.bottom += _verbLineSpacing;
 			}
 		} else {
+			vs->curRect.right = vs->curRect.left + textWidth;
 			if (_language == Common::HE_ISR)
-				vs->curRect.left = vs->curRect.right - textWidth;
-			else
-				vs->curRect.right = vs->curRect.left + textWidth;
-			enqueueText(msg, vs->curRect.left, vs->curRect.top, color, vs->charset_nr, vs->center);
+				leftPos = _screenWidth - vs->curRect.left - 1 - textWidth;
+			enqueueText(msg, leftPos, vs->curRect.top, color, vs->charset_nr, vs->center);
 		}
 		_charset->setCurID(oldID);
 	}
@@ -1112,7 +1117,12 @@ void ScummEngine::drawVerb(int verb, int mode) {
 
 		vs->curRect.right = _charset->_str.right;
 		vs->curRect.bottom = _charset->_str.bottom;
-		vs->oldRect = _charset->_str;
+		vs->oldRect = vs->curRect;
+		if (_language == Common::HE_ISR && !vs->center) {
+			const int newLeft = _screenWidth - vs->oldRect.right - 1;
+			vs->oldRect.right = _screenWidth - vs->oldRect.left;
+			vs->oldRect.left = newLeft;
+		}
 		_charset->_str.left = _charset->_str.right;
 	} else if (_game.id != GID_FT) {
 		restoreVerbBG(verb);
