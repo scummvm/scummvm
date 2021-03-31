@@ -72,11 +72,10 @@
 
 
 
-
-
 ====================
 Welcome to ScummVM!
 ====================
+
 
 ScummVM allows you to play classic graphic point-and-click adventure games, text adventure games, and RPGs, as long as you already have the game data files. ScummVM replaces the executable files shipped with the games, which means you can now play your favorite games on all your favorite devices.
 
@@ -141,6 +140,8 @@ We also have guides on how to get ScummVM running on a wide range of other platf
       Handheld consoles
       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
       :doc:`other_platforms/nintendo_3ds`
+
+      :doc:`other_platforms/nintendo_ds`
 
       :doc:`other_platforms/nintendo_switch`
 
