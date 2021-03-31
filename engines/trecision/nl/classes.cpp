@@ -300,7 +300,7 @@ void doMouse() {
 				if ((g_vm->_curObj >= oWHEEL1A2C) && (g_vm->_curObj <= oWHEEL12C2C))
 					g_vm->_wheel = (g_vm->_curObj - oWHEEL1A2C) % 3;
 				else if (g_vm->_curObj == oPULSANTE2C) {
-					extern uint16 *SmackImagePointer, *ImagePointer;
+					extern uint16 *ImagePointer;
 					if (g_vm->_curMessage->_event == ME_MLEFT) {
 						doEvent(MC_ACTION, ME_MOUSEEXAMINE, MP_DEFAULT, 0, 0, 0, g_vm->_curObj);
 						break;
