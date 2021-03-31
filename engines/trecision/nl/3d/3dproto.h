@@ -20,7 +20,10 @@
  *
  */
 
-#include "Common/str.h"
+#ifndef TRECISION_3DPROTO_H
+#define TRECISION_3DPROTO_H
+
+#include "common/str.h"
 
 void warning(const char *format, ...);
 
@@ -71,3 +74,5 @@ void actorOrder();
 char waitKey();
 
 } // End of namespace Trecision
+
+#endif
