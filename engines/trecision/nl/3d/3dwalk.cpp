@@ -22,7 +22,6 @@
 
 #include "common/util.h"
 #include "common/scummsys.h"
-#include "trecision/nl/struct.h"
 #include "trecision/nl/ll/llinc.h"
 #include "trecision/nl/extern.h"
 #include "trecision/nl/define.h"
@@ -1055,20 +1054,19 @@ void displayPath() {
 int findAttachedPanel(int srcP, int destP) {
 	int curp;
 	int nearp;
-	int b;
 
 	// se almeno uno e' sul pavimento sul pavimento esci
 	if ((srcP < 0) || (destP < 0))
-		return (0);
+		return 0;
 
 	// se sono uguali torna 1
 	if (srcP == destP)
-		return (1);
+		return 1;
 
 	curp  = srcP;
 	nearp = _panel[srcP]._near1;
 
-	for (b = 0;; b++) {
+	for (int b = 0;; b++) {
 		// se sono attaccati torna 1
 		if (curp == destP)
 			return (1);
@@ -1147,16 +1145,16 @@ bool pointInside(int pan, double x, double z) {
 
 //	Crossing-Multiply algorithm
 	{
-		register double *vtx0 = pgon[3];
+		double *vtx0 = pgon[3];
 		// get test bit for above/below X axis
-		register bool yflag0 = (vtx0[1] >= z);
-		register double *vtx1 = pgon[0];
+		bool yflag0 = (vtx0[1] >= z);
+		double *vtx1 = pgon[0];
 
 		inside_flag = 0;
-		for (register int j = 5; --j ;) {
-			register bool yflag1 = (vtx1[1] >= z);
+		for (int j = 5; --j ;) {
+			bool yflag1 = (vtx1[1] >= z);
 			if (yflag0 != yflag1) {
-				register bool xflag0 = (vtx0[0] >= x);
+				bool xflag0 = (vtx0[0] >= x);
 				if ((xflag0 == (vtx1[0] >= x)) && (xflag0))
 					inside_flag += (yflag0 ? -1 : 1);
 				else if ((vtx1[0] - (vtx1[1] - z) * (vtx0[0] - vtx1[0]) / (vtx0[1] - vtx1[1])) >= x)
@@ -1263,8 +1261,6 @@ void whereIs(int px, int py) {
 			}
 		}
 	}
-
-	inters = 32000.0;
 
 	_lookX = _curX;
 	_lookZ = _curZ;
