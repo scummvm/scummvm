@@ -63,7 +63,6 @@ void NancyConsole::postEnter() {
 
 		if (dec->loadFile(_videoFile)) {
 			dec->start();
-			g_system->fillScreen(0);
 			Common::EventManager *ev = g_system->getEventManager();
 			while (!g_nancy->shouldQuit() && !dec->endOfVideo()) {
 				Common::Event event;
@@ -76,8 +75,7 @@ void NancyConsole::postEnter() {
 				if (dec->needsUpdate()) {
 					const Graphics::Surface *frame = dec->decodeNextFrame();
 					if (frame) {
-						g_system->copyRectToScreen(frame->getPixels(), frame->pitch, 0, 0, frame->w, frame->h);
-						g_system->updateScreen();
+						g_nancy->_graphicsManager->debugDrawToScreen(*frame);
 					}
 				}
 
@@ -96,9 +94,7 @@ void NancyConsole::postEnter() {
 	if (!_imageFile.empty()) {
 		Graphics::Surface surf;
 		if (g_nancy->_resource->loadImage(_imageFile, surf)) {
-			g_system->fillScreen(0);
-			g_system->copyRectToScreen(surf.getPixels(), surf.pitch, 0, 0, surf.w > 640 ? 640 : surf.w, surf.h > 480 ? 480 : surf.h);
-			g_system->updateScreen();
+			g_nancy->_graphicsManager->debugDrawToScreen(surf);
 			surf.free();
 
 			Common::EventManager *ev = g_system->getEventManager();

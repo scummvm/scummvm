@@ -219,6 +219,11 @@ void GraphicsManager::copyToManaged(void *src, Graphics::ManagedSurface &dst, ui
 	copyToManaged(surf, dst, verticalFlip, doubleSize);
 }
 
+void GraphicsManager::debugDrawToScreen(const Graphics::Surface &surf) {
+	_screen.blitFrom(surf, Common::Point());
+	_screen.update();
+}
+
 const Graphics::PixelFormat &GraphicsManager::getInputPixelFormat() {
 	if (g_nancy->getGameFlags() & NGF_8BITCOLOR) {
 		return _clut8Format;
