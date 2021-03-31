@@ -315,8 +315,8 @@ void HelpDialog::reflowLayout() {
 	int xoff = (_w >> 1) - (w >> 1);
 
 	for (int i = 0; i < _numLines; i++) {
-		_key[i]->resize(xoff + x, y + lineHeight * i, keyW, lineHeight);
-		_dsc[i]->resize(xoff + dscX, y + lineHeight * i, dscW, lineHeight);
+		_key[i]->resize(xoff + x, y + lineHeight * i, keyW, lineHeight, false);
+		_dsc[i]->resize(xoff + dscX, y + lineHeight * i, dscW, lineHeight, false);
 	}
 
 	displayKeyBindings();
