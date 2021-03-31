@@ -86,6 +86,10 @@ public:
 	SYNC_PRIMITIVE(Uint32BE)
 	SYNC_PRIMITIVE(Sint32LE)
 	SYNC_PRIMITIVE(Sint32BE)
+	SYNC_PRIMITIVE(FloatLE)
+	SYNC_PRIMITIVE(FloatBE)
+	SYNC_PRIMITIVE(DoubleLE)
+	SYNC_PRIMITIVE(DoubleBE)
 	SYNC_PRIMITIVE(Uint16LE)
 	SYNC_PRIMITIVE(Uint16BE)
 	SYNC_PRIMITIVE(Sint16LE)
@@ -131,6 +135,10 @@ public:
 	SYNC_AS(Uint32BE, uint32, 4)
 	SYNC_AS(Sint32LE, int32, 4)
 	SYNC_AS(Sint32BE, int32, 4)
+	SYNC_AS(FloatLE, float, 4)
+	SYNC_AS(FloatBE, float, 4)
+	SYNC_AS(DoubleLE, double, 4)
+	SYNC_AS(DoubleBE, double, 4)
 
 	/**
 	 * Returns true if an I/O failure occurred.
