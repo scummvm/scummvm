@@ -54,8 +54,6 @@ TrecisionEngine::TrecisionEngine(OSystem *syst) : Engine(syst) {
 	SearchMan.addSubDirectoryMatching(gameDataDir, "DATA");
 	SearchMan.addSubDirectoryMatching(gameDataDir, "FMV");
 
-	syncSoundSettings();
-
 	g_vm = nullptr;
 
 	_curRoom = 0;
@@ -178,6 +176,8 @@ TrecisionEngine::~TrecisionEngine() {
 
 Common::Error TrecisionEngine::run() {
 	g_vm = this;
+
+	syncSoundSettings();
 	
 	_graphicsMgr = new GraphicsManager(this);
 	if (!_graphicsMgr->initScreen())
