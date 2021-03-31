@@ -299,6 +299,14 @@ Common::U32String MacTextWindow::cutSelection() {
 	return selection;
 }
 
+void MacTextWindow::calcScrollBar() {
+	int maxText = _mactext->getTextHeight() + getInnerDimensions().height();
+	int drawableHeight = getInnerDimensions().height();
+	float scrollSize = (float)drawableHeight * drawableHeight / (float)maxText;
+	float scrollPos = (float)_scrollPos * drawableHeight / (float)maxText;
+	setScroll(scrollPos, scrollSize);
+}
+
 bool MacTextWindow::processEvent(Common::Event &event) {
 	WindowClick click = isInBorder(event.mouse.x, event.mouse.y);
 
@@ -344,26 +352,25 @@ bool MacTextWindow::processEvent(Common::Event &event) {
 		return MacWindow::processEvent(event);	// Pass it to upstream
 
 	if (event.type == Common::EVENT_WHEELUP) {
+		setHighlight(kBorderScrollUp);
+		calcScrollBar();
 		scroll(-2);
 		return true;
 	}
 
 	if (event.type == Common::EVENT_WHEELDOWN) {
+		setHighlight(kBorderScrollDown);
+		calcScrollBar();
 		scroll(2);
 		return true;
 	}
 
 	if (click == kBorderScrollUp || click == kBorderScrollDown) {
 		if (event.type == Common::EVENT_LBUTTONDOWN) {
-			int maxText = _mactext->getTextHeight() + getInnerDimensions().height();
-			int drawableHeight = getInnerDimensions().height();
-			float scrollSize = (float)drawableHeight * drawableHeight / (float)maxText;
-			float scrollPos = (float)_scrollPos * drawableHeight / (float)maxText;
 			setHighlight(click);
-			setScroll(scrollPos, scrollSize);
+			calcScrollBar();
 			return true;
 		} else if (event.type == Common::EVENT_LBUTTONUP) {
-			setHighlight(kBorderNone);
 			switch (click) {
 			case kBorderScrollUp:
 				scroll(-1);
