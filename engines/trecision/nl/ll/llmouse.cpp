@@ -301,7 +301,7 @@ bool syncSaveData(int slot, char *desc, bool save) {
 
 	ser.syncBytes((byte *)desc, 40);
 	
-	uint16 *thumbnailBuf = g_vm->Icone + (READICON + 1) * ICONDX * ICONDY;
+	uint16 *thumbnailBuf = g_vm->Icone + (READICON + 13) * ICONDX * ICONDY;
 	for (int i = 0; i < ICONDX * ICONDY; i++)
 		ser.syncAsUint16LE(thumbnailBuf[i]);
 	if (!save)
