@@ -275,7 +275,7 @@ void CharacterContinueTalk() {
 	substringagain = (CurSubString < (SubStringUsed - 1));
 
 	if (FlagCharacterExist)
-		PositionString(_actor._lim[0], _actor._lim[2], SubString[CurSubString], &posx, &posy, true);
+		PositionString(g_vm->_actor->_lim[0], g_vm->_actor->_lim[2], SubString[CurSubString], &posx, &posy, true);
 	else
 		PositionString(MAXX / 2, 30, SubString[CurSubString], &posx, &posy, false);
 
@@ -361,7 +361,7 @@ void SomeOneContinueTalk() {
 	if (SpeakSomeOnePerson)
 		PositionString(g_vm->_obj[SpeakSomeOnePerson]._lim[0], g_vm->_obj[SpeakSomeOnePerson]._lim[1], SubString[CurSubString], &posx, &posy, false);
 	else
-		PositionString(_actor._lim[0], _actor._lim[2], SubString[CurSubString], &posx, &posy, true);
+		PositionString(g_vm->_actor->_lim[0], g_vm->_actor->_lim[2], SubString[CurSubString], &posx, &posy, true);
 
 	g_vm->clearText();
 	if (ConfMan.getBool("subtitles"))

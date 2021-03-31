@@ -116,7 +116,16 @@ struct SStep {
 	short _curPanel;
 };
 
-struct SActor {
+class TrecisionEngine;
+
+class SActor {
+private:
+	TrecisionEngine *_vm;
+
+public:
+	SActor(TrecisionEngine *vm);
+	~SActor();
+
 	SVertex  *_vertex;
 	SFace    *_face;
 	SLight   *_light;
@@ -142,7 +151,6 @@ extern SPan      _panel[];
 extern SSortPan  _sortPan[];
 extern SPathNode _pathNode[];
 extern SStep     _step[];
-extern SActor    _actor;
 
 extern float  _proj[3][3];
 extern float  _invP[3][3];

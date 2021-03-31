@@ -617,37 +617,37 @@ int8 clockWise(int16 x1, int16 y1, int16 x2, int16 y2, int16 x3, int16 y3) {
 void drawCharacter(uint8 flag) {
 	// Compute pointer to frame
 	if (flag & CALCPOINTS) {
-		if (_actor._curAction <= hLAST) {
+		if (g_vm->_actor->_curAction <= hLAST) {
 			int cfp = 0;
 			int cur = 0;
-			while (cur < _actor._curAction)
+			while (cur < g_vm->_actor->_curAction)
 				cfp += _defActionLen[cur++];
 
-			if (_actor._curAction == hWALKOUT)
+			if (g_vm->_actor->_curAction == hWALKOUT)
 				cfp = 1;
 
-			cfp += _actor._curFrame;
+			cfp += g_vm->_actor->_curFrame;
 
-			if (_actor._curAction == hLAST)
+			if (g_vm->_actor->_curAction == hLAST)
 				cfp = 0;
 
-			_actor._vertex = (SVertex *)_characterArea + cfp * _actor._vertexNum;
+			g_vm->_actor->_vertex = &_characterArea[cfp * g_vm->_actor->_vertexNum];
 		} else {
-			_actor._vertex = (SVertex *)(_actionPointer[_actionPosition[actionInRoom(_actor._curAction)] + _actor._curFrame]);
+			g_vm->_actor->_vertex = (SVertex *)(_actionPointer[_actionPosition[actionInRoom(g_vm->_actor->_curAction)] + g_vm->_actor->_curFrame]);
 
-			if (_actor._vertex == NULL)
-				return ;
+			if (g_vm->_actor->_vertex == nullptr)
+				return;
 		}
 	}
 
-	_camera = _actor._camera;
-	_light = _actor._light;
-	_texture = _actor._texture;
-	_vertex = _actor._vertex;
-	_face = _actor._face;
+	_camera = g_vm->_actor->_camera;
+	_light = g_vm->_actor->_light;
+	_texture = g_vm->_actor->_texture;
+	_vertex = g_vm->_actor->_vertex;
+	_face = g_vm->_actor->_face;
 
-	int CurVertexNum = _actor._vertexNum;
-	int FaceNum = _actor._faceNum;
+	int CurVertexNum = g_vm->_actor->_vertexNum;
+	int FaceNum = g_vm->_actor->_faceNum;
 
 	if (flag & CALCPOINTS) {
 		_shadowLightNum = 0;
@@ -671,14 +671,14 @@ void drawCharacter(uint8 flag) {
 		float l1 = 0.0;
 		float l2 = 0.0;
 
-		_actor._lim[0] =  32000;
-		_actor._lim[1] = -32000;
-		_actor._lim[2] =  32000;
-		_actor._lim[3] = -32000;
-		_actor._lim[4] =  32000;
-		_actor._lim[5] = -32000;
+		g_vm->_actor->_lim[0] = 32000;
+		g_vm->_actor->_lim[1] = -32000;
+		g_vm->_actor->_lim[2] = 32000;
+		g_vm->_actor->_lim[3] = -32000;
+		g_vm->_actor->_lim[4] = 32000;
+		g_vm->_actor->_lim[5] = -32000;
 
-		float t = (_actor._theta * PI2) / 360.0;
+		float t = (g_vm->_actor->_theta * PI2) / 360.0;
 		float cost = cos(t);
 		float sint = sin(t);
 
@@ -692,14 +692,14 @@ void drawCharacter(uint8 flag) {
 		float tz = 0;
 		float pa0, pa1, pa2;
 
-		for (int b = 0; b < _actor._lightNum; b++) {
+		for (int b = 0; b < g_vm->_actor->_lightNum; b++) {
 			// if off                lint == 0
 			// if it has a shadow    lint & 0x80
 
 			int lint = _light->_inten & 0x7F;
 			if (lint) {    // if it's not turned off
-				tx = _light->_x - _actor._px - _actor._dx;  // computes direction vector
-				tz = _light->_z - _actor._pz - _actor._dz;  // between light and actor
+				tx = _light->_x - g_vm->_actor->_px - g_vm->_actor->_dx; // computes direction vector
+				tz = _light->_z - g_vm->_actor->_pz - g_vm->_actor->_dz; // between light and actor
 				ty = _light->_y;
 
 				if (_light->_position) {     // if it's attenuated
@@ -757,7 +757,7 @@ void drawCharacter(uint8 flag) {
 			}
 
 			if ((_light->_inten & 0x80) && lint) {    // if it's shadowed and still on
-				_vertex = _actor._vertex;
+				_vertex = g_vm->_actor->_vertex;
 
 				// casts shadow vertices
 				for (int a = 0; a < _shadowVertsNum; a++) {
@@ -784,7 +784,7 @@ void drawCharacter(uint8 flag) {
 				l1 = (l1 * t);
 				l2 = (l2 * t);
 
-				_vertex = (SVertex *)(_actor._vertex);
+				_vertex = g_vm->_actor->_vertex;
 				for (int a = 0; a < CurVertexNum; a++) {
 					pa0 = _vertex->_nx;
 					pa1 = _vertex->_ny;
@@ -805,12 +805,12 @@ void drawCharacter(uint8 flag) {
 		for (int a = 0; a < CurVertexNum; a++)
 			_vVertex[a]._angle = CLIP(_vVertex[a]._angle, 0, 180);
 
-		_vertex = (SVertex *)(_actor._vertex);
+		_vertex = g_vm->_actor->_vertex;
 
 		// Calculate the distance of the character from the room
-		tx = _camera->_ex - _actor._px;
-		ty = _camera->_ey - _actor._py;
-		tz = _camera->_ez - _actor._pz;
+		tx = _camera->_ex - g_vm->_actor->_px;
+		ty = _camera->_ey - g_vm->_actor->_py;
+		tz = _camera->_ez - g_vm->_actor->_pz;
 
 		dist = tx * e30 + ty * e31 + tz * e32;
 
@@ -839,37 +839,37 @@ void drawCharacter(uint8 flag) {
 			_vVertex[a]._y = (short)_y2d;
 			_vVertex[a]._z = (short)((dist - l2) * 128.0);
 
-			_actor._lim[0] = MIN(_x2d, _actor._lim[0]);
-			_actor._lim[1] = MAX(_x2d, _actor._lim[1]);
-			_actor._lim[2] = MIN(_y2d, _actor._lim[2]);
-			_actor._lim[3] = MAX(_y2d, _actor._lim[3]);
+			g_vm->_actor->_lim[0] = MIN(_x2d, g_vm->_actor->_lim[0]);
+			g_vm->_actor->_lim[1] = MAX(_x2d, g_vm->_actor->_lim[1]);
+			g_vm->_actor->_lim[2] = MIN(_y2d, g_vm->_actor->_lim[2]);
+			g_vm->_actor->_lim[3] = MAX(_y2d, g_vm->_actor->_lim[3]);
 
-			_actor._lim[4] = MIN(_vVertex[a]._z, _actor._lim[4]);
-			_actor._lim[5] = MAX(_vVertex[a]._z, _actor._lim[5]);
+			g_vm->_actor->_lim[4] = MIN(_vVertex[a]._z, g_vm->_actor->_lim[4]);
+			g_vm->_actor->_lim[5] = MAX(_vVertex[a]._z, g_vm->_actor->_lim[5]);
 
 			_vertex++;
 		}
-		_actor._lim[4] = (short)dist;
-		_actor._lim[5] = (short)dist;
+		g_vm->_actor->_lim[4] = (short)dist;
+		g_vm->_actor->_lim[5] = (short)dist;
 
 		// vertex clipping
-		_actor._lim[0] = (_actor._lim[0] <= _minXClip + 1) ? _minXClip : _actor._lim[0]--;
-		_actor._lim[1] = (_actor._lim[1] >= _maxXClip - 1) ? _maxXClip : _actor._lim[1]++;
-		_actor._lim[2] = (_actor._lim[2] <= _minYClip + 1) ? _minYClip : _actor._lim[2]--;
-		_actor._lim[3] = (_actor._lim[3] >= _maxYClip - 1) ? _maxYClip : _actor._lim[3]++;
+		g_vm->_actor->_lim[0] = (g_vm->_actor->_lim[0] <= _minXClip + 1) ? _minXClip : g_vm->_actor->_lim[0]--;
+		g_vm->_actor->_lim[1] = (g_vm->_actor->_lim[1] >= _maxXClip - 1) ? _maxXClip : g_vm->_actor->_lim[1]++;
+		g_vm->_actor->_lim[2] = (g_vm->_actor->_lim[2] <= _minYClip + 1) ? _minYClip : g_vm->_actor->_lim[2]--;
+		g_vm->_actor->_lim[3] = (g_vm->_actor->_lim[3] >= _maxYClip - 1) ? _maxYClip : g_vm->_actor->_lim[3]++;
 
-		if (_actor._curAction == hLAST)    // exit displacer
-			_actor._lim[2] = _actor._lim[3] - (((_actor._lim[3] - _actor._lim[2]) * _actor._curFrame) / _defActionLen[hLAST]);
+		if (g_vm->_actor->_curAction == hLAST) // exit displacer
+			g_vm->_actor->_lim[2] = g_vm->_actor->_lim[3] - (((g_vm->_actor->_lim[3] - g_vm->_actor->_lim[2]) * g_vm->_actor->_curFrame) / _defActionLen[hLAST]);
 
 		// set zbuffer vars
-		setZBufferRegion(_actor._lim[0], _actor._lim[2], _actor._lim[1] - _actor._lim[0]);
+		setZBufferRegion(g_vm->_actor->_lim[0], g_vm->_actor->_lim[2], g_vm->_actor->_lim[1] - g_vm->_actor->_lim[0]);
 	}
 
 	if (flag & DRAWFACES) {
 		int px0, px1, px2, py0, py1, py2, p0, p1, p2;
 
-		if (_actor._curAction == hLAST)
-			setClipping(0, _actor._lim[2], MAXX, _actor._lim[3]);
+		if (g_vm->_actor->_curAction == hLAST)
+			setClipping(0, g_vm->_actor->_lim[2], MAXX, g_vm->_actor->_lim[3]);
 
 		for (int b = 0; b < _shadowLightNum; b++) {
 			for (int a = 0; a < _shadowFacesNum; a++) {
@@ -914,7 +914,7 @@ void drawCharacter(uint8 flag) {
 		}
 
 		p0 = 0;
-		for (int b = _zBufStartY; b < _actor._lim[3]; b++) {
+		for (int b = _zBufStartY; b < g_vm->_actor->_lim[3]; b++) {
 			px0 = b * _screenMaxX + _zBufStartX;
 			for (int a = 1; a < _zBufWid; a++) {
 				py1 = (_zBuf[p0]   >= 0x7FF0) * 0x8000 * _shadowSplit;
@@ -966,7 +966,7 @@ void drawCharacter(uint8 flag) {
 			}
 			p0++;
 		}
-		if (_actor._curAction == hLAST)
+		if (g_vm->_actor->_curAction == hLAST)
 			setClipping(0, TOP, MAXX, AREA + TOP);
 	}
 }

@@ -65,7 +65,7 @@ void DemoOver();
 void CheckFileInCD(Common::String name);
 void openSys();
 void OpenVideo();
-uint32 ReadActor(const char *filename, uint8 *Area);
+void ReadActor(const char *filename);
 int actionInRoom(int curA);
 void ReadLoc();
 void TendIn();

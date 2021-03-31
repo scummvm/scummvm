@@ -324,12 +324,12 @@ bool syncSaveData(int slot, char *desc, bool save) {
 	ser.syncAsSint16LE(FlagCharacterExist);
 	ser.syncBytes(/*OldInv*/ g_vm->_inventory, MAXICON);
 	ser.syncBytes(g_vm->_cyberInventory, MAXICON);
-	ser.syncAsFloatLE(_actor._px);
-	ser.syncAsFloatLE(_actor._py);
-	ser.syncAsFloatLE(_actor._pz);
-	ser.syncAsFloatLE(_actor._dx);
-	ser.syncAsFloatLE(_actor._dz);
-	ser.syncAsFloatLE(_actor._theta);
+	ser.syncAsFloatLE(g_vm->_actor->_px);
+	ser.syncAsFloatLE(g_vm->_actor->_py);
+	ser.syncAsFloatLE(g_vm->_actor->_pz);
+	ser.syncAsFloatLE(g_vm->_actor->_dx);
+	ser.syncAsFloatLE(g_vm->_actor->_dz);
+	ser.syncAsFloatLE(g_vm->_actor->_theta);
 	ser.syncAsSint32LE(_curPanel);
 	ser.syncAsSint32LE(_oldPanel);
 
