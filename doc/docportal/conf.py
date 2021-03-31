@@ -65,6 +65,8 @@ html_theme_options = {
 
 html_static_path = ['_static']
 
+html_js_files = ['version.js']
+
 html_extra_path = ['images/donate/ppdonate.png','images/donate/GOG_button_small.png']
 html_favicon = 'scummvm.ico'
 
