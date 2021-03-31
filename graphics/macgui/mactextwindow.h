@@ -67,6 +67,7 @@ private:
 	bool isCutAllowed();
 
 	void scroll(int delta);
+	void calcScrollBar();
 
 	void undrawInput();
 	void drawInput();

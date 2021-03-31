@@ -285,6 +285,7 @@ void MacWindow::drawBorder() {
 
 		MacPlotData pd(g, nullptr,  &_wm->getPatterns(), 1, 0, 0, 1, _wm->_colorWhite, true);
 		Graphics::drawFilledRect(rr, _wm->_colorWhite, _wm->getDrawInvertPixel(), &pd);
+		setHighlight(kBorderNone);
 	}
 
 	if (!_title.empty()) {
