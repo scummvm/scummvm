@@ -442,7 +442,7 @@ Common::String Reader::path() const { return _path; }
 
 Common::String Reader::query() const { return _query; }
 
-Common::String Reader::queryParameter(Common::String name) const { return _queryParameters[name]; }
+Common::String Reader::queryParameter(Common::String name) const { return _queryParameters.getValOrDefault(name); }
 
 Common::String Reader::anchor() const { return _anchor; }
 
