@@ -222,7 +222,8 @@ void NancyEngine::setMouseEnabled(bool enabled) {
 }
 
 void NancyEngine::callCheatMenu(bool eventFlags) {
-	setState(NancyState::kCheat), _cheatTypeIsEventFlag = eventFlags;
+	_cheatTypeIsEventFlag = eventFlags;
+	setState(NancyState::kCheat);
 }
 
 Common::Error NancyEngine::run() {
