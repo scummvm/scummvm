@@ -23,6 +23,8 @@
 #ifndef TRECISION_LLINC_H
 #define TRECISION_LLINC_H
 
+#include "trecision/nl/sysdef.h"
+
 #define DRAWMASK        1
 #define COPYTORAM       2
 
