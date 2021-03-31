@@ -20,6 +20,9 @@
  *
  */
 
+#ifndef TRECISION_3DREND_H
+#define TRECISION_3DREND_H
+
 #define MAXVERTEX	1000
 #define MAXFACE		1000
 
@@ -87,3 +90,5 @@ void setClipping(int16 x1, int16 y1, int16 x2, int16 y2);
 void drawCharacter(uint8 flag);
 
 } // End of namespace Trecision
+
+#endif
