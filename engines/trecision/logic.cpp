@@ -2639,12 +2639,6 @@ bool LogicManager::mouseOperate(uint16 curObj) {
 		break;
 
 	case oVALVOLAC34:
-		if (_vm->_obj[curObj]._anim)
-			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, _vm->_obj[curObj]._anim, 0, 0, curObj);
-		else
-			retVal = true;
-		break;
-
 	case oVALVOLA34:
 		if (_vm->_obj[curObj]._anim)
 			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, _vm->_obj[curObj]._anim, 0, 0, curObj);
