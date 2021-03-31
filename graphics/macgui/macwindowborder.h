@@ -63,15 +63,19 @@ public:
 	 * Add the given surface as the display of the border in the active state.
 	 * Will fail if there is already an active border.
 	 * @param The surface that will be displayed.
+	 * @param The title index of bmp image
+	 * @param The title width that you want to set
 	 */
-	void addActiveBorder(TransparentSurface *source);
+	void addActiveBorder(TransparentSurface *source, int titleIndex = 0, int titleWidth = 0);
 
 	/**
 	 * Add the given surface as the display of the border in the inactive state.
 	 * Will fail if there is already an inactive border.
 	 * @param The surface that will be displayed.
+	 * @param The title index of bmp image
+	 * @param The title width that you want to set
 	 */
-	void addInactiveBorder(TransparentSurface *source);
+	void addInactiveBorder(TransparentSurface *source, int titleIndex = 0, int titleWidth = 0);
 
 	/**
 	 * Accessor function for the custom offsets.

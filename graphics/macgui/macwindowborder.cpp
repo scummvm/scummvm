@@ -53,22 +53,22 @@ bool MacWindowBorder::hasBorder(bool active) {
 	return active ? _activeInitialized : _inactiveInitialized;
 }
 
-void MacWindowBorder::addActiveBorder(TransparentSurface *source) {
+void MacWindowBorder::addActiveBorder(TransparentSurface *source, int titleIndex, int titleWidth) {
 	if (_activeBorder)
 		delete _activeBorder;
 
-	_activeBorder = new NinePatchBitmap(source, true);
+	_activeBorder = new NinePatchBitmap(source, true, titleIndex, titleWidth);
 	_activeInitialized = true;
 
 	if (_activeBorder->getPadding().isValidRect())
 		setOffsets(_activeBorder->getPadding());
 }
 
-void MacWindowBorder::addInactiveBorder(TransparentSurface *source) {
+void MacWindowBorder::addInactiveBorder(TransparentSurface *source, int titleIndex, int titleWidth) {
 	if (_inactiveBorder)
 		delete _inactiveBorder;
 
-	_inactiveBorder = new NinePatchBitmap(source, true);
+	_inactiveBorder = new NinePatchBitmap(source, true, titleIndex, titleWidth);
 	_inactiveInitialized = true;
 
 	if (!_inactiveBorder->getPadding().isValidRect())

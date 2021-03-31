@@ -252,7 +252,7 @@ void MacWindow::drawBorder() {
 	if (_macBorder.hasBorder(_active)) {
 		drawBorderFromSurface(g);
 
-		titleColor = _wm->_colorGray88;
+		titleColor = _wm->_colorBlack;
 		if (_active)
 			titleColor = _macBorder.getOffset().dark ? _wm->_colorWhite : _wm->_colorBlack;
 
@@ -290,8 +290,6 @@ void MacWindow::drawBorder() {
 		if (_macBorder.hasBorder(_active)) {
 			if (_active && !_macBorder.getOffset().dark)
 				fillRect(g, (width - w) / 2, titleY, w, titleHeight, _wm->_colorGrayEE);
-		} else {
-			drawBox(g, (width - w) / 2, titleY, w, titleHeight);
 		}
 		font->drawString(g, _title, (width - w) / 2 + 5, titleY + yOff, w, titleColor);
 	}
@@ -356,7 +354,7 @@ void MacWindow::loadBorder(Common::SeekableReadStream &file, bool active, int lo
 	loadBorder(file, active, offsets);
 }
 
-void MacWindow::loadBorder(Common::SeekableReadStream &file, bool active, BorderOffsets offsets) {
+void MacWindow::loadBorder(Common::SeekableReadStream &file, bool active, BorderOffsets offsets, int titleIndex, int titleWidth) {
 	Image::BitmapDecoder bmpDecoder;
 	Graphics::Surface *source;
 	Graphics::TransparentSurface *surface = new Graphics::TransparentSurface();
@@ -370,7 +368,7 @@ void MacWindow::loadBorder(Common::SeekableReadStream &file, bool active, Border
 	source->free();
 	delete source;
 
-	setBorder(surface, active, offsets);
+	setBorder(surface, active, offsets, titleIndex, titleWidth);
 }
 
 void MacWindow::setBorder(Graphics::TransparentSurface *surface, bool active, int lo, int ro, int to, int bo) {
@@ -385,13 +383,14 @@ void MacWindow::setBorder(Graphics::TransparentSurface *surface, bool active, in
 	setBorder(surface, active, offsets);
 }
 
-void MacWindow::setBorder(Graphics::TransparentSurface *surface, bool active, BorderOffsets offsets) {
+void MacWindow::setBorder(Graphics::TransparentSurface *surface, bool active, BorderOffsets offsets, int titleIndex, int titleWidth) {
 	surface->applyColorKey(255, 0, 255, false);
 
 	if (active)
-		_macBorder.addActiveBorder(surface);
+		_macBorder.addActiveBorder(surface, titleIndex, titleWidth);
 	else
-		_macBorder.addInactiveBorder(surface);
+		_macBorder.addInactiveBorder(surface, titleIndex, titleWidth);
+
 
 	if (active && offsets.left + offsets.right + offsets.top + offsets.bottom > -4) { // Checking against default -1
 		_macBorder.setOffsets(offsets);
