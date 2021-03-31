@@ -124,7 +124,7 @@ void GraphicsManager::updatePixelFormat(uint16 *p, uint32 len) const {
 
 	uint8 r, g, b;
 	for (uint32 a = 0; a < len; a++) {
-		uint16 t = p[a];
+		const uint16 t = p[a];
 		kImageFormat.colorToRGB(t, r, g, b);
 		p[a] = _screenFormat.RGBToColor(r, g, b);
 	}
