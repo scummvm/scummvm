@@ -302,8 +302,7 @@ bool syncSaveData(int slot, char *desc, bool save) {
 	ser.syncBytes((byte *)desc, 40);
 	
 	uint16 *thumbnailBuf = g_vm->Icone + (READICON + 13) * ICONDX * ICONDY;
-	for (int i = 0; i < ICONDX * ICONDY; i++)
-		ser.syncAsUint16LE(thumbnailBuf[i]);
+	ser.syncBytes((byte *)thumbnailBuf, ICONDX * ICONDY * sizeof(uint16));
 	if (!save)
 		g_vm->_graphicsMgr->updatePixelFormat(thumbnailBuf, ICONDX * ICONDY);
 
@@ -494,9 +493,7 @@ insave:
 		if (saveFile && saveFile->readByte() == NlVer) {
 			saveFile->read(&savename[a], 40);
 			uint16 *thumbnailBuf = g_vm->Icone + (READICON + 1 + a) * ICONDX * ICONDY;
-			for (int i = 0; i < ICONDX * ICONDY; i++)
-				thumbnailBuf[i] = saveFile->readUint16LE();
-			
+			saveFile->read((void *)thumbnailBuf, ICONDX * ICONDY * sizeof(uint16));
 			g_vm->_graphicsMgr->updatePixelFormat(thumbnailBuf, ICONDX * ICONDY);
 
 			g_vm->_inventory[a] = LASTICON + a;
@@ -719,8 +716,7 @@ bool DataLoad() {
 		if (saveFile && saveFile->readByte() == NlVer) {
 			saveFile->read(&savename[a], 40);
 			uint16 *iconBuf = g_vm->Icone + (READICON + 1 + a) * ICONDX * ICONDY;
-			for (int i = 0; i < ICONDX * ICONDY; i++)
-				iconBuf[i] = saveFile->readUint16LE();
+			saveFile->read((void *)iconBuf, ICONDX * ICONDY * sizeof(uint16));
 			g_vm->_graphicsMgr->updatePixelFormat(iconBuf, ICONDX * ICONDY);
 
 			g_vm->_inventory[a] = LASTICON + a;
