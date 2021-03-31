@@ -262,9 +262,6 @@ void MacWindow::drawBorder() {
 	if (_macBorder.hasBorder(_active)) {
 		drawBorderFromSurface(g);
 
-		if (_macBorder.getOffset().titleTop == -1 && _macBorder.getOffset().titleBottom == -1)
-			return;
-
 		titleColor = _wm->_colorGray88;
 		if (_active)
 			titleColor = _macBorder.getOffset().dark ? _wm->_colorWhite : _wm->_colorBlack;
@@ -275,6 +272,19 @@ void MacWindow::drawBorder() {
 	} else {
 		warning("MacWindow: No Border Loaded");
 		setBorderType(0xff);
+	}
+
+	// draw highlight scroll bar
+	if (_highlightedPart == kBorderScrollUp || _highlightedPart == kBorderScrollDown) {
+		int size = _borderWidth;
+		int rx1 = 0 + width - size + 2;
+		int ry1 = 0 + size + _scrollPos + 1;
+		int rx2 = rx1 + size - 6;
+		int ry2 = ry1 + _scrollSize ;
+		Common::Rect rr(rx1, ry1, rx2, ry2);
+
+		MacPlotData pd(g, nullptr,  &_wm->getPatterns(), 1, 0, 0, 1, _wm->_colorWhite, true);
+		Graphics::drawFilledRect(rr, _wm->_colorWhite, _wm->getDrawPixel(), &pd);
 	}
 
 	if (!_title.empty()) {
