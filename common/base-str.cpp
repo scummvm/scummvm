@@ -181,14 +181,18 @@ TEMPLATE
 void BASESTRING::incRefCount() const {
 	assert(!isStorageIntern());
 	if (_extern._refCount == nullptr) {
+#ifndef SCUMMVM_UTIL
 		lockMemoryPoolMutex();
+#endif
 		if (g_refCountPool == nullptr) {
 			g_refCountPool = new MemoryPool(sizeof(int));
 			assert(g_refCountPool);
 		}
 
 		_extern._refCount = (int *)g_refCountPool->allocChunk();
+#ifndef SCUMMVM_UTIL
 		unlockMemoryPoolMutex();
+#endif
 		*_extern._refCount = 2;
 	} else {
 		++(*_extern._refCount);
@@ -207,10 +211,14 @@ void BASESTRING::decRefCount(int *oldRefCount) {
 		// The ref count reached zero, so we free the string storage
 		// and the ref count storage.
 		if (oldRefCount) {
+#ifndef SCUMMVM_UTIL
 			lockMemoryPoolMutex();
+#endif
 			assert(g_refCountPool);
 			g_refCountPool->freeChunk(oldRefCount);
+#ifndef SCUMMVM_UTIL
 			unlockMemoryPoolMutex();
+#endif
 		}
 		// Coverity thinks that we always free memory, as it assumes
 		// (correctly) that there are cases when oldRefCount == 0
