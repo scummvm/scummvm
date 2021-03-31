@@ -20,7 +20,10 @@
  *
  */
 
-#include "Common/str.h"
+#ifndef TRECISION_LLPROTO_H
+#define TRECISION_LLPROTO_H
+
+#include "common/str.h"
 
 namespace Common {
 class SeekableReadStream;
@@ -93,3 +96,5 @@ void byte2wordm(void *dest, void *src, void *data, uint32 len);
 void byte2wordn(void *dest, void *src, void *data, uint32 len);
 
 } // End of namespace Trecision
+
+#endif

@@ -20,6 +20,9 @@
  *
  */
 
+#ifndef TRECISION_SYSDEF_H
+#define TRECISION_SYSDEF_H
+
 /******************************************************************************
 Game Structure
 ******************************************************************************/
@@ -154,3 +157,5 @@ Management of cards for Regen
 #define  dACTIVATE      4
 #define  dDEACTIVATE    8
 #define  dPREVARICA    16
+
+#endif
