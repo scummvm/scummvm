@@ -85,6 +85,8 @@ public:
 	void checkSystem();
 	void initCursor();
 
+	Common::String getSavegameName(int slotNumber);
+	
 	uint16 _curRoom;
 	uint16 _oldRoom;
 	SRoom _room[MAXROOMS];

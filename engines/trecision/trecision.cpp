@@ -487,4 +487,8 @@ void TrecisionEngine::initCursor() {
 	CursorMan.pushCursor(cursor, cw, ch, cx, cy, 0, false, &format);
 }
 
+Common::String TrecisionEngine::getSavegameName(int slotNumber) {
+	return _targetName + Common::String::format(".%03d", slotNumber);
+}
+
 } // End of namespace Trecision
