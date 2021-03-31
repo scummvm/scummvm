@@ -455,11 +455,43 @@ void macDrawPixel(int x, int y, int color, void *data) {
 	}
 }
 
+void macDrawInvertPixel(int x, int y, int color, void *data) {
+	MacPlotData *p = (MacPlotData *)data;
+
+	if (p->fillType > p->patterns->size() || !p->fillType)
+		return;
+
+	if (x >= 0 && x < p->surface->w && y >= 0 && y < p->surface->h) {
+		uint xu = (uint)x; // for letting compiler optimize it
+		uint yu = (uint)y;
+
+		byte cur_color = *((byte *)p->surface->getBasePtr(xu, yu));
+		// 0 represent black in default palette, and 4 represent white
+		// if color is black, we invert it to white, otherwise, we invert it to black
+		byte invert_color = 0;
+		if (cur_color == 0) {
+			invert_color = 4;
+		}
+		*((byte *)p->surface->getBasePtr(xu, yu)) = invert_color;
+
+		if (p->mask)
+			*((byte *)p->mask->getBasePtr(xu, yu)) = 0xff;
+	}
+}
+
 MacDrawPixPtr MacWindowManager::getDrawPixel() {
 	if (_pixelformat.bytesPerPixel == 1)
 		return &macDrawPixel<byte *>;
 	else
 		return &macDrawPixel<uint32 *>;
+}
+
+// get the function of drawing invert pixel for default palette
+MacDrawPixPtr MacWindowManager::getDrawInvertPixel() {
+	if (_pixelformat.bytesPerPixel == 1)
+		return &macDrawInvertPixel;
+	warning("function of drawing invert pixel for default palette has not implemented yet");
+	return nullptr;
 }
 
 void MacWindowManager::loadDesktop() {

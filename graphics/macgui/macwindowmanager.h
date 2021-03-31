@@ -144,6 +144,7 @@ public:
 	~MacWindowManager();
 
 	MacDrawPixPtr getDrawPixel();
+	MacDrawPixPtr getDrawInvertPixel();
 
 	/**
 	 * Mutator to indicate the surface onto which the desktop will be drawn.
