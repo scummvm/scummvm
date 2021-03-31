@@ -91,8 +91,8 @@ public:
 
 	ThemeEval *xmlEval() { return _theme->getEvaluator(); }
 
-	int16 getBaseWidth() const { return _baseWidth; }
-	int16 getBaseHeight() const { return _baseHeight; }
+	int16 getGUIWidth() const { return _baseWidth; }
+	int16 getGUIHeight() const { return _baseHeight; }
 	float getScaleFactor() const { return _scaleFactor; }
 
 	bool useRTL() const { return _useRTL; }

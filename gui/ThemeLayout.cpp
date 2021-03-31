@@ -225,13 +225,13 @@ void ThemeLayoutMain::reflowLayout(Widget *widgetChain) {
 	if (_overlays == "screen") {
 		_x = 0;
 		_y = 0;
-		_w = g_gui.getBaseWidth() * g_gui.getScaleFactor();
-		_h = g_gui.getBaseHeight() * g_gui.getScaleFactor();
+		_w = g_gui.getGUIWidth() * g_gui.getScaleFactor();
+		_h = g_gui.getGUIHeight() * g_gui.getScaleFactor();
 	} else if (_overlays == "screen_center") {
 		_x = -1;
 		_y = -1;
-		_w = _defaultW > 0 ? MIN(_defaultW, g_gui.getBaseWidth()) * g_gui.getScaleFactor() : -1;
-		_h = _defaultH > 0 ? MIN(_defaultH, g_gui.getBaseHeight()) * g_gui.getScaleFactor() : -1;
+		_w = _defaultW > 0 ? MIN(_defaultW, g_gui.getGUIWidth()) * g_gui.getScaleFactor() : -1;
+		_h = _defaultH > 0 ? MIN(_defaultH, g_gui.getGUIHeight()) * g_gui.getScaleFactor() : -1;
 	} else {
 		if (!g_gui.xmlEval()->getWidgetData(_overlays, _x, _y, _w, _h)) {
 			warning("Unable to retrieve overlayed dialog position %s", _overlays.c_str());
@@ -239,10 +239,10 @@ void ThemeLayoutMain::reflowLayout(Widget *widgetChain) {
 
 		if (_w == -1 || _h == -1) {
 			warning("The overlayed dialog %s has not been sized, using a default size for %s", _overlays.c_str(), _name.c_str());
-			_x = g_gui.getBaseWidth()      / 10 * g_gui.getScaleFactor();
-			_y = g_gui.getBaseHeight()     / 10 * g_gui.getScaleFactor();
-			_w = g_gui.getBaseWidth()  * 8 / 10 * g_gui.getScaleFactor();
-			_h = g_gui.getBaseHeight() * 8 / 10 * g_gui.getScaleFactor();
+			_x = g_gui.getGUIWidth()      / 10 * g_gui.getScaleFactor();
+			_y = g_gui.getGUIHeight()     / 10 * g_gui.getScaleFactor();
+			_w = g_gui.getGUIWidth()  * 8 / 10 * g_gui.getScaleFactor();
+			_h = g_gui.getGUIHeight() * 8 / 10 * g_gui.getScaleFactor();
 		}
 	}
 
@@ -254,7 +254,7 @@ void ThemeLayoutMain::reflowLayout(Widget *widgetChain) {
 				add them here and in Widget::draw() to enable RTL support for that particular dialog
 			*/
 			int oldX = _x;
-			_x = g_gui.getBaseWidth() * g_gui.getScaleFactor() - _w - _x;
+			_x = g_gui.getGUIWidth() * g_gui.getScaleFactor() - _w - _x;
 			g_gui.setDialogPaddings(oldX, _x);
 		}
 	}
