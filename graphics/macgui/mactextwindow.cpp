@@ -355,15 +355,15 @@ bool MacTextWindow::processEvent(Common::Event &event) {
 
 	if (click == kBorderScrollUp || click == kBorderScrollDown) {
 		if (event.type == Common::EVENT_LBUTTONDOWN) {
-			int consoleHeight = getInnerDimensions().height();
-			int textFullSize = _mactext->getTextHeight();
-			float scrollPos = (float)_scrollPos / textFullSize;
-			float scrollSize = (float)consoleHeight / textFullSize;
-
+			int maxText = _mactext->getTextHeight() + getInnerDimensions().height();
+			int drawableHeight = getInnerDimensions().height();
+			float scrollSize = (float)drawableHeight * drawableHeight / (float)maxText;
+			float scrollPos = (float)_scrollPos * drawableHeight / (float)maxText;
+			setHighlight(click);
 			setScroll(scrollPos, scrollSize);
-
 			return true;
 		} else if (event.type == Common::EVENT_LBUTTONUP) {
+			setHighlight(kBorderNone);
 			switch (click) {
 			case kBorderScrollUp:
 				scroll(-1);
