@@ -20,9 +20,6 @@
  *
  */
 
-#define FORBIDDEN_SYMBOL_ALLOW_ALL // TODO: remove file operations
-#include <trecision/logic.h>
-
 #include "common/scummsys.h"
 #include "trecision/nl/3d/3dinc.h"
 #include "trecision/nl/struct.h"
@@ -31,8 +28,11 @@
 #include "trecision/nl/define.h"
 #include "trecision/nl/message.h"
 #include "trecision/trecision.h"
+#include "trecision/logic.h"
 
 #include "common/file.h"
+#include "common/savefile.h"
+#include "common/serializer.h"
 #include "common/str.h"
 #include "common/system.h"
 #include "graphics/cursorman.h"
@@ -42,8 +42,19 @@
 namespace Trecision {
 
 uint16 BlinkLastDTextChar = MASKCOL;
+extern byte NlVer;
 
-extern int NlVer;
+/**
+ * Derived serializer class with extra synchronization types
+ */
+class Serializer : public Common::Serializer {
+public:
+	Serializer(Common::SeekableReadStream *in, Common::WriteStream *out) : Common::Serializer(in, out) {}
+
+	// Trecision saved games contain a single byte for the savegame version,
+	// so use this for setting the serializer version instead of syncVersion()
+	void setSaveVersion(byte version) { _version = version; }
+};
 
 void VMouseOFF() {
 	CursorMan.showMouse(false);
@@ -273,17 +284,167 @@ void IconSnapShot() {
 	}
 }
 
+bool syncSaveData(int slot, char *desc, bool save) {
+	Common::SaveFileManager *saveFileMan = g_engine->getSaveFileManager();
+	Common::String saveName = g_vm->getSavegameName(slot);
+	Common::InSaveFile *in = !save ? saveFileMan->openForLoading(saveName) : nullptr;
+	Common::OutSaveFile *out = save ? saveFileMan->openForSaving(saveName) : nullptr;
+	if (!in && !out)
+		return false;
+
+	byte version = !save ? in->readByte() : NlVer;
+	// TODO: Check for newer save versions
+	Common::Serializer ser(in, out);
+	ser.setVersion(version);
+	if (save)
+		out->writeByte(version);
+
+	ser.syncBytes((byte *)desc, 40);
+	
+	uint16 *thumbnailBuf = g_vm->Icone + (READICON + 1) * ICONDX * ICONDY;
+	for (int i = 0; i < ICONDX * ICONDY; i++)
+		ser.syncAsUint16LE(thumbnailBuf[i]);
+	if (!save)
+		g_vm->_graphicsMgr->updatePixelFormat(thumbnailBuf, ICONDX * ICONDY);
+
+	ser.syncAsUint16LE(g_vm->_curRoom);
+	ser.syncAsByte(/*OldInvLen*/ g_vm->_inventorySize);
+	ser.syncAsByte(g_vm->_cyberInventorySize);
+	ser.syncAsByte(/*OldIconBase*/ g_vm->_iconBase);
+	ser.syncAsSint16LE(Flagskiptalk);
+	ser.syncAsSint16LE(Flagskipenable);
+	ser.syncAsSint16LE(g_vm->_flagMouseEnabled);
+	ser.syncAsSint16LE(g_vm->_flagScreenRefreshed);
+	ser.syncAsSint16LE(FlagPaintCharacter);
+	ser.syncAsSint16LE(FlagSomeOneSpeak);
+	ser.syncAsSint16LE(FlagCharacterSpeak);
+	ser.syncAsSint16LE(g_vm->_flagInventoryLocked);
+	ser.syncAsSint16LE(FlagUseWithStarted);
+	ser.syncAsSint16LE(FlagMousePolling);
+	ser.syncAsSint16LE(FlagDialogSolitaire);
+	ser.syncAsSint16LE(FlagCharacterExist);
+	ser.syncBytes(/*OldInv*/ g_vm->_inventory, MAXICON);
+	ser.syncBytes(g_vm->_cyberInventory, MAXICON);
+	ser.syncAsFloatLE(_actor._px);
+	ser.syncAsFloatLE(_actor._py);
+	ser.syncAsFloatLE(_actor._pz);
+	ser.syncAsFloatLE(_actor._dx);
+	ser.syncAsFloatLE(_actor._dz);
+	ser.syncAsFloatLE(_actor._theta);
+	ser.syncAsSint32LE(_curPanel);
+	ser.syncAsSint32LE(_oldPanel);
+
+	for (int a = 0; a < MAXROOMS; a++) {
+		ser.syncBytes((byte *)g_vm->_room[a]._baseName, 4);
+		for (int i = 0; i < MAXACTIONINROOM; i++)
+			ser.syncAsUint16LE(g_vm->_room[a]._actions[i]);		
+		ser.syncAsByte(g_vm->_room[a]._flag);
+		ser.syncAsUint16LE(g_vm->_room[a]._bkgAnim);
+	}
+
+	for (int a = 0; a < MAXOBJ; a++) {
+		for (int i = 0; i < 4; i++)
+			ser.syncAsUint16LE(g_vm->_obj[a]._lim[i]);
+		ser.syncAsUint16LE(g_vm->_obj[a]._name);
+		ser.syncAsUint16LE(g_vm->_obj[a]._examine);
+		ser.syncAsUint16LE(g_vm->_obj[a]._action);
+		ser.syncAsUint16LE(g_vm->_obj[a]._anim);
+		ser.syncAsByte(g_vm->_obj[a]._mode);
+		ser.syncAsByte(g_vm->_obj[a]._flag);
+		ser.syncAsByte(g_vm->_obj[a]._goRoom);
+		ser.syncAsByte(g_vm->_obj[a]._nbox);
+		ser.syncAsByte(g_vm->_obj[a]._ninv);
+		ser.syncAsSByte(g_vm->_obj[a]._position);
+	}
+
+	for (int a = 0; a < MAXINVENTORY; a++) {
+		ser.syncAsUint16LE(g_vm->_inventoryObj[a]._name);
+		ser.syncAsUint16LE(g_vm->_inventoryObj[a]._examine);
+		ser.syncAsUint16LE(g_vm->_inventoryObj[a]._action);
+		ser.syncAsUint16LE(g_vm->_inventoryObj[a]._anim);
+		ser.syncAsByte(g_vm->_inventoryObj[a]._flag);
+	}
+
+	for (int a = 0; a < MAXANIM; a++) {
+		SAnim *cur = &g_vm->_animMgr->_animTab[a];
+		ser.syncBytes((byte *)cur->_name, 14);
+		ser.syncAsUint16LE(cur->_flag);
+		for (int i = 0; i < MAXCHILD; i++) {
+			for (int j = 0; j < 4; j++) {
+				ser.syncAsUint16LE(cur->_lim[i][j]);
+			}
+		}
+		ser.syncAsByte(cur->_nbox);
+		for (int i = 0; i < MAXATFRAME; i++) {
+			ser.syncAsByte(cur->_atFrame[i]._type);
+			ser.syncAsByte(cur->_atFrame[i]._child);
+			ser.syncAsUint16LE(cur->_atFrame[i]._numFrame);
+			ser.syncAsUint16LE(cur->_atFrame[i]._index);
+		}
+	}
+	
+	for (int a = 0; a < MAXSAMPLE; a++) {
+		ser.syncAsByte(GSample[a]._volume);
+		ser.syncAsByte(GSample[a]._flag);
+	}
+
+	for (int a = 0; a < MAXCHOICE; a++) {
+		DialogChoice *cur = &g_vm->_choice[a];
+		ser.syncAsUint16LE(cur->_flag);
+		ser.syncAsUint16LE(cur->_sentenceIndex);
+		ser.syncAsUint16LE(cur->_firstSubTitle);
+		ser.syncAsUint16LE(cur->_subTitleNumb);
+		for (int i = 0; i < MAXDISPSCELTE; i++)
+			ser.syncAsUint16LE(cur->_on[i]);
+		for (int i = 0; i < MAXDISPSCELTE; i++)
+			ser.syncAsUint16LE(cur->_off[i]);
+		ser.syncAsUint16LE(cur->_startFrame);
+		ser.syncAsUint16LE(cur->_nextDialog);
+	}
+
+	for (int a = 0; a < MAXDIALOG; a++) {
+		Dialog *cur = &_dialog[a];
+		ser.syncAsUint16LE(cur->_flag);
+		ser.syncAsUint16LE(cur->_interlocutor);
+		ser.syncBytes((byte *)cur->_startAnim, 14);
+		ser.syncAsUint16LE(cur->_startLen);
+		ser.syncAsUint16LE(cur->_firstChoice);
+		ser.syncAsUint16LE(cur->_choiceNumb);
+		for (int i = 0; i < MAXNEWSMKPAL; i++)
+			ser.syncAsUint16LE(cur->_newPal[i]);
+	}
+
+	for (int i = 0; i < 7; i++)
+		ser.syncAsUint16LE(g_vm->_logicMgr->Comb35[i]);
+	for (int i = 0; i < 4; i++)
+		ser.syncAsUint16LE(g_vm->_logicMgr->Comb49[i]);
+	for (int i = 0; i < 6; i++)
+		ser.syncAsUint16LE(g_vm->_logicMgr->Comb4CT[i]);
+	for (int i = 0; i < 6; i++)
+		ser.syncAsUint16LE(g_vm->_logicMgr->Comb58[i]);
+	for (int i = 0; i < 3; i++)
+		ser.syncAsUint16LE(g_vm->_wheelPos[i]);
+	ser.syncAsUint16LE(g_vm->_wheel);
+	ser.syncAsUint16LE(g_vm->_logicMgr->Count35);
+	ser.syncAsUint16LE(g_vm->_logicMgr->Count58);
+	ser.syncAsUint16LE(g_vm->_slotMachine41Counter);
+
+	delete in;
+	delete out;
+	
+	return true;
+}
+
 /* -----------------25/10/97 15.16-------------------
 						DataSave
  --------------------------------------------------*/
 bool DataSave() {
-	FILE *fh;
 	uint8 OldInv[MAXICON], OldIconBase, OldInvLen;
 	char tempname[20], ch, strcount;
 	char savename[MAXSAVEFILE][40];
 	uint16 posx, LenText;
 	bool ret = true;
-
+	
 	actorStop();
 	nextStep();
 
@@ -324,25 +485,27 @@ insave:
 
 	int8 CurPos = -1;
 	int8 OldPos = -1;
-
+	Common::SaveFileManager *saveFileMan = g_engine->getSaveFileManager();
+	
 	for (int a = 0; a < g_vm->_inventorySize; a++) {
-		strcpy(tempname, "SaveGame._X_");
-		tempname[10] = 'A' + a;
-
-		// Check the existence of savegames
-		if ((fh = fopen(tempname, "rb")) && (fgetc(fh) == NlVer)) {
-			fread(&savename[a], 1, 40, fh);
-			fread(g_vm->Icone + (READICON + 1 + a)*ICONDX * ICONDY, 2, ICONDX * ICONDY, fh);
-			fclose(fh);
-			g_vm->_graphicsMgr->updatePixelFormat(g_vm->Icone + (READICON + 1 + a) * ICONDX * ICONDY, ICONDX * ICONDY);
+		Common::String saveName = g_vm->getSavegameName(a);
+		Common::InSaveFile *saveFile = saveFileMan->openForLoading(saveName);
+		
+		if (saveFile && saveFile->readByte() == NlVer) {
+			saveFile->read(&savename[a], 40);
+			uint16 *thumbnailBuf = g_vm->Icone + (READICON + 1 + a) * ICONDX * ICONDY;
+			for (int i = 0; i < ICONDX * ICONDY; i++)
+				thumbnailBuf[i] = saveFile->readUint16LE();
+			
+			g_vm->_graphicsMgr->updatePixelFormat(thumbnailBuf, ICONDX * ICONDY);
 
 			g_vm->_inventory[a] = LASTICON + a;
 		} else {
 			strcpy(savename[a], g_vm->_sysText[10]);
-			if (fh)
-				fclose(fh);
 			g_vm->_inventory[a] = iEMPTYSLOT;
 		}
+
+		delete saveFile;
 	}
 
 	g_vm->refreshInventory(0, 0);
@@ -469,96 +632,9 @@ insave:
 		for (int a = FIRSTLINE; a < MAXY; a++)
 			memset(g_vm->_screenBuffer + SCREENLEN * a, 0, SCREENLEN * 2);
 
-		strcpy(tempname, "SaveGame._X_");
-		tempname[10] = 'A' + CurPos;
-		tempname[12] = '\0';
 		ret = false;
 
-		fh = fopen(tempname, "wb");
-
-		fputc(NlVer, fh);
-		fwrite(&savename[CurPos], 1, 40, fh);
-
-		fwrite(g_vm->Icone + (READICON + 13)*ICONDX * ICONDY, 2, ICONDX * ICONDY, fh);
-
-		fwrite(&g_vm->_curRoom, sizeof(uint16), 1, fh);
-		fwrite(&OldInvLen,           sizeof(uint8), 1, fh);
-		fwrite(&g_vm->_cyberInventorySize, sizeof(uint8), 1, fh);
-		fwrite(&OldIconBase,         sizeof(uint8), 1, fh);
-		fwrite(&Flagskiptalk,         sizeof(int16), 1, fh);
-		fwrite(&Flagskipenable,       sizeof(int16), 1, fh);
-		fwrite(&g_vm->_flagMouseEnabled, sizeof(int16), 1, fh);
-		fwrite(&g_vm->_flagScreenRefreshed,  sizeof(int16), 1, fh);
-		fwrite(&FlagPaintCharacter,        sizeof(int16), 1, fh);
-		fwrite(&FlagSomeOneSpeak,     sizeof(int16), 1, fh);
-		fwrite(&FlagCharacterSpeak,        sizeof(int16), 1, fh);
-		fwrite(&g_vm->_flagInventoryLocked,  sizeof(int16), 1, fh);
-		fwrite(&FlagUseWithStarted,   sizeof(int16), 1, fh);
-		fwrite(&FlagMousePolling,     sizeof(int16), 1, fh);
-		fwrite(&FlagDialogSolitaire,  sizeof(int16), 1, fh);
-		fwrite(&FlagCharacterExist,        sizeof(int16), 1, fh);
-
-		fwrite(&OldInv[0],           sizeof(uint8), MAXICON, fh);
-		fwrite(&g_vm->_cyberInventory[0], sizeof(uint8), MAXICON, fh);
-
-		fwrite(&_actor._px,              sizeof(float), 1, fh);
-		fwrite(&_actor._py,              sizeof(float), 1, fh);
-		fwrite(&_actor._pz,              sizeof(float), 1, fh);
-		fwrite(&_actor._dx,              sizeof(float), 1, fh);
-		fwrite(&_actor._dz,              sizeof(float), 1, fh);
-		fwrite(&_actor._theta,           sizeof(float), 1, fh);
-		fwrite(&_curPanel,            sizeof(int),   1, fh);
-		fwrite(&_oldPanel,            sizeof(int),   1, fh);
-
-		for (int a = 0; a < MAXROOMS; a++) {
-			fwrite(g_vm->_room[a]._baseName, sizeof(char), 4, fh);
-			fwrite(g_vm->_room[a]._actions, sizeof(uint16), MAXACTIONINROOM, fh);
-			fwrite(&g_vm->_room[a]._flag, sizeof(uint8), 1, fh);
-			fwrite(&g_vm->_room[a]._bkgAnim, sizeof(uint16), 1, fh);
-		}
-		for (int a = 0; a < MAXOBJ; a++) {
-			fwrite(&g_vm->_obj[a]._lim, sizeof(uint16), 4, fh);
-			fwrite(&g_vm->_obj[a]._name, sizeof(uint16), 1, fh);
-			fwrite(&g_vm->_obj[a]._examine, sizeof(uint16), 1, fh);
-			fwrite(&g_vm->_obj[a]._action, sizeof(uint16), 1, fh);
-			fwrite(&g_vm->_obj[a]._anim, sizeof(uint16), 1, fh);
-			fwrite(&g_vm->_obj[a]._mode, sizeof(uint8), 1, fh);
-			fwrite(&g_vm->_obj[a]._flag, sizeof(uint8), 1, fh);
-			fwrite(&g_vm->_obj[a]._goRoom, sizeof(uint8), 1, fh);
-			fwrite(&g_vm->_obj[a]._nbox, sizeof(uint8), 1, fh);
-			fwrite(&g_vm->_obj[a]._ninv, sizeof(uint8), 1, fh);
-			fwrite(&g_vm->_obj[a]._position, sizeof(int8), 1, fh);
-		}
-		for (int a = 0; a < MAXINVENTORY; a++) {
-			fwrite(&g_vm->_inventoryObj[a]._name, sizeof(uint16), 1, fh);
-			fwrite(&g_vm->_inventoryObj[a]._examine, sizeof(uint16), 1, fh);
-			fwrite(&g_vm->_inventoryObj[a]._action, sizeof(uint16), 1, fh);
-			fwrite(&g_vm->_inventoryObj[a]._anim, sizeof(uint16), 1, fh);
-			fwrite(&g_vm->_inventoryObj[a]._flag, sizeof(uint8), 1, fh);
-		}
-		for (int a = 0; a < MAXANIM; a++)
-			fwrite(&g_vm->_animMgr->_animTab[a], sizeof(SAnim), 1, fh);
-		for (int a = 0; a < MAXSAMPLE; a++) {
-			fwrite(&GSample[a]._volume,  sizeof(uint8), 1, fh);
-			fwrite(&GSample[a]._flag,    sizeof(uint8), 1, fh);
-		}
-		for (int a = 0; a < MAXCHOICE; a++)
-			fwrite(&g_vm->_choice[a],           sizeof(DialogChoice), 1, fh);
-
-		for (int a = 0; a < MAXDIALOG; a++)
-			fwrite(&_dialog[a],          sizeof(Dialog), 1, fh);
-
-		fwrite(&g_vm->_logicMgr->Comb35,      sizeof(uint16), 7, fh);
-		fwrite(&g_vm->_logicMgr->Comb49, sizeof(uint16), 4, fh);
-		fwrite(&g_vm->_logicMgr->Comb4CT, sizeof(uint16), 6, fh);
-		fwrite(&g_vm->_logicMgr->Comb58, sizeof(uint16), 6, fh);
-		fwrite(&g_vm->_wheelPos, sizeof(uint16), 3, fh);
-		fwrite(&g_vm->_wheel, sizeof(uint16), 1, fh);
-		fwrite(&g_vm->_logicMgr->Count35, sizeof(uint16), 1, fh);
-		fwrite(&g_vm->_logicMgr->Count58, sizeof(uint16), 1, fh);
-		fwrite(&g_vm->_slotMachine41Counter, sizeof(uint16), 1, fh);
-
-		fclose(fh);
+		syncSaveData(CurPos, savename[CurPos], true);
 	}
 
 	for (int a = FIRSTLINE; a < MAXY; a++)
@@ -590,12 +666,11 @@ insave:
 --------------------------------------------------*/
 bool DataLoad() {
 	extern char CurCDSet;
-	FILE *fh;
 	uint8 OldInv[MAXICON], OldIconBase, OldInvLen;
-	char tempname[20];
 	char savename[MAXSAVEFILE][40];
 	bool retval = true;
-
+	Common::SaveFileManager *saveFileMan = g_engine->getSaveFileManager();
+	
 	for (int a = 0; a < TOP; a++)
 		memset(g_vm->_screenBuffer + SCREENLEN * a, 0, SCREENLEN * 2);
 
@@ -638,24 +713,23 @@ bool DataLoad() {
 	int8 OldPos = -1;
 
 	for (int a = 0; a < g_vm->_inventorySize; a++) {
-		strcpy(tempname, "SaveGame._X_");
-		tempname[10] = 'A' + a;
+		Common::String saveName = g_vm->getSavegameName(a);
+		Common::InSaveFile *saveFile = saveFileMan->openForLoading(saveName);
 
-		// Check if savegames exist
-		if ((fh = fopen(tempname, "rb")) && (fgetc(fh) == NlVer)) {
-			fread(&savename[a], 1, 40, fh);
-			fread(g_vm->Icone + (READICON + 1 + a)*ICONDX * ICONDY, 2, ICONDX * ICONDY, fh);
-			fclose(fh);
-			g_vm->_graphicsMgr->updatePixelFormat(g_vm->Icone + (READICON + 1 + a) * ICONDX * ICONDY, ICONDX * ICONDY);
+		if (saveFile && saveFile->readByte() == NlVer) {
+			saveFile->read(&savename[a], 40);
+			uint16 *iconBuf = g_vm->Icone + (READICON + 1 + a) * ICONDX * ICONDY;
+			for (int i = 0; i < ICONDX * ICONDY; i++)
+				iconBuf[i] = saveFile->readUint16LE();
+			g_vm->_graphicsMgr->updatePixelFormat(iconBuf, ICONDX * ICONDY);
 
 			g_vm->_inventory[a] = LASTICON + a;
 		} else {
 			strcpy(savename[a], g_vm->_sysText[10]);
-			if (fh)
-				fclose(fh);
-			fh = nullptr;
 			g_vm->_inventory[a] = iEMPTYSLOT;
 		}
+
+		delete saveFile;
 	}
 
 	g_vm->refreshInventory(0, 0);
@@ -719,101 +793,8 @@ bool DataLoad() {
 		for (int a = FIRSTLINE; a < MAXY; a++)
 			memset(g_vm->_screenBuffer + SCREENLEN * a, 0, SCREENLEN * 2);
 
-		strcpy(tempname, "SaveGame._X_");
-		tempname[10] = 'A' + CurPos;
-		tempname[12] = '\0';
-
-		fh = fopen(tempname, "rb");
-		if (!fh) {
-			CloseSys(g_vm->_sysText[12]);
-			return false;
-		}
-
-		fgetc(fh);
-		fread(&savename[0], 1, 40, fh);
-		fread(g_vm->Icone + (READICON + 1) * ICONDX * ICONDY, 2, ICONDX * ICONDY, fh);
-		g_vm->_graphicsMgr->updatePixelFormat(g_vm->Icone + (READICON + 1) * ICONDX * ICONDY, ICONDX * ICONDY);
-
-		fread(&g_vm->_curRoom, sizeof(uint16), 1, fh);
-		fread(&OldInvLen,           sizeof(uint8), 1, fh);
-		fread(&g_vm->_cyberInventorySize, sizeof(uint8), 1, fh);
-		fread(&OldIconBase,         sizeof(uint8), 1, fh);
-		fread(&Flagskiptalk,         sizeof(int16), 1, fh);
-		fread(&Flagskipenable,       sizeof(int16), 1, fh);
-		fread(&g_vm->_flagMouseEnabled, sizeof(int16), 1, fh);
-		fread(&g_vm->_flagScreenRefreshed,  sizeof(int16), 1, fh);
-		fread(&FlagPaintCharacter,        sizeof(int16), 1, fh);
-		fread(&FlagSomeOneSpeak,     sizeof(int16), 1, fh);
-		fread(&FlagCharacterSpeak,        sizeof(int16), 1, fh);
-		fread(&g_vm->_flagInventoryLocked,  sizeof(int16), 1, fh);
-		fread(&FlagUseWithStarted,   sizeof(int16), 1, fh);
-		fread(&FlagMousePolling,     sizeof(int16), 1, fh);
-		fread(&FlagDialogSolitaire,  sizeof(int16), 1, fh);
-		fread(&FlagCharacterExist,        sizeof(int16), 1, fh);
-
-		fread(&OldInv[0],           sizeof(uint8), MAXICON, fh);
-		fread(&g_vm->_cyberInventory[0], sizeof(uint8), MAXICON, fh);
-
-		fread(&_actor._px,              sizeof(float), 1, fh);
-		fread(&_actor._py,              sizeof(float), 1, fh);
-		fread(&_actor._pz,              sizeof(float), 1, fh);
-		fread(&_actor._dx,              sizeof(float), 1, fh);
-		fread(&_actor._dz,              sizeof(float), 1, fh);
-		fread(&_actor._theta,           sizeof(float), 1, fh);
-		fread(&_curPanel,            sizeof(int),   1, fh);
-		fread(&_oldPanel,            sizeof(int),   1, fh);
-
-		for (int a = 0; a < MAXROOMS; a++) {
-			fread(g_vm->_room[a]._baseName, sizeof(char), 4, fh);
-			fread(g_vm->_room[a]._actions, sizeof(uint16), MAXACTIONINROOM, fh);
-			fread(&g_vm->_room[a]._flag, sizeof(uint8), 1, fh);
-			fread(&g_vm->_room[a]._bkgAnim, sizeof(uint16), 1, fh);
-		}
-		for (int a = 0; a < MAXOBJ; a++) {
-			fread(&g_vm->_obj[a]._lim, sizeof(uint16), 4, fh);
-			fread(&g_vm->_obj[a]._name, sizeof(uint16), 1, fh);
-			fread(&g_vm->_obj[a]._examine, sizeof(uint16), 1, fh);
-			fread(&g_vm->_obj[a]._action, sizeof(uint16), 1, fh);
-			fread(&g_vm->_obj[a]._anim, sizeof(uint16), 1, fh);
-			fread(&g_vm->_obj[a]._mode, sizeof(uint8), 1, fh);
-			fread(&g_vm->_obj[a]._flag, sizeof(uint8), 1, fh);
-			fread(&g_vm->_obj[a]._goRoom, sizeof(uint8), 1, fh);
-			fread(&g_vm->_obj[a]._nbox, sizeof(uint8), 1, fh);
-			fread(&g_vm->_obj[a]._ninv, sizeof(uint8), 1, fh);
-			fread(&g_vm->_obj[a]._position, sizeof(int8), 1, fh);
-		}
-		for (int a = 0; a < MAXINVENTORY; a++) {
-			fread(&g_vm->_inventoryObj[a]._name, sizeof(uint16), 1, fh);
-			fread(&g_vm->_inventoryObj[a]._examine, sizeof(uint16), 1, fh);
-			fread(&g_vm->_inventoryObj[a]._action, sizeof(uint16), 1, fh);
-			fread(&g_vm->_inventoryObj[a]._anim, sizeof(uint16), 1, fh);
-			fread(&g_vm->_inventoryObj[a]._flag, sizeof(uint8), 1, fh);
-		}
-		for (int a = 0; a < MAXANIM; a++)
-			fread(&g_vm->_animMgr->_animTab[a], sizeof(SAnim), 1, fh);
-		for (int a = 0; a < MAXSAMPLE; a++) {
-			fread(&GSample[a]._volume,  sizeof(uint8), 1, fh);
-			fread(&GSample[a]._flag,    sizeof(uint8), 1, fh);
-		}
-
-		for (int a = 0; a < MAXCHOICE; a++)
-			fread(&g_vm->_choice[a],           sizeof(DialogChoice), 1, fh);
-
-		for (int a = 0; a < MAXDIALOG; a++)
-			fread(&_dialog[a],          sizeof(Dialog), 1, fh);
-
-		fread(&g_vm->_logicMgr->Comb35, sizeof(uint16), 7, fh);
-		fread(&g_vm->_logicMgr->Comb49, sizeof(uint16), 4, fh);
-		fread(&g_vm->_logicMgr->Comb4CT, sizeof(uint16), 6, fh);
-		fread(&g_vm->_logicMgr->Comb58, sizeof(uint16), 6, fh);
-		fread(&g_vm->_wheelPos, sizeof(uint16), 3, fh);
-		fread(&g_vm->_wheel, sizeof(uint16), 1, fh);
-		fread(&g_vm->_logicMgr->Count35, sizeof(uint16), 1, fh);
-		fread(&g_vm->_logicMgr->Count58, sizeof(uint16), 1, fh);
-		fread(&g_vm->_slotMachine41Counter, sizeof(uint16), 1, fh);
-
-		fclose(fh);
-
+		syncSaveData(CurPos, savename[CurPos], false);
+		
 		FlagNoPaintScreen = true;
 		g_vm->_curStack = 0;
 		g_vm->_flagscriptactive = false;

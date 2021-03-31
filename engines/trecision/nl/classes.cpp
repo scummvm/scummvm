@@ -37,7 +37,7 @@ namespace Trecision {
 #define COUNTERSTEP 6
 
 bool ForceQuit = false;
-int NlVer = 102;
+byte NlVer = 102;
 
 /*-------------------------------------------------------------------------*/
 /*                                DOACTION           					   */
