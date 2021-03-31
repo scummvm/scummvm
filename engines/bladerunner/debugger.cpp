@@ -1017,6 +1017,11 @@ bool Debugger::cmdLoad(int argc, const char **argv) {
 		return true;
 	}
 
+	if (fs.isDirectory()) {
+		debugPrintf("Warning: Given path %s is a folder. Please provide a path to a file!\n", argv[1]);
+		return true;
+	}
+
 	Common::SeekableReadStream *saveFile = fs.createReadStream();
 
 	_vm->loadGame(*saveFile);
@@ -1037,6 +1042,11 @@ bool Debugger::cmdSave(int argc, const char **argv) {
 
 	if (fs.exists() && !fs.isWritable()) {
 		debugPrintf("Warning: File %s is not writable\n", argv[1]);
+		return true;
+	}
+
+	if (fs.isDirectory()) {
+		debugPrintf("Warning: Given path %s is a folder. Please provide a path to a file!\n", argv[1]);
 		return true;
 	}
 
