@@ -55,7 +55,7 @@ goto done
 echo.
 echo Creating project files with all engines enabled (stable and unstable)
 echo.
-create_project ..\.. --disable-all-engines --use-canonical-lib-names --msvc --enable-engine=trecision
+create_project ..\.. --enable-all-engines --use-canonical-lib-names --msvc
 goto done
 
 :stable
