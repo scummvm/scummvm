@@ -38,9 +38,9 @@ void actorDoAction(int whatAction) {
 	int len;
 
 	_curStep = 1;
-	float px = _actor._px + _actor._dx;
-	float pz = _actor._pz + _actor._dz;
-	float theta = _actor._theta;
+	float px = g_vm->_actor->_px + g_vm->_actor->_dx;
+	float pz = g_vm->_actor->_pz + g_vm->_actor->_dz;
+	float theta = g_vm->_actor->_theta;
 	int b = 0;
 
 	_step[b]._px = px;
@@ -57,7 +57,7 @@ void actorDoAction(int whatAction) {
 	float ox = cos(t);
 	float oz = sin(t);
 
-	SVertex *v = (SVertex *)_characterArea;
+	SVertex *v = _characterArea;
 	float firstFrame = FRAMECENTER(v);
 
 	if (whatAction > hLAST) {
@@ -68,12 +68,12 @@ void actorDoAction(int whatAction) {
 		int cur = 0;
 		while (cur < whatAction)
 			cfp += _defActionLen[cur++];
-		v = (SVertex *)_characterArea + cfp * _actor._vertexNum;
+		v = &_characterArea[cfp * g_vm->_actor->_vertexNum];
 
 		if (whatAction == hWALKOUT)
-			v = (SVertex *)_characterArea + _actor._vertexNum;
+			v = &_characterArea[g_vm->_actor->_vertexNum];
 		else if (whatAction == hLAST)
-			v = (SVertex *)_characterArea;
+			v = _characterArea;
 
 		len = _defActionLen[whatAction];
 	}
@@ -92,12 +92,12 @@ void actorDoAction(int whatAction) {
 		_step[b]._theta    = theta;
 		_step[b]._curPanel = _curPanel;
 
-		v += _actor._vertexNum;
+		v += g_vm->_actor->_vertexNum;
 
 		if (whatAction > hLAST)
 			v = (SVertex *)((uint8 *)v + 4);
 		else if (whatAction == hLAST)
-			v = (SVertex *)_characterArea;
+			v = _characterArea;
 	}
 
 	_step[b]._px = px;
@@ -125,12 +125,12 @@ void actorDoAction(int whatAction) {
 void actorStop() {
 	int b = 0;
 
-	_step[b]._px = _actor._px + _actor._dx;
-	_step[b]._pz = _actor._pz + _actor._dz;
+	_step[b]._px = g_vm->_actor->_px + g_vm->_actor->_dx;
+	_step[b]._pz = g_vm->_actor->_pz + g_vm->_actor->_dz;
 	_step[b]._dx = 0.0;
 	_step[b]._dz = 0.0;
 
-	_step[b]._theta     = _actor._theta;
+	_step[b]._theta = g_vm->_actor->_theta;
 	_step[b]._curAction = hSTAND;
 	_step[b]._curFrame  = 0;
 	_step[b]._curPanel  = _curPanel;
@@ -147,17 +147,17 @@ void actorStop() {
 void setPosition(int num) {
 	extern SLight *_light;
 
-	_light = _actor._light;
+	_light = g_vm->_actor->_light;
 
-	for (int a = 0; a < _actor._lightNum; a++) {
+	for (int a = 0; a < g_vm->_actor->_lightNum; a++) {
 		// If it's off
 		if (_light->_inten == 0) {
 			// If it's the required position
 			if (_light->_position == num) {
-				_actor._px = _light->_x;
-				_actor._pz = _light->_z;
-				_actor._dx = 0.0;
-				_actor._dz = 0.0;
+				g_vm->_actor->_px = _light->_x;
+				g_vm->_actor->_pz = _light->_z;
+				g_vm->_actor->_dx = 0.0;
+				g_vm->_actor->_dz = 0.0;
 
 				float ox = _light->_dx;
 				float oz = _light->_dz;
@@ -176,19 +176,19 @@ void setPosition(int num) {
 				if (theta < 0.0)
 					theta += 360.0;
 
-				_actor._theta = theta;
+				g_vm->_actor->_theta = theta;
 
 				_curStep = 0;
 				_lastStep = 0;
 				_curPanel = -1;
 				_oldPanel = -1;
 
-				_step[0]._px = _actor._px + _actor._dx;
-				_step[0]._pz = _actor._pz + _actor._dz;
+				_step[0]._px = g_vm->_actor->_px + g_vm->_actor->_dx;
+				_step[0]._pz = g_vm->_actor->_pz + g_vm->_actor->_dz;
 				_step[0]._dx = 0.0;
 				_step[0]._dz = 0.0;
 
-				_step[0]._theta     = _actor._theta;
+				_step[0]._theta = g_vm->_actor->_theta;
 				_step[0]._curAction = hSTAND;
 				_step[0]._curFrame  = 0;
 				_step[0]._curPanel  = _curPanel;
@@ -209,9 +209,9 @@ void goToPosition(int num) {
 	extern SLight *_light;
 	extern float _lookX, _lookZ;
 
-	_light = (SLight *)_actor._light;
+	_light = g_vm->_actor->_light;
 
-	for (int a = 0; a < _actor._lightNum; a++) {
+	for (int a = 0; a < g_vm->_actor->_lightNum; a++) {
 		// If it's off and if it's a position
 		if (_light->_inten == 0) {
 			// If it's the right position
@@ -224,12 +224,12 @@ void goToPosition(int num) {
 				_curStep  = 0;
 				_lastStep = 0;
 
-				_step[0]._px = _actor._px + _actor._dx;
-				_step[0]._pz = _actor._pz + _actor._dz;
+				_step[0]._px = g_vm->_actor->_px + g_vm->_actor->_dx;
+				_step[0]._pz = g_vm->_actor->_pz + g_vm->_actor->_dz;
 				_step[0]._dx = 0.0;
 				_step[0]._dz = 0.0;
 
-				_step[0]._theta     = _actor._theta;
+				_step[0]._theta = g_vm->_actor->_theta;
 				_step[0]._curAction = hSTAND;
 				_step[0]._curFrame  = 0;
 				_step[0]._curPanel  = _curPanel;

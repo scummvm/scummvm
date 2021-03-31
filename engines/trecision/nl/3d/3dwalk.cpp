@@ -43,11 +43,11 @@ int read3D(Common::String c) {
 		CloseSys("Can't open 3D file!\n");
 
 	// read rooms and lights
-	FastFileRead(ff, _actor._camera, sizeof(SCamera));
-	FastFileRead(ff, &_actor._lightNum, 4);
-	FastFileRead(ff, _actor._light, sizeof(SLight) * _actor._lightNum);
+	FastFileRead(ff, g_vm->_actor->_camera, sizeof(SCamera));
+	FastFileRead(ff, &g_vm->_actor->_lightNum, 4);
+	FastFileRead(ff, g_vm->_actor->_light, sizeof(SLight) * g_vm->_actor->_lightNum);
 
-	if (_actor._lightNum > 40)
+	if (g_vm->_actor->_lightNum > 40)
 		CloseSys("Too many lights");
 
 	// read panels
@@ -56,15 +56,15 @@ int read3D(Common::String c) {
 	FastFileClose(ff);
 
 	// projection matrix
-	_proj[0][0] = _actor._camera->_e1[0];
-	_proj[0][1] = _actor._camera->_e1[1];
-	_proj[0][2] = _actor._camera->_e1[2];
-	_proj[1][0] = _actor._camera->_e2[0];
-	_proj[1][1] = _actor._camera->_e2[1];
-	_proj[1][2] = _actor._camera->_e2[2];
-	_proj[2][0] = _actor._camera->_e3[0];
-	_proj[2][1] = _actor._camera->_e3[1];
-	_proj[2][2] = _actor._camera->_e3[2];
+	_proj[0][0] = g_vm->_actor->_camera->_e1[0];
+	_proj[0][1] = g_vm->_actor->_camera->_e1[1];
+	_proj[0][2] = g_vm->_actor->_camera->_e1[2];
+	_proj[1][0] = g_vm->_actor->_camera->_e2[0];
+	_proj[1][1] = g_vm->_actor->_camera->_e2[1];
+	_proj[1][2] = g_vm->_actor->_camera->_e2[2];
+	_proj[2][0] = g_vm->_actor->_camera->_e3[0];
+	_proj[2][1] = g_vm->_actor->_camera->_e3[1];
+	_proj[2][2] = g_vm->_actor->_camera->_e3[2];
 
 	// Compute 3x3 inverse matrix for 2D points on 3D
 	float det = _proj[0][0] * _proj[1][1] * _proj[2][2] +
@@ -112,8 +112,8 @@ int read3D(Common::String c) {
 void findPath() {
 	int b;
 
-	_actor._px += _actor._dx;
-	_actor._pz += _actor._dz;
+	g_vm->_actor->_px += g_vm->_actor->_dx;
+	g_vm->_actor->_pz += g_vm->_actor->_dz;
 
 	int inters = 0;
 	_numPathNodes = 0;
@@ -123,35 +123,35 @@ void findPath() {
 			// behind the starting panel
 			((pointInside(b = _oldPanel, (double)_curX, (double)_curZ)) ||
 			 // behind the panel corner1
-			 ((distF(_panel[_oldPanel]._x1, _panel[_oldPanel]._z1, _actor._px, _actor._pz) < EPSILON) &&
+		 ((distF(_panel[_oldPanel]._x1, _panel[_oldPanel]._z1, g_vm->_actor->_px, g_vm->_actor->_pz) < EPSILON) &&
 			  (pointInside(b = _panel[_oldPanel]._near1, (double)_curX, (double)_curZ) ||
 			   pointInside(b = _panel[_oldPanel]._near2, (double)_curX, (double)_curZ))) ||
 			 // behind the panel corner2
-			 ((distF(_panel[_oldPanel]._x2, _panel[_oldPanel]._z2, _actor._px, _actor._pz) < EPSILON) &&
+		 ((distF(_panel[_oldPanel]._x2, _panel[_oldPanel]._z2, g_vm->_actor->_px, g_vm->_actor->_pz) < EPSILON) &&
 			  (pointInside(b = _panel[_oldPanel]._near2, (double)_curX, (double)_curZ) ||
 			   pointInside(b = _panel[_oldPanel]._near1, (double)_curX, (double)_curZ))))) {
-		_curX = _actor._px;
-		_curZ = _actor._pz;
-		_actor._px -= _actor._dx;
-		_actor._pz -= _actor._dz;
+		_curX = g_vm->_actor->_px;
+		_curZ = g_vm->_actor->_pz;
+		g_vm->_actor->_px -= g_vm->_actor->_dx;
+		g_vm->_actor->_pz -= g_vm->_actor->_dz;
 		_curPanel = b;
 		_numPathNodes = 0;
 		lookAt(_lookX, _lookZ);
 		return ;
 	}
 
-	float dist = distF(_actor._px, _actor._pz, _curX, _curZ);
+	float dist = distF(g_vm->_actor->_px, g_vm->_actor->_pz, _curX, _curZ);
 
 	for (b = 0; b < _panelNum; b++) {
 		if (_panel[b]._flags & 0x80000000) {       // it must be a wide panel
 			if (intersectLineLine(_panel[b]._x1, _panel[b]._z1,
 								  _panel[b]._x2, _panel[b]._z2,
-								  _actor._px, _actor._pz, _curX, _curZ)) {
+								  g_vm->_actor->_px, g_vm->_actor->_pz, _curX, _curZ)) {
 				inters++;
 
 				_pathNode[_numPathNodes]._x    = _x3d;
 				_pathNode[_numPathNodes]._z    = _z3d;
-				_pathNode[_numPathNodes]._dist = distF(_actor._px, _actor._pz, _x3d, _z3d);
+				_pathNode[_numPathNodes]._dist = distF(g_vm->_actor->_px, g_vm->_actor->_pz, _x3d, _z3d);
 				_pathNode[_numPathNodes]._oldp = b;
 				_pathNode[_numPathNodes]._curp = b;
 				_numPathNodes++;
@@ -167,10 +167,10 @@ void findPath() {
 
 						// If the click is inside the nearby panel
 						if ((_curPanel < 0) && (pointInside(b, (double)_curX, (double)_curZ))) {
-							_curX = _actor._px;
-							_curZ = _actor._pz;
-							_actor._px -= _actor._dx;
-							_actor._pz -= _actor._dz;
+							_curX = g_vm->_actor->_px;
+							_curZ = g_vm->_actor->_pz;
+							g_vm->_actor->_px -= g_vm->_actor->_dx;
+							g_vm->_actor->_pz -= g_vm->_actor->_dz;
 
 							_curPanel = b;
 							lookAt(_lookX, _lookZ);
@@ -191,8 +191,8 @@ void findPath() {
 				// always adds start and finish node only in on a panel
 				inters++;
 
-				_pathNode[_numPathNodes]._x    = _actor._px;
-				_pathNode[_numPathNodes]._z    = _actor._pz;
+				_pathNode[_numPathNodes]._x = g_vm->_actor->_px;
+				_pathNode[_numPathNodes]._z = g_vm->_actor->_pz;
 				_pathNode[_numPathNodes]._dist = 0.0;
 				_pathNode[_numPathNodes]._oldp = _oldPanel;
 				_pathNode[_numPathNodes]._curp = _oldPanel;
@@ -310,7 +310,7 @@ void findPath() {
 
 		_pathNode[_numPathNodes]._x    = _curX;
 		_pathNode[_numPathNodes]._z    = _curZ;
-		_pathNode[_numPathNodes]._dist = distF(_actor._px, _actor._pz, _curX, _curZ);
+		_pathNode[_numPathNodes]._dist = distF(g_vm->_actor->_px, g_vm->_actor->_pz, _curX, _curZ);
 		_pathNode[_numPathNodes]._oldp = _curPanel;
 		_pathNode[_numPathNodes]._curp = _curPanel;
 		_numPathNodes ++;
@@ -318,8 +318,8 @@ void findPath() {
 		findShortPath();
 		displayPath();
 	} else {     // otherwise if it's direct
-		_pathNode[_numPathNodes]._x    = _actor._px;
-		_pathNode[_numPathNodes]._z    = _actor._pz;
+		_pathNode[_numPathNodes]._x = g_vm->_actor->_px;
+		_pathNode[_numPathNodes]._z = g_vm->_actor->_pz;
 		_pathNode[_numPathNodes]._dist = 0.0;
 		_pathNode[_numPathNodes]._oldp = _oldPanel;
 		_pathNode[_numPathNodes]._curp = _oldPanel;
@@ -327,7 +327,7 @@ void findPath() {
 
 		_pathNode[_numPathNodes]._x    = _curX;
 		_pathNode[_numPathNodes]._z    = _curZ;
-		_pathNode[_numPathNodes]._dist = distF(_actor._px, _actor._pz, _curX, _curZ);
+		_pathNode[_numPathNodes]._dist = distF(g_vm->_actor->_px, g_vm->_actor->_pz, _curX, _curZ);
 		_pathNode[_numPathNodes]._oldp = _curPanel;
 		_pathNode[_numPathNodes]._curp = _curPanel;
 		_numPathNodes++;
@@ -335,8 +335,8 @@ void findPath() {
 		displayPath();
 	}
 
-	_actor._px -= _actor._dx;
-	_actor._pz -= _actor._dz;
+	g_vm->_actor->_px -= g_vm->_actor->_dx;
+	g_vm->_actor->_pz -= g_vm->_actor->_dz;
 }
 /*------------------------------------------------
   Look for the shorter route avoiding obstacle
@@ -350,8 +350,8 @@ void findShortPath() {
 
 	int count = 0;
 	// Add departure
-	TempPath[count]._x = _actor._px;
-	TempPath[count]._z = _actor._pz;
+	TempPath[count]._x = g_vm->_actor->_px;
+	TempPath[count]._z = g_vm->_actor->_pz;
 	TempPath[count]._dist = 0.0;
 	TempPath[count]._oldp = _oldPanel;
 	TempPath[count]._curp = _oldPanel;
@@ -634,14 +634,9 @@ float evalPath(int a, float destX, float destZ, int nearP) {
 		Build list containing all the frames
 --------------------------------------------------*/
 void buildFramelist() {
-	int a, b, c, CurA, CurF, cfp;
-	float ox, oz, cx, cz;
-	float startpos, approx, theta = 0.0, oldtheta, firstframe;
-	SVertex *v;
-
 	// controlla che in nessun caso attraversi o sfiori un pannello stretto
-	for (a = 1; a < _numPathNodes; a++) {
-		for (c = 0; c < _panelNum; c++) {
+	for (int a = 1; a < _numPathNodes; a++) {
+		for (int c = 0; c < _panelNum; c++) {
 			// non deve intersecare pannello stretto mai
 			if (!(_panel[c]._flags & 0x80000000)) {
 				if (intersectLineLine(_panel[c]._x1, _panel[c]._z1,
@@ -658,10 +653,10 @@ void buildFramelist() {
 	float len    = 0.0;
 	float curlen = 0.0;
 
-	ox = _pathNode[0]._x;
-	oz = _pathNode[0]._z;
+	float ox = _pathNode[0]._x;
+	float oz = _pathNode[0]._z;
 
-	for (a = 1; a < _numPathNodes; a++) {
+	for (int a = 1; a < _numPathNodes; a++) {
 		len += dist3D(_pathNode[a]._x, 0.0, _pathNode[a]._z, ox, 0.0, oz);
 
 		ox = _pathNode[a]._x;
@@ -673,37 +668,38 @@ void buildFramelist() {
 		return;
 	}
 
-	a = 0;
-	// calcola offset
-	v = (SVertex *)_characterArea;
-	firstframe = FRAMECENTER(v);
-	startpos = 0.0;
+	int a = 0;
+	// compute offset
+	SVertex *v = _characterArea;
+	float firstframe = FRAMECENTER(v);
+	float startpos = 0.0;
 
 	// se stava gia' camminando
-	if (_actor._curAction == hWALK) {
+	int CurA, CurF, cfp;
+	if (g_vm->_actor->_curAction == hWALK) {
 		// calcola frame attuale
-		cfp = _defActionLen[hSTART] + 1 + _actor._curFrame;
-		v += cfp * _actor._vertexNum;
+		cfp = _defActionLen[hSTART] + 1 + g_vm->_actor->_curFrame;
+		v += cfp * g_vm->_actor->_vertexNum;
 
 		CurA = hWALK;
-		CurF = _actor._curFrame;
+		CurF = g_vm->_actor->_curFrame;
 
 		// se non era all'ultimo frame fa il passo dodpo
-		if (_actor._curFrame < _defActionLen[hWALK] - 1) {
-			cfp ++;
-			CurF ++;
-			v += _actor._vertexNum;
+		if (g_vm->_actor->_curFrame < _defActionLen[hWALK] - 1) {
+			cfp++;
+			CurF++;
+			v += g_vm->_actor->_vertexNum;
 		}
 	}
 	// se era in stop riparte
-	else if ((_actor._curAction >= hSTOP0) && (_actor._curAction <= hSTOP9)) {
+	else if ((g_vm->_actor->_curAction >= hSTOP0) && (g_vm->_actor->_curAction <= hSTOP9)) {
 		// calcola frame attuale
 		CurA = hWALK;
-//o		CurF = _actor._curAction - hSTOP1;
-		CurF = _actor._curAction - hSTOP0;
+//o		CurF = g_vm->_actor->_curAction - hSTOP1;
+		CurF = g_vm->_actor->_curAction - hSTOP0;
 
 		cfp = _defActionLen[hSTART] + 1 + CurF;
-		v += cfp * _actor._vertexNum;
+		v += cfp * g_vm->_actor->_vertexNum;
 	}
 	// se era fermo, partiva o girava riparte da stand
 	else {
@@ -714,19 +710,19 @@ void buildFramelist() {
 		CurF = 0;
 
 		// parte dal primo frame
-		v += _actor._vertexNum;
+		v += g_vm->_actor->_vertexNum;
 	}
 	oz   =  - FRAMECENTER(v) + firstframe;
 
-	// finche' non arrivo al punto destinazione
+	// until it arrives at the destination
 	while (((curlen = oz + FRAMECENTER(v) - firstframe) < len) || (!a)) {
-		_step[a]._pz = oz - firstframe;		// dove renderizzare
-		_step[a]._dz = curlen;			// dove si trova
+		_step[a]._pz = oz - firstframe;	// where to render
+		_step[a]._dz = curlen;			// where it is
 		_step[a]._curAction = CurA;
 		_step[a]._curFrame  = CurF;
 
 		a ++;
-		v += _actor._vertexNum;
+		v += g_vm->_actor->_vertexNum;
 
 		CurF++;
 		cfp ++;
@@ -743,19 +739,17 @@ void buildFramelist() {
 				CurF = 0;
 				cfp  = _defActionLen[hSTART] + 1;
 
-				// frame fine camminata
+				// end walk frame
 				ox = FRAMECENTER(v) - firstframe;
 
-				v = (SVertex *)_characterArea;
-				v += cfp * _actor._vertexNum;
+				v = &_characterArea[cfp * g_vm->_actor->_vertexNum];
 				ox -= FRAMECENTER(v);
 
 			}
 
-			v = (SVertex *)_characterArea;
-			v += cfp * _actor._vertexNum;
+			v = &_characterArea[cfp * g_vm->_actor->_vertexNum];
 
-			// solo se non finisce
+			// only if it doesn't end
 			if ((oz + ox + FRAMECENTER(v) - firstframe) < len)
 				oz += ox;
 			else
@@ -777,13 +771,12 @@ void buildFramelist() {
 
 	CurF  = 0;
 
-	b = 0;
+	int b = 0;
 	cfp = 0;
 	while (b != CurA)
 		cfp += _defActionLen[b++];
 
-	v = (SVertex *)_characterArea;
-	v += cfp * _actor._vertexNum;
+	v = &_characterArea[cfp * g_vm->_actor->_vertexNum];
 
 	for (b = 0; b < _defActionLen[CurA]; b++) {
 		curlen = oz + FRAMECENTER(v) - firstframe;
@@ -794,11 +787,12 @@ void buildFramelist() {
 
 		a ++;
 		CurF ++;
-		v += _actor._vertexNum;
+		v += g_vm->_actor->_vertexNum;
 	}
 
 	// di quanto ha sbagliato?
-	approx = (len - curlen - EPSILON) / (a - 2);
+	float approx = (len - curlen - EPSILON) / (a - 2);
+	float theta = 0.0;
 	// riaggiusta tutti i passi di modo che arrivi nel pto esatto cliccato
 	for (b = 1; b < a; b++) {
 		// controlla che non inverta passi
@@ -811,7 +805,7 @@ void buildFramelist() {
 			_step[b]._dz += (approx * b);
 		}
 	}
-	cx = _step[b - 1]._dz;
+	float cx = _step[b - 1]._dz;
 
 	_lastStep = b;		// ultimo step
 	_curStep  = 0;		// step attuale
@@ -822,7 +816,7 @@ void buildFramelist() {
 
 	len = 0.0;
 	startpos = 0.0;
-	oldtheta = -1.0;
+	float oldtheta = -1.0;
 	for (a = 0; a < _numPathNodes - 1; a++) {
 		curlen = 0.0;
 		len   += dist3D(_pathNode[a]._x, 0.0, _pathNode[a]._z,
@@ -876,7 +870,7 @@ void buildFramelist() {
 	_curStep  = 0;		// step attuale
 
 	// angolo di partenza
-	oldtheta = _actor._theta;
+	oldtheta = g_vm->_actor->_theta;
 	// primo angolo camminata
 	theta    = _step[0]._theta;
 
@@ -904,7 +898,7 @@ void buildFramelist() {
 			oz = sin(theta) * curlen;
 
 			cx = _step[b]._px + _step[b]._dx;
-			cz = _step[b]._pz + _step[b]._dz;
+			float cz = _step[b]._pz + _step[b]._dz;
 
 			_step[b]._px += _step[b]._dx - ox;
 			_step[b]._pz += _step[b]._dz - oz;
@@ -944,7 +938,7 @@ void buildFramelist() {
 			oz = sin(oldtheta) * curlen;
 
 			cx = _step[b - 1]._px + _step[b - 1]._dx;
-			cz = _step[b - 1]._pz + _step[b - 1]._dz;
+			float cz = _step[b - 1]._pz + _step[b - 1]._dz;
 
 			_step[b - 1]._px += _step[b - 1]._dx - ox;
 			_step[b - 1]._pz += _step[b - 1]._dz - oz;
@@ -985,14 +979,14 @@ void buildFramelist() {
 			Prende prossimo frame camminata
 --------------------------------------------------*/
 int nextStep() {
-	_actor._px        = _step[_curStep]._px;
-	_actor._pz        = _step[_curStep]._pz;
-	_actor._dx        = _step[_curStep]._dx;
-	_actor._dz        = _step[_curStep]._dz;
-	_actor._theta     = _step[_curStep]._theta;
-	_actor._curAction = _step[_curStep]._curAction;
-	_actor._curFrame  = _step[_curStep]._curFrame;
-	_curPanel      = _step[_curStep]._curPanel;
+	g_vm->_actor->_px = _step[_curStep]._px;
+	g_vm->_actor->_pz = _step[_curStep]._pz;
+	g_vm->_actor->_dx = _step[_curStep]._dx;
+	g_vm->_actor->_dz = _step[_curStep]._dz;
+	g_vm->_actor->_theta = _step[_curStep]._theta;
+	g_vm->_actor->_curAction = _step[_curStep]._curAction;
+	g_vm->_actor->_curFrame = _step[_curStep]._curFrame;
+	_curPanel = _step[_curStep]._curPanel;
 	// avanza solo se non e' ultimo frame
 	if (_curStep < _lastStep) {
 		_curStep ++;
@@ -1230,8 +1224,8 @@ void putPix(int x, int y, uint16 c) {
 void whereIs(int px, int py) {
 	float inters = 32000.0;
 
-	_actor._px += _actor._dx;
-	_actor._pz += _actor._dz;
+	g_vm->_actor->_px += g_vm->_actor->_dx;
+	g_vm->_actor->_pz += g_vm->_actor->_dz;
 
 	_oldPanel = _curPanel;
 	_curPanel = -2;
@@ -1251,7 +1245,7 @@ void whereIs(int px, int py) {
 	// try all the panels and choose the closest one
 	for (int b = 0; b < _panelNum; b++) {
 		if (intersectLinePanel(&_panel[b], x, y, z)) {
-			float temp = dist3D(_actor._camera->_ex, _actor._camera->_ey, _actor._camera->_ez, _x3d, _y3d, _z3d);
+			float temp = dist3D(g_vm->_actor->_camera->_ex, g_vm->_actor->_camera->_ey, g_vm->_actor->_camera->_ez, _x3d, _y3d, _z3d);
 
 			if (temp < inters) {
 				inters = temp;
@@ -1267,8 +1261,8 @@ void whereIs(int px, int py) {
 
 	pointOut();
 
-	_actor._px -= _actor._dx;
-	_actor._pz -= _actor._dz;
+	g_vm->_actor->_px -= g_vm->_actor->_dx;
+	g_vm->_actor->_pz -= g_vm->_actor->_dz;
 }
 
 /*------------------------------------------------
@@ -1337,7 +1331,7 @@ void pointOut() {
 			}
 
 			// check intersection with camera
-			if (intersectLineLine(_panel[b]._x1, _panel[b]._z1, _panel[b]._x2, _panel[b]._z2, _actor._camera->_ex, _actor._camera->_ez, _curX, _curZ)) {
+			if (intersectLineLine(_panel[b]._x1, _panel[b]._z1, _panel[b]._x2, _panel[b]._z2, g_vm->_actor->_camera->_ex, g_vm->_actor->_camera->_ez, _curX, _curZ)) {
 				temp = distF(_curX, _curZ, _x3d, _z3d);
 
 				if (temp < inters) {
@@ -1351,7 +1345,7 @@ void pointOut() {
 			// check intersection with character
 			if (intersectLineLine(_panel[b]._x1, _panel[b]._z1,
 								  _panel[b]._x2, _panel[b]._z2,
-								  _actor._px, _actor._pz, _curX, _curZ)) {
+								  g_vm->_actor->_px, g_vm->_actor->_pz, _curX, _curZ)) {
 				temp = distF(_curX, _curZ, _x3d, _z3d);
 
 				if (temp < inters) {
@@ -1498,32 +1492,32 @@ void viewPanel(SPan *p) {
 		Projects 3D point on 2D screen
 --------------------------------------------------*/
 void pointProject(float x, float y, float z) {
-	float pa0 = _actor._camera->_ex - x;
-	float pa1 = _actor._camera->_ey - y;
-	float pa2 = _actor._camera->_ez - z;
+	float pa0 = g_vm->_actor->_camera->_ex - x;
+	float pa1 = g_vm->_actor->_camera->_ey - y;
+	float pa2 = g_vm->_actor->_camera->_ez - z;
 
 	float p0 = pa0 * _proj[0][0] + pa1 * _proj[0][1] + pa2 * _proj[0][2];
 	float p1 = pa0 * _proj[1][0] + pa1 * _proj[1][1] + pa2 * _proj[1][2];
 	float p2 = pa0 * _proj[2][0] + pa1 * _proj[2][1] + pa2 * _proj[2][2];
 
-	_x2d = _cx + (int)((p0 * _actor._camera->_fovX) / p2);
-	_y2d = _cy + (int)((p1 * _actor._camera->_fovY) / p2);
+	_x2d = _cx + (int)((p0 * g_vm->_actor->_camera->_fovX) / p2);
+	_y2d = _cy + (int)((p1 * g_vm->_actor->_camera->_fovY) / p2);
 }
 
 /*------------------------------------------------
 		Projects 2D point in a 3D world
 --------------------------------------------------*/
 void invPointProject(int x, int y) {
-	float px = (float)(x - _cx) / _actor._camera->_fovX;
-	float py = (float)(y - _cy) / _actor._camera->_fovY;
+	float px = (float)(x - _cx) / g_vm->_actor->_camera->_fovX;
+	float py = (float)(y - _cy) / g_vm->_actor->_camera->_fovY;
 
 	_x3d = (float)(px * _invP[0][0] + py * _invP[0][1] + _invP[0][2]);
 	_y3d = (float)(px * _invP[1][0] + py * _invP[1][1] + _invP[1][2]);
 	_z3d = (float)(px * _invP[2][0] + py * _invP[2][1] + _invP[2][2]);
 
-	_x3d += _actor._camera->_ex;
-	_y3d += _actor._camera->_ey;
-	_z3d += _actor._camera->_ez;
+	_x3d += g_vm->_actor->_camera->_ex;
+	_y3d += g_vm->_actor->_camera->_ey;
+	_z3d += g_vm->_actor->_camera->_ez;
 }
 
 /*------------------------------------------------
@@ -1534,9 +1528,9 @@ int intersectLinePanel(SPan *p, float x, float y, float z) {
 	if (p->_flags & 0x80000000)
 		return false;
 
-	float x1 = _actor._camera->_ex;
-	float y1 = _actor._camera->_ey;
-	float z1 = _actor._camera->_ez;
+	float x1 = g_vm->_actor->_camera->_ex;
+	float y1 = g_vm->_actor->_camera->_ey;
+	float z1 = g_vm->_actor->_camera->_ez;
 
 	float dx = (x - x1);
 	float dy = (y - y1);
@@ -1586,9 +1580,9 @@ int intersectLinePanel(SPan *p, float x, float y, float z) {
 		Intersects 3D line with the floor
 --------------------------------------------------*/
 int intersectLineFloor(float x, float y, float z) {
-	float x1 = _actor._camera->_ex;
-	float y1 = _actor._camera->_ey;
-	float z1 = _actor._camera->_ez;
+	float x1 = g_vm->_actor->_camera->_ex;
+	float y1 = g_vm->_actor->_camera->_ey;
+	float z1 = g_vm->_actor->_camera->_ez;
 
 	float dx = (x - x1);
 	float dy = (y - y1);
@@ -1660,10 +1654,8 @@ void initSortPan() {
 	// Sort panel blocks by increasing distance from the camera
 	for (b = 0; b < _panelNum; b++) {
 		if (!(_panel[b]._flags & 0x80000000)) {
-			float dist1 = dist3D(_actor._camera->_ex, 0.0, _actor._camera->_ez,
-								 _panel[b]._x1, 0.0, _panel[b]._z1);
-			float dist2 = dist3D(_actor._camera->_ex, 0.0, _actor._camera->_ez,
-								 _panel[b]._x2, 0.0, _panel[b]._z2);
+			float dist1 = dist3D(g_vm->_actor->_camera->_ex, 0.0, g_vm->_actor->_camera->_ez, _panel[b]._x1, 0.0, _panel[b]._z1);
+			float dist2 = dist3D(g_vm->_actor->_camera->_ex, 0.0, g_vm->_actor->_camera->_ez, _panel[b]._x2, 0.0, _panel[b]._z2);
 
 			float min = MIN(dist1, dist2);
 
@@ -1720,14 +1712,14 @@ void actorOrder() {
 		return ;
 	}
 
-	float ox = _actor._px + _actor._dx - _actor._camera->_ex;
-	float oz = _actor._pz + _actor._dz - _actor._camera->_ez;
+	float ox = g_vm->_actor->_px + g_vm->_actor->_dx - g_vm->_actor->_camera->_ex;
+	float oz = g_vm->_actor->_pz + g_vm->_actor->_dz - g_vm->_actor->_camera->_ez;
 	float dist = sqrt(ox * ox + oz * oz);
 	float lx = (-oz / dist) * LARGEVAL;
 	float lz = (ox / dist) * LARGEVAL;
 
-	ox = _actor._px + _actor._dx;
-	oz = _actor._pz + _actor._dz;
+	ox = g_vm->_actor->_px + g_vm->_actor->_dx;
+	oz = g_vm->_actor->_pz + g_vm->_actor->_dz;
 
 	// It must be copied in front of the nearest box
 	_actorPos = _sortPan[1]._num;
@@ -1737,9 +1729,9 @@ void actorOrder() {
 			// If it's not wide and belongs to this level
 			if (!(_panel[a]._flags & 0x80000000) && (_panel[a]._flags & (1 << (_sortPan[b]._num - 1)))) {
 				// If it intersects the center of the character camera
-				if (intersectLineLine(_panel[a]._x1, _panel[a]._z1, _panel[a]._x2, _panel[a]._z2, _actor._camera->_ex, _actor._camera->_ez, ox, oz)
-						|| intersectLineLine(_panel[a]._x1, _panel[a]._z1, _panel[a]._x2, _panel[a]._z2, _actor._camera->_ex, _actor._camera->_ez, ox + lx, oz + lz)
-						|| intersectLineLine(_panel[a]._x1, _panel[a]._z1, _panel[a]._x2, _panel[a]._z2, _actor._camera->_ex, _actor._camera->_ez, ox - lx, oz - lz)) {
+				if (intersectLineLine(_panel[a]._x1, _panel[a]._z1, _panel[a]._x2, _panel[a]._z2, g_vm->_actor->_camera->_ex, g_vm->_actor->_camera->_ez, ox, oz)
+				|| intersectLineLine(_panel[a]._x1, _panel[a]._z1, _panel[a]._x2, _panel[a]._z2, g_vm->_actor->_camera->_ex, g_vm->_actor->_camera->_ez, ox + lx, oz + lz)
+				|| intersectLineLine(_panel[a]._x1, _panel[a]._z1, _panel[a]._x2, _panel[a]._z2, g_vm->_actor->_camera->_ex, g_vm->_actor->_camera->_ez, ox - lx, oz - lz)) {
 					// If it intersects it must be copied after the next box
 					_actorPos = _sortPan[b + 1]._num;
 				}

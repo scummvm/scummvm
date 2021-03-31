@@ -26,6 +26,7 @@
 #include "engines/engine.h"
 #include "common/keyboard.h"
 #include "graphics/pixelformat.h"
+#include "nl/3d/3dinc.h"
 
 #include "trecision/nl/struct.h"
 #include "trecision/nl/ll/llinc.h"
@@ -199,6 +200,8 @@ public:
 	uint8 *TextureArea;
 	uint16 *Icone;
 	int16 *ZBuffer;
+
+	SActor *_actor;
 };
 
 extern TrecisionEngine *g_vm;

@@ -41,6 +41,7 @@
 #define MAXSYSTEXT	30
 
 #define MAXFILEREF		5000
+#include "trecision/nl/3d/3drend.h"
 
 namespace Common {
 class SeekableReadStream;
@@ -109,7 +110,7 @@ extern uint16 _actionPosition[];
 // DATA POINTER
 extern uint8 *TextArea;
 // 3D AREA
-extern uint8 *_characterArea;
+extern SVertex *_characterArea;
 extern uint8 *BaseHeadTexture;
 extern uint8 AddObjectMaterial;
 // MEMORY

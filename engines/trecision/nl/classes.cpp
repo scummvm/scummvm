@@ -222,9 +222,9 @@ void doMouse() {
 			Flagskiptalk = Flagskipenable;
 			break;
 		}
-		if (_actor._curAction > hWALKIN)
+		if (g_vm->_actor->_curAction > hWALKIN)
 			break;
-		if (FlagWalkNoInterrupt && (_actor._curAction != hSTAND))
+		if (FlagWalkNoInterrupt && (g_vm->_actor->_curAction != hSTAND))
 			break;
 
 		if ((FlagDialogActive) && (FlagDialogMenuActive)) {
@@ -831,7 +831,8 @@ void doIdle() {
 		if (FlagDialogActive) {
 			if (g_vm->_animMgr->_fullMotionEnd != g_vm->_animMgr->_curAnimFrame[1])
 				g_vm->_animMgr->_fullMotionEnd = g_vm->_animMgr->_curAnimFrame[1] + 1;
-		} else if (!FlagSomeOneSpeak && !g_vm->_flagscriptactive && !FlagDialogActive && !FlagDialogMenuActive && (_actor._curAction < hWALKIN) && !FlagUseWithStarted && g_vm->_animMgr->_playingAnims[1] == 0 && FlagShowCharacter) {
+		} else if (!FlagSomeOneSpeak && !g_vm->_flagscriptactive && !FlagDialogActive && !FlagDialogMenuActive
+		&& (g_vm->_actor->_curAction < hWALKIN) && !FlagUseWithStarted && g_vm->_animMgr->_playingAnims[1] == 0 && FlagShowCharacter) {
 			actorStop();
 			nextStep();
 			Mouse(MCMD_ON);
@@ -846,7 +847,8 @@ void doIdle() {
 
 	// Sys
 	case 0x3B:
-		if (!FlagSomeOneSpeak && !g_vm->_flagscriptactive && !FlagDialogActive && !FlagDialogMenuActive && (_actor._curAction < hWALKIN) && !FlagUseWithStarted && g_vm->_animMgr->_playingAnims[1] == 0 && FlagShowCharacter) {
+		if (!FlagSomeOneSpeak && !g_vm->_flagscriptactive && !FlagDialogActive && !FlagDialogMenuActive
+		&& (g_vm->_actor->_curAction < hWALKIN) && !FlagUseWithStarted && g_vm->_animMgr->_playingAnims[1] == 0 && FlagShowCharacter) {
 			actorStop();
 			nextStep();
 			Mouse(MCMD_ON);
@@ -861,7 +863,8 @@ void doIdle() {
 
 	// Save
 	case 0x3C:
-		if (!FlagSomeOneSpeak && !g_vm->_flagscriptactive && !FlagDialogActive && !FlagDialogMenuActive && (_actor._curAction < hWALKIN) && !FlagUseWithStarted && g_vm->_animMgr->_playingAnims[1] == 0 && FlagShowCharacter) {
+		if (!FlagSomeOneSpeak && !g_vm->_flagscriptactive && !FlagDialogActive && !FlagDialogMenuActive
+		&& (g_vm->_actor->_curAction < hWALKIN) && !FlagUseWithStarted && g_vm->_animMgr->_playingAnims[1] == 0 && FlagShowCharacter) {
 			IconSnapShot();
 			DataSave();
 			g_vm->showInventoryName(NO_OBJECTS, false);
@@ -872,7 +875,8 @@ void doIdle() {
 
 	// Load
 	case 0x3D:
-		if (!FlagSomeOneSpeak && !g_vm->_flagscriptactive && !FlagDialogActive && !FlagDialogMenuActive && (_actor._curAction < hWALKIN) && !FlagUseWithStarted && g_vm->_animMgr->_playingAnims[1] == 0 && FlagShowCharacter) {
+		if (!FlagSomeOneSpeak && !g_vm->_flagscriptactive && !FlagDialogActive && !FlagDialogMenuActive
+		&& (g_vm->_actor->_curAction < hWALKIN) && !FlagUseWithStarted && g_vm->_animMgr->_playingAnims[1] == 0 && FlagShowCharacter) {
 			IconSnapShot();
 			if (!DataLoad()) {
 				g_vm->showInventoryName(NO_OBJECTS, false);

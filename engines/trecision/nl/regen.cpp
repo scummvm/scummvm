@@ -73,10 +73,10 @@ void PaintScreen(uint8 flag) {
 		DObj.y    = TOP;
 		DObj.dx   = SCREENLEN;
 		DObj.dy   = AREA;
-		DObj.l[0] = _actor._lim[0];
-		DObj.l[1] = _actor._lim[2] - TOP;
-		DObj.l[2] = _actor._lim[1];
-		DObj.l[3] = _actor._lim[3] - TOP;
+		DObj.l[0] = g_vm->_actor->_lim[0];
+		DObj.l[1] = g_vm->_actor->_lim[2] - TOP;
+		DObj.l[2] = g_vm->_actor->_lim[1];
+		DObj.l[3] = g_vm->_actor->_lim[3] - TOP;
 		DObj.buf  = ImagePointer;
 		DObj.flag = COPYTORAM;
 		DrawObj(DObj);
@@ -229,7 +229,7 @@ void PaintScreen(uint8 flag) {
 		TextStatus = TEXT_DRAW;                 // Activate text update
 	}
 
-	SoundPasso((_actor._lim[1] + _actor._lim[0]) / 2, (_actor._lim[5] + _actor._lim[4]) / 2, _actor._curAction, _actor._curFrame, g_vm->_room[g_vm->_curRoom]._sounds);
+	SoundPasso((g_vm->_actor->_lim[1] + g_vm->_actor->_lim[0]) / 2, (g_vm->_actor->_lim[5] + g_vm->_actor->_lim[4]) / 2, g_vm->_actor->_curAction, g_vm->_actor->_curFrame, g_vm->_room[g_vm->_curRoom]._sounds);
 
 #if USE_DIRTY_RECTS
 	for (int liv = 0; liv < g_vm->_limitsNum; liv++) {
@@ -458,19 +458,19 @@ void PaintObjAnm(uint16 CurBox) {
 		drawCharacter(CALCPOINTS);
 
 		// enlarge the rectangle of the character
-		if (g_vm->_limits[g_vm->_actorLimit][0] > _actor._lim[0])
-			g_vm->_limits[g_vm->_actorLimit][0] = _actor._lim[0];
+		if (g_vm->_limits[g_vm->_actorLimit][0] > g_vm->_actor->_lim[0])
+			g_vm->_limits[g_vm->_actorLimit][0] = g_vm->_actor->_lim[0];
 
-		if (g_vm->_limits[g_vm->_actorLimit][1] > _actor._lim[2])
-			g_vm->_limits[g_vm->_actorLimit][1] = _actor._lim[2];
+		if (g_vm->_limits[g_vm->_actorLimit][1] > g_vm->_actor->_lim[2])
+			g_vm->_limits[g_vm->_actorLimit][1] = g_vm->_actor->_lim[2];
 
-		if (g_vm->_limits[g_vm->_actorLimit][2] < _actor._lim[1])
-			g_vm->_limits[g_vm->_actorLimit][2] = _actor._lim[1];
+		if (g_vm->_limits[g_vm->_actorLimit][2] < g_vm->_actor->_lim[1])
+			g_vm->_limits[g_vm->_actorLimit][2] = g_vm->_actor->_lim[1];
 
-		if (g_vm->_limits[g_vm->_actorLimit][3] < _actor._lim[3])
-			g_vm->_limits[g_vm->_actorLimit][3] = _actor._lim[3];
+		if (g_vm->_limits[g_vm->_actorLimit][3] < g_vm->_actor->_lim[3])
+			g_vm->_limits[g_vm->_actorLimit][3] = g_vm->_actor->_lim[3];
 
-		resetZBuffer(_actor._lim[0], _actor._lim[2], _actor._lim[1], _actor._lim[3]);
+		resetZBuffer(g_vm->_actor->_lim[0], g_vm->_actor->_lim[2], g_vm->_actor->_lim[1], g_vm->_actor->_lim[3]);
 		drawCharacter(DRAWFACES);
 
 		//FlagPaintCharacter = false;

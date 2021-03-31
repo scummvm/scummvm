@@ -57,7 +57,7 @@ uint8 *SpeechBuf[2];
 uint16 *ExtraObj2C;
 uint16 *ExtraObj41D;
 // 3D AREA
-uint8 *_characterArea;
+SVertex *_characterArea;
 // MEMORY
 uint32 GameBytePointer;
 uint32 GameWordPointer;
@@ -193,15 +193,17 @@ void OpenVideo() {
 	FTexture[hh]._palette = nullptr;
 	FTexture[hh]._flag = TEXTUREACTIVE + TEXTURECYLIND;
 
-	_characterArea = (uint8 *)(MemoryArea + GameBytePointer);
-	GameBytePointer += ReadActor("jm.om", (uint8 *)_characterArea);
+	delete g_vm->_actor;
+	g_vm->_actor = new SActor(g_vm);
 
-	_actor._vertexNum = VertexNum;
-	_actor._faceNum = FaceNum;
-	_actor._light = (SLight *)&VLight;
-	_actor._lightNum = LightNum;
-	_actor._camera = (SCamera *)&FCamera;
-	_actor._texture = (STexture *)&FTexture[0];
+	ReadActor("jm.om");
+
+	g_vm->_actor->_vertexNum = VertexNum;
+	g_vm->_actor->_faceNum = FaceNum;
+	g_vm->_actor->_light = (SLight *)&VLight;
+	g_vm->_actor->_lightNum = LightNum;
+	g_vm->_actor->_camera = (SCamera *)&FCamera;
+	g_vm->_actor->_texture = (STexture *)&FTexture[0];
 
 	TextArea = (uint8 *)(MemoryArea + GameBytePointer);
 	GameBytePointer += MAXTEXTAREA;
@@ -255,7 +257,7 @@ void OpenVideo() {
 /*-----------------13/09/95 11.59-------------------
 					ReadActor
 --------------------------------------------------*/
-uint32 ReadActor(const char *filename, uint8 *Area) {
+void ReadActor(const char *filename) {
 
 	extern uint16 _textureMat[256][91];
 	extern int16  _textureCoord[MAXFACE][3][2];
@@ -268,19 +270,15 @@ uint32 ReadActor(const char *filename, uint8 *Area) {
 
 	int32 ActionNum = ff->readSint32LE();
 	VertexNum = ff->readSint32LE();
-	_actor._vertexNum = VertexNum;
+	g_vm->_actor->_vertexNum = VertexNum;
 
-	_actor._vertex = (SVertex *)Area;
-	_characterArea = Area;
-
-	int32 Read = FastFileRead(ff, _actor._vertex, sizeof(SVertex) * VertexNum * ActionNum);
+	_characterArea = new SVertex[VertexNum * ActionNum];
+	g_vm->_actor->_vertex = _characterArea;
+	FastFileRead(ff, g_vm->_actor->_vertex, sizeof(SVertex) * VertexNum * ActionNum);
 
 	FaceNum = ff->readUint32LE();
-	_actor._faceNum = FaceNum;
+	g_vm->_actor->_faceNum = FaceNum;
 
-	Area += Read;
-	_actor._face = (SFace *)Area;
-	Read += FastFileRead(ff, _actor._face, sizeof(SFace) * FaceNum);
 	FastFileClose(ff);
 
 	ff = FastFileOpen("mat.tex");
@@ -298,17 +296,18 @@ uint32 ReadActor(const char *filename, uint8 *Area) {
 		}
 	}
 
+	g_vm->_actor->_face = new SFace[FaceNum];
 	for (int i = 0; i < FaceNum; ++i) {
-		_actor._face[i]._a = ff->readSint16LE();
-		_actor._face[i]._b = ff->readSint16LE();
-		_actor._face[i]._c = ff->readSint16LE();
-		_actor._face[i]._mat = ff->readSint16LE();
+		g_vm->_actor->_face[i]._a = ff->readSint16LE();
+		g_vm->_actor->_face[i]._b = ff->readSint16LE();
+		g_vm->_actor->_face[i]._c = ff->readSint16LE();
+		g_vm->_actor->_face[i]._mat = ff->readSint16LE();
 	}
 
 	FastFileClose(ff);
 
-	_actor._curFrame  = 0;
-	_actor._curAction = hSTAND;
+	g_vm->_actor->_curFrame = 0;
+	g_vm->_actor->_curAction = hSTAND;
 
 	// fixup Microprose head correction
 #define P1	306
@@ -319,17 +318,17 @@ uint32 ReadActor(const char *filename, uint8 *Area) {
 	double v1[3], v2[3], v[3], q[3], m1[3][3], m2[3][3], s;
 	int c, d, f;
 
-	v1[0] = _actor._vertex[P2]._x - _actor._vertex[P1]._x;
-	v1[1] = _actor._vertex[P2]._y - _actor._vertex[P1]._y;
-	v1[2] = _actor._vertex[P2]._z - _actor._vertex[P1]._z;
+	v1[0] = g_vm->_actor->_vertex[P2]._x - g_vm->_actor->_vertex[P1]._x;
+	v1[1] = g_vm->_actor->_vertex[P2]._y - g_vm->_actor->_vertex[P1]._y;
+	v1[2] = g_vm->_actor->_vertex[P2]._z - g_vm->_actor->_vertex[P1]._z;
 	s = sqrt(v1[0] * v1[0] + v1[1] * v1[1] + v1[2] * v1[2]);
 	v1[0] /= s;
 	v1[1] /= s;
 	v1[2] /= s;
 
-	v2[0] = _actor._vertex[P3]._x - _actor._vertex[P1]._x;
-	v2[1] = _actor._vertex[P3]._y - _actor._vertex[P1]._y;
-	v2[2] = _actor._vertex[P3]._z - _actor._vertex[P1]._z;
+	v2[0] = g_vm->_actor->_vertex[P3]._x - g_vm->_actor->_vertex[P1]._x;
+	v2[1] = g_vm->_actor->_vertex[P3]._y - g_vm->_actor->_vertex[P1]._y;
+	v2[2] = g_vm->_actor->_vertex[P3]._z - g_vm->_actor->_vertex[P1]._z;
 	s = sqrt(v2[0] * v2[0] + v2[1] * v2[1] + v2[2] * v2[2]);
 	v2[0] /= s;
 	v2[1] /= s;
@@ -356,7 +355,7 @@ uint32 ReadActor(const char *filename, uint8 *Area) {
 	m1[0][2] = v1[2];
 
 	for (int b = 0; b < ActionNum; b++) {
-		SVertex *sv = (SVertex *)(_actor._vertex + b * VertexNum);
+		SVertex *sv = (SVertex *)(g_vm->_actor->_vertex + b * VertexNum);
 
 		v1[0] = sv[P2]._x - sv[P1]._x;
 		v1[1] = sv[P2]._y - sv[P1]._y;
@@ -398,9 +397,9 @@ uint32 ReadActor(const char *filename, uint8 *Area) {
 		v2[1] = sv[P1]._y;
 		v2[2] = sv[P1]._z;
 
-		v1[0] = _actor._vertex[P1]._x;
-		v1[1] = _actor._vertex[P1]._y;
-		v1[2] = _actor._vertex[P1]._z;
+		v1[0] = g_vm->_actor->_vertex[P1]._x;
+		v1[1] = g_vm->_actor->_vertex[P1]._y;
+		v1[2] = g_vm->_actor->_vertex[P1]._z;
 
 		for (int e = 279; e < 383; e++) {
 			for (f = 0; f < 84; f++) {
@@ -440,8 +439,6 @@ uint32 ReadActor(const char *filename, uint8 *Area) {
 			}
 		}
 	}
-
-	return (Read + 8 + 4);
 }
 
 /* -----------------27/06/97 17.52-------------------

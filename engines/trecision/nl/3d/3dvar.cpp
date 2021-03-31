@@ -54,7 +54,6 @@ SSortPan  _sortPan[32];
 SPathNode _pathNode[MAXPATHNODES];
 
 SStep     _step[MAXSTEP];
-SActor    _actor;
 
 float  _proj[3][3];
 float  _invP[3][3];

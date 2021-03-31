@@ -161,6 +161,7 @@ TrecisionEngine::TrecisionEngine(OSystem *syst) : Engine(syst) {
 	TextureArea = nullptr;
 	Icone = nullptr;
 	ZBuffer = nullptr;
+	_actor = nullptr;
 }
 
 TrecisionEngine::~TrecisionEngine() {
@@ -172,6 +173,7 @@ TrecisionEngine::~TrecisionEngine() {
 	delete[] TextureArea;
 	delete[] Icone;
 	delete[] ZBuffer;
+	delete _actor;
 }
 
 Common::Error TrecisionEngine::run() {
@@ -489,6 +491,37 @@ void TrecisionEngine::initCursor() {
 
 Common::String TrecisionEngine::getSavegameName(int slotNumber) {
 	return _targetName + Common::String::format(".%03d", slotNumber);
+}
+
+SActor::SActor(TrecisionEngine *vm) : _vm(vm) {
+	_vertex = nullptr;
+	_face = nullptr;
+	_light = nullptr;
+	_camera = nullptr;
+	_texture = nullptr;
+
+	_vertexNum = 0;
+	_faceNum = 0;
+	_lightNum = 0;
+	_matNum = 0;
+
+	_px = _py = _pz = 0.0;
+	_dx = _dz = 0.0;
+	_theta = 0.0;
+
+	for (int i = 0; i < 6; ++i)
+		_lim[i] = 0;
+
+	_curFrame = 0;
+	_curAction = 0;
+}
+
+SActor::~SActor() {
+//	delete _vertex; TODO: Delete[] _characterArea instead!
+	delete[] _face;
+//	delete _light;
+//	delete _camera;
+//	delete _texture;
 }
 
 } // End of namespace Trecision

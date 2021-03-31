@@ -205,9 +205,9 @@ void doInvOperate() {
 void doDoing() {
 	switch (g_vm->_curMessage->_event) {
 	case ME_INITOPENCLOSE:
-		if (_actor._curAction == hSTAND)
+		if (g_vm->_actor->_curAction == hSTAND)
 			REEVENT;
-		else if (_actor._curFrame == 4)
+		else if (g_vm->_actor->_curFrame == 4)
 			doEvent(g_vm->_curMessage->_class, ME_OPENCLOSE, g_vm->_curMessage->_priority, g_vm->_curMessage->_u16Param1, g_vm->_curMessage->_u16Param2, g_vm->_curMessage->_u8Param, g_vm->_curMessage->_u32Param);
 		else
 			REEVENT;
@@ -226,7 +226,7 @@ void doDoing() {
 		// no break!
 	case ME_WAITOPENCLOSE:
 		RegenRoom();
-		if (_actor._curAction == hSTAND)
+		if (g_vm->_actor->_curAction == hSTAND)
 			g_vm->_flagMouseEnabled = true;
 		break;
 	}
@@ -431,12 +431,12 @@ void AtEndChangeRoom() {
 		StartCharacterAction(a1B11ESCETOMBINO, 0, 0, 0);
 	else if ((g_vm->_curRoom == r1D) && (g_vm->_oldRoom == r1B) && (g_vm->_obj[oDONNA1D]._mode & OBJMODE_OBJSTATUS)) {
 		StartCharacterAction(a1D1SCENDESCALE, 0, 1, 0);
-		_actor._lim[0] = 60;
-		_actor._lim[2] = 240;
+		g_vm->_actor->_lim[0] = 60;
+		g_vm->_actor->_lim[2] = 240;
 	} else if ((g_vm->_curRoom == r1D) && (g_vm->_oldRoom == r1B) && !(g_vm->_obj[oDONNA1D]._mode & OBJMODE_OBJSTATUS)) {
 		StartCharacterAction(a1D12SCENDESCALA, 0, 1, 0);
-		_actor._lim[0] = 60;
-		_actor._lim[2] = 240;
+		g_vm->_actor->_lim[0] = 60;
+		g_vm->_actor->_lim[2] = 240;
 	} else if ((g_vm->_curRoom == r1B) && (g_vm->_oldRoom == r1D))
 		StartCharacterAction(a1B4ESCEBOTOLA, 0, 0, 0);
 	else if ((g_vm->_curRoom == r1B) && (g_vm->_oldRoom == r18) && (g_vm->_animMgr->_animTab[aBKG1B]._flag & SMKANIM_OFF1))

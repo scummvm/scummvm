@@ -3492,7 +3492,7 @@ bool LogicManager::operateInventory() {
 		break;
 
 	case iTELECOMANDO44:
-		if ((_actor._px < 5057.6) && (_vm->_obj[oPUPAZZO44]._mode & OBJMODE_OBJSTATUS) && (_vm->_curRoom == r43)) {
+		if ((g_vm->_actor->_px < 5057.6) && (_vm->_obj[oPUPAZZO44]._mode & OBJMODE_OBJSTATUS) && (_vm->_curRoom == r43)) {
 			doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, r46, 0, 7, _vm->_useWith[WITH]);
 			printSentence = false;
 		}
