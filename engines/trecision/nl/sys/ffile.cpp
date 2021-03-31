@@ -136,7 +136,7 @@ char FastFileInit(const char *fname) {
  *
  * Clean up resources
  * --------------------------------------------------*/
-void FastFileFinish(void) {
+void FastFileFinish() {
 	dataFile.close();
 }
 
@@ -239,7 +239,7 @@ bool AnimFileInit(Common::String fname) {
 /* -----------------19/01/98 17.14-------------------
  * AnimFileFinish
  * --------------------------------------------------*/
-void AnimFileFinish(void) {
+void AnimFileFinish() {
 	for (int a = 0; a < MAXSMACK; a++) {
 		animFile[a].close();
 	}
@@ -313,7 +313,7 @@ bool SpeechFileInit(const char *fname) {
 /* -----------------04/08/98 11.33-------------------
  * SpeechFileFinish
  * --------------------------------------------------*/
-void SpeechFileFinish(void) {
+void SpeechFileFinish() {
 	speechFile.close();
 }
 
