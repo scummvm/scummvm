@@ -24,7 +24,6 @@
 #include "common/scummsys.h"
 
 #include "trecision/nl/3d/3dinc.h"
-#include "trecision/nl/struct.h"
 #include "trecision/nl/ll/llinc.h"
 #include "trecision/nl/extern.h"
 #include "trecision/trecision.h"
@@ -38,9 +37,6 @@ void decompress(const unsigned char *src, unsigned src_len, unsigned char *dst, 
 	unsigned char *d = dst;
 	const unsigned char *s = src;
 	unsigned short ctrl = 0, ctrl_cnt = 1;
-
-	dst_len++;
-	dst_len--;
 
 	while (s < (const unsigned char *)sw) {
 		if (!--ctrl_cnt) {

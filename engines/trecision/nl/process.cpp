@@ -22,7 +22,6 @@
 
 #include "common/scummsys.h"
 
-#include "trecision/nl/struct.h"
 #include "trecision/nl/message.h"
 #include "trecision/nl/extern.h"
 #include "trecision/trecision.h"
