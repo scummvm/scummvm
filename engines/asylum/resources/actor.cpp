@@ -3736,9 +3736,9 @@ void Actor::setVisible(bool value) {
 }
 
 bool Actor::isOnScreen() {
-	Common::Rect scene(getWorld()->yTop, getWorld()->xLeft, getWorld()->yTop + 480, getWorld()->xLeft + 640);
+	Common::Rect scene(getWorld()->xLeft, getWorld()->yTop, getWorld()->xLeft + 640, getWorld()->yTop + 480);
 	Common::Rect actor(_boundingRect);
-	actor.moveTo(_point1.x, _point1.y);
+	actor.translate(_point1.x, _point1.y);
 
 	return isVisible() && scene.intersects(actor);
 }
