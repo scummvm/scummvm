@@ -46,7 +46,7 @@ int VisualRef[50];
 SDObj DObj;
 
 void PaintScreen(uint8 flag) {
-	int a, liv;
+	int a;
 
 	AtFrameNext();
 	ContinueTalk();
@@ -189,7 +189,7 @@ void PaintScreen(uint8 flag) {
 
 	// PER OGNI BOX DALL'ORIZZONTE IN AVANTI...
 	// COPIA PER LIVELLO
-	for (liv = _numSortPan; liv >= 0; liv--) {
+	for (int liv = _numSortPan; liv >= 0; liv--) {
 		uint16 CurBox = _sortPan[liv]._num;
 
 		// disegna tutti gli oggetti e le animazioni che intersecano
@@ -232,7 +232,7 @@ void PaintScreen(uint8 flag) {
 	SoundPasso((_actor._lim[1] + _actor._lim[0]) / 2, (_actor._lim[5] + _actor._lim[4]) / 2, _actor._curAction, _actor._curFrame, g_vm->_room[g_vm->_curRoom]._sounds);
 
 #if USE_DIRTY_RECTS
-	for (liv = 0; liv < g_vm->_limitsNum; liv++) {
+	for (int liv = 0; liv < g_vm->_limitsNum; liv++) {
 		for (int b = g_vm->_limits[liv][1]; b < g_vm->_limits[liv][3]; b++) {
 			AddLine(g_vm->_limits[liv][0], g_vm->_limits[liv][2], b);
 		}
