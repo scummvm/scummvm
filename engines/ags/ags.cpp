@@ -189,8 +189,13 @@ SaveStateList AGSEngine::listSaves() const {
 }
 
 void AGSEngine::setGraphicsMode(size_t w, size_t h) {
-	Graphics::PixelFormat FORMAT(4, 8, 8, 8, 8, 24, 16, 8, 0);
-	initGraphics(w, h, &FORMAT);
+	Common::List<Graphics::PixelFormat> supportedFormatsList = g_system->getSupportedFormats();
+	Graphics::PixelFormat format;
+	if (!supportedFormatsList.empty())
+		format = supportedFormatsList.front();
+	else
+		format = Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
+	initGraphics(w, h, &format);
 
 	_rawScreen = new Graphics::Screen();
 	_screen = new ::AGS3::BITMAP(_rawScreen);
