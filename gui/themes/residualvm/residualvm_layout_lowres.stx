@@ -577,6 +577,7 @@
 						width = 'Globals.Line.Height'
 				/>
 			</layout>
+			<widget name = 'ConfigPath' height = 'Globals.Line.Height' />
 		</layout>
 	</dialog>
 
