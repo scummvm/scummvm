@@ -110,7 +110,6 @@ extern uint16 _actionPosition[];
 // DATA POINTER
 extern uint8 *TextArea;
 // 3D AREA
-extern SVertex *_characterArea;
 extern uint8 *BaseHeadTexture;
 extern uint8 AddObjectMaterial;
 // MEMORY

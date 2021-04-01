@@ -670,7 +670,7 @@ void buildFramelist() {
 
 	int a = 0;
 	// compute offset
-	SVertex *v = _characterArea;
+	SVertex *v = g_vm->_actor->_characterArea;
 	float firstframe = FRAMECENTER(v);
 	float startpos = 0.0;
 
@@ -742,12 +742,12 @@ void buildFramelist() {
 				// end walk frame
 				ox = FRAMECENTER(v) - firstframe;
 
-				v = &_characterArea[cfp * g_vm->_actor->_vertexNum];
+				v = &g_vm->_actor->_characterArea[cfp * g_vm->_actor->_vertexNum];
 				ox -= FRAMECENTER(v);
 
 			}
 
-			v = &_characterArea[cfp * g_vm->_actor->_vertexNum];
+			v = &g_vm->_actor->_characterArea[cfp * g_vm->_actor->_vertexNum];
 
 			// only if it doesn't end
 			if ((oz + ox + FRAMECENTER(v) - firstframe) < len)
@@ -776,7 +776,7 @@ void buildFramelist() {
 	while (b != CurA)
 		cfp += _defActionLen[b++];
 
-	v = &_characterArea[cfp * g_vm->_actor->_vertexNum];
+	v = &g_vm->_actor->_characterArea[cfp * g_vm->_actor->_vertexNum];
 
 	for (b = 0; b < _defActionLen[CurA]; b++) {
 		curlen = oz + FRAMECENTER(v) - firstframe;

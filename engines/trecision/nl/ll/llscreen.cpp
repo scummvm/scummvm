@@ -56,8 +56,6 @@ uint8 *TextArea;
 uint8 *SpeechBuf[2];
 uint16 *ExtraObj2C;
 uint16 *ExtraObj41D;
-// 3D AREA
-SVertex *_characterArea;
 // MEMORY
 uint32 GameBytePointer;
 uint32 GameWordPointer;
@@ -272,8 +270,8 @@ void ReadActor(const char *filename) {
 	VertexNum = ff->readSint32LE();
 	g_vm->_actor->_vertexNum = VertexNum;
 
-	_characterArea = new SVertex[VertexNum * ActionNum];
-	g_vm->_actor->_vertex = _characterArea;
+	g_vm->_actor->_characterArea = new SVertex[VertexNum * ActionNum];
+	g_vm->_actor->_vertex = g_vm->_actor->_characterArea;
 	FastFileRead(ff, g_vm->_actor->_vertex, sizeof(SVertex) * VertexNum * ActionNum);
 
 	FaceNum = ff->readUint32LE();

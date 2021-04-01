@@ -1,5 +1,5 @@
 /* ScummVM - Graphic Adventure Engine
- *
+ *	
  * ScummVM is the legal property of its developers, whose names
  * are too numerous to list here. Please refer to the COPYRIGHT
  * file distributed with this source distribution.
@@ -125,6 +125,8 @@ private:
 public:
 	SActor(TrecisionEngine *vm);
 	~SActor();
+
+	SVertex *_characterArea; // TODO: Make it private
 
 	SVertex  *_vertex;
 	SFace    *_face;
