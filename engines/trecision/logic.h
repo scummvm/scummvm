@@ -35,7 +35,7 @@ private:
 public:
 	// panel puzzle 35
 	uint16 Comb35[7];
-	uint16 Count35 = 0;
+	uint16 Count35;
 
 	// sundial puzzle 49
 	uint16 Comb49[4];
