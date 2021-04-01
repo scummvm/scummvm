@@ -207,6 +207,8 @@ public:
 	DomainMap::iterator      beginGameDomains() { return _gameDomains.begin(); } /*!< Return the beginning position of game domains. */
 	DomainMap::iterator      endGameDomains() { return _gameDomains.end(); } /*!< Return the ending position of game domains. */
 
+	const String             &getCustomConfigFileName() { return _filename; } /*!< Return the custom config file being used, or an empty string when using the default config file */
+
 	static void              defragment(); /*!< Move the configuration in memory to reduce fragmentation. */
 	void                     copyFrom(ConfigManager &source); /*!< Copy from a ConfigManager instance. */
 	/** @} */

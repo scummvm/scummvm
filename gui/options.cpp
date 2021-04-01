@@ -2086,7 +2086,9 @@ void GlobalOptionsDialog::addPathsControls(GuiObject *boss, const Common::String
 #endif // DYNAMIC_MODULES
 #endif // !defined(__DC__)
 
-	Common::U32String confPath = g_system->getDefaultConfigFileName();
+	Common::U32String confPath = ConfMan.getCustomConfigFileName();
+	if (confPath.empty())
+		confPath = g_system->getDefaultConfigFileName();
 	new StaticTextWidget(boss, prefix + "ConfigPath", _("ScummVM config path: ") + confPath, confPath);
 }
 
