@@ -31,16 +31,11 @@ class TrecisionMetaEngine : public AdvancedMetaEngine {
 	}
 
 	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
-	bool hasFeature(MetaEngineFeature f) const override;
 };
 
 Common::Error TrecisionMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 	*engine = new Trecision::TrecisionEngine(syst);
 	return Common::kNoError;
-}
-
-bool TrecisionMetaEngine::hasFeature(MetaEngineFeature f) const {
-	return false;
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(TRECISION)

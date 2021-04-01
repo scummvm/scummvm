@@ -44,18 +44,6 @@ namespace Trecision {
 uint16 BlinkLastDTextChar = MASKCOL;
 extern byte NlVer;
 
-/**
- * Derived serializer class with extra synchronization types
- */
-class Serializer : public Common::Serializer {
-public:
-	Serializer(Common::SeekableReadStream *in, Common::WriteStream *out) : Common::Serializer(in, out) {}
-
-	// Trecision saved games contain a single byte for the savegame version,
-	// so use this for setting the serializer version instead of syncVersion()
-	void setSaveVersion(byte version) { _version = version; }
-};
-
 void VMouseOFF() {
 	CursorMan.showMouse(false);
 }
@@ -284,162 +272,12 @@ void IconSnapShot() {
 	}
 }
 
-bool syncSaveData(int slot, char *desc, bool save) {
-	Common::SaveFileManager *saveFileMan = g_engine->getSaveFileManager();
-	Common::String saveName = g_vm->getSavegameName(slot);
-	Common::InSaveFile *in = !save ? saveFileMan->openForLoading(saveName) : nullptr;
-	Common::OutSaveFile *out = save ? saveFileMan->openForSaving(saveName) : nullptr;
-	if (!in && !out)
-		return false;
-
-	byte version = !save ? in->readByte() : NlVer;
-	// TODO: Check for newer save versions
-	Common::Serializer ser(in, out);
-	ser.setVersion(version);
-	if (save)
-		out->writeByte(version);
-
-	ser.syncBytes((byte *)desc, 40);
-	
-	uint16 *thumbnailBuf = g_vm->Icone + (READICON + 13) * ICONDX * ICONDY;
-	ser.syncBytes((byte *)thumbnailBuf, ICONDX * ICONDY * sizeof(uint16));
-	if (!save)
-		g_vm->_graphicsMgr->updatePixelFormat(thumbnailBuf, ICONDX * ICONDY);
-
-	ser.syncAsUint16LE(g_vm->_curRoom);
-	ser.syncAsByte(/*OldInvLen*/ g_vm->_inventorySize);
-	ser.syncAsByte(g_vm->_cyberInventorySize);
-	ser.syncAsByte(/*OldIconBase*/ g_vm->_iconBase);
-	ser.syncAsSint16LE(Flagskiptalk);
-	ser.syncAsSint16LE(Flagskipenable);
-	ser.syncAsSint16LE(g_vm->_flagMouseEnabled);
-	ser.syncAsSint16LE(g_vm->_flagScreenRefreshed);
-	ser.syncAsSint16LE(FlagPaintCharacter);
-	ser.syncAsSint16LE(FlagSomeOneSpeak);
-	ser.syncAsSint16LE(FlagCharacterSpeak);
-	ser.syncAsSint16LE(g_vm->_flagInventoryLocked);
-	ser.syncAsSint16LE(FlagUseWithStarted);
-	ser.syncAsSint16LE(FlagMousePolling);
-	ser.syncAsSint16LE(FlagDialogSolitaire);
-	ser.syncAsSint16LE(FlagCharacterExist);
-	ser.syncBytes(/*OldInv*/ g_vm->_inventory, MAXICON);
-	ser.syncBytes(g_vm->_cyberInventory, MAXICON);
-	ser.syncAsFloatLE(g_vm->_actor->_px);
-	ser.syncAsFloatLE(g_vm->_actor->_py);
-	ser.syncAsFloatLE(g_vm->_actor->_pz);
-	ser.syncAsFloatLE(g_vm->_actor->_dx);
-	ser.syncAsFloatLE(g_vm->_actor->_dz);
-	ser.syncAsFloatLE(g_vm->_actor->_theta);
-	ser.syncAsSint32LE(_curPanel);
-	ser.syncAsSint32LE(_oldPanel);
-
-	for (int a = 0; a < MAXROOMS; a++) {
-		ser.syncBytes((byte *)g_vm->_room[a]._baseName, 4);
-		for (int i = 0; i < MAXACTIONINROOM; i++)
-			ser.syncAsUint16LE(g_vm->_room[a]._actions[i]);		
-		ser.syncAsByte(g_vm->_room[a]._flag);
-		ser.syncAsUint16LE(g_vm->_room[a]._bkgAnim);
-	}
-
-	for (int a = 0; a < MAXOBJ; a++) {
-		for (int i = 0; i < 4; i++)
-			ser.syncAsUint16LE(g_vm->_obj[a]._lim[i]);
-		ser.syncAsUint16LE(g_vm->_obj[a]._name);
-		ser.syncAsUint16LE(g_vm->_obj[a]._examine);
-		ser.syncAsUint16LE(g_vm->_obj[a]._action);
-		ser.syncAsUint16LE(g_vm->_obj[a]._anim);
-		ser.syncAsByte(g_vm->_obj[a]._mode);
-		ser.syncAsByte(g_vm->_obj[a]._flag);
-		ser.syncAsByte(g_vm->_obj[a]._goRoom);
-		ser.syncAsByte(g_vm->_obj[a]._nbox);
-		ser.syncAsByte(g_vm->_obj[a]._ninv);
-		ser.syncAsSByte(g_vm->_obj[a]._position);
-	}
-
-	for (int a = 0; a < MAXINVENTORY; a++) {
-		ser.syncAsUint16LE(g_vm->_inventoryObj[a]._name);
-		ser.syncAsUint16LE(g_vm->_inventoryObj[a]._examine);
-		ser.syncAsUint16LE(g_vm->_inventoryObj[a]._action);
-		ser.syncAsUint16LE(g_vm->_inventoryObj[a]._anim);
-		ser.syncAsByte(g_vm->_inventoryObj[a]._flag);
-	}
-
-	for (int a = 0; a < MAXANIM; a++) {
-		SAnim *cur = &g_vm->_animMgr->_animTab[a];
-		ser.syncBytes((byte *)cur->_name, 14);
-		ser.syncAsUint16LE(cur->_flag);
-		for (int i = 0; i < MAXCHILD; i++) {
-			for (int j = 0; j < 4; j++) {
-				ser.syncAsUint16LE(cur->_lim[i][j]);
-			}
-		}
-		ser.syncAsByte(cur->_nbox);
-		for (int i = 0; i < MAXATFRAME; i++) {
-			ser.syncAsByte(cur->_atFrame[i]._type);
-			ser.syncAsByte(cur->_atFrame[i]._child);
-			ser.syncAsUint16LE(cur->_atFrame[i]._numFrame);
-			ser.syncAsUint16LE(cur->_atFrame[i]._index);
-		}
-	}
-	
-	for (int a = 0; a < MAXSAMPLE; a++) {
-		ser.syncAsByte(GSample[a]._volume);
-		ser.syncAsByte(GSample[a]._flag);
-	}
-
-	for (int a = 0; a < MAXCHOICE; a++) {
-		DialogChoice *cur = &g_vm->_choice[a];
-		ser.syncAsUint16LE(cur->_flag);
-		ser.syncAsUint16LE(cur->_sentenceIndex);
-		ser.syncAsUint16LE(cur->_firstSubTitle);
-		ser.syncAsUint16LE(cur->_subTitleNumb);
-		for (int i = 0; i < MAXDISPSCELTE; i++)
-			ser.syncAsUint16LE(cur->_on[i]);
-		for (int i = 0; i < MAXDISPSCELTE; i++)
-			ser.syncAsUint16LE(cur->_off[i]);
-		ser.syncAsUint16LE(cur->_startFrame);
-		ser.syncAsUint16LE(cur->_nextDialog);
-	}
-
-	for (int a = 0; a < MAXDIALOG; a++) {
-		Dialog *cur = &_dialog[a];
-		ser.syncAsUint16LE(cur->_flag);
-		ser.syncAsUint16LE(cur->_interlocutor);
-		ser.syncBytes((byte *)cur->_startAnim, 14);
-		ser.syncAsUint16LE(cur->_startLen);
-		ser.syncAsUint16LE(cur->_firstChoice);
-		ser.syncAsUint16LE(cur->_choiceNumb);
-		for (int i = 0; i < MAXNEWSMKPAL; i++)
-			ser.syncAsUint16LE(cur->_newPal[i]);
-	}
-
-	for (int i = 0; i < 7; i++)
-		ser.syncAsUint16LE(g_vm->_logicMgr->Comb35[i]);
-	for (int i = 0; i < 4; i++)
-		ser.syncAsUint16LE(g_vm->_logicMgr->Comb49[i]);
-	for (int i = 0; i < 6; i++)
-		ser.syncAsUint16LE(g_vm->_logicMgr->Comb4CT[i]);
-	for (int i = 0; i < 6; i++)
-		ser.syncAsUint16LE(g_vm->_logicMgr->Comb58[i]);
-	for (int i = 0; i < 3; i++)
-		ser.syncAsUint16LE(g_vm->_wheelPos[i]);
-	ser.syncAsUint16LE(g_vm->_wheel);
-	ser.syncAsUint16LE(g_vm->_logicMgr->Count35);
-	ser.syncAsUint16LE(g_vm->_logicMgr->Count58);
-	ser.syncAsUint16LE(g_vm->_slotMachine41Counter);
-
-	delete in;
-	delete out;
-	
-	return true;
-}
-
 /* -----------------25/10/97 15.16-------------------
 						DataSave
  --------------------------------------------------*/
 bool DataSave() {
 	uint8 OldInv[MAXICON], OldIconBase, OldInvLen;
-	char tempname[20], ch, strcount;
+	char ch, strcount;
 	char savename[MAXSAVEFILE][40];
 	uint16 posx, LenText;
 	bool ret = true;
@@ -487,7 +325,7 @@ insave:
 	Common::SaveFileManager *saveFileMan = g_engine->getSaveFileManager();
 	
 	for (int a = 0; a < g_vm->_inventorySize; a++) {
-		Common::String saveName = g_vm->getSavegameName(a);
+		Common::String saveName = g_vm->getSaveStateName(a + 1);
 		Common::InSaveFile *saveFile = saveFileMan->openForLoading(saveName);
 		
 		if (saveFile && saveFile->readByte() == NlVer) {
@@ -631,7 +469,7 @@ insave:
 
 		ret = false;
 
-		syncSaveData(CurPos, savename[CurPos], true);
+		g_vm->saveGameState(CurPos + 1, savename[CurPos]);
 	}
 
 	for (int a = FIRSTLINE; a < MAXY; a++)
@@ -710,7 +548,7 @@ bool DataLoad() {
 	int8 OldPos = -1;
 
 	for (int a = 0; a < g_vm->_inventorySize; a++) {
-		Common::String saveName = g_vm->getSavegameName(a);
+		Common::String saveName = g_vm->getSaveStateName(a + 1);
 		Common::InSaveFile *saveFile = saveFileMan->openForLoading(saveName);
 
 		if (saveFile && saveFile->readByte() == NlVer) {
@@ -789,7 +627,7 @@ bool DataLoad() {
 		for (int a = FIRSTLINE; a < MAXY; a++)
 			memset(g_vm->_screenBuffer + SCREENLEN * a, 0, SCREENLEN * 2);
 
-		syncSaveData(CurPos, savename[CurPos], false);
+		g_vm->loadGameState(CurPos + 1);
 		
 		FlagNoPaintScreen = true;
 		g_vm->_curStack = 0;
