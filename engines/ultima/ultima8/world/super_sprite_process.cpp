@@ -224,9 +224,11 @@ void SuperSpriteProcess::run() {
 		}
 	}
 
-	// TODO: Clamp Z values as original does ~lines 280-290 of
-	// SuperSpriteProcess::run()
 	_pt3 = newpt;
+	if (_pt3.z < 0)
+		_pt3.z = 0;
+	if (_pt3.z > 0xfa)
+		_pt3.z = 0xfa;
 
 	_counter++;
 
@@ -237,7 +239,7 @@ void SuperSpriteProcess::run() {
 		sprite->move(_nowpt);
 	}
 
-	if (_pt3.z != 0 && _pt3.z != 0xfa) {
+	if (_pt3.z > 0 && _pt3.z < 0xfa) {
 		int32 duration = firetypedat->getRoundDuration() + 25;
 
 		if (_counter < duration) {
@@ -408,7 +410,7 @@ void SuperSpriteProcess::advanceFrame() {
 	if (_fireType == 3) {
 		if (_pt5.x != -1) {
 			// Create a little sparkly thing
-			Process *p = new SpriteProcess(0x426, 0, 9, 0, 3, _pt5.x, _pt5.y, _pt5.z);
+			Process *p = new SpriteProcess(0x426, 0, 9, 1, 3, _pt5.x, _pt5.y, _pt5.z);
 			Kernel::get_instance()->addProcess(p);
 		}
 		_pt5 = _nextpt;
@@ -427,14 +429,14 @@ bool SuperSpriteProcess::areaSearch() {
 		item->getLocation(start[0], start[1], start[2]);
 
 	Std::list<CurrentMap::SweepItem> hits;
-	bool collision = map->sweepTest(start, end, dims, ShapeInfo::SI_SOLID,
+	map->sweepTest(start, end, dims, ShapeInfo::SI_SOLID,
 							   _source, true, &hits);
 
 	if (hits.size() > 0) {
 		_item0x77 = hits.front()._item;
 	}
 
-	return !collision;
+	return hits.size() == 0;
 }
 
 
@@ -449,17 +451,19 @@ void SuperSpriteProcess::saveData(Common::WriteStream *ws) {
 	_startpt.saveData(ws);
 	_pt5.saveData(ws);
 	_destpt.saveData(ws);
+	ws->writeUint16LE(_frame);
 	ws->writeUint16LE(_fireType);
 	ws->writeUint16LE(_damage);
 	ws->writeUint16LE(_source);
 	ws->writeUint16LE(_target);
+	ws->writeUint16LE(_counter);
 	ws->writeUint16LE(_item0x77);
 	ws->writeUint16LE(_spriteNo);
 	ws->writeFloatLE(_xstep);
 	ws->writeFloatLE(_ystep);
 	ws->writeFloatLE(_zstep);
-
-	// TODO: Update save and load functions once this is finished.
+	ws->writeByte(_startedAsFiretype9);
+	ws->writeByte(_expired);
 }
 
 bool SuperSpriteProcess::loadData(Common::ReadStream *rs, uint32 version) {
@@ -473,15 +477,19 @@ bool SuperSpriteProcess::loadData(Common::ReadStream *rs, uint32 version) {
 	_startpt.loadData(rs, version);
 	_pt5.loadData(rs, version);
 	_destpt.loadData(rs, version);
+	_frame = rs->readUint16LE();
 	_fireType = rs->readUint16LE();
 	_damage = rs->readUint16LE();
 	_source = rs->readUint16LE();
 	_target = rs->readUint16LE();
+	_counter = rs->readUint16LE();
 	_item0x77 = rs->readUint16LE();
 	_spriteNo = rs->readUint16LE();
 	_xstep = rs->readFloatLE();
 	_ystep = rs->readFloatLE();
 	_zstep = rs->readFloatLE();
+	_startedAsFiretype9 = (rs->readByte() != 0);
+	_expired = (rs->readByte() != 0);
 
 	return true;
 }
