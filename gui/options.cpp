@@ -528,12 +528,12 @@ void OptionsDialog::apply() {
 				graphicsModeChanged = true;
 			if (ConfMan.getBool("vsync", _domain) != _vsyncCheckbox->getState())
 				graphicsModeChanged = true;
-			
+
 			ConfMan.setBool("filtering", _filteringCheckbox->getState(), _domain);
 			ConfMan.setBool("fullscreen", _fullscreenCheckbox->getState(), _domain);
 			ConfMan.setBool("aspect_ratio", _aspectCheckbox->getState(), _domain);
 			ConfMan.setBool("vsync", _vsyncCheckbox->getState(), _domain);
-			
+
 			bool isSet = false;
 
 			if ((int32)_gfxPopUp->getSelectedTag() >= 0) {
@@ -577,7 +577,7 @@ void OptionsDialog::apply() {
 				ConfMan.removeKey("stretch_mode", _domain);
 				if (g_system->getStretchMode() != g_system->getDefaultStretchMode())
 					graphicsModeChanged = true;
-			}				
+			}
 
 			if (_rendererTypePopUp->getSelectedTag() > 0) {
 				Graphics::RendererType selected = (Graphics::RendererType) _rendererTypePopUp->getSelectedTag();
@@ -639,7 +639,7 @@ void OptionsDialog::apply() {
 		g_system->beginGFXTransaction();
 		g_system->setGraphicsMode(ConfMan.get("gfx_mode", _domain).c_str());
 		g_system->setStretchMode(ConfMan.get("stretch_mode", _domain).c_str());
-		
+
 		if (ConfMan.hasKey("aspect_ratio"))
 			g_system->setFeatureState(OSystem::kFeatureAspectRatioCorrection, ConfMan.getBool("aspect_ratio", _domain));
 		if (ConfMan.hasKey("fullscreen"))
@@ -2085,6 +2085,9 @@ void GlobalOptionsDialog::addPathsControls(GuiObject *boss, const Common::String
 	_pluginsPathClearButton = addClearButton(boss, "GlobalOptions_Paths.PluginsPathClearButton", kPluginsPathClearCmd);
 #endif // DYNAMIC_MODULES
 #endif // !defined(__DC__)
+
+	Common::U32String confPath = g_system->getDefaultConfigFileName();
+	new StaticTextWidget(boss, prefix + "ConfigPath", _("ScummVM config path: ") + confPath, confPath);
 }
 
 void GlobalOptionsDialog::addMiscControls(GuiObject *boss, const Common::String &prefix, bool lowres) {
