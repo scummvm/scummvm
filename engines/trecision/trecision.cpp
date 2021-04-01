@@ -21,6 +21,7 @@
  */
 
 #include "trecision/trecision.h"
+#include "trecision/nl/3d/3dinc.h"
 #include "trecision/nl/define.h"
 #include "trecision/nl/extern.h"
 #include "trecision/nl/sysdef.h"
@@ -45,6 +46,8 @@ class File;
 }
 
 namespace Trecision {
+
+extern byte NlVer;
 
 TrecisionEngine *g_vm;
 
@@ -258,6 +261,165 @@ void TrecisionEngine::eventLoop() {
 	}
 	g_system->delayMillis(10);
 	g_system->updateScreen();
+}
+
+bool TrecisionEngine::hasFeature(EngineFeature f) const {
+	return (f == kSupportsLoadingDuringRuntime) ||
+		   (f == kSupportsSavingDuringRuntime);
+}
+
+Common::Error TrecisionEngine::loadGameStream(Common::SeekableReadStream *stream) {
+	byte version = stream->readByte();
+	// TODO: Check for newer save versions
+	Common::Serializer ser(stream, nullptr);
+	ser.setVersion(version);
+	syncGameStream(ser);
+	return Common::kNoError;
+}
+
+Common::Error TrecisionEngine::saveGameStream(Common::WriteStream *stream, bool isAutosave) {
+	byte version = NlVer;
+	// TODO: Check for newer save versions
+	Common::Serializer ser(nullptr, stream);
+	ser.setVersion(version);
+	stream->writeByte(version);
+	syncGameStream(ser);
+	return Common::kNoError;
+}
+
+bool TrecisionEngine::syncGameStream(Common::Serializer &ser) {
+	// TODO: Get description from metadata
+	char desc[40] = "savegame";
+	ser.syncBytes((byte *)desc, 40);
+
+	uint16 *thumbnailBuf = Icone + (READICON + 13) * ICONDX * ICONDY;
+	ser.syncBytes((byte *)thumbnailBuf, ICONDX * ICONDY * sizeof(uint16));
+	if (ser.isLoading())
+		_graphicsMgr->updatePixelFormat(thumbnailBuf, ICONDX * ICONDY);
+
+	ser.syncAsUint16LE(_curRoom);
+	ser.syncAsByte(/*OldInvLen*/ _inventorySize);
+	ser.syncAsByte(_cyberInventorySize);
+	ser.syncAsByte(/*OldIconBase*/ _iconBase);
+	ser.syncAsSint16LE(Flagskiptalk);
+	ser.syncAsSint16LE(Flagskipenable);
+	ser.syncAsSint16LE(_flagMouseEnabled);
+	ser.syncAsSint16LE(_flagScreenRefreshed);
+	ser.syncAsSint16LE(FlagPaintCharacter);
+	ser.syncAsSint16LE(FlagSomeOneSpeak);
+	ser.syncAsSint16LE(FlagCharacterSpeak);
+	ser.syncAsSint16LE(_flagInventoryLocked);
+	ser.syncAsSint16LE(FlagUseWithStarted);
+	ser.syncAsSint16LE(FlagMousePolling);
+	ser.syncAsSint16LE(FlagDialogSolitaire);
+	ser.syncAsSint16LE(FlagCharacterExist);
+	ser.syncBytes(/*OldInv*/ _inventory, MAXICON);
+	ser.syncBytes(_cyberInventory, MAXICON);
+	ser.syncAsFloatLE(_actor->_px);
+	ser.syncAsFloatLE(_actor->_py);
+	ser.syncAsFloatLE(_actor->_pz);
+	ser.syncAsFloatLE(_actor->_dx);
+	ser.syncAsFloatLE(_actor->_dz);
+	ser.syncAsFloatLE(_actor->_theta);
+	ser.syncAsSint32LE(_curPanel);
+	ser.syncAsSint32LE(_oldPanel);
+
+	for (int a = 0; a < MAXROOMS; a++) {
+		ser.syncBytes((byte *)_room[a]._baseName, 4);
+		for (int i = 0; i < MAXACTIONINROOM; i++)
+			ser.syncAsUint16LE(_room[a]._actions[i]);
+		ser.syncAsByte(_room[a]._flag);
+		ser.syncAsUint16LE(_room[a]._bkgAnim);
+	}
+
+	for (int a = 0; a < MAXOBJ; a++) {
+		for (int i = 0; i < 4; i++)
+			ser.syncAsUint16LE(_obj[a]._lim[i]);
+		ser.syncAsUint16LE(_obj[a]._name);
+		ser.syncAsUint16LE(_obj[a]._examine);
+		ser.syncAsUint16LE(_obj[a]._action);
+		ser.syncAsUint16LE(_obj[a]._anim);
+		ser.syncAsByte(_obj[a]._mode);
+		ser.syncAsByte(_obj[a]._flag);
+		ser.syncAsByte(_obj[a]._goRoom);
+		ser.syncAsByte(_obj[a]._nbox);
+		ser.syncAsByte(_obj[a]._ninv);
+		ser.syncAsSByte(_obj[a]._position);
+	}
+
+	for (int a = 0; a < MAXINVENTORY; a++) {
+		ser.syncAsUint16LE(_inventoryObj[a]._name);
+		ser.syncAsUint16LE(_inventoryObj[a]._examine);
+		ser.syncAsUint16LE(_inventoryObj[a]._action);
+		ser.syncAsUint16LE(_inventoryObj[a]._anim);
+		ser.syncAsByte(_inventoryObj[a]._flag);
+	}
+
+	for (int a = 0; a < MAXANIM; a++) {
+		SAnim *cur = &_animMgr->_animTab[a];
+		ser.syncBytes((byte *)cur->_name, 14);
+		ser.syncAsUint16LE(cur->_flag);
+		for (int i = 0; i < MAXCHILD; i++) {
+			for (int j = 0; j < 4; j++) {
+				ser.syncAsUint16LE(cur->_lim[i][j]);
+			}
+		}
+		ser.syncAsByte(cur->_nbox);
+		for (int i = 0; i < MAXATFRAME; i++) {
+			ser.syncAsByte(cur->_atFrame[i]._type);
+			ser.syncAsByte(cur->_atFrame[i]._child);
+			ser.syncAsUint16LE(cur->_atFrame[i]._numFrame);
+			ser.syncAsUint16LE(cur->_atFrame[i]._index);
+		}
+	}
+
+	for (int a = 0; a < MAXSAMPLE; a++) {
+		ser.syncAsByte(GSample[a]._volume);
+		ser.syncAsByte(GSample[a]._flag);
+	}
+
+	for (int a = 0; a < MAXCHOICE; a++) {
+		DialogChoice *cur = &_choice[a];
+		ser.syncAsUint16LE(cur->_flag);
+		ser.syncAsUint16LE(cur->_sentenceIndex);
+		ser.syncAsUint16LE(cur->_firstSubTitle);
+		ser.syncAsUint16LE(cur->_subTitleNumb);
+		for (int i = 0; i < MAXDISPSCELTE; i++)
+			ser.syncAsUint16LE(cur->_on[i]);
+		for (int i = 0; i < MAXDISPSCELTE; i++)
+			ser.syncAsUint16LE(cur->_off[i]);
+		ser.syncAsUint16LE(cur->_startFrame);
+		ser.syncAsUint16LE(cur->_nextDialog);
+	}
+
+	for (int a = 0; a < MAXDIALOG; a++) {
+		Dialog *cur = &_dialog[a];
+		ser.syncAsUint16LE(cur->_flag);
+		ser.syncAsUint16LE(cur->_interlocutor);
+		ser.syncBytes((byte *)cur->_startAnim, 14);
+		ser.syncAsUint16LE(cur->_startLen);
+		ser.syncAsUint16LE(cur->_firstChoice);
+		ser.syncAsUint16LE(cur->_choiceNumb);
+		for (int i = 0; i < MAXNEWSMKPAL; i++)
+			ser.syncAsUint16LE(cur->_newPal[i]);
+	}
+
+	for (int i = 0; i < 7; i++)
+		ser.syncAsUint16LE(_logicMgr->Comb35[i]);
+	for (int i = 0; i < 4; i++)
+		ser.syncAsUint16LE(_logicMgr->Comb49[i]);
+	for (int i = 0; i < 6; i++)
+		ser.syncAsUint16LE(_logicMgr->Comb4CT[i]);
+	for (int i = 0; i < 6; i++)
+		ser.syncAsUint16LE(_logicMgr->Comb58[i]);
+	for (int i = 0; i < 3; i++)
+		ser.syncAsUint16LE(_wheelPos[i]);
+	ser.syncAsUint16LE(_wheel);
+	ser.syncAsUint16LE(_logicMgr->Count35);
+	ser.syncAsUint16LE(_logicMgr->Count58);
+	ser.syncAsUint16LE(_slotMachine41Counter);
+
+	return true;
 }
 
 /*-----------------03/01/97 16.15-------------------
@@ -476,7 +638,7 @@ void TrecisionEngine::initCursor() {
 	uint16 cursor[cw * ch];
 	memset(cursor, 0, ARRAYSIZE(cursor) * 2);
 
-	const uint16 cursorColor = g_vm->_graphicsMgr->palTo16bit(255, 255, 255);
+	const uint16 cursorColor = _graphicsMgr->palTo16bit(255, 255, 255);
 
 	for (int i = 0; i < cw; i++) {
 		if (i >= 8 && i <= 12 && i != 10)
@@ -487,10 +649,6 @@ void TrecisionEngine::initCursor() {
 
 	Graphics::PixelFormat format = g_system->getScreenFormat();
 	CursorMan.pushCursor(cursor, cw, ch, cx, cy, 0, false, &format);
-}
-
-Common::String TrecisionEngine::getSavegameName(int slotNumber) {
-	return _targetName + Common::String::format(".%03d", slotNumber);
 }
 
 SActor::SActor(TrecisionEngine *vm) : _vm(vm) {

@@ -25,6 +25,7 @@
 
 #include "engines/engine.h"
 #include "common/keyboard.h"
+#include "common/serializer.h"
 #include "graphics/pixelformat.h"
 #include "nl/3d/3dinc.h"
 
@@ -48,8 +49,15 @@ public:
 	TrecisionEngine(OSystem *syst);
 	~TrecisionEngine() override;
 
+	// ScummVM
 	Common::Error run() override;
 	void eventLoop();
+	bool hasFeature(EngineFeature f) const override;
+	bool canLoadGameStateCurrently() override { return true; }
+	bool canSaveGameStateCurrently() override { return true; }
+	Common::Error loadGameStream(Common::SeekableReadStream *stream) override;
+	Common::Error saveGameStream(Common::WriteStream *stream, bool isAutosave = false) override;
+	bool syncGameStream(Common::Serializer &ser);
 
 	// Inventory
 	void refreshInventory(uint8 StartIcon, uint8 StartLine);
@@ -85,8 +93,6 @@ public:
 	// Others
 	void checkSystem();
 	void initCursor();
-
-	Common::String getSavegameName(int slotNumber);
 	
 	uint16 _curRoom;
 	uint16 _oldRoom;
