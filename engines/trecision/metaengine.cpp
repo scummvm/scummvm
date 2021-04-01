@@ -41,6 +41,9 @@ Common::Error TrecisionMetaEngine::createInstance(OSystem *syst, Engine **engine
 }
 
 void TrecisionMetaEngine::getSavegameThumbnail(Graphics::Surface &thumb) {
+	// We are referencing g_engine here, but this should be safe, as this
+	// method is only used while the engine is running.
+	// TODO: Is there a better way to do this?
 	thumb.copyFrom(((Trecision::TrecisionEngine *)g_engine)->_thumbnail);
 }
 
