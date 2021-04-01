@@ -100,7 +100,7 @@ void ShowObjName(uint16 obj, bool showhide) {
 		if ((g_vm->_obj[g_vm->_curObj]._flag & (OBJFLAG_ROOMOUT | OBJFLAG_ROOMIN)) && !(g_vm->_obj[g_vm->_curObj]._flag & OBJFLAG_EXAMINE))
 			return;
 
-		locsent += g_vm->_sysText[23];
+		locsent += g_vm->_sysText[kMessageUse];
 		if (g_vm->_useWithInv[USED])
 			locsent += g_vm->_objName[g_vm->_inventoryObj[g_vm->_useWith[USED]]._name];
 		else if (g_vm->_obj[g_vm->_useWith[USED]]._mode & OBJMODE_HIDDEN)
@@ -108,7 +108,7 @@ void ShowObjName(uint16 obj, bool showhide) {
 		else
 			locsent += g_vm->_objName[g_vm->_obj[g_vm->_useWith[USED]]._name];
 
-		locsent += g_vm->_sysText[24];
+		locsent += g_vm->_sysText[kMessageWith];
 		if (obj && (g_vm->_useWithInv[USED] || (obj != g_vm->_useWith[USED]))) {
 			if (g_vm->_obj[obj]._mode & OBJMODE_HIDDEN)
 				locsent += dunno;
@@ -136,13 +136,13 @@ void ShowObjName(uint16 obj, bool showhide) {
 			return;
 		if (!(g_vm->_obj[obj]._flag & OBJFLAG_EXAMINE)) {
 			if ((g_vm->_obj[obj]._flag & OBJFLAG_DONE) || (g_vm->_room[g_vm->_obj[obj]._goRoom]._flag & OBJFLAG_DONE)) {
-				locsent =  g_vm->_sysText[25];
+				locsent = g_vm->_sysText[kMessageGoto];
 				if (g_vm->_obj[obj]._mode & OBJMODE_HIDDEN)
 					locsent += dunno;
 				else
 					locsent += g_vm->_objName[g_vm->_obj[obj]._name];
 			} else
-				locsent = g_vm->_sysText[26];
+				locsent = g_vm->_sysText[kMessageGoto2];
 		} else if (g_vm->_obj[obj]._mode & OBJMODE_HIDDEN)
 			locsent = dunno;
 		else

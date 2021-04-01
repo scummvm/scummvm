@@ -39,6 +39,36 @@ class LogicManager;
 
 #define USE_DIRTY_RECTS 0
 
+enum TrecisionMessageIds {
+	// 0
+	kMessageFilesMissing = 1,
+	// 2
+	// 3
+	kMessageInsertCD = 4,
+	kMessageUnknownError = 5,
+	// 6
+	kMessageErrorReadingFile = 7,
+	// 8
+	kMessageSavePosition = 9,
+	kMessageEmptySpot = 10,
+	kMessageLoadPosition = 11,
+	// 12
+	kMessageConfirmExit = 13,
+	// 14
+	// 15
+	// 16
+	kMessageDemoOver = 17,
+	// 18
+	kMessageError = 19,
+	// 20
+	// 21
+	// 22
+	kMessageUse = 23,
+	kMessageWith = 24,
+	kMessageGoto = 25,
+	kMessageGoto2 = 26
+};
+
 class TrecisionEngine : public Engine {
 	void initMain();
 	void initMessageSystem();

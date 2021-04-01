@@ -264,7 +264,7 @@ void ReadActor(const char *filename) {
 
 	ff = FastFileOpen(filename);
 	if (ff == nullptr)
-		CloseSys(g_vm->_sysText[1]);
+		CloseSys(g_vm->_sysText[kMessageFilesMissing]);
 
 	int32 ActionNum = ff->readSint32LE();
 	VertexNum = ff->readSint32LE();
@@ -712,7 +712,7 @@ void ReadSounds() {
 
 		ff = FastFileOpen(GSample[b]._name);
 		if (ff == nullptr)
-			CloseSys(g_vm->_sysText[1]);
+			CloseSys(g_vm->_sysText[kMessageFilesMissing]);
 		int len = FastFileRead(ff, SoundPointer[a], FastFileLen(ff));
 		FastFileClose(ff);
 		if (LoadAudioWav(b, SoundPointer[a], len))
