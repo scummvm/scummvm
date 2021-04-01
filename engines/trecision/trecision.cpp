@@ -192,7 +192,11 @@ Common::Error TrecisionEngine::run() {
 
 	initMain();
 	initCursor();
-	
+
+	// Check if a saved game is to be loaded from the launcher
+	if (ConfMan.hasKey("save_slot"))
+		loadGameState(ConfMan.getInt("save_slot"));
+
 	while (!g_engine->shouldQuit()) {
 		eventLoop();
 		NextMessage();
