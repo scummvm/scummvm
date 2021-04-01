@@ -87,7 +87,7 @@ bool CheckMask(uint16 MX, uint16 my);
 char FastFileInit(const char *fname);
 void FastFileFinish();
 Common::SeekableReadStream *FastFileOpen(const char *name);
-bool FastFileClose(Common::SeekableReadStream *stream);
+void FastFileClose(Common::SeekableReadStream *stream);
 int FastFileRead(Common::SeekableReadStream *stream, void *ptr, int size);
 int32 FastFileLen(Common::SeekableReadStream *stream);
 void byte2word(void *dest, void *src, void *data, uint32 len);

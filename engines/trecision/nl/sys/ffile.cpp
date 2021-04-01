@@ -173,13 +173,12 @@ Common::SeekableReadStream *FastFileOpen(const char *name) {
  *
  * Mark a fast file handle as closed
  * --------------------------------------------------*/
-bool FastFileClose(Common::SeekableReadStream *stream) {
+void FastFileClose(Common::SeekableReadStream *stream) {
 	if (stream == nullptr) {
 		warning("FastFileClose: invalid handle");
-		return false;
+		return;
 	}
 	delete stream;
-	return true;
 }
 
 /* -----------------19/01/98 17.17-------------------
