@@ -25,6 +25,7 @@
 #include "ultima/ultima8/world/actors/main_actor.h"
 #include "ultima/ultima8/world/teleport_egg.h"
 #include "ultima/ultima8/world/get_object.h"
+#include "ultima/ultima8/ultima8.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -52,6 +53,10 @@ void EggHatcherProcess::run() {
 	MainActor *av = getMainActor();
 	assert(av);
 
+	// CONSTANTS!
+	const int range_mul = GAME_IS_U8 ? 32 : 64;
+	const int z_range = GAME_IS_U8 ? 48 : 96;
+
 	for (unsigned int i = 0; i < _eggs.size(); i++) {
 		uint16 eggid = _eggs[i];
 		Egg *egg = dynamic_cast<Egg *>(getObject(eggid));
@@ -61,10 +66,10 @@ void EggHatcherProcess::run() {
 		egg->getLocation(x, y, z);
 
 		//! constants
-		int32 x1 = x - 32 * egg->getXRange();
-		int32 x2 = x + 32 * egg->getXRange();
-		int32 y1 = y - 32 * egg->getYRange();
-		int32 y2 = y + 32 * egg->getYRange();
+		int32 x1 = x - range_mul * egg->getXRange();
+		int32 x2 = x + range_mul * egg->getXRange();
+		int32 y1 = y - range_mul * egg->getYRange();
+		int32 y2 = y + range_mul * egg->getYRange();
 
 		// get avatar location
 		int32 ax, ay, az;
@@ -79,7 +84,7 @@ void EggHatcherProcess::run() {
 		TeleportEgg *tegg = dynamic_cast<TeleportEgg *>(egg);
 
 		if (x1 <= ax && ax - axs < x2 && y1 <= ay && ay - ays < y2 &&
-		        z - 48 < az && az <= z + 48) { // CONSTANTS!
+		        z - z_range < az && az <= z + z_range) {
 			if (tegg && tegg->isTeleporter())
 				nearteleporter = true;
 
