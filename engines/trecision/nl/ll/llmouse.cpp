@@ -21,6 +21,7 @@
  */
 
 #include "common/scummsys.h"
+#include "common/translation.h"
 #include "trecision/nl/3d/3dinc.h"
 #include "trecision/nl/struct.h"
 #include "trecision/nl/ll/llinc.h"
@@ -28,14 +29,14 @@
 #include "trecision/nl/define.h"
 #include "trecision/nl/message.h"
 #include "trecision/trecision.h"
-#include "trecision/logic.h"
 
 #include "common/file.h"
 #include "common/savefile.h"
-#include "common/serializer.h"
 #include "common/str.h"
 #include "common/system.h"
+#include "glk/conf.h"
 #include "graphics/cursorman.h"
+#include "gui/saveload.h"
 #include "trecision/graphics.h"
 #include "trecision/video.h"
 
@@ -500,12 +501,26 @@ insave:
 					DataLoad
 --------------------------------------------------*/
 bool DataLoad() {
-	extern char CurCDSet;
 	uint8 OldInv[MAXICON], OldIconBase, OldInvLen;
 	char savename[MAXSAVEFILE][40];
 	bool retval = true;
 	Common::SaveFileManager *saveFileMan = g_engine->getSaveFileManager();
-	
+
+	if (!ConfMan.getBool("originalsaveload")) {
+		GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Load game:"), _("Load"), false);
+		int saveSlot = dialog->runModalWithCurrentTarget();
+		bool skipLoad = saveSlot == -1;
+		delete dialog;
+
+		// Remove the mouse click event from the save/load dialog
+		g_vm->eventLoop();
+		g_vm->_mouseLeftBtn = g_vm->_mouseRightBtn = false;
+
+		performLoad(saveSlot - 1, skipLoad);
+		
+		return !skipLoad;
+	}
+
 	for (int a = 0; a < TOP; a++)
 		memset(g_vm->_screenBuffer + SCREENLEN * a, 0, SCREENLEN * 2);
 
@@ -535,17 +550,13 @@ bool DataLoad() {
 	while (mleft || mright)
 		Mouse(MCMD_UPDT);
 
-	// Stop character and animations, turn off writings
-
+	// Reset the inventory and turn it into save slots
 	memcpy(OldInv, g_vm->_inventory, MAXICON);
 	memset(g_vm->_inventory, 0, MAXICON);
-
 	OldIconBase = g_vm->_iconBase;
 	g_vm->_iconBase = 0;
 	OldInvLen = g_vm->_inventorySize;
 	g_vm->_inventorySize = MAXSAVEFILE;
-	int8 CurPos = -1;
-	int8 OldPos = -1;
 
 	for (int a = 0; a < g_vm->_inventorySize; a++) {
 		Common::String saveName = g_vm->getSaveStateName(a + 1);
@@ -569,6 +580,8 @@ bool DataLoad() {
 	g_vm->refreshInventory(0, 0);
 
 	bool skipLoad = false;
+	int8 CurPos = -1;
+	int8 OldPos = -1;
 
 	for (;;) {
 		g_vm->checkSystem();
@@ -623,12 +636,26 @@ bool DataLoad() {
 		}
 	}
 
+	performLoad(CurPos, skipLoad);
+
+	// Restore the inventory
+	memcpy(g_vm->_inventory, OldInv, MAXICON);
+	g_vm->_curInventory = 0;
+	g_vm->_iconBase = OldIconBase;
+	g_vm->_inventorySize = OldInvLen;
+	
+	return retval;
+}
+
+void performLoad(int slot, bool skipLoad) {
+	extern char CurCDSet;
+
 	if (!skipLoad) {
 		for (int a = FIRSTLINE; a < MAXY; a++)
 			memset(g_vm->_screenBuffer + SCREENLEN * a, 0, SCREENLEN * 2);
 
-		g_vm->loadGameState(CurPos + 1);
-		
+		g_vm->loadGameState(slot + 1);
+
 		FlagNoPaintScreen = true;
 		g_vm->_curStack = 0;
 		g_vm->_flagscriptactive = false;
@@ -659,12 +686,6 @@ bool DataLoad() {
 
 	g_vm->_graphicsMgr->copyToScreen(0, 0, MAXX, TOP);
 
-	memcpy(g_vm->_inventory, OldInv, MAXICON);
-
-	g_vm->_curInventory = 0;
-	g_vm->_iconBase = OldIconBase;
-	g_vm->_inventorySize = OldInvLen;
-
 	mleft = mright = false;
 	Mouse(MCMD_UPDT);
 	while (mleft || mright)
@@ -674,8 +695,6 @@ bool DataLoad() {
 		g_vm->_flagMouseEnabled = false;
 		Mouse(MCMD_OFF);
 	}
-
-	return retval;
 }
 
 /*-----------------09/02/96 20.57-------------------
