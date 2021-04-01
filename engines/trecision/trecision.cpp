@@ -298,9 +298,9 @@ bool TrecisionEngine::syncGameStream(Common::Serializer &ser) {
 		_graphicsMgr->updatePixelFormat(thumbnailBuf, ICONDX * ICONDY);
 
 	ser.syncAsUint16LE(_curRoom);
-	ser.syncAsByte(/*OldInvLen*/ _inventorySize);
+	ser.syncAsByte(_inventorySize);
 	ser.syncAsByte(_cyberInventorySize);
-	ser.syncAsByte(/*OldIconBase*/ _iconBase);
+	ser.syncAsByte(_iconBase);
 	ser.syncAsSint16LE(Flagskiptalk);
 	ser.syncAsSint16LE(Flagskipenable);
 	ser.syncAsSint16LE(_flagMouseEnabled);
@@ -313,7 +313,7 @@ bool TrecisionEngine::syncGameStream(Common::Serializer &ser) {
 	ser.syncAsSint16LE(FlagMousePolling);
 	ser.syncAsSint16LE(FlagDialogSolitaire);
 	ser.syncAsSint16LE(FlagCharacterExist);
-	ser.syncBytes(/*OldInv*/ _inventory, MAXICON);
+	ser.syncBytes(_inventory, MAXICON);
 	ser.syncBytes(_cyberInventory, MAXICON);
 	ser.syncAsFloatLE(_actor->_px);
 	ser.syncAsFloatLE(_actor->_py);
