@@ -22,6 +22,7 @@
 
 #include "base/plugins.h"
 #include "engines/advancedDetector.h"
+#include "graphics/surface.h"
 
 #include "trecision/trecision.h"
 
@@ -31,11 +32,16 @@ class TrecisionMetaEngine : public AdvancedMetaEngine {
 	}
 
 	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	void getSavegameThumbnail(Graphics::Surface &thumb) override;
 };
 
 Common::Error TrecisionMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 	*engine = new Trecision::TrecisionEngine(syst);
 	return Common::kNoError;
+}
+
+void TrecisionMetaEngine::getSavegameThumbnail(Graphics::Surface &thumb) {
+	thumb.copyFrom(((Trecision::TrecisionEngine *)g_engine)->_thumbnail);
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(TRECISION)

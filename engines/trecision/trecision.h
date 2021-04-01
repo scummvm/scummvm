@@ -26,7 +26,7 @@
 #include "engines/engine.h"
 #include "common/keyboard.h"
 #include "common/serializer.h"
-#include "graphics/pixelformat.h"
+#include "graphics/surface.h"
 #include "nl/3d/3dinc.h"
 
 #include "trecision/nl/struct.h"
@@ -123,7 +123,9 @@ public:
 	// Others
 	void checkSystem();
 	void initCursor();
-	
+
+	Graphics::Surface _thumbnail;
+
 	uint16 _curRoom;
 	uint16 _oldRoom;
 	SRoom _room[MAXROOMS];
