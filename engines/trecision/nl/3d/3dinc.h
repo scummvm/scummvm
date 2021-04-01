@@ -134,6 +134,9 @@ public:
 	SCamera  *_camera;
 	STexture *_texture;
 
+	uint16 _textureMat[256][91];
+	int16  _textureCoord[MAXFACE][3][2];
+
 	int _vertexNum;
 	int _faceNum;
 	int _lightNum;
@@ -146,6 +149,8 @@ public:
 
 	int _curFrame;
 	int _curAction;
+
+	void ReadActor(const char *filename);
 };
 
 

@@ -673,6 +673,18 @@ SActor::SActor(TrecisionEngine *vm) : _vm(vm) {
 	_curFrame = 0;
 	_curAction = 0;
 
+	for (int i = 0; i < 256; ++i) {
+		for (int j = 0; j < 91; ++j)
+			_textureMat[i][j] = 0;
+	}
+
+	for (int i = 0; i < MAXFACE; ++i) {
+		for (int j = 0; j < 3; ++j) {
+			_textureCoord[i][j][0] = 0;
+			_textureCoord[i][j][1] = 0;
+		}
+	}
+
 	_characterArea = nullptr;
 }
 
