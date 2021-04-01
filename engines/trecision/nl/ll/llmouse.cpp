@@ -191,7 +191,7 @@ void SDText::DText() {
 		uint16 len = strlen(curSign);
 
 		if (len >= MAXCHARS) {
-			strcpy(curSign, g_vm->_sysText[19]);
+			strcpy(curSign, g_vm->_sysText[kMessageError]);
 			len = strlen(curSign);
 		}
 
@@ -289,7 +289,7 @@ bool DataSave() {
 		memset(g_vm->_screenBuffer + SCREENLEN * a, 0, SCREENLEN * 2);
 
 	SDText SText;
-	SText.set(0, TOP - 20, SCREENLEN, CARHEI, 0, 0, SCREENLEN, CARHEI, 0x7FFF, MASKCOL, g_vm->_sysText[9]);
+	SText.set(0, TOP - 20, SCREENLEN, CARHEI, 0, 0, SCREENLEN, CARHEI, 0x7FFF, MASKCOL, g_vm->_sysText[kMessageSavePosition]);
 	SText.DText();
 
 	g_vm->_graphicsMgr->copyToScreen(0, 0, MAXX, TOP);
@@ -336,7 +336,7 @@ insave:
 
 			g_vm->_inventory[a] = LASTICON + a;
 		} else {
-			strcpy(savename[a], g_vm->_sysText[10]);
+			strcpy(savename[a], g_vm->_sysText[kMessageEmptySpot]);
 			g_vm->_inventory[a] = iEMPTYSLOT;
 		}
 
@@ -515,7 +515,7 @@ bool DataLoad() {
 	}
 
 	SDText SText;
-	SText.set(0, TOP - 20, SCREENLEN, CARHEI, 0, 0, SCREENLEN, CARHEI, 0x7FFF, MASKCOL, g_vm->_sysText[11]);
+	SText.set(0, TOP - 20, SCREENLEN, CARHEI, 0, 0, SCREENLEN, CARHEI, 0x7FFF, MASKCOL, g_vm->_sysText[kMessageLoadPosition]);
 	SText.DText();
 
 	g_vm->_graphicsMgr->copyToScreen(0, 0, MAXX, TOP);
@@ -559,7 +559,7 @@ bool DataLoad() {
 
 			g_vm->_inventory[a] = LASTICON + a;
 		} else {
-			strcpy(savename[a], g_vm->_sysText[10]);
+			strcpy(savename[a], g_vm->_sysText[kMessageEmptySpot]);
 			g_vm->_inventory[a] = iEMPTYSLOT;
 		}
 
@@ -689,7 +689,7 @@ bool QuitGame() {
 		memset(g_vm->_screenBuffer + SCREENLEN * a, 0, SCREENLEN * 2);
 
 	SDText SText;
-	SText.set(0, TOP - 20, SCREENLEN, CARHEI, 0, 0, SCREENLEN, CARHEI, 0x7FFF, MASKCOL, g_vm->_sysText[13]);
+	SText.set(0, TOP - 20, SCREENLEN, CARHEI, 0, 0, SCREENLEN, CARHEI, 0x7FFF, MASKCOL, g_vm->_sysText[kMessageConfirmExit]);
 	SText.DText();
 
 	g_vm->_graphicsMgr->copyToScreen(0, 0, SCREENLEN, TOP);
@@ -721,7 +721,7 @@ void DemoOver() {
 		memset(g_vm->_screenBuffer + SCREENLEN * a, 0, SCREENLEN * 2);
 
 	SDText SText;
-	SText.set(0, TOP - 20, SCREENLEN, CARHEI, 0, 0, SCREENLEN, CARHEI, 0x7FFF, MASKCOL, g_vm->_sysText[17]);
+	SText.set(0, TOP - 20, SCREENLEN, CARHEI, 0, 0, SCREENLEN, CARHEI, 0x7FFF, MASKCOL, g_vm->_sysText[kMessageDemoOver]);
 	SText.DText();
 
 	g_vm->_graphicsMgr->copyToScreen(0, 0, SCREENLEN, TOP);
@@ -750,7 +750,7 @@ void CheckFileInCD(Common::String name) {
 	fe.name[11] = '\0';	
 	SFileEntry *pfe = (SFileEntry *)bsearch(&fe, FileRef, NumFileRef, sizeof(SFileEntry), Compare);
 	if (pfe == nullptr)
-		CloseSys(g_vm->_sysText[5]);
+		CloseSys(g_vm->_sysText[kMessageUnknownError]);
 
 	char optcd = 1;
 	if ((g_vm->_curRoom == r11) || (g_vm->_curRoom == r12) || (g_vm->_curRoom == r13) || (g_vm->_curRoom == r14) || (g_vm->_curRoom == r15) || (g_vm->_curRoom == r16) || (g_vm->_curRoom == r17) || (g_vm->_curRoom == r18) || (g_vm->_curRoom == r19) || (g_vm->_curRoom == r1A) || (g_vm->_curRoom == r1B) || (g_vm->_curRoom == r1C) || (g_vm->_curRoom == r1D) || (g_vm->_curRoom == rINTRO) || (g_vm->_curRoom == rSYS) || (g_vm->_curRoom == r12CU) || (g_vm->_curRoom == r13CU))
@@ -784,7 +784,7 @@ void CheckFileInCD(Common::String name) {
 	FastFileClose(ff);
 	g_vm->_graphicsMgr->updatePixelFormat(g_vm->_screenBuffer, MAXX * TOP);
 
-	sprintf(str, g_vm->_sysText[4], ncd + '0');
+	sprintf(str, g_vm->_sysText[kMessageInsertCD], ncd + '0');
 	SDText SText;
 	SText.set(0, TOP - 20, SCREENLEN, CARHEI, 0, 0, SCREENLEN, CARHEI, g_vm->_graphicsMgr->palTo16bit(255, 255, 255), MASKCOL, str);
 	SText.DText();

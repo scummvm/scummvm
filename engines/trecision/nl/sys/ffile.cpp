@@ -124,7 +124,7 @@ char FastFileInit(const char *fname) {
 
 	if (!dataFile.open(fname)) {
 		warning("FastFileInit: failed to open %s", fname);
-		CloseSys(g_vm->_sysText[1]);
+		CloseSys(g_vm->_sysText[kMessageFilesMissing]);
 		return false;
 	}
 
@@ -162,7 +162,7 @@ Common::SeekableReadStream *FastFileOpen(const char *name) {
 	}
 	if (stream == nullptr) {
 		warning("FastFileOpen: File %s not found", name);
-		CloseSys(g_vm->_sysText[1]);
+		CloseSys(g_vm->_sysText[kMessageFilesMissing]);
 	}
 
 	return stream;
@@ -229,7 +229,7 @@ bool AnimFileInit(Common::String fname) {
 		if (!animFile[a].open(fname)) {
 			warning("AnimFileInit: failed to open file %s", fname.c_str());
 			AnimFileFinish();
-			CloseSys(g_vm->_sysText[1]);
+			CloseSys(g_vm->_sysText[kMessageFilesMissing]);
 			return false;
 		}
 	}
@@ -265,7 +265,7 @@ Common::SeekableReadStream *AnimFileOpen(Common::String name) {
 	}
 	if (stream == nullptr) {
 		warning("AnimFileOpen: File %s not found", name.c_str());
-		CloseSys(g_vm->_sysText[1]);
+		CloseSys(g_vm->_sysText[kMessageFilesMissing]);
 	}
 
 	return stream;
@@ -284,7 +284,7 @@ Common::SeekableReadStream *FmvFileOpen(const char *name) {
 	if (!file->open(name)) {
 		warning("Fmv file %s not found!", name);
 		delete file;
-		CloseSys(g_vm->_sysText[1]);
+		CloseSys(g_vm->_sysText[kMessageFilesMissing]);
 		return nullptr;
 	}
 
@@ -303,7 +303,7 @@ bool SpeechFileInit(const char *fname) {
 	if (!speechFile.open(fname)) {
 		warning("SpeechFileInit: failed to open %s", fname);
 		SpeechFileFinish();
-		CloseSys(g_vm->_sysText[1]);
+		CloseSys(g_vm->_sysText[kMessageFilesMissing]);
 		return false;
 	}
 
@@ -334,7 +334,7 @@ Common::SeekableReadStream *SpeechFileOpen(const char *name) {
 	}
 	if (stream == nullptr) {
 		warning("SpeechFileOpen: File %s not found", name);
-		CloseSys(g_vm->_sysText[1]);
+		CloseSys(g_vm->_sysText[kMessageFilesMissing]);
 	}
 
 	return stream;

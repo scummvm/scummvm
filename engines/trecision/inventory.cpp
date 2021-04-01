@@ -263,10 +263,10 @@ void TrecisionEngine::showInventoryName(uint16 obj, bool showhide) {
 			return;
 
 		char locsent[256];
-		strcpy(locsent, _sysText[23]);
+		strcpy(locsent, _sysText[kMessageUse]);
 		if (_useWithInv[USED]) {
 			strcat(locsent, _objName[_inventoryObj[_useWith[USED]]._name]);
-			strcat(locsent, _sysText[24]);
+			strcat(locsent, _sysText[kMessageWith]);
 			if (obj && (_inventoryObj[_useWith[USED]]._name != _inventoryObj[obj]._name))
 				strcat(locsent, _objName[_inventoryObj[obj]._name]);
 		} else {
@@ -274,7 +274,7 @@ void TrecisionEngine::showInventoryName(uint16 obj, bool showhide) {
 				strcat(locsent, dunno);
 			else
 				strcat(locsent, _objName[_obj[_useWith[USED]]._name]);
-			strcat(locsent, _sysText[24]);
+			strcat(locsent, _sysText[kMessageWith]);
 			if (obj && (_obj[_useWith[USED]]._name != _inventoryObj[obj]._name))
 				strcat(locsent, _objName[_inventoryObj[obj]._name]);
 		}

@@ -75,7 +75,7 @@ int read3D(Common::String c) {
 				_proj[2][2] * _proj[1][0] * _proj[2][1];
 
 	if (det == 0.0)
-		CloseSys(g_vm->_sysText[5]);
+		CloseSys(g_vm->_sysText[kMessageUnknownError]);
 
 	_invP[0][0] = (_proj[1][1] * _proj[2][2] - _proj[1][2] * _proj[2][1]) / det;
 	_invP[0][1] = (_proj[0][1] * _proj[2][2] - _proj[0][2] * _proj[2][1]) / (-det);
