@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-04-01 16:24+0000\n"
+"POT-Creation-Date: 2021-04-01 18:27+0000\n"
 "PO-Revision-Date: 2021-03-28 02:24+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
@@ -4633,19 +4633,19 @@ msgstr "チートモードを有効化"
 msgid "Debug info and level selection becomes available"
 msgstr "デバッグ情報とレベル選択を利用可能にする"
 
-#: engines/hdb/metaengine.cpp:193 engines/nancy/input.cpp:182
+#: engines/hdb/metaengine.cpp:193 engines/nancy/input.cpp:180
 msgid "Move up"
 msgstr "上"
 
-#: engines/hdb/metaengine.cpp:199 engines/nancy/input.cpp:188
+#: engines/hdb/metaengine.cpp:199 engines/nancy/input.cpp:186
 msgid "Move down"
 msgstr "下"
 
-#: engines/hdb/metaengine.cpp:205 engines/nancy/input.cpp:194
+#: engines/hdb/metaengine.cpp:205 engines/nancy/input.cpp:192
 msgid "Move left"
 msgstr "左に行く"
 
-#: engines/hdb/metaengine.cpp:211 engines/nancy/input.cpp:200
+#: engines/hdb/metaengine.cpp:211 engines/nancy/input.cpp:198
 msgid "Move right"
 msgstr "右に行く"
 
@@ -5395,74 +5395,74 @@ msgstr "2人目の子供"
 msgid "Invalid Scene ID!"
 msgstr "指定されたパスが不正です!"
 
-#: engines/nancy/input.cpp:168
+#: engines/nancy/input.cpp:166
 #, fuzzy
 #| msgid "Left Click"
 msgid "Left Click Interact"
 msgstr "左クリック"
 
-#: engines/nancy/input.cpp:175
+#: engines/nancy/input.cpp:173
 #, fuzzy
 #| msgid "Right Click"
 msgid "Right Click Interact"
 msgstr "右クリック"
 
-#: engines/nancy/input.cpp:206
+#: engines/nancy/input.cpp:204
 #, fuzzy
 msgid "Fast move modifier"
 msgstr "高速モードの切り替え"
 
-#: engines/nancy/input.cpp:214
+#: engines/nancy/input.cpp:212
 #, fuzzy
 #| msgid "Toggle fast mode"
 msgid "Toggle fast conversation mode"
 msgstr "高速モードの切り替え"
 
-#: engines/nancy/input.cpp:219
+#: engines/nancy/input.cpp:217
 #, fuzzy
 #| msgid "Toggle fast mode"
 msgid "Toggle end conversation mode"
 msgstr "高速モードの切り替え"
 
-#: engines/nancy/input.cpp:224
+#: engines/nancy/input.cpp:222
 #, fuzzy
 #| msgid "Open main menu"
 msgid "Go to main menu"
 msgstr "メインメニューを開く"
 
-#: engines/nancy/input.cpp:229
+#: engines/nancy/input.cpp:227
 #, fuzzy
 msgid "Go to save/load menu"
 msgstr "セーブデータの同期を始まる"
 
-#: engines/nancy/input.cpp:234
+#: engines/nancy/input.cpp:232
 #, fuzzy
 #| msgid "No date saved"
 msgid "Reload last save"
 msgstr "日付未記録"
 
-#: engines/nancy/input.cpp:239
+#: engines/nancy/input.cpp:237
 #, fuzzy
 msgid "Go to setup menu"
 msgstr "設定"
 
-#: engines/nancy/input.cpp:244
+#: engines/nancy/input.cpp:242
 #, fuzzy
 #| msgid "Show game credits"
 msgid "Show credits"
 msgstr "ゲームクレジットを表示"
 
-#: engines/nancy/input.cpp:249
+#: engines/nancy/input.cpp:247
 #, fuzzy
 msgid "Go to map screen"
 msgstr "スクショを保存する"
 
-#: engines/nancy/input.cpp:255
+#: engines/nancy/input.cpp:253
 #, fuzzy
 msgid "Open general cheat menu"
 msgstr "マウス操作を有効にする"
 
-#: engines/nancy/input.cpp:260
+#: engines/nancy/input.cpp:258
 msgid "Open event flags cheat menu"
 msgstr "イベントフラグのチートメニューを開く"
 

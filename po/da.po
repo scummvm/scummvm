@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-04-01 16:24+0000\n"
+"POT-Creation-Date: 2021-04-01 18:27+0000\n"
 "PO-Revision-Date: 2021-03-21 08:24+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Danish <https://translations.scummvm.org/projects/scummvm/"
@@ -4695,22 +4695,22 @@ msgstr "Aktivér snydetilstand"
 msgid "Debug info and level selection becomes available"
 msgstr "Fejlretningsinformation og valg af bane bliver tilgængeligt"
 
-#: engines/hdb/metaengine.cpp:193 engines/nancy/input.cpp:182
+#: engines/hdb/metaengine.cpp:193 engines/nancy/input.cpp:180
 #, fuzzy
 msgid "Move up"
 msgstr "Flyt bagud"
 
-#: engines/hdb/metaengine.cpp:199 engines/nancy/input.cpp:188
+#: engines/hdb/metaengine.cpp:199 engines/nancy/input.cpp:186
 #, fuzzy
 msgid "Move down"
 msgstr "Annuller download"
 
-#: engines/hdb/metaengine.cpp:205 engines/nancy/input.cpp:194
+#: engines/hdb/metaengine.cpp:205 engines/nancy/input.cpp:192
 #, fuzzy
 msgid "Move left"
 msgstr "Flyt til venstre"
 
-#: engines/hdb/metaengine.cpp:211 engines/nancy/input.cpp:200
+#: engines/hdb/metaengine.cpp:211 engines/nancy/input.cpp:198
 #, fuzzy
 msgid "Move right"
 msgstr "Flyt til højre"
@@ -5489,73 +5489,73 @@ msgstr "Andet barn"
 msgid "Invalid Scene ID!"
 msgstr "Ugyldig sti!"
 
-#: engines/nancy/input.cpp:168
+#: engines/nancy/input.cpp:166
 #, fuzzy
 #| msgid "Left Click"
 msgid "Left Click Interact"
 msgstr "Venstreklik"
 
-#: engines/nancy/input.cpp:175
+#: engines/nancy/input.cpp:173
 #, fuzzy
 #| msgid "Right Click Once"
 msgid "Right Click Interact"
 msgstr "Enkelt højreklik"
 
-#: engines/nancy/input.cpp:206
+#: engines/nancy/input.cpp:204
 #, fuzzy
 #| msgid "Fast mode"
 msgid "Fast move modifier"
 msgstr "Hurtigtilstand"
 
-#: engines/nancy/input.cpp:214
+#: engines/nancy/input.cpp:212
 #, fuzzy
 msgid "Toggle fast conversation mode"
 msgstr "Hurtigtilstand"
 
-#: engines/nancy/input.cpp:219
+#: engines/nancy/input.cpp:217
 #, fuzzy
 msgid "Toggle end conversation mode"
 msgstr "Hurtigtilstand"
 
-#: engines/nancy/input.cpp:224
+#: engines/nancy/input.cpp:222
 #, fuzzy
 msgid "Go to main menu"
 msgstr "~R~etur til oversigt"
 
-#: engines/nancy/input.cpp:229
+#: engines/nancy/input.cpp:227
 #, fuzzy
 #| msgid "Insert save/load game disk"
 msgid "Go to save/load menu"
 msgstr "Indsæt gem/indlæs spil disk"
 
-#: engines/nancy/input.cpp:234
+#: engines/nancy/input.cpp:232
 #, fuzzy
 #| msgid "No date saved"
 msgid "Reload last save"
 msgstr "Ingen dato gemt"
 
-#: engines/nancy/input.cpp:239
+#: engines/nancy/input.cpp:237
 #, fuzzy
 msgid "Go to setup menu"
 msgstr "Indstillinger"
 
-#: engines/nancy/input.cpp:244
+#: engines/nancy/input.cpp:242
 #, fuzzy
 msgid "Show credits"
 msgstr "Vis muse markør"
 
-#: engines/nancy/input.cpp:249
+#: engines/nancy/input.cpp:247
 #, fuzzy
 msgid "Go to map screen"
 msgstr "Jævn bevægelse til"
 
-#: engines/nancy/input.cpp:255
+#: engines/nancy/input.cpp:253
 #, fuzzy
 #| msgid "Enable cheat mode"
 msgid "Open general cheat menu"
 msgstr "Aktivér snydetilstand"
 
-#: engines/nancy/input.cpp:260
+#: engines/nancy/input.cpp:258
 msgid "Open event flags cheat menu"
 msgstr ""
 

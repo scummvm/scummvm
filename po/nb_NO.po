@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-04-01 16:24+0000\n"
+"POT-Creation-Date: 2021-04-01 18:27+0000\n"
 "PO-Revision-Date: 2020-09-26 21:13+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Norwegian Bokmål <https://translations.scummvm.org/projects/"
@@ -4758,22 +4758,22 @@ msgstr "Aktiver helium-modus"
 msgid "Debug info and level selection becomes available"
 msgstr ""
 
-#: engines/hdb/metaengine.cpp:193 engines/nancy/input.cpp:182
+#: engines/hdb/metaengine.cpp:193 engines/nancy/input.cpp:180
 #, fuzzy
 msgid "Move up"
 msgstr "Beveg Bakover"
 
-#: engines/hdb/metaengine.cpp:199 engines/nancy/input.cpp:188
+#: engines/hdb/metaengine.cpp:199 engines/nancy/input.cpp:186
 #, fuzzy
 msgid "Move down"
 msgstr "Avbryt nedlasting"
 
-#: engines/hdb/metaengine.cpp:205 engines/nancy/input.cpp:194
+#: engines/hdb/metaengine.cpp:205 engines/nancy/input.cpp:192
 #, fuzzy
 msgid "Move left"
 msgstr "Skli mot Venstre"
 
-#: engines/hdb/metaengine.cpp:211 engines/nancy/input.cpp:200
+#: engines/hdb/metaengine.cpp:211 engines/nancy/input.cpp:198
 #, fuzzy
 msgid "Move right"
 msgstr "Skli mot Høyre"
@@ -5516,72 +5516,72 @@ msgstr "Andre unge"
 msgid "Invalid Scene ID!"
 msgstr "Ugyldig kode"
 
-#: engines/nancy/input.cpp:168
+#: engines/nancy/input.cpp:166
 #, fuzzy
 #| msgid "Left Click"
 msgid "Left Click Interact"
 msgstr "Venstreklikk"
 
-#: engines/nancy/input.cpp:175
+#: engines/nancy/input.cpp:173
 #, fuzzy
 #| msgid "Right Click Once"
 msgid "Right Click Interact"
 msgstr "Høyreklikk én gang"
 
-#: engines/nancy/input.cpp:206
+#: engines/nancy/input.cpp:204
 #, fuzzy
 #| msgid "Fast mode"
 msgid "Fast move modifier"
 msgstr "Rask modus"
 
-#: engines/nancy/input.cpp:214
+#: engines/nancy/input.cpp:212
 #, fuzzy
 msgid "Toggle fast conversation mode"
 msgstr "Rask modus"
 
-#: engines/nancy/input.cpp:219
+#: engines/nancy/input.cpp:217
 #, fuzzy
 msgid "Toggle end conversation mode"
 msgstr "Rask modus"
 
-#: engines/nancy/input.cpp:224
+#: engines/nancy/input.cpp:222
 #, fuzzy
 msgid "Go to main menu"
 msgstr "~T~ilbake til oppstarter"
 
-#: engines/nancy/input.cpp:229
+#: engines/nancy/input.cpp:227
 #, fuzzy
 #| msgid "Insert save/load game disk"
 msgid "Go to save/load menu"
 msgstr "Sett inn disk for lagrede spill"
 
-#: engines/nancy/input.cpp:234
+#: engines/nancy/input.cpp:232
 #, fuzzy
 #| msgid "No date saved"
 msgid "Reload last save"
 msgstr "Ingen dato lagret"
 
-#: engines/nancy/input.cpp:239
+#: engines/nancy/input.cpp:237
 #, fuzzy
 msgid "Go to setup menu"
 msgstr "Valg"
 
-#: engines/nancy/input.cpp:244
+#: engines/nancy/input.cpp:242
 #, fuzzy
 msgid "Show credits"
 msgstr "Vis muspeker"
 
-#: engines/nancy/input.cpp:249
+#: engines/nancy/input.cpp:247
 #, fuzzy
 msgid "Go to map screen"
 msgstr "Trinnvis skjermrulling på"
 
-#: engines/nancy/input.cpp:255
+#: engines/nancy/input.cpp:253
 #, fuzzy
 msgid "Open general cheat menu"
 msgstr "Aktiver helium-modus"
 
-#: engines/nancy/input.cpp:260
+#: engines/nancy/input.cpp:258
 msgid "Open event flags cheat menu"
 msgstr ""
 

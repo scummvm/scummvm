@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-04-01 16:24+0000\n"
+"POT-Creation-Date: 2021-04-01 18:27+0000\n"
 "PO-Revision-Date: 2021-01-27 11:15+0000\n"
 "Last-Translator: Morgan Roberts <morganroberts@mentercaerffili.cymru>\n"
 "Language-Team: Welsh <https://translations.scummvm.org/projects/scummvm/"
@@ -4446,19 +4446,19 @@ msgstr ""
 msgid "Debug info and level selection becomes available"
 msgstr ""
 
-#: engines/hdb/metaengine.cpp:193 engines/nancy/input.cpp:182
+#: engines/hdb/metaengine.cpp:193 engines/nancy/input.cpp:180
 msgid "Move up"
 msgstr ""
 
-#: engines/hdb/metaengine.cpp:199 engines/nancy/input.cpp:188
+#: engines/hdb/metaengine.cpp:199 engines/nancy/input.cpp:186
 msgid "Move down"
 msgstr ""
 
-#: engines/hdb/metaengine.cpp:205 engines/nancy/input.cpp:194
+#: engines/hdb/metaengine.cpp:205 engines/nancy/input.cpp:192
 msgid "Move left"
 msgstr ""
 
-#: engines/hdb/metaengine.cpp:211 engines/nancy/input.cpp:200
+#: engines/hdb/metaengine.cpp:211 engines/nancy/input.cpp:198
 msgid "Move right"
 msgstr ""
 
@@ -5133,55 +5133,55 @@ msgstr ""
 msgid "Invalid Scene ID!"
 msgstr ""
 
-#: engines/nancy/input.cpp:168
+#: engines/nancy/input.cpp:166
 msgid "Left Click Interact"
 msgstr ""
 
-#: engines/nancy/input.cpp:175
+#: engines/nancy/input.cpp:173
 msgid "Right Click Interact"
 msgstr ""
 
-#: engines/nancy/input.cpp:206
+#: engines/nancy/input.cpp:204
 msgid "Fast move modifier"
 msgstr ""
 
-#: engines/nancy/input.cpp:214
+#: engines/nancy/input.cpp:212
 msgid "Toggle fast conversation mode"
 msgstr ""
 
-#: engines/nancy/input.cpp:219
+#: engines/nancy/input.cpp:217
 msgid "Toggle end conversation mode"
 msgstr ""
 
-#: engines/nancy/input.cpp:224
+#: engines/nancy/input.cpp:222
 msgid "Go to main menu"
 msgstr ""
 
-#: engines/nancy/input.cpp:229
+#: engines/nancy/input.cpp:227
 msgid "Go to save/load menu"
 msgstr ""
 
-#: engines/nancy/input.cpp:234
+#: engines/nancy/input.cpp:232
 msgid "Reload last save"
 msgstr ""
 
-#: engines/nancy/input.cpp:239
+#: engines/nancy/input.cpp:237
 msgid "Go to setup menu"
 msgstr ""
 
-#: engines/nancy/input.cpp:244
+#: engines/nancy/input.cpp:242
 msgid "Show credits"
 msgstr ""
 
-#: engines/nancy/input.cpp:249
+#: engines/nancy/input.cpp:247
 msgid "Go to map screen"
 msgstr ""
 
-#: engines/nancy/input.cpp:255
+#: engines/nancy/input.cpp:253
 msgid "Open general cheat menu"
 msgstr ""
 
-#: engines/nancy/input.cpp:260
+#: engines/nancy/input.cpp:258
 msgid "Open event flags cheat menu"
 msgstr ""
 

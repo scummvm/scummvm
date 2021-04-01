@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-04-01 16:24+0000\n"
+"POT-Creation-Date: 2021-04-01 18:27+0000\n"
 "PO-Revision-Date: 2021-03-21 08:24+0000\n"
 "Last-Translator: Aashwin Vaish <aashwin.vaish@research.iiit.ac.in>\n"
 "Language-Team: Hindi <https://translations.scummvm.org/projects/scummvm/"
@@ -4515,21 +4515,21 @@ msgstr ""
 msgid "Debug info and level selection becomes available"
 msgstr ""
 
-#: engines/hdb/metaengine.cpp:193 engines/nancy/input.cpp:182
+#: engines/hdb/metaengine.cpp:193 engines/nancy/input.cpp:180
 #, fuzzy
 msgid "Move up"
 msgstr "नीचे देखो"
 
-#: engines/hdb/metaengine.cpp:199 engines/nancy/input.cpp:188
+#: engines/hdb/metaengine.cpp:199 engines/nancy/input.cpp:186
 #, fuzzy
 msgid "Move down"
 msgstr "नीचे देखो"
 
-#: engines/hdb/metaengine.cpp:205 engines/nancy/input.cpp:194
+#: engines/hdb/metaengine.cpp:205 engines/nancy/input.cpp:192
 msgid "Move left"
 msgstr ""
 
-#: engines/hdb/metaengine.cpp:211 engines/nancy/input.cpp:200
+#: engines/hdb/metaengine.cpp:211 engines/nancy/input.cpp:198
 #, fuzzy
 msgid "Move right"
 msgstr "दायें मुड़िए"
@@ -5220,57 +5220,57 @@ msgstr ""
 msgid "Invalid Scene ID!"
 msgstr ""
 
-#: engines/nancy/input.cpp:168
+#: engines/nancy/input.cpp:166
 msgid "Left Click Interact"
 msgstr ""
 
-#: engines/nancy/input.cpp:175
+#: engines/nancy/input.cpp:173
 #, fuzzy
 msgid "Right Click Interact"
 msgstr "दाहिने"
 
-#: engines/nancy/input.cpp:206
+#: engines/nancy/input.cpp:204
 msgid "Fast move modifier"
 msgstr ""
 
-#: engines/nancy/input.cpp:214
+#: engines/nancy/input.cpp:212
 msgid "Toggle fast conversation mode"
 msgstr ""
 
-#: engines/nancy/input.cpp:219
+#: engines/nancy/input.cpp:217
 msgid "Toggle end conversation mode"
 msgstr ""
 
-#: engines/nancy/input.cpp:224
+#: engines/nancy/input.cpp:222
 msgid "Go to main menu"
 msgstr ""
 
-#: engines/nancy/input.cpp:229
+#: engines/nancy/input.cpp:227
 msgid "Go to save/load menu"
 msgstr ""
 
-#: engines/nancy/input.cpp:234
+#: engines/nancy/input.cpp:232
 msgid "Reload last save"
 msgstr ""
 
-#: engines/nancy/input.cpp:239
+#: engines/nancy/input.cpp:237
 msgid "Go to setup menu"
 msgstr ""
 
-#: engines/nancy/input.cpp:244
+#: engines/nancy/input.cpp:242
 #, fuzzy
 msgid "Show credits"
 msgstr "छिपी हुई files दिखाये"
 
-#: engines/nancy/input.cpp:249
+#: engines/nancy/input.cpp:247
 msgid "Go to map screen"
 msgstr ""
 
-#: engines/nancy/input.cpp:255
+#: engines/nancy/input.cpp:253
 msgid "Open general cheat menu"
 msgstr ""
 
-#: engines/nancy/input.cpp:260
+#: engines/nancy/input.cpp:258
 msgid "Open event flags cheat menu"
 msgstr ""
 
