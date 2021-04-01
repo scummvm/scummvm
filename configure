@@ -199,6 +199,7 @@ _no_pragma_pack=no
 _bink=yes
 _cloud=auto
 _pandoc=no
+_curl=yes
 _lld=no
 _gold=yes
 # Default vkeybd/eventrec options
@@ -249,10 +250,9 @@ _nasmpath="$PATH"
 NASMFLAGS=""
 NASM=""
 _tainted_build=no
-PANDOC=""
-_pandocpath="$PATH"
 _pandocformat="default"
 _pandocext="default"
+_manualversion="latest"
 # Detection features to be linked into executable or not
 _detection_features_static=yes
 _detection_features_full=yes
@@ -912,6 +912,10 @@ Optional Features:
   --enable-windows-unicode  use Windows Unicode APIs (default)
   --disable-windows-unicode use Windows ANSI APIs
 
+Optional Documentation Options:
+  --with-manual-version=VERSION version to use when generating the manuak (optional)
+  --with-pandoc-format=FORMAT   pandoc format to use during the conversion (optional)
+
 Optional Libraries:
   --with-alsa-prefix=DIR   prefix where alsa is installed (optional)
   --disable-alsa           disable ALSA midi sound support [autodetect]
@@ -997,8 +1001,6 @@ Optional Libraries:
 
   --with-nasm-prefix=DIR   prefix where nasm executable is installed (optional)
   --disable-nasm           disable assembly language optimizations [autodetect]
-
-  --with-pandoc-format=FORMAT   pandoc format to use during the conversion (optional)
 
   --with-readline-prefix=DIR   prefix where readline is installed (optional)
   --disable-readline       disable readline support in text console [autodetect]
@@ -1413,6 +1415,10 @@ for ac_option in $@; do
 		arg=`echo $ac_option | cut -d '=' -f 2`
 		_pandocformat="$arg"
 		_pandoc=yes
+		;;
+	--with-manual-version=*)
+		arg=`echo $ac_option | cut -d '=' -f 2`
+		_manualversion="$arg"
 		;;
 	--with-staticlib-prefix=*)
 		_staticlibpath=`echo $ac_option | cut -d '=' -f 2`
@@ -1986,6 +1992,26 @@ EOF
 	else
 		eval "$1 $CXXFLAGS $LDFLAGS -o $TMPO$HOSTEXEEXT tmp_cxx_compiler.cpp" 2>> "$TMPLOG" && eval "$TMPO$HOSTEXEEXT 2>> $TMPLOG" && cc_check_clean tmp_cxx_compiler.cpp
 	fi
+}
+
+# Check for an executable in PATH. Takes the name of the EXE and sets
+# two variables with whether the exe exists and the path.
+# For example "test_exe_in_path curl" will set _curlpath and _curl
+test_exe_in_path() {
+	IFS="${IFS= 	}"; ac_save_ifs="$IFS"; IFS=$SEPARATOR
+
+	for path_dir in $PATH; do
+		if test -x "$path_dir/$1$NATIVEEXEEXT" ; then
+			eval "_${1}path"="$path_dir/$1$NATIVEEXEEXT"
+			break
+		fi
+	done
+	IFS="$ac_save_ifs"
+	if ! test "_${1}path" ; then
+		eval "_${1}=no"
+	else
+    eval "_${1}=yes"
+  fi
 }
 
 # Prepare a list of candidates for the C++ compiler
@@ -5660,25 +5686,25 @@ define_in_config_if_yes $_nasm 'USE_NASM'
 if test "$_pandoc" = yes ; then
 	echocheck "pandoc"
 
-	IFS="${IFS= 	}"; ac_save_ifs="$IFS"; IFS=$SEPARATOR
-
-	for path_dir in $_pandocpath; do
-		if test -x "$path_dir/pandoc$NATIVEEXEEXT" ; then
-			PANDOC="$path_dir/pandoc$NATIVEEXEEXT"
-			break
-		fi
-	done
-
-	IFS="$ac_save_ifs"
-
-	if ! test "$PANDOC" ; then
-		_pandoc=no
-	fi
+	test_exe_in_path pandoc
 
 	echo $_pandoc
 fi
 
 define_in_config_if_yes $_pandoc 'USE_PANDOC'
+
+#
+# Check for curl
+#
+if test "$_curl" = yes ; then
+	echocheck "curl"
+
+	test_exe_in_path curl
+
+	echo $_curl
+fi
+
+define_in_config_if_yes $_curl 'USE_CURL'
 
 #
 # Check for FriBidi
@@ -6247,9 +6273,11 @@ EXEPRE := $HOSTEXEPRE
 EXEEXT := $HOSTEXEEXT
 NASM := $NASM
 NASMFLAGS := $NASMFLAGS
-PANDOC := $PANDOC
+PANDOC := $_pandocpath
+CURL := $_curlpath
 PANDOCFORMAT := $_pandocformat
 PANDOCEXT := $_pandocext
+MANUALVERSION := $_manualversion
 ZLIB_LIBS := $ZLIB_LIBS
 ZLIB_CFLAGS := $ZLIB_CFLAGS
 
