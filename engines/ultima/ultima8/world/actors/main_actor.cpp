@@ -249,6 +249,7 @@ int16 MainActor::addItemCru(Item *item, bool showtoast) {
 		} else {
 			Item *existing = getFirstItemWithShape(shapeno, true);
 			if (!existing) {
+				// Shields. Note, these are the same in Remorse and Regret.
 				if ((shapeno == 0x52e) || (shapeno == 0x52f) || (shapeno == 0x530)) {
 					int shieldtype;
 					switch (shapeno) {
@@ -906,7 +907,7 @@ void MainActor::useInventoryItem(Item *item) {
 
 	// 0x4d4 = datalink, 0x52d = scanner, 0x52e = ionic,
 	// 0x52f = plasma, 0x530 = graviton
-	// TODO: check these for no regret
+	// Note: These are the same in Remorse and Regret.
 	if (GAME_IS_CRUSADER && (shapenum != 0x4d4 && shapenum != 0x52d &&
 							 shapenum != 0x530 && shapenum != 0x52f &&
 							 shapenum != 0x52e)) {
