@@ -286,6 +286,23 @@ bool DataSave() {
 	actorStop();
 	nextStep();
 
+	if (!ConfMan.getBool("originalsaveload")) {
+		GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"), true);
+		int saveSlot = dialog->runModalWithCurrentTarget();
+		Common::String saveName = dialog->getResultString();
+		bool skipSave = saveSlot == -1;
+		delete dialog;
+
+		// Remove the mouse click event from the save/load dialog
+		g_vm->eventLoop();
+		g_vm->_mouseLeftBtn = g_vm->_mouseRightBtn = false;
+
+		if (!skipSave)
+			g_vm->saveGameState(saveSlot, saveName);
+
+		return !skipSave;
+	}
+
 	for (int a = 0; a < TOP; a++)
 		memset(g_vm->_screenBuffer + SCREENLEN * a, 0, SCREENLEN * 2);
 
