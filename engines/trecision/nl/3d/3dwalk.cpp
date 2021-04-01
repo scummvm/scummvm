@@ -22,6 +22,9 @@
 
 #include "common/util.h"
 #include "common/scummsys.h"
+#include "common/file.h"
+#include "common/str.h"
+
 #include "trecision/nl/ll/llinc.h"
 #include "trecision/nl/extern.h"
 #include "trecision/nl/define.h"
@@ -40,11 +43,11 @@ float _lookX, _lookZ;
 int read3D(Common::String c) {
 	ff = FastFileOpen(c.c_str());
 	if (ff == nullptr)
-		CloseSys("Can't open 3D file!\n");
+		error("read3D: Can't open 3D file %s", c.c_str());
 
 	// read rooms and lights
 	FastFileRead(ff, g_vm->_actor->_camera, sizeof(SCamera));
-	FastFileRead(ff, &g_vm->_actor->_lightNum, 4);
+	g_vm->_actor->_lightNum = ff->readSint32LE();
 	FastFileRead(ff, g_vm->_actor->_light, sizeof(SLight) * g_vm->_actor->_lightNum);
 
 	if (g_vm->_actor->_lightNum > 40)

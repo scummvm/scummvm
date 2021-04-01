@@ -36,9 +36,6 @@
 
 namespace Trecision {
 
-// da cancellare
-int VertexNum, FaceNum, MatNum, LightNum;
-
 #define MAXLIGHT	40
 #define MAXMAT		20
 
@@ -195,10 +192,7 @@ void OpenVideo() {
 	g_vm->_actor = new SActor(g_vm);
 	g_vm->_actor->ReadActor("jm.om");
 
-	g_vm->_actor->_vertexNum = VertexNum;
-	g_vm->_actor->_faceNum = FaceNum;
 	g_vm->_actor->_light = (SLight *)&VLight;
-	g_vm->_actor->_lightNum = LightNum;
 	g_vm->_actor->_camera = (SCamera *)&FCamera;
 	g_vm->_actor->_texture = (STexture *)&FTexture[0];
 
@@ -328,18 +322,16 @@ void SActor::ReadActor(const char *filename) {
 
 	ff = FastFileOpen(filename);
 	if (ff == nullptr)
-		CloseSys(_vm->_sysText[kMessageFilesMissing]);
+		error("ReadActor - Error opening file %s", filename);
 
 	int32 ActionNum = ff->readSint32LE();
-	VertexNum = ff->readSint32LE();
-	_vertexNum = VertexNum;
+	_vertexNum = ff->readSint32LE();
 
-	_characterArea = new SVertex[VertexNum * ActionNum];
+	_characterArea = new SVertex[_vertexNum * ActionNum];
 	_vertex = _characterArea;
-	FastFileRead(ff, _vertex, sizeof(SVertex) * VertexNum * ActionNum);
+	FastFileRead(ff, _vertex, sizeof(SVertex) * _vertexNum * ActionNum);
 
-	FaceNum = ff->readUint32LE();
-	_faceNum = FaceNum;
+	_faceNum = ff->readUint32LE();
 
 	FastFileClose(ff);
 
@@ -358,8 +350,8 @@ void SActor::ReadActor(const char *filename) {
 		}
 	}
 
-	_face = new SFace[FaceNum];
-	for (int i = 0; i < FaceNum; ++i) {
+	_face = new SFace[_faceNum];
+	for (int i = 0; i < _faceNum; ++i) {
 		_face[i]._a = ff->readSint16LE();
 		_face[i]._b = ff->readSint16LE();
 		_face[i]._c = ff->readSint16LE();
@@ -415,7 +407,7 @@ void SActor::ReadActor(const char *filename) {
 	m1[0][2] = v1[2];
 
 	for (int b = 0; b < ActionNum; b++) {
-		SVertex *sv = &_vertex[b * VertexNum];
+		SVertex *sv = &_vertex[b * _vertexNum];
 
 		v1[0] = sv[P2]._x - sv[P1]._x;
 		v1[1] = sv[P2]._y - sv[P1]._y;
@@ -505,19 +497,13 @@ void SActor::ReadActor(const char *filename) {
 					actionInRoom
  --------------------------------------------------*/
 int actionInRoom(int curA) {
-	int b;
-
 	for (int b = 0; b < MAXACTIONINROOM; b++) {
 		if (g_vm->_room[g_vm->_curRoom]._actions[b] == curA)
-			break;
+			return b;
 	}
 
-	if (b >= MAXACTIONINROOM) {
-		warning("Action %d not found in room %d", curA, g_vm->_curRoom);
-		return 0 ;
-	}
-
-	return b;
+	warning("Action %d not found in room %d", curA, g_vm->_curRoom);
+	return 0 ;
 }
 
 /*-----------------17/02/95 10.19-------------------
