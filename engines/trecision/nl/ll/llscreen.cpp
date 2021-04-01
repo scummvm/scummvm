@@ -328,14 +328,22 @@ void SActor::ReadActor(const char *filename) {
 	_vertexNum = ff->readSint32LE();
 
 	_characterArea = new SVertex[_vertexNum * ActionNum];
+	for (int i = 0; i < _vertexNum * ActionNum; ++i) {
+		_characterArea[i]._x = ff->readFloatLE();
+		_characterArea[i]._y = ff->readFloatLE();
+		_characterArea[i]._z = ff->readFloatLE();
+		_characterArea[i]._nx = ff->readFloatLE();
+		_characterArea[i]._ny = ff->readFloatLE();
+		_characterArea[i]._nz = ff->readFloatLE();
+	}
 	_vertex = _characterArea;
-	FastFileRead(ff, _vertex, sizeof(SVertex) * _vertexNum * ActionNum);
-
 	_faceNum = ff->readUint32LE();
-
 	FastFileClose(ff);
 
 	ff = FastFileOpen("mat.tex");
+	if (ff == nullptr)
+		error("ReadActor - Error opening file mat.tex");
+
 	for (int i = 0; i < 256; ++i) {
 		for (int j = 0; j < 91; ++j)
 			_textureMat[i][j] = ff->readUint16LE();
