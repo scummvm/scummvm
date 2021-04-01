@@ -20,9 +20,7 @@
  *
  */
 
-#include "engines/nancy/action/actionmanager.h"
 #include "engines/nancy/action/recordtypes.h"
-#include "engines/nancy/action/actionrecord.h"
 #include "engines/nancy/action/primaryvideo.h"
 #include "engines/nancy/action/secondaryvideo.h"
 #include "engines/nancy/action/secondarymovie.h"

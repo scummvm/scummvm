@@ -20,8 +20,6 @@
  *
  */
 
-#include "engines/nancy/state/scene.h"
-
 #include "common/serializer.h"
 #include "common/config-manager.h"
 
@@ -32,6 +30,8 @@
 #include "engines/nancy/graphics.h"
 #include "engines/nancy/cursor.h"
 #include "engines/nancy/util.h"
+
+#include "engines/nancy/state/scene.h"
 
 namespace Common {
 DECLARE_SINGLETON(Nancy::State::Scene);

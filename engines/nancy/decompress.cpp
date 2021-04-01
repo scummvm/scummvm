@@ -20,10 +20,10 @@
  *
  */
 
-#include "engines/nancy/decompress.h"
-
 #include "common/memstream.h"
 #include "common/textconsole.h"
+
+#include "engines/nancy/decompress.h"
 
 namespace Nancy {
 

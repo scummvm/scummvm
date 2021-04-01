@@ -24,7 +24,6 @@
 #define NANCY_COMMONYPES_H
 
 #include "common/rect.h"
-#include "common/str.h"
 
 namespace Common {
 class SeekableReadStream;

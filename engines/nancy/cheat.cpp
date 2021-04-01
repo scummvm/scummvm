@@ -20,8 +20,6 @@
  *
  */
 
-#include "engines/nancy/cheat.h"
-
 #include "common/winexe.h"
 #include "common/translation.h"
 #include "common/stream.h"
@@ -30,6 +28,8 @@
 #include "gui/widgets/edittext.h"
 
 #include "engines/nancy/iff.h"
+#include "engines/nancy/cheat.h"
+
 #include "engines/nancy/state/scene.h"
 
 namespace Nancy {

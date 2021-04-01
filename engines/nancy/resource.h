@@ -23,7 +23,6 @@
 #ifndef NANCY_RESOURCE_H
 #define NANCY_RESOURCE_H
 
-#include "common/str.h"
 #include "common/array.h"
 
 namespace Graphics {

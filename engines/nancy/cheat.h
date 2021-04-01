@@ -25,9 +25,6 @@
 
 #include "gui/dialog.h"
 
-#include "common/str.h"
-#include "common/array.h"
-
 namespace GUI {
 class EditTextWidget;
 class CheckboxWidget;

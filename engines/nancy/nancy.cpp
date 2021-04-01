@@ -20,34 +20,30 @@
  *
  */
 
-#include "engines/nancy/nancy.h"
-
 #include "common/system.h"
 #include "common/random.h"
 #include "common/debug-channels.h"
 #include "common/config-manager.h"
 #include "common/memstream.h"
 #include "common/installshield_cab.h"
-#include "common/savefile.h"
 #include "common/serializer.h"
+
+#include "engines/nancy/nancy.h"
+#include "engines/nancy/resource.h"
+#include "engines/nancy/iff.h"
+#include "engines/nancy/input.h"
+#include "engines/nancy/sound.h"
+#include "engines/nancy/graphics.h"
+#include "engines/nancy/cheat.h"
+#include "engines/nancy/console.h"
+
+#include "engines/nancy/action/primaryvideo.h"
 
 #include "engines/nancy/state/logo.h"
 #include "engines/nancy/state/scene.h"
 #include "engines/nancy/state/help.h"
 #include "engines/nancy/state/map.h"
 #include "engines/nancy/state/credits.h"
-
-#include "engines/nancy/resource.h"
-#include "engines/nancy/iff.h"
-#include "engines/nancy/sound.h"
-#include "engines/nancy/input.h"
-#include "engines/nancy/sound.h"
-#include "engines/nancy/graphics.h"
-#include "engines/nancy/cursor.h"
-#include "engines/nancy/cheat.h"
-#include "engines/nancy/console.h"
-
-#include "engines/nancy/action/primaryvideo.h"
 
 namespace Nancy {
 

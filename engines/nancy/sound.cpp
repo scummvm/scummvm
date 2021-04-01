@@ -20,8 +20,6 @@
  *
  */
 
-#include "engines/nancy/sound.h"
-
 #include "common/system.h"
 #include "common/substream.h"
 
@@ -30,6 +28,7 @@
 #include "audio/decoders/vorbis.h"
 
 #include "engines/nancy/nancy.h"
+#include "engines/nancy/sound.h"
 
 namespace Nancy {
 

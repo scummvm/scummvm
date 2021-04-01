@@ -23,8 +23,6 @@
 #ifndef NANCY_SOUND_H
 #define NANCY_SOUND_H
 
-#include "common/str.h"
-
 #include "audio/mixer.h"
 
 namespace Common {

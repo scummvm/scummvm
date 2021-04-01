@@ -23,10 +23,10 @@
 #ifndef NANCY_UI_VIEWPORT_H
 #define NANCY_UI_VIEWPORT_H
 
-#include "engines/nancy/renderobject.h"
-
-#include "engines/nancy/video.h"
 #include "engines/nancy/time.h"
+#include "engines/nancy/video.h"
+
+#include "engines/nancy/renderobject.h"
 
 namespace Common {
 class String;

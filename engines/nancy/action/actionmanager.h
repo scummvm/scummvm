@@ -23,7 +23,7 @@
 #ifndef NANCY_ACTION_ACTIONMANAGER_H
 #define NANCY_ACTION_ACTIONMANAGER_H
 
-#include "engines/nancy/action/actionrecord.h"
+#include "common/array.h"
 
 namespace Common {
 class Serializer;
@@ -40,6 +40,8 @@ class Scene;
 }
 
 namespace Action {
+
+class ActionRecord;
 
 // The class that handles ActionRecords and their execution
 class ActionManager {

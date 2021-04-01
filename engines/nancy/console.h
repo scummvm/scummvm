@@ -25,8 +25,6 @@
 
 #include "gui/debugger.h"
 
-#include "common/str.h"
-
 namespace Nancy {
 
 class NancyEngine;

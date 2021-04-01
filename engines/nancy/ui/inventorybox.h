@@ -23,9 +23,6 @@
 #ifndef NANCY_UI_INVENTORYBOX_H
 #define NANCY_UI_INVENTORYBOX_H
 
-#include "common/array.h"
-#include "common/str.h"
-
 #include "engines/nancy/time.h"
 
 #include "engines/nancy/ui/scrollbar.h"

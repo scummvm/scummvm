@@ -20,10 +20,10 @@
  *
  */
 
-#include "engines/nancy/ui/fullscreenimage.h"
-
 #include "engines/nancy/nancy.h"
 #include "engines/nancy/resource.h"
+
+#include "engines/nancy/ui/fullscreenimage.h"
 
 namespace Nancy {
 namespace UI {

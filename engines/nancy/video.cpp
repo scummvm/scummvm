@@ -20,14 +20,13 @@
  *
  */
 
-#include "engines/nancy/video.h"
-
 #include "common/memstream.h"
 #include "common/substream.h"
 
+#include "engines/nancy/nancy.h"
+#include "engines/nancy/video.h"
 #include "engines/nancy/decompress.h"
 #include "engines/nancy/graphics.h"
-#include "engines/nancy/nancy.h"
 
 namespace Nancy {
 

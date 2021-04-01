@@ -21,10 +21,8 @@
  */
 
 #include "engines/nancy/commontypes.h"
-
-#include "common/stream.h"
-
 #include "engines/nancy/util.h"
+
 #include "engines/nancy/state/scene.h"
 
 namespace Nancy {

@@ -20,15 +20,14 @@
  *
  */
 
-#include "engines/nancy/graphics.h"
-
 #include "image/bmp.h"
 
 #include "engines/util.h"
 
+#include "engines/nancy/nancy.h"
+#include "engines/nancy/graphics.h"
 #include "engines/nancy/renderobject.h"
 #include "engines/nancy/resource.h"
-#include "engines/nancy/nancy.h"
 
 namespace Nancy {
 

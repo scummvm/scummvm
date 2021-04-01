@@ -20,14 +20,11 @@
  *
  */
 
-#include "engines/nancy/renderobject.h"
-
-#include "common/stream.h"
-
-#include "engines/nancy/state/scene.h"
-
 #include "engines/nancy/nancy.h"
 #include "engines/nancy/graphics.h"
+#include "engines/nancy/renderobject.h"
+
+#include "engines/nancy/state/scene.h"
 
 namespace Nancy {
 

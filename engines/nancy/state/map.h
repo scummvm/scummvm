@@ -23,15 +23,12 @@
 #ifndef NANCY_STATE_MAP_H
 #define NANCY_STATE_MAP_H
 
-#include "common/array.h"
 #include "common/singleton.h"
 
 #include "engines/nancy/state/state.h"
 
 #include "engines/nancy/ui/viewport.h"
 #include "engines/nancy/ui/button.h"
-
-#include "engines/nancy/renderobject.h"
 
 namespace Nancy {
 

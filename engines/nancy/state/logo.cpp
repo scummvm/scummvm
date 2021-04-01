@@ -20,11 +20,11 @@
  *
  */
 
-#include "engines/nancy/state/logo.h"
-
 #include "engines/nancy/nancy.h"
 #include "engines/nancy/sound.h"
 #include "engines/nancy/input.h"
+
+#include "engines/nancy/state/logo.h"
 
 namespace Common {
 DECLARE_SINGLETON(Nancy::State::Logo);

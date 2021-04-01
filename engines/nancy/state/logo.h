@@ -25,9 +25,9 @@
 
 #include "common/singleton.h"
 
-#include "engines/nancy/state/state.h"
-
 #include "engines/nancy/commontypes.h"
+
+#include "engines/nancy/state/state.h"
 
 #include "engines/nancy/ui/fullscreenimage.h"
 

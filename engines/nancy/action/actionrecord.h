@@ -23,8 +23,6 @@
 #ifndef NANCY_ACTION_ACTIONRECORD_H
 #define NANCY_ACTION_ACTIONRECORD_H
 
-#include "common/str.h"
-
 #include "engines/nancy/time.h"
 #include "engines/nancy/cursor.h"
 

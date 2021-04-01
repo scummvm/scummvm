@@ -20,17 +20,16 @@
  *
  */
 
-#include "engines/nancy/action/actionmanager.h"
-
-
-#include "engines/nancy/state/scene.h"
+#include "common/serializer.h"
 
 #include "engines/nancy/nancy.h"
-#include "engines/nancy/cursor.h"
 #include "engines/nancy/input.h"
 #include "engines/nancy/sound.h"
 
-#include "common/serializer.h"
+#include "engines/nancy/action/actionmanager.h"
+#include "engines/nancy/action/actionrecord.h"
+
+#include "engines/nancy/state/scene.h"
 
 namespace Nancy {
 namespace Action {

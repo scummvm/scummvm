@@ -24,7 +24,6 @@
 #define NANCY_INPUT_H
 
 #include "common/rect.h"
-#include "common/array.h"
 #include "common/keyboard.h"
 
 namespace Common {

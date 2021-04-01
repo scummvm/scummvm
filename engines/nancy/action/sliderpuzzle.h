@@ -23,10 +23,10 @@
 #ifndef NANCY_ACTION_SLIDERPUZZLE_H
 #define NANCY_ACTION_SLIDERPUZZLE_H
 
-#include "engines/nancy/action/actionrecord.h"
+#include "engines/nancy/commontypes.h"
 #include "engines/nancy/renderobject.h"
 
-#include "engines/nancy/commontypes.h"
+#include "engines/nancy/action/actionrecord.h"
 
 namespace Common {
 class Serializer;

@@ -23,8 +23,6 @@
 #ifndef NANCY_GRAPHICS_H
 #define NANCY_GRAPHICS_H
 
-#include "common/array.h"
-
 #include "graphics/screen.h"
 
 #include "engines/nancy/font.h"

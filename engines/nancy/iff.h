@@ -24,7 +24,6 @@
 #define NANCY_IFF_H
 
 #include "common/array.h"
-#include "common/str.h"
 
 namespace Common {
 struct IFFChunk;

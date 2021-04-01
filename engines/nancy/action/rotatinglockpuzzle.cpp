@@ -20,18 +20,18 @@
  *
  */
 
-#include "engines/nancy/action/rotatinglockpuzzle.h"
-
 #include "common/random.h"
 
-#include "engines/nancy/state/scene.h"
-
-#include "engines/nancy/util.h"
 #include "engines/nancy/nancy.h"
 #include "engines/nancy/resource.h"
 #include "engines/nancy/graphics.h"
 #include "engines/nancy/sound.h"
 #include "engines/nancy/input.h"
+#include "engines/nancy/util.h"
+
+#include "engines/nancy/action/rotatinglockpuzzle.h"
+
+#include "engines/nancy/state/scene.h"
 
 namespace Nancy {
 namespace Action {

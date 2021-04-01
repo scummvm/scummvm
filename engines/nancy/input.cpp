@@ -20,16 +20,14 @@
  *
  */
 
-#include "engines/nancy/input.h"
-
-#include "engines/nancy/nancy.h"
-
 #include "common/translation.h"
-#include "common/events.h"
 
 #include "backends/keymapper/action.h"
 #include "backends/keymapper/keymap.h"
 #include "backends/keymapper/standard-actions.h"
+
+#include "engines/nancy/nancy.h"
+#include "engines/nancy/input.h"
 
 namespace Nancy {
 
