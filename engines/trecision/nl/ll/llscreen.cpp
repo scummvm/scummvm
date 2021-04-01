@@ -193,8 +193,7 @@ void OpenVideo() {
 
 	delete g_vm->_actor;
 	g_vm->_actor = new SActor(g_vm);
-
-	ReadActor("jm.om");
+	g_vm->_actor->ReadActor("jm.om");
 
 	g_vm->_actor->_vertexNum = VertexNum;
 	g_vm->_actor->_faceNum = FaceNum;
@@ -252,30 +251,95 @@ void OpenVideo() {
 	}
 }
 
+static const float _vertsCorr[104][3] = {
+	0.000000,	0.000000,	0.000000,		0.000000,	0.000000,	0.000000,
+	0.000000,	0.000000,	0.000000,		0.000000,	0.000000,	0.000000,
+	0.000000,	0.000000,	0.000000,		0.000000,	0.000000,	0.000000,
+	0.000000,	0.000001,	0.000000,		0.000000,	0.000000,	0.000000,
+	0.000000,	0.000000,	0.000000,		0.000000,	0.000000,	0.000000,
+	0.000000,	-0.061717,	0.833191,		0.000000,	-0.120163,	0.330445,
+	0.000000,	0.000000,	0.000000,		0.000000,	0.000000,	0.000000,
+	0.000000,	-0.432022,	0.216004,		0.000000,	-0.030041,	0.360489,
+	0.310895,	0.000000,	0.000000,		0.312943,	0.000000,	0.000000,
+	0.114858,	0.000000,	0.000000,		0.000000,	1.051431,	0.300415,
+	0.000000,	0.000000,	0.246856,		0.000000,	0.120163,	0.480652,
+	0.000000,	0.000000,	0.000000,		0.000000,	0.000000,	0.000000,
+	0.000000,	0.000000,	0.000000,		0.000000,	0.000000,	0.000000,
+	0.000000,	0.180247,	0.600815,		0.000000,	0.000000,	0.000000,
+	0.530074,	0.041892,	0.670273,		0.000000,	0.000000,	0.000000,
+	0.000000,	0.060081,	0.540726,		0.000000,	-0.318127,	-0.249817,
+	0.000000,	0.180244,	0.540741,		0.000000,	0.000000,	0.000000,
+	0.000000,	-0.922172,	0.201188,		0.000000,	-0.442684,	-0.328400,
+	0.353384,	1.047291,	-1.005401,		0.000000,	-0.646931,	-0.933030,
+	0.000000,	2.283107,	-0.420562,		0.412281,	-1.633775,	-1.193909,
+	0.312389,	0.000000,	0.000000,		0.000000,	0.020947,	-0.083786,
+	0.000000,	0.000000,	0.000000,		0.000000,	-1.021390,	-1.141556,
+	0.000000,	0.020946,	-0.146637,		0.000000,	0.000000,	0.000000,
+	0.000000,	0.020946,	-0.146637,		0.000000,	0.020947,	-0.146637,
+	0.000000,	0.020946,	-0.083786,		0.000000,	0.020946,	-0.125687,
+	0.000000,	0.020947,	-0.146637,		0.000000,	0.020947,	-0.125687,
+	0.000000,	0.020946,	-0.083786,		0.000000,	0.000000,	0.000000,
+	0.000000,	0.020947,	-0.125687,		0.000000,	0.000000,	0.000000,
+	0.000000,	0.020947,	-0.125686,		0.000000,	0.020946,	-0.125687,
+	0.000000,	0.020946,	-0.083786,		0.000000,	0.020946,	-0.146637,
+	0.000000,	0.000000,	0.000000,		0.000000,	0.000000,	0.000000,
+	0.000000,	0.000000,	0.000000,		0.000000,	0.000000,	0.000000,
+	0.000000,	0.000000,	0.000000,		0.000000,	0.000000,	0.000000,
+	0.000000,	0.000000,	0.000000,		0.000000,	0.000000,	0.000000,
+	0.000000,	0.000000,	0.000000,		0.000000,	0.000000,	0.000000,
+	0.000000,	-0.061717,	0.833191,		0.000000,	-0.090122,	0.330460,
+	0.000000,	0.000000,	0.000000,		0.000000,	-0.432022,	0.185150,
+	-0.310895,	0.000000,	0.000000,		-0.312943,	0.000001,	0.000000,
+	-0.114858,	0.000000,	0.000000,		0.000000,	1.051431,	0.270371,
+	0.000000,	-0.030858,	0.246856,		0.000000,	0.000000,	0.000000,
+	0.000000,	0.000000,	0.000000,		0.000000,	0.000000,	0.000000,
+	-0.647869,	0.041892,	0.628372,		0.000000,	0.000000,	0.000000,
+	0.000000,	-0.442684,	-0.328400,		-0.294485,	1.026345,	-1.005401,
+	-0.353383,	-1.633775,	-1.214859,		-0.312389,	0.000000,	0.000000,
+	0.000000,	0.000000,	0.000000,		0.000000,	0.020947,	-0.146637,
+	0.000000,	0.000000,	0.000000,		0.000000,	0.020946,	-0.146637,
+	0.000000,	0.020946,	-0.083786,		0.000000,	0.020947,	-0.146637,
+	0.000000,	0.020947,	-0.125687,		0.000000,	0.020947,	-0.083786,
+	0.000000,	0.000000,	0.000000,		0.000000,	0.020947,	-0.125687,
+	0.000000,	0.000000,	0.000000,		0.000000,	0.020946,	-0.125687,
+	0.000000,	0.020946,	-0.146637,		0.000000,	0.000000,	0.000000,
+	0.000000,	0.000000,	0.000000,		0.000000,	0.000000,	0.000000,
+};
+
+static const int _vertsCorrList[84] = {
+	289, 290, 293, 294, 295, 296, 297, 298,
+	299, 300, 300, 302, 303, 304, 305, 305,
+	307, 307, 309, 310, 311, 312, 313, 314,
+	315, 316, 317, 318, 319, 320, 321, 322,
+	323, 324, 325, 326, 327, 328, 329, 330,
+	331, 332, 333, 334, 335, 336, 337, 338,
+	339, 340, 341, 349, 350, 352, 353, 354,
+	355, 356, 357, 358, 359, 360, 361, 362,
+	363, 364, 365, 366, 367, 368, 369, 370,
+	371, 372, 373, 374, 375, 376, 377, 378,
+	379, 380, 381, 382
+};
+
 /*-----------------13/09/95 11.59-------------------
 					ReadActor
 --------------------------------------------------*/
-void ReadActor(const char *filename) {
-
-	extern uint16 _textureMat[256][91];
-	extern int16  _textureCoord[MAXFACE][3][2];
-
-	g_vm->_graphicsMgr->updatePixelFormat((uint16 *)_textureMat, 256 * 91);
+void SActor::ReadActor(const char *filename) {
+	_vm->_graphicsMgr->updatePixelFormat((uint16 *)_textureMat, 256 * 91);
 
 	ff = FastFileOpen(filename);
 	if (ff == nullptr)
-		CloseSys(g_vm->_sysText[kMessageFilesMissing]);
+		CloseSys(_vm->_sysText[kMessageFilesMissing]);
 
 	int32 ActionNum = ff->readSint32LE();
 	VertexNum = ff->readSint32LE();
-	g_vm->_actor->_vertexNum = VertexNum;
+	_vertexNum = VertexNum;
 
-	g_vm->_actor->_characterArea = new SVertex[VertexNum * ActionNum];
-	g_vm->_actor->_vertex = g_vm->_actor->_characterArea;
-	FastFileRead(ff, g_vm->_actor->_vertex, sizeof(SVertex) * VertexNum * ActionNum);
+	_characterArea = new SVertex[VertexNum * ActionNum];
+	_vertex = _characterArea;
+	FastFileRead(ff, _vertex, sizeof(SVertex) * VertexNum * ActionNum);
 
 	FaceNum = ff->readUint32LE();
-	g_vm->_actor->_faceNum = FaceNum;
+	_faceNum = FaceNum;
 
 	FastFileClose(ff);
 
@@ -294,39 +358,37 @@ void ReadActor(const char *filename) {
 		}
 	}
 
-	g_vm->_actor->_face = new SFace[FaceNum];
+	_face = new SFace[FaceNum];
 	for (int i = 0; i < FaceNum; ++i) {
-		g_vm->_actor->_face[i]._a = ff->readSint16LE();
-		g_vm->_actor->_face[i]._b = ff->readSint16LE();
-		g_vm->_actor->_face[i]._c = ff->readSint16LE();
-		g_vm->_actor->_face[i]._mat = ff->readSint16LE();
+		_face[i]._a = ff->readSint16LE();
+		_face[i]._b = ff->readSint16LE();
+		_face[i]._c = ff->readSint16LE();
+		_face[i]._mat = ff->readSint16LE();
 	}
 
 	FastFileClose(ff);
 
-	g_vm->_actor->_curFrame = 0;
-	g_vm->_actor->_curAction = hSTAND;
+	_curFrame = 0;
+	_curAction = hSTAND;
 
 	// fixup Microprose head correction
 #define P1	306
 #define P2	348
 #define P3	288
-	extern float _vertsCorr[104][3];
-	extern int _vertsCorrList[84];
 	double v1[3], v2[3], v[3], q[3], m1[3][3], m2[3][3], s;
 	int c, d, f;
 
-	v1[0] = g_vm->_actor->_vertex[P2]._x - g_vm->_actor->_vertex[P1]._x;
-	v1[1] = g_vm->_actor->_vertex[P2]._y - g_vm->_actor->_vertex[P1]._y;
-	v1[2] = g_vm->_actor->_vertex[P2]._z - g_vm->_actor->_vertex[P1]._z;
+	v1[0] = _vertex[P2]._x - _vertex[P1]._x;
+	v1[1] = _vertex[P2]._y - _vertex[P1]._y;
+	v1[2] = _vertex[P2]._z - _vertex[P1]._z;
 	s = sqrt(v1[0] * v1[0] + v1[1] * v1[1] + v1[2] * v1[2]);
 	v1[0] /= s;
 	v1[1] /= s;
 	v1[2] /= s;
 
-	v2[0] = g_vm->_actor->_vertex[P3]._x - g_vm->_actor->_vertex[P1]._x;
-	v2[1] = g_vm->_actor->_vertex[P3]._y - g_vm->_actor->_vertex[P1]._y;
-	v2[2] = g_vm->_actor->_vertex[P3]._z - g_vm->_actor->_vertex[P1]._z;
+	v2[0] = _vertex[P3]._x - _vertex[P1]._x;
+	v2[1] = _vertex[P3]._y - _vertex[P1]._y;
+	v2[2] = _vertex[P3]._z - _vertex[P1]._z;
 	s = sqrt(v2[0] * v2[0] + v2[1] * v2[1] + v2[2] * v2[2]);
 	v2[0] /= s;
 	v2[1] /= s;
@@ -353,7 +415,7 @@ void ReadActor(const char *filename) {
 	m1[0][2] = v1[2];
 
 	for (int b = 0; b < ActionNum; b++) {
-		SVertex *sv = (SVertex *)(g_vm->_actor->_vertex + b * VertexNum);
+		SVertex *sv = &_vertex[b * VertexNum];
 
 		v1[0] = sv[P2]._x - sv[P1]._x;
 		v1[1] = sv[P2]._y - sv[P1]._y;
@@ -395,9 +457,9 @@ void ReadActor(const char *filename) {
 		v2[1] = sv[P1]._y;
 		v2[2] = sv[P1]._z;
 
-		v1[0] = g_vm->_actor->_vertex[P1]._x;
-		v1[1] = g_vm->_actor->_vertex[P1]._y;
-		v1[2] = g_vm->_actor->_vertex[P1]._z;
+		v1[0] = _vertex[P1]._x;
+		v1[1] = _vertex[P1]._y;
+		v1[2] = _vertex[P1]._z;
 
 		for (int e = 279; e < 383; e++) {
 			for (f = 0; f < 84; f++) {
@@ -445,7 +507,7 @@ void ReadActor(const char *filename) {
 int actionInRoom(int curA) {
 	int b;
 
-	for (b = 0; b < MAXACTIONINROOM; b++) {
+	for (int b = 0; b < MAXACTIONINROOM; b++) {
 		if (g_vm->_room[g_vm->_curRoom]._actions[b] == curA)
 			break;
 	}
