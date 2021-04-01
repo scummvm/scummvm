@@ -57,7 +57,7 @@ void actorDoAction(int whatAction) {
 	float ox = cos(t);
 	float oz = sin(t);
 
-	SVertex *v = _characterArea;
+	SVertex *v = g_vm->_actor->_characterArea;
 	float firstFrame = FRAMECENTER(v);
 
 	if (whatAction > hLAST) {
@@ -68,12 +68,12 @@ void actorDoAction(int whatAction) {
 		int cur = 0;
 		while (cur < whatAction)
 			cfp += _defActionLen[cur++];
-		v = &_characterArea[cfp * g_vm->_actor->_vertexNum];
+		v = &g_vm->_actor->_characterArea[cfp * g_vm->_actor->_vertexNum];
 
 		if (whatAction == hWALKOUT)
-			v = &_characterArea[g_vm->_actor->_vertexNum];
+			v = &g_vm->_actor->_characterArea[g_vm->_actor->_vertexNum];
 		else if (whatAction == hLAST)
-			v = _characterArea;
+			v = g_vm->_actor->_characterArea;
 
 		len = _defActionLen[whatAction];
 	}
@@ -97,7 +97,7 @@ void actorDoAction(int whatAction) {
 		if (whatAction > hLAST)
 			v = (SVertex *)((uint8 *)v + 4);
 		else if (whatAction == hLAST)
-			v = _characterArea;
+			v = g_vm->_actor->_characterArea;
 	}
 
 	_step[b]._px = px;

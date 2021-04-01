@@ -631,7 +631,7 @@ void drawCharacter(uint8 flag) {
 			if (g_vm->_actor->_curAction == hLAST)
 				cfp = 0;
 
-			g_vm->_actor->_vertex = &_characterArea[cfp * g_vm->_actor->_vertexNum];
+			g_vm->_actor->_vertex = &g_vm->_actor->_characterArea[cfp * g_vm->_actor->_vertexNum];
 		} else {
 			g_vm->_actor->_vertex = (SVertex *)(_actionPointer[_actionPosition[actionInRoom(g_vm->_actor->_curAction)] + g_vm->_actor->_curFrame]);
 

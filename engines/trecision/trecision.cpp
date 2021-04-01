@@ -672,10 +672,12 @@ SActor::SActor(TrecisionEngine *vm) : _vm(vm) {
 
 	_curFrame = 0;
 	_curAction = 0;
+
+	_characterArea = nullptr;
 }
 
 SActor::~SActor() {
-//	delete _vertex; TODO: Delete[] _characterArea instead!
+	delete[] _characterArea;
 	delete[] _face;
 //	delete _light;
 //	delete _camera;
