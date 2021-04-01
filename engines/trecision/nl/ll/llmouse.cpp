@@ -310,10 +310,9 @@ bool DataSave() {
 	while (mleft || mright)
 		Mouse(MCMD_UPDT);
 
-	// ferma omino, animazioni, spegne scritte
+	// Reset the inventory and turn it into save slots
 	memcpy(OldInv, g_vm->_inventory, MAXICON);
 	memset(g_vm->_inventory, 0, MAXICON);
-
 	OldIconBase = g_vm->_iconBase;
 	g_vm->_iconBase = 0;
 	OldInvLen = g_vm->_inventorySize;
@@ -470,6 +469,12 @@ insave:
 
 		ret = false;
 
+		// Restore the inventory
+		memcpy(g_vm->_inventory, OldInv, MAXICON);
+		g_vm->_curInventory = 0;
+		g_vm->_iconBase = OldIconBase;
+		g_vm->_inventorySize = OldInvLen;
+		
 		g_vm->saveGameState(CurPos + 1, savename[CurPos]);
 	}
 
@@ -482,13 +487,13 @@ insave:
 		memset(g_vm->_screenBuffer + SCREENLEN * a, 0, SCREENLEN * 2);
 
 	g_vm->_graphicsMgr->copyToScreen(0, 0, MAXX, TOP);
-	g_vm->_curInventory = 0;
 
+	// Restore the inventory
 	memcpy(g_vm->_inventory, OldInv, MAXICON);
-
+	g_vm->_curInventory = 0;
 	g_vm->_iconBase = OldIconBase;
 	g_vm->_inventorySize = OldInvLen;
-
+	
 	mleft = mright = false;
 	Mouse(MCMD_UPDT);
 	while (mleft || mright)
@@ -638,11 +643,13 @@ bool DataLoad() {
 
 	performLoad(CurPos, skipLoad);
 
-	// Restore the inventory
-	memcpy(g_vm->_inventory, OldInv, MAXICON);
-	g_vm->_curInventory = 0;
-	g_vm->_iconBase = OldIconBase;
-	g_vm->_inventorySize = OldInvLen;
+	if (skipLoad) {
+		// Restore the inventory
+		memcpy(g_vm->_inventory, OldInv, MAXICON);
+		g_vm->_curInventory = 0;
+		g_vm->_iconBase = OldIconBase;
+		g_vm->_inventorySize = OldInvLen;
+	}
 	
 	return retval;
 }
