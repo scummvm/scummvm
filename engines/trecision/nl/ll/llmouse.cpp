@@ -36,6 +36,7 @@
 #include "common/str.h"
 #include "common/system.h"
 #include "graphics/cursorman.h"
+#include "graphics/scaler.h"
 #include "gui/saveload.h"
 #include "trecision/graphics.h"
 #include "trecision/video.h"
@@ -271,6 +272,36 @@ void IconSnapShot() {
 			g_vm->Icone[(READICON + 13) * ICONDX * ICONDY + b * ICONDX + a] = g_vm->_graphicsMgr->restorePixelFormat(g_vm->_screenBuffer[SCREENLEN * b * 10 + a * (SCREENLEN / ICONDX)]);
 		g_vm->Icone[(READICON + 13)*ICONDX * ICONDY + b * ICONDX + a] = blackPixel;
 	}
+
+	::createThumbnailFromScreen(&g_vm->_thumbnail);
+}
+
+void loadSaveSlots(Common::StringArray &saveNames) {
+	Common::SaveFileManager *saveFileMan = g_engine->getSaveFileManager();
+	
+	for (int a = 0; a < g_vm->_inventorySize; a++) {
+		Common::String saveFileName = g_vm->getSaveStateName(a + 1);
+		Common::InSaveFile *saveFile = saveFileMan->openForLoading(saveFileName);
+
+		if (saveFile && saveFile->readByte() == NlVer) {
+			char buf[40];
+			saveFile->read(buf, 40);
+			buf[39] = '\0';
+			saveNames.push_back(buf);
+			uint16 *thumbnailBuf = g_vm->Icone + (READICON + 1 + a) * ICONDX * ICONDY;
+			saveFile->read((void *)thumbnailBuf, ICONDX * ICONDY * sizeof(uint16));
+			g_vm->_graphicsMgr->updatePixelFormat(thumbnailBuf, ICONDX * ICONDY);
+
+			g_vm->_inventory[a] = LASTICON + a;
+		} else {
+			saveNames.push_back(g_vm->_sysText[kMessageEmptySpot]);
+			g_vm->_inventory[a] = iEMPTYSLOT;
+		}
+
+		delete saveFile;
+	}
+
+	g_vm->refreshInventory(0, 0);
 }
 
 /* -----------------25/10/97 15.16-------------------
@@ -278,8 +309,9 @@ void IconSnapShot() {
  --------------------------------------------------*/
 bool DataSave() {
 	uint8 OldInv[MAXICON], OldIconBase, OldInvLen;
-	char ch, strcount;
-	char savename[MAXSAVEFILE][40];
+	char ch;
+	Common::StringArray saveNames;
+	saveNames.reserve(MAXSAVEFILE);
 	uint16 posx, LenText;
 	bool ret = true;
 	
@@ -339,31 +371,11 @@ insave:
 
 	int8 CurPos = -1;
 	int8 OldPos = -1;
-	Common::SaveFileManager *saveFileMan = g_engine->getSaveFileManager();
-	
-	for (int a = 0; a < g_vm->_inventorySize; a++) {
-		Common::String saveName = g_vm->getSaveStateName(a + 1);
-		Common::InSaveFile *saveFile = saveFileMan->openForLoading(saveName);
-		
-		if (saveFile && saveFile->readByte() == NlVer) {
-			saveFile->read(&savename[a], 40);
-			uint16 *thumbnailBuf = g_vm->Icone + (READICON + 1 + a) * ICONDX * ICONDY;
-			saveFile->read((void *)thumbnailBuf, ICONDX * ICONDY * sizeof(uint16));
-			g_vm->_graphicsMgr->updatePixelFormat(thumbnailBuf, ICONDX * ICONDY);
-
-			g_vm->_inventory[a] = LASTICON + a;
-		} else {
-			strcpy(savename[a], g_vm->_sysText[kMessageEmptySpot]);
-			g_vm->_inventory[a] = iEMPTYSLOT;
-		}
-
-		delete saveFile;
-	}
-
-	g_vm->refreshInventory(0, 0);
-
 	bool skipSave = false;
 	ch = 0;
+
+	loadSaveSlots(saveNames);
+	
 	for (;;) {
 		g_vm->checkSystem();
 		Mouse(MCMD_UPDT);
@@ -382,10 +394,10 @@ insave:
 					memset(g_vm->_screenBuffer + SCREENLEN * a, 0, SCREENLEN * 2);
 
 				posx    = ICONMARGSX + ((CurPos) * (ICONDX)) + ICONDX / 2;
-				LenText  = TextLength(savename[CurPos], 0);
+				LenText  = TextLength(saveNames[CurPos].c_str(), 0);
 
 				posx = CLIP(posx - (LenText / 2), 2, SCREENLEN - 2 - LenText);
-				SText.set(posx, FIRSTLINE + ICONDY + 10, LenText, CARHEI, 0, 0, LenText, CARHEI, 0x7FFF, MASKCOL, savename[CurPos]);
+				SText.set(posx, FIRSTLINE + ICONDY + 10, LenText, CARHEI, 0, 0, LenText, CARHEI, 0x7FFF, MASKCOL, saveNames[CurPos].c_str());
 				SText.DText();
 
 				g_vm->_graphicsMgr->copyToScreen(0, FIRSTLINE + ICONDY + 10, MAXX, CARHEI);
@@ -412,11 +424,8 @@ insave:
 	}
 
 	if (!skipSave) {
-		if (g_vm->_inventory[CurPos] != iEMPTYSLOT)
-			strcount = strlen(savename[CurPos]);
-		else {
-			strcount = 0;
-			savename[CurPos][0] = '\0';
+		if (g_vm->_inventory[CurPos] == iEMPTYSLOT) {
+			saveNames[CurPos].clear();
 
 			for (int a = FIRSTLINE + ICONDY + 10; a < FIRSTLINE + ICONDY + 10 + CARHEI; a++)
 				memset(g_vm->_screenBuffer + SCREENLEN * a, 0, SCREENLEN * 2);
@@ -443,31 +452,23 @@ insave:
 				goto insave;
 			}
 
-			if (ch == 0x08) {
-				if (strcount > 0)
-					savename[CurPos][--strcount] = '\0';
-				ch = 0;
-			} else if (ch == 0x0D)
+			if (ch == 8)	// Backspace
+				saveNames[CurPos].deleteLastChar();
+			else if (ch == 13)	// Enter
 				break;
-			else if ((strcount < 39) && (((ch >= 'a') && (ch <= 'z')) || ((ch >= 'A') && (ch <= 'Z')) || ((ch >= '0') && (ch <= '9')) || (ch == 0x20))) {
-				savename[CurPos][strcount++] = ch;
-				savename[CurPos][strcount] = '\0';
-				ch = 0;
-			} else
-				ch = 0;
-
+			else if (saveNames[CurPos].size() < 39 && Common::isPrint(ch))
+				saveNames[CurPos] += ch;
+			
 			for (int a = FIRSTLINE + ICONDY + 10; a < FIRSTLINE + ICONDY + 10 + CARHEI; a++)
 				memset(g_vm->_screenBuffer + SCREENLEN * a, 0, SCREENLEN * 2);
 
-			int endStr = strlen(savename[CurPos]);
-			savename[CurPos][endStr] = '_';
-			savename[CurPos][endStr + 1] = '\0';
-
+			saveNames[CurPos] += '_';	// add blinking cursor
+			
 			posx    = ICONMARGSX + ((CurPos) * (ICONDX)) + ICONDX / 2 ;
-			LenText  = TextLength(savename[CurPos], 0);
+			LenText  = TextLength(saveNames[CurPos].c_str(), 0);
 
 			posx = CLIP(posx - (LenText / 2), 2, SCREENLEN - 2 - LenText);
-			SText.set(posx, FIRSTLINE + ICONDY + 10, LenText, CARHEI, 0, 0, LenText, CARHEI, 0x7FFF, MASKCOL, savename[CurPos]);
+			SText.set(posx, FIRSTLINE + ICONDY + 10, LenText, CARHEI, 0, 0, LenText, CARHEI, 0x7FFF, MASKCOL, saveNames[CurPos].c_str());
 
 			if ((ReadTime() / 8) & 1)
 				BlinkLastDTextChar = 0x0000;
@@ -475,9 +476,8 @@ insave:
 			SText.DText();
 			BlinkLastDTextChar = MASKCOL;
 
-			endStr = strlen(savename[CurPos]);
-			savename[CurPos][endStr - 1] = '\0';
-
+			saveNames[CurPos].deleteLastChar();	// remove blinking cursor
+			
 			g_vm->_graphicsMgr->copyToScreen(0, FIRSTLINE + ICONDY + 10, MAXX, CARHEI);
 		}
 
@@ -492,7 +492,7 @@ insave:
 		g_vm->_iconBase = OldIconBase;
 		g_vm->_inventorySize = OldInvLen;
 		
-		g_vm->saveGameState(CurPos + 1, savename[CurPos]);
+		g_vm->saveGameState(CurPos + 1, saveNames[CurPos]);
 	}
 
 	for (int a = FIRSTLINE; a < MAXY; a++)
@@ -524,7 +524,8 @@ insave:
 --------------------------------------------------*/
 bool DataLoad() {
 	uint8 OldInv[MAXICON], OldIconBase, OldInvLen;
-	char savename[MAXSAVEFILE][40];
+	Common::StringArray saveNames;
+	saveNames.reserve(MAXSAVEFILE);
 	bool retval = true;
 	Common::SaveFileManager *saveFileMan = g_engine->getSaveFileManager();
 
@@ -580,26 +581,7 @@ bool DataLoad() {
 	OldInvLen = g_vm->_inventorySize;
 	g_vm->_inventorySize = MAXSAVEFILE;
 
-	for (int a = 0; a < g_vm->_inventorySize; a++) {
-		Common::String saveName = g_vm->getSaveStateName(a + 1);
-		Common::InSaveFile *saveFile = saveFileMan->openForLoading(saveName);
-
-		if (saveFile && saveFile->readByte() == NlVer) {
-			saveFile->read(&savename[a], 40);
-			uint16 *iconBuf = g_vm->Icone + (READICON + 1 + a) * ICONDX * ICONDY;
-			saveFile->read((void *)iconBuf, ICONDX * ICONDY * sizeof(uint16));
-			g_vm->_graphicsMgr->updatePixelFormat(iconBuf, ICONDX * ICONDY);
-
-			g_vm->_inventory[a] = LASTICON + a;
-		} else {
-			strcpy(savename[a], g_vm->_sysText[kMessageEmptySpot]);
-			g_vm->_inventory[a] = iEMPTYSLOT;
-		}
-
-		delete saveFile;
-	}
-
-	g_vm->refreshInventory(0, 0);
+	loadSaveSlots(saveNames);
 
 	bool skipLoad = false;
 	int8 CurPos = -1;
@@ -623,7 +605,7 @@ bool DataLoad() {
 					memset(g_vm->_screenBuffer + SCREENLEN * a, 0, SCREENLEN * 2);
 
 				uint16 posX = ICONMARGSX + ((CurPos) * (ICONDX)) + ICONDX / 2;
-				uint16 lenText = TextLength(savename[CurPos], 0);
+				uint16 lenText = TextLength(saveNames[CurPos].c_str(), 0);
 				if (posX - (lenText / 2) < 2)
 					posX = 2;
 				else
@@ -631,7 +613,7 @@ bool DataLoad() {
 				if ((posX + lenText) > SCREENLEN - 2)
 					posX = SCREENLEN - 2 - lenText;
 
-				SText.set(posX, FIRSTLINE + ICONDY + 10, lenText, CARHEI, 0, 0, lenText, CARHEI, 0x7FFF, MASKCOL, savename[CurPos]);
+				SText.set(posX, FIRSTLINE + ICONDY + 10, lenText, CARHEI, 0, 0, lenText, CARHEI, 0x7FFF, MASKCOL, saveNames[CurPos].c_str());
 				SText.DText();
 
 				g_vm->_graphicsMgr->copyToScreen(0, FIRSTLINE + ICONDY + 10, MAXX, CARHEI);
