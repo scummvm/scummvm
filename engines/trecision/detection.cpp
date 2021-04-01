@@ -21,6 +21,7 @@
  */
 
 #include "base/plugins.h"
+#include "common/translation.h"
 #include "engines/advancedDetector.h"
 
 static const PlainGameDescriptor trecisionGames[] = {
@@ -88,6 +89,21 @@ static const ADGameDescription gameDescriptions[] = {
 	AD_TABLE_END_MARKER
 };
 
+#define GAMEOPTION_ORIGINAL_SAVELOAD GUIO_GAMEOPTIONS1
+
+static const ADExtraGuiOptionsMap optionsList[] = {
+
+	{
+		GAMEOPTION_ORIGINAL_SAVELOAD,
+		{
+			_s("Use original save/load screens"),
+			_s("Use the original save/load screens instead of the ScummVM ones"),
+			"originalsaveload",
+			false
+		}
+	},
+};
+
 } // End of namespace Trecision
 
 static const char *directoryGlobs[] = {
@@ -97,10 +113,10 @@ static const char *directoryGlobs[] = {
 
 class TrecisionMetaEngineDetection : public AdvancedMetaEngineDetection {
 public:
-	TrecisionMetaEngineDetection() : AdvancedMetaEngineDetection(Trecision::gameDescriptions, sizeof(ADGameDescription), trecisionGames) {
+	TrecisionMetaEngineDetection() : AdvancedMetaEngineDetection(Trecision::gameDescriptions, sizeof(ADGameDescription), trecisionGames, Trecision::optionsList) {
 		_maxScanDepth = 2;
 		_directoryGlobs = directoryGlobs;
-		_guiOptions = GUIO1(GUIO_NOMIDI);
+		_guiOptions = GUIO2(GUIO_NOMIDI, GAMEOPTION_ORIGINAL_SAVELOAD);
 	}
 
 	const char *getEngineId() const override {

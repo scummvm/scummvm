@@ -57,6 +57,7 @@ uint32 DecCR(Common::String FileName, uint8 *DestArea, uint8 *DecArea);
 void VMouseOFF();
 void VMouseON();
 uint16 TextLength(const char *sign, uint16 num);
+void performLoad(int slot, bool skipLoad);
 void IconSnapShot();
 bool DataSave();
 bool DataLoad();
