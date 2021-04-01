@@ -59,11 +59,12 @@ bool ItemSelectionProcess::selectNextItem() {
 		return false;
 
 	mainactor->getCentre(_ax, _ay, _az);
+	_az = mainactor->getZ();
 
 	UCList uclist(2);
 	LOOPSCRIPT(script, LS_TOKEN_TRUE); // we want all items
 	currentmap->areaSearch(&uclist, script, sizeof(script),
-						   mainactor, 0x120, false);
+						   mainactor, 0x200, false);
 
 	Std::vector<Item *> candidates;
 
@@ -77,7 +78,7 @@ bool ItemSelectionProcess::selectNextItem() {
 
 		// Maybe this can be done with a loopscript,
 		// but this is how the game does it..
-		if (item->hasFlags(Actor::FLG_HANGING))
+		if (item->hasFlags(Item::FLG_HANGING))
 			continue;
 		uint16 family = item->getFamily();
 		if (item->getShape() == 0x4ed || family == ShapeInfo::SF_CRUWEAPON ||
@@ -87,7 +88,9 @@ bool ItemSelectionProcess::selectNextItem() {
 
 			int32 cx, cy, cz;
 			item->getCentre(cx, cy, cz);
-			if (abs(cx - _ax) > 0x100 || abs(cy - _ay) > 0x100 || abs(cz - _az) > 50)
+			int32 iz = item->getZ();
+			if (abs(cx - _ax) > 0x100 || abs(cy - _ay) > 0x100 ||
+				(iz - _az) >= 0x50 || (_az - iz) >= 0x18)
 				continue;
 
 			candidates.push_back(item);
