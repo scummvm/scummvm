@@ -383,7 +383,7 @@ Globals::~Globals() {
 	delete _thingsToDrawList;
 	delete[] _dynamicallyCreatedSurfaces;
 	delete[] _palette;
-	delete[] _maincoltable;
+	delete _maincoltable;
 
 	// draw_software.cpp globals
 	delete _BlackRects;
