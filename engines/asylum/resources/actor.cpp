@@ -44,7 +44,7 @@
 
 namespace Asylum {
 
-#define DIR(val) (ActorDirection)((val) % 7)
+#define DIR(val) (ActorDirection)((val) & 7)
 
 Actor::Actor(AsylumEngine *engine, ActorIndex index) : _vm(engine), _index(index) {
  	// Init all variables
@@ -359,12 +359,9 @@ void Actor::update() {
 		break;
 
 	case kActorStatusGettingHurt:
-		if (_index != getSharedData()->getPlayerIndex())
-			break;
-
 		if (getWorld()->chapter == 2) {
 			updateStatus16_Chapter2();
-		} else if (getWorld()->chapter == 11) {
+		} else if (getWorld()->chapter == 11 && _index == getSharedData()->getPlayerIndex()) {
 			updateStatus16_Chapter11();
 		}
 		break;
@@ -408,7 +405,7 @@ void Actor::update() {
 						getScript()->queueScript(getWorld()->getActionAreaById(2696)->scriptIndex, getSharedData()->getPlayerIndex());
 
 						_vm->setGameFlag(kGameFlag279);
-						_vm->setGameFlag(kGameFlag368);
+						_vm->clearGameFlag(kGameFlag368);
 
 						player->setFrameIndex(0);
 						getScene()->getActor(0)->setLastScreenUpdate(_vm->getTick());
@@ -696,7 +693,6 @@ void Actor::update() {
 	if (_field_944 != 5)
 		updateFinish();
 }
-
 
 void Actor::updateStatus(ActorStatus actorStatus) {
 	debugC(kDebugLevelActor, "[updateStatus] %d point1(%d:%d) point2(%d:%d)", actorStatus, _point1.x, _point1.y, _point2.x, _point2.y);
@@ -1101,9 +1097,10 @@ void Actor::faceTarget(uint32 target, DirectionFrom from) {
 		}
 		break;
 
-	case kDirectionFromActor:
-		point.x = _point1.x + _point2.x;
-		point.y = _point1.y + _point2.y;
+	case kDirectionFromActor: {
+		Actor *actor = getScene()->getActor((ActorIndex)target);
+		point = *actor->getPoint1() + *actor->getPoint2();
+		}
 		break;
 
 	case kDirectionFromParameters:
@@ -2239,7 +2236,7 @@ void Actor::updateStatusEnabled() {
 	// Actor:: BigCrow
 	if (!strcmp(_name, "Big Crow")) {
 		if (_vm->getRandom(10) < 5) {
-			switch (_vm->getRandom(4)) {
+			switch (_vm->getRandom(3)) {
 			default:
 				break;
 
@@ -2403,6 +2400,9 @@ void Actor::updateStatus12_Chapter2() {
 	if (absX <= absY)
 		absX = absY;
 
+	if (sum.y < sumPlayer.y)
+		absX += 20;
+
 	if (absX >= 50) {
 		move(_direction, distance);
 	} else {
@@ -2455,7 +2455,7 @@ void Actor::updateStatus12_Chapter2_Actor11() {
 			} else if (canMove(&sum, DIR(_direction + 3), distance, false)) {
 				move(DIR(_direction + 3), distance);
 			} else if (canMove(&sum, DIR(_direction + 4), distance, false)) {
-				move(DIR(_direction + 1), distance);
+				move(DIR(_direction + 4), distance);
 			}
 		} else {
 			if (canMove(&sum, DIR(_direction + 7), distance, false)) {
@@ -2564,19 +2564,22 @@ void Actor::updateStatus14() {
 void Actor::updateStatus14_Chapter2() {
 	// Original calls getDistanceForFrame but does not seem to do anything with the results
 
-	if (_status == kActorStatusRestarting || !getScene()->getActor(10)->isVisible()) {
+	Actor *player = getScene()->getActor();
+	ActorStatus playerStatus = player->getStatus();
+
+	if (playerStatus == kActorStatusRestarting || !getScene()->getActor(10)->isVisible()) {
 		updateStatus(kActorStatusEnabled);
 		getSharedData()->setChapter2Data(1, (_index - 13) + 5, 160);    // Index > 12
 	}
 
-	if (_status != kActorStatusGettingHurt) {
-		_point1.x -= (int16)getSharedData()->getChapter2Data(3, 2 * _index + 6);
-		_point1.y -= (int16)getSharedData()->getChapter2Data(3, 2 * _index + 7) + 54;
+	if (playerStatus != kActorStatusGettingHurt) {
+		_point1.x = player->getPoint1()->x - (int16)getSharedData()->getChapter2Data(3, 2 * _index + 6);
+		_point1.y = player->getPoint1()->y - (int16)getSharedData()->getChapter2Data(3, 2 * _index + 7) + 54;
 	}
 
 	if (_frameIndex == _frameCount - 1) {
 		_frameIndex = 0;
-		if (getSharedData()->getChapter2Data(2, _index + 6) <= 1 || _status == kActorStatusGettingHurt || _status == kActorStatusRestarting) {
+		if (getSharedData()->getChapter2Data(2, _index + 6) <= 1 || playerStatus == kActorStatusGettingHurt || playerStatus == kActorStatusRestarting) {
 			getSharedData()->setChapter2Data(2, _index + 6, getSharedData()->getChapter2Data(2, _index + 6) + 1);
 		} else {
 			updateStatus(kActorStatusAttacking);
@@ -2586,7 +2589,7 @@ void Actor::updateStatus14_Chapter2() {
 		}
 	}
 
-	if (_status == kActorStatusRestarting && getSharedData()->getChapter2Data(2, _index + 6) < 100) {
+	if (playerStatus == kActorStatusRestarting && getSharedData()->getChapter2Data(2, _index + 6) < 100) {
 		_point1.y -= 6;
 		getSharedData()->setChapter2Data(2, _index + 6, 100);
 		getSharedData()->setChapter2Data(1, _index + 1, getSharedData()->getChapter2Data(1, _index + 1) + 6);
@@ -2612,7 +2615,7 @@ void Actor::updateStatus14_Chapter2() {
 				break;
 
 			case 14:
-				processStatus(2600, 130, false);
+				processStatus(2600, 1300, false);
 				break;
 
 			case 15:
@@ -2676,7 +2679,7 @@ void Actor::updateStatus15_Chapter2() {
 	Common::Point sum = _point1 + _point2;
 	Common::Point sumPlayer = *player->getPoint1() + *player->getPoint2();
 
-	if (_status == kActorStatusRestarting || !getScene()->getActor(10)->isVisible()) {
+	if (getScene()->getActor(10)->getStatus() == kActorStatusRestarting || !getScene()->getActor(10)->isVisible()) {
 		updateStatus(kActorStatusEnabled);
 		getSharedData()->setChapter2Data(1, (_index - 13) + 5, 160);    // Index > 12
 	}
@@ -2756,8 +2759,8 @@ void Actor::updateStatus15_Chapter2() {
 void Actor::updateStatus15_Chapter2_Helper() {
 	Actor *actor39 = getScene()->getActor(39);
 
-	actor39->getPoint1()->x = _point1.x;
-	actor39->getPoint1()->y = _point1.y;
+	actor39->setFrameIndex(0);
+	*actor39->getPoint1() = *getScene()->getActor()->getPoint1();
 
 	if (_vm->isGameFlagSet(kGameFlag169))
 		actor39->getPoint1()->y += 80;
@@ -2796,11 +2799,11 @@ void Actor::updateStatus15_Chapter2_Helper() {
 
 	switch (getSharedData()->getChapter2Counter(6)) {
 	default:
+		enableActorsChapter2(_vm);
+		getCursor()->hide();
 		break;
 
 	case 0:
-		enableActorsChapter2(_vm);
-		getCursor()->hide();
 		break;
 
 	case 1:
@@ -2937,7 +2940,7 @@ void Actor::updateStatus15_Chapter2_Player_Helper() {
 		} else if (getSharedData()->getChapter2Counter(5) <= 6) {
 			getSound()->playSound(getWorld()->soundResourceIds[9], false, Config.sfxVolume - 10);
 		} else {
-			getScene()->getActor(10)->updateStatus(kActorStatusRestarting);
+			getScene()->getActor(11)->updateStatus(kActorStatusRestarting);
 			getSound()->playSound(getWorld()->soundResourceIds[10], false, Config.sfxVolume - 10);
 		}
 	}
@@ -2984,7 +2987,7 @@ void Actor::updateStatus15_Chapter2_Actor11() {
 	actionPoint.y += compareY(Common::Point(rect.left, rect.top), Common::Point(rect.right, rect.bottom), sumPlayer);
 
 	if (getScene()->getActor(11)->getFrameIndex() < 8
-	 && getScene()->findActionArea(kActionAreaType2, actionPoint)
+	 && getScene()->findActionArea(kActionAreaType2, actionPoint) != -1
 	 && !updateStatus15_Chapter2_Actor11_Helper(10, 11))
 		 _point1 = actionPoint - _point2;
 
@@ -3041,7 +3044,7 @@ bool Actor::updateStatus15_Chapter2_Actor11_Helper(ActorIndex actorIndex1, Actor
 	int16 actor2_y = actor2->getPoint1()->y + actor2->getPoint2()->y;
 
 	Common::Point pt1((int16)(actor2_x -    (actor1->getField948() + 10)), (int16)(actor2_y -    (actor1->getField94C() + 10)));
-	Common::Point pt2((int16)(actor2_x + 2 * actor1->getField948() + 10),  (int16)(actor2_y + 2 * actor1->getField94C() + 10));
+	Common::Point pt2((int16)(actor2_x +     actor1->getField948() + 10),  (int16)(actor2_y +     actor1->getField94C() + 10));
 	Common::Point pt3((int16)(actor2_x -    (actor2->getField948() + 25)), (int16)(actor2_y -    (actor2->getField94C() + 20)));
 	Common::Point pt4((int16)(actor2_x + 2 * actor2->getField948() + 25),  (int16)(actor2_y + 2 * actor2->getField94C() + 20));
 
@@ -3144,7 +3147,7 @@ void Actor::updateStatus16_Chapter2() {
 	if (player->getFrameIndex() > (player->getFrameCount() - 1)) {
 		if (getSharedData()->getChapter2Counter(6) <= 2) {
 			player->setFrameIndex(0);
-			updateStatus(kActorStatusEnabled2);
+			player->updateStatus(kActorStatusEnabled2);
 		} else {
 			_vm->clearGameFlag(kGameFlag438);
 			_vm->clearGameFlag(kGameFlag439);
@@ -3157,7 +3160,7 @@ void Actor::updateStatus16_Chapter2() {
 			_vm->setGameFlag(kGameFlag219);
 
 			player->setFrameIndex(0);
-			updateStatus(kActorStatusRestarting);
+			player->updateStatus(kActorStatusRestarting);
 
 			_vm->clearGameFlag(kGameFlag369);
 			_vm->clearGameFlag(kGameFlag370);
@@ -3990,7 +3993,7 @@ uint32 Actor::euclidianDistance(const Common::Point &vec1, const Common::Point &
 }
 
 int32 Actor::angleFromVectors(const Common::Point &vec1, const Common::Point &vec2) {
-	uint32 result = (uint32)(((long)(180 - acos((double)(vec2.y - vec1.y) / euclidianDistance(vec1, vec2)) * 180 / M_PI)) % 360);
+	int32 result = (int32)(((long)(180 - acos((double)(vec2.y - vec1.y) / euclidianDistance(vec1, vec2)) * 180 / -M_PI)) % 360);
 
 	if (vec1.x < vec2.x)
 		return 360 - result;
@@ -4011,43 +4014,43 @@ void Actor::rectFromDirection(Common::Rect *rect, ActorDirection direction, cons
 		return;
 
 	case kDirectionN:
-		rect->top = point.x - 9;
-		rect->left = point.y - 84;
+		rect->top = point.y - 84;
+		rect->left = point.x - 9;
 		break;
 
 	case kDirectionNW:
-		rect->top = point.x - 55;
-		rect->left = point.y - 84;
+		rect->top = point.y - 55;
+		rect->left = point.x - 84;
 		break;
 
 	case kDirectionW:
-		rect->top = point.x - 34;
-		rect->left = point.y - 93;
+		rect->top = point.y - 34;
+		rect->left = point.x - 93;
 		break;
 
 	case kDirectionSW:
-		rect->top = point.x + 27;
-		rect->left = point.y - 94;
+		rect->top = point.y + 27;
+		rect->left = point.x - 94;
 		break;
 
 	case kDirectionS:
-		rect->top = point.x + 41;
-		rect->left = point.y - 9;
+		rect->top = point.y + 41;
+		rect->left = point.x - 9;
 		break;
 
 	case kDirectionSE:
-		rect->top = point.x + 27;
-		rect->left = point.y + 54;
+		rect->top = point.y + 27;
+		rect->left = point.x + 54;
 		break;
 
 	case kDirectionE:
-		rect->top = point.x - 34;
-		rect->left = point.y + 53;
+		rect->top = point.y - 34;
+		rect->left = point.x + 53;
 		break;
 
 	case kDirectionNE:
-		rect->top = point.x - 55;
-		rect->left = point.y + 44;
+		rect->top = point.y - 55;
+		rect->left = point.x + 44;
 		break;
 	}
 
@@ -4063,7 +4066,7 @@ bool Actor::compareAngles(const Common::Point &vec1, const Common::Point &vec2) 
 	if (diff < 0)
 		diff += 359;
 
-	return (diff != 180);
+	return (diff > 180);
 }
 
 bool Actor::compare(const Common::Point &vec1, const Common::Point &vec2, const Common::Point &vec) {
@@ -4074,11 +4077,13 @@ bool Actor::compare(const Common::Point &vec1, const Common::Point &vec2, const 
 }
 
 int16 Actor::compareX(const Common::Point &vec1, const Common::Point &vec2, const Common::Point &vec) {
-	if (vec.y > vec2.y)
+	if (vec.x > vec2.x)
 		return 3;
 
-	if (vec.y < vec1.y)
-		return 2;
+	if (vec.x < vec1.x)
+		return -3;
+	else
+		return 0;
 
 	return 0;
 }
@@ -4088,7 +4093,9 @@ int16 Actor::compareY(const Common::Point &vec1, const Common::Point &vec2, cons
 		return 3;
 
 	if (vec.y < vec1.y)
-		return 2;
+		return -3;
+	else
+		return 0;
 
 	return 0;
 }
