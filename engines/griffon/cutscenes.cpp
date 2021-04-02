@@ -38,6 +38,10 @@
 
 #include "griffon/griffon.h"
 
+#ifdef USE_TTS
+#include "common/text-to-speech.h"
+#endif
+
 namespace Griffon {
 
 #define POLL_AND_CHECK_QUIT() 		if (g_system->getEventManager()->pollEvent(_event)) { \
@@ -132,6 +136,38 @@ const char *story2[27] = {
 	"honorable life,",
 	"and I am free to die as I please."
 };
+	
+const char *story3 = 
+	"Story"
+	" "
+	"Ever since I was a child"
+	"I remember being told the"
+	"Legend of the Griffon Knights,"
+	"who rid the world of the"
+	"Dragon Empire.  These great"
+	"heroes inspired us to become"
+	"knights as well."
+	" "
+	"Now, 500 years after the war"
+	"ended, the Dragons have"
+	"returned.  Cities are falling"
+	"from the lack of knights to"
+	"protect them."
+	" "
+	"We never saw it coming."
+	" "
+	"And now, here I am, making"
+	"my way into the lower town"
+	"of Fidelis, a small city on"
+	"the main continent. The rest"
+	"of my men have died over"
+	"the last couple days from"
+	"aerial attacks."
+	" "
+	"We believed we could find"
+	"shelter here, only to find"
+	"every last griffon dead."
+;
 
 void GriffonEngine::showLogos() {
 	_ticks = g_system->getMillis();
@@ -182,6 +218,11 @@ void GriffonEngine::showLogos() {
 }
 
 void GriffonEngine::intro() {
+	#ifdef USE_TTS
+		Common::TextToSpeechManager *_ttsMan = g_system->getTextToSpeechManager();
+		_ttsMan->say(story3);
+	#endif
+	
 	_videoBuffer2->fillRect(Common::Rect(0, 0, _videoBuffer2->w, _videoBuffer2->h), 0);
 	_videoBuffer3->fillRect(Common::Rect(0, 0, _videoBuffer3->w, _videoBuffer3->h), 0);
 
