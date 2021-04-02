@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-04-01 19:20+0000\n"
-"PO-Revision-Date: 2021-03-29 19:08+0000\n"
+"PO-Revision-Date: 2021-04-02 16:32+0000\n"
 "Last-Translator: Walter Agazzi <tag2015@gmail.com>\n"
 "Language-Team: Italian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/it/>\n"
@@ -1332,7 +1332,7 @@ msgstr "Perc. plugin:"
 
 #: gui/options.cpp:2092
 msgid "ScummVM config path: "
-msgstr ""
+msgstr "Config. di ScummVM: "
 
 #: gui/options.cpp:2096
 msgid "Theme:"
