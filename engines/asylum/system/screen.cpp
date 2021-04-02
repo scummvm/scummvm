@@ -711,17 +711,17 @@ void Screen::clearGraphicsInQueue() {
 }
 
 void Screen::graphicsSelectionSort() {
-	uint32 minIdx;
+	uint32 maxIdx;
 
 	for (uint32 i = 0; i < _queueItems.size(); i++) {
-		minIdx = i;
+		maxIdx = i;
 
 		for (uint32 j = i + 1; j < _queueItems.size(); j++)
-			if (_queueItems[j].priority > _queueItems[i].priority)
-				minIdx = j;
+			if (_queueItems[j].priority > _queueItems[maxIdx].priority)
+				maxIdx = j;
 
-		if (i != minIdx)
-			swapGraphicItem(i, minIdx);
+		if (i != maxIdx)
+			swapGraphicItem(i, maxIdx);
 	}
 }
 
