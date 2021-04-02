@@ -50,7 +50,7 @@ uint8 *_actionPointer[MAXACTIONFRAMESINROOM];		// puntatore progressivo ai frame
 uint16 _actionPosition[MAXACTIONINROOM];			// Starting position of each action in the room
 // DATA POINTER
 uint8 *TextArea;
-uint8 *SpeechBuf[2];
+uint8 SpeechBuf[SPEECHSIZE];
 uint16 *ExtraObj2C;
 uint16 *ExtraObj41D;
 // MEMORY
@@ -199,10 +199,8 @@ void openSys() {
 		g_vm->ZBuffer[c] = 0x7FFF;
 	
 	// CDBuffer
-	SpeechBuf[0] = (uint8 *)(MemoryArea + GameBytePointer);
-	SpeechBuf[1] = (uint8 *)(MemoryArea + GameBytePointer);
-	ExtraObj2C = (uint16 *)SpeechBuf[0]; // for room 2C
-	GameBytePointer += SPEECHSIZE;
+	ExtraObj2C = (uint16 *)SpeechBuf; // for room 2C
+
 	// omino e full motions area
 	g_vm->_animMgr->_smkBuffer[1] = (uint8 *)(MemoryArea + GameBytePointer);
 	ExtraObj41D = (uint16 *)g_vm->_animMgr->_smkBuffer[1]; // for room 41D
