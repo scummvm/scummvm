@@ -38,6 +38,8 @@ class GraphicsManager;
 class LogicManager;
 
 #define USE_DIRTY_RECTS 0
+#define SAVE_VERSION_ORIGINAL 102
+#define SAVE_VERSION_SCUMMVM 103
 
 enum TrecisionMessageIds {
 	// 0

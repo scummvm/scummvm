@@ -44,7 +44,6 @@
 namespace Trecision {
 
 uint16 BlinkLastDTextChar = MASKCOL;
-extern byte NlVer;
 
 void VMouseOFF() {
 	CursorMan.showMouse(false);
@@ -276,26 +275,65 @@ void IconSnapShot() {
 	::createThumbnailFromScreen(&g_vm->_thumbnail);
 }
 
+Graphics::Surface *convertScummVMThumbnail(Graphics::Surface *thumbnail) {
+	Graphics::Surface *thumbnailConverted = thumbnail->convertTo(g_system->getScreenFormat());
+	Graphics::Surface *result = thumbnailConverted->scale(ICONDX, ICONDY);
+
+	thumbnailConverted->free();
+	delete thumbnailConverted;
+	thumbnail->free();
+	delete thumbnail;
+
+	return result;
+}
+
 void loadSaveSlots(Common::StringArray &saveNames) {
 	Common::SaveFileManager *saveFileMan = g_engine->getSaveFileManager();
 	
-	for (int a = 0; a < g_vm->_inventorySize; a++) {
-		Common::String saveFileName = g_vm->getSaveStateName(a + 1);
+	for (int i = 0; i < g_vm->_inventorySize; i++) {
+		Common::String saveFileName = g_vm->getSaveStateName(i + 1);
 		Common::InSaveFile *saveFile = saveFileMan->openForLoading(saveFileName);
+		ExtendedSavegameHeader header;
 
-		if (saveFile && saveFile->readByte() == NlVer) {
+		if (!saveFile) {
+			saveNames.push_back(g_vm->_sysText[kMessageEmptySpot]);
+			g_vm->_inventory[i] = iEMPTYSLOT;
+			continue;
+		}
+
+		const byte version = saveFile->readByte();
+
+		if (saveFile && version == SAVE_VERSION_ORIGINAL) {
+			// Original saved game, convert
 			char buf[40];
 			saveFile->read(buf, 40);
 			buf[39] = '\0';
 			saveNames.push_back(buf);
-			uint16 *thumbnailBuf = g_vm->Icone + (READICON + 1 + a) * ICONDX * ICONDY;
+			
+			uint16 *thumbnailBuf = g_vm->Icone + (READICON + 1 + i) * ICONDX * ICONDY;
 			saveFile->read((void *)thumbnailBuf, ICONDX * ICONDY * sizeof(uint16));
 			g_vm->_graphicsMgr->updatePixelFormat(thumbnailBuf, ICONDX * ICONDY);
 
-			g_vm->_inventory[a] = LASTICON + a;
+			g_vm->_inventory[i] = LASTICON + i;
+		} else if (saveFile && version == SAVE_VERSION_SCUMMVM) {
+			const bool headerRead = MetaEngine::readSavegameHeader(saveFile, &header, false);
+			if (headerRead) {
+				saveNames.push_back(header.description);
+
+				Graphics::Surface *thumbnail = convertScummVMThumbnail(header.thumbnail);
+				uint16 *thumbnailBuf = g_vm->Icone + (READICON + 1 + i) * ICONDX * ICONDY;
+				memcpy(thumbnailBuf, thumbnail->getPixels(), ICONDX * ICONDY * 2);
+				thumbnail->free();
+				delete thumbnail;
+
+				g_vm->_inventory[i] = LASTICON + i;
+			} else {
+				saveNames.push_back(g_vm->_sysText[kMessageEmptySpot]);
+				g_vm->_inventory[i] = iEMPTYSLOT;
+			}
 		} else {
 			saveNames.push_back(g_vm->_sysText[kMessageEmptySpot]);
-			g_vm->_inventory[a] = iEMPTYSLOT;
+			g_vm->_inventory[i] = iEMPTYSLOT;
 		}
 
 		delete saveFile;

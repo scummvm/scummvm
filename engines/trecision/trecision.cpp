@@ -47,8 +47,6 @@ class File;
 
 namespace Trecision {
 
-extern byte NlVer;
-
 TrecisionEngine *g_vm;
 
 TrecisionEngine::TrecisionEngine(OSystem *syst) : Engine(syst) {
@@ -273,8 +271,7 @@ bool TrecisionEngine::hasFeature(EngineFeature f) const {
 }
 
 Common::Error TrecisionEngine::loadGameStream(Common::SeekableReadStream *stream) {
-	byte version = stream->readByte();
-	// TODO: Check for newer save versions
+	const byte version = stream->readByte();
 	Common::Serializer ser(stream, nullptr);
 	ser.setVersion(version);
 	syncGameStream(ser);
@@ -282,8 +279,7 @@ Common::Error TrecisionEngine::loadGameStream(Common::SeekableReadStream *stream
 }
 
 Common::Error TrecisionEngine::saveGameStream(Common::WriteStream *stream, bool isAutosave) {
-	byte version = NlVer;
-	// TODO: Check for newer save versions
+	const byte version = SAVE_VERSION_SCUMMVM;
 	Common::Serializer ser(nullptr, stream);
 	ser.setVersion(version);
 	stream->writeByte(version);
@@ -292,14 +288,10 @@ Common::Error TrecisionEngine::saveGameStream(Common::WriteStream *stream, bool 
 }
 
 bool TrecisionEngine::syncGameStream(Common::Serializer &ser) {
-	// TODO: Get description from metadata
-	char desc[40] = "savegame";
-	ser.syncBytes((byte *)desc, 40);
-
-	uint16 *thumbnailBuf = Icone + (READICON + 13) * ICONDX * ICONDY;
-	ser.syncBytes((byte *)thumbnailBuf, ICONDX * ICONDY * sizeof(uint16));
-	if (ser.isLoading())
-		_graphicsMgr->updatePixelFormat(thumbnailBuf, ICONDX * ICONDY);
+	if (ser.isLoading()) {
+		ser.skip(40, SAVE_VERSION_ORIGINAL, SAVE_VERSION_ORIGINAL);	// description
+		ser.skip(ICONDX * ICONDY * sizeof(uint16), SAVE_VERSION_ORIGINAL, SAVE_VERSION_ORIGINAL); // thumbnail
+	}
 
 	ser.syncAsUint16LE(_curRoom);
 	ser.syncAsByte(_inventorySize);
