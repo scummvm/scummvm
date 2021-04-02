@@ -196,7 +196,6 @@ void NlDissolve(int val);
 void Mouse(MouseCmd opt);
 void CloseSys(const char *str);
 void soundtimefunct();
-void StartSoundSystem();
 void StopSoundSystem();
 int16 LoadAudioWav(int num, uint8 *wav, int len);
 void NLPlaySound(int num);

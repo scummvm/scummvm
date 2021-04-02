@@ -65,7 +65,6 @@ STexture FTexture[MAXMAT];
 // ANIMATION
 uint8 *MemoryArea;
 // SOUND
-bool SoundSystemActive;
 bool SpeechTrackEnabled = false;
 uint8 *SoundStartBuffer;
 // Temporary variables
@@ -106,10 +105,6 @@ void openSys() {
 			break;
 		}
 	}
-
-	SoundSystemActive = false;
-
-	StartSoundSystem();
 
 	MemoryArea = (uint8 *)malloc(NL_REQUIREDMEMORY);
 
@@ -752,9 +747,6 @@ void ReadExtraObj41D() {
 					ReadSounds
 --------------------------------------------------*/
 void ReadSounds() {
-	if (!SoundSystemActive)
-		return;
-
 	for (uint16 a = 0; a < MAXSOUNDSINROOM; a++) {
 		uint16 b = g_vm->_room[g_vm->_curRoom]._sounds[a];
 

@@ -77,8 +77,6 @@ extern const char *_sysSentence[];
 					soundtimefunct
  --------------------------------------------------*/
 void soundtimefunct() {
-	if (!SoundSystemActive)
-		return;
 	uint32 ctime = g_system->getMillis() / 8;		    // entra una volta ogni otto
 
 	if (ctime > nltime)
@@ -106,15 +104,11 @@ void soundtimefunct() {
 		if (SoundFadStatus & SFADIN) {
 			SoundFadInVal += FADMULT;
 
-			if (SoundFadInVal < (GSample[playing[StepChannel]]._volume * FADMULT))
-				g_system->getMixer()->setChannelVolume(smp[StepChannel], VOLUME(SoundFadInVal / FADMULT));
-			else {
+			if (SoundFadInVal > GSample[playing[StepChannel]]._volume * FADMULT)
 				SoundFadInVal = GSample[playing[StepChannel]]._volume * FADMULT;
-				g_system->getMixer()->setChannelVolume(smp[StepChannel], VOLUME(SoundFadInVal / FADMULT));
 
-				//SoundFadStatus &= ( ~SFADIN );
-			}
-
+			g_system->getMixer()->setChannelVolume(smp[StepChannel], VOLUME(SoundFadInVal / FADMULT));
+			
 			for (int a = 2; a < SAMPLEVOICES; a++) {
 				if (playing[a] != 0) {
 					smpvol[a] += FADMULT;
@@ -129,21 +123,10 @@ void soundtimefunct() {
 	}
 }
 
-/* -----------------05/08/97 16.36-------------------
-					StartSoundSystem
- --------------------------------------------------*/
-void StartSoundSystem() {
-	if (g_system->getMixer()->isReady())
-		SoundSystemActive = true;
-}
-
 /* -----------------05/08/97 16.35-------------------
 					StopSoundSystem
  --------------------------------------------------*/
 void StopSoundSystem() {
-	if (!SoundSystemActive)
-		return;
-
 	g_system->getMixer()->stopAll();
 }
 
@@ -151,9 +134,6 @@ void StopSoundSystem() {
 					LoadAudioWav
  --------------------------------------------------*/
 short LoadAudioWav(int num, uint8 *wav, int len) {
-	if (!SoundSystemActive)
-		return 0;
-
 	Audio::SeekableAudioStream *stream = Audio::makeWAVStream(new Common::MemoryReadStream(wav, len), DisposeAfterUse::YES);
 
 	if (num != 0xFFFF) {
@@ -173,10 +153,6 @@ short LoadAudioWav(int num, uint8 *wav, int len) {
 					NLPlaySound
  --------------------------------------------------*/
 void NLPlaySound(int num) {
-
-	if (!SoundSystemActive)
-		return;
-
 	int channel = 2;
 	if (g_system->getMixer()->isSoundHandleActive(smp[channel])) {
 		g_system->getMixer()->stopHandle(smp[channel]);
@@ -203,9 +179,6 @@ void NLPlaySound(int num) {
 					NLStopSound
  --------------------------------------------------*/
 void NLStopSound(int num) {
-	if (!SoundSystemActive)
-		return;
-
 	for (int a = 2; a < SpeechChannel; a++) {
 		if (playing[a] == num) {
 			g_system->getMixer()->stopHandle(smp[a]);
@@ -218,9 +191,6 @@ void NLStopSound(int num) {
 					SoundFadOut
  --------------------------------------------------*/
 void SoundFadOut() {
-	if (!SoundSystemActive)
-		return;
-
 	for (int a = 0; a < SAMPLEVOICES; a++) {	// spegne tutti i canali eccetto il background
 		if (a != BackChannel) {
 			g_system->getMixer()->stopHandle(smp[a]);
@@ -236,9 +206,6 @@ void SoundFadOut() {
 					SoundFadIn
  --------------------------------------------------*/
 void SoundFadIn(int num) {
-	if (!SoundSystemActive)
-		return;
-
 	Audio::AudioStream *stream = NLSample[num].stream;
 	if (stream != nullptr && GSample[num]._flag & SOUNDFLAG_SLOOP)
 		stream = Audio::makeLoopingAudioStream(NLSample[num].stream, 0);
@@ -255,12 +222,6 @@ void SoundFadIn(int num) {
 					WaitSoundFadEnd
  --------------------------------------------------*/
 void WaitSoundFadEnd() {
-	if (!SoundSystemActive) {
-		if (g_vm->_curRoom == r41D)
-			ReadExtraObj41D();
-		return;
-	}
-
 	while ((SoundFadInVal != (GSample[playing[StepChannel]]._volume * FADMULT)) && (playing[StepChannel] != 0) && (SoundFadOutVal != 0))
 		g_vm->checkSystem();
 	SoundFadStatus = 0;
@@ -285,9 +246,6 @@ void WaitSoundFadEnd() {
  --------------------------------------------------*/
 void SoundPasso(int midx, int midz, int act, int frame, unsigned short *list) {
 	extern unsigned char _defActionLen[];
-
-	if (!SoundSystemActive)
-		return;
 
 	bool stepRight = false;
 	bool stepLeft = false;
@@ -367,9 +325,6 @@ void SoundPasso(int midx, int midz, int act, int frame, unsigned short *list) {
 }
 
 void ContinueTalk() {
-	if (!SpeechTrackEnabled)
-		return;
-
 	if (!g_system->getMixer()->isSoundHandleActive(smp[SpeechChannel]))
 		StopTalk();
 }
@@ -378,10 +333,6 @@ int32 Talk(const char *name) {
 	StopTalk();
 
 	int speechLen = SpeechFileLen(name);
-	if (speechLen > SPEECHSIZE || !SoundSystemActive) {
-		SpeechTrackEnabled = false;
-		return (speechLen * 60L) / 11025;
-	}
 	if (SpeechFileRead(name, SpeechBuf[0]) == 0) {
 		SpeechTrackEnabled = false;
 		return (speechLen * 60L) / 11025;
@@ -390,22 +341,15 @@ int32 Talk(const char *name) {
 	SpeechTrackEnabled = true;
 	LoadAudioWav(0xFFFF, SpeechBuf[0], speechLen);
 
-	if (!SoundSystemActive)
-		SpeechTrackEnabled = false;
-	else {
-		extern uint32 CharacterSpeakTime;
-		g_system->getMixer()->playStream(SpeechSample.type, &smp[SpeechChannel], SpeechSample.stream);
-		CharacterSpeakTime = ReadTime();
-	}
+	extern uint32 CharacterSpeakTime;
+	g_system->getMixer()->playStream(SpeechSample.type, &smp[SpeechChannel], SpeechSample.stream);
+	CharacterSpeakTime = ReadTime();
 
 	return TIME(SpeechSample.stream->getLength().msecs());
 }
 
 void StopTalk() {
-	if (SoundSystemActive)
-		g_system->getMixer()->stopHandle(smp[SpeechChannel]);
-
-	SpeechTrackEnabled = false;
+	g_system->getMixer()->stopHandle(smp[SpeechChannel]);
 }
 
 } // End of namespace Trecision
