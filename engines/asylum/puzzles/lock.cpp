@@ -112,6 +112,7 @@ bool PuzzleLock::update(const AsylumEvent &)  {
 				getSound()->playSound(getWorld()->soundResourceIds[16], false, Config.sfxVolume - 10);
 				_frameIndexes[6] = 0;
 				_counter = 0;
+				getSharedData()->reset();
 
 				exitPuzzle();
 			} else {

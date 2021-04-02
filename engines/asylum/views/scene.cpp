@@ -1759,7 +1759,7 @@ void Scene::hitActorChapter2(ActorIndex index) {
 		return;
 
 	if (index == 11) {
-		player->faceTarget((uint32)(index + 9), kDirectionFromActor);
+		player->faceTarget((uint32)index, kDirectionFromActor);
 		player->updateStatus(kActorStatusAttacking);
 
 		Actor *actor11 = getActor(index);
