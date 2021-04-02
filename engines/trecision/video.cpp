@@ -22,6 +22,8 @@
 
 #include "trecision/trecision.h"
 #include "trecision/video.h"
+
+#include "common/file.h"
 #include "trecision/graphics.h"
 #include "trecision/nl/message.h"
 #include "trecision/nl/define.h"
@@ -113,13 +115,20 @@ AnimManager::~AnimManager() {
 	}
 }
 
-/*------------------------------------------------
-					openSmk
---------------------------------------------------*/
-void AnimManager::openSmk(Common::SeekableReadStream *stream) {
-	if (stream == nullptr)
-		return;
+void AnimManager::openSmk(Common::String name) {
+	Common::File *smkFile = new Common::File();
+	smkFile->open(name);
 
+	if (!smkFile->isOpen()) {
+		warning("SMK file not found: %s", name.c_str());
+		return;
+	}
+
+	openSmk(smkFile);
+}
+
+
+void AnimManager::openSmk(Common::SeekableReadStream *stream) {
 	_smkAnims[_curSmackBuffer] = new NightlongSmackerDecoder();
 
 	if (!_smkAnims[_curSmackBuffer]->loadStream(stream)) {
@@ -330,7 +339,7 @@ void AnimManager::startFullMotion(const char *name) {
 	actorStop();
 	g_vm->_flagMouseEnabled = false;
 
-	openSmk(FmvFileOpen(name));
+	openSmk(name);
 }
 
 /*------------------------------------------------

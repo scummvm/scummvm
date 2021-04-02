@@ -332,10 +332,10 @@ void ContinueTalk() {
 int32 Talk(const char *name) {
 	StopTalk();
 
-	int speechLen = SpeechFileLen(name);
-	if (SpeechFileRead(name, SpeechBuf[0]) == 0) {
+	const int speechLen = SpeechFileRead(name, SpeechBuf[0]);
+	if (speechLen == 0) {
 		SpeechTrackEnabled = false;
-		return (speechLen * 60L) / 11025;
+		return 0;
 	}
 
 	SpeechTrackEnabled = true;

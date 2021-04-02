@@ -25,7 +25,6 @@
 #include "trecision/nl/sys/ffile.h"
 
 #include "common/str.h"
-#include "common/textconsole.h"
 #include "common/file.h"
 #include "common/substream.h"
 #include "trecision/video.h"
@@ -111,55 +110,13 @@ Common::SeekableReadStream *FastFile::createReadStreamForMember(const Common::St
 	return nullptr;
 }
 
-FastFile dataFile;
-
-/* -----------------19/01/98 17.13-------------------
- * FastFileInit
- *
- * Initialize for fast file access. The master file and maximum number
- * of open "files" are specified.
- * --------------------------------------------------*/
-char FastFileInit(const char *fname) {
-	FastFileFinish();
-
-	if (!dataFile.open(fname)) {
-		warning("FastFileInit: failed to open %s", fname);
-		CloseSys(g_vm->_sysText[kMessageFilesMissing]);
-		return false;
-	}
-
-	return true;
-}
-
-/* -----------------19/01/98 17.14-------------------
- * FastFileFinish
- *
- * Clean up resources
- * --------------------------------------------------*/
-void FastFileFinish() {
-	dataFile.close();
-}
-
 /* -----------------19/01/98 17.15-------------------
  * FastFileOpen
  *
  * Search the directory for the file, and return a file handle if found.
  * --------------------------------------------------*/
 Common::SeekableReadStream *FastFileOpen(const char *name) {
-	if (!dataFile.isOpen()) {
-		warning("FastFileOpen: not initialized");
-		return nullptr;
-	}
-	if (name == nullptr || name[0] == 0) {
-		warning("FastFileOpen: invalid name");
-		return nullptr;
-	}
-
-	Common::SeekableReadStream *stream = dataFile.createReadStreamForMember(name);
-	if (stream == nullptr) {
-		CheckFileInCD(name);
-		stream = dataFile.createReadStreamForMember(name);
-	}
+	Common::SeekableReadStream *stream = g_vm->_dataFile.createReadStreamForMember(name);
 	if (stream == nullptr) {
 		warning("FastFileOpen: File %s not found", name);
 		CloseSys(g_vm->_sysText[kMessageFilesMissing]);
@@ -174,10 +131,8 @@ Common::SeekableReadStream *FastFileOpen(const char *name) {
  * Mark a fast file handle as closed
  * --------------------------------------------------*/
 void FastFileClose(Common::SeekableReadStream *stream) {
-	if (stream == nullptr) {
+	if (stream == nullptr)
 		warning("FastFileClose: invalid handle");
-		return;
-	}
 	delete stream;
 }
 
@@ -202,32 +157,11 @@ int FastFileRead(Common::SeekableReadStream *stream, void *ptr, int size) {
 	return stream->read(ptr, size);
 }
 
-// AnimFile
-FastFile animFile[MAXSMACK];
-
-/* -----------------19/01/98 17.13-------------------
- * AnimFileInit
- * --------------------------------------------------*/
-bool AnimFileInit(Common::String fname) {
-	AnimFileFinish();
-
-	for (int a = 0; a < MAXSMACK; a++) {
-		if (!animFile[a].open(fname)) {
-			warning("AnimFileInit: failed to open file %s", fname.c_str());
-			AnimFileFinish();
-			CloseSys(g_vm->_sysText[kMessageFilesMissing]);
-			return false;
-		}
-	}
-	return true;
-}
-
-/* -----------------19/01/98 17.14-------------------
- * AnimFileFinish
- * --------------------------------------------------*/
-void AnimFileFinish() {
-	for (int a = 0; a < MAXSMACK; a++) {
-		animFile[a].close();
+void swapCD(int cd) {
+	Common::String animFileName = Common::String::format("nlanim.cd%d", cd);
+	for (int i = 0; i < MAXSMACK; i++) {
+		g_vm->_animFile[i].close();
+		g_vm->_animFile[i].open(animFileName);
 	}
 }
 
@@ -235,117 +169,33 @@ void AnimFileFinish() {
  * AnimFileOpen
  * --------------------------------------------------*/
 Common::SeekableReadStream *AnimFileOpen(Common::String name) {
-	if (!animFile[g_vm->_animMgr->_curSmackBuffer].isOpen()) {
-		warning("AnimFileOpen: not initialized");
-		return nullptr;
-	}
-	if (name.empty()) {
-		warning("AnimFileOpen: invalid name");
-		return nullptr;
+	int cur = g_vm->_animMgr->_curSmackBuffer;
+	if (g_vm->_animFile[cur].hasFile(name)) {
+		return g_vm->_animFile[cur].createReadStreamForMember(name);
 	}
 
-	Common::SeekableReadStream *stream = animFile[g_vm->_animMgr->_curSmackBuffer].createReadStreamForMember(name);
-	if (stream == nullptr) {
-		CheckFileInCD(name);
-		stream = animFile[g_vm->_animMgr->_curSmackBuffer].createReadStreamForMember(name);
-	}
-	if (stream == nullptr) {
-		warning("AnimFileOpen: File %s not found", name.c_str());
-		CloseSys(g_vm->_sysText[kMessageFilesMissing]);
+	g_vm->curCD = g_vm->curCD == 1 ? 2 : 1;
+	swapCD(g_vm->curCD);
+
+	if (g_vm->_animFile[cur].hasFile(name)) {
+		return g_vm->_animFile[cur].createReadStreamForMember(name);
 	}
 
-	return stream;
+	// Invalid file
+	warning("AnimFileOpen: File %s not found", name.c_str());
+	CloseSys(g_vm->_sysText[kMessageFilesMissing]);
+	return nullptr;	// should never reach here
 }
 
-/* -----------------19/01/98 17.15-------------------
- * FmvFileOpen
- * --------------------------------------------------*/
-Common::SeekableReadStream *FmvFileOpen(const char *name) {
-	if (name == nullptr || name[0] == 0) {
-		warning("FmvFileOpen: invalid name");
-		return nullptr;
-	}
-
-	Common::File *file = new Common::File();
-	if (!file->open(name)) {
-		warning("Fmv file %s not found!", name);
-		delete file;
-		CloseSys(g_vm->_sysText[kMessageFilesMissing]);
-		return nullptr;
-	}
-
-	return file;
-}
-
-// SpeechFile
-FastFile speechFile;
-
-/* -----------------04/08/98 11.33-------------------
- * SpeechFileInit
- * --------------------------------------------------*/
-bool SpeechFileInit(const char *fname) {
-	SpeechFileFinish();
-
-	if (!speechFile.open(fname)) {
-		warning("SpeechFileInit: failed to open %s", fname);
-		SpeechFileFinish();
-		CloseSys(g_vm->_sysText[kMessageFilesMissing]);
-		return false;
-	}
-
-	return true;
-}
-
-/* -----------------04/08/98 11.33-------------------
- * SpeechFileFinish
- * --------------------------------------------------*/
-void SpeechFileFinish() {
-	speechFile.close();
-}
-
-Common::SeekableReadStream *SpeechFileOpen(const char *name) {
-	if (!speechFile.isOpen()) {
-		warning("SpeechFileOpen: not initialized");
-		return nullptr;
-	}
-	if (name == nullptr || name[0] == 0) {
-		warning("SpeechFileOpen: invalid name");
-		return nullptr;
-	}
-
-	Common::SeekableReadStream *stream = speechFile.createReadStreamForMember(name);
-	if (stream == nullptr) {
-		CheckFileInCD(name);
-		stream = speechFile.createReadStreamForMember(name);
-	}
-	if (stream == nullptr) {
-		warning("SpeechFileOpen: File %s not found", name);
-		CloseSys(g_vm->_sysText[kMessageFilesMissing]);
-	}
-
-	return stream;
-}
-
-/* -----------------04/08/98 11.34-------------------
- * SpeechFileLen
- * --------------------------------------------------*/
-int SpeechFileLen(const char *name) {
-	Common::SeekableReadStream *stream = SpeechFileOpen(name);
-	if (stream != nullptr) {
-		return stream->size();
-	}
-	return 0;
-}
-
-/* -----------------04/08/98 11.12-------------------
- * SpeechFileRead
- * --------------------------------------------------*/
 int SpeechFileRead(const char *name, unsigned char *buf) {
-	Common::SeekableReadStream *stream = SpeechFileOpen(name);
-	if (stream != nullptr) {
-		return stream->read(buf, stream->size());
-	}
-	return 0;
+	if (!g_vm->_speechFile.isOpen())
+		return 0;
+
+	Common::SeekableReadStream *stream = g_vm->_speechFile.createReadStreamForMember(name);
+	const int bytesRead = stream != nullptr ? stream->read(buf, stream->size()) : 0;
+	delete stream;
+	
+	return bytesRead;
 }
 
 } // End of namespace Trecision

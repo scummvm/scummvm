@@ -27,10 +27,12 @@
 #include "common/keyboard.h"
 #include "common/serializer.h"
 #include "graphics/surface.h"
-#include "nl/3d/3dinc.h"
 
-#include "trecision/nl/struct.h"
+#include "trecision/nl/3d/3dinc.h"
 #include "trecision/nl/ll/llinc.h"
+#include "trecision/nl/sys/ffile.h"
+#include "trecision/nl/struct.h"
+#include "trecision/video.h"
 
 namespace Trecision {
 class AnimManager;
@@ -242,6 +244,12 @@ public:
 	int16 *ZBuffer;
 
 	SActor *_actor;
+
+	// Data files
+	FastFile _dataFile;	// nldata.cd0
+	FastFile _speechFile;	// nlspeech.cd0
+	FastFile _animFile[MAXSMACK];	// nlanim.cd1 / nlanim.cd2
+	int curCD;
 };
 
 extern TrecisionEngine *g_vm;
