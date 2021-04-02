@@ -692,8 +692,6 @@ bool DataLoad() {
 }
 
 void performLoad(int slot, bool skipLoad) {
-	extern char CurCDSet;
-
 	if (!skipLoad) {
 		for (int a = FIRSTLINE; a < MAXY; a++)
 			memset(g_vm->_screenBuffer + SCREENLEN * a, 0, SCREENLEN * 2);
@@ -706,14 +704,6 @@ void performLoad(int slot, bool skipLoad) {
 
 		g_vm->_oldRoom = g_vm->_curRoom;
 		doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, g_vm->_curRoom, 0, 0, 0);
-
-		// Set CD preference
-		if ((CurCDSet != 1) && ((g_vm->_curRoom == r11) || (g_vm->_curRoom == r12) || (g_vm->_curRoom == r13) || (g_vm->_curRoom == r14) || (g_vm->_curRoom == r15) || (g_vm->_curRoom == r16) || (g_vm->_curRoom == r17) || (g_vm->_curRoom == r18) || (g_vm->_curRoom == r19) || (g_vm->_curRoom == r1A) || (g_vm->_curRoom == r1B) || (g_vm->_curRoom == r1C) || (g_vm->_curRoom == r1D) || (g_vm->_curRoom == rINTRO) || (g_vm->_curRoom == rSYS) || (g_vm->_curRoom == r12CU) || (g_vm->_curRoom == r13CU)))
-			CheckFileInCD("11.bkg");
-		else if ((CurCDSet != 2) && ((g_vm->_curRoom == r21) || (g_vm->_curRoom == r22) || (g_vm->_curRoom == r23A) || (g_vm->_curRoom == r24) || (g_vm->_curRoom == r25) || (g_vm->_curRoom == r26) || (g_vm->_curRoom == r27) || (g_vm->_curRoom == r28) || (g_vm->_curRoom == r29) || (g_vm->_curRoom == r2A) || (g_vm->_curRoom == r2B) || (g_vm->_curRoom == r2C) || (g_vm->_curRoom == r2D) || (g_vm->_curRoom == r2E) || (g_vm->_curRoom == r2F) || (g_vm->_curRoom == r2G) || (g_vm->_curRoom == r2H) || (g_vm->_curRoom == r31) || (g_vm->_curRoom == r32) || (g_vm->_curRoom == r33) || (g_vm->_curRoom == r34) || (g_vm->_curRoom == r35) || (g_vm->_curRoom == r36) || (g_vm->_curRoom == r37) || (g_vm->_curRoom == r23B) || (g_vm->_curRoom == r29L) || (g_vm->_curRoom == r2BL) || (g_vm->_curRoom == r2GV) || (g_vm->_curRoom == r31P) || (g_vm->_curRoom == r35P) || (g_vm->_curRoom == r36F)))
-			CheckFileInCD("33.bkg");
-		else if ((CurCDSet != 3) && ((g_vm->_curRoom == r41) || (g_vm->_curRoom == r42) || (g_vm->_curRoom == r43) || (g_vm->_curRoom == r44) || (g_vm->_curRoom == r45) || (g_vm->_curRoom == r46) || (g_vm->_curRoom == r47) || (g_vm->_curRoom == r48) || (g_vm->_curRoom == r49) || (g_vm->_curRoom == r4A) || (g_vm->_curRoom == r4B) || (g_vm->_curRoom == r4C) || (g_vm->_curRoom == r4D) || (g_vm->_curRoom == r4E) || (g_vm->_curRoom == r4F) || (g_vm->_curRoom == r4G) || (g_vm->_curRoom == r4H) || (g_vm->_curRoom == r4I) || (g_vm->_curRoom == r4J) || (g_vm->_curRoom == r4K) || (g_vm->_curRoom == r4L) || (g_vm->_curRoom == r4M) || (g_vm->_curRoom == r4N) || (g_vm->_curRoom == r4O) || (g_vm->_curRoom == r4P) || (g_vm->_curRoom == r4Q) || (g_vm->_curRoom == r4R) || (g_vm->_curRoom == r4S) || (g_vm->_curRoom == r4T) || (g_vm->_curRoom == r4U) || (g_vm->_curRoom == r4V) || (g_vm->_curRoom == r4W) || (g_vm->_curRoom == r4X) || (g_vm->_curRoom == r51) || (g_vm->_curRoom == r52) || (g_vm->_curRoom == r53) || (g_vm->_curRoom == r54) || (g_vm->_curRoom == r55) || (g_vm->_curRoom == r56) || (g_vm->_curRoom == r57) || (g_vm->_curRoom == r58) || (g_vm->_curRoom == r59) || (g_vm->_curRoom == r5A) || (g_vm->_curRoom == r41D) || (g_vm->_curRoom == r45S) || (g_vm->_curRoom == r49M) || (g_vm->_curRoom == r4CT) || (g_vm->_curRoom == r58M) || (g_vm->_curRoom == r58T) || (g_vm->_curRoom == r59L)))
-			CheckFileInCD("51.bkg");
 	}
 
 	actorStop();
@@ -799,85 +789,6 @@ void DemoOver() {
 	waitKey();
 
 	CloseSys(nullptr);
-}
-
-/* -----------------01/02/98 18.38-------------------
- * 					CheckFileInCD
- * --------------------------------------------------*/
-void CheckFileInCD(Common::String name) {
-	extern char CurCDSet;
-	char str[200];
-	SFileEntry fe;
-
-	strncpy(fe.name, name.c_str(), 11);
-	fe.name[11] = '\0';	
-	SFileEntry *pfe = (SFileEntry *)bsearch(&fe, FileRef, NumFileRef, sizeof(SFileEntry), Compare);
-	if (pfe == nullptr)
-		CloseSys(g_vm->_sysText[kMessageUnknownError]);
-
-	char optcd = 1;
-	if ((g_vm->_curRoom == r11) || (g_vm->_curRoom == r12) || (g_vm->_curRoom == r13) || (g_vm->_curRoom == r14) || (g_vm->_curRoom == r15) || (g_vm->_curRoom == r16) || (g_vm->_curRoom == r17) || (g_vm->_curRoom == r18) || (g_vm->_curRoom == r19) || (g_vm->_curRoom == r1A) || (g_vm->_curRoom == r1B) || (g_vm->_curRoom == r1C) || (g_vm->_curRoom == r1D) || (g_vm->_curRoom == rINTRO) || (g_vm->_curRoom == rSYS) || (g_vm->_curRoom == r12CU) || (g_vm->_curRoom == r13CU))
-		optcd = 1;
-	else if ((g_vm->_curRoom == r21) || (g_vm->_curRoom == r22) || (g_vm->_curRoom == r23A) || (g_vm->_curRoom == r24) || (g_vm->_curRoom == r25) || (g_vm->_curRoom == r26) || (g_vm->_curRoom == r27) || (g_vm->_curRoom == r28) || (g_vm->_curRoom == r29) || (g_vm->_curRoom == r2A) || (g_vm->_curRoom == r2B) || (g_vm->_curRoom == r2C) || (g_vm->_curRoom == r2D) || (g_vm->_curRoom == r2E) || (g_vm->_curRoom == r2F) || (g_vm->_curRoom == r2G) || (g_vm->_curRoom == r2H) || (g_vm->_curRoom == r31) || (g_vm->_curRoom == r32) || (g_vm->_curRoom == r33) || (g_vm->_curRoom == r34) || (g_vm->_curRoom == r35) || (g_vm->_curRoom == r36) || (g_vm->_curRoom == r37) || (g_vm->_curRoom == r23B) || (g_vm->_curRoom == r29L) || (g_vm->_curRoom == r2BL) || (g_vm->_curRoom == r2GV) || (g_vm->_curRoom == r31P) || (g_vm->_curRoom == r35P) || (g_vm->_curRoom == r36F))
-		optcd = 2;
-	else if ((g_vm->_curRoom == r41) || (g_vm->_curRoom == r42) || (g_vm->_curRoom == r43) || (g_vm->_curRoom == r44) || (g_vm->_curRoom == r45) || (g_vm->_curRoom == r46) || (g_vm->_curRoom == r47) || (g_vm->_curRoom == r48) || (g_vm->_curRoom == r49) || (g_vm->_curRoom == r4A) || (g_vm->_curRoom == r4B) || (g_vm->_curRoom == r4C) || (g_vm->_curRoom == r4D) || (g_vm->_curRoom == r4E) || (g_vm->_curRoom == r4F) || (g_vm->_curRoom == r4G) || (g_vm->_curRoom == r4H) || (g_vm->_curRoom == r4I) || (g_vm->_curRoom == r4J) || (g_vm->_curRoom == r4K) || (g_vm->_curRoom == r4L) || (g_vm->_curRoom == r4M) || (g_vm->_curRoom == r4N) || (g_vm->_curRoom == r4O) || (g_vm->_curRoom == r4P) || (g_vm->_curRoom == r4Q) || (g_vm->_curRoom == r4R) || (g_vm->_curRoom == r4S) || (g_vm->_curRoom == r4T) || (g_vm->_curRoom == r4U) || (g_vm->_curRoom == r4V) || (g_vm->_curRoom == r4W) || (g_vm->_curRoom == r4X) || (g_vm->_curRoom == r51) || (g_vm->_curRoom == r52) || (g_vm->_curRoom == r53) || (g_vm->_curRoom == r54) || (g_vm->_curRoom == r55) || (g_vm->_curRoom == r56) || (g_vm->_curRoom == r57) || (g_vm->_curRoom == r58) || (g_vm->_curRoom == r59) || (g_vm->_curRoom == r5A) || (g_vm->_curRoom == r41D) || (g_vm->_curRoom == r45S) || (g_vm->_curRoom == r49M) || (g_vm->_curRoom == r4CT) || (g_vm->_curRoom == r58M) || (g_vm->_curRoom == r58T) || (g_vm->_curRoom == r59L))
-		optcd = 3;
-
-	char ncd = 1;
-	if (pfe->offset & (1 << (CurCDSet - 1)))
-		ncd = CurCDSet;
-	else if (pfe->offset & (1 << (optcd - 1)))
-		ncd = optcd;
-	else if (pfe->offset & 1)
-		ncd = 1;
-	else if (pfe->offset & 2)
-		ncd = 2;
-	else if (pfe->offset & 4)
-		ncd = 3;
-
-	memset(g_vm->_screenBuffer, 0, MAXX * MAXY * 2);
-	VMouseOFF();
-
-	for (int a = 0; a < TOP; a++)
-		memset(g_vm->_screenBuffer + MAXX * a, 0, MAXX * 2);
-
-	sprintf(str, "CD%c.bm", ncd + '0');
-	ff = FastFileOpen(str);
-	FastFileRead(ff, g_vm->_screenBuffer, ff->size());
-	FastFileClose(ff);
-	g_vm->_graphicsMgr->updatePixelFormat(g_vm->_screenBuffer, MAXX * TOP);
-
-	sprintf(str, g_vm->_sysText[kMessageInsertCD], ncd + '0');
-	SDText SText;
-	SText.set(0, TOP - 20, SCREENLEN, CARHEI, 0, 0, SCREENLEN, CARHEI, g_vm->_graphicsMgr->palTo16bit(255, 255, 255), MASKCOL, str);
-	SText.DText();
-
-	g_vm->_graphicsMgr->copyToScreen(0, 0, MAXX, TOP);
-
-	Common::String filename = Common::String::format("NlAnim.cd%c", ncd + '0');
-	Common::File testCD;
-	bool found = false;
-
-	do {
-		found = testCD.open(filename);
-		FreeKey();
-		waitKey();
-	} while (!found);
-	testCD.close();
-
-	for (int a = 0; a < TOP; a++)
-		memset(g_vm->_screenBuffer + MAXX * a, 0, MAXX * 2);
-
-	g_vm->_graphicsMgr->copyToScreen(0, 0, MAXX, TOP);
-
-	CurCDSet = ncd;
-
-	FastFileInit("NlData.cd0");
-	SpeechFileInit("NlSpeech.cd0");
-	Common::String fname = Common::String::format("NlAnim.cd%c", CurCDSet + '0');
-	AnimFileInit(fname);
-
-	VMouseON();
 }
 
 } // End of namespace Trecision

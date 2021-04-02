@@ -23,12 +23,14 @@
 #ifndef TRECISION_VIDEO_H
 #define TRECISION_VIDEO_H
 
+#include "nl/struct.h"
+#include "nl/sysdef.h"
 #include "video/smk_decoder.h"
 
 enum SmackerType {
-	kSmackerBackground = 0,
-	kSmackerFullMotion = 1,
-	kSmackerIcon = 2
+	kSmackerBackground = 0,	// Smacker animations embedded in nlanim.cd? files
+	kSmackerFullMotion = 1,	// Standalone full screen Smacker videos
+	kSmackerIcon = 2		// Smacker inventory animations embedded in nlanim.cd? files
 };
 
 #define FULLMOTIONANIM 620
@@ -68,6 +70,7 @@ private:
 	NightlongSmackerDecoder *_smkAnims[MAXSMACK];
 
 	void openSmk(Common::SeekableReadStream *stream);
+	void openSmk(Common::String name);
 	void closeSmk();
 	void smkNextFrame();
 

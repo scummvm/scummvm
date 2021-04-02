@@ -236,9 +236,10 @@ void CloseSys(const char *str) { // close all
 	if (MemoryArea)
 		free(MemoryArea);
 
-	FastFileFinish();
-	SpeechFileFinish();
-	AnimFileFinish();
+	g_vm->_dataFile.close();
+	g_vm->_speechFile.close();
+	for (int i = 0; i < MAXSMACK; i++)
+		g_vm->_animFile[i].close();
 	g_vm->_animMgr->stopAllSmkAnims();
 	StopSoundSystem();
 

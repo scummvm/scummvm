@@ -74,8 +74,6 @@ int32  hh;
 SDText curString;
 SDText oldString;
 uint8  TextStatus;
-// AOT.CFG
-char  CurCDSet = 1;
 // FILEREF
 SFileEntry FileRef[MAXFILEREF];
 int NumFileRef;
@@ -97,32 +95,28 @@ struct SBmInfo {
 						openSys
 --------------------------------------------------*/
 void openSys() {
-	Common::File testCD;
-	for (CurCDSet = 1; CurCDSet <= 3; CurCDSet++) {
-		Common::String filename = Common::String::format("NlAnim.cd%c", CurCDSet + '0');
-		if (testCD.open(filename)) {
-			testCD.close();
-			break;
-		}
-	}
-
 	MemoryArea = (uint8 *)malloc(NL_REQUIREDMEMORY);
-
 	memset(MemoryArea, 0, NL_REQUIREDMEMORY);
 
-	OpenVideo();
-}
-/*-----------------13/09/95 11.59-------------------
-					OpenVideo
---------------------------------------------------*/
-void OpenVideo() {
 	GameBytePointer = 0;
 	GameWordPointer = 0;
 
-	FastFileInit("NlData.cd0");
-	SpeechFileInit("NlSpeech.cd0");
-	Common::String filename = Common::String::format("NlAnim.cd%c", CurCDSet + '0');
-	AnimFileInit(filename);
+	if (!g_vm->_dataFile.open("nldata.cd0")) {
+		warning(g_vm->_sysText[kMessageFilesMissing]);
+		CloseSys(g_vm->_sysText[kMessageFilesMissing]);
+	}		
+
+	if (!Common::File::exists("nlanim.cd1") || !Common::File::exists("nlanim.cd2")) {
+		warning(g_vm->_sysText[kMessageFilesMissing]);
+		CloseSys(g_vm->_sysText[kMessageFilesMissing]);
+	}
+
+	g_vm->curCD = 1;
+	swapCD(g_vm->curCD);
+	
+	if (!g_vm->_speechFile.open("nlspeech.cd0")) {
+		warning(g_vm->_sysText[kMessageFilesMissing]);
+	}	
 
 	ff = FastFileOpen("NlFont.fnt");
 	g_vm->Font = new uint8[ff->size()];
