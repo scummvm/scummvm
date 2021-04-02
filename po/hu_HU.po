@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-04-01 19:20+0000\n"
-"PO-Revision-Date: 2021-03-27 07:42+0000\n"
+"PO-Revision-Date: 2021-04-02 08:37+0000\n"
 "Last-Translator: George Kormendi <grubycza@hotmail.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/hu/>\n"
@@ -1319,7 +1319,7 @@ msgstr "Plugin Mappa:"
 
 #: gui/options.cpp:2092
 msgid "ScummVM config path: "
-msgstr ""
+msgstr "ScummVM konfigurációs path: "
 
 #: gui/options.cpp:2096
 msgid "Theme:"
