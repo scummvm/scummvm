@@ -202,19 +202,6 @@ int FastFileRead(Common::SeekableReadStream *stream, void *ptr, int size) {
 	return stream->read(ptr, size);
 }
 
-/* -----------------19/01/98 17.17-------------------
- * FastFileLen
- *
- * Get the current length in a fast file
- * --------------------------------------------------*/
-int FastFileLen(Common::SeekableReadStream *stream) {
-	if (stream == nullptr) {
-		warning("FastFileRead: invalid handle");
-		return 0;
-	}
-	return stream->size();
-}
-
 // AnimFile
 FastFile animFile[MAXSMACK];
 

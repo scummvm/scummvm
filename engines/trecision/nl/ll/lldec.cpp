@@ -101,7 +101,7 @@ uint32 DecCR(Common::String FileName, uint8 *DestArea, uint8 *DecArea) {
 	char *ibuf = (char *)DecArea;
 	char *obuf = (char *)DestArea;
 
-	int isize = FastFileLen(ff);
+	int isize = ff->size();
 
 	if ((isize != FastFileRead(ff, ibuf, isize)))
 		CloseSys(g_vm->_sysText[kMessageUnknownError]);

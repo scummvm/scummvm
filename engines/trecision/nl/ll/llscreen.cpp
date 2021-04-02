@@ -649,7 +649,7 @@ void ReadExtraObj2C() {
 	
 	uint16 *o = (uint16 *)ExtraObj2C;
 	ff = FastFileOpen("2C2.bm");
-	FastFileRead(ff, ExtraObj2C, FastFileLen(ff));
+	FastFileRead(ff, ExtraObj2C, ff->size());
 	FastFileClose(ff);
 
 	uint32 b = 0;
@@ -703,7 +703,7 @@ void ReadExtraObj41D() {
 
 	uint16 *o = (uint16 *)ExtraObj41D;
 	ff = FastFileOpen("41D2.bm");
-	FastFileRead(ff, ExtraObj41D, FastFileLen(ff));
+	FastFileRead(ff, ExtraObj41D, ff->size());
 	FastFileClose(ff);
 
 	uint32 b = 0;
@@ -769,7 +769,7 @@ void ReadSounds() {
 		ff = FastFileOpen(GSample[b]._name);
 		if (ff == nullptr)
 			CloseSys(g_vm->_sysText[kMessageFilesMissing]);
-		int len = FastFileRead(ff, SoundPointer[a], FastFileLen(ff));
+		int len = FastFileRead(ff, SoundPointer[a], ff->size());
 		FastFileClose(ff);
 		if (LoadAudioWav(b, SoundPointer[a], len))
 			len *= 2;
