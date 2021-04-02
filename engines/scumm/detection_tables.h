@@ -28,6 +28,7 @@
 #include "common/rect.h"
 #include "common/util.h"
 
+#include "audio/mididrv.h"
 #include "scumm/detection.h"
 
 #include "scumm/scumm-md5.h"

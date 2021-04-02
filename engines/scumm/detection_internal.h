@@ -23,6 +23,13 @@
 #ifndef SCUMM_DETECTION_INTERNAL_H
 #define SCUMM_DETECTION_INTERNAL_H
 
+#include "common/debug.h"
+#include "common/md5.h"
+
+#include "scumm/detection_tables.h"
+#include "scumm/scumm-md5.h"
+#include "scumm/file_nes.h"
+
 // Includes some shared functionalities, which is required by multiple TU's.
 // Mark it as static in the header, so visibility for function is limited by the TU, and we can use it whereever required.
 // This is being done, because it's necessary in detection, creating an instance, as well as in initiliasing the ScummEngine.

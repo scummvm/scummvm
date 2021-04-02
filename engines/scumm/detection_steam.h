@@ -23,6 +23,8 @@
 #ifndef SCUMM_DETECTION_STEAM_H
 #define SCUMM_DETECTION_STEAM_H
 
+#include "scumm/file.h"
+
 namespace Scumm {
 
 // The following table includes all the index files, which are embedded in the
