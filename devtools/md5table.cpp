@@ -136,6 +136,12 @@ static const char *c_header =
 	"  DO NOT EDIT MANUALLY!\n"
 	" */\n"
 	"\n"
+	"#ifndef SCUMM_MD5_INTERNAL_H\n"
+	"#define SCUMM_MD5_INTERNAL_H\n"
+	"\n"
+	"#include \"common/language.h\"\n"
+	"#include \"common/platform.h\"\n"
+	"\n"
 	"struct MD5Table {\n"
 	"	const char *md5;\n"
 	"	const char *gameid;\n"
@@ -150,7 +156,9 @@ static const char *c_header =
 
 static const char *c_footer =
 	"	{ 0, 0, 0, 0, 0, Common::UNK_LANG, Common::kPlatformUnknown }\n"
-	"};\n";
+	"};\n"
+	"\n"
+	"#endif\n";
 
 static void parseEntry(Entry *entry, char *line) {
 	assert(entry);

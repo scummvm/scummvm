@@ -3,6 +3,12 @@
   DO NOT EDIT MANUALLY!
  */
 
+#ifndef SCUMM_MD5_INTERNAL_H
+#define SCUMM_MD5_INTERNAL_H
+
+#include "common/language.h"
+#include "common/platform.h"
+
 struct MD5Table {
 	const char *md5;
 	const char *gameid;
@@ -730,3 +736,5 @@ static const MD5Table md5table[] = {
 	{ "ff05c07990061d97647f059c48c1d05a", "zak", "V2", "V2", -1, Common::DE_DEU, Common::kPlatformAtariST },
 	{ 0, 0, 0, 0, 0, Common::UNK_LANG, Common::kPlatformUnknown }
 };
+
+#endif
