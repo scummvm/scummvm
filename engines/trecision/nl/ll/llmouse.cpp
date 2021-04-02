@@ -805,7 +805,7 @@ void CheckFileInCD(Common::String name) {
 
 	sprintf(str, "CD%c.bm", ncd + '0');
 	ff = FastFileOpen(str);
-	FastFileRead(ff, g_vm->_screenBuffer, FastFileLen(ff));
+	FastFileRead(ff, g_vm->_screenBuffer, ff->size());
 	FastFileClose(ff);
 	g_vm->_graphicsMgr->updatePixelFormat(g_vm->_screenBuffer, MAXX * TOP);
 
