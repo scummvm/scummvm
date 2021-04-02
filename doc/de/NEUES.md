@@ -26,6 +26,7 @@ Programmcodes finden Sie auf Englisch unter:
    - Code der Roland MT-32-Emulation auf mt32emu 2.4.2 des Munt-Projekts aktualisiert.
    - Unterstützung für die neue OAuth-Implementierung von Dropbox hinzugefügt.
    - Umfangreiche Verbesserungen an den unterstützten Grafik-Scalern vorgenommen.
+   - Der Pfad zur ScummVM-Konfigurationsdatei wird nun in der GUI unter Optionen -> Pfade angezeigt.
 
  AGOS:
    - Unterstützung für die japanische PC-98-Version von Elvira 1 hinzugefügt.
