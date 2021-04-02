@@ -38,9 +38,9 @@
 
 #include "griffon/griffon.h"
 
-//#ifdef USE_TTF
+#ifdef USE_TTS
 #include "common/text-to-speech.h"
-//#endif
+#endif
 
 namespace Griffon {
 
@@ -229,10 +229,10 @@ void GriffonEngine::showLogos() {
 }
 
 void GriffonEngine::intro() {
-	//#ifdef USE_TTF
+	#ifdef USE_TTS
 		Common::TextToSpeechManager *_ttsMan = g_system->getTextToSpeechManager();
 		_ttsMan->say(story3);
-	//#endif
+	#endif
 
 	_videoBuffer2->fillRect(Common::Rect(0, 0, _videoBuffer2->w, _videoBuffer2->h), 0);
 	_videoBuffer3->fillRect(Common::Rect(0, 0, _videoBuffer3->w, _videoBuffer3->h), 0);
@@ -424,7 +424,7 @@ void GriffonEngine::endOfGame() {
 		_titleImg->blit(*_videoBuffer, rc.left, rc.top);
 
 		y = y - spd * _fpsr;
-		//#ifdef USE_TTF
+		//#ifdef USE_TTS
 		//Common::TextToSpeechManager *_ttsMan = g_system->getTextToSpeechManager();
 		//#endif
 		for (int i = 0; i <= 26; i++) {
