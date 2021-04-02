@@ -67,7 +67,7 @@ uint8 SoundFadStatus = 0;
 int16 SoundFadInVal;
 int16 SoundFadOutVal;
 
-extern uint8 *SpeechBuf[2];
+extern uint8 SpeechBuf[SPEECHSIZE];
 extern const char *_sysSentence[];
 
 #define VOLUME(a)	( (a*255)/127 )
@@ -331,15 +331,15 @@ void ContinueTalk() {
 
 int32 Talk(const char *name) {
 	StopTalk();
-
-	const int speechLen = SpeechFileRead(name, SpeechBuf[0]);
+	
+	const int speechLen = SpeechFileRead(name, SpeechBuf);
 	if (speechLen == 0) {
 		SpeechTrackEnabled = false;
 		return 0;
 	}
 
 	SpeechTrackEnabled = true;
-	LoadAudioWav(0xFFFF, SpeechBuf[0], speechLen);
+	LoadAudioWav(0xFFFF, SpeechBuf, speechLen);
 
 	extern uint32 CharacterSpeakTime;
 	g_system->getMixer()->playStream(SpeechSample.type, &smp[SpeechChannel], SpeechSample.stream);
