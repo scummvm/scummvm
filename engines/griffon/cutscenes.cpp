@@ -167,6 +167,7 @@ const char *story3 =
 	"We believed we could find"
 	"shelter here, only to find"
 	"every last griffon dead."
+	"the town burned to the ground,"
 ;
 
 void GriffonEngine::showLogos() {
