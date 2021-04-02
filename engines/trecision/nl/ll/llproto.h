@@ -67,7 +67,6 @@ void RegenRoom();
 void PaintRegenRoom();
 void DrawObj(SDObj d);
 uint16 ULaw2Linear(uint8 ulawbyte);
-void StartSoundSystem();
 void StopSoundSystem();
 int16 LoadAudioWav(int num, uint8 *Buffer, int len);
 void NLPlaySound(int num);
