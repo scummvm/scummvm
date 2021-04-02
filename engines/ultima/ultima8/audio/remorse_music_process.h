@@ -45,15 +45,13 @@ protected:
 private:
 	int _currentTrack;      //! Currently playing track (don't save)
 
-	//! Is the current music "combat" music
-	bool _combatMusicActive;
-
 	int _savedTrack;
 
 	uint8 _m16offset;
 
 	Audio::SoundHandle _soundHandle;
 
+	// These are both initialized in constructor and do not need to be saved.
 	int _maxTrack;
 	const char **_trackNames;
 

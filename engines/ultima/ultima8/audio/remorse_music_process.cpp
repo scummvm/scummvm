@@ -35,7 +35,8 @@ namespace Ultima8 {
 static const int MAX_TRACK_REMORSE = 21;
 static const int MAX_TRACK_REGRET = 22;
 
-// NOTE: This order is chosen to match the list in Crusader: No Remorse.
+// NOTE: The order of these lists has to be the same as the original games
+// as they come as numbers from the usecode.
 static const char *TRACK_FILE_NAMES_REMORSE[] = {
 	nullptr,
 	"M01",
@@ -84,7 +85,7 @@ static const char *TRACK_FILE_NAMES_REGRET[] = {
 	"m13",
 	"retro",
 	"metal",
-	"xmas" // for demo
+	"xmas" // for christmas easter egg
 };
 
 static const int REGRET_MAP_TRACKS[] = {
@@ -95,7 +96,7 @@ static const int REGRET_MAP_TRACKS[] = {
 
 DEFINE_RUNTIME_CLASSTYPE_CODE(RemorseMusicProcess)
 
-RemorseMusicProcess::RemorseMusicProcess() : MusicProcess(), _currentTrack(0), _savedTrack(0), _m16offset(0), _combatMusicActive(false) {
+RemorseMusicProcess::RemorseMusicProcess() : MusicProcess(), _currentTrack(0), _savedTrack(0), _m16offset(0) {
 	_maxTrack = (GAME_IS_REMORSE ? MAX_TRACK_REMORSE : MAX_TRACK_REGRET);
 	_trackNames = (GAME_IS_REMORSE ? TRACK_FILE_NAMES_REMORSE
 				   : TRACK_FILE_NAMES_REGRET);
@@ -204,8 +205,8 @@ void RemorseMusicProcess::run() {
 		return;
 	}
 
-	// hit end of stream, play it again.
-	// TODO: This doesn't loop to the correct spot, should do something a bit nicer..
+	// Hit end of stream, play it again.  This normally won't happen because
+	// the mods should loop infinitely, but just in case.
 	playMusic_internal(_currentTrack);
 }
 
@@ -213,12 +214,22 @@ void RemorseMusicProcess::saveData(Common::WriteStream *ws) {
 	Process::saveData(ws);
 
 	ws->writeUint32LE(static_cast<uint32>(_currentTrack));
+	ws->writeUint32LE(static_cast<uint32>(_savedTrack));
+	ws->writeByte(_m16offset);
 }
 
 bool RemorseMusicProcess::loadData(Common::ReadStream *rs, uint32 version) {
 	if (!Process::loadData(rs, version)) return false;
 
 	_currentTrack = static_cast<int32>(rs->readUint32LE());
+	_savedTrack = static_cast<int32>(rs->readUint32LE());
+	_m16offset = rs->readByte();
+
+	_theMusicProcess = this;
+
+	// Slight hack - resuming from savegame we want to restore the game
+	// track (not the menu track)
+	restoreTrackState();
 
 	return true;
 }
