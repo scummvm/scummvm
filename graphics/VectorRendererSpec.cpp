@@ -2717,10 +2717,10 @@ drawBorderRoundedSquareAlg(int x1, int y1, int r, int w, int h, PixelType color,
 	PixelType color2 = color;
 
 	while (sw++ < Base::_strokeWidth) {
-		PixelType *ptr_fill3 = (PixelType *)Base::_activeSurface->getBasePtr(x1, y1 + sw);
+		PixelType *ptr_fill3 = (PixelType *)Base::_activeSurface->getBasePtr(x1, y1 + sw - 1);
 		this->blendFill(ptr_fill3 + r, ptr_fill3 + w + 1 - r, color1, alpha_t); // top
 
-		PixelType *ptr_fill2 = (PixelType *)Base::_activeSurface->getBasePtr(x1, y1 + h - sw);
+		PixelType *ptr_fill2 = (PixelType *)Base::_activeSurface->getBasePtr(x1, y1 + h - sw + 1);
 		this->blendFill(ptr_fill2 + r, ptr_fill2 + w + 1 - r, color2, alpha_b); // bottom
 
 		BE_RESET();
@@ -3620,10 +3620,10 @@ drawBorderRoundedSquareAlg(int x1, int y1, int r, int w, int h, PixelType color,
 	int strokeWidth = Base::_strokeWidth;
 
 	while (sw++ < strokeWidth) {
-		PixelType *ptr_fill3 = (PixelType *)Base::_activeSurface->getBasePtr(x1, y1 + sw);
+		PixelType *ptr_fill3 = (PixelType *)Base::_activeSurface->getBasePtr(x1, y1 + sw - 1);
 		this->blendFill(ptr_fill3 + r, ptr_fill3 + w + 1 - r, color, alpha_t); // top
 
-		PixelType *ptr_fill2 = (PixelType *)Base::_activeSurface->getBasePtr(x1, y1 + h - sw);
+		PixelType *ptr_fill2 = (PixelType *)Base::_activeSurface->getBasePtr(x1, y1 + h - sw + 1);
 		this->blendFill(ptr_fill2 + r, ptr_fill2 + w + 1 - r, color, alpha_b); // bottom
 
 		x = r - (sw - 1);
