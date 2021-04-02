@@ -259,8 +259,6 @@ void GriffonEngine::intro() {
 	int cnt = 0;
 	float xofs = 0.0;
 	float ld = 0.0;
-
-	
 	do {
 		Common::Rect rc;
 
@@ -272,7 +270,6 @@ void GriffonEngine::intro() {
 			if ((int)ld == config.musicVol)
 				ldStop = true;
 		}
-
 
 		rc.left = -xofs;
 		rc.top = 0;
@@ -289,10 +286,8 @@ void GriffonEngine::intro() {
 			y--;
 		}
 		
-
 		for (int i = 0; i <= 37; i++) {
 			int yy = y + i * 10;
-			
 			if (yy > -8 && yy < 240) {
 				int x = 160 - strlen(story[i]) * 4;
 				drawString(_videoBuffer, story[i], x, yy, 4);
@@ -424,16 +419,10 @@ void GriffonEngine::endOfGame() {
 		_titleImg->blit(*_videoBuffer, rc.left, rc.top);
 
 		y = y - spd * _fpsr;
-		//#ifdef USE_TTS
-		//Common::TextToSpeechManager *_ttsMan = g_system->getTextToSpeechManager();
-		//#endif
 		for (int i = 0; i <= 26; i++) {
 			
 			int yy = y + i * 10;
 			if (yy > -8 && yy < 240) {
-				//#ifdef USE_TTF
-                //_ttsMan->say(story2[i]);
-				//#endif
 				int x = 160 - strlen(story2[i]) * 4;
                 drawString(_videoBuffer, story2[i], x, yy, 4);
 			}
