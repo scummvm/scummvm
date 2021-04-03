@@ -297,6 +297,9 @@ public:
 	// A cru-specific behavior - mostly make "ugh" noises, or explode for some robots.
 	void tookHitCru();
 
+	//! Add the x/y/z fire offsets given the current state of the actor
+	void addFireAnimOffsets(int32 &x, int32 &y, int32 &z);
+
 	ENABLE_RUNTIME_CLASSTYPE()
 
 	INTRINSIC(I_isNPC);

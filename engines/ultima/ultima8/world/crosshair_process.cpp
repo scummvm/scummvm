@@ -47,14 +47,14 @@ CrosshairProcess::CrosshairProcess() : Process() {
 }
 
 void CrosshairProcess::run() {
-	MainActor *mainactor = getMainActor();
-	assert(mainactor);
-	if (mainactor->isInCombat()) {
+	Actor *actor = getControlledActor();
+	assert(actor);
+	if (actor->isInCombat()) {
 		Kernel *kernel = Kernel::get_instance();
 		assert(kernel);
 		int32 ax, ay, az;
-		mainactor->getLocation(ax, ay, az);
-		mainactor->addFireAnimOffsets(ax, ay, az);
+		actor->getLocation(ax, ay, az);
+		actor->addFireAnimOffsets(ax, ay, az);
 
 		const CruAvatarMoverProcess *mover = dynamic_cast<CruAvatarMoverProcess *>(Ultima8Engine::get_instance()->getAvatarMoverProcess());
 		if (!mover) {

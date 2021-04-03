@@ -693,25 +693,6 @@ void MainActor::nextInvItem() {
 	_activeInvItem = getIdOfNextItemInList(items, _activeInvItem);
 }
 
-void MainActor::addFireAnimOffsets(int32 &x, int32 &y, int32 &z) {
-	assert(GAME_IS_CRUSADER);
-	Animation::Sequence fireanim = (isKneeling() ? Animation::kneelAndFire : Animation::attack);
-	uint32 actionno = AnimDat::getActionNumberForSequence(fireanim, this);
-	Direction dir = getDir();
-
-	const AnimAction *animaction = GameData::get_instance()->getMainShapes()->getAnim(getShape(), actionno);
-	for (unsigned int i = 0; i < animaction->getSize(); i++) {
-		const AnimFrame &frame = animaction->getFrame(dir, i);
-		if (frame.is_cruattack()) {
-			x += frame.cru_attackx();
-			y += frame.cru_attacky();
-			z += frame.cru_attackz();
-			return;
-		}
-	}
-}
-
-
 void MainActor::saveData(Common::WriteStream *ws) {
 	Actor::saveData(ws);
 	uint8 jt = _justTeleported ? 1 : 0;
