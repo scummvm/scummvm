@@ -463,10 +463,10 @@ void AnimManager::refreshSmkAnim(int num) {
 		for (int32 a = 0; a < MAXCHILD; a++) {
 			if (_animTab[num]._flag & (SMKANIM_OFF1 << a)) {
 				// if the rectangle is completely included in the limit, raise it
-				if ((_animTab[num]._lim[a][0] <= lastRect->right) &&
-				    (_animTab[num]._lim[a][1] <= lastRect->bottom) &&
-				    (_animTab[num]._lim[a][2] >= lastRect->left) &&
-				    (_animTab[num]._lim[a][3] >= lastRect->top)) {
+				if ((_animTab[num]._lim[a].right <= lastRect->right) &&
+				    (_animTab[num]._lim[a].bottom <= lastRect->bottom) &&
+				    (_animTab[num]._lim[a].left >= lastRect->left) &&
+				    (_animTab[num]._lim[a].top >= lastRect->top)) {
 					inters++;
 				}
 			}
@@ -502,11 +502,11 @@ void AnimManager::refreshSmkAnim(int num) {
 	if (pos == kSmackerBackground) {
 		// If it's a background
 		for (int32 a = 0; a < MAXCHILD; a++) {
-			if (!(_animTab[num]._flag & (SMKANIM_OFF1 << a)) && (_animTab[num]._lim[a][3] != 0)) {
-				_vm->_limits[_vm->_limitsNum][0] = _animTab[num]._lim[a][0];
-				_vm->_limits[_vm->_limitsNum][1] = _animTab[num]._lim[a][1] + TOP;
-				_vm->_limits[_vm->_limitsNum][2] = _animTab[num]._lim[a][2];
-				_vm->_limits[_vm->_limitsNum][3] = _animTab[num]._lim[a][3] + TOP;
+			if (!(_animTab[num]._flag & (SMKANIM_OFF1 << a)) && (_animTab[num]._lim[a].top != 0)) {
+				_vm->_limits[_vm->_limitsNum][0] = _animTab[num]._lim[a].right;
+				_vm->_limits[_vm->_limitsNum][1] = _animTab[num]._lim[a].bottom + TOP;
+				_vm->_limits[_vm->_limitsNum][2] = _animTab[num]._lim[a].left;
+				_vm->_limits[_vm->_limitsNum][3] = _animTab[num]._lim[a].top + TOP;
 				_vm->_limitsNum++;
 			}
 		}
