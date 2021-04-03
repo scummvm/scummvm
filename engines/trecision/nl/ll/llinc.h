@@ -104,7 +104,6 @@ extern uint16 *ImagePointer;
 extern uint16 *SmackImagePointer;
 extern uint16 *ObjPointers[];
 extern uint8 *MaskPointers[];
-extern uint8 *SoundPointer[];
 extern uint8 *_actionPointer[];
 extern uint16 _actionPosition[];
 // DATA POINTER
