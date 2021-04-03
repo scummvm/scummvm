@@ -22,7 +22,7 @@
 
 #include "ultima/ultima8/world/snap_process.h"
 #include "ultima/ultima8/world/get_object.h"
-#include "ultima/ultima8/world/actors/main_actor.h"
+#include "ultima/ultima8/world/actors/actor.h"
 #include "ultima/ultima8/world/camera_process.h"
 
 namespace Ultima {
@@ -59,7 +59,7 @@ void SnapProcess::updateCurrentEgg() {
 	if (!_currentSnapEgg && !_snapEggs.size())
 		return;
 
-	const MainActor *a = getMainActor();
+	const Actor *a = getControlledActor();
 	int32 ax, ay, az, axd, ayd, azd, x, y, z;
 	a->getLocation(ax, ay, az);
 	a->getFootpadWorld(axd, ayd, azd);
@@ -100,7 +100,7 @@ bool SnapProcess::isNpcInRangeOfCurrentEgg() const {
 	if (!_currentSnapEgg)
 		return false;
 
-	const MainActor *a = getMainActor();
+	const Actor *a = getControlledActor();
 	Item *currentegg = getItem(_currentSnapEgg);
 
 	if (!a || !currentegg)

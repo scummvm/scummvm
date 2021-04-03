@@ -1124,7 +1124,7 @@ bool Debugger::cmdAttack(int argc, const char **argv) {
 }
 
 bool Debugger::cmdCameraOnAvatar(int argc, const char **argv) {
-	MainActor *actor = getMainActor();
+	Actor *actor = getControlledActor();
 	if (actor) {
 		int32 x, y, z;
 		actor->getLocation(x, y, z);

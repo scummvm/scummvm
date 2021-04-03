@@ -24,7 +24,7 @@
 #include "ultima/ultima8/gumps/message_box_gump.h"
 #include "ultima/ultima8/games/game_data.h"
 #include "ultima/ultima8/kernel/kernel.h"
-#include "ultima/ultima8/world/actors/main_actor.h"
+#include "ultima/ultima8/world/actors/actor.h"
 #include "ultima/ultima8/world/target_reticle_process.h"
 #include "ultima/ultima8/world/sprite_process.h"
 #include "ultima/ultima8/world/world.h"
@@ -47,7 +47,7 @@ void TargetReticleProcess::run() {
 	Kernel *kernel = Kernel::get_instance();
 	assert(kernel);
 	uint32 frameno = kernel->getFrameNum();
-	Actor *mainactor = getMainActor();
+	Actor *mainactor = getControlledActor();
 	Process *spriteProc = nullptr;
 	if (_reticleSpriteProcess != 0) {
 		spriteProc = kernel->getProcess(_reticleSpriteProcess);
@@ -82,7 +82,7 @@ void TargetReticleProcess::run() {
 }
 
 bool TargetReticleProcess::findTargetItem() {
-	MainActor *mainactor = getMainActor();
+	Actor *mainactor = getControlledActor();
 	CurrentMap *currentmap = World::get_instance()->getCurrentMap();
 	bool changed = false;
 
@@ -152,7 +152,7 @@ void TargetReticleProcess::itemMoved(Item *item) {
 	int32 x, y, z;
 	item->getCentre(x, y, z);
 
-	MainActor *mainactor = getMainActor();
+	Actor *mainactor = getControlledActor();
 	int actordir = -1;
 	int dirtoitem = -2;
 	if (mainactor) {

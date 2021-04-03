@@ -21,7 +21,7 @@
  */
 
 #include "ultima/ultima8/world/actors/avatar_mover_process.h"
-#include "ultima/ultima8/world/actors/main_actor.h"
+#include "ultima/ultima8/world/actors/actor.h"
 #include "ultima/ultima8/kernel/kernel.h"
 #include "ultima/ultima8/world/actors/targeted_anim_process.h"
 #include "ultima/ultima8/world/get_object.h"
@@ -40,7 +40,7 @@ AvatarMoverProcess::~AvatarMoverProcess() {
 }
 
 void AvatarMoverProcess::run() {
-	MainActor *avatar = getMainActor();
+	Actor *avatar = getControlledActor();
 	assert(avatar);
 
 	// busy, so don't move
@@ -60,6 +60,11 @@ void AvatarMoverProcess::run() {
 		return;
 	}
 
+	// not in fast area, don't move (can happen for some death sequences
+	// in Crusader)
+	if (!avatar->hasFlags(Item::FLG_FASTAREA))
+		return;
+
 	bool combatRun = avatar->hasActorFlags(Actor::ACT_COMBATRUN);
 	if (avatar->isInCombat() && !combatRun)
 		handleCombatMode();
@@ -69,7 +74,7 @@ void AvatarMoverProcess::run() {
 
 
 bool AvatarMoverProcess::checkTurn(Direction direction, bool moving) {
-	MainActor *avatar = getMainActor();
+	Actor *avatar = getControlledActor();
 	Direction curdir = avatar->getDir();
 	bool combat = avatar->isInCombat() && !avatar->hasActorFlags(Actor::ACT_COMBATRUN);
 
@@ -102,14 +107,14 @@ bool AvatarMoverProcess::checkTurn(Direction direction, bool moving) {
 }
 
 void AvatarMoverProcess::turnToDirection(Direction direction) {
-	MainActor *avatar = getMainActor();
+	Actor *avatar = getControlledActor();
 	uint16 turnpid = avatar->turnTowardDir(direction);
 	if (turnpid)
 		waitFor(turnpid);
 }
 
 void AvatarMoverProcess::slowFromRun(Direction direction) {
-	MainActor *avatar = getMainActor();
+	Actor *avatar = getControlledActor();
 	ProcId walkpid = avatar->doAnim(Animation::walk, direction);
 	ProcId standpid = avatar->doAnim(Animation::stand, direction);
 	Process *standproc = Kernel::get_instance()->getProcess(standpid);
@@ -118,7 +123,7 @@ void AvatarMoverProcess::slowFromRun(Direction direction) {
 }
 
 void AvatarMoverProcess::putAwayWeapon(Direction direction) {
-	MainActor *avatar = getMainActor();
+	Actor *avatar = getControlledActor();
 	ProcId anim1 = avatar->doAnim(Animation::unreadyWeapon, direction);
 	ProcId anim2 = avatar->doAnim(Animation::stand, direction);
 	Process *anim2p = Kernel::get_instance()->getProcess(anim2);
@@ -127,7 +132,7 @@ void AvatarMoverProcess::putAwayWeapon(Direction direction) {
 }
 
 bool AvatarMoverProcess::standUpIfNeeded(Direction direction) {
-	MainActor *avatar = getMainActor();
+	Actor *avatar = getControlledActor();
 	Animation::Sequence lastanim = avatar->getLastAnim();
 	bool stasis = Ultima8Engine::get_instance()->isAvatarInStasis();
 
