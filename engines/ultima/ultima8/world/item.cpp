@@ -3343,6 +3343,11 @@ uint32 Item::I_popToCoords(const uint8 *args, unsigned int /*argsize*/) {
 	if (GAME_IS_CRUSADER) {
 		x *= 2;
 		y *= 2;
+		// HACK!!  DEATHFL::ordinal20 has a hack to add 1 to z for the death
+		// animation (falling into acid), but then our animation tracker
+		// detects a fall and stops animating.  Fight hacks with hacks..
+		if (item->_shape == 1408 && z > 0)
+			z -= 1;
 	}
 
 	item->move(x, y, z);
