@@ -69,14 +69,19 @@ private:
 	uint16 _smkPal[MAXSMACK][256];
 	NightlongSmackerDecoder *_smkAnims[MAXSMACK];
 
+	FastFile _animFile[MAXSMACK]; // nlanim.cd1 / nlanim.cd2
+	int _curCD;
+
 	void openSmk(Common::SeekableReadStream *stream);
-	void openSmk(Common::String name);
+	void openSmkAnim(Common::String name);
+	void openSmkVideo(Common::String name);
 	void closeSmk();
 	void smkNextFrame();
 
 	void drawSmkBuffer(int px, int py, int dx, int dy);
 	void refreshFullMotion();
 	void refreshSmkIcon(int StartIcon, int num);
+	void swapCD(int cd);
 
 public:
 	uint8 *_smkBuffer[MAXSMACK];

@@ -157,36 +157,6 @@ int FastFileRead(Common::SeekableReadStream *stream, void *ptr, int size) {
 	return stream->read(ptr, size);
 }
 
-void swapCD(int cd) {
-	Common::String animFileName = Common::String::format("nlanim.cd%d", cd);
-	for (int i = 0; i < MAXSMACK; i++) {
-		g_vm->_animFile[i].close();
-		g_vm->_animFile[i].open(animFileName);
-	}
-}
-
-/* -----------------19/01/98 17.15-------------------
- * AnimFileOpen
- * --------------------------------------------------*/
-Common::SeekableReadStream *AnimFileOpen(Common::String name) {
-	int cur = g_vm->_animMgr->_curSmackBuffer;
-	if (g_vm->_animFile[cur].hasFile(name)) {
-		return g_vm->_animFile[cur].createReadStreamForMember(name);
-	}
-
-	g_vm->curCD = g_vm->curCD == 1 ? 2 : 1;
-	swapCD(g_vm->curCD);
-
-	if (g_vm->_animFile[cur].hasFile(name)) {
-		return g_vm->_animFile[cur].createReadStreamForMember(name);
-	}
-
-	// Invalid file
-	warning("AnimFileOpen: File %s not found", name.c_str());
-	CloseSys(g_vm->_sysText[kMessageFilesMissing]);
-	return nullptr;	// should never reach here
-}
-
 int SpeechFileRead(const char *name, unsigned char *buf) {
 	if (!g_vm->_speechFile.isOpen())
 		return 0;
