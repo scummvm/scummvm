@@ -114,16 +114,13 @@
 				size = '40, 27'
 				padding = '0, 0, 8, 0'
 		/>
-
 		<widget name = 'TabWidget.Body'
 				padding = '0, 0, 0, 0'
 		/>
-
 		<widget name = 'TabWidget.NavButton'
 				size = '15, 18'
 				padding = '0, 3, 4, 0'
 		/>
-
 		<widget name = 'EditRecordLabel'
 				size = '60, 25'
 		/>
