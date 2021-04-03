@@ -265,6 +265,31 @@ protected:
 	 */
 	bool saveScreenshot(const Common::String &filename) const;
 
+	/**
+	 * @brief Dummy implementation of saveScreenshot() (ie. no file argument) for OpenGLGraphicsManager
+	 *
+	 * Currently we have a backend OpenGLSDLGraphicsManager, which inherits from both
+	 * OpenGLGraphicsManager and SdlGraphicsManager
+	 *
+	 * OpenGLSDLGraphicsManager "implements" saveScreenshot(const Common::String &filename) (can be overridden)
+	 * by calling the saveScreenshot(const Common::String &filename) of OpenGLGraphicsManager
+	 * and saveScreenshot() by calling saveScreenshot() of SdlGraphicsManager
+	 *
+	 * SdlGraphicsManager provides an implementation of saveScreenshot() (which can be overridden)
+	 * but a dummy implementation of saveScreenshot(const Common::String &filename)
+	 *
+	 * OpenGLGraphicsManager provides the implementation of saveScreenshot(const Common::String &filename)
+	 * but needs a (dummy) implementation of saveScreenshot() since OpenGLGraphicsManager inherits from GraphicsManager
+	 * This avoids the noisy warning (when building for OpenGL backend with no SDL support):
+	 * OpenGL::OpenGLGraphicsManager::saveScreenshot
+	 * hides overloaded virtual function
+	 * GraphicsManager::saveScreenshot
+	 *
+	*/
+	// TODO Maybe we should just unify these two method signatures in one
+	//      to avoid this mess
+	void saveScreenshot() override { return; }
+
 private:
 	//
 	// OpenGL utilities

@@ -362,6 +362,10 @@ bool OpenGLSdlGraphicsManager::saveScreenshot(const Common::String &filename) co
 	return OpenGLGraphicsManager::saveScreenshot(filename);
 }
 
+void OpenGLSdlGraphicsManager::saveScreenshot() {
+	SdlGraphicsManager::saveScreenshot();
+}
+
 bool OpenGLSdlGraphicsManager::setupMode(uint width, uint height) {
 	// In case we request a fullscreen mode we will use the mode the user
 	// has chosen last time or the biggest mode available.
