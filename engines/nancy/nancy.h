@@ -74,11 +74,6 @@ class NancyConsole;
 
 namespace State {
 class State;
-class Logo;
-class Scene;
-class Map;
-class Help;
-class Credits;
 }
 
 class NancyEngine : public Engine {
@@ -104,8 +99,8 @@ public:
 	Common::Platform getPlatform() const;
 
 	void setState(NancyState::NancyState state, NancyState::NancyState overridePrevious = NancyState::kNone);
-	State::State *getState() { return _gameFlow.currentState; }
-	void setPreviousState();
+	NancyState::NancyState getState() { return _gameFlow.curState; }
+	void setToPreviousState();
 
 	// Chunks found in BOOT get extracted and cached at startup, this function lets other classes access them
 	Common::SeekableReadStream *getBootChunkStream(const Common::String &name) const;
@@ -133,8 +128,8 @@ public:
 
 private:
 	struct GameFlow {
-		State::State *currentState = nullptr;
-		State::State *previousState = nullptr;
+		NancyState::NancyState curState = NancyState::kNone;
+		NancyState::NancyState prevState = NancyState::kNone;
 	};
 
 	virtual Common::Error run() override;

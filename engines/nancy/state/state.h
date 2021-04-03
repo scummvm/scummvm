@@ -34,7 +34,7 @@ public:
 
 	virtual void process() = 0;
 	virtual void onStateEnter() {}
-	virtual bool onStateExit() { return true; } // Returns whether the object destroyed itself after exit
+	virtual void onStateExit() {}
 };
 
 } // End of namespace State

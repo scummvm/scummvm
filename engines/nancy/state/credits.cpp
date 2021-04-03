@@ -90,9 +90,10 @@ void Credits::run() {
 	if (input.input & NancyInput::kLeftMouseButtonDown) {
 		_state = kInit;
 		g_nancy->_sound->stopSound(_sound);
-		g_nancy->setState(NancyState::kMainMenu);
 		g_nancy->_cursorManager->showCursor(true);
 		_fullTextSurface.free();
+		g_nancy->setState(NancyState::kMainMenu);
+		return;
 	}
 
 	Time currentTime = g_nancy->getTotalPlayTime();

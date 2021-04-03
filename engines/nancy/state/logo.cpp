@@ -49,10 +49,9 @@ void Logo::process() {
 	}
 }
 
-bool Logo::onStateExit() {
+void Logo::onStateExit() {
 	g_nancy->_sound->stopSound(_msnd);
 	destroy();
-	return true;
 }
 
 void Logo::init() {

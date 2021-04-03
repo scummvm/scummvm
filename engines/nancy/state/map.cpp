@@ -158,14 +158,12 @@ void Map::run() {
 	}
 }
 
-bool Map::onStateExit() {
+void Map::onStateExit() {
 	Common::SeekableReadStream *chunk = g_nancy->getBootChunkStream("MAP");
 	SoundDescription sound;
 	chunk->seek(0x18 + _mapID * 0x20, SEEK_SET);
 	sound.read(*chunk, SoundDescription::kMenu);
 	g_nancy->_sound->stopSound(sound);
-
-	g_nancy->setState(NancyState::kScene);
 
 	if (_pickedLocationID != -1) {
 		auto &loc = _locations[_pickedLocationID];
@@ -181,7 +179,6 @@ bool Map::onStateExit() {
 	_mapButtonClicked = false;
 
 	destroy();
-	return true;
 }
 
 void Map::registerGraphics() {

@@ -116,7 +116,7 @@ public:
 	// State API
 	virtual void process() override;
 	virtual void onStateEnter() override;
-	virtual bool onStateExit() override;
+	virtual void onStateExit() override;
 
 	void changeScene(uint16 id, uint16 frame, uint16 verticalOffset, bool noSound);
 	void changeScene(const SceneChangeDescription &sceneDescription);

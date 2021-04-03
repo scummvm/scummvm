@@ -124,13 +124,11 @@ void Scene::onStateEnter() {
 	}
 }
 
-bool Scene::onStateExit() {
+void Scene::onStateExit() {
 	_timers.pushedPlayTime = g_nancy->getTotalPlayTime();
 	_actionManager.onPause(true);
 	pauseSceneSpecificSounds();
 	_gameStateRequested = NancyState::kNone;
-
-	return false;
 }
 
 void Scene::changeScene(uint16 id, uint16 frame, uint16 verticalOffset, bool noSound) {

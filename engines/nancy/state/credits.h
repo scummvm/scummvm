@@ -43,7 +43,7 @@ public:
 
 	// State API
 	virtual void process() override;
-	virtual bool onStateExit() override { destroy(); return true; };
+	virtual void onStateExit() override { destroy(); };
 
 protected:
 	void init();

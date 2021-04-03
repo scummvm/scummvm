@@ -97,7 +97,7 @@ void Help::run() {
 void Help::waitForSound() {
 	if (!g_nancy->_sound->isSoundPlaying(18)) {
 		g_nancy->_sound->stopSound(_sound);
-		g_nancy->setPreviousState();
+		g_nancy->setToPreviousState();
 	}
 }
 

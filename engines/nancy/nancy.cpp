@@ -148,11 +148,10 @@ void NancyEngine::setState(NancyState::NancyState state, NancyState::NancyState 
 		bootGameEngine();
 		setState(NancyState::kLogo);
 		return;
-	case NancyState::kMainMenu:
-		if (_gameFlow.currentState) {
-			if (_gameFlow.currentState->onStateExit()) {
-				_gameFlow.currentState = nullptr;
-			}
+	case NancyState::kMainMenu: {
+		State::State *s = getStateObject(_gameFlow.curState);
+		if (s) {
+			s->onStateExit();
 		}
 
 		// TODO until the game's own menus are implemented we simply open the GMM
@@ -162,11 +161,13 @@ void NancyEngine::setState(NancyState::NancyState state, NancyState::NancyState 
 			return;
 		}
 
-		if (_gameFlow.currentState) {
-			_gameFlow.currentState->onStateEnter();
+		s = getStateObject(_gameFlow.curState);
+		if (s) {
+			s->onStateEnter();
 		}
 
 		return;
+	}
 	case NancyState::kCheat:
 		if (_cheatTypeIsEventFlag) {
 			EventFlagDialog *dialog = new EventFlagDialog();
@@ -185,32 +186,37 @@ void NancyEngine::setState(NancyState::NancyState state, NancyState::NancyState 
 
 	_graphicsManager->clearObjects();
 
-	_gameFlow.previousState = _gameFlow.currentState;
-	_gameFlow.currentState = getStateObject(state);
-
-	if (_gameFlow.previousState) {
-		_gameFlow.previousState->onStateExit();
+	State::State *s = getStateObject(_gameFlow.curState);
+	if (s) {
+		s->onStateExit();
 	}
-
-	if (_gameFlow.currentState) {
-		_gameFlow.currentState->onStateEnter();
+	
+	s = getStateObject(state);
+	if (s) {
+		s->onStateEnter();
 	}
 
 	if (overridePrevious != NancyState::kNone) {
-		_gameFlow.previousState = getStateObject(state);
+		_gameFlow.prevState = overridePrevious;
+	} else {
+		_gameFlow.prevState = _gameFlow.curState;
 	}
+
+	_gameFlow.curState = state;
 }
 
-void NancyEngine::setPreviousState() {
-	if (_gameFlow.currentState) {
-		_gameFlow.currentState->onStateExit();
+void NancyEngine::setToPreviousState() {
+	State::State *s = getStateObject(_gameFlow.curState);
+	if (s) {
+		s->onStateExit();
 	}
 
-	if (_gameFlow.previousState) {
-		_gameFlow.previousState->onStateEnter();
+	s = getStateObject(_gameFlow.prevState);
+	if (s) {
+		s->onStateEnter();
 	}
 
-	SWAP<Nancy::State::State *>(_gameFlow.currentState, _gameFlow.previousState);
+	SWAP<NancyState::NancyState>(_gameFlow.curState, _gameFlow.prevState);
 }
 
 void NancyEngine::setMouseEnabled(bool enabled) {
@@ -241,9 +247,10 @@ Common::Error NancyEngine::run() {
 	while (!shouldQuit()) {
 		_cursorManager->setCursorType(CursorManager::kNormalArrow);
 		_input->processEvents();
-
-		if (_gameFlow.currentState) {
-			_gameFlow.currentState->process();
+		
+		State::State *s = getStateObject(_gameFlow.curState);
+		if (s) {
+			s->process();
 		}
 
 		_graphicsManager->draw();
@@ -252,7 +259,9 @@ Common::Error NancyEngine::run() {
 		_system->delayMillis(16);
 	}
 
-	NancySceneState.destroy();
+	if (State::Scene::hasInstance()) {
+		NancySceneState.destroy();
+	}
 
 	return Common::kNoError;
 }
