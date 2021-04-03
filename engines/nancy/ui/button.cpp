@@ -60,7 +60,7 @@ void MenuButton::init() {
 
 void MenuButton::onClick() {
 	NancySceneState.requestStateChange(NancyState::kMainMenu);
-	g_nancy->_sound->playSound(0x18);
+	g_nancy->_sound->playSound("GLOB");
 	setVisible(true);
 }
 
@@ -80,7 +80,7 @@ void HelpButton::init() {
 
 void HelpButton::onClick() {
 	NancySceneState.requestStateChange(NancyState::kHelp);
-	g_nancy->_sound->playSound(0x18);
+	g_nancy->_sound->playSound("GLOB");
 	setVisible(true);
 }
 

@@ -53,7 +53,6 @@ private:
 	State _state;
 	UI::FullScreenImage _image;
 	Common::Rect _hotspot; // Can be an array, but isn't in nancy1
-	SoundDescription _sound;
 };
 
 #define NancyHelpState Nancy::State::Help::instance()

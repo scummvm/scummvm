@@ -80,10 +80,9 @@ void Map::init() {
 
 	// Load the audio
 	chunk->seek(0x18 + _mapID * 0x20, SEEK_SET);
-	SoundDescription sound;
-	sound.read(*chunk, SoundDescription::kMenu);
-	g_nancy->_sound->loadSound(sound);
-	g_nancy->_sound->playSound(0x14);
+	_sound.read(*chunk, SoundDescription::kMenu);
+	g_nancy->_sound->loadSound(_sound);
+	g_nancy->_sound->playSound("GLOB");
 
 	_locations.clear();
 
@@ -126,8 +125,8 @@ void Map::init() {
 }
 
 void Map::run() {
-	if (!g_nancy->_sound->isSoundPlaying(0x14) && !g_nancy->_sound->isSoundPlaying(0x13)) {
-		g_nancy->_sound->playSound(0x13);
+	if (!g_nancy->_sound->isSoundPlaying("GLOB") && !g_nancy->_sound->isSoundPlaying(_sound)) {
+		g_nancy->_sound->playSound(_sound);
 	}
 
 	NancyInput input = g_nancy->_input->getInput();
@@ -159,22 +158,18 @@ void Map::run() {
 }
 
 void Map::onStateExit() {
-	Common::SeekableReadStream *chunk = g_nancy->getBootChunkStream("MAP");
-	SoundDescription sound;
-	chunk->seek(0x18 + _mapID * 0x20, SEEK_SET);
-	sound.read(*chunk, SoundDescription::kMenu);
-	g_nancy->_sound->stopSound(sound);
+	g_nancy->_sound->stopSound(_sound);
 
 	if (_pickedLocationID != -1) {
 		auto &loc = _locations[_pickedLocationID];
 		NancySceneState.changeScene(loc.scenes[_mapID].sceneID, loc.scenes[_mapID].frameID, loc.scenes[_mapID].verticalOffset, false);
 		_pickedLocationID = -1;
 
-		g_nancy->_sound->playSound(0x18);
+		g_nancy->_sound->playSound("BUOK");
 	}
 
 	// The two sounds play at the same time if a location was picked
-	g_nancy->_sound->playSound(0x14);
+	g_nancy->_sound->playSound("GLOB");
 
 	_mapButtonClicked = false;
 

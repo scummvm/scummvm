@@ -100,6 +100,7 @@ private:
 	Nancy::UI::Viewport _viewport;
 	MapLabel _label;
 	MapButton _button;
+	SoundDescription _sound;
 
 	State _state;
 	uint16 _mapID;

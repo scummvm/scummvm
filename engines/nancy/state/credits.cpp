@@ -73,6 +73,8 @@ void Credits::init() {
 	_text._drawSurface.create(_fullTextSurface, src);
 	_text.init();
 
+	g_nancy->_sound->stopSound("MSND");
+
 	g_nancy->_sound->loadSound(_sound);
 	g_nancy->_sound->playSound(_sound);
 

@@ -64,7 +64,7 @@ void ActionManager::handleInput(NancyInput &input) {
 					}
 
 					if (!shouldTrigger) {
-						g_nancy->_sound->playSound(17); // Hardcoded by original engine
+						g_nancy->_sound->playSound("CANT");
 					}
 				} else {
 					shouldTrigger = true;

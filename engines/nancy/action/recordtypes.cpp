@@ -398,7 +398,7 @@ void ShowInventoryItem::execute() {
 		break;
 	}
 	case kActionTrigger:
-		g_nancy->_sound->playSound(24); // Hardcoded by original engine
+		g_nancy->_sound->playSound("BUOK");
 		NancySceneState.addItemToInventory(_objectID);
 		setVisible(false);
 		_hasHotspot = false;

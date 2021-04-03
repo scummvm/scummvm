@@ -66,16 +66,13 @@ void Help::init() {
 	_hotspot.right = chunk->readUint16LE();
 	_hotspot.bottom = chunk->readUint16LE();
 
-	chunk = g_nancy->getBootChunkStream("MSND");
-	chunk->seek(0);
-	_sound.read(*chunk, SoundDescription::kMenu);
-
 	_state = kBegin;
 }
 
 void Help::begin() {
-	g_nancy->_sound->loadSound(_sound);
-	g_nancy->_sound->playSound(_sound);
+	if (!g_nancy->_sound->isSoundPlaying("MSND")) {
+		g_nancy->_sound->playSound("MSND");
+	}
 
 	_image.registerGraphics();
 	_image.setVisible(true);
@@ -89,14 +86,14 @@ void Help::run() {
 	NancyInput input = g_nancy->_input->getInput();
 
 	if (_hotspot.contains(input.mousePos) && input.input & NancyInput::kLeftMouseButtonUp) {
-		g_nancy->_sound->playSound(0x18); // Hardcoded by original engine
+		g_nancy->_sound->playSound("BUOK");
 		_state = kWaitForSound;
 	}
 }
 
 void Help::waitForSound() {
-	if (!g_nancy->_sound->isSoundPlaying(18)) {
-		g_nancy->_sound->stopSound(_sound);
+	if (!g_nancy->_sound->isSoundPlaying("BUOK")) {
+		g_nancy->_sound->stopSound("BUOK");
 		g_nancy->setToPreviousState();
 	}
 }

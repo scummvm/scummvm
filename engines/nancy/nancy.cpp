@@ -317,25 +317,11 @@ void NancyEngine::bootGameEngine() {
 		"CLOK", "SPEC"
 	};
 
-	Common::String persistentSounds[] = {
-		"BUOK", "BUDE", "BULS", "GLOB", "CURT",
-		"CANT"
-	};
-	
-	SoundDescription desc;
-
 	for (auto const &n : names) {
 		addBootChunk(n, boot->getChunkStream(n));
 	}
 
-	// Persistent sounds that are used across the engine. These originally get loaded inside Logo
-	for (auto const &s : persistentSounds) {
-		Common::SeekableReadStream *str = g_nancy->getBootChunkStream(s);
-		if (str) {
-			desc.read(*str, SoundDescription::kNormal);
-			g_nancy->_sound->loadSound(desc);
-		}
-	}
+	_sound->loadCommonSounds();
 
 	delete boot;
 

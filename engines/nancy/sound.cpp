@@ -215,6 +215,36 @@ SoundManager::SoundManager() {
 	initSoundChannels();
 }
 
+void SoundManager::loadCommonSounds() {
+	// Persistent sounds that are used across the engine. These originally get loaded inside Logo
+	Common::String chunkNames[] = {
+		"CANT", // channel 17
+		"CURT", // channel 18
+		"GLOB", // channel 20
+		"BULS", // channel 22
+		"BUDE", // channel 23
+		"BUOK", // channel 24
+	};
+
+	Common::SeekableReadStream *chunk = nullptr;
+	for (auto const &s : chunkNames) {
+		chunk = g_nancy->getBootChunkStream(s);
+		if (chunk) {
+			SoundDescription &desc = _commonSounds.getOrCreateVal(s);
+			desc.read(*chunk, SoundDescription::kNormal);
+			g_nancy->_sound->loadSound(desc);
+		}
+	}
+
+	// Menu sound is special since it's stored differently and can be
+	// unloaded and loaded again
+	chunk = g_nancy->getBootChunkStream("MSND"); // channel 28
+	if (chunk) {
+		SoundDescription &desc = _commonSounds.getOrCreateVal("MSND");
+		desc.read(*chunk, SoundDescription::kMenu);
+	}
+}
+
 SoundManager::~SoundManager() {
 	stopAllSounds();
 }
@@ -262,6 +292,16 @@ void SoundManager::playSound(const SoundDescription &description) {
 	}
 }
 
+void SoundManager::playSound(const Common::String &chunkName) {
+	const SoundDescription &desc = _commonSounds[chunkName];
+	
+	if (!isSoundPlaying(desc)) {
+		loadSound(desc);
+	}
+
+	playSound(desc);
+}
+
 void SoundManager::pauseSound(uint16 channelID, bool pause) {
 	if (channelID > 31)
 		return;
@@ -277,6 +317,10 @@ void SoundManager::pauseSound(const SoundDescription &description, bool pause) {
 	}
 }
 
+void SoundManager::pauseSound(const Common::String &chunkName, bool pause) {
+	pauseSound(_commonSounds[chunkName], pause);
+}
+
 bool SoundManager::isSoundPlaying(uint16 channelID) const {
 	if (channelID > 31)
 		return false;
@@ -290,6 +334,10 @@ bool SoundManager::isSoundPlaying(const SoundDescription &description) const {
 	} else {
 		return isSoundPlaying(description.channelID);
 	}
+}
+
+bool SoundManager::isSoundPlaying(const Common::String &chunkName) const {
+	return isSoundPlaying(_commonSounds[chunkName]);
 }
 
 void SoundManager::stopSound(uint16 channelID) {
@@ -310,6 +358,10 @@ void SoundManager::stopSound(const SoundDescription &description) {
 	}
 }
 
+void SoundManager::stopSound(const Common::String &chunkName) {
+	stopSound(_commonSounds[chunkName]);
+}
+
 // Returns whether the exception was skipped
 void SoundManager::stopAllSounds() {
 	for (uint i = 0; i < 31; ++i) {
@@ -323,6 +375,8 @@ void SoundManager::stopAndUnloadSpecificSounds() {
 	for (uint i = 0; i < 10; ++i) {
 		stopSound(i);
 	}
+
+	stopSound(_commonSounds["MSND"]);
 }
 
 void SoundManager::initSoundChannels() {

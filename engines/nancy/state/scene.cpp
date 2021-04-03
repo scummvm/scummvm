@@ -121,6 +121,7 @@ void Scene::onStateEnter() {
 		g_nancy->setTotalPlayTime((uint32)_timers.pushedPlayTime);
 
 		unpauseSceneSpecificSounds();
+		g_nancy->_sound->stopSound("MSND");
 	}
 }
 

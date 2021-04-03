@@ -118,13 +118,13 @@ void InventoryBox::handleInput(NancyInput &input) {
 				g_nancy->_cursorManager->setCursorType(CursorManager::kHotspotArrow);
 				if (input.input & NancyInput::kLeftMouseButtonUp) {
 					NancySceneState.addItemToInventory(NancySceneState.getHeldItem());
-					g_nancy->_sound->playSound(0x16);
+					g_nancy->_sound->playSound("BULS");
 				}
 			} else if (_itemHotspots[i].itemID != -1) {
 				g_nancy->_cursorManager->setCursorType(CursorManager::kHotspotArrow);
 				if (input.input & NancyInput::kLeftMouseButtonUp) {
 					NancySceneState.removeItemFromInventory(_itemHotspots[i].itemID);
-					g_nancy->_sound->playSound(0x18);
+					g_nancy->_sound->playSound("GLOB");
 				}
 			}
 			break;
@@ -242,7 +242,7 @@ void InventoryBox::Shades::updateGraphics() {
 
 			if (!_soundTriggered) {
 				_soundTriggered = true;
-				g_nancy->_sound->playSound(0x12);
+				g_nancy->_sound->playSound("CURT");
 			}
 		}
 	} else {
@@ -252,7 +252,7 @@ void InventoryBox::Shades::updateGraphics() {
 
 			if (!_soundTriggered) {
 				_soundTriggered = true;
-				g_nancy->_sound->playSound(0x12);
+				g_nancy->_sound->playSound("CURT");
 			}
 		}
 	}

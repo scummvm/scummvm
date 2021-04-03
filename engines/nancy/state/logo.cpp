@@ -50,7 +50,6 @@ void Logo::process() {
 }
 
 void Logo::onStateExit() {
-	g_nancy->_sound->stopSound(_msnd);
 	destroy();
 }
 
@@ -65,9 +64,7 @@ void Logo::init() {
 }
 
 void Logo::startSound() {
-	_msnd.read(*g_nancy->getBootChunkStream("MSND"), SoundDescription::kMenu);
-	g_nancy->_sound->loadSound(_msnd);
-	g_nancy->_sound->playSound(_msnd);
+	g_nancy->_sound->playSound("MSND");
 
 	_startTicks = g_nancy->getTotalPlayTime();
 	_state = kRun;
@@ -83,9 +80,6 @@ void Logo::stop() {
 	// The original engine checks for N+D and N+C key combos here.
 	// For the N+C key combo it looks for some kind of cheat file
 	// to initialize the game state with.
-
-	g_nancy->_sound->stopSound(_msnd);
-
 	g_nancy->setState(NancyState::kScene);
 }
 
