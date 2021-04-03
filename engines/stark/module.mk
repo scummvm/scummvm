@@ -9,6 +9,11 @@ MODULE_OBJS := \
 	gfx/openglsfade.o \
 	gfx/openglsprop.o \
 	gfx/openglssurface.o \
+	gfx/opengl.o \
+	gfx/openglactor.o \
+	gfx/openglfade.o \
+	gfx/openglprop.o \
+	gfx/openglsurface.o \
 	gfx/opengltexture.o \
 	gfx/renderentry.o \
 	gfx/surfacerenderer.o \
