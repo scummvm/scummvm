@@ -265,7 +265,11 @@ void GravityProcess::terminate() {
 	//signal item GravityProcess is gone
 	Item *item = getItem(_itemNum);
 	if (item) {
-		assert(item->getGravityPID() == 0 || item->getGravityPID() == _pid);
+		// This is strange, but not impossible (one terminates
+		// and another starts before terminate() gets called).
+		if (item->getGravityPID() != 0 && item->getGravityPID() != _pid)
+			warning("GravityProcess::terminate %d on item %d which has gravityPID %d",
+					_pid, _itemNum, item->getGravityPID());
 		item->setGravityPID(0);
 
 		// no longer bouncing
