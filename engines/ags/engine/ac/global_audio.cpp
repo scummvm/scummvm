@@ -539,6 +539,10 @@ static bool play_voice_clip_on_channel(const String &voice_name) {
 	}
 
 	if (speechmp3 != nullptr) {
+		SoundClipWaveBase *clip = dynamic_cast<SoundClipWaveBase *>(speechmp3);
+		if (clip)
+			clip->_soundType = Audio::Mixer::kSpeechSoundType;
+
 		if (!speechmp3->play()) {
 			// not assigned to a channel, so clean up manually.
 			//speechmp3->destroy();

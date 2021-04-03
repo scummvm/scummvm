@@ -170,6 +170,7 @@ Common::Error AGSEngine::run() {
 	if (_GP(usetup).disable_exception_handling)
 #endif
 	{
+		syncSoundSettings();
 		AGS3::initialize_engine(startup_opts);
 
 		// Do shutdown stuff

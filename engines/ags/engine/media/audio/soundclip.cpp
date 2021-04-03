@@ -61,7 +61,7 @@ void SoundClipWaveBase::poll() {
 }
 
 int SoundClipWaveBase::play() {
-	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundHandle, _stream,
+	_mixer->playStream(_soundType, &_soundHandle, _stream,
 		-1, 255, 0, DisposeAfterUse::NO);
 	return 1;
 }

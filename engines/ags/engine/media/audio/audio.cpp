@@ -66,6 +66,21 @@ SOUNDCLIP *AudioChannelsLock::GetChannelIfPlaying(int index) {
 }
 
 SOUNDCLIP *AudioChannelsLock::SetChannel(int index, SOUNDCLIP *ch) {
+	SoundClipWaveBase *wavClip = dynamic_cast<SoundClipWaveBase *>(ch);
+	if (wavClip) {
+		switch (index) {
+		case SCHAN_SPEECH:
+			wavClip->_soundType = Audio::Mixer::kSpeechSoundType;
+			break;
+		case SCHAN_MUSIC:
+			wavClip->_soundType = Audio::Mixer::kMusicSoundType;
+			break;
+		default:
+			wavClip->_soundType = Audio::Mixer::kSFXSoundType;
+			break;
+		}
+	}
+
 	// TODO: store clips in smart pointers
 	if (_GP(audioChannels)[index] == ch)
 		Debug::Printf(kDbgMsg_Warn, "WARNING: channel %d - same clip assigned", index);

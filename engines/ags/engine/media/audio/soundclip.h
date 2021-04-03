@@ -167,6 +167,7 @@ struct SoundClipWaveBase : public SOUNDCLIP {
 	Audio::AudioStream *_stream;
 	Audio::SoundHandle _soundHandle;
 	SoundClipState _state;
+	Audio::Mixer::SoundType _soundType = Audio::Mixer::kPlainSoundType;
 
 	SoundClipWaveBase(Audio::AudioStream *stream, int volume, bool repeat = false);
 	~SoundClipWaveBase() override { destroy(); }
