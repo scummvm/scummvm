@@ -52,19 +52,19 @@ Intro2::Intro2(SupernovaEngine *vm, GameManager2 *gm) {
 	_objectState[8] = Object(_id, kStringKeycard, kStringDefaultDescription, MUSCARD, TAKE, 255, 255, 0);
 
 	_introText =
-		_vm->getGameString(kStringIntro1) + '\0' +
-		_vm->getGameString(kStringIntro2) + '\0' +
-		_vm->getGameString(kStringIntro3) + '\0' +
-		_vm->getGameString(kStringIntro4) + '\0' +
-		_vm->getGameString(kStringIntro5) + '\0' +
-		"^Matthias Neef#" + '\0' +
-		"^Sascha Otterbach#" + '\0' +
-		"^Thomas Mazzoni#" + '\0' +
-		"^Matthias Klein#" + '\0' +
-		"^Gerrit Rothmaier#" + '\0' +
-		"^Thomas Hassler#" + '\0' +
-		"^Rene Kach#" + '\0' +
-		'\233' + '\0';
+		_vm->getGameString(kStringIntro1) + '\1' +
+		_vm->getGameString(kStringIntro2) + '\1' +
+		_vm->getGameString(kStringIntro3) + '\1' +
+		_vm->getGameString(kStringIntro4) + '\1' +
+		_vm->getGameString(kStringIntro5) + '\1' +
+		"^Matthias Neef#" + '\1' +
+		"^Sascha Otterbach#" + '\1' +
+		"^Thomas Mazzoni#" + '\1' +
+		"^Matthias Klein#" + '\1' +
+		"^Gerrit Rothmaier#" + '\1' +
+		"^Thomas Hassler#" + '\1' +
+		"^Rene Kach#" + '\1' +
+		'\233' + '\1';
 }
 
 void Intro2::onEntrance() {
@@ -1906,28 +1906,28 @@ Ship::Ship(SupernovaEngine *vm, GameManager2 *gm) {
 	_objectState[6] = Object(_id, kStringCable, kStringCableDescription2, CABLE, TAKE | COMBINABLE, 255, 255, 8 + kSectionInvert);
 
 	_outroText =
-		_vm->getGameString(kStringIntro1) + '\0' +
-		_vm->getGameString(kStringIntro2) + '\0' +
-		_vm->getGameString(kStringIntro3) + '\0' +
-		_vm->getGameString(kStringIntro4) + '\0' +
-		_vm->getGameString(kStringIntro5) + '\0' +
-		"^Matthias Neef#" + '\0' +
-		"^Sascha Otterbach#" + '\0' +
-		"^Thomas Mazzoni#" + '\0' +
-		"^Matthias Klein#" + '\0' +
-		"^Gerrit Rothmaier#" + '\0' +
-		"^Thomas Hassler#" + '\0' +
-		"^Rene Kach#" + '\0' +
-		'\233' + '\0';
+		_vm->getGameString(kStringIntro1) + '\1' +
+		_vm->getGameString(kStringIntro2) + '\1' +
+		_vm->getGameString(kStringIntro3) + '\1' +
+		_vm->getGameString(kStringIntro4) + '\1' +
+		_vm->getGameString(kStringIntro5) + '\1' +
+		"^Matthias Neef#" + '\1' +
+		"^Sascha Otterbach#" + '\1' +
+		"^Thomas Mazzoni#" + '\1' +
+		"^Matthias Klein#" + '\1' +
+		"^Gerrit Rothmaier#" + '\1' +
+		"^Thomas Hassler#" + '\1' +
+		"^Rene Kach#" + '\1' +
+		'\233' + '\1';
 	Common::String waitString = "##################";
 	_outroText2 =
-		waitString + '\0' +
-		_vm->getGameString(kStringOutro1) + '\0' +
-		_vm->getGameString(kStringOutro2) + '\0' +
-		_vm->getGameString(kStringOutro3) + '\0' +
-		_vm->getGameString(kStringOutro4) + '\0' +
-		_vm->getGameString(kStringOutro5) + '\0' +
-		'\233' + '\0';
+		waitString + '\1' +
+		_vm->getGameString(kStringOutro1) + '\1' +
+		_vm->getGameString(kStringOutro2) + '\1' +
+		_vm->getGameString(kStringOutro3) + '\1' +
+		_vm->getGameString(kStringOutro4) + '\1' +
+		_vm->getGameString(kStringOutro5) + '\1' +
+		'\233' + '\1';
 }
 
 void Ship::onEntrance() {
