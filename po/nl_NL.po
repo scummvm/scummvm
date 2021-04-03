@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-04-01 19:20+0000\n"
+"POT-Creation-Date: 2021-04-02 21:13+0000\n"
 "PO-Revision-Date: 2020-11-29 17:10+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
@@ -4033,8 +4033,8 @@ msgstr "ongeldige bewaarbestandsnaam"
 #: engines/kyra/detection_tables.h:224 engines/kyra/detection_tables.h:237
 #: engines/kyra/detection_tables.h:593 engines/kyra/detection_tables.h:1777
 #: engines/saga/detection_tables.h:187 engines/saga/detection_tables.h:608
-#: engines/saga/detection_tables.h:936 engines/sci/detection_tables.h:4833
-#: engines/sci/detection_tables.h:4841
+#: engines/saga/detection_tables.h:936 engines/sci/detection_tables.h:4841
+#: engines/sci/detection_tables.h:4849
 msgid "Missing game code"
 msgstr "Ontbrekende spel code"
 
