@@ -3353,4 +3353,6 @@ enum MouseCmd {
 	MCMD_UPDT = 0x0003
 };
 
+#define MAXLIGHT 40
+
 #endif
