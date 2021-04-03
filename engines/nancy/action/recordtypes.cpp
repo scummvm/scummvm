@@ -124,7 +124,7 @@ void MapCall::execute() {
 }
 
 void MapCallHot1Fr::readData(Common::SeekableReadStream &stream) {
-	stream.skip(0x12);
+	_hotspotDesc.readData(stream);
 }
 
 void MapCallHot1Fr::execute() {
