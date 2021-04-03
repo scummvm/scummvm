@@ -232,7 +232,8 @@ void KeypadGump::Close(bool no_del) {
 bool KeypadGump::OnTextInput(int unicode) {
 	if (!(unicode & 0xFF80)) {
 		//char c = unicode & 0x7F;
-		// TODO: Accept numeric keyboard inputs
+		// Could also accept numeric keyboard inputs here.
+		// For now we do it in OnKeyDown.
 	}
 	return true;
 }
