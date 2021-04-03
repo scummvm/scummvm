@@ -187,7 +187,7 @@ const char* const ConvertUsecodeCrusader::_intrinsics[] = {
 	"int16 CameraProcess::I_getCameraY(void)",
 	"void Item::I_setMapArray(Item *, uint16 maparray)", // based on decompile - sets same value as read by getmaparray .. see VALUEBOX:ordinal20
 	"int16 Item::I_getNpcNum(Item *)", // part of same coff set 067, 06D, 089, 08E, 0AD, 0F8, 100, 102, 105, 107, 109, 10B, 10D, 10F, 111, 115, 11C, 123, 129
-	"void Intrinsic08A(12 bytes)", // TODO: No idea here.. something about hurling? look at the usecode.
+	"void Item::I_shoot(Item *, Point3 *, int speed, int gravity)",
 	"int16 Item::I_enterFastArea(Item *)", // based on disasm, v similar to U8
 	"void Item::I_setIsBroken(Item *)", // same coff as 119, 12A
 	"int16 Item::I_hurl(Item *,8 bytes)", // part of same coff set 028, 08D, 0BD, 0C0, 0C2, 0C8, 0F7, 0F9, 118, 11D
@@ -204,12 +204,12 @@ const char* const ConvertUsecodeCrusader::_intrinsics[] = {
 	"void PaletteFaderProcess:I_jumpToGreyScale(void)",
 	"void I_resetVargasHealthTo500(void)", // TODO: look how this is used in disasm and usecode .. seems weird.
 	"void Item::I_andStatus(Item *, uint16 status)", // part of same coff set 01A, 031, 069, 06E, 099, 0B2, 0BF, 0C1, 0C3, 0E9, 0FC, 101, 104, 106, 108, 10A, 10C, 10E, 110, 114, 117, 11A, 128, 132
-	"void PaletteFaderProcess::I_stopFadesAndResetToGamePal(void)", // TODO: Implement this.
+	"void PaletteFaderProcess::I_jumpToNormalPalette(void)",
 	"int16 PaletteFaderProcess::I_fadeFromBlack(nsteps)",
-	"int16 PaletteFaderProcess::I_fadeFromBlackWithParam(nsteps, unk)", // TODO: what's the param?
+	"int16 PaletteFaderProcess::I_fadeFromBlackWithParam(nsteps, unk)",
 	"int16 PaletteFaderProcess::I_fadeToBlack(nsteps)",
-	"int16 PaletteFaderProcess::I_fadeToBlackWithParam(nsteps, unk)", // TODO: what's the param?
-	"int16 PaletteFaderProcess::I_fadeToColor(r, g, b, nsteps, unk)", // TODO: what's the other param?
+	"int16 PaletteFaderProcess::I_fadeToBlackWithParam(nsteps, unk)",
+	"int16 PaletteFaderProcess::I_fadeToColor(r, g, b, nsteps, unk)",
 	// 00A0
 	"void Actor::I_setDead(Actor *)", // part of same coff set 021, 060, 073, 0A0, 0A8, 0D8, 0E7, 135
 	"int16 Item::I_getQLo(Item *)", // same as 02B based on same coff set 010, 02B, 066, 084, 0A1, 0AE, 0D9, 0EA
@@ -256,7 +256,7 @@ const char* const ConvertUsecodeCrusader::_intrinsics[] = {
 	"int16 Item::I_hurl(Item *,8 bytes)", // part of same coff set 028, 08D, 0BD, 0C0, 0C2, 0C8, 0F7, 0F9, 118, 11D
 	"int16 Item::I_getQHi(Item *)", // same as 026 based on same coff set 026, 045, 047, 049, 04B, 04D, 04F, 0AF, 0BE, 0C9, 0F0, 0F3, 0FB, 133
 	"byte Actor::I_addHp(Actor *, int)",
-	"void I_createMapJumpProcess(int16 mapnum)", // TODO: Implement me
+	"void MainActort::I_switchMap(int16 mapnum)",
 	"byte Actor::I_getInCombat(Actor *)",
 	"void Actor::I_setActivity(Actor *, int)", // part of same coff set 055, 07D, 0CD, 0DB, 0F2, 131
 	"int16 Game::I_isReleaseBuild(void)", // whether the string "GAME COMPILE=1" has the 1.  Might be interesting to see what this does..

@@ -208,7 +208,7 @@ const char* const ConvertUsecodeRegret::_intrinsics[] = {
 	"Actor::I_clrInCombat()",
 	"PaletteFaderProcess::I_jumpToGreyScale()",
 	"PaletteFaderProcess::I_jumpToNormalPalette()",
-	"Intrinsic009F()",
+	"CruStatusGump::I_showStatusGump()",
 	// 00A0
 	"Item::andStatus(void)",
 	"Item::getUnkEggType(void)",
@@ -219,7 +219,7 @@ const char* const ConvertUsecodeRegret::_intrinsics[] = {
 	"Item::getQHi(void)",
 	"Actor::I_getLastAnimSet()",
 	"Item::getCY(void)",
-	"Intrinsic00A9()", // Equivalent to Intrinsic00BB() in Remorse
+	"CurrentMap::I_canExistAt()", // Equivalent to Intrinsic00BB() in Remorse
 	"Item::isOn(uint16)",
 	"Actor::isDead(void)",
 	"Item::hurl(sint16,sint16,sint16,sint16)",
@@ -370,7 +370,7 @@ const char* const ConvertUsecodeRegret::_intrinsics[] = {
 	"Item::andStatus(void)",
 	"Camera::getY(void)",
 	"Camera::getZ(void)",
-	"Intrinsic0137()",
+	"CruStatusGump::I_hideStatusGump()",
 	"Actor::I_clrInCombat()",
 	"Item::getTypeFlagCrusader(sint16)",
 	"Item::getNpcNum(void)",
