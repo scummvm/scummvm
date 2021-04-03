@@ -643,7 +643,7 @@ void ItemSorter::AddItem(int32 x, int32 y, int32 z, uint32 shapeNum, uint32 fram
 	si->_shape = _shapes->getShape(shapeNum);
 	si->_shapeNum = shapeNum;
 	si->_frame = frame_num;
-	const ShapeFrame *_frame = si->_shape->getFrame(si->_frame);
+	const ShapeFrame *_frame = si->_shape ? si->_shape->getFrame(si->_frame) : nullptr;
 	if (!_frame) {
 		perr << "Invalid shape: " << si->_shapeNum << "," << si->_frame
 		     << Std::endl;
