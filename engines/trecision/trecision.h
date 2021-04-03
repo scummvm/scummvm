@@ -248,8 +248,6 @@ public:
 	// Data files
 	FastFile _dataFile;	// nldata.cd0
 	FastFile _speechFile;	// nlspeech.cd0
-	FastFile _animFile[MAXSMACK];	// nlanim.cd1 / nlanim.cd2
-	int curCD;
 };
 
 extern TrecisionEngine *g_vm;

@@ -106,27 +106,49 @@ AnimManager::AnimManager(TrecisionEngine *vm) : _vm(vm) {
 	_curSmackBuffer = kSmackerBackground;
 
 	_fullMotionStart = _fullMotionEnd = 0;
+
+	_curCD = 1;
+	swapCD(_curCD);
 }
 
 AnimManager::~AnimManager() {
 	for (int i = 0; i < MAXSMACK; ++i) {
 		delete _smkAnims[i];
 		_smkAnims[i] = nullptr;
+		_animFile[i].close();
 	}
 }
 
-void AnimManager::openSmk(Common::String name) {
+void AnimManager::openSmkVideo(Common::String name) {
 	Common::File *smkFile = new Common::File();
 	smkFile->open(name);
 
 	if (!smkFile->isOpen()) {
-		warning("SMK file not found: %s", name.c_str());
+		warning("openSmkVideo: File %s not found", name.c_str());
 		return;
 	}
 
 	openSmk(smkFile);
 }
 
+void AnimManager::openSmkAnim(Common::String name) {
+	if (_animFile[_curSmackBuffer].hasFile(name)) {
+		openSmk(_animFile[_curSmackBuffer].createReadStreamForMember(name));
+		return;
+	}
+
+	_curCD = _curCD == 1 ? 2 : 1;
+	swapCD(_curCD);
+
+	if (_animFile[_curSmackBuffer].hasFile(name)) {
+		openSmk(_animFile[_curSmackBuffer].createReadStreamForMember(name));
+		return;
+	}
+
+	// Invalid file
+	warning("openSmkAnim: File %s not found", name.c_str());
+	CloseSys(g_vm->_sysText[kMessageFilesMissing]);
+}
 
 void AnimManager::openSmk(Common::SeekableReadStream *stream) {
 	_smkAnims[_curSmackBuffer] = new NightlongSmackerDecoder();
@@ -140,17 +162,11 @@ void AnimManager::openSmk(Common::SeekableReadStream *stream) {
 	}
 }
 
-/*------------------------------------------------
-					closeSmk
---------------------------------------------------*/
 void AnimManager::closeSmk() {
 	delete _smkAnims[_curSmackBuffer];
 	_smkAnims[_curSmackBuffer] = nullptr;
 }
 
-/*------------------------------------------------
-				smkNextFrame
---------------------------------------------------*/
 void AnimManager::smkNextFrame() {
 	if (_smkAnims[_curSmackBuffer] == nullptr)
 		return;
@@ -165,9 +181,6 @@ void AnimManager::smkNextFrame() {
 	_smkBuffer[_curSmackBuffer] = (uint8 *)surface->getPixels();
 }
 
-/*---------------------------------------------------
- * 					smkGoto
- *---------------------------------------------------*/
 void AnimManager::smkGoto(int buf, int num) {
 	_curSmackBuffer = buf;
 
@@ -177,9 +190,6 @@ void AnimManager::smkGoto(int buf, int num) {
 	_smkAnims[_curSmackBuffer]->forceSeekToFrame(num);
 }
 
-/*------------------------------------------------
-				smkVolumePan
---------------------------------------------------*/
 void AnimManager::smkVolumePan(int buf, int track, int vol) {
 	_curSmackBuffer = buf;
 
@@ -189,9 +199,6 @@ void AnimManager::smkVolumePan(int buf, int track, int vol) {
 	_smkAnims[_curSmackBuffer]->muteTrack(track, vol == 0);
 }
 
-/*--------------------------------------------------
- * 				smkSoundOnOff
- *--------------------------------------------------*/
 void AnimManager::smkSoundOnOff(int pos, bool on) {
 	if (_smkAnims[pos] == nullptr)
 		return;
@@ -199,9 +206,6 @@ void AnimManager::smkSoundOnOff(int pos, bool on) {
 	_smkAnims[pos]->setMute(!on);
 }
 
-/*------------------------------------------------
-					startSmkAnim
---------------------------------------------------*/
 void AnimManager::startSmkAnim(uint16 num) {
 	int pos;
 
@@ -230,7 +234,7 @@ void AnimManager::startSmkAnim(uint16 num) {
 
 	// choose how to open
 	if (_animTab[num]._flag & SMKANIM_BKG) {
-		openSmk(AnimFileOpen(_animTab[num]._name));
+		openSmkAnim(_animTab[num]._name);
 
 		// Turns off when not needed
 		if ((num == aBKG11) && (_animTab[num]._flag & SMKANIM_OFF1))
@@ -263,18 +267,15 @@ void AnimManager::startSmkAnim(uint16 num) {
 		          (_vm->_obj[oVALVOLAC34]._mode & OBJMODE_OBJSTATUS)))  // if the valve is closed
 			smkVolumePan(0, 2, 0);
 	} else if (_animTab[num]._flag & SMKANIM_ICON) {
-		openSmk(AnimFileOpen(_animTab[num]._name));
+		openSmkAnim(_animTab[num]._name);
 	} else {
 		uint32 st = ReadTime();
 
-		openSmk(AnimFileOpen(_animTab[num]._name));
+		openSmkAnim(_animTab[num]._name);
 		_vm->_nextRefresh += (ReadTime() - st); // fixup opening time
 	}
 }
 
-/*------------------------------------------------
-				stopSmkAnim
---------------------------------------------------*/
 void AnimManager::stopSmkAnim(uint16 num) {
 	if (num == 0)
 		return;
@@ -302,9 +303,6 @@ void AnimManager::stopSmkAnim(uint16 num) {
 	_vm->_lightIcon = 0xFF;
 }
 
-/*-------------------------------------------------
-				stopAllSmkAnims
- --------------------------------------------------*/
 void AnimManager::stopAllSmkAnims() {
 	for (int a = 0; a < MAXSMACK; a++) {
 		if (_playingAnims[a])
@@ -312,9 +310,6 @@ void AnimManager::stopAllSmkAnims() {
 	}
 }
 
-/*------------------------------------------------
-				startFullMotion
---------------------------------------------------*/
 void AnimManager::startFullMotion(const char *name) {
 	stopAllSmkAnims();
 
@@ -339,12 +334,9 @@ void AnimManager::startFullMotion(const char *name) {
 	actorStop();
 	g_vm->_flagMouseEnabled = false;
 
-	openSmk(name);
+	openSmkVideo(name);
 }
 
-/*------------------------------------------------
-				stopFullMotion
---------------------------------------------------*/
 void AnimManager::stopFullMotion() {
 	_curSmackBuffer = kSmackerFullMotion;
 
@@ -382,9 +374,6 @@ void AnimManager::stopFullMotion() {
 	}
 }
 
-/*------------------------------------------------
-					refreshAnim
---------------------------------------------------*/
 void AnimManager::refreshAnim(int box) {
 	for (int a = 0; a < MAXSMACK; a++) {
 		if ((_playingAnims[a] != 0) && (box == BACKGROUND)) {
@@ -396,9 +385,6 @@ void AnimManager::refreshAnim(int box) {
 	}
 }
 
-/*-------------------------------------------------
-				refreshAllAnimations
- --------------------------------------------------*/
 void AnimManager::refreshAllAnimations() {
 	soundtimefunct();
 
@@ -424,9 +410,6 @@ void AnimManager::refreshPalette(int num) {
 	}
 }
 
-/*------------------------------------------------
-					refreshSmkAnim
---------------------------------------------------*/
 void AnimManager::refreshSmkAnim(int num) {
 	if ((num == 0) || (num == FULLMOTIONANIM))
 		return;
@@ -574,9 +557,6 @@ void AnimManager::refreshSmkAnim(int num) {
 	}
 }
 
-/*------------------------------------------------
-			Refresh FullMotion
---------------------------------------------------*/
 void AnimManager::refreshFullMotion() {
 	int32 yfact;
 
@@ -660,9 +640,6 @@ void AnimManager::refreshFullMotion() {
 	}
 }
 
-/*------------------------------------------------
-			Refresh Smacker Icons
---------------------------------------------------*/
 void AnimManager::refreshSmkIcon(int StartIcon, int num) {
 	_curAnimFrame[kSmackerIcon]++;
 
@@ -700,9 +677,6 @@ void AnimManager::refreshSmkIcon(int StartIcon, int num) {
 	smkNextFrame();
 }
 
-/*------------------------------------------------
-					playFullMotion
---------------------------------------------------*/
 void AnimManager::playFullMotion(int start, int end) {
 	_curSmackBuffer = kSmackerFullMotion;
 
@@ -746,9 +720,6 @@ void AnimManager::playFullMotion(int start, int end) {
 	_vm->_oldSdText.clear();
 }
 
-/*-------------------------------------------------
-					drawSmkBuffer
- --------------------------------------------------*/
 void AnimManager::drawSmkBuffer(int px, int py, int dx, int dy) {
 	for (int a = 0; a < dy; a++) {
 		byte2word(
@@ -757,6 +728,14 @@ void AnimManager::drawSmkBuffer(int px, int py, int dx, int dy) {
 			_smkPal[kSmackerFullMotion],
 			dx
 		);
+	}
+}
+
+void AnimManager::swapCD(int cd) {
+	Common::String animFileName = Common::String::format("nlanim.cd%d", cd);
+	for (int i = 0; i < MAXSMACK; i++) {
+		_animFile[i].close();
+		_animFile[i].open(animFileName);
 	}
 }
 

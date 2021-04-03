@@ -32,8 +32,6 @@ class SeekableReadStream;
 namespace Trecision {
 
 int Compare(const void *p1, const void *p2);
-Common::SeekableReadStream *AnimFileOpen(Common::String name);
-void swapCD(int cd);
 int SpeechFileRead(const char *name, uint8 *buf);
 void RedrawRoom();
 void decompress(const uint8 *src, unsigned int src_len, uint8 *dst, unsigned int dst_len);

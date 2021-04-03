@@ -111,9 +111,6 @@ void openSys() {
 		CloseSys(g_vm->_sysText[kMessageFilesMissing]);
 	}
 
-	g_vm->curCD = 1;
-	swapCD(g_vm->curCD);
-	
 	if (!g_vm->_speechFile.open("nlspeech.cd0")) {
 		warning(g_vm->_sysText[kMessageFilesMissing]);
 	}	
