@@ -88,6 +88,18 @@ void StartCrusaderProcess::run() {
 		Item *smiley = ItemFactory::createItem(0x598, 0, 0, 0, 0, mapnum, 0, true);
 		smiley->moveToContainer(avatar);
 
+		avatar->setShieldType(1);
+
+#if 0
+		// Give the avatar *all the weapons*.. (handy for testing)
+		uint32 wpnshapes[] = {0x032E, 0x032F, 0x0330, 0x038C, 0x0332, 0x0333, 0x0334,
+			0x038E, 0x0388, 0x038A, 0x038D, 0x038B, 0x0386};
+		for (int i = 0; i < ARRAYSIZE(wpnshapes); i++) {
+			Item *wpn = ItemFactory::createItem(wpnshapes[i], 0, 0, 0, 0, mapnum, 0, true);
+			avatar->addItemCru(wpn, false);
+		}
+#endif
+
 		avatar->teleport(1, 0x1e);
 		// The first level 0x1e teleporter in No Remorse goes straight to another
 		// teleport, so undo the flag that normally stops that.

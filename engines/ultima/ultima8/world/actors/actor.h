@@ -276,8 +276,12 @@ public:
 		return damage;
 	}
 
-	virtual uint8 getShieldType() const {
-		return 0;
+	uint8 getShieldType() const {
+		return _shieldType;
+	}
+
+	void setShieldType(uint8 type) {
+		_shieldType = type;
 	}
 
 	uint16 getActiveWeapon() const {
@@ -425,6 +429,9 @@ protected:
 
 	//! Kernel timer last time NPC was hit (only used in Crusader)
 	int32 _lastTimeWasHit;
+
+	//! Type of shield (only used in Crusader)
+	uint8 _shieldType;
 
 	//! starts an activity (Ultima 8 version)
 	//! \return processID of process handling the activity or zero
