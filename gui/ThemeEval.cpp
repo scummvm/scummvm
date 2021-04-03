@@ -139,13 +139,11 @@ ThemeEval &ThemeEval::addDialog(const Common::String &name, const Common::String
 	return *this;
 }
 
-#define SCALEVALUE(val) (val > 0 ? val * _scaleFactor : val)
-
 ThemeEval &ThemeEval::addLayout(ThemeLayout::LayoutType type, int spacing, ThemeLayout::ItemAlign itemAlign) {
 	ThemeLayout *layout = nullptr;
 
 	if (spacing == -1)
-		spacing = getVar("Globals.Layout.Spacing", SCALEVALUE(4));
+		spacing = getVar("Globals.Layout.Spacing");
 
 	layout = new ThemeLayoutStacked(_curLayout.top(), type, spacing, itemAlign);
 
@@ -170,6 +168,8 @@ ThemeEval &ThemeEval::addSpace(int size) {
 
 	return *this;
 }
+
+#define SCALEVALUE(val) (val > 0 ? val * _scaleFactor : val)
 
 ThemeEval &ThemeEval::addPadding(int16 l, int16 r, int16 t, int16 b) {
 	_curLayout.top()->setPadding(SCALEVALUE(l), SCALEVALUE(r), SCALEVALUE(t), SCALEVALUE(b));
