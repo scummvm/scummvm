@@ -144,7 +144,7 @@ public:
 
 	char *_textPtr;
 	SDText _sdText, _oldSdText;
-	int16 _limits[50][4];
+	Common::Rect _limits[50];
 	uint16 _limitsNum;
 	int _actorLimit;
 

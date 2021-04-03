@@ -463,10 +463,10 @@ void AnimManager::refreshSmkAnim(int num) {
 		for (int32 a = 0; a < MAXCHILD; a++) {
 			if (_animTab[num]._flag & (SMKANIM_OFF1 << a)) {
 				// if the rectangle is completely included in the limit, raise it
-				if ((_animTab[num]._lim[a].right <= lastRect->right) &&
-				    (_animTab[num]._lim[a].bottom <= lastRect->bottom) &&
-				    (_animTab[num]._lim[a].left >= lastRect->left) &&
-				    (_animTab[num]._lim[a].top >= lastRect->top)) {
+				if ((_animTab[num]._lim[a].left <= lastRect->right) &&
+				    (_animTab[num]._lim[a].top <= lastRect->bottom) &&
+				    (_animTab[num]._lim[a].right >= lastRect->left) &&
+				    (_animTab[num]._lim[a].bottom >= lastRect->top)) {
 					inters++;
 				}
 			}
@@ -502,11 +502,11 @@ void AnimManager::refreshSmkAnim(int num) {
 	if (pos == kSmackerBackground) {
 		// If it's a background
 		for (int32 a = 0; a < MAXCHILD; a++) {
-			if (!(_animTab[num]._flag & (SMKANIM_OFF1 << a)) && (_animTab[num]._lim[a].top != 0)) {
-				_vm->_limits[_vm->_limitsNum][0] = _animTab[num]._lim[a].right;
-				_vm->_limits[_vm->_limitsNum][1] = _animTab[num]._lim[a].bottom + TOP;
-				_vm->_limits[_vm->_limitsNum][2] = _animTab[num]._lim[a].left;
-				_vm->_limits[_vm->_limitsNum][3] = _animTab[num]._lim[a].top + TOP;
+			if (!(_animTab[num]._flag & (SMKANIM_OFF1 << a)) && (_animTab[num]._lim[a].bottom != 0)) {
+				_vm->_limits[_vm->_limitsNum].left = _animTab[num]._lim[a].left;
+				_vm->_limits[_vm->_limitsNum].top = _animTab[num]._lim[a].top + TOP;
+				_vm->_limits[_vm->_limitsNum].right = _animTab[num]._lim[a].right;
+				_vm->_limits[_vm->_limitsNum].bottom = _animTab[num]._lim[a].bottom + TOP;
 				_vm->_limitsNum++;
 			}
 		}
@@ -542,10 +542,10 @@ void AnimManager::refreshSmkAnim(int num) {
 #endif
 		}
 
-		_vm->_limits[_vm->_limitsNum][0] = _animMinX;
-		_vm->_limits[_vm->_limitsNum][1] = _animMinY + TOP;
-		_vm->_limits[_vm->_limitsNum][2] = _animMaxX;
-		_vm->_limits[_vm->_limitsNum][3] = _animMaxY + TOP;
+		_vm->_limits[_vm->_limitsNum].left = _animMinX;
+		_vm->_limits[_vm->_limitsNum].top = _animMinY + TOP;
+		_vm->_limits[_vm->_limitsNum].right = _animMaxX;
+		_vm->_limits[_vm->_limitsNum].bottom = _animMaxY + TOP;
 
 		_vm->_actorLimit = _vm->_limitsNum;
 		_vm->_limitsNum++;
