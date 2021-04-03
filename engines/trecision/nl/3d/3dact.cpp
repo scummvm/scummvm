@@ -194,7 +194,7 @@ void setPosition(int num) {
 				_step[0]._curPanel  = _curPanel;
 
 				_characterGoToPosition = num;
-				return ;
+				return;
 			}
 		}
 
@@ -261,7 +261,7 @@ void lookAt(float x, float z) {
 		memcpy(&_step[_lastStep + 2], &_step[_lastStep + 1], sizeof(SStep));
 		_lastStep += 2;
 
-		return ;
+		return;
 	}
 
 	float t = sqrt(ox * ox + oz * oz);

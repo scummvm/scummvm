@@ -51,7 +51,7 @@ void VMouseOFF() {
 
 void VMouseON() {
 	if (!g_vm->_mouseONOFF)
-		return ;
+		return;
 
 	CursorMan.showMouse(true);
 }
@@ -471,7 +471,7 @@ insave:
 			g_vm->_graphicsMgr->copyToScreen(0, FIRSTLINE + ICONDY + 10, MAXX, CARHEI);
 		}
 
-		for (; ;) {
+		for (;;) {
 			g_vm->_keybInput = true;
 			g_vm->checkSystem();
 			ch = GetKey();
@@ -502,7 +502,7 @@ insave:
 
 			saveNames[CurPos] += '_';	// add blinking cursor
 			
-			posx    = ICONMARGSX + ((CurPos) * (ICONDX)) + ICONDX / 2 ;
+			posx    = ICONMARGSX + ((CurPos) * (ICONDX)) + ICONDX / 2;
 			LenText  = TextLength(saveNames[CurPos].c_str(), 0);
 
 			posx = CLIP(posx - (LenText / 2), 2, SCREENLEN - 2 - LenText);

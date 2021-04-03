@@ -82,7 +82,7 @@ void soundtimefunct() {
 	if (ctime > nltime)
 		nltime = ctime;
 	else
-		return ;
+		return;
 
 	if (SoundFadStatus) {	// solo se sono in un fad
 		if (SoundFadStatus & SFADOUT) {

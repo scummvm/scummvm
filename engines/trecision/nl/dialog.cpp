@@ -508,7 +508,7 @@ void afterChoice(int numframe) {
 		// se c'e' predialog
 		if (_dialog[_curDialog]._startLen > 0) {
 			g_vm->_animMgr->playFullMotion(1, _dialog[_curDialog]._startLen);
-			return ;
+			return;
 		}
 	}
 

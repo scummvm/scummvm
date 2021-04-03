@@ -498,7 +498,7 @@ int actionInRoom(int curA) {
 	}
 
 	warning("Action %d not found in room %d", curA, g_vm->_curRoom);
-	return 0 ;
+	return 0;
 }
 
 /*-----------------17/02/95 10.19-------------------
@@ -561,7 +561,7 @@ void TendIn() {
 
 	if (g_vm->_curRoom == rINTRO) {
 		PlayDialog(dFLOG);
-		return ;
+		return;
 	}
 
 	FlagPaintCharacter = true;
