@@ -33,8 +33,6 @@ enum {
 	kCmdRight = 'RGHT'
 };
 
-static const int kTabTitleSpacing = 2 * 5;
-
 TabWidget::TabWidget(GuiObject *boss, int x, int y, int w, int h)
 	: Widget(boss, x, y, w, h), _bodyBackgroundType(GUI::ThemeEngine::kDialogBackgroundDefault) {
 	init();
@@ -66,6 +64,8 @@ void TabWidget::init() {
 	_butTP = g_gui.xmlEval()->getVar("Globals.TabWidget.NavButton.Padding.Top", 0);
 	_butW = g_gui.xmlEval()->getVar("Globals.TabWidget.NavButton.Width", 10);
 	_butH = g_gui.xmlEval()->getVar("Globals.TabWidget.NavButton.Height", 10);
+
+	_titleSpacing = g_gui.xmlEval()->getVar("Globals.TabWidget.TitleSpacing");
 
 	int x = _w - _butRP - _butW * 2 - 2;
 	int y = _butTP - _tabHeight;
@@ -120,7 +120,7 @@ int TabWidget::addTab(const U32String &title, const String &dialogName) {
 	newTab.firstWidget = nullptr;
 
 	// Determine the new tab width
-	int newWidth = g_gui.getStringWidth(title) + kTabTitleSpacing;
+	int newWidth = g_gui.getStringWidth(title) + _titleSpacing;
 	if (newWidth < _minTabWidth)
 		newWidth = _minTabWidth;
 	newTab._tabWidth = newWidth;
@@ -350,7 +350,7 @@ void TabWidget::reflowLayout() {
 
 	for (uint i = 0; i < _tabs.size(); ++i) {
 		// Determine the new tab width
-		int newWidth = g_gui.getStringWidth(_tabs[i].title) + kTabTitleSpacing;
+		int newWidth = g_gui.getStringWidth(_tabs[i].title) + _titleSpacing;
 		if (newWidth < _minTabWidth)
 			newWidth = _minTabWidth;
 		_tabs[i]._tabWidth = newWidth;
