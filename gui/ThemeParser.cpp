@@ -46,6 +46,7 @@ static const TextDataInfo kTextDataDefaults[] = {
 };
 
 #define SCALEVALUE(val) (val > 0 ? val * _scaleFactor : val)
+#define FORCESCALEVALUE(val) (val * _scaleFactor)
 
 static TextData parseTextDataId(const Common::String &name) {
 	for (int i = 0; i < kTextDataMAX; ++i)
@@ -700,10 +701,11 @@ bool ThemeParser::parseDrawStep(ParserNode *stepNode, Graphics::DrawStep *drawst
 		val = stepNode->values["clip"];
 		int cl, ct, cr, cb;
 		if (parseIntegerKey(val, 4, &cl, &ct, &cr, &cb)) {
-			drawstep->clip.left = SCALEVALUE(cl);
-			drawstep->clip.top = SCALEVALUE(ct);
-			drawstep->clip.right = SCALEVALUE(cr);
-			drawstep->clip.bottom = SCALEVALUE(cb);
+			// Values could be less than 0 which is legit
+			drawstep->clip.left = FORCESCALEVALUE(cl);
+			drawstep->clip.top = FORCESCALEVALUE(ct);
+			drawstep->clip.right = FORCESCALEVALUE(cr);
+			drawstep->clip.bottom = FORCESCALEVALUE(cb);
 		}
 	}
 
