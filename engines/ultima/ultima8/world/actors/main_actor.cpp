@@ -876,12 +876,22 @@ uint32 MainActor::I_addItemCru(const uint8 *args,
 }
 
 uint32 MainActor::I_getNumberOfCredits(const uint8 *args,
-unsigned int /*argsize*/) {
+									   unsigned int /*argsize*/) {
 	MainActor *av = getMainActor();
 	if (av) {
 		Item *item = av->getFirstItemWithShape(0x4ed, true);
 		if (item)
 			return item->getQuality();
+	}
+	return 0;
+}
+
+uint32 MainActor::I_switchMap(const uint8 *args,
+									   unsigned int /*argsize*/) {
+	ARG_UINT16(mapnum);
+	MainActor *av = getMainActor();
+	if (av) {
+		av->teleport(mapnum, 0x1e); // CONSTANT
 	}
 	return 0;
 }
