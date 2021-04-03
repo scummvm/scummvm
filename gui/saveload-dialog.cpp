@@ -48,6 +48,8 @@ enum {
 	kBackgroundSyncCmd = 'PDBS'
 };
 
+#define SCALEVALUE(val) ((val) * g_gui.getScaleFactor())
+
 SaveLoadCloudSyncProgressDialog::SaveLoadCloudSyncProgressDialog(bool canRunInBackground): Dialog("SaveLoadCloudSyncProgress"), _close(false) {
 	_label = new StaticTextWidget(this, "SaveLoadCloudSyncProgress.TitleText", _("Downloading saves..."));
 	uint32 progress = (uint32)(100 * CloudMan.getSyncDownloadingProgress());
@@ -355,7 +357,7 @@ ButtonWidget *SaveLoadChooserDialog::createSwitchButton(const Common::String &na
 	if (g_gui.xmlEval()->getVar("Globals.ShowChooserPics") == 1 && g_gui.theme()->supportsImages()) {
 		button = new PicButtonWidget(this, name, tooltip, cmd);
 		((PicButtonWidget *)button)->useThemeTransparency(true);
-		((PicButtonWidget *)button)->setGfx(g_gui.theme()->getImageSurface(image));
+		((PicButtonWidget *)button)->setGfx(g_gui.theme()->getImageSurface(image), kPicButtonStateEnabled, false);
 	} else
 #endif
 		button = new ButtonWidget(this, name, desc, tooltip, cmd);
@@ -931,16 +933,16 @@ void SaveLoadChooserGrid::reflowLayout() {
 	if (!g_gui.xmlEval()->getWidgetData("SaveLoadChooser.List", x, y, w, availableHeight))
 		error("Could not load widget position for 'SaveLoadChooser.List'");
 
-	const int16 buttonWidth = kThumbnailWidth + 6;
-	const int16 buttonHeight = kThumbnailHeight2 + 6;
+	const int16 buttonWidth = SCALEVALUE(kThumbnailWidth + 6);
+	const int16 buttonHeight = SCALEVALUE(kThumbnailHeight2 + 6);
 
-	const int16 containerFrameWidthAdd = 10;
+	const int16 containerFrameWidthAdd = SCALEVALUE(10);
 	const int16 containerFrameHeightAdd = 0;
 	const int16 containerWidth = buttonWidth + containerFrameWidthAdd;
 	const int16 containerHeight = buttonHeight + kLineHeight + containerFrameHeightAdd;
 
-	const int16 defaultSpacingHorizontal = 4;
-	const int16 defaultSpacingVertical = 8;
+	const int16 defaultSpacingHorizontal = SCALEVALUE(4);
+	const int16 defaultSpacingVertical = SCALEVALUE(8);
 	const int16 slotAreaWidth = containerWidth + defaultSpacingHorizontal;
 	const int16 slotAreaHeight = containerHeight + defaultSpacingVertical;
 
