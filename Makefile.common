@@ -147,6 +147,8 @@ endif
 # The build rules for object files.
 #
 
+base/plugins.o: config.mk
+
 ifdef CXX_UPDATE_DEP_FLAG
 
 # Build rule for C++ files. Makes use of CXX_UPDATE_DEP_FLAG for advanced
