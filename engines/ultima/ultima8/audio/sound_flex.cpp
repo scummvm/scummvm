@@ -32,8 +32,13 @@ namespace Ultima {
 namespace Ultima8 {
 
 SoundFlex::SoundFlex(Common::SeekableReadStream *rs) : Archive(rs), _samples(nullptr) {
-	uint32 size;
+	uint32 size = 0;
 	uint8 *buf = getRawObject(0, &size);
+
+	if (!size || !buf) {
+		warning("couldn't load sound flex");
+		return;
+	}
 
 	Common::MemoryReadStream st(buf, size);
 
