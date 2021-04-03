@@ -36,7 +36,6 @@
 
 namespace Trecision {
 
-#define MAXLIGHT	40
 #define MAXMAT		20
 
 int MaxMemory = 0;

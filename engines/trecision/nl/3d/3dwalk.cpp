@@ -47,15 +47,44 @@ int read3D(Common::String c) {
 
 	// read rooms and lights
 	FastFileRead(ff, g_vm->_actor->_camera, sizeof(SCamera));
-	g_vm->_actor->_lightNum = ff->readSint32LE();
-	FastFileRead(ff, g_vm->_actor->_light, sizeof(SLight) * g_vm->_actor->_lightNum);
 
-	if (g_vm->_actor->_lightNum > 40)
+	g_vm->_actor->_lightNum = ff->readSint32LE();
+	if (g_vm->_actor->_lightNum > MAXLIGHT)
 		CloseSys("Too many lights");
 
+	for (int i = 0; i < g_vm->_actor->_lightNum; ++i) {
+		g_vm->_actor->_light[i]._x = ff->readFloatLE();
+		g_vm->_actor->_light[i]._y = ff->readFloatLE();
+		g_vm->_actor->_light[i]._z = ff->readFloatLE();
+		g_vm->_actor->_light[i]._dx = ff->readFloatLE();
+		g_vm->_actor->_light[i]._dy = ff->readFloatLE();
+		g_vm->_actor->_light[i]._dz = ff->readFloatLE();
+		g_vm->_actor->_light[i]._inr = ff->readFloatLE();
+		g_vm->_actor->_light[i]._outr = ff->readFloatLE();
+		g_vm->_actor->_light[i]._hotspot = ff->readByte();
+		g_vm->_actor->_light[i]._fallOff = ff->readByte();
+		g_vm->_actor->_light[i]._inten = ff->readSByte();
+		g_vm->_actor->_light[i]._position = ff->readSByte();
+	}
+
 	// read panels
-	FastFileRead(ff, &_panelNum, 4);
-	FastFileRead(ff, _panel, sizeof(SPan) * _panelNum);
+	_panelNum = ff->readSint32LE();
+	if (_panelNum > MAXPANELSINROOM)
+		CloseSys("Too many panels");
+
+	for (int i = 0; i < _panelNum; ++i) {
+		_panel[i]._x1 = ff->readFloatLE();
+		_panel[i]._z1 = ff->readFloatLE();
+		_panel[i]._x2 = ff->readFloatLE();
+		_panel[i]._z2 = ff->readFloatLE();
+		_panel[i]._h = ff->readFloatLE();
+		_panel[i]._flags = ff->readUint32LE();
+
+		_panel[i]._near1 = ff->readSByte();
+		_panel[i]._near2 = ff->readSByte();
+		_panel[i]._col1 = ff->readSByte();
+		_panel[i]._col2 = ff->readSByte();
+	}
 	FastFileClose(ff);
 
 	// projection matrix
