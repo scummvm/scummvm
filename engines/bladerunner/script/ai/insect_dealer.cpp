@@ -112,6 +112,10 @@ bool AIScriptInsectDealer::GoalChanged(int currentGoalNumber, int newGoalNumber)
 		Actor_Set_At_Waypoint(kActorInsectDealer, 40, 0);
 
 		if (!Game_Flag_Query(kFlagAR02DektoraBoughtScorpions)) {
+			// TODO A bug? Does it not matter if Dektora is retired at this point?
+			// Probably a safe inconsistency to allow (setting the flag), since in Act 5 (when Insect Dealer's goal becomes 400)
+			// it no longer matters if Dektora purchased the scorpions or not.
+			// But it still may confuse debugging and tracing of what actually happened looking at a save game.
 			Game_Flag_Set(kFlagAR02DektoraBoughtScorpions);
 #if BLADERUNNER_ORIGINAL_BUGS
 			Item_Remove_From_World(kItemScorpions);
