@@ -1473,6 +1473,9 @@ void Actor::setInCombatCru(int activity) {
 
 	setActorFlag(ACT_INCOMBAT);
 
+	if (getObjId() == World::get_instance()->getControlledNPCNum())
+		return;
+
 	AttackProcess *ap = new AttackProcess(this);
 	Kernel::get_instance()->addProcess(ap);
 
@@ -1616,6 +1619,9 @@ void Actor::addFireAnimOffsets(int32 &x, int32 &y, int32 &z) {
 	Direction dir = getDir();
 
 	const AnimAction *animaction = GameData::get_instance()->getMainShapes()->getAnim(getShape(), actionno);
+	if (!animaction)
+		return;
+
 	for (unsigned int i = 0; i < animaction->getSize(); i++) {
 		const AnimFrame &frame = animaction->getFrame(dir, i);
 		if (frame.is_cruattack()) {

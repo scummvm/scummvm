@@ -60,6 +60,10 @@ void SnapProcess::updateCurrentEgg() {
 		return;
 
 	const Actor *a = getControlledActor();
+
+	if (!a)
+		return;
+
 	int32 ax, ay, az, axd, ayd, azd, x, y, z;
 	a->getLocation(ax, ay, az);
 	a->getFootpadWorld(axd, ayd, azd);

@@ -48,7 +48,10 @@ void CruAvatarMoverProcess::run() {
 	// we check if the combat angle needs updating - this keeps it smooth.
 
 	const Actor *avatar = getControlledActor();
-	assert(avatar);
+
+	// Controlled actor may have gone
+	if (!avatar)
+		return;
 
 	// When not in combat the angle is kept as -1
 	if (avatar->isInCombat()) {
@@ -216,8 +219,8 @@ void CruAvatarMoverProcess::handleCombatMode() {
 			nextanim = Animation::combatRunSmallWeapon;
 		}
 
-		nextanim = Animation::checkWeapon(nextanim, lastanim);
-		step(nextanim, nextdir);
+		Animation::Sequence wpnanim = Animation::checkWeapon(nextanim, lastanim);
+		step(wpnanim, nextdir);
 		return;
 	}
 

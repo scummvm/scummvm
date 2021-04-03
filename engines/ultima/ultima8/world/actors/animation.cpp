@@ -54,6 +54,7 @@ bool isCombatAnimU8(const Sequence anim) {
 bool isCombatAnimCru(const Sequence anim) {
 	switch (anim) {
 	case combatStand:
+	case combatStandSmallWeapon:
 	case readyWeapon:
 	case advance:
 	case retreat:

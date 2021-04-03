@@ -519,6 +519,12 @@ void AttackProcess::genericAttack() {
 		return;
 	}
 
+	// This should never be running on the controlled npc.
+	if (_itemNum == World::get_instance()->getControlledNPCNum()) {
+		terminate();
+		return;
+	}
+
 	const Item *wpn = getItem(a->getActiveWeapon());
 	/*if (!wpn) {
 		warning("started attack for NPC %d with no weapon", _itemNum);

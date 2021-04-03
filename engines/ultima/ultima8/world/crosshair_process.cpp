@@ -48,7 +48,9 @@ CrosshairProcess::CrosshairProcess() : Process() {
 
 void CrosshairProcess::run() {
 	Actor *actor = getControlledActor();
-	assert(actor);
+	if (!actor)
+		return;
+
 	if (actor->isInCombat()) {
 		Kernel *kernel = Kernel::get_instance();
 		assert(kernel);

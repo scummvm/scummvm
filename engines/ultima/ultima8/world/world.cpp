@@ -37,6 +37,7 @@
 #include "ultima/ultima8/world/camera_process.h" // for resetting the camera
 #include "ultima/ultima8/gumps/gump.h" // For CloseItemDependents notification
 #include "ultima/ultima8/world/get_object.h"
+#include "ultima/ultima8/world/target_reticle_process.h"
 #include "ultima/ultima8/audio/audio_process.h"
 
 namespace Ultima {
@@ -46,7 +47,7 @@ namespace Ultima8 {
 
 World *World::_world = nullptr;
 
-World::World() : _currentMap(nullptr), _alertActive(false), _difficulty(1),
+World::World() : _currentMap(nullptr), _alertActive(false), _difficulty(3),
 				 _controlledNPCNum(1) {
 	debugN(MM_INFO, "Creating World...\n");
 
@@ -440,8 +441,25 @@ void World::setAlertActive(bool active)
 }
 
 void World::setControlledNPCNum(uint16 num) {
-	warning("TODO: World::setControlledNPCNum(%d): IMPLEMENT ME", num);
+	uint16 oldnpc = _controlledNPCNum;
+	_controlledNPCNum = num;
+	CameraProcess::SetCameraProcess(new CameraProcess(num));
+	Actor *previous = getActor(oldnpc);
+	if (previous && !previous->isDead() && previous->isInCombat()) {
+		previous->clearInCombat();
+	}
+
+	Actor *controlled = getActor(num);
+	if (controlled && controlled->isInCombat() && num != 1) {
+		controlled->clearInCombat();
+	}
+
+	TargetReticleProcess *t = TargetReticleProcess::get_instance();
+	if (t) {
+		t->avatarMoved();
+	}
 }
+
 
 uint32 World::I_getAlertActive(const uint8 * /*args*/,
 	unsigned int /*argsize*/) {
