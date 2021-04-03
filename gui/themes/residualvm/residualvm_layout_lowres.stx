@@ -41,30 +41,19 @@
 
 		<def var = 'OnScreenDialog.ShowPics' value = '1'/>
 
+		<def var = 'KeyMapper.Spacing' value = '5' scalable = 'yes'/>
+		<def var = 'KeyMapper.ButtonWidth' value = '100' scalable = 'yes'/>
+		<def var = 'KeyMapper.ResetWidth' value = '60' scalable = 'yes'/>
+
+		<def var = 'Tooltip.MaxWidth' value = '70' scalable = 'yes'/>
+		<def var = 'Tooltip.XDelta' value = '9' scalable = 'yes'/> <!-- basically cursor size -->
+		<def var = 'Tooltip.YDelta' value = '18' scalable = 'yes'/>
+
 		<def var = 'Predictive.Button.Width' value = '45' scalable = 'yes'/>
 		<def var = 'Predictive.Button.Height' value = '15' scalable = 'yes'/>
 		<def var = 'Predictive.ShowDeletePic' value = '0'/>
 
 		<def var = 'DropdownButton.Width' value = '7' scalable = 'yes'/>
-
-		<widget name = 'Button'
-				size = '72, 16'
-		/>
-		<widget name = 'WideButton'
-				size = '144, 16'
-		/>
-
-		<widget name = 'Slider'
-				size = '85, 12'
-		/>
-
-		<def var = 'KeyMapper.Spacing' value = '5'/>
-		<def var = 'KeyMapper.ButtonWidth' value = '100'/>
-		<def var = 'KeyMapper.ResetWidth' value = '60'/>
-
-		<def var = 'Tooltip.MaxWidth' value = '70'/>
-		<def var = 'Tooltip.XDelta' value = '9'/> <!-- basically cursor size -->
-		<def var = 'Tooltip.YDelta' value = '18'/>
 
 		<widget name = 'OptionsLabel'
 				size = '100, Globals.Line.Height'
@@ -78,6 +67,17 @@
 		/>
 		<widget name = 'CloudTabLabelValue'
 				size = '170, Globals.Line.Height'
+		/>
+
+		<widget name = 'Button'
+				size = '72, 16'
+		/>
+		<widget name = 'WideButton'
+				size = '144, 16'
+		/>
+
+		<widget name = 'Slider'
+				size = '85, 12'
 		/>
 		<widget name = 'PopUp'
 				size = '-1, 15'

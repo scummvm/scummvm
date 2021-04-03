@@ -57,17 +57,6 @@
 
 		<def var = 'DropdownButton.Width' value = '7' scalable = 'yes'/>
 
-		<widget name = 'Button'
-				size = '72, 16'
-		/>
-		<widget name = 'WideButton'
-				size = '144, 16'
-		/>
-
-		<widget name = 'Slider'
-				size = '85, 12'
-		/>
-
 		<widget name = 'OptionsLabel'
 				size = '120, Globals.Line.Height'
 				textalign = 'end'
@@ -80,6 +69,17 @@
 		/>
 		<widget name = 'CloudTabLabelValue'
 				size = '180, Globals.Line.Height'
+		/>
+
+		<widget name = 'Button'
+				size = '72, 16'
+		/>
+		<widget name = 'WideButton'
+				size = '144, 16'
+		/>
+
+		<widget name = 'Slider'
+				size = '85, 12'
 		/>
 		<widget name = 'PopUp'
 				size = '-1, 15'
