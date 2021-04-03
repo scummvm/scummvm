@@ -44,7 +44,6 @@ uint16 *ImagePointer;
 uint16 *SmackImagePointer;
 uint16 *ObjPointers[MAXOBJINROOM];
 uint8 *MaskPointers[MAXOBJINROOM];
-uint8 *SoundPointer[MAXSOUNDSINROOM];
 uint8 *_actionPointer[MAXACTIONFRAMESINROOM];		// puntatore progressivo ai frame
 uint16 _actionPosition[MAXACTIONINROOM];			// Starting position of each action in the room
 // DATA POINTER
@@ -519,6 +518,8 @@ void ReadLoc() {
 	g_vm->_graphicsMgr->updatePixelFormat(ImagePointer, BmInfo.dx * BmInfo.dy);
 
 	ReadObj();
+
+	WaitSoundFadEnd();
 	if (g_vm->_room[g_vm->_curRoom]._sounds[0] != 0)
 		ReadSounds();
 
@@ -736,12 +737,15 @@ void ReadExtraObj41D() {
 --------------------------------------------------*/
 void ReadSounds() {
 	for (uint16 a = 0; a < MAXSOUNDSINROOM; a++) {
+		delete[] g_vm->SoundPointer[a];
+		g_vm->SoundPointer[a] = nullptr;
+	}
+
+	for (uint16 a = 0; a < MAXSOUNDSINROOM; a++) {
 		uint16 b = g_vm->_room[g_vm->_curRoom]._sounds[a];
 
 		if (b == 0)
 			break;
-
-		SoundPointer[a] = (uint8 *)(g_vm->_screenBuffer + GameWordPointer);
 
 		if (!scumm_stricmp(GSample[b]._name, "RUOTE2C.WAV"))
 			break;
@@ -749,12 +753,11 @@ void ReadSounds() {
 		ff = FastFileOpen(GSample[b]._name);
 		if (ff == nullptr)
 			CloseSys(g_vm->_sysText[kMessageFilesMissing]);
-		int len = FastFileRead(ff, SoundPointer[a], ff->size());
+		int len = ff->size();
+		g_vm->SoundPointer[a] = new uint8[len];
+		ff->read(g_vm->SoundPointer[a], len);
 		FastFileClose(ff);
-		if (LoadAudioWav(b, SoundPointer[a], len))
-			len *= 2;
-
-		GameWordPointer += (len + 1) / 2;
+		LoadAudioWav(b, g_vm->SoundPointer[a], len);
 
 		if (GSample[b]._flag & SOUNDFLAG_SBACK)
 			SoundFadIn(b);

@@ -133,6 +133,7 @@ public:
 	uint16 _curRoom;
 	uint16 _oldRoom;
 	SRoom _room[MAXROOMS];
+	uint8 *SoundPointer[MAXSOUNDSINROOM];
 
 	int32 _curSortTableNum;
 	uint16 _curScriptFrame[10];

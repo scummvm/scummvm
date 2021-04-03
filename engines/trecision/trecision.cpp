@@ -59,6 +59,10 @@ TrecisionEngine::TrecisionEngine(OSystem *syst) : Engine(syst) {
 
 	_curRoom = 0;
 	_oldRoom = 0;
+
+	for (int i = 0; i < MAXSOUNDSINROOM; ++i)
+		SoundPointer[i] = nullptr;
+
 	_curInventory = 0;
 	_curSortTableNum = 0;
 
@@ -173,6 +177,9 @@ TrecisionEngine::~TrecisionEngine() {
 	delete[] Icone;
 	delete[] ZBuffer;
 	delete _actor;
+
+	for (int i = 0; i < MAXSOUNDSINROOM; ++i)
+		delete[] SoundPointer[i];
 }
 
 Common::Error TrecisionEngine::run() {
