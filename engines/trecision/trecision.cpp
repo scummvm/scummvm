@@ -121,9 +121,7 @@ TrecisionEngine::TrecisionEngine(OSystem *syst) : Engine(syst) {
 	_logicMgr = nullptr;
 
 	for (int i = 0; i < 50; ++i) {
-		for (int j = 0; j < 4; ++j) {
-			_limits[i][j] = 0;
-		}
+		_limits[i].left = _limits[i].top = _limits[i].right = _limits[i].bottom = 0;
 	}
 
 	_limitsNum = 0;
@@ -356,10 +354,10 @@ bool TrecisionEngine::syncGameStream(Common::Serializer &ser) {
 		ser.syncBytes((byte *)cur->_name, 14);
 		ser.syncAsUint16LE(cur->_flag);
 		for (int i = 0; i < MAXCHILD; i++) {
-			ser.syncAsUint16LE(cur->_lim[i].right);
-			ser.syncAsUint16LE(cur->_lim[i].bottom);
 			ser.syncAsUint16LE(cur->_lim[i].left);
 			ser.syncAsUint16LE(cur->_lim[i].top);
+			ser.syncAsUint16LE(cur->_lim[i].right);
+			ser.syncAsUint16LE(cur->_lim[i].bottom);
 		}
 		ser.syncAsByte(cur->_nbox);
 		for (int i = 0; i < MAXATFRAME; i++) {
@@ -539,10 +537,10 @@ void TrecisionEngine::LoadAll() {
 		_animMgr->_animTab[i]._flag = dataNl.readUint16LE();
 
 		for (int j = 0; j < MAXCHILD; ++j) {
-			_animMgr->_animTab[i]._lim[j].right = dataNl.readUint16LE();
-			_animMgr->_animTab[i]._lim[j].bottom = dataNl.readUint16LE();
 			_animMgr->_animTab[i]._lim[j].left = dataNl.readUint16LE();
 			_animMgr->_animTab[i]._lim[j].top = dataNl.readUint16LE();
+			_animMgr->_animTab[i]._lim[j].right = dataNl.readUint16LE();
+			_animMgr->_animTab[i]._lim[j].bottom = dataNl.readUint16LE();
 		}
 
 		_animMgr->_animTab[i]._nbox = dataNl.readByte();
