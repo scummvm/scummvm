@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-04-03 11:04+0000\n"
-"PO-Revision-Date: 2021-04-02 08:37+0000\n"
+"PO-Revision-Date: 2021-04-03 17:27+0000\n"
 "Last-Translator: Lothar Serra Mari <serra@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/de/>\n"
@@ -5476,16 +5476,12 @@ msgid "Invalid Scene ID!"
 msgstr "Ungültige Szenen-ID!"
 
 #: engines/nancy/input.cpp:166
-#, fuzzy
-#| msgid "Left Click"
 msgid "Left Click Interact"
 msgstr "Linksklick"
 
 #: engines/nancy/input.cpp:173
-#, fuzzy
-#| msgid "Right Click Once"
 msgid "Right Click Interact"
-msgstr "Einmal Rechtsklick"
+msgstr "Rechtsklick"
 
 #: engines/nancy/input.cpp:204
 #, fuzzy
@@ -5494,10 +5490,8 @@ msgid "Fast move modifier"
 msgstr "Schneller Modus"
 
 #: engines/nancy/input.cpp:212
-#, fuzzy
-#| msgid "Toggle fast mode"
 msgid "Toggle fast conversation mode"
-msgstr "Schnellen Modus umschalten"
+msgstr "Schnellen Konversations-Modus umschalten"
 
 #: engines/nancy/input.cpp:217
 #, fuzzy
@@ -5506,46 +5500,32 @@ msgid "Toggle end conversation mode"
 msgstr "Schnellen Modus umschalten"
 
 #: engines/nancy/input.cpp:222
-#, fuzzy
-#| msgid "Return to main menu"
 msgid "Go to main menu"
-msgstr "zum Hauptmenü zurückkehren"
+msgstr "Gehe zum Hauptmenü"
 
 #: engines/nancy/input.cpp:227
-#, fuzzy
-#| msgid "Insert save/load game disk"
 msgid "Go to save/load menu"
-msgstr "Legen Sie eine Spielstand-Diskette ein"
+msgstr "Gehe zum Speichern/Laden-Menü"
 
 #: engines/nancy/input.cpp:232
-#, fuzzy
-#| msgid "No date saved"
 msgid "Reload last save"
-msgstr "Kein Datum gespeichert"
+msgstr "Letzten Spielstand erneut laden"
 
 #: engines/nancy/input.cpp:237
-#, fuzzy
-#| msgid "Show options menu"
 msgid "Go to setup menu"
-msgstr "Optionsmenü anzeigen"
+msgstr "Gehe zum Setup-Menü"
 
 #: engines/nancy/input.cpp:242
-#, fuzzy
-#| msgid "Show game credits"
 msgid "Show credits"
-msgstr "Abspann des Spieles anzeigen"
+msgstr "Abspann anzeigen"
 
 #: engines/nancy/input.cpp:247
-#, fuzzy
-#| msgid "Swap screens"
 msgid "Go to map screen"
-msgstr "Bildschirme vertauschen"
+msgstr "Zur Karte gehen"
 
 #: engines/nancy/input.cpp:253
-#, fuzzy
-#| msgid "Enable cheat mode"
 msgid "Open general cheat menu"
-msgstr "Cheat-Modus aktivieren"
+msgstr "Öffne Cheat-Menü"
 
 #: engines/nancy/input.cpp:258
 msgid "Open event flags cheat menu"
