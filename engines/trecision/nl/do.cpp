@@ -927,7 +927,7 @@ void AtFrameEnd(int type) {
 
 	// if this ATFrame has already been handled
 	if (h->curframe == h->lastframe)
-		return ;
+		return;
 
 	h->lastframe = h->curframe;
 
@@ -953,13 +953,13 @@ void AtFrameHandler(int type) {
 	ATFHandle *h = &AnimType[type];
 	SAnim *anim = h->curanim;
 	if (anim == nullptr)
-		return ;
+		return;
 
 	if (h->curframe == 0)
 		h->curframe++;
 	// if this ATFrame has already been applied
 	if (h->curframe <= h->lastframe)
-		return ;
+		return;
 
 	for (int32 a = 0; a < MAXATFRAME; a++) {
 		// if it's time to run this AtFrame

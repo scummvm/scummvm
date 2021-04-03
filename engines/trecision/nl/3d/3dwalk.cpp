@@ -140,7 +140,7 @@ void findPath() {
 		_curPanel = b;
 		_numPathNodes = 0;
 		lookAt(_lookX, _lookZ);
-		return ;
+		return;
 	}
 
 	float dist = distF(g_vm->_actor->_px, g_vm->_actor->_pz, _curX, _curZ);
@@ -177,7 +177,7 @@ void findPath() {
 
 							_curPanel = b;
 							lookAt(_lookX, _lookZ);
-							return ;
+							return;
 						}
 					}
 				} else if ((b == _panel[_curPanel]._near1) || (b == _panel[_curPanel]._near2)) {
@@ -1148,7 +1148,7 @@ bool pointInside(int pan, double x, double z) {
 		double *vtx1 = pgon[0];
 
 		inside_flag = 0;
-		for (int j = 5; --j ;) {
+		for (int j = 5; --j;) {
 			bool yflag1 = (vtx1[1] >= z);
 			if (yflag0 != yflag1) {
 				bool xflag0 = (vtx0[0] >= x);
@@ -1159,12 +1159,12 @@ bool pointInside(int pan, double x, double z) {
 			}
 
 			// Move to the next pair of vertices, retaining info as possible.
-			yflag0 = yflag1 ;
-			vtx0 = vtx1 ;
-			vtx1 += 2 ;
+			yflag0 = yflag1;
+			vtx0 = vtx1;
+			vtx1 += 2;
 		}
 	}
-	return (inside_flag != 0) ;
+	return (inside_flag != 0);
 }
 
 /*------------------------------------------------
@@ -1712,7 +1712,7 @@ void actorOrder() {
 
 	if (_forcedActorPos) {
 		_actorPos = _forcedActorPos;
-		return ;
+		return;
 	}
 
 	float ox = g_vm->_actor->_px + g_vm->_actor->_dx - g_vm->_actor->_camera->_ex;

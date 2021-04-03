@@ -609,7 +609,7 @@ void doSystem() {
 
 	case ME_CHANGEROOM:
 		if (g_vm->_curRoom == 0)
-			return ;
+			return;
 
 		// if regen still has to occur
 		if (FlagWaitRegen)
@@ -787,7 +787,7 @@ void RollInventory(uint8 status) {
 			if (!(isInventoryArea(my)))
 				doEvent(MC_INVENTORY, ME_CLOSE, MP_DEFAULT, 0, 0, 0, 0);
 			g_vm->redrawString();
-			return ;
+			return;
 		}
 	} else if (status == INV_DEPAINT) {
 		g_vm->_inventoryCounter += g_vm->_inventorySpeed[g_vm->_inventorySpeedIndex++];
@@ -801,7 +801,7 @@ void RollInventory(uint8 status) {
 				doEvent(MC_INVENTORY, ME_OPEN, MP_DEFAULT, 0, 0, 0, 0);
 			else
 				g_vm->redrawString();
-			return ;
+			return;
 		}
 	}
 	g_vm->setInventoryStart(g_vm->_iconBase, g_vm->_inventoryCounter);
