@@ -638,7 +638,17 @@ Val &HashMap<Key, Val, HashFunc, EqualFunc>::getVal(const Key &key) {
 	if (_storage[ctr] != nullptr)
 		return _storage[ctr]->_value;
 	else
+		// In the past getVal() and operator[] used to return the default value for this case.
+		// Clarifying the intent by using getValOrDefault() when we query a key that may not be
+		// present is a good idea, but we have a lot of legacy code that may need to be updated.
+		// So for now only returns an error in non-release builds. Once we are confident all the
+		// code has been updated to use the correct function we can remove the RELEASE_BUILD
+		// special case.
+#ifdef RELEASE_BUILD
+		return _defaultVal;
+#else
 		unknownKeyError(key);
+#endif
 }
 
 template<class Key, class Val, class HashFunc, class EqualFunc>
@@ -647,7 +657,12 @@ const Val &HashMap<Key, Val, HashFunc, EqualFunc>::getVal(const Key &key) const 
 	if (_storage[ctr] != nullptr)
 		return _storage[ctr]->_value;
 	else
+		// See comment in non-const getVal() above.
+#ifdef RELEASE_BUILD
+		return _defaultVal;
+#else
 		unknownKeyError(key);
+#endif
 }
 
 template<class Key, class Val, class HashFunc, class EqualFunc>
