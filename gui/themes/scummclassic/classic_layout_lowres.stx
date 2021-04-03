@@ -27,6 +27,8 @@
 
 		<def var = 'About.OuterBorder' value = '10' scalable = 'yes'/>
 
+		<def var = 'TabWidget.TitleSpacing' value = '10' scalable = 'yes'/>
+
 		<def var = 'Layout.Spacing' value = '8' scalable = 'yes'/>
 
 		<def var = 'ShowLauncherLogo' value = '0'/>
