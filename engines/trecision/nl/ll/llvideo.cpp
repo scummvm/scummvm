@@ -47,22 +47,19 @@ void resetZBuffer(int x1, int y1, int x2, int y2) {
 /*-----------------10/12/95 15.53-------------------
 				CheckMask - Compreso
 --------------------------------------------------*/
-bool CheckMask(uint16 MX, uint16 MY) {
+bool CheckMask(uint16 mx, uint16 my) {
 	for (int8 a = (MAXOBJINROOM - 1); a >= 0; a--) {
 		uint16 checkedObj = g_vm->_room[g_vm->_curRoom]._object[a];
+		Common::Rect lim = g_vm->_obj[checkedObj]._lim;
+		lim.translate(0, TOP);
+		// trecision includes the bottom and right coordinates
+		lim.right++;
+		lim.bottom++;
+		
+		if (checkedObj && (g_vm->_obj[checkedObj]._mode & OBJMODE_OBJSTATUS)) {
+			if (lim.contains(mx, my)) {
 
-		if ((checkedObj) && (g_vm->_obj[checkedObj]._mode & (OBJMODE_OBJSTATUS))) {
-			if ((MX >= g_vm->_obj[checkedObj]._lim.left) &&
-			    (MY >= g_vm->_obj[checkedObj]._lim.top + TOP) &&
-			    (MX <= g_vm->_obj[checkedObj]._lim.right) &&
-			    (MY <= g_vm->_obj[checkedObj]._lim.bottom + TOP)) {
-
-				if (g_vm->_obj[checkedObj]._mode & OBJMODE_FULL) {
-					g_vm->_curObj = checkedObj;
-					return true;
-				}
-
-				if (g_vm->_obj[checkedObj]._mode & OBJMODE_LIM) {
+				if ((g_vm->_obj[checkedObj]._mode & OBJMODE_FULL) || (g_vm->_obj[checkedObj]._mode & OBJMODE_LIM)) {
 					g_vm->_curObj = checkedObj;
 					return true;
 				}
@@ -70,14 +67,15 @@ bool CheckMask(uint16 MX, uint16 MY) {
 				if (g_vm->_obj[checkedObj]._mode & OBJMODE_MASK) {
 					uint8 *mask = MaskPointers[a];
 					int16 d = g_vm->_obj[checkedObj]._px;
+					uint16 max = g_vm->_obj[checkedObj]._py + g_vm->_obj[checkedObj]._dy;
 
-					for (int16 b = g_vm->_obj[checkedObj]._py; b < (g_vm->_obj[checkedObj]._py + g_vm->_obj[checkedObj]._dy); b++) {
+					for (int16 b = g_vm->_obj[checkedObj]._py; b < max; b++) {
 						int16 c = 0;
 						int16 e = 0;
 						while (e < g_vm->_obj[checkedObj]._dx) {
 							if (!c) {		// not inside an object
-								if (b + TOP == MY) {
-									if ((MX >= (d + e)) && (MX < (d + e + *mask))) {
+								if (b + TOP == my) {
+									if ((mx >= (d + e)) && (mx < (d + e + *mask))) {
 										g_vm->_curObj = 0;
 									}
 								}
@@ -86,8 +84,8 @@ bool CheckMask(uint16 MX, uint16 MY) {
 								mask++;
 								c = 1;
 							} else {		// inside an object
-								if (b + TOP == MY) {
-									if ((MX >= (d + e)) && (MX < (d + e + *mask))) {
+								if (b + TOP == my) {
+									if ((mx >= (d + e)) && (mx < (d + e + *mask))) {
 										g_vm->_curObj = checkedObj;
 										return true;
 									}

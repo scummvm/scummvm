@@ -486,11 +486,9 @@ void AnimManager::refreshSmkAnim(int num) {
 		// If it's a background
 		for (int32 a = 0; a < MAXCHILD; a++) {
 			if (!(_animTab[num]._flag & (SMKANIM_OFF1 << a)) && (_animTab[num]._lim[a].bottom != 0)) {
-				_vm->_limits[_vm->_limitsNum].left = _animTab[num]._lim[a].left;
-				_vm->_limits[_vm->_limitsNum].top = _animTab[num]._lim[a].top + TOP;
-				_vm->_limits[_vm->_limitsNum].right = _animTab[num]._lim[a].right;
-				_vm->_limits[_vm->_limitsNum].bottom = _animTab[num]._lim[a].bottom + TOP;
-				_vm->_limitsNum++;
+				Common::Rect l = _animTab[num]._lim[a];
+				l.translate(0, TOP);
+				_vm->_limits[_vm->_limitsNum++] = l;
 			}
 		}
 	} else if (pos == kSmackerFullMotion) {
@@ -525,13 +523,8 @@ void AnimManager::refreshSmkAnim(int num) {
 #endif
 		}
 
-		_vm->_limits[_vm->_limitsNum].left = _animMinX;
-		_vm->_limits[_vm->_limitsNum].top = _animMinY + TOP;
-		_vm->_limits[_vm->_limitsNum].right = _animMaxX;
-		_vm->_limits[_vm->_limitsNum].bottom = _animMaxY + TOP;
-
 		_vm->_actorLimit = _vm->_limitsNum;
-		_vm->_limitsNum++;
+		_vm->_limits[_vm->_limitsNum++] = Common::Rect(_animMinX, _animMinY + TOP, _animMaxX, _animMaxY + TOP);
 	}
 
 	if (!(_animTab[num]._flag & SMKANIM_LOOP) && !(_animTab[num]._flag & SMKANIM_BKG)) {

@@ -65,48 +65,40 @@ void PaintScreen(uint8 flag) {
 	AddLine(0, 0, 0);
 #endif
 
-// CANCELLA L'OMINO
-	if (FlagShowCharacter) {                    // se c'era una scritta
-		// cancello omino
+	int x1 = g_vm->_actor->_lim[0];
+	int y1 = g_vm->_actor->_lim[2] - TOP;
+	int x2 = g_vm->_actor->_lim[1];
+	int y2 = g_vm->_actor->_lim[3] - TOP;
+	
+	// erase character
+	if (FlagShowCharacter && x2 > x1 && y2 > y1) {                    // if a description exists
 		DObj.x    = 0;
 		DObj.y    = TOP;
 		DObj.dx   = SCREENLEN;
 		DObj.dy   = AREA;
-		DObj.l[0] = g_vm->_actor->_lim[0];
-		DObj.l[1] = g_vm->_actor->_lim[2] - TOP;
-		DObj.l[2] = g_vm->_actor->_lim[1];
-		DObj.l[3] = g_vm->_actor->_lim[3] - TOP;
+		DObj.l = Common::Rect(x1, y1, x2, y2);
 		DObj.buf  = ImagePointer;
 		DObj.flag = COPYTORAM;
 		DrawObj(DObj);
 
-		g_vm->_limits[g_vm->_limitsNum].left = DObj.l[0]; // aggiunge rettangolo omino
-		g_vm->_limits[g_vm->_limitsNum].top = DObj.l[1] + TOP;
-		g_vm->_limits[g_vm->_limitsNum].right = DObj.l[2];
-		g_vm->_limits[g_vm->_limitsNum].bottom = DObj.l[3] + TOP;
-
 		g_vm->_actorLimit = g_vm->_limitsNum;
-		g_vm->_limitsNum++;
+		Common::Rect l = DObj.l;
+		l.translate(0, TOP);
+		g_vm->_limits[g_vm->_limitsNum++] = l;		
 	} else if (g_vm->_animMgr->_animMinX != MAXX) {
 		DObj.x    = 0;
 		DObj.y    = TOP;
 		DObj.dx   = SCREENLEN;
 		DObj.dy   = AREA;
-		DObj.l[0] = g_vm->_animMgr->_animMinX;
-		DObj.l[1] = g_vm->_animMgr->_animMinY;
-		DObj.l[2] = g_vm->_animMgr->_animMaxX;
-		DObj.l[3] = g_vm->_animMgr->_animMaxY;
+		DObj.l = Common::Rect(g_vm->_animMgr->_animMinX, g_vm->_animMgr->_animMinY, g_vm->_animMgr->_animMaxX, g_vm->_animMgr->_animMaxY);
 		DObj.buf  = ImagePointer;
 		DObj.flag = COPYTORAM;
 		DrawObj(DObj);
 
-		g_vm->_limits[g_vm->_limitsNum].left = DObj.l[0]; // aggiunge rettangolo omino
-		g_vm->_limits[g_vm->_limitsNum].top = DObj.l[1] + TOP;
-		g_vm->_limits[g_vm->_limitsNum].right = DObj.l[2];
-		g_vm->_limits[g_vm->_limitsNum].bottom = DObj.l[3] + TOP;
-
 		g_vm->_actorLimit = g_vm->_limitsNum;
-		g_vm->_limitsNum++;
+		Common::Rect l = DObj.l;
+		l.translate(0, TOP);
+		g_vm->_limits[g_vm->_limitsNum++] = l;
 	}
 
 // CANCELLO LA SCRITTA
@@ -116,25 +108,25 @@ void PaintScreen(uint8 flag) {
 		DObj.y    = TOP;
 		DObj.dx   = SCREENLEN;
 		DObj.dy   = 480;
-		DObj.l[0] = oldString.x;
-		DObj.l[1] = oldString.y - TOP;
-		DObj.l[2] = DObj.l[0] + oldString.dx;
-		DObj.l[3] = DObj.l[1] + oldString.dy;
+		DObj.l.left = oldString.x;
+		DObj.l.top = oldString.y - TOP;
+		DObj.l.right = DObj.l.left + oldString.dx;
+		DObj.l.bottom = DObj.l.top + oldString.dy;
 
 		if ((oldString.y >= TOP) && ((oldString.y + oldString.dy) < (AREA + TOP))) {
 			DObj.buf  = ImagePointer;
 			DObj.flag = COPYTORAM;
 			DrawObj(DObj);
 		} else {
-			for (a = (DObj.l[1] + TOP); a < (DObj.l[3] + TOP); a++)
-				memset(g_vm->_screenBuffer + DObj.l[0] + a * SCREENLEN, 0x0000, (DObj.l[2] - DObj.l[0]) * 2);
+			for (a = (DObj.l.top + TOP); a < (DObj.l.bottom + TOP); a++)
+				memset(g_vm->_screenBuffer + DObj.l.left + a * SCREENLEN, 0x0000, (DObj.l.right - DObj.l.left) * 2);
 		}
 		oldString.sign = NULL;
 
-		g_vm->_limits[g_vm->_limitsNum].left = DObj.l[0]; // aggiunge rettangolo scritta
-		g_vm->_limits[g_vm->_limitsNum].top = DObj.l[1] + TOP;
-		g_vm->_limits[g_vm->_limitsNum].right = DObj.l[2];
-		g_vm->_limits[g_vm->_limitsNum].bottom = DObj.l[3] + TOP;
+		g_vm->_limits[g_vm->_limitsNum].left = DObj.l.left; // aggiunge rettangolo scritta
+		g_vm->_limits[g_vm->_limitsNum].top = DObj.l.top + TOP;
+		g_vm->_limits[g_vm->_limitsNum].right = DObj.l.right;
+		g_vm->_limits[g_vm->_limitsNum].bottom = DObj.l.bottom + TOP;
 
 		g_vm->_limitsNum++;
 
@@ -154,26 +146,23 @@ void PaintScreen(uint8 flag) {
 			DObj.dy   = 480;
 
 			if (SortTable[a]._typology == TYPO_BMP) {
-				DObj.l[0] = g_vm->_obj[SortTable[a]._index]._px;
-				DObj.l[1] = g_vm->_obj[SortTable[a]._index]._py;
-				DObj.l[2] = DObj.l[0] + g_vm->_obj[SortTable[a]._index]._dx;
-				DObj.l[3] = DObj.l[1] + g_vm->_obj[SortTable[a]._index]._dy;
+				DObj.l.left = g_vm->_obj[SortTable[a]._index]._px;
+				DObj.l.top = g_vm->_obj[SortTable[a]._index]._py;
+				DObj.l.right = DObj.l.left + g_vm->_obj[SortTable[a]._index]._dx;
+				DObj.l.bottom = DObj.l.top + g_vm->_obj[SortTable[a]._index]._dy;
 			}
 
 			DObj.buf  = ImagePointer;
 			DObj.flag = COPYTORAM;
 			DrawObj(DObj);
 
-			g_vm->_limits[g_vm->_limitsNum].left = DObj.l[0]; // aggiunge rettangolo
-			g_vm->_limits[g_vm->_limitsNum].top = DObj.l[1] + TOP;
-			g_vm->_limits[g_vm->_limitsNum].right = DObj.l[2];
-			g_vm->_limits[g_vm->_limitsNum].bottom = DObj.l[3] + TOP;
-
-			if ((SortTable[a + 1]._typology  == SortTable[a]._typology) &&
-					(SortTable[a + 1]._roomIndex == SortTable[a]._roomIndex))
+			if ((SortTable[a + 1]._typology == SortTable[a]._typology) &&
+				(SortTable[a + 1]._roomIndex == SortTable[a]._roomIndex))
 				VisualRef[a + 1] = g_vm->_limitsNum;
 
-			g_vm->_limitsNum++;
+			Common::Rect l(DObj.l);
+			l.translate(0, TOP);
+			g_vm->_limits[g_vm->_limitsNum++] = l;
 		}
 	}
 
@@ -218,13 +207,7 @@ void PaintScreen(uint8 flag) {
 
 	} else if (TextStatus & TEXT_DRAW) {
 		curString.DText();
-		g_vm->_limits[g_vm->_limitsNum].left = curString.x; // Add rectangle
-		g_vm->_limits[g_vm->_limitsNum].top = curString.y;
-		g_vm->_limits[g_vm->_limitsNum].right = curString.x + curString.dx;
-		g_vm->_limits[g_vm->_limitsNum].bottom = curString.y + curString.dy;
-
-		g_vm->_limitsNum++;
-
+		g_vm->_limits[g_vm->_limitsNum++] = Common::Rect(curString.x, curString.y, curString.x + curString.dx, curString.y + curString.dy);
 		TextStatus = TEXT_DRAW;                 // Activate text update
 	}
 
@@ -380,10 +363,7 @@ void PaintObjAnm(uint16 CurBox) {
 					DObj.y = g_vm->_obj[SortTable[a]._index]._py + TOP;
 					DObj.dx = g_vm->_obj[SortTable[a]._index]._dx;
 					DObj.dy = g_vm->_obj[SortTable[a]._index]._dy;
-					DObj.l[0] = 0;
-					DObj.l[1] = 0;
-					DObj.l[2] = DObj.dx;
-					DObj.l[3] = DObj.dy;
+					DObj.l = Common::Rect(DObj.dx, DObj.dy);
 					DObj.buf  = ObjPointers[SortTable[a]._roomIndex];
 					DObj.mask = MaskPointers[SortTable[a]._roomIndex];
 					DObj.flag = COPYTORAM;
@@ -391,24 +371,12 @@ void PaintObjAnm(uint16 CurBox) {
 						DObj.flag += DRAWMASK;
 					DrawObj(DObj);
 
+					Common::Rect objRect(DObj.x, DObj.y, DObj.x + DObj.dx, DObj.y + DObj.dy);
+					
 					if (VisualRef[a] == 255) {
-						g_vm->_limits[g_vm->_limitsNum].left = DObj.x; // aggiunge rettangolo
-						g_vm->_limits[g_vm->_limitsNum].top = DObj.y;
-						g_vm->_limits[g_vm->_limitsNum].right = DObj.x + DObj.dx;
-						g_vm->_limits[g_vm->_limitsNum].bottom = DObj.y + DObj.dy;
-						g_vm->_limitsNum++;
+						g_vm->_limits[g_vm->_limitsNum++] = objRect;
 					} else {
-						if (g_vm->_limits[VisualRef[a]].left > DObj.x)
-							g_vm->_limits[VisualRef[a]].left = DObj.x;
-
-						if (g_vm->_limits[VisualRef[a]].top > DObj.y)
-							g_vm->_limits[VisualRef[a]].top = DObj.y;
-
-						if (g_vm->_limits[VisualRef[a]].right < (DObj.x + DObj.dx))
-							g_vm->_limits[VisualRef[a]].right = DObj.x + DObj.dx;
-
-						if (g_vm->_limits[VisualRef[a]].bottom < (DObj.y + DObj.dy))
-							g_vm->_limits[VisualRef[a]].bottom = DObj.y + DObj.dy;
+						g_vm->_limits[VisualRef[a]].extend(objRect);
 					}
 				}
 			}
@@ -434,10 +402,7 @@ void PaintObjAnm(uint16 CurBox) {
 					DObj.y = g_vm->_obj[curObject]._py + TOP;
 					DObj.dx = g_vm->_obj[curObject]._dx;
 					DObj.dy = g_vm->_obj[curObject]._dy;
-					DObj.l[0] = xr1;
-					DObj.l[1] = yr1;
-					DObj.l[2] = xr2;
-					DObj.l[3] = yr2;
+					DObj.l = Common::Rect(xr1, yr1, xr2, yr2);
 
 					DObj.buf  = ObjPointers[b];
 					DObj.mask = MaskPointers[b];
@@ -452,24 +417,22 @@ void PaintObjAnm(uint16 CurBox) {
 		}
 	}
 
-	if ((_actorPos == CurBox) &&
-			((FlagShowCharacter) && (FlagCharacterExist))) {
+	if (_actorPos == CurBox && FlagShowCharacter && FlagCharacterExist) {
 		drawCharacter(CALCPOINTS);
 
-		// enlarge the rectangle of the character
-		if (g_vm->_limits[g_vm->_actorLimit].left > g_vm->_actor->_lim[0])
-			g_vm->_limits[g_vm->_actorLimit].left = g_vm->_actor->_lim[0];
+		int x1 = g_vm->_actor->_lim[0];
+		int y1 = g_vm->_actor->_lim[2];
+		int x2 = g_vm->_actor->_lim[1];
+		int y2 = g_vm->_actor->_lim[3];
+		
+		if (x2 > x1 && y2 > y1) {
+			// enlarge the rectangle of the character
+			Common::Rect l(x1, y1, x2, y2);
+			g_vm->_limits[g_vm->_actorLimit].extend(l);
 
-		if (g_vm->_limits[g_vm->_actorLimit].top > g_vm->_actor->_lim[2])
-			g_vm->_limits[g_vm->_actorLimit].top = g_vm->_actor->_lim[2];
+			resetZBuffer(x1, y1, x2, y2);
+		}
 
-		if (g_vm->_limits[g_vm->_actorLimit].right < g_vm->_actor->_lim[1])
-			g_vm->_limits[g_vm->_actorLimit].right = g_vm->_actor->_lim[1];
-
-		if (g_vm->_limits[g_vm->_actorLimit].bottom < g_vm->_actor->_lim[3])
-			g_vm->_limits[g_vm->_actorLimit].bottom = g_vm->_actor->_lim[3];
-
-		resetZBuffer(g_vm->_actor->_lim[0], g_vm->_actor->_lim[2], g_vm->_actor->_lim[1], g_vm->_actor->_lim[3]);
 		drawCharacter(DRAWFACES);
 
 		//FlagPaintCharacter = false;

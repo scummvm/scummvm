@@ -23,6 +23,7 @@
 #ifndef TRECISION_LLINC_H
 #define TRECISION_LLINC_H
 
+#include "common/rect.h"
 #include "trecision/nl/sysdef.h"
 
 #define DRAWMASK        1
@@ -74,7 +75,7 @@ struct SDObj {
 	uint16 y;
 	uint16 dx;
 	uint16 dy;
-	uint16 l[4];
+	Common::Rect l;
 	uint16 *buf;
 	uint8 *mask;
 	uint8 flag;         /* 0 - with mask
