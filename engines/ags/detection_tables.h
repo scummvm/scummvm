@@ -974,6 +974,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "perilsofpoom", "PERILS OF POOM" },
 	{ "pesterquest", "Pester Quest" },
 	{ "petalrose", "Petal Rose" },
+	{ "phantomfellows", "The Phantom Fellow" },
 	{ "pharmacistjones", "Pharmacist Jones" },
 	{ "pickpocketrpg", "Pickpocket RPG" },
 	{ "pilotlight", "Pilot Light" },
@@ -1831,6 +1832,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	DEMO_ENTRY("neofeud", "neofeud.exe", "6e861b1f476ff7cdf036082abb271329", 2078743282), // 1.3 itch.io
 	DEMO_ENTRY("neofeud", "Neofeud_LINUX_TEST_9_2_17.ags", "a23f0c48d8128bb7045ab8685665a464", 2076260110), // itch.io Linux
 	DEMO_ENTRY("oott", "demo_tkc.exe", "54da0ce99f3e8b556db6d236c8ef76ba", 415137576), // Steam
+	DEMO_ENTRY("phantomfellows", "TPF.exe", "71961f24fd94e30e61167d7b0720cd35", 96534651),
 	DEMO_ENTRY("primordia", "primordia.exe", "22313e59c3233001488c26f18c80cc08", 727898212),
 	DEMO_ENTRY("pubmastersquest", "pub master quest [demo].exe", "e1676318c8a040fcf508b817013dc8fe", 23431689),
 	DEMO_ENTRY("puzzlebots", "puzzlebots_demo.exe", "34b49df9cf6eadb5c3587b3921d5b72f", 354138961),
