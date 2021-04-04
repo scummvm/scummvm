@@ -30,17 +30,23 @@
 #include "audio/decoders/wave.h"
 #include "audio/audiostream.h"
 
-#define SOUND_OFF		0
-#define SOUND_ON		1
-
-#define SFADNONE	0
-#define SFADIN		1
-#define SFADOUT		2
-
-#define	SAMPLEVOICES	6
-#define	NUMSAMPLES		MAXSAMPLE
-
 namespace Trecision {
+
+#define SOUND_OFF 0
+#define SOUND_ON 1
+
+#define SFADNONE 0
+#define SFADIN 1
+#define SFADOUT 2
+
+#define SAMPLEVOICES 6
+#define NUMSAMPLES MAXSAMPLE
+
+enum SoundChannel {
+	kSoundChannelBack = 0,
+	kSoundChannelStep = 1,
+	kSoundChannelSpeech = 5
+};
 
 Audio::SeekableAudioStream *sfxStream[NUMSAMPLES];
 
@@ -49,22 +55,19 @@ extern SSound GSample[];
 int SoundDevice = -1;
 int BackSound = 1;
 
-Audio::SoundHandle    smp[SAMPLEVOICES];	// Sample handles for each mixer channel
+Audio::SoundHandle    soundHandle[SAMPLEVOICES];	// Sample handles for each mixer channel
 uint32        nltime;			// timer variable
 int32 	   MinSampleBuffer;
 
 int16 playing[SAMPLEVOICES];			// sample currently playing
 int16  smpvol[SAMPLEVOICES];
 
-uint8 StepChannel = 1;
-uint8 BackChannel = 0;
-uint8 SpeechChannel = 5;
+uint8 StepChannel = kSoundChannelStep;
+uint8 BackChannel = kSoundChannelBack;
 uint8 SoundFadStatus = SFADNONE;
 
 int16 SoundFadInVal;
 int16 SoundFadOutVal;
-
-extern uint8 SpeechBuf[SPEECHSIZE];
 
 #define VOLUME(a)	( (a*255)/127 )
 #define TIME(a)		( (a*3)/50 )
@@ -82,16 +85,16 @@ void soundtimefunct() {
 
 	if (SoundFadStatus) {	// solo se sono in un fad
 		if (SoundFadStatus & SFADOUT) {
-			if (!g_system->getMixer()->isSoundHandleActive(smp[BackChannel])) {
+			if (!g_system->getMixer()->isSoundHandleActive(soundHandle[BackChannel])) {
 				SoundFadStatus &= (~SFADOUT);
 			} else {
 				SoundFadOutVal -= FADMULT;
 
 				if (SoundFadOutVal > 0)
-					g_system->getMixer()->setChannelVolume(smp[BackChannel], VOLUME(SoundFadOutVal / FADMULT));
+					g_system->getMixer()->setChannelVolume(soundHandle[BackChannel], VOLUME(SoundFadOutVal / FADMULT));
 				else {
 					SoundFadOutVal = 0;
-					g_system->getMixer()->setChannelVolume(smp[BackChannel], VOLUME(SoundFadOutVal));
+					g_system->getMixer()->setChannelVolume(soundHandle[BackChannel], VOLUME(SoundFadOutVal));
 
 					SoundFadStatus &= (~SFADOUT);
 				}
@@ -103,7 +106,7 @@ void soundtimefunct() {
 			if (SoundFadInVal > GSample[playing[StepChannel]]._volume * FADMULT)
 				SoundFadInVal = GSample[playing[StepChannel]]._volume * FADMULT;
 
-			g_system->getMixer()->setChannelVolume(smp[StepChannel], VOLUME(SoundFadInVal / FADMULT));
+			g_system->getMixer()->setChannelVolume(soundHandle[StepChannel], VOLUME(SoundFadInVal / FADMULT));
 			
 			for (int a = 2; a < SAMPLEVOICES; a++) {
 				if (playing[a] != 0) {
@@ -112,7 +115,7 @@ void soundtimefunct() {
 					if (smpvol[a] > GSample[playing[a]]._volume * FADMULT)
 						smpvol[a] = GSample[playing[a]]._volume * FADMULT;
 
-					g_system->getMixer()->setChannelVolume(smp[a], VOLUME(smpvol[a] / FADMULT));
+					g_system->getMixer()->setChannelVolume(soundHandle[a], VOLUME(smpvol[a] / FADMULT));
 				}
 			}
 		}
@@ -141,8 +144,8 @@ void LoadAudioWav(int num, uint8 *wav, int len) {
  --------------------------------------------------*/
 void NLPlaySound(int num) {
 	int channel = 2;
-	if (g_system->getMixer()->isSoundHandleActive(smp[channel])) {
-		g_system->getMixer()->stopHandle(smp[channel]);
+	if (g_system->getMixer()->isSoundHandleActive(soundHandle[channel])) {
+		g_system->getMixer()->stopHandle(soundHandle[channel]);
 		playing[channel] = 0;
 	}
 
@@ -158,7 +161,7 @@ void NLPlaySound(int num) {
 	if (stream != nullptr && GSample[num]._flag & SOUNDFLAG_SLOOP)
 		stream = Audio::makeLoopingAudioStream(sfxStream[num], 0);
 
-	g_system->getMixer()->playStream(type, &smp[channel], stream, -1, volume, 0, DisposeAfterUse::NO);
+	g_system->getMixer()->playStream(type, &soundHandle[channel], stream, -1, volume, 0, DisposeAfterUse::NO);
 
 	playing[channel] = num;
 }
@@ -167,9 +170,9 @@ void NLPlaySound(int num) {
 					NLStopSound
  --------------------------------------------------*/
 void NLStopSound(int num) {
-	for (int a = 2; a < SpeechChannel; a++) {
+	for (int a = 2; a < kSoundChannelSpeech; a++) {
 		if (playing[a] == num) {
-			g_system->getMixer()->stopHandle(smp[a]);
+			g_system->getMixer()->stopHandle(soundHandle[a]);
 			playing[a] = 0;
 		}
 	}
@@ -177,7 +180,7 @@ void NLStopSound(int num) {
 
 void SoundStopAll() {
 	for (int a = 0; a < SAMPLEVOICES; a++) {
-		g_system->getMixer()->stopHandle(smp[a]);
+		g_system->getMixer()->stopHandle(soundHandle[a]);
 		playing[a] = 0;
 	}
 
@@ -190,12 +193,12 @@ void SoundStopAll() {
 void SoundFadOut() {
 	for (int a = 0; a < SAMPLEVOICES; a++) {	// Turns off all channels except background
 		if (a != BackChannel) {
-			g_system->getMixer()->stopHandle(smp[a]);
+			g_system->getMixer()->stopHandle(soundHandle[a]);
 			playing[a] = 0;
 		}
 	}
 
-	SoundFadOutVal = g_system->getMixer()->getChannelVolume(smp[BackChannel]) * FADMULT;
+	SoundFadOutVal = g_system->getMixer()->getChannelVolume(soundHandle[BackChannel]) * FADMULT;
 	SoundFadStatus = SFADOUT;
 }
 
@@ -208,7 +211,7 @@ void SoundFadIn(int num) {
 	if (stream != nullptr && GSample[num]._flag & SOUNDFLAG_SLOOP)
 		stream = Audio::makeLoopingAudioStream(sfxStream[num], 0);
 
-	g_system->getMixer()->playStream(type, &smp[StepChannel], stream, -1, 0, 0, DisposeAfterUse::NO);
+	g_system->getMixer()->playStream(type, &soundHandle[StepChannel], stream, -1, 0, 0, DisposeAfterUse::NO);
 
 	playing[StepChannel] = num;
 
@@ -224,14 +227,14 @@ void WaitSoundFadEnd() {
 		g_vm->checkSystem();
 	SoundFadStatus = SFADNONE;
 
-	g_system->getMixer()->stopHandle(smp[BackChannel]);
+	g_system->getMixer()->stopHandle(soundHandle[BackChannel]);
 
-	g_system->getMixer()->setChannelVolume(smp[StepChannel], VOLUME(GSample[playing[StepChannel]]._volume));
+	g_system->getMixer()->setChannelVolume(soundHandle[StepChannel], VOLUME(GSample[playing[StepChannel]]._volume));
 	playing[BackChannel] = 0;
 
-	for (uint8 a = 2; a < SpeechChannel; a++) {
+	for (uint8 a = 2; a < kSoundChannelSpeech; a++) {
 		if (playing[a] != 0)
-			g_system->getMixer()->setChannelVolume(smp[a], VOLUME(GSample[playing[a]]._volume));
+			g_system->getMixer()->setChannelVolume(soundHandle[a], VOLUME(GSample[playing[a]]._volume));
 	}
 
 	SWAP(StepChannel, BackChannel);
@@ -313,15 +316,13 @@ void SoundPasso(int midx, int midz, int act, int frame, unsigned short *list) {
 	if (midz > 255)
 		midz = 255;
 
-	int St = StepChannel;
-
-	g_system->getMixer()->stopHandle(smp[St]);
+	g_system->getMixer()->stopHandle(soundHandle[StepChannel]);
 	sfxStream[b]->rewind();
 
 	int panpos = ((midx - 320) * 127 / 320) / 2;
 	Audio::Mixer::SoundType type = GSample[b]._flag & SOUNDFLAG_SBACK ? Audio::Mixer::kMusicSoundType : Audio::Mixer::kSFXSoundType;
 	
-	g_system->getMixer()->playStream(type, &smp[St], sfxStream[b], -1, VOLUME(midz), panpos, DisposeAfterUse::NO);
+	g_system->getMixer()->playStream(type, &soundHandle[StepChannel], sfxStream[b], -1, VOLUME(midz), panpos, DisposeAfterUse::NO);
 }
 
 int32 Talk(const char *name) {
@@ -337,14 +338,14 @@ int32 Talk(const char *name) {
 	Audio::SeekableAudioStream *speechStream = Audio::makeWAVStream(stream, DisposeAfterUse::YES);
 
 	extern uint32 CharacterSpeakTime;
-	g_system->getMixer()->playStream(Audio::Mixer::kSpeechSoundType, &smp[SpeechChannel], speechStream);
+	g_system->getMixer()->playStream(Audio::Mixer::kSpeechSoundType, &soundHandle[kSoundChannelSpeech], speechStream);
 	CharacterSpeakTime = ReadTime();
 
 	return TIME(speechStream->getLength().msecs());
 }
 
 void StopTalk() {
-	g_system->getMixer()->stopHandle(smp[SpeechChannel]);
+	g_system->getMixer()->stopHandle(soundHandle[kSoundChannelSpeech]);
 }
 
 } // End of namespace Trecision
