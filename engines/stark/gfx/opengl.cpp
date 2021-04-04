@@ -121,6 +121,7 @@ void OpenGLDriver::setupLights(const LightEntryArray &lights) {
 		GLfloat lightDir[] = { 0.0f, 0.0f, -1.0f };
 		GLfloat cutoff = 180.0f;
 		GLfloat spotExp = 0.0f;
+		GLfloat l_attenuation = 0.0f;
 		GLfloat q_attenuation = 0.0f;
 
 		Math::Vector4d worldPosition;
@@ -134,12 +135,6 @@ void OpenGLDriver::setupLights(const LightEntryArray &lights) {
 		Math::Vector3d worldDirection = l->direction;
 		Math::Vector3d eyeDirection = viewMatrixRot * worldDirection;
 		eyeDirection.normalize();
-
-		Math::Vector4d params;
-		params.x() = l->falloffNear;
-		params.y() = l->falloffFar;
-		params.z() = l->innerConeAngle.getCosine();
-		params.w() = l->outerConeAngle.getCosine();
 
 		glDisable(GL_LIGHT0 + i);
 		switch (l->type) {
@@ -167,13 +162,14 @@ void OpenGLDriver::setupLights(const LightEntryArray &lights) {
 				lightPos[0] = (GLfloat)eyePosition.x();
 				lightPos[1] = (GLfloat)eyePosition.y();
 				lightPos[2] = (GLfloat)eyePosition.z();
-				lightDir[0] = (GLfloat)eyeDirection.x();
-				lightDir[1] = (GLfloat)eyeDirection.y();
-				lightDir[2] = (GLfloat)eyeDirection.z();
+				lightDir[0] = -(GLfloat)eyeDirection.x();
+				lightDir[1] = -(GLfloat)eyeDirection.y();
+				lightDir[2] = -(GLfloat)eyeDirection.z();
 				// FIXME
-				q_attenuation = 1.0f;
-				spotExp = 1.0f;
-				cutoff = 180.f;
+				l_attenuation = 0.0000001f;
+				q_attenuation = 0.0000001f;
+				//spotExp = 0.0f;
+				//cutoff = (l->outerConeAngle.getDegrees() + l->innerConeAngle.getDegrees()) / 2.0f;
 				break;
 			case LightEntry::kAmbient:
 				ambientColor[0] = (GLfloat)l->color.x();
@@ -190,6 +186,7 @@ void OpenGLDriver::setupLights(const LightEntryArray &lights) {
 		glLightfv(GL_LIGHT0 + i, GL_SPOT_DIRECTION, lightDir);
 		glLightf(GL_LIGHT0 + i, GL_SPOT_EXPONENT, spotExp);
 		glLightf(GL_LIGHT0 + i, GL_SPOT_CUTOFF, cutoff);
+		glLightf(GL_LIGHT0 + i, GL_LINEAR_ATTENUATION, l_attenuation);
 		glLightf(GL_LIGHT0 + i, GL_QUADRATIC_ATTENUATION, q_attenuation);
 		glEnable(GL_LIGHT0 + i);
 	}
