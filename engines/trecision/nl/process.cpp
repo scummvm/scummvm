@@ -75,11 +75,11 @@ void ProcessMouse() {
 	static uint16 oldmy;
 	static bool LastMouseON = true;
 
-	if ((LastMouseON == true) && (g_vm->_flagMouseEnabled == false)) {
+	if (LastMouseON && !g_vm->_flagMouseEnabled) {
 		oldmx = 0;    // Switch off
 		oldmy = 0;
 		Mouse(MCMD_OFF);
-	} else if ((LastMouseON == false) && (g_vm->_flagMouseEnabled == true)) {
+	} else if (!LastMouseON && g_vm->_flagMouseEnabled) {
 		oldmx = 0;    // Switch on
 		oldmy = 0;
 		Mouse(MCMD_ON);
@@ -91,21 +91,18 @@ void ProcessMouse() {
 	if (!g_vm->_flagMouseEnabled)
 		return;
 
-	uint16 tmpMx = mx;
-
 	if (mright || mleft) {
 		if (!MaskMouse) {
-			doEvent(MC_MOUSE, mright ? ME_MRIGHT : ME_MLEFT, MP_DEFAULT, tmpMx, my, 0, 0);
+			doEvent(MC_MOUSE, mright ? ME_MRIGHT : ME_MLEFT, MP_DEFAULT, mx, my, 0, 0);
 			MaskMouse = true;
 		}
-	} else
+	} else {
 		MaskMouse = false;
 
-	if (!(mright || mleft)) {
 		if (!g_vm->_flagscriptactive) {
-			if ((tmpMx != oldmx) || (my != oldmy)) {
-				doEvent(MC_MOUSE, ME_MMOVE, MP_DEFAULT, tmpMx, my, 0, 0);
-				oldmx = tmpMx;
+			if (mx != oldmx || my != oldmy) {
+				doEvent(MC_MOUSE, ME_MMOVE, MP_DEFAULT, mx, my, 0, 0);
+				oldmx = mx;
 				oldmy = my;
 			}
 		}

@@ -26,6 +26,7 @@
 
 #include "common/events.h"
 #include "common/system.h"
+#include "graphics/cursorman.h"
 #include "trecision/graphics.h"
 #include "trecision/video.h"
 
@@ -199,7 +200,7 @@ void Mouse(MouseCmd opt) {
 			mx = CLIP<int16>(g_vm->_mouseX, 10, MAXX - 11);
 			my = CLIP<int16>(g_vm->_mouseY, 10, MAXY - 11);
 
-			VMouseON();
+			CursorMan.showMouse(true);
 		}
 		break;
 	}
@@ -207,7 +208,7 @@ void Mouse(MouseCmd opt) {
 		if (!g_vm->_mouseONOFF)
 			break;
 		g_vm->_mouseONOFF = false;
-		VMouseOFF();
+		CursorMan.showMouse(false);
 		break;
 	}
 	case MCMD_ON: {
@@ -221,7 +222,7 @@ void Mouse(MouseCmd opt) {
 		mx = CLIP<int16>(g_vm->_mouseX, 10, MAXX - 11);
 		my = CLIP<int16>(g_vm->_mouseY, 10, MAXY - 11);
 
-		VMouseON();
+		CursorMan.showMouse(true);
 		break;
 	}
 	}

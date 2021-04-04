@@ -45,17 +45,6 @@ namespace Trecision {
 
 uint16 BlinkLastDTextChar = MASKCOL;
 
-void VMouseOFF() {
-	CursorMan.showMouse(false);
-}
-
-void VMouseON() {
-	if (!g_vm->_mouseONOFF)
-		return;
-
-	CursorMan.showMouse(true);
-}
-
 /*-----------------17/02/95 09.53-------------------
  TextLength - Compute string length from character 0 to num
 --------------------------------------------------*/
