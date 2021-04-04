@@ -65,7 +65,6 @@ STexture FTexture[MAXMAT];
 // ANIMATION
 uint8 *MemoryArea;
 // SOUND
-bool SpeechTrackEnabled = false;
 uint8 *SoundStartBuffer;
 // Temporary variables
 Common::SeekableReadStream *ff;

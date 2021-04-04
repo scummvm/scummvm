@@ -42,7 +42,6 @@
 
 namespace Trecision {
 
-Audio::SeekableAudioStream *speechStream;
 Audio::SeekableAudioStream *sfxStream[NUMSAMPLES];
 
 extern SSound GSample[];
@@ -130,15 +129,11 @@ void StopSoundSystem() {
 /* -----------------14/08/97 12.06-------------------
 					LoadAudioWav
  --------------------------------------------------*/
-short LoadAudioWav(int num, uint8 *wav, int len) {
+void LoadAudioWav(int num, uint8 *wav, int len) {
 	Audio::SeekableAudioStream *stream = Audio::makeWAVStream(new Common::MemoryReadStream(wav, len), DisposeAfterUse::YES);
 
-	if (num != 0xFFFF) {
-		sfxStream[num] = stream;
-	} else {
-		speechStream = stream;
-	}
-	return 1;
+	assert(num != 0xFFFF);
+	sfxStream[num] = stream;
 }
 
 /* -----------------14/08/97 14.08-------------------
@@ -329,22 +324,17 @@ void SoundPasso(int midx, int midz, int act, int frame, unsigned short *list) {
 	g_system->getMixer()->playStream(type, &smp[St], sfxStream[b], -1, VOLUME(midz), panpos, DisposeAfterUse::NO);
 }
 
-void ContinueTalk() {
-	if (!g_system->getMixer()->isSoundHandleActive(smp[SpeechChannel]))
-		StopTalk();
-}
-
 int32 Talk(const char *name) {
-	StopTalk();
-	
-	const int speechLen = SpeechFileRead(name, SpeechBuf);
-	if (speechLen == 0) {
-		SpeechTrackEnabled = false;
+	if (!g_vm->_speechFile.isOpen())
 		return 0;
-	}
 
-	SpeechTrackEnabled = true;
-	LoadAudioWav(0xFFFF, SpeechBuf, speechLen);
+	StopTalk();
+
+	Common::SeekableReadStream *stream = g_vm->_speechFile.createReadStreamForMember(name);
+	if (!stream)
+		return 0;
+
+	Audio::SeekableAudioStream *speechStream = Audio::makeWAVStream(stream, DisposeAfterUse::YES);
 
 	extern uint32 CharacterSpeakTime;
 	g_system->getMixer()->playStream(Audio::Mixer::kSpeechSoundType, &smp[SpeechChannel], speechStream);

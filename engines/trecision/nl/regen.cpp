@@ -49,7 +49,6 @@ void PaintScreen(uint8 flag) {
 	int a;
 
 	AtFrameNext();
-	ContinueTalk();
 	PaintRegenRoom();
 
 //	if( ( !FlagPaintCharacter) && ( _curSortTableNum == 0 ) &&  ( curString.sign == NULL ) && ( oldString.sign == NULL ) )
