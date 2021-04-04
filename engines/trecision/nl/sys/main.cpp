@@ -33,8 +33,6 @@ namespace Trecision {
 
 extern int16 mx, my;
 extern bool mleft, mright;
-extern const char 		*_sysSentence[];
-extern bool	ForceQuit;
 
 void NextMessage();
 
