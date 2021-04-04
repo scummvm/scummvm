@@ -237,48 +237,50 @@ void doDoing() {
 /*-------------------------------------------------------------------------*/
 void doScript() {
 	static uint32 pauseStartTime = 0;
-	uint8 scope = g_vm->_curMessage->_u8Param;
-	uint16 index = g_vm->_curMessage->_u16Param1;
-	uint16 index2 = g_vm->_curMessage->_u16Param2;
-	uint32 value = g_vm->_curMessage->_u32Param;
+	Message *message = g_vm->_curMessage;
+	uint8 scope = message->_u8Param;
+	uint16 index = message->_u16Param1;
+	uint16 index2 = message->_u16Param2;
+	uint32 value = message->_u32Param;
+	SObject *obj = &g_vm->_obj[index];
 
-	switch (g_vm->_curMessage->_event) {
+	switch (message->_event) {
 	case ME_PAUSE:
 		if (!pauseStartTime) {
 			pauseStartTime = TheTime;
-			doEvent(g_vm->_curMessage->_class, g_vm->_curMessage->_event, g_vm->_curMessage->_priority, g_vm->_curMessage->_u16Param1, g_vm->_curMessage->_u16Param2, g_vm->_curMessage->_u8Param, g_vm->_curMessage->_u32Param);
-		} else if (TheTime >= (pauseStartTime + g_vm->_curMessage->_u16Param1))
+			doEvent(message->_class, message->_event, message->_priority, message->_u16Param1, message->_u16Param2, message->_u8Param, message->_u32Param);
+		} else if (TheTime >= (pauseStartTime + message->_u16Param1))
 			pauseStartTime = 0;
 		else
-			doEvent(g_vm->_curMessage->_class, g_vm->_curMessage->_event, g_vm->_curMessage->_priority, g_vm->_curMessage->_u16Param1, g_vm->_curMessage->_u16Param2, g_vm->_curMessage->_u8Param, g_vm->_curMessage->_u32Param);
+			doEvent(message->_class, message->_event, message->_priority, message->_u16Param1, message->_u16Param2, message->_u8Param, message->_u32Param);
 
 		break;
 
 	case ME_SETOBJ:
 		switch (scope) {
 		case C_ONAME:
-			g_vm->_obj[index]._name = (uint16)value;
+			obj->_name = (uint16)value;
 			break;
 		case C_OEXAMINE:
-			g_vm->_obj[index]._examine = (uint16)value;
+			obj->_examine = (uint16)value;
 			break;
 		case C_OACTION:
-			g_vm->_obj[index]._action = (uint16)value;
+			obj->_action = (uint16)value;
 			break;
 		case C_OGOROOM:
-			g_vm->_obj[index]._goRoom = (uint8)value;
+			obj->_goRoom = (uint8)value;
 			break;
 		case C_OMODE:
 			if (value)
-				g_vm->_obj[index]._mode |= (uint8)index2;
+				obj->_mode |= (uint8)index2;
 			else
-				g_vm->_obj[index]._mode &= ~(uint8)index2;
+				obj->_mode &= ~(uint8)index2;
 			break;
 		case C_OFLAG:
 			if (value)
-				g_vm->_obj[index]._flag |= (uint8)index2;
+				obj->_flag |= (uint8)index2;
 			else
-				g_vm->_obj[index]._flag &= ~(uint8)index2;
+				obj->_flag &= ~(uint8)index2;
 			break;
 		default:
 			break;
@@ -320,7 +322,7 @@ void doScript() {
 		break;
 
 	case ME_CHARACTERSAY:
-		CharacterSay(g_vm->_curMessage->_u32Param);
+		CharacterSay(message->_u32Param);
 		break;
 
 	case ME_PLAYSOUND:
