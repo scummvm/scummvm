@@ -45,7 +45,7 @@ struct SRoom {
 struct SObject {
 	uint16 _dx, _dy;
 	uint16 _px, _py;
-	uint16 _lim[4];
+	Common::Rect _lim;
 	int8  _position;						// -1 if no position
 	uint16 _name;
 	uint16 _examine;

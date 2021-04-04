@@ -148,8 +148,8 @@ void ShowObjName(uint16 obj, bool showhide) {
 		else
 			locsent = g_vm->_objName[g_vm->_obj[obj]._name];
 
-		posx = (g_vm->_obj[obj]._lim[0] + g_vm->_obj[obj]._lim[2]) / 2;
-		posy = (obj == oWHEELS2C) ? 187 : g_vm->_obj[obj]._lim[1];
+		posx = (g_vm->_obj[obj]._lim.left + g_vm->_obj[obj]._lim.right) / 2;
+		posy = (obj == oWHEELS2C) ? 187 : g_vm->_obj[obj]._lim.top;
 
 		PositionString(posx, posy, locsent.c_str(), &posx, &posy, false);
 		if (g_vm->lastobj)
@@ -359,7 +359,7 @@ void SomeOneContinueTalk() {
 	substringagain = (CurSubString < (SubStringUsed - 1));
 
 	if (SpeakSomeOnePerson)
-		PositionString(g_vm->_obj[SpeakSomeOnePerson]._lim[0], g_vm->_obj[SpeakSomeOnePerson]._lim[1], SubString[CurSubString], &posx, &posy, false);
+		PositionString(g_vm->_obj[SpeakSomeOnePerson]._lim.left, g_vm->_obj[SpeakSomeOnePerson]._lim.top, SubString[CurSubString], &posx, &posy, false);
 	else
 		PositionString(g_vm->_actor->_lim[0], g_vm->_actor->_lim[2], SubString[CurSubString], &posx, &posy, true);
 

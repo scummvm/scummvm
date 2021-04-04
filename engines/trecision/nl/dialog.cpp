@@ -345,10 +345,10 @@ void afterChoice(int numframe) {
 			break;
 
 		case dF331:
-			g_vm->_obj[oTUBOT33]._lim[0] = 0;
-			g_vm->_obj[oTUBOT33]._lim[1] = 0;
-			g_vm->_obj[oTUBOT33]._lim[2] = 0;
-			g_vm->_obj[oTUBOT33]._lim[3] = 0;
+			g_vm->_obj[oTUBOT33]._lim.left = 0;
+			g_vm->_obj[oTUBOT33]._lim.top = 0;
+			g_vm->_obj[oTUBOT33]._lim.right = 0;
+			g_vm->_obj[oTUBOT33]._lim.bottom = 0;
 			CharacterSay(1997);
 			break;
 
