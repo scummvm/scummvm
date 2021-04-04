@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-04-03 11:04+0000\n"
-"PO-Revision-Date: 2021-03-28 02:24+0000\n"
+"PO-Revision-Date: 2021-04-04 11:24+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ja/>\n"
@@ -1317,7 +1317,7 @@ msgstr "拡張のフォルダー："
 
 #: gui/options.cpp:2092
 msgid "ScummVM config path: "
-msgstr ""
+msgstr "ScummVMの設定パス： "
 
 #: gui/options.cpp:2096
 msgid "Theme:"
@@ -2671,9 +2671,8 @@ msgstr "ウィンドウに合わせる"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:247
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:76
-#, fuzzy
 msgid "Stretch to window"
-msgstr "拡大モード："
+msgstr "ウィンドウに合わせて拡大"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:248
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:77
@@ -3130,9 +3129,8 @@ msgid "Snap to edges"
 msgstr "縁を切り落とす"
 
 #: backends/platform/3ds/options-dialog.cpp:54
-#, fuzzy
 msgid "Stretch to fit"
-msgstr "拡大モード："
+msgstr "フィットするよう拡大"
 
 #: backends/platform/3ds/options-dialog.cpp:57
 msgid "Use Screen:"
@@ -5120,24 +5118,20 @@ msgid "Open main menu"
 msgstr "メインメニューを開く"
 
 #: engines/mohawk/myst.cpp:576 engines/mohawk/riven.cpp:846
-#, fuzzy
 msgid "Load game state"
-msgstr "ゲームをロード"
+msgstr "ゲームステートをロード"
 
 #: engines/mohawk/myst.cpp:581 engines/mohawk/riven.cpp:851
-#, fuzzy
 msgid "Save game state"
-msgstr "ゲームをセーブ："
+msgstr "ゲームステートをセーブ"
 
 #: engines/mohawk/myst.cpp:586 engines/mohawk/riven.cpp:856
-#, fuzzy
 msgid "Show options menu"
-msgstr "設定"
+msgstr "オプションメニューを表示"
 
 #: engines/mohawk/myst.cpp:598
-#, fuzzy
 msgid "Drop page"
-msgstr "前のページ"
+msgstr "ページをドロップ"
 
 #: engines/mohawk/myst.cpp:604 engines/wintermute/keymapper_tables.h:1176
 #: engines/wintermute/keymapper_tables.h:1318
@@ -5210,24 +5204,20 @@ msgid "You are missing the following required Riven data files:\n"
 msgstr "Rivenに必要な、以下のデータファイルが見つかりません：\n"
 
 #: engines/mohawk/riven.cpp:868
-#, fuzzy
 msgid "Move forward"
-msgstr "前に進む"
+msgstr "前進"
 
 #: engines/mohawk/riven.cpp:874
-#, fuzzy
 msgid "Move forward left"
-msgstr "前に進む"
+msgstr "左に進む"
 
 #: engines/mohawk/riven.cpp:878
-#, fuzzy
 msgid "Move forward right"
-msgstr "前に進む"
+msgstr "右に進む"
 
 #: engines/mohawk/riven.cpp:882
-#, fuzzy
 msgid "Move backwards"
-msgstr "去る"
+msgstr "後退"
 
 #: engines/mohawk/riven.cpp:888 engines/wintermute/keymapper_tables.h:159
 #: engines/wintermute/keymapper_tables.h:520
@@ -5306,9 +5296,8 @@ msgstr ""
 "https://www.scummvm.org/frs/extras/patches/"
 
 #: engines/myst3/myst3.cpp:1575 engines/pegasus/pegasus.cpp:737
-#, fuzzy
 msgid "Invalid file name for saving"
-msgstr "セーブデータの名前を入力してください"
+msgstr "無効なセーブファイル名です"
 
 #: engines/nancy/cheat.cpp:53
 msgid "General"
@@ -5319,10 +5308,8 @@ msgid "Scene Data"
 msgstr "シーンデータ"
 
 #: engines/nancy/cheat.cpp:56
-#, fuzzy
-#| msgid "Start the debugger"
 msgid "Restart the Scene"
-msgstr "デバッガーを起動"
+msgstr "シーンをリスタート"
 
 #: engines/nancy/cheat.cpp:58
 msgid "Scene Number"
@@ -5354,10 +5341,8 @@ msgid "Hard"
 msgstr "ハード"
 
 #: engines/nancy/cheat.cpp:74 engines/nancy/cheat.cpp:85
-#, fuzzy
-#| msgid "Player 1: Left"
 msgid "Player Data"
-msgstr "1P：左"
+msgstr "プレイヤーデータ"
 
 #: engines/nancy/cheat.cpp:75
 msgid "Player Time:"
@@ -5384,83 +5369,60 @@ msgid "Timer On"
 msgstr "タイマー"
 
 #: engines/nancy/cheat.cpp:93
-#, fuzzy
-#| msgid "Second kid"
 msgid "Seconds"
-msgstr "2人目の子供"
+msgstr "秒"
 
 #: engines/nancy/cheat.cpp:162
-#, fuzzy
-#| msgid "Invalid path!"
 msgid "Invalid Scene ID!"
-msgstr "指定されたパスが不正です!"
+msgstr "シーンIDが不正です!"
 
 #: engines/nancy/input.cpp:166
-#, fuzzy
-#| msgid "Left Click"
 msgid "Left Click Interact"
-msgstr "左クリック"
+msgstr "左クリックで会話"
 
 #: engines/nancy/input.cpp:173
-#, fuzzy
-#| msgid "Right Click"
 msgid "Right Click Interact"
-msgstr "右クリック"
+msgstr "右クリックで会話"
 
 #: engines/nancy/input.cpp:204
-#, fuzzy
 msgid "Fast move modifier"
-msgstr "高速モードの切り替え"
+msgstr "高速移動の修正"
 
 #: engines/nancy/input.cpp:212
-#, fuzzy
-#| msgid "Toggle fast mode"
 msgid "Toggle fast conversation mode"
-msgstr "高速モードの切り替え"
+msgstr "高速会話モードの切り替え"
 
 #: engines/nancy/input.cpp:217
-#, fuzzy
-#| msgid "Toggle fast mode"
 msgid "Toggle end conversation mode"
-msgstr "高速モードの切り替え"
+msgstr "会話スキップモードの切り替え"
 
 #: engines/nancy/input.cpp:222
-#, fuzzy
-#| msgid "Open main menu"
 msgid "Go to main menu"
-msgstr "メインメニューを開く"
+msgstr "メインメニューへ"
 
 #: engines/nancy/input.cpp:227
-#, fuzzy
 msgid "Go to save/load menu"
-msgstr "セーブデータの同期を始まる"
+msgstr "セーブ/ロードメニューへ"
 
 #: engines/nancy/input.cpp:232
-#, fuzzy
-#| msgid "No date saved"
 msgid "Reload last save"
-msgstr "日付未記録"
+msgstr "最後にセーブしたデータをリロード"
 
 #: engines/nancy/input.cpp:237
-#, fuzzy
 msgid "Go to setup menu"
-msgstr "設定"
+msgstr "セットアップメニューへ"
 
 #: engines/nancy/input.cpp:242
-#, fuzzy
-#| msgid "Show game credits"
 msgid "Show credits"
-msgstr "ゲームクレジットを表示"
+msgstr "クレジットを表示"
 
 #: engines/nancy/input.cpp:247
-#, fuzzy
 msgid "Go to map screen"
-msgstr "スクショを保存する"
+msgstr "マップ画面へ"
 
 #: engines/nancy/input.cpp:253
-#, fuzzy
 msgid "Open general cheat menu"
-msgstr "マウス操作を有効にする"
+msgstr "総合チートメニューを開く"
 
 #: engines/nancy/input.cpp:258
 msgid "Open event flags cheat menu"
@@ -5492,18 +5454,16 @@ msgstr ""
 "\n"
 
 #: engines/parallaction/saveload.cpp:194
-#, fuzzy
 msgid "Load file"
-msgstr "ゲームをロード"
+msgstr "ファイルをロード"
 
 #: engines/parallaction/saveload.cpp:201
 msgid "Loading game..."
 msgstr "ロード中..."
 
 #: engines/parallaction/saveload.cpp:209
-#, fuzzy
 msgid "Save file"
-msgstr "ゲームをセーブ"
+msgstr "ファイルにセーブ"
 
 #: engines/parallaction/saveload.cpp:216
 msgid "Saving game..."
@@ -5545,14 +5505,12 @@ msgid "Up/Zoom In/Move Forward/Open Doors"
 msgstr "上/ズームイン/前方へ移動/ドアを開ける"
 
 #: engines/pegasus/pegasus.cpp:2718
-#, fuzzy
 msgid "Down/Zoom Out"
-msgstr "ズームアウト"
+msgstr "下/ズームアウト"
 
 #: engines/pegasus/pegasus.cpp:2739
-#, fuzzy
 msgid "Action/Select"
-msgstr "自発的"
+msgstr "アクション/セレクト"
 
 #: engines/pegasus/pegasus.cpp:2759
 msgid "Display/Hide Inventory Tray"
@@ -5575,10 +5533,8 @@ msgid "Display/Hide Pause Menu"
 msgstr "ポーズメニューの表示/非表示"
 
 #: engines/pegasus/pegasus.cpp:2795
-#, fuzzy
-#| msgid "Toggle fast mode"
 msgid "Toggle Chatty AI"
-msgstr "高速モードの切り替え"
+msgstr "おしゃべりAIの切り替え"
 
 #: engines/pegasus/pegasus.cpp:2804 engines/wintermute/keymapper_tables.h:298
 #: engines/wintermute/keymapper_tables.h:325
@@ -5616,14 +5572,12 @@ msgid "Use an alternative game intro (CD version only)"
 msgstr "もう1つのイントロを使用する(CD版のみ)"
 
 #: engines/saga/metaengine.cpp:114
-#, fuzzy
 msgid "I Have No Mouth support not compiled in"
-msgstr "含まれた機能："
+msgstr "I Have No Mouthのサポートはコンパイルされていません"
 
 #: engines/saga/metaengine.cpp:120
-#, fuzzy
 msgid "SAGA2 support not compiled in"
-msgstr "含まれた機能："
+msgstr "SAGA2のサポートはコンパイルされていません"
 
 #: engines/saga/saga.cpp:247
 msgid "Error loading game resources."
@@ -5638,9 +5592,8 @@ msgid "Skip dithering pass in EGA games, graphics are shown with full colors"
 msgstr "EGAディザリングパスをスキップし、フルカラーでグラフィックを表示"
 
 #: engines/sci/detection.cpp:153
-#, fuzzy
 msgid "Enable high resolution graphics"
-msgstr "高解像度なMPEGファイルを使用する"
+msgstr "ハイレゾグラフィックを有効化"
 
 #: engines/sci/detection.cpp:154
 msgid "Enable high resolution graphics/content"
@@ -5659,9 +5612,8 @@ msgid "Use high-quality video scaling"
 msgstr "高品質なビデオスケーリングを使用する"
 
 #: engines/sci/detection.cpp:175
-#, fuzzy
 msgid "Use linear interpolation when upscaling videos, where possible"
-msgstr "線形フィルターによる画像を拡大する"
+msgstr "映像のアップスケーリングに、可能な限り線形補間を使用"
 
 #: engines/sci/detection.cpp:185
 msgid "Use high-quality \"LarryScale\" cel scaling"
@@ -5672,9 +5624,8 @@ msgid "Use special cartoon scaler for drawing character sprites"
 msgstr "キャラクタースプライト用に特別なカートゥーンスケーラーを使用"
 
 #: engines/sci/detection.cpp:195
-#, fuzzy
 msgid "Prefer digital sound effects"
-msgstr "音響効果の音量"
+msgstr "デジタルSEを選ぶ"
 
 #: engines/sci/detection.cpp:196
 msgid "Prefer digital sound effects instead of synthesized ones"
@@ -5800,9 +5751,8 @@ msgid ""
 msgstr "最大色深度が8bppのシステムで、%dbppの映像を再生する事はできません"
 
 #: engines/sci/metaengine.cpp:325
-#, fuzzy
 msgid "SCI32 support not compiled in"
-msgstr "含まれた機能："
+msgstr "SCI32のサポートはコンパイルされていません"
 
 #: engines/sci/resource/resource.cpp:845
 msgid ""
@@ -5986,14 +5936,12 @@ msgid "Are you sure you want to quit?  (Y/N)Y"
 msgstr "終了してもよろしいですか?  (Y/N)Y"
 
 #: engines/scumm/dialogs.cpp:179
-#, fuzzy
 msgid "Play"
 msgstr "再生"
 
 #: engines/scumm/dialogs.cpp:183
-#, fuzzy
 msgid "Insert save/load game disk"
-msgstr "セーブデータの同期を始まる"
+msgstr "セーブ/ロードディスクを挿入"
 
 #: engines/scumm/dialogs.cpp:184
 msgid "You must enter a name"
@@ -6022,14 +5970,12 @@ msgid "Name your SAVE game"
 msgstr "セーブ名を入力してください"
 
 #: engines/scumm/dialogs.cpp:190
-#, fuzzy
 msgid "Select a game to LOAD"
-msgstr "テーマを選ぶ"
+msgstr "ロードするゲームを選択"
 
 #: engines/scumm/dialogs.cpp:191
-#, fuzzy
 msgid "Game title)"
-msgstr "ゲームメニュー"
+msgstr "ゲームタイトル"
 
 #. I18N: Previous page button
 #: engines/scumm/dialogs.cpp:277
@@ -6054,10 +6000,9 @@ msgid "Subtitles Only"
 msgstr "字幕のみ"
 
 #: engines/scumm/dialogs.cpp:621
-#, fuzzy
 msgctxt "lowres"
 msgid "Speech & Subs"
-msgstr "音声と字幕"
+msgstr "喋り&字幕"
 
 #: engines/scumm/dialogs.cpp:667
 msgid "Select a Proficiency Level."
@@ -6100,9 +6045,8 @@ msgid "Space"
 msgstr "スペース"
 
 #: engines/scumm/help.cpp:78
-#, fuzzy
 msgid "Pause game"
-msgstr "ゲームをセーブ："
+msgstr "ポーズ"
 
 #: engines/scumm/help.cpp:79 engines/scumm/help.cpp:84
 #: engines/scumm/help.cpp:95 engines/scumm/help.cpp:96
@@ -6113,9 +6057,8 @@ msgid "Ctrl"
 msgstr "Ctrl"
 
 #: engines/scumm/help.cpp:79
-#, fuzzy
 msgid "Load saved game 1-10"
-msgstr "ゲームをロード"
+msgstr "セーブ1～10番をロード"
 
 #: engines/scumm/help.cpp:80 engines/scumm/help.cpp:84
 #: engines/scumm/help.cpp:86 engines/scumm/help.cpp:100
@@ -6124,9 +6067,8 @@ msgid "Alt"
 msgstr "Alt"
 
 #: engines/scumm/help.cpp:80
-#, fuzzy
 msgid "Save game 1-10"
-msgstr "ゲームをセーブ："
+msgstr "1～10番にセーブ"
 
 #: engines/scumm/help.cpp:87
 msgid "Music volume up / down"
@@ -6137,27 +6079,24 @@ msgid "Text speed slower / faster"
 msgstr "テキスト表示速度を下げる/上げる"
 
 #: engines/scumm/help.cpp:89
-#, fuzzy
 msgid "Simulate left mouse button"
-msgstr "マウスの左ボタン"
+msgstr "マウスの左ボタンをシミュレート"
 
 #: engines/scumm/help.cpp:90 engines/wintermute/keymapper_tables.h:1741
 msgid "Tab"
 msgstr "Tab"
 
 #: engines/scumm/help.cpp:90
-#, fuzzy
 msgid "Simulate right mouse button"
-msgstr "マウスの右ボタン"
+msgstr "マウスの右ボタンをシミュレート"
 
 #: engines/scumm/help.cpp:93
 msgid "Special keyboard commands:"
 msgstr "特殊なキーボードコマンド："
 
 #: engines/scumm/help.cpp:94
-#, fuzzy
 msgid "Show / Hide console"
-msgstr "隠しファイルを表示する"
+msgstr "コンソールを表示/非表示"
 
 #: engines/scumm/help.cpp:95
 msgid "Start the debugger"
@@ -6180,14 +6119,12 @@ msgid "Switch between graphics filters"
 msgstr "グラフィックフィルターの切り替え"
 
 #: engines/scumm/help.cpp:101
-#, fuzzy
 msgid "Increase / Decrease scale factor"
-msgstr "スケールを拡大する"
+msgstr "スケールファクターを拡大/縮小"
 
 #: engines/scumm/help.cpp:102
-#, fuzzy
 msgid "Toggle aspect-ratio correction"
-msgstr "縦横比修正の切替"
+msgstr "アスペクト比補正の切り替え"
 
 #: engines/scumm/help.cpp:107
 msgid "* Note that using ctrl-f and"
@@ -6263,7 +6200,6 @@ msgstr "消す"
 
 #: engines/scumm/help.cpp:142 engines/scumm/help.cpp:167
 #: engines/scumm/help.cpp:194 engines/wintermute/keymapper_tables.h:1190
-#, fuzzy
 msgid "Walk to"
 msgstr "歩く"
 
@@ -6271,9 +6207,8 @@ msgstr "歩く"
 #: engines/scumm/help.cpp:195 engines/scumm/help.cpp:210
 #: engines/scumm/help.cpp:227 engines/wintermute/keymapper_tables.h:132
 #: engines/wintermute/keymapper_tables.h:1196
-#, fuzzy
 msgid "Pick up"
-msgstr "拾う／片付ける"
+msgstr "拾う"
 
 #: engines/scumm/help.cpp:144 engines/scumm/help.cpp:169
 msgid "What is"
@@ -6288,18 +6223,16 @@ msgid "Put on"
 msgstr "置く"
 
 #: engines/scumm/help.cpp:150
-#, fuzzy
 msgid "Take off"
-msgstr "消す"
+msgstr "外す"
 
 #: engines/scumm/help.cpp:156
 msgid "Fix"
 msgstr "直す"
 
 #: engines/scumm/help.cpp:158
-#, fuzzy
 msgid "Switch"
-msgstr "ゲームへ切り替え"
+msgstr "スイッチ"
 
 #: engines/scumm/help.cpp:166 engines/scumm/help.cpp:228
 msgid "Look"
@@ -6361,24 +6294,20 @@ msgstr "引く"
 #: engines/scumm/help.cpp:196 engines/scumm/help.cpp:212
 #: engines/scumm/help.cpp:248 engines/wintermute/keymapper_tables.h:126
 #: engines/wintermute/keymapper_tables.h:1208
-#, fuzzy
 msgid "Talk to"
 msgstr "話す"
 
 #: engines/scumm/help.cpp:199 engines/scumm/help.cpp:211
 #: engines/wintermute/keymapper_tables.h:120
 #: engines/wintermute/keymapper_tables.h:1184
-#, fuzzy
 msgid "Look at"
 msgstr "見る"
 
 #: engines/scumm/help.cpp:200
-#, fuzzy
 msgid "turn oN"
-msgstr "付く"
+msgstr "付ける"
 
 #: engines/scumm/help.cpp:201
-#, fuzzy
 msgid "turn oFf"
 msgstr "消す"
 
@@ -6391,9 +6320,8 @@ msgid "Highlight prev dialogue"
 msgstr "前のダイアログをハイライト"
 
 #: engines/scumm/help.cpp:218
-#, fuzzy
 msgid "KeyDown"
-msgstr "下"
+msgstr "下キー"
 
 #: engines/scumm/help.cpp:218
 msgid "Highlight next dialogue"
@@ -6420,9 +6348,8 @@ msgid "Tongue"
 msgstr "舌"
 
 #: engines/scumm/help.cpp:235
-#, fuzzy
 msgid "Punch"
-msgstr "ロンチャー"
+msgstr "パンチ"
 
 #: engines/scumm/help.cpp:236
 msgid "Kick"
@@ -6470,14 +6397,12 @@ msgid "Upper right item"
 msgstr "右上のアイテム"
 
 #: engines/scumm/help.cpp:265 engines/scumm/help.cpp:275
-#, fuzzy
 msgid "Lower right item"
-msgstr "右に行く"
+msgstr "右下のアイテム"
 
 #: engines/scumm/help.cpp:271
-#, fuzzy
 msgid "Middle left item"
-msgstr "中クリック"
+msgstr "左中央のアイテム"
 
 #: engines/scumm/help.cpp:274
 msgid "Middle right item"
@@ -6577,9 +6502,8 @@ msgid "Fly to upper left"
 msgstr "左へ上昇"
 
 #: engines/scumm/help.cpp:333
-#, fuzzy
 msgid "Fly to left"
-msgstr "左に行く"
+msgstr "左へ飛ぶ"
 
 #: engines/scumm/help.cpp:334
 msgid "Fly to lower left"
@@ -6602,9 +6526,8 @@ msgid "Fly to upper right"
 msgstr "右へ上昇"
 
 #: engines/scumm/help.cpp:339
-#, fuzzy
 msgid "Fly to right"
-msgstr "右に行く"
+msgstr "右へ飛ぶ"
 
 #: engines/scumm/help.cpp:340
 msgid "Fly to lower right"
@@ -6637,14 +6560,12 @@ msgstr ""
 "製品版はiTunes Storeからご購入いただけます。"
 
 #: engines/scumm/metaengine.cpp:422
-#, fuzzy
 msgid "HE v71+ support is not compiled in"
-msgstr "含まれた機能："
+msgstr "HE v71+のサポートはコンパイルされていません"
 
 #: engines/scumm/metaengine.cpp:446
-#, fuzzy
 msgid "SCUMM v7-8 support is not compiled in"
-msgstr "含まれた機能："
+msgstr "SCUMM v7-8のサポートはコンパイルされていません"
 
 #: engines/scumm/scumm.cpp:1942
 #, c-format
@@ -6772,9 +6693,8 @@ msgid "Toggle fast mode"
 msgstr "高速モードの切り替え"
 
 #: engines/sky/metaengine.cpp:123
-#, fuzzy
 msgid "Toggle really fast mode"
-msgstr "高速モードの切り替え"
+msgstr "超高速モードの切り替え"
 
 #: engines/stark/detection.cpp:322
 msgid "Load modded assets"
@@ -6797,9 +6717,8 @@ msgstr ""
 "すが、一部のディテールは損なわれます。"
 
 #: engines/stark/detection.cpp:340 engines/ultima/ultima8/meta_engine.cpp:172
-#, fuzzy
 msgid "Enable font anti-aliasing"
-msgstr "3Dアンチエイリアス："
+msgstr "フォントのアンチエイリアスを有効化"
 
 #: engines/stark/detection.cpp:341 engines/ultima/ultima8/meta_engine.cpp:173
 msgid "When font anti-aliasing is enabled, the text is smoother."
@@ -7096,15 +7015,12 @@ msgid "Enable the USA specific version flags"
 msgstr "北米版のバージョンフラグを有効にする"
 
 #: engines/twine/metaengine.cpp:149
-#, fuzzy
 msgid "Enable high resolution"
-msgstr "高解像度なMPEGファイルを使用する"
+msgstr "ハイレゾを有効化"
 
 #: engines/twine/metaengine.cpp:150
-#, fuzzy
-#| msgid "Enable the sound for the game"
 msgid "Enable a higher resolution for the game"
-msgstr "ゲームの音声を有効にする"
+msgstr "ゲームのハイレゾを有効化"
 
 #: engines/twine/metaengine.cpp:237
 msgid "Debug Next Room"
