@@ -360,9 +360,9 @@ void doMouse() {
 			int pmousey = g_vm->_curMessage->_u16Param2;
 			if (!(AtMouseClick(g_vm->_curObj))) {
 				if (CheckMask(g_vm->_curMessage->_u16Param1, g_vm->_curMessage->_u16Param2)) {
-					if ((g_vm->_obj[g_vm->_curObj]._lim[2] - g_vm->_obj[g_vm->_curObj]._lim[0]) < MAXX / 7) {
-						pmousex = (g_vm->_obj[g_vm->_curObj]._lim[0] + g_vm->_obj[g_vm->_curObj]._lim[2]) / 2;
-						pmousey = ((g_vm->_obj[g_vm->_curObj]._lim[1] + g_vm->_obj[g_vm->_curObj]._lim[3]) / 2) + TOP;
+					if ((g_vm->_obj[g_vm->_curObj]._lim.right - g_vm->_obj[g_vm->_curObj]._lim.left) < MAXX / 7) {
+						pmousex = (g_vm->_obj[g_vm->_curObj]._lim.left + g_vm->_obj[g_vm->_curObj]._lim.right) / 2;
+						pmousey = ((g_vm->_obj[g_vm->_curObj]._lim.top + g_vm->_obj[g_vm->_curObj]._lim.bottom) / 2) + TOP;
 					}
 				}
 				whereIs(pmousex, pmousey);

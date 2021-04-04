@@ -1052,8 +1052,8 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 		break;
 
 	case iTOPO1D:
-		if ((_vm->_useWith[WITH] == oDONNA1D) && ((mx >= _vm->_obj[oDONNA1D]._lim[0]) && (my >= _vm->_obj[oDONNA1D]._lim[1] + TOP)
-		&& (mx <= _vm->_obj[oDONNA1D]._lim[2]) && (my <= _vm->_obj[oDONNA1D]._lim[3] + TOP))) {
+		if ((_vm->_useWith[WITH] == oDONNA1D) && ((mx >= _vm->_obj[oDONNA1D]._lim.left) && (my >= _vm->_obj[oDONNA1D]._lim.top + TOP)
+		&& (mx <= _vm->_obj[oDONNA1D]._lim.right) && (my <= _vm->_obj[oDONNA1D]._lim.bottom + TOP))) {
 			PlayDialog(dF1D1);
 			*updateInventory = false;
 			_vm->removeIcon(iTOPO1D);
@@ -1537,10 +1537,10 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 	case iFIAMMIFERO:
 		if (_vm->_useWith[WITH] == oTORCIAS48) {
 			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a4812, 0, 0, _vm->_useWith[WITH]);
-			_vm->_obj[oTORCIAS48]._lim[0] = 0;
-			_vm->_obj[oTORCIAS48]._lim[1] = 0;
-			_vm->_obj[oTORCIAS48]._lim[2] = 0;
-			_vm->_obj[oTORCIAS48]._lim[3] = 0;
+			_vm->_obj[oTORCIAS48]._lim.left = 0;
+			_vm->_obj[oTORCIAS48]._lim.top = 0;
+			_vm->_obj[oTORCIAS48]._lim.right = 0;
+			_vm->_obj[oTORCIAS48]._lim.bottom = 0;
 			*printSentence = false;
 		}
 		break;

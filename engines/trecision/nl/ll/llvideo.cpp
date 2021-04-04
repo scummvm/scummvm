@@ -23,7 +23,6 @@
 #include "common/scummsys.h"
 #include "trecision/nl/struct.h"
 #include "trecision/nl/ll/llinc.h"
-#include "trecision/nl/extern.h"
 #include "trecision/nl/define.h"
 #include "trecision/trecision.h"
 
@@ -53,10 +52,10 @@ bool CheckMask(uint16 MX, uint16 MY) {
 		uint16 checkedObj = g_vm->_room[g_vm->_curRoom]._object[a];
 
 		if ((checkedObj) && (g_vm->_obj[checkedObj]._mode & (OBJMODE_OBJSTATUS))) {
-			if ((MX >= g_vm->_obj[checkedObj]._lim[0]) &&
-			    (MY >= g_vm->_obj[checkedObj]._lim[1] + TOP) &&
-			    (MX <= g_vm->_obj[checkedObj]._lim[2]) &&
-			    (MY <= g_vm->_obj[checkedObj]._lim[3] + TOP)) {
+			if ((MX >= g_vm->_obj[checkedObj]._lim.left) &&
+			    (MY >= g_vm->_obj[checkedObj]._lim.top + TOP) &&
+			    (MX <= g_vm->_obj[checkedObj]._lim.right) &&
+			    (MY <= g_vm->_obj[checkedObj]._lim.bottom + TOP)) {
 
 				if (g_vm->_obj[checkedObj]._mode & OBJMODE_FULL) {
 					g_vm->_curObj = checkedObj;

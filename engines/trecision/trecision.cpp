@@ -334,8 +334,10 @@ bool TrecisionEngine::syncGameStream(Common::Serializer &ser) {
 	}
 
 	for (int a = 0; a < MAXOBJ; a++) {
-		for (int i = 0; i < 4; i++)
-			ser.syncAsUint16LE(_obj[a]._lim[i]);
+		ser.syncAsUint16LE(_obj[a]._lim.left);
+		ser.syncAsUint16LE(_obj[a]._lim.top);
+		ser.syncAsUint16LE(_obj[a]._lim.right);
+		ser.syncAsUint16LE(_obj[a]._lim.bottom);
 		ser.syncAsUint16LE(_obj[a]._name);
 		ser.syncAsUint16LE(_obj[a]._examine);
 		ser.syncAsUint16LE(_obj[a]._action);
@@ -488,8 +490,10 @@ void TrecisionEngine::LoadAll() {
 		_obj[i]._px = dataNl.readUint16LE();
 		_obj[i]._py = dataNl.readUint16LE();
 
-		for (int j = 0; j < 4; ++j)
-			_obj[i]._lim[j] = dataNl.readUint16LE();
+		_obj[i]._lim.left = dataNl.readUint16LE();
+		_obj[i]._lim.top = dataNl.readUint16LE();
+		_obj[i]._lim.right = dataNl.readUint16LE();
+		_obj[i]._lim.bottom = dataNl.readUint16LE();
 
 		_obj[i]._position = dataNl.readSByte();
 		dataNl.readByte(); // Padding
