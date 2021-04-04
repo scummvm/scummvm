@@ -899,7 +899,6 @@ void GraphicsWidget::setGfxFromTheme(const char *name) {
 	Graphics::SVGBitmap *svg = g_gui.theme()->getSVG(name);
 
 	if (!svg) {
-		warning("Nope");
 		const Graphics::Surface *gfx = g_gui.theme()->getImageSurface(name);
 
 		setGfx(gfx);
