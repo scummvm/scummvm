@@ -46,7 +46,7 @@ int read3D(Common::String c) {
 		error("read3D: Can't open 3D file %s", c.c_str());
 
 	// read rooms and lights
-	FastFileRead(ff, g_vm->_actor->_camera, sizeof(SCamera));
+	ff->read(g_vm->_actor->_camera, sizeof(SCamera));
 
 	g_vm->_actor->_lightNum = ff->readSint32LE();
 	if (g_vm->_actor->_lightNum > MAXLIGHT)
@@ -85,7 +85,7 @@ int read3D(Common::String c) {
 		_panel[i]._col1 = ff->readSByte();
 		_panel[i]._col2 = ff->readSByte();
 	}
-	FastFileClose(ff);
+	delete ff;
 
 	// projection matrix
 	_proj[0][0] = g_vm->_actor->_camera->_e1[0];

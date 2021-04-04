@@ -72,8 +72,6 @@ void NlDelay(uint32 val);
 void NlDissolve(int val);
 bool CheckMask(uint16 MX, uint16 my);
 Common::SeekableReadStream *FastFileOpen(const char *name);
-void FastFileClose(Common::SeekableReadStream *stream);
-int FastFileRead(Common::SeekableReadStream *stream, void *ptr, int size);
 void byte2word(void *dest, void *src, void *data, uint32 len);
 void byte2wordm(void *dest, void *src, void *data, uint32 len);
 void byte2wordn(void *dest, void *src, void *data, uint32 len);

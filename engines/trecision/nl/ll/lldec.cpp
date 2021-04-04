@@ -102,10 +102,8 @@ uint32 DecCR(Common::String FileName, uint8 *DestArea, uint8 *DecArea) {
 	char *obuf = (char *)DestArea;
 
 	int isize = ff->size();
-
-	if ((isize != FastFileRead(ff, ibuf, isize)))
-		CloseSys(g_vm->_sysText[kMessageUnknownError]);
-	FastFileClose(ff);
+	ff->read(ibuf, isize);
+	delete ff;
 
 	if (*(unsigned *)ibuf != FAST_COOKIE)
 		CloseSys(g_vm->_sysText[kMessageErrorReadingFile]);
