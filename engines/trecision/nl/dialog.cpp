@@ -394,7 +394,7 @@ void afterChoice(int numframe) {
 					break;
 				}
 			}
-			g_vm->removeIcon(iASTA);
+			g_vm->removeIcon(iROD);
 			PlayDialog(dC4A1);
 			setPosition(12);
 			break;
