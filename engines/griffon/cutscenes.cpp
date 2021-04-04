@@ -188,13 +188,13 @@ void GriffonEngine::showLogos() {
 void GriffonEngine::intro() {
 	#ifdef USE_TTS
 		Common::TextToSpeechManager *_ttsMan = g_system->getTextToSpeechManager();
-		const char *story1 = story[0];
-		char result[1000];
 
-		strcpy(result,story1);
+		Common::String result;
+
+		result+=story[0];
 
 		for(int i=10; i< ARRAYSIZE(story); ++i){
-			strcat(result, story[i]);
+			result+=story[i];
 		}
 			
 		_ttsMan->say(result);
