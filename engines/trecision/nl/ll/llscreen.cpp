@@ -804,11 +804,9 @@ void PaintRegenRoom() {
                               DrawObj
 --------------------------------------------------*/
 void DrawObj(SDObj d) {
-	for (uint16 a = 0; a < 4; a++) {
-		if (d.l[a] > SCREENLEN)
-			return;
-	}
-
+	if (d.l.left > SCREENLEN || d.l.top > SCREENLEN || d.l.right > SCREENLEN || d.l.bottom > SCREENLEN)
+		return;
+	
 	uint16 *buf = d.buf;
 	if (d.flag & DRAWMASK) {
 		uint8 *mask = d.mask;
@@ -826,18 +824,18 @@ void DrawObj(SDObj d) {
 					} else {                 // copia
 						uint16 maskOffset = *mask;
 
-						if ((maskOffset != 0) && (b >= (d.y + d.l[1])) && (b < (d.y + d.l[3]))) {
-							if ((Sco >= d.l[0]) && ((Sco + maskOffset) < d.l[2]))
+						if ((maskOffset != 0) && (b >= (d.y + d.l.top)) && (b < (d.y + d.l.bottom))) {
+							if ((Sco >= d.l.left) && ((Sco + maskOffset) < d.l.right))
 								memcpy(g_vm->_screenBuffer + (b * SCREENLEN) + Sco + d.x, buf, maskOffset * 2);
 
-							else if ((Sco < d.l[0]) && ((Sco + maskOffset) < d.l[2]) && ((Sco + maskOffset) >= d.l[0]))
-								memcpy(g_vm->_screenBuffer + (b * SCREENLEN) + d.l[0] + d.x, buf + d.l[0] - Sco, (maskOffset + Sco - d.l[0]) * 2);
+							else if ((Sco < d.l.left) && ((Sco + maskOffset) < d.l.right) && ((Sco + maskOffset) >= d.l.left))
+								memcpy(g_vm->_screenBuffer + (b * SCREENLEN) + d.l.left + d.x, buf + d.l.left - Sco, (maskOffset + Sco - d.l.left) * 2);
 
-							else if ((Sco >= d.l[0]) && ((Sco + maskOffset) >= d.l[2]) && (Sco < d.l[2]))
-								memcpy(g_vm->_screenBuffer + (b * SCREENLEN) + Sco + d.x, buf, (d.l[2] - Sco) * 2);
+							else if ((Sco >= d.l.left) && ((Sco + maskOffset) >= d.l.right) && (Sco < d.l.right))
+								memcpy(g_vm->_screenBuffer + (b * SCREENLEN) + Sco + d.x, buf, (d.l.right - Sco) * 2);
 
-							else if ((Sco < d.l[0]) && ((Sco + maskOffset) >= d.l[2]))
-								memcpy(g_vm->_screenBuffer + (b * SCREENLEN) + d.l[0] + d.x, buf + d.l[0] - Sco, (d.l[2] - d.l[0]) * 2);
+							else if ((Sco < d.l.left) && ((Sco + maskOffset) >= d.l.right))
+								memcpy(g_vm->_screenBuffer + (b * SCREENLEN) + d.l.left + d.x, buf + d.l.left - Sco, (d.l.right - d.l.left) * 2);
 						}
 						Sco += *mask;
 						buf += *mask++;
@@ -848,9 +846,9 @@ void DrawObj(SDObj d) {
 		}
 	} else {
 		if (d.flag & COPYTORAM) {
-			for (uint16 b = d.l[1]; b < d.l[3]; b++) {
-				memcpy(g_vm->_screenBuffer + (d.y + b) * SCREENLEN + (d.x + d.l[0]),
-					  buf + (b * d.dx) + d.l[0], (d.l[2] - d.l[0]) * 2);
+			for (uint16 b = d.l.top; b < d.l.bottom; b++) {
+				memcpy(g_vm->_screenBuffer + (d.y + b) * SCREENLEN + (d.x + d.l.left),
+					  buf + (b * d.dx) + d.l.left, (d.l.right - d.l.left) * 2);
 			}
 		}
 	}

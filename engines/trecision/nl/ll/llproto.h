@@ -70,7 +70,7 @@ void resetZBuffer(int x1, int y1, int x2, int y2);
 uint32 ReadTime();
 void NlDelay(uint32 val);
 void NlDissolve(int val);
-bool CheckMask(uint16 MX, uint16 my);
+bool CheckMask(uint16 mx, uint16 my);
 Common::SeekableReadStream *FastFileOpen(const char *name);
 void byte2word(void *dest, void *src, void *data, uint32 len);
 void byte2wordm(void *dest, void *src, void *data, uint32 len);

@@ -66,7 +66,7 @@ void RegenRoom();
 void PaintRegenRoom();
 void DrawObj(SDObj);
 void resetZBuffer(int x1, int y1, int x2, int y2);
-bool CheckMask(uint16 MX, uint16 MY);
+bool CheckMask(uint16 mx, uint16 my);
 void actorDoAction(int whatAction);
 void actorStop();
 void setPosition(int num);
