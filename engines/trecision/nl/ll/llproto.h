@@ -37,8 +37,6 @@ void decompress(const uint8 *src, unsigned int src_len, uint8 *dst, unsigned int
 char waitKey();
 void FreeKey();
 char *GetNextSent();
-void VMouseOFF();
-void VMouseON();
 void Mouse(uint8 opt);
 uint16 TextLength(const char *sign, uint16 num);
 void IconSnapShot();

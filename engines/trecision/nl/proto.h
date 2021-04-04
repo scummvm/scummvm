@@ -46,8 +46,6 @@ int Compare(const void *p1, const void *p2);
 void RedrawRoom();
 void decompress(const uint8 *src, unsigned int src_len, uint8 *dst, unsigned int dst_len);
 uint32 DecCR(Common::String FileName, uint8 *DestArea, uint8 *DecArea);
-void VMouseOFF();
-void VMouseON();
 uint16 TextLength(const char *sign, uint16 num);
 void performLoad(int slot, bool skipLoad);
 void IconSnapShot();
