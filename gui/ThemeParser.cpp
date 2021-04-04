@@ -298,7 +298,11 @@ bool ThemeParser::parserCallback_bitmap(ParserNode *node) {
 		return true;
 	}
 
-	if (!_theme->addBitmap(node->values["filename"]))
+	Common::String scalableFile;
+	if (node->values.contains("scalable_file"))
+		scalableFile = node->values["scalable_file"];
+
+	if (!_theme->addBitmap(node->values["filename"], scalableFile))
 		return parserError("Error loading Bitmap file '" + node->values["filename"] + "'");
 
 	return true;
