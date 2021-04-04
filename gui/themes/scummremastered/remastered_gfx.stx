@@ -102,7 +102,7 @@
 	</palette>
 
 	<bitmaps>
-		<bitmap filename = 'logo.bmp'/>
+		<bitmap filename = 'logo.bmp' scalable_file = 'logo.svg'/>
 		<bitmap filename = 'cursor.bmp'/>
 		<bitmap filename = 'cursor_small.bmp'/>
 		<bitmap filename = 'checkbox.bmp'/>

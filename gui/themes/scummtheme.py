@@ -5,7 +5,7 @@ import re
 import os
 import zipfile
 
-THEME_FILE_EXTENSIONS = ('.stx', '.bmp', '.fcc', '.ttf', '.png')
+THEME_FILE_EXTENSIONS = ('.stx', '.bmp', '.fcc', '.ttf', '.png', '.svg')
 
 def buildTheme(themeName):
 	if not os.path.isdir(themeName) or not os.path.isfile(os.path.join(themeName, "THEMERC")):
