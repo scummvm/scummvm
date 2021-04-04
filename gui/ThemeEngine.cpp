@@ -33,6 +33,7 @@
 #include "graphics/cursorman.h"
 #include "graphics/fontman.h"
 #include "graphics/surface.h"
+#include "graphics/svg.h"
 #include "graphics/transparent_surface.h"
 #include "graphics/VectorRenderer.h"
 #include "graphics/fonts/bdf.h"
@@ -264,6 +265,14 @@ ThemeEngine::~ThemeEngine() {
 		}
 	}
 	_abitmaps.clear();
+
+	for (SVGMap::iterator i = _svgs.begin(); i != _svgs.end(); ++i) {
+		Graphics::SVGBitmap *svg = i->_value;
+		if (svg) {
+			delete svg;
+		}
+	}
+	_svgs.clear();
 
 	delete _parser;
 	delete _themeEval;
@@ -689,7 +698,7 @@ bool ThemeEngine::addTextColor(TextColor colorId, int r, int g, int b) {
 	return true;
 }
 
-bool ThemeEngine::addBitmap(const Common::String &filename) {
+bool ThemeEngine::addBitmap(const Common::String &filename, const Common::String &scalablefile) {
 	// Nothing has to be done if the bitmap already has been loaded.
 	Graphics::Surface *surf = _bitmaps[filename];
 	if (surf) {
@@ -743,6 +752,21 @@ bool ThemeEngine::addBitmap(const Common::String &filename) {
 
 		if (srcSurface && srcSurface->format.bytesPerPixel != 1)
 			surf = srcSurface->convertTo(_overlayFormat);
+	}
+
+	if (!scalablefile.empty()) {
+		Graphics::SVGBitmap *image = nullptr;
+		Common::ArchiveMemberList members;
+		_themeFiles.listMatchingMembers(members, filename);
+		for (Common::ArchiveMemberList::const_iterator i = members.begin(), end = members.end(); i != end; ++i) {
+			Common::SeekableReadStream *stream = (*i)->createReadStream();
+			if (stream) {
+				image = new Graphics::SVGBitmap(stream);
+				break;
+			}
+		}
+
+		_svgs[filename] = image;
 	}
 
 	if (_scaleFactor != 1.0) {

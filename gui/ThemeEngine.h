@@ -45,6 +45,7 @@ class OSystem;
 namespace Graphics {
 struct DrawStep;
 class VectorRenderer;
+class SVGBitmap;
 }
 
 namespace GUI {
@@ -202,6 +203,7 @@ private:
 class ThemeEngine {
 protected:
 	typedef Common::HashMap<Common::String, Graphics::Surface *> ImagesMap;
+	typedef Common::HashMap<Common::String, Graphics::SVGBitmap *> SVGMap;
 	typedef Common::HashMap<Common::String, Graphics::TransparentSurface *> AImagesMap;
 
 	friend class GUI::Dialog;
@@ -582,8 +584,9 @@ public:
 	 * The filename is also used as its identifier.
 	 *
 	 * @param filename Name of the bitmap file.
+	 * @param filename Name of the scalable (SVG) file, could be empty
 	 */
-	bool addBitmap(const Common::String &filename);
+	bool addBitmap(const Common::String &filename, const Common::String &scalablefile);
 
 	/**
 	 * Interface for the ThemeParser class: Loads a bitmap with transparency file to use on the GUI.
@@ -799,6 +802,7 @@ protected:
 	Common::Array<LangExtraFont> _langExtraFonts;
 
 	ImagesMap _bitmaps;
+	SVGMap _svgs;
 	AImagesMap _abitmaps;
 	Graphics::PixelFormat _overlayFormat;
 	Graphics::PixelFormat _cursorFormat;
