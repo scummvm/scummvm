@@ -186,20 +186,16 @@ void GriffonEngine::showLogos() {
 }
 
 void GriffonEngine::intro() {
-	#ifdef USE_TTS
-		Common::TextToSpeechManager *_ttsMan = g_system->getTextToSpeechManager();
-
-		Common::String result;
-
-		result+=story[0];
-
+#ifdef USE_TTS
+	Common::TextToSpeechManager *_ttsMan = g_system->getTextToSpeechManager();
+	if (_ttsMan != nullptr) {
+		Common::String result = story[0];
 		for(int i=10; i< ARRAYSIZE(story); ++i){
 			result+=story[i];
 		}
-
-		if (_ttsMan != nullptr)	
-			_ttsMan->say(result);
-	#endif
+		_ttsMan->say(result);
+	}
+#endif
 
 	_videoBuffer2->fillRect(Common::Rect(0, 0, _videoBuffer2->w, _videoBuffer2->h), 0);
 	_videoBuffer3->fillRect(Common::Rect(0, 0, _videoBuffer3->w, _videoBuffer3->h), 0);
