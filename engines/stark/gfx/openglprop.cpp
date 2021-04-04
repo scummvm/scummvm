@@ -73,9 +73,9 @@ void OpenGLPropRenderer::render(const Math::Vector3d &position, float direction,
 		// For each face draw its vertices from the VBO, indexed by the EBO
 		const Gfx::Texture *tex = _texture->getTexture(material.texture);
 		if (material.doubleSided)
-			glColorMaterial(GL_FRONT_AND_BACK, GL_DIFFUSE);
+			glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
 		else
-			glColorMaterial(GL_FRONT, GL_DIFFUSE);
+			glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
 		glEnable(GL_COLOR_MATERIAL);
 		if (tex) {
 			tex->bind();

@@ -102,7 +102,7 @@ void OpenGLActorRenderer::render(const Math::Vector3d &position, float direction
 	for (Common::Array<Face *>::const_iterator face = faces.begin(); face != faces.end(); ++face) {
 		const Material *material = mats[(*face)->materialId];
 		const Gfx::Texture *tex = resolveTexture(material);
-		glColorMaterial(GL_FRONT_AND_BACK, GL_DIFFUSE);
+		glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
 		glEnable(GL_COLOR_MATERIAL);
 		if (tex) {
 			tex->bind();
