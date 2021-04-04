@@ -20,6 +20,8 @@
  *
  */
 
+#include <common/system.h>
+
 #include "common/scummsys.h"
 #include "trecision/trecision.h"
 #include "trecision/nl/3d/3dinc.h"
@@ -519,7 +521,8 @@ void ReadLoc() {
 
 	ReadObj();
 
-	WaitSoundFadEnd();
+	SoundStopAll();
+
 	if (g_vm->_room[g_vm->_curRoom]._sounds[0] != 0)
 		ReadSounds();
 
@@ -685,7 +688,7 @@ void ReadExtraObj41D() {
 	if (!g_vm->_room[g_vm->_curRoom]._object[32])
 		return;
 
-	uint16 *o = (uint16 *)ExtraObj41D;
+	uint16 *obj = (uint16 *)ExtraObj41D;
 	ff = FastFileOpen("41D2.bm");
 	FastFileRead(ff, ExtraObj41D, ff->size());
 	FastFileClose(ff);
@@ -697,34 +700,34 @@ void ReadExtraObj41D() {
 			break;
 
 		if (g_vm->_obj[c]._mode & OBJMODE_FULL) {
-			BmInfo.read(o + b);
+			BmInfo.read(obj + b);
 			b += 4;
 			g_vm->_obj[c]._px = BmInfo.px;
 			g_vm->_obj[c]._py = BmInfo.py;
 			g_vm->_obj[c]._dx = BmInfo.dx;
 			g_vm->_obj[c]._dy = BmInfo.dy;
 
-			ObjPointers[a] = (uint16 *)(o + b);
+			ObjPointers[a] = (uint16 *)(obj + b);
 			g_vm->_graphicsMgr->updatePixelFormat(ObjPointers[a], (g_vm->_obj[c]._dx * g_vm->_obj[c]._dy));
 			b += (g_vm->_obj[c]._dx * g_vm->_obj[c]._dy);
 		}
 
 		if ((g_vm->_obj[c]._mode & OBJMODE_MASK)) {
-			BmInfo.read(o + b);
+			BmInfo.read(obj + b);
 			b += 4;
 			g_vm->_obj[c]._px = BmInfo.px;
 			g_vm->_obj[c]._py = BmInfo.py;
 			g_vm->_obj[c]._dx = BmInfo.dx;
 			g_vm->_obj[c]._dy = BmInfo.dy;
 
-			uint32 *p = (uint32 *)(o + b);
+			uint32 *p = (uint32 *)(obj + b);
 			ObjPointers[a] = (uint16 *)p + 2;
 			g_vm->_graphicsMgr->updatePixelFormat(ObjPointers[a], *p);
 
 			b += (p[0]);
 			b += 2;
 
-			p = (uint32 *)(o + b);
+			p = (uint32 *)(obj + b);
 			MaskPointers[a] = (uint8 *)p + 4;
 			b += (*p / 2);
 			b += 2;

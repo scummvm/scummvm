@@ -193,6 +193,7 @@ void NLPlaySound(int num);
 void NLStopSound(int num);
 void SoundFadOut();
 void SoundFadIn(int num);
+void SoundStopAll();
 void WaitSoundFadEnd();
 void SoundPasso(int midx, int midz, int act, int frame, uint16 *list);
 void ContinueTalk();
