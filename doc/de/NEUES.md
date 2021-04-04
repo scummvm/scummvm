@@ -17,6 +17,7 @@ Programmcodes finden Sie auf Englisch unter:
    - Unterstützung für OO-Topos hinzugefügt.
    - Unterstützung für die Glulx interactive fiction-Spiele hinzugefügt.
    - Unterstützung für die US-Version von Private Eye hinzugefügt.
+   - Unterstützung für AGS-Spiele (AGS-Version 2.5+) hinzugefügt.
 
  Neue Portierungen:
    - Die Version für den Nintendo DS wurde zu großen Teilen neu geschrieben.
