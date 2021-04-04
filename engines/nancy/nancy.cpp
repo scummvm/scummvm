@@ -196,16 +196,6 @@ void NancyEngine::setState(NancyState::NancyState state, NancyState::NancyState 
 
 	_graphicsManager->clearObjects();
 
-	State::State *s = getStateObject(_gameFlow.curState);
-	if (s) {
-		s->onStateExit();
-	}
-	
-	s = getStateObject(state);
-	if (s) {
-		s->onStateEnter();
-	}
-
 	if (overridePrevious != NancyState::kNone) {
 		_gameFlow.prevState = overridePrevious;
 	} else {
@@ -213,6 +203,16 @@ void NancyEngine::setState(NancyState::NancyState state, NancyState::NancyState 
 	}
 
 	_gameFlow.curState = state;
+
+	State::State *s = getStateObject(_gameFlow.prevState);
+	if (s) {
+		s->onStateExit();
+	}
+	
+	s = getStateObject(_gameFlow.curState);
+	if (s) {
+		s->onStateEnter();
+	}
 }
 
 void NancyEngine::setToPreviousState() {
