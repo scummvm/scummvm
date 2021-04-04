@@ -196,8 +196,9 @@ void GriffonEngine::intro() {
 		for(int i=10; i< ARRAYSIZE(story); ++i){
 			result+=story[i];
 		}
-			
-		_ttsMan->say(result);
+
+		if (_ttsMan != nullptr)	
+			_ttsMan->say(result);
 	#endif
 
 	_videoBuffer2->fillRect(Common::Rect(0, 0, _videoBuffer2->w, _videoBuffer2->h), 0);
