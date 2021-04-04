@@ -1100,7 +1100,8 @@ bool Ultima8Engine::newGame(int saveSlot) {
 		_avatarMoverProcess = new CruAvatarMoverProcess();
 	_kernel->addProcess(_avatarMoverProcess);
 
-	_kernel->addProcess(new HealProcess());
+	if (GAME_IS_U8)
+		_kernel->addProcess(new HealProcess());
 
 	_kernel->addProcess(new SchedulerProcess());
 
