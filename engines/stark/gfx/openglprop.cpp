@@ -67,6 +67,7 @@ void OpenGLPropRenderer::render(const Math::Vector3d &position, float direction,
 	const Common::Array<Face> &faces = _model->getFaces();
 	const Common::Array<Material> &materials = _model->getMaterials();
 
+	glEnable(GL_COLOR_MATERIAL);
 	for (Common::Array<Face>::const_iterator face = faces.begin(); face != faces.end(); ++face) {
 		const Material &material = materials[face->materialId];
 
@@ -76,7 +77,6 @@ void OpenGLPropRenderer::render(const Math::Vector3d &position, float direction,
 			glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
 		else
 			glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
-		glEnable(GL_COLOR_MATERIAL);
 		if (tex) {
 			tex->bind();
 			glColor3f(1.0f, 1.0f, 1.0f);
@@ -102,8 +102,8 @@ void OpenGLPropRenderer::render(const Math::Vector3d &position, float direction,
 		glDisableClientState(GL_NORMAL_ARRAY);
 		glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 
-		glDisable(GL_COLOR_MATERIAL);
 	}
+	glDisable(GL_COLOR_MATERIAL);
 
 }
 

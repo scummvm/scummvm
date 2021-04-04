@@ -99,11 +99,11 @@ void OpenGLActorRenderer::render(const Math::Vector3d &position, float direction
 	Common::Array<Material *> mats = _model->getMaterials();
 	const Common::Array<BoneNode *> &bones = _model->getBones();
 
+	glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
+	glEnable(GL_COLOR_MATERIAL);
 	for (Common::Array<Face *>::const_iterator face = faces.begin(); face != faces.end(); ++face) {
 		const Material *material = mats[(*face)->materialId];
 		const Gfx::Texture *tex = resolveTexture(material);
-		glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
-		glEnable(GL_COLOR_MATERIAL);
 		if (tex) {
 			tex->bind();
 			glColor3f(1.0f, 1.0f, 1.0f);
@@ -183,8 +183,8 @@ void OpenGLActorRenderer::render(const Math::Vector3d &position, float direction
 		glDisableClientState(GL_NORMAL_ARRAY);
 		glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 
-		glDisable(GL_COLOR_MATERIAL);
 	}
+	glDisable(GL_COLOR_MATERIAL);
 
 
 	if (drawShadow) {
