@@ -117,14 +117,14 @@ void openSys() {
 	ff = FastFileOpen("NlFont.fnt");
 	g_vm->Font = new uint8[ff->size()];
 	ff->read(g_vm->Font, ff->size());
-	FastFileClose(ff);
+	delete ff;
 
 	ff = FastFileOpen("frecc.bm");
 	int size = ceil(ff->size() / 2.0);
 	g_vm->Arrows = new uint16[size];
 	for (int i = 0; i < size; ++i)
 		g_vm->Arrows[i] = ff->readUint16LE();
-	FastFileClose(ff);
+	delete ff;
 	g_vm->_graphicsMgr->updatePixelFormat(g_vm->Arrows, size);
 
 	ff = FastFileOpen("icone.bm");
@@ -136,7 +136,7 @@ void openSys() {
 		g_vm->Icone[i] = 0;
 	for (int i = 0; i < size; ++i)
 		g_vm->Icone[iconSize + i] = ff->readUint16LE();
-	FastFileClose(ff);
+	delete ff;
 	g_vm->_graphicsMgr->updatePixelFormat(&g_vm->Icone[iconSize], size);
 
 	//
@@ -144,7 +144,7 @@ void openSys() {
 	size = ff->size();
 	g_vm->TextureArea = new uint8[size];
 	ff->read(g_vm->TextureArea, size);
-	FastFileClose(ff);
+	delete ff;
 
 	// head
 	hh = 0;
@@ -321,7 +321,7 @@ void SActor::ReadActor(const char *filename) {
 	}
 	_vertex = _characterArea;
 	_faceNum = ff->readUint32LE();
-	FastFileClose(ff);
+	delete ff;
 
 	ff = FastFileOpen("mat.tex");
 	if (ff == nullptr)
@@ -349,7 +349,7 @@ void SActor::ReadActor(const char *filename) {
 		_face[i]._mat = ff->readSint16LE();
 	}
 
-	FastFileClose(ff);
+	delete ff;
 
 	_curFrame = 0;
 	_curAction = hSTAND;
@@ -635,8 +635,8 @@ void ReadExtraObj2C() {
 	
 	uint16 *o = (uint16 *)ExtraObj2C;
 	ff = FastFileOpen("2C2.bm");
-	FastFileRead(ff, ExtraObj2C, ff->size());
-	FastFileClose(ff);
+	ff->read(ExtraObj2C, ff->size());
+	delete ff;
 
 	uint32 b = 0;
 	for (uint16 a = 20; a < MAXOBJINROOM; a++) {
@@ -689,8 +689,8 @@ void ReadExtraObj41D() {
 
 	uint16 *obj = (uint16 *)ExtraObj41D;
 	ff = FastFileOpen("41D2.bm");
-	FastFileRead(ff, ExtraObj41D, ff->size());
-	FastFileClose(ff);
+	ff->read(ExtraObj41D, ff->size());
+	delete ff;
 
 	uint32 b = 0;
 	for (uint16 a = 89; a < MAXOBJINROOM; a++) {
@@ -758,7 +758,7 @@ void ReadSounds() {
 		int len = ff->size();
 		g_vm->SoundPointer[a] = new uint8[len];
 		ff->read(g_vm->SoundPointer[a], len);
-		FastFileClose(ff);
+		delete ff;
 		LoadAudioWav(b, g_vm->SoundPointer[a], len);
 
 		if (GSample[b]._flag & SOUNDFLAG_SBACK)

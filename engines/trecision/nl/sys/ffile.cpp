@@ -125,36 +125,4 @@ Common::SeekableReadStream *FastFileOpen(const char *name) {
 	return stream;
 }
 
-/* -----------------19/01/98 17.16-------------------
- * FastFileClose
- *
- * Mark a fast file handle as closed
- * --------------------------------------------------*/
-void FastFileClose(Common::SeekableReadStream *stream) {
-	if (stream == nullptr)
-		warning("FastFileClose: invalid handle");
-	delete stream;
-}
-
-/* -----------------19/01/98 17.17-------------------
- * FastFileRead
- *
- * read from a fast file (memcpy!)
- * --------------------------------------------------*/
-int FastFileRead(Common::SeekableReadStream *stream, void *ptr, int size) {
-	if (stream == nullptr) {
-		warning("FastFileRead: invalid handle");
-		return 0;
-	}
-	if (size < 0) {
-		warning("FastFileRead: invalid size");
-		return 0;
-	}
-	if (stream->pos() + size > stream->size()) {
-		warning("FastFileRead: read past end of file");
-		return 0;
-	}
-	return stream->read(ptr, size);
-}
-
 } // End of namespace Trecision
