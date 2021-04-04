@@ -193,7 +193,7 @@ void GriffonEngine::intro() {
 
 		strcpy(result,story1);
 
-		for(int i=10; i<=47; ++i){
+		for(int i=10; i< ARRAYSIZE(story); ++i){
 			strcat(result, story[i]);
 		}
 			
@@ -252,7 +252,7 @@ void GriffonEngine::intro() {
 			y--;
 		}
 
-		for (int i = 0; i <= 47; i++) {
+		for (int i = 0; i < ARRAYSIZE(story); i++) {
 			int yy = y + i * 10;
 			if (yy > -8 && yy < 240) {
 				int x = 160 - strlen(story[i]) * 4;
