@@ -157,7 +157,7 @@ void CruAvatarMoverProcess::handleCombatMode() {
 	} else if (hasMovementFlags(MOVE_BACK)) {
 		Animation::Sequence nextanim;
 		if (hasMovementFlags(MOVE_JUMP)) {
-			if (!avatar->isKneeling()) {
+			if (!avatar->isKneeling() && avatar->hasAnim(Animation::kneelStartCru)) {
 				nextanim = Animation::kneelStartCru;
 				avatar->setActorFlag(Actor::ACT_KNEELING);
 			} else {
