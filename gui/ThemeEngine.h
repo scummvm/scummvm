@@ -637,6 +637,10 @@ public:
 		return _abitmaps.contains(name) ? _abitmaps[name] : 0;
 	}
 
+	Graphics::SVGBitmap *getSVG(const Common::String &name) {
+		return _svgs.contains(name) ? _svgs[name] : 0;
+	}
+
 	const Graphics::Surface *getImageSurface(const Common::String &name) const {
 		return _bitmaps.contains(name) ? _bitmaps[name] : 0;
 	}

@@ -421,6 +421,7 @@ public:
 
 	void setGfx(const Graphics::Surface *gfx);
 	void setGfx(int w, int h, int r, int g, int b);
+	void setGfxFromTheme(const char *name);
 
 	void useAlpha(int alpha) { _alpha = alpha; }
 	void useThemeTransparency(bool enable) { _transparency = enable; }
