@@ -66,7 +66,6 @@ int16 SoundFadInVal;
 int16 SoundFadOutVal;
 
 extern uint8 SpeechBuf[SPEECHSIZE];
-extern const char *_sysSentence[];
 
 #define VOLUME(a)	( (a*255)/127 )
 #define TIME(a)		( (a*3)/50 )

@@ -36,8 +36,6 @@ namespace Trecision {
 // inventory
 #define COUNTERSTEP 6
 
-bool ForceQuit = false;
-
 /*-------------------------------------------------------------------------*/
 /*                                DOACTION           					   */
 /*-------------------------------------------------------------------------*/
@@ -899,7 +897,7 @@ void doIdle() {
 		g_vm->_inventoryScrollTime = TheTime;
 	}
 
-	if (ForceQuit && !FlagDialogActive  && !FlagDialogMenuActive)
+	if (g_engine->shouldQuit() && !FlagDialogActive  && !FlagDialogMenuActive)
 		doEvent(MC_SYSTEM, ME_QUIT, MP_SYSTEM, 0, 0, 0, 0);
 }
 
