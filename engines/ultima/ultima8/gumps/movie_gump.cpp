@@ -33,6 +33,7 @@
 #include "ultima/ultima8/world/get_object.h"
 #include "ultima/ultima8/gumps/gump_notify_process.h"
 #include "ultima/ultima8/gumps/cru_status_gump.h"
+#include "ultima/ultima8/gumps/widgets/text_widget.h"
 
 #include "ultima/ultima8/filesys/file_system.h"
 
@@ -48,7 +49,7 @@ MovieGump::MovieGump() : ModalGump(), _player(nullptr) {
 MovieGump::MovieGump(int width, int height, Common::SeekableReadStream *rs,
                      bool introMusicHack, bool noScale, const byte *overridePal,
 					 uint32 flags, int32 layer)
-		: ModalGump(50, 50, width, height, 0, flags, layer) {
+		: ModalGump(50, 50, width, height, 0, flags, layer), _subtitleWidget(0) {
 	uint32 stream_id = rs->readUint32BE();
 	rs->seek(-4, SEEK_CUR);
 	if (stream_id == 0x52494646) {// 'RIFF' - crusader AVIs
@@ -93,6 +94,24 @@ void MovieGump::run() {
 	ModalGump::run();
 
 	_player->run();
+
+	AVIPlayer *aviplayer = dynamic_cast<AVIPlayer *>(_player);
+	if (aviplayer) {
+		const int frameno = aviplayer->getFrameNo();
+		if (_subtitles.contains(frameno)) {
+			TextWidget *subtitle = dynamic_cast<TextWidget *>(getGump(_subtitleWidget));
+			if (subtitle)
+				subtitle->Close();
+			// Create a new TextWidget
+			TextWidget *widget = new TextWidget(0, 0, _subtitles[frameno], true, 4, 640, 10);
+			widget->InitGump(this);
+			widget->setRelativePosition(BOTTOM_CENTER, 0, -10);
+			// Subtitles should be white.
+			widget->setBlendColour(0xffffffff);
+			_subtitleWidget = widget->getObjId();
+		}
+	}
+
 	if (!_player->isPlaying()) {
 		Close();
 	}
@@ -137,6 +156,36 @@ ProcId MovieGump::U8MovieViewer(Common::SeekableReadStream *rs, bool fade, bool 
 	}
 }
 
+void MovieGump::loadSubtitles(Common::SeekableReadStream *rs) {
+	const uint32 id = rs->readUint32BE();
+	rs->seek(0);
+
+	if (id == 0x464F524D) { // 'FORM'
+		loadIFFSubs(rs);
+	} else {
+		loadTXTSubs(rs);
+	}
+}
+
+void MovieGump::loadTXTSubs(Common::SeekableReadStream *rs) {
+	int frameno = 0;
+	Common::String subtitles;
+	while (!rs->eos()) {
+		Common::String line = rs->readLine();
+		if (line.hasPrefix("@frame ")) {
+			frameno = atoi(line.c_str() + 7);
+			subtitles += '\n';
+		} else {
+			_subtitles[frameno] = line;
+			subtitles += line;
+		}
+	}
+}
+
+void MovieGump::loadIFFSubs(Common::SeekableReadStream *rs) {
+	warning("TODO: load IFF subtitle data");
+}
+
 bool MovieGump::loadData(Common::ReadStream *rs) {
 	return false;
 }
@@ -168,20 +217,34 @@ static Std::string _fixCrusaderMovieName(const Std::string &s) {
 	return s;
 }
 
-static Common::SeekableReadStream *_tryLoadCruMovie(const Std::string &filename) {
-	const Std::string path = Std::string::format("flics/%s.avi", filename.c_str());
+static Common::SeekableReadStream *_tryLoadCruMovieFile(const Std::string &filename, const char *extn) {
+	const Std::string path = Std::string::format("flics/%s.%s", filename.c_str(), extn);
 	FileSystem *filesys = FileSystem::get_instance();
 	Common::SeekableReadStream *rs = filesys->ReadFile(path);
 	if (!rs) {
 		// Try with a "0" in the name
-		const Std::string adjustedfn = Std::string::format("flics/0%s.avi", filename.c_str());
+		const Std::string adjustedfn = Std::string::format("flics/0%s.%s", filename.c_str(), extn);
 		rs = filesys->ReadFile(adjustedfn);
-		if (!rs) {
-			warning("movie %s not found", filename.c_str());
-			return 0;
-		}
+		if (!rs)
+			return nullptr;
 	}
 	return rs;
+}
+
+static Common::SeekableReadStream *_tryLoadCruAVI(const Std::string &filename) {
+	Common::SeekableReadStream *rs = _tryLoadCruMovieFile(filename, "avi");
+	if (!rs)
+		warning("movie %s not found", filename.c_str());
+	return rs;
+}
+
+// Convenience function that tries to open both TXT (No Remorse)
+// and IFF (No Regret) subtitle formats.
+static Common::SeekableReadStream *_tryLoadCruSubtitle(const Std::string &filename) {
+	Common::SeekableReadStream *txtfile = _tryLoadCruMovieFile(filename, "txt");
+	if (txtfile)
+		return txtfile;
+	return _tryLoadCruMovieFile(filename, "iff");
 }
 
 uint32 MovieGump::I_playMovieOverlay(const uint8 *args,
@@ -201,11 +264,12 @@ uint32 MovieGump::I_playMovieOverlay(const uint8 *args,
 		const Palette *pal = palman->getPalette(PaletteManager::Pal_Game);
 		assert(pal);
 
-		Common::SeekableReadStream *rs = _tryLoadCruMovie(name);
+		Common::SeekableReadStream *rs = _tryLoadCruAVI(name);
 		if (rs) {
-			Gump *gump = new MovieGump(x, y, rs, false, false, pal->_palette);
+			MovieGump *gump = new MovieGump(x, y, rs, false, false, pal->_palette);
 			gump->InitGump(nullptr, true);
 			gump->setRelativePosition(CENTER);
+			gump->loadSubtitles(_tryLoadCruSubtitle(name));
 		}
 	}
 
@@ -219,11 +283,12 @@ uint32 MovieGump::I_playMovieCutscene(const uint8 *args, unsigned int /*argsize*
 	ARG_UINT16(y);
 
 	if (item) {
-		Common::SeekableReadStream *rs = _tryLoadCruMovie(name);
+		Common::SeekableReadStream *rs = _tryLoadCruAVI(name);
 		if (rs) {
-			Gump *gump = new MovieGump(x * 3, y * 3, rs, false, false);
+			MovieGump *gump = new MovieGump(x * 3, y * 3, rs, false, false);
 			gump->InitGump(nullptr, true);
 			gump->setRelativePosition(CENTER);
+			gump->loadSubtitles(_tryLoadCruSubtitle(name));
 		}
 	}
 
@@ -239,11 +304,12 @@ uint32 MovieGump::I_playMovieCutsceneAlt(const uint8 *args, unsigned int /*argsi
 	warning("MovieGump::I_playMovieCutsceneAlt: TODO: This intrinsic should pause and fade the background to grey");
 
 	if (item) {
-		Common::SeekableReadStream *rs = _tryLoadCruMovie(name);
+		Common::SeekableReadStream *rs = _tryLoadCruAVI(name);
 		if (rs) {
-			Gump *gump = new MovieGump(x * 3, y * 3, rs, false, false);
+			MovieGump *gump = new MovieGump(x * 3, y * 3, rs, false, false);
 			gump->InitGump(nullptr, true);
 			gump->setRelativePosition(CENTER);
+			gump->loadSubtitles(_tryLoadCruSubtitle(name));
 		}
 	}
 
@@ -256,11 +322,12 @@ uint32 MovieGump::I_playMovieCutsceneRegret(const uint8 *args, unsigned int /*ar
 
 	warning("MovieGump::I_playMovieCutsceneRegret: TODO: use fade argument %d", fade);
 
-	Common::SeekableReadStream *rs = _tryLoadCruMovie(name);
+	Common::SeekableReadStream *rs = _tryLoadCruAVI(name);
 	if (rs) {
-		Gump *gump = new MovieGump(640, 480, rs, false, false);
+		MovieGump *gump = new MovieGump(640, 480, rs, false, false);
 		gump->InitGump(nullptr, true);
 		gump->setRelativePosition(CENTER);
+		gump->loadSubtitles(_tryLoadCruSubtitle(name));
 	}
 
 	return 0;

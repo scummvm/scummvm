@@ -124,5 +124,9 @@ void AVIPlayer::run() {
 	}
 }
 
+int AVIPlayer::getFrameNo() const {
+	return _decoder->getCurFrame();
+}
+
 } // End of namespace Ultima8
 } // End of namespace Ultima

@@ -53,6 +53,8 @@ public:
 		return _playing;
 	}
 
+	int getFrameNo() const;
+
 private:
 
 	bool _playing;
