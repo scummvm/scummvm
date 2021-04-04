@@ -38,6 +38,10 @@
 
 #include "griffon/griffon.h"
 
+#ifdef USE_TTS
+#include "common/text-to-speech.h"
+#endif
+
 namespace Griffon {
 
 #define POLL_AND_CHECK_QUIT() 		if (g_system->getEventManager()->pollEvent(_event)) { \
@@ -182,6 +186,20 @@ void GriffonEngine::showLogos() {
 }
 
 void GriffonEngine::intro() {
+	#ifdef USE_TTS
+		Common::TextToSpeechManager *_ttsMan = g_system->getTextToSpeechManager();
+		const char *story1 = story[0];
+		char result[1000];
+
+		strcpy(result,story1);
+
+		for(int i=10; i<=47; ++i){
+			strcat(result, story[i]);
+		}
+			
+		_ttsMan->say(result);
+	#endif
+
 	_videoBuffer2->fillRect(Common::Rect(0, 0, _videoBuffer2->w, _videoBuffer2->h), 0);
 	_videoBuffer3->fillRect(Common::Rect(0, 0, _videoBuffer3->w, _videoBuffer3->h), 0);
 
@@ -234,7 +252,7 @@ void GriffonEngine::intro() {
 			y--;
 		}
 
-		for (int i = 0; i <= 37; i++) {
+		for (int i = 0; i <= 47; i++) {
 			int yy = y + i * 10;
 			if (yy > -8 && yy < 240) {
 				int x = 160 - strlen(story[i]) * 4;
