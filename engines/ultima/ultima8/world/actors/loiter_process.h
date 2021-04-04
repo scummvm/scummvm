@@ -42,6 +42,7 @@ public:
 	bool loadData(Common::ReadStream *rs, uint32 version);
 	void saveData(Common::WriteStream *ws) override;
 
+	void dumpInfo() const override;
 protected:
 	int32 _count;
 };

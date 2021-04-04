@@ -44,6 +44,11 @@ LoiterProcess::LoiterProcess(Actor *actor, int32 c) : _count(c) {
 		_type = 0x205; // CONSTANT!
 	else
 		_type = 599;
+
+	// Only loiter with one process at a time.
+	Process *previous = Kernel::get_instance()->findProcess(_itemNum, _type);
+	if (previous)
+		previous->terminate();
 }
 
 void LoiterProcess::run() {
@@ -101,6 +106,11 @@ void LoiterProcess::run() {
 
 		waitFor(dp);
 	}
+}
+
+void LoiterProcess::dumpInfo() const {
+	Process::dumpInfo();
+	pout << "Frames left: " << _count;
 }
 
 void LoiterProcess::saveData(Common::WriteStream *ws) {
