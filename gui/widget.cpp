@@ -26,6 +26,7 @@
 #include "common/textconsole.h"
 #include "common/translation.h"
 #include "graphics/pixelformat.h"
+#include "graphics/svg.h"
 #include "gui/widget.h"
 #include "gui/gui-manager.h"
 
@@ -892,6 +893,23 @@ void GraphicsWidget::setGfx(int w, int h, int r, int g, int b) {
 	_gfx.free();
 	_gfx.create(w, h, requiredFormat);
 	_gfx.fillRect(Common::Rect(0, 0, w, h), _gfx.format.RGBToColor(r, g, b));
+}
+
+void GraphicsWidget::setGfxFromTheme(const char *name) {
+	Graphics::SVGBitmap *svg = g_gui.theme()->getSVG(name);
+
+	if (!svg) {
+		warning("Nope");
+		const Graphics::Surface *gfx = g_gui.theme()->getImageSurface(name);
+
+		setGfx(gfx);
+
+		return;
+	}
+
+	_gfx.free();
+	_gfx.create(_w, _h, g_gui.theme()->getPixelFormat());
+	svg->render(_gfx, _w, _h);
 }
 
 void GraphicsWidget::drawWidget() {
