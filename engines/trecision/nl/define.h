@@ -481,10 +481,10 @@
 #define oPORTELLOC22			241
 #define oMANIGLIONE22			242
 #define oMANIGLIONEO22			243
-#define od22ALLA29				244
+#define od22TO29				244
 #define om22ALLA29				245
 #define oBOTOLAA22				246
-#define od22ALLA29I				247
+#define od22TO29I				247
 #define omARMADIETTORA22		248
 #define oARMADIETTORA22			249
 #define oKEY22					250
@@ -550,7 +550,7 @@
 #define oINSEGNA26				310
 #define oCARTELLOR26			311
 #define oPALMA26				312
-#define od26ALLA2G				313
+#define od26TO2G				313
 #define od26ALLA27				314
 #define od26ALLA2C				315
 #define omPIANTER26				316
@@ -598,7 +598,7 @@
 #define od28ALLA2B				358
 #define omPIANTAL28				359
 #define od29ALLA22				360
-#define oINTERRUTTORE29			361
+#define oSWITCH29			361
 #define oBOTOLAC29				362
 #define oBOTOLAA29				363
 #define oPORTALAMPADE29			364
@@ -625,7 +625,7 @@
 #define od2AALLA2B				385
 #define oSCATOLA2A				386
 #define oTUBI2A					387
-#define od2AALLA29				388
+#define od2ATO29				388
 #define oSBARRE2A				389
 #define od2AALLA25				390
 #define omL2A					391
@@ -782,7 +782,7 @@
 #define oROBOT2F				542
 #define oCHIUSAC2G				543
 #define oMACCHINARIO2G			544
-#define oPANNELLOM2G			545
+#define oPANELM2G			545
 #define oSERBATOIOC2G			546
 #define oCOPERCHIO2G			547
 #define oSERBATOIOA2G			548
@@ -866,7 +866,7 @@
 #define omTUBOR33				626
 #define oTUBOP33				627
 #define omTUBOP33				628
-#define oTUBOT33				629
+#define oTUBET33				629
 #define omTUBOT33				630
 #define oTUBOS33				631
 #define omTUBOS33				632
@@ -2434,7 +2434,7 @@
 #define iTRIPLA                         45
 #define iLIBRO                          46
 #define iLAMPADINA2B                    47
-#define iFUCILE                         48
+#define iRIFLE                         48
 #define iCANDELOTTO                     49
 #define iTELECOMANDO2G                  50
 #define iLATTINE                        51

@@ -314,7 +314,7 @@ void afterChoice(int numframe) {
 
 		case dF2E2:
 			CharacterSay(1561);
-			g_vm->_inventoryObj[iFUCILE]._examine = 1562;
+			g_vm->_inventoryObj[iRIFLE]._examine = 1562;
 			break;
 
 		case dF231:
@@ -323,20 +323,20 @@ void afterChoice(int numframe) {
 			break;
 
 		case dF291:
-			g_vm->_obj[oINTERRUTTORE29]._action = 479;
-			g_vm->_obj[od22ALLA29]._goRoom = r29L;
-			g_vm->_obj[od2AALLA29]._goRoom = r29L;
-			g_vm->_obj[od22ALLA29]._mode &= ~OBJMODE_OBJSTATUS;
-			g_vm->_obj[od22ALLA29I]._mode |= OBJMODE_OBJSTATUS;
+			g_vm->_obj[oSWITCH29]._action = 479;
+			g_vm->_obj[od22TO29]._goRoom = r29L;
+			g_vm->_obj[od2ATO29]._goRoom = r29L;
+			g_vm->_obj[od22TO29]._mode &= ~OBJMODE_OBJSTATUS;
+			g_vm->_obj[od22TO29I]._mode |= OBJMODE_OBJSTATUS;
 			break;
 
 		case dF2G1:
-			g_vm->_obj[oPANNELLOM2G]._action = 660;
+			g_vm->_obj[oPANELM2G]._action = 660;
 			CharacterSay(659);
 			break;
 
 		case dF2G2:
-			g_vm->_obj[od26ALLA2G]._goRoom = r2GV;
+			g_vm->_obj[od26TO2G]._goRoom = r2GV;
 			g_vm->replaceIcon(iSAM, iSAMROTTO);
 			break;
 
@@ -345,10 +345,7 @@ void afterChoice(int numframe) {
 			break;
 
 		case dF331:
-			g_vm->_obj[oTUBOT33]._lim.left = 0;
-			g_vm->_obj[oTUBOT33]._lim.top = 0;
-			g_vm->_obj[oTUBOT33]._lim.right = 0;
-			g_vm->_obj[oTUBOT33]._lim.bottom = 0;
+			g_vm->_obj[oTUBET33]._lim = Common::Rect(0, 0, 0, 0);
 			CharacterSay(1997);
 			break;
 
@@ -419,7 +416,7 @@ void afterChoice(int numframe) {
 			g_vm->removeIcon(iPISTOLA15);
 			g_vm->removeIcon(iRAPPORTO);
 			g_vm->removeIcon(iTESSERA);
-			g_vm->removeIcon(iFUCILE);
+			g_vm->removeIcon(iRIFLE);
 			g_vm->removeIcon(iLAMPADINA29);
 			g_vm->removeIcon(iTELECOMANDO2G);
 			g_vm->removeIcon(iCARD36);
