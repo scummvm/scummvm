@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-04-03 11:04+0000\n"
-"PO-Revision-Date: 2021-04-04 11:24+0000\n"
+"PO-Revision-Date: 2021-04-04 22:24+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ja/>\n"
@@ -7103,9 +7103,8 @@ msgid "Throw Magic Ball"
 msgstr "マジックボールを投げる"
 
 #: engines/twine/metaengine.cpp:378
-#, fuzzy
 msgid "Move Backward"
-msgstr "去る"
+msgstr "後方へ移動"
 
 #: engines/twine/metaengine.cpp:399
 msgid "Use Protopack"
@@ -7116,9 +7115,8 @@ msgid "Open Holomap"
 msgstr "ホログラムマップを開く"
 
 #: engines/twine/metaengine.cpp:417
-#, fuzzy
 msgid "Special Action"
-msgstr "自発的"
+msgstr "スペシャルアクション"
 
 #: engines/twine/metaengine.cpp:423 engines/wintermute/keymapper_tables.h:61
 msgid "Escape"
@@ -7134,21 +7132,16 @@ msgid "Abort"
 msgstr "停止"
 
 #: engines/twine/metaengine.cpp:482
-#, fuzzy
 msgid "Next Page"
 msgstr "次のページ"
 
 #: engines/twine/metaengine.cpp:549
-#, fuzzy
-#| msgid "Previous action"
 msgid "Previous location"
-msgstr "前の行動"
+msgstr "前の地点"
 
 #: engines/twine/metaengine.cpp:554
-#, fuzzy
-#| msgid "Next action"
 msgid "Next location"
-msgstr "次の行動"
+msgstr "次の地点"
 
 #: engines/ultima/shared/early/ultima_early.cpp:71
 msgid "Could not find correct ultima.dat datafile"
