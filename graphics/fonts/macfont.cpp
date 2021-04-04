@@ -355,14 +355,31 @@ void MacFONTFont::drawChar(Surface *dst, uint32 chr, int x, int y, uint32 color)
 	assert(dst != 0);
 	assert(dst->format.bytesPerPixel == 1 || dst->format.bytesPerPixel == 2 || dst->format.bytesPerPixel == 4);
 
+	if (x > dst->w || y > dst->h)
+		return;
+
 	const MacGlyph *glyph = findGlyph(chr);
 	if (!glyph || glyph->width == 0)
 		return;
 
-	for (uint16 i = 0; i < _data._fRectHeight; i++) {
+	if (x + glyph->bitmapWidth < 0 || y + _data._fRectHeight < 0)
+		return;
+
+	// Make sure we do not draw outside the surface
+	uint16 yStart = (y < 0) ? -y : 0;
+	uint16 yStop = _data._fRectHeight;
+	uint16 xStart = (x < 0) ? -x : 0;
+	uint16 xStop = glyph->bitmapWidth;
+
+	if (y + _data._fRectHeight >= dst->h)
+		yStop = dst->h - y;
+	if (x + glyph->bitmapWidth >= dst->w)
+		xStop = dst->w - x;
+
+	for (uint16 i = yStart; i < yStop; i++) {
 		byte *srcRow = _data._bitImage + i * _data._rowWords;
 
-		for (uint16 j = 0; j < glyph->bitmapWidth; j++) {
+		for (uint16 j = xStart; j < xStop; j++) {
 			uint16 bitmapOffset = glyph->bitmapOffset + j;
 
 			if (srcRow[bitmapOffset / 8] & (1 << (7 - (bitmapOffset % 8)))) {
