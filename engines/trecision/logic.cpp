@@ -1237,7 +1237,7 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 		}
 		break;
 
-	case iFUCILE:
+	case iRIFLE:
 		if (_vm->_useWith[WITH] == oDINOSAURO2E) {
 			PlayDialog(dF2E2);
 			_vm->_obj[oDINOSAURO2E]._mode &= ~OBJMODE_OBJSTATUS;
@@ -1816,7 +1816,7 @@ bool LogicManager::useScreenWithScreen() {
 		}
 		break;
 
-	case oTUBOT33:
+	case oTUBET33:
 		if (((_vm->_useWith[WITH] == oSAMA33) || (_vm->_useWith[WITH] == oSERRATURA33 && _vm->_obj[oSAMA33]._mode & OBJMODE_OBJSTATUS)) && (_vm->_obj[oVALVOLA34]._mode & OBJMODE_OBJSTATUS)) {
 			PlayDialog(dF331);
 			setPosition(10);
@@ -2107,7 +2107,7 @@ bool LogicManager::mouseExamine(uint16 curObj) {
 		retVal = false;
 		break;
 
-	case oTUBOT33:
+	case oTUBET33:
 		if ((_vm->_obj[oVALVOLA34]._mode & OBJMODE_OBJSTATUS) && _vm->_obj[oVALVOLA34]._anim)
 			CharacterSay(2001);
 		else
@@ -2396,16 +2396,16 @@ bool LogicManager::mouseOperate(uint16 curObj) {
 		doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, _vm->_obj[curObj]._anim, 0, 0, curObj);
 		_vm->_obj[oMANIGLIONE22]._anim = a227A;
 		_vm->_obj[oMANIGLIONEO22]._anim = a229A;
-		_vm->_obj[od22ALLA29]._anim = a2214A;
-		_vm->_obj[od22ALLA29I]._anim = a2215A;
+		_vm->_obj[od22TO29]._anim = a2214A;
+		_vm->_obj[od22TO29I]._anim = a2215A;
 		break;
 
 	case oARMADIETTORA22:
 		doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, _vm->_obj[curObj]._anim, 0, 0, curObj);
 		_vm->_obj[oMANIGLIONE22]._anim = a227;
 		_vm->_obj[oMANIGLIONEO22]._anim = a229;
-		_vm->_obj[od22ALLA29]._anim = a2214;
-		_vm->_obj[od22ALLA29I]._anim = a2215;
+		_vm->_obj[od22TO29]._anim = a2214;
+		_vm->_obj[od22TO29I]._anim = a2215;
 		break;
 
 	case oCATENAT21:
@@ -2435,7 +2435,7 @@ bool LogicManager::mouseOperate(uint16 curObj) {
 		_vm->_obj[oPULSANTEBC2D]._anim = a2D7SCHIACCIATASTO6R;
 		break;
 
-	case oINTERRUTTORE29:
+	case oSWITCH29:
 		if (_vm->_curRoom == r29L)
 			retVal = true;
 		else if ((_vm->_obj[oLAMPADINAS29]._mode & OBJMODE_OBJSTATUS)) {
@@ -2538,17 +2538,17 @@ bool LogicManager::mouseOperate(uint16 curObj) {
 		doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, _vm->_obj[oEXIT59L]._goRoom, 0, 0, curObj);
 		break;
 
-	case oPANNELLOM2G:
-		if (!(_vm->_obj[oPANNELLOM2G]._flag & OBJFLAG_EXTRA)) {
+	case oPANELM2G:
+		if (!(_vm->_obj[oPANELM2G]._flag & OBJFLAG_EXTRA)) {
 			PlayDialog(dF2G1);
 			_vm->_obj[oCOPERCHIO2G]._mode &= ~OBJMODE_OBJSTATUS;
-			//_vm->_obj[oPANNELLOM2G]._mode &= ~OBJMODE_OBJSTATUS;
+			//_vm->_obj[oPANELM2G]._mode &= ~OBJMODE_OBJSTATUS;
 			_vm->_obj[oSERBATOIOC2G]._mode &= ~OBJMODE_OBJSTATUS;
 			_vm->_obj[oRAGAZZOP2G]._mode &= ~OBJMODE_OBJSTATUS;
 			_vm->_obj[oRAGAZZOS2G]._mode |= OBJMODE_OBJSTATUS;
 			_vm->_obj[oSERBATOIOA2G]._mode |= OBJMODE_OBJSTATUS;
 			_vm->_obj[oPANNELLOE2G]._mode |= OBJMODE_OBJSTATUS;
-			_vm->_obj[oPANNELLOM2G]._flag |= OBJFLAG_EXTRA;
+			_vm->_obj[oPANELM2G]._flag |= OBJFLAG_EXTRA;
 			_vm->_animMgr->_animTab[aBKG2G]._flag |= SMKANIM_OFF1;
 			retVal = false;
 		} else
@@ -3254,7 +3254,7 @@ bool LogicManager::mouseClick(uint16 curObj) {
 
 		case oSAMA33:
 		case oSERRATURA33:
-			if ((_vm->_useWith[USED] == oTUBOT33) && (_vm->_obj[oVALVOLA34]._mode & OBJMODE_OBJSTATUS) && (_vm->_obj[oSAMA33]._mode & OBJMODE_OBJSTATUS) && (FlagUseWithStarted)) {
+			if ((_vm->_useWith[USED] == oTUBET33) && (_vm->_obj[oVALVOLA34]._mode & OBJMODE_OBJSTATUS) && (_vm->_obj[oSAMA33]._mode & OBJMODE_OBJSTATUS) && (FlagUseWithStarted)) {
 				if (_characterGoToPosition != 4)
 					goToPosition(4);
 			} else if (_characterGoToPosition != _vm->_obj[curObj]._position)
