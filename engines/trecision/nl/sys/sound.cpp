@@ -42,11 +42,8 @@
 
 namespace Trecision {
 
-struct SNLSample {
-	Audio::SeekableAudioStream *stream;
-	Audio::Mixer::SoundType type;
-} NLSample[NUMSAMPLES];
-SNLSample SpeechSample;
+Audio::SeekableAudioStream *speechStream;
+Audio::SeekableAudioStream *sfxStream[NUMSAMPLES];
 
 extern SSound GSample[];
 
@@ -138,14 +135,9 @@ short LoadAudioWav(int num, uint8 *wav, int len) {
 	Audio::SeekableAudioStream *stream = Audio::makeWAVStream(new Common::MemoryReadStream(wav, len), DisposeAfterUse::YES);
 
 	if (num != 0xFFFF) {
-		NLSample[num].stream = stream;
-		if (GSample[num]._flag & SOUNDFLAG_SBACK)
-			NLSample[num].type = Audio::Mixer::kMusicSoundType;
-		else
-			NLSample[num].type = Audio::Mixer::kSFXSoundType;
+		sfxStream[num] = stream;
 	} else {
-		SpeechSample.stream = stream;
-		SpeechSample.type = Audio::Mixer::kSpeechSoundType;
+		speechStream = stream;
 	}
 	return 1;
 }
@@ -167,11 +159,12 @@ void NLPlaySound(int num) {
 		smpvol[channel] = 0;
 	}
 
-	Audio::AudioStream *stream = NLSample[num].stream;
+	Audio::AudioStream *stream = sfxStream[num];
+	Audio::Mixer::SoundType type = GSample[num]._flag & SOUNDFLAG_SBACK ? Audio::Mixer::kMusicSoundType : Audio::Mixer::kSFXSoundType;
 	if (stream != nullptr && GSample[num]._flag & SOUNDFLAG_SLOOP)
-		stream = Audio::makeLoopingAudioStream(NLSample[num].stream, 0);
+		stream = Audio::makeLoopingAudioStream(sfxStream[num], 0);
 
-	g_system->getMixer()->playStream(NLSample[num].type, &smp[channel], stream, -1, volume, 0, DisposeAfterUse::NO);
+	g_system->getMixer()->playStream(type, &smp[channel], stream, -1, volume, 0, DisposeAfterUse::NO);
 
 	playing[channel] = num;
 }
@@ -216,11 +209,12 @@ void SoundFadOut() {
 					SoundFadIn
  --------------------------------------------------*/
 void SoundFadIn(int num) {
-	Audio::AudioStream *stream = NLSample[num].stream;
+	Audio::AudioStream *stream = sfxStream[num];
+	Audio::Mixer::SoundType type = GSample[num]._flag & SOUNDFLAG_SBACK ? Audio::Mixer::kMusicSoundType : Audio::Mixer::kSFXSoundType;
 	if (stream != nullptr && GSample[num]._flag & SOUNDFLAG_SLOOP)
-		stream = Audio::makeLoopingAudioStream(NLSample[num].stream, 0);
+		stream = Audio::makeLoopingAudioStream(sfxStream[num], 0);
 
-	g_system->getMixer()->playStream(NLSample[num].type, &smp[StepChannel], stream, -1, 0, 0, DisposeAfterUse::NO);
+	g_system->getMixer()->playStream(type, &smp[StepChannel], stream, -1, 0, 0, DisposeAfterUse::NO);
 
 	playing[StepChannel] = num;
 
@@ -328,11 +322,12 @@ void SoundPasso(int midx, int midz, int act, int frame, unsigned short *list) {
 	int St = StepChannel;
 
 	g_system->getMixer()->stopHandle(smp[St]);
-	NLSample[b].stream->rewind();
+	sfxStream[b]->rewind();
 
 	int panpos = ((midx - 320) * 127 / 320) / 2;
-
-	g_system->getMixer()->playStream(NLSample[b].type, &smp[St], NLSample[b].stream, -1, VOLUME(midz), panpos, DisposeAfterUse::NO);
+	Audio::Mixer::SoundType type = GSample[b]._flag & SOUNDFLAG_SBACK ? Audio::Mixer::kMusicSoundType : Audio::Mixer::kSFXSoundType;
+	
+	g_system->getMixer()->playStream(type, &smp[St], sfxStream[b], -1, VOLUME(midz), panpos, DisposeAfterUse::NO);
 }
 
 void ContinueTalk() {
@@ -353,10 +348,10 @@ int32 Talk(const char *name) {
 	LoadAudioWav(0xFFFF, SpeechBuf, speechLen);
 
 	extern uint32 CharacterSpeakTime;
-	g_system->getMixer()->playStream(SpeechSample.type, &smp[SpeechChannel], SpeechSample.stream);
+	g_system->getMixer()->playStream(Audio::Mixer::kSpeechSoundType, &smp[SpeechChannel], speechStream);
 	CharacterSpeakTime = ReadTime();
 
-	return TIME(SpeechSample.stream->getLength().msecs());
+	return TIME(speechStream->getLength().msecs());
 }
 
 void StopTalk() {
