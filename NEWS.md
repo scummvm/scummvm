@@ -16,6 +16,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added support for OO-Topos
    - Added support for Glulx interactive fiction games
    - Added support for Private Eye (US release)
+   - Added support for AGS Games versions 2.5+
 
  New ports:
    - The Nintendo DS port got a major rewrite.
