@@ -44,6 +44,7 @@
 #include "engines/nancy/state/help.h"
 #include "engines/nancy/state/map.h"
 #include "engines/nancy/state/credits.h"
+#include "engines/nancy/state/mainmenu.h"
 
 namespace Nancy {
 
@@ -153,6 +154,11 @@ void NancyEngine::setState(NancyState::NancyState state, NancyState::NancyState 
 		setState(NancyState::kLogo);
 		return;
 	case NancyState::kMainMenu: {
+		if (ConfMan.getBool("original_menus")) {
+			break;
+		}
+
+		// Do not use the original engine's menus, call the GMM instead
 		State::State *s = getStateObject(_gameFlow.curState);
 		if (s) {
 			s->onStateExit();
@@ -286,6 +292,7 @@ void NancyEngine::bootGameEngine() {
 	// Register default settings
 	ConfMan.registerDefault("player_speech", true);
 	ConfMan.registerDefault("character_speech", true);
+	ConfMan.registerDefault("original_menus", false);
 
 	// Load archive
 	Common::SeekableReadStream *stream = SearchMan.createReadStreamForMember("data1.cab");
@@ -349,6 +356,8 @@ State::State *NancyEngine::getStateObject(NancyState::NancyState state) const {
 		return &State::Help::instance();
 	case NancyState::kScene:
 		return &State::Scene::instance();
+	case NancyState::kMainMenu:
+		return &State::MainMenu::instance();
 	default:
 		return nullptr;
 	}

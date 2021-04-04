@@ -20,6 +20,8 @@
  *
  */
 
+#include "common/config-manager.h"
+
 #include "engines/nancy/nancy.h"
 #include "engines/nancy/sound.h"
 #include "engines/nancy/input.h"
@@ -80,7 +82,12 @@ void Logo::stop() {
 	// The original engine checks for N+D and N+C key combos here.
 	// For the N+C key combo it looks for some kind of cheat file
 	// to initialize the game state with.
-	g_nancy->setState(NancyState::kScene);
+	
+	if (ConfMan.getBool("original_menus")) {
+		g_nancy->setState(NancyState::kMainMenu);
+	} else {
+		g_nancy->setState(NancyState::kScene);
+	}
 }
 
 } // End of namespace State

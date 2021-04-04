@@ -67,6 +67,7 @@ public:
 	Common::Rect convertToScreen(const Common::Rect &rect) const;
 
 	Common::Rect getBounds() const { return Common::Rect(_drawSurface.w, _drawSurface.h); }
+	Graphics::ManagedSurface &getDrawSurface() { return _drawSurface; }
 
 protected:
 	// Z order and blit type are extracted directly from the corresponding

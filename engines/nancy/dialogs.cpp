@@ -32,18 +32,22 @@ NancyOptionsWidget::NancyOptionsWidget(GuiObject *boss, const Common::String &na
 		OptionsContainerWidget(boss, name, "NancyOptionsDialog", false, domain) {
 	_playerSpeechCheckbox = new GUI::CheckboxWidget(widgetsBoss(), "NancyOptionsDialog.PlayerSpeech", _("Player Speech"), _("Enable player speech. Only works if speech is enabled in the Audio settings."));
 	_characterSpeechCheckbox = new GUI::CheckboxWidget(widgetsBoss(), "NancyOptionsDialog.CharacterSpeech", _("Character Speech"), _("Enable NPC speech. Only works if speech is enabled in the Audio settings."));
+	_originalMenusCheckbox = new GUI::CheckboxWidget(widgetsBoss(), "NancyOptionsDialog.OriginalMenus", _("Use original menus"), _("Use the original engine's main, save/load, and setup menus. ScummVM's Global Main Menu can still be accessed through its keymap."));
 
 	new GUI::StaticTextWidget(widgetsBoss(), "NancyOptionsDialog.SpeechSettingsLabel", _("Speech Options"));
+	new GUI::StaticTextWidget(widgetsBoss(), "NancyOptionsDialog.EngineSettingsLabel", _("Engine Options"));
 }
 
 void NancyOptionsWidget::load() {
 	_playerSpeechCheckbox->setState(ConfMan.getBool("player_speech", _domain));
 	_characterSpeechCheckbox->setState(ConfMan.getBool("character_speech", _domain));
+	_originalMenusCheckbox->setState(ConfMan.getBool("original_menus", _domain));
 }
 
 bool NancyOptionsWidget::save() {
 	ConfMan.setBool("player_speech", _playerSpeechCheckbox->getState(), _domain);
 	ConfMan.setBool("character_speech", _characterSpeechCheckbox->getState(), _domain);
+	ConfMan.setBool("original_menus", _characterSpeechCheckbox->getState(), _domain);
 
 	return true;
 }
@@ -55,6 +59,9 @@ void NancyOptionsWidget::defineLayout(GUI::ThemeEval &layouts, const Common::Str
 			.addWidget("SpeechSettingsLabel", "OptionsLabel")
 			.addWidget("PlayerSpeech", "Checkbox")
 			.addWidget("CharacterSpeech", "Checkbox")
+			.addSpace(16)
+			.addWidget("EngineSettingsLabel", "OptionsLabel")
+			.addWidget("OriginalMenus", "Checkbox")
 		.closeLayout()
 	.closeDialog();
 }

@@ -24,6 +24,7 @@ MODULE_OBJS = \
   state/credits.o \
   state/logo.o \
   state/help.o \
+  state/mainmenu.o \
   state/map.o \
   state/scene.o \
   cheat.o \
