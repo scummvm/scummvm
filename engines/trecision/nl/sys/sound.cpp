@@ -187,11 +187,20 @@ void NLStopSound(int num) {
 	}
 }
 
+void SoundStopAll() {
+	for (int a = 0; a < SAMPLEVOICES; a++) {
+		g_system->getMixer()->stopHandle(smp[a]);
+		playing[a] = 0;
+	}
+
+	SoundFadOutVal = 0;
+	SoundFadStatus = 0;
+}
 /* -----------------14/08/97 16.30-------------------
 					SoundFadOut
  --------------------------------------------------*/
 void SoundFadOut() {
-	for (int a = 0; a < SAMPLEVOICES; a++) {	// spegne tutti i canali eccetto il background
+	for (int a = 0; a < SAMPLEVOICES; a++) {	// Turns off all channels except background
 		if (a != BackChannel) {
 			g_system->getMixer()->stopHandle(smp[a]);
 			playing[a] = 0;
@@ -231,9 +240,10 @@ void WaitSoundFadEnd() {
 	g_system->getMixer()->setChannelVolume(smp[StepChannel], VOLUME(GSample[playing[StepChannel]]._volume));
 	playing[BackChannel] = 0;
 
-	for (uint8 a = 2; a < SpeechChannel; a++)
+	for (uint8 a = 2; a < SpeechChannel; a++) {
 		if (playing[a] != 0)
 			g_system->getMixer()->setChannelVolume(smp[a], VOLUME(GSample[playing[a]]._volume));
+	}
 
 	SWAP(StepChannel, BackChannel);
 
