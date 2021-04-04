@@ -757,7 +757,7 @@ bool ThemeEngine::addBitmap(const Common::String &filename, const Common::String
 	if (!scalablefile.empty()) {
 		Graphics::SVGBitmap *image = nullptr;
 		Common::ArchiveMemberList members;
-		_themeFiles.listMatchingMembers(members, filename);
+		_themeFiles.listMatchingMembers(members, scalablefile);
 		for (Common::ArchiveMemberList::const_iterator i = members.begin(), end = members.end(); i != end; ++i) {
 			Common::SeekableReadStream *stream = (*i)->createReadStream();
 			if (stream) {

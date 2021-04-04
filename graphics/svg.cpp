@@ -49,7 +49,7 @@ SVGBitmap::SVGBitmap(Common::SeekableReadStream *in) {
 		error("Cannot parse SVG image");
 
 	_rasterizer = NULL;
-	_cachedW = _cachedH = 0;
+	_cachedW = _cachedH = -1;
 	_cache = NULL;
 	_render = NULL;
 
@@ -62,13 +62,13 @@ SVGBitmap::~SVGBitmap() {
 
 	nsvgDelete(_svg);
 
-	if (_cache)
-		free(_cache);
-
 	delete _render;
 }
 
 void SVGBitmap::render(Graphics::Surface &target, int dw, int dh) {
+	if (dw == 0 || dh == 0)
+		return;
+
 	if (_rasterizer == NULL)
 		_rasterizer = nsvgCreateRasterizer();
 
