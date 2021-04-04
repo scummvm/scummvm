@@ -157,15 +157,4 @@ int FastFileRead(Common::SeekableReadStream *stream, void *ptr, int size) {
 	return stream->read(ptr, size);
 }
 
-int SpeechFileRead(const char *name, unsigned char *buf) {
-	if (!g_vm->_speechFile.isOpen())
-		return 0;
-
-	Common::SeekableReadStream *stream = g_vm->_speechFile.createReadStreamForMember(name);
-	const int bytesRead = stream != nullptr ? stream->read(buf, stream->size()) : 0;
-	delete stream;
-	
-	return bytesRead;
-}
-
 } // End of namespace Trecision

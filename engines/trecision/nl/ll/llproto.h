@@ -32,7 +32,6 @@ class SeekableReadStream;
 namespace Trecision {
 
 int Compare(const void *p1, const void *p2);
-int SpeechFileRead(const char *name, uint8 *buf);
 void RedrawRoom();
 void decompress(const uint8 *src, unsigned int src_len, uint8 *dst, unsigned int dst_len);
 char waitKey();
@@ -59,7 +58,7 @@ void RegenRoom();
 void PaintRegenRoom();
 void DrawObj(SDObj d);
 void StopSoundSystem();
-int16 LoadAudioWav(int num, uint8 *Buffer, int len);
+void LoadAudioWav(int num, uint8 *Buffer, int len);
 void NLPlaySound(int num);
 void NLStopSound(int num);
 void SoundFadOut();
@@ -67,7 +66,6 @@ void SoundFadIn(int num);
 void SoundStopAll();
 void WaitSoundFadEnd();
 void SoundPasso(int midx, int midz, int act, int frame, uint16 *list);
-void ContinueTalk();
 int32 Talk(const char *name);
 void StopTalk();
 void resetZBuffer(int x1, int y1, int x2, int y2);

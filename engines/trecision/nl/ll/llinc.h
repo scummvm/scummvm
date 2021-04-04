@@ -120,8 +120,6 @@ extern int8 DTextLines[MAXDTEXTLINES][MAXDTEXTCHARS];
 extern uint8 *SoundBuffer;
 extern uint8 *MemoryArea;
 extern uint8 *SoundStartBuffer;
-// SOUND
-extern bool SpeechTrackEnabled;
 // MOUSE
 extern SDText curString;
 extern SDText oldString;
