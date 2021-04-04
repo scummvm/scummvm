@@ -58,11 +58,11 @@ public:
 	PNGDecoder();
 	~PNGDecoder();
 
-	bool loadStream(Common::SeekableReadStream &stream);
-	void destroy();
-	const Graphics::Surface *getSurface() const { return _outputSurface; }
-	const byte *getPalette() const { return _palette; }
-	uint16 getPaletteColorCount() const { return _paletteColorCount; }
+	bool loadStream(Common::SeekableReadStream &stream) override;
+	void destroy() override;
+	const Graphics::Surface *getSurface() const override { return _outputSurface; }
+	const byte *getPalette() const override { return _palette; }
+	uint16 getPaletteColorCount() const override { return _paletteColorCount; }
 	int getTransparentColor() const { return _transparentColor; }
 	void setSkipSignature(bool skip) { _skipSignature = skip; }
 	void setKeepTransparencyPaletted(bool keep) { _keepTransparencyPaletted = keep; }
