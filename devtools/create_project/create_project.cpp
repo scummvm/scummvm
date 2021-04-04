@@ -1043,6 +1043,7 @@ const Feature s_features[] = {
 	{    "tremor",      "USE_TREMOR", true, false, "Tremor support" },
 	{      "flac",        "USE_FLAC", true, true,  "FLAC support" },
 	{       "png",         "USE_PNG", true, true,  "libpng support" },
+	{       "gif",         "USE_GIF", true, false, "libgif support" },
 	{      "faad",        "USE_FAAD", true, false, "AAC support" },
 	{     "mpeg2",       "USE_MPEG2", true, false, "MPEG-2 support" },
 	{    "theora",   "USE_THEORADEC", true, true,  "Theora decoding support" },
