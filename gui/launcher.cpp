@@ -747,7 +747,7 @@ void LauncherDialog::reflowLayout() {
 		if (!_logo)
 			_logo = new GraphicsWidget(this, "Launcher.Logo");
 		_logo->useThemeTransparency(true);
-		_logo->setGfx(g_gui.theme()->getImageSurface(ThemeEngine::kImageLogo));
+		_logo->setGfxFromTheme(ThemeEngine::kImageLogo);
 	} else {
 		StaticTextWidget *ver = (StaticTextWidget *)findWidget("Launcher.Version");
 		if (ver) {
