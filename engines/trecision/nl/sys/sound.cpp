@@ -33,6 +33,7 @@
 #define SOUND_OFF		0
 #define SOUND_ON		1
 
+#define SFADNONE	0
 #define SFADIN		1
 #define SFADOUT		2
 
@@ -62,7 +63,7 @@ int16  smpvol[SAMPLEVOICES];
 uint8 StepChannel = 1;
 uint8 BackChannel = 0;
 uint8 SpeechChannel = 5;
-uint8 SoundFadStatus = 0;
+uint8 SoundFadStatus = SFADNONE;
 
 int16 SoundFadInVal;
 int16 SoundFadOutVal;
@@ -193,7 +194,7 @@ void SoundStopAll() {
 		playing[a] = 0;
 	}
 
-	SoundFadOutVal = 0;
+	SoundFadOutVal = SFADNONE;
 	SoundFadStatus = 0;
 }
 /* -----------------14/08/97 16.30-------------------
@@ -233,7 +234,7 @@ void SoundFadIn(int num) {
 void WaitSoundFadEnd() {
 	while ((SoundFadInVal != (GSample[playing[StepChannel]]._volume * FADMULT)) && (playing[StepChannel] != 0) && (SoundFadOutVal != 0))
 		g_vm->checkSystem();
-	SoundFadStatus = 0;
+	SoundFadStatus = SFADNONE;
 
 	g_system->getMixer()->stopHandle(smp[BackChannel]);
 
