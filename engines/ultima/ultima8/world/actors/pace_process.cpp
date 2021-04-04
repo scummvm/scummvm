@@ -39,11 +39,16 @@ PaceProcess::PaceProcess(Actor *actor): _counter(0) {
 	assert(actor);
 	_itemNum = actor->getObjId();
 	_type = 0x255;
+
+	// Only pace with one process at a time.
+	Process *previous = Kernel::get_instance()->findProcess(_itemNum, _type);
+	if (previous)
+		previous->terminate();
 }
 
 
 bool PaceProcess::maybeStartDefaultActivity1(Actor *actor) {
-	const Actor *mainactor = getMainActor();
+	const Actor *mainactor = getControlledActor();
 	if (!mainactor)
 		return false;
 
@@ -71,6 +76,9 @@ void PaceProcess::run() {
 		terminate();
 		return;
 	}
+
+	if (!a->hasFlags(Item::FLG_FASTAREA))
+		return;
 
 	if (maybeStartDefaultActivity1(a))
 		return;
