@@ -118,7 +118,11 @@ bool NancyEngine::canSaveGameStateCurrently() {
 }
 
 bool NancyEngine::hasFeature(EngineFeature f) const {
-	return (f == kSupportsReturnToLauncher) || (f == kSupportsLoadingDuringRuntime) || (f == kSupportsSavingDuringRuntime);
+	return  (f == kSupportsReturnToLauncher) ||
+			(f == kSupportsLoadingDuringRuntime) ||
+			(f == kSupportsSavingDuringRuntime) ||
+			(f == kSupportsChangingOptionsDuringRuntime) ||
+			(f == kSupportsSubtitleOptions);
 }
 
 const char *NancyEngine::getCopyrightString() const {
@@ -278,6 +282,10 @@ void NancyEngine::bootGameEngine() {
 	SearchMan.addSubDirectoryMatching(gameDataDir, "iff");
 	SearchMan.addSubDirectoryMatching(gameDataDir, "art");
 	SearchMan.addSubDirectoryMatching(gameDataDir, "font");
+
+	// Register default settings
+	ConfMan.registerDefault("player_speech", true);
+	ConfMan.registerDefault("character_speech", true);
 
 	// Load archive
 	Common::SeekableReadStream *stream = SearchMan.createReadStreamForMember("data1.cab");

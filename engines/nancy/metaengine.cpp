@@ -24,19 +24,22 @@
 
 #include "engines/nancy/nancy.h"
 #include "engines/nancy/input.h"
+#include "engines/nancy/dialogs.h"
 
 class NancyMetaEngine : public AdvancedMetaEngine {
 public:
-	const char *getName() const override {
+	virtual const char *getName() const override {
 		return "nancy";
 	}
 
-	bool hasFeature(MetaEngineFeature f) const override;
-	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const override;
+	virtual bool hasFeature(MetaEngineFeature f) const override;
+	virtual Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const override;
 
-	int getMaximumSaveSlot() const override;
+	virtual int getMaximumSaveSlot() const override;
 
-	Common::KeymapArray initKeymaps(const char *target) const override;
+	virtual Common::KeymapArray initKeymaps(const char *target) const override;
+	
+	virtual GUI::OptionsContainerWidget *buildEngineOptionsWidgetDynamic(GUI::GuiObject *boss, const Common::String &name, const Common::String &target) const override;
 };
 
 Common::KeymapArray NancyMetaEngine::initKeymaps(const char *target) const {
@@ -70,6 +73,10 @@ Common::Error NancyMetaEngine::createInstance(OSystem *syst, Engine **engine, co
 }
 
 int NancyMetaEngine::getMaximumSaveSlot() const { return 8; }
+
+GUI::OptionsContainerWidget *NancyMetaEngine::buildEngineOptionsWidgetDynamic(GUI::GuiObject *boss, const Common::String &name, const Common::String &target) const {
+	return new Nancy::NancyOptionsWidget(boss, name, target);
+}
 
 #if PLUGIN_ENABLED_DYNAMIC(NANCY)
 	REGISTER_PLUGIN_DYNAMIC(NANCY, PLUGIN_TYPE_ENGINE, NancyMetaEngine);

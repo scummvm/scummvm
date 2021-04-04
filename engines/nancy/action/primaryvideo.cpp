@@ -21,6 +21,7 @@
  */
 
 #include "common/random.h"
+#include "common/config-manager.h"
 
 #include "engines/nancy/nancy.h"
 #include "engines/nancy/sound.h"
@@ -226,7 +227,11 @@ void PlayPrimaryVideoChan0::execute() {
 		init();
 		registerGraphics();
 		g_nancy->_sound->loadSound(_sound);
-		g_nancy->_sound->playSound(_sound);
+
+		if (!ConfMan.getBool("speech_mute") && ConfMan.getBool("character_speech")) {
+			g_nancy->_sound->playSound(_sound);
+		}
+
 		_state = kRun;
 		_activePrimaryVideo = this;
 		// fall through
@@ -234,7 +239,10 @@ void PlayPrimaryVideoChan0::execute() {
 		if (!_hasDrawnTextbox) {
 			_hasDrawnTextbox = true;
 			NancySceneState.getTextbox().clear();
-			NancySceneState.getTextbox().addTextLine(_text);
+
+			if (ConfMan.getBool("subtitles")) {
+				NancySceneState.getTextbox().addTextLine(_text);
+			}
 
 			// Add responses when conditions have been satisfied
 			if (_conditionalResponseCharacterID != 10) {
@@ -270,11 +278,14 @@ void PlayPrimaryVideoChan0::execute() {
 				}
 
 				if (_pickedResponse != -1) {
-					// Player has picked response, play sound file and change _state
+					// Player has picked response, play sound file and change state
 					_responseGenericSound.name = _responses[_pickedResponse].soundName;
-					// TODO this is probably not correct
 					g_nancy->_sound->loadSound(_responseGenericSound);
-					g_nancy->_sound->playSound(_responseGenericSound);
+
+					if (!ConfMan.getBool("speech_mute") && ConfMan.getBool("player_speech")) {
+						g_nancy->_sound->playSound(_responseGenericSound);
+					}
+					
 					_state = kActionTrigger;
 				}
 			}
