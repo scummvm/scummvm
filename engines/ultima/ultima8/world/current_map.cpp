@@ -357,6 +357,10 @@ Item *CurrentMap::findBestTargetItem(int32 x, int32 y, Direction dir, DirectionM
 			_targets[i] = 0;
 			continue;
 		}
+
+		if (item->hasFlags(Item::FLG_BROKEN))
+			continue;
+
 		const ShapeInfo *si = item->getShapeInfo();
 		bool isoccl = si->_flags & ShapeInfo::SI_OCCL;
 
