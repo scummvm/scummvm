@@ -1511,43 +1511,40 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 		} else if (_vm->_useWith[WITH] == oCAMPANA4U) {
 			CharacterSay(1713);
 			*printSentence = false;
-		} else if ((_vm->_useWith[WITH] == oRAGNO46) || (_vm->_useWith[WITH] == oLICANTROPO4P)) {
+		} else if ((_vm->_useWith[WITH] == oSPIDER46) || (_vm->_useWith[WITH] == oLICANTROPO4P)) {
 			*printSentence = false;
 			CharacterSay(1711);
 		}
 		break;
 
-	case iTESCHIO:
-		if (_vm->_useWith[WITH] == oPIASTRELLA48) {
+	case iSKULL:
+		if (_vm->_useWith[WITH] == oTILE48) {
 			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a4810, 0, 0, _vm->_useWith[WITH]);
 			*printSentence = false;
 		}
 		break;
 
-	case iTORCIA47:
-		if (_vm->_useWith[WITH] == oTESCHIO48) {
+	case iTORCH47:
+		if (_vm->_useWith[WITH] == oSKULL48) {
 			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a4811, 0, 0, _vm->_useWith[WITH]);
 			*printSentence = false;
-		} else if ((_vm->_useWith[WITH] == oCALDAIAS45) || (_vm->_useWith[WITH] == oRAGNO46)) {
+		} else if ((_vm->_useWith[WITH] == oBOILERS45) || (_vm->_useWith[WITH] == oSPIDER46)) {
 			*printSentence = false;
 			CharacterSay(1640);
 		}
 		break;
 
-	case iFIAMMIFERO:
-		if (_vm->_useWith[WITH] == oTORCIAS48) {
+	case iMATCH:
+		if (_vm->_useWith[WITH] == oTORCHS48) {
 			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a4812, 0, 0, _vm->_useWith[WITH]);
-			_vm->_obj[oTORCIAS48]._lim.left = 0;
-			_vm->_obj[oTORCIAS48]._lim.top = 0;
-			_vm->_obj[oTORCIAS48]._lim.right = 0;
-			_vm->_obj[oTORCIAS48]._lim.bottom = 0;
+			_vm->_obj[oTORCHS48]._lim = Common::Rect(0, 0, 0, 0);
 			*printSentence = false;
 		}
 		break;
 
-	case iASTA:
-		if (_vm->_useWith[WITH] == oMERIDIANA49) {
-			_vm->removeIcon(iASTA);
+	case iROD:
+		if (_vm->_useWith[WITH] == oSUNDIAL49) {
+			_vm->removeIcon(iROD);
 			StartCharacterAction(a491, r49M, 1, 0);
 			*printSentence = false;
 		}
@@ -1568,7 +1565,7 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 			_vm->replaceIcon(iPISTOLA4PD, iPISTOLA4B);
 			PlayDialog(dF4P1);
 			*printSentence = false;
-		} else if ((_vm->_useWith[WITH] == oRAGNO46) || (_vm->_useWith[WITH] == oPORTAC4B) || (_vm->_useWith[WITH] == oSERRATURA4B)) {
+		} else if ((_vm->_useWith[WITH] == oSPIDER46) || (_vm->_useWith[WITH] == oPORTAC4B) || (_vm->_useWith[WITH] == oSERRATURA4B)) {
 			*printSentence = false;
 			CharacterSay(1706);
 		}
@@ -2805,7 +2802,7 @@ bool LogicManager::mouseOperate(uint16 curObj) {
 			_vm->_obj[oOMBRAS49]._mode |= OBJMODE_OBJSTATUS;
 			_vm->_obj[oSCOMPARTO49]._mode |= OBJMODE_OBJSTATUS;
 			_vm->_obj[oAGENDA49]._mode |= OBJMODE_OBJSTATUS;
-			_vm->_obj[oMERIDIANA49]._mode &= ~OBJMODE_OBJSTATUS;
+			_vm->_obj[oSUNDIAL49]._mode &= ~OBJMODE_OBJSTATUS;
 			_vm->_obj[oAGENDA49]._examine = 1099;
 			_vm->_obj[oAGENDA49]._action = 1100;
 			FlagCharacterExist = true;
