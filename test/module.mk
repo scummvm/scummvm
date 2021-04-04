@@ -5,7 +5,7 @@
 #
 ######################################################################
 
-TESTS        := $(srcdir)/test/common/*.h $(srcdir)/test/audio/*.h $(srcdir)/test/math/*.h
+TESTS        := $(srcdir)/test/common/*.h $(srcdir)/test/audio/*.h $(srcdir)/test/math/*.h $(srcdir)/test/image/*.h
 TEST_LIBS    :=
 
 ifdef POSIX
@@ -27,7 +27,7 @@ TEST_LIBS += test/null_osystem.o \
 	backends/modular-backend.o
 endif
 
-TEST_LIBS +=	audio/libaudio.a math/libmath.a common/libcommon.a
+TEST_LIBS +=	audio/libaudio.a math/libmath.a common/libcommon.a image/libimage.a graphics/libgraphics.a
 
 ifeq ($(ENABLE_WINTERMUTE), STATIC_PLUGIN)
 	TESTS += $(srcdir)/test/engines/wintermute/*.h

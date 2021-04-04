@@ -154,6 +154,7 @@ _sparkle=auto
 _osxdockplugin=auto
 _jpeg=auto
 _png=auto
+_gif=auto
 _theoradec=auto
 _faad=auto
 _fluidsynth=auto
@@ -272,6 +273,7 @@ add_feature jpeg "JPEG" "_jpeg"
 add_feature mpeg2 "mpeg2" "_mpeg2"
 add_feature opengl_game_shaders "OpenGL with shaders" "_opengl_game_shaders"
 add_feature png "PNG" "_png"
+add_feature png "GIF" "_gif"
 add_feature theoradec "libtheoradec" "_theoradec"
 add_feature tinygl "TinyGL" "_tinygl"
 add_feature vorbis "Vorbis file support" "_vorbis _tremor"
@@ -1111,6 +1113,8 @@ for ac_option in $@; do
 	--enable-jpeg)                _jpeg=yes              ;;
 	--disable-png)                _png=no                ;;
 	--enable-png)                 _png=yes               ;;
+	--disable-gif)                _gif=no                ;;
+	--enable-gif)                 _gif=yes               ;;
 	--disable-theoradec)          _theoradec=no          ;;
 	--enable-theoradec)           _theoradec=yes         ;;
 	--disable-faad)               _faad=no               ;;
@@ -4476,6 +4480,37 @@ if test "$_png" = yes ; then
 fi
 define_in_config_if_yes "$_png" 'USE_PNG'
 echo "$_png"
+
+#
+# Check for GIF
+#
+echocheck "GIF >= 5.0.0"
+if test "$_pkg_config" = "yes" && $_pkgconfig --exists libgif; then
+	append_var GIF_LIBS "`$_pkgconfig --libs libgif`"
+	append_var GIF_CFLAGS "`$_pkgconfig --cflags libgif`"
+else
+	append_var GIF_LIBS "-lgif"
+fi
+if test "$_gif" = auto ; then
+	_gif=no
+	cat > $TMPC << EOF
+#include <gif_lib.h>
+int main(void) {
+#if GIFLIB_MAJOR >= 5
+#else
+  syntax error
+#endif
+  return 0;
+}
+EOF
+	cc_check $GIF_CFLAGS $GIF_LIBS && _gif=yes
+fi
+if test "$_gif" = yes ; then
+	append_var LIBS "$GIF_LIBS"
+	append_var INCLUDES "$GIF_CFLAGS"
+fi
+define_in_config_if_yes "$_gif" 'USE_GIF'
+echo "$_gif"
 
 #
 # Check for Theora Decoder
