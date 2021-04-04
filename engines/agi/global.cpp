@@ -154,8 +154,8 @@ void AgiEngine::setVolumeViaSystemSetting() {
 	}
 
 	// Now actually set it
-	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, scummVMVolumeMusic);
-	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, scummVMVolumeSfx);
+	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, scummVMVolumeSfx);
+	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, scummVMVolumeMusic);
 
 	// Take lowest volume to the scripts
 	if (scummVMVolumeMusic < scummVMVolumeSfx) {
