@@ -290,6 +290,7 @@ public:
 	~PicButtonWidget() override;
 
 	void setGfx(const Graphics::Surface *gfx, int statenum = kPicButtonStateEnabled, bool scale = true);
+	void setGfxFromTheme(const char *name, int statenum = kPicButtonStateEnabled, bool scale = true);
 	void setGfx(int w, int h, int r, int g, int b, int statenum = kPicButtonStateEnabled);
 
 	void useAlpha(int alpha) { _alpha = alpha; }
@@ -299,7 +300,7 @@ public:
 protected:
 	void drawWidget() override;
 
-	Graphics::Surface _gfx[kPicButtonStateMax + 1];
+	Graphics::ManagedSurface _gfx[kPicButtonStateMax + 1];
 	int _alpha;
 	bool _transparency;
 	bool _showButton;
