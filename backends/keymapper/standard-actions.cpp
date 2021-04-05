@@ -24,6 +24,9 @@
 
 namespace Common {
 
+const char *kStandardActionLeftClick     = "LCLK";
+const char *kStandardActionMiddleClick   = "MCLK";
+const char *kStandardActionRightClick    = "RCLK";
 const char *kStandardActionInteract      = "INTRCT";
 const char *kStandardActionSkip          = "SKIP";
 const char *kStandardActionPause         = "PAUSE";

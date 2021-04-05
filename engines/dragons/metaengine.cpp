@@ -137,7 +137,7 @@ Common::KeymapArray DragonsMetaEngine::initKeymaps(const char *target) const {
 
 	Action *act;
 
-	act = new Action("LCLK", _("Action"));
+	act = new Action(kStandardActionLeftClick, _("Action"));
 	act->setCustomEngineActionEvent(Dragons::kDragonsActionSelect);
 	act->addDefaultInputMapping("MOUSE_LEFT");
 	act->addDefaultInputMapping("JOY_A");

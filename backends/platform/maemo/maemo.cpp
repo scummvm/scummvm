@@ -159,15 +159,15 @@ Common::KeymapArray OSystem_SDL_Maemo::getGlobalKeymaps() {
 	act->setCustomBackendActionEvent(Maemo::kEventClickMode);
 	globalMap->addAction(act);
 
-	act = new Action("LCLK", _("Left Click"));
+	act = new Action(kStandardActionLeftClick, _("Left Click"));
 	act->setLeftClickEvent();
 	globalMap->addAction(act);
 
-	act = new Action("MCLK", _("Middle Click"));
+	act = new Action(kStandardActionMiddleClick, _("Middle Click"));
 	act->setMiddleClickEvent();
 	globalMap->addAction(act);
 
-	act = new Action("RCLK", _("Right Click"));
+	act = new Action(kStandardActionRightClick, _("Right Click"));
 	act->setRightClickEvent();
 	globalMap->addAction(act);
 
@@ -202,7 +202,7 @@ Common::KeymapperDefaultBindings *OSystem_SDL_Maemo::getKeymapperDefaultBindings
 
 	keymapperDefaultBindings->setDefaultBinding("gui", "CLOS", "ESCAPE");
 
-	keymapperDefaultBindings->setDefaultBinding("maemo", "RCLK", "ZOOMPLUS");
+	keymapperDefaultBindings->setDefaultBinding("maemo", kStandardActionRightClick, "ZOOMPLUS");
 	keymapperDefaultBindings->setDefaultBinding("maemo", "CLKM", "ZOOMMINUS");
 
 	return keymapperDefaultBindings;

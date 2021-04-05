@@ -163,14 +163,14 @@ void InputManager::initKeymaps(Common::KeymapArray &keymaps) {
 	Keymap *debugKeymap = new Keymap(Keymap::kKeymapTypeGame, "nancy-debug", "Nancy Drew - Debug/Cheat Shortcuts");
 	Action *act;
 
-	act = new Action(kStandardActionInteract, _("Left Click Interact"));
+	act = new Action(kStandardActionLeftClick, _("Left Click Interact"));
 	act->setLeftClickEvent();
 	act->setCustomEngineActionEvent(kNancyActionLeftClick);
 	act->addDefaultInputMapping("MOUSE_LEFT");
 	act->addDefaultInputMapping("JOY_A");
 	mainKeymap->addAction(act);
 
-	act = new Action("RCLK", _("Right Click Interact"));
+	act = new Action(kStandardActionRightClick, _("Right Click Interact"));
 	act->setRightClickEvent();
 	act->setCustomEngineActionEvent(kNancyActionRightClick);
 	act->addDefaultInputMapping("MOUSE_RIGHT");

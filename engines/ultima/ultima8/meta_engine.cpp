@@ -25,6 +25,7 @@
 #include "ultima/ultima8/ultima8.h"
 #include "common/translation.h"
 #include "backends/keymapper/action.h"
+#include "backends/keymapper/standard-actions.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -192,13 +193,13 @@ Common::KeymapArray MetaEngine::initKeymaps(const Common::String &gameId, bool i
 
 	Common::Action *act;
 
-	act = new Common::Action("LCLK", _("Interact via Left Click"));
+	act = new Common::Action(Common::kStandardActionLeftClick, _("Interact via Left Click"));
 	act->setLeftClickEvent();
 	act->addDefaultInputMapping("MOUSE_LEFT");
 	act->addDefaultInputMapping("JOY_A");
 	keyMap->addAction(act);
 
-	act = new Common::Action("RCLK", _("Interact via Right Click"));
+	act = new Common::Action(Common::kStandardActionRightClick, _("Interact via Right Click"));
 	act->setRightClickEvent();
 	act->addDefaultInputMapping("MOUSE_RIGHT");
 	act->addDefaultInputMapping("JOY_B");
