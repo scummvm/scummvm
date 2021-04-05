@@ -557,7 +557,7 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 			// Then, pass in the pointer to enginePlugin, with the matching type, so our function behaves as-is.
 			PluginManager::instance().unloadPluginsExcept(PLUGIN_TYPE_ENGINE, enginePlugin);
 
-#if defined(UNCACHED_PLUGINS) && defined(DYNAMIC_MODULES)
+#if defined(UNCACHED_PLUGINS) && defined(DYNAMIC_MODULES) && !defined(DETECTION_STATIC)
 			// Unload all MetaEngines not needed for the current engine, if we're using uncached plugins
 			// to save extra memory.
 			PluginManager::instance().unloadPluginsExcept(PLUGIN_TYPE_ENGINE_DETECTION, plugin);
