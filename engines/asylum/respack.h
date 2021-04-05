@@ -92,8 +92,10 @@ public:
 
 	//int count(ResourceId id);
 
+	int getCdNumber() { return _cdNumber; }
 	void setCdNumber(int cdNumber) { _cdNumber = cdNumber; }
 	void setMusicPackId(ResourcePackId id) { _musicPackId = id; }
+	void clearSharedSoundCache() { _resources.erase(kResourcePackSharedSound); }
 
 private:
 	struct ResourcePackId_EqualTo {
