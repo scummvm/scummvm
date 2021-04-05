@@ -46,7 +46,15 @@
 #include "backends/platform/ios7/ios7_common.h"
 #endif
 
-#if defined(FLUIDSYNTH_VERSION_MAJOR) && FLUIDSYNTH_VERSION_MAJOR > 1
+// We assume here Fluidsynth minor will never be above 255 and
+// that micro versions won't break API compatibility
+#if defined(FLUIDSYNTH_VERSION_MAJOR) && defined(FLUIDSYNTH_VERSION_MINOR)
+#define FS_API_VERSION ((FLUIDSYNTH_VERSION_MAJOR << 8) | FLUIDSYNTH_VERSION_MINOR)
+#else
+#define FS_API_VERSION 0
+#endif
+
+#if FS_API_VERSION >= 0x0200
 static void logHandler(int level, const char *message, void *data)
 #else
 static void logHandler(int level, char *message, void *data)
@@ -103,7 +111,7 @@ public:
 
 	void setEngineSoundFont(Common::SeekableReadStream *soundFontData) override;
 	bool acceptsSoundFontData() override {
-#if defined(FLUIDSYNTH_VERSION_MAJOR) && FLUIDSYNTH_VERSION_MAJOR > 1
+#if FS_API_VERSION >= 0x0200
 		return true;
 #else
 		return false;
@@ -162,7 +170,7 @@ void MidiDriver_FluidSynth::setStr(const char *name, const char *val) {
 
 // Soundfont memory loader callback functions.
 
-#if defined(FLUIDSYNTH_VERSION_MAJOR) && FLUIDSYNTH_VERSION_MAJOR > 1
+#if FS_API_VERSION >= 0x0200
 static void *SoundFontMemLoader_open(const char *filename) {
 	void *p;
 	if (filename[0] != '&') {
@@ -200,7 +208,7 @@ int MidiDriver_FluidSynth::open() {
 	fluid_set_log_function(FLUID_INFO, logHandler, NULL);
 	fluid_set_log_function(FLUID_DBG, logHandler, NULL);
 
-#if defined(FLUIDSYNTH_VERSION_MAJOR) && FLUIDSYNTH_VERSION_MAJOR > 1
+#if FS_API_VERSION >= 0x0200
 	// When provided with in-memory SoundFont data, only use the configured
 	// SoundFont instead if it's explicitly configured on the current game.
 	bool isUsingInMemorySoundFontData = _engineSoundFontData && !ConfMan.getActiveDomain()->contains("soundfont");
@@ -280,7 +288,7 @@ int MidiDriver_FluidSynth::open() {
 	const char *soundfont = !isUsingInMemorySoundFontData ?
 			ConfMan.get("soundfont").c_str() : Common::String::format("&%p", (void *)_engineSoundFontData).c_str();
 
-#if defined(FLUIDSYNTH_VERSION_MAJOR) && FLUIDSYNTH_VERSION_MAJOR > 1
+#if FS_API_VERSION >= 0x0200
 	if (isUsingInMemorySoundFontData) {
 		fluid_sfloader_t *soundFontMemoryLoader = new_fluid_defsfloader(_settings);
 		fluid_sfloader_set_callbacks(soundFontMemoryLoader,
