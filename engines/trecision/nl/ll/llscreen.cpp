@@ -577,7 +577,7 @@ void ReadObj() {
 	if (!g_vm->_room[g_vm->_curRoom]._object[0])
 		return;
 
-	uint16 *o = (uint16 *)ImagePointer + BmInfo.dx * BmInfo.dy;
+	uint16 *objBuffer = (uint16 *)ImagePointer + BmInfo.dx * BmInfo.dy;
 	uint32 b = 0;
 	for (uint16 a = 0; a < MAXOBJINROOM; a++) {
 		uint16 c = g_vm->_room[g_vm->_curRoom]._object[a];
@@ -591,34 +591,34 @@ void ReadObj() {
 			break;
 
 		if (g_vm->_obj[c]._mode & OBJMODE_FULL) {
-			BmInfo.read(o + b);
+			BmInfo.read(objBuffer + b);
 			b += 4;
 			g_vm->_obj[c]._px = BmInfo.px;
 			g_vm->_obj[c]._py = BmInfo.py;
 			g_vm->_obj[c]._dx = BmInfo.dx;
 			g_vm->_obj[c]._dy = BmInfo.dy;
 
-			ObjPointers[a] = (uint16 *)(o + b);
+			ObjPointers[a] = (uint16 *)(objBuffer + b);
 			g_vm->_graphicsMgr->updatePixelFormat(ObjPointers[a], (g_vm->_obj[c]._dx * g_vm->_obj[c]._dy));
 			b += (g_vm->_obj[c]._dx * g_vm->_obj[c]._dy);
 		}
 
 		if (g_vm->_obj[c]._mode & OBJMODE_MASK) {
-			BmInfo.read(o + b);
+			BmInfo.read(objBuffer + b);
 			b += 4;
 			g_vm->_obj[c]._px = BmInfo.px;
 			g_vm->_obj[c]._py = BmInfo.py;
 			g_vm->_obj[c]._dx = BmInfo.dx;
 			g_vm->_obj[c]._dy = BmInfo.dy;
 
-			uint32 *p = (uint32 *)(o + b);
+			uint32 *p = (uint32 *)(objBuffer + b);
 			ObjPointers[a] = (uint16 *)p + 2;
 			g_vm->_graphicsMgr->updatePixelFormat(ObjPointers[a], *p);
 
 			b += (p[0]);
 			b += 2;
 
-			p = (uint32 *)(o + b);
+			p = (uint32 *)(objBuffer + b);
 			MaskPointers[a] = (uint8 *)p + 4;
 			b += (*p / 2);
 			b += 2;
@@ -626,14 +626,14 @@ void ReadObj() {
 	}
 }
 
-/*-----------------17/02/95 10.20-------------------
-						ReadObj
+/*------------------------------------------------
+				ReadExtraObj2C()
 --------------------------------------------------*/
 void ReadExtraObj2C() {
 	if (!g_vm->_room[g_vm->_curRoom]._object[32])
 		return;
 	
-	uint16 *o = (uint16 *)ExtraObj2C;
+	uint16 *objBuffer = ExtraObj2C;
 	ff = FastFileOpen("2C2.bm");
 	ff->read(ExtraObj2C, ff->size());
 	delete ff;
@@ -645,34 +645,34 @@ void ReadExtraObj2C() {
 			break;
 
 		if (g_vm->_obj[c]._mode & OBJMODE_FULL) {
-			BmInfo.read(o + b);
+			BmInfo.read(objBuffer + b);
 			b += 4;
 			g_vm->_obj[c]._px = BmInfo.px;
 			g_vm->_obj[c]._py = BmInfo.py;
 			g_vm->_obj[c]._dx = BmInfo.dx;
 			g_vm->_obj[c]._dy = BmInfo.dy;
 
-			ObjPointers[a] = (uint16 *)(o + b);
+			ObjPointers[a] = (uint16 *)(objBuffer + b);
 			g_vm->_graphicsMgr->updatePixelFormat(ObjPointers[a], (g_vm->_obj[c]._dx * g_vm->_obj[c]._dy));
 			b += (g_vm->_obj[c]._dx * g_vm->_obj[c]._dy);
 		}
 
 		if (g_vm->_obj[c]._mode & OBJMODE_MASK) {
-			BmInfo.read(o + b);
+			BmInfo.read(objBuffer + b);
 			b += 4;
 			g_vm->_obj[c]._px = BmInfo.px;
 			g_vm->_obj[c]._py = BmInfo.py;
 			g_vm->_obj[c]._dx = BmInfo.dx;
 			g_vm->_obj[c]._dy = BmInfo.dy;
 
-			uint32 *p = (uint32 *)(o + b);
+			uint32 *p = (uint32 *)(objBuffer + b);
 			ObjPointers[a] = (uint16 *)p + 2;
 			g_vm->_graphicsMgr->updatePixelFormat(ObjPointers[a], *p);
 
 			b += (p[0]);
 			b += 2;
 
-			p = (uint32 *)(o + b);
+			p = (uint32 *)(objBuffer + b);
 			MaskPointers[a] = (uint8 *)p + 4;
 			b += (*p / 2);
 			b += 2;
@@ -680,14 +680,14 @@ void ReadExtraObj2C() {
 	}
 }
 
-/*-----------------17/02/95 10.20-------------------
-						ReadObj
+/*------------------------------------------------
+					ReadExtraObj41D
 --------------------------------------------------*/
 void ReadExtraObj41D() {
 	if (!g_vm->_room[g_vm->_curRoom]._object[32])
 		return;
 
-	uint16 *obj = (uint16 *)ExtraObj41D;
+	uint16 *objBuffer = ExtraObj41D;
 	ff = FastFileOpen("41D2.bm");
 	ff->read(ExtraObj41D, ff->size());
 	delete ff;
@@ -699,34 +699,34 @@ void ReadExtraObj41D() {
 			break;
 
 		if (g_vm->_obj[c]._mode & OBJMODE_FULL) {
-			BmInfo.read(obj + b);
+			BmInfo.read(objBuffer + b);
 			b += 4;
 			g_vm->_obj[c]._px = BmInfo.px;
 			g_vm->_obj[c]._py = BmInfo.py;
 			g_vm->_obj[c]._dx = BmInfo.dx;
 			g_vm->_obj[c]._dy = BmInfo.dy;
 
-			ObjPointers[a] = (uint16 *)(obj + b);
+			ObjPointers[a] = (uint16 *)(objBuffer + b);
 			g_vm->_graphicsMgr->updatePixelFormat(ObjPointers[a], (g_vm->_obj[c]._dx * g_vm->_obj[c]._dy));
 			b += (g_vm->_obj[c]._dx * g_vm->_obj[c]._dy);
 		}
 
 		if ((g_vm->_obj[c]._mode & OBJMODE_MASK)) {
-			BmInfo.read(obj + b);
+			BmInfo.read(objBuffer + b);
 			b += 4;
 			g_vm->_obj[c]._px = BmInfo.px;
 			g_vm->_obj[c]._py = BmInfo.py;
 			g_vm->_obj[c]._dx = BmInfo.dx;
 			g_vm->_obj[c]._dy = BmInfo.dy;
 
-			uint32 *p = (uint32 *)(obj + b);
+			uint32 *p = (uint32 *)(objBuffer + b);
 			ObjPointers[a] = (uint16 *)p + 2;
 			g_vm->_graphicsMgr->updatePixelFormat(ObjPointers[a], *p);
 
 			b += (p[0]);
 			b += 2;
 
-			p = (uint32 *)(obj + b);
+			p = (uint32 *)(objBuffer + b);
 			MaskPointers[a] = (uint8 *)p + 4;
 			b += (*p / 2);
 			b += 2;

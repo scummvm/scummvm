@@ -98,31 +98,24 @@ uint32 DecCR(Common::String FileName, uint8 *DestArea, uint8 *DecArea) {
 	if (ff == nullptr)
 		error("File not found %s", FileName.c_str());
 
-	char *ibuf = (char *)DecArea;
-	char *obuf = (char *)DestArea;
+	uint8 *ibuf = DecArea;
+	uint8 *obuf = DestArea;
 
-	int isize = ff->size();
-	ff->read(ibuf, isize);
+	int dataSize = ff->size() - 8;
+	uint32 signature = ff->readUint32LE();
+	if (signature != FAST_COOKIE)
+		error("DecCR - %s has a bad signature and can't be loaded", FileName.c_str());
+
+	uint32 decompSize = ff->readUint32LE();
+	ff->read(ibuf, dataSize);
 	delete ff;
 
-	if (*(unsigned *)ibuf != FAST_COOKIE)
-		CloseSys(g_vm->_sysText[kMessageErrorReadingFile]);
+	if (dataSize < decompSize)
+		decompress(ibuf, dataSize, obuf, decompSize);
+	else
+		memcpy(obuf, ibuf, dataSize);
 
-	ibuf += sizeof(unsigned);
-	isize -= sizeof(unsigned);
-
-	int osize = *(unsigned *)ibuf;
-	ibuf += sizeof(unsigned);
-	isize -= sizeof(unsigned);
-
-	if (isize < osize)
-		decompress((unsigned char *)ibuf, isize, (unsigned char *)obuf, osize);
-	else {
-		isize -= sizeof(unsigned);
-		memcpy(obuf, ibuf, isize);
-	}
-
-	return osize;
+	return decompSize;
 }
 
 } // End of namespace Trecision
