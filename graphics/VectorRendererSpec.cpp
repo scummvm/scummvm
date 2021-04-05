@@ -801,12 +801,16 @@ static const int kRIndex = 3;
 
 template<typename PixelType>
 void VectorRendererSpec<PixelType>::
-blitManagedSurface(const Graphics::ManagedSurface *source, const Common::Point &p) {
+blitManagedSurface(const Graphics::ManagedSurface *source, const Common::Point &p, bool themeTrans) {
 	Common::Rect drawRect(p.x, p.y, p.x + source->w, p.y + source->h);
 	drawRect.clip(_clippingArea);
 
 	if (drawRect.isEmpty()) {
 		return;
+	}
+
+	if (sizeof(PixelType) != 4) {
+		error("Unsupported bpp in blitManagedSurface: %lu", sizeof(PixelType));
 	}
 
 	int sourceOffsetX = drawRect.left - p.x;
@@ -824,7 +828,7 @@ blitManagedSurface(const Graphics::ManagedSurface *source, const Common::Point &
 		w = drawRect.width();
 
 		while (w--) {
-			if (sizeof(PixelType) == 4) {
+			if (!themeTrans || *src_ptr != _bitmapAlphaColor) {
 				const byte *in = (const byte *)src_ptr;
 				byte *out = (byte *)dst_ptr;
 
@@ -834,8 +838,6 @@ blitManagedSurface(const Graphics::ManagedSurface *source, const Common::Point &
 					out[kGIndex] = ((in[kGIndex] * in[kAIndex]) + out[kGIndex] * (255 - in[kAIndex])) >> 8;
 					out[kBIndex] = ((in[kBIndex] * in[kAIndex]) + out[kBIndex] * (255 - in[kAIndex])) >> 8;
 				}
-			} else {
-				error("Unsupported bpp in blitManagedSurface: %lu", sizeof(PixelType));
 			}
 
 			dst_ptr++;
