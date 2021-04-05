@@ -103,7 +103,7 @@ void PlayDialog(uint16 i) {
 	FlagDialogActive = true;
 	_curChoice = 0;
 	_curSubTitle = 0;
-	FlagShowCharacter = false;		        // prima non c'era
+	FlagShowCharacter = false;
 
 	g_vm->_characterQueue.initQueue();
 	g_vm->_inventoryStatus = INV_OFF;
@@ -127,10 +127,10 @@ void PlayDialog(uint16 i) {
 		skip++;
 	if ((_curDialog == dC581) && (curChoice == 1))
 		skip++;
-	if ((_curDialog == dNEGOZIANTE1A) && (curChoice == 1))
+	if ((_curDialog == dSHOPKEEPER1A) && (curChoice == 1))
 		skip++;
-	// se c'e' predialog
-	if ((_dialog[i]._startLen > 0) && !(skip))
+	// if there's a pre-dialog
+	if ((_dialog[i]._startLen > 0) && !skip)
 		g_vm->_animMgr->playFullMotion(1, _dialog[i]._startLen);
 	else {
 		g_vm->_animMgr->smkSoundOnOff(1, false);
@@ -145,49 +145,49 @@ void afterChoice(int numframe) {
 	g_vm->_graphicsMgr->copyToScreen(0, 0, MAXX, TOP);
 
 	switch (_curDialog) {
-	case dBARBONE171:
+	case dTRAMP171:
 		if (_curChoice == 80) {
-			g_vm->_obj[ocBARBONE17]._action = 213;
-			g_vm->_obj[ocBARBONE17]._flag &= ~OBJFLAG_PERSON;
+			g_vm->_obj[ocTRAMP17]._action = 213;
+			g_vm->_obj[ocTRAMP17]._flag &= ~OBJFLAG_PERSON;
 		} else if (_curChoice == 77) {
-			g_vm->_obj[ocBARBONE17]._action = 211;
-			g_vm->_obj[ocBARBONE17]._flag &= ~OBJFLAG_PERSON;
+			g_vm->_obj[ocTRAMP17]._action = 211;
+			g_vm->_obj[ocTRAMP17]._flag &= ~OBJFLAG_PERSON;
 		}
 		break;
 
-	case dBARBONE1714:
+	case dTRAMP1714:
 		if (_curChoice == 106) {
-			g_vm->_obj[ocBARBONE17]._action = 213;
-			g_vm->_obj[ocBARBONE17]._flag &= ~OBJFLAG_PERSON;
+			g_vm->_obj[ocTRAMP17]._action = 213;
+			g_vm->_obj[ocTRAMP17]._flag &= ~OBJFLAG_PERSON;
 		}
 		break;
 
-	case dBARBONE1713:
+	case dTRAMP1713:
 		if (_curChoice == 91) {
-			g_vm->_obj[ocBARBONE17]._action = 212;
-			g_vm->_obj[ocBARBONE17]._flag &= ~OBJFLAG_PERSON;
+			g_vm->_obj[ocTRAMP17]._action = 212;
+			g_vm->_obj[ocTRAMP17]._flag &= ~OBJFLAG_PERSON;
 		}
 		break;
 
-	case dBARBONE1716:
+	case dTRAMP1716:
 		if (_curChoice == 122) {
-			g_vm->_obj[ocBARBONE17]._action = 212;
-			g_vm->_obj[ocBARBONE17]._flag &= ~OBJFLAG_PERSON;
+			g_vm->_obj[ocTRAMP17]._action = 212;
+			g_vm->_obj[ocTRAMP17]._flag &= ~OBJFLAG_PERSON;
 		}
 		break;
 
-	case dBARBONE1717:
+	case dTRAMP1717:
 		if (_curChoice == 136) {
-			g_vm->_obj[ocBARBONE17]._mode &= ~OBJMODE_OBJSTATUS;
-			g_vm->_obj[oBARBONED17]._mode |= OBJMODE_OBJSTATUS;
+			g_vm->_obj[ocTRAMP17]._mode &= ~OBJMODE_OBJSTATUS;
+			g_vm->_obj[oTRAMPD17]._mode |= OBJMODE_OBJSTATUS;
 			g_vm->_room[r17]._bkgAnim = aBKG17B;
-			g_vm->addIcon(iPATTINO);
+			g_vm->addIcon(iSKATE);
 		} else if (_curChoice == 137) {
-			g_vm->_obj[ocBARBONE17]._flag |= OBJFLAG_PERSON;
+			g_vm->_obj[ocTRAMP17]._flag |= OBJFLAG_PERSON;
 		}
 		break;
 
-	case dGUARDIANO18:
+	case dGUARDIAN18:
 		if ((_curChoice == 151) || (_curChoice == 152)) {
 			g_vm->_inventoryObj[iFOTO]._action = 1465;
 			g_vm->_obj[oTESSERA1A]._action = 238;
@@ -252,17 +252,17 @@ void afterChoice(int numframe) {
 				g_vm->_obj[ocPOLIZIOTTO16]._mode &= ~OBJMODE_OBJSTATUS;
 			break;
 
-		case dBARBONE171:
+		case dTRAMP171:
 			if (_curChoice == 77) {
-				g_vm->_obj[ocBARBONE17]._action = 211;
-				g_vm->_obj[ocBARBONE17]._flag &= ~OBJFLAG_PERSON;
+				g_vm->_obj[ocTRAMP17]._action = 211;
+				g_vm->_obj[ocTRAMP17]._flag &= ~OBJFLAG_PERSON;
 			} else if (_curChoice == 80)
-				g_vm->_obj[ocBARBONE17]._action = 213;
+				g_vm->_obj[ocTRAMP17]._action = 213;
 			else if (_curChoice == 122)
-				g_vm->_obj[ocBARBONE17]._action = 211;
+				g_vm->_obj[ocTRAMP17]._action = 211;
 			break;
 
-		case dGUARDIANO18:
+		case dGUARDIAN18:
 			if (_curChoice == 152)
 				g_vm->_obj[ocGUARD18]._mode &= ~OBJMODE_OBJSTATUS;
 			else if (_curChoice == 155)
@@ -276,7 +276,7 @@ void afterChoice(int numframe) {
 			g_vm->_obj[ocEVA19]._flag &= ~OBJFLAG_PERSON;
 			break;
 
-		case dNEGOZIANTE1A:
+		case dSHOPKEEPER1A:
 			if (_curChoice == 185) {
 				doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, r18, a1810ENTRADALNEGOZIO, 10, g_vm->_curObj);
 				g_vm->_obj[oPORTAN18]._flag &= ~OBJFLAG_ROOMOUT;

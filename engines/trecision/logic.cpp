@@ -421,8 +421,8 @@ void LogicManager::useInventoryWithInventory(bool *updateInventory, bool *printS
 		break;
 
 	case iTOPO1C:
-		if (_vm->_useWith[WITH] == iPATTINO) {
-			_vm->removeIcon(iPATTINO);
+		if (_vm->_useWith[WITH] == iSKATE) {
+			_vm->removeIcon(iSKATE);
 			_vm->removeIcon(iTOPO1C);
 			_vm->addIcon(iTOPO1D);
 			StartCharacterAction(hUSEGG, 0, 0, 1497);
@@ -430,9 +430,9 @@ void LogicManager::useInventoryWithInventory(bool *updateInventory, bool *printS
 		}
 		break;
 
-	case iPATTINO:
+	case iSKATE:
 		if (_vm->_useWith[WITH] == iTOPO1C) {
-			_vm->removeIcon(iPATTINO);
+			_vm->removeIcon(iSKATE);
 			_vm->removeIcon(iTOPO1C);
 			_vm->addIcon(iTOPO1D);
 			StartCharacterAction(hUSEGG, 0, 0, 1497);
@@ -914,14 +914,14 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 		break;
 
 	case iFOTO:
-		if ((_vm->_useWith[WITH] == ocBARBONE17) && (_vm->_choice[81]._flag & OBJFLAG_DONE)) {
+		if ((_vm->_useWith[WITH] == ocTRAMP17) && (_vm->_choice[81]._flag & OBJFLAG_DONE)) {
 			CharacterSay(1463);
 			*printSentence = false;
-		} else if ((_vm->_useWith[WITH] == ocBARBONE17) && (_vm->_choice[91]._flag & OBJFLAG_DONE)) {
-			_vm->_obj[ocBARBONE17]._action = 1462;
-			CharacterSay(_vm->_obj[ocBARBONE17]._action);
+		} else if ((_vm->_useWith[WITH] == ocTRAMP17) && (_vm->_choice[91]._flag & OBJFLAG_DONE)) {
+			_vm->_obj[ocTRAMP17]._action = 1462;
+			CharacterSay(_vm->_obj[ocTRAMP17]._action);
 			*printSentence = false;
-		} else if ((_vm->_useWith[WITH] == ocBARBONE17) && (!(_vm->_choice[78]._flag & OBJFLAG_DONE) || ((_vm->_choice[79]._flag & OBJFLAG_DONE) || (_vm->_choice[83]._flag & OBJFLAG_DONE) && !(_vm->_choice[92]._flag & OBJFLAG_DONE)))) {
+		} else if ((_vm->_useWith[WITH] == ocTRAMP17) && (!(_vm->_choice[78]._flag & OBJFLAG_DONE) || ((_vm->_choice[79]._flag & OBJFLAG_DONE) || (_vm->_choice[83]._flag & OBJFLAG_DONE) && !(_vm->_choice[92]._flag & OBJFLAG_DONE)))) {
 			_vm->_choice[78]._flag &= ~DLGCHOICE_HIDE;
 			if ((_vm->_choice[79]._flag & OBJFLAG_DONE) || (_vm->_choice[83]._flag & OBJFLAG_DONE)) {
 				_vm->_choice[92]._flag &= ~DLGCHOICE_HIDE;
@@ -931,7 +931,7 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 					_vm->_choice[122]._flag &= ~DLGCHOICE_HIDE;
 			} else
 				_vm->_choice[91]._flag &= ~DLGCHOICE_HIDE;
-			PlayDialog(dBARBONE171);
+			PlayDialog(dTRAMP171);
 			*updateInventory = false;
 			*printSentence = false;
 		} else if (_vm->_useWith[WITH] == ocPOLIZIOTTO16) {
@@ -957,14 +957,14 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 		break;
 
 	case iLATTINA13:
-		if (_vm->_useWith[WITH] == ocBARBONE17) {
+		if (_vm->_useWith[WITH] == ocTRAMP17) {
 			if ((_vm->_choice[79]._flag & OBJFLAG_DONE) || (_vm->_choice[83]._flag & OBJFLAG_DONE)) {
 				_vm->_choice[80]._flag &= ~DLGCHOICE_HIDE;
 				if (_vm->_choice[81]._flag & OBJFLAG_DONE) {
 					_vm->_choice[81]._flag &= ~DLGCHOICE_HIDE;
 					_vm->_choice[80]._flag &= ~DLGCHOICE_EXITDLG;
 				}
-				PlayDialog(dBARBONE171);
+				PlayDialog(dTRAMP171);
 				*updateInventory = false;
 				_vm->removeIcon(iLATTINA13);
 				*printSentence = false;
@@ -972,7 +972,7 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 				_vm->_choice[79]._flag &= ~DLGCHOICE_HIDE;
 				if (!(_vm->_choice[78]._flag & OBJFLAG_DONE)) {
 					_vm->_choice[106]._flag &= ~DLGCHOICE_HIDE;
-					_vm->_obj[ocBARBONE17]._action = 213;
+					_vm->_obj[ocTRAMP17]._action = 213;
 				} else {
 					_vm->_choice[107]._flag &= ~DLGCHOICE_HIDE;
 					if (_vm->_choice[80]._flag & OBJFLAG_DONE)
@@ -980,7 +980,7 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 					else
 						_vm->_choice[122]._flag &= ~DLGCHOICE_HIDE;
 				}
-				PlayDialog(dBARBONE171);
+				PlayDialog(dTRAMP171);
 				*updateInventory = false;
 				_vm->removeIcon(iLATTINA13);
 				*printSentence = false;
@@ -990,14 +990,14 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 		break;
 
 	case iBOTTIGLIA14:
-		if (_vm->_useWith[WITH] == ocBARBONE17) {
+		if (_vm->_useWith[WITH] == ocTRAMP17) {
 			if ((_vm->_choice[79]._flag & OBJFLAG_DONE) || (_vm->_choice[83]._flag & OBJFLAG_DONE)) {
 				_vm->_choice[80]._flag &= ~DLGCHOICE_HIDE;
 				if (_vm->_choice[81]._flag & OBJFLAG_DONE) {
 					_vm->_choice[81]._flag &= ~DLGCHOICE_HIDE;
 					_vm->_choice[80]._flag &= ~DLGCHOICE_EXITDLG;
 				}
-				PlayDialog(dBARBONE171);
+				PlayDialog(dTRAMP171);
 				*updateInventory = false;
 				_vm->removeIcon(iBOTTIGLIA14);
 				*printSentence = false;
@@ -1005,7 +1005,7 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 				_vm->_choice[83]._flag &= ~DLGCHOICE_HIDE;
 				if (!(_vm->_choice[78]._flag & OBJFLAG_DONE)) {
 					_vm->_choice[106]._flag &= ~DLGCHOICE_HIDE;
-					_vm->_obj[ocBARBONE17]._action = 213;
+					_vm->_obj[ocTRAMP17]._action = 213;
 				} else {
 					_vm->_choice[107]._flag &= ~DLGCHOICE_HIDE;
 					if (_vm->_choice[80]._flag & OBJFLAG_DONE)
@@ -1013,7 +1013,7 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 					else
 						_vm->_choice[122]._flag &= ~DLGCHOICE_HIDE;
 				}
-				PlayDialog(dBARBONE171);
+				PlayDialog(dTRAMP171);
 				*updateInventory = false;
 				_vm->removeIcon(iBOTTIGLIA14);
 				*printSentence = false;
@@ -1027,10 +1027,10 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 			*printSentence = false;
 			if (_vm->_choice[183]._flag & OBJFLAG_DONE) {
 				_vm->_choice[185]._flag &= ~DLGCHOICE_HIDE;
-				_dialog[dNEGOZIANTE1A]._startLen = 0;
-				PlayDialog(dNEGOZIANTE1A);
+				_dialog[dSHOPKEEPER1A]._startLen = 0;
+				PlayDialog(dSHOPKEEPER1A);
 				*updateInventory = false;
-				_dialog[dNEGOZIANTE1A]._startLen = 1;
+				_dialog[dSHOPKEEPER1A]._startLen = 1;
 				_vm->replaceIcon(iBOTTIGLIA1D, iTESSERA);
 			} else
 				CharacterSay(2006);
@@ -1040,7 +1040,7 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 	case iTESSERA:
 		if ((_vm->_useWith[WITH] == ocGUARD18) && !(_vm->_choice[155]._flag & OBJFLAG_DONE)) {
 			_vm->_choice[155]._flag &= ~DLGCHOICE_HIDE;
-			PlayDialog(dGUARDIANO18);
+			PlayDialog(dGUARDIAN18);
 			*updateInventory = false;
 			_vm->_obj[ocGUARD18]._flag &= ~OBJFLAG_PERSON;
 			_vm->_obj[oPORTAC18]._flag |= OBJFLAG_ROOMOUT;
@@ -2368,7 +2368,7 @@ bool LogicManager::mouseOperate(uint16 curObj) {
 		if (_vm->_obj[ocGUARD18]._flag & OBJFLAG_PERSON) {
 			_vm->_choice[151]._flag |= DLGCHOICE_HIDE;
 			_vm->_choice[152]._flag &= ~DLGCHOICE_HIDE;
-			PlayDialog(dGUARDIANO18);
+			PlayDialog(dGUARDIAN18);
 			_vm->_obj[ocGUARD18]._flag &= ~OBJFLAG_PERSON;
 			_vm->_obj[ocGUARD18]._action = 227;
 			_vm->_obj[oPORTAC18]._action = 220;
@@ -3135,7 +3135,7 @@ bool LogicManager::mouseTalk(uint16 curObj) {
 		break;
 
 	case ocNEGOZIANTE1A:
-		for (int c = _dialog[dNEGOZIANTE1A]._firstChoice; c < (_dialog[dNEGOZIANTE1A]._firstChoice + _dialog[dNEGOZIANTE1A]._choiceNumb); c++) {
+		for (int c = _dialog[dSHOPKEEPER1A]._firstChoice; c < (_dialog[dSHOPKEEPER1A]._firstChoice + _dialog[dSHOPKEEPER1A]._choiceNumb); c++) {
 			if (!(_vm->_choice[c]._flag & DLGCHOICE_HIDE)) {
 				PlayDialog(_vm->_obj[curObj]._goRoom);
 				retVal = false;
