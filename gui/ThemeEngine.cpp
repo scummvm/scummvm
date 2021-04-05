@@ -1348,7 +1348,7 @@ void ThemeEngine::drawSurface(const Common::Point &p, const Graphics::ManagedSur
 		return;
 
 	_vectorRenderer->setClippingRect(_clip);
-	_vectorRenderer->blitManagedSurface(&surface, p);
+	_vectorRenderer->blitManagedSurface(&surface, p, themeTrans);
 
 	Common::Rect dirtyRect = Common::Rect(p.x, p.y, p.x + surface.w, p.y + surface.h);
 	dirtyRect.clip(_clip);
