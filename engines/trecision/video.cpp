@@ -523,8 +523,10 @@ void AnimManager::refreshSmkAnim(int num) {
 #endif
 		}
 
-		_vm->_actorLimit = _vm->_limitsNum;
-		_vm->_limits[_vm->_limitsNum++] = Common::Rect(_animMinX, _animMinY + TOP, _animMaxX, _animMaxY + TOP);
+		if (_animMaxX > _animMinX && _animMaxY > _animMinY) {
+			_vm->_actorLimit = _vm->_limitsNum;
+			_vm->_limits[_vm->_limitsNum++] = Common::Rect(_animMinX, _animMinY + TOP, _animMaxX, _animMaxY + TOP);			
+		}
 	}
 
 	if (!(_animTab[num]._flag & SMKANIM_LOOP) && !(_animTab[num]._flag & SMKANIM_BKG)) {
