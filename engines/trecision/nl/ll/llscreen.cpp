@@ -66,8 +66,6 @@ STexture FTexture[MAXMAT];
 uint8 *MemoryArea;
 // SOUND
 uint8 *SoundStartBuffer;
-// Temporary variables
-Common::SeekableReadStream *ff;
 int32  hh;
 // MOUSE
 SDText curString;
@@ -99,52 +97,6 @@ void openSys() {
 
 	GameBytePointer = 0;
 	GameWordPointer = 0;
-
-	if (!g_vm->_dataFile.open("nldata.cd0")) {
-		warning(g_vm->_sysText[kMessageFilesMissing]);
-		CloseSys(g_vm->_sysText[kMessageFilesMissing]);
-	}		
-
-	if (!Common::File::exists("nlanim.cd1") || !Common::File::exists("nlanim.cd2")) {
-		warning(g_vm->_sysText[kMessageFilesMissing]);
-		CloseSys(g_vm->_sysText[kMessageFilesMissing]);
-	}
-
-	if (!g_vm->_speechFile.open("nlspeech.cd0")) {
-		warning(g_vm->_sysText[kMessageFilesMissing]);
-	}	
-
-	ff = FastFileOpen("NlFont.fnt");
-	g_vm->Font = new uint8[ff->size()];
-	ff->read(g_vm->Font, ff->size());
-	delete ff;
-
-	ff = FastFileOpen("frecc.bm");
-	int size = ceil(ff->size() / 2.0);
-	g_vm->Arrows = new uint16[size];
-	for (int i = 0; i < size; ++i)
-		g_vm->Arrows[i] = ff->readUint16LE();
-	delete ff;
-	g_vm->_graphicsMgr->updatePixelFormat(g_vm->Arrows, size);
-
-	ff = FastFileOpen("icone.bm");
-	size = ceil(ff->size() / 2.0);
-	int iconSize = ICONDX * ICONDY;
-	int arraySize = size + iconSize * (INVICONNUM + 1);
-	g_vm->Icone = new uint16[arraySize];
-	for (int i = 0; i < arraySize; ++i)
-		g_vm->Icone[i] = 0;
-	for (int i = 0; i < size; ++i)
-		g_vm->Icone[iconSize + i] = ff->readUint16LE();
-	delete ff;
-	g_vm->_graphicsMgr->updatePixelFormat(&g_vm->Icone[iconSize], size);
-
-	//
-	ff = FastFileOpen("textur.bm");
-	size = ff->size();
-	g_vm->TextureArea = new uint8[size];
-	ff->read(g_vm->TextureArea, size);
-	delete ff;
 
 	// head
 	hh = 0;
@@ -189,9 +141,8 @@ void openSys() {
 	GameBytePointer += ICONDX * ICONDY;
 
 	// zbuffer
-	size = ZBUFFERSIZE / 2;
-	g_vm->ZBuffer = new int16[size];
-	for (int c = 0; c < size; ++c)
+	g_vm->ZBuffer = new int16[ZBUFFERSIZE / 2];
+	for (int c = 0; c < ZBUFFERSIZE / 2; ++c)
 		g_vm->ZBuffer[c] = 0x7FFF;
 	
 	// CDBuffer
@@ -303,7 +254,7 @@ static const int _vertsCorrList[84] = {
 void SActor::ReadActor(const char *filename) {
 	_vm->_graphicsMgr->updatePixelFormat((uint16 *)_textureMat, 256 * 91);
 
-	ff = FastFileOpen(filename);
+	Common::SeekableReadStream *ff = g_vm->_dataFile.createReadStreamForMember(filename);
 	if (ff == nullptr)
 		error("ReadActor - Error opening file %s", filename);
 
@@ -323,7 +274,7 @@ void SActor::ReadActor(const char *filename) {
 	_faceNum = ff->readUint32LE();
 	delete ff;
 
-	ff = FastFileOpen("mat.tex");
+	ff = g_vm->_dataFile.createReadStreamForMember("mat.tex");
 	if (ff == nullptr)
 		error("ReadActor - Error opening file mat.tex");
 
@@ -634,7 +585,7 @@ void ReadExtraObj2C() {
 		return;
 	
 	uint16 *objBuffer = ExtraObj2C;
-	ff = FastFileOpen("2C2.bm");
+	Common::SeekableReadStream *ff = g_vm->_dataFile.createReadStreamForMember("2c2.bm");
 	ff->read(ExtraObj2C, ff->size());
 	delete ff;
 
@@ -688,7 +639,7 @@ void ReadExtraObj41D() {
 		return;
 
 	uint16 *objBuffer = ExtraObj41D;
-	ff = FastFileOpen("41D2.bm");
+	Common::SeekableReadStream *ff = g_vm->_dataFile.createReadStreamForMember("41d2.bm");
 	ff->read(ExtraObj41D, ff->size());
 	delete ff;
 
@@ -739,11 +690,6 @@ void ReadExtraObj41D() {
 --------------------------------------------------*/
 void ReadSounds() {
 	for (uint16 a = 0; a < MAXSOUNDSINROOM; a++) {
-		delete[] g_vm->SoundPointer[a];
-		g_vm->SoundPointer[a] = nullptr;
-	}
-
-	for (uint16 a = 0; a < MAXSOUNDSINROOM; a++) {
 		uint16 b = g_vm->_room[g_vm->_curRoom]._sounds[a];
 
 		if (b == 0)
@@ -752,14 +698,7 @@ void ReadSounds() {
 		if (!scumm_stricmp(GSample[b]._name, "RUOTE2C.WAV"))
 			break;
 
-		ff = FastFileOpen(GSample[b]._name);
-		if (ff == nullptr)
-			CloseSys(g_vm->_sysText[kMessageFilesMissing]);
-		int len = ff->size();
-		g_vm->SoundPointer[a] = new uint8[len];
-		ff->read(g_vm->SoundPointer[a], len);
-		delete ff;
-		LoadAudioWav(b, g_vm->SoundPointer[a], len);
+		LoadAudioWav(b, GSample[b]._name);
 
 		if (GSample[b]._flag & SOUNDFLAG_SBACK)
 			SoundFadIn(b);

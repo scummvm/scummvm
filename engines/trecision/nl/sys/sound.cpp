@@ -122,26 +122,20 @@ void soundtimefunct() {
 	}
 }
 
-/* -----------------05/08/97 16.35-------------------
-					StopSoundSystem
- --------------------------------------------------*/
 void StopSoundSystem() {
 	g_system->getMixer()->stopAll();
 }
 
-/* -----------------14/08/97 12.06-------------------
-					LoadAudioWav
- --------------------------------------------------*/
-void LoadAudioWav(int num, uint8 *wav, int len) {
-	Audio::SeekableAudioStream *stream = Audio::makeWAVStream(new Common::MemoryReadStream(wav, len), DisposeAfterUse::YES);
-
+void LoadAudioWav(int num, Common::String fileName) {
 	assert(num != 0xFFFF);
-	sfxStream[num] = stream;
+	Common::SeekableReadStream *stream = g_vm->_dataFile.createReadStreamForMember(fileName);
+	byte *buf = new byte[stream->size()];
+	int size = stream->size();
+	stream->read(buf, size);
+	delete stream;
+	sfxStream[num] = Audio::makeWAVStream(new Common::MemoryReadStream(buf, size), DisposeAfterUse::YES);
 }
 
-/* -----------------14/08/97 14.08-------------------
-					NLPlaySound
- --------------------------------------------------*/
 void NLPlaySound(int num) {
 	int channel = 2;
 	if (g_system->getMixer()->isSoundHandleActive(soundHandle[channel])) {

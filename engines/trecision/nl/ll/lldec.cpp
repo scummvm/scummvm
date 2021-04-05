@@ -93,10 +93,10 @@ void decompress(const unsigned char *src, unsigned src_len, unsigned char *dst, 
 	}
 }
 
-uint32 DecCR(Common::String FileName, uint8 *DestArea, uint8 *DecArea) {
-	ff = FastFileOpen(FileName.c_str());
+uint32 DecCR(Common::String fileName, uint8 *DestArea, uint8 *DecArea) {
+	Common::SeekableReadStream *ff = g_vm->_dataFile.createReadStreamForMember(fileName);
 	if (ff == nullptr)
-		error("File not found %s", FileName.c_str());
+		error("File not found %s", fileName.c_str());
 
 	uint8 *ibuf = DecArea;
 	uint8 *obuf = DestArea;
@@ -104,7 +104,7 @@ uint32 DecCR(Common::String FileName, uint8 *DestArea, uint8 *DecArea) {
 	int dataSize = ff->size() - 8;
 	uint32 signature = ff->readUint32LE();
 	if (signature != FAST_COOKIE)
-		error("DecCR - %s has a bad signature and can't be loaded", FileName.c_str());
+		error("DecCR - %s has a bad signature and can't be loaded", fileName.c_str());
 
 	uint32 decompSize = ff->readUint32LE();
 	ff->read(ibuf, dataSize);

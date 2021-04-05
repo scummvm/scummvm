@@ -60,9 +60,6 @@ TrecisionEngine::TrecisionEngine(OSystem *syst) : Engine(syst) {
 	_curRoom = 0;
 	_oldRoom = 0;
 
-	for (int i = 0; i < MAXSOUNDSINROOM; ++i)
-		SoundPointer[i] = nullptr;
-
 	_curInventory = 0;
 	_curSortTableNum = 0;
 
@@ -177,9 +174,6 @@ TrecisionEngine::~TrecisionEngine() {
 	delete[] Icone;
 	delete[] ZBuffer;
 	delete _actor;
-
-	for (int i = 0; i < MAXSOUNDSINROOM; ++i)
-		delete[] SoundPointer[i];
 }
 
 Common::Error TrecisionEngine::run() {
@@ -435,6 +429,7 @@ void TrecisionEngine::initMain() {
 
 	initNames();
 	_logicMgr->initScript();
+	openDataFiles();
 	openSys();
 
 	LoadAll();
@@ -449,9 +444,41 @@ void TrecisionEngine::initMain() {
 	doEvent(MC_SYSTEM, ME_START, MP_DEFAULT, 0, 0, 0, 0);
 }
 
-/*-------------------------------------------------------------------------*/
-/*                            initMessageSystem          				   */
-/*-------------------------------------------------------------------------*/
+void TrecisionEngine::openDataFiles() {
+	if (!_dataFile.open("nldata.cd0")) {
+		warning(_sysText[kMessageFilesMissing]);
+		CloseSys(_sysText[kMessageFilesMissing]);
+	}
+
+	if (!Common::File::exists("nlanim.cd1") || !Common::File::exists("nlanim.cd2")) {
+		warning(_sysText[kMessageFilesMissing]);
+		CloseSys(_sysText[kMessageFilesMissing]);
+	}
+
+	if (!_speechFile.open("nlspeech.cd0")) {
+		warning(_sysText[kMessageFilesMissing]);
+	}
+
+	Font = readData("nlfont.fnt");
+	int size;
+	Arrows = readData16("frecc.bm", size);
+	_graphicsMgr->updatePixelFormat(Arrows, size);
+
+	Common::SeekableReadStream *ff = _dataFile.createReadStreamForMember("icone.bm");
+	size = ceil(ff->size() / 2.0);
+	int iconSize = ICONDX * ICONDY;
+	int arraySize = size + iconSize * (INVICONNUM + 1);
+	Icone = new uint16[arraySize];
+	for (int i = 0; i < arraySize; ++i)
+		Icone[i] = 0;
+	for (int i = 0; i < size; ++i)
+		Icone[iconSize + i] = ff->readUint16LE();
+	delete ff;
+	_graphicsMgr->updatePixelFormat(&Icone[iconSize], size);
+
+	TextureArea = readData("textur.bm");
+}
+
 void TrecisionEngine::initMessageSystem() {
 	_gameQueue.initQueue();
 	_animQueue.initQueue();
@@ -655,6 +682,38 @@ void TrecisionEngine::initCursor() {
 
 	Graphics::PixelFormat format = g_system->getScreenFormat();
 	CursorMan.pushCursor(cursor, cw, ch, cx, cy, 0, false, &format);
+}
+
+byte *TrecisionEngine::readData(Common::String fileName) {
+	Common::SeekableReadStream *stream = _dataFile.createReadStreamForMember(fileName);
+	if (stream == nullptr) {
+		warning("readData: File %s not found", fileName.c_str());
+		CloseSys(_sysText[kMessageFilesMissing]);
+		return nullptr;
+	}
+
+	byte *buf = new byte[stream->size()];
+	stream->read(buf, stream->size());
+	delete stream;
+	
+	return buf;
+}
+
+uint16 *TrecisionEngine::readData16(Common::String fileName, int &size) {
+	Common::SeekableReadStream *stream = _dataFile.createReadStreamForMember(fileName);
+	if (stream == nullptr) {
+		warning("readData16: File %s not found", fileName.c_str());
+		CloseSys(_sysText[kMessageFilesMissing]);
+		return nullptr;
+	}
+
+	size = ceil(stream->size() / 2.0);
+	uint16 *buf = new uint16[size];
+	for (int i = 0; i < size; ++i)
+		buf[i] = stream->readUint16LE();
+	delete stream;
+
+	return buf;
 }
 
 SActor::SActor(TrecisionEngine *vm) : _vm(vm) {
