@@ -53,7 +53,7 @@ SVGBitmap::SVGBitmap(Common::SeekableReadStream *in) {
 	_cache = NULL;
 	_render = NULL;
 
-	_pixelformat = new Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
+	_pixelformat = new Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24);
 }
 
 SVGBitmap::~SVGBitmap() {
