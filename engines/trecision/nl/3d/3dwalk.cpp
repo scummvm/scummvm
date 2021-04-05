@@ -46,7 +46,18 @@ int read3D(Common::String c) {
 		error("read3D: Can't open 3D file %s", c.c_str());
 
 	// read rooms and lights
-	ff->read(g_vm->_actor->_camera, sizeof(SCamera));
+	SCamera *cam = g_vm->_actor->_camera;
+	cam->_ex = ff->readFloatLE();
+	cam->_ey = ff->readFloatLE();
+	cam->_ez = ff->readFloatLE();
+	for (int i = 0; i < 3; ++i)
+		cam->_e1[i] = ff->readFloatLE();
+	for (int i = 0; i < 3; ++i)
+		cam->_e2[i] = ff->readFloatLE();
+	for (int i = 0; i < 3; ++i)
+		cam->_e3[i] = ff->readFloatLE();
+	cam->_fovX = ff->readFloatLE();
+	cam->_fovY = ff->readFloatLE();
 
 	g_vm->_actor->_lightNum = ff->readSint32LE();
 	if (g_vm->_actor->_lightNum > MAXLIGHT)
