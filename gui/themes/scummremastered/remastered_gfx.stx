@@ -103,27 +103,27 @@
 
 	<bitmaps>
 		<bitmap filename = 'logo.bmp' scalable_file = 'logo.svg'/>
-		<bitmap filename = 'cursor.bmp'/>
-		<bitmap filename = 'cursor_small.bmp'/>
-		<bitmap filename = 'checkbox.bmp'/>
+		<bitmap filename = 'cursor.bmp' scalable_file = 'cursor.svg'/>
+		<bitmap filename = 'cursor_small.bmp' scalable_file = 'cursor.svg'/>
+		<bitmap filename = 'checkbox.bmp' scalable_file = 'checkbox.svg'/>
 		<bitmap filename = 'checkbox_empty.bmp'/>
-		<bitmap filename = 'checkbox_disabled.bmp'/>
-		<bitmap filename = 'radiobutton.bmp'/>
-		<bitmap filename = 'radiobutton_empty.bmp'/>
-		<bitmap filename = 'logo_small.bmp'/>
-		<bitmap filename = 'search.bmp'/>
-		<bitmap filename = 'eraser.bmp'/>
-		<bitmap filename = 'delbtn.bmp'/>
-		<bitmap filename = 'list.bmp'/>
-		<bitmap filename = 'grid.bmp'/>
-		<bitmap filename = 'stopbtn.bmp'/>
-		<bitmap filename = 'editbtn.bmp'/>
-		<bitmap filename = 'switchbtn.bmp'/>
-		<bitmap filename = 'fastreplay.bmp'/>
-		<bitmap filename = 'stopbtn_small.bmp'/>
-		<bitmap filename = 'editbtn_small.bmp'/>
-		<bitmap filename = 'switchbtn_small.bmp'/>
-		<bitmap filename = 'fastreplay_small.bmp'/>
+		<bitmap filename = 'checkbox_disabled.bmp' scalable_file = 'checkbox_disabled.svg'/>
+		<bitmap filename = 'radiobutton.bmp' scalable_file = 'radiobutton.svg'/>
+		<bitmap filename = 'radiobutton_empty.bmp' scalable_file = 'radiobutton_empty.svg'/>
+		<bitmap filename = 'logo_small.bmp' scalable_file = 'logo.svg'/>
+		<bitmap filename = 'search.bmp' scalable_file = 'search.svg'/>
+		<bitmap filename = 'eraser.bmp' scalable_file = 'eraser.svg'/>
+		<bitmap filename = 'delbtn.bmp' scalable_file = 'delbtn.svg'/>
+		<bitmap filename = 'list.bmp' scalable_file = 'list.svg'/>
+		<bitmap filename = 'grid.bmp' scalable_file = 'grid.svg'/>
+		<bitmap filename = 'stopbtn.bmp' scalable_file = 'stopbtn.svg'/>
+		<bitmap filename = 'editbtn.bmp' scalable_file = 'editbtn.svg'/>
+		<bitmap filename = 'switchbtn.bmp' scalable_file = 'switchbtn.svg'/>
+		<bitmap filename = 'fastreplay.bmp' scalable_file = 'fastreplay.svg'/>
+		<bitmap filename = 'stopbtn_small.bmp' scalable_file = 'stopbtn.svg'/>
+		<bitmap filename = 'editbtn_small.bmp' scalable_file = 'editbtn.svg'/>
+		<bitmap filename = 'switchbtn_small.bmp' scalable_file = 'switchbtn.svg'/>
+		<bitmap filename = 'fastreplay_small.bmp' scalable_file = 'fastreplay.svg'/>
 	</bitmaps>
 
 	<fonts>
