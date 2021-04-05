@@ -78,7 +78,12 @@ void SVGBitmap::render(Graphics::Surface &target, int dw, int dh) {
 
 		_cache = (byte *)malloc(dw * dh * 4);
 
-		nsvgRasterize(_rasterizer, _svg, 0, 0, 1, _cache, dw, dh, dw * 4);
+		// Maintain aspect ratio
+		float xRatio = 1.0f * dw / _svg->width;
+		float yRatio = 1.0f * dh / _svg->height;
+		float ratio = xRatio < yRatio ? xRatio : yRatio;
+
+		nsvgRasterize(_rasterizer, _svg, 0, 0, ratio, _cache, dw, dh, dw * 4);
 
 		_cachedW = dw;
 		_cachedH = dh;
