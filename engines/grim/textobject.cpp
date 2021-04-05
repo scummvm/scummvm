@@ -20,6 +20,7 @@
  *
  */
 
+#include "common/unicode-bidi.h"
 #include "engines/grim/debug.h"
 #include "engines/grim/grim.h"
 #include "engines/grim/textobject.h"
@@ -278,16 +279,11 @@ void TextObject::setupText() {
 			nextLinePos = message.size();
 			cutLen = nextLinePos;
 		}
-		Common::String currentLine;
+		Common::String currentLine(message.c_str(), message.c_str() + nextLinePos);
 
-		const char *start = message.c_str();
 		// Reverse the line for the Hebrew translation
-		if (g_grim->getGameLanguage() == Common::HE_ISR) {
-			for (const char *ch = start + nextLinePos - 1; ch > start; --ch)
-				currentLine += *ch;
-		} else {
-			currentLine = Common::String(start, start + nextLinePos);
-		}
+		if (g_grim->getGameLanguage() == Common::HE_ISR)
+			currentLine = Common::convertBiDiString(currentLine, Common::kWindows1255);
 
 		_lines[j] = currentLine;
 		int width = _font->getKernedStringLength(currentLine);
