@@ -231,7 +231,7 @@ Common::Error NancyEngine::run() {
 	// Check if we need to load a save state from the launcher
 	if (ConfMan.hasKey("save_slot")) {
 		int saveSlot = ConfMan.getInt("save_slot");
-		if (saveSlot >= 0 && saveSlot <= getMetaEngine().getMaximumSaveSlot()) {
+		if (saveSlot >= 0 && saveSlot <= getMetaEngine()->getMaximumSaveSlot()) {
 			// Set to Scene but do not do the loading yet
 			setState(NancyState::kScene);
 		}

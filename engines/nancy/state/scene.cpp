@@ -406,7 +406,7 @@ void Scene::init() {
 	if (ConfMan.hasKey("save_slot")) {
 		// Load savefile directly from the launcher
 		int saveSlot = ConfMan.getInt("save_slot");
-		if (saveSlot >= 0 && saveSlot <= g_nancy->getMetaEngine().getMaximumSaveSlot()) {
+		if (saveSlot >= 0 && saveSlot <= g_nancy->getMetaEngine()->getMaximumSaveSlot()) {
 			// Set to Scene but do not do the loading yet
 			g_nancy->loadGameState(saveSlot);
 		}
