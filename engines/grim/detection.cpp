@@ -153,6 +153,20 @@ static const GrimGameDescription gameDescriptions[] = {
 		},
 		GType_GRIM
 	},
+	{
+		// Grim Fandango Hebrew Fan translation (patched)
+		{
+			"grim",
+			"",
+			AD_ENTRY2s("LOCAL.LAB", "d22648d6787c2f8f0a789ee3ed0c08f7", 608,
+					   "VOX0001.LAB", "444f05f2af689c1bffd179b8b6a632bd", 57993159),
+			Common::HE_ISR,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUI_OPTIONS_GRIME
+		},
+		GType_GRIM
+	},
 /*	{
 		// Grim Fandango German version (patched)
 		{
