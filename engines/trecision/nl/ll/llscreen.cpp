@@ -615,7 +615,7 @@ void ReadObj() {
 			ObjPointers[a] = (uint16 *)p + 2;
 			g_vm->_graphicsMgr->updatePixelFormat(ObjPointers[a], *p);
 
-			b += (p[0]);
+			b += p[0];
 			b += 2;
 
 			p = (uint32 *)(objBuffer + b);
@@ -669,7 +669,7 @@ void ReadExtraObj2C() {
 			ObjPointers[a] = (uint16 *)p + 2;
 			g_vm->_graphicsMgr->updatePixelFormat(ObjPointers[a], *p);
 
-			b += (p[0]);
+			b += p[0];
 			b += 2;
 
 			p = (uint32 *)(objBuffer + b);
@@ -723,7 +723,7 @@ void ReadExtraObj41D() {
 			ObjPointers[a] = (uint16 *)p + 2;
 			g_vm->_graphicsMgr->updatePixelFormat(ObjPointers[a], *p);
 
-			b += (p[0]);
+			b += p[0];
 			b += 2;
 
 			p = (uint32 *)(objBuffer + b);
@@ -801,7 +801,7 @@ void PaintRegenRoom() {
 	}
 }
 /*-----------------16/05/95 11.03-------------------
-                              DrawObj
+                      DrawObj
 --------------------------------------------------*/
 void DrawObj(SDObj d) {
 	if (d.l.left > SCREENLEN || d.l.top > SCREENLEN || d.l.right > SCREENLEN || d.l.bottom > SCREENLEN)
@@ -816,12 +816,12 @@ void DrawObj(SDObj d) {
 				uint16 Sco = 0;
 				uint16 c = 0;
 				while (Sco < d.dx) {
-					if (c == 0) {                 /* salta */
+					if (c == 0) {            // jump
 						Sco += *mask;
 						mask++;
 
 						c = 1;
-					} else {                 // copia
+					} else {                 // copy
 						uint16 maskOffset = *mask;
 
 						if ((maskOffset != 0) && (b >= (d.y + d.l.top)) && (b < (d.y + d.l.bottom))) {
@@ -844,12 +844,10 @@ void DrawObj(SDObj d) {
 				}
 			}
 		}
-	} else {
-		if (d.flag & COPYTORAM) {
-			for (uint16 b = d.l.top; b < d.l.bottom; b++) {
-				memcpy(g_vm->_screenBuffer + (d.y + b) * SCREENLEN + (d.x + d.l.left),
-					  buf + (b * d.dx) + d.l.left, (d.l.right - d.l.left) * 2);
-			}
+	} else if (d.flag & COPYTORAM) {
+		for (uint16 b = d.l.top; b < d.l.bottom; b++) {
+			memcpy(g_vm->_screenBuffer + (d.y + b) * SCREENLEN + (d.x + d.l.left),
+				  buf + (b * d.dx) + d.l.left, (d.l.right - d.l.left) * 2);
 		}
 	}
 }

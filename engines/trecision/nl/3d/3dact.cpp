@@ -35,8 +35,6 @@ namespace Trecision {
 					Do Action
 --------------------------------------------------*/
 void actorDoAction(int whatAction) {
-	int len;
-
 	_curStep = 1;
 	float px = g_vm->_actor->_px + g_vm->_actor->_dx;
 	float pz = g_vm->_actor->_pz + g_vm->_actor->_dz;
@@ -60,6 +58,7 @@ void actorDoAction(int whatAction) {
 	SVertex *v = g_vm->_actor->_characterArea;
 	float firstFrame = FRAMECENTER(v);
 
+	int len;
 	if (whatAction > hLAST) {
 		v = (SVertex *)(_actionPointer[_actionPosition[actionInRoom(whatAction)]]);
 		len = g_vm->_actionLen[whatAction];

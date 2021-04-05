@@ -361,7 +361,7 @@ void AnimManager::stopFullMotion() {
 		return;
 	}
 
-	if (!((_curDialog == dNEGOZIANTE1A) && (_curChoice == 185))) {
+	if (!((_curDialog == dSHOPKEEPER1A) && (_curChoice == 185))) {
 		if ((_curDialog == dF582) || (_curDialog == dFLOG) || (_curDialog == dINTRO) || (_curDialog == dF362) || (_curDialog == dC381) || (_curDialog == dF381) ||
 		    (_curDialog == dF491) || ((_curDialog == dC581) && !(g_vm->_choice[886]._flag & OBJFLAG_DONE) && (g_vm->_choice[258]._flag & OBJFLAG_DONE)) ||
 		    ((_curDialog == dC5A1) && (_vm->_room[r5A]._flag & OBJFLAG_EXTRA)))
