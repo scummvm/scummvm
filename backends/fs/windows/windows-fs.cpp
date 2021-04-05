@@ -43,16 +43,17 @@
 #define W_OK 2
 #endif
 
+
 bool WindowsFilesystemNode::exists() const {
-	return _access(_path.c_str(), F_OK) == 0;
+	return _taccess(toUnicode(_path.c_str()), F_OK) == 0;
 }
 
 bool WindowsFilesystemNode::isReadable() const {
-	return _access(_path.c_str(), R_OK) == 0;
+	return _taccess(toUnicode(_path.c_str()), R_OK) == 0;
 }
 
 bool WindowsFilesystemNode::isWritable() const {
-	return _access(_path.c_str(), W_OK) == 0;
+	return _taccess(toUnicode(_path.c_str()), W_OK) == 0;
 }
 
 void WindowsFilesystemNode::addFile(AbstractFSList &list, ListMode mode, const char *base, bool hidden, WIN32_FIND_DATA* find_data) {
@@ -91,7 +92,7 @@ char* WindowsFilesystemNode::toAscii(TCHAR *str) {
 	return (char *)str;
 #else
 	static char asciiString[MAX_PATH];
-	WideCharToMultiByte(CP_ACP, 0, str, _tcslen(str) + 1, asciiString, sizeof(asciiString), NULL, NULL);
+	WideCharToMultiByte(CP_UTF8, 0, str, _tcslen(str) + 1, asciiString, sizeof(asciiString), NULL, NULL);
 	return asciiString;
 #endif
 }
@@ -101,7 +102,7 @@ const TCHAR* WindowsFilesystemNode::toUnicode(const char *str) {
 	return (const TCHAR *)str;
 #else
 	static TCHAR unicodeString[MAX_PATH];
-	MultiByteToWideChar(CP_ACP, 0, str, strlen(str) + 1, unicodeString, sizeof(unicodeString) / sizeof(TCHAR));
+	MultiByteToWideChar(CP_UTF8, 0, str, strlen(str) + 1, unicodeString, sizeof(unicodeString) / sizeof(TCHAR));
 	return unicodeString;
 #endif
 }
@@ -116,9 +117,9 @@ WindowsFilesystemNode::WindowsFilesystemNode() {
 
 WindowsFilesystemNode::WindowsFilesystemNode(const Common::String &p, const bool currentDir) {
 	if (currentDir) {
-		char path[MAX_PATH];
+		TCHAR path[MAX_PATH];
 		GetCurrentDirectory(MAX_PATH, path);
-		_path = path;
+		_path = toAscii(path);
 	} else {
 		assert(p.size() > 0);
 		_path = p;
@@ -231,12 +232,25 @@ AbstractFSNode *WindowsFilesystemNode::getParent() const {
 }
 
 Common::SeekableReadStream *WindowsFilesystemNode::createReadStream() {
-	return StdioStream::makeFromPath(getPath(), false);
+	return makeFromPath(getPath(), false);
 }
 
 Common::WriteStream *WindowsFilesystemNode::createWriteStream() {
-	return StdioStream::makeFromPath(getPath(), true);
+	return makeFromPath(getPath(), true);
 }
+
+//TODO fix StdioStream::makeFromPath, use it instead of this, and remove this
+StdioStream *WindowsFilesystemNode::makeFromPath(const Common::String &path, bool writeMode) {
+#ifndef UNICODE
+	FILE *handle = fopen(path.c_str(), writeMode ? "wb" : "rb");
+#else
+	FILE *handle = _wfopen(WindowsFilesystemNode::toUnicode(path.c_str()), writeMode ? L"wb" : L"rb");
+#endif
+	if (handle)
+		return new StdioStream(handle);
+	return 0;
+}
+
 
 bool WindowsFilesystemNode::createDirectory() {
 	if (CreateDirectory(toUnicode(_path.c_str()), NULL) != 0)

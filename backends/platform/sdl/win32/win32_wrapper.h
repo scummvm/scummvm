@@ -43,23 +43,23 @@ bool confirmWindowsVersion(int majorVersion, int minorVersion);
  * Used to interact with Win32 Unicode APIs with no ANSI fallback.
  *
  * @param s Source string
- * @param c Code Page, by default is CP_ACP (default Windows ANSI code page)
+ * @param c Code Page, by default is CP_UTF8
  * @return Converted string
  *
  * @note Return value must be freed by the caller.
  */
-wchar_t *ansiToUnicode(const char *s, uint codePage = CP_ACP);
+wchar_t *ansiToUnicode(const char *s, uint codePage = CP_UTF8);
 /**
  * Converts a Windows wide-character string into a C string.
  * Used to interact with Win32 Unicode APIs with no ANSI fallback.
  *
  * @param s Source string
- * @param c Code Page, by default is CP_ACP (default Windows ANSI code page)
+ * @param c Code Page, by default is CP_UTF8
  * @return Converted string
  *
  * @note Return value must be freed by the caller.
  */
-char *unicodeToAnsi(const wchar_t *s, uint codePage = CP_ACP);
+char *unicodeToAnsi(const wchar_t *s, uint codePage = CP_UTF8);
 
 }
 

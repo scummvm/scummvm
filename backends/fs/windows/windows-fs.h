@@ -26,6 +26,7 @@
 #include <windows.h>
 
 #include "backends/fs/abstract-fs.h"
+#include "backends/fs/stdiostream.h"
 
 #include <io.h>
 #include <stdio.h>
@@ -80,6 +81,8 @@ public:
 
 	virtual Common::SeekableReadStream *createReadStream() override;
 	virtual Common::WriteStream *createWriteStream() override;
+	//TODO fix StdioStream::makeFromPath, use it instead of this, and remove this
+	StdioStream *makeFromPath(const Common::String &path, bool writeMode);
 	virtual bool createDirectory() override;
 
 private:

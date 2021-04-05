@@ -1083,7 +1083,8 @@ const Feature s_features[] = {
 	{              "tts",                       "USE_TTS", false, true,  "Text to speech support"},
 	{"builtin-resources",             "BUILTIN_RESOURCES", false, true,  "include resources (e.g. engine data, fonts) into the binary"},
 	{ "detection-static", "USE_DETECTION_FEATURES_STATIC", false, true,  "Static linking of detection objects for engines."},
-	{            "cxx11",                     "USE_CXX11", false, true,  "Compile with c++11 support"}
+	{            "cxx11",                     "USE_CXX11", false, true,  "Compile with c++11 support"},
+	{    "win32_unicode",              "UNICODE;_UNICODE", false, true,  "Use Win32 API Unicode"}
 };
 
 const Tool s_tools[] = {
