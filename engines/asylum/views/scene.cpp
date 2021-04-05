@@ -2456,7 +2456,7 @@ bool Scene::drawScene() {
 }
 
 bool Scene::updateListCompare(const UpdateItem &item1, const UpdateItem &item2) {
-	return (item1.priority - item2.priority < 0) ? false : true;
+	return (item1.priority < item2.priority);
 }
 
 void Scene::buildUpdateList() {
