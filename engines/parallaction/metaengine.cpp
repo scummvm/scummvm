@@ -26,6 +26,11 @@
 #include "engines/advancedDetector.h"
 #include "common/system.h"
 #include "common/textconsole.h"
+#include "common/translation.h"
+
+#include "backends/keymapper/action.h"
+#include "backends/keymapper/keymap.h"
+#include "backends/keymapper/standard-actions.h"
 
 #include "parallaction/parallaction.h"
 #include "parallaction/detection.h"
@@ -45,8 +50,9 @@ public:
 		return "parallaction";
 	}
 
-    bool hasFeature(MetaEngineFeature f) const override;
+	bool hasFeature(MetaEngineFeature f) const override;
 	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	Common::KeymapArray initKeymaps(const char *target) const override;
 
 	SaveStateList listSaves(const char *target) const override;
 	int getMaximumSaveSlot() const override;
@@ -79,6 +85,68 @@ Common::Error ParallactionMetaEngine::createInstance(OSystem *syst, Engine **eng
 	}
 
 	return Common::kNoError;
+}
+
+Common::KeymapArray ParallactionMetaEngine::initKeymaps(const char *target) const {
+	using namespace Common;
+
+	Common::String gameId = ConfMan.get("gameid", target);
+	Keymap *engineKeymap;
+
+	if (gameId == "nippon")
+		engineKeymap = new Keymap(Keymap::kKeymapTypeGame, "parallaction", "Nippon Safes Inc.");
+	else if (gameId == "bra")
+		engineKeymap = new Keymap(Keymap::kKeymapTypeGame, "parallaction", "The Big Red Adventure");
+	else
+		return AdvancedMetaEngine::initKeymaps(target);
+
+	Action *act;
+
+	act = new Action(kStandardActionLeftClick, _("Left Click"));
+	act->setLeftClickEvent();
+	act->addDefaultInputMapping("MOUSE_LEFT");
+	act->addDefaultInputMapping("JOY_A");
+	engineKeymap->addAction(act);
+
+	act = new Action(kStandardActionRightClick, _("Right Click"));
+	act->setRightClickEvent();
+	act->addDefaultInputMapping("MOUSE_RIGHT");
+	act->addDefaultInputMapping("JOY_B");
+	engineKeymap->addAction(act);
+
+	if (gameId == "nippon") {
+		act = new Action(kStandardActionLoad, _("Load"));
+		act->setKeyEvent(KeyState(KEYCODE_l, 'l'));
+		act->addDefaultInputMapping("l");
+		act->addDefaultInputMapping("JOY_LEFT_SHOULDER");
+		engineKeymap->addAction(act);
+
+		act = new Action(kStandardActionSave, _("Save"));
+		act->setKeyEvent(KeyState(KEYCODE_s, 's'));
+		act->addDefaultInputMapping("s");
+		act->addDefaultInputMapping("JOY_RIGHT_SHOULDER");
+		engineKeymap->addAction(act);
+	} else if (gameId == "bra") {
+		act = new Action(kStandardActionOpenMainMenu, _("Game menu"));
+		act->setKeyEvent(KeyState(KEYCODE_F5, ASCII_F5));
+		act->addDefaultInputMapping("F5");
+		act->addDefaultInputMapping("JOY_LEFT_SHOULDER");
+		engineKeymap->addAction(act);
+
+		act = new Action("YES", _("Yes"));
+		act->setKeyEvent(KeyState(KEYCODE_y, 'y'));
+		act->addDefaultInputMapping("y");
+		act->addDefaultInputMapping("JOY_Y");
+		engineKeymap->addAction(act);
+
+		act = new Action("NO", _("No"));
+		act->setKeyEvent(KeyState(KEYCODE_n, 'n'));
+		act->addDefaultInputMapping("n");
+		act->addDefaultInputMapping("JOY_X");
+		engineKeymap->addAction(act);
+	}
+
+	return Keymap::arrayOf(engineKeymap);
 }
 
 SaveStateList ParallactionMetaEngine::listSaves(const char *target) const {
