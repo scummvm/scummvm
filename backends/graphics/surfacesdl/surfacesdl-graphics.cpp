@@ -625,7 +625,7 @@ void SurfaceSdlGraphicsManager::detectSupportedFormats() {
 #endif
 
 int SurfaceSdlGraphicsManager::getGraphicsModeScale(int mode) const {
-	if (mode >= (int)s_supportedGraphicsModes->size())
+	if (mode < 0 || mode >= (int)s_supportedGraphicsModes->size())
 		return -1;
 
 	return (*s_supportedGraphicsModesData)[mode].scaleFactor;
@@ -641,7 +641,7 @@ bool SurfaceSdlGraphicsManager::setGraphicsMode(int mode, uint flags) {
 
 	int newScaleFactor;
 
-	if (mode >= (int)s_supportedGraphicsModes->size()) {
+	if (mode < 0 || mode >= (int)s_supportedGraphicsModes->size()) {
 		warning("unknown gfx mode %d", mode);
 		return false;
 	}
