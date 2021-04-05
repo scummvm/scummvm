@@ -608,6 +608,22 @@ void PicButtonWidget::setGfx(const Graphics::Surface *gfx, int statenum, bool sc
 	}
 }
 
+void PicButtonWidget::setGfxFromTheme(const char *name, int statenum, bool scale) {
+	Graphics::SVGBitmap *svg = g_gui.theme()->getSVG(name);
+
+	if (!svg) {
+		const Graphics::Surface *gfx = g_gui.theme()->getImageSurface(name);
+
+		setGfx(gfx, statenum, scale);
+
+		return;
+	}
+
+	_gfx[statenum].free();
+	_gfx[statenum].create(_w, _h, *svg->getPixelFormat());
+	svg->render(_gfx[statenum], _w, _h);
+}
+
 void PicButtonWidget::setGfx(int w, int h, int r, int g, int b, int statenum) {
 	if (w == -1)
 		w = _w;
@@ -625,7 +641,7 @@ void PicButtonWidget::drawWidget() {
 	if (_showButton)
 		g_gui.theme()->drawButton(Common::Rect(_x, _y, _x + _w, _y + _h), Common::U32String(), _state, getFlags());
 
-	Graphics::Surface *gfx;
+	Graphics::ManagedSurface *gfx;
 
 	if (_state == ThemeEngine::kStateHighlight)
 		gfx = &_gfx[kPicButtonHighlight];
