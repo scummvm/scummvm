@@ -40,7 +40,7 @@ public:
 	SVGBitmap(Common::SeekableReadStream *in);
 	~SVGBitmap();
 
-	void render(Graphics::Surface &target, int dw, int dh);
+	void render(Graphics::ManagedSurface &target, int dw, int dh);
 
 private:
 	NSVGimage *_svg;

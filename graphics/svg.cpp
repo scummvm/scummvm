@@ -65,7 +65,7 @@ SVGBitmap::~SVGBitmap() {
 	delete _render;
 }
 
-void SVGBitmap::render(Graphics::Surface &target, int dw, int dh) {
+void SVGBitmap::render(Graphics::ManagedSurface &target, int dw, int dh) {
 	if (dw == 0 || dh == 0)
 		return;
 
@@ -97,12 +97,12 @@ void SVGBitmap::render(Graphics::Surface &target, int dw, int dh) {
 		_render = new ManagedSurface(dw, dh, *_pixelformat);
 		_render->clear(_pixelformat->ARGBToColor(255, 255, 0, 255));
 
-		_render->blitFrom(tmp);
+		_render->transBlitFrom(tmp);
 
 		tmp.free();
 	}
 
-	target.copyFrom(_render->rawSurface());
+	target.blitFrom(_render->rawSurface());
 }
 
 } // end of namespace Graphics
