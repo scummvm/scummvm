@@ -1340,6 +1340,21 @@ void ThemeEngine::drawSurface(const Common::Point &p, const Graphics::Surface &s
 	addDirtyRect(dirtyRect);
 }
 
+void ThemeEngine::drawSurface(const Common::Point &p, const Graphics::ManagedSurface &surface, bool themeTrans) {
+	if (!ready())
+		return;
+
+	if (_layerToDraw == kDrawLayerBackground)
+		return;
+
+	_vectorRenderer->setClippingRect(_clip);
+	_vectorRenderer->blitManagedSurface(&surface, p);
+
+	Common::Rect dirtyRect = Common::Rect(p.x, p.y, p.x + surface.w, p.y + surface.h);
+	dirtyRect.clip(_clip);
+	addDirtyRect(dirtyRect);
+}
+
 void ThemeEngine::drawWidgetBackground(const Common::Rect &r, WidgetBackground background) {
 	if (!ready())
 		return;
