@@ -986,6 +986,7 @@ void Screen::blitMasked(GraphicFrame *frame, Common::Rect *source, byte *maskDat
 
 	if (destination->left > destMask->left) {
 		zoom += abs(destination->left - destMask->left) & 7;
+		zoom &= 7;
 		maskBufferPtr += ((destination->left - destMask->left) + zoom) / 8;
 		sourceMask->setWidth(sourceMask->width() + destMask->left - destination->left);
 		destMask->left = destination->left;
