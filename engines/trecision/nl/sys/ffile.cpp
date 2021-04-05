@@ -110,19 +110,4 @@ Common::SeekableReadStream *FastFile::createReadStreamForMember(const Common::St
 	return nullptr;
 }
 
-/* -----------------19/01/98 17.15-------------------
- * FastFileOpen
- *
- * Search the directory for the file, and return a file handle if found.
- * --------------------------------------------------*/
-Common::SeekableReadStream *FastFileOpen(const char *name) {
-	Common::SeekableReadStream *stream = g_vm->_dataFile.createReadStreamForMember(name);
-	if (stream == nullptr) {
-		warning("FastFileOpen: File %s not found", name);
-		CloseSys(g_vm->_sysText[kMessageFilesMissing]);
-	}
-
-	return stream;
-}
-
 } // End of namespace Trecision

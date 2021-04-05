@@ -125,7 +125,6 @@ extern uint8 *SoundStartBuffer;
 extern SDText curString;
 extern SDText oldString;
 extern uint8  TextStatus;
-extern Common::SeekableReadStream *ff;
 // FILEREF
 extern SFileEntry FileRef[];
 extern int NumFileRef;

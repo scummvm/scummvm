@@ -76,6 +76,7 @@ enum TrecisionMessageIds {
 class TrecisionEngine : public Engine {
 	void initMain();
 	void initMessageSystem();
+	void openDataFiles();
 	void initNames();
 	void LoadAll();
 
@@ -92,6 +93,10 @@ public:
 	Common::Error loadGameStream(Common::SeekableReadStream *stream) override;
 	Common::Error saveGameStream(Common::WriteStream *stream, bool isAutosave = false) override;
 	bool syncGameStream(Common::Serializer &ser);
+
+	// Data files
+	byte *readData(Common::String fileName);
+	uint16 *readData16(Common::String fileName, int &size);
 
 	// Inventory
 	void refreshInventory(uint8 StartIcon, uint8 StartLine);
@@ -133,7 +138,6 @@ public:
 	uint16 _curRoom;
 	uint16 _oldRoom;
 	SRoom _room[MAXROOMS];
-	uint8 *SoundPointer[MAXSOUNDSINROOM];
 
 	int32 _curSortTableNum;
 	uint16 _curScriptFrame[10];

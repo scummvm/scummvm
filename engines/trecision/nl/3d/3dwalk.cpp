@@ -41,7 +41,7 @@ float _lookX, _lookZ;
 					read3D
 --------------------------------------------------*/
 int read3D(Common::String c) {
-	ff = FastFileOpen(c.c_str());
+	Common::SeekableReadStream *ff = g_vm->_dataFile.createReadStreamForMember(c);
 	if (ff == nullptr)
 		error("read3D: Can't open 3D file %s", c.c_str());
 
