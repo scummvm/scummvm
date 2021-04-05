@@ -742,6 +742,14 @@ void U8AvatarMoverProcess::jump(Animation::Sequence action, Direction direction)
 
 bool U8AvatarMoverProcess::canAttack() {
 	MainActor *avatar = getMainActor();
+	const uint32 frameno = Kernel::get_instance()->getFrameNum();
+
+	// Sanity check in case the frame num went backwards - eg, if
+	// frame counting changed after loading a game.
+	if (_lastAttack > frameno) {
+		_lastAttack = frameno;
+	}
+
 	return (Kernel::get_instance()->getFrameNum() > _lastAttack + (25 - avatar->getDex()));
 }
 
