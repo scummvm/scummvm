@@ -908,7 +908,7 @@ void GraphicsWidget::setGfxFromTheme(const char *name) {
 
 	_gfx.free();
 	_gfx.create(_w, _h, g_gui.theme()->getPixelFormat());
-	//svg->render(_gfx, _w, _h);
+	svg->render(_gfx, _w, _h);
 }
 
 void GraphicsWidget::drawWidget() {
