@@ -524,6 +524,8 @@ public:
 
 	virtual void blitKeyBitmap(const Graphics::Surface *source, const Common::Point &p) = 0;
 
+	virtual void blitManagedSurface(const Graphics::ManagedSurface *source, const Common::Point &p) = 0;
+
 	virtual void blitAlphaBitmap(Graphics::TransparentSurface *source, const Common::Rect &r,
 			GUI::ThemeEngine::AutoScaleMode autoscale = GUI::ThemeEngine::kAutoScaleNone,
 			Graphics::DrawStep::VectorAlignment xAlign = Graphics::DrawStep::kVectorAlignManual,
