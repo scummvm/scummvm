@@ -127,7 +127,7 @@ void LauncherDialog::build() {
 	if (g_gui.xmlEval()->getVar("Globals.ShowLauncherLogo") == 1 && g_gui.theme()->supportsImages()) {
 		_logo = new GraphicsWidget(this, "Launcher.Logo");
 		_logo->useThemeTransparency(true);
-		_logo->setGfx(g_gui.theme()->getImageSurface(ThemeEngine::kImageLogo));
+		_logo->setGfxFromTheme(ThemeEngine::kImageLogo);
 
 		new StaticTextWidget(this, "Launcher.Version", Common::U32String(gScummVMVersionDate));
 	} else
