@@ -525,6 +525,12 @@ public:
 	void copyFrom(const ManagedSurface &surf);
 
 	/**
+	 * Copy the data from another surface, reinitializing the
+	 * surface to match the dimensions of the passed surface.
+	 */
+	void copyFrom(const Surface &surf);
+
+	/**
 	 * Draw a line.
 	 */
 	void drawLine(int x0, int y0, int x1, int y1, uint32 color) {

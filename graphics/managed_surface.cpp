@@ -172,6 +172,24 @@ void ManagedSurface::copyFrom(const ManagedSurface &surf) {
 	Common::copy(&surf._palette[0], &surf._palette[256], _palette);
 }
 
+void ManagedSurface::copyFrom(const Surface &surf) {
+	// Surface::copyFrom frees pixel pointer so let's free up ManagedSurface to be coherent
+	free();
+
+	// Copy the surface
+	_innerSurface.copyFrom(surf);
+	markAllDirty();
+
+	// Pixels data is now owned by us
+	_disposeAfterUse = DisposeAfterUse::YES;
+
+	// Set miscellaneous properties to sane values
+	_transparentColorSet = false;
+	_transparentColor = 0;
+	_paletteSet = false;
+	Common::fill(&_palette[0], &_palette[256], 0);
+}
+
 bool ManagedSurface::clip(Common::Rect &srcBounds, Common::Rect &destBounds) {
 	if (destBounds.left >= this->w || destBounds.top >= this->h ||
 			destBounds.right <= 0 || destBounds.bottom <= 0)
