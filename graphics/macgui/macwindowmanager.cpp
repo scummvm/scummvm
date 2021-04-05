@@ -204,9 +204,10 @@ MacWindowManager::MacWindowManager(uint32 mode, MacPatterns *patterns) {
 	g_system->getPaletteManager()->setPalette(palette, 0, ARRAYSIZE(palette) / 3);
 
 	_paletteSize = ARRAYSIZE(palette) / 3;
-	_palette = (byte *)malloc(_paletteSize * 3);
-	if (_palette)
+	if (_paletteSize) {
+		_palette = (byte *)malloc(_paletteSize * 3);
 		memcpy(_palette, palette, _paletteSize * 3);
+	}
 
 	_fontMan = new MacFontManager(mode);
 
@@ -986,9 +987,10 @@ void MacWindowManager::passPalette(const byte *pal, uint size) {
 	if (_palette)
 		free(_palette);
 
-	_palette = (byte *)malloc(size * 3);
-	if (_palette)
+	if (size) {
+		_palette = (byte *)malloc(size * 3);
 		memcpy(_palette, pal, size * 3);
+	}
 	_paletteSize = size;
 
 	_colorHash.clear();
