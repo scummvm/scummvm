@@ -1450,20 +1450,23 @@ ActorIndex Scene::hitTestActor() {
 	//////////////////////////////////////////////////////////////////////////
 	// Default check
 	for (int i = _ws->actors.size() - 1; i >= 0 ; i--) {
-	Actor *actor = getActor(i);
+		Actor *actor = getActor(i);
 
-	uint32 hitFrame;
-	if (actor->getFrameIndex() >= actor->getFrameCount())
-		hitFrame = 2 * actor->getFrameIndex() - (actor->getFrameCount() + 1);
-	else
-		hitFrame = actor->getFrameIndex();
+		if (!actor->isOnScreen() || !actor->actionType)
+			continue;
 
-	if (hitTestPixel(actor->getResourceId(),
-					 hitFrame,
-					 _ws->xLeft - (actor->getPoint()->x + actor->getPoint1()->x),
-					 _ws->yTop  - (actor->getPoint()->y + actor->getPoint1()->y),
-					 actor->getDirection() >= kDirectionSE))
-		return i;
+		uint32 hitFrame;
+		if (actor->getFrameIndex() >= actor->getFrameCount())
+			hitFrame = 2 * actor->getFrameIndex() - (actor->getFrameCount() + 1);
+		else
+			hitFrame = actor->getFrameIndex();
+
+		if (hitTestPixel(actor->getResourceId(),
+						 hitFrame,
+						 _ws->xLeft + mouse.x - (actor->getPoint1()->x + actor->getPoint()->x),
+						 _ws->yTop  + mouse.y - (actor->getPoint1()->y + actor->getPoint()->y),
+						 actor->getDirection() >= kDirectionSE))
+			return i;
 	}
 
 	return -1;
@@ -1620,7 +1623,7 @@ void Scene::handleHit(int32 index, HitType type) {
 
 		if (actor->actionType & (kActionTypeFind | kActionType16)) {
 
-			if (getScript()->isInQueue(actor->getScriptIndex())) {
+			if (!getScript()->isInQueue(actor->getScriptIndex())) {
 				debugC(kDebugLevelScripts, "[Script] Queuing Script idx: %d from kHitActor (id: %d, name: '%s')",
 						actor->getScriptIndex(), index, actor->getName());
 				getScript()->queueScript(actor->getScriptIndex(), getSharedData()->getPlayerIndex());
@@ -1636,7 +1639,7 @@ void Scene::handleHit(int32 index, HitType type) {
 				actor->setSoundResourceId(kResourceNone);
 			}
 
-			if (getScript()->isInQueue(actor->getScriptIndex())) {
+			if (!getScript()->isInQueue(actor->getScriptIndex())) {
 				debugC(kDebugLevelScripts, "[Script] Queuing Script idx: %d from kActionTypeTalk (actor idx: %d)",
 										actor->getScriptIndex(), getSharedData()->getPlayerIndex());
 				getScript()->queueScript(actor->getScriptIndex(), getSharedData()->getPlayerIndex());
