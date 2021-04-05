@@ -1680,7 +1680,7 @@ void Item::setupLerp(int32 gametick) {
 	// Animate it, if needed
 	const ShapeInfo *info = getShapeInfo();
 	if (info->_animType &&
-			((gametick % info->_animSpeed) == (_objId % info->_animSpeed)))
+			((gametick % info->_animSpeed) == 0))
 		animateItem();
 
 	// Setup the prev values for lerping
@@ -1713,7 +1713,7 @@ void Item::animateItem() {
 	int anim_data = info->_animData;
 	int speed = info->_animSpeed;
 
-	if ((static_cast<int>(_lastSetup) % speed * 2) != (_objId % speed * 2) && info->_animType != 1)
+	if ((static_cast<int>(_lastSetup) % speed * 2) != 0 && info->_animType != 1)
 		return;
 
 	const Shape *shp = getShapeObject();
