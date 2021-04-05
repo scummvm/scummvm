@@ -40,6 +40,8 @@ public:
 	SVGBitmap(Common::SeekableReadStream *in);
 	~SVGBitmap();
 
+	Graphics::PixelFormat *getPixelFormat() { return _pixelformat; }
+
 	void render(Graphics::ManagedSurface &target, int dw, int dh);
 
 private:
