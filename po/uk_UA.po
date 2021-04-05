@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-04-03 11:04+0000\n"
+"POT-Creation-Date: 2021-04-05 14:33+0000\n"
 "PO-Revision-Date: 2021-04-02 13:11+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
@@ -149,7 +149,7 @@ msgstr "Так"
 msgid "No"
 msgstr "Ні"
 
-#: gui/downloaddialog.cpp:137 gui/launcher.cpp:559
+#: gui/downloaddialog.cpp:137 gui/launcher.cpp:560
 msgid "ScummVM couldn't open the specified directory!"
 msgstr "ScummVM не може відкрити вказану папку!"
 
@@ -162,8 +162,8 @@ msgstr ""
 "назвою."
 
 #: gui/downloaddialog.cpp:147 gui/editgamedialog.cpp:377
-#: gui/fluidsynth-dialog.cpp:154 gui/KeysDialog.cpp:43 gui/launcher.cpp:509
-#: gui/launcher.cpp:513 gui/massadd.cpp:89 gui/options.cpp:1955
+#: gui/fluidsynth-dialog.cpp:154 gui/KeysDialog.cpp:43 gui/launcher.cpp:510
+#: gui/launcher.cpp:514 gui/massadd.cpp:89 gui/options.cpp:1955
 #: gui/saveload-dialog.cpp:1166 engines/engine.cpp:511 engines/engine.cpp:522
 #: backends/platform/wii/options.cpp:47 engines/agos/animation.cpp:559
 #: engines/drascula/saveload.cpp:49 engines/groovie/script.cpp:484
@@ -779,7 +779,7 @@ msgstr "~В~идалити гру"
 msgid "Search in game list"
 msgstr "Пошук у списку ігор"
 
-#: gui/launcher.cpp:185 gui/launcher.cpp:778
+#: gui/launcher.cpp:185 gui/launcher.cpp:779
 msgid "Search:"
 msgstr "Пошук:"
 
@@ -818,23 +818,23 @@ msgstr "Ви дійсно хочете видалити налаштування
 msgid "Do you want to load saved game?"
 msgstr "Ви хочете завантажити збережений стан гри?"
 
-#: gui/launcher.cpp:509
+#: gui/launcher.cpp:510
 msgid "This game does not support loading games from the launcher."
 msgstr "Ця гра не підтримує завантаження збережених ігор через головне меню."
 
-#: gui/launcher.cpp:513
+#: gui/launcher.cpp:514
 msgid "ScummVM could not find any engine capable of running the selected game!"
 msgstr "ScummVM не може знайти движок для запуску вибраної гри!"
 
-#: gui/launcher.cpp:578
+#: gui/launcher.cpp:579
 msgid "ScummVM could not find any game in the specified directory!"
 msgstr "ScummVM не може знайти гру у вказаній папці!"
 
-#: gui/launcher.cpp:593
+#: gui/launcher.cpp:594
 msgid "Unknown variant"
 msgstr "Невідомий варіант"
 
-#: gui/launcher.cpp:599
+#: gui/launcher.cpp:600
 msgid "Pick the game:"
 msgstr "Виберіть гру:"
 
@@ -1986,11 +1986,11 @@ msgstr "Продовжити"
 msgid "Clear value"
 msgstr "Очистити значення"
 
-#: base/main.cpp:621
+#: base/main.cpp:615
 msgid "Error running game:"
 msgstr "Помилка запуску гри:"
 
-#: base/main.cpp:668
+#: base/main.cpp:662
 msgid "Could not find any engine capable of running the selected game"
 msgstr "Не можу знайти движок для запуску вибраної гри"
 

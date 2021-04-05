@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-04-03 11:04+0000\n"
+"POT-Creation-Date: 2021-04-05 14:33+0000\n"
 "PO-Revision-Date: 2021-03-07 12:24+0000\n"
 "Last-Translator: Joohan Lee <losernator@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -145,7 +145,7 @@ msgstr "예"
 msgid "No"
 msgstr "아니오"
 
-#: gui/downloaddialog.cpp:137 gui/launcher.cpp:559
+#: gui/downloaddialog.cpp:137 gui/launcher.cpp:560
 msgid "ScummVM couldn't open the specified directory!"
 msgstr "ScummVM이 지정된 디렉토리를 열 수 없습니다!"
 
@@ -158,8 +158,8 @@ msgstr ""
 "의 파일이 이미 존재합니다."
 
 #: gui/downloaddialog.cpp:147 gui/editgamedialog.cpp:377
-#: gui/fluidsynth-dialog.cpp:154 gui/KeysDialog.cpp:43 gui/launcher.cpp:509
-#: gui/launcher.cpp:513 gui/massadd.cpp:89 gui/options.cpp:1955
+#: gui/fluidsynth-dialog.cpp:154 gui/KeysDialog.cpp:43 gui/launcher.cpp:510
+#: gui/launcher.cpp:514 gui/massadd.cpp:89 gui/options.cpp:1955
 #: gui/saveload-dialog.cpp:1166 engines/engine.cpp:511 engines/engine.cpp:522
 #: backends/platform/wii/options.cpp:47 engines/agos/animation.cpp:559
 #: engines/drascula/saveload.cpp:49 engines/groovie/script.cpp:484
@@ -772,7 +772,7 @@ msgstr "게임 제거(~R~)"
 msgid "Search in game list"
 msgstr "게임 리스트에서 검색"
 
-#: gui/launcher.cpp:185 gui/launcher.cpp:778
+#: gui/launcher.cpp:185 gui/launcher.cpp:779
 msgid "Search:"
 msgstr "검색:"
 
@@ -811,23 +811,23 @@ msgstr "이 게임의 설정을 제거하겠습니까?"
 msgid "Do you want to load saved game?"
 msgstr "세이브 파일을 불러오겠습니까?"
 
-#: gui/launcher.cpp:509
+#: gui/launcher.cpp:510
 msgid "This game does not support loading games from the launcher."
 msgstr "이 게임은 런처에서 불러오기를 지원하지 않습니다."
 
-#: gui/launcher.cpp:513
+#: gui/launcher.cpp:514
 msgid "ScummVM could not find any engine capable of running the selected game!"
 msgstr "ScummVM은 선택한 게임을 실행할 수 있는 엔진을 찾지 못했습니다!"
 
-#: gui/launcher.cpp:578
+#: gui/launcher.cpp:579
 msgid "ScummVM could not find any game in the specified directory!"
 msgstr "ScummVM은 선택한 디렉토리에서 아무 게임도 찾지 못했습니다!"
 
-#: gui/launcher.cpp:593
+#: gui/launcher.cpp:594
 msgid "Unknown variant"
 msgstr "알려지지 않은 변종"
 
-#: gui/launcher.cpp:599
+#: gui/launcher.cpp:600
 msgid "Pick the game:"
 msgstr "게임을 선택하세요:"
 
@@ -1956,11 +1956,11 @@ msgstr "진행"
 msgid "Clear value"
 msgstr "값 제거"
 
-#: base/main.cpp:621
+#: base/main.cpp:615
 msgid "Error running game:"
 msgstr "게임 실행 에러:"
 
-#: base/main.cpp:668
+#: base/main.cpp:662
 msgid "Could not find any engine capable of running the selected game"
 msgstr "선택된 게임을 실행할 수 있는 엔진을 찾지 못 했습니다"
 
