@@ -388,9 +388,9 @@ bool TrecisionEngine::syncGameStream(Common::Serializer &ser) {
 		ser.syncAsUint16LE(cur->_sentenceIndex);
 		ser.syncAsUint16LE(cur->_firstSubTitle);
 		ser.syncAsUint16LE(cur->_subTitleNumb);
-		for (int i = 0; i < MAXDISPSCELTE; i++)
+		for (int i = 0; i < MAXDISPCHOICES; i++)
 			ser.syncAsUint16LE(cur->_on[i]);
-		for (int i = 0; i < MAXDISPSCELTE; i++)
+		for (int i = 0; i < MAXDISPCHOICES; i++)
 			ser.syncAsUint16LE(cur->_off[i]);
 		ser.syncAsUint16LE(cur->_startFrame);
 		ser.syncAsUint16LE(cur->_nextDialog);
@@ -585,10 +585,10 @@ void TrecisionEngine::LoadAll() {
 		_choice[i]._firstSubTitle = dataNl.readUint16LE();
 		_choice[i]._subTitleNumb = dataNl.readUint16LE();
 
-		for (int j = 0; j < MAXDISPSCELTE; ++j)
+		for (int j = 0; j < MAXDISPCHOICES; ++j)
 			_choice[i]._on[j] = dataNl.readUint16LE();
 
-		for (int j = 0; j < MAXDISPSCELTE; ++j)
+		for (int j = 0; j < MAXDISPCHOICES; ++j)
 			_choice[i]._off[j] = dataNl.readUint16LE();
 
 		_choice[i]._startFrame = dataNl.readUint16LE();

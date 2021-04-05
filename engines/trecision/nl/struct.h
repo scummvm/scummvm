@@ -112,7 +112,7 @@ struct DialogChoice {
 	uint16	_flag;			// DLGCHOICE_HIDE|DLGCHOICE_ONETIME|DLGCHOICE_FRAUD...if used...
 	uint16	_sentenceIndex;	// Index in the sentence array.
 	uint16	_firstSubTitle, _subTitleNumb;	 	// starting index and number of sub title sentences
-	uint16	_on[MAXDISPSCELTE], _off[MAXDISPSCELTE];
+	uint16	_on[MAXDISPCHOICES], _off[MAXDISPCHOICES];
 	uint16  _startFrame;    // Starting frame of the choice
 	uint16  _nextDialog;
 };
