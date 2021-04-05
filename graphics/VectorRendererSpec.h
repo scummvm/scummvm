@@ -90,6 +90,7 @@ public:
 	void fillSurface() override;
 	void blitSurface(const Graphics::Surface *source, const Common::Rect &r) override;
 	void blitSubSurface(const Graphics::Surface *source, const Common::Point &p) override;
+	void blitManagedSurface(const Graphics::ManagedSurface *source, const Common::Point &p) override;
 	void blitKeyBitmap(const Graphics::Surface *source, const Common::Point &p) override;
 	void blitAlphaBitmap(Graphics::TransparentSurface *source, const Common::Rect &r,
 			GUI::ThemeEngine::AutoScaleMode autoscale = GUI::ThemeEngine::kAutoScaleNone,
