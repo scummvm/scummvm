@@ -61,7 +61,7 @@ NinePatchSide::~NinePatchSide() {
 }
 
 
-bool NinePatchSide::init(Graphics::TransparentSurface *bmp, bool vertical, int titleIndex, int titleWidth) {
+bool NinePatchSide::init(Graphics::TransparentSurface *bmp, bool vertical, int titlePos, int titleWidth, int *titleIndex) {
 	const uint len = vertical ? bmp->h : bmp->w;
 	uint i;
 	int s, t, z;
@@ -99,7 +99,11 @@ bool NinePatchSide::init(Graphics::TransparentSurface *bmp, bool vertical, int t
 					mrk->ratio = 0;
 				}
 				// if there is title, then we try to recalc the t, because we want to fix the title width
-				if (titleIndex > 0 && index == titleIndex) t -= mrk->length;
+				if (titlePos > 0 && (int)i == titlePos) {
+					t -= mrk->length;
+					if (titleIndex)
+						*titleIndex = index;
+				}
 				_m.push_back(mrk);
 				index++;
 			}
@@ -150,7 +154,7 @@ void NinePatchSide::calcOffsets(int len, int titleIndex, int titleWidth) {
 	}
 }
 
-NinePatchBitmap::NinePatchBitmap(Graphics::TransparentSurface *bmp, bool owns_bitmap, int titleIndex, int titleWidth) {
+NinePatchBitmap::NinePatchBitmap(Graphics::TransparentSurface *bmp, bool owns_bitmap, int titlePos, int titleWidth) {
 	int i;
 	uint8 r, g, b, a;
 
@@ -162,8 +166,9 @@ NinePatchBitmap::NinePatchBitmap(Graphics::TransparentSurface *bmp, bool owns_bi
 	_cached_dh = 0;
 	_width = bmp->w - 2;
 	_height = bmp->h - 2;
-	_titleIndex = titleIndex;
+	_titleIndex = 0;
 	_titleWidth = titleWidth;
+	_titlePos = titlePos;
 
 	if (_width <= 0 || _height <= 0)
 		goto bad_bitmap;
@@ -213,13 +218,19 @@ NinePatchBitmap::NinePatchBitmap(Graphics::TransparentSurface *bmp, bool owns_bi
 		++i;
 	}
 
-	if (!_h.init(bmp, false, titleIndex, titleWidth) || !_v.init(bmp, true)) {
+	if (!_h.init(bmp, false, titlePos, titleWidth, &_titleIndex) || !_v.init(bmp, true)) {
 bad_bitmap:
 		warning("NinePatchBitmap::NinePatchBitmap(): Bad bitmap");
 
 		_h._m.clear();
 		_v._m.clear();
 	}
+}
+
+void NinePatchBitmap::modifyTitleWidth(int titleWidth) {
+	if (_titlePos == 0) return;
+	_titleWidth = titleWidth;
+	_h.calcOffsets(_cached_dw, _titleIndex, _titleWidth);
 }
 
 void NinePatchBitmap::blit(Graphics::Surface &target, int dx, int dy, int dw, int dh, byte *palette, int numColors, MacWindowManager *wm, uint32 transColor) {

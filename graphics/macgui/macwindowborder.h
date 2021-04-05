@@ -63,19 +63,19 @@ public:
 	 * Add the given surface as the display of the border in the active state.
 	 * Will fail if there is already an active border.
 	 * @param The surface that will be displayed.
-	 * @param The title index of bmp image
+	 * @param The title position of bmp image
 	 * @param The title width that you want to set
 	 */
-	void addActiveBorder(TransparentSurface *source, int titleIndex = 0, int titleWidth = 0);
+	void addActiveBorder(TransparentSurface *source, int titlePos = 0, int titleWidth = 0);
 
 	/**
 	 * Add the given surface as the display of the border in the inactive state.
 	 * Will fail if there is already an inactive border.
 	 * @param The surface that will be displayed.
-	 * @param The title index of bmp image
+	 * @param The title position of bmp image
 	 * @param The title width that you want to set
 	 */
-	void addInactiveBorder(TransparentSurface *source, int titleIndex = 0, int titleWidth = 0);
+	void addInactiveBorder(TransparentSurface *source, int titlePos = 0, int titleWidth = 0);
 
 	/**
 	 * Accessor function for the custom offsets.
@@ -116,6 +116,10 @@ public:
 	 * @param wm The window manager.
 	 */
 	void blitBorderInto(ManagedSurface &destination, bool active, MacWindowManager *wm);
+
+	void modifyTitleWidth(int titleWidth);
+	// in this implement, we should guarantee the titleWidth of activeBorder and inactiveBorder is the same
+	int getTitleWidth() { return _activeBorder->getTitleWidth(); }
 
 private:
 

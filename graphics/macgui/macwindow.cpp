@@ -244,24 +244,33 @@ void MacWindow::drawBorder() {
 
 	ManagedSurface *g = &_borderSurface;
 	int width = _borderSurface.w;
-	int titleColor;
-	int titleY;
-	int titleHeight;
-	int sidesWidth;
 
 	if (_macBorder.hasBorder(_active)) {
-		drawBorderFromSurface(g);
 
-		titleColor = _wm->_colorBlack;
-		if (_active)
-			titleColor = _macBorder.getOffset().dark ? _wm->_colorWhite : _wm->_colorBlack;
+		if (_title.empty())
+			drawBorderFromSurface(g);
+		else {
+			const Graphics::Font *font = getTitleFont();
+			int titleColor = _wm->_colorBlack;
+			int titleY = _macBorder.getOffset().titleTop;
+			int sidesWidth = _macBorder.getOffset().left + _macBorder.getOffset().right;
+			int titleWidth = font->getStringWidth(_title) + 10;
+			int yOff = _wm->_fontMan->hasBuiltInFonts() ? 3 : 1;
+			int maxWidth = width - sidesWidth - 7;
+			if (titleWidth > maxWidth)
+				titleWidth = maxWidth;
 
-		titleY = _macBorder.getOffset().titleTop;
-		titleHeight = _macBorder.getOffset().top - titleY - _macBorder.getOffset().titleBottom;
-		sidesWidth = _macBorder.getOffset().left + _macBorder.getOffset().right;
+			// if titleWidth is changed, then we modify it
+			if (titleWidth != _macBorder.getTitleWidth())
+				_macBorder.modifyTitleWidth(titleWidth);
+
+			drawBorderFromSurface(g);
+			font->drawString(g, _title, (width - titleWidth) / 2 + 5, titleY + yOff, titleWidth, titleColor);
+		}
 	} else {
 		warning("MacWindow: No Border Loaded");
 		setBorderType(0xff);
+		return;
 	}
 
 	// draw highlight scroll bar
@@ -276,22 +285,6 @@ void MacWindow::drawBorder() {
 		MacPlotData pd(g, nullptr,  &_wm->getPatterns(), 1, 0, 0, 1, _wm->_colorWhite, true);
 		Graphics::drawFilledRect(rr, _wm->_colorWhite, _wm->getDrawInvertPixel(), &pd);
 		setHighlight(kBorderNone);
-	}
-
-	if (!_title.empty()) {
-		const Graphics::Font *font = getTitleFont();
-		int yOff = _wm->_fontMan->hasBuiltInFonts() ? 3 : 1;
-
-		int w = font->getStringWidth(_title) + 10;
-		int maxWidth = width - sidesWidth * 2 - 7;
-		if (w > maxWidth)
-			w = maxWidth;
-
-		if (_macBorder.hasBorder(_active)) {
-			if (_active && !_macBorder.getOffset().dark)
-				fillRect(g, (width - w) / 2, titleY, w, titleHeight, _wm->_colorGrayEE);
-		}
-		font->drawString(g, _title, (width - w) / 2 + 5, titleY + yOff, w, titleColor);
 	}
 }
 
@@ -354,7 +347,7 @@ void MacWindow::loadBorder(Common::SeekableReadStream &file, bool active, int lo
 	loadBorder(file, active, offsets);
 }
 
-void MacWindow::loadBorder(Common::SeekableReadStream &file, bool active, BorderOffsets offsets, int titleIndex, int titleWidth) {
+void MacWindow::loadBorder(Common::SeekableReadStream &file, bool active, BorderOffsets offsets, int titlePos, int titleWidth) {
 	Image::BitmapDecoder bmpDecoder;
 	Graphics::Surface *source;
 	Graphics::TransparentSurface *surface = new Graphics::TransparentSurface();
@@ -368,7 +361,7 @@ void MacWindow::loadBorder(Common::SeekableReadStream &file, bool active, Border
 	source->free();
 	delete source;
 
-	setBorder(surface, active, offsets, titleIndex, titleWidth);
+	setBorder(surface, active, offsets, titlePos, titleWidth);
 }
 
 void MacWindow::setBorder(Graphics::TransparentSurface *surface, bool active, int lo, int ro, int to, int bo) {
@@ -383,13 +376,13 @@ void MacWindow::setBorder(Graphics::TransparentSurface *surface, bool active, in
 	setBorder(surface, active, offsets);
 }
 
-void MacWindow::setBorder(Graphics::TransparentSurface *surface, bool active, BorderOffsets offsets, int titleIndex, int titleWidth) {
+void MacWindow::setBorder(Graphics::TransparentSurface *surface, bool active, BorderOffsets offsets, int titlePos, int titleWidth) {
 	surface->applyColorKey(255, 0, 255, false);
 
 	if (active)
-		_macBorder.addActiveBorder(surface, titleIndex, titleWidth);
+		_macBorder.addActiveBorder(surface, titlePos, titleWidth);
 	else
-		_macBorder.addInactiveBorder(surface, titleIndex, titleWidth);
+		_macBorder.addInactiveBorder(surface, titlePos, titleWidth);
 
 
 	if (active && offsets.left + offsets.right + offsets.top + offsets.bottom > -4) { // Checking against default -1
