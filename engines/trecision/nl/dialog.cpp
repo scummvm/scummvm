@@ -32,7 +32,7 @@
 
 namespace Trecision {
 
-uint16 DispScelte[MAXDISPSCELTE], CurDispScelte;
+uint16 DispChoice[MAXDISPCHOICES], CurDispChoice;
 int16 CurPos, LastPos;
 
 void DialogPrint(int x, int y, int c, const char *txt) {
@@ -50,13 +50,13 @@ void ShowChoices(uint16 i) {
 	LastPos = -1;
 	memset(g_vm->_screenBuffer, 0, MAXX * TOP * 2);
 
-	for (int c = 0; c < MAXDISPSCELTE; c++)
-		DispScelte[c] = 0;
+	for (int c = 0; c < MAXDISPCHOICES; c++)
+		DispChoice[c] = 0;
 
-	CurDispScelte = 0;
+	CurDispChoice = 0;
 	for (int c = d->_firstChoice; c < (d->_firstChoice + d->_choiceNumb); c++) {
 		if (!(g_vm->_choice[c]._flag & DLGCHOICE_HIDE)) {
-			DispScelte[CurDispScelte++] = c;
+			DispChoice[CurDispChoice++] = c;
 			DialogPrint(x, y, HWHITE, g_vm->_sentence[g_vm->_choice[c]._sentenceIndex]);
 			y += CARHEI;
 		}
@@ -69,21 +69,21 @@ void ShowChoices(uint16 i) {
 }
 
 void UpdateChoices(int16 dmx, int16 dmy) {
-	if ((dmy >= MAXDISPSCELTE) && (dmy < (CARHEI * (CurDispScelte) + 5)))
+	if ((dmy >= MAXDISPCHOICES) && (dmy < (CARHEI * (CurDispChoice) + 5)))
 		CurPos = (dmy - 5) / CARHEI;
 	else
 		CurPos = -1;
 
 	if ((CurPos != LastPos) && ((CurPos != -1) || (LastPos != -1))) {
-		for (int c = 0; c < MAXDISPSCELTE; c++) {
-			if (DispScelte[c] != 0) {
+		for (int c = 0; c < MAXDISPCHOICES; c++) {
+			if (DispChoice[c] != 0) {
 				if (c == CurPos)
-					DialogPrint(10, 5 + c * CARHEI, HGREEN, g_vm->_sentence[g_vm->_choice[DispScelte[c]]._sentenceIndex]);
+					DialogPrint(10, 5 + c * CARHEI, HGREEN, g_vm->_sentence[g_vm->_choice[DispChoice[c]]._sentenceIndex]);
 				else
-					DialogPrint(10, 5 + c * CARHEI, HWHITE, g_vm->_sentence[g_vm->_choice[DispScelte[c]]._sentenceIndex]);
+					DialogPrint(10, 5 + c * CARHEI, HWHITE, g_vm->_sentence[g_vm->_choice[DispChoice[c]]._sentenceIndex]);
 			}
 		}
-		g_vm->_graphicsMgr->copyToScreen(0, 5, MAXX, (CurDispScelte)*CARHEI + 5);
+		g_vm->_graphicsMgr->copyToScreen(0, 5, MAXX, (CurDispChoice)*CARHEI + 5);
 	}
 	LastPos = CurPos;
 }
@@ -94,7 +94,7 @@ void SelectChoice(int16 dmx, int16 dmy) {
 	if (CurPos != -1) {
 		FlagDialogMenuActive = false;
 
-		PlayChoice(DispScelte[CurPos]);
+		PlayChoice(DispChoice[CurPos]);
 	}
 }
 
@@ -587,7 +587,7 @@ void PlayChoice(uint16 i) {
 		ss->_flag |= DLGCHOICE_HIDE;
 
 	// Disable other choices
-	for (int c = 0; c < MAXDISPSCELTE; c++) {
+	for (int c = 0; c < MAXDISPCHOICES; c++) {
 		g_vm->_choice[ss->_off[c]]._flag |= DLGCHOICE_HIDE;
 		g_vm->_choice[ss->_on[c]]._flag &= ~DLGCHOICE_HIDE;
 	}

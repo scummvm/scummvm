@@ -50,7 +50,7 @@ Game Structure
 #define MAXDIALOG   			70
 #define MAXCHOICE  				1000
 #define MAXSUBTITLES  			1500
-#define MAXDISPSCELTE			5
+#define MAXDISPCHOICES			5
 #define MAXNEWSMKPAL            40
 
 // define smacker animations
