@@ -27,7 +27,6 @@ namespace Math {
 
 Vector2d::Matrix() :
 	MatrixType<2, 1>() {
-
 }
 
 Vector2d::Matrix(float x, float y) :
@@ -38,7 +37,6 @@ Vector2d::Matrix(float x, float y) :
 
 Vector2d::Matrix(const MatrixBase<2, 1> &vec) :
 	MatrixType<2, 1>(vec) {
-
 }
 
 Vector2d::Matrix(const float *data) :

@@ -42,7 +42,6 @@ public:
 
 private:
 	float _a, _b, _c;
-
 };
 
 class Segment2d {
@@ -66,7 +65,6 @@ public:
 
 private:
 	Math::Vector2d _begin, _end;
-
 };
 
 }

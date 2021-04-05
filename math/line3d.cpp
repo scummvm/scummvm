@@ -25,12 +25,10 @@
 namespace Math {
 
 Line3d::Line3d() {
-
 }
 
 Line3d::Line3d(const Vector3d &b, const Vector3d &e) :
 	_begin(b), _end(e) {
-
 }
 
 Line3d::Line3d(const Line3d &other) {
@@ -50,7 +48,6 @@ Math::Vector3d Line3d::middle() const {
 }
 
 bool Line3d::intersectLine2d(const Line3d &other, Math::Vector3d *pos, bool useXZ) {
-
 	float denom, nume_a, nume_b;
 	if (useXZ) {
 		denom = ((other._end.z() - other._begin.z()) * (_end.x() - _begin.x())) -

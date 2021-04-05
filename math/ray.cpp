@@ -50,7 +50,6 @@ void Ray::translate(const Vector3d &v) {
 	_origin += v;
 }
 
-
 bool Ray::intersectAABB(const AABB &aabb) const {
 	Vector3d dirFrac;
 	dirFrac.x() = 1.0f / _direction.x();

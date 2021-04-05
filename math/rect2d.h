@@ -35,7 +35,7 @@ public:
 	Rect2d();
 	Rect2d(const Vector2d &topLeft, const Vector2d &bottomRight);
 	Rect2d(const Vector2d &topLeft, const Vector2d &topRight,
-		   const Vector2d &bottomLeft, const Vector2d &bottomRight);
+	       const Vector2d &bottomLeft, const Vector2d &bottomRight);
 
 	void rotateAround(const Vector2d &point, const Angle &angle);
 	void rotateAroundCenter(const Angle &angle);

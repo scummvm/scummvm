@@ -28,7 +28,6 @@
 namespace Math {
 
 Rect2d::Rect2d() {
-
 }
 
 Rect2d::Rect2d(const Vector2d &topLeft, const Vector2d &bottomRight) {

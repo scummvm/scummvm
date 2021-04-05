@@ -112,7 +112,6 @@ public:
 
 private:
 	float _degrees;
-
 };
 
 inline Angle operator-(const Angle &a) {
@@ -149,7 +148,6 @@ inline bool operator==(const Angle &a1, const Angle &a2) {
 inline bool operator!=(const Angle &a1, const Angle &a2) {
 	return !(a1 == a2);
 }
-
 
 
 inline bool operator<(const Angle &a1, const Angle &a2) {

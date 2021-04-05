@@ -35,7 +35,7 @@ public:
 	Matrix();
 	Matrix(const MatrixBase<3, 3> &m);
 
-    void transpose();
+	void transpose();
 
 	
 	/**
@@ -50,8 +50,8 @@ public:
 	 *                vectors cannot be collinear, but they do not need to be perpendicular either.
 	 * All the parameters MUST be normalized.
 	 */
-	void buildFromTargetDir(const Math::Vector3d &modelForward, const Math::Vector3d &targetDirection, 
-						   const Math::Vector3d &modelUp, const Math::Vector3d &worldUp);
+	void buildFromTargetDir(const Math::Vector3d &modelForward, const Math::Vector3d &targetDirection,
+                                const Math::Vector3d &modelUp, const Math::Vector3d &worldUp);
 
 	inline Matrix<3, 3> operator*(const Matrix<3, 3> &m2) const {
 		Matrix<3, 3> result;
@@ -62,8 +62,8 @@ public:
 		for (int i = 0; i < 9; i += 3) {
 			for (int j = 0; j < 3; ++j) {
 				r[i + j] = (d1[i + 0] * d2[j + 0])
-					+ (d1[i + 1] * d2[j + 3])
-					+ (d1[i + 2] * d2[j + 6]);
+				         + (d1[i + 1] * d2[j + 3])
+				         + (d1[i + 2] * d2[j + 6]);
 			}
 		}
 

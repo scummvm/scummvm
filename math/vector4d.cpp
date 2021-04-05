@@ -28,7 +28,6 @@ namespace Math {
 
 Vector4d::Matrix() :
 	MatrixType<4, 1>() {
-
 }
 
 Vector4d::Matrix(float lx, float ly, float lz, float lw) :

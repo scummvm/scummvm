@@ -28,11 +28,11 @@
 namespace Math {
 
 Angle::Angle(float degrees) :
-	_degrees(degrees) {
+		_degrees(degrees) {
 }
 
 Angle::Angle(const Angle &a) :
-	_degrees(a._degrees) {
+		_degrees(a._degrees) {
 
 }
 
@@ -43,13 +43,13 @@ Angle &Angle::normalize(float low) {
 }
 
 Angle &Angle::clampDegrees(float mag) {
-    _degrees = getDegrees(-180.f);
-    if (_degrees >= mag)
+	_degrees = getDegrees(-180.f);
+	if (_degrees >= mag)
 		setDegrees(mag);
 	if (_degrees <= -mag)
 		setDegrees(-mag);
-    
-    return *this;
+
+	return *this;
 }
 
 Angle &Angle::clampDegrees(float min, float max) {

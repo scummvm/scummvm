@@ -41,12 +41,10 @@ namespace Math {
 
 Matrix<4, 4>::Matrix() :
 	MatrixType<4, 4>(), Rotation3D<Matrix4>() {
-
 }
 
 Matrix<4, 4>::Matrix(const MatrixBase<4, 4> &m) :
 	MatrixType<4, 4>(m), Rotation3D<Matrix4>() {
-
 }
 
 void Matrix<4, 4>::transform(Vector3d *v, bool trans) const {
@@ -72,9 +70,9 @@ void Matrix<4, 4>::setPosition(const Vector3d &v) {
 }
 
 Matrix3 Matrix<4, 4>::getRotation() const{
-    Matrix3 m2;
-    
-    m2.setValue(0, 0, getValue(0, 0));
+	Matrix3 m2;
+
+	m2.setValue(0, 0, getValue(0, 0));
 	m2.setValue(0, 1, getValue(0, 1));
 	m2.setValue(0, 2, getValue(0, 2));
 	m2.setValue(1, 0, getValue(1, 0));
@@ -88,7 +86,7 @@ Matrix3 Matrix<4, 4>::getRotation() const{
 }
 
 void Matrix<4, 4>::setRotation(const Matrix3 &m) {
-    setValue(0, 0, m.getValue(0, 0));
+	setValue(0, 0, m.getValue(0, 0));
 	setValue(0, 1, m.getValue(0, 1));
 	setValue(0, 2, m.getValue(0, 2));
 	setValue(1, 0, m.getValue(1, 0));
@@ -108,27 +106,27 @@ void Matrix<4, 4>::translate(const Vector3d &vec) {
 	operator()(2, 3) += v.z();
 }
 
-/** 
- * Generates a lookat matrix. For reference, see 
- * http://clb.demon.fi/MathGeoLib/docs/float3x3_LookAt.php 
+/**
+ * Generates a lookat matrix. For reference, see
+ * http://clb.demon.fi/MathGeoLib/docs/float3x3_LookAt.php
  */
-void Matrix<4, 4>::buildFromTargetDir(const Math::Vector3d &modelForward, const Math::Vector3d &targetDirection, 
-						   const Math::Vector3d &modelUp, const Math::Vector3d &worldUp)
+void Matrix<4, 4>::buildFromTargetDir(const Math::Vector3d &modelForward, const Math::Vector3d &targetDirection,
+                                      const Math::Vector3d &modelUp, const Math::Vector3d &worldUp)
 {
-    Matrix3 rotation;
-    rotation.buildFromTargetDir(modelForward, targetDirection, modelUp, worldUp);
-    this->setRotation(rotation);
+	Matrix3 rotation;
+	rotation.buildFromTargetDir(modelForward, targetDirection, modelUp, worldUp);
+	this->setRotation(rotation);
 }
 
 void Matrix<4, 4>::invertAffineOrthonormal() {
-    Matrix3 rotation(getRotation());
-    rotation.transpose();
-    
-    Vector3d position(getPosition().getNegative());
-    
-    rotation.transformVector(&position);
-    setRotation(rotation);
-    setPosition(position);
+	Matrix3 rotation(getRotation());
+	rotation.transpose();
+
+	Vector3d position(getPosition().getNegative());
+
+	rotation.transformVector(&position);
+	setRotation(rotation);
+	setPosition(position);
 }
 
 void Matrix<4, 4>::inverseTranslate(Vector3d *v) const {
@@ -139,17 +137,16 @@ void Matrix<4, 4>::inverseTranslate(Vector3d *v) const {
 
 void Matrix<4, 4>::inverseRotate(Vector3d *v) const {
 	Vector3d temp;
-	
+
 	temp.x() = v->x() * getValue(0, 0) + v->y() * getValue(1, 0) + v->z() * getValue(2, 0);
 	temp.y() = v->x() * getValue(0, 1) + v->y() * getValue(1, 1) + v->z() * getValue(2, 1);
 	temp.z() = v->x() * getValue(0, 2) + v->y() * getValue(1, 2) + v->z() * getValue(2, 2);
-	
+
 	*v = temp;
 }
 
 void swap (float &a, float &b);
 
-	
 void Matrix<4, 4>::transpose() {
 	swap(operator ()(0,1), operator ()(1,0));
 	swap(operator ()(0,2), operator ()(2,0));

@@ -61,7 +61,7 @@ void Frustum::setup(const Math::Matrix4 &matrix) {
 	_planes[5]._normal.y() = matrix.getValue(3, 1) - matrix.getValue(2, 1);
 	_planes[5]._normal.z() = matrix.getValue(3, 2) - matrix.getValue(2, 2);
 	_planes[5]._d = matrix.getValue(3, 3) - matrix.getValue(2, 3);
-	
+
 	for (int i = 0; i < 6; ++i) {
 		_planes[i].normalize();
 	}
@@ -70,7 +70,7 @@ void Frustum::setup(const Math::Matrix4 &matrix) {
 bool Frustum::isInside(const Math::AABB &aabb) const {
 	Math::Vector3d min = aabb.getMin();
 	Math::Vector3d max = aabb.getMax();
-	
+
 	for (int i = 0; i < 6; ++i) {
 		const Plane &plane = _planes[i];
 		Math::Vector3d positive = min;

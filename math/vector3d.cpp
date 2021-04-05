@@ -27,7 +27,6 @@ namespace Math {
 
 Vector3d::Matrix() :
 	MatrixType<3, 1>() {
-
 }
 
 Vector3d::Matrix(float lx, float ly, float lz) :

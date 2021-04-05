@@ -31,7 +31,6 @@ namespace Math {
  *
  */
 
-
 Line2d::Line2d(const Vector2d &direction, const Vector2d &point) {
 	_a = direction.getX();
 	_b = direction.getY();
@@ -97,15 +96,12 @@ Common::StreamDebug &operator<<(Common::StreamDebug &dbg, const Math::Line2d &li
 }
 
 
-
-
 Segment2d::Segment2d() {
 
 }
 
 Segment2d::Segment2d(const Vector2d &b, const Vector2d &e) :
 	_begin(b), _end(e) {
-
 }
 
 Segment2d::Segment2d(const Segment2d &other) {
