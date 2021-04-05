@@ -194,6 +194,8 @@ void AsylumEngine::startGame(ResourcePackId sceneId, StartGameType type) {
 	_handler = _scene;
 
 	// Set the current cd number (necessary for proper SharedSound resource pack initialization)
+	int32 cdNumber = _resource->getCdNumber();
+
 	switch (sceneId) {
 	default:
 		_resource->setCdNumber(-1);
@@ -221,6 +223,9 @@ void AsylumEngine::startGame(ResourcePackId sceneId, StartGameType type) {
 		_resource->setCdNumber(3);
 		break;
 	}
+
+	if (_resource->getCdNumber() != cdNumber)
+		_resource->clearSharedSoundCache();
 
 	switch (type) {
 	default:
