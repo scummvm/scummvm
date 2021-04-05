@@ -23,6 +23,8 @@
 #ifndef BACKENDS_KEYMAPPER_STANDARD_ACTIONS_H
 #define BACKENDS_KEYMAPPER_STANDARD_ACTIONS_H
 
+#include "common/scummsys.h"
+
 /**
  * @file
  * @brief A set of well known keymapper actions.
@@ -36,6 +38,9 @@
 
 namespace Common {
 
+extern const char *kStandardActionLeftClick;
+extern const char *kStandardActionMiddleClick;
+extern const char *kStandardActionRightClick;
 extern const char *kStandardActionInteract;
 extern const char *kStandardActionSkip;
 extern const char *kStandardActionPause;

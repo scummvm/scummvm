@@ -38,6 +38,7 @@
 
 #include "backends/keymapper/action.h"
 #include "backends/keymapper/keymapper.h"
+#include "backends/keymapper/standard-actions.h"
 
 namespace Kyra {
 
@@ -364,8 +365,8 @@ EoBCoreEngine::~EoBCoreEngine() {
 Common::KeymapArray EoBCoreEngine::initKeymaps(const Common::String &gameId) {
 	Common::Keymap *const keyMap = new Common::Keymap(Common::Keymap::kKeymapTypeGame, kKeymapName, "Eye of the Beholder");
 
-	addKeymapAction(keyMap, "LCLK", _("Interact via Left Click"), &Common::Action::setLeftClickEvent, "MOUSE_LEFT", "JOY_A");
-	addKeymapAction(keyMap, "RCLK", _("Interact via Right Click"), &Common::Action::setRightClickEvent, "MOUSE_RIGHT", "JOY_B");
+	addKeymapAction(keyMap, Common::kStandardActionLeftClick, _("Interact via Left Click"), &Common::Action::setLeftClickEvent, "MOUSE_LEFT", "JOY_A");
+	addKeymapAction(keyMap, Common::kStandardActionRightClick, _("Interact via Right Click"), &Common::Action::setRightClickEvent, "MOUSE_RIGHT", "JOY_B");
 	addKeymapAction(keyMap, "MVF", _("Move Forward"), Common::KeyState(Common::KEYCODE_UP), "UP", "JOY_UP");
 	addKeymapAction(keyMap, "MVB", _("Move Back"), Common::KeyState(Common::KEYCODE_DOWN), "DOWN", "JOY_DOWN");
 	addKeymapAction(keyMap, "MVL", _("Move Left"), Common::KeyState(Common::KEYCODE_LEFT), "LEFT", "JOY_LEFT_TRIGGER");

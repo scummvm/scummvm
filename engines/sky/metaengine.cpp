@@ -73,13 +73,13 @@ Common::KeymapArray SkyMetaEngine::initKeymaps(const char *target) const {
 
 	Action *act;
 
-	act = new Action("LCLK", _("Walk / Look / Talk"));
+	act = new Action(kStandardActionLeftClick, _("Walk / Look / Talk"));
 	act->setLeftClickEvent();
 	act->addDefaultInputMapping("MOUSE_LEFT");
 	act->addDefaultInputMapping("JOY_A");
 	mainKeymap->addAction(act);
 
-	act = new Action("RCLK", _("Use"));
+	act = new Action(kStandardActionRightClick, _("Use"));
 	act->setRightClickEvent();
 	act->addDefaultInputMapping("MOUSE_RIGHT");
 	act->addDefaultInputMapping("JOY_B");
