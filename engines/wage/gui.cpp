@@ -314,13 +314,13 @@ void Gui::executeMenuCommand(int action, Common::String &text) {
 }
 
 void Gui::loadBorders() {
-	loadBorder(_sceneWindow, "wage_border_inact-title.bmp", false, 3, 36);
-	loadBorder(_sceneWindow, "wage_border_act-noscrollbar-title.bmp", true, 3, 36);
+	loadBorder(_sceneWindow, "wage_border_inact-title.bmp", false, 22, 36);
+	loadBorder(_sceneWindow, "wage_border_act-noscrollbar-title.bmp", true, 22, 36);
 	loadBorder(_consoleWindow, "wage_border_inact.bmp", false, 0, 0);
 	loadBorder(_consoleWindow, "wage_border_act.bmp", true, 0, 0);
 }
 
-void Gui::loadBorder(Graphics::MacWindow *target, Common::String filename, bool active, int titleIndex, int titleWidth) {
+void Gui::loadBorder(Graphics::MacWindow *target, Common::String filename, bool active, int titlePos, int titleWidth) {
 	Common::File borderfile;
 
 	if (!borderfile.open(filename)) {
@@ -332,7 +332,7 @@ void Gui::loadBorder(Graphics::MacWindow *target, Common::String filename, bool 
 	Common::SeekableReadStream *stream = borderfile.readStream(borderfile.size());
 	if (stream) {
 
-		if (titleIndex != 0) {
+		if (titlePos != 0) {
 			Graphics::BorderOffsets offsets;
 			offsets.left = 16;
 			offsets.right = 16;
@@ -341,7 +341,7 @@ void Gui::loadBorder(Graphics::MacWindow *target, Common::String filename, bool 
 			offsets.titleTop = 0;
 			offsets.titleBottom = 0;
 			offsets.dark = false;
-			target->loadBorder(*stream, active, offsets, titleIndex, titleWidth);
+			target->loadBorder(*stream, active, offsets, titlePos, titleWidth);
 		} else {
 			target->loadBorder(*stream, active);
 		}

@@ -53,26 +53,33 @@ bool MacWindowBorder::hasBorder(bool active) {
 	return active ? _activeInitialized : _inactiveInitialized;
 }
 
-void MacWindowBorder::addActiveBorder(TransparentSurface *source, int titleIndex, int titleWidth) {
+void MacWindowBorder::addActiveBorder(TransparentSurface *source, int titlePos, int titleWidth) {
 	if (_activeBorder)
 		delete _activeBorder;
 
-	_activeBorder = new NinePatchBitmap(source, true, titleIndex, titleWidth);
+	_activeBorder = new NinePatchBitmap(source, true, titlePos, titleWidth);
 	_activeInitialized = true;
 
 	if (_activeBorder->getPadding().isValidRect())
 		setOffsets(_activeBorder->getPadding());
 }
 
-void MacWindowBorder::addInactiveBorder(TransparentSurface *source, int titleIndex, int titleWidth) {
+void MacWindowBorder::addInactiveBorder(TransparentSurface *source, int titlePos, int titleWidth) {
 	if (_inactiveBorder)
 		delete _inactiveBorder;
 
-	_inactiveBorder = new NinePatchBitmap(source, true, titleIndex, titleWidth);
+	_inactiveBorder = new NinePatchBitmap(source, true, titlePos, titleWidth);
 	_inactiveInitialized = true;
 
 	if (!_inactiveBorder->getPadding().isValidRect())
 		setOffsets(_inactiveBorder->getPadding());
+}
+
+void MacWindowBorder::modifyTitleWidth(int titleWidth) {
+	if (_inactiveBorder)
+		_inactiveBorder->modifyTitleWidth(titleWidth);
+	if (_activeBorder)
+		_activeBorder->modifyTitleWidth(titleWidth);
 }
 
 bool MacWindowBorder::hasOffsets() {
