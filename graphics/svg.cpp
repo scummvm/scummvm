@@ -95,7 +95,6 @@ void SVGBitmap::render(Graphics::ManagedSurface &target, int dw, int dh) {
 		tmp.init(dw, dh, dw * 4, _cache, *_pixelformat);
 
 		_render = new ManagedSurface(dw, dh, *_pixelformat);
-		_render->clear(_pixelformat->ARGBToColor(255, 255, 0, 255));
 
 		_render->transBlitFrom(tmp);
 
