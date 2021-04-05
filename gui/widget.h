@@ -28,7 +28,7 @@
 #include "common/str.h"
 #include "common/keyboard.h"
 #include "graphics/font.h"
-#include "graphics/surface.h"
+#include "graphics/managed_surface.h"
 #include "gui/object.h"
 #include "gui/ThemeEngine.h"
 #include "common/text-to-speech.h"
@@ -429,7 +429,7 @@ public:
 protected:
 	void drawWidget() override;
 
-	Graphics::Surface _gfx;
+	Graphics::ManagedSurface _gfx;
 	int _alpha;
 	bool _transparency;
 };
