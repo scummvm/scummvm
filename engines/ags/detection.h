@@ -41,7 +41,7 @@ extern const PlainGameDescriptor GAME_NAMES[];
 
 extern const AGSGameDescription GAME_DESCRIPTIONS[];
 
-enum AGSSteamVersion { kAGSteam = 0, kBlackwell = 1 };
+enum AGSSteamVersion { kAGSteam = 0, kWadjetEye = 1 };
 enum AGSSpriteFontVersion { kAGSSpriteFont = 0, kClifftopGames = 1 };
 
 } // namespace AGS

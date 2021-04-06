@@ -26,7 +26,7 @@
 #include "ags/plugins/ags_creditz/ags_creditz1.h"
 #include "ags/plugins/ags_creditz/ags_creditz2.h"
 #include "ags/plugins/ags_flashlight/ags_flashlight.h"
-#include "ags/plugins/ags_galaxy_steam/ags_blackwell_steam.h"
+#include "ags/plugins/ags_galaxy_steam/ags_wadjeteye_steam.h"
 #include "ags/plugins/ags_galaxy_steam/ags_galaxy_steam.h"
 #include "ags/plugins/ags_joy/ags_joy.h"
 #include "ags/plugins/ags_nickenstien_gfx/ags_nickenstien_gfx.h"
@@ -97,8 +97,8 @@ void *pluginOpen(const char *filename) {
 	if (fname.equalsIgnoreCase("ags_Nickenstien_GFX"))
 		return new AGSNickenstienGFX::AGSNickenstienGFX();
 
-	if (fname.equalsIgnoreCase("agsteam") && version == ::AGS::kBlackwell)
-		return new AGSGalaxySteam::AGSBlackwellSteam();
+	if (fname.equalsIgnoreCase("agsteam") && version == ::AGS::kWadjetEye)
+		return new AGSGalaxySteam::AGSWadjetEyeSteam();
 
 	if (fname.equalsIgnoreCase("agsteam") || fname.equalsIgnoreCase("agsteam-unified") ||
 			fname.equalsIgnoreCase("agsteam-disjoint"))

@@ -29,14 +29,14 @@ namespace AGS3 {
 namespace Plugins {
 namespace AGSGalaxySteam {
 
-class AGSBlackwellSteam : public AGSSteam {
+class AGSWadjetEyeSteam : public AGSSteam {
 private:
 	static void AGS_EngineStartup(IAGSEngine *engine);
 	static void AddAchievement(ScriptMethodParams &params);
 	static void AddStat(ScriptMethodParams &params);
     
 public:
-	AGSBlackwellSteam();
+	AGSWadjetEyeSteam();
 };
 
 } // namespace AGSGalaxySteam
