@@ -23,6 +23,7 @@
 #include "twine/flamovies.h"
 #include "common/file.h"
 #include "common/system.h"
+#include "image/gif.h"
 #include "twine/audio/music.h"
 #include "twine/audio/sound.h"
 #include "twine/input.h"
@@ -270,8 +271,6 @@ void FlaMovies::processFrame() {
 FlaMovies::FlaMovies(TwinEEngine *engine) : _engine(engine) {}
 
 void FlaMovies::prepareGIF(int index) {
-	// TODO: version 87a 640x480
-#if 0
 	Image::GIFDecoder decoder;
 	Common::SeekableReadStream *stream = HQR::makeReadStream(Resources::HQR_FLAGIF_FILE, index);
 	if (stream == nullptr) {
@@ -284,16 +283,13 @@ void FlaMovies::prepareGIF(int index) {
 		return;
 	}
 	const Graphics::Surface *surface = decoder.getSurface();
-	const bool state = Graphics::crossBlit((uint8*)_engine->imageBuffer.getPixels(), (const uint8*)surface->getPixels(), _engine->imageBuffer.pitch, surface->pitch, surface->w, surface->h, _engine->imageBuffer.format, surface->format);
-	if (!state) {
-		error("Failed to blit");
-	}
-	_engine->frontVideoBuffer.transBlitFrom(_engine->imageBuffer, _engine->imageBuffer.getBounds(), _engine->frontVideoBuffer.getBounds());
-	debug(2, "Show gif with id %i from FLA_GIF.HQR", index);
-	_engine->flip();
+	_engine->setPalette(0, decoder.getPaletteColorCount(), decoder.getPalette());
+	g_system->copyRectToScreen(surface->getPixels(), surface->pitch, 0, 0, surface->w, surface->h);
+	g_system->updateScreen();
+	debug(2, "Show gif with id %i from %s", index, Resources::HQR_FLAGIF_FILE);
 	delete stream;
-	g_system->delayMillis(5000);
-#endif
+	_engine->delaySkip(5000);
+	_engine->setPalette(_engine->_screens->paletteRGBA);
 }
 
 void FlaMovies::playGIFMovie(const char *flaName) {
