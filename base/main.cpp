@@ -154,6 +154,7 @@ void saveLastLaunchedTarget(const Common::String &target) {
 // TODO: specify the possible return values here
 static Common::Error runGame(const Plugin *plugin, const Plugin *enginePlugin, OSystem &system, const Common::String &edebuglevels) {
 	assert(plugin);
+	assert(enginePlugin);
 
 	// Determine the game data path, for validation and error messages
 	Common::FSNode dir(ConfMan.get("path"));
@@ -547,14 +548,17 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 
 		// Try to find a MetaEnginePlugin which feels responsible for the specified game.
 		const Plugin *plugin = detectPlugin();
-		if (plugin) {
+
+		// Then, get the relevant Engine plugin from MetaEngine.
+		const Plugin *enginePlugin = nullptr;
+		if (plugin)
+			enginePlugin = PluginMan.getEngineFromMetaEngine(plugin);
+
+		if (enginePlugin) {
 			// Unload all plugins not needed for this game, to save memory
-
 			// Right now, we have a MetaEngine plugin, and we want to unload all except Engine.
-			// First, get the relevant Engine plugin from MetaEngine.
-			const Plugin *enginePlugin = PluginMan.getEngineFromMetaEngine(plugin);
 
-			// Then, pass in the pointer to enginePlugin, with the matching type, so our function behaves as-is.
+			// Pass in the pointer to enginePlugin, with the matching type, so our function behaves as-is.
 			PluginManager::instance().unloadPluginsExcept(PLUGIN_TYPE_ENGINE, enginePlugin);
 
 #if defined(UNCACHED_PLUGINS) && defined(DYNAMIC_MODULES)
