@@ -30,8 +30,8 @@
 
 #include "trecision/nl/3d/3dinc.h"
 #include "trecision/nl/ll/llinc.h"
-#include "trecision/nl/sys/ffile.h"
 #include "trecision/nl/struct.h"
+#include "trecision/fastfile.h"
 #include "trecision/video.h"
 
 namespace Trecision {
