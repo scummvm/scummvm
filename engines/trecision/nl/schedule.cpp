@@ -194,7 +194,7 @@ void MessageQueue::orderEvents() {
 		if (_event[pos]->_priority > _event[PredEvent(pos)]->_priority) {
 			if (_event[pos]->_priority < MP_HIGH)
 				_event[pos]->_priority++;
-			SwapMessage(_event[pos], _event[PredEvent(pos)]);
+			SWAP(_event[pos], _event[PredEvent(pos)]);
 		}
 	}
 }
@@ -230,15 +230,6 @@ bool MessageQueue::testEmptyCharacterQueue4Script() {
 //	2) or there's a particular action in progress
 
 	return true;
-}
-
-/*-------------------------------------------------------------------------*/
-/*                               SWAPMESSAGE          					   */
-/*-------------------------------------------------------------------------*/
-void SwapMessage(Message *m1, Message *m2) {
-	Message *tmp = m1;
-	m1 = m2;
-	m2 = tmp;
 }
 
 } // End of namespace Trecision

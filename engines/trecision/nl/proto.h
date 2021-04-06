@@ -159,7 +159,6 @@ int IntersecateRect(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int 
 void doEvent(uint8 cls, uint8 event, uint8 priority, uint16 u16Param1, uint16 u16Param2, uint8 u8Param, uint32 u32Param);
 void Scheduler();
 void ProcessTheMessage();
-void SwapMessage(Message *m1, Message *m2);
 void PositionString(uint16 x, uint16 y, const char *string, uint16 *posx, uint16 *posy, bool Homo);
 void ShowObjName(uint16 obj, bool showhide);
 void FormattingSuperString();
