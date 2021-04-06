@@ -136,21 +136,25 @@ BITMAP *backgroundimage;
 PALSTRUCT objectivepal[256];
 int bgimgspr;
 
-void WriteObjectivePalette(unsigned char index, unsigned char r, unsigned char b, unsigned char g) {
+void WriteObjectivePalette(ScriptMethodParams &params) {
+	PARAMS4(unsigned char, index, unsigned char, r, unsigned char, b, unsigned char, g);
 	objectivepal[index].r = r;
 	objectivepal[index].b = b;
 	objectivepal[index].g = g;
 }
 
-int ReadObjectivePaletteR(unsigned char index) {
-	return objectivepal[index].r;
+void ReadObjectivePaletteR(ScriptMethodParams &params) {
+	PARAMS1(unsigned char, index);
+	params._result = (int)objectivepal[index].r;
 }
 
-int ReadObjectivePaletteB(unsigned char index) {
-	return objectivepal[index].b;
+void ReadObjectivePaletteB(ScriptMethodParams &params) {
+	PARAMS1(unsigned char, index);
+	params._result = (int)objectivepal[index].b;
 }
-int ReadObjectivePaletteG(unsigned char index) {
-	return objectivepal[index].g;
+void ReadObjectivePaletteG(ScriptMethodParams &params) {
+	PARAMS1(unsigned char, index);
+	params._result = (int)objectivepal[index].g;
 }
 
 
@@ -184,8 +188,8 @@ void PreMultiply_Alphas () //Ha ha, this isn't the kind of premultiplcation you'
 }
 */
 
-int GetModifiedBackgroundImage() {
-	return bgimgspr;
+void GetModifiedBackgroundImage(ScriptMethodParams &params) {
+	params._result = bgimgspr;
 }
 
 unsigned short root(unsigned short x) {
@@ -234,16 +238,24 @@ float FastCos(float x) {
 	return FastSin(x + halfpi);
 }
 
-FLOAT_RETURN_TYPE AGSFastSin(SCRIPT_FLOAT(x)) {
-	INIT_SCRIPT_FLOAT(x);
-	x = FastSin(x);
-	RETURN_FLOAT(x);
+void AGSFastRoot(ScriptMethodParams &params) {
+	PARAMS1(unsigned short, x);
+	x = root(x);
+	params._result = (int)x;
 }
 
-FLOAT_RETURN_TYPE AGSFastCos(SCRIPT_FLOAT(x)) {
-	INIT_SCRIPT_FLOAT(x);
+void AGSFastSin(ScriptMethodParams &params) {
+	PARAMS1(int32, xi);
+	float x = PARAM_TO_FLOAT(xi);
+	x = FastSin(x);
+	params._result = PARAM_FROM_FLOAT(x);
+}
+
+void AGSFastCos(ScriptMethodParams &params) {
+	PARAMS1(int32, xi);
+	float x = PARAM_TO_FLOAT(xi);
 	x = FastSin(x + halfpi);
-	RETURN_FLOAT(x);
+	params._result = PARAM_FROM_FLOAT(x);
 }
 
 
@@ -302,47 +314,56 @@ void DrawLens(int ox, int oy) {
 	engine->FreeBitmap(lenswrite);
 }
 
-void SetLensPos(int x, int y) {
+void SetLensPos(ScriptMethodParams &params) {
+	PARAMS2(int, x, int, y);
 	LensOption.x = x;
 	LensOption.y = y;
 }
 
-int GetLensX() {
-	return LensOption.x;
+void GetLensX(ScriptMethodParams &params) {
+	params._result = LensOption.x;
 }
 
-int GetLensY() {
-	return LensOption.y;
+void GetLensY(ScriptMethodParams &params) {
+	params._result =  LensOption.y;
 }
 
-void SetLensDrawn(int toggle) {
+void SetLensDrawn(ScriptMethodParams &params) {
+	PARAMS1(int, toggle);
 	if (toggle > 0) LensOption.draw = 1;
 	else LensOption.draw = 0;
 }
 
-int GetLensDrawn() {
-	return LensOption.draw;
+void GetLensDrawn(ScriptMethodParams &params) {
+	params._result = LensOption.draw;
 }
 
-void SetLensOffsetClamp(int clamp) {
+void SetLensOffsetClamp(ScriptMethodParams &params) {
+	PARAMS1(int, clamp);
 	if (clamp < 0) LensOption.clampoffset = LensOption.lenswidth;
 	else LensOption.clampoffset = clamp;
 }
 
-int GetLensOffsetClamp() {
-	return LensOption.clampoffset;
+void GetLensOffsetClamp(ScriptMethodParams &params) {
+	params._result = LensOption.clampoffset;
 }
 
-int GetLensLevel() {
-	return LensOption.level;
+void GetLensLevel(ScriptMethodParams &params) {
+	params._result = LensOption.level;
 }
 
-void SetLensLevel(int level) {
+void SetLensLevel(ScriptMethodParams &params) {
+	PARAMS1(int, level);
 	if (level < 0 || level > 4) engine->AbortGame("SetLensLevel: Invalid level.");
 	else LensOption.level = level;
 }
 
-void LensInitialize(int width, int zoom, int lensx, int lensy, int level, int clamp = -1) {
+void LensInitialize(ScriptMethodParams &params) {
+	PARAMS5(int, width, int, zoom, int, lensx, int, lensy, int, level);
+	int clamp = -1;
+	if (params.size() > 5)
+		clamp = (int)params[5];
+
 	int32 sw, sh, radius;
 	if (width < 1) engine->AbortGame("Invalid lens dimension!");
 	radius = width >> 1;
@@ -383,7 +404,7 @@ void LensInitialize(int width, int zoom, int lensx, int lensy, int level, int cl
 	else LensOption.level = level;
 }
 
-void ResetRemapping() {
+void ResetRemapping(ScriptMethodParams &) {
 	for (int j = 0; j < 256; ++j) {
 		cycle_remap [j] = j;
 	}
@@ -397,16 +418,18 @@ int plasmadata3 [MAX_PLASMA_COMPLEXITY];
 int plasmaroottype;
 
 
-void SetPlasmaRootType(int real) {
+void SetPlasmaRootType(ScriptMethodParams &params) {
+	PARAMS1(int, real);
 	if (real) plasmaroottype = 1;
 	else plasmaroottype = 0;
 }
 
-int GetPlasmaRootType() {
-	return plasmaroottype;
+void GetPlasmaRootType(ScriptMethodParams &params) {
+	params._result = plasmaroottype;
 }
 
-void SetPlasmaType(int component, int type, int data, int data2, int data3) {
+void SetPlasmaType(ScriptMethodParams &params) {
+	PARAMS5(int, component, int, type, int, data, int, data2, int, data3);
 	if (component >= MAX_PLASMA_COMPLEXITY) engine->AbortGame("Plasma too complex!");
 	else {
 		plasmatype [component] = type;
@@ -422,7 +445,7 @@ void SetPlasmaType(int component, int type, int data, int data2, int data3) {
 	//4 = Diagonal Bars (data=width)
 }
 
-void ResetPlasmaSettings() {
+void ResetPlasmaSettings(ScriptMethodParams &) {
 	int i = 0;
 	while (i < MAX_PLASMA_COMPLEXITY) {
 		plasmatype [i] = 0;
@@ -433,7 +456,8 @@ void ResetPlasmaSettings() {
 	}
 }
 
-void DrawPlasma(int slot, int palstart, int palend) {
+void DrawPlasma(ScriptMethodParams &params) {
+	PARAMS3(int, slot, int, palstart, int, palend);
 	BITMAP *plasmaspr = engine->GetSpriteGraphic(slot);
 	if (!plasmaspr) engine->AbortGame("Plasma: Not a sprite I can load.");
 	int32 w, h, basecol, range = 0;
@@ -481,7 +505,8 @@ void DrawPlasma(int slot, int palstart, int palend) {
 	engine->NotifySpriteUpdated(slot);
 }
 
-void DoFire(int spriteId, int masksprite, int palstart, int palend, int strength, int seed, int cutoff, int windspeed) {
+void DoFire(ScriptMethodParams &params) {
+	PARAMS8(int, spriteId, int, masksprite, int, palstart, int, palend, int, strength, int, seed, int, cutoff, int, windspeed);
 	BITMAP *firespr = engine->GetSpriteGraphic(masksprite);
 	BITMAP *firecolorspr = engine->GetSpriteGraphic(spriteId);
 	BITMAP *seedspr;
@@ -623,7 +648,8 @@ unsigned char MixColorAdditive (unsigned char fg,unsigned char bg,unsigned char 
     return result;
 }
 */
-unsigned char GetColor565(unsigned char r, unsigned char g, unsigned char b) {
+void GetColor565(ScriptMethodParams &params) {
+	PARAMS3(unsigned char, r, unsigned char, g, unsigned char, b);
 	//BITMAP *clutspr = engine->GetSpriteGraphic (clutslot);
 	//if (!clutspr) engine->AbortGame ("MixColorAlpha: Can't load CLUT sprite into memory.");
 	//uint8 *clutarray = engine->GetRawBitmapSurface (clutspr);
@@ -632,10 +658,11 @@ unsigned char GetColor565(unsigned char r, unsigned char g, unsigned char b) {
 	unsigned char result = *(clutp + i);
 	result = cycle_remap [result]; //Once again, to make sure that the palette slot used is the right one.
 	//engine->ReleaseBitmapSurface (clutspr);
-	return result;
+	params._result = (int)result;
 }
 
-void CycleRemap(int start, int end) {
+void CycleRemap(ScriptMethodParams &params) {
+	PARAMS2(int, start, int, end);
 	if (end > start) {
 		// Rotate left
 		int wraparound = cycle_remap [start];
@@ -654,12 +681,17 @@ void CycleRemap(int start, int end) {
 	}
 }
 
-unsigned char GetRemappedSlot(unsigned char slot) {
-	return cycle_remap [slot];
+void GetRemappedSlot(ScriptMethodParams &params) {
+	PARAMS1(unsigned char, slot);
+	params._result = cycle_remap [slot];
 }
 
-int LoadCLUT(int slot) {
-	if (engine->GetSpriteWidth(slot) != 256 || engine->GetSpriteHeight(slot) != 256) return 1;
+void LoadCLUT(ScriptMethodParams &params) {
+	PARAMS1(int, slot);
+	if (engine->GetSpriteWidth(slot) != 256 || engine->GetSpriteHeight(slot) != 256) {
+		params._result = 1;
+		return;
+	};
 	BITMAP *clutimage = engine->GetSpriteGraphic(slot);
 	uint8 *clutarray = engine->GetRawBitmapSurface(clutimage);
 	int pitch = engine->GetBitmapPitch(clutimage);
@@ -670,18 +702,20 @@ int LoadCLUT(int slot) {
 	}
 	clutslot = slot;
 	engine->ReleaseBitmapSurface(clutimage);
-	return 0;
+	params._result = 0;
 }
 
-void SetReflections(int toggle) {
+void SetReflections(ScriptMethodParams &params) {
+	PARAMS1(int, toggle);
 	drawreflections = toggle;
 }
 
-int IsReflectionsOn() {
-	return drawreflections;
+void IsReflectionsOn(ScriptMethodParams &params) {
+	params._result = drawreflections;
 }
 
-int GetLuminosityFromPalette(int slot) {
+void GetLuminosityFromPalette(ScriptMethodParams &params) {
+	PARAMS1(int, slot);
 	AGSColor *pal = engine->GetPalette();
 	int lum = (pal[slot].r +
 	           pal[slot].r +
@@ -691,16 +725,18 @@ int GetLuminosityFromPalette(int slot) {
 	           pal[slot].g +
 	           pal[slot].g +
 	           pal[slot].b) >> 3;
-	return lum;
+	params._result = lum;
 }
 
 
 
-void SetStarsOriginPoint(int x, int y) {
+void SetStarsOriginPoint(ScriptMethodParams &params) {
+	PARAMS2(int, x, int, y);
 	Starfield.originx = x;
 	Starfield.originy = y;
 }
-void InitializeStars(int slot, int maxstars) {
+void InitializeStars(ScriptMethodParams &params) {
+	PARAMS2(int, slot, int, maxstars);
 	int32 sw, sh = 0;
 	BITMAP *canvas = engine->GetSpriteGraphic(slot);
 	engine->GetBitmapDimensions(canvas, &sw, &sh, nullptr);
@@ -719,7 +755,8 @@ void InitializeStars(int slot, int maxstars) {
 	}
 }
 
-void IterateStars(int slot) {
+void IterateStars(ScriptMethodParams &params) {
+	PARAMS1(int, slot);
 	long sw, sh = 0;
 	sw = engine->GetSpriteWidth(slot);
 	sh = engine->GetSpriteHeight(slot);
@@ -739,50 +776,57 @@ void IterateStars(int slot) {
 		}
 	}
 }
-int GetStarfieldOverscan() {
-	return Starfield.overscan;
+void GetStarfieldOverscan(ScriptMethodParams &params) {
+	params._result = Starfield.overscan;
 }
-void SetStarfieldOverscan(int overscan) {
+void SetStarfieldOverscan(ScriptMethodParams &params) {
+	PARAMS1(int, overscan);
 	Starfield.overscan = overscan;
 }
 
-int GetStarfieldOriginX() {
-	return Starfield.originx;
+void GetStarfieldOriginX(ScriptMethodParams &params) {
+	params._result = Starfield.originx;
 }
 
-int GetStarfieldOriginY() {
-	return Starfield.originy;
+void GetStarfieldOriginY(ScriptMethodParams &params) {
+	params._result = Starfield.originy;
 }
 
-void SetStarfieldDepthMultiplier(int multi) {
+void SetStarfieldDepthMultiplier(ScriptMethodParams &params) {
+	PARAMS1(int, multi);
 	Starfield.depthmultiplier = multi;
 }
 
-int GetStarfieldDepthMultiplier() {
-	return Starfield.depthmultiplier;
+void GetStarfieldDepthMultiplier(ScriptMethodParams &params) {
+	params._result = Starfield.depthmultiplier;
 }
 
-int GetStarfieldMaxStars() {
-	return Starfield.maxstars;
+void GetStarfieldMaxStars(ScriptMethodParams &params) {
+	params._result = Starfield.maxstars;
 }
 
-void SetStarSpriteScaleBoost(int star, int boost) {
+void SetStarSpriteScaleBoost(ScriptMethodParams &params) {
+	PARAMS2(int, star, int, boost);
 	stars[star].scaleboost = boost;
 }
 
-int GetStarSpriteScaleBoost(int star) {
-	return stars[star].scaleboost;
+void GetStarSpriteScaleBoost(ScriptMethodParams &params) {
+	PARAMS1(int, star);
+	params._result = stars[star].scaleboost;
 }
 
-void SetStarMaxRadius(int star, int radius) {
+void SetStarMaxRadius(ScriptMethodParams &params) {
+	PARAMS2(int, star, int, radius);
 	stars[star].maxrad = radius;
 }
 
-int GetStarMaxRadius(int star) {
-	return stars[star].maxrad;
+void GetStarMaxRadius(ScriptMethodParams &params) {
+	PARAMS1(int, star);
+	params._result = stars[star].maxrad;
 }
 
-void RotateStar(int star, int angle, int px, int py) {
+void RotateStar(ScriptMethodParams &params) {
+	PARAMS4(int, star, int, angle, int, px, int, py);
 	float rsin = rot_sine_LUT[angle];
 	float rcos = rot_cos_LUT[angle];
 	float fPx = (float)px;
@@ -798,47 +842,56 @@ void RotateStar(int star, int angle, int px, int py) {
 	i++;
 }
 
-FLOAT_RETURN_TYPE GetStarX(int i) {
+void GetStarX(ScriptMethodParams &params) {
+	PARAMS1(int, i);
 	float starx = (float)stars[i].x;
-	RETURN_FLOAT(starx);
+	params._result = PARAM_FROM_FLOAT(starx);
 }
 
-FLOAT_RETURN_TYPE GetStarY(int i) {
+void GetStarY(ScriptMethodParams &params) {
+	PARAMS1(int, i);
 	float stary = (float)stars[i].y;
-	RETURN_FLOAT(stary);
+	params._result = PARAM_FROM_FLOAT(stary);
 }
 
-FLOAT_RETURN_TYPE GetStarZ(int i) {
+void GetStarZ(ScriptMethodParams &params) {
+	PARAMS1(int, i);
 	float starz = (float)stars[i].z;
-	RETURN_FLOAT(starz);
+	params._result = PARAM_FROM_FLOAT(starz);
 }
 
-void SetStarPosition(int star, SCRIPT_FLOAT(x), SCRIPT_FLOAT(y), SCRIPT_FLOAT(z)) {
-	INIT_SCRIPT_FLOAT(x);
-	INIT_SCRIPT_FLOAT(y);
-	INIT_SCRIPT_FLOAT(z);
+void SetStarPosition(ScriptMethodParams &params) {
+	PARAMS4(int, star, int32, xi, int32, yi, int32, zi);
+	float x = PARAM_TO_FLOAT(xi);
+	float y = PARAM_TO_FLOAT(yi);
+	float z = PARAM_TO_FLOAT(zi);
 	stars[star].x = x;
 	stars[star].y = y;
 	stars[star].z = z;
 }
 
-void SetStarColor(int star, unsigned char color) {
+void SetStarColor(ScriptMethodParams &params) {
+	PARAMS2(int, star, unsigned char, color);
 	stars[star].color = color;
 }
 
-unsigned char GetStarColor(int star) {
-	return stars[star].color;
+void GetStarColor(ScriptMethodParams &params) {
+	PARAMS1(int, star);
+	params._result = (int)stars[star].color;
 }
 
-void SetStarSprite(int star, int slot) {
+void SetStarSprite(ScriptMethodParams &params) {
+	PARAMS2(int, star, int, slot);
 	stars[star].sprite = slot;
 }
 
-int GetStarSprite(int star) {
-	return stars[star].sprite;
+void GetStarSprite(ScriptMethodParams &params) {
+	PARAMS1(int, star);
+	params._result = stars[star].sprite;
 }
 
-void SetStarSpriteRange(int start, int end, int slot) {
+void SetStarSpriteRange(ScriptMethodParams &params) {
+	PARAMS3(int, start, int, end, int, slot);
 	int sfix = start;
 	int efix = end;
 	if (start > Starfield.maxstars) sfix = Starfield.maxstars - 1;
@@ -847,7 +900,8 @@ void SetStarSpriteRange(int start, int end, int slot) {
 		stars[i].sprite = slot;
 }
 
-void DrawStars(int slot, int maskslot) {
+void DrawStars(ScriptMethodParams &params) {
+	PARAMS2(int, slot, int, maskslot);
 	int32 sw, sh = 0;
 	BITMAP *canvas = engine->GetSpriteGraphic(slot);
 	if (!canvas) engine->AbortGame("DrawStars: Can't load sprite slot.");
@@ -1027,7 +1081,13 @@ void DrawStars(int slot, int maskslot) {
 }
 
 
-int CreateTranslucentOverlay(int id, int spriteId, int alpha, int level, int ox, int oy, int mask = 0, int blendmode = 0) {
+void CreateTranslucentOverlay(ScriptMethodParams &params) {
+	PARAMS6(int, id, int, spriteId, int, alpha, int, level, int, ox, int, oy);
+	int mask = 0, blendmode = 0;
+	if (params.size() > 6)
+		mask = params[6];
+	if (params.size() > 7)
+		blendmode = params[7];
 	BITMAP *testspr = engine->GetSpriteGraphic(spriteId);
 	if (testspr) overlay[id].sprite = spriteId;
 	else engine->AbortGame("CreateTranslucentOverlay: Invalid spriteId.");
@@ -1039,90 +1099,106 @@ int CreateTranslucentOverlay(int id, int spriteId, int alpha, int level, int ox,
 	overlay[id].y = oy;
 	overlay[id].enabled = true;
 	overlay[id].blendtype = blendmode;
-	return 0;
+	params._result = 0;
 }
 
-int DeleteTranslucentOverlay(int id) {
+void DeleteTranslucentOverlay(ScriptMethodParams &params) {
+	PARAMS1(int, id);
 	overlay[id].enabled = false;
 	overlay[id].sprite = 0;
 	overlay[id].x = 0;
 	overlay[id].y = 0;
 	overlay[id].level = 0;
 	overlay[id].trans = 0;
-	return 0;
+	params._result = 0;
 }
 
-int MoveTranslucentOverlay(int id, int ox, int oy) {
+void MoveTranslucentOverlay(ScriptMethodParams &params) {
+	PARAMS3(int, id, int, ox, int, oy);
 	overlay[id].x = ox;
 	overlay[id].y = oy;
-	return 0;
+	params._result = 0;
 }
 
-int GetTranslucentOverlayX(int id) {
-	return overlay[id].x;
+void GetTranslucentOverlayX(ScriptMethodParams &params) {
+	PARAMS1(int, id);
+	params._result = overlay[id].x;
 }
 
-int GetTranslucentOverlayY(int id) {
-	return overlay[id].y;
+void GetTranslucentOverlayY(ScriptMethodParams &params) {
+	PARAMS1(int, id);
+	params._result = overlay[id].y;
 }
 
-int GetTranslucentOverlaySprite(int id) {
-	return overlay[id].sprite;
+void GetTranslucentOverlaySprite(ScriptMethodParams &params) {
+	PARAMS1(int, id);
+	params._result = overlay[id].sprite;
 }
 
-int GetTranslucentOverlayLevel(int id) {
-	return overlay[id].level;
+void GetTranslucentOverlayLevel(ScriptMethodParams &params) {
+	PARAMS1(int, id);
+	params._result = overlay[id].level;
 }
 
-int GetTranslucentOverlayEnabled(int id) {
-	return overlay[id].enabled;
+void GetTranslucentOverlayEnabled(ScriptMethodParams &params) {
+	PARAMS1(int, id);
+	params._result = overlay[id].enabled;
 }
 
-int GetTranslucentOverlayAlpha(int id) {
-	return overlay[id].trans;
+void GetTranslucentOverlayAlpha(ScriptMethodParams &params) {
+	PARAMS1(int, id);
+	params._result = overlay[id].trans;
 }
 
-int SetTranslucentOverlayAlpha(int id, int alpha) {
+void SetTranslucentOverlayAlpha(ScriptMethodParams &params) {
+	PARAMS2(int, id, int, alpha);
 	if (alpha >= 0 && alpha < 256)
 		overlay[id].trans = alpha;
 	else
 		engine->AbortGame("CreateTranslucentOverlay: Invalid alpha selected.");
-	return 0;
+	params._result = 0;
 }
 
-int SetTranslucentOverlayEnabled(int id, int toggle) {
+void SetTranslucentOverlayEnabled(ScriptMethodParams &params) {
+	PARAMS2(int, id, int, toggle);
 	if (toggle > 0)
 		overlay[id].enabled = true;
 	else
 		overlay[id].enabled = false;
-	return 0;
+	params._result = 0;
 }
 
-void SetCharacterReflected(int id, int refl) {
+void SetCharacterReflected(ScriptMethodParams &params) {
+	PARAMS2(int, id, int, refl);
 	if (refl > 0) Reflection.Characters[id].reflect = 1;
 	else Reflection.Characters[id].reflect = 0;
 }
 
-void SetObjectReflected(int id, int refl) {
+void SetObjectReflected(ScriptMethodParams &params) {
+	PARAMS2(int, id, int, refl);
 	if (refl > 0)
 		Reflection.Objects[id].reflect = 1;
 	else
 		Reflection.Objects[id].reflect = 0;
 }
 
-int GetCharacterReflected(int id) {
-	return Reflection.Characters[id].reflect;
+void GetCharacterReflected(ScriptMethodParams &params) {
+	PARAMS1(int, id);
+	params._result = Reflection.Characters[id].reflect;
 }
 
-int GetObjectReflected(int id) {
-	return Reflection.Objects[id].reflect;
+void GetObjectReflected(ScriptMethodParams &params) {
+	PARAMS1(int, id);
+	params._result = Reflection.Objects[id].reflect;
 }
 
-void ReplaceCharacterReflectionView(int id, int view) {
+void ReplaceCharacterReflectionView(ScriptMethodParams &params) {
+	PARAMS2(int, id, int, view);
 	Reflection.Characters[id].replaceview = view - 1;
 }
 
-void SetObjectReflectionIgnoreScaling(int id, int wb) {
+void SetObjectReflectionIgnoreScaling(ScriptMethodParams &params) {
+	PARAMS2(int, id, int, wb);
 	if (wb) Reflection.Objects[id].ignorescaling = 1;
 	else    Reflection.Objects[id].ignorescaling = 0;
 }
@@ -1293,7 +1369,16 @@ int DrawReflections(int id, int charobj = 0) {
 }
 
 
-int DrawTransSprite(int spriteId, int bg, int translevel, int mask = 0, int blendmode = 0, int use_objpal = 0) {
+void DrawTransSprite(ScriptMethodParams &params) {
+	PARAMS3(int, spriteId, int, bg, int, translevel);
+	int mask = 0, blendmode = 0, use_objpal = 0;
+	if (params.size() > 3)
+		mask = params[3];
+	if (params.size() > 4)
+		blendmode = params[4];
+	if (params.size() > 5)
+		use_objpal = params[5];
+
 	BITMAP *maskspr = nullptr;
 	if (mask > 0) maskspr = engine->GetSpriteGraphic(mask);
 	if (!maskspr && mask > 0) {
@@ -1352,7 +1437,7 @@ int DrawTransSprite(int spriteId, int bg, int translevel, int mask = 0, int blen
 	//engine->ReleaseBitmapSurface (clutspr);
 	engine->ReleaseBitmapSurface(spritespr);
 	engine->NotifySpriteUpdated(spriteId);
-	return 0;
+	params._result = 0;
 }
 
 int DrawTranslucentOverlay(int spriteId, int translevel, int ox, int oy, int mask = 0, int blendmode = 0) {
@@ -1449,7 +1534,7 @@ void AGSPalRender::AGS_EngineStartup(IAGSEngine *lpEngine) {
 	engine->RegisterScriptFunction("PALInternal::GetLuminosityFromPalette^1", (void *)GetLuminosityFromPalette);
 	engine->RegisterScriptFunction("PALInternal::FastSin^1", (void *)AGSFastSin);
 	engine->RegisterScriptFunction("PALInternal::FastCos^1", (void *)AGSFastCos);
-	engine->RegisterScriptFunction("PALInternal::FastRoot^1", (void *)root);
+	engine->RegisterScriptFunction("PALInternal::FastRoot^1", (void *)AGSFastRoot);
 	engine->RegisterScriptFunction("PALInternal::GetRemappedSlot^1", (void *)GetRemappedSlot);
 	engine->RegisterScriptFunction("PALInternal::ResetRemapping^0", (void *)ResetRemapping);
 	engine->RegisterScriptFunction("PALInternal::GetModifiedBackgroundImage", (void *)GetModifiedBackgroundImage);
@@ -1551,7 +1636,7 @@ void AGSPalRender::AGS_EngineStartup(IAGSEngine *lpEngine) {
 	engine->RegisterScriptFunction("LensDistort::SetOffsetClamp^1", (void *)SetLensOffsetClamp);
 	engine->RegisterScriptFunction("LensDistort::GetOffsetClamp^0", (void *)GetLensOffsetClamp);
 	engine->RegisterScriptFunction("LensDistort::GetLevel^0", (void *)GetLensLevel);
-	engine->RegisterScriptFunction("LensDistort::SetLevel^1", (void *)GetLensLevel);
+	engine->RegisterScriptFunction("LensDistort::SetLevel^1", (void *)SetLensLevel);
 	engine->RegisterScriptFunction("LensDistort::Initialize^6", (void *)LensInitialize);
 
 	engine->RegisterScriptFunction("Translucence::CreateOverlay^8", (void *)CreateTranslucentOverlay);
@@ -1625,7 +1710,8 @@ void AGSPalRender::AGS_EngineStartup(IAGSEngine *lpEngine) {
 	//PreMultiply_Alphas ();
 	plasmaroottype = 0;
 	Make_Sin_Lut();
-	Init_Raycaster();
+	ScriptMethodParams params;
+	Init_Raycaster(params);
 }
 
 void AGSPalRender::AGS_EngineShutdown() {
@@ -1732,7 +1818,8 @@ int64 AGSPalRender::AGS_EngineOnEvent(int event, NumberPtr data) {
 		syncGame(s);
 	}
 	if (event == AGSE_ENTERROOM) {
-		ResetRemapping();
+		ScriptMethodParams params;
+		ResetRemapping(params);
 		delete[] Reflection.Objects;
 		Reflection.Objects = new objrefopt [engine->GetNumObjects()]();
 	}
@@ -1813,14 +1900,20 @@ void AGSPalRender::syncGame(Serializer &s) {
 	}
 
 	s.syncAsInt(textureSlot);
-	if (s.isLoading() && textureSlot)
-		MakeTextures(textureSlot);
+	if (s.isLoading() && textureSlot) {
+		ScriptMethodParams params;
+		params.push_back(textureSlot);
+		MakeTextures(params);
+	}
 
 	s.syncAsInt(skybox);
 	s.syncAsInt(ambientlight);
 
-	if (s.isLoading())
-		LoadCLUT(clutslot);
+	if (s.isLoading()) {
+		ScriptMethodParams params;
+		params.push_back(clutslot);
+		LoadCLUT(params);
+	}
 }
 
 } // namespace AGSPalRender

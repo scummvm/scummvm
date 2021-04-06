@@ -104,103 +104,103 @@ extern int skybox;
 
 
 
-void MakeTextures(int slot);
-void Raycast_Render(int slot);
-void MoveForward();
-void MoveBackward();
-void RotateLeft();
-void RotateRight();
-void Init_Raycaster();
-void QuitCleanup();
-void LoadMap(int worldmapSlot, int lightmapSlot, int ceilingmapSlot, int floormapSlot);
-void Ray_InitSprite(int id, SCRIPT_FLOAT(x), SCRIPT_FLOAT(y), int slot, unsigned char alpha, int blendmode, SCRIPT_FLOAT(scale_x), SCRIPT_FLOAT(scale_y), SCRIPT_FLOAT(vMove));
-void Ray_SetPlayerPosition(SCRIPT_FLOAT(x), SCRIPT_FLOAT(y));
-FLOAT_RETURN_TYPE Ray_GetPlayerX();
-FLOAT_RETURN_TYPE Ray_GetPlayerY();
-int Ray_GetPlayerAngle();
-void Ray_SetPlayerAngle(int angle);
+void MakeTextures(ScriptMethodParams &params);
+void Raycast_Render(ScriptMethodParams &params);
+void MoveForward(ScriptMethodParams &params);
+void MoveBackward(ScriptMethodParams &params);
+void RotateLeft(ScriptMethodParams &params);
+void RotateRight(ScriptMethodParams &params);
+void Init_Raycaster(ScriptMethodParams &params);
+void QuitCleanup(ScriptMethodParams &params);
+void LoadMap(ScriptMethodParams &params);
+void Ray_InitSprite(ScriptMethodParams &params);
+void Ray_SetPlayerPosition(ScriptMethodParams &params);
+void Ray_GetPlayerX(ScriptMethodParams &params);
+void Ray_GetPlayerY(ScriptMethodParams &params);
+void Ray_GetPlayerAngle(ScriptMethodParams &params);
+void Ray_SetPlayerAngle(ScriptMethodParams &params);
 
-int Ray_GetWallHotspot(int id);
-int Ray_GetWallTexture(int id, int dir);
-int Ray_GetWallSolid(int id, int dir);
-int Ray_GetWallIgnoreLighting(int id, int dir);
-int Ray_GetWallAlpha(int id, int dir);
-int Ray_GetWallBlendType(int id, int dir);
+void Ray_GetWallHotspot(ScriptMethodParams &params);
+void Ray_GetWallTexture(ScriptMethodParams &params);
+void Ray_GetWallSolid(ScriptMethodParams &params);
+void Ray_GetWallIgnoreLighting(ScriptMethodParams &params);
+void Ray_GetWallAlpha(ScriptMethodParams &params);
+void Ray_GetWallBlendType(ScriptMethodParams &params);
 
-void Ray_SelectTile(int x, int y, unsigned char color);
+void Ray_SelectTile(ScriptMethodParams &params);
 
-int Ray_GetHotspotAt(int x, int y);
-int Ray_GetObjectAt(int x, int y);
+void Ray_GetHotspotAt(ScriptMethodParams &params);
+void Ray_GetObjectAt(ScriptMethodParams &params);
 
-void Ray_DrawTile(int spr, int tile);
-void Ray_DrawOntoTile(int spr, int tile);
-void Ray_SetNoClip(int value);
-int Ray_GetNoClip();
-void Ray_SetSpriteInteractObj(int id, int obj);
-int  Ray_GetSpriteInteractObj(int id);
-void Ray_SetSpritePosition(int id, SCRIPT_FLOAT(x), SCRIPT_FLOAT(y));
-void Ray_SetSpriteVertOffset(int id, SCRIPT_FLOAT(vMove));
-FLOAT_RETURN_TYPE Ray_GetSpriteVertOffset(int id);
-FLOAT_RETURN_TYPE Ray_GetSpriteX(int id);
-FLOAT_RETURN_TYPE Ray_GetSpriteY(int id);
+void Ray_DrawTile(ScriptMethodParams &params);
+void Ray_DrawOntoTile(ScriptMethodParams &params);
+void Ray_SetNoClip(ScriptMethodParams &params);
+void Ray_GetNoClip(ScriptMethodParams &params);
+void Ray_SetSpriteInteractObj(ScriptMethodParams &params);
+void  Ray_GetSpriteInteractObj(ScriptMethodParams &params);
+void Ray_SetSpritePosition(ScriptMethodParams &params);
+void Ray_SetSpriteVertOffset(ScriptMethodParams &params);
+void Ray_GetSpriteVertOffset(ScriptMethodParams &params);
+void Ray_GetSpriteX(ScriptMethodParams &params);
+void Ray_GetSpriteY(ScriptMethodParams &params);
 
-void Ray_SetWallHotspot(int id, char hotsp);
-void Ray_SetWallTextures(int id, int n, int s, int w, int e);
-void Ray_SetWallSolid(int id, int n, int s, int w, int e);
-void Ray_SetWallIgnoreLighting(int id, int n, int s, int w, int e);
-void Ray_SetWallAlpha(int id, int n, int s, int w, int e);
-void Ray_SetWallBlendType(int id, int n, int s, int w, int e);
+void Ray_SetWallHotspot(ScriptMethodParams &params);
+void Ray_SetWallTextures(ScriptMethodParams &params);
+void Ray_SetWallSolid(ScriptMethodParams &params);
+void Ray_SetWallIgnoreLighting(ScriptMethodParams &params);
+void Ray_SetWallAlpha(ScriptMethodParams &params);
+void Ray_SetWallBlendType(ScriptMethodParams &params);
 
-FLOAT_RETURN_TYPE Ray_GetMoveSpeed();
-void Ray_SetMoveSpeed(SCRIPT_FLOAT(speed));
-FLOAT_RETURN_TYPE Ray_GetRotSpeed();
-void Ray_SetRotSpeed(SCRIPT_FLOAT(speed));
-int Ray_GetWallAt(int x, int y);
-int Ray_GetLightAt(int x, int y);
-void Ray_SetLightAt(int x, int y, int light);
-void Ray_SetWallAt(int x, int y, int id);
-void Ray_SetPlaneY(SCRIPT_FLOAT(y));
-FLOAT_RETURN_TYPE Ray_GetDistanceAt(int x, int y);
-int Ray_GetSpriteAngle(int id);
-void Ray_SetSpriteAngle(int id, int angle);
-void Ray_SetSpriteView(int id, int view);
-int Ray_GetSpriteView(int id);
-void Ray_SetSpriteFrame(int id, int frame);
-int Ray_GetSpriteFrame(int id);
+void Ray_GetMoveSpeed(ScriptMethodParams &params);
+void Ray_SetMoveSpeed(ScriptMethodParams &params);
+void Ray_GetRotSpeed(ScriptMethodParams &params);
+void Ray_SetRotSpeed(ScriptMethodParams &params);
+void Ray_GetWallAt(ScriptMethodParams &params);
+void Ray_GetLightAt(ScriptMethodParams &params);
+void Ray_SetLightAt(ScriptMethodParams &params);
+void Ray_SetWallAt(ScriptMethodParams &params);
+void Ray_SetPlaneY(ScriptMethodParams &params);
+void Ray_GetDistanceAt(ScriptMethodParams &params);
+void Ray_GetSpriteAngle(ScriptMethodParams &params);
+void Ray_SetSpriteAngle(ScriptMethodParams &params);
+void Ray_SetSpriteView(ScriptMethodParams &params);
+void Ray_GetSpriteView(ScriptMethodParams &params);
+void Ray_SetSpriteFrame(ScriptMethodParams &params);
+void Ray_GetSpriteFrame(ScriptMethodParams &params);
 
-int Ray_GetTileX_At(int x, int y);
-int Ray_GetTileY_At(int x, int y);
+void Ray_GetTileX_At(ScriptMethodParams &params);
+void Ray_GetTileY_At(ScriptMethodParams &params);
 
-void Ray_SetSkyBox(int slot);
-int Ray_GetSkyBox(int slot);
+void Ray_SetSkyBox(ScriptMethodParams &params);
+void Ray_GetSkyBox(ScriptMethodParams &params);
 
-void Ray_SetAmbientLight(int value);
-int Ray_GetAmbientLight();
-void Ray_SetAmbientColor(int color, int amount);
+void Ray_SetAmbientLight(ScriptMethodParams &params);
+void Ray_GetAmbientLight(ScriptMethodParams &params);
+void Ray_SetAmbientColor(ScriptMethodParams &params);
 
 
-int Ray_GetSpriteAlpha(int id);
-void Ray_SetSpriteAlpha(int id, int alpha);
-int Ray_GetSpritePic(int id);
-void Ray_SetSpritePic(int id, int slot);
+void Ray_GetSpriteAlpha(ScriptMethodParams &params);
+void Ray_SetSpriteAlpha(ScriptMethodParams &params);
+void Ray_GetSpritePic(ScriptMethodParams &params);
+void Ray_SetSpritePic(ScriptMethodParams &params);
 
-FLOAT_RETURN_TYPE Ray_GetSpriteScaleX(int id);
-void Ray_SetSpriteScaleX(int id, SCRIPT_FLOAT(scale));
-FLOAT_RETURN_TYPE Ray_GetSpriteScaleY(int id);
-void Ray_SetSpriteScaleY(int id, SCRIPT_FLOAT(scale));
+void Ray_GetSpriteScaleX(ScriptMethodParams &params);
+void Ray_SetSpriteScaleX(ScriptMethodParams &params);
+void Ray_GetSpriteScaleY(ScriptMethodParams &params);
+void Ray_SetSpriteScaleY(ScriptMethodParams &params);
 
-void Ray_SetSpriteBlendType(int id, int type);
-int Ray_GetSpriteBlendType(int id);
+void Ray_SetSpriteBlendType(ScriptMethodParams &params);
+void Ray_GetSpriteBlendType(ScriptMethodParams &params);
 
-void Ray_SetFloorAt(int x, int y, int tex);
-void Ray_SetCeilingAt(int x, int y, int tex);
-int Ray_GetCeilingAt(int x, int y);
-int Ray_GetFloorAt(int x, int y);
-int Ray_GetLightingAt(int x, int y);
-void Ray_SetLightingAt(int x, int y, unsigned char lighting);
-int Ray_GetAmbientWeight();
+void Ray_SetFloorAt(ScriptMethodParams &params);
+void Ray_SetCeilingAt(ScriptMethodParams &params);
+void Ray_GetCeilingAt(ScriptMethodParams &params);
+void Ray_GetFloorAt(ScriptMethodParams &params);
+void Ray_GetLightingAt(ScriptMethodParams &params);
+void Ray_SetLightingAt(ScriptMethodParams &params);
+void Ray_GetAmbientWeight(ScriptMethodParams &params);
 
-int Ray_HasSeenTile(int x, int y);
+void Ray_HasSeenTile(ScriptMethodParams &params);
 
 } // namespace AGSPalRender
 } // namespace Plugins

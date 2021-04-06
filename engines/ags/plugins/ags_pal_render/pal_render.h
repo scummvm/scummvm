@@ -31,10 +31,17 @@ namespace AGS3 {
 namespace Plugins {
 namespace AGSPalRender {
 
-#define SCRIPT_FLOAT(x) int32 __script_float##x
-#define INIT_SCRIPT_FLOAT(x) float x; memcpy(&x, &__script_float##x, sizeof(float))
-#define FLOAT_RETURN_TYPE int32
-#define RETURN_FLOAT(x) int32 __ret##x; memcpy(&__ret##x, &x, sizeof(float)); return __ret##x
+inline float PARAM_TO_FLOAT(int32 xi) {
+	float x;
+	memcpy(&x, &xi, sizeof(float));
+	return x;
+}
+
+inline int32 PARAM_FROM_FLOAT(float x) {
+	int32 xi;
+	memcpy(&xi, &x, sizeof(float));
+	return xi;
+}
 
 struct PALSTRUCT {
 	byte r;
@@ -180,7 +187,7 @@ public:
 
 };
 
-unsigned char GetColor565(unsigned char r, unsigned char g, unsigned char b);
+void GetColor565(ScriptMethodParams &params);
 
 unsigned short root(unsigned short x);
 float FastSin(float x);

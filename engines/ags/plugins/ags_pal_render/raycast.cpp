@@ -22,6 +22,7 @@
 
 #include "ags/lib/allegro.h"
 #include "ags/plugins/ags_pal_render/raycast.h"
+#include "ags/plugins/plugin_base.h"
 
 namespace AGS3 {
 namespace Plugins {
@@ -79,7 +80,8 @@ int selectedX;
 int selectedY;
 unsigned char selectedColor;
 
-void Ray_SelectTile(int x, int y, unsigned char color) {
+void Ray_SelectTile(ScriptMethodParams &params) {
+	PARAMS3(int, x, int, y, unsigned char, color);
 	if (x < 0 || x >= MAP_WIDTH) selectedX = -1;
 	else if (y < 0 || y >= MAP_HEIGHT) selectedY = -1;
 	else {
@@ -89,21 +91,24 @@ void Ray_SelectTile(int x, int y, unsigned char color) {
 	}
 }
 
-int Ray_HasSeenTile(int x, int y) {
-	if (x < 0 || x >= MAP_WIDTH) return -1;
-	else if (y < 0 || y >= MAP_HEIGHT) return -1;
-	return seenMap [x][y];
+void Ray_HasSeenTile(ScriptMethodParams &params) {
+	PARAMS2(int, x, int, y);
+	if (x < 0 || x >= MAP_WIDTH) params._result = -1;
+	else if (y < 0 || y >= MAP_HEIGHT) params._result = -1;
+	else params._result = seenMap [x][y];
 }
 
-void Ray_SetNoClip(int value) {
+void Ray_SetNoClip(ScriptMethodParams &params) {
+	PARAMS1(int, value);
 	noclip = value;
 }
 
-int Ray_GetNoClip() {
-	return noclip;
+void Ray_GetNoClip(ScriptMethodParams &params) {
+	params._result = noclip;
 }
 
-void Ray_DrawTile(int spr, int tile) {
+void Ray_DrawTile(ScriptMethodParams &params) {
+	PARAMS2(int, spr, int, tile);
 	BITMAP *img = engine->GetSpriteGraphic(spr);
 	uint8 *sprarray = engine->GetRawBitmapSurface(img);
 	int pitch = engine->GetBitmapPitch(img);
@@ -113,7 +118,8 @@ void Ray_DrawTile(int spr, int tile) {
 	engine->ReleaseBitmapSurface(img);
 }
 
-void Ray_DrawOntoTile(int spr, int tile) {
+void Ray_DrawOntoTile(ScriptMethodParams &params) {
+	PARAMS2(int, spr, int, tile);
 	BITMAP *img = engine->GetSpriteGraphic(spr);
 	uint8 *sprarray = engine->GetRawBitmapSurface(img);
 	int pitch = engine->GetBitmapPitch(img);
@@ -123,43 +129,49 @@ void Ray_DrawOntoTile(int spr, int tile) {
 	engine->ReleaseBitmapSurface(img);
 }
 
-int Ray_GetTileX_At(int x, int y) {
-	if (x < 0 || x >= S_WIDTH  || y < 0 || y >= S_HEIGHT) return -1;
-	else return editorMap [x][y] >> 16;
+void Ray_GetTileX_At(ScriptMethodParams &params) {
+	PARAMS2(int, x, int, y);
+	if (x < 0 || x >= S_WIDTH  || y < 0 || y >= S_HEIGHT) params._result = -1;
+	else params._result = editorMap [x][y] >> 16;
 }
 
-int Ray_GetTileY_At(int x, int y) {
-	if (x < 0 || x >= S_WIDTH  || y < 0 || y >= S_HEIGHT) return -1;
-	else return editorMap [x][y] & 0x0000FFFF;
+void Ray_GetTileY_At(ScriptMethodParams &params) {
+	PARAMS2(int, x, int, y);
+	if (x < 0 || x >= S_WIDTH  || y < 0 || y >= S_HEIGHT) params._result = -1;
+	else params._result = editorMap [x][y] & 0x0000FFFF;
 }
 
-void Ray_SetWallAt(int x, int y, int id) {
+void Ray_SetWallAt(ScriptMethodParams &params) {
+	PARAMS3(int, x, int, y, int, id);
 	if (x < 0 || x >= MAP_WIDTH) return;
 	if (y < 0 || y >= MAP_HEIGHT) return;
 	worldMap [x][y] = id;
 }
 
-int Ray_GetWallAt(int x, int y) {
-	if (x < 0 || x >= MAP_WIDTH) return -1;
-	if (y < 0 || y >= MAP_HEIGHT) return -1;
-	return worldMap [x][y];
+void Ray_GetWallAt(ScriptMethodParams &params) {
+	PARAMS2(int, x, int, y);
+	if (x < 0 || x >= MAP_WIDTH) params._result = -1;
+	else if (y < 0 || y >= MAP_HEIGHT) params._result = -1;
+	else params._result = worldMap [x][y];
 }
 
-int Ray_GetAmbientWeight() {
-	return ambientweight;
+void Ray_GetAmbientWeight(ScriptMethodParams &params) {
+	params._result = ambientweight;
 }
 
-void Ray_SetAmbientLight(int value) {
+void Ray_SetAmbientLight(ScriptMethodParams &params) {
+	PARAMS1(int, value);
 	ambientlight = MIN(255, MAX(0, value));
 }
 
-void Ray_SetAmbientColor(int color, int amount) {
+void Ray_SetAmbientColor(ScriptMethodParams &params) {
+	PARAMS2(int, color, int, amount);
 	ambientcolor = color;
 	ambientcolorAmount = amount;
 }
 
-int Ray_GetAmbientLight() {
-	return ambientlight;
+void Ray_GetAmbientLight(ScriptMethodParams &params) {
+	params._result = ambientlight;
 }
 double fsqrt(double y) {
 	double x, z, tempf;
@@ -177,39 +189,45 @@ double fsqrt(double y) {
 	return x * y;
 }
 
-void Ray_SetWallHotspot(int id, char hotsp) {
+void Ray_SetWallHotspot(ScriptMethodParams &params) {
+	PARAMS2(int, id, char, hotsp);
 	wallData[id].hotspotinteract = hotsp;
 }
 
-void Ray_SetWallTextures(int id, int n, int s, int w, int e) {
+void Ray_SetWallTextures(ScriptMethodParams &params) {
+	PARAMS5(int, id, int, n, int, s, int, w, int, e);
 	wallData[id].texture[0] = n;
 	wallData[id].texture[1] = s;
 	wallData[id].texture[2] = w;
 	wallData[id].texture[3] = e;
 }
 
-void Ray_SetWallSolid(int id, int n, int s, int w, int e) {
+void Ray_SetWallSolid(ScriptMethodParams &params) {
+	PARAMS5(int, id, int, n, int, s, int, w, int, e);
 	wallData[id].solid [0] = MAX(0, MIN(n, 1));
 	wallData[id].solid [1] = MAX(0, MIN(s, 1));
 	wallData[id].solid [2] = MAX(0, MIN(w, 1));
 	wallData[id].solid [3] = MAX(0, MIN(e, 1));
 }
 
-void Ray_SetWallIgnoreLighting(int id, int n, int s, int w, int e) {
+void Ray_SetWallIgnoreLighting(ScriptMethodParams &params) {
+	PARAMS5(int, id, int, n, int, s, int, w, int, e);
 	wallData[id].ignorelighting [0] = MAX(0, MIN(n, 1));
 	wallData[id].ignorelighting [1] = MAX(0, MIN(s, 1));
 	wallData[id].ignorelighting [2] = MAX(0, MIN(w, 1));
 	wallData[id].ignorelighting [3] = MAX(0, MIN(e, 1));
 }
 
-void Ray_SetWallAlpha(int id, int n, int s, int w, int e) {
+void Ray_SetWallAlpha(ScriptMethodParams &params) {
+	PARAMS5(int, id, int, n, int, s, int, w, int, e);
 	wallData[id].alpha [0] = MAX(0, MIN(n, 255));
 	wallData[id].alpha [1] = MAX(0, MIN(s, 255));
 	wallData[id].alpha [2] = MAX(0, MIN(w, 255));
 	wallData[id].alpha [3] = MAX(0, MIN(e, 255));
 }
 
-void Ray_SetWallBlendType(int id, int n, int s, int w, int e) {
+void Ray_SetWallBlendType(ScriptMethodParams &params) {
+	PARAMS5(int, id, int, n, int, s, int, w, int, e);
 	wallData[id].blendtype [0] = MAX(0, MIN(n, 10));
 	wallData[id].blendtype [1] = MAX(0, MIN(s, 10));
 	wallData[id].blendtype [2] = MAX(0, MIN(w, 10));
@@ -219,103 +237,118 @@ void Ray_SetWallBlendType(int id, int n, int s, int w, int e) {
 
 
 
-int Ray_GetWallHotspot(int id) {
-	return wallData[id].hotspotinteract;
+void Ray_GetWallHotspot(ScriptMethodParams &params) {
+	PARAMS1(int, id);
+	params._result = wallData[id].hotspotinteract;
 }
 
-int Ray_GetWallTexture(int id, int dir) {
-	return wallData[id].texture[dir];
+void Ray_GetWallTexture(ScriptMethodParams &params) {
+	PARAMS2(int, id, int, dir);
+	params._result = wallData[id].texture[dir];
 }
 
-int Ray_GetWallSolid(int id, int dir) {
-	return wallData[id].solid [dir];
+void Ray_GetWallSolid(ScriptMethodParams &params) {
+	PARAMS2(int, id, int, dir);
+	params._result = wallData[id].solid [dir];
 }
 
-int Ray_GetWallIgnoreLighting(int id, int dir) {
-	return wallData[id].ignorelighting [dir];
+void Ray_GetWallIgnoreLighting(ScriptMethodParams &params) {
+	PARAMS2(int, id, int, dir);
+	params._result = wallData[id].ignorelighting [dir];
 }
 
-int Ray_GetWallAlpha(int id, int dir) {
-	return wallData[id].alpha [dir];
+void Ray_GetWallAlpha(ScriptMethodParams &params) {
+	PARAMS2(int, id, int, dir);
+	params._result = wallData[id].alpha [dir];
 }
 
-int Ray_GetWallBlendType(int id, int dir) {
-	return wallData[id].blendtype [dir];
+void Ray_GetWallBlendType(ScriptMethodParams &params) {
+	PARAMS2(int, id, int, dir);
+	params._result = wallData[id].blendtype [dir];
 }
 
 
 
 
 
-FLOAT_RETURN_TYPE Ray_GetMoveSpeed() {
+void Ray_GetMoveSpeed(ScriptMethodParams &params) {
 	float mSpeed = (float)moveSpeed;
-	RETURN_FLOAT(mSpeed);
+	params._result = PARAM_FROM_FLOAT(mSpeed);
 }
 
 
-void Ray_SetMoveSpeed(SCRIPT_FLOAT(speed)) {
-	INIT_SCRIPT_FLOAT(speed);
+void Ray_SetMoveSpeed(ScriptMethodParams &params) {
+	PARAMS1(int32, speedi);
+	float speed = PARAM_TO_FLOAT(speedi);
 	moveSpeed = (double)speed;
 }
 
-FLOAT_RETURN_TYPE Ray_GetRotSpeed() {
+void Ray_GetRotSpeed(ScriptMethodParams &params) {
 	float rSpeed = (float)rotSpeed;
-	RETURN_FLOAT(rSpeed);
+	params._result = PARAM_FROM_FLOAT(rSpeed);
 }
 
-void Ray_SetRotSpeed(SCRIPT_FLOAT(speed)) {
-	INIT_SCRIPT_FLOAT(speed);
+void Ray_SetRotSpeed(ScriptMethodParams &params) {
+	PARAMS1(int32, speedi);
+	float speed = PARAM_TO_FLOAT(speedi);
 	rotSpeed = (double)speed;
 }
 
 
-int Ray_GetLightAt(int x, int y) {
-	return lightMap [x][y];
+void Ray_GetLightAt(ScriptMethodParams &params) {
+	PARAMS2(int, x, int, y);
+	params._result = lightMap [x][y];
 }
 
-void Ray_SetLightAt(int x, int y, int light) {
+void Ray_SetLightAt(ScriptMethodParams &params) {
+	PARAMS3(int, x, int, y, int, light);
 	lightMap [x][y] = light;
 }
 
-void Ray_SetPlaneY(SCRIPT_FLOAT(y)) {
-	INIT_SCRIPT_FLOAT(y);
+void Ray_SetPlaneY(ScriptMethodParams &params) {
+	PARAMS1(int32, yi);
+	float y = PARAM_TO_FLOAT(yi);
 	planeY = (double)y;
 }
 
-FLOAT_RETURN_TYPE Ray_GetPlaneY() {
+void Ray_GetPlaneY(ScriptMethodParams &params) {
 	float pY = (float)planeY;
-	RETURN_FLOAT(pY);
+	params._result = PARAM_FROM_FLOAT(pY);
 }
 
-void Ray_SetPlayerPosition(SCRIPT_FLOAT(x), SCRIPT_FLOAT(y)) {
-	INIT_SCRIPT_FLOAT(x);
-	INIT_SCRIPT_FLOAT(y);
+void Ray_SetPlayerPosition(ScriptMethodParams &params) {
+	PARAMS2(int32, xi, int32, yi);
+	float x = PARAM_TO_FLOAT(xi);
+	float y = PARAM_TO_FLOAT(yi);
 	posX = (double)x;
 	posY = (double)y;
 }
 
-FLOAT_RETURN_TYPE Ray_GetPlayerX() {
+void Ray_GetPlayerX(ScriptMethodParams &params) {
 
 	float x = (float)posX;
-	RETURN_FLOAT(x);
+	params._result = PARAM_FROM_FLOAT(x);
 }
 
-FLOAT_RETURN_TYPE Ray_GetPlayerY() {
+void Ray_GetPlayerY(ScriptMethodParams &params) {
 	float y = (float)posY;
-	RETURN_FLOAT(y);
+	params._result = PARAM_FROM_FLOAT(y);
 }
 
-int Ray_GetPlayerAngle() {
+void Ray_GetPlayerAngle(ScriptMethodParams &params) {
 	double bgrad = atan2(dirY, dirX);
 	int bgdeg = (int)(bgrad / PI * 180.0) + 180;
-	return bgdeg % 360;
+	params._result = bgdeg % 360;
 }
 
-void Ray_SetPlayerAngle(int angle) {
+void Ray_SetPlayerAngle(ScriptMethodParams &params) {
+	PARAMS1(int, angle);
 	int realangle = angle % 360;
 	if (realangle < 0) realangle += 360;
 
-	int anglediff = realangle - Ray_GetPlayerAngle();
+	ScriptMethodParams playerAngle;
+	Ray_GetPlayerAngle(playerAngle);
+	int anglediff = realangle - playerAngle._result;
 	double radians = 0.0174533 * anglediff;
 	double oldDirX = dirX;
 	dirX = dirX * cos(radians) - dirY * sin(radians);
@@ -344,7 +377,8 @@ void LoadHeightMap(int heightmapSlot) {
 	heightmapOn = true;
 }
 
-void LoadMap(int worldmapSlot, int lightmapSlot, int ceilingmapSlot, int floormapSlot) {
+void LoadMap(ScriptMethodParams &params) {
+	PARAMS4(int, worldmapSlot, int, lightmapSlot, int, ceilingmapSlot, int, floormapSlot);
 	int tempw = engine->GetSpriteWidth(worldmapSlot);
 	int temph = engine->GetSpriteHeight(worldmapSlot);
 	BITMAP *worldmapBm = nullptr;
@@ -401,119 +435,144 @@ void LoadMap(int worldmapSlot, int lightmapSlot, int ceilingmapSlot, int floorma
 	//LoadHeightMap (31); //debug only
 }
 
-FLOAT_RETURN_TYPE Ray_GetSpriteScaleX(int id) {
+void Ray_GetSpriteScaleX(ScriptMethodParams &params) {
+	PARAMS1(int, id);
 	float scale = (float)sprite[id].uDivW;
-	RETURN_FLOAT(scale);
+	params._result = PARAM_FROM_FLOAT(scale);
 }
 
-void Ray_SetSpriteScaleX(int id, SCRIPT_FLOAT(scale)) {
-	INIT_SCRIPT_FLOAT(scale);
+void Ray_SetSpriteScaleX(ScriptMethodParams &params) {
+	PARAMS2(int, id, int32, scalei);
+	float scale = PARAM_TO_FLOAT(scalei);
 	sprite[id].uDivW = scale;
 }
 
-FLOAT_RETURN_TYPE Ray_GetSpriteScaleY(int id) {
+void Ray_GetSpriteScaleY(ScriptMethodParams &params) {
+	PARAMS1(int, id);
 	float scale = (float)sprite[id].uDivH;
-	RETURN_FLOAT(scale);
+	params._result = PARAM_FROM_FLOAT(scale);
 }
 
-void Ray_SetSpriteScaleY(int id, SCRIPT_FLOAT(scale)) {
-	INIT_SCRIPT_FLOAT(scale);
+void Ray_SetSpriteScaleY(ScriptMethodParams &params) {
+	PARAMS2(int, id, int32, scalei);
+	float scale = PARAM_TO_FLOAT(scalei);
 	sprite[id].uDivH = scale;
 }
 
-int Ray_GetSpriteAlpha(int id) {
-	return sprite[id].alpha;
+void Ray_GetSpriteAlpha(ScriptMethodParams &params) {
+	PARAMS1(int, id);
+	params._result = sprite[id].alpha;
 }
 
-void Ray_SetSpriteAlpha(int id, int alpha) {
+void Ray_SetSpriteAlpha(ScriptMethodParams &params) {
+	PARAMS2(int, id, int, alpha);
 	sprite[id].alpha = alpha;
 }
 
-int Ray_GetSpritePic(int id) {
-	return sprite[id].texture;
+void Ray_GetSpritePic(ScriptMethodParams &params) {
+	PARAMS1(int, id);
+	params._result = sprite[id].texture;
 }
 
-void Ray_SetSpritePic(int id, int slot) {
+void Ray_SetSpritePic(ScriptMethodParams &params) {
+	PARAMS2(int, id, int, slot);
 	sprite[id].texture = slot;
 }
 
 
 
-int Ray_GetSpriteAngle(int id) {
-	return sprite[id].angle;
+void Ray_GetSpriteAngle(ScriptMethodParams &params) {
+	PARAMS1(int, id);
+	params._result = sprite[id].angle;
 }
 
-void Ray_SetSpriteAngle(int id, int angle) {
+void Ray_SetSpriteAngle(ScriptMethodParams &params) {
+	PARAMS2(int, id, int, angle);
 	sprite[id].angle = angle % 360;
 }
 
-int Ray_GetSpriteInteractObj(int id) {
-	return sprite[id].objectinteract;
+void Ray_GetSpriteInteractObj(ScriptMethodParams &params) {
+	PARAMS1(int, id);
+	params._result = sprite[id].objectinteract;
 }
 
-void Ray_SetSpriteView(int id, int view) {
+void Ray_SetSpriteView(ScriptMethodParams &params) {
+	PARAMS2(int, id, int, view);
 	sprite[id].view = view;
 }
 
-void Ray_SetSpriteBlendType(int id, int type) {
+void Ray_SetSpriteBlendType(ScriptMethodParams &params) {
+	PARAMS2(int, id, int, type);
 	sprite[id].blendmode = type;
 }
 
-int Ray_GetSpriteBlendType(int id) {
-	return sprite[id].blendmode;
+void Ray_GetSpriteBlendType(ScriptMethodParams &params) {
+	PARAMS1(int, id);
+	params._result = sprite[id].blendmode;
 }
 
 
-int Ray_GetSpriteView(int id) {
-	return sprite[id].view;
+void Ray_GetSpriteView(ScriptMethodParams &params) {
+	PARAMS1(int, id);
+	params._result = sprite[id].view;
 }
 
-void Ray_SetSpriteFrame(int id, int frame) {
+void Ray_SetSpriteFrame(ScriptMethodParams &params) {
+	PARAMS2(int, id, int, frame);
 	sprite[id].frame = frame;
 }
 
-int Ray_GetSpriteFrame(int id) {
-	return sprite[id].frame;
+void Ray_GetSpriteFrame(ScriptMethodParams &params) {
+	PARAMS1(int, id);
+	params._result = sprite[id].frame;
 }
 
-void Ray_SetSpriteInteractObj(int id, int obj) {
+void Ray_SetSpriteInteractObj(ScriptMethodParams &params) {
+	PARAMS2(int, id, int, obj);
 	sprite[id].objectinteract = obj;
 }
 
-void Ray_SetSpritePosition(int id, SCRIPT_FLOAT(x), SCRIPT_FLOAT(y)) {
-	INIT_SCRIPT_FLOAT(x);
-	INIT_SCRIPT_FLOAT(y);
+void Ray_SetSpritePosition(ScriptMethodParams &params) {
+	PARAMS3(int, id, int32, xi, int32, yi);
+	float x = PARAM_TO_FLOAT(xi);
+	float y = PARAM_TO_FLOAT(yi);
 	sprite[id].x = x;
 	sprite[id].y = y;
 }
 
-void Ray_SetSpriteVertOffset(int id, SCRIPT_FLOAT(vMove)) {
-	INIT_SCRIPT_FLOAT(vMove);
+void Ray_SetSpriteVertOffset(ScriptMethodParams &params) {
+	PARAMS2(int, id, int32, vMovei);
+	float vMove = PARAM_TO_FLOAT(vMovei);
 	sprite[id].vMove = vMove;
 }
 
 
-FLOAT_RETURN_TYPE Ray_GetSpriteVertOffset(int id) {
+void Ray_GetSpriteVertOffset(ScriptMethodParams &params) {
+	PARAMS1(int, id);
 	float x = (float)sprite[id].vMove;
-	RETURN_FLOAT(x);
+	params._result = PARAM_FROM_FLOAT(x);
 }
 
-FLOAT_RETURN_TYPE Ray_GetSpriteX(int id) {
+void Ray_GetSpriteX(ScriptMethodParams &params) {
+	PARAMS1(int, id);
 	float x = (float)sprite[id].x;
-	RETURN_FLOAT(x);
+	params._result = PARAM_FROM_FLOAT(x);
 }
 
-FLOAT_RETURN_TYPE Ray_GetSpriteY(int id) {
+void Ray_GetSpriteY(ScriptMethodParams &params) {
+	PARAMS1(int, id);
 	float y = (float)sprite[id].y;
-	RETURN_FLOAT(y);
+	params._result = PARAM_FROM_FLOAT(y);
 }
 
-void Ray_InitSprite(int id, SCRIPT_FLOAT(x), SCRIPT_FLOAT(y), int slot, unsigned char alpha, int blendmode, SCRIPT_FLOAT(scale_x), SCRIPT_FLOAT(scale_y), SCRIPT_FLOAT(vMove)) {
-	INIT_SCRIPT_FLOAT(x);
-	INIT_SCRIPT_FLOAT(y);
-	INIT_SCRIPT_FLOAT(scale_x);
-	INIT_SCRIPT_FLOAT(scale_y);
-	INIT_SCRIPT_FLOAT(vMove);
+void Ray_InitSprite(ScriptMethodParams &params) {
+	PARAMS9(int, id, int32, xi, int32, yi, int, slot, unsigned char, alpha, int, blendmode, int32, scale_xi, int32, scale_yi, int32, vMovei);
+	float x = PARAM_TO_FLOAT(xi);
+	float y = PARAM_TO_FLOAT(yi);
+	float scale_x = PARAM_TO_FLOAT(scale_xi);
+	float scale_y = PARAM_TO_FLOAT(scale_yi);
+	float vMove = PARAM_TO_FLOAT(vMovei);
+
 	sprite[id].x = x;
 	sprite[id].y = y;
 	sprite[id].texture = slot;
@@ -527,7 +586,8 @@ void Ray_InitSprite(int id, SCRIPT_FLOAT(x), SCRIPT_FLOAT(y), int slot, unsigned
 //function used to sort the sprites
 void combSort(int *order, double *dist, int amount);
 
-void MakeTextures(int slot) {
+void MakeTextures(ScriptMethodParams &params) {
+	PARAMS1(int, slot);
 	textureSlot = slot;
 	int sourceWidth = engine->GetSpriteWidth(slot);
 	int sourceHeight = engine->GetSpriteHeight(slot);
@@ -575,84 +635,95 @@ void MakeTextures(int slot) {
 
 //double ZBuffer[screenWidth][screenHeight];
 
-void Ray_SetFloorAt(int x, int y, int tex) {
+void Ray_SetFloorAt(ScriptMethodParams &params) {
+	PARAMS3(int, x, int, y, int, tex);
 	if (x < 0 || x > MAP_WIDTH || y < 0 || y > MAP_HEIGHT || tex > 511) return;
 	else floorMap[x][y] = tex;
 }
 
-void Ray_SetCeilingAt(int x, int y, int tex) {
+void Ray_SetCeilingAt(ScriptMethodParams &params) {
+	PARAMS3(int, x, int, y, int, tex);
 	if (x < 0 || x > MAP_WIDTH || y < 0 || y > MAP_HEIGHT || tex > 511) return;
 	else ceilingMap[x][y] = tex;
 }
 
-int Ray_GetCeilingAt(int x, int y) {
-	if (x < 0 || x > MAP_WIDTH || y < 0 || y > MAP_HEIGHT) return -1;
-	else return ceilingMap [x][y];
+void Ray_GetCeilingAt(ScriptMethodParams &params) {
+	PARAMS2(int, x, int, y);
+	if (x < 0 || x > MAP_WIDTH || y < 0 || y > MAP_HEIGHT) params._result = -1;
+	else params._result = ceilingMap [x][y];
 }
 
 
-int Ray_GetFloorAt(int x, int y) {
-	if (x < 0 || x > MAP_WIDTH || y < 0 || y > MAP_HEIGHT) return -1;
-	else return floorMap [x][y];
+void Ray_GetFloorAt(ScriptMethodParams &params) {
+	PARAMS2(int, x, int, y);
+	if (x < 0 || x > MAP_WIDTH || y < 0 || y > MAP_HEIGHT) params._result = -1;
+	else params._result = floorMap [x][y];
 }
 
 
-int Ray_GetLightingAt(int x, int y) {
-	if (x < 0 || x > MAP_WIDTH || y < 0 || y > MAP_HEIGHT) return -1;
+void Ray_GetLightingAt(ScriptMethodParams &params) {
+	PARAMS2(int, x, int, y);
+	if (x < 0 || x > MAP_WIDTH || y < 0 || y > MAP_HEIGHT) params._result = -1;
 	else {
 		int lighting = 0;
 		if (ceilingMap[x][y] == 0) {
 			lighting = ambientlight;
 			if (ambientlight < lightMap [x][y]) lighting = lightMap[x][y];
 		}
-		return lighting;
+		params._result = lighting;
 	}
 }
 
-void Ray_SetLightingAt(int x, int y, unsigned char lighting) {
+void Ray_SetLightingAt(ScriptMethodParams &params) {
+	PARAMS3(int, x, int, y, unsigned char, lighting);
 	if (x < 0 || x > MAP_WIDTH || y < 0 || y > MAP_HEIGHT) return;
 	else {
 		lightMap [x][y] = lighting;
 	}
 }
 
-void Ray_SetSkyBox(int slot) {
+void Ray_SetSkyBox(ScriptMethodParams &params) {
+	PARAMS1(int, slot);
 	BITMAP *test = engine->GetSpriteGraphic(slot);
 	if (test) {
 		skybox = slot;
 	} else engine->AbortGame("Ray_SetSkybox: No such sprite!");
 }
 
-int Ray_GetSkyBox(int slot) {
-	return skybox;
+void Ray_GetSkyBox(ScriptMethodParams &params) {
+	//PARAMS1(int, slot);
+	params._result = skybox;
 }
 
-int Ray_GetHotspotAt(int x, int y) {
-	if (!interactionmap) return -1;
-	else if (x > S_WIDTH || x < 0 || y > S_HEIGHT || y < 0) return -1;
-	else return interactionmap [x * S_WIDTH + y] & 0x00FF;
+void Ray_GetHotspotAt(ScriptMethodParams &params) {
+	PARAMS2(int, x, int, y);
+	if (!interactionmap) params._result = -1;
+	else if (x > S_WIDTH || x < 0 || y > S_HEIGHT || y < 0) params._result = -1;
+	else params._result = interactionmap [x * S_WIDTH + y] & 0x00FF;
 }
 
-int Ray_GetObjectAt(int x, int y) {
-	if (!interactionmap) return -1;
-	else if (x > S_WIDTH || x < 0 || y > S_HEIGHT || y < 0) return -1;
-	else return interactionmap [x * S_WIDTH + y] >> 8;
+void Ray_GetObjectAt(ScriptMethodParams &params) {
+	PARAMS2(int, x, int, y);
+	if (!interactionmap) params._result = -1;
+	else if (x > S_WIDTH || x < 0 || y > S_HEIGHT || y < 0) params._result = -1;
+	else params._result = interactionmap [x * S_WIDTH + y] >> 8;
 }
 
-FLOAT_RETURN_TYPE Ray_GetDistanceAt(int x, int y) {
+void Ray_GetDistanceAt(ScriptMethodParams &params) {
+	PARAMS2(int, x, int, y);
 	float falsereturn = -1.0f;
 	if (!ZBuffer) {
-		RETURN_FLOAT(falsereturn);
+		params._result = PARAM_FROM_FLOAT(falsereturn);
 	} else if (x > S_WIDTH || x < 0 || y > S_HEIGHT || y < 0) {
-		RETURN_FLOAT(falsereturn);
+		params._result = PARAM_FROM_FLOAT(falsereturn);
 	} else {
 
 		float zbuf = (float)ZBuffer[x][y];
-		RETURN_FLOAT(zbuf);
+		params._result = PARAM_FROM_FLOAT(zbuf);
 	}
 }
 
-void Init_Raycaster() {
+void Init_Raycaster(ScriptMethodParams &) {
 	if (ZBuffer)
 		return;
 	//if (!worldMap) return;
@@ -677,7 +748,8 @@ void Init_Raycaster() {
 }
 
 bool rendering;
-void Raycast_Render(int slot) {
+void Raycast_Render(ScriptMethodParams &params) {
+	PARAMS1(int, slot);
 	ambientweight = 0;
 	raycastOn = true;
 	double playerrad = atan2(dirY, dirX) + (2.0 * PI);
@@ -1315,7 +1387,7 @@ void Raycast_Render(int slot) {
 
 }
 
-void QuitCleanup() {
+void QuitCleanup(ScriptMethodParams &) {
 	if (!rendering) {
 		for (int i = 0; i < S_WIDTH; ++i) {
 			if (transcolorbuffer[i])delete [] transcolorbuffer[i];
@@ -1332,7 +1404,7 @@ void QuitCleanup() {
 	}
 }
 
-void MoveForward() {
+void MoveForward(ScriptMethodParams &) {
 	double newposx = 0;
 	if (dirX > 0) newposx = 0.1 + posX + dirX * moveSpeed;
 	else newposx = -0.1 + posX + dirX * moveSpeed;
@@ -1387,7 +1459,7 @@ void MoveForward() {
 	}
 }
 
-void MoveBackward() {
+void MoveBackward(ScriptMethodParams &) {
 	double newposx = 0;
 	if (dirX > 0) newposx = -0.1 + posX - dirX * moveSpeed;
 	else newposx = 0.1 + posX - dirX * moveSpeed;
@@ -1459,7 +1531,7 @@ void MoveBackward ()
 }
 */
 
-void RotateLeft() {
+void RotateLeft(ScriptMethodParams &) {
 	double oldDirX = dirX;
 	dirX = dirX * cos(rotSpeed) - dirY * sin(rotSpeed);
 	dirY = oldDirX * sin(rotSpeed) + dirY * cos(rotSpeed);
@@ -1468,7 +1540,7 @@ void RotateLeft() {
 	planeY = oldPlaneX * sin(rotSpeed) + planeY * cos(rotSpeed);
 }
 
-void RotateRight() {
+void RotateRight(ScriptMethodParams &) {
 	double oldDirX = dirX;
 	dirX = dirX * cos(-rotSpeed) - dirY * sin(-rotSpeed);
 	dirY = oldDirX * sin(-rotSpeed) + dirY * cos(-rotSpeed);
