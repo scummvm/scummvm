@@ -13,7 +13,6 @@ MODULE_OBJS = \
 	nl/dialog.o \
 	nl/do.o \
 	nl/globvar.o \
-	nl/initmain.o \
 	nl/process.o \
 	nl/regen.o \
 	nl/schedule.o \

@@ -146,7 +146,6 @@ void InitAtFrameHandler(uint16 an, uint16 obj);
 void AtFrameNext();
 void AtFrameEnd(int type);
 void AtFrameHandler(int type);
-void NextMessage();
 void ProcessTime();
 void ProcessMouse();
 void PaintScreen(uint8 flag);

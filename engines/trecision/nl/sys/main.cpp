@@ -35,8 +35,6 @@ namespace Trecision {
 extern int16 mx, my;
 extern bool mleft, mright;
 
-void NextMessage();
-
 /*-----------------16/01/97 20.53-------------------
 					GetKey
 --------------------------------------------------*/
