@@ -179,7 +179,7 @@ void LauncherDialog::build() {
 	_searchPic = nullptr;
 	if (g_gui.xmlEval()->getVar("Globals.ShowSearchPic") == 1 && g_gui.theme()->supportsImages()) {
 		_searchPic = new GraphicsWidget(this, "Launcher.SearchPic", _("Search in game list"));
-		_searchPic->setGfx(g_gui.theme()->getImageSurface(ThemeEngine::kImageSearch));
+		_searchPic->setGfxFromTheme(ThemeEngine::kImageSearch);
 	} else
 #endif
 		_searchDesc = new StaticTextWidget(this, "Launcher.SearchDesc", _("Search:"));
@@ -766,7 +766,7 @@ void LauncherDialog::reflowLayout() {
 	if (g_gui.xmlEval()->getVar("Globals.ShowSearchPic") == 1 && g_gui.theme()->supportsImages()) {
 		if (!_searchPic)
 			_searchPic = new GraphicsWidget(this, "Launcher.SearchPic");
-		_searchPic->setGfx(g_gui.theme()->getImageSurface(ThemeEngine::kImageSearch));
+		_searchPic->setGfxFromTheme(ThemeEngine::kImageSearch);
 
 		if (_searchDesc) {
 			removeWidget(_searchDesc);
