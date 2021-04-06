@@ -125,7 +125,7 @@ SOUNDCLIP *my_load_mod(const AssetPath &asset_name, bool repeat) {
 			return nullptr;
 		}
 
-		return new SoundClipWave<MUS_OGG>(audioStream, 255, repeat);
+		return new SoundClipWave<MUS_MOD>(audioStream, 255, repeat);
 	} else {
 		return nullptr;
 	}
