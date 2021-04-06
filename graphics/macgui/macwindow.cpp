@@ -85,10 +85,10 @@ void MacWindow::disableBorder() {
 		for (int x = 0; x < 3; x++)
 			*((uint32 *)noborder->getBasePtr(x, y)) = noborderData[y][x] ? colorBlack : colorPink;
 
-	setBorder(noborder, true);
+	setBorder(noborder, kWindowBorderActive);
 
 	Graphics::TransparentSurface *noborder2 = new Graphics::TransparentSurface(*noborder, true);
-	setBorder(noborder2, false);
+	setBorder(noborder2, 0);
 }
 
 const Font *MacWindow::getTitleFont() {
@@ -245,7 +245,7 @@ void MacWindow::drawBorder() {
 	uint32 flags = 0;
 	if (_active)
 		flags |= kWindowBorderActive;
-	if (!_title.empty())
+	if (_borderFlags & kWindowBorderTitle)
 		flags |= kWindowBorderTitle;
 	if (_borderFlags & kWindowBorderScrollbar)
 		flags |= kWindowBorderScrollbar;
@@ -562,13 +562,13 @@ void MacWindow::setBorderType(int borderType) {
 
 		Common::SeekableReadStream *activeFile = _wm->getBorderFile(borderType, true);
 		if (activeFile) {
-			loadBorder(*activeFile, true, offsets);
+			loadBorder(*activeFile, kWindowBorderActive, offsets);
 			delete activeFile;
 		}
 
 		Common::SeekableReadStream *inactiveFile = _wm->getBorderFile(borderType, false);
 		if (inactiveFile) {
-			loadBorder(*inactiveFile, false, offsets);
+			loadBorder(*inactiveFile, 0, offsets);
 			delete inactiveFile;
 		}
 	}
