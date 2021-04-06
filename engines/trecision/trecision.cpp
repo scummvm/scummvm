@@ -194,9 +194,23 @@ Common::Error TrecisionEngine::run() {
 	if (ConfMan.hasKey("save_slot"))
 		loadGameState(ConfMan.getInt("save_slot"));
 
-	while (!g_engine->shouldQuit()) {
+	while (!shouldQuit()) {
 		eventLoop();
-		NextMessage();
+		if (!FlagNoPaintScreen)
+			ProcessTime();
+
+		ProcessMouse();
+		Scheduler();
+
+		if (_curMessage->_class == MC_SYSTEM && _curMessage->_event == ME_QUIT)
+			CloseSys(NULL);
+
+		AtFrameHandler(BACKGROUND_ANIM);
+
+		ProcessTheMessage();
+
+		if (_flagscriptactive)
+			EvalScript();
 	}
 
 	return Common::kNoError;
