@@ -1401,8 +1401,8 @@ void Special::checkFlags(ObjectId id, GameFlag flag1, GameFlag flag2, GameFlag f
 				*val1 = 0;
 				*val2 = 0;
 
-				_vm->clearGameFlag(flag2);
-				_vm->clearGameFlag(flag4);
+				_vm->setGameFlag(flag2);
+				_vm->setGameFlag(flag4);
 
 				getWorld()->getObjectById(id)->setTransparency(0);
 
