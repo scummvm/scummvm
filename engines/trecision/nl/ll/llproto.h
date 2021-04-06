@@ -45,7 +45,6 @@ bool DataLoad();
 bool QuitGame();
 void DemoOver();
 void openSys();
-void CloseSys(const char *str);
 void ReadLoc();
 void TendIn();
 void ReadObj();

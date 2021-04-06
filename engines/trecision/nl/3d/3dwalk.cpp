@@ -61,7 +61,7 @@ int read3D(Common::String c) {
 
 	g_vm->_actor->_lightNum = ff->readSint32LE();
 	if (g_vm->_actor->_lightNum > MAXLIGHT)
-		CloseSys("Too many lights");
+		error("read3D(): Too many lights");
 
 	for (int i = 0; i < g_vm->_actor->_lightNum; ++i) {
 		g_vm->_actor->_light[i]._x = ff->readFloatLE();
@@ -81,7 +81,7 @@ int read3D(Common::String c) {
 	// read panels
 	_panelNum = ff->readSint32LE();
 	if (_panelNum > MAXPANELSINROOM)
-		CloseSys("Too many panels");
+		error("read3D(): Too many panels");
 
 	for (int i = 0; i < _panelNum; ++i) {
 		_panel[i]._x1 = ff->readFloatLE();
@@ -118,7 +118,7 @@ int read3D(Common::String c) {
 				_proj[2][2] * _proj[1][0] * _proj[2][1];
 
 	if (det == 0.0)
-		CloseSys(g_vm->_sysText[kMessageUnknownError]);
+		error("read3D : Unexpected data error while computing inverse matrix");
 
 	_invP[0][0] = (_proj[1][1] * _proj[2][2] - _proj[1][2] * _proj[2][1]) / det;
 	_invP[0][1] = (_proj[0][1] * _proj[2][2] - _proj[0][2] * _proj[2][1]) / (-det);
