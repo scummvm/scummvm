@@ -300,6 +300,22 @@ public:
 	//! Add the x/y/z fire offsets given the current state of the actor
 	void addFireAnimOffsets(int32 &x, int32 &y, int32 &z);
 
+	uint32 getAttackMoveTimeoutFinish() const {
+		return _attackMoveStartTime + _attackMoveTimeout;
+	}
+
+	uint16 getAttackMoveDodgeFactor() const {
+		return _attackMoveDodgeFactor;
+	}
+
+	bool getAttackAimFlag() const {
+		return _attackAimFlag;
+	}
+
+	void setAttackAimFlag(bool val) {
+		_attackAimFlag = val;
+	}
+
 	ENABLE_RUNTIME_CLASSTYPE()
 
 	INTRINSIC(I_isNPC);
@@ -435,6 +451,18 @@ protected:
 
 	//! Type of shield (only used in Crusader)
 	uint8 _shieldType;
+
+	//! The frame certain animations last happened (for Crusader).
+	//! Used in calcualting how hard controlled actor is to hit.
+	uint32 _attackMoveStartTime;
+	//! The number of frames the above effect lasts for.
+	uint32 _attackMoveTimeout;
+	//! A spread divisor used by shots targeting the controlled actor when they
+	//! are within the above timeout.
+	uint16 _attackMoveDodgeFactor;
+
+	//! A flag used in Crusader attack process which adjusts the aim accuracy.
+	bool _attackAimFlag;
 
 	//! starts an activity (Ultima 8 version)
 	//! \return processID of process handling the activity or zero

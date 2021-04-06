@@ -61,11 +61,6 @@ const uint16 AttackProcess::ATTACK_PROCESS_TYPE = 0x259;
 
 static uint16 someSleepGlobal = 0;
 
-// TODO: Implement me. Set timer for some avatar moves.
-static bool World_FinishedAvatarMoveTimeout() {
-	return true;
-}
-
 static inline int32 randomOf(int32 max) {
 	return (max > 0 ? getRandom() % max : 0);
 }
@@ -97,6 +92,8 @@ _soundTimestamp(0), _fireTimestamp(0) {
 	for (int i = 0; i < ARRAYSIZE(_dataArray); i++) {
 		_dataArray[i] = 0;
 	}
+
+	actor->setAttackAimFlag(false);
 
 	const Item *wpn = getItem(actor->getActiveWeapon());
 	if (wpn) {
@@ -606,7 +603,7 @@ void AttackProcess::genericAttack() {
 					if (_wpnField8 < 3) {
 						_wpnField8 = 1;
 					} else if ((_doubleDelay && (getRandom() % 2 == 0)) || (getRandom() % 5 == 0)) {
-						// TODO: a->setField0x68(1);
+						a->setAttackAimFlag(true);
 						_wpnField8 *= 4;
 					}
 					_fireTimestamp = now;
@@ -648,8 +645,11 @@ void AttackProcess::genericAttack() {
 		}
 		if (targetdir == curdir) {
 			const uint16 rnd = randomOf(10);
+			const uint32 frameno = Kernel::get_instance()->getFrameNum();
+			const uint32 timeoutfinish = target->getAttackMoveTimeoutFinish();
+
 			if (!onscreen ||
-				(!_field96 && !timer4and5Update(now) && !World_FinishedAvatarMoveTimeout()
+				(!_field96 && !timer4and5Update(now) && frameno < timeoutfinish
 				 && rnd > 2 && (!_isActivityAorB || rnd > 3))) {
 				sleep(0x14);
 				return;
@@ -700,7 +700,7 @@ void AttackProcess::genericAttack() {
 				if (wpn) {
 					_wpnField8 = wpnField8;
 					if (_wpnField8 > 2 && ((_doubleDelay && randomOf(2) == 0) || randomOf(5) == 0)) {
-						// TODO: a->setField0x68(1);
+						a->setAttackAimFlag(true);
 						_wpnField8 *= 4;
 					}
 				}

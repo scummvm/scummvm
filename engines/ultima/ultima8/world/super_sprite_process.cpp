@@ -77,13 +77,27 @@ SuperSpriteProcess::SuperSpriteProcess(int shape, int frame, int sx, int sy, int
 			else
 				rng /= 10;
 		} else {
-			if (dynamic_cast<Actor *>(srcitem) != nullptr) {
-				rng /= 2;
+			Actor *srcnpc = dynamic_cast<Actor *>(srcitem);
+			Actor *controlled = getControlledActor();
+			const uint32 frameno = Kernel::get_instance()->getFrameNum();
+			const uint32 timeoutfinish = controlled ? controlled->getAttackMoveTimeoutFinish() : 0;
+			if (!srcnpc || !srcnpc->getAttackAimFlag()) {
+				if (!srcnpc || frameno < timeoutfinish) {
+					if (!srcnpc && (controlled && controlled->isKneeling())) {
+						rng = rng / 5;
+					} else {
+						const uint16 dodgefactor = controlled ? controlled->getAttackMoveDodgeFactor() : 2;
+						if (!srcnpc) {
+							rng = rng / (dodgefactor * 3);
+						} else {
+							rng = rng / dodgefactor;
+						}
+					}
+				} else {
+					rng = rng / 8;
+				}
 			} else {
-				// TODO: various other flags are checked in the game (around 1138:0bd1)
-				// such as World_FinishedAvatarMoveTimeout() -> 8
-				//  to make it either 5 or 8.  For now just use 5.
-				rng /= 5;
+				rng = rng / 2;
 			}
 		}
 
