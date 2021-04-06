@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-04-06 06:51+0000\n"
+"POT-Creation-Date: 2021-04-06 08:15+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -127,6 +127,7 @@ msgstr ""
 #: backends/events/symbiansdl/symbiansdl-events.cpp:191
 #: engines/buried/buried.cpp:533 engines/grim/grim.cpp:353
 #: engines/kyra/gui/saveload_eob.cpp:596 engines/kyra/gui/saveload_eob.cpp:629
+#: engines/parallaction/metaengine.cpp:136
 #: engines/sci/graphics/controls32.cpp:928
 msgid "Yes"
 msgstr ""
@@ -138,6 +139,7 @@ msgstr ""
 #: backends/events/symbiansdl/symbiansdl-events.cpp:191
 #: engines/buried/buried.cpp:533 engines/grim/grim.cpp:353
 #: engines/kyra/gui/saveload_eob.cpp:596 engines/kyra/gui/saveload_eob.cpp:629
+#: engines/parallaction/metaengine.cpp:142
 #: engines/sci/graphics/controls32.cpp:928
 msgid "No"
 msgstr ""
@@ -771,10 +773,10 @@ msgid "Load game:"
 msgstr ""
 
 #: gui/launcher.cpp:210 engines/dialogs.cpp:102 engines/engine.cpp:802
-#: engines/buried/saveload.cpp:515 engines/parallaction/saveload.cpp:194
-#: engines/pegasus/pegasus.cpp:384 engines/scumm/dialogs.cpp:178
-#: engines/tsage/scenes.cpp:601 engines/wage/saveload.cpp:742
-#: engines/xeen/saves.cpp:256
+#: engines/buried/saveload.cpp:515 engines/parallaction/metaengine.cpp:118
+#: engines/parallaction/saveload.cpp:194 engines/pegasus/pegasus.cpp:384
+#: engines/scumm/dialogs.cpp:178 engines/tsage/scenes.cpp:601
+#: engines/wage/saveload.cpp:742 engines/xeen/saves.cpp:256
 msgid "Load"
 msgstr ""
 
@@ -2100,10 +2102,11 @@ msgstr ""
 #: engines/illusions/menusystem.cpp:703 engines/kingdom/kingdom.cpp:739
 #: engines/lab/savegame.cpp:238 engines/lab/savegame.cpp:243
 #: engines/mads/nebular/dialogs_nebular.cpp:350
-#: engines/neverhood/menumodule.cpp:890 engines/parallaction/saveload.cpp:209
-#: engines/pegasus/pegasus.cpp:403 engines/prince/saveload.cpp:55
-#: engines/sci/engine/guest_additions.cpp:689 engines/sci/engine/kfile.cpp:1075
-#: engines/scumm/dialogs.cpp:177 engines/sherlock/scalpel/scalpel.cpp:1250
+#: engines/neverhood/menumodule.cpp:890 engines/parallaction/metaengine.cpp:124
+#: engines/parallaction/saveload.cpp:209 engines/pegasus/pegasus.cpp:403
+#: engines/prince/saveload.cpp:55 engines/sci/engine/guest_additions.cpp:689
+#: engines/sci/engine/kfile.cpp:1075 engines/scumm/dialogs.cpp:177
+#: engines/sherlock/scalpel/scalpel.cpp:1250
 #: engines/sherlock/tattoo/widget_files.cpp:75 engines/startrek/saveload.cpp:43
 #: engines/toltecs/menu.cpp:292 engines/toon/toon.cpp:3362
 #: engines/tsage/scenes.cpp:599 engines/wage/saveload.cpp:752
@@ -2257,8 +2260,8 @@ msgstr ""
 
 #: engines/metaengine.cpp:59 backends/platform/maemo/maemo.cpp:162
 #: backends/platform/symbian/src/SymbianActions.cpp:44
-#: engines/hdb/metaengine.cpp:187 engines/wintermute/keymapper_tables.h:43
-#: engines/zvision/metaengine.cpp:115
+#: engines/hdb/metaengine.cpp:187 engines/parallaction/metaengine.cpp:105
+#: engines/wintermute/keymapper_tables.h:43 engines/zvision/metaengine.cpp:115
 msgid "Left Click"
 msgstr ""
 
@@ -2271,6 +2274,7 @@ msgstr ""
 
 #: engines/metaengine.cpp:70 backends/platform/maemo/maemo.cpp:170
 #: backends/platform/symbian/src/SymbianActions.cpp:45
+#: engines/parallaction/metaengine.cpp:111
 #: engines/wintermute/keymapper_tables.h:49 engines/zvision/metaengine.cpp:121
 msgid "Right Click"
 msgstr ""
@@ -2283,7 +2287,7 @@ msgstr ""
 msgid "Pause"
 msgstr ""
 
-#: engines/metaengine.cpp:81
+#: engines/metaengine.cpp:81 engines/parallaction/metaengine.cpp:130
 msgid "Game menu"
 msgstr ""
 
@@ -3588,7 +3592,7 @@ msgstr ""
 #: engines/drascula/detection.cpp:299 engines/dreamweb/detection.cpp:44
 #: engines/neverhood/detection.cpp:112 engines/sci/detection.cpp:205
 #: engines/sherlock/detection.cpp:50 engines/toltecs/detection.cpp:213
-#: engines/ultima/detection.cpp:55 engines/ultima/ultima8/meta_engine.cpp:160
+#: engines/ultima/detection.cpp:55 engines/ultima/ultima8/meta_engine.cpp:161
 #: engines/zvision/detection_tables.h:50
 msgid "Use original save/load screens"
 msgstr ""
@@ -3597,7 +3601,7 @@ msgstr ""
 #: engines/drascula/detection.cpp:300 engines/dreamweb/detection.cpp:45
 #: engines/neverhood/detection.cpp:113 engines/sci/detection.cpp:206
 #: engines/sherlock/detection.cpp:51 engines/toltecs/detection.cpp:214
-#: engines/ultima/detection.cpp:56 engines/ultima/ultima8/meta_engine.cpp:161
+#: engines/ultima/detection.cpp:56 engines/ultima/ultima8/meta_engine.cpp:162
 #: engines/zvision/detection_tables.h:51
 msgid "Use the original save/load screens instead of the ScummVM ones"
 msgstr ""
@@ -4580,120 +4584,120 @@ msgstr ""
 msgid "Eye of Beholder support is not compiled in"
 msgstr ""
 
-#: engines/kyra/engine/eobcommon.cpp:367 engines/kyra/engine/lol.cpp:469
-#: engines/ultima/ultima4/meta_engine.cpp:224
-#: engines/ultima/ultima8/meta_engine.cpp:195
+#: engines/kyra/engine/eobcommon.cpp:368 engines/kyra/engine/lol.cpp:470
+#: engines/ultima/ultima4/meta_engine.cpp:225
+#: engines/ultima/ultima8/meta_engine.cpp:196
 msgid "Interact via Left Click"
 msgstr ""
 
-#: engines/kyra/engine/eobcommon.cpp:368 engines/kyra/engine/lol.cpp:470
-#: engines/ultima/ultima4/meta_engine.cpp:230
-#: engines/ultima/ultima8/meta_engine.cpp:201
+#: engines/kyra/engine/eobcommon.cpp:369 engines/kyra/engine/lol.cpp:471
+#: engines/ultima/ultima4/meta_engine.cpp:231
+#: engines/ultima/ultima8/meta_engine.cpp:202
 msgid "Interact via Right Click"
 msgstr ""
 
-#: engines/kyra/engine/eobcommon.cpp:369 engines/kyra/engine/lol.cpp:475
+#: engines/kyra/engine/eobcommon.cpp:370 engines/kyra/engine/lol.cpp:476
 #: engines/twine/metaengine.cpp:371
 msgid "Move Forward"
 msgstr ""
 
-#: engines/kyra/engine/eobcommon.cpp:370 engines/kyra/engine/lol.cpp:476
+#: engines/kyra/engine/eobcommon.cpp:371 engines/kyra/engine/lol.cpp:477
 msgid "Move Back"
 msgstr ""
 
-#: engines/kyra/engine/eobcommon.cpp:371
+#: engines/kyra/engine/eobcommon.cpp:372
 msgid "Move Left"
 msgstr ""
 
-#: engines/kyra/engine/eobcommon.cpp:372
+#: engines/kyra/engine/eobcommon.cpp:373
 msgid "Move Right"
 msgstr ""
 
-#: engines/kyra/engine/eobcommon.cpp:373 engines/kyra/engine/lol.cpp:479
+#: engines/kyra/engine/eobcommon.cpp:374 engines/kyra/engine/lol.cpp:480
 #: engines/pegasus/pegasus.cpp:2725 engines/twine/metaengine.cpp:392
 #: engines/zvision/metaengine.cpp:141
 msgid "Turn Left"
 msgstr ""
 
-#: engines/kyra/engine/eobcommon.cpp:374 engines/kyra/engine/lol.cpp:480
+#: engines/kyra/engine/eobcommon.cpp:375 engines/kyra/engine/lol.cpp:481
 #: engines/pegasus/pegasus.cpp:2732 engines/twine/metaengine.cpp:385
 #: engines/zvision/metaengine.cpp:147
 msgid "Turn Right"
 msgstr ""
 
-#: engines/kyra/engine/eobcommon.cpp:375
+#: engines/kyra/engine/eobcommon.cpp:376
 msgid "Open/Close Inventory"
 msgstr ""
 
-#: engines/kyra/engine/eobcommon.cpp:376
+#: engines/kyra/engine/eobcommon.cpp:377
 msgid "Switch Inventory/Character screen"
 msgstr ""
 
-#: engines/kyra/engine/eobcommon.cpp:377
+#: engines/kyra/engine/eobcommon.cpp:378
 msgid "Camp"
 msgstr ""
 
-#: engines/kyra/engine/eobcommon.cpp:378
+#: engines/kyra/engine/eobcommon.cpp:379
 msgid "Cast Spell"
 msgstr ""
 
-#: engines/kyra/engine/eobcommon.cpp:381
+#: engines/kyra/engine/eobcommon.cpp:382
 msgid "Spell Level 1"
 msgstr ""
 
-#: engines/kyra/engine/eobcommon.cpp:382
+#: engines/kyra/engine/eobcommon.cpp:383
 msgid "Spell Level 2"
 msgstr ""
 
-#: engines/kyra/engine/eobcommon.cpp:383
+#: engines/kyra/engine/eobcommon.cpp:384
 msgid "Spell Level 3"
 msgstr ""
 
-#: engines/kyra/engine/eobcommon.cpp:384
+#: engines/kyra/engine/eobcommon.cpp:385
 msgid "Spell Level 4"
 msgstr ""
 
-#: engines/kyra/engine/eobcommon.cpp:385
+#: engines/kyra/engine/eobcommon.cpp:386
 msgid "Spell Level 5"
 msgstr ""
 
-#: engines/kyra/engine/eobcommon.cpp:387
+#: engines/kyra/engine/eobcommon.cpp:388
 msgid "Spell Level 6"
 msgstr ""
 
-#: engines/kyra/engine/lol.cpp:471
+#: engines/kyra/engine/lol.cpp:472
 msgid "Attack 1"
 msgstr ""
 
-#: engines/kyra/engine/lol.cpp:472
+#: engines/kyra/engine/lol.cpp:473
 msgid "Attack 2"
 msgstr ""
 
-#: engines/kyra/engine/lol.cpp:473
+#: engines/kyra/engine/lol.cpp:474
 msgid "Attack 3"
 msgstr ""
 
-#: engines/kyra/engine/lol.cpp:474
+#: engines/kyra/engine/lol.cpp:475
 msgid "Show Map"
 msgstr ""
 
-#: engines/kyra/engine/lol.cpp:477
+#: engines/kyra/engine/lol.cpp:478
 msgid "Slide Left"
 msgstr ""
 
-#: engines/kyra/engine/lol.cpp:478
+#: engines/kyra/engine/lol.cpp:479
 msgid "Slide Right"
 msgstr ""
 
-#: engines/kyra/engine/lol.cpp:481
+#: engines/kyra/engine/lol.cpp:482
 msgid "Rest"
 msgstr ""
 
-#: engines/kyra/engine/lol.cpp:482
+#: engines/kyra/engine/lol.cpp:483
 msgid "Options"
 msgstr ""
 
-#: engines/kyra/engine/lol.cpp:483
+#: engines/kyra/engine/lol.cpp:484
 msgid "Choose Spell"
 msgstr ""
 
@@ -6396,11 +6400,11 @@ msgid ""
 "full screen mode, at the cost of some details."
 msgstr ""
 
-#: engines/stark/detection.cpp:340 engines/ultima/ultima8/meta_engine.cpp:172
+#: engines/stark/detection.cpp:340 engines/ultima/ultima8/meta_engine.cpp:173
 msgid "Enable font anti-aliasing"
 msgstr ""
 
-#: engines/stark/detection.cpp:341 engines/ultima/ultima8/meta_engine.cpp:173
+#: engines/stark/detection.cpp:341 engines/ultima/ultima8/meta_engine.cpp:174
 msgid "When font anti-aliasing is enabled, the text is smoother."
 msgstr ""
 
@@ -6834,68 +6838,68 @@ msgstr ""
 msgid "Transfer Character"
 msgstr ""
 
-#: engines/ultima/ultima8/meta_engine.cpp:126
+#: engines/ultima/ultima8/meta_engine.cpp:127
 msgid "Enable frame skipping"
 msgstr ""
 
-#: engines/ultima/ultima8/meta_engine.cpp:127
+#: engines/ultima/ultima8/meta_engine.cpp:128
 msgid "Allow the game to skip animation frames when running too slow."
 msgstr ""
 
-#: engines/ultima/ultima8/meta_engine.cpp:132
+#: engines/ultima/ultima8/meta_engine.cpp:133
 msgid "Enable frame limiting"
 msgstr ""
 
-#: engines/ultima/ultima8/meta_engine.cpp:133
+#: engines/ultima/ultima8/meta_engine.cpp:134
 msgid "Limits the speed of the game to prevent running too fast."
 msgstr ""
 
-#: engines/ultima/ultima8/meta_engine.cpp:138
+#: engines/ultima/ultima8/meta_engine.cpp:139
 msgid "Enable cheats"
 msgstr ""
 
-#: engines/ultima/ultima8/meta_engine.cpp:139
+#: engines/ultima/ultima8/meta_engine.cpp:140
 msgid "Allow cheats by commands and a menu when player is clicked."
 msgstr ""
 
-#: engines/ultima/ultima8/meta_engine.cpp:148
+#: engines/ultima/ultima8/meta_engine.cpp:149
 msgid "Play foot step sounds"
 msgstr ""
 
-#: engines/ultima/ultima8/meta_engine.cpp:149
+#: engines/ultima/ultima8/meta_engine.cpp:150
 msgid "Plays sound when the player moves."
 msgstr ""
 
-#: engines/ultima/ultima8/meta_engine.cpp:154
+#: engines/ultima/ultima8/meta_engine.cpp:155
 msgid "Enable jump to mouse position"
 msgstr ""
 
-#: engines/ultima/ultima8/meta_engine.cpp:155
+#: engines/ultima/ultima8/meta_engine.cpp:156
 msgid ""
 "Jumping while not moving targets the mouse cursor rather than direction only."
 msgstr ""
 
-#: engines/ultima/ultima8/meta_engine.cpp:166
+#: engines/ultima/ultima8/meta_engine.cpp:167
 msgid "Enable font replacement"
 msgstr ""
 
-#: engines/ultima/ultima8/meta_engine.cpp:167
+#: engines/ultima/ultima8/meta_engine.cpp:168
 msgid "Replaces game fonts with rendered fonts"
 msgstr ""
 
-#: engines/ultima/ultima8/meta_engine.cpp:188
+#: engines/ultima/ultima8/meta_engine.cpp:189
 msgid "Ultima VIII"
 msgstr ""
 
-#: engines/ultima/ultima8/meta_engine.cpp:188
+#: engines/ultima/ultima8/meta_engine.cpp:189
 msgid "Crusader"
 msgstr ""
 
-#: engines/ultima/ultima8/meta_engine.cpp:235
+#: engines/ultima/ultima8/meta_engine.cpp:236
 msgid "Ultima VIII Cheats"
 msgstr ""
 
-#: engines/ultima/ultima8/meta_engine.cpp:252
+#: engines/ultima/ultima8/meta_engine.cpp:253
 msgid "Ultima VIII Debug"
 msgstr ""
 
