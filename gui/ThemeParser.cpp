@@ -302,7 +302,23 @@ bool ThemeParser::parserCallback_bitmap(ParserNode *node) {
 	if (node->values.contains("scalable_file"))
 		scalableFile = node->values["scalable_file"];
 
-	if (!_theme->addBitmap(node->values["filename"], scalableFile))
+	int width = 0, height = 0;
+	Common::String val;
+	if (node->values.contains("width")) {
+		val = node->values["width"];
+
+		if (!parseIntegerKey(val, 1, &width))
+			return parserError("Error parsing width value");
+	}
+
+	if (node->values.contains("height")) {
+		val = node->values["height"];
+
+		if (!parseIntegerKey(val, 1, &height))
+			return parserError("Error parsing width height");
+	}
+
+	if (!_theme->addBitmap(node->values["filename"], scalableFile, width, height))
 		return parserError("Error loading Bitmap file '" + node->values["filename"] + "'");
 
 	return true;

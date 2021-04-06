@@ -204,6 +204,7 @@ class ThemeEngine {
 protected:
 	typedef Common::HashMap<Common::String, Graphics::Surface *> ImagesMap;
 	typedef Common::HashMap<Common::String, Graphics::SVGBitmap *> SVGMap;
+	typedef Common::HashMap<Common::String, Common::Point *> PointMap;
 	typedef Common::HashMap<Common::String, Graphics::TransparentSurface *> AImagesMap;
 
 	friend class GUI::Dialog;
@@ -586,8 +587,9 @@ public:
 	 *
 	 * @param filename Name of the bitmap file.
 	 * @param filename Name of the scalable (SVG) file, could be empty
+	 * @param width, height Default image dimensions
 	 */
-	bool addBitmap(const Common::String &filename, const Common::String &scalablefile);
+	bool addBitmap(const Common::String &filename, const Common::String &scalablefile, int widht, int height);
 
 	/**
 	 * Interface for the ThemeParser class: Loads a bitmap with transparency file to use on the GUI.
@@ -640,6 +642,10 @@ public:
 
 	Graphics::SVGBitmap *getSVG(const Common::String &name) {
 		return _svgs.contains(name) ? _svgs[name] : 0;
+	}
+
+	Common::Point *getBitmapDims(const Common::String &name) {
+		return _bitmapDims.contains(name) ? _bitmapDims[name] : 0;
 	}
 
 	const Graphics::Surface *getImageSurface(const Common::String &name) const {
@@ -808,6 +814,7 @@ protected:
 
 	ImagesMap _bitmaps;
 	SVGMap _svgs;
+	PointMap _bitmapDims;
 	AImagesMap _abitmaps;
 	Graphics::PixelFormat _overlayFormat;
 	Graphics::PixelFormat _cursorFormat;
