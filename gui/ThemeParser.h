@@ -92,6 +92,8 @@ protected:
 					XML_PROP(filename, true)
 					XML_PROP(resolution, false)
 					XML_PROP(scalable_file, false)
+					XML_PROP(width, false)
+					XML_PROP(height, false)
 				KEY_END()
 				XML_KEY(alphabitmap)
 					XML_PROP(filename, true)
