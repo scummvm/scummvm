@@ -587,6 +587,32 @@ void Special::chapter8(Object *object, ActorIndex actorIndex) {
 			updateObjectFlag(kObjectGong2);
 			updateObjectFlag(kObjectGong3);
 			break;
+
+		case kObjectWheel1:
+		case kObjectWheel2:
+		case kObjectWheel3:
+		case kObjectWheel4:
+		case kObjectWheel5:
+		case kObjectWheel6:
+		case kObjectWheel7: {
+			GameFlag wheelFlag = (GameFlag)(612 + object->getId() - kObjectWheel1);
+			uint32 frameIndex = object->getFrameIndex();
+
+			if (_vm->isGameFlagSet(wheelFlag)) {
+				_vm->clearGameFlag(wheelFlag);
+				++frameIndex;
+			}
+
+			if (frameIndex >= 17) {
+				if ((frameIndex + 1) % 4)
+					++frameIndex;
+			} else if (frameIndex % 4) {
+				++frameIndex;
+			}
+
+			object->setFrameIndex(frameIndex >= object->getFrameCount() ? 0 : frameIndex);
+			}
+			break;
 		}
 	}
 
