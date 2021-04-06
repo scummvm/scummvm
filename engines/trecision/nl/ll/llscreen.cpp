@@ -40,7 +40,6 @@ namespace Trecision {
 
 #define MAXMAT		20
 
-int MaxMemory = 0;
 // GAME POINTER
 uint16 *ImagePointer;
 uint16 *SmackImagePointer;
@@ -498,9 +497,6 @@ void ReadLoc() {
 		g_vm->_animMgr->stopSmkAnim(g_vm->_animMgr->_playingAnims[0]);
 
 	InitAtFrameHandler(g_vm->_room[g_vm->_curRoom]._bkgAnim, 0);
-
-	if (MaxMemory < (GameWordPointer * 2 + GameBytePointer))
-		MaxMemory = (GameWordPointer * 2 + GameBytePointer);
 }
 
 /*-----------------10/12/95 14.59-------------------
