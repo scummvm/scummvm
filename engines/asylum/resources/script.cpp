@@ -2011,13 +2011,13 @@ void ScriptManager::enableObject(ScriptEntry *cmd, ObjectTransparency type) {
 		getWorld()->getObjectById(kObjectHook4B)->setTransparency(transparency);
 		getWorld()->getObjectById(kObjectHook5B)->setTransparency(transparency);
 		getWorld()->getObjectById(kObjectHook6B)->setTransparency(transparency);
-		getWorld()->getObjectById(kObjectHook0Down)->setTransparency(transparency);
+		//getWorld()->getObjectById(kObjectHook0Down)->setTransparency(transparency);
 		getWorld()->getObjectById(kObjectHook2Down)->setTransparency(transparency);
-		getWorld()->getObjectById(kObjectHook3Down)->setTransparency(transparency);
+		//getWorld()->getObjectById(kObjectHook3Down)->setTransparency(transparency);
 		getWorld()->getObjectById(kObjectHook4Down)->setTransparency(transparency);
-		getWorld()->getObjectById(kObjectHook5Down)->setTransparency(transparency);
-		getWorld()->getObjectById(kObjectHook6Down)->setTransparency(transparency);
-		getWorld()->getObjectById(kObject2230)->setTransparency(transparency);
+		//getWorld()->getObjectById(kObjectHook5Down)->setTransparency(transparency);
+		//getWorld()->getObjectById(kObjectHook6Down)->setTransparency(transparency);
+		//getWorld()->getObjectById(kObject2230)->setTransparency(transparency);
 		break;
 	}
 }
