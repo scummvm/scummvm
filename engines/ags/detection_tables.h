@@ -974,7 +974,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "perilsofpoom", "PERILS OF POOM" },
 	{ "pesterquest", "Pester Quest" },
 	{ "petalrose", "Petal Rose" },
-	{ "phantomfellows", "The Phantom Fellow" },
+	{ "phantomfellows", "The Phantom Fellows" },
 	{ "pharmacistjones", "Pharmacist Jones" },
 	{ "pickpocketrpg", "Pickpocket RPG" },
 	{ "pilotlight", "Pilot Light" },
@@ -1001,6 +1001,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "politicallyyours", "Politically Yours" },
 	{ "pong", "Pong" },
 	{ "postmansquest", "Postman's Quest" },
+	{ "potterrpg", "PotterRPG" },
 	{ "powernap", "Power Nap" },
 	{ "powerunlimited", "Power Unlimited" },
 	{ "pqtadventure", "PQT Adventure" },
@@ -1119,6 +1120,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "shadowsoftheempire", "Shadows of the Empire" },
 	{ "shailadusithlenquete", "Shai-la du Sith : l'Enquete" },
 	{ "shailaofthesith", "Shai-la of the Sith" },
+	{ "sheepquest", "SheepQuest" },
 	{ "shem", "Shem" },
 	{ "sherlock", "Sherlock" },
 	{ "shiftersboxoutsidein", "Shifter's Box - Outside In" },
@@ -1131,6 +1133,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "silentknight1", "Silent Knight" },
 	{ "silentknight2", "Silent Knight II" },
 	{ "simonthesorcerer3", "Simon the Sorcerer 3" },
+	{ "simshogwarts", "SimsHogwarts" },
 	{ "skippysavestheday", "Skippy Saves The Day" },
 	{ "slaythedragon", "Slay the Dragon" },
 	{ "sleepyisland", "Sleepy Island" },
@@ -1152,6 +1155,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "snowmaneatcarrot", "May the Best Snowman Eat a Carrot" },
 	{ "snowyadventures", "Snowy Adventures" },
 	{ "sonicandfriendsinclubhouse", "Sonic and friends in: Club house" },
+	{ "sophiamcgrath", "Sophia McGrath" },
 	{ "sosk", "Sosk" },
 	{ "sovietunionstrikesback", "The Soviet Union Strikes Back" },
 	{ "sovietunterzoegersdorf2", "Soviet Unterzoegersdorf: Sector II" },
@@ -1725,6 +1729,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("lamplightcity", "lamplight city.exe", "0cb636e2235e2b7cff4ece5898653e18", 981897178), // GoG, Version 1.10
 	GAME_ENTRY("lamplightcity", "lamplight city.ags", "70a52d0ba7e5975df40aef460142f770", 979393622), // Linux, GOG
 	GAME_ENTRY("lamplightcity", "lamplight city.exe", "4b18403fd1d150321f50cff9232d7b28", 982468239), // Steam
+	GAME_ENTRY("lamplightcity", "lamplight city.ags", "69936bd2263616bb0bd64fa6b4fe5a8d", 979409133), // Steam
 	GAME_ENTRY("legendofhand", "legend of hand.exe", "fc478dd7564c908615c9366398d995c8", 75797285), // Steam
 	GAME_ENTRY("mage", "ac2game.dat", "2e822f554994f36e0c62da2acda874da", 30492258), // GOG, Mac
 	GAME_ENTRY("mage", "mages_initiation.exe", "2e822f554994f36e0c62da2acda874da", 30492089), // GOG, Windows
@@ -2578,6 +2583,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("nellycootalot", "Nelly Cootalot.exe", "18b284c22010850f79bc5c20054a70c4", 108256323),
 	GAME_ENTRY("nellycootalot", "Nelly.exe", "bdaf20d9779c01986d6d8b7e1d6118ee", 198349190),
 	GAME_ENTRY("nellycootalot-hd", "Nelly.exe", "521aecdb5343c8d8f1c1000c4c2fa468", 11069524), // Steam
+	GAME_ENTRY("nellycootalot-hd", "Nelly.exe", "28f22ae60e2f3524665c1d5be60a0bf3", 11069220), // Steam
 	GAME_ENTRY("nesquest", "NES Quest.exe", "8b72036706da98095057df615d07460b", 20881972),
 	GAME_ENTRY("news", "WI-AA.exe", "06a03fe35791b0578068ab1873455463", 29631312),
 	GAME_ENTRY("nickitandrun", "NIAREnglish.exe", "b25674056fe8cc0b7bf0a4409c5c5bfc", 14180082),
@@ -2669,6 +2675,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("pong", "Pong.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 611249),
 	GAME_ENTRY("postmansquest", "PQ.exe", "345685aaec400c69a1e6d5e18a63850c", 6896450),
 	GAME_ENTRY("powernap", "powernap.exe", "615e73fc1874e92d60a1996c2330ea36", 13308487),
+	GAME_ENTRY("potterrpg", "Harry Potter RPG.exe", "7a3096ac0237cb6aa8e1718e28caf039", 364510777),
 	GAME_ENTRY("powerunlimited", "PU Bordspel.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 1842762),
 	GAME_ENTRY("pqtadventure", "playpqt.exe", "0b7529a76f38283d6e850b8d56526fc1", 19914806),
 	GAME_ENTRY("practicescript", "Practice.exe", "f3a13b2d6c2e0fe04c6f466062920e23", 764358),
@@ -2787,6 +2794,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("shailadusithlenquete", "Shai-la Enquete.exe", "a524cbb1c51589903c4043b98917f1d9", 7489302),
 	GAME_ENTRY("shailaofthesith", "Shaila_of_the_Sith.exe", "a524cbb1c51589903c4043b98917f1d9", 76170347),
 	GAME_ENTRY("shem", "Shem.exe", "0710e2ec71042617f565c01824f0cf3c", 8866401),
+	GAME_ENTRY("sheepquest", "SheepQuest.exe", "c62e6e17113f278357859e2b9d5e4dbf", 16505844),
 	GAME_ENTRY("sherlock", "Sherlock.exe", "615e73fc1874e92d60a1996c2330ea36", 19108029),
 	GAME_ENTRY("shiftersboxoutsidein", "Box.exe", "fc17e9b3ab53f6b4841e2a4af5c782ff", 24471804),
 	GAME_ENTRY("shoot", "Shoot.exe", "1275885401b7d2ece491e704535707d9", 4327626),
@@ -2797,6 +2805,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("sierraquest1", "SierraQuest1.exe", "465f972675db2da6040518221af5b0ba", 1275381),
 	GAME_ENTRY("silentknight1", "Silent Knight.exe", "465f972675db2da6040518221af5b0ba", 47414163),
 	GAME_ENTRY("silentknight2", "SilentKnight2.exe", "465f972675db2da6040518221af5b0ba", 39941166),
+	GAME_ENTRY("simshogwarts", "Sims Hogwarts.exe", "615e73fc1874e92d60a1996c2330ea36", 20016887),
 	GAME_ENTRY("skippysavestheday", "First Game Test.exe", "06a03fe35791b0578068ab1873455463", 10473902),
 	GAME_ENTRY("slaythedragon", "dragon.exe", "3c5bd1713959ff469cb46ebe5542cfcf", 2917672),
 	GAME_ENTRY("sleepyisland", "Sleepy Island.exe", "465f972675db2da6040518221af5b0ba", 20270790),
@@ -2818,6 +2827,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("sniperandspotterservingthemotherland", "sniper and spotter 2.exe", "7a3096ac0237cb6aa8e1718e28caf039", 134215997),
 	GAME_ENTRY("snowmaneatcarrot", "HourgameIBISPI_1.exe", "2ff048659aaefd20d342db6428a5f1a0", 3484230),
 	GAME_ENTRY("sonicandfriendsinclubhouse", "Sonic and friends.exe", "71989c04f1b9812a0df87bc4f5915d4b", 50429335),
+	GAME_ENTRY("sophiamcgrath", "SophiaMcGrath.exe", "06a03fe35791b0578068ab1873455463", 7477218),
 	GAME_ENTRY("sosk", "Sosk.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 12338591),
 	GAME_ENTRY("sovietunionstrikesback", "ac2game.dat", "565953ecb1a69a31439ff33b00c539bb", 1062670),
 	GAME_ENTRY("sovietunterzoegersdorf2", "suz2prog.exe", "47a774ff828be0ca227ee58e7dc61467", 43921618),
