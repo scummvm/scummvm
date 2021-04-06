@@ -32,6 +32,7 @@
 #include "ags/engine/media/audio/soundclip.h"
 #include "ags/engine/media/audio/clip_mymidi.h"
 #include "audio/mods/mod_xm_s3m.h"
+#include "audio/mods/protracker.h"
 #include "audio/decoders/mp3.h"
 #include "audio/decoders/vorbis.h"
 #include "audio/decoders/wave.h"
@@ -96,7 +97,34 @@ SOUNDCLIP *my_load_midi(const AssetPath &asset_name, bool repeat) {
 SOUNDCLIP *my_load_mod(const AssetPath &asset_name, bool repeat) {
 	Common::SeekableReadStream *data = get_cached_sound(asset_name);
 	if (data) {
-		Audio::AudioStream *audioStream = Audio::makeModXmS3mStream(data, DisposeAfterUse::YES);
+		// determine the file extension
+		size_t lastDot = asset_name.second.FindCharReverse('.');
+		if (lastDot == AGS::Shared::String::npos || lastDot == asset_name.second.GetLength() - 1) {
+			delete data;
+			return nullptr;
+		}
+		// get the first char of the extensin
+		char charAfterDot = toupper(asset_name.second[lastDot + 1]);
+
+		// use the appropriate loader
+		Audio::AudioStream *audioStream = nullptr;
+		if (charAfterDot == 'I') {
+			// Impulse Tracker
+			warning("Impulse Tracker MOD files not yet supported");
+			delete data;
+			return nullptr;
+		} else if (charAfterDot == 'X') {
+			audioStream = Audio::makeModXmS3mStream(data, DisposeAfterUse::YES);
+		} else if (charAfterDot == 'S') {
+			audioStream = Audio::makeModXmS3mStream(data, DisposeAfterUse::YES);
+		} else if (charAfterDot == 'M') {
+			audioStream = Audio::makeProtrackerStream(data, DisposeAfterUse::YES);
+		} else {
+			warning("MOD file format not recognized");
+			delete data;
+			return nullptr;
+		}
+
 		return new SoundClipWave<MUS_OGG>(audioStream, 255, repeat);
 	} else {
 		return nullptr;
