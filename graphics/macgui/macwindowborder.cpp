@@ -29,9 +29,15 @@ namespace Graphics {
 
 using namespace Graphics::MacGUIConstants;
 
-MacWindowBorder::MacWindowBorder() : _activeInitialized(false), _inactiveInitialized(false) {
-	_activeBorder = nullptr;
-	_inactiveBorder = nullptr;
+MacWindowBorder::MacWindowBorder() {
+
+	_borderInitialized = Common::Array<bool>(_borderTypeNum);
+	_border = Common::Array<NinePatchBitmap *>(_borderTypeNum);
+
+	for (uint32 i = 0; i < _borderTypeNum; i++) {
+		_border[i] = nullptr;
+		_borderInitialized[i] = false;
+	}
 
 	_borderOffsets.left = -1;
 	_borderOffsets.right = -1;
@@ -43,43 +49,45 @@ MacWindowBorder::MacWindowBorder() : _activeInitialized(false), _inactiveInitial
 }
 
 MacWindowBorder::~MacWindowBorder() {
-	if (_activeBorder)
-		delete _activeBorder;
-	if (_inactiveBorder)
-		delete _inactiveBorder;
+	for (uint32 i = 0; i < _borderTypeNum; i++) {
+		if (_border[i])
+			delete _border[i];
+	}
 }
 
-bool MacWindowBorder::hasBorder(bool active) {
-	return active ? _activeInitialized : _inactiveInitialized;
+bool MacWindowBorder::hasBorder(uint32 flags) {
+	if (flags >= _borderTypeNum) {
+		warning("Accessing non-existed border type");
+		return false;
+	}
+	return _borderInitialized[flags];
 }
 
-void MacWindowBorder::addActiveBorder(TransparentSurface *source, int titlePos, int titleWidth) {
-	if (_activeBorder)
-		delete _activeBorder;
+void MacWindowBorder::addBorder(TransparentSurface *source, uint32 flags, int titlePos, int titleWidth) {
+	if (flags >= _borderTypeNum) {
+		warning("Accessing non-existed border type");
+		return;
+	}
+	if (_border[flags])
+		delete _border[flags];
 
-	_activeBorder = new NinePatchBitmap(source, true, titlePos, titleWidth);
-	_activeInitialized = true;
+	_border[flags] = new NinePatchBitmap(source, true, titlePos, titleWidth);
+	_borderInitialized[flags] = true;
 
-	if (_activeBorder->getPadding().isValidRect())
-		setOffsets(_activeBorder->getPadding());
+	if (_border[flags]->getPadding().isValidRect())
+		setOffsets(_border[flags]->getPadding());
 }
 
-void MacWindowBorder::addInactiveBorder(TransparentSurface *source, int titlePos, int titleWidth) {
-	if (_inactiveBorder)
-		delete _inactiveBorder;
-
-	_inactiveBorder = new NinePatchBitmap(source, true, titlePos, titleWidth);
-	_inactiveInitialized = true;
-
-	if (!_inactiveBorder->getPadding().isValidRect())
-		setOffsets(_inactiveBorder->getPadding());
-}
-
-void MacWindowBorder::modifyTitleWidth(int titleWidth) {
-	if (_inactiveBorder)
-		_inactiveBorder->modifyTitleWidth(titleWidth);
-	if (_activeBorder)
-		_activeBorder->modifyTitleWidth(titleWidth);
+void MacWindowBorder::modifyTitleWidth(uint32 flags, int titleWidth) {
+	if (flags >= _borderTypeNum) {
+		warning("Accessing non-existed border type");
+		return;
+	}
+	if (!_borderInitialized[flags]) {
+		warning("Trying to modify title width of an uninitialized border");
+		return;
+	}
+	_border[flags]->modifyTitleWidth(titleWidth);
 }
 
 bool MacWindowBorder::hasOffsets() {
@@ -109,13 +117,67 @@ BorderOffsets &MacWindowBorder::getOffset() {
 	return _borderOffsets;
 }
 
-void MacWindowBorder::blitBorderInto(ManagedSurface &destination, bool active, MacWindowManager *wm) {
+void MacWindowBorder::setTitle(const Common::String& title, int width, MacWindowManager *wm) {
+	_title = title;
+	const Graphics::Font *font = wm->_fontMan->getFont(Graphics::MacFont(kMacFontChicago, 12));
+	int sidesWidth = getOffset().left + getOffset().right;
+	int titleWidth = font->getStringWidth(_title) + 10;
+	int maxWidth = width - sidesWidth - 7;
+	if (titleWidth > maxWidth)
+		titleWidth = maxWidth;
+
+	// if titleWidth is changed, then we modify it
+	// here, we change all the border that has title
+	for (uint32 i = 0; i < _borderTypeNum; i++) {
+		if (_borderInitialized[i] && (i & kWindowBorderTitle))
+			_border[i]->modifyTitleWidth(titleWidth);
+	}
+}
+
+void MacWindowBorder::drawScrollBar(ManagedSurface *g, MacWindowManager *wm) {
+	// here, we first check the _scrollSize, and if it is negative, then we don't draw the scrollBar
+	if (_scrollSize < 0)
+		return;
+	int size = kBorderWidth;
+	int rx1 = 0 + g->w - size + 2;
+	int ry1 = 0 + size + _scrollPos + 1;
+	int rx2 = rx1 + size - 6;
+	int ry2 = ry1 + _scrollSize ;
+	Common::Rect rr(rx1, ry1, rx2, ry2);
+
+	MacPlotData pd(g, nullptr,  &wm->getPatterns(), 1, 0, 0, 1, wm->_colorWhite, true);
+	Graphics::drawFilledRect(rr, wm->_colorWhite, wm->getDrawInvertPixel(), &pd);
+
+	// after drawing, we set the _scrollSize negative, to indicate no more drawing is needed
+	_scrollSize = -1;
+}
+
+void MacWindowBorder::drawTitle(ManagedSurface *g, MacWindowManager *wm) {
+	const Graphics::Font *font = wm->_fontMan->getFont(Graphics::MacFont(kMacFontChicago, 12));
+	int width = g->w;
+	int titleColor = wm->_colorBlack;
+	int titleY = getOffset().titleTop;
+	int sidesWidth = getOffset().left + getOffset().right;
+	int titleWidth = font->getStringWidth(_title) + 10;
+	int yOff = wm->_fontMan->hasBuiltInFonts() ? 3 : 1;
+	int maxWidth = width - sidesWidth - 7;
+	if (titleWidth > maxWidth)
+		titleWidth = maxWidth;
+
+	font->drawString(g, _title, (width - titleWidth) / 2 + 5, titleY + yOff, titleWidth, titleColor);
+}
+
+void MacWindowBorder::blitBorderInto(ManagedSurface &destination, uint32 flags, MacWindowManager *wm) {
+	if (flags >= _borderTypeNum) {
+		warning("Accessing non-existed border type");
+		return;
+	}
 
 	TransparentSurface srf;
-	NinePatchBitmap *src = active ? _activeBorder : _inactiveBorder;
+	NinePatchBitmap *src = _border[flags];
 
-	if ((active && !_activeInitialized) || (!active && !_inactiveInitialized)) {
-		warning("Attempt to blit unitialised border");
+	if (!_borderInitialized[flags]) {
+		warning("Attempt to blit uninitialized border");
 	}
 
 	if (destination.w == 0 || destination.h == 0) {
@@ -129,6 +191,12 @@ void MacWindowBorder::blitBorderInto(ManagedSurface &destination, bool active, M
 	src->blit(srf, 0, 0, srf.w, srf.h, NULL, 0, wm);
 	destination.transBlitFrom(srf, wm->_colorGreen2);
 	srf.free();
+
+	if (flags & kWindowBorderTitle)
+		drawTitle(&destination, wm);
+
+	if (flags & kWindowBorderScrollbar)
+		drawScrollBar(&destination, wm);
 }
 
 } // End of namespace Graphics

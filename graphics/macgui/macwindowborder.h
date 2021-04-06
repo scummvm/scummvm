@@ -29,8 +29,16 @@
 #include "graphics/nine_patch.h"
 #include "graphics/managed_surface.h"
 #include "graphics/transparent_surface.h"
+#include "graphics/macgui/macfontmanager.h"
+#include "graphics/primitives.h"
 
 namespace Graphics {
+
+enum {
+   kWindowBorderActive = 1 << 0,
+   kWindowBorderTitle  = 1 << 1,
+   kWindowBorderScrollbar = 1 << 2
+};
 
 struct BorderOffsets {
 	int left;
@@ -54,28 +62,20 @@ public:
 
 	/**
 	 * Accessor to check whether or not a border is loaded.
-	 * @param active State that we want to check. If true it checks for active border, if false it checks for inactive.
+	 * @param check whether the border type we want has been initialized.
 	 * @return True if the checked state has a border loaded, false otherwise.
 	 */
-	bool hasBorder(bool active);
+	bool hasBorder(uint32 flags);
 
 	/**
-	 * Add the given surface as the display of the border in the active state.
-	 * Will fail if there is already an active border.
+	 * Add the given surface as the display of the border in the state that is instructed by flag.
+	 * Will fail if there is already an border.
 	 * @param The surface that will be displayed.
+	 * @param The border type indicated by flag
 	 * @param The title position of bmp image
 	 * @param The title width that you want to set
 	 */
-	void addActiveBorder(TransparentSurface *source, int titlePos = 0, int titleWidth = 0);
-
-	/**
-	 * Add the given surface as the display of the border in the inactive state.
-	 * Will fail if there is already an inactive border.
-	 * @param The surface that will be displayed.
-	 * @param The title position of bmp image
-	 * @param The title width that you want to set
-	 */
-	void addInactiveBorder(TransparentSurface *source, int titlePos = 0, int titleWidth = 0);
+	void addBorder(TransparentSurface *source, uint32 flags, int titlePos = 0, int titleWidth = 0);
 
 	/**
 	 * Accessor function for the custom offsets.
@@ -112,22 +112,30 @@ public:
 	 * Blit the desired border (active or inactive) into a destination surface.
 	 * It automatically resizes the border to fit the given surface.
 	 * @param destination The surface we want to blit into.
-	 * @param active True if we want to blit the active border, false otherwise.
+	 * @param border type that you want to draw
 	 * @param wm The window manager.
 	 */
-	void blitBorderInto(ManagedSurface &destination, bool active, MacWindowManager *wm);
+	void blitBorderInto(ManagedSurface &destination, uint32 flags, MacWindowManager *wm);
 
-	void modifyTitleWidth(int titleWidth);
-	// in this implement, we should guarantee the titleWidth of activeBorder and inactiveBorder is the same
-	int getTitleWidth() { return _activeBorder->getTitleWidth(); }
+	void modifyTitleWidth(uint32 flags, int titleWidth);
+
+	void setTitle(const Common::String& title, int width, MacWindowManager *wm);
+
+	void setScroll(int scrollPos, int scrollSize) { _scrollPos = scrollPos, _scrollSize = scrollSize; }
+
+	void drawTitle(ManagedSurface *g, MacWindowManager *wm);
+
+	void drawScrollBar(ManagedSurface *g, MacWindowManager *wm);
 
 private:
+	int _scrollPos, _scrollSize;
+	Common::String _title;
 
-	NinePatchBitmap *_activeBorder;
-	NinePatchBitmap *_inactiveBorder;
+	const uint32 _borderTypeNum = 8;
 
-	bool _activeInitialized;
-	bool _inactiveInitialized;
+	Common::Array<NinePatchBitmap *> _border;
+
+	Common::Array<bool> _borderInitialized;
 
 	BorderOffsets _borderOffsets;
 

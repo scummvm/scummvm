@@ -265,7 +265,7 @@ public:
 	 * Mutator to change the title of the window.
 	 * @param title Target title.
 	 */
-	void setTitle(const Common::String &title) { _title = title; _borderIsDirty = true; }
+	void setTitle(const Common::String &title);
 	/**
 	 * Accessor to get the title of the window.
 	 * @return Title.
@@ -301,10 +301,10 @@ public:
 	 * @param to Width of the top side of the border, in pixels.
 	 * @param bo Width of the bottom side of the border, in pixels.
 	 */
-	void loadBorder(Common::SeekableReadStream &file, bool active, int lo = -1, int ro = -1, int to = -1, int bo = -1);
-	void loadBorder(Common::SeekableReadStream &file, bool active, BorderOffsets offsets, int titlePos = 0, int titleWidth = 0);
-	void setBorder(TransparentSurface *border, bool active, int lo = -1, int ro = -1, int to = -1, int bo = -1);
-	void setBorder(TransparentSurface *border, bool active, BorderOffsets offsets, int titlePos = 0, int titleWidth = 0);
+	void loadBorder(Common::SeekableReadStream &file, uint32 flags, int lo = -1, int ro = -1, int to = -1, int bo = -1);
+	void loadBorder(Common::SeekableReadStream &file, uint32 flags, BorderOffsets offsets, int titlePos = 0, int titleWidth = 0);
+	void setBorder(TransparentSurface *border, uint32 flags, int lo = -1, int ro = -1, int to = -1, int bo = -1);
+	void setBorder(TransparentSurface *border, uint32 flags, BorderOffsets offsets, int titlePos = 0, int titleWidth = 0);
 	void disableBorder();
 
 	/**
@@ -332,7 +332,7 @@ public:
 	virtual bool isDirty() override { return _borderIsDirty || _contentIsDirty; }
 
 private:
-	void drawBorderFromSurface(ManagedSurface *g);
+	void drawBorderFromSurface(ManagedSurface *g, uint32 flags);
 	void drawPattern();
 	void drawBox(ManagedSurface *g, int x, int y, int w, int h);
 	void fillRect(ManagedSurface *g, int x, int y, int w, int h, int color);
@@ -358,6 +358,7 @@ protected:
 
 private:
 	MacWindowBorder _macBorder;
+	uint32 _borderFlags;
 
 	int _pattern;
 	bool _hasPattern;
@@ -373,7 +374,6 @@ private:
 	int _draggedX, _draggedY;
 
 	WindowClick _highlightedPart;
-	float _scrollPos, _scrollSize;
 
 	Common::String _title;
 
