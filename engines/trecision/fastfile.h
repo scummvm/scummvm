@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef TRECISION_FFILE_H
-#define TRECISION_FFILE_H
+#ifndef TRECISION_FASTFILE_H
+#define TRECISION_FASTFILE_H
 
 #include "common/archive.h"
 #include "common/stream.h"

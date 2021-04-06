@@ -22,7 +22,7 @@
 
 #include "common/scummsys.h"
 #include "trecision/trecision.h"
-#include "trecision/nl/sys/ffile.h"
+#include "trecision/fastfile.h"
 
 #include "common/str.h"
 #include "common/file.h"
