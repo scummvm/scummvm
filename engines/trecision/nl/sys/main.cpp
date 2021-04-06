@@ -226,22 +226,4 @@ void Mouse(MouseCmd opt) {
 	}
 }
 
-/* -----------------17/02/95 10.18-------------------
-						CloseSys
---------------------------------------------------*/
-void CloseSys(const char *str) { // close all
-	if (MemoryArea)
-		free(MemoryArea);
-
-	g_vm->_dataFile.close();
-	g_vm->_speechFile.close();
-	g_vm->_animMgr->stopAllSmkAnims();
-	StopSoundSystem();
-
-	if (str)
-		warning(str);
-
-	g_system->quit();
-}
-
 } // End of namespace Trecision

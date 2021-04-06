@@ -203,7 +203,7 @@ Common::Error TrecisionEngine::run() {
 		Scheduler();
 
 		if (_curMessage->_class == MC_SYSTEM && _curMessage->_event == ME_QUIT)
-			CloseSys(NULL);
+			break;
 
 		AtFrameHandler(BACKGROUND_ANIM);
 
@@ -459,19 +459,14 @@ void TrecisionEngine::initMain() {
 }
 
 void TrecisionEngine::openDataFiles() {
-	if (!_dataFile.open("nldata.cd0")) {
-		warning(_sysText[kMessageFilesMissing]);
-		CloseSys(_sysText[kMessageFilesMissing]);
-	}
+	if (!_dataFile.open("nldata.cd0"))
+		error("openDataFiles() - Error opening nldata.cd0");
 
-	if (!Common::File::exists("nlanim.cd1") || !Common::File::exists("nlanim.cd2")) {
-		warning(_sysText[kMessageFilesMissing]);
-		CloseSys(_sysText[kMessageFilesMissing]);
-	}
+	if (!Common::File::exists("nlanim.cd1") || !Common::File::exists("nlanim.cd2"))
+		error("openDataFiles() - nlanim.cd1 or nlanim.cd2 is missing");
 
-	if (!_speechFile.open("nlspeech.cd0")) {
-		warning(_sysText[kMessageFilesMissing]);
-	}
+	if (!_speechFile.open("nlspeech.cd0"))
+		warning("openDataFiles() - nlspeech.cd0 is missing - skipping");
 
 	Font = readData("nlfont.fnt");
 	int size;
@@ -700,11 +695,8 @@ void TrecisionEngine::initCursor() {
 
 byte *TrecisionEngine::readData(Common::String fileName) {
 	Common::SeekableReadStream *stream = _dataFile.createReadStreamForMember(fileName);
-	if (stream == nullptr) {
-		warning("readData: File %s not found", fileName.c_str());
-		CloseSys(_sysText[kMessageFilesMissing]);
-		return nullptr;
-	}
+	if (stream == nullptr)
+		error("readData(): File %s not found", fileName.c_str());
 
 	byte *buf = new byte[stream->size()];
 	stream->read(buf, stream->size());
@@ -715,11 +707,8 @@ byte *TrecisionEngine::readData(Common::String fileName) {
 
 uint16 *TrecisionEngine::readData16(Common::String fileName, int &size) {
 	Common::SeekableReadStream *stream = _dataFile.createReadStreamForMember(fileName);
-	if (stream == nullptr) {
-		warning("readData16: File %s not found", fileName.c_str());
-		CloseSys(_sysText[kMessageFilesMissing]);
-		return nullptr;
-	}
+	if (stream == nullptr)
+		error("readData16(): File %s not found", fileName.c_str());
 
 	size = ceil(stream->size() / 2.0);
 	uint16 *buf = new uint16[size];

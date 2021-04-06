@@ -180,7 +180,6 @@ uint32 ReadTime();
 void NlDelay(uint32 val);
 void NlDissolve(int val);
 void Mouse(MouseCmd opt);
-void CloseSys(const char *str);
 void soundtimefunct();
 void StopSoundSystem();
 void LoadAudioWav(int num, Common::String fileName);

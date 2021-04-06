@@ -154,8 +154,7 @@ void AnimManager::openSmkAnim(Common::String name) {
 	}
 
 	// Invalid file
-	warning("openSmkAnim: File %s not found", name.c_str());
-	CloseSys(g_vm->_sysText[kMessageFilesMissing]);
+	error("openSmkAnim(): File %s not found", name.c_str());
 }
 
 void AnimManager::openSmk(Common::SeekableReadStream *stream) {
@@ -365,7 +364,7 @@ void AnimManager::stopFullMotion() {
 	_fullMotionStart = 0;
 	_fullMotionEnd = 0;
 	if (_curDialog == dFCRED) {
-		CloseSys(nullptr);
+		g_vm->quitGame();
 		return;
 	}
 

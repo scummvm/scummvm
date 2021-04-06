@@ -777,7 +777,7 @@ void DemoOver() {
 
 	waitKey();
 
-	CloseSys(nullptr);
+	g_vm->quitGame();
 }
 
 } // End of namespace Trecision
