@@ -5066,11 +5066,11 @@ echo "$_gtk"
 # Check for FreeType2 to be present
 #
 find_freetype() {
-        # Wrapper function which tries to find freetype
-        # either by calling freetype-config or by using
-        # pkg-config.
-        # As of freetype-2.9.1 the freetype-config file
-        # no longer gets installed by default.
+	# Wrapper function which tries to find freetype
+	# either by calling freetype-config or by using
+	# pkg-config.
+	# As of freetype-2.9.1 the freetype-config file
+	# no longer gets installed by default.
 	if test "$_pkg_config" = "yes" && $_pkgconfig --exists freetype2; then
 		FREETYPE2_LIBS=`$_pkgconfig --libs freetype2`
 		FREETYPE2_CFLAGS=`$_pkgconfig --cflags freetype2`
