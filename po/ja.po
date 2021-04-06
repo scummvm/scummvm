@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-04-05 14:33+0000\n"
+"POT-Creation-Date: 2021-04-06 06:51+0000\n"
 "PO-Revision-Date: 2021-04-04 22:24+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
@@ -5808,11 +5808,11 @@ msgstr ""
 "は、ScummVMでは発生しません。予期せぬエラーを避けるために、ゲームフォルダーか"
 "らパッチを削除する事をお勧めします。"
 
-#: engines/sci/sci.cpp:518
+#: engines/sci/sci.cpp:520
 msgid "Download patch"
 msgstr "パッチをダウンロード"
 
-#: engines/sci/sci.cpp:519
+#: engines/sci/sci.cpp:521
 msgid ""
 "(or click 'Download patch' button. But note - it only downloads, you will "
 "have to continue from there)\n"
@@ -5820,7 +5820,7 @@ msgstr ""
 "(または「パッチをダウンロード」ボタンをクリックします。ただし、ダウンロード後"
 "の作業を手動で行う必要があります)\n"
 
-#: engines/sci/sci.cpp:526
+#: engines/sci/sci.cpp:528
 msgid ""
 "GK2 has a fan made subtitles, available thanks to the good persons at "
 "SierraHelp.\n"
@@ -5835,7 +5835,7 @@ msgstr ""
 "- ダウンロード先 http://www.sierrahelp.com/Files/Patches/GabrielKnight/"
 "GK2Subtitles.zip\n"
 
-#: engines/sci/sci.cpp:884
+#: engines/sci/sci.cpp:886
 msgid ""
 "Characters saved inside ScummVM are shown automatically. Character files "
 "saved in the original interpreter need to be put inside ScummVM's saved "

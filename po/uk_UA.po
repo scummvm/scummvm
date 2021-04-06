@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-04-05 14:33+0000\n"
+"POT-Creation-Date: 2021-04-06 06:51+0000\n"
 "PO-Revision-Date: 2021-04-02 13:11+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
@@ -5888,11 +5888,11 @@ msgstr ""
 "виникають у ScummVM, тому вам рекомендується видалити цей патч із папки "
 "ігор, щоб уникнути виникнення несподіваних помилок та / або проблем пізніше."
 
-#: engines/sci/sci.cpp:518
+#: engines/sci/sci.cpp:520
 msgid "Download patch"
 msgstr "Завантажити патч"
 
-#: engines/sci/sci.cpp:519
+#: engines/sci/sci.cpp:521
 msgid ""
 "(or click 'Download patch' button. But note - it only downloads, you will "
 "have to continue from there)\n"
@@ -5900,7 +5900,7 @@ msgstr ""
 "(або натисніть кнопку \"Завантажити патч\". Але зауважте - вона просто "
 "завантажить, вам буде потрібно продовжити самостійно)\n"
 
-#: engines/sci/sci.cpp:526
+#: engines/sci/sci.cpp:528
 msgid ""
 "GK2 has a fan made subtitles, available thanks to the good persons at "
 "SierraHelp.\n"
@@ -5915,7 +5915,7 @@ msgstr ""
 "- завантажте http://www.sierrahelp.com/Files/Patches/GabrielKnight/"
 "GK2Subtitles.zip\n"
 
-#: engines/sci/sci.cpp:884
+#: engines/sci/sci.cpp:886
 msgid ""
 "Characters saved inside ScummVM are shown automatically. Character files "
 "saved in the original interpreter need to be put inside ScummVM's saved "
