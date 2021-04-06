@@ -25,34 +25,17 @@
 #include "trecision/nl/extern.h"
 #include "trecision/nl/message.h"
 
-#include "common/textconsole.h"
 #include "logic.h"
 
 namespace Trecision {
 
 void TrecisionEngine::initNames() {
-	_sysText[kMessageFilesMissing] = "NightLong was not properly installed!\nRun Autorun.exe from the CD-Rom.";
-	//_sysText[2] = "Not enough memory!\nYou need %d bytes more.\n";
-	//_sysText[3] = "Unknown error\n";
-	_sysText[kMessageInsertCD] = "Please insert CD number %c and press return.";
-	_sysText[kMessageUnknownError] = "Unknown error";
-	//_sysText[6] = "VESA Not Supported.\n";
-	_sysText[kMessageErrorReadingFile] = "Error reading file.";
-	//_sysText[8] = "Mouse not found error!\n";
 	_sysText[kMessageSavePosition] = "SAVE POSITION";
 	_sysText[kMessageEmptySpot] = "EMPTY SLOT";
 	_sysText[kMessageLoadPosition] = "LOAD POSITION";
-	//_sysText[12] = "Error reading saved-game";
 	_sysText[kMessageConfirmExit] = "Are you sure that you want to quit (y/n)?";
-	//_sysText[14] = "Unknown error\n";
-	//_sysText[15] = "Sample handle not available\n";
-	//_sysText[16] = "Run NL to select an appropriate digital audio driver\n";
 	_sysText[kMessageDemoOver] = "This demo is over.";
-	//_sysText[18] = "NightLong";
 	_sysText[kMessageError] = "ERROR!";
-	//_sysText[20] = "Unsupported pixel format.";
-	//_sysText[21] = "DirectX Error";
-	//_sysText[22] = "NightLong Warning";
 	_sysText[kMessageUse] = "Use ";
 	_sysText[kMessageWith] = " with ";
 	_sysText[kMessageGoto] = "Go to ";
