@@ -14,6 +14,7 @@ MODULE_OBJS := \
 	codecs/cdtoons.o \
 	codecs/cinepak.o \
 	codecs/codec.o \
+	codecs/hlz.o \
 	codecs/indeo3.o \
 	codecs/indeo4.o \
 	codecs/indeo5.o \

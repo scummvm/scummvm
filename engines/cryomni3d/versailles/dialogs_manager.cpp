@@ -24,7 +24,7 @@
 #include "common/file.h"
 #include "common/system.h"
 
-#include "cryomni3d/video/hnm_decoder.h"
+#include "video/hnm_decoder.h"
 
 #include "cryomni3d/versailles/dialogs_manager.h"
 #include "cryomni3d/versailles/engine.h"

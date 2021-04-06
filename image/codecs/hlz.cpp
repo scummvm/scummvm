@@ -20,7 +20,7 @@
  *
  */
 
-#include "cryomni3d/image/codecs/hlz.h"
+#include "image/codecs/hlz.h"
 
 #include "common/stream.h"
 #include "common/textconsole.h"

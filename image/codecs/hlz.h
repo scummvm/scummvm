@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef CRYOMNI3D_IMAGE_CODECS_HLZ_H
-#define CRYOMNI3D_IMAGE_CODECS_HLZ_H
+#ifndef IMAGE_CODECS_HLZ_H
+#define IMAGE_CODECS_HLZ_H
 
 #include "image/codecs/codec.h"
 
