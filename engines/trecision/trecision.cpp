@@ -165,6 +165,16 @@ TrecisionEngine::TrecisionEngine(OSystem *syst) : Engine(syst) {
 }
 
 TrecisionEngine::~TrecisionEngine() {
+	if (MemoryArea)
+		free(MemoryArea);
+
+	if (_animMgr)
+		_animMgr->stopAllSmkAnims();
+
+	_dataFile.close();
+	_speechFile.close();
+	StopSoundSystem();
+	
 	delete _animMgr;
 	delete _graphicsMgr;
 	delete _logicMgr;
