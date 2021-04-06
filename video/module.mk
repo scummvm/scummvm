@@ -6,6 +6,7 @@ MODULE_OBJS := \
 	coktel_decoder.o \
 	dxa_decoder.o \
 	flic_decoder.o \
+	hnm_decoder.o \
 	mpegps_decoder.o \
 	mve_decoder.o \
 	psx_decoder.o \

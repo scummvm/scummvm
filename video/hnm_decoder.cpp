@@ -29,8 +29,8 @@
 
 #include "audio/decoders/raw.h"
 
-#include "cryomni3d/video/hnm_decoder.h"
-#include "cryomni3d/image/codecs/hlz.h"
+#include "video/hnm_decoder.h"
+#include "image/codecs/hlz.h"
 
 namespace Video {
 

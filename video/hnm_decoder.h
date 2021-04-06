@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef CRYOMNI3D_VIDEO_HNM_DECODER_H
-#define CRYOMNI3D_VIDEO_HNM_DECODER_H
+#ifndef VIDEO_HNM_DECODER_H
+#define VIDEO_HNM_DECODER_H
 
 #include "common/rational.h"
 #include "graphics/pixelformat.h"

@@ -36,7 +36,7 @@
 #include "cryomni3d/datstream.h"
 
 #include "cryomni3d/image/hlz.h"
-#include "cryomni3d/video/hnm_decoder.h"
+#include "video/hnm_decoder.h"
 
 namespace CryOmni3D {
 
