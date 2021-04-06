@@ -102,28 +102,28 @@
 	</palette>
 
 	<bitmaps>
-		<bitmap filename = 'logo.bmp' scalable_file = 'logo.svg'/>
-		<bitmap filename = 'cursor.bmp' scalable_file = 'cursor.svg'/>
-		<bitmap filename = 'cursor_small.bmp' scalable_file = 'cursor.svg'/>
-		<bitmap filename = 'checkbox.bmp' scalable_file = 'checkbox.svg'/>
+		<bitmap filename = 'logo.bmp' scalable_file = 'logo.svg' width = '287' height = '80'/>
+		<bitmap filename = 'cursor.bmp' scalable_file = 'cursor.svg' width = '32' height = '32'/>
+		<bitmap filename = 'cursor_small.bmp' scalable_file = 'cursor.svg' width = '16' height = '16'/>
+		<bitmap filename = 'checkbox.bmp' scalable_file = 'checkbox.svg' width = '15' height = '15'/>
 		<bitmap filename = 'checkbox_empty.bmp'/>
-		<bitmap filename = 'checkbox_disabled.bmp' scalable_file = 'checkbox_disabled.svg'/>
-		<bitmap filename = 'radiobutton.bmp' scalable_file = 'radiobutton.svg'/>
-		<bitmap filename = 'radiobutton_empty.bmp' scalable_file = 'radiobutton_empty.svg'/>
-		<bitmap filename = 'logo_small.bmp' scalable_file = 'logo.svg'/>
-		<bitmap filename = 'search.bmp' scalable_file = 'search.svg'/>
-		<bitmap filename = 'eraser.bmp' scalable_file = 'eraser.svg'/>
-		<bitmap filename = 'delbtn.bmp' scalable_file = 'delbtn.svg'/>
-		<bitmap filename = 'list.bmp' scalable_file = 'list.svg'/>
-		<bitmap filename = 'grid.bmp' scalable_file = 'grid.svg'/>
-		<bitmap filename = 'stopbtn.bmp' scalable_file = 'stopbtn.svg'/>
-		<bitmap filename = 'editbtn.bmp' scalable_file = 'editbtn.svg'/>
-		<bitmap filename = 'switchbtn.bmp' scalable_file = 'switchbtn.svg'/>
-		<bitmap filename = 'fastreplay.bmp' scalable_file = 'fastreplay.svg'/>
-		<bitmap filename = 'stopbtn_small.bmp' scalable_file = 'stopbtn.svg'/>
-		<bitmap filename = 'editbtn_small.bmp' scalable_file = 'editbtn.svg'/>
-		<bitmap filename = 'switchbtn_small.bmp' scalable_file = 'switchbtn.svg'/>
-		<bitmap filename = 'fastreplay_small.bmp' scalable_file = 'fastreplay.svg'/>
+		<bitmap filename = 'checkbox_disabled.bmp' scalable_file = 'checkbox_disabled.svg' width = '15' height = '15'/>
+		<bitmap filename = 'radiobutton.bmp' scalable_file = 'radiobutton.svg'width = '15' height = '15'/>
+		<bitmap filename = 'radiobutton_empty.bmp' scalable_file = 'radiobutton_empty.svg'width = '15' height = '15'/>
+		<bitmap filename = 'logo_small.bmp' scalable_file = 'logo.svg' width = '144' height = '40'/>
+		<bitmap filename = 'search.bmp' scalable_file = 'search.svg' width = '16' height = '16'/>
+		<bitmap filename = 'eraser.bmp' scalable_file = 'eraser.svg' width = '16' height = '16'/>
+		<bitmap filename = 'delbtn.bmp' scalable_file = 'delbtn.svg' width = '16' height = '16'/>
+		<bitmap filename = 'list.bmp' scalable_file = 'list.svg' width = '16' height = '16'/>
+		<bitmap filename = 'grid.bmp' scalable_file = 'grid.svg' width = '16' height = '16'/>
+		<bitmap filename = 'stopbtn.bmp' scalable_file = 'stopbtn.svg' width = '32' height = '32'/>
+		<bitmap filename = 'editbtn.bmp' scalable_file = 'editbtn.svg' width = '32' height = '32'/>
+		<bitmap filename = 'switchbtn.bmp' scalable_file = 'switchbtn.svg' width = '32' height = '32'/>
+		<bitmap filename = 'fastreplay.bmp' scalable_file = 'fastreplay.svg' width = '32' height = '32'/>
+		<bitmap filename = 'stopbtn_small.bmp' scalable_file = 'stopbtn.svg' width = '16' height = '16'/>
+		<bitmap filename = 'editbtn_small.bmp' scalable_file = 'editbtn.svg' width = '16' height = '16'/>
+		<bitmap filename = 'switchbtn_small.bmp' scalable_file = 'switchbtn.svg' width = '16' height = '16'/>
+		<bitmap filename = 'fastreplay_small.bmp' scalable_file = 'fastreplay.svg' width = '16' height = '16'/>
 	</bitmaps>
 
 	<fonts>
