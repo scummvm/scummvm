@@ -75,13 +75,21 @@ bool NightlongSmackerDecoder::forceSeekToFrame(uint frame) {
 		return false;
 
 	SmackerVideoTrack *videoTrack = (SmackerVideoTrack *)getTrack(0);
+	uint32 start = _fileStream->pos();
 	uint32 offset = 0;
 	for (uint32 i = 0; i < frame; i++) {
 		videoTrack->increaseCurFrame();
+		// Frames with palette data contain palette entries which use
+		// the previous palette as their base. Therefore, we need to
+		// parse all palette entries up to the requested frame
+		if (_frameTypes[videoTrack->getCurFrame()] & 1) {
+			_fileStream->seek(start + offset, SEEK_SET);
+			videoTrack->unpackPalette(_fileStream);
+		}
 		offset += _frameSizes[i] & ~3;
 	}
 
-	return _fileStream->seek(offset, SEEK_CUR);
+	return _fileStream->seek(start + offset, SEEK_SET);
 }
 
 AnimManager::AnimManager(TrecisionEngine *vm) : _vm(vm) {
