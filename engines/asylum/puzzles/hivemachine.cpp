@@ -250,8 +250,11 @@ void PuzzleHiveMachine::updateScreen() {
 	if (_ok) {
 		if (_counterGreen > 1)
 			--_counterGreen;
-		else if (_counterGreen-- == 1)
+		else if (_counterGreen-- == 1) {
 			getSound()->playSound(getWorld()->graphicResourceIds[86], false, Config.sfxVolume - 10);
+			_vm->setGameFlag(kGameFlagSolveHiveMachine);
+			_vm->switchEventHandler(getScene());
+		}
 		getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[11], 0, Common::Point(271, 369), kDrawFlagNone, 0, 1);
 	} else if (_counterRed) {
 		if (_counterRed == 1)

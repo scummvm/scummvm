@@ -159,6 +159,7 @@ enum GameFlag {
 	kGameFlag828                  = 828,
 	kGameFlag829                  = 829,
 	kGameFlag830                  = 830,
+	kGameFlagSolveHiveMachine     = 834,
 	kGameFlag866                  = 866,
 	kGameFlag875                  = 875,
 	kGameFlag876                  = 876,
