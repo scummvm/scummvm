@@ -136,7 +136,7 @@ bool ActionManager::addNewActionRecord(Common::SeekableReadStream &inputData) {
 			dep.seconds = inputData.readSint16LE();
 			dep.milliseconds = inputData.readSint16LE();
 
-			if (dep.type != kSceneCount || dep.hours != -1 || dep.minutes != -1 || dep.seconds != -1) {
+			if (dep.type != DependencyType::kSceneCount || dep.hours != -1 || dep.minutes != -1 || dep.seconds != -1) {
 				dep.timeData = ((dep.hours * 60 + dep.minutes) * 60 + dep.seconds) * 1000 + dep.milliseconds;
 			}
 		}
@@ -157,70 +157,70 @@ bool ActionManager::addNewActionRecord(Common::SeekableReadStream &inputData) {
 		debugCN(1, kDebugActionRecord, "\tDependency %i: type ", i);
 		DependencyRecord &dep = newRecord->_dependencies[i];
 		switch (dep.type) {
-		case kNone :
+		case DependencyType::kNone :
 			debugCN(1, kDebugActionRecord, "kNone");
 			break;
-		case kInventory :
+		case DependencyType::kInventory :
 			debugCN(1, kDebugActionRecord, "kInventory, item ID %i %s",
 						dep.label,
 						dep.condition == kTrue ? "is in possession" : "is not in possession");
 			break;
-		case kEventFlag :
+		case DependencyType::kEventFlag :
 			debugCN(1, kDebugActionRecord, "kEventFlag, flag ID %i == %s",
 						dep.label,
 						dep.condition == kTrue ? "true" : "false");
 			break;
-		case kLogicCondition :
+		case DependencyType::kLogicCondition :
 			debugCN(1, kDebugActionRecord, "kLogicCondition, logic condition ID %i == %s",
 						dep.label,
 						dep.condition == kTrue ? "true" : "false");
 			break;
-		case kTotalTime :
+		case DependencyType::kTotalTime :
 			debugCN(1, kDebugActionRecord, "kTotalTime, %i hours, %i minutes, %i seconds, %i milliseconds",
 						dep.hours,
 						dep.minutes,
 						dep.seconds,
 						dep.milliseconds);
 			break;
-		case kSceneTime :
+		case DependencyType::kSceneTime :
 			debugCN(1, kDebugActionRecord, "kSceneTime, %i hours, %i minutes, %i seconds, %i milliseconds",
 						dep.hours,
 						dep.minutes,
 						dep.seconds,
 						dep.milliseconds);
 			break;
-		case kPlayerTime :
+		case DependencyType::kPlayerTime :
 			debugCN(1, kDebugActionRecord, "kPlayerTime, %i days, %i hours, %i minutes, %i seconds",
 						dep.hours,
 						dep.minutes,
 						dep.seconds,
 						dep.milliseconds);
 			break;
-		case kSceneCount :
+		case DependencyType::kSceneCount :
 			debugCN(1, kDebugActionRecord, "kSceneCount, scene ID %i, hit count %s %i",
 						dep.hours,
 						dep.milliseconds == 1 ? ">" : dep.milliseconds == 2 ? "<" : "==",
 						dep.seconds);
 			break;
-		case kResetOnNewDay :
+		case DependencyType::kResetOnNewDay :
 			debugCN(1, kDebugActionRecord, "kResetOnNewDay");
 			break;
-		case kUseItem :
+		case DependencyType::kUseItem :
 			debugCN(1, kDebugActionRecord, "kUseItem, item ID %i %s",
 						dep.label,
 						dep.condition == kTrue ? "is held" : "is not held");
 			break;
-		case kTimeOfDay :
+		case DependencyType::kTimeOfDay :
 			debugCN(1, kDebugActionRecord, "kTimeOfDay, %s",
 						dep.label == 0 ? "day" : dep.label == 1 ? "night" : "dusk/dawn");
 			break;
-		case kTimerNotDone :
+		case DependencyType::kTimerNotDone :
 			debugCN(1, kDebugActionRecord, "kTimerNotDone");
 			break;
-		case kTimerDone :
+		case DependencyType::kTimerDone :
 			debugCN(1, kDebugActionRecord, "kTimerDone");
 			break;
-		case kDifficultyLevel :
+		case DependencyType::kDifficultyLevel :
 			debugCN(1, kDebugActionRecord, "kDifficultyLevel, level %i", dep.condition);
 			break;
 		default:
@@ -245,10 +245,10 @@ void ActionManager::processActionRecords() {
 
 				if (!dep.satisfied) {
 					switch (dep.type) {
-					case kNone:
+					case DependencyType::kNone:
 						dep.satisfied = true;
 						break;
-					case kInventory:
+					case DependencyType::kInventory:
 						switch (dep.condition) {
 						case kFalse:
 							// Item not in possession or held
@@ -270,7 +270,7 @@ void ActionManager::processActionRecords() {
 						}
 
 						break;
-					case kEventFlag:
+					case DependencyType::kEventFlag:
 						if (NancySceneState.getEventFlag(dep.label, (NancyFlag)dep.condition)) {
 							// nancy1 has code for some timer array that never gets used
 							// and is discarded from nancy2 onward
@@ -278,7 +278,7 @@ void ActionManager::processActionRecords() {
 						}
 
 						break;
-					case kLogicCondition:
+					case DependencyType::kLogicCondition:
 						if (NancySceneState._flags.logicConditions[dep.label].flag == dep.condition) {
 							// Wait for specified time before satisfying dependency condition
 							Time elapsed = NancySceneState._timers.lastTotalTime - NancySceneState._flags.logicConditions[dep.label].timestamp;
@@ -289,32 +289,32 @@ void ActionManager::processActionRecords() {
 						}
 
 						break;
-					case kTotalTime:
+					case DependencyType::kTotalTime:
 						if (NancySceneState._timers.lastTotalTime >= dep.timeData) {
 							dep.satisfied = true;
 						}
 
 						break;
-					case kSceneTime:
+					case DependencyType::kSceneTime:
 						if (NancySceneState._timers.sceneTime >= dep.timeData) {
 							dep.satisfied = true;
 						}
 
 						break;
-					case kPlayerTime:
+					case DependencyType::kPlayerTime:
 						// TODO almost definitely wrong, as the original engine treats player time differently
 						if (NancySceneState._timers.playerTime >= dep.timeData) {
 							dep.satisfied = true;
 						}
 
 						break;
-					case kUnknownType7:
+					case DependencyType::kUnknownType7:
 						warning("Unknown Dependency type 7");
 						break;
-					case kUnknownType8:
+					case DependencyType::kUnknownType8:
 						warning("Unknown Dependency type 8");
 						break;
-					case kSceneCount:
+					case DependencyType::kSceneCount:
 						// This dependency type keeps its data in the time variables
 						// Also, I'm pretty sure it never gets used
 						switch (dep.milliseconds) {
@@ -339,7 +339,7 @@ void ActionManager::processActionRecords() {
 						}
 
 						break;
-					case kResetOnNewDay:
+					case DependencyType::kResetOnNewDay:
 						if (record->_days == -1) {
 							record->_days = NancySceneState._timers.playerTime.getDays();
 							dep.satisfied = true;
@@ -349,14 +349,14 @@ void ActionManager::processActionRecords() {
 						if (record->_days < NancySceneState._timers.playerTime.getDays()) {
 							record->_days = NancySceneState._timers.playerTime.getDays();
 							for (uint j = 0; j < record->_dependencies.size(); ++j) {
-								if (record->_dependencies[j].type == kPlayerTime) {
+								if (record->_dependencies[j].type == DependencyType::kPlayerTime) {
 									record->_dependencies[j].satisfied = false;
 								}
 							}
 						}
 
 						break;
-					case kUseItem: {
+					case DependencyType::kUseItem: {
 						bool hasUnsatisfiedDeps = false;
 						for (uint j = 0; j < record->_dependencies.size(); ++j) {
 							if (j != i && record->_dependencies[j].satisfied == false) {
@@ -377,25 +377,25 @@ void ActionManager::processActionRecords() {
 						dep.satisfied = true;
 						break;
 					}
-					case kTimeOfDay:
+					case DependencyType::kTimeOfDay:
 						if (dep.label == (byte)NancySceneState._timers.timeOfDay) {
 							dep.satisfied = true;
 						}
 
 						break;
-					case kTimerNotDone:
+					case DependencyType::kTimerNotDone:
 						if (NancySceneState._timers.timerTime <= dep.timeData) {
 							dep.satisfied = true;
 						}
 
 						break;
-					case kTimerDone:
+					case DependencyType::kTimerDone:
 						if (NancySceneState._timers.timerTime > dep.timeData) {
 							dep.satisfied = true;
 						}
 
 						break;
-					case kDifficultyLevel:
+					case DependencyType::kDifficultyLevel:
 						if (dep.condition == NancySceneState._difficulty) {
 							dep.satisfied = true;
 						}

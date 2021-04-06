@@ -37,7 +37,7 @@ struct NancyInput;
 
 namespace Action {
 
-enum DependencyType : byte {
+enum struct DependencyType : byte {
 	kNone               = 0,
 	kInventory          = 1,
 	kEventFlag          = 2,
