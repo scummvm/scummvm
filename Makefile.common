@@ -89,7 +89,7 @@ MODULE_DIRS += $(sort $(dir $(DETECT_OBJS)))
 endif
 
 # Depdir information
-DEPDIRS = $(addsuffix $(DEPDIR),$(MODULE_DIRS))
+DEPDIRS = $(addsuffix $(DEPDIR),$(MODULE_DIRS)) dists/$(DEPDIR)
 DEPFILES =
 
 # Make base/version.o depend on all other object files. This way if anything is
@@ -203,9 +203,17 @@ endif
 	$(QUIET_AS)$(AS) $(ASFLAGS) $(<) -o $@
 
 # Build rule for Windows resource files
-# TODO: Support dependency tracking
+# The regular expression is a portable form of ^(.*\s(FILE|ICON|RT_MANIFEST|DATA)|#include)\s+"([^"]*)".*$
+# This finds lines in the form '... FILE "path/file.ext" ...' (and also ICON and #include)
+# and replaces them with the $(srcdir)/path/file.ext \
+# The second sed removes winresrc.h (system include) and config.h (not in srcdir, printed
+# by the echo before sed), and strips the trailing backslash on the last line.
 %.o: %.rc
 	$(QUIET)$(MKDIR) $(*D)
+	$(QUIET)$(MKDIR) $(*D)/$(DEPDIR)
+	$(QUIET)echo "$@: $< config.h config.mk \\" > $(*D)/$(DEPDIR)/scummvm.d
+	$(QUIET)sed -n 's:^\(.*[[:space:]]\(FILE\|ICON\|RT_MANIFEST\|DATA\)\|#include\)[[:space:]][[:space:]]*"\([^"]*\)".*$$:    $(srcdir)/\3 \\:p; ' $(<) | \
+		sed '/winresrc\.h\|config\.h/d; $$ s/ \\//' >> $(*D)/$(DEPDIR)/scummvm.d
 	$(QUIET_WINDRES)$(WINDRES) $(WINDRESFLAGS) $(CPPFLAGS) $(<) -o $@
 
 ifdef USE_NASM

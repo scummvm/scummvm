@@ -2,18 +2,6 @@
 # Windows specific
 #
 
-dists/scummvm.o: \
-	config.h \
-	config.mk \
-	$(srcdir)/icons/scummvm.ico \
-	$(srcdir)/icons/count.ico \
-	$(srcdir)/base/internal_version.h \
-	$(srcdir)/base/internal_plugins.h \
-	$(DIST_FILES_THEMES) \
-	$(DIST_FILES_NETWORKING) \
-	$(DIST_FILES_ENGINEDATA) \
-	$(DIST_FILES_SHADERS)
-
 # Special target to create a win32 snapshot binary (for Inno Setup)
 win32dist: all
 	mkdir -p $(WIN32PATH)
