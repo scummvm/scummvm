@@ -243,6 +243,10 @@ public:
 	// inventory objects
 	static constexpr const char *HQR_INVOBJ_FILE = "invobj.hqr";
 
+	/**
+	 * @brief Floppy version of the game uses gifs for replacing the videos
+	 */
+	static constexpr const char *HQR_FLAGIF_FILE = "fla_gif.hqr";
 	static constexpr const char *HQR_FLASAMP_FILE = "flasamp.hqr";
 	static constexpr const char *HQR_MIDI_MI_DOS_FILE = "midi_mi.hqr";
 	static constexpr const char *HQR_MIDI_MI_WIN_FILE = "midi_mi_win.hqr";

@@ -273,14 +273,14 @@ void FlaMovies::prepareGIF(int index) {
 	// TODO: version 87a 640x480
 #if 0
 	Image::GIFDecoder decoder;
-	Common::SeekableReadStream *stream = HQR::makeReadStream("FLA_GIF.HQR", index);
+	Common::SeekableReadStream *stream = HQR::makeReadStream(Resources::HQR_FLAGIF_FILE, index);
 	if (stream == nullptr) {
-		warning("Failed to load gif hqr entry with id %i from FLA_GIF.HQR", index);
+		warning("Failed to load gif hqr entry with id %i from %s", index, Resources::HQR_FLAGIF_FILE);
 		return;
 	}
 	if (!decoder.loadStream(*stream)) {
 		delete stream;
-		warning("Failed to load gif with id %i from FLA_GIF.HQR", index);
+		warning("Failed to load gif with id %i from %s", index, Resources::HQR_FLAGIF_FILE);
 		return;
 	}
 	const Graphics::Surface *surface = decoder.getSurface();
@@ -297,45 +297,50 @@ void FlaMovies::prepareGIF(int index) {
 }
 
 void FlaMovies::playGIFMovie(const char *flaName) {
-	if (!Common::File::exists("FLA_GIF.HQR")) {
-		warning("FLA_GIF file doesn't exist!");
+	if (!Common::File::exists(Resources::HQR_FLAGIF_FILE)) {
+		warning("%s file doesn't exist", Resources::HQR_FLAGIF_FILE);
 		return;
 	}
 
-	debug("Play gif %s", flaName);
+	Common::String name(flaName);
+	name.toLowercase();
+
+	debug(1, "Play gif %s", name.c_str());
 	// TODO: use the HQR 23th entry (movies informations)
 	// TODO: there are gifs [1-18]
-	if (!strcmp(flaName, FLA_INTROD)) {
+	if (name == FLA_INTROD) {
 		prepareGIF(3);
 		prepareGIF(4);
 		prepareGIF(5);
-	} else if (!strcmp(flaName, "BAFFE") || !strcmp(flaName, "BAFFE2") || !strcmp(flaName, "BAFFE3") || !strcmp(flaName, "BAFFE4")) {
-		prepareGIF(6);
-	} else if (!strcmp(flaName, "bateau") || !strcmp(flaName, "bateau2")) {
+	} else if (name == "bateau" || name == "bateau2") {
 		prepareGIF(7);
-	} else if (!strcmp(flaName, "navette")) {
+	} else if (name == "navette") {
 		prepareGIF(15);
-	} else if (!strcmp(flaName, "templebu")) {
+	} else if (name == "templebu") {
 		prepareGIF(12);
-	} else if (!strcmp(flaName, "flute2")) {
+	} else if (name == "flute2") {
 		prepareGIF(8); // TODO: same as glass2?
-	} else if (!strcmp(flaName, "glass2")) {
+	} else if (name == "glass2") {
 		prepareGIF(8); // TODO: same as flute2?
-	} else if (!strcmp(flaName, "surf")) {
+	} else if (name == "surf") {
 		prepareGIF(9);
-	} else if (!strcmp(flaName, "verser") || !strcmp(flaName, "verser2")) {
+	} else if (name == "verser" || name == "verser2") {
 		prepareGIF(10);
-	} else if (!strcmp(flaName, "neige2")) {
+	} else if (name == "neige2") {
 		prepareGIF(11);
-	} else if (!strcmp(flaName, "capture")) {
+	} else if (name == "capture") {
 		prepareGIF(14); // TODO: same as sendel?
-	} else if (!strcmp(flaName, "sendel")) {
+	} else if (name == "sendel") {
 		prepareGIF(14); // TODO: same as capture?
-	} else if (!strcmp(flaName, "sendel2")) {
+	} else if (name == "sendel2") {
 		prepareGIF(17);
-	} else if (!strcmp(flaName, FLA_DRAGON3)) {
+	} else if (name == FLA_DRAGON3) {
 		prepareGIF(1);
 		prepareGIF(2);
+	} else if (name == "baffe" || name.matchString("baffe#")) {
+		prepareGIF(6);
+	} else {
+		warning("unknown gif image: %s", name.c_str());
 	}
 }
 
