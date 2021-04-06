@@ -265,6 +265,9 @@ protected:
 	 */
 	bool saveScreenshot(const Common::String &filename) const;
 
+	// Do not hide the argument-less saveScreenshot from the base class
+	using WindowedGraphicsManager::saveScreenshot;
+
 private:
 	//
 	// OpenGL utilities
