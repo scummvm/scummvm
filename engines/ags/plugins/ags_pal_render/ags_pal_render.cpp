@@ -547,6 +547,7 @@ void DoFire(ScriptMethodParams &params) {
 				ABS((int)::AGS::g_vm->getRandomNumber(0x7fffffff) % 10) > 7)
 			fire[firexy] = 255;
 		sparky = ABS((int)::AGS::g_vm->getRandomNumber(0x7fffffff) % (h - 2));
+		firexy = (h - sparky) * firePitch + x;
 		if (sparky < h && sparky > 0 && fire[firexy] > cutoff &&
 				ABS((int)::AGS::g_vm->getRandomNumber(0x7fffffff) % 10) > 7)
 			fire[firexy] = 0;
