@@ -21,6 +21,7 @@
  */
 
 #include "common/scummsys.h"
+#include "trecision/trecision.h"
 
 namespace Trecision {
 
@@ -30,6 +31,8 @@ void byte2word(void *dest, void *src, void *data, uint32 len) {
 	for (uint32 i = 0; i < len; i++)
 		*d++ = p[*s++];
 }
+
+#if (!USE_NEW_VIDEO_CODE)
 void byte2wordm(void *dest, void *src, void *data, uint32 len) {
 	uint16 *d = (uint16 *)dest, *p = (uint16 *)data;
 	uint8 *s = (uint8 *)src;
@@ -41,6 +44,8 @@ void byte2wordm(void *dest, void *src, void *data, uint32 len) {
 			*d++ = p[v];
 	}
 }
+#endif
+
 void byte2wordn(void *dest, void *src, void *data, uint32 len) {
 	uint16 *d = (uint16 *)dest, *p = (uint16 *)data, *t = (uint16 *)((uint8 *)(dest) - 537600);
 	uint8 *s = (uint8 *)src;

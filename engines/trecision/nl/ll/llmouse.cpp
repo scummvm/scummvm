@@ -46,15 +46,15 @@ uint16 BlinkLastDTextChar = MASKCOL;
 /*-----------------17/02/95 09.53-------------------
  TextLength - Compute string length from character 0 to num
 --------------------------------------------------*/
-uint16 TextLength(const char *sign, uint16 num) {
-	if (sign == nullptr)
+uint16 TextLength(const char *text, uint16 num) {
+	if (text == nullptr)
 		return 0;
 
-	uint16 len = (num == 0) ? strlen(sign) : num;
+	uint16 len = (num == 0) ? strlen(text) : num;
 
 	uint16 retVal = 0;
 	for (uint16 c = 0; c < len; c++)
-		retVal += g_vm->Font[(uint8)sign[c] * 3 + 2];
+		retVal += g_vm->Font[(uint8)text[c] * 3 + 2];
 
 	return retVal;
 }
@@ -170,7 +170,6 @@ void SDText::DText(uint16 *frameBuffer) {
 		return;
 
 	uint16 *buffer = (frameBuffer == nullptr) ? g_vm->_screenBuffer : frameBuffer;
-	uint16 factor = (frameBuffer == nullptr) ? 1 : 2;
 	uint16 curDy = checkDText();
 
 	for (uint16 b = 0; b < (curDy / CARHEI); b++) {
@@ -184,26 +183,26 @@ void SDText::DText(uint16 *frameBuffer) {
 		}
 
 		for (uint16 c = 0; c < len; c++) {
-			uint8 curCar = text[c]; /* legge prima parte del font */
+			byte curChar = text[c]; /* legge prima parte del font */
 
-			uint16 charDeviation = (uint16)g_vm->Font[curCar * 3] + (uint16)(g_vm->Font[curCar * 3 + 1] << 8);
-			uint16 dataDeviation = 768;
-			uint16 charWidth = g_vm->Font[curCar * 3 + 2];
+			const uint16 charOffset = g_vm->Font[curChar * 3] + (uint16)(g_vm->Font[curChar * 3 + 1] << 8);
+			uint16 fontDataOffset = 768;
+			const uint16 charWidth = g_vm->Font[curChar * 3 + 2];
 
 			if (c == len - 1 && BlinkLastDTextChar != MASKCOL)
 				tmpTCol = BlinkLastDTextChar;
 
-			for (uint16 a = (b * CARHEI); a < ((b + 1)*CARHEI); a++) {
+			for (uint16 a = b * CARHEI; a < (b + 1) * CARHEI; a++) {
 				uint16 curPos = 0;
 				uint16 CurColor = tmpSCol;
 
 				while (curPos <= charWidth - 1) {
 					if (a >= _subtitleRect.top && a < _subtitleRect.bottom) {
-						if (CurColor != MASKCOL && (g_vm->Font[charDeviation + dataDeviation])) {
-							uint16 charLeft = inc + curPos;
-							uint16 charRight = charLeft + g_vm->Font[charDeviation + dataDeviation];
-							uint16 *dst1 = buffer + (x + charLeft + (y + a) * SCREENLEN) / factor;
-							uint16 *dst2 = buffer + (x + _subtitleRect.left + (y + a) * SCREENLEN) / factor;
+						if (CurColor != MASKCOL && (g_vm->Font[charOffset + fontDataOffset])) {
+							const uint16 charLeft = inc + curPos;
+							const uint16 charRight = charLeft + g_vm->Font[charOffset + fontDataOffset];
+							uint16 *dst1 = buffer + x + charLeft + (y + a) * SCREENLEN;
+							uint16 *dst2 = buffer + x + _subtitleRect.left + (y + a) * SCREENLEN;
 							uint16 *dst = nullptr;
 							uint16 size = 0;
 							
@@ -222,15 +221,15 @@ void SDText::DText(uint16 *frameBuffer) {
 							}
 
 							if (dst && size > 0) {
-								uint16 *d = (uint16 *)dst;
+								uint16 *d = dst;
 								for (uint32 i = 0; i < size; i++)
 									*d++ = CurColor;
 							}
 						}
 					}
 
-					curPos += g_vm->Font[charDeviation + dataDeviation];
-					dataDeviation++;
+					curPos += g_vm->Font[charOffset + fontDataOffset];
+					fontDataOffset++;
 
 					if (CurColor == tmpSCol)
 						CurColor = 0;
