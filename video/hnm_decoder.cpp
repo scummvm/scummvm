@@ -304,9 +304,8 @@ void HNMDecoder::HNM4VideoTrack::decodeInterframe(Common::SeekableReadStream *st
 				// Fill (next byte of input) * 2 of output with (next byte of input)
 				c = stream->readByte() * 2;
 				fill = stream->readByte();
-				while (c--) {
-					_frameBufferC[currentPos++] = fill;
-				}
+				memset(&_frameBufferC[currentPos], fill, c);
+				currentPos += c;
 				size -= 2;
 				break;
 			default:
@@ -485,27 +484,26 @@ void HNMDecoder::HNM4VideoTrack::postprocess(uint16 flags) {
 	if ((flags & 1) == 1) {
 		memcpy(_frameBufferF, _frameBufferC, width * height);
 	} else if ((width % 4) == 0) {
-		byte *input = _frameBufferC;
-		byte *line0 = _frameBufferF;
-		byte *line1 = _frameBufferF + width;
+		uint32 *input = (uint32 *)_frameBufferC;
+		uint32 *line0 = (uint32 *)_frameBufferF;
+		uint32 *line1 = (uint32 *)(_frameBufferF + width);
 		int count = (height) / 2;
 		while (count--) {
-			int16 i;
+			int i;
 			for (i = 0; i < width / 4; i++) {
-				byte p0 = *input++, p1 = *input++, p2 = *input++, p3 = *input++;
-				byte p4 = *input++, p5 = *input++, p6 = *input++, p7 = *input++;
+				uint32 p0 = *input++;
+				uint32 p4 = *input++;
 
-				*line0++ = p0;
-				*line0++ = p2;
-				*line0++ = p4;
-				*line0++ = p6;
-				*line1++ = p1;
-				*line1++ = p3;
-				*line1++ = p5;
-				*line1++ = p7;
+#ifndef SCUMM_LITTLE_ENDIAN
+				*line0++ = ((p4 & 0xFF00) >> 8) | ((p4 & 0xFF000000) >> 16) | ((p0 & 0xFF00) << 8) | (p0 & 0xFF000000);
+				*line1++ = ((p0 & 0xFF0000) << 8) | ((p0 & 0xFF) << 16) | ((p4 & 0xFF0000) >> 8) | (p4 & 0xFF);
+#else
+				*line0++ = (p0 & 0xFF) | ((p0 & 0xFF0000) >> 8) | ((p4 & 0xFF) << 16) | ((p4 & 0xFF0000) << 8);
+				*line1++ = ((p0 & 0xFF00) >> 8) | ((p0 & 0xFF000000) >> 16) | ((p4 & 0xFF00) << 8) | (p4 & 0xFF000000);
+#endif
 			}
-			line0 += width;
-			line1 += width;
+			line0 += width / 4;
+			line1 += width / 4;
 		}
 	} else {
 		error("HNMDecoder::HNM4VideoTrack::postprocess(%x): Unexpected width: %d", flags, width);
