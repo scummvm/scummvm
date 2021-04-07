@@ -190,7 +190,7 @@ void GriffonEngine::intro() {
 	Common::TextToSpeechManager *_ttsMan = g_system->getTextToSpeechManager();
 	if (_ttsMan != nullptr) {
 		Common::String result = story[0];
-		for(int i=10; i< ARRAYSIZE(story); ++i){
+		for(int i = 10; i < ARRAYSIZE(story); ++i){
 			result+=story[i];
 		}
 		_ttsMan->say(result);
