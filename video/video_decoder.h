@@ -966,7 +966,10 @@ private:
 	bool hasFramesLeft() const;
 	bool hasAudio() const;
 
+protected:
 	int32 _startTime;
+
+private:
 	uint32 _pauseLevel;
 	uint32 _pauseStartTime;
 	byte _audioVolume;
