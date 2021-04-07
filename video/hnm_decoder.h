@@ -39,6 +39,7 @@ namespace Video {
  * Decoder for HNM videos.
  *
  * Video decoder used in engines:
+ *  - cryo
  *  - cryomni3d
  */
 class HNMDecoder : public VideoDecoder {

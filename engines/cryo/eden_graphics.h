@@ -32,7 +32,7 @@ class HnmPlayer;
 
 class EdenGraphics {
 public:
-	EdenGraphics(EdenGame *game, HnmPlayer *video);
+	EdenGraphics(EdenGame *game);
 
 	// Original name: noclipax
 	void drawSprite(int16 index, int16 x, int16 y, bool withBlack = false, bool onSubtitle = false);
@@ -154,7 +154,6 @@ public:
 
 private:
 	EdenGame *_game;
-	HnmPlayer *_video;
 
 	int16 _glowX;
 	int16 _glowY;
@@ -233,7 +232,7 @@ private:
 
 	////// film.c
 	// Original name: showfilm
-	void showMovie(char arg1);
+	void showMovie(int16 num, char arg1);
 
 	// Original name bullehnm
 	void handleHNMSubtitles();
