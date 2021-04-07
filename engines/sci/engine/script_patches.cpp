@@ -13269,6 +13269,37 @@ static const uint16 qfg3PatchNrsAngerGuardian[] = {
 	PATCH_END
 };
 
+// The NRS fan-patch, which is included with the GOG release, has a script bug
+//  which causes spears to float during the moving target contest in room 460.
+//  The patch throttles the speed of several room objects with a technique that
+//  assumes there will only be one instance of each. trackSpear is responsible
+//  for updating the position of a spear that hits the moving target and one of
+//  these is created for each spear. Each trackSpear uses the same variable to
+//  enforce their doit throttling and so they stomp on each other's values.
+//  Subsequent trackSpears never make it past the throttling code and are stuck.
+//
+// We fix this by patching out the buggy trackSpear throttling. Disabling this
+//  code has no effect on speed because it turns out that trackSpear isn't
+//  responsible for any speeds in the first place.
+//
+// Applies to: Any version with NRS patches 460.HEP/SCR, such as GOG
+// Responsible method: trackSpear:doit
+// Fixes bug: #11426
+static const uint16 qfg3SignatureNrsFloatingSpears[] = {
+	0x78,                               // push1
+	SIG_MAGICDWORD,
+	0x89, 0x58,                         // lsg 58 [ game time ]
+	0x83, 0x67,                         // lal 67 [ game time of previous trackSpear:doit ]
+	SIG_ADDTOOFFSET(+15),
+	0xa3, 0x67,                         // sal 67 [ store game time ]
+	SIG_END
+};
+
+static const uint16 qfg3PatchNrsFloatingSpears[] = {
+	0x32, PATCH_UINT16(0x0013),         // jmp 0013 [ skip trackSpear throttling ]
+	PATCH_END
+};
+
 //          script, description,                                      signature                    patch
 static const SciScriptPatcherEntry qfg3Signatures[] = {
 	{  true,   944, "import dialog continuous calls",                     1, qfg3SignatureImportDialog,           qfg3PatchImportDialog },
@@ -13280,6 +13311,7 @@ static const SciScriptPatcherEntry qfg3Signatures[] = {
 	{  true,   285, "missing points for telling about initiation heap",   1, qfg3SignatureMissingPoints1,         qfg3PatchMissingPoints1 },
 	{  true,   285, "missing points for telling about initiation script", 1, qfg3SignatureMissingPoints2a,	      qfg3PatchMissingPoints2 },
 	{  true,   285, "missing points for telling about initiation script", 1, qfg3SignatureMissingPoints2b,        qfg3PatchMissingPoints2 },
+	{  true,   460, "NRS: floating spears",                               1, qfg3SignatureNrsFloatingSpears,      qfg3PatchNrsFloatingSpears },
 	{  true,   550, "combat speed throttling script",                     1, qfg3SignatureCombatSpeedThrottling1, qfg3PatchCombatSpeedThrottling1 },
 	{  true,   550, "combat speed throttling heap",                       1, qfg3SignatureCombatSpeedThrottling2, qfg3PatchCombatSpeedThrottling2 },
 	{  true,   750, "hero goes out of bounds in room 750",                2, qfg3SignatureRoom750Bounds1,         qfg3PatchRoom750Bounds1 },
