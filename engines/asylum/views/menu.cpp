@@ -1738,7 +1738,7 @@ void Menu::clickSaveGame() {
 		if (cursor.x >= 350) {
 			sprintf((char *)&text, "%d. %s ", index + _startIndex + 7, getSaveLoad()->getName((uint32)(index + _startIndex + 6)).c_str());
 
-			if (cursor.x <= (30 + getText()->getWidth((char *)&text))
+			if (cursor.x <= (350 + getText()->getWidth((char *)&text))
 			 && cursor.y >= y
 			 && cursor.y <= (y + 24)
 			 && getWorld()->chapter != kChapterNone) {
@@ -1759,7 +1759,7 @@ void Menu::clickSaveGame() {
 		} else if (cursor.x >= 30) {
 			sprintf((char *)&text, "%d. %s ", index + _startIndex + 1, getSaveLoad()->getName((uint32)(index + _startIndex)).c_str());
 
-			if (cursor.x <= (350 + getText()->getWidth((char *)&text))
+			if (cursor.x <= (30 + getText()->getWidth((char *)&text))
 			 && cursor.y >= y
 			 && cursor.y <= (y + 24)
 			 && getScene()
@@ -1843,7 +1843,7 @@ void Menu::clickDeleteGame() {
 		if (cursor.x >= 350) {
 			sprintf((char *)&text, "%d. %s ", index + _startIndex + 7, getSaveLoad()->getName((uint32)(index + _startIndex + 6)).c_str());
 
-			if (cursor.x <= (30 + getText()->getWidth((char *)&text))
+			if (cursor.x <= (350 + getText()->getWidth((char *)&text))
 			 && cursor.y >= y
 			 && cursor.y <= (y + 24)) {
 				uint32 saveIndex = (uint32)(index + _startIndex);
@@ -1857,7 +1857,7 @@ void Menu::clickDeleteGame() {
 		} else if (cursor.x >= 30) {
 			sprintf((char *)&text, "%d. %s ", index + _startIndex + 1, getSaveLoad()->getName((uint32)(index + _startIndex)).c_str());
 
-			if (cursor.x <= (350 + getText()->getWidth((char *)&text))
+			if (cursor.x <= (30 + getText()->getWidth((char *)&text))
 				&& cursor.y >= y
 				&& cursor.y <= (y + 24)) {
 					uint32 saveIndex = (uint32)(index + _startIndex);
