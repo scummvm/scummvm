@@ -44,7 +44,6 @@ CryoEngine::CryoEngine(OSystem *syst, const ADGameDescription *gameDesc) : Engin
 	_rnd = new Common::RandomSource("cryo");
 
 	_game = nullptr;
-	_video = nullptr;
 	_screenView = nullptr;
 
 	_showHotspots = false;
@@ -56,7 +55,6 @@ CryoEngine::CryoEngine(OSystem *syst, const ADGameDescription *gameDesc) : Engin
 CryoEngine::~CryoEngine() {
 	delete _rnd;
 	delete _game;
-	delete _video;
 	delete _screenView;
 
 	DebugMan.clearAllDebugChannels();
@@ -64,7 +62,6 @@ CryoEngine::~CryoEngine() {
 
 Common::Error CryoEngine::run() {
 	_game = new EdenGame(this);
-	_video = new HnmPlayer(this);
 	_screenView = new View(320, 200);
 	setDebugger(new Debugger(this));
 

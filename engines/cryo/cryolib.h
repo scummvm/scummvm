@@ -71,14 +71,6 @@ struct color_t {
 	uint16   a, r, g, b;
 };
 
-struct HNMHeader {
-	int32   _signature;
-	uint16  _width;
-	uint16  _height;
-	int32   _numbFrame;
-	int32   _bufferSize;
-};
-
 void SysBeep(int x);
 void FlushEvents(int16 arg1, int16 arg2);
 
