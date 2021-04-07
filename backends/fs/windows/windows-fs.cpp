@@ -27,6 +27,7 @@
 
 #include "backends/fs/windows/windows-fs.h"
 #include "backends/fs/stdiostream.h"
+#include "backends/platform/sdl/win32/win32_wrapper.h"
 
 // F_OK, R_OK and W_OK are not defined under MSVC, so we define them here
 // For more information on the modes used by MSVC, check:
@@ -44,20 +45,20 @@
 #endif
 
 bool WindowsFilesystemNode::exists() const {
-	return _access(_path.c_str(), F_OK) == 0;
+	return _waccess(Win32::asciiToWinUnicode(_path.c_str()), F_OK) == 0;
 }
 
 bool WindowsFilesystemNode::isReadable() const {
-	return _access(_path.c_str(), R_OK) == 0;
+	return _waccess(Win32::asciiToWinUnicode(_path.c_str()), R_OK) == 0;
 }
 
 bool WindowsFilesystemNode::isWritable() const {
-	return _access(_path.c_str(), W_OK) == 0;
+	return _waccess(Win32::asciiToWinUnicode(_path.c_str()), W_OK) == 0;
 }
 
-void WindowsFilesystemNode::addFile(AbstractFSList &list, ListMode mode, const char *base, bool hidden, WIN32_FIND_DATA* find_data) {
+void WindowsFilesystemNode::addFile(AbstractFSList &list, ListMode mode, const char *base, bool hidden, LPWIN32_FIND_DATAW find_data) {
 	WindowsFilesystemNode entry;
-	char *asciiName = toAscii(find_data->cFileName);
+	char *asciiName = Win32::winUnicodeToAscii(find_data->cFileName);
 	bool isDirectory;
 
 	// Skip local directory (.) and parent (..)
@@ -86,25 +87,6 @@ void WindowsFilesystemNode::addFile(AbstractFSList &list, ListMode mode, const c
 	list.push_back(new WindowsFilesystemNode(entry));
 }
 
-char* WindowsFilesystemNode::toAscii(TCHAR *str) {
-#ifndef UNICODE
-	return (char *)str;
-#else
-	static char asciiString[MAX_PATH];
-	WideCharToMultiByte(CP_ACP, 0, str, _tcslen(str) + 1, asciiString, sizeof(asciiString), NULL, NULL);
-	return asciiString;
-#endif
-}
-
-const TCHAR* WindowsFilesystemNode::toUnicode(const char *str) {
-#ifndef UNICODE
-	return (const TCHAR *)str;
-#else
-	static TCHAR unicodeString[MAX_PATH];
-	MultiByteToWideChar(CP_ACP, 0, str, strlen(str) + 1, unicodeString, sizeof(unicodeString) / sizeof(TCHAR));
-	return unicodeString;
-#endif
-}
 
 WindowsFilesystemNode::WindowsFilesystemNode() {
 	// Create a virtual root directory for standard Windows system
@@ -133,7 +115,7 @@ WindowsFilesystemNode::WindowsFilesystemNode(const Common::String &p, const bool
 
 void WindowsFilesystemNode::setFlags() {
 	// Check whether it is a directory, and whether the file actually exists
-	DWORD fileAttribs = GetFileAttributes(toUnicode(_path.c_str()));
+	DWORD fileAttribs = GetFileAttributesW(Win32::asciiToWinUnicode(_path.c_str()));
 
 	if (fileAttribs == INVALID_FILE_ATTRIBUTES) {
 		_isDirectory = false;
@@ -167,39 +149,39 @@ bool WindowsFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, b
 
 	if (_isPseudoRoot) {
 		// Drives enumeration
-		TCHAR drive_buffer[100];
-		GetLogicalDriveStrings(sizeof(drive_buffer) / sizeof(TCHAR), drive_buffer);
+		wchar_t drive_buffer[100];
+		GetLogicalDriveStringsW(sizeof(drive_buffer) / sizeof(wchar_t), drive_buffer);
 
-		for (TCHAR *current_drive = drive_buffer; *current_drive;
-			current_drive += _tcslen(current_drive) + 1) {
+		for (wchar_t *current_drive = drive_buffer; *current_drive;
+			current_drive += wcsnlen(current_drive, MAX_PATH) + 1) {
 				WindowsFilesystemNode entry;
 				char drive_name[2];
 
-				drive_name[0] = toAscii(current_drive)[0];
+				drive_name[0] = Win32::winUnicodeToAscii(current_drive)[0];
 				drive_name[1] = '\0';
 				entry._displayName = drive_name;
 				entry._isDirectory = true;
 				entry._isValid = true;
 				entry._isPseudoRoot = false;
-				entry._path = toAscii(current_drive);
+				entry._path = Win32::winUnicodeToAscii(current_drive);
 				myList.push_back(new WindowsFilesystemNode(entry));
 		}
 	} else {
 		// Files enumeration
-		WIN32_FIND_DATA desc;
+		WIN32_FIND_DATAW desc;
 		HANDLE handle;
 		char searchPath[MAX_PATH + 10];
 
 		sprintf(searchPath, "%s*", _path.c_str());
 
-		handle = FindFirstFile(toUnicode(searchPath), &desc);
+		handle = FindFirstFileW(Win32::asciiToWinUnicode(searchPath), &desc);
 
 		if (handle == INVALID_HANDLE_VALUE)
 			return false;
 
 		addFile(myList, mode, _path.c_str(), hidden, &desc);
 
-		while (FindNextFile(handle, &desc))
+		while (FindNextFileW(handle, &desc))
 			addFile(myList, mode, _path.c_str(), hidden, &desc);
 
 		FindClose(handle);
@@ -231,15 +213,23 @@ AbstractFSNode *WindowsFilesystemNode::getParent() const {
 }
 
 Common::SeekableReadStream *WindowsFilesystemNode::createReadStream() {
-	return StdioStream::makeFromPath(getPath(), false);
+	return makeFromPath(getPath(), false);
 }
 
 Common::WriteStream *WindowsFilesystemNode::createWriteStream() {
-	return StdioStream::makeFromPath(getPath(), true);
+	return makeFromPath(getPath(), true);
+}
+
+//TODO fix StdioStream::makeFromPath, use it instead of this, and remove this
+StdioStream *WindowsFilesystemNode::makeFromPath(const Common::String &path, bool writeMode) {
+	FILE *handle = _wfopen(Win32::asciiToWinUnicode(path.c_str()), writeMode ? L"wb" : L"rb");
+	if (handle)
+		return new StdioStream(handle);
+	return 0;
 }
 
 bool WindowsFilesystemNode::createDirectory() {
-	if (CreateDirectory(toUnicode(_path.c_str()), NULL) != 0)
+	if (CreateDirectoryW(Win32::asciiToWinUnicode(_path.c_str()), NULL) != 0)
 		setFlags();
 
 	return _isValid && _isDirectory;

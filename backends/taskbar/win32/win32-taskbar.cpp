@@ -129,7 +129,7 @@ void Win32TaskbarManager::setOverlayIcon(const Common::String &name, const Commo
 	}
 
 	// Sets the overlay icon
-	LPWSTR desc = Win32::ansiToUnicode(description.c_str());
+	LPWSTR desc = Win32::asciiToWinUnicode(description.c_str());
 	_taskbar->SetOverlayIcon(_window->getHwnd(), pIcon, desc);
 
 	DestroyIcon(pIcon);
@@ -263,7 +263,7 @@ void Win32TaskbarManager::setCount(int count) {
 	}
 
 	// Sets the overlay icon
-	LPWSTR desc = Win32::ansiToUnicode(Common::String::format("Found games: %d", count).c_str());
+	LPWSTR desc = Win32::asciiToWinUnicode(Common::String::format("Found games: %d", count).c_str());
 	_taskbar->SetOverlayIcon(_window->getHwnd(), _icon, desc);
 	free(desc);
 }
@@ -284,8 +284,8 @@ void Win32TaskbarManager::addRecent(const Common::String &name, const Common::St
 	// Create a shell link.
 	if (SUCCEEDED(CoCreateInstance(CLSID_ShellLink, NULL, CLSCTX_INPROC, IID_IShellLinkW, reinterpret_cast<void **> (&link)))) {
 		// Convert game name and description to Unicode.
-		LPWSTR game = Win32::ansiToUnicode(name.c_str());
-		LPWSTR desc = Win32::ansiToUnicode(description.c_str());
+		LPWSTR game = Win32::asciiToWinUnicode(name.c_str());
+		LPWSTR desc = Win32::asciiToWinUnicode(description.c_str());
 
 		// Set link properties.
 		link->SetPath(path);
@@ -295,7 +295,7 @@ void Win32TaskbarManager::addRecent(const Common::String &name, const Common::St
 		if (iconPath.empty()) {
 			link->SetIconLocation(path, 0); // No game-specific icon available
 		} else {
-			LPWSTR icon = Win32::ansiToUnicode(iconPath.c_str());
+			LPWSTR icon = Win32::asciiToWinUnicode(iconPath.c_str());
 
 			link->SetIconLocation(icon, 0);
 

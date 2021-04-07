@@ -26,6 +26,7 @@
 #include <windows.h>
 
 #include "backends/fs/abstract-fs.h"
+#include "backends/fs/stdiostream.h"
 
 #include <io.h>
 #include <stdio.h>
@@ -80,6 +81,8 @@ public:
 
 	virtual Common::SeekableReadStream *createReadStream() override;
 	virtual Common::WriteStream *createWriteStream() override;
+	//TODO fix StdioStream::makeFromPath, use it instead of this, and remove this
+	StdioStream *makeFromPath(const Common::String &path, bool writeMode);
 	virtual bool createDirectory() override;
 
 private:
@@ -93,23 +96,7 @@ private:
 	 * @param hidden       true if hidden files should be added, false otherwise
 	 * @param find_data    Describes a file that the FindFirstFile, FindFirstFileEx, or FindNextFile functions find.
 	 */
-	static void addFile(AbstractFSList &list, ListMode mode, const char *base, bool hidden, WIN32_FIND_DATA* find_data);
-
-	/**
-	 * Converts a Unicode string to Ascii format.
-	 *
-	 * @param str Common::String to convert from Unicode to Ascii.
-	 * @return str in Ascii format.
-	 */
-	static char *toAscii(TCHAR *str);
-
-	/**
-	 * Converts an Ascii string to Unicode format.
-	 *
-	 * @param str Common::String to convert from Ascii to Unicode.
-	 * @return str in Unicode format.
-	 */
-	static const TCHAR* toUnicode(const char *str);
+	static void addFile(AbstractFSList &list, ListMode mode, const char *base, bool hidden, LPWIN32_FIND_DATAW find_data);
 
 	/**
 	 * Tests and sets the _isValid and _isDirectory flags, using the GetFileAttributes() function.

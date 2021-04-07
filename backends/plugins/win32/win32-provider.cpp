@@ -40,7 +40,7 @@ private:
 		return (const TCHAR *)x;
 	#else
 		static TCHAR unicodeString[MAX_PATH];
-		MultiByteToWideChar(CP_ACP, 0, x, strlen(x) + 1, unicodeString, sizeof(unicodeString) / sizeof(TCHAR));
+		MultiByteToWideChar(CP_UTF8, 0, x, strlen(x) + 1, unicodeString, sizeof(unicodeString) / sizeof(TCHAR));
 		return unicodeString;
 	#endif
 	}

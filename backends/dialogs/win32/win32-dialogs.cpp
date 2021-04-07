@@ -92,7 +92,7 @@ HRESULT getShellPath(IShellItem *item, Common::String &path) {
 	LPWSTR name = NULL;
 	HRESULT hr = item->GetDisplayName(SIGDN_FILESYSPATH, &name);
 	if (SUCCEEDED(hr)) {
-		char *str = Win32::unicodeToAnsi(name);
+		char *str = Win32::winUnicodeToAscii(name);
 		path = Common::String(str);
 		CoTaskMemFree(name);
 		free(str);
@@ -140,7 +140,7 @@ Common::DialogManager::DialogResult Win32DialogManager::showFileBrowser(const Co
 
 		LPWSTR str;
 		if (ConfMan.hasKey("browser_lastpath")) {
-			str = Win32::ansiToUnicode(ConfMan.get("browser_lastpath").c_str());
+			str = Win32::asciiToWinUnicode(ConfMan.get("browser_lastpath").c_str());
 			IShellItem *item = NULL;
 			hr = winCreateItemFromParsingName(str, NULL, IID_IShellItem, reinterpret_cast<void **> (&(item)));
 			if (SUCCEEDED(hr)) {

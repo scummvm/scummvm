@@ -31,6 +31,7 @@
 #include "common/scummsys.h"
 #include "backends/platform/sdl/win32/win32_wrapper.h"
 
+
 // VerSetConditionMask, VerifyVersionInfo and SHGetFolderPath didn't appear until Windows 2000,
 // so we need to check for them at runtime
 ULONGLONG VerSetConditionMaskFunc(ULONGLONG dwlConditionMask, DWORD dwTypeMask, BYTE dwConditionMask) {
@@ -80,7 +81,7 @@ bool confirmWindowsVersion(int majorVersion, int minorVersion) {
 	return VerifyVersionInfoFunc(&versionInfo, VER_MAJORVERSION | VER_MINORVERSION, conditionMask);
 }
 
-wchar_t *ansiToUnicode(const char *s, uint codePage) {
+wchar_t *asciiToWinUnicode(const char *s, uint codePage) {
 	DWORD size = MultiByteToWideChar(codePage, 0, s, -1, NULL, 0);
 
 	if (size > 0) {
@@ -92,7 +93,7 @@ wchar_t *ansiToUnicode(const char *s, uint codePage) {
 	return NULL;
 }
 
-char *unicodeToAnsi(const wchar_t *s, uint codePage) {
+char *winUnicodeToAscii(const wchar_t *s, uint codePage) {
 	DWORD size = WideCharToMultiByte(codePage, 0, s, -1, NULL, 0, 0, 0);
 
 	if (size > 0) {

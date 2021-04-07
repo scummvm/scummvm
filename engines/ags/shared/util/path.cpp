@@ -216,7 +216,7 @@ String WidePathNameToAnsi(LPCWSTR pathw) {
 	LPCWSTR arg_path = pathw;
 	if (GetShortPathNameW(arg_path, short_path, MAX_PATH) == 0)
 		return "";
-	WideCharToMultiByte(CP_ACP, 0, short_path, -1, ascii_buffer, MAX_PATH, NULL, NULL);
+	WideCharToMultiByte(CP_UTF8, 0, short_path, -1, ascii_buffer, MAX_PATH, NULL, NULL);
 	return ascii_buffer;
 }
 #endif
