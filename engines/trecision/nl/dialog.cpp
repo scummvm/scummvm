@@ -115,9 +115,7 @@ void PlayDialog(uint16 i) {
 	memset(g_vm->_screenBuffer, 0, MAXX * TOP * 2);
 	g_vm->_graphicsMgr->copyToScreen(0, 0, MAXX, TOP);
 
-#if USE_NEW_VIDEO_CODE
-	g_vm->_animMgr->playMovie(_dialog[i]._startAnim);
-#else
+#if (!USE_NEW_VIDEO_CODE)
 	g_vm->_animMgr->startFullMotion((const char *)_dialog[i]._startAnim);
 #endif
 
