@@ -283,6 +283,7 @@ void ScriptManager::resetAll() {
 
 void ScriptManager::reset(uint32 count) {
 	// Create a set of empty scripts
+	_scripts.clear();
 	for (uint32 i = 0; i < count; i++) {
 		Script script;
 		_scripts.push_back(script);
