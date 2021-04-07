@@ -1806,6 +1806,10 @@ IMPLEMENT_OPCODE(UpdateTransparency)
 	if (cmd->param2 >= 0 && cmd->param2 <= 3) {
 		if (cmd->param1) {
 			Object *object = getWorld()->getObjectById((ObjectId)cmd->param1);
+			if (!object) {
+				warning("No object with id %d", cmd->param1);
+				return;
+			}
 
 			if (!cmd->param2)
 				object->setTransparency(0);
