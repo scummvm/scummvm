@@ -142,6 +142,7 @@ void AnimManager::playMovie(Common::String filename, int startFrame, int endFram
 	startFrame = CLIP<int32>(startFrame, 1, smkDecoder->getFrameCount() - 1);
 	endFrame = CLIP<int32>(endFrame, 1, smkDecoder->getFrameCount());	
 	bool skipVideo = false;
+	g_vm->_sdText.text = nullptr;
 
 	smkDecoder->start();
 
