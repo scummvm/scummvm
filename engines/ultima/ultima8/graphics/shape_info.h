@@ -144,6 +144,9 @@ public:
 	inline bool is_u8_explode() const {
 		return (_flags & SI_U8_EXPLODE) != 0;
 	}
+	inline bool is_targetable() const {
+		return (_flags & (SI_OCCL | SI_CRU_TARGETABLE));
+	}
 
 	bool hasQuantity() const {
 		return (_family == SF_QUANTITY || _family == SF_REAGENT);

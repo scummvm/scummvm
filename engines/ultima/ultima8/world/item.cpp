@@ -469,11 +469,28 @@ Box Item::getWorldBox() const {
 }
 
 void Item::setShape(uint32 shape) {
-	_shape = shape;
-	_cachedShapeInfo = nullptr;
 	_cachedShape = nullptr;
-	// FIXME: In Crusader, here we should check if the shape
-	// changed from targetable to not-targetable, or vice-versa
+
+	if (GAME_IS_CRUSADER) {
+		// In Crusader, here we need to check if the shape
+		// changed from targetable to not-targetable, or vice-versa
+		const ShapeInfo *oldinfo = getShapeInfo();
+		_shape = shape;
+		_cachedShapeInfo = nullptr;
+		const ShapeInfo *newinfo = getShapeInfo();
+
+		if (!hasFlags(FLG_BROKEN)) {
+			if (oldinfo->is_targetable() && !newinfo->is_targetable()) {
+				World::get_instance()->getCurrentMap()->removeTargetItem(this);
+			}
+			else if (!oldinfo->is_targetable() && newinfo->is_targetable()) {
+				World::get_instance()->getCurrentMap()->addTargetItem(this);
+			}
+		}
+	} else {
+		_shape = shape;
+		_cachedShapeInfo = nullptr;
+	}
 }
 
 bool Item::overlaps(const Item &item2) const {
@@ -1810,7 +1827,7 @@ void Item::enterFastArea() {
 	}
 
 	if (!hasFlags(FLG_BROKEN) && GAME_IS_CRUSADER) {
-		if ((si->_flags & ShapeInfo::SI_CRU_TARGETABLE) || (si->_flags & ShapeInfo::SI_OCCL)) {
+		if (si->is_targetable()) {
 			World::get_instance()->getCurrentMap()->addTargetItem(this);
 		}
 		if (_shape == SNAP_EGG_SHAPE) {
