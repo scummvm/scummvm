@@ -177,7 +177,9 @@ void Resources::loadData() {
 	file.syncString(NOT_ENOUGH_X_IN_THE_Y);
 	file.syncString(NO_X_IN_THE_Y);
 	file.syncStrings(STAT_NAMES, 16);
-	file.syncStrings(CONSUMABLE_NAMES, 6);
+	file.syncStrings(CONSUMABLE_NAMES, 4);
+	file.syncStrings(CONSUMABLE_GOLD_FORMS, 1);
+	file.syncStrings(CONSUMABLE_GEM_FORMS, 1);
 	file.syncStrings(WHERE_NAMES, 2);
 	file.syncString(AMOUNT);
 	file.syncString(FOOD_PACKS_FULL);
@@ -223,6 +225,7 @@ void Resources::loadData() {
 	file.syncString(CURRENT_MAXIMUM_RATING_TEXT);
 	file.syncString(CURRENT_MAXIMUM_TEXT);
 	file.syncStrings(RATING_TEXT, 24);
+	file.syncStrings(BORN, 2);
 	file.syncString(AGE_TEXT);
 	file.syncString(LEVEL_TEXT);
 	file.syncString(RESISTENCES_TEXT);
@@ -230,6 +233,7 @@ void Resources::loadData() {
 	file.syncString(EXPERIENCE_TEXT);
 	file.syncString(ELIGIBLE);
 	file.syncString(IN_PARTY_IN_BANK);
+	file.syncStrings(FOOD_ON_HAND, 3);
 	file.syncString(FOOD_TEXT);
 	file.syncString(EXCHANGE_WITH_WHOM);
 	file.syncString(QUICK_REF_LINE);
@@ -364,6 +368,7 @@ void Resources::loadData() {
 	file.syncString(BACKPACKS_FULL_PRESS_KEY);
 	file.syncString(HIT_A_KEY);
 	file.syncString(GIVE_TREASURE_FORMATTING);
+	file.syncStrings(FOUND, 2);
 	file.syncString(X_FOUND_Y);
 	file.syncString(ON_WHO);
 	file.syncString(WHICH_ELEMENT1);
@@ -387,7 +392,9 @@ void Resources::loadData() {
 	file.syncString(WARZONE_LEVEL);
 	file.syncString(WARZONE_HOW_MANY);
 	file.syncString(PICKS_THE_LOCK);
+	file.syncStrings(PICK_FORM, 2);
 	file.syncString(UNABLE_TO_PICK_LOCK);
+	file.syncStrings(UNABLE_TO_PICK_FORM, 2);
 	file.syncString(CONTROL_PANEL_TEXT);
 	file.syncString(CONTROL_PANEL_BUTTONS);
 	file.syncString(ON);

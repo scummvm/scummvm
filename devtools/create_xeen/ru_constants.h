@@ -628,8 +628,20 @@ public:
 
 	const char **CONSUMABLE_NAMES() {
 		delete[] _consumableNames;
-		_consumableNames = new const char *[6] { "\x87\xAE\xAB\xAE\xE2\xAE", "\x80\xAB\xAC\xA0\xA7\xEB", "\x8F\xA8\xE9\xA0", "\x91\xAE\xE1\xE2\xAE\xEF\xAD\xA8\xA5", "\x87\xAE\xAB\xAE\xE2\xA0", "\x80\xAB\xAC\xA0\xA7\xAE\xA2" }; // "Золото", "Алмазы", "Пища", "Состояние", "Золота", "Алмазов"
+		_consumableNames = new const char *[4] { "\x87\xAE\xAB\xAE\xE2\xAE", "\x80\xAB\xAC\xA0\xA7\xEB", "\x8F\xA8\xE9\xA0", "\x91\xAE\xE1\xE2\xAE\xEF\xAD\xA8\xA5" }; // "Золото", "Алмазы", "Пища", "Состояние"
 		return _consumableNames;
+	}
+
+	const char **CONSUMABLE_GOLD_FORMS() {
+		delete[] _consumableGoldForms;
+		_consumableGoldForms = new const char *[1] { "\x87\xAE\xAB\xAE\xE2\xA0" }; // "Золота"
+		return _consumableGoldForms;
+	}
+
+	const char **CONSUMABLE_GEM_FORMS() {
+		delete[] _consumableGemForms;
+		_consumableGemForms = new const char *[1] { "\x80\xAB\xAC\xA0\xA7\xAE\xA2" }; // "Алмазов"
+		return _consumableGemForms;
 	}
 
 	const char **WHERE_NAMES() {
@@ -869,11 +881,17 @@ public:
 		return _ratingText;
 	}
 
+	const char **BORN() {
+		delete[] _born;
+		_born = new const char *[2] { "\x90\xAE\xA4\xA8\xAB\xE1\xEF", "\x90\xAE\xA4\xA8\xAB\xA0\xE1\xEC" }; // "Родился", "Родилась"
+		return _born;
+	}
+
 	const char *AGE_TEXT() {
 		return "\x2\x3""c%s\n"														   // "\x2\x3""c%s\n"
 			   "\x92\xA5\xAA\xE3\xE9\xA8\xA9 / \x8D\xA0\xE1\xE2\xAE\xEF\xE9\xA8\xA9\n" // "Текущий / Настоящий\n"
 			   "\x3""r\t057%u\x3""l\t061/ %u\n"                                        // "\x3""r\t057%u\x3""l\t061/ %u\n"
-			   "\x3""c\x90\xAE\xA4\xA8\xAB%s: %u / %u\x1";                             // "\x3""cРодил%s: %u / %u\x1";
+			   "\x3""c%s: %u / %u\x1";                             // "\x3""cРодил%s: %u / %u\x1";
 	}
 
 	const char *LEVEL_TEXT() {
@@ -913,9 +931,15 @@ public:
 			   "%lu \xA2 \xA1\xA0\xAD\xAA\xA5\x1\x3""l"; // "%lu в банке\x1\x3""l";
 	}
 
+	const char **FOOD_ON_HAND() {
+		delete[] _onHand;
+		_onHand = new const char *[3] { "\xAF\xAE\xE0\xE6\xA8\xEF", "\xAF\xAE\xE0\xE6\xA8\xA8", "\xAF\xAE\xE0\xE6\xA8\xA9" }; // "порция", "порции", "порций"
+		return _onHand;
+	}
+
 	const char *FOOD_TEXT() {
 		return "\x2\x3""c%s\n"									   // "\x2\x3""c%s\n"
-			   "%u \xAF\xAE\xE0\xE6\xA8%c\n"                       // "%u порци%c\n"
+			   "%u %s\n"										   // "%u %s\n"
 			   "\x95\xA2\xA0\xE2\xA8\xE2 \xAD\xA0 %u %s\x1\x3""l"; // "Хватит на %u %s\x1\x3""l";
 	}
 
@@ -1654,8 +1678,14 @@ public:
 			   "077";
 	}
 
+	const char **FOUND() {
+		delete[] _found;
+		_found = new const char *[2] { "\xAD\xA0\xE8\xF1\xAB", "\xAD\xA0\xE8\xAB\xA0" }; // "нашёл", "нашла"
+		return _found;
+	}
+
 	const char *X_FOUND_Y() {
-		return "\v060\t000\x3""c%s \xAD\xA0\xE8%s: %s"; // "\v060\t000\x3""c%s наш%s: %s"
+		return "\v060\t000\x3""c%s %s: %s"; // "\v060\t000\x3""c%s %s: %s"
 	}
 
 	const char *ON_WHO() {
@@ -1771,11 +1801,23 @@ public:
 	}
 
 	const char *PICKS_THE_LOCK() {
-		return "\x3""c\v010%s \xA2\xA7\xAB\xAE\xAC\xA0\xAB%s \xA7\xA0\xAC\xAE\xAA!\n\x8D\xA0\xA6\xAC\xA8\xE2\xA5 \xAA\xAB\xA0\xA2\xA8\xE8\xE3."; // "\x3""c\v010%s взломал%s замок!\nНажмите клавишу."
+		return "\x3""c\v010%s %s \xA7\xA0\xAC\xAE\xAA!\n\x8D\xA0\xA6\xAC\xA8\xE2\xA5 \xAA\xAB\xA0\xA2\xA8\xE8\xE3."; // "\x3""c\v010%s %s замок!\nНажмите клавишу."
+	}
+
+	const char **PICK_FORM() {
+		delete[] _pickForm;
+		_pickForm = new const char *[2] { "\xA2\xA7\xAB\xAE\xAC\xA0\xAB", "\xA2\xA7\xAB\xAE\xAC\xA0\xAB\xA0" }; // "взломал", "взломала"
+		return _pickForm;
 	}
 
 	const char *UNABLE_TO_PICK_LOCK() {
-		return "\x3""c\v010%s \xAD\xA5 \xE1\xAC\xAE\xA3%s \xA2\xA7\xAB\xAE\xAC\xA0\xE2\xEC \xA7\xA0\xAC\xAE\xAA!\n\x8D\xA0\xA6\xAC\xA8\xE2\xA5 \xAA\xAB\xA0\xA2\xA8\xE8\xE3."; // "\x3""c\v010%s не смог%s взломать замок!\nНажмите клавишу."
+		return "\x3""c\v010%s %s \xA2\xA7\xAB\xAE\xAC\xA0\xE2\xEC \xA7\xA0\xAC\xAE\xAA!\n\x8D\xA0\xA6\xAC\xA8\xE2\xA5 \xAA\xAB\xA0\xA2\xA8\xE8\xE3."; // "\x3""c\v010%s %s взломать замок!\nНажмите клавишу."
+	}
+
+	const char **UNABLE_TO_PICK_FORM() {
+		delete[] _unableToPickForm;
+		_unableToPickForm = new const char *[2] { "\xAD\xA5 \xE1\xAC\xAE\xA3", "\xAD\xA5 \xE1\xAC\xAE\xA3\xAB\xA0" }; // "не смог", "не смогла"
+		return _unableToPickForm;
 	}
 
 	const char *CONTROL_PANEL_TEXT() {

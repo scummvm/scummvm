@@ -124,6 +124,8 @@ protected:
 	const char **_statNames = NULL;
 	const char **_whereNames = NULL;
 	const char **_consumableNames = NULL;
+	const char **_consumableGoldForms = NULL;
+	const char **_consumableGemForms = NULL;
 	const char **_weekDayStrings = NULL;
 	const char **_ratingText = NULL;
 	const char **_bonusNames = NULL;
@@ -144,11 +146,16 @@ protected:
 	const char **_removeDelete = NULL;
 	const char **_spellCastComponents = NULL;
 	const char **_monsterSpecialAttacks = NULL;
+	const char **_pickForm = NULL;
+	const char **_unableToPickForm = NULL;
 	const char **_quickFightOptions = NULL;
 	const char **_goober = NULL;
 	const char **_worldEndText = NULL;
 	const char **_days = NULL;
 	const char **_sellXForYGoldEndings = NULL;
+	const char **_found = NULL;
+	const char **_born = NULL;
+	const char **_onHand = NULL;
 
 public:
 	virtual const char  *CLOUDS_CREDITS() = 0;
@@ -840,6 +847,8 @@ public:
 	virtual const char  *NO_X_IN_THE_Y() = 0;
 	virtual const char **STAT_NAMES() = 0;
 	virtual const char **CONSUMABLE_NAMES() = 0;
+	virtual const char **CONSUMABLE_GOLD_FORMS() = 0;
+	virtual const char **CONSUMABLE_GEM_FORMS() = 0;
 	virtual const char **WHERE_NAMES() = 0;
 	virtual const char  *AMOUNT() = 0;
 	virtual const char  *FOOD_PACKS_FULL() = 0;
@@ -965,6 +974,7 @@ public:
 	virtual const char  *CURRENT_MAXIMUM_RATING_TEXT() = 0;
 	virtual const char  *CURRENT_MAXIMUM_TEXT() = 0;
 	virtual const char **RATING_TEXT() = 0;
+	virtual const char **BORN() = 0;
 	virtual const char  *AGE_TEXT() = 0;
 	virtual const char  *LEVEL_TEXT() = 0;
 	virtual const char  *RESISTENCES_TEXT() = 0;
@@ -972,6 +982,7 @@ public:
 	virtual const char  *EXPERIENCE_TEXT() = 0;
 	virtual const char  *ELIGIBLE() = 0;
 	virtual const char  *IN_PARTY_IN_BANK() = 0;
+	virtual const char **FOOD_ON_HAND() = 0;
 	virtual const char  *FOOD_TEXT() = 0;
 	virtual const char  *EXCHANGE_WITH_WHOM() = 0;
 	virtual const char  *QUICK_REF_LINE() = 0;
@@ -1154,6 +1165,7 @@ public:
 	virtual const char  *BACKPACKS_FULL_PRESS_KEY() = 0;
 	virtual const char  *HIT_A_KEY() = 0;
 	virtual const char  *GIVE_TREASURE_FORMATTING() = 0;
+	virtual const char **FOUND() = 0;
 	virtual const char  *X_FOUND_Y() = 0;
 	virtual const char  *ON_WHO() = 0;
 	virtual const char  *WHICH_ELEMENT1() = 0;
@@ -1185,7 +1197,9 @@ public:
 	virtual const char  *WARZONE_LEVEL() = 0;
 	virtual const char  *WARZONE_HOW_MANY() = 0;
 	virtual const char  *PICKS_THE_LOCK() = 0;
+	virtual const char **PICK_FORM() = 0;
 	virtual const char  *UNABLE_TO_PICK_LOCK() = 0;
+	virtual const char **UNABLE_TO_PICK_FORM() = 0;
 	virtual const char  *CONTROL_PANEL_TEXT() = 0;
 	virtual const char  *CONTROL_PANEL_BUTTONS() = 0;
 	virtual const char  *ON() = 0;

@@ -52,7 +52,7 @@ private:
 	/**
 	 * Get plural day/days form
 	 */
-	Common::String getDaysPlurals(int val);
+	const char* getDaysPlurals(int val);
 
 	/**
 	 * Return a string containing the details of the character
@@ -63,6 +63,16 @@ private:
 	 * Cursor display handling
 	 */
 	void showCursor(bool flag);
+
+	/**
+	 * Get gender form 'born'
+	 */
+	const char *getBornForm(const Character &c);
+
+	/**
+	 * Get plural form 'on hand' for food
+	*/
+	const char *getFoodOnHandPlurals(int food);
 
 	bool expandStat(int attrib, const Character &c);
 public:

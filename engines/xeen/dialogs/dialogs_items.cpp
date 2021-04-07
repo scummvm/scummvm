@@ -752,7 +752,7 @@ int ItemsDialog::calcItemCost(Character *c, int itemIndex, ItemsMode mode,
 	return (mode == ITEMMODE_CHAR_INFO) ? 0 : result;
 }
 
-Common::String ItemsDialog::getGoldPlurals(int cost) {
+const char* ItemsDialog::getGoldPlurals(int cost) {
 	if (Common::RU_RUS == Common::parseLanguage(ConfMan.get("language")))
 		return Res.GOLDS[cost % 10 == 1 ? 0 : 1];
 	return Res.GOLDS[0];
@@ -855,7 +855,7 @@ int ItemsDialog::doItemOptions(Character &c, int actionIndex, int itemIndex, Ite
 				int cost = calcItemCost(&c, itemIndex, mode, 0, category);
 				Common::String desc = c._items[category].getFullDescription(itemIndex);
 				if (Confirm::show(_vm, Common::String::format(Res.BUY_X_FOR_Y_GOLD,
-						desc.c_str(), cost, getGoldPlurals(cost).c_str()))) {
+						desc.c_str(), cost, getGoldPlurals(cost)))) {
 					if (party.subtract(CONS_GOLD, cost, WHERE_PARTY, WT_FREEZE_WAIT)) {
 						if (ccNum) {
 							sound.stopSound();
@@ -895,7 +895,7 @@ int ItemsDialog::doItemOptions(Character &c, int actionIndex, int itemIndex, Ite
 				int cost = calcItemCost(&c, itemIndex, mode, c._skills[MERCHANT], category);
 				Common::String desc = c._items[category].getFullDescription(itemIndex);
 				Common::String msg = Common::String::format(Res.SELL_X_FOR_Y_GOLD,
-					desc.c_str(), cost, getGoldPlurals(cost).c_str());
+					desc.c_str(), cost, getGoldPlurals(cost));
 
 				if (Confirm::show(_vm, msg)) {
 					// Remove the sold item and add gold to the party's total

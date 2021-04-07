@@ -230,7 +230,9 @@ public:
 	const char *NOT_ENOUGH_X_IN_THE_Y;
 	const char *NO_X_IN_THE_Y;
 	const char *STAT_NAMES[16];
-	const char *CONSUMABLE_NAMES[6];
+	const char *CONSUMABLE_NAMES[4];
+	const char *CONSUMABLE_GOLD_FORMS[1];
+	const char *CONSUMABLE_GEM_FORMS[1];
 	const char *WHERE_NAMES[2];
 	const char *AMOUNT;
 	const char *FOOD_PACKS_FULL;
@@ -276,6 +278,7 @@ public:
 	const char *CURRENT_MAXIMUM_RATING_TEXT;
 	const char *CURRENT_MAXIMUM_TEXT;
 	const char *RATING_TEXT[24];
+	const char *BORN[2];
 	const char *AGE_TEXT;
 	const char *LEVEL_TEXT;
 	const char *RESISTENCES_TEXT;
@@ -283,6 +286,7 @@ public:
 	const char *EXPERIENCE_TEXT;
 	const char *ELIGIBLE;
 	const char *IN_PARTY_IN_BANK;
+	const char *FOOD_ON_HAND[3];
 	const char *FOOD_TEXT;
 	const char *EXCHANGE_WITH_WHOM;
 	const char *QUICK_REF_LINE;
@@ -417,6 +421,7 @@ public:
 	const char *BACKPACKS_FULL_PRESS_KEY;
 	const char *HIT_A_KEY;
 	const char *GIVE_TREASURE_FORMATTING;
+	const char *FOUND[2];
 	const char *X_FOUND_Y;
 	const char *ON_WHO;
 	const char *WHICH_ELEMENT1;
@@ -440,7 +445,9 @@ public:
 	const char *WARZONE_LEVEL;
 	const char *WARZONE_HOW_MANY;
 	const char *PICKS_THE_LOCK;
+	const char *PICK_FORM[2];
 	const char *UNABLE_TO_PICK_LOCK;
+	const char *UNABLE_TO_PICK_FORM[2];
 	const char *CONTROL_PANEL_TEXT;
 	const char *CONTROL_PANEL_BUTTONS;
 	const char *ON;

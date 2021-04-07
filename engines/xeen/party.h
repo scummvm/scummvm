@@ -158,6 +158,11 @@ private:
 	Character _itemsCharacter;
 
 	/**
+	 * Get gender form 'found'
+	 */
+	const char* getFoundForm(const Character &c);
+
+	/**
 	 * Give a treasure item to the given character's inventory
 	 */
 	void giveTreasureToCharacter(Character &c, ItemCategory category, int itemIndex);
@@ -269,7 +274,7 @@ public:
 
 	int subtract(ConsumableType consumableId, uint amount, PartyBank whereId, MessageWaitType wait = WT_FREEZE_WAIT);
 
-	int getConsumableForm(ConsumableType consumableId);
+	const char* getConsumableForm(ConsumableType consumableId);
 
 	void notEnough(ConsumableType consumableId, PartyBank whereId, bool mode, MessageWaitType wait);
 
@@ -296,6 +301,16 @@ public:
 	 * Gives and/or takes amounts from various character and/or party properties
 	 */
 	bool giveTake(int takeMode, uint takeVal, int giveMode, uint giveVal, int charIdx);
+
+	/*
+	 * Get gender form 'picks'
+	 */
+	const char* getPickLockForm(const Character &c);
+
+	/*
+	 *  Get gender form 'unable to pick'
+	 */
+	const char* getUnablePickLockForm(const Character &c);
 
 	/**
 	 * Gives up to three different item/amounts to various character and/or party properties
