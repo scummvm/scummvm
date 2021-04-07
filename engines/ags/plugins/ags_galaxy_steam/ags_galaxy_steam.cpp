@@ -23,6 +23,7 @@
 #include "ags/metaengine.h"
 #include "ags/ags.h"
 #include "ags/plugins/ags_galaxy_steam/ags_galaxy_steam.h"
+#include "common/config-manager.h"
 
 namespace AGS3 {
 namespace Plugins {
@@ -168,8 +169,9 @@ void AGSGalaxy::AGS_EngineStartup(IAGSEngine *engine) {
 	SCRIPT_METHOD_EXT(AGSGalaxy::GetCurrentGameLanguage^0, GetCurrentGameLanguage);
 	SCRIPT_METHOD_EXT(AGSGalaxy::Initialize^2, Initialize);
 
+	Common::String gameTarget = ConfMan.getActiveDomainName();
 	const MetaEngine *meta = ::AGS::g_vm->getMetaEngine();
-	Common::AchievementsInfo achievementsInfo = meta->getAchievementsInfo(::AGS::g_vm->getGameId());
+	Common::AchievementsInfo achievementsInfo = meta->getAchievementsInfo(gameTarget);
 	const Common::String target = achievementsInfo.appId;
 	if (!target.empty()) {
 		AchMan.setActiveDomain(Common::GALAXY_ACHIEVEMENTS, target);
@@ -187,8 +189,9 @@ void AGSGalaxy::IsAchievementAchieved(ScriptMethodParams &params) {
 void AGSGalaxy::SetAchievementAchieved(ScriptMethodParams &params) {
 	PARAMS1(char *, id);
 
+	Common::String gameTarget = ConfMan.getActiveDomainName();
 	const MetaEngine *meta = ::AGS::g_vm->getMetaEngine();
-	Common::AchievementsInfo achievementsInfo = meta->getAchievementsInfo(::AGS::g_vm->getGameId());
+	Common::AchievementsInfo achievementsInfo = meta->getAchievementsInfo(gameTarget);
 
 	Common::String msg = id;
 	for (uint32 i = 0; i < achievementsInfo.descriptions.size(); i++) {
@@ -304,8 +307,9 @@ void AGSSteam::AGS_EngineStartup(IAGSEngine *engine) {
 	SCRIPT_METHOD_EXT(AGSteam::GetCurrentGameLanguage^0, GetCurrentGameLanguage);
 	SCRIPT_METHOD_EXT(AGSteam::FindLeaderboard^1, FindLeaderboard);
 
+	Common::String gameTarget = ConfMan.getActiveDomainName();
 	const MetaEngine *meta = ::AGS::g_vm->getMetaEngine();
-	Common::AchievementsInfo achievementsInfo = meta->getAchievementsInfo(::AGS::g_vm->getGameId());
+	Common::AchievementsInfo achievementsInfo = meta->getAchievementsInfo(gameTarget);
 	const Common::String target = achievementsInfo.appId;
 	if (!target.empty()) {
 		AchMan.setActiveDomain(Common::STEAM_ACHIEVEMENTS, target);
@@ -323,8 +327,9 @@ void AGSSteam::IsAchievementAchieved(ScriptMethodParams &params) {
 void AGSSteam::SetAchievementAchieved(ScriptMethodParams &params) {
 	PARAMS1(char *, id);
 
+	Common::String gameTarget = ConfMan.getActiveDomainName();
 	const MetaEngine *meta = ::AGS::g_vm->getMetaEngine();
-	Common::AchievementsInfo achievementsInfo = meta->getAchievementsInfo(::AGS::g_vm->getGameId());
+	Common::AchievementsInfo achievementsInfo = meta->getAchievementsInfo(gameTarget);
 
 	Common::String msg = id;
 	for (uint32 i = 0; i < achievementsInfo.descriptions.size(); i++) {
