@@ -543,7 +543,7 @@ bool ThemeParser::parseDrawStep(ParserNode *stepNode, Graphics::DrawStep *drawst
 			if (!stepNode->values.contains("file"))
 				return parserError("Need to specify a filename for Bitmap blitting.");
 
-			drawstep->blitSrc = _theme->getBitmap(stepNode->values["file"]);
+			drawstep->blitSrc = _theme->getImageSurface(stepNode->values["file"]);
 
 			if (!drawstep->blitSrc)
 				return parserError("The given filename hasn't been loaded into the GUI.");
@@ -553,7 +553,7 @@ bool ThemeParser::parseDrawStep(ParserNode *stepNode, Graphics::DrawStep *drawst
 			if (!stepNode->values.contains("file"))
 				return parserError("Need to specify a filename for AlphaBitmap blitting.");
 
-			drawstep->blitAlphaSrc = _theme->getAlphaBitmap(stepNode->values["file"]);
+			drawstep->blitAlphaSrc = _theme->getAImageSurface(stepNode->values["file"]);
 
 			if (!drawstep->blitAlphaSrc)
 				return parserError("The given filename hasn't been loaded into the GUI.");
