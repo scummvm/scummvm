@@ -42,7 +42,6 @@ class LogicManager;
 // Temporary define for the new video code
 // TODOs:
 // - Fix occasional palette glitches after seeking
-// - Add dialog options
 #define USE_NEW_VIDEO_CODE 0
 
 #define USE_DIRTY_RECTS 0
