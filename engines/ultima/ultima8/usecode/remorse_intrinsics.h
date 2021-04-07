@@ -100,7 +100,7 @@ Intrinsic RemorseIntrinsics[] = {
 	Item::I_setQLo,
 	Item::I_getFamily,
 	Container::I_destroyContents,
-	Item::I_fall, // FIXME: Not really the same as the U8 version.. does this work?
+	Item::I_fall,
 	Egg::I_getEggId, // void Intrinsic03F(4 bytes)
 	// 0x040
 	CameraProcess::I_moveTo, // void Intrinsic040(8 bytes)
