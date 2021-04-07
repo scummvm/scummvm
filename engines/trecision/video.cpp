@@ -296,6 +296,7 @@ void AnimManager::startSmkAnim(uint16 num) {
 		pos = kSmackerBackground;
 	else if (_animTab[num]._flag & SMKANIM_ICON)
 		pos = kSmackerIcon;
+#if (!USE_NEW_VIDEO_CODE)
 	else {
 		pos = kSmackerFullMotion;
 
@@ -304,6 +305,7 @@ void AnimManager::startSmkAnim(uint16 num) {
 		_animMaxY = 0;
 		_animMinY = MAXY;
 	}
+#endif
 
 	_curSmackBuffer = pos;
 
@@ -372,8 +374,10 @@ void AnimManager::stopSmkAnim(uint16 num) {
 			pos = kSmackerBackground;
 		else if (_animTab[num]._flag & SMKANIM_ICON)
 			pos = kSmackerIcon;
+#if (!USE_NEW_VIDEO_CODE)
 		else
 			pos = kSmackerFullMotion;
+#endif
 	}
 
 	_playingAnims[pos] = 0;
@@ -392,14 +396,14 @@ void AnimManager::stopAllSmkAnims() {
 	}
 }
 
-#if (!USE_NEW_VIDEO_CODE)
 void AnimManager::startFullMotion(const char *name) {
 	stopAllSmkAnims();
 
+#if (!USE_NEW_VIDEO_CODE)
 	_curSmackBuffer = kSmackerFullMotion;
-
 	_playingAnims[_curSmackBuffer] = FULLMOTIONANIM;
 	_curAnimFrame[_curSmackBuffer] = 0;
+#endif
 
 	FlagShowCharacter = false;
 	_fullMotionStart = 0;
@@ -417,10 +421,13 @@ void AnimManager::startFullMotion(const char *name) {
 	actorStop();
 	g_vm->_flagMouseEnabled = false;
 
+#if (!USE_NEW_VIDEO_CODE)
 	openSmkVideo(name);
+#endif
 }
 
 void AnimManager::stopFullMotion() {
+#if (!USE_NEW_VIDEO_CODE)
 	_curSmackBuffer = kSmackerFullMotion;
 
 	if (_playingAnims[_curSmackBuffer] == 0)
@@ -428,6 +435,7 @@ void AnimManager::stopFullMotion() {
 
 	_playingAnims[_curSmackBuffer] = 0;
 	_curAnimFrame[_curSmackBuffer] = 0;
+#endif
 
 	closeSmk();
 
@@ -456,17 +464,18 @@ void AnimManager::stopFullMotion() {
 			SoundFadOut();
 	}
 }
-#endif
 
 void AnimManager::refreshAnim(int box) {
 	for (int a = 0; a < MAXSMACK; a++) {
 		if ((_playingAnims[a] != 0) && (box == BACKGROUND)) {
 #if (!USE_NEW_VIDEO_CODE)
-			if ((a == 1) && (_playingAnims[a] == FULLMOTIONANIM))
+			if ((a == 1) && (_playingAnims[a] == FULLMOTIONANIM)) {
 				refreshFullMotion();
-			else if (a != 1)
+			} else
 #endif
+			if (a != 1) {
 				refreshSmkAnim(_playingAnims[a]);
+			}
 		}
 	}
 }
@@ -514,8 +523,10 @@ void AnimManager::refreshSmkAnim(int num) {
 			pos = kSmackerBackground;
 		else if (_animTab[num]._flag & SMKANIM_ICON)
 			pos = kSmackerIcon;
+#if (!USE_NEW_VIDEO_CODE)
 		else
 			pos = kSmackerFullMotion;
+#endif
 	}
 
 	_curSmackBuffer = pos;
@@ -577,6 +588,7 @@ void AnimManager::refreshSmkAnim(int num) {
 				_vm->_limits[_vm->_limitsNum++] = l;
 			}
 		}
+#if (!USE_NEW_VIDEO_CODE)
 	} else if (pos == kSmackerFullMotion) {
 		// Only for the character
 		if (_curAnimFrame[pos] == 1) {
@@ -613,6 +625,7 @@ void AnimManager::refreshSmkAnim(int num) {
 			_vm->_actorLimit = _vm->_limitsNum;
 			_vm->_limits[_vm->_limitsNum++] = Common::Rect(_animMinX, _animMinY + TOP, _animMaxX, _animMaxY + TOP);			
 		}
+#endif
 	}
 
 	if (!(_animTab[num]._flag & SMKANIM_LOOP) && !(_animTab[num]._flag & SMKANIM_BKG)) {

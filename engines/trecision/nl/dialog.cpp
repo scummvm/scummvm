@@ -115,9 +115,7 @@ void PlayDialog(uint16 i) {
 	memset(g_vm->_screenBuffer, 0, MAXX * TOP * 2);
 	g_vm->_graphicsMgr->copyToScreen(0, 0, MAXX, TOP);
 
-#if (!USE_NEW_VIDEO_CODE)
 	g_vm->_animMgr->startFullMotion((const char *)_dialog[i]._startAnim);
-#endif
 
 	int skip = 0;
 	int curChoice = 0;
@@ -250,9 +248,7 @@ void afterChoice(int numframe) {
 	}
 	// If the player chose to exit the dialog
 	if (g_vm->_choice[_curChoice]._flag & DLGCHOICE_EXITDLG) {
-#if (!USE_NEW_VIDEO_CODE)
 		g_vm->_animMgr->stopFullMotion();
-#endif
 
 		switch (_curDialog) {
 		case dPOLIZIOTTO16:
@@ -559,9 +555,7 @@ void afterChoice(int numframe) {
 	}
 
 	if (res == 0) {
-#if (!USE_NEW_VIDEO_CODE)
 		g_vm->_animMgr->stopFullMotion();
-#endif
 		if (_curDialog == dC381)
 			PlayDialog(dF381);
 		return;

@@ -44,7 +44,6 @@ class LogicManager;
 // - Fix subtitle drawing
 // - Fix artifacts after seeking and not drawing a key frame
 // - Add dialog options
-// - Fix background animations not playing after playing a fullscreen video
 #define USE_NEW_VIDEO_CODE 0
 
 #define USE_DIRTY_RECTS 0
