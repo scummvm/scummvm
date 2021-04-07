@@ -39,6 +39,14 @@ class AnimManager;
 class GraphicsManager;
 class LogicManager;
 
+// Temporary define for the new video code
+// TODOs:
+// - Fix subtitle drawing
+// - Fix artifacts after seeking and not drawing a key frame
+// - Add dialog options
+// - Fix background animations not playing after playing a fullscreen video
+#define USE_NEW_VIDEO_CODE 0
+
 #define USE_DIRTY_RECTS 0
 #define SAVE_VERSION_ORIGINAL 102
 #define SAVE_VERSION_SCUMMVM 103

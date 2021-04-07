@@ -115,7 +115,11 @@ void PlayDialog(uint16 i) {
 	memset(g_vm->_screenBuffer, 0, MAXX * TOP * 2);
 	g_vm->_graphicsMgr->copyToScreen(0, 0, MAXX, TOP);
 
+#if USE_NEW_VIDEO_CODE
+	g_vm->_animMgr->playMovie(_dialog[i]._startAnim);
+#else
 	g_vm->_animMgr->startFullMotion((const char *)_dialog[i]._startAnim);
+#endif
 
 	int skip = 0;
 	int curChoice = 0;
@@ -131,7 +135,11 @@ void PlayDialog(uint16 i) {
 		skip++;
 	// if there's a pre-dialog
 	if ((_dialog[i]._startLen > 0) && !skip)
+#if USE_NEW_VIDEO_CODE
+		g_vm->_animMgr->playMovie(_dialog[i]._startAnim, 1, _dialog[i]._startLen);
+#else
 		g_vm->_animMgr->playFullMotion(1, _dialog[i]._startLen);
+#endif	
 	else {
 		g_vm->_animMgr->smkSoundOnOff(1, false);
 		afterChoice(1);
@@ -244,7 +252,9 @@ void afterChoice(int numframe) {
 	}
 	// If the player chose to exit the dialog
 	if (g_vm->_choice[_curChoice]._flag & DLGCHOICE_EXITDLG) {
+#if (!USE_NEW_VIDEO_CODE)
 		g_vm->_animMgr->stopFullMotion();
+#endif
 
 		switch (_curDialog) {
 		case dPOLIZIOTTO16:
@@ -504,7 +514,11 @@ void afterChoice(int numframe) {
 
 		// se c'e' predialog
 		if (_dialog[_curDialog]._startLen > 0) {
+#if USE_NEW_VIDEO_CODE			
+			g_vm->_animMgr->playMovie(_dialog[_curDialog]._startAnim, 1, _dialog[_curDialog]._startLen);
+#else
 			g_vm->_animMgr->playFullMotion(1, _dialog[_curDialog]._startLen);
+#endif
 			return;
 		}
 	}
@@ -547,7 +561,9 @@ void afterChoice(int numframe) {
 	}
 
 	if (res == 0) {
+#if (!USE_NEW_VIDEO_CODE)
 		g_vm->_animMgr->stopFullMotion();
+#endif
 		if (_curDialog == dC381)
 			PlayDialog(dF381);
 		return;
@@ -565,7 +581,7 @@ void DialogHandler(int numframe) {
 			g_vm->_sdText.x = _subTitles[i]._x;
 			g_vm->_sdText.y = _subTitles[i]._y;
 			g_vm->_sdText.tcol = _subTitles[i]._color;
-			g_vm->_sdText.sign = g_vm->_sentence[_subTitles[i]._sentence];
+			g_vm->_sdText.text = g_vm->_sentence[_subTitles[i]._sentence];
 		}
 	}
 }
@@ -598,7 +614,12 @@ void PlayChoice(uint16 i) {
 		totalLength += _subTitles[c]._length;
 
 	g_vm->_flagMouseEnabled = false;
+#if USE_NEW_VIDEO_CODE
+	g_vm->_animMgr->playMovie(_dialog[_curDialog]._startAnim, ss->_startFrame, ss->_startFrame + totalLength - 1);
+#else
 	g_vm->_animMgr->playFullMotion(ss->_startFrame, ss->_startFrame + totalLength - 1);
+#endif
+	
 }
 
 void doDialog() {

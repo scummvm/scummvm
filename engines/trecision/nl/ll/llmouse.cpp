@@ -35,11 +35,9 @@
 #include "common/savefile.h"
 #include "common/str.h"
 #include "common/system.h"
-#include "graphics/cursorman.h"
 #include "graphics/scaler.h"
 #include "gui/saveload.h"
 #include "trecision/graphics.h"
-#include "trecision/video.h"
 
 namespace Trecision {
 
@@ -62,7 +60,7 @@ uint16 TextLength(const char *sign, uint16 num) {
 }
 
 void SDText::set(SDText org) {
-	set(org.x, org.y, org.dx, org.dy, org.l[0], org.l[1], org.l[2], org.l[3], org.tcol, org.scol, org.sign);
+	set(org.x, org.y, org.dx, org.dy, org._subtitleRect.left, org._subtitleRect.top, org._subtitleRect.right, org._subtitleRect.bottom, org.tcol, org.scol, org.text);
 }
 
 void SDText::set(uint16 px, uint16 py, uint16 pdx, uint16 pdy, uint16 pl0, uint16 pl1, uint16 pl2, uint16 pl3, uint16 ptcol, uint16 pscol, const char *psign) {
@@ -70,13 +68,13 @@ void SDText::set(uint16 px, uint16 py, uint16 pdx, uint16 pdy, uint16 pl0, uint1
 	y = py;
 	dx = pdx;
 	dy = pdy;
-	l[0] = pl0;
-	l[1] = pl1;
-	l[2] = pl2;
-	l[3] = pl3;
+	_subtitleRect.left = pl0;
+	_subtitleRect.top = pl1;
+	_subtitleRect.right = pl2;
+	_subtitleRect.bottom = pl3;
 	tcol = ptcol;
 	scol = pscol;
-	sign = psign;
+	text = psign;
 }
 
 void SDText::clear() {
@@ -86,12 +84,12 @@ void SDText::clear() {
    checkDText - Computes and returns the dy of the given DText
 --------------------------------------------------------------*/
 uint16 SDText::checkDText() {
-	if (sign == nullptr)
+	if (text == nullptr)
 		return 0;
 
 	uint8 curLine = 0;
-	if (TextLength(sign, 0) <= dx) {
-		strcpy((char *)DTextLines[curLine], sign);
+	if (TextLength(text, 0) <= dx) {
+		strcpy((char *)DTextLines[curLine], text);
 		return CARHEI;
 	}
 
@@ -100,15 +98,15 @@ uint16 SDText::checkDText() {
 	uint16 lastSpace = 0;
 	uint16 curInit = 0;
 
-	while (a < strlen(sign)) {
+	while (a < strlen(text)) {
 		a++;
-		if (sign[a] == ' ') {
-			if (TextLength(sign + curInit, a - curInit) <= dx)
+		if (text[a] == ' ') {
+			if (TextLength(text + curInit, a - curInit) <= dx)
 				lastSpace = a;
-			else if (TextLength(sign + curInit, lastSpace - curInit) <= dx) {
+			else if (TextLength(text + curInit, lastSpace - curInit) <= dx) {
 				uint16 b;
 				for (b = curInit; b < lastSpace; b++)
-					DTextLines[curLine][b - curInit] = sign[b];
+					DTextLines[curLine][b - curInit] = text[b];
 
 				DTextLines[curLine][b - curInit] = '\0';
 				curLine++;
@@ -119,11 +117,11 @@ uint16 SDText::checkDText() {
 				a = curInit;
 			} else
 				return 0;
-		} else if (sign[a] == '\0') {
-			if (TextLength(sign + curInit, a - curInit) <= dx) {
+		} else if (text[a] == '\0') {
+			if (TextLength(text + curInit, a - curInit) <= dx) {
 				uint16 b;
 				for (b = curInit; b < a; b++)
-					DTextLines[curLine][b - curInit] = sign[b];
+					DTextLines[curLine][b - curInit] = text[b];
 				DTextLines[curLine][b - curInit] = '\0';
 
 				tmpDy += CARHEI;
@@ -131,10 +129,10 @@ uint16 SDText::checkDText() {
 				return tmpDy;
 			}
 
-			if (TextLength(sign + curInit, lastSpace - curInit) <= dx) {
+			if (TextLength(text + curInit, lastSpace - curInit) <= dx) {
 				uint16 b;
 				for (b = curInit; b < lastSpace; b++)
-					DTextLines[curLine][b - curInit] = sign[b];
+					DTextLines[curLine][b - curInit] = text[b];
 
 				DTextLines[curLine][b - curInit] = '\0';
 				curLine++;
@@ -142,9 +140,9 @@ uint16 SDText::checkDText() {
 				curInit = lastSpace + 1;
 				tmpDy += CARHEI;
 
-				if (curInit < strlen(sign)) {
-					for (b = curInit; b < strlen(sign); b++)
-						DTextLines[curLine][b - curInit] = sign[b];
+				if (curInit < strlen(text)) {
+					for (b = curInit; b < strlen(text); b++)
+						DTextLines[curLine][b - curInit] = text[b];
 
 					DTextLines[curLine][b - curInit] = '\0';
 
@@ -161,66 +159,66 @@ uint16 SDText::checkDText() {
 /*-----------------10/12/95 15.43-------------------
 						DText
 --------------------------------------------------*/
-void SDText::DText() {
+void SDText::DText(uint16 *frameBuffer) {
 	uint16 tmpTCol = tcol;
 	uint16 tmpSCol = scol;
 	g_vm->_graphicsMgr->updatePixelFormat(&tmpTCol, 1);
 	if (scol != MASKCOL)
 		g_vm->_graphicsMgr->updatePixelFormat(&tmpSCol, 1);
 
-	if (sign == nullptr)
+	if (text == nullptr)
 		return;
 
+	uint16 *buffer = (frameBuffer == nullptr) ? g_vm->_screenBuffer : frameBuffer;
+	uint16 factor = (frameBuffer == nullptr) ? 1 : 2;
 	uint16 curDy = checkDText();
 
 	for (uint16 b = 0; b < (curDy / CARHEI); b++) {
-		char *curSign = (char *)DTextLines[b];
-
-		uint16 inc = (dx - TextLength(curSign, 0)) / 2;
-
-		uint16 len = strlen(curSign);
+		char *text = (char *)DTextLines[b];
+		uint16 inc = (dx - TextLength(text, 0)) / 2;
+		uint16 len = strlen(text);
 
 		if (len >= MAXCHARS) {
-			strcpy(curSign, g_vm->_sysText[kMessageError]);
-			len = strlen(curSign);
+			strcpy(text, g_vm->_sysText[kMessageError]);
+			len = strlen(text);
 		}
 
 		for (uint16 c = 0; c < len; c++) {
-			uint8 curCar = curSign[c]; /* legge prima parte del font */
+			uint8 curCar = text[c]; /* legge prima parte del font */
 
-			uint16 carSco = (uint16)(g_vm->Font[curCar * 3]) + (uint16)(g_vm->Font[curCar * 3 + 1] << 8);
-			uint16 DataSco = 768;                       /* Scostamento */
-			uint16 CarWid = g_vm->Font[curCar * 3 + 2]; /* Larghezza   */
+			uint16 charDeviation = (uint16)g_vm->Font[curCar * 3] + (uint16)(g_vm->Font[curCar * 3 + 1] << 8);
+			uint16 dataDeviation = 768;
+			uint16 charWidth = g_vm->Font[curCar * 3 + 2];
 
-			if ((c == (len - 1)) && (BlinkLastDTextChar != MASKCOL))
+			if (c == len - 1 && BlinkLastDTextChar != MASKCOL)
 				tmpTCol = BlinkLastDTextChar;
 
 			for (uint16 a = (b * CARHEI); a < ((b + 1)*CARHEI); a++) {
-				uint16 CarCounter = 0;
+				uint16 curPos = 0;
 				uint16 CurColor = tmpSCol;
 
-				while (CarCounter <= (CarWid - 1)) {
-					if ((a >= l[1]) && (a < l[3])) {
-						if ((CurColor != MASKCOL) && (g_vm->Font[carSco + DataSco])) {
-							uint16 firstLim = inc + CarCounter;
-							uint16 lastLim = firstLim + g_vm->Font[carSco + DataSco];
-							uint16 *dst1 = g_vm->_screenBuffer + (x + firstLim) + (y + a) * SCREENLEN;
-							uint16 *dst2 = g_vm->_screenBuffer + (x + l[0]) + (y + a) * SCREENLEN;
+				while (curPos <= charWidth - 1) {
+					if (a >= _subtitleRect.top && a < _subtitleRect.bottom) {
+						if (CurColor != MASKCOL && (g_vm->Font[charDeviation + dataDeviation])) {
+							uint16 charLeft = inc + curPos;
+							uint16 charRight = charLeft + g_vm->Font[charDeviation + dataDeviation];
+							uint16 *dst1 = buffer + (x + charLeft + (y + a) * SCREENLEN) / factor;
+							uint16 *dst2 = buffer + (x + _subtitleRect.left + (y + a) * SCREENLEN) / factor;
 							uint16 *dst = nullptr;
 							uint16 size = 0;
 							
-							if (firstLim >= l[0] && lastLim < l[2]) {
+							if (charLeft >= _subtitleRect.left && charRight < _subtitleRect.right) {
 								dst = dst1;
-								size = lastLim - firstLim;
-							} else if (firstLim < l[0] && lastLim < l[2] && lastLim > l[0]) {
+								size = charRight - charLeft;
+							} else if (charLeft < _subtitleRect.left && charRight < _subtitleRect.right && charRight > _subtitleRect.left) {
 								dst = dst2;
-								size = lastLim - l[0];
-							} else if (firstLim >= l[0] && lastLim >= l[2] && l[2] > firstLim) {
+								size = charRight - _subtitleRect.left;
+							} else if (charLeft >= _subtitleRect.left && charRight >= _subtitleRect.right && _subtitleRect.right > charLeft) {
 								dst = dst1;
-								size = l[2] - firstLim;
-							} else if (firstLim < l[0] && lastLim >= l[2] && l[2] > firstLim) {
+								size = _subtitleRect.right - charLeft;
+							} else if (charLeft < _subtitleRect.left && charRight >= _subtitleRect.right && _subtitleRect.right > charLeft) {
 								dst = dst2;
-								size = l[2] - l[0];
+								size = _subtitleRect.right - _subtitleRect.left;
 							}
 
 							if (dst && size > 0) {
@@ -231,8 +229,8 @@ void SDText::DText() {
 						}
 					}
 
-					CarCounter += g_vm->Font[carSco + DataSco];
-					DataSco++;
+					curPos += g_vm->Font[charDeviation + dataDeviation];
+					dataDeviation++;
 
 					if (CurColor == tmpSCol)
 						CurColor = 0;
@@ -242,7 +240,7 @@ void SDText::DText() {
 						CurColor = tmpSCol;
 				}
 			}
-			inc += CarWid;
+			inc += charWidth;
 		}
 	}
 }

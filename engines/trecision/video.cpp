@@ -20,17 +20,18 @@
  *
  */
 
-#include "trecision/trecision.h"
-#include "trecision/video.h"
-
+#include "common/config-manager.h"
+#include "common/scummsys.h"
+#include "common/system.h"
 #include "common/file.h"
+#include "common/events.h"
+
+#include "trecision/trecision.h"
 #include "trecision/graphics.h"
+#include "trecision/video.h"
 #include "trecision/nl/message.h"
 #include "trecision/nl/define.h"
 #include "trecision/nl/extern.h"
-
-#include <common/config-manager.h>
-#include "common/scummsys.h"
 
 namespace Trecision {
 
@@ -127,7 +128,79 @@ AnimManager::~AnimManager() {
 	}
 }
 
+#if USE_NEW_VIDEO_CODE
+void AnimManager::playMovie(Common::String filename, int startFrame, int endFrame) {
+	NightlongSmackerDecoder *smkDecoder = new NightlongSmackerDecoder;
+
+	if (!smkDecoder->loadFile(filename))
+		return;
+
+	uint16 x = (g_system->getWidth() - smkDecoder->getWidth()) / 2;
+	uint16 y = (g_system->getHeight() - smkDecoder->getHeight()) / 2;
+	startFrame = CLIP<int32>(startFrame, 1, smkDecoder->getFrameCount() - 1);
+	endFrame = CLIP<int32>(endFrame, 1, smkDecoder->getFrameCount());	
+	bool skipVideo = false;
+
+	smkDecoder->start();
+
+	// FIXME: This breaks some videos
+	//if (startFrame > 1)
+	//	smkDecoder->forceSeekToFrame(startFrame);
+
+	while (!g_vm->shouldQuit() && !smkDecoder->endOfVideo() && !skipVideo && smkDecoder->getCurFrame() < endFrame) {
+		if (smkDecoder->needsUpdate()) {
+			const Graphics::Surface *frame = smkDecoder->decodeNextFrame();
+			if (frame) {
+				const Graphics::Surface *frame16 = frame->convertTo(g_system->getScreenFormat(), smkDecoder->getPalette());
+				drawFrameSubtitles((uint16 *)frame16->getPixels(), smkDecoder->getCurFrame());
+				g_system->copyRectToScreen(frame16->getPixels(), frame16->pitch, x, y, frame16->w, frame16->h);
+				delete frame16;
+
+				g_vm->_system->updateScreen();
+			}
+		}
+
+		Common::Event event;
+		while (g_engine->getEventManager()->pollEvent(event)) {
+			if (event.type == Common::EVENT_KEYDOWN && event.kbd.keycode == Common::KEYCODE_ESCAPE)
+				skipVideo = true;
+		}
+
+		g_system->delayMillis(10);
+	}
+	
+	doEvent(MC_DIALOG, ME_ENDCHOICE, MP_HIGH, smkDecoder->getCurFrame(), 0, 0, 0);
+	delete smkDecoder;
+}
+
+void AnimManager::drawFrameSubtitles(uint16 *frameBuffer, int frameNum) {
+	if (!ConfMan.getBool("subtitles"))
+		return;
+
+	DialogHandler(frameNum);
+	if (_vm->_sdText.text == nullptr)
+		return;
+
+	// Subtitles can be placed in different coordinates in the video,
+	// which are set inside DialogHandler(), but are then reset to
+	// fixed coordinates
+	_vm->_sdText.x = 20;
+	_vm->_sdText.y = 380;
+	_vm->_sdText.dx = MAXX - 40;
+	_vm->_sdText.dy = _vm->_sdText.checkDText();
+	_vm->_sdText._subtitleRect.left = 0;
+	_vm->_sdText._subtitleRect.top = 0;
+	_vm->_sdText._subtitleRect.right = MAXX;
+	_vm->_sdText._subtitleRect.bottom = MAXY;
+	_vm->_sdText.scol = MASKCOL;
+	_vm->_sdText.DText(frameBuffer);
+}
+
+#else
+
 void AnimManager::openSmkVideo(Common::String name) {
+	//debug("Opening video %s", name.c_str());
+
 	Common::File *smkFile = new Common::File();
 	smkFile->open(name);
 
@@ -138,8 +211,10 @@ void AnimManager::openSmkVideo(Common::String name) {
 
 	openSmk(smkFile);
 }
+#endif
 
 void AnimManager::openSmkAnim(Common::String name) {
+	//debug("Opening anim %s", name.c_str());
 	if (_animFile[_curSmackBuffer].hasFile(name)) {
 		openSmk(_animFile[_curSmackBuffer].createReadStreamForMember(name));
 		return;
@@ -317,6 +392,7 @@ void AnimManager::stopAllSmkAnims() {
 	}
 }
 
+#if (!USE_NEW_VIDEO_CODE)
 void AnimManager::startFullMotion(const char *name) {
 	stopAllSmkAnims();
 
@@ -380,13 +456,16 @@ void AnimManager::stopFullMotion() {
 			SoundFadOut();
 	}
 }
+#endif
 
 void AnimManager::refreshAnim(int box) {
 	for (int a = 0; a < MAXSMACK; a++) {
 		if ((_playingAnims[a] != 0) && (box == BACKGROUND)) {
+#if (!USE_NEW_VIDEO_CODE)
 			if ((a == 1) && (_playingAnims[a] == FULLMOTIONANIM))
 				refreshFullMotion();
 			else if (a != 1)
+#endif
 				refreshSmkAnim(_playingAnims[a]);
 		}
 	}
@@ -559,6 +638,7 @@ void AnimManager::refreshSmkAnim(int num) {
 	}
 }
 
+#if (!USE_NEW_VIDEO_CODE)
 void AnimManager::refreshFullMotion() {
 	int32 yfact;
 
@@ -571,34 +651,34 @@ void AnimManager::refreshFullMotion() {
 
 		DialogHandler(_curAnimFrame[kSmackerFullMotion]);
 
-		_vm->_sdText.dx = TextLength(_vm->_sdText.sign, 0);
+		_vm->_sdText.dx = TextLength(_vm->_sdText.text, 0);
 
 		_vm->_sdText.x = 20;
 		_vm->_sdText.y = 380;
 		_vm->_sdText.dx = MAXX - 40;
 		_vm->_sdText.dy = _vm->_sdText.checkDText();
-		_vm->_sdText.l[0] = 0;
-		_vm->_sdText.l[1] = 0;
-		_vm->_sdText.l[2] = MAXX;
-		_vm->_sdText.l[3] = MAXY;
+		_vm->_sdText._subtitleRect.left = 0;
+		_vm->_sdText._subtitleRect.top = 0;
+		_vm->_sdText._subtitleRect.right = MAXX;
+		_vm->_sdText._subtitleRect.bottom = MAXY;
 		_vm->_sdText.scol = MASKCOL;
 
 		// If text was displayed, remove it
-		if (_vm->_oldSdText.sign != nullptr) {
-			if ((_vm->_oldSdText.y < _vm->_sdText.y) || (_vm->_oldSdText.y + _vm->_oldSdText.dy > _vm->_sdText.y + _vm->_sdText.dy) || (_vm->_sdText.sign == nullptr)) {
+		if (_vm->_oldSdText.text != nullptr) {
+			if ((_vm->_oldSdText.y < _vm->_sdText.y) || (_vm->_oldSdText.y + _vm->_oldSdText.dy > _vm->_sdText.y + _vm->_sdText.dy) || (_vm->_sdText.text == nullptr)) {
 				drawSmkBuffer(0, _vm->_oldSdText.y - TOP, MAXX, _vm->_oldSdText.dy);
 				_vm->_graphicsMgr->copyToScreen(0, _vm->_oldSdText.y, MAXX, _vm->_oldSdText.dy);
 			}
-			_vm->_oldSdText.sign = nullptr;
+			_vm->_oldSdText.text = nullptr;
 		}
 		// If there's text
-		if (_vm->_sdText.sign != nullptr) {
+		if (_vm->_sdText.text != nullptr) {
 			drawSmkBuffer(0, _vm->_sdText.y - TOP, MAXX, _vm->_sdText.dy);
 			// Write string
 			if (ConfMan.getBool("subtitles"))
 				_vm->_sdText.DText();
 			// and show it
-			_vm->_oldSdText.sign = nullptr;
+			_vm->_oldSdText.text = nullptr;
 		}
 
 		if (_smkAnims[kSmackerFullMotion]->getHeight() > MAXY / 2)
@@ -611,7 +691,7 @@ void AnimManager::refreshFullMotion() {
 
 		for (int32 a = 0; a < dirtyRect.height(); a++) {
 			// if it's already copied
-			if ((_vm->_sdText.sign == nullptr) ||
+			if ((_vm->_sdText.text == nullptr) ||
 				((dirtyRect.top + a) * yfact < (_vm->_sdText.y - TOP)) ||
 				((dirtyRect.top + a) * yfact >= (_vm->_sdText.y + _vm->_sdText.dy - TOP))) {
 
@@ -626,7 +706,7 @@ void AnimManager::refreshFullMotion() {
 
 		_vm->_graphicsMgr->unlock();
 
-		if (_vm->_sdText.sign != nullptr)
+		if (_vm->_sdText.text != nullptr)
 			_vm->_graphicsMgr->copyToScreen(0, _vm->_sdText.y, MAXX, _vm->_sdText.dy);
 
 		if (_curAnimFrame[kSmackerFullMotion] == _fullMotionEnd) {
@@ -641,6 +721,7 @@ void AnimManager::refreshFullMotion() {
 		}
 	}
 }
+#endif
 
 void AnimManager::refreshSmkIcon(int StartIcon, int num) {
 	_curAnimFrame[kSmackerIcon]++;
@@ -679,6 +760,7 @@ void AnimManager::refreshSmkIcon(int StartIcon, int num) {
 	smkNextFrame();
 }
 
+#if (!USE_NEW_VIDEO_CODE)
 void AnimManager::playFullMotion(int start, int end) {
 	_curSmackBuffer = kSmackerFullMotion;
 
@@ -732,6 +814,7 @@ void AnimManager::drawSmkBuffer(int px, int py, int dx, int dy) {
 		);
 	}
 }
+#endif
 
 void AnimManager::swapCD(int cd) {
 	Common::String animFileName = Common::String::format("nlanim.cd%d", cd);
