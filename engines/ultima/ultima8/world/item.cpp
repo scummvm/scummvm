@@ -1727,55 +1727,65 @@ void Item::animateItem() {
 	if (!info->_animType)
 		return;
 
-	int anim_data = info->_animData;
-	int speed = info->_animSpeed;
-
-	if ((static_cast<int>(_lastSetup) % speed * 2) != 0 && info->_animType != 1)
-		return;
-
+	uint32 anim_data = info->_animData;
 	const Shape *shp = getShapeObject();
 
 	switch (info->_animType) {
 	case 2:
-		// 50 % chance
-		if (getRandom() & 1) break;
-		// Intentional fall-through
+		// Randomly change frame
+		if ((getRandom() & 1) && shp)
+			_frame = getRandom() % shp->frameCount();
+		break;
 
 	case 1:
 	case 3:
-		// 50 % chance
-		if (anim_data == 1 && (getRandom() & 1)) break;
-		_frame ++;
-		if (anim_data < 2) {
-			if (shp && _frame == shp->frameCount()) _frame = 0;
-		} else {
-			// Data represents frame count for the loop
-			unsigned int num = (_frame - 1) / anim_data;
-			if (_frame == ((num + 1)*anim_data)) _frame = num * anim_data;
+		// animdata 0 = always increment
+		// animdata 1 = 50 % chance of changing
+		// animdata 2+ = loop in frame blocks of size animdata
+		if (anim_data == 0 || (anim_data == 1 && (getRandom() & 1))) {
+			_frame++;
+			if (shp && _frame >= shp->frameCount())
+				_frame = 0;
+		} else if (anim_data > 1) {
+			_frame++;
+			uint32 num = (_frame - 1) / anim_data;
+			if (_frame == ((num + 1) * anim_data))
+				_frame = num * anim_data;
 		}
 		break;
 
 	case 4:
-		if (anim_data && !(getRandom() % anim_data)) break;
-		_frame ++;
-		if (shp && _frame == shp->frameCount()) _frame = 0;
+		// Randomly start animating, with chance of 1/(animdata + 2)
+		// once animating, go through all frames.
+		if (_frame || getRandom() % (anim_data + 2)) {
+			_frame++;
+			if (shp && _frame >= shp->frameCount())
+				_frame = 0;
+		}
 		break;
 
-
 	case 5:
+		// Just call the usecode
 		callUsecodeEvent_anim();
 		break;
 
 	case 6:
-		if (anim_data < 2) {
-			if (_frame == 0) break;
-			_frame ++;
-			if (shp && _frame == shp->frameCount()) _frame = 1;
-		} else {
-			if (!(_frame % anim_data)) break;
-			_frame ++;
-			unsigned int num = (_frame - 1) / anim_data;
-			if (_frame == ((num + 1)*anim_data)) _frame = num * anim_data + 1;
+		// animdata 0 = stick on frame 0, else loop from 1 to count
+		// animdata 1 = same as 0, but with 50% chance of change
+		// animdata 2+ = same, but loop in frame blocks of size animdata
+		if (anim_data == 0 || (anim_data == 1 && (getRandom() & 1))) {
+			if (!_frame)
+				break;
+			_frame++;
+			if (shp && _frame >= shp->frameCount())
+				_frame = 1;
+		} else if (anim_data > 1) {
+			if (!(_frame % anim_data))
+				break;
+			_frame++;
+			uint32 num = (_frame - 1) / anim_data;
+			if (_frame == ((num + 1) * anim_data))
+				_frame = num * anim_data + 1;
 		}
 		break;
 
