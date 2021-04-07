@@ -116,7 +116,9 @@ AnimManager::AnimManager(TrecisionEngine *vm) : _vm(vm) {
 
 	_curSmackBuffer = kSmackerBackground;
 
+#if (!USE_NEW_VIDEO_CODE)
 	_fullMotionStart = _fullMotionEnd = 0;
+#endif
 
 	_curCD = 1;
 	swapCD(_curCD);
@@ -379,7 +381,10 @@ void AnimManager::stopSmkAnim(uint16 num) {
 			pos = kSmackerBackground;
 		else if (_animTab[num]._flag & SMKANIM_ICON)
 			pos = kSmackerIcon;
-#if (!USE_NEW_VIDEO_CODE)
+#if USE_NEW_VIDEO_CODE
+		else
+			return;
+#else
 		else
 			pos = kSmackerFullMotion;
 #endif
@@ -408,11 +413,11 @@ void AnimManager::startFullMotion(const char *name) {
 	_curSmackBuffer = kSmackerFullMotion;
 	_playingAnims[_curSmackBuffer] = FULLMOTIONANIM;
 	_curAnimFrame[_curSmackBuffer] = 0;
+	_fullMotionStart = 0;
+	_fullMotionEnd = 0;
 #endif
 
 	FlagShowCharacter = false;
-	_fullMotionStart = 0;
-	_fullMotionEnd = 0;
 	TextStatus = TEXT_OFF;
 	memset(_vm->_screenBuffer, 0, TOP * MAXX * 2);
 	_vm->_graphicsMgr->copyToScreen(0, 0, MAXX, TOP);
@@ -440,6 +445,8 @@ void AnimManager::stopFullMotion() {
 
 	_playingAnims[_curSmackBuffer] = 0;
 	_curAnimFrame[_curSmackBuffer] = 0;
+	_fullMotionStart = 0;
+	_fullMotionEnd = 0;
 #endif
 
 	closeSmk();
@@ -450,8 +457,6 @@ void AnimManager::stopFullMotion() {
 	FlagSomeOneSpeak = false;
 
 	_vm->_lightIcon = 0xFF;
-	_fullMotionStart = 0;
-	_fullMotionEnd = 0;
 	if (_curDialog == dFCRED) {
 		g_vm->quitGame();
 		return;
@@ -528,7 +533,10 @@ void AnimManager::refreshSmkAnim(int num) {
 			pos = kSmackerBackground;
 		else if (_animTab[num]._flag & SMKANIM_ICON)
 			pos = kSmackerIcon;
-#if (!USE_NEW_VIDEO_CODE)
+#if USE_NEW_VIDEO_CODE
+		else
+			return;
+#else
 		else
 			pos = kSmackerFullMotion;
 #endif

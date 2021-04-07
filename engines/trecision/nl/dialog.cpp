@@ -565,11 +565,13 @@ void afterChoice(int numframe) {
 }
 
 void DialogHandler(int numframe) {
-	if ((FlagDialogActive) && (!(FlagDialogMenuActive))) {
+	if (FlagDialogActive && (!FlagDialogMenuActive)) {
 		g_vm->_flagMouseEnabled = false;
 		if (numframe == _subTitles[_curSubTitle]._startFrame) {
 			int i = _curSubTitle++;
+#if (!USE_NEW_VIDEO_CODE)
 			g_vm->_oldSdText.set(g_vm->_sdText);
+#endif
 			g_vm->_sdText.x = _subTitles[i]._x;
 			g_vm->_sdText.y = _subTitles[i]._y;
 			g_vm->_sdText.tcol = _subTitles[i]._color;
