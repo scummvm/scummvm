@@ -323,13 +323,6 @@ struct perso_t {
 	byte    _steps;      // current ticks
 };
 
-class EdenGame;
-
-struct phase_t {
-	int16 _id;
-	void (EdenGame::*disp)();
-};
-
 namespace ObjectFlags {
 enum ObjectFlags {
 	ofFlag1 = 1,
@@ -742,6 +735,8 @@ struct global_t {
 	byte   _var119;     // unused
 };
 
+#include "common/pack-end.h"
+
 struct PakHeaderItem {
 	Common::String _name; //[16];
 	int32 _size;
@@ -757,8 +752,6 @@ public:
 	uint16    _count;
 	PakHeaderItem* _files;
 };
-
-#include "common/pack-end.h"
 
 struct Citadel {
 	int16 _id;

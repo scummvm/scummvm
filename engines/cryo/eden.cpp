@@ -3081,16 +3081,11 @@ void EdenGame::tyranDies(perso_t *perso) {
 }
 
 void EdenGame::specialObjects(perso_t *perso, char objid) {
-
-#include "common/pack-start.h"	// START STRUCT PACKING
-
 	struct SpecialObject {
 		int8  _characterType;
 		int8  _objectId;
 		void  (EdenGame::*dispFct)(perso_t *perso);
 	};
-
-#include "common/pack-end.h"	// END STRUCT PACKING
 
 	static SpecialObject kSpecialObjectActions[] = {
 		//    persoType, objectId, dispFct
@@ -5972,6 +5967,11 @@ void EdenGame::handleEloiReturn() {
 }
 //// phase.c
 void EdenGame::incPhase() {
+	struct phase_t {
+		int16 _id;
+		void (EdenGame::*disp)();
+	};
+
 	static phase_t phases[] = {
 		{ 65, &EdenGame::dialautoon },
 		{ 113, &EdenGame::phase113 },
