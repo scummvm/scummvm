@@ -132,12 +132,12 @@ void StackText::doText() {
 	else if ((y != MAXY - CARHEI) && (curString.dx > 320))
 		curString.dx = curString.dx * 3 / 5;
 
-	curString.sign = sign;
-	curString.l[0] = 0;
-	curString.l[1] = 0;
-	curString.l[2] = curString.dx;
+	curString.text = sign;
+	curString._subtitleRect.left = 0;
+	curString._subtitleRect.top = 0;
+	curString._subtitleRect.right = curString.dx;
 	uint16 hstring = curString.checkDText();
-	curString.l[3] = hstring;
+	curString._subtitleRect.bottom = hstring;
 	curString.dy = hstring;
 	curString.tcol = tcol;
 	curString.scol = scol;
@@ -157,9 +157,9 @@ void StackText::doText() {
 					doClearText
  --------------------------------------------------*/
 void TrecisionEngine::doClearText() {
-	if ((oldString.sign == nullptr) && (curString.sign)) {
+	if ((oldString.text == nullptr) && (curString.text)) {
 		oldString.set(curString);
-		curString.sign = nullptr;
+		curString.text = nullptr;
 
 		TextStatus |= TEXT_DEL;
 	}

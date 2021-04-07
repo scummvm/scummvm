@@ -121,7 +121,7 @@ void PaintScreen(uint8 flag) {
 			for (a = (DObj.l.top + TOP); a < (DObj.l.bottom + TOP); a++)
 				memset(g_vm->_screenBuffer + DObj.l.left + a * SCREENLEN, 0x0000, (DObj.l.right - DObj.l.left) * 2);
 		}
-		oldString.sign = NULL;
+		oldString.text = NULL;
 
 		g_vm->_limits[g_vm->_limitsNum].left = DObj.l.left; // aggiunge rettangolo scritta
 		g_vm->_limits[g_vm->_limitsNum].top = DObj.l.top + TOP;
@@ -196,10 +196,10 @@ void PaintScreen(uint8 flag) {
 								curString.x, curString.y,
 								curString.x + curString.dx,
 								curString.y + curString.dy)) {
-				curString.l[0] = xr1;
-				curString.l[1] = yr1;
-				curString.l[2] = xr2;
-				curString.l[3] = yr2;
+				curString._subtitleRect.left = xr1;
+				curString._subtitleRect.top = yr1;
+				curString._subtitleRect.right = xr2;
+				curString._subtitleRect.bottom = yr2;
 
 				curString.DText();
 			}
