@@ -1495,7 +1495,7 @@ int32 Scene::hitTestObject() {
 
 	const Common::Point pt = getCursor()->position();
 
-	for (uint32 i = 0; i < _ws->objects.size(); i++) {
+	for (int32 i = _ws->objects.size() - 1; i >= 0; i--) {
 		Object *object = _ws->objects[i];
 		if (object->isOnScreen() && object->actionType)
 			if (hitTestPixel(object->getResourceId(),
