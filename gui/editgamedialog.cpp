@@ -28,6 +28,7 @@
 #include "common/gui_options.h"
 #include "common/translation.h"
 #include "common/system.h"
+#include "common/dialogs.h"
 
 #include "gui/browser.h"
 #include "gui/gui-manager.h"
@@ -336,7 +337,12 @@ EditGameDialog::EditGameDialog(const String &domain)
 		new ButtonWidget(tab, "GameOptions_Paths.Gamepath", _("Game Path:"), Common::U32String(), kCmdGameBrowser);
 	else
 		new ButtonWidget(tab, "GameOptions_Paths.Gamepath", _c("Game Path:", "lowres"), Common::U32String(), kCmdGameBrowser);
-	_gamePathWidget = new StaticTextWidget(tab, "GameOptions_Paths.GamepathText", gamePath);
+
+	Common::DialogManager *dialogManager = g_system->getDialogManager();
+	if (dialogManager)
+		_gamePathWidget = new StaticTextWidget(tab, "GameOptions_Paths.GamepathText", dialogManager->ansiToU32Str(gamePath));
+	else
+		_gamePathWidget = new StaticTextWidget(tab, "GameOptions_Paths.GamepathText", gamePath);
 
 	// GUI:  Button + Label for the additional path
 	if (g_system->getOverlayWidth() > 320)
@@ -483,8 +489,13 @@ void EditGameDialog::apply() {
 		ConfMan.set("language", Common::getLanguageCode(lang), _domain);
 
 	U32String gamePath(_gamePathWidget->getLabel());
-	if (!gamePath.empty())
-		ConfMan.set("path", gamePath, _domain);
+	if (!gamePath.empty()) {
+		Common::DialogManager *dialogManager = g_system->getDialogManager();
+		if (dialogManager)
+			ConfMan.set("path", dialogManager->u32StrToAnsi(gamePath), _domain);
+		else
+			ConfMan.set("path", gamePath, _domain);
+	}
 
 	U32String extraPath(_extraPathWidget->getLabel());
 	if (!extraPath.empty() && (extraPath != _c("None", "path")))

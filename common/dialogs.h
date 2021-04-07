@@ -69,6 +69,25 @@ public:
 	 */
 	virtual DialogResult showFileBrowser(const Common::U32String &title, FSNode &choice, bool isDirBrowser = false) { return kDialogError; }
 
+	/**
+	 * Transform an Ansi encoded String into a U32String
+	 * If Ansi encoding doesn't apply to OS, returns representation of the original string
+	 *
+	 * @param s		Ansi encoded String
+	 * @return		The U32String result
+	 */
+	virtual Common::U32String ansiToU32Str(Common::String s) { return s; };
+
+	/**
+	 * Transform a U32String into Ansi encoded String
+	 * If Ansi encoding doesn't apply to OS, returns representation of the original string
+	 *
+	 * @param s		U32String
+	 * @return		The String result
+	 */
+	virtual Common::String u32StrToAnsi(Common::U32String s) { return s; };
+
+
 protected:
 	bool _wasFullscreen;
 

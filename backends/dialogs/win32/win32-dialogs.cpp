@@ -190,4 +190,14 @@ Common::DialogManager::DialogResult Win32DialogManager::showFileBrowser(const Co
 	return result;
 }
 
+Common::U32String Win32DialogManager::ansiToU32Str(Common::String s) {
+	wchar_t* str = Win32::ansiToUnicode(s.c_str());
+	return Common::U32String::decodeUTF16Native((uint16 *)str, wcslen(str));;
+}
+
+Common::String Win32DialogManager::u32StrToAnsi(Common::U32String s) {
+	return Win32::unicodeToAnsi((LPWSTR)s.encodeUTF16Native());
+
+}
+
 #endif

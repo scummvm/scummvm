@@ -36,6 +36,8 @@ public:
 	Win32DialogManager(SdlWindow_Win32 *window);
 	virtual ~Win32DialogManager();
 	virtual DialogResult showFileBrowser(const Common::U32String &title, Common::FSNode &choice, bool isDirBrowser) override;
+	virtual Common::U32String ansiToU32Str(Common::String s) override;
+	virtual Common::String u32StrToAnsi(Common::U32String s) override;
 
 private:
 	SdlWindow_Win32 *_window;
