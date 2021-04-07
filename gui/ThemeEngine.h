@@ -632,14 +632,6 @@ public:
 	inline bool supportsImages() const { return true; }
 	inline bool ownCursor() const { return _useCursor; }
 
-	Graphics::Surface *getBitmap(const Common::String &name) {
-		return _bitmaps.contains(name) ? _bitmaps[name] : 0;
-	}
-
-	Graphics::TransparentSurface *getAlphaBitmap(const Common::String &name) {
-		return _abitmaps.contains(name) ? _abitmaps[name] : 0;
-	}
-
 	Graphics::SVGBitmap *getSVG(const Common::String &name) {
 		return _svgs.contains(name) ? _svgs[name] : 0;
 	}
@@ -648,11 +640,11 @@ public:
 		return _bitmapDims.contains(name) ? _bitmapDims[name] : 0;
 	}
 
-	const Graphics::Surface *getImageSurface(const Common::String &name) const {
+	Graphics::Surface *getImageSurface(const Common::String &name) const {
 		return _bitmaps.contains(name) ? _bitmaps[name] : 0;
 	}
 
-	const Graphics::TransparentSurface *getAImageSurface(const Common::String &name) const {
+	Graphics::TransparentSurface *getAImageSurface(const Common::String &name) const {
 		return _abitmaps.contains(name) ? _abitmaps[name] : 0;
 	}
 
