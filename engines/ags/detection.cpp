@@ -26,6 +26,7 @@
 #include "common/md5.h"
 #include "common/str-array.h"
 #include "common/translation.h"
+#include "common/util.h"
 #include "ags/detection.h"
 #include "ags/detection_tables.h"
 
@@ -78,11 +79,14 @@ private:
 
 	GUI::PopUpWidget *_langPopUp;
 	Common::StringArray _traFileNames;
+
+	GUI::CheckboxWidget *_forceTextAACheckbox;
 };
 
 AGSOptionsWidget::AGSOptionsWidget(GuiObject *boss, const Common::String &name, const Common::String &domain) :
 		OptionsContainerWidget(boss, name, "AGSGameOptionsDialog", false, domain) {
-			
+
+	// Language
 	GUI::StaticTextWidget *textWidget = new GUI::StaticTextWidget(widgetsBoss(), _dialogLayout + ".translation_desc", _("Game language:"), _("Language to use for multilingual games"));
 	textWidget->setAlign(Graphics::kTextAlignRight);
 			
@@ -101,6 +105,9 @@ AGSOptionsWidget::AGSOptionsWidget(GuiObject *boss, const Common::String &name, 
 		_traFileNames.push_back(traFileName);
 		_langPopUp->appendEntry(traFileName, i++);
 	}
+
+	// Force font antialiasing
+	_forceTextAACheckbox = new GUI::CheckboxWidget(widgetsBoss(), _dialogLayout + ".textAA", _("Force antialiased text"), _("Use antialiasing to draw text even if the game does not ask for it"));
 }
 
 void AGSOptionsWidget::defineLayout(GUI::ThemeEval &layouts, const Common::String &layoutName, const Common::String &overlayedLayout) const {
@@ -110,6 +117,8 @@ void AGSOptionsWidget::defineLayout(GUI::ThemeEval &layouts, const Common::Strin
 	layouts.addLayout(GUI::ThemeLayout::kLayoutHorizontal).addPadding(0, 0, 0, 0);
 	layouts.addWidget("translation_desc", "OptionsLabel");
 	layouts.addWidget("translation", "PopUp").closeLayout();
+
+	layouts.addWidget("textAA", "Checkbox");
 
 	layouts.closeLayout().closeDialog();
 }
@@ -131,6 +140,14 @@ void AGSOptionsWidget::load() {
 		}
 	}
 	_langPopUp->setSelectedTag(curLangIndex);
+
+	Common::String forceTextAA;
+	gameConfig->tryGetVal("force_text_aa", forceTextAA);
+	if (!forceTextAA.empty()) {
+		bool val;
+		if (parseBool(forceTextAA, val))
+			_forceTextAACheckbox->setState(val);
+	}
 }
 
 bool AGSOptionsWidget::save() {
@@ -139,6 +156,8 @@ bool AGSOptionsWidget::save() {
 		ConfMan.set("translation", _traFileNames[langIndex], _domain);
 	else
 		ConfMan.removeKey("translation", _domain);
+
+	ConfMan.setBool("force_text_aa", _forceTextAACheckbox->getState(), _domain);
 
 	return true;
 }

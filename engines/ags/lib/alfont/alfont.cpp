@@ -34,7 +34,7 @@ Graphics::Font *ALFONT_FONT::getFont() {
 	if (!_fonts.contains(_size)) {
 		// Instantiate the raw TTF data into a font of the given size
 		Graphics::TTFRenderMode renderMode = Graphics::kTTFRenderModeMonochrome;
-		if (_GP(game).options[OPT_ANTIALIASFONTS] != 0)
+		if (_GP(game).options[OPT_ANTIALIASFONTS] != 0 || ::AGS::g_vm->_forceTextAA)
 			renderMode = Graphics::kTTFRenderModeLight;
 		_fonts[_size] = Graphics::loadTTFFont(_ttfData, _size, Graphics::kTTFSizeModeCharacter, 0, renderMode);
 		assert(_fonts[_size]);

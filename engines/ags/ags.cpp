@@ -31,6 +31,7 @@
 #include "common/debug-channels.h"
 #include "common/events.h"
 #include "common/file.h"
+#include "common/util.h"
 #include "engines/util.h"
 
 #include "ags/shared/core/platform.h"
@@ -70,7 +71,7 @@ AGSEngine *g_vm;
 AGSEngine::AGSEngine(OSystem *syst, const AGSGameDescription *gameDesc) : Engine(syst),
 		_gameDescription(gameDesc), _randomSource("AGS"), _events(nullptr), _music(nullptr),
 		_rawScreen(nullptr), _screen(nullptr), _gfxDriver(nullptr),
-		_globals(nullptr) {
+		_globals(nullptr), _forceTextAA(false) {
 	g_vm = this;
 	DebugMan.addDebugChannel(kDebugGraphics, "Graphics", "Graphics debug level");
 	DebugMan.addDebugChannel(kDebugPath, "Path", "Pathfinding debug level");
@@ -80,6 +81,10 @@ AGSEngine::AGSEngine(OSystem *syst, const AGSGameDescription *gameDesc) : Engine
 	_events = new EventsManager();
 	_music = new Music(_mixer);
 	_globals = new ::AGS3::Globals();
+
+	Common::String forceAA;
+	if (ConfMan.getActiveDomain()->tryGetVal("force_text_aa", forceAA))
+		Common::parseBool(forceAA, _forceTextAA);
 }
 
 AGSEngine::~AGSEngine() {

@@ -72,6 +72,7 @@ public:
 	::AGS3::AGS::Engine::Mutex _soundCacheMutex;
 	::AGS3::AGS::Engine::Mutex _mp3Mutex;
 	::AGS3::Globals *_globals;
+	bool _forceTextAA;
 protected:
 	// Engine APIs
 	Common::Error run() override;

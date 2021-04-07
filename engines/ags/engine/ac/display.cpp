@@ -416,7 +416,7 @@ int GetTextDisplayTime(const char *text, int canberel) {
 }
 
 bool ShouldAntiAliasText() {
-	return (_GP(game).options[OPT_ANTIALIASFONTS] != 0);
+	return (_GP(game).options[OPT_ANTIALIASFONTS] != 0 || ::AGS::g_vm->_forceTextAA);
 }
 
 // Draw an outline if requested, then draw the text on top
