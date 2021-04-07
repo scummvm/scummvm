@@ -78,7 +78,7 @@ private:
 	void openSmkVideo(Common::String name);
 	void closeSmk();
 	void smkNextFrame();
-	void drawFrameSubtitles(uint16 *frameBuffer, int frameNum);
+	void drawFrameSubtitles(Graphics::Surface *surface, int frameNum);
 
 	void drawSmkBuffer(int px, int py, int dx, int dy);
 	void refreshFullMotion();

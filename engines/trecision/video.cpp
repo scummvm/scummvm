@@ -90,6 +90,8 @@ bool NightlongSmackerDecoder::forceSeekToFrame(uint frame) {
 		offset += _frameSizes[i] & ~3;
 	}
 
+	_startTime = g_system->getMillis() - (videoTrack->getFrameTime(frame).msecs() / getRate()).toInt();
+	
 	return _fileStream->seek(start + offset, SEEK_SET);
 }
 
@@ -143,16 +145,15 @@ void AnimManager::playMovie(Common::String filename, int startFrame, int endFram
 
 	smkDecoder->start();
 
-	// FIXME: This breaks some videos
-	//if (startFrame > 1)
-	//	smkDecoder->forceSeekToFrame(startFrame);
+	if (endFrame - startFrame > 2 && startFrame > 10)
+		smkDecoder->forceSeekToFrame(startFrame - 10);
 
-	while (!g_vm->shouldQuit() && !smkDecoder->endOfVideo() && !skipVideo && smkDecoder->getCurFrame() < endFrame) {
+	while (!g_vm->shouldQuit() && !smkDecoder->endOfVideo() && smkDecoder->getCurFrame() < endFrame && !skipVideo) {
 		if (smkDecoder->needsUpdate()) {
 			const Graphics::Surface *frame = smkDecoder->decodeNextFrame();
 			if (frame) {
-				const Graphics::Surface *frame16 = frame->convertTo(g_system->getScreenFormat(), smkDecoder->getPalette());
-				drawFrameSubtitles((uint16 *)frame16->getPixels(), smkDecoder->getCurFrame());
+				Graphics::Surface *frame16 = frame->convertTo(g_system->getScreenFormat(), smkDecoder->getPalette());
+				drawFrameSubtitles(frame16, smkDecoder->getCurFrame());
 				g_system->copyRectToScreen(frame16->getPixels(), frame16->pitch, x, y, frame16->w, frame16->h);
 				delete frame16;
 
@@ -173,19 +174,19 @@ void AnimManager::playMovie(Common::String filename, int startFrame, int endFram
 	delete smkDecoder;
 }
 
-void AnimManager::drawFrameSubtitles(uint16 *frameBuffer, int frameNum) {
+void AnimManager::drawFrameSubtitles(Graphics::Surface *surface, int frameNum) {
 	if (!ConfMan.getBool("subtitles"))
 		return;
 
 	DialogHandler(frameNum);
 	if (_vm->_sdText.text == nullptr)
 		return;
-
+	
 	// Subtitles can be placed in different coordinates in the video,
 	// which are set inside DialogHandler(), but are then reset to
 	// fixed coordinates
 	_vm->_sdText.x = 20;
-	_vm->_sdText.y = 380;
+	_vm->_sdText.y = 380 - TOP;
 	_vm->_sdText.dx = MAXX - 40;
 	_vm->_sdText.dy = _vm->_sdText.checkDText();
 	_vm->_sdText._subtitleRect.left = 0;
@@ -193,7 +194,7 @@ void AnimManager::drawFrameSubtitles(uint16 *frameBuffer, int frameNum) {
 	_vm->_sdText._subtitleRect.right = MAXX;
 	_vm->_sdText._subtitleRect.bottom = MAXY;
 	_vm->_sdText.scol = MASKCOL;
-	_vm->_sdText.DText(frameBuffer);
+	_vm->_sdText.DText((uint16 *)surface->getPixels());
 }
 
 #else
@@ -296,7 +297,10 @@ void AnimManager::startSmkAnim(uint16 num) {
 		pos = kSmackerBackground;
 	else if (_animTab[num]._flag & SMKANIM_ICON)
 		pos = kSmackerIcon;
-#if (!USE_NEW_VIDEO_CODE)
+#if USE_NEW_VIDEO_CODE
+	else
+		return;
+#else
 	else {
 		pos = kSmackerFullMotion;
 

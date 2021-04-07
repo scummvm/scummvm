@@ -41,8 +41,8 @@ class LogicManager;
 
 // Temporary define for the new video code
 // TODOs:
-// - Fix subtitle drawing
-// - Fix artifacts after seeking and not drawing a key frame
+// - Fix occasional palette glitches after seeking
+// - Fix crashes when drawing some subtitles (e.g. when talking to the bum)
 // - Add dialog options
 #define USE_NEW_VIDEO_CODE 0
 

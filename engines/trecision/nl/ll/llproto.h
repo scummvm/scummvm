@@ -38,7 +38,7 @@ char waitKey();
 void FreeKey();
 char *GetNextSent();
 void Mouse(uint8 opt);
-uint16 TextLength(const char *sign, uint16 num);
+uint16 TextLength(const char *text, uint16 num);
 void IconSnapShot();
 bool DataSave();
 bool DataLoad();
