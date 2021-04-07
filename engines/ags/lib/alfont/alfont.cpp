@@ -21,6 +21,9 @@
  */
 
 #include "ags/lib/alfont/alfont.h"
+#include "ags/ags.h"
+#include "ags/globals.h"
+#include "ags/shared/ac/gamesetupstruct.h"
 #include "common/file.h"
 #include "graphics/fonts/ttf.h"
 
@@ -30,7 +33,10 @@ Graphics::Font *ALFONT_FONT::getFont() {
 #ifdef USE_FREETYPE2
 	if (!_fonts.contains(_size)) {
 		// Instantiate the raw TTF data into a font of the given size
-		_fonts[_size] = Graphics::loadTTFFont(_ttfData, _size);
+		Graphics::TTFRenderMode renderMode = Graphics::kTTFRenderModeMonochrome;
+		if (_GP(game).options[OPT_ANTIALIASFONTS] != 0)
+			renderMode = Graphics::kTTFRenderModeLight;
+		_fonts[_size] = Graphics::loadTTFFont(_ttfData, _size, Graphics::kTTFSizeModeCharacter, 0, renderMode);
 		assert(_fonts[_size]);
 	}
 
