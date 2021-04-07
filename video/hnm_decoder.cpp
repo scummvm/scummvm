@@ -127,16 +127,19 @@ void HNMDecoder::readNextPacket() {
 	while (superchunkRemaining) {
 		uint32 chunkSize = _stream->readUint32LE();
 		uint16 chunkType = _stream->readUint16BE();
-		//uint16 ukn        = _stream->readUint16LE();
-		_stream->skip(2);
+		uint16 flags     = _stream->readUint16LE();
 
 		if (chunkType == MKTAG16('P', 'L')) {
 			_videoTrack->decodePalette(_stream, chunkSize - 8);
 		} else if (chunkType == MKTAG16('I', 'Z')) {
 			_stream->skip(4);
-			_videoTrack->decodeIntraframe(_stream, chunkSize - 8 - 4);
+			_videoTrack->decodeIntraframe(_stream, chunkSize - 8 - 4, flags);
 		} else if (chunkType == MKTAG16('I', 'U')) {
-			_videoTrack->decodeInterframe(_stream, chunkSize - 8);
+			if ((flags & 1) == 1) {
+				_videoTrack->decodeInterframeA(_stream, chunkSize - 8, flags);
+			} else {
+				_videoTrack->decodeInterframe(_stream, chunkSize - 8, flags);
+			}
 		} else if (chunkType == MKTAG16('S', 'D')) {
 			if (_audioTrack) {
 				Audio::Timestamp duration = _audioTrack->decodeSound(_stream, chunkSize - 8);
@@ -167,21 +170,25 @@ HNMDecoder::HNM4VideoTrack::HNM4VideoTrack(uint32 width, uint32 height, uint32 f
 	}
 	_dirtyPalette = true;
 
-	if (width * height != frameSize) {
-		error("Invalid frameSize");
+	if (width * height > frameSize) {
+		error("Invalid frameSize: expected %d, got %d", width * height, frameSize);
 	}
 
-	// We will use _frameBufferC/P as the surface pixels, just init there with nullptr to avoid unintended usage of surface
-	const Graphics::PixelFormat &f = Graphics::PixelFormat::createFormatCLUT8();
-	_surface.init(width, height, width * f.bytesPerPixel, nullptr, f);
+	_frameBufferF = new byte[frameSize];
+	memset(_frameBufferF, 0, frameSize);
 	_frameBufferC = new byte[frameSize];
 	memset(_frameBufferC, 0, frameSize);
 	_frameBufferP = new byte[frameSize];
 	memset(_frameBufferP, 0, frameSize);
+
+	const Graphics::PixelFormat &f = Graphics::PixelFormat::createFormatCLUT8();
+	_surface.init(width, height, width * f.bytesPerPixel, _frameBufferF, f);
 }
 
 HNMDecoder::HNM4VideoTrack::~HNM4VideoTrack() {
 	// Don't free _surface as we didn't used create() but init()
+	delete[] _frameBufferF;
+	_frameBufferF = nullptr;
 	delete[] _frameBufferC;
 	_frameBufferC = nullptr;
 	delete[] _frameBufferP;
@@ -240,7 +247,129 @@ void HNMDecoder::HNM4VideoTrack::decodePalette(Common::SeekableReadStream *strea
 	}
 }
 
-void HNMDecoder::HNM4VideoTrack::decodeInterframe(Common::SeekableReadStream *stream, uint32 size) {
+void HNMDecoder::HNM4VideoTrack::decodeInterframe(Common::SeekableReadStream *stream, uint32 size, uint16 flags) {
+	SWAP(_frameBufferC, _frameBufferP);
+
+	uint16 width = _surface.w;
+	bool eop = false;
+
+	uint currentPos = 0;
+
+	while (!eop) {
+		if (size < 1) {
+			warning("Not enough data in chunk for interframe block");
+			break;
+		}
+		byte countFlgs = stream->readByte();
+		size -= 1;
+		byte count = countFlgs & 0x1f;
+		byte flgs = (countFlgs >> 5) & 0x7;
+
+		if (count == 0) {
+			int c, fill;
+			switch (flgs) {
+			case 0:
+				if (size < 2) {
+					error("Not enough data for case 0");
+				}
+				// Copy next two bytes of input to the output
+				c = stream->readByte();
+				_frameBufferC[currentPos++] = c;
+				c = stream->readByte();
+				_frameBufferC[currentPos++] = c;
+				size -= 2;
+				break;
+			case 1:
+				if (size < 1) {
+					error("Not enough data for case 1");
+				}
+				// Skip (next byte of input) * 2 bytes of output
+				c = stream->readByte() * 2;
+				currentPos += c;
+				size -= 1;
+				break;
+			case 2:
+				if (size < 2) {
+					error("Not enough data for case 2");
+				}
+				// Skip (next word of input) * 2 bytes of output
+				c = stream->readUint16LE() * 2;
+				currentPos += c;
+				size -= 2;
+				break;
+			case 3:
+				if (size < 2) {
+					error("Not enough data for case 3");
+				}
+				// Fill (next byte of input) * 2 of output with (next byte of input)
+				c = stream->readByte() * 2;
+				fill = stream->readByte();
+				while (c--) {
+					_frameBufferC[currentPos++] = fill;
+				}
+				size -= 2;
+				break;
+			default:
+				// End of picture
+				eop = true;
+				break;
+			}
+		} else {
+			if (size < 2) {
+				error("Not enough data for count > 0");
+			}
+
+			bool backward = (flgs & 0x4) != 0;
+			bool backline = (flgs & 0x2) != 0;
+			bool previous = (flgs & 0x1) != 0;
+			int offset = stream->readUint16LE();
+			bool swap = (offset & 0x1) != 0;
+			size -= 2;
+
+			offset = currentPos + (offset & 0xFFFE) - 0x8000;
+			if (offset < 0) {
+				error("Invalid offset");
+			}
+
+			byte *ptr;
+			if (previous) {
+				ptr = _frameBufferP;
+			} else {
+				ptr = _frameBufferC;
+			}
+
+			int shft1, shft2;
+			if (backline) {
+				const int twolinesabove = -(width * 2);
+				shft1 = twolinesabove + 1;
+				shft2 = 0;
+			} else {
+				shft1 = 0;
+				shft2 = 1;
+			}
+			if (swap)
+				SWAP(shft1, shft2);
+
+			while (count--) {
+				_frameBufferC[currentPos++] = ptr[offset + shft1];
+				_frameBufferC[currentPos++] = ptr[offset + shft2];
+				offset += backward ? -2 : 2;
+			}
+		}
+	}
+	postprocess(flags);
+
+	_curFrame++;
+	_nextFrameStartTime += _nextFrameDelay != uint32(-1) ? _nextFrameDelay : _regularFrameDelay;
+	_nextFrameDelay = _nextNextFrameDelay;
+	_nextNextFrameDelay = uint32(-1);
+
+	if (size > 0) {
+		stream->skip(size);
+	}
+}
+
+void HNMDecoder::HNM4VideoTrack::decodeInterframeA(Common::SeekableReadStream *stream, uint32 size, uint16 flags) {
 	SWAP(_frameBufferC, _frameBufferP);
 
 	uint16 width = _surface.w;
@@ -326,7 +455,7 @@ void HNMDecoder::HNM4VideoTrack::decodeInterframe(Common::SeekableReadStream *st
 			}
 		}
 	}
-	_surface.setPixels(_frameBufferC);
+	postprocess(flags);
 
 	_curFrame++;
 	_nextFrameStartTime += _nextFrameDelay != uint32(-1) ? _nextFrameDelay : _regularFrameDelay;
@@ -338,15 +467,49 @@ void HNMDecoder::HNM4VideoTrack::decodeInterframe(Common::SeekableReadStream *st
 	}
 }
 
-void HNMDecoder::HNM4VideoTrack::decodeIntraframe(Common::SeekableReadStream *stream, uint32 size) {
+void HNMDecoder::HNM4VideoTrack::decodeIntraframe(Common::SeekableReadStream *stream, uint32 size, uint16 flags) {
 	Image::HLZDecoder::decodeFrameInPlace(*stream, size, _frameBufferC);
 	memcpy(_frameBufferP, _frameBufferC, (uint)_surface.w * (uint)_surface.h);
-	_surface.setPixels(_frameBufferC);
+	postprocess(flags);
 
 	_curFrame++;
 	_nextFrameStartTime += _nextFrameDelay != uint32(-1) ? _nextFrameDelay : _regularFrameDelay;
 	_nextFrameDelay = _nextNextFrameDelay;
 	_nextNextFrameDelay = uint32(-1);
+}
+
+void HNMDecoder::HNM4VideoTrack::postprocess(uint16 flags) {
+	int width = _surface.w;
+	int height = _surface.h;
+
+	if ((flags & 1) == 1) {
+		memcpy(_frameBufferF, _frameBufferC, width * height);
+	} else if ((width % 4) == 0) {
+		byte *input = _frameBufferC;
+		byte *line0 = _frameBufferF;
+		byte *line1 = _frameBufferF + width;
+		int count = (height) / 2;
+		while (count--) {
+			int16 i;
+			for (i = 0; i < width / 4; i++) {
+				byte p0 = *input++, p1 = *input++, p2 = *input++, p3 = *input++;
+				byte p4 = *input++, p5 = *input++, p6 = *input++, p7 = *input++;
+
+				*line0++ = p0;
+				*line0++ = p2;
+				*line0++ = p4;
+				*line0++ = p6;
+				*line1++ = p1;
+				*line1++ = p3;
+				*line1++ = p5;
+				*line1++ = p7;
+			}
+			line0 += width;
+			line1 += width;
+		}
+	} else {
+		error("HNMDecoder::HNM4VideoTrack::postprocess(%x): Unexpected width: %d", flags, width);
+	}
 }
 
 HNMDecoder::DPCMAudioTrack::DPCMAudioTrack(uint16 channels, uint16 bits, uint sampleRate,
