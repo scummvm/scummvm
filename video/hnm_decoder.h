@@ -72,8 +72,10 @@ private:
 
 		/** Decode a video chunk. */
 		void decodePalette(Common::SeekableReadStream *stream, uint32 size);
-		void decodeInterframe(Common::SeekableReadStream *stream, uint32 size);
-		void decodeIntraframe(Common::SeekableReadStream *stream, uint32 size);
+		void decodeInterframe(Common::SeekableReadStream *stream, uint32 size, uint16 flags);
+		void decodeInterframeA(Common::SeekableReadStream *stream, uint32 size, uint16 flags);
+		void decodeIntraframe(Common::SeekableReadStream *stream, uint32 size, uint16 flags);
+		void postprocess(uint16 flags);
 
 		void restart() { _nextFrameDelay = uint32(-1); _nextNextFrameDelay = uint32(-1); }
 		void setFrameDelay(uint32 frameDelay);
@@ -92,6 +94,7 @@ private:
 		byte _palette[256 * 3];
 		mutable bool _dirtyPalette;
 
+		byte *_frameBufferF;
 		byte *_frameBufferC;
 		byte *_frameBufferP;
 	};
