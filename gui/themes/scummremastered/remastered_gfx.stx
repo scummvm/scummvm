@@ -106,7 +106,7 @@
 		<bitmap filename = 'cursor.bmp' scalable_file = 'cursor.svg' width = '32' height = '32'/>
 		<bitmap filename = 'cursor_small.bmp' scalable_file = 'cursor.svg' width = '16' height = '16'/>
 		<bitmap filename = 'checkbox.bmp' scalable_file = 'checkbox.svg' width = '15' height = '15'/>
-		<bitmap filename = 'checkbox_empty.bmp'/>
+		<bitmap filename = 'checkbox_empty.bmp' scalable_file = 'checkbox_empty.svg' width = '15' height = '15'/>
 		<bitmap filename = 'checkbox_disabled.bmp' scalable_file = 'checkbox_disabled.svg' width = '15' height = '15'/>
 		<bitmap filename = 'radiobutton.bmp' scalable_file = 'radiobutton.svg'width = '15' height = '15'/>
 		<bitmap filename = 'radiobutton_empty.bmp' scalable_file = 'radiobutton_empty.svg'width = '15' height = '15'/>
