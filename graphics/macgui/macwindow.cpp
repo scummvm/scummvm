@@ -245,7 +245,7 @@ void MacWindow::drawBorder() {
 	uint32 flags = 0;
 	if (_active)
 		flags |= kWindowBorderActive;
-	if (_borderFlags & kWindowBorderTitle)
+	if (!_title.empty())
 		flags |= kWindowBorderTitle;
 	if (_borderFlags & kWindowBorderScrollbar)
 		flags |= kWindowBorderScrollbar;
@@ -561,21 +561,19 @@ void MacWindow::setBorderType(int borderType) {
 		disableBorder();
 	} else {
 		BorderOffsets offsets = _wm->getBorderOffsets(borderType);
-		uint32 flags = _wm->getBorderFlags(borderType);
-		int titlePos = 0;
-		if (flags & kWindowBorderTitle)
-			titlePos = _wm->getBorderTitlePos(borderType);
-		Common::SeekableReadStream *activeFile = _wm->getBorderFile(borderType, flags | kWindowBorderActive);
-		if (activeFile) {
-			loadBorder(*activeFile, flags | kWindowBorderActive, offsets, titlePos);
-			delete activeFile;
-		}
-
-		Common::SeekableReadStream *inactiveFile = _wm->getBorderFile(borderType, flags);
-		if (inactiveFile) {
-			loadBorder(*inactiveFile, flags, offsets, titlePos);
-			delete inactiveFile;
-		}
+		uint32 flags = _wm->getBorderFlags(borderType) | kWindowBorderActive;
+		uint32 i = flags;
+		do {
+			int titlePos = 0;
+			if (i & kWindowBorderTitle)
+				titlePos = _wm->getBorderTitlePos(borderType);
+			Common::SeekableReadStream *file = _wm->getBorderFile(borderType, i);
+			if (file) {
+				loadBorder(*file, i, offsets, titlePos);
+				delete file;
+			}
+			i = (i - 1) & flags;
+		} while (i != flags);
 	}
 }
 
