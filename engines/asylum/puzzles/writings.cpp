@@ -68,7 +68,8 @@ bool PuzzleWritings::init(const AsylumEvent &)  {
 	_textSurface.create(640, 480, Graphics::PixelFormat::createFormatCLUT8());
 
 	// Draw background
-	getScreen()->draw(getWorld()->graphicResourceIds[5]);
+	getScreen()->fillRect(0, 0, 640, 480, 253);
+	getScreen()->draw(getWorld()->graphicResourceIds[5], 0, Common::Point(0, 0), kDrawFlagNone, true);
 
 	// Draw all lines of text
 	getText()->loadFont(getWorld()->graphicResourceIds[42]);
@@ -126,7 +127,8 @@ bool PuzzleWritings::update(const AsylumEvent &)  {
 
 	// Draw background
 	getScreen()->clearGraphicsInQueue();
-	getScreen()->draw(getWorld()->graphicResourceIds[4]);
+	getScreen()->fillRect(0, 0, 640, 480, 253);
+	getScreen()->draw(getWorld()->graphicResourceIds[4], 0, Common::Point(0, 0), kDrawFlagNone, true);
 
 	if (_hasGlassMagnifier) {
 		getScreen()->copyToBackBuffer(

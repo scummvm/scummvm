@@ -92,7 +92,8 @@ bool PuzzleFisherman::update(const AsylumEvent &)  {
 
 	// Draw background
 	getScreen()->clearGraphicsInQueue();
-	getScreen()->draw(getWorld()->graphicResourceIds[38]);
+	getScreen()->fillRect(0, 0, 640, 480, 251);
+	getScreen()->draw(getWorld()->graphicResourceIds[38], 0, Common::Point(0, 0), kDrawFlagNone, true);
 
 	// Draw 7 graphics
 	for (uint32 i = 0; i < 6; i++) {

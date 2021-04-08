@@ -132,7 +132,9 @@ bool PuzzleTimeMachine::update(const AsylumEvent &)  {
 
 	// Draw screen elements
 	getScreen()->clearGraphicsInQueue();
-	getScreen()->draw(getWorld()->graphicResourceIds[34]);
+	getScreen()->fillRect(0, 0, 640, 480, 115);
+	getScreen()->draw(getWorld()->graphicResourceIds[34], 0, Common::Point(0, 0), kDrawFlagNone, true);
+
 	getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[35], _frameIndexes[0], Common::Point( 23, 215), kDrawFlagNone, 0, 3);
 	getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[36], _frameIndexes[1], Common::Point( 70, 217), kDrawFlagNone, 0, 3);
 	getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[37], _frameIndexes[2], Common::Point(189, 217), kDrawFlagNone, 0, 3);

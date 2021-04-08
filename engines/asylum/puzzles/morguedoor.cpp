@@ -107,7 +107,9 @@ bool PuzzleMorgueDoor::update(const AsylumEvent &)  {
 
 	// Draw elements
 	getScreen()->clearGraphicsInQueue();
-	getScreen()->draw(getWorld()->graphicResourceIds[19]);
+	getScreen()->fillRect(0, 0, 640, 480, 252);
+	getScreen()->draw(getWorld()->graphicResourceIds[19], 0, Common::Point(0, 0), kDrawFlagNone, true);
+
 	getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[21], (uint32)_frameIndexes[kTopLever], Common::Point(47, 0), kDrawFlagNone, 0, 1);
 	getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[22], (uint32)_frameIndexes[kBottomLever], Common::Point(51, 236), kDrawFlagNone, 0, 1);
 
