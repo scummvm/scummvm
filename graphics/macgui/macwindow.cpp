@@ -198,7 +198,7 @@ void MacWindow::center(bool toCenter) {
 
 	if (toCenter) {
 		move((screen.width() - _dims.width()) / 2, (screen.height() - _dims.height()) / 2);
-	} else if (_macBorder.hasBorder(_active) && _macBorder.hasOffsets()) {
+	} else if (_macBorder.hasBorder(_borderFlags | _active) && _macBorder.hasOffsets()) {
 		move(_macBorder.getOffset().left, _macBorder.getOffset().top);
 	} else {
 		move(0, 0);
@@ -209,7 +209,7 @@ void MacWindow::updateInnerDims() {
 	if (_dims.isEmpty())
 		return;
 
-	if (_macBorder.hasBorder(_active) && _macBorder.hasOffsets()) {
+	if (_macBorder.hasBorder(_borderFlags | _active) && _macBorder.hasOffsets()) {
 		_innerDims = Common::Rect(
 			_dims.left + _macBorder.getOffset().left,
 			_dims.top + _macBorder.getOffset().top,
@@ -225,7 +225,7 @@ void MacWindow::updateOuterDims() {
 	if (_innerDims.isEmpty())
 		return;
 
-	if (_macBorder.hasBorder(_active) && _macBorder.hasOffsets()) {
+	if (_macBorder.hasBorder(_borderFlags | _active) && _macBorder.hasOffsets()) {
 		_dims = Common::Rect(
 			_innerDims.left - _macBorder.getOffset().left,
 			_innerDims.top - _macBorder.getOffset().top,
@@ -365,7 +365,9 @@ void MacWindow::setBorder(Graphics::TransparentSurface *surface, uint32 flags, B
 
 	_borderIsDirty = true;
 	_wm->setFullRefresh(true);
-	_borderFlags = flags;
+	// here we set the first bit zero, which indicate the active and inactive
+	// because we will use _active flag to decide whether it's active or not
+	_borderFlags = flags & 0xfffffffe;
 }
 
 void MacWindow::setCloseable(bool closeable) {
@@ -559,16 +561,19 @@ void MacWindow::setBorderType(int borderType) {
 		disableBorder();
 	} else {
 		BorderOffsets offsets = _wm->getBorderOffsets(borderType);
-
-		Common::SeekableReadStream *activeFile = _wm->getBorderFile(borderType, true);
+		uint32 flags = _wm->getBorderFlags(borderType);
+		int titlePos = 0;
+		if (flags & kWindowBorderTitle)
+			titlePos = _wm->getBorderTitlePos(borderType);
+		Common::SeekableReadStream *activeFile = _wm->getBorderFile(borderType, flags | kWindowBorderActive);
 		if (activeFile) {
-			loadBorder(*activeFile, kWindowBorderActive, offsets);
+			loadBorder(*activeFile, flags | kWindowBorderActive, offsets, titlePos);
 			delete activeFile;
 		}
 
-		Common::SeekableReadStream *inactiveFile = _wm->getBorderFile(borderType, false);
+		Common::SeekableReadStream *inactiveFile = _wm->getBorderFile(borderType, flags);
 		if (inactiveFile) {
-			loadBorder(*inactiveFile, 0, offsets);
+			loadBorder(*inactiveFile, flags, offsets, titlePos);
 			delete inactiveFile;
 		}
 	}

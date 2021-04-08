@@ -74,7 +74,7 @@ void MacWindowBorder::addBorder(TransparentSurface *source, uint32 flags, int ti
 	_border[flags] = new NinePatchBitmap(source, true, titlePos, titleWidth);
 	_borderInitialized[flags] = true;
 
-	if (_border[flags]->getPadding().isValidRect())
+	if (_border[flags]->getPadding().isValidRect() && _border[flags]->getPadding().left > -1 && _border[flags]->getPadding().top > -1)
 		setOffsets(_border[flags]->getPadding());
 }
 
@@ -122,7 +122,7 @@ void MacWindowBorder::setTitle(const Common::String& title, int width, MacWindow
 	const Graphics::Font *font = wm->_fontMan->getFont(Graphics::MacFont(kMacFontChicago, 12));
 	int sidesWidth = getOffset().left + getOffset().right;
 	int titleWidth = font->getStringWidth(_title) + 10;
-	int maxWidth = width - sidesWidth - 7;
+	int maxWidth = MAX<int>(width - sidesWidth - 7, 0);
 	if (titleWidth > maxWidth)
 		titleWidth = maxWidth;
 
@@ -183,6 +183,11 @@ void MacWindowBorder::blitBorderInto(ManagedSurface &destination, uint32 flags, 
 	if (destination.w == 0 || destination.h == 0) {
 		warning("Attempt to draw %d x %d window", destination.w, destination.h);
 		return;
+	}
+	
+	// we add a special check here, if we have title but the titleWidth is zero, then we try to recalc it
+	if ((flags & kWindowBorderTitle) && _border[flags]->getTitleWidth() == 0) {
+		setTitle(_title, destination.w, wm);
 	}
 
 	srf.create(destination.w, destination.h, destination.format);

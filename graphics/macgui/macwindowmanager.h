@@ -306,7 +306,9 @@ public:
 
 	void loadDataBundle();
 	BorderOffsets getBorderOffsets(byte windowType);
-	Common::SeekableReadStream *getBorderFile(byte windowType, bool isActive);
+	uint32 getBorderFlags(byte windowType);
+	int getBorderTitlePos(byte windowType);
+	Common::SeekableReadStream *getBorderFile(byte windowType, uint32 flags);
 	Common::SeekableReadStream *getFile(const Common::String &filename);
 
 public:
