@@ -68,6 +68,41 @@ ManagedSurface::ManagedSurface(ManagedSurface &surf, const Common::Rect &bounds)
 	create(surf, bounds);
 }
 
+ManagedSurface::ManagedSurface(Surface *surf, DisposeAfterUse::Flag disposeAfterUse) :
+		w(_innerSurface.w), h(_innerSurface.h), pitch(_innerSurface.pitch), format(_innerSurface.format),
+		_owner(nullptr), _transparentColor(0), _transparentColorSet(false), _paletteSet(false) {
+	if (!surf) {
+		_disposeAfterUse = DisposeAfterUse::YES;
+
+		return;
+	}
+
+	if (disposeAfterUse == DisposeAfterUse::YES) {
+		_innerSurface.w = surf->w;
+		_innerSurface.h = surf->h;
+		_innerSurface.pitch = surf->pitch;
+		_innerSurface.format = surf->format;
+		_innerSurface.setPixels(surf->getPixels());
+
+		delete surf;
+	} else {
+		copyFrom(*surf);
+	}
+}
+
+ManagedSurface::ManagedSurface(const Surface *surf) :
+		w(_innerSurface.w), h(_innerSurface.h), pitch(_innerSurface.pitch), format(_innerSurface.format),
+		_owner(nullptr), _transparentColor(0), _transparentColorSet(false), _paletteSet(false) {
+	if (!surf)  {
+		_disposeAfterUse = DisposeAfterUse::YES;
+
+		return;
+	}
+
+	copyFrom(*surf);
+	_disposeAfterUse = DisposeAfterUse::NO;
+}
+
 ManagedSurface::~ManagedSurface() {
 	free();
 }
