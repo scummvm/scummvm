@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-04-07 23:46+0000\n"
+"POT-Creation-Date: 2021-04-08 09:18+0000\n"
 "PO-Revision-Date: 2021-01-27 11:15+0000\n"
 "Last-Translator: Morgan Roberts <morganroberts@mentercaerffili.cymru>\n"
 "Language-Team: Welsh <https://translations.scummvm.org/projects/scummvm/"
@@ -1912,11 +1912,11 @@ msgstr ""
 msgid "Clear value"
 msgstr ""
 
-#: base/main.cpp:615
+#: base/main.cpp:619
 msgid "Error running game:"
 msgstr ""
 
-#: base/main.cpp:662
+#: base/main.cpp:666
 msgid "Could not find any engine capable of running the selected game"
 msgstr ""
 
