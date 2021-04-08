@@ -44,7 +44,6 @@ class OSystem;
 namespace Graphics {
 struct DrawStep;
 class VectorRenderer;
-class SVGBitmap;
 }
 
 namespace GUI {
@@ -202,7 +201,6 @@ private:
 class ThemeEngine {
 protected:
 	typedef Common::HashMap<Common::String, Graphics::ManagedSurface *> ImagesMap;
-	typedef Common::HashMap<Common::String, Graphics::SVGBitmap *> SVGMap;
 	typedef Common::HashMap<Common::String, Common::Point *> PointMap;
 
 	friend class GUI::Dialog;
@@ -621,10 +619,6 @@ public:
 	inline bool supportsImages() const { return true; }
 	inline bool ownCursor() const { return _useCursor; }
 
-	Graphics::SVGBitmap *getSVG(const Common::String &name) {
-		return _svgs.contains(name) ? _svgs[name] : 0;
-	}
-
 	Common::Point *getBitmapDims(const Common::String &name) {
 		return _bitmapDims.contains(name) ? _bitmapDims[name] : 0;
 	}
@@ -790,7 +784,6 @@ protected:
 	Common::Array<LangExtraFont> _langExtraFonts;
 
 	ImagesMap _bitmaps;
-	SVGMap _svgs;
 	PointMap _bitmapDims;
 	Graphics::PixelFormat _overlayFormat;
 	Graphics::PixelFormat _cursorFormat;
