@@ -63,8 +63,6 @@ extern bool  FlagSomeOneSpeak;
 extern bool  FlagCharacterSpeak;
 extern bool  FlagUseWithStarted;
 extern bool  FlagUseWithLocked;
-extern bool  FlagMousePolling;
-extern bool  FlagDialogSolitaire;
 extern bool  FlagCharacterExist;
 extern bool  FlagWalkNoInterrupt;
 extern bool  FlagNoPaintScreen;
