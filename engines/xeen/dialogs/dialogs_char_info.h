@@ -52,7 +52,7 @@ private:
 	/**
 	 * Get plural day/days form
 	 */
-	const char* getDaysPlurals(int val);
+	const char *getDaysPlurals(int val);
 
 	/**
 	 * Return a string containing the details of the character

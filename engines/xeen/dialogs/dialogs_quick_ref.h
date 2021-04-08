@@ -31,6 +31,11 @@ class QuickReferenceDialog : public ButtonContainer {
 private:
 	QuickReferenceDialog(XeenEngine *vm) : ButtonContainer(vm) {}
 
+	/**
+	 * Get plural day/days form
+	 */
+	const char *getDaysPlurals(int val);
+
 	void execute();
 public:
 	static void show(XeenEngine *vm);
