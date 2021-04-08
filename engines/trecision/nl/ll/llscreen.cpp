@@ -102,7 +102,7 @@ void openSys() {
 	FTexture[hh]._dx = 300 / 2;
 	FTexture[hh]._dy = 208 / 2;
 	FTexture[hh]._angle = 0;
-	FTexture[hh]._texture = g_vm->TextureArea;
+	FTexture[hh]._texture = g_vm->_textureArea;
 	FTexture[hh]._palette = nullptr;
 	FTexture[hh]._flag = TEXTUREACTIVE + TEXTURECYLIND;
 
@@ -140,9 +140,9 @@ void openSys() {
 	GameBytePointer += ICONDX * ICONDY;
 
 	// zbuffer
-	g_vm->ZBuffer = new int16[ZBUFFERSIZE / 2];
+	g_vm->_zBuffer = new int16[ZBUFFERSIZE / 2];
 	for (int c = 0; c < ZBUFFERSIZE / 2; ++c)
-		g_vm->ZBuffer[c] = 0x7FFF;
+		g_vm->_zBuffer[c] = 0x7FFF;
 	
 	// CDBuffer
 	ExtraObj2C = (uint16 *)SpeechBuf; // for room 2C

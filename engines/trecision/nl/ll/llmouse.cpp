@@ -54,7 +54,7 @@ uint16 TextLength(const char *text, uint16 num) {
 
 	uint16 retVal = 0;
 	for (uint16 c = 0; c < len; c++)
-		retVal += g_vm->Font[(uint8)text[c] * 3 + 2];
+		retVal += g_vm->_font[(uint8)text[c] * 3 + 2];
 
 	return retVal;
 }
@@ -185,9 +185,9 @@ void SDText::DText(uint16 *frameBuffer) {
 		for (uint16 c = 0; c < len; c++) {
 			byte curChar = text[c]; /* legge prima parte del font */
 
-			const uint16 charOffset = g_vm->Font[curChar * 3] + (uint16)(g_vm->Font[curChar * 3 + 1] << 8);
+			const uint16 charOffset = g_vm->_font[curChar * 3] + (uint16)(g_vm->_font[curChar * 3 + 1] << 8);
 			uint16 fontDataOffset = 768;
-			const uint16 charWidth = g_vm->Font[curChar * 3 + 2];
+			const uint16 charWidth = g_vm->_font[curChar * 3 + 2];
 
 			if (c == len - 1 && BlinkLastDTextChar != MASKCOL)
 				tmpTCol = BlinkLastDTextChar;
@@ -198,9 +198,9 @@ void SDText::DText(uint16 *frameBuffer) {
 
 				while (curPos <= charWidth - 1) {
 					if (a >= _subtitleRect.top && a < _subtitleRect.bottom) {
-						if (CurColor != MASKCOL && (g_vm->Font[charOffset + fontDataOffset])) {
+						if (CurColor != MASKCOL && (g_vm->_font[charOffset + fontDataOffset])) {
 							const uint16 charLeft = inc + curPos;
-							const uint16 charRight = charLeft + g_vm->Font[charOffset + fontDataOffset];
+							const uint16 charRight = charLeft + g_vm->_font[charOffset + fontDataOffset];
 							uint16 *dst1 = buffer + x + charLeft + (y + a) * SCREENLEN;
 							uint16 *dst2 = buffer + x + _subtitleRect.left + (y + a) * SCREENLEN;
 							uint16 *dst = nullptr;
@@ -228,7 +228,7 @@ void SDText::DText(uint16 *frameBuffer) {
 						}
 					}
 
-					curPos += g_vm->Font[charOffset + fontDataOffset];
+					curPos += g_vm->_font[charOffset + fontDataOffset];
 					fontDataOffset++;
 
 					if (CurColor == tmpSCol)
@@ -254,8 +254,8 @@ void IconSnapShot() {
 
 	for (int b = 0; b < ICONDY; b++) {
 		for (a = 0; a < (ICONDX - 1); a++)
-			g_vm->Icone[(READICON + 13) * ICONDX * ICONDY + b * ICONDX + a] = g_vm->_graphicsMgr->restorePixelFormat(g_vm->_screenBuffer[SCREENLEN * b * 10 + a * (SCREENLEN / ICONDX)]);
-		g_vm->Icone[(READICON + 13)*ICONDX * ICONDY + b * ICONDX + a] = blackPixel;
+			g_vm->_icons[(READICON + 13) * ICONDX * ICONDY + b * ICONDX + a] = g_vm->_graphicsMgr->restorePixelFormat(g_vm->_screenBuffer[SCREENLEN * b * 10 + a * (SCREENLEN / ICONDX)]);
+		g_vm->_icons[(READICON + 13)*ICONDX * ICONDY + b * ICONDX + a] = blackPixel;
 	}
 
 	::createThumbnailFromScreen(&g_vm->_thumbnail);
@@ -296,7 +296,7 @@ void loadSaveSlots(Common::StringArray &saveNames) {
 			buf[39] = '\0';
 			saveNames.push_back(buf);
 			
-			uint16 *thumbnailBuf = g_vm->Icone + (READICON + 1 + i) * ICONDX * ICONDY;
+			uint16 *thumbnailBuf = g_vm->_icons + (READICON + 1 + i) * ICONDX * ICONDY;
 			saveFile->read((void *)thumbnailBuf, ICONDX * ICONDY * sizeof(uint16));
 			g_vm->_graphicsMgr->updatePixelFormat(thumbnailBuf, ICONDX * ICONDY);
 
@@ -307,7 +307,7 @@ void loadSaveSlots(Common::StringArray &saveNames) {
 				saveNames.push_back(header.description);
 
 				Graphics::Surface *thumbnail = convertScummVMThumbnail(header.thumbnail);
-				uint16 *thumbnailBuf = g_vm->Icone + (READICON + 1 + i) * ICONDX * ICONDY;
+				uint16 *thumbnailBuf = g_vm->_icons + (READICON + 1 + i) * ICONDX * ICONDY;
 				memcpy(thumbnailBuf, thumbnail->getPixels(), ICONDX * ICONDY * 2);
 				thumbnail->free();
 				delete thumbnail;
@@ -722,7 +722,7 @@ void performLoad(int slot, bool skipLoad) {
 --------------------------------------------------*/
 bool QuitGame() {
 	for (int a = 0; a < TOP; a++)
-		memcpy(g_vm->ZBuffer + a * SCREENLEN, g_vm->_screenBuffer + SCREENLEN * a, SCREENLEN * 2);
+		memcpy(g_vm->_zBuffer + a * SCREENLEN, g_vm->_screenBuffer + SCREENLEN * a, SCREENLEN * 2);
 
 	for (int a = 0; a < TOP; a++)
 		memset(g_vm->_screenBuffer + SCREENLEN * a, 0, SCREENLEN * 2);
@@ -745,7 +745,7 @@ bool QuitGame() {
 	bool exitFl = ((ch == 'y') || (ch == 'Y'));
 
 	for (int a = 0; a < TOP; a++)
-		memcpy(g_vm->_screenBuffer + SCREENLEN * a, g_vm->ZBuffer + a * SCREENLEN, SCREENLEN * 2);
+		memcpy(g_vm->_screenBuffer + SCREENLEN * a, g_vm->_zBuffer + a * SCREENLEN, SCREENLEN * 2);
 
 	g_vm->_graphicsMgr->copyToScreen(0, 0, SCREENLEN, TOP);
 

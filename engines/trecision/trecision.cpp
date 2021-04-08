@@ -156,11 +156,11 @@ TrecisionEngine::TrecisionEngine(OSystem *syst) : Engine(syst) {
 	for (int i = 0; i < 3; ++i)
 		_wheelPos[i] = 0;
 
-	Font = nullptr;
-	Arrows = nullptr;
-	TextureArea = nullptr;
-	Icone = nullptr;
-	ZBuffer = nullptr;
+	_font = nullptr;
+	_arrows = nullptr;
+	_textureArea = nullptr;
+	_icons = nullptr;
+	_zBuffer = nullptr;
 	_actor = nullptr;
 }
 
@@ -178,11 +178,11 @@ TrecisionEngine::~TrecisionEngine() {
 	delete _animMgr;
 	delete _graphicsMgr;
 	delete _logicMgr;
-	delete[] Font;
-	delete[] Arrows;
-	delete[] TextureArea;
-	delete[] Icone;
-	delete[] ZBuffer;
+	delete[] _font;
+	delete[] _arrows;
+	delete[] _textureArea;
+	delete[] _icons;
+	delete[] _zBuffer;
 	delete _actor;
 }
 
@@ -480,24 +480,24 @@ void TrecisionEngine::openDataFiles() {
 	if (!_speechFile.open("nlspeech.cd0"))
 		warning("openDataFiles() - nlspeech.cd0 is missing - skipping");
 
-	Font = readData("nlfont.fnt");
+	_font = readData("nlfont.fnt");
 	int size;
-	Arrows = readData16("frecc.bm", size);
-	_graphicsMgr->updatePixelFormat(Arrows, size);
+	_arrows = readData16("frecc.bm", size);
+	_graphicsMgr->updatePixelFormat(_arrows, size);
 
 	Common::SeekableReadStream *ff = _dataFile.createReadStreamForMember("icone.bm");
 	size = ceil(ff->size() / 2.0);
 	int iconSize = ICONDX * ICONDY;
 	int arraySize = size + iconSize * (INVICONNUM + 1);
-	Icone = new uint16[arraySize];
+	_icons = new uint16[arraySize];
 	for (int i = 0; i < arraySize; ++i)
-		Icone[i] = 0;
+		_icons[i] = 0;
 	for (int i = 0; i < size; ++i)
-		Icone[iconSize + i] = ff->readUint16LE();
+		_icons[iconSize + i] = ff->readUint16LE();
 	delete ff;
-	_graphicsMgr->updatePixelFormat(&Icone[iconSize], size);
+	_graphicsMgr->updatePixelFormat(&_icons[iconSize], size);
 
-	TextureArea = readData("textur.bm");
+	_textureArea = readData("textur.bm");
 }
 
 void TrecisionEngine::initMessageSystem() {

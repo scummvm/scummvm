@@ -87,10 +87,10 @@ public:
 	uint16 *readData16(Common::String fileName, int &size);
 
 	// Inventory
-	void refreshInventory(uint8 StartIcon, uint8 StartLine);
+	void refreshInventory(uint8 startIcon, uint8 startLine);
 	void moveInventoryLeft();
 	void moveInventoryRight();
-	void setInventoryStart(uint8 StartIcon, uint8 StartLine);
+	void setInventoryStart(uint8 startIcon, uint8 startLine);
 	void doInventory();
 	void showInventoryName(uint16 obj, bool showhide);
 	uint8 whatIcon(uint16 mx);
@@ -230,11 +230,11 @@ public:
 	GraphicsManager *_graphicsMgr;
 	LogicManager *_logicMgr;
 
-	uint8 *Font;
-	uint16 *Arrows;
-	uint8 *TextureArea;
-	uint16 *Icone;
-	int16 *ZBuffer;
+	uint8 *_font;
+	uint16 *_arrows;
+	uint8 *_textureArea;
+	uint16 *_icons;
+	int16 *_zBuffer;
 
 	SActor *_actor;
 

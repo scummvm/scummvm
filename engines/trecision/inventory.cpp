@@ -33,39 +33,39 @@ namespace Trecision {
 /*------------------------------------------------
                     refreshInventory()
 --------------------------------------------------*/
-void TrecisionEngine::refreshInventory(uint8 StartIcon, uint8 StartLine) {
-	if (StartLine > ICONDY)
-		StartLine = ICONDY;
+void TrecisionEngine::refreshInventory(uint8 startIcon, uint8 startLine) {
+	if (startLine > ICONDY)
+		startLine = ICONDY;
 
 	for (uint16 b = 0; b < ICONDY; b++)
 		memset(_screenBuffer + (FIRSTLINE + b) * SCREENLEN, 0, SCREENLEN * 2);
 
 	for (uint16 a = 0; a < ICONSHOWN; a++) {
-		if (_inventory[a + StartIcon] >= LASTICON) {
-			for (uint16 b = 0; b < (ICONDY - StartLine); b++)
+		if (_inventory[a + startIcon] >= LASTICON) {
+			for (uint16 b = 0; b < (ICONDY - startLine); b++)
 				memcpy(_screenBuffer + (FIRSTLINE + b) * SCREENLEN + a * (ICONDX) + ICONMARGSX,
-					  Icone + (_inventory[a + StartIcon] - LASTICON + READICON + 1) * ICONDX * ICONDY + (b + StartLine) * ICONDX, ICONDX * 2);
-		} else if (_inventory[a + StartIcon] != _lightIcon) {
-			for (uint16 b = 0; b < (ICONDY - StartLine); b++)
+					  _icons + (_inventory[a + startIcon] - LASTICON + READICON + 1) * ICONDX * ICONDY + (b + startLine) * ICONDX, ICONDX * 2);
+		} else if (_inventory[a + startIcon] != _lightIcon) {
+			for (uint16 b = 0; b < (ICONDY - startLine); b++)
 				memcpy(_screenBuffer + (FIRSTLINE + b) * SCREENLEN + a * (ICONDX) + ICONMARGSX,
-					  Icone + _inventory[a + StartIcon] * ICONDX * ICONDY + (b + StartLine) * ICONDX, ICONDX * 2);
+					  _icons + _inventory[a + startIcon] * ICONDX * ICONDY + (b + startLine) * ICONDX, ICONDX * 2);
 		}
 	}
 
 	// Arrows
-	if (StartIcon != 0) { // Copy left
-		int16 LeftArrow = ICONMARGSX * ICONDY * 3;
-		for (uint16 b = 0; b < (ICONDY - StartLine); b++) {
+	if (startIcon != 0) { // Copy left
+		int16 leftArrow = ICONMARGSX * ICONDY * 3;
+		for (uint16 b = 0; b < (ICONDY - startLine); b++) {
 			memcpy(_screenBuffer + (FIRSTLINE + b) * SCREENLEN,
-				  Arrows + LeftArrow + (b + StartLine) * ICONMARGSX, ICONMARGSX * 2);
+				  _arrows + leftArrow + (b + startLine) * ICONMARGSX, ICONMARGSX * 2);
 		}
 	}
 
-	if ((StartIcon + ICONSHOWN) < _inventorySize) { // Copy right
-		int16 RightArrow = ICONMARGDX * ICONDY * 2;
-		for (uint16 b = 0; b < (ICONDY - StartLine); b++) {
+	if ((startIcon + ICONSHOWN) < _inventorySize) { // Copy right
+		int16 rightArrow = ICONMARGDX * ICONDY * 2;
+		for (uint16 b = 0; b < (ICONDY - startLine); b++) {
 			memcpy(_screenBuffer + (FIRSTLINE + b) * SCREENLEN + SCREENLEN - ICONMARGDX,
-				  Arrows + RightArrow + ICONMARGSX * ICONDY * 2 + (b + StartLine) * ICONMARGSX, ICONMARGSX * 2);
+				  _arrows + rightArrow + ICONMARGSX * ICONDY * 2 + (b + startLine) * ICONMARGSX, ICONMARGSX * 2);
 		}
 	}
 
@@ -75,9 +75,9 @@ void TrecisionEngine::refreshInventory(uint8 StartIcon, uint8 StartLine) {
 /*-------------------------------------------------------------------------*/
 /*                            setInventoryStart					  		   */
 /*-------------------------------------------------------------------------*/
-void TrecisionEngine::setInventoryStart(uint8 StartIcon, uint8 StartLine) {
-	_inventoryRefreshStartIcon = StartIcon;
-	_inventoryRefreshStartLine = StartLine;
+void TrecisionEngine::setInventoryStart(uint8 startIcon, uint8 startLine) {
+	_inventoryRefreshStartIcon = startIcon;
+	_inventoryRefreshStartLine = startLine;
 }
 
 /*-------------------------------------------------------------------------*/
@@ -104,7 +104,7 @@ void TrecisionEngine::moveInventoryRight() {
 void TrecisionEngine::doInventory() {
 	switch (_curMessage->_event) {
 	case ME_OPEN:
-		if ((!_flagInventoryLocked) && (_inventoryStatus == INV_OFF) && !(FlagDialogActive)) {
+		if (!_flagInventoryLocked && (_inventoryStatus == INV_OFF) && !FlagDialogActive) {
 			_inventoryCounter = INVENTORY_HIDE;
 			_inventorySpeedIndex = 0;
 			_inventoryStatus = INV_PAINT;
@@ -112,7 +112,7 @@ void TrecisionEngine::doInventory() {
 		break;
 
 	case ME_CLOSE:
-		if ((!_flagInventoryLocked) && (_inventoryStatus == INV_INACTION) && !(FlagDialogActive)) {
+		if (!_flagInventoryLocked && (_inventoryStatus == INV_INACTION) && !FlagDialogActive) {
 			_inventoryCounter = INVENTORY_SHOW;
 			_inventorySpeedIndex = 0;
 			_inventoryStatus = INV_DEPAINT;
@@ -198,10 +198,10 @@ void TrecisionEngine::doInventory() {
 				setInventoryStart(_iconBase, INVENTORY_SHOW);
 			}
 		} else {
-			if (!(isInventoryArea(my)))
+			if (!isInventoryArea(my))
 				break;
 			showInventoryName(NO_OBJECTS, true);
-			if (!(FlagUseWithStarted)) {
+			if (!FlagUseWithStarted) {
 				_lightIcon = 0xFF;
 				setInventoryStart(_iconBase, INVENTORY_SHOW);
 			}

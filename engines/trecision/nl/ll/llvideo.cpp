@@ -37,10 +37,10 @@ void resetZBuffer(int x1, int y1, int x2, int y2) {
 
 	int size = (x2 - x1) * (y2 - y1);
 	if (size * 2 > ZBUFFERSIZE)
-		warning("Warning: ZBuffer size %d!\n", size * 2);
+		warning("Warning: _zBuffer size %d!\n", size * 2);
 
-	uint16 *d = (uint16 *)g_vm->ZBuffer;
-	for (uint32 i = 0; i < size; i++)
+	int16 *d = g_vm->_zBuffer;
+	for (int i = 0; i < size; ++i)
 		*d++ = 0x7FFF;
 }
 
