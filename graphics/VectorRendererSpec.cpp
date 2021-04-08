@@ -25,7 +25,6 @@
 #include "common/frac.h"
 
 #include "graphics/managed_surface.h"
-#include "graphics/transparent_surface.h"
 #include "graphics/nine_patch.h"
 
 #include "gui/ThemeEngine.h"
@@ -883,40 +882,6 @@ blitKeyBitmap(const Graphics::ManagedSurface *source, const Common::Point &p) {
 
 		dst_ptr = dst_ptr - drawRect.width() + dst_pitch;
 		src_ptr = src_ptr - drawRect.width() + src_pitch;
-	}
-}
-
-template<typename PixelType>
-void VectorRendererSpec<PixelType>::
-blitAlphaBitmap(Graphics::TransparentSurface *source, const Common::Rect &r, GUI::ThemeEngine::AutoScaleMode autoscale,
-			Graphics::DrawStep::VectorAlignment xAlign, Graphics::DrawStep::VectorAlignment yAlign, int alpha) {
-	if (autoscale == GUI::ThemeEngine::kAutoScaleStretch) {
-		source->blit(*_activeSurface->surfacePtr(), r.left, r.top, Graphics::FLIP_NONE,
-			nullptr, TS_ARGB(alpha, 255, 255, 255),
-			  r.width(), r.height());
-	} else if (autoscale == GUI::ThemeEngine::kAutoScaleFit) {
-		double ratio = (double)r.width() / source->w;
-		double ratio2 = (double)r.height() / source->h;
-
-		if (ratio2 < ratio)
-			ratio = ratio2;
-
-		int offx = 0, offy = 0;
-		if (xAlign == Graphics::DrawStep::kVectorAlignCenter)
-			offx = (r.width() - (int)(source->w * ratio)) >> 1;
-
-		if (yAlign == Graphics::DrawStep::kVectorAlignCenter)
-			offy = (r.height() - (int)(source->h * ratio)) >> 1;
-
-		source->blit(*_activeSurface->surfacePtr(), r.left + offx, r.top + offy, Graphics::FLIP_NONE,
-			nullptr, TS_ARGB(alpha, 255, 255, 255),
-	                  (int)(source->w * ratio), (int)(source->h * ratio));
-
-	} else if (autoscale == GUI::ThemeEngine::kAutoScaleNinePatch) {
-		Graphics::NinePatchBitmap nine(source, false);
-		nine.blit(*_activeSurface->surfacePtr(), r.left, r.top, r.width(), r.height());
-	} else {
-		source->blit(*_activeSurface->surfacePtr(), r.left, r.top);
 	}
 }
 

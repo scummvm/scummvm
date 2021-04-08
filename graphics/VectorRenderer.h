@@ -28,7 +28,6 @@
 #include "common/str.h"
 
 #include "graphics/managed_surface.h"
-#include "graphics/transparent_surface.h"
 
 #include "gui/ThemeEngine.h"
 
@@ -53,7 +52,6 @@ typedef void (VectorRenderer::*DrawingFunctionCallback)(const Common::Rect &, co
 struct DrawStep {
 	DrawingFunctionCallback drawingCall; /**< Pointer to drawing function */
 	Graphics::ManagedSurface *blitSrc;
-	Graphics::TransparentSurface *blitAlphaSrc;
 
 	struct Color {
 		uint8 r, g, b;
@@ -100,7 +98,6 @@ struct DrawStep {
 	DrawStep() {
 		drawingCall = nullptr;
 		blitSrc = nullptr;
-		blitAlphaSrc = nullptr;
 		// fgColor, bgColor, gradColor1, gradColor2, bevelColor initialized by Color default constructor
 		autoWidth = autoHeight = false;
 		x = y = w = h = 0;
@@ -463,12 +460,6 @@ public:
 		blitKeyBitmap(step.blitSrc, Common::Point(x, y));
 	}
 
-	void drawCallback_ALPHABITMAP(const Common::Rect &area, const DrawStep &step) {
-		uint16 x, y, w, h;
-		stepGetPositions(step, area, x, y, w, h);
-		blitAlphaBitmap(step.blitAlphaSrc, Common::Rect(x, y, x + w, y + h), step.autoscale, step.xAlign, step.yAlign); // TODO
-	}
-
 	void drawCallback_CROSS(const Common::Rect &area, const DrawStep &step) {
 		uint16 x, y, w, h;
 		stepGetPositions(step, area, x, y, w, h);
@@ -525,12 +516,6 @@ public:
 	virtual void blitKeyBitmap(const Graphics::ManagedSurface *source, const Common::Point &p) = 0;
 
 	virtual void blitManagedSurface(const Graphics::ManagedSurface *source, const Common::Point &p, bool themeTrans) = 0;
-
-	virtual void blitAlphaBitmap(Graphics::TransparentSurface *source, const Common::Rect &r,
-			GUI::ThemeEngine::AutoScaleMode autoscale = GUI::ThemeEngine::kAutoScaleNone,
-			Graphics::DrawStep::VectorAlignment xAlign = Graphics::DrawStep::kVectorAlignManual,
-			Graphics::DrawStep::VectorAlignment yAlign = Graphics::DrawStep::kVectorAlignManual,
-			int alpha = 255) = 0;
 
 	/**
 	 * Draws a string into the screen. Wrapper for the Graphics::Font string drawing
