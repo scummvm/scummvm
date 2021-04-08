@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-04-08 09:18+0000\n"
+"POT-Creation-Date: 2021-04-08 18:54+0000\n"
 "PO-Revision-Date: 2021-03-21 08:24+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Chinese <https://translations.scummvm.org/projects/scummvm/"
@@ -73,7 +73,7 @@ msgstr ""
 #: engines/mohawk/myst_stacks/menu.cpp:319
 #: engines/mohawk/riven_stacks/aspit.cpp:350
 #: engines/mohawk/riven_stacks/aspit.cpp:372
-#: engines/mohawk/riven_stacks/aspit.cpp:456 engines/nancy/cheat.cpp:50
+#: engines/mohawk/riven_stacks/aspit.cpp:456 engines/nancy/dialogs.cpp:95
 #: engines/parallaction/saveload.cpp:271 engines/scumm/dialogs.cpp:180
 #: engines/sword1/control.cpp:889 engines/wintermute/wintermute.cpp:210
 msgid "Cancel"
@@ -484,7 +484,7 @@ msgid "Notes:"
 msgstr ""
 
 #: gui/editrecorddialog.cpp:68 gui/predictivedialog.cpp:70
-#: engines/nancy/cheat.cpp:51
+#: engines/nancy/dialogs.cpp:96
 msgid "Ok"
 msgstr ""
 
@@ -601,7 +601,7 @@ msgid "Interact"
 msgstr ""
 
 #: gui/gui-manager.cpp:122 gui/unknown-game-dialog.cpp:54
-#: engines/nancy/cheat.cpp:263 engines/scumm/help.cpp:125
+#: engines/nancy/dialogs.cpp:308 engines/scumm/help.cpp:125
 #: engines/scumm/help.cpp:140 engines/scumm/help.cpp:165
 #: engines/scumm/help.cpp:191 engines/scumm/help.cpp:209
 msgid "Close"
@@ -3960,7 +3960,7 @@ msgstr ""
 
 #: engines/dragons/metaengine.cpp:152 engines/griffon/metaengine.cpp:127
 #: engines/grim/grim.cpp:491 engines/grim/grim.cpp:583
-#: engines/hdb/metaengine.cpp:231 engines/nancy/cheat.cpp:95
+#: engines/hdb/metaengine.cpp:231 engines/nancy/dialogs.cpp:140
 #: engines/scumm/help.cpp:225 engines/scumm/help.cpp:234
 #: engines/scumm/help.cpp:241 engines/scumm/help.cpp:249
 #: engines/twine/metaengine.cpp:409 engines/zvision/metaengine.cpp:164
@@ -5104,83 +5104,6 @@ msgstr ""
 msgid "Invalid file name for saving"
 msgstr ""
 
-#: engines/nancy/cheat.cpp:53
-msgid "General"
-msgstr ""
-
-#: engines/nancy/cheat.cpp:55
-msgid "Scene Data"
-msgstr ""
-
-#: engines/nancy/cheat.cpp:56
-msgid "Restart the Scene"
-msgstr ""
-
-#: engines/nancy/cheat.cpp:58
-msgid "Scene Number"
-msgstr ""
-
-#: engines/nancy/cheat.cpp:60
-msgid "Frame Number"
-msgstr ""
-
-#. I18N: The Y position (a.k.a vertical scroll) of the background
-#: engines/nancy/cheat.cpp:64
-msgid "Background Top (Y)"
-msgstr ""
-
-#: engines/nancy/cheat.cpp:66
-msgid "Hints Remaining"
-msgstr ""
-
-#: engines/nancy/cheat.cpp:67
-msgid "Easy"
-msgstr ""
-
-#: engines/nancy/cheat.cpp:69
-msgid "Medium"
-msgstr ""
-
-#: engines/nancy/cheat.cpp:71
-msgid "Hard"
-msgstr ""
-
-#: engines/nancy/cheat.cpp:74 engines/nancy/cheat.cpp:85
-msgid "Player Data"
-msgstr ""
-
-#: engines/nancy/cheat.cpp:75
-msgid "Player Time:"
-msgstr ""
-
-#: engines/nancy/cheat.cpp:77
-msgid "Days"
-msgstr ""
-
-#: engines/nancy/cheat.cpp:79 engines/nancy/cheat.cpp:89
-msgid "Hours"
-msgstr ""
-
-#: engines/nancy/cheat.cpp:81 engines/nancy/cheat.cpp:91
-msgid "Minutes"
-msgstr ""
-
-#: engines/nancy/cheat.cpp:83
-msgid "Player Difficulty Level"
-msgstr ""
-
-#: engines/nancy/cheat.cpp:86
-msgid "Timer On"
-msgstr ""
-
-#: engines/nancy/cheat.cpp:93
-msgid "Seconds"
-msgstr ""
-
-#: engines/nancy/cheat.cpp:162
-msgid "Invalid Scene ID!"
-msgstr ""
-
 #: engines/nancy/input.cpp:166
 msgid "Left Click Interact"
 msgstr ""
@@ -5232,6 +5155,125 @@ msgstr ""
 
 #: engines/nancy/input.cpp:258
 msgid "Open event flags cheat menu"
+msgstr ""
+
+#: engines/nancy/dialogs.cpp:41
+msgid "Player Speech"
+msgstr ""
+
+#: engines/nancy/dialogs.cpp:41
+msgid ""
+"Enable player speech. Only works if speech is enabled in the Audio settings."
+msgstr ""
+
+#: engines/nancy/dialogs.cpp:42
+msgid "Character Speech"
+msgstr ""
+
+#: engines/nancy/dialogs.cpp:42
+msgid ""
+"Enable NPC speech. Only works if speech is enabled in the Audio settings."
+msgstr ""
+
+#: engines/nancy/dialogs.cpp:43
+msgid "Use original menus"
+msgstr ""
+
+#: engines/nancy/dialogs.cpp:43
+msgid ""
+"Use the original engine's main, save/load, and setup menus. ScummVM's Global "
+"Main Menu can still be accessed through its keymap."
+msgstr ""
+
+#: engines/nancy/dialogs.cpp:45
+#, fuzzy
+msgid "Speech Options"
+msgstr "選項(O)..."
+
+#: engines/nancy/dialogs.cpp:46
+#, fuzzy
+msgid "Engine Options"
+msgstr "選項(O)..."
+
+#: engines/nancy/dialogs.cpp:98
+msgid "General"
+msgstr ""
+
+#: engines/nancy/dialogs.cpp:100
+msgid "Scene Data"
+msgstr ""
+
+#: engines/nancy/dialogs.cpp:101
+msgid "Restart the Scene"
+msgstr ""
+
+#: engines/nancy/dialogs.cpp:103
+msgid "Scene Number"
+msgstr ""
+
+#: engines/nancy/dialogs.cpp:105
+msgid "Frame Number"
+msgstr ""
+
+#. I18N: The Y position (a.k.a vertical scroll) of the background
+#: engines/nancy/dialogs.cpp:109
+msgid "Background Top (Y)"
+msgstr ""
+
+#: engines/nancy/dialogs.cpp:111
+msgid "Hints Remaining"
+msgstr ""
+
+#: engines/nancy/dialogs.cpp:112
+msgid "Easy"
+msgstr ""
+
+#: engines/nancy/dialogs.cpp:114
+msgid "Medium"
+msgstr ""
+
+#: engines/nancy/dialogs.cpp:116
+msgid "Hard"
+msgstr ""
+
+#: engines/nancy/dialogs.cpp:119
+msgid "Player Data"
+msgstr ""
+
+#: engines/nancy/dialogs.cpp:120
+msgid "Player Time:"
+msgstr ""
+
+#: engines/nancy/dialogs.cpp:122
+msgid "Days"
+msgstr ""
+
+#: engines/nancy/dialogs.cpp:124 engines/nancy/dialogs.cpp:134
+msgid "Hours"
+msgstr ""
+
+#: engines/nancy/dialogs.cpp:126 engines/nancy/dialogs.cpp:136
+msgid "Minutes"
+msgstr ""
+
+#: engines/nancy/dialogs.cpp:128
+msgid "Player Difficulty Level"
+msgstr ""
+
+#: engines/nancy/dialogs.cpp:130
+msgid "Software Timer"
+msgstr ""
+
+#: engines/nancy/dialogs.cpp:131
+msgid "Timer On"
+msgstr ""
+
+#: engines/nancy/dialogs.cpp:138
+msgid "Seconds"
+msgstr ""
+
+#: engines/nancy/dialogs.cpp:207
+msgid "Invalid Scene ID!"
 msgstr ""
 
 #: engines/neverhood/detection.cpp:119
