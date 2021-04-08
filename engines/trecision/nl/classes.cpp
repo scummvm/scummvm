@@ -532,7 +532,7 @@ void doCharacter() {
 				FlagShowCharacter = false;
 				doEvent(MC_SYSTEM, ME_CHANGEROOM, g_vm->_curMessage->_priority, g_vm->_curMessage->_u16Param1, g_vm->_curMessage->_u16Param2, g_vm->_curMessage->_u8Param, g_vm->_curMessage->_u32Param);
 			} else if (g_vm->_curMessage->_event == ME_CHARACTERDOACTION) {
-				g_vm->lastobj = 0;
+				g_vm->_lastObj = 0;
 				ShowObjName(g_vm->_curObj, true);
 				g_vm->refreshInventory(g_vm->_inventoryRefreshStartIcon, g_vm->_inventoryRefreshStartLine);
 			}
@@ -568,7 +568,7 @@ void doCharacter() {
 			g_vm->_characterQueue.initQueue();
 			AtFrameEnd(CHARACTER_ANIM);
 			FlagWaitRegen = true;
-			g_vm->lastobj = 0;
+			g_vm->_lastObj = 0;
 			ShowObjName(g_vm->_curObj, true);
 			//	If the room changes at the end
 			if (g_vm->_curMessage->_u16Param2) {

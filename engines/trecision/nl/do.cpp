@@ -547,7 +547,7 @@ void AtEndChangeRoom() {
 		WaitSoundFadEnd();
 		g_vm->_room[r32]._flag &= ~OBJFLAG_EXTRA;
 	} else if ((g_vm->_curRoom == r19) && !(g_vm->_room[r19]._flag & OBJFLAG_DONE)) {
-		g_vm->PlayScript(s19EVA);
+		g_vm->playScript(s19EVA);
 		FlagNoPaintScreen = false;
 		g_vm->clearText();
 		g_vm->redrawString();

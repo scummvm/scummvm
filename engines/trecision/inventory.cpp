@@ -248,18 +248,18 @@ void TrecisionEngine::showInventoryName(uint16 obj, bool showhide) {
 	if (FlagSomeOneSpeak)
 		return;
 
-	if (lastobj) {
+	if (_lastObj) {
 		clearText();
-		lastobj = 0;
+		_lastObj = 0;
 	}
 
 	if (FlagUseWithStarted && !FlagUseWithLocked) {
 		if (!showhide) {
 			clearText();
-			lastinv = 0;
+			_lastInv = 0;
 			return;
 		}
-		if ((obj | 0x8000) == lastinv)
+		if ((obj | 0x8000) == _lastInv)
 			return;
 
 		char locsent[256];
@@ -283,27 +283,27 @@ void TrecisionEngine::showInventoryName(uint16 obj, bool showhide) {
 		uint16 posX = CLIP(320 - (lenText / 2), 2, SCREENLEN - 2 - lenText);
 		uint16 posY = MAXY - CARHEI;
 
-		lastinv = (obj | 0x8000);
-		if (lastinv)
+		_lastInv = (obj | 0x8000);
+		if (_lastInv)
 			clearText();
 		addText(posX, posY, locsent, COLOR_INVENTORY, MASKCOL);
 	} else {
-		if (obj == lastinv)
+		if (obj == _lastInv)
 			return;
 
 		if (!obj || !showhide) {
 			clearText();
-			lastinv = 0;
+			_lastInv = 0;
 			return;
 		}
 		uint16 posX = ICONMARGSX + ((iconPos(_curInventory) - _iconBase) * (ICONDX)) + ICONDX / 2;
 		uint16 posY = MAXY - CARHEI;
-		lastinv = obj;
+		_lastInv = obj;
 		uint16 lenText = TextLength(_objName[_inventoryObj[obj]._name], 0);
 
 		posX = CLIP(posX - (lenText / 2), 2, SCREENLEN - 2 - lenText);
 
-		if (lastinv)
+		if (_lastInv)
 			clearText();
 
 		if (_inventoryObj[obj]._name)
