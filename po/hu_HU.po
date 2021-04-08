@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-04-07 23:46+0000\n"
-"PO-Revision-Date: 2021-04-02 08:37+0000\n"
+"PO-Revision-Date: 2021-04-08 07:24+0000\n"
 "Last-Translator: George Kormendi <grubycza@hotmail.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/hu/>\n"
@@ -3879,14 +3879,13 @@ msgid "Language to use for multilingual games"
 msgstr "A többnyelvű játékokhoz használt nyelv"
 
 #: engines/ags/detection.cpp:110
-#, fuzzy
-#| msgid "Antialiased"
 msgid "Force antialiased text"
-msgstr "Élsimított"
+msgstr "Erőltetett élsimított szöveg"
 
 #: engines/ags/detection.cpp:110
 msgid "Use antialiasing to draw text even if the game does not ask for it"
 msgstr ""
+"Használjon élsimítást a szöveg rajzolásához, akkor is ha a játék nem kéri"
 
 #: engines/bladerunner/bladerunner.cpp:363
 msgid "Failed to initialize resources"
