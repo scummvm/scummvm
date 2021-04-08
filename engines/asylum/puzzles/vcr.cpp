@@ -310,7 +310,8 @@ void PuzzleVCR::updateScreen(const AsylumEvent &) {
 
 	// Draw background
 	getScreen()->clearGraphicsInQueue();
-	getScreen()->draw(getWorld()->graphicResourceIds[0]);
+	getScreen()->fillRect(0, 0, 640, 480, 252);
+	getScreen()->draw(getWorld()->graphicResourceIds[0], 0, Common::Point(0, 0), kDrawFlagNone, true);
 
 	updateBlackJack();
 	updateRedJack();

@@ -78,7 +78,8 @@ bool PuzzleLock::update(const AsylumEvent &)  {
 
 	// Draw screen
 	getScreen()->clearGraphicsInQueue();
-	getScreen()->draw(getWorld()->graphicResourceIds[13]);
+	getScreen()->fillRect(0, 0, 640, 480, 252);
+	getScreen()->draw(getWorld()->graphicResourceIds[13], 0, Common::Point(0, 0), kDrawFlagNone, true);
 
 	if (_frameIndexes[0] != 32 || _frameIndexes[1] != 28 || _frameIndexes[2] != 0) {
 		getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[15], (uint32)_frameIndexes[0], Common::Point(145, 292), kDrawFlagNone, 0, 1);
