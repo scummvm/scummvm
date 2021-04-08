@@ -746,7 +746,7 @@ blitSurface(const Graphics::ManagedSurface *source, const Common::Rect &r) {
 
 template<typename PixelType>
 void VectorRendererSpec<PixelType>::
-blitManagedSurface(const Graphics::ManagedSurface *source, const Common::Point &p, bool themeTrans) {
+blitKeyBitmap(const Graphics::ManagedSurface *source, const Common::Point &p, bool themeTrans) {
 	Common::Rect drawRect(p.x, p.y, p.x + source->w, p.y + source->h);
 	drawRect.clip(_clippingArea);
 	drawRect.moveTo(0, 0);
@@ -759,20 +759,6 @@ blitManagedSurface(const Graphics::ManagedSurface *source, const Common::Point &
 		_activeSurface->transBlitFrom(*source, drawRect, p, _bitmapAlphaColor);
 	else
 		_activeSurface->blitFrom(*source, drawRect, p);
-}
-
-template<typename PixelType>
-void VectorRendererSpec<PixelType>::
-blitKeyBitmap(const Graphics::ManagedSurface *source, const Common::Point &p) {
-	Common::Rect drawRect(p.x, p.y, p.x + source->w, p.y + source->h);
-	drawRect.clip(_clippingArea);
-	drawRect.moveTo(0, 0);
-
-	if (drawRect.isEmpty()) {
-		return;
-	}
-
-	_activeSurface->transBlitFrom(*source, drawRect, p, _bitmapAlphaColor);
 }
 
 template<typename PixelType>
