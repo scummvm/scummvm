@@ -18,12 +18,20 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
+ *
+ * The bottom part of this is file is adapted from SDL_rotozoom.c. The
+ * relevant copyright notice for those specific functions can be found at the
+ * top of that section.
+ *
  */
 
 #include "graphics/conversion.h"
 #include "graphics/pixelformat.h"
+#include "graphics/transform_struct.h"
 
 #include "common/endian.h"
+#include "common/math.h"
+#include "common/rect.h"
 
 namespace Graphics {
 
@@ -437,6 +445,96 @@ void scaleBlitBilinearLogic(byte *dst, const byte *src,
 	}
 }
 
+template <typename Size, bool filtering, bool flipx, bool flipy> // TODO: See mirroring comment in RenderTicket ctor
+void rotoscaleBlitLogic(byte *dst, const byte *src,
+                       const uint dstPitch, const uint srcPitch,
+                       const uint dstW, const uint dstH,
+                       const uint srcW, const uint srcH,
+                       const Graphics::PixelFormat &fmt,
+                       const TransformStruct &transform,
+                       const Common::Point &newHotspot) {
+
+	assert(transform._angle != kDefaultAngle); // This would not be ideal; rotoscale() should never be called in conditional branches where angle = 0 anyway.
+
+	if (transform._zoom.x == 0 || transform._zoom.y == 0) {
+		return;
+	}
+
+	uint32 invAngle = 360 - (transform._angle % 360);
+	float invAngleRad = Common::deg2rad<uint32,float>(invAngle);
+	float invCos = cos(invAngleRad);
+	float invSin = sin(invAngleRad);
+
+	int icosx = (int)(invCos * (65536.0f * kDefaultZoomX / transform._zoom.x));
+	int isinx = (int)(invSin * (65536.0f * kDefaultZoomX / transform._zoom.x));
+	int icosy = (int)(invCos * (65536.0f * kDefaultZoomY / transform._zoom.y));
+	int isiny = (int)(invSin * (65536.0f * kDefaultZoomY / transform._zoom.y));
+
+	int xd = transform._hotspot.x << 16;
+	int yd = transform._hotspot.y << 16;
+	int cx = newHotspot.x;
+	int cy = newHotspot.y;
+
+	int ax = -icosx * cx;
+	int ay = -isiny * cx;
+	int sw = srcW - 1;
+	int sh = srcH - 1;
+
+	Size *pc = (Size *)dst;
+
+	for (uint y = 0; y < dstH; y++) {
+		int t = cy - y;
+		int sdx = ax + (isinx * t) + xd;
+		int sdy = ay - (icosy * t) + yd;
+		for (uint x = 0; x < dstW; x++) {
+			int dx = (sdx >> 16);
+			int dy = (sdy >> 16);
+			if (flipx) {
+				dx = sw - dx;
+			}
+			if (flipy) {
+				dy = sh - dy;
+			}
+
+			if (filtering) {
+				if ((dx > -1) && (dy > -1) && (dx < sw) && (dy < sh)) {
+					const byte *sp = src + dy * srcPitch + dx * sizeof(Size);
+					Size c00, c01, c10, c11;
+					c00 = *(const Size *)sp;
+					sp += sizeof(Size);
+					c01 = *(const Size *)sp;
+					sp += srcPitch;
+					c11 = *(const Size *)sp;
+					sp -= sizeof(Size);
+					c10 = *(const Size *)sp;
+					if (flipx) {
+						SWAP(c00, c01);
+						SWAP(c10, c11);
+					}
+					if (flipy) {
+						SWAP(c00, c10);
+						SWAP(c01, c11);
+					}
+					/*
+					* Interpolate colors
+					*/
+					int ex = (sdx & 0xffff);
+					int ey = (sdy & 0xffff);
+					*pc = scaleBlitBilinearInterpolate(c01, c00, c11, c10, ex, ey, fmt);
+				}
+			} else {
+				if ((dx >= 0) && (dy >= 0) && (dx < (int)srcW) && (dy < (int)srcH)) {
+					const byte *sp = src + dy * srcPitch + dx * sizeof(Size);
+					*pc = *(const Size *)sp;
+				}
+			}
+			sdx += icosx;
+			sdy += isiny;
+			pc++;
+		}
+	}
+}
+
 } // End of anonymous namespace
 
 bool scaleBlitBilinear(byte *dst, const byte *src,
@@ -504,6 +602,44 @@ bool scaleBlitBilinear(byte *dst, const byte *src,
 
 	delete[] sax;
 	delete[] say;
+
+	return true;
+}
+
+bool rotoscaleBlit(byte *dst, const byte *src,
+                   const uint dstPitch, const uint srcPitch,
+                   const uint dstW, const uint dstH,
+                   const uint srcW, const uint srcH,
+                   const Graphics::PixelFormat &fmt,
+                   const TransformStruct &transform,
+                   const Common::Point &newHotspot) {
+	if (fmt.bytesPerPixel == 4) {
+		rotoscaleBlitLogic<uint32, false, false, false>(dst, src, dstPitch, srcPitch, dstW, dstH, srcW, srcH, fmt, transform, newHotspot);
+	} else if (fmt.bytesPerPixel == 2) {
+		rotoscaleBlitLogic<uint16, false, false, false>(dst, src, dstPitch, srcPitch, dstW, dstH, srcW, srcH, fmt, transform, newHotspot);
+	} else if (fmt.bytesPerPixel == 1) {
+		rotoscaleBlitLogic<uint8, false, false, false>(dst, src, dstPitch, srcPitch, dstW, dstH, srcW, srcH, fmt, transform, newHotspot);
+	} else {
+		return false;
+	}
+
+	return true;
+}
+
+bool rotoscaleBlitBilinear(byte *dst, const byte *src,
+                           const uint dstPitch, const uint srcPitch,
+                           const uint dstW, const uint dstH,
+                           const uint srcW, const uint srcH,
+                           const Graphics::PixelFormat &fmt,
+                           const TransformStruct &transform,
+                           const Common::Point &newHotspot) {
+	if (fmt.bytesPerPixel == 4) {
+		rotoscaleBlitLogic<uint32, true, false, false>(dst, src, dstPitch, srcPitch, dstW, dstH, srcW, srcH, fmt, transform, newHotspot);
+	} else if (fmt.bytesPerPixel == 2) {
+		rotoscaleBlitLogic<uint16, true, false, false>(dst, src, dstPitch, srcPitch, dstW, dstH, srcW, srcH, fmt, transform, newHotspot);
+	} else {
+		return false;
+	}
 
 	return true;
 }

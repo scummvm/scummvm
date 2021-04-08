@@ -77,11 +77,6 @@ enum AlphaType {
 	ALPHA_FULL = 2
 };
 
-enum TFilteringMode {
-	FILTER_NEAREST = 0,
-	FILTER_BILINEAR = 1
-};
-
 /**
  * A transparent graphics surface, which implements alpha blitting.
  */
@@ -161,12 +156,10 @@ struct TransparentSurface : public Graphics::Surface {
 	 * scaling. Please do not use this if angle == 0, use plain old scaling function.
 	 *
 	 * @param transform a TransformStruct wrapping the required info. @see TransformStruct
+	 * @param filtering Whether or not to use bilinear filtering.
 	 *
 	 */
-	template <TFilteringMode filteringMode>
-	TransparentSurface *rotoscaleT(const TransformStruct &transform) const;
-
-	TransparentSurface *rotoscale(const TransformStruct &transform) const;
+	TransparentSurface *rotoscale(const TransformStruct &transform, bool filtering = false) const;
 
 	TransparentSurface *convertTo(const PixelFormat &dstFormat, const byte *palette = 0) const;
 

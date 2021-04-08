@@ -45,6 +45,8 @@ namespace Graphics {
  * @{
  */
 
+struct TransformStruct;
+
 /**
  * An arbitrary graphics surface that can be the target (or source) of blit
  * operations, font rendering, etc.
@@ -408,6 +410,19 @@ public:
 	 * @param filtering  Whether or not to use bilinear filtering.
 	 */
 	Graphics::Surface *scale(uint16 newWidth, uint16 newHeight, bool filtering = false) const;
+
+	/**
+	 * @brief Rotoscale function; this returns a transformed version of this surface after rotation and
+	 * scaling. Please do not use this if angle == 0, use plain old scaling function.
+	 *
+	 * The client code must call @ref free on the returned surface and then delete
+	 * it.
+	 *
+	 * @param transform a TransformStruct wrapping the required info. @see TransformStruct
+	 * @param filtering Whether or not to use bilinear filtering.
+	 *
+	 */
+	Graphics::Surface *rotoscale(const TransformStruct &transform, bool filtering = false) const;
 
 };
 

@@ -25,6 +25,10 @@
 
 #include "common/util.h"
 
+namespace Common {
+struct Point;
+}
+
 namespace Graphics {
 
 /**
@@ -37,6 +41,7 @@ namespace Graphics {
  */
 
 struct PixelFormat;
+struct TransformStruct;
 
 /** Converting a color from YUV to RGB colorspace. */
 inline static void YUV2RGB(byte y, byte u, byte v, byte &r, byte &g, byte &b) {
@@ -124,6 +129,22 @@ bool scaleBlitBilinear(byte *dst, const byte *src,
 					   const uint dstW, const uint dstH,
 					   const uint srcW, const uint srcH,
 					   const Graphics::PixelFormat &fmt);
+
+bool rotoscaleBlit(byte *dst, const byte *src,
+                   const uint dstPitch, const uint srcPitch,
+                   const uint dstW, const uint dstH,
+                   const uint srcW, const uint srcH,
+                   const Graphics::PixelFormat &fmt,
+                   const TransformStruct &transform,
+                   const Common::Point &newHotspot);
+
+bool rotoscaleBlitBilinear(byte *dst, const byte *src,
+                           const uint dstPitch, const uint srcPitch,
+                           const uint dstW, const uint dstH,
+                           const uint srcW, const uint srcH,
+                           const Graphics::PixelFormat &fmt,
+                           const TransformStruct &transform,
+                           const Common::Point &newHotspot);
 /** @} */
 } // End of namespace Graphics
 
