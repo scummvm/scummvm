@@ -741,111 +741,24 @@ void VectorRendererSpec<PixelType>::
 blitSurface(const Graphics::ManagedSurface *source, const Common::Rect &r) {
 	assert(source->w == _activeSurface->w && source->h == _activeSurface->h);
 
-	byte *dst_ptr = (byte *)_activeSurface->getBasePtr(r.left, r.top);
-	const byte *src_ptr = (const byte *)source->getBasePtr(r.left, r.top);
-
-	const int dst_pitch = _activeSurface->pitch;
-	const int src_pitch = source->pitch;
-
-	int h = r.height();
-	const int w = r.width() * sizeof(PixelType);
-
-	while (h--) {
-		memcpy(dst_ptr, src_ptr, w);
-		dst_ptr += dst_pitch;
-		src_ptr += src_pitch;
-	}
+	_activeSurface->blitFrom(*source, r, r);
 }
-
-template<typename PixelType>
-void VectorRendererSpec<PixelType>::
-blitSubSurface(const Graphics::ManagedSurface *source, const Common::Point &p) {
-	Common::Rect drawRect(p.x, p.y, p.x + source->w, p.y + source->h);
-	drawRect.clip(_clippingArea);
-
-	if (drawRect.isEmpty()) {
-		return;
-	}
-
-	int sourceOffsetX = drawRect.left - p.x;
-	int sourceOffsetY = drawRect.top - p.y;
-
-	byte *dst_ptr = (byte *)_activeSurface->getBasePtr(drawRect.left, drawRect.top);
-	const byte *src_ptr = (const byte *)source->getBasePtr(sourceOffsetX, sourceOffsetY);
-
-	const int dst_pitch = _activeSurface->pitch;
-	const int src_pitch = source->pitch;
-
-	int lines = drawRect.height();
-	const int sz = drawRect.width() * sizeof(PixelType);
-
-	while (lines--) {
-		memcpy(dst_ptr, src_ptr, sz);
-		dst_ptr += dst_pitch;
-		src_ptr += src_pitch;
-	}
-}
-
-#ifdef SCUMM_LITTLE_ENDIAN
-static const int kAIndex = 3;
-static const int kBIndex = 2;
-static const int kGIndex = 1;
-static const int kRIndex = 0;
-#else
-static const int kAIndex = 0;
-static const int kBIndex = 1;
-static const int kGIndex = 2;
-static const int kRIndex = 3;
-#endif
 
 template<typename PixelType>
 void VectorRendererSpec<PixelType>::
 blitManagedSurface(const Graphics::ManagedSurface *source, const Common::Point &p, bool themeTrans) {
 	Common::Rect drawRect(p.x, p.y, p.x + source->w, p.y + source->h);
 	drawRect.clip(_clippingArea);
+	drawRect.moveTo(0, 0);
 
 	if (drawRect.isEmpty()) {
 		return;
 	}
 
-	if (sizeof(PixelType) != 4) {
-		error("Unsupported bpp in blitManagedSurface: %lu", sizeof(PixelType));
-	}
-
-	int sourceOffsetX = drawRect.left - p.x;
-	int sourceOffsetY = drawRect.top - p.y;
-
-	PixelType *dst_ptr = (PixelType *)_activeSurface->getBasePtr(drawRect.left, drawRect.top);
-	const PixelType *src_ptr = (const PixelType *)source->getBasePtr(sourceOffsetX, sourceOffsetY);
-
-	int dst_pitch = _activeSurface->pitch / _activeSurface->format.bytesPerPixel;
-	int src_pitch = source->pitch / source->format.bytesPerPixel;
-
-	int w, h = drawRect.height();
-
-	while (h--) {
-		w = drawRect.width();
-
-		while (w--) {
-			if (!themeTrans || *src_ptr != _bitmapAlphaColor) {
-				const byte *in = (const byte *)src_ptr;
-				byte *out = (byte *)dst_ptr;
-
-				if (in[kAIndex] != 0) {
-					out[kAIndex] = 255;
-					out[kRIndex] = ((in[kRIndex] * in[kAIndex]) + out[kRIndex] * (255 - in[kAIndex])) >> 8;
-					out[kGIndex] = ((in[kGIndex] * in[kAIndex]) + out[kGIndex] * (255 - in[kAIndex])) >> 8;
-					out[kBIndex] = ((in[kBIndex] * in[kAIndex]) + out[kBIndex] * (255 - in[kAIndex])) >> 8;
-				}
-			}
-
-			dst_ptr++;
-			src_ptr++;
-		}
-
-		dst_ptr = dst_ptr - drawRect.width() + dst_pitch;
-		src_ptr = src_ptr - drawRect.width() + src_pitch;
-	}
+	if (themeTrans)
+		_activeSurface->transBlitFrom(*source, drawRect, p, _bitmapAlphaColor);
+	else
+		_activeSurface->blitFrom(*source, drawRect, p);
 }
 
 template<typename PixelType>
@@ -853,36 +766,13 @@ void VectorRendererSpec<PixelType>::
 blitKeyBitmap(const Graphics::ManagedSurface *source, const Common::Point &p) {
 	Common::Rect drawRect(p.x, p.y, p.x + source->w, p.y + source->h);
 	drawRect.clip(_clippingArea);
+	drawRect.moveTo(0, 0);
 
 	if (drawRect.isEmpty()) {
 		return;
 	}
 
-	int sourceOffsetX = drawRect.left - p.x;
-	int sourceOffsetY = drawRect.top - p.y;
-
-	PixelType *dst_ptr = (PixelType *)_activeSurface->getBasePtr(drawRect.left, drawRect.top);
-	const PixelType *src_ptr = (const PixelType *)source->getBasePtr(sourceOffsetX, sourceOffsetY);
-
-	int dst_pitch = _activeSurface->pitch / _activeSurface->format.bytesPerPixel;
-	int src_pitch = source->pitch / source->format.bytesPerPixel;
-
-	int w, h = drawRect.height();
-
-	while (h--) {
-		w = drawRect.width();
-
-		while (w--) {
-			if (*src_ptr != _bitmapAlphaColor)
-				*dst_ptr = *src_ptr;
-
-			dst_ptr++;
-			src_ptr++;
-		}
-
-		dst_ptr = dst_ptr - drawRect.width() + dst_pitch;
-		src_ptr = src_ptr - drawRect.width() + src_pitch;
-	}
+	_activeSurface->transBlitFrom(*source, drawRect, p, _bitmapAlphaColor);
 }
 
 template<typename PixelType>
