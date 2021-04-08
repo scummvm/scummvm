@@ -875,7 +875,7 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 				_vm->_choice[47]._flag |= DLGCHOICE_HIDE;
 				_vm->_choice[48]._flag |= DLGCHOICE_HIDE;
 				_vm->_choice[49]._flag &= ~DLGCHOICE_HIDE;
-				_vm->PlayScript(s16CARD);
+				_vm->playScript(s16CARD);
 				// doMouseTalk( _useWith[WITH] );
 				*printSentence = false;
 			}
@@ -894,7 +894,7 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 			_vm->_choice[47]._flag |= DLGCHOICE_HIDE;
 			_vm->_choice[48]._flag |= DLGCHOICE_HIDE;
 			_vm->_choice[50]._flag &= ~DLGCHOICE_HIDE;
-			_vm->PlayScript(S16MONEY);
+			_vm->playScript(S16MONEY);
 			// doMouseTalk( _useWith[WITH] );
 			*printSentence = false;
 			_vm->removeIcon(iMONETA13);
@@ -1605,7 +1605,7 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 
 	case iPAPAVERINA:
 		if ((_vm->_useWith[WITH] == oCHOCOLATES4A) && ((_vm->_animMgr->_curAnimFrame[0] < 370) || (_vm->_animMgr->_curAnimFrame[0] > 480))) {
-			_vm->PlayScript(s4AHELLEN);
+			_vm->playScript(s4AHELLEN);
 			_vm->_obj[oPULSANTE4A]._anim = a4A3;
 			*printSentence = false;
 		} else if (_vm->_useWith[WITH] == oCHOCOLATES4A) {
@@ -2809,7 +2809,7 @@ bool LogicManager::mouseOperate(uint16 curObj) {
 			_vm->_curObj = oAGENDA49;
 			//FlagShowCharacter=true;
 			//doEvent(MC_SYSTEM,ME_CHANGEROOM,MP_SYSTEM,r4A,0,1,TheObj);
-			_vm->PlayScript(s49SUNDIAL);
+			_vm->playScript(s49SUNDIAL);
 		}
 		retVal = false;
 		break;

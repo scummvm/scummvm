@@ -102,9 +102,9 @@ public:
 	void doInventoryUseWithScreen();
 
 	// Script
-	void EndScript();
-	void PlayScript(uint16 i);
-	void EvalScript();
+	void endScript();
+	void playScript(uint16 id);
+	void evalScript();
 
 	// Utils
 	char *getNextSentence();
@@ -160,8 +160,8 @@ public:
 	int16 _inventorySpeed[8];
 	uint8 _inventorySpeedIndex;
 	uint32 _inventoryScrollTime;
-	uint16 lastinv;
-	uint16 lastobj;
+	uint16 _lastInv;
+	uint16 _lastObj;
 
 	bool _fastWalk;
 	bool _fastWalkLocked;

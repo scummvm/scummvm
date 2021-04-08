@@ -26,9 +26,9 @@
 namespace Trecision {
 
 /*-------------------------------------------------------------------------*/
-/*                                EndScript           					   */
+/*                                endScript           					   */
 /*-------------------------------------------------------------------------*/
-void TrecisionEngine::EndScript() {
+void TrecisionEngine::endScript() {
 	_curStack--;
 	if (_curStack == 0) {
 		_flagscriptactive = false;
@@ -38,18 +38,18 @@ void TrecisionEngine::EndScript() {
 }
 
 /*-------------------------------------------------------------------------*/
-/*                               PlayScript           					   */
+/*                               playScript           					   */
 /*-------------------------------------------------------------------------*/
-void TrecisionEngine::PlayScript(uint16 i) {
+void TrecisionEngine::playScript(uint16 id) {
 	_curStack++;
 	_flagscriptactive = true;
 	_flagMouseEnabled = false;
-	_curScriptFrame[_curStack] = _script[i]._firstFrame;
+	_curScriptFrame[_curStack] = _script[id]._firstFrame;
 
 	SScriptFrame *curFrame = &_scriptFrame[_curScriptFrame[_curStack]];
 	// If the event is empty, terminate the script
 	if ((curFrame->_class == 0) && (curFrame->_event == 0)) {
-		EndScript();
+		endScript();
 		return;
 	}
 
@@ -67,16 +67,16 @@ void TrecisionEngine::PlayScript(uint16 i) {
 }
 
 /*-------------------------------------------------------------------------*/
-/*                               EvalScript           					   */
+/*                               evalScript           					   */
 /*-------------------------------------------------------------------------*/
-void TrecisionEngine::EvalScript() {
+void TrecisionEngine::evalScript() {
 	if (_characterQueue.testEmptyCharacterQueue4Script() && _gameQueue.testEmptyQueue(MC_DIALOG) && _flagScreenRefreshed) {
 		_curScriptFrame[_curStack]++;
 		_flagMouseEnabled = false;
 
 		SScriptFrame *curFrame = &_scriptFrame[_curScriptFrame[_curStack]];
 		if ((curFrame->_class == 0) && (curFrame->_event == 0)) {
-			EndScript();
+			endScript();
 			return;
 		}
 

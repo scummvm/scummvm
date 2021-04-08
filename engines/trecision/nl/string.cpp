@@ -85,15 +85,15 @@ void ShowObjName(uint16 obj, bool showhide) {
 	if (FlagSomeOneSpeak)
 		return;
 
-	if (g_vm->lastinv) {
+	if (g_vm->_lastInv) {
 		g_vm->clearText();
-		g_vm->lastinv = 0;
+		g_vm->_lastInv = 0;
 	}
 
 	if (FlagUseWithStarted && !FlagUseWithLocked) {
 		if (!showhide) {
 			g_vm->clearText();
-			g_vm->lastobj = obj;
+			g_vm->_lastObj = obj;
 			return;
 		}
 
@@ -116,23 +116,23 @@ void ShowObjName(uint16 obj, bool showhide) {
 				locsent += g_vm->_objName[g_vm->_obj[obj]._name];
 		}
 
-		g_vm->lastobj = (obj | 0x8000);
+		g_vm->_lastObj = (obj | 0x8000);
 		uint16 lenText = TextLength(locsent.c_str(), 0);
 
 		posx = CLIP(320 - (lenText / 2), 2, SCREENLEN - 2 - lenText);
 		posy = MAXY - CARHEI;
 
-		if (g_vm->lastobj)
+		if (g_vm->_lastObj)
 			g_vm->clearText();
 		g_vm->addText(posx, posy, locsent.c_str(), COLOR_INVENTORY, MASKCOL);
 	} else {
 		if ((!obj) || (!showhide)) {
 			g_vm->clearText();
-			g_vm->lastobj = obj;
+			g_vm->_lastObj = obj;
 			return;
 		}
 
-		if (obj == g_vm->lastobj)
+		if (obj == g_vm->_lastObj)
 			return;
 		if (!(g_vm->_obj[obj]._flag & OBJFLAG_EXAMINE)) {
 			if ((g_vm->_obj[obj]._flag & OBJFLAG_DONE) || (g_vm->_room[g_vm->_obj[obj]._goRoom]._flag & OBJFLAG_DONE)) {
@@ -152,9 +152,9 @@ void ShowObjName(uint16 obj, bool showhide) {
 		posy = (obj == oWHEELS2C) ? 187 : g_vm->_obj[obj]._lim.top;
 
 		PositionString(posx, posy, locsent.c_str(), &posx, &posy, false);
-		if (g_vm->lastobj)
+		if (g_vm->_lastObj)
 			g_vm->clearText();
-		g_vm->lastobj = obj;
+		g_vm->_lastObj = obj;
 		g_vm->addText(posx, posy, locsent.c_str(), COLOR_OBJECT, MASKCOL);
 	}
 }
@@ -309,8 +309,8 @@ void CharacterMute() {
 	CharacterSpeakTime = 0L;
 
 	g_vm->clearText();
-	g_vm->lastobj = 0;
-	g_vm->lastinv = 0;
+	g_vm->_lastObj = 0;
+	g_vm->_lastInv = 0;
 
 	g_vm->redrawString();
 	StopTalk();
@@ -390,8 +390,8 @@ void SomeOneMute() {
 	SomeOneSpeakTime = 0L;
 
 	g_vm->clearText();
-	g_vm->lastobj = 0;
-	g_vm->lastinv = 0;
+	g_vm->_lastObj = 0;
+	g_vm->_lastInv = 0;
 
 	g_vm->redrawString();
 	StopTalk();

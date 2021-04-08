@@ -141,8 +141,8 @@ TrecisionEngine::TrecisionEngine(OSystem *syst) : Engine(syst) {
 
 	_closeUpObj = 0;
 	_textPtr = nullptr;
-	lastinv = 0;
-	lastobj = 0;
+	_lastInv = 0;
+	_lastObj = 0;
 
 	_slotMachine41Counter = 0;
 
@@ -220,7 +220,7 @@ Common::Error TrecisionEngine::run() {
 		ProcessTheMessage();
 
 		if (_flagscriptactive)
-			EvalScript();
+			evalScript();
 	}
 
 	return Common::kNoError;
