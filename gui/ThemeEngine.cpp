@@ -249,7 +249,7 @@ ThemeEngine::~ThemeEngine() {
 
 	// Release all graphics surfaces
 	for (ImagesMap::iterator i = _bitmaps.begin(); i != _bitmaps.end(); ++i) {
-		Graphics::Surface *surf = i->_value;
+		Graphics::ManagedSurface *surf = i->_value;
 		if (surf) {
 			surf->free();
 			delete surf;
@@ -405,7 +405,7 @@ void ThemeEngine::refresh() {
 	// Flush all bitmaps if the overlay pixel format changed.
 	if (_overlayFormat != _system->getOverlayFormat()) {
 		for (ImagesMap::iterator i = _bitmaps.begin(); i != _bitmaps.end(); ++i) {
-			Graphics::Surface *surf = i->_value;
+			Graphics::ManagedSurface *surf = i->_value;
 			if (surf) {
 				surf->free();
 				delete surf;
@@ -708,7 +708,7 @@ bool ThemeEngine::addTextColor(TextColor colorId, int r, int g, int b) {
 
 bool ThemeEngine::addBitmap(const Common::String &filename, const Common::String &scalablefile, int width, int height) {
 	// Nothing has to be done if the bitmap already has been loaded.
-	Graphics::Surface *surf = _bitmaps[filename];
+	Graphics::ManagedSurface *surf = _bitmaps[filename];
 	if (surf) {
 		surf->free();
 		delete surf;
@@ -738,7 +738,7 @@ bool ThemeEngine::addBitmap(const Common::String &filename, const Common::String
 		}
 
 		if (srcSurface && srcSurface->format.bytesPerPixel != 1)
-			surf = srcSurface->convertTo(_overlayFormat);
+			surf = new Graphics::ManagedSurface(srcSurface->convertTo(_overlayFormat));
 #else
 		error("No PNG support compiled in");
 #endif
@@ -759,7 +759,7 @@ bool ThemeEngine::addBitmap(const Common::String &filename, const Common::String
 		}
 
 		if (srcSurface && srcSurface->format.bytesPerPixel != 1)
-			surf = srcSurface->convertTo(_overlayFormat);
+			surf = new Graphics::ManagedSurface(srcSurface->convertTo(_overlayFormat));
 	}
 
 	if (!scalablefile.empty()) {
@@ -780,12 +780,12 @@ bool ThemeEngine::addBitmap(const Common::String &filename, const Common::String
 	_bitmapDims[filename] = new Common::Point(width * _scaleFactor, height * _scaleFactor);
 
 	if (_scaleFactor != 1.0) {
-		Graphics::Surface *tmp2 = surf->scale(surf->w * _scaleFactor, surf->h * _scaleFactor, false);
+		Graphics::Surface *tmp2 = surf->rawSurface().scale(surf->w * _scaleFactor, surf->h * _scaleFactor, false);
 
 		surf->free();
 		delete surf;
 
-		surf = tmp2;
+		surf = new Graphics::ManagedSurface(tmp2);
 	}
 	// Store the surface into our hashmap (attention, may store NULL entries!)
 	_bitmaps[filename] = surf;
@@ -1332,24 +1332,6 @@ void ThemeEngine::drawPopUpWidget(const Common::Rect &r, const Common::U32String
 	}
 }
 
-void ThemeEngine::drawSurface(const Common::Point &p, const Graphics::Surface &surface, bool themeTrans) {
-	if (!ready())
-		return;
-
-	if (_layerToDraw == kDrawLayerBackground)
-		return;
-
-	_vectorRenderer->setClippingRect(_clip);
-	if (themeTrans)
-		_vectorRenderer->blitKeyBitmap(&surface, p);
-	else
-		_vectorRenderer->blitSubSurface(&surface, p);
-
-	Common::Rect dirtyRect = Common::Rect(p.x, p.y, p.x + surface.w, p.y + surface.h);
-	dirtyRect.clip(_clip);
-	addDirtyRect(dirtyRect);
-}
-
 void ThemeEngine::drawSurface(const Common::Point &p, const Graphics::ManagedSurface &surface, bool themeTrans) {
 	if (!ready())
 		return;
@@ -1612,7 +1594,7 @@ void ThemeEngine::applyScreenShading(ShadingStyle style) {
 
 bool ThemeEngine::createCursor(const Common::String &filename, int hotspotX, int hotspotY) {
 	// Try to locate the specified file among all loaded bitmaps
-	const Graphics::Surface *cursor = _bitmaps[filename];
+	const Graphics::ManagedSurface *cursor = _bitmaps[filename];
 	if (!cursor)
 		return false;
 

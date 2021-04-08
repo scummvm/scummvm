@@ -27,7 +27,7 @@
 #include "common/scummsys.h"
 #include "common/str.h"
 
-#include "graphics/surface.h"
+#include "graphics/managed_surface.h"
 #include "graphics/transparent_surface.h"
 
 #include "gui/ThemeEngine.h"
@@ -52,8 +52,8 @@ typedef void (VectorRenderer::*DrawingFunctionCallback)(const Common::Rect &, co
 
 struct DrawStep {
 	DrawingFunctionCallback drawingCall; /**< Pointer to drawing function */
-	Graphics::Surface* blitSrc;
-	Graphics::TransparentSurface* blitAlphaSrc;
+	Graphics::ManagedSurface *blitSrc;
+	Graphics::TransparentSurface *blitAlphaSrc;
 
 	struct Color {
 		uint8 r, g, b;
@@ -300,14 +300,14 @@ public:
 	 *
 	 * @param surface Pointer to a Surface object.
 	 */
-	virtual void setSurface(TransparentSurface *surface) {
+	virtual void setSurface(ManagedSurface *surface) {
 		_activeSurface = surface;
 	}
 
 	/**
 	 * Returns the currently active drawing surface
 	 */
-	virtual TransparentSurface *getActiveSurface() {
+	virtual ManagedSurface *getActiveSurface() {
 		return _activeSurface;
 	}
 
@@ -515,14 +515,14 @@ public:
 	 * @param source Surface to blit into the drawing surface.
 	 * @param r Position in the active drawing surface to do the blitting.
 	 */
-	virtual void blitSurface(const Graphics::Surface *source, const Common::Rect &r) = 0;
+	virtual void blitSurface(const Graphics::ManagedSurface *source, const Common::Rect &r) = 0;
 
 	/**
 	 * Blits a given graphics surface at the specified position of the current drawing surface.
 	 */
-	virtual void blitSubSurface(const Graphics::Surface *source, const Common::Point &p) = 0;
+	virtual void blitSubSurface(const Graphics::ManagedSurface *source, const Common::Point &p) = 0;
 
-	virtual void blitKeyBitmap(const Graphics::Surface *source, const Common::Point &p) = 0;
+	virtual void blitKeyBitmap(const Graphics::ManagedSurface *source, const Common::Point &p) = 0;
 
 	virtual void blitManagedSurface(const Graphics::ManagedSurface *source, const Common::Point &p, bool themeTrans) = 0;
 
@@ -554,7 +554,7 @@ public:
 	virtual void applyScreenShading(GUI::ThemeEngine::ShadingStyle) = 0;
 
 protected:
-	TransparentSurface *_activeSurface; /**< Pointer to the surface currently being drawn */
+	ManagedSurface *_activeSurface; /**< Pointer to the surface currently being drawn */
 
 	FillMode _fillMode; /**< Defines in which way (if any) are filled the drawn shapes */
 	ShadowFillMode _shadowFillMode;

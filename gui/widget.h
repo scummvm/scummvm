@@ -289,6 +289,7 @@ public:
 	PicButtonWidget(GuiObject *boss, const Common::String &name, const Common::U32String &tooltip = Common::U32String(), uint32 cmd = 0, uint8 hotkey = 0);
 	~PicButtonWidget() override;
 
+	void setGfx(const Graphics::ManagedSurface *gfx, int statenum = kPicButtonStateEnabled, bool scale = true);
 	void setGfx(const Graphics::Surface *gfx, int statenum = kPicButtonStateEnabled, bool scale = true);
 	void setGfxFromTheme(const char *name, int statenum = kPicButtonStateEnabled, bool scale = true);
 	void setGfx(int w, int h, int r, int g, int b, int statenum = kPicButtonStateEnabled);
@@ -420,6 +421,7 @@ public:
 	GraphicsWidget(GuiObject *boss, const Common::String &name, const Common::U32String &tooltip = Common::U32String());
 	~GraphicsWidget() override;
 
+	void setGfx(const Graphics::ManagedSurface *gfx);
 	void setGfx(const Graphics::Surface *gfx);
 	void setGfx(int w, int h, int r, int g, int b);
 	void setGfxFromTheme(const char *name);
