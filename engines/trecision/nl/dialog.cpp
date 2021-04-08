@@ -503,12 +503,14 @@ void afterChoice(int numframe) {
 
 		d = &_dialog[_curDialog];
 
+#if (!USE_NEW_VIDEO_CODE)
 		g_vm->_animMgr->_fullMotionStart = 0;
 		g_vm->_animMgr->_fullMotionEnd = 0;
-
+#endif
+		
 		// se c'e' predialog
 		if (_dialog[_curDialog]._startLen > 0) {
-#if USE_NEW_VIDEO_CODE			
+#if USE_NEW_VIDEO_CODE
 			g_vm->_animMgr->playMovie(_dialog[_curDialog]._startAnim, 1, _dialog[_curDialog]._startLen);
 #else
 			g_vm->_animMgr->playFullMotion(1, _dialog[_curDialog]._startLen);
