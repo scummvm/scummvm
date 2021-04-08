@@ -67,7 +67,7 @@ private:
 	/**
 	 * Get plural gold form
 	*/
-	const char* getGoldPlurals(int val);
+	const char *getGoldPlurals(int val);
 
 	int doItemOptions(Character &c, int actionIndex, int itemIndex,
 		ItemCategory category, ItemsMode mode);

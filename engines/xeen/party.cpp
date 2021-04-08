@@ -662,7 +662,7 @@ int Party::subtract(ConsumableType consumableId, uint amount, PartyBank whereId,
 	return true;
 }
 
-const char* Party::getConsumableForm(ConsumableType consumableId) {
+const char *Party::getConsumableForm(ConsumableType consumableId) {
 	switch (consumableId) {
 	case CONS_GOLD: return Res.CONSUMABLE_GOLD_FORMS[0];
 	case CONS_GEMS: return Res.CONSUMABLE_GEM_FORMS[0];
@@ -821,7 +821,7 @@ bool Party::arePacksFull() const {
 	return total == (_activeParty.size() * NUM_ITEM_CATEGORIES);
 }
 
-const char* Party::getFoundForm(const Character& c) {
+const char *Party::getFoundForm(const Character &c) {
 	if (Common::RU_RUS == Common::parseLanguage(ConfMan.get("language"))) {
 		switch (c._sex) {
 		case MALE:
@@ -1483,7 +1483,7 @@ bool Party::giveTake(int takeMode, uint takeVal, int giveMode, uint giveVal, int
 	return false;
 }
 
-const char* Party::getPickLockForm(const Character &c) {
+const char *Party::getPickLockForm(const Character &c) {
 	if (Common::RU_RUS == Common::parseLanguage(ConfMan.get("language"))) {
 		switch (c._sex) {
 		case MALE:
@@ -1495,7 +1495,7 @@ const char* Party::getPickLockForm(const Character &c) {
 	return Res.PICK_FORM[0];
 }
 
-const char* Party::getUnablePickLockForm(const Character &c) {
+const char *Party::getUnablePickLockForm(const Character &c) {
 	if (Common::RU_RUS == Common::parseLanguage(ConfMan.get("language"))) {
 		switch (c._sex) {
 		case MALE:

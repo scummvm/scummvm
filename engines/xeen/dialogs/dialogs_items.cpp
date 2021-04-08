@@ -752,7 +752,7 @@ int ItemsDialog::calcItemCost(Character *c, int itemIndex, ItemsMode mode,
 	return (mode == ITEMMODE_CHAR_INFO) ? 0 : result;
 }
 
-const char* ItemsDialog::getGoldPlurals(int cost) {
+const char *ItemsDialog::getGoldPlurals(int cost) {
 	if (Common::RU_RUS == Common::parseLanguage(ConfMan.get("language")))
 		return Res.GOLDS[cost % 10 == 1 ? 0 : 1];
 	return Res.GOLDS[0];
@@ -933,7 +933,7 @@ int ItemsDialog::doItemOptions(Character &c, int actionIndex, int itemIndex, Ite
 				Common::String msg = Common::String::format(Res.FIX_IDENTIFY_GOLD,
 					Res.FIX_IDENTIFY[0],
 					c._items[category].getFullDescription(itemIndex).c_str(),
-					cost);
+					cost, getGoldPlurals(cost));
 
 				if (Confirm::show(_vm, msg) && party.subtract(CONS_GOLD, cost, WHERE_PARTY)) {
 					item._state._broken = false;
@@ -946,7 +946,7 @@ int ItemsDialog::doItemOptions(Character &c, int actionIndex, int itemIndex, Ite
 			Common::String msg = Common::String::format(Res.FIX_IDENTIFY_GOLD,
 				Res.FIX_IDENTIFY[1],
 				c._items[category].getFullDescription(itemIndex).c_str(),
-				cost);
+				cost, getGoldPlurals(cost));
 
 			if (Confirm::show(_vm, msg) && party.subtract(CONS_GOLD, cost, WHERE_PARTY)) {
 				Common::String details = c._items[category].getIdentifiedDetails(itemIndex);

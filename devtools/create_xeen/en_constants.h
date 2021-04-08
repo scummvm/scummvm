@@ -1359,7 +1359,7 @@ public:
 	}
 
 	const char *FIX_IDENTIFY_GOLD() {
-		return "\x3l\v000\t000%s %s\fd for %u gold?";
+		return "\x3l\v000\t000%s %s\fd for %u %s?";
 	}
 
 	const char *IDENTIFY_ITEM_MSG() {
