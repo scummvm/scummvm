@@ -48,7 +48,7 @@ struct BorderName {
 };
 
 static const BorderName borders[] = {
-	{0x00, "StandardClose",		 { 1,  2, 19,  2,		 2,  2,		false}, kWindowBorderTitle, 23},
+	{0x00, "StandardClose",		 { 1,  2, 19,  2,		 2,  2,		false}, kWindowBorderTitle, 25},
 	{0x01, "ThickNoTitle",		 { 5,  5,  5,  5,		-1, -1,		false}, 0, 0},
 	{0x02, "ThinNoTitle",		 { 1,  1,  1,  1,		-1, -1,		false}, 0, 0},
 	{0x03, "ThinNoTitleShadow",	 { 1,  3,  1,  3,		-1, -1,		false}, 0, 0},

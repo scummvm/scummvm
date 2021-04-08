@@ -152,7 +152,7 @@ void MacWindowBorder::drawScrollBar(ManagedSurface *g, MacWindowManager *wm) {
 	_scrollSize = -1;
 }
 
-void MacWindowBorder::drawTitle(ManagedSurface *g, MacWindowManager *wm) {
+void MacWindowBorder::drawTitle(ManagedSurface *g, MacWindowManager *wm, int titleOffset) {
 	const Graphics::Font *font = wm->_fontMan->getFont(Graphics::MacFont(kMacFontChicago, 12));
 	int width = g->w;
 	int titleColor = wm->_colorBlack;
@@ -164,7 +164,7 @@ void MacWindowBorder::drawTitle(ManagedSurface *g, MacWindowManager *wm) {
 	if (titleWidth > maxWidth)
 		titleWidth = maxWidth;
 
-	font->drawString(g, _title, (width - titleWidth) / 2 + 5, titleY + yOff, titleWidth, titleColor);
+	font->drawString(g, _title, titleOffset + 5, titleY + yOff, titleWidth, titleColor);
 }
 
 void MacWindowBorder::blitBorderInto(ManagedSurface &destination, uint32 flags, MacWindowManager *wm) {
@@ -198,7 +198,7 @@ void MacWindowBorder::blitBorderInto(ManagedSurface &destination, uint32 flags, 
 	srf.free();
 
 	if (flags & kWindowBorderTitle)
-		drawTitle(&destination, wm);
+		drawTitle(&destination, wm, src->getTitleOffset());
 
 	if (flags & kWindowBorderScrollbar)
 		drawScrollBar(&destination, wm);

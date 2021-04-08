@@ -100,6 +100,8 @@ public:
 	int getMinWidth() { return _h._fix; }
 	int getMinHeight() { return _v._fix; }
 	int getTitleWidth() { return _titleWidth; }
+	// always call it after you calc the offset, such as after you call blit, then you will get the right offset
+	int getTitleOffset();
 	Graphics::TransparentSurface *getSource() { return _bmp; }
 	Common::Rect &getPadding() { return _padding; }
 
