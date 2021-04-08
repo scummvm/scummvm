@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-04-07 23:46+0000\n"
-"PO-Revision-Date: 2021-04-02 13:11+0000\n"
+"PO-Revision-Date: 2021-04-08 10:05+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ru/>\n"
@@ -3898,14 +3898,13 @@ msgid "Language to use for multilingual games"
 msgstr "Язык для использвания в мультиязычных играх"
 
 #: engines/ags/detection.cpp:110
-#, fuzzy
-#| msgid "Antialiased"
 msgid "Force antialiased text"
-msgstr "Со сглаживанием"
+msgstr "Принудительно шрифты со сглаживанием"
 
 #: engines/ags/detection.cpp:110
 msgid "Use antialiasing to draw text even if the game does not ask for it"
 msgstr ""
+"Использовать шрифты со сглаживанием, даже если игра этого не запрашивала"
 
 #: engines/bladerunner/bladerunner.cpp:363
 msgid "Failed to initialize resources"
