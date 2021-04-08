@@ -175,6 +175,11 @@ bool GUIMain::IsVisible() const {
 	return (_flags & kGUIMain_Visible) != 0;
 }
 
+bool GUIMain::IsVisibleAndNotConcealed() const {
+	return (_flags & kGUIMain_Visible) != 0 &&
+		(_flags & kGUIMain_Concealed) == 0;
+}
+
 void GUIMain::AddControl(GUIControlType type, int id, GUIObject *control) {
 	_ctrlRefs.push_back(std::make_pair(type, id));
 	_controls.push_back(control);

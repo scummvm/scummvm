@@ -217,6 +217,10 @@ protected:
 	// Function call stack processing
 	void    PushToFuncCallStack(FunctionCallStack &func_callstack, const RuntimeScriptValue &rval);
 	void    PopFromFuncCallStack(FunctionCallStack &func_callstack, int32_t num_entries);
+
+private:
+	enum WorkaroundResult { WR_NONE, WR_SKIP_FUNCTION };
+	WorkaroundResult checkForWorkaround(ScriptOperation &codeOp);
 };
 
 } // namespace AGS3

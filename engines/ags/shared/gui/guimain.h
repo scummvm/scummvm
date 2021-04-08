@@ -98,6 +98,7 @@ public:
 	// For example GUI with kGUIPopupMouseY style will not be shown unless
 	// mouse cursor is at certain position on screen.
 	bool        IsVisible() const;
+	bool        IsVisibleAndNotConcealed() const;
 
 	int32_t FindControlUnderMouse() const;
 	// this version allows some extra leeway in the Editor so that

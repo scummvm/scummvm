@@ -44,6 +44,7 @@
 #include "ags/shared/util/memory.h"
 #include "ags/shared/util/string_utils.h" // linux strnicmp definition
 #include "ags/globals.h"
+#include "ags/ags.h"
 
 namespace AGS3 {
 
@@ -511,6 +512,19 @@ int ccInstance::Run(int32_t curpc) {
 
 		if (write_debug_dump) {
 			DumpInstruction(codeOp);
+		}
+
+		switch (checkForWorkaround(codeOp)) {
+		case WorkaroundResult::WR_SKIP_FUNCTION:
+			codeOp.Instruction.Code = 0;
+			_G(current_instance) = this;
+			next_call_needs_object = 0;
+			num_args_to_func = -1;
+
+			pc += codeOp.ArgCount + 1;
+			continue;
+		default:
+			break;
 		}
 
 		switch (codeOp.Instruction.Code) {
@@ -1197,6 +1211,18 @@ int ccInstance::Run(int32_t curpc) {
 
 		pc += codeOp.ArgCount + 1;
 	}
+}
+
+ccInstance::WorkaroundResult ccInstance::checkForWorkaround(ScriptOperation &codeOp) {
+	if (pc == 0x72bab && codeOp.Instruction.Code == SCMD_CALLEXT &&
+			::AGS::g_vm->getGameId() == "qfg2agdi") {
+		GUIMain &gui = _GP(guis)[2];
+		registers[SREG_AX] = gui.IsVisibleAndNotConcealed() ? 1 : 0;
+
+		return WorkaroundResult::WR_SKIP_FUNCTION;
+	}
+
+	return WorkaroundResult::WR_NONE;
 }
 
 String ccInstance::GetCallStack(int maxLines) {
