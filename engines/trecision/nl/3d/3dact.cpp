@@ -144,22 +144,22 @@ void actorStop() {
 				Set Light Position
 --------------------------------------------------*/
 void setPosition(int num) {
-	extern SLight *_light;
+	extern SLight *_curLight;
 
-	_light = g_vm->_actor->_light;
+	_curLight = g_vm->_actor->_light;
 
 	for (int a = 0; a < g_vm->_actor->_lightNum; a++) {
 		// If it's off
-		if (_light->_inten == 0) {
+		if (_curLight->_inten == 0) {
 			// If it's the required position
-			if (_light->_position == num) {
-				g_vm->_actor->_px = _light->_x;
-				g_vm->_actor->_pz = _light->_z;
+			if (_curLight->_position == num) {
+				g_vm->_actor->_px = _curLight->_x;
+				g_vm->_actor->_pz = _curLight->_z;
 				g_vm->_actor->_dx = 0.0;
 				g_vm->_actor->_dz = 0.0;
 
-				float ox = _light->_dx;
-				float oz = _light->_dz;
+				float ox = _curLight->_dx;
+				float oz = _curLight->_dz;
 
 				// If it's a null light
 				if ((ox == 0.0) && (oz == 0.0))
@@ -197,7 +197,7 @@ void setPosition(int num) {
 			}
 		}
 
-		_light ++;
+		_curLight++;
 	}
 }
 
@@ -205,20 +205,20 @@ void setPosition(int num) {
 				Go To Light Position
 --------------------------------------------------*/
 void goToPosition(int num) {
-	extern SLight *_light;
+	extern SLight *_curLight;
 	extern float _lookX, _lookZ;
 
-	_light = g_vm->_actor->_light;
+	_curLight = g_vm->_actor->_light;
 
 	for (int a = 0; a < g_vm->_actor->_lightNum; a++) {
 		// If it's off and if it's a position
-		if (_light->_inten == 0) {
+		if (_curLight->_inten == 0) {
 			// If it's the right position
-			if (_light->_position == num) {
-				_curX = _light->_x;
-				_curZ = _light->_z;
-				_lookX = _curX - _light->_dx;
-				_lookZ = _curZ - _light->_dz;
+			if (_curLight->_position == num) {
+				_curX = _curLight->_x;
+				_curZ = _curLight->_z;
+				_lookX = _curX - _curLight->_dx;
+				_lookZ = _curZ - _curLight->_dz;
 
 				_curStep  = 0;
 				_lastStep = 0;
@@ -243,7 +243,7 @@ void goToPosition(int num) {
 			}
 		}
 
-		_light ++;
+		_curLight++;
 	}
 }
 
