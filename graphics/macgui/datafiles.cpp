@@ -41,10 +41,14 @@ struct BorderName {
 	byte type;
 	const char *name;
 	BorderOffsets offsets;
+	uint32 flags;
+	int titlePos;
+	BorderName(byte _type, const char *_name, BorderOffsets _offsets, uint32 _flags = 0, int _titlePos = 0): 
+		type(_type), name(_name), offsets(_offsets), flags(_flags), titlePos(_titlePos) {}
 };
 
 static const BorderName borders[] = {
-	{0x00, "StandardClose",		 { 1,  2, 19,  2,		 2,  2,		false}},
+	{0x00, "StandardClose",		 { 1,  2, 19,  2,		 2,  2,		false}, kWindowBorderTitle, 23},
 	{0x01, "ThickNoTitle",		 { 5,  5,  5,  5,		-1, -1,		false}},
 	{0x02, "ThinNoTitle",		 { 1,  1,  1,  1,		-1, -1,		false}},
 	{0x03, "ThinNoTitleShadow",	 { 1,  3,  1,  3,		-1, -1,		false}},
@@ -92,12 +96,34 @@ BorderOffsets MacWindowManager::getBorderOffsets(byte windowType) {
 	return borders[i].offsets;
 }
 
-Common::SeekableReadStream *MacWindowManager::getBorderFile(byte windowType, bool isActive) {
+uint32 MacWindowManager::getBorderFlags(byte windowType) {
+	int i = 0;
+	while (borders[i].type != 0xFF) {
+		if (borders[i].type == windowType)
+			break;
+		i++;
+	}
+	return borders[i].flags;
+}
+
+int MacWindowManager::getBorderTitlePos(byte windowType) {
+	int i = 0;
+	while (borders[i].type != 0xFF) {
+		if (borders[i].type == windowType)
+			break;
+		i++;
+	}
+	return borders[i].titlePos;
+}
+
+Common::SeekableReadStream *MacWindowManager::getBorderFile(byte windowType, uint32 flags) {
 	if (!_dataBundle)
 		return NULL;
 
 	Common::String filename = windowTypeName(windowType);
-	filename += (isActive ? "_act.bmp" : "_inac.bmp");
+	filename += (flags & kWindowBorderActive) ? "_act" : "_inac";
+	filename += (flags & kWindowBorderTitle) ? "_title" : "";
+	filename += ".bmp";
 	if (!_dataBundle->hasFile(filename)) {
 		warning("Missing border file '%s' in data bundle", filename.c_str());
 		return NULL;
