@@ -96,6 +96,10 @@ void Special::run(Object* object, ActorIndex index) {
 	case kChapter9:
 		chapter9(object, index);
 		break;
+
+	case kChapter12:
+		chapter12(object, index);
+		break;
 	}
 }
 
@@ -687,6 +691,102 @@ void Special::chapter9(Object *object, ActorIndex actorIndex) {
 				getScript()->queueScript(getWorld()->actions[getWorld()->getActionAreaIndexById(2523)]->scriptIndex, kActorMax);
 				break;
 			}
+		}
+		break;
+	}
+}
+
+void Special::chapter12(Object *object, ActorIndex actorIndex) {
+	playChapterSound(object, actorIndex);
+
+	if (actorIndex != kActorInvalid)
+		return;
+
+	switch (object->getId()) {
+	default:
+		return;
+
+	case kObjectFloorTrap9:
+		if (object->getFrameIndex() > 1 && _vm->isGameFlagSet(kGameFlag809)) {
+			getScript()->queueScript(getWorld()->actions[getWorld()->getActionAreaIndexById(1971)]->scriptIndex, kActorMax);
+			_vm->clearGameFlag(kGameFlag809);
+		}
+		break;
+
+	case kObjectFloorTrap8:
+		if (object->getFrameIndex() > 1 && _vm->isGameFlagSet(kGameFlag810)) {
+			getScript()->queueScript(getWorld()->actions[getWorld()->getActionAreaIndexById(1971)]->scriptIndex, kActorMax);
+			_vm->clearGameFlag(kGameFlag810);
+		}
+		break;
+
+	case kObjectFloorTrap4:
+		if (object->getFrameIndex() > 1 && _vm->isGameFlagSet(kGameFlag794)) {
+			getScript()->queueScript(getWorld()->actions[getWorld()->getActionAreaIndexById(1971)]->scriptIndex, kActorMax);
+			_vm->clearGameFlag(kGameFlag794);
+		}
+		break;
+
+	case kObjectFloorTrap3:
+		if (object->getFrameIndex() > 1 && _vm->isGameFlagSet(kGameFlag795)) {
+			getScript()->queueScript(getWorld()->actions[getWorld()->getActionAreaIndexById(1971)]->scriptIndex, kActorMax);
+			_vm->clearGameFlag(kGameFlag795);
+		}
+		break;
+
+	case kObjectFloorTrap2:
+		if (object->getFrameIndex() > 1 && _vm->isGameFlagSet(kGameFlag796)) {
+			getScript()->queueScript(getWorld()->actions[getWorld()->getActionAreaIndexById(1971)]->scriptIndex, kActorMax);
+			_vm->clearGameFlag(kGameFlag796);
+		}
+		break;
+
+	case kObjectFloorTrap1:
+		if (object->getFrameIndex() > 1 && _vm->isGameFlagSet(kGameFlag797)) {
+			getScript()->queueScript(getWorld()->actions[getWorld()->getActionAreaIndexById(1971)]->scriptIndex, kActorMax);
+			_vm->clearGameFlag(kGameFlag797);
+		}
+		break;
+
+	case kObjectFloorTrap5:
+		if (object->getFrameIndex() > 1 && _vm->isGameFlagSet(kGameFlag792)) {
+			getScript()->queueScript(getWorld()->actions[getWorld()->getActionAreaIndexById(1971)]->scriptIndex, kActorMax);
+			_vm->clearGameFlag(kGameFlag792);
+		}
+		break;
+
+	case kObjectFloorTrap6:
+		if (object->getFrameIndex() > 1 && _vm->isGameFlagSet(kGameFlag791)) {
+			getScript()->queueScript(getWorld()->actions[getWorld()->getActionAreaIndexById(1971)]->scriptIndex, kActorMax);
+			_vm->clearGameFlag(kGameFlag791);
+		}
+		break;
+
+	case kObjectFloorTrap7:
+		if (object->getFrameIndex() > 1 && _vm->isGameFlagSet(kGameFlag790)) {
+			getScript()->queueScript(getWorld()->actions[getWorld()->getActionAreaIndexById(1971)]->scriptIndex, kActorMax);
+			_vm->clearGameFlag(kGameFlag790);
+		}
+		break;
+
+	case kObjectSparkPuzzleRight:
+		if (object->getFrameIndex() > 1 && _vm->isGameFlagSet(kGameFlag761)) {
+			getScript()->queueScript(getWorld()->actions[getWorld()->getActionAreaIndexById(1971)]->scriptIndex, kActorMax);
+			_vm->clearGameFlag(kGameFlag761);
+		}
+		break;
+
+	case kObjectSparkPuzzleMiddle:
+		if (object->getFrameIndex() > 1 && _vm->isGameFlagSet(kGameFlag760)) {
+			getScript()->queueScript(getWorld()->actions[getWorld()->getActionAreaIndexById(1971)]->scriptIndex, kActorMax);
+			_vm->clearGameFlag(kGameFlag760);
+		}
+		break;
+
+	case kObjectSparkPuzzleLeft:
+		if (object->getFrameIndex() > 1 && _vm->isGameFlagSet(kGameFlag759)) {
+			getScript()->queueScript(getWorld()->actions[getWorld()->getActionAreaIndexById(1971)]->scriptIndex, kActorMax);
+			_vm->clearGameFlag(kGameFlag759);
 		}
 		break;
 	}
