@@ -508,11 +508,6 @@ public:
 	 */
 	virtual void blitSurface(const Graphics::ManagedSurface *source, const Common::Rect &r) = 0;
 
-	/**
-	 * Blits a given graphics surface at the specified position of the current drawing surface.
-	 */
-	virtual void blitSubSurface(const Graphics::ManagedSurface *source, const Common::Point &p) = 0;
-
 	virtual void blitKeyBitmap(const Graphics::ManagedSurface *source, const Common::Point &p) = 0;
 
 	virtual void blitManagedSurface(const Graphics::ManagedSurface *source, const Common::Point &p, bool themeTrans) = 0;
