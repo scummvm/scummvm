@@ -25,8 +25,6 @@
 
 #include "engines/advancedDetector.h"
 
-#define MAX_SAVES 99
-
 class AGSMetaEngine : public AdvancedMetaEngine {
 public:
 	const char *getName() const override;
@@ -36,7 +34,13 @@ public:
 	SaveStateList listSaves(const char *target) const override;
 
 	int getAutosaveSlot() const override {
-		return 999;
+		return 0;
+	}
+
+	int getMaximumSaveSlot() const override {
+		// The original allows saveslot 000 to 099 and reserves higher slots
+		// for special purposes.
+		return 99;
 	}
 
 	/**

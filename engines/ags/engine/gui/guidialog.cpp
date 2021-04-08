@@ -279,17 +279,23 @@ void preparesavegamelist(int ctrllist) {
 		CSCISendControlMessage(ctrllist, CLB_ADDITEM, 0,
 			const_cast<char *>(desc.c_str()));
 
-		// Select the first item
-		CSCISendControlMessage(ctrllist, CLB_SETCURSEL, 0, 0);
 		_G(filenumbers)[_G(numsaves)] = it->getSaveSlot();
 		_G(filedates)[_G(numsaves)] = 0;		// TODO: How to handle file dates in ScummVM
 
-		++_G(numsaves);
+		if (++_G(numsaves) == MAXSAVEGAMES_20) {
+			_G(toomanygames) = 1;
+			break;
+		}
 	}
 
-	if (_G(numsaves) >= MAXSAVEGAMES)
-		_G(toomanygames) = 1;
+	// Select the first item
+	CSCISendControlMessage(ctrllist, CLB_SETCURSEL, 0, 0);
 
+	// The code below reorder the savegames according to filedates
+	// Since we don't currently have this info, there is no sense in doing it.
+	// Also the newer AGS code does the sorting of the list before the loop above,
+	// which simpligies the code, and we might want to do the same.
+/*
 	for (int nn = 0; nn < _G(numsaves) - 1; nn++) {
 		for (int kk = 0; kk < _G(numsaves) - 1; kk++) { // Date order the games
 			if (_G(filedates)[kk] < _G(filedates)[kk + 1]) {  // swap them round
@@ -306,6 +312,7 @@ void preparesavegamelist(int ctrllist) {
 			}
 		}
 	}
+*/
 }
 
 void enterstringwindow(const char *prompttext, char *stouse) {

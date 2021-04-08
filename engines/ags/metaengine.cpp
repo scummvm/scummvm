@@ -52,6 +52,7 @@ SaveStateList AGSMetaEngine::listSaves(const char *target) const {
 
 	filenames = saveFileMan->listSavefiles(pattern);
 
+	int maxSlot = getMaximumSaveSlot();
 	SaveStateList saveList;
 	for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
 		Common::String filename = Common::String::format("%s%s",
@@ -65,6 +66,8 @@ SaveStateList AGSMetaEngine::listSaves(const char *target) const {
 
 			if (rich_media_header.dwMagicNumber == RM_MAGICNUMBER) {
 				int slotNum = atoi(file->c_str() + file->size() - 3);
+				if (slotNum > maxSlot)
+					continue;
 
 				SaveStateDescriptor desc;
 				desc.setSaveSlot(slotNum);
