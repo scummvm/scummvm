@@ -311,6 +311,8 @@ Common::Error TrecisionEngine::saveGameStream(Common::WriteStream *stream, bool 
 }
 
 bool TrecisionEngine::syncGameStream(Common::Serializer &ser) {
+	bool unused = true;
+
 	if (ser.isLoading()) {
 		ser.skip(40, SAVE_VERSION_ORIGINAL, SAVE_VERSION_ORIGINAL);	// description
 		ser.skip(ICONDX * ICONDY * sizeof(uint16), SAVE_VERSION_ORIGINAL, SAVE_VERSION_ORIGINAL); // thumbnail
@@ -329,8 +331,8 @@ bool TrecisionEngine::syncGameStream(Common::Serializer &ser) {
 	ser.syncAsSint16LE(FlagCharacterSpeak);
 	ser.syncAsSint16LE(_flagInventoryLocked);
 	ser.syncAsSint16LE(FlagUseWithStarted);
-	ser.syncAsSint16LE(FlagMousePolling);
-	ser.syncAsSint16LE(FlagDialogSolitaire);
+	ser.syncAsSint16LE(unused);	// FlagMousePolling
+	ser.syncAsSint16LE(unused); // FlagDialogSolitaire
 	ser.syncAsSint16LE(FlagCharacterExist);
 	ser.syncBytes(_inventory, MAXICON);
 	ser.syncBytes(_cyberInventory, MAXICON);

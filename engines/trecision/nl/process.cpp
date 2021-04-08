@@ -62,7 +62,6 @@ void ProcessTime() {
 			g_vm->_nextRefresh = PaintTime + 1;
 		else
 			g_vm->_nextRefresh = TheTime + 5;
-		FlagMousePolling = true;
 	}
 }
 

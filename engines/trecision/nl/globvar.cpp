@@ -62,8 +62,6 @@ bool  FlagSomeOneSpeak;
 bool  FlagCharacterSpeak;
 bool  FlagUseWithStarted;
 bool  FlagUseWithLocked;
-bool  FlagMousePolling;
-bool  FlagDialogSolitaire;
 bool  FlagCharacterExist = true;
 bool  FlagWalkNoInterrupt;
 bool  FlagNoPaintScreen;
