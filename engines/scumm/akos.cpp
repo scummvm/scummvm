@@ -994,6 +994,8 @@ byte AkosRenderer::codec1(int xmoveCur, int ymoveCur) {
 	if (_draw_bottom < rect.bottom)
 		_draw_bottom = rect.bottom;
 
+	v1.width = _out.w;
+	v1.height = _out.h;
 	v1.destptr = (byte *)_out.getBasePtr(v1.x, v1.y);
 
 	codec1_genericDecode(v1);

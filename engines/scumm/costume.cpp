@@ -300,6 +300,8 @@ byte ClassicCostumeRenderer::mainRoutine(int xmoveCur, int ymoveCur) {
 		return 2;
 	}
 
+	v1.width = _out.w;
+	v1.height = _out.h;
 	v1.destptr = (byte *)_out.getBasePtr(v1.x, v1.y);
 
 	v1.mask_ptr = _vm->getMaskBuffer(0, v1.y, _zbuf);
@@ -422,7 +424,7 @@ void ClassicCostumeRenderer::procC64(Codec1 &v1, int actor) {
 
 extern "C" int ClassicProc3RendererShadowARM(int _scaleY,
                                         ClassicCostumeRenderer::Codec1 *v1,
-                                        Graphics::Surface *_out,
+                                        int pitch,
                                         const byte *src,
                                         int   height,
                                         int _scaleX,
@@ -449,7 +451,7 @@ void ClassicCostumeRenderer::proc3(Codec1 &v1) {
 	{
 		_scaleIndexX = ClassicProc3RendererShadowARM(_scaleY,
 		                                             &v1,
-		                                             &_out,
+		                                             _out.pitch,
 		                                             _srcptr,
 		                                             _height,
 		                                             _scaleX,

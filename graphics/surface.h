@@ -50,13 +50,6 @@ namespace Graphics {
  * operations, font rendering, etc.
  */
 struct Surface {
-	/*
-	 * IMPORTANT implementation-specific detail:
-	 *
-	 * ARM code relies on the layout of the first 3 of these fields. Do not
-	 * change them.
-	 */
-
 	/**
 	 * Width of the surface.
 	 */

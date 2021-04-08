@@ -112,6 +112,8 @@ public:
 		int x;
 		int y;
 		const byte *scaletable;
+		int height;
+		int width;
 		int skip_width;
 		byte *destptr;
 		const byte *mask_ptr;
