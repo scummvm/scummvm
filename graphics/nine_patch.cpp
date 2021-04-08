@@ -154,6 +154,12 @@ void NinePatchSide::calcOffsets(int len, int titleIndex, int titleWidth) {
 	}
 }
 
+int NinePatchBitmap::getTitleOffset() {
+	if (_titleIndex == 0)
+		return 0;
+	return _h._m[_titleIndex]->dest_offset;
+}
+
 NinePatchBitmap::NinePatchBitmap(Graphics::TransparentSurface *bmp, bool owns_bitmap, int titlePos, int titleWidth) {
 	int i;
 	uint8 r, g, b, a;

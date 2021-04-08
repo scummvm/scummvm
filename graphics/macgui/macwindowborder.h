@@ -123,7 +123,7 @@ public:
 
 	void setScroll(int scrollPos, int scrollSize) { _scrollPos = scrollPos, _scrollSize = scrollSize; }
 
-	void drawTitle(ManagedSurface *g, MacWindowManager *wm);
+	void drawTitle(ManagedSurface *g, MacWindowManager *wm, int titleOffset);
 
 	void drawScrollBar(ManagedSurface *g, MacWindowManager *wm);
 
