@@ -108,11 +108,11 @@ struct SVVertex {
 	int32 _angle;
 } _vVertex[MAXVERTEX];
 
-SVertex  *_vertex, _shVertex[MAXVERTEX];
-SFace    *_face;
-SLight   *_light;
-SCamera  *_camera;
-STexture *_texture;
+SVertex  *_curVertex, _shVertex[MAXVERTEX];
+SFace    *_curFace;
+SLight   *_curLight;
+SCamera  *_curCamera;
+STexture *_curTexture;
 
 uint32 _materials[21][181];
 
@@ -569,11 +569,11 @@ void drawCharacter(uint8 flag) {
 		}
 	}
 
-	_camera = g_vm->_actor->_camera;
-	_light = g_vm->_actor->_light;
-	_texture = g_vm->_actor->_texture;
-	_vertex = g_vm->_actor->_vertex;
-	_face = g_vm->_actor->_face;
+	_curCamera = g_vm->_actor->_camera;
+	_curLight = g_vm->_actor->_light;
+	_curTexture = g_vm->_actor->_texture;
+	_curVertex = g_vm->_actor->_vertex;
+	_curFace = g_vm->_actor->_face;
 
 	int CurVertexNum = g_vm->_actor->_vertexNum;
 	int FaceNum = g_vm->_actor->_faceNum;
@@ -583,17 +583,17 @@ void drawCharacter(uint8 flag) {
 		_totalShadowVerts = 0;
 
 		// camera matrix
-		float e10 = _camera->_e1[0];
-		float e11 = _camera->_e1[1];
-		float e12 = _camera->_e1[2];
+		float e10 = _curCamera->_e1[0];
+		float e11 = _curCamera->_e1[1];
+		float e12 = _curCamera->_e1[2];
 
-		float e20 = _camera->_e2[0];
-		float e21 = _camera->_e2[1];
-		float e22 = _camera->_e2[2];
+		float e20 = _curCamera->_e2[0];
+		float e21 = _curCamera->_e2[1];
+		float e22 = _curCamera->_e2[2];
 
-		float e30 = _camera->_e3[0];
-		float e31 = _camera->_e3[1];
-		float e32 = _camera->_e3[2];
+		float e30 = _curCamera->_e3[0];
+		float e31 = _curCamera->_e3[1];
+		float e32 = _curCamera->_e3[2];
 
 		// Light directions
 		float l0 = 0.0;
@@ -625,20 +625,20 @@ void drawCharacter(uint8 flag) {
 			// if off                lint == 0
 			// if it has a shadow    lint & 0x80
 
-			int lint = _light->_inten & 0x7F;
+			int lint = _curLight->_inten & 0x7F;
 			if (lint) {    // if it's not turned off
-				tx = _light->_x - g_vm->_actor->_px - g_vm->_actor->_dx; // computes direction vector
-				tz = _light->_z - g_vm->_actor->_pz - g_vm->_actor->_dz; // between light and actor
-				ty = _light->_y;
+				tx = _curLight->_x - g_vm->_actor->_px - g_vm->_actor->_dx; // computes direction vector
+				tz = _curLight->_z - g_vm->_actor->_pz - g_vm->_actor->_dz; // between light and actor
+				ty = _curLight->_y;
 
-				if (_light->_position) {     // if it's attenuated
+				if (_curLight->_position) {     // if it's attenuated
 					dist = sqrt(tx * tx + ty * ty + tz * tz);   // Distance light <--> actor
 
 					// adjust light intensity due to the distance
-					if (dist > _light->_outr)           // if it's out of range it's off
+					if (dist > _curLight->_outr)           // if it's out of range it's off
 						lint = 0;
-					else if (dist > _light->_inr)       // if it's inside the circle it's decreased
-						lint = (int)((float)lint * (_light->_outr - dist) / (_light->_outr - _light->_inr));
+					else if (dist > _curLight->_inr)       // if it's inside the circle it's decreased
+						lint = (int)((float)lint * (_curLight->_outr - dist) / (_curLight->_outr - _curLight->_inr));
 				}
 			}
 
@@ -653,13 +653,13 @@ void drawCharacter(uint8 flag) {
 				l2 /= t;
 
 				// Adjust light intensity according to the spot
-				tx = (float)_light->_fallOff;
+				tx = (float)_curLight->_fallOff;
 				if (tx) {    // for light spot only
-					ty = (float)_light->_hotspot;
+					ty = (float)_curLight->_hotspot;
 
-					pa0 = _light->_dx * cost - _light->_dz * sint;
-					pa1 = _light->_dy;
-					pa2 = _light->_dx * sint + _light->_dz * cost;
+					pa0 = _curLight->_dx * cost - _curLight->_dz * sint;
+					pa1 = _curLight->_dy;
+					pa2 = _curLight->_dx * sint + _curLight->_dz * cost;
 
 					t = sqrt(pa0 * pa0 + pa1 * pa1 + pa2 * pa2);
 					pa0 /= t;
@@ -685,14 +685,14 @@ void drawCharacter(uint8 flag) {
 				}
 			}
 
-			if ((_light->_inten & 0x80) && lint) {    // if it's shadowed and still on
-				_vertex = g_vm->_actor->_vertex;
+			if ((_curLight->_inten & 0x80) && lint) {    // if it's shadowed and still on
+				_curVertex = g_vm->_actor->_vertex;
 
 				// casts shadow vertices
 				for (int a = 0; a < _shadowVertsNum; a++) {
-					pa0 = _vertex[_shadowVerts[a]]._x;
-					pa1 = _vertex[_shadowVerts[a]]._y;
-					pa2 = _vertex[_shadowVerts[a]]._z;
+					pa0 = _curVertex[_shadowVerts[a]]._x;
+					pa1 = _curVertex[_shadowVerts[a]]._y;
+					pa2 = _curVertex[_shadowVerts[a]]._z;
 
 					_shVertex[CurVertexNum + _totalShadowVerts + a]._x = pa0 - (pa1 * l0);
 					_shVertex[CurVertexNum + _totalShadowVerts + a]._z = pa2 - (pa1 * l2);
@@ -713,56 +713,56 @@ void drawCharacter(uint8 flag) {
 				l1 = (l1 * t);
 				l2 = (l2 * t);
 
-				_vertex = g_vm->_actor->_vertex;
+				_curVertex = g_vm->_actor->_vertex;
 				for (int a = 0; a < CurVertexNum; a++) {
-					pa0 = _vertex->_nx;
-					pa1 = _vertex->_ny;
-					pa2 = _vertex->_nz;
+					pa0 = _curVertex->_nx;
+					pa1 = _curVertex->_ny;
+					pa2 = _curVertex->_nz;
 
 					lint = (int)((acos(pa0 * l0 + pa1 * l1 + pa2 * l2) * 360.0) / PI);
 					lint = CLIP(lint, 0, 180);
 
 					_vVertex[a]._angle -= (180 - lint);
-					_vertex++;
+					_curVertex++;
 				}
 			}
 
-			_light++;
+			_curLight++;
 		}
 
 		// rearranged light values so they can be viewed
 		for (int a = 0; a < CurVertexNum; a++)
 			_vVertex[a]._angle = CLIP(_vVertex[a]._angle, 0, 180);
 
-		_vertex = g_vm->_actor->_vertex;
+		_curVertex = g_vm->_actor->_vertex;
 
 		// Calculate the distance of the character from the room
-		tx = _camera->_ex - g_vm->_actor->_px;
-		ty = _camera->_ey - g_vm->_actor->_py;
-		tz = _camera->_ez - g_vm->_actor->_pz;
+		tx = _curCamera->_ex - g_vm->_actor->_px;
+		ty = _curCamera->_ey - g_vm->_actor->_py;
+		tz = _curCamera->_ez - g_vm->_actor->_pz;
 
 		dist = tx * e30 + ty * e31 + tz * e32;
 
 		for (int a = 0; a < CurVertexNum + _totalShadowVerts; a++) {
 			if (a < CurVertexNum) {
-				l0 = _vertex->_x;
-				l1 = _vertex->_z;
-				pa1 = ty - _vertex->_y;
+				l0 = _curVertex->_x;
+				l1 = _curVertex->_z;
+				pa1 = ty - _curVertex->_y;
 			} else {
 				l0 = _shVertex[a]._x;
 				l1 = _shVertex[a]._z;
 				pa1 = ty - _shVertex[a]._y;
 			}
 
-			pa0 = tx - (l0 * cost + l1 * sint);     // rotate _vertex
+			pa0 = tx - (l0 * cost + l1 * sint);     // rotate _curVertex
 			pa2 = tz - (-l0 * sint + l1 * cost);
 
-			l0 = pa0 * e10 + pa1 * e11 + pa2 * e12; // project _vertex
+			l0 = pa0 * e10 + pa1 * e11 + pa2 * e12; // project _curVertex
 			l1 = pa0 * e20 + pa1 * e21 + pa2 * e22;
 			l2 = pa0 * e30 + pa1 * e31 + pa2 * e32;
 
-			_x2d = _cx + (int)((l0 * _camera->_fovX) / l2);
-			_y2d = _cy + (int)((l1 * _camera->_fovY) / l2);
+			_x2d = _cx + (int)((l0 * _curCamera->_fovX) / l2);
+			_y2d = _cy + (int)((l1 * _curCamera->_fovY) / l2);
 
 			_vVertex[a]._x = (short)_x2d;
 			_vVertex[a]._y = (short)_y2d;
@@ -776,7 +776,7 @@ void drawCharacter(uint8 flag) {
 			g_vm->_actor->_lim[4] = MIN(_vVertex[a]._z, g_vm->_actor->_lim[4]);
 			g_vm->_actor->_lim[5] = MAX(_vVertex[a]._z, g_vm->_actor->_lim[5]);
 
-			_vertex++;
+			_curVertex++;
 		}
 		g_vm->_actor->_lim[4] = (short)dist;
 		g_vm->_actor->_lim[5] = (short)dist;
@@ -818,9 +818,9 @@ void drawCharacter(uint8 flag) {
 		}
 
 		for (int a = 0; a < FaceNum; a++) {
-			p0 = _face->_a;
-			p1 = _face->_b;
-			p2 = _face->_c;
+			p0 = _curFace->_a;
+			p1 = _curFace->_b;
+			p2 = _curFace->_c;
 
 			px0 = _vVertex[p0]._x;
 			py0 = _vVertex[p0]._y;
@@ -830,16 +830,16 @@ void drawCharacter(uint8 flag) {
 			py2 = _vVertex[p2]._y;
 
 			if (clockWise(px0, py0, px1, py1, px2, py2) > 0) {
-				int b = _face->_mat;
-				if (_texture[b]._flag & TEXTUREACTIVE) {
+				int b = _curFace->_mat;
+				if (_curTexture[b]._flag & TEXTUREACTIVE) {
 					textureTriangle(px0, py0, _vVertex[p0]._z, _vVertex[p0]._angle, g_vm->_actor->_textureCoord[a][0][0], g_vm->_actor->_textureCoord[a][0][1],
 									px1, py1, _vVertex[p1]._z, _vVertex[p1]._angle, g_vm->_actor->_textureCoord[a][1][0], g_vm->_actor->_textureCoord[a][1][1],
 									px2, py2, _vVertex[p2]._z, _vVertex[p2]._angle, g_vm->_actor->_textureCoord[a][2][0], g_vm->_actor->_textureCoord[a][2][1],
-									&_texture[b]);
+									&_curTexture[b]);
 				}
 			}
 
-			_face++;
+			_curFace++;
 		}
 
 		p0 = 0;
