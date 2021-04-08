@@ -613,27 +613,11 @@ void PicButtonWidget::setGfx(const Graphics::Surface *gfx, int statenum, bool sc
 }
 
 void PicButtonWidget::setGfxFromTheme(const char *name, int statenum, bool scale) {
-	Graphics::SVGBitmap *svg = g_gui.theme()->getSVG(name);
+	const Graphics::ManagedSurface *gfx = g_gui.theme()->getImageSurface(name);
 
-	if (!svg) {
-		const Graphics::ManagedSurface *gfx = g_gui.theme()->getImageSurface(name);
+	setGfx(gfx, statenum, scale);
 
-		setGfx(gfx, statenum, scale);
-
-		return;
-	}
-
-	if (_w == 0 || _h == 0) {
-		Common::Point *dims = g_gui.theme()->getBitmapDims(name);
-
-		if (dims) {
-			_w = dims->x;
-			_h = dims->y;
-		}
-	}
-	_gfx[statenum].free();
-	_gfx[statenum].create(_w, _h, *svg->getPixelFormat());
-	svg->render(_gfx[statenum], _w, _h);
+	return;
 }
 
 void PicButtonWidget::setGfx(int w, int h, int r, int g, int b, int statenum) {
@@ -928,19 +912,9 @@ void GraphicsWidget::setGfx(int w, int h, int r, int g, int b) {
 }
 
 void GraphicsWidget::setGfxFromTheme(const char *name) {
-	Graphics::SVGBitmap *svg = g_gui.theme()->getSVG(name);
+	const Graphics::ManagedSurface *gfx = g_gui.theme()->getImageSurface(name);
 
-	if (!svg) {
-		const Graphics::ManagedSurface *gfx = g_gui.theme()->getImageSurface(name);
-
-		setGfx(gfx);
-
-		return;
-	}
-
-	_gfx.free();
-	_gfx.create(_w, _h, *svg->getPixelFormat());
-	svg->render(_gfx, _w, _h);
+	setGfx(gfx);
 }
 
 void GraphicsWidget::drawWidget() {

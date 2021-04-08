@@ -256,14 +256,6 @@ ThemeEngine::~ThemeEngine() {
 	}
 	_bitmaps.clear();
 
-	for (SVGMap::iterator i = _svgs.begin(); i != _svgs.end(); ++i) {
-		Graphics::SVGBitmap *svg = i->_value;
-		if (svg) {
-			delete svg;
-		}
-	}
-	_svgs.clear();
-
 	for (PointMap::iterator i = _bitmapDims.begin(); i != _bitmapDims.end(); ++i) {
 		Common::Point *point = i->_value;
 		if (point) {
@@ -755,7 +747,12 @@ bool ThemeEngine::addBitmap(const Common::String &filename, const Common::String
 			}
 		}
 
-		_svgs[filename] = image;
+		_bitmaps[filename] = new Graphics::ManagedSurface(width * _scaleFactor, height * _scaleFactor, _overlayFormat);
+		image->render(*_bitmaps[filename], width * _scaleFactor, height * _scaleFactor);
+
+		delete image;
+
+		return true;
 	}
 
 	_bitmapDims[filename] = new Common::Point(width * _scaleFactor, height * _scaleFactor);
