@@ -315,7 +315,7 @@ void OpenGLSdlGraphicsManager::notifyResize(const int w, const int h) {
 		// so we do not overwrite the users requested window size whenever we
 		// switch aspect ratio or similar.
 		_gotResize = true;
-		if (!setupMode(width, height)) {
+		if (!setupMode(w, h)) {
 			warning("OpenGLSdlGraphicsManager::notifyResize: Resize failed ('%s')", SDL_GetError());
 			g_system->quit();
 		}
