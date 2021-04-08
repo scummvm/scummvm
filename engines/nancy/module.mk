@@ -27,7 +27,6 @@ MODULE_OBJS = \
   state/mainmenu.o \
   state/map.o \
   state/scene.o \
-  cheat.o \
   commontypes.o \
   console.o \
   cursor.o \

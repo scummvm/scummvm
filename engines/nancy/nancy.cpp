@@ -34,7 +34,7 @@
 #include "engines/nancy/input.h"
 #include "engines/nancy/sound.h"
 #include "engines/nancy/graphics.h"
-#include "engines/nancy/cheat.h"
+#include "engines/nancy/dialogs.h"
 #include "engines/nancy/console.h"
 
 #include "engines/nancy/action/primaryvideo.h"

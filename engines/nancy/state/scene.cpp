@@ -196,7 +196,7 @@ void Scene::setHeldItem(int16 id)  {
 }
 
 void Scene::setEventFlag(int16 label, NancyFlag flag) {
-	if (label > -1) {
+	if (label > -1 && label < 168) {
 		_flags.eventFlags[label] = flag;
 	}
 }
