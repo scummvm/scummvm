@@ -24,6 +24,7 @@
 #include "ags/ags.h"
 #include "ags/globals.h"
 #include "ags/shared/ac/gamesetupstruct.h"
+#include "ags/engine/ac/display.h"
 #include "common/file.h"
 #include "graphics/fonts/ttf.h"
 
@@ -34,7 +35,7 @@ Graphics::Font *ALFONT_FONT::getFont() {
 	if (!_fonts.contains(_size)) {
 		// Instantiate the raw TTF data into a font of the given size
 		Graphics::TTFRenderMode renderMode = Graphics::kTTFRenderModeMonochrome;
-		if (_GP(game).options[OPT_ANTIALIASFONTS] != 0 || ::AGS::g_vm->_forceTextAA)
+		if (ShouldAntiAliasText())
 			renderMode = Graphics::kTTFRenderModeLight;
 		_fonts[_size] = Graphics::loadTTFFont(_ttfData, _size, Graphics::kTTFSizeModeCharacter, 0, renderMode);
 		assert(_fonts[_size]);
@@ -65,14 +66,12 @@ size_t alfont_text_height(ALFONT_FONT *font) {
 }
 
 void alfont_textout(BITMAP *bmp, ALFONT_FONT *font, const char *text, int x, int y, uint32 color) {
+	// Note: the original does not use antialiasing when drawing on 8 bit bmp
+	// if (bitmap_color_depth(bmp) > 8) do not use AA in getFont()...
 	// The original alfont changes the y based on the font height and ascent.
 	y += (font->_size - font->getFont()->getFontAscent());
 	Graphics::ManagedSurface &surf = **bmp;
 	font->getFont()->drawString(&surf, text, x, y, bmp->w - x, color);
-}
-
-void alfont_textout_aa(BITMAP *bmp, ALFONT_FONT *font, const char *text, int x, int y, uint32 color) {
-	alfont_textout(bmp, font, text, x, y, color);
 }
 
 void alfont_set_font_size(ALFONT_FONT *font, int size) {
