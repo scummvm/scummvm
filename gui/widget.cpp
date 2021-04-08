@@ -954,9 +954,9 @@ void OptionsContainerWidget::reflowLayout() {
 	Widget::reflowLayout();
 
 	if (!_dialogLayout.empty()) {
-		if (!g_gui.xmlEval()->hasDialog(_dialogLayout)) {
-			defineLayout(*g_gui.xmlEval(), _dialogLayout, _name);
-		}
+		// Since different engines have different number of options,
+		// we have to create it every time.
+		defineLayout(*g_gui.xmlEval(), _dialogLayout, _name);
 
 		if (!_scrollContainer) {
 			g_gui.xmlEval()->reflowDialogLayout(_dialogLayout, _firstWidget);
