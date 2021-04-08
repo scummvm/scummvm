@@ -32,7 +32,7 @@ void TrecisionEngine::EndScript() {
 	_curStack--;
 	if (_curStack == 0) {
 		_flagscriptactive = false;
-		g_vm->_flagMouseEnabled = true;
+		_flagMouseEnabled = true;
 		redrawString();
 	}
 }
@@ -43,10 +43,10 @@ void TrecisionEngine::EndScript() {
 void TrecisionEngine::PlayScript(uint16 i) {
 	_curStack++;
 	_flagscriptactive = true;
-	g_vm->_flagMouseEnabled = false;
-	g_vm->_curScriptFrame[_curStack] = g_vm->_script[i]._firstFrame;
+	_flagMouseEnabled = false;
+	_curScriptFrame[_curStack] = _script[i]._firstFrame;
 
-	SScriptFrame *curFrame = &g_vm->_scriptFrame[g_vm->_curScriptFrame[_curStack]];
+	SScriptFrame *curFrame = &_scriptFrame[_curScriptFrame[_curStack]];
 	// If the event is empty, terminate the script
 	if ((curFrame->_class == 0) && (curFrame->_event == 0)) {
 		EndScript();
@@ -56,11 +56,11 @@ void TrecisionEngine::PlayScript(uint16 i) {
 	bool loop = true;
 	while (loop) {
 		loop = false;
-		curFrame = &g_vm->_scriptFrame[g_vm->_curScriptFrame[_curStack]];
-		SScriptFrame *nextFrame = &g_vm->_scriptFrame[g_vm->_curScriptFrame[_curStack] + 1];
+		curFrame = &_scriptFrame[_curScriptFrame[_curStack]];
+		SScriptFrame *nextFrame = &_scriptFrame[_curScriptFrame[_curStack] + 1];
 		curFrame->sendFrame();
 		if (curFrame->_noWait && !((nextFrame->_class == 0) && (nextFrame->_event == 0))) {
-			g_vm->_curScriptFrame[_curStack]++;
+			_curScriptFrame[_curStack]++;
 			loop = true;
 		}
 	}
@@ -70,11 +70,11 @@ void TrecisionEngine::PlayScript(uint16 i) {
 /*                               EvalScript           					   */
 /*-------------------------------------------------------------------------*/
 void TrecisionEngine::EvalScript() {
-	if (g_vm->_characterQueue.testEmptyCharacterQueue4Script() && g_vm->_gameQueue.testEmptyQueue(MC_DIALOG) && _flagScreenRefreshed) {
-		g_vm->_curScriptFrame[_curStack]++;
-		g_vm->_flagMouseEnabled = false;
+	if (_characterQueue.testEmptyCharacterQueue4Script() && _gameQueue.testEmptyQueue(MC_DIALOG) && _flagScreenRefreshed) {
+		_curScriptFrame[_curStack]++;
+		_flagMouseEnabled = false;
 
-		SScriptFrame *curFrame = &g_vm->_scriptFrame[g_vm->_curScriptFrame[_curStack]];
+		SScriptFrame *curFrame = &_scriptFrame[_curScriptFrame[_curStack]];
 		if ((curFrame->_class == 0) && (curFrame->_event == 0)) {
 			EndScript();
 			return;
@@ -83,11 +83,11 @@ void TrecisionEngine::EvalScript() {
 		bool loop = true;
 		while (loop) {
 			loop = false;
-			curFrame = &g_vm->_scriptFrame[g_vm->_curScriptFrame[_curStack]];
-			SScriptFrame *nextFrame = &g_vm->_scriptFrame[g_vm->_curScriptFrame[_curStack] + 1];
+			curFrame = &_scriptFrame[_curScriptFrame[_curStack]];
+			SScriptFrame *nextFrame = &_scriptFrame[_curScriptFrame[_curStack] + 1];
 			curFrame->sendFrame();
 			if (curFrame->_noWait && !((nextFrame->_class == 0) && (nextFrame->_event == 0))) {
-				g_vm->_curScriptFrame[_curStack]++;
+				_curScriptFrame[_curStack]++;
 				loop = true;
 			}
 		}
