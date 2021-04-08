@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-04-08 18:54+0000\n"
+"POT-Creation-Date: 2021-04-08 19:04+0000\n"
 "PO-Revision-Date: 2021-04-03 17:27+0000\n"
 "Last-Translator: Lothar Serra Mari <serra@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
@@ -2526,7 +2526,7 @@ msgstr "Apple II GS-Emulator (NICHT INTEGRIERT)"
 msgid "Creative Music System emulator"
 msgstr "Creative Music System-Emulator"
 
-#: audio/softsynth/fluidsynth.cpp:212
+#: audio/softsynth/fluidsynth.cpp:232
 msgid ""
 "FluidSynth requires a 'soundfont' setting. Please specify it in ScummVM GUI "
 "on MIDI tab. Music is off."
@@ -2534,7 +2534,7 @@ msgstr ""
 "FluidSynth kann nicht ohne SoundFonts genutzt werden. Bitte in der ScummVM-"
 "Oberfläche unter \"MIDI\" auswählen. Musik wird deaktiviert."
 
-#: audio/softsynth/fluidsynth.cpp:313
+#: audio/softsynth/fluidsynth.cpp:364
 #, c-format
 msgid "FluidSynth: Failed loading custom SoundFont '%s'. Music is off."
 msgstr ""
