@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-04-06 23:09+0000\n"
+"POT-Creation-Date: 2021-04-07 23:46+0000\n"
 "PO-Revision-Date: 2021-04-05 23:24+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
@@ -251,7 +251,7 @@ msgstr ""
 #: gui/editgamedialog.cpp:161 gui/editgamedialog.cpp:175 gui/options.cpp:1269
 #: gui/options.cpp:1289 gui/options.cpp:1302 gui/options.cpp:1316
 #: gui/options.cpp:1334 gui/options.cpp:1346 gui/options.cpp:2147
-#: gui/options.cpp:2319 audio/null.cpp:41 engines/ags/detection.cpp:90
+#: gui/options.cpp:2319 audio/null.cpp:41 engines/ags/detection.cpp:94
 msgid "<default>"
 msgstr "<προκαθορισμένη>"
 
@@ -3948,13 +3948,23 @@ msgstr ""
 "Roland MT32 σε αυτά του General MIDI. Είναι πιθανό ότι\n"
 "ορισμένα κομμάτια θα ακούγονται εσφαλμένα."
 
-#: engines/ags/detection.cpp:86
+#: engines/ags/detection.cpp:90
 msgid "Game language:"
 msgstr "Γλώσσα παιχνιδιού:"
 
-#: engines/ags/detection.cpp:86
+#: engines/ags/detection.cpp:90
 msgid "Language to use for multilingual games"
 msgstr "Η γλώσσα που θα χρησιμοποιηθεί για πολυγλωσσικά παιχνίδια"
+
+#: engines/ags/detection.cpp:110
+#, fuzzy
+#| msgid "Antialiased"
+msgid "Force antialiased text"
+msgstr "Εξομαλυμένη"
+
+#: engines/ags/detection.cpp:110
+msgid "Use antialiasing to draw text even if the game does not ask for it"
+msgstr ""
 
 #: engines/bladerunner/bladerunner.cpp:363
 msgid "Failed to initialize resources"

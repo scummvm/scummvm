@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-04-06 23:09+0000\n"
+"POT-Creation-Date: 2021-04-07 23:46+0000\n"
 "PO-Revision-Date: 2021-04-02 13:11+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
@@ -253,7 +253,7 @@ msgstr ""
 #: gui/editgamedialog.cpp:161 gui/editgamedialog.cpp:175 gui/options.cpp:1269
 #: gui/options.cpp:1289 gui/options.cpp:1302 gui/options.cpp:1316
 #: gui/options.cpp:1334 gui/options.cpp:1346 gui/options.cpp:2147
-#: gui/options.cpp:2319 audio/null.cpp:41 engines/ags/detection.cpp:90
+#: gui/options.cpp:2319 audio/null.cpp:41 engines/ags/detection.cpp:94
 msgid "<default>"
 msgstr "<за умовчанням>"
 
@@ -3892,13 +3892,23 @@ msgstr ""
 "MT32 на General MIDI. Але в результаті може\n"
 "статися, що деякі треки будуть грати неправильно."
 
-#: engines/ags/detection.cpp:86
+#: engines/ags/detection.cpp:90
 msgid "Game language:"
 msgstr "Мова гри.:"
 
-#: engines/ags/detection.cpp:86
+#: engines/ags/detection.cpp:90
 msgid "Language to use for multilingual games"
 msgstr "Мова для використання багатомовними грами"
+
+#: engines/ags/detection.cpp:110
+#, fuzzy
+#| msgid "Antialiased"
+msgid "Force antialiased text"
+msgstr "Зі згладжуванням"
+
+#: engines/ags/detection.cpp:110
+msgid "Use antialiasing to draw text even if the game does not ask for it"
+msgstr ""
 
 #: engines/bladerunner/bladerunner.cpp:363
 msgid "Failed to initialize resources"

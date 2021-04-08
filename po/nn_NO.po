@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-04-06 23:09+0000\n"
+"POT-Creation-Date: 2021-04-07 23:46+0000\n"
 "PO-Revision-Date: 2020-09-26 21:13+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Norwegian Nynorsk <https://translations.scummvm.org/projects/"
@@ -249,7 +249,7 @@ msgstr ""
 #: gui/editgamedialog.cpp:161 gui/editgamedialog.cpp:175 gui/options.cpp:1269
 #: gui/options.cpp:1289 gui/options.cpp:1302 gui/options.cpp:1316
 #: gui/options.cpp:1334 gui/options.cpp:1346 gui/options.cpp:2147
-#: gui/options.cpp:2319 audio/null.cpp:41 engines/ags/detection.cpp:90
+#: gui/options.cpp:2319 audio/null.cpp:41 engines/ags/detection.cpp:94
 msgid "<default>"
 msgstr "<standard>"
 
@@ -3965,16 +3965,26 @@ msgid ""
 "some tracks sound incorrect."
 msgstr ""
 
-#: engines/ags/detection.cpp:86
+#: engines/ags/detection.cpp:90
 #, fuzzy
 msgid "Game language:"
 msgstr "GUI-språk:"
 
-#: engines/ags/detection.cpp:86
+#: engines/ags/detection.cpp:90
 #, fuzzy
 #| msgid "AdLib is used for music in many games"
 msgid "Language to use for multilingual games"
 msgstr "AdLib nyttast til musikk i mange spel"
+
+#: engines/ags/detection.cpp:110
+#, fuzzy
+#| msgid "Antialiased"
+msgid "Force antialiased text"
+msgstr "Kantutjevna"
+
+#: engines/ags/detection.cpp:110
+msgid "Use antialiasing to draw text even if the game does not ask for it"
+msgstr ""
 
 #: engines/bladerunner/bladerunner.cpp:363
 #, fuzzy

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-04-06 23:09+0000\n"
+"POT-Creation-Date: 2021-04-07 23:46+0000\n"
 "PO-Revision-Date: 2021-04-04 22:24+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
@@ -247,7 +247,7 @@ msgstr "ゲームの言語です。スペイン語版を英語版に変換はし
 #: gui/editgamedialog.cpp:161 gui/editgamedialog.cpp:175 gui/options.cpp:1269
 #: gui/options.cpp:1289 gui/options.cpp:1302 gui/options.cpp:1316
 #: gui/options.cpp:1334 gui/options.cpp:1346 gui/options.cpp:2147
-#: gui/options.cpp:2319 audio/null.cpp:41 engines/ags/detection.cpp:90
+#: gui/options.cpp:2319 audio/null.cpp:41 engines/ags/detection.cpp:94
 msgid "<default>"
 msgstr "<デフォルト>"
 
@@ -3852,13 +3852,23 @@ msgstr ""
 "マッピングを試みます。\n"
 "一部のトラックは正しく聞こえない事があります。"
 
-#: engines/ags/detection.cpp:86
+#: engines/ags/detection.cpp:90
 msgid "Game language:"
 msgstr "ゲームの言語："
 
-#: engines/ags/detection.cpp:86
+#: engines/ags/detection.cpp:90
 msgid "Language to use for multilingual games"
 msgstr "多言語ゲームで使用する言語"
+
+#: engines/ags/detection.cpp:110
+#, fuzzy
+#| msgid "Antialiased"
+msgid "Force antialiased text"
+msgstr "アンチエイリアス"
+
+#: engines/ags/detection.cpp:110
+msgid "Use antialiasing to draw text even if the game does not ask for it"
+msgstr ""
 
 #: engines/bladerunner/bladerunner.cpp:363
 msgid "Failed to initialize resources"

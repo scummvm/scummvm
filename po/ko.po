@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-04-06 23:09+0000\n"
+"POT-Creation-Date: 2021-04-07 23:46+0000\n"
 "PO-Revision-Date: 2021-03-07 12:24+0000\n"
 "Last-Translator: Joohan Lee <losernator@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -245,7 +245,7 @@ msgstr "게임의 언어. 선택한 언어로 게임이 번역되지는 않음"
 #: gui/editgamedialog.cpp:161 gui/editgamedialog.cpp:175 gui/options.cpp:1269
 #: gui/options.cpp:1289 gui/options.cpp:1302 gui/options.cpp:1316
 #: gui/options.cpp:1334 gui/options.cpp:1346 gui/options.cpp:2147
-#: gui/options.cpp:2319 audio/null.cpp:41 engines/ags/detection.cpp:90
+#: gui/options.cpp:2319 audio/null.cpp:41 engines/ags/detection.cpp:94
 msgid "<default>"
 msgstr "<기본값>"
 
@@ -3862,13 +3862,23 @@ msgstr ""
 "Roland MT32 악기를 General MIDI로 변환하는 경우\n"
 "일부 음악이 올바르지 않게 들릴 수 있습니다."
 
-#: engines/ags/detection.cpp:86
+#: engines/ags/detection.cpp:90
 msgid "Game language:"
 msgstr "게임 언어:"
 
-#: engines/ags/detection.cpp:86
+#: engines/ags/detection.cpp:90
 msgid "Language to use for multilingual games"
 msgstr "다중 언어 게임에서 사용할 언어"
+
+#: engines/ags/detection.cpp:110
+#, fuzzy
+#| msgid "Antialiased"
+msgid "Force antialiased text"
+msgstr "안티앨리어싱"
+
+#: engines/ags/detection.cpp:110
+msgid "Use antialiasing to draw text even if the game does not ask for it"
+msgstr ""
 
 #: engines/bladerunner/bladerunner.cpp:363
 msgid "Failed to initialize resources"
