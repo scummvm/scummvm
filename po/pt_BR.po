@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-04-08 19:04+0000\n"
-"PO-Revision-Date: 2021-04-02 08:37+0000\n"
+"PO-Revision-Date: 2021-04-09 04:24+0000\n"
 "Last-Translator: Marcel Souza Lemes <marcosoutsider@gmail.com>\n"
 "Language-Team: Portuguese (Brazil) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/pt_BR/>\n"
@@ -3906,14 +3906,13 @@ msgid "Language to use for multilingual games"
 msgstr "Idioma a ser usado para jogos multilíngues"
 
 #: engines/ags/detection.cpp:110
-#, fuzzy
-#| msgid "Antialiased"
 msgid "Force antialiased text"
-msgstr "Com anti-serrilhamento"
+msgstr "Forçar texto suave"
 
 #: engines/ags/detection.cpp:110
 msgid "Use antialiasing to draw text even if the game does not ask for it"
 msgstr ""
+"Utiliza suavização para desenhar texto mesmo que o jogo não precise disso"
 
 #: engines/bladerunner/bladerunner.cpp:363
 msgid "Failed to initialize resources"
@@ -5442,48 +5441,47 @@ msgid "Open event flags cheat menu"
 msgstr "Abrir menu de truques de sinalizadores de evento"
 
 #: engines/nancy/dialogs.cpp:41
-#, fuzzy
-#| msgid "Player Time:"
 msgid "Player Speech"
-msgstr "Tempo do Jogador:"
+msgstr "Fala do Jogador"
 
 #: engines/nancy/dialogs.cpp:41
 msgid ""
 "Enable player speech. Only works if speech is enabled in the Audio settings."
 msgstr ""
+"Habilita a fala do jogador. Só funciona se a fala estiver habilitada nas "
+"configurações de Áudio."
 
 #: engines/nancy/dialogs.cpp:42
 msgid "Character Speech"
-msgstr ""
+msgstr "Fala do Personagem"
 
 #: engines/nancy/dialogs.cpp:42
 msgid ""
 "Enable NPC speech. Only works if speech is enabled in the Audio settings."
 msgstr ""
+"Habilita a fala do NPC. Só funciona se a fala estiver habilitada nas "
+"configurações de Áudio."
 
 #: engines/nancy/dialogs.cpp:43
-#, fuzzy
-#| msgid "Use original save/load screens"
 msgid "Use original menus"
-msgstr "Utilizar telas de salvar/carregar originais"
+msgstr "Utilizar menus originais"
 
 #: engines/nancy/dialogs.cpp:43
 msgid ""
 "Use the original engine's main, save/load, and setup menus. ScummVM's Global "
 "Main Menu can still be accessed through its keymap."
 msgstr ""
+"Utiliza o menu principal, salvar/carregar e de configuração original da "
+"engine. O Menu Principal Global do ScummVM ainda pode ser acessado por meio "
+"de sua tecla de atalho mapeada."
 
 #: engines/nancy/dialogs.cpp:45
-#, fuzzy
-#| msgid "Speech Only"
 msgid "Speech Options"
-msgstr "Somente Fala"
+msgstr "Opções de Fala"
 
 #: engines/nancy/dialogs.cpp:46
-#, fuzzy
-#| msgid "Options"
 msgid "Engine Options"
-msgstr "Opções"
+msgstr "Opções da Engine"
 
 #: engines/nancy/dialogs.cpp:98
 msgid "General"
@@ -5552,7 +5550,7 @@ msgstr "Nível de Dificuldade do Jogador"
 
 #: engines/nancy/dialogs.cpp:130
 msgid "Software Timer"
-msgstr ""
+msgstr "Temporizador do Software"
 
 #: engines/nancy/dialogs.cpp:131
 msgid "Timer On"
