@@ -33,7 +33,6 @@
 #include "common/rect.h"
 
 #include "graphics/managed_surface.h"
-#include "graphics/transparent_surface.h"
 #include "graphics/font.h"
 #include "graphics/pixelformat.h"
 
@@ -205,7 +204,6 @@ protected:
 	typedef Common::HashMap<Common::String, Graphics::ManagedSurface *> ImagesMap;
 	typedef Common::HashMap<Common::String, Graphics::SVGBitmap *> SVGMap;
 	typedef Common::HashMap<Common::String, Common::Point *> PointMap;
-	typedef Common::HashMap<Common::String, Graphics::TransparentSurface *> AImagesMap;
 
 	friend class GUI::Dialog;
 	friend class GUI::GuiObject;
@@ -591,14 +589,6 @@ public:
 	bool addBitmap(const Common::String &filename, const Common::String &scalablefile, int widht, int height);
 
 	/**
-	 * Interface for the ThemeParser class: Loads a bitmap with transparency file to use on the GUI.
-	 * The filename is also used as its identifier.
-	 *
-	 * @param filename Name of the bitmap file.
-	 */
-	bool addAlphaBitmap(const Common::String &filename);
-
-	/**
 	 * Adds a new TextStep from the ThemeParser. This will be deprecated/removed once the
 	 * new Font API is in place. FIXME: Is that so ???
 	 */
@@ -641,10 +631,6 @@ public:
 
 	Graphics::ManagedSurface *getImageSurface(const Common::String &name) const {
 		return _bitmaps.contains(name) ? _bitmaps[name] : 0;
-	}
-
-	Graphics::TransparentSurface *getAImageSurface(const Common::String &name) const {
-		return _abitmaps.contains(name) ? _abitmaps[name] : 0;
 	}
 
 	/**
@@ -806,7 +792,6 @@ protected:
 	ImagesMap _bitmaps;
 	SVGMap _svgs;
 	PointMap _bitmapDims;
-	AImagesMap _abitmaps;
 	Graphics::PixelFormat _overlayFormat;
 	Graphics::PixelFormat _cursorFormat;
 

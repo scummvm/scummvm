@@ -92,11 +92,6 @@ public:
 	void blitSubSurface(const Graphics::ManagedSurface *source, const Common::Point &p) override;
 	void blitManagedSurface(const Graphics::ManagedSurface *source, const Common::Point &p, bool themeTrans) override;
 	void blitKeyBitmap(const Graphics::ManagedSurface *source, const Common::Point &p) override;
-	void blitAlphaBitmap(Graphics::TransparentSurface *source, const Common::Rect &r,
-			GUI::ThemeEngine::AutoScaleMode autoscale = GUI::ThemeEngine::kAutoScaleNone,
-			Graphics::DrawStep::VectorAlignment xAlign = Graphics::DrawStep::kVectorAlignManual,
-			Graphics::DrawStep::VectorAlignment yAlign = Graphics::DrawStep::kVectorAlignManual,
-			int alpha = 255) override;
 
 	void applyScreenShading(GUI::ThemeEngine::ShadingStyle shadingStyle) override;
 

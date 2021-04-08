@@ -324,18 +324,6 @@ bool ThemeParser::parserCallback_bitmap(ParserNode *node) {
 	return true;
 }
 
-bool ThemeParser::parserCallback_alphabitmap(ParserNode *node) {
-	if (resolutionCheck(node->values["resolution"]) == false) {
-		node->ignore = true;
-		return true;
-	}
-
-	if (!_theme->addAlphaBitmap(node->values["filename"]))
-		return parserError("Error loading Bitmap file '" + node->values["filename"] + "'");
-
-	return true;
-}
-
 bool ThemeParser::parserCallback_text(ParserNode *node) {
 	Graphics::TextAlign alignH;
 	GUI::ThemeEngine::TextAlignVertical alignV;
@@ -418,8 +406,6 @@ static Graphics::DrawingFunctionCallback getDrawingFunctionCallback(const Common
 		return &Graphics::VectorRenderer::drawCallback_BITMAP;
 	if (name == "cross")
 		return &Graphics::VectorRenderer::drawCallback_CROSS;
-	if (name == "alphabitmap")
-		return &Graphics::VectorRenderer::drawCallback_ALPHABITMAP;
 
 	return nullptr;
 }
@@ -547,58 +533,6 @@ bool ThemeParser::parseDrawStep(ParserNode *stepNode, Graphics::DrawStep *drawst
 
 			if (!drawstep->blitSrc)
 				return parserError("The given filename hasn't been loaded into the GUI.");
-		}
-
-		if (functionName == "alphabitmap") {
-			if (!stepNode->values.contains("file"))
-				return parserError("Need to specify a filename for AlphaBitmap blitting.");
-
-			drawstep->blitAlphaSrc = _theme->getAImageSurface(stepNode->values["file"]);
-
-			if (!drawstep->blitAlphaSrc)
-				return parserError("The given filename hasn't been loaded into the GUI.");
-
-			if (stepNode->values.contains("autoscale")) {
-				if (stepNode->values["autoscale"] == "true" || stepNode->values["autoscale"] == "stretch") {
-					drawstep->autoscale = ThemeEngine::kAutoScaleStretch;
-				} else if (stepNode->values["autoscale"] == "fit") {
-					drawstep->autoscale = ThemeEngine::kAutoScaleFit;
-				} else if (stepNode->values["autoscale"] == "9patch") {
-					drawstep->autoscale = ThemeEngine::kAutoScaleNinePatch;
-				} else {
-					drawstep->autoscale = ThemeEngine::kAutoScaleNone;
-				}
-			}
-
-			if (stepNode->values.contains("xpos")) {
-				val = stepNode->values["xpos"];
-
-				if (parseIntegerKey(val, 1, &x))
-					drawstep->x = SCALEVALUE(x);
-				else if (val == "center")
-					drawstep->xAlign = Graphics::DrawStep::kVectorAlignCenter;
-				else if (val == "left")
-					drawstep->xAlign = Graphics::DrawStep::kVectorAlignLeft;
-				else if (val == "right")
-					drawstep->xAlign = Graphics::DrawStep::kVectorAlignRight;
-				else
-					return parserError("Invalid value for X Position");
-			}
-
-			if (stepNode->values.contains("ypos")) {
-				val = stepNode->values["ypos"];
-
-				if (parseIntegerKey(val, 1, &x))
-					drawstep->y = SCALEVALUE(x);
-				else if (val == "center")
-					drawstep->yAlign = Graphics::DrawStep::kVectorAlignCenter;
-				else if (val == "top")
-					drawstep->yAlign = Graphics::DrawStep::kVectorAlignTop;
-				else if (val == "bottom")
-					drawstep->yAlign = Graphics::DrawStep::kVectorAlignBottom;
-				else
-					return parserError("Invalid value for Y Position");
-			}
 		}
 
 		if (functionName == "roundedsq" || functionName == "circle" || functionName == "tab") {
