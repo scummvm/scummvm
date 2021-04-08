@@ -417,7 +417,7 @@ void SaveLoadChooserSimple::addThumbnailContainer() {
 
 int SaveLoadChooserSimple::runIntern() {
 	if (_gfxWidget)
-		_gfxWidget->setGfx(nullptr);
+		_gfxWidget->setGfx((Graphics::ManagedSurface *)nullptr);
 
 	_resultString.clear();
 	reflowLayout();
@@ -1086,7 +1086,7 @@ void SaveLoadChooserGrid::destroyButtons() {
 
 void SaveLoadChooserGrid::hideButtons() {
 	for (ButtonArray::iterator i = _buttons.begin(), end = _buttons.end(); i != end; ++i) {
-		i->button->setGfx(nullptr);
+		i->button->setGfx((Graphics::ManagedSurface *)nullptr);
 		i->setVisible(false);
 	}
 }

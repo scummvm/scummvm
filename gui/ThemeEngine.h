@@ -32,7 +32,7 @@
 #include "common/str.h"
 #include "common/rect.h"
 
-#include "graphics/surface.h"
+#include "graphics/managed_surface.h"
 #include "graphics/transparent_surface.h"
 #include "graphics/font.h"
 #include "graphics/pixelformat.h"
@@ -202,7 +202,7 @@ private:
 
 class ThemeEngine {
 protected:
-	typedef Common::HashMap<Common::String, Graphics::Surface *> ImagesMap;
+	typedef Common::HashMap<Common::String, Graphics::ManagedSurface *> ImagesMap;
 	typedef Common::HashMap<Common::String, Graphics::SVGBitmap *> SVGMap;
 	typedef Common::HashMap<Common::String, Common::Point *> PointMap;
 	typedef Common::HashMap<Common::String, Graphics::TransparentSurface *> AImagesMap;
@@ -459,7 +459,6 @@ public:
 	void drawDropDownButton(const Common::Rect &r, uint32 dropdownWidth, const Common::U32String &str,
 	                        WidgetStateInfo buttonState, bool inButton, bool inDropdown, bool rtl = false);
 
-	void drawSurface(const Common::Point &p, const Graphics::Surface &surface, bool themeTrans = false);
 	void drawSurface(const Common::Point &p, const Graphics::ManagedSurface &surface, bool themeTrans = false);
 
 	void drawSlider(const Common::Rect &r, int width, WidgetStateInfo state = kStateEnabled, bool rtl = false);
@@ -640,7 +639,7 @@ public:
 		return _bitmapDims.contains(name) ? _bitmapDims[name] : 0;
 	}
 
-	Graphics::Surface *getImageSurface(const Common::String &name) const {
+	Graphics::ManagedSurface *getImageSurface(const Common::String &name) const {
 		return _bitmaps.contains(name) ? _bitmaps[name] : 0;
 	}
 
@@ -762,10 +761,10 @@ protected:
 	GUI::ThemeEval *_themeEval;
 
 	/** Main screen surface. This is blitted straight into the overlay. */
-	Graphics::TransparentSurface _screen;
+	Graphics::ManagedSurface _screen;
 
 	/** Backbuffer surface. Stores previous states of the screen to blit back */
-	Graphics::TransparentSurface _backBuffer;
+	Graphics::ManagedSurface _backBuffer;
 
 	/**
 	 * Filter the submitted DrawData descriptors according to their layer attribute

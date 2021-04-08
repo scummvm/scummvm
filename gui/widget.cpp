@@ -543,7 +543,7 @@ void DropdownButtonWidget::drawWidget() {
 
 #pragma mark -
 
-Graphics::Surface *scaleGfx(const Graphics::Surface *gfx, int w, int h) {
+Graphics::Surface *scaleGfx(const Graphics::ManagedSurface *gfx, int w, int h) {
 	const Graphics::PixelFormat &requiredFormat = g_gui.theme()->getPixelFormat();
 	Graphics::Surface tmp;
 
@@ -586,7 +586,7 @@ PicButtonWidget::~PicButtonWidget() {
 		_gfx[i].free();
 }
 
-void PicButtonWidget::setGfx(const Graphics::Surface *gfx, int statenum, bool scale) {
+void PicButtonWidget::setGfx(const Graphics::ManagedSurface *gfx, int statenum, bool scale) {
 	_gfx[statenum].free();
 
 	if (!gfx || !gfx->getPixels())
@@ -599,7 +599,7 @@ void PicButtonWidget::setGfx(const Graphics::Surface *gfx, int statenum, bool sc
 
 	float sf = g_gui.getScaleFactor();
 	if (scale && sf != 1.0) {
-		Graphics::Surface *tmp2 = gfx->scale(gfx->w * sf, gfx->h * sf, false);
+		Graphics::Surface *tmp2 = gfx->rawSurface().scale(gfx->w * sf, gfx->h * sf, false);
 		_gfx[statenum].copyFrom(*tmp2);
 		tmp2->free();
 		delete tmp2;
@@ -608,11 +608,15 @@ void PicButtonWidget::setGfx(const Graphics::Surface *gfx, int statenum, bool sc
 	}
 }
 
+void PicButtonWidget::setGfx(const Graphics::Surface *gfx, int statenum, bool scale) {
+	setGfx(new Graphics::ManagedSurface(gfx), statenum, scale);
+}
+
 void PicButtonWidget::setGfxFromTheme(const char *name, int statenum, bool scale) {
 	Graphics::SVGBitmap *svg = g_gui.theme()->getSVG(name);
 
 	if (!svg) {
-		const Graphics::Surface *gfx = g_gui.theme()->getImageSurface(name);
+		const Graphics::ManagedSurface *gfx = g_gui.theme()->getImageSurface(name);
 
 		setGfx(gfx, statenum, scale);
 
@@ -885,7 +889,7 @@ GraphicsWidget::~GraphicsWidget() {
 	_gfx.free();
 }
 
-void GraphicsWidget::setGfx(const Graphics::Surface *gfx) {
+void GraphicsWidget::setGfx(const Graphics::ManagedSurface *gfx) {
 	_gfx.free();
 
 	if (!gfx || !gfx->getPixels())
@@ -906,6 +910,10 @@ void GraphicsWidget::setGfx(const Graphics::Surface *gfx) {
 	}
 }
 
+void GraphicsWidget::setGfx(const Graphics::Surface *gfx) {
+	setGfx(new Graphics::ManagedSurface(gfx));
+}
+
 void GraphicsWidget::setGfx(int w, int h, int r, int g, int b) {
 	if (w == -1)
 		w = _w;
@@ -923,7 +931,7 @@ void GraphicsWidget::setGfxFromTheme(const char *name) {
 	Graphics::SVGBitmap *svg = g_gui.theme()->getSVG(name);
 
 	if (!svg) {
-		const Graphics::Surface *gfx = g_gui.theme()->getImageSurface(name);
+		const Graphics::ManagedSurface *gfx = g_gui.theme()->getImageSurface(name);
 
 		setGfx(gfx);
 

@@ -739,7 +739,7 @@ copyFrame(OSystem *sys, const Common::Rect &r) {
 
 template<typename PixelType>
 void VectorRendererSpec<PixelType>::
-blitSurface(const Graphics::Surface *source, const Common::Rect &r) {
+blitSurface(const Graphics::ManagedSurface *source, const Common::Rect &r) {
 	assert(source->w == _activeSurface->w && source->h == _activeSurface->h);
 
 	byte *dst_ptr = (byte *)_activeSurface->getBasePtr(r.left, r.top);
@@ -760,7 +760,7 @@ blitSurface(const Graphics::Surface *source, const Common::Rect &r) {
 
 template<typename PixelType>
 void VectorRendererSpec<PixelType>::
-blitSubSurface(const Graphics::Surface *source, const Common::Point &p) {
+blitSubSurface(const Graphics::ManagedSurface *source, const Common::Point &p) {
 	Common::Rect drawRect(p.x, p.y, p.x + source->w, p.y + source->h);
 	drawRect.clip(_clippingArea);
 
@@ -851,7 +851,7 @@ blitManagedSurface(const Graphics::ManagedSurface *source, const Common::Point &
 
 template<typename PixelType>
 void VectorRendererSpec<PixelType>::
-blitKeyBitmap(const Graphics::Surface *source, const Common::Point &p) {
+blitKeyBitmap(const Graphics::ManagedSurface *source, const Common::Point &p) {
 	Common::Rect drawRect(p.x, p.y, p.x + source->w, p.y + source->h);
 	drawRect.clip(_clippingArea);
 
@@ -891,7 +891,7 @@ void VectorRendererSpec<PixelType>::
 blitAlphaBitmap(Graphics::TransparentSurface *source, const Common::Rect &r, GUI::ThemeEngine::AutoScaleMode autoscale,
 			Graphics::DrawStep::VectorAlignment xAlign, Graphics::DrawStep::VectorAlignment yAlign, int alpha) {
 	if (autoscale == GUI::ThemeEngine::kAutoScaleStretch) {
-		source->blit(*_activeSurface, r.left, r.top, Graphics::FLIP_NONE,
+		source->blit(*_activeSurface->surfacePtr(), r.left, r.top, Graphics::FLIP_NONE,
 			nullptr, TS_ARGB(alpha, 255, 255, 255),
 			  r.width(), r.height());
 	} else if (autoscale == GUI::ThemeEngine::kAutoScaleFit) {
@@ -908,15 +908,15 @@ blitAlphaBitmap(Graphics::TransparentSurface *source, const Common::Rect &r, GUI
 		if (yAlign == Graphics::DrawStep::kVectorAlignCenter)
 			offy = (r.height() - (int)(source->h * ratio)) >> 1;
 
-		source->blit(*_activeSurface, r.left + offx, r.top + offy, Graphics::FLIP_NONE,
+		source->blit(*_activeSurface->surfacePtr(), r.left + offx, r.top + offy, Graphics::FLIP_NONE,
 			nullptr, TS_ARGB(alpha, 255, 255, 255),
 	                  (int)(source->w * ratio), (int)(source->h * ratio));
 
 	} else if (autoscale == GUI::ThemeEngine::kAutoScaleNinePatch) {
 		Graphics::NinePatchBitmap nine(source, false);
-		nine.blit(*_activeSurface, r.left, r.top, r.width(), r.height());
+		nine.blit(*_activeSurface->surfacePtr(), r.left, r.top, r.width(), r.height());
 	} else {
-		source->blit(*_activeSurface, r.left, r.top);
+		source->blit(*_activeSurface->surfacePtr(), r.left, r.top);
 	}
 }
 
