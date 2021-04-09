@@ -60,14 +60,13 @@ enum _MenuButtonTypes {
 	kMusicVolume = 1,
 	kSoundVolume = 2,
 	kCDVolume = 3,
-	kLineVolume = 4,
-	kMasterVolume = 5,
-	kAggressiveMode = 6,
-	kPolygonDetails = 7,
-	kShadowSettings = 8,
-	kSceneryZoom = 9,
-	kHighResolution = 10,
-	kWallCollision = 11
+	kSpeechVolume = 4,
+	kAggressiveMode = 5,
+	kPolygonDetails = 6,
+	kShadowSettings = 7,
+	kSceneryZoom = 8,
+	kHighResolution = 9,
+	kWallCollision = 10
 };
 }
 
@@ -141,9 +140,7 @@ static MenuSettings createVolumeMenu() {
 	settings.addButton(TextId::kMusicVolume, MenuButtonTypes::kMusicVolume);
 	settings.addButton(TextId::kSoundVolume, MenuButtonTypes::kSoundVolume);
 	settings.addButton(TextId::kCDVolume, MenuButtonTypes::kCDVolume);
-	settings.addButton(TextId::kLineInVolume, MenuButtonTypes::kLineVolume);
-	settings.addButton(TextId::kMasterVolume, MenuButtonTypes::kMasterVolume);
-	settings.addButton(TextId::kSaveSettings);
+	settings.addButton(TextId::kSpeechVolume, MenuButtonTypes::kSpeechVolume);
 	return settings;
 }
 
@@ -254,7 +251,7 @@ void Menu::drawBox(int32 left, int32 top, int32 right, int32 bottom, int32 color
 
 void Menu::drawButtonGfx(const MenuSettings *menuSettings, const Common::Rect &rect, int32 buttonId, const char *dialText, bool hover) {
 	if (hover) {
-		if (menuSettings == &volumeMenuState && buttonId <= MenuButtonTypes::kMasterVolume && buttonId >= MenuButtonTypes::kMusicVolume) {
+		if (menuSettings == &volumeMenuState && buttonId <= MenuButtonTypes::kSpeechVolume && buttonId >= MenuButtonTypes::kMusicVolume) {
 			int32 newWidth = 0;
 			switch (buttonId) {
 			case MenuButtonTypes::kMusicVolume: {
@@ -272,13 +269,8 @@ void Menu::drawButtonGfx(const MenuSettings *menuSettings, const Common::Rect &r
 				newWidth = _engine->_screens->crossDot(rect.left, rect.right, Audio::Mixer::kMaxMixerVolume, status.volume);
 				break;
 			}
-			case MenuButtonTypes::kLineVolume: {
+			case MenuButtonTypes::kSpeechVolume: {
 				const int volume = _engine->_system->getMixer()->getVolumeForSoundType(Audio::Mixer::kSpeechSoundType);
-				newWidth = _engine->_screens->crossDot(rect.left, rect.right, Audio::Mixer::kMaxMixerVolume, volume);
-				break;
-			}
-			case MenuButtonTypes::kMasterVolume: {
-				const int volume = _engine->_system->getMixer()->getVolumeForSoundType(Audio::Mixer::kPlainSoundType);
 				newWidth = _engine->_screens->crossDot(rect.left, rect.right, Audio::Mixer::kMaxMixerVolume, volume);
 				break;
 			}
@@ -513,6 +505,7 @@ int32 Menu::processMenu(MenuSettings *menuSettings, bool showCredits) {
 					volume += 4;
 				}
 				_engine->_music->musicVolume(volume);
+				ConfMan.setInt("music_volume", mixer->getVolumeForSoundType(Audio::Mixer::kMusicSoundType));
 				break;
 			}
 			case MenuButtonTypes::kSoundVolume: {
@@ -522,7 +515,9 @@ int32 Menu::processMenu(MenuSettings *menuSettings, bool showCredits) {
 				} else if (_engine->_input->isActionActive(TwinEActionType::UIRight)) {
 					volume += 4;
 				}
+
 				mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, volume);
+				ConfMan.setInt("sfx_volume", mixer->getVolumeForSoundType(Audio::Mixer::kSFXSoundType));
 				break;
 			}
 			case MenuButtonTypes::kCDVolume: {
@@ -536,7 +531,7 @@ int32 Menu::processMenu(MenuSettings *menuSettings, bool showCredits) {
 				_engine->_system->getAudioCDManager()->setVolume(status.volume);
 				break;
 			}
-			case MenuButtonTypes::kLineVolume: {
+			case MenuButtonTypes::kSpeechVolume: {
 				int volume = mixer->getVolumeForSoundType(Audio::Mixer::kSpeechSoundType);
 				if (_engine->_input->isActionActive(TwinEActionType::UILeft)) {
 					volume -= 4;
@@ -544,16 +539,7 @@ int32 Menu::processMenu(MenuSettings *menuSettings, bool showCredits) {
 					volume += 4;
 				}
 				mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, volume);
-				break;
-			}
-			case MenuButtonTypes::kMasterVolume: {
-				int volume = mixer->getVolumeForSoundType(Audio::Mixer::kPlainSoundType);
-				if (_engine->_input->isActionActive(TwinEActionType::UILeft)) {
-					volume -= 4;
-				} else if (_engine->_input->isActionActive(TwinEActionType::UIRight)) {
-					volume += 4;
-				}
-				mixer->setVolumeForSoundType(Audio::Mixer::kPlainSoundType, volume);
+				ConfMan.setInt("speech_volume", mixer->getVolumeForSoundType(Audio::Mixer::kSpeechSoundType));
 				break;
 			}
 			default:
@@ -670,16 +656,12 @@ int32 Menu::volumeMenu() {
 		switch (processMenu(&volumeMenuState)) {
 		case (int32)TextId::kReturnMenu:
 			return 0;
-		case (int32)TextId::kSaveSettings:
-			ConfMan.flushToDisk();
-			break;
 		case kQuitEngine:
 			return kQuitEngine;
 		case (int32)TextId::kMusicVolume:
 		case (int32)TextId::kSoundVolume:
 		case (int32)TextId::kCDVolume:
-		case (int32)TextId::kLineInVolume:
-		case (int32)TextId::kMasterVolume:
+		case (int32)TextId::kSpeechVolume:
 		default:
 			warning("Unknown menu button handled");
 			break;

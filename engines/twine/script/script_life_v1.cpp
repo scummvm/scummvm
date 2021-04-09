@@ -1714,6 +1714,7 @@ static int32 lTEXT(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const int32 textHeight = 40;
 	if (lTextYPos < engine->height() - textHeight) {
 		if (engine->cfgfile.Version == USA_VERSION) {
+			// TODO: these are most likely not the menu text ids - but from a different text bank
 			if (textIdx == TextId::kBehaviourNormal) {
 				textIdx = TextId::kSaveSettings;
 			}

@@ -437,7 +437,7 @@ enum class TextId : int16 {
 	kMusicVolume = 10,
 	kSoundVolume = 11,
 	kCDVolume = 12,
-	kLineInVolume = 13,
+	kSpeechVolume = 13,
 	kMasterVolume = 14,
 	kReturnGame = 15,
 	kSaveSettings = 16,
