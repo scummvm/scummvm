@@ -66,6 +66,7 @@ Scene::Scene(AsylumEngine *engine): _vm(engine),
 	_chapter5RainFrameIndex = 0;
 
 	_musicVolume = 0;
+	_frameCounter = 0;
 
 	g_debugActors = 0;
 	g_debugObjects  = 0;
@@ -609,7 +610,7 @@ bool Scene::clickDown(const AsylumEvent &evt) {
 // Scene update
 //////////////////////////////////////////////////////////////////////////
 bool Scene::updateScreen() {
-	// Original has a frame counter (for showing fps)
+	_frameCounter++;
 
 	if (updateScene())
 		return true;

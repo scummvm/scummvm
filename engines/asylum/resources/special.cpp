@@ -39,6 +39,18 @@
 
 namespace Asylum {
 
+static const int32 zapPatterns[9][16] = {
+	{2292, 2299, 2301, 2302, 2303, 2304, 2306, 2307, 2310, 2311, 2312, 2313, 2314},
+	{2291, 2294, 2295, 2296, 2297, 2298, 2300, 2301, 2306, 2309, 2311, 2313, 2316},
+	{2292, 2296, 2297, 2299, 2302, 2303, 2304, 2305, 2307, 2309, 2310},
+	{2291, 2292, 2294, 2295, 2299, 2302, 2303, 2305, 2309, 2311, 2312, 2315},
+	{2293, 2294, 2296, 2297, 2298, 2300, 2302, 2306, 2307, 2309, 2311, 2313, 2316},
+	{2296, 2297, 2299, 2300, 2302, 2304, 2305, 2307, 2309, 2310, 2314, 2315},
+	{2295, 2297, 2298, 2300, 2302, 2304, 2305, 2309, 2310, 2312, 2313, 2314},
+	{2292, 2293, 2294, 2295, 2296, 2301, 2302, 2303, 2304, 2305, 2306, 2313, 2314, 2315},
+	{2293, 2296, 2297, 2298, 2299, 2300, 2302, 2304, 2306, 2307, 2309, 2310, 2311}
+};
+
 Special::Special(AsylumEngine *engine) : _vm(engine) {
 	// Flags
 	_paletteFlag = false;
@@ -99,6 +111,10 @@ void Special::run(Object* object, ActorIndex index) {
 
 	case kChapter12:
 		chapter12(object, index);
+		break;
+
+	case kChapter13:
+		chapter13(object, index);
 		break;
 	}
 }
@@ -787,6 +803,118 @@ void Special::chapter12(Object *object, ActorIndex actorIndex) {
 		if (object->getFrameIndex() > 1 && _vm->isGameFlagSet(kGameFlag759)) {
 			getScript()->queueScript(getWorld()->actions[getWorld()->getActionAreaIndexById(1971)]->scriptIndex, kActorMax);
 			_vm->clearGameFlag(kGameFlag759);
+		}
+		break;
+	}
+}
+
+void Special::chapter13(Object *object, ActorIndex actorIndex) {
+	uint32 i = 0;
+
+	playChapterSound(object, actorIndex);
+
+	if (actorIndex != kActorInvalid)
+		return;
+
+	switch (object->getId()) {
+	default:
+		return;
+
+	case kObjectLine:
+		if (!(getScene()->getFrameCounter() % 50) && _vm->isGameFlagNotSet(kGameFlag1122)) {
+			if (object->getFrameIndex() >= 59) {
+				_vm->setGameFlag(kGameFlag1121);
+				object->setFrameIndex(0);
+				getScript()->removeFromQueue(getWorld()->scriptIndex);
+				getScript()->queueScript(getWorld()->actions[getWorld()->getActionAreaIndexById(2578)]->scriptIndex, kActorMax);
+			} else if (object->getFrameIndex() < object->getFrameCount()) {
+				object->setFrameIndex(object->getFrameIndex() + 1);
+			}
+		}
+		break;
+
+	case kObjectZapPattern1:
+		if (_vm->isGameFlagNotSet(kGameFlag1122) && !object->getFrameIndex() && zapPatterns[0][0]) {
+			do {
+				if (getWorld()->actions[getScene()->getActor(0)->getActionIndex3()]->id == zapPatterns[0][i++]) {
+					getScript()->queueScript(getWorld()->actions[getWorld()->getActionAreaIndexById(2237)]->scriptIndex, kActorMax);
+				}
+			} while (zapPatterns[0][i]);
+		}
+		break;
+
+	case kObjectZapPattern2:
+		if (_vm->isGameFlagNotSet(kGameFlag1122) && !object->getFrameIndex() && zapPatterns[1][0]) {
+			do {
+				if (getWorld()->actions[getScene()->getActor(0)->getActionIndex3()]->id == zapPatterns[1][i++])
+					getScript()->queueScript(getWorld()->actions[getWorld()->getActionAreaIndexById(2237)]->scriptIndex, kActorMax);
+			} while (zapPatterns[1][i]);
+		}
+		break;
+
+	case kObjectZapPattern3:
+		if (_vm->isGameFlagNotSet(kGameFlag1122) && !object->getFrameIndex() && zapPatterns[2][0]) {
+			while (getWorld()->actions[getScene()->getActor(0)->getActionIndex3()]->id != zapPatterns[2][i]) {
+				if (!zapPatterns[2][i++])
+					return;
+			}
+			getScript()->queueScript(getWorld()->actions[getWorld()->getActionAreaIndexById(2237)]->scriptIndex, kActorMax);
+		}
+		break;
+
+	case kObjectZapPattern4:
+		if (_vm->isGameFlagNotSet(kGameFlag1122) && !object->getFrameIndex() && zapPatterns[3][0]) {
+			do {
+				if (getWorld()->actions[getScene()->getActor(0)->getActionIndex3()]->id == zapPatterns[3][i++])
+					getScript()->queueScript(getWorld()->actions[getWorld()->getActionAreaIndexById(2329)]->scriptIndex, kActorMax);
+			} while (zapPatterns[3][i]);
+		}
+		break;
+
+	case kObjectZapPattern5:
+		if (_vm->isGameFlagNotSet(kGameFlag1122) && !object->getFrameIndex() && zapPatterns[4][0]) {
+			do {
+				if (getWorld()->actions[getScene()->getActor(0)->getActionIndex3()]->id == zapPatterns[4][i++])
+					getScript()->queueScript(getWorld()->actions[getWorld()->getActionAreaIndexById(2329)]->scriptIndex, kActorMax);
+			} while (zapPatterns[4][i]);
+		}
+		break;
+
+	case kObjectZapPattern6:
+		if (_vm->isGameFlagNotSet(kGameFlag1122) && !object->getFrameIndex() && zapPatterns[5][0]) {
+			do {
+				if (getWorld()->actions[getScene()->getActor(0)->getActionIndex3()]->id == zapPatterns[5][i++]) {
+					getScript()->queueScript(getWorld()->actions[getWorld()->getActionAreaIndexById(2329)]->scriptIndex, kActorMax);
+				}
+			} while (zapPatterns[5][i]);
+		}
+		break;
+
+	case kObjectZapPattern7:
+		if (_vm->isGameFlagNotSet(kGameFlag1122) && !object->getFrameIndex() && zapPatterns[6][0]) {
+			do {
+				if (getWorld()->actions[getScene()->getActor(0)->getActionIndex3()]->id == zapPatterns[6][i++])
+					getScript()->queueScript(getWorld()->actions[getWorld()->getActionAreaIndexById(2331)]->scriptIndex, kActorMax);
+			} while (zapPatterns[6][i]);
+		}
+		break;
+
+	case kObjectZapPattern8:
+		if (_vm->isGameFlagNotSet(kGameFlag1122) && !object->getFrameIndex() && zapPatterns[7][0]) {
+			do {
+				if (getWorld()->actions[getScene()->getActor(0)->getActionIndex3()]->id == zapPatterns[7][i++])
+					getScript()->queueScript(getWorld()->actions[getWorld()->getActionAreaIndexById(2331)]->scriptIndex, kActorMax);
+			} while (zapPatterns[7][i]);
+		}
+		break;
+
+	case kObjectZapPattern9:
+		if (_vm->isGameFlagNotSet(kGameFlag1122) && !object->getFrameIndex() && zapPatterns[8][0]) {
+			while (getWorld()->actions[getScene()->getActor(0)->getActionIndex3()]->id != zapPatterns[8][i++]) {
+				if (!zapPatterns[8][i])
+					return;
+			}
+			getScript()->queueScript(getWorld()->actions[getWorld()->getActionAreaIndexById(2331)]->scriptIndex, kActorMax);
 		}
 		break;
 	}

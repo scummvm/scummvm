@@ -193,6 +193,7 @@ public:
 
 	Polygons    *polygons()   { return _polygons; }
 	WorldStats  *worldstats() { return _ws; }
+	uint32 getFrameCounter() { return _frameCounter; }
 
 private:
 	AsylumEngine  *_vm;
@@ -211,6 +212,7 @@ private:
 	int32 _musicVolume;
 
 	Common::Array<UpdateItem> _updateList;
+	uint32 _frameCounter;
 
 	//////////////////////////////////////////////////////////////////////////
 	// Message handling

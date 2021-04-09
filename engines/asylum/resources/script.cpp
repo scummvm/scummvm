@@ -345,7 +345,7 @@ bool ScriptManager::isInQueue(int32 scriptIndex) const {
 	return false;
 }
 
-void ScriptManager::updateQueue(uint32 entryIndex) {
+void ScriptManager::removeFromQueue(uint32 entryIndex) {
 	if (_queue.first == _queue.last) {
 		_queue.last = 0;
 		_queue.first = 0;
@@ -423,7 +423,7 @@ bool ScriptManager::process() {
 						++_queue.entries[entryIndex].currentLine;
 
 					if (_done)
-						updateQueue(entryIndex);
+						removeFromQueue(entryIndex);
 
 					if (!_done)
 						continue;

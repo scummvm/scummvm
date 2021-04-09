@@ -65,6 +65,7 @@ private:
 	void chapter8(Object *object, ActorIndex actorIndex);
 	void chapter9(Object *object, ActorIndex actorIndex);
 	void chapter12(Object *object, ActorIndex actorIndex);
+	void chapter13(Object *object, ActorIndex actorIndex);
 
 	//////////////////////////////////////////////////////////////////////////
 	// Sound logic
