@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-04-09 13:08+0000\n"
+"POT-Creation-Date: 2021-04-09 14:56+0000\n"
 "PO-Revision-Date: 2020-11-29 17:10+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
@@ -7421,26 +7421,26 @@ msgstr "Vorige actie"
 msgid "Next location"
 msgstr "Volgende actie"
 
-#: engines/twine/parser/text.cpp:69
+#: engines/twine/parser/text.cpp:33
 #, fuzzy
 #| msgid "Enable high resolution graphics"
 msgctxt "Options menu"
 msgid "High resolution on"
 msgstr "Gebruik hoge resolutie beelden"
 
-#: engines/twine/parser/text.cpp:70
+#: engines/twine/parser/text.cpp:34
 #, fuzzy
 #| msgid "Enable high resolution graphics"
 msgctxt "Options menu"
 msgid "High resolution off"
 msgstr "Gebruik hoge resolutie beelden"
 
-#: engines/twine/parser/text.cpp:71
+#: engines/twine/parser/text.cpp:35
 msgctxt "Options menu"
 msgid "Wall collision on"
 msgstr ""
 
-#: engines/twine/parser/text.cpp:72
+#: engines/twine/parser/text.cpp:36
 #, fuzzy
 #| msgid "Snap scroll off"
 msgctxt "Options menu"

@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-04-09 13:08+0000\n"
+"POT-Creation-Date: 2021-04-09 14:56+0000\n"
 "PO-Revision-Date: 2021-01-27 11:15+0000\n"
 "Last-Translator: Morgan Roberts <morganroberts@mentercaerffili.cymru>\n"
 "Language-Team: Welsh <https://translations.scummvm.org/projects/scummvm/"
@@ -6852,22 +6852,22 @@ msgstr ""
 msgid "Next location"
 msgstr ""
 
-#: engines/twine/parser/text.cpp:69
+#: engines/twine/parser/text.cpp:33
 msgctxt "Options menu"
 msgid "High resolution on"
 msgstr ""
 
-#: engines/twine/parser/text.cpp:70
+#: engines/twine/parser/text.cpp:34
 msgctxt "Options menu"
 msgid "High resolution off"
 msgstr ""
 
-#: engines/twine/parser/text.cpp:71
+#: engines/twine/parser/text.cpp:35
 msgctxt "Options menu"
 msgid "Wall collision on"
 msgstr ""
 
-#: engines/twine/parser/text.cpp:72
+#: engines/twine/parser/text.cpp:36
 msgctxt "Options menu"
 msgid "Wall collision off"
 msgstr ""

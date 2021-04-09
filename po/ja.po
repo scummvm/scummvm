@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-04-09 13:08+0000\n"
+"POT-Creation-Date: 2021-04-09 14:56+0000\n"
 "PO-Revision-Date: 2021-04-04 22:24+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
@@ -7205,28 +7205,28 @@ msgstr "前の地点"
 msgid "Next location"
 msgstr "次の地点"
 
-#: engines/twine/parser/text.cpp:69
+#: engines/twine/parser/text.cpp:33
 #, fuzzy
 #| msgid "Enable high resolution"
 msgctxt "Options menu"
 msgid "High resolution on"
 msgstr "ハイレゾを有効化"
 
-#: engines/twine/parser/text.cpp:70
+#: engines/twine/parser/text.cpp:34
 #, fuzzy
 #| msgid "Enable high resolution"
 msgctxt "Options menu"
 msgid "High resolution off"
 msgstr "ハイレゾを有効化"
 
-#: engines/twine/parser/text.cpp:71
+#: engines/twine/parser/text.cpp:35
 #, fuzzy
 #| msgid "Enable wall collisions"
 msgctxt "Options menu"
 msgid "Wall collision on"
 msgstr "壁の衝突判定を有効にする"
 
-#: engines/twine/parser/text.cpp:72
+#: engines/twine/parser/text.cpp:36
 #, fuzzy
 #| msgid "Enable wall collisions"
 msgctxt "Options menu"

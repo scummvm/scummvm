@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-04-09 13:08+0000\n"
+"POT-Creation-Date: 2021-04-09 14:56+0000\n"
 "PO-Revision-Date: 2021-04-08 10:05+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
@@ -7290,28 +7290,28 @@ msgstr "Попередня локація"
 msgid "Next location"
 msgstr "Наступна локація"
 
-#: engines/twine/parser/text.cpp:69
+#: engines/twine/parser/text.cpp:33
 #, fuzzy
 #| msgid "Enable high resolution"
 msgctxt "Options menu"
 msgid "High resolution on"
 msgstr "Ввімкнути високе розгалуження"
 
-#: engines/twine/parser/text.cpp:70
+#: engines/twine/parser/text.cpp:34
 #, fuzzy
 #| msgid "Enable high resolution"
 msgctxt "Options menu"
 msgid "High resolution off"
 msgstr "Ввімкнути високе розгалуження"
 
-#: engines/twine/parser/text.cpp:71
+#: engines/twine/parser/text.cpp:35
 #, fuzzy
 #| msgid "Enable wall collisions"
 msgctxt "Options menu"
 msgid "Wall collision on"
 msgstr "Ввімкнути зіткнення зі стінами"
 
-#: engines/twine/parser/text.cpp:72
+#: engines/twine/parser/text.cpp:36
 #, fuzzy
 #| msgid "Enable wall collisions"
 msgctxt "Options menu"

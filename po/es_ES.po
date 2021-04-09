@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-04-09 13:08+0000\n"
+"POT-Creation-Date: 2021-04-09 14:56+0000\n"
 "PO-Revision-Date: 2021-04-02 08:37+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
@@ -7346,28 +7346,28 @@ msgstr "Lugar anterior"
 msgid "Next location"
 msgstr "Siguiente lugar"
 
-#: engines/twine/parser/text.cpp:69
+#: engines/twine/parser/text.cpp:33
 #, fuzzy
 #| msgid "Enable high resolution"
 msgctxt "Options menu"
 msgid "High resolution on"
 msgstr "Activar alta resolución"
 
-#: engines/twine/parser/text.cpp:70
+#: engines/twine/parser/text.cpp:34
 #, fuzzy
 #| msgid "Enable high resolution"
 msgctxt "Options menu"
 msgid "High resolution off"
 msgstr "Activar alta resolución"
 
-#: engines/twine/parser/text.cpp:71
+#: engines/twine/parser/text.cpp:35
 #, fuzzy
 #| msgid "Enable wall collisions"
 msgctxt "Options menu"
 msgid "Wall collision on"
 msgstr "Activar colisiones con paredes"
 
-#: engines/twine/parser/text.cpp:72
+#: engines/twine/parser/text.cpp:36
 #, fuzzy
 #| msgid "Enable wall collisions"
 msgctxt "Options menu"
