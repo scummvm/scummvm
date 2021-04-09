@@ -13,7 +13,7 @@
    version="1.1"
    id="svg677"
    inkscape:version="1.0.2 (e86c8708, 2021-01-15)"
-   sodipodi:docname="radio.svg">
+   sodipodi:docname="radiobutton.svg">
   <defs
      id="defs671" />
   <sodipodi:namedview
@@ -23,14 +23,14 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.35"
-     inkscape:cx="-153.82448"
-     inkscape:cy="670.46121"
+     inkscape:zoom="2.4152283"
+     inkscape:cx="41.017028"
+     inkscape:cy="64.066902"
      inkscape:document-units="mm"
-     inkscape:current-layer="layer1"
+     inkscape:current-layer="g2912-8"
      inkscape:document-rotation="0"
      showgrid="false"
-     inkscape:window-width="1252"
+     inkscape:window-width="1580"
      inkscape:window-height="908"
      inkscape:window-x="0"
      inkscape:window-y="25"
@@ -58,71 +58,15 @@
        inkscape:label="radio"
        transform="translate(-98.983097,-149.70764)"
        sodipodi:insensitive="true">
-      <g
-         transform="translate(25.451986,-76.371402)"
-         style="display:inline;opacity:1"
-         inkscape:label="background"
-         id="g2898-8">
-        <rect
-           style="display:inline;opacity:1;fill:#ff00ff;fill-opacity:1;stroke-width:0;stroke-linecap:square;stroke-miterlimit:0;paint-order:markers fill stroke"
-           id="rect2896-7"
-           width="32.000004"
-           height="32.000004"
-           x="106.41801"
-           y="284.66833" />
-      </g>
-      <g
-         id="g2906-0"
-         transform="matrix(0.93349411,0,0,0.92307545,89.99852,-17.262231)"
-         inkscape:label="box">
-        <rect
-           inkscape:export-ydpi="25.4"
-           inkscape:export-xdpi="25.4"
-           transform="matrix(1.01254,0,0,1.0239597,0.17926447,-5.1130905)"
-           inkscape:label="bottom blur"
-           ry="16.927776"
-           rx="16.927631"
-           y="245.10159"
-           x="45.591568"
-           height="32"
-           width="32"
-           id="rect2900-2"
-           style="display:inline;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1.48128;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:stroke fill markers" />
-        <rect
-           inkscape:export-ydpi="25.4"
-           inkscape:export-xdpi="25.4"
-           transform="matrix(1.01254,0,0,1.0239597,-0.91816789,-6.2229095)"
-           style="display:inline;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1.48128;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:stroke fill markers"
-           id="rect2902-6"
-           width="32"
-           height="32"
-           x="45.591568"
-           y="245.10159"
-           rx="16.927631"
-           ry="16.927776"
-           inkscape:label="black top" />
-        <rect
-           inkscape:export-ydpi="25.4"
-           inkscape:export-xdpi="25.4"
-           style="display:inline;fill:#fbf1ce;fill-opacity:1;stroke:none;stroke-width:1.54464;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:stroke fill markers"
-           id="rect2904-8"
-           width="33.182205"
-           height="33.556732"
-           x="45.40337"
-           y="244.91115"
-           rx="17.139904"
-           ry="17.333361"
-           inkscape:label="center" />
-      </g>
       <rect
-         style="display:inline;fill:#831c00;fill-opacity:1;stroke:none;stroke-width:1.38871;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:stroke fill markers"
+         style="display:inline;fill:#831c00;fill-opacity:1;stroke:none;stroke-width:1.48129;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:stroke fill markers"
          id="rect2908-2"
-         width="30"
-         height="30"
-         x="132.87"
-         y="209.29694"
-         rx="16"
-         ry="16"
+         width="32"
+         height="32"
+         x="131.87"
+         y="208.29694"
+         rx="17.066668"
+         ry="17.066668"
          inkscape:label="box" />
     </g>
   </g>
