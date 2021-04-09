@@ -24,7 +24,6 @@
 
 #include "backends/audiocd/audiocd.h"
 #include "backends/graphics/graphics.h"
-#include "backends/graphics3d/graphics3d.h"
 #include "backends/mixer/mixer.h"
 #include "backends/mutex/mutex.h"
 #include "gui/EventRecorder.h"

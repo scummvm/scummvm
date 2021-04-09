@@ -143,7 +143,6 @@ MODULE_OBJS += \
 	events/sdl/sdl-events.o \
 	graphics/sdl/sdl-graphics.o \
 	graphics/surfacesdl/surfacesdl-graphics.o \
-	graphics3d/sdl/sdl-graphics3d.o \
 	graphics3d/openglsdl/openglsdl-graphics3d.o \
 	mixer/sdl/sdl-mixer.o \
 	mutex/sdl/sdl-mutex.o \

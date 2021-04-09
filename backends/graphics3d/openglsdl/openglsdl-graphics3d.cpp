@@ -45,7 +45,7 @@
 #endif
 
 OpenGLSdlGraphics3dManager::OpenGLSdlGraphics3dManager(SdlEventSource *eventSource, SdlWindow *window, bool supportsFrameBuffer)
-	: SdlGraphics3dManager(eventSource, window),
+	: SdlGraphicsManager(eventSource, window),
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	_glContext(nullptr),
 #endif
@@ -282,6 +282,8 @@ void OpenGLSdlGraphics3dManager::createOrUpdateScreen() {
 	int obtainedWidth = effectiveWidth;
 	int obtainedHeight = effectiveHeight;
 #endif
+
+	handleResize(obtainedWidth, obtainedHeight);
 
 	// Compute the rectangle where to draw the game inside the effective screen
 	_gameRect = computeGameRect(renderToFrameBuffer, _engineRequestedWidth, _engineRequestedHeight,
@@ -669,6 +671,11 @@ int16 OpenGLSdlGraphics3dManager::getOverlayHeight() const {
 
 int16 OpenGLSdlGraphics3dManager::getOverlayWidth() const {
 	return _overlayScreen->getWidth();
+}
+
+bool OpenGLSdlGraphics3dManager::showMouse(bool visible) {
+	SDL_ShowCursor(visible);
+	return true;
 }
 
 void OpenGLSdlGraphics3dManager::warpMouse(int x, int y) {
