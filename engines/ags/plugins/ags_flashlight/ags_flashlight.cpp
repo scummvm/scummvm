@@ -32,7 +32,6 @@ namespace AGSFlashlight {
 const uint32 Magic = 0xBABE0000;
 const uint32 Version = 2;
 const uint32 SaveMagic = Magic + Version;
-const float PI = 3.14159265f;
 
 int32 AGSFlashlight::AGSFlashlight::screen_width = 320;
 int32 AGSFlashlight::screen_height = 200;

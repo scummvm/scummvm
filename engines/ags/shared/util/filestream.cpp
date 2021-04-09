@@ -35,7 +35,7 @@ namespace Shared {
 FileStream::FileStream(const String &file_name, FileOpenMode open_mode, FileWorkMode work_mode,
 	DataEndianess stream_endianess)
 		: DataStream(stream_endianess), _writeBuffer(DisposeAfterUse::YES),
-		_openMode(open_mode), _workMode(work_mode), _file(nullptr), _outSave(nullptr) {
+		_workMode(work_mode), _file(nullptr), _outSave(nullptr) {
 	Open(file_name, open_mode, work_mode);
 }
 
