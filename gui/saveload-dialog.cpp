@@ -41,14 +41,14 @@
 
 namespace GUI {
 
+#define SCALEVALUE(val) ((val) * g_gui.getScaleFactor())
+
 #if defined(USE_CLOUD) && defined(USE_LIBCURL)
 
 enum {
 	kCancelSyncCmd = 'PDCS',
 	kBackgroundSyncCmd = 'PDBS'
 };
-
-#define SCALEVALUE(val) ((val) * g_gui.getScaleFactor())
 
 SaveLoadCloudSyncProgressDialog::SaveLoadCloudSyncProgressDialog(bool canRunInBackground): Dialog("SaveLoadCloudSyncProgress"), _close(false) {
 	_label = new StaticTextWidget(this, "SaveLoadCloudSyncProgress.TitleText", _("Downloading saves..."));
