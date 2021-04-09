@@ -460,7 +460,7 @@ int32 Menu::processMenu(MenuSettings *menuSettings, bool showCredits) {
 		if (menuSettings == &advOptionsMenuState) {
 			switch (id) {
 			case MenuButtonTypes::kAggressiveMode:
-				if (_engine->_input->toggleActionIfActive(TwinEActionType::UILeft) || _engine->_input->toggleActionIfActive(TwinEActionType::UIRight)) {
+				if (_engine->_input->toggleActionIfActive(TwinEActionType::UILeft) || _engine->_input->toggleActionIfActive(TwinEActionType::UIRight) || _engine->_input->toggleActionIfActive(TwinEActionType::UIEnter)) {
 					_engine->_actor->autoAggressive = !_engine->_actor->autoAggressive;
 				}
 				break;
@@ -468,7 +468,7 @@ int32 Menu::processMenu(MenuSettings *menuSettings, bool showCredits) {
 				if (_engine->_input->toggleActionIfActive(TwinEActionType::UILeft)) {
 					_engine->cfgfile.PolygonDetails--;
 					_engine->cfgfile.PolygonDetails %= 3;
-				} else if (_engine->_input->toggleActionIfActive(TwinEActionType::UIRight)) {
+				} else if (_engine->_input->toggleActionIfActive(TwinEActionType::UIRight) || _engine->_input->toggleActionIfActive(TwinEActionType::UIEnter)) {
 					_engine->cfgfile.PolygonDetails++;
 					_engine->cfgfile.PolygonDetails %= 3;
 				}
@@ -477,24 +477,24 @@ int32 Menu::processMenu(MenuSettings *menuSettings, bool showCredits) {
 				if (_engine->_input->toggleActionIfActive(TwinEActionType::UILeft)) {
 					_engine->cfgfile.ShadowMode--;
 					_engine->cfgfile.ShadowMode %= 3;
-				} else if (_engine->_input->toggleActionIfActive(TwinEActionType::UIRight)) {
+				} else if (_engine->_input->toggleActionIfActive(TwinEActionType::UIRight) || _engine->_input->toggleActionIfActive(TwinEActionType::UIEnter)) {
 					_engine->cfgfile.ShadowMode++;
 					_engine->cfgfile.ShadowMode %= 3;
 				}
 				break;
 			case MenuButtonTypes::kSceneryZoom:
-				if (_engine->_input->toggleActionIfActive(TwinEActionType::UILeft) || _engine->_input->toggleActionIfActive(TwinEActionType::UIRight)) {
+				if (_engine->_input->toggleActionIfActive(TwinEActionType::UILeft) || _engine->_input->toggleActionIfActive(TwinEActionType::UIRight) || _engine->_input->toggleActionIfActive(TwinEActionType::UIEnter)) {
 					_engine->cfgfile.SceZoom = !_engine->cfgfile.SceZoom;
 				}
 				break;
 			case MenuButtonTypes::kHighResolution:
-				if (_engine->_input->toggleActionIfActive(TwinEActionType::UILeft) || _engine->_input->toggleActionIfActive(TwinEActionType::UIRight)) {
+				if (_engine->_input->toggleActionIfActive(TwinEActionType::UILeft) || _engine->_input->toggleActionIfActive(TwinEActionType::UIRight) || _engine->_input->toggleActionIfActive(TwinEActionType::UIEnter)) {
 					const bool highRes = ConfMan.getBool("usehighres");
 					ConfMan.setBool("usehighres", !highRes);
 				}
 				break;
 			case MenuButtonTypes::kWallCollision:
-				if (_engine->_input->toggleActionIfActive(TwinEActionType::UILeft) || _engine->_input->toggleActionIfActive(TwinEActionType::UIRight)) {
+				if (_engine->_input->toggleActionIfActive(TwinEActionType::UILeft) || _engine->_input->toggleActionIfActive(TwinEActionType::UIRight) || _engine->_input->toggleActionIfActive(TwinEActionType::UIEnter)) {
 					const bool highRes = ConfMan.getBool("wallcollision");
 					ConfMan.setBool("wallcollision", !highRes);
 				}
