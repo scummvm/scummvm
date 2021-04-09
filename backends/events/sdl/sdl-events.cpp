@@ -27,7 +27,6 @@
 #include "backends/events/sdl/sdl-events.h"
 #include "backends/platform/sdl/sdl.h"
 #include "backends/graphics/graphics.h"
-#include "backends/graphics3d/sdl/sdl-graphics3d.h"
 #include "common/config-manager.h"
 #include "common/textconsole.h"
 #include "common/fs.h"
@@ -179,11 +178,7 @@ bool SdlEventSource::processMouseEvent(Common::Event &event, int x, int y, int r
 	event.relMouse.y = rely;
 
 	if (_graphicsManager) {
-		if (dynamic_cast<SdlGraphics3dManager *>(_graphicsManager)) {
-			return dynamic_cast<SdlGraphics3dManager *>(_graphicsManager)->notifyMousePosition(event.mouse);
-		} else if (dynamic_cast<SdlGraphicsManager *>(_graphicsManager)) {
-			return dynamic_cast<SdlGraphicsManager *>(_graphicsManager)->notifyMousePosition(event.mouse);
-		}
+		return _graphicsManager->notifyMousePosition(event.mouse);
 	}
 
 	return true;
@@ -504,12 +499,7 @@ bool SdlEventSource::dispatchSDLEvent(SDL_Event &ev, Common::Event &event) {
 	case SDL_WINDOWEVENT:
 		// We're only interested in events from the current display window
 		if (_graphicsManager) {
-			uint32 windowID = 0;
-			if (dynamic_cast<SdlGraphics3dManager *>(_graphicsManager)) {
-				windowID = SDL_GetWindowID(dynamic_cast<SdlGraphics3dManager *>(_graphicsManager)->getWindow()->getSDLWindow());
-			} else if (dynamic_cast<SdlGraphicsManager *>(_graphicsManager)) {
-				windowID = SDL_GetWindowID(dynamic_cast<SdlGraphicsManager *>(_graphicsManager)->getWindow()->getSDLWindow());
-			}
+			uint32 windowID = SDL_GetWindowID(_graphicsManager->getWindow()->getSDLWindow());
 			if (windowID != ev.window.windowID) {
 				return false;
 			}
@@ -518,11 +508,7 @@ bool SdlEventSource::dispatchSDLEvent(SDL_Event &ev, Common::Event &event) {
 		switch (ev.window.event) {
 		case SDL_WINDOWEVENT_EXPOSED:
 			if (_graphicsManager) {
-				if (dynamic_cast<SdlGraphics3dManager *>(_graphicsManager)) {
-					dynamic_cast<SdlGraphics3dManager *>(_graphicsManager)->notifyVideoExpose();
-				} else if (dynamic_cast<SdlGraphicsManager *>(_graphicsManager)) {
-					dynamic_cast<SdlGraphicsManager *>(_graphicsManager)->notifyVideoExpose();
-				}
+				_graphicsManager->notifyVideoExpose();
 			}
 			return false;
 
@@ -581,11 +567,7 @@ bool SdlEventSource::dispatchSDLEvent(SDL_Event &ev, Common::Event &event) {
 #else
 	case SDL_VIDEOEXPOSE:
 		if (_graphicsManager) {
-			if (dynamic_cast<SdlGraphics3dManager *>(_graphicsManager)) {
-				dynamic_cast<SdlGraphics3dManager *>(_graphicsManager)->notifyVideoExpose();
-			} else if (dynamic_cast<SdlGraphicsManager *>(_graphicsManager)) {
-				dynamic_cast<SdlGraphicsManager *>(_graphicsManager)->notifyVideoExpose();
-			}
+			_graphicsManager->notifyVideoExpose();
 		}
 		return false;
 
@@ -979,11 +961,8 @@ void SdlEventSource::setEngineRunning(const bool value) {
 
 bool SdlEventSource::handleResizeEvent(Common::Event &event, int w, int h) {
 	if (_graphicsManager) {
-		if (dynamic_cast<SdlGraphics3dManager *>(_graphicsManager)) {
-			dynamic_cast<SdlGraphics3dManager *>(_graphicsManager)->notifyResize(w, h);
-		} else if (dynamic_cast<SdlGraphicsManager *>(_graphicsManager)) {
-			dynamic_cast<SdlGraphicsManager *>(_graphicsManager)->notifyResize(w, h);
-		}
+		_graphicsManager->notifyResize(w, h);
+
 		// If the screen changed, send an Common::EVENT_SCREEN_CHANGED
 		int screenID = g_system->getScreenChangeID();
 		if (screenID != _lastScreenID) {

@@ -24,9 +24,9 @@
 #define ANDROID_GRAPHICS_H
 
 #include "common/scummsys.h"
-#include "backends/graphics3d/graphics3d.h"
+#include "backends/graphics/graphics.h"
 
-class AndroidGraphicsManager : public Graphics3dManager {
+class AndroidGraphicsManager : public GraphicsManager {
 public:
 	AndroidGraphicsManager();
 	virtual ~AndroidGraphicsManager();
@@ -76,6 +76,10 @@ public:
 	virtual Graphics::Surface *lockScreen() override;
 	virtual void unlockScreen() override;
 	virtual void fillScreen(uint32 col);
+
+	virtual void setShakePos(int shakeXOffset, int shakeYOffset) {};
+	virtual void setFocusRectangle(const Common::Rect& rect) {}
+	virtual void clearFocusRectangle() {}
 
 	virtual void initSize(uint width, uint height,
 							const Graphics::PixelFormat *format) override;
