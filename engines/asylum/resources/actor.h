@@ -107,6 +107,7 @@ public:
 	void setSoundResourceId(ResourceId id) { _soundResourceId = id; }
 	void setStatus(ActorStatus status) { _status = status; }
 	void setTransparency(int32 val) { _transparency = val; }
+	void setTickCount(int32 tickCount) { _tickCount = tickCount; }
 
 	void setField638(int32 val) { _field_638 = val; }
 	void setField934(int32 val) { _field_934 = val; }
@@ -132,6 +133,7 @@ public:
 	bool           shouldInvertPriority() { return _invertPriority; }
 	ResourceId     getSoundResourceId() { return _soundResourceId; }
 	ActorStatus    getStatus()    { return _status; }
+	int32          getTickCount() { return _tickCount; }
 
 	int32          getField638() { return _field_638; }
 	int32          getField934() { return _field_934; }
@@ -438,7 +440,6 @@ private:
 
 	void updateStatus12_Chapter2();
 	void updateStatus12_Chapter2_Actor11();
-	void updateStatus12_Chapter11_Actor1();
 	void updateStatus12_Chapter11();
 
 	void updateStatus14();

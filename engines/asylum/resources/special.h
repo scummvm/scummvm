@@ -26,6 +26,7 @@
 #include "asylum/shared.h"
 
 #include "common/scummsys.h"
+#include "common/rect.h"
 
 namespace Asylum {
 
@@ -64,6 +65,7 @@ private:
 	void chapter7(Object *object, ActorIndex actorIndex);
 	void chapter8(Object *object, ActorIndex actorIndex);
 	void chapter9(Object *object, ActorIndex actorIndex);
+	void chapter11(Object *object, ActorIndex actorIndex);
 	void chapter12(Object *object, ActorIndex actorIndex);
 	void chapter13(Object *object, ActorIndex actorIndex);
 
@@ -98,6 +100,13 @@ private:
 
 	void checkObject(Object *object, GameFlag flagToSet, GameFlag flagToClear, ObjectId objectId = kObjectNone);
 	void checkOtherObject(Object *object, ObjectId otherObjectId, GameFlag flagToClear, GameFlag flagToSet);
+
+	//////////////////////////////////////////////////////////////////////////
+	// Chapter 11 helpers
+	//////////////////////////////////////////////////////////////////////////
+
+	void tentacle(ActorIndex actorIndex, GameFlag flag1, GameFlag flag2, GameFlag flag3, const Common::Point &p1, const Common::Point &p2);
+	void rock(ActorIndex actorIndex, GameFlag flag1, GameFlag flag2, GameFlag flag3, GameFlag flag4, const Common::Point &p1, const Common::Point &p2);
 };
 
 } // End of namespace Asylum
