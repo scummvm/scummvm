@@ -434,7 +434,7 @@ void PaintObjAnm(uint16 CurBox) {
 
 		//FlagPaintCharacter = false;
 	} else if ((_actorPos == CurBox) && !FlagDialogActive) {
-		g_vm->_animMgr->refreshSmkAnim(g_vm->_animMgr->_playingAnims[1]);
+		g_vm->_animMgr->refreshSmkAnim(g_vm->_animMgr->_playingAnims[kSmackerFullMotion]);
 	}
 }
 
