@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-04-09 14:56+0000\n"
-"PO-Revision-Date: 2021-04-02 08:37+0000\n"
+"PO-Revision-Date: 2021-04-10 09:24+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fi/>\n"
@@ -3887,14 +3887,13 @@ msgid "Language to use for multilingual games"
 msgstr "Monikielisissä peleissä käytetty kieli"
 
 #: engines/ags/detection.cpp:110
-#, fuzzy
-#| msgid "Antialiased"
 msgid "Force antialiased text"
-msgstr "Antialiasoitu"
+msgstr "Pakota antialiasoitu teksti"
 
 #: engines/ags/detection.cpp:110
 msgid "Use antialiasing to draw text even if the game does not ask for it"
 msgstr ""
+"Käytä antialiasointia tekstin piirtämisessä vaikka peli ei sitä pyytäisi"
 
 #: engines/bladerunner/bladerunner.cpp:363
 msgid "Failed to initialize resources"
@@ -5413,48 +5412,44 @@ msgid "Open event flags cheat menu"
 msgstr "Avaa tapahtumavipujen huijausvalikko"
 
 #: engines/nancy/dialogs.cpp:41
-#, fuzzy
-#| msgid "Player Time:"
 msgid "Player Speech"
-msgstr "Peliaika:"
+msgstr "Pelaajan puhe"
 
 #: engines/nancy/dialogs.cpp:41
 msgid ""
 "Enable player speech. Only works if speech is enabled in the Audio settings."
 msgstr ""
+"Pelaajan puhe kuuluviin. Toimii vain jos puhe on päällä ääniasetuksissa."
 
 #: engines/nancy/dialogs.cpp:42
 msgid "Character Speech"
-msgstr ""
+msgstr "Hahmojen puhe"
 
 #: engines/nancy/dialogs.cpp:42
 msgid ""
 "Enable NPC speech. Only works if speech is enabled in the Audio settings."
 msgstr ""
+"Hahmojen puhe kuulluviin. Toimii vain jos puhe on päällä ääniasetuksissa."
 
 #: engines/nancy/dialogs.cpp:43
-#, fuzzy
-#| msgid "Use original save/load screens"
 msgid "Use original menus"
-msgstr "Käytä alkuperäisiä tallenna/lataa valikkoja"
+msgstr "Käytä alkuperäisiä valikkoja"
 
 #: engines/nancy/dialogs.cpp:43
 msgid ""
 "Use the original engine's main, save/load, and setup menus. ScummVM's Global "
 "Main Menu can still be accessed through its keymap."
 msgstr ""
+"Käytä alkuperäisen pelimoottorin pää-, lataus/tallennus- ja asetusvalikkoja. "
+"ScummVM:n globaali päävalikko on silti avattavissa sen pikanäppäimellä."
 
 #: engines/nancy/dialogs.cpp:45
-#, fuzzy
-#| msgid "Speech Only"
 msgid "Speech Options"
-msgstr "Vain puhe"
+msgstr "Puheasetukset"
 
 #: engines/nancy/dialogs.cpp:46
-#, fuzzy
-#| msgid "Options"
 msgid "Engine Options"
-msgstr "Asetukset"
+msgstr "Pelimoottorin asetukset"
 
 #: engines/nancy/dialogs.cpp:98
 msgid "General"
@@ -5523,7 +5518,7 @@ msgstr "Pelaajan vaikeusaste"
 
 #: engines/nancy/dialogs.cpp:130
 msgid "Software Timer"
-msgstr ""
+msgstr "Ohjelmistoajastin"
 
 #: engines/nancy/dialogs.cpp:131
 msgid "Timer On"
@@ -7283,32 +7278,24 @@ msgid "Next location"
 msgstr "Seuraava lokaatio"
 
 #: engines/twine/parser/text.cpp:33
-#, fuzzy
-#| msgid "Enable high resolution"
 msgctxt "Options menu"
 msgid "High resolution on"
 msgstr "Käytä korkeaa resoluutiota"
 
 #: engines/twine/parser/text.cpp:34
-#, fuzzy
-#| msgid "Enable high resolution"
 msgctxt "Options menu"
 msgid "High resolution off"
-msgstr "Käytä korkeaa resoluutiota"
+msgstr "Älä käytä korkeaa resoluutiota"
 
 #: engines/twine/parser/text.cpp:35
-#, fuzzy
-#| msgid "Enable wall collisions"
 msgctxt "Options menu"
 msgid "Wall collision on"
-msgstr "Seinien törmäystarkistus päälle"
+msgstr "Seinien törmäystarkistus päällä"
 
 #: engines/twine/parser/text.cpp:36
-#, fuzzy
-#| msgid "Enable wall collisions"
 msgctxt "Options menu"
 msgid "Wall collision off"
-msgstr "Seinien törmäystarkistus päälle"
+msgstr "Seinien törmäystarkistus pois päältä"
 
 #: engines/ultima/shared/early/ultima_early.cpp:71
 msgid "Could not find correct ultima.dat datafile"
