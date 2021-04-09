@@ -67,6 +67,10 @@ MacWindow::MacWindow(int id, bool scrollable, bool resizable, bool editable, Mac
 
 	_borderType = -1;
 	_borderWidth = kBorderWidth;
+
+	_macBorder.setWindow(this);
+
+	_hasScrollBar = false;
 }
 
 static const byte noborderData[3][3] = {
@@ -196,9 +200,17 @@ void MacWindow::center(bool toCenter) {
 
 	Common::Rect screen = _wm->getScreenBounds();
 
+	uint32 flags = 0;
+	if (_active)
+		flags |= kWindowBorderActive;
+	if (!_title.empty())
+		flags |= kWindowBorderTitle;
+	if (_hasScrollBar)
+		flags |= kWindowBorderScrollbar;
+
 	if (toCenter) {
 		move((screen.width() - _dims.width()) / 2, (screen.height() - _dims.height()) / 2);
-	} else if (_macBorder.hasBorder(_borderFlags | _active) && _macBorder.hasOffsets()) {
+	} else if (_macBorder.hasBorder(flags) && _macBorder.hasOffsets()) {
 		move(_macBorder.getOffset().left, _macBorder.getOffset().top);
 	} else {
 		move(0, 0);
@@ -209,7 +221,15 @@ void MacWindow::updateInnerDims() {
 	if (_dims.isEmpty())
 		return;
 
-	if (_macBorder.hasBorder(_borderFlags | _active) && _macBorder.hasOffsets()) {
+	uint32 flags = 0;
+	if (_active)
+		flags |= kWindowBorderActive;
+	if (!_title.empty())
+		flags |= kWindowBorderTitle;
+	if (_hasScrollBar)
+		flags |= kWindowBorderScrollbar;
+
+	if (_macBorder.hasBorder(flags) && _macBorder.hasOffsets()) {
 		_innerDims = Common::Rect(
 			_dims.left + _macBorder.getOffset().left,
 			_dims.top + _macBorder.getOffset().top,
@@ -225,7 +245,15 @@ void MacWindow::updateOuterDims() {
 	if (_innerDims.isEmpty())
 		return;
 
-	if (_macBorder.hasBorder(_borderFlags | _active) && _macBorder.hasOffsets()) {
+	uint32 flags = 0;
+	if (_active)
+		flags |= kWindowBorderActive;
+	if (!_title.empty())
+		flags |= kWindowBorderTitle;
+	if (_hasScrollBar)
+		flags |= kWindowBorderScrollbar;
+
+	if (_macBorder.hasBorder(flags) && _macBorder.hasOffsets()) {
 		_dims = Common::Rect(
 			_innerDims.left - _macBorder.getOffset().left,
 			_innerDims.top - _macBorder.getOffset().top,
@@ -247,7 +275,7 @@ void MacWindow::drawBorder() {
 		flags |= kWindowBorderActive;
 	if (!_title.empty())
 		flags |= kWindowBorderTitle;
-	if (_borderFlags & kWindowBorderScrollbar)
+	if (_hasScrollBar)
 		flags |= kWindowBorderScrollbar;
 
 	if (_macBorder.hasBorder(flags)) {
@@ -365,9 +393,6 @@ void MacWindow::setBorder(Graphics::TransparentSurface *surface, uint32 flags, B
 
 	_borderIsDirty = true;
 	_wm->setFullRefresh(true);
-	// here we set the first bit zero, which indicate the active and inactive
-	// because we will use _active flag to decide whether it's active or not
-	_borderFlags = flags & 0xfffffffe;
 }
 
 void MacWindow::setCloseable(bool closeable) {
@@ -560,20 +585,25 @@ void MacWindow::setBorderType(int borderType) {
 	if (borderType < 0) {
 		disableBorder();
 	} else {
-		BorderOffsets offsets = _wm->getBorderOffsets(borderType);
-		uint32 flags = _wm->getBorderFlags(borderType) | kWindowBorderActive;
-		uint32 i = flags;
-		do {
-			int titlePos = 0;
-			if (i & kWindowBorderTitle)
-				titlePos = _wm->getBorderTitlePos(borderType);
-			Common::SeekableReadStream *file = _wm->getBorderFile(borderType, i);
-			if (file) {
-				loadBorder(*file, i, offsets, titlePos);
-				delete file;
-			}
-			i = (i - 1) & flags;
-		} while (i != flags);
+		for (uint i = 0; i < kWindowBorderMaxFlag; i++) {
+			_macBorder.lazyLoad(i);
+		}
+	}
+}
+
+void MacWindow::loadLazyBorder(uint32 flags) {
+	if (_borderType < 0) {
+		warning("trying to lazy load non-existing border type");
+		return;
+	}
+	BorderOffsets offsets = _wm->getBorderOffsets(_borderType);
+	Common::SeekableReadStream *file = _wm->getBorderFile(_borderType, flags);
+	int titlePos = 0;
+	if (flags & kWindowBorderTitle)
+		titlePos = _wm->getBorderTitlePos(_borderType);
+	if (file) {
+		loadBorder(*file, flags, offsets, titlePos);
+		delete file;
 	}
 }
 

@@ -41,31 +41,28 @@ struct BorderName {
 	byte type;
 	const char *name;
 	BorderOffsets offsets;
-	uint32 flags;
 	int titlePos;
-	BorderName(byte _type, const char *_name, BorderOffsets _offsets, uint32 _flags = 0, int _titlePos = 0): 
-		type(_type), name(_name), offsets(_offsets), flags(_flags), titlePos(_titlePos) {}
 };
 
 static const BorderName borders[] = {
-	{0x00, "StandardClose",		 { 1,  2, 19,  2,		 2,  2,		false}, kWindowBorderTitle, 25},
-	{0x01, "ThickNoTitle",		 { 5,  5,  5,  5,		-1, -1,		false}, 0, 0},
-	{0x02, "ThinNoTitle",		 { 1,  1,  1,  1,		-1, -1,		false}, 0, 0},
-	{0x03, "ThinNoTitleShadow",	 { 1,  3,  1,  3,		-1, -1,		false}, 0, 0},
-	{0x04, "StandardClose",		 { 1,  2, 19,  2,		 2,  2,		false}, 0, 0},
-	{0x05, "Thick",				 { 5,  5, 20,  5,		 2,  3,		false}, 0, 0},
-	{0x06, "ThinNoTitle",		 { 1,  1,  1,  1,		-1, -1,		false}, 0, 0},
-	{0x07, "ThinNoTitleShadow",	 { 1,  3,  1,  3,		-1, -1, 	false}, 0, 0},
-	{0x08, "StandardCloseZoom",	 { 1,  2, 19,  2,		 2,  2,		false}, 0, 0},
-	{0x09, "ThickZoom",			 { 5,  5, 20,  5,		 2,  3,		false}, 0, 0},
-	{0x0A, "ThinNoTitle",		 { 1,  1,  1,  1,		-1, -1,		false}, 0, 0},
-	{0x0B, "ThinNoTitleShadow",  { 1,  3,  1,  3,		-1, -1,		false}, 0, 0},
-	{0x0C, "StandardCloseZoom",	 { 1,  2, 19,  2,		 2,  2,		false}, 0, 0},
-	{0x0D, "ThickZoom",			 { 5,  5, 20,  5,		 2,  3,		false}, 0, 0},
-	{0x0E, "ThinNoTitle",		 { 1,  1,  1,  1,		-1, -1,		false}, 0, 0},
-	{0x0F, "ThinNoTitleShadow",  { 1,  3,  1,  3,		-1, -1,		false}, 0, 0},
-	{0x10, "RoundClose",		 { 1,  1, 19,  6,		 1,  1,		true}, 0, 0},
-	{0xFF, "No type",			 {-1, -1, -1, -1,		-1, -1,		false}, 0, 0}
+	{0x00, "StandardClose",		 { 1,  2, 19,  2,		 2,  2,		false}, 25},
+	{0x01, "ThickNoTitle",		 { 5,  5,  5,  5,		-1, -1,		false}, 0},
+	{0x02, "ThinNoTitle",		 { 1,  1,  1,  1,		-1, -1,		false}, 0},
+	{0x03, "ThinNoTitleShadow",	 { 1,  3,  1,  3,		-1, -1,		false}, 0},
+	{0x04, "StandardClose",		 { 1,  2, 19,  2,		 2,  2,		false}, 0},
+	{0x05, "Thick",				 { 5,  5, 20,  5,		 2,  3,		false}, 0},
+	{0x06, "ThinNoTitle",		 { 1,  1,  1,  1,		-1, -1,		false}, 0},
+	{0x07, "ThinNoTitleShadow",	 { 1,  3,  1,  3,		-1, -1, 	false}, 0},
+	{0x08, "StandardCloseZoom",	 { 1,  2, 19,  2,		 2,  2,		false}, 0},
+	{0x09, "ThickZoom",			 { 5,  5, 20,  5,		 2,  3,		false}, 0},
+	{0x0A, "ThinNoTitle",		 { 1,  1,  1,  1,		-1, -1,		false}, 0},
+	{0x0B, "ThinNoTitleShadow",  { 1,  3,  1,  3,		-1, -1,		false}, 0},
+	{0x0C, "StandardCloseZoom",	 { 1,  2, 19,  2,		 2,  2,		false}, 0},
+	{0x0D, "ThickZoom",			 { 5,  5, 20,  5,		 2,  3,		false}, 0},
+	{0x0E, "ThinNoTitle",		 { 1,  1,  1,  1,		-1, -1,		false}, 0},
+	{0x0F, "ThinNoTitleShadow",  { 1,  3,  1,  3,		-1, -1,		false}, 0},
+	{0x10, "RoundClose",		 { 1,  1, 19,  6,		 1,  1,		true}, 0},
+	{0xFF, "No type",			 {-1, -1, -1, -1,		-1, -1,		false}, 0}
 };
 
 Common::String windowTypeName(byte windowType) {
@@ -94,16 +91,6 @@ BorderOffsets MacWindowManager::getBorderOffsets(byte windowType) {
 		i++;
 	}
 	return borders[i].offsets;
-}
-
-uint32 MacWindowManager::getBorderFlags(byte windowType) {
-	int i = 0;
-	while (borders[i].type != 0xFF) {
-		if (borders[i].type == windowType)
-			break;
-		i++;
-	}
-	return borders[i].flags;
 }
 
 int MacWindowManager::getBorderTitlePos(byte windowType) {

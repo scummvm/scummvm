@@ -287,6 +287,7 @@ public:
 	/**
 	 * See BaseMacWindow.
 	 */
+	void setScrollBar(bool active) { _hasScrollBar = active; }
 	virtual bool processEvent(Common::Event &event) override;
 	virtual bool hasAllFocus() override { return _beingDragged || _beingResized; }
 
@@ -307,6 +308,7 @@ public:
 	void setBorder(TransparentSurface *border, uint32 flags, BorderOffsets offsets, int titlePos = 0, int titleWidth = 0);
 	void disableBorder();
 
+	void loadLazyBorder(uint32 flags);
 	/**
 	 * Indicate whether the window can be closed (false by default).
 	 * @param closeable True if the window can be closed.
@@ -358,7 +360,6 @@ protected:
 
 private:
 	MacWindowBorder _macBorder;
-	uint32 _borderFlags;
 
 	int _pattern;
 	bool _hasPattern;
@@ -377,6 +378,7 @@ private:
 
 	Common::String _title;
 
+	bool _hasScrollBar;
 	int _borderType;
 };
 

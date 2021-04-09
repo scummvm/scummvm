@@ -34,10 +34,14 @@
 
 namespace Graphics {
 
+class MacWindow;
+
 enum {
-   kWindowBorderActive = 1 << 0,
-   kWindowBorderTitle  = 1 << 1,
-   kWindowBorderScrollbar = 1 << 2
+	kWindowBorderActive = 1 << 0,
+	kWindowBorderTitle  = 1 << 1,
+	kWindowBorderScrollbar = 1 << 2,
+
+	kWindowBorderMaxFlag = 1 << 3
 };
 
 struct BorderOffsets {
@@ -127,15 +131,24 @@ public:
 
 	void drawScrollBar(ManagedSurface *g, MacWindowManager *wm);
 
+	void lazyLoad(uint32 flags);
+
+	// we should call this method as soon as the macwindowborder is constructed
+	void setWindow(MacWindow *window) { _window = window; }
+
 private:
 	int _scrollPos, _scrollSize;
 	Common::String _title;
 
-	const uint32 _borderTypeNum = 8;
+	const uint32 _borderTypeNum = kWindowBorderMaxFlag;
 
 	Common::Array<NinePatchBitmap *> _border;
 
 	Common::Array<bool> _borderInitialized;
+
+	Common::Array<bool> _lazyTag;
+
+	MacWindow *_window;
 
 	BorderOffsets _borderOffsets;
 
