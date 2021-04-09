@@ -193,8 +193,10 @@ void doMouse() {
 				break; // When it's in a room without a character, such as the map
 			if ((FlagSomeOneSpeak && !FlagCharacterSpeak) || FlagDialogMenuActive || FlagDialogActive || FlagUseWithLocked)
 				break;
+#if (!USE_NEW_VIDEO_CODE)
 			if (g_vm->_animMgr->_playingAnims[kSmackerFullMotion])
 				break;
+#endif
 
 			if (g_vm->_inventoryStatus == INV_OFF)
 				doEvent(MC_INVENTORY, ME_OPEN, MP_DEFAULT, 0, 0, 0, 0);
@@ -350,7 +352,11 @@ void doMouse() {
 		}
 
 		//	Game area
-		if (GAMEAREA(g_vm->_curMessage->_u16Param2) && !g_vm->_animMgr->_playingAnims[kSmackerFullMotion]) {
+		if (GAMEAREA(g_vm->_curMessage->_u16Param2)
+#if (!USE_NEW_VIDEO_CODE)
+			&& !g_vm->_animMgr->_playingAnims[kSmackerFullMotion]
+#endif
+		) {
 			if (g_vm->_flagscriptactive)
 				g_vm->_curObj = g_vm->_curMessage->_u32Param;
 
@@ -441,7 +447,12 @@ void doMouse() {
 				doEvent(MC_CHARACTER, ME_CHARACTERGOTO, MP_DEFAULT, g_vm->_curMessage->_u16Param1, g_vm->_curMessage->_u16Param2, 0, 0);
 		} else if (isInventoryArea(g_vm->_curMessage->_u16Param2)) {
 			// Inventory area
-			if (g_vm->_animMgr->_playingAnims[kSmackerFullMotion] || FlagDialogActive || g_vm->_curRoom == rSYS)
+#if (!USE_NEW_VIDEO_CODE)
+			if (g_vm->_animMgr->_playingAnims[kSmackerFullMotion])
+				break;
+#endif
+
+			if (FlagDialogActive || g_vm->_curRoom == rSYS)
 				break;
 
 			if (ICONAREA(g_vm->_curMessage->_u16Param1, g_vm->_curMessage->_u16Param2) && g_vm->whatIcon(g_vm->_curMessage->_u16Param1) && (g_vm->_inventoryStatus == INV_INACTION)) {
@@ -561,7 +572,9 @@ void doCharacter() {
 		FlagShowCharacter = false;
 		AtFrameHandler(CHARACTER_ANIM);
 		//	If the animation is over
+#if (!USE_NEW_VIDEO_CODE)
 		if (!g_vm->_animMgr->_playingAnims[kSmackerFullMotion]) {
+#endif
 			g_vm->_flagMouseEnabled = true;
 			FlagShowCharacter = true;
 			_characterInMovement = false;
@@ -584,8 +597,10 @@ void doCharacter() {
 				g_vm->_flagMouseEnabled = false;
 				setPosition(1);
 			}
+#if (!USE_NEW_VIDEO_CODE)
 		} else
 			REEVENT;
+#endif
 		break;
 	default:
 		break;
@@ -817,19 +832,29 @@ void doIdle() {
 		if (!FlagDialogActive  && !FlagDialogMenuActive) {
 			if (QuitGame())
 				doEvent(MC_SYSTEM, ME_QUIT, MP_SYSTEM, 0, 0, 0, 0);
+#if (!USE_NEW_VIDEO_CODE)
 		} else { //if( _curDialog == dINTRO )
-			if (g_vm->_animMgr->_fullMotionEnd != g_vm->_animMgr->_curAnimFrame[1])
-				g_vm->_animMgr->_fullMotionEnd = g_vm->_animMgr->_curAnimFrame[1] + 1;
+			if (g_vm->_animMgr->_fullMotionEnd != g_vm->_animMgr->_curAnimFrame[kSmackerFullMotion])
+				g_vm->_animMgr->_fullMotionEnd = g_vm->_animMgr->_curAnimFrame[kSmackerFullMotion] + 1;
+#endif
 		}
 		break;
 
 	// Skip
 	case 0x1B:
+#if (!USE_NEW_VIDEO_CODE)
 		if (FlagDialogActive) {
-			if (g_vm->_animMgr->_fullMotionEnd != g_vm->_animMgr->_curAnimFrame[1])
-				g_vm->_animMgr->_fullMotionEnd = g_vm->_animMgr->_curAnimFrame[1] + 1;
-		} else if (!FlagSomeOneSpeak && !g_vm->_flagscriptactive && !FlagDialogActive && !FlagDialogMenuActive
-		&& (g_vm->_actor->_curAction < hWALKIN) && !FlagUseWithStarted && !g_vm->_animMgr->_playingAnims[kSmackerFullMotion] && FlagShowCharacter) {
+			if (g_vm->_animMgr->_fullMotionEnd != g_vm->_animMgr->_curAnimFrame[kSmackerFullMotion])
+				g_vm->_animMgr->_fullMotionEnd = g_vm->_animMgr->_curAnimFrame[kSmackerFullMotion] + 1;
+		}
+#endif
+
+		if (!FlagSomeOneSpeak && !g_vm->_flagscriptactive && !FlagDialogActive && !FlagDialogMenuActive
+		&& (g_vm->_actor->_curAction < hWALKIN) && !FlagUseWithStarted && FlagShowCharacter
+#if (!USE_NEW_VIDEO_CODE)
+			&& !g_vm->_animMgr->_playingAnims[kSmackerFullMotion]
+#endif
+			) {
 			actorStop();
 			nextStep();
 			Mouse(MCMD_ON);
@@ -845,7 +870,11 @@ void doIdle() {
 	// Sys
 	case 0x3B:
 		if (!FlagSomeOneSpeak && !g_vm->_flagscriptactive && !FlagDialogActive && !FlagDialogMenuActive
-		&& (g_vm->_actor->_curAction < hWALKIN) && !FlagUseWithStarted && !g_vm->_animMgr->_playingAnims[kSmackerFullMotion] && FlagShowCharacter) {
+		&& (g_vm->_actor->_curAction < hWALKIN) && !FlagUseWithStarted && FlagShowCharacter
+#if (!USE_NEW_VIDEO_CODE)
+			&& !g_vm->_animMgr->_playingAnims[kSmackerFullMotion]
+#endif
+			) {
 			actorStop();
 			nextStep();
 			Mouse(MCMD_ON);
@@ -861,7 +890,11 @@ void doIdle() {
 	// Save
 	case 0x3C:
 		if (!FlagSomeOneSpeak && !g_vm->_flagscriptactive && !FlagDialogActive && !FlagDialogMenuActive
-		&& (g_vm->_actor->_curAction < hWALKIN) && !FlagUseWithStarted && !g_vm->_animMgr->_playingAnims[kSmackerFullMotion] && FlagShowCharacter) {
+		&& (g_vm->_actor->_curAction < hWALKIN) && !FlagUseWithStarted && FlagShowCharacter
+#if (!USE_NEW_VIDEO_CODE)
+			&& !g_vm->_animMgr->_playingAnims[kSmackerFullMotion]
+#endif
+			) {
 			IconSnapShot();
 			DataSave();
 			g_vm->showInventoryName(NO_OBJECTS, false);
@@ -873,7 +906,11 @@ void doIdle() {
 	// Load
 	case 0x3D:
 		if (!FlagSomeOneSpeak && !g_vm->_flagscriptactive && !FlagDialogActive && !FlagDialogMenuActive
-		&& (g_vm->_actor->_curAction < hWALKIN) && !FlagUseWithStarted && !g_vm->_animMgr->_playingAnims[kSmackerFullMotion] && FlagShowCharacter) {
+		&& (g_vm->_actor->_curAction < hWALKIN) && !FlagUseWithStarted && FlagShowCharacter
+#if (!USE_NEW_VIDEO_CODE)
+			&& !g_vm->_animMgr->_playingAnims[kSmackerFullMotion]
+#endif
+			) {
 			IconSnapShot();
 			if (!DataLoad()) {
 				g_vm->showInventoryName(NO_OBJECTS, false);
