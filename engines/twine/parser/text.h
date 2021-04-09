@@ -42,7 +42,11 @@ class TextData {
 private:
 	// 30 is the max for lba2, lba1 uses 28
 	Common::Array<TextEntry> _texts[30];
+	void add(TextBankId textBankId, const TextEntry &entry) {
+		_texts[(int)textBankId].push_back(entry);
+	}
 public:
+	TextData();
 	bool loadFromHQR(const char *name, TextBankId textBankId, int language, int entryCount);
 
 	const TextEntry *getText(TextBankId textBankId, TextId textIndex) const;

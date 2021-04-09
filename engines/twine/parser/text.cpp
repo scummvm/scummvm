@@ -28,6 +28,14 @@
 
 namespace TwinE {
 
+TextData::TextData() {
+	// custom texts that are not included in the original game
+	add(TextBankId::Options_and_menus, TextEntry{_sc("High resolution on", "Options menu"), -1, TextId::kCustomHighResOptionOn});
+	add(TextBankId::Options_and_menus, TextEntry{_sc("High resolution off", "Options menu"), -1, TextId::kCustomHighResOptionOff});
+	add(TextBankId::Options_and_menus, TextEntry{_sc("Wall collision on", "Options menu"), -1, TextId::kCustomWallCollisionOn});
+	add(TextBankId::Options_and_menus, TextEntry{_sc("Wall collision off", "Options menu"), -1, TextId::kCustomWallCollisionOff});
+}
+
 bool TextData::loadFromHQR(const char *name, TextBankId textBankId, int language, int entryCount) {
 	const int langIdx = (int)textBankId * 2 + (entryCount * language);
 	Common::SeekableReadStream *indexStream = HQR::makeReadStream(name, langIdx + 0);
@@ -55,7 +63,7 @@ bool TextData::loadFromHQR(const char *name, TextBankId textBankId, int language
 			const char c = (char)offsetStream->readByte();
 			result += c;
 		}
-		_texts[(int)textBankId].push_back(TextEntry{result, entry, textIdx});
+		add(textBankId, TextEntry{result, entry, textIdx});
 		debug(5, "index: %i (bank %i), text: %s", (int)textIdx, (int)textBankId, result.c_str());
 		offsetStream->seek(offsetPos);
 		if (end >= offsetStream->size()) {
@@ -64,12 +72,6 @@ bool TextData::loadFromHQR(const char *name, TextBankId textBankId, int language
 	}
 	delete indexStream;
 	delete offsetStream;
-
-	// custom texts that are not included in the original game
-	_texts[(int)TextBankId::Options_and_menus].push_back(TextEntry{_sc("High resolution on", "Options menu"), -1, TextId::kCustomHighResOptionOn});
-	_texts[(int)TextBankId::Options_and_menus].push_back(TextEntry{_sc("High resolution off", "Options menu"), -1, TextId::kCustomHighResOptionOff});
-	_texts[(int)TextBankId::Options_and_menus].push_back(TextEntry{_sc("Wall collision on", "Options menu"), -1, TextId::kCustomWallCollisionOn});
-	_texts[(int)TextBankId::Options_and_menus].push_back(TextEntry{_sc("Wall collision off", "Options menu"), -1, TextId::kCustomWallCollisionOff});
 
 	return true;
 }
