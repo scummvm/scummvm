@@ -454,41 +454,49 @@ int32 Menu::processMenu(MenuSettings *menuSettings, bool showCredits) {
 			case MenuButtonTypes::kAggressiveMode:
 				if (_engine->_input->toggleActionIfActive(TwinEActionType::UILeft) || _engine->_input->toggleActionIfActive(TwinEActionType::UIRight) || _engine->_input->toggleActionIfActive(TwinEActionType::UIEnter)) {
 					_engine->_actor->autoAggressive = !_engine->_actor->autoAggressive;
+					startMillis = loopMillis;
 				}
 				break;
 			case MenuButtonTypes::kPolygonDetails:
 				if (_engine->_input->toggleActionIfActive(TwinEActionType::UILeft)) {
 					_engine->cfgfile.PolygonDetails--;
 					_engine->cfgfile.PolygonDetails %= 3;
+					startMillis = loopMillis;
 				} else if (_engine->_input->toggleActionIfActive(TwinEActionType::UIRight) || _engine->_input->toggleActionIfActive(TwinEActionType::UIEnter)) {
 					_engine->cfgfile.PolygonDetails++;
 					_engine->cfgfile.PolygonDetails %= 3;
+					startMillis = loopMillis;
 				}
 				break;
 			case MenuButtonTypes::kShadowSettings:
 				if (_engine->_input->toggleActionIfActive(TwinEActionType::UILeft)) {
 					_engine->cfgfile.ShadowMode--;
 					_engine->cfgfile.ShadowMode %= 3;
+					startMillis = loopMillis;
 				} else if (_engine->_input->toggleActionIfActive(TwinEActionType::UIRight) || _engine->_input->toggleActionIfActive(TwinEActionType::UIEnter)) {
 					_engine->cfgfile.ShadowMode++;
 					_engine->cfgfile.ShadowMode %= 3;
+					startMillis = loopMillis;
 				}
 				break;
 			case MenuButtonTypes::kSceneryZoom:
 				if (_engine->_input->toggleActionIfActive(TwinEActionType::UILeft) || _engine->_input->toggleActionIfActive(TwinEActionType::UIRight) || _engine->_input->toggleActionIfActive(TwinEActionType::UIEnter)) {
 					_engine->cfgfile.SceZoom = !_engine->cfgfile.SceZoom;
+					startMillis = loopMillis;
 				}
 				break;
 			case MenuButtonTypes::kHighResolution:
 				if (_engine->_input->toggleActionIfActive(TwinEActionType::UILeft) || _engine->_input->toggleActionIfActive(TwinEActionType::UIRight) || _engine->_input->toggleActionIfActive(TwinEActionType::UIEnter)) {
 					const bool highRes = ConfMan.getBool("usehighres");
 					ConfMan.setBool("usehighres", !highRes);
+					startMillis = loopMillis;
 				}
 				break;
 			case MenuButtonTypes::kWallCollision:
 				if (_engine->_input->toggleActionIfActive(TwinEActionType::UILeft) || _engine->_input->toggleActionIfActive(TwinEActionType::UIRight) || _engine->_input->toggleActionIfActive(TwinEActionType::UIEnter)) {
 					const bool highRes = ConfMan.getBool("wallcollision");
 					ConfMan.setBool("wallcollision", !highRes);
+					startMillis = loopMillis;
 				}
 				break;
 			default:
@@ -501,8 +509,10 @@ int32 Menu::processMenu(MenuSettings *menuSettings, bool showCredits) {
 				int volume = mixer->getVolumeForSoundType(Audio::Mixer::SoundType::kMusicSoundType);
 				if (_engine->_input->isActionActive(TwinEActionType::UILeft)) {
 					volume -= 4;
+					startMillis = loopMillis;
 				} else if (_engine->_input->isActionActive(TwinEActionType::UIRight)) {
 					volume += 4;
+					startMillis = loopMillis;
 				}
 				_engine->_music->musicVolume(volume);
 				ConfMan.setInt("music_volume", mixer->getVolumeForSoundType(Audio::Mixer::kMusicSoundType));
@@ -512,8 +522,10 @@ int32 Menu::processMenu(MenuSettings *menuSettings, bool showCredits) {
 				int volume = mixer->getVolumeForSoundType(Audio::Mixer::kSFXSoundType);
 				if (_engine->_input->isActionActive(TwinEActionType::UILeft)) {
 					volume -= 4;
+					startMillis = loopMillis;
 				} else if (_engine->_input->isActionActive(TwinEActionType::UIRight)) {
 					volume += 4;
+					startMillis = loopMillis;
 				}
 
 				mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, volume);
@@ -524,8 +536,10 @@ int32 Menu::processMenu(MenuSettings *menuSettings, bool showCredits) {
 				AudioCDManager::Status status = _engine->_system->getAudioCDManager()->getStatus();
 				if (_engine->_input->isActionActive(TwinEActionType::UILeft)) {
 					status.volume -= 4;
+					startMillis = loopMillis;
 				} else if (_engine->_input->isActionActive(TwinEActionType::UIRight)) {
 					status.volume += 4;
+					startMillis = loopMillis;
 				}
 				status.volume = CLIP(status.volume, 0, 255);
 				_engine->_system->getAudioCDManager()->setVolume(status.volume);
@@ -535,8 +549,10 @@ int32 Menu::processMenu(MenuSettings *menuSettings, bool showCredits) {
 				int volume = mixer->getVolumeForSoundType(Audio::Mixer::kSpeechSoundType);
 				if (_engine->_input->isActionActive(TwinEActionType::UILeft)) {
 					volume -= 4;
+					startMillis = loopMillis;
 				} else if (_engine->_input->isActionActive(TwinEActionType::UIRight)) {
 					volume += 4;
+					startMillis = loopMillis;
 				}
 				mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, volume);
 				ConfMan.setInt("speech_volume", mixer->getVolumeForSoundType(Audio::Mixer::kSpeechSoundType));
