@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-04-09 14:56+0000\n"
-"PO-Revision-Date: 2021-04-04 22:24+0000\n"
+"PO-Revision-Date: 2021-04-09 19:02+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ja/>\n"
@@ -7276,18 +7276,16 @@ msgid "Allow the game to skip animation frames when running too slow."
 msgstr "ゲームが遅い場合、アニメーションフレームをスキップできます。"
 
 #: engines/ultima/ultima8/meta_engine.cpp:133
-#, fuzzy
 msgid "Enable frame limiting"
-msgstr "3Dアンチエイリアス："
+msgstr "フレームリミットを有効化"
 
 #: engines/ultima/ultima8/meta_engine.cpp:134
 msgid "Limits the speed of the game to prevent running too fast."
 msgstr "ゲームスピードに制限を設け、速すぎないようにします。"
 
 #: engines/ultima/ultima8/meta_engine.cpp:139
-#, fuzzy
 msgid "Enable cheats"
-msgstr "マウス操作を有効にする"
+msgstr "チートを有効化"
 
 #: engines/ultima/ultima8/meta_engine.cpp:140
 msgid "Allow cheats by commands and a menu when player is clicked."
