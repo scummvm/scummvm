@@ -207,16 +207,6 @@ void MacWindow::center(bool toCenter) {
 	}
 }
 
-#define ARROW_W 12
-#define ARROW_H 6
-const int arrowPixels[ARROW_H][ARROW_W] = {
-		{0,0,0,0,0,1,1,0,0,0,0,0},
-		{0,0,0,0,1,1,1,1,0,0,0,0},
-		{0,0,0,1,1,1,1,1,1,0,0,0},
-		{0,0,1,1,1,1,1,1,1,1,0,0},
-		{0,1,1,1,1,1,1,1,1,1,1,0},
-		{1,1,1,1,1,1,1,1,1,1,1,1}};
-
 void MacWindow::updateInnerDims() {
 	if (_dims.isEmpty())
 		return;
