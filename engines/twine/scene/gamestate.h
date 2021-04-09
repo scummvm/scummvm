@@ -32,38 +32,6 @@
 
 namespace TwinE {
 
-enum InventoryItems {
-	kiHolomap = 0,
-	kiMagicBall = 1,
-	kiUseSabre = 2,
-	kiGawleysHorn = 3,
-	kiTunic = 4,
-	kiBookOfBu = 5,
-	kSendellsMedallion = 6,
-	kFlaskOfClearWater = 7,
-	kRedCard = 8,
-	kBlueCard = 9,
-	kIDCard = 10,
-	kMrMiesPass = 11,
-	kiProtoPack = 12,
-	kSnowboard = 13,
-	kiPinguin = 14,
-	kGasItem = 15,
-	kPirateFlag = 16,
-	kMagicFlute = 17,
-	kSpaceGuitar = 18,
-	kHairDryer = 19,
-	kAncesteralKey = 20,
-	kBottleOfSyrup = 21,
-	kEmptyBottle = 22,
-	kFerryTicket = 23,
-	kKeypad = 24,
-	kCoffeeCan = 25,
-	kiBonusList = 26,
-	kiCloverLeaf = 27,
-	MaxInventoryItems = 28
-};
-
 /** Magicball strength*/
 enum MagicballStrengthType {
 	kNoBallStrength = 2,
@@ -213,9 +181,9 @@ public:
 
 	char sceneName[30] {};
 
-	int32 gameChoices[10];  // inGameMenuData
+	TextId gameChoices[10];  // inGameMenuData
 	int32 numChoices = 0;   // numOfOptionsInChoice
-	int32 choiceAnswer = 0; // inGameMenuAnswer
+	TextId choiceAnswer = TextId::kNone; // inGameMenuAnswer
 
 	/** Initialize all engine variables */
 	void initEngineVars();
@@ -223,13 +191,13 @@ public:
 	/** Initialize engine 3D projections */
 	void initEngineProjections();
 
-	void processFoundItem(int32 item);
+	void processFoundItem(InventoryItems item);
 
 	void giveUp();
 	bool loadGame(Common::SeekableReadStream *file);
 	bool saveGame(Common::WriteStream *file);
 
-	void processGameChoices(int32 choiceIdx);
+	void processGameChoices(TextId choiceIdx);
 
 	void processGameoverAnimation();
 };

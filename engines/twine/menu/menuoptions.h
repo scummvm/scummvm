@@ -44,11 +44,11 @@ private:
 
 	void setOnScreenKeyboard(int x, int y);
 
-	bool enterText(int32 textIdx, char *textTargetBuf, size_t bufSize);
+	bool enterText(TextId textIdx, char *textTargetBuf, size_t bufSize);
 	void drawSelectableCharacters();
 	void drawInputText(int32 centerx, int32 top, int32 type, const char *text);
 	void drawSelectableCharacter(int32 x, int32 y, Common::Rect &dirtyRect);
-	int chooseSave(int textIdx, bool showEmptySlots = false);
+	int chooseSave(TextId textIdx, bool showEmptySlots = false);
 
 public:
 	MenuOptions(TwinEEngine *engine) : _engine(engine) {}

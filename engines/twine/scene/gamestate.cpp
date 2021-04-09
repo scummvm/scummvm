@@ -53,7 +53,7 @@ GameState::GameState(TwinEEngine *engine) : _engine(engine) {
 	clearGameFlags();
 	Common::fill(&inventoryFlags[0], &inventoryFlags[NUM_INVENTORY_ITEMS], 0);
 	Common::fill(&holomapFlags[0], &holomapFlags[NUM_LOCATIONS], 0);
-	Common::fill(&gameChoices[0], &gameChoices[10], 0);
+	Common::fill(&gameChoices[0], &gameChoices[10], TextId::kNone);
 }
 
 void GameState::initEngineProjections() {
@@ -302,7 +302,7 @@ void GameState::setGameFlag(uint8 index, uint8 value) {
 	}
 }
 
-void GameState::processFoundItem(int32 item) {
+void GameState::processFoundItem(InventoryItems item) {
 	ScopedEngineFreeze freeze(_engine);
 	_engine->_grid->centerOnActor(_engine->_scene->sceneHero);
 
@@ -355,7 +355,7 @@ void GameState::processFoundItem(int32 item) {
 
 	ProgressiveTextState textState = ProgressiveTextState::ContinueRunning;
 
-	_engine->_text->initVoxToPlayTextId(item);
+	_engine->_text->initVoxToPlayTextId((TextId)item);
 
 	const int32 bodyAnimIdx = _engine->_animations->getBodyAnimIndex(AnimationTypes::kFoundItem);
 	const AnimData &currentAnimData = _engine->_resources->animData[bodyAnimIdx];
@@ -446,11 +446,11 @@ void GameState::processFoundItem(int32 item) {
 	_engine->_scene->sceneHero->animTimerData = tmpAnimTimer;
 }
 
-void GameState::processGameChoices(int32 choiceIdx) {
+void GameState::processGameChoices(TextId choiceIdx) {
 	_engine->_screens->copyScreen(_engine->frontVideoBuffer, _engine->workVideoBuffer);
 
 	_gameChoicesSettings.reset();
-	_gameChoicesSettings.setTextBankId(_engine->_scene->sceneTextBank + TextBankId::Citadel_Island);
+	_gameChoicesSettings.setTextBankId((TextBankId)((int)_engine->_scene->sceneTextBank + (int)TextBankId::Citadel_Island));
 
 	// filled via script
 	for (int32 i = 0; i < numChoices; i++) {

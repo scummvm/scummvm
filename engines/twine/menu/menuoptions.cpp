@@ -249,7 +249,7 @@ public:
 	}
 };
 
-bool MenuOptions::enterText(int32 textIdx, char *textTargetBuf, size_t bufSize) {
+bool MenuOptions::enterText(TextId textIdx, char *textTargetBuf, size_t bufSize) {
 	textTargetBuf[0] = '\0';
 	_engine->_text->initTextBank(TextBankId::Options_and_menus);
 	char buffer[256];
@@ -364,7 +364,7 @@ bool MenuOptions::newGameMenu() {
 	return true;
 }
 
-int MenuOptions::chooseSave(int textIdx, bool showEmptySlots) {
+int MenuOptions::chooseSave(TextId textIdx, bool showEmptySlots) {
 	const SaveStateList &savegames = _engine->getSaveSlots();
 	if (savegames.empty() && !showEmptySlots) {
 		return -1;
@@ -394,7 +394,7 @@ int MenuOptions::chooseSave(int textIdx, bool showEmptySlots) {
 		const int32 id = _engine->_menu->processMenu(&saveFiles);
 		switch (id) {
 		case kQuitEngine:
-		case TextId::kReturnMenu:
+		case (int32)TextId::kReturnMenu:
 			return -1;
 		default:
 			const int16 slot = saveFiles.getButtonState(id);

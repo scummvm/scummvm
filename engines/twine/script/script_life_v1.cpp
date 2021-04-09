@@ -41,6 +41,7 @@
 #include "twine/renderer/screens.h"
 #include "twine/resources/resources.h"
 #include "twine/scene/scene.h"
+#include "twine/shared.h"
 #include "twine/text.h"
 #include "twine/twine.h"
 
@@ -347,7 +348,7 @@ static int32 processLifeConditions(TwinEEngine *engine, LifeScriptContext &ctx) 
 	}
 	case kcCHOICE:
 		conditionValueSize = 2;
-		engine->_scene->currentScriptValue = engine->_gameState->choiceAnswer;
+		engine->_scene->currentScriptValue = (int16)engine->_gameState->choiceAnswer;
 		break;
 	case kcFUEL:
 		engine->_scene->currentScriptValue = engine->_gameState->inventoryNumGas;
@@ -646,7 +647,7 @@ static int32 lSET_TRACK_OBJ(TwinEEngine *engine, LifeScriptContext &ctx) {
  * @note Opcode @c 0x19
  */
 static int32 lMESSAGE(TwinEEngine *engine, LifeScriptContext &ctx) {
-	const int32 textIdx = ctx.stream.readSint16LE();
+	const TextId textIdx = (TextId)ctx.stream.readSint16LE();
 
 	engine->freezeTime();
 	if (engine->_text->showDialogueBubble) {
@@ -902,7 +903,7 @@ static int32 lRESTORE_L_TRACK(TwinEEngine *engine, LifeScriptContext &ctx) {
  */
 static int32 lMESSAGE_OBJ(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const int32 otherActorIdx = ctx.stream.readByte();
-	const int32 textIdx = ctx.stream.readSint16LE();
+	const TextId textIdx = (TextId)ctx.stream.readSint16LE();
 
 	engine->freezeTime();
 	if (engine->_text->showDialogueBubble) {
@@ -931,7 +932,7 @@ static int32 lINC_CHAPTER(TwinEEngine *engine, LifeScriptContext &ctx) {
  * @note Opcode @c 0x2E
  */
 static int32 lFOUND_OBJECT(TwinEEngine *engine, LifeScriptContext &ctx) {
-	const int32 item = ctx.stream.readByte();
+	const InventoryItems item = (InventoryItems)ctx.stream.readByte();
 
 	engine->_gameState->processFoundItem(item);
 	engine->_redraw->redrawEngineActions(true);
@@ -1249,7 +1250,7 @@ static int32 lSET_USED_INVENTORY(TwinEEngine *engine, LifeScriptContext &ctx) {
  * @note Opcode @c 0x44
  */
 static int32 lADD_CHOICE(TwinEEngine *engine, LifeScriptContext &ctx) {
-	int32 choiceIdx = ctx.stream.readSint16LE();
+	TextId choiceIdx = (TextId)ctx.stream.readSint16LE();
 	engine->_gameState->gameChoices[engine->_gameState->numChoices++] = choiceIdx;
 	return 0;
 }
@@ -1259,7 +1260,7 @@ static int32 lADD_CHOICE(TwinEEngine *engine, LifeScriptContext &ctx) {
  * @note Opcode @c 0x45
  */
 static int32 lASK_CHOICE(TwinEEngine *engine, LifeScriptContext &ctx) {
-	int32 choiceIdx = ctx.stream.readSint16LE();
+	TextId choiceIdx = (TextId)ctx.stream.readSint16LE();
 
 	engine->freezeTime();
 	if (engine->_text->showDialogueBubble) {
@@ -1279,7 +1280,7 @@ static int32 lASK_CHOICE(TwinEEngine *engine, LifeScriptContext &ctx) {
  * @note Opcode @c 0x46
  */
 static int32 lBIG_MESSAGE(TwinEEngine *engine, LifeScriptContext &ctx) {
-	int32 textIdx = ctx.stream.readSint16LE();
+	TextId textIdx = (TextId)ctx.stream.readSint16LE();
 
 	engine->freezeTime();
 	engine->_text->textClipFull();
@@ -1363,9 +1364,9 @@ static int32 lSET_GRM(TwinEEngine *engine, LifeScriptContext &ctx) {
  * @note Opcode @c 0x4D
  */
 static int32 lSAY_MESSAGE(TwinEEngine *engine, LifeScriptContext &ctx) {
-	int16 textEntry = ctx.stream.readSint16LE();
+	TextId textEntry = (TextId)ctx.stream.readSint16LE();
 
-	engine->_redraw->addOverlay(OverlayType::koText, textEntry, 0, 0, ctx.actorIdx, OverlayPosType::koFollowActor, 2);
+	engine->_redraw->addOverlay(OverlayType::koText, (int16)textEntry, 0, 0, ctx.actorIdx, OverlayPosType::koFollowActor, 2);
 
 	ScopedEngineFreeze scoped(engine);
 	engine->_text->initVoxToPlayTextId(textEntry);
@@ -1379,9 +1380,9 @@ static int32 lSAY_MESSAGE(TwinEEngine *engine, LifeScriptContext &ctx) {
  */
 static int32 lSAY_MESSAGE_OBJ(TwinEEngine *engine, LifeScriptContext &ctx) {
 	int32 otherActorIdx = ctx.stream.readByte();
-	int16 textEntry = ctx.stream.readSint16LE();
+	TextId textEntry = (TextId)ctx.stream.readSint16LE();
 
-	engine->_redraw->addOverlay(OverlayType::koText, textEntry, 0, 0, otherActorIdx, OverlayPosType::koFollowActor, 2);
+	engine->_redraw->addOverlay(OverlayType::koText, (int16)textEntry, 0, 0, otherActorIdx, OverlayPosType::koFollowActor, 2);
 
 	ScopedEngineFreeze scoped(engine);
 	engine->_text->initVoxToPlayTextId(textEntry);
@@ -1536,7 +1537,7 @@ static int32 lBUBBLE_OFF(TwinEEngine *engine, LifeScriptContext &ctx) {
  */
 static int32 lASK_CHOICE_OBJ(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const int32 otherActorIdx = ctx.stream.readByte();
-	const int32 choiceIdx = ctx.stream.readSint16LE();
+	const TextId choiceIdx = (TextId)ctx.stream.readSint16LE();
 
 	engine->freezeTime();
 	if (engine->_text->showDialogueBubble) {
@@ -1708,12 +1709,12 @@ static int32 lPROJ_3D(TwinEEngine *engine, LifeScriptContext &ctx) {
  * @note Opcode @c 0x67
  */
 static int32 lTEXT(TwinEEngine *engine, LifeScriptContext &ctx) {
-	int32 textIdx = ctx.stream.readSint16LE();
+	TextId textIdx = (TextId)ctx.stream.readSint16LE();
 
 	const int32 textHeight = 40;
 	if (lTextYPos < engine->height() - textHeight) {
 		if (engine->cfgfile.Version == USA_VERSION) {
-			if (!textIdx) {
+			if (textIdx == TextId::kBehaviourNormal) {
 				textIdx = TextId::kSaveSettings;
 			}
 		}

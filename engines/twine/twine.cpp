@@ -225,15 +225,15 @@ Common::Error TwinEEngine::run() {
 	debug("The original Little Big Adventure game is:");
 	debug("(c) 1994 by Adeline Software International, All Rights Reserved.");
 
+	ConfMan.registerDefault("usehighres", false);
+
 	syncSoundSettings();
 	int32 w = ORIGINAL_WIDTH;
 	int32 h = ORIGINAL_HEIGHT;
-	if (ConfMan.hasKey("usehighres")) {
-		const bool highRes = ConfMan.getBool("usehighres");
-		if (highRes) {
-			w = 1024;
-			h = 768;
-		}
+	const bool highRes = ConfMan.getBool("usehighres");
+	if (highRes) {
+		w = 1024;
+		h = 768;
 	}
 
 	initGraphics(w, h);

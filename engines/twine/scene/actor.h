@@ -318,7 +318,7 @@ public:
 	/** Load hero 3D body and animations */
 	void loadHeroEntities();
 
-	int32 getTextIdForBehaviour() const;
+	TextId getTextIdForBehaviour() const;
 
 	/**
 	 * Set hero behaviour

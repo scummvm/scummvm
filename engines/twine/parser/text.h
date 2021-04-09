@@ -35,7 +35,7 @@ class TextEntry {
 public:
 	Common::String string;	/**< The real string behind the text id */
 	int index;				/**< The index in the text index hqr file. This is also the index in the corresponding vox hqr file */
-	int textIndex;			/**< The text identifier */
+	TextId textIndex;			/**< The text identifier */
 };
 
 class TextData {
@@ -43,9 +43,9 @@ private:
 	// 30 is the max for lba2, lba1 uses 28
 	Common::Array<TextEntry> _texts[30];
 public:
-	bool loadFromHQR(const char *name, int textBankId, int language, int entryCount);
+	bool loadFromHQR(const char *name, TextBankId textBankId, int language, int entryCount);
 
-	const TextEntry *getText(int textBankId, int textIndex) const;
+	const TextEntry *getText(TextBankId textBankId, TextId textIndex) const;
 };
 
 } // End of namespace TwinE

@@ -26,86 +26,11 @@
 #include "common/scummsys.h"
 #include "common/str.h"
 #include "common/rect.h"
+#include "twine/shared.h"
 
 namespace TwinE {
 
 class TextEntry;
-
-// lba
-namespace TextBankId {
-enum _TextBankId {
-	None = -1,
-	Options_and_menus = 0,
-	Credits = 1,
-	Inventory_Intro_and_Holomap = 2,
-	Citadel_Island = 3,
-	Principal_Island = 4,
-	White_Leaf_Desert = 5,
-	Proxima_Island = 6,
-	Rebellion_Island = 7,
-	Hamalayi_mountains_southern_range = 8,
-	Hamalayi_mountains_northern_range = 9,
-	Tippet_Island = 10,
-	Brundle_Island = 11,
-	Fortress_Island = 12,
-	Polar_Island = 13
-};
-}
-
-/** menu text ids */
-namespace TextId {
-enum _TextId {
-	kBehaviourNormal = 0,
-	kBehaviourSporty = 1,
-	kBehaviourAggressiveManual = 2,
-	kBehaviourHiding = 3,
-	kBehaviourAggressiveAuto = 4,
-	kUseProtopack = 5,
-	kSendell = 6,
-	kMusicVolume = 10,
-	kSoundVolume = 11,
-	kCDVolume = 12,
-	kLineInVolume = 13,
-	kMasterVolume = 14,
-	kReturnGame = 15,
-	kSaveSettings = 16,
-	kNewGame = 20,
-	kContinueGame = 21,
-	kQuit = 22,
-	kOptions = 23,
-	kDelete = 24,
-	kReturnMenu = 26,
-	kGiveUp = 27,
-	kContinue = 28,
-	kVolumeSettings = 30,
-	kDetailsPolygonsHigh = 31,
-	kDetailsShadowHigh = 32,
-	//kSceneryZoomOn = 33, // duplicate with 133 - TODO check if this is the same in all languages
-	kCreateNewPlayer = 40,
-	kCreateSaveGame = 41,
-	kEnterYourName = 42,
-	kPlayerAlreadyExists = 43,
-	kEnterYourNewName = 44,
-	kDeleteSaveGame = 45,
-	kSaveManage = 46,
-	kAdvanced = 47,
-	kDelete2 = 48, // difference between 24 and 48?
-	kTransferVoices = 49,
-	kPleaseWaitWhileVoicesAreSaved = 50,
-	kRemoveProtoPack = 105,
-	kDetailsPolygonsMiddle = 131,
-	kShadowsFigures = 132,
-	kSceneryZoomOn = 133,
-	kIntroText1 = 150,
-	kIntroText2 = 151,
-	kIntroText3 = 152,
-	kBookOfBu = 161,
-	kBonusList = 162,
-	kDetailsPolygonsLow = 231,
-	kShadowsDisabled = 232,
-	kNoSceneryZoom = 233
-};
-}
 
 #define TEXT_MAX_FADE_IN_CHR 32
 
@@ -134,7 +59,7 @@ class TwinEEngine;
 class Text {
 private:
 	TwinEEngine *_engine;
-	void initVoxBank(int32 bankIdx);
+	void initVoxBank(TextBankId bankIdx);
 	/**
 	 * Draw a certain character in the screen
 	 * @param x X coordinate in screen
@@ -171,10 +96,8 @@ private:
 	 */
 	void fadeInCharacters(int32 counter, int32 fontColor);
 
-	// RECHECK THIS LATER
-	int32 _currentBankIdx = TextBankId::None; // textVar1
+	TextBankId _currentBankIdx = TextBankId::None;
 
-	// TODO: refactor all this variables and related functions
 	char _progressiveTextBuffer[256] {'\0'};
 	const char *_currentTextPosition = nullptr;
 
@@ -199,8 +122,8 @@ private:
 	int32 _currDialTextSize = 0;
 
 	char _currMenuTextBuffer[256];
-	int32 _currMenuTextBank = TextBankId::None;
-	int32 _currMenuTextIndex = -1;
+	TextBankId _currMenuTextBank = TextBankId::None;
+	TextId _currMenuTextIndex = TextId::kNone;
 
 	/** Pixel size between dialogue text */
 	int32 _dialSpaceBetween = 0;
@@ -227,7 +150,7 @@ private:
 	int32 _dialTextBoxLines = 0; // dialogueBoxParam1
 	int32 _dialTextBoxMaxX = 0; // dialogueBoxParam2
 
-	bool displayText(int32 index, bool showText, bool playVox, bool loop);
+	bool displayText(TextId index, bool showText, bool playVox, bool loop);
 public:
 	Text(TwinEEngine *engine);
 	~Text();
@@ -252,9 +175,9 @@ public:
 	 * Initialize dialogue
 	 * @param bankIdx Text bank index
 	 */
-	void initTextBank(int32 bankIdx);
+	void initTextBank(TextBankId bankIdx);
 	void initSceneTextBank();
-	inline int textBank() const {
+	inline TextBankId textBank() const {
 		return _currentBankIdx;
 	}
 
@@ -266,7 +189,7 @@ public:
 	 */
 	void drawText(int32 x, int32 y, const char *dialogue);
 
-	bool drawTextProgressive(int32 index, bool playVox = true, bool loop = true);
+	bool drawTextProgressive(TextId index, bool playVox = true, bool loop = true);
 
 	/**
 	 * Gets dialogue text width size
@@ -279,9 +202,9 @@ public:
 	void initDialogueBox();
 	void initInventoryDialogueBox();
 
-	void initText(int32 index);
-	void initInventoryText(int index);
-	void initItemFoundText(int index);
+	void initText(TextId index);
+	void initInventoryText(InventoryItems index);
+	void initItemFoundText(InventoryItems index);
 	void fadeInRemainingChars();
 	ProgressiveTextState updateProgressiveText();
 
@@ -317,7 +240,7 @@ public:
 	 * @sa initTextBank()
 	 * @param index dialogue index
 	 */
-	bool getText(int32 index);
+	bool getText(TextId index);
 
 	/**
 	 * Gets menu dialogue text
@@ -325,19 +248,19 @@ public:
 	 * @param text dialogue text buffer to display
 	 * @param textSize The size of the text buffer
 	 */
-	bool getMenuText(int32 index, char *text, uint32 textSize);
+	bool getMenuText(TextId index, char *text, uint32 textSize);
 
 	void textClipFull();
 	void textClipSmall();
 
-	void drawAskQuestion(int32 index);
-	void drawHolomapLocation(int32 index);
+	void drawAskQuestion(TextId index);
+	void drawHolomapLocation(TextId index);
 
 	bool playVox(const TextEntry *text);
 	bool playVoxSimple(const TextEntry *text);
 	bool stopVox(const TextEntry *text);
 	bool initVoxToPlay(const TextEntry *text);
-	bool initVoxToPlayTextId(int textId);
+	bool initVoxToPlayTextId(TextId index);
 };
 
 } // namespace TwinE

@@ -38,6 +38,7 @@
 #include "twine/renderer/screens.h"
 #include "twine/resources/hqr.h"
 #include "twine/resources/resources.h"
+#include "twine/scene/gamestate.h"
 #include "twine/scene/scene.h"
 #include "twine/twine.h"
 
@@ -55,7 +56,7 @@ Text::Text(TwinEEngine *engine) : _engine(engine) {
 Text::~Text() {
 }
 
-void Text::initVoxBank(int32 bankIdx) {
+void Text::initVoxBank(TextBankId bankIdx) {
 	static const char *LanguageSuffixTypes[] = {
 	    "sys",
 	    "cre",
@@ -73,17 +74,17 @@ void Text::initVoxBank(int32 bankIdx) {
 	    "010", // Polar Island voices
 	    "011"  //
 	};
-	if (bankIdx < 0 || bankIdx >= ARRAYSIZE(LanguageSuffixTypes)) {
-		error("bankIdx is out of bounds: %i", bankIdx);
+	if ((int)bankIdx < 0 || (int)bankIdx >= ARRAYSIZE(LanguageSuffixTypes)) {
+		error("bankIdx is out of bounds: %i", (int)bankIdx);
 	}
 	// get the correct vox hqr file
-	currentVoxBankFile = Common::String::format("%s%s" VOX_EXT, LanguageTypes[_engine->cfgfile.LanguageId].id, LanguageSuffixTypes[bankIdx]);
+	currentVoxBankFile = Common::String::format("%s%s" VOX_EXT, LanguageTypes[_engine->cfgfile.LanguageId].id, LanguageSuffixTypes[(int)bankIdx]);
 	// TODO: loop through other languages and take the scummvm settings regarding voices into account...
 
 	// TODO check the rest to reverse
 }
 
-bool Text::initVoxToPlayTextId(int textId) {
+bool Text::initVoxToPlayTextId(TextId textId) {
 	const TextEntry *text = _engine->_resources->getText(_currentBankIdx, textId);
 	return initVoxToPlay(text);
 }
@@ -148,7 +149,7 @@ bool Text::stopVox(const TextEntry *text) {
 	return true;
 }
 
-void Text::initTextBank(int32 bankIdx) {
+void Text::initTextBank(TextBankId bankIdx) {
 	// don't load if we already have the dialogue text bank loaded
 	if (bankIdx == _currentBankIdx) {
 		return;
@@ -159,7 +160,7 @@ void Text::initTextBank(int32 bankIdx) {
 }
 
 void Text::initSceneTextBank() {
-	initTextBank(_engine->_scene->sceneTextBank + TextBankId::Citadel_Island);
+	initTextBank((TextBankId)((int)_engine->_scene->sceneTextBank + (int)TextBankId::Citadel_Island));
 }
 
 void Text::drawCharacter(int32 x, int32 y, uint8 character) {
@@ -293,16 +294,16 @@ void Text::initInventoryDialogueBox() {
 	_fadeInCharactersPos = 0;
 }
 
-void Text::initInventoryText(int index) {
+void Text::initInventoryText(InventoryItems index) {
 	// 100 if the offset for the inventory item descriptions
-	initText(100 + index);
+	initText((TextId)(100 + (int)index));
 }
 
-void Text::initItemFoundText(int index) {
-	initText(100 + index);
+void Text::initItemFoundText(InventoryItems index) {
+	initText((TextId)(100 + (int)index));
 }
 
-void Text::initText(int32 index) {
+void Text::initText(TextId index) {
 	if (!getText(index)) {
 		_hasValidTextHandle = false;
 		return;
@@ -579,9 +580,9 @@ ProgressiveTextState Text::updateProgressiveText() {
 	return ProgressiveTextState::ContinueRunning;
 }
 
-bool Text::displayText(int32 index, bool showText, bool playVox, bool loop) {
+bool Text::displayText(TextId index, bool showText, bool playVox, bool loop) {
 	debug(3, "displayText(index = %i, showText = %s, playVox = %s)",
-		index, showText ? "true" : "false", playVox ? "true" : "false");
+		(int)index, showText ? "true" : "false", playVox ? "true" : "false");
 	if (playVox) {
 		const TextEntry *textEntry = _engine->_resources->getText(_currentBankIdx, index);
 		// get right VOX entry index
@@ -655,7 +656,7 @@ bool Text::displayText(int32 index, bool showText, bool playVox, bool loop) {
 	return aborted;
 }
 
-bool Text::drawTextProgressive(int32 index, bool playVox, bool loop) {
+bool Text::drawTextProgressive(TextId index, bool playVox, bool loop) {
 	_engine->exitSceneryView();
 	_engine->_interface->saveClip();
 	_engine->_interface->resetClip();
@@ -688,7 +689,7 @@ void Text::setTextCrossColor(int32 stopColor, int32 startColor, int32 stepSize) 
 	_dialTextBufferSize = ((startColor - stopColor) + 1) / stepSize;
 }
 
-bool Text::getText(int32 index) {
+bool Text::getText(TextId index) {
 	const TextEntry *textEntry = _engine->_resources->getText(_currentBankIdx, index);
 	if (textEntry == nullptr) {
 		return false;
@@ -699,11 +700,11 @@ bool Text::getText(int32 index) {
 	// RECHECK: this was added for vox playback
 	currDialTextEntry = textEntry;
 
-	debug(3, "text for bank %i with index %i (currIndex: %i): %s", _currentBankIdx, textEntry->index, textEntry->textIndex, _currDialTextPtr);
+	debug(3, "text for bank %i with index %i (currIndex: %i): %s", (int)_currentBankIdx, textEntry->index, (int)textEntry->textIndex, _currDialTextPtr);
 	return true;
 }
 
-bool Text::getMenuText(int32 index, char *text, uint32 textSize) {
+bool Text::getMenuText(TextId index, char *text, uint32 textSize) {
 	if (index == _currMenuTextIndex) {
 		if (_currMenuTextBank == _engine->_scene->sceneTextBank) {
 			Common::strlcpy(text, _currMenuTextBuffer, textSize);
@@ -753,11 +754,11 @@ void Text::textClipSmall() {
 	_dialTextBoxMaxX = _engine->width() - 2 * margin - 2 * PADDING;
 }
 
-void Text::drawAskQuestion(int32 index) {
+void Text::drawAskQuestion(TextId index) {
 	displayText(index, true, true, true);
 }
 
-void Text::drawHolomapLocation(int32 index) {
+void Text::drawHolomapLocation(TextId index) {
 	textClipSmall();
 	setFontCrossColor(COLOR_WHITE);
 	_engine->_interface->drawFilledRect(_dialTextBox, COLOR_BLACK);

@@ -149,7 +149,7 @@ void Scene::setBonusParameterFlags(ActorStruct *act, uint16 bonusFlags) {
 
 bool Scene::loadSceneLBA2() {
 	Common::MemoryReadStream stream(currentScene, _currentSceneSize);
-	sceneTextBank = stream.readByte();
+	sceneTextBank = (TextBankId)stream.readByte();
 	_currentGameOverScene = stream.readByte();
 	stream.skip(4);
 
@@ -281,7 +281,7 @@ bool Scene::loadSceneLBA1() {
 	Common::MemoryReadStream stream(currentScene, _currentSceneSize);
 
 	// load scene ambience properties
-	sceneTextBank = stream.readByte();
+	sceneTextBank = (TextBankId)stream.readByte();
 	_currentGameOverScene = stream.readByte();
 	stream.skip(4);
 
