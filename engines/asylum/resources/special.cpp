@@ -25,6 +25,7 @@
 #include "asylum/resources/actor.h"
 #include "asylum/resources/object.h"
 #include "asylum/resources/encounters.h"
+#include "asylum/resources/polygons.h"
 #include "asylum/resources/script.h"
 #include "asylum/resources/worldstats.h"
 
@@ -38,6 +39,22 @@
 #include "asylum/asylum.h"
 
 namespace Asylum {
+
+static const Common::Point actorRects[][2] = {
+	{Common::Point(1100,  150), Common::Point(  30,   95)},
+	{Common::Point( 695,  159), Common::Point( 113,   54)},
+	{Common::Point( 925,  158), Common::Point( 129,   66)},
+	{Common::Point(1158,  162), Common::Point( 135,   86)},
+	{Common::Point(1319,  218), Common::Point( 150,  133)},
+	{Common::Point( 430,  351), Common::Point(  78,   56)},
+	{Common::Point( 762,  339), Common::Point( 102,   59)},
+	{Common::Point( 962,  328), Common::Point( 118,   45)},
+	{Common::Point( 848,  161), Common::Point(  36,   55)},
+	{Common::Point( 861,  334), Common::Point(  23,   79)},
+	{Common::Point( 600,  193), Common::Point(  21,   36)},
+	{Common::Point( 805,  156), Common::Point( 152,   69)},
+	{Common::Point( 641,  162), Common::Point( 150,   64)},
+};
 
 static const int32 zapPatterns[9][16] = {
 	{2292, 2299, 2301, 2302, 2303, 2304, 2306, 2307, 2310, 2311, 2312, 2313, 2314},
@@ -107,6 +124,10 @@ void Special::run(Object* object, ActorIndex index) {
 
 	case kChapter9:
 		chapter9(object, index);
+		break;
+
+	case kChapter11:
+		chapter11(object, index);
 		break;
 
 	case kChapter12:
@@ -709,6 +730,265 @@ void Special::chapter9(Object *object, ActorIndex actorIndex) {
 			}
 		}
 		break;
+	}
+}
+
+void Special::chapter11(Object *object, ActorIndex actorIndex) {
+	Actor *actor0 = getScene()->getActor(0), *actor1 = getScene()->getActor(1);
+	Actor *player = getScene()->getActor(getSharedData()->getPlayerIndex());
+	Common::Point sum;
+
+	playChapterSound(object, actorIndex);
+
+	if (actorIndex == kActorInvalid) {
+		switch (object->getId()) {
+		default:
+			return;
+
+		case kObjectABarrier:
+			if (actor0->isVisible() && _vm->isGameFlagSet(kGameFlag708)) {
+				if (!getSound()->isPlaying(getSpeech()->getSoundResourceId()))
+					_vm->clearGameFlag(kGameFlag219);
+				if (!getWorld()->field_E848C && !getSound()->isPlaying(getWorld()->soundResourceIds[3]))
+					getSound()->playSound(getWorld()->soundResourceIds[3], false, Config.sfxVolume);
+				if (getWorld()->field_E848C == 1 && !getSound()->isPlaying(getWorld()->soundResourceIds[4]))
+					getSound()->playSound(getWorld()->soundResourceIds[4], false, Config.sfxVolume);
+				if (getWorld()->field_E848C == 2 && !getSound()->isPlaying(getWorld()->soundResourceIds[5]))
+					getSound()->playSound(getWorld()->soundResourceIds[5], false, Config.sfxVolume);
+			}
+
+			if (_vm->isGameFlagNotSet(kGameFlag1099)) {
+				_vm->setGameFlag(kGameFlag1099);
+				getScene()->getActor(9)->setReaction(0, 1);
+				getScene()->getActor(9)->setReaction(1, 2);
+				getScene()->getActor(9)->setReaction(2, 3);
+			}
+
+			if (_vm->isGameFlagSet(kGameFlag561) && _vm->isGameFlagNotSet(kGameFlag562)) {
+				ActorStatus playerStatus = player->getStatus();
+				if (playerStatus != kActorStatusGettingHurt && playerStatus != kActorStatusRestarting && playerStatus != kActorStatusAttacking && playerStatus != kActorStatusWalkingTo2)
+					actor0->updateStatus(kActorStatusAttacking);
+				_vm->clearGameFlag(kGameFlag561);
+			}
+
+			if (actor1->getTickCount() != -1 && actor1->getTickCount() < _vm->getTick()) {
+				actor1->setTickCount(-1);
+				actor1->show();
+				actor1->getPoint1()->x = actor0->getPoint2()->x + actor0->getPoint1()->x - actor1->getPoint2()->x;
+				actor1->getPoint1()->y = actor0->getPoint2()->y + actor0->getPoint1()->y - actor1->getPoint2()->y;
+				actor1->updateStatus(kActorStatusWalking2);
+			}
+
+			tentacle(10, kGameFlag557, kGameFlag558, kGameFlag563, actorRects[0][0], actorRects[0][1]);
+			tentacle(11, kGameFlag722, kGameFlag723, kGameFlag724, actorRects[8][0], actorRects[8][1]);
+			tentacle(12, kGameFlag725, kGameFlag726, kGameFlag727, actorRects[9][0], actorRects[9][1]);
+			tentacle(13, kGameFlag728, kGameFlag729, kGameFlag730, actorRects[10][0], actorRects[10][1]);
+			rock(2, kGameFlag597, kGameFlag598, kGameFlag599, kGameFlag600, actorRects[1][0], actorRects[1][1]);
+			rock(3, kGameFlag684, kGameFlag685, kGameFlag686, kGameFlag687, actorRects[2][0], actorRects[2][1]);
+			rock(4, kGameFlag688, kGameFlag689, kGameFlag690, kGameFlag691, actorRects[3][0], actorRects[3][1]);
+			rock(5, kGameFlag692, kGameFlag693, kGameFlag694, kGameFlag695, actorRects[4][0], actorRects[4][1]);
+			rock(6, kGameFlag696, kGameFlag697, kGameFlag698, kGameFlag699, actorRects[5][0], actorRects[5][1]);
+			rock(7, kGameFlag700, kGameFlag701, kGameFlag702, kGameFlag703, actorRects[6][0], actorRects[6][1]);
+			rock(8, kGameFlag704, kGameFlag705, kGameFlag706, kGameFlag707, actorRects[7][0], actorRects[7][1]);
+			rock(16, kGameFlag1054, kGameFlag1055, kGameFlag1056, kGameFlag1057, actorRects[11][0], actorRects[11][1]);
+			rock(17, kGameFlag1058, kGameFlag1059, kGameFlag1060, kGameFlag1061, actorRects[12][0], actorRects[12][1]);
+			break;
+
+		case kObjectMonsterHurt:
+			object->setFrameIndex(object->getFrameIndex() + 1);
+			if (object->getFrameIndex() == 4) {
+				if (getWorld()->field_E8518 <= 2) {
+					object->setFrameIndex(0);
+					_vm->clearGameFlag(kGameFlag582);
+					_vm->setGameFlag(kGameFlag565);
+				} else {
+					_vm->clearGameFlag(kGameFlag582);
+					_vm->setGameFlag(kGameFlag566);
+				}
+			}
+			break;
+
+		case kObjectMonsterDeath:
+			if (object->getFrameIndex() == object->getFrameCount() - 1) {
+				_vm->clearGameFlag(kGameFlag566);
+				_vm->setGameFlag(kGameFlag596);
+			} else {
+				if (object->getFrameIndex() == 40) {
+					_vm->setGameFlag(kGameFlag219);
+					getSpeech()->playPlayer(134);
+				}
+			}
+			break;
+
+		case kObjectMonsterUp:
+			object->setFrameIndex(object->getFrameIndex() + 1);
+			if (object->getFrameIndex() >= object->getFrameCount()) {
+				_vm->clearGameFlag(kGameFlag564);
+				getSpeech()->playPlayer(0);
+				object->setFrameIndex(0);
+				_vm->setGameFlag(kGameFlag565);
+				getWorld()->field_E8490 = -666;
+			}
+			break;
+
+		case kObjectMonsterAttack:
+			if (object->getFrameIndex() != 9)
+				object->setFrameIndex(object->getFrameIndex() + 1);
+			if (object->getFrameIndex() == 8) {
+				getSound()->playSound(object->getSoundResourceId(), false, Config.sfxVolume);
+
+				switch (getWorld()->field_E8494) {
+				default:
+					break;
+
+				case 0:
+					_vm->setGameFlag(kGameFlag567);
+					break;
+
+				case 1:
+					_vm->setGameFlag(kGameFlag568);
+					break;
+
+				case 2:
+					_vm->setGameFlag(kGameFlag569);
+					break;
+
+				case 3:
+					_vm->setGameFlag(kGameFlag567);
+					_vm->setGameFlag(kGameFlag568);
+					_vm->setGameFlag(kGameFlag569);
+					break;
+				}
+
+				if (++getWorld()->field_E8494 > 3)
+					getWorld()->field_E8494 = 0;
+			}
+
+			if (object->getFrameIndex() >= object->getFrameCount()) {
+				_vm->clearGameFlag(kGameFlag570);
+				object->setFrameIndex(0);
+				_vm->setGameFlag(kGameFlag565);
+			}
+			break;
+
+		case kObjectPuke1:
+			sum = *player->getPoint1() + *player->getPoint2();
+			if (getScene()->polygons()->get(getWorld()->actions[getWorld()->getActionAreaIndexById(1591)]->polygonIndex).contains(sum)) {
+				ActorStatus playerStatus = getScene()->getActor(getSharedData()->getPlayerIndex())->getStatus();
+				if (playerStatus == kActorStatusWalking2 || playerStatus == kActorStatusAttacking || playerStatus == kActorStatusEnabled2) {
+					actor0->updateStatus(kActorStatusGettingHurt);
+					getSpeech()->playPlayer(131);
+					++getWorld()->field_E848C;
+					getSound()->stop(getWorld()->soundResourceIds[3]);
+					getSound()->stop(getWorld()->soundResourceIds[4]);
+					getSound()->stop(getWorld()->soundResourceIds[5]);
+				}
+			}
+
+			object->setFrameIndex(object->getFrameIndex() + 1);
+			if (object->getFrameIndex() == 15) {
+				Object *otherObject = getWorld()->getObjectById(kObjectMonsterAttack);
+				otherObject->setFrameIndex(otherObject->getFrameIndex() + 1);
+			}
+
+			if (object->getFrameIndex() >= object->getFrameCount()) {
+				_vm->clearGameFlag(kGameFlag567);
+				object->setFrameIndex(0);
+			}
+			break;
+
+		case kObjectPuke2:
+			sum = *player->getPoint1() + *player->getPoint2();
+			if (getScene()->polygons()->get(getWorld()->actions[getWorld()->getActionAreaIndexById(1590)]->polygonIndex).contains(sum)) {
+				ActorStatus playerStatus = getScene()->getActor(getSharedData()->getPlayerIndex())->getStatus();
+				if (playerStatus == kActorStatusWalking2 || playerStatus == kActorStatusAttacking || playerStatus == kActorStatusEnabled2) {
+					actor0->updateStatus(kActorStatusGettingHurt);
+					++getWorld()->field_E848C;
+					getSound()->stop(getWorld()->soundResourceIds[3]);
+					getSound()->stop(getWorld()->soundResourceIds[4]);
+					getSound()->stop(getWorld()->soundResourceIds[5]);
+					getSpeech()->playPlayer(131);
+				}
+			}
+
+			object->setFrameIndex(object->getFrameIndex() + 1);
+			if (object->getFrameIndex() == 15 && _vm->isGameFlagNotSet(kGameFlag567)) {
+				Object *otherObject = getWorld()->getObjectById(kObjectMonsterAttack);
+				otherObject->setFrameIndex(otherObject->getFrameIndex() + 1);
+			}
+
+			if (object->getFrameIndex() >= object->getFrameCount()) {
+				_vm->clearGameFlag(kGameFlag568);
+				object->setFrameIndex(0);
+			}
+			break;
+
+		case kObjectPuke3:
+			sum = *player->getPoint1() + *player->getPoint2();
+			if (getScene()->polygons()->get(getWorld()->actions[getWorld()->getActionAreaIndexById(1589)]->polygonIndex).contains(sum)) {
+				ActorStatus playerStatus = getScene()->getActor(getSharedData()->getPlayerIndex())->getStatus();
+				if (playerStatus == kActorStatusWalking2 || playerStatus == kActorStatusAttacking || playerStatus == kActorStatusEnabled2) {
+					actor0->updateStatus(kActorStatusGettingHurt);
+					++getWorld()->field_E848C;
+					getSound()->stop(getWorld()->soundResourceIds[3]);
+					getSound()->stop(getWorld()->soundResourceIds[4]);
+					getSound()->stop(getWorld()->soundResourceIds[5]);
+					getSpeech()->playPlayer(131);
+				}
+			}
+
+			object->setFrameIndex(object->getFrameIndex() + 1);
+			if (object->getFrameIndex() == 15 && _vm->isGameFlagNotSet(kGameFlag567)) {
+				Object *otherObject = getWorld()->getObjectById(kObjectMonsterAttack);
+				otherObject->setFrameIndex(otherObject->getFrameIndex() + 1);
+			}
+
+			if (object->getFrameIndex() >= object->getFrameCount()) {
+				_vm->clearGameFlag(kGameFlag569);
+				object->setFrameIndex(0);
+			}
+			break;
+
+		case kObjectMonsterStatus:
+			_vm->setGameFlag(kGameFlag572);
+			if (object->getFrameIndex() >= getWorld()->dword_4563A0 + object->getFrameIndex()) {
+				object->setFrameIndex(object->getFrameCount() - 1);
+				getWorld()->dword_4563A0 = -1;
+			}
+
+			if (object->getFrameIndex() < 0) {
+				object->setFrameIndex(0);
+				getWorld()->dword_4563A0 = 1;
+			}
+
+			if (getWorld()->field_E8490 == -666)
+				getWorld()->field_E8490 = _vm->getTick() + 3000;
+
+			if (getWorld()->field_E8490 < _vm->getTick()) {
+				getWorld()->field_E8490 = -666;
+				if (_vm->isGameFlagSet(kGameFlag572)) {
+					_vm->clearGameFlag(kGameFlag565);
+					_vm->setGameFlag(kGameFlag570);
+				}
+			}
+			break;
+
+		}
+	} else {
+		if (actorIndex == 1 && !actor0->isVisible()) {
+			if (_vm->isGameFlagNotSet(kGameFlag560))
+				actor1->setFrameIndex((actor1->getFrameIndex() + 1) % actor1->getFrameCount());
+			if (getWorld()->tickCount1 < _vm->getTick() && !actor1->getFrameIndex()) {
+				if (_vm->isGameFlagNotSet(kGameFlag560)) {
+					_vm->setGameFlag(kGameFlag560);
+					actor1->hide();
+					actor1->updateStatus(kActorStatusEnabled);
+					actor0->updateStatus(kActorStatusEnabled);
+					getWorld()->field_E848C = 0;
+					getScript()->queueScript(getWorld()->getActionAreaIndexById(1574), kActorSarah);
+				}
+			}
+		}
 	}
 }
 
@@ -1724,6 +2004,90 @@ void Special::checkOtherObject(Object *object, ObjectId otherObjectId, GameFlag 
 		_vm->clearGameFlag(flagToClear);
 		_vm->setGameFlag(flagToSet);
 		otherObject->setNextFrame(kObjectFlag8);
+	}
+}
+
+//////////////////////////////////////////////////////////////////////////
+// Chapter 11 helpers
+//////////////////////////////////////////////////////////////////////////
+
+void Special::rock(ActorIndex actorIndex, GameFlag flag1, GameFlag flag2, GameFlag flag3, GameFlag flag4, const Common::Point &p1, const Common::Point &p2) {
+	Actor *actor = getScene()->getActor(actorIndex);
+
+	if (!(_vm->isGameFlagNotSet(flag1) && _vm->isGameFlagSet(flag2)))
+		return;
+
+	if (_vm->isGameFlagNotSet(flag3)) {
+		getWorld()->tickValueArray[actorIndex] = _vm->getTick() + 1500;
+
+		actor->getPoint1()->x = p1.x + rnd(p2.x - p1.x) - actor->getPoint2()->x;
+		actor->getPoint1()->y = p1.y + rnd(p2.y - p1.y) - actor->getPoint2()->y;
+
+		getWorld()->field_E8594[actorIndex] = actor->getPoint1()->y;
+		actor->getPoint1()->y -= 160;
+
+		actor->updateStatus(kActorStatusEnabled2);
+		getSound()->playSound(getWorld()->soundResourceIds[0], false, Config.sfxVolume - 10);
+		_vm->setGameFlag(flag3);
+		getScene()->getActor(actorIndex)->show();
+	} else if (_vm->getTick() > getWorld()->tickValueArray[actorIndex]) {
+		if (_vm->isGameFlagNotSet(flag4)) {
+			_vm->setGameFlag(flag4);
+			actor->setFrameIndex(0);
+			actor->updateStatus(kActorStatusWalking2);
+			if (actorIndex == 8 || actorIndex == 9)
+				actor->setField944(1);
+			actor->getPoint1()->y = 0;
+		} else {
+			if (actor->getPoint1()->y <= getWorld()->field_E8594[actorIndex]) {
+				actor->getPoint1()->y += 27;
+				actor->setFrameIndex((actor->getFrameIndex() + 1) % actor->getFrameCount());
+			} else if (actor->getStatus() == kActorStatusAttacking) {
+				actor->setFrameIndex((actor->getFrameIndex() + 1) % actor->getFrameCount());
+				if (actor->getFrameIndex() == actor->getFrameCount() - 1)
+					actor->hide();
+			} else {
+				actor->setField944(3);
+				getSound()->playSound(getWorld()->soundResourceIds[1], false, Config.sfxVolume - 10);
+				actor->updateStatus(kActorStatusAttacking);
+				actor->setFrameIndex(4);
+
+				ActorIndex playerIndex = getSharedData()->getPlayerIndex();
+				Common::Point sum = *actor->getPoint1() + *actor->getPoint2();
+				Common::Point playerSum = *getScene()->getActor(playerIndex)->getPoint1() + *getScene()->getActor(playerIndex)->getPoint2();
+				if (Actor::euclidianDistance(sum, playerSum) < 30) {
+					getScene()->getActor(0)->updateStatus(kActorStatusGettingHurt);
+					++getWorld()->field_E848C;
+					getSound()->stop(getWorld()->soundResourceIds[3]);
+					getSound()->stop(getWorld()->soundResourceIds[4]);
+					getSound()->stop(getWorld()->soundResourceIds[5]);
+					getSpeech()->playPlayer(131);
+				}
+			}
+		}
+	}
+}
+
+void Special::tentacle(ActorIndex actorIndex, GameFlag flag1, GameFlag flag2, GameFlag flag3, const Common::Point &p1, const Common::Point &p2) {
+	Actor *actor = getScene()->getActor(actorIndex);
+	if (_vm->isGameFlagSet(flag1)
+	 && _vm->isGameFlagNotSet(flag3)
+	 && !_vm->isGameFlagSet(flag2)
+	 && _vm->getTick() > getWorld()->tickValueArray[actorIndex + 10]) {
+		actor->getPoint1()->x = p1.x + rnd(p2.x - p1.x) - actor->getPoint2()->x;
+		actor->getPoint1()->y = p1.y + rnd(p2.y - p1.y) - actor->getPoint2()->y;
+
+		ActorIndex playerIndex = getSharedData()->getPlayerIndex();
+		Common::Point sum = *actor->getPoint1() + *actor->getPoint2();
+		Common::Point playerSum = *getScene()->getActor(playerIndex)->getPoint1() + *getScene()->getActor(playerIndex)->getPoint2();
+
+		if (Actor::euclidianDistance(sum, playerSum) > 40) {
+			getWorld()->tickValueArray[actorIndex + 10] = 0;
+			actor->show();
+			actor->updateStatus(kActorStatusWalking2);
+			actor->setFrameIndex(0);
+			_vm->setGameFlag(flag2);
+		}
 	}
 }
 

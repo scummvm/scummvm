@@ -92,6 +92,7 @@ WorldStats::WorldStats(AsylumEngine *engine) : _vm(engine) {
 	memset(&wheels, 0, sizeof(wheels));
 	tickCount1 = 0;
 	memset(&field_E8660, 0, sizeof(field_E8660));
+	dword_4563A0 = 0;
 }
 
 WorldStats::~WorldStats() {

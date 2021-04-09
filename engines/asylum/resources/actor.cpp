@@ -519,8 +519,8 @@ void Actor::update() {
 				break;
 
 			case 1:
-				updateStatus12_Chapter11_Actor1();
-				return;
+				getSpecial()->run(NULL, _index);
+				break;
 
 			case 10:
 			case 11:
@@ -2327,16 +2327,6 @@ void Actor::updateStatusEnabled() {
 			break;
 		}
 	}
-
-	// XXX
-	if (getWorld()->chapter == kChapter11 && _index == 9)
-		// the following block is originally from updateStatus12_Chapter11_Actor1()
-		if (_vm->isGameFlagNotSet(kGameFlag1099)) {
-			_vm->setGameFlag(kGameFlag1099);
-			_reaction[0] = 1;
-			_reaction[1] = 2;
-			_reaction[2] = 3;
-		}
 }
 
 void Actor::updateStatusEnabledProcessStatus(int16 testX, int16 testY, uint32 counter, int16 setX, int16 setY) {
@@ -2488,28 +2478,6 @@ void Actor::updateStatus12_Chapter2_Actor11() {
 				updateStatus(kActorStatusAttacking);
 			}
 		}
-	}
-}
-
-void Actor::updateStatus12_Chapter11_Actor1() {
-	// Original seems to have lots of dead code here
-	Actor *actor0 = getScene()->getActor(0);
-	if (actor0->isVisible())
-		return;
-
-	if (_vm->isGameFlagNotSet(kGameFlag560))
-		_frameIndex = (_frameIndex + 1) & _frameCount;
-
-	if (getWorld()->tickCount1 < (int32)_vm->getTick()
-	 && !_frameIndex
-	 && _vm->isGameFlagNotSet(kGameFlag560)) {
-		_vm->setGameFlag(kGameFlag560);
-		hide();
-		updateStatus(kActorStatusEnabled);
-		actor0->updateStatus(kActorStatusEnabled);
-
-		getWorld()->field_E848C = 0;
-		getScript()->queueScript(getWorld()->getActionAreaById(1574)->scriptIndex, 1);
 	}
 }
 
