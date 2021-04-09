@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.5.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-04-08 19:04+0000\n"
+"POT-Creation-Date: 2021-04-09 13:08+0000\n"
 "PO-Revision-Date: 2020-10-26 22:27+0000\n"
 "Last-Translator: anonymous <noreply@weblate.org>\n"
 "Language-Team: Swedish <https://translations.scummvm.org/projects/scummvm/"
@@ -7335,6 +7335,32 @@ msgstr "~F~öregående"
 #, fuzzy
 msgid "Next location"
 msgstr "~F~öregående"
+
+#: engines/twine/parser/text.cpp:69
+#, fuzzy
+#| msgid "Enable high resolution graphics"
+msgctxt "Options menu"
+msgid "High resolution on"
+msgstr "Aktivera högupplöst grafik"
+
+#: engines/twine/parser/text.cpp:70
+#, fuzzy
+#| msgid "Enable high resolution graphics"
+msgctxt "Options menu"
+msgid "High resolution off"
+msgstr "Aktivera högupplöst grafik"
+
+#: engines/twine/parser/text.cpp:71
+msgctxt "Options menu"
+msgid "Wall collision on"
+msgstr ""
+
+#: engines/twine/parser/text.cpp:72
+#, fuzzy
+#| msgid "Snap scroll off"
+msgctxt "Options menu"
+msgid "Wall collision off"
+msgstr "Snäpprullning av"
 
 #: engines/ultima/shared/early/ultima_early.cpp:71
 msgid "Could not find correct ultima.dat datafile"

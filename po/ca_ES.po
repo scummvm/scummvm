@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-04-08 19:04+0000\n"
+"POT-Creation-Date: 2021-04-09 13:08+0000\n"
 "PO-Revision-Date: 2021-03-21 08:24+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
@@ -7335,6 +7335,29 @@ msgstr "~A~nterior"
 #, fuzzy
 msgid "Next location"
 msgstr "~A~nterior"
+
+#: engines/twine/parser/text.cpp:69
+#, fuzzy
+msgctxt "Options menu"
+msgid "High resolution on"
+msgstr "Activa la barra gràfica dels punts d'impacte"
+
+#: engines/twine/parser/text.cpp:70
+#, fuzzy
+msgctxt "Options menu"
+msgid "High resolution off"
+msgstr "Activa la barra gràfica dels punts d'impacte"
+
+#: engines/twine/parser/text.cpp:71
+msgctxt "Options menu"
+msgid "Wall collision on"
+msgstr ""
+
+#: engines/twine/parser/text.cpp:72
+#, fuzzy
+msgctxt "Options menu"
+msgid "Wall collision off"
+msgstr "Desplaçament suau"
 
 #: engines/ultima/shared/early/ultima_early.cpp:71
 msgid "Could not find correct ultima.dat datafile"

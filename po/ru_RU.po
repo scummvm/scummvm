@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-04-08 19:04+0000\n"
+"POT-Creation-Date: 2021-04-09 13:08+0000\n"
 "PO-Revision-Date: 2021-04-08 10:05+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
@@ -7294,6 +7294,34 @@ msgstr "Предыдущая локация"
 #: engines/twine/metaengine.cpp:554
 msgid "Next location"
 msgstr "Следующая локация"
+
+#: engines/twine/parser/text.cpp:69
+#, fuzzy
+#| msgid "Enable high resolution"
+msgctxt "Options menu"
+msgid "High resolution on"
+msgstr "Включить отображение высокого разрешения"
+
+#: engines/twine/parser/text.cpp:70
+#, fuzzy
+#| msgid "Enable high resolution"
+msgctxt "Options menu"
+msgid "High resolution off"
+msgstr "Включить отображение высокого разрешения"
+
+#: engines/twine/parser/text.cpp:71
+#, fuzzy
+#| msgid "Enable wall collisions"
+msgctxt "Options menu"
+msgid "Wall collision on"
+msgstr "Включить столкновение со стенами"
+
+#: engines/twine/parser/text.cpp:72
+#, fuzzy
+#| msgid "Enable wall collisions"
+msgctxt "Options menu"
+msgid "Wall collision off"
+msgstr "Включить столкновение со стенами"
 
 #: engines/ultima/shared/early/ultima_early.cpp:71
 msgid "Could not find correct ultima.dat datafile"
