@@ -53,7 +53,6 @@ GameState::GameState(TwinEEngine *engine) : _engine(engine) {
 	clearGameFlags();
 	Common::fill(&inventoryFlags[0], &inventoryFlags[NUM_INVENTORY_ITEMS], 0);
 	Common::fill(&holomapFlags[0], &holomapFlags[NUM_LOCATIONS], 0);
-	playerName[0] = '\0';
 	Common::fill(&gameChoices[0], &gameChoices[10], 0);
 }
 
@@ -162,11 +161,11 @@ bool GameState::loadGame(Common::SeekableReadStream *file) {
 	int playerNameIdx = 0;
 	do {
 		const byte c = file->readByte();
-		playerName[playerNameIdx++] = c;
+		_engine->_menuOptions->playerName[playerNameIdx++] = c;
 		if (c == '\0') {
 			break;
 		}
-		if (playerNameIdx >= ARRAYSIZE(playerName)) {
+		if (playerNameIdx >= ARRAYSIZE(_engine->_menuOptions->playerName)) {
 			warning("Failed to load savegame. Invalid playername.");
 			return false;
 		}
@@ -229,8 +228,8 @@ bool GameState::loadGame(Common::SeekableReadStream *file) {
 
 bool GameState::saveGame(Common::WriteStream *file) {
 	debug(2, "Save game");
-	if (playerName[0] == '\0') {
-		Common::strlcpy(playerName, "TwinEngineSave", sizeof(playerName));
+	if (_engine->_menuOptions->playerName[0] == '\0') {
+		Common::strlcpy(_engine->_menuOptions->playerName, "TwinEngineSave", sizeof(_engine->_menuOptions->playerName));
 	}
 
 	int32 sceneIdx = _engine->_scene->currentSceneIdx;
@@ -242,7 +241,7 @@ bool GameState::saveGame(Common::WriteStream *file) {
 	}
 
 	file->writeByte(0x03);
-	file->writeString(playerName);
+	file->writeString(_engine->_menuOptions->playerName);
 	file->writeByte('\0');
 	file->writeByte(NUM_GAME_FLAGS);
 	for (uint8 i = 0; i < NUM_GAME_FLAGS; ++i) {

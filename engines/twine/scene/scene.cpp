@@ -481,8 +481,7 @@ void Scene::changeScene() {
 	if (_engine->isLBA1() && currentSceneIdx >= LBA1SceneId::Citadel_Island_Prison && currentSceneIdx < LBA1SceneId::SceneIdMax) {
 		snprintf(_engine->_gameState->sceneName, sizeof(_engine->_gameState->sceneName), "%i %s", currentSceneIdx, _engine->_holomap->getLocationName(currentSceneIdx));
 	} else {
-		const char *pName = _engine->_gameState->playerName;
-		snprintf(_engine->_gameState->sceneName, sizeof(_engine->_gameState->sceneName), "%i %s", currentSceneIdx, pName);
+		snprintf(_engine->_gameState->sceneName, sizeof(_engine->_gameState->sceneName), "%i", currentSceneIdx);
 	}
 	debug(2, "Entering scene %s (came from %i)", _engine->_gameState->sceneName, previousSceneIdx);
 

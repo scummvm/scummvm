@@ -211,7 +211,6 @@ public:
 
 	uint8 holomapFlags[NUM_LOCATIONS]; // GV14
 
-	char playerName[30] {};
 	char sceneName[30] {};
 
 	int32 gameChoices[10];  // inGameMenuData
