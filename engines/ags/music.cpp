@@ -29,8 +29,7 @@ namespace AGS {
 
 Music *g_music;
 
-Music::Music(Audio::Mixer *mixer) :
-		Audio::MidiPlayer(), _mixer(mixer) {
+Music::Music() {
 	g_music = this;
 	Audio::MidiPlayer::createDriver();
 

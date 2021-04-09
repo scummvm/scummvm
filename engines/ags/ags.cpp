@@ -79,7 +79,7 @@ AGSEngine::AGSEngine(OSystem *syst, const AGSGameDescription *gameDesc) : Engine
 	DebugMan.addDebugChannel(kDebugScan, "Scan", "Scan for unrecognised games");
 
 	_events = new EventsManager();
-	_music = new Music(_mixer);
+	_music = new Music();
 	_globals = new ::AGS3::Globals();
 
 	Common::String forceAA;

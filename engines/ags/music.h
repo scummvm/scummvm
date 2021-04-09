@@ -32,14 +32,13 @@ namespace AGS {
 
 class Music : public Audio::MidiPlayer {
 private:
-	Audio::Mixer *_mixer;
 	Audio::SoundHandle _soundHandle;
 	Common::Array<byte> _midiData;
 protected:
 	// Overload Audio::MidiPlayer method
 	void sendToChannel(byte channel, uint32 b) override;
 public:
-	Music(Audio::Mixer *mixer);
+	Music();
 	~Music() override;
 
 	/**
