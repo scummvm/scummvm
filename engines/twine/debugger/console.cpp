@@ -301,13 +301,19 @@ bool TwinEConsole::doToggleDebug(int argc, const char **argv) {
 }
 
 bool TwinEConsole::doListMenuText(int argc, const char **argv) {
-	_engine->_text->initTextBank(TextBankId::Inventory_Intro_and_Holomap);
+	TextBankId textBankId = TextBankId::Inventory_Intro_and_Holomap;
+	if (argc >= 2) {
+		textBankId = (TextBankId)atoi(argv[1]);
+	}
+	const TextBankId oldTextBankId = _engine->_text->textBank();
+	_engine->_text->initTextBank(textBankId);
 	for (int32 i = 0; i < 1000; ++i) {
 		char buf[256];
 		if (_engine->_text->getMenuText((TextId)i, buf, sizeof(buf))) {
 			debugPrintf("%4i: %s\n", i, buf);
 		}
 	}
+	_engine->_text->initTextBank(oldTextBankId);
 	return true;
 }
 
