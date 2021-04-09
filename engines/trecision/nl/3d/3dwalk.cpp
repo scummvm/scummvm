@@ -1566,7 +1566,7 @@ void invPointProject(int x, int y) {
 /*------------------------------------------------
 		Intersects a 3D line with the panel
 --------------------------------------------------*/
-int intersectLinePanel(SPan *p, float x, float y, float z) {
+bool intersectLinePanel(SPan *p, float x, float y, float z) {
 	// If it's an enlarged panel
 	if (p->_flags & 0x80000000)
 		return false;
@@ -1622,7 +1622,7 @@ int intersectLinePanel(SPan *p, float x, float y, float z) {
 /*------------------------------------------------
 		Intersects 3D line with the floor
 --------------------------------------------------*/
-int intersectLineFloor(float x, float y, float z) {
+bool intersectLineFloor(float x, float y, float z) {
 	float x1 = g_vm->_actor->_camera->_ex;
 	float y1 = g_vm->_actor->_camera->_ey;
 	float z1 = g_vm->_actor->_camera->_ez;
@@ -1656,7 +1656,7 @@ int intersectLineFloor(float x, float y, float z) {
 /*------------------------------------------------
 		Intersects a 2D line with a 2D line
 --------------------------------------------------*/
-int intersectLineLine(float xa, float ya, float xb, float yb, float xc, float yc, float xd, float yd) {
+bool intersectLineLine(float xa, float ya, float xb, float yb, float xc, float yc, float xd, float yd) {
 	float divisor = (float)((xb - xa) * (yd - yc) - (yb - ya) * (xd - xc));
 	if (divisor == 0.0)
 		return false;
