@@ -211,7 +211,7 @@ void MenuOptions::drawSelectableCharacters() {
 	_engine->copyBlockPhys(dirtyRect);
 }
 
-void MenuOptions::drawPlayerName(int32 centerx, int32 top, int32 type) {
+void MenuOptions::drawInputText(int32 centerx, int32 top, int32 type, const char *text) {
 	const int32 left = 10;
 	const int right = _engine->width() - left;
 	const int bottom = top + PLASMA_HEIGHT;
@@ -225,7 +225,7 @@ void MenuOptions::drawPlayerName(int32 centerx, int32 top, int32 type) {
 	_engine->_menu->drawBox(rect);
 	_engine->_interface->drawTransparentBox(rectBox, 3);
 
-	_engine->_text->drawText(centerx - _engine->_text->getTextSize(playerName) / 2, top + 6, playerName);
+	_engine->_text->drawText(centerx - _engine->_text->getTextSize(text) / 2, top + 6, text);
 	_engine->copyBlockPhys(rect);
 }
 
@@ -249,8 +249,8 @@ public:
 	}
 };
 
-bool MenuOptions::enterPlayerName(int32 textIdx) {
-	playerName[0] = '\0'; // TODO: read from settings?
+bool MenuOptions::enterText(int32 textIdx, char *textTargetBuf, size_t bufSize) {
+	textTargetBuf[0] = '\0';
 	_engine->_text->initTextBank(TextBankId::Options_and_menus);
 	char buffer[256];
 	_engine->_text->getMenuText(textIdx, buffer, sizeof(buffer));
@@ -277,27 +277,27 @@ bool MenuOptions::enterPlayerName(int32 textIdx) {
 				if (_engine->_input->toggleActionIfActive(TwinEActionType::UIEnter)) {
 					if (_onScreenKeyboardLeaveViaOkButton) {
 						if (_onScreenKeyboardX == ONSCREENKEYBOARD_WIDTH - 1 && _onScreenKeyboardY == ONSCREENKEYBOARD_HEIGHT - 1) {
-							if (playerName[0] == '\0') {
+							if (textTargetBuf[0] == '\0') {
 								continue;
 							}
 							return true;
 						}
-						const size_t size = strlen(playerName);
+						const size_t size = strlen(textTargetBuf);
 						if (_onScreenKeyboardX == ONSCREENKEYBOARD_WIDTH - 2 && _onScreenKeyboardY == ONSCREENKEYBOARD_HEIGHT - 1) {
 							if (size >= 1) {
-								playerName[size - 1] = '\0';
+								textTargetBuf[size - 1] = '\0';
 							}
 							continue;
 						}
 						const char chr = allowedCharIndex[_onScreenKeyboardX + _onScreenKeyboardY * ONSCREENKEYBOARD_WIDTH];
-						playerName[size] = chr;
-						playerName[size + 1] = '\0';
-						if (size + 1 >= sizeof(playerName) - 1) {
+						textTargetBuf[size] = chr;
+						textTargetBuf[size + 1] = '\0';
+						if (size + 1 >= bufSize - 1) {
 							return true;
 						}
 						continue;
 					}
-					if (playerName[0] == '\0') {
+					if (textTargetBuf[0] == '\0') {
 						continue;
 					}
 
@@ -319,22 +319,22 @@ bool MenuOptions::enterPlayerName(int32 textIdx) {
 
 				break;
 			case Common::EVENT_KEYDOWN: {
-				const size_t size = strlen(playerName);
+				const size_t size = strlen(textTargetBuf);
 				if (!Common::isPrint(event.kbd.ascii)) {
 					if (event.kbd.keycode == Common::KEYCODE_BACKSPACE) {
 						if (size >= 1) {
-							playerName[size - 1] = '\0';
+							textTargetBuf[size - 1] = '\0';
 							_onScreenKeyboardLeaveViaOkButton = false;
 						}
 					}
 					continue;
 				}
-				if (size >= sizeof(playerName) - 1) {
+				if (size >= bufSize - 1) {
 					return true;
 				}
 				if (strchr(allowedCharIndex, event.kbd.ascii)) {
-					playerName[size] = event.kbd.ascii;
-					playerName[size + 1] = '\0';
+					textTargetBuf[size] = event.kbd.ascii;
+					textTargetBuf[size + 1] = '\0';
 					_onScreenKeyboardLeaveViaOkButton = false;
 				}
 
@@ -347,7 +347,7 @@ bool MenuOptions::enterPlayerName(int32 textIdx) {
 		if (_engine->shouldQuit()) {
 			break;
 		}
-		drawPlayerName(halfScreenWidth, 100, 1);
+		drawInputText(halfScreenWidth, 100, 1, textTargetBuf);
 		drawSelectableCharacters();
 	}
 	return false;
@@ -356,7 +356,7 @@ bool MenuOptions::enterPlayerName(int32 textIdx) {
 bool MenuOptions::newGameMenu() {
 	_engine->_screens->copyScreen(_engine->workVideoBuffer, _engine->frontVideoBuffer);
 	_engine->flip();
-	if (!enterPlayerName(TextId::kEnterYourName)) {
+	if (!enterText(TextId::kEnterYourName, saveGameName, sizeof(saveGameName))) {
 		return false;
 	}
 	_engine->_gameState->initEngineVars();

@@ -44,9 +44,9 @@ private:
 
 	void setOnScreenKeyboard(int x, int y);
 
-	bool enterPlayerName(int32 textIdx);
+	bool enterText(int32 textIdx, char *textTargetBuf, size_t bufSize);
 	void drawSelectableCharacters();
-	void drawPlayerName(int32 centerx, int32 top, int32 type);
+	void drawInputText(int32 centerx, int32 top, int32 type, const char *text);
 	void drawSelectableCharacter(int32 x, int32 y, Common::Rect &dirtyRect);
 	int chooseSave(int textIdx, bool showEmptySlots = false);
 
@@ -57,7 +57,7 @@ public:
 	void showCredits();
 	bool canShowCredits = false;
 
-	char playerName[32] {'\0'};
+	char saveGameName[32] {'\0'};
 
 	/** Main menu new game options */
 	bool newGameMenu();
