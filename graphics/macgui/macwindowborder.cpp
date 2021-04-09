@@ -33,10 +33,13 @@ MacWindowBorder::MacWindowBorder() {
 
 	_borderInitialized = Common::Array<bool>(_borderTypeNum);
 	_border = Common::Array<NinePatchBitmap *>(_borderTypeNum);
+	_lazyTag = Common::Array<bool>(_borderTypeNum);
+	_window = nullptr;
 
 	for (uint32 i = 0; i < _borderTypeNum; i++) {
 		_border[i] = nullptr;
 		_borderInitialized[i] = false;
+		_lazyTag[i] = false;
 	}
 
 	_borderOffsets.left = -1;
@@ -57,8 +60,12 @@ MacWindowBorder::~MacWindowBorder() {
 
 bool MacWindowBorder::hasBorder(uint32 flags) {
 	if (flags >= _borderTypeNum) {
-		warning("Accessing non-existed border type");
+		warning("Accessing non-existed border type, %d", flags);
 		return false;
+	}
+	if (_lazyTag[flags]) {
+		_lazyTag[flags] = false;
+		_window->loadLazyBorder(flags);
 	}
 	return _borderInitialized[flags];
 }
@@ -132,6 +139,14 @@ void MacWindowBorder::setTitle(const Common::String& title, int width, MacWindow
 		if (_borderInitialized[i] && (i & kWindowBorderTitle))
 			_border[i]->modifyTitleWidth(titleWidth);
 	}
+}
+
+void MacWindowBorder::lazyLoad(uint32 flags) {
+	if (flags >= _borderTypeNum) {
+		warning("trying to load non-existing border type");
+		return;
+	}
+	_lazyTag[flags] = true;
 }
 
 void MacWindowBorder::drawScrollBar(ManagedSurface *g, MacWindowManager *wm) {
