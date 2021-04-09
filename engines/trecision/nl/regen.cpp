@@ -255,7 +255,7 @@ void PaintScreen(uint8 flag) {
 
 	// Handle papaverine delayed action
 	if ((g_vm->_curRoom == r4A) && (g_vm->_obj[oCHOCOLATES4A]._flag & OBJFLAG_EXTRA)) {
-		if (g_vm->_animMgr->_curAnimFrame[0] > 480) {
+		if (g_vm->_animMgr->_curAnimFrame[kSmackerBackground] > 480) {
 			g_vm->playScript(s4AHELLEN);
 			g_vm->_obj[oCHOCOLATES4A]._flag &= ~OBJFLAG_EXTRA;
 		}
@@ -432,9 +432,10 @@ void PaintObjAnm(uint16 CurBox) {
 
 		drawCharacter(DRAWFACES);
 
-		//FlagPaintCharacter = false;
-	} else if ((_actorPos == CurBox) && !FlagDialogActive) {
+#if (!USE_NEW_VIDEO_CODE)
+	} else if (_actorPos == CurBox && !FlagDialogActive) {
 		g_vm->_animMgr->refreshSmkAnim(g_vm->_animMgr->_playingAnims[kSmackerFullMotion]);
+#endif
 	}
 }
 

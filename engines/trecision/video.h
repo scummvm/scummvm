@@ -28,10 +28,12 @@
 #include "nl/sysdef.h"
 #include "video/smk_decoder.h"
 
+namespace Trecision {
+
 enum SmackerType {
-	kSmackerBackground = 0,	// Smacker animations embedded in nlanim.cd? files
-	kSmackerFullMotion = 1,	// Standalone full screen Smacker videos
-	kSmackerIcon = 2		// Smacker inventory animations embedded in nlanim.cd? files
+	kSmackerBackground = 0, // Smacker animations embedded in nlanim.cd? files
+	kSmackerFullMotion = 1, // Standalone full screen Smacker videos
+	kSmackerIcon = 2        // Smacker inventory animations embedded in nlanim.cd? files
 };
 
 #define FULLMOTIONANIM 620
@@ -48,7 +50,6 @@ enum SmackerType {
 #define SMKANIM_OFF3 128
 #define SMKANIM_OFF4 256
 
-namespace Trecision {
 class TrecisionEngine;
 
 class NightlongSmackerDecoder : public Video::SmackerDecoder {
@@ -87,13 +88,12 @@ private:
 	void swapCD(int cd);
 
 public:
-	uint8 *_smkBuffer[MAXSMACK];
-
 	uint8 _curSmackBuffer;
+	uint8 *_smkBuffer[MAXSMACK];
 	uint16 _playingAnims[MAXSMACK];
 	uint16 _curAnimFrame[MAXSMACK];
-	int _fullMotionStart, _fullMotionEnd;
 
+	int _fullMotionStart, _fullMotionEnd;
 	uint16 _animMaxX, _animMinX, _animMaxY, _animMinY;
 
 	SAnim _animTab[MAXANIM];
