@@ -162,6 +162,11 @@ public:
 	bool isInQueue(int32 scriptIndex) const;
 
 	/**
+	 * Remove a script element from the queue
+	 */
+	void removeFromQueue(uint32 entryIndex);
+
+	/**
 	 * Resets the queue.
 	 */
 	void resetQueue();
@@ -334,8 +339,6 @@ private:
 	ScriptEntry		 *_lastProcessedCmd; // DEBUGGING
 	Script           *_currentScript;
 	ScriptQueueEntry *_currentQueueEntry;
-
-	void updateQueue(uint32 entryIndex);
 
 	// Opcode helper functions
 	void enableObject(ScriptEntry *cmd, ObjectTransparency type);

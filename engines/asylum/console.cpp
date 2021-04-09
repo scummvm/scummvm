@@ -656,7 +656,7 @@ bool Console::cmdKillScript(int32 argc, const char **argv) {
 	int32 index = atoi(argv[1]);
 
 	if (getScript()->isInQueue(index))
-		getScript()->updateQueue(index);
+		getScript()->removeFromQueue(index);
 
 	return false;
 }
