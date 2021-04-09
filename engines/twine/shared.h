@@ -479,7 +479,9 @@ enum class TextId : int16 {
 
 	// custom strings (not originally included in the game)
 	kCustomHighResOptionOn = -2,
-	kCustomHighResOptionOff = -3
+	kCustomHighResOptionOff = -3,
+	kCustomWallCollisionOn = -4,
+	kCustomWallCollisionOff = -5
 };
 
 enum InventoryItems {

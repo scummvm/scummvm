@@ -226,6 +226,7 @@ Common::Error TwinEEngine::run() {
 	debug("(c) 1994 by Adeline Software International, All Rights Reserved.");
 
 	ConfMan.registerDefault("usehighres", false);
+	ConfMan.registerDefault("wallcollision", false);
 
 	syncSoundSettings();
 	int32 w = ORIGINAL_WIDTH;

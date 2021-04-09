@@ -68,6 +68,8 @@ bool TextData::loadFromHQR(const char *name, TextBankId textBankId, int language
 	// custom texts that are not included in the original game
 	_texts[(int)TextBankId::Options_and_menus].push_back(TextEntry{_sc("High resolution on", "Options menu"), -1, TextId::kCustomHighResOptionOn});
 	_texts[(int)TextBankId::Options_and_menus].push_back(TextEntry{_sc("High resolution off", "Options menu"), -1, TextId::kCustomHighResOptionOff});
+	_texts[(int)TextBankId::Options_and_menus].push_back(TextEntry{_sc("Wall collision on", "Options menu"), -1, TextId::kCustomWallCollisionOn});
+	_texts[(int)TextBankId::Options_and_menus].push_back(TextEntry{_sc("Wall collision off", "Options menu"), -1, TextId::kCustomWallCollisionOff});
 
 	return true;
 }

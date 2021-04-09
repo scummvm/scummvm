@@ -66,7 +66,8 @@ enum _MenuButtonTypes {
 	kPolygonDetails = 7,
 	kShadowSettings = 8,
 	kSceneryZoom = 9,
-	kHighResolution = 10
+	kHighResolution = 10,
+	kWallCollision = 11
 };
 }
 
@@ -122,6 +123,7 @@ static MenuSettings createAdvancedOptionsMenu() {
 	settings.addButton(TextId::kDetailsShadowHigh, MenuButtonTypes::kShadowSettings);
 	settings.addButton(TextId::kSceneryZoomOn, MenuButtonTypes::kSceneryZoom);
 	settings.addButton(TextId::kCustomHighResOptionOn, MenuButtonTypes::kHighResolution);
+	settings.addButton(TextId::kCustomWallCollisionOff, MenuButtonTypes::kWallCollision);
 	return settings;
 }
 
@@ -362,11 +364,18 @@ int16 Menu::drawButtons(MenuSettings *menuSettings, bool hover) {
 				}
 				break;
 			case MenuButtonTypes::kHighResolution: {
-				const bool highRes = ConfMan.getBool("usehighres");
-				if (highRes) {
+				if (ConfMan.getBool("usehighres")) {
 					menuSettings->setButtonTextId(i, TextId::kCustomHighResOptionOn);
 				} else {
 					menuSettings->setButtonTextId(i, TextId::kCustomHighResOptionOff);
+				}
+				break;
+			}
+			case MenuButtonTypes::kWallCollision: {
+				if (ConfMan.getBool("wallcollision")) {
+					menuSettings->setButtonTextId(i, TextId::kCustomWallCollisionOn);
+				} else {
+					menuSettings->setButtonTextId(i, TextId::kCustomWallCollisionOff);
 				}
 				break;
 			}
@@ -482,6 +491,12 @@ int32 Menu::processMenu(MenuSettings *menuSettings, bool showCredits) {
 				if (_engine->_input->toggleActionIfActive(TwinEActionType::UILeft) || _engine->_input->toggleActionIfActive(TwinEActionType::UIRight)) {
 					const bool highRes = ConfMan.getBool("usehighres");
 					ConfMan.setBool("usehighres", !highRes);
+				}
+				break;
+			case MenuButtonTypes::kWallCollision:
+				if (_engine->_input->toggleActionIfActive(TwinEActionType::UILeft) || _engine->_input->toggleActionIfActive(TwinEActionType::UIRight)) {
+					const bool highRes = ConfMan.getBool("wallcollision");
+					ConfMan.setBool("wallcollision", !highRes);
 				}
 				break;
 			default:
