@@ -38,10 +38,22 @@ class TextEntry;
 #define COLOR_BRIGHT_BLUE 4
 #define COLOR_9 9
 #define COLOR_14 14
-#define COLOR_RED 68
-#define COLOR_73 73
+// color 1 = yellow
+// color 2 - 15 = white
+// color 16 - 19 = brown
+// color 20 - 24 = orange to yellow
+// color 25 orange
+// color 26 - 30 = bright gray or white
+#define COlOR_31 31 // green dark
+#define COlOR_47 47 // green bright
+#define COLOR_48 48 // brown dark
+#define COLOR_63 63 // brown bright
+#define COLOR_64 64 // blue dark
+#define COLOR_68 68 // blue
+#define COLOR_73 73 // blue
 #define COLOR_75 75
-#define COLOR_79 79
+#define COLOR_79 79 // blue bright
+#define COLOR_80 80
 #define COLOR_91 91
 #define COLOR_BRIGHT_BLUE2 69
 #define COLOR_WHITE 15

@@ -56,7 +56,7 @@ namespace TwinE {
 static const uint32 kPlasmaEffectFilesize = 262176;
 
 namespace MenuButtonTypes {
-enum _MenuButtonTypes {
+enum MenuButtonTypesEnum {
 	kMusicVolume = 1,
 	kSoundVolume = 2,
 	kCDVolume = 3,
@@ -276,13 +276,13 @@ void Menu::drawButtonGfx(const MenuSettings *menuSettings, const Common::Rect &r
 			}
 			}
 
-			processPlasmaEffect(rect, 80);
+			processPlasmaEffect(rect, COLOR_80);
 			if (!(_engine->getRandomNumber() % 5)) {
 				plasmaEffectPtr[_engine->getRandomNumber() % 140 * 10 + 1900] = 255;
 			}
-			_engine->_interface->drawFilledRect(Common::Rect(newWidth, rect.top, rect.right, rect.bottom), COLOR_RED);
+			_engine->_interface->drawFilledRect(Common::Rect(newWidth, rect.top, rect.right, rect.bottom), COLOR_68);
 		} else {
-			processPlasmaEffect(rect, 64);
+			processPlasmaEffect(rect, COLOR_64);
 			if (!(_engine->getRandomNumber() % 5)) {
 				plasmaEffectPtr[_engine->getRandomNumber() % PLASMA_WIDTH * 10 + 6400] = 255;
 			}
@@ -1171,7 +1171,7 @@ void Menu::processInventoryMenu() {
 
 	_engine->_renderer->setLightVector(ANGLE_315, ANGLE_334, ANGLE_0);
 
-	inventorySelectedColor = COLOR_RED;
+	inventorySelectedColor = COLOR_68;
 
 	if (_engine->_gameState->inventoryNumLeafs > 0) {
 		_engine->_gameState->giveItem(InventoryItems::kiCloverLeaf);
