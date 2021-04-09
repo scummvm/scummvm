@@ -193,7 +193,7 @@ void doMouse() {
 				break; // When it's in a room without a character, such as the map
 			if ((FlagSomeOneSpeak && !FlagCharacterSpeak) || FlagDialogMenuActive || FlagDialogActive || FlagUseWithLocked)
 				break;
-			if (g_vm->_animMgr->_playingAnims[1])
+			if (g_vm->_animMgr->_playingAnims[kSmackerFullMotion])
 				break;
 
 			if (g_vm->_inventoryStatus == INV_OFF)
@@ -224,7 +224,7 @@ void doMouse() {
 		if (FlagWalkNoInterrupt && (g_vm->_actor->_curAction != hSTAND))
 			break;
 
-		if ((FlagDialogActive) && (FlagDialogMenuActive)) {
+		if (FlagDialogActive && FlagDialogMenuActive) {
 			SelectChoice(g_vm->_curMessage->_u16Param1, g_vm->_curMessage->_u16Param2);
 			break;
 		}
@@ -350,7 +350,7 @@ void doMouse() {
 		}
 
 		//	Game area
-		if (GAMEAREA(g_vm->_curMessage->_u16Param2) && (!g_vm->_animMgr->_playingAnims[1])) {
+		if (GAMEAREA(g_vm->_curMessage->_u16Param2) && !g_vm->_animMgr->_playingAnims[kSmackerFullMotion]) {
 			if (g_vm->_flagscriptactive)
 				g_vm->_curObj = g_vm->_curMessage->_u32Param;
 
@@ -441,7 +441,7 @@ void doMouse() {
 				doEvent(MC_CHARACTER, ME_CHARACTERGOTO, MP_DEFAULT, g_vm->_curMessage->_u16Param1, g_vm->_curMessage->_u16Param2, 0, 0);
 		} else if (isInventoryArea(g_vm->_curMessage->_u16Param2)) {
 			// Inventory area
-			if (g_vm->_animMgr->_playingAnims[1] || FlagDialogActive || g_vm->_curRoom == rSYS)
+			if (g_vm->_animMgr->_playingAnims[kSmackerFullMotion] || FlagDialogActive || g_vm->_curRoom == rSYS)
 				break;
 
 			if (ICONAREA(g_vm->_curMessage->_u16Param1, g_vm->_curMessage->_u16Param2) && g_vm->whatIcon(g_vm->_curMessage->_u16Param1) && (g_vm->_inventoryStatus == INV_INACTION)) {
@@ -561,7 +561,7 @@ void doCharacter() {
 		FlagShowCharacter = false;
 		AtFrameHandler(CHARACTER_ANIM);
 		//	If the animation is over
-		if (!g_vm->_animMgr->_playingAnims[1]) {
+		if (!g_vm->_animMgr->_playingAnims[kSmackerFullMotion]) {
 			g_vm->_flagMouseEnabled = true;
 			FlagShowCharacter = true;
 			_characterInMovement = false;
@@ -829,7 +829,7 @@ void doIdle() {
 			if (g_vm->_animMgr->_fullMotionEnd != g_vm->_animMgr->_curAnimFrame[1])
 				g_vm->_animMgr->_fullMotionEnd = g_vm->_animMgr->_curAnimFrame[1] + 1;
 		} else if (!FlagSomeOneSpeak && !g_vm->_flagscriptactive && !FlagDialogActive && !FlagDialogMenuActive
-		&& (g_vm->_actor->_curAction < hWALKIN) && !FlagUseWithStarted && g_vm->_animMgr->_playingAnims[1] == 0 && FlagShowCharacter) {
+		&& (g_vm->_actor->_curAction < hWALKIN) && !FlagUseWithStarted && !g_vm->_animMgr->_playingAnims[kSmackerFullMotion] && FlagShowCharacter) {
 			actorStop();
 			nextStep();
 			Mouse(MCMD_ON);
@@ -845,7 +845,7 @@ void doIdle() {
 	// Sys
 	case 0x3B:
 		if (!FlagSomeOneSpeak && !g_vm->_flagscriptactive && !FlagDialogActive && !FlagDialogMenuActive
-		&& (g_vm->_actor->_curAction < hWALKIN) && !FlagUseWithStarted && g_vm->_animMgr->_playingAnims[1] == 0 && FlagShowCharacter) {
+		&& (g_vm->_actor->_curAction < hWALKIN) && !FlagUseWithStarted && !g_vm->_animMgr->_playingAnims[kSmackerFullMotion] && FlagShowCharacter) {
 			actorStop();
 			nextStep();
 			Mouse(MCMD_ON);
@@ -861,7 +861,7 @@ void doIdle() {
 	// Save
 	case 0x3C:
 		if (!FlagSomeOneSpeak && !g_vm->_flagscriptactive && !FlagDialogActive && !FlagDialogMenuActive
-		&& (g_vm->_actor->_curAction < hWALKIN) && !FlagUseWithStarted && g_vm->_animMgr->_playingAnims[1] == 0 && FlagShowCharacter) {
+		&& (g_vm->_actor->_curAction < hWALKIN) && !FlagUseWithStarted && !g_vm->_animMgr->_playingAnims[kSmackerFullMotion] && FlagShowCharacter) {
 			IconSnapShot();
 			DataSave();
 			g_vm->showInventoryName(NO_OBJECTS, false);
@@ -873,7 +873,7 @@ void doIdle() {
 	// Load
 	case 0x3D:
 		if (!FlagSomeOneSpeak && !g_vm->_flagscriptactive && !FlagDialogActive && !FlagDialogMenuActive
-		&& (g_vm->_actor->_curAction < hWALKIN) && !FlagUseWithStarted && g_vm->_animMgr->_playingAnims[1] == 0 && FlagShowCharacter) {
+		&& (g_vm->_actor->_curAction < hWALKIN) && !FlagUseWithStarted && !g_vm->_animMgr->_playingAnims[kSmackerFullMotion] && FlagShowCharacter) {
 			IconSnapShot();
 			if (!DataLoad()) {
 				g_vm->showInventoryName(NO_OBJECTS, false);

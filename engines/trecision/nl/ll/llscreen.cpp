@@ -136,7 +136,7 @@ void openSys() {
 	GameBytePointer += MAXTEXTAREA;
 
 	// icon area
-	g_vm->_animMgr->_smkBuffer[2] = (uint8 *)(MemoryArea + GameBytePointer);
+	g_vm->_animMgr->_smkBuffer[kSmackerIcon] = (uint8 *)(MemoryArea + GameBytePointer);
 	GameBytePointer += ICONDX * ICONDY;
 
 	// zbuffer
@@ -148,8 +148,8 @@ void openSys() {
 	ExtraObj2C = (uint16 *)SpeechBuf; // for room 2C
 
 	// omino e full motions area
-	g_vm->_animMgr->_smkBuffer[1] = (uint8 *)(MemoryArea + GameBytePointer);
-	ExtraObj41D = (uint16 *)g_vm->_animMgr->_smkBuffer[1]; // for room 41D
+	g_vm->_animMgr->_smkBuffer[kSmackerFullMotion] = (uint8 *)(MemoryArea + GameBytePointer);
+	ExtraObj41D = (uint16 *)g_vm->_animMgr->_smkBuffer[kSmackerFullMotion]; // for room 41D
 	GameBytePointer += SCREENLEN * AREA;
 	// omino buffer
 	GameBytePointer += SMKANBUFFER;
@@ -158,7 +158,7 @@ void openSys() {
 	// icone buffer
 	GameBytePointer += SMKICONBUFFER;
 	// background area
-	g_vm->_animMgr->_smkBuffer[0] = (uint8 *)(MemoryArea + GameBytePointer);
+	g_vm->_animMgr->_smkBuffer[kSmackerBackground] = (uint8 *)(MemoryArea + GameBytePointer);
 	GameBytePointer += SCREENLEN * AREA;
 	// SmackImagePointer
 	SmackImagePointer = (uint16 *)(MemoryArea + GameBytePointer);
@@ -494,7 +494,7 @@ void ReadLoc() {
 		memcpy(SmackImagePointer, ImagePointer, MAXX * AREA * 2);
 		g_vm->_animMgr->startSmkAnim(g_vm->_room[g_vm->_curRoom]._bkgAnim);
 	} else
-		g_vm->_animMgr->stopSmkAnim(g_vm->_animMgr->_playingAnims[0]);
+		g_vm->_animMgr->stopSmkAnim(g_vm->_animMgr->_playingAnims[kSmackerBackground]);
 
 	InitAtFrameHandler(g_vm->_room[g_vm->_curRoom]._bkgAnim, 0);
 }
