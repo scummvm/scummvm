@@ -318,6 +318,7 @@ void Gui::loadBorders() {
 	loadBorder(_sceneWindow, "wage_border_act-noscrollbar-title.bmp", Graphics::kWindowBorderActive|Graphics::kWindowBorderTitle, 22, 36);
 	loadBorder(_consoleWindow, "wage_border_inact.bmp", Graphics::kWindowBorderScrollbar, 0, 0);
 	loadBorder(_consoleWindow, "wage_border_act.bmp", Graphics::kWindowBorderScrollbar|Graphics::kWindowBorderActive, 0, 0);
+	_consoleWindow->setScrollBar(true);
 }
 
 void Gui::loadBorder(Graphics::MacWindow *target, Common::String filename, uint32 flags, int titlePos, int titleWidth) {
