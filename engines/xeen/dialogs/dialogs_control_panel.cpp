@@ -20,6 +20,7 @@
  *
  */
 
+#include "common/config-manager.h"
 #include "xeen/dialogs/dialogs_control_panel.h"
 #include "xeen/dialogs/dialogs_query.h"
 #include "xeen/party.h"
@@ -84,6 +85,10 @@ int ControlPanel::execute() {
 		} while (!_buttonValue && events.timeElapsed() < 2);
 
 		switch (_buttonValue) {
+		case Common::KEYCODE_d:
+			if (Common::RU_RUS != Common::parseLanguage(ConfMan.get("language"))) {
+				break;
+			}
 		case Common::KEYCODE_q:
 			if (Confirm::show(g_vm, Res.CONFIRM_QUIT)) {
 				g_vm->_gameMode = GMODE_QUIT;
@@ -91,6 +96,12 @@ int ControlPanel::execute() {
 			}
 			break;
 
+		case Common::KEYCODE_g:
+			// Goober cheat sequence
+			debugCtr = 1;
+			if (Common::RU_RUS != Common::parseLanguage(ConfMan.get("language"))) {
+				break;
+			}
 		case Common::KEYCODE_w:
 			if (Confirm::show(g_vm, Res.MR_WIZARD)) {
 				w.close();
@@ -114,6 +125,10 @@ int ControlPanel::execute() {
 			}
 			break;
 
+		case Common::KEYCODE_p:
+			if (Common::RU_RUS != Common::parseLanguage(ConfMan.get("language"))) {
+				break;
+			}
 		case Common::KEYCODE_l:
 			if (_vm->_mode == MODE_COMBAT) {
 				ErrorScroll::show(_vm, Res.NO_LOADING_IN_COMBAT);
@@ -123,6 +138,10 @@ int ControlPanel::execute() {
 			}
 			break;
 
+		case Common::KEYCODE_c:
+			if (Common::RU_RUS != Common::parseLanguage(ConfMan.get("language"))) {
+				break;
+			}
 		case Common::KEYCODE_s:
 			if (_vm->_mode == MODE_COMBAT) {
 				ErrorScroll::show(_vm, Res.NO_SAVING_IN_COMBAT);
@@ -136,6 +155,10 @@ int ControlPanel::execute() {
 			sound.setFxOn(!sound._fxOn);
 			break;
 
+		case Common::KEYCODE_v:
+			if (Common::RU_RUS != Common::parseLanguage(ConfMan.get("language"))) {
+				break;
+			}
 		case Common::KEYCODE_m:
 			sound.setMusicOn(!sound._musicOn);
 			break;
@@ -145,9 +168,6 @@ int ControlPanel::execute() {
 			break;
 
 		// Goober cheat sequence
-		case Common::KEYCODE_g:
-			debugCtr = 1;
-			break;
 		case Common::KEYCODE_o:
 			debugCtr = (debugCtr == 1 || debugCtr == 2) ? 2 : 0;
 			break;
@@ -181,18 +201,27 @@ int ControlPanel::execute() {
 
 void ControlPanel::loadButtons() {
 	_iconSprites.load("cpanel.icn");
+	if (Common::RU_RUS == Common::parseLanguage(ConfMan.get("language"))) {
+		addButton(Common::Rect(214, 56, 244, 69), Common::KEYCODE_e, 0, &_iconSprites);		// russian key Ó
+		addButton(Common::Rect(214, 75, 244, 88), Common::KEYCODE_v, 0, &_iconSprites);		// russian key Ì
+		addButton(Common::Rect(135, 56, 165, 69), Common::KEYCODE_p, 0, &_iconSprites);		// russian key Ç
+		addButton(Common::Rect(135, 75, 165, 88), Common::KEYCODE_c, 0, &_iconSprites);		// russian key Ñ
+		addButton(Common::Rect(135, 94, 165, 107), Common::KEYCODE_d, 0, &_iconSprites);	// russian key Â
+		addButton(Common::Rect(175, 113, 205, 126), Common::KEYCODE_g, 0, &_iconSprites);	// russian key Ï
+	} else {
 
-	addButton(Common::Rect(214, 56, 244, 69), Common::KEYCODE_e, 0, &_iconSprites);
-	addButton(Common::Rect(214, 75, 244, 88), Common::KEYCODE_m, 0, &_iconSprites);
-	addButton(Common::Rect(135, 56, 165, 69), Common::KEYCODE_l, 0, &_iconSprites);
-	addButton(Common::Rect(135, 75, 165, 88), Common::KEYCODE_s, 0, &_iconSprites);
+		addButton(Common::Rect(214, 56, 244, 69), Common::KEYCODE_e, 0, &_iconSprites);
+		addButton(Common::Rect(214, 75, 244, 88), Common::KEYCODE_m, 0, &_iconSprites);
+		addButton(Common::Rect(135, 56, 165, 69), Common::KEYCODE_l, 0, &_iconSprites);
+		addButton(Common::Rect(135, 75, 165, 88), Common::KEYCODE_s, 0, &_iconSprites);
 
-	// For ScummVM we've merged both Save and Save As into a single
-	// save item, so we don't need this one
-	addButton(Common::Rect(), 0);
+		// For ScummVM we've merged both Save and Save As into a single
+		// save item, so we don't need this one
+		addButton(Common::Rect(), 0);
 
-	addButton(Common::Rect(135, 94, 165, 107), Common::KEYCODE_q, 0, &_iconSprites);
-	addButton(Common::Rect(175, 113, 205, 126), Common::KEYCODE_w, 0, &_iconSprites);
+		addButton(Common::Rect(135, 94, 165, 107), Common::KEYCODE_q, 0, &_iconSprites);
+		addButton(Common::Rect(175, 113, 205, 126), Common::KEYCODE_w, 0, &_iconSprites);
+	}
 }
 
 Common::String ControlPanel::getButtonText() {
