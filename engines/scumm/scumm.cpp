@@ -2036,7 +2036,7 @@ void ScummEngine::setupMusic(int midi) {
 			useOnlyNative = true;
 		} else if (_sound->_musicType == MDT_AMIGA) {
 			nativeMidiDriver = new IMuseDriver_Amiga(_mixer);
-			_native_mt32 = false;
+			_native_mt32 = _enable_gs = false;
 			useOnlyNative = true;
 		} else if (_sound->_musicType != MDT_ADLIB && _sound->_musicType != MDT_TOWNS && _sound->_musicType != MDT_PCSPK) {
 			nativeMidiDriver = MidiDriver::createMidi(dev);
