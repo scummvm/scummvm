@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-04-10 16:52+0000\n"
-"PO-Revision-Date: 2021-04-09 19:02+0000\n"
+"PO-Revision-Date: 2021-04-10 17:58+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ja/>\n"
@@ -3861,14 +3861,12 @@ msgid "Language to use for multilingual games"
 msgstr "多言語ゲームで使用する言語"
 
 #: engines/ags/detection.cpp:110
-#, fuzzy
-#| msgid "Antialiased"
 msgid "Force antialiased text"
-msgstr "アンチエイリアス"
+msgstr "テキストを強制的にアンチエイリアス"
 
 #: engines/ags/detection.cpp:110
 msgid "Use antialiasing to draw text even if the game does not ask for it"
-msgstr ""
+msgstr "ゲームが要求していない場合でも、テキストにアンチエイリアシングを使用"
 
 #: engines/bladerunner/bladerunner.cpp:363
 msgid "Failed to initialize resources"
@@ -5366,48 +5364,42 @@ msgid "Open event flags cheat menu"
 msgstr "イベントフラグのチートメニューを開く"
 
 #: engines/nancy/dialogs.cpp:41
-#, fuzzy
-#| msgid "Player Time:"
 msgid "Player Speech"
-msgstr "プレイ時間："
+msgstr "プレイヤースピーチ"
 
 #: engines/nancy/dialogs.cpp:41
 msgid ""
 "Enable player speech. Only works if speech is enabled in the Audio settings."
-msgstr ""
+msgstr "プレイヤースピーチを有効にします。オーディオ設定でスピーチが有効になっている場合のみ動作します。"
 
 #: engines/nancy/dialogs.cpp:42
 msgid "Character Speech"
-msgstr ""
+msgstr "キャラクタースピーチ"
 
 #: engines/nancy/dialogs.cpp:42
 msgid ""
 "Enable NPC speech. Only works if speech is enabled in the Audio settings."
-msgstr ""
+msgstr "NPCスピーチを有効にします。オーディオ設定でスピーチが有効になっている場合のみ動作します。"
 
 #: engines/nancy/dialogs.cpp:43
-#, fuzzy
-#| msgid "Use original save/load screens"
 msgid "Use original menus"
-msgstr "オリジナルのセーブ/ロード画面を使用する"
+msgstr "オリジナルのメニューを使用"
 
 #: engines/nancy/dialogs.cpp:43
 msgid ""
 "Use the original engine's main, save/load, and setup menus. ScummVM's Global "
 "Main Menu can still be accessed through its keymap."
 msgstr ""
+"オリジナルエンジンのメインメニュー、セーブ/ロードメニュー、セットアップメニューを使用します。ScummVMの総合メインメニューは、キーマップからもアクセ"
+"スできます。"
 
 #: engines/nancy/dialogs.cpp:45
-#, fuzzy
-#| msgid "Speech Only"
 msgid "Speech Options"
-msgstr "音声のみ"
+msgstr "スピーチオプション"
 
 #: engines/nancy/dialogs.cpp:46
-#, fuzzy
-#| msgid "Options"
 msgid "Engine Options"
-msgstr "設定"
+msgstr "エンジンオプション"
 
 #: engines/nancy/dialogs.cpp:98
 msgid "General"
@@ -5476,7 +5468,7 @@ msgstr "プレイヤーの難易度"
 
 #: engines/nancy/dialogs.cpp:130
 msgid "Software Timer"
-msgstr ""
+msgstr "ソフトウェアタイマー"
 
 #: engines/nancy/dialogs.cpp:131
 msgid "Timer On"
@@ -6988,11 +6980,8 @@ msgid "Spanish CD version is not yet supported"
 msgstr "スペイン版(CDバージョン)はまだサポートされていません"
 
 #: engines/twine/detection.cpp:218
-#, fuzzy
-#| msgid "This game requires the FoxTail subengine, which is not compiled in."
 msgid "This version requires Giflib which was not compiled into ScummVM"
-msgstr ""
-"このゲームはFoxTailサブエンジンが必要ですが、コンパイルされていません。"
+msgstr "このバージョンではGiflibが必要ですが、これはScummVMに組み込まれていません"
 
 #: engines/twine/metaengine.cpp:71
 msgid "Enable wall collisions"
@@ -7213,32 +7202,24 @@ msgid "Next location"
 msgstr "次の地点"
 
 #: engines/twine/parser/text.cpp:33
-#, fuzzy
-#| msgid "Enable high resolution"
 msgctxt "Options menu"
 msgid "High resolution on"
-msgstr "ハイレゾを有効化"
+msgstr "ハイレゾON"
 
 #: engines/twine/parser/text.cpp:34
-#, fuzzy
-#| msgid "Enable high resolution"
 msgctxt "Options menu"
 msgid "High resolution off"
-msgstr "ハイレゾを有効化"
+msgstr "ハイレゾOFF"
 
 #: engines/twine/parser/text.cpp:35
-#, fuzzy
-#| msgid "Enable wall collisions"
 msgctxt "Options menu"
 msgid "Wall collision on"
-msgstr "壁の衝突判定を有効にする"
+msgstr "壁の衝突判定ON"
 
 #: engines/twine/parser/text.cpp:36
-#, fuzzy
-#| msgid "Enable wall collisions"
 msgctxt "Options menu"
 msgid "Wall collision off"
-msgstr "壁の衝突判定を有効にする"
+msgstr "壁の衝突判定OFF"
 
 #: engines/ultima/shared/early/ultima_early.cpp:71
 msgid "Could not find correct ultima.dat datafile"
@@ -7307,10 +7288,8 @@ msgid "Plays sound when the player moves."
 msgstr "プレイヤーが動いた時に音を再生します。"
 
 #: engines/ultima/ultima8/meta_engine.cpp:155
-#, fuzzy
-#| msgid "Enable the mouse for the UI"
 msgid "Enable jump to mouse position"
-msgstr "マウスでのUI操作を有効にする"
+msgstr "マウス位置へのジャンプを有効化"
 
 #: engines/ultima/ultima8/meta_engine.cpp:156
 msgid ""
@@ -7318,9 +7297,8 @@ msgid ""
 msgstr "静止中のジャンプは、一方向ではなくマウスカーソルをターゲットします。"
 
 #: engines/ultima/ultima8/meta_engine.cpp:167
-#, fuzzy
 msgid "Enable font replacement"
-msgstr "3Dアンチエイリアス："
+msgstr "フォントの置き換えを有効化"
 
 #: engines/ultima/ultima8/meta_engine.cpp:168
 msgid "Replaces game fonts with rendered fonts"
@@ -7335,14 +7313,12 @@ msgid "Crusader"
 msgstr "クルセイダー"
 
 #: engines/ultima/ultima8/meta_engine.cpp:236
-#, fuzzy
 msgid "Ultima VIII Cheats"
-msgstr "ウルティマ VIII"
+msgstr "Ultima VIIIのチート"
 
 #: engines/ultima/ultima8/meta_engine.cpp:253
-#, fuzzy
 msgid "Ultima VIII Debug"
-msgstr "ウルティマ VIII"
+msgstr "Ultima VIIIのデバッグ"
 
 #: engines/ultima/ultima8/gumps/u8_save_gump.cpp:297
 msgid "[corrupt]"
@@ -7373,24 +7349,20 @@ msgid "Apply bilinear filtering to individual sprites"
 msgstr "スプライト単位でバイリニアフィルタリングを適用"
 
 #: engines/wintermute/metaengine.cpp:65
-#, fuzzy
 msgid "FoxTail support is not compiled in"
-msgstr "含まれた機能："
+msgstr "FoxTailのサポートは組み込まれていません"
 
 #: engines/wintermute/metaengine.cpp:71
-#, fuzzy
 msgid "Hero Craft support is not compiled in"
-msgstr "含まれた機能："
+msgstr "Hero Craftのサポートは組み込まれていません"
 
 #: engines/wintermute/metaengine.cpp:77
-#, fuzzy
 msgid "Wintermute3D support is not compiled in"
-msgstr "含まれた機能："
+msgstr "Wintermute3Dのサポートは組み込まれていません"
 
 #: engines/wintermute/wintermute.cpp:176
-#, fuzzy
 msgid "This game requires PNG, JPEG and Vorbis support."
-msgstr "未対応のゲームID。"
+msgstr "このゲームはPNG, JPEG, Vorbisのサポートが必要です。"
 
 #: engines/wintermute/wintermute.cpp:187
 msgid "This game requires the FoxTail subengine, which is not compiled in."
@@ -7426,9 +7398,8 @@ msgstr "後ろに歩く"
 #: engines/wintermute/keymapper_tables.h:171
 #: engines/wintermute/keymapper_tables.h:468
 #: engines/wintermute/keymapper_tables.h:1412
-#, fuzzy
 msgid "Show scene geometry"
-msgstr "画面上コントロールを表示する"
+msgstr "シーンのジオメトリーを表示"
 
 #: engines/wintermute/keymapper_tables.h:180
 #: engines/wintermute/keymapper_tables.h:196
@@ -7464,9 +7435,8 @@ msgstr "次のページ"
 #: engines/wintermute/keymapper_tables.h:1354
 #: engines/wintermute/keymapper_tables.h:1537
 #: engines/wintermute/keymapper_tables.h:1653
-#, fuzzy
 msgid "Show hints"
-msgstr "隠しファイルを表示する"
+msgstr "ヒントを表示"
 
 #: engines/wintermute/keymapper_tables.h:242
 #: engines/wintermute/keymapper_tables.h:442
@@ -7477,27 +7447,24 @@ msgstr "隠しファイルを表示する"
 #: engines/wintermute/keymapper_tables.h:1324
 #: engines/wintermute/keymapper_tables.h:1333
 #: engines/wintermute/keymapper_tables.h:1504
-#, fuzzy
 msgid "Show inventory"
-msgstr "インベントリ"
+msgstr "インベントリーを表示"
 
 #: engines/wintermute/keymapper_tables.h:262
 #: engines/wintermute/keymapper_tables.h:311
 #: engines/wintermute/keymapper_tables.h:338
 #: engines/wintermute/keymapper_tables.h:1486
 #: engines/wintermute/keymapper_tables.h:1544
-#, fuzzy
 msgid "GUI variant A"
-msgstr "未認識バージョン"
+msgstr "GUI(Aタイプ)"
 
 #: engines/wintermute/keymapper_tables.h:269
 #: engines/wintermute/keymapper_tables.h:318
 #: engines/wintermute/keymapper_tables.h:345
 #: engines/wintermute/keymapper_tables.h:1492
 #: engines/wintermute/keymapper_tables.h:1550
-#, fuzzy
 msgid "GUI variant B"
-msgstr "未認識バージョン"
+msgstr "GUI(Bタイプ)"
 
 #: engines/wintermute/keymapper_tables.h:276
 #: engines/wintermute/keymapper_tables.h:352
