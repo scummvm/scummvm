@@ -73,26 +73,8 @@ MacWindow::MacWindow(int id, bool scrollable, bool resizable, bool editable, Mac
 	_hasScrollBar = false;
 }
 
-static const byte noborderData[3][3] = {
-	{ 0, 1, 0 },
-	{ 1, 0, 1 },
-	{ 0, 1, 0 },
-};
-
 void MacWindow::disableBorder() {
-	Graphics::TransparentSurface *noborder = new Graphics::TransparentSurface();
-	noborder->create(3, 3, noborder->getSupportedPixelFormat());
-	uint32 colorBlack = noborder->getSupportedPixelFormat().RGBToColor(0, 0, 0);
-	uint32 colorPink = noborder->getSupportedPixelFormat().RGBToColor(255, 0, 255);
-
-	for (int y = 0; y < 3; y++)
-		for (int x = 0; x < 3; x++)
-			*((uint32 *)noborder->getBasePtr(x, y)) = noborderData[y][x] ? colorBlack : colorPink;
-
-	setBorder(noborder, kWindowBorderActive);
-
-	Graphics::TransparentSurface *noborder2 = new Graphics::TransparentSurface(*noborder, true);
-	setBorder(noborder2, 0);
+	_macBorder.disableBorder();
 }
 
 const Font *MacWindow::getTitleFont() {
@@ -339,60 +321,17 @@ void MacWindow::setScroll(float scrollPos, float scrollSize) {
 }
 
 void MacWindow::loadBorder(Common::SeekableReadStream &file, uint32 flags, int lo, int ro, int to, int bo) {
-	BorderOffsets offsets;
-	offsets.left = lo;
-	offsets.right = ro;
-	offsets.top = to;
-	offsets.bottom = bo;
-	offsets.titleTop = -1;
-	offsets.titleBottom = -1;
-	offsets.dark = false;
-	loadBorder(file, flags, offsets);
+	_macBorder.loadBorder(file, flags, lo, ro, to, bo);
 }
 
 void MacWindow::loadBorder(Common::SeekableReadStream &file, uint32 flags, BorderOffsets offsets, int titlePos, int titleWidth) {
-	Image::BitmapDecoder bmpDecoder;
-	Graphics::Surface *source;
-	Graphics::TransparentSurface *surface = new Graphics::TransparentSurface();
-
-	bmpDecoder.loadStream(file);
-	source = bmpDecoder.getSurface()->convertTo(surface->getSupportedPixelFormat(), bmpDecoder.getPalette());
-
-	surface->create(source->w, source->h, _wm->_pixelformat);
-	surface->copyFrom(*source);
-
-	source->free();
-	delete source;
-
-	setBorder(surface, flags, offsets, titlePos, titleWidth);
+	_macBorder.loadBorder(file, flags, offsets, titlePos, titleWidth);
 }
 
-void MacWindow::setBorder(Graphics::TransparentSurface *surface, uint32 flags, int lo, int ro, int to, int bo) {
-	BorderOffsets offsets;
-	offsets.left = lo;
-	offsets.right = ro;
-	offsets.top = to;
-	offsets.bottom = bo;
-	offsets.titleTop = -1;
-	offsets.titleBottom = -1;
-	offsets.dark = false;
-	setBorder(surface, flags, offsets);
-}
-
-void MacWindow::setBorder(Graphics::TransparentSurface *surface, uint32 flags, BorderOffsets offsets, int titlePos, int titleWidth) {
-	surface->applyColorKey(255, 0, 255, false);
-
-	_macBorder.addBorder(surface, flags, titlePos, titleWidth);
-
-	if ((flags & kWindowBorderActive) && offsets.left + offsets.right + offsets.top + offsets.bottom > -4) { // Checking against default -1
-		_macBorder.setOffsets(offsets);
-		updateOuterDims();
-		_borderSurface.free();
-		_borderSurface.create(_dims.width(), _dims.height(), _wm->_pixelformat);
-	}
-
-	_borderIsDirty = true;
-	_wm->setFullRefresh(true);
+void MacWindow::resizeBorderSurface() {
+	updateOuterDims();
+	_borderSurface.free();
+	_borderSurface.create(_dims.width(), _dims.height(), _wm->_pixelformat);
 }
 
 void MacWindow::setCloseable(bool closeable) {
@@ -583,27 +522,9 @@ bool MacWindow::processEvent(Common::Event &event) {
 void MacWindow::setBorderType(int borderType) {
 	_borderType = borderType;
 	if (borderType < 0) {
-		disableBorder();
+		_macBorder.disableBorder();
 	} else {
-		for (uint i = 0; i < kWindowBorderMaxFlag; i++) {
-			_macBorder.lazyLoad(i);
-		}
-	}
-}
-
-void MacWindow::loadLazyBorder(uint32 flags) {
-	if (_borderType < 0) {
-		warning("trying to lazy load non-existing border type");
-		return;
-	}
-	BorderOffsets offsets = _wm->getBorderOffsets(_borderType);
-	Common::SeekableReadStream *file = _wm->getBorderFile(_borderType, flags);
-	int titlePos = 0;
-	if (flags & kWindowBorderTitle)
-		titlePos = _wm->getBorderTitlePos(_borderType);
-	if (file) {
-		loadBorder(*file, flags, offsets, titlePos);
-		delete file;
+		_macBorder.setBorderType(borderType);
 	}
 }
 

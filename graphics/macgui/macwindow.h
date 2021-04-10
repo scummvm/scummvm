@@ -287,7 +287,7 @@ public:
 	/**
 	 * See BaseMacWindow.
 	 */
-	void setScrollBar(bool active) { _hasScrollBar = active; }
+	void enableScrollbar(bool active) { _hasScrollBar = active; }
 	virtual bool processEvent(Common::Event &event) override;
 	virtual bool hasAllFocus() override { return _beingDragged || _beingResized; }
 
@@ -304,11 +304,8 @@ public:
 	 */
 	void loadBorder(Common::SeekableReadStream &file, uint32 flags, int lo = -1, int ro = -1, int to = -1, int bo = -1);
 	void loadBorder(Common::SeekableReadStream &file, uint32 flags, BorderOffsets offsets, int titlePos = 0, int titleWidth = 0);
-	void setBorder(TransparentSurface *border, uint32 flags, int lo = -1, int ro = -1, int to = -1, int bo = -1);
-	void setBorder(TransparentSurface *border, uint32 flags, BorderOffsets offsets, int titlePos = 0, int titleWidth = 0);
 	void disableBorder();
 
-	void loadLazyBorder(uint32 flags);
 	/**
 	 * Indicate whether the window can be closed (false by default).
 	 * @param closeable True if the window can be closed.
@@ -332,6 +329,9 @@ public:
 	void mergeDirtyRects();
 
 	virtual bool isDirty() override { return _borderIsDirty || _contentIsDirty; }
+
+	void setBorderDirty(bool dirty) { _borderIsDirty = true; }
+	void resizeBorderSurface();
 
 private:
 	void drawBorderFromSurface(ManagedSurface *g, uint32 flags);

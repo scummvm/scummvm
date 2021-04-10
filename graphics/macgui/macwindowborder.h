@@ -32,6 +32,8 @@
 #include "graphics/macgui/macfontmanager.h"
 #include "graphics/primitives.h"
 
+#include "image/bmp.h"
+
 namespace Graphics {
 
 class MacWindow;
@@ -121,8 +123,6 @@ public:
 	 */
 	void blitBorderInto(ManagedSurface &destination, uint32 flags, MacWindowManager *wm);
 
-	void modifyTitleWidth(uint32 flags, int titleWidth);
-
 	void setTitle(const Common::String& title, int width, MacWindowManager *wm);
 
 	void setScroll(int scrollPos, int scrollSize) { _scrollPos = scrollPos, _scrollSize = scrollSize; }
@@ -131,27 +131,32 @@ public:
 
 	void drawScrollBar(ManagedSurface *g, MacWindowManager *wm);
 
-	void lazyLoad(uint32 flags);
-
 	// we should call this method as soon as the macwindowborder is constructed
 	void setWindow(MacWindow *window) { _window = window; }
 
+	void setBorderType(int type);
+
+	void disableBorder();
+
+	void loadBorder(Common::SeekableReadStream &file, uint32 flags, int lo = -1, int ro = -1, int to = -1, int bo = -1);
+	void loadBorder(Common::SeekableReadStream &file, uint32 flags, BorderOffsets offsets, int titlePos = 0, int titleWidth = 0);
+	void loadInternalBorder(uint32 flags);
+
+	void setBorder(Graphics::TransparentSurface *surface, uint32 flags, int lo = -1, int ro = -1, int to = -1, int bo = -1);
+	void setBorder(Graphics::TransparentSurface *surface, uint32 flags, BorderOffsets offsets, int titlePos = 0, int titleWidth = 0);
 private:
 	int _scrollPos, _scrollSize;
 	Common::String _title;
 
-	const uint32 _borderTypeNum = kWindowBorderMaxFlag;
-
 	Common::Array<NinePatchBitmap *> _border;
-
-	Common::Array<bool> _borderInitialized;
-
-	Common::Array<bool> _lazyTag;
 
 	MacWindow *_window;
 
 	BorderOffsets _borderOffsets;
 
+	bool _useInternalBorder;
+
+	int _borderType;
 };
 
 } // End of namespace Graphics
