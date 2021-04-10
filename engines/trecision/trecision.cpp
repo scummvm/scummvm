@@ -184,6 +184,8 @@ TrecisionEngine::~TrecisionEngine() {
 	delete[] _icons;
 	delete[] _zBuffer;
 	delete _actor;
+	delete[] _screenBuffer;
+	delete[] _smackImageBuffer;
 }
 
 Common::Error TrecisionEngine::run() {

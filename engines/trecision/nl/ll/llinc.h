@@ -102,7 +102,6 @@ struct SFileHandle {
 
 // GAME POINTER
 extern uint16 *ImagePointer;
-extern uint16 *SmackImagePointer;
 extern uint16 *ObjPointers[];
 extern uint8 *MaskPointers[];
 extern uint8 *_actionPointer[];
@@ -114,7 +113,6 @@ extern uint8 *BaseHeadTexture;
 extern uint8 AddObjectMaterial;
 // MEMORY
 extern uint32 GameBytePointer;
-extern uint32 GameWordPointer;
 // DTEXT
 extern int8 DTextLines[MAXDTEXTLINES][MAXDTEXTCHARS];
 // ANIMATION

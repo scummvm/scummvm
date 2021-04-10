@@ -324,7 +324,7 @@ void doMouse() {
 					g_vm->_obj[oWHEELS2C]._mode |= OBJMODE_OBJSTATUS;
 					FlagShowCharacter = true;
 					RegenRoom();
-					memcpy(SmackImagePointer, ImagePointer, MAXX * AREA * 2);
+					memcpy(g_vm->_smackImageBuffer, ImagePointer, MAXX * AREA * 2);
 					g_vm->_animMgr->startSmkAnim(g_vm->_room[g_vm->_curRoom]._bkgAnim);
 
 					// right combination
