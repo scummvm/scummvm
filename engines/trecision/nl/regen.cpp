@@ -59,7 +59,7 @@ void PaintScreen(uint8 flag) {
 		VisualRef[a] = 255;
 
 	g_vm->_limitsNum = 0;
-	FlagPaintCharacter = true;                      // ridisegna sempre l'omino
+	g_vm->FlagPaintCharacter = true; // always redraws the character
 
 #if USE_DIRTY_RECTS	
 	AddLine(0, 0, 0);
@@ -71,7 +71,7 @@ void PaintScreen(uint8 flag) {
 	int y2 = g_vm->_actor->_lim[3] - TOP;
 	
 	// erase character
-	if (FlagShowCharacter && x2 > x1 && y2 > y1) {                    // if a description exists
+	if (g_vm->FlagShowCharacter && x2 > x1 && y2 > y1) {                    // if a description exists
 		DObj.x    = 0;
 		DObj.y    = TOP;
 		DObj.dx   = SCREENLEN;
@@ -221,7 +221,7 @@ void PaintScreen(uint8 flag) {
 	}
 #endif
 
-	if (!flag && !FlagDialogActive) {
+	if (!flag && !g_vm->FlagDialogActive) {
 #if USE_DIRTY_RECTS
 
 		// Sort the blocks to copy and remove the useless ones
@@ -250,8 +250,8 @@ void PaintScreen(uint8 flag) {
 
 	g_vm->_curSortTableNum = 0;
 
-	FlagPaintCharacter = false;
-	FlagWaitRegen = false;
+	g_vm->FlagPaintCharacter = false;
+	g_vm->FlagWaitRegen = false;
 
 	// Handle papaverine delayed action
 	if ((g_vm->_curRoom == r4A) && (g_vm->_obj[oCHOCOLATES4A]._flag & OBJFLAG_EXTRA)) {
@@ -414,7 +414,7 @@ void PaintObjAnm(uint16 CurBox) {
 		}
 	}
 
-	if (_actorPos == CurBox && FlagShowCharacter && FlagCharacterExist) {
+	if (_actorPos == CurBox && g_vm->FlagShowCharacter && g_vm->FlagCharacterExist) {
 		drawCharacter(CALCPOINTS);
 
 		int x1 = g_vm->_actor->_lim[0];
@@ -432,7 +432,7 @@ void PaintObjAnm(uint16 CurBox) {
 
 		drawCharacter(DRAWFACES);
 
-	} else if (_actorPos == CurBox && !FlagDialogActive) {
+	} else if (_actorPos == CurBox && !g_vm->FlagDialogActive) {
 		g_vm->_animMgr->refreshSmkAnim(g_vm->_animMgr->_playingAnims[kSmackerAction]);
 	}
 }

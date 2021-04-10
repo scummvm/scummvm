@@ -36,7 +36,7 @@ namespace Trecision {
 --------------------------------------------------*/
 void RedrawRoom() {
 	if ((_curDialog != dF321) && (_curDialog != dF431) && (_curDialog != dF4C1) && (_curDialog != dASCENSORE12) && (_curDialog != dASCENSORE13) && (_curDialog != dASCENSORE16))
-		FlagShowCharacter = true;
+		g_vm->FlagShowCharacter = true;
 
 	switch (_curDialog) {
 	case dASCENSORE12:
@@ -83,7 +83,7 @@ void RedrawRoom() {
 	RegenRoom();
 
 	TextStatus = TEXT_OFF;
-	FlagPaintCharacter = true;
+	g_vm->FlagPaintCharacter = true;
 	PaintScreen(1);
 	g_vm->_graphicsMgr->copyToScreen(0, 0, 640, 480);
 }

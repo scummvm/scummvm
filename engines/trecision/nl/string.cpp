@@ -82,7 +82,7 @@ void ShowObjName(uint16 obj, bool showhide) {
 	uint16 posy;
 	Common::String locsent;
 
-	if (FlagSomeOneSpeak)
+	if (g_vm->FlagSomeOneSpeak)
 		return;
 
 	if (g_vm->_lastInv) {
@@ -90,7 +90,7 @@ void ShowObjName(uint16 obj, bool showhide) {
 		g_vm->_lastInv = 0;
 	}
 
-	if (FlagUseWithStarted && !FlagUseWithLocked) {
+	if (g_vm->FlagUseWithStarted && !g_vm->FlagUseWithLocked) {
 		if (!showhide) {
 			g_vm->clearText();
 			g_vm->_lastObj = obj;
@@ -207,7 +207,7 @@ void CharacterSay(uint16 i) {
 	CurS = i;
 
 	//	TODO: Use a define...  ************************
-	Flagskipenable = (i != 99999);
+	g_vm->Flagskipenable = (i != 99999);
 
 	//	if he took some action
 	if (g_vm->_sentence[i][0] == '*' && !g_vm->_animMgr->_playingAnims[kSmackerAction]
@@ -221,9 +221,9 @@ void CharacterSay(uint16 i) {
 /*                                CharacterTalk            				   */
 /*-------------------------------------------------------------------------*/
 void CharacterTalk(const char *s, bool FromCharacterSay) {
-	FlagSomeOneSpeak = true;
-	FlagCharacterSpeak = true;
-	Flagskiptalk = false;
+	g_vm->FlagSomeOneSpeak = true;
+	g_vm->FlagCharacterSpeak = true;
+	g_vm->Flagskiptalk = false;
 
 	SuperString = s;
 	SuperStringLen = strlen(SuperString);
@@ -232,7 +232,7 @@ void CharacterTalk(const char *s, bool FromCharacterSay) {
 	FormattingSuperString();
 
 	if (!FromCharacterSay)
-		Flagskipenable = true;
+		g_vm->Flagskipenable = true;
 
 	CharacterContinueTalk();
 
@@ -250,10 +250,10 @@ void CharacterTalkInAction(uint16 ss) {
 		return;
 	CurS = ss;
 
-	FlagSomeOneSpeak = true;
-	FlagCharacterSpeak = true;
-	Flagskiptalk = false;
-	Flagskipenable = true;
+	g_vm->FlagSomeOneSpeak = true;
+	g_vm->FlagCharacterSpeak = true;
+	g_vm->Flagskiptalk = false;
+	g_vm->Flagskipenable = true;
 
 	SuperString = s;
 	SuperStringLen = strlen(SuperString);
@@ -270,12 +270,12 @@ void CharacterTalkInAction(uint16 ss) {
 void CharacterContinueTalk() {
 	uint16 posx, posy;
 
-	Flagskiptalk = false;
+	g_vm->Flagskiptalk = false;
 	CharacterSpeakTime = TheTime;
 
 	substringagain = (CurSubString < (SubStringUsed - 1));
 
-	if (FlagCharacterExist)
+	if (g_vm->FlagCharacterExist)
 		PositionString(g_vm->_actor->_lim[0], g_vm->_actor->_lim[2], SubString[CurSubString], &posx, &posy, true);
 	else
 		PositionString(MAXX / 2, 30, SubString[CurSubString], &posx, &posy, false);
@@ -284,7 +284,7 @@ void CharacterContinueTalk() {
 	if (ConfMan.getBool("subtitles"))
 		g_vm->addText(posx, posy, SubString[CurSubString], COLOR_OBJECT, MASKCOL);
 
-	if (!FlagDialogActive) {
+	if (!g_vm->FlagDialogActive) {
 		if (CurSubString)
 			sprintf(sn, "s%04d%c.wav", CurS, CurSubString + 'a');
 		else
@@ -304,9 +304,9 @@ void CharacterContinueTalk() {
 /*                                CharacterMute            				   */
 /*-------------------------------------------------------------------------*/
 void CharacterMute() {
-	FlagSomeOneSpeak = false;
-	FlagCharacterSpeak = false;
-	Flagskiptalk = false;
+	g_vm->FlagSomeOneSpeak = false;
+	g_vm->FlagCharacterSpeak = false;
+	g_vm->Flagskiptalk = false;
 	CharacterSpeakTime = 0L;
 
 	g_vm->clearText();
@@ -329,8 +329,8 @@ void CharacterMute() {
 void SomeOneTalk(uint16 s, uint16 Person, uint16 NewAnim, bool FromSomeOneSay) {
 	SpeakSomeOneAnimation = NewAnim;
 	SpeakSomeOnePerson = Person;
-	FlagSomeOneSpeak = true;
-	Flagskiptalk = false;
+	g_vm->FlagSomeOneSpeak = true;
+	g_vm->Flagskiptalk = false;
 
 	CurS = s;
 	SuperString = g_vm->_sentence[s];
@@ -339,7 +339,7 @@ void SomeOneTalk(uint16 s, uint16 Person, uint16 NewAnim, bool FromSomeOneSay) {
 	CurSubString = 0;
 
 	if (!FromSomeOneSay)
-		Flagskipenable = true;
+		g_vm->Flagskipenable = true;
 
 	FormattingSuperString();
 
@@ -355,7 +355,7 @@ void SomeOneContinueTalk() {
 	uint16 posx, posy;
 
 	SomeOneSpeakTime = TheTime;
-	Flagskiptalk = false;
+	g_vm->Flagskiptalk = false;
 
 	substringagain = (CurSubString < (SubStringUsed - 1));
 
@@ -385,9 +385,9 @@ void SomeOneContinueTalk() {
 /*                                SOMEONEMUTE                 			   */
 /*-------------------------------------------------------------------------*/
 void SomeOneMute() {
-	FlagCharacterSpeak = false;
-	Flagskiptalk = false;
-	FlagSomeOneSpeak = false;
+	g_vm->FlagCharacterSpeak = false;
+	g_vm->Flagskiptalk = false;
+	g_vm->FlagSomeOneSpeak = false;
 	SomeOneSpeakTime = 0L;
 
 	g_vm->clearText();
@@ -408,16 +408,14 @@ void doString() {
 		break;
 
 	case ME_CHARACTERSPEAKING:
-		if (FlagCharacterSpeak) {
-			if (Flagskiptalk || (TheTime > (TalkTime + CharacterSpeakTime))) {
+		if (g_vm->FlagCharacterSpeak) {
+			if (g_vm->Flagskiptalk || (TheTime > TalkTime + CharacterSpeakTime)) {
 				if (substringagain)
 					CharacterContinueTalk();
 				else
 					CharacterMute();
-			} else {
-				//	actorDoNextFrame();
+			} else
 				REEVENT;
-			}
 		}
 		break;
 
@@ -436,8 +434,8 @@ void doString() {
 		break;
 
 	case ME_SOMEONESPEAKING:
-		if (FlagSomeOneSpeak) {
-			if (Flagskiptalk || (TheTime >= (TalkTime + SomeOneSpeakTime))) {
+		if (g_vm->FlagSomeOneSpeak) {
+			if (g_vm->Flagskiptalk || (TheTime >= (TalkTime + SomeOneSpeakTime))) {
 				if (substringagain)
 					SomeOneContinueTalk();
 				else {
@@ -448,6 +446,8 @@ void doString() {
 			} else
 				REEVENT;
 		}
+		break;
+	default:
 		break;
 	}
 }

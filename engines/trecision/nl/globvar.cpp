@@ -50,24 +50,6 @@ ScreenRect VideoBott = {0, (TOP + AREA), MAXX - 1, MAXY - 1};
 SSortTable SortTable[200];
 
 /*-------------------------------------------------------------------------*/
-/*                             FLAGS DI STATO          					   */
-/*-------------------------------------------------------------------------*/
-bool  FlagDialogActive;
-bool  FlagDialogMenuActive;
-bool  Flagskiptalk;
-bool  Flagskipenable;
-bool  FlagPaintCharacter;
-bool  FlagShowCharacter = true;
-bool  FlagSomeOneSpeak;
-bool  FlagCharacterSpeak;
-bool  FlagUseWithStarted;
-bool  FlagUseWithLocked;
-bool  FlagCharacterExist = true;
-bool  FlagWalkNoInterrupt;
-bool  FlagNoPaintScreen;
-bool  FlagWaitRegen;
-
-/*-------------------------------------------------------------------------*/
 /*                                  VARIE           					   */
 /*-------------------------------------------------------------------------*/
 uint32 TheTime;

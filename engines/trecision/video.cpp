@@ -425,7 +425,7 @@ void AnimManager::startFullMotion(const char *name) {
 	_fullMotionEnd = 0;
 #endif
 
-	FlagShowCharacter = false;
+	g_vm->FlagShowCharacter = false;
 	TextStatus = TEXT_OFF;
 	memset(_vm->_screenBuffer, 0, TOP * MAXX * 2);
 	_vm->_graphicsMgr->copyToScreen(0, 0, MAXX, TOP);
@@ -459,10 +459,10 @@ void AnimManager::stopFullMotion() {
 
 	closeSmk();
 
-	FlagDialogActive = false;
-	FlagDialogMenuActive = false;
+	g_vm->FlagDialogActive = false;
+	g_vm->FlagDialogMenuActive = false;
 	g_vm->_flagMouseEnabled = true;
-	FlagSomeOneSpeak = false;
+	g_vm->FlagSomeOneSpeak = false;
 
 	_vm->_lightIcon = 0xFF;
 	if (_curDialog == dFCRED) {
@@ -474,7 +474,7 @@ void AnimManager::stopFullMotion() {
 		if ((_curDialog == dF582) || (_curDialog == dFLOG) || (_curDialog == dINTRO) || (_curDialog == dF362) || (_curDialog == dC381) || (_curDialog == dF381) ||
 		    (_curDialog == dF491) || ((_curDialog == dC581) && !(g_vm->_choice[886]._flag & OBJFLAG_DONE) && (g_vm->_choice[258]._flag & OBJFLAG_DONE)) ||
 		    ((_curDialog == dC5A1) && (_vm->_room[r5A]._flag & OBJFLAG_EXTRA)))
-			FlagShowCharacter = false;
+			g_vm->FlagShowCharacter = false;
 		else
 			RedrawRoom();
 
@@ -647,7 +647,7 @@ void AnimManager::refreshSmkAnim(int num) {
 	if (!(_animTab[num]._flag & SMKANIM_LOOP) && !(_animTab[num]._flag & SMKANIM_BKG)) {
 		if (_curAnimFrame[pos] >= _smkAnims[pos]->getFrameCount()) {
 			stopSmkAnim(num);
-			FlagPaintCharacter = true;
+			g_vm->FlagPaintCharacter = true;
 
 			_animMaxX = 0;
 			_animMinX = MAXX;

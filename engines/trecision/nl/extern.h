@@ -47,26 +47,7 @@ extern bool VideoObjStatus[];
 extern struct ScreenRect VideoTop;
 extern struct ScreenRect VideoCent;
 extern struct ScreenRect VideoBott;
-
 extern struct SSortTable SortTable[];
-
-/*-------------------------------------------------------------------------*/
-/*                             FLAGS DI STATO          					   */
-/*-------------------------------------------------------------------------*/
-extern bool  FlagDialogActive;
-extern bool  FlagDialogMenuActive;
-extern bool  Flagskiptalk;
-extern bool  Flagskipenable;
-extern bool  FlagPaintCharacter;
-extern bool  FlagShowCharacter;
-extern bool  FlagSomeOneSpeak;
-extern bool  FlagCharacterSpeak;
-extern bool  FlagUseWithStarted;
-extern bool  FlagUseWithLocked;
-extern bool  FlagCharacterExist;
-extern bool  FlagWalkNoInterrupt;
-extern bool  FlagNoPaintScreen;
-extern bool  FlagWaitRegen;
 
 /*-------------------------------------------------------------------------*/
 /*                                  VARIE           					   */

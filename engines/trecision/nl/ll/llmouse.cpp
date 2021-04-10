@@ -684,7 +684,7 @@ void performLoad(int slot, bool skipLoad) {
 
 		g_vm->loadGameState(slot + 1);
 
-		FlagNoPaintScreen = true;
+		g_vm->FlagNoPaintScreen = true;
 		g_vm->_curStack = 0;
 		g_vm->_flagscriptactive = false;
 

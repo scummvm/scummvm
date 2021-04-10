@@ -156,7 +156,7 @@ void doUseWith() {
 	g_vm->_useWith[WITH] = 0;
 	g_vm->_useWithInv[USED] = false;
 	g_vm->_useWithInv[WITH] = false;
-	FlagUseWithStarted = false;
+	g_vm->FlagUseWithStarted = false;
 }
 
 /*-------------------------------------------------------------------------*/
@@ -470,18 +470,18 @@ void AtEndChangeRoom() {
 	else if ((g_vm->_curRoom == r23A) && (g_vm->_oldRoom == r21) && (g_vm->_room[r23A]._flag & OBJFLAG_DONE))
 		StartCharacterAction(aWALKIN, 0, 0, 0);
 	else if ((g_vm->_curRoom == r23A) && (g_vm->_oldRoom == r21) && (!(g_vm->_room[r23A]._flag & OBJFLAG_DONE)))
-		FlagShowCharacter = false;
+		g_vm->FlagShowCharacter = false;
 	else if ((g_vm->_curRoom == r21) && ((g_vm->_oldRoom == r23A) || (g_vm->_oldRoom == r23B)))
 		StartCharacterAction(aWALKIN, 0, 0, 0);
 	else if ((g_vm->_curRoom == r2BL) || (g_vm->_curRoom == r36F) || (g_vm->_curRoom == r41D) || (g_vm->_curRoom == r49M) || (g_vm->_curRoom == r4CT) ||
 	         (g_vm->_curRoom == r58T) || (g_vm->_curRoom == r58M) || (g_vm->_curRoom == r59L) || (g_vm->_curRoom == rSYS) ||
 	         (g_vm->_curRoom == r12CU) || (g_vm->_curRoom == r13CU)) { // Screens without inventory
-		FlagShowCharacter = false;
-		FlagCharacterExist = false;
+		g_vm->FlagShowCharacter = false;
+		g_vm->FlagCharacterExist = false;
 		g_vm->_flagInventoryLocked = true;
 	} else if ((g_vm->_curRoom == r31P) || (g_vm->_curRoom == r35P)) { // Screens with inventory
-		FlagShowCharacter = false;
-		FlagCharacterExist = false;
+		g_vm->FlagShowCharacter = false;
+		g_vm->FlagCharacterExist = false;
 	} else if ((g_vm->_curRoom == r2F) && (g_vm->_oldRoom == r31))
 		StartCharacterAction(a2F4ESCEASCENSORE, 0, 0, 0);
 	else if ((g_vm->_curRoom == r31) && (g_vm->_oldRoom == r2F))
@@ -543,12 +543,12 @@ void AtEndChangeRoom() {
 		WaitSoundFadEnd();
 	} else if ((g_vm->_curRoom == r31) && (g_vm->_oldRoom == r32) && (g_vm->_room[r32]._flag & OBJFLAG_EXTRA)) {
 		PlayDialog(dF321);
-		FlagShowCharacter = false;
+		g_vm->FlagShowCharacter = false;
 		WaitSoundFadEnd();
 		g_vm->_room[r32]._flag &= ~OBJFLAG_EXTRA;
 	} else if ((g_vm->_curRoom == r19) && !(g_vm->_room[r19]._flag & OBJFLAG_DONE)) {
 		g_vm->playScript(s19EVA);
-		FlagNoPaintScreen = false;
+		g_vm->FlagNoPaintScreen = false;
 		g_vm->clearText();
 		g_vm->redrawString();
 		WaitSoundFadEnd();
@@ -557,7 +557,7 @@ void AtEndChangeRoom() {
 	else if ((g_vm->_curRoom == r21) && (/*!( _room[g_vm->_curRoom]._flag & OBJFLAG_DONE ) || */ (g_vm->_oldRoom == r1C))) {
 		setPosition(10);
 		TendIn();
-		FlagNoPaintScreen = false;
+		g_vm->FlagNoPaintScreen = false;
 		g_vm->clearText();
 		g_vm->redrawString();
 	} else if ((g_vm->_curRoom == r46) && (g_vm->_oldRoom == r43) && !(g_vm->_inventoryObj[iDISLOCATORE]._flag & OBJFLAG_EXTRA)) {
@@ -574,11 +574,11 @@ void AtEndChangeRoom() {
 		PlayDialog(dC4A1);
 	} else if ((g_vm->_curRoom == r4P) && (g_vm->_oldRoom == r4O) && !(g_vm->_room[r4P]._flag & OBJFLAG_DONE)) {
 		PlayDialog(dF4PI);
-		FlagShowCharacter = false;
+		g_vm->FlagShowCharacter = false;
 		WaitSoundFadEnd();
 	} else if ((g_vm->_curRoom == r51) && (g_vm->_oldRoom == r4CT)) {
 		PlayDialog(dF4C1);
-		FlagShowCharacter = false;
+		g_vm->FlagShowCharacter = false;
 		WaitSoundFadEnd();
 	} else if ((g_vm->_curRoom == r1A) && (g_vm->_oldRoom == r18)) {
 		if (!(g_vm->_room[r1A]._flag & OBJFLAG_DONE)) {
@@ -588,12 +588,12 @@ void AtEndChangeRoom() {
 			g_vm->_obj[oTOPO1C]._anim = a1C3RACCOGLIETOPO;
 		} else {
 			TendIn();
-			FlagNoPaintScreen = false;
+			g_vm->FlagNoPaintScreen = false;
 			g_vm->redrawString();
 		}
 	} else {
 		TendIn();
-		FlagNoPaintScreen = false;
+		g_vm->FlagNoPaintScreen = false;
 		g_vm->clearText();
 		g_vm->redrawString();
 	}
@@ -601,10 +601,10 @@ void AtEndChangeRoom() {
 //	Sentence
 	if ((g_vm->_curRoom == r17) && (g_vm->_oldRoom == r18) && !(g_vm->_room[r17]._flag & OBJFLAG_DONE) && (g_vm->_obj[oRETE17]._mode & OBJMODE_OBJSTATUS))
 		CharacterSay(189);
-	if (((g_vm->_curRoom == r12CU) || (g_vm->_curRoom == r13CU)) && (g_vm->_closeUpObj) && (g_vm->_obj[g_vm->_closeUpObj]._examine))
+	if (((g_vm->_curRoom == r12CU) || (g_vm->_curRoom == r13CU)) && g_vm->_closeUpObj && g_vm->_obj[g_vm->_closeUpObj]._examine)
 		CharacterSay(g_vm->_obj[g_vm->_closeUpObj]._examine);
-	else if ((g_vm->_curRoom == r23A) && (g_vm->_oldRoom == r21) && (!(g_vm->_room[r23A]._flag & OBJFLAG_DONE))) {
-		FlagShowCharacter = true;
+	else if ((g_vm->_curRoom == r23A) && (g_vm->_oldRoom == r21) && !(g_vm->_room[r23A]._flag & OBJFLAG_DONE)) {
+		g_vm->FlagShowCharacter = true;
 		StartCharacterAction(aWALKIN, 0, 0, 361);
 	} else if ((g_vm->_curRoom == r24) && !(g_vm->_room[r24]._flag & OBJFLAG_DONE))
 		CharacterSay(381);
@@ -696,10 +696,10 @@ void ExecuteATFDO(ATFHandle *h, int doit, int obj) {
 		break;
 
 	case fCHARACTEROFF:
-		FlagCharacterExist = false;
+		g_vm->FlagCharacterExist = false;
 		break;
 	case fCHARACTERON:
-		FlagCharacterExist = true;
+		g_vm->FlagCharacterExist = true;
 		break;
 	case fCHARACTERFOREGROUND:
 		_forcedActorPos = FOREGROUND;
@@ -911,11 +911,11 @@ void InitAtFrameHandler(uint16 an, uint16 obj) {
 					AtFrameNext
  --------------------------------------------------*/
 void AtFrameNext() {
-	if (!((AnimType[0].status & ATF_WAITTEXT) && FlagCharacterSpeak))
+	if (!((AnimType[0].status & ATF_WAITTEXT) && g_vm->FlagCharacterSpeak))
 		AnimType[0].curframe++;
-	if (!((AnimType[1].status & ATF_WAITTEXT) && FlagCharacterSpeak))
+	if (!((AnimType[1].status & ATF_WAITTEXT) && g_vm->FlagCharacterSpeak))
 		AnimType[1].curframe++;
-	if (!((AnimType[2].status & ATF_WAITTEXT) && FlagCharacterSpeak))
+	if (!((AnimType[2].status & ATF_WAITTEXT) && g_vm->FlagCharacterSpeak))
 		AnimType[2].curframe++;
 }
 
