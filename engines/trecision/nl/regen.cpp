@@ -432,10 +432,8 @@ void PaintObjAnm(uint16 CurBox) {
 
 		drawCharacter(DRAWFACES);
 
-#if (!USE_NEW_VIDEO_CODE)
 	} else if (_actorPos == CurBox && !FlagDialogActive) {
-		g_vm->_animMgr->refreshSmkAnim(g_vm->_animMgr->_playingAnims[kSmackerFullMotion]);
-#endif
+		g_vm->_animMgr->refreshSmkAnim(g_vm->_animMgr->_playingAnims[kSmackerAction]);
 	}
 }
 

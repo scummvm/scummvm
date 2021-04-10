@@ -145,13 +145,9 @@ void openSys() {
 	ExtraObj2C = (uint16 *)SpeechBuf; // for room 2C
 
 	// omino e full motions area
-#if (!USE_NEW_VIDEO_CODE)
-	g_vm->_animMgr->_smkBuffer[kSmackerFullMotion] = (uint8 *)(MemoryArea + GameBytePointer);
-	ExtraObj41D = (uint16 *)g_vm->_animMgr->_smkBuffer[kSmackerFullMotion]; // for room 41D
-#else
-	// TODO/CHECKME: Will this work?
-	ExtraObj41D = (uint16 *)(MemoryArea + GameBytePointer); // for room 41D
-#endif
+	g_vm->_animMgr->_smkBuffer[kSmackerAction] = (uint8 *)(MemoryArea + GameBytePointer);
+	ExtraObj41D = (uint16 *)g_vm->_animMgr->_smkBuffer[kSmackerAction]; // for room 41D
+
 	GameBytePointer += SCREENLEN * AREA;
 	// omino buffer
 	GameBytePointer += SMKANBUFFER;

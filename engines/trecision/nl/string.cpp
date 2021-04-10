@@ -210,10 +210,7 @@ void CharacterSay(uint16 i) {
 	Flagskipenable = (i != 99999);
 
 	//	if he took some action
-	if (g_vm->_sentence[i][0] == '*'
-#if (!USE_NEW_VIDEO_CODE)
-		&& !g_vm->_animMgr->_playingAnims[kSmackerFullMotion]
-#endif
+	if (g_vm->_sentence[i][0] == '*' && !g_vm->_animMgr->_playingAnims[kSmackerAction]
 	)
 		StartCharacterAction(hBOH, 0, 0, 0);
 	else

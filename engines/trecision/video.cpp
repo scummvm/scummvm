@@ -300,19 +300,14 @@ void AnimManager::startSmkAnim(uint16 num) {
 		pos = kSmackerBackground;
 	else if (_animTab[num]._flag & SMKANIM_ICON)
 		pos = kSmackerIcon;
-#if USE_NEW_VIDEO_CODE
-	else
-		return;
-#else
 	else {
-		pos = kSmackerFullMotion;
+		pos = kSmackerAction;
 
 		_animMaxX = 0;
 		_animMinX = MAXX;
 		_animMaxY = 0;
 		_animMinY = MAXY;
 	}
-#endif
 
 	_curSmackBuffer = pos;
 
@@ -381,13 +376,8 @@ void AnimManager::stopSmkAnim(uint16 num) {
 			pos = kSmackerBackground;
 		else if (_animTab[num]._flag & SMKANIM_ICON)
 			pos = kSmackerIcon;
-#if USE_NEW_VIDEO_CODE
 		else
-			return;
-#else
-		else
-			pos = kSmackerFullMotion;
-#endif
+			pos = kSmackerAction;
 	}
 
 	_playingAnims[pos] = 0;
@@ -516,7 +506,7 @@ void AnimManager::refreshPalette(int num) {
 }
 
 void AnimManager::refreshSmkAnim(int num) {
-	if ((num == 0) || (num == FULLMOTIONANIM))
+	if (num == 0 || num == FULLMOTIONANIM)
 		return;
 
 	if (_animTab[num]._flag & SMKANIM_ICON) {
@@ -533,13 +523,8 @@ void AnimManager::refreshSmkAnim(int num) {
 			pos = kSmackerBackground;
 		else if (_animTab[num]._flag & SMKANIM_ICON)
 			pos = kSmackerIcon;
-#if USE_NEW_VIDEO_CODE
 		else
-			return;
-#else
-		else
-			pos = kSmackerFullMotion;
-#endif
+			pos = kSmackerAction;
 	}
 
 	_curSmackBuffer = pos;
@@ -603,8 +588,7 @@ void AnimManager::refreshSmkAnim(int num) {
 				_vm->_limits[_vm->_limitsNum++] = l;
 			}
 		}
-#if (!USE_NEW_VIDEO_CODE)
-	} else if (pos == kSmackerFullMotion) {
+	} else if (pos == kSmackerAction) {
 		// Only for the character
 		if (_curAnimFrame[pos] == 1) {
 			for (uint16 b = 0; b < AREA; b++) {
@@ -640,7 +624,6 @@ void AnimManager::refreshSmkAnim(int num) {
 			_vm->_actorLimit = _vm->_limitsNum;
 			_vm->_limits[_vm->_limitsNum++] = Common::Rect(_animMinX, _animMinY + TOP, _animMaxX, _animMaxY + TOP);			
 		}
-#endif
 	}
 
 	if (!(_animTab[num]._flag & SMKANIM_LOOP) && !(_animTab[num]._flag & SMKANIM_BKG)) {
@@ -664,6 +647,42 @@ void AnimManager::refreshSmkAnim(int num) {
 
 		_curAnimFrame[pos] = 0;
 	}
+}
+
+void AnimManager::refreshSmkIcon(int StartIcon, int num) {
+	_curAnimFrame[kSmackerIcon]++;
+
+	_curSmackBuffer = kSmackerIcon;
+
+	if (_smkAnims[_curSmackBuffer] == nullptr)
+		return;
+
+	int stx = ICONMARGSX;
+	int32 a;
+	for (a = 0; a < ICONSHOWN; a++) {
+		if (_vm->_inventory[a + StartIcon] == (num - aiBANCONOTE + 1)) {
+			stx = a * ICONDX + ICONMARGSX;
+			break;
+		}
+	}
+	if (a == ICONSHOWN)
+		return;
+
+	refreshPalette(kSmackerIcon);
+
+	Common::Rect dirtyRect = Common::Rect(0, 0, _smkAnims[kSmackerIcon]->getWidth(), _smkAnims[kSmackerIcon]->getHeight());
+	for (a = 0; a < ICONDY - dirtyRect.top; a++) {
+		byte2word(
+			_vm->_screenBuffer + dirtyRect.left + stx + (dirtyRect.top + a + FIRSTLINE) * SCREENLEN,
+			_smkBuffer[kSmackerIcon] + dirtyRect.left + (dirtyRect.top + a) * _smkAnims[kSmackerIcon]->getWidth(),
+			_smkPal[kSmackerIcon], dirtyRect.width());
+
+#if USE_DIRTY_RECTS
+		AddLine(lastRect->left + stx, lastRect->right + stx, lastRect->top + a + FIRSTLINE);
+#endif
+	}
+
+	smkNextFrame();
 }
 
 #if (!USE_NEW_VIDEO_CODE)
@@ -749,46 +768,7 @@ void AnimManager::refreshFullMotion() {
 		}
 	}
 }
-#endif
 
-void AnimManager::refreshSmkIcon(int StartIcon, int num) {
-	_curAnimFrame[kSmackerIcon]++;
-
-	_curSmackBuffer = kSmackerIcon;
-
-	if (_smkAnims[_curSmackBuffer] == nullptr)
-		return;
-
-	int stx = ICONMARGSX;
-	int32 a;
-	for (a = 0; a < ICONSHOWN; a++) {
-		if (_vm->_inventory[a + StartIcon] == (num - aiBANCONOTE + 1)) {
-			stx = a * ICONDX + ICONMARGSX;
-			break;
-		}
-	}
-	if (a == ICONSHOWN)
-		return;
-
-	refreshPalette(kSmackerIcon);
-
-	Common::Rect dirtyRect = Common::Rect(0, 0, _smkAnims[kSmackerIcon]->getWidth(), _smkAnims[kSmackerIcon]->getHeight());
-	for (a = 0; a < ICONDY - dirtyRect.top; a++) {
-		byte2word(
-			_vm->_screenBuffer + dirtyRect.left + stx + (dirtyRect.top + a + FIRSTLINE) * SCREENLEN,
-			_smkBuffer[kSmackerIcon] + dirtyRect.left + (dirtyRect.top + a) * _smkAnims[kSmackerIcon]->getWidth(),
-			_smkPal[kSmackerIcon], dirtyRect.width()
-		);
-
-#if USE_DIRTY_RECTS
-		AddLine(lastRect->left + stx, lastRect->right + stx, lastRect->top + a + FIRSTLINE);
-#endif
-	}
-
-	smkNextFrame();
-}
-
-#if (!USE_NEW_VIDEO_CODE)
 void AnimManager::playFullMotion(int start, int end) {
 	_curSmackBuffer = kSmackerFullMotion;
 
