@@ -543,10 +543,7 @@ void DropdownButtonWidget::drawWidget() {
 
 #pragma mark -
 
-Graphics::Surface *scaleGfx(const Graphics::ManagedSurface *gfx, int w, int h) {
-	const Graphics::PixelFormat &requiredFormat = g_gui.theme()->getPixelFormat();
-	Graphics::Surface tmp;
-
+const Graphics::ManagedSurface *scaleGfx(const Graphics::ManagedSurface *gfx, int w, int h) {
 	// Maintain aspect ratio
 	float xRatio = 1.0f * w / gfx->w;
 	float yRatio = 1.0f * h / gfx->h;
@@ -556,11 +553,9 @@ Graphics::Surface *scaleGfx(const Graphics::ManagedSurface *gfx, int w, int h) {
 	else
 		w = gfx->w * yRatio;
 
-	tmp.create(gfx->w, gfx->h, g_gui.theme()->getPixelFormat());
-	tmp.copyFrom(*gfx);
-	tmp.convertToInPlace(requiredFormat);
+	Graphics::ManagedSurface tmp(*gfx);
 
-	Graphics::Surface *tmp2 = tmp.scale(w, h, false);
+	const Graphics::ManagedSurface *tmp2 = new Graphics::ManagedSurface(tmp.surfacePtr()->scale(w, h, false));
 	tmp.free();
 
 	return tmp2;
@@ -878,10 +873,7 @@ void GraphicsWidget::setGfx(const Graphics::ManagedSurface *gfx) {
 	}
 
 	if ((_w != gfx->w || _h != gfx->h) && _w && _h) {
-		Graphics::Surface *tmp = scaleGfx(gfx, _w, _h);
-		_gfx.copyFrom(*tmp);
-		tmp->free();
-		delete tmp;
+		_gfx = *scaleGfx(gfx, _w, _h);
 	} else {
 		_gfx.copyFrom(*gfx);
 	}
