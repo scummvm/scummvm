@@ -209,8 +209,7 @@ bool SdlGraphicsManager::notifyMousePosition(Common::Point &mouse) {
 
 	int showCursor = SDL_DISABLE;
 	// DPI aware scaling to mouse position
-	uint scale;
-	getDpiScalingFactor(&scale);
+	uint scale = getFeatureState(BaseBackend::kFeatureHiDPI) ? 2 : 1;
 	mouse.x *= scale;
 	mouse.y *= scale;
 	bool valid = true;
