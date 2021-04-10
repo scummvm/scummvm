@@ -948,6 +948,9 @@ Optional Libraries:
   --with-png-prefix=DIR    prefix where libpng is installed (optional)
   --disable-png            disable PNG decoder [autodetect]
 
+  --with-gif-prefix=DIR    prefix where giflib is installed (optional)
+  --disable-gif            disable GIF decoder [autodetect]
+
   --with-theoradec-prefix=DIR  prefix where libtheoradec is installed (optional)
   --disable-theoradec      disable Theora decoder [autodetect]
 
@@ -1243,6 +1246,11 @@ for ac_option in $@; do
 		arg=`echo $ac_option | cut -d '=' -f 2`
 		PNG_CFLAGS="-I$arg/include"
 		PNG_LIBS="-L$arg/lib"
+		;;
+	--with-gif-prefix=*)
+		arg=`echo $ac_option | cut -d '=' -f 2`
+		GIF_CFLAGS="-I$arg/include"
+		GIF_LIBS="-L$arg/lib"
 		;;
 	--with-theoradec-prefix=*)
 		arg=`echo $ac_option | cut -d '=' -f 2`
