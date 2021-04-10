@@ -353,133 +353,7 @@ void doSystem() {
 		if (FlagWaitRegen)
 			REEVENT;
 
-		if ((g_vm->_curRoom == r41D) && (g_vm->_oldRoom != g_vm->_curMessage->_u16Param1))
-			NlDissolve(30);
-
-		g_vm->_oldRoom = g_vm->_curRoom;
-		g_vm->_curRoom = g_vm->_curMessage->_u16Param1;
-		g_vm->_gameQueue.initQueue();
-		g_vm->_animQueue.initQueue();
-		g_vm->_characterQueue.initQueue();
-		g_vm->_lastCurInventory = 0;
-		g_vm->_lastLightIcon = 0xFF;
-		g_vm->_inventoryStatus = INV_OFF;
-		g_vm->_lightIcon = 0xFF;
-		g_vm->_flagInventoryLocked = false;
-		g_vm->_inventoryRefreshStartLine = INVENTORY_HIDE;
-		g_vm->_inventoryCounter = INVENTORY_HIDE;
-		g_vm->setInventoryStart(g_vm->_inventoryRefreshStartIcon, INVENTORY_HIDE);
-		FlagCharacterExist = true;
-		FlagShowCharacter = true;
-		g_vm->_animMgr->stopSmkAnim(g_vm->_inventoryObj[g_vm->_useWith[USED]]._anim);
-		g_vm->_useWith[USED] = 0;
-		g_vm->_useWith[WITH] = 0;
-		g_vm->_useWithInv[USED] = false;
-		g_vm->_useWithInv[WITH] = false;
-		FlagUseWithStarted = false;
-		FlagUseWithLocked = false;
-		g_vm->_lightIcon = 0xFF;
-		FlagCharacterSpeak = false;
-		FlagSomeOneSpeak = false;
-		actorStop();
-		nextStep();
-
-		// Handle exit velocity in dual rooms level 2
-		if (g_vm->_room[g_vm->_oldRoom]._flag & OBJFLAG_EXTRA) {
-			if (g_vm->_curObj == od2ETO2C)
-				g_vm->setRoom(r2E, false);
-			if (g_vm->_curObj == od24TO23)
-				g_vm->setRoom(r24, false);
-			if (g_vm->_curObj == od21TO22)
-				g_vm->setRoom(r21, false);
-			if (g_vm->_curObj == od2GVALLA26)
-				g_vm->setRoom(r2GV, false);
-		} else {
-			if (g_vm->_curObj == oENTRANCE2E)
-				g_vm->setRoom(r2E, true);
-			if (g_vm->_curObj == od24TO26)
-				g_vm->setRoom(r24, true);
-			if (g_vm->_curObj == od21TO23)
-				g_vm->setRoom(r21, true);
-		}
-
-		if ((g_vm->_curRoom == r12) && (g_vm->_oldRoom == r11))
-			g_vm->_animMgr->_animTab[aBKG11]._flag |= SMKANIM_OFF1;
-		else if ((g_vm->_oldRoom == r2BL) || (g_vm->_oldRoom == r36F))
-			g_vm->_oldRoom = g_vm->_curRoom;
-		else if (g_vm->_curRoom == rSYS) {
-			bool SpeechON = !ConfMan.getBool("speech_mute");
-			bool TextON = ConfMan.getBool("subtitles");
-			int SpeechVol = ConfMan.getInt("speech_volume");
-			int MusicVol = ConfMan.getInt("music_volume");
-			int SFxVol = ConfMan.getInt("sfx_volume");
-
-			if (SpeechON)
-				g_vm->_obj[o00SPEECHON]._mode |= OBJMODE_OBJSTATUS;
-			else
-				g_vm->_obj[o00SPEECHOFF]._mode |= OBJMODE_OBJSTATUS;
-			if (TextON)
-				g_vm->_obj[o00TEXTON]._mode |= OBJMODE_OBJSTATUS;
-			else
-				g_vm->_obj[o00TEXTOFF]._mode |= OBJMODE_OBJSTATUS;
-			g_vm->_obj[o00SPEECH1D + ((SpeechVol) / 51) * 2]._mode |= OBJMODE_OBJSTATUS;
-			g_vm->_obj[o00MUSIC1D + ((MusicVol) / 51) * 2]._mode |= OBJMODE_OBJSTATUS;
-			g_vm->_obj[o00SOUND1D + ((SFxVol) / 51) * 2]._mode |= OBJMODE_OBJSTATUS;
-			if (SpeechVol < 256)
-				g_vm->_obj[o00SPEECH1D + ((SpeechVol) / 51) * 2 + 1]._mode |= OBJMODE_OBJSTATUS;
-			if (MusicVol < 256)
-				g_vm->_obj[o00MUSIC1D + ((MusicVol) / 51) * 2 + 1]._mode |= OBJMODE_OBJSTATUS;
-			if (SFxVol < 256)
-				g_vm->_obj[o00SOUND1D + ((SFxVol) / 51) * 2 + 1]._mode |= OBJMODE_OBJSTATUS;
-		}
-
-		ReadLoc();
-		g_vm->_flagMouseEnabled = true;
-
-		if ((g_vm->_curRoom == r21) && ((g_vm->_oldRoom == r23A) || (g_vm->_oldRoom == r23B)))
-			g_vm->setRoom(r21, true);
-		else if ((g_vm->_curRoom == r21) && (g_vm->_oldRoom == r22))
-			g_vm->setRoom(r21, false);
-		else if ((g_vm->_curRoom == r24) && ((g_vm->_oldRoom == r23A) || (g_vm->_oldRoom == r23B)))
-			g_vm->setRoom(r24, false);
-		else if ((g_vm->_curRoom == r24) && (g_vm->_oldRoom == r26))
-			g_vm->setRoom(r24, true);
-		else if ((g_vm->_curRoom == r2A) && (g_vm->_oldRoom == r25))
-			g_vm->setRoom(r2A, true);
-		else if ((g_vm->_curRoom == r2A) && ((g_vm->_oldRoom == r2B) || (g_vm->_oldRoom == r29) || (g_vm->_oldRoom == r29L)))
-			g_vm->setRoom(r2A, false);
-		else if ((g_vm->_curRoom == r2B) && (g_vm->_oldRoom == r28))
-			g_vm->setRoom(r2B, true);
-		else if ((g_vm->_curRoom == r2B) && (g_vm->_oldRoom == r2A))
-			g_vm->setRoom(r2B, false);
-		//			for save/load
-		else if ((g_vm->_curRoom == r15) && (g_vm->_room[g_vm->_curRoom]._flag & OBJFLAG_EXTRA))
-			read3D("152.3d");
-		else if ((g_vm->_curRoom == r17) && (g_vm->_room[g_vm->_curRoom]._flag & OBJFLAG_EXTRA))
-			read3D("172.3d");
-		else if ((g_vm->_curRoom == r1D) && (g_vm->_room[g_vm->_curRoom]._flag & OBJFLAG_EXTRA))
-			read3D("1d2.3d");
-		else if ((g_vm->_curRoom == r21) && (g_vm->_room[g_vm->_curRoom]._flag & OBJFLAG_EXTRA))
-			read3D("212.3d");
-		else if ((g_vm->_curRoom == r24) && (g_vm->_room[g_vm->_curRoom]._flag & OBJFLAG_EXTRA))
-			read3D("242.3d");
-		else if ((g_vm->_curRoom == r28) && (g_vm->_room[g_vm->_curRoom]._flag & OBJFLAG_EXTRA))
-			read3D("282.3d");
-		else if ((g_vm->_curRoom == r2A) && (g_vm->_room[g_vm->_curRoom]._flag & OBJFLAG_EXTRA))
-			read3D("2A2.3d");
-		else if ((g_vm->_curRoom == r2B) && (g_vm->_room[g_vm->_curRoom]._flag & OBJFLAG_EXTRA))
-			read3D("2B2.3d");
-		else if ((g_vm->_curRoom == r2E) && (g_vm->_room[g_vm->_curRoom]._flag & OBJFLAG_EXTRA))
-			read3D("2E2.3d");
-		else if ((g_vm->_curRoom == r2GV) && (g_vm->_room[g_vm->_curRoom]._flag & OBJFLAG_EXTRA))
-			read3D("2GV2.3d");
-		else if ((g_vm->_curRoom == r35) && (g_vm->_room[g_vm->_curRoom]._flag & OBJFLAG_EXTRA))
-			read3D("352.3d");
-		else if ((g_vm->_curRoom == r37) && (g_vm->_room[g_vm->_curRoom]._flag & OBJFLAG_EXTRA))
-			read3D("372.3d");
-		else if ((g_vm->_curRoom == r4P) && (g_vm->_room[g_vm->_curRoom]._flag & OBJFLAG_EXTRA))
-			read3D("4P2.3d");
-		//			end save/load
+		g_vm->_logicMgr->doSystemChangeRoom();
 
 		setPosition(g_vm->_curMessage->_u8Param);
 		actorStop();
@@ -499,54 +373,7 @@ void doSystem() {
 }
 
 /*-------------------------------------------------------------------------*/
-/*                              DOSCROLLINVENTORY         				   */
-/*-------------------------------------------------------------------------*/
-void doScrollInventory(uint16 mousex) {
-	if ((g_vm->_inventoryStatus == INV_PAINT) || (g_vm->_inventoryStatus == INV_DEPAINT))
-		return;
-
-	if ((mousex <= ICONMARGSX) && g_vm->_iconBase)
-		doEvent(MC_INVENTORY, ME_ONERIGHT, MP_DEFAULT, 0, 0, 0, 0);
-	else if (BETWEEN(SCREENLEN - ICONMARGDX, mousex, SCREENLEN) && (g_vm->_iconBase + ICONSHOWN < g_vm->_inventorySize))
-		doEvent(MC_INVENTORY, ME_ONELEFT, MP_DEFAULT, 0, 0, 0, 0);
-}
-
-/*-------------------------------------------------------------------------*/
-/*                                ROLLINVENTORY             			   */
-/*-------------------------------------------------------------------------*/
-void RollInventory(uint8 status) {
-	if (status == INV_PAINT) {
-		g_vm->_inventoryCounter -= g_vm->_inventorySpeed[g_vm->_inventorySpeedIndex++];
-		if (g_vm->_inventoryCounter <= INVENTORY_SHOW || g_vm->_inventorySpeedIndex > 5) {
-			g_vm->_inventorySpeedIndex = 0;
-			g_vm->setInventoryStart(g_vm->_iconBase, INVENTORY_SHOW);
-			g_vm->_inventoryStatus = INV_INACTION;
-			g_vm->_inventoryCounter = INVENTORY_SHOW;
-			if (!(isInventoryArea(my)))
-				doEvent(MC_INVENTORY, ME_CLOSE, MP_DEFAULT, 0, 0, 0, 0);
-			g_vm->redrawString();
-			return;
-		}
-	} else if (status == INV_DEPAINT) {
-		g_vm->_inventoryCounter += g_vm->_inventorySpeed[g_vm->_inventorySpeedIndex++];
-
-		if (g_vm->_inventoryCounter > INVENTORY_HIDE || g_vm->_inventorySpeedIndex > 5) {
-			g_vm->_inventorySpeedIndex = 0;
-			g_vm->setInventoryStart(g_vm->_iconBase, INVENTORY_HIDE);
-			g_vm->_inventoryStatus = INV_OFF;
-			g_vm->_inventoryCounter = INVENTORY_HIDE;
-			if (isInventoryArea(my) && !(FlagDialogActive || FlagDialogMenuActive))
-				doEvent(MC_INVENTORY, ME_OPEN, MP_DEFAULT, 0, 0, 0, 0);
-			else
-				g_vm->redrawString();
-			return;
-		}
-	}
-	g_vm->setInventoryStart(g_vm->_iconBase, g_vm->_inventoryCounter);
-}
-
-/*-------------------------------------------------------------------------*/
-/*                                  DOIDLE            					   */
+/*                                  doIdle            					   */
 /*-------------------------------------------------------------------------*/
 void doIdle() {
 	char c = GetKey();
@@ -643,7 +470,7 @@ void doIdle() {
 		g_vm->_inventoryScrollTime = TheTime;
 
 	if (isInventoryArea(my) && (TheTime > (INVSCROLLSP + g_vm->_inventoryScrollTime))) {
-		doScrollInventory(mx);
+		g_vm->doScrollInventory(mx);
 		g_vm->_inventoryScrollTime = TheTime;
 	}
 

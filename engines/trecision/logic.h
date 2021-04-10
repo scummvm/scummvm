@@ -68,6 +68,8 @@ public:
 	void doMouseGame();
 	bool doMouseInventory();
 	void doMouseLeftRight();
+
+	void doSystemChangeRoom();
 };
 ; // end of class
 

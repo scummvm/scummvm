@@ -50,8 +50,6 @@ void doMouse();
 void StartCharacterAction(uint16 Act, uint16 NewRoom, uint8 NewPos, uint16 sent);
 void doCharacter();
 void doSystem();
-void doScrollInventory(uint16 mousex);
-void RollInventory(uint8 status);
 void doIdle();
 void DialogPrint(int x, int y, int c, const char *txt);
 void ShowChoices(uint16 i);
