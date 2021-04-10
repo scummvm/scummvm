@@ -5370,7 +5370,9 @@ msgstr "プレイヤースピーチ"
 #: engines/nancy/dialogs.cpp:41
 msgid ""
 "Enable player speech. Only works if speech is enabled in the Audio settings."
-msgstr "プレイヤースピーチを有効にします。オーディオ設定でスピーチが有効になっている場合のみ動作します。"
+msgstr ""
+"プレイヤースピーチを有効にします。オーディオ設定でスピーチが有効になっている"
+"場合のみ動作します。"
 
 #: engines/nancy/dialogs.cpp:42
 msgid "Character Speech"
@@ -5379,7 +5381,9 @@ msgstr "キャラクタースピーチ"
 #: engines/nancy/dialogs.cpp:42
 msgid ""
 "Enable NPC speech. Only works if speech is enabled in the Audio settings."
-msgstr "NPCスピーチを有効にします。オーディオ設定でスピーチが有効になっている場合のみ動作します。"
+msgstr ""
+"NPCスピーチを有効にします。オーディオ設定でスピーチが有効になっている場合のみ"
+"動作します。"
 
 #: engines/nancy/dialogs.cpp:43
 msgid "Use original menus"
@@ -5390,8 +5394,9 @@ msgid ""
 "Use the original engine's main, save/load, and setup menus. ScummVM's Global "
 "Main Menu can still be accessed through its keymap."
 msgstr ""
-"オリジナルエンジンのメインメニュー、セーブ/ロードメニュー、セットアップメニューを使用します。ScummVMの総合メインメニューは、キーマップからもアクセ"
-"スできます。"
+"オリジナルエンジンのメインメニュー、セーブ/ロードメニュー、セットアップメ"
+"ニューを使用します。ScummVMの総合メインメニューは、キーマップからもアクセスで"
+"きます。"
 
 #: engines/nancy/dialogs.cpp:45
 msgid "Speech Options"
@@ -6981,7 +6986,8 @@ msgstr "スペイン版(CDバージョン)はまだサポートされていま�
 
 #: engines/twine/detection.cpp:218
 msgid "This version requires Giflib which was not compiled into ScummVM"
-msgstr "このバージョンではGiflibが必要ですが、これはScummVMに組み込まれていません"
+msgstr ""
+"このバージョンではGiflibが必要ですが、これはScummVMに組み込まれていません"
 
 #: engines/twine/metaengine.cpp:71
 msgid "Enable wall collisions"
