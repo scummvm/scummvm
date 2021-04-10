@@ -104,6 +104,8 @@ public:
 /*--------------------------------------------------------------------------*/
 
 class RingworldInvObjectList : public InvObjectList {
+private:
+	bool _ESP;
 public:
 	InvObject _stunner;
 	InvObject _scanner;

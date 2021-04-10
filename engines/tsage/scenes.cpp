@@ -568,7 +568,12 @@ void Scene::setZoomPercents(int yStart, int minPercent, int yEnd, int maxPercent
 void Game::restartGame() {
 	int rc;
 	if (g_vm->getLanguage() == Common::ES_ESP) {
-		rc = MessageDialog::show(ESP_RESTART_MSG, ESP_CANCEL_BTN_STRING, ESP_RESTART_BTN_STRING);
+		if (g_vm->getGameID() == GType_Ringworld) {
+			rc = MessageDialog::show(ESP_RW_RESTART_MSG, ESP_CANCEL_BTN_STRING, ESP_RW_RESTART_BTN_2_STRING);
+		}
+		else {
+			rc = MessageDialog::show(ESP_BF_RESTART_MSG, ESP_CANCEL_BTN_STRING, ESP_BF_RESTART_BTN_STRING);
+		}
 	} else {
 		rc = MessageDialog::show(RESTART_MSG, CANCEL_BTN_STRING, RESTART_BTN_STRING);
 	}
@@ -578,7 +583,11 @@ void Game::restartGame() {
 
 void Game::saveGame() {
 	if (!g_vm->canSaveGameStateCurrently())
-		MessageDialog::show(SAVING_NOT_ALLOWED_MSG, OK_BTN_STRING);
+		if (g_vm->getLanguage() == Common::ES_ESP) {
+			MessageDialog::show(ESP_SAVING_NOT_ALLOWED_MSG, ESP_OK_BTN_STRING);
+		} else {
+			MessageDialog::show(SAVING_NOT_ALLOWED_MSG, OK_BTN_STRING);
+		}
 	else {
 		// Show the save dialog
 		handleSaveLoad(true, g_globals->_sceneHandler->_saveGameSlot, g_globals->_sceneHandler->_saveName);
@@ -587,7 +596,11 @@ void Game::saveGame() {
 
 void Game::restoreGame() {
 	if (!g_vm->canLoadGameStateCurrently())
-		MessageDialog::show(RESTORING_NOT_ALLOWED_MSG, OK_BTN_STRING);
+		if (g_vm->getLanguage() == Common::ES_ESP) {
+			MessageDialog::show(ESP_RESTORING_NOT_ALLOWED_MSG, ESP_OK_BTN_STRING);
+		} else {
+			MessageDialog::show(RESTORING_NOT_ALLOWED_MSG, OK_BTN_STRING);
+		}
 	else {
 		// Show the load dialog
 		handleSaveLoad(false, g_globals->_sceneHandler->_loadGameSlot, g_globals->_sceneHandler->_saveName);
@@ -597,7 +610,12 @@ void Game::restoreGame() {
 void Game::quitGame() {
 	int rc;
 	if (g_vm->getLanguage() == Common::ES_ESP) {
-		rc = MessageDialog::show(ESP_QUIT_CONFIRM_MSG, ESP_CANCEL_BTN_STRING, ESP_QUIT_BTN_STRING);
+		if (g_vm->getGameID() == GType_Ringworld) {
+			rc = MessageDialog::show(ESP_RW_QUIT_CONFIRM_2_MSG, ESP_CANCEL_BTN_STRING, ESP_RW_QUIT_BTN_STRING);
+		}
+		else {
+			rc = MessageDialog::show(ESP_BF_QUIT_CONFIRM_MSG, ESP_CANCEL_BTN_STRING, ESP_BF_QUIT_BTN_STRING);
+		}
 	} else {
 		rc = MessageDialog::show(QUIT_CONFIRM_MSG, CANCEL_BTN_STRING, QUIT_BTN_STRING);
 	}
