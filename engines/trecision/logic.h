@@ -24,32 +24,40 @@
 #define TRECISION_LOGIC_H
 
 #include "common/scummsys.h"
+#include "common/serializer.h"
 
 namespace Trecision {
 class TrecisionEngine;
 
 class LogicManager {
-private:
 	TrecisionEngine *_vm;
 
-public:
 	// panel puzzle 35
-	uint16 Comb35[7];
-	uint16 Count35;
+	uint16 _comb35[7];
+	uint16 _count35;
 
 	// sundial puzzle 49
-	uint16 Comb49[4];
+	uint16 _comb49[4];
 
 	// sundial puzzle 4CT
-	uint16 Comb4CT[6];
+	uint16 _comb4CT[6];
 
 	// keyboard puzzle 58
-	uint16 Comb58[6];
-	uint16 Count58;
+	uint16 _comb58[6];
+	uint16 _count58;
 
+	// SlotMachine41
+	uint16 _slotMachine41Counter;
+
+	// special management
+	uint16 _wheel;
+	uint16 _wheelPos[3];
+
+public:
 	LogicManager(TrecisionEngine *vm);
 	~LogicManager();
 
+	void syncGameStream(Common::Serializer &ser);
 	void initScript();
 	void initInventory();
 
