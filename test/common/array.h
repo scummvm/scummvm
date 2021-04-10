@@ -459,6 +459,11 @@ public:
 		}
 
 		TS_ASSERT_EQUALS(iter, container.end());
+
+		// Cleanup
+		for(iter = container.begin(); iter != container.end(); iter++) {
+			delete *iter;
+		}
 	}
 
 	void test_stability() {
@@ -485,6 +490,11 @@ public:
 		}
 
 		TS_ASSERT_EQUALS(iter, container.end());
+
+		// Cleanup
+		for(iter = container.begin(); iter != container.end(); iter++) {
+			delete *iter;
+		}
 	}
 
 };
