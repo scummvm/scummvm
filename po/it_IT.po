@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-04-09 14:56+0000\n"
-"PO-Revision-Date: 2021-04-02 16:32+0000\n"
+"PO-Revision-Date: 2021-04-10 10:07+0000\n"
 "Last-Translator: Walter Agazzi <tag2015@gmail.com>\n"
 "Language-Team: Italian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/it/>\n"
@@ -3924,14 +3924,14 @@ msgid "Language to use for multilingual games"
 msgstr "Lingua da utilizzare nei giochi multilingua"
 
 #: engines/ags/detection.cpp:110
-#, fuzzy
-#| msgid "Antialiased"
 msgid "Force antialiased text"
-msgstr "Con antialiasing"
+msgstr "Forza antialiasing dei testi"
 
 #: engines/ags/detection.cpp:110
 msgid "Use antialiasing to draw text even if the game does not ask for it"
 msgstr ""
+"Applica l'antialiasing ai testi, anche se il gioco non lo richiede "
+"esplicitamente"
 
 #: engines/bladerunner/bladerunner.cpp:363
 msgid "Failed to initialize resources"
@@ -5464,48 +5464,48 @@ msgid "Open event flags cheat menu"
 msgstr "Apri menù cheat - Flag degli eventi"
 
 #: engines/nancy/dialogs.cpp:41
-#, fuzzy
-#| msgid "Player Time:"
 msgid "Player Speech"
-msgstr "Tempo di gioco:"
+msgstr "Voce del giocatore"
 
 #: engines/nancy/dialogs.cpp:41
 msgid ""
 "Enable player speech. Only works if speech is enabled in the Audio settings."
 msgstr ""
+"Riproduce la voce del giocatore. Questa impostazione ha effetto solo se le "
+"voci sono abilitate in Opzioni - Audio."
 
 #: engines/nancy/dialogs.cpp:42
 msgid "Character Speech"
-msgstr ""
+msgstr "Voci dei personaggi"
 
 #: engines/nancy/dialogs.cpp:42
 msgid ""
 "Enable NPC speech. Only works if speech is enabled in the Audio settings."
 msgstr ""
+"Riproduce la voce dei personaggi non giocanti. Questa impostazione ha "
+"effetto solo se le voci sono abilitate in Opzioni - Audio."
 
 #: engines/nancy/dialogs.cpp:43
-#, fuzzy
-#| msgid "Use original save/load screens"
 msgid "Use original menus"
-msgstr "Usa schermate di salvataggio originali"
+msgstr "Usa menù originali del gioco"
 
 #: engines/nancy/dialogs.cpp:43
 msgid ""
 "Use the original engine's main, save/load, and setup menus. ScummVM's Global "
 "Main Menu can still be accessed through its keymap."
 msgstr ""
+"Utilizza tutti i menù (principale, salvataggio/caricamento, impostazioni) "
+"originali del gioco, al posto di quelli di ScummVM. Il menù globale di "
+"ScummVM è comunque accessibile usando la combinazione di tasti specificata "
+"in Mappa Tasti."
 
 #: engines/nancy/dialogs.cpp:45
-#, fuzzy
-#| msgid "Speech Only"
 msgid "Speech Options"
-msgstr "Solo voci"
+msgstr "Opzioni Parlato"
 
 #: engines/nancy/dialogs.cpp:46
-#, fuzzy
-#| msgid "Options"
 msgid "Engine Options"
-msgstr "Opzioni"
+msgstr "Opzioni Motore"
 
 #: engines/nancy/dialogs.cpp:98
 msgid "General"
@@ -5574,7 +5574,7 @@ msgstr "Livello di difficoltà"
 
 #: engines/nancy/dialogs.cpp:130
 msgid "Software Timer"
-msgstr ""
+msgstr "Timer Software"
 
 #: engines/nancy/dialogs.cpp:131
 msgid "Timer On"
@@ -7361,32 +7361,24 @@ msgid "Next location"
 msgstr "Posizione successiva"
 
 #: engines/twine/parser/text.cpp:33
-#, fuzzy
-#| msgid "Enable high resolution"
 msgctxt "Options menu"
 msgid "High resolution on"
-msgstr "Attiva alta risoluzione"
+msgstr "Alta risoluzione attivata"
 
 #: engines/twine/parser/text.cpp:34
-#, fuzzy
-#| msgid "Enable high resolution"
 msgctxt "Options menu"
 msgid "High resolution off"
-msgstr "Attiva alta risoluzione"
+msgstr "Alta risoluzione disattivata"
 
 #: engines/twine/parser/text.cpp:35
-#, fuzzy
-#| msgid "Enable wall collisions"
 msgctxt "Options menu"
 msgid "Wall collision on"
-msgstr "Abilita collisioni pareti"
+msgstr "Collisioni pareti attivate"
 
 #: engines/twine/parser/text.cpp:36
-#, fuzzy
-#| msgid "Enable wall collisions"
 msgctxt "Options menu"
 msgid "Wall collision off"
-msgstr "Abilita collisioni pareti"
+msgstr "Collisioni pareti disattivate"
 
 #: engines/ultima/shared/early/ultima_early.cpp:71
 msgid "Could not find correct ultima.dat datafile"
