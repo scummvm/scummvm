@@ -175,12 +175,14 @@ void U32String::decodeWindows932(const char *src, uint32 len) {
 		uint8 lowidx = low - 0x40;
 		uint8 highidx;
 
-		if (high >= 0x81 && high <= 0x84)
+		if (high >= 0x81 && high < 0x85)
 			highidx = high - 0x81;
-		else if (high >= 0x87 && high <= 0x9f)
+		else if (high >= 0x87 && high < 0xa0)
 			highidx = high - 0x87 + 4;
-		else if (high >= 0xe0 && high <= 0xee)
+		else if (high >= 0xe0 && high < 0xef)
 			highidx = high - 0xe0 + 29;
+		else if (high >= 0xfa && high < 0xfd)
+			highidx = high - 0xfa + 44;
 		else {
 			operator+=(invalidCode);
 			continue;
@@ -199,11 +201,11 @@ void U32String::decodeWindows932(const char *src, uint32 len) {
 
 static uint16 convertUHCToUCSReal(uint8 high, uint8 low) {
 	uint lowidx = 0;
-	if (low >= 0x41 && low <= 0x5a)
+	if (low >= 0x41 && low < 0x5b)
 		lowidx = low - 0x41;
-	else if (low >= 0x61 && low <= 0x7a)
+	else if (low >= 0x61 && low < 0x7b)
 		lowidx = low - 0x61 + 0x1a;
-	else if (low >= 0x81 && low <= 0xfe)
+	else if (low >= 0x81 && low < 0xff)
 		lowidx = low - 0x81 + 0x1a * 2;
 	else
 		return 0;
@@ -283,7 +285,7 @@ void U32String::decodeWindows950(const char *src, uint32 len) {
 		}
 
 		uint8 low = src[i++];
-		uint8 lowidx = low < 0x80 ? low - 0x40 : low - 0x62;
+		uint8 lowidx = low < 0x80 ? low - 0x40 : (low - 0xa1 + 0x3f);
 
 		// Main range
 		if (high >= 0xa1 && high < 0xfa) {
@@ -320,22 +322,24 @@ void String::encodeWindows932(const U32String &src) {
 	if (!reverseTable && windows932ConversionTable) {
 		uint16 *rt = new uint16[0x10000];
 		memset(rt, 0, sizeof(rt[0]) * 0x10000);
-		for (uint highidx = 0; highidx < 58; highidx++)
+		for (uint highidx = 0; highidx < 47; highidx++) {
+			uint8 high = 0;
+			if (highidx < 4)
+				high = highidx + 0x81;
+			else if (highidx < 29)
+				high = highidx + 0x87 - 4;
+			else if (highidx < 44)
+				high = highidx + 0xe0 - 29;
+			else
+				high = highidx + 0xfa - 44;
+
 			for (uint lowidx = 0; lowidx < 192; lowidx++) {
-				uint8 high = 0;
 				uint8 low = lowidx + 0x40;
 				uint16 unicode = windows932ConversionTable[highidx * 192 + lowidx];
 
-				if (highidx < 4)
-					high = highidx + 0x81;
-				else if (highidx < 29)
-					high = highidx + 0x87 - 4;
-				else
-					high = highidx + 0xe0 - 29;
-
 				rt[unicode] = (high << 8) | low;
 			}
-
+		}
 		reverseTable = rt;
 	}
 
@@ -389,20 +393,22 @@ void String::encodeWindows949(const U32String &src) {
 		uint16 *rt = new uint16[0x10000];
 		memset(rt, 0, sizeof(rt[0]) * 0x10000);
 
-		for (uint highidx = 0; highidx < 0x7e; highidx++)
-			for (uint lowidx = 0; lowidx < 0xb2; lowidx++) {
+		for (uint lowidx = 0; lowidx < 0xb2; lowidx++) {
+			uint8 low = 0;
+			if (lowidx < 0x1a)
+				low = 0x41 + lowidx;
+			else if (lowidx < 0x1a * 2)
+				low = 0x61 + lowidx - 0x1a;
+			else
+				low = 0x81 + lowidx - 0x1a * 2;
+
+			for (uint highidx = 0; highidx < 0x7e; highidx++) {
 				uint8 high = highidx + 0x81;
-				uint8 low = 0;
 				uint16 unicode = windows949ConversionTable[highidx * 0xb2 + lowidx];
 
-				if (lowidx < 0x1a)
-					low = 0x41 + lowidx;
-				else if (lowidx < 0x1a * 2)
-					low = 0x61 + lowidx - 0x1a;
-				else
-					low = 0x81 + lowidx - 0x1a * 2;
 				rt[unicode] = (high << 8) | low;
 			}
+		}
 
 		reverseTable = rt;
 	}
@@ -477,18 +483,20 @@ void String::encodeWindows950(const U32String &src, bool transliterate) {
 		uint16 *rt = new uint16[0x10000];
 		memset(rt, 0, sizeof(rt[0]) * 0x10000);
 
-		for (uint highidx = 0; highidx < 90; highidx++)
-			for (uint lowidx = 0; lowidx < 157; lowidx++) {
+		for (uint lowidx = 0; lowidx < 157; lowidx++) {
+			uint8 low = 0;
+			if (lowidx < 0x3f)
+				low = 0x40 + lowidx;
+			else
+				low = 0xa1 + lowidx - 0x3f;
+
+			for (uint highidx = 0; highidx < 89; highidx++) {
 				uint8 high = highidx + 0xa1;
-				uint8 low = 0;
 				uint16 unicode = windows950ConversionTable[highidx * 157 + lowidx];
 
-				if (lowidx <= 0x3e)
-					low = 0x40 + lowidx;
-				else
-					low = 0x62 + lowidx;
 				rt[unicode] = (high << 8) | low;
 			}
+		}
 
 		reverseTable = rt;
 	}
