@@ -23,7 +23,7 @@ For a more comprehensive changelog of the latest experimental code, see:
 
  General:
    - Switched ScummVM GUI output to UTF-32.
-   - Updated the Roland MT-32 emulation code to the Munt project's mt32emu 2.4.2.
+   - Updated the Roland MT-32 emulation code to the Munt project's mt32emu 2.5.0.
    - Updated Dropbox Cloud Storage to use the new Dropbox OAuth workflow.
    - Major extension to the number of supported graphics scalers.
    - Display path to scummvm configuration file in GUI -> Options -> Paths
