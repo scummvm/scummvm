@@ -36,11 +36,11 @@
 
 #include "common/system.h"
 #include "common/config-manager.h"
-
 #include "griffon/griffon.h"
 
+#ifdef USE_TTS
 #include "common/text-to-speech.h"
-
+#endif
 
 namespace Griffon {
 
@@ -287,7 +287,6 @@ void GriffonEngine::configMenu() {
 			static char line[24];
 
 			int destColumn = 3;
-
 			if (i == 9 && config.music)
 				destColumn = 0;
 			else if (i == 10 && !config.music)
