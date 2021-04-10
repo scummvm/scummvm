@@ -201,6 +201,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "tales", "Tales" },
 	{ "technobabylon", "Technobabylon" },
 	{ "theadventuresoffatman", "The Adventures of Fatman" },
+	{ "theantidote", "The Antidote" },
 	{ "thebeardinthemirror", "The Beard in the Mirror" },
 	{ "thecastle", "The Castle" },
 	{ "thecatlady", "The Cat Lady" },
@@ -346,6 +347,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "bcremake", "Black Cauldron Remake" },
 	{ "beacon", "Beacon" },
 	{ "bear", "Bear" },
+	{ "bearinvenice", "Bear in Venice" },
 	{ "beasts", "Beasts" },
 	{ "beautiesandbeasts", "Beauties and Beasts" },
 	{ "beforethedarkcrystal2", "Before the Dark Crystal II" },
@@ -1303,6 +1305,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "thephantominheritance", "The Phantom Inheritance" },
 	{ "thequestfortheholysalsa", "The Quest for the Holy Salsa" },
 	{ "thequesttozooloo", "The Quest To Zooloo" },
+	{ "therail", "The Rail" },
 	{ "theroadtomurder", "The Road to Murder" },
 	{ "therobolovers", "The Robolovers" },
 	{ "therotaryclub", "The Rotary Club" },
@@ -1784,6 +1787,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("technobabylon", "technobabylon.exe", "e523535e730f313e1ed9b19b1a9dd228", 447894701),  // Humble Bundle
 	GAME_ENTRY("theadventuresoffatman", "fatman.exe", "853cef07077feadd0f2ccd55c5bd747b", 56375090),
 	GAME_ENTRY("theadventuresoffatman", "fatman.exe", "6cddccb3744ec5c6af7c398fb7b3b11c", 44449205), // Steam
+	GAME_ENTRY("theantidote", "The Antidote.exe", "4017d881af6467d6aad9183e6e38a261", 325819947),
 	GAME_ENTRY("thebeardinthemirror", "the beard in the mirror.exe", "4d4b6d6e560cf32f440c39f8d3896da5", 40637501), // Steam
 	GAME_ENTRY("thecastle", "maniac.exe", "3b96c2143d927f005715be73344e456c", 22362337), // Steam
 	GAME_ENTRY("thecatlady", "thecatlady.exe", "0ea2b985dc5d7d27cb7c1b7da5eedea0", 1072316702), // GOG
@@ -2020,6 +2024,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("bcremake", "bc.exe", "0710e2ec71042617f565c01824f0cf3c", 7683255),
 	GAME_ENTRY("beacon", "beacon.exe", "af0d268193a9220891e983d03141ec58", 24671086),
 	GAME_ENTRY("bear", "bear.exe", "97020973a2a635fe28eb0ba4bdfaa70b", 3258662),
+	GAME_ENTRY("bearinvenice", "Bear in Venice.exe", "7d2c5cddcac88662b24165b3a0dd77c9", 20615211),
 	GAME_ENTRY("beasts", "beasts.exe", "0500aacb6c176d47ac0f8158f055db83", 1295435),
 	GAME_ENTRY("beautiesandbeasts", "beautiesandbeasts.exe", "089fab88e6e1075a2f5b271f6f5b3c57", 6507202),
 	GAME_ENTRY("beforethedarkcrystal2", "Before the Dark Crystal II.exe", "23a67b6de10ec35e9f5a4dfc7d928222", 59569723),
@@ -2990,6 +2995,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("thephantominheritance", "Phantom.exe", "ec04c7917c003d9e07d4514ff25bf365", 27558669),
 	GAME_ENTRY("thequestfortheholysalsa", "TheQuestForTheHolySalsa.exe", "a01a9639ce30bdcd5bf82e528b51fa06", 38506266),
 	GAME_ENTRY("thequesttozooloo", "Zooloo.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 14619530),
+	GAME_ENTRY("therail", "Rail.exe", "973f6b65820ca1f4e19704a49be99d76", 23852280),
 	GAME_ENTRY("theroadtomurder", "lbb.exe", "465f972675db2da6040518221af5b0ba", 1020984),
 	GAME_ENTRY("therobolovers", "The Robolovers.exe", "618d7dce9631229b4579340b964c6810", 63850620),
 	GAME_ENTRY("therotaryclub", "The Rotary Club.exe", "01823d511cc00f4de6fd920eb543c6e7", 9641709),
