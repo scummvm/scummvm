@@ -39,11 +39,14 @@
 
 #include "griffon/griffon.h"
 
+#include "common/text-to-speech.h"
+
+
 namespace Griffon {
 
 #define MINCURSEL 7
-#define MAXCURSEL 14
-#define SY 22
+#define MAXCURSEL 16
+#define SY 25
 #define PI 3.141593
 
 void GriffonEngine::title(int mode) {
@@ -225,19 +228,21 @@ void GriffonEngine::title(int mode) {
 }
 
 void GriffonEngine::configMenu() {
-	static const char *optionTitles[22] = {
+	static const char *optionTitles[25] = {
 		"", "",
 		"", "", "", "",
 		"", "", "",
 		"Music:", "", "",
 		"Sound Effects:", "", "",
+		"Text to Speech:", "", "",
 		"Music Volume:", "",
 		"Effects Volume:", "", "", "", ""
 	};
-	static const char *optionValues[22] = {
+	static const char *optionValues[25] = {
 		"", "",
 		"", "", "", "",
 		"", "", "",
+		"On", "Off", "",
 		"On", "Off", "",
 		"On", "Off", "",
 		"[----------]", "",
@@ -255,7 +260,6 @@ void GriffonEngine::configMenu() {
 	configwindow->setAlpha(160, true);
 
 	int ticks1 = _ticks;
-
 
 	do {
 		_videoBuffer->fillRect(Common::Rect(0, 0, _videoBuffer->w, _videoBuffer->h), 0);
@@ -279,10 +283,11 @@ void GriffonEngine::configMenu() {
 
 		int sy = SY;
 
-		for (int i = 0; i <= 21; i++) {
+		for (int i = 0; i <= 24; i++) {
 			static char line[24];
 
 			int destColumn = 3;
+
 			if (i == 9 && config.music)
 				destColumn = 0;
 			else if (i == 10 && !config.music)
@@ -291,14 +296,18 @@ void GriffonEngine::configMenu() {
 				destColumn = 0;
 			else if (i == 13 && !config.effects)
 				destColumn = 0;
-			else if (i == 15 || i == 17) {
-				int vol = (i == 15 ? config.musicVol : config.effectsVol) * 9 / 255;
+			else if (i == 15 && ConfMan.getBool("tts_enabled"))
+				destColumn = 0;
+			else if (i == 16 && !ConfMan.getBool("tts_enabled"))
+				destColumn = 0;
+			else if (i == 18|| i == 20) {
+				int vol = (i ==18 ? config.musicVol : config.effectsVol) * 9 / 255;
 				vol = CLIP(vol, 0, 9);
 
 				strcpy(line, "[----------]");
 				line[vol + 1] = 'X';
 				optionValues[i] = line;
-			} else if (i > 18)
+			} else if (i > 21)
 				destColumn = 0;
 
 			drawString(_videoBuffer, optionTitles[i], 156 - 8 * strlen(optionTitles[i]), sy + i * 8, 0);
@@ -310,11 +319,13 @@ void GriffonEngine::configMenu() {
 			curselt += 1;
 		if (cursel > 10)
 			curselt += 1;
-		if (cursel > 11)
-			curselt += 1;
 		if (cursel > 12)
 			curselt += 1;
 		if (cursel > 13)
+			curselt += 1;
+		if (cursel > 14)
+			curselt += 1;
+		if (cursel > 15)
 			curselt += 1;
 
 		Common::Rect rc;
@@ -364,11 +375,11 @@ void GriffonEngine::configMenu() {
 					break;
 
 				case kGriffonLeft:
-					if (cursel == 11) {
+					if (cursel == 13) {
 						config.musicVol = CLIP(config.musicVol - 25, 0, 255);
 						setChannelVolume(_musicChannel, config.musicVol);
 						setChannelVolume(_menuChannel, config.musicVol);
-					} else if (cursel == 12) {
+					} else if (cursel == 14) {
 						config.effectsVol = CLIP(config.effectsVol - 25, 0, 255);
 						setChannelVolume(-1, config.effectsVol);
 						setChannelVolume(_musicChannel, config.musicVol);
@@ -382,11 +393,11 @@ void GriffonEngine::configMenu() {
 					break;
 
 				case kGriffonRight:
-					if (cursel == 11) {
+					if (cursel == 13) {
 						config.musicVol = CLIP(config.musicVol + 25, 0, 255);
 						setChannelVolume(_musicChannel, config.musicVol);
 						setChannelVolume(_menuChannel, config.musicVol);
-					} else if (cursel == 12) {
+					} else if (cursel == 14) {
 						config.effectsVol = CLIP(config.effectsVol + 25, 0, 255);
 
 						setChannelVolume(-1, config.effectsVol);
@@ -439,10 +450,20 @@ void GriffonEngine::configMenu() {
 						if (config.effects)
 							config.effects = false;
 						break;
-					case 13:
+					case 11:
+						if (!ConfMan.getBool("tts_enabled")) {
+							ConfMan.setBool("tts_enabled", true);
+						}
+						break;
+					case 12:
+						if (ConfMan.getBool("tts_enabled")) {
+							ConfMan.setBool("tts_enabled", false);
+						}
+						break;
+					case 16:
 						saveConfig();
 						// fall through
-					case 14:
+					case 17:
 						exitMenu = true;
 						break;
 					default:

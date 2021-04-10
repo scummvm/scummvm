@@ -38,6 +38,8 @@
 
 #include "griffon/griffon.h"
 
+#include "common/config-manager.h"
+
 #ifdef USE_TTS
 #include "common/text-to-speech.h"
 #endif
@@ -188,9 +190,9 @@ void GriffonEngine::showLogos() {
 void GriffonEngine::intro() {
 #ifdef USE_TTS
 	Common::TextToSpeechManager *_ttsMan = g_system->getTextToSpeechManager();
-	if (_ttsMan != nullptr) {
+	if (_ttsMan != nullptr && ConfMan.getBool("tts_enabled")) {
 		Common::String result = story[0];
-		for(int i = 10; i < ARRAYSIZE(story); ++i){
+		for (int i = 10; i < ARRAYSIZE(story); ++i) {
 			result+=story[i];
 		}
 		_ttsMan->say(result);
