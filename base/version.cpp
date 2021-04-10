@@ -149,6 +149,10 @@ const char *gScummVMFeatures = ""
 	"PNG "
 #endif
 
+#ifdef USE_GIF
+	"GIF "
+#endif
+
 #ifdef ENABLE_VKEYBD
 	"VirtualKeyboard "
 #endif
