@@ -190,7 +190,8 @@ void AnimManager::drawFrame(NightlongSmackerDecoder *smkDecoder, uint16 x, uint1
 		g_system->copyRectToScreen(frame16->getPixels(), frame16->pitch, x, y, frame16->w, frame16->h);
 		delete frame16;
 
-		g_vm->_system->updateScreen();
+		if (updateScreen)
+			g_vm->_system->updateScreen();
 	}
 }
 
