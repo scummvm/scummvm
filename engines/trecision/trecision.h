@@ -100,6 +100,8 @@ public:
 	void replaceIcon(uint8 oldIcon, uint8 newIcon);
 	void doInventoryUseWithInventory();
 	void doInventoryUseWithScreen();
+	void rollInventory(uint8 status);
+	void doScrollInventory(uint16 mouseX);
 
 	// Script
 	void endScript();

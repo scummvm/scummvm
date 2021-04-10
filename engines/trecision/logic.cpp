@@ -23,6 +23,9 @@
 #include "trecision/nl/extern.h"
 #include "trecision/trecision.h"
 #include "trecision/logic.h"
+
+#include <common/config-manager.h>
+
 #include "trecision/nl/struct.h"
 #include "trecision/nl/define.h"
 #include "trecision/nl/message.h"
@@ -3648,7 +3651,7 @@ void LogicManager::doMouseLeftRight() {
 				_vm->_obj[oWHEELS2C]._mode |= OBJMODE_OBJSTATUS;
 				FlagShowCharacter = true;
 				RegenRoom();
-				memcpy(g_vm->_smackImageBuffer, ImagePointer, MAXX * AREA * 2);
+				memcpy(_vm->_smackImageBuffer, ImagePointer, MAXX * AREA * 2);
 				_vm->_animMgr->startSmkAnim(_vm->_room[_vm->_curRoom]._bkgAnim);
 
 				// right combination
@@ -3785,6 +3788,139 @@ void LogicManager::doMouseLeftRight() {
 				doEvent(MC_INVENTORY, ME_EXAMINEICON, MP_DEFAULT, _vm->_curMessage->_u16Param1, _vm->_curMessage->_u16Param2, 0, 0);
 		}
 	}
+}
+
+void LogicManager::doSystemChangeRoom() {
+	if ((_vm->_curRoom == r41D) && (_vm->_oldRoom != _vm->_curMessage->_u16Param1))
+		NlDissolve(30);
+
+	_vm->_oldRoom = _vm->_curRoom;
+	_vm->_curRoom = _vm->_curMessage->_u16Param1;
+	_vm->_gameQueue.initQueue();
+	_vm->_animQueue.initQueue();
+	_vm->_characterQueue.initQueue();
+	_vm->_lastCurInventory = 0;
+	_vm->_lastLightIcon = 0xFF;
+	_vm->_inventoryStatus = INV_OFF;
+	_vm->_lightIcon = 0xFF;
+	_vm->_flagInventoryLocked = false;
+	_vm->_inventoryRefreshStartLine = INVENTORY_HIDE;
+	_vm->_inventoryCounter = INVENTORY_HIDE;
+	_vm->setInventoryStart(_vm->_inventoryRefreshStartIcon, INVENTORY_HIDE);
+	FlagCharacterExist = true;
+	FlagShowCharacter = true;
+	_vm->_animMgr->stopSmkAnim(_vm->_inventoryObj[_vm->_useWith[USED]]._anim);
+	_vm->_useWith[USED] = 0;
+	_vm->_useWith[WITH] = 0;
+	_vm->_useWithInv[USED] = false;
+	_vm->_useWithInv[WITH] = false;
+	FlagUseWithStarted = false;
+	FlagUseWithLocked = false;
+	_vm->_lightIcon = 0xFF;
+	FlagCharacterSpeak = false;
+	FlagSomeOneSpeak = false;
+	actorStop();
+	nextStep();
+
+	// Handle exit velocity in dual rooms level 2
+	if (_vm->_room[_vm->_oldRoom]._flag & OBJFLAG_EXTRA) {
+		if (_vm->_curObj == od2ETO2C)
+			_vm->setRoom(r2E, false);
+		if (_vm->_curObj == od24TO23)
+			_vm->setRoom(r24, false);
+		if (_vm->_curObj == od21TO22)
+			_vm->setRoom(r21, false);
+		if (_vm->_curObj == od2GVALLA26)
+			_vm->setRoom(r2GV, false);
+	} else {
+		if (_vm->_curObj == oENTRANCE2E)
+			_vm->setRoom(r2E, true);
+		if (_vm->_curObj == od24TO26)
+			_vm->setRoom(r24, true);
+		if (_vm->_curObj == od21TO23)
+			_vm->setRoom(r21, true);
+	}
+
+	if ((_vm->_curRoom == r12) && (_vm->_oldRoom == r11))
+		_vm->_animMgr->_animTab[aBKG11]._flag |= SMKANIM_OFF1;
+	else if ((_vm->_oldRoom == r2BL) || (_vm->_oldRoom == r36F))
+		_vm->_oldRoom = _vm->_curRoom;
+	else if (_vm->_curRoom == rSYS) {
+		bool speechON = !ConfMan.getBool("speech_mute");
+		bool textON = ConfMan.getBool("subtitles");
+		int speechVol = ConfMan.getInt("speech_volume");
+		int musicVol = ConfMan.getInt("music_volume");
+		int sfxVol = ConfMan.getInt("sfx_volume");
+
+		if (speechON)
+			_vm->_obj[o00SPEECHON]._mode |= OBJMODE_OBJSTATUS;
+		else
+			_vm->_obj[o00SPEECHOFF]._mode |= OBJMODE_OBJSTATUS;
+
+		if (textON)
+			_vm->_obj[o00TEXTON]._mode |= OBJMODE_OBJSTATUS;
+		else
+			_vm->_obj[o00TEXTOFF]._mode |= OBJMODE_OBJSTATUS;
+
+		_vm->_obj[o00SPEECH1D + ((speechVol) / 51) * 2]._mode |= OBJMODE_OBJSTATUS;
+		_vm->_obj[o00MUSIC1D + ((musicVol) / 51) * 2]._mode |= OBJMODE_OBJSTATUS;
+		_vm->_obj[o00SOUND1D + ((sfxVol) / 51) * 2]._mode |= OBJMODE_OBJSTATUS;
+
+		if (speechVol < 256)
+			_vm->_obj[o00SPEECH1D + ((speechVol) / 51) * 2 + 1]._mode |= OBJMODE_OBJSTATUS;
+		if (musicVol < 256)
+			_vm->_obj[o00MUSIC1D + ((musicVol) / 51) * 2 + 1]._mode |= OBJMODE_OBJSTATUS;
+		if (sfxVol < 256)
+			_vm->_obj[o00SOUND1D + ((sfxVol) / 51) * 2 + 1]._mode |= OBJMODE_OBJSTATUS;
+	}
+
+	ReadLoc();
+	_vm->_flagMouseEnabled = true;
+
+	if ((_vm->_curRoom == r21) && ((_vm->_oldRoom == r23A) || (_vm->_oldRoom == r23B)))
+		_vm->setRoom(r21, true);
+	else if ((_vm->_curRoom == r21) && (_vm->_oldRoom == r22))
+		_vm->setRoom(r21, false);
+	else if ((_vm->_curRoom == r24) && ((_vm->_oldRoom == r23A) || (_vm->_oldRoom == r23B)))
+		_vm->setRoom(r24, false);
+	else if ((_vm->_curRoom == r24) && (_vm->_oldRoom == r26))
+		_vm->setRoom(r24, true);
+	else if ((_vm->_curRoom == r2A) && (_vm->_oldRoom == r25))
+		_vm->setRoom(r2A, true);
+	else if ((_vm->_curRoom == r2A) && ((_vm->_oldRoom == r2B) || (_vm->_oldRoom == r29) || (_vm->_oldRoom == r29L)))
+		_vm->setRoom(r2A, false);
+	else if ((_vm->_curRoom == r2B) && (_vm->_oldRoom == r28))
+		_vm->setRoom(r2B, true);
+	else if ((_vm->_curRoom == r2B) && (_vm->_oldRoom == r2A))
+		_vm->setRoom(r2B, false);
+	//			for save/load
+	else if ((_vm->_curRoom == r15) && (_vm->_room[_vm->_curRoom]._flag & OBJFLAG_EXTRA))
+		read3D("152.3d");
+	else if ((_vm->_curRoom == r17) && (_vm->_room[_vm->_curRoom]._flag & OBJFLAG_EXTRA))
+		read3D("172.3d");
+	else if ((_vm->_curRoom == r1D) && (_vm->_room[_vm->_curRoom]._flag & OBJFLAG_EXTRA))
+		read3D("1d2.3d");
+	else if ((_vm->_curRoom == r21) && (_vm->_room[_vm->_curRoom]._flag & OBJFLAG_EXTRA))
+		read3D("212.3d");
+	else if ((_vm->_curRoom == r24) && (_vm->_room[_vm->_curRoom]._flag & OBJFLAG_EXTRA))
+		read3D("242.3d");
+	else if ((_vm->_curRoom == r28) && (_vm->_room[_vm->_curRoom]._flag & OBJFLAG_EXTRA))
+		read3D("282.3d");
+	else if ((_vm->_curRoom == r2A) && (_vm->_room[_vm->_curRoom]._flag & OBJFLAG_EXTRA))
+		read3D("2A2.3d");
+	else if ((_vm->_curRoom == r2B) && (_vm->_room[_vm->_curRoom]._flag & OBJFLAG_EXTRA))
+		read3D("2B2.3d");
+	else if ((_vm->_curRoom == r2E) && (_vm->_room[_vm->_curRoom]._flag & OBJFLAG_EXTRA))
+		read3D("2E2.3d");
+	else if ((_vm->_curRoom == r2GV) && (_vm->_room[_vm->_curRoom]._flag & OBJFLAG_EXTRA))
+		read3D("2GV2.3d");
+	else if ((_vm->_curRoom == r35) && (_vm->_room[_vm->_curRoom]._flag & OBJFLAG_EXTRA))
+		read3D("352.3d");
+	else if ((_vm->_curRoom == r37) && (_vm->_room[_vm->_curRoom]._flag & OBJFLAG_EXTRA))
+		read3D("372.3d");
+	else if ((_vm->_curRoom == r4P) && (_vm->_room[_vm->_curRoom]._flag & OBJFLAG_EXTRA))
+		read3D("4P2.3d");
+	//			end save/load
 }
 
 } // End of namespace Trecision

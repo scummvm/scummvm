@@ -400,4 +400,51 @@ void TrecisionEngine::doInventoryUseWithScreen() {
 		setInventoryStart(_iconBase, INVENTORY_SHOW);
 }
 
+/*-------------------------------------------------------------------------*/
+/*                                ROLLINVENTORY             			   */
+/*-------------------------------------------------------------------------*/
+void TrecisionEngine::rollInventory(uint8 status) {
+	if (status == INV_PAINT) {
+		_inventoryCounter -= _inventorySpeed[_inventorySpeedIndex++];
+		if (_inventoryCounter <= INVENTORY_SHOW || _inventorySpeedIndex > 5) {
+			_inventorySpeedIndex = 0;
+			setInventoryStart(_iconBase, INVENTORY_SHOW);
+			_inventoryStatus = INV_INACTION;
+			_inventoryCounter = INVENTORY_SHOW;
+			if (!(isInventoryArea(my)))
+				doEvent(MC_INVENTORY, ME_CLOSE, MP_DEFAULT, 0, 0, 0, 0);
+			redrawString();
+			return;
+		}
+	} else if (status == INV_DEPAINT) {
+		_inventoryCounter += _inventorySpeed[_inventorySpeedIndex++];
+
+		if (_inventoryCounter > INVENTORY_HIDE || _inventorySpeedIndex > 5) {
+			_inventorySpeedIndex = 0;
+			setInventoryStart(_iconBase, INVENTORY_HIDE);
+			_inventoryStatus = INV_OFF;
+			_inventoryCounter = INVENTORY_HIDE;
+			if (isInventoryArea(my) && !(FlagDialogActive || FlagDialogMenuActive))
+				doEvent(MC_INVENTORY, ME_OPEN, MP_DEFAULT, 0, 0, 0, 0);
+			else
+				redrawString();
+			return;
+		}
+	}
+	setInventoryStart(_iconBase, _inventoryCounter);
+}
+
+/*-------------------------------------------------------------------------*/
+/*                              doScrollInventory         				   */
+/*-------------------------------------------------------------------------*/
+void TrecisionEngine::doScrollInventory(uint16 mouseX) {
+	if ((_inventoryStatus == INV_PAINT) || (_inventoryStatus == INV_DEPAINT))
+		return;
+
+	if ((mouseX <= ICONMARGSX) && _iconBase)
+		doEvent(MC_INVENTORY, ME_ONERIGHT, MP_DEFAULT, 0, 0, 0, 0);
+	else if (BETWEEN(SCREENLEN - ICONMARGDX, mouseX, SCREENLEN) && (_iconBase + ICONSHOWN < _inventorySize))
+		doEvent(MC_INVENTORY, ME_ONELEFT, MP_DEFAULT, 0, 0, 0, 0);
+}
+
 } // End of namespace Trecision

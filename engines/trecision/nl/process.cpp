@@ -43,7 +43,7 @@ void ProcessTime() {
 		g_vm->drawString();
 
 		if ((g_vm->_inventoryStatus == INV_PAINT) || (g_vm->_inventoryStatus == INV_DEPAINT))
-			RollInventory(g_vm->_inventoryStatus);
+			g_vm->rollInventory(g_vm->_inventoryStatus);
 
 		if ((g_vm->_inventoryStatus != INV_OFF)
 			&& ((OldRegInvSI != g_vm->_inventoryRefreshStartIcon) || (OldRegInvSL != g_vm->_inventoryRefreshStartLine) || (OldLightIcon != g_vm->_lightIcon))) {
