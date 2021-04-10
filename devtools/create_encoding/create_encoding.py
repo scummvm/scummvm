@@ -1,7 +1,14 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # encoding: utf-8
 
 import struct
+
+def merge_ranges(*ranges):
+    # Use a set for efficient lookup
+    result = set()
+    for rng in ranges:
+        result.update(rng)
+    return result
 
 def processtable(inputfilename, outfile, highrange, lowrange):
     with open(inputfilename) as f:
@@ -37,18 +44,18 @@ FILE = 'file'
 tables = [
     {
         FILE: "CP932.TXT",
-        HIGH: range(0x81, 0x85) + range(0x87, 0xa0) + range(0xe0, 0xef) + range(0xfa, 0xfd),
+        HIGH: merge_ranges(range(0x81, 0x85), range(0x87, 0xa0), range(0xe0, 0xef), range(0xfa, 0xfd)),
         LOW: range(0x40, 0x100)
     },
     {
         FILE: "CP949.TXT",
         HIGH: range(0x81, 0xFF),
-        LOW: range(0x41, 0x5b) + range(0x61, 0x7b) + range(0x81, 0xFF)
+        LOW: merge_ranges(range(0x41, 0x5b), range(0x61, 0x7b), range(0x81, 0xFF))
     },
     {
         FILE: "CP950.TXT",
         HIGH: range(0xA1, 0xFA),
-        LOW: range(0x40, 0x7f) + range(0xa1, 0xff)
+        LOW: merge_ranges(range(0x40, 0x7f), range(0xa1, 0xff))
     }
 ]
 
