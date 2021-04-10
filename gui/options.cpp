@@ -1392,7 +1392,7 @@ void OptionsDialog::addAudioControls(GuiObject *boss, const Common::String &pref
 				// marked as General MIDI device.
 				|| (deviceGuiOption.contains(GUIO_MIDIGM) && (_guioptions.contains(GUIO_MIDIMT32)))
 				|| d->getMusicDriverId() == "auto" || d->getMusicDriverId() == "null") // always add default and null device
-				_midiPopUp->appendEntry(d->getCompleteName(), d->getHandle());
+				_midiPopUp->appendEntry(_(d->getCompleteName()), d->getHandle());
 		}
 	}
 
