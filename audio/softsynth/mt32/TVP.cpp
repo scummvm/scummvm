@@ -270,7 +270,7 @@ void TVP::setupPitchChange(int targetPitchOffset, Bit8u changeDuration) {
 		pitchOffsetDelta = -pitchOffsetDelta;
 	}
 	// We want to maximise the number of bits of the Bit16s "pitchOffsetChangePerBigTick" we use in order to get the best possible precision later
-	Bit32u absPitchOffsetDelta = pitchOffsetDelta << 16;
+	Bit32u absPitchOffsetDelta = (pitchOffsetDelta & 0xFFFF) << 16;
 	Bit8u normalisationShifts = normalise(absPitchOffsetDelta); // FIXME: Double-check: normalisationShifts is usually between 0 and 15 here, unless the delta is 0, in which case it's 31
 	absPitchOffsetDelta = absPitchOffsetDelta >> 1; // Make room for the sign bit
 
@@ -337,13 +337,16 @@ void TVP::process() {
 		return;
 	}
 	// FIXME: Write explanation for this stuff
+	// NOTE: Value of shifts may happily exceed the maximum of 31 specified for the 8095 MCU.
+	// We assume the device performs a shift with the rightmost 5 bits of the counter regardless of argument size,
+	// since shift instructions of any size have the same maximum.
 	int rightShifts = shifts;
 	if (rightShifts > 13) {
 		rightShifts -= 13;
-		negativeBigTicksRemaining = negativeBigTicksRemaining >> rightShifts; // PORTABILITY NOTE: Assumes arithmetic shift
+		negativeBigTicksRemaining = negativeBigTicksRemaining >> (rightShifts & 0x1F); // PORTABILITY NOTE: Assumes arithmetic shift
 		rightShifts = 13;
 	}
-	int newResult = (negativeBigTicksRemaining * pitchOffsetChangePerBigTick) >> rightShifts; // PORTABILITY NOTE: Assumes arithmetic shift
+	int newResult = (negativeBigTicksRemaining * pitchOffsetChangePerBigTick) >> (rightShifts & 0x1F); // PORTABILITY NOTE: Assumes arithmetic shift
 	newResult += targetPitchOffsetWithoutLFO + lfoPitchOffset;
 	currentPitchOffset = newResult;
 	updatePitch();

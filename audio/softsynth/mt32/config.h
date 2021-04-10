@@ -18,10 +18,10 @@
 #ifndef MT32EMU_CONFIG_H
 #define MT32EMU_CONFIG_H
 
-#define MT32EMU_VERSION      "2.4.2"
+#define MT32EMU_VERSION      "2.5.0"
 #define MT32EMU_VERSION_MAJOR 2
-#define MT32EMU_VERSION_MINOR 4
-#define MT32EMU_VERSION_PATCH 2
+#define MT32EMU_VERSION_MINOR 5
+#define MT32EMU_VERSION_PATCH 0
 
 /* Library Exports Configuration
  *
@@ -33,6 +33,35 @@
  *    is exported, and thus the client application may ONLY use MT32EMU_API_TYPE 2.
  * 3: All the available API types are provided by the library build.
  */
-#define MT32EMU_EXPORTS_TYPE  0
+#define MT32EMU_EXPORTS_TYPE 0
 
+/* Type of library build.
+ *
+ * For shared library builds, MT32EMU_SHARED is defined, so that compiler-specific attributes are assigned
+ * to all the exported symbols as appropriate. MT32EMU_SHARED is undefined for static library builds.
+ */
+@libmt32emu_SHARED_DEFINITION@
+
+/* Whether the library is built as a shared object with a version tag to enable runtime version checks. */
+#define MT32EMU_WITH_VERSION_TAGGING @libmt32emu_RUNTIME_VERSION_CHECK@
+
+/* Automatic runtime check of the shared library version in client applications.
+ *
+ * When the shared library is built with version tagging enabled, the client application may rely on an automatic
+ * version check that ensures forward compatibility. See VersionTagging.h for more info.
+ * 0: Disables the automatic runtime version check in the client application. Implied for static library builds
+ *    and when version tagging is not used in a shared object.
+ * 1: Enables an automatic runtime version check in client applications that utilise low-level C++ API,
+ *    i.e. when MT32EMU_API_TYPE 0. Client applications that rely on the C-compatible API are supposed
+ *    to check the version of the shared object by other means (e.g. using versioned C symbols, etc.).
+ * 2: Enables an automatic runtime version check for C++ and C client applications.
+ */
+#if MT32EMU_WITH_VERSION_TAGGING
+#  ifndef MT32EMU_RUNTIME_VERSION_CHECK
+#    define MT32EMU_RUNTIME_VERSION_CHECK @libmt32emu_RUNTIME_VERSION_CHECK@
+#  endif
+#else
+#  undef MT32EMU_RUNTIME_VERSION_CHECK
 #endif
+
+#endif /* #ifndef MT32EMU_CONFIG_H */

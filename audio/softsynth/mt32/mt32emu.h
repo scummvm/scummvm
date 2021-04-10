@@ -37,27 +37,22 @@
  */
 
 #ifdef MT32EMU_API_TYPE
-#if MT32EMU_API_TYPE == 0 && (MT32EMU_EXPORTS_TYPE == 1 || MT32EMU_EXPORTS_TYPE == 2)
-#error Incompatible setting MT32EMU_API_TYPE=0
-#elif MT32EMU_API_TYPE == 1 && (MT32EMU_EXPORTS_TYPE == 0 || MT32EMU_EXPORTS_TYPE == 2)
-#error Incompatible setting MT32EMU_API_TYPE=1
-#elif MT32EMU_API_TYPE == 2 && (MT32EMU_EXPORTS_TYPE == 0)
-#error Incompatible setting MT32EMU_API_TYPE=2
-#elif MT32EMU_API_TYPE == 3 && (MT32EMU_EXPORTS_TYPE == 0 || MT32EMU_EXPORTS_TYPE == 2)
-#error Incompatible setting MT32EMU_API_TYPE=3
-#endif
+#  if MT32EMU_API_TYPE == 0 && (MT32EMU_EXPORTS_TYPE == 1 || MT32EMU_EXPORTS_TYPE == 2)
+#    error Incompatible setting MT32EMU_API_TYPE=0
+#  elif MT32EMU_API_TYPE == 1 && (MT32EMU_EXPORTS_TYPE == 0 || MT32EMU_EXPORTS_TYPE == 2)
+#    error Incompatible setting MT32EMU_API_TYPE=1
+#  elif MT32EMU_API_TYPE == 2 && (MT32EMU_EXPORTS_TYPE == 0)
+#    error Incompatible setting MT32EMU_API_TYPE=2
+#  elif MT32EMU_API_TYPE == 3 && (MT32EMU_EXPORTS_TYPE == 0 || MT32EMU_EXPORTS_TYPE == 2)
+#    error Incompatible setting MT32EMU_API_TYPE=3
+#  endif
 #else /* #ifdef MT32EMU_API_TYPE */
-#if 0 < MT32EMU_EXPORTS_TYPE && MT32EMU_EXPORTS_TYPE < 3
-#define MT32EMU_API_TYPE MT32EMU_EXPORTS_TYPE
-#else
-#define MT32EMU_API_TYPE 0
-#endif
+#  if 0 < MT32EMU_EXPORTS_TYPE && MT32EMU_EXPORTS_TYPE < 3
+#    define MT32EMU_API_TYPE MT32EMU_EXPORTS_TYPE
+#  else
+#    define MT32EMU_API_TYPE 0
+#  endif
 #endif /* #ifdef MT32EMU_API_TYPE */
-
-/* MT32EMU_SHARED should be defined when building shared library, especially for Windows platforms. */
-/*
-#define MT32EMU_SHARED
-*/
 
 #include "globals.h"
 
@@ -79,6 +74,14 @@
 #include "MidiStreamParser.h"
 #include "SampleRateConverter.h"
 
+#if MT32EMU_RUNTIME_VERSION_CHECK == 1
+#include "VersionTagging.h"
+#endif
+
 #endif /* #if !defined(__cplusplus) || MT32EMU_API_TYPE == 1 */
+
+#if MT32EMU_RUNTIME_VERSION_CHECK == 2
+#include "VersionTagging.h"
+#endif
 
 #endif /* #ifndef MT32EMU_MT32EMU_H */

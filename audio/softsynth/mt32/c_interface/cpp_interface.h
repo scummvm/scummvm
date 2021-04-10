@@ -41,10 +41,17 @@ mt32emu_service_i mt32emu_get_service_i();
 #define mt32emu_get_library_version_string i.v0->getLibraryVersionString
 #define mt32emu_get_stereo_output_samplerate i.v0->getStereoOutputSamplerate
 #define mt32emu_get_best_analog_output_mode iV1()->getBestAnalogOutputMode
+#define mt32emu_get_machine_ids iV4()->getMachineIDs
+#define mt32emu_get_rom_ids iV4()->getROMIDs
+#define mt32emu_identify_rom_data iV4()->identifyROMData
+#define mt32emu_identify_rom_file iV4()->identifyROMFile
 #define mt32emu_create_context i.v0->createContext
 #define mt32emu_free_context i.v0->freeContext
 #define mt32emu_add_rom_data i.v0->addROMData
 #define mt32emu_add_rom_file i.v0->addROMFile
+#define mt32emu_merge_and_add_rom_data iV4()->mergeAndAddROMData
+#define mt32emu_merge_and_add_rom_files iV4()->mergeAndAddROMFiles
+#define mt32emu_add_machine_rom_file iV4()->addMachineROMFile
 #define mt32emu_get_rom_info i.v0->getROMInfo
 #define mt32emu_set_partial_count i.v0->setPartialCount
 #define mt32emu_set_analog_output_mode i.v0->setAnalogOutputMode
@@ -196,6 +203,11 @@ public:
 	Bit32u getStereoOutputSamplerate(const AnalogOutputMode analog_output_mode) { return mt32emu_get_stereo_output_samplerate(static_cast<mt32emu_analog_output_mode>(analog_output_mode)); }
 	AnalogOutputMode getBestAnalogOutputMode(const double target_samplerate) { return static_cast<AnalogOutputMode>(mt32emu_get_best_analog_output_mode(target_samplerate)); }
 
+	size_t getMachineIDs(const char **machine_ids, size_t machine_ids_size) { return mt32emu_get_machine_ids(machine_ids, machine_ids_size); }
+	size_t getROMIDs(const char **rom_ids, size_t rom_ids_size, const char *machine_id) { return mt32emu_get_rom_ids(rom_ids, rom_ids_size, machine_id); }
+	mt32emu_return_code identifyROMData(mt32emu_rom_info *rom_info, const Bit8u *data, size_t data_size, const char *machine_id) { return mt32emu_identify_rom_data(rom_info, data, data_size, machine_id); }
+	mt32emu_return_code identifyROMFile(mt32emu_rom_info *rom_info, const char *filename, const char *machine_id) { return mt32emu_identify_rom_file(rom_info, filename, machine_id); }
+
 	// Context-dependent methods
 
 	mt32emu_context getContext() { return c; }
@@ -204,6 +216,10 @@ public:
 	void freeContext() { if (c != NULL) { mt32emu_free_context(c); c = NULL; } }
 	mt32emu_return_code addROMData(const Bit8u *data, size_t data_size, const mt32emu_sha1_digest *sha1_digest = NULL) { return mt32emu_add_rom_data(c, data, data_size, sha1_digest); }
 	mt32emu_return_code addROMFile(const char *filename) { return mt32emu_add_rom_file(c, filename); }
+	mt32emu_return_code mergeAndAddROMData(const Bit8u *part1_data, size_t part1_data_size, const Bit8u *part2_data, size_t part2_data_size) { return mt32emu_merge_and_add_rom_data(c, part1_data, part1_data_size, NULL, part2_data, part2_data_size, NULL); }
+	mt32emu_return_code mergeAndAddROMData(const Bit8u *part1_data, size_t part1_data_size, const mt32emu_sha1_digest *part1_sha1_digest, const Bit8u *part2_data, size_t part2_data_size, const mt32emu_sha1_digest *part2_sha1_digest) { return mt32emu_merge_and_add_rom_data(c, part1_data, part1_data_size, part1_sha1_digest, part2_data, part2_data_size, part2_sha1_digest); }
+	mt32emu_return_code mergeAndAddROMFiles(const char *part1_filename, const char *part2_filename) { return mt32emu_merge_and_add_rom_files(c, part1_filename, part2_filename); }
+	mt32emu_return_code addMachineROMFile(const char *machine_id, const char *filename) { return mt32emu_add_machine_rom_file(c, machine_id, filename); }
 	void getROMInfo(mt32emu_rom_info *rom_info) { mt32emu_get_rom_info(c, rom_info); }
 	void setPartialCount(const Bit32u partial_count) { mt32emu_set_partial_count(c, partial_count); }
 	void setAnalogOutputMode(const AnalogOutputMode analog_output_mode) { mt32emu_set_analog_output_mode(c, static_cast<mt32emu_analog_output_mode>(analog_output_mode)); }
@@ -294,7 +310,11 @@ private:
 	const mt32emu_service_i_v1 *iV1() { return (getVersionID() < MT32EMU_SERVICE_VERSION_1) ? NULL : i.v1; }
 	const mt32emu_service_i_v2 *iV2() { return (getVersionID() < MT32EMU_SERVICE_VERSION_2) ? NULL : i.v2; }
 	const mt32emu_service_i_v3 *iV3() { return (getVersionID() < MT32EMU_SERVICE_VERSION_3) ? NULL : i.v3; }
+	const mt32emu_service_i_v4 *iV4() { return (getVersionID() < MT32EMU_SERVICE_VERSION_4) ? NULL : i.v4; }
 #endif
+
+	Service(const Service &);            // prevent copy-construction
+	Service& operator=(const Service &); // prevent assignment
 };
 
 namespace CppInterfaceImpl {
@@ -424,10 +444,17 @@ static mt32emu_midi_receiver_i getMidiReceiverThunk() {
 #undef mt32emu_get_library_version_string
 #undef mt32emu_get_stereo_output_samplerate
 #undef mt32emu_get_best_analog_output_mode
+#undef mt32emu_get_machine_ids
+#undef mt32emu_get_rom_ids
+#undef mt32emu_identify_rom_data
+#undef mt32emu_identify_rom_file
 #undef mt32emu_create_context
 #undef mt32emu_free_context
 #undef mt32emu_add_rom_data
 #undef mt32emu_add_rom_file
+#undef mt32emu_merge_and_add_rom_data
+#undef mt32emu_merge_and_add_rom_files
+#undef mt32emu_add_machine_rom_file
 #undef mt32emu_get_rom_info
 #undef mt32emu_set_partial_count
 #undef mt32emu_set_analog_output_mode
