@@ -566,7 +566,13 @@ void Scene::setZoomPercents(int yStart, int minPercent, int yEnd, int maxPercent
 /*--------------------------------------------------------------------------*/
 
 void Game::restartGame() {
-	if (MessageDialog::show(RESTART_MSG, CANCEL_BTN_STRING, RESTART_BTN_STRING) == 1)
+	int rc;
+	if (g_vm->getLanguage() == Common::ES_ESP) {
+		rc = MessageDialog::show(ESP_RESTART_MSG, ESP_CANCEL_BTN_STRING, ESP_RESTART_BTN_STRING);
+	} else {
+		rc = MessageDialog::show(RESTART_MSG, CANCEL_BTN_STRING, RESTART_BTN_STRING);
+	}
+	if (rc == 1)
 		g_globals->_game->restart();
 }
 
@@ -589,7 +595,13 @@ void Game::restoreGame() {
 }
 
 void Game::quitGame() {
-	if (MessageDialog::show(QUIT_CONFIRM_MSG, CANCEL_BTN_STRING, QUIT_BTN_STRING) == 1)
+	int rc;
+	if (g_vm->getLanguage() == Common::ES_ESP) {
+		rc = MessageDialog::show(ESP_QUIT_CONFIRM_MSG, ESP_CANCEL_BTN_STRING, ESP_QUIT_BTN_STRING);
+	} else {
+		rc = MessageDialog::show(QUIT_CONFIRM_MSG, CANCEL_BTN_STRING, QUIT_BTN_STRING);
+	}
+	if (rc == 1)
 		g_vm->quitGame();
 }
 

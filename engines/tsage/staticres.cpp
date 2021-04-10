@@ -88,6 +88,25 @@ char const *const RESUME_BTN_STRING = " Resume \rplay";
 char const *const LOOK_BTN_STRING = "Look";
 char const *const PICK_BTN_STRING = "Pick";
 
+// Spanish version
+char const *const ESP_LOOK_SCENE_HOTSPOT = "No ves nada especial.";
+char const *const ESP_USE_SCENE_HOTSPOT = "Con eso no conseguir\240s nada.";
+char const *const ESP_TALK_SCENE_HOTSPOT = "Yak, yak.";
+char const *const ESP_SPECIAL_SCENE_HOTSPOT = "Es una forma original de usar eso.";
+char const *const ESP_DEFAULT_SCENE_HOTSPOT = "No ves nada especial.";
+char const *const ESP_SAVE_ERROR_MSG = "El juego no ha podido ser archivado. Por favor, no intente recuperar este juego!";
+
+char const *const ESP_QUIT_CONFIRM_MSG = "Quieres dejar de jugar?";
+char const *const ESP_RESTART_MSG = "Deseas volver a comenzar el juego?";
+char const *const ESP_GAME_PAUSED_MSG = "Juego en pausa.";
+char const *const ESP_OK_BTN_STRING = " Ok ";
+char const *const ESP_CANCEL_BTN_STRING = "Cancelar";
+char const *const ESP_QUIT_BTN_STRING = " Salir ";
+char const *const ESP_RESTART_BTN_STRING = "Reiniciar";
+char const *const ESP_SAVE_BTN_STRING = "Guardar";
+char const *const ESP_RESTORE_BTN_STRING = "Recuperar";
+char const *const ESP_SOUND_BTN_STRING = "Sonido";
+char const *const ESP_RESUME_BTN_STRING = " Seguir \rjugando";
 
 namespace Ringworld {
 
@@ -178,6 +197,34 @@ char const *const SCENE570_WACKYDATA = "WACKYDATA";
 
 // Scene 180 messages
 char const *const THE_NEXT_DAY = "The Next Day";
+
+// Spanish version
+// Dialog resources
+char const *const ESP_HELP_MSG = "Blue Force\x14\rScummVM Version\r\r\
+Funciones del Teclado...\rF2 - Sonido\rF3 - Salir del Juego\r\
+F4 - Recomenzar\rF5 - Guardar\rF7 - Recuperar\rF10 - Pausa";
+char const *const ESP_WATCH_INTRO_MSG = "Quieres ver la introducci\242n?";
+char const *const ESP_START_PLAY_BTN_STRING = " Jugar ";
+char const *const ESP_INTRODUCTION_BTN_STRING = " Ver ";
+char const *const ESP_OPTIONS_MSG = "Opciones...";
+
+// Blue Force general messages
+char const *const ESP_BF_ALL_RIGHTS_RESERVED = "Todos los derechos reservados";
+char const *const ESP_BF_19840518 = "18 de Mayo de 1984";
+char const *const ESP_BF_19840515 = "15 de Mayo de 1984";
+char const *const ESP_BF_3_DAYS = "Tres d\241as despu\202s";
+char const *const ESP_BF_11_YEARS = "Once a\244os despu\202s.";
+
+// Scene 50 hotspots
+char const *const ESP_GRANDMA_FRANNIE = "La abuela Frannie";
+char const *const ESP_POLICE_DEPARTMENT = "Departamento de Polic\241a";
+char const *const ESP_TONYS_BAR = "El Bar de Tony";
+char const *const ESP_CHILD_PROTECTIVE_SERVICES = "Servicio de Protecci\242n de Menores";
+char const *const ESP_CITY_HALL_JAIL = "Ayuntamiento & C\240rcel";
+
+// Scene 180 messages
+char const *const ESP_THE_NEXT_DAY = "Al d\241a siguiente";
+
 
 } // End of namespace BlueForce
 
