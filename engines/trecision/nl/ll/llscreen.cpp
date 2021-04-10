@@ -454,7 +454,7 @@ int actionInRoom(int curA) {
 --------------------------------------------------*/
 void ReadLoc() {
 	if (g_vm->_curRoom == r11 && !(g_vm->_room[r11]._flag & OBJFLAG_DONE))
-		FlagShowCharacter = true;
+		g_vm->FlagShowCharacter = true;
 
 	SoundFadOut();
 
@@ -508,7 +508,7 @@ void TendIn() {
 		return;
 	}
 
-	FlagPaintCharacter = true;
+	g_vm->FlagPaintCharacter = true;
 	WaitSoundFadEnd();
 	PaintScreen(1);
 

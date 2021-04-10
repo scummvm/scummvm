@@ -127,7 +127,7 @@ void Scheduler() {
 
 		case CLASS_CHAR:
 			token = CLASS_GAME;
-			if (FlagPaintCharacter || g_vm->_characterQueue.getMessage())
+			if (g_vm->FlagPaintCharacter || g_vm->_characterQueue.getMessage())
 				retry = true;
 			break;
 

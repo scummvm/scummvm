@@ -156,6 +156,21 @@ TrecisionEngine::TrecisionEngine(OSystem *syst) : Engine(syst) {
 	_icons = nullptr;
 	_zBuffer = nullptr;
 	_actor = nullptr;
+
+	FlagDialogActive = false;
+	FlagDialogMenuActive = false;
+	Flagskiptalk = false;
+	Flagskipenable = false;
+	FlagPaintCharacter = false;
+	FlagShowCharacter = true;
+	FlagSomeOneSpeak = false;
+	FlagCharacterSpeak = false;
+	FlagUseWithStarted = false;
+	FlagUseWithLocked = false;
+	FlagCharacterExist = true;
+	FlagWalkNoInterrupt = false;
+	FlagNoPaintScreen = false;
+	FlagWaitRegen = false;
 }
 
 TrecisionEngine::~TrecisionEngine() {

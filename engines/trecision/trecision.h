@@ -237,6 +237,21 @@ public:
 	// Data files
 	FastFile _dataFile;	// nldata.cd0
 	FastFile _speechFile;	// nlspeech.cd0
+
+	bool FlagDialogActive;
+	bool FlagDialogMenuActive;
+	bool Flagskiptalk;
+	bool Flagskipenable;
+	bool FlagPaintCharacter;
+	bool FlagShowCharacter = true;
+	bool FlagSomeOneSpeak;
+	bool FlagCharacterSpeak;
+	bool FlagUseWithStarted;
+	bool FlagUseWithLocked;
+	bool FlagCharacterExist = true;
+	bool FlagWalkNoInterrupt;
+	bool FlagNoPaintScreen;
+	bool FlagWaitRegen;
 };
 
 extern TrecisionEngine *g_vm;
