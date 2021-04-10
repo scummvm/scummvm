@@ -1252,12 +1252,11 @@ float dist3D(float x1, float y1, float z1, float x2, float y2, float z2) {
 --------------------------------------------------*/
 void putPix(int x, int y, uint16 c) {
 	extern uint16 *ImagePointer;
-	extern uint16 *SmackImagePointer;
 
 	if ((x >  0) && (x < SCREENLEN) && (y > 60) && (y < 420)) {
 		g_vm->_screenBuffer[x + SCREENLEN * y] = c;
 		ImagePointer[x + SCREENLEN * (y - 60)] = c;
-		SmackImagePointer[x + SCREENLEN * (y - 60)] = c;
+		g_vm->_smackImageBuffer[x + SCREENLEN * (y - 60)] = c;
 	}
 }
 

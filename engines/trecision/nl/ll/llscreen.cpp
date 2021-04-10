@@ -42,7 +42,6 @@ namespace Trecision {
 
 // GAME POINTER
 uint16 *ImagePointer;
-uint16 *SmackImagePointer;
 uint16 *ObjPointers[MAXOBJINROOM];
 uint8 *MaskPointers[MAXOBJINROOM];
 uint8 *_actionPointer[MAXACTIONFRAMESINROOM];		// puntatore progressivo ai frame
@@ -54,7 +53,6 @@ uint16 *ExtraObj2C;
 uint16 *ExtraObj41D;
 // MEMORY
 uint32 GameBytePointer;
-uint32 GameWordPointer;
 // DTEXT
 int8 DTextLines[MAXDTEXTLINES][MAXDTEXTCHARS];
 // 3D
@@ -95,7 +93,6 @@ void openSys() {
 	memset(MemoryArea, 0, NL_REQUIREDMEMORY);
 
 	GameBytePointer = 0;
-	GameWordPointer = 0;
 
 	// head
 	hh = 0;
@@ -165,17 +162,21 @@ void openSys() {
 	// background area
 	g_vm->_animMgr->_smkBuffer[kSmackerBackground] = (uint8 *)(MemoryArea + GameBytePointer);
 	GameBytePointer += SCREENLEN * AREA;
-	// SmackImagePointer
-	SmackImagePointer = (uint16 *)(MemoryArea + GameBytePointer);
-	GameBytePointer += SCREENLEN * AREA * 2;
 
-	g_vm->_screenBuffer = (uint16 *)(MemoryArea + GameBytePointer);
+	g_vm->_smackImageBuffer = new uint16[MAXX * AREA];
+	memset(g_vm->_smackImageBuffer, 0, MAXX * AREA * 2);
+	GameBytePointer += MAXX * AREA * 2; // Space that used to be SmackImagePointer
+
+	g_vm->_screenBuffer = new uint16[MAXX * MAXY];
+	memset(g_vm->_screenBuffer, 0, MAXX * MAXY * 2);
+	GameBytePointer += MAXX * MAXY * 2; // Space that used to be _screenBuffer
+
+	g_vm->_graphicsMgr->copyToScreen(0, 0, MAXX, MAXY);
+
+	ImagePointer = (uint16 *)(MemoryArea + GameBytePointer);
 
 	if (!g_vm->_flagMouseEnabled)
 		Mouse(MCMD_OFF);
-
-	memset(g_vm->_screenBuffer, 0, 1280L * 480L * 2);
-	g_vm->_graphicsMgr->copyToScreen(0, 0, 640, 480);
 
 	for (int i = 0; i < MAXOBJINROOM; ++i) {
 		OldObjStatus[i] = false;
@@ -456,21 +457,17 @@ int actionInRoom(int curA) {
 						ReadLoc
 --------------------------------------------------*/
 void ReadLoc() {
-	if ((g_vm->_curRoom == r11) && !(g_vm->_room[r11]._flag & OBJFLAG_DONE))
+	if (g_vm->_curRoom == r11 && !(g_vm->_room[r11]._flag & OBJFLAG_DONE))
 		FlagShowCharacter = true;
 
 	SoundFadOut();
 
-	memset(g_vm->_screenBuffer, 0, NL_REQUIREDMEMORY - GameBytePointer);
-
-	GameWordPointer = (SCREENLEN * MAXY);           // space for _screenBuffer
+	memset(g_vm->_screenBuffer, 0, MAXX * MAXY * 2);
 
 	Common::String filename = Common::String::format("%s.cr", g_vm->_room[g_vm->_curRoom]._baseName);
-	ImagePointer = (uint16 *)g_vm->_screenBuffer + GameWordPointer - 4;
 
-	GameWordPointer += (DecCR(filename, (uint8 *)ImagePointer, (uint8 *)g_vm->_screenBuffer) + 1) / 2;
-	memcpy(&BmInfo, (SBmInfo *)ImagePointer, sizeof(SBmInfo));
-	ImagePointer += 4;
+	uint32 dataLength = (DecCR(filename, (uint8 *)(ImagePointer - 4), (uint8 *)g_vm->_screenBuffer) + 1) / 2;
+	memcpy(&BmInfo, (SBmInfo *)(ImagePointer - 4), sizeof(SBmInfo));
 	g_vm->_graphicsMgr->updatePixelFormat(ImagePointer, BmInfo.dx * BmInfo.dy);
 
 	ReadObj();
@@ -480,9 +477,9 @@ void ReadLoc() {
 	if (g_vm->_room[g_vm->_curRoom]._sounds[0] != 0)
 		ReadSounds();
 
-	_actionPointer[0] = (uint8 *)(g_vm->_screenBuffer + GameWordPointer);
+	_actionPointer[0] = (uint8 *)ImagePointer + dataLength;
 	Common::String fname = Common::String::format("%s.3d", g_vm->_room[g_vm->_curRoom]._baseName);
-	GameWordPointer += read3D(fname) / 2;
+	read3D(fname);
 
 	memset(g_vm->_screenBuffer, 0, SCREENLEN * MAXY * 2);
 	memcpy(g_vm->_screenBuffer + TOP * SCREENLEN, ImagePointer, SCREENLEN * AREA * 2);
@@ -496,7 +493,7 @@ void ReadLoc() {
 	RegenRoom();
 
 	if (g_vm->_room[g_vm->_curRoom]._bkgAnim) {
-		memcpy(SmackImagePointer, ImagePointer, MAXX * AREA * 2);
+		memcpy(g_vm->_smackImageBuffer, ImagePointer, MAXX * AREA * 2);
 		g_vm->_animMgr->startSmkAnim(g_vm->_room[g_vm->_curRoom]._bkgAnim);
 	} else
 		g_vm->_animMgr->stopSmkAnim(g_vm->_animMgr->_playingAnims[kSmackerBackground]);
