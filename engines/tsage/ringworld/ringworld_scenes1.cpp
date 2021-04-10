@@ -2478,7 +2478,11 @@ void Scene60::signal() {
 			g_globals->_player._uiEnabled = true;
 			g_globals->_events.setCursor(CURSOR_USE);
 
-			_gfxButton.setText(EXIT_MSG);
+			if (g_vm->getLanguage() == Common::ES_ESP) {
+				_gfxButton.setText(ESP_EXIT_MSG);
+			} else {
+				_gfxButton.setText(EXIT_MSG);
+			}
 			_gfxButton._bounds.center(160, 193);
 			_gfxButton.draw();
 			_gfxButton._bounds.expandPanes();
@@ -2911,10 +2915,18 @@ void Scene6100::Action1::signal() {
 
 	switch (_actionIndex++) {
 	case 0:
-		scene->showMessage(SCENE6100_CAREFUL, 13, this);
+		if (g_vm->getLanguage() == Common::ES_ESP) {
+			scene->showMessage(ESP_SCENE6100_CAREFUL, 13, this);
+		} else {
+			scene->showMessage(SCENE6100_CAREFUL, 13, this);
+		}
 		break;
 	case 1:
-		scene->showMessage(SCENE6100_TOUGHER, 35, this);
+		if (g_vm->getLanguage() == Common::ES_ESP) {
+			scene->showMessage(ESP_SCENE6100_TOUGHER, 35, this);
+		} else {
+			scene->showMessage(SCENE6100_TOUGHER, 35, this);
+		}
 		break;
 	case 2:
 		scene->showMessage(NULL, 0, NULL);
@@ -2930,10 +2942,18 @@ void Scene6100::Action2::signal() {
 
 	switch (_actionIndex++) {
 	case 0:
-		scene->showMessage(SCENE6100_ONE_MORE_HIT, 13, this);
+		if (g_vm->getLanguage() == Common::ES_ESP) {
+			scene->showMessage(ESP_SCENE6100_ONE_MORE_HIT, 13, this);
+		} else {
+			scene->showMessage(SCENE6100_ONE_MORE_HIT, 13, this);
+		}
 		break;
 	case 1:
-		scene->showMessage(SCENE6100_DOING_BEST, 35, this);
+		if (g_vm->getLanguage() == Common::ES_ESP) {
+			scene->showMessage(ESP_SCENE6100_DOING_BEST, 35, this);
+		} else {
+			scene->showMessage(SCENE6100_DOING_BEST, 35, this);
+		}
 		break;
 	case 2:
 		scene->showMessage(NULL, 0, NULL);
@@ -2970,7 +2990,11 @@ void Scene6100::Action3::signal() {
 		scene->_stripManager.start(8120, this);
 		break;
 	case 2:
-		scene->showMessage(SCENE6100_REPAIR, 7, this);
+		if (g_vm->getLanguage() == Common::ES_ESP) {
+			scene->showMessage(ESP_SCENE6100_REPAIR, 7, this);
+		} else {
+			scene->showMessage(SCENE6100_REPAIR, 7, this);
+		}
 		break;
 	case 3:
 		scene->showMessage(NULL, 0, NULL);
@@ -2993,10 +3017,18 @@ void Scene6100::Action4::signal() {
 
 	switch (_actionIndex++) {
 	case 0:
-		scene->showMessage(SCENE6100_ROCKY_AREA, 13, this);
+		if (g_vm->getLanguage() == Common::ES_ESP) {
+			scene->showMessage(ESP_SCENE6100_ROCKY_AREA, 13, this);
+		} else {
+			scene->showMessage(SCENE6100_ROCKY_AREA, 13, this);
+		}
 		break;
 	case 1:
-		scene->showMessage(SCENE6100_REPLY, 35, this);
+		if (g_vm->getLanguage() == Common::ES_ESP) {
+			scene->showMessage(ESP_SCENE6100_REPLY, 35, this);
+		} else {
+			scene->showMessage(SCENE6100_REPLY, 35, this);
+		}
 		break;
 	case 2:
 		scene->showMessage(NULL, 0, NULL);
@@ -3123,7 +3155,11 @@ void Scene6100::GetBoxAction::signal() {
 		break;
 	}
 	case 1: {
-		scene->showMessage(SCENE6100_TAKE_CONTROLS, 35, this);
+		if (g_vm->getLanguage() == Common::ES_ESP) {
+			scene->showMessage(ESP_SCENE6100_TAKE_CONTROLS, 35, this);
+		} else {
+			scene->showMessage(SCENE6100_TAKE_CONTROLS, 35, this);
+		}
 		g_globals->_scenePalette.clearListeners();
 
 		Common::Point pt(scene->_rocks._position.x, scene->_rocks._position.y - 10);
@@ -3133,13 +3169,25 @@ void Scene6100::GetBoxAction::signal() {
 	}
 	case 2:
 		scene->_probe._percent = 4;
-		scene->showMessage(SCENE6100_SURPRISE, 13, this);
+		if (g_vm->getLanguage() == Common::ES_ESP) {
+			scene->showMessage(ESP_SCENE6100_SURPRISE, 13, this);
+		} else {
+			scene->showMessage(SCENE6100_SURPRISE, 13, this);
+		}
 		break;
 	case 3:
-		scene->showMessage(SCENE6100_SWEAT, 35, this);
+		if (g_vm->getLanguage() == Common::ES_ESP) {
+			scene->showMessage(ESP_SCENE6100_SWEAT, 35, this);
+		} else {
+			scene->showMessage(SCENE6100_SWEAT, 35, this);
+		}
 		break;
 	case 4:
-		scene->showMessage(SCENE6100_VERY_WELL, 13, this);
+		if (g_vm->getLanguage() == Common::ES_ESP) {
+			scene->showMessage(ESP_SCENE6100_VERY_WELL, 13, this);
+		} else {
+			scene->showMessage(SCENE6100_VERY_WELL, 13, this);
+		}
 		break;
 	case 5:
 		scene->showMessage(NULL, 0, NULL);

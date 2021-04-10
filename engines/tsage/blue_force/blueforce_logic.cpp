@@ -330,7 +330,7 @@ void BlueForceGame::processEvent(Event &event) {
 			// F10 - Pause
 			GfxDialog::setPalette();
 			if (g_vm->getLanguage() == Common::ES_ESP) {
-				MessageDialog::show(ESP_GAME_PAUSED_MSG, ESP_OK_BTN_STRING);
+				MessageDialog::show(ESP_BF_GAME_PAUSED_MSG, ESP_OK_BTN_STRING);
 			} else {
 				MessageDialog::show(GAME_PAUSED_MSG, OK_BTN_STRING);
 			}

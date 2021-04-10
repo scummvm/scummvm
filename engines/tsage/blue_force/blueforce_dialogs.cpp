@@ -467,7 +467,7 @@ void OptionsDialog::show() {
 		// Quit game
 		int rc;
 		if (g_vm->getLanguage() == Common::ES_ESP) {
-			rc = MessageDialog::show(ESP_QUIT_CONFIRM_MSG, ESP_CANCEL_BTN_STRING, ESP_QUIT_BTN_STRING);
+			rc = MessageDialog::show(ESP_BF_QUIT_CONFIRM_MSG, ESP_CANCEL_BTN_STRING, ESP_BF_QUIT_BTN_STRING);
 		} else {
 			rc = MessageDialog::show(QUIT_CONFIRM_MSG, CANCEL_BTN_STRING, QUIT_BTN_STRING);
 		}
@@ -485,11 +485,11 @@ OptionsDialog::OptionsDialog() {
 	if (g_vm->getLanguage() == Common::ES_ESP) {
 		_gfxMessage.set(ESP_OPTIONS_MSG, 140, ALIGN_LEFT);
 		_btnRestore.setText(ESP_RESTORE_BTN_STRING);
-		_btnSave.setText(ESP_SAVE_BTN_STRING);
-		_btnRestart.setText(ESP_RESTART_BTN_STRING);
-		_btnQuit.setText(ESP_QUIT_BTN_STRING);
+		_btnSave.setText(ESP_BF_SAVE_BTN_STRING);
+		_btnRestart.setText(ESP_BF_RESTART_BTN_STRING);
+		_btnQuit.setText(ESP_BF_QUIT_BTN_STRING);
 		_btnSound.setText(ESP_SOUND_BTN_STRING);
-		_btnResume.setText(ESP_RESUME_BTN_STRING);
+		_btnResume.setText(ESP_BF_RESUME_BTN_STRING);
 	} else {
 		_gfxMessage.set(OPTIONS_MSG, 140, ALIGN_LEFT);
 		_btnRestore.setText(RESTORE_BTN_STRING);

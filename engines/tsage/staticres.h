@@ -63,19 +63,34 @@ extern char const *const ESP_TALK_SCENE_HOTSPOT;
 extern char const *const ESP_SPECIAL_SCENE_HOTSPOT;
 extern char const *const ESP_DEFAULT_SCENE_HOTSPOT;
 extern char const *const ESP_SAVE_ERROR_MSG;
+extern char const *const ESP_SAVING_NOT_ALLOWED_MSG;
+extern char const *const ESP_RESTORING_NOT_ALLOWED_MSG;
+extern char const *const ESP_INV_EMPTY_MSG;
 
 // Dialogs
-extern char const *const ESP_QUIT_CONFIRM_MSG;
-extern char const *const ESP_RESTART_MSG;
-extern char const *const ESP_GAME_PAUSED_MSG;
+extern char const *const ESP_RW_QUIT_CONFIRM_1_MSG;
+extern char const *const ESP_RW_QUIT_CONFIRM_2_MSG;
+extern char const *const ESP_BF_QUIT_CONFIRM_MSG;
+extern char const *const ESP_RW_RESTART_MSG;
+extern char const *const ESP_BF_RESTART_MSG;
+extern char const *const ESP_RW_GAME_PAUSED_MSG;
+extern char const *const ESP_BF_GAME_PAUSED_MSG;
 extern char const *const ESP_OK_BTN_STRING;
+extern char const *const ESP_OK_BTN_2_STRING;
 extern char const *const ESP_CANCEL_BTN_STRING;
-extern char const *const ESP_QUIT_BTN_STRING;
-extern char const *const ESP_RESTART_BTN_STRING;
-extern char const *const ESP_SAVE_BTN_STRING;
+extern char const *const ESP_RW_QUIT_BTN_STRING;
+extern char const *const ESP_BF_QUIT_BTN_STRING;
+extern char const *const ESP_RW_RESTART_BTN_1_STRING;
+extern char const *const ESP_RW_RESTART_BTN_2_STRING;
+extern char const *const ESP_BF_RESTART_BTN_STRING;
+extern char const *const ESP_RW_SAVE_BTN_STRING;
+extern char const *const ESP_BF_SAVE_BTN_STRING;
 extern char const *const ESP_RESTORE_BTN_STRING;
 extern char const *const ESP_SOUND_BTN_STRING;
-extern char const *const ESP_RESUME_BTN_STRING;
+extern char const *const ESP_RW_RESUME_BTN_STRING;
+extern char const *const ESP_BF_RESUME_BTN_STRING;
+extern char const *const ESP_LOOK_BTN_STRING;
+extern char const *const ESP_PICK_BTN_STRING;
 
 namespace Ringworld {
 
@@ -109,6 +124,28 @@ extern char const *const DEMO_EXIT_MSG;
 extern char const *const EXIT_BTN_STRING;
 extern char const *const DEMO_BTN_STRING;
 extern char const *const DEMO_RESUME_BTN_STRING;
+
+// Spanish version
+// Dialog resources
+extern char const *const ESP_HELP_MSG;
+extern char const *const ESP_WATCH_INTRO_MSG;
+extern char const *const ESP_START_PLAY_BTN_STRING;
+extern char const *const ESP_INTRODUCTION_BTN_STRING;
+extern char const *const ESP_OPTIONS_MSG;
+
+// Scene specific resources
+extern char const *const ESP_EXIT_MSG;
+extern char const *const ESP_SCENE6100_CAREFUL;
+extern char const *const ESP_SCENE6100_TOUGHER;
+extern char const *const ESP_SCENE6100_ONE_MORE_HIT;
+extern char const *const ESP_SCENE6100_DOING_BEST;
+extern char const *const ESP_SCENE6100_REPAIR;
+extern char const *const ESP_SCENE6100_ROCKY_AREA;
+extern char const *const ESP_SCENE6100_REPLY;
+extern char const *const ESP_SCENE6100_TAKE_CONTROLS;
+extern char const *const ESP_SCENE6100_SURPRISE;
+extern char const *const ESP_SCENE6100_SWEAT;
+extern char const *const ESP_SCENE6100_VERY_WELL;
 
 } // End of namespace Ringworld
 
