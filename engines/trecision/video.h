@@ -79,6 +79,7 @@ private:
 	void openSmkVideo(Common::String name);
 	void closeSmk();
 	void smkNextFrame();
+	void drawFrame(NightlongSmackerDecoder *smkDecoder, uint16 x, uint16 y, bool updateScreen);
 	void drawFrameSubtitles(Graphics::Surface *surface, int frameNum);
 
 	void drawSmkBuffer(int px, int py, int dx, int dy);

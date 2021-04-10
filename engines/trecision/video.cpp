@@ -133,38 +133,39 @@ AnimManager::~AnimManager() {
 }
 
 #if USE_NEW_VIDEO_CODE
+
 void AnimManager::playMovie(Common::String filename, int startFrame, int endFrame) {
 	NightlongSmackerDecoder *smkDecoder = new NightlongSmackerDecoder;
 
 	if (!smkDecoder->loadFile(filename))
 		return;
 
+	Common::Event event;
+	bool skipVideo = false;
 	uint16 x = (g_system->getWidth() - smkDecoder->getWidth()) / 2;
 	uint16 y = (g_system->getHeight() - smkDecoder->getHeight()) / 2;
 	startFrame = CLIP<int32>(startFrame, 1, smkDecoder->getFrameCount() - 1);
 	endFrame = CLIP<int32>(endFrame, 1, smkDecoder->getFrameCount());	
-	bool skipVideo = false;
 	g_vm->_sdText.text = nullptr;
 
 	smkDecoder->start();
 
-	if (endFrame - startFrame > 2 && startFrame > 10)
+	if (endFrame - startFrame > 2 && startFrame > 10) {
+		smkDecoder->setMute(true);
 		smkDecoder->forceSeekToFrame(startFrame - 10);
 
-	while (!g_vm->shouldQuit() && !smkDecoder->endOfVideo() && smkDecoder->getCurFrame() < endFrame && !skipVideo) {
-		if (smkDecoder->needsUpdate()) {
-			const Graphics::Surface *frame = smkDecoder->decodeNextFrame();
-			if (frame) {
-				Graphics::Surface *frame16 = frame->convertTo(g_system->getScreenFormat(), smkDecoder->getPalette());
-				drawFrameSubtitles(frame16, smkDecoder->getCurFrame());
-				g_system->copyRectToScreen(frame16->getPixels(), frame16->pitch, x, y, frame16->w, frame16->h);
-				delete frame16;
-
-				g_vm->_system->updateScreen();
-			}
+		while (smkDecoder->getCurFrame() < startFrame - 1) {
+			drawFrame(smkDecoder, x, y, false);
 		}
 
-		Common::Event event;
+		smkDecoder->setMute(false);
+	}
+	
+	while (!g_vm->shouldQuit() && !smkDecoder->endOfVideo() && smkDecoder->getCurFrame() < endFrame && !skipVideo) {
+		if (smkDecoder->needsUpdate()) {
+			drawFrame(smkDecoder, x, y, true);
+		}
+
 		while (g_engine->getEventManager()->pollEvent(event)) {
 			if (event.type == Common::EVENT_KEYDOWN && event.kbd.keycode == Common::KEYCODE_ESCAPE)
 				skipVideo = true;
@@ -172,9 +173,25 @@ void AnimManager::playMovie(Common::String filename, int startFrame, int endFram
 
 		g_system->delayMillis(10);
 	}
+
+	// Clear pending events
+	while (g_engine->getEventManager()->pollEvent(event)) {
+	}
 	
 	doEvent(MC_DIALOG, ME_ENDCHOICE, MP_HIGH, smkDecoder->getCurFrame(), 0, 0, 0);
 	delete smkDecoder;
+}
+
+void AnimManager::drawFrame(NightlongSmackerDecoder *smkDecoder, uint16 x, uint16 y, bool updateScreen) {
+	const Graphics::Surface *frame = smkDecoder->decodeNextFrame();
+	if (frame) {
+		Graphics::Surface *frame16 = frame->convertTo(g_system->getScreenFormat(), smkDecoder->getPalette());
+		drawFrameSubtitles(frame16, smkDecoder->getCurFrame());
+		g_system->copyRectToScreen(frame16->getPixels(), frame16->pitch, x, y, frame16->w, frame16->h);
+		delete frame16;
+
+		g_vm->_system->updateScreen();
+	}
 }
 
 void AnimManager::drawFrameSubtitles(Graphics::Surface *surface, int frameNum) {
