@@ -46,15 +46,18 @@ void byte2wordm(void *dest, void *src, void *data, uint32 len) {
 }
 #endif
 
-void byte2wordn(void *dest, void *src, void *data, uint32 len) {
-	uint16 *d = (uint16 *)dest, *p = (uint16 *)data, *t = (uint16 *)((uint8 *)(dest) - 537600);
-	uint8 *s = (uint8 *)src;
+void byte2wordn(void *dest, void *src, void *smk, void *pal, uint32 len) {
+	uint16 *pDest = (uint16 *)dest;
+	uint16 *pPal = (uint16 *)pal;
+	uint16 *t = (uint16 *)smk;
+	uint8 *pSrc = (uint8 *)src;
+
 	for (uint32 i = 0; i < len; i++) {
-		uint8 v = *s++;
-		if (v == 0)
-			*d++ = *t++;
+		uint8 color = *pSrc++;
+		if (color == 0)
+			*pDest++ = *t++;
 		else {
-			*d++ = p[v];
+			*pDest++ = pPal[color];
 			t++;
 		}
 	}

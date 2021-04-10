@@ -571,7 +571,9 @@ void AnimManager::refreshSmkAnim(int num) {
 					byte2wordn(
 						_vm->_screenBuffer + lastRect->left + (lastRect->top + a + TOP) * MAXX,
 						_smkBuffer[pos] + lastRect->left + (lastRect->top + a) * _smkAnims[pos]->getWidth(),
-						_smkPal[pos], lastRect->width()
+						SmackImagePointer + lastRect->left + (lastRect->top + a) * MAXX,
+						_smkPal[pos],
+						lastRect->width()
 					);
 
 #if USE_DIRTY_RECTS
