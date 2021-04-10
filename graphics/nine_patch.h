@@ -72,7 +72,7 @@ public:
 	NinePatchSide() : _fix(0) { _m.clear(); }
 	~NinePatchSide();
 
-	bool init(Graphics::TransparentSurface *bmp, bool vertical, int titlePos = 0, int titleWidth = 0, int *titleIndex = nullptr);
+	bool init(Graphics::TransparentSurface *bmp, bool vertical, int titlePos = 0, int *titleIndex = nullptr);
 
 	void calcOffsets(int len, int titleIndex = 0, int titleWidth = 0);
 };
@@ -88,7 +88,7 @@ class NinePatchBitmap {
 	Common::HashMap<uint32, int> _cached_colors;
 
 public:
-	NinePatchBitmap(Graphics::TransparentSurface *bmp, bool owns_bitmap, int titlePos = 0, int titleWidth = 0);
+	NinePatchBitmap(Graphics::TransparentSurface *bmp, bool owns_bitmap, int titlePos = 0);
 	~NinePatchBitmap();
 
 	void blit(Graphics::Surface &target, int dx, int dy, int dw, int dh, byte *palette = NULL, int numColors = 0, MacWindowManager *wm = NULL, uint32 transColor = 0);

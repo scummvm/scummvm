@@ -303,7 +303,7 @@ public:
 	 * @param bo Width of the bottom side of the border, in pixels.
 	 */
 	void loadBorder(Common::SeekableReadStream &file, uint32 flags, int lo = -1, int ro = -1, int to = -1, int bo = -1);
-	void loadBorder(Common::SeekableReadStream &file, uint32 flags, BorderOffsets offsets, int titlePos = 0, int titleWidth = 0);
+	void loadBorder(Common::SeekableReadStream &file, uint32 flags, BorderOffsets offsets);
 	void disableBorder();
 
 	/**

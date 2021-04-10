@@ -87,7 +87,7 @@ void MacWindowBorder::disableBorder() {
 	setBorder(noborder2, 0);
 }
 
-void MacWindowBorder::addBorder(TransparentSurface *source, uint32 flags, int titlePos, int titleWidth) {
+void MacWindowBorder::addBorder(TransparentSurface *source, uint32 flags, int titlePos) {
 	if (flags >= kWindowBorderMaxFlag) {
 		warning("Accessing non-existed border type");
 		return;
@@ -95,7 +95,7 @@ void MacWindowBorder::addBorder(TransparentSurface *source, uint32 flags, int ti
 	if (_border[flags])
 		delete _border[flags];
 
-	_border[flags] = new NinePatchBitmap(source, true, titlePos, titleWidth);
+	_border[flags] = new NinePatchBitmap(source, true, titlePos);
 
 	if (_border[flags]->getPadding().isValidRect() && _border[flags]->getPadding().left > -1 && _border[flags]->getPadding().top > -1)
 		setOffsets(_border[flags]->getPadding());
@@ -191,11 +191,12 @@ void MacWindowBorder::loadBorder(Common::SeekableReadStream &file, uint32 flags,
 	offsets.bottom = bo;
 	offsets.titleTop = -1;
 	offsets.titleBottom = -1;
+	offsets.titlePos = 0;
 	offsets.dark = false;
 	loadBorder(file, flags, offsets);
 }
 
-void MacWindowBorder::loadBorder(Common::SeekableReadStream &file, uint32 flags, BorderOffsets offsets, int titlePos, int titleWidth) {
+void MacWindowBorder::loadBorder(Common::SeekableReadStream &file, uint32 flags, BorderOffsets offsets) {
 	Image::BitmapDecoder bmpDecoder;
 	Graphics::Surface *source;
 	Graphics::TransparentSurface *surface = new Graphics::TransparentSurface();
@@ -209,7 +210,7 @@ void MacWindowBorder::loadBorder(Common::SeekableReadStream &file, uint32 flags,
 	source->free();
 	delete source;
 
-	setBorder(surface, flags, offsets, titlePos, titleWidth);
+	setBorder(surface, flags, offsets);
 }
 
 void MacWindowBorder::setBorder(Graphics::TransparentSurface *surface, uint32 flags, int lo, int ro, int to, int bo) {
@@ -220,13 +221,14 @@ void MacWindowBorder::setBorder(Graphics::TransparentSurface *surface, uint32 fl
 	offsets.bottom = bo;
 	offsets.titleTop = -1;
 	offsets.titleBottom = -1;
+	offsets.titlePos = 0;
 	offsets.dark = false;
 	setBorder(surface, flags, offsets);
 }
 
-void MacWindowBorder::setBorder(Graphics::TransparentSurface *surface, uint32 flags, BorderOffsets offsets, int titlePos, int titleWidth) {
+void MacWindowBorder::setBorder(Graphics::TransparentSurface *surface, uint32 flags, BorderOffsets offsets) {
 	surface->applyColorKey(255, 0, 255, false);
-	addBorder(surface, flags, titlePos, titleWidth);
+	addBorder(surface, flags, offsets.titlePos);
 
 	if ((flags & kWindowBorderActive) && offsets.left + offsets.right + offsets.top + offsets.bottom > -4) { // Checking against default -1
 		setOffsets(offsets);
@@ -244,11 +246,8 @@ void MacWindowBorder::loadInternalBorder(uint32 flags) {
 	}
 	BorderOffsets offsets = _window->_wm->getBorderOffsets(_borderType);
 	Common::SeekableReadStream *file = _window->_wm->getBorderFile(_borderType, flags);
-	int titlePos = 0;
-	if (flags & kWindowBorderTitle)
-		titlePos = _window->_wm->getBorderTitlePos(_borderType);
 	if (file) {
-		loadBorder(*file, flags, offsets, titlePos);
+		loadBorder(*file, flags, offsets);
 		delete file;
 	}
 }

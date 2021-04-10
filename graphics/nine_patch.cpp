@@ -61,7 +61,7 @@ NinePatchSide::~NinePatchSide() {
 }
 
 
-bool NinePatchSide::init(Graphics::TransparentSurface *bmp, bool vertical, int titlePos, int titleWidth, int *titleIndex) {
+bool NinePatchSide::init(Graphics::TransparentSurface *bmp, bool vertical, int titlePos, int *titleIndex) {
 	const uint len = vertical ? bmp->h : bmp->w;
 	uint i;
 	int s, t, z;
@@ -160,7 +160,7 @@ int NinePatchBitmap::getTitleOffset() {
 	return _h._m[_titleIndex]->dest_offset;
 }
 
-NinePatchBitmap::NinePatchBitmap(Graphics::TransparentSurface *bmp, bool owns_bitmap, int titlePos, int titleWidth) {
+NinePatchBitmap::NinePatchBitmap(Graphics::TransparentSurface *bmp, bool owns_bitmap, int titlePos) {
 	int i;
 	uint8 r, g, b, a;
 
@@ -173,7 +173,7 @@ NinePatchBitmap::NinePatchBitmap(Graphics::TransparentSurface *bmp, bool owns_bi
 	_width = bmp->w - 2;
 	_height = bmp->h - 2;
 	_titleIndex = 0;
-	_titleWidth = titleWidth;
+	_titleWidth = 0;
 	_titlePos = titlePos;
 
 	if (_width <= 0 || _height <= 0)
@@ -224,7 +224,7 @@ NinePatchBitmap::NinePatchBitmap(Graphics::TransparentSurface *bmp, bool owns_bi
 		++i;
 	}
 
-	if (!_h.init(bmp, false, titlePos, titleWidth, &_titleIndex) || !_v.init(bmp, true)) {
+	if (!_h.init(bmp, false, titlePos, &_titleIndex) || !_v.init(bmp, true)) {
 bad_bitmap:
 		warning("NinePatchBitmap::NinePatchBitmap(): Bad bitmap");
 
