@@ -256,14 +256,6 @@ ThemeEngine::~ThemeEngine() {
 	}
 	_bitmaps.clear();
 
-	for (PointMap::iterator i = _bitmapDims.begin(); i != _bitmapDims.end(); ++i) {
-		Common::Point *point = i->_value;
-		if (point) {
-			delete point;
-		}
-	}
-	_bitmapDims.clear();
-
 	delete _parser;
 	delete _themeEval;
 	delete[] _cursor;
@@ -754,8 +746,6 @@ bool ThemeEngine::addBitmap(const Common::String &filename, const Common::String
 
 		return true;
 	}
-
-	_bitmapDims[filename] = new Common::Point(width * _scaleFactor, height * _scaleFactor);
 
 	if (_scaleFactor != 1.0) {
 		Graphics::Surface *tmp2 = surf->rawSurface().scale(surf->w * _scaleFactor, surf->h * _scaleFactor, false);
