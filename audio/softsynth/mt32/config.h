@@ -40,10 +40,10 @@
  * For shared library builds, MT32EMU_SHARED is defined, so that compiler-specific attributes are assigned
  * to all the exported symbols as appropriate. MT32EMU_SHARED is undefined for static library builds.
  */
-@libmt32emu_SHARED_DEFINITION@
+#undef MT32EMU_SHARED
 
 /* Whether the library is built as a shared object with a version tag to enable runtime version checks. */
-#define MT32EMU_WITH_VERSION_TAGGING @libmt32emu_RUNTIME_VERSION_CHECK@
+#define MT32EMU_WITH_VERSION_TAGGING 0
 
 /* Automatic runtime check of the shared library version in client applications.
  *
