@@ -72,7 +72,7 @@ void NlDissolve(int val);
 bool CheckMask(uint16 mx, uint16 my);
 void byte2word(void *dest, void *src, void *data, uint32 len);
 void byte2wordm(void *dest, void *src, void *data, uint32 len);
-void byte2wordn(void *dest, void *src, void *data, uint32 len);
+void byte2wordn(void *dest, void *src, void *smk, void *pal, uint32 len);
 
 } // End of namespace Trecision
 
