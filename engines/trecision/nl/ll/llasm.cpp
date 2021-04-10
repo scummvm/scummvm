@@ -32,7 +32,6 @@ void byte2word(void *dest, void *src, void *data, uint32 len) {
 		*d++ = p[*s++];
 }
 
-#if (!USE_NEW_VIDEO_CODE)
 void byte2wordm(void *dest, void *src, void *data, uint32 len) {
 	uint16 *d = (uint16 *)dest, *p = (uint16 *)data;
 	uint8 *s = (uint8 *)src;
@@ -44,7 +43,6 @@ void byte2wordm(void *dest, void *src, void *data, uint32 len) {
 			*d++ = p[v];
 	}
 }
-#endif
 
 void byte2wordn(void *dest, void *src, void *smk, void *pal, uint32 len) {
 	uint16 *pDest = (uint16 *)dest;

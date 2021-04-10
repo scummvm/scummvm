@@ -23,7 +23,6 @@
 #ifndef TRECISION_VIDEO_H
 #define TRECISION_VIDEO_H
 
-#include "trecision/trecision.h"	// for USE_NEW_VIDEO_CODE
 #include "nl/struct.h"
 #include "nl/sysdef.h"
 #include "video/smk_decoder.h"
@@ -31,9 +30,10 @@
 namespace Trecision {
 
 enum SmackerType {
-	kSmackerBackground = 0, // Smacker animations embedded in nlanim.cd? files
-	kSmackerFullMotion = 1, // Standalone full screen Smacker videos
-	kSmackerIcon = 2        // Smacker inventory animations embedded in nlanim.cd? files
+	kSmackerBackground = 0,		// Smacker animations embedded in nlanim.cd? files
+	kSmackerFullMotion = 1,		// Standalone full screen Smacker videos
+	kSmackerAction = 1,			// Main character action animations
+	kSmackerIcon = 2			// Smacker inventory animations embedded in nlanim.cd? files
 };
 
 #define FULLMOTIONANIM 620
