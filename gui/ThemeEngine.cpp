@@ -681,6 +681,26 @@ bool ThemeEngine::addBitmap(const Common::String &filename, const Common::String
 		_bitmaps.erase(filename);
 	}
 
+	if (!scalablefile.empty()) {
+		Graphics::SVGBitmap *image = nullptr;
+		Common::ArchiveMemberList members;
+		_themeFiles.listMatchingMembers(members, scalablefile);
+		for (Common::ArchiveMemberList::const_iterator i = members.begin(), end = members.end(); i != end; ++i) {
+			Common::SeekableReadStream *stream = (*i)->createReadStream();
+			if (stream) {
+				image = new Graphics::SVGBitmap(stream);
+				break;
+			}
+		}
+
+		_bitmaps[filename] = new Graphics::ManagedSurface(width * _scaleFactor, height * _scaleFactor, *image->getPixelFormat());
+		image->render(*_bitmaps[filename], width * _scaleFactor, height * _scaleFactor);
+
+		delete image;
+
+		return true;
+	}
+
 	const Graphics::Surface *srcSurface = nullptr;
 
 	if (filename.hasSuffix(".png")) {
@@ -725,26 +745,6 @@ bool ThemeEngine::addBitmap(const Common::String &filename, const Common::String
 
 		if (srcSurface && srcSurface->format.bytesPerPixel != 1)
 			surf = new Graphics::ManagedSurface(srcSurface->convertTo(_overlayFormat));
-	}
-
-	if (!scalablefile.empty()) {
-		Graphics::SVGBitmap *image = nullptr;
-		Common::ArchiveMemberList members;
-		_themeFiles.listMatchingMembers(members, scalablefile);
-		for (Common::ArchiveMemberList::const_iterator i = members.begin(), end = members.end(); i != end; ++i) {
-			Common::SeekableReadStream *stream = (*i)->createReadStream();
-			if (stream) {
-				image = new Graphics::SVGBitmap(stream);
-				break;
-			}
-		}
-
-		_bitmaps[filename] = new Graphics::ManagedSurface(width * _scaleFactor, height * _scaleFactor, *image->getPixelFormat());
-		image->render(*_bitmaps[filename], width * _scaleFactor, height * _scaleFactor);
-
-		delete image;
-
-		return true;
 	}
 
 	if (_scaleFactor != 1.0) {
