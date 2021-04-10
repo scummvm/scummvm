@@ -104,7 +104,7 @@ void TrecisionEngine::moveInventoryRight() {
 void TrecisionEngine::doInventory() {
 	switch (_curMessage->_event) {
 	case ME_OPEN:
-		if (!_flagInventoryLocked && (_inventoryStatus == INV_OFF) && !FlagDialogActive) {
+		if (!_flagInventoryLocked && (_inventoryStatus == INV_OFF) && !_flagDialogActive) {
 			_inventoryCounter = INVENTORY_HIDE;
 			_inventorySpeedIndex = 0;
 			_inventoryStatus = INV_PAINT;
@@ -112,7 +112,7 @@ void TrecisionEngine::doInventory() {
 		break;
 
 	case ME_CLOSE:
-		if (!_flagInventoryLocked && (_inventoryStatus == INV_INACTION) && !FlagDialogActive) {
+		if (!_flagInventoryLocked && (_inventoryStatus == INV_INACTION) && !_flagDialogActive) {
 			_inventoryCounter = INVENTORY_SHOW;
 			_inventorySpeedIndex = 0;
 			_inventoryStatus = INV_DEPAINT;
@@ -135,9 +135,9 @@ void TrecisionEngine::doInventory() {
 		if (_curInventory == 0)
 			break;
 
-		if (FlagUseWithStarted) {
+		if (_flagUseWithStarted) {
 			_flagInventoryLocked = false;
-			FlagUseWithStarted = false;
+			_flagUseWithStarted = false;
 			_useWith[WITH] = _curInventory;
 			_useWithInv[WITH] = true;
 
@@ -158,7 +158,7 @@ void TrecisionEngine::doInventory() {
 			_lightIcon = _curInventory;
 			setInventoryStart(_iconBase, INVENTORY_SHOW);
 			_flagInventoryLocked = true;
-			FlagUseWithStarted = true;
+			_flagUseWithStarted = true;
 			_useWith[USED] = _curInventory;
 			_useWithInv[USED] = true;
 			showInventoryName(_curInventory, true);
@@ -170,9 +170,9 @@ void TrecisionEngine::doInventory() {
 		_curInventory = whatIcon(mx);
 		actorStop();
 		nextStep();
-		if (FlagUseWithStarted) {
+		if (_flagUseWithStarted) {
 			_flagInventoryLocked = false;
-			FlagUseWithStarted = false;
+			_flagUseWithStarted = false;
 			_useWith[WITH] = _curInventory;
 			_useWithInv[WITH] = true;
 			if (_useWith[USED] != _curInventory) {
@@ -194,14 +194,14 @@ void TrecisionEngine::doInventory() {
 			_curInventory = whatIcon(mx);
 			showInventoryName(_curInventory, true);
 
-			if (!FlagUseWithStarted && !FlagSomeOneSpeak) {
+			if (!_flagUseWithStarted && !_flagSomeoneSpeaks) {
 				setInventoryStart(_iconBase, INVENTORY_SHOW);
 			}
 		} else {
 			if (!isInventoryArea(my))
 				break;
 			showInventoryName(NO_OBJECTS, true);
-			if (!FlagUseWithStarted) {
+			if (!_flagUseWithStarted) {
 				_lightIcon = 0xFF;
 				setInventoryStart(_iconBase, INVENTORY_SHOW);
 			}
@@ -245,7 +245,7 @@ void TrecisionEngine::showInventoryName(uint16 obj, bool showhide) {
 	 || (_curRoom == rSYS) || (_curRoom == r12CU) || (_curRoom == r13CU))
 		return;
 
-	if (FlagSomeOneSpeak)
+	if (_flagSomeoneSpeaks)
 		return;
 
 	if (_lastObj) {
@@ -253,7 +253,7 @@ void TrecisionEngine::showInventoryName(uint16 obj, bool showhide) {
 		_lastObj = 0;
 	}
 
-	if (FlagUseWithStarted && !FlagUseWithLocked) {
+	if (_flagUseWithStarted && !FlagUseWithLocked) {
 		if (!showhide) {
 			clearText();
 			_lastInv = 0;
@@ -424,7 +424,7 @@ void TrecisionEngine::rollInventory(uint8 status) {
 			setInventoryStart(_iconBase, INVENTORY_HIDE);
 			_inventoryStatus = INV_OFF;
 			_inventoryCounter = INVENTORY_HIDE;
-			if (isInventoryArea(my) && !(FlagDialogActive || FlagDialogMenuActive))
+			if (isInventoryArea(my) && !(_flagDialogActive || _flagDialogMenuActive))
 				doEvent(MC_INVENTORY, ME_OPEN, MP_DEFAULT, 0, 0, 0, 0);
 			else
 				redrawString();

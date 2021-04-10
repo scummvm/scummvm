@@ -53,10 +53,10 @@ void doAction() {
 		if (g_vm->_obj[g_vm->_curObj]._mode & OBJMODE_HIDDEN)
 			g_vm->_obj[g_vm->_curObj]._mode &= ~OBJMODE_HIDDEN;
 
-		if (g_vm->FlagUseWithStarted) {
+		if (g_vm->_flagUseWithStarted) {
 			if ((g_vm->_obj[g_vm->_curObj]._flag & (OBJFLAG_ROOMOUT | OBJFLAG_ROOMIN)) && !(g_vm->_obj[g_vm->_curObj]._flag & OBJFLAG_EXAMINE))
 				return;
-			g_vm->FlagUseWithStarted = false;
+			g_vm->_flagUseWithStarted = false;
 			g_vm->_flagInventoryLocked = false;
 			g_vm->_useWith[WITH] = g_vm->_curObj;
 			g_vm->_useWithInv[WITH] = false;
@@ -67,7 +67,7 @@ void doAction() {
 				g_vm->_useWith[WITH] = 0;
 				g_vm->_useWithInv[USED] = false;
 				g_vm->_useWithInv[WITH] = false;
-				g_vm->FlagUseWithStarted = false;
+				g_vm->_flagUseWithStarted = false;
 				g_vm->clearText();
 			} else
 				doEvent(MC_ACTION, ME_USEWITH, MP_SYSTEM, 0, 0, 0, 0);
@@ -76,7 +76,7 @@ void doAction() {
 		}
 
 		if ((g_vm->_curMessage->_event == ME_MOUSEOPERATE) && (g_vm->_obj[g_vm->_curObj]._flag & OBJFLAG_USEWITH)) {
-			g_vm->FlagUseWithStarted = true;
+			g_vm->_flagUseWithStarted = true;
 			g_vm->_flagInventoryLocked = true;
 			g_vm->_useWith[USED] = g_vm->_curObj;
 			g_vm->_useWith[WITH] = 0;
@@ -149,7 +149,7 @@ void doMouse() {
 
 		if (curpos == POSGAME) {
 		// Game area
-			if (g_vm->FlagSomeOneSpeak || g_vm->FlagDialogMenuActive || g_vm->FlagDialogActive || g_vm->FlagUseWithLocked)
+			if (g_vm->_flagSomeoneSpeaks || g_vm->_flagDialogMenuActive || g_vm->_flagDialogActive || g_vm->FlagUseWithLocked)
 				break;
 
 			CheckMask(g_vm->_curMessage->_u16Param1, g_vm->_curMessage->_u16Param2);
@@ -157,7 +157,7 @@ void doMouse() {
 		} else if (curpos == POSINV) {
 			if (g_vm->_logicMgr->doMouseInventory())
 				break;
-			if ((g_vm->FlagSomeOneSpeak && !g_vm->FlagCharacterSpeak) || g_vm->FlagDialogMenuActive || g_vm->FlagDialogActive || g_vm->FlagUseWithLocked)
+			if ((g_vm->_flagSomeoneSpeaks && !g_vm->_flagCharacterSpeak) || g_vm->_flagDialogMenuActive || g_vm->_flagDialogActive || g_vm->FlagUseWithLocked)
 				break;
 			if (g_vm->_animMgr->_playingAnims[kSmackerAction])
 				break;
@@ -174,15 +174,15 @@ void doMouse() {
 			g_vm->_curObj = 0;
 			ShowObjName(g_vm->_curObj, true);
 
-			if (g_vm->FlagDialogMenuActive)
+			if (g_vm->_flagDialogMenuActive)
 				UpdateChoices(g_vm->_curMessage->_u16Param1, g_vm->_curMessage->_u16Param2);
 		}
 		break;
 
 	case ME_MRIGHT:
 	case ME_MLEFT:
-		if (g_vm->FlagSomeOneSpeak) {
-			g_vm->Flagskiptalk = g_vm->Flagskipenable;
+		if (g_vm->_flagSomeoneSpeaks) {
+			g_vm->_flagSkipTalk = g_vm->_flagSkipEnable;
 			break;
 		}
 		if (g_vm->_actor->_curAction > hWALKIN)
@@ -190,7 +190,7 @@ void doMouse() {
 		if (g_vm->FlagWalkNoInterrupt && (g_vm->_actor->_curAction != hSTAND))
 			break;
 
-		if (g_vm->FlagDialogActive && g_vm->FlagDialogMenuActive) {
+		if (g_vm->_flagDialogActive && g_vm->_flagDialogMenuActive) {
 			SelectChoice(g_vm->_curMessage->_u16Param1, g_vm->_curMessage->_u16Param2);
 			break;
 		}
@@ -213,7 +213,7 @@ void StartCharacterAction(uint16 Act, uint16 NewRoom, uint8 NewPos, uint16 sent)
 		g_vm->_animMgr->startSmkAnim(Act);
 		InitAtFrameHandler(Act, g_vm->_curObj);
 		g_vm->_flagMouseEnabled = false;
-		g_vm->FlagShowCharacter = false;
+		g_vm->_flagShowCharacter = false;
 		doEvent(MC_CHARACTER, ME_CHARACTERCONTINUEACTION, MP_DEFAULT, Act, NewRoom, NewPos, g_vm->_curObj);
 	} else {
 		if ((Act == aWALKIN) || (Act == aWALKOUT))
@@ -243,7 +243,7 @@ void doCharacter() {
 		if (nextStep()) {
 			_characterInMovement = false;
 			_characterGoToPosition = -1;
-			g_vm->FlagWaitRegen = true;
+			g_vm->_flagWaitRegen = true;
 		} else
 			_characterInMovement = true;
 
@@ -251,12 +251,12 @@ void doCharacter() {
 			if (nextStep()) {
 				_characterInMovement = false;
 				_characterGoToPosition = -1;
-				g_vm->FlagWaitRegen = true;
+				g_vm->_flagWaitRegen = true;
 			} else
 				_characterInMovement = true;
 		}
 
-		g_vm->FlagPaintCharacter = true;
+		g_vm->_flagPaintCharacter = true;
 
 		if (_characterInMovement)
 			REEVENT;
@@ -268,7 +268,7 @@ void doCharacter() {
 			else if (g_vm->_curMessage->_event == ME_CHARACTERGOTOEXAMINE)
 				doEvent(MC_ACTION, ME_MOUSEEXAMINE, g_vm->_curMessage->_priority, g_vm->_curMessage->_u16Param1, g_vm->_curMessage->_u16Param2, 0, g_vm->_curMessage->_u32Param);
 			else if (g_vm->_curMessage->_event == ME_CHARACTERGOTOEXIT) {
-				g_vm->FlagShowCharacter = false;
+				g_vm->_flagShowCharacter = false;
 				doEvent(MC_SYSTEM, ME_CHANGEROOM, g_vm->_curMessage->_priority, g_vm->_curMessage->_u16Param1, g_vm->_curMessage->_u16Param2, g_vm->_curMessage->_u8Param, g_vm->_curMessage->_u32Param);
 			} else if (g_vm->_curMessage->_event == ME_CHARACTERDOACTION) {
 				g_vm->_lastObj = 0;
@@ -279,7 +279,7 @@ void doCharacter() {
 		break;
 
 	case ME_CHARACTERACTION:
-		if (g_vm->FlagWaitRegen)
+		if (g_vm->_flagWaitRegen)
 			REEVENT;
 		g_vm->_characterQueue.initQueue();
 		g_vm->_inventoryRefreshStartLine = INVENTORY_HIDE;
@@ -297,21 +297,21 @@ void doCharacter() {
 		break;
 
 	case ME_CHARACTERCONTINUEACTION:
-		g_vm->FlagShowCharacter = false;
+		g_vm->_flagShowCharacter = false;
 		AtFrameHandler(CHARACTER_ANIM);
 		//	If the animation is over
 		if (!g_vm->_animMgr->_playingAnims[kSmackerAction]) {
 			g_vm->_flagMouseEnabled = true;
-			g_vm->FlagShowCharacter = true;
+			g_vm->_flagShowCharacter = true;
 			_characterInMovement = false;
 			g_vm->_characterQueue.initQueue();
 			AtFrameEnd(CHARACTER_ANIM);
-			g_vm->FlagWaitRegen = true;
+			g_vm->_flagWaitRegen = true;
 			g_vm->_lastObj = 0;
 			ShowObjName(g_vm->_curObj, true);
 			//	If the room changes at the end
 			if (g_vm->_curMessage->_u16Param2) {
-				g_vm->FlagShowCharacter = false;
+				g_vm->_flagShowCharacter = false;
 				doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, g_vm->_curMessage->_u16Param2, 0, g_vm->_curMessage->_u8Param, g_vm->_curMessage->_u32Param);
 			} else if (g_vm->_curMessage->_u8Param)
 				setPosition(g_vm->_curMessage->_u8Param);
@@ -349,7 +349,7 @@ void doSystem() {
 			return;
 
 		// if regen still has to occur
-		if (g_vm->FlagWaitRegen)
+		if (g_vm->_flagWaitRegen)
 			REEVENT;
 
 		g_vm->_logicMgr->doSystemChangeRoom();
@@ -380,7 +380,7 @@ void doIdle() {
 	// Quit
 	case 'q':
 	case 'Q':
-		if (!g_vm->FlagDialogActive && !g_vm->FlagDialogMenuActive) {
+		if (!g_vm->_flagDialogActive && !g_vm->_flagDialogMenuActive) {
 			if (QuitGame())
 				doEvent(MC_SYSTEM, ME_QUIT, MP_SYSTEM, 0, 0, 0, 0);
 #if (!USE_NEW_VIDEO_CODE)
@@ -394,30 +394,30 @@ void doIdle() {
 	// Skip
 	case 0x1B:
 #if (!USE_NEW_VIDEO_CODE)
-		if (g_vm->FlagDialogActive) {
+		if (g_vm->_flagDialogActive) {
 			if (g_vm->_animMgr->_fullMotionEnd != g_vm->_animMgr->_curAnimFrame[kSmackerFullMotion])
 				g_vm->_animMgr->_fullMotionEnd = g_vm->_animMgr->_curAnimFrame[kSmackerFullMotion] + 1;
 		}
 #endif
 
-		if (!g_vm->FlagSomeOneSpeak && !g_vm->_flagscriptactive && !g_vm->FlagDialogActive && !g_vm->FlagDialogMenuActive
-		&& (g_vm->_actor->_curAction < hWALKIN) && !g_vm->FlagUseWithStarted && g_vm->FlagShowCharacter && !g_vm->_animMgr->_playingAnims[kSmackerAction]) {
+		if (!g_vm->_flagSomeoneSpeaks && !g_vm->_flagscriptactive && !g_vm->_flagDialogActive && !g_vm->_flagDialogMenuActive
+		&& (g_vm->_actor->_curAction < hWALKIN) && !g_vm->_flagUseWithStarted && g_vm->_flagShowCharacter && !g_vm->_animMgr->_playingAnims[kSmackerAction]) {
 			actorStop();
 			nextStep();
 			Mouse(MCMD_ON);
 			g_vm->_flagMouseEnabled = true;
 			g_vm->_obj[o00EXIT]._goRoom = g_vm->_curRoom;
 			doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, rSYS, 0, 0, c);
-			g_vm->FlagShowCharacter = false;
-			g_vm->FlagCharacterExist = false;
+			g_vm->_flagShowCharacter = false;
+			g_vm->_flagCharacterExists = false;
 			IconSnapShot();
 		}
 		break;
 
 	// Sys
 	case 0x3B:
-		if (!g_vm->FlagSomeOneSpeak && !g_vm->_flagscriptactive && !g_vm->FlagDialogActive && !g_vm->FlagDialogMenuActive
-		&& (g_vm->_actor->_curAction < hWALKIN) && !g_vm->FlagUseWithStarted && g_vm->FlagShowCharacter
+		if (!g_vm->_flagSomeoneSpeaks && !g_vm->_flagscriptactive && !g_vm->_flagDialogActive && !g_vm->_flagDialogMenuActive
+		&& (g_vm->_actor->_curAction < hWALKIN) && !g_vm->_flagUseWithStarted && g_vm->_flagShowCharacter
 		&& !g_vm->_animMgr->_playingAnims[kSmackerAction]) {
 			actorStop();
 			nextStep();
@@ -425,16 +425,16 @@ void doIdle() {
 			g_vm->_flagMouseEnabled = true;
 			g_vm->_obj[o00EXIT]._goRoom = g_vm->_curRoom;
 			doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, rSYS, 0, 0, c);
-			g_vm->FlagShowCharacter = false;
-			g_vm->FlagCharacterExist = false;
+			g_vm->_flagShowCharacter = false;
+			g_vm->_flagCharacterExists = false;
 			IconSnapShot();
 		}
 		break;
 
 	// Save
 	case 0x3C:
-		if (!g_vm->FlagSomeOneSpeak && !g_vm->_flagscriptactive && !g_vm->FlagDialogActive && !g_vm->FlagDialogMenuActive
-		&& (g_vm->_actor->_curAction < hWALKIN) && !g_vm->FlagUseWithStarted && g_vm->FlagShowCharacter
+		if (!g_vm->_flagSomeoneSpeaks && !g_vm->_flagscriptactive && !g_vm->_flagDialogActive && !g_vm->_flagDialogMenuActive
+		&& (g_vm->_actor->_curAction < hWALKIN) && !g_vm->_flagUseWithStarted && g_vm->_flagShowCharacter
 		&& !g_vm->_animMgr->_playingAnims[kSmackerAction]) {
 			IconSnapShot();
 			DataSave();
@@ -446,8 +446,8 @@ void doIdle() {
 
 	// Load
 	case 0x3D:
-		if (!g_vm->FlagSomeOneSpeak && !g_vm->_flagscriptactive && !g_vm->FlagDialogActive && !g_vm->FlagDialogMenuActive
-		&& (g_vm->_actor->_curAction < hWALKIN) && !g_vm->FlagUseWithStarted && g_vm->FlagShowCharacter
+		if (!g_vm->_flagSomeoneSpeaks && !g_vm->_flagscriptactive && !g_vm->_flagDialogActive && !g_vm->_flagDialogMenuActive
+		&& (g_vm->_actor->_curAction < hWALKIN) && !g_vm->_flagUseWithStarted && g_vm->_flagShowCharacter
 		&& !g_vm->_animMgr->_playingAnims[kSmackerAction]) {
 			IconSnapShot();
 			if (!DataLoad()) {
@@ -472,7 +472,7 @@ void doIdle() {
 		g_vm->_inventoryScrollTime = TheTime;
 	}
 
-	if (g_engine->shouldQuit() && !g_vm->FlagDialogActive && !g_vm->FlagDialogMenuActive)
+	if (g_engine->shouldQuit() && !g_vm->_flagDialogActive && !g_vm->_flagDialogMenuActive)
 		doEvent(MC_SYSTEM, ME_QUIT, MP_SYSTEM, 0, 0, 0, 0);
 }
 
