@@ -747,7 +747,7 @@ bool ThemeEngine::addBitmap(const Common::String &filename, const Common::String
 			}
 		}
 
-		_bitmaps[filename] = new Graphics::ManagedSurface(width * _scaleFactor, height * _scaleFactor, _overlayFormat);
+		_bitmaps[filename] = new Graphics::ManagedSurface(width * _scaleFactor, height * _scaleFactor, *image->getPixelFormat());
 		image->render(*_bitmaps[filename], width * _scaleFactor, height * _scaleFactor);
 
 		delete image;
