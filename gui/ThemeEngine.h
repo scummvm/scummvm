@@ -201,7 +201,6 @@ private:
 class ThemeEngine {
 protected:
 	typedef Common::HashMap<Common::String, Graphics::ManagedSurface *> ImagesMap;
-	typedef Common::HashMap<Common::String, Common::Point *> PointMap;
 
 	friend class GUI::Dialog;
 	friend class GUI::GuiObject;
@@ -619,10 +618,6 @@ public:
 	inline bool supportsImages() const { return true; }
 	inline bool ownCursor() const { return _useCursor; }
 
-	Common::Point *getBitmapDims(const Common::String &name) {
-		return _bitmapDims.contains(name) ? _bitmapDims[name] : 0;
-	}
-
 	Graphics::ManagedSurface *getImageSurface(const Common::String &name) const {
 		return _bitmaps.contains(name) ? _bitmaps[name] : 0;
 	}
@@ -784,7 +779,6 @@ protected:
 	Common::Array<LangExtraFont> _langExtraFonts;
 
 	ImagesMap _bitmaps;
-	PointMap _bitmapDims;
 	Graphics::PixelFormat _overlayFormat;
 	Graphics::PixelFormat _cursorFormat;
 
