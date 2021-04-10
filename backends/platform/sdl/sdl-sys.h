@@ -155,12 +155,12 @@
 
 #ifndef FORBIDDEN_SYMBOL_EXCEPTION_setjmp
 #undef setjmp
-#define setjmp(a)	FORBIDDEN_SYMBOL_REPLACEMENT
+#define setjmp(a)	FORBIDDEN_look_at_common_forbidden_h_for_more_info SYMBOL !%*
 #endif
 
 #ifndef FORBIDDEN_SYMBOL_EXCEPTION_longjmp
 #undef longjmp
-#define longjmp(a,b)	FORBIDDEN_SYMBOL_REPLACEMENT
+#define longjmp(a,b)	FORBIDDEN_look_at_common_forbidden_h_for_more_info SYMBOL !%*
 #endif
 
 #endif
@@ -196,32 +196,32 @@
 // Finally forbid FILE again (if it was forbidden to start with)
 #if !defined(FORBIDDEN_SYMBOL_ALLOW_ALL) && !defined(FORBIDDEN_SYMBOL_EXCEPTION_FILE)
 #undef FILE
-#define FILE	FORBIDDEN_SYMBOL_REPLACEMENT
+#define FILE	FORBIDDEN_look_at_common_forbidden_h_for_more_info SYMBOL !%*
 #endif
 
 #if !defined(FORBIDDEN_SYMBOL_ALLOW_ALL) && !defined(FORBIDDEN_SYMBOL_EXCEPTION_strcasecmp)
 #undef strcasecmp
-#define strcasecmp     FORBIDDEN_SYMBOL_REPLACEMENT
+#define strcasecmp     FORBIDDEN_look_at_common_forbidden_h_for_more_info SYMBOL !%*
 #endif
 
 #if !defined(FORBIDDEN_SYMBOL_ALLOW_ALL) && !defined(FORBIDDEN_SYMBOL_EXCEPTION_strncasecmp)
 #undef strncasecmp
-#define strncasecmp    FORBIDDEN_SYMBOL_REPLACEMENT
+#define strncasecmp    FORBIDDEN_look_at_common_forbidden_h_for_more_info SYMBOL !%*
 #endif
 
 #if !defined(FORBIDDEN_SYMBOL_ALLOW_ALL) && !defined(FORBIDDEN_SYMBOL_EXCEPTION_exit)
 #undef exit
-#define exit(a) FORBIDDEN_SYMBOL_REPLACEMENT
+#define exit(a) FORBIDDEN_look_at_common_forbidden_h_for_more_info SYMBOL !%*
 #endif
 
 #if !defined(FORBIDDEN_SYMBOL_ALLOW_ALL) && !defined(FORBIDDEN_SYMBOL_EXCEPTION_abort)
 #undef abort
-#define abort() FORBIDDEN_SYMBOL_REPLACEMENT
+#define abort() FORBIDDEN_look_at_common_forbidden_h_for_more_info SYMBOL !%*
 #endif
 
 #if !defined(FORBIDDEN_SYMBOL_ALLOW_ALL) && !defined(FORBIDDEN_SYMBOL_EXCEPTION_system)
 #undef system
-#define system(a) FORBIDDEN_SYMBOL_REPLACEMENT
+#define system(a) FORBIDDEN_look_at_common_forbidden_h_for_more_info SYMBOL !%*
 #endif
 
 // re-forbid all those time.h symbols again (if they were forbidden)
@@ -229,47 +229,47 @@
 
 	#if !defined(FORBIDDEN_SYMBOL_ALLOW_ALL) && !defined(FORBIDDEN_SYMBOL_EXCEPTION_asctime)
 	#undef asctime
-	#define asctime(a) FORBIDDEN_SYMBOL_REPLACEMENT
+	#define asctime(a) FORBIDDEN_look_at_common_forbidden_h_for_more_info SYMBOL !%*
 	#endif
 
 	#if !defined(FORBIDDEN_SYMBOL_ALLOW_ALL) && !defined(FORBIDDEN_SYMBOL_EXCEPTION_clock)
 	#undef clock
-	#define clock() FORBIDDEN_SYMBOL_REPLACEMENT
+	#define clock() FORBIDDEN_look_at_common_forbidden_h_for_more_info SYMBOL !%*
 	#endif
 
 	#if !defined(FORBIDDEN_SYMBOL_ALLOW_ALL) && !defined(FORBIDDEN_SYMBOL_EXCEPTION_ctime)
 	#undef ctime
-	#define ctime(a) FORBIDDEN_SYMBOL_REPLACEMENT
+	#define ctime(a) FORBIDDEN_look_at_common_forbidden_h_for_more_info SYMBOL !%*
 	#endif
 
 	#if !defined(FORBIDDEN_SYMBOL_ALLOW_ALL) && !defined(FORBIDDEN_SYMBOL_EXCEPTION_difftime)
 	#undef difftime
-	#define difftime(a,b) FORBIDDEN_SYMBOL_REPLACEMENT
+	#define difftime(a,b) FORBIDDEN_look_at_common_forbidden_h_for_more_info SYMBOL !%*
 	#endif
 
 	#if !defined(FORBIDDEN_SYMBOL_ALLOW_ALL) && !defined(FORBIDDEN_SYMBOL_EXCEPTION_getdate)
 	#undef getdate
-	#define getdate(a) FORBIDDEN_SYMBOL_REPLACEMENT
+	#define getdate(a) FORBIDDEN_look_at_common_forbidden_h_for_more_info SYMBOL !%*
 	#endif
 
 	#if !defined(FORBIDDEN_SYMBOL_ALLOW_ALL) && !defined(FORBIDDEN_SYMBOL_EXCEPTION_gmtime)
 	#undef gmtime
-	#define gmtime(a) FORBIDDEN_SYMBOL_REPLACEMENT
+	#define gmtime(a) FORBIDDEN_look_at_common_forbidden_h_for_more_info SYMBOL !%*
 	#endif
 
 	#if !defined(FORBIDDEN_SYMBOL_ALLOW_ALL) && !defined(FORBIDDEN_SYMBOL_EXCEPTION_localtime)
 	#undef localtime
-	#define localtime(a) FORBIDDEN_SYMBOL_REPLACEMENT
+	#define localtime(a) FORBIDDEN_look_at_common_forbidden_h_for_more_info SYMBOL !%*
 	#endif
 
 	#if !defined(FORBIDDEN_SYMBOL_ALLOW_ALL) && !defined(FORBIDDEN_SYMBOL_EXCEPTION_mktime)
 	#undef mktime
-	#define mktime(a) FORBIDDEN_SYMBOL_REPLACEMENT
+	#define mktime(a) FORBIDDEN_look_at_common_forbidden_h_for_more_info SYMBOL !%*
 	#endif
 
 	#if !defined(FORBIDDEN_SYMBOL_ALLOW_ALL) && !defined(FORBIDDEN_SYMBOL_EXCEPTION_time)
 	#undef time
-	#define time(a) FORBIDDEN_SYMBOL_REPLACEMENT
+	#define time(a) FORBIDDEN_look_at_common_forbidden_h_for_more_info SYMBOL !%*
 	#endif
 
 #endif // FORBIDDEN_SYMBOL_EXCEPTION_time_h
