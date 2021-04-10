@@ -157,20 +157,20 @@ TrecisionEngine::TrecisionEngine(OSystem *syst) : Engine(syst) {
 	_zBuffer = nullptr;
 	_actor = nullptr;
 
-	FlagDialogActive = false;
-	FlagDialogMenuActive = false;
-	Flagskiptalk = false;
-	Flagskipenable = false;
-	FlagPaintCharacter = false;
-	FlagShowCharacter = true;
-	FlagSomeOneSpeak = false;
-	FlagCharacterSpeak = false;
-	FlagUseWithStarted = false;
+	_flagDialogActive = false;
+	_flagDialogMenuActive = false;
+	_flagSkipTalk = false;
+	_flagSkipEnable = false;
+	_flagPaintCharacter = false;
+	_flagShowCharacter = true;
+	_flagSomeoneSpeaks = false;
+	_flagCharacterSpeak = false;
+	_flagUseWithStarted = false;
 	FlagUseWithLocked = false;
-	FlagCharacterExist = true;
+	_flagCharacterExists = true;
 	FlagWalkNoInterrupt = false;
-	FlagNoPaintScreen = false;
-	FlagWaitRegen = false;
+	_flagNoPaintScreen = false;
+	_flagWaitRegen = false;
 }
 
 TrecisionEngine::~TrecisionEngine() {
@@ -217,7 +217,7 @@ Common::Error TrecisionEngine::run() {
 
 	while (!shouldQuit()) {
 		eventLoop();
-		if (!FlagNoPaintScreen)
+		if (!_flagNoPaintScreen)
 			ProcessTime();
 
 		ProcessMouse();
@@ -333,18 +333,18 @@ bool TrecisionEngine::syncGameStream(Common::Serializer &ser) {
 	ser.syncAsByte(_inventorySize);
 	ser.syncAsByte(_cyberInventorySize);
 	ser.syncAsByte(_iconBase);
-	ser.syncAsSint16LE(Flagskiptalk);
-	ser.syncAsSint16LE(Flagskipenable);
+	ser.syncAsSint16LE(_flagSkipTalk);
+	ser.syncAsSint16LE(_flagSkipEnable);
 	ser.syncAsSint16LE(_flagMouseEnabled);
 	ser.syncAsSint16LE(_flagScreenRefreshed);
-	ser.syncAsSint16LE(FlagPaintCharacter);
-	ser.syncAsSint16LE(FlagSomeOneSpeak);
-	ser.syncAsSint16LE(FlagCharacterSpeak);
+	ser.syncAsSint16LE(_flagPaintCharacter);
+	ser.syncAsSint16LE(_flagSomeoneSpeaks);
+	ser.syncAsSint16LE(_flagCharacterSpeak);
 	ser.syncAsSint16LE(_flagInventoryLocked);
-	ser.syncAsSint16LE(FlagUseWithStarted);
+	ser.syncAsSint16LE(_flagUseWithStarted);
 	ser.syncAsSint16LE(unused);	// FlagMousePolling
 	ser.syncAsSint16LE(unused); // FlagDialogSolitaire
-	ser.syncAsSint16LE(FlagCharacterExist);
+	ser.syncAsSint16LE(_flagCharacterExists);
 	ser.syncBytes(_inventory, MAXICON);
 	ser.syncBytes(_cyberInventory, MAXICON);
 	ser.syncAsFloatLE(_actor->_px);

@@ -238,20 +238,20 @@ public:
 	FastFile _dataFile;	// nldata.cd0
 	FastFile _speechFile;	// nlspeech.cd0
 
-	bool FlagDialogActive;
-	bool FlagDialogMenuActive;
-	bool Flagskiptalk;
-	bool Flagskipenable;
-	bool FlagPaintCharacter;
-	bool FlagShowCharacter = true;
-	bool FlagSomeOneSpeak;
-	bool FlagCharacterSpeak;
-	bool FlagUseWithStarted;
+	bool _flagDialogActive;
+	bool _flagDialogMenuActive;
+	bool _flagSkipTalk;
+	bool _flagSkipEnable;
+	bool _flagPaintCharacter;
+	bool _flagShowCharacter;
+	bool _flagSomeoneSpeaks;
+	bool _flagCharacterSpeak;
+	bool _flagUseWithStarted;
 	bool FlagUseWithLocked;
-	bool FlagCharacterExist = true;
+	bool _flagCharacterExists;
 	bool FlagWalkNoInterrupt;
-	bool FlagNoPaintScreen;
-	bool FlagWaitRegen;
+	bool _flagNoPaintScreen;
+	bool _flagWaitRegen;
 };
 
 extern TrecisionEngine *g_vm;

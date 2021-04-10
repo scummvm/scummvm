@@ -64,7 +64,7 @@ void ShowChoices(uint16 i) {
 
 	g_vm->_graphicsMgr->copyToScreen(0, 0, MAXX, TOP);
 
-	g_vm->FlagDialogMenuActive = true;
+	g_vm->_flagDialogMenuActive = true;
 	g_vm->_flagMouseEnabled = true;
 }
 
@@ -92,17 +92,17 @@ void SelectChoice(int16 dmx, int16 dmy) {
 	UpdateChoices(dmx, dmy);
 
 	if (CurPos != -1) {
-		g_vm->FlagDialogMenuActive = false;
+		g_vm->_flagDialogMenuActive = false;
 		PlayChoice(DispChoice[CurPos]);
 	}
 }
 
 void PlayDialog(uint16 i) {
 	_curDialog = i;
-	g_vm->FlagDialogActive = true;
+	g_vm->_flagDialogActive = true;
 	_curChoice = 0;
 	_curSubTitle = 0;
-	g_vm->FlagShowCharacter = false;
+	g_vm->_flagShowCharacter = false;
 
 	g_vm->_characterQueue.initQueue();
 	g_vm->_inventoryStatus = INV_OFF;
@@ -217,7 +217,7 @@ void afterChoice(int numframe) {
 
 	case dF321:
 		g_vm->removeIcon(iTORCIA32);
-		g_vm->FlagShowCharacter = false;
+		g_vm->_flagShowCharacter = false;
 		break;
 
 	case dF4A3:
@@ -376,7 +376,7 @@ void afterChoice(int numframe) {
 			break;
 
 		case dF431:
-			g_vm->FlagShowCharacter = true;
+			g_vm->_flagShowCharacter = true;
 			StartCharacterAction(aWALKIN, 0, 11, 0);
 			break;
 
@@ -400,8 +400,8 @@ void afterChoice(int numframe) {
 			break;
 
 		case dC4A1:
-			g_vm->FlagCharacterExist = true;
-			g_vm->FlagShowCharacter = true;
+			g_vm->_flagCharacterExists = true;
+			g_vm->_flagShowCharacter = true;
 			actorStop();
 			nextStep();
 			break;
@@ -497,7 +497,7 @@ void afterChoice(int numframe) {
 	// se parte altro dialogo
 	if (g_vm->_choice[_curChoice]._nextDialog != 0) {
 		_curDialog = g_vm->_choice[_curChoice]._nextDialog;
-		g_vm->FlagDialogActive = true;
+		g_vm->_flagDialogActive = true;
 		_curChoice = 0;
 
 		d = &_dialog[_curDialog];
@@ -566,7 +566,7 @@ void afterChoice(int numframe) {
 }
 
 void DialogHandler(int numframe) {
-	if (g_vm->FlagDialogActive && !g_vm->FlagDialogMenuActive) {
+	if (g_vm->_flagDialogActive && !g_vm->_flagDialogMenuActive) {
 		g_vm->_flagMouseEnabled = false;
 		if (numframe == _subTitles[_curSubTitle]._startFrame) {
 			int i = _curSubTitle++;
@@ -589,7 +589,7 @@ void PlayChoice(uint16 i) {
 
 	_curChoice = i;
 	_curSubTitle = ss->_firstSubTitle;
-	g_vm->FlagDialogMenuActive = false;
+	g_vm->_flagDialogMenuActive = false;
 
 	ss->_flag |= OBJFLAG_DONE;
 

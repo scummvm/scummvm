@@ -108,7 +108,7 @@ void TrecisionEngine::drawString() {
 /*                           redrawString		        				   */
 /*-------------------------------------------------------------------------*/
 void TrecisionEngine::redrawString() {
-	if (!FlagDialogActive && !FlagDialogMenuActive && !FlagSomeOneSpeak && !_flagscriptactive && _flagMouseEnabled) {
+	if (!_flagDialogActive && !_flagDialogMenuActive && !_flagSomeoneSpeaks && !_flagscriptactive && _flagMouseEnabled) {
 		if (isInventoryArea(my))
 			doEvent(MC_INVENTORY, ME_SHOWICONNAME, MP_DEFAULT, 0, 0, 0, 0);
 		else {

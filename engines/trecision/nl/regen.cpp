@@ -51,7 +51,7 @@ void PaintScreen(uint8 flag) {
 	AtFrameNext();
 	PaintRegenRoom();
 
-//	if( ( !FlagPaintCharacter) && ( _curSortTableNum == 0 ) &&  ( curString.sign == NULL ) && ( oldString.sign == NULL ) )
+//	if( ( !_flagPaintCharacter) && ( _curSortTableNum == 0 ) &&  ( curString.sign == NULL ) && ( oldString.sign == NULL ) )
 //		return;
 
 	g_vm->_actorLimit = 255;
@@ -59,7 +59,7 @@ void PaintScreen(uint8 flag) {
 		VisualRef[a] = 255;
 
 	g_vm->_limitsNum = 0;
-	g_vm->FlagPaintCharacter = true; // always redraws the character
+	g_vm->_flagPaintCharacter = true; // always redraws the character
 
 #if USE_DIRTY_RECTS	
 	AddLine(0, 0, 0);
@@ -71,7 +71,7 @@ void PaintScreen(uint8 flag) {
 	int y2 = g_vm->_actor->_lim[3] - TOP;
 	
 	// erase character
-	if (g_vm->FlagShowCharacter && x2 > x1 && y2 > y1) {                    // if a description exists
+	if (g_vm->_flagShowCharacter && x2 > x1 && y2 > y1) {                    // if a description exists
 		DObj.x    = 0;
 		DObj.y    = TOP;
 		DObj.dx   = SCREENLEN;
@@ -221,7 +221,7 @@ void PaintScreen(uint8 flag) {
 	}
 #endif
 
-	if (!flag && !g_vm->FlagDialogActive) {
+	if (!flag && !g_vm->_flagDialogActive) {
 #if USE_DIRTY_RECTS
 
 		// Sort the blocks to copy and remove the useless ones
@@ -250,8 +250,8 @@ void PaintScreen(uint8 flag) {
 
 	g_vm->_curSortTableNum = 0;
 
-	g_vm->FlagPaintCharacter = false;
-	g_vm->FlagWaitRegen = false;
+	g_vm->_flagPaintCharacter = false;
+	g_vm->_flagWaitRegen = false;
 
 	// Handle papaverine delayed action
 	if ((g_vm->_curRoom == r4A) && (g_vm->_obj[oCHOCOLATES4A]._flag & OBJFLAG_EXTRA)) {
@@ -414,7 +414,7 @@ void PaintObjAnm(uint16 CurBox) {
 		}
 	}
 
-	if (_actorPos == CurBox && g_vm->FlagShowCharacter && g_vm->FlagCharacterExist) {
+	if (_actorPos == CurBox && g_vm->_flagShowCharacter && g_vm->_flagCharacterExists) {
 		drawCharacter(CALCPOINTS);
 
 		int x1 = g_vm->_actor->_lim[0];
@@ -432,7 +432,7 @@ void PaintObjAnm(uint16 CurBox) {
 
 		drawCharacter(DRAWFACES);
 
-	} else if (_actorPos == CurBox && !g_vm->FlagDialogActive) {
+	} else if (_actorPos == CurBox && !g_vm->_flagDialogActive) {
 		g_vm->_animMgr->refreshSmkAnim(g_vm->_animMgr->_playingAnims[kSmackerAction]);
 	}
 }
