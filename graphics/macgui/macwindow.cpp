@@ -324,8 +324,8 @@ void MacWindow::loadBorder(Common::SeekableReadStream &file, uint32 flags, int l
 	_macBorder.loadBorder(file, flags, lo, ro, to, bo);
 }
 
-void MacWindow::loadBorder(Common::SeekableReadStream &file, uint32 flags, BorderOffsets offsets, int titlePos, int titleWidth) {
-	_macBorder.loadBorder(file, flags, offsets, titlePos, titleWidth);
+void MacWindow::loadBorder(Common::SeekableReadStream &file, uint32 flags, BorderOffsets offsets) {
+	_macBorder.loadBorder(file, flags, offsets);
 }
 
 void MacWindow::resizeBorderSurface() {
