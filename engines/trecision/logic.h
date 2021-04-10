@@ -64,6 +64,10 @@ public:
 	bool mouseTalk(uint16 curObj);
 	bool mouseClick(uint16 curObj);
 	bool operateInventory();
+
+	void doMouseGame();
+	bool doMouseInventory();
+	void doMouseLeftRight();
 };
 ; // end of class
 

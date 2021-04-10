@@ -44,8 +44,8 @@ void resetZBuffer(int x1, int y1, int x2, int y2) {
 		*d++ = 0x7FFF;
 }
 
-/*-----------------10/12/95 15.53-------------------
-				CheckMask - Compreso
+/*------------------------------------------------
+					CheckMask
 --------------------------------------------------*/
 bool CheckMask(uint16 mx, uint16 my) {
 	for (int8 a = (MAXOBJINROOM - 1); a >= 0; a--) {
@@ -70,10 +70,10 @@ bool CheckMask(uint16 mx, uint16 my) {
 					uint16 max = g_vm->_obj[checkedObj]._py + g_vm->_obj[checkedObj]._dy;
 
 					for (int16 b = g_vm->_obj[checkedObj]._py; b < max; b++) {
-						int16 c = 0;
+						bool insideObj = false;
 						int16 e = 0;
 						while (e < g_vm->_obj[checkedObj]._dx) {
-							if (!c) {		// not inside an object
+							if (!insideObj) {		// not inside an object
 								if (b + TOP == my) {
 									if ((mx >= (d + e)) && (mx < (d + e + *mask))) {
 										g_vm->_curObj = 0;
@@ -82,7 +82,7 @@ bool CheckMask(uint16 mx, uint16 my) {
 
 								e += *mask;
 								mask++;
-								c = 1;
+								insideObj = true;
 							} else {		// inside an object
 								if (b + TOP == my) {
 									if ((mx >= (d + e)) && (mx < (d + e + *mask))) {
@@ -93,7 +93,7 @@ bool CheckMask(uint16 mx, uint16 my) {
 
 								e += *mask;
 								mask++;
-								c = 0;
+								insideObj = false;
 							}
 						}
 					}
