@@ -23,32 +23,53 @@
 #include "trecision/nl/extern.h"
 #include "trecision/trecision.h"
 #include "trecision/logic.h"
-
-#include <common/config-manager.h>
-
 #include "trecision/nl/struct.h"
 #include "trecision/nl/define.h"
 #include "trecision/nl/message.h"
 #include "trecision/video.h"
 #include "trecision/nl/3d/3dinc.h"
 
-namespace Trecision {
+#include <common/config-manager.h>
 
+namespace Trecision {
 LogicManager::LogicManager(TrecisionEngine *vm) : _vm(vm) {
 	for (int i = 0; i < 7; ++i)
-		Comb35[i] = 0;
-	Count35 = 0;
+		_comb35[i] = 0;
+	_count35 = 0;
 
 	for (int i = 0; i < 4; ++i)
-		Comb49[i] = 0;
+		_comb49[i] = 0;
 
 	for (int i = 0; i < 6; ++i) {
-		Comb58[i] = 0;
-		Comb4CT[i] = 0;
+		_comb58[i] = 0;
+		_comb4CT[i] = 0;
 	}
-	Count58 = 0;
+	_count58 = 0;
+
+	_wheel = 0xFFFF;
+	for (int i = 0; i < 3; ++i)
+		_wheelPos[i] = 0;
+
+	_slotMachine41Counter = 0;
 }
 LogicManager::~LogicManager() {}
+
+void LogicManager::syncGameStream(Common::Serializer &ser) {
+	for (int i = 0; i < 7; i++)
+		ser.syncAsUint16LE(_comb35[i]);
+	for (int i = 0; i < 4; i++)
+		ser.syncAsUint16LE(_comb49[i]);
+	for (int i = 0; i < 6; i++)
+		ser.syncAsUint16LE(_comb4CT[i]);
+	for (int i = 0; i < 6; i++)
+		ser.syncAsUint16LE(_comb58[i]);
+	for (int i = 0; i < 3; i++)
+		ser.syncAsUint16LE(_wheelPos[i]);
+	ser.syncAsUint16LE(_wheel);
+	ser.syncAsUint16LE(_count35);
+	ser.syncAsUint16LE(_count58);
+	ser.syncAsUint16LE(_slotMachine41Counter);
+}
 
 /* ------------------------------------------------
 					initScript
@@ -1425,11 +1446,11 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a412, 0, 0, _vm->_useWith[WITH]);
 			if (_vm->_obj[oZAMPA41]._mode & OBJMODE_OBJSTATUS)
 				_vm->_obj[oSLOT41]._anim = a417;
-			else if (_vm->_slotMachine41Counter <= 2)
+			else if (_slotMachine41Counter <= 2)
 				_vm->_obj[oSLOT41]._anim = a414;
 			else
 				CharacterSay(2015);
-			_vm->_slotMachine41Counter++;
+			_slotMachine41Counter++;
 			*printSentence = false;
 		} else if ((_vm->_useWith[WITH] == oFESSURA41) && ((_vm->_obj[oFUCILE42]._anim == 0) || (_vm->_obj[oFUCILE42]._anim == a428) || (_vm->_obj[oFUCILE42]._anim == a429))) {
 			CharacterSay(2010);
@@ -2238,7 +2259,7 @@ bool LogicManager::mouseExamine(uint16 curObj) {
 		break;
 
 	case oEXIT58T:
-		Count58 = 0;
+		_count58 = 0;
 		for (int a = 0; a < 6; a++)
 			_vm->_obj[oLED158 + a]._mode &= ~OBJMODE_OBJSTATUS;
 		doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, _vm->_obj[oEXIT58T]._goRoom, 0, 0, curObj);
@@ -2527,7 +2548,7 @@ bool LogicManager::mouseOperate(uint16 curObj) {
 		break;
 
 	case oEXIT58T:
-		Count58 = 0;
+		_count58 = 0;
 		for (uint8 a = 0; a < 6; a++)
 			_vm->_obj[oLED158 + a]._mode &= ~OBJMODE_OBJSTATUS;
 		doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, _vm->_obj[oEXIT58T]._goRoom, 0, 0, curObj);
@@ -2566,9 +2587,9 @@ bool LogicManager::mouseOperate(uint16 curObj) {
 			_vm->_obj[oBASEWHEELS2C]._mode |= OBJMODE_OBJSTATUS;
 			_vm->_obj[omWHEELS2C]._mode |= OBJMODE_OBJSTATUS;
 			_vm->_obj[oPULSANTE2C]._mode |= OBJMODE_OBJSTATUS;
-			_vm->_obj[_vm->_wheelPos[0] * 3 + 0 + oWHEEL1A2C]._mode |= OBJMODE_OBJSTATUS;
-			_vm->_obj[_vm->_wheelPos[1] * 3 + 1 + oWHEEL1A2C]._mode |= OBJMODE_OBJSTATUS;
-			_vm->_obj[_vm->_wheelPos[2] * 3 + 2 + oWHEEL1A2C]._mode |= OBJMODE_OBJSTATUS;
+			_vm->_obj[_wheelPos[0] * 3 + 0 + oWHEEL1A2C]._mode |= OBJMODE_OBJSTATUS;
+			_vm->_obj[_wheelPos[1] * 3 + 1 + oWHEEL1A2C]._mode |= OBJMODE_OBJSTATUS;
+			_vm->_obj[_wheelPos[2] * 3 + 2 + oWHEEL1A2C]._mode |= OBJMODE_OBJSTATUS;
 			_vm->_obj[oCAMPO2C]._mode &= ~OBJMODE_OBJSTATUS;
 			_vm->_obj[oTEMPIO2C]._mode &= ~OBJMODE_OBJSTATUS;
 			_vm->_obj[oLEONE2C]._mode &= ~OBJMODE_OBJSTATUS;
@@ -2689,15 +2710,15 @@ bool LogicManager::mouseOperate(uint16 curObj) {
 	case oPULSANTEG35:
 		_vm->_obj[curObj]._mode &= ~OBJMODE_OBJSTATUS;
 		_vm->_obj[curObj + 7]._mode |= OBJMODE_OBJSTATUS;
-		Comb35[Count35++] = curObj;
+		_comb35[_count35++] = curObj;
 		NLPlaySound(wPAD5);
-		if (Count35 == 7) {
-			if (((Comb35[0] == oPULSANTEF35) && (Comb35[1] == oPULSANTED35) && (Comb35[2] == oPULSANTEC35) &&
-				 (Comb35[3] == oPULSANTEG35) && (Comb35[4] == oPULSANTEB35) && (Comb35[5] == oPULSANTEA35) &&
-				 (Comb35[6] == oPULSANTEE35)) ||
-				((Comb35[0] == oPULSANTEE35) &&
-				 (Comb35[1] == oPULSANTEA35) && (Comb35[2] == oPULSANTEB35) && (Comb35[3] == oPULSANTEG35) &&
-				 (Comb35[4] == oPULSANTEC35) && (Comb35[5] == oPULSANTED35) && (Comb35[6] == oPULSANTEF35))) {
+		if (_count35 == 7) {
+			if (((_comb35[0] == oPULSANTEF35) && (_comb35[1] == oPULSANTED35) && (_comb35[2] == oPULSANTEC35) &&
+				 (_comb35[3] == oPULSANTEG35) && (_comb35[4] == oPULSANTEB35) && (_comb35[5] == oPULSANTEA35) &&
+				 (_comb35[6] == oPULSANTEE35)) ||
+				((_comb35[0] == oPULSANTEE35) &&
+				 (_comb35[1] == oPULSANTEA35) && (_comb35[2] == oPULSANTEB35) && (_comb35[3] == oPULSANTEG35) &&
+				 (_comb35[4] == oPULSANTEC35) && (_comb35[5] == oPULSANTED35) && (_comb35[6] == oPULSANTEF35))) {
 				_vm->_obj[oPULSANTEAA35]._mode &= ~OBJMODE_OBJSTATUS;
 				_vm->_obj[oPULSANTEBA35]._mode &= ~OBJMODE_OBJSTATUS;
 				_vm->_obj[oPULSANTECA35]._mode &= ~OBJMODE_OBJSTATUS;
@@ -2740,14 +2761,14 @@ bool LogicManager::mouseOperate(uint16 curObj) {
 				_vm->_obj[oPULSANTEFA35]._mode &= ~OBJMODE_OBJSTATUS;
 				_vm->_obj[oPULSANTEGA35]._mode &= ~OBJMODE_OBJSTATUS;
 			}
-			Count35 = 0;
-			Comb35[0] = 0;
-			Comb35[1] = 0;
-			Comb35[2] = 0;
-			Comb35[3] = 0;
-			Comb35[4] = 0;
-			Comb35[5] = 0;
-			Comb35[6] = 0;
+			_count35 = 0;
+			_comb35[0] = 0;
+			_comb35[1] = 0;
+			_comb35[2] = 0;
+			_comb35[3] = 0;
+			_comb35[4] = 0;
+			_comb35[5] = 0;
+			_comb35[6] = 0;
 		}
 		_vm->_curObj += 7;
 		RegenRoom();
@@ -2793,13 +2814,13 @@ bool LogicManager::mouseOperate(uint16 curObj) {
 		for (int a = oASTAC49; a <= oASTA749; a++)
 			_vm->_obj[a]._mode &= ~OBJMODE_OBJSTATUS;
 		_vm->_obj[oASTAC49 + curObj - oFOROC49]._mode |= OBJMODE_OBJSTATUS;
-		Comb49[3] = Comb49[2];
-		Comb49[2] = Comb49[1];
-		Comb49[1] = Comb49[0];
-		Comb49[0] = curObj;
+		_comb49[3] = _comb49[2];
+		_comb49[2] = _comb49[1];
+		_comb49[1] = _comb49[0];
+		_comb49[0] = curObj;
 		NLPlaySound(wASTA49);
 		RegenRoom();
-		if ((Comb49[3] == oFORO749) && (Comb49[2] == oFORO849) && (Comb49[1] == oFORO449) && (Comb49[0] == oFORO549)) {
+		if ((_comb49[3] == oFORO749) && (_comb49[2] == oFORO849) && (_comb49[1] == oFORO449) && (_comb49[0] == oFORO549)) {
 			PaintScreen(0);
 			NlDelay(60);
 			_vm->_obj[oOMBRAS49]._mode |= OBJMODE_OBJSTATUS;
@@ -2849,9 +2870,9 @@ bool LogicManager::mouseOperate(uint16 curObj) {
 	case oNUMERO04C: {
 		int a;
 		for (a = 0; a < 6; a++) {
-			if (Comb4CT[a] == 0) {
+			if (_comb4CT[a] == 0) {
 				_vm->_obj[a + oAST14C]._mode |= OBJMODE_OBJSTATUS;
-				Comb4CT[a] = curObj - oNUMERO14C + 1;
+				_comb4CT[a] = curObj - oNUMERO14C + 1;
 				break;
 			}
 		}
@@ -2861,10 +2882,10 @@ bool LogicManager::mouseOperate(uint16 curObj) {
 			break;
 		PaintScreen(0);
 		NlDelay(60);
-		if ((Comb4CT[0] == 5) && (Comb4CT[1] == 6) && (Comb4CT[2] == 2) &&
-			(Comb4CT[3] == 3) && (Comb4CT[4] == 9) && (Comb4CT[5] == 6)) {
+		if ((_comb4CT[0] == 5) && (_comb4CT[1] == 6) && (_comb4CT[2] == 2) &&
+			(_comb4CT[3] == 3) && (_comb4CT[4] == 9) && (_comb4CT[5] == 6)) {
 			for (a = 0; a < 6; a++) {
-				Comb4CT[a] = 0;
+				_comb4CT[a] = 0;
 				_vm->_obj[oAST14C + a]._mode &= ~OBJMODE_OBJSTATUS;
 			}
 			doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, r51, 0, 1, curObj);
@@ -2872,7 +2893,7 @@ bool LogicManager::mouseOperate(uint16 curObj) {
 			//FlagShowCharacter=true;
 		} else {
 			for (a = 0; a < 6; a++) {
-				Comb4CT[a] = 0;
+				_comb4CT[a] = 0;
 				_vm->_obj[oAST14C + a]._mode &= ~OBJMODE_OBJSTATUS;
 			}
 			doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, r4C, 0, 4, curObj);
@@ -3021,35 +3042,35 @@ bool LogicManager::mouseOperate(uint16 curObj) {
 	case oTASTO958:
 	case oTASTO058:
 		retVal = false;
-		Comb58[5] = Comb58[4];
-		Comb58[4] = Comb58[3];
-		Comb58[3] = Comb58[2];
-		Comb58[2] = Comb58[1];
-		Comb58[1] = Comb58[0];
-		Comb58[0] = curObj;
+		_comb58[5] = _comb58[4];
+		_comb58[4] = _comb58[3];
+		_comb58[3] = _comb58[2];
+		_comb58[2] = _comb58[1];
+		_comb58[1] = _comb58[0];
+		_comb58[0] = curObj;
 
 		NLPlaySound(wPAD1 + curObj - oTASTO158);
-		_vm->_obj[oLED158 + Count58]._mode |= OBJMODE_OBJSTATUS;
-		Count58++;
+		_vm->_obj[oLED158 + _count58]._mode |= OBJMODE_OBJSTATUS;
+		_count58++;
 		RegenRoom();
-		if (Count58 < 6)
+		if (_count58 < 6)
 			break;
 
 		PaintScreen(0);
 		NlDelay(60);
-		Count58 = 0;
+		_count58 = 0;
 		for (int a = 0; a < 6; a++)
 			_vm->_obj[oLED158 + a]._mode &= ~OBJMODE_OBJSTATUS;
 
-		if ((Comb58[0] == oTASTO058) && (Comb58[1] == oTASTO258) && (Comb58[2] == oTASTO358) &&
-			(Comb58[3] == oTASTO858) && (Comb58[4] == oTASTO558) && (Comb58[5] == oTASTO958)) {
+		if ((_comb58[0] == oTASTO058) && (_comb58[1] == oTASTO258) && (_comb58[2] == oTASTO358) &&
+			(_comb58[3] == oTASTO858) && (_comb58[4] == oTASTO558) && (_comb58[5] == oTASTO958)) {
 			SoundFadOut();
 			PlayDialog(dF582);
 		} else
 			doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, r58, 0, 2, curObj);
 
 		for (int i = 0; i < 6; ++i)
-			Comb58[i] = 0;
+			_comb58[i] = 0;
 		break;
 
 	default:
@@ -3599,7 +3620,8 @@ void LogicManager::doMouseLeftRight() {
 	// If it's in a room without a character, like a map or a book
 	if (FlagCharacterExist == false) {
 		if ((isInventoryArea(_vm->_curMessage->_u16Param2)) && ((_vm->_curRoom == r31P) || (_vm->_curRoom == r35P))) {
-			if (ICONAREA(_vm->_curMessage->_u16Param1, _vm->_curMessage->_u16Param2) && (_vm->whatIcon(_vm->_curMessage->_u16Param1)) && (_vm->_inventoryStatus == INV_INACTION)) {
+			if (ICONAREA(_vm->_curMessage->_u16Param1, _vm->_curMessage->_u16Param2)
+			&& (_vm->whatIcon(_vm->_curMessage->_u16Param1)) && (_vm->_inventoryStatus == INV_INACTION)) {
 				_vm->_useWith[WITH] = 0;
 				_vm->_curObj = 0;
 				_vm->_lightIcon = 0xFF;
@@ -3612,9 +3634,9 @@ void LogicManager::doMouseLeftRight() {
 			return;
 		}
 
-		if ((_vm->_curMessage->_event == ME_MLEFT) && (_vm->_curObj))
+		if ((_vm->_curMessage->_event == ME_MLEFT) && _vm->_curObj)
 			doEvent(MC_ACTION, ME_MOUSEEXAMINE, MP_DEFAULT, 0, 0, 0, _vm->_curObj);
-		else if ((_vm->_curMessage->_event == ME_MRIGHT) && (_vm->_curObj))
+		else if ((_vm->_curMessage->_event == ME_MRIGHT) && _vm->_curObj)
 			doEvent(MC_ACTION, ME_MOUSEOPERATE, MP_DEFAULT, 0, 0, 0, _vm->_curObj);
 
 		return;
@@ -3624,7 +3646,7 @@ void LogicManager::doMouseLeftRight() {
 	if ((_vm->_obj[oBASEWHEELS2C]._mode & OBJMODE_OBJSTATUS) && (_vm->_curRoom == r2C)) {
 		if (CheckMask(_vm->_curMessage->_u16Param1, _vm->_curMessage->_u16Param2)) {
 			if ((_vm->_curObj >= oWHEEL1A2C) && (_vm->_curObj <= oWHEEL12C2C))
-				_vm->_wheel = (_vm->_curObj - oWHEEL1A2C) % 3;
+				_wheel = (_vm->_curObj - oWHEEL1A2C) % 3;
 			else if (_vm->_curObj == oPULSANTE2C) {
 				extern uint16 *ImagePointer;
 				if (_vm->_curMessage->_event == ME_MLEFT) {
@@ -3635,9 +3657,9 @@ void LogicManager::doMouseLeftRight() {
 				_vm->_obj[oBASEWHEELS2C]._mode &= ~OBJMODE_OBJSTATUS;
 				_vm->_obj[omWHEELS2C]._mode &= ~OBJMODE_OBJSTATUS;
 				_vm->_obj[oPULSANTE2C]._mode &= ~OBJMODE_OBJSTATUS;
-				_vm->_obj[_vm->_wheelPos[0] * 3 + 0 + oWHEEL1A2C]._mode &= ~OBJMODE_OBJSTATUS;
-				_vm->_obj[_vm->_wheelPos[1] * 3 + 1 + oWHEEL1A2C]._mode &= ~OBJMODE_OBJSTATUS;
-				_vm->_obj[_vm->_wheelPos[2] * 3 + 2 + oWHEEL1A2C]._mode &= ~OBJMODE_OBJSTATUS;
+				_vm->_obj[_wheelPos[0] * 3 + 0 + oWHEEL1A2C]._mode &= ~OBJMODE_OBJSTATUS;
+				_vm->_obj[_wheelPos[1] * 3 + 1 + oWHEEL1A2C]._mode &= ~OBJMODE_OBJSTATUS;
+				_vm->_obj[_wheelPos[2] * 3 + 2 + oWHEEL1A2C]._mode &= ~OBJMODE_OBJSTATUS;
 
 				_vm->_obj[oCAMPO2C]._mode |= OBJMODE_OBJSTATUS;
 				_vm->_obj[oTEMPIO2C]._mode |= OBJMODE_OBJSTATUS;
@@ -3655,7 +3677,7 @@ void LogicManager::doMouseLeftRight() {
 				_vm->_animMgr->startSmkAnim(_vm->_room[_vm->_curRoom]._bkgAnim);
 
 				// right combination
-				if ((_vm->_wheelPos[0] == 7) && (_vm->_wheelPos[1] == 5) && (_vm->_wheelPos[2] == 11)) {
+				if ((_wheelPos[0] == 7) && (_wheelPos[1] == 5) && (_wheelPos[2] == 11)) {
 					doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a2C6PREMEPULSANTEAPERTURA, 0, 0, _vm->_curObj);
 					_vm->_obj[oSFINGE2C]._flag &= ~OBJFLAG_PERSON;
 				} else
@@ -3666,13 +3688,13 @@ void LogicManager::doMouseLeftRight() {
 				return;
 
 			if (_vm->_curMessage->_event == ME_MLEFT)
-				_vm->_wheelPos[_vm->_wheel] = (_vm->_wheelPos[_vm->_wheel] > 10) ? 0 : _vm->_wheelPos[_vm->_wheel] + 1;
+				_wheelPos[_wheel] = (_wheelPos[_wheel] > 10) ? 0 : _wheelPos[_wheel] + 1;
 			if (_vm->_curMessage->_event == ME_MRIGHT)
-				_vm->_wheelPos[_vm->_wheel] = (_vm->_wheelPos[_vm->_wheel] < 1) ? 11 : _vm->_wheelPos[_vm->_wheel] - 1;
+				_wheelPos[_wheel] = (_wheelPos[_wheel] < 1) ? 11 : _wheelPos[_wheel] - 1;
 
 			NLPlaySound(wWHEELS2C);
 			_vm->_obj[_vm->_curObj]._mode &= ~OBJMODE_OBJSTATUS;
-			_vm->_obj[_vm->_wheelPos[_vm->_wheel] * 3 + _vm->_wheel + oWHEEL1A2C]._mode |= OBJMODE_OBJSTATUS;
+			_vm->_obj[_wheelPos[_wheel] * 3 + _wheel + oWHEEL1A2C]._mode |= OBJMODE_OBJSTATUS;
 			RegenRoom();
 		}
 		return;
@@ -3685,7 +3707,7 @@ void LogicManager::doMouseLeftRight() {
 
 		int pmousex = _vm->_curMessage->_u16Param1;
 		int pmousey = _vm->_curMessage->_u16Param2;
-		if (!(AtMouseClick(_vm->_curObj))) {
+		if (!AtMouseClick(_vm->_curObj)) {
 			if (CheckMask(_vm->_curMessage->_u16Param1, _vm->_curMessage->_u16Param2)) {
 				if ((_vm->_obj[_vm->_curObj]._lim.right - _vm->_obj[_vm->_curObj]._lim.left) < MAXX / 7) {
 					pmousex = (_vm->_obj[_vm->_curObj]._lim.left + _vm->_obj[_vm->_curObj]._lim.right) / 2;
@@ -3862,16 +3884,16 @@ void LogicManager::doSystemChangeRoom() {
 		else
 			_vm->_obj[o00TEXTOFF]._mode |= OBJMODE_OBJSTATUS;
 
-		_vm->_obj[o00SPEECH1D + ((speechVol) / 51) * 2]._mode |= OBJMODE_OBJSTATUS;
-		_vm->_obj[o00MUSIC1D + ((musicVol) / 51) * 2]._mode |= OBJMODE_OBJSTATUS;
-		_vm->_obj[o00SOUND1D + ((sfxVol) / 51) * 2]._mode |= OBJMODE_OBJSTATUS;
+		_vm->_obj[o00SPEECH1D + (speechVol / 51) * 2]._mode |= OBJMODE_OBJSTATUS;
+		_vm->_obj[o00MUSIC1D + (musicVol) / 51 * 2]._mode |= OBJMODE_OBJSTATUS;
+		_vm->_obj[o00SOUND1D + (sfxVol / 51) * 2]._mode |= OBJMODE_OBJSTATUS;
 
 		if (speechVol < 256)
-			_vm->_obj[o00SPEECH1D + ((speechVol) / 51) * 2 + 1]._mode |= OBJMODE_OBJSTATUS;
+			_vm->_obj[o00SPEECH1D + (speechVol / 51) * 2 + 1]._mode |= OBJMODE_OBJSTATUS;
 		if (musicVol < 256)
-			_vm->_obj[o00MUSIC1D + ((musicVol) / 51) * 2 + 1]._mode |= OBJMODE_OBJSTATUS;
+			_vm->_obj[o00MUSIC1D + (musicVol) / 51 * 2 + 1]._mode |= OBJMODE_OBJSTATUS;
 		if (sfxVol < 256)
-			_vm->_obj[o00SOUND1D + ((sfxVol) / 51) * 2 + 1]._mode |= OBJMODE_OBJSTATUS;
+			_vm->_obj[o00SOUND1D + (sfxVol / 51) * 2 + 1]._mode |= OBJMODE_OBJSTATUS;
 	}
 
 	ReadLoc();

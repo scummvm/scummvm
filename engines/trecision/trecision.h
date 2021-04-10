@@ -217,17 +217,10 @@ public:
 	int16 _textStackTop;
 	StackText _textStack[MAXTEXTSTACK];
 
-	// SlotMachine41
-	uint16 _slotMachine41Counter;
-
 	//Dialogs
 	DialogChoice _choice[MAXCHOICE];
 
 	bool _flagScreenRefreshed;
-
-	// special management
-	uint16 _wheel;
-	uint16 _wheelPos[3];
 
 	AnimManager *_animMgr;
 	GraphicsManager *_graphicsMgr;

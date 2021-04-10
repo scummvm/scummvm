@@ -144,17 +144,11 @@ TrecisionEngine::TrecisionEngine(OSystem *syst) : Engine(syst) {
 	_lastInv = 0;
 	_lastObj = 0;
 
-	_slotMachine41Counter = 0;
-
 	_curStack = 0;
 	_textStackTop = -1;
 	
 	_flagscriptactive = false;
 	_flagScreenRefreshed = false;
-
-	_wheel = 0xFFFF;
-	for (int i = 0; i < 3; ++i)
-		_wheelPos[i] = 0;
 
 	_font = nullptr;
 	_arrows = nullptr;
@@ -430,25 +424,12 @@ bool TrecisionEngine::syncGameStream(Common::Serializer &ser) {
 			ser.syncAsUint16LE(cur->_newPal[i]);
 	}
 
-	for (int i = 0; i < 7; i++)
-		ser.syncAsUint16LE(_logicMgr->Comb35[i]);
-	for (int i = 0; i < 4; i++)
-		ser.syncAsUint16LE(_logicMgr->Comb49[i]);
-	for (int i = 0; i < 6; i++)
-		ser.syncAsUint16LE(_logicMgr->Comb4CT[i]);
-	for (int i = 0; i < 6; i++)
-		ser.syncAsUint16LE(_logicMgr->Comb58[i]);
-	for (int i = 0; i < 3; i++)
-		ser.syncAsUint16LE(_wheelPos[i]);
-	ser.syncAsUint16LE(_wheel);
-	ser.syncAsUint16LE(_logicMgr->Count35);
-	ser.syncAsUint16LE(_logicMgr->Count58);
-	ser.syncAsUint16LE(_slotMachine41Counter);
+	_logicMgr->syncGameStream(ser);
 
 	return true;
 }
 
-/*-----------------03/01/97 16.15-------------------
+/*------------------------------------------------
 					InitMain
 --------------------------------------------------*/
 void TrecisionEngine::initMain() {
