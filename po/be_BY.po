@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-04-09 14:56+0000\n"
+"POT-Creation-Date: 2021-04-10 16:52+0000\n"
 "PO-Revision-Date: 2021-03-21 08:24+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Belarusian <https://translations.scummvm.org/projects/scummvm/"
@@ -7103,6 +7103,12 @@ msgstr "Не магчыма знайсці файл дадзеных '%s'."
 #, fuzzy
 msgid "Spanish CD version is not yet supported"
 msgstr "Game id не падтрымваецца"
+
+#: engines/twine/detection.cpp:218
+#, fuzzy
+#| msgid "This game requires the FoxTail subengine, which is not compiled in."
+msgid "This version requires Giflib which was not compiled into ScummVM"
+msgstr "Гэта гульня патрабуе рухавічок FoxTail, якога няма ў зборцы."
 
 #: engines/twine/metaengine.cpp:71
 msgid "Enable wall collisions"

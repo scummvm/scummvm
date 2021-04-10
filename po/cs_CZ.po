@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.7.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-04-09 14:56+0000\n"
+"POT-Creation-Date: 2021-04-10 16:52+0000\n"
 "PO-Revision-Date: 2021-03-21 08:24+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Czech <https://translations.scummvm.org/projects/scummvm/"
@@ -7076,6 +7076,10 @@ msgstr "Nelze najít datové soubory jádra '%s'."
 #, fuzzy
 msgid "Spanish CD version is not yet supported"
 msgstr "Id hry není podporováno"
+
+#: engines/twine/detection.cpp:218
+msgid "This version requires Giflib which was not compiled into ScummVM"
+msgstr ""
 
 #: engines/twine/metaengine.cpp:71
 msgid "Enable wall collisions"

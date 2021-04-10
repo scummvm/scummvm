@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-04-09 14:56+0000\n"
+"POT-Creation-Date: 2021-04-10 16:52+0000\n"
 "PO-Revision-Date: 2021-04-10 09:24+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
@@ -7056,6 +7056,14 @@ msgstr "Datatiedostoa \"%s\" ei löydetty."
 #: engines/tsage/detection_tables.h:150
 msgid "Spanish CD version is not yet supported"
 msgstr "Espanjalainen CD-versio ei ole vielä tuettu"
+
+#: engines/twine/detection.cpp:218
+#, fuzzy
+#| msgid "This game requires the FoxTail subengine, which is not compiled in."
+msgid "This version requires Giflib which was not compiled into ScummVM"
+msgstr ""
+"Tämä peli vaatii toimiakseen FoxTail-pelimoottorin, jota ei ole käännetty "
+"tähän ScummVM:ään."
 
 #: engines/twine/metaengine.cpp:71
 msgid "Enable wall collisions"

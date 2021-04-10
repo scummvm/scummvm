@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.5.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-04-09 14:56+0000\n"
+"POT-Creation-Date: 2021-04-10 16:52+0000\n"
 "PO-Revision-Date: 2020-10-26 22:27+0000\n"
 "Last-Translator: anonymous <noreply@weblate.org>\n"
 "Language-Team: Swedish <https://translations.scummvm.org/projects/scummvm/"
@@ -7089,6 +7089,10 @@ msgstr "Kunde inte hitta spelmotorns datafil '%s'."
 #, fuzzy
 msgid "Spanish CD version is not yet supported"
 msgstr "Spel-ID stöds inte"
+
+#: engines/twine/detection.cpp:218
+msgid "This version requires Giflib which was not compiled into ScummVM"
+msgstr ""
 
 #: engines/twine/metaengine.cpp:71
 msgid "Enable wall collisions"

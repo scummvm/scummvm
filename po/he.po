@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.1.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-04-09 14:56+0000\n"
+"POT-Creation-Date: 2021-04-10 16:52+0000\n"
 "PO-Revision-Date: 2020-11-23 12:19+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Hebrew <https://translations.scummvm.org/projects/scummvm/"
@@ -7030,6 +7030,11 @@ msgstr "לא ניתן לאתר את קובץ נתוני המנוע '%s'."
 #, fuzzy
 msgid "Spanish CD version is not yet supported"
 msgstr "מזהה המשחק אינו נתמך."
+
+#: engines/twine/detection.cpp:218
+#, fuzzy
+msgid "This version requires Giflib which was not compiled into ScummVM"
+msgstr "משחק זה דורש תמיכה בתווי תלת ממד, שהוא מחוץ לתחום של ScummVM."
 
 #: engines/twine/metaengine.cpp:71
 msgid "Enable wall collisions"

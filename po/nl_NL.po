@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-04-09 14:56+0000\n"
+"POT-Creation-Date: 2021-04-10 16:52+0000\n"
 "PO-Revision-Date: 2020-11-29 17:10+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
@@ -7173,6 +7173,12 @@ msgstr "Kan de '%s' data file niet vinden."
 #, fuzzy
 msgid "Spanish CD version is not yet supported"
 msgstr "Spel-ID niet ondersteund"
+
+#: engines/twine/detection.cpp:218
+#, fuzzy
+#| msgid "This game requires the FoxTail subengine, which is not compiled in."
+msgid "This version requires Giflib which was not compiled into ScummVM"
+msgstr "Dit spel vereist de FoxTail subengine die niet meegecompileerd is."
 
 #: engines/twine/metaengine.cpp:71
 msgid "Enable wall collisions"
