@@ -572,7 +572,7 @@ void Game::restartGame() {
 			rc = MessageDialog::show(Ringworld::ESP_RESTART_MSG, ESP_CANCEL_BTN_STRING, Ringworld::ESP_RESTART_BTN_2_STRING);
 		}
 		else {
-			rc = MessageDialog::show(BlueForce::ESP_RESTART_MSG, ESP_CANCEL_BTN_STRING, BlueForce::ESP_RESTART_BTN_STRING);
+			rc = MessageDialog::show(BlueForce::ESP_RESTART_MSG, ESP_CANCEL_BTN_STRING, BlueForce::ESP_RESTART_BTN_2_STRING);
 		}
 	} else {
 		rc = MessageDialog::show(RESTART_MSG, CANCEL_BTN_STRING, RESTART_BTN_STRING);

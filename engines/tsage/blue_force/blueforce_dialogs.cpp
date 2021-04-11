@@ -486,7 +486,7 @@ OptionsDialog::OptionsDialog() {
 		_gfxMessage.set(ESP_OPTIONS_MSG, 140, ALIGN_LEFT);
 		_btnRestore.setText(ESP_RESTORE_BTN_STRING);
 		_btnSave.setText(ESP_SAVE_BTN_STRING);
-		_btnRestart.setText(ESP_RESTART_BTN_STRING);
+		_btnRestart.setText(ESP_RESTART_BTN_1_STRING);
 		_btnQuit.setText(ESP_QUIT_BTN_STRING);
 		_btnSound.setText(ESP_SOUND_BTN_STRING);
 		_btnResume.setText(ESP_RESUME_BTN_STRING);

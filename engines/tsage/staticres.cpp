@@ -243,7 +243,8 @@ char const *const ESP_QUIT_CONFIRM_MSG = "\250Quieres dejar de jugar?";
 char const *const ESP_RESTART_MSG = "\250Quieres volver a comenzar el juego?";
 char const *const ESP_GAME_PAUSED_MSG = "Juego en pausa.";
 char const *const ESP_QUIT_BTN_STRING = " Salir ";
-char const *const ESP_RESTART_BTN_STRING = "Volver a empezar";
+char const *const ESP_RESTART_BTN_1_STRING = "Reiniciar";
+char const *const ESP_RESTART_BTN_2_STRING = "Volver a empezar";
 char const *const ESP_SAVE_BTN_STRING = "Guardar";
 char const *const ESP_RESUME_BTN_STRING = " Seguir \rjugando";
 

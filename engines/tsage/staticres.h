@@ -200,7 +200,8 @@ extern char const *const ESP_QUIT_CONFIRM_MSG;
 extern char const *const ESP_RESTART_MSG;
 extern char const *const ESP_GAME_PAUSED_MSG;
 extern char const *const ESP_QUIT_BTN_STRING;
-extern char const *const ESP_RESTART_BTN_STRING;
+extern char const *const ESP_RESTART_BTN_1_STRING;
+extern char const *const ESP_RESTART_BTN_2_STRING;
 extern char const *const ESP_SAVE_BTN_STRING;
 extern char const *const ESP_RESUME_BTN_STRING;
 
