@@ -597,9 +597,9 @@ void RingworldGame::processEvent(Event &event) {
 			// F10 - Pause
 			GfxDialog::setPalette();
 			if (g_vm->getLanguage() == Common::ES_ESP) {
-				MessageDialog::show(ESP_RW_GAME_PAUSED_MSG, ESP_OK_BTN_2_STRING);
+				MessageDialog::show(ESP_RW_GAME_PAUSED_MSG, ESP_CONTINUE_BTN_STRING);
 			} else {
-				MessageDialog::show(GAME_PAUSED_MSG, OK_BTN_STRING);
+				MessageDialog::show(GAME_PAUSED_MSG, CONTINUE_BTN_STRING);
 			}
 			g_globals->_events.setCursorFromFlag();
 			break;
