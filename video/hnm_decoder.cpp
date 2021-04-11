@@ -133,13 +133,15 @@ void HNMDecoder::readNextPacket() {
 			_videoTrack->decodePalette(_stream, chunkSize - 8);
 		} else if (chunkType == MKTAG16('I', 'Z')) {
 			_stream->skip(4);
-			_videoTrack->decodeIntraframe(_stream, chunkSize - 8 - 4, flags);
+			_videoTrack->decodeIntraframe(_stream, chunkSize - 8 - 4);
+			_videoTrack->presentFrame(flags);
 		} else if (chunkType == MKTAG16('I', 'U')) {
 			if ((flags & 1) == 1) {
-				_videoTrack->decodeInterframeA(_stream, chunkSize - 8, flags);
+				_videoTrack->decodeInterframeA(_stream, chunkSize - 8);
 			} else {
-				_videoTrack->decodeInterframe(_stream, chunkSize - 8, flags);
+				_videoTrack->decodeInterframe(_stream, chunkSize - 8);
 			}
+			_videoTrack->presentFrame(flags);
 		} else if (chunkType == MKTAG16('S', 'D')) {
 			if (_audioTrack) {
 				Audio::Timestamp duration = _audioTrack->decodeSound(_stream, chunkSize - 8);
@@ -181,8 +183,9 @@ HNMDecoder::HNM4VideoTrack::HNM4VideoTrack(uint32 width, uint32 height, uint32 f
 	_frameBufferP = new byte[frameSize];
 	memset(_frameBufferP, 0, frameSize);
 
+	// We will use _frameBufferF/C/P as the surface pixels, just init there with nullptr to avoid unintended usage of surface
 	const Graphics::PixelFormat &f = Graphics::PixelFormat::createFormatCLUT8();
-	_surface.init(width, height, width * f.bytesPerPixel, _frameBufferF, f);
+	_surface.init(width, height, width * f.bytesPerPixel, nullptr, f);
 }
 
 HNMDecoder::HNM4VideoTrack::~HNM4VideoTrack() {
@@ -247,7 +250,7 @@ void HNMDecoder::HNM4VideoTrack::decodePalette(Common::SeekableReadStream *strea
 	}
 }
 
-void HNMDecoder::HNM4VideoTrack::decodeInterframe(Common::SeekableReadStream *stream, uint32 size, uint16 flags) {
+void HNMDecoder::HNM4VideoTrack::decodeInterframe(Common::SeekableReadStream *stream, uint32 size) {
 	SWAP(_frameBufferC, _frameBufferP);
 
 	uint16 width = _surface.w;
@@ -361,19 +364,12 @@ void HNMDecoder::HNM4VideoTrack::decodeInterframe(Common::SeekableReadStream *st
 			}
 		}
 	}
-	postprocess(flags);
-
-	_curFrame++;
-	_nextFrameStartTime += _nextFrameDelay != uint32(-1) ? _nextFrameDelay : _regularFrameDelay;
-	_nextFrameDelay = _nextNextFrameDelay;
-	_nextNextFrameDelay = uint32(-1);
-
 	if (size > 0) {
 		stream->skip(size);
 	}
 }
 
-void HNMDecoder::HNM4VideoTrack::decodeInterframeA(Common::SeekableReadStream *stream, uint32 size, uint16 flags) {
+void HNMDecoder::HNM4VideoTrack::decodeInterframeA(Common::SeekableReadStream *stream, uint32 size) {
 	SWAP(_frameBufferC, _frameBufferP);
 
 	uint16 width = _surface.w;
@@ -459,36 +455,26 @@ void HNMDecoder::HNM4VideoTrack::decodeInterframeA(Common::SeekableReadStream *s
 			}
 		}
 	}
-	postprocess(flags);
-
-	_curFrame++;
-	_nextFrameStartTime += _nextFrameDelay != uint32(-1) ? _nextFrameDelay : _regularFrameDelay;
-	_nextFrameDelay = _nextNextFrameDelay;
-	_nextNextFrameDelay = uint32(-1);
 
 	if (size > 0) {
 		stream->skip(size);
 	}
 }
 
-void HNMDecoder::HNM4VideoTrack::decodeIntraframe(Common::SeekableReadStream *stream, uint32 size, uint16 flags) {
+void HNMDecoder::HNM4VideoTrack::decodeIntraframe(Common::SeekableReadStream *stream, uint32 size) {
 	Image::HLZDecoder::decodeFrameInPlace(*stream, size, _frameBufferC);
 	memcpy(_frameBufferP, _frameBufferC, (uint)_surface.w * (uint)_surface.h);
-	postprocess(flags);
-
-	_curFrame++;
-	_nextFrameStartTime += _nextFrameDelay != uint32(-1) ? _nextFrameDelay : _regularFrameDelay;
-	_nextFrameDelay = _nextNextFrameDelay;
-	_nextNextFrameDelay = uint32(-1);
 }
 
-void HNMDecoder::HNM4VideoTrack::postprocess(uint16 flags) {
+void HNMDecoder::HNM4VideoTrack::presentFrame(uint16 flags) {
 	int width = _surface.w;
 	int height = _surface.h;
 
 	if ((flags & 1) == 1) {
-		memcpy(_frameBufferF, _frameBufferC, width * height);
+		// High resolution HNM4A: no deinterlacing, use current image directly
+		_surface.setPixels(_frameBufferC);
 	} else if ((width % 4) == 0) {
+		// HNM4: deinterlacing must not alter the framebuffer as it will get reused as previous source for next frame
 		uint32 *input = (uint32 *)_frameBufferC;
 		uint32 *line0 = (uint32 *)_frameBufferF;
 		uint32 *line1 = (uint32 *)(_frameBufferF + width);
@@ -510,9 +496,16 @@ void HNMDecoder::HNM4VideoTrack::postprocess(uint16 flags) {
 			line0 += width / 4;
 			line1 += width / 4;
 		}
+		_surface.setPixels(_frameBufferF);
 	} else {
 		error("HNMDecoder::HNM4VideoTrack::postprocess(%x): Unexpected width: %d", flags, width);
 	}
+
+	// Frame done
+	_curFrame++;
+	_nextFrameStartTime += _nextFrameDelay != uint32(-1) ? _nextFrameDelay : _regularFrameDelay;
+	_nextFrameDelay = _nextNextFrameDelay;
+	_nextNextFrameDelay = uint32(-1);
 }
 
 HNMDecoder::DPCMAudioTrack::DPCMAudioTrack(uint16 channels, uint16 bits, uint sampleRate,
