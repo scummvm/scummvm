@@ -208,6 +208,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "thecatlady", "The Cat Lady" },
 	{ "thesecretsofjesus", "The Secrets of Jesus" },
 	{ "theterribleoldman", "The Terrible Old Man" },
+	{ "timegentlemenplease", "Time Gentlemen, Please" },
 	{ "unavowed", "Unavowed" },
 	{ "untilihaveyou", "Until I Have You" },
 	{ "waitingfortheloop", "Waiting For the Loop" },
@@ -1342,7 +1343,6 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "threeguyswalkintoheaven", "Three Guys Walk Into Heaven" },
 	{ "tilepuzzlegame", "Tile Puzzle Game" },
 	{ "tiltor", "Tiltor" },
-	{ "timegentlemenplease", "Time Gentlemen, Please" },
 	{ "timequest1", "Time Quest" },
 	{ "timequest2", "Time Quest 2" },
 	{ "timesinkofchronos", "Timesink of Chronos" },
@@ -1804,6 +1804,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("thesecretsofjesus", "the secrets of jesus.exe", "2e17ab52586ad34b5e597c20a59f60a0", 1577637692), // Steam
 	GAME_ENTRY("theterribleoldman", "the terrible old man.exe", "e07a475bcf14bc75c016724186f222ac", 369769127), // Steam
 	GAME_ENTRY("theterribleoldman", "the terrible old man.exe", "b3a10d7d3b5a728330b028ec28ff2d05", 103852030), // Steam
+	GAME_ENTRY("timegentlemenplease", "tgp.exe", "86a5359bac7c88f0dfa060478800dd61", 74077811), // Steam
 	GAME_ENTRY("untilihaveyou", "until i have you.exe", "cda1d7e36993dd55ba5513c1c43e5b2b", 1089857773), // Steam
 	GAME_ENTRY("untilihaveyou", "until i have you.exe", "cda1d7e36993dd55ba5513c1c43e5b2b", 1072879555),
 	GAME_ENTRY("untilihaveyou", "until i have you.exe", "cda1d7e36993dd55ba5513c1c43e5b2b", 457842687),
@@ -3047,7 +3048,6 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("threeguyswalkintoheaven", "Three Guys Walk Into Heaven.exe", "c45653d1c856f002ceb59a5b865ab187", 2896291),
 	GAME_ENTRY("tilepuzzlegame", "Puzzle01.exe", "615e73fc1874e92d60a1996c2330ea36", 2819964),
 	GAME_ENTRY("tiltor", "Tiltor.exe", "f120690b506dd63cd7d1112ea6af2f77", 17561878),
-	GAME_ENTRY("timegentlemenplease", "tgp.exe", "86a5359bac7c88f0dfa060478800dd61", 74077811), // Steam
 	GAME_ENTRY("timequest1", "gam.exe", "465f972675db2da6040518221af5b0ba", 5669007),
 	GAME_ENTRY("timequest2", "TimeQ2.exe", "465f972675db2da6040518221af5b0ba", 5838823),
 	GAME_ENTRY("timesinkofchronos", "Timesink.exe", "2bc8f994a7d1e05ed45f35abf2128231", 127528679),
