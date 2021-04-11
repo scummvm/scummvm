@@ -30,15 +30,6 @@
 
 namespace Audio {
 
-// This used to be an inline template function, but
-// buggy template function handling in MSVC6 forced
-// us to go with the macro approach. So far this is
-// the only template function that MSVC6 seemed to
-// compile incorrectly. Knock on wood.
-#define READ_ENDIAN_SAMPLE(bytesPerSample, isUnsigned, ptr, isLE) \
-	((bytesPerSample == 1 ? (*ptr << 8) : (bytesPerSample == 2 ? (isLE ? READ_LE_UINT16(ptr) : READ_BE_UINT16(ptr)) : (int16)((isLE ? READ_LE_UINT24(ptr) : READ_BE_UINT24(ptr)) >> 8))) ^ (isUnsigned ? 0x8000 : 0))
-
-
 #pragma mark -
 #pragma mark --- RawStream ---
 #pragma mark -
@@ -118,7 +109,13 @@ int RawStream<bytesPerSample, isUnsigned, isLE>::readBuffer(int16 *buffer, const
 		// Copy the data to the caller's buffer.
 		const byte *src = _buffer;
 		while (len-- > 0) {
-			*buffer++ = READ_ENDIAN_SAMPLE(bytesPerSample, isUnsigned, src, isLE);
+			if (bytesPerSample == 1)
+				*buffer++ = (*src << 8) ^ (isUnsigned ? 0x8000 : 0);
+			else if (bytesPerSample == 2)
+				*buffer++ = ((isLE ? READ_LE_UINT16(src) : READ_BE_UINT16(src)) ^ (isUnsigned ? 0x8000 : 0));
+			else // if (bytesPerSample == 3)
+				*buffer++ = (((int16)((isLE ? READ_LE_UINT24(src) : READ_BE_UINT24(src)) >> 8)) ^ (isUnsigned ? 0x8000 : 0));
+
 			src += bytesPerSample;
 		}
 	}
