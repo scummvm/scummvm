@@ -3837,7 +3837,6 @@ void LogicManager::doSystemChangeRoom() {
 	_vm->_useWithInv[USED] = false;
 	_vm->_useWithInv[WITH] = false;
 	_vm->_flagUseWithStarted = false;
-	_vm->FlagUseWithLocked = false;
 	_vm->_lightIcon = 0xFF;
 	_vm->_flagCharacterSpeak = false;
 	_vm->_flagSomeoneSpeaks = false;

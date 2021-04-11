@@ -149,7 +149,7 @@ void doMouse() {
 
 		if (curpos == POSGAME) {
 		// Game area
-			if (g_vm->_flagSomeoneSpeaks || g_vm->_flagDialogMenuActive || g_vm->_flagDialogActive || g_vm->FlagUseWithLocked)
+			if (g_vm->_flagSomeoneSpeaks || g_vm->_flagDialogMenuActive || g_vm->_flagDialogActive)
 				break;
 
 			CheckMask(g_vm->_curMessage->_u16Param1, g_vm->_curMessage->_u16Param2);
@@ -157,7 +157,7 @@ void doMouse() {
 		} else if (curpos == POSINV) {
 			if (g_vm->_logicMgr->doMouseInventory())
 				break;
-			if ((g_vm->_flagSomeoneSpeaks && !g_vm->_flagCharacterSpeak) || g_vm->_flagDialogMenuActive || g_vm->_flagDialogActive || g_vm->FlagUseWithLocked)
+			if ((g_vm->_flagSomeoneSpeaks && !g_vm->_flagCharacterSpeak) || g_vm->_flagDialogMenuActive || g_vm->_flagDialogActive)
 				break;
 			if (g_vm->_animMgr->_playingAnims[kSmackerAction])
 				break;
@@ -186,8 +186,6 @@ void doMouse() {
 			break;
 		}
 		if (g_vm->_actor->_curAction > hWALKIN)
-			break;
-		if (g_vm->FlagWalkNoInterrupt && (g_vm->_actor->_curAction != hSTAND))
 			break;
 
 		if (g_vm->_flagDialogActive && g_vm->_flagDialogMenuActive) {
