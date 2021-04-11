@@ -35,7 +35,6 @@ private:
 	Common::Queue<Common::Event> _pendingEvents;
 	Common::Queue<Common::KeyState> _pendingKeys;
 	Common::Array<bool> _keys;
-	uint _keyFlags;
 
 	bool isModifierKey(const Common::KeyCode &keycode) const;
 
@@ -79,9 +78,7 @@ public:
 	/**
 	 * Returns the bitset of currently pressed modifier keys
 	 */
-	uint getModifierFlags() const {
-		return _keyFlags;
-	}
+	uint getModifierFlags() const;
 };
 
 extern EventsManager *g_events;

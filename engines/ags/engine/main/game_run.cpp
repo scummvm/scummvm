@@ -251,37 +251,35 @@ static int get_active_shifts() {
 // and no more processing required, otherwise returns true and provides current keycode and key shifts.
 bool run_service_key_controls(int &kgn) {
 	// check keypresses
-	static int old_key_shifts = 0; // for saving shift modes
-
 	bool handled = false;
 	int kbhit_res = ags_kbhit();
 	// First, check shifts
 	const int act_shifts = get_active_shifts();
 	// If shifts combination have already triggered an action, then do nothing
 	// until new shifts are empty, in which case reset saved shifts
-	if (old_key_shifts & KEY_SHIFTS_FIRED) {
+	if (_G(old_key_shifts) & KEY_SHIFTS_FIRED) {
 		if (act_shifts == 0)
-			old_key_shifts = 0;
+			_G(old_key_shifts) = 0;
 	} else {
 		// If any non-shift key is pressed, add fired flag to indicate that
 		// this is no longer a pure shifts key combination
 		if (kbhit_res) {
-			old_key_shifts = act_shifts | KEY_SHIFTS_FIRED;
+			_G(old_key_shifts) = act_shifts | KEY_SHIFTS_FIRED;
 		}
 		// If all the previously registered shifts are still pressed,
 		// then simply resave new shift state.
-		else if ((old_key_shifts & act_shifts) == old_key_shifts) {
-			old_key_shifts = act_shifts;
+		else if ((_G(old_key_shifts) & act_shifts) == _G(old_key_shifts)) {
+			_G(old_key_shifts) = act_shifts;
 		}
 		// Otherwise some of the shifts were released, then run key combo action
 		// and set KEY_COMBO_FIRED flag to prevent multiple execution
-		else if (old_key_shifts) {
+		else if (_G(old_key_shifts)) {
 			// Toggle mouse lock on Ctrl + Alt
-			if (old_key_shifts == (KB_ALT_FLAG | KB_CTRL_FLAG)) {
+			if (_G(old_key_shifts) == (KB_ALT_FLAG | KB_CTRL_FLAG)) {
 				toggle_mouse_lock();
 				handled = true;
 			}
-			old_key_shifts |= KEY_SHIFTS_FIRED;
+			_G(old_key_shifts) |= KEY_SHIFTS_FIRED;
 		}
 	}
 

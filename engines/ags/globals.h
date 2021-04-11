@@ -728,6 +728,7 @@ public:
 	unsigned int _lastcounter = 0;
 	int _numEventsAtStartOfFunction = 0;
 	uint32 _t1 = 0; // timer for FPS
+	int _old_key_shifts = 0; // for saving shift modes
 
 	 /**@}*/
 

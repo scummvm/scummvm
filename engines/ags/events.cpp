@@ -28,7 +28,7 @@ namespace AGS {
 
 EventsManager *g_events;
 
-EventsManager::EventsManager() : _keyFlags(0) {
+EventsManager::EventsManager() {
 	g_events = this;
 	_keys.resize(AGS3::__allegro_KEY_MAX);
 }
@@ -47,14 +47,14 @@ void EventsManager::pollEvents() {
 			_G(check_dynamic_sprites_at_exit) = false;
 
 		} else if (e.type == Common::EVENT_KEYDOWN) {
-			updateKeys(e.kbd.keycode, true);
+			updateKeys(e.kbd, true);
 
 			if (!isModifierKey(e.kbd.keycode)) {
 				// Add keypresses to the pending key list
 				_pendingKeys.push(e.kbd);
 			}
 		} else if (e.type == Common::EVENT_KEYUP) {
-			updateKeys(e.kbd.keycode, false);
+			updateKeys(e.kbd, false);
 
 		} else {
 			// Add other event types to the pending events queue. If the event is a
@@ -170,23 +170,30 @@ void EventsManager::updateKeys(const Common::KeyState &keyState, bool isDown) {
 	int scancode = getScancode(keyState.keycode);
 	if (scancode != 0)
 		_keys[scancode] = isDown;
+}
 
-	// Update shift flags
-	_keyFlags = 0;
-	if (keyState.flags & Common::KBD_SHIFT)
-		_keyFlags |= AGS3::__allegro_KB_SHIFT_FLAG;
-	if (keyState.flags & Common::KBD_CTRL)
-		_keyFlags |= AGS3::__allegro_KB_CTRL_FLAG;
-	if (keyState.flags & Common::KBD_ALT)
-		_keyFlags |= AGS3::__allegro_KB_ALT_FLAG;
-	if (keyState.flags & Common::KBD_META)
-		_keyFlags |= AGS3::__allegro_KB_COMMAND_FLAG;
-	if (keyState.flags & Common::KBD_SCRL)
-		_keyFlags |= AGS3::__allegro_KB_SCROLOCK_FLAG;
-	if (keyState.flags & Common::KBD_NUM)
-		_keyFlags |= AGS3::__allegro_KB_NUMLOCK_FLAG;
-	if (keyState.flags & Common::KBD_CAPS)
-		_keyFlags |= AGS3::__allegro_KB_CAPSLOCK_FLAG;
+uint EventsManager::getModifierFlags() const {
+	if (_pendingKeys.empty())
+		return 0;
+
+	byte flags = _pendingKeys.front().flags;
+	uint keyFlags = 0;
+	if (flags & Common::KBD_SHIFT)
+		keyFlags |= AGS3::__allegro_KB_SHIFT_FLAG;
+	if (flags & Common::KBD_CTRL)
+		keyFlags |= AGS3::__allegro_KB_CTRL_FLAG;
+	if (flags & Common::KBD_ALT)
+		keyFlags |= AGS3::__allegro_KB_ALT_FLAG;
+	if (flags & Common::KBD_META)
+		keyFlags |= AGS3::__allegro_KB_COMMAND_FLAG;
+	if (flags & Common::KBD_SCRL)
+		keyFlags |= AGS3::__allegro_KB_SCROLOCK_FLAG;
+	if (flags & Common::KBD_NUM)
+		keyFlags |= AGS3::__allegro_KB_NUMLOCK_FLAG;
+	if (flags & Common::KBD_CAPS)
+		keyFlags |= AGS3::__allegro_KB_CAPSLOCK_FLAG;
+
+	return keyFlags;
 }
 
 bool EventsManager::isKeyPressed(AGS3::AllegroKbdKeycode keycode) const {
