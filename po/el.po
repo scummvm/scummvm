@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-04-11 18:36+0000\n"
+"POT-Creation-Date: 2021-04-11 19:21+0000\n"
 "PO-Revision-Date: 2021-04-05 23:24+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
@@ -59,9 +59,9 @@ msgstr "Μετάβαση πάνω"
 #: gui/fluidsynth-dialog.cpp:153 gui/KeysDialog.cpp:44 gui/massadd.cpp:92
 #: gui/options.cpp:1953 gui/predictivedialog.cpp:69 gui/recorderdialog.cpp:68
 #: gui/recorderdialog.cpp:155 gui/remotebrowser.cpp:60
-#: gui/saveload-dialog.cpp:60 gui/saveload-dialog.cpp:393
-#: gui/saveload-dialog.cpp:465 gui/saveload-dialog.cpp:769
-#: gui/saveload-dialog.cpp:1165 gui/themebrowser.cpp:55
+#: gui/saveload-dialog.cpp:62 gui/saveload-dialog.cpp:395
+#: gui/saveload-dialog.cpp:467 gui/saveload-dialog.cpp:771
+#: gui/saveload-dialog.cpp:1167 gui/themebrowser.cpp:55
 #: gui/unknown-game-dialog.cpp:54 engines/engine.cpp:652
 #: backends/dialogs/gtk/gtk-dialogs.cpp:46
 #: backends/events/default/default-events.cpp:185
@@ -163,7 +163,7 @@ msgstr ""
 #: gui/downloaddialog.cpp:147 gui/editgamedialog.cpp:377
 #: gui/fluidsynth-dialog.cpp:154 gui/KeysDialog.cpp:43 gui/launcher.cpp:510
 #: gui/launcher.cpp:514 gui/massadd.cpp:89 gui/options.cpp:1955
-#: gui/saveload-dialog.cpp:1166 engines/engine.cpp:511 engines/engine.cpp:522
+#: gui/saveload-dialog.cpp:1168 engines/engine.cpp:511 engines/engine.cpp:522
 #: backends/platform/wii/options.cpp:47 engines/agos/animation.cpp:559
 #: engines/drascula/saveload.cpp:49 engines/groovie/script.cpp:484
 #: engines/parallaction/saveload.cpp:271 engines/sci/engine/kgraphics.cpp:75
@@ -274,7 +274,7 @@ msgid "Engine"
 msgstr "Μηχανή"
 
 #: gui/editgamedialog.cpp:203 gui/options.cpp:1666 gui/options.cpp:1799
-#: backends/graphics/sdl/sdl-graphics.cpp:382
+#: backends/graphics/sdl/sdl-graphics.cpp:389
 #: backends/graphics3d/sdl/sdl-graphics3d.cpp:132
 msgid "Graphics"
 msgstr "Γραφικά"
@@ -594,23 +594,23 @@ msgstr ""
 "Θέλετε σίγουρα να επαναφέρετε όλες τις ρυθμίσεις του FluidSynth στις "
 "προκαθορισμένες τους τιμές;"
 
-#: gui/gui-manager.cpp:113
+#: gui/gui-manager.cpp:141
 msgid "GUI"
 msgstr "Γραφική Διεπαφή Χρήστη"
 
-#: gui/gui-manager.cpp:117 engines/mohawk/myst.cpp:570
+#: gui/gui-manager.cpp:145 engines/mohawk/myst.cpp:570
 #: engines/mohawk/riven.cpp:840
 msgid "Interact"
 msgstr "Αλληλεπίδραση"
 
-#: gui/gui-manager.cpp:122 gui/unknown-game-dialog.cpp:54
+#: gui/gui-manager.cpp:150 gui/unknown-game-dialog.cpp:54
 #: engines/nancy/dialogs.cpp:308 engines/scumm/help.cpp:125
 #: engines/scumm/help.cpp:140 engines/scumm/help.cpp:165
 #: engines/scumm/help.cpp:191 engines/scumm/help.cpp:209
 msgid "Close"
 msgstr "Κλείσιμο"
 
-#: gui/gui-manager.cpp:128 engines/metaengine.cpp:108
+#: gui/gui-manager.cpp:156 engines/metaengine.cpp:108
 #: backends/platform/symbian/src/SymbianActions.cpp:40
 #: engines/dragons/metaengine.cpp:163 engines/glk/scott/scott.cpp:412
 #: engines/griffon/metaengine.cpp:96 engines/grim/grim.cpp:451
@@ -622,7 +622,7 @@ msgstr "Κλείσιμο"
 msgid "Up"
 msgstr "Πάνω"
 
-#: gui/gui-manager.cpp:133 engines/metaengine.cpp:113
+#: gui/gui-manager.cpp:161 engines/metaengine.cpp:113
 #: backends/platform/symbian/src/SymbianActions.cpp:41
 #: engines/dragons/metaengine.cpp:169 engines/glk/scott/scott.cpp:412
 #: engines/griffon/metaengine.cpp:102 engines/grim/grim.cpp:456
@@ -634,7 +634,7 @@ msgstr "Πάνω"
 msgid "Down"
 msgstr "Κάτω"
 
-#: gui/gui-manager.cpp:138 engines/metaengine.cpp:118
+#: gui/gui-manager.cpp:166 engines/metaengine.cpp:118
 #: backends/platform/symbian/src/SymbianActions.cpp:42
 #: engines/dragons/metaengine.cpp:175 engines/griffon/metaengine.cpp:108
 #: engines/grim/grim.cpp:461 engines/grim/grim.cpp:538
@@ -646,7 +646,7 @@ msgstr "Κάτω"
 msgid "Left"
 msgstr "Αριστερά"
 
-#: gui/gui-manager.cpp:143 engines/metaengine.cpp:123
+#: gui/gui-manager.cpp:171 engines/metaengine.cpp:123
 #: backends/platform/symbian/src/SymbianActions.cpp:43
 #: engines/dragons/metaengine.cpp:181 engines/griffon/metaengine.cpp:114
 #: engines/grim/grim.cpp:466 engines/grim/grim.cpp:543
@@ -1029,7 +1029,7 @@ msgstr ""
 msgid "Stretch mode:"
 msgstr "Λειτουργία επέκτασης:"
 
-#: gui/options.cpp:1324 backends/graphics/sdl/sdl-graphics.cpp:373
+#: gui/options.cpp:1324 backends/graphics/sdl/sdl-graphics.cpp:380
 msgid "Fullscreen mode"
 msgstr "Λειτουργία πλήρους οθόνης"
 
@@ -1821,7 +1821,7 @@ msgid "Recorder or Playback Gameplay"
 msgstr "Εγγραφή ή Αναπαραγωγή Gameplay"
 
 #: gui/recorderdialog.cpp:67 gui/recorderdialog.cpp:155
-#: gui/saveload-dialog.cpp:397 gui/saveload-dialog.cpp:465
+#: gui/saveload-dialog.cpp:399 gui/saveload-dialog.cpp:467
 msgid "Delete"
 msgstr "Σβήσιμο"
 
@@ -1859,75 +1859,75 @@ msgstr "Άγνωστος Συγγραφέας"
 msgid "ScummVM could not access the directory!"
 msgstr "Το ScummVM δε μπόρεσε να προσπελάσει τον φάκελο!"
 
-#: gui/saveload-dialog.cpp:52
+#: gui/saveload-dialog.cpp:54
 msgid "Downloading saves..."
 msgstr "Λήψη αποθηκευμένων παιχνιδιών (saves)..."
 
-#: gui/saveload-dialog.cpp:61
+#: gui/saveload-dialog.cpp:63
 msgid "Run in background"
 msgstr "Εκτέλεση στο παρασκήνιο"
 
-#: gui/saveload-dialog.cpp:343
+#: gui/saveload-dialog.cpp:345
 msgid "List view"
 msgstr "Προβολή λίστας"
 
-#: gui/saveload-dialog.cpp:344
+#: gui/saveload-dialog.cpp:346
 msgid "Grid view"
 msgstr "Προβολή πλέγματος"
 
-#: gui/saveload-dialog.cpp:388 gui/saveload-dialog.cpp:569
+#: gui/saveload-dialog.cpp:390 gui/saveload-dialog.cpp:571
 msgid "No date saved"
 msgstr "Χωρίς αποθηκ. ημ/νία"
 
-#: gui/saveload-dialog.cpp:389 gui/saveload-dialog.cpp:570
+#: gui/saveload-dialog.cpp:391 gui/saveload-dialog.cpp:572
 msgid "No time saved"
 msgstr "Χωρίς αποθηκ. ώρα"
 
-#: gui/saveload-dialog.cpp:390 gui/saveload-dialog.cpp:571
+#: gui/saveload-dialog.cpp:392 gui/saveload-dialog.cpp:573
 msgid "No playtime saved"
 msgstr "Χωρίς αποθηκ. ώρα παιχνιδιού"
 
-#: gui/saveload-dialog.cpp:464
+#: gui/saveload-dialog.cpp:466
 msgid "Do you really want to delete this saved game?"
 msgstr "Θέλετε σίγουρα να σβήσετε αυτό το αποθηκευμένο παιχνίδι;"
 
-#: gui/saveload-dialog.cpp:596 gui/saveload-dialog.cpp:1116
+#: gui/saveload-dialog.cpp:598 gui/saveload-dialog.cpp:1118
 msgid "Date: "
 msgstr "Ημερομηνία: "
 
-#: gui/saveload-dialog.cpp:600 gui/saveload-dialog.cpp:1122
+#: gui/saveload-dialog.cpp:602 gui/saveload-dialog.cpp:1124
 msgid "Time: "
 msgstr "Ώρα: "
 
-#: gui/saveload-dialog.cpp:606 gui/saveload-dialog.cpp:1130
+#: gui/saveload-dialog.cpp:608 gui/saveload-dialog.cpp:1132
 msgid "Playtime: "
 msgstr "Ώρα παιχνιδιού: "
 
-#: gui/saveload-dialog.cpp:619 gui/saveload-dialog.cpp:707
+#: gui/saveload-dialog.cpp:621 gui/saveload-dialog.cpp:709
 msgid "Untitled saved game"
 msgstr "Αποθηκευμένο παιχνίδι χωρίς όνομα"
 
-#: gui/saveload-dialog.cpp:770
+#: gui/saveload-dialog.cpp:772
 msgid "Next"
 msgstr "Επόμενο"
 
-#: gui/saveload-dialog.cpp:773
+#: gui/saveload-dialog.cpp:775
 msgid "Prev"
 msgstr "Προηγούμενο"
 
-#: gui/saveload-dialog.cpp:980
+#: gui/saveload-dialog.cpp:982
 msgid "New Save"
 msgstr "Νέα Αποθήκευση"
 
-#: gui/saveload-dialog.cpp:980
+#: gui/saveload-dialog.cpp:982
 msgid "Create a new saved game"
 msgstr "Δημιουργία νέου αποθηκευμένου παιχνιδιού"
 
-#: gui/saveload-dialog.cpp:1109
+#: gui/saveload-dialog.cpp:1111
 msgid "Name: "
 msgstr "Όνομα: "
 
-#: gui/saveload-dialog.cpp:1185
+#: gui/saveload-dialog.cpp:1187
 #, c-format
 msgid "Enter a description for slot %d:"
 msgstr "Εισάγετε περιγραφή για τη θυρίδα %d:"
@@ -1936,28 +1936,28 @@ msgstr "Εισάγετε περιγραφή για τη θυρίδα %d:"
 msgid "Select a Theme"
 msgstr "Επιλέξτε θέμα"
 
-#: gui/ThemeEngine.cpp:278
+#: gui/ThemeEngine.cpp:270
 msgid "Disabled GFX"
 msgstr "Απενεργοποιημένα γραφικά"
 
-#: gui/ThemeEngine.cpp:278
+#: gui/ThemeEngine.cpp:270
 msgctxt "lowres"
 msgid "Disabled GFX"
 msgstr "Απενεργ. γραφικά"
 
-#: gui/ThemeEngine.cpp:279
+#: gui/ThemeEngine.cpp:271
 msgid "Standard renderer"
 msgstr "Κανονική απόδοση"
 
-#: gui/ThemeEngine.cpp:279 engines/scumm/dialogs.cpp:672
+#: gui/ThemeEngine.cpp:271 engines/scumm/dialogs.cpp:672
 msgid "Standard"
 msgstr "Κανονικό"
 
-#: gui/ThemeEngine.cpp:281
+#: gui/ThemeEngine.cpp:273
 msgid "Antialiased renderer"
 msgstr "Εξομαλυμένη απόδοση"
 
-#: gui/ThemeEngine.cpp:281
+#: gui/ThemeEngine.cpp:273
 msgid "Antialiased"
 msgstr "Εξομαλυμένη"
 
@@ -2018,7 +2018,7 @@ msgstr ""
 msgid "Proceed"
 msgstr "Προχώρα"
 
-#: gui/widget.cpp:413 gui/widget.cpp:415 gui/widget.cpp:421 gui/widget.cpp:423
+#: gui/widget.cpp:407 gui/widget.cpp:409 gui/widget.cpp:415 gui/widget.cpp:417
 msgid "Clear value"
 msgstr "Σβήσιμο τιμής"
 
@@ -2766,32 +2766,32 @@ msgstr "Επέκταση εικόνας για να γεμίσει το παρά
 msgid "Fit to window (4:3)"
 msgstr "Προσαρμογή στο παράθυρο (4:3)"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:595
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:604
 #, c-format
 msgid "Resolution: %dx%d"
 msgstr "Ανάλυση: %dx%d"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:618
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:627
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2498
 msgid "Enabled aspect ratio correction"
 msgstr "Ενεργοποιημένη διόρθωση αναλογίας διαστάσεων"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:620
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:629
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2504
 msgid "Disabled aspect ratio correction"
 msgstr "Απενεργοποιημένη διόρθωση αναλογίας διαστάσεων"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:641
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:650
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2520
 msgid "Filtering enabled"
 msgstr "Ενεργοποίηση φιλτραρίσματος"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:643
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:652
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2522
 msgid "Filtering disabled"
 msgstr "Απενεργοποίηση φιλτραρίσματος"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:672
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:681
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2549
 msgid "Stretch mode"
 msgstr "Λειτουργία επέκτασης εικόνας"
@@ -2805,22 +2805,22 @@ msgstr "Κανονικό (χωρίς κλιμάκωση)"
 msgid "Active graphics filter:"
 msgstr "Ενεργό φίλτρο γραφικών:"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:375
+#: backends/graphics/sdl/sdl-graphics.cpp:382
 msgid "Windowed mode"
 msgstr "Λειτουργία παραθύρου"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:386
+#: backends/graphics/sdl/sdl-graphics.cpp:393
 #: backends/graphics3d/sdl/sdl-graphics3d.cpp:136 engines/scumm/help.cpp:86
 msgid "Toggle fullscreen"
 msgstr "Λειτουργία πλήρους οθόνης"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:393
+#: backends/graphics/sdl/sdl-graphics.cpp:400
 #: backends/graphics3d/sdl/sdl-graphics3d.cpp:143 engines/scumm/help.cpp:99
 #: engines/wintermute/keymapper_tables.h:710
 msgid "Toggle mouse capture"
 msgstr "Εναλλαγή κράτησης ποντικιού"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:398
+#: backends/graphics/sdl/sdl-graphics.cpp:405
 #: backends/graphics3d/sdl/sdl-graphics3d.cpp:148
 #: engines/wintermute/keymapper_tables.h:478
 #: engines/wintermute/keymapper_tables.h:847
@@ -2833,32 +2833,32 @@ msgstr "Εναλλαγή κράτησης ποντικιού"
 msgid "Save screenshot"
 msgstr "Αποθήκευση στιγμιότυπου"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:404
+#: backends/graphics/sdl/sdl-graphics.cpp:411
 #: backends/graphics3d/sdl/sdl-graphics3d.cpp:154
 msgid "Toggle aspect ratio correction"
 msgstr "Εναλλαγή διόρθωσης αναλογίας διαστάσεων"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:411
+#: backends/graphics/sdl/sdl-graphics.cpp:418
 msgid "Toggle linear filtered scaling"
 msgstr "Εναλλαγή χρήσης γραμμικού φίλτρου σε κλιμάκωση εικόνας"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:418
+#: backends/graphics/sdl/sdl-graphics.cpp:425
 msgid "Cycle through stretch modes"
 msgstr "Κυκλική περιήγηση στις λειτουργίες εξάπλωσης εικόνας"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:424
+#: backends/graphics/sdl/sdl-graphics.cpp:431
 msgid "Increase the scale factor"
 msgstr "Αύξηση συντελεστή κλίμακας"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:430
+#: backends/graphics/sdl/sdl-graphics.cpp:437
 msgid "Decrease the scale factor"
 msgstr "Μείωση συντελεστή κλίμακας"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:436
+#: backends/graphics/sdl/sdl-graphics.cpp:443
 msgid "Switch to the next scaler"
 msgstr "Χρήση επόμενου κλιμακωτή"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:441
+#: backends/graphics/sdl/sdl-graphics.cpp:448
 msgid "Switch to the previous scaler"
 msgstr "Χρήση προηγούμενου κλιμακωτή"
 

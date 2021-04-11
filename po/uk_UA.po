@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-04-11 18:36+0000\n"
+"POT-Creation-Date: 2021-04-11 19:21+0000\n"
 "PO-Revision-Date: 2021-04-08 10:05+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
@@ -62,9 +62,9 @@ msgstr "Вгору"
 #: gui/fluidsynth-dialog.cpp:153 gui/KeysDialog.cpp:44 gui/massadd.cpp:92
 #: gui/options.cpp:1953 gui/predictivedialog.cpp:69 gui/recorderdialog.cpp:68
 #: gui/recorderdialog.cpp:155 gui/remotebrowser.cpp:60
-#: gui/saveload-dialog.cpp:60 gui/saveload-dialog.cpp:393
-#: gui/saveload-dialog.cpp:465 gui/saveload-dialog.cpp:769
-#: gui/saveload-dialog.cpp:1165 gui/themebrowser.cpp:55
+#: gui/saveload-dialog.cpp:62 gui/saveload-dialog.cpp:395
+#: gui/saveload-dialog.cpp:467 gui/saveload-dialog.cpp:771
+#: gui/saveload-dialog.cpp:1167 gui/themebrowser.cpp:55
 #: gui/unknown-game-dialog.cpp:54 engines/engine.cpp:652
 #: backends/dialogs/gtk/gtk-dialogs.cpp:46
 #: backends/events/default/default-events.cpp:185
@@ -166,7 +166,7 @@ msgstr ""
 #: gui/downloaddialog.cpp:147 gui/editgamedialog.cpp:377
 #: gui/fluidsynth-dialog.cpp:154 gui/KeysDialog.cpp:43 gui/launcher.cpp:510
 #: gui/launcher.cpp:514 gui/massadd.cpp:89 gui/options.cpp:1955
-#: gui/saveload-dialog.cpp:1166 engines/engine.cpp:511 engines/engine.cpp:522
+#: gui/saveload-dialog.cpp:1168 engines/engine.cpp:511 engines/engine.cpp:522
 #: backends/platform/wii/options.cpp:47 engines/agos/animation.cpp:559
 #: engines/drascula/saveload.cpp:49 engines/groovie/script.cpp:484
 #: engines/parallaction/saveload.cpp:271 engines/sci/engine/kgraphics.cpp:75
@@ -276,7 +276,7 @@ msgid "Engine"
 msgstr "Движок"
 
 #: gui/editgamedialog.cpp:203 gui/options.cpp:1666 gui/options.cpp:1799
-#: backends/graphics/sdl/sdl-graphics.cpp:382
+#: backends/graphics/sdl/sdl-graphics.cpp:389
 #: backends/graphics3d/sdl/sdl-graphics3d.cpp:132
 msgid "Graphics"
 msgstr "Графіка"
@@ -592,23 +592,23 @@ msgstr ""
 "Ви дійсно хочете скинути всі налаштування FluidSynth до їх значень за "
 "замовченням?"
 
-#: gui/gui-manager.cpp:113
+#: gui/gui-manager.cpp:141
 msgid "GUI"
 msgstr "GUI"
 
-#: gui/gui-manager.cpp:117 engines/mohawk/myst.cpp:570
+#: gui/gui-manager.cpp:145 engines/mohawk/myst.cpp:570
 #: engines/mohawk/riven.cpp:840
 msgid "Interact"
 msgstr "Взаємодія"
 
-#: gui/gui-manager.cpp:122 gui/unknown-game-dialog.cpp:54
+#: gui/gui-manager.cpp:150 gui/unknown-game-dialog.cpp:54
 #: engines/nancy/dialogs.cpp:308 engines/scumm/help.cpp:125
 #: engines/scumm/help.cpp:140 engines/scumm/help.cpp:165
 #: engines/scumm/help.cpp:191 engines/scumm/help.cpp:209
 msgid "Close"
 msgstr "Закрити"
 
-#: gui/gui-manager.cpp:128 engines/metaengine.cpp:108
+#: gui/gui-manager.cpp:156 engines/metaengine.cpp:108
 #: backends/platform/symbian/src/SymbianActions.cpp:40
 #: engines/dragons/metaengine.cpp:163 engines/glk/scott/scott.cpp:412
 #: engines/griffon/metaengine.cpp:96 engines/grim/grim.cpp:451
@@ -620,7 +620,7 @@ msgstr "Закрити"
 msgid "Up"
 msgstr "Догори"
 
-#: gui/gui-manager.cpp:133 engines/metaengine.cpp:113
+#: gui/gui-manager.cpp:161 engines/metaengine.cpp:113
 #: backends/platform/symbian/src/SymbianActions.cpp:41
 #: engines/dragons/metaengine.cpp:169 engines/glk/scott/scott.cpp:412
 #: engines/griffon/metaengine.cpp:102 engines/grim/grim.cpp:456
@@ -632,7 +632,7 @@ msgstr "Догори"
 msgid "Down"
 msgstr "Донизу"
 
-#: gui/gui-manager.cpp:138 engines/metaengine.cpp:118
+#: gui/gui-manager.cpp:166 engines/metaengine.cpp:118
 #: backends/platform/symbian/src/SymbianActions.cpp:42
 #: engines/dragons/metaengine.cpp:175 engines/griffon/metaengine.cpp:108
 #: engines/grim/grim.cpp:461 engines/grim/grim.cpp:538
@@ -644,7 +644,7 @@ msgstr "Донизу"
 msgid "Left"
 msgstr "Наліво"
 
-#: gui/gui-manager.cpp:143 engines/metaengine.cpp:123
+#: gui/gui-manager.cpp:171 engines/metaengine.cpp:123
 #: backends/platform/symbian/src/SymbianActions.cpp:43
 #: engines/dragons/metaengine.cpp:181 engines/griffon/metaengine.cpp:114
 #: engines/grim/grim.cpp:466 engines/grim/grim.cpp:543
@@ -1014,7 +1014,7 @@ msgstr "Спеціальні режими растрування, які під�
 msgid "Stretch mode:"
 msgstr "Режим розтягування:"
 
-#: gui/options.cpp:1324 backends/graphics/sdl/sdl-graphics.cpp:373
+#: gui/options.cpp:1324 backends/graphics/sdl/sdl-graphics.cpp:380
 msgid "Fullscreen mode"
 msgstr "Повноекранний режим"
 
@@ -1788,7 +1788,7 @@ msgid "Recorder or Playback Gameplay"
 msgstr "Записувати або відтворювати процес гри"
 
 #: gui/recorderdialog.cpp:67 gui/recorderdialog.cpp:155
-#: gui/saveload-dialog.cpp:397 gui/saveload-dialog.cpp:465
+#: gui/saveload-dialog.cpp:399 gui/saveload-dialog.cpp:467
 msgid "Delete"
 msgstr "Видалити"
 
@@ -1826,75 +1826,75 @@ msgstr "Невідомий автор"
 msgid "ScummVM could not access the directory!"
 msgstr "ScummVM не має доступу до вказаної папки!"
 
-#: gui/saveload-dialog.cpp:52
+#: gui/saveload-dialog.cpp:54
 msgid "Downloading saves..."
 msgstr "Завантажую збереження гри..."
 
-#: gui/saveload-dialog.cpp:61
+#: gui/saveload-dialog.cpp:63
 msgid "Run in background"
 msgstr "Працювати у фоні"
 
-#: gui/saveload-dialog.cpp:343
+#: gui/saveload-dialog.cpp:345
 msgid "List view"
 msgstr "Вигляд списку"
 
-#: gui/saveload-dialog.cpp:344
+#: gui/saveload-dialog.cpp:346
 msgid "Grid view"
 msgstr "Вигляд сітки"
 
-#: gui/saveload-dialog.cpp:388 gui/saveload-dialog.cpp:569
+#: gui/saveload-dialog.cpp:390 gui/saveload-dialog.cpp:571
 msgid "No date saved"
 msgstr "Дату не записано"
 
-#: gui/saveload-dialog.cpp:389 gui/saveload-dialog.cpp:570
+#: gui/saveload-dialog.cpp:391 gui/saveload-dialog.cpp:572
 msgid "No time saved"
 msgstr "Час не записано"
 
-#: gui/saveload-dialog.cpp:390 gui/saveload-dialog.cpp:571
+#: gui/saveload-dialog.cpp:392 gui/saveload-dialog.cpp:573
 msgid "No playtime saved"
 msgstr "Час гри не записано"
 
-#: gui/saveload-dialog.cpp:464
+#: gui/saveload-dialog.cpp:466
 msgid "Do you really want to delete this saved game?"
 msgstr "Ви дійсно хочете видалити цю збережену гру?"
 
-#: gui/saveload-dialog.cpp:596 gui/saveload-dialog.cpp:1116
+#: gui/saveload-dialog.cpp:598 gui/saveload-dialog.cpp:1118
 msgid "Date: "
 msgstr "Дата: "
 
-#: gui/saveload-dialog.cpp:600 gui/saveload-dialog.cpp:1122
+#: gui/saveload-dialog.cpp:602 gui/saveload-dialog.cpp:1124
 msgid "Time: "
 msgstr "Час: "
 
-#: gui/saveload-dialog.cpp:606 gui/saveload-dialog.cpp:1130
+#: gui/saveload-dialog.cpp:608 gui/saveload-dialog.cpp:1132
 msgid "Playtime: "
 msgstr "Час гри: "
 
-#: gui/saveload-dialog.cpp:619 gui/saveload-dialog.cpp:707
+#: gui/saveload-dialog.cpp:621 gui/saveload-dialog.cpp:709
 msgid "Untitled saved game"
 msgstr "Збережена гра без імені"
 
-#: gui/saveload-dialog.cpp:770
+#: gui/saveload-dialog.cpp:772
 msgid "Next"
 msgstr "Наступний"
 
-#: gui/saveload-dialog.cpp:773
+#: gui/saveload-dialog.cpp:775
 msgid "Prev"
 msgstr "Попередній"
 
-#: gui/saveload-dialog.cpp:980
+#: gui/saveload-dialog.cpp:982
 msgid "New Save"
 msgstr "Новий стан"
 
-#: gui/saveload-dialog.cpp:980
+#: gui/saveload-dialog.cpp:982
 msgid "Create a new saved game"
 msgstr "Створити новий запис гри"
 
-#: gui/saveload-dialog.cpp:1109
+#: gui/saveload-dialog.cpp:1111
 msgid "Name: "
 msgstr "Назва: "
 
-#: gui/saveload-dialog.cpp:1185
+#: gui/saveload-dialog.cpp:1187
 #, c-format
 msgid "Enter a description for slot %d:"
 msgstr "Введіть опис для слоту %d:"
@@ -1903,28 +1903,28 @@ msgstr "Введіть опис для слоту %d:"
 msgid "Select a Theme"
 msgstr "Виберіть тему"
 
-#: gui/ThemeEngine.cpp:278
+#: gui/ThemeEngine.cpp:270
 msgid "Disabled GFX"
 msgstr "Без графіки"
 
-#: gui/ThemeEngine.cpp:278
+#: gui/ThemeEngine.cpp:270
 msgctxt "lowres"
 msgid "Disabled GFX"
 msgstr "Без графіки"
 
-#: gui/ThemeEngine.cpp:279
+#: gui/ThemeEngine.cpp:271
 msgid "Standard renderer"
 msgstr "Стандартний растеризатор"
 
-#: gui/ThemeEngine.cpp:279 engines/scumm/dialogs.cpp:672
+#: gui/ThemeEngine.cpp:271 engines/scumm/dialogs.cpp:672
 msgid "Standard"
 msgstr "Стандартний"
 
-#: gui/ThemeEngine.cpp:281
+#: gui/ThemeEngine.cpp:273
 msgid "Antialiased renderer"
 msgstr "Растеризатор зі згладжуванням"
 
-#: gui/ThemeEngine.cpp:281
+#: gui/ThemeEngine.cpp:273
 msgid "Antialiased"
 msgstr "Зі згладжуванням"
 
@@ -1984,7 +1984,7 @@ msgstr ""
 msgid "Proceed"
 msgstr "Продовжити"
 
-#: gui/widget.cpp:413 gui/widget.cpp:415 gui/widget.cpp:421 gui/widget.cpp:423
+#: gui/widget.cpp:407 gui/widget.cpp:409 gui/widget.cpp:415 gui/widget.cpp:417
 msgid "Clear value"
 msgstr "Очистити значення"
 
@@ -2719,32 +2719,32 @@ msgstr "Протягніть до вікна"
 msgid "Fit to window (4:3)"
 msgstr "Підходить до вікна (4: 3)"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:595
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:604
 #, c-format
 msgid "Resolution: %dx%d"
 msgstr "Розгалуження %dx%d"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:618
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:627
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2498
 msgid "Enabled aspect ratio correction"
 msgstr "Корекцію співвідношення сторін увімкнено"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:620
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:629
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2504
 msgid "Disabled aspect ratio correction"
 msgstr "Корекцію співвідношення сторін вимкнено"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:641
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:650
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2520
 msgid "Filtering enabled"
 msgstr "Фільтрування увімкнено"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:643
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:652
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2522
 msgid "Filtering disabled"
 msgstr "Фільтрування вимкнено"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:672
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:681
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2549
 msgid "Stretch mode"
 msgstr "Стретч-режим"
@@ -2758,22 +2758,22 @@ msgstr "Без збільшення"
 msgid "Active graphics filter:"
 msgstr "Поточний графічний фільтр:"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:375
+#: backends/graphics/sdl/sdl-graphics.cpp:382
 msgid "Windowed mode"
 msgstr "Віконний режим"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:386
+#: backends/graphics/sdl/sdl-graphics.cpp:393
 #: backends/graphics3d/sdl/sdl-graphics3d.cpp:136 engines/scumm/help.cpp:86
 msgid "Toggle fullscreen"
 msgstr "Перемикання повноекранного режиму"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:393
+#: backends/graphics/sdl/sdl-graphics.cpp:400
 #: backends/graphics3d/sdl/sdl-graphics3d.cpp:143 engines/scumm/help.cpp:99
 #: engines/wintermute/keymapper_tables.h:710
 msgid "Toggle mouse capture"
 msgstr "Перемикання захоплення миші"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:398
+#: backends/graphics/sdl/sdl-graphics.cpp:405
 #: backends/graphics3d/sdl/sdl-graphics3d.cpp:148
 #: engines/wintermute/keymapper_tables.h:478
 #: engines/wintermute/keymapper_tables.h:847
@@ -2786,32 +2786,32 @@ msgstr "Перемикання захоплення миші"
 msgid "Save screenshot"
 msgstr "Зберегти екран"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:404
+#: backends/graphics/sdl/sdl-graphics.cpp:411
 #: backends/graphics3d/sdl/sdl-graphics3d.cpp:154
 msgid "Toggle aspect ratio correction"
 msgstr "Перемикання корекції співвідношення сторін"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:411
+#: backends/graphics/sdl/sdl-graphics.cpp:418
 msgid "Toggle linear filtered scaling"
 msgstr "Перемикання фільтра лінийний"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:418
+#: backends/graphics/sdl/sdl-graphics.cpp:425
 msgid "Cycle through stretch modes"
 msgstr "Перемикання між режимів розтягування"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:424
+#: backends/graphics/sdl/sdl-graphics.cpp:431
 msgid "Increase the scale factor"
 msgstr "Збільшити масштаб"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:430
+#: backends/graphics/sdl/sdl-graphics.cpp:437
 msgid "Decrease the scale factor"
 msgstr "Зменшити масштаб"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:436
+#: backends/graphics/sdl/sdl-graphics.cpp:443
 msgid "Switch to the next scaler"
 msgstr "Перемикання до наступного фільтру"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:441
+#: backends/graphics/sdl/sdl-graphics.cpp:448
 msgid "Switch to the previous scaler"
 msgstr "Перемикання до попереднього фільтру"
 

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-04-11 18:36+0000\n"
+"POT-Creation-Date: 2021-04-11 19:21+0000\n"
 "PO-Revision-Date: 2020-09-26 21:13+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Galician <https://translations.scummvm.org/projects/scummvm/"
@@ -60,9 +60,9 @@ msgstr "Arriba"
 #: gui/fluidsynth-dialog.cpp:153 gui/KeysDialog.cpp:44 gui/massadd.cpp:92
 #: gui/options.cpp:1953 gui/predictivedialog.cpp:69 gui/recorderdialog.cpp:68
 #: gui/recorderdialog.cpp:155 gui/remotebrowser.cpp:60
-#: gui/saveload-dialog.cpp:60 gui/saveload-dialog.cpp:393
-#: gui/saveload-dialog.cpp:465 gui/saveload-dialog.cpp:769
-#: gui/saveload-dialog.cpp:1165 gui/themebrowser.cpp:55
+#: gui/saveload-dialog.cpp:62 gui/saveload-dialog.cpp:395
+#: gui/saveload-dialog.cpp:467 gui/saveload-dialog.cpp:771
+#: gui/saveload-dialog.cpp:1167 gui/themebrowser.cpp:55
 #: gui/unknown-game-dialog.cpp:54 engines/engine.cpp:652
 #: backends/dialogs/gtk/gtk-dialogs.cpp:46
 #: backends/events/default/default-events.cpp:185
@@ -164,7 +164,7 @@ msgstr ""
 #: gui/downloaddialog.cpp:147 gui/editgamedialog.cpp:377
 #: gui/fluidsynth-dialog.cpp:154 gui/KeysDialog.cpp:43 gui/launcher.cpp:510
 #: gui/launcher.cpp:514 gui/massadd.cpp:89 gui/options.cpp:1955
-#: gui/saveload-dialog.cpp:1166 engines/engine.cpp:511 engines/engine.cpp:522
+#: gui/saveload-dialog.cpp:1168 engines/engine.cpp:511 engines/engine.cpp:522
 #: backends/platform/wii/options.cpp:47 engines/agos/animation.cpp:559
 #: engines/drascula/saveload.cpp:49 engines/groovie/script.cpp:484
 #: engines/parallaction/saveload.cpp:271 engines/sci/engine/kgraphics.cpp:75
@@ -272,7 +272,7 @@ msgid "Engine"
 msgstr "Motor"
 
 #: gui/editgamedialog.cpp:203 gui/options.cpp:1666 gui/options.cpp:1799
-#: backends/graphics/sdl/sdl-graphics.cpp:382
+#: backends/graphics/sdl/sdl-graphics.cpp:389
 #: backends/graphics3d/sdl/sdl-graphics3d.cpp:132
 msgid "Graphics"
 msgstr "Gráficos"
@@ -596,24 +596,24 @@ msgstr ""
 "Seguro que queres restablecer a configuración de FluidSynth aos seus valores "
 "predefinidos?"
 
-#: gui/gui-manager.cpp:113
+#: gui/gui-manager.cpp:141
 msgid "GUI"
 msgstr ""
 
-#: gui/gui-manager.cpp:117 engines/mohawk/myst.cpp:570
+#: gui/gui-manager.cpp:145 engines/mohawk/myst.cpp:570
 #: engines/mohawk/riven.cpp:840
 #, fuzzy
 msgid "Interact"
 msgstr "Interpolación:"
 
-#: gui/gui-manager.cpp:122 gui/unknown-game-dialog.cpp:54
+#: gui/gui-manager.cpp:150 gui/unknown-game-dialog.cpp:54
 #: engines/nancy/dialogs.cpp:308 engines/scumm/help.cpp:125
 #: engines/scumm/help.cpp:140 engines/scumm/help.cpp:165
 #: engines/scumm/help.cpp:191 engines/scumm/help.cpp:209
 msgid "Close"
 msgstr "Pechar"
 
-#: gui/gui-manager.cpp:128 engines/metaengine.cpp:108
+#: gui/gui-manager.cpp:156 engines/metaengine.cpp:108
 #: backends/platform/symbian/src/SymbianActions.cpp:40
 #: engines/dragons/metaengine.cpp:163 engines/glk/scott/scott.cpp:412
 #: engines/griffon/metaengine.cpp:96 engines/grim/grim.cpp:451
@@ -625,7 +625,7 @@ msgstr "Pechar"
 msgid "Up"
 msgstr "Arriba"
 
-#: gui/gui-manager.cpp:133 engines/metaengine.cpp:113
+#: gui/gui-manager.cpp:161 engines/metaengine.cpp:113
 #: backends/platform/symbian/src/SymbianActions.cpp:41
 #: engines/dragons/metaengine.cpp:169 engines/glk/scott/scott.cpp:412
 #: engines/griffon/metaengine.cpp:102 engines/grim/grim.cpp:456
@@ -637,7 +637,7 @@ msgstr "Arriba"
 msgid "Down"
 msgstr "Abaixo"
 
-#: gui/gui-manager.cpp:138 engines/metaengine.cpp:118
+#: gui/gui-manager.cpp:166 engines/metaengine.cpp:118
 #: backends/platform/symbian/src/SymbianActions.cpp:42
 #: engines/dragons/metaengine.cpp:175 engines/griffon/metaengine.cpp:108
 #: engines/grim/grim.cpp:461 engines/grim/grim.cpp:538
@@ -649,7 +649,7 @@ msgstr "Abaixo"
 msgid "Left"
 msgstr "Esquerda"
 
-#: gui/gui-manager.cpp:143 engines/metaengine.cpp:123
+#: gui/gui-manager.cpp:171 engines/metaengine.cpp:123
 #: backends/platform/symbian/src/SymbianActions.cpp:43
 #: engines/dragons/metaengine.cpp:181 engines/griffon/metaengine.cpp:114
 #: engines/grim/grim.cpp:466 engines/grim/grim.cpp:543
@@ -1024,7 +1024,7 @@ msgstr "Modos de interpolación de cores compatibles con algúns xogos"
 msgid "Stretch mode:"
 msgstr "Modo Helio"
 
-#: gui/options.cpp:1324 backends/graphics/sdl/sdl-graphics.cpp:373
+#: gui/options.cpp:1324 backends/graphics/sdl/sdl-graphics.cpp:380
 msgid "Fullscreen mode"
 msgstr "Pantalla completa"
 
@@ -1805,7 +1805,7 @@ msgid "Recorder or Playback Gameplay"
 msgstr "Partida gravada ou reproducida"
 
 #: gui/recorderdialog.cpp:67 gui/recorderdialog.cpp:155
-#: gui/saveload-dialog.cpp:397 gui/saveload-dialog.cpp:465
+#: gui/saveload-dialog.cpp:399 gui/saveload-dialog.cpp:467
 msgid "Delete"
 msgstr "Eliminar"
 
@@ -1843,77 +1843,77 @@ msgstr "Autor descoñecido"
 msgid "ScummVM could not access the directory!"
 msgstr "ScummVM non foi quen de acceder ao directorio!"
 
-#: gui/saveload-dialog.cpp:52
+#: gui/saveload-dialog.cpp:54
 #, fuzzy
 msgid "Downloading saves..."
 msgstr "Cargando..."
 
-#: gui/saveload-dialog.cpp:61
+#: gui/saveload-dialog.cpp:63
 #, fuzzy
 msgid "Run in background"
 msgstr "Mover cara diante"
 
-#: gui/saveload-dialog.cpp:343
+#: gui/saveload-dialog.cpp:345
 msgid "List view"
 msgstr "Lista"
 
-#: gui/saveload-dialog.cpp:344
+#: gui/saveload-dialog.cpp:346
 msgid "Grid view"
 msgstr "Grade"
 
-#: gui/saveload-dialog.cpp:388 gui/saveload-dialog.cpp:569
+#: gui/saveload-dialog.cpp:390 gui/saveload-dialog.cpp:571
 msgid "No date saved"
 msgstr "Non hai data gardada"
 
-#: gui/saveload-dialog.cpp:389 gui/saveload-dialog.cpp:570
+#: gui/saveload-dialog.cpp:391 gui/saveload-dialog.cpp:572
 msgid "No time saved"
 msgstr "Non hai hora gardada"
 
-#: gui/saveload-dialog.cpp:390 gui/saveload-dialog.cpp:571
+#: gui/saveload-dialog.cpp:392 gui/saveload-dialog.cpp:573
 msgid "No playtime saved"
 msgstr "Non hai tempo de xogo gardado"
 
-#: gui/saveload-dialog.cpp:464
+#: gui/saveload-dialog.cpp:466
 msgid "Do you really want to delete this saved game?"
 msgstr "Seguro que queres eliminar esta partida?"
 
-#: gui/saveload-dialog.cpp:596 gui/saveload-dialog.cpp:1116
+#: gui/saveload-dialog.cpp:598 gui/saveload-dialog.cpp:1118
 msgid "Date: "
 msgstr "Data: "
 
-#: gui/saveload-dialog.cpp:600 gui/saveload-dialog.cpp:1122
+#: gui/saveload-dialog.cpp:602 gui/saveload-dialog.cpp:1124
 msgid "Time: "
 msgstr "Hora: "
 
-#: gui/saveload-dialog.cpp:606 gui/saveload-dialog.cpp:1130
+#: gui/saveload-dialog.cpp:608 gui/saveload-dialog.cpp:1132
 msgid "Playtime: "
 msgstr "Tempo de xogo: "
 
-#: gui/saveload-dialog.cpp:619 gui/saveload-dialog.cpp:707
+#: gui/saveload-dialog.cpp:621 gui/saveload-dialog.cpp:709
 msgid "Untitled saved game"
 msgstr "Partida gardada sen título"
 
-#: gui/saveload-dialog.cpp:770
+#: gui/saveload-dialog.cpp:772
 msgid "Next"
 msgstr "Seg."
 
-#: gui/saveload-dialog.cpp:773
+#: gui/saveload-dialog.cpp:775
 msgid "Prev"
 msgstr "Ant."
 
-#: gui/saveload-dialog.cpp:980
+#: gui/saveload-dialog.cpp:982
 msgid "New Save"
 msgstr "Novo ficheiro"
 
-#: gui/saveload-dialog.cpp:980
+#: gui/saveload-dialog.cpp:982
 msgid "Create a new saved game"
 msgstr "Crea un novo ficheiro de gardado"
 
-#: gui/saveload-dialog.cpp:1109
+#: gui/saveload-dialog.cpp:1111
 msgid "Name: "
 msgstr "Nome: "
 
-#: gui/saveload-dialog.cpp:1185
+#: gui/saveload-dialog.cpp:1187
 #, c-format
 msgid "Enter a description for slot %d:"
 msgstr "Introduce unha descrición para o espazo %d:"
@@ -1922,30 +1922,30 @@ msgstr "Introduce unha descrición para o espazo %d:"
 msgid "Select a Theme"
 msgstr "Seleccionar tema"
 
-#: gui/ThemeEngine.cpp:278
+#: gui/ThemeEngine.cpp:270
 msgid "Disabled GFX"
 msgstr "Efectos gráficos desactivados"
 
-#: gui/ThemeEngine.cpp:278
+#: gui/ThemeEngine.cpp:270
 msgctxt "lowres"
 msgid "Disabled GFX"
 msgstr "Efectos desactivados"
 
-#: gui/ThemeEngine.cpp:279
+#: gui/ThemeEngine.cpp:271
 #, fuzzy
 msgid "Standard renderer"
 msgstr "Procesamento estándar"
 
-#: gui/ThemeEngine.cpp:279 engines/scumm/dialogs.cpp:672
+#: gui/ThemeEngine.cpp:271 engines/scumm/dialogs.cpp:672
 msgid "Standard"
 msgstr "Estándar"
 
-#: gui/ThemeEngine.cpp:281
+#: gui/ThemeEngine.cpp:273
 #, fuzzy
 msgid "Antialiased renderer"
 msgstr "Procesamento antidistorsión"
 
-#: gui/ThemeEngine.cpp:281
+#: gui/ThemeEngine.cpp:273
 msgid "Antialiased"
 msgstr "Antidistorsión"
 
@@ -2004,7 +2004,7 @@ msgstr ""
 msgid "Proceed"
 msgstr "Continuar"
 
-#: gui/widget.cpp:413 gui/widget.cpp:415 gui/widget.cpp:421 gui/widget.cpp:423
+#: gui/widget.cpp:407 gui/widget.cpp:409 gui/widget.cpp:415 gui/widget.cpp:417
 msgid "Clear value"
 msgstr "Limpar valor"
 
@@ -2754,32 +2754,32 @@ msgstr ""
 msgid "Fit to window (4:3)"
 msgstr ""
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:595
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:604
 #, c-format
 msgid "Resolution: %dx%d"
 msgstr "Resolución: %dx%d"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:618
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:627
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2498
 msgid "Enabled aspect ratio correction"
 msgstr "Corrección de proporción activada"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:620
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:629
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2504
 msgid "Disabled aspect ratio correction"
 msgstr "Corrección de proporción desactivada"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:641
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:650
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2520
 msgid "Filtering enabled"
 msgstr "Filtrado activado"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:643
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:652
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2522
 msgid "Filtering disabled"
 msgstr "Filtrado desactivado"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:672
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:681
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2549
 #, fuzzy
 msgid "Stretch mode"
@@ -2794,22 +2794,22 @@ msgstr "Normal (sen escala)"
 msgid "Active graphics filter:"
 msgstr "Filtro de gráficos activo:"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:375
+#: backends/graphics/sdl/sdl-graphics.cpp:382
 msgid "Windowed mode"
 msgstr "Modo en ventá"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:386
+#: backends/graphics/sdl/sdl-graphics.cpp:393
 #: backends/graphics3d/sdl/sdl-graphics3d.cpp:136 engines/scumm/help.cpp:86
 msgid "Toggle fullscreen"
 msgstr "Activar/desactivar pantalla completa"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:393
+#: backends/graphics/sdl/sdl-graphics.cpp:400
 #: backends/graphics3d/sdl/sdl-graphics3d.cpp:143 engines/scumm/help.cpp:99
 #: engines/wintermute/keymapper_tables.h:710
 msgid "Toggle mouse capture"
 msgstr "Activar/desactivar captura de rato"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:398
+#: backends/graphics/sdl/sdl-graphics.cpp:405
 #: backends/graphics3d/sdl/sdl-graphics3d.cpp:148
 #: engines/wintermute/keymapper_tables.h:478
 #: engines/wintermute/keymapper_tables.h:847
@@ -2823,39 +2823,39 @@ msgstr "Activar/desactivar captura de rato"
 msgid "Save screenshot"
 msgstr "Axuste de desprazamento SI"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:404
+#: backends/graphics/sdl/sdl-graphics.cpp:411
 #: backends/graphics3d/sdl/sdl-graphics3d.cpp:154
 #, fuzzy
 msgid "Toggle aspect ratio correction"
 msgstr "Activar/desactivar corrección de proporción"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:411
+#: backends/graphics/sdl/sdl-graphics.cpp:418
 #, fuzzy
 msgid "Toggle linear filtered scaling"
 msgstr "Empregar filtrado linear ao escalar gráficos"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:418
+#: backends/graphics/sdl/sdl-graphics.cpp:425
 #, fuzzy
 msgid "Cycle through stretch modes"
 msgstr "Non se puido cambiar ao modo de vídeo: '"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:424
+#: backends/graphics/sdl/sdl-graphics.cpp:431
 #, fuzzy
 msgid "Increase the scale factor"
 msgstr "Aumentar/reducir factor de escala"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:430
+#: backends/graphics/sdl/sdl-graphics.cpp:437
 #, fuzzy
 msgid "Decrease the scale factor"
 msgstr "Aumentar/reducir factor de escala"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:436
+#: backends/graphics/sdl/sdl-graphics.cpp:443
 #, fuzzy
 #| msgid "Switch to Game"
 msgid "Switch to the next scaler"
 msgstr "Cambiar ao xogo"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:441
+#: backends/graphics/sdl/sdl-graphics.cpp:448
 msgid "Switch to the previous scaler"
 msgstr ""
 

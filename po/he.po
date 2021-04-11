@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.1.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-04-11 18:36+0000\n"
+"POT-Creation-Date: 2021-04-11 19:21+0000\n"
 "PO-Revision-Date: 2020-11-23 12:19+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Hebrew <https://translations.scummvm.org/projects/scummvm/"
@@ -61,9 +61,9 @@ msgstr "תיקיה למעלה"
 #: gui/fluidsynth-dialog.cpp:153 gui/KeysDialog.cpp:44 gui/massadd.cpp:92
 #: gui/options.cpp:1953 gui/predictivedialog.cpp:69 gui/recorderdialog.cpp:68
 #: gui/recorderdialog.cpp:155 gui/remotebrowser.cpp:60
-#: gui/saveload-dialog.cpp:60 gui/saveload-dialog.cpp:393
-#: gui/saveload-dialog.cpp:465 gui/saveload-dialog.cpp:769
-#: gui/saveload-dialog.cpp:1165 gui/themebrowser.cpp:55
+#: gui/saveload-dialog.cpp:62 gui/saveload-dialog.cpp:395
+#: gui/saveload-dialog.cpp:467 gui/saveload-dialog.cpp:771
+#: gui/saveload-dialog.cpp:1167 gui/themebrowser.cpp:55
 #: gui/unknown-game-dialog.cpp:54 engines/engine.cpp:652
 #: backends/dialogs/gtk/gtk-dialogs.cpp:46
 #: backends/events/default/default-events.cpp:185
@@ -161,7 +161,7 @@ msgstr "לא ניתן ליצור תיקיה להורדה - קובץ באותו �
 #: gui/downloaddialog.cpp:147 gui/editgamedialog.cpp:377
 #: gui/fluidsynth-dialog.cpp:154 gui/KeysDialog.cpp:43 gui/launcher.cpp:510
 #: gui/launcher.cpp:514 gui/massadd.cpp:89 gui/options.cpp:1955
-#: gui/saveload-dialog.cpp:1166 engines/engine.cpp:511 engines/engine.cpp:522
+#: gui/saveload-dialog.cpp:1168 engines/engine.cpp:511 engines/engine.cpp:522
 #: backends/platform/wii/options.cpp:47 engines/agos/animation.cpp:559
 #: engines/drascula/saveload.cpp:49 engines/groovie/script.cpp:484
 #: engines/parallaction/saveload.cpp:271 engines/sci/engine/kgraphics.cpp:75
@@ -268,7 +268,7 @@ msgid "Engine"
 msgstr "מנוע"
 
 #: gui/editgamedialog.cpp:203 gui/options.cpp:1666 gui/options.cpp:1799
-#: backends/graphics/sdl/sdl-graphics.cpp:382
+#: backends/graphics/sdl/sdl-graphics.cpp:389
 #: backends/graphics3d/sdl/sdl-graphics3d.cpp:132
 msgid "Graphics"
 msgstr "תצוגה"
@@ -586,23 +586,23 @@ msgid ""
 "Do you really want to reset all FluidSynth settings to their default values?"
 msgstr "האם באמת לאתחל מחדש את הגדרות FluidSynth למצבם המקורי?"
 
-#: gui/gui-manager.cpp:113
+#: gui/gui-manager.cpp:141
 msgid "GUI"
 msgstr "ממשק משתמש"
 
-#: gui/gui-manager.cpp:117 engines/mohawk/myst.cpp:570
+#: gui/gui-manager.cpp:145 engines/mohawk/myst.cpp:570
 #: engines/mohawk/riven.cpp:840
 msgid "Interact"
 msgstr "אינטראקציה"
 
-#: gui/gui-manager.cpp:122 gui/unknown-game-dialog.cpp:54
+#: gui/gui-manager.cpp:150 gui/unknown-game-dialog.cpp:54
 #: engines/nancy/dialogs.cpp:308 engines/scumm/help.cpp:125
 #: engines/scumm/help.cpp:140 engines/scumm/help.cpp:165
 #: engines/scumm/help.cpp:191 engines/scumm/help.cpp:209
 msgid "Close"
 msgstr "סגירה"
 
-#: gui/gui-manager.cpp:128 engines/metaengine.cpp:108
+#: gui/gui-manager.cpp:156 engines/metaengine.cpp:108
 #: backends/platform/symbian/src/SymbianActions.cpp:40
 #: engines/dragons/metaengine.cpp:163 engines/glk/scott/scott.cpp:412
 #: engines/griffon/metaengine.cpp:96 engines/grim/grim.cpp:451
@@ -614,7 +614,7 @@ msgstr "סגירה"
 msgid "Up"
 msgstr "למעלה"
 
-#: gui/gui-manager.cpp:133 engines/metaengine.cpp:113
+#: gui/gui-manager.cpp:161 engines/metaengine.cpp:113
 #: backends/platform/symbian/src/SymbianActions.cpp:41
 #: engines/dragons/metaengine.cpp:169 engines/glk/scott/scott.cpp:412
 #: engines/griffon/metaengine.cpp:102 engines/grim/grim.cpp:456
@@ -626,7 +626,7 @@ msgstr "למעלה"
 msgid "Down"
 msgstr "למטה"
 
-#: gui/gui-manager.cpp:138 engines/metaengine.cpp:118
+#: gui/gui-manager.cpp:166 engines/metaengine.cpp:118
 #: backends/platform/symbian/src/SymbianActions.cpp:42
 #: engines/dragons/metaengine.cpp:175 engines/griffon/metaengine.cpp:108
 #: engines/grim/grim.cpp:461 engines/grim/grim.cpp:538
@@ -638,7 +638,7 @@ msgstr "למטה"
 msgid "Left"
 msgstr "שמאלה"
 
-#: gui/gui-manager.cpp:143 engines/metaengine.cpp:123
+#: gui/gui-manager.cpp:171 engines/metaengine.cpp:123
 #: backends/platform/symbian/src/SymbianActions.cpp:43
 #: engines/dragons/metaengine.cpp:181 engines/griffon/metaengine.cpp:114
 #: engines/grim/grim.cpp:466 engines/grim/grim.cpp:543
@@ -1006,7 +1006,7 @@ msgstr "מצבי dithering מיוחדים הנתמכים על ידי כמה מש
 msgid "Stretch mode:"
 msgstr "מצב מתיחה:"
 
-#: gui/options.cpp:1324 backends/graphics/sdl/sdl-graphics.cpp:373
+#: gui/options.cpp:1324 backends/graphics/sdl/sdl-graphics.cpp:380
 msgid "Fullscreen mode"
 msgstr "מצב מסך מלא"
 
@@ -1750,7 +1750,7 @@ msgid "Recorder or Playback Gameplay"
 msgstr "משחק מקליט או פלייבק"
 
 #: gui/recorderdialog.cpp:67 gui/recorderdialog.cpp:155
-#: gui/saveload-dialog.cpp:397 gui/saveload-dialog.cpp:465
+#: gui/saveload-dialog.cpp:399 gui/saveload-dialog.cpp:467
 msgid "Delete"
 msgstr "מחק"
 
@@ -1788,77 +1788,77 @@ msgstr "סופר לא ידוע"
 msgid "ScummVM could not access the directory!"
 msgstr "ScummVM לא יכול היה לגשת לספרייה!"
 
-#: gui/saveload-dialog.cpp:52
+#: gui/saveload-dialog.cpp:54
 #, fuzzy
 msgid "Downloading saves..."
 msgstr "טוען משחק..."
 
-#: gui/saveload-dialog.cpp:61
+#: gui/saveload-dialog.cpp:63
 #, fuzzy
 msgid "Run in background"
 msgstr "להתקדם"
 
-#: gui/saveload-dialog.cpp:343
+#: gui/saveload-dialog.cpp:345
 msgid "List view"
 msgstr "תצוגת רשימה"
 
-#: gui/saveload-dialog.cpp:344
+#: gui/saveload-dialog.cpp:346
 msgid "Grid view"
 msgstr "נוף רשת"
 
-#: gui/saveload-dialog.cpp:388 gui/saveload-dialog.cpp:569
+#: gui/saveload-dialog.cpp:390 gui/saveload-dialog.cpp:571
 msgid "No date saved"
 msgstr "לא נשמר תאריך"
 
-#: gui/saveload-dialog.cpp:389 gui/saveload-dialog.cpp:570
+#: gui/saveload-dialog.cpp:391 gui/saveload-dialog.cpp:572
 msgid "No time saved"
 msgstr "לא חסך זמן"
 
-#: gui/saveload-dialog.cpp:390 gui/saveload-dialog.cpp:571
+#: gui/saveload-dialog.cpp:392 gui/saveload-dialog.cpp:573
 msgid "No playtime saved"
 msgstr "לא נשמר זמן משחק"
 
-#: gui/saveload-dialog.cpp:464
+#: gui/saveload-dialog.cpp:466
 msgid "Do you really want to delete this saved game?"
 msgstr "האם אתה באמת רוצה למחוק את המשחק השמור הזה?"
 
-#: gui/saveload-dialog.cpp:596 gui/saveload-dialog.cpp:1116
+#: gui/saveload-dialog.cpp:598 gui/saveload-dialog.cpp:1118
 msgid "Date: "
 msgstr "תאריך: "
 
-#: gui/saveload-dialog.cpp:600 gui/saveload-dialog.cpp:1122
+#: gui/saveload-dialog.cpp:602 gui/saveload-dialog.cpp:1124
 msgid "Time: "
 msgstr "זמן: "
 
-#: gui/saveload-dialog.cpp:606 gui/saveload-dialog.cpp:1130
+#: gui/saveload-dialog.cpp:608 gui/saveload-dialog.cpp:1132
 msgid "Playtime: "
 msgstr "זמן משחק: "
 
-#: gui/saveload-dialog.cpp:619 gui/saveload-dialog.cpp:707
+#: gui/saveload-dialog.cpp:621 gui/saveload-dialog.cpp:709
 msgid "Untitled saved game"
 msgstr "משחק שמור ללא שם"
 
-#: gui/saveload-dialog.cpp:770
+#: gui/saveload-dialog.cpp:772
 msgid "Next"
 msgstr "הבא"
 
-#: gui/saveload-dialog.cpp:773
+#: gui/saveload-dialog.cpp:775
 msgid "Prev"
 msgstr "קודם"
 
-#: gui/saveload-dialog.cpp:980
+#: gui/saveload-dialog.cpp:982
 msgid "New Save"
 msgstr "שמור חדש"
 
-#: gui/saveload-dialog.cpp:980
+#: gui/saveload-dialog.cpp:982
 msgid "Create a new saved game"
 msgstr "צור משחק שמור חדש"
 
-#: gui/saveload-dialog.cpp:1109
+#: gui/saveload-dialog.cpp:1111
 msgid "Name: "
 msgstr "שם: "
 
-#: gui/saveload-dialog.cpp:1185
+#: gui/saveload-dialog.cpp:1187
 #, c-format
 msgid "Enter a description for slot %d:"
 msgstr "הזן תיאור עבור משבצת %d:"
@@ -1867,28 +1867,28 @@ msgstr "הזן תיאור עבור משבצת %d:"
 msgid "Select a Theme"
 msgstr "בחר נושא"
 
-#: gui/ThemeEngine.cpp:278
+#: gui/ThemeEngine.cpp:270
 msgid "Disabled GFX"
 msgstr "GFX מושבת"
 
-#: gui/ThemeEngine.cpp:278
+#: gui/ThemeEngine.cpp:270
 msgctxt "lowres"
 msgid "Disabled GFX"
 msgstr "GFX מושבת"
 
-#: gui/ThemeEngine.cpp:279
+#: gui/ThemeEngine.cpp:271
 msgid "Standard renderer"
 msgstr "מעבד רגיל"
 
-#: gui/ThemeEngine.cpp:279 engines/scumm/dialogs.cpp:672
+#: gui/ThemeEngine.cpp:271 engines/scumm/dialogs.cpp:672
 msgid "Standard"
 msgstr "סטנדרט"
 
-#: gui/ThemeEngine.cpp:281
+#: gui/ThemeEngine.cpp:273
 msgid "Antialiased renderer"
 msgstr "מעבד אנטי-מיועד"
 
-#: gui/ThemeEngine.cpp:281
+#: gui/ThemeEngine.cpp:273
 msgid "Antialiased"
 msgstr "אנטי-מיועד"
 
@@ -1945,7 +1945,7 @@ msgstr ""
 msgid "Proceed"
 msgstr "להמשיך"
 
-#: gui/widget.cpp:413 gui/widget.cpp:415 gui/widget.cpp:421 gui/widget.cpp:423
+#: gui/widget.cpp:407 gui/widget.cpp:409 gui/widget.cpp:415 gui/widget.cpp:417
 msgid "Clear value"
 msgstr "ערך ברור"
 
@@ -2672,32 +2672,32 @@ msgstr "מתחים לחלון"
 msgid "Fit to window (4:3)"
 msgstr "מתאים לחלון (4: 3)"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:595
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:604
 #, c-format
 msgid "Resolution: %dx%d"
 msgstr "רזולוציה: %dx%d"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:618
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:627
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2498
 msgid "Enabled aspect ratio correction"
 msgstr "תיקון יחס גובה-רוחב מופעל"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:620
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:629
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2504
 msgid "Disabled aspect ratio correction"
 msgstr "תיקון יחס גובה-רוחב מושבת"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:641
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:650
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2520
 msgid "Filtering enabled"
 msgstr "סינון מופעל"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:643
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:652
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2522
 msgid "Filtering disabled"
 msgstr "הסינון מושבת"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:672
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:681
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2549
 msgid "Stretch mode"
 msgstr "מצב מתיחה"
@@ -2711,22 +2711,22 @@ msgstr "רגיל (ללא קנה מידה)"
 msgid "Active graphics filter:"
 msgstr "פילטר גרפי פעיל:"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:375
+#: backends/graphics/sdl/sdl-graphics.cpp:382
 msgid "Windowed mode"
 msgstr "מצב חלון"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:386
+#: backends/graphics/sdl/sdl-graphics.cpp:393
 #: backends/graphics3d/sdl/sdl-graphics3d.cpp:136 engines/scumm/help.cpp:86
 msgid "Toggle fullscreen"
 msgstr "מיתוג מסך מלא"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:393
+#: backends/graphics/sdl/sdl-graphics.cpp:400
 #: backends/graphics3d/sdl/sdl-graphics3d.cpp:143 engines/scumm/help.cpp:99
 #: engines/wintermute/keymapper_tables.h:710
 msgid "Toggle mouse capture"
 msgstr "החלף לכידת עכבר"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:398
+#: backends/graphics/sdl/sdl-graphics.cpp:405
 #: backends/graphics3d/sdl/sdl-graphics3d.cpp:148
 #: engines/wintermute/keymapper_tables.h:478
 #: engines/wintermute/keymapper_tables.h:847
@@ -2739,37 +2739,37 @@ msgstr "החלף לכידת עכבר"
 msgid "Save screenshot"
 msgstr "שמור צילום מסך"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:404
+#: backends/graphics/sdl/sdl-graphics.cpp:411
 #: backends/graphics3d/sdl/sdl-graphics3d.cpp:154
 msgid "Toggle aspect ratio correction"
 msgstr "החלף בין מצבי יחס גובה-רוחב"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:411
+#: backends/graphics/sdl/sdl-graphics.cpp:418
 msgid "Toggle linear filtered scaling"
 msgstr "השתמש בסינון לינארי בעת קנה המידה של גרפיקה"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:418
+#: backends/graphics/sdl/sdl-graphics.cpp:425
 #, fuzzy
 msgid "Cycle through stretch modes"
 msgstr "לא ניתן היה לעבור למצב מתיחה '%s'."
 
-#: backends/graphics/sdl/sdl-graphics.cpp:424
+#: backends/graphics/sdl/sdl-graphics.cpp:431
 #, fuzzy
 msgid "Increase the scale factor"
 msgstr "הגדל / הקטן את גורם הסולם"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:430
+#: backends/graphics/sdl/sdl-graphics.cpp:437
 #, fuzzy
 msgid "Decrease the scale factor"
 msgstr "הגדל / הקטן את גורם הסולם"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:436
+#: backends/graphics/sdl/sdl-graphics.cpp:443
 #, fuzzy
 #| msgid "Switch to Game"
 msgid "Switch to the next scaler"
 msgstr "עבור אל המשחק"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:441
+#: backends/graphics/sdl/sdl-graphics.cpp:448
 msgid "Switch to the previous scaler"
 msgstr ""
 

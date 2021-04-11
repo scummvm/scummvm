@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-04-11 18:36+0000\n"
+"POT-Creation-Date: 2021-04-11 19:21+0000\n"
 "PO-Revision-Date: 2021-03-07 12:24+0000\n"
 "Last-Translator: Joohan Lee <losernator@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -60,9 +60,9 @@ msgstr "위로"
 #: gui/fluidsynth-dialog.cpp:153 gui/KeysDialog.cpp:44 gui/massadd.cpp:92
 #: gui/options.cpp:1953 gui/predictivedialog.cpp:69 gui/recorderdialog.cpp:68
 #: gui/recorderdialog.cpp:155 gui/remotebrowser.cpp:60
-#: gui/saveload-dialog.cpp:60 gui/saveload-dialog.cpp:393
-#: gui/saveload-dialog.cpp:465 gui/saveload-dialog.cpp:769
-#: gui/saveload-dialog.cpp:1165 gui/themebrowser.cpp:55
+#: gui/saveload-dialog.cpp:62 gui/saveload-dialog.cpp:395
+#: gui/saveload-dialog.cpp:467 gui/saveload-dialog.cpp:771
+#: gui/saveload-dialog.cpp:1167 gui/themebrowser.cpp:55
 #: gui/unknown-game-dialog.cpp:54 engines/engine.cpp:652
 #: backends/dialogs/gtk/gtk-dialogs.cpp:46
 #: backends/events/default/default-events.cpp:185
@@ -162,7 +162,7 @@ msgstr ""
 #: gui/downloaddialog.cpp:147 gui/editgamedialog.cpp:377
 #: gui/fluidsynth-dialog.cpp:154 gui/KeysDialog.cpp:43 gui/launcher.cpp:510
 #: gui/launcher.cpp:514 gui/massadd.cpp:89 gui/options.cpp:1955
-#: gui/saveload-dialog.cpp:1166 engines/engine.cpp:511 engines/engine.cpp:522
+#: gui/saveload-dialog.cpp:1168 engines/engine.cpp:511 engines/engine.cpp:522
 #: backends/platform/wii/options.cpp:47 engines/agos/animation.cpp:559
 #: engines/drascula/saveload.cpp:49 engines/groovie/script.cpp:484
 #: engines/parallaction/saveload.cpp:271 engines/sci/engine/kgraphics.cpp:75
@@ -268,7 +268,7 @@ msgid "Engine"
 msgstr "엔진"
 
 #: gui/editgamedialog.cpp:203 gui/options.cpp:1666 gui/options.cpp:1799
-#: backends/graphics/sdl/sdl-graphics.cpp:382
+#: backends/graphics/sdl/sdl-graphics.cpp:389
 #: backends/graphics3d/sdl/sdl-graphics3d.cpp:132
 msgid "Graphics"
 msgstr "그래픽"
@@ -585,23 +585,23 @@ msgid ""
 "Do you really want to reset all FluidSynth settings to their default values?"
 msgstr "FluidSynth의 모든 설정을 기본값으로 되돌리겠습니까?"
 
-#: gui/gui-manager.cpp:113
+#: gui/gui-manager.cpp:141
 msgid "GUI"
 msgstr "GUI"
 
-#: gui/gui-manager.cpp:117 engines/mohawk/myst.cpp:570
+#: gui/gui-manager.cpp:145 engines/mohawk/myst.cpp:570
 #: engines/mohawk/riven.cpp:840
 msgid "Interact"
 msgstr "상호작용"
 
-#: gui/gui-manager.cpp:122 gui/unknown-game-dialog.cpp:54
+#: gui/gui-manager.cpp:150 gui/unknown-game-dialog.cpp:54
 #: engines/nancy/dialogs.cpp:308 engines/scumm/help.cpp:125
 #: engines/scumm/help.cpp:140 engines/scumm/help.cpp:165
 #: engines/scumm/help.cpp:191 engines/scumm/help.cpp:209
 msgid "Close"
 msgstr "닫기"
 
-#: gui/gui-manager.cpp:128 engines/metaengine.cpp:108
+#: gui/gui-manager.cpp:156 engines/metaengine.cpp:108
 #: backends/platform/symbian/src/SymbianActions.cpp:40
 #: engines/dragons/metaengine.cpp:163 engines/glk/scott/scott.cpp:412
 #: engines/griffon/metaengine.cpp:96 engines/grim/grim.cpp:451
@@ -613,7 +613,7 @@ msgstr "닫기"
 msgid "Up"
 msgstr "위"
 
-#: gui/gui-manager.cpp:133 engines/metaengine.cpp:113
+#: gui/gui-manager.cpp:161 engines/metaengine.cpp:113
 #: backends/platform/symbian/src/SymbianActions.cpp:41
 #: engines/dragons/metaengine.cpp:169 engines/glk/scott/scott.cpp:412
 #: engines/griffon/metaengine.cpp:102 engines/grim/grim.cpp:456
@@ -625,7 +625,7 @@ msgstr "위"
 msgid "Down"
 msgstr "아래"
 
-#: gui/gui-manager.cpp:138 engines/metaengine.cpp:118
+#: gui/gui-manager.cpp:166 engines/metaengine.cpp:118
 #: backends/platform/symbian/src/SymbianActions.cpp:42
 #: engines/dragons/metaengine.cpp:175 engines/griffon/metaengine.cpp:108
 #: engines/grim/grim.cpp:461 engines/grim/grim.cpp:538
@@ -637,7 +637,7 @@ msgstr "아래"
 msgid "Left"
 msgstr "왼쪽"
 
-#: gui/gui-manager.cpp:143 engines/metaengine.cpp:123
+#: gui/gui-manager.cpp:171 engines/metaengine.cpp:123
 #: backends/platform/symbian/src/SymbianActions.cpp:43
 #: engines/dragons/metaengine.cpp:181 engines/griffon/metaengine.cpp:114
 #: engines/grim/grim.cpp:466 engines/grim/grim.cpp:543
@@ -1011,7 +1011,7 @@ msgstr "일부 게임에서 지원하는 특수 디더링 모드"
 msgid "Stretch mode:"
 msgstr "확대 모드:"
 
-#: gui/options.cpp:1324 backends/graphics/sdl/sdl-graphics.cpp:373
+#: gui/options.cpp:1324 backends/graphics/sdl/sdl-graphics.cpp:380
 msgid "Fullscreen mode"
 msgstr "전체 화면 모드"
 
@@ -1761,7 +1761,7 @@ msgid "Recorder or Playback Gameplay"
 msgstr "게임플레이 녹화 또는 재생"
 
 #: gui/recorderdialog.cpp:67 gui/recorderdialog.cpp:155
-#: gui/saveload-dialog.cpp:397 gui/saveload-dialog.cpp:465
+#: gui/saveload-dialog.cpp:399 gui/saveload-dialog.cpp:467
 msgid "Delete"
 msgstr "삭제"
 
@@ -1799,75 +1799,75 @@ msgstr "알 수 없는 작성자"
 msgid "ScummVM could not access the directory!"
 msgstr "ScummVM이 선택된 디렉토리에 접근하지 못했습니다!"
 
-#: gui/saveload-dialog.cpp:52
+#: gui/saveload-dialog.cpp:54
 msgid "Downloading saves..."
 msgstr "세이브 파일을 다운로드하는 중..."
 
-#: gui/saveload-dialog.cpp:61
+#: gui/saveload-dialog.cpp:63
 msgid "Run in background"
 msgstr "백그라운드에서 실행"
 
-#: gui/saveload-dialog.cpp:343
+#: gui/saveload-dialog.cpp:345
 msgid "List view"
 msgstr "리스트로 표시"
 
-#: gui/saveload-dialog.cpp:344
+#: gui/saveload-dialog.cpp:346
 msgid "Grid view"
 msgstr "그리드로 표시"
 
-#: gui/saveload-dialog.cpp:388 gui/saveload-dialog.cpp:569
+#: gui/saveload-dialog.cpp:390 gui/saveload-dialog.cpp:571
 msgid "No date saved"
 msgstr "날짜가 기록되지 않음"
 
-#: gui/saveload-dialog.cpp:389 gui/saveload-dialog.cpp:570
+#: gui/saveload-dialog.cpp:391 gui/saveload-dialog.cpp:572
 msgid "No time saved"
 msgstr "시각이 기록되지 않음"
 
-#: gui/saveload-dialog.cpp:390 gui/saveload-dialog.cpp:571
+#: gui/saveload-dialog.cpp:392 gui/saveload-dialog.cpp:573
 msgid "No playtime saved"
 msgstr "플레이 시간이 기록되지 않음"
 
-#: gui/saveload-dialog.cpp:464
+#: gui/saveload-dialog.cpp:466
 msgid "Do you really want to delete this saved game?"
 msgstr "이 세이브 파일을 삭제하겠습니까?"
 
-#: gui/saveload-dialog.cpp:596 gui/saveload-dialog.cpp:1116
+#: gui/saveload-dialog.cpp:598 gui/saveload-dialog.cpp:1118
 msgid "Date: "
 msgstr "날짜: "
 
-#: gui/saveload-dialog.cpp:600 gui/saveload-dialog.cpp:1122
+#: gui/saveload-dialog.cpp:602 gui/saveload-dialog.cpp:1124
 msgid "Time: "
 msgstr "시각: "
 
-#: gui/saveload-dialog.cpp:606 gui/saveload-dialog.cpp:1130
+#: gui/saveload-dialog.cpp:608 gui/saveload-dialog.cpp:1132
 msgid "Playtime: "
 msgstr "플레이 시간: "
 
-#: gui/saveload-dialog.cpp:619 gui/saveload-dialog.cpp:707
+#: gui/saveload-dialog.cpp:621 gui/saveload-dialog.cpp:709
 msgid "Untitled saved game"
 msgstr "제목 없음"
 
-#: gui/saveload-dialog.cpp:770
+#: gui/saveload-dialog.cpp:772
 msgid "Next"
 msgstr "다음"
 
-#: gui/saveload-dialog.cpp:773
+#: gui/saveload-dialog.cpp:775
 msgid "Prev"
 msgstr "이전"
 
-#: gui/saveload-dialog.cpp:980
+#: gui/saveload-dialog.cpp:982
 msgid "New Save"
 msgstr "새 저장"
 
-#: gui/saveload-dialog.cpp:980
+#: gui/saveload-dialog.cpp:982
 msgid "Create a new saved game"
 msgstr "새로운 게임 저장 파일을 생성합니다"
 
-#: gui/saveload-dialog.cpp:1109
+#: gui/saveload-dialog.cpp:1111
 msgid "Name: "
 msgstr "이름: "
 
-#: gui/saveload-dialog.cpp:1185
+#: gui/saveload-dialog.cpp:1187
 #, c-format
 msgid "Enter a description for slot %d:"
 msgstr "세이브 %d의 설명을 입력하세요:"
@@ -1876,28 +1876,28 @@ msgstr "세이브 %d의 설명을 입력하세요:"
 msgid "Select a Theme"
 msgstr "테마 선택"
 
-#: gui/ThemeEngine.cpp:278
+#: gui/ThemeEngine.cpp:270
 msgid "Disabled GFX"
 msgstr "GFX 비활성화"
 
-#: gui/ThemeEngine.cpp:278
+#: gui/ThemeEngine.cpp:270
 msgctxt "lowres"
 msgid "Disabled GFX"
 msgstr "GFX 비활성화"
 
-#: gui/ThemeEngine.cpp:279
+#: gui/ThemeEngine.cpp:271
 msgid "Standard renderer"
 msgstr "표준 렌더러"
 
-#: gui/ThemeEngine.cpp:279 engines/scumm/dialogs.cpp:672
+#: gui/ThemeEngine.cpp:271 engines/scumm/dialogs.cpp:672
 msgid "Standard"
 msgstr "표준"
 
-#: gui/ThemeEngine.cpp:281
+#: gui/ThemeEngine.cpp:273
 msgid "Antialiased renderer"
 msgstr "안티앨리어싱 렌더러"
 
-#: gui/ThemeEngine.cpp:281
+#: gui/ThemeEngine.cpp:273
 msgid "Antialiased"
 msgstr "안티앨리어싱"
 
@@ -1954,7 +1954,7 @@ msgstr ""
 msgid "Proceed"
 msgstr "진행"
 
-#: gui/widget.cpp:413 gui/widget.cpp:415 gui/widget.cpp:421 gui/widget.cpp:423
+#: gui/widget.cpp:407 gui/widget.cpp:409 gui/widget.cpp:415 gui/widget.cpp:417
 msgid "Clear value"
 msgstr "값 제거"
 
@@ -2691,32 +2691,32 @@ msgstr "창에 맞게 늘림"
 msgid "Fit to window (4:3)"
 msgstr "창 크기에 맞춤 (4:3)"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:595
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:604
 #, c-format
 msgid "Resolution: %dx%d"
 msgstr "해상도: %dx%d"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:618
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:627
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2498
 msgid "Enabled aspect ratio correction"
 msgstr "화면 종횡비 보정 활성화"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:620
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:629
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2504
 msgid "Disabled aspect ratio correction"
 msgstr "화면 종횡비 보정 비활성화"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:641
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:650
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2520
 msgid "Filtering enabled"
 msgstr "필터링 활성화"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:643
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:652
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2522
 msgid "Filtering disabled"
 msgstr "필터링 비활성화"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:672
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:681
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2549
 msgid "Stretch mode"
 msgstr "확대 모드"
@@ -2730,22 +2730,22 @@ msgstr "일반 (확대 없음)"
 msgid "Active graphics filter:"
 msgstr "활성 그래픽 필터:"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:375
+#: backends/graphics/sdl/sdl-graphics.cpp:382
 msgid "Windowed mode"
 msgstr "창 모드"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:386
+#: backends/graphics/sdl/sdl-graphics.cpp:393
 #: backends/graphics3d/sdl/sdl-graphics3d.cpp:136 engines/scumm/help.cpp:86
 msgid "Toggle fullscreen"
 msgstr "전체화면 전환"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:393
+#: backends/graphics/sdl/sdl-graphics.cpp:400
 #: backends/graphics3d/sdl/sdl-graphics3d.cpp:143 engines/scumm/help.cpp:99
 #: engines/wintermute/keymapper_tables.h:710
 msgid "Toggle mouse capture"
 msgstr "마우스 캡처 전환"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:398
+#: backends/graphics/sdl/sdl-graphics.cpp:405
 #: backends/graphics3d/sdl/sdl-graphics3d.cpp:148
 #: engines/wintermute/keymapper_tables.h:478
 #: engines/wintermute/keymapper_tables.h:847
@@ -2758,34 +2758,34 @@ msgstr "마우스 캡처 전환"
 msgid "Save screenshot"
 msgstr "스크린샷 저장"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:404
+#: backends/graphics/sdl/sdl-graphics.cpp:411
 #: backends/graphics3d/sdl/sdl-graphics3d.cpp:154
 msgid "Toggle aspect ratio correction"
 msgstr "화면 종횡비 보정 전환"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:411
+#: backends/graphics/sdl/sdl-graphics.cpp:418
 msgid "Toggle linear filtered scaling"
 msgstr "선형 필터링 전환"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:418
+#: backends/graphics/sdl/sdl-graphics.cpp:425
 msgid "Cycle through stretch modes"
 msgstr "확대 모드간 순환"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:424
+#: backends/graphics/sdl/sdl-graphics.cpp:431
 msgid "Increase the scale factor"
 msgstr "확대 비율 증가"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:430
+#: backends/graphics/sdl/sdl-graphics.cpp:437
 msgid "Decrease the scale factor"
 msgstr "확대 비율 감소"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:436
+#: backends/graphics/sdl/sdl-graphics.cpp:443
 #, fuzzy
 #| msgid "Switch to TV 2x scaling"
 msgid "Switch to the next scaler"
 msgstr "TV 2x 크기조절로 전환"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:441
+#: backends/graphics/sdl/sdl-graphics.cpp:448
 #, fuzzy
 #| msgid "Switch to nearest neighbour scaling"
 msgid "Switch to the previous scaler"
