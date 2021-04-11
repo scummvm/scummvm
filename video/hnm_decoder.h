@@ -73,10 +73,10 @@ private:
 
 		/** Decode a video chunk. */
 		void decodePalette(Common::SeekableReadStream *stream, uint32 size);
-		void decodeInterframe(Common::SeekableReadStream *stream, uint32 size, uint16 flags);
-		void decodeInterframeA(Common::SeekableReadStream *stream, uint32 size, uint16 flags);
-		void decodeIntraframe(Common::SeekableReadStream *stream, uint32 size, uint16 flags);
-		void postprocess(uint16 flags);
+		void decodeInterframe(Common::SeekableReadStream *stream, uint32 size);
+		void decodeInterframeA(Common::SeekableReadStream *stream, uint32 size);
+		void decodeIntraframe(Common::SeekableReadStream *stream, uint32 size);
+		void presentFrame(uint16 flags);
 
 		void restart() { _nextFrameDelay = uint32(-1); _nextNextFrameDelay = uint32(-1); }
 		void setFrameDelay(uint32 frameDelay);
