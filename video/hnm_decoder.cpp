@@ -349,10 +349,15 @@ void HNMDecoder::HNM4VideoTrack::decodeInterframe(Common::SeekableReadStream *st
 			if (swap)
 				SWAP(shft1, shft2);
 
+			int src_inc = backward ? -2 : 2;
+
 			while (count--) {
-				_frameBufferC[currentPos++] = ptr[offset + shft1];
-				_frameBufferC[currentPos++] = ptr[offset + shft2];
-				offset += backward ? -2 : 2;
+				byte b0 = ptr[offset + shft1];
+				byte b1 = ptr[offset + shft2];
+				_frameBufferC[currentPos++] = b0;
+				_frameBufferC[currentPos++] = b1;
+
+				offset += src_inc;
 			}
 		}
 	}
