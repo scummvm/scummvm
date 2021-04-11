@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-04-10 21:43+0000\n"
+"POT-Creation-Date: 2021-04-11 18:36+0000\n"
 "PO-Revision-Date: 2021-04-08 10:05+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
@@ -784,7 +784,7 @@ msgstr "Поиск:"
 
 #: gui/launcher.cpp:210 engines/dialogs.cpp:102 engines/engine.cpp:802
 #: engines/buried/saveload.cpp:515 engines/pegasus/pegasus.cpp:384
-#: engines/tsage/scenes.cpp:613 engines/wage/saveload.cpp:742
+#: engines/tsage/scenes.cpp:631 engines/wage/saveload.cpp:742
 #: engines/xeen/saves.cpp:256
 msgid "Load game:"
 msgstr "Загрузить игру:"
@@ -792,7 +792,7 @@ msgstr "Загрузить игру:"
 #: gui/launcher.cpp:210 engines/dialogs.cpp:102 engines/engine.cpp:802
 #: engines/buried/saveload.cpp:515 engines/parallaction/metaengine.cpp:118
 #: engines/parallaction/saveload.cpp:194 engines/pegasus/pegasus.cpp:384
-#: engines/scumm/dialogs.cpp:178 engines/tsage/scenes.cpp:613
+#: engines/scumm/dialogs.cpp:178 engines/tsage/scenes.cpp:631
 #: engines/wage/saveload.cpp:742 engines/xeen/saves.cpp:256
 msgid "Load"
 msgstr "Загрузить"
@@ -2159,7 +2159,7 @@ msgstr "~В~ главное меню"
 #: engines/sci/engine/kfile.cpp:1075 engines/sherlock/scalpel/scalpel.cpp:1250
 #: engines/sherlock/tattoo/widget_files.cpp:75 engines/startrek/saveload.cpp:43
 #: engines/toltecs/menu.cpp:292 engines/toon/toon.cpp:3362
-#: engines/tsage/scenes.cpp:611 engines/wage/saveload.cpp:752
+#: engines/tsage/scenes.cpp:629 engines/wage/saveload.cpp:752
 #: engines/xeen/saves.cpp:277 engines/zvision/file/save_manager.cpp:49
 msgid "Save game:"
 msgstr "Сохранить игру:"
@@ -2181,7 +2181,7 @@ msgstr "Сохранить игру:"
 #: engines/sherlock/scalpel/scalpel.cpp:1250
 #: engines/sherlock/tattoo/widget_files.cpp:75 engines/startrek/saveload.cpp:43
 #: engines/toltecs/menu.cpp:292 engines/toon/toon.cpp:3362
-#: engines/tsage/scenes.cpp:611 engines/wage/saveload.cpp:752
+#: engines/tsage/scenes.cpp:629 engines/wage/saveload.cpp:752
 #: engines/xeen/saves.cpp:277 engines/zvision/file/save_manager.cpp:49
 #: engines/zvision/metaengine.cpp:194
 msgid "Save"
