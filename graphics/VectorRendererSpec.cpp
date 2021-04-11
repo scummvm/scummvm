@@ -741,7 +741,20 @@ void VectorRendererSpec<PixelType>::
 blitSurface(const Graphics::ManagedSurface *source, const Common::Rect &r) {
 	assert(source->w == _activeSurface->w && source->h == _activeSurface->h);
 
-	_activeSurface->blitFrom(*source, r, r);
+	byte *dst_ptr = (byte *)_activeSurface->getBasePtr(r.left, r.top);
+	const byte *src_ptr = (const byte *)source->getBasePtr(r.left, r.top);
+
+	const int dst_pitch = _activeSurface->pitch;
+	const int src_pitch = source->pitch;
+
+	int h = r.height();
+	const int w = r.width() * sizeof(PixelType);
+
+	while (h--) {
+		memcpy(dst_ptr, src_ptr, w);
+		dst_ptr += dst_pitch;
+		src_ptr += src_pitch;
+	}
 }
 
 template<typename PixelType>
