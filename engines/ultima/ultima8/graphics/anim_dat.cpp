@@ -245,8 +245,13 @@ void AnimDat::load(Common::SeekableReadStream *rs) {
 						f._sfx = rs->readByte();
 						// byte 4: deltadir (signed) - convert to pixels
 						f._deltaDir = rs->readSByte();
-						// byte 5: flags
-						f._flags = rs->readByte();
+						// byte 5: flags.  The lowest bit is actually a sign bit for
+						// deltaDir, which is technically 9 bits long.  There are no
+						// animations in the game exceeding 8-bit signed, the 9th bit
+						// is there so that multiple frames can be stacked in the same
+						// struct by the original game when it's skipping frames.
+						// We have more memory and don't frame-skip, so just ignore it.
+						f._flags = rs->readByte() & 0xFE;
 						f._flags += (x & 0xF0) << 8;
 						// bytes 6, 7: more flags
 						f._flags += rs->readUint16LE() << 16;
