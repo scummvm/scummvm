@@ -166,7 +166,7 @@ void MacWindowBorder::drawScrollBar(ManagedSurface *g, MacWindowManager *wm) {
 void MacWindowBorder::drawTitle(ManagedSurface *g, MacWindowManager *wm, int titleOffset) {
 	const Graphics::Font *font = wm->_fontMan->getFont(Graphics::MacFont(kMacFontChicago, 12));
 	int width = g->w;
-	int titleColor = wm->_colorBlack;
+	int titleColor = getOffset().dark ? wm->_colorWhite: wm->_colorBlack;
 	int titleY = getOffset().titleTop;
 	int sidesWidth = getOffset().left + getOffset().right;
 	int titleWidth = font->getStringWidth(_title) + 10;
