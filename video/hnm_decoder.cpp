@@ -69,7 +69,7 @@ bool HNMDecoder::loadStream(Common::SeekableReadStream *stream) {
 	//uint32 tabOffset = stream->readUint32LE();
 	stream->skip(4);
 	uint16 soundBits = stream->readUint16LE();
-	uint16 soundChannels = stream->readUint16LE();
+	uint16 soundFormat = stream->readUint16LE();
 	uint32 frameSize = stream->readUint32LE();
 
 	byte unknownStr[16];
@@ -84,14 +84,14 @@ bool HNMDecoder::loadStream(Common::SeekableReadStream *stream) {
 
 	_videoTrack = new HNM4VideoTrack(width, height, frameSize, frameCount, _regularFrameDelay,
 	                                 _initialPalette);
-	if (soundBits != 0 && soundChannels != 0) {
+	addTrack(_videoTrack);
+	if (soundFormat == 2 && soundBits != 0) {
 		// HNM4 is 22050Hz
-		_audioTrack = new DPCMAudioTrack(soundChannels, soundBits, 22050, getSoundType());
+		_audioTrack = new DPCMAudioTrack(soundFormat, soundBits, 22050, getSoundType());
+		addTrack(_audioTrack);
 	} else {
 		_audioTrack = nullptr;
 	}
-	addTrack(_videoTrack);
-	addTrack(_audioTrack);
 
 	_stream = stream;
 
@@ -147,7 +147,7 @@ void HNMDecoder::readNextPacket() {
 				Audio::Timestamp duration = _audioTrack->decodeSound(_stream, chunkSize - 8);
 				_videoTrack->setFrameDelay(duration.msecs());
 			} else {
-				error("Shouldn't have audio data");
+				warning("Got audio data without an audio track");
 			}
 		} else {
 			error("Got %d chunk: size %d", chunkType, chunkSize);
@@ -508,15 +508,16 @@ void HNMDecoder::HNM4VideoTrack::presentFrame(uint16 flags) {
 	_nextNextFrameDelay = uint32(-1);
 }
 
-HNMDecoder::DPCMAudioTrack::DPCMAudioTrack(uint16 channels, uint16 bits, uint sampleRate,
+HNMDecoder::DPCMAudioTrack::DPCMAudioTrack(uint16 format, uint16 bits, uint sampleRate,
         Audio::Mixer::SoundType soundType) : AudioTrack(soundType), _audioStream(nullptr),
 	_gotLUT(false), _lastSample(0) {
 	if (bits != 16) {
 		error("Unsupported audio bits");
 	}
-	if (channels != 2) {
-		warning("Unsupported %d audio channels", channels);
+	if (format != 2) {
+		warning("Unsupported %d audio format", format);
 	}
+	// Format 2 is Mono 16-bits DPCM
 	_audioStream = Audio::makeQueuingAudioStream(sampleRate, false);
 }
 
@@ -555,7 +556,6 @@ Audio::Timestamp HNMDecoder::DPCMAudioTrack::decodeSound(Common::SeekableReadStr
 #ifdef SCUMM_LITTLE_ENDIAN
 		flags |= Audio::FLAG_LITTLE_ENDIAN;
 #endif
-		// channels is 2 but we are MONO!
 		_audioStream->queueBuffer((byte *)out, size * sizeof(*out), DisposeAfterUse::YES, flags);
 	}
 	return Audio::Timestamp(0, size, 22050);
