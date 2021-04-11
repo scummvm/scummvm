@@ -54,11 +54,14 @@ enum RawFlags {
 	/** sound is 16 bits wide (default: 8bit) */
 	FLAG_16BITS = 1 << 1,
 
+	/** sound is 24 bits wide (default: 8bit) */
+	FLAG_24BITS = 1 << 2,
+
 	/** samples are little endian (default: big endian) */
-	FLAG_LITTLE_ENDIAN = 1 << 2,
+	FLAG_LITTLE_ENDIAN = 1 << 3,
 
 	/** sound is in stereo (default: mono) */
-	FLAG_STEREO = 1 << 3
+	FLAG_STEREO = 1 << 4
 };
 
 /**

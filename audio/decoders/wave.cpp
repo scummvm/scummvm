@@ -141,6 +141,8 @@ bool loadWAVFromStream(Common::SeekableReadStream &stream, int &size, int &rate,
 		flags |= Audio::FLAG_UNSIGNED;
 	else if (bitsPerSample == 16)	// 16 bit data is signed little endian
 		flags |= (Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN);
+	else if (bitsPerSample == 24)	// 24 bit data is signed little endian
+		flags |= (Audio::FLAG_24BITS | Audio::FLAG_LITTLE_ENDIAN);
 	else if (bitsPerSample == 4 && (type == kWaveFormatMSADPCM || type == kWaveFormatMSIMAADPCM))
 		flags |= Audio::FLAG_16BITS;
 	else {
@@ -193,7 +195,7 @@ SeekableAudioStream *makeWAVStream(Common::SeekableReadStream *stream, DisposeAf
 		return 0;
 	}
 	int channels = (flags & Audio::FLAG_STEREO) ? 2 : 1;
-	int bytesPerSample = (flags & Audio::FLAG_16BITS) ? 2 : 1;
+	int bytesPerSample = (flags & Audio::FLAG_24BITS) ? 3 : ((flags & Audio::FLAG_16BITS) ? 2 : 1);
 
 	// Raw PCM, make sure the last packet is complete
 	if (type == kWaveFormatPCM) {
