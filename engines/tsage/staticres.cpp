@@ -100,27 +100,11 @@ char const *const ESP_SAVING_NOT_ALLOWED_MSG = "No es posible salvar en este mom
 char const *const ESP_RESTORING_NOT_ALLOWED_MSG = "No es posible recuperar una partida en este momento.";
 char const *const ESP_INV_EMPTY_MSG = "No llevas nada contigo.";
 
-char const *const ESP_RW_QUIT_CONFIRM_1_MSG = "\250Quieres abandonar el juego?";
-char const *const ESP_RW_QUIT_CONFIRM_2_MSG = "\250Quieres abandonar esta partida?";
-char const *const ESP_BF_QUIT_CONFIRM_MSG = "\250Quieres dejar de jugar?";
-char const *const ESP_RW_RESTART_MSG = "   \250Quieres empezar de nuevo?    ";
-char const *const ESP_BF_RESTART_MSG = "\250Quieres volver a comenzar el juego?";
-char const *const ESP_RW_GAME_PAUSED_MSG = "Juego pausado";
-char const *const ESP_BF_GAME_PAUSED_MSG = "Juego en pausa.";
 char const *const ESP_OK_BTN_STRING = " Ok ";
 char const *const ESP_CONTINUE_BTN_STRING = " Continuar ";
 char const *const ESP_CANCEL_BTN_STRING = "Cancelar";
-char const *const ESP_RW_QUIT_BTN_STRING = " Abandonar ";
-char const *const ESP_BF_QUIT_BTN_STRING = " Salir ";
-char const *const ESP_RW_RESTART_BTN_1_STRING = "Empezar \rde nuevo";
-char const *const ESP_RW_RESTART_BTN_2_STRING = "Empezar de nuevo";
-char const *const ESP_BF_RESTART_BTN_STRING = "Volver a empezar";
-char const *const ESP_RW_SAVE_BTN_STRING = "Salvar";
-char const *const ESP_BF_SAVE_BTN_STRING = "Guardar";
 char const *const ESP_RESTORE_BTN_STRING = "Recuperar";
 char const *const ESP_SOUND_BTN_STRING = "Sonido";
-char const *const ESP_RW_RESUME_BTN_STRING = " Continuar \rjuego";
-char const *const ESP_BF_RESUME_BTN_STRING = " Seguir \rjugando";
 char const *const ESP_LOOK_BTN_STRING = "Mirar";
 char const *const ESP_PICK_BTN_STRING = "Escoger";
 
@@ -159,6 +143,16 @@ char const *const DEMO_BTN_STRING = "Demo";
 char const *const DEMO_RESUME_BTN_STRING = "Resume";
 
 // Spanish version
+char const *const ESP_QUIT_CONFIRM_1_MSG = "\250Quieres abandonar el juego?";
+char const *const ESP_QUIT_CONFIRM_2_MSG = "\250Quieres abandonar esta partida?";
+char const *const ESP_RESTART_MSG = "   \250Quieres empezar de nuevo?    ";
+char const *const ESP_GAME_PAUSED_MSG = "Juego pausado";
+char const *const ESP_QUIT_BTN_STRING = " Abandonar ";
+char const *const ESP_RESTART_BTN_1_STRING = "Empezar \rde nuevo";
+char const *const ESP_RESTART_BTN_2_STRING = "Empezar de nuevo";
+char const *const ESP_SAVE_BTN_STRING = "Salvar";
+char const *const ESP_RESUME_BTN_STRING = " Continuar \rjuego";
+
 // Dialog resources
 char const *const ESP_HELP_MSG = "Mundo Anillo\x14\rLa Venganza del Patriarca\rVersi\242n ScummVM\r\r\
 \x01 Teclas de aceso r\240pido...\rF2 - Opciones de Sonido\rF3 - Abandonar\r\
@@ -245,6 +239,14 @@ char const *const SCENE570_WACKYDATA = "WACKYDATA";
 char const *const THE_NEXT_DAY = "The Next Day";
 
 // Spanish version
+char const *const ESP_QUIT_CONFIRM_MSG = "\250Quieres dejar de jugar?";
+char const *const ESP_RESTART_MSG = "\250Quieres volver a comenzar el juego?";
+char const *const ESP_GAME_PAUSED_MSG = "Juego en pausa.";
+char const *const ESP_QUIT_BTN_STRING = " Salir ";
+char const *const ESP_RESTART_BTN_STRING = "Volver a empezar";
+char const *const ESP_SAVE_BTN_STRING = "Guardar";
+char const *const ESP_RESUME_BTN_STRING = " Seguir \rjugando";
+
 // Dialog resources
 char const *const ESP_HELP_MSG = "Blue Force\x14\rVersi\242n ScummVM\r\r\
 Funciones del Teclado...\rF2 - Sonido\rF3 - Salir del Juego\r\

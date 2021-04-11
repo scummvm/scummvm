@@ -569,10 +569,10 @@ void Game::restartGame() {
 	int rc;
 	if (g_vm->getLanguage() == Common::ES_ESP) {
 		if (g_vm->getGameID() == GType_Ringworld) {
-			rc = MessageDialog::show(ESP_RW_RESTART_MSG, ESP_CANCEL_BTN_STRING, ESP_RW_RESTART_BTN_2_STRING);
+			rc = MessageDialog::show(Ringworld::ESP_RESTART_MSG, ESP_CANCEL_BTN_STRING, Ringworld::ESP_RESTART_BTN_2_STRING);
 		}
 		else {
-			rc = MessageDialog::show(ESP_BF_RESTART_MSG, ESP_CANCEL_BTN_STRING, ESP_BF_RESTART_BTN_STRING);
+			rc = MessageDialog::show(BlueForce::ESP_RESTART_MSG, ESP_CANCEL_BTN_STRING, BlueForce::ESP_RESTART_BTN_STRING);
 		}
 	} else {
 		rc = MessageDialog::show(RESTART_MSG, CANCEL_BTN_STRING, RESTART_BTN_STRING);
@@ -611,10 +611,10 @@ void Game::quitGame() {
 	int rc;
 	if (g_vm->getLanguage() == Common::ES_ESP) {
 		if (g_vm->getGameID() == GType_Ringworld) {
-			rc = MessageDialog::show(ESP_RW_QUIT_CONFIRM_2_MSG, ESP_CANCEL_BTN_STRING, ESP_RW_QUIT_BTN_STRING);
+			rc = MessageDialog::show(Ringworld::ESP_QUIT_CONFIRM_2_MSG, ESP_CANCEL_BTN_STRING, Ringworld::ESP_QUIT_BTN_STRING);
 		}
 		else {
-			rc = MessageDialog::show(ESP_BF_QUIT_CONFIRM_MSG, ESP_CANCEL_BTN_STRING, ESP_BF_QUIT_BTN_STRING);
+			rc = MessageDialog::show(BlueForce::ESP_QUIT_CONFIRM_MSG, ESP_CANCEL_BTN_STRING, BlueForce::ESP_QUIT_BTN_STRING);
 		}
 	} else {
 		rc = MessageDialog::show(QUIT_CONFIRM_MSG, CANCEL_BTN_STRING, QUIT_BTN_STRING);
