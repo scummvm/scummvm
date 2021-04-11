@@ -102,7 +102,7 @@ private:
 
 	class DPCMAudioTrack : public AudioTrack {
 	public:
-		DPCMAudioTrack(uint16 channels, uint16 bits, uint sampleRate,
+		DPCMAudioTrack(uint16 format, uint16 bits, uint sampleRate,
 		               Audio::Mixer::SoundType soundType);
 		~DPCMAudioTrack() override;
 
