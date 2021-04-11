@@ -91,6 +91,7 @@ For a more comprehensive changelog of the latest experimental code, see:
 
  TsAGE:
    - Added support for uninstalled floppy version.
+   - Properly support Spanish Ringworld & Blue Force.
 
  Stark:
    - Added support for Hungarian translation.
