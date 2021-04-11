@@ -94,6 +94,7 @@ Programmcodes finden Sie auf Englisch unter:
 
  TsAGE:
    - Unterstützung für eine weitere Disketten-Version hinzugefügt.
+   - Unterstützung für die spanischen Versionen von Ringworld und Blue Force hinzugefügt.
 
  Stark:
    - Unterstützung für die ungarische Übersetzung hinzugefügt.
