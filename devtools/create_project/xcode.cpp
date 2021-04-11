@@ -486,6 +486,9 @@ void XcodeProvider::setupFrameworksBuildPhase(const BuildSetup &setup) {
 	if (CONTAINS_DEFINE(setup.defines, "USE_PNG")) {
 		DEF_LOCALLIB_STATIC("libpng");
 	}
+	if (CONTAINS_DEFINE(setup.defines, "USE_GIF")) {
+		DEF_LOCALLIB_STATIC("libgif");
+	}
 	if (CONTAINS_DEFINE(setup.defines, "USE_OGG")) {
 		DEF_LOCALLIB_STATIC("libogg");
 	}
@@ -569,6 +572,9 @@ void XcodeProvider::setupFrameworksBuildPhase(const BuildSetup &setup) {
 	}
 	if (CONTAINS_DEFINE(setup.defines, "USE_PNG")) {
 		frameworks_iOS.push_back("libpng.a");
+	}
+	if (CONTAINS_DEFINE(setup.defines, "USE_GIF")) {
+		frameworks_iOS.push_back("libgif.a");
 	}
 	if (CONTAINS_DEFINE(setup.defines, "USE_OGG")) {
 		frameworks_iOS.push_back("libogg.a");
@@ -683,6 +689,9 @@ void XcodeProvider::setupFrameworksBuildPhase(const BuildSetup &setup) {
 	}
 	if (CONTAINS_DEFINE(setup.defines, "USE_PNG")) {
 		frameworks_osx.push_back("libpng.a");
+	}
+	if (CONTAINS_DEFINE(setup.defines, "USE_GIF")) {
+		frameworks_osx.push_back("libgif.a");
 	}
 	if (CONTAINS_DEFINE(setup.defines, "USE_OGG")) {
 		frameworks_osx.push_back("libogg.a");

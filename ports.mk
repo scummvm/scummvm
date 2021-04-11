@@ -426,6 +426,10 @@ ifdef USE_PNG
 OSX_STATIC_LIBS += $(STATICLIBPATH)/lib/libpng.a
 endif
 
+ifdef USE_GIF
+OSX_STATIC_LIBS += $(STATICLIBPATH)/lib/libgif.a
+endif
+
 ifdef USE_THEORADEC
 OSX_STATIC_LIBS += $(STATICLIBPATH)/lib/libtheoradec.a
 endif
