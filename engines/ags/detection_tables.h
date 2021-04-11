@@ -700,6 +700,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "imnotcrazyrightthecell", "I'm not crazy, right? - The Cell" },
 	{ "imnotcrazyrightthewell", "I'm not crazy, right? - The Well" },
 	{ "indianajonescomingofage", "Indiana Jones - Coming of Age" },
+	{ "indianajonesrelicoftheviking", "Indiana Jones and the relic of the viking" },
 	{ "indianarodent", "Indiana Rodent and the Raiders of the Lost Cheese" },
 	{ "indycositalianver", "IndyCoS - Italian ver" },
 	{ "infectionep2", "Infection_Ep_II" },
@@ -1715,6 +1716,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("geminirue", "GeminiRue.exe", "0bdfb2139abaae5ae2dc85f1aacfd3f6", 61906750), // v1.1 CD Release
 	GAME_ENTRY("geminirue", "gemini rue.exe", "f3c0c7d3892bdd8963e8ce017f73de08", 61986506), // GOG
 	GAME_ENTRY("geminirue", "gemini rue.exe", "0bdfb2139abaae5ae2dc85f1aacfd3f6", 61926695),
+	GAME_ENTRY("geminirue", "gemini rue.exe", "0bdfb2139abaae5ae2dc85f1aacfd3f6", 64650419), // German retail
 	GAME_ENTRY("geminirue", "gemini_rue_pc.exe", "83362d0d2c1d4909bfbd85c04c95bde2", 72960932), // Steam
 	GAME_ENTRY("geminirue", "gemini_rue_pc.exe", "f49a61ea46feb86f89de3c136ad809ff", 73412249), // Steam
 	GAME_ENTRY_PLUGIN("geminirue", "agsgame.dat", "f3c0c7d3892bdd8963e8ce017f73de08", 62059297, AGSTEAM_WADJETEYE), // Steam Linux
@@ -2339,6 +2341,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("harrys21stbirthday", "harold.exe", "f3a13b2d6c2e0fe04c6f466062920e23", 3525444),
 	GAME_ENTRY("haventhesmallworld", "A small world.exe", "b142b43c146c25443a1d155d441a6a81", 43019171),
 	GAME_ENTRY("heartlanddeluxe", "Heartland.exe", "0829f8e184ed6a4bf36b14ba42003a67", 6702004),
+	GAME_ENTRY("heartlanddeluxe", "Heartland.exe", "0829f8e184ed6a4bf36b14ba42003a67", 6701875), // v1.1
 	GAME_ENTRY("heartland", "Heartland V1.2.exe", "261d108f9213356a351b35b54867f342", 21237374),
 	GAME_ENTRY("heavymetalnannulfthestrangestage", "NannulfMAGS.exe", "3c5bd1713959ff469cb46ebe5542cfcf", 21272417),
 	GAME_ENTRY("heed", "Heed.exe", "e8b2a430042709f07183c2c249e0e0d9", 6300045),
@@ -2380,6 +2383,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("imnotcrazyrightthecell", "I'm not crazy.exe", "9cb3c8dc7a8ab9c44815955696be2677", 3152216),
 	GAME_ENTRY("imnotcrazyrightthewell", "The Well.exe", "9cb3c8dc7a8ab9c44815955696be2677", 5000358),
 	GAME_ENTRY("indianajonescomingofage", "IndyCOA.exe", "90413e9ae57e222f8913b09d2bc847bc", 2368083),
+	GAME_ENTRY("indianajonesrelicoftheviking", "Indiana Jones and the relic of the viking.exe", "de375dffcb0635bb84daf82eaddf4e3b", 63943198),
 	GAME_ENTRY("indianarodent", "Indiana Rodent.exe", "89df481678b2ddc40ecc9f83caa76b89", 5629366),
 	GAME_ENTRY("infectionep2", "Infection_Ep_II_AGS.exe", "a524cbb1c51589903c4043b98917f1d9", 23691417),
 	GAME_ENTRY("infectionitheship", "Infection I.exe", "7132ff7d6b0bc1e9f3e4bd4755390626", 25974295),
