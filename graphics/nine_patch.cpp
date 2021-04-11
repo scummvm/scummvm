@@ -66,6 +66,7 @@ bool NinePatchSide::init(Graphics::TransparentSurface *bmp, bool vertical, int t
 	uint i;
 	int s, t, z;
 
+	int titleWidth = 0;
 	int index = 0;
 	_m.clear();
 
@@ -101,6 +102,7 @@ bool NinePatchSide::init(Graphics::TransparentSurface *bmp, bool vertical, int t
 				// if there is title, then we try to recalc the t, because we want to fix the title width
 				if (titlePos > 0 && (int)i == titlePos) {
 					t -= mrk->length;
+					titleWidth = mrk->length;
 					if (titleIndex)
 						*titleIndex = index;
 				}
@@ -113,6 +115,10 @@ bool NinePatchSide::init(Graphics::TransparentSurface *bmp, bool vertical, int t
 	}
 
 	_fix = len - 2 - t;
+	// here, titleWidth represent the width in 9-patch image, and we delete it from fix size
+	// so, currently, we will have 3 part, fix size, stretchable size and title size
+	if (titleWidth)
+		_fix -= titleWidth;
 	for (i = 0; i < _m.size(); ++i) {
 		if (_m[i]->ratio)
 			_m[i]->ratio = _m[i]->length / (float)t;
