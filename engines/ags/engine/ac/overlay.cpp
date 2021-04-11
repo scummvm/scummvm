@@ -194,7 +194,7 @@ size_t add_screen_overlay(int x, int y, int type, Shared::Bitmap *piccy, int pic
 	if (type == OVER_TEXTMSG) _G(is_text_overlay)++;
 	if (type == OVER_CUSTOM) {
 		// find an unused custom ID; TODO: find a better approach!
-		for (int id = OVER_CUSTOM + 1; id < (int)_GP(screenover).size() + OVER_CUSTOM + 1; ++id) {
+		for (int id = OVER_CUSTOM + 1; id < OVER_CUSTOM + 100; ++id) {
 			if (find_overlay_of_type(id) == -1) {
 				type = id;
 				break;
