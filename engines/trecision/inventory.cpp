@@ -253,7 +253,7 @@ void TrecisionEngine::showInventoryName(uint16 obj, bool showhide) {
 		_lastObj = 0;
 	}
 
-	if (_flagUseWithStarted && !FlagUseWithLocked) {
+	if (_flagUseWithStarted) {
 		if (!showhide) {
 			clearText();
 			_lastInv = 0;

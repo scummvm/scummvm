@@ -166,9 +166,7 @@ TrecisionEngine::TrecisionEngine(OSystem *syst) : Engine(syst) {
 	_flagSomeoneSpeaks = false;
 	_flagCharacterSpeak = false;
 	_flagUseWithStarted = false;
-	FlagUseWithLocked = false;
 	_flagCharacterExists = true;
-	FlagWalkNoInterrupt = false;
 	_flagNoPaintScreen = false;
 	_flagWaitRegen = false;
 }

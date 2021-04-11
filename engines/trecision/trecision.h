@@ -247,9 +247,7 @@ public:
 	bool _flagSomeoneSpeaks;
 	bool _flagCharacterSpeak;
 	bool _flagUseWithStarted;
-	bool FlagUseWithLocked;
 	bool _flagCharacterExists;
-	bool FlagWalkNoInterrupt;
 	bool _flagNoPaintScreen;
 	bool _flagWaitRegen;
 };
