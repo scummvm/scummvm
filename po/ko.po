@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-04-10 16:52+0000\n"
+"POT-Creation-Date: 2021-04-10 21:43+0000\n"
 "PO-Revision-Date: 2021-03-07 12:24+0000\n"
 "Last-Translator: Joohan Lee <losernator@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -780,7 +780,7 @@ msgstr "검색:"
 
 #: gui/launcher.cpp:210 engines/dialogs.cpp:102 engines/engine.cpp:802
 #: engines/buried/saveload.cpp:515 engines/pegasus/pegasus.cpp:384
-#: engines/tsage/scenes.cpp:601 engines/wage/saveload.cpp:742
+#: engines/tsage/scenes.cpp:613 engines/wage/saveload.cpp:742
 #: engines/xeen/saves.cpp:256
 msgid "Load game:"
 msgstr "게임 불러오기:"
@@ -788,7 +788,7 @@ msgstr "게임 불러오기:"
 #: gui/launcher.cpp:210 engines/dialogs.cpp:102 engines/engine.cpp:802
 #: engines/buried/saveload.cpp:515 engines/parallaction/metaengine.cpp:118
 #: engines/parallaction/saveload.cpp:194 engines/pegasus/pegasus.cpp:384
-#: engines/scumm/dialogs.cpp:178 engines/tsage/scenes.cpp:601
+#: engines/scumm/dialogs.cpp:178 engines/tsage/scenes.cpp:613
 #: engines/wage/saveload.cpp:742 engines/xeen/saves.cpp:256
 msgid "Load"
 msgstr "불러오기"
@@ -2132,7 +2132,7 @@ msgstr "런처로 돌아가기(~R~)"
 #: engines/sci/engine/kfile.cpp:1075 engines/sherlock/scalpel/scalpel.cpp:1250
 #: engines/sherlock/tattoo/widget_files.cpp:75 engines/startrek/saveload.cpp:43
 #: engines/toltecs/menu.cpp:292 engines/toon/toon.cpp:3362
-#: engines/tsage/scenes.cpp:599 engines/wage/saveload.cpp:752
+#: engines/tsage/scenes.cpp:611 engines/wage/saveload.cpp:752
 #: engines/xeen/saves.cpp:277 engines/zvision/file/save_manager.cpp:49
 msgid "Save game:"
 msgstr "게임 저장:"
@@ -2154,7 +2154,7 @@ msgstr "게임 저장:"
 #: engines/sherlock/scalpel/scalpel.cpp:1250
 #: engines/sherlock/tattoo/widget_files.cpp:75 engines/startrek/saveload.cpp:43
 #: engines/toltecs/menu.cpp:292 engines/toon/toon.cpp:3362
-#: engines/tsage/scenes.cpp:599 engines/wage/saveload.cpp:752
+#: engines/tsage/scenes.cpp:611 engines/wage/saveload.cpp:752
 #: engines/xeen/saves.cpp:277 engines/zvision/file/save_manager.cpp:49
 #: engines/zvision/metaengine.cpp:194
 msgid "Save"
@@ -6991,10 +6991,6 @@ msgstr "#%d 게임을 빠른 불러오기 하지 못함"
 msgid "Unable to locate the '%s' data file."
 msgstr "'%s' 엔진의 데이터 파일을 찾을 수 없습니다."
 
-#: engines/tsage/detection_tables.h:150
-msgid "Spanish CD version is not yet supported"
-msgstr "스페인어 CD 버전은 아직 지원되지 않습니다"
-
 #: engines/twine/detection.cpp:218
 msgid "This version requires Giflib which was not compiled into ScummVM"
 msgstr ""
@@ -8076,6 +8072,9 @@ msgstr ""
 "니다. 선택한 글꼴 패키지의 모든 글꼴이 필요 할 수 있습니다. 예: "
 "LiberationMono, LiberationSans 및 LiberationSerif 또는 FreeMono, FreeSans 및 "
 "FreeSerif가 각각 필요함."
+
+#~ msgid "Spanish CD version is not yet supported"
+#~ msgstr "스페인어 CD 버전은 아직 지원되지 않습니다"
 
 #, fuzzy
 #~| msgid "Inventory"

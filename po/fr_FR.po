@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-04-10 16:52+0000\n"
+"POT-Creation-Date: 2021-04-10 21:43+0000\n"
 "PO-Revision-Date: 2021-04-02 08:37+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
@@ -786,7 +786,7 @@ msgstr "Filtre :"
 
 #: gui/launcher.cpp:210 engines/dialogs.cpp:102 engines/engine.cpp:802
 #: engines/buried/saveload.cpp:515 engines/pegasus/pegasus.cpp:384
-#: engines/tsage/scenes.cpp:601 engines/wage/saveload.cpp:742
+#: engines/tsage/scenes.cpp:613 engines/wage/saveload.cpp:742
 #: engines/xeen/saves.cpp:256
 msgid "Load game:"
 msgstr "Charger le jeu :"
@@ -794,7 +794,7 @@ msgstr "Charger le jeu :"
 #: gui/launcher.cpp:210 engines/dialogs.cpp:102 engines/engine.cpp:802
 #: engines/buried/saveload.cpp:515 engines/parallaction/metaengine.cpp:118
 #: engines/parallaction/saveload.cpp:194 engines/pegasus/pegasus.cpp:384
-#: engines/scumm/dialogs.cpp:178 engines/tsage/scenes.cpp:601
+#: engines/scumm/dialogs.cpp:178 engines/tsage/scenes.cpp:613
 #: engines/wage/saveload.cpp:742 engines/xeen/saves.cpp:256
 msgid "Load"
 msgstr "Charger"
@@ -2172,7 +2172,7 @@ msgstr "Retour au ~L~anceur"
 #: engines/sci/engine/kfile.cpp:1075 engines/sherlock/scalpel/scalpel.cpp:1250
 #: engines/sherlock/tattoo/widget_files.cpp:75 engines/startrek/saveload.cpp:43
 #: engines/toltecs/menu.cpp:292 engines/toon/toon.cpp:3362
-#: engines/tsage/scenes.cpp:599 engines/wage/saveload.cpp:752
+#: engines/tsage/scenes.cpp:611 engines/wage/saveload.cpp:752
 #: engines/xeen/saves.cpp:277 engines/zvision/file/save_manager.cpp:49
 msgid "Save game:"
 msgstr "Sauvegarde :"
@@ -2194,7 +2194,7 @@ msgstr "Sauvegarde :"
 #: engines/sherlock/scalpel/scalpel.cpp:1250
 #: engines/sherlock/tattoo/widget_files.cpp:75 engines/startrek/saveload.cpp:43
 #: engines/toltecs/menu.cpp:292 engines/toon/toon.cpp:3362
-#: engines/tsage/scenes.cpp:599 engines/wage/saveload.cpp:752
+#: engines/tsage/scenes.cpp:611 engines/wage/saveload.cpp:752
 #: engines/xeen/saves.cpp:277 engines/zvision/file/save_manager.cpp:49
 #: engines/zvision/metaengine.cpp:194
 msgid "Save"
@@ -7145,10 +7145,6 @@ msgstr "Erreur lors du chargement rapide depuis l'emplacement #%d"
 msgid "Unable to locate the '%s' data file."
 msgstr "Le fichier de données '%s' n'a pu être trouvé."
 
-#: engines/tsage/detection_tables.h:150
-msgid "Spanish CD version is not yet supported"
-msgstr "La version CD espagnole n'est pas encore prise en charge"
-
 #: engines/twine/detection.cpp:218
 #, fuzzy
 #| msgid "This game requires the FoxTail subengine, which is not compiled in."
@@ -8211,6 +8207,9 @@ msgstr ""
 "les polices du paquet de polices que vous avez choisi, c'est-à-dire "
 "LiberationMono, LiberationSans et LiberationSerif, ou respectivement "
 "FreeMono, FreeSans et FreeSerif."
+
+#~ msgid "Spanish CD version is not yet supported"
+#~ msgstr "La version CD espagnole n'est pas encore prise en charge"
 
 #, fuzzy
 #~| msgid "General"

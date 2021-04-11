@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-04-10 16:52+0000\n"
+"POT-Creation-Date: 2021-04-10 21:43+0000\n"
 "PO-Revision-Date: 2020-11-29 17:10+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
@@ -788,7 +788,7 @@ msgstr "Zoeken:"
 
 #: gui/launcher.cpp:210 engines/dialogs.cpp:102 engines/engine.cpp:802
 #: engines/buried/saveload.cpp:515 engines/pegasus/pegasus.cpp:384
-#: engines/tsage/scenes.cpp:601 engines/wage/saveload.cpp:742
+#: engines/tsage/scenes.cpp:613 engines/wage/saveload.cpp:742
 #: engines/xeen/saves.cpp:256
 msgid "Load game:"
 msgstr "Laad spel:"
@@ -796,7 +796,7 @@ msgstr "Laad spel:"
 #: gui/launcher.cpp:210 engines/dialogs.cpp:102 engines/engine.cpp:802
 #: engines/buried/saveload.cpp:515 engines/parallaction/metaengine.cpp:118
 #: engines/parallaction/saveload.cpp:194 engines/pegasus/pegasus.cpp:384
-#: engines/scumm/dialogs.cpp:178 engines/tsage/scenes.cpp:601
+#: engines/scumm/dialogs.cpp:178 engines/tsage/scenes.cpp:613
 #: engines/wage/saveload.cpp:742 engines/xeen/saves.cpp:256
 msgid "Load"
 msgstr "Laden"
@@ -2159,7 +2159,7 @@ msgstr "S~t~artmenu"
 #: engines/sci/engine/kfile.cpp:1075 engines/sherlock/scalpel/scalpel.cpp:1250
 #: engines/sherlock/tattoo/widget_files.cpp:75 engines/startrek/saveload.cpp:43
 #: engines/toltecs/menu.cpp:292 engines/toon/toon.cpp:3362
-#: engines/tsage/scenes.cpp:599 engines/wage/saveload.cpp:752
+#: engines/tsage/scenes.cpp:611 engines/wage/saveload.cpp:752
 #: engines/xeen/saves.cpp:277 engines/zvision/file/save_manager.cpp:49
 msgid "Save game:"
 msgstr "Spel opslaan:"
@@ -2181,7 +2181,7 @@ msgstr "Spel opslaan:"
 #: engines/sherlock/scalpel/scalpel.cpp:1250
 #: engines/sherlock/tattoo/widget_files.cpp:75 engines/startrek/saveload.cpp:43
 #: engines/toltecs/menu.cpp:292 engines/toon/toon.cpp:3362
-#: engines/tsage/scenes.cpp:599 engines/wage/saveload.cpp:752
+#: engines/tsage/scenes.cpp:611 engines/wage/saveload.cpp:752
 #: engines/xeen/saves.cpp:277 engines/zvision/file/save_manager.cpp:49
 #: engines/zvision/metaengine.cpp:194
 msgid "Save"
@@ -7169,11 +7169,6 @@ msgstr "Kon opgeslagen spel #%d niet snelladen"
 msgid "Unable to locate the '%s' data file."
 msgstr "Kan de '%s' data file niet vinden."
 
-#: engines/tsage/detection_tables.h:150
-#, fuzzy
-msgid "Spanish CD version is not yet supported"
-msgstr "Spel-ID niet ondersteund"
-
 #: engines/twine/detection.cpp:218
 #, fuzzy
 #| msgid "This game requires the FoxTail subengine, which is not compiled in."
@@ -8252,6 +8247,10 @@ msgstr ""
 "alle lettertypes van de collectie nodig die u selecteert, dus "
 "LiberationMono, LiberationSans en LiberationSerif, of FreeMono, FreeSans en "
 "FreeSerif respectievelijk."
+
+#, fuzzy
+#~ msgid "Spanish CD version is not yet supported"
+#~ msgstr "Spel-ID niet ondersteund"
 
 #, fuzzy
 #~| msgid "General"
