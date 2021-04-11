@@ -20,6 +20,7 @@ description: |
     you will find some really obscure adventures and truly hidden gems to explore.
 confinement: strict
 grade: stable
+compression: lzo
 
 apps:
   scummvm:
@@ -42,6 +43,7 @@ apps:
       - mount-observe
       - system-observe
       - network-observe
+      - hardware-observe
       - joystick
     environment:
       LD_LIBRARY_PATH: "$LD_LIBRARY_PATH:$SNAP/usr/lib/${SNAPCRAFT_ARCH_TRIPLET}/libunity/:$SNAP/usr/lib/${SNAPCRAFT_ARCH_TRIPLET}/pulseaudio/:$SNAP/usr/lib/${SNAPCRAFT_ARCH_TRIPLET}/speech-dispatcher/"
@@ -49,7 +51,7 @@ apps:
       DBUS_FATAL_WARNINGS: 0
 
   daemon:
-    command: bin/daemon-start.sh $SNAP/bin/scummvm-launch.sh -f
+    command: bin/daemon-start.sh $SNAP/snap/command-chain/desktop-launch $SNAP/bin/wayland-if-possible.sh $SNAP/bin/scummvm-launch.sh -f
     daemon: simple
     restart-condition: always
     plugs:
@@ -62,9 +64,13 @@ apps:
       - network-bind
       - removable-media
       - joystick
+      - mount-observe
+      - system-observe
+      - network-observe
+      - hardware-observe
     environment:
       SDL_VIDEODRIVER: wayland
-      LD_LIBRARY_PATH: "$LD_LIBRARY_PATH:$SNAP/usr/lib/${SNAPCRAFT_ARCH_TRIPLET}/:$SNAP/usr/lib/${SNAPCRAFT_ARCH_TRIPLET}/libunity/:$SNAP/usr/lib/${SNAPCRAFT_ARCH_TRIPLET}/pulseaudio/:$SNAP/usr/lib/${SNAPCRAFT_ARCH_TRIPLET}/speech-dispatcher/"
+      LD_LIBRARY_PATH: "$SNAP/usr/lib/${SNAPCRAFT_ARCH_TRIPLET}/:$SNAP/usr/lib/${SNAPCRAFT_ARCH_TRIPLET}/libunity/:$SNAP/usr/lib/${SNAPCRAFT_ARCH_TRIPLET}/pulseaudio/:$SNAP/usr/lib/${SNAPCRAFT_ARCH_TRIPLET}/speech-dispatcher/"
       ESPEAK_DATA_PATH: "$SNAP/usr/lib/${SNAPCRAFT_ARCH_TRIPLET}/espeak-ng-data"
       PULSE_SYSTEM: 1
       PULSE_RUNTIME_PATH: /var/run/pulse
@@ -125,6 +131,7 @@ parts:
       - libfluidsynth-dev
       - libfreetype6-dev
       - libfribidi-dev
+      - libgif-dev
       - libglew-dev
       - libgtk-3-dev
       - libieee1284-3-dev
@@ -153,6 +160,7 @@ parts:
       - libflac8
       - libfluidsynth1
       - libfribidi0
+      - libgif7
       - libgl1-mesa-dri
       - libgl1-mesa-glx
       - libglew2.0
@@ -240,14 +248,15 @@ parts:
     stage-packages:
       - libasound2
       - libasound2-plugins
-  
+      - inotify-tools
+
   scripts:
     plugin: dump
     source: scripts
 
   games:
     plugin: dump
-    source: https://www.scummvm.org/frs/extras/storefront/games-bundle.zip
+    source: https://downloads.scummvm.org/frs/extras/storefront/games-bundle.zip
     source-checksum: sha256/5c16f3db7fda3660d1bddb52e76aa27ada8eb8268872f5e045490f3eabb603e1
     organize:
       games-bundle: usr/share/scummvm/

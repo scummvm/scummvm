@@ -1,22 +1,25 @@
 #!/bin/sh
 
-if [ "$(id -u)" = "0" ]  && [ "$(snapctl get daemon)" = "false" ]
-then
-  # If not configured to run as a daemon we have to stop here
-  # (There's no "snapctl disable ...")
-  snapctl stop $SNAP_NAME.daemon
-  exit 0
+real_xdg_runtime_dir=$(dirname "${XDG_RUNTIME_DIR}")
+real_wayland=${real_xdg_runtime_dir}/${WAYLAND_DISPLAY:-wayland-0}
+
+if [ ! -O "${real_wayland}" ]; then
+  # On core systems mir-kiosk may also need to create the host XDG_RUNTIME_DIR
+  if [ ! -O "${real_xdg_runtime_dir}" ]; then
+    echo waiting for host XDG_RUNTIME_DIR...
+    until [ -O "${real_xdg_runtime_dir}" ]
+    do
+      inotifywait --event create $(dirname "${real_xdg_runtime_dir}") || sleep 4
+    done
+  fi
+
+  echo waiting for Wayland socket...
+  until [ -O "${real_wayland}" ]
+  do
+    inotifywait --event create $(dirname "${real_wayland}") || sleep 4
+  done
+
+  echo ...waiting done
 fi
-
-mkdir -p "$XDG_RUNTIME_DIR" -m 700
-
-if [ -z "${WAYLAND_DISPLAY}" ]
-then WAYLAND_DISPLAY=wayland-0
-fi
-
-real_wayland=$(dirname "$XDG_RUNTIME_DIR")/${WAYLAND_DISPLAY}
-while [ ! -O "${real_wayland}" ]; do echo waiting for Wayland socket; sleep 4; done
-
-ln -sf "${real_wayland}" "$XDG_RUNTIME_DIR"
 
 exec "$@"
