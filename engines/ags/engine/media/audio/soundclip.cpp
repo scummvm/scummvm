@@ -41,8 +41,8 @@ SoundClipWaveBase::SoundClipWaveBase(Audio::AudioStream *stream, int volume, boo
 
 	if (repeat) {
 		Audio::SeekableAudioStream *str = dynamic_cast<Audio::SeekableAudioStream *>(stream);
-		assert(str);
-		_stream = new Audio::LoopingAudioStream(str, 0);
+		if (str)
+			_stream = new Audio::LoopingAudioStream(str, 0);
 	}
 }
 
