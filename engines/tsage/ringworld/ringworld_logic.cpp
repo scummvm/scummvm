@@ -523,7 +523,7 @@ void RingworldGame::endGame(int resNum, int lineNum) {
 		// No savegames exist, so prompt the user to restart or quit
 		int rc;
 		if (g_vm->getLanguage() == Common::ES_ESP) {
-			rc = MessageDialog::show(msg, ESP_RW_QUIT_BTN_STRING, ESP_RW_RESTART_BTN_2_STRING);
+			rc = MessageDialog::show(msg, ESP_QUIT_BTN_STRING, ESP_RESTART_BTN_2_STRING);
 		} else {
 			rc = MessageDialog::show(msg, QUIT_BTN_STRING, RESTART_BTN_STRING);
 		}
@@ -540,7 +540,7 @@ void RingworldGame::endGame(int resNum, int lineNum) {
 			} else {
 				int rc;
 				if (g_vm->getLanguage() == Common::ES_ESP) {
-					rc = MessageDialog::show(msg, ESP_RW_RESTART_BTN_2_STRING, ESP_RESTORE_BTN_STRING);
+					rc = MessageDialog::show(msg, ESP_RESTART_BTN_2_STRING, ESP_RESTORE_BTN_STRING);
 				} else {
 					rc = MessageDialog::show(msg, RESTART_BTN_STRING, RESTORE_BTN_STRING);
 				}
@@ -597,7 +597,7 @@ void RingworldGame::processEvent(Event &event) {
 			// F10 - Pause
 			GfxDialog::setPalette();
 			if (g_vm->getLanguage() == Common::ES_ESP) {
-				MessageDialog::show(ESP_RW_GAME_PAUSED_MSG, ESP_CONTINUE_BTN_STRING);
+				MessageDialog::show(ESP_GAME_PAUSED_MSG, ESP_CONTINUE_BTN_STRING);
 			} else {
 				MessageDialog::show(GAME_PAUSED_MSG, CONTINUE_BTN_STRING);
 			}

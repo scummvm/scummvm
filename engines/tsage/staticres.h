@@ -69,27 +69,11 @@ extern char const *const ESP_RESTORING_NOT_ALLOWED_MSG;
 extern char const *const ESP_INV_EMPTY_MSG;
 
 // Dialogs
-extern char const *const ESP_RW_QUIT_CONFIRM_1_MSG;
-extern char const *const ESP_RW_QUIT_CONFIRM_2_MSG;
-extern char const *const ESP_BF_QUIT_CONFIRM_MSG;
-extern char const *const ESP_RW_RESTART_MSG;
-extern char const *const ESP_BF_RESTART_MSG;
-extern char const *const ESP_RW_GAME_PAUSED_MSG;
-extern char const *const ESP_BF_GAME_PAUSED_MSG;
 extern char const *const ESP_OK_BTN_STRING;
 extern char const *const ESP_CONTINUE_BTN_STRING;
 extern char const *const ESP_CANCEL_BTN_STRING;
-extern char const *const ESP_RW_QUIT_BTN_STRING;
-extern char const *const ESP_BF_QUIT_BTN_STRING;
-extern char const *const ESP_RW_RESTART_BTN_1_STRING;
-extern char const *const ESP_RW_RESTART_BTN_2_STRING;
-extern char const *const ESP_BF_RESTART_BTN_STRING;
-extern char const *const ESP_RW_SAVE_BTN_STRING;
-extern char const *const ESP_BF_SAVE_BTN_STRING;
 extern char const *const ESP_RESTORE_BTN_STRING;
 extern char const *const ESP_SOUND_BTN_STRING;
-extern char const *const ESP_RW_RESUME_BTN_STRING;
-extern char const *const ESP_BF_RESUME_BTN_STRING;
 extern char const *const ESP_LOOK_BTN_STRING;
 extern char const *const ESP_PICK_BTN_STRING;
 
@@ -127,6 +111,16 @@ extern char const *const DEMO_BTN_STRING;
 extern char const *const DEMO_RESUME_BTN_STRING;
 
 // Spanish version
+extern char const *const ESP_QUIT_CONFIRM_1_MSG;
+extern char const *const ESP_QUIT_CONFIRM_2_MSG;
+extern char const *const ESP_RESTART_MSG;
+extern char const *const ESP_GAME_PAUSED_MSG;
+extern char const *const ESP_QUIT_BTN_STRING;
+extern char const *const ESP_RESTART_BTN_1_STRING;
+extern char const *const ESP_RESTART_BTN_2_STRING;
+extern char const *const ESP_SAVE_BTN_STRING;
+extern char const *const ESP_RESUME_BTN_STRING;
+
 // Dialog resources
 extern char const *const ESP_HELP_MSG;
 extern char const *const ESP_WATCH_INTRO_MSG;
@@ -202,6 +196,14 @@ extern char const *const RADIO_BTN_LIST[8];
 extern char const *const THE_NEXT_DAY;
 
 // Spanish version
+extern char const *const ESP_QUIT_CONFIRM_MSG;
+extern char const *const ESP_RESTART_MSG;
+extern char const *const ESP_GAME_PAUSED_MSG;
+extern char const *const ESP_QUIT_BTN_STRING;
+extern char const *const ESP_RESTART_BTN_STRING;
+extern char const *const ESP_SAVE_BTN_STRING;
+extern char const *const ESP_RESUME_BTN_STRING;
+
 // Dialog resources
 extern char const *const ESP_HELP_MSG;
 extern char const *const ESP_WATCH_INTRO_MSG;
