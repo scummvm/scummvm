@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.5.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-04-12 16:38+0000\n"
-"PO-Revision-Date: 2020-10-26 22:27+0000\n"
-"Last-Translator: anonymous <noreply@weblate.org>\n"
+"PO-Revision-Date: 2021-04-12 23:47+0000\n"
+"Last-Translator: Henrik Andersson <henke@henke37.cjb.net>\n"
 "Language-Team: Swedish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/sv/>\n"
 "Language: sv_SE\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.0.4\n"
+"X-Generator: Weblate 4.4\n"
 "X-Poedit-SourceCharset: iso-8859-1\n"
 "X-Language-name: Svenska\n"
 
@@ -1063,9 +1063,8 @@ msgid "Aspect ratio correction"
 msgstr "Korrektion av bildförhållande"
 
 #: gui/options.cpp:1363
-#, fuzzy
 msgid "Correct aspect ratio for games"
-msgstr "Korrigera bildförhållandet för 320x200-spel"
+msgstr "Korrigera bildförhållandet för spel"
 
 #: gui/options.cpp:1371
 msgid "Preferred device:"
@@ -1474,7 +1473,6 @@ msgid "Space used by ScummVM's saved games on this storage"
 msgstr "Utrymme som används av ScummVM:s sparade data på det här lagret"
 
 #: gui/options.cpp:2229
-#, fuzzy
 msgid "Last sync:"
 msgstr "Senast synkad:"
 
@@ -1831,9 +1829,8 @@ msgid "ScummVM could not access the directory!"
 msgstr "ScummVM kunde inte öppna katalogen!"
 
 #: gui/saveload-dialog.cpp:54
-#, fuzzy
 msgid "Downloading saves..."
-msgstr "Laddar speldata..."
+msgstr "Laddar ned sparade spel..."
 
 #: gui/saveload-dialog.cpp:63
 msgid "Run in background"
@@ -2235,9 +2232,9 @@ msgid "Could not initialize color format."
 msgstr "Kunde inte initialisera färgformat."
 
 #: engines/engine.cpp:337
-#, fuzzy, c-format
+#, c-format
 msgid "Could not switch to video mode '%s'."
-msgstr "Kunde inte byta till videoläget: '"
+msgstr "Kunde inte byta till videoläget '%s'."
 
 #: engines/engine.cpp:345
 #, fuzzy, c-format
@@ -2257,9 +2254,8 @@ msgid "Could not apply filtering setting."
 msgstr "Filterinställningen stöds inte."
 
 #: engines/engine.cpp:420
-#, fuzzy
 msgid "Error"
-msgstr "Inget fel"
+msgstr "Fel"
 
 #: engines/engine.cpp:507
 msgid ""
@@ -2396,7 +2392,6 @@ msgid "Pause"
 msgstr "Paus"
 
 #: engines/metaengine.cpp:81 engines/parallaction/metaengine.cpp:130
-#, fuzzy
 msgid "Game menu"
 msgstr "Spelmeny"
 
@@ -2432,7 +2427,7 @@ msgstr "OpenGL"
 
 #: graphics/renderer.cpp:34
 msgid "OpenGL with shaders"
-msgstr ""
+msgstr "OpenGL med shaders"
 
 #: graphics/renderer.cpp:42
 msgctxt "lowres"
@@ -2894,7 +2889,7 @@ msgstr "Steg bakåt"
 
 #: backends/keymapper/hardware-input.cpp:261
 msgid "Joy Guide"
-msgstr ""
+msgstr "Joy Guide"
 
 #: backends/keymapper/hardware-input.cpp:262
 msgid "Joy Start"
@@ -3127,7 +3122,7 @@ msgstr "Ett fel inträffade"
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:81
 #: backends/networking/sdl_net/handlers/listajaxhandler.cpp:45
 msgid "File system root"
-msgstr ""
+msgstr "Filsystemsrot"
 
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:82
 #: backends/networking/sdl_net/handlers/listajaxhandler.cpp:46
@@ -3270,26 +3265,26 @@ msgstr "~S~tarta"
 #: backends/platform/3ds/osystem-events.cpp:54
 #: backends/platform/sdl/switch/switch.cpp:57
 msgid "ZL"
-msgstr ""
+msgstr "ZL"
 
 #: backends/platform/3ds/osystem-events.cpp:55
 #: backends/platform/sdl/switch/switch.cpp:58
 msgid "ZR"
-msgstr ""
+msgstr "ZR"
 
 #: backends/platform/3ds/osystem-events.cpp:56
 #: backends/platform/ds/osystem_ds.cpp:146
 #: backends/platform/sdl/psp2/psp2.cpp:50
 #: backends/platform/sdl/switch/switch.cpp:47
 msgid "L"
-msgstr ""
+msgstr "L"
 
 #: backends/platform/3ds/osystem-events.cpp:57
 #: backends/platform/ds/osystem_ds.cpp:147
 #: backends/platform/sdl/psp2/psp2.cpp:51
 #: backends/platform/sdl/switch/switch.cpp:48
 msgid "R"
-msgstr ""
+msgstr "R"
 
 #: backends/platform/3ds/osystem-events.cpp:66
 msgid "C-Pad X"
@@ -3316,7 +3311,7 @@ msgstr "Våldsamt läge"
 
 #: backends/platform/3ds/osystem-events.cpp:322
 msgid "Open 3DS Settings"
-msgstr ""
+msgstr "Öppna 3DS Inställningar"
 
 #: backends/platform/3ds/osystem-events.cpp:360
 msgid ""
@@ -3435,7 +3430,7 @@ msgstr "Minimera"
 #: backends/platform/sdl/macosx/appmenu_osx.mm:223
 #: engines/zvision/metaengine.cpp:158
 msgid "Help"
-msgstr ""
+msgstr "Hjälp"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:228
 msgid "User Manual"
@@ -3455,11 +3450,11 @@ msgstr ""
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:234
 msgid "GPL License"
-msgstr ""
+msgstr "GPL Licens"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:235
 msgid "LGPL License"
-msgstr ""
+msgstr "LGPL Licens"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:236
 msgid "Freefont License"
@@ -3471,22 +3466,22 @@ msgstr ""
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:238
 msgid "BSD License"
-msgstr ""
+msgstr "BSD Licens"
 
 #: backends/platform/sdl/ps3/ps3.cpp:41 backends/platform/sdl/psp2/psp2.cpp:44
 #: engines/dragons/metaengine.cpp:205
 msgid "Cross"
-msgstr ""
+msgstr "Kryss"
 
 #: backends/platform/sdl/ps3/ps3.cpp:42 backends/platform/sdl/psp2/psp2.cpp:45
 #: engines/dragons/metaengine.cpp:199
 msgid "Circle"
-msgstr ""
+msgstr "Cirkel"
 
 #: backends/platform/sdl/ps3/ps3.cpp:43 backends/platform/sdl/psp2/psp2.cpp:46
 #: engines/dragons/metaengine.cpp:187
 msgid "Square"
-msgstr ""
+msgstr "Fyrkant"
 
 #: backends/platform/sdl/ps3/ps3.cpp:46
 msgid "PS"
@@ -3495,37 +3490,37 @@ msgstr ""
 #: backends/platform/sdl/ps3/ps3.cpp:48
 #: backends/platform/sdl/switch/switch.cpp:45
 msgid "L3"
-msgstr ""
+msgstr "L3"
 
 #: backends/platform/sdl/ps3/ps3.cpp:49
 #: backends/platform/sdl/switch/switch.cpp:46
 msgid "R3"
-msgstr ""
+msgstr "R3"
 
 #: backends/platform/sdl/ps3/ps3.cpp:50
 msgid "L1"
-msgstr ""
+msgstr "L1"
 
 #: backends/platform/sdl/ps3/ps3.cpp:51
 msgid "R1"
-msgstr ""
+msgstr "R1"
 
 #: backends/platform/sdl/ps3/ps3.cpp:60
 msgid "L2"
-msgstr ""
+msgstr "L2"
 
 #: backends/platform/sdl/ps3/ps3.cpp:61
 msgid "R2"
-msgstr ""
+msgstr "R2"
 
 #: backends/platform/sdl/switch/switch.cpp:42
 msgid "Minus"
-msgstr ""
+msgstr "Minus"
 
 #: backends/platform/sdl/switch/switch.cpp:43
 #: backends/platform/sdl/switch/switch.cpp:44
 msgid "Plus"
-msgstr ""
+msgstr "Plus"
 
 #: backends/platform/symbian/src/SymbianActions.cpp:48
 msgid "Zone"
@@ -3754,11 +3749,11 @@ msgstr ""
 
 #: engines/adl/detection.cpp:88
 msgid "Always use sharp monochrome text"
-msgstr ""
+msgstr "Använd alltid skarp monokrom text"
 
 #: engines/adl/detection.cpp:89
 msgid "Do not emulate NTSC artifacts for text"
-msgstr ""
+msgstr "Emulera inte NTSC artifakter för text"
 
 #: engines/agi/detection.cpp:72 engines/cine/detection.cpp:43
 #: engines/drascula/detection.cpp:299 engines/dreamweb/detection.cpp:44
@@ -3978,7 +3973,7 @@ msgstr ""
 
 #: engines/bladerunner/bladerunner.cpp:2275
 msgid "Continue"
-msgstr ""
+msgstr "Fortsätt"
 
 #: engines/bladerunner/detection.cpp:48
 #, fuzzy
@@ -4007,6 +4002,8 @@ msgid ""
 "This mode may result in high CPU usage! It avoids use of delayMillis() "
 "function."
 msgstr ""
+"Detta läge can resultera i hög CPU användning! Det undviker andvändingen av "
+"delayMillis() funktionen."
 
 #: engines/bladerunner/detection.cpp:75
 msgid "Max frames per second limit"
@@ -4035,6 +4032,7 @@ msgid ""
 "The fan translator does not wish his translation to be incorporated into "
 "ScummVM."
 msgstr ""
+"Fan-översättaren önskar att hans översättning inte inkorporeras in i ScummVM."
 
 #: engines/buried/biochip_view.cpp:623
 #, fuzzy
@@ -4072,13 +4070,15 @@ msgstr "Aktivera färgblint läge som standard"
 
 #: engines/cine/detection.cpp:52
 msgid "Use transparent dialog boxes in 16 color scenes"
-msgstr ""
+msgstr "Använd transparenta dialogrutor i 16 färgsscener"
 
 #: engines/cine/detection.cpp:53
 msgid ""
 "Use transparent dialog boxes in 16 color scenes even if the original game "
 "version did not support them"
 msgstr ""
+"Använd transparenta dialogrutor i 16 färgscener även om orginal spelet inte "
+"stödje dem"
 
 #: engines/cine/metaengine.cpp:136
 #, fuzzy
@@ -4324,27 +4324,27 @@ msgstr ""
 
 #: engines/glk/scott/scott.cpp:412
 msgid "North"
-msgstr ""
+msgstr "Norr"
 
 #: engines/glk/scott/scott.cpp:412
 msgid "South"
-msgstr ""
+msgstr "Syd"
 
 #: engines/glk/scott/scott.cpp:412
 msgid "East"
-msgstr ""
+msgstr "Öst"
 
 #: engines/glk/scott/scott.cpp:412
 msgid "West"
-msgstr ""
+msgstr "Väst"
 
 #: engines/glk/scott/scott.cpp:424
 msgid "You can't see. It is too dark!\n"
-msgstr ""
+msgstr "Du kan inte se. Det är för mörkt!\n"
 
 #: engines/glk/scott/scott.cpp:426
 msgid "I can't see. It is too dark!\n"
-msgstr ""
+msgstr "Jag kan inte se. Det är för mörkt!\n"
 
 #: engines/glk/scott/scott.cpp:436
 #, c-format
