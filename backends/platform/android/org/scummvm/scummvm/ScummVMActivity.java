@@ -928,6 +928,10 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 		                                                        }
 		                                                    });
 
+		float[] dpiValues = new float[] { 0.0f, 0.0f };
+		_scummvm.getDPI(dpiValues);
+		Log.d(ScummVM.LOG_TAG, "Current xdpi: " + dpiValues[0] + " and ydpi: " + dpiValues[1]);
+
 		// Currently in release builds version string does not contain the revision info
 		// but in debug builds (daily builds) this should be there (see base/internal_version_h)
 		_currentScummVMVersion = new Version(_scummvm.getInstallingScummVMVersionInfo());
