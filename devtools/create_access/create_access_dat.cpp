@@ -231,7 +231,7 @@ bool processExecutable(int exeIdx, const char *name) {
 	const char *const *itemNames;
 	const int *comboTable;
 	byte gameId = 0, discType = 0, demoType = 0;
-	byte language = Common::EN_ANY;
+	byte language = 5; //old Common::EN_ANY;
 
 	// Open up the file for access
 	File exeFile;
@@ -258,6 +258,28 @@ bool processExecutable(int exeIdx, const char *name) {
 		roomsStart = dataSegmentOffset + 0x35a8;
 		roomsEnd = dataSegmentOffset + 0x4234;
 		travelPosOffset = dataSegmentOffset + 0x5ff7;
+		numRooms = 64;
+		roomDescs = &Amazon::ROOM_DESCR[0];
+		deathScreens = Amazon::DEATH_SCREENS_ENG;
+		deathText = &Amazon::DEATH_TEXT_ENG[0];
+		numDeaths = sizeof(Amazon::DEATH_SCREENS_ENG);
+		numItems = 85;
+		itemNames = &Amazon::INVENTORY_NAMES_ENG[0];
+		comboTable = &Amazon::COMBO_TABLE[0][0];
+		break;
+
+	case 12012:
+		// Amazon Spanish floppy
+		language = 23; //old Common::ES_ESP;
+		gameId = 1;
+		dataSegmentOffset = 0xC8C0;
+		filenamesOffset = dataSegmentOffset + 0x3628 + 0x128;
+		numFilenames = 100;
+		charsStart = dataSegmentOffset + 0x4234 + 0x128;
+		charsEnd = dataSegmentOffset + 0x49c6 + 0x128;
+		roomsStart = dataSegmentOffset + 0x35a8 + 0x128;
+		roomsEnd = dataSegmentOffset + 0x4234 + 0x128;
+		travelPosOffset = dataSegmentOffset + 0x5ff7 + 0x128 + 0x2b;
 		numRooms = 64;
 		roomDescs = &Amazon::ROOM_DESCR[0];
 		deathScreens = Amazon::DEATH_SCREENS_ENG;
