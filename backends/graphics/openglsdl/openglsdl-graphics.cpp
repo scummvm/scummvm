@@ -289,10 +289,10 @@ void OpenGLSdlGraphicsManager::updateScreen() {
 void OpenGLSdlGraphicsManager::notifyVideoExpose() {
 }
 
-void OpenGLSdlGraphicsManager::notifyResize(const int w, const int h) {
+void OpenGLSdlGraphicsManager::notifyResize(const int width, const int height) {
 #if SDL_VERSION_ATLEAST(2, 0, 0)
-	// We sometime get outdated resize events from SDL2. So check that the size we get
-	// is the actual current window size. If not ignore the resize.
+	// We sometime get inaccurate resize events from SDL2. So use the real drawable size
+	// we get from SDL2 and ignore the event data.
 	// The issue for example occurs when switching from fullscreen to windowed mode or
 	// when switching between different fullscreen resolutions because SDL_DestroyWindow
 	// for a fullscreen window that doesn't have the SDL_WINDOW_FULLSCREEN_DESKTOP flag
@@ -302,20 +302,16 @@ void OpenGLSdlGraphicsManager::notifyResize(const int w, const int h) {
 	getWindowSizeFromSdl(&currentWidth, &currentHeight);
 	uint scale;
 	getDpiScalingFactor(&scale);
-	int width = w * scale;
-	int height = h * scale;
 	debug(3, "req: %d x %d  cur: %d x %d, scale: %d", width, height, currentWidth, currentHeight, scale);
-	if (width != currentWidth || height != currentHeight)
-		return;
 
-	handleResize(width, height);
+	handleResize(currentWidth, currentHeight);
 #else
 	if (!_ignoreResizeEvents && _hwScreen && !(_hwScreen->flags & SDL_FULLSCREEN)) {
 		// We save that we handled a resize event here. We need to know this
 		// so we do not overwrite the users requested window size whenever we
 		// switch aspect ratio or similar.
 		_gotResize = true;
-		if (!setupMode(w, h)) {
+		if (!setupMode(width, height)) {
 			warning("OpenGLSdlGraphicsManager::notifyResize: Resize failed ('%s')", SDL_GetError());
 			g_system->quit();
 		}
