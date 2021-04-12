@@ -164,7 +164,6 @@ protected:
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 		assert(_window);
 		SDL_GL_GetDrawableSize(_window->getSDLWindow(), width, height);
-		// SDL_GetWindowSize(_window->getSDLWindow(), width, height);
 #else
 		assert(_hwScreen);
 

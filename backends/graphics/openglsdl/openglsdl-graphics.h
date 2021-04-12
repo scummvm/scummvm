@@ -61,9 +61,16 @@ protected:
 	virtual bool saveScreenshot(const Common::String &filename) const override;
 
 	virtual int getGraphicsModeScale(int mode) const override {
-		uint scale;
-		getDpiScalingFactor(&scale);
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+		int windowWidth, windowHeight;
+		SDL_GetWindowSize(_window->getSDLWindow(), &windowWidth, &windowHeight);
+		int realWidth, realHeight;
+		SDL_GL_GetDrawableSize(_window->getSDLWindow(), &realWidth, &realHeight);
+		int scale = realWidth / windowWidth;
 		return scale;
+#else
+		return 1;
+#endif
 	}
 
 private:
