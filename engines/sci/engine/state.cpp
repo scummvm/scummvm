@@ -107,6 +107,7 @@ void EngineState::reset(bool isRestoring) {
 #ifdef ENABLE_SCI32
 	_eventCounter = 0;
 #endif
+	_paletteSetIntensityCounter = 0;
 	_throttleLastTime = 0;
 	_throttleTrigger = false;
 	_gameIsBenchmarking = false;
