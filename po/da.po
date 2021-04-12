@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-04-12 16:38+0000\n"
+"POT-Creation-Date: 2021-04-12 18:12+0000\n"
 "PO-Revision-Date: 2021-03-21 08:24+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Danish <https://translations.scummvm.org/projects/scummvm/"
@@ -5928,7 +5928,7 @@ msgstr "(Autogem)"
 msgid "Please use an external viewer to open the game's help file: %s"
 msgstr "Brug venligst en ekstern fremviser til at åbne spillets hjælpefil: %s"
 
-#: engines/sci/engine/kmisc.cpp:869
+#: engines/sci/engine/kmisc.cpp:871
 msgid ""
 "The Poker logic is hardcoded in an external DLL, and is not implemented yet. "
 "There exists some dummy logic for now, where opponent actions are chosen "
