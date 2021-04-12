@@ -323,6 +323,12 @@ public:
 	 */
 	int getBorderType() { return _borderType; };
 
+	/**
+	 * We should call this method whenever we need border flags
+	 * don't calc border flags yourself
+	 * @return Border flags
+	 */
+	uint32 getBorderFlags();
 
 	void addDirtyRect(const Common::Rect &r);
 	void markAllDirty();

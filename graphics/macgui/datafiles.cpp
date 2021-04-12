@@ -60,7 +60,7 @@ static const BorderName borders[] = {
 	{0x0D, "ThickZoom",			 { 5,  5, 20,  5,		 2,  3,		false, 13}},
 	{0x0E, "ThinNoTitle",		 { 1,  1,  1,  1,		-1, -1,		false, 0}},
 	{0x0F, "ThinNoTitleShadow",  { 1,  3,  1,  3,		-1, -1,		false, 0}},
-	{0x10, "RoundClose",		 { 1,  1, 19,  6,		 1,  1,		true, 25}},
+	{0x10, "RoundClose",		 { 1,  1, 19,  6,		 1,  1,		true,  25}},
 	{0xFF, "No type",			 {-1, -1, -1, -1,		-1, -1,		false, 0}}
 };
 

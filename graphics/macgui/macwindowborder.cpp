@@ -24,6 +24,7 @@
 
 #include "graphics/macgui/macwindowborder.h"
 #include "graphics/macgui/macwindowmanager.h"
+#include "graphics/macgui/macfontmanager.h"
 
 namespace Graphics {
 

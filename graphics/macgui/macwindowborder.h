@@ -26,10 +26,8 @@
 #include "common/str.h"
 #include "common/list.h"
 
-#include "graphics/nine_patch.h"
 #include "graphics/managed_surface.h"
 #include "graphics/transparent_surface.h"
-#include "graphics/macgui/macfontmanager.h"
 #include "graphics/primitives.h"
 
 #include "image/bmp.h"
@@ -37,13 +35,15 @@
 namespace Graphics {
 
 class MacWindow;
+class MacWindowManager;
+class NinePatchBitmap;
 
 enum {
-	kWindowBorderActive = 1 << 0,
-	kWindowBorderTitle  = 1 << 1,
+	kWindowBorderActive    = 1 << 0,
+	kWindowBorderTitle     = 1 << 1,
 	kWindowBorderScrollbar = 1 << 2,
 
-	kWindowBorderMaxFlag = 1 << 3
+	kWindowBorderMaxFlag   = 1 << 3
 };
 
 struct BorderOffsets {

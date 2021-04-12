@@ -332,6 +332,8 @@ void Gui::loadBorder(Graphics::MacWindow *target, Common::String filename, uint3
 	Common::SeekableReadStream *stream = borderfile.readStream(borderfile.size());
 	if (stream) {
 
+		// if titlePos != 0, then we will draw title for that window
+		// here, we draw title for scene window
 		if (titlePos != 0) {
 			Graphics::BorderOffsets offsets;
 			offsets.left = 16;
