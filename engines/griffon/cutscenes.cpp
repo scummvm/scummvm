@@ -188,17 +188,6 @@ void GriffonEngine::showLogos() {
 }
 
 void GriffonEngine::intro() {
-#ifdef USE_TTS
-	Common::TextToSpeechManager *_ttsMan = g_system->getTextToSpeechManager();
-	if (_ttsMan != nullptr && ConfMan.getBool("tts_enabled")) {
-		Common::String result = story[0];
-		for (int i = 10; i < ARRAYSIZE(story); ++i) {
-			result+=story[i];
-		}
-		_ttsMan->say(result);
-	}
-#endif
-
 	_videoBuffer2->fillRect(Common::Rect(0, 0, _videoBuffer2->w, _videoBuffer2->h), 0);
 	_videoBuffer3->fillRect(Common::Rect(0, 0, _videoBuffer3->w, _videoBuffer3->h), 0);
 
@@ -224,6 +213,7 @@ void GriffonEngine::intro() {
 	int cnt = 0;
 	float xofs = 0.0;
 	float ld = 0.0;
+
 	do {
 		Common::Rect rc;
 
@@ -251,14 +241,41 @@ void GriffonEngine::intro() {
 			y--;
 		}
 
+		#ifdef USE_TTS
+			Common::TextToSpeechManager *_ttsMan = g_system->getTextToSpeechManager();
+			Common::String paragraph_1 = story[10];
+			Common::String paragraph_2 = story[18];
+			Common::String paragraph_3 = story[26];
+			Common::String paragraph_4 = story[34];
+			Common::String paragraph_5 = story[41];
+			Common::String paragraph_6 = story[46];
+			for (int i = 11; i <= 16; ++i) paragraph_1 += story[i];
+			for (int i = 19; i <= 22; ++i) paragraph_2 += story[i];
+			for (int i = 27; i <= 32; ++i) paragraph_3 += story[i];
+			for (int i = 35; i <= 39; ++i) paragraph_4 += story[i];
+			for (int i = 42; i <= 44; ++i) paragraph_5 += story[i];
+			for (int i = 47; i <= 47; ++i) paragraph_6 += story[i];
+		#endif
+
 		for (int i = 0; i < ARRAYSIZE(story); i++) {
 			int yy = y + i * 10;
+			#ifdef USE_TTS
+				if (_ttsMan != nullptr && ConfMan.getBool("tts_enabled")){
+					if (i == 0  && yy == 140) _ttsMan -> say(story[i]);
+					if (i == 10 && yy == 225) _ttsMan -> say(paragraph_1);
+					if (i == 18 && yy == 190) _ttsMan -> say(paragraph_2);
+					if (i == 24 && yy == 158) _ttsMan -> say(story[i]);
+					if (i == 26 && yy == 158) _ttsMan -> say(paragraph_3);
+					if (i == 34 && yy == 110) _ttsMan -> say(paragraph_4);
+					if (i == 41 && yy == 65)  _ttsMan -> say(paragraph_5);
+					if (i == 46 && yy == 35)  _ttsMan -> say(paragraph_6);
+				}
+			#endif
 			if (yy > -8 && yy < 240) {
 				int x = 160 - strlen(story[i]) * 4;
 				drawString(_videoBuffer, story[i], x, yy, 4);
 			}
-
-			if (yy < 10 && i == 37)
+			if (yy < 10 && i == ARRAYSIZE(story) - 1)
 				return;
 		}
 
