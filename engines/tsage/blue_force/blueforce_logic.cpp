@@ -296,11 +296,15 @@ void BlueForceGame::processEvent(Event &event) {
 		switch (event.kbd.keycode) {
 		case Common::KEYCODE_F1:
 			// F1 - Help
+			int tmp;
+			tmp = BF_GLOBALS._dialogCenter.y;
+			BF_GLOBALS._dialogCenter.y = 100;
 			if (g_vm->getLanguage() == Common::ES_ESP) {
 				MessageDialog::show(ESP_HELP_MSG, ESP_OK_BTN_STRING);
 			} else {
 				MessageDialog::show(HELP_MSG, OK_BTN_STRING);
 			}
+			BF_GLOBALS._dialogCenter.y = tmp;
 			break;
 
 		case Common::KEYCODE_F2:
