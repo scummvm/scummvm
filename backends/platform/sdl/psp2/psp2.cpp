@@ -28,7 +28,6 @@
 #include "common/debug-channels.h"
 #include "common/translation.h"
 #include "backends/platform/sdl/psp2/psp2.h"
-#include "backends/graphics/psp2sdl/psp2sdl-graphics.h"
 #include "backends/saves/default/default-saves.h"
 #include "backends/fs/posix-drives/posix-drives-fs-factory.h"
 #include "backends/events/psp2sdl/psp2sdl-events.h"
@@ -142,10 +141,6 @@ void OSystem_PSP2::initBackend() {
 	// Event source
 	if (_eventSource == 0)
 		_eventSource = new PSP2EventSource();
-
-	// Graphics Manager
-	if (_graphicsManager == 0)
-		_graphicsManager = new PSP2SdlGraphicsManager(_eventSource, _window);
 
 	// Invoke parent implementation of this method
 	OSystem_SDL::initBackend();

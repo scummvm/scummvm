@@ -351,8 +351,7 @@ MODULE_OBJS += \
 	fs/posix/posix-iostream.o \
 	fs/posix-drives/posix-drives-fs.o \
 	fs/posix-drives/posix-drives-fs-factory.o \
-	events/psp2sdl/psp2sdl-events.o \
-	graphics/psp2sdl/psp2sdl-graphics.o
+	events/psp2sdl/psp2sdl-events.o
 endif
 
 ifeq ($(BACKEND),samsungtv)

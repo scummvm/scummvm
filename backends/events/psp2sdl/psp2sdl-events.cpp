@@ -61,6 +61,11 @@ PSP2EventSource::PSP2EventSource() {
 
 	_hiresDX = 0;
 	_hiresDY = 0;
+
+#if SDL_VERSION_ATLEAST(2,0,10)
+	// ensure that touch doesn't create double-events
+	SDL_SetHint(SDL_HINT_TOUCH_MOUSE_EVENTS, "0");
+#endif
 }
 
 bool PSP2EventSource::pollEvent(Common::Event &event) {
