@@ -81,7 +81,8 @@ private:
 	void smkNextFrame();
 	void drawFrame(NightlongSmackerDecoder *smkDecoder, uint16 x, uint16 y, bool updateScreen);
 	void drawFrameSubtitles(Graphics::Surface *surface, int frameNum);
-
+	void setVideoRange(NightlongSmackerDecoder *smkDecoder, int &startFrame, int &endFrame);
+	
 	void drawSmkBuffer(int px, int py, int dx, int dy);
 	void refreshFullMotion();
 

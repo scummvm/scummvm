@@ -40,9 +40,7 @@ class GraphicsManager;
 class LogicManager;
 
 // Temporary define for the new video code
-// TODOs:
-// - Fix occasional palette glitches after seeking
-#define USE_NEW_VIDEO_CODE 0
+#define USE_NEW_VIDEO_CODE 1
 
 #define USE_DIRTY_RECTS 0
 #define SAVE_VERSION_ORIGINAL 102
