@@ -176,12 +176,7 @@ void MacWindow::blit(ManagedSurface *g, Common::Rect &dest) {
 	g->transBlitFrom(*_composeSurface, _composeSurface->getBounds(), dest, transcolor);
 }
 
-void MacWindow::center(bool toCenter) {
-	if (!_wm)
-		return;
-
-	Common::Rect screen = _wm->getScreenBounds();
-
+uint32 MacWindow::getBorderFlags() {
 	uint32 flags = 0;
 	if (_active)
 		flags |= kWindowBorderActive;
@@ -189,7 +184,16 @@ void MacWindow::center(bool toCenter) {
 		flags |= kWindowBorderTitle;
 	if (_hasScrollBar)
 		flags |= kWindowBorderScrollbar;
+	return flags;
+}
 
+void MacWindow::center(bool toCenter) {
+	if (!_wm)
+		return;
+
+	Common::Rect screen = _wm->getScreenBounds();
+
+	uint32 flags = getBorderFlags();
 	if (toCenter) {
 		move((screen.width() - _dims.width()) / 2, (screen.height() - _dims.height()) / 2);
 	} else if (_macBorder.hasBorder(flags) && _macBorder.hasOffsets()) {
@@ -203,13 +207,7 @@ void MacWindow::updateInnerDims() {
 	if (_dims.isEmpty())
 		return;
 
-	uint32 flags = 0;
-	if (_active)
-		flags |= kWindowBorderActive;
-	if (!_title.empty())
-		flags |= kWindowBorderTitle;
-	if (_hasScrollBar)
-		flags |= kWindowBorderScrollbar;
+	uint32 flags = getBorderFlags();
 
 	if (_macBorder.hasBorder(flags) && _macBorder.hasOffsets()) {
 		_innerDims = Common::Rect(
@@ -227,13 +225,7 @@ void MacWindow::updateOuterDims() {
 	if (_innerDims.isEmpty())
 		return;
 
-	uint32 flags = 0;
-	if (_active)
-		flags |= kWindowBorderActive;
-	if (!_title.empty())
-		flags |= kWindowBorderTitle;
-	if (_hasScrollBar)
-		flags |= kWindowBorderScrollbar;
+	uint32 flags = getBorderFlags();
 
 	if (_macBorder.hasBorder(flags) && _macBorder.hasOffsets()) {
 		_dims = Common::Rect(
@@ -252,13 +244,7 @@ void MacWindow::drawBorder() {
 
 	ManagedSurface *g = &_borderSurface;
 
-	uint32 flags = 0;
-	if (_active)
-		flags |= kWindowBorderActive;
-	if (!_title.empty())
-		flags |= kWindowBorderTitle;
-	if (_hasScrollBar)
-		flags |= kWindowBorderScrollbar;
+	uint32 flags = getBorderFlags();
 
 	if (_macBorder.hasBorder(flags)) {
 		drawBorderFromSurface(g, flags);

@@ -131,10 +131,12 @@ void NinePatchSide::calcOffsets(int len, int titleIndex, int titleWidth) {
 	uint i, j;
 	int dest_offset = 0;
 	// if we don't got titleIndex, then we better set titleWidth to 0
-	if (titleIndex == 0) titleWidth = 0;
+	if (titleIndex == 0)
+		titleWidth = 0;
 	int remaining_stretch = len - _fix - titleWidth;
 	// if titleWidth is too big, which may cause the remaining_stretch be 0, so we check it here
-	if (remaining_stretch < 0) remaining_stretch = 0;
+	if (remaining_stretch < 0)
+		remaining_stretch = 0;
 
 	for (i = 0, j = 0; i < _m.size(); ++i) {
 		_m[i]->dest_offset = dest_offset;
@@ -250,7 +252,8 @@ void NinePatchBitmap::blit(Graphics::Surface &target, int dx, int dy, int dw, in
 	if (dw < _h._fix || dh < _v._fix)
 		return;
 
-	if (dw < _h._fix + _titleWidth) dw = _h._fix + _titleWidth;
+	if (dw < _h._fix + _titleWidth)
+		dw = _h._fix + _titleWidth;
 	/* if the bitmap is the same size as the origin, then draw it as-is */
 	if (dw == _width && dh == _height) {
 		Common::Rect r(1, 1, dw, dh);
