@@ -9,7 +9,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-04-12 16:38+0000\n"
 "PO-Revision-Date: 2021-04-12 23:51+0000\n"
-"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
+"Last-Translator: Henrik Andersson <henke@henke37.cjb.net>\n"
 "Language-Team: Swedish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/sv/>\n"
 "Language: sv_SE\n"
@@ -4379,6 +4379,8 @@ msgid ""
 "\n"
 "I can also see: "
 msgstr ""
+"\n"
+"Jag kan också se: "
 
 #: engines/glk/scott/scott.cpp:551
 msgid "Saved.\n"
@@ -4403,7 +4405,7 @@ msgstr "Ladda\n"
 
 #: engines/glk/scott/scott.cpp:809
 msgid "I am dead.\n"
-msgstr ""
+msgstr "Jag är död.\n"
 
 #: engines/glk/scott/scott.cpp:821
 msgid "The game is now over.\n"
@@ -4437,11 +4439,11 @@ msgstr ""
 
 #: engines/glk/scott/scott.cpp:870
 msgid "Nothing"
-msgstr ""
+msgstr "Ingenting"
 
 #: engines/glk/scott/scott.cpp:999
 msgid "Give me a direction too."
-msgstr ""
+msgstr "Ge mig en riktning också."
 
 #: engines/glk/scott/scott.cpp:1008
 msgid "Dangerous to move in the dark! "
@@ -4449,11 +4451,11 @@ msgstr ""
 
 #: engines/glk/scott/scott.cpp:1016
 msgid "You fell down and broke your neck. "
-msgstr ""
+msgstr "Du föll ned och bröt nacken. "
 
 #: engines/glk/scott/scott.cpp:1018
 msgid "I fell down and broke my neck. "
-msgstr ""
+msgstr "Jag föll ner och bröt min nacke. "
 
 #: engines/glk/scott/scott.cpp:1023
 msgid "You can't go in that direction. "
@@ -4465,7 +4467,7 @@ msgstr ""
 
 #: engines/glk/scott/scott.cpp:1083
 msgid "It is dark.\n"
-msgstr ""
+msgstr "Det är mörkt.\n"
 
 #: engines/glk/scott/scott.cpp:1099 engines/glk/scott/scott.cpp:1121
 msgid "I've too much to carry. "
@@ -4477,7 +4479,7 @@ msgstr ""
 
 #: engines/glk/scott/scott.cpp:1110
 msgid "Nothing taken."
-msgstr ""
+msgstr "Inget taget."
 
 #: engines/glk/scott/scott.cpp:1114 engines/glk/scott/scott.cpp:1162
 #, fuzzy
@@ -4490,7 +4492,7 @@ msgstr ""
 
 #: engines/glk/scott/scott.cpp:1129
 msgid "It's beyond my power to do that. "
-msgstr ""
+msgstr "Det är bortom min färmåga att göra det. "
 
 #: engines/glk/scott/scott.cpp:1133
 msgid "O.K. "
@@ -4502,11 +4504,11 @@ msgstr ""
 
 #: engines/glk/scott/scott.cpp:1168
 msgid "It's beyond your power to do that.\n"
-msgstr ""
+msgstr "Det är bortom din förmåga att göra det.\n"
 
 #: engines/glk/scott/scott.cpp:1170
 msgid "It's beyond my power to do that.\n"
-msgstr ""
+msgstr "Det är bortom min förmåga att göra det.\n"
 
 #: engines/glk/zcode/zcode.cpp:145
 #, fuzzy
@@ -4515,7 +4517,7 @@ msgstr "Fel under körning av spel:"
 
 #: engines/glk/hugo/hugo.cpp:183
 msgid "Incorrect rs file."
-msgstr ""
+msgstr "Felaktig rs fil."
 
 #: engines/glk/hugo/hugo.cpp:190
 msgid "Save file created by different version."
@@ -4578,7 +4580,7 @@ msgstr ""
 
 #: engines/grim/grim.cpp:471 engines/grim/grim.cpp:558
 msgid "Run"
-msgstr ""
+msgstr "Spring"
 
 #: engines/grim/grim.cpp:476 engines/scumm/help.cpp:239
 #: engines/scumm/help.cpp:247
@@ -4712,7 +4714,7 @@ msgstr "Aktivera heliumläge"
 
 #: engines/hdb/detection.cpp:125
 msgid "Debug info and level selection becomes available"
-msgstr ""
+msgstr "Felsökningsinformation och nivåval blir tilgängligt"
 
 #: engines/hdb/metaengine.cpp:193 engines/nancy/input.cpp:180
 #, fuzzy
@@ -5078,12 +5080,12 @@ msgstr "För fortsatt utforskande krävs den fullständiga versionen av spelet."
 #: engines/lure/detection.cpp:44 engines/mads/detection.cpp:106
 #: engines/sherlock/detection.cpp:111 engines/twine/metaengine.cpp:157
 msgid "TTS Narrator"
-msgstr ""
+msgstr "TTT Berättare"
 
 #: engines/lure/detection.cpp:45 engines/mads/detection.cpp:107
 #: engines/sherlock/detection.cpp:112 engines/twine/metaengine.cpp:158
 msgid "Use TTS to read the descriptions (if TTS is available)"
-msgstr ""
+msgstr "Använd TTT för att läsa beskrivningarna (om TTT är tilgängligt)"
 
 #: engines/made/detection_tables.h:387
 #, fuzzy
@@ -5261,7 +5263,7 @@ msgstr ""
 
 #: engines/mohawk/myst_stacks/preview.cpp:90
 msgid "You can't leave the library in the demo."
-msgstr ""
+msgstr "Du kan inte lämna bilioteket i demot."
 
 #: engines/mohawk/riven.cpp:159
 msgid ""
@@ -5722,7 +5724,7 @@ msgstr "Snabbläge"
 #: engines/wintermute/keymapper_tables.h:1498
 #: engines/wintermute/keymapper_tables.h:1556
 msgid "???"
-msgstr ""
+msgstr "???"
 
 #: engines/pegasus/pegasus.cpp:2810
 #, fuzzy
@@ -5736,7 +5738,7 @@ msgstr "Ladda spel"
 
 #: engines/pink/gui.cpp:220
 msgid "This menu item is not yet implemented"
-msgstr ""
+msgstr "Detta menyval är ännu inte implementerat"
 
 #: engines/queen/detection.cpp:45
 msgid "Alternative intro"
@@ -5854,7 +5856,7 @@ msgstr ""
 
 #: engines/sci/detection.cpp:270
 msgid "Use RGB rendering"
-msgstr ""
+msgstr "Använd RGB rendering"
 
 #: engines/sci/detection.cpp:271
 msgid "Use RGB rendering to improve screen transitions"
@@ -5881,15 +5883,15 @@ msgstr ""
 
 #: engines/sci/detection.cpp:318
 msgid "Standard (GM / MT-32)"
-msgstr ""
+msgstr "Standard (GM / MT-32)"
 
 #: engines/sci/detection.cpp:322
 msgid "Roland D-110 / D-10 / D-20"
-msgstr ""
+msgstr "Roland D-110 / D-10 / D-20"
 
 #: engines/sci/detection.cpp:326
 msgid "Yamaha FB-01"
-msgstr ""
+msgstr "Yamaha FB-01"
 
 #: engines/sci/engine/kfile.cpp:485 engines/sci/metaengine.cpp:403
 msgid "(Autosave)"
@@ -6037,6 +6039,8 @@ msgid ""
 "The selected audio driver requires the following file(s):\n"
 "\n"
 msgstr ""
+"Den valda ljuddrivrutien kräver följande fil(er):\n"
+"\n"
 
 #: engines/sci/sound/music.cpp:164
 msgid ""
@@ -6069,7 +6073,7 @@ msgstr "Använd alternativ färgkarta"
 
 #: engines/scumm/detection.cpp:166
 msgid "Use a more neutral color palette that closely emulates the NES Classic"
-msgstr ""
+msgstr "Använd en mer neutral färgpalett som nära emulerar NES Classic"
 
 #: engines/scumm/dialogs.cpp:165
 #, c-format
@@ -6776,6 +6780,8 @@ msgid ""
 "This AMIGA version is missing (at least) the following file(s):\n"
 "\n"
 msgstr ""
+"Denna AMIGA version saknar (minst) fölande fil(er):\n"
+"\n"
 
 #: engines/scumm/imuse/drivers/amiga.cpp:659
 msgid ""
@@ -6853,7 +6859,7 @@ msgstr "Skippa rad"
 
 #: engines/sky/metaengine.cpp:102
 msgid "Open control panel"
-msgstr ""
+msgstr "Öppna kontrolpanel"
 
 #: engines/sky/metaengine.cpp:118
 #, fuzzy
@@ -7117,14 +7123,12 @@ msgid ""
 msgstr ""
 
 #: engines/twine/metaengine.cpp:93
-#, fuzzy
 msgid "Enable debug mode"
-msgstr "Aktivera heliumläge"
+msgstr "Aktivera felsökningsläge"
 
 #: engines/twine/metaengine.cpp:94
-#, fuzzy
 msgid "Enable the debug mode"
-msgstr "Aktivera heliumläge"
+msgstr "Aktivera felsökningsläget"
 
 #: engines/twine/metaengine.cpp:100
 #, fuzzy
@@ -7136,9 +7140,8 @@ msgid "Enable the original audio cd track"
 msgstr ""
 
 #: engines/twine/metaengine.cpp:107
-#, fuzzy
 msgid "Enable sound"
-msgstr "Aktivera lagring"
+msgstr "Aktivera ljud"
 
 #: engines/twine/metaengine.cpp:108
 #, fuzzy
@@ -7176,9 +7179,8 @@ msgid "Enable the cutscenes for the game"
 msgstr "Aktivera Venus-hjälpsystemet"
 
 #: engines/twine/metaengine.cpp:135
-#, fuzzy
 msgid "Enable mouse"
-msgstr "Aktivera Venus"
+msgstr "Aktivera mus"
 
 #: engines/twine/metaengine.cpp:136
 #, fuzzy
@@ -7206,11 +7208,11 @@ msgstr "Spelets fullständiga titel"
 
 #: engines/twine/metaengine.cpp:237
 msgid "Debug Next Room"
-msgstr ""
+msgstr "Felsök Nästa Rum"
 
 #: engines/twine/metaengine.cpp:242
 msgid "Debug Previous Room"
-msgstr ""
+msgstr "Felsök Föregående Rum"
 
 #: engines/twine/metaengine.cpp:247
 msgid "Debug Apply Celling Grid"
@@ -7282,11 +7284,11 @@ msgstr "Inställningar"
 
 #: engines/twine/metaengine.cpp:358
 msgid "Use Selected Object"
-msgstr ""
+msgstr "Använd Valt Objekt"
 
 #: engines/twine/metaengine.cpp:364
 msgid "Throw Magic Ball"
-msgstr ""
+msgstr "Kasta Magisk Boll"
 
 #: engines/twine/metaengine.cpp:378
 #, fuzzy
@@ -7318,7 +7320,7 @@ msgstr ""
 #: engines/twine/metaengine.cpp:444 engines/twine/metaengine.cpp:496
 #: engines/twine/metaengine.cpp:512
 msgid "Abort"
-msgstr ""
+msgstr "Avbryt"
 
 #: engines/twine/metaengine.cpp:482
 #, fuzzy
@@ -7451,7 +7453,7 @@ msgstr ""
 
 #: engines/ultima/ultima8/meta_engine.cpp:189
 msgid "Ultima VIII"
-msgstr ""
+msgstr "Ultima VIII"
 
 #: engines/ultima/ultima8/meta_engine.cpp:189
 msgid "Crusader"
@@ -7459,15 +7461,15 @@ msgstr ""
 
 #: engines/ultima/ultima8/meta_engine.cpp:236
 msgid "Ultima VIII Cheats"
-msgstr ""
+msgstr "Ultima VIII Fusk"
 
 #: engines/ultima/ultima8/meta_engine.cpp:253
 msgid "Ultima VIII Debug"
-msgstr ""
+msgstr "Ultima VIII Felsök"
 
 #: engines/ultima/ultima8/gumps/u8_save_gump.cpp:297
 msgid "[corrupt]"
-msgstr ""
+msgstr "[korrupt]"
 
 #: engines/ultima/ultima8/gumps/u8_save_gump.cpp:300
 msgid "[outdated]"
@@ -7587,9 +7589,8 @@ msgstr "Nästa"
 #: engines/wintermute/keymapper_tables.h:1354
 #: engines/wintermute/keymapper_tables.h:1537
 #: engines/wintermute/keymapper_tables.h:1653
-#, fuzzy
 msgid "Show hints"
-msgstr "Visa gömda filer"
+msgstr "Visa ledtrådar"
 
 #: engines/wintermute/keymapper_tables.h:242
 #: engines/wintermute/keymapper_tables.h:442
@@ -7826,15 +7827,15 @@ msgstr "Klickläge"
 
 #: engines/wintermute/keymapper_tables.h:685
 msgid "Walking speed: Low"
-msgstr ""
+msgstr "Gånghastighet: Långsam"
 
 #: engines/wintermute/keymapper_tables.h:690
 msgid "Walking speed: Medium"
-msgstr ""
+msgstr "Gånghastighet: Medium"
 
 #: engines/wintermute/keymapper_tables.h:695
 msgid "Walking speed: High"
-msgstr ""
+msgstr "Gånghastighet: Snabb"
 
 #: engines/wintermute/keymapper_tables.h:700
 #, fuzzy
@@ -7860,7 +7861,7 @@ msgstr "Kasta besvärjelse"
 
 #: engines/wintermute/keymapper_tables.h:727
 msgid "Walking speed: Ultra Super Mega Fast"
-msgstr ""
+msgstr "Gånghastighet: Super Duper Mega Snabb"
 
 #: engines/wintermute/keymapper_tables.h:743
 #, fuzzy
@@ -7869,11 +7870,11 @@ msgstr "Visa muspekare"
 
 #: engines/wintermute/keymapper_tables.h:748
 msgid "Play selected music record"
-msgstr ""
+msgstr "Spela vald musikskiva"
 
 #: engines/wintermute/keymapper_tables.h:753
 msgid "Select next music record"
-msgstr ""
+msgstr "Spela nästa musikskiva"
 
 #: engines/wintermute/keymapper_tables.h:758
 #, fuzzy
@@ -7920,19 +7921,19 @@ msgstr ""
 
 #: engines/wintermute/keymapper_tables.h:811
 msgid "Ability: Lightning"
-msgstr ""
+msgstr "Förmåga: Åska"
 
 #: engines/wintermute/keymapper_tables.h:816
 msgid "Ability: Light"
-msgstr ""
+msgstr "Förmåga: Ljus"
 
 #: engines/wintermute/keymapper_tables.h:821
 msgid "Ability: Wind"
-msgstr ""
+msgstr "Förmåga: Vind"
 
 #: engines/wintermute/keymapper_tables.h:826
 msgid "Ability: Sound"
-msgstr ""
+msgstr "Förmåga: Ljud"
 
 #: engines/wintermute/keymapper_tables.h:831
 msgid "Ability: Esence"
@@ -8000,7 +8001,7 @@ msgstr "~F~öregående"
 #: engines/wintermute/keymapper_tables.h:1261
 #: engines/wintermute/keymapper_tables.h:1424
 msgid "Settings"
-msgstr ""
+msgstr "Inställningar"
 
 #: engines/wintermute/keymapper_tables.h:1266
 msgid "Dialogue answer 1"
@@ -8027,20 +8028,17 @@ msgid "Spin faster"
 msgstr ""
 
 #: engines/wintermute/keymapper_tables.h:1376
-#, fuzzy
 msgid "Zoom out"
-msgstr "Zooma upp"
+msgstr "Zooma ut"
 
 #: engines/wintermute/keymapper_tables.h:1383
-#, fuzzy
 msgid "Zoom in"
-msgstr "Zooma upp"
+msgstr "Zooma in"
 
 #: engines/wintermute/keymapper_tables.h:1396
 #: engines/wintermute/keymapper_tables.h:1511
-#, fuzzy
 msgid "Show journal"
-msgstr "Visa alla"
+msgstr "Visa journal"
 
 #: engines/wintermute/keymapper_tables.h:1439
 #, fuzzy
@@ -8113,7 +8111,7 @@ msgstr "Dubbla FPS"
 
 #: engines/wintermute/keymapper_tables.h:1731
 msgid "F1"
-msgstr ""
+msgstr "F1"
 
 #: engines/wintermute/keymapper_tables.h:1736
 msgid "Key i"
@@ -8198,7 +8196,7 @@ msgstr "Zooma ned"
 
 #: engines/zvision/metaengine.cpp:170
 msgid "Spellbook"
-msgstr ""
+msgstr "Trollbok"
 
 #: engines/zvision/metaengine.cpp:176
 msgid "Score"
