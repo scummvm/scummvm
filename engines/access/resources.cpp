@@ -79,6 +79,9 @@ bool Resources::load(Common::U32String &errorMessage) {
 		case 5:
 			_datIndex[idx]._language = Common::EN_ANY;
 			break;
+		case 23:
+			_datIndex[idx]._language = Common::ES_ESP;
+			break;
 		default:
 			error("Unknown language");
 			break;
