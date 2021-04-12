@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-04-12 16:38+0000\n"
-"PO-Revision-Date: 2021-04-05 23:24+0000\n"
+"PO-Revision-Date: 2021-04-12 18:19+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/el/>\n"
@@ -3957,14 +3957,14 @@ msgid "Language to use for multilingual games"
 msgstr "Η γλώσσα που θα χρησιμοποιηθεί για πολυγλωσσικά παιχνίδια"
 
 #: engines/ags/detection.cpp:110
-#, fuzzy
-#| msgid "Antialiased"
 msgid "Force antialiased text"
-msgstr "Εξομαλυμένη"
+msgstr "Επιβολή εξομαλυμένου κειμένου"
 
 #: engines/ags/detection.cpp:110
 msgid "Use antialiasing to draw text even if the game does not ask for it"
 msgstr ""
+"Χρήση εξομάλυνσης για τη σχεδίαση κειμένου ακόμα κι αν το παιχνίδι δεν το "
+"απαιτεί"
 
 #: engines/bladerunner/bladerunner.cpp:363
 msgid "Failed to initialize resources"
@@ -5519,48 +5519,47 @@ msgid "Open event flags cheat menu"
 msgstr "Άνοιγμα μενού cheat συμβάντων"
 
 #: engines/nancy/dialogs.cpp:41
-#, fuzzy
-#| msgid "Player Time:"
 msgid "Player Speech"
-msgstr "Χρόνος Παιχνιδιού:"
+msgstr "Ομιλία Παίκτη"
 
 #: engines/nancy/dialogs.cpp:41
 msgid ""
 "Enable player speech. Only works if speech is enabled in the Audio settings."
 msgstr ""
+"Ενεργοποίηση ομιλίας παίκτη. Προϋποθέτει να είναι ενεργοποιημένη η ομιλία "
+"στις ρυθμίσεις Ήχου."
 
 #: engines/nancy/dialogs.cpp:42
 msgid "Character Speech"
-msgstr ""
+msgstr "Ομιλία Χαρακτήρων"
 
 #: engines/nancy/dialogs.cpp:42
 msgid ""
 "Enable NPC speech. Only works if speech is enabled in the Audio settings."
 msgstr ""
+"Ενεργοποίηση ομιλίας για τους μη-χειριζόμενους χαρακτήρες (NPC). Προϋποθέτει "
+"να είναι ενεργοποιημένη η ομιλία στις ρυθμίσεις Ήχου."
 
 #: engines/nancy/dialogs.cpp:43
-#, fuzzy
-#| msgid "Use original save/load screens"
 msgid "Use original menus"
-msgstr "Χρήση αρχικών οθονών αποθήκευσης/φόρτωσης"
+msgstr "Χρήση αρχικών μενού"
 
 #: engines/nancy/dialogs.cpp:43
 msgid ""
 "Use the original engine's main, save/load, and setup menus. ScummVM's Global "
 "Main Menu can still be accessed through its keymap."
 msgstr ""
+"Χρήση κεντρικού μενού, αποθήκευσης/φόρτωσης, και ρυθμίσεων της πρωτότυπης "
+"μηχανής. Το Καθολικό Κεντρικό Μενού του ScummVM (GMM) θα παραμείνει "
+"προσβάσιμο από τη σχετική συντόμευση (keymap)."
 
 #: engines/nancy/dialogs.cpp:45
-#, fuzzy
-#| msgid "Speech Only"
 msgid "Speech Options"
-msgstr "Μόνο Ομιλία"
+msgstr "Επιλογές Ομιλίας"
 
 #: engines/nancy/dialogs.cpp:46
-#, fuzzy
-#| msgid "Options"
 msgid "Engine Options"
-msgstr "Επιλογές"
+msgstr "Επιλογές Μηχανής"
 
 #: engines/nancy/dialogs.cpp:98
 msgid "General"
@@ -5629,7 +5628,7 @@ msgstr "Επίπεδο Δυσκολίας"
 
 #: engines/nancy/dialogs.cpp:130
 msgid "Software Timer"
-msgstr ""
+msgstr "Χρονομετρητής Λογισμικού"
 
 #: engines/nancy/dialogs.cpp:131
 msgid "Timer On"
@@ -7207,12 +7206,8 @@ msgid "Unable to locate the '%s' data file."
 msgstr "Αδυναμία εντοπισμού του αρχείου παιχνιδιού '%s'."
 
 #: engines/twine/detection.cpp:218
-#, fuzzy
-#| msgid "This game requires the FoxTail subengine, which is not compiled in."
 msgid "This version requires Giflib which was not compiled into ScummVM"
-msgstr ""
-"Το παιχνίδι αυτό απαιτεί την επιμέρους μηχανή FoxTail, η οποία δεν έχει "
-"γίνει compiled."
+msgstr "Αυτή η έκδοση απαιτεί τη Giflib που δεν έγινε compiled στο ScummVM"
 
 #: engines/twine/metaengine.cpp:71
 msgid "Enable wall collisions"
@@ -7436,32 +7431,24 @@ msgid "Next location"
 msgstr "Επόμενο μέρος"
 
 #: engines/twine/parser/text.cpp:33
-#, fuzzy
-#| msgid "Enable high resolution"
 msgctxt "Options menu"
 msgid "High resolution on"
 msgstr "Ενεργοποίηση υψηλής ανάλυσης"
 
 #: engines/twine/parser/text.cpp:34
-#, fuzzy
-#| msgid "Enable high resolution"
 msgctxt "Options menu"
 msgid "High resolution off"
-msgstr "Ενεργοποίηση υψηλής ανάλυσης"
+msgstr "Απενεργοποίηση υψηλής ανάλυσης"
 
 #: engines/twine/parser/text.cpp:35
-#, fuzzy
-#| msgid "Enable wall collisions"
 msgctxt "Options menu"
 msgid "Wall collision on"
-msgstr "Σύγκρουση με τοίχους"
+msgstr "Ενεργή σύγκρουση με τοίχους"
 
 #: engines/twine/parser/text.cpp:36
-#, fuzzy
-#| msgid "Enable wall collisions"
 msgctxt "Options menu"
 msgid "Wall collision off"
-msgstr "Σύγκρουση με τοίχους"
+msgstr "Ανενεργή σύγκρουση με τοίχους"
 
 #: engines/ultima/shared/early/ultima_early.cpp:71
 msgid "Could not find correct ultima.dat datafile"
