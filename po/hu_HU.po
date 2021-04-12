@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-04-11 23:54+0000\n"
+"POT-Creation-Date: 2021-04-12 01:32+0000\n"
 "PO-Revision-Date: 2021-04-10 09:24+0000\n"
 "Last-Translator: George Kormendi <grubycza@hotmail.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
@@ -543,7 +543,7 @@ msgid "Sine"
 msgstr "Színusz"
 
 #: gui/fluidsynth-dialog.cpp:137 backends/platform/sdl/ps3/ps3.cpp:44
-#: backends/platform/sdl/psp2/psp2.cpp:48 engines/dragons/metaengine.cpp:193
+#: backends/platform/sdl/psp2/psp2.cpp:47 engines/dragons/metaengine.cpp:193
 msgid "Triangle"
 msgstr "Háromszög"
 
@@ -2870,7 +2870,7 @@ msgstr "Jobb Shoulder"
 #: backends/keymapper/hardware-input.cpp:267
 #: backends/platform/3ds/osystem-events.cpp:58
 #: backends/platform/ds/osystem_ds.cpp:148 backends/platform/sdl/ps3/ps3.cpp:52
-#: backends/platform/sdl/psp2/psp2.cpp:53
+#: backends/platform/sdl/psp2/psp2.cpp:52
 #: backends/platform/sdl/switch/switch.cpp:49
 msgid "D-pad Up"
 msgstr "D-pad Fel"
@@ -2878,7 +2878,7 @@ msgstr "D-pad Fel"
 #: backends/keymapper/hardware-input.cpp:268
 #: backends/platform/3ds/osystem-events.cpp:59
 #: backends/platform/ds/osystem_ds.cpp:149 backends/platform/sdl/ps3/ps3.cpp:53
-#: backends/platform/sdl/psp2/psp2.cpp:54
+#: backends/platform/sdl/psp2/psp2.cpp:53
 #: backends/platform/sdl/switch/switch.cpp:50
 msgid "D-pad Down"
 msgstr "D-pad Le"
@@ -2886,7 +2886,7 @@ msgstr "D-pad Le"
 #: backends/keymapper/hardware-input.cpp:269
 #: backends/platform/3ds/osystem-events.cpp:60
 #: backends/platform/ds/osystem_ds.cpp:150 backends/platform/sdl/ps3/ps3.cpp:54
-#: backends/platform/sdl/psp2/psp2.cpp:55
+#: backends/platform/sdl/psp2/psp2.cpp:54
 #: backends/platform/sdl/switch/switch.cpp:51
 msgid "D-pad Left"
 msgstr "D-pad Bal"
@@ -2894,7 +2894,7 @@ msgstr "D-pad Bal"
 #: backends/keymapper/hardware-input.cpp:270
 #: backends/platform/3ds/osystem-events.cpp:61
 #: backends/platform/ds/osystem_ds.cpp:151 backends/platform/sdl/ps3/ps3.cpp:55
-#: backends/platform/sdl/psp2/psp2.cpp:56
+#: backends/platform/sdl/psp2/psp2.cpp:55
 #: backends/platform/sdl/switch/switch.cpp:52
 msgid "D-pad Right"
 msgstr "D-pad Jobb"
@@ -2908,25 +2908,25 @@ msgid "Right Trigger"
 msgstr "Jobb Indító"
 
 #: backends/keymapper/hardware-input.cpp:277
-#: backends/platform/sdl/ps3/ps3.cpp:62 backends/platform/sdl/psp2/psp2.cpp:61
+#: backends/platform/sdl/ps3/ps3.cpp:62 backends/platform/sdl/psp2/psp2.cpp:60
 #: backends/platform/sdl/switch/switch.cpp:59
 msgid "Left Stick X"
 msgstr "Bal Kar X"
 
 #: backends/keymapper/hardware-input.cpp:278
-#: backends/platform/sdl/ps3/ps3.cpp:63 backends/platform/sdl/psp2/psp2.cpp:62
+#: backends/platform/sdl/ps3/ps3.cpp:63 backends/platform/sdl/psp2/psp2.cpp:61
 #: backends/platform/sdl/switch/switch.cpp:60
 msgid "Left Stick Y"
 msgstr "Bal Kar Y"
 
 #: backends/keymapper/hardware-input.cpp:279
-#: backends/platform/sdl/ps3/ps3.cpp:64 backends/platform/sdl/psp2/psp2.cpp:63
+#: backends/platform/sdl/ps3/ps3.cpp:64 backends/platform/sdl/psp2/psp2.cpp:62
 #: backends/platform/sdl/switch/switch.cpp:61
 msgid "Right Stick X"
 msgstr "Jobb Kar X"
 
 #: backends/keymapper/hardware-input.cpp:280
-#: backends/platform/sdl/ps3/ps3.cpp:65 backends/platform/sdl/psp2/psp2.cpp:64
+#: backends/platform/sdl/ps3/ps3.cpp:65 backends/platform/sdl/psp2/psp2.cpp:63
 #: backends/platform/sdl/switch/switch.cpp:62
 msgid "Right Stick Y"
 msgstr "Jobb Kar Y"
@@ -3197,13 +3197,13 @@ msgstr "Y"
 
 #: backends/platform/3ds/osystem-events.cpp:52
 #: backends/platform/ds/osystem_ds.cpp:144 backends/platform/sdl/ps3/ps3.cpp:45
-#: backends/platform/sdl/psp2/psp2.cpp:49
+#: backends/platform/sdl/psp2/psp2.cpp:48
 msgid "Select"
 msgstr "Választ"
 
 #: backends/platform/3ds/osystem-events.cpp:53
 #: backends/platform/ds/osystem_ds.cpp:145 backends/platform/sdl/ps3/ps3.cpp:47
-#: backends/platform/sdl/psp2/psp2.cpp:50
+#: backends/platform/sdl/psp2/psp2.cpp:49
 msgid "Start"
 msgstr "Start"
 
@@ -3219,14 +3219,14 @@ msgstr "ZR"
 
 #: backends/platform/3ds/osystem-events.cpp:56
 #: backends/platform/ds/osystem_ds.cpp:146
-#: backends/platform/sdl/psp2/psp2.cpp:51
+#: backends/platform/sdl/psp2/psp2.cpp:50
 #: backends/platform/sdl/switch/switch.cpp:47
 msgid "L"
 msgstr "L"
 
 #: backends/platform/3ds/osystem-events.cpp:57
 #: backends/platform/ds/osystem_ds.cpp:147
-#: backends/platform/sdl/psp2/psp2.cpp:52
+#: backends/platform/sdl/psp2/psp2.cpp:51
 #: backends/platform/sdl/switch/switch.cpp:48
 msgid "R"
 msgstr "R"
@@ -3413,17 +3413,17 @@ msgstr "OFL Licensz"
 msgid "BSD License"
 msgstr "BSD Licensz"
 
-#: backends/platform/sdl/ps3/ps3.cpp:41 backends/platform/sdl/psp2/psp2.cpp:45
+#: backends/platform/sdl/ps3/ps3.cpp:41 backends/platform/sdl/psp2/psp2.cpp:44
 #: engines/dragons/metaengine.cpp:205
 msgid "Cross"
 msgstr "Kereszt"
 
-#: backends/platform/sdl/ps3/ps3.cpp:42 backends/platform/sdl/psp2/psp2.cpp:46
+#: backends/platform/sdl/ps3/ps3.cpp:42 backends/platform/sdl/psp2/psp2.cpp:45
 #: engines/dragons/metaengine.cpp:199
 msgid "Circle"
 msgstr "Kör"
 
-#: backends/platform/sdl/ps3/ps3.cpp:43 backends/platform/sdl/psp2/psp2.cpp:47
+#: backends/platform/sdl/ps3/ps3.cpp:43 backends/platform/sdl/psp2/psp2.cpp:46
 #: engines/dragons/metaengine.cpp:187
 msgid "Square"
 msgstr "Négyzet"
