@@ -100,7 +100,6 @@ void openSys() {
 	FTexture[hh]._dy = 208 / 2;
 	FTexture[hh]._angle = 0;
 	FTexture[hh]._texture = g_vm->_textureArea;
-	FTexture[hh]._palette = nullptr;
 	FTexture[hh]._flag = TEXTUREACTIVE + TEXTURECYLIND;
 
 	// body
@@ -109,7 +108,6 @@ void openSys() {
 	FTexture[hh]._dy = 300;
 	FTexture[hh]._angle = 0;
 	FTexture[hh]._texture = FTexture[0]._texture + (300 * 208) / 4;
-	FTexture[hh]._palette = nullptr;
 	FTexture[hh]._flag = TEXTUREACTIVE + TEXTURECYLIND;
 
 	// arms
@@ -118,7 +116,6 @@ void openSys() {
 	FTexture[hh]._dy = 150;
 	FTexture[hh]._angle = 0;
 	FTexture[hh]._texture = FTexture[1]._texture + 300 * 300;
-	FTexture[hh]._palette = nullptr;
 	FTexture[hh]._flag = TEXTUREACTIVE + TEXTURECYLIND;
 
 	delete g_vm->_actor;

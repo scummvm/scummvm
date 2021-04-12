@@ -72,7 +72,6 @@ struct SCamera {
 struct STexture {
 	int16 _dx, _dy, _angle;
 	uint8 *_texture;
-	uint8 *_palette;
 	uint8 _flag;
 };
 
