@@ -26,7 +26,8 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Updated the Roland MT-32 emulation code to the Munt project's mt32emu 2.5.0.
    - Updated Dropbox Cloud Storage to use the new Dropbox OAuth workflow.
    - Major extension to the number of supported graphics scalers.
-   - Display path to scummvm configuration file in GUI -> Options -> Paths
+   - Display path to scummvm configuration file in GUI -> Options -> Paths.
+   - Added new optional dependency, giflib >= 5.0.0. Used by some version of LBA.
 
  AGOS:
    - Added support for the Japanese PC-98 version of Elvira 1.
