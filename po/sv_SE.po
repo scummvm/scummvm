@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.5.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-04-12 16:38+0000\n"
-"PO-Revision-Date: 2021-04-12 23:48+0000\n"
-"Last-Translator: Henrik Andersson <henke@henke37.cjb.net>\n"
+"PO-Revision-Date: 2021-04-12 23:51+0000\n"
+"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Swedish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/sv/>\n"
 "Language: sv_SE\n"
@@ -2326,11 +2326,12 @@ msgid "This game is not supported."
 msgstr "Spel-ID stöds inte"
 
 #: engines/engine.cpp:659
-#, fuzzy
 msgid ""
 "This game is not supported for the following reason:\n"
 "\n"
-msgstr "Det här spelet stöder inte laddning av spardata från launchern."
+msgstr ""
+"Det här spelet stöder inte laddning av spardata från launchern.\n"
+"\n"
 
 #: engines/engine.cpp:798
 msgid "Loading game is currently unavailable"
@@ -4221,9 +4222,8 @@ msgid "Untitled Savegame"
 msgstr "Namnlös sparfil"
 
 #: engines/glk/adrift/os_glk.cpp:2814
-#, fuzzy
 msgid "Loading game...\n"
-msgstr "Laddar speldata..."
+msgstr "Laddar speldata...\n"
 
 #: engines/glk/advsys/advsys.cpp:35
 #, fuzzy
@@ -4381,9 +4381,8 @@ msgid ""
 msgstr ""
 
 #: engines/glk/scott/scott.cpp:551
-#, fuzzy
 msgid "Saved.\n"
-msgstr "Spara"
+msgstr "Spara\n"
 
 #: engines/glk/scott/scott.cpp:644
 msgid "You use word(s) I don't know! "
@@ -4399,9 +4398,8 @@ msgid "I've too much to carry! "
 msgstr ""
 
 #: engines/glk/scott/scott.cpp:807
-#, fuzzy
 msgid "You are dead.\n"
-msgstr "Ladda"
+msgstr "Ladda\n"
 
 #: engines/glk/scott/scott.cpp:809
 msgid "I am dead.\n"
