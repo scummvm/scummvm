@@ -144,22 +144,12 @@ void AnimManager::playMovie(Common::String filename, int startFrame, int endFram
 	bool skipVideo = false;
 	uint16 x = (g_system->getWidth() - smkDecoder->getWidth()) / 2;
 	uint16 y = (g_system->getHeight() - smkDecoder->getHeight()) / 2;
-	startFrame = CLIP<int32>(startFrame, 1, smkDecoder->getFrameCount() - 1);
-	endFrame = CLIP<int32>(endFrame, 1, smkDecoder->getFrameCount());	
 	g_vm->_sdText.text = nullptr;
 
 	smkDecoder->start();
-
-	if (endFrame - startFrame > 2 && startFrame > 10) {
-		smkDecoder->setMute(true);
-		smkDecoder->forceSeekToFrame(startFrame - 10);
-
-		while (smkDecoder->getCurFrame() < startFrame - 1) {
-			drawFrame(smkDecoder, x, y, false);
-		}
-
-		smkDecoder->setMute(false);
-	}
+	//debug("playMovie %s, %d - %d", filename.c_str(), startFrame, endFrame);
+	
+	setVideoRange(smkDecoder, startFrame, endFrame);
 	
 	while (!g_vm->shouldQuit() && !smkDecoder->endOfVideo() && smkDecoder->getCurFrame() < endFrame && !skipVideo) {
 		if (smkDecoder->needsUpdate()) {
@@ -174,12 +164,42 @@ void AnimManager::playMovie(Common::String filename, int startFrame, int endFram
 		g_system->delayMillis(10);
 	}
 
-	// Clear pending events
-	while (g_engine->getEventManager()->pollEvent(event)) {
-	}
-	
 	doEvent(MC_DIALOG, ME_ENDCHOICE, MP_HIGH, smkDecoder->getCurFrame(), 0, 0, 0);
 	delete smkDecoder;
+}
+
+void AnimManager::setVideoRange(NightlongSmackerDecoder *smkDecoder, int &startFrame, int &endFrame) {
+	uint16 x = (g_system->getWidth() - smkDecoder->getWidth()) / 2;
+	uint16 y = (g_system->getHeight() - smkDecoder->getHeight()) / 2;
+	startFrame = CLIP<int32>(startFrame, 1, smkDecoder->getFrameCount() - 1) - 1;
+	endFrame = CLIP<int32>(endFrame, 1, smkDecoder->getFrameCount()) - 1;
+
+	//	If choices are attached
+	if (smkDecoder->getCurFrame() != startFrame) {
+		for (int a = 0; a < MAXNEWSMKPAL; a++) {
+			if ((_dialog[_curDialog]._newPal[a] > startFrame || !_dialog[_curDialog]._newPal[a]) && a) {
+				smkDecoder->forceSeekToFrame(_dialog[_curDialog]._newPal[a - 1]);
+				break;
+			}
+
+			if (!_dialog[_curDialog]._newPal[a] || _dialog[_curDialog]._newPal[a] == startFrame)
+				break;
+		}
+
+		if (endFrame - startFrame > 2) {
+			if (startFrame > 10)
+				smkDecoder->forceSeekToFrame(startFrame - 10);
+			else
+				smkDecoder->forceSeekToFrame(0);
+
+			while (smkDecoder->getCurFrame() < startFrame) {
+				drawFrame(smkDecoder, x, y, false);
+			}
+		} else
+			smkDecoder->forceSeekToFrame(startFrame);
+	}
+	if (endFrame - startFrame > 2)
+		smkDecoder->setMute(false);
 }
 
 void AnimManager::drawFrame(NightlongSmackerDecoder *smkDecoder, uint16 x, uint16 y, bool updateScreen) {
@@ -796,13 +816,13 @@ void AnimManager::playFullMotion(int start, int end) {
 	//	If choices are attached
 	if (_curAnimFrame[kSmackerFullMotion] != (start - 1)) {
 		for (int a = 0; a < MAXNEWSMKPAL; a++) {
-			if (((_dialog[_curDialog]._newPal[a] > start) || !(_dialog[_curDialog]._newPal[a])) && (a)) {
+			if ((_dialog[_curDialog]._newPal[a] > start || !_dialog[_curDialog]._newPal[a]) && a) {
 				smkGoto(kSmackerFullMotion, _dialog[_curDialog]._newPal[a - 1]);
 				refreshPalette(kSmackerFullMotion);
 				break;
 			}
 
-			if ((_dialog[_curDialog]._newPal[a] == 0) || (_dialog[_curDialog]._newPal[a] == start))
+			if (_dialog[_curDialog]._newPal[a] == 0 || _dialog[_curDialog]._newPal[a] == start)
 				break;
 		}
 
