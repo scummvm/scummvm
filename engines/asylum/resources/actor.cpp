@@ -3026,8 +3026,8 @@ void Actor::updateStatus15_Chapter11() {
 	getSharedData()->vector1.x = actor0->getPoint1()->x + actor0->getPoint2()->x;
 	getSharedData()->vector1.y = actor0->getPoint1()->y + actor0->getPoint2()->y - 5;
 
-	getSharedData()->vector2.x = actor0->getPoint1()->x + actor0->getPoint2()->x;
-	getSharedData()->vector2.y = actor0->getPoint1()->y + actor0->getPoint2()->y;
+	getSharedData()->vector2.x = getPoint1()->x + getPoint2()->x;
+	getSharedData()->vector2.y = getPoint1()->y + getPoint2()->y;
 
 	updateCoordinates(getSharedData()->vector1, getSharedData()->vector2);
 
@@ -3313,10 +3313,10 @@ void Actor::updateCoordinates(const Common::Point &vec1, Common::Point vec2) {
 	if (diffY == 0)
 		return;
 
-	ActorDirection dir = (diffY > 0) ? kDirectionS : kDirectionN;
+	ActorDirection dir = (vec1.y > vec2.y) ? kDirectionS : kDirectionN;
 
 	if (canMove(&vec2, dir, diffY + 3, false))
-		updateCoordinatesForDirection(dir, (int16)(diffY - 1), &_point);
+		updateCoordinatesForDirection(dir, (int16)(diffY - 1), &_point1);
 }
 
 void Actor::resetActors() {
@@ -3731,8 +3731,8 @@ void Actor::setVolume() {
 //////////////////////////////////////////////////////////////////////////
 
 ActorDirection Actor::directionFromAngle(const Common::Point &vec1, const Common::Point &vec2) {
-	int32 diffX = (vec2.x - vec1.x) * 2^16;
-	int32 diffY = (vec1.y - vec2.y) * 2^16;
+	int32 diffX = (vec2.x << 16) - (vec1.x << 16);
+	int32 diffY = (vec1.y << 16) - (vec2.y << 16);
 	int32 adjust = 0;
 
 	if (diffX < 0) {
