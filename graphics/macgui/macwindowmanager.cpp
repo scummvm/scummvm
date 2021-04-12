@@ -546,21 +546,22 @@ void MacWindowManager::draw() {
 	Common::Rect bounds = getScreenBounds();
 
 	if (_fullRefresh) {
-		Common::Rect screen = getScreenBounds();
-		if (_desktop->w != screen.width() || _desktop->h != screen.height()) {
-			_desktop->free();
-			_desktop->create(screen.width(), screen.height(), _pixelformat);
-			drawDesktop();
-		}
+		if (!(_mode & kWMModeNoDesktop)) {
+			Common::Rect screen = getScreenBounds();
+			if (_desktop->w != screen.width() || _desktop->h != screen.height()) {
+				_desktop->free();
+				_desktop->create(screen.width(), screen.height(), _pixelformat);
+				drawDesktop();
+			}
 
-		if (_screen) {
-			_screen->blitFrom(*_desktop, Common::Point(0, 0));
-			g_system->copyRectToScreen(_screen->getPixels(), _screen->pitch, 0, 0, _screen->w, _screen->h);
-		} else {
-			_screenCopyPauseToken = new PauseToken(pauseEngine());
-			g_system->copyRectToScreen(_desktop->getPixels(), _desktop->pitch, 0, 0, _desktop->w, _desktop->h);
+			if (_screen) {
+				_screen->blitFrom(*_desktop, Common::Point(0, 0));
+				g_system->copyRectToScreen(_screen->getPixels(), _screen->pitch, 0, 0, _screen->w, _screen->h);
+			} else {
+				_screenCopyPauseToken = new PauseToken(pauseEngine());
+				g_system->copyRectToScreen(_desktop->getPixels(), _desktop->pitch, 0, 0, _desktop->w, _desktop->h);
+			}
 		}
-
 		if (_redrawEngineCallback != nullptr)
 			_redrawEngineCallback(_engineR);
 	}
