@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-04-12 16:38+0000\n"
-"PO-Revision-Date: 2021-04-08 10:05+0000\n"
+"PO-Revision-Date: 2021-04-12 23:40+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/uk/>\n"
@@ -5425,48 +5425,47 @@ msgid "Open event flags cheat menu"
 msgstr "Відкрити чіт-меню флагів подій"
 
 #: engines/nancy/dialogs.cpp:41
-#, fuzzy
-#| msgid "Player Time:"
 msgid "Player Speech"
-msgstr "Час гравця:"
+msgstr "Озвучка гравця"
 
 #: engines/nancy/dialogs.cpp:41
 msgid ""
 "Enable player speech. Only works if speech is enabled in the Audio settings."
 msgstr ""
+"Ввімкнути озвучку гравця. Працює тільки коли озвучку також ввімкнено у "
+"налаштуваннях."
 
 #: engines/nancy/dialogs.cpp:42
 msgid "Character Speech"
-msgstr ""
+msgstr "Озвучка героїв"
 
 #: engines/nancy/dialogs.cpp:42
 msgid ""
 "Enable NPC speech. Only works if speech is enabled in the Audio settings."
 msgstr ""
+"Ввімкнути озвучку героїв гри. Працює тільки коли озвучку також ввімкнено у "
+"налаштуваннях."
 
 #: engines/nancy/dialogs.cpp:43
-#, fuzzy
-#| msgid "Use original save/load screens"
 msgid "Use original menus"
-msgstr "Використовувати ориг. екрани збереження/завантаження"
+msgstr "Використовувати оригінальні меню"
 
 #: engines/nancy/dialogs.cpp:43
 msgid ""
 "Use the original engine's main, save/load, and setup menus. ScummVM's Global "
 "Main Menu can still be accessed through its keymap."
 msgstr ""
+"Використовувати меню оригінального движка: головне, завантаження/збереження, "
+"налаштування. Глобальне меню ScummVM також можна викликати через цю "
+"комбінацію клавіш."
 
 #: engines/nancy/dialogs.cpp:45
-#, fuzzy
-#| msgid "Speech Only"
 msgid "Speech Options"
-msgstr "Тільки озвучка"
+msgstr "Налаштування озвучки"
 
 #: engines/nancy/dialogs.cpp:46
-#, fuzzy
-#| msgid "Options"
 msgid "Engine Options"
-msgstr "Налаштування"
+msgstr "Налашт. движка"
 
 #: engines/nancy/dialogs.cpp:98
 msgid "General"
@@ -5535,7 +5534,7 @@ msgstr "Складність гри"
 
 #: engines/nancy/dialogs.cpp:130
 msgid "Software Timer"
-msgstr ""
+msgstr "Програмний таймер"
 
 #: engines/nancy/dialogs.cpp:131
 msgid "Timer On"
@@ -7067,10 +7066,8 @@ msgid "Unable to locate the '%s' data file."
 msgstr "Не вдалося знайти файл даних '%s'."
 
 #: engines/twine/detection.cpp:218
-#, fuzzy
-#| msgid "This game requires the FoxTail subengine, which is not compiled in."
 msgid "This version requires Giflib which was not compiled into ScummVM"
-msgstr "Ця гра потрубує движка FoxTail, який відсутній у збірці."
+msgstr "Ця гра потрeбує бібліотеки Giflib, яка відсутня у збірці"
 
 #: engines/twine/metaengine.cpp:71
 msgid "Enable wall collisions"
@@ -7293,32 +7290,24 @@ msgid "Next location"
 msgstr "Наступна локація"
 
 #: engines/twine/parser/text.cpp:33
-#, fuzzy
-#| msgid "Enable high resolution"
 msgctxt "Options menu"
 msgid "High resolution on"
-msgstr "Ввімкнути високе розгалуження"
+msgstr "Високе розгалуження увімкнено"
 
 #: engines/twine/parser/text.cpp:34
-#, fuzzy
-#| msgid "Enable high resolution"
 msgctxt "Options menu"
 msgid "High resolution off"
-msgstr "Ввімкнути високе розгалуження"
+msgstr "Високе розгалуження вимкнено"
 
 #: engines/twine/parser/text.cpp:35
-#, fuzzy
-#| msgid "Enable wall collisions"
 msgctxt "Options menu"
 msgid "Wall collision on"
-msgstr "Ввімкнути зіткнення зі стінами"
+msgstr "Зіткнення зі стінами увімкнено"
 
 #: engines/twine/parser/text.cpp:36
-#, fuzzy
-#| msgid "Enable wall collisions"
 msgctxt "Options menu"
 msgid "Wall collision off"
-msgstr "Ввімкнути зіткнення зі стінами"
+msgstr "Зіткнення зі стінами вимкнено"
 
 #: engines/ultima/shared/early/ultima_early.cpp:71
 msgid "Could not find correct ultima.dat datafile"
@@ -7466,7 +7455,7 @@ msgstr "Для цієї гри потрібна підтримка PNG, JPEG т�
 
 #: engines/wintermute/wintermute.cpp:187
 msgid "This game requires the FoxTail subengine, which is not compiled in."
-msgstr "Ця гра потрубує движка FoxTail, який відсутній у збірці."
+msgstr "Ця гра потребує движка FoxTail, який відсутній у збірці."
 
 #: engines/wintermute/wintermute.cpp:198
 msgid "This game requires the HeroCraft subengine, which is not compiled in."
