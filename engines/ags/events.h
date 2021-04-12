@@ -37,7 +37,7 @@ private:
 	Common::Array<bool> _keys;
 
 	bool isModifierKey(const Common::KeyCode &keycode) const;
-
+	bool isExtendedKey(const Common::KeyCode &keycode) const;
 	int getScancode(Common::KeyCode keycode) const;
 
 	void updateKeys(const Common::KeyState &keyState, bool isDown);

@@ -23,6 +23,7 @@
 #include "ags/events.h"
 #include "common/system.h"
 #include "ags/globals.h"
+#include "ags/engine/ac/keycode.h"
 
 namespace AGS {
 
@@ -81,9 +82,15 @@ int EventsManager::readKey() {
 
 	Common::KeyState keyState = _pendingKeys.pop();
 
-	int code = getScancode(keyState.keycode) << 8;
-	if (keyState.ascii <= 127)
-		code = keyState.ascii;
+	int scancode = getScancode(keyState.keycode);
+	int code = scancode << 8;
+
+	if (isExtendedKey(keyState.keycode))
+		code |= EXTENDED_KEY_CODE;
+	else if (keyState.flags == 0)
+		code |= keyState.ascii;
+	else
+		code |= scancode;
 
 	return code;
 }
@@ -104,6 +111,33 @@ bool EventsManager::isModifierKey(const Common::KeyCode &keycode) const {
 		|| keycode == Common::KEYCODE_LSUPER || keycode == Common::KEYCODE_RSUPER
 		|| keycode == Common::KEYCODE_CAPSLOCK || keycode == Common::KEYCODE_NUMLOCK
 		|| keycode == Common::KEYCODE_SCROLLOCK;
+}
+
+bool EventsManager::isExtendedKey(const Common::KeyCode &keycode) const {
+	const Common::KeyCode EXTENDED_KEYS[] = {
+		Common::KEYCODE_F1, Common::KEYCODE_F2, Common::KEYCODE_F3,
+		Common::KEYCODE_F4, Common::KEYCODE_F5, Common::KEYCODE_F6,
+		Common::KEYCODE_F7, Common::KEYCODE_F8, Common::KEYCODE_F9,
+		Common::KEYCODE_F10, Common::KEYCODE_F11, Common::KEYCODE_F12,
+		Common::KEYCODE_KP0, Common::KEYCODE_KP1, Common::KEYCODE_KP2,
+		Common::KEYCODE_KP3, Common::KEYCODE_KP4, Common::KEYCODE_KP5,
+		Common::KEYCODE_KP6, Common::KEYCODE_KP7, Common::KEYCODE_KP8,
+		Common::KEYCODE_KP9, Common::KEYCODE_KP_PERIOD,
+		Common::KEYCODE_INSERT, Common::KEYCODE_DELETE,
+		Common::KEYCODE_HOME, Common::KEYCODE_END,
+		Common::KEYCODE_PAGEUP, Common::KEYCODE_PAGEDOWN,
+		Common::KEYCODE_LEFT, Common::KEYCODE_RIGHT,
+		Common::KEYCODE_UP, Common::KEYCODE_DOWN,
+		Common::KEYCODE_INVALID
+	};
+
+	for (const Common::KeyCode *kc = EXTENDED_KEYS;
+			*kc != Common::KEYCODE_INVALID; ++kc) {
+		if (keycode == *kc)
+			return true;
+	}
+
+	return false;
 }
 
 int EventsManager::getScancode(Common::KeyCode keycode) const {
