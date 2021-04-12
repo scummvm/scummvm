@@ -520,7 +520,7 @@ void AsylumEngine::initSinCosTables(double a2, int32 a3, int32 a4) {
 				double angle = (double)(baseAngle % 360) * 3.141592653589 * 0.005555555555555556;
 
 				*val       = (int16)(cos(angle) * a2 - (a3 / 2.0));
-				*(val + 1) = (int16)(sin(angle) * a2 - (a4 / 2.0));
+				*(val + 1) = (int16)(sin(angle) * a2 + (a4 / 2.0));
 
 				baseAngle += 360 / baseStep;
 				val += 2;
@@ -552,7 +552,7 @@ Common::Point AsylumEngine::getSinCosValues(int32 index1, int32 index2) {
 	if (_scene->worldstats()->chapter == kChapter11) {
 		int32 offset = computeSinCosOffset(8) + index2 + 3;
 		values.x = _sinCosTables[2 * offset];
-		values.y = _sinCosTables[1];
+		values.y = _sinCosTables[2 * offset + 1];
 	} else {
 		int32 offset = computeSinCosOffset(index1) + index2;
 		values.x = _sinCosTables[2 * offset];

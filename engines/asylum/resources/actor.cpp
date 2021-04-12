@@ -2001,7 +2001,7 @@ void Actor::updateAndDraw() {
 		adjustCoordinates(&coords);
 
 		Common::Point sinCos = _vm->getSinCosValues(count, i);
-		Common::Point point = coords + Common::Point(player->getPoint2()->x + sinCos.x, player->getPoint2()->y / 2 - sinCos.y - 20);
+		Common::Point point = coords + Common::Point(player->getPoint2()->x + sinCos.x, player->getPoint2()->y / 2 - sinCos.y);
 
 		if (mouse.x < point.x || mouse.x > (point.x + 40) || mouse.y < point.y || mouse.y > (point.y + 40)) {
 			getScreen()->addGraphicToQueue(getWorld()->cursorResourcesAlternate[_reaction[i] + 15],
