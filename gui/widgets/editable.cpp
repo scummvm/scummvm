@@ -340,7 +340,7 @@ void EditableWidget::drawCaret(bool erase) {
 		// possible glitches due to different methods used.
 		width = MIN(editRect.width() - caretOffset, width);
 		if (width > 0) {
-			g_gui.theme()->drawText(Common::Rect(x, y, x + width, y ), character,
+			g_gui.theme()->drawText(Common::Rect(x, y, x + width, y), character,
 			                        _state, _drawAlign, _inversion, 0, false, _font,
 			                        ThemeEngine::kFontColorNormal, true, _textDrawableArea);
 		}
