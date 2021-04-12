@@ -213,7 +213,6 @@ void GriffonEngine::intro() {
 	int cnt = 0;
 	float xofs = 0.0;
 	float ld = 0.0;
-
 	do {
 		Common::Rect rc;
 
@@ -259,6 +258,7 @@ void GriffonEngine::intro() {
 
 		for (int i = 0; i < ARRAYSIZE(story); i++) {
 			int yy = y + i * 10;
+
 			#ifdef USE_TTS
 				if (_ttsMan != nullptr && ConfMan.getBool("tts_enabled")){
 					if (i == 0  && yy == 140) _ttsMan -> say(story[i]);
@@ -271,6 +271,7 @@ void GriffonEngine::intro() {
 					if (i == 46 && yy == 35)  _ttsMan -> say(paragraph_6);
 				}
 			#endif
+			
 			if (yy > -8 && yy < 240) {
 				int x = 160 - strlen(story[i]) * 4;
 				drawString(_videoBuffer, story[i], x, yy, 4);
