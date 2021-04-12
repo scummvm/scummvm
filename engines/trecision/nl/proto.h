@@ -102,7 +102,7 @@ void CharacterTalkInAction(uint16 ss);
 void CharacterContinueTalk();
 void CharacterMute();
 void SomeOneTalk(uint16 s, uint16 Person, uint16 NewAnim, bool FromSomeOneSay);
-void SomeOneContinueTalk();
+void SomeoneContinueTalk();
 void SomeOneMute();
 void doString();
 void DoSys(uint16 curObj);

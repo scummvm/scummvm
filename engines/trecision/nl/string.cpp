@@ -52,7 +52,7 @@ uint32 TalkTime;
 const char *dunno = "?";
 
 /*-------------------------------------------------------------------------*/
-/*                                 POSITIONSTRING           			   */
+/*                                 PositionString           			   */
 /*-------------------------------------------------------------------------*/
 void PositionString(uint16 x, uint16 y, const char *string, uint16 *posx, uint16 *posy, bool characterFl) {
 	uint16 lenText = TextLength(string, 0);
@@ -75,7 +75,7 @@ void PositionString(uint16 x, uint16 y, const char *string, uint16 *posx, uint16
 }
 
 /*-------------------------------------------------------------------------*/
-/*                                 SHOWOBJNAME           				   */
+/*                                 ShowObjName           				   */
 /*-------------------------------------------------------------------------*/
 void ShowObjName(uint16 obj, bool showhide) {
 	uint16 posx;
@@ -90,7 +90,7 @@ void ShowObjName(uint16 obj, bool showhide) {
 		g_vm->_lastInv = 0;
 	}
 
-	if (g_vm->_flagUseWithStarted && !g_vm->FlagUseWithLocked) {
+	if (g_vm->_flagUseWithStarted) {
 		if (!showhide) {
 			g_vm->clearText();
 			g_vm->_lastObj = obj;
@@ -126,7 +126,7 @@ void ShowObjName(uint16 obj, bool showhide) {
 			g_vm->clearText();
 		g_vm->addText(posx, posy, locsent.c_str(), COLOR_INVENTORY, MASKCOL);
 	} else {
-		if ((!obj) || (!showhide)) {
+		if (!obj || !showhide) {
 			g_vm->clearText();
 			g_vm->_lastObj = obj;
 			return;
@@ -160,7 +160,7 @@ void ShowObjName(uint16 obj, bool showhide) {
 }
 
 /*-------------------------------------------------------------------------*/
-/*                             FORMATTINGSUPERSTRING             		   */
+/*                             FormattingSuperString             		   */
 /*-------------------------------------------------------------------------*/
 void FormattingSuperString() {
 	SubStringUsed  = 0;
@@ -201,7 +201,7 @@ void FormattingOneString() {
 }
 
 /*-------------------------------------------------------------------------*/
-/*                                characterSay             				   */
+/*                                CharacterSay             				   */
 /*-------------------------------------------------------------------------*/
 void CharacterSay(uint16 i) {
 	CurS = i;
@@ -210,8 +210,7 @@ void CharacterSay(uint16 i) {
 	g_vm->_flagSkipEnable = (i != 99999);
 
 	//	if he took some action
-	if (g_vm->_sentence[i][0] == '*' && !g_vm->_animMgr->_playingAnims[kSmackerAction]
-	)
+	if (g_vm->_sentence[i][0] == '*' && !g_vm->_animMgr->_playingAnims[kSmackerAction])
 		StartCharacterAction(hBOH, 0, 0, 0);
 	else
 		CharacterTalk(g_vm->_sentence[i], true);
@@ -349,9 +348,9 @@ void SomeOneTalk(uint16 s, uint16 Person, uint16 NewAnim, bool FromSomeOneSay) {
 }
 
 /*-------------------------------------------------------------------------*/
-/*                             SOMEONECONTINUETALK             			   */
+/*                             SomeoneContinueTalk             			   */
 /*-------------------------------------------------------------------------*/
-void SomeOneContinueTalk() {
+void SomeoneContinueTalk() {
 	uint16 posx, posy;
 
 	SomeOneSpeakTime = TheTime;
@@ -382,7 +381,7 @@ void SomeOneContinueTalk() {
 }
 
 /*-------------------------------------------------------------------------*/
-/*                                SOMEONEMUTE                 			   */
+/*                                SomeOneMute                 			   */
 /*-------------------------------------------------------------------------*/
 void SomeOneMute() {
 	g_vm->_flagCharacterSpeak = false;
@@ -399,7 +398,7 @@ void SomeOneMute() {
 }
 
 /*-------------------------------------------------------------------------*/
-/*                                    DOSTRING            				   */
+/*                                    doString            				   */
 /*-------------------------------------------------------------------------*/
 void doString() {
 	switch (g_vm->_curMessage->_event) {
@@ -421,7 +420,7 @@ void doString() {
 
 	case ME_SOMEONEWAIT2SPEAK:
 		if (!g_vm->_curMessage->_u16Param1)
-			SomeOneContinueTalk();
+			SomeoneContinueTalk();
 		else
 			REEVENT;
 		break;
@@ -437,7 +436,7 @@ void doString() {
 		if (g_vm->_flagSomeoneSpeaks) {
 			if (g_vm->_flagSkipTalk || (TheTime >= (TalkTime + SomeOneSpeakTime))) {
 				if (substringagain)
-					SomeOneContinueTalk();
+					SomeoneContinueTalk();
 				else {
 					if (SpeakSomeOneAnimation)
 						doEvent(MC_ANIMATION, ME_DELANIM, MP_SYSTEM, SpeakSomeOneAnimation, true, 0, 0);
