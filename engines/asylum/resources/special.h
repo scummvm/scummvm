@@ -105,8 +105,8 @@ private:
 	// Chapter 11 helpers
 	//////////////////////////////////////////////////////////////////////////
 
-	void tentacle(ActorIndex actorIndex, GameFlag flag1, GameFlag flag2, GameFlag flag3, const Common::Point &p1, const Common::Point &p2);
-	void rock(ActorIndex actorIndex, GameFlag flag1, GameFlag flag2, GameFlag flag3, GameFlag flag4, const Common::Point &p1, const Common::Point &p2);
+	void tentacle(ActorIndex actorIndex, GameFlag flag1, GameFlag flag2, GameFlag flag3, const Common::Rect &rect);
+	void rock(ActorIndex actorIndex, GameFlag flag1, GameFlag flag2, GameFlag flag3, GameFlag flag4, const Common::Rect &rect);
 };
 
 } // End of namespace Asylum

@@ -40,20 +40,20 @@
 
 namespace Asylum {
 
-static const Common::Point actorRects[][2] = {
-	{Common::Point(1100,  150), Common::Point(  30,   95)},
-	{Common::Point( 695,  159), Common::Point( 113,   54)},
-	{Common::Point( 925,  158), Common::Point( 129,   66)},
-	{Common::Point(1158,  162), Common::Point( 135,   86)},
-	{Common::Point(1319,  218), Common::Point( 150,  133)},
-	{Common::Point( 430,  351), Common::Point(  78,   56)},
-	{Common::Point( 762,  339), Common::Point( 102,   59)},
-	{Common::Point( 962,  328), Common::Point( 118,   45)},
-	{Common::Point( 848,  161), Common::Point(  36,   55)},
-	{Common::Point( 861,  334), Common::Point(  23,   79)},
-	{Common::Point( 600,  193), Common::Point(  21,   36)},
-	{Common::Point( 805,  156), Common::Point( 152,   69)},
-	{Common::Point( 641,  162), Common::Point( 150,   64)},
+static const Common::Rect actorRects[] = {
+	Common::Rect(1100,  150, 1130,  245),
+	Common::Rect( 848,  161,  884,  216),
+	Common::Rect( 861,  334,  884,  413),
+	Common::Rect( 600,  193,  621,  229),
+	Common::Rect( 805,  156,  957,  225),
+	Common::Rect( 641,  162,  791,  226),
+	Common::Rect( 695,  159,  808,  213),
+	Common::Rect( 925,  158, 1054,  224),
+	Common::Rect(1158,  162, 1293,  248),
+	Common::Rect(1319,  218, 1469,  351),
+	Common::Rect( 430,  351,  508,  407),
+	Common::Rect( 762,  339,  864,  398),
+	Common::Rect( 962,  328, 1080,  373),
 };
 
 static const int32 zapPatterns[9][16] = {
@@ -735,7 +735,7 @@ void Special::chapter9(Object *object, ActorIndex actorIndex) {
 
 void Special::chapter11(Object *object, ActorIndex actorIndex) {
 	Actor *actor0 = getScene()->getActor(0), *actor1 = getScene()->getActor(1);
-	Actor *player = getScene()->getActor(getSharedData()->getPlayerIndex());
+	Actor *player = getScene()->getActor();
 	Common::Point sum;
 
 	playChapterSound(object, actorIndex);
@@ -779,19 +779,19 @@ void Special::chapter11(Object *object, ActorIndex actorIndex) {
 				actor1->updateStatus(kActorStatusWalking2);
 			}
 
-			tentacle(10, kGameFlag557, kGameFlag558, kGameFlag563, actorRects[0][0], actorRects[0][1]);
-			tentacle(11, kGameFlag722, kGameFlag723, kGameFlag724, actorRects[8][0], actorRects[8][1]);
-			tentacle(12, kGameFlag725, kGameFlag726, kGameFlag727, actorRects[9][0], actorRects[9][1]);
-			tentacle(13, kGameFlag728, kGameFlag729, kGameFlag730, actorRects[10][0], actorRects[10][1]);
-			rock(2, kGameFlag597, kGameFlag598, kGameFlag599, kGameFlag600, actorRects[1][0], actorRects[1][1]);
-			rock(3, kGameFlag684, kGameFlag685, kGameFlag686, kGameFlag687, actorRects[2][0], actorRects[2][1]);
-			rock(4, kGameFlag688, kGameFlag689, kGameFlag690, kGameFlag691, actorRects[3][0], actorRects[3][1]);
-			rock(5, kGameFlag692, kGameFlag693, kGameFlag694, kGameFlag695, actorRects[4][0], actorRects[4][1]);
-			rock(6, kGameFlag696, kGameFlag697, kGameFlag698, kGameFlag699, actorRects[5][0], actorRects[5][1]);
-			rock(7, kGameFlag700, kGameFlag701, kGameFlag702, kGameFlag703, actorRects[6][0], actorRects[6][1]);
-			rock(8, kGameFlag704, kGameFlag705, kGameFlag706, kGameFlag707, actorRects[7][0], actorRects[7][1]);
-			rock(16, kGameFlag1054, kGameFlag1055, kGameFlag1056, kGameFlag1057, actorRects[11][0], actorRects[11][1]);
-			rock(17, kGameFlag1058, kGameFlag1059, kGameFlag1060, kGameFlag1061, actorRects[12][0], actorRects[12][1]);
+			tentacle(10, kGameFlag557, kGameFlag558, kGameFlag563, actorRects[0]);
+			tentacle(11, kGameFlag722, kGameFlag723, kGameFlag724, actorRects[1]);
+			tentacle(12, kGameFlag725, kGameFlag726, kGameFlag727, actorRects[2]);
+			tentacle(13, kGameFlag728, kGameFlag729, kGameFlag730, actorRects[3]);
+			rock(2, kGameFlag597, kGameFlag598, kGameFlag599, kGameFlag600, actorRects[6]);
+			rock(3, kGameFlag684, kGameFlag685, kGameFlag686, kGameFlag687, actorRects[7]);
+			rock(4, kGameFlag688, kGameFlag689, kGameFlag690, kGameFlag691, actorRects[8]);
+			rock(5, kGameFlag692, kGameFlag693, kGameFlag694, kGameFlag695, actorRects[9]);
+			rock(6, kGameFlag696, kGameFlag697, kGameFlag698, kGameFlag699, actorRects[10]);
+			rock(7, kGameFlag700, kGameFlag701, kGameFlag702, kGameFlag703, actorRects[11]);
+			rock(8, kGameFlag704, kGameFlag705, kGameFlag706, kGameFlag707, actorRects[12]);
+			rock(16, kGameFlag1054, kGameFlag1055, kGameFlag1056, kGameFlag1057, actorRects[4]);
+			rock(17, kGameFlag1058, kGameFlag1059, kGameFlag1060, kGameFlag1061, actorRects[5]);
 			break;
 
 		case kObjectMonsterHurt:
@@ -873,6 +873,8 @@ void Special::chapter11(Object *object, ActorIndex actorIndex) {
 
 		case kObjectPuke1:
 			sum = *player->getPoint1() + *player->getPoint2();
+			getSharedData()->vector1 = sum;
+
 			if (getScene()->polygons()->get(getWorld()->actions[getWorld()->getActionAreaIndexById(1591)]->polygonIndex).contains(sum)) {
 				ActorStatus playerStatus = getScene()->getActor(getSharedData()->getPlayerIndex())->getStatus();
 				if (playerStatus == kActorStatusWalking2 || playerStatus == kActorStatusAttacking || playerStatus == kActorStatusEnabled2) {
@@ -899,6 +901,8 @@ void Special::chapter11(Object *object, ActorIndex actorIndex) {
 
 		case kObjectPuke2:
 			sum = *player->getPoint1() + *player->getPoint2();
+			getSharedData()->vector1 = sum;
+
 			if (getScene()->polygons()->get(getWorld()->actions[getWorld()->getActionAreaIndexById(1590)]->polygonIndex).contains(sum)) {
 				ActorStatus playerStatus = getScene()->getActor(getSharedData()->getPlayerIndex())->getStatus();
 				if (playerStatus == kActorStatusWalking2 || playerStatus == kActorStatusAttacking || playerStatus == kActorStatusEnabled2) {
@@ -925,6 +929,8 @@ void Special::chapter11(Object *object, ActorIndex actorIndex) {
 
 		case kObjectPuke3:
 			sum = *player->getPoint1() + *player->getPoint2();
+			getSharedData()->vector1 = sum;
+
 			if (getScene()->polygons()->get(getWorld()->actions[getWorld()->getActionAreaIndexById(1589)]->polygonIndex).contains(sum)) {
 				ActorStatus playerStatus = getScene()->getActor(getSharedData()->getPlayerIndex())->getStatus();
 				if (playerStatus == kActorStatusWalking2 || playerStatus == kActorStatusAttacking || playerStatus == kActorStatusEnabled2) {
@@ -2011,7 +2017,7 @@ void Special::checkOtherObject(Object *object, ObjectId otherObjectId, GameFlag 
 // Chapter 11 helpers
 //////////////////////////////////////////////////////////////////////////
 
-void Special::rock(ActorIndex actorIndex, GameFlag flag1, GameFlag flag2, GameFlag flag3, GameFlag flag4, const Common::Point &p1, const Common::Point &p2) {
+void Special::rock(ActorIndex actorIndex, GameFlag flag1, GameFlag flag2, GameFlag flag3, GameFlag flag4, const Common::Rect &rect) {
 	Actor *actor = getScene()->getActor(actorIndex);
 
 	if (!(_vm->isGameFlagNotSet(flag1) && _vm->isGameFlagSet(flag2)))
@@ -2020,8 +2026,8 @@ void Special::rock(ActorIndex actorIndex, GameFlag flag1, GameFlag flag2, GameFl
 	if (_vm->isGameFlagNotSet(flag3)) {
 		getWorld()->tickValueArray[actorIndex] = _vm->getTick() + 1500;
 
-		actor->getPoint1()->x = p1.x + rnd(p2.x - p1.x) - actor->getPoint2()->x;
-		actor->getPoint1()->y = p1.y + rnd(p2.y - p1.y) - actor->getPoint2()->y;
+		actor->getPoint1()->x = rect.left + rnd(rect.right - rect.left) - actor->getPoint2()->x;
+		actor->getPoint1()->y = rect.top + rnd(rect.bottom - rect.top) - actor->getPoint2()->y;
 
 		getWorld()->field_E8594[actorIndex] = actor->getPoint1()->y;
 		actor->getPoint1()->y -= 160;
@@ -2052,9 +2058,12 @@ void Special::rock(ActorIndex actorIndex, GameFlag flag1, GameFlag flag2, GameFl
 				actor->updateStatus(kActorStatusAttacking);
 				actor->setFrameIndex(4);
 
-				ActorIndex playerIndex = getSharedData()->getPlayerIndex();
 				Common::Point sum = *actor->getPoint1() + *actor->getPoint2();
-				Common::Point playerSum = *getScene()->getActor(playerIndex)->getPoint1() + *getScene()->getActor(playerIndex)->getPoint2();
+				Common::Point playerSum = *getScene()->getActor()->getPoint1() + *getScene()->getActor()->getPoint2();
+
+				getSharedData()->vector1 = playerSum;
+				getSharedData()->vector2 = sum;
+
 				if (Actor::euclidianDistance(sum, playerSum) < 30) {
 					getScene()->getActor(0)->updateStatus(kActorStatusGettingHurt);
 					++getWorld()->field_E848C;
@@ -2068,18 +2077,20 @@ void Special::rock(ActorIndex actorIndex, GameFlag flag1, GameFlag flag2, GameFl
 	}
 }
 
-void Special::tentacle(ActorIndex actorIndex, GameFlag flag1, GameFlag flag2, GameFlag flag3, const Common::Point &p1, const Common::Point &p2) {
+void Special::tentacle(ActorIndex actorIndex, GameFlag flag1, GameFlag flag2, GameFlag flag3, const Common::Rect &rect) {
 	Actor *actor = getScene()->getActor(actorIndex);
 	if (_vm->isGameFlagSet(flag1)
 	 && _vm->isGameFlagNotSet(flag3)
 	 && !_vm->isGameFlagSet(flag2)
 	 && _vm->getTick() > getWorld()->tickValueArray[actorIndex + 10]) {
-		actor->getPoint1()->x = p1.x + rnd(p2.x - p1.x) - actor->getPoint2()->x;
-		actor->getPoint1()->y = p1.y + rnd(p2.y - p1.y) - actor->getPoint2()->y;
+		actor->getPoint1()->x = rect.left + rnd(rect.right - rect.left) - actor->getPoint2()->x;
+		actor->getPoint1()->y = rect.top + rnd(rect.bottom - rect.top) - actor->getPoint2()->y;
 
-		ActorIndex playerIndex = getSharedData()->getPlayerIndex();
 		Common::Point sum = *actor->getPoint1() + *actor->getPoint2();
-		Common::Point playerSum = *getScene()->getActor(playerIndex)->getPoint1() + *getScene()->getActor(playerIndex)->getPoint2();
+		Common::Point playerSum = *getScene()->getActor()->getPoint1() + *getScene()->getActor()->getPoint2();
+
+		getSharedData()->vector1 = playerSum;
+		getSharedData()->vector2 = sum;
 
 		if (Actor::euclidianDistance(sum, playerSum) > 40) {
 			getWorld()->tickValueArray[actorIndex + 10] = 0;
