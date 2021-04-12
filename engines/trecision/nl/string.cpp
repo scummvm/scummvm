@@ -52,7 +52,7 @@ uint32 TalkTime;
 const char *dunno = "?";
 
 /*-------------------------------------------------------------------------*/
-/*                                 PositionString           			   */
+/*                                 POSITIONSTRING           			   */
 /*-------------------------------------------------------------------------*/
 void PositionString(uint16 x, uint16 y, const char *string, uint16 *posx, uint16 *posy, bool characterFl) {
 	uint16 lenText = TextLength(string, 0);
@@ -75,7 +75,7 @@ void PositionString(uint16 x, uint16 y, const char *string, uint16 *posx, uint16
 }
 
 /*-------------------------------------------------------------------------*/
-/*                                 ShowObjName           				   */
+/*                                 SHOWOBJNAME           				   */
 /*-------------------------------------------------------------------------*/
 void ShowObjName(uint16 obj, bool showhide) {
 	uint16 posx;
@@ -90,7 +90,7 @@ void ShowObjName(uint16 obj, bool showhide) {
 		g_vm->_lastInv = 0;
 	}
 
-	if (g_vm->_flagUseWithStarted) {
+	if (g_vm->_flagUseWithStarted && !g_vm->FlagUseWithLocked) {
 		if (!showhide) {
 			g_vm->clearText();
 			g_vm->_lastObj = obj;
@@ -160,7 +160,7 @@ void ShowObjName(uint16 obj, bool showhide) {
 }
 
 /*-------------------------------------------------------------------------*/
-/*                             FormattingSuperString             		   */
+/*                             FORMATTINGSUPERSTRING             		   */
 /*-------------------------------------------------------------------------*/
 void FormattingSuperString() {
 	SubStringUsed  = 0;
@@ -201,7 +201,7 @@ void FormattingOneString() {
 }
 
 /*-------------------------------------------------------------------------*/
-/*                                CharacterSay             				   */
+/*                                characterSay             				   */
 /*-------------------------------------------------------------------------*/
 void CharacterSay(uint16 i) {
 	CurS = i;

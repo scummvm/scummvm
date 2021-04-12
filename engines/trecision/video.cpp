@@ -178,7 +178,7 @@ void AnimManager::setVideoRange(NightlongSmackerDecoder *smkDecoder, int &startF
 	if (smkDecoder->getCurFrame() != startFrame) {
 		for (int a = 0; a < MAXNEWSMKPAL; a++) {
 			if ((_dialog[_curDialog]._newPal[a] > startFrame || !_dialog[_curDialog]._newPal[a]) && a) {
-				smkDecoder->forceSeekToFrame(_dialog[_curDialog]._newPal[a - 1]);
+				smkDecoder->forceSeekToFrame(_dialog[_curDialog]._newPal[a - 1] - 1);
 				break;
 			}
 
