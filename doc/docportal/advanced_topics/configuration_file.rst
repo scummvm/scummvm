@@ -244,7 +244,11 @@ There are many recognized configuration keys. In the table below, each key is ei
 		":ref:`herculesfont <herc>`",boolean,false,
 		":ref:`hpbargraphs <hp>`",boolean,true,
 		":ref:`hypercheat <hyper>`",boolean,false,
-		iconspath,string,, "Specifies the path to icons to use as overlay for the ScummVM icon in the Windows taskbar or the macOS Dock when running a game. The icon files should be named after the gameid or the :ref:`ID <id>` as per the GUI, and be an ICO file on Windows, or a PNG file on macOS."
+		iconspath,string,, "Specifies the path to icons to use as overlay for the ScummVM icon in the Windows taskbar or the macOS Dock when running a game. The icon file must be an ICO file for Windows, or a PNG file for macOS. It must follow one of these naming conventions, where xxx is the file extension:
+
+		- gameid.xxx
+		- :ref:`ID <id>`.xxx
+		- engineid-gameid.xxx"
 		":ref:`improved <improved>`",boolean,true,
 		":ref:`InvObjectsAnimated <objanimated>`",boolean,true,
 		":ref:`joystick_deadzone <deadzone>`",integer, 3
