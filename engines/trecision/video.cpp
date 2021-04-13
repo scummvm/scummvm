@@ -457,7 +457,7 @@ void AnimManager::startFullMotion(const char *name) {
 	_vm->_animQueue.initQueue();
 	_vm->_characterQueue.initQueue();
 	actorStop();
-	g_vm->_flagMouseEnabled = false;
+	g_vm->hideCursor();
 
 #if (!USE_NEW_VIDEO_CODE)
 	openSmkVideo(name);
@@ -481,7 +481,7 @@ void AnimManager::stopFullMotion() {
 
 	g_vm->_flagDialogActive = false;
 	g_vm->_flagDialogMenuActive = false;
-	g_vm->_flagMouseEnabled = true;
+	g_vm->showCursor();
 	g_vm->_flagSomeoneSpeaks = false;
 
 	_vm->_lightIcon = 0xFF;

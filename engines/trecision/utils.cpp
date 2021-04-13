@@ -108,11 +108,11 @@ void TrecisionEngine::drawString() {
 /*                           redrawString		        				   */
 /*-------------------------------------------------------------------------*/
 void TrecisionEngine::redrawString() {
-	if (!_flagDialogActive && !_flagDialogMenuActive && !_flagSomeoneSpeaks && !_flagscriptactive && _flagMouseEnabled) {
-		if (isInventoryArea(my))
+	if (!_flagDialogActive && !_flagDialogMenuActive && !_flagSomeoneSpeaks && !_flagscriptactive && g_vm->isCursorVisible()) {
+		if (isInventoryArea(g_vm->_mouseY))
 			doEvent(MC_INVENTORY, ME_SHOWICONNAME, MP_DEFAULT, 0, 0, 0, 0);
 		else {
-			CheckMask(mx, my);
+			CheckMask(g_vm->_mouseX, g_vm->_mouseY);
 			ShowObjName(_curObj, true);
 		}
 	}

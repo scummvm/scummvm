@@ -32,7 +32,7 @@ void TrecisionEngine::endScript() {
 	_curStack--;
 	if (_curStack == 0) {
 		_flagscriptactive = false;
-		_flagMouseEnabled = true;
+		g_vm->showCursor();
 		redrawString();
 	}
 }
@@ -43,7 +43,7 @@ void TrecisionEngine::endScript() {
 void TrecisionEngine::playScript(uint16 id) {
 	_curStack++;
 	_flagscriptactive = true;
-	_flagMouseEnabled = false;
+	g_vm->hideCursor();
 	_curScriptFrame[_curStack] = _script[id]._firstFrame;
 
 	SScriptFrame *curFrame = &_scriptFrame[_curScriptFrame[_curStack]];
@@ -72,7 +72,7 @@ void TrecisionEngine::playScript(uint16 id) {
 void TrecisionEngine::evalScript() {
 	if (_characterQueue.testEmptyCharacterQueue4Script() && _gameQueue.testEmptyQueue(MC_DIALOG) && _flagScreenRefreshed) {
 		_curScriptFrame[_curStack]++;
-		_flagMouseEnabled = false;
+		g_vm->hideCursor();
 
 		SScriptFrame *curFrame = &_scriptFrame[_curScriptFrame[_curStack]];
 		if ((curFrame->_class == 0) && (curFrame->_event == 0)) {

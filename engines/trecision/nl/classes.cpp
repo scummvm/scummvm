@@ -210,13 +210,13 @@ void StartCharacterAction(uint16 Act, uint16 NewRoom, uint8 NewPos, uint16 sent)
 	if (Act > hLAST) {
 		g_vm->_animMgr->startSmkAnim(Act);
 		InitAtFrameHandler(Act, g_vm->_curObj);
-		g_vm->_flagMouseEnabled = false;
+		g_vm->hideCursor();
 		g_vm->_flagShowCharacter = false;
 		doEvent(MC_CHARACTER, ME_CHARACTERCONTINUEACTION, MP_DEFAULT, Act, NewRoom, NewPos, g_vm->_curObj);
 	} else {
 		if ((Act == aWALKIN) || (Act == aWALKOUT))
 			g_vm->_curObj = 0;
-		g_vm->_flagMouseEnabled = false;
+		g_vm->hideCursor();
 		actorDoAction(Act);
 		nextStep();
 	}
@@ -259,7 +259,7 @@ void doCharacter() {
 		if (_characterInMovement)
 			REEVENT;
 		else {
-			g_vm->_flagMouseEnabled = true;
+			g_vm->showCursor();
 
 			if (g_vm->_curMessage->_event == ME_CHARACTERGOTOACTION)
 				doEvent(MC_ACTION, ME_MOUSEOPERATE, g_vm->_curMessage->_priority, g_vm->_curMessage->_u16Param1, g_vm->_curMessage->_u16Param2, 0, g_vm->_curMessage->_u32Param);
@@ -286,7 +286,7 @@ void doCharacter() {
 		if (g_vm->_curMessage->_u16Param1 > hLAST) {
 			g_vm->_animMgr->startSmkAnim(g_vm->_curMessage->_u16Param1);
 			InitAtFrameHandler(g_vm->_curMessage->_u16Param1, g_vm->_curMessage->_u32Param);
-			g_vm->_flagMouseEnabled = false;
+			g_vm->hideCursor();
 			doEvent(MC_CHARACTER, ME_CHARACTERCONTINUEACTION, g_vm->_curMessage->_priority, g_vm->_curMessage->_u16Param1, g_vm->_curMessage->_u16Param2, g_vm->_curMessage->_u8Param, g_vm->_curMessage->_u32Param);
 		} else
 			actorDoAction(g_vm->_curMessage->_u16Param1);
@@ -299,7 +299,7 @@ void doCharacter() {
 		AtFrameHandler(CHARACTER_ANIM);
 		//	If the animation is over
 		if (!g_vm->_animMgr->_playingAnims[kSmackerAction]) {
-			g_vm->_flagMouseEnabled = true;
+			g_vm->showCursor();
 			g_vm->_flagShowCharacter = true;
 			_characterInMovement = false;
 			g_vm->_characterQueue.initQueue();
@@ -318,7 +318,7 @@ void doCharacter() {
 			&& !(g_vm->_obj[oBOTTIGLIA1D]._mode & OBJMODE_OBJSTATUS)
 			&& !(g_vm->_obj[oRETE17]._mode & OBJMODE_OBJSTATUS)) {
 				PlayDialog(dF181);
-				g_vm->_flagMouseEnabled = false;
+				g_vm->hideCursor();
 				setPosition(1);
 			}
 		} else
@@ -402,8 +402,7 @@ void doIdle() {
 		&& (g_vm->_actor->_curAction < hWALKIN) && !g_vm->_flagUseWithStarted && g_vm->_flagShowCharacter && !g_vm->_animMgr->_playingAnims[kSmackerAction]) {
 			actorStop();
 			nextStep();
-			Mouse(MCMD_ON);
-			g_vm->_flagMouseEnabled = true;
+			g_vm->showCursor();
 			g_vm->_obj[o00EXIT]._goRoom = g_vm->_curRoom;
 			doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, rSYS, 0, 0, c);
 			g_vm->_flagShowCharacter = false;
@@ -419,8 +418,7 @@ void doIdle() {
 		&& !g_vm->_animMgr->_playingAnims[kSmackerAction]) {
 			actorStop();
 			nextStep();
-			Mouse(MCMD_ON);
-			g_vm->_flagMouseEnabled = true;
+			g_vm->showCursor();
 			g_vm->_obj[o00EXIT]._goRoom = g_vm->_curRoom;
 			doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, rSYS, 0, 0, c);
 			g_vm->_flagShowCharacter = false;
@@ -437,7 +435,7 @@ void doIdle() {
 			IconSnapShot();
 			DataSave();
 			g_vm->showInventoryName(NO_OBJECTS, false);
-			doEvent(MC_INVENTORY, ME_SHOWICONNAME, MP_DEFAULT, mx, my, 0, 0);
+			doEvent(MC_INVENTORY, ME_SHOWICONNAME, MP_DEFAULT, g_vm->_mouseX, g_vm->_mouseY, 0, 0);
 			g_vm->refreshInventory(g_vm->_inventoryRefreshStartIcon, g_vm->_inventoryRefreshStartLine);
 		}
 		break;
@@ -450,7 +448,7 @@ void doIdle() {
 			IconSnapShot();
 			if (!DataLoad()) {
 				g_vm->showInventoryName(NO_OBJECTS, false);
-				doEvent(MC_INVENTORY, ME_SHOWICONNAME, MP_DEFAULT, mx, my, 0, 0);
+				doEvent(MC_INVENTORY, ME_SHOWICONNAME, MP_DEFAULT, g_vm->_mouseX, g_vm->_mouseY, 0, 0);
 				g_vm->refreshInventory(g_vm->_inventoryRefreshStartIcon, g_vm->_inventoryRefreshStartLine);
 			}
 		}
@@ -459,14 +457,14 @@ void doIdle() {
 		break;
 	}
 
-	if (GAMEAREA(my) && ((g_vm->_inventoryStatus == INV_ON) || (g_vm->_inventoryStatus == INV_INACTION)))
+	if (GAMEAREA(g_vm->_mouseY) && ((g_vm->_inventoryStatus == INV_ON) || (g_vm->_inventoryStatus == INV_INACTION)))
 		doEvent(MC_INVENTORY, ME_CLOSE, MP_SYSTEM, 0, 0, 0, 0);
 
 	if (g_vm->_inventoryScrollTime > TheTime)
 		g_vm->_inventoryScrollTime = TheTime;
 
-	if (isInventoryArea(my) && (TheTime > (INVSCROLLSP + g_vm->_inventoryScrollTime))) {
-		g_vm->doScrollInventory(mx);
+	if (isInventoryArea(g_vm->_mouseY) && (TheTime > (INVSCROLLSP + g_vm->_inventoryScrollTime))) {
+		g_vm->doScrollInventory(g_vm->_mouseX);
 		g_vm->_inventoryScrollTime = TheTime;
 	}
 

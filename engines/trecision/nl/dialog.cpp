@@ -65,7 +65,7 @@ void ShowChoices(uint16 i) {
 	g_vm->_graphicsMgr->copyToScreen(0, 0, MAXX, TOP);
 
 	g_vm->_flagDialogMenuActive = true;
-	g_vm->_flagMouseEnabled = true;
+	g_vm->showCursor();
 }
 
 void UpdateChoices(int16 dmx, int16 dmy) {
@@ -567,7 +567,7 @@ void afterChoice(int numframe) {
 
 void DialogHandler(int numframe) {
 	if (g_vm->_flagDialogActive && !g_vm->_flagDialogMenuActive) {
-		g_vm->_flagMouseEnabled = false;
+		g_vm->hideCursor();
 		if (numframe == _subTitles[_curSubTitle]._startFrame) {
 			int i = _curSubTitle++;
 #if (!USE_NEW_VIDEO_CODE)
@@ -608,7 +608,7 @@ void PlayChoice(uint16 i) {
 	for (int c = _curSubTitle; c < subtitleCount; c++)
 		totalLength += _subTitles[c]._length;
 
-	g_vm->_flagMouseEnabled = false;
+	g_vm->hideCursor();
 #if USE_NEW_VIDEO_CODE
 	g_vm->_animMgr->playMovie(_dialog[_curDialog]._startAnim, ss->_startFrame, ss->_startFrame + totalLength - 1);
 #else

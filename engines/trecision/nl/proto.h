@@ -107,7 +107,6 @@ void SomeOneMute();
 void doString();
 void DoSys(uint16 curObj);
 char GetKey();
-void Mouse(MouseCmd opt);
 void soundtimefunct();
 
 #endif

@@ -378,11 +378,6 @@ bool DataSave() {
 
 	FreeKey();
 
-	mleft = mright = false;
-	Mouse(MCMD_UPDT);
-	while (mleft || mright)
-		Mouse(MCMD_UPDT);
-
 	// Reset the inventory and turn it into save slots
 	memcpy(OldInv, g_vm->_inventory, MAXICON);
 	memset(g_vm->_inventory, 0, MAXICON);
@@ -402,14 +397,16 @@ insave:
 	
 	for (;;) {
 		g_vm->checkSystem();
-		Mouse(MCMD_UPDT);
 
 		GetKey();
 
-		if ((my >= FIRSTLINE) &&
-				(my < (FIRSTLINE + ICONDY)) &&
-				(mx >= ICONMARGSX) &&
-				(mx < (SCREENLEN - ICONMARGDX))) {
+		int16 mx = g_vm->_mouseX;
+		int16 my = g_vm->_mouseY;
+
+		if (my >= FIRSTLINE &&
+				my < FIRSTLINE + ICONDY &&
+				mx >= ICONMARGSX &&
+				mx < SCREENLEN - ICONMARGDX) {
 			OldPos = CurPos;
 			CurPos = ((mx - ICONMARGSX) / ICONDX);
 
@@ -427,7 +424,7 @@ insave:
 				g_vm->_graphicsMgr->copyToScreen(0, FIRSTLINE + ICONDY + 10, MAXX, CARHEI);
 			}
 
-			if (mleft)
+			if (g_vm->_mouseLeftBtn)
 				break;
 		} else {
 			if (OldPos != -1) {
@@ -440,7 +437,7 @@ insave:
 			OldPos = -1;
 			CurPos = -1;
 
-			if (mleft || mright) {
+			if (g_vm->_mouseLeftBtn || g_vm->_mouseRightBtn) {
 				skipSave = true;
 				break;
 			}
@@ -463,7 +460,6 @@ insave:
 			ch = GetKey();
 			FreeKey();
 
-			Mouse(MCMD_UPDT);
 			g_vm->_keybInput = false;
 
 			if (ch == 0x1B) {
@@ -535,11 +531,6 @@ insave:
 	g_vm->_iconBase = OldIconBase;
 	g_vm->_inventorySize = OldInvLen;
 	
-	mleft = mright = false;
-	Mouse(MCMD_UPDT);
-	while (mleft || mright)
-		Mouse(MCMD_UPDT);
-
 	return ret;
 }
 
@@ -571,10 +562,7 @@ bool DataLoad() {
 	for (int a = 0; a < TOP; a++)
 		memset(g_vm->_screenBuffer + SCREENLEN * a, 0, SCREENLEN * 2);
 
-	if (!g_vm->_flagMouseEnabled) {
-		g_vm->_flagMouseEnabled = true;
-		Mouse(MCMD_ON);
-	}
+	g_vm->showCursor();
 
 	SDText SText;
 	SText.set(0, TOP - 20, SCREENLEN, CARHEI, 0, 0, SCREENLEN, CARHEI, 0x7FFF, MASKCOL, g_vm->_sysText[kMessageLoadPosition]);
@@ -592,11 +580,6 @@ bool DataLoad() {
 
 	FreeKey();
 
-	mleft = mright = false;
-	Mouse(MCMD_UPDT);
-	while (mleft || mright)
-		Mouse(MCMD_UPDT);
-
 	// Reset the inventory and turn it into save slots
 	memcpy(OldInv, g_vm->_inventory, MAXICON);
 	memset(g_vm->_inventory, 0, MAXICON);
@@ -613,16 +596,15 @@ bool DataLoad() {
 
 	for (;;) {
 		g_vm->checkSystem();
-		Mouse(MCMD_UPDT);
 
 		GetKey();
 
-		if ((my >= FIRSTLINE) &&
-				(my < (FIRSTLINE + ICONDY)) &&
-				(mx >= ICONMARGSX) &&
-				(mx < (SCREENLEN - ICONMARGDX))) {
+		if (g_vm->_mouseY >= FIRSTLINE &&
+			g_vm->_mouseY < (FIRSTLINE + ICONDY) &&
+			g_vm->_mouseX >= ICONMARGSX &&
+			(g_vm->_mouseX < (SCREENLEN - ICONMARGDX))) {
 			OldPos = CurPos;
-			CurPos = ((mx - ICONMARGSX) / ICONDX);
+			CurPos = (g_vm->_mouseX - ICONMARGSX) / ICONDX;
 
 			if (OldPos != CurPos) {
 				for (int a = FIRSTLINE + ICONDY + 10; a < FIRSTLINE + ICONDY + 10 + CARHEI; a++)
@@ -643,7 +625,7 @@ bool DataLoad() {
 				g_vm->_graphicsMgr->copyToScreen(0, FIRSTLINE + ICONDY + 10, MAXX, CARHEI);
 			}
 
-			if (mleft && (g_vm->_inventory[CurPos] != iEMPTYSLOT))
+			if (g_vm->_mouseLeftBtn && (g_vm->_inventory[CurPos] != iEMPTYSLOT))
 				break;
 		} else {
 			if (OldPos != -1) {
@@ -656,7 +638,7 @@ bool DataLoad() {
 			OldPos = -1;
 			CurPos = -1;
 
-			if (mleft || mright) {
+			if (g_vm->_mouseLeftBtn || g_vm->_mouseRightBtn) {
 				retval = false;
 				skipLoad = true;
 				break;
@@ -706,14 +688,8 @@ void performLoad(int slot, bool skipLoad) {
 
 	g_vm->_graphicsMgr->copyToScreen(0, 0, MAXX, TOP);
 
-	mleft = mright = false;
-	Mouse(MCMD_UPDT);
-	while (mleft || mright)
-		Mouse(MCMD_UPDT);
-
 	if (g_vm->_flagscriptactive) {
-		g_vm->_flagMouseEnabled = false;
-		Mouse(MCMD_OFF);
+		g_vm->hideCursor();
 	}
 }
 
@@ -735,10 +711,7 @@ bool QuitGame() {
 
 	FreeKey();
 
-	mleft = mright = false;
-	Mouse(MCMD_UPDT);
-	while (mleft || mright)
-		Mouse(MCMD_UPDT);
+	g_vm->checkSystem();
 
 	char ch = waitKey();
 
@@ -766,11 +739,6 @@ void DemoOver() {
 	g_vm->_graphicsMgr->copyToScreen(0, 0, SCREENLEN, TOP);
 
 	FreeKey();
-
-	mleft = mright = false;
-	Mouse(MCMD_UPDT);
-	while (mleft || mright)
-		Mouse(MCMD_UPDT);
 
 	waitKey();
 

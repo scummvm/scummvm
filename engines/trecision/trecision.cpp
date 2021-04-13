@@ -89,7 +89,6 @@ TrecisionEngine::TrecisionEngine(OSystem *syst) : Engine(syst) {
 
 	_fastWalk = false;
 	_fastWalkLocked = false;
-	_mouseONOFF = true;
 
 	// Use With
 	_useWith[0] = _useWith[1] = 0;
@@ -137,7 +136,6 @@ TrecisionEngine::TrecisionEngine(OSystem *syst) : Engine(syst) {
 	_keybInput = false;
 
 	_gamePaused = false;
-	_flagMouseEnabled = true;
 
 	_closeUpObj = 0;
 	_textPtr = nullptr;
@@ -333,7 +331,7 @@ bool TrecisionEngine::syncGameStream(Common::Serializer &ser) {
 	ser.syncAsByte(_iconBase);
 	ser.syncAsSint16LE(_flagSkipTalk);
 	ser.syncAsSint16LE(_flagSkipEnable);
-	ser.syncAsSint16LE(_flagMouseEnabled);
+	ser.syncAsSint16LE(unused);	// _flagMouseEnabled
 	ser.syncAsSint16LE(_flagScreenRefreshed);
 	ser.syncAsSint16LE(_flagPaintCharacter);
 	ser.syncAsSint16LE(_flagSomeoneSpeaks);
@@ -699,6 +697,18 @@ void TrecisionEngine::initCursor() {
 
 	Graphics::PixelFormat format = g_system->getScreenFormat();
 	CursorMan.pushCursor(cursor, cw, ch, cx, cy, 0, false, &format);
+}
+
+void TrecisionEngine::showCursor() {
+	CursorMan.showMouse(true);
+}
+
+void TrecisionEngine::hideCursor() {
+	CursorMan.showMouse(false);
+}
+
+bool TrecisionEngine::isCursorVisible() {
+	return CursorMan.isVisible();
 }
 
 byte *TrecisionEngine::readData(Common::String fileName) {

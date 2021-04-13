@@ -73,26 +73,26 @@ void ProcessMouse() {
 	static uint16 oldmx;
 	static uint16 oldmy;
 	static bool LastMouseON = true;
+	int16 mx = g_vm->_mouseX;
+	int16 my = g_vm->_mouseY;
 
-	if (LastMouseON && !g_vm->_flagMouseEnabled) {
+	if (LastMouseON && !g_vm->isCursorVisible()) {
 		oldmx = 0;    // Switch off
 		oldmy = 0;
-		Mouse(MCMD_OFF);
-	} else if (!LastMouseON && g_vm->_flagMouseEnabled) {
+	} else if (!LastMouseON && g_vm->isCursorVisible()) {
 		oldmx = 0;    // Switch on
 		oldmy = 0;
-		Mouse(MCMD_ON);
 	}
 
-	LastMouseON = g_vm->_flagMouseEnabled;
-	Mouse(MCMD_UPDT);
+	LastMouseON = g_vm->isCursorVisible();
+	g_vm->checkSystem();
 
-	if (!g_vm->_flagMouseEnabled)
+	if (!g_vm->isCursorVisible())
 		return;
 
-	if (mright || mleft) {
+	if (g_vm->_mouseLeftBtn || g_vm->_mouseRightBtn) {
 		if (!MaskMouse) {
-			doEvent(MC_MOUSE, mright ? ME_MRIGHT : ME_MLEFT, MP_DEFAULT, mx, my, 0, 0);
+			doEvent(MC_MOUSE, g_vm->_mouseRightBtn ? ME_MRIGHT : ME_MLEFT, MP_DEFAULT, mx, my, 0, 0);
 			MaskMouse = true;
 		}
 	} else {
