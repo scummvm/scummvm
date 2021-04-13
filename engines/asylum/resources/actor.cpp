@@ -520,7 +520,7 @@ void Actor::update() {
 
 			case 1:
 				getSpecial()->run(NULL, _index);
-				break;
+				return;
 
 			case 10:
 			case 11:
@@ -3163,8 +3163,7 @@ void Actor::updateStatus16_Chapter11() {
 			_frameIndex = 0;
 
 			getScene()->getActor(0)->updateStatus(kActorStatusRestarting);
-
-			_tickCount = _vm->getTick() + 2000;
+			getScene()->getActor(1)->setTickCount(_vm->getTick() + 2000);
 		} else {
 			getScene()->getActor(0)->updateStatus(kActorStatusEnabled2);
 		}

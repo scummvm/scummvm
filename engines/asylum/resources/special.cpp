@@ -991,7 +991,7 @@ void Special::chapter11(Object *object, ActorIndex actorIndex) {
 					actor1->updateStatus(kActorStatusEnabled);
 					actor0->updateStatus(kActorStatusEnabled);
 					getWorld()->field_E848C = 0;
-					getScript()->queueScript(getWorld()->getActionAreaIndexById(1574), kActorSarah);
+					getScript()->queueScript(getWorld()->actions[getWorld()->getActionAreaIndexById(1574)]->scriptIndex, kActorSarah);
 				}
 			}
 		}
