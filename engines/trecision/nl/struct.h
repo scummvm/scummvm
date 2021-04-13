@@ -178,6 +178,8 @@ struct SScriptFrame {
 	bool  _noWait;
 
 	void sendFrame();
+
+	bool eventIsEmpty() const { return _class == 0 && _event == 0;  }
 };
 
 struct SScript {
