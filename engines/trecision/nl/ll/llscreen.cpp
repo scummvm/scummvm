@@ -55,8 +55,6 @@ int8 DTextLines[MAXDTEXTLINES][MAXDTEXTCHARS];
 SLight  VLight[MAXLIGHT];
 SCamera FCamera;
 STexture FTexture[MAXMAT];
-// SOUND
-uint8 *SoundStartBuffer;
 int32  hh;
 // MOUSE
 SDText curString;
@@ -64,7 +62,6 @@ SDText oldString;
 uint8  TextStatus;
 // FILEREF
 SFileEntry FileRef[MAXFILEREF];
-int NumFileRef;
 
 // info for Toc BmData
 struct SBmInfo {

@@ -81,7 +81,6 @@ struct SDObj {
 	uint8 flag;         /* 0 - with mask
                             1 - copy to _screenPtr
                             2 - copy to _screenBuffer */
-
 };
 
 // fastfile
@@ -108,24 +107,58 @@ extern uint8 *_actionPointer[];
 extern uint16 _actionPosition[];
 // DATA POINTER
 extern uint8 *TextArea;
-// 3D AREA
-extern uint8 *BaseHeadTexture;
-extern uint8 AddObjectMaterial;
 // DTEXT
 extern int8 DTextLines[MAXDTEXTLINES][MAXDTEXTCHARS];
-// ANIMATION
-extern uint8 *SoundBuffer;
-extern uint8 *SoundStartBuffer;
 // MOUSE
 extern SDText curString;
 extern SDText oldString;
 extern uint8  TextStatus;
 // FILEREF
 extern SFileEntry FileRef[];
-extern int NumFileRef;
+
+int Compare(const void *p1, const void *p2);
+void RedrawRoom();
+void decompress(const uint8 *src, unsigned int src_len, uint8 *dst, unsigned int dst_len);
+char waitKey();
+void FreeKey();
+char *GetNextSent();
+void Mouse(uint8 opt);
+uint16 TextLength(const char *text, uint16 num);
+void IconSnapShot();
+bool DataSave();
+bool DataLoad();
+bool QuitGame();
+void DemoOver();
+void openSys();
+void ReadLoc();
+void TendIn();
+void ReadObj();
+void ReadExtraObj2C();
+void ReadExtraObj41D();
+void ReadSounds();
+void RegenRoom();
+void PaintRegenRoom();
+void DrawObj(SDObj d);
+void StopSoundSystem();
+void LoadAudioWav(int num, Common::String fileName);
+void NLPlaySound(int num);
+void NLStopSound(int num);
+void SoundFadOut();
+void SoundFadIn(int num);
+void SoundStopAll();
+void WaitSoundFadEnd();
+void SoundPasso(int midx, int midz, int act, int frame, uint16 *list);
+int32 Talk(const char *name);
+void StopTalk();
+void resetZBuffer(int x1, int y1, int x2, int y2);
+uint32 ReadTime();
+void NlDelay(uint32 val);
+void NlDissolve(int val);
+bool CheckMask(uint16 mx, uint16 my);
+void byte2word(void *dest, void *src, void *data, uint32 len);
+void byte2wordm(void *dest, void *src, void *data, uint32 len);
+void byte2wordn(void *dest, void *src, void *smk, void *pal, uint32 len);
 
 } // End of namespace Trecision
-
-#include "trecision/nl/ll/llproto.h"
 
 #endif
