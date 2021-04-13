@@ -549,10 +549,6 @@ void AnimManager::refreshSmkAnim(int num) {
 						lastRect->width()
 					);
 
-#if USE_DIRTY_RECTS
-					AddLine(lastRect->left, lastRect->right, lastRect->top + a + TOP);
-#endif
-
 					memcpy(ImagePointer + lastRect->left + (lastRect->top + a) * MAXX,
 					         _vm->_screenBuffer + lastRect->left + (lastRect->top + a + TOP) * MAXX,
 					         lastRect->width() * 2);
@@ -602,10 +598,6 @@ void AnimManager::refreshSmkAnim(int num) {
 				_smkPal[kSmackerAction],
 				_animMaxX - _animMinX
 			);
-
-#if USE_DIRTY_RECTS
-			AddLine(_animMinX, _animMaxX, _animMinY + a + TOP);
-#endif
 		}
 
 		if (_animMaxX > _animMinX && _animMaxY > _animMinY) {
@@ -664,10 +656,6 @@ void AnimManager::refreshSmkIcon(int StartIcon, int num) {
 			_vm->_screenBuffer + dirtyRect.left + stx + (dirtyRect.top + a + FIRSTLINE) * SCREENLEN,
 			_smkBuffer[kSmackerIcon] + dirtyRect.left + (dirtyRect.top + a) * _smkAnims[kSmackerIcon]->getWidth(),
 			_smkPal[kSmackerIcon], dirtyRect.width());
-
-#if USE_DIRTY_RECTS
-		AddLine(lastRect->left + stx, lastRect->right + stx, lastRect->top + a + FIRSTLINE);
-#endif
 	}
 
 	smkNextFrame();

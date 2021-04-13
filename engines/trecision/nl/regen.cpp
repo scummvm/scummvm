@@ -34,12 +34,6 @@
 
 namespace Trecision {
 
-#if USE_DIRTY_RECTS
-#define MAXBLOCK 5000
-uint32 PaintBlock[MAXBLOCK];
-int16 BlockCount;
-#endif
-
 int xr1, xr2, yr1, yr2;
 int VisualRef[50];
 
@@ -51,19 +45,12 @@ void PaintScreen(uint8 flag) {
 	AtFrameNext();
 	PaintRegenRoom();
 
-//	if( ( !_flagPaintCharacter) && ( _curSortTableNum == 0 ) &&  ( curString.sign == NULL ) && ( oldString.sign == NULL ) )
-//		return;
-
 	g_vm->_actorLimit = 255;
 	for (a = 0; a < 20; a++)
 		VisualRef[a] = 255;
 
 	g_vm->_limitsNum = 0;
 	g_vm->_flagPaintCharacter = true; // always redraws the character
-
-#if USE_DIRTY_RECTS	
-	AddLine(0, 0, 0);
-#endif
 
 	int x1 = g_vm->_actor->_lim[0];
 	int y1 = g_vm->_actor->_lim[2] - TOP;
@@ -134,10 +121,7 @@ void PaintScreen(uint8 flag) {
 			TextStatus = TEXT_OFF;               // non aggiorna piu' scritta
 	}
 
-//	if( ( TextStatus & TEXT_DRAW ) && ( ( curString.sign == NULL ) || ( curString.sign[0] == '\0' ) ) )
-//		TextStatus = TEXT_OFF;
-
-// CANCELLA TUTTI GLI OGGETTI TOGLI
+	// CANCELLA TUTTI GLI OGGETTI TOGLI
 	for (a = 0; a < g_vm->_curSortTableNum; a++) {
 		if (SortTable[a]._remove) {
 			DObj.x    = 0;
@@ -166,14 +150,8 @@ void PaintScreen(uint8 flag) {
 		}
 	}
 
-#if USE_DIRTY_RECTS
-	BlockCount = 0;
-#endif
-
 	// trova la posizione dell'omino
 	actorOrder();
-	// disegna gli oggetti che intersecano nel box di sfondo
-	//PaintObjAnm( BACKGROUND );
 
 	// PER OGNI BOX DALL'ORIZZONTE IN AVANTI...
 	// COPIA PER LIVELLO
@@ -185,9 +163,6 @@ void PaintScreen(uint8 flag) {
 		PaintObjAnm(CurBox);
 
 	}
-
-	// disegna gli oggetti che intersecano nel foreground
-	//PaintObjAnm( FOREGROUND );
 
 	if (TextStatus == TEXT_ON) {
 		for (a = 0; a < g_vm->_limitsNum; a++) {
@@ -213,32 +188,8 @@ void PaintScreen(uint8 flag) {
 
 	SoundPasso((g_vm->_actor->_lim[1] + g_vm->_actor->_lim[0]) / 2, (g_vm->_actor->_lim[5] + g_vm->_actor->_lim[4]) / 2, g_vm->_actor->_curAction, g_vm->_actor->_curFrame, g_vm->_room[g_vm->_curRoom]._sounds);
 
-#if USE_DIRTY_RECTS
-	for (int liv = 0; liv < g_vm->_limitsNum; liv++) {
-		for (int b = g_vm->_limits[liv][1]; b < g_vm->_limits[liv][3]; b++) {
-			AddLine(g_vm->_limits[liv][0], g_vm->_limits[liv][2], b);
-		}
-	}
-#endif
-
 	if (!flag && !g_vm->_flagDialogActive) {
-#if USE_DIRTY_RECTS
-
-		// Sort the blocks to copy and remove the useless ones
-		SortBlock();
-
-		g_vm->_graphicsMgr->lock();
-		for (a = 0; a < BlockCount; a++) {
-			uint32 screenOffset = PaintBlock[a] & 0xFFFFF;
-			uint32 bufferLength = ((PaintBlock[a] & 0xFFF00000) >> 20) & 0xFFF;
-			g_vm->_graphicsMgr->vCopy(screenOffset, g_vm->_screenBuffer + screenOffset, bufferLength);
-		}
-		g_vm->_graphicsMgr->unlock();
-#else
-
-	g_vm->_graphicsMgr->copyToScreen(0, 0, MAXX, MAXY);
-
-#endif
+		g_vm->_graphicsMgr->copyToScreen(0, 0, MAXX, MAXY);
 	}
 
 	for (a = 0; a < g_vm->_curSortTableNum; a++) {
@@ -262,86 +213,6 @@ void PaintScreen(uint8 flag) {
 	}
 	//
 }
-
-#if USE_DIRTY_RECTS
-/* -----------------12/06/97 21.35-------------------
-			Aggiunge linea a buffer da copiare
- --------------------------------------------------*/
-void AddLine(int16 x1, int16 x2, int16 y) {
-	if (x1 > x2)
-		SWAP(x1, x2);
-
-	PaintBlock[BlockCount++] = (uint32)((uint32)(y * SCREENLEN + x1) & 0xFFFFF) + ((((uint32)(x2 - x1) & 0xFFF) << 20) & 0xFFF00000);
-
-	if (BlockCount >= MAXBLOCK)
-		error("AddLine() - Too many blocks");
-}
-
-/*-----------------============-------------------
-		Compare panel distance (qsort)
---------------------------------------------------*/
-int BlockCompare(const void *arg1, const void *arg2) {
-	uint32 p1 = *(uint32 *)arg1;
-	uint32 p2 = *(uint32 *)arg2;
-
-	if ((p1 & 0xFFFFF) > (p2 & 0xFFFFF))
-		return 1;
-
-	if ((p1 & 0xFFFFF) < (p2 & 0xFFFFF))
-		return -1;
-
-	if ((p1 & 0xFFF00000) > (p2 & 0xFFF00000))
-		return -1;
-
-	if ((p1 & 0xFFF00000) < (p2 & 0xFFF00000))
-		return 1;
-
-	return 0;
-}
-
-/*-----------------15/10/96 10.34-------------------
-			Sorta i blocchi da visualizzare
---------------------------------------------------*/
-void SortBlock() {
-// si possono verificare 4 casi
-// 1) x1 < a1 e a1 < x2 < a2 => a1 = x1
-// 2) a1 < x1 < a2 e x2 > a2 => a2 = x2
-// 3) a1 < x1 < x2 < a2 => break
-// 4) x1 < a1 e x2 > a2 => a1 = x1 e a2 = x2
-	uint32 x1, x2, c;
-
-	qsort(&PaintBlock[0], BlockCount, sizeof(uint32), BlockCompare);
-
-	for (c = 0; c < BlockCount;) {
-		uint32 a1 = (PaintBlock[c] & 0xFFFFF);
-		uint32 a2 = a1 + (((PaintBlock[c] & 0xFFF00000) >> 20) & 0xFFF);
-		uint32 oc = c;
-		c ++;
-
-		// finche' il blocco seguente non e' completamente staccato dal blocco attuale
-		while ((c < BlockCount) && ((x1 = (PaintBlock[c] & 0xFFFFF)) < a2)) {
-			// se allarga il blocco precedente aggiorna
-			if ((x2 = x1 + (((PaintBlock[c] & 0xFFF00000) >> 20) & 0xFFF)) > a2)
-				a2 = x2;
-			// altrimenti cancella il blocco
-			else
-				PaintBlock[c] = 0xFFFFFFFF;
-
-			c ++;
-		}
-		PaintBlock[oc] = (uint32)((((uint32)a1) & 0xFFFFF) + ((((uint32)(a2 - a1) & 0xFFF) << 20) & 0xFFF00000));
-	}
-
-	qsort(&PaintBlock[0], BlockCount, sizeof(uint32), BlockCompare);
-
-	// leva i blocchi che non servono
-	for (c = 0; c < BlockCount; c++)
-		if (PaintBlock[c] == 0xFFFFFFFF)
-			break;
-
-	BlockCount = c;
-}
-#endif
 
 /* -----------------12/06/97 21.35-------------------
  Disegna tutti gli oggetti e le animazioni che intersecano i limiti
