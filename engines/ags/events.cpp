@@ -87,7 +87,7 @@ int EventsManager::readKey() {
 
 	if (isExtendedKey(keyState.keycode))
 		code |= EXTENDED_KEY_CODE;
-	else if (keyState.flags == 0)
+	else if ((keyState.flags & (Common::KBD_CTRL | Common::KBD_ALT))  == 0)
 		code |= keyState.ascii;
 	else
 		code |= scancode;
