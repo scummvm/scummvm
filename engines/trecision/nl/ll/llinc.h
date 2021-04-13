@@ -41,8 +41,6 @@
 
 #define MAXSYSTEXT	30
 
-#include "trecision/nl/3d/3drend.h"
-
 namespace Common {
 class SeekableReadStream;
 }

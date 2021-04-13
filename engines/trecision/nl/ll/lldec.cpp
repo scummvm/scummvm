@@ -20,12 +20,9 @@
  *
  */
 
-#include "common/array.h"
 #include "common/scummsys.h"
 
-#include "trecision/nl/3d/3dinc.h"
 #include "trecision/nl/ll/llinc.h"
-#include "trecision/nl/extern.h"
 #include "trecision/trecision.h"
 
 #define FAST_COOKIE 0xFA57F00D
