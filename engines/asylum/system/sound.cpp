@@ -106,7 +106,7 @@ void Sound::playMusic(ResourceId resourceId, int32 volume) {
 
 void Sound::changeMusic(int32 index, int32 musicStatusExt) {
 	if (index != getWorld()->musicCurrentResourceIndex) {
-		getWorld()->musicCurrentResourceIndex = index;
+		getWorld()->musicResourceIndex = index;
 		getWorld()->musicStatusExt = musicStatusExt;
 		getWorld()->musicFlag = 1;
 	}
