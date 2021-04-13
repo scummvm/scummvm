@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-04-12 18:12+0000\n"
+"POT-Creation-Date: 2021-04-13 20:23+0000\n"
 "PO-Revision-Date: 2021-04-10 17:58+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
@@ -73,7 +73,7 @@ msgstr "上へ"
 #: engines/mohawk/myst_stacks/menu.cpp:319
 #: engines/mohawk/riven_stacks/aspit.cpp:350
 #: engines/mohawk/riven_stacks/aspit.cpp:372
-#: engines/mohawk/riven_stacks/aspit.cpp:456 engines/nancy/dialogs.cpp:95
+#: engines/mohawk/riven_stacks/aspit.cpp:456 engines/nancy/dialogs.cpp:101
 #: engines/parallaction/saveload.cpp:271 engines/scumm/dialogs.cpp:180
 #: engines/sword1/control.cpp:889 engines/wintermute/wintermute.cpp:210
 msgid "Cancel"
@@ -476,7 +476,7 @@ msgid "Notes:"
 msgstr "メモ："
 
 #: gui/editrecorddialog.cpp:68 gui/predictivedialog.cpp:70
-#: engines/nancy/dialogs.cpp:96
+#: engines/nancy/dialogs.cpp:102
 msgid "Ok"
 msgstr "Ok"
 
@@ -593,7 +593,7 @@ msgid "Interact"
 msgstr "作用"
 
 #: gui/gui-manager.cpp:150 gui/unknown-game-dialog.cpp:54
-#: engines/nancy/dialogs.cpp:308 engines/scumm/help.cpp:125
+#: engines/nancy/dialogs.cpp:314 engines/scumm/help.cpp:125
 #: engines/scumm/help.cpp:140 engines/scumm/help.cpp:165
 #: engines/scumm/help.cpp:191 engines/scumm/help.cpp:209
 msgid "Close"
@@ -4067,7 +4067,7 @@ msgstr "コマンドを変更"
 
 #: engines/dragons/metaengine.cpp:152 engines/griffon/metaengine.cpp:127
 #: engines/grim/grim.cpp:491 engines/grim/grim.cpp:583
-#: engines/hdb/metaengine.cpp:231 engines/nancy/dialogs.cpp:140
+#: engines/hdb/metaengine.cpp:231 engines/nancy/dialogs.cpp:146
 #: engines/scumm/help.cpp:225 engines/scumm/help.cpp:234
 #: engines/scumm/help.cpp:241 engines/scumm/help.cpp:249
 #: engines/twine/metaengine.cpp:409 engines/zvision/metaengine.cpp:164
@@ -5398,92 +5398,105 @@ msgstr ""
 "ニューを使用します。ScummVMの総合メインメニューは、キーマップからもアクセスで"
 "きます。"
 
-#: engines/nancy/dialogs.cpp:45
+#. I18N: Second Chance is the name of the original engine's autosave system
+#: engines/nancy/dialogs.cpp:46
+#, fuzzy
+#| msgid "Enable cross fade"
+msgid "Enable Second Chance"
+msgstr "クロスフェードを有効にする"
+
+#: engines/nancy/dialogs.cpp:46
+msgid ""
+"Enable the Second Chance feature, which automatically saves at specific "
+"scenes. Enabling this disables timed autosaves."
+msgstr ""
+
+#: engines/nancy/dialogs.cpp:48
 msgid "Speech Options"
 msgstr "スピーチオプション"
 
-#: engines/nancy/dialogs.cpp:46
+#: engines/nancy/dialogs.cpp:49
 msgid "Engine Options"
 msgstr "エンジンオプション"
 
-#: engines/nancy/dialogs.cpp:98
+#: engines/nancy/dialogs.cpp:104
 msgid "General"
 msgstr "全般"
 
-#: engines/nancy/dialogs.cpp:100
+#: engines/nancy/dialogs.cpp:106
 msgid "Scene Data"
 msgstr "シーンデータ"
 
-#: engines/nancy/dialogs.cpp:101
+#: engines/nancy/dialogs.cpp:107
 msgid "Restart the Scene"
 msgstr "シーンをリスタート"
 
-#: engines/nancy/dialogs.cpp:103
+#: engines/nancy/dialogs.cpp:109
 msgid "Scene Number"
 msgstr "シーン番号"
 
-#: engines/nancy/dialogs.cpp:105
+#: engines/nancy/dialogs.cpp:111
 msgid "Frame Number"
 msgstr "フレーム番号"
 
 #. I18N: The Y position (a.k.a vertical scroll) of the background
-#: engines/nancy/dialogs.cpp:109
+#: engines/nancy/dialogs.cpp:115
 msgid "Background Top (Y)"
 msgstr "背景の上端(縦方向)"
 
-#: engines/nancy/dialogs.cpp:111
+#: engines/nancy/dialogs.cpp:117
 msgid "Hints Remaining"
 msgstr "残りのヒント"
 
-#: engines/nancy/dialogs.cpp:112
+#: engines/nancy/dialogs.cpp:118
 msgid "Easy"
 msgstr "イージー"
 
-#: engines/nancy/dialogs.cpp:114
+#: engines/nancy/dialogs.cpp:120
 msgid "Medium"
 msgstr "ミディアム"
 
-#: engines/nancy/dialogs.cpp:116
+#: engines/nancy/dialogs.cpp:122
 msgid "Hard"
 msgstr "ハード"
 
-#: engines/nancy/dialogs.cpp:119
+#: engines/nancy/dialogs.cpp:125
 msgid "Player Data"
 msgstr "プレイヤーデータ"
 
-#: engines/nancy/dialogs.cpp:120
+#: engines/nancy/dialogs.cpp:126
 msgid "Player Time:"
 msgstr "プレイ時間："
 
-#: engines/nancy/dialogs.cpp:122
+#: engines/nancy/dialogs.cpp:128
 msgid "Days"
 msgstr "日"
 
-#: engines/nancy/dialogs.cpp:124 engines/nancy/dialogs.cpp:134
+#: engines/nancy/dialogs.cpp:130 engines/nancy/dialogs.cpp:140
 msgid "Hours"
 msgstr "時"
 
-#: engines/nancy/dialogs.cpp:126 engines/nancy/dialogs.cpp:136
+#: engines/nancy/dialogs.cpp:132 engines/nancy/dialogs.cpp:142
 msgid "Minutes"
 msgstr "分"
 
-#: engines/nancy/dialogs.cpp:128
+#: engines/nancy/dialogs.cpp:134
 msgid "Player Difficulty Level"
 msgstr "プレイヤーの難易度"
 
-#: engines/nancy/dialogs.cpp:130
+#: engines/nancy/dialogs.cpp:136
 msgid "Software Timer"
 msgstr "ソフトウェアタイマー"
 
-#: engines/nancy/dialogs.cpp:131
+#: engines/nancy/dialogs.cpp:137
 msgid "Timer On"
 msgstr "タイマー"
 
-#: engines/nancy/dialogs.cpp:138
+#: engines/nancy/dialogs.cpp:144
 msgid "Seconds"
 msgstr "秒"
 
-#: engines/nancy/dialogs.cpp:207
+#: engines/nancy/dialogs.cpp:213
 msgid "Invalid Scene ID!"
 msgstr "シーンIDが不正です!"
 

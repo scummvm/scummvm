@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-04-12 18:12+0000\n"
+"POT-Creation-Date: 2021-04-13 20:23+0000\n"
 "PO-Revision-Date: 2020-11-29 17:10+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
@@ -74,7 +74,7 @@ msgstr "Ga omhoog"
 #: engines/mohawk/myst_stacks/menu.cpp:319
 #: engines/mohawk/riven_stacks/aspit.cpp:350
 #: engines/mohawk/riven_stacks/aspit.cpp:372
-#: engines/mohawk/riven_stacks/aspit.cpp:456 engines/nancy/dialogs.cpp:95
+#: engines/mohawk/riven_stacks/aspit.cpp:456 engines/nancy/dialogs.cpp:101
 #: engines/parallaction/saveload.cpp:271 engines/scumm/dialogs.cpp:180
 #: engines/sword1/control.cpp:889 engines/wintermute/wintermute.cpp:210
 msgid "Cancel"
@@ -484,7 +484,7 @@ msgid "Notes:"
 msgstr "Notities:"
 
 #: gui/editrecorddialog.cpp:68 gui/predictivedialog.cpp:70
-#: engines/nancy/dialogs.cpp:96
+#: engines/nancy/dialogs.cpp:102
 msgid "Ok"
 msgstr "Ok"
 
@@ -603,7 +603,7 @@ msgid "Interact"
 msgstr "Interactie"
 
 #: gui/gui-manager.cpp:150 gui/unknown-game-dialog.cpp:54
-#: engines/nancy/dialogs.cpp:308 engines/scumm/help.cpp:125
+#: engines/nancy/dialogs.cpp:314 engines/scumm/help.cpp:125
 #: engines/scumm/help.cpp:140 engines/scumm/help.cpp:165
 #: engines/scumm/help.cpp:191 engines/scumm/help.cpp:209
 msgid "Close"
@@ -4145,7 +4145,7 @@ msgstr "Verander Commando"
 
 #: engines/dragons/metaengine.cpp:152 engines/griffon/metaengine.cpp:127
 #: engines/grim/grim.cpp:491 engines/grim/grim.cpp:583
-#: engines/hdb/metaengine.cpp:231 engines/nancy/dialogs.cpp:140
+#: engines/hdb/metaengine.cpp:231 engines/nancy/dialogs.cpp:146
 #: engines/scumm/help.cpp:225 engines/scumm/help.cpp:234
 #: engines/scumm/help.cpp:241 engines/scumm/help.cpp:249
 #: engines/twine/metaengine.cpp:409 engines/zvision/metaengine.cpp:164
@@ -5521,108 +5521,120 @@ msgid ""
 "Main Menu can still be accessed through its keymap."
 msgstr ""
 
-#: engines/nancy/dialogs.cpp:45
+#. I18N: Second Chance is the name of the original engine's autosave system
+#: engines/nancy/dialogs.cpp:46
+#, fuzzy
+msgid "Enable Second Chance"
+msgstr "Valsspeel modus aangezet"
+
+#: engines/nancy/dialogs.cpp:46
+msgid ""
+"Enable the Second Chance feature, which automatically saves at specific "
+"scenes. Enabling this disables timed autosaves."
+msgstr ""
+
+#: engines/nancy/dialogs.cpp:48
 #, fuzzy
 #| msgid "Speech Only"
 msgid "Speech Options"
 msgstr "Alleen Spraak"
 
-#: engines/nancy/dialogs.cpp:46
+#: engines/nancy/dialogs.cpp:49
 #, fuzzy
 #| msgid "Options"
 msgid "Engine Options"
 msgstr "Opties"
 
-#: engines/nancy/dialogs.cpp:98
+#: engines/nancy/dialogs.cpp:104
 msgid "General"
 msgstr "Algemeen"
 
-#: engines/nancy/dialogs.cpp:100
+#: engines/nancy/dialogs.cpp:106
 msgid "Scene Data"
 msgstr ""
 
-#: engines/nancy/dialogs.cpp:101
+#: engines/nancy/dialogs.cpp:107
 #, fuzzy
 #| msgid "Start the debugger"
 msgid "Restart the Scene"
 msgstr "Start de debugger"
 
-#: engines/nancy/dialogs.cpp:103
+#: engines/nancy/dialogs.cpp:109
 msgid "Scene Number"
 msgstr ""
 
-#: engines/nancy/dialogs.cpp:105
+#: engines/nancy/dialogs.cpp:111
 msgid "Frame Number"
 msgstr ""
 
 #. I18N: The Y position (a.k.a vertical scroll) of the background
-#: engines/nancy/dialogs.cpp:109
+#: engines/nancy/dialogs.cpp:115
 msgid "Background Top (Y)"
 msgstr ""
 
-#: engines/nancy/dialogs.cpp:111
+#: engines/nancy/dialogs.cpp:117
 msgid "Hints Remaining"
 msgstr ""
 
-#: engines/nancy/dialogs.cpp:112
+#: engines/nancy/dialogs.cpp:118
 msgid "Easy"
 msgstr ""
 
-#: engines/nancy/dialogs.cpp:114
+#: engines/nancy/dialogs.cpp:120
 msgid "Medium"
 msgstr ""
 
-#: engines/nancy/dialogs.cpp:116
+#: engines/nancy/dialogs.cpp:122
 msgid "Hard"
 msgstr ""
 
-#: engines/nancy/dialogs.cpp:119
+#: engines/nancy/dialogs.cpp:125
 #, fuzzy
 #| msgid "Player 1: Left"
 msgid "Player Data"
 msgstr "Speler 1: Links"
 
-#: engines/nancy/dialogs.cpp:120
+#: engines/nancy/dialogs.cpp:126
 #, fuzzy
 #| msgid "Playtime: "
 msgid "Player Time:"
 msgstr "Speeltijd: "
 
-#: engines/nancy/dialogs.cpp:122
+#: engines/nancy/dialogs.cpp:128
 msgid "Days"
 msgstr ""
 
-#: engines/nancy/dialogs.cpp:124 engines/nancy/dialogs.cpp:134
+#: engines/nancy/dialogs.cpp:130 engines/nancy/dialogs.cpp:140
 msgid "Hours"
 msgstr ""
 
-#: engines/nancy/dialogs.cpp:126 engines/nancy/dialogs.cpp:136
+#: engines/nancy/dialogs.cpp:132 engines/nancy/dialogs.cpp:142
 #, fuzzy
 #| msgid "Minus"
 msgid "Minutes"
 msgstr "Min"
 
-#: engines/nancy/dialogs.cpp:128
+#: engines/nancy/dialogs.cpp:134
 msgid "Player Difficulty Level"
 msgstr ""
 
-#: engines/nancy/dialogs.cpp:130
+#: engines/nancy/dialogs.cpp:136
 msgid "Software Timer"
 msgstr ""
 
-#: engines/nancy/dialogs.cpp:131
+#: engines/nancy/dialogs.cpp:137
 #, fuzzy
 #| msgid "Time: "
 msgid "Timer On"
 msgstr "Tijd: "
 
-#: engines/nancy/dialogs.cpp:138
+#: engines/nancy/dialogs.cpp:144
 #, fuzzy
 #| msgid "Second kid"
 msgid "Seconds"
 msgstr "Tweede kind"
 
-#: engines/nancy/dialogs.cpp:207
+#: engines/nancy/dialogs.cpp:213
 #, fuzzy
 #| msgid "Invalid path!"
 msgid "Invalid Scene ID!"
