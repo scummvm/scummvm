@@ -120,6 +120,9 @@ public:
 	// Others
 	void checkSystem();
 	void initCursor();
+	bool isCursorVisible();
+	void showCursor();
+	void hideCursor();
 
 	Graphics::Surface _thumbnail;
 
@@ -165,7 +168,6 @@ public:
 
 	bool _fastWalk;
 	bool _fastWalkLocked;
-	bool _mouseONOFF;
 
 	// Use With
 	uint16 _useWith[2];
@@ -203,8 +205,6 @@ public:
 	bool _gamePaused = false;
 	// CloseUp12 and 13
 	uint16 _closeUpObj;
-
-	bool _flagMouseEnabled;
 
 	bool _flagscriptactive;
 	SScriptFrame _scriptFrame[MAXSCRIPTFRAME];

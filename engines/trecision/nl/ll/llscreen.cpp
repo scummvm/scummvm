@@ -130,8 +130,7 @@ void openSys() {
 
 	ImagePointer = new uint16[MAXX * MAXY * 2];
 
-	if (!g_vm->_flagMouseEnabled)
-		Mouse(MCMD_OFF);
+	g_vm->hideCursor();
 
 	for (int i = 0; i < MAXOBJINROOM; ++i) {
 		OldObjStatus[i] = false;

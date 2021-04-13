@@ -1076,8 +1076,8 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 		break;
 
 	case iTOPO1D:
-		if ((_vm->_useWith[WITH] == oDONNA1D) && ((mx >= _vm->_obj[oDONNA1D]._lim.left) && (my >= _vm->_obj[oDONNA1D]._lim.top + TOP)
-		&& (mx <= _vm->_obj[oDONNA1D]._lim.right) && (my <= _vm->_obj[oDONNA1D]._lim.bottom + TOP))) {
+		if ((_vm->_useWith[WITH] == oDONNA1D) && (g_vm->_mouseX >= _vm->_obj[oDONNA1D]._lim.left && (g_vm->_mouseY >= _vm->_obj[oDONNA1D]._lim.top + TOP)
+		&& (g_vm->_mouseX <= _vm->_obj[oDONNA1D]._lim.right) && (g_vm->_mouseY <= _vm->_obj[oDONNA1D]._lim.bottom + TOP))) {
 			PlayDialog(dF1D1);
 			*updateInventory = false;
 			_vm->removeIcon(iTOPO1D);
@@ -1900,7 +1900,7 @@ bool LogicManager::useScreenWithScreen() {
 void LogicManager::roomOut(uint16 curObj, uint16 *action, uint16 *pos) {
 	if (curObj == oSCALA32 && _vm->_obj[oBOTOLAC32]._mode & OBJMODE_OBJSTATUS) {
 		CharacterSay(_vm->_obj[curObj]._action);
-		_vm->_flagMouseEnabled = true;
+		_vm->showCursor();
 		*action = 0;
 		*pos = 0;
 	} else {
@@ -3197,7 +3197,7 @@ bool LogicManager::mouseClick(uint16 curObj) {
 	} else {
 		switch (curObj) {
 		case oPORTAA13:
-			if (mright && (_vm->_room[r14]._flag & OBJFLAG_DONE)) {
+			if (g_vm->_mouseRightBtn && (_vm->_room[r14]._flag & OBJFLAG_DONE)) {
 				if (_characterGoToPosition != 4)
 					goToPosition(4);
 			} else if (_characterGoToPosition != _vm->_obj[curObj]._position)
@@ -3207,7 +3207,7 @@ bool LogicManager::mouseClick(uint16 curObj) {
 			break;
 
 		case oDIVANO14:
-			if (mleft) {
+			if (g_vm->_mouseLeftBtn) {
 				if (_characterGoToPosition != 2)
 					goToPosition(2);
 			} else if (_characterGoToPosition != _vm->_obj[curObj]._position)
@@ -3217,7 +3217,7 @@ bool LogicManager::mouseClick(uint16 curObj) {
 			break;
 
 		case oSCAFFALE1D:
-			if (mright) {
+			if (g_vm->_mouseRightBtn) {
 				if (_characterGoToPosition != 9)
 					goToPosition(9);
 			} else if (_characterGoToPosition != _vm->_obj[curObj]._position)
@@ -3227,7 +3227,7 @@ bool LogicManager::mouseClick(uint16 curObj) {
 			break;
 
 		case oDIVANOR4A:
-			if (mright) {
+			if (g_vm->_mouseRightBtn) {
 				if (_characterGoToPosition != 1)
 					goToPosition(1);
 			} else if (_characterGoToPosition != _vm->_obj[curObj]._position)
@@ -3288,7 +3288,7 @@ bool LogicManager::mouseClick(uint16 curObj) {
 			break;
 
 		case oFINESTRA33:
-			if (mleft) {
+			if (g_vm->_mouseLeftBtn) {
 				if (_characterGoToPosition != 7)
 					goToPosition(7);
 			} else if (_characterGoToPosition != _vm->_obj[curObj]._position)
@@ -3308,7 +3308,7 @@ bool LogicManager::mouseClick(uint16 curObj) {
 			break;
 
 		case oTRIPLA35:
-			if (!_vm->_flagUseWithStarted && mleft) {
+			if (!_vm->_flagUseWithStarted && g_vm->_mouseLeftBtn) {
 				if (_characterGoToPosition != 2)
 					goToPosition(2);
 			} else if (_characterGoToPosition != _vm->_obj[curObj]._position)
@@ -3896,7 +3896,7 @@ void LogicManager::doSystemChangeRoom() {
 	}
 
 	ReadLoc();
-	_vm->_flagMouseEnabled = true;
+	_vm->showCursor();
 
 	if ((_vm->_curRoom == r21) && ((_vm->_oldRoom == r23A) || (_vm->_oldRoom == r23B)))
 		_vm->setRoom(r21, true);

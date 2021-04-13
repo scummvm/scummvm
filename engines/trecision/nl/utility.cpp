@@ -59,7 +59,7 @@ void DoSys(uint16 curObj) {
 		g_vm->_curRoom = g_vm->_obj[o00EXIT]._goRoom;
 		if (!DataSave()) {
 			g_vm->showInventoryName(NO_OBJECTS, false);
-			doEvent(MC_INVENTORY, ME_SHOWICONNAME, MP_DEFAULT, mx, my, 0, 0);
+			doEvent(MC_INVENTORY, ME_SHOWICONNAME, MP_DEFAULT, g_vm->_mouseX, g_vm->_mouseY, 0, 0);
 			doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, g_vm->_obj[o00EXIT]._goRoom, 0, 0, 0);
 		}
 		g_vm->_curRoom = rSYS;
@@ -68,7 +68,7 @@ void DoSys(uint16 curObj) {
 	case o00LOAD:
 		if (!DataLoad()) {
 			g_vm->showInventoryName(NO_OBJECTS, false);
-			doEvent(MC_INVENTORY, ME_SHOWICONNAME, MP_DEFAULT, mx, my, 0, 0);
+			doEvent(MC_INVENTORY, ME_SHOWICONNAME, MP_DEFAULT, g_vm->_mouseX, g_vm->_mouseY, 0, 0);
 		}
 		break;
 

@@ -53,8 +53,6 @@ SSortTable SortTable[200];
 /*                                  VARIE           					   */
 /*-------------------------------------------------------------------------*/
 uint32 TheTime;
-int16 mx, my;
-bool mleft, mright;
 uint32 OldTime;
 uint32 CharacterSpeakTime;
 uint32 SomeOneSpeakTime;

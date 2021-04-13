@@ -32,9 +32,6 @@
 
 namespace Trecision {
 
-extern int16 mx, my;
-extern bool mleft, mright;
-
 /*-----------------16/01/97 20.53-------------------
 					GetKey
 --------------------------------------------------*/
@@ -174,56 +171,6 @@ void NlDissolve(int val) {
 	}
 
 	g_vm->_graphicsMgr->clearScreen();
-}
-
-/*-----------------10/12/95 15.29-------------------
-					Mouse
---------------------------------------------------*/
-void Mouse(MouseCmd opt) {
-	g_vm->checkSystem();
-
-	switch (opt) {
-	// Update mouse
-	case MCMD_UPDT: {
-		if (g_vm->_mouseONOFF && !g_vm->_flagMouseEnabled)
-			Mouse(MCMD_OFF);
-
-		if (!g_vm->_mouseONOFF && g_vm->_flagMouseEnabled)
-			Mouse(MCMD_ON);
-
-		if (g_vm->_mouseONOFF) {
-			mleft = g_vm->_mouseLeftBtn;
-			mright = g_vm->_mouseRightBtn;
-
-			mx = CLIP<int16>(g_vm->_mouseX, 10, MAXX - 11);
-			my = CLIP<int16>(g_vm->_mouseY, 10, MAXY - 11);
-
-			CursorMan.showMouse(true);
-		}
-		break;
-	}
-	case MCMD_OFF: {
-		if (!g_vm->_mouseONOFF)
-			break;
-		g_vm->_mouseONOFF = false;
-		CursorMan.showMouse(false);
-		break;
-	}
-	case MCMD_ON: {
-		if (g_vm->_mouseONOFF)
-			break;
-		g_vm->_mouseONOFF = true;
-
-		mleft = g_vm->_mouseLeftBtn;
-		mright = g_vm->_mouseRightBtn;
-
-		mx = CLIP<int16>(g_vm->_mouseX, 10, MAXX - 11);
-		my = CLIP<int16>(g_vm->_mouseY, 10, MAXY - 11);
-
-		CursorMan.showMouse(true);
-		break;
-	}
-	}
 }
 
 } // End of namespace Trecision

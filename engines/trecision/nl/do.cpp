@@ -37,7 +37,7 @@ namespace Trecision {
 /*                                 doRoomIn            					   */
 /*-------------------------------------------------------------------------*/
 void doRoomIn(uint16 curObj) {
-	g_vm->_flagMouseEnabled = false;
+	g_vm->hideCursor();
 
 	uint16 curAction = g_vm->_obj[curObj]._anim;
 	uint16 curPos = g_vm->_obj[curObj]._ninv;
@@ -51,7 +51,7 @@ void doRoomIn(uint16 curObj) {
 /*                              doRoomOut         						   */
 /*-------------------------------------------------------------------------*/
 void doRoomOut(uint16 curObj) {
-	g_vm->_flagMouseEnabled = false;
+	g_vm->hideCursor();
 
 	uint16 curAction, curPos;
 	g_vm->_logicMgr->roomOut(curObj, &curAction, &curPos);
@@ -227,7 +227,7 @@ void doDoing() {
 	case ME_WAITOPENCLOSE:
 		RegenRoom();
 		if (g_vm->_actor->_curAction == hSTAND)
-			g_vm->_flagMouseEnabled = true;
+			g_vm->showCursor();
 		break;
 	}
 }
