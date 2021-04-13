@@ -329,6 +329,8 @@ void TabWidget::reflowLayout() {
 	_butW = g_gui.xmlEval()->getVar("Globals.TabWidget.NavButton.Width", 10);
 	_butH = g_gui.xmlEval()->getVar("Globals.TabWidget.NavButton.Height", 10);
 
+	_titleSpacing = g_gui.xmlEval()->getVar("Globals.TabWidget.TitleSpacing");
+
 	// If widgets were added or removed in the current tab, without tabs
 	// having been switched using setActiveTab() afterward, then the
 	// firstWidget in the _tabs list for the active tab may not be up to
