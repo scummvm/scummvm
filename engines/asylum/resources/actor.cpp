@@ -3755,6 +3755,8 @@ ActorDirection Actor::directionFromAngle(const Common::Point &vec1, const Common
 			dirAngle = angleTable02[index / 16];
 		else if (index < 65536)
 			dirAngle = angleTable03[index / 256];
+		else
+			dirAngle = 90;
 	} else {
 		dirAngle = 90;
 	}
