@@ -81,147 +81,271 @@ void CharacterInfo::execute(int charIndex) {
 		}
 		events.clearEvents();
 
-		switch (_buttonValue) {
-		case Common::KEYCODE_F1:
-		case Common::KEYCODE_F2:
-		case Common::KEYCODE_F3:
-		case Common::KEYCODE_F4:
-		case Common::KEYCODE_F5:
-		case Common::KEYCODE_F6:
-			_buttonValue -= Common::KEYCODE_F1;
-			if (_buttonValue < (int)(oldMode == MODE_COMBAT ? combat._combatParty.size() : party._activeParty.size())) {
-				charIndex = _buttonValue;
-				c = (oldMode != MODE_COMBAT) ? &party._activeParty[charIndex] : combat._combatParty[charIndex];
+		if (Common::RU_RUS == Common::parseLanguage(ConfMan.get("language"))) {
+			switch (_buttonValue) {
+			case Common::KEYCODE_F1:
+			case Common::KEYCODE_F2:
+			case Common::KEYCODE_F3:
+			case Common::KEYCODE_F4:
+			case Common::KEYCODE_F5:
+			case Common::KEYCODE_F6:
+				_buttonValue -= Common::KEYCODE_F1;
+				if (_buttonValue < (int)(oldMode == MODE_COMBAT ? combat._combatParty.size() : party._activeParty.size())) {
+					charIndex = _buttonValue;
+					c = (oldMode != MODE_COMBAT) ? &party._activeParty[charIndex] : combat._combatParty[charIndex];
 
-				intf.highlightChar(_buttonValue);
-				redrawFlag = true;
-			} else {
-				_vm->_mode = MODE_CHARACTER_INFO;
-			}
-			break;
+					intf.highlightChar(_buttonValue);
+					redrawFlag = true;
+				} else {
+					_vm->_mode = MODE_CHARACTER_INFO;
+				}
+				break;
 
-		case Common::KEYCODE_UP:
-		case Common::KEYCODE_KP8:
-			if (_cursorCell > 0) {
+			case Common::KEYCODE_UP:
+			case Common::KEYCODE_KP8:
+				if (_cursorCell > 0) {
+					showCursor(false);
+					--_cursorCell;
+					showCursor(true);
+				}
+				w.update();
+				break;
+
+			case Common::KEYCODE_DOWN:
+			case Common::KEYCODE_KP2:
+				if (_cursorCell < 20) {
+					showCursor(false);
+					++_cursorCell;
+					showCursor(true);
+				}
+				w.update();
+				break;
+
+			case Common::KEYCODE_LEFT:
+			case Common::KEYCODE_KP4:
+				if (_cursorCell >= 5) {
+					showCursor(false);
+					_cursorCell -= 5;
+					showCursor(true);
+				}
+				w.update();
+				break;
+
+			case Common::KEYCODE_RIGHT:
+			case Common::KEYCODE_KP6:
+				if (_cursorCell <= 15) {
+					showCursor(false);
+					_cursorCell += 5;
+					showCursor(true);
+				}
+				w.update();
+				break;
+
+			case 1001:
+			case 1002:
+			case 1003:
+			case 1004:
+			case 1005:
+			case 1006:
+			case 1007:
+			case 1008:
+			case 1009:
+			case 1010:
+			case 1011:
+			case 1012:
+			case 1013:
+			case 1014:
+			case 1015:
+			case 1016:
+			case 1017:
+			case 1018:
+			case 1019:
+			case 1020:
 				showCursor(false);
-				--_cursorCell;
+				_cursorCell = _buttonValue - 1001;
 				showCursor(true);
-			}
-			w.update();
-			break;
+				w.update();
+				// fall through
 
-		case Common::KEYCODE_DOWN:
-		case Common::KEYCODE_KP2:
-			if (_cursorCell < 20) {
-				showCursor(false);
-				++_cursorCell;
-				showCursor(true);
-			}
-			w.update();
-			break;
-
-		case Common::KEYCODE_LEFT:
-		case Common::KEYCODE_KP4:
-			if (_cursorCell >= 5) {
-				showCursor(false);
-				_cursorCell -= 5;
-				showCursor(true);
-			}
-			w.update();
-			break;
-
-		case Common::KEYCODE_RIGHT:
-		case Common::KEYCODE_KP6:
-			if (_cursorCell <= 15) {
-				showCursor(false);
-				_cursorCell += 5;
-				showCursor(true);
-			}
-			w.update();
-			break;
-
-		case 1001:
-		case 1002:
-		case 1003:
-		case 1004:
-		case 1005:
-		case 1006:
-		case 1007:
-		case 1008:
-		case 1009:
-		case 1010:
-		case 1011:
-		case 1012:
-		case 1013:
-		case 1014:
-		case 1015:
-		case 1016:
-		case 1017:
-		case 1018:
-		case 1019:
-		case 1020:
-			showCursor(false);
-			_cursorCell = _buttonValue - 1001;
-			showCursor(true);
-			w.update();
-			// fall through
-
-		case Common::KEYCODE_RETURN:
-		case Common::KEYCODE_KP_ENTER: {
-			bool result = expandStat(_cursorCell, *c);
-			_vm->_mode = MODE_COMBAT;
-			if (result)
-				redrawFlag = true;
-			break;
-		}
-
-		case Common::KEYCODE_c:
-			if (Common::RU_RUS != Common::parseLanguage(ConfMan.get("language"))) {
+			case Common::KEYCODE_RETURN:
+			case Common::KEYCODE_KP_ENTER: {
+				bool result = expandStat(_cursorCell, *c);
+				_vm->_mode = MODE_COMBAT;
+				if (result)
+					redrawFlag = true;
 				break;
 			}
-		case Common::KEYCODE_e:
-			if (oldMode == MODE_COMBAT) {
-				ErrorScroll::show(_vm, Res.EXCHANGING_IN_COMBAT, WT_FREEZE_WAIT);
-			} else {
+
+			// С ({С}мен)
+			case Common::KEYCODE_c:	// russian key С
+				if (oldMode == MODE_COMBAT) {
+					ErrorScroll::show(_vm, Res.EXCHANGING_IN_COMBAT, WT_FREEZE_WAIT);
+				} else {
+					_vm->_mode = oldMode;
+					ExchangeDialog::show(_vm, c, charIndex);
+					_vm->_mode = MODE_CHARACTER_INFO;
+					redrawFlag = true;
+				}
+				break;
+
+			// В ({В}ещи)
+			case Common::KEYCODE_d: // russian key В
 				_vm->_mode = oldMode;
-				ExchangeDialog::show(_vm, c, charIndex);
+				_vm->_combat->_itemFlag = _vm->_mode == MODE_COMBAT;
+				c = ItemsDialog::show(_vm, c, ITEMMODE_CHAR_INFO);
+
+				if (!c) {
+					party._stepped = true;
+					goto exit;
+				}
+
 				_vm->_mode = MODE_CHARACTER_INFO;
 				redrawFlag = true;
-			}
-			break;
-
-		case Common::KEYCODE_d:
-			if (Common::RU_RUS != Common::parseLanguage(ConfMan.get("language"))) {
 				break;
-			}
-		case Common::KEYCODE_i:
-			_vm->_mode = oldMode;
-			_vm->_combat->_itemFlag = _vm->_mode == MODE_COMBAT;
-			c = ItemsDialog::show(_vm, c, ITEMMODE_CHAR_INFO);
 
-			if (!c) {
-				party._stepped = true;
+			// Б ({Б}стр)
+			case Common::KEYCODE_COMMA: // russian key Б
+				QuickReferenceDialog::show(_vm);
+				redrawFlag = true;
+				break;
+
+			case Common::KEYCODE_ESCAPE:
 				goto exit;
-			}
 
-			_vm->_mode = MODE_CHARACTER_INFO;
-			redrawFlag = true;
-			break;
-
-		case Common::KEYCODE_COMMA:
-			if (Common::RU_RUS != Common::parseLanguage(ConfMan.get("language"))) {
+			default:
 				break;
 			}
-		case Common::KEYCODE_q:
-			QuickReferenceDialog::show(_vm);
-			redrawFlag = true;
-			break;
+		} else {
+			switch (_buttonValue) {
+			case Common::KEYCODE_F1:
+			case Common::KEYCODE_F2:
+			case Common::KEYCODE_F3:
+			case Common::KEYCODE_F4:
+			case Common::KEYCODE_F5:
+			case Common::KEYCODE_F6:
+				_buttonValue -= Common::KEYCODE_F1;
+				if (_buttonValue < (int)(oldMode == MODE_COMBAT ? combat._combatParty.size() : party._activeParty.size())) {
+					charIndex = _buttonValue;
+					c = (oldMode != MODE_COMBAT) ? &party._activeParty[charIndex] : combat._combatParty[charIndex];
 
-		case Common::KEYCODE_ESCAPE:
-			goto exit;
+					intf.highlightChar(_buttonValue);
+					redrawFlag = true;
+				} else {
+					_vm->_mode = MODE_CHARACTER_INFO;
+				}
+				break;
 
-		default:
-			break;
+			case Common::KEYCODE_UP:
+			case Common::KEYCODE_KP8:
+				if (_cursorCell > 0) {
+					showCursor(false);
+					--_cursorCell;
+					showCursor(true);
+				}
+				w.update();
+				break;
+
+			case Common::KEYCODE_DOWN:
+			case Common::KEYCODE_KP2:
+				if (_cursorCell < 20) {
+					showCursor(false);
+					++_cursorCell;
+					showCursor(true);
+				}
+				w.update();
+				break;
+
+			case Common::KEYCODE_LEFT:
+			case Common::KEYCODE_KP4:
+				if (_cursorCell >= 5) {
+					showCursor(false);
+					_cursorCell -= 5;
+					showCursor(true);
+				}
+				w.update();
+				break;
+
+			case Common::KEYCODE_RIGHT:
+			case Common::KEYCODE_KP6:
+				if (_cursorCell <= 15) {
+					showCursor(false);
+					_cursorCell += 5;
+					showCursor(true);
+				}
+				w.update();
+				break;
+
+			case 1001:
+			case 1002:
+			case 1003:
+			case 1004:
+			case 1005:
+			case 1006:
+			case 1007:
+			case 1008:
+			case 1009:
+			case 1010:
+			case 1011:
+			case 1012:
+			case 1013:
+			case 1014:
+			case 1015:
+			case 1016:
+			case 1017:
+			case 1018:
+			case 1019:
+			case 1020:
+				showCursor(false);
+				_cursorCell = _buttonValue - 1001;
+				showCursor(true);
+				w.update();
+				// fall through
+
+			case Common::KEYCODE_RETURN:
+			case Common::KEYCODE_KP_ENTER: {
+				bool result = expandStat(_cursorCell, *c);
+				_vm->_mode = MODE_COMBAT;
+				if (result)
+					redrawFlag = true;
+				break;
+			}
+
+			case Common::KEYCODE_e:
+				if (oldMode == MODE_COMBAT) {
+					ErrorScroll::show(_vm, Res.EXCHANGING_IN_COMBAT, WT_FREEZE_WAIT);
+				} else {
+					_vm->_mode = oldMode;
+					ExchangeDialog::show(_vm, c, charIndex);
+					_vm->_mode = MODE_CHARACTER_INFO;
+					redrawFlag = true;
+				}
+				break;
+
+			case Common::KEYCODE_i:
+				_vm->_mode = oldMode;
+				_vm->_combat->_itemFlag = _vm->_mode == MODE_COMBAT;
+				c = ItemsDialog::show(_vm, c, ITEMMODE_CHAR_INFO);
+
+				if (!c) {
+					party._stepped = true;
+					goto exit;
+				}
+
+				_vm->_mode = MODE_CHARACTER_INFO;
+				redrawFlag = true;
+				break;
+
+			case Common::KEYCODE_q:
+				QuickReferenceDialog::show(_vm);
+				redrawFlag = true;
+				break;
+
+			case Common::KEYCODE_ESCAPE:
+				goto exit;
+
+			default:
+				break;
+			}
 		}
 	} while (!_vm->shouldExit());
 exit:

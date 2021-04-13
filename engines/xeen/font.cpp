@@ -334,8 +334,6 @@ bool FontSurface::getNextCharWidth(int &total) {
 			getNextChar();
 		return false;
 	} else if (Common::RU_RUS == lang && c < 0) {
-		int iii = (_fontReduced ? _fntNonEnReducedWOffset : _fntNonEnWOffset) + (char)(0x80 + c);
-		//int iii = _fontData[(_fontReduced ? _fntNonEnReducedWOffset : _fntNonEnWOffset) + (int)(0x80 + c)];
 		total += _fontData[(_fontReduced ? _fntNonEnReducedWOffset : _fntNonEnWOffset) + (char)(0x80 + c)];
 		return false;
 	} else {

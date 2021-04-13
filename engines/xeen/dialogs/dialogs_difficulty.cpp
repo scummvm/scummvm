@@ -20,6 +20,7 @@
  *
  */
 
+#include "common/config-manager.h"
 #include "xeen/dialogs/dialogs_difficulty.h"
 #include "xeen/resources.h"
 #include "xeen/xeen.h"
@@ -51,14 +52,23 @@ int DifficultyDialog::execute() {
 	while (!_vm->shouldExit()) {
 		events.pollEventsAndWait();
 		checkEvents(_vm);
-
-		if (_buttonValue == Common::KEYCODE_a)
-			result = ADVENTURER;
-		else if (_buttonValue == Common::KEYCODE_w)
-			result = WARRIOR;
-		else if (_buttonValue != Common::KEYCODE_ESCAPE)
-			continue;
-
+		if (Common::RU_RUS == Common::parseLanguage(ConfMan.get("language"))) {
+			// а ({а}вантюрист)
+			if (_buttonValue == Common::KEYCODE_f)		// russian key А
+				result = ADVENTURER;
+			// в ({в}оин)
+			else if (_buttonValue == Common::KEYCODE_d)	// russian key В
+				result = WARRIOR;
+			else if (_buttonValue != Common::KEYCODE_ESCAPE)
+				continue;
+		} else {
+			if (_buttonValue == Common::KEYCODE_a)
+				result = ADVENTURER;
+			else if (_buttonValue == Common::KEYCODE_w)
+				result = WARRIOR;
+			else if (_buttonValue != Common::KEYCODE_ESCAPE)
+				continue;
+		}
 		break;
 	}
 
@@ -68,8 +78,13 @@ int DifficultyDialog::execute() {
 
 void DifficultyDialog::loadButtons() {
 	_sprites.load("choice.icn");
-	addButton(Common::Rect(68, 167, 158, 187), Common::KEYCODE_a, &_sprites);
-	addButton(Common::Rect(166, 167, 256, 187), Common::KEYCODE_w, &_sprites);
+	if (Common::RU_RUS == Common::parseLanguage(ConfMan.get("language"))) {
+		addButton(Common::Rect(68, 167, 158, 187), Common::KEYCODE_f, &_sprites);	// russian key А
+		addButton(Common::Rect(166, 167, 256, 187), Common::KEYCODE_d, &_sprites);	// russian key В
+	} else {
+		addButton(Common::Rect(68, 167, 158, 187), Common::KEYCODE_a, &_sprites);
+		addButton(Common::Rect(166, 167, 256, 187), Common::KEYCODE_w, &_sprites);
+	}
 }
 
 } // End of namespace Xeen

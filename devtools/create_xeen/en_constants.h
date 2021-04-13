@@ -1574,6 +1574,12 @@ public:
 		return "Exchange %s with...";
 	}
 
+	const int *NEW_CHAR_SKILLS_OFFSET() {
+		delete[] _newCharSkillsOffset;
+		_newCharSkillsOffset = new const int [10] { 0, 0, 0, 5, 0, 0, 0, 0, 0, 0 };
+		return _newCharSkillsOffset;
+	}
+
 	const char *COMBAT_DETAILS() {
 		return "\r\f00\x3"
 			   "c\v000\t000\x2"

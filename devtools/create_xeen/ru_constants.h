@@ -293,13 +293,14 @@ public:
 	const char **SKILL_NAMES() {
 		delete[] _skillNames;
 		_skillNames = new const char *[18] {
-			"\x82\xAE\xE0\xAE\xA2\xE1\xE2\xA2\xAE\t100",								// "Воровство\t100",
+			"\x82\xAE\xE0\xAE\xA2\xE1\xE2\xA2\xAE\t100",								 // "Воровство\t100",
 			"\x8E\xE0\xE3\xA6\xA5\xA9\xAD\xA8\xAA",                                      // "Оружейник",
 			"\x80\xE1\xE2\xE0\xAE\xAB\xAE\xA3",                                          // "Астролог",
 			"\x80\xE2\xAB\xA5\xE2",                                                      // "Атлет",
 			"\x8A\xA0\xE0\xE2\xAE\xA3\xE0\xA0\xE4",                                      // "Картограф",
 			"\x8A\xE0\xA5\xE1\xE2\xAE\xAD\xAE\xE1\xA5\xE6",                              // "Крестоносец",
-			"\x97\xE3\xA2\xE1\xE2\xA2\xAE \xAD\xA0\xAF\xE0\xA0\xA2\xAB\xA5\xAD\xA8\xEF", // "Чувство направления",
+			"\x97\xE3\xA2\xE1\xE2\xA2\xAE \xAD\xA0\xAF\xE0.",                            // "Чувство напр.",
+			//"\x97\xE3\xA2\xE1\xE2\xA2\xAE \xAD\xA0\xAF\xE0\xA0\xA2\xAB\xA5\xAD\xA8\xEF", // "Чувство направления",
 			"\x9F\xA7\xEB\xAA\xAE\xA2\xA5\xA4",                                          // "Языковед",
 			"\x8A\xE3\xAF\xA5\xE6",                                                      // "Купец",
 			"\x91\xAA\xA0\xAB\xAE\xAB\xA0\xA7",                                          // "Скалолаз",
@@ -310,7 +311,8 @@ public:
 			"\x8F\xAB\xAE\xA2\xA5\xE6",                                                  // "Пловец",
 			"\x8E\xE5\xAE\xE2\xAD\xA8\xAA",                                              // "Охотник",
 			"\x82\xAE\xE1\xAF\xE0\xA8\xEF\xE2\xA8\xA5",                                  // "Восприятие",
-			"\x97\xE3\xA2\xE1\xE2\xA2\xAE \xAE\xAF\xA0\xE1\xAD\xAE\xE1\xE2\xA8"          // "Чувство опасности"
+			"\x97\xE3\xA2\xE1\xE2\xA2\xAE \xAE\xAF\xA0\xE1\xAD."                         // "Чувство опасн."
+			//"\x97\xE3\xA2\xE1\xE2\xA2\xAE \xAE\xAF\xA0\xE1\xAD\xAE\xE1\xE2\xA8"          // "Чувство опасности"
 		};
 		return _skillNames;
 	}
@@ -1607,6 +1609,12 @@ public:
 
 	const char *EXCHANGE_ATTR_WITH() {
 		return "\x8F\xAE\xAC\xA5\xAD\xEF\xE2\xEC %s \xE1..."; // "Поменять %s с..."
+	}
+
+	const int *NEW_CHAR_SKILLS_OFFSET() {
+		delete[] _newCharSkillsOffset;
+		_newCharSkillsOffset = new const int[10]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+		return _newCharSkillsOffset;
 	}
 
 	const char *COMBAT_DETAILS() {

@@ -156,6 +156,7 @@ protected:
 	const char **_found = NULL;
 	const char **_born = NULL;
 	const char **_onHand = NULL;
+	const int   *_newCharSkillsOffset = NULL;
 
 public:
 	virtual const char  *CLOUDS_CREDITS() = 0;
@@ -1134,7 +1135,7 @@ public:
 	virtual const char  *EXCHANGE_ATTR_WITH() = 0;
 
 	const int NEW_CHAR_SKILLS[10] = { 1, 5, -1, -1, 4, 0, 0, -1, 6, 11 };
-	const int NEW_CHAR_SKILLS_OFFSET[10] = { 0, 0, 0, 5, 0, 0, 0, 0, 0, 0 };
+	virtual const int *NEW_CHAR_SKILLS_OFFSET() = 0;
 	const int NEW_CHAR_SKILLS_LEN[10] = { 11, 8, 0, 0, 12, 8, 8, 0, 9, 11 };
 	const int NEW_CHAR_RACE_SKILLS[10] = { 14, -1, 17, 16, -1, 0, 0, 0, 0, 0 };
 
