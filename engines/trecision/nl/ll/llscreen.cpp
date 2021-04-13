@@ -20,19 +20,17 @@
  *
  */
 
-#include <common/system.h>
-
+#include "common/system.h"
 #include "common/scummsys.h"
+#include "common/str.h"
 #include "trecision/trecision.h"
 #include "trecision/nl/3d/3dinc.h"
+#include "trecision/nl/extern.h"
+#include "trecision/nl/define.h"
+#include "trecision/nl/proto.h"
 #include "trecision/nl/sysdef.h"
 #include "trecision/nl/struct.h"
 #include "trecision/nl/ll/llinc.h"
-#include "trecision/nl/extern.h"
-#include "trecision/nl/define.h"
-
-#include "common/file.h"
-#include "common/str.h"
 #include "trecision/graphics.h"
 #include "trecision/video.h"
 

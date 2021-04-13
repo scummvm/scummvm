@@ -21,15 +21,15 @@
  */
 
 #include "common/scummsys.h"
+#include "common/config-manager.h"
+#include "engines/engine.h"
+
 #include "trecision/nl/struct.h"
 #include "trecision/nl/define.h"
 #include "trecision/nl/message.h"
+#include "trecision/nl/proto.h"
 #include "trecision/nl/ll/llinc.h"
-#include "trecision/nl/extern.h"
 #include "trecision/trecision.h"
-
-#include "common/config-manager.h"
-#include "engines/engine.h"
 
 namespace Trecision {
 
