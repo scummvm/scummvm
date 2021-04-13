@@ -168,7 +168,7 @@ void PlayStaticBitmapAnimation::execute() {
 }
 
 void PlayStaticBitmapAnimation::onPause(bool pause) {
-	if (pause) {
+	if (!pause) {
 		registerGraphics();
 	}
 }

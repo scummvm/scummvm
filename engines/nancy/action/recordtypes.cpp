@@ -423,7 +423,7 @@ void ShowInventoryItem::execute() {
 }
 
 void ShowInventoryItem::onPause(bool pause) {
-	if (pause) {
+	if (!pause) {
 		registerGraphics();
 	}
 }

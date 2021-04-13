@@ -215,7 +215,7 @@ void RotatingLockPuzzle::handleInput(NancyInput &input) {
 }
 
 void RotatingLockPuzzle::onPause(bool pause) {
-	if (pause) {
+	if (!pause) {
 		registerGraphics();
 	}
 }

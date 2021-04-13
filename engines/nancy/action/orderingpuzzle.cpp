@@ -203,7 +203,7 @@ void OrderingPuzzle::handleInput(NancyInput &input) {
 }
 
 void OrderingPuzzle::onPause(bool pause) {
-	if (pause) {
+	if (!pause) {
 		registerGraphics();
 	}
 }

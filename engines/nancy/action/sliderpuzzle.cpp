@@ -290,7 +290,7 @@ void SliderPuzzle::handleInput(NancyInput &input) {
 }
 
 void SliderPuzzle::onPause(bool pause) {
-	if (pause) {
+	if (!pause) {
 		registerGraphics();
 	}
 }

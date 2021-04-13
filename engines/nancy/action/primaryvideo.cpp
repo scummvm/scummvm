@@ -148,7 +148,7 @@ void PlayPrimaryVideoChan0::updateGraphics() {
 void PlayPrimaryVideoChan0::onPause(bool pause) {
 	_decoder.pauseVideo(pause);
 
-	if (pause) {
+	if (!pause) {
 		registerGraphics();
 	}
 }

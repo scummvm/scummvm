@@ -212,7 +212,7 @@ void PasswordPuzzle::handleInput(NancyInput &input) {
 }
 
 void PasswordPuzzle::onPause(bool pause) {
-	if (pause) {
+	if (!pause) {
 		registerGraphics();
 	}
 }

@@ -227,7 +227,7 @@ void LeverPuzzle::handleInput(NancyInput &input) {
 }
 
 void LeverPuzzle::onPause(bool pause) {
-	if (pause) {
+	if (!pause) {
 		registerGraphics();
 	}
 }

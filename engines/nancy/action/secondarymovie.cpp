@@ -133,7 +133,7 @@ void PlaySecondaryMovie::updateGraphics() {
 void PlaySecondaryMovie::onPause(bool pause) {
 	_decoder.pauseVideo(pause);
 
-	if (pause) {
+	if (!pause) {
 		registerGraphics();
 	}
 }
