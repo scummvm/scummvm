@@ -215,13 +215,13 @@ void CharacterSay(uint16 i) {
 	if (g_vm->_sentence[i][0] == '*' && !g_vm->_animMgr->_playingAnims[kSmackerAction])
 		StartCharacterAction(hBOH, 0, 0, 0);
 	else
-		CharacterTalk(g_vm->_sentence[i], true);
+		CharacterTalk(g_vm->_sentence[i]);
 }
 
 /*-------------------------------------------------------------------------*/
 /*                                CharacterTalk            				   */
 /*-------------------------------------------------------------------------*/
-void CharacterTalk(const char *s, bool FromCharacterSay) {
+void CharacterTalk(const char *s) {
 	g_vm->_flagSomeoneSpeaks = true;
 	g_vm->_flagCharacterSpeak = true;
 	g_vm->_flagSkipTalk = false;
@@ -231,9 +231,6 @@ void CharacterTalk(const char *s, bool FromCharacterSay) {
 	SubStringStart = 0;
 	CurSubString = 0;
 	FormattingSuperString();
-
-	if (!FromCharacterSay)
-		g_vm->_flagSkipEnable = true;
 
 	CharacterContinueTalk();
 

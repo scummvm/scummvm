@@ -88,7 +88,7 @@ void ShowObjName(uint16 obj, bool showhide);
 void FormattingSuperString();
 void FormattingOneString();
 void CharacterSay(uint16 i);
-void CharacterTalk(const char *s, bool FromCharacterSay);
+void CharacterTalk(const char *s);
 void CharacterTalkInAction(uint16 ss);
 void CharacterContinueTalk();
 void CharacterMute();
