@@ -43,7 +43,6 @@ int8 _characterGoToPosition = -1;
 bool OldObjStatus[MAXOBJINROOM];
 bool VideoObjStatus[MAXOBJINROOM];
 
-ScreenRect VideoTop = {  0,  0,   0, TOP - 1};
 ScreenRect VideoCent = {0, TOP, MAXX - 1, (TOP + AREA) - 1};
 ScreenRect VideoBott = {0, (TOP + AREA), MAXX - 1, MAXY - 1};
 
@@ -53,7 +52,6 @@ SSortTable SortTable[200];
 /*                                  VARIE           					   */
 /*-------------------------------------------------------------------------*/
 uint32 TheTime;
-uint32 OldTime;
 uint32 CharacterSpeakTime;
 uint32 SomeOneSpeakTime;
 
