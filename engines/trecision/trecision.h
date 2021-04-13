@@ -39,9 +39,6 @@ class AnimManager;
 class GraphicsManager;
 class LogicManager;
 
-// Temporary define for the new video code
-#define USE_NEW_VIDEO_CODE 1
-
 #define USE_DIRTY_RECTS 0
 #define SAVE_VERSION_ORIGINAL 102
 #define SAVE_VERSION_SCUMMVM 103
@@ -139,7 +136,7 @@ public:
 	uint8 _actionLen[MAXACTION];
 
 	char *_textPtr;
-	SDText _sdText, _oldSdText;
+	SDText _sdText;
 	Common::Rect _limits[50];
 	uint16 _limitsNum;
 	int _actorLimit;
