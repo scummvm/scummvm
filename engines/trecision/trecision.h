@@ -229,6 +229,7 @@ public:
 	uint8 *_textureArea;
 	uint16 *_icons;
 	int16 *_zBuffer;
+	uint16 *_extraRoomObject;
 
 	SActor *_actor;
 
