@@ -22,13 +22,12 @@
 
 #include "common/scummsys.h"
 #include "trecision/nl/3d/3dinc.h"
-#include "trecision/nl/struct.h"
 #include "trecision/nl/define.h"
-#include "trecision/nl/message.h"
 #include "trecision/nl/extern.h"
+#include "trecision/nl/message.h"
+#include "trecision/nl/proto.h"
+#include "trecision/nl/struct.h"
 #include "trecision/trecision.h"
-
-#include "common/config-manager.h"
 #include "trecision/logic.h"
 #include "trecision/video.h"
 

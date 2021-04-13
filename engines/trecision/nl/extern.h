@@ -23,7 +23,7 @@
 #ifndef TRECISION_EXTERN_H
 #define TRECISION_EXTERN_H
 
-#include "proto.h"
+#include "trecision/nl/struct.h"
 
 namespace Trecision {
 

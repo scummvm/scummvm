@@ -20,12 +20,12 @@
  *
  */
 
-#include "trecision/trecision.h"
-#include "trecision/nl/struct.h"
 #include "trecision/nl/extern.h"
 #include "trecision/nl/message.h"
-
-#include "logic.h"
+#include "trecision/nl/proto.h"
+#include "trecision/nl/struct.h"
+#include "trecision/logic.h"
+#include "trecision/trecision.h"
 
 namespace Trecision {
 
