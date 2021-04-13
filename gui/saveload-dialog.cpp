@@ -499,8 +499,8 @@ void SaveLoadChooserSimple::reflowLayout() {
 			error("Error when loading position data for Save/Load Thumbnails");
 
 		// Even if there is no thumbnail support, getWidgetData() will provide default thumbnail values
-		int thumbW = kThumbnailWidth;
-		int thumbH = kThumbnailHeight2;
+		int thumbW = SCALEVALUE(kThumbnailWidth);
+		int thumbH = SCALEVALUE(kThumbnailHeight2);
 		int thumbX = x + (w >> 1) - (thumbW >> 1);
 		int thumbY = y + kLineHeight;
 
@@ -513,7 +513,7 @@ void SaveLoadChooserSimple::reflowLayout() {
 			textLines++; // add a line of padding at the bottom
 
 		if (_thumbnailSupport) {
-			_gfxWidget->resize(thumbX, thumbY, thumbW, thumbH);
+			_gfxWidget->resize(thumbX, thumbY, thumbW, thumbH, false);
 			_gfxWidget->setVisible(true);
 		} else {
 			// choose sensible values for displaying playtime and date/time when a thumbnail is not being used
@@ -526,9 +526,9 @@ void SaveLoadChooserSimple::reflowLayout() {
 		int height = thumbY + thumbH + kLineHeight;
 
 		if (_saveDateSupport) {
-			_date->resize(thumbX, height, thumbW, kLineHeight);
+			_date->resize(thumbX, height, thumbW, kLineHeight, false);
 			height += kLineHeight;
-			_time->resize(thumbX, height, thumbW, kLineHeight);
+			_time->resize(thumbX, height, thumbW, kLineHeight, false);
 			height += kLineHeight;
 			_date->setVisible(_saveDateSupport);
 			_time->setVisible(_saveDateSupport);
@@ -538,13 +538,13 @@ void SaveLoadChooserSimple::reflowLayout() {
 		}
 
 		if (_playTimeSupport) {
-			_playtime->resize(thumbX, height, thumbW, kLineHeight);
+			_playtime->resize(thumbX, height, thumbW, kLineHeight, false);
 			_playtime->setVisible(_playTimeSupport);
 		} else {
 			_playtime->setVisible(false);
 		}
 
-		_container->resize(x, y, w, h + (kLineHeight * textLines));
+		_container->resize(x, y, w, h + (kLineHeight * textLines), false);
 		_container->setVisible(true);
 
 		updateSelection(false);
