@@ -84,105 +84,175 @@ int ControlPanel::execute() {
 				return 0;
 		} while (!_buttonValue && events.timeElapsed() < 2);
 
-		switch (_buttonValue) {
-		case Common::KEYCODE_d:
-			if (Common::RU_RUS != Common::parseLanguage(ConfMan.get("language"))) {
-				break;
-			}
-		case Common::KEYCODE_q:
-			if (Confirm::show(g_vm, Res.CONFIRM_QUIT)) {
-				g_vm->_gameMode = GMODE_QUIT;
-				result = 1;
-			}
-			break;
-
-		case Common::KEYCODE_g:
-			// Goober cheat sequence
-			debugCtr = 1;
-			if (Common::RU_RUS != Common::parseLanguage(ConfMan.get("language"))) {
-				break;
-			}
-		case Common::KEYCODE_w:
-			if (Confirm::show(g_vm, Res.MR_WIZARD)) {
-				w.close();
-				if (!windows[2]._enabled) {
-					sound.playFX(51);
-
-					if (g_vm->getGameID() == GType_WorldOfXeen) {
-						map._loadCcNum = 0;
-						map.load(28);
-						party._mazeDirection = DIR_EAST;
-					} else {
-						map._loadCcNum = 1;
-						map.load(29);
-						party._mazeDirection = DIR_SOUTH;
-					}
-					party.moveToRunLocation();
+		if (Common::RU_RUS == Common::parseLanguage(ConfMan.get("language"))) {
+			switch (_buttonValue) {
+			// В ({В}ыход)
+			case Common::KEYCODE_d:	// russian key В
+				if (Confirm::show(g_vm, Res.CONFIRM_QUIT)) {
+					g_vm->_gameMode = GMODE_QUIT;
+					result = 1;
 				}
+				break;
 
-				party._gems = 0;
-				result = 2;
-			}
-			break;
+			// П ({П}омощь)
+			case Common::KEYCODE_g:	// russian key П
+				debugCtr = 1;	// Goober cheat sequence
 
-		case Common::KEYCODE_p:
-			if (Common::RU_RUS != Common::parseLanguage(ConfMan.get("language"))) {
+				if (Confirm::show(g_vm, Res.MR_WIZARD)) {
+					w.close();
+					if (!windows[2]._enabled) {
+						sound.playFX(51);
+
+						if (g_vm->getGameID() == GType_WorldOfXeen) {
+							map._loadCcNum = 0;
+							map.load(28);
+							party._mazeDirection = DIR_EAST;
+						} else {
+							map._loadCcNum = 1;
+							map.load(29);
+							party._mazeDirection = DIR_SOUTH;
+						}
+						party.moveToRunLocation();
+					}
+
+					party._gems = 0;
+					result = 2;
+				}
+				break;
+
+			// З ({З}агрузить)
+			case Common::KEYCODE_p:	// russian key З
+				if (_vm->_mode == MODE_COMBAT) {
+					ErrorScroll::show(_vm, Res.NO_LOADING_IN_COMBAT);
+				} else {
+					// Close dialog and show loading dialog
+					result = 3;
+				}
+				break;
+
+			// С ({С}охранить)
+			case Common::KEYCODE_c:	// russian key С
+				if (_vm->_mode == MODE_COMBAT) {
+					ErrorScroll::show(_vm, Res.NO_SAVING_IN_COMBAT);
+				} else {
+					// Close dialog and show saving dialog
+					result = 4;
+				}
+				break;
+
+			// У (Зв{у}к)
+			case Common::KEYCODE_e:	// russian key У
+				sound.setFxOn(!sound._fxOn);
+				break;
+
+			// М ({М}узыка)
+			case Common::KEYCODE_v:	// russian key М
+				sound.setMusicOn(!sound._musicOn);
+				break;
+
+			case Common::KEYCODE_ESCAPE:
+				result = 1;
+				break;
+
+			// Goober cheat sequence
+			case Common::KEYCODE_o:
+				debugCtr = (debugCtr == 1 || debugCtr == 2) ? 2 : 0;
+				break;
+			case Common::KEYCODE_b:
+				debugCtr = (debugCtr == 2) ? 3 : 0;
+				break;
+			case Common::KEYCODE_r:
+				if (debugCtr == 3)
+					_debugFlag = true;
+				else
+					debugCtr = 0;
+				break;
+
+			default:
 				break;
 			}
-		case Common::KEYCODE_l:
-			if (_vm->_mode == MODE_COMBAT) {
-				ErrorScroll::show(_vm, Res.NO_LOADING_IN_COMBAT);
-			} else {
-				// Close dialog and show loading dialog
-				result = 3;
-			}
-			break;
+		} else {
+			switch (_buttonValue) {
+			case Common::KEYCODE_q:
+				if (Confirm::show(g_vm, Res.CONFIRM_QUIT)) {
+					g_vm->_gameMode = GMODE_QUIT;
+					result = 1;
+				}
+				break;
 
-		case Common::KEYCODE_c:
-			if (Common::RU_RUS != Common::parseLanguage(ConfMan.get("language"))) {
+			case Common::KEYCODE_w:
+				if (Confirm::show(g_vm, Res.MR_WIZARD)) {
+					w.close();
+					if (!windows[2]._enabled) {
+						sound.playFX(51);
+
+						if (g_vm->getGameID() == GType_WorldOfXeen) {
+							map._loadCcNum = 0;
+							map.load(28);
+							party._mazeDirection = DIR_EAST;
+						} else {
+							map._loadCcNum = 1;
+							map.load(29);
+							party._mazeDirection = DIR_SOUTH;
+						}
+						party.moveToRunLocation();
+					}
+
+					party._gems = 0;
+					result = 2;
+				}
+				break;
+
+			case Common::KEYCODE_l:
+				if (_vm->_mode == MODE_COMBAT) {
+					ErrorScroll::show(_vm, Res.NO_LOADING_IN_COMBAT);
+				} else {
+					// Close dialog and show loading dialog
+					result = 3;
+				}
+				break;
+
+			case Common::KEYCODE_s:
+				if (_vm->_mode == MODE_COMBAT) {
+					ErrorScroll::show(_vm, Res.NO_SAVING_IN_COMBAT);
+				} else {
+					// Close dialog and show saving dialog
+					result = 4;
+				}
+				break;
+
+			case Common::KEYCODE_e:
+				sound.setFxOn(!sound._fxOn);
+				break;
+
+			case Common::KEYCODE_m:
+				sound.setMusicOn(!sound._musicOn);
+				break;
+
+			case Common::KEYCODE_ESCAPE:
+				result = 1;
+				break;
+
+			// Goober cheat sequence
+			case Common::KEYCODE_g:
+				debugCtr = 1;
+				break;
+			case Common::KEYCODE_o:
+				debugCtr = (debugCtr == 1 || debugCtr == 2) ? 2 : 0;
+				break;
+			case Common::KEYCODE_b:
+				debugCtr = (debugCtr == 2) ? 3 : 0;
+				break;
+			case Common::KEYCODE_r:
+				if (debugCtr == 3)
+					_debugFlag = true;
+				else
+					debugCtr = 0;
+				break;
+
+			default:
 				break;
 			}
-		case Common::KEYCODE_s:
-			if (_vm->_mode == MODE_COMBAT) {
-				ErrorScroll::show(_vm, Res.NO_SAVING_IN_COMBAT);
-			} else {
-				// Close dialog and show saving dialog
-				result = 4;
-			}
-			break;
-
-		case Common::KEYCODE_e:
-			sound.setFxOn(!sound._fxOn);
-			break;
-
-		case Common::KEYCODE_v:
-			if (Common::RU_RUS != Common::parseLanguage(ConfMan.get("language"))) {
-				break;
-			}
-		case Common::KEYCODE_m:
-			sound.setMusicOn(!sound._musicOn);
-			break;
-
-		case Common::KEYCODE_ESCAPE:
-			result = 1;
-			break;
-
-		// Goober cheat sequence
-		case Common::KEYCODE_o:
-			debugCtr = (debugCtr == 1 || debugCtr == 2) ? 2 : 0;
-			break;
-		case Common::KEYCODE_b:
-			debugCtr = (debugCtr == 2) ? 3 : 0;
-			break;
-		case Common::KEYCODE_r:
-			if (debugCtr == 3)
-				_debugFlag = true;
-			else
-				debugCtr = 0;
-			break;
-
-		default:
-			break;
 		}
 	} while (!result);
 
