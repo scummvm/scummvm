@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-04-13 20:23+0000\n"
-"PO-Revision-Date: 2021-04-12 23:40+0000\n"
+"PO-Revision-Date: 2021-04-13 23:18+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/uk/>\n"
@@ -5461,16 +5461,17 @@ msgstr ""
 
 #. I18N: Second Chance is the name of the original engine's autosave system
 #: engines/nancy/dialogs.cpp:46
-#, fuzzy
-#| msgid "Enable cross fade"
 msgid "Enable Second Chance"
-msgstr "Ввімкнути плавне вицвітання"
+msgstr "Ввімкнути другу спробу"
 
 #: engines/nancy/dialogs.cpp:46
 msgid ""
 "Enable the Second Chance feature, which automatically saves at specific "
 "scenes. Enabling this disables timed autosaves."
 msgstr ""
+"Вмикає режим другої спроби, коли в деяких сценах відбувається автоматичне "
+"збереження. Якщо цей режим увімкнено, автоматичні збереження по таймери "
+"вимикаються."
 
 #: engines/nancy/dialogs.cpp:48
 msgid "Speech Options"
