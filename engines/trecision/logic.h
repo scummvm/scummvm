@@ -78,6 +78,7 @@ public:
 	void doMouseLeftRight();
 
 	void doSystemChangeRoom();
+	void DoSys(uint16 curObj);
 };
 ; // end of class
 

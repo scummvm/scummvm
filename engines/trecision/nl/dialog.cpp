@@ -491,7 +491,7 @@ void afterChoice(int numframe) {
 		return;
 	}
 
-	// se parte altro dialogo
+	// If another dialog starts
 	if (g_vm->_choice[_curChoice]._nextDialog != 0) {
 		_curDialog = g_vm->_choice[_curChoice]._nextDialog;
 		g_vm->_flagDialogActive = true;
@@ -499,15 +499,15 @@ void afterChoice(int numframe) {
 
 		d = &_dialog[_curDialog];
 
-		// se c'e' predialog
+		// If there is a pre-dialog
 		if (_dialog[_curDialog]._startLen > 0) {
 			g_vm->_animMgr->playMovie(_dialog[_curDialog]._startAnim, 1, _dialog[_curDialog]._startLen);
 			return;
 		}
 	}
 
-	// fa partire subito tutte le prevarica
-	for (int c = d->_firstChoice; c < (d->_firstChoice + d->_choiceNumb); c++) {
+	// Immediately starts the fraud choice
+	for (int c = d->_firstChoice; c < (d->_firstChoice + d->_choiceNumb); ++c) {
 		if ((g_vm->_choice[c]._flag & DLGCHOICE_FRAUD) && (!(g_vm->_choice[c]._flag & DLGCHOICE_HIDE))) {
 			PlayChoice(c);
 			return;

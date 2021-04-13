@@ -18,7 +18,6 @@ MODULE_OBJS = \
 	nl/regen.o \
 	nl/schedule.o \
 	nl/string.o \
-	nl/utility.o \
 	nl/3d/3dact.o \
 	nl/3d/3drend.o \
 	nl/3d/3dvar.o \

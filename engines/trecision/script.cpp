@@ -20,11 +20,15 @@
  *
  */
 
+#include "trecision/nl/proto.h"
 #include "trecision/nl/message.h"
 #include "trecision/trecision.h"
 
 namespace Trecision {
 
+void SScriptFrame::sendFrame() {
+	doEvent(_class, _event, MP_DEFAULT, _u16Param1, _u16Param2, _u8Param, _u32Param);
+}
 /*-------------------------------------------------------------------------*/
 /*                                endScript           					   */
 /*-------------------------------------------------------------------------*/

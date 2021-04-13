@@ -625,7 +625,7 @@ void AtEndChangeRoom() {
 	else if ((g_vm->_curRoom == r5A) && !(g_vm->_room[r5A]._flag & OBJFLAG_DONE))
 		CharacterSay(1408);
 	else if ((g_vm->_curRoom == rSYS) && (g_vm->_oldRoom == rSYS))
-		DoSys(o00LOAD);
+		g_vm->_logicMgr->DoSys(o00LOAD);
 	g_vm->_inventoryObj[iDISLOCATORE]._flag &= ~OBJFLAG_EXTRA;
 }
 
