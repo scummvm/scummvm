@@ -565,13 +565,5 @@ endif
 	@echo Now run
 	@echo "\tgit commit -m 'DISTS: Generated Code::Blocks and MSVC project files'"
 
-# Target to create Raspberry Pi zip containig binary and specific README
-raspberrypi_dist:
-	mkdir -p $(srcdir)/scummvm-rpi
-	cp $(srcdir)/backends/platform/sdl/raspberrypi/README.RASPBERRYPI $(srcdir)/scummvm-rpi/README
-	cp $(srcdir)/scummvm $(srcdir)/scummvm-rpi
-	zip -r scummvm-rpi.zip scummvm-rpi
-	rm -f -R scummvm-rpi
-
 # Mark special targets as phony
 .PHONY: deb bundle osxsnap install uninstall
