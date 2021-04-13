@@ -111,13 +111,10 @@ extern uint8 *TextArea;
 // 3D AREA
 extern uint8 *BaseHeadTexture;
 extern uint8 AddObjectMaterial;
-// MEMORY
-extern uint32 GameBytePointer;
 // DTEXT
 extern int8 DTextLines[MAXDTEXTLINES][MAXDTEXTCHARS];
 // ANIMATION
 extern uint8 *SoundBuffer;
-extern uint8 *MemoryArea;
 extern uint8 *SoundStartBuffer;
 // MOUSE
 extern SDText curString;

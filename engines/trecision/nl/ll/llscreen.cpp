@@ -51,16 +51,12 @@ uint8 *TextArea;
 uint8 SpeechBuf[SPEECHSIZE];
 uint16 *ExtraObj2C;
 uint16 *ExtraObj41D;
-// MEMORY
-uint32 GameBytePointer;
 // DTEXT
 int8 DTextLines[MAXDTEXTLINES][MAXDTEXTCHARS];
 // 3D
 SLight  VLight[MAXLIGHT];
 SCamera FCamera;
 STexture FTexture[MAXMAT];
-// ANIMATION
-uint8 *MemoryArea;
 // SOUND
 uint8 *SoundStartBuffer;
 int32  hh;
@@ -84,16 +80,10 @@ struct SBmInfo {
 	}
 } BmInfo;
 
-#define NL_REQUIREDMEMORY	6100000L
 /*-----------------17/02/95 10.19-------------------
 						openSys
 --------------------------------------------------*/
 void openSys() {
-	MemoryArea = (uint8 *)malloc(NL_REQUIREDMEMORY);
-	memset(MemoryArea, 0, NL_REQUIREDMEMORY);
-
-	GameBytePointer = 0;
-
 	// head
 	hh = 0;
 	FTexture[hh]._dx = 300 / 2;
@@ -126,12 +116,7 @@ void openSys() {
 	g_vm->_actor->_camera = (SCamera *)&FCamera;
 	g_vm->_actor->_texture = (STexture *)&FTexture[0];
 
-	TextArea = (uint8 *)(MemoryArea + GameBytePointer);
-	GameBytePointer += MAXTEXTAREA;
-
-	// icon area
-	g_vm->_animMgr->_smkBuffer[kSmackerIcon] = (uint8 *)(MemoryArea + GameBytePointer);
-	GameBytePointer += ICONDX * ICONDY;
+	TextArea = new uint8[MAXTEXTAREA];
 
 	// zbuffer
 	g_vm->_zBuffer = new int16[ZBUFFERSIZE / 2];
@@ -141,32 +126,17 @@ void openSys() {
 	// CDBuffer
 	ExtraObj2C = (uint16 *)SpeechBuf; // for room 2C
 
-	// omino e full motions area
-	g_vm->_animMgr->_smkBuffer[kSmackerAction] = (uint8 *)(MemoryArea + GameBytePointer);
 	ExtraObj41D = (uint16 *)g_vm->_animMgr->_smkBuffer[kSmackerAction]; // for room 41D
-
-	GameBytePointer += SCREENLEN * AREA;
-	// omino buffer
-	GameBytePointer += SMKANBUFFER;
-	// background buffer
-	GameBytePointer += SMKBKGBUFFER;
-	// icone buffer
-	GameBytePointer += SMKICONBUFFER;
-	// background area
-	g_vm->_animMgr->_smkBuffer[kSmackerBackground] = (uint8 *)(MemoryArea + GameBytePointer);
-	GameBytePointer += SCREENLEN * AREA;
 
 	g_vm->_smackImageBuffer = new uint16[MAXX * AREA];
 	memset(g_vm->_smackImageBuffer, 0, MAXX * AREA * 2);
-	GameBytePointer += MAXX * AREA * 2; // Space that used to be SmackImagePointer
 
 	g_vm->_screenBuffer = new uint16[MAXX * MAXY];
 	memset(g_vm->_screenBuffer, 0, MAXX * MAXY * 2);
-	GameBytePointer += MAXX * MAXY * 2; // Space that used to be _screenBuffer
 
 	g_vm->_graphicsMgr->copyToScreen(0, 0, MAXX, MAXY);
 
-	ImagePointer = (uint16 *)(MemoryArea + GameBytePointer);
+	ImagePointer = new uint16[MAXX * MAXY * 2];
 
 	if (!g_vm->_flagMouseEnabled)
 		Mouse(MCMD_OFF);
