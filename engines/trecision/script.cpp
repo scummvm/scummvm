@@ -52,7 +52,7 @@ void TrecisionEngine::playScript(uint16 id) {
 
 	SScriptFrame *curFrame = &_scriptFrame[_curScriptFrame[_curStack]];
 	// If the event is empty, terminate the script
-	if (curFrame->eventIsEmpty()) {
+	if (curFrame->isEmptyEvent()) {
 		endScript();
 		return;
 	}
@@ -63,7 +63,7 @@ void TrecisionEngine::playScript(uint16 id) {
 		curFrame = &_scriptFrame[_curScriptFrame[_curStack]];
 		SScriptFrame *nextFrame = &_scriptFrame[_curScriptFrame[_curStack] + 1];
 		curFrame->sendFrame();
-		if (curFrame->_noWait && !nextFrame->eventIsEmpty()) {
+		if (curFrame->_noWait && !nextFrame->isEmptyEvent()) {
 			_curScriptFrame[_curStack]++;
 			loop = true;
 		}
@@ -79,7 +79,7 @@ void TrecisionEngine::evalScript() {
 		g_vm->hideCursor();
 
 		SScriptFrame *curFrame = &_scriptFrame[_curScriptFrame[_curStack]];
-		if (curFrame->eventIsEmpty()) {
+		if (curFrame->isEmptyEvent()) {
 			endScript();
 			return;
 		}
@@ -90,7 +90,7 @@ void TrecisionEngine::evalScript() {
 			curFrame = &_scriptFrame[_curScriptFrame[_curStack]];
 			SScriptFrame *nextFrame = &_scriptFrame[_curScriptFrame[_curStack] + 1];
 			curFrame->sendFrame();
-			if (curFrame->_noWait && !nextFrame->eventIsEmpty()) {
+			if (curFrame->_noWait && !nextFrame->isEmptyEvent()) {
 				_curScriptFrame[_curStack]++;
 				loop = true;
 			}
