@@ -128,16 +128,9 @@ Management of cards for Regen
 //#define TYPO_ANI 1
 #define TYPO_BMP 2
 
-//uint32 ReadTime();
 #define MAXMESSAGE 128
 
-
 #define DEFAULTACTIONS 19               // Number of default actions
-
-
-#define DLG_SHOW   0
-#define DLG_HIDE   1
-#define DLG_SELECT 2
 
 /* MACROS */
 #define BETWEEN(a,x,b) ((x>=a) && (x<=b))
@@ -145,15 +138,5 @@ Management of cards for Regen
 #define isInventoryArea(my)  (my>=VideoBott.y0)
 #define ICONAREA(mx,my) ((my>=VideoBott.y0) && (my</*=VideoBott.y0+ICONDY*/MAXY) && (mx>=ICONMARGSX) && (mx<=MAXX-ICONMARGDX))
 #define REEVENT doEvent(g_vm->_curMessage->_class, g_vm->_curMessage->_event, g_vm->_curMessage->_priority, g_vm->_curMessage->_u16Param1, g_vm->_curMessage->_u16Param2, g_vm->_curMessage->_u8Param, g_vm->_curMessage->_u32Param)
-
-
-#define  COLOR_ARG     HWHITE
-#define  COLOR_ARG_PT  HYELLOW
-
-#define  dONETIME       1
-#define  dPARTISUBITO   2
-#define  dACTIVATE      4
-#define  dDEACTIVATE    8
-#define  dPREVARICA    16
 
 #endif
