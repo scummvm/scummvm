@@ -199,6 +199,7 @@ _bink=yes
 _cloud=auto
 _pandoc=no
 _lld=no
+_gold=yes
 # Default vkeybd/eventrec options
 _vkeybd=no
 _eventrec=no
@@ -282,7 +283,6 @@ add_feature lua "lua" "_lua"
 add_feature fribidi "FriBidi" "_fribidi"
 add_feature cxx11 "c++11" "_use_cxx11"
 add_feature test_cxx11 "Test C++11" "_test_cxx11"
-add_feature lld "Use LLD linker" "_lld"
 
 # Directories for installing ScummVM.
 # This list is closely based on what GNU autoconf does,
@@ -1138,6 +1138,9 @@ for ac_option in $@; do
 	--enable-cloud)               _cloud=yes             ;;
 	--disable-cloud)              _cloud=no              ;;
 	--enable-lld)                 _lld=yes               ;;
+	--disable-lld)                _lld=no                ;;
+	--enable-gold)                _gold=yes              ;;
+	--disable-gold)               _gold=no               ;;
 	--enable-updates)             _updates=yes           ;;
 	--disable-updates)            _updates=no            ;;
 	--enable-libunity)            _libunity=yes          ;;
@@ -2233,7 +2236,7 @@ if test "$_debug_build" != no; then
 			append_var LDFLAGS "-fuse-ld=lld"
 			append_var LDFLAGS "-Wl,--gdb-index"
 			echo_n -- " + LLD"
-		elif cc_check_no_clean $debug_mode -gsplit-dwarf -fuse-ld=gold -Wl,--gdb-index; then
+		elif test "$_gold" = yes && cc_check_no_clean $debug_mode -gsplit-dwarf -fuse-ld=gold -Wl,--gdb-index; then
 			append_var LDFLAGS "-fuse-ld=gold"
 			append_var LDFLAGS "-Wl,--gdb-index"
 			echo_n -- " + Gold"
