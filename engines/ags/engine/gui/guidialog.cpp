@@ -272,6 +272,14 @@ void preparesavegamelist(int ctrllist) {
 	// Get a list of savegames
 	SaveStateList saveList = ::AGS::g_vm->listSaves();
 
+	// The original AGS sorts the list from most recent to oldest.
+	// We don't have the modification date in ScummVM though. We could try to
+	// parse the date string, but for now, sort by decreasing slot number, which
+	// should work better than the default sort by increasing slot.
+	Common::sort(saveList.begin(), saveList.end(),
+		[](const SaveStateDescriptor &x, const SaveStateDescriptor &y) {return x.getSaveSlot() > y.getSaveSlot(); });
+
+
 	for (SaveStateList::iterator it = saveList.begin(); it != saveList.end(); ++it) {
 		Common::String desc = it->getDescription();
 
@@ -290,29 +298,6 @@ void preparesavegamelist(int ctrllist) {
 
 	// Select the first item
 	CSCISendControlMessage(ctrllist, CLB_SETCURSEL, 0, 0);
-
-	// The code below reorder the savegames according to filedates
-	// Since we don't currently have this info, there is no sense in doing it.
-	// Also the newer AGS code does the sorting of the list before the loop above,
-	// which simpligies the code, and we might want to do the same.
-/*
-	for (int nn = 0; nn < _G(numsaves) - 1; nn++) {
-		for (int kk = 0; kk < _G(numsaves) - 1; kk++) { // Date order the games
-			if (_G(filedates)[kk] < _G(filedates)[kk + 1]) {  // swap them round
-				CSCISendControlMessage(ctrllist, CLB_GETTEXT, kk, &_G(buff)[0]);
-				CSCISendControlMessage(ctrllist, CLB_GETTEXT, kk + 1, &_G(buffer2)[0]);
-				CSCISendControlMessage(ctrllist, CLB_SETTEXT, kk + 1, &_G(buff)[0]);
-				CSCISendControlMessage(ctrllist, CLB_SETTEXT, kk, &_G(buffer2)[0]);
-				int numtem = _G(filenumbers)[kk];
-				_G(filenumbers)[kk] = _G(filenumbers)[kk + 1];
-				_G(filenumbers)[kk + 1] = numtem;
-				long numted = _G(filedates)[kk];
-				_G(filedates)[kk] = _G(filedates)[kk + 1];
-				_G(filedates)[kk + 1] = numted;
-			}
-		}
-	}
-*/
 }
 
 void enterstringwindow(const char *prompttext, char *stouse) {

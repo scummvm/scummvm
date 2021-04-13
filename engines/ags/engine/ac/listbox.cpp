@@ -132,6 +132,13 @@ int ListBox_FillSaveGameList(GUIListBox *listbox) {
 
 	SaveStateList saveList = ::AGS::g_vm->listSaves();
 
+	// The original AGS sorts the list from most recent to oldest.
+	// We don't have the modification date in ScummVM though. We could try to
+	// parse the date string, but for now, sort by decreasing slot number, which
+	// should work better than the default sort by increasing slot.
+	Common::sort(saveList.begin(), saveList.end(),
+		[](const SaveStateDescriptor &x, const SaveStateDescriptor &y) {return x.getSaveSlot() > y.getSaveSlot(); });
+
 	for (uint idx = 0; idx < saveList.size(); ++idx) {
 		if (numsaves >= MAXSAVEGAMES)
 			break;
