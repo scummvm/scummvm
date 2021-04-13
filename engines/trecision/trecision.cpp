@@ -651,9 +651,9 @@ void TrecisionEngine::LoadAll() {
 	for (int i = 0; i < MAXACTION; ++i)
 		_actionLen[i] = dataNl.readByte();
 
-	NumFileRef = dataNl.readSint32LE();
+	int numFileRef = dataNl.readSint32LE();
 
-	for (int i = 0; i < NumFileRef; ++i) {
+	for (int i = 0; i < numFileRef; ++i) {
 		dataNl.read(&FileRef[i].name, ARRAYSIZE(FileRef[i].name));
 		FileRef[i].offset = dataNl.readSint32LE();
 	}
