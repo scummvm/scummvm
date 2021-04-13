@@ -654,7 +654,7 @@ void AnimManager::refreshSmkIcon(int StartIcon, int num) {
 	Common::Rect dirtyRect = Common::Rect(0, 0, _smkAnims[kSmackerIcon]->getWidth(), _smkAnims[kSmackerIcon]->getHeight());
 	for (a = 0; a < ICONDY - dirtyRect.top; a++) {
 		byte2word(
-			_vm->_screenBuffer + dirtyRect.left + stx + (dirtyRect.top + a + FIRSTLINE) * SCREENLEN,
+			_vm->_screenBuffer + dirtyRect.left + stx + (dirtyRect.top + a + FIRSTLINE) * MAXX,
 			_smkBuffer[kSmackerIcon] + dirtyRect.left + (dirtyRect.top + a) * _smkAnims[kSmackerIcon]->getWidth(),
 			_smkPal[kSmackerIcon], dirtyRect.width());
 	}

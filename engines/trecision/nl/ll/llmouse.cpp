@@ -201,8 +201,8 @@ void SDText::DText(uint16 *frameBuffer) {
 						if (CurColor != MASKCOL && (g_vm->_font[charOffset + fontDataOffset])) {
 							const uint16 charLeft = inc + curPos;
 							const uint16 charRight = charLeft + g_vm->_font[charOffset + fontDataOffset];
-							uint16 *dst1 = buffer + x + charLeft + (y + a) * SCREENLEN;
-							uint16 *dst2 = buffer + x + _subtitleRect.left + (y + a) * SCREENLEN;
+							uint16 *dst1 = buffer + x + charLeft + (y + a) * MAXX;
+							uint16 *dst2 = buffer + x + _subtitleRect.left + (y + a) * MAXX;
 							uint16 *dst = nullptr;
 							uint16 size = 0;
 							
@@ -254,7 +254,7 @@ void IconSnapShot() {
 
 	for (int b = 0; b < ICONDY; b++) {
 		for (a = 0; a < (ICONDX - 1); a++)
-			g_vm->_icons[(READICON + 13) * ICONDX * ICONDY + b * ICONDX + a] = g_vm->_graphicsMgr->restorePixelFormat(g_vm->_screenBuffer[SCREENLEN * b * 10 + a * (SCREENLEN / ICONDX)]);
+			g_vm->_icons[(READICON + 13) * ICONDX * ICONDY + b * ICONDX + a] = g_vm->_graphicsMgr->restorePixelFormat(g_vm->_screenBuffer[MAXX * b * 10 + a * (MAXX / ICONDX)]);
 		g_vm->_icons[(READICON + 13)*ICONDX * ICONDY + b * ICONDX + a] = blackPixel;
 	}
 
@@ -360,16 +360,16 @@ bool DataSave() {
 	}
 
 	for (int a = 0; a < TOP; a++)
-		memset(g_vm->_screenBuffer + SCREENLEN * a, 0, SCREENLEN * 2);
+		memset(g_vm->_screenBuffer + MAXX * a, 0, MAXX * 2);
 
 	SDText SText;
-	SText.set(0, TOP - 20, SCREENLEN, CARHEI, 0, 0, SCREENLEN, CARHEI, 0x7FFF, MASKCOL, g_vm->_sysText[kMessageSavePosition]);
+	SText.set(0, TOP - 20, MAXX, CARHEI, 0, 0, MAXX, CARHEI, 0x7FFF, MASKCOL, g_vm->_sysText[kMessageSavePosition]);
 	SText.DText();
 
 	g_vm->_graphicsMgr->copyToScreen(0, 0, MAXX, TOP);
 
 	for (int a = TOP + AREA; a < AREA + 2 * TOP; a++)
-		memset(g_vm->_screenBuffer + SCREENLEN * a, 0, SCREENLEN * 2);
+		memset(g_vm->_screenBuffer + MAXX * a, 0, MAXX * 2);
 	g_vm->_graphicsMgr->copyToScreen(0, TOP + AREA, MAXX, TOP);
 
 	g_vm->_gameQueue.initQueue();
@@ -406,18 +406,18 @@ insave:
 		if (my >= FIRSTLINE &&
 				my < FIRSTLINE + ICONDY &&
 				mx >= ICONMARGSX &&
-				mx < SCREENLEN - ICONMARGDX) {
+				mx < MAXX - ICONMARGDX) {
 			OldPos = CurPos;
 			CurPos = ((mx - ICONMARGSX) / ICONDX);
 
 			if (OldPos != CurPos) {
 				for (int a = FIRSTLINE + ICONDY + 10; a < FIRSTLINE + ICONDY + 10 + CARHEI; a++)
-					memset(g_vm->_screenBuffer + SCREENLEN * a, 0, SCREENLEN * 2);
+					memset(g_vm->_screenBuffer + MAXX * a, 0, MAXX * 2);
 
 				posx    = ICONMARGSX + ((CurPos) * (ICONDX)) + ICONDX / 2;
 				LenText  = TextLength(saveNames[CurPos].c_str(), 0);
 
-				posx = CLIP(posx - (LenText / 2), 2, SCREENLEN - 2 - LenText);
+				posx = CLIP(posx - (LenText / 2), 2, MAXX - 2 - LenText);
 				SText.set(posx, FIRSTLINE + ICONDY + 10, LenText, CARHEI, 0, 0, LenText, CARHEI, 0x7FFF, MASKCOL, saveNames[CurPos].c_str());
 				SText.DText();
 
@@ -429,7 +429,7 @@ insave:
 		} else {
 			if (OldPos != -1) {
 				for (int a = FIRSTLINE + ICONDY + 10; a < FIRSTLINE + ICONDY + 10 + CARHEI; a++)
-					memset(g_vm->_screenBuffer + SCREENLEN * a, 0, SCREENLEN * 2);
+					memset(g_vm->_screenBuffer + MAXX * a, 0, MAXX * 2);
 
 				g_vm->_graphicsMgr->copyToScreen(0, FIRSTLINE + ICONDY + 10, MAXX, CARHEI);
 			}
@@ -449,7 +449,7 @@ insave:
 			saveNames[CurPos].clear();
 
 			for (int a = FIRSTLINE + ICONDY + 10; a < FIRSTLINE + ICONDY + 10 + CARHEI; a++)
-				memset(g_vm->_screenBuffer + SCREENLEN * a, 0, SCREENLEN * 2);
+				memset(g_vm->_screenBuffer + MAXX * a, 0, MAXX * 2);
 
 			g_vm->_graphicsMgr->copyToScreen(0, FIRSTLINE + ICONDY + 10, MAXX, CARHEI);
 		}
@@ -465,7 +465,7 @@ insave:
 			if (ch == 0x1B) {
 				ch = 0;
 				for (int a = FIRSTLINE + ICONDY + 10; a < FIRSTLINE + ICONDY + 10 + CARHEI; a++)
-					memset(g_vm->_screenBuffer + SCREENLEN * a, 0, SCREENLEN * 2);
+					memset(g_vm->_screenBuffer + MAXX * a, 0, MAXX * 2);
 
 				g_vm->_graphicsMgr->copyToScreen(0, FIRSTLINE + ICONDY + 10, MAXX, CARHEI);
 
@@ -480,14 +480,14 @@ insave:
 				saveNames[CurPos] += ch;
 			
 			for (int a = FIRSTLINE + ICONDY + 10; a < FIRSTLINE + ICONDY + 10 + CARHEI; a++)
-				memset(g_vm->_screenBuffer + SCREENLEN * a, 0, SCREENLEN * 2);
+				memset(g_vm->_screenBuffer + MAXX * a, 0, MAXX * 2);
 
 			saveNames[CurPos] += '_';	// add blinking cursor
 			
 			posx    = ICONMARGSX + ((CurPos) * (ICONDX)) + ICONDX / 2;
 			LenText  = TextLength(saveNames[CurPos].c_str(), 0);
 
-			posx = CLIP(posx - (LenText / 2), 2, SCREENLEN - 2 - LenText);
+			posx = CLIP(posx - (LenText / 2), 2, MAXX - 2 - LenText);
 			SText.set(posx, FIRSTLINE + ICONDY + 10, LenText, CARHEI, 0, 0, LenText, CARHEI, 0x7FFF, MASKCOL, saveNames[CurPos].c_str());
 
 			if ((ReadTime() / 8) & 1)
@@ -502,7 +502,7 @@ insave:
 		}
 
 		for (int a = FIRSTLINE; a < MAXY; a++)
-			memset(g_vm->_screenBuffer + SCREENLEN * a, 0, SCREENLEN * 2);
+			memset(g_vm->_screenBuffer + MAXX * a, 0, MAXX * 2);
 
 		ret = false;
 
@@ -516,12 +516,12 @@ insave:
 	}
 
 	for (int a = FIRSTLINE; a < MAXY; a++)
-		memset(g_vm->_screenBuffer + SCREENLEN * a, 0, SCREENLEN * 2);
+		memset(g_vm->_screenBuffer + MAXX * a, 0, MAXX * 2);
 
 	g_vm->_graphicsMgr->copyToScreen(0, FIRSTLINE, MAXX, TOP);
 
 	for (int a = TOP - 20; a < TOP - 20 + CARHEI; a++)
-		memset(g_vm->_screenBuffer + SCREENLEN * a, 0, SCREENLEN * 2);
+		memset(g_vm->_screenBuffer + MAXX * a, 0, MAXX * 2);
 
 	g_vm->_graphicsMgr->copyToScreen(0, 0, MAXX, TOP);
 
@@ -560,18 +560,18 @@ bool DataLoad() {
 	}
 
 	for (int a = 0; a < TOP; a++)
-		memset(g_vm->_screenBuffer + SCREENLEN * a, 0, SCREENLEN * 2);
+		memset(g_vm->_screenBuffer + MAXX * a, 0, MAXX * 2);
 
 	g_vm->showCursor();
 
 	SDText SText;
-	SText.set(0, TOP - 20, SCREENLEN, CARHEI, 0, 0, SCREENLEN, CARHEI, 0x7FFF, MASKCOL, g_vm->_sysText[kMessageLoadPosition]);
+	SText.set(0, TOP - 20, MAXX, CARHEI, 0, 0, MAXX, CARHEI, 0x7FFF, MASKCOL, g_vm->_sysText[kMessageLoadPosition]);
 	SText.DText();
 
 	g_vm->_graphicsMgr->copyToScreen(0, 0, MAXX, TOP);
 
 	for (int a = TOP + AREA; a < AREA + 2 * TOP; a++)
-		memset(g_vm->_screenBuffer + SCREENLEN * a, 0, SCREENLEN * 2);
+		memset(g_vm->_screenBuffer + MAXX * a, 0, MAXX * 2);
 	g_vm->_graphicsMgr->copyToScreen(0, TOP + AREA, MAXX, TOP);
 
 	g_vm->_gameQueue.initQueue();
@@ -602,13 +602,13 @@ bool DataLoad() {
 		if (g_vm->_mouseY >= FIRSTLINE &&
 			g_vm->_mouseY < (FIRSTLINE + ICONDY) &&
 			g_vm->_mouseX >= ICONMARGSX &&
-			(g_vm->_mouseX < (SCREENLEN - ICONMARGDX))) {
+			(g_vm->_mouseX < (MAXX - ICONMARGDX))) {
 			OldPos = CurPos;
 			CurPos = (g_vm->_mouseX - ICONMARGSX) / ICONDX;
 
 			if (OldPos != CurPos) {
 				for (int a = FIRSTLINE + ICONDY + 10; a < FIRSTLINE + ICONDY + 10 + CARHEI; a++)
-					memset(g_vm->_screenBuffer + SCREENLEN * a, 0, SCREENLEN * 2);
+					memset(g_vm->_screenBuffer + MAXX * a, 0, MAXX * 2);
 
 				uint16 posX = ICONMARGSX + ((CurPos) * (ICONDX)) + ICONDX / 2;
 				uint16 lenText = TextLength(saveNames[CurPos].c_str(), 0);
@@ -616,8 +616,8 @@ bool DataLoad() {
 					posX = 2;
 				else
 					posX = posX - (lenText / 2);
-				if ((posX + lenText) > SCREENLEN - 2)
-					posX = SCREENLEN - 2 - lenText;
+				if ((posX + lenText) > MAXX - 2)
+					posX = MAXX - 2 - lenText;
 
 				SText.set(posX, FIRSTLINE + ICONDY + 10, lenText, CARHEI, 0, 0, lenText, CARHEI, 0x7FFF, MASKCOL, saveNames[CurPos].c_str());
 				SText.DText();
@@ -630,7 +630,7 @@ bool DataLoad() {
 		} else {
 			if (OldPos != -1) {
 				for (int a = FIRSTLINE + ICONDY + 10; a < FIRSTLINE + ICONDY + 10 + CARHEI; a++)
-					memset(g_vm->_screenBuffer + SCREENLEN * a, 0, SCREENLEN * 2);
+					memset(g_vm->_screenBuffer + MAXX * a, 0, MAXX * 2);
 
 				g_vm->_graphicsMgr->copyToScreen(0, FIRSTLINE + ICONDY + 10, MAXX, CARHEI);
 			}
@@ -662,7 +662,7 @@ bool DataLoad() {
 void performLoad(int slot, bool skipLoad) {
 	if (!skipLoad) {
 		for (int a = FIRSTLINE; a < MAXY; a++)
-			memset(g_vm->_screenBuffer + SCREENLEN * a, 0, SCREENLEN * 2);
+			memset(g_vm->_screenBuffer + MAXX * a, 0, MAXX * 2);
 
 		g_vm->loadGameState(slot + 1);
 
@@ -679,12 +679,12 @@ void performLoad(int slot, bool skipLoad) {
 	g_vm->checkSystem();
 
 	for (int a = FIRSTLINE; a < MAXY; a++)
-		memset(g_vm->_screenBuffer + SCREENLEN * a, 0, SCREENLEN * 2);
+		memset(g_vm->_screenBuffer + MAXX * a, 0, MAXX * 2);
 
 	g_vm->_graphicsMgr->copyToScreen(0, FIRSTLINE, MAXX, TOP);
 
 	for (int a = TOP - 20; a < TOP - 20 + CARHEI; a++)
-		memset(g_vm->_screenBuffer + SCREENLEN * a, 0, SCREENLEN * 2);
+		memset(g_vm->_screenBuffer + MAXX * a, 0, MAXX * 2);
 
 	g_vm->_graphicsMgr->copyToScreen(0, 0, MAXX, TOP);
 
@@ -698,16 +698,16 @@ void performLoad(int slot, bool skipLoad) {
 --------------------------------------------------*/
 bool QuitGame() {
 	for (int a = 0; a < TOP; a++)
-		memcpy(g_vm->_zBuffer + a * SCREENLEN, g_vm->_screenBuffer + SCREENLEN * a, SCREENLEN * 2);
+		memcpy(g_vm->_zBuffer + a * MAXX, g_vm->_screenBuffer + MAXX * a, MAXX * 2);
 
 	for (int a = 0; a < TOP; a++)
-		memset(g_vm->_screenBuffer + SCREENLEN * a, 0, SCREENLEN * 2);
+		memset(g_vm->_screenBuffer + MAXX * a, 0, MAXX * 2);
 
 	SDText SText;
-	SText.set(0, TOP - 20, SCREENLEN, CARHEI, 0, 0, SCREENLEN, CARHEI, 0x7FFF, MASKCOL, g_vm->_sysText[kMessageConfirmExit]);
+	SText.set(0, TOP - 20, MAXX, CARHEI, 0, 0, MAXX, CARHEI, 0x7FFF, MASKCOL, g_vm->_sysText[kMessageConfirmExit]);
 	SText.DText();
 
-	g_vm->_graphicsMgr->copyToScreen(0, 0, SCREENLEN, TOP);
+	g_vm->_graphicsMgr->copyToScreen(0, 0, MAXX, TOP);
 
 	FreeKey();
 
@@ -718,9 +718,9 @@ bool QuitGame() {
 	bool exitFl = ((ch == 'y') || (ch == 'Y'));
 
 	for (int a = 0; a < TOP; a++)
-		memcpy(g_vm->_screenBuffer + SCREENLEN * a, g_vm->_zBuffer + a * SCREENLEN, SCREENLEN * 2);
+		memcpy(g_vm->_screenBuffer + MAXX * a, g_vm->_zBuffer + a * MAXX, MAXX * 2);
 
-	g_vm->_graphicsMgr->copyToScreen(0, 0, SCREENLEN, TOP);
+	g_vm->_graphicsMgr->copyToScreen(0, 0, MAXX, TOP);
 
 	return exitFl;
 }
@@ -730,13 +730,13 @@ bool QuitGame() {
 --------------------------------------------------*/
 void DemoOver() {
 	for (int a = 0; a < TOP; a++)
-		memset(g_vm->_screenBuffer + SCREENLEN * a, 0, SCREENLEN * 2);
+		memset(g_vm->_screenBuffer + MAXX * a, 0, MAXX * 2);
 
 	SDText SText;
-	SText.set(0, TOP - 20, SCREENLEN, CARHEI, 0, 0, SCREENLEN, CARHEI, 0x7FFF, MASKCOL, g_vm->_sysText[kMessageDemoOver]);
+	SText.set(0, TOP - 20, MAXX, CARHEI, 0, 0, MAXX, CARHEI, 0x7FFF, MASKCOL, g_vm->_sysText[kMessageDemoOver]);
 	SText.DText();
 
-	g_vm->_graphicsMgr->copyToScreen(0, 0, SCREENLEN, TOP);
+	g_vm->_graphicsMgr->copyToScreen(0, 0, MAXX, TOP);
 
 	FreeKey();
 

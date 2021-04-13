@@ -62,7 +62,7 @@ void PaintScreen(uint8 flag) {
 	if (g_vm->_flagShowCharacter && x2 > x1 && y2 > y1) {                    // if a description exists
 		DObj.x    = 0;
 		DObj.y    = TOP;
-		DObj.dx   = SCREENLEN;
+		DObj.dx   = MAXX;
 		DObj.dy   = AREA;
 		DObj.l = Common::Rect(x1, y1, x2, y2);
 		DObj.buf  = ImagePointer;
@@ -76,7 +76,7 @@ void PaintScreen(uint8 flag) {
 	} else if (g_vm->_animMgr->_animMinX != MAXX) {
 		DObj.x    = 0;
 		DObj.y    = TOP;
-		DObj.dx   = SCREENLEN;
+		DObj.dx   = MAXX;
 		DObj.dy   = AREA;
 		DObj.l = Common::Rect(g_vm->_animMgr->_animMinX, g_vm->_animMgr->_animMinY, g_vm->_animMgr->_animMaxX, g_vm->_animMgr->_animMaxY);
 		DObj.buf  = ImagePointer;
@@ -94,7 +94,7 @@ void PaintScreen(uint8 flag) {
 		// cancello scritta
 		DObj.x    = 0;
 		DObj.y    = TOP;
-		DObj.dx   = SCREENLEN;
+		DObj.dx   = MAXX;
 		DObj.dy   = 480;
 		DObj.l.left = oldString.x;
 		DObj.l.top = oldString.y - TOP;
@@ -107,7 +107,7 @@ void PaintScreen(uint8 flag) {
 			DrawObj(DObj);
 		} else {
 			for (a = (DObj.l.top + TOP); a < (DObj.l.bottom + TOP); a++)
-				memset(g_vm->_screenBuffer + DObj.l.left + a * SCREENLEN, 0x0000, (DObj.l.right - DObj.l.left) * 2);
+				memset(g_vm->_screenBuffer + DObj.l.left + a * MAXX, 0x0000, (DObj.l.right - DObj.l.left) * 2);
 		}
 		oldString.text = NULL;
 
@@ -127,7 +127,7 @@ void PaintScreen(uint8 flag) {
 		if (SortTable[a]._remove) {
 			DObj.x    = 0;
 			DObj.y    = TOP;
-			DObj.dx   = SCREENLEN;
+			DObj.dx   = MAXX;
 			DObj.dy   = 480;
 
 			if (SortTable[a]._typology == TYPO_BMP) {
