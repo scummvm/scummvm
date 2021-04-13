@@ -21,12 +21,10 @@
  */
 
 #include "common/scummsys.h"
-#include "trecision/nl/define.h"
 #include "trecision/trecision.h"
 
 #include "common/events.h"
 #include "common/system.h"
-#include "graphics/cursorman.h"
 #include "trecision/graphics.h"
 #include "trecision/video.h"
 
