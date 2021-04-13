@@ -628,10 +628,10 @@ void AnimManager::refreshSmkAnim(int num) {
 		}
 	} else if (pos == kSmackerAction) {
 		// Only for the character
-		if (_curAnimFrame[pos] == 1) {
+		if (_curAnimFrame[kSmackerAction] == 1) {
 			for (uint16 b = 0; b < AREA; b++) {
 				for (uint16 a = 0; a < MAXX; a++) {
-					if (_smkBuffer[pos][b * MAXX + a]) {
+					if (_smkBuffer[kSmackerAction][b * MAXX + a]) {
 						_animMinX = MIN(a, _animMinX);
 						_animMinY = MIN(b, _animMinY);
 
@@ -648,8 +648,8 @@ void AnimManager::refreshSmkAnim(int num) {
 		for (int32 a = 0; a < _animMaxY - _animMinY; a++) {
 			byte2wordm(
 				_vm->_screenBuffer + _animMinX + (_animMinY + a + TOP) * MAXX,
-				_smkBuffer[pos] + _animMinX + (_animMinY + a) * _smkAnims[pos]->getWidth(),
-				_smkPal[pos],
+				_smkBuffer[kSmackerAction] + _animMinX + (_animMinY + a) * _smkAnims[kSmackerAction]->getWidth(),
+				_smkPal[kSmackerAction],
 				_animMaxX - _animMinX
 			);
 
