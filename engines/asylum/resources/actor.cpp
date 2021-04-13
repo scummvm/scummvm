@@ -3853,7 +3853,7 @@ DrawFlags Actor::getGraphicsFlags() {
 
 int32 Actor::getAbsoluteDistanceForFrame(ActorDirection dir, uint32 frameIndex) const {
 	if (frameIndex >= ARRAYSIZE(_distancesNS))
-		error("[Actor::getAbsoluteDistanceForFrame] Invalid frame index (was: %d, max: %d)", _frameIndex, ARRAYSIZE(_distancesNS) - 1);
+		warning("[Actor::getAbsoluteDistanceForFrame] Invalid frame index (was: %d, max: %d)", _frameIndex, ARRAYSIZE(_distancesNS) - 1);
 
 	switch (dir) {
 	default:
@@ -3861,7 +3861,8 @@ int32 Actor::getAbsoluteDistanceForFrame(ActorDirection dir, uint32 frameIndex) 
 
 	case kDirectionN:
 	case kDirectionS:
-		return _distancesNS[frameIndex];
+		// XXX it seems that the original allows frameIndex to be out of range
+		return (frameIndex < ARRAYSIZE(_distancesNS) ? _distancesNS[frameIndex] : _distancesNSEO[frameIndex % ARRAYSIZE(_distancesNS)]);
 
 	case kDirectionNW:
 	case kDirectionSW:
