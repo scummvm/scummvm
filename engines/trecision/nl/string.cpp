@@ -120,7 +120,7 @@ void ShowObjName(uint16 obj, bool showhide) {
 		g_vm->_lastObj = (obj | 0x8000);
 		uint16 lenText = TextLength(locsent.c_str(), 0);
 
-		posx = CLIP(320 - (lenText / 2), 2, SCREENLEN - 2 - lenText);
+		posx = CLIP(320 - (lenText / 2), 2, MAXX - 2 - lenText);
 		posy = MAXY - CARHEI;
 
 		if (g_vm->_lastObj)

@@ -39,16 +39,16 @@ void TrecisionEngine::refreshInventory(uint8 startIcon, uint8 startLine) {
 		startLine = ICONDY;
 
 	for (uint16 b = 0; b < ICONDY; b++)
-		memset(_screenBuffer + (FIRSTLINE + b) * SCREENLEN, 0, SCREENLEN * 2);
+		memset(_screenBuffer + (FIRSTLINE + b) * MAXX, 0, MAXX * 2);
 
 	for (uint16 a = 0; a < ICONSHOWN; a++) {
 		if (_inventory[a + startIcon] >= LASTICON) {
 			for (uint16 b = 0; b < (ICONDY - startLine); b++)
-				memcpy(_screenBuffer + (FIRSTLINE + b) * SCREENLEN + a * (ICONDX) + ICONMARGSX,
+				memcpy(_screenBuffer + (FIRSTLINE + b) * MAXX + a * (ICONDX) + ICONMARGSX,
 					  _icons + (_inventory[a + startIcon] - LASTICON + READICON + 1) * ICONDX * ICONDY + (b + startLine) * ICONDX, ICONDX * 2);
 		} else if (_inventory[a + startIcon] != _lightIcon) {
 			for (uint16 b = 0; b < (ICONDY - startLine); b++)
-				memcpy(_screenBuffer + (FIRSTLINE + b) * SCREENLEN + a * (ICONDX) + ICONMARGSX,
+				memcpy(_screenBuffer + (FIRSTLINE + b) * MAXX + a * (ICONDX) + ICONMARGSX,
 					  _icons + _inventory[a + startIcon] * ICONDX * ICONDY + (b + startLine) * ICONDX, ICONDX * 2);
 		}
 	}
@@ -57,7 +57,7 @@ void TrecisionEngine::refreshInventory(uint8 startIcon, uint8 startLine) {
 	if (startIcon != 0) { // Copy left
 		int16 leftArrow = ICONMARGSX * ICONDY * 3;
 		for (uint16 b = 0; b < (ICONDY - startLine); b++) {
-			memcpy(_screenBuffer + (FIRSTLINE + b) * SCREENLEN,
+			memcpy(_screenBuffer + (FIRSTLINE + b) * MAXX,
 				  _arrows + leftArrow + (b + startLine) * ICONMARGSX, ICONMARGSX * 2);
 		}
 	}
@@ -65,12 +65,12 @@ void TrecisionEngine::refreshInventory(uint8 startIcon, uint8 startLine) {
 	if ((startIcon + ICONSHOWN) < _inventorySize) { // Copy right
 		int16 rightArrow = ICONMARGDX * ICONDY * 2;
 		for (uint16 b = 0; b < (ICONDY - startLine); b++) {
-			memcpy(_screenBuffer + (FIRSTLINE + b) * SCREENLEN + SCREENLEN - ICONMARGDX,
+			memcpy(_screenBuffer + (FIRSTLINE + b) * MAXX + MAXX - ICONMARGDX,
 				  _arrows + rightArrow + ICONMARGSX * ICONDY * 2 + (b + startLine) * ICONMARGSX, ICONMARGSX * 2);
 		}
 	}
 
-	_graphicsMgr->copyToScreen(0, FIRSTLINE, SCREENLEN, ICONDY);
+	_graphicsMgr->copyToScreen(0, FIRSTLINE, MAXX, ICONDY);
 }
 
 /*-------------------------------------------------------------------------*/
@@ -215,7 +215,7 @@ void TrecisionEngine::doInventory() {
 /*                                whatIcon           					   */
 /*-------------------------------------------------------------------------*/
 uint8 TrecisionEngine::whatIcon(uint16 invmx) {
-	if (invmx < ICONMARGSX || invmx > SCREENLEN - ICONMARGDX)
+	if (invmx < ICONMARGSX || invmx > MAXX - ICONMARGDX)
 		return 0;
 
 	return _inventory[_iconBase + ((invmx - ICONMARGSX) / (ICONDX))];
@@ -281,7 +281,7 @@ void TrecisionEngine::showInventoryName(uint16 obj, bool showhide) {
 		}
 
 		uint16 lenText = TextLength(locsent, 0);
-		uint16 posX = CLIP(320 - (lenText / 2), 2, SCREENLEN - 2 - lenText);
+		uint16 posX = CLIP(320 - (lenText / 2), 2, MAXX - 2 - lenText);
 		uint16 posY = MAXY - CARHEI;
 
 		_lastInv = (obj | 0x8000);
@@ -302,7 +302,7 @@ void TrecisionEngine::showInventoryName(uint16 obj, bool showhide) {
 		_lastInv = obj;
 		uint16 lenText = TextLength(_objName[_inventoryObj[obj]._name], 0);
 
-		posX = CLIP(posX - (lenText / 2), 2, SCREENLEN - 2 - lenText);
+		posX = CLIP(posX - (lenText / 2), 2, MAXX - 2 - lenText);
 
 		if (_lastInv)
 			clearText();
@@ -444,7 +444,7 @@ void TrecisionEngine::doScrollInventory(uint16 mouseX) {
 
 	if ((mouseX <= ICONMARGSX) && _iconBase)
 		doEvent(MC_INVENTORY, ME_ONERIGHT, MP_DEFAULT, 0, 0, 0, 0);
-	else if (BETWEEN(SCREENLEN - ICONMARGDX, mouseX, SCREENLEN) && (_iconBase + ICONSHOWN < _inventorySize))
+	else if (BETWEEN(MAXX - ICONMARGDX, mouseX, MAXX) && (_iconBase + ICONSHOWN < _inventorySize))
 		doEvent(MC_INVENTORY, ME_ONELEFT, MP_DEFAULT, 0, 0, 0, 0);
 }
 

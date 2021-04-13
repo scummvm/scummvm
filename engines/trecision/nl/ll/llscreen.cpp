@@ -433,8 +433,8 @@ void ReadLoc() {
 	Common::String fname = Common::String::format("%s.3d", g_vm->_room[g_vm->_curRoom]._baseName);
 	read3D(fname);
 
-	memset(g_vm->_screenBuffer, 0, SCREENLEN * MAXY * 2);
-	memcpy(g_vm->_screenBuffer + TOP * SCREENLEN, ImagePointer, SCREENLEN * AREA * 2);
+	memset(g_vm->_screenBuffer, 0, MAXX * MAXY * 2);
+	memcpy(g_vm->_screenBuffer + TOP * MAXX, ImagePointer, MAXX * AREA * 2);
 
 	g_vm->_curSortTableNum = 0;
 	for (int i = 0; i < MAXOBJINROOM; ++i) {
@@ -697,7 +697,7 @@ void PaintRegenRoom() {
                       DrawObj
 --------------------------------------------------*/
 void DrawObj(SDObj d) {
-	if (d.l.left > SCREENLEN || d.l.top > SCREENLEN || d.l.right > SCREENLEN || d.l.bottom > SCREENLEN)
+	if (d.l.left > MAXX || d.l.top > MAXX || d.l.right > MAXX || d.l.bottom > MAXX)
 		return;
 	
 	uint16 *buf = d.buf;
@@ -719,16 +719,16 @@ void DrawObj(SDObj d) {
 
 						if ((maskOffset != 0) && (b >= (d.y + d.l.top)) && (b < (d.y + d.l.bottom))) {
 							if ((Sco >= d.l.left) && ((Sco + maskOffset) < d.l.right))
-								memcpy(g_vm->_screenBuffer + (b * SCREENLEN) + Sco + d.x, buf, maskOffset * 2);
+								memcpy(g_vm->_screenBuffer + (b * MAXX) + Sco + d.x, buf, maskOffset * 2);
 
 							else if ((Sco < d.l.left) && ((Sco + maskOffset) < d.l.right) && ((Sco + maskOffset) >= d.l.left))
-								memcpy(g_vm->_screenBuffer + (b * SCREENLEN) + d.l.left + d.x, buf + d.l.left - Sco, (maskOffset + Sco - d.l.left) * 2);
+								memcpy(g_vm->_screenBuffer + (b * MAXX) + d.l.left + d.x, buf + d.l.left - Sco, (maskOffset + Sco - d.l.left) * 2);
 
 							else if ((Sco >= d.l.left) && ((Sco + maskOffset) >= d.l.right) && (Sco < d.l.right))
-								memcpy(g_vm->_screenBuffer + (b * SCREENLEN) + Sco + d.x, buf, (d.l.right - Sco) * 2);
+								memcpy(g_vm->_screenBuffer + (b * MAXX) + Sco + d.x, buf, (d.l.right - Sco) * 2);
 
 							else if ((Sco < d.l.left) && ((Sco + maskOffset) >= d.l.right))
-								memcpy(g_vm->_screenBuffer + (b * SCREENLEN) + d.l.left + d.x, buf + d.l.left - Sco, (d.l.right - d.l.left) * 2);
+								memcpy(g_vm->_screenBuffer + (b * MAXX) + d.l.left + d.x, buf + d.l.left - Sco, (d.l.right - d.l.left) * 2);
 						}
 						Sco += *mask;
 						buf += *mask++;
@@ -739,7 +739,7 @@ void DrawObj(SDObj d) {
 		}
 	} else if (d.flag & COPYTORAM) {
 		for (uint16 b = d.l.top; b < d.l.bottom; b++) {
-			memcpy(g_vm->_screenBuffer + (d.y + b) * SCREENLEN + (d.x + d.l.left),
+			memcpy(g_vm->_screenBuffer + (d.y + b) * MAXX + (d.x + d.l.left),
 				  buf + (b * d.dx) + d.l.left, (d.l.right - d.l.left) * 2);
 		}
 	}

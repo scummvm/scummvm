@@ -69,7 +69,6 @@ Screen management
 ******************************************************************************/
 #define MAXX            640
 #define MAXY            480
-#define SCREENLEN		640
 
 #define AREA  			360
 #define TOP         	((MAXY-AREA)/2)             // Coordinate y of game screen
@@ -145,7 +144,7 @@ Management of cards for Regen
 #define BETWEEN(a,x,b) ((x>=a) && (x<=b))
 #define GAMEAREA(my) BETWEEN(VideoCent.y0,my,VideoCent.y1)
 #define isInventoryArea(my)  (my>=VideoBott.y0)
-#define ICONAREA(mx,my) ((my>=VideoBott.y0) && (my</*=VideoBott.y0+ICONDY*/MAXY) && (mx>=ICONMARGSX) && (mx<=SCREENLEN-ICONMARGDX))
+#define ICONAREA(mx,my) ((my>=VideoBott.y0) && (my</*=VideoBott.y0+ICONDY*/MAXY) && (mx>=ICONMARGSX) && (mx<=MAXX-ICONMARGDX))
 #define REEVENT doEvent(g_vm->_curMessage->_class, g_vm->_curMessage->_event, g_vm->_curMessage->_priority, g_vm->_curMessage->_u16Param1, g_vm->_curMessage->_u16Param2, g_vm->_curMessage->_u8Param, g_vm->_curMessage->_u32Param)
 
 

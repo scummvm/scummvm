@@ -91,7 +91,7 @@ void GraphicsManager::clearScreen() {
 
 void GraphicsManager::copyToScreen(int px, int py, int dx, int dy) {
 	g_system->copyRectToScreen(
-		_vm->_screenBuffer + px + py * SCREENLEN,
+		_vm->_screenBuffer + px + py * MAXX,
 		MAXX * 2, px, py, dx, dy
 	);
 }
