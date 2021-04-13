@@ -182,8 +182,6 @@ extern int    _lastStep;
 
 extern uint8  _defActionLen[];
 
-extern bool   _shadowSplit;
-
 int actionInRoom(int curA);
 void actorDoAction(int whatAction);
 void actorStop();

@@ -846,8 +846,10 @@ void drawCharacter(uint8 flag) {
 		for (int b = _zBufStartY; b < g_vm->_actor->_lim[3]; b++) {
 			px0 = b * _screenMaxX + _zBufStartX;
 			for (int a = 1; a < _zBufWid; a++) {
-				py1 = (_zBuf[p0]   >= 0x7FF0) * 0x8000 * _shadowSplit;
-				py2 = (_zBuf[p0 + 1] >= 0x7FF0) * 0x8000 * _shadowSplit;
+				// CHECKME: These are always 0
+				//bool _shadowSplit;
+				py1 = 0;	//(_zBuf[p0]   >= 0x7FF0) * 0x8000 * _shadowSplit;
+				py2 = 0;	//(_zBuf[p0 + 1] >= 0x7FF0) * 0x8000 * _shadowSplit;
 
 				p1 = _zBuf[p0] < 0x7FFF;
 				p2 = _zBuf[p0 + 1] < 0x7FFF;
