@@ -1077,8 +1077,7 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 		break;
 
 	case iTOPO1D:
-		if ((_vm->_useWith[WITH] == oDONNA1D) && (g_vm->_mouseX >= _vm->_obj[oDONNA1D]._lim.left && (g_vm->_mouseY >= _vm->_obj[oDONNA1D]._lim.top + TOP)
-		&& (g_vm->_mouseX <= _vm->_obj[oDONNA1D]._lim.right) && (g_vm->_mouseY <= _vm->_obj[oDONNA1D]._lim.bottom + TOP))) {
+		if ((_vm->_useWith[WITH] == oDONNA1D) && (_vm->_mouseX >= _vm->_obj[oDONNA1D]._lim.left && (_vm->_mouseY >= _vm->_obj[oDONNA1D]._lim.top + TOP) && (_vm->_mouseX <= _vm->_obj[oDONNA1D]._lim.right) && (_vm->_mouseY <= _vm->_obj[oDONNA1D]._lim.bottom + TOP))) {
 			PlayDialog(dF1D1);
 			*updateInventory = false;
 			_vm->removeIcon(iTOPO1D);
@@ -3198,7 +3197,7 @@ bool LogicManager::mouseClick(uint16 curObj) {
 	} else {
 		switch (curObj) {
 		case oPORTAA13:
-			if (g_vm->_mouseRightBtn && (_vm->_room[r14]._flag & OBJFLAG_DONE)) {
+			if (_vm->_mouseRightBtn && (_vm->_room[r14]._flag & OBJFLAG_DONE)) {
 				if (_characterGoToPosition != 4)
 					goToPosition(4);
 			} else if (_characterGoToPosition != _vm->_obj[curObj]._position)
@@ -3208,7 +3207,7 @@ bool LogicManager::mouseClick(uint16 curObj) {
 			break;
 
 		case oDIVANO14:
-			if (g_vm->_mouseLeftBtn) {
+			if (_vm->_mouseLeftBtn) {
 				if (_characterGoToPosition != 2)
 					goToPosition(2);
 			} else if (_characterGoToPosition != _vm->_obj[curObj]._position)
@@ -3218,7 +3217,7 @@ bool LogicManager::mouseClick(uint16 curObj) {
 			break;
 
 		case oSCAFFALE1D:
-			if (g_vm->_mouseRightBtn) {
+			if (_vm->_mouseRightBtn) {
 				if (_characterGoToPosition != 9)
 					goToPosition(9);
 			} else if (_characterGoToPosition != _vm->_obj[curObj]._position)
@@ -3228,7 +3227,7 @@ bool LogicManager::mouseClick(uint16 curObj) {
 			break;
 
 		case oDIVANOR4A:
-			if (g_vm->_mouseRightBtn) {
+			if (_vm->_mouseRightBtn) {
 				if (_characterGoToPosition != 1)
 					goToPosition(1);
 			} else if (_characterGoToPosition != _vm->_obj[curObj]._position)
@@ -3279,7 +3278,8 @@ bool LogicManager::mouseClick(uint16 curObj) {
 
 		case oSAMA33:
 		case oSERRATURA33:
-			if ((_vm->_useWith[USED] == oTUBET33) && (_vm->_obj[oVALVOLA34]._mode & OBJMODE_OBJSTATUS) && (_vm->_obj[oSAMA33]._mode & OBJMODE_OBJSTATUS) && _vm->_flagUseWithStarted) {
+			if ((_vm->_useWith[USED] == oTUBET33) && (_vm->_obj[oVALVOLA34]._mode & OBJMODE_OBJSTATUS)
+			&& (_vm->_obj[oSAMA33]._mode & OBJMODE_OBJSTATUS) && _vm->_flagUseWithStarted) {
 				if (_characterGoToPosition != 4)
 					goToPosition(4);
 			} else if (_characterGoToPosition != _vm->_obj[curObj]._position)
@@ -3289,7 +3289,7 @@ bool LogicManager::mouseClick(uint16 curObj) {
 			break;
 
 		case oFINESTRA33:
-			if (g_vm->_mouseLeftBtn) {
+			if (_vm->_mouseLeftBtn) {
 				if (_characterGoToPosition != 7)
 					goToPosition(7);
 			} else if (_characterGoToPosition != _vm->_obj[curObj]._position)
@@ -3309,7 +3309,7 @@ bool LogicManager::mouseClick(uint16 curObj) {
 			break;
 
 		case oTRIPLA35:
-			if (!_vm->_flagUseWithStarted && g_vm->_mouseLeftBtn) {
+			if (!_vm->_flagUseWithStarted && _vm->_mouseLeftBtn) {
 				if (_characterGoToPosition != 2)
 					goToPosition(2);
 			} else if (_characterGoToPosition != _vm->_obj[curObj]._position)
@@ -3391,11 +3391,16 @@ bool LogicManager::mouseClick(uint16 curObj) {
 		}
 
 		if (_vm->_room[_vm->_curRoom]._flag & OBJFLAG_EXTRA) {
-			if ((curObj == oTUBO21) || (curObj == oCARTELLONE21) || (curObj == oESSE21) || (curObj == oRAMPINO21) || (curObj == oCATENA21) || (curObj == od21TO22) || (curObj == oDOORC21) || (curObj == oPORTAA21) || (curObj == oCUNICOLO21) || (curObj == od24TO23) || (curObj == od2ETO2C) || (curObj == od2GVALLA26)) {
+			if ((curObj == oTUBO21) || (curObj == oCARTELLONE21) || (curObj == oESSE21)
+			|| (curObj == oRAMPINO21) || (curObj == oCATENA21) || (curObj == od21TO22)
+			|| (curObj == oDOORC21) || (curObj == oPORTAA21) || (curObj == oCUNICOLO21)
+			|| (curObj == od24TO23) || (curObj == od2ETO2C) || (curObj == od2GVALLA26)) {
 				_characterGoToPosition = -1;
 				retVal = true;
 			}
-		} else if ((curObj == od21TO23) || (curObj == od24TO26) || (curObj == oENTRANCE2E) || (curObj == oCARTELLO2B) || (curObj == oFRONTOFFICEC35) || (curObj == oFRONTOFFICEA35) || (curObj == oASCENSORE35) || (curObj == oGIORNALE35)) {
+		} else if ((curObj == od21TO23) || (curObj == od24TO26) || (curObj == oENTRANCE2E)
+		|| (curObj == oCARTELLO2B) || (curObj == oFRONTOFFICEC35) || (curObj == oFRONTOFFICEA35)
+		|| (curObj == oASCENSORE35) || (curObj == oGIORNALE35)) {
 			_characterGoToPosition = -1;
 			retVal = true;
 		}
@@ -3665,7 +3670,6 @@ void LogicManager::doMouseLeftRight() {
 				_vm->_obj[oCAMPO2C]._mode |= OBJMODE_OBJSTATUS;
 				_vm->_obj[oTEMPIO2C]._mode |= OBJMODE_OBJSTATUS;
 				_vm->_obj[oLEONE2C]._mode |= OBJMODE_OBJSTATUS;
-				//_vm->_obj[od2CALLA2D]._mode |= OBJMODE_OBJSTATUS;
 				_vm->_obj[oSFINGE2C]._mode |= OBJMODE_OBJSTATUS;
 				_vm->_obj[oSTATUA2C]._mode |= OBJMODE_OBJSTATUS;
 				_vm->_obj[od2CALLA2E]._mode |= OBJMODE_OBJSTATUS;
@@ -3742,7 +3746,9 @@ void LogicManager::doMouseLeftRight() {
 					_vm->clearText();
 				}
 				return;
-			} else if ((_vm->_curRoom == r35) && !(_vm->_room[r35]._flag & OBJFLAG_EXTRA) && ((_vm->_curObj == oFRONTOFFICEC35) || (_vm->_curObj == oFRONTOFFICEA35) || (_vm->_curObj == oASCENSORE35) || (_vm->_curObj == oMONITOR35) || (_vm->_curObj == oSEDIA35) || (_vm->_curObj == oRIBELLEA35) || (_vm->_curObj == oCOMPUTER35) || (_vm->_curObj == oGIORNALE35))) {
+			} else if ((_vm->_curRoom == r35) && !(_vm->_room[r35]._flag & OBJFLAG_EXTRA) && ((_vm->_curObj == oFRONTOFFICEC35)
+				|| (_vm->_curObj == oFRONTOFFICEA35) || (_vm->_curObj == oASCENSORE35) || (_vm->_curObj == oMONITOR35)
+				|| (_vm->_curObj == oSEDIA35) || (_vm->_curObj == oRIBELLEA35) || (_vm->_curObj == oCOMPUTER35) || (_vm->_curObj == oGIORNALE35))) {
 				_vm->_curObj = oLASTLEV5;
 				doEvent(MC_CHARACTER, ME_CHARACTERGOTOEXAMINE, MP_DEFAULT, _vm->_curMessage->_u16Param1, _vm->_curMessage->_u16Param2, 0, _vm->_curObj);
 				if (_vm->_flagUseWithStarted) {
@@ -3943,6 +3949,147 @@ void LogicManager::doSystemChangeRoom() {
 	else if ((_vm->_curRoom == r4P) && (_vm->_room[_vm->_curRoom]._flag & OBJFLAG_EXTRA))
 		read3D("4P2.3d");
 	//			end save/load
+}
+
+/* --------------------------------------------------
+ * 				DoSys
+ * --------------------------------------------------*/
+void LogicManager::DoSys(uint16 curObj) {
+	switch (curObj) {
+	case o00QUIT:
+		if (QuitGame())
+			doEvent(MC_SYSTEM, ME_QUIT, MP_SYSTEM, 0, 0, 0, 0);
+		break;
+
+	case o00EXIT:
+		if (_vm->_oldRoom == rSYS)
+			break;
+		doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, _vm->_obj[o00EXIT]._goRoom, 0, 0, 0);
+		break;
+
+	case o00SAVE:
+		if (_vm->_oldRoom == rSYS)
+			break;
+		_vm->_curRoom = _vm->_obj[o00EXIT]._goRoom;
+		if (!DataSave()) {
+			_vm->showInventoryName(NO_OBJECTS, false);
+			doEvent(MC_INVENTORY, ME_SHOWICONNAME, MP_DEFAULT, _vm->_mouseX, _vm->_mouseY, 0, 0);
+			doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, _vm->_obj[o00EXIT]._goRoom, 0, 0, 0);
+		}
+		_vm->_curRoom = rSYS;
+		break;
+
+	case o00LOAD:
+		if (!DataLoad()) {
+			_vm->showInventoryName(NO_OBJECTS, false);
+			doEvent(MC_INVENTORY, ME_SHOWICONNAME, MP_DEFAULT, _vm->_mouseX, _vm->_mouseY, 0, 0);
+		}
+		break;
+
+	case o00SPEECHON:
+		if (ConfMan.getBool("subtitles")) {
+			_vm->_obj[o00SPEECHON]._mode &= ~OBJMODE_OBJSTATUS;
+			_vm->_obj[o00SPEECHOFF]._mode |= OBJMODE_OBJSTATUS;
+			ConfMan.setBool("speech_mute", true);
+			_vm->_curObj = o00SPEECHOFF;
+			RegenRoom();
+			ShowObjName(_vm->_curObj, true);
+		}
+		break;
+
+	case o00SPEECHOFF:
+		_vm->_obj[o00SPEECHOFF]._mode &= ~OBJMODE_OBJSTATUS;
+		_vm->_obj[o00SPEECHON]._mode |= OBJMODE_OBJSTATUS;
+		ConfMan.setBool("speech_mute", false);
+		_vm->_curObj = o00SPEECHON;
+		RegenRoom();
+		ShowObjName(_vm->_curObj, true);
+		break;
+
+	case o00TEXTON:
+		if (!ConfMan.getBool("speech_mute")) {
+			_vm->_obj[o00TEXTON]._mode &= ~OBJMODE_OBJSTATUS;
+			_vm->_obj[o00TEXTOFF]._mode |= OBJMODE_OBJSTATUS;
+			ConfMan.setBool("subtitles", false);
+			_vm->_curObj = o00TEXTOFF;
+			RegenRoom();
+			ShowObjName(_vm->_curObj, true);
+		}
+		break;
+
+	case o00TEXTOFF:
+		_vm->_obj[o00TEXTOFF]._mode &= ~OBJMODE_OBJSTATUS;
+		_vm->_obj[o00TEXTON]._mode |= OBJMODE_OBJSTATUS;
+		ConfMan.setBool("subtitles", true);
+		_vm->_curObj = o00TEXTON;
+		RegenRoom();
+		ShowObjName(_vm->_curObj, true);
+		break;
+
+	case o00SPEECH1D:
+	case o00SPEECH2D:
+	case o00SPEECH3D:
+	case o00SPEECH4D:
+	case o00SPEECH5D:
+	case o00SPEECH6D:
+	case o00MUSIC1D:
+	case o00MUSIC2D:
+	case o00MUSIC3D:
+	case o00MUSIC4D:
+	case o00MUSIC5D:
+	case o00MUSIC6D:
+	case o00SOUND1D:
+	case o00SOUND2D:
+	case o00SOUND3D:
+	case o00SOUND4D:
+	case o00SOUND5D:
+	case o00SOUND6D:
+		_vm->_obj[curObj]._mode &= ~OBJMODE_OBJSTATUS;
+		if ((curObj != o00SPEECH6D) && (curObj != o00MUSIC6D) && (curObj != o00SOUND6D))
+			_vm->_obj[curObj + 1]._mode &= ~OBJMODE_OBJSTATUS;
+		_vm->_obj[curObj - 1]._mode |= OBJMODE_OBJSTATUS;
+		_vm->_obj[curObj - 2]._mode |= OBJMODE_OBJSTATUS;
+		RegenRoom();
+		if (curObj < o00MUSIC1D)
+			ConfMan.setInt("speech_volume", ((curObj - 2 - o00SPEECH1D) / 2) * 51);
+		else if (curObj > o00MUSIC6D)
+			ConfMan.setInt("sfx_volume", ((curObj - 2 - o00SOUND1D) / 2) * 51);
+		else
+			ConfMan.setInt("music_volume", ((curObj - 2 - o00MUSIC1D) / 2) * 51);
+		break;
+
+	case o00SPEECH1U:
+	case o00SPEECH2U:
+	case o00SPEECH3U:
+	case o00SPEECH4U:
+	case o00SPEECH5U:
+	case o00MUSIC1U:
+	case o00MUSIC2U:
+	case o00MUSIC3U:
+	case o00MUSIC4U:
+	case o00MUSIC5U:
+	case o00SOUND1U:
+	case o00SOUND2U:
+	case o00SOUND3U:
+	case o00SOUND4U:
+	case o00SOUND5U:
+		_vm->_obj[curObj]._mode &= ~OBJMODE_OBJSTATUS;
+		_vm->_obj[curObj - 1]._mode &= ~OBJMODE_OBJSTATUS;
+		_vm->_obj[curObj + 1]._mode |= OBJMODE_OBJSTATUS;
+		if ((curObj != o00SPEECH5U) && (curObj != o00MUSIC5U) && (curObj != o00SOUND5U))
+			_vm->_obj[curObj + 2]._mode |= OBJMODE_OBJSTATUS;
+		RegenRoom();
+		if (curObj < o00MUSIC1D)
+			ConfMan.setInt("speech_volume", ((curObj + 1 - o00SPEECH1D) / 2) * 51);
+		else if (curObj > o00MUSIC6D)
+			ConfMan.setInt("sfx_volume", ((curObj + 1 - o00SOUND1D) / 2) * 51);
+		else
+			ConfMan.setInt("music_volume", ((curObj + 1 - o00MUSIC1D) / 2) * 51);
+		break;
+	}
+
+	g_engine->syncSoundSettings();
+	ConfMan.flushToDisk();
 }
 
 } // End of namespace Trecision
