@@ -54,6 +54,7 @@ void MenuButton::init() {
 	bsum->skip(16);
 	readRect(*bsum, _screenPosition);
 	setVisible(false);
+	setTransparent(true);
 
 	RenderObject::init();
 }
@@ -74,6 +75,7 @@ void HelpButton::init() {
 	bsum->skip(16);
 	readRect(*bsum, _screenPosition);
 	setVisible(false);
+	setTransparent(true);
 
 	RenderObject::init();
 }

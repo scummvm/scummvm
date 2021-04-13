@@ -187,8 +187,6 @@ Common::Rect Font::getCharacterSourceRect(char chr) const {
 		}
 	}
 	ret = _symbolRects[offset];
-	ret.right += 1;
-	ret.bottom += 1;
 	return ret;
 }
 
