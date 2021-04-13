@@ -1237,7 +1237,7 @@ drawRoundedSquare(int x, int y, int r, int w, int h) {
 
 template<typename PixelType>
 void VectorRendererSpec<PixelType>::
-drawTab(int x, int y, int r, int w, int h) {
+drawTab(int x, int y, int r, int w, int h, int s) {
 	if (x + w > Base::_activeSurface->w || y + h > Base::_activeSurface->h ||
 		w <= 0 || h <= 0 || x < 0 || y < 0 || r > w || r > h)
 		return;
@@ -1267,12 +1267,12 @@ drawTab(int x, int y, int r, int w, int h) {
 		// See the rounded rect alg for how to fix it. (The border should
 		// be drawn before the interior, both inside drawTabAlg.)
 		if (useClippingVersions) {
-			drawTabShadowClip(x, y, w - 2, h, r);
+			drawTabShadowClip(x, y, w - 2, h, r, s);
 			drawTabAlgClip(x, y, w - 2, h, r, _bgColor, Base::_fillMode);
 			if (Base::_strokeWidth)
 				drawTabAlgClip(x, y, w, h, r, _fgColor, kFillDisabled, (Base::_dynamicData >> 16), (Base::_dynamicData & 0xFFFF));
 		} else {
-			drawTabShadow(x, y, w - 2, h, r);
+			drawTabShadow(x, y, w - 2, h, r, s);
 			drawTabAlg(x, y, w - 2, h, r, _bgColor, Base::_fillMode);
 			if (Base::_strokeWidth)
 				drawTabAlg(x, y, w, h, r, _fgColor, kFillDisabled, (Base::_dynamicData >> 16), (Base::_dynamicData & 0xFFFF));
@@ -1598,8 +1598,8 @@ drawTabAlgClip(int x1, int y1, int w, int h, int r, PixelType color, VectorRende
 
 template<typename PixelType>
 void VectorRendererSpec<PixelType>::
-drawTabShadow(int x1, int y1, int w, int h, int r) {
-	int offset = 3;
+drawTabShadow(int x1, int y1, int w, int h, int r, int s) {
+	int offset = s;
 	int pitch = _activeSurface->pitch / _activeSurface->format.bytesPerPixel;
 
 	// "Harder" shadows when having lower BPP, since we will have artifacts (greenish tint on the modern theme)
@@ -1659,8 +1659,8 @@ drawTabShadow(int x1, int y1, int w, int h, int r) {
 
 template<typename PixelType>
 void VectorRendererSpec<PixelType>::
-drawTabShadowClip(int x1, int y1, int w, int h, int r) {
-	int offset = 3;
+drawTabShadowClip(int x1, int y1, int w, int h, int r, int s) {
+	int offset = s;
 	int pitch = _activeSurface->pitch / _activeSurface->format.bytesPerPixel;
 
 	// "Harder" shadows when having lower BPP, since we will have artifacts (greenish tint on the modern theme)

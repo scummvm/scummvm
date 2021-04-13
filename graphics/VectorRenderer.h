@@ -239,8 +239,9 @@ public:
 	 * @param w Width of the tab
 	 * @param h Height of the tab
 	 * @param r Radius of the corners of the tab (0 for squared tabs).
+	 * @param s Shadow size
 	 */
-	virtual void drawTab(int x, int y, int r, int w, int h) = 0;
+	virtual void drawTab(int x, int y, int r, int w, int h, int s) = 0;
 
 	/**
 	 * Simple helper function to draw a cross.
@@ -451,7 +452,7 @@ public:
 	void drawCallback_TAB(const Common::Rect &area, const DrawStep &step) {
 		uint16 x, y, w, h;
 		stepGetPositions(step, area, x, y, w, h);
-		drawTab(x, y, stepGetRadius(step, area), w, h);
+		drawTab(x, y, stepGetRadius(step, area), w, h, step.shadow);
 	}
 
 	void drawCallback_BITMAP(const Common::Rect &area, const DrawStep &step) {

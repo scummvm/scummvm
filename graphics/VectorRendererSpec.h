@@ -64,7 +64,7 @@ public:
 	void drawSquare(int x, int y, int w, int h) override;
 	void drawRoundedSquare(int x, int y, int r, int w, int h) override;
 	void drawTriangle(int x, int y, int base, int height, TriangleOrientation orient) override;
-	void drawTab(int x, int y, int r, int w, int h) override;
+	void drawTab(int x, int y, int r, int w, int h, int s) override;
 
 	void drawBeveledSquare(int x, int y, int w, int h) override {
 		bool useClippingVersions = !_clippingArea.contains(Common::Rect(x, y, x + w, y + h));
@@ -226,9 +226,9 @@ protected:
 		PixelType color, VectorRenderer::FillMode fill_m,
 		int baseLeft = 0, int baseRight = 0);
 
-	virtual void drawTabShadow(int x, int y, int w, int h, int r);
+	virtual void drawTabShadow(int x, int y, int w, int h, int r, int s);
 
-	virtual void drawTabShadowClip(int x, int y, int w, int h, int r);
+	virtual void drawTabShadowClip(int x, int y, int w, int h, int r, int s);
 
 	virtual void drawBevelTabAlg(int x, int y, int w, int h,
 	    int bevel, PixelType topColor, PixelType bottomColor,
