@@ -46,7 +46,6 @@ uint8 *_actionPointer[MAXACTIONFRAMESINROOM];		// puntatore progressivo ai frame
 uint16 _actionPosition[MAXACTIONINROOM];			// Starting position of each action in the room
 // DATA POINTER
 uint8 *TextArea;
-uint8 SpeechBuf[SPEECHSIZE];
 // DTEXT
 int8 DTextLines[MAXDTEXTLINES][MAXDTEXTCHARS];
 // 3D
@@ -58,8 +57,6 @@ int32  hh;
 SDText curString;
 SDText oldString;
 uint8  TextStatus;
-// FILEREF
-SFileEntry FileRef[MAXFILEREF];
 
 // info for Toc BmData
 struct SBmInfo {
