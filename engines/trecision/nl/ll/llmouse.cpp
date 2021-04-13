@@ -542,7 +542,6 @@ bool DataLoad() {
 	Common::StringArray saveNames;
 	saveNames.reserve(MAXSAVEFILE);
 	bool retval = true;
-	Common::SaveFileManager *saveFileMan = g_engine->getSaveFileManager();
 
 	if (!ConfMan.getBool("originalsaveload")) {
 		GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Load game:"), _("Load"), false);
