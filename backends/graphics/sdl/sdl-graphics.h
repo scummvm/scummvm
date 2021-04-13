@@ -199,7 +199,7 @@ protected:
 #endif
 		if (defaultDpi)
 			*defaultDpi = systemDpi;
-#if SDL_VERSION_ATLEAST(2, 0, 0)
+#if SDL_VERSION_ATLEAST(2, 0, 4)
 		int displayIndex = 0;
 		getWindowDisplayIndexFromSdl(&displayIndex);
 
