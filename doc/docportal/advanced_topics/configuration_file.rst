@@ -208,7 +208,7 @@ There are many recognized configuration keys. In the table below, each key is ei
 		":ref:`frames_per_secondfl <fpsfl>`",boolean,false,
 		:ref:`frontpanel_touchpad_mode <frontpanel>`,boolean, false
 		":ref:`fullscreen <fullscreen>`",boolean,false,
-		":ref:`gameid <gameid>`",string,,
+		gameid,string,,Short name of the game
 		gamepath,string,,Specifies the path to the game
 		":ref:`gfx_mode <gfxmode>`",string,normal (1x),"
 	- 1x
@@ -244,7 +244,7 @@ There are many recognized configuration keys. In the table below, each key is ei
 		":ref:`herculesfont <herc>`",boolean,false,
 		":ref:`hpbargraphs <hp>`",boolean,true,
 		":ref:`hypercheat <hyper>`",boolean,false,
-		iconspath,string,, "Specifies the path to icons to use as overlay for the ScummVM icon in the Windows taskbar or the macOS Dock when running a game. The icon files should be named after the :ref:`gameid <gameid>`, and be an ICO file on Windows, or a PNG file on macOS."
+		iconspath,string,, "Specifies the path to icons to use as overlay for the ScummVM icon in the Windows taskbar or the macOS Dock when running a game. The icon files should be named after the gameid or the :ref:`ID <id>` as per the GUI, and be an ICO file on Windows, or a PNG file on macOS."
 		":ref:`improved <improved>`",boolean,true,
 		":ref:`InvObjectsAnimated <objanimated>`",boolean,true,
 		":ref:`joystick_deadzone <deadzone>`",integer, 3
