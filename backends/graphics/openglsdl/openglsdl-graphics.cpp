@@ -140,11 +140,6 @@ OpenGLSdlGraphicsManager::OpenGLSdlGraphicsManager(SdlEventSource *eventSource, 
 
 	// Retrieve a list of working fullscreen modes
 #if SDL_VERSION_ATLEAST(2, 0, 0)
-#ifdef NINTENDO_SWITCH
-	// Switch quirk: hardware has built-in 720p screen, but SDL reports 1080p
-	// TODO: Implement dynamic switching to 1080p on handheld->docked transition
-	_fullscreenVideoModes.push_back(VideoMode(1280, 720));
-#else
 	const int numModes = SDL_GetNumDisplayModes(0);
 	for (int i = 0; i < numModes; ++i) {
 		SDL_DisplayMode mode;
@@ -154,7 +149,6 @@ OpenGLSdlGraphicsManager::OpenGLSdlGraphicsManager(SdlEventSource *eventSource, 
 
 		_fullscreenVideoModes.push_back(VideoMode(mode.w, mode.h));
 	}
-#endif
 #else
 	const SDL_Rect *const *availableModes = SDL_ListModes(NULL, SDL_OPENGL | SDL_FULLSCREEN);
 	// TODO: NULL means that there are no fullscreen modes supported. We
@@ -451,6 +445,11 @@ bool OpenGLSdlGraphicsManager::setupMode(uint width, uint height) {
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, _glContextMajor);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, _glContextMinor);
 
+#ifdef NINTENDO_SWITCH
+	// Switch quirk: Switch seems to need this flag, otherwise the screen
+	// is zoomed when switching from Normal graphics mode to OpenGL
+	flags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
+#endif
 	if (!createOrUpdateWindow(width, height, flags)) {
 		return false;
 	}
