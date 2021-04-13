@@ -41,7 +41,6 @@
 
 #define MAXSYSTEXT	30
 
-#define MAXFILEREF		5000
 #include "trecision/nl/3d/3drend.h"
 
 namespace Common {
@@ -113,8 +112,6 @@ extern int8 DTextLines[MAXDTEXTLINES][MAXDTEXTCHARS];
 extern SDText curString;
 extern SDText oldString;
 extern uint8  TextStatus;
-// FILEREF
-extern SFileEntry FileRef[];
 
 int Compare(const void *p1, const void *p2);
 void RedrawRoom();
