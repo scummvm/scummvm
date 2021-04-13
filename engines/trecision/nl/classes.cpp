@@ -381,23 +381,11 @@ void doIdle() {
 		if (!g_vm->_flagDialogActive && !g_vm->_flagDialogMenuActive) {
 			if (QuitGame())
 				doEvent(MC_SYSTEM, ME_QUIT, MP_SYSTEM, 0, 0, 0, 0);
-#if (!USE_NEW_VIDEO_CODE)
-		} else { //if( _curDialog == dINTRO )
-			if (g_vm->_animMgr->_fullMotionEnd != g_vm->_animMgr->_curAnimFrame[kSmackerFullMotion])
-				g_vm->_animMgr->_fullMotionEnd = g_vm->_animMgr->_curAnimFrame[kSmackerFullMotion] + 1;
-#endif
 		}
 		break;
 
 	// Skip
 	case 0x1B:
-#if (!USE_NEW_VIDEO_CODE)
-		if (g_vm->_flagDialogActive) {
-			if (g_vm->_animMgr->_fullMotionEnd != g_vm->_animMgr->_curAnimFrame[kSmackerFullMotion])
-				g_vm->_animMgr->_fullMotionEnd = g_vm->_animMgr->_curAnimFrame[kSmackerFullMotion] + 1;
-		}
-#endif
-
 		if (!g_vm->_flagSomeoneSpeaks && !g_vm->_flagscriptactive && !g_vm->_flagDialogActive && !g_vm->_flagDialogMenuActive
 		&& (g_vm->_actor->_curAction < hWALKIN) && !g_vm->_flagUseWithStarted && g_vm->_flagShowCharacter && !g_vm->_animMgr->_playingAnims[kSmackerAction]) {
 			actorStop();

@@ -31,12 +31,10 @@ namespace Trecision {
 
 enum SmackerType {
 	kSmackerBackground = 0,		// Smacker animations embedded in nlanim.cd? files
-	kSmackerFullMotion = 1,		// Standalone full screen Smacker videos
 	kSmackerAction = 1,			// Main character action animations
 	kSmackerIcon = 2			// Smacker inventory animations embedded in nlanim.cd? files
 };
 
-#define FULLMOTIONANIM 620
 #define MAXSMACK 3
 
 // SMACKER ANIMATION FLAGS
@@ -76,16 +74,12 @@ private:
 
 	void openSmk(Common::SeekableReadStream *stream);
 	void openSmkAnim(Common::String name);
-	void openSmkVideo(Common::String name);
 	void closeSmk();
 	void smkNextFrame();
 	void drawFrame(NightlongSmackerDecoder *smkDecoder, uint16 x, uint16 y, bool updateScreen);
 	void drawFrameSubtitles(Graphics::Surface *surface, int frameNum);
 	void setVideoRange(NightlongSmackerDecoder *smkDecoder, int &startFrame, int &endFrame);
 	
-	void drawSmkBuffer(int px, int py, int dx, int dy);
-	void refreshFullMotion();
-
 	void refreshSmkIcon(int StartIcon, int num);
 	void swapCD(int cd);
 
@@ -95,7 +89,6 @@ public:
 	uint16 _playingAnims[MAXSMACK];
 	uint16 _curAnimFrame[MAXSMACK];
 
-	int _fullMotionStart, _fullMotionEnd;
 	uint16 _animMaxX, _animMinX, _animMaxY, _animMinY;
 
 	SAnim _animTab[MAXANIM];
@@ -105,7 +98,6 @@ public:
 	void smkVolumePan(int buf, int track, int vol);
 
 	void playMovie(Common::String filename, int startFrame = 1, int endFrame = -1);
-	void playFullMotion(int start, int end);
 	void startFullMotion(const char *name);
 	void stopFullMotion();
 

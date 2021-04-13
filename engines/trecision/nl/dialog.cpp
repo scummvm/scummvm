@@ -130,11 +130,7 @@ void PlayDialog(uint16 i) {
 		skip++;
 	// if there's a pre-dialog
 	if ((_dialog[i]._startLen > 0) && !skip)
-#if USE_NEW_VIDEO_CODE
 		g_vm->_animMgr->playMovie(_dialog[i]._startAnim, 1, _dialog[i]._startLen);
-#else
-		g_vm->_animMgr->playFullMotion(1, _dialog[i]._startLen);
-#endif	
 	else {
 		g_vm->_animMgr->smkSoundOnOff(1, false);
 		afterChoice(1);
@@ -502,18 +498,9 @@ void afterChoice(int numframe) {
 
 		d = &_dialog[_curDialog];
 
-#if (!USE_NEW_VIDEO_CODE)
-		g_vm->_animMgr->_fullMotionStart = 0;
-		g_vm->_animMgr->_fullMotionEnd = 0;
-#endif
-		
 		// se c'e' predialog
 		if (_dialog[_curDialog]._startLen > 0) {
-#if USE_NEW_VIDEO_CODE
 			g_vm->_animMgr->playMovie(_dialog[_curDialog]._startAnim, 1, _dialog[_curDialog]._startLen);
-#else
-			g_vm->_animMgr->playFullMotion(1, _dialog[_curDialog]._startLen);
-#endif
 			return;
 		}
 	}
@@ -570,9 +557,6 @@ void DialogHandler(int numframe) {
 		g_vm->hideCursor();
 		if (numframe == _subTitles[_curSubTitle]._startFrame) {
 			int i = _curSubTitle++;
-#if (!USE_NEW_VIDEO_CODE)
-			g_vm->_oldSdText.set(g_vm->_sdText);
-#endif
 			g_vm->_sdText.x = _subTitles[i]._x;
 			g_vm->_sdText.y = _subTitles[i]._y;
 			g_vm->_sdText.tcol = _subTitles[i]._color;
@@ -609,12 +593,7 @@ void PlayChoice(uint16 i) {
 		totalLength += _subTitles[c]._length;
 
 	g_vm->hideCursor();
-#if USE_NEW_VIDEO_CODE
 	g_vm->_animMgr->playMovie(_dialog[_curDialog]._startAnim, ss->_startFrame, ss->_startFrame + totalLength - 1);
-#else
-	g_vm->_animMgr->playFullMotion(ss->_startFrame, ss->_startFrame + totalLength - 1);
-#endif
-	
 }
 
 void doDialog() {
