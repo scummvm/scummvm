@@ -372,7 +372,7 @@ void SomeoneContinueTalk() {
 		sprintf(sn, "s%04d%c.wav", CurS, CurSubString + 'a');
 	else
 		sprintf(sn, "s%04d.wav", CurS);
-	//	sprintf(sn,"d%02d%03d%02d",_curDialog,_subTitles[_curSubTitle]._sentence,CurSubString);
+
 	TalkTime = Talk(sn);
 	if (!TalkTime)
 		TalkTime = (strlen(SubString[CurSubString]) * 5) / 2 + 50;

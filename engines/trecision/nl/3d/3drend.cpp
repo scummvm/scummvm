@@ -332,14 +332,14 @@ void textureScanEdge(int32 x1, int32 y1, int32 z1, int32 c1, int32 tx1, int32 ty
 	for (int16 count = y1; count < y2; count++) {
 		int16 x = (uint16)(x1 >> 16);
 		if (x < _lEdge[count]) {
-			_lEdge[count]  = (int16)(x);
+			_lEdge[count]  = x;
 			_lZ[count]     = (int16)(z1 >> 16);
 			_lTextX[count] = (uint16)(tx1 >> 16);
 			_lTextY[count] = (uint16)(ty1 >> 16);
 			_lColor[count] = (uint8)(c1 >> 8);
 		}
 		if (x > _rEdge[count]) {
-			_rEdge[count]  = (int16)(x);
+			_rEdge[count] = x;
 			_rZ[count]     = (int16)(z1 >> 16);
 			_rTextX[count] = (uint16)(tx1 >> 16);
 			_rTextY[count] = (uint16)(ty1 >> 16);
@@ -468,10 +468,10 @@ void shadowScanEdge(int32 x1, int32 y1, int32 x2, int32 y2) {
 	for (int16 count = y1; count < y2; count++) {
 		int16 x = (uint16)(x1 >> 16);
 		if (x < _lEdge[count])
-			_lEdge[count]  = (int16)x;
+			_lEdge[count] = x;
 
 		if (x > _rEdge[count])
-			_rEdge[count] = (int16)x;
+			_rEdge[count] = x;
 
 		x1 += mx;  // x = x + dx/dy
 	}
