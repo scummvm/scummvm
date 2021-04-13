@@ -199,17 +199,19 @@ protected:
 #endif
 		if (defaultDpi)
 			*defaultDpi = systemDpi;
-#if SDL_VERSION_ATLEAST(2, 0, 4)
-		int displayIndex = 0;
-		getWindowDisplayIndexFromSdl(&displayIndex);
 
-		if (SDL_GetDisplayDPI(displayIndex, NULL, dpi, NULL) != 0) {
-		if (dpi)
-			*dpi = systemDpi;
-		}
+		if (dpi) {
+#if SDL_VERSION_ATLEAST(2, 0, 4)
+			int displayIndex = 0;
+			getWindowDisplayIndexFromSdl(&displayIndex);
+
+			if (SDL_GetDisplayDPI(displayIndex, NULL, dpi, NULL) != 0) {
+				*dpi = systemDpi;
+			}
 #else
-		*dpi = systemDpi;
+			*dpi = systemDpi;
 #endif
+		}
 	}
 
 	/**
