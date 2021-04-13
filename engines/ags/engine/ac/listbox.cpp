@@ -125,11 +125,6 @@ int ListBox_GetSaveGameSlots(GUIListBox *listbox, int index) {
 }
 
 int ListBox_FillSaveGameList(GUIListBox *listbox) {
-	listbox->Clear();
-
-	int numsaves = 0;
-	long filedates[MAXSAVEGAMES];
-
 	SaveStateList saveList = ::AGS::g_vm->listSaves();
 
 	// The original AGS sorts the list from most recent to oldest.
@@ -139,6 +134,9 @@ int ListBox_FillSaveGameList(GUIListBox *listbox) {
 	Common::sort(saveList.begin(), saveList.end(),
 		[](const SaveStateDescriptor &x, const SaveStateDescriptor &y) {return x.getSaveSlot() > y.getSaveSlot(); });
 
+	listbox->Clear();
+
+	int numsaves = 0;
 	for (uint idx = 0; idx < saveList.size(); ++idx) {
 		if (numsaves >= MAXSAVEGAMES)
 			break;
@@ -148,30 +146,11 @@ int ListBox_FillSaveGameList(GUIListBox *listbox) {
 
 		listbox->AddItem(desc);
 		listbox->SavedGameIndex[numsaves] = saveGameSlot;
-		filedates[numsaves] = 0;
 		numsaves++;
 	}
 
-	int nn;
-	for (nn = 0; nn < numsaves - 1; nn++) {
-		for (int kk = 0; kk < numsaves - 1; kk++) { // Date order the games
-
-			if (filedates[kk] < filedates[kk + 1]) { // swap them round
-				String tempptr = listbox->Items[kk];
-				listbox->Items[kk] = listbox->Items[kk + 1];
-				listbox->Items[kk + 1] = tempptr;
-				int numtem = listbox->SavedGameIndex[kk];
-				listbox->SavedGameIndex[kk] = listbox->SavedGameIndex[kk + 1];
-				listbox->SavedGameIndex[kk + 1] = numtem;
-				long numted = filedates[kk];
-				filedates[kk] = filedates[kk + 1];
-				filedates[kk + 1] = numted;
-			}
-		}
-	}
-
 	// update the global savegameindex[] array for backward compatibilty
-	for (nn = 0; nn < numsaves; nn++) {
+	for (int nn = 0; nn < numsaves; nn++) {
 		_GP(play).filenumbers[nn] = listbox->SavedGameIndex[nn];
 	}
 
