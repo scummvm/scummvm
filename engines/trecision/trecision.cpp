@@ -172,11 +172,9 @@ TrecisionEngine::TrecisionEngine(OSystem *syst) : Engine(syst) {
 }
 
 TrecisionEngine::~TrecisionEngine() {
-	if (MemoryArea)
-		free(MemoryArea);
-
-	if (_animMgr)
+	if (_animMgr) {
 		_animMgr->stopAllSmkAnims();
+	}
 
 	_dataFile.close();
 	_speechFile.close();
@@ -191,6 +189,7 @@ TrecisionEngine::~TrecisionEngine() {
 	delete[] _icons;
 	delete[] _zBuffer;
 	delete _actor;
+	delete[] TextArea;
 	delete[] _screenBuffer;
 	delete[] _smackImageBuffer;
 }
