@@ -44,7 +44,6 @@ extern int8 _characterGoToPosition;
 extern bool OldObjStatus[];
 extern bool VideoObjStatus[];
 
-extern struct ScreenRect VideoTop;
 extern struct ScreenRect VideoCent;
 extern struct ScreenRect VideoBott;
 extern struct SSortTable SortTable[];
@@ -53,7 +52,6 @@ extern struct SSortTable SortTable[];
 /*                                  VARIE           					   */
 /*-------------------------------------------------------------------------*/
 extern uint32 TheTime;
-extern uint32 OldTime;
 extern uint32 CharacterSpeakTime;
 extern uint32 SomeOneSpeakTime;
 
