@@ -45,7 +45,9 @@ These controls can also be manually configured in the :doc:`Keymaps tab <../sett
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16"><path fill-rule="evenodd" d="M2 8a.75.75 0 01.75-.75h10.5a.75.75 0 010 1.5H2.75A.75.75 0 012 8z"></path></svg>
 
 .. csv-table::
-  	:header-rows: 1
+    :widths: 50 50
+    :header-rows: 1
+    :class: controls
 
         Button,Action
         Left stick,Mouse
@@ -64,10 +66,13 @@ These controls can also be manually configured in the :doc:`Keymaps tab <../sett
         |minus|,Toggle virtual keyboard
         |minus| + R button,AGI predictive input dialog
 
+Touch Controls (Touchpad Mouse Mode Off, Default)
+**************************************************
+
 .. csv-table::
     :header-rows: 2
+    :class: touch
 
-        "Touch Controls (Touchpad Mouse Mode Off, Default)",
         Touch,Action
         Short single finger tap,Move pointer to finger position and left mouse button click
         Short second finger tap while holding one finger,Move pointer to first finger position and right mouse button click
@@ -75,10 +80,12 @@ These controls can also be manually configured in the :doc:`Keymaps tab <../sett
         `Two finger drag`_ ,Move pointer while left mouse button is held down (drag and drop). The pointer directly follows the first finger. The drag is ended when the last finger is removed.
         `Three finger drag`_ ,Move pointer while right mouse button is held down (drag and drop). The pointer directly follows the first finger. The drag is ended when the last finger is removed.
 
+Touch Controls (Touchpad Mouse Mode On)
+***************************************
 .. csv-table::
-    :header-rows: 2
+    :header-rows: 1
+    :class: touch
 
-        Touch Controls (Touchpad Mouse Mode On),
         Touch,Action
         Short single finger tap,Left mouse button click
         Short second finger tap while holding one finger,Right mouse button click

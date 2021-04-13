@@ -96,18 +96,19 @@ Default control map
 
 .. csv-table::
     :header-rows: 2
+    :class: controls
 
     Game Controller Mapping:,,
-    Button,Action,Notes
-    Joystick,Moves pointer,
-    Directional pad,Moves pointer slowly, Also controls the on-screen keyboard
-    Ⓐ,Left Click,
-    Ⓑ,Right Click,
-    Ⓨ,Spacebar,Pause
-    Start,F5,Load and save
-    Trigger L,Toggles the virtual keyboard on/off,
-    Ⓧ,5,For boxing in Indiana Jones and the Last Crusade
-    Ⓧ + Directional pad,"1, 2, 3, 4, 6, 7, 8, 9",For boxing in Indiana Jones and the Last Crusade
+    Button,Action
+    Joystick,Moves pointer
+    Directional pad,"Moves pointer slowly. Also controls the on-screen keyboard"
+    Ⓐ,Left Click
+    Ⓑ,Right Click
+    Ⓨ,"Pause"
+    START,"Load and save"
+    Trigger L,Toggles the virtual keyboard on/off
+    Ⓧ,"5 - used for boxing in Indiana Jones and the Last Crusade"
+    Ⓧ + Directional pad,"1, 2, 3, 4, 6, 7, 8, 9 - used for boxing in Indiana Jones and the Last Crusade"
 
 The mouse cursor is controlled with the standard Dreamcast controller. The Dreamcast mouse and keyboard peripherals are also supported.
 

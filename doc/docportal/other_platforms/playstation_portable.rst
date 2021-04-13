@@ -55,11 +55,11 @@ These controls can also be manually configured in the :doc:`Keymaps tab <../sett
 
    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M11.574 3.712c.195-.323.662-.323.857 0l9.37 15.545c.2.333-.039.757-.429.757l-18.668-.006c-.385 0-.629-.422-.428-.758l9.298-15.538zm.429-2.483c-.76 0-1.521.37-1.966 1.111l-9.707 16.18c-.915 1.523.182 3.472 1.965 3.472h19.416c1.783 0 2.879-1.949 1.965-3.472l-9.707-16.18c-.446-.741-1.205-1.111-1.966-1.111z"/></svg>
 
-
 .. csv-table::
-  	:header-rows: 2
+    :widths: 50 50
+    :header-rows: 1
+    :class: controls
 
-        Game Controller Mapping,
         Button,Action
         R button,Modifier key
         L button,ESC
@@ -77,10 +77,12 @@ These controls can also be manually configured in the :doc:`Keymaps tab <../sett
         START,Global Main Menu
         START + R button,F5
 
-.. csv-table::
-  	:header-rows: 1
+Virtual Keyboard Mode
+**********************
 
-        Virtual Keyboard Mode,
+.. csv-table::
+   :class: controls
+        
         START,Enter. Also exits virtual keyboard mode
         SELECT,Exits the virtual keyboard mode
         R button,Input: lowercase/uppercase letters (press to toggle)
@@ -89,19 +91,22 @@ These controls can also be manually configured in the :doc:`Keymaps tab <../sett
         |triangle| |x| |circle| |square| and L/R buttons,Chooses a specific character in the square. The four center characters are chosen by the button in the corresponding position. The 2 top characters are chosen by the L/R buttons.
         Analog stick,Moves in a direction (left/right/up/down)
 
-.. csv-table::
-  	:header-rows: 1
+Image Viewer
+**************
 
-        Image Viewer,
+.. csv-table::
+  	:class: controls
+
         Left/right directional buttons,Previous/next image
         Up/down directional buttons ,Zooms in/out
         Analog stick,Moves around the image
         "L/R buttons + START",Exits image viewer
 
+1st Person Game Mode 
+**************************
 .. csv-table::
-  	:header-rows: 1
+  	:class: controls
 
-        1st Person Game Mode ,
         |square| + R button + L button,Enables 1st Person Mode
         |square|,Modifier key (instead of R button)
         L/R button,Strafes left/right

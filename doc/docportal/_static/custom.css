@@ -1,6 +1,62 @@
-/* override table width restrictions */
+/* word wrapping */
 
-@media (min-width: 385px){
+.std, .std-ref, .head {
+   word-wrap: break-word
+}
+
+p {
+   word-wrap: break-word;
+}
+
+/* changes table to block element when screen size is small*/
+@media screen and (min-width:770px) and (max-width:900px), screen and (min-width:200px) and (max-width:600px){
+   table, thead, tbody, th, td, tr{
+      display:block
+   }
+
+   thead tr {
+      position:absolute;
+      top: -9999px;
+      left: -9999px;
+   }
+   td {
+      border: none;
+      position: relative;
+      padding-left: 40% !important;
+   }
+   td:before{
+      position: absolute;
+      top: 6px;
+      left: 6px;
+      width: 35%;
+      padding-right: 10px;
+      white-space: nowrap;
+   }
+
+   td:empty {
+      min-height: 2rem;
+   }
+
+   .config td:nth-of-type(1):before { content: "Key";}
+   .config td:nth-of-type(2):before { content: "Type";}
+   .config td:nth-of-type(3):before { content: "Default";}
+   .config td:nth-of-type(4):before { content: "Description/Options";}
+
+   .command td:nth-of-type(1):before { content: "Option"}
+   .command td:nth-of-type(2):before { content: "Short"}
+   .command td:nth-of-type(3):before { content: "Description"}
+
+   .controls td:nth-of-type(1):before { content: "Control"}
+   .controls td:nth-of-type(2):before { content: "Action"}
+
+   .touch td:nth-of-type(1):before { content: "Touch"}
+   .touch td:nth-of-type(2):before { content: "Action"}
+   
+}
+  
+
+/* override table width */
+@media (min-width: 385px) {
     .wy-table-responsive table td {
        white-space: normal !important;
 
