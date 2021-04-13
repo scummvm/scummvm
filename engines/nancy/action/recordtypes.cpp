@@ -20,6 +20,8 @@
  *
  */
 
+#include "common/config-manager.h"
+
 #include "engines/nancy/nancy.h"
 #include "engines/nancy/sound.h"
 #include "engines/nancy/resource.h"
@@ -208,6 +210,19 @@ void BumpPlayerClock::readData(Common::SeekableReadStream &stream) {
 
 void SaveContinueGame::readData(Common::SeekableReadStream &stream) {
 	stream.skip(1);
+}
+
+void SaveContinueGame::execute() {
+	if (ConfMan.getBool("second_chance")) {
+		if (_state == kBegin) {
+			// Slight hack, skip first call to let the graphics render once and provide the correct thumbnail
+			_state = kRun;
+			return;
+		}
+
+		g_nancy->saveGameState(g_nancy->getAutosaveSlot(), "Second Chance", true);
+	}
+	_isDone = true;
 }
 
 void TurnOffMainRendering::readData(Common::SeekableReadStream &stream) {

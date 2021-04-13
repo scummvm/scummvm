@@ -91,6 +91,7 @@ public:
 	virtual Common::Error saveGameStream(Common::WriteStream *stream, bool isAutosave = false) override;
 	virtual bool canLoadGameStateCurrently() override;
 	virtual bool canSaveGameStateCurrently() override;
+	virtual bool canSaveAutosaveCurrently() override;
 
 	const char *getCopyrightString() const;
 	uint32 getGameFlags() const;

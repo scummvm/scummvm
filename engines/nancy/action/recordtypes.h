@@ -193,6 +193,7 @@ protected:
 class SaveContinueGame : public ActionRecord {
 public:
 	virtual void readData(Common::SeekableReadStream &stream) override;
+	virtual void execute() override;
 
 protected:
 	virtual Common::String getRecordTypeName() const override { return "SaveContinueGame"; }

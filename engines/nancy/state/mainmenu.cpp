@@ -155,8 +155,13 @@ void MainMenu::stop() {
 			}
 			break;
 		case 4:
-			// Second Chance, TODO
-			_state = kRun;
+			// Second Chance
+			if (!Scene::hasInstance()) {
+				NancySceneState.process(); // run once to init the state
+			}
+
+			g_nancy->loadGameState(g_nancy->getAutosaveSlot());
+			g_nancy->setState(NancyState::kScene);
 			break;
 		case 5:
 			// Game Setup, TODO
@@ -164,7 +169,7 @@ void MainMenu::stop() {
 			break;
 		case 6: 
 			// Exit Game
-			g_nancy->quitGame(); // Consider returning to launcher instead?
+			g_nancy->quitGame();
 			break;
 		case 7:
 			// Help

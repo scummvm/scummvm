@@ -118,6 +118,14 @@ bool NancyEngine::canSaveGameStateCurrently() {
 	return Action::PlayPrimaryVideoChan0::_activePrimaryVideo == nullptr;
 }
 
+bool NancyEngine::canSaveAutosaveCurrently() {
+	if (ConfMan.getBool("second_chance")) {
+		return false;
+	} else {
+		return Engine::canSaveAutosaveCurrently();
+	}
+}
+
 bool NancyEngine::hasFeature(EngineFeature f) const {
 	return  (f == kSupportsReturnToLauncher) ||
 			(f == kSupportsLoadingDuringRuntime) ||
@@ -293,6 +301,7 @@ void NancyEngine::bootGameEngine() {
 	ConfMan.registerDefault("player_speech", true);
 	ConfMan.registerDefault("character_speech", true);
 	ConfMan.registerDefault("original_menus", false);
+	ConfMan.registerDefault("second_chance", false);
 
 	// Load archive
 	Common::SeekableReadStream *stream = SearchMan.createReadStreamForMember("data1.cab");
