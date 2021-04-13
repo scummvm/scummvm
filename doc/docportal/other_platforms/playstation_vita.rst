@@ -59,6 +59,7 @@ These controls can also be manually configured in the :doc:`Keymaps tab <../sett
 .. csv-table::
     :widths: 50 50
     :header-rows: 2
+    :class: controls
 
         Game Controller Mapping,
         Button,Action

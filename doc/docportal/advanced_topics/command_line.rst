@@ -103,7 +103,8 @@ Option parameters are shown below in capitals, and need to be replaced with real
 Short options are listed where they are available.
 
 .. csv-table::
-    :widths: 35 10 55
+    :widths: 35 15 50
+    :class: command
     :header-rows: 1
 
 		Option,Short,Description

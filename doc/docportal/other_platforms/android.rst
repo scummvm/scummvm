@@ -70,6 +70,7 @@ Controls can also be manually configured in the :doc:`Keymaps tab <../settings/k
 
 .. csv-table::
     :header-rows: 1
+    :class: controls
 
         Touch screen control, Action
         One finger tap, Left mouse button click

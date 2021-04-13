@@ -165,10 +165,10 @@ Controls
 ============
 
 .. csv-table::
-  	:widths: 40 60
-  	:header-rows: 2
+    :widths: 40 60
+    :header-rows: 1
+    :class: controls
 
-        Game Controller Mapping,
         Touch screen control, Action
         One finger tap, Left mouse click
         :ref:`twofinger`, Right mouse click
