@@ -78,17 +78,8 @@ Common::Error FreescapeEngine::run() {
 	byte *buf = (byte *)malloc(fileSize);
 	file->read(buf, fileSize);
 
-	int i = 0;
-	int j = 0;
-	byte *p = buf;
-
 	_pixelFormat = g_system->getScreenFormat();
-	//if (_pixelFormat == Graphics::PixelFormat::createFormatCLUT8())
-	//	return Common::kUnsupportedColorMode;
-
-	//changeCursor("default");
-	//_compositeSurface = new Graphics::Surface();
-	//_compositeSurface->create(300, 200, _pixelFormat);
+	// 16 colors palette from ultima
     static const byte PALETTE[16][3] = {
                 { 0, 0, 0 },{ 0x00, 0x00, 0x80 },{ 0x00, 0x80, 0x00 },{ 0x00, 0x80, 0x80 },
                 { 0x80, 0x00, 0x00 },{ 0x80, 0x00, 0x80 },{ 0x80, 0x80, 0x00 },{ 0xC0, 0xC0, 0xC0 },
@@ -97,10 +88,12 @@ Common::Error FreescapeEngine::run() {
     };
     g_system->getPaletteManager()->setPalette(&PALETTE[0][0], 0, 16);
 
+	int i = 0;
+	byte *p = buf;
 
 	while(i < fileSize-4) {
 		if(*((uint32*) p) == 0xfa002445) {
-			debug("found at %d", i);
+			debug("Border found at %x", i);
 			g_system->copyRectToScreen((const void*) p, 320, 0, 0, 320, 200);
 		}
 		p++;
@@ -112,17 +105,7 @@ Common::Error FreescapeEngine::run() {
 	Console *console = new Console(this);
 	setDebugger(console);
 
-	// Additional setup.
-	debug("QuuxEngine::init");
-
-	// Your main even loop should be (invoked from) here.
-	debug("QuuxEngine::go: Hello, World!");
-
-	// This test will show up if -d1 and --debugflags=example are specified on the commandline
-	debugC(1, kQuuxDebugExample, "Example debug call");
-
-	// This test will show up if --debugflags=example or --debugflags=example2 or both of them and -d3 are specified on the commandline
-	debugC(3, kQuuxDebugExample | kQuuxDebugExample2, "Example debug call two");
+	debug("FreescapeEngine::init");
 
 	// Simple main event loop
 	Common::Event evt;
