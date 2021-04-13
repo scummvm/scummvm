@@ -25,8 +25,6 @@
 
 #include "common/str.h"
 
-void warning(const char *format, ...);
-
 namespace Common {
 class SeekableReadStream;
 }
