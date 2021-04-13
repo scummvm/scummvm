@@ -49,8 +49,6 @@ uint16 _actionPosition[MAXACTIONINROOM];			// Starting position of each action i
 // DATA POINTER
 uint8 *TextArea;
 uint8 SpeechBuf[SPEECHSIZE];
-uint16 *ExtraObj2C;
-uint16 *ExtraObj41D;
 // DTEXT
 int8 DTextLines[MAXDTEXTLINES][MAXDTEXTCHARS];
 // 3D
@@ -122,11 +120,8 @@ void openSys() {
 	g_vm->_zBuffer = new int16[ZBUFFERSIZE / 2];
 	for (int c = 0; c < ZBUFFERSIZE / 2; ++c)
 		g_vm->_zBuffer[c] = 0x7FFF;
-	
-	// CDBuffer
-	ExtraObj2C = (uint16 *)SpeechBuf; // for room 2C
 
-	ExtraObj41D = (uint16 *)g_vm->_animMgr->_smkBuffer[kSmackerAction]; // for room 41D
+	g_vm->_extraRoomObject = nullptr;
 
 	g_vm->_smackImageBuffer = new uint16[MAXX * AREA];
 	memset(g_vm->_smackImageBuffer, 0, MAXX * AREA * 2);
@@ -545,9 +540,11 @@ void ReadExtraObj2C() {
 	if (!g_vm->_room[g_vm->_curRoom]._object[32])
 		return;
 	
-	uint16 *objBuffer = ExtraObj2C;
 	Common::SeekableReadStream *ff = g_vm->_dataFile.createReadStreamForMember("2c2.bm");
-	ff->read(ExtraObj2C, ff->size());
+	uint16 *objBuffer = g_vm->_extraRoomObject = new uint16[ff->size() / 2];
+	for (int i = 0; i < ff->size() / 2; i++) {
+		objBuffer[i] = ff->readUint16LE();
+	}
 	delete ff;
 
 	uint32 b = 0;
@@ -599,9 +596,11 @@ void ReadExtraObj41D() {
 	if (!g_vm->_room[g_vm->_curRoom]._object[32])
 		return;
 
-	uint16 *objBuffer = ExtraObj41D;
 	Common::SeekableReadStream *ff = g_vm->_dataFile.createReadStreamForMember("41d2.bm");
-	ff->read(ExtraObj41D, ff->size());
+	uint16 *objBuffer = g_vm->_extraRoomObject = new uint16[ff->size() / 2];
+	for (int i = 0; i < ff->size() / 2; i++) {
+		objBuffer[i] = ff->readUint16LE();
+	}
 	delete ff;
 
 	uint32 b = 0;
