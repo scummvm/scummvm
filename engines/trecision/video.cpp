@@ -164,7 +164,9 @@ void AnimManager::playMovie(Common::String filename, int startFrame, int endFram
 		g_system->delayMillis(10);
 	}
 
+	FreeKey();
 	doEvent(MC_DIALOG, ME_ENDCHOICE, MP_HIGH, smkDecoder->getCurFrame(), 0, 0, 0);
+
 	delete smkDecoder;
 }
 
