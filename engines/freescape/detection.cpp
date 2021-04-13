@@ -3,15 +3,13 @@
 
 namespace Freescape {
 static const PlainGameDescriptor freescapeGames[] = {
-	{ "3dkitgame", "Quux the Example Module" },
-	{ "quuxcd", "Quux the Example Module (CD version)" },
+	{ "3dkit", "3D Kit Constructor example game" },
 	{ 0, 0 }
 };
 
-
 static const ADGameDescription gameDescriptions[] = {
 	{
-		"3Dkitgame",
+		"3Dkit",
 		0,
 		AD_ENTRY1s("3DKIT.RUN", "f35147729a2f5b6852a504223aeb6a57", 112158),
 		Common::EN_ANY,
@@ -37,7 +35,7 @@ public:
 	}
 
 	const char *getOriginalCopyright() const override {
-		return "Copyright (C) TODO Entertainment Ltd.";
+		return "Copyright (C) Incentive Software";
 	}
 };
 
