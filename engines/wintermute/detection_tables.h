@@ -84,6 +84,7 @@ static const PlainGameDescriptor wintermuteGames[] = {
 	{"helga",           "Helga Deep In Trouble"},
 	{"hor",             "Hor"},
 	{"idiotstale",      "The Idiot's Tale"},
+	{"imustkill",       "I Must Kill...: Fresh Meat"},
 	{"jamesperis",      "James Peris: No License Nor Control"},
 	{"knossos",         "K'NOSSOS"},
 	{"kulivocko",       "Kulivocko"},
@@ -1249,6 +1250,22 @@ static const WMEGameDescription gameDescriptions[] = {
 	// The Idiot's Tale (Steam, April 2018)
 	WME_WINENTRY("idiotstale", "1.0.2",
 		WME_ENTRY1s("data.dcp", "3ecf43cb535482b82fd583097921edb9", 417507705), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
+
+	// I Must Kill...: Fresh Meat (v0.02)
+	WME_WINENTRY("imustkill", "v0.02",
+		WME_ENTRY1s("data.dcp", "482660d7c196c949b31f4d9599e20777", 56444999), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, WME_1_9_3),
+
+	// I Must Kill...: Fresh Meat (v0.03)
+	WME_WINENTRY("imustkill", "v0.03",
+		WME_ENTRY1s("data.dcp", "ac1e07e1806661e71875e1456302f5d9", 100703459), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, WME_1_9_3),
+
+	// I Must Kill...: Fresh Meat (Greenlight demo)
+	WME_WINENTRY("imustkill", "Greenlight demo",
+		WME_ENTRY1s("data.dcp", "984abb9a75490ff31be00c41270d6913", 133161500), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, WME_1_9_3),
+
+	// I Must Kill...: Fresh Meat (Steam Early Access, 22 June 2016)
+	WME_WINENTRY("imustkill", "Early Access",
+		WME_ENTRY1s("data.dcp", "9474fdfa678d8bf059d311044b781e34", 197732041), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, WME_1_9_3),
 
 	// James Peris: No License Nor Control (English)
 	WME_WINENTRY("jamesperis", "Version 1.5",
