@@ -1270,27 +1270,34 @@ void ccInstance::DumpInstruction(const ScriptOperation &op) {
 		return;
 	}
 
-	Stream *data_s = ci_fopen("script.log", kFile_Create, kFile_Write);
-	TextStreamWriter writer(data_s);
-	writer.WriteFormat("Line %3d, IP:%8d (SP:%p) ", line_num, pc, registers[SREG_SP].RValue);
+	// The original opens and close the script.log file for each call, which
+	// is very slow, and also doesn't work in ScummVM (as the file is open
+	// in write only mode, which overwrites the previous content, so we only
+	// get the last line). So we use a Common::DumpFile that we keep open
+	// instead.
+	if (_G(scriptDumpFile) == nullptr) {
+		_G(scriptDumpFile) = new Common::DumpFile();
+		_G(scriptDumpFile)->open("script.log");
+	}
+	Common::String msg = Common::String::format("Line %3d, IP:%8d (SP:%p) ", line_num, pc, (void*)registers[SREG_SP].RValue);
 
 	const ScriptCommandInfo &cmd_info = sccmd_info[op.Instruction.Code];
-	writer.WriteString(cmd_info.CmdName);
+	msg += cmd_info.CmdName;
 
 	for (int i = 0; i < cmd_info.ArgCount; ++i) {
 		if (i > 0) {
-			writer.WriteChar(',');
+			msg += ',';
 		}
 		if (cmd_info.ArgIsReg[i]) {
-			writer.WriteFormat(" %s", regnames[op.Args[i].IValue]);
+			msg += Common::String::format(" %s", regnames[op.Args[i].IValue]);
 		} else {
 			// MACPORT FIX 9/6/5: changed %d to %ld
 			// FIXME: check type and write appropriate values
-			writer.WriteFormat(" %ld", op.Args[i].GetPtrWithOffset());
+			msg += Common::String::format(" %ld", (long)op.Args[i].GetPtrWithOffset());
 		}
 	}
-	writer.WriteLineBreak();
-	// the writer will delete data stream internally
+	msg += '\n';
+	_G(scriptDumpFile)->writeString(msg);
 }
 
 bool ccInstance::IsBeingRun() const {
