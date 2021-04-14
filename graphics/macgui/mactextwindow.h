@@ -105,6 +105,8 @@ private:
 	bool _inputIsDirty;
 
 	MacMenu *_menu;
+
+	int _bgcolor;
 };
 
 } // End of namespace Graphics
