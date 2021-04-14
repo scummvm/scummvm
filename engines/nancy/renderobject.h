@@ -37,15 +37,9 @@ class GraphicsManager;
 class RenderObject {
 	friend class GraphicsManager;
 public:
-	RenderObject() :
-		_needsRedraw(true),
-		_isVisible(true),
-		_redrawFrom(nullptr) {}
-
-	RenderObject(RenderObject &redrawFrom) :
-		_needsRedraw(true),
-		_isVisible(true),
-		_redrawFrom(&redrawFrom) {}
+	RenderObject(uint16 zOrder);
+	RenderObject(RenderObject &redrawFrom, uint16 zOrder);
+	RenderObject(RenderObject &redrawFrom, uint16 zOrder, Graphics::ManagedSurface &surface, const Common::Rect &srcBounds, const Common::Rect &destBounds);
 
 	virtual ~RenderObject();
 
@@ -67,22 +61,23 @@ public:
 	Common::Rect convertToScreen(const Common::Rect &rect) const;
 
 	Common::Rect getBounds() const { return Common::Rect(_drawSurface.w, _drawSurface.h); }
-	Graphics::ManagedSurface &getDrawSurface() { return _drawSurface; }
+
+	Graphics::ManagedSurface _drawSurface;
+	Common::Rect _screenPosition;
 
 protected:
 	// Z order and blit type are extracted directly from the corresponding
 	// ZRenderStruct from the original engine
-	virtual uint16 getZOrder() const = 0;
+	uint16 getZOrder() const { return _z; }
 
 	// Needed for proper handling of objects inside the viewport
 	virtual bool isViewportRelative() const { return false; }
 
 	RenderObject *_redrawFrom;
 
-	Graphics::ManagedSurface _drawSurface;
-	Common::Rect _screenPosition;
 	bool _needsRedraw;
 	bool _isVisible;
+	uint16 _z;
 	Common::Rect _previousScreenPosition;
 };
 

@@ -93,7 +93,6 @@ void MainMenu::init() {
 	}
 
 	_buttonDown.registerGraphics();
-	_buttonDown._redrawFrom = &_background;
 
 	_state = kRun;
 }
@@ -117,7 +116,7 @@ void MainMenu::run() {
 				_selected = i;
 				_state = kStop;
 
-				_buttonDown._drawSurface.create(_background.getDrawSurface(), _srcRects[i]);
+				_buttonDown._drawSurface.create(_background._drawSurface, _srcRects[i]);
 				_buttonDown._screenPosition = _destRects[i];
 				_buttonDown.setVisible(true);
 

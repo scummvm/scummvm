@@ -70,7 +70,7 @@ struct FlagsStruct {
 };
 
 public:
-	PlayPrimaryVideoChan0(RenderObject &redrawFrom) : RenderObject(redrawFrom) {}
+	PlayPrimaryVideoChan0(RenderObject &redrawFrom) : RenderObject(redrawFrom, 8) {}
 	virtual ~PlayPrimaryVideoChan0();
 
 	virtual void init() override;
@@ -111,8 +111,6 @@ public:
 
 protected:
 	virtual Common::String getRecordTypeName() const override { return "PlayPrimaryVideoChan0"; }
-
-	virtual uint16 getZOrder() const override { return 8; }
 	virtual bool isViewportRelative() const override { return true; }
 };
 

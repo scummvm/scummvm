@@ -67,28 +67,15 @@ private:
 		Common::Rect labelDest;
 	};
 
-	class MapLabel : public Nancy::RenderObject {
-	public:
-		MapLabel(RenderObject &redrawFrom, Map *parent) : Nancy::RenderObject(redrawFrom), _parent(parent) {}
-		virtual ~MapLabel() = default;
-
-		virtual void init() override;
-
-		void setLabel(int labelID);
-
-	protected:
-		virtual uint16 getZOrder() const override { return 7; }
-
-		Map *_parent;
-	};
-
 	void init();
 	void run();
 
 	void registerGraphics();
 
+	void setLabel(int labelID);
+
 	Nancy::UI::Viewport _viewport;
-	MapLabel _label;
+	RenderObject _label;
 	UI::Button *_button;
 	SoundDescription _sound;
 

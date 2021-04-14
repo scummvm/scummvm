@@ -52,7 +52,7 @@ void PlayStaticBitmapAnimation::readData(Common::SeekableReadStream &stream) {
 	_loopFirstFrame = stream.readUint16LE();
 	_loopLastFrame = stream.readUint16LE();
 	_frameTime = Common::Rational(1000, stream.readUint16LE()).toInt();
-	_zOrder = stream.readUint16LE();
+	_z = stream.readUint16LE();
 
 	if (_isInterruptible) {
 		_interruptCondition.label = stream.readSint16LE();

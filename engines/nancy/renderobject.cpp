@@ -28,6 +28,24 @@
 
 namespace Nancy {
 
+RenderObject::RenderObject(uint16 zOrder) :
+		_needsRedraw(true),
+		_isVisible(true),
+		_redrawFrom(nullptr),
+		_z(zOrder) {}
+
+RenderObject::RenderObject(RenderObject &redrawFrom, uint16 zOrder) :
+		_needsRedraw(true),
+		_isVisible(true),
+		_redrawFrom(&redrawFrom),
+		_z(zOrder) {}
+
+RenderObject::RenderObject(RenderObject &redrawFrom, uint16 zOrder, Graphics::ManagedSurface &surface, const Common::Rect &srcBounds, const Common::Rect &destBounds) :
+		RenderObject(redrawFrom, zOrder) {
+	_drawSurface.create(surface, srcBounds);
+	_screenPosition = destBounds;
+}
+
 void RenderObject::init() {
 	_previousScreenPosition = _screenPosition;
 }

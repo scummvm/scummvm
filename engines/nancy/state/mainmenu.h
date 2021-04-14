@@ -35,24 +35,13 @@ namespace State {
 class MainMenu : public State, public Common::Singleton<MainMenu> {
 	friend class MainMenuButton;
 public:
-	MainMenu() : _state(kInit), _selected(-1), _playedOKSound(false) {}
+	MainMenu() : _state(kInit), _selected(-1), _playedOKSound(false), _buttonDown(_background, 5) {}
 
 	// State API
 	virtual void process() override;
 	virtual void onStateExit() override;
 
 private:
-	// This is not a UI::Button subclass since the cursor doesn't change on hover
-	class ButtonDownLabel : public RenderObject {
-		friend class MainMenu;
-	public:
-		ButtonDownLabel() {}
-		virtual ~ButtonDownLabel() override {}
-	
-	protected:
-		virtual uint16 getZOrder() const override { return 5; }
-	};
-
 	void init();
 	void run();
 	void stop();
@@ -60,7 +49,7 @@ private:
 	enum State { kInit, kRun, kStop };
 
 	UI::FullScreenImage _background;
-	ButtonDownLabel _buttonDown;
+	RenderObject _buttonDown;
 	State _state;
 	int16 _selected;
 	bool _playedOKSound;

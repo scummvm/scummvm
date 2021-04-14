@@ -33,7 +33,7 @@ namespace Action {
 class LeverPuzzle : public ActionRecord, public RenderObject {
 public:
 	enum SolveState { kNotSolved, kPlaySound, kWaitForSound };
-	LeverPuzzle(RenderObject &redrawFrom) : RenderObject(redrawFrom) {}
+	LeverPuzzle(RenderObject &redrawFrom) : RenderObject(redrawFrom, 7) {}
 	virtual ~LeverPuzzle() {}
 
 	virtual void init() override;
@@ -65,8 +65,6 @@ public:
 
 protected:
 	virtual Common::String getRecordTypeName() const override { return "LeverPuzzle"; }
-
-	virtual uint16 getZOrder() const override { return 7; }
 	virtual bool isViewportRelative() const override { return true; }
 
 	void drawLever(uint id);

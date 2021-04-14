@@ -425,7 +425,7 @@ public:
 	virtual void readData(Common::SeekableReadStream &stream) override;
 	virtual void execute() override;
 
-	ShowInventoryItem(RenderObject &redrawFrom) : RenderObject(redrawFrom) {}
+	ShowInventoryItem(RenderObject &redrawFrom) : RenderObject(redrawFrom, 9) {}
 	virtual ~ShowInventoryItem() { _fullSurface.free(); }
 
 	virtual void init() override;
@@ -440,8 +440,6 @@ public:
 
 protected:
 	virtual Common::String getRecordTypeName() const override { return "ShowInventoryItem"; }
-
-	virtual uint16 getZOrder() const override { return 9; }
 	virtual bool isViewportRelative() const override { return true; }
 };
 

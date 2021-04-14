@@ -42,7 +42,7 @@ namespace UI {
 class Viewport : public Nancy::RenderObject {
 public:
 	Viewport() :
-		RenderObject(),
+		RenderObject(6),
 		_movementLastFrame(0),
 		_edgesMask(0),
 		_currentFrame(0),
@@ -77,9 +77,6 @@ public:
 	void setEdgesSize(uint16 upSize, uint16 downSize, uint16 leftSize, uint16 rightSize);
 	void disableEdges(byte edges);
 	void enableEdges(byte edges);
-
-protected:
-	virtual uint16 getZOrder() const override { return 6; }
 
 	Common::Rect _upHotspot;
 	Common::Rect _downHotspot;

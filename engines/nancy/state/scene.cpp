@@ -627,8 +627,8 @@ void Scene::initStaticData() {
 	readRect(*chunk, helpSrc);
 	readRect(*chunk, menuDest);
 	readRect(*chunk, helpDest);
-	_menuButton = new UI::Button(_frame, g_nancy->_graphicsManager->_object0, menuSrc, menuDest);
-	_helpButton = new UI::Button(_frame, g_nancy->_graphicsManager->_object0, helpSrc, helpDest);
+	_menuButton = new UI::Button(_frame, 5, g_nancy->_graphicsManager->_object0, menuSrc, menuDest);
+	_helpButton = new UI::Button(_frame, 5, g_nancy->_graphicsManager->_object0, helpSrc, helpDest);
 	_menuButton->init();
 	_helpButton->init();
 	g_nancy->_cursorManager->showCursor(true);

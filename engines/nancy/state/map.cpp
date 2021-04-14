@@ -44,7 +44,7 @@ Map::Map() : _state(kInit),
 			_mapButtonClicked(false),
 			_pickedLocationID(-1),
 			_viewport(),
-			_label(NancySceneState.getFrame(), this),
+			_label(NancySceneState.getFrame(), 7),
 			_button(nullptr) {}
 
 Map::~Map() {
@@ -68,12 +68,14 @@ void Map::init() {
 	_viewport.init();
 	_label.init();
 
+	setLabel(-1);
+
 	Common::Rect buttonSrc, buttonDest;
 	chunk->seek(0x7A, SEEK_SET);
 	readRect(*chunk, buttonSrc);
 	readRect(*chunk, buttonDest);
 
-	_button = new UI::Button(NancySceneState.getFrame(), g_nancy->_graphicsManager->_object0, buttonSrc, buttonDest);
+	_button = new UI::Button(NancySceneState.getFrame(), 9, g_nancy->_graphicsManager->_object0, buttonSrc, buttonDest);
 	_button->init();
 	_button->setVisible(true);
 
@@ -145,7 +147,7 @@ void Map::run() {
 
 	NancyInput input = g_nancy->_input->getInput();
 
-	_label.setLabel(-1);
+	setLabel(-1);
 
 	_button->handleInput(input);
 
@@ -160,7 +162,7 @@ void Map::run() {
 		if (loc.isActive && _viewport.convertToScreen(loc.hotspot).contains(input.mousePos)) {
 			g_nancy->_cursorManager->setCursorType(CursorManager::kHotspotArrow);
 
-			_label.setLabel(i);
+			setLabel(i);
 
 			if (input.input & NancyInput::kLeftMouseButtonUp) {
 				_pickedLocationID = i;
@@ -197,19 +199,13 @@ void Map::registerGraphics() {
 	_button->registerGraphics();
 }
 
-void Map::MapLabel::init() {
-	setLabel(-1);
-
-	RenderObject::init();
-}
-
-void Map::MapLabel::setLabel(int labelID) {
+void Map::setLabel(int labelID) {
 	if (labelID == -1) {
-		setVisible(false);
+		_label.setVisible(false);
 	} else {
-		_screenPosition = _parent->_locations[labelID].labelDest;
-		_drawSurface.create(g_nancy->_graphicsManager->_object0, _parent->_locations[labelID].labelSrc);
-		setVisible(true);
+		_label._screenPosition = _locations[labelID].labelDest;
+		_label._drawSurface.create(g_nancy->_graphicsManager->_object0, _locations[labelID].labelSrc);
+		_label.setVisible(true);
 	}
 }
 

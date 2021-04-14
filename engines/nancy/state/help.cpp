@@ -82,7 +82,7 @@ void Help::init() {
 	buttonSrc.right = chunk->readUint16LE();
 	buttonSrc.bottom = chunk->readUint16LE();
 
-	_button = new UI::Button(_image, _image.getDrawSurface(), buttonSrc, buttonDest);
+	_button = new UI::Button(_image, 5, _image._drawSurface, buttonSrc, buttonDest);
 	_button->init();
 
 	_state = kBegin;

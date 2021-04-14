@@ -66,9 +66,6 @@ public:
 
 	ItemDescription getItemDescription(uint id) const { return _itemDescriptions[id]; }
 
-protected:
-	virtual uint16 getZOrder() const override { return 6; }
-
 	void onScrollbarMove();
 
 private:
@@ -78,7 +75,7 @@ private:
 	class Shades : public RenderObject {
 	public:
 		Shades(RenderObject &redrawFrom, InventoryBox *parent) :
-			RenderObject(redrawFrom),
+			RenderObject(redrawFrom, 9),
 			_parent(parent),
 			_soundTriggered(false),
 			_areOpen(false),
@@ -89,9 +86,6 @@ private:
 		virtual void updateGraphics() override;
 
 		void setOpen(bool open) { _areOpen = open; }
-
-	protected:
-		virtual uint16 getZOrder() const override { return 9; }
 
 		void setAnimationFrame(uint frame);
 

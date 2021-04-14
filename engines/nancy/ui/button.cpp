@@ -34,11 +34,9 @@
 namespace Nancy {
 namespace UI {
 
-Button::Button(RenderObject &redrawFrom, Graphics::ManagedSurface &surface, const Common::Rect &srcBounds, const Common::Rect &destBounds) :
-		RenderObject(redrawFrom),
+Button::Button(RenderObject &redrawFrom, uint16 zOrder, Graphics::ManagedSurface &surface, const Common::Rect &srcBounds, const Common::Rect &destBounds) :
+		RenderObject(redrawFrom, zOrder, surface, srcBounds, destBounds),
 		_isClicked(false) {
-	_drawSurface.create(surface, srcBounds);
-	_screenPosition = destBounds;
 	setVisible(false);
 	setTransparent(true);
 }

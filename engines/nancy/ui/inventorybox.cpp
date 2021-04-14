@@ -38,7 +38,7 @@ namespace Nancy {
 namespace UI {
 
 InventoryBox::InventoryBox(RenderObject &redrawFrom) :
-		RenderObject(redrawFrom),
+		RenderObject(redrawFrom, 6),
 		_scrollbar(nullptr),
 		_shades(*this, this),
 		_scrollbarPos(0),
@@ -106,7 +106,7 @@ void InventoryBox::init() {
 
 	RenderObject::init();
 
-	_scrollbar = new Scrollbar(NancySceneState.getFrame(), scrollbarSrcBounds, scrollbarDefaultPos, scrollbarMaxScroll - scrollbarDefaultPos.y);
+	_scrollbar = new Scrollbar(NancySceneState.getFrame(), 9, scrollbarSrcBounds, scrollbarDefaultPos, scrollbarMaxScroll - scrollbarDefaultPos.y);
 	_scrollbar->init();
 	_shades.init();
 }

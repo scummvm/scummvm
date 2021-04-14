@@ -33,15 +33,12 @@ namespace UI {
 
 class Button : public RenderObject {
 public:
-	Button(RenderObject &redrawFrom, Graphics::ManagedSurface &surface, const Common::Rect &srcBounds, const Common::Rect &destBounds);
+	Button(RenderObject &redrawFrom, uint16 zOrder, Graphics::ManagedSurface &surface, const Common::Rect &srcBounds, const Common::Rect &destBounds);
 	virtual ~Button() = default;
 
 	void handleInput(NancyInput &input);
 
 	bool _isClicked;
-
-protected:
-	virtual uint16 getZOrder() const override { return 5; }
 };
 
 } // End of namespace UI

@@ -38,7 +38,7 @@ class PlaySecondaryVideo : public ActionRecord, public RenderObject {
 public:
 	enum HoverState { kNoHover, kHover, kEndHover };
 
-	PlaySecondaryVideo(uint chan, RenderObject &redrawFrom) : RenderObject(redrawFrom), channel(chan) {}
+	PlaySecondaryVideo(uint chan, RenderObject &redrawFrom) : RenderObject(redrawFrom, 8), channel(chan) {}
 	virtual ~PlaySecondaryVideo() { _decoder.close(); }
 
 	virtual void init() override;
@@ -63,8 +63,6 @@ public:
 
 protected:
 	virtual Common::String getRecordTypeName() const override { return Common::String::format("PlaySecondaryVideoChan%i", channel); }
-
-	virtual uint16 getZOrder() const override { return 8; }
 	virtual bool isViewportRelative() const override { return true; }
 
 	HoverState _hoverState = kNoHover;

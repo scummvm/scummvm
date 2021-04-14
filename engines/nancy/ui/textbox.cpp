@@ -44,7 +44,7 @@ const char Textbox::_tabToken[] = "<t>";
 const char Textbox::_telephoneEndToken[] = "<e>";
 
 Textbox::Textbox(RenderObject &redrawFrom) :
-		RenderObject(redrawFrom),
+		RenderObject(redrawFrom, 6),
 		_firstLineOffset(0),
 		_lineHeight(0),
 		_borderWidth(0),
@@ -91,7 +91,7 @@ void Textbox::init() {
 
 	RenderObject::init();
 
-	_scrollbar = new Scrollbar(NancySceneState.getFrame(), scrollbarSrcBounds, scrollbarDefaultPos, scrollbarMaxScroll - scrollbarDefaultPos.y);
+	_scrollbar = new Scrollbar(NancySceneState.getFrame(), 9, scrollbarSrcBounds, scrollbarDefaultPos, scrollbarMaxScroll - scrollbarDefaultPos.y);
 	_scrollbar->init();
 }
 
