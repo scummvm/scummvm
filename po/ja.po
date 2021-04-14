@@ -21,7 +21,7 @@ msgstr ""
 "X-Language-name: Japanese\n"
 
 #: gui/about.cpp:102
-#, c-format, fuzzy
+#, fuzzy, c-format
 msgid "(built on %s)"
 msgstr "(ビルドの日時：%s)"
 
@@ -126,7 +126,9 @@ msgstr "非表示"
 msgid ""
 "It looks like your connection is limited. Do you really want to download "
 "files with it?"
-msgstr "インターネットの接続に制限があるようです。ダウンロードを続けてもよろしいですか？"
+msgstr ""
+"インターネットの接続に制限があるようです。ダウンロードを続けてもよろしいです"
+"か？"
 
 #: gui/downloaddialog.cpp:119 gui/downloaddialog.cpp:153
 #: gui/filebrowser-dialog.cpp:133 gui/fluidsynth-dialog.cpp:218
@@ -186,7 +188,7 @@ msgid "OK"
 msgstr "OK"
 
 #: gui/downloaddialog.cpp:152
-#, c-format, fuzzy
+#, fuzzy, c-format
 msgid ""
 "The \"%s\" already exists in the specified directory.\n"
 "Do you really want to download files into that directory?"
@@ -195,12 +197,12 @@ msgstr ""
 "ダウンロード続けてもよろしいですか？"
 
 #: gui/downloaddialog.cpp:215
-#, c-format, fuzzy
+#, fuzzy, c-format
 msgid "Downloaded %s %S / %s %S"
 msgstr "%s %S / %s %Sダウンロード済み"
 
 #: gui/downloaddialog.cpp:222
-#, c-format, fuzzy
+#, fuzzy, c-format
 msgid "Download speed: %s %S"
 msgstr "ダウンロード速度：%s %S"
 
