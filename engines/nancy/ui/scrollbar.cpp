@@ -21,6 +21,7 @@
  */
 
 #include "engines/nancy/nancy.h"
+#include "engines/nancy/graphics.h"
 #include "engines/nancy/input.h"
 #include "engines/nancy/cursor.h"
 
@@ -28,6 +29,21 @@
 
 namespace Nancy {
 namespace UI {
+
+Scrollbar::Scrollbar(RenderObject &redrawFrom, const Common::Rect &srcBounds, const Common::Point &topPosition, uint16 scrollDistance, bool isVertical) :
+		RenderObject(redrawFrom),
+		_isVertical(isVertical),
+		_isClicked(false),
+		_currentPosition(0),
+		_maxDist(scrollDistance) {
+	_drawSurface.create(g_nancy->_graphicsManager->_object0, srcBounds);
+	
+	_startPosition = topPosition;
+	_startPosition.x -= srcBounds.width() / 2;
+
+	_screenPosition = srcBounds;
+	_screenPosition.moveTo(_startPosition);
+}
 
 void Scrollbar::init() {
 	setTransparent(true);
@@ -54,10 +70,18 @@ void Scrollbar::handleInput(NancyInput &input) {
 			Common::Point newMousePos = input.mousePos - Common::Point(_screenPosition.left, _screenPosition.top);
 
 			if (newMousePos != _mousePosOnClick) {
-				uint16 minY = _startPosition.y;
-				uint16 maxY = minY + _maxDist;
-				uint16 newTop = CLIP<uint16>((_screenPosition.top + newMousePos.y - _mousePosOnClick.y), minY, maxY);
-				moveTo(Common::Point(_screenPosition.left, newTop));
+
+				if (_isVertical) {
+					uint16 minY = _startPosition.y;
+					uint16 maxY = minY + _maxDist;
+					uint16 newTop = CLIP<uint16>((_screenPosition.top + newMousePos.y - _mousePosOnClick.y), minY, maxY);
+					moveTo(Common::Point(_screenPosition.left, newTop));
+				} else {
+					uint16 minX = _startPosition.x;
+					uint16 maxX = minX + _maxDist;
+					uint16 newLeft = CLIP<uint16>((_screenPosition.left + newMousePos.x - _mousePosOnClick.x), minX, maxX);
+					moveTo(Common::Point(newLeft, _screenPosition.top));
+				}
 
 				calculatePosition();
 			}
@@ -70,9 +94,9 @@ void Scrollbar::handleInput(NancyInput &input) {
 }
 
 void Scrollbar::calculatePosition() {
-	uint16 scrollY = _screenPosition.top - _startPosition.y;
+	uint16 scroll = _isVertical ? _screenPosition.top - _startPosition.y : _screenPosition.left - _startPosition.x;
 
-	_currentPosition = scrollY != 0 ? (float)scrollY / (float)_maxDist : 0;
+	_currentPosition = scroll != 0 ? (float)scroll / (float)_maxDist : 0;
 }
 
 void Scrollbar::resetPosition() {

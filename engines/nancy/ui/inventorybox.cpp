@@ -32,8 +32,22 @@
 
 #include "engines/nancy/state/scene.h"
 
+#include "engines/nancy/ui/scrollbar.h"
+
 namespace Nancy {
 namespace UI {
+
+InventoryBox::InventoryBox(RenderObject &redrawFrom) :
+		RenderObject(redrawFrom),
+		_scrollbar(nullptr),
+		_shades(*this, this),
+		_scrollbarPos(0),
+		_shadesFrameTime(0) {}
+
+InventoryBox::~InventoryBox() {
+	_fullInventorySurface.free();
+	_iconsSurface.free(); delete _scrollbar;
+}
 
 void InventoryBox::init() {
 	Common::SeekableReadStream &stream = *g_nancy->getBootChunkStream("INV");
@@ -41,9 +55,12 @@ void InventoryBox::init() {
 
 	_order.clear();
 
-	readRect(stream, _sliderSource);
-	_sliderDefaultDest.x = stream.readUint16LE();
-	_sliderDefaultDest.y = stream.readUint16LE();
+	Common::Rect scrollbarSrcBounds;
+	readRect(stream, scrollbarSrcBounds);
+	Common::Point scrollbarDefaultPos;
+	scrollbarDefaultPos.x = stream.readUint16LE();
+	scrollbarDefaultPos.y = stream.readUint16LE();
+	uint16 scrollbarMaxScroll = stream.readUint16LE();
 
 	stream.seek(0xD6, SEEK_SET);
 
@@ -89,13 +106,14 @@ void InventoryBox::init() {
 
 	RenderObject::init();
 
-	_scrollbar.init();
+	_scrollbar = new Scrollbar(NancySceneState.getFrame(), scrollbarSrcBounds, scrollbarDefaultPos, scrollbarMaxScroll - scrollbarDefaultPos.y);
+	_scrollbar->init();
 	_shades.init();
 }
 
 void InventoryBox::updateGraphics() {
-	if (_scrollbarPos != _scrollbar.getPos()) {
-		_scrollbarPos = _scrollbar.getPos();
+	if (_scrollbarPos != _scrollbar->getPos()) {
+		_scrollbarPos = _scrollbar->getPos();
 
 		onScrollbarMove();
 	}
@@ -103,13 +121,13 @@ void InventoryBox::updateGraphics() {
 
 void InventoryBox::registerGraphics() {
 	RenderObject::registerGraphics();
-	_scrollbar.registerGraphics();
+	_scrollbar->registerGraphics();
 	_shades.registerGraphics();
 }
 
 void InventoryBox::handleInput(NancyInput &input) {
 	if (_order.size()) {
-		_scrollbar.handleInput(input);
+		_scrollbar->handleInput(input);
 	}
 
 	for (uint i = 0; i < 4; ++i) {
@@ -189,7 +207,7 @@ void InventoryBox::setHotspots(uint pageNr) {
 }
 
 void InventoryBox::onScrollbarMove() {
-	float scrollPos = _scrollbar.getPos();
+	float scrollPos = _scrollbar->getPos();
 
 	float numPages = (_order.size() - 1) / 4 + 1;
 	float pageFrac = 1 / numPages;
@@ -202,23 +220,6 @@ void InventoryBox::onScrollbarMove() {
 	setHotspots(curPage);
 
 	_needsRedraw = true;
-}
-
-void InventoryBox::InventoryScrollbar::init() {
-	Common::Rect &srcBounds = _parent->_sliderSource;
-	Common::Point &topPosition = _parent->_sliderDefaultDest;
-
-	_drawSurface.create(g_nancy->_graphicsManager->_object0, srcBounds);
-
-	_startPosition = topPosition;
-	_startPosition.x -= srcBounds.width() / 2;
-
-	_screenPosition = srcBounds;
-	_screenPosition.moveTo(_startPosition);
-
-	_maxDist = _parent->getBounds().height() - _drawSurface.h;
-
-	Scrollbar::init();
 }
 
 void InventoryBox::Shades::init() {

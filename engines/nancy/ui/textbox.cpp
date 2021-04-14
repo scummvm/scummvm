@@ -29,6 +29,7 @@
 #include "engines/nancy/state/scene.h"
 
 #include "engines/nancy/ui/textbox.h"
+#include "engines/nancy/ui/scrollbar.h"
 
 namespace Nancy {
 namespace UI {
@@ -42,20 +43,36 @@ const char Textbox::_newLineToken[] = "<n>";
 const char Textbox::_tabToken[] = "<t>";
 const char Textbox::_telephoneEndToken[] = "<e>";
 
+Textbox::Textbox(RenderObject &redrawFrom) :
+		RenderObject(redrawFrom),
+		_firstLineOffset(0),
+		_lineHeight(0),
+		_borderWidth(0),
+		_needsTextRedraw(false),
+		_scrollbar(nullptr),
+		_scrollbarPos(0),
+		_numLines(0) {}
+
+Textbox::~Textbox() {
+	delete _scrollbar;
+}
+
 void Textbox::init() {
 	Common::SeekableReadStream *chunk = g_nancy->getBootChunkStream("TBOX");
 	chunk->seek(0);
-	readRect(*chunk, _scrollbarSourceBounds);
+	Common::Rect scrollbarSrcBounds;
+	readRect(*chunk, scrollbarSrcBounds);
 
 	chunk->seek(0x20);
 	Common::Rect innerBoundingBox;
 	readRect(*chunk, innerBoundingBox);
 	_fullSurface.create(innerBoundingBox.width(), innerBoundingBox.height(), g_nancy->_graphicsManager->getScreenPixelFormat());
 
-	_scrollbarDefaultDest.x = chunk->readUint16LE();
-	_scrollbarDefaultDest.y = chunk->readUint16LE();
+	Common::Point scrollbarDefaultPos;
+	scrollbarDefaultPos.x = chunk->readUint16LE();
+	scrollbarDefaultPos.y = chunk->readUint16LE();
+	uint16 scrollbarMaxScroll = chunk->readUint16LE();
 
-	chunk->seek(0x36);
 	_firstLineOffset = chunk->readUint16LE();
 	_lineHeight = chunk->readUint16LE();
 	// Not sure why but to get exact results we subtract 1
@@ -74,12 +91,13 @@ void Textbox::init() {
 
 	RenderObject::init();
 
-	_scrollbar.init();
+	_scrollbar = new Scrollbar(NancySceneState.getFrame(), scrollbarSrcBounds, scrollbarDefaultPos, scrollbarMaxScroll - scrollbarDefaultPos.y);
+	_scrollbar->init();
 }
 
 void Textbox::registerGraphics() {
 	RenderObject::registerGraphics();
-	_scrollbar.registerGraphics();
+	_scrollbar->registerGraphics();
 }
 
 void Textbox::updateGraphics() {
@@ -87,8 +105,8 @@ void Textbox::updateGraphics() {
 		drawTextbox();
 	}
 
-	if (_scrollbarPos != _scrollbar.getPos()) {
-		_scrollbarPos = _scrollbar.getPos();
+	if (_scrollbarPos != _scrollbar->getPos()) {
+		_scrollbarPos = _scrollbar->getPos();
 
 		onScrollbarMove();
 	}
@@ -97,7 +115,7 @@ void Textbox::updateGraphics() {
 }
 
 void Textbox::handleInput(NancyInput &input) {
-	_scrollbar.handleInput(input);
+	_scrollbar->handleInput(input);
 
 	for (uint i = 0; i < _hotspots.size(); ++i) {
 		Common::Rect hotspot = _hotspots[i];
@@ -231,7 +249,7 @@ void Textbox::clear() {
 	_fullSurface.clear();
 	_textLines.clear();
 	_hotspots.clear();
-	_scrollbar.resetPosition();
+	_scrollbar->resetPosition();
 	_numLines = 0;
 	onScrollbarMove();
 	_needsRedraw = true;
@@ -278,23 +296,6 @@ void Textbox::onScrollbarMove() {
 uint16 Textbox::getInnerHeight() const {
 	uint lineDist = _lineHeight + _lineHeight / 4;
 	return _numLines * lineDist + _firstLineOffset + lineDist / 2;
-}
-
-void Textbox::TextboxScrollbar::init() {
-	Common::Rect &srcBounds = _parent->_scrollbarSourceBounds;
-	Common::Point &topPosition = _parent->_scrollbarDefaultDest;
-
-	_drawSurface.create(g_nancy->_graphicsManager->_object0, srcBounds);
-
-	_startPosition = topPosition;
-	_startPosition.x -= srcBounds.width() / 2;
-
-	_screenPosition = srcBounds;
-	_screenPosition.moveTo(_startPosition);
-
-	_maxDist = _parent->getBounds().height() - _drawSurface.h;
-
-	Scrollbar::init();
 }
 
 } // End of namespace UI

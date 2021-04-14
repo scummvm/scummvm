@@ -23,7 +23,7 @@
 #ifndef NANCY_UI_TEXTBOX_H
 #define NANCY_UI_TEXTBOX_H
 
-#include "engines/nancy/ui/scrollbar.h"
+#include "engines/nancy/renderobject.h"
 
 namespace Nancy {
 
@@ -33,19 +33,12 @@ struct NancyInput;
 
 namespace UI {
 
+class Scrollbar;
+
 class Textbox : public Nancy::RenderObject {
 public:
-	Textbox(RenderObject &redrawFrom) :
-		RenderObject(redrawFrom),
-		_firstLineOffset(0),
-		_lineHeight(0),
-		_borderWidth(0),
-		_needsTextRedraw(false),
-		_scrollbar(redrawFrom, this),
-		_scrollbarPos(0),
-		_numLines(0) {}
-
-	virtual ~Textbox() { _fullSurface.free(); }
+	Textbox(RenderObject &redrawFrom);
+	virtual ~Textbox();
 
 	virtual void init() override;
 	virtual void registerGraphics() override;
@@ -72,26 +65,13 @@ private:
 		Common::Rect hotspot;
 	};
 
-	class TextboxScrollbar : public Scrollbar {
-	public:
-		TextboxScrollbar(RenderObject &redrawFrom, Textbox *parent) :
-			Scrollbar(redrawFrom),
-			_parent(parent) {}
-		~TextboxScrollbar() = default;
-
-		virtual void init() override;
-		Textbox *_parent;
-	};
-
 	Graphics::ManagedSurface _fullSurface;
 
-	TextboxScrollbar _scrollbar;
+	Scrollbar *_scrollbar;
 
 	Common::Array<Common::String> _textLines;
 	Common::Array<Common::Rect> _hotspots;
 
-	Common::Rect _scrollbarSourceBounds;
-	Common::Point _scrollbarDefaultDest;
 	uint16 _firstLineOffset;
 	uint16 _lineHeight;
 	uint16 _borderWidth;

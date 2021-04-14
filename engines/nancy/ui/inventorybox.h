@@ -25,7 +25,7 @@
 
 #include "engines/nancy/time.h"
 
-#include "engines/nancy/ui/scrollbar.h"
+#include "engines/nancy/renderobject.h"
 
 namespace Nancy {
 
@@ -37,6 +37,8 @@ class Scene;
 }
 
 namespace UI {
+
+class Scrollbar;
 
 class InventoryBox : public RenderObject {
 	friend class InventoryScrollbar;
@@ -50,14 +52,8 @@ public:
 		Common::Rect sourceRect; // 0x16
 	};
 
-	InventoryBox(RenderObject &redrawFrom) :
-		RenderObject(redrawFrom),
-		_scrollbar(redrawFrom, this),
-		_shades(*this, this),
-		_scrollbarPos(0),
-		_shadesFrameTime(0) {}
-
-	virtual ~InventoryBox() { _fullInventorySurface.free(); _iconsSurface.free(); }
+	InventoryBox(RenderObject &redrawFrom);
+	virtual ~InventoryBox();
 
 	virtual void init() override;
 	virtual void updateGraphics() override;
@@ -78,19 +74,6 @@ protected:
 private:
 	void onReorder();
 	void setHotspots(uint pageNr);
-
-	class InventoryScrollbar : public Scrollbar {
-	public:
-		InventoryScrollbar(RenderObject &redrawFrom, InventoryBox *parent) :
-			Scrollbar(redrawFrom),
-			_parent(parent) {}
-		virtual ~InventoryScrollbar() = default;
-
-		virtual void init() override;
-
-	protected:
-		InventoryBox *_parent;
-	};
 
 	class Shades : public RenderObject {
 	public:
@@ -128,7 +111,7 @@ private:
 	Graphics::Surface _iconsSurface;
 	Graphics::ManagedSurface _fullInventorySurface;
 
-	InventoryScrollbar _scrollbar;
+	Scrollbar *_scrollbar;
 	Shades _shades;
 
 	float _scrollbarPos;
@@ -137,8 +120,6 @@ private:
 	ItemHotspot _itemHotspots[4];
 
 	// INV contents
-	Common::Rect _sliderSource; // 0x00
-	Common::Point _sliderDefaultDest; // 0x10
 	//...
 	Common::Rect _shadesSrc[14]; // 0xD6
 	// _screenPosition 0x1B6

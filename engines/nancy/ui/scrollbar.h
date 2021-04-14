@@ -33,11 +33,7 @@ namespace UI {
 
 class Scrollbar : public RenderObject {
 public:
-	Scrollbar(RenderObject &redrawFrom) :
-		RenderObject(redrawFrom),
-		_isClicked(false),
-		_currentPosition(0),
-		_maxDist(0) {}
+	Scrollbar(RenderObject &redrawFrom, const Common::Rect &srcBounds, const Common::Point &topPosition, uint16 scrollDistance, bool isVertical = true);
 	virtual ~Scrollbar() = default;
 
 	virtual void init() override;
@@ -54,9 +50,9 @@ protected:
 
 	Common::Point _startPosition;
 	uint _maxDist;
+	bool _isVertical;
 
 	float _currentPosition;
-
 	bool _isClicked;
 	Common::Point _mousePosOnClick;
 };
