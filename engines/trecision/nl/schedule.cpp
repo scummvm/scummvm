@@ -33,30 +33,6 @@ namespace Trecision {
 int maxmesg, maxmesh, maxmesa;
 
 /*-------------------------------------------------------------------------*/
-/*                               GETMESSAGE           					   */
-/*-------------------------------------------------------------------------*/
-bool MessageQueue::getMessage() {
-	if (!_len)
-		return true;
-
-	g_vm->_curMessage = _event[_head++];
-	if (_head == MAXMESSAGE)
-		_head = 0;
-	_len--;
-
-	return false;
-}
-
-/*-------------------------------------------------------------------------*/
-/*                                INITQUEUE           					   */
-/*-------------------------------------------------------------------------*/
-void MessageQueue::initQueue() {
-	_head = 0;
-	_tail = 0;
-	_len  = 0;
-}
-
-/*-------------------------------------------------------------------------*/
 /*                                  EVENT           					   */
 /*-------------------------------------------------------------------------*/
 void doEvent(uint8 cls,  uint8 event,  uint8 priority,
@@ -158,8 +134,6 @@ void ProcessTheMessage() {
 		doSystem();
 		break;
 
-//F		case MC_ANIMATION: doAnimation(); break;
-
 	case MC_INVENTORY:
 		g_vm->doInventory();
 		break;
@@ -186,9 +160,24 @@ void ProcessTheMessage() {
 	}
 }
 
-/*-------------------------------------------------------------------------*/
-/*                               ORDEREVENT           					   */
-/*-------------------------------------------------------------------------*/
+bool MessageQueue::getMessage() {
+	if (!_len)
+		return true;
+
+	g_vm->_curMessage = _event[_head++];
+	if (_head == MAXMESSAGE)
+		_head = 0;
+	_len--;
+
+	return false;
+}
+
+void MessageQueue::initQueue() {
+	_head = 0;
+	_tail = 0;
+	_len = 0;
+}
+
 void MessageQueue::orderEvents() {
 #define PredEvent(i)       (((i)==0)?MAXMESSAGE-1:((i)-1))
 
@@ -201,9 +190,6 @@ void MessageQueue::orderEvents() {
 	}
 }
 
-/*-------------------------------------------------------------------------*/
-/*                               TESTEMPTYQUEUE          				   */
-/*-------------------------------------------------------------------------*/
 bool MessageQueue::testEmptyQueue(uint8 cls) {
 	for (uint8 pos = _head; pos != _tail; pos = (pos + 1) % MAXMESSAGE) {
 		if (_event[pos]->_class != cls)
@@ -213,9 +199,6 @@ bool MessageQueue::testEmptyQueue(uint8 cls) {
 	return true;
 }
 
-/*-------------------------------------------------------------------------*/
-/*                     TESTEMPTYCHARACTERQUEUE4SCRIPT          			   */
-/*-------------------------------------------------------------------------*/
 bool MessageQueue::testEmptyCharacterQueue4Script() {
 	for (uint8 pos = _head; pos != _tail; pos = (pos + 1) % MAXMESSAGE) {
 		if (_event[pos]->_class != MC_CHARACTER)
