@@ -1460,7 +1460,8 @@ bool processSettings(Common::String &command, Common::StringMap &settings, Commo
 		return true;
 #endif
 	} else {
-		warning("Unhandled command \"%s\"", command.c_str());
+		if (!command.empty())
+			warning("processSettings(): Unhandled command line parameter \"%s\"", command.c_str());
 	}
 
 #endif // DISABLE_COMMAND_LINE
