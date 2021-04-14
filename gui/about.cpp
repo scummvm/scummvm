@@ -118,7 +118,7 @@ AboutDialog::AboutDialog()
 	engines += _("Available engines:");
 	addLine(engines);
 
-	const PluginList &plugins = EngineMan.getPlugins();
+	const PluginList &plugins = EngineMan.getPlugins(PLUGIN_TYPE_ENGINE);
 	PluginList::const_iterator iter = plugins.begin();
 	for (; iter != plugins.end(); ++iter) {
 		Common::String str;
@@ -126,8 +126,15 @@ AboutDialog::AboutDialog()
 		str += (*iter)->getName();
 		addLine(str);
 
+		const Plugin *p = EngineMan.findPlugin((*iter)->getName());
+
+		if (!p) {
+			warning("Cannot find plugin for %s", (*iter)->getName());
+			continue;
+		}
+
 		str = "C2";
-		str += (*iter)->get<MetaEngineDetection>().getOriginalCopyright();
+		str += p->get<MetaEngineDetection>().getOriginalCopyright();
 		addLine(str);
 
 		//addLine("");
