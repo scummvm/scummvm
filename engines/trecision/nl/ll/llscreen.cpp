@@ -100,7 +100,7 @@ void openSys() {
 
 	delete g_vm->_actor;
 	g_vm->_actor = new SActor(g_vm);
-	g_vm->_actor->ReadActor("jm.om");
+	g_vm->_actor->readActor("jm.om");
 
 	g_vm->_actor->_light = (SLight *)&VLight;
 	g_vm->_actor->_camera = (SCamera *)&FCamera;
@@ -202,15 +202,15 @@ static const int _vertsCorrList[84] = {
 	379, 380, 381, 382
 };
 
-/*-----------------13/09/95 11.59-------------------
-					ReadActor
+/*-------------------------------------------------
+					readActor
 --------------------------------------------------*/
-void SActor::ReadActor(const char *filename) {
+void SActor::readActor(const char *filename) {
 	_vm->_graphicsMgr->updatePixelFormat((uint16 *)_textureMat, 256 * 91);
 
 	Common::SeekableReadStream *ff = g_vm->_dataFile.createReadStreamForMember(filename);
 	if (ff == nullptr)
-		error("ReadActor - Error opening file %s", filename);
+		error("readActor - Error opening file %s", filename);
 
 	int32 ActionNum = ff->readSint32LE();
 	_vertexNum = ff->readSint32LE();
@@ -230,7 +230,7 @@ void SActor::ReadActor(const char *filename) {
 
 	ff = g_vm->_dataFile.createReadStreamForMember("mat.tex");
 	if (ff == nullptr)
-		error("ReadActor - Error opening file mat.tex");
+		error("readActor - Error opening file mat.tex");
 
 	for (int i = 0; i < 256; ++i) {
 		for (int j = 0; j < 91; ++j)

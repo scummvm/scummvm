@@ -108,11 +108,7 @@ struct SVVertex {
 	int32 _angle;
 } _vVertex[MAXVERTEX];
 
-SVertex  *_curVertex, _shVertex[MAXVERTEX];
-SFace    *_curFace;
-SLight   *_curLight;
-SCamera  *_curCamera;
-STexture *_curTexture;
+SVertex  _shVertex[MAXVERTEX];
 
 uint32 _materials[21][181];
 
@@ -569,14 +565,13 @@ void drawCharacter(uint8 flag) {
 		}
 	}
 
-	_curCamera = g_vm->_actor->_camera;
-	_curLight = g_vm->_actor->_light;
-	_curTexture = g_vm->_actor->_texture;
-	_curVertex = g_vm->_actor->_vertex;
-	_curFace = g_vm->_actor->_face;
+	SCamera  *_curCamera = g_vm->_actor->_camera;
+	SLight   *_curLight = g_vm->_actor->_light;
+	STexture *_curTexture = g_vm->_actor->_texture;
+	SVertex  *_curVertex = g_vm->_actor->_vertex;
+	SFace    *_curFace = g_vm->_actor->_face;
 
-	int CurVertexNum = g_vm->_actor->_vertexNum;
-	int FaceNum = g_vm->_actor->_faceNum;
+	int vertexNum = g_vm->_actor->_vertexNum;
 
 	if (flag & CALCPOINTS) {
 		_shadowLightNum = 0;
@@ -612,7 +607,7 @@ void drawCharacter(uint8 flag) {
 		float sint = sin(t);
 
 		// Put all vertices in dark color
-		for (int a = 0; a < CurVertexNum; a++)
+		for (int a = 0; a < vertexNum; a++)
 			_vVertex[a]._angle = 180;
 
 		float dist;
@@ -670,7 +665,7 @@ void drawCharacter(uint8 flag) {
 					tz = CLIP(tz, 0.f, 180.f);
 
 					// tx falloff
-					// ty hospot
+					// ty hotspot
 					// tz current angle
 
 					_shadowIntens[_shadowLightNum] = SHADOWAMBIENT;
@@ -694,9 +689,9 @@ void drawCharacter(uint8 flag) {
 					pa1 = _curVertex[_shadowVerts[a]]._y;
 					pa2 = _curVertex[_shadowVerts[a]]._z;
 
-					_shVertex[CurVertexNum + _totalShadowVerts + a]._x = pa0 - (pa1 * l0);
-					_shVertex[CurVertexNum + _totalShadowVerts + a]._z = pa2 - (pa1 * l2);
-					_shVertex[CurVertexNum + _totalShadowVerts + a]._y = 0;
+					_shVertex[vertexNum + _totalShadowVerts + a]._x = pa0 - (pa1 * l0);
+					_shVertex[vertexNum + _totalShadowVerts + a]._z = pa2 - (pa1 * l2);
+					_shVertex[vertexNum + _totalShadowVerts + a]._y = 0;
 				}
 
 				// per default all shadows are equally faint
@@ -709,12 +704,12 @@ void drawCharacter(uint8 flag) {
 			if (lint) { // if still on
 				// adapts the light vector o its intensity
 				t = (float)(lint) / 127.0;
-				l0 = (l0 * t);
-				l1 = (l1 * t);
-				l2 = (l2 * t);
+				l0 = l0 * t;
+				l1 = l1 * t;
+				l2 = l2 * t;
 
 				_curVertex = g_vm->_actor->_vertex;
-				for (int a = 0; a < CurVertexNum; a++) {
+				for (int a = 0; a < vertexNum; a++) {
 					pa0 = _curVertex->_nx;
 					pa1 = _curVertex->_ny;
 					pa2 = _curVertex->_nz;
@@ -731,7 +726,7 @@ void drawCharacter(uint8 flag) {
 		}
 
 		// rearranged light values so they can be viewed
-		for (int a = 0; a < CurVertexNum; a++)
+		for (int a = 0; a < vertexNum; a++)
 			_vVertex[a]._angle = CLIP(_vVertex[a]._angle, 0, 180);
 
 		_curVertex = g_vm->_actor->_vertex;
@@ -743,8 +738,8 @@ void drawCharacter(uint8 flag) {
 
 		dist = tx * e30 + ty * e31 + tz * e32;
 
-		for (int a = 0; a < CurVertexNum + _totalShadowVerts; a++) {
-			if (a < CurVertexNum) {
+		for (int a = 0; a < vertexNum + _totalShadowVerts; a++) {
+			if (a < vertexNum) {
 				l0 = _curVertex->_x;
 				l1 = _curVertex->_z;
 				pa1 = ty - _curVertex->_y;
@@ -802,9 +797,9 @@ void drawCharacter(uint8 flag) {
 
 		for (int b = 0; b < _shadowLightNum; b++) {
 			for (int a = 0; a < _shadowFacesNum; a++) {
-				p0 = _shadowFaces[a][0] + CurVertexNum + b * _shadowVertsNum;
-				p1 = _shadowFaces[a][1] + CurVertexNum + b * _shadowVertsNum;
-				p2 = _shadowFaces[a][2] + CurVertexNum + b * _shadowVertsNum;
+				p0 = _shadowFaces[a][0] + vertexNum + b * _shadowVertsNum;
+				p1 = _shadowFaces[a][1] + vertexNum + b * _shadowVertsNum;
+				p2 = _shadowFaces[a][2] + vertexNum + b * _shadowVertsNum;
 
 				px0 = _vVertex[p0]._x;
 				py0 = _vVertex[p0]._y;
@@ -817,7 +812,7 @@ void drawCharacter(uint8 flag) {
 			}
 		}
 
-		for (int a = 0; a < FaceNum; a++) {
+		for (int a = 0; a < g_vm->_actor->_faceNum; a++) {
 			p0 = _curFace->_a;
 			p1 = _curFace->_b;
 			p2 = _curFace->_c;

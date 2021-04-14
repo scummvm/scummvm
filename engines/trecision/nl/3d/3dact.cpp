@@ -145,9 +145,7 @@ void actorStop() {
 				Set Light Position
 --------------------------------------------------*/
 void setPosition(int num) {
-	extern SLight *_curLight;
-
-	_curLight = g_vm->_actor->_light;
+	SLight *_curLight = g_vm->_actor->_light;
 
 	for (int a = 0; a < g_vm->_actor->_lightNum; a++) {
 		// If it's off
@@ -206,10 +204,9 @@ void setPosition(int num) {
 				Go To Light Position
 --------------------------------------------------*/
 void goToPosition(int num) {
-	extern SLight *_curLight;
 	extern float _lookX, _lookZ;
 
-	_curLight = g_vm->_actor->_light;
+	SLight *_curLight = g_vm->_actor->_light;
 
 	for (int a = 0; a < g_vm->_actor->_lightNum; a++) {
 		// If it's off and if it's a position
