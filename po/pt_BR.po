@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-04-13 21:18+0000\n"
-"PO-Revision-Date: 2021-04-12 21:31+0000\n"
+"PO-Revision-Date: 2021-04-14 20:24+0000\n"
 "Last-Translator: Marcel Souza Lemes <marcosoutsider@gmail.com>\n"
 "Language-Team: Portuguese (Brazil) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/pt_BR/>\n"
@@ -5477,16 +5477,16 @@ msgstr ""
 
 #. I18N: Second Chance is the name of the original engine's autosave system
 #: engines/nancy/dialogs.cpp:46
-#, fuzzy
-#| msgid "Enable cross fade"
 msgid "Enable Second Chance"
-msgstr "Habilitar transição suave"
+msgstr "Habilitar Segunda Chance"
 
 #: engines/nancy/dialogs.cpp:46
 msgid ""
 "Enable the Second Chance feature, which automatically saves at specific "
 "scenes. Enabling this disables timed autosaves."
 msgstr ""
+"Habilita o recurso Segunda Chance, que salva automaticamente em cenas "
+"específicas. Habilitar isso desativa os salvamentos automáticos temporizados."
 
 #: engines/nancy/dialogs.cpp:48
 msgid "Speech Options"
