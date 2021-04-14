@@ -25,6 +25,7 @@
 #include "ags/lib/aastr-0.1.1/aastr.h"
 #include "common/savefile.h"
 #include "common/system.h"
+#include "common/config-manager.h"
 
 namespace AGS3 {
 
@@ -129,7 +130,14 @@ bool Bitmap::SaveToFile(Common::WriteStream &out, const void *palette) {
 }
 
 bool Bitmap::SaveToFile(const char *filename, const void *palette) {
-	Common::OutSaveFile *out = g_system->getSavefileManager()->openForSaving(filename, false);
+	// Only keeps the file name and add the game target as prefix.
+	Common::String name = filename;
+	size_t lastSlash = name.findLastOf('/');
+	if (lastSlash != Common::String::npos)
+		name = name.substr(lastSlash + 1);
+	name = ConfMan.getActiveDomainName() + "-" + name;
+
+	Common::OutSaveFile *out = g_system->getSavefileManager()->openForSaving(name, false);
 	assert(out);
 	bool result = SaveToFile(*out, palette);
 	out->finalize();
