@@ -120,9 +120,9 @@ void Director::update() {
 			_sprites[i]->update();
 	}
 
-	_wm->draw();
-
 	draw();
+
+	_wm->draw();
 }
 
 bool Director::processEvent(Common::Event &event) {
