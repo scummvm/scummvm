@@ -790,39 +790,37 @@ void drawCharacter(uint8 flag) {
 	}
 
 	if (flag & DRAWFACES) {
-		int px0, px1, px2, py0, py1, py2, p0, p1, p2;
-
 		if (g_vm->_actor->_curAction == hLAST)
 			setClipping(0, g_vm->_actor->_lim[2], MAXX, g_vm->_actor->_lim[3]);
 
 		for (int b = 0; b < _shadowLightNum; b++) {
 			for (int a = 0; a < _shadowFacesNum; a++) {
-				p0 = _shadowFaces[a][0] + vertexNum + b * _shadowVertsNum;
-				p1 = _shadowFaces[a][1] + vertexNum + b * _shadowVertsNum;
-				p2 = _shadowFaces[a][2] + vertexNum + b * _shadowVertsNum;
+				int p0 = _shadowFaces[a][0] + vertexNum + b * _shadowVertsNum;
+				int p1 = _shadowFaces[a][1] + vertexNum + b * _shadowVertsNum;
+				int p2 = _shadowFaces[a][2] + vertexNum + b * _shadowVertsNum;
 
-				px0 = _vVertex[p0]._x;
-				py0 = _vVertex[p0]._y;
-				px1 = _vVertex[p1]._x;
-				py1 = _vVertex[p1]._y;
-				px2 = _vVertex[p2]._x;
-				py2 = _vVertex[p2]._y;
+				int px0 = _vVertex[p0]._x;
+				int py0 = _vVertex[p0]._y;
+				int px1 = _vVertex[p1]._x;
+				int py1 = _vVertex[p1]._y;
+				int px2 = _vVertex[p2]._x;
+				int py2 = _vVertex[p2]._y;
 
 				shadowTriangle(px0, py0, px1, py1, px2, py2, 127 - _shadowIntens[b], (int16)(0x7FF0 + b));
 			}
 		}
 
 		for (int a = 0; a < g_vm->_actor->_faceNum; a++) {
-			p0 = _curFace->_a;
-			p1 = _curFace->_b;
-			p2 = _curFace->_c;
+			int p0 = _curFace->_a;
+			int p1 = _curFace->_b;
+			int p2 = _curFace->_c;
 
-			px0 = _vVertex[p0]._x;
-			py0 = _vVertex[p0]._y;
-			px1 = _vVertex[p1]._x;
-			py1 = _vVertex[p1]._y;
-			px2 = _vVertex[p2]._x;
-			py2 = _vVertex[p2]._y;
+			int px0 = _vVertex[p0]._x;
+			int py0 = _vVertex[p0]._y;
+			int px1 = _vVertex[p1]._x;
+			int py1 = _vVertex[p1]._y;
+			int px2 = _vVertex[p2]._x;
+			int py2 = _vVertex[p2]._y;
 
 			if (clockWise(px0, py0, px1, py1, px2, py2) > 0) {
 				int b = _curFace->_mat;
@@ -837,21 +835,21 @@ void drawCharacter(uint8 flag) {
 			_curFace++;
 		}
 
-		p0 = 0;
+		int p0 = 0;
 		for (int b = _zBufStartY; b < g_vm->_actor->_lim[3]; b++) {
-			px0 = b * _screenMaxX + _zBufStartX;
+			int px0 = b * _screenMaxX + _zBufStartX;
 			for (int a = 1; a < _zBufWid; a++) {
 				// CHECKME: These are always 0
 				//bool _shadowSplit;
-				py1 = 0;	//(_zBuf[p0]   >= 0x7FF0) * 0x8000 * _shadowSplit;
-				py2 = 0;	//(_zBuf[p0 + 1] >= 0x7FF0) * 0x8000 * _shadowSplit;
+				int py1 = 0;	//(_zBuf[p0]   >= 0x7FF0) * 0x8000 * _shadowSplit;
+				int py2 = 0;	//(_zBuf[p0 + 1] >= 0x7FF0) * 0x8000 * _shadowSplit;
 
-				p1 = _zBuf[p0] < 0x7FFF;
-				p2 = _zBuf[p0 + 1] < 0x7FFF;
+				int p1 = _zBuf[p0] < 0x7FFF;
+				int p2 = _zBuf[p0 + 1] < 0x7FFF;
 
 				if (p1 != p2) {
-					px1 = _curPage[px0 + a - 1];
-					px2 = _curPage[px0 + a];
+					int px1 = _curPage[px0 + a - 1];
+					int px2 = _curPage[px0 + a];
 
 					_curPage[px0 + a - 1] = g_vm->_graphicsMgr->aliasing(px1, px2, 6); // 75% 25%
 					_curPage[px0 + a] = g_vm->_graphicsMgr->aliasing(px1, px2, 2);     // 25% 75%
