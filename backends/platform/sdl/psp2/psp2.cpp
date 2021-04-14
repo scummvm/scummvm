@@ -151,7 +151,6 @@ bool OSystem_PSP2::hasFeature(Feature f) {
 		return false;
 	return (f == kFeatureKbdMouseSpeed ||
 		f == kFeatureJoystickDeadzone ||
-		f == kFeatureShader ||
 		f == kFeatureTouchpadMode ||
 		OSystem_SDL::hasFeature(f));
 }
