@@ -1794,7 +1794,6 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("tales", "tales.exe", "7b5842e8954354ef6e21dc1837073182", 150969855), // Steam
 	GAME_ENTRY("technobabylon", "technobabylon.exe", "e523535e730f313e1ed9b19b1a9dd228", 447900356), // Steam
 	GAME_ENTRY("technobabylon", "technobabylon.exe", "e523535e730f313e1ed9b19b1a9dd228", 447894701),  // Humble Bundle
-	GAME_ENTRY("theadventuresoffatman", "fatman.exe", "853cef07077feadd0f2ccd55c5bd747b", 56375090),
 	GAME_ENTRY("theadventuresoffatman", "fatman.exe", "6cddccb3744ec5c6af7c398fb7b3b11c", 44449205), // Steam
 	GAME_ENTRY("theantidote", "The Antidote.exe", "4017d881af6467d6aad9183e6e38a261", 325819947),
 	GAME_ENTRY("thebeardinthemirror", "the beard in the mirror.exe", "4d4b6d6e560cf32f440c39f8d3896da5", 40637501), // Steam
@@ -1886,6 +1885,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	DEMO_ENTRY("tales", "tales.exe", "4f6c7ec127e8b0ce077abb357903612f", 112930689), // Steam
 	DEMO_ENTRY("technobabylon", "technobabylon.exe", "e523535e730f313e1ed9b19b1a9dd228", 595787927),
 	DEMO_ENTRY("technobabylon", "technobabylon.exe", "e523535e730f313e1ed9b19b1a9dd228", 59578792),
+	DEMO_ENTRY("theadventuresoffatman", "fatman.exe", "853cef07077feadd0f2ccd55c5bd747b", 56375090),
 	DEMO_ENTRY("theloneloser", "demo (english).exe", "0500aacb6c176d47ac0f8158f055db83", 6082095),
 	DEMO_ENTRY("thesecretsofjesus", "the secrets of jesus.exe", "2e17ab52586ad34b5e597c20a59f60a0", 841450335), // Steam
 	DEMO_ENTRY("thesecretsofjesus", "The secrets of Jesus.ags", "ed790525ab59cfc727a35582731de9c1", 838622031), // itch.io Linux
