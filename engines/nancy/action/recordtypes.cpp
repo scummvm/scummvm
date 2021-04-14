@@ -35,6 +35,11 @@
 namespace Nancy {
 namespace Action {
 
+void Unimplemented::execute() {
+	debugC(Nancy::kDebugActionRecord, "Unimplemented Action Record type %s", getRecordTypeName().c_str());
+	_isDone = true;
+}
+
 void SceneChange::readData(Common::SeekableReadStream &stream) {
 	_sceneChange.readData(stream);
 }
@@ -107,11 +112,51 @@ void HotMultiframeMultisceneChange::readData(Common::SeekableReadStream &stream)
 	stream.skip(size);
 }
 
+void PaletteThisScene::readData(Common::SeekableReadStream &stream) {
+	stream.skip(6);
+}
+
+void PaletteNextScene::readData(Common::SeekableReadStream &stream) {
+	stream.skip(6);
+}
+
 void StartFrameNextScene::readData(Common::SeekableReadStream &stream) {
 	stream.skip(4);
 }
 
 void StartStopPlayerScrolling::readData(Common::SeekableReadStream &stream) {
+	stream.skip(1);
+}
+
+void LightningOn::readData(Common::SeekableReadStream &stream) {
+	stream.skip(0xA);
+}
+
+void LightningOff::readData(Common::SeekableReadStream &stream) {
+	stream.skip(1);
+}
+
+void AmbientLightUp::readData(Common::SeekableReadStream &stream) {
+	stream.skip(0x12);
+}
+
+void AmbientLightDown::readData(Common::SeekableReadStream &stream) {
+	stream.skip(0x12);
+}
+
+void AmbientLightToTod::readData(Common::SeekableReadStream &stream) {
+	stream.skip(0x1C);
+}
+
+void AmbientLightToTodOff::readData(Common::SeekableReadStream &stream) {
+	stream.skip(1);
+}
+
+void FlickerOn::readData(Common::SeekableReadStream &stream) {
+	stream.skip(0xA);
+}
+
+void FlickerOff::readData(Common::SeekableReadStream &stream) {
 	stream.skip(1);
 }
 
@@ -177,6 +222,14 @@ void MapCallHotMultiframe::execute() {
 
 void MapLocationAccess::readData(Common::SeekableReadStream &stream) {
 	stream.skip(4);
+}
+
+void MapLightning::readData(Common::SeekableReadStream &stream) {
+	stream.skip(0xA);
+}
+
+void MapLightningOff::readData(Common::SeekableReadStream &stream) {
+	stream.skip(1);
 }
 
 void MapSound::readData(Common::SeekableReadStream &stream) {

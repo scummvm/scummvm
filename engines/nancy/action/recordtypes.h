@@ -34,6 +34,10 @@ class NancyEngine;
 
 namespace Action {
 
+class Unimplemented : public ActionRecord {
+	virtual void execute() override;
+};
+
 class SceneChange : public ActionRecord {
 public:
 	virtual void readData(Common::SeekableReadStream &stream) override;
@@ -74,7 +78,7 @@ protected:
 	virtual Common::String getRecordTypeName() const override { return "Hot1FrExitSceneChange"; }
 };
 
-class HotMultiframeMultisceneChange : public ActionRecord {
+class HotMultiframeMultisceneChange : public Unimplemented {
 public:
 	virtual void readData(Common::SeekableReadStream &stream) override;
 
@@ -82,7 +86,23 @@ protected:
 	virtual Common::String getRecordTypeName() const override { return "HotMultiframeMultisceneChange"; }
 };
 
-class StartFrameNextScene : public ActionRecord {
+class PaletteThisScene : public Unimplemented {
+public:
+	virtual void readData(Common::SeekableReadStream &stream) override;
+
+protected:
+	virtual Common::String getRecordTypeName() const override { return "PaletteThisScene"; }
+};
+
+class PaletteNextScene : public Unimplemented {
+public:
+	virtual void readData(Common::SeekableReadStream &stream) override;
+
+protected:
+	virtual Common::String getRecordTypeName() const override { return "PaletteNextScene"; }
+};
+
+class StartFrameNextScene : public Unimplemented {
 public:
 	virtual void readData(Common::SeekableReadStream &stream) override;
 
@@ -90,7 +110,7 @@ protected:
 	virtual Common::String getRecordTypeName() const override { return "StartFrameNextScene"; }
 };
 
-class StartStopPlayerScrolling : public ActionRecord {
+class StartStopPlayerScrolling : public Unimplemented {
 public:
 	virtual void readData(Common::SeekableReadStream &stream) override;
 	// TODO add a Start and Stop subclass
@@ -99,6 +119,70 @@ public:
 
 protected:
 	virtual Common::String getRecordTypeName() const override { return "StartStopPlayerScrolling"; }
+};
+
+class LightningOn : public Unimplemented {
+public:
+	virtual void readData(Common::SeekableReadStream &stream) override;
+
+protected:
+	virtual Common::String getRecordTypeName() const override { return "LightningOn"; }
+};
+
+class LightningOff : public Unimplemented {
+public:
+	virtual void readData(Common::SeekableReadStream &stream) override;
+
+protected:
+	virtual Common::String getRecordTypeName() const override { return "LightningOff"; }
+};
+
+class AmbientLightUp : public Unimplemented {
+public:
+	virtual void readData(Common::SeekableReadStream &stream) override;
+
+protected:
+	virtual Common::String getRecordTypeName() const override { return "AmbientLightUp"; }
+};
+
+class AmbientLightDown : public Unimplemented {
+public:
+	virtual void readData(Common::SeekableReadStream &stream) override;
+
+protected:
+	virtual Common::String getRecordTypeName() const override { return "AmbientLightDown"; }
+};
+
+class AmbientLightToTod : public Unimplemented {
+public:
+	virtual void readData(Common::SeekableReadStream &stream) override;
+
+protected:
+	virtual Common::String getRecordTypeName() const override { return "AmbientLightToTod"; }
+};
+
+class AmbientLightToTodOff : public Unimplemented {
+public:
+	virtual void readData(Common::SeekableReadStream &stream) override;
+
+protected:
+	virtual Common::String getRecordTypeName() const override { return "AmbientLightToTodOff"; }
+};
+
+class FlickerOn : public Unimplemented {
+public:
+	virtual void readData(Common::SeekableReadStream &stream) override;
+
+protected:
+	virtual Common::String getRecordTypeName() const override { return "FlickerOn"; }
+};
+
+class FlickerOff : public Unimplemented {
+public:
+	virtual void readData(Common::SeekableReadStream &stream) override;
+
+protected:
+	virtual Common::String getRecordTypeName() const override { return "FlickerOff"; }
 };
 
 class MapCall : public ActionRecord {
@@ -134,7 +218,7 @@ protected:
 	virtual Common::String getRecordTypeName() const override { return "MapCallHotMultiframe"; }
 };
 
-class MapLocationAccess : public ActionRecord {
+class MapLocationAccess : public Unimplemented {
 public:
 	virtual void readData(Common::SeekableReadStream &stream) override;
 
@@ -142,7 +226,23 @@ protected:
 	virtual Common::String getRecordTypeName() const override { return "MapLocationAccess"; }
 };
 
-class MapSound : public ActionRecord {
+class MapLightning : public Unimplemented {
+public:
+	virtual void readData(Common::SeekableReadStream &stream) override;
+
+protected:
+	virtual Common::String getRecordTypeName() const override { return "MapLightning"; }
+};
+
+class MapLightningOff : public Unimplemented {
+public:
+	virtual void readData(Common::SeekableReadStream &stream) override;
+
+protected:
+	virtual Common::String getRecordTypeName() const override { return "MapLightningOff"; }
+};
+
+class MapSound : public Unimplemented {
 public:
 	virtual void readData(Common::SeekableReadStream &stream) override;
 
@@ -150,7 +250,7 @@ protected:
 	virtual Common::String getRecordTypeName() const override { return "MapSound"; }
 };
 
-class MapAviOverride : public ActionRecord {
+class MapAviOverride : public Unimplemented {
 public:
 	virtual void readData(Common::SeekableReadStream &stream) override;
 
@@ -158,7 +258,7 @@ protected:
 	virtual Common::String getRecordTypeName() const override { return "MapAviOverride"; }
 };
 
-class MapAviOverrideOff : public ActionRecord {
+class MapAviOverrideOff : public Unimplemented {
 public:
 	virtual void readData(Common::SeekableReadStream &stream) override;
 
@@ -166,7 +266,7 @@ protected:
 	virtual Common::String getRecordTypeName() const override { return "MapAviOverrideOff"; }
 };
 
-class TextBoxWrite : public ActionRecord {
+class TextBoxWrite : public Unimplemented {
 public:
 	virtual void readData(Common::SeekableReadStream &stream) override;
 
@@ -174,7 +274,7 @@ protected:
 	virtual Common::String getRecordTypeName() const override { return "TextBoxWrite"; }
 };
 
-class TextBoxClear : public ActionRecord {
+class TextBoxClear : public Unimplemented {
 public:
 	virtual void readData(Common::SeekableReadStream &stream) override;
 
@@ -182,7 +282,7 @@ protected:
 	virtual Common::String getRecordTypeName() const override { return "TextBoxClear"; }
 };
 
-class BumpPlayerClock : public ActionRecord {
+class BumpPlayerClock : public Unimplemented {
 public:
 	virtual void readData(Common::SeekableReadStream &stream) override;
 
@@ -199,7 +299,7 @@ protected:
 	virtual Common::String getRecordTypeName() const override { return "SaveContinueGame"; }
 };
 
-class TurnOffMainRendering : public ActionRecord {
+class TurnOffMainRendering : public Unimplemented {
 public:
 	virtual void readData(Common::SeekableReadStream &stream) override;
 
@@ -207,7 +307,7 @@ protected:
 	virtual Common::String getRecordTypeName() const override { return "TurnOffMainRendering"; }
 };
 
-class TurnOnMainRendering : public ActionRecord {
+class TurnOnMainRendering : public Unimplemented {
 public:
 	virtual void readData(Common::SeekableReadStream &stream) override;
 
@@ -264,7 +364,7 @@ protected:
 	virtual Common::String getRecordTypeName() const override { return "LoseGame"; }
 };
 
-class PushScene : public ActionRecord {
+class PushScene : public Unimplemented {
 public:
 	virtual void readData(Common::SeekableReadStream &stream) override;
 
@@ -272,7 +372,7 @@ protected:
 	virtual Common::String getRecordTypeName() const override { return "PushScene"; }
 };
 
-class PopScene : public ActionRecord {
+class PopScene : public Unimplemented {
 public:
 	virtual void readData(Common::SeekableReadStream &stream) override;
 
@@ -300,7 +400,7 @@ protected:
 	virtual Common::String getRecordTypeName() const override { return "AddInventoryNoHS"; }
 };
 
-class RemoveInventoryNoHS : public ActionRecord {
+class RemoveInventoryNoHS : public Unimplemented {
 public:
 	virtual void readData(Common::SeekableReadStream &stream) override;
 
@@ -359,7 +459,7 @@ protected:
 	virtual Common::String getRecordTypeName() const override { return "PlayDigiSoundAndDie"; }
 };
 
-class PlaySoundPanFrameAnchorAndDie : public ActionRecord {
+class PlaySoundPanFrameAnchorAndDie : public Unimplemented {
 public:
 	virtual void readData(Common::SeekableReadStream &stream) override;
 
