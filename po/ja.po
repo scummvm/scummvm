@@ -5409,7 +5409,9 @@ msgstr "クロスフェードを有効にする"
 msgid ""
 "Enable the Second Chance feature, which automatically saves at specific "
 "scenes. Enabling this disables timed autosaves."
-msgstr "特定のシーンでオートセーブする「セカンド・チャンス」機能を有効化します。この場合、一定間隔でオートセーブする機能が無効化されます。"
+msgstr ""
+"特定のシーンでオートセーブする「セカンド・チャンス」機能を有効化します。この"
+"場合、一定間隔でオートセーブする機能が無効化されます。"
 
 #: engines/nancy/dialogs.cpp:48
 msgid "Speech Options"
