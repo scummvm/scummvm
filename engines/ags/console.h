@@ -47,6 +47,8 @@ private:
 	bool Cmd_listDebugGroups(int argc, const char **argv);
 	bool Cmd_setDebugGroupLevel(int argc, const char **argv);
 
+	bool Cmd_SetScriptDump(int argc, const char **argv);
+
 	bool Cmd_getSpriteInfo(int argc, const char **argv);
 	bool Cmd_dumpSprite(int argc, const char **argv);
 

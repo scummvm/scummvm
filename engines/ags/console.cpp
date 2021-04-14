@@ -25,6 +25,7 @@
 #include "ags/globals.h"
 #include "ags/shared/ac/spritecache.h"
 #include "ags/shared/gfx/allegrobitmap.h"
+#include "ags/shared/script/cc_options.h"
 #include "image/png.h"
 
 namespace AGS {
@@ -32,6 +33,7 @@ namespace AGS {
 AGSConsole::AGSConsole(AGSEngine *vm) : GUI::Debugger(), _vm(vm), _logOutputTarget(nullptr), _agsDebuggerOutput(nullptr) {
 	registerCmd("ags_debug_groups_list",   WRAP_METHOD(AGSConsole, Cmd_listDebugGroups));
 	registerCmd("ags_debug_groups_set",  WRAP_METHOD(AGSConsole, Cmd_setDebugGroupLevel));
+	registerCmd("ags_set_script_dump", WRAP_METHOD(AGSConsole, Cmd_SetScriptDump));
 	registerCmd("ags_sprite_info",   WRAP_METHOD(AGSConsole, Cmd_getSpriteInfo));
 	registerCmd("ags_sprite_dump",  WRAP_METHOD(AGSConsole, Cmd_dumpSprite));
 
@@ -168,6 +170,19 @@ void AGSConsole::printLevelList() {
 	debugPrintf("%s", levelNames[0].name);
 	for (int i = 1 ; levelNames[i].name != nullptr ; ++i)
 		debugPrintf(", %s", levelNames[i].name);
+}
+
+bool AGSConsole::Cmd_SetScriptDump(int argc, const char **argv) {
+	if (argc != 2) {
+		debugPrintf("Usage: %s [on|off]\n", argv[0]);
+		return true;
+	}
+
+	if (strcmp(argv[1], "on") == 0 || strcmp(argv[1], "true") == 0)
+		AGS3::ccSetOption(SCOPT_DEBUGRUN, 1);
+	else
+		AGS3::ccSetOption(SCOPT_DEBUGRUN, 0);
+	return true;
 }
 
 bool AGSConsole::Cmd_getSpriteInfo(int argc, const char **argv) {
