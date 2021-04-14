@@ -72,6 +72,7 @@ static const char HELP_STRING[] =
 	"  --list-all-games         Display list of all detected games and exit\n"
 	"  -t, --list-targets       Display list of configured targets and exit\n"
 	"  --list-engines           Display list of suppported engines and exit\n"
+	"  --list-all-engines       Display list of all detection engines and exit\n"
 	"  --list-saves             Display a list of saved games for the target specified\n"
 	"                           with --game=TARGET, or all targets if none is specified\n"
 	"  -a, --add                Add all games from current or specified directory.\n"
@@ -544,6 +545,9 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 			DO_LONG_COMMAND("list-engines")
 			END_COMMAND
 
+			DO_LONG_COMMAND("list-all-engines")
+			END_COMMAND
+
 			DO_COMMAND('a', "add")
 			END_COMMAND
 
@@ -860,6 +864,18 @@ static void listEngines() {
 		const Plugin *p = EngineMan.findPlugin((*iter)->getName());
 
 		printf("%-15s %s\n", p->get<MetaEngineDetection>().getEngineId(), p->get<MetaEngineDetection>().getName());
+	}
+}
+
+/** List all detection engines, i.e. all loaded plugins. */
+static void listAllEngines() {
+	printf("Engine ID       Engine Name                                           \n"
+	       "--------------- ------------------------------------------------------\n");
+
+	const PluginList &plugins = EngineMan.getPlugins();
+	for (PluginList::const_iterator iter = plugins.begin(); iter != plugins.end(); ++iter) {
+		const MetaEngineDetection &metaEngine = (*iter)->get<MetaEngineDetection>();
+		printf("%-15s %s\n", metaEngine.getEngineId(), metaEngine.getName());
 	}
 }
 
@@ -1389,6 +1405,9 @@ bool processSettings(Common::String &command, Common::StringMap &settings, Commo
 	} else if (command == "list-engines") {
 		listEngines();
 		return true;
+	} else if (command == "list-all-engines") {
+		listAllEngines();
+		return true;
 	} else if (command == "list-saves") {
 		err = listSaves(settings["game"]);
 		return true;
@@ -1430,19 +1449,19 @@ bool processSettings(Common::String &command, Common::StringMap &settings, Commo
 	} else if (command == "add") {
 		addGames(settings["path"], gameOption.engineId, gameOption.gameId, settings["recursive"] == "true");
 		return true;
-	}
 #ifdef DETECTOR_TESTING_HACK
-	else if (command == "test-detector") {
+	} else if (command == "test-detector") {
 		runDetectorTest();
 		return true;
-	}
 #endif
 #ifdef UPGRADE_ALL_TARGETS_HACK
-	else if (command == "upgrade-targets") {
+	} else if (command == "upgrade-targets") {
 		upgradeTargets();
 		return true;
-	}
 #endif
+	} else {
+		warning("Unhandled command \"%s\"", command.c_str());
+	}
 
 #endif // DISABLE_COMMAND_LINE
 
