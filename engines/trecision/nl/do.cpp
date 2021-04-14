@@ -912,12 +912,13 @@ void InitAtFrameHandler(uint16 an, uint16 obj) {
 					AtFrameNext
  --------------------------------------------------*/
 void AtFrameNext() {
-	if (!((AnimType[0].status & ATF_WAITTEXT) && g_vm->_flagCharacterSpeak))
-		AnimType[0].curframe++;
-	if (!((AnimType[1].status & ATF_WAITTEXT) && g_vm->_flagCharacterSpeak))
-		AnimType[1].curframe++;
-	if (!((AnimType[2].status & ATF_WAITTEXT) && g_vm->_flagCharacterSpeak))
-		AnimType[2].curframe++;
+	if (!g_vm->_flagCharacterSpeak)
+		return;
+
+	for (int i = 0; i < 3; ++i) {
+		if (!(AnimType[i].status & ATF_WAITTEXT))
+			AnimType[i].curframe++;		
+	}
 }
 
 /* -----------------11/07/97 11.42-------------------
@@ -934,14 +935,16 @@ void AtFrameEnd(int type) {
 
 	h->lastframe = h->curframe;
 
+	uint16 flag = g_vm->_animMgr->_animTab[g_vm->_room[g_vm->_curRoom]._bkgAnim]._flag;
+	
 	for (int32 a = 0; a < MAXATFRAME; a++) {
 		// if it's time to run this AtFrame
-		if ((anim->_atFrame[a]._numFrame == 0) && (anim->_atFrame[a]._type)) {
-			if ((anim->_atFrame[a]._child == 0) ||
-			    ((anim->_atFrame[a]._child == 1) && !(g_vm->_animMgr->_animTab[g_vm->_room[g_vm->_curRoom]._bkgAnim]._flag & SMKANIM_OFF1)) ||
-			    ((anim->_atFrame[a]._child == 2) && !(g_vm->_animMgr->_animTab[g_vm->_room[g_vm->_curRoom]._bkgAnim]._flag & SMKANIM_OFF2)) ||
-			    ((anim->_atFrame[a]._child == 3) && !(g_vm->_animMgr->_animTab[g_vm->_room[g_vm->_curRoom]._bkgAnim]._flag & SMKANIM_OFF3)) ||
-			    ((anim->_atFrame[a]._child == 4) && !(g_vm->_animMgr->_animTab[g_vm->_room[g_vm->_curRoom]._bkgAnim]._flag & SMKANIM_OFF4)))
+		if (anim->_atFrame[a]._numFrame == 0 && anim->_atFrame[a]._type) {
+			if (anim->_atFrame[a]._child == 0 ||
+			    (anim->_atFrame[a]._child == 1 && !(flag & SMKANIM_OFF1)) ||
+				(anim->_atFrame[a]._child == 2 && !(flag & SMKANIM_OFF2)) ||
+			    (anim->_atFrame[a]._child == 3 && !(flag & SMKANIM_OFF3)) ||
+			    (anim->_atFrame[a]._child == 4 && !(flag & SMKANIM_OFF4)))
 				ProcessATF(h, anim->_atFrame[a]._type, a);
 		}
 	}
@@ -964,14 +967,16 @@ void AtFrameHandler(int type) {
 	if (h->curframe <= h->lastframe)
 		return;
 
+	uint16 flag = g_vm->_animMgr->_animTab[g_vm->_room[g_vm->_curRoom]._bkgAnim]._flag;
+
 	for (int32 a = 0; a < MAXATFRAME; a++) {
 		// if it's time to run this AtFrame
 		if ((anim->_atFrame[a]._numFrame > h->lastframe) && (anim->_atFrame[a]._numFrame <= h->curframe) && (anim->_atFrame[a]._numFrame != 0)) {
-			if ((anim->_atFrame[a]._child == 0) ||
-			    ((anim->_atFrame[a]._child == 1) && !(g_vm->_animMgr->_animTab[g_vm->_room[g_vm->_curRoom]._bkgAnim]._flag & SMKANIM_OFF1)) ||
-			    ((anim->_atFrame[a]._child == 2) && !(g_vm->_animMgr->_animTab[g_vm->_room[g_vm->_curRoom]._bkgAnim]._flag & SMKANIM_OFF2)) ||
-			    ((anim->_atFrame[a]._child == 3) && !(g_vm->_animMgr->_animTab[g_vm->_room[g_vm->_curRoom]._bkgAnim]._flag & SMKANIM_OFF3)) ||
-			    ((anim->_atFrame[a]._child == 4) && !(g_vm->_animMgr->_animTab[g_vm->_room[g_vm->_curRoom]._bkgAnim]._flag & SMKANIM_OFF4)))
+			if (anim->_atFrame[a]._child == 0 ||
+			    (anim->_atFrame[a]._child == 1 && !(flag & SMKANIM_OFF1)) ||
+			    (anim->_atFrame[a]._child == 2 && !(flag & SMKANIM_OFF2)) ||
+			    (anim->_atFrame[a]._child == 3 && !(flag & SMKANIM_OFF3)) ||
+			    (anim->_atFrame[a]._child == 4 && !(flag & SMKANIM_OFF4)))
 				ProcessATF(h, anim->_atFrame[a]._type, a);
 		}
 	}
