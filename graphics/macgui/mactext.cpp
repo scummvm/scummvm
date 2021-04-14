@@ -204,8 +204,6 @@ MacText::MacText(const Common::String &s, MacWindowManager *wm, const MacFont *m
 	if (macFont) {
 		_defaultFormatting = MacFontRun(_wm, macFont->getId(), macFont->getSlant(), macFont->getSize(), 0, 0, 0);
 		_defaultFormatting.font = wm->_fontMan->getFont(*macFont);
-		// try to set fgcolor as default color in chunks
-		_defaultFormatting.fgcolor = _fgcolor;
 	} else {
 		_defaultFormatting.font = NULL;
 	}
@@ -215,6 +213,10 @@ MacText::MacText(const Common::String &s, MacWindowManager *wm, const MacFont *m
 
 void MacText::init() {
 	_defaultFormatting.wm = _wm;
+	// try to set fgcolor as default color in chunks
+	if (_wm->_mode & kWMModeWin95) {
+		_defaultFormatting.fgcolor = _fgcolor;
+	}
 	_currentFormatting = _defaultFormatting;
 	_composeSurface->clear(_bgcolor);
 
@@ -952,7 +954,7 @@ void MacText::draw(ManagedSurface *g, int x, int y, int w, int h, int xoff, int 
 	render();
 
 	if (x + w < _surface->w || y + h < _surface->h)
-		g->fillRect(Common::Rect(x, y, x + w, y + w), _bgcolor);
+		g->fillRect(Common::Rect(x, y, x + w, y + h), _bgcolor);
 
 	g->blitFrom(*_surface, Common::Rect(MIN<int>(_surface->w, x), MIN<int>(_surface->h, y), MIN<int>(_surface->w, x + w), MIN<int>(_surface->h, y + h)), Common::Point(xoff, yoff));
 
