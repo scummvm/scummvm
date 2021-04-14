@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-04-13 21:18+0000\n"
-"PO-Revision-Date: 2021-04-10 17:58+0000\n"
+"PO-Revision-Date: 2021-04-14 09:15+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ja/>\n"
@@ -5409,7 +5409,7 @@ msgstr "クロスフェードを有効にする"
 msgid ""
 "Enable the Second Chance feature, which automatically saves at specific "
 "scenes. Enabling this disables timed autosaves."
-msgstr ""
+msgstr "特定のシーンでオートセーブする「セカンド・チャンス」機能を有効化します。この場合、一定間隔でオートセーブする機能が無効化されます。"
 
 #: engines/nancy/dialogs.cpp:48
 msgid "Speech Options"
@@ -7490,9 +7490,8 @@ msgstr "通話終了ボタン"
 #: engines/wintermute/keymapper_tables.h:281
 #: engines/wintermute/keymapper_tables.h:357
 #: engines/wintermute/keymapper_tables.h:871
-#, fuzzy
 msgid "Phone up button"
-msgstr "マウスの左ボタン"
+msgstr "電話の上ボタン"
 
 #: engines/wintermute/keymapper_tables.h:287
 #: engines/wintermute/keymapper_tables.h:363
@@ -7502,81 +7501,68 @@ msgstr "電話の上ボタン"
 
 #: engines/wintermute/keymapper_tables.h:369
 #: engines/wintermute/keymapper_tables.h:883
-#, fuzzy
 msgid "Phone 0 button"
-msgstr "マウスの右ボタン"
+msgstr "電話の0ボタン"
 
 #: engines/wintermute/keymapper_tables.h:374
 #: engines/wintermute/keymapper_tables.h:888
-#, fuzzy
 msgid "Phone 1 button"
-msgstr "マウスの右ボタン"
+msgstr "電話の1ボタン"
 
 #: engines/wintermute/keymapper_tables.h:379
 #: engines/wintermute/keymapper_tables.h:893
-#, fuzzy
 msgid "Phone 2 button"
-msgstr "マウスの右ボタン"
+msgstr "電話の2ボタン"
 
 #: engines/wintermute/keymapper_tables.h:384
 #: engines/wintermute/keymapper_tables.h:898
-#, fuzzy
 msgid "Phone 3 button"
-msgstr "マウスの右ボタン"
+msgstr "電話の3ボタン"
 
 #: engines/wintermute/keymapper_tables.h:389
 #: engines/wintermute/keymapper_tables.h:903
-#, fuzzy
 msgid "Phone 4 button"
-msgstr "マウスの右ボタン"
+msgstr "電話の4ボタン"
 
 #: engines/wintermute/keymapper_tables.h:394
 #: engines/wintermute/keymapper_tables.h:908
-#, fuzzy
 msgid "Phone 5 button"
-msgstr "マウスの右ボタン"
+msgstr "電話の5ボタン"
 
 #: engines/wintermute/keymapper_tables.h:399
 #: engines/wintermute/keymapper_tables.h:913
-#, fuzzy
 msgid "Phone 6 button"
-msgstr "マウスの右ボタン"
+msgstr "電話の6ボタン"
 
 #: engines/wintermute/keymapper_tables.h:404
 #: engines/wintermute/keymapper_tables.h:918
-#, fuzzy
 msgid "Phone 7 button"
-msgstr "マウスの右ボタン"
+msgstr "電話の7ボタン"
 
 #: engines/wintermute/keymapper_tables.h:409
 #: engines/wintermute/keymapper_tables.h:923
-#, fuzzy
 msgid "Phone 8 button"
-msgstr "マウスの右ボタン"
+msgstr "電話の8ボタン"
 
 #: engines/wintermute/keymapper_tables.h:414
 #: engines/wintermute/keymapper_tables.h:928
-#, fuzzy
 msgid "Phone 9 button"
-msgstr "マウスの右ボタン"
+msgstr "電話の9ボタン"
 
 #: engines/wintermute/keymapper_tables.h:419
 #: engines/wintermute/keymapper_tables.h:933
-#, fuzzy
 msgid "Phone * button"
-msgstr "マウスの右ボタン"
+msgstr "電話の*ボタン"
 
 #: engines/wintermute/keymapper_tables.h:424
 #: engines/wintermute/keymapper_tables.h:938
-#, fuzzy
 msgid "Phone # button"
-msgstr "マウスの右ボタン"
+msgstr "電話の#ボタン"
 
 #: engines/wintermute/keymapper_tables.h:448
 #: engines/wintermute/keymapper_tables.h:1073
-#, fuzzy
 msgid "Show help"
-msgstr "地図を表示"
+msgstr "ヘルプを表示"
 
 #: engines/wintermute/keymapper_tables.h:454
 #: engines/wintermute/keymapper_tables.h:621
@@ -7601,9 +7587,8 @@ msgstr "上にスクロール"
 #: engines/wintermute/keymapper_tables.h:1347
 #: engines/wintermute/keymapper_tables.h:1530
 #: engines/wintermute/keymapper_tables.h:1726
-#, fuzzy
 msgid "Scroll down"
-msgstr "下"
+msgstr "下にスクロール"
 
 #: engines/wintermute/keymapper_tables.h:473
 msgid "Change shadow type"
@@ -7611,9 +7596,8 @@ msgstr "影の付き方を変更"
 
 #: engines/wintermute/keymapper_tables.h:483
 #: engines/wintermute/keymapper_tables.h:570
-#, fuzzy
 msgid "Volume max"
-msgstr "音量"
+msgstr "ボリュームMAX"
 
 #: engines/wintermute/keymapper_tables.h:488
 msgid "Show debug parser"
