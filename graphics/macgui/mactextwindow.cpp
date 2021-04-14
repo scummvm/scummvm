@@ -52,6 +52,8 @@ MacTextWindow::MacTextWindow(MacWindowManager *wm, const MacFont *font, int fgco
 
 	_fontRef = wm->_fontMan->getFont(*font);
 
+	_bgcolor = bgcolor;
+
 	_inputTextHeight = 0;
 	_maxWidth = maxWidth;
 
@@ -146,7 +148,11 @@ bool MacTextWindow::draw(bool forceRedraw) {
 	if (_borderIsDirty || forceRedraw) {
 		drawBorder();
 
-		_composeSurface->clear(_wm->_colorWhite);
+		if (_wm->_mode & kWMModeWin95) {
+			_composeSurface->clear(_bgcolor);
+		} else {
+			_composeSurface->clear(_wm->_colorWhite);
+		}
 	}
 
 	if (_inputIsDirty || forceRedraw) {
