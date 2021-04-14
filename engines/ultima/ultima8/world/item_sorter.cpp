@@ -344,17 +344,17 @@ inline bool SortItem::operator<(const SortItem &si2) const {
 		// Clearly in z
 		if (si1._zTop <= si2._z)
 			return true;
-		else if (si1._z >= si2._zTop)
+		if (si1._z >= si2._zTop)
 			return false;
 	}
 
-	// Clearly in x?
-	if (si1._x <= si2._xLeft) return true;
-	else if (si1._xLeft >= si2._x) return false;
-
 	// Clearly in y?
 	if (si1._y <= si2._yFar) return true;
-	else if (si1._yFar >= si2._y) return false;
+	if (si1._yFar >= si2._y) return false;
+
+	// Clearly in x?
+	if (si1._x <= si2._xLeft) return true;
+	if (si1._xLeft >= si2._x) return false;
 
 	// Are overlapping in all 3 dimentions if we come here
 
@@ -363,19 +363,7 @@ inline bool SortItem::operator<(const SortItem &si2) const {
 	// This check must be on the z-bottom and not the z-top because two objects with the
 	// same z-position may have different heights (think of a mouse sorting vs the Avatar).
 	if (si1._z < si2._z) return true;
-	else if (si1._z > si2._z) return false;
-
-	// Biased Clearly in z
-	if ((si1._zTop + si1._z) / 2 <= si2._z) return true;
-	else if (si1._z >= (si2._zTop + si2._z) / 2) return false;
-
-	// Biased Clearly X
-	if ((si1._x + si1._xLeft) / 2 <= si2._xLeft) return true;
-	else if (si1._xLeft >= (si2._x + si2._xLeft) / 2) return false;
-
-	// Biased Clearly Y
-	if ((si1._y + si1._yFar) / 2 <= si2._yFar) return true;
-	else if (si1._yFar >= (si2._y + si2._yFar) / 2) return false;
+	if (si1._z > si2._z) return false;
 
 	// Partial in X + Y front
 	if (si1._x + si1._y != si2._x + si2._y) return (si1._x + si1._y < si2._x + si2._y);
@@ -383,11 +371,11 @@ inline bool SortItem::operator<(const SortItem &si2) const {
 	// Partial in X + Y back
 	if (si1._xLeft + si1._yFar != si2._xLeft + si2._yFar) return (si1._xLeft + si1._yFar < si2._xLeft + si2._yFar);
 
-	// Partial in x?
-	if (si1._x != si2._x) return si1._x < si2._x;
-
 	// Partial in y?
 	if (si1._y != si2._y) return si1._y < si2._y;
+
+	// Partial in x?
+	if (si1._x != si2._x) return si1._x < si2._x;
 
 	// Just sort by shape number
 	if (si1._shapeNum != si2._shapeNum) return si1._shapeNum < si2._shapeNum;
