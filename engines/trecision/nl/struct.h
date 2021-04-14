@@ -191,8 +191,8 @@ struct StackText {
 	uint16 x;
 	uint16 y;
 	uint16 tcol, scol;
-	char sign[256];
-	bool Clear;
+	char text[256];
+	bool clear;
 
 	void doText();
 };

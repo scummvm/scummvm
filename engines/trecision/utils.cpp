@@ -61,7 +61,7 @@ char *TrecisionEngine::getNextSentence() {
 /*-------------------------------------------------------------------------*/
 /*                                   addText           					   */
 /*-------------------------------------------------------------------------*/
-void TrecisionEngine::addText(uint16 x, uint16 y, const char *sign, uint16 tcol, uint16 scol) {
+void TrecisionEngine::addText(uint16 x, uint16 y, const char *text, uint16 tcol, uint16 scol) {
 	_textStackTop++;
 	if (_textStackTop >= MAXTEXTSTACK) {
 		warning("MAXTEXTSTACK Reached!");
@@ -72,8 +72,8 @@ void TrecisionEngine::addText(uint16 x, uint16 y, const char *sign, uint16 tcol,
 	_textStack[_textStackTop].y = y;
 	_textStack[_textStackTop].tcol = tcol;
 	_textStack[_textStackTop].scol = scol;
-	_textStack[_textStackTop].Clear = false;
-	strcpy(_textStack[_textStackTop].sign, sign);
+	_textStack[_textStackTop].clear = false;
+	strcpy(_textStack[_textStackTop].text, text);
 }
 
 /* ------------------------------------------------
@@ -82,13 +82,13 @@ void TrecisionEngine::addText(uint16 x, uint16 y, const char *sign, uint16 tcol,
 void TrecisionEngine::clearText() {
 	if (_textStackTop >= 0) {
 		// The stack isn't empty
-		if (!_textStack[_textStackTop].Clear)
+		if (!_textStack[_textStackTop].clear)
 			// The previous is a string to write, return
 			_textStackTop--;
 	} else {
 		// the stack is empty
 		_textStackTop = 0;
-		_textStack[_textStackTop].Clear = true;
+		_textStack[_textStackTop].clear = true;
 	}
 }
 
@@ -97,7 +97,7 @@ void TrecisionEngine::clearText() {
  --------------------------------------------------*/
 void TrecisionEngine::drawString() {
 	for (int16 i = 0; i <= _textStackTop; i++) {
-		if (_textStack[i].Clear)
+		if (_textStack[i].clear)
 			doClearText();
 		else
 			_textStack[i].doText();
@@ -124,7 +124,7 @@ void TrecisionEngine::redrawString() {
 void StackText::doText() {
 	curString.x = x;
 	curString.y = y;
-	curString.dx = TextLength(sign, 0);
+	curString.dx = TextLength(text, 0);
 	if ((y == MAXY - CARHEI) && (curString.dx > 600))
 		curString.dx = curString.dx * 3 / 5;
 	else if ((y != MAXY - CARHEI) && (curString.dx > 960))
@@ -132,7 +132,7 @@ void StackText::doText() {
 	else if ((y != MAXY - CARHEI) && (curString.dx > 320))
 		curString.dx = curString.dx * 3 / 5;
 
-	curString.text = sign;
+	curString.text = text;
 	curString._subtitleRect.left = 0;
 	curString._subtitleRect.top = 0;
 	curString._subtitleRect.right = curString.dx;
