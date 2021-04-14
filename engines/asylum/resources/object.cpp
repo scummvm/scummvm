@@ -533,7 +533,7 @@ ResourceId Object::getRandomResourceId() {
 	if (count == 0)
 		error("[Object::getRandomId] Could not get a random resource id!");
 
-	ResourceId id = shuffle[_vm->getRandom(count - 1)];
+	ResourceId id = shuffle[_vm->getRandom(count)];
 	if (id == kResourceNone)
 		error("[Object::getRandomId] Got an empty resource id!");
 

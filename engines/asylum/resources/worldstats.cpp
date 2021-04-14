@@ -486,7 +486,7 @@ int32 WorldStats::getRandomActionAreaIndexById(int32 id) {
 	if (!count)
 		return -1;
 
-	return indexes[_vm->getRandom(count - 1)];
+	return indexes[_vm->getRandom(count)];
 }
 
 ActionArea* WorldStats::getActionAreaById(int32 id) {

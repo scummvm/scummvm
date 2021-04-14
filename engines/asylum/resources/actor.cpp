@@ -1768,14 +1768,14 @@ void Actor::move(ActorDirection actorDir, uint32 dist) {
 				ResourceId resourceId = kResourceNone;
 				if (getWorld()->actions[_actionIdx3]->soundResourceIdFrame != kResourceNone && strcmp((char *)&_name, "Crow") && strcmp((char *)&_name, "Big Crow")) {
 					if (_frameIndex == _field_64C)
-						resourceId = (ResourceId)(getWorld()->actions[_actionIdx3]->soundResourceIdFrame + (int)rnd(1));
+						resourceId = (ResourceId)(getWorld()->actions[_actionIdx3]->soundResourceIdFrame + (int)rnd(2));
 					else if (_frameIndex == _field_650)
-						resourceId = (ResourceId)(getWorld()->actions[_actionIdx3]->soundResourceId + (int)rnd(1));
+						resourceId = (ResourceId)(getWorld()->actions[_actionIdx3]->soundResourceId + (int)rnd(2));
 				} else {
 					if (_frameIndex == _field_64C)
-						resourceId = (ResourceId)(_walkingSound1 + (int)rnd(1));
+						resourceId = (ResourceId)(_walkingSound1 + (int)rnd(2));
 					else if (_frameIndex == _field_650)
-						resourceId = (ResourceId)(_walkingSound3 + (int)rnd(1));
+						resourceId = (ResourceId)(_walkingSound3 + (int)rnd(2));
 				}
 
 				// Play sound
@@ -1804,14 +1804,14 @@ void Actor::move(ActorDirection actorDir, uint32 dist) {
 			ResourceId resourceId = kResourceNone;
 			if (getWorld()->actions[_actionIdx3]->soundResourceIdFrame != kResourceNone && strcmp((char *)&_name, "Crow") && strcmp((char *)&_name, "Big Crow")) {
 				if (_frameIndex == _field_64C)
-					resourceId = (ResourceId)(getWorld()->actions[_actionIdx3]->soundResourceIdFrame + (int)rnd(1));
+					resourceId = (ResourceId)(getWorld()->actions[_actionIdx3]->soundResourceIdFrame + (int)rnd(2));
 				else if (_frameIndex == _field_650)
-					resourceId = (ResourceId)(getWorld()->actions[_actionIdx3]->soundResourceId + (int)rnd(1));
+					resourceId = (ResourceId)(getWorld()->actions[_actionIdx3]->soundResourceId + (int)rnd(2));
 			} else {
 				if (_frameIndex == _field_64C)
-					resourceId = (ResourceId)(_walkingSound1 + (int)rnd(1));
+					resourceId = (ResourceId)(_walkingSound1 + (int)rnd(2));
 				else if (_frameIndex == _field_650)
-					resourceId = (ResourceId)(_walkingSound3 + (int)rnd(1));
+					resourceId = (ResourceId)(_walkingSound3 + (int)rnd(2));
 			}
 
 			// Play sound
@@ -2236,7 +2236,7 @@ void Actor::updateStatusEnabled() {
 	// Actor:: BigCrow
 	if (!strcmp(_name, "Big Crow")) {
 		if (_vm->getRandom(10) < 5) {
-			switch (_vm->getRandom(3)) {
+			switch (_vm->getRandom(4)) {
 			default:
 				break;
 
@@ -2287,7 +2287,7 @@ void Actor::updateStatusEnabled() {
 
 						if (!getSharedData()->getFlag(kFlagActorUpdateEnabledCheck)) {
 							if (!isInActionArea(pt, area)) {
-								Common::Point polyPoint = poly.points[rnd(poly.count() - 1)];
+								Common::Point polyPoint = poly.points[rnd(poly.count())];
 								processStatus(polyPoint.x, polyPoint.y, false);
 							} else {
 								processStatus(pt.x, pt.y, false);
