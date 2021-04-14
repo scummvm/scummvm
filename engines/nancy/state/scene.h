@@ -35,7 +35,6 @@
 #include "engines/nancy/ui/viewport.h"
 #include "engines/nancy/ui/textbox.h"
 #include "engines/nancy/ui/inventorybox.h"
-#include "engines/nancy/ui/button.h"
 
 namespace Common {
 class SeekableReadStream;
@@ -51,6 +50,10 @@ struct SceneChangeDescription;
 
 namespace Action {
 class SliderPuzzle;
+}
+
+namespace UI {
+class Button;
 }
 
 namespace State {
@@ -100,18 +103,8 @@ public:
 		void read(Common::SeekableReadStream &stream);
 	};
 
-	Scene() :
-		_state (kInit),
-		_lastHint(-1),
-		_gameStateRequested(NancyState::kNone),
-		_frame(),
-		_viewport(),
-		_textbox(_frame),
-		_inventoryBox(_frame),
-		_menuButton(_frame),
-		_helpButton(_frame),
-		_actionManager(),
-		_difficulty(0) {}
+	Scene();
+	virtual ~Scene();
 
 	// State API
 	virtual void process() override;
@@ -233,8 +226,9 @@ private:
 	UI::Viewport _viewport;
 	UI::Textbox _textbox;
 	UI::InventoryBox _inventoryBox;
-	UI::MenuButton _menuButton;
-	UI::HelpButton _helpButton;
+
+	UI::Button *_menuButton;
+	UI::Button *_helpButton;
 
 	// Data
 	SceneState _sceneState;

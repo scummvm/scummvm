@@ -33,6 +33,8 @@
 
 #include "engines/nancy/state/scene.h"
 
+#include "engines/nancy/ui/button.h"
+
 namespace Common {
 DECLARE_SINGLETON(Nancy::State::Scene);
 }
@@ -79,6 +81,24 @@ void Scene::SceneSummary::read(Common::SeekableReadStream &stream) {
 	}
 
 	delete[] buf;
+}
+
+Scene::Scene() :
+		_state (kInit),
+		_lastHint(-1),
+		_gameStateRequested(NancyState::kNone),
+		_frame(),
+		_viewport(),
+		_textbox(_frame),
+		_inventoryBox(_frame),
+		_menuButton(nullptr),
+		_helpButton(nullptr),
+		_actionManager(),
+		_difficulty(0) {}
+
+Scene::~Scene()  {
+	delete _helpButton;
+	delete _menuButton;
 }
 
 void Scene::process() {
@@ -251,12 +271,12 @@ void Scene::registerGraphics() {
 	_viewport.registerGraphics();
 	_textbox.registerGraphics();
 	_inventoryBox.registerGraphics();
-	_menuButton.registerGraphics();
-	_helpButton.registerGraphics();
+	_menuButton->registerGraphics();
+	_helpButton->registerGraphics();
 
 	_textbox.setVisible(!_shouldClearTextbox);
-	_menuButton.setVisible(false);
-	_helpButton.setVisible(false);
+	_menuButton->setVisible(false);
+	_helpButton->setVisible(false);
 }
 
 void Scene::synchronize(Common::Serializer &ser) {
@@ -537,11 +557,23 @@ void Scene::run() {
 	// Update the UI elements and handle input
 	NancyInput input = g_nancy->_input->getInput();
 	_viewport.handleInput(input);
-	_menuButton.handleInput(input);
-	_helpButton.handleInput(input);
+	_menuButton->handleInput(input);
+	_helpButton->handleInput(input);
 	_textbox.handleInput(input);
 	_inventoryBox.handleInput(input);
 	_actionManager.handleInput(input);
+
+	if (_menuButton->_isClicked) {
+		_menuButton->_isClicked = false;
+		g_nancy->_sound->playSound("GLOB");
+		requestStateChange(NancyState::kMainMenu);
+	}
+
+	if (_helpButton->_isClicked) {
+		_helpButton->_isClicked = false;
+		g_nancy->_sound->playSound("GLOB");
+		requestStateChange(NancyState::kHelp);
+	}
 
 	_sceneState.currentScene.frameID = _viewport.getCurFrame();
 	_sceneState.currentScene.verticalOffset = _viewport.getCurVerticalScroll();
@@ -579,15 +611,26 @@ void Scene::initStaticData() {
 	_mapAccessSceneIDs.push_back(0x4E2);
 	_mapAccessSceneIDs.push_back(0x682);
 
-	Common::SeekableReadStream *fr = g_nancy->getBootChunkStream("FR0");
-	fr->seek(0);
+	chunk = g_nancy->getBootChunkStream("FR0");
+	chunk->seek(0);
 
-	_frame.init(fr->readString());
+	_frame.init(chunk->readString());
 	_viewport.init();
 	_textbox.init();
 	_inventoryBox.init();
-	_menuButton.init();
-	_helpButton.init();
+
+	// Init menu and help buttons
+	chunk = g_nancy->getBootChunkStream("BSUM");
+	chunk->seek(0x184);
+	Common::Rect menuSrc, helpSrc, menuDest, helpDest;
+	readRect(*chunk, menuSrc);
+	readRect(*chunk, helpSrc);
+	readRect(*chunk, menuDest);
+	readRect(*chunk, helpDest);
+	_menuButton = new UI::Button(_frame, g_nancy->_graphicsManager->_object0, menuSrc, menuDest);
+	_helpButton = new UI::Button(_frame, g_nancy->_graphicsManager->_object0, helpSrc, helpDest);
+	_menuButton->init();
+	_helpButton->init();
 	g_nancy->_cursorManager->showCursor(true);
 
 	_state = kLoad;

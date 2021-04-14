@@ -28,12 +28,23 @@
 
 #include "engines/nancy/state/help.h"
 
+#include "engines/nancy/ui/button.h"
+
 namespace Common {
 DECLARE_SINGLETON(Nancy::State::Help);
 }
 
 namespace Nancy {
 namespace State {
+
+Help::Help() :
+		_state(kInit),
+		_image(),
+		_button(nullptr) {}
+
+Help::~Help() {
+	delete _button;
+}
 
 void Help::process() {
 	switch (_state) {
@@ -61,10 +72,18 @@ void Help::init() {
 	_image.init(imageName);
 
 	chunk->skip(20);
-	_hotspot.left = chunk->readUint16LE();
-	_hotspot.top = chunk->readUint16LE();
-	_hotspot.right = chunk->readUint16LE();
-	_hotspot.bottom = chunk->readUint16LE();
+	Common::Rect buttonSrc, buttonDest;
+	buttonDest.left = chunk->readUint16LE();
+	buttonDest.top = chunk->readUint16LE();
+	buttonDest.right = chunk->readUint16LE();
+	buttonDest.bottom = chunk->readUint16LE();
+	buttonSrc.left = chunk->readUint16LE();
+	buttonSrc.top = chunk->readUint16LE();
+	buttonSrc.right = chunk->readUint16LE();
+	buttonSrc.bottom = chunk->readUint16LE();
+
+	_button = new UI::Button(_image, _image.getDrawSurface(), buttonSrc, buttonDest);
+	_button->init();
 
 	_state = kBegin;
 }
@@ -75,6 +94,7 @@ void Help::begin() {
 	}
 
 	_image.registerGraphics();
+	_button->registerGraphics();
 	_image.setVisible(true);
 
 	g_nancy->_cursorManager->setCursorType(CursorManager::kNormalArrow);
@@ -84,8 +104,10 @@ void Help::begin() {
 
 void Help::run() {
 	NancyInput input = g_nancy->_input->getInput();
+	_button->handleInput(input);
 
-	if (_hotspot.contains(input.mousePos) && input.input & NancyInput::kLeftMouseButtonUp) {
+	if (_button->_isClicked) {
+		_button->_isClicked = false;
 		g_nancy->_sound->playSound("BUOK");
 		_state = kWaitForSound;
 	}

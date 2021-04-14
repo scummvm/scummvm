@@ -28,11 +28,14 @@
 #include "engines/nancy/state/state.h"
 
 #include "engines/nancy/ui/viewport.h"
-#include "engines/nancy/ui/button.h"
 
 namespace Nancy {
 
 class NancyEngine;
+
+namespace UI {
+class Button;
+}
 
 namespace State {
 
@@ -42,6 +45,7 @@ class Map : public State, public Common::Singleton<Map> {
 public:
 	enum State { kInit, kRun };
 	Map();
+	virtual ~Map();
 
 	// State API
 	virtual void process() override;
@@ -78,20 +82,6 @@ private:
 		Map *_parent;
 	};
 
-	class MapButton : public UI::Button {
-	public:
-		MapButton(RenderObject &redrawFrom, Map *parent) : Button(redrawFrom), _parent(parent) {}
-		virtual ~MapButton() = default;
-
-		virtual void init() override;
-		virtual void onClick() override;
-
-	protected:
-		virtual uint16 getZOrder() const override { return 9; }
-
-		Map *_parent;
-	};
-
 	void init();
 	void run();
 
@@ -99,7 +89,7 @@ private:
 
 	Nancy::UI::Viewport _viewport;
 	MapLabel _label;
-	MapButton _button;
+	UI::Button *_button;
 	SoundDescription _sound;
 
 	State _state;

@@ -33,12 +33,17 @@
 
 namespace Nancy {
 
+namespace UI {
+class Button;
+}
+
 namespace State {
 
 class Help : public State, public Common::Singleton<Help> {
 public:
 	enum State { kInit, kBegin, kRun, kWaitForSound };
-	Help() : _state(kInit), _image() {}
+	Help();
+	virtual ~Help();
 
 	// State API
 	virtual void process() override;
@@ -52,7 +57,7 @@ private:
 
 	State _state;
 	UI::FullScreenImage _image;
-	Common::Rect _hotspot; // Can be an array, but isn't in nancy1
+	UI::Button *_button;
 };
 
 #define NancyHelpState Nancy::State::Help::instance()

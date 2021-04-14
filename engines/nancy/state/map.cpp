@@ -30,6 +30,8 @@
 #include "engines/nancy/state/map.h"
 #include "engines/nancy/state/scene.h"
 
+#include "engines/nancy/ui/button.h"
+
 namespace Common {
 DECLARE_SINGLETON(Nancy::State::Map);
 }
@@ -43,7 +45,11 @@ Map::Map() : _state(kInit),
 			_pickedLocationID(-1),
 			_viewport(),
 			_label(NancySceneState.getFrame(), this),
-			_button(NancySceneState.getFrame(), this) {}
+			_button(nullptr) {}
+
+Map::~Map() {
+	delete _button;
+}
 
 void Map::process() {
 	switch (_state) {
@@ -61,7 +67,15 @@ void Map::init() {
 
 	_viewport.init();
 	_label.init();
-	_button.init();
+
+	Common::Rect buttonSrc, buttonDest;
+	chunk->seek(0x7A, SEEK_SET);
+	readRect(*chunk, buttonSrc);
+	readRect(*chunk, buttonDest);
+
+	_button = new UI::Button(NancySceneState.getFrame(), g_nancy->_graphicsManager->_object0, buttonSrc, buttonDest);
+	_button->init();
+	_button->setVisible(true);
 
 	if (NancySceneState.getEventFlag(40, kTrue) && // Has set up sting
 		NancySceneState.getEventFlag(95, kTrue)) { // Connie chickens
@@ -133,9 +147,10 @@ void Map::run() {
 
 	_label.setLabel(-1);
 
-	_button.handleInput(input);
+	_button->handleInput(input);
 
-	if (_mapButtonClicked) {
+	if (_button->_isClicked) {
+		_button->_isClicked = false;
 		g_nancy->setState(NancyState::kScene);
 		return;
 	}
@@ -179,7 +194,7 @@ void Map::onStateExit() {
 void Map::registerGraphics() {
 	_viewport.registerGraphics();
 	_label.registerGraphics();
-	_button.registerGraphics();
+	_button->registerGraphics();
 }
 
 void Map::MapLabel::init() {
@@ -196,23 +211,6 @@ void Map::MapLabel::setLabel(int labelID) {
 		_drawSurface.create(g_nancy->_graphicsManager->_object0, _parent->_locations[labelID].labelSrc);
 		setVisible(true);
 	}
-}
-
-void Map::MapButton::init() {
-	Common::SeekableReadStream *map = g_nancy->getBootChunkStream("MAP");
-
-	map->seek(0x7A, SEEK_SET);
-	Common::Rect src;
-	readRect(*map, src);
-	_drawSurface.create(g_nancy->_graphicsManager->_object0, src);
-	readRect(*map, _screenPosition);
-	setVisible(true);
-
-	RenderObject::init();
-}
-
-void Map::MapButton::onClick() {
-	_parent->_mapButtonClicked = true;
 }
 
 } // End of namespace State

@@ -34,56 +34,24 @@
 namespace Nancy {
 namespace UI {
 
+Button::Button(RenderObject &redrawFrom, Graphics::ManagedSurface &surface, const Common::Rect &srcBounds, const Common::Rect &destBounds) :
+		RenderObject(redrawFrom),
+		_isClicked(false) {
+	_drawSurface.create(surface, srcBounds);
+	_screenPosition = destBounds;
+	setVisible(false);
+	setTransparent(true);
+}
+
 void Button::handleInput(NancyInput &input) {
-	if (_screenPosition.contains(input.mousePos)) {
+	if (!_isClicked && _screenPosition.contains(input.mousePos)) {
 		g_nancy->_cursorManager->setCursorType(CursorManager::kHotspotArrow);
 
 		if (input.input & NancyInput::kLeftMouseButtonUp) {
-			onClick();
+			_isClicked = true;
+			setVisible(true);
 		}
 	}
-}
-
-void MenuButton::init() {
-	Common::SeekableReadStream *bsum = g_nancy->getBootChunkStream("BSUM");
-
-	bsum->seek(0x184, SEEK_SET);
-	Common::Rect src;
-	readRect(*bsum, src);
-	_drawSurface.create(g_nancy->_graphicsManager->_object0, src);
-	bsum->skip(16);
-	readRect(*bsum, _screenPosition);
-	setVisible(false);
-	setTransparent(true);
-
-	RenderObject::init();
-}
-
-void MenuButton::onClick() {
-	NancySceneState.requestStateChange(NancyState::kMainMenu);
-	g_nancy->_sound->playSound("GLOB");
-	setVisible(true);
-}
-
-void HelpButton::init() {
-	Common::SeekableReadStream *bsum = g_nancy->getBootChunkStream("BSUM");
-
-	bsum->seek(0x194, SEEK_SET);
-	Common::Rect src;
-	readRect(*bsum, src);
-	_drawSurface.create(g_nancy->_graphicsManager->_object0, src);
-	bsum->skip(16);
-	readRect(*bsum, _screenPosition);
-	setVisible(false);
-	setTransparent(true);
-
-	RenderObject::init();
-}
-
-void HelpButton::onClick() {
-	NancySceneState.requestStateChange(NancyState::kHelp);
-	g_nancy->_sound->playSound("GLOB");
-	setVisible(true);
 }
 
 } // End of namespace UI
