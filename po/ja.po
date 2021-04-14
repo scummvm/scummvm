@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-04-13 21:18+0000\n"
-"PO-Revision-Date: 2021-04-14 09:15+0000\n"
+"PO-Revision-Date: 2021-04-14 20:24+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ja/>\n"
@@ -21,15 +21,17 @@ msgstr ""
 "X-Language-name: Japanese\n"
 
 #: gui/about.cpp:102
-#, c-format
+#, c-format, fuzzy
 msgid "(built on %s)"
 msgstr "(ビルドの日時：%s)"
 
 #: gui/about.cpp:109
+#, fuzzy
 msgid "Features compiled in:"
 msgstr "含まれた機能："
 
 #: gui/about.cpp:118
+#, fuzzy
 msgid "Available engines:"
 msgstr "使用可能エンジン："
 
@@ -88,6 +90,7 @@ msgid "Choose"
 msgstr "選択"
 
 #: gui/downloaddialog.cpp:49
+#, fuzzy
 msgid "Select directory where to download game data"
 msgstr "ダウンロードされたゲームデータを保存するフォルダーを選択する"
 
@@ -96,10 +99,12 @@ msgid "Select directory with game data"
 msgstr "ゲームデータのフォルダーを選択する"
 
 #: gui/downloaddialog.cpp:52 gui/downloaddialog.cpp:227
+#, fuzzy
 msgid "From: "
 msgstr "元： "
 
 #: gui/downloaddialog.cpp:53 gui/downloaddialog.cpp:228
+#, fuzzy
 msgid "To: "
 msgstr "先： "
 
@@ -117,12 +122,11 @@ msgid "Hide"
 msgstr "非表示"
 
 #: gui/downloaddialog.cpp:118
+#, fuzzy
 msgid ""
 "It looks like your connection is limited. Do you really want to download "
 "files with it?"
-msgstr ""
-"インターネットの接続に制限があるようです。ダウンロードを続けてもよろしいです"
-"か？"
+msgstr "インターネットの接続に制限があるようです。ダウンロードを続けてもよろしいですか？"
 
 #: gui/downloaddialog.cpp:119 gui/downloaddialog.cpp:153
 #: gui/filebrowser-dialog.cpp:133 gui/fluidsynth-dialog.cpp:218
@@ -150,6 +154,7 @@ msgid "No"
 msgstr "いいえ"
 
 #: gui/downloaddialog.cpp:137 gui/launcher.cpp:560
+#, fuzzy
 msgid "ScummVM couldn't open the specified directory!"
 msgstr "指定されたフォルダーを開ませんでした！"
 
@@ -181,7 +186,7 @@ msgid "OK"
 msgstr "OK"
 
 #: gui/downloaddialog.cpp:152
-#, c-format
+#, c-format, fuzzy
 msgid ""
 "The \"%s\" already exists in the specified directory.\n"
 "Do you really want to download files into that directory?"
@@ -190,12 +195,12 @@ msgstr ""
 "ダウンロード続けてもよろしいですか？"
 
 #: gui/downloaddialog.cpp:215
-#, c-format
+#, c-format, fuzzy
 msgid "Downloaded %s %S / %s %S"
 msgstr "%s %S / %s %Sダウンロード済み"
 
 #: gui/downloaddialog.cpp:222
-#, c-format
+#, c-format, fuzzy
 msgid "Download speed: %s %S"
 msgstr "ダウンロード速度：%s %S"
 
@@ -209,6 +214,7 @@ msgstr "ID："
 
 #: gui/editgamedialog.cpp:146 gui/editgamedialog.cpp:148
 #: gui/editgamedialog.cpp:149
+#, fuzzy
 msgid ""
 "Short game identifier used for referring to saved games and running the game "
 "from the command line"
@@ -280,10 +286,12 @@ msgid "GFX"
 msgstr "GFX"
 
 #: gui/editgamedialog.cpp:209
+#, fuzzy
 msgid "Override global graphic settings"
 msgstr "全般の画像設定を上書きする"
 
 #: gui/editgamedialog.cpp:211
+#, fuzzy
 msgctxt "lowres"
 msgid "Override global graphic settings"
 msgstr "共通設定に優先して適用する"
@@ -293,10 +301,12 @@ msgid "Shader"
 msgstr "シェーダー"
 
 #: gui/editgamedialog.cpp:224
+#, fuzzy
 msgid "Override global shader settings"
 msgstr "全般のシェーダー設定を上書きする"
 
 #: gui/editgamedialog.cpp:226
+#, fuzzy
 msgctxt "lowres"
 msgid "Override global shader settings"
 msgstr "全般のシェーダー設定を上書きする"
@@ -323,19 +333,23 @@ msgid "Audio"
 msgstr "オーディオ"
 
 #: gui/editgamedialog.cpp:269
+#, fuzzy
 msgid "Override global audio settings"
 msgstr "全般のオーディオ設定を上書きする"
 
 #: gui/editgamedialog.cpp:271
+#, fuzzy
 msgctxt "lowres"
 msgid "Override global audio settings"
 msgstr "全般のオーディオ設定を上書きする"
 
 #: gui/editgamedialog.cpp:280 gui/options.cpp:1870
+#, fuzzy
 msgid "Volume"
 msgstr "音量"
 
 #: gui/editgamedialog.cpp:282 gui/options.cpp:1872
+#, fuzzy
 msgctxt "lowres"
 msgid "Volume"
 msgstr "音量"
@@ -5400,10 +5414,8 @@ msgstr ""
 
 #. I18N: Second Chance is the name of the original engine's autosave system
 #: engines/nancy/dialogs.cpp:46
-#, fuzzy
-#| msgid "Enable cross fade"
 msgid "Enable Second Chance"
-msgstr "クロスフェードを有効にする"
+msgstr "セカンド・チャンス(オートセーブ)を有効化"
 
 #: engines/nancy/dialogs.cpp:46
 msgid ""
@@ -7609,9 +7621,8 @@ msgstr "デバッグパーサーを表示"
 #: engines/wintermute/keymapper_tables.h:603
 #: engines/wintermute/keymapper_tables.h:1228
 #: engines/wintermute/keymapper_tables.h:1434
-#, fuzzy
 msgid "Debug print"
-msgstr "画像"
+msgstr "デバッグを表示"
 
 #: engines/wintermute/keymapper_tables.h:500
 #: engines/wintermute/keymapper_tables.h:1407
@@ -7623,42 +7634,36 @@ msgid "Light helper window"
 msgstr "ヘルパーウィンドウを明るくする"
 
 #: engines/wintermute/keymapper_tables.h:530
-#, fuzzy
 msgid "Run forward"
-msgstr "前に進む"
+msgstr "前進"
 
 #: engines/wintermute/keymapper_tables.h:535
-#, fuzzy
 msgid "Run backward"
-msgstr "バックグラウンドで実行する"
+msgstr "後退"
 
 #: engines/wintermute/keymapper_tables.h:540
-#, fuzzy
 msgid "Turn left fast"
-msgstr "左へ"
+msgstr "高速で左折"
 
 #: engines/wintermute/keymapper_tables.h:545
-#, fuzzy
 msgid "Turn right fast"
-msgstr "右へ"
+msgstr "高速で右折"
 
 #: engines/wintermute/keymapper_tables.h:550
 msgid "Show blueprint"
 msgstr "設計図を表示"
 
 #: engines/wintermute/keymapper_tables.h:577
-#, fuzzy
 msgid "Volume off"
-msgstr "音量"
+msgstr "ボリュームOFF"
 
 #: engines/wintermute/keymapper_tables.h:591
 msgid "Change font size"
 msgstr "フォントサイズの変更"
 
 #: engines/wintermute/keymapper_tables.h:670
-#, fuzzy
 msgid "Save game"
-msgstr "ゲームをセーブ："
+msgstr "ゲームをセーブ"
 
 #: engines/wintermute/keymapper_tables.h:680
 msgid "Quick save"
@@ -7683,19 +7688,16 @@ msgstr "クイックロード"
 #: engines/wintermute/keymapper_tables.h:705
 #: engines/wintermute/keymapper_tables.h:1035
 #: engines/wintermute/keymapper_tables.h:1429
-#, fuzzy
 msgid "Cancel waiting"
-msgstr "ダウンロードをキャンセル"
+msgstr "キャンセル待機中"
 
 #: engines/wintermute/keymapper_tables.h:715
-#, fuzzy
 msgid "First page"
-msgstr "次のページ"
+msgstr "最初のページ"
 
 #: engines/wintermute/keymapper_tables.h:720
-#, fuzzy
 msgid "Last page"
-msgstr "次のページ"
+msgstr "最後のページ"
 
 #: engines/wintermute/keymapper_tables.h:727
 msgid "Walking speed: Ultra Super Mega Fast"
@@ -7782,29 +7784,24 @@ msgid "Show hints / Dance move"
 msgstr "ヒントを表示 / ダンスの動き"
 
 #: engines/wintermute/keymapper_tables.h:956
-#, fuzzy
 msgid "Dance move up"
-msgstr "上"
+msgstr "ダンス速度アップ"
 
 #: engines/wintermute/keymapper_tables.h:962
-#, fuzzy
 msgid "Dance move down"
-msgstr "下"
+msgstr "ダンス速度ダウン"
 
 #: engines/wintermute/keymapper_tables.h:968
-#, fuzzy
 msgid "Dance move left"
-msgstr "左に行く"
+msgstr "左へダンス"
 
 #: engines/wintermute/keymapper_tables.h:974
-#, fuzzy
 msgid "Dance move right"
-msgstr "右に行く"
+msgstr "右へダンス"
 
 #: engines/wintermute/keymapper_tables.h:1004
-#, fuzzy
 msgid "Cancel input"
-msgstr "キャンセル"
+msgstr "入力をキャンセル"
 
 #: engines/wintermute/keymapper_tables.h:1114
 msgid "Shift"
@@ -7863,9 +7860,8 @@ msgstr "ズームイン"
 
 #: engines/wintermute/keymapper_tables.h:1396
 #: engines/wintermute/keymapper_tables.h:1511
-#, fuzzy
 msgid "Show journal"
-msgstr "地図を表示"
+msgstr "日記を表示"
 
 #: engines/wintermute/keymapper_tables.h:1439
 msgid "Bezier window"
@@ -7963,14 +7959,12 @@ msgid "Increase framerate from 30 to 60 FPS"
 msgstr "フレームレートを30→60fpsへ引き上げる"
 
 #: engines/zvision/detection_tables.h:70
-#, fuzzy
 msgid "Enable Venus"
-msgstr "マウス操作を有効にする"
+msgstr "ヴィーナスを有効化"
 
 #: engines/zvision/detection_tables.h:71
-#, fuzzy
 msgid "Enable the Venus help system"
-msgstr "ゲーム音声を有効にする"
+msgstr "ヴィーナスヘルプシステムを有効化"
 
 #: engines/zvision/detection_tables.h:80
 msgid "Disable animation while turning"
@@ -8022,9 +8016,8 @@ msgid "Extract coin"
 msgstr "コインを抽出"
 
 #: engines/zvision/metaengine.cpp:209
-#, fuzzy
 msgid "Preferences"
-msgstr "優先デバイス："
+msgstr "環境設定"
 
 #: engines/zvision/zvision.cpp:313
 msgid ""
