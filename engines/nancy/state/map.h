@@ -59,6 +59,8 @@ private:
 			uint16 verticalOffset = 0;
 		};
 
+		Common::String description;
+
 		bool isActive = false;
 		Common::Rect hotspot;
 		Common::Array<SceneChange> scenes;
@@ -76,6 +78,7 @@ private:
 
 	Nancy::UI::Viewport _viewport;
 	RenderObject _label;
+	RenderObject _closedLabel;
 	UI::Button *_button;
 	SoundDescription _sound;
 

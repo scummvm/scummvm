@@ -45,6 +45,7 @@ Map::Map() : _state(kInit),
 			_pickedLocationID(-1),
 			_viewport(),
 			_label(NancySceneState.getFrame(), 7),
+			_closedLabel(NancySceneState.getFrame(), 7),
 			_button(nullptr) {}
 
 Map::~Map() {
@@ -64,16 +65,28 @@ void Map::process() {
 
 void Map::init() {
 	Common::SeekableReadStream *chunk = g_nancy->getBootChunkStream("MAP");
+	Common::Rect textboxScreenPosition = NancySceneState.getTextbox().getScreenPosition();
 
 	_viewport.init();
 	_label.init();
-
-	setLabel(-1);
 
 	Common::Rect buttonSrc, buttonDest;
 	chunk->seek(0x7A, SEEK_SET);
 	readRect(*chunk, buttonSrc);
 	readRect(*chunk, buttonDest);
+
+	chunk->seek(0xDA, SEEK_SET);
+	Common::Rect closedLabelSrc;
+	readRect(*chunk, closedLabelSrc);
+
+	_closedLabel._drawSurface.create(g_nancy->_graphicsManager->_object0, closedLabelSrc);
+
+	_closedLabel._screenPosition.left = textboxScreenPosition.left + ((textboxScreenPosition.width() - closedLabelSrc.width()) / 2);
+	_closedLabel._screenPosition.right = _closedLabel._screenPosition.left + closedLabelSrc.width() - 1;
+	_closedLabel._screenPosition.bottom = textboxScreenPosition.bottom - 11;
+	_closedLabel._screenPosition.top = _closedLabel._screenPosition.bottom - closedLabelSrc.height() + 1;
+
+	setLabel(-1);
 
 	_button = new UI::Button(NancySceneState.getFrame(), 9, g_nancy->_graphicsManager->_object0, buttonSrc, buttonDest);
 	_button->init();
@@ -103,10 +116,17 @@ void Map::init() {
 	_locations.clear();
 
 	_locations.reserve(4);
+	char buf[30];
 	for (uint i = 0; i < 4; ++i) {
-		chunk->seek(0x162 + i * 16, SEEK_SET);
 		_locations.push_back(Location());
 		Location &loc = _locations.back();
+
+		chunk->seek(0xEA + i * 16, SEEK_SET);
+		chunk->read(buf, 30);
+		buf[29] = '\0';
+		loc.description = buf;
+
+		chunk->seek(0x162 + i * 16, SEEK_SET);
 		readRect(*chunk, loc.hotspot);
 
 		if (_mapID == 1 && (i % 2) != 0) {
@@ -128,10 +148,10 @@ void Map::init() {
 		chunk->seek(0x9A + i * 16, SEEK_SET);
 		readRect(*chunk, loc.labelSrc);
 
-		// TODO this gets initialized using MAP and the textbox's on-screen location
-		// but the code is annoyingly long so fpr now i just directly write the result
-		loc.labelDest = Common::Rect(0x56, 0x166, 0x15E, 0x19B);
-
+		loc.labelDest.left = textboxScreenPosition.left + ((textboxScreenPosition.width() - loc.labelSrc.width()) / 2);
+		loc.labelDest.right = loc.labelDest.left + loc.labelSrc.width() - 1;
+		loc.labelDest.bottom = _closedLabel._screenPosition.bottom - ((_closedLabel._screenPosition.bottom - loc.labelSrc.height() - textboxScreenPosition.top) / 2) - 11;
+		loc.labelDest.top = loc.labelDest.bottom - loc.labelSrc.height() + 1;
 	}
 
 	registerGraphics();
@@ -159,14 +179,16 @@ void Map::run() {
 
 	for (uint i = 0; i < 4; ++i) {
 		auto &loc = _locations[i];
-		if (loc.isActive && _viewport.convertToScreen(loc.hotspot).contains(input.mousePos)) {
-			g_nancy->_cursorManager->setCursorType(CursorManager::kHotspotArrow);
-
+		if (_viewport.convertToScreen(loc.hotspot).contains(input.mousePos)) {
 			setLabel(i);
 
-			if (input.input & NancyInput::kLeftMouseButtonUp) {
-				_pickedLocationID = i;
-				g_nancy->setState(NancyState::kScene);
+			if (loc.isActive){
+				g_nancy->_cursorManager->setCursorType(CursorManager::kHotspotArrow);
+
+				if (input.input & NancyInput::kLeftMouseButtonUp) {
+					_pickedLocationID = i;
+					g_nancy->setState(NancyState::kScene);
+				}
 			}
 
 			return;
@@ -196,16 +218,22 @@ void Map::onStateExit() {
 void Map::registerGraphics() {
 	_viewport.registerGraphics();
 	_label.registerGraphics();
+	_closedLabel.registerGraphics();
 	_button->registerGraphics();
 }
 
 void Map::setLabel(int labelID) {
 	if (labelID == -1) {
 		_label.setVisible(false);
+		_closedLabel.setVisible(false);
 	} else {
 		_label._screenPosition = _locations[labelID].labelDest;
 		_label._drawSurface.create(g_nancy->_graphicsManager->_object0, _locations[labelID].labelSrc);
 		_label.setVisible(true);
+
+		if (!_locations[labelID].isActive) {
+			_closedLabel.setVisible(true);
+		}
 	}
 }
 
