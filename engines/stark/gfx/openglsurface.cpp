@@ -33,7 +33,7 @@ static const GLfloat textCords[] = {
 	0.0f, 0.0f,
 	1.0f, 0.0f,
 	0.0f, 1.0f,
-	1.0f, 1.0f,
+	1.0f, 1.0f
 };
 
 OpenGLSurfaceRenderer::OpenGLSurfaceRenderer(OpenGLDriver *gfx) :
@@ -54,10 +54,10 @@ void OpenGLSurfaceRenderer::render(const Texture *texture, const Common::Point &
 
 	const Math::Vector2d surfaceVertices[] = {
 		// X   Y
-		{ 0.0f, 0.0f },
-		{ 1.0f, 0.0f },
-		{ 0.0f, 1.0f },
-		{ 1.0f, 1.0f },
+		Math::Vector2d(0.0f, 0.0f),
+		Math::Vector2d(1.0f, 0.0f),
+		Math::Vector2d(0.0f, 1.0f),
+		Math::Vector2d(1.0f, 1.0f)
 	};
 
 	Math::Vector2d verSizeWH;
@@ -66,9 +66,9 @@ void OpenGLSurfaceRenderer::render(const Texture *texture, const Common::Point &
 	} else {
 		verSizeWH = normalizeOriginalCoordinates(width, height);
 	}
-	auto verOffsetXY = normalizeOriginalCoordinates(dest.x, dest.y);
-	auto nativeViewport = _gfx->getViewport();
-	auto viewport = Math::Vector2d(nativeViewport.width(), nativeViewport.height());
+	Math::Vector2d verOffsetXY = normalizeOriginalCoordinates(dest.x, dest.y);
+	Common::Rect nativeViewport = _gfx->getViewport();
+	Math::Vector2d viewport = Math::Vector2d(nativeViewport.width(), nativeViewport.height());
 
 	SurfaceVertex vertices[4] = {};
 	for (int32 v = 0; v < 4; v++) {

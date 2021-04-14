@@ -85,7 +85,7 @@ void OpenGLPropRenderer::render(const Math::Vector3d &position, float direction,
 			glColor3f(material.r, material.g, material.b);
 		}
 
-		auto vertexIndices = _faceEBO[face];
+		uint32 *vertexIndices = _faceEBO[face];
 
 		glEnableClientState(GL_VERTEX_ARRAY);
 		glEnableClientState(GL_TEXTURE_COORD_ARRAY);
@@ -129,7 +129,7 @@ void OpenGLPropRenderer::uploadVertices() {
 
 PropVertex *OpenGLPropRenderer::createFaceVBO() {
 	const Common::Array<Formats::BiffMesh::Vertex> &modelVertices = _model->getVertices();
-	auto vertices = new PropVertex[modelVertices.size()];
+	PropVertex *vertices = new PropVertex[modelVertices.size()];
 	// Build a vertex array
 	for (uint32 i = 0; i < modelVertices.size(); i++) {
 		vertices[i].x = modelVertices[i].position.x();
@@ -146,7 +146,7 @@ PropVertex *OpenGLPropRenderer::createFaceVBO() {
 }
 
 uint32 *OpenGLPropRenderer::createFaceEBO(const Face *face) {
-	auto indices = new uint32[face->vertexIndices.size()];
+	uint32 *indices = new uint32[face->vertexIndices.size()];
 	for (uint32 index = 0; index < face->vertexIndices.size(); index++) {
 		indices[index] = face->vertexIndices[index];
 	}

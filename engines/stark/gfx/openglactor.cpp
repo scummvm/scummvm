@@ -112,11 +112,11 @@ void OpenGLActorRenderer::render(const Math::Vector3d &position, float direction
 			glColor3f(material->r, material->g, material->b);
 		}
 
-		auto vertexIndices = _faceEBO[*face];
-		auto numVertexIndices = (*face)->vertexIndices.size();
+		uint32 *vertexIndices = _faceEBO[*face];
+		uint numVertexIndices = (*face)->vertexIndices.size();
 		for (uint32 i = 0; i < numVertexIndices; i++) {
 			uint32 index = vertexIndices[i];
-			auto vertex = _faceVBO[index];
+			ActorVertex &vertex = _faceVBO[index];
 			uint32 bone1 = vertex.bone1;
 			uint32 bone2 = vertex.bone2;
 			Math::Vector3d position1 = vertex.pos1;
@@ -202,7 +202,7 @@ void OpenGLActorRenderer::render(const Math::Vector3d &position, float direction
 		glColor4f(0.0f, 0.0f, 0.0f, 0.5f);
 
 		for (Common::Array<Face *>::const_iterator face = faces.begin(); face != faces.end(); ++face) {
-			auto vertexIndices = _faceEBO[*face];
+			uint32 *vertexIndices = _faceEBO[*face];
 
 			glEnableClientState(GL_VERTEX_ARRAY);
 
@@ -243,7 +243,7 @@ void OpenGLActorRenderer::uploadVertices() {
 ActorVertex *OpenGLActorRenderer::createModelVBO(const Model *model) {
 	const Common::Array<VertNode *> &modelVertices = model->getVertices();
 
-	auto vertices = new ActorVertex[modelVertices.size()];
+	ActorVertex *vertices = new ActorVertex[modelVertices.size()];
 	// Build a vertex array
 	int i = 0;
 	for (Common::Array<VertNode *>::const_iterator tri = modelVertices.begin(); tri != modelVertices.end(); ++tri, i++) {
@@ -261,7 +261,7 @@ ActorVertex *OpenGLActorRenderer::createModelVBO(const Model *model) {
 }
 
 uint32 *OpenGLActorRenderer::createFaceEBO(const Face *face) {
-	auto indices = new uint32[face->vertexIndices.size()];
+	uint32 *indices = new uint32[face->vertexIndices.size()];
 	for (uint32 index = 0; index < face->vertexIndices.size(); index++) {
 		indices[index] = face->vertexIndices[index];
 	}
