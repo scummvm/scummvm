@@ -39,7 +39,7 @@ namespace TwinE {
 class TwinEMetaEngine : public AdvancedMetaEngine {
 public:
 	const char *getName() const override {
-		return "TwinE";
+		return "twine";
 	}
 
 	int getMaximumSaveSlot() const override {
