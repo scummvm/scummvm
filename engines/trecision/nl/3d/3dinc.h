@@ -140,7 +140,7 @@ public:
 
 	int _vertexNum;
 	int _faceNum;
-	int _lightNum;
+	int32 _lightNum;
 	int _matNum;
 
 	float _px, _py, _pz;
@@ -151,7 +151,7 @@ public:
 	int _curFrame;
 	int _curAction;
 
-	void ReadActor(const char *filename);
+	void readActor(const char *filename);
 };
 
 
