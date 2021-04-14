@@ -571,7 +571,10 @@ bool LauncherDialog::doGameDetection(const Common::String &path) {
 		g_system->logMessage(LogMessageType::kInfo, report.encode().c_str());
 	}
 
-	Common::Array<DetectedGame> candidates = detectionResults.listDetectedGames();
+	Common::Array<DetectedGame> candidates = detectionResults.listRecognizedGames();
+	if (candidates.empty()) {
+		candidates = detectionResults.listDetectedGames();
+	}
 
 	int idx;
 	if (candidates.empty()) {
