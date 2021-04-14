@@ -806,7 +806,6 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 		if (_vm->_useWith[WITH] == oBAR11) {
 			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a113USAFIALA, 0, 0, _vm->_useWith[WITH]);
 			_vm->replaceIcon(iACIDO15, iFIALAMETA);
-			//_vm->_animMgr->_animTab[a113USAFIALA]._atFrame[0]._index = 1483;
 			*printSentence = false;
 		} else if (_vm->_useWith[WITH] == oPADLOCK1B) {
 			if (_vm->_obj[oTOMBINOA1B]._mode & OBJMODE_OBJSTATUS)
@@ -869,7 +868,6 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 		if (_vm->_useWith[WITH] == oMANHOLEC1B) {
 			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a1B1USASBARRA, 0, 0, _vm->_useWith[WITH]);
 			_vm->_obj[oBOTOLAA1B]._anim = a1B6ASCENDEBOTOLA;
-			//_vm->_obj[oBOTOLAC1B]._anim = a1B3AAPREBOTOLA;
 			*printSentence = false;
 		} else if (_vm->_useWith[WITH] == oCATENAT21) {
 			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a216, 0, 0, _vm->_useWith[WITH]);
@@ -901,7 +899,6 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 				_vm->_choice[48]._flag |= DLGCHOICE_HIDE;
 				_vm->_choice[49]._flag &= ~DLGCHOICE_HIDE;
 				_vm->playScript(s16CARD);
-				// doMouseTalk( _useWith[WITH] );
 				*printSentence = false;
 			}
 		} else if (_vm->_useWith[WITH] == oSLOT23) {
@@ -920,7 +917,6 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 			_vm->_choice[48]._flag |= DLGCHOICE_HIDE;
 			_vm->_choice[50]._flag &= ~DLGCHOICE_HIDE;
 			_vm->playScript(S16MONEY);
-			// doMouseTalk( _useWith[WITH] );
 			*printSentence = false;
 			_vm->removeIcon(iMONETA13);
 			_vm->_obj[oFINGERPADP16]._flag |= OBJFLAG_ROOMOUT;
@@ -1204,12 +1200,9 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 			_vm->_obj[oCARTELLONE2H]._mode &= ~OBJMODE_OBJSTATUS;
 			_vm->_obj[oPASSERELLA24]._mode &= ~OBJMODE_OBJSTATUS;
 			_vm->_obj[oMACERIE24]._mode &= ~OBJMODE_OBJSTATUS;
-			//_vm->_obj[oPASSERELLA24]._flag &= ~OBJFLAG_ROOMOUT;
-			//_vm->_obj[oPASSERELLA24]._anim = 0;
 			*printSentence = false;
 		} else if ((_vm->_useWith[WITH] == oTUBOT34) && (_vm->_obj[oVALVOLAC34]._mode & OBJMODE_OBJSTATUS)) {
 			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a341USAPINZE, 0, 0, _vm->_useWith[WITH]);
-			//_vm->_obj[oVALVOLAC34]._anim = 0;
 			*printSentence = false;
 		} else if ((_vm->_useWith[WITH] == oTUBOT34) && (_vm->_obj[oVALVOLA34]._mode & OBJMODE_OBJSTATUS)) {
 			CharacterSay(2007);
@@ -1835,7 +1828,6 @@ bool LogicManager::useScreenWithScreen() {
 			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a337PRENDETUBO, 0, 0, _vm->_useWith[WITH]);
 			_vm->_obj[oTUBOF34]._examine = 1832;
 			_vm->_obj[oTUBOFT34]._examine = 773;
-			//_vm->_obj[oVALVOLAC34]._anim = a344APREVALVOLA;
 			printSentence = false;
 		}
 		break;
@@ -2566,7 +2558,6 @@ bool LogicManager::mouseOperate(uint16 curObj) {
 		if (!(_vm->_obj[oPANELM2G]._flag & OBJFLAG_EXTRA)) {
 			PlayDialog(dF2G1);
 			_vm->_obj[oCOPERCHIO2G]._mode &= ~OBJMODE_OBJSTATUS;
-			//_vm->_obj[oPANELM2G]._mode &= ~OBJMODE_OBJSTATUS;
 			_vm->_obj[oSERBATOIOC2G]._mode &= ~OBJMODE_OBJSTATUS;
 			_vm->_obj[oRAGAZZOP2G]._mode &= ~OBJMODE_OBJSTATUS;
 			_vm->_obj[oRAGAZZOS2G]._mode |= OBJMODE_OBJSTATUS;
@@ -2730,7 +2721,6 @@ bool LogicManager::mouseOperate(uint16 curObj) {
 				_vm->_obj[oLEDS35]._mode &= ~OBJMODE_OBJSTATUS;
 
 				_vm->_obj[oFRONTOFFICEA35]._anim = 0;
-				//_vm->_obj[oFRONTOFFICEA35]._examine = 1843;
 				_vm->_obj[oFRONTOFFICEA35]._action = 1844;
 				_vm->_obj[oFRONTOFFICEA35]._flag |= OBJFLAG_EXTRA;
 				_vm->_obj[oPORTAMC36]._flag |= OBJFLAG_ROOMOUT;
@@ -2831,8 +2821,6 @@ bool LogicManager::mouseOperate(uint16 curObj) {
 			_vm->_obj[oAGENDA49]._action = 1100;
 			_vm->_flagCharacterExists = true;
 			_vm->_curObj = oAGENDA49;
-			//_vm->_flagShowCharacter=true;
-			//doEvent(MC_SYSTEM,ME_CHANGEROOM,MP_SYSTEM,r4A,0,1,TheObj);
 			_vm->playScript(s49SUNDIAL);
 		}
 		retVal = false;
@@ -2890,7 +2878,6 @@ bool LogicManager::mouseOperate(uint16 curObj) {
 			}
 			doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, r51, 0, 1, curObj);
 			_vm->_flagCharacterExists = true;
-			//_vm->_flagShowCharacter=true;
 		} else {
 			for (a = 0; a < 6; a++) {
 				_comb4CT[a] = 0;
@@ -2898,7 +2885,6 @@ bool LogicManager::mouseOperate(uint16 curObj) {
 			}
 			doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, r4C, 0, 4, curObj);
 			_vm->_flagCharacterExists = true;
-			//_vm->_flagShowCharacter=true;
 		}
 		retVal = false;
 		break;

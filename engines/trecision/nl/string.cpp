@@ -316,9 +316,6 @@ void CharacterMute() {
 
 	if ((g_vm->_curRoom == r12CU) || (g_vm->_curRoom == r13CU))
 		doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, g_vm->_oldRoom, 0, 0, g_vm->_curObj);
-
-	//	actorStop();
-	//	if(_flagDialogActive) doEvent(MC_DIALOG,ME_FINEBATTUTA,MP_DEFAULT,0,0,0,0);
 }
 
 /*-------------------------------------------------------------------------*/
