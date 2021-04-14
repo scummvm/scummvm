@@ -107,7 +107,7 @@ public:
 	void setRoom(uint16 r, bool b);
 
 	// Text
-	void addText(uint16 x, uint16 y, const char *sign, uint16 tcol, uint16 scol);
+	void addText(uint16 x, uint16 y, const char *text, uint16 tcol, uint16 scol);
 	void clearText();
 	void drawString();
 	void doClearText();
