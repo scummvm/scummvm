@@ -856,7 +856,7 @@ static void listTargets() {
 
 	for (iter = domains.begin(); iter != domains.end(); ++iter) {
 		Common::String name(iter->_key);
-		Common::String description(iter->_value.getVal("description"));
+		Common::String description(iter->_value.getValOrDefault("description"));
 
 		// If there's no description, fallback on the default description.
 		if (description.empty()) {
