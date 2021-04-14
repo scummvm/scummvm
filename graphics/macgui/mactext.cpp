@@ -204,6 +204,8 @@ MacText::MacText(const Common::String &s, MacWindowManager *wm, const MacFont *m
 	if (macFont) {
 		_defaultFormatting = MacFontRun(_wm, macFont->getId(), macFont->getSlant(), macFont->getSize(), 0, 0, 0);
 		_defaultFormatting.font = wm->_fontMan->getFont(*macFont);
+		// try to set fgcolor as default color in chunks
+		_defaultFormatting.fgcolor = _fgcolor;
 	} else {
 		_defaultFormatting.font = NULL;
 	}
@@ -863,6 +865,15 @@ void MacText::appendText(const Common::U32String &str, int fontId, int fontSize,
 	MacFontRun fontRun = MacFontRun(_wm, fontId, fontSlant, fontSize, 0, 0, 0);
 
 	_currentFormatting = fontRun;
+
+	// we check _str here, if _str is empty but _textLines is not empty, and they are not the end of paragraph
+	// then we remove those empty lines
+	// too many special check may cause some strange problem in the future
+	if (_str.empty()) {
+		while (!_textLines.empty() && !_textLines.back().paragraphEnd) {
+			removeLastLine();
+		}
+	}
 
 	if (!skipAdd) {
 		_str += fontRun.toString();
