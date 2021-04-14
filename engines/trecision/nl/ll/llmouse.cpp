@@ -538,7 +538,6 @@ insave:
 					DataLoad
 --------------------------------------------------*/
 bool DataLoad() {
-	uint8 OldInv[MAXICON], OldIconBase, OldInvLen;
 	Common::StringArray saveNames;
 	saveNames.reserve(MAXSAVEFILE);
 	bool retval = true;
@@ -579,12 +578,13 @@ bool DataLoad() {
 
 	FreeKey();
 
+	uint8 OldInv[MAXICON];
 	// Reset the inventory and turn it into save slots
 	memcpy(OldInv, g_vm->_inventory, MAXICON);
 	memset(g_vm->_inventory, 0, MAXICON);
-	OldIconBase = g_vm->_iconBase;
+	uint8 OldIconBase = g_vm->_iconBase;
 	g_vm->_iconBase = 0;
-	OldInvLen = g_vm->_inventorySize;
+	uint8 OldInvLen = g_vm->_inventorySize;
 	g_vm->_inventorySize = MAXSAVEFILE;
 
 	loadSaveSlots(saveNames);

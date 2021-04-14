@@ -173,5 +173,92 @@ void TrecisionEngine::setRoom(uint16 r, bool b) {
 	RegenRoom();
 }
 
+void TrecisionEngine::decompress(const unsigned char *src, unsigned src_len, unsigned char *dst, unsigned dst_len) {
+	unsigned short *sw = (unsigned short *)(src + src_len);
+	unsigned char *d = dst;
+	const unsigned char *s = src;
+	unsigned short ctrl = 0, ctrl_cnt = 1;
+
+	while (s < (const unsigned char *)sw) {
+		if (!--ctrl_cnt) {
+			ctrl = *--sw;
+			ctrl_cnt = 16;
+		} else {
+			ctrl <<= 1;
+		}
+
+		if (ctrl & 0x8000) {
+			unsigned foo = *--sw;
+			const unsigned char *cs = d - (foo >> 4);
+
+			switch (foo & 0xF) {
+			case 0:
+				*d++ = *cs++;
+			case 1:
+				*d++ = *cs++;
+			case 2:
+				*d++ = *cs++;
+			case 3:
+				*d++ = *cs++;
+			case 4:
+				*d++ = *cs++;
+			case 5:
+				*d++ = *cs++;
+			case 6:
+				*d++ = *cs++;
+			case 7:
+				*d++ = *cs++;
+			case 8:
+				*d++ = *cs++;
+			case 9:
+				*d++ = *cs++;
+			case 10:
+				*d++ = *cs++;
+			case 11:
+				*d++ = *cs++;
+			case 12:
+				*d++ = *cs++;
+			case 13:
+				*d++ = *cs++;
+			case 14:
+				*d++ = *cs++;
+			case 15:
+				*d++ = *cs++;
+
+				*d++ = *cs++;
+				*d++ = *cs++;
+			}
+		} else {
+			*d++ = *s++;
+		}
+	}
+}
+
+#define FAST_COOKIE 0xFA57F00D
+uint32 TrecisionEngine::DecCR(Common::String fileName, uint8 *DestArea) {
+	Common::SeekableReadStream *ff = g_vm->_dataFile.createReadStreamForMember(fileName);
+	if (ff == nullptr)
+		error("File not found %s", fileName.c_str());
+
+	int dataSize = ff->size() - 8;
+	uint8 *ibuf = new uint8[dataSize];
+	uint8 *obuf = DestArea;
+
+	uint32 signature = ff->readUint32LE();
+	if (signature != FAST_COOKIE)
+		error("DecCR - %s has a bad signature and can't be loaded", fileName.c_str());
+
+	uint32 decompSize = ff->readUint32LE();
+	ff->read(ibuf, dataSize);
+	delete ff;
+
+	if (dataSize < decompSize)
+		decompress(ibuf, dataSize, obuf, decompSize);
+	else
+		memcpy(obuf, ibuf, dataSize);
+
+	delete[] ibuf;
+	return decompSize;
+}
 
 } // End of namespace Trecision

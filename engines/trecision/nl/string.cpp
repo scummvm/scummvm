@@ -244,7 +244,7 @@ void CharacterTalk(const char *s) {
 void CharacterTalkInAction(uint16 ss) {
 	const char *s = g_vm->_sentence[ss];
 
-	if (g_vm->_sentence[ss][0] == '*')
+	if (s[0] == '*')
 		return;
 	CurS = ss;
 
@@ -266,13 +266,12 @@ void CharacterTalkInAction(uint16 ss) {
 /*                            CharacterContinueTalk                		   */
 /*-------------------------------------------------------------------------*/
 void CharacterContinueTalk() {
-	uint16 posx, posy;
-
 	g_vm->_flagSkipTalk = false;
 	CharacterSpeakTime = TheTime;
 
 	substringagain = (CurSubString < (SubStringUsed - 1));
 
+	uint16 posx, posy;
 	if (g_vm->_flagCharacterExists)
 		PositionString(g_vm->_actor->_lim[0], g_vm->_actor->_lim[2], SubString[CurSubString], &posx, &posy, true);
 	else
@@ -319,9 +318,9 @@ void CharacterMute() {
 }
 
 /*-------------------------------------------------------------------------*/
-/*                                 SOMEONETALK            				   */
+/*                                 SomeoneTalk            				   */
 /*-------------------------------------------------------------------------*/
-void SomeOneTalk(uint16 s, uint16 Person, uint16 NewAnim, bool FromSomeOneSay) {
+void SomeoneTalk(uint16 s, uint16 Person, uint16 NewAnim, bool FromSomeOneSay) {
 	SpeakSomeOneAnimation = NewAnim;
 	SpeakSomeOnePerson = Person;
 	g_vm->_flagSomeoneSpeaks = true;

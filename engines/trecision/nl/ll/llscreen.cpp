@@ -415,7 +415,7 @@ void ReadLoc() {
 
 	Common::String filename = Common::String::format("%s.cr", g_vm->_room[g_vm->_curRoom]._baseName);
 
-	uint32 dataLength = (DecCR(filename, (uint8 *)(ImagePointer - 4), (uint8 *)g_vm->_screenBuffer) + 1) / 2;
+	uint32 dataLength = (g_vm->DecCR(filename, (uint8 *)(ImagePointer - 4)) + 1) / 2;
 	memcpy(&BmInfo, (SBmInfo *)(ImagePointer - 4), sizeof(SBmInfo));
 	g_vm->_graphicsMgr->updatePixelFormat(ImagePointer, BmInfo.dx * BmInfo.dy);
 

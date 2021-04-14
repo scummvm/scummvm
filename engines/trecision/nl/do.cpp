@@ -867,13 +867,13 @@ void ProcessATF(ATFHandle *h, int type, int atf) {
 			if (g_vm->_room[r1D]._flag & OBJFLAG_EXTRA)
 				break;
 
-			SomeOneTalk(307 + dc, oDONNA1D, 0, 0);
+			SomeoneTalk(307 + dc, oDONNA1D, 0, false);
 			if (dc < 6)
 				dc ++;
 			break;
 
 		case 2:
-			SomeOneTalk(1788, ocNEGOZIANTE1A, 0, 0);
+			SomeoneTalk(1788, ocNEGOZIANTE1A, 0, false);
 			break;
 		}
 		break;
