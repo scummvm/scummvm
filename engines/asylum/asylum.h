@@ -164,7 +164,7 @@ public:
 	void resetFlags();
 
 	// Misc
-	uint getRandom(uint max) { return _rnd->getRandomNumber(max); }
+	uint getRandom(uint max) { return max ? _rnd->getRandomNumber(max - 1) : 0; }
 	uint getRandomBit()      { return _rnd->getRandomBit(); }
 
 	/**

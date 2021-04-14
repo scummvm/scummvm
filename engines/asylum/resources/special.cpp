@@ -163,7 +163,7 @@ void Special::chapter1(Object *object, ActorIndex actorIndex) {
 
 		case kObjectHeadBanger:
 			if (object->getFrameIndex() == 2)
-				object->getFrameSoundItem(0)->resourceId = getWorld()->graphicResourceIds[rnd(2) ? 37 : 38];
+				object->getFrameSoundItem(0)->resourceId = getWorld()->graphicResourceIds[rnd(254) ? 38 : 37];
 			break;
 
 		case kObjectAngelFlares:

@@ -577,7 +577,7 @@ bool PuzzleTicTacToe::countEmptyFields() {
 
 void PuzzleTicTacToe::placeOpponentMark() {
 	_frameIndex = 0;
-	_lastMarkedField = _field[rnd(_emptyCount - 1)];
+	_lastMarkedField = _field[rnd(_emptyCount)];
 
 	if (_gameField[_lastMarkedField] != ' ')
 		error("[PuzzleTicTacToe::placeOpponentMark] Field is already occupied (%d)!", _lastMarkedField);
