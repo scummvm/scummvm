@@ -36,7 +36,6 @@ struct SDObj;
 struct STexture;
 struct SPan;
 
-uint32 DecCR(Common::String fileName, uint8 *DestArea, uint8 *DecArea);
 void performLoad(int slot, bool skipLoad);
 bool pointInside(int pan, double x, double z);
 void doAction();
@@ -81,7 +80,7 @@ int IntersecateRect(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int 
 void doEvent(uint8 cls, uint8 event, uint8 priority, uint16 u16Param1, uint16 u16Param2, uint8 u8Param, uint32 u32Param);
 void Scheduler();
 void ProcessTheMessage();
-void PositionString(uint16 x, uint16 y, const char *string, uint16 *posx, uint16 *posy, bool Homo);
+void PositionString(uint16 x, uint16 y, const char *string, uint16 *posx, uint16 *posy, bool characterFl);
 void ShowObjName(uint16 obj, bool showhide);
 void FormattingSuperString();
 void FormattingOneString();
@@ -90,7 +89,7 @@ void CharacterTalk(const char *s);
 void CharacterTalkInAction(uint16 ss);
 void CharacterContinueTalk();
 void CharacterMute();
-void SomeOneTalk(uint16 s, uint16 Person, uint16 NewAnim, bool FromSomeOneSay);
+void SomeoneTalk(uint16 s, uint16 Person, uint16 NewAnim, bool FromSomeOneSay);
 void SomeoneContinueTalk();
 void SomeOneMute();
 void doString();
