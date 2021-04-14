@@ -174,12 +174,12 @@ void TrecisionEngine::setRoom(uint16 r, bool b) {
 }
 
 void TrecisionEngine::decompress(const unsigned char *src, unsigned src_len, unsigned char *dst, unsigned dst_len) {
-	unsigned short *sw = (unsigned short *)(src + src_len);
-	unsigned char *d = dst;
-	const unsigned char *s = src;
+	uint16 *sw = (uint16 *)(src + src_len);
+	uint8 *d = dst;
+	const uint8 *s = src;
 	unsigned short ctrl = 0, ctrl_cnt = 1;
 
-	while (s < (const unsigned char *)sw) {
+	while (s < (const uint8 *)sw) {
 		if (!--ctrl_cnt) {
 			ctrl = *--sw;
 			ctrl_cnt = 16;
@@ -188,46 +188,16 @@ void TrecisionEngine::decompress(const unsigned char *src, unsigned src_len, uns
 		}
 
 		if (ctrl & 0x8000) {
-			unsigned foo = *--sw;
-			const unsigned char *cs = d - (foo >> 4);
+			uint16 foo = *--sw;
+			const uint8 *cs = d - (foo >> 4);
 
-			switch (foo & 0xF) {
-			case 0:
-				*d++ = *cs++;
-			case 1:
-				*d++ = *cs++;
-			case 2:
-				*d++ = *cs++;
-			case 3:
-				*d++ = *cs++;
-			case 4:
-				*d++ = *cs++;
-			case 5:
-				*d++ = *cs++;
-			case 6:
-				*d++ = *cs++;
-			case 7:
-				*d++ = *cs++;
-			case 8:
-				*d++ = *cs++;
-			case 9:
-				*d++ = *cs++;
-			case 10:
-				*d++ = *cs++;
-			case 11:
-				*d++ = *cs++;
-			case 12:
-				*d++ = *cs++;
-			case 13:
-				*d++ = *cs++;
-			case 14:
-				*d++ = *cs++;
-			case 15:
+			uint num = 16 - (foo & 0xF);
+
+			for (uint16 i = 0; i < num; ++i)
 				*d++ = *cs++;
 
-				*d++ = *cs++;
-				*d++ = *cs++;
-			}
+			*d++ = *cs++;
+			*d++ = *cs;
 		} else {
 			*d++ = *s++;
 		}
