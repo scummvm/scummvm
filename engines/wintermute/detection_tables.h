@@ -83,6 +83,7 @@ static const PlainGameDescriptor wintermuteGames[] = {
 	{"hamlet",          "Hamlet or the last game without MMORPG features, shaders and product placement"},
 	{"helga",           "Helga Deep In Trouble"},
 	{"hor",             "Hor"},
+	{"idiotstale",      "The Idiot's Tale"},
 	{"jamesperis",      "James Peris: No License Nor Control"},
 	{"knossos",         "K'NOSSOS"},
 	{"kulivocko",       "Kulivocko"},
@@ -1244,6 +1245,10 @@ static const WMEGameDescription gameDescriptions[] = {
 	// Hor v1.3
 	WME_WINENTRY("hor", "1.3",
 		WME_ENTRY1s("data.dcp", "37b0abeb8651b82b9e6327bd10a18185", 15077486), Common::UNK_LANG, ADGF_UNSTABLE, WME_1_9_3),
+
+	// The Idiot's Tale (Steam, April 2018)
+	WME_WINENTRY("idiotstale", "1.0.2",
+		WME_ENTRY1s("data.dcp", "3ecf43cb535482b82fd583097921edb9", 417507705), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
 
 	// James Peris: No License Nor Control (English)
 	WME_WINENTRY("jamesperis", "Version 1.5",

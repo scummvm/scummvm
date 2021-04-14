@@ -90,6 +90,7 @@ inline Common::KeymapArray getWintermuteKeymaps(const char *target, const Common
 		gameId == "framed" ||
 		gameId == "hamlet" ||
 		gameId == "hor" ||
+		gameId == "idiotstale" ||
 		gameId == "juliauntold" ||
 		gameId == "lifein3minutes" ||
 		gameId == "lonelyrobot" ||
