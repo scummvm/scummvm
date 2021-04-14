@@ -59,6 +59,7 @@
 #include "ags/engine/ac/route_finder.h"
 #include "ags/shared/core/assetmanager.h"
 #include "ags/shared/util/directory.h"
+#include "ags/shared/script/cc_options.h"
 
 #ifdef ENABLE_AGS_TESTS
 #include "ags/tests/test_all.h"
@@ -77,6 +78,7 @@ AGSEngine::AGSEngine(OSystem *syst, const AGSGameDescription *gameDesc) : Engine
 	DebugMan.addDebugChannel(kDebugPath, "Path", "Pathfinding debug level");
 	DebugMan.addDebugChannel(kDebugFilePath, "FilePath", "File path debug level");
 	DebugMan.addDebugChannel(kDebugScan, "Scan", "Scan for unrecognised games");
+	DebugMan.addDebugChannel(kDebugScript, "Script", "Enable debug script dump");
 
 	_events = new EventsManager();
 	_music = new Music();
@@ -122,6 +124,9 @@ Common::Error AGSEngine::run() {
 		scanner.scan(ConfMan.get("path"));
 		return Common::kNoError;
 	}
+
+	if (debugChannelSet(-1, kDebugScript))
+		AGS3::ccSetOption(SCOPT_DEBUGRUN, 1);
 
 #ifdef ENABLE_AGS_TESTS
 	AGS3::Test_DoAllTests();
