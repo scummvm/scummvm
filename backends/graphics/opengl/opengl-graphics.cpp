@@ -1221,7 +1221,7 @@ bool OpenGLGraphicsManager::getGLPixelFormat(const Graphics::PixelFormat &pixelF
 }
 
 bool OpenGLGraphicsManager::gameNeedsAspectRatioCorrection() const {
-	if (_currentState.aspectRatioCorrection) {
+	if (ConfMan.getBool("aspect_ratio")) {
 		const uint width = getWidth();
 		const uint height = getHeight();
 
