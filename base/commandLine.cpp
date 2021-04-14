@@ -69,6 +69,7 @@ static const char HELP_STRING[] =
 	"  -v, --version            Display ScummVM version information and exit\n"
 	"  -h, --help               Display a brief help text and exit\n"
 	"  -z, --list-games         Display list of supported games and exit\n"
+	"  --list-all-games         Display list of all detected games and exit\n"
 	"  -t, --list-targets       Display list of configured targets and exit\n"
 	"  --list-engines           Display list of suppported engines and exit\n"
 	"  --list-saves             Display a list of saved games for the target specified\n"
@@ -537,6 +538,9 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 			DO_COMMAND('z', "list-games")
 			END_COMMAND
 
+			DO_LONG_COMMAND("list-all-games")
+			END_COMMAND
+
 			DO_LONG_COMMAND("list-engines")
 			END_COMMAND
 
@@ -816,6 +820,22 @@ unknownOption:
 
 /** List all supported game IDs, i.e. all games which any loaded plugin supports. */
 static void listGames() {
+	printf("Game ID                        Full Title                                                 \n"
+	       "------------------------------ -----------------------------------------------------------\n");
+
+	const PluginList &plugins = EngineMan.getPlugins(PLUGIN_TYPE_ENGINE);
+	for (PluginList::const_iterator iter = plugins.begin(); iter != plugins.end(); ++iter) {
+		const Plugin *p = EngineMan.findPlugin((*iter)->getName());
+
+		PlainGameList list = p->get<MetaEngineDetection>().getSupportedGames();
+		for (PlainGameList::const_iterator v = list.begin(); v != list.end(); ++v) {
+			printf("%-30s %s\n", buildQualifiedGameName(p->get<MetaEngineDetection>().getEngineId(), v->gameId).c_str(), v->description);
+		}
+	}
+}
+
+/** List all detected game IDs, i.e. all games which any loaded plugin supports. */
+static void listAllGames() {
 	printf("Game ID                        Full Title                                                 \n"
 	       "------------------------------ -----------------------------------------------------------\n");
 
@@ -1362,6 +1382,9 @@ bool processSettings(Common::String &command, Common::StringMap &settings, Commo
 		return true;
 	} else if (command == "list-games") {
 		listGames();
+		return true;
+	} else if (command == "list-all-games") {
+		listAllGames();
 		return true;
 	} else if (command == "list-engines") {
 		listEngines();
