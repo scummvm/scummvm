@@ -359,6 +359,47 @@ static const AchievementDescriptionList achievementDescriptionList[] = {
 	},
 
 	{
+		"carolreed10",
+		Common::STEAM_ACHIEVEMENTS,
+		"337130",
+		{
+			ACHIEVEMENT_SIMPLE_ENTRY("STIERN_HOUSE", "The Stierngranat family's house", "You've unlocked the Stierngranat Family's House."),
+			ACHIEVEMENT_SIMPLE_ENTRY("BLOOD_FALLS", "The Blood Falls", "You've unlocked the Blood Falls."),
+			ACHIEVEMENT_SIMPLE_ENTRY("SCHOOL_MUSEUM", "The School Museum", "You've unlocked the School Museum."),
+			ACHIEVEMENT_SIMPLE_ENTRY("JOHANSSON_PEAK", "The Johansson Peak", "You've unlocked Johansson Peak."),
+			ACHIEVEMENT_SIMPLE_ENTRY("SAINT_MARIA_CHURCH", "The Saint Maria Church", "You've unlocked the Saint Maria Church."),
+			ACHIEVEMENT_SIMPLE_ENTRY("EMHART_ZURICH", "Emhart Zurich", "You've found Emhart Zurich."),
+			ACHIEVEMENT_SIMPLE_ENTRY("MALTE_MUSEUM", "The Malte Stierngranat Museum", "You've unlocked the Malte Stierngranat Museum."),
+			ACHIEVEMENT_SIMPLE_ENTRY("PYRAMID", "The Pyramid", "You've unlocked the Pyramid."),
+			ACHIEVEMENT_SIMPLE_ENTRY("BARN", "The Barn", "You've unlocked the Barn."),
+			ACHIEVEMENT_SIMPLE_ENTRY("SONIC_FORGE", "The Sonic Forge", "You've unlocked the Sonic Forge."),
+			ACHIEVEMENT_SIMPLE_ENTRY("CAR_GRAVEYARD", "The car graveyard", "You've unlocked the Car Graveyard."),
+			ACHIEVEMENT_SIMPLE_ENTRY("MALTES_TRAIN", "Malte's Train Wagon", "You've unlocked Malte's Train Wagon."),
+			ACHIEVEMENT_SIMPLE_ENTRY("SKIING_HOUSE", "The Skiing House", "You've unlocked the Skiing House."),
+			ACHIEVEMENTS_LISTEND
+		}
+	},
+
+	{
+		"carolreed11",
+		Common::STEAM_ACHIEVEMENTS,
+		"340370",
+		{
+			ACHIEVEMENT_SIMPLE_ENTRY("BOTTLE", "Mysterious bottle.", "You found the mysterious bottle!"),
+			ACHIEVEMENT_SIMPLE_ENTRY("PIPE", "The last pipe.", "You found the last pipe!"),
+			ACHIEVEMENT_SIMPLE_ENTRY("POEM", "The poem in the wallet.", "You found the poem in the wallet!"),
+			ACHIEVEMENT_SIMPLE_ENTRY("BLINDFOLD", "The blindfold.", "You found the blindfold!"),
+			ACHIEVEMENT_SIMPLE_ENTRY("WINDOW", "The window in the sun cannon.", "You found the window in the sun cannon!"),
+			ACHIEVEMENT_SIMPLE_ENTRY("MINE_LADY", "Information about the Mine Lady.", "You've discovered information about the Mine Lady!"),
+			ACHIEVEMENT_SIMPLE_ENTRY("PENCIL", "Artistic pencil.", "You found the artistic pencil!"),
+			ACHIEVEMENT_SIMPLE_ENTRY("NOTE", "Note from Rick.", "You found the note from Rick!"),
+			ACHIEVEMENT_SIMPLE_ENTRY("STONE", "Leaving no stone unturned.", "You've left no stone unturned!"),
+			ACHIEVEMENT_SIMPLE_ENTRY("TESTING", "Testing the waters.", "Testing the waters!"),
+			ACHIEVEMENTS_LISTEND
+		}
+	},
+
+	{
 		"corrosion",
 		Common::STEAM_ACHIEVEMENTS,
 		"349140",
