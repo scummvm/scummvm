@@ -1646,6 +1646,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("alemmo", "al-emmo.exe", "ff22fd118f18eca884dc7ed2a5be3877", 19045178), // Steam
 	GAME_ENTRY("alemmo", "al_emmo.exe", "bb9e32ee92bb0996df5fea50e88d686a", 19036716), // 4.1, Desura
 	GAME_ENTRY("alemmo", "al_emmo.exe", "d14295053c672c253460c8a7179b2bba", 19054865),
+	GAME_ENTRY("alemmo", "al_emmo.exe", "4139d665622b2e3c5a31e90fc530fc74", 22442059),
 	GAME_ENTRY("alemmoanozira", "postcards from anozira.exe", "f5f73b35e809d9e01a2cff32abeffadf", 5567476), // 3.0, Desura
 	GAME_ENTRY("alemmoanozira", "Postcards_from_Anozira.exe", "a33691e4a84e2645b4cbe1f681511798", 5567690), // Steam
 	GAME_ENTRY("alemmoanozira", "postcards from anozira.exe", "893f31faa33f1219b316894a0cbe7b27", 174781776),
