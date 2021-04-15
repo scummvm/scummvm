@@ -63,6 +63,9 @@ public:
 	void addSound(ActionSound *sound) { _sounds.push_back(sound); };
 	void removeSound(ActionSound *sound);
 
+	void addTextWindow(Graphics::MacTextWindow *window);
+	void removeTextWindow(Graphics::MacTextWindow *window);
+
 	void clear();
 
 	void pause(bool pause);
@@ -88,6 +91,7 @@ private:
 	Common::Array<ActionCEL *> _savedSprites;
 	Common::Array<ActionSound *> _sounds;
 	Common::Array<ActionText *> _textActions;
+	Common::Array<Graphics::MacTextWindow *> _textWindows;
 	bool _textRendered;
 };
 

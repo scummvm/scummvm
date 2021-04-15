@@ -149,6 +149,19 @@ void Director::removeTextAction(ActionText *action) {
 	}
 }
 
+void Director::addTextWindow(Graphics::MacTextWindow *window) {
+	_textWindows.push_back(window);
+}
+
+void Director::removeTextWindow(Graphics::MacTextWindow *window) {
+	for (uint i = 0; i < _textWindows.size(); i++) {
+		if (_textWindows[i] == window) {
+			_textWindows.remove_at(i);
+			break;
+		}
+	}
+}
+
 void Director::addSprite(ActionCEL *sprite) {
 	_sprites.push_back(sprite);
 	int i;
@@ -291,6 +304,24 @@ void Director::drawRect(const Common::Rect &rect) {
 		Common::Rect srcRect(interRect);
 		srcRect.translate(-spriteRect.left, -spriteRect.top);
 		_surface.transBlitFrom(*_sprites[i]->getDecoder()->getCurrentFrame(), srcRect, interRect, _sprites[i]->getDecoder()->getTransparentColourIndex());
+	}
+
+	// check the intersection with action text
+	for (uint i = 0; i < _textActions.size(); i++) {
+		const Common::Rect &textActionRect = _textActions[i]->getBound();
+		Common::Rect interRect = rect.findIntersectingRect(textActionRect);
+		if (interRect.isEmpty())
+			continue;
+		_textActions[i]->draw(&_surface);
+	}
+
+	// check the intersection with mactextwindow
+	for (uint i = 0; i < _textWindows.size(); i++) {
+		const Common::Rect &textWindowRect = _textWindows[i]->getDimensions();
+		Common::Rect interRect = rect.findIntersectingRect(textWindowRect);
+		if (interRect.isEmpty())
+			continue;
+		_textWindows[i]->draw(_wm->_screen, true);
 	}
 }
 
