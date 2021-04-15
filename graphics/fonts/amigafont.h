@@ -87,6 +87,9 @@ public:
 	virtual int getMaxCharWidth() const;
 	virtual int getKerningOffset(uint32 left, uint32 right) const;
 	virtual void drawChar(Surface *dst, uint32 chr, int x, int y, uint32 color) const;
+
+	int getLoChar() { return _font->_loChar; }
+	int getHiChar() { return _font->_hiChar; }
 };
 
 } // End of namespace Graphics
