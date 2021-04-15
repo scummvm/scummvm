@@ -541,13 +541,13 @@ uint16 Actor::doAnim(Animation::Sequence anim, Direction dir, unsigned int steps
 
 	}
 
-#if 1
+#if 0
 	if (_objId == 1) {
 		int32 x, y, z;
 		getLocation(x, y, z);
 		int32 actionno = AnimDat::getActionNumberForSequence(anim, this);
 		const AnimAction *action = GameData::get_instance()->getMainShapes()->getAnim(getShape(), actionno);
-		debug(6, "Actir::doAnim(%d, %d, %d) from (%d, %d, %d) frame repeat %d", anim, dir, steps, x, y, z, action->getFrameRepeat());
+		debug(6, "Actor::doAnim(%d, %d, %d) from (%d, %d, %d) frame repeat %d", anim, dir, steps, x, y, z, action->getFrameRepeat());
 	}
 #endif
 
