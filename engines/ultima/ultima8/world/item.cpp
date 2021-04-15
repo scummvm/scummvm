@@ -471,7 +471,7 @@ Box Item::getWorldBox() const {
 void Item::setShape(uint32 shape) {
 	_cachedShape = nullptr;
 
-	if (GAME_IS_CRUSADER) {
+	if (GAME_IS_CRUSADER && _shape && shape != _shape) {
 		// In Crusader, here we need to check if the shape
 		// changed from targetable to not-targetable, or vice-versa
 		const ShapeInfo *oldinfo = getShapeInfo();
@@ -479,7 +479,7 @@ void Item::setShape(uint32 shape) {
 		_cachedShapeInfo = nullptr;
 		const ShapeInfo *newinfo = getShapeInfo();
 
-		if (!hasFlags(FLG_BROKEN)) {
+		if (!hasFlags(FLG_BROKEN) && oldinfo && newinfo) {
 			if (oldinfo->is_targetable() && !newinfo->is_targetable()) {
 				World::get_instance()->getCurrentMap()->removeTargetItem(this);
 			}
