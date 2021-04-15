@@ -59,6 +59,7 @@ public:
 	const ScriptImport *getByName(const String &name);
 	int  get_index_of(const String &name);
 	const ScriptImport *getByIndex(int index);
+	String findName(const RuntimeScriptValue &value);
 	void RemoveScriptExports(ccInstance *inst);
 	void clear();
 };

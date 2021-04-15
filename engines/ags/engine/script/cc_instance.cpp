@@ -1288,11 +1288,50 @@ void ccInstance::DumpInstruction(const ScriptOperation &op) {
 		if (i > 0) {
 			msg += ',';
 		}
+		RuntimeScriptValue arg = op.Args[i];
 		if (cmd_info.ArgIsReg[i]) {
-			msg += Common::String::format(" %s", regnames[op.Args[i].IValue]);
+			msg += Common::String::format(" %s", regnames[arg.IValue]);
 		} else {
-			// FIXME: check type and write appropriate values
-			msg += Common::String::format(" %lld", (long long)op.Args[i].GetPtrWithOffset());
+			if (arg.Type == kScValStackPtr || arg.Type == kScValGlobalVar)
+				arg = *arg.RValue;
+			switch(arg.Type) {
+			case kScValInteger:
+			case kScValPluginArg:
+				msg += Common::String::format(" %d", arg.IValue);
+				break;
+			case kScValFloat:
+				msg += Common::String::format(" %f", arg.FValue);
+				break;
+			case kScValStringLiteral:
+				msg += Common::String::format(" \"%s\"", arg.Ptr);
+				break;
+			case kScValStackPtr:
+			case kScValGlobalVar:
+				msg += Common::String::format(" %p", (void*)arg.RValue);
+				break;
+			case kScValData:
+			case kScValCodePtr:
+				msg += Common::String::format(" %p", (void*)arg.GetPtrWithOffset());
+				break;
+			case kScValStaticArray:
+			case kScValStaticObject:
+			case kScValDynamicObject:
+			case kScValStaticFunction:
+			case kScValObjectFunction:
+			case kScValPluginFunction:
+			case kScValPluginObject:
+			{
+				String name = _GP(simp).findName(arg);
+				if (!name.IsEmpty())
+					msg += Common::String::format(" &%s", name.GetCStr());
+				else
+					msg += Common::String::format(" %p", (void*)arg.GetPtrWithOffset());
+			}
+				break;
+			case kScValUndefined:
+				msg += " undefined";
+				break;
+			}
 		}
 	}
 	msg += '\n';

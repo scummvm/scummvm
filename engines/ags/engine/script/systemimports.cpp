@@ -103,6 +103,14 @@ int SystemImports::get_index_of(const String &name) {
 	return -1;
 }
 
+String SystemImports::findName(const RuntimeScriptValue &value) {
+	for (size_t i = 0; i < imports.size(); ++i) {
+		if (imports[i].Value == value)
+			return imports[i].Name;
+	}
+	return String();
+}
+
 void SystemImports::RemoveScriptExports(ccInstance *inst) {
 	if (!inst) {
 		return;
