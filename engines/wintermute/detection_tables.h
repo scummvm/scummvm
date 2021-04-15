@@ -580,6 +580,10 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("carolreed10", "",
 		WME_ENTRY1s("data.dcp", "5c698e28fe10854ea52964e3768e50e4", 588439599), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
 
+	// Carol Reed 10 - Bosch's Damnation (Steam)
+	WME_WINENTRY("carolreed10", "",
+		WME_ENTRY1s("data.dcp", "dd1e858f2eac016eadccdeeb93589015", 588494380), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
+
 	// Carol Reed 10 - Bosch's Damnation (Russian)
 	WME_WINENTRY("carolreed10", "",
 		WME_ENTRY1s("data.dcp", "ab88da3f4df7f3c4d831f9bf57aa73fc", 586886303), Common::RU_RUS, ADGF_UNSTABLE, WME_1_9_3),
@@ -592,11 +596,11 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("carolreed11", "SD",
 		WME_ENTRY1s("data.dcp", "a1e9f54b48493e9c6d737e3a94779d8c", 525450069), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
 
-	// Carol Reed 11 - Shades Of Black (HD) (MDNA Games)
+	// Carol Reed 11 - Shades Of Black (HD) (MDNA Games) (Steam)
 	WME_WINENTRY("carolreed11", "HD",
 		WME_ENTRY1s("data.dcp", "459f4a851ea053cc4d204e45e2f88afc", 853256580), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
 
-	// Carol Reed 11 - Shades Of Black (SD) (MDNA Games)
+	// Carol Reed 11 - Shades Of Black (SD) (MDNA Games) (Steam)
 	WME_WINENTRY("carolreed11", "SD",
 		WME_ENTRY1s("data.dcp", "c47314872afbbdc587dae0bc976a3375", 525502344), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
 
