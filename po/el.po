@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-04-13 21:18+0000\n"
+"POT-Creation-Date: 2021-04-15 15:46+0000\n"
 "PO-Revision-Date: 2021-04-14 05:51+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
@@ -3842,7 +3842,7 @@ msgstr "Προσθήκη μενού ταχύτητας"
 msgid "Add game speed menu (similar to PC version)"
 msgstr "Προσθήκη ενός μενού ταχύτητας (παρόμοιο με της έκδοσης για PC)"
 
-#: engines/agi/font.cpp:1298
+#: engines/agi/font.cpp:1090
 msgid ""
 "Could not open/use file 'hgc_font' for Hercules hires font.\n"
 "If you have such file in other AGI (Sierra) game, you can copy it to the "
