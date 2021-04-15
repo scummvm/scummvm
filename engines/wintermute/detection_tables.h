@@ -53,6 +53,8 @@ static const PlainGameDescriptor wintermuteGames[] = {
 	{"carolreed12",     "Carol Reed 12 - Profound Red"},
 	{"carolreed13",     "Carol Reed 13 - The Birdwatcher"},
 	{"carolreed14",     "Carol Reed 14 - The Fall Of April"},
+	{"carolreed15",     "Carol Reed 15 - Geospots"},
+	{"carolreed16",     "Carol Reed 16 - Quarantine Diary"},
 	{"chivalry",        "Chivalry is Not Dead"},
 	{"colorsoncanvas",  "Colors on Canvas"},
 	{"conspiracao",     "Conspiracao Dumont"},
@@ -597,6 +599,22 @@ static const WMEGameDescription gameDescriptions[] = {
 	// Carol Reed 14 - The Fall Of April (HD)
 	WME_WINENTRY("carolreed14", "HD",
 		WME_ENTRY1s("data.dcp", "38c9088dca07c9623562e8efdea4c856", 1256960150), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
+
+	// Carol Reed 15 - Geospots (HD) (MDNA Games) (v1.1)
+	WME_WINENTRY("carolreed15", "HD",
+		WME_ENTRY1s("data.dcp", "75645132e95924e83c9c7ff578e860a0", 1255837902), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
+
+	// Carol Reed 15 - Geospots (SD) (MDNA Games) (v1.1)
+	WME_WINENTRY("carolreed15", "SD",
+		WME_ENTRY1s("data.dcp", "7a82716edee6d10be847ae3d9d49b1de", 913384243), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
+
+	// Carol Reed 16 - Quarantine Diary (HD) (MDNA Games)
+	WME_WINENTRY("carolreed16", "HD",
+		WME_ENTRY1s("data.dcp", "07158d48b5a1739d9c87dc1d7f780353", 1344041919), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
+
+	// Carol Reed 16 - Quarantine Diary (SD) (MDNA Games)
+	WME_WINENTRY("carolreed16", "SD",
+		WME_ENTRY1s("data.dcp", "9d98bf2a9a4b11506392f4cd79f94c50", 850376712), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
 
 	// Chivalry is Not Dead
 	WME_WINENTRY("chivalry", "",
