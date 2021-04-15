@@ -227,6 +227,10 @@ inline Common::KeymapArray getWintermuteKeymaps(const char *target, const Common
 		gameId == "carolreed10" ||
 		gameId == "carolreed11" ||
 		gameId == "carolreed12" ||
+		gameId == "carolreed13" ||
+		gameId == "carolreed14" ||
+		gameId == "carolreed15" ||
+		gameId == "carolreed16" ||
 		gameId == "kulivocko" ||
 		gameId == "sunrise" ||
 		gameId == "rebeccacarlson1"
@@ -1757,6 +1761,10 @@ inline Common::KeymapArray getWintermuteKeymaps(const char *target, const Common
 		gameId == "carolreed10" ||
 		gameId == "carolreed11" ||
 		gameId == "carolreed12" ||
+		gameId == "carolreed13" ||
+		gameId == "carolreed14" ||
+		gameId == "carolreed15" ||
+		gameId == "carolreed16" ||
 		gameId == "corrosion" ||
 		gameId == "rebeccacarlson1"
 	) {
