@@ -472,10 +472,10 @@ AudioStream *makeLimitingAudioStream(AudioStream *parentStream, const Timestamp 
  */
 class NullAudioStream : public AudioStream {
 public:
-		bool isStereo() const { return false; }
-		int getRate() const;
-		int readBuffer(int16 *data, const int numSamples) { return 0; }
-		bool endOfData() const { return true; }
+	bool isStereo() const { return false; }
+	int getRate() const;
+	int readBuffer(int16 *data, const int numSamples) { return 0; }
+	bool endOfData() const { return true; }
 };
 
 int NullAudioStream::getRate() const {

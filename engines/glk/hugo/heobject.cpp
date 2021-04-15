@@ -75,7 +75,7 @@ int Hugo::Elder(int obj) {
 	p = Parent(obj);
 	cp = Child(p);
 
-		if (p==0 || cp==obj)
+	if (p==0 || cp==obj)
 		return 0;
 
 	lastobj = cp;
@@ -204,7 +204,7 @@ int Hugo::GetProp(int obj, int p, int n, char s) {
 	if (getaddress && MEM(codeptr)!=DECIMAL_T)
 		getpropaddress = true;
 
-		tempself = var[self];
+	tempself = var[self];
 	if (!s) var[self] = obj;
 
 	temp_stack_depth = stack_depth;
