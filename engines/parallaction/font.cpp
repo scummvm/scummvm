@@ -122,13 +122,13 @@ public:
 
 	}
 
-	void drawString(byte* buffer, uint32 pitch, const char *s) override {
-		if (s == NULL)
+	void drawString(Graphics::Surface *src, int x, int y, const char *s) override {
+		if (src == NULL)
 			return;
 
-		_bufPitch = pitch;
+		_bufPitch = src->pitch;
 
-		_cp = buffer;
+		_cp = (byte *)src->getBasePtr(x, y);
 		while (*s) {
 			byte c = mapChar(*s);
 			_cp += drawChar(c);
@@ -327,13 +327,13 @@ public:
 		return len;
 	}
 
-	void drawString(byte* buffer, uint32 pitch, const char *s) override {
-		if (s == NULL)
+	void drawString(Graphics::Surface *src, int x, int y, const char *s) override {
+		if (src == NULL)
 			return;
 
-		_bufPitch = pitch;
+		_bufPitch = src->pitch;
 
-		_cp = buffer;
+		_cp = (byte *)src->getBasePtr(x, y);
 		while (*s) {
 			byte c = mapChar(*s);
 			_cp += drawChar(c);
@@ -495,7 +495,7 @@ public:
 	~AmigaFont() override;
 
 	uint32 getStringWidth(const char *s) override;
-	void drawString(byte *buf, uint32 pitch, const char *s) override;
+	void drawString(Graphics::Surface *src, int x, int y, const char *s) override;
 
 
 
@@ -605,10 +605,10 @@ uint32 AmigaFont::getStringWidth(const char *s) {
 	return len;
 }
 
-void AmigaFont::drawString(byte *buffer, uint32 pitch, const char *s) {
+void AmigaFont::drawString(Graphics::Surface *src, int x, int y, const char *s) {
 
-	_cp = buffer;
-	_pitch = pitch;
+	_cp = (byte *)src->getBasePtr(x, y);
+	_pitch = src->pitch;
 
 	byte c;
 

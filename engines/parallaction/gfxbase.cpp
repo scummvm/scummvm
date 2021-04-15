@@ -232,10 +232,9 @@ void Gfx::drawGfxObject(GfxObj *obj, Graphics::Surface &surf) {
 
 }
 
-void Gfx::drawText(Font *font, Graphics::Surface* surf, uint16 x, uint16 y, const char *text, byte color) {
-	byte *dst = (byte *)surf->getBasePtr(x, y);
+void Gfx::drawText(Font *font, Graphics::Surface *surf, uint16 x, uint16 y, const char *text, byte color) {
 	font->setColor(color);
-	font->drawString(dst, surf->w, text);
+	font->drawString(surf, x, y, text);
 }
 
 void Gfx::unpackBlt(const Common::Rect& r, byte *data, uint size, Graphics::Surface *surf, uint16 z, uint scale, byte transparentColor) {

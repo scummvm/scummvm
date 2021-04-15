@@ -117,8 +117,8 @@ class MainMenuInputState_BR : public MenuInputState {
 		// one is in normal color, the other is inverted.
 		// the two 'frames' are used to display selected/unselected menu items
 
-		byte *data = new byte[MENUITEM_WIDTH * MENUITEM_HEIGHT * 2];
-		memset(data, 0, MENUITEM_WIDTH * MENUITEM_HEIGHT * 2);
+		Graphics::Surface *surf = new Graphics::Surface();
+		surf->create(MENUITEM_WIDTH, MENUITEM_HEIGHT * 2, Graphics::PixelFormat::createFormatCLUT8());
 
 		// build first frame to be displayed when item is not selected
 		if (_vm->getPlatform() == Common::kPlatformDOS) {
@@ -126,20 +126,18 @@ class MainMenuInputState_BR : public MenuInputState {
 		} else {
 			_vm->_menuFont->setColor(23);
 		}
-		byte *dst = data + 5 + 2 * MENUITEM_WIDTH;
-		_vm->_menuFont->drawString(dst, MENUITEM_WIDTH, text);
+		_vm->_menuFont->drawString(surf, 5, 2, text);
 
 		// build second frame to be displayed when item is selected
-		dst = dst + MENUITEM_WIDTH * MENUITEM_HEIGHT;
-		_vm->_menuFont->drawString(dst, MENUITEM_WIDTH, text);
+		_vm->_menuFont->drawString(surf, 5, 2 + MENUITEM_HEIGHT, text);
 
-		dst = data + MENUITEM_WIDTH * MENUITEM_HEIGHT;
+		byte *dst = (byte *)surf->getPixels() + MENUITEM_WIDTH * MENUITEM_HEIGHT;
 		for (int i = 0; i < MENUITEM_WIDTH * MENUITEM_HEIGHT; i++) {
 			*dst++ ^= 0xD;
 		}
 
 		// wrap the surface into the suitable Frames adapter
-		return new Cnv(2, MENUITEM_WIDTH, MENUITEM_HEIGHT, data, true);
+		return new Cnv(2, MENUITEM_WIDTH, MENUITEM_HEIGHT, surf);
 	}
 
 	enum MenuOptions {
@@ -500,10 +498,10 @@ public:
 		_font->setColor(0);
 		int x = (w - questionW)/2;
 		int y = 13;
-		_font->drawString((byte *)surf->getBasePtr(x, y), surf->pitch, question);
+		_font->drawString(surf, x, y, question);
 		x = (w - optionW)/2;
 		y = 13 + _font->height()*2;
-		_font->drawString((byte *)surf->getBasePtr(x,y), surf->pitch, option);
+		_font->drawString(surf, x, y, option);
 
 		_obj = new GfxObj(kGfxObjTypeMenu, new SurfaceToFrames(surf), "quitdialog");
 		assert(_obj);
