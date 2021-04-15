@@ -293,7 +293,7 @@ void drawCharIntern(byte *ptr, uint32 pitch, int num, int bitOffset, byte *charD
 		}
 
 		s += modulo;
-		d += pitch - num;
+		d = (PixelType *)((byte *)d + pitch) - num;
 	}
 
 }
