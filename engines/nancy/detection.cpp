@@ -27,7 +27,7 @@
 
 const char *const directoryGlobs[] = {
 	"game",
-	"datafiles",
+	"iff",
 	0
 };
 
@@ -48,7 +48,7 @@ static const Nancy::NancyGameDescription gameDescriptions[] = {
 	{ // MD5 by fracturehill
 		{
 			"vampirediaries", 0,
-			AD_ENTRY1s("vampire.exe", "c6207f4bb7418b8a067ad75ed9f57bdf", 114688),
+			AD_ENTRY1s("boot.iff", "66d3b6fe9a90d35de7a28950870719ec", 20340),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			Nancy::NGF_8BITCOLOR,
