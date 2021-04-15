@@ -484,9 +484,13 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("carolreed4", "",
 		WME_ENTRY1s("data.dcp", "ef8a5aaec2f754a04017a97fed771b43", 601616328), Common::ES_ESP, ADGF_UNSTABLE, WME_1_8_3),
 
-	// Carol Reed 4 - East Side Story (Russian)
+	// Carol Reed 4 - East Side Story (Russian) (CD Navigator)
 	WME_WINENTRY("carolreed4", "",
 		WME_ENTRY1s("data.dcp", "549e6fb7afebcc4a8092e3898a5c5cc3", 618787625), Common::RU_RUS, ADGF_UNSTABLE, WME_1_8_3),
+
+	// Carol Reed 4 - East Side Story (Russian)
+	WME_WINENTRY("carolreed4", "",
+		WME_ENTRY1s("data.dcp", "a583bedf9345b55866ad84c84a1166f8", 501910422), Common::RU_RUS, ADGF_UNSTABLE, WME_1_8_3),
 
 	// Carol Reed 4 - East Side Story (Demo) (English)
 	WME_WINENTRY("carolreed4", "Demo",
@@ -499,6 +503,10 @@ static const WMEGameDescription gameDescriptions[] = {
 	// Carol Reed 5 - The Colour of Murder (Spanish)
 	WME_WINENTRY("carolreed5", "",
 		WME_ENTRY1s("data.dcp", "a2885bbc31a7f0b0f616ec7f4d9a6fae", 617467065), Common::ES_ESP, ADGF_UNSTABLE, WME_1_8_6),
+
+	// Carol Reed 5 - The Colour of Murder (Russian)
+	WME_WINENTRY("carolreed5", "",
+		WME_ENTRY1s("data.dcp", "512b13a67fc5e1a965f19ab158c4a984", 616068459), Common::RU_RUS, ADGF_UNSTABLE, WME_1_8_6),
 
 	// Carol Reed 5 - The Colour of Murder (1.0 Demo)
 	WME_WINENTRY("carolreed5", "Demo",
@@ -520,6 +528,10 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("carolreed6", "",
 		WME_ENTRY1s("data.dcp", "050048bc81f700c8e22ed9d1ace6d853", 456267557), Common::EN_ANY, ADGF_UNSTABLE, WME_1_8_11),
 
+	// Carol Reed 6 - Black Circle (Russian)
+	WME_WINENTRY("carolreed6", "",
+		WME_ENTRY1s("data.dcp", "bd28a7501b0b0cbf83add4b3f938feef", 451468707), Common::RU_RUS, ADGF_UNSTABLE, WME_1_8_11),
+
 	// Carol Reed 6 - Black Circle (Demo)
 	WME_WINENTRY("carolreed6", "Demo",
 		WME_ENTRY1s("data.dcp", "e18bc4adc843e6dcf08cc20be00d1608", 94399373), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, WME_1_8_11),
@@ -532,6 +544,10 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("carolreed7", "",
 		WME_ENTRY1s("data.dcp", "79610b483fc62a60687c6432ee54ef97", 495185438), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_1),
 
+	// Carol Reed 7 - Blue Madonna (Russian)
+	WME_WINENTRY("carolreed7", "",
+		WME_ENTRY1s("data.dcp", "5ce25bf0e2eec7774be99ebb06b25c81", 490985628), Common::RU_RUS, ADGF_UNSTABLE, WME_1_9_1),
+
 	// Carol Reed 7 - Blue Madonna (Demo)
 	WME_WINENTRY("carolreed7", "Demo",
 		WME_ENTRY1s("data.dcp", "0372ad0c775266f6355e9e8ae397a2f1", 103719442), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, WME_1_9_1),
@@ -539,6 +555,10 @@ static const WMEGameDescription gameDescriptions[] = {
 	// Carol Reed 8 - Amber's Blood
 	WME_WINENTRY("carolreed8", "",
 		WME_ENTRY1s("data.dcp", "859d16b0d5b9b255e470cbded2c6cedc", 502714557), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_1),
+
+	// Carol Reed 8 - Amber's Blood (Russian)
+	WME_WINENTRY("carolreed8", "",
+		WME_ENTRY1s("data.dcp", "ce14d5c9fc31cfed934c688dc621f562", 501843631), Common::RU_RUS, ADGF_UNSTABLE, WME_1_9_1),
 
 	// Carol Reed 8 - Amber's Blood (Demo)
 	WME_WINENTRY("carolreed8", "Demo",
@@ -548,6 +568,10 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("carolreed9", "",
 		WME_ENTRY1s("data.dcp", "2b343b48a7aee508d728a546b414a255", 620005266), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
 
+	// Carol Reed 9 - Cold Case Summer (Russian)
+	WME_WINENTRY("carolreed9", "",
+		WME_ENTRY1s("data.dcp", "21b97762d1621cf91a340245cdb6f58d", 643392604), Common::RU_RUS, ADGF_UNSTABLE, WME_1_9_3),
+
 	// Carol Reed 9 - Cold Case Summer (Demo)
 	WME_WINENTRY("carolreed9", "Demo",
 		WME_ENTRY1s("data.dcp", "b3312b0b9f209a9a01b2ba9135829640", 86362217), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, WME_1_9_3),
@@ -555,6 +579,10 @@ static const WMEGameDescription gameDescriptions[] = {
 	// Carol Reed 10 - Bosch's Damnation
 	WME_WINENTRY("carolreed10", "",
 		WME_ENTRY1s("data.dcp", "5c698e28fe10854ea52964e3768e50e4", 588439599), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
+
+	// Carol Reed 10 - Bosch's Damnation (Russian)
+	WME_WINENTRY("carolreed10", "",
+		WME_ENTRY1s("data.dcp", "ab88da3f4df7f3c4d831f9bf57aa73fc", 586886303), Common::RU_RUS, ADGF_UNSTABLE, WME_1_9_3),
 
 	// Carol Reed 10 - Bosch's Damnation (Demo)
 	WME_WINENTRY("carolreed10", "Demo",
@@ -572,6 +600,14 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("carolreed11", "SD",
 		WME_ENTRY1s("data.dcp", "c47314872afbbdc587dae0bc976a3375", 525502344), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
 
+	// Carol Reed 11 - Shades Of Black (HD) (Russian)
+	WME_WINENTRY("carolreed11", "HD",
+		WME_ENTRY1s("data.dcp", "ee927bacf2aa5955946b9ddfa32f84ba", 871145562), Common::RU_RUS, ADGF_UNSTABLE, WME_1_9_3),
+
+	// Carol Reed 11 - Shades Of Black (SD) (Russian)
+	WME_WINENTRY("carolreed11", "SD",
+		WME_ENTRY1s("data.dcp", "58fd92c52ac5e2bd4d7cebedc8cae870", 431784607), Common::RU_RUS, ADGF_UNSTABLE, WME_1_9_3),
+
 	// Carol Reed 11 - Shades Of Black (SD) (Demo)
 	WME_WINENTRY("carolreed11", "SD Demo",
 		WME_ENTRY1s("data.dcp", "8c27236d29747b6bb6a0a563fb769f20", 52692061), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, WME_1_9_3),
@@ -588,6 +624,14 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("carolreed12", "SD",
 		WME_ENTRY1s("data.dcp", "84d296ab65b89e87f6d56accb9360f19", 627095895), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
 
+	// Carol Reed 12 - Profound Red (HD) (Russian)
+	WME_WINENTRY("carolreed12", "HD",
+		WME_ENTRY1s("data.dcp", "470b7eb5f79d0cfa3e5a58e40bca9420", 915944751), Common::RU_RUS, ADGF_UNSTABLE, WME_1_9_3),
+
+	// Carol Reed 12 - Profound Red (SD) (Russian)
+	WME_WINENTRY("carolreed12", "SD",
+		WME_ENTRY1s("data.dcp", "c58e9a8aa8f87ebfae94a2fa3e07817e", 420274897), Common::RU_RUS, ADGF_UNSTABLE, WME_1_9_3),
+
 	// Carol Reed 13 - The Birdwatcher (HD)
 	WME_WINENTRY("carolreed13", "HD",
 		WME_ENTRY1s("data.dcp", "954392d19f0c928b700f17badd35d488", 1267391173), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
@@ -596,9 +640,25 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("carolreed13", "SD",
 		WME_ENTRY1s("data.dcp", "4c5e1094a2e05b76b2ee5a8d9af5de4a", 774352150), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
 
+	// Carol Reed 13 - The Birdwatcher (HD) (Russian)
+	WME_WINENTRY("carolreed13", "HD",
+		WME_ENTRY1s("data.dcp", "495c87fcfcfa365f3239172acd362a46", 1361946376), Common::RU_RUS, ADGF_UNSTABLE, WME_1_9_3),
+
+	// Carol Reed 13 - The Birdwatcher (SD) (Russian)
+	WME_WINENTRY("carolreed13", "SD",
+		WME_ENTRY1s("data.dcp", "d86676ba56bfac82d19ee63f39098eb7", 607269218), Common::RU_RUS, ADGF_UNSTABLE, WME_1_9_3),
+
 	// Carol Reed 14 - The Fall Of April (HD)
 	WME_WINENTRY("carolreed14", "HD",
 		WME_ENTRY1s("data.dcp", "38c9088dca07c9623562e8efdea4c856", 1256960150), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
+
+	// Carol Reed 14 - The Fall Of April (HD) (Russian)
+	WME_WINENTRY("carolreed14", "HD",
+		WME_ENTRY1s("data.dcp", "59784da3fe0d8b016394ad0554eecef4", 1251855682), Common::RU_RUS, ADGF_UNSTABLE, WME_1_9_3),
+
+	// Carol Reed 14 - The Fall Of April (SD) (Russian)
+	WME_WINENTRY("carolreed14", "SD",
+		WME_ENTRY1s("data.dcp", "1a9a5ba095057b4e9d79c7522dd0389f", 717751105), Common::RU_RUS, ADGF_UNSTABLE, WME_1_9_3),
 
 	// Carol Reed 15 - Geospots (HD) (MDNA Games) (v1.1)
 	WME_WINENTRY("carolreed15", "HD",
@@ -608,6 +668,14 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("carolreed15", "SD",
 		WME_ENTRY1s("data.dcp", "7a82716edee6d10be847ae3d9d49b1de", 913384243), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
 
+	// Carol Reed 15 - Geospots (HD) (Russian)
+	WME_WINENTRY("carolreed15", "HD",
+		WME_ENTRY1s("data.dcp", "d2ab22116e6a438ea13690a00fd3e99a", 1265758319), Common::RU_RUS, ADGF_UNSTABLE, WME_1_9_3),
+
+	// Carol Reed 15 - Geospots (SD) (Russian)
+	WME_WINENTRY("carolreed15", "SD",
+		WME_ENTRY1s("data.dcp", "984255ea48b26dc4c6703cd6f965a4b4", 849201287), Common::RU_RUS, ADGF_UNSTABLE, WME_1_9_3),
+
 	// Carol Reed 16 - Quarantine Diary (HD) (MDNA Games)
 	WME_WINENTRY("carolreed16", "HD",
 		WME_ENTRY1s("data.dcp", "07158d48b5a1739d9c87dc1d7f780353", 1344041919), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
@@ -615,6 +683,14 @@ static const WMEGameDescription gameDescriptions[] = {
 	// Carol Reed 16 - Quarantine Diary (SD) (MDNA Games)
 	WME_WINENTRY("carolreed16", "SD",
 		WME_ENTRY1s("data.dcp", "9d98bf2a9a4b11506392f4cd79f94c50", 850376712), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
+
+	// Carol Reed 16 - Quarantine Diary (HD) (Russian)
+	WME_WINENTRY("carolreed16", "HD",
+		WME_ENTRY1s("data.dcp", "2d18acd49d624f60c64dc3400bff5566", 1350220173), Common::RU_RUS, ADGF_UNSTABLE, WME_1_9_3),
+
+	// Carol Reed 16 - Quarantine Diary (SD) (Russian)
+	WME_WINENTRY("carolreed16", "SD",
+		WME_ENTRY1s("data.dcp", "9a9749e4d9cf6a151e9c95dece48b2c1", 774823176), Common::RU_RUS, ADGF_UNSTABLE, WME_1_9_3),
 
 	// Chivalry is Not Dead
 	WME_WINENTRY("chivalry", "",
