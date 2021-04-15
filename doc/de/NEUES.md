@@ -28,6 +28,7 @@ Programmcodes finden Sie auf Englisch unter:
    - Unterstützung für die neue OAuth-Implementierung von Dropbox hinzugefügt.
    - Umfangreiche Verbesserungen an den unterstützten Grafik-Scalern vorgenommen.
    - Der Pfad zur ScummVM-Konfigurationsdatei wird nun in der GUI unter Optionen -> Pfade angezeigt.
+   - Neue optionale Abhängigkeit zur giflib-Bibliothek (>=5.0.0) hinzugefügt. Wird für einige Versionen von LBA benötigt.
 
  AGOS:
    - Unterstützung für die japanische PC-98-Version von Elvira 1 hinzugefügt.
