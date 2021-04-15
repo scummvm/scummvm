@@ -119,16 +119,22 @@ void ActionText::start() {
 		_txtWnd->setSelectable(false);
 
 		_txtWnd->appendText(_text, font);
+		director->addTextWindow(_txtWnd);
 
 	} else {
 		director->addTextAction(this);
 	}
 }
 
+Common::Rect ActionText::getBound() {
+	return Common::Rect(_xLeft, _yTop, _xRight, _yBottom);
+}
+
 void ActionText::end() {
 	Director *director = _actor->getPage()->getGame()->getDirector();
 	if (_scrollBar && _txtWnd) {
 		director->getWndManager().removeWindow(_txtWnd);
+		director->removeTextWindow(_txtWnd);
 		_txtWnd = nullptr;
 	} else {
 		director->removeTextAction(this);

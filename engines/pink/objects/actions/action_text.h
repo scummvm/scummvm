@@ -46,6 +46,8 @@ public:
 
 	void draw(Graphics::ManagedSurface *surface); // only for non-scrollable text
 
+	Common::Rect getBound();
+
 private:
 
 	void findColorsInPalette();
