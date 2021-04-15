@@ -189,6 +189,7 @@ static const OldNewIdTableEntry s_oldNewTable[] = {
 	{ "pq",			"pq2",				SCI_VERSION_NONE       },
 	// pq3 is the same
 	// pq4 is the same
+	{ "swat",		"pqswat",			SCI_VERSION_NONE       },
 	{ "hq",			"qfg1",				SCI_VERSION_NONE       },	// QFG1 SCI0/EGA
 	{ "glory",      "qfg1",             SCI_VERSION_0_LATE     },	// QFG1 SCI0/EGA
 	{ "trial",		"qfg2",				SCI_VERSION_NONE       },
@@ -233,7 +234,7 @@ static Common::String convertSierraGameId(Common::String sierraId, uint32 *gameF
 		demoThreshold = 40;
 	if (sierraId == "hoyle3")
 		demoThreshold = 45;	// cnick-kq has 42 scripts. The actual hoyle 3 demo has 27.
-	if (sierraId == "fp" || sierraId == "gk" || sierraId == "pq4")
+	if (sierraId == "fp" || sierraId == "gk" || sierraId == "pq4" || sierraId == "swat")
 		demoThreshold = 150;
 
 	Common::List<ResourceId> resources = resMan.listResources(kResourceTypeScript, -1);
