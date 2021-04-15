@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-04-15 15:46+0000\n"
+"POT-Creation-Date: 2021-04-15 19:20+0000\n"
 "PO-Revision-Date: 2021-04-13 23:18+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
@@ -22,16 +22,16 @@ msgstr ""
 "X-Generator: Weblate 4.4\n"
 "X-Language-name: Українська\n"
 
-#: gui/about.cpp:102
+#: gui/about.cpp:103
 #, c-format
 msgid "(built on %s)"
 msgstr "(зібраний %s)"
 
-#: gui/about.cpp:109
+#: gui/about.cpp:110
 msgid "Features compiled in:"
 msgstr "Включені в білд опції:"
 
-#: gui/about.cpp:118
+#: gui/about.cpp:119
 msgid "Available engines:"
 msgstr "Доступні движки:"
 

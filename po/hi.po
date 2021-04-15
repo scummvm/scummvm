@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-04-15 15:46+0000\n"
+"POT-Creation-Date: 2021-04-15 19:20+0000\n"
 "PO-Revision-Date: 2021-03-21 08:24+0000\n"
 "Last-Translator: Aashwin Vaish <aashwin.vaish@research.iiit.ac.in>\n"
 "Language-Team: Hindi <https://translations.scummvm.org/projects/scummvm/"
@@ -20,16 +20,16 @@ msgstr ""
 "X-Generator: Weblate 4.4\n"
 "X-Language-name: Hindi\n"
 
-#: gui/about.cpp:102
+#: gui/about.cpp:103
 #, c-format
 msgid "(built on %s)"
 msgstr "(%s को बनाया गया)"
 
-#: gui/about.cpp:109
+#: gui/about.cpp:110
 msgid "Features compiled in:"
 msgstr "सुविधा बनाए गए:"
 
-#: gui/about.cpp:118
+#: gui/about.cpp:119
 msgid "Available engines:"
 msgstr "उपलब्ध इंजन :"
 
