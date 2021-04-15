@@ -469,6 +469,33 @@ void Object::playSounds() {
 		}
 	}
 
+	for (int i = 0; i < ARRAYSIZE(_frameSoundItems); i++) {
+		FrameSoundItem *item = &_frameSoundItems[i];
+
+		if (item->frameIndex == _frameIndex) {
+			if (item->resourceId) {
+				if (_soundItems[item->index].resourceId && !_soundItems[item->index].field_4) {
+					getSound()->stop(_soundItems[item->index].resourceId);
+					_soundItems[item->index].resourceId = kResourceNone;
+				}
+
+				_soundItems[item->index].resourceId = item->resourceId;
+				_soundItems[item->index].field_4 = item->field_10;
+				_soundItems[item->index].field_8 = item->field_C;
+				_soundItems[item->index].field_C = item->field_14;
+
+				if (!getSound()->isPlaying(item->resourceId)) {
+					int32 volume = Config.sfxVolume + getSound()->calculateVolumeAdjustement(point, item->field_C, item->field_14);
+
+					if (volume > -5000)
+						getSound()->playSound(item->resourceId, item->field_10, volume, getSound()->calculatePanningAtPoint(point));
+				}
+			}
+		} else if (item->frameIndex > _frameIndex || !item->resourceId) {
+			break;
+		}
+	}
+
 	setVolume();
 }
 
