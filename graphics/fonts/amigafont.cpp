@@ -215,6 +215,15 @@ AmigaFont::AmigaFont() {
 		_charSpace = (uint16 *)(_data + FROM_BE_32(_font->_charSpace));
 	if (_font->_charKern != 0)
 		_charKern = (uint16 *)(_data + FROM_BE_32(_font->_charKern));
+
+	if (_charSpace) {
+		_maxCharWidth = _charSpace[0];
+		for (int i = _font->_hiChar - _font->_loChar; i > 0 ; i--)
+			if (_maxCharWidth < _charSpace[i])
+				_maxCharWidth = _charSpace[i];
+	} else {
+		_maxCharWidth = _font->_xSize;
+	}
 }
 
 int AmigaFont::getFontHeight() const {
@@ -222,11 +231,15 @@ int AmigaFont::getFontHeight() const {
 }
 
 int AmigaFont::getCharWidth(uint32 chr) const {
-	return (_charSpace == 0) ? _font->_xSize : FROM_BE_16(_charSpace[chr]);
+	return (_charSpace == 0) ? _font->_xSize : FROM_BE_16(_charSpace[mapChar(chr)]);
+}
+
+int AmigaFont::getMaxCharWidth() const {
+	return _maxCharWidth;
 }
 
 int AmigaFont::getKerningOffset(uint32 left, uint32 right) const {
-	return (_charKern == 0) ? 0 : FROM_BE_16(_charKern[right]);
+	return (_charKern == 0) ? 0 : FROM_BE_16(_charKern[mapChar(right)]);
 }
 
 uint16 AmigaFont::getPixels(byte c) const {

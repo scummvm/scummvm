@@ -62,6 +62,7 @@ class AmigaFont : public Font {
 
 	byte			*_cp;
 	uint32			_pitch;
+	int             _maxCharWidth;
 
 private:
 	uint16 getPixels(byte c) const;
@@ -74,6 +75,7 @@ public:
 
 	virtual int getFontHeight() const;
 	virtual int getCharWidth(uint32 chr) const;
+	virtual int getMaxCharWidth() const;
 	virtual int getKerningOffset(uint32 left, uint32 right) const;
 	virtual void drawChar(Surface *dst, uint32 chr, int x, int y, uint32 color) const;
 };
