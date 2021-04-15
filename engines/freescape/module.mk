@@ -2,10 +2,17 @@ MODULE := engines/freescape
  
 MODULE_OBJS := \
 	metaengine.o \
-	freescape.o
+	freescape.o \
+	game.o \
+	area.o \
+	objects/object.o \
+	objects/geometricobject.o \
+	loaders/16bitBinaryLoader.o \
+	language/16bitDetokeniser.o
  
 MODULE_DIRS += \
 	engines/freescape
+
  
 # This module can be built as a plugin
 ifeq ($(ENABLE_FREESCAPE), DYNAMIC_PLUGIN)
