@@ -516,9 +516,6 @@ void Gfx::invertBackground(const Common::Rect& r) {
 }
 
 
-
-
-
 void setupLabelSurface(Graphics::Surface &surf, uint w, uint h) {
 	surf.create(w, h, Graphics::PixelFormat::createFormatCLUT8());
 	surf.fillRect(Common::Rect(w,h), LABEL_TRANSPARENT_COLOR);
