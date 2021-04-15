@@ -24,13 +24,13 @@
 #define ASYLUM_SPECIAL_H
 
 #include "asylum/shared.h"
+#include "asylum/asylum.h"
 
 #include "common/scummsys.h"
 #include "common/rect.h"
 
 namespace Asylum {
 
-class AsylumEngine;
 class Object;
 
 class Special {
@@ -97,6 +97,7 @@ private:
 	//////////////////////////////////////////////////////////////////////////
 	ResourceId getResourceId(Object *object, ActorIndex actorIndex);
 	uint32 getCounter(ActorIndex index) const;
+	bool chance() { return _vm->getRandom(10000) < 30; }
 
 	void checkObject(Object *object, GameFlag flagToSet, GameFlag flagToClear, ObjectId objectId = kObjectNone);
 	void checkOtherObject(Object *object, ObjectId otherObjectId, GameFlag flagToClear, GameFlag flagToSet);
