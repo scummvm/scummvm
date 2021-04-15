@@ -64,6 +64,8 @@ class AmigaFont : public Font {
 	uint32			_pitch;
 	int             _maxCharWidth;
 
+	bool            _needCleanup;
+
 private:
 	uint16 getPixels(byte c) const;
 	uint16 getOffset(byte c) const;
@@ -71,7 +73,14 @@ private:
 	uint32 mapChar(uint32 c) const;
 
 public:
-	AmigaFont();
+	/**
+	 * Create font in Amiga format.
+	 *
+	 * @param stream  Stream with the font data. If NULL, then the built-in
+	 *				  Topaz font is used.
+	 */
+	AmigaFont(Common::SeekableReadStream *stream = NULL);
+	virtual ~AmigaFont();
 
 	virtual int getFontHeight() const;
 	virtual int getCharWidth(uint32 chr) const;

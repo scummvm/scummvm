@@ -20,6 +20,7 @@
  *
  */
 
+#include "common/stream.h"
 #include "common/textconsole.h"
 #include "graphics/surface.h"
 #include "graphics/fonts/amigafont.h"
@@ -193,8 +194,19 @@ static byte amigaTopazFont[2600] = {
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x03, 0xf2
 };
 
-AmigaFont::AmigaFont() {
-	_data = amigaTopazFont + 32; // skips dummy header
+AmigaFont::AmigaFont(Common::SeekableReadStream *stream) {
+	if (!stream) {
+		_data = amigaTopazFont + 32; // skips dummy header
+		_needCleanup = false;
+	} else {
+		stream->seek(32);	// skips dummy header
+
+		uint dataSize = stream->size() - stream->pos();
+		_data = (byte *)malloc(dataSize);
+		stream->read(_data, dataSize);
+
+		_needCleanup = true;
+	}
 
 	_font = (AmigaDiskFont *)(_data + 78);
 	_font->_ySize = FROM_BE_16(_font->_ySize);
@@ -224,6 +236,11 @@ AmigaFont::AmigaFont() {
 	} else {
 		_maxCharWidth = _font->_xSize;
 	}
+}
+
+AmigaFont::~AmigaFont() {
+	if (_needCleanup)
+		free(_data);
 }
 
 int AmigaFont::getFontHeight() const {
