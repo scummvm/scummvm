@@ -267,10 +267,12 @@ void GravityProcess::terminate() {
 	if (item) {
 		// This is strange, but not impossible (one terminates
 		// and another starts before terminate() gets called).
+		// Don't reset the item's gravityPID in this case.
 		if (item->getGravityPID() != 0 && item->getGravityPID() != _pid)
-			warning("GravityProcess::terminate %d on item %d which has gravityPID %d",
+			warning("GravityProcess::terminate %d on item %d which now has gravityPID %d",
 					_pid, _itemNum, item->getGravityPID());
-		item->setGravityPID(0);
+		else
+			item->setGravityPID(0);
 
 		// no longer bouncing
 		item->clearFlag(Item::FLG_BOUNCING);
