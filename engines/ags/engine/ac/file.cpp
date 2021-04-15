@@ -75,10 +75,10 @@ int File_Delete(const char *fnmm) {
 	if (!ResolveScriptPath(fnmm, false, rp))
 		return 0;
 
-	if (::remove(rp.FullPath) == 0)
+	if (File::DeleteFile(rp.FullPath))
 		return 1;
 	if (_G(errnum) == AL_ENOENT && !rp.AltPath.IsEmpty() && rp.AltPath.Compare(rp.FullPath) != 0)
-		return ::remove(rp.AltPath) == 0 ? 1 : 0;
+		return File::DeleteFile(rp.AltPath) ? 1 : 0;
 	return 0;
 }
 

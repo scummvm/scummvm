@@ -109,7 +109,7 @@ void RestoreGameSlot(int slnum) {
 void DeleteSaveSlot(int slnum) {
 	String nametouse;
 	nametouse = get_save_game_path(slnum);
-	::remove(nametouse);
+	Shared::File::DeleteFile(nametouse);
 	if ((slnum >= 1) && (slnum <= MAXSAVEGAMES)) {
 		String thisname;
 		for (int i = MAXSAVEGAMES; i > slnum; i--) {
