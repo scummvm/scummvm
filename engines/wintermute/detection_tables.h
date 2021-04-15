@@ -770,6 +770,16 @@ static const WMEGameDescription gameDescriptions[] = {
 		WME_ENTRY2s("russian.dcp", "a0ae71e9e1185596fffb07ad2c951eb9", 653317,
 					"data.dcp", "7ebfd50d1a22370ed7b079bcaa631d62", 9070205), Common::RU_RUS, ADGF_UNSTABLE, WME_1_4_1),
 
+	// Dead City (Polish) (18.11.2012)
+	WME_WINENTRY("deadcity", "",
+		WME_ENTRY2s("string.tab", "9c997f0d58fd7aa6ba9baf3fbfbaba90", 42087,
+					"data.dcp", "7ebfd50d1a22370ed7b079bcaa631d62", 9070205), Common::PL_POL, ADGF_UNSTABLE, WME_1_4_1),
+
+	// Dead City (Polish) (08.06.2013)
+	WME_WINENTRY("deadcity", "",
+		WME_ENTRY2s("string.tab", "9c997f0d58fd7aa6ba9baf3fbfbaba90", 42085,
+					"data.dcp", "7ebfd50d1a22370ed7b079bcaa631d62", 9070205), Common::PL_POL, ADGF_UNSTABLE, WME_1_4_1),
+
 	// Devil In The Capital (Steam, July 2017) (English)
 	// NOTE: This is a 2.5D game that is out of ScummVM scope
 	WME_WINENTRY("devilincapital", "",
@@ -1607,6 +1617,12 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("mentalrepairs", "",
 		WME_ENTRY2s("data.dcp", "414d423bbff697f22fb38932f030e897", 59518068,
 					"german.dcp", "af59a05ef29768e7fced3794a7a380a3", 3249142), Common::DE_DEU, ADGF_UNSTABLE | GF_3D, WME_1_8_6),
+
+	// Mental Repairs Inc (Polish)
+	// NOTE: This is a 2.5D game that is out of ScummVM scope
+	WME_WINENTRY("mentalrepairs", "",
+		WME_ENTRY2s("data.dcp", "414d423bbff697f22fb38932f030e897", 59518068,
+					"string.tab", "d3393ba2445fc7e6a1cdf8fe95c59659", 72143), Common::PL_POL, ADGF_UNSTABLE | GF_3D, WME_1_8_6),
 
 	// Mirage
 	WME_WINENTRY("mirage", "",
