@@ -5,6 +5,7 @@ MODULE_OBJS := \
 	cursorman.o \
 	font.o \
 	fontman.o \
+	fonts/amigafont.o \
 	fonts/bdf.o \
 	fonts/consolefont.o \
 	fonts/macfont.o \
