@@ -25,9 +25,14 @@ namespace Snatcher {
 
 class SCDRenderer : public Renderer {
 public:
-	SCDRenderer() : Renderer() {}
+	SCDRenderer() : Renderer(), _screenWidth(320), _screenHeight(224) {}
 	~SCDRenderer() override {}
+
+	uint16 screenWidth() const { return _screenWidth; }
+	uint16 screenHeight() const { return _screenHeight; }
+
 private:
+	const uint16 _screenWidth, _screenHeight;
 };
 
 Renderer *Renderer::createSegaRenderer() {

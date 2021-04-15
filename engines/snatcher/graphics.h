@@ -22,19 +22,31 @@
 #ifndef SNATCHER_GRAPHICS_H
 #define SNATCHER_GRAPHICS_H
 
+#include "snatcher/render.h"
 #include "common/platform.h"
+
+class OSystem;
 
 namespace Snatcher {
 
-class Renderer;
+class Palette;
 
 class GraphicsEngine {
 public:
-	GraphicsEngine(Common::Platform platform);
+	GraphicsEngine(OSystem *system, Common::Platform platform);
 	~GraphicsEngine();
+
+	void enqueuePaletteEvent(const uint8 *data, uint32 curPos);
+
+	void nextFrame();
+
+	uint16 screenWidth() const { return _renderer ? _renderer->screenWidth() : 0; }
+	uint16 screenHeight() const { return _renderer ? _renderer->screenHeight() : 0; }
 
 private:
 	Renderer *_renderer;
+	Palette *_palette;
+	OSystem *_system;
 };
 
 } // End of namespace Snatcher

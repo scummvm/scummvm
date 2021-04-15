@@ -31,7 +31,9 @@ class SnatcherMetaEngine;
 namespace Snatcher {
 
 class GraphicsEngine;
+class FIO;
 class SoundEngine;
+class SceneResource;
 
 class SnatcherEngine : public Engine {
 public:
@@ -42,9 +44,13 @@ private:
 	// Startup
 	Common::Error run() override;
 	bool initResource();
-	bool initGraphics(Common::Platform platform);
+	bool initGfx(Common::Platform platform);
 	bool initSound(Common::Platform platform, int soundOptions);
-	bool start();	
+
+	// Main loop
+	bool start();
+	void delayUntil(uint32 end);
+	void updateEvents();
 
 	// ConfigManager sync
 	void registerDefaultSettings();
@@ -56,6 +62,10 @@ private:
 	// MetaEngine
 	bool hasFeature(EngineFeature f) const override;
 	GameDescription _game;
+
+	// Resource
+	FIO *_fio;
+	SceneResource *_scene;
 
 	// Graphics
 	GraphicsEngine *_gfx;

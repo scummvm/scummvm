@@ -30,6 +30,8 @@ class Renderer {
 public:
 	virtual ~Renderer() {}
 
+	virtual uint16 screenWidth() const = 0;
+	virtual uint16 screenHeight() const = 0;
 protected:
 	Renderer() {}
 
