@@ -27,7 +27,7 @@
 #include "common/system.h"
 #include "common/translation.h"
 #include "common/util.h"
-#include "graphics/managed_surface.h"
+#include "graphics/surface.h"
 #include "graphics/fonts/amigafont.h"
 #include "gui/about.h"
 #include "gui/gui-manager.h"
@@ -371,7 +371,7 @@ public:
 	void run();
 
 private:
-	Graphics::ManagedSurface _back;
+	Graphics::Surface _back;
 	int _hits;
 	bool _rmode; // animation after loosing
 	int _score[2];
@@ -436,6 +436,7 @@ private:
 	void playSound(int d);
 
 	void genSprites();
+	void genField();
 };
 
 bool EEHandler::handleKeyDown(Common::KeyState &state) {
@@ -1108,7 +1109,27 @@ void EE::init() {
 void EE::draw(int sn, int x1, int y1) {
 	int x = x1 * _scale;
 	int y = y1 * _scale;
-	_back.transBlitFrom(_sp[sn], Common::Point(x, y), 0);
+
+	if (_back.format.bytesPerPixel == 2) {
+		for (int y_ = 0; y_ < _sp[sn].h; y_++) {
+			uint16 *src = (uint16 *)_sp[sn].getBasePtr(0, y_);
+			uint16 *dst = (uint16 *)_back.getBasePtr(x, y + y_);
+
+			for (int x_ = 0; x_ < _sp[sn].w; x_++, dst++, src++)
+				if (*src != 0)
+					*dst = *src;
+		}
+	} else {
+		for (int y_ = 0; y_ < _sp[sn].h; y_++) {
+			uint32 *src = (uint32 *)_sp[sn].getBasePtr(0, y_);
+			uint32 *dst = (uint32 *)_back.getBasePtr(x, y + y_);
+
+			for (int x_ = 0; x_ < _sp[sn].w; x_++, dst++, src++)
+				if (*src != 0 && *src != 0xff000000 && *src != 0xff)
+					*dst = *src;
+		}
+	}
+
 	g_system->copyRectToOverlay(_back.getBasePtr(x, y), _back.pitch, _windowX + x, _windowY + y, _sp[sn].w, _sp[sn].h);
 }
 
@@ -1195,16 +1216,6 @@ void EE::putshapes() {
 
 		if (_mode != kModeMenu)
 			break;
-	}
-
-	g_system->copyRectToOverlay(_back.getPixels(), _back.pitch, _windowX, _windowY, _windowW, 10 * _scale);
-
-	if (_mode == kModeMenu) {
-		int x = 92 * _scale;
-		int y = 20 * _scale;
-		int w = _sp[kSpCode1].w;
-		int h = _sp[kSpCode1].h * 5;
-		g_system->copyRectToOverlay(_back.getBasePtr(x, y), _back.pitch, _windowX + x, _windowY + y, w, h);
 	}
 }
 
