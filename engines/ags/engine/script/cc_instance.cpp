@@ -1291,9 +1291,8 @@ void ccInstance::DumpInstruction(const ScriptOperation &op) {
 		if (cmd_info.ArgIsReg[i]) {
 			msg += Common::String::format(" %s", regnames[op.Args[i].IValue]);
 		} else {
-			// MACPORT FIX 9/6/5: changed %d to %ld
 			// FIXME: check type and write appropriate values
-			msg += Common::String::format(" %ld", (long)op.Args[i].GetPtrWithOffset());
+			msg += Common::String::format(" %lld", (long long)op.Args[i].GetPtrWithOffset());
 		}
 	}
 	msg += '\n';
