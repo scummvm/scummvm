@@ -22,9 +22,88 @@
 #ifndef SNATCHER_RESOURCE_H
 #define SNATCHER_RESOURCE_H
 
+#include "common/fs.h"
+#include "common/scummsys.h"
+#include "common/str.h"
+
+namespace Common {
+class SeekableReadStream;
+class SeekableReadStreamEndian;
+} // End of namespace Common
+
 namespace Snatcher {
 
-///
+class SnatcherEngine;
+class SceneResource;
+class FIO;
+
+class SceneHandler {
+public:
+	SceneHandler(SnatcherEngine *vm, SceneResource *scn, FIO *fio) : _vm(vm), _scene(scn), _fio(fio) {}
+	virtual ~SceneHandler() {}
+	virtual void operator()() = 0;
+protected:
+	SnatcherEngine *_vm;
+	SceneResource *_scene;
+	FIO *_fio;
+};
+
+class SceneResource {
+	friend class FIO;
+public:
+	~SceneResource();
+
+	const uint8 *getData(int offset) const;
+	const uint8 *getDataFromTable(int offset, int tableEntry) const;
+	const uint8 *getDataFromMainTable(int tableEntry) const;
+
+	void startScene();
+
+private:
+	SceneResource(SnatcherEngine *vm, FIO *fio, const char *resFile, int index);
+
+	const uint8 *_data;
+	uint32 _dataSize;
+	//const uint8 **_table;
+	//uint16 _tableSize;
+
+	SnatcherEngine *_vm;
+	FIO *_fio;
+	const int _resIndex;
+	Common::Path _resFile;
+	SceneHandler *_handler;
+
+	typedef SceneHandler*(SHFactory)(SnatcherEngine*, SceneResource*, FIO*);
+	static SHFactory *const _shList[97];
+};
+
+class FIO {
+public:
+	FIO(SnatcherEngine *vm, bool isBigEndian);
+	~FIO();
+
+	SceneResource *createSceneResource(int index);
+
+	enum EndianMode {
+		kPlatformEndianness = 0,
+		kForceLE,
+		kForceBE
+	};
+
+	Common::SeekableReadStream *readStream(const Common::Path &file);
+	Common::SeekableReadStreamEndian *readStreamEndian(const Common::Path &file, EndianMode em = kPlatformEndianness);
+	uint8 *fileData(const Common::Path &file, uint32 *fileSize);
+
+private:
+	Common::SearchSet _files;
+
+	SnatcherEngine *_vm;
+	bool _bigEndianTarget;
+
+private:
+	static const char *_resFileList[97];
+	static const int _resFileListSize;
+};
 
 } // End of namespace Snatcher
 
