@@ -77,8 +77,10 @@ clean-test:
 	-$(RM) test/runner.cpp test/runner test/engine-data/encoding.dat
 	-rmdir test/engine-data
 
-copy-dat:
+test/engine-data/encoding.dat: $(srcdir)/dists/engine-data/encoding.dat
 	$(MKDIR) test/engine-data
 	$(CP) $(srcdir)/dists/engine-data/encoding.dat test/engine-data/encoding.dat
+
+copy-dat: test/engine-data/encoding.dat
 
 .PHONY: test clean-test copy-dat
