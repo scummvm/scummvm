@@ -28,6 +28,7 @@
 #include "common/translation.h"
 #include "common/util.h"
 #include "graphics/managed_surface.h"
+#include "graphics/fonts/amigafont.h"
 #include "gui/about.h"
 #include "gui/gui-manager.h"
 #include "gui/ThemeEval.h"
@@ -389,6 +390,8 @@ private:
 	int _opts;
 	int _opt;
 
+	Graphics::AmigaFont _font;
+
 	Graphics::Surface _sp[10];
 
 	Graphics::PixelFormat _format;
@@ -417,7 +420,7 @@ private:
 	void playSound(int d);
 
 	void genSprites();
-	void drawStatus(Common::String str, int x, uint32 color, int y = 0, int color2 = 0, int w = 16);
+	void drawStatus(Common::String str, int x, uint32 color, int y = 2, int color2 = 0, int w = 184);
 };
 
 bool EEHandler::handleKeyDown(Common::KeyState &state) {
@@ -1078,7 +1081,7 @@ void EE::init() {
 void EE::drawStatus(Common::String str, int x, uint32 color, int y, int color2, int w) {
 	if (color2)
 		_back.fillRect(Common::Rect(x, y, x + w, y + 10), color2);
-	g_gui.theme()->getFont(ThemeEngine::kFontStyleConsole)->drawString(&_back, str, x, y, 160, color);
+	_font.drawString(&_back, str, x, y + 1, w, color, Graphics::kTextAlignLeft, 0, false);
 }
 
 void EE::draw(int sn, int x, int y) {
@@ -1201,11 +1204,11 @@ void EE::putshapes() {
 			buf[c] = codes[c + 23 * i] - 3 - c % 6;
 		buf[c] = 0;
 
-		int sx = i == 0 ? 110 : 92;
-		int sy = i == 0 ? 0 : 20;
+		int sx = i == 0 ? 92 : 80;
+		int sy = i == 0 ? 2 : 20;
 		int c1 = i == 0 ? _colorOrange : (i - 1 == _opt) ? 0 : _colorBlue;
 		int c2 = i - 1 == _opt ? _colorBlue : 0;
-		drawStatus(buf, sx, c1, sy + i * 10, c2, 135);
+		drawStatus(buf, sx, c1, sy + i * 10, c2);
 
 		if (_mode != kModeMenu)
 			break;
@@ -1216,14 +1219,14 @@ void EE::putshapes() {
 	                            MIN<int>(_windowX, g_system->getOverlayWidth()),
 	                            MIN<int>(_windowY, g_system->getOverlayHeight()),
 	                            MIN<int>(320, g_system->getOverlayWidth() - MIN<int>(_windowX, g_system->getOverlayWidth())),
-	                            MIN<int>(10, g_system->getOverlayHeight() - MIN<int>(_windowY, g_system->getOverlayHeight()) ));
+	                            MIN<int>(12, g_system->getOverlayHeight() - MIN<int>(_windowY, g_system->getOverlayHeight()) ));
 
 	if (_mode == kModeMenu) {
-		g_system->copyRectToOverlay(_back.getBasePtr(92, 30),
+		g_system->copyRectToOverlay(_back.getBasePtr(80, 30),
 		                            _back.pitch,
-		                            MIN<int>(_windowX + 92, g_system->getOverlayWidth()),
+		                            MIN<int>(_windowX + 80, g_system->getOverlayWidth()),
 		                            MIN<int>(_windowY + 30, g_system->getOverlayHeight()),
-		                            MIN<int>(135, g_system->getOverlayWidth() - MIN<int>(_windowX + 92, g_system->getOverlayWidth())),
+		                            MIN<int>(250, g_system->getOverlayWidth() - MIN<int>(_windowX + 80, g_system->getOverlayWidth())),
 		                            MIN<int>(5 * 10, g_system->getOverlayHeight() - MIN<int>(_windowY + 30, g_system->getOverlayHeight()) ));
 	}
 }
