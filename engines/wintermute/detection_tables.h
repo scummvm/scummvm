@@ -558,44 +558,44 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("carolreed10", "Demo",
 		WME_ENTRY1s("data.dcp", "72b29cb3f0bc83efa6e3bae41b4e899a", 79971080), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, WME_1_9_3),
 
-	// Carol Reed 11 - Shades Of Black
-	WME_WINENTRY("carolreed11", "",
+	// Carol Reed 11 - Shades Of Black (SD)
+	WME_WINENTRY("carolreed11", "SD",
 		WME_ENTRY1s("data.dcp", "a1e9f54b48493e9c6d737e3a94779d8c", 525450069), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
 
-	// Carol Reed 11 - Shades Of Black (MDNA Games)
-	WME_WINENTRY("carolreed11", "",
+	// Carol Reed 11 - Shades Of Black (HD) (MDNA Games)
+	WME_WINENTRY("carolreed11", "HD",
 		WME_ENTRY1s("data.dcp", "459f4a851ea053cc4d204e45e2f88afc", 853256580), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
 
-	// Carol Reed 11 - Shades Of Black (MDNA Games)
-	WME_WINENTRY("carolreed11", "",
+	// Carol Reed 11 - Shades Of Black (SD) (MDNA Games)
+	WME_WINENTRY("carolreed11", "SD",
 		WME_ENTRY1s("data.dcp", "c47314872afbbdc587dae0bc976a3375", 525502344), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
 
-	// Carol Reed 11 - Shades Of Black (Demo)
-	WME_WINENTRY("carolreed11", "Demo",
+	// Carol Reed 11 - Shades Of Black (SD) (Demo)
+	WME_WINENTRY("carolreed11", "SD Demo",
 		WME_ENTRY1s("data.dcp", "8c27236d29747b6bb6a0a563fb769f20", 52692061), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, WME_1_9_3),
 
-	// Carol Reed 11 - Shades Of Black (HD Demo)
+	// Carol Reed 11 - Shades Of Black (HD) (Demo)
 	WME_WINENTRY("carolreed11", "HD Demo",
 		WME_ENTRY1s("data.dcp", "ba124af0a0ee3113f3f9dc0c1159ec26", 77909344), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, WME_1_9_3),
 
-	// Carol Reed 12 - Profound Red
-	WME_WINENTRY("carolreed12", "",
+	// Carol Reed 12 - Profound Red (HD)
+	WME_WINENTRY("carolreed12", "HD",
 		WME_ENTRY1s("data.dcp", "edc1e69dc52ec2a65fa431a51c783c2e", 944403699), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
 
-	// Carol Reed 12 - Profound Red (MDNA Games)
-	WME_WINENTRY("carolreed12", "",
+	// Carol Reed 12 - Profound Red (SD) (MDNA Games)
+	WME_WINENTRY("carolreed12", "SD",
 		WME_ENTRY1s("data.dcp", "84d296ab65b89e87f6d56accb9360f19", 627095895), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
 
-	// Carol Reed 13 - The Birdwatcher
-	WME_WINENTRY("carolreed13", "",
+	// Carol Reed 13 - The Birdwatcher (HD)
+	WME_WINENTRY("carolreed13", "HD",
 		WME_ENTRY1s("data.dcp", "954392d19f0c928b700f17badd35d488", 1267391173), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
 
-	// Carol Reed 13 - The Birdwatcher (MDNA Games)
-	WME_WINENTRY("carolreed13", "",
+	// Carol Reed 13 - The Birdwatcher (SD) (MDNA Games)
+	WME_WINENTRY("carolreed13", "SD",
 		WME_ENTRY1s("data.dcp", "4c5e1094a2e05b76b2ee5a8d9af5de4a", 774352150), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
 
-	// Carol Reed 14 - The Fall Of April
-	WME_WINENTRY("carolreed14", "",
+	// Carol Reed 14 - The Fall Of April (HD)
+	WME_WINENTRY("carolreed14", "HD",
 		WME_ENTRY1s("data.dcp", "38c9088dca07c9623562e8efdea4c856", 1256960150), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
 
 	// Chivalry is Not Dead
