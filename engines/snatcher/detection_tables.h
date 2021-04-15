@@ -21,10 +21,10 @@
 
 namespace {
 
-#define FLAGS(id, sound) { id, sound, Common::UNK_LANG, Common::kPlatformUnknown, Common::UNK_LANG, Common::UNK_LANG }
-#define FLAGS_FAN(id, sound, fanLang, repLang) { id, sound, Common::UNK_LANG, Common::kPlatformUnknown, fanLang, repLang }
+#define FLAGS(id, a, b) { id, a, Common::UNK_LANG, Common::kPlatformUnknown, b, Common::UNK_LANG, Common::UNK_LANG }
+#define FLAGS_FAN(id, a, b, fanLang, repLang) { id, a, Common::UNK_LANG, Common::kPlatformUnknown, b, fanLang, repLang }
 
-#define SNATCHER_FLAGS(sound) FLAGS(Snatcher::GI_SNATCHER, sound)
+#define SNATCHER_FLAGS(a, b) FLAGS(Snatcher::GI_SNATCHER, a, b)
 
 const SnatcherGameDescription adGameDescs[] = {
 	{
@@ -38,10 +38,10 @@ const SnatcherGameDescription adGameDescs[] = {
 			ADGF_TESTING,
 			GUIO2(GUIO_NOSPEECHVOLUME, GUIO_MIDISEGACD)
 		},
-		SNATCHER_FLAGS(MDT_SEGACD)
+		SNATCHER_FLAGS(MDT_SEGACD, true)
 	},
 
-	{ AD_TABLE_END_MARKER, FLAGS(0, MDT_NONE) }
+	{ AD_TABLE_END_MARKER, FLAGS(0, MDT_NONE, false) }
 };
 
 const PlainGameDescriptor gameList[] = {

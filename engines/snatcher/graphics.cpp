@@ -19,18 +19,35 @@
 *
 */
 
+#include "snatcher/palette.h"
 #include "snatcher/render.h"
 #include "snatcher/graphics.h"
 
+#include "common/system.h"
+
 namespace Snatcher {
 
-GraphicsEngine::GraphicsEngine(Common::Platform platform) : _renderer(0) {
+GraphicsEngine::GraphicsEngine(OSystem *system, Common::Platform platform) : _system(system), _renderer(0) {
 	_renderer = Renderer::create(platform);
+	_palette = Palette::create(_system->getPaletteManager(), platform);
 	assert(_renderer);
 }
 
 GraphicsEngine::~GraphicsEngine() {
 	delete _renderer;
+	delete _palette;
+}
+
+void GraphicsEngine::enqueuePaletteEvent(const uint8 *data, uint32 curPos) {
+	_palette->enqueueEvent(data, curPos);
+}
+
+void GraphicsEngine::nextFrame() {
+	//if (!_skipManyEvents) {
+		//_blockPalEvent = false;
+		_palette->processEventQueue();
+	//}
+	_system->updateScreen();
 }
 
 } // End of namespace Snatcher

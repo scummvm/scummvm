@@ -35,6 +35,7 @@ struct GameDescription {
 	int soundOptions;
 	Common::Language lang;
 	Common::Platform platform;
+	bool isBigEndian;
 
 	// language overwrites of fan translations (only needed for multilingual games)
 	Common::Language fanLang;
