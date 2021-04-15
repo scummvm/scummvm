@@ -56,7 +56,7 @@ void Object::dumpInfo() const {
 }
 
 ProcId Object::callUsecode(uint16 classid, uint16 offset,
-                           const uint8 *args, int argsize) {
+						   const uint8 *args, int argsize) {
 	uint32 objptr = UCMachine::objectToPtr(getObjId());
 	UCProcess *p = new UCProcess(classid, offset, objptr, 2, args, argsize);
 	return Kernel::get_instance()->addProcess(p);

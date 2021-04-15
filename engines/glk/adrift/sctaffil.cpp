@@ -83,9 +83,9 @@ typedef sc_taf_s sc_taf_t;
 
 /* Microsoft Visual Basic PRNG magic numbers, initial and current state. */
 static const sc_int PRNG_CST1 = 0x43fd43fd,
-                    PRNG_CST2 = 0x00c39ec3,
-                    PRNG_CST3 = 0x00ffffff,
-                    PRNG_INITIAL_STATE = 0x00a09e86;
+					PRNG_CST2 = 0x00c39ec3,
+					PRNG_CST3 = 0x00ffffff,
+					PRNG_INITIAL_STATE = 0x00a09e86;
 static sc_int taf_random_state = 0x00a09e86;
 
 /*

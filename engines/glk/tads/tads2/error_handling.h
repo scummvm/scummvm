@@ -73,16 +73,16 @@ namespace TADS2 {
 #define ERRFACMAX    6
 
 union erradef {
-    int   erraint;                                      /* integer argument */
-    const char *errastr;                            /* text string argument */
+	int   erraint;                                      /* integer argument */
+	const char *errastr;                            /* text string argument */
 };
 
 struct errdef {
-    struct errdef *errprv;                          /* previous error frame */
-    int            errcode;        /* error code of exception being handled */
-    char           errfac[ERRFACMAX+1];        /* facility of current error */
-    erradef        erraav[10];                      /* parameters for error */
-    int            erraac;                   /* count of parameters in argc */
+	struct errdef *errprv;                          /* previous error frame */
+	int            errcode;        /* error code of exception being handled */
+	char           errfac[ERRFACMAX+1];        /* facility of current error */
+	erradef        erraav[10];                      /* parameters for error */
+	int            erraac;                   /* count of parameters in argc */
 };
 
 #define ERRBUFSIZ 512
@@ -91,23 +91,23 @@ struct errdef {
  * Seek location record for an error message by number
  */
 struct errmfdef {
-    uint  errmfnum;                                         /* error number */
-    ulong errmfseek;                       /* seek location of this message */
+	uint  errmfnum;                                         /* error number */
+	ulong errmfseek;                       /* seek location of this message */
 };
 typedef struct errmfdef errmfdef;
 
 struct errcxdef {
-    errdef   *errcxptr;                              /* current error frame */
-    void    (*errcxlog)(void *, const char *fac, int err, int argc, erradef *);
-                                         /* error logging callback function */
-    void     *errcxlgc;               /* context for error logging callback */
-    int       errcxofs;                        /* offset in argument buffer */
-    char      errcxbuf[ERRBUFSIZ];            /* space for argument strings */
-    osfildef *errcxfp;                /* message file, if one is being used */
-    errmfdef *errcxseek;              /* seek locations of messages in file */
-    uint      errcxsksz;                         /* size of errcxseek array */
-    ulong     errcxbase;   /* offset in physical file of logical error file */
-    struct appctxdef *errcxappctx;              /* host application context */
+	errdef   *errcxptr;                              /* current error frame */
+	void    (*errcxlog)(void *, const char *fac, int err, int argc, erradef *);
+										 /* error logging callback function */
+	void     *errcxlgc;               /* context for error logging callback */
+	int       errcxofs;                        /* offset in argument buffer */
+	char      errcxbuf[ERRBUFSIZ];            /* space for argument strings */
+	osfildef *errcxfp;                /* message file, if one is being used */
+	errmfdef *errcxseek;              /* seek locations of messages in file */
+	uint      errcxsksz;                         /* size of errcxseek array */
+	ulong     errcxbase;   /* offset in physical file of logical error file */
+	struct appctxdef *errcxappctx;              /* host application context */
 };
 
 /**
@@ -115,47 +115,47 @@ struct errcxdef {
  */
 #define ERRBEGIN(ctx) \
   { \
-    errdef fr_; \
-    if (1 /*(fr_.errcode = setjmp(fr_.errbuf)) == 0 */) \
-    { \
-      fr_.errprv = (ctx)->errcxptr; \
-      (ctx)->errcxptr = &fr_;
+	errdef fr_; \
+	if (1 /*(fr_.errcode = setjmp(fr_.errbuf)) == 0 */) \
+	{ \
+	  fr_.errprv = (ctx)->errcxptr; \
+	  (ctx)->errcxptr = &fr_;
 
 /**
  * End protected code, begin error handler
  */
 #define ERRCATCH(ctx, e) \
-      assert(1==1 && (ctx)->errcxptr != fr_.errprv); \
-      (ctx)->errcxptr = fr_.errprv; \
-    } \
-    else \
-    { \
-      assert(2==2 && (ctx)->errcxptr != fr_.errprv); \
-      (e) = fr_.errcode; \
-      (ctx)->errcxptr = fr_.errprv;
-        
+	  assert(1==1 && (ctx)->errcxptr != fr_.errprv); \
+	  (ctx)->errcxptr = fr_.errprv; \
+	} \
+	else \
+	{ \
+	  assert(2==2 && (ctx)->errcxptr != fr_.errprv); \
+	  (e) = fr_.errcode; \
+	  (ctx)->errcxptr = fr_.errprv;
+		
 /* retrieve argument (int, string) in current error frame */
 #define errargint(argnum) (fr_.erraav[argnum].erraint)
 #define errargstr(argnum) (fr_.erraav[argnum].errastr)
 
-    
+	
 #define ERREND(ctx) \
-    } \
+	} \
   }
 
 /* end protected code, begin cleanup (no handling; just cleaning up) */
 #define ERRCLEAN(ctx) \
-      assert((ctx)->errcxptr != fr_.errprv); \
-      (ctx)->errcxptr = fr_.errprv; \
-    } \
-    else \
-    { \
-      assert((ctx)->errcxptr != fr_.errprv); \
-      (ctx)->errcxptr = fr_.errprv;
+	  assert((ctx)->errcxptr != fr_.errprv); \
+	  (ctx)->errcxptr = fr_.errprv; \
+	} \
+	else \
+	{ \
+	  assert((ctx)->errcxptr != fr_.errprv); \
+	  (ctx)->errcxptr = fr_.errprv;
 
 #define ERRENDCLN(ctx) \
-      errrse(ctx); \
-    } \
+	  errrse(ctx); \
+	} \
   }
 
 
@@ -192,13 +192,13 @@ void errsign(errcxdef *ctx, int e, const char *facility);
 void errjmp(jump_buf buf, int e);
 #  define errsign(ctx, e, fac) \
    (strncpy((ctx)->errcxptr->errfac, fac, ERRFACMAX),\
-    (ctx)->errcxptr->errfac[ERRFACMAX]='\0',\
-    (ctx)->errcxofs=0, errjmp((ctx)->errcxptr->errbuf, e))
+	(ctx)->errcxptr->errfac[ERRFACMAX]='\0',\
+	(ctx)->errcxofs=0, errjmp((ctx)->errcxptr->errbuf, e))
 # else /* DEBUG */
 #  define errsign(ctx, e, fac) \
    (strncpy((ctx)->errcxptr->errfac, fac, ERRFACMAX),\
-    (ctx)->errcxptr->errfac[ERRFACMAX]='\0',\
-    (ctx)->errcxofs=0, longjmp((ctx)->errcxptr->errbuf, e))
+	(ctx)->errcxptr->errfac[ERRFACMAX]='\0',\
+	(ctx)->errcxofs=0, longjmp((ctx)->errcxptr->errbuf, e))
 # endif /* DEBUG */
 #endif /* ERR_NO_MACRO */
 
@@ -229,7 +229,7 @@ void errrse1(errcxdef *ctx, errdef *fr);
 # define errrse(ctx) \
   (errargc(ctx, fr_.erraac),\
    memcpy((ctx)->errcxptr->erraav, fr_.erraav, \
-    (size_t)(fr_.erraac*sizeof(erradef))),\
+	(size_t)(fr_.erraac*sizeof(erradef))),\
    errsign(ctx, fr_.errcode, fr_.errfac))
 
 #endif /* ERR_NO_MACRO */
@@ -253,8 +253,8 @@ void errrse1(errcxdef *ctx, errdef *fr);
 /* void errcopyargs(errcxdef *ctx, errdef *fr); */
 #define errcopyargs(ctx, fr) \
    (errargc((ctx), (fr)->erraac), \
-    memcpy((ctx)->errcxptr->erraav, (fr)->erraav, \
-           (size_t)((fr)->erraac*sizeof(erradef))))
+	memcpy((ctx)->errcxptr->erraav, (fr)->erraav, \
+		   (size_t)((fr)->erraac*sizeof(erradef))))
 
 /* log error that's been caught, using arguments already caught */
 #define errclog(ctx) \
@@ -309,7 +309,7 @@ void errlogf(errcxdef *ctx, const char *facility, int err);
  *   will be computed and returned.)
  */
 int errfmt(char *outbuf, int outbufl, char *fmt, int argc,
-           erradef *argv);
+		   erradef *argv);
   
 /* get the text of an error */
 void errmsg(errcxdef *ctx, char *outbuf, uint outbufl, uint err);
@@ -323,8 +323,8 @@ void      lerfre(errcxdef *ctx);
 
 /* error message structure - number + text */
 struct errmdef {
-    uint   errmerr;                                         /* error number */
-    char  *errmtxt;                                /* text of error message */
+	uint   errmerr;                                         /* error number */
+	char  *errmtxt;                                /* text of error message */
 };
 
 } // End of namespace TADS2

@@ -742,7 +742,7 @@ int32 DrawLineG3(int32 x0, int32 y0, int32 x1, int32 y1, int32 x2, int32 y2, uin
 
 // three connected lines gouraud coloured : 4 points, 4 colours
 int32 DrawLineG4(int32 x0, int32 y0, int32 x1, int32 y1, int32 x2, int32 y2, int32 x3, int32 y3, uint8 r0, uint8 g0, uint8 b0, uint8 r1, uint8 g1, uint8 b1, uint8 r2, uint8 g2, uint8 b2, uint8 r3,
-               uint8 g3, uint8 b3, uint8 alpha, uint16 z) {
+			   uint8 g3, uint8 b3, uint8 alpha, uint16 z) {
 	DrawLineG2(x0, y0, x1, y1, r0, g0, b0, r1, g1, b1, alpha, z);
 	DrawLineG2(x1, y1, x2, y2, r1, g1, b1, r2, g2, b2, alpha, z);
 	DrawLineG2(x2, y2, x3, y3, r2, g2, b2, r3, g3, b3, alpha, z);
@@ -832,7 +832,7 @@ int32 DrawFlatQuad(int32 x0, int32 y0, int32 x1, int32 y1, int32 x2, int32 y2, i
 
 // Simple gouraud coloured triangle : 3 points, 3 colours
 int32 DrawGouraudTriangle(int32 x0, int32 y0, int32 x1, int32 y1, int32 x2, int32 y2, uint8 r0, uint8 g0, uint8 b0, uint8 r1, uint8 g1, uint8 b1, uint8 r2, uint8 g2, uint8 b2, uint8 alpha,
-                        uint16 z) {
+						uint16 z) {
 	verts[0].x = (RGBWidth / 2 + x0) << 16;
 	verts[0].y = (RGBHeight / 2 + y0) << 16;
 	verts[1].x = (RGBWidth / 2 + x1) << 16;
@@ -873,7 +873,7 @@ int32 DrawGouraudTriangle(int32 x0, int32 y0, int32 x1, int32 y1, int32 x2, int3
 
 // Simple gouraud coloured quad : 4 points, 4 colours
 int32 DrawGouraudQuad(int32 x0, int32 y0, int32 x1, int32 y1, int32 x2, int32 y2, int32 x3, int32 y3, uint8 r0, uint8 g0, uint8 b0, uint8 r1, uint8 g1, uint8 b1, uint8 r2, uint8 g2, uint8 b2,
-                    uint8 r3, uint8 g3, uint8 b3, uint8 alpha, uint16 z) {
+					uint8 r3, uint8 g3, uint8 b3, uint8 alpha, uint16 z) {
 	// Input Quad is :
 	//  0----1
 	//  |    |
@@ -920,7 +920,7 @@ int32 DrawGouraudQuad(int32 x0, int32 y0, int32 x1, int32 y1, int32 x2, int32 y2
 // Simple flat coloured triangle : 3 points, 1 colour, 3 UV's
 // r0, g0, b0 :  128 means colour scale of 1.0
 int32 DrawFlatTriangleTextured(int32 x0, int32 y0, int32 x1, int32 y1, int32 x2, int32 y2, uint8 r0, uint8 g0, uint8 b0, uint16 u0, uint16 v0, uint16 u1, uint16 v1, uint16 u2, uint16 v2,
-                             uint8 alpha, uint16 z, void *tex) {
+							 uint8 alpha, uint16 z, void *tex) {
 	verts[0].x = (RGBWidth / 2 + x0) << 16;
 	verts[0].y = (RGBHeight / 2 + y0) << 16;
 	verts[1].x = (RGBWidth / 2 + x1) << 16;
@@ -980,7 +980,7 @@ int32 DrawFlatTriangleTextured(int32 x0, int32 y0, int32 x1, int32 y1, int32 x2,
 // Simple flat coloured quad : 4 points, 1 colour, 4 UV's
 // r0, g0, b0 :  128 means colour scale of 1.0
 int32 DrawFlatQuadTextured(int32 x0, int32 y0, int32 x1, int32 y1, int32 x2, int32 y2, int32 x3, int32 y3, uint8 r0, uint8 g0, uint8 b0, uint16 u0, uint16 v0, uint16 u1, uint16 v1, uint16 u2,
-                         uint16 v2, uint16 u3, uint16 v3, uint8 alpha, uint16 z, void *tex) {
+						 uint16 v2, uint16 u3, uint16 v3, uint8 alpha, uint16 z, void *tex) {
 	// Input Quad is :
 	//  0----1
 	//  |    |
@@ -1049,7 +1049,7 @@ int32 tempor = 0;
 // Simple gouraud coloured triangle : 3 points, 3 colours
 // r0, g0, b0 :  128 means colour scale of 1.0
 int32 DrawGouraudTriangleTextured(int32 x0, int32 y0, int32 x1, int32 y1, int32 x2, int32 y2, uint8 r0, uint8 g0, uint8 b0, uint8 r1, uint8 g1, uint8 b1, uint8 r2, uint8 g2, uint8 b2,
-                                uint16 u0, uint16 v0, uint16 u1, uint16 v1, uint16 u2, uint16 v2, uint8 alpha, uint16 z, void *tex) {
+								uint16 u0, uint16 v0, uint16 u1, uint16 v1, uint16 u2, uint16 v2, uint8 alpha, uint16 z, void *tex) {
 	verts[0].x = (RGBWidth / 2 + x0) << 16;
 	verts[0].y = (RGBHeight / 2 + y0) << 16;
 	verts[1].x = (RGBWidth / 2 + x1) << 16;
@@ -1111,8 +1111,8 @@ int32 DrawGouraudTriangleTextured(int32 x0, int32 y0, int32 x1, int32 y1, int32 
 // Simple gouraud coloured quad : 4 points, 4 colours
 // r0, g0, b0 :  128 means colour scale of 1.0
 int32 DrawGouraudQuadTextured(int32 x0, int32 y0, int32 x1, int32 y1, int32 x2, int32 y2, int32 x3, int32 y3, uint8 r0, uint8 g0, uint8 b0, uint8 r1, uint8 g1, uint8 b1, uint8 r2, uint8 g2,
-                            uint8 b2, uint8 r3, uint8 g3, uint8 b3, uint16 u0, uint16 v0, uint16 u1, uint16 v1, uint16 u2, uint16 v2, uint16 u3, uint16 v3, uint8 alpha,
-                            uint16 z, void *tex) {
+							uint8 b2, uint8 r3, uint8 g3, uint8 b3, uint16 u0, uint16 v0, uint16 u1, uint16 v1, uint16 u2, uint16 v2, uint16 u3, uint16 v3, uint8 alpha,
+							uint16 z, void *tex) {
 	// Input Quad is :
 	//  0----1
 	//  |    |

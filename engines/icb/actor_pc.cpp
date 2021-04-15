@@ -74,9 +74,9 @@ void DrawModel4PC(rap_API *mrap, int32 poseBone, MATRIXPC *lw, MATRIXPC *local2s
 // using soft-skinning specific data
 
 void DrawActor4PC(psxActor *actor, psxCamera *camera, Bone_Frame *frame, rap_API *mesh, rap_API *pose, rap_API *smesh, PSXrgb *ambient, PSXLampList *lamplist,
-                  PSXShadeList *shadelist, int32 nShadows, SVECTORPC *p_n, int32 *p_d, uint32 debug, int32 uvframe, BoneDeformation **boneDeforms, int32 *brightness,
-                  MATRIXPC *local2screen // filled in
-                  ) {
+				  PSXShadeList *shadelist, int32 nShadows, SVECTORPC *p_n, int32 *p_d, uint32 debug, int32 uvframe, BoneDeformation **boneDeforms, int32 *brightness,
+				  MATRIXPC *local2screen // filled in
+				  ) {
 
 	// The position actor->pos is the world position
 	// lw is the local to world matrix

@@ -65,7 +65,7 @@ public:
 		return "tsage";
 	}
 
-    bool hasFeature(MetaEngineFeature f) const override {
+	bool hasFeature(MetaEngineFeature f) const override {
 		switch (f) {
 		case kSupportsListSaves:
 		case kSupportsDeleteSave:

@@ -40,7 +40,7 @@
 namespace ICB {
 
 void DrawShadow1PC(rap_API *srap, int32 poseBone, MATRIXPC *lw, MATRIXPC *world2screen, MATRIXPC *local2world, int32 nShadows, SVECTORPC *ldirs, CVECTOR *lcolours, SVECTORPC *p_n,
-                   int32 *p_d, int32 debug, SVECTOR **shadowBox, SVECTOR *shadowBoxMin, SVECTOR *shadowBoxMax);
+				   int32 *p_d, int32 debug, SVECTOR **shadowBox, SVECTOR *shadowBoxMin, SVECTOR *shadowBoxMax);
 
 } // End of namespace ICB
 

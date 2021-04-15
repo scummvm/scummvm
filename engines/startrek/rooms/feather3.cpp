@@ -169,13 +169,13 @@ extern const RoomTextOffsets feather3TextOffsets[] = {
 	{ TX_FEA3N010, 6878, 0 },
 	{ TX_FEA3N011, 3408, 0 },
 	{ TX_FEA3N012, 2883, 0 },
-    { TX_LOVA_100, 8620, 0 },
+	{ TX_LOVA_100, 8620, 0 },
 	{ TX_DIALOG_ERROR, 7022, 0 },
 	{          -1, 0,    0 }
 };
 
 extern const RoomText feather3Texts[] = {
-    { -1, Common::UNK_LANG, "" }
+	{ -1, Common::UNK_LANG, "" }
 };
 
 void Room::feather3Tick1() {

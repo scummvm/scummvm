@@ -460,7 +460,7 @@ bool Obstacles::findNextWaypoint(const Vector3 &from, const Vector3 &to, Vector3
 #endif
 
 bool Obstacles::findIntersectionNearest(int polygonIndex, Vector2 from, Vector2 to,
-                                        int *outVertexIndex, float *outDistance, Vector2 *out) const
+										int *outVertexIndex, float *outDistance, Vector2 *out) const
 {
 	float   minDistance = 0.0f;
 	Vector2 minIntersection;
@@ -492,7 +492,7 @@ bool Obstacles::findIntersectionNearest(int polygonIndex, Vector2 from, Vector2 
 }
 
 bool Obstacles::findIntersectionFarthest(int polygonIndex, Vector2 from, Vector2 to,
-                                         int *outVertexIndex, float *outDistance, Vector2 *out) const
+										 int *outVertexIndex, float *outDistance, Vector2 *out) const
 {
 	float   maxDistance = 0.0f;
 	Vector2 maxIntersection;

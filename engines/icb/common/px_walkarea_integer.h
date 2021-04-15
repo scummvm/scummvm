@@ -88,7 +88,7 @@ public:
 	bool8 GetPoint(uint32 area, uint32 number, __point &point) const;
 	bool8 GetCameraName(uint32 number, const char *&name) const;
 
-      private:
+private:
 	uint32 noAreas;
 	uint32 offsetTable[1];
 };

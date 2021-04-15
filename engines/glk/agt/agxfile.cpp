@@ -27,29 +27,29 @@ namespace AGT {
 
 /* NOTES ON CHANGING THE AGX FILE FORMAT
 
-     First of all, don't.
+	 First of all, don't.
 
-     One of the benefits of adventure creation systems like this is
+	 One of the benefits of adventure creation systems like this is
    that the same game files can be played on a variety of different
    platforms without any extra effort on the part of the game
    author.  If you change the file format, this is no longer true:  games
    created under the new format won't run on the old interpreters.
 
-     Even if you distribute a new interpreter with your game, there are two
+	 Even if you distribute a new interpreter with your game, there are two
    problems:
 
-     i) People on other platforms won't be able to play your game unless
-    and until your modified interpreter is ported to their machine. Since
-    I-F players as a group tend to use a wider range of different computers
-    and operating systems than the population at large, this is bad.
+	 i) People on other platforms won't be able to play your game unless
+	and until your modified interpreter is ported to their machine. Since
+	I-F players as a group tend to use a wider range of different computers
+	and operating systems than the population at large, this is bad.
 
-     ii) Even for machines that you port your modified interpreter to,
-    people will now need to maintain two interpreters: the original one
-     (for most of the games) and your modified one (for your new game).
-    This is not only a nuisance but it wastes disk space.
+	 ii) Even for machines that you port your modified interpreter to,
+	people will now need to maintain two interpreters: the original one
+	 (for most of the games) and your modified one (for your new game).
+	This is not only a nuisance but it wastes disk space.
 
 
-    If you *do* decide to change the file format anyhow, please adhere to
+	If you *do* decide to change the file format anyhow, please adhere to
   the following guidelines, to minimize confusion.
 
 GUIDLINES FOR NEW FILE FORMAT VERSIONS
@@ -118,11 +118,11 @@ records and it can define new blocks.
 id and number, but keep the version the same):
 
 --Adding a new field onto the end of the creature record, containing
-    the code for a sound file that should be played whenever
-    the creature is in the room.
+	the code for a sound file that should be played whenever
+	the creature is in the room.
 
 --Adding a new block to the file containing debugging information for
-    the new AGT compiler you've just written, numbered 35.
+	the new AGT compiler you've just written, numbered 35.
 
 
   Things that would *not* be extensions (create a new version id and
@@ -179,30 +179,30 @@ error message.
 /* Changes is AGX File format versions:
   0-0: Original format.
   0-1: Add
-    PURE_TIME, PURE_OBJ_DESC, exitmsg_base
-    noun.related_name
-    command.noun_adj, command.obj_adj
+	PURE_TIME, PURE_OBJ_DESC, exitmsg_base
+	noun.related_name
+	command.noun_adj, command.obj_adj
   1-0: Change index file format, fixing a bug
   1-1: Add
-      Multi-word verb block(28)
-      Preposition block(29)
-      (room|noun|creature).oclass
+	  Multi-word verb block(28)
+	  Preposition block(29)
+	  (room|noun|creature).oclass
   1-2: Add (room|noun|creature).unused
   1-3: Add PURE_GRAMMAR
   1-4: Add (noun|creature).isglobal and (noun|creature).flagnum
-       Add TWO_CYCLE
+	   Add TWO_CYCLE
   1-5: Add min_ver
-       Add PURE_AFTER
+	   Add PURE_AFTER
   1-6: Add (noun|creature).seen
   1-7: Add objflag and objprop blocks (with corrosponding
-         support data in the gameinfo block).
+		 support data in the gameinfo block).
   2-0: No change in file format; version upped to protect against
-        a bug in early versions of the AGX file code.
+		a bug in early versions of the AGX file code.
   2-1: Added (noun|creature).proper
   2-2: Added noun_obj and obj_obj to cmd header
-       Added objflag.ystr, objflag.nstr, objprop.str_cnt, objprop.str_list
-       Added propstr block.
-       Added fallback_ext to file header.
+	   Added objflag.ystr, objflag.nstr, objprop.str_cnt, objprop.str_list
+	   Added propstr block.
+	   Added fallback_ext to file header.
 */
 
 #define AGX_NUMBLOCK 37
@@ -231,21 +231,21 @@ Mandatory blocks are marked with astericks.
    byte Extension 0
    char[2]: '\n\r'  -- to catch download errors
    byte Extension fallback. For non-'R' extensions, this gives the
-           'R' extension to fall back to.
+		   'R' extension to fall back to.
    char[5] Reserved for future use (should be 0 right now)
 *0-File index:
    For each block (including itself): [16 bytes]
-        uint32 starting offset
-        uint32 block size
-    uint32 number of records
-    uint32 size of a record  (recsize*numrec == blocksize)
+		uint32 starting offset
+		uint32 block size
+	uint32 number of records
+	uint32 size of a record  (recsize*numrec == blocksize)
 11-Description strings (block of tline)
 12-Command text (block of int16)
 *1-Game header
    uint16 AGT_version_code;  +1 for "big/soggy" games
    uint32 game_sig  (game signature, used to check save files and debug info)
    rbool debug_mode, freeze_mode, milltime_mode, bold_mode,
-         have_meta, mars_fix, intro_first, TWO_CYCLE;
+		 have_meta, mars_fix, intro_first, TWO_CYCLE;
    uchar score_mode, statusmode;
    uint16 max_lives
    uint32 max_score;
@@ -276,7 +276,7 @@ Mandatory blocks are marked with astericks.
 4-Creature data (creat_rec format)
    include creature, talk, ask ptrs
 5-Command headers (cmd_rec format), pointers into command text
-     must be in increasing order.
+	 must be in increasing order.
 6-Standard error message ptrs (array of descptr
 7-Message ptrs   (array of descptr)
 8-Question pointers (array of descptr)
@@ -310,23 +310,23 @@ Mandatory blocks are marked with astericks.
 */
 
 /* AGT Version IDs; +1 for LARGE/SOGGY
-        00000=v1.0
-    01800=v1.18
-    01900=v1.19
-    02000=v1.20           ("Early Classic")
-    03200=v1.32/COS
-    03500=v1.35           ("Classic")
-    05000=v1.5/H
-    05050=v1.5/F (MDT)
-        05070=v1.6   (PORK)
-    08200=v1.82
-    08300=v1.83
-        10000=ME/1.0
-    15000=ME/1.5
-    15500=ME/1.55
-    16000=ME/1.6
-    20000=Magx/0.0
-    etc.
+		00000=v1.0
+	01800=v1.18
+	01900=v1.19
+	02000=v1.20           ("Early Classic")
+	03200=v1.32/COS
+	03500=v1.35           ("Classic")
+	05000=v1.5/H
+	05050=v1.5/F (MDT)
+		05070=v1.6   (PORK)
+	08200=v1.82
+	08300=v1.83
+		10000=ME/1.0
+	15000=ME/1.5
+	15500=ME/1.55
+	16000=ME/1.6
+	20000=Magx/0.0
+	etc.
 */
 
 
@@ -762,7 +762,7 @@ struct file_head_rec  {
 	uchar ext_own;
 	uchar extnum;
 	uchar fallback_ext;  /* For non-'R' extensions, this is the 'R' extension
-              to fall back to. */
+			  to fall back to. */
 };
 
 static file_info fi_header[] = {
@@ -996,7 +996,7 @@ int read_agx(fc_type fc, rbool diag) {
 	}
 	maxpix = index[16].numrec;
 	for (i = 0; i < MAX_PIX; i++) pix_name[i] = 0; /* In case there are less than
-                       MAX_PIX names */
+					   MAX_PIX names */
 	read_recblock(pix_name, FT_WORD, index[16].numrec, index[16].file_offset,
 	              index[16].blocksize);
 
@@ -1180,7 +1180,7 @@ void write_header(void) {
 	filehead.version = 2;
 	filehead.extnum = 2;
 	filehead.fallback_ext = 2; /* 'R' extension to fall back to;
-                  only meaningful if ext_own is *not* 'R' */
+				  only meaningful if ext_own is *not* 'R' */
 	filehead.eol_chk1 = '\n';
 	filehead.eol_chk2 = '\r';
 	filehead.res1 = 0;
@@ -1243,8 +1243,8 @@ void agx_create(fc_type fc) {
 	write_recarray(NULL, sizeof(index_rec), AGX_NUMBLOCK, fi_index, 16);
 
 	old_base_verb = BASE_VERB; /* This will be constant for any given version
-                  of the interpreter, but may change across
-                  versions of the interpreter */
+				  of the interpreter, but may change across
+				  versions of the interpreter */
 	/* Set record sizes */
 	gindex[0].recsize = compute_recsize(fi_index);
 	gindex[1].recsize = compute_recsize(fi_gameinfo);
@@ -1328,7 +1328,7 @@ static void agx_finish_index(void) {
 	gindex[18].numrec = MAX_FLAG_NOUN;
 
 	agx_compute_index(); /* This time it will be complete except for
-            the VOC-TTL-INS blocks at the end */
+			the VOC-TTL-INS blocks at the end */
 }
 
 

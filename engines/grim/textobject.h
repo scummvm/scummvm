@@ -83,7 +83,7 @@ class TextObjectDefaults : public TextObjectCommon {
 };
 
 class TextObject : public PoolObject<TextObject>,
-                   public TextObjectCommon {
+				   public TextObjectCommon {
 public:
 	TextObject();
 	~TextObject();

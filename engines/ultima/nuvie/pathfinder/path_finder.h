@@ -35,7 +35,7 @@ protected:
 	MapCoord start, goal, loc; /* source, destination, current location */
 
 	Path *search; /* contains path-search algorithms, and
-                                 game-specific step costs */
+								 game-specific step costs */
 
 	void new_search(Path *new_path);
 //    bool is_hazardous(MapCoord &loc); will have to check objects and tiles

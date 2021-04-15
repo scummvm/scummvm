@@ -690,7 +690,7 @@ void Hugo::FatalError(int n) {
 #if defined (DEBUGGER)
 
 	if (routines > 0)
-        {
+		{
 		SwitchtoDebugger();
 
 		if (n==MEMORY_E) DebuggerFatal(D_MEMORY_ERROR);
@@ -1331,7 +1331,7 @@ void ParseCommandLine(int argc, char *argv[])
 	char* game_file_arg = nullptr;
 
 #if defined(GCC_UNIX) && defined(DO_COLOR)
-        int ch;
+		int ch;
 	/* Parse comand line options (colour switches) */
 	while ((ch = getopt(argc, argv, "f:b:F:B:?h")) != -1) {
 	  switch (ch) {
@@ -2353,10 +2353,10 @@ static int rand_index1, rand_index2;
 
 int random()
 {
-    rand_index1 = (rand_index1 + 1) % 55;
-    rand_index2 = (rand_index2 + 1) % 55;
-    rand_table[rand_index1] = rand_table[rand_index1] - rand_table[rand_index2];
-    return rand_table[rand_index1];
+	rand_index1 = (rand_index1 + 1) % 55;
+	rand_index2 = (rand_index2 + 1) % 55;
+	rand_table[rand_index1] = rand_table[rand_index1] - rand_table[rand_index2];
+	return rand_table[rand_index1];
 }
 
 void srandom(int seed)

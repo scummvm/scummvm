@@ -427,7 +427,7 @@ private:
 
 	Common::String _nounName;                /**< The name that identifies a node name of noun nodes */
 	Common::String _idPropName;              /**< The name of the property that uniquely identifies a noun node
-                                         and is used to find a new translation context */
+										 and is used to find a new translation context */
 
 	Common::String _choices;
 	int _iterator;

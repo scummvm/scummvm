@@ -39,16 +39,16 @@ using Std::string;
  */
 
 bool openFile(Common::ReadStream *&in, const char *fname) {
-    Common::File *f = new Common::File();
-    Common::String filename(fname);
+	Common::File *f = new Common::File();
+	Common::String filename(fname);
 
-    if (f->open(filename)) {
+	if (f->open(filename)) {
 	    in = f;
 	    return true;
-    } else {
+	} else {
 	    delete f;
 	    return false;
-    }
+	}
 }
 
 /*

@@ -53,11 +53,11 @@ static char s_fallbackExtraBuf[256];
 
 class WintermuteMetaEngine : public AdvancedMetaEngine {
 public:
-    const char *getName() const override {
+	const char *getName() const override {
 		return "wintermute";
 	}
 
-    Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override {
+	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override {
 		const WMEGameDescription *gd = (const WMEGameDescription *)desc;
 
 #ifndef ENABLE_FOXTAIL
@@ -131,7 +131,7 @@ public:
 		return retVal;
 	}
 
-    const Common::AchievementsInfo getAchievementsInfo(const Common::String &target) const override {
+	const Common::AchievementsInfo getAchievementsInfo(const Common::String &target) const override {
 		Common::String gameId = ConfMan.get("gameid", target);
 
 		// HACK: "juliauntold" is a DLC of "juliastars", they share the same achievements list

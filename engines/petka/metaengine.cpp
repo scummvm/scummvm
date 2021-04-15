@@ -29,11 +29,11 @@
 
 class PetkaMetaEngine : public AdvancedMetaEngine {
 public:
-    const char *getName() const override {
+	const char *getName() const override {
 		return "petka";
 	}
 
-    virtual bool hasFeature(MetaEngineFeature f) const override;
+	virtual bool hasFeature(MetaEngineFeature f) const override;
 	virtual int getMaximumSaveSlot() const override { return 17; }
 	virtual SaveStateList listSaves(const char *target) const override;
 	virtual void removeSaveState(const char *target, int slot) const override;

@@ -60,14 +60,14 @@ public:
 	OutSaveFile(WriteStream *w); /*!< Create an OutSaveFile that uses the given WriteStream to write the data. */
 	virtual ~OutSaveFile();
 
-    /**
+	/**
 	 * Return true if an I/O failure occurred.
 	 * This flag is never cleared automatically. In order to clear it,
 	 * you must call clearErr() explicitly.
 	 */
 	virtual bool err() const;
 	
-    /**
+	/**
 	 * Reset the I/O error status as returned by err().
 	 */
 	virtual void clearErr();
@@ -93,11 +93,11 @@ public:
 	virtual bool flush();
 
 	/**
-     * Write data into the stream.
+	 * Write data into the stream.
 	 *
 	 * @param dataPtr	Pointer to the data to be written.
 	 * @param dataSize	Number of bytes to be written.
-     */
+	 */
 	virtual uint32 write(const void *dataPtr, uint32 dataSize);
 
 	/**

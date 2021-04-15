@@ -43,49 +43,49 @@ namespace TADS2 {
  * Line source superclass structure
  */
 struct lindef {
-    int   (*lingetp)(lindef *lin);                         /* get next line */
-    void  (*linclsp)(lindef *lin);                     /* close line source */
-    void  (*linppos)(lindef *lin, char *buf, uint buflen);
-            /* write printable rep of position to buf (for error reporting) */
-    void  (*linglop)(lindef *lin, uchar *buf);
-                       /* generate a line record for an OPCLINE instruction */
-    int   (*linwrtp)(lindef *lin, osfildef *fp);
-            /* write line source information to binary file; TRUE ==> error */
-    void  (*lincmpp)(lindef *lin, uchar *buf);
-          /* give location of compiled code for current line to line source */
-    void  (*linactp)(lindef *lin);                      /* activate for dbg */
-    void  (*lindisp)(lindef *lin);                           /* disactivate */
-    void  (*lintellp)(lindef *lin, uchar *pos);             /* get position */
-    void  (*linseekp)(lindef *lin, uchar *pos);                     /* seek */
-    int   (*linreadp)(lindef *lin, uchar *buf, uint siz);          /* fread */
-    void  (*linpaddp)(lindef *lin, uchar *pos, long delta);
-                                       /* add an offset to a position value */
-    int   (*linqtopp)(lindef *lin, uchar *pos);                  /* at top? */
-    int   (*lingetsp)(lindef *lin, uchar *buf, uint siz);       /* get line */
-    void  (*linnamp)(lindef *lin, char *buf);            /* get source name */
-    void  (*linfindp)(lindef *lin, char *buf, objnum *objp,
-                      uint *ofsp);              /* find nearest line record */
-    void  (*lingotop)(lindef *lin, int where);               /* seek global */
-    long  (*linofsp)(lindef *lin);            /* byte offset in line source */
-    void  (*linrenp)(lindef *lin, objnum oldnum, objnum newnum);
-                                       /* renumber an object (for "modify") */
-    void  (*lindelp)(lindef *lin, objnum objn);
-                                        /* delete an object (for "replace") */
-    ulong (*linlnump)(lindef *lin);          /* get the current line number */
+	int   (*lingetp)(lindef *lin);                         /* get next line */
+	void  (*linclsp)(lindef *lin);                     /* close line source */
+	void  (*linppos)(lindef *lin, char *buf, uint buflen);
+			/* write printable rep of position to buf (for error reporting) */
+	void  (*linglop)(lindef *lin, uchar *buf);
+					   /* generate a line record for an OPCLINE instruction */
+	int   (*linwrtp)(lindef *lin, osfildef *fp);
+			/* write line source information to binary file; TRUE ==> error */
+	void  (*lincmpp)(lindef *lin, uchar *buf);
+		  /* give location of compiled code for current line to line source */
+	void  (*linactp)(lindef *lin);                      /* activate for dbg */
+	void  (*lindisp)(lindef *lin);                           /* disactivate */
+	void  (*lintellp)(lindef *lin, uchar *pos);             /* get position */
+	void  (*linseekp)(lindef *lin, uchar *pos);                     /* seek */
+	int   (*linreadp)(lindef *lin, uchar *buf, uint siz);          /* fread */
+	void  (*linpaddp)(lindef *lin, uchar *pos, long delta);
+									   /* add an offset to a position value */
+	int   (*linqtopp)(lindef *lin, uchar *pos);                  /* at top? */
+	int   (*lingetsp)(lindef *lin, uchar *buf, uint siz);       /* get line */
+	void  (*linnamp)(lindef *lin, char *buf);            /* get source name */
+	void  (*linfindp)(lindef *lin, char *buf, objnum *objp,
+					  uint *ofsp);              /* find nearest line record */
+	void  (*lingotop)(lindef *lin, int where);               /* seek global */
+	long  (*linofsp)(lindef *lin);            /* byte offset in line source */
+	void  (*linrenp)(lindef *lin, objnum oldnum, objnum newnum);
+									   /* renumber an object (for "modify") */
+	void  (*lindelp)(lindef *lin, objnum objn);
+										/* delete an object (for "replace") */
+	ulong (*linlnump)(lindef *lin);          /* get the current line number */
 #define  LINGOTOP   OSFSK_SET                   /* go to top of line source */
 #define  LINGOEND   OSFSK_END                   /* go to end of line source */
-    lindef *linpar;                        /* parent of current line source */
-    lindef *linnxt;                       /* next line in line source chain */
-    int     linid;           /* serial number of line source (for debugger) */
-    char   *linbuf;                              /* pointer to current line */
-    ushort  linflg;                                                /* flags */
+	lindef *linpar;                        /* parent of current line source */
+	lindef *linnxt;                       /* next line in line source chain */
+	int     linid;           /* serial number of line source (for debugger) */
+	char   *linbuf;                              /* pointer to current line */
+	ushort  linflg;                                                /* flags */
 #define  LINFEOF   0x01                    /* line source is at end of file */
 #define  LINFMORE  0x02             /* there's more to the line than linlen */
 #define  LINFDBG   0x04          /* debug record already generated for line */
 #define  LINFNOINC 0x08        /* ignore # directives from this line source */
 #define  LINFCMODE 0x10                  /* line source is parsed in C-mode */
-    ushort  linlen;                                   /* length of the line */
-    ushort  linlln;           /* length of line record generated by lingloc */
+	ushort  linlen;                                   /* length of the line */
+	ushort  linlln;           /* length of line record generated by lingloc */
 };
 
 /**

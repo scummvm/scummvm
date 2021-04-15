@@ -305,7 +305,7 @@ void OpenGLSdlGraphics3dManager::createOrUpdateScreen() {
 }
 
 Math::Rect2d OpenGLSdlGraphics3dManager::computeGameRect(bool renderToFrameBuffer, uint gameWidth, uint gameHeight,
-                                                      uint screenWidth, uint screenHeight) {
+													  uint screenWidth, uint screenHeight) {
 	if (renderToFrameBuffer) {
 		if (_lockAspectRatio) {
 			// The game is scaled to fit the screen, keeping the same aspect ratio
@@ -382,9 +382,9 @@ OpenGLSdlGraphics3dManager::OpenGLPixelFormat::OpenGLPixelFormat(uint screenByte
 }
 
 bool OpenGLSdlGraphics3dManager::createOrUpdateGLContext(uint gameWidth, uint gameHeight,
-                                                       uint effectiveWidth, uint effectiveHeight,
-                                                       bool renderToFramebuffer,
-                                                       bool engineSupportsArbitraryResolutions) {
+													   uint effectiveWidth, uint effectiveHeight,
+													   bool renderToFramebuffer,
+													   bool engineSupportsArbitraryResolutions) {
 	// Build a list of OpenGL pixel formats usable by ScummVM
 	Common::Array<OpenGLPixelFormat> pixelFormats;
 	if (_antialiasing > 0 && !renderToFramebuffer) {

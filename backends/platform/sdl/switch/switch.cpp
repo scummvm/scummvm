@@ -35,32 +35,32 @@
 #include "backends/keymapper/hardware-input.h"
 
 static const Common::HardwareInputTableEntry switchJoystickButtons[] = {
-    { "JOY_A",              Common::JOYSTICK_BUTTON_A,              _s("B")           },
-    { "JOY_B",              Common::JOYSTICK_BUTTON_B,              _s("A")           },
-    { "JOY_X",              Common::JOYSTICK_BUTTON_X,              _s("Y")           },
-    { "JOY_Y",              Common::JOYSTICK_BUTTON_Y,              _s("X")           },
-    { "JOY_BACK",           Common::JOYSTICK_BUTTON_BACK,           _s("Minus")       },
-    { "JOY_START",          Common::JOYSTICK_BUTTON_START,          _s("Plus")        },
-    { "JOY_GUIDE",          Common::JOYSTICK_BUTTON_START,          _s("Plus")        },
-    { "JOY_LEFT_STICK",     Common::JOYSTICK_BUTTON_LEFT_STICK,     _s("L3")          },
-    { "JOY_RIGHT_STICK",    Common::JOYSTICK_BUTTON_RIGHT_STICK,    _s("R3")          },
-    { "JOY_LEFT_SHOULDER",  Common::JOYSTICK_BUTTON_LEFT_SHOULDER,  _s("L")           },
-    { "JOY_RIGHT_SHOULDER", Common::JOYSTICK_BUTTON_RIGHT_SHOULDER, _s("R")           },
-    { "JOY_UP",             Common::JOYSTICK_BUTTON_DPAD_UP,        _s("D-pad Up")    },
-    { "JOY_DOWN",           Common::JOYSTICK_BUTTON_DPAD_DOWN,      _s("D-pad Down")  },
-    { "JOY_LEFT",           Common::JOYSTICK_BUTTON_DPAD_LEFT,      _s("D-pad Left")  },
-    { "JOY_RIGHT",          Common::JOYSTICK_BUTTON_DPAD_RIGHT,     _s("D-pad Right") },
-    { nullptr,              0,                                      nullptr           }
+	{ "JOY_A",              Common::JOYSTICK_BUTTON_A,              _s("B")           },
+	{ "JOY_B",              Common::JOYSTICK_BUTTON_B,              _s("A")           },
+	{ "JOY_X",              Common::JOYSTICK_BUTTON_X,              _s("Y")           },
+	{ "JOY_Y",              Common::JOYSTICK_BUTTON_Y,              _s("X")           },
+	{ "JOY_BACK",           Common::JOYSTICK_BUTTON_BACK,           _s("Minus")       },
+	{ "JOY_START",          Common::JOYSTICK_BUTTON_START,          _s("Plus")        },
+	{ "JOY_GUIDE",          Common::JOYSTICK_BUTTON_START,          _s("Plus")        },
+	{ "JOY_LEFT_STICK",     Common::JOYSTICK_BUTTON_LEFT_STICK,     _s("L3")          },
+	{ "JOY_RIGHT_STICK",    Common::JOYSTICK_BUTTON_RIGHT_STICK,    _s("R3")          },
+	{ "JOY_LEFT_SHOULDER",  Common::JOYSTICK_BUTTON_LEFT_SHOULDER,  _s("L")           },
+	{ "JOY_RIGHT_SHOULDER", Common::JOYSTICK_BUTTON_RIGHT_SHOULDER, _s("R")           },
+	{ "JOY_UP",             Common::JOYSTICK_BUTTON_DPAD_UP,        _s("D-pad Up")    },
+	{ "JOY_DOWN",           Common::JOYSTICK_BUTTON_DPAD_DOWN,      _s("D-pad Down")  },
+	{ "JOY_LEFT",           Common::JOYSTICK_BUTTON_DPAD_LEFT,      _s("D-pad Left")  },
+	{ "JOY_RIGHT",          Common::JOYSTICK_BUTTON_DPAD_RIGHT,     _s("D-pad Right") },
+	{ nullptr,              0,                                      nullptr           }
 };
 
 static const Common::AxisTableEntry switchJoystickAxes[] = {
-    { "JOY_LEFT_TRIGGER",  Common::JOYSTICK_AXIS_LEFT_TRIGGER,  Common::kAxisTypeHalf, _s("ZL")            },
-    { "JOY_RIGHT_TRIGGER", Common::JOYSTICK_AXIS_RIGHT_TRIGGER, Common::kAxisTypeHalf, _s("ZR")            },
-    { "JOY_LEFT_STICK_X",  Common::JOYSTICK_AXIS_LEFT_STICK_X,  Common::kAxisTypeFull, _s("Left Stick X")  },
-    { "JOY_LEFT_STICK_Y",  Common::JOYSTICK_AXIS_LEFT_STICK_Y,  Common::kAxisTypeFull, _s("Left Stick Y")  },
-    { "JOY_RIGHT_STICK_X", Common::JOYSTICK_AXIS_RIGHT_STICK_X, Common::kAxisTypeFull, _s("Right Stick X") },
-    { "JOY_RIGHT_STICK_Y", Common::JOYSTICK_AXIS_RIGHT_STICK_Y, Common::kAxisTypeFull, _s("Right Stick Y") },
-    { nullptr,             0,                                   Common::kAxisTypeFull, nullptr             }
+	{ "JOY_LEFT_TRIGGER",  Common::JOYSTICK_AXIS_LEFT_TRIGGER,  Common::kAxisTypeHalf, _s("ZL")            },
+	{ "JOY_RIGHT_TRIGGER", Common::JOYSTICK_AXIS_RIGHT_TRIGGER, Common::kAxisTypeHalf, _s("ZR")            },
+	{ "JOY_LEFT_STICK_X",  Common::JOYSTICK_AXIS_LEFT_STICK_X,  Common::kAxisTypeFull, _s("Left Stick X")  },
+	{ "JOY_LEFT_STICK_Y",  Common::JOYSTICK_AXIS_LEFT_STICK_Y,  Common::kAxisTypeFull, _s("Left Stick Y")  },
+	{ "JOY_RIGHT_STICK_X", Common::JOYSTICK_AXIS_RIGHT_STICK_X, Common::kAxisTypeFull, _s("Right Stick X") },
+	{ "JOY_RIGHT_STICK_Y", Common::JOYSTICK_AXIS_RIGHT_STICK_Y, Common::kAxisTypeFull, _s("Right Stick Y") },
+	{ nullptr,             0,                                   Common::kAxisTypeFull, nullptr             }
 };
 
 void OSystem_Switch::init() {

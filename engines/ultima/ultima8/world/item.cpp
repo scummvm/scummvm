@@ -2283,8 +2283,8 @@ int Item::getThrowRange() {
 }
 
 static bool checkLineOfSightCollisions(
-    const Std::list<CurrentMap::SweepItem> &collisions,
-    bool usingAlternatePos, ObjId item, ObjId other) {
+	const Std::list<CurrentMap::SweepItem> &collisions,
+	bool usingAlternatePos, ObjId item, ObjId other) {
 	Std::list<CurrentMap::SweepItem>::const_iterator it;
 	int32 other_hit_time = 0x4000;
 	int32 blocked_time = 0x4000;
@@ -2310,7 +2310,7 @@ static bool checkLineOfSightCollisions(
 }
 
 bool Item::canReach(Item *other, int range,
-                    int32 otherX, int32 otherY, int32 otherZ) {
+					int32 otherX, int32 otherY, int32 otherZ) {
 	// get location and dimensions of self and other (or their root containers)
 	int32 thisX, thisY, thisZ;
 	int32 thisXd, thisYd, thisZd;
@@ -2941,7 +2941,7 @@ uint32 Item::I_getWeight(const uint8 *args, unsigned int /*argsize*/) {
 }
 
 uint32 Item::I_getWeightIncludingContents(const uint8 *args,
-        unsigned int /*argsize*/) {
+		unsigned int /*argsize*/) {
 	ARG_ITEM_FROM_PTR(item);
 	if (!item) return 0;
 

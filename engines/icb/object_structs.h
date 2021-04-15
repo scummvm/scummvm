@@ -97,7 +97,7 @@ public:
 	__weapon temp_weapon;
 	char alternativeImagePath[128]; // this stores the pcp path for animations (for getting the raj files instead of rai files...
 	char alternativeBasePath[128];  // this is same as base path but is pcp (on voxels) - isn't required for polys and can go when we
-                                        // ditch
+										// ditch
 	// setting functions
 	bool8 Init_custom_animation(const char *anim_name);
 	bool8 Find_anim_type(__mega_set_names *anim, const char *name);
@@ -202,7 +202,7 @@ enum CameraStateEnum { OFF_CAMERA = 0x0, ON_CAMERA = 0x1 };
 #define ON_ON_CAMERA MAKE_VIEW_STATE(ON_CAMERA, ON_CAMERA)
 
 class _mega { // mega logic specific
-      public:
+public:
 	_parent_box *cur_parent; // our owner parent box
 	uint32 par_number;       // for players abar list update
 	uint32 cur_slice;        // for speedups

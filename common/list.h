@@ -33,7 +33,7 @@ namespace Common {
  *
  * @brief API for managing doubly linked lists.
  *
- *		
+ *
  * @{
  */
 
@@ -176,7 +176,7 @@ public:
 		return static_cast<Node *>(_anchor._prev)->_data;
 	}
 
-    /** Assign a given @p list to this list. */
+	/** Assign a given @p list to this list. */
 	List<t_T> &operator=(const List<t_T> &list) {
 		if (this != &list) {
 			iterator i;
@@ -197,7 +197,7 @@ public:
 		return *this;
 	}
 
-    /** Return the size of the list. */
+	/** Return the size of the list. */
 	size_type size() const {
 		size_type n = 0;
 		for (const NodeBase *cur = _anchor._next; cur != &_anchor; cur = cur->_next)
@@ -205,7 +205,7 @@ public:
 		return n;
 	}
 
-    /** Remove all elements from the list. */
+	/** Remove all elements from the list. */
 	void clear() {
 		NodeBase *pos = _anchor._next;
 		while (pos != &_anchor) {
@@ -218,12 +218,12 @@ public:
 		_anchor._next = &_anchor;
 	}
 
-    /** Check whether the list is empty. */
+	/** Check whether the list is empty. */
 	bool empty() const {
 		return (&_anchor == _anchor._next);
 	}
 
-    /** Return an iterator to the start of the list.	
+	/** Return an iterator to the start of the list.
 	 *  This can be used, for example, to iterate from the first element
 	 *  of the list to the last element of the list.
 	 */
@@ -231,7 +231,7 @@ public:
 		return iterator(_anchor._next);
 	}
 
-    /** Return a reverse iterator to the start of the list.	
+	/** Return a reverse iterator to the start of the list.
 	 *  This can be used, for example, to iterate from the last element
 	 *  of the list to the first element of the list.
 	 */
@@ -239,12 +239,12 @@ public:
 		return iterator(_anchor._prev);
 	}
 
-    /** Return an iterator to the end of the list. */
+	/** Return an iterator to the end of the list. */
 	iterator		end() {
 		return iterator(&_anchor);
 	}
 
-    /** Return a const iterator to the start of the list.	
+	/** Return a const iterator to the start of the list.
 	 *  This can be used, for example, to iterate from the first element
 	 *  of the list to the last element of the list.
 	 */
@@ -252,7 +252,7 @@ public:
 		return const_iterator(_anchor._next);
 	}
 
-    /** Return a const reverse iterator to the start of the list.	
+	/** Return a const reverse iterator to the start of the list.
 	 *  This can be used, for example, to iterate from the last element
 	 *  of the list to the first element of the list.
 	 */
@@ -260,13 +260,13 @@ public:
 		return const_iterator(_anchor._prev);
 	}
 
-    /** Return a const iterator to the end of the list. */
+	/** Return a const iterator to the end of the list. */
 	const_iterator	end() const {
 		return const_iterator(const_cast<NodeBase *>(&_anchor));
 	}
 
 protected:
-    /**
+	/**
 	 * Erase an element at @p pos.
 	 */
 	NodeBase erase(NodeBase *pos) {

@@ -55,8 +55,8 @@ const int32 HMD_GTL3_SIZE = 6;
 const int32 TRIANGLE_SIZE = 2;
 
 int32 decodeHMDpolygon(uint32 primType, uint32 pcplatform, uint32 *&pp, uint32 &code0, uint32 &r0, uint32 &g0, uint32 &b0, uint32 &code1, uint32 &r1, uint32 &g1, uint32 &b1, uint32 &code2, uint32 &r2,
-                     uint32 &g2, uint32 &b2, uint32 &u0, uint32 &v0, uint32 &u1, uint32 &v1, uint32 &u2, uint32 &v2, uint32 &cba, uint32 &cx, uint32 &cy, uint32 &tsb, uint32 &tp, uint32 &n0, uint32 &vert0,
-                     uint32 &n1, uint32 &vert1, uint32 &n2, uint32 &vert2, uint32 dump);
+					 uint32 &g2, uint32 &b2, uint32 &u0, uint32 &v0, uint32 &u1, uint32 &v1, uint32 &u2, uint32 &v2, uint32 &cba, uint32 &cx, uint32 &cy, uint32 &tsb, uint32 &tp, uint32 &n0, uint32 &vert0,
+					 uint32 &n1, uint32 &vert1, uint32 &n2, uint32 &vert2, uint32 dump);
 
 // Handy structures for decoding polygon information
 

@@ -50,9 +50,9 @@ uint32 MemoryDynamicRWStream::read(void *dataPtr, uint32 dataSize) {
 }
 
 SaveFileRewriteStream::SaveFileRewriteStream(const Common::String &fileName,
-                                             Common::SeekableReadStream *inFile,
-                                             kFileOpenMode mode,
-                                             bool compress) :
+											 Common::SeekableReadStream *inFile,
+											 kFileOpenMode mode,
+											 bool compress) :
 	MemoryDynamicRWStream(DisposeAfterUse::YES),
 	_fileName(fileName),
 	_compress(compress) {

@@ -728,9 +728,9 @@ AudioCDManager *OSystem_SDL::createAudioCDManager() {
 
 Common::SaveFileManager *OSystem_SDL::getSavefileManager() {
 #ifdef ENABLE_EVENTRECORDER
-    return g_eventRec.getSaveManager(_savefileManager);
+	return g_eventRec.getSaveManager(_savefileManager);
 #else
-    return _savefileManager;
+	return _savefileManager;
 #endif
 }
 

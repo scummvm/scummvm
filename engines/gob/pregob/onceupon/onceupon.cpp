@@ -284,7 +284,7 @@ void OnceUpon::setGameCursor() {
 }
 
 void OnceUpon::drawLineByLine(const Surface &src, int16 left, int16 top, int16 right, int16 bottom,
-                              int16 x, int16 y) const {
+							  int16 x, int16 y) const {
 
 	// A special way of drawing something:
 	// Draw every other line "downwards", wait a bit after each line
@@ -488,7 +488,7 @@ bool OnceUpon::doCopyProtection(const uint8 colors[7], const uint8 shapes[7 * 20
 }
 
 int8 OnceUpon::cpSetup(const uint8 colors[7], const uint8 shapes[7 * 20], const uint8 obfuscate[4],
-                       const Surface sprites[2]) {
+					   const Surface sprites[2]) {
 
 	fadeOut();
 	hideCursor();
@@ -708,7 +708,7 @@ void OnceUpon::showByeBye() {
 }
 
 void OnceUpon::doStartMenu(const MenuButton *animalsButton, uint animalCount,
-                           const MenuButton *animalButtons, const char * const *animalNames) {
+						   const MenuButton *animalButtons, const char * const *animalNames) {
 	clearScreen();
 
 	// Wait until we clicked on of the difficulty buttons and are ready to start playing

@@ -150,7 +150,7 @@ public:
 			insert_aux(end(), &element, &element + 1);
 	}
 
-    /** Append an element to the end of the array. */
+	/** Append an element to the end of the array. */
 	void push_back(const Array<T> &array) {
 		if (_size + array.size() <= _capacity) {
 			uninitialized_copy(array.begin(), array.end(), end());
@@ -201,12 +201,12 @@ public:
 		return _storage[_size-1];
 	}
 
-    /** Insert an element into the array at the given position. */
+	/** Insert an element into the array at the given position. */
 	void insert_at(size_type idx, const T &element) {
 		assert(idx <= _size);
 		insert_aux(_storage + idx, &element, &element + 1);
 	}
-    
+
 	/** Insert copies of all the elements from the given array into this array at the given position. */
 	void insert_at(size_type idx, const Array<T> &array) {
 		assert(idx <= _size);
@@ -219,7 +219,7 @@ public:
 	void insert(iterator pos, const T &element) {
 		insert_aux(pos, &element, &element + 1);
 	}
-    
+
 	/** Remove an element at the given position from the array and return the value of that element. */
 	T remove_at(size_type idx) {
 		assert(idx < _size);
@@ -239,13 +239,13 @@ public:
 		return _storage[idx];
 	}
 
-    /** Return a const reference to the element at the given position in the array. */
+	/** Return a const reference to the element at the given position in the array. */
 	const T &operator[](size_type idx) const {
 		assert(idx < _size);
 		return _storage[idx];
 	}
 
-    /** Assign the given @p array to this array. */
+	/** Assign the given @p array to this array. */
 	Array<T> &operator=(const Array<T> &array) {
 		if (this == &array)
 			return *this;
@@ -259,7 +259,7 @@ public:
 	}
 
 #ifdef USE_CXX11
-    /** Assign the given array to this array using the C++11 move semantic. */
+	/** Assign the given array to this array using the C++11 move semantic. */
 	Array &operator=(Array<T> &&old) {
 		if (this == &old)
 			return *this;
@@ -277,12 +277,12 @@ public:
 	}
 #endif
 
-    /** Return the size of the array. */
+	/** Return the size of the array. */
 	size_type size() const {
 		return _size;
 	}
 
-    /** Clear the array of all its elements. */
+	/** Clear the array of all its elements. */
 	void clear() {
 		freeStorage(_storage, _size);
 		_storage = nullptr;
@@ -290,7 +290,7 @@ public:
 		_capacity = 0;
 	}
 
-    /** Erase the element at @p pos position and return an iterator pointing to the next element in the array. */
+	/** Erase the element at @p pos position and return an iterator pointing to the next element in the array. */
 	iterator erase(iterator pos) {
 		copy(pos + 1, _storage + _size, pos);
 		_size--;
@@ -298,13 +298,13 @@ public:
 		_storage[_size].~T();
 		return pos;
 	}
-		
-    /** Check whether the array is empty. */
+
+	/** Check whether the array is empty. */
 	bool empty() const {
 		return (_size == 0);
 	}
 
-    /** Check whether two arrays are identical. */
+	/** Check whether two arrays are identical. */
 	bool operator==(const Array<T> &other) const {
 		if (this == &other)
 			return true;
@@ -317,32 +317,32 @@ public:
 		return true;
 	}
 
-    /** Check if two arrays are different. */
+	/** Check if two arrays are different. */
 	bool operator!=(const Array<T> &other) const {
 		return !(*this == other);
 	}
 
-    /** Return an iterator pointing to the first element in the array. */
+	/** Return an iterator pointing to the first element in the array. */
 	iterator       begin() {
 		return _storage;
 	}
 
-    /** Return an iterator pointing past the last element in the array. */
+	/** Return an iterator pointing past the last element in the array. */
 	iterator       end() {
 		return _storage + _size;
 	}
 
-    /** Return a const iterator pointing to the first element in the array. */
+	/** Return a const iterator pointing to the first element in the array. */
 	const_iterator begin() const {
 		return _storage;
 	}
 
-    /** Return a const iterator pointing past the last element in the array. */
+	/** Return a const iterator pointing past the last element in the array. */
 	const_iterator end() const {
 		return _storage + _size;
 	}
 
-    /** Reserve enough memory in the array so that it can store at least the given number of elements. 
+	/** Reserve enough memory in the array so that it can store at least the given number of elements.
 	 *  The current content of the array is not modified.
 	 */
 	void reserve(size_type newCapacity) {
@@ -359,7 +359,7 @@ public:
 		}
 	}
 
-    /** Change the size of the array. */
+	/** Change the size of the array. */
 	void resize(size_type newSize) {
 		reserve(newSize);
 		for (size_type i = newSize; i < _size; ++i)
@@ -369,7 +369,7 @@ public:
 		_size = newSize;
 	}
 
-    /** Assign to this array the elements between the given iterators from another array,
+	/** Assign to this array the elements between the given iterators from another array,
 	 *  from @p first included to @p last excluded.
 	 */
 	void assign(const_iterator first, const_iterator last) {
@@ -380,7 +380,7 @@ public:
 	}
 
 protected:
-    /** Round up capacity to the next power of 2.
+	/** Round up capacity to the next power of 2.
 	  * A minimal capacity of 8 is used.
 	  */
 	static size_type roundUpCapacity(size_type capacity) {
@@ -390,7 +390,7 @@ protected:
 		return capa;
 	}
 
-    /** Allocate a specific capacity for the array. */
+	/** Allocate a specific capacity for the array. */
 	void allocCapacity(size_type capacity) {
 		_capacity = capacity;
 		if (capacity) {
@@ -402,7 +402,7 @@ protected:
 		}
 	}
 
-    /** Free the storage used by the array. */
+	/** Free the storage used by the array. */
 	void freeStorage(T *storage, const size_type elements) {
 		for (size_type i = 0; i < elements; ++i)
 			storage[i].~T();

@@ -76,17 +76,17 @@ void Draw_horizontal_line(int32 xx, int32 yy, uint32 len, _rgb *pen, uint8 *ad, 
 void Draw_vertical_line(int32 xx, int32 yy, uint32 len, _rgb *pen, uint8 *ad, uint32 pitch);
 void Fill_rect(int32 x, int32 y, int32 x2, int32 y2, uint32 pen, int32 z = 0);
 void General_draw_line_24_32(int16 x0, int16 y0, int16 x1, int16 y1, _rgb *colour, uint8 *myScreenBuffer, uint32 pitch, int32 surface_width = SCREEN_WIDTH,
-                             int32 surface_height = SCREEN_DEPTH);
+							 int32 surface_height = SCREEN_DEPTH);
 
 void General_poly_draw_24_32(_point *pVerts, int32 nNumVerts, _rgb sColour, bool8 bFill, uint8 *pSurface, int32 nPitch, int32 nSurfaceWidth, int32 nSurfaceHeight);
 
 // This draws a sprite to a surface, using the x, y found in the sprite itself.
 void SpriteFrameDraw(uint8 *pSurfaceBitmap, uint32 nPitch, uint32 nSurfaceWidth, uint32 nSurfaceHeight, _pxBitmap *pBitmap, uint32 nFrameNumber, uint32 *nTransparencyRef,
-                     uint8 nOpacity);
+					 uint8 nOpacity);
 
 // This draws a sprite to a surface, using a supplied x, y, so the sprite can be moved on the surface.
 void SpriteXYFrameDraw(uint8 *pSurfaceBitmap, uint32 nPitch, uint32 nSurfaceWidth, uint32 nSurfaceHeight, _pxBitmap *pBitmap, int32 nX, int32 nY, uint32 nFrameNumber,
-                       bool8 bCentre, uint32 *nTransparencyRef, uint8 nOpacity);
+					   bool8 bCentre, uint32 *nTransparencyRef, uint8 nOpacity);
 
 // These all make LRECTs (needed by Direct-X) from various sources.
 LRECT ConvertPxBitmapRectToRECT(const _PxBitmapRect &sBitmapRect);

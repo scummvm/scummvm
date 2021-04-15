@@ -36,13 +36,13 @@ enum {
 };
 
 MidiDriver_Simon1_AdLib::Voice::Voice()
-    : channel(kChannelUnused), note(0), instrTotalLevel(0), instrScalingLevel(0), frequency(0) {
+	: channel(kChannelUnused), note(0), instrTotalLevel(0), instrScalingLevel(0), frequency(0) {
 }
 
 MidiDriver_Simon1_AdLib::MidiDriver_Simon1_AdLib(const byte *instrumentData)
-    : _isOpen(false), _opl(nullptr), _timerProc(nullptr), _timerParam(nullptr),
-      _melodyVoices(0), _amvdrBits(0), _rhythmEnabled(false), _voices(), _midiPrograms(),
-      _instruments(instrumentData) {
+	: _isOpen(false), _opl(nullptr), _timerProc(nullptr), _timerParam(nullptr),
+	  _melodyVoices(0), _amvdrBits(0), _rhythmEnabled(false), _voices(), _midiPrograms(),
+	  _instruments(instrumentData) {
 }
 
 MidiDriver_Simon1_AdLib::~MidiDriver_Simon1_AdLib() {

@@ -26,17 +26,17 @@
 /*
 
 Song::Song() {
-    m_Filename="";
-    m_pMusic=NULL;
+	m_Filename="";
+	m_pMusic=NULL;
 //  m_Paused=false;
 }
 
 Song::~Song() {
-    if (m_pMusic!=NULL) {
-        Mix_HaltMusic();
-        Mix_FreeMusic(m_pMusic);
-        m_pMusic=NULL;
-    }
+	if (m_pMusic!=NULL) {
+		Mix_HaltMusic();
+		Mix_FreeMusic(m_pMusic);
+		m_pMusic=NULL;
+	}
 }
 */
 

@@ -25,12 +25,12 @@
 
 /* Abstract datatype Set for Alan interpreter
 
-    A set is implemented as a struct holding a size and a
-    dynamically allocated array of members. Members can be
-    integers or instance numbers. Attributes of Set type is
-    allocated and the pointer to it is used as the attribute
-    value. As members are only references, clearing a set can
-    simply be done by setting the size to zero.
+	A set is implemented as a struct holding a size and a
+	dynamically allocated array of members. Members can be
+	integers or instance numbers. Attributes of Set type is
+	allocated and the pointer to it is used as the attribute
+	value. As members are only references, clearing a set can
+	simply be done by setting the size to zero.
 */
 
 #include "glk/alan3/acode.h"

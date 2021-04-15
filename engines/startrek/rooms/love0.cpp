@@ -203,7 +203,7 @@ extern const RoomTextOffsets love0TextOffsets[] = {
 };
 
 extern const RoomText love0Texts[] = {
-    { -1, Common::UNK_LANG, "" }
+	{ -1, Common::UNK_LANG, "" }
 };
 
 void Room::love0Tick1() {

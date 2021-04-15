@@ -175,7 +175,7 @@ extern const RoomTextOffsets mudd1TextOffsets[] = {
 
 extern const RoomText mudd1Texts[] = {
 	{ TX_DEM0N009, Common::EN_ANY, "#DEM0\\DEM0N009#Spock raises an eyebrow" },
-    { -1, Common::UNK_LANG, "" }
+	{ -1, Common::UNK_LANG, "" }
 };
 
 void Room::mudd1Tick1() {

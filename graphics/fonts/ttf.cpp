@@ -52,19 +52,19 @@
 #include FT_TRUETYPE_TAGS_H
 
 #if (FREETYPE_MAJOR > 2 ||                                                          \
-        (FREETYPE_MAJOR == 2 && (FREETYPE_MINOR > 3 ||                              \
-                                 (FREETYPE_MINOR == 3 && FREETYPE_PATCH >= 8))))
+		(FREETYPE_MAJOR == 2 && (FREETYPE_MINOR > 3 ||                              \
+								 (FREETYPE_MINOR == 3 && FREETYPE_PATCH >= 8))))
 // FT2.3.8+, nothing to do, FT_GlyphSlot_Own_Bitmap is in FT_BITMAP_H
 #define FAKE_BOLD 2
 #elif (FREETYPE_MAJOR > 2 ||                                                        \
-        (FREETYPE_MAJOR == 2 && (FREETYPE_MINOR > 2 ||                              \
-                                 (FREETYPE_MINOR == 2 && FREETYPE_PATCH >= 0))))
+		(FREETYPE_MAJOR == 2 && (FREETYPE_MINOR > 2 ||                              \
+								 (FREETYPE_MINOR == 2 && FREETYPE_PATCH >= 0))))
 // FT2.2.0+ have FT_GlyphSlot_Own_Bitmap in FT_SYNTHESIS_H
 #include FT_SYNTHESIS_H
 #define FAKE_BOLD 2
 #elif (FREETYPE_MAJOR > 2 ||                                                        \
-        (FREETYPE_MAJOR == 2 && (FREETYPE_MINOR > 1 ||                              \
-                                 (FREETYPE_MINOR == 1 && FREETYPE_PATCH >= 10))))
+		(FREETYPE_MAJOR == 2 && (FREETYPE_MINOR > 1 ||                              \
+								 (FREETYPE_MINOR == 1 && FREETYPE_PATCH >= 10))))
 // FT2.1.10+ don't have FT_GlyphSlot_Own_Bitmap but they have FT_Bitmap_Embolden, do workaround
 #define FAKE_BOLD 1
 #else
@@ -202,9 +202,9 @@ private:
 };
 
 TTFFont::TTFFont()
-    : _initialized(false), _face(), _ttfFile(0), _size(0), _width(0), _height(0), _ascent(0),
-      _descent(0), _glyphs(), _loadFlags(FT_LOAD_TARGET_NORMAL), _renderMode(FT_RENDER_MODE_NORMAL),
-      _hasKerning(false), _allowLateCaching(false), _fakeBold(false), _fakeItalic(false) {
+	: _initialized(false), _face(), _ttfFile(0), _size(0), _width(0), _height(0), _ascent(0),
+	  _descent(0), _glyphs(), _loadFlags(FT_LOAD_TARGET_NORMAL), _renderMode(FT_RENDER_MODE_NORMAL),
+	  _hasKerning(false), _allowLateCaching(false), _fakeBold(false), _fakeItalic(false) {
 }
 
 TTFFont::~TTFFont() {
@@ -222,7 +222,7 @@ TTFFont::~TTFFont() {
 }
 
 bool TTFFont::load(Common::SeekableReadStream &stream, int size, TTFSizeMode sizeMode,
-                   uint dpi, TTFRenderMode renderMode, const uint32 *mapping, bool stemDarkening) {
+				   uint dpi, TTFRenderMode renderMode, const uint32 *mapping, bool stemDarkening) {
 	if (!g_ttf.isInitialized())
 		return false;
 
@@ -248,7 +248,7 @@ bool TTFFont::load(Common::SeekableReadStream &stream, int size, TTFSizeMode siz
 }
 
 bool TTFFont::load(uint8 *ttfFile, uint32 sizeFile, int32 faceIndex, bool bold, bool italic,
-                   int size, TTFSizeMode sizeMode, uint dpi, TTFRenderMode renderMode, const uint32 *mapping, bool stemDarkening) {
+				   int size, TTFSizeMode sizeMode, uint dpi, TTFRenderMode renderMode, const uint32 *mapping, bool stemDarkening) {
 	_initialized = false;
 
 	if (!g_ttf.isInitialized())
@@ -947,7 +947,7 @@ static bool matchFaceName(const Common::U32String &faceName, const FT_Face &face
 }
 
 Font *findTTFace(const Common::Array<Common::String> &files, const Common::U32String &faceName,
-                 bool bold, bool italic, int size, uint dpi, TTFRenderMode renderMode, const uint32 *mapping) {
+				 bool bold, bool italic, int size, uint dpi, TTFRenderMode renderMode, const uint32 *mapping) {
 	if (!g_ttf.isInitialized())
 		return nullptr;
 

@@ -31,18 +31,18 @@ namespace AGT {
 
 /*
    This file contains most of the configuration information
-      including the platform-dependent #define statements
+	  including the platform-dependent #define statements
    It's in three major sections:
-     --Platform specific defines for various platforms, each
-       surrounded by "#ifdef <platform>" and "#endif"
-     --Various defaults
-     --Filename extensions
+	 --Platform specific defines for various platforms, each
+	   surrounded by "#ifdef <platform>" and "#endif"
+	 --Various defaults
+	 --Filename extensions
 
    Ideally, a port to a new platform should only need to modify this
-    file, the makefile, os_<whatever>.c, and possibly filename.c.  (In
-    practice, you may also need to tweak the the high-level I/O code
-    in interface.c or the memory-allocation code in util.c.  If you
-    find yourself needing to do more than that, get in touch with me.)  */
+	file, the makefile, os_<whatever>.c, and possibly filename.c.  (In
+	practice, you may also need to tweak the the high-level I/O code
+	in interface.c or the memory-allocation code in util.c.  If you
+	find yourself needing to do more than that, get in touch with me.)  */
 
 #undef _WIN32 /* GARGLK */
 
@@ -71,51 +71,51 @@ namespace AGT {
 /*    REPLACE_MAIN: define if you replace the default main(). */
 /*  (replacements should be defined in the relevant os_<platform>.c file) */
 /*    DA1,DA2,...DA6,DSS,pTTL: file name extensions for the various AGT
-            files */
+			files */
 /*   HAVE_SLEEP if your platform has the sleep() function */
 /*   BUFF_SIZE is the maximum size of the buffer to use when reading
-       in files. Regardless, it will be made no bigger than the file
-       being read in and no smaller than the record size; thus setting
-       it to 0 will cause the smallest buffer to always be used and
-       setting this to 1MB will in practice always use a buffer the
-       sizs of the file. It defaults to 32K */
+	   in files. Regardless, it will be made no bigger than the file
+	   being read in and no smaller than the record size; thus setting
+	   it to 0 will cause the smallest buffer to always be used and
+	   setting this to 1MB will in practice always use a buffer the
+	   sizs of the file. It defaults to 32K */
 /*   CBUF_SIZE is the maximum size of the buffer used for reading in
-       the Master's Edition DA6 files; the size of the buffer in bytes
-       is twice this value (since an individual token is two bytes long). */
+	   the Master's Edition DA6 files; the size of the buffer in bytes
+	   is twice this value (since an individual token is two bytes long). */
 /*   DESCR_BUFFSIZE is the maximum size of the description text block before
-       the interpreter will read it from disk rather than storing it in
-       memory during play. At the moment this only affects AGX games;
-       original AGT games always use the disk. */
+	   the interpreter will read it from disk rather than storing it in
+	   memory during play. At the moment this only affects AGX games;
+	   original AGT games always use the disk. */
 /*   DOHASH to use a hash table for dictionary searches; the only
-       reason not to have this would be memory */
+	   reason not to have this would be memory */
 /*   HASHBITS determines the size of the hash table: (2^HASHBITS)*sizeof(word);
-       the hash table must be at least as large as the dictionary.
-       In practice this means HASHBITS should be at least 12;
-       this is the current default. */
+	   the hash table must be at least as large as the dictionary.
+	   In practice this means HASHBITS should be at least 12;
+	   this is the current default. */
 /*   MAXSTRUC The maximum size (in chars) which a single data structure can
-       be on this platform. This defaults to 1MB (i.e. no limit for
-       practical purposes). In practice I know of no game files that
-       require any structures bigger than about 30K.  */
+	   be on this platform. This defaults to 1MB (i.e. no limit for
+	   practical purposes). In practice I know of no game files that
+	   require any structures bigger than about 30K.  */
 /*   LOWMEM Define this if you are low on memory. At the moment this
-       only saves a few K.*/
+	   only saves a few K.*/
 /*   PORTSTR Is the string describing this particular port.
-        e.g. #define PORTSTR "OrfDOS Port by R.J. Wright" */
+		e.g. #define PORTSTR "OrfDOS Port by R.J. Wright" */
 /*   UNIX_IO  if you have Unix-like low level file I/O functions.
-       (MS-DOS, for example, does). This speeds up the reading
-       of the large game data files on some platforms. If this is
-       defined, READFLAG, WRITEFLAG, and FILE_PERM also need to
-       be defined. (Giving the flags needed for opening a file for
-       reading or writing, and the file permissions to be given to newly
-       created files. */
+	   (MS-DOS, for example, does). This speeds up the reading
+	   of the large game data files on some platforms. If this is
+	   defined, READFLAG, WRITEFLAG, and FILE_PERM also need to
+	   be defined. (Giving the flags needed for opening a file for
+	   reading or writing, and the file permissions to be given to newly
+	   created files. */
 /*   OPEN_AS_TEXT  Define to cause text files to be opened as text files. */
 /*   PREFIX_EXT  Add filename extensions at the beginning of the name,
-       rather than at the end. */
+	   rather than at the end. */
 /*   PATH_SEP, if defined, is a string containing all characters which
-       can be used to separate the path from the filename. */
+	   can be used to separate the path from the filename. */
 /*   pathtest(s) is a macro that should check whether the given string
-        is an absolute path.  If this is left undefined, then _all_
-        paths will be treated as absolute. You don't need to define
-        this if you are replacing filename.c.  */
+		is an absolute path.  If this is left undefined, then _all_
+		paths will be treated as absolute. You don't need to define
+		this if you are replacing filename.c.  */
 /* ------------------------------------------------------------------- */
 
 /* force16 is used purely for debugging purposes, to make sure that
@@ -140,7 +140,7 @@ namespace AGT {
 #define INBUFF_SIZE (1024)      /* Inherited from PLAIN. */
 #define fix_ascii   0       /* os_glk.c does translations. */
 #define MAXSTRUC    (1024L*1024L)   /* 32Kb from PLAIN is too small for
-                       several games (including Soggy). */
+					   several games (including Soggy). */
 #define PORTSTR     "Glk version"   /* Identify ourselves discreetly. */
 #define REPLACE_GETFILE         /* Override get_user_file. */
 #define REPLACE_MAIN            /* Override main. */
@@ -158,7 +158,7 @@ namespace AGT {
 #define CBUF_SIZE (5000L)
 #define INBUFF_SIZE (1024)     /* Used by Magx */
 #define MAXSTRUC (32L*1024L) /* IIRC, 32K is the minimum required by
-                the ANSI standard */
+				the ANSI standard */
 #define PORTSTR "Pure ANSI C version"
 #endif
 

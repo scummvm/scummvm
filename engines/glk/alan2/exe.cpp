@@ -248,8 +248,8 @@ void schedule(Aword evt, Aword whr, Aword aft) {
 
  */
 static Aptr getatr(
-    Aaddr atradr,              /* IN - ACODE address to attribute table */
-    Aaddr atr                  /* IN - The attribute to read */
+	Aaddr atradr,              /* IN - ACODE address to attribute table */
+	Aaddr atr                  /* IN - The attribute to read */
 ) {
 	AtrElem *at;
 
@@ -366,9 +366,9 @@ void setstr(Aword id, Aword atr, Aword str) {
 
  */
 static void incratr(
-    Aaddr atradr,           /* IN - ACODE address to attribute table */
-    Aword atr,              /* IN - attribute code */
-    Aword step              /* IN - step to increment by */
+	Aaddr atradr,           /* IN - ACODE address to attribute table */
+	Aword atr,              /* IN - attribute code */
+	Aword step              /* IN - step to increment by */
 ) {
 	AtrElem *at;
 

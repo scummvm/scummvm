@@ -58,10 +58,10 @@ namespace TADS2 {
  *   meanings.
  */
 struct vocwdef {
-    uint   vocwnxt;      /* index of next vocwdef attached to the same word */
-    objnum vocwobj;                      /* object associated with the word */
-    uchar  vocwtyp;   /* property associated with the word (part of speech) */
-    uchar  vocwflg;                                   /* flags for the word */
+	uint   vocwnxt;      /* index of next vocwdef attached to the same word */
+	objnum vocwobj;                      /* object associated with the word */
+	uchar  vocwtyp;   /* property associated with the word (part of speech) */
+	uchar  vocwflg;                                   /* flags for the word */
 #define VOCFCLASS  1                          /* word is for a class object */
 #define VOCFINH    2                 /* word is inherited from a superclass */
 #define VOCFNEW    4                          /* word was added at run-time */
@@ -70,30 +70,30 @@ struct vocwdef {
 
 /* vocabulary word structure */
 struct vocdef {
-    vocdef *vocnxt;                         /* next word at same hash value */
-    uchar   voclen;                                   /* length of the word */
-    uchar   vocln2;          /* length of second word (0 if no second word) */
-    uint    vocwlst;      /* head of list of vocwdef's attached to the word */
-    uchar   voctxt[1];                                  /* text of the word */
+	vocdef *vocnxt;                         /* next word at same hash value */
+	uchar   voclen;                                   /* length of the word */
+	uchar   vocln2;          /* length of second word (0 if no second word) */
+	uint    vocwlst;      /* head of list of vocwdef's attached to the word */
+	uchar   voctxt[1];                                  /* text of the word */
 };
 
 /* vocabulary inheritance cell */
 struct vocidef {
-    uchar            vocinsc;   /* # of superclasses (gives size of record) */
-    union {
-        struct {
-            uchar    vociusflg;                          /* flags for entry */
+	uchar            vocinsc;   /* # of superclasses (gives size of record) */
+	union {
+		struct {
+			uchar    vociusflg;                          /* flags for entry */
 #define VOCIFCLASS  1  /* entry refers to a class object (loc records only) */
 #define VOCIFVOC    2                 /* entry has vocabulary words defined */
 #define VOCIFXLAT   4  /* superclasses must be translated from portable fmt */
 #define VOCIFLOCNIL 8                  /* location is explicitly set to nil */
 #define VOCIFNEW    16       /* object was allocated at run-time with "new" */
-            objnum   vociusloc;                   /* location of the object */
-            objnum   vociusilc;                       /* inherited location */
-            objnum   vociussc[1];                  /* array of superclasses */
-        } vocius;
-        vocidef     *vociunxt;
-    } vociu;
+			objnum   vociusloc;                   /* location of the object */
+			objnum   vociusilc;                       /* inherited location */
+			objnum   vociussc[1];                  /* array of superclasses */
+		} vocius;
+		vocidef     *vociunxt;
+	} vociu;
 #define   vociflg vociu.vocius.vociusflg
 #define   vociloc vociu.vocius.vociusloc
 #define   vociilc vociu.vocius.vociusilc
@@ -142,8 +142,8 @@ struct vocidef {
 vocwdef *vocwget(struct voccxdef *ctx, uint idx);
 #else
 #define vocwget(ctx, idx) \
-    ((idx) == VOCCXW_NONE ? (vocwdef *)0 : \
-      ((ctx)->voccxwp[(idx)/VOCWPGSIZ] + ((idx) % VOCWPGSIZ)))
+	((idx) == VOCCXW_NONE ? (vocwdef *)0 : \
+	  ((ctx)->voccxwp[(idx)/VOCWPGSIZ] + ((idx) % VOCWPGSIZ)))
 #endif
 
 /*
@@ -154,149 +154,149 @@ vocwdef *vocwget(struct voccxdef *ctx, uint idx);
 
 /* daemon/fuse/alarm slot */
 struct vocddef {
-    objnum   vocdfn;             /* object number of function to be invoked */
-    runsdef  vocdarg;                  /* argument for daemon/fuse function */
-    prpnum   vocdprp;             /* property number (used only for alarms) */
-    uint     vocdtim;  /* time for fuses/alarms (0xffff -> each-turn alarm) */
+	objnum   vocdfn;             /* object number of function to be invoked */
+	runsdef  vocdarg;                  /* argument for daemon/fuse function */
+	prpnum   vocdprp;             /* property number (used only for alarms) */
+	uint     vocdtim;  /* time for fuses/alarms (0xffff -> each-turn alarm) */
 };
 
 /* vocabulary object list entry */
 struct vocoldef {
-    objnum  vocolobj;                           /* object matching the word */
-    const char *vocolfst;     /* first word in cmd[] that identified object */
-    const char *vocollst;      /* last word in cmd[] that identified object */
-    char   *vocolhlst;      /* hypothetical last word, if we trimmed a prep */
-    int     vocolflg;                           /* special flags (ALL, etc) */
+	objnum  vocolobj;                           /* object matching the word */
+	const char *vocolfst;     /* first word in cmd[] that identified object */
+	const char *vocollst;      /* last word in cmd[] that identified object */
+	char   *vocolhlst;      /* hypothetical last word, if we trimmed a prep */
+	int     vocolflg;                           /* special flags (ALL, etc) */
 };
 
 /* vocabulary context */
 struct voccxdef {
-    errcxdef  *voccxerr;                          /* error handling context */
-    tiocxdef  *voccxtio;                                /* text i/o context */
-    runcxdef  *voccxrun;                               /* execution context */
-    mcmcxdef  *voccxmem;                          /* memory manager context */
-    objucxdef *voccxundo;                                   /* undo context */
-    uchar     *voccxpool;                  /* next free byte in vocdef pool */
-    vocdef    *voccxfre;                        /* head of vocdef free list */
-    char      *voccxcpp;                   /* pointer to compound word area */
-    int        voccxcpl;                    /* length of compound word area */
-    char      *voccxspp;                    /* pointer to special word area */
-    int        voccxspl;                     /* length of special word area */
-    uint       voccxrem;        /* number of bytes remaining in vocdef pool */
-    vocidef  **voccxinh[VOCINHMAX];     /* vocidef page table: 256 per page */
-    uchar     *voccxip[VOCIPGMAX];                 /* inheritance cell pool */
-    vocidef   *voccxifr;              /* head of inheritance cell free list */
-    uint       voccxiplst;          /* last inheritance cell page allocated */
-    uint       voccxilst;      /* next unused byte in last inheritance page */
-    int        voccxredo;                   /* flag: redo command in buffer */
+	errcxdef  *voccxerr;                          /* error handling context */
+	tiocxdef  *voccxtio;                                /* text i/o context */
+	runcxdef  *voccxrun;                               /* execution context */
+	mcmcxdef  *voccxmem;                          /* memory manager context */
+	objucxdef *voccxundo;                                   /* undo context */
+	uchar     *voccxpool;                  /* next free byte in vocdef pool */
+	vocdef    *voccxfre;                        /* head of vocdef free list */
+	char      *voccxcpp;                   /* pointer to compound word area */
+	int        voccxcpl;                    /* length of compound word area */
+	char      *voccxspp;                    /* pointer to special word area */
+	int        voccxspl;                     /* length of special word area */
+	uint       voccxrem;        /* number of bytes remaining in vocdef pool */
+	vocidef  **voccxinh[VOCINHMAX];     /* vocidef page table: 256 per page */
+	uchar     *voccxip[VOCIPGMAX];                 /* inheritance cell pool */
+	vocidef   *voccxifr;              /* head of inheritance cell free list */
+	uint       voccxiplst;          /* last inheritance cell page allocated */
+	uint       voccxilst;      /* next unused byte in last inheritance page */
+	int        voccxredo;                   /* flag: redo command in buffer */
 
-    /* 
-     *   redo buffer - if voccxredo is set, and this buffer is not empty,
-     *   we'll redo the command in this buffer rather than the one in our
-     *   internal stack buffer 
-     */
-    char       voccxredobuf[VOCBUFSIZ];
+	/* 
+	 *   redo buffer - if voccxredo is set, and this buffer is not empty,
+	 *   we'll redo the command in this buffer rather than the one in our
+	 *   internal stack buffer 
+	 */
+	char       voccxredobuf[VOCBUFSIZ];
 
-    /*
-     *   "again" buffer - when we save the last command for repeating via
-     *   the "again" command, we'll save the direct and indirect object
-     *   words here, so that they can be recovered if "again" is used 
-     */
-    char       voccxagainbuf[VOCBUFSIZ];
+	/*
+	 *   "again" buffer - when we save the last command for repeating via
+	 *   the "again" command, we'll save the direct and indirect object
+	 *   words here, so that they can be recovered if "again" is used 
+	 */
+	char       voccxagainbuf[VOCBUFSIZ];
 
-    vocdef    *voccxhsh[VOCHASHSIZ];                          /* hash table */
+	vocdef    *voccxhsh[VOCHASHSIZ];                          /* hash table */
 
 #ifdef VOCW_IN_CACHE
-    mcmon      voccxwp[VOCWPGMAX];        /* list of pages of vocab records */
-    mcmon      voccxwplck;                  /* locked page of vocab records */
-    vocwdef   *voccxwpgptr;             /* pointer to currently locked page */
+	mcmon      voccxwp[VOCWPGMAX];        /* list of pages of vocab records */
+	mcmon      voccxwplck;                  /* locked page of vocab records */
+	vocwdef   *voccxwpgptr;             /* pointer to currently locked page */
 #else
-    vocwdef   *voccxwp[VOCWPGMAX];                  /* vocabulary word pool */
+	vocwdef   *voccxwp[VOCWPGMAX];                  /* vocabulary word pool */
 #endif
 
-    uint       voccxwalocnt;             /* number of vocwdef's used so far */
-    uint       voccxwfre;            /* index of first vocwdef in free list */
+	uint       voccxwalocnt;             /* number of vocwdef's used so far */
+	uint       voccxwfre;            /* index of first vocwdef in free list */
 #define VOCCXW_NONE  ((uint)(-1))     /* index value indicating end of list */
 
-    vocddef   *voccxdmn;                           /* array of daemon slots */
-    uint       voccxdmc;                 /* number of slots in daemon array */
-    vocddef   *voccxfus;                             /* array of fuse slots */
-    uint       voccxfuc;                   /* number of slots in fuse array */
-    vocddef   *voccxalm;                            /* array of alarm slots */
-    uint       voccxalc;                  /* number of slots in alarm array */
-    char       voccxtim[26];            /* game's timestamp (asctime value) */
-    
-    objnum     voccxvtk;                /* object number of "take" deepverb */
-    objnum     voccxme;                      /* object number of "Me" actor */
-    objnum     voccxme_init;                     /* initial setting of "Me" */
-    objnum     voccxstr;                       /* object number of "strObj" */
-    objnum     voccxnum;                       /* object number of "numObj" */
-    objnum     voccxit;                                  /* last "it" value */
-    objnum     voccxhim;                                /* last "him" value */
-    objnum     voccxher;                                /* last "her" value */
-    objnum     voccxthc;                   /* count of items in "them" list */
-    objnum     voccxthm[VOCMAXAMBIG];            /* list of items in "them" */
-    objnum     voccxprd;                 /* "pardon" function object number */
-    objnum     voccxpre;               /* "preparse" function object number */
-    objnum     voccxppc;            /* "preparseCmd" function object number */
-    objnum     voccxpre2;           /* "preparseExt" function object number */
-    objnum     voccxvag;                             /* "again" verb object */
-    objnum     voccxini;                                 /* "init" function */
-    objnum     voccxper;             /* "parseError" function object number */
-    objnum     voccxprom;             /* "cmdPrompt" function object number */
-    objnum     voccxpostprom;     /* "cmdPostPrompt" function object number */
-    objnum     voccxpdis;                         /* parseDisambig function */
-    objnum     voccxper2;                           /* parseError2 function */
-    objnum     voccxperp;                       /* parseErrorParam function */
-    objnum     voccxpdef;                          /* parseDefault function */
-    objnum     voccxpdef2;                      /* parseDefaultExt function */
-    objnum     voccxpask;                           /* parseAskobj function */
-    objnum     voccxpask2;                     /* parseAskobjActor function */
-    objnum     voccxpask3;                  /* parseAskobjIndirect function */
-    objnum     voccxinitrestore;    /* "initRestore" function object number */
-    objnum     voccxpuv;         /* parseUnknownVerb function object number */
-    objnum     voccxpnp;          /* parseNounPhrase function object number */
-    objnum     voccxpostact;           /* postAction function object number */
-    objnum     voccxprecmd;            /* preCommand function object number */
-    objnum     voccxendcmd;            /* endCommand function object number */
+	vocddef   *voccxdmn;                           /* array of daemon slots */
+	uint       voccxdmc;                 /* number of slots in daemon array */
+	vocddef   *voccxfus;                             /* array of fuse slots */
+	uint       voccxfuc;                   /* number of slots in fuse array */
+	vocddef   *voccxalm;                            /* array of alarm slots */
+	uint       voccxalc;                  /* number of slots in alarm array */
+	char       voccxtim[26];            /* game's timestamp (asctime value) */
+	
+	objnum     voccxvtk;                /* object number of "take" deepverb */
+	objnum     voccxme;                      /* object number of "Me" actor */
+	objnum     voccxme_init;                     /* initial setting of "Me" */
+	objnum     voccxstr;                       /* object number of "strObj" */
+	objnum     voccxnum;                       /* object number of "numObj" */
+	objnum     voccxit;                                  /* last "it" value */
+	objnum     voccxhim;                                /* last "him" value */
+	objnum     voccxher;                                /* last "her" value */
+	objnum     voccxthc;                   /* count of items in "them" list */
+	objnum     voccxthm[VOCMAXAMBIG];            /* list of items in "them" */
+	objnum     voccxprd;                 /* "pardon" function object number */
+	objnum     voccxpre;               /* "preparse" function object number */
+	objnum     voccxppc;            /* "preparseCmd" function object number */
+	objnum     voccxpre2;           /* "preparseExt" function object number */
+	objnum     voccxvag;                             /* "again" verb object */
+	objnum     voccxini;                                 /* "init" function */
+	objnum     voccxper;             /* "parseError" function object number */
+	objnum     voccxprom;             /* "cmdPrompt" function object number */
+	objnum     voccxpostprom;     /* "cmdPostPrompt" function object number */
+	objnum     voccxpdis;                         /* parseDisambig function */
+	objnum     voccxper2;                           /* parseError2 function */
+	objnum     voccxperp;                       /* parseErrorParam function */
+	objnum     voccxpdef;                          /* parseDefault function */
+	objnum     voccxpdef2;                      /* parseDefaultExt function */
+	objnum     voccxpask;                           /* parseAskobj function */
+	objnum     voccxpask2;                     /* parseAskobjActor function */
+	objnum     voccxpask3;                  /* parseAskobjIndirect function */
+	objnum     voccxinitrestore;    /* "initRestore" function object number */
+	objnum     voccxpuv;         /* parseUnknownVerb function object number */
+	objnum     voccxpnp;          /* parseNounPhrase function object number */
+	objnum     voccxpostact;           /* postAction function object number */
+	objnum     voccxprecmd;            /* preCommand function object number */
+	objnum     voccxendcmd;            /* endCommand function object number */
 
-    /* current command word list values */
-    vocoldef  *voccxdobj;                /* current direct object word list */
-    vocoldef  *voccxiobj;              /* current indirect object word list */
+	/* current command word list values */
+	vocoldef  *voccxdobj;                /* current direct object word list */
+	vocoldef  *voccxiobj;              /* current indirect object word list */
 
-    /* current command objects */
-    objnum     voccxactor;                                 /* current actor */
-    objnum     voccxverb;                       /* current command deepverb */
-    objnum     voccxprep;                    /* current command preposition */
-    
-    /* previous command values - used by "again" */
-    objnum     voccxlsa;                                  /* previous actor */
-    objnum     voccxlsv;                                   /* previous verb */
-    vocoldef   voccxlsd;                          /* previous direct object */
-    vocoldef   voccxlsi;                        /* previous indirect object */
-    objnum     voccxlsp;                                     /* preposition */
-    int        voccxlssty;              /* style (new/old) of last template */
-    uchar      voccxlst[VOCTPL2SIZ];                            /* template */
+	/* current command objects */
+	objnum     voccxactor;                                 /* current actor */
+	objnum     voccxverb;                       /* current command deepverb */
+	objnum     voccxprep;                    /* current command preposition */
+	
+	/* previous command values - used by "again" */
+	objnum     voccxlsa;                                  /* previous actor */
+	objnum     voccxlsv;                                   /* previous verb */
+	vocoldef   voccxlsd;                          /* previous direct object */
+	vocoldef   voccxlsi;                        /* previous indirect object */
+	objnum     voccxlsp;                                     /* preposition */
+	int        voccxlssty;              /* style (new/old) of last template */
+	uchar      voccxlst[VOCTPL2SIZ];                            /* template */
 
-    objnum     voccxpreinit;                            /* preinit function */
+	objnum     voccxpreinit;                            /* preinit function */
 
-    /* special flags */
-    uchar      voccxflg;
+	/* special flags */
+	uchar      voccxflg;
 #define VOCCXFCLEAR    1      /* ignore remainder of command line (restore) */
 #define VOCCXFVWARN    2                /* generate redundant verb warnings */
 #define VOCCXFDBG      4           /* debug mode:  show parsing information */
 #define VOCCXAGAINDEL  8             /* "again" lost due to object deletion */
 
-    /* number of remaining unresolved unknown words in the command */
-    int        voccxunknown;
+	/* number of remaining unresolved unknown words in the command */
+	int        voccxunknown;
 
-    /* total number of unresolved words in the last command */
-    int        voccxlastunk;
+	/* total number of unresolved words in the last command */
+	int        voccxlastunk;
 
-    /* parser stack area */
-    uchar *voc_stk_ptr;
-    uchar *voc_stk_cur;
-    uchar *voc_stk_end;
+	/* parser stack area */
+	uchar *voc_stk_ptr;
+	uchar *voc_stk_cur;
+	uchar *voc_stk_end;
 };
 
 /* allocate and push a list, returning a pointer to the list's memory */
@@ -313,18 +313,18 @@ void voc_set_me(voccxdef *ctx, objnum new_me);
 
 /* add a vocabulary word */
 void vocadd(voccxdef *ctx, prpnum p, objnum objn,
-            int classflag, char *wrdval);
+			int classflag, char *wrdval);
 
 /* internal addword - must already be split into two words and lengths */
 void vocadd2(voccxdef *ctx, prpnum p, objnum objn, int classflg,
-             uchar *wrd1, int len1, uchar *wrd2, int len2);
+			 uchar *wrd1, int len1, uchar *wrd2, int len2);
 
 /* delete vocabulary for a given object */
 void vocdel(voccxdef *ctx, objnum objn);
 
 /* lower-level vocabulary deletion routine */
 void vocdel1(voccxdef *ctx, objnum objn, char *wrd, prpnum prp,
-             int really_delete, int revert, int keep_undo);
+			 int really_delete, int revert, int keep_undo);
 
 /* delete all inherited vocabulary */
 void vocdelinh(voccxdef *ctx);
@@ -334,7 +334,7 @@ void vocialo(voccxdef *ctx, objnum obj);
 
 /* add an inheritance/location record */
 void vociadd(voccxdef *ctx, objnum obj, objnum loc,
-             int numsc, objnum *sc, int flags);
+			 int numsc, objnum *sc, int flags);
 
 /* delete inheritance records for an object */
 void vocidel(voccxdef *ctx, objnum chi);
@@ -344,24 +344,24 @@ void vociren(voccxdef *ctx, objnum oldnum, objnum newnum);
 
 /* caller-provided context structure for vocffw/vocfnw searches */
 struct vocseadef {
-    vocdef  *v;
-    vocwdef *vw;
-    const uchar *wrd1;
-    int      len1;
-    const uchar *wrd2;
-    int      len2;
+	vocdef  *v;
+	vocwdef *vw;
+	const uchar *wrd1;
+	int      len1;
+	const uchar *wrd2;
+	int      len2;
 };
 
 /* find first word matching a given word */
 vocwdef *vocffw(voccxdef *ctx, const char *wrd, int len, const char *wrd2, int len2,
-                int p, vocseadef *search_ctx);
+				int p, vocseadef *search_ctx);
 
 /* find next word */
 vocwdef *vocfnw(voccxdef *voccx, vocseadef *search_ctx);
 
 /* read a line of input text */
 int vocread(voccxdef *ctx, objnum actor, objnum verb,
-            char *buf, int bufl, int type);
+			char *buf, int bufl, int type);
 #define VOCREAD_OK    0
 #define VOCREAD_REDO  1
 
@@ -370,7 +370,7 @@ int voclistlen(vocoldef *lst);
 
 /* tokenize an input buffer */
 int voctok(voccxdef *ctx, char *cmd, char *outbuf,
-           char **wrd, int lower, int cvt_ones, int show_errors);
+		   char **wrd, int lower, int cvt_ones, int show_errors);
 
 /* get types for a word list */
 int vocgtyp(voccxdef *ctx, char **cmd, int *types, char *orgbuf);
@@ -380,30 +380,30 @@ int voccmd(voccxdef *ctx, char *cmd, uint cmdlen);
 
 /* disambiguator */
 int vocdisambig(voccxdef *ctx, vocoldef *outlist, vocoldef *inlist,
-                prpnum defprop, prpnum accprop, prpnum verprop,
-                char *cmd[], objnum otherobj, objnum cmdActor,
-                objnum cmdVerb, objnum cmdPrep, char *cmdbuf,
-                int silent);
+				prpnum defprop, prpnum accprop, prpnum verprop,
+				char *cmd[], objnum otherobj, objnum cmdActor,
+				objnum cmdVerb, objnum cmdPrep, char *cmdbuf,
+				int silent);
 
 /* display a multiple-object prefix */
 void voc_multi_prefix(voccxdef *ctx, objnum objn,
-                      int show_prefix, int multi_flags,
-                      int cur_index, int count);
+					  int show_prefix, int multi_flags,
+					  int cur_index, int count);
 
 /* low-level executor */
 int execmd(voccxdef *ctx, objnum actor, objnum prep,
-           char *vverb, char *vprep, vocoldef *dolist, vocoldef *iolist,
-           char **cmd, int *typelist,
-           char *cmdbuf, int wrdcnt, uchar **preparse_list, int *next_start);
+		   char *vverb, char *vprep, vocoldef *dolist, vocoldef *iolist,
+		   char **cmd, int *typelist,
+		   char *cmdbuf, int wrdcnt, uchar **preparse_list, int *next_start);
 
 /* recursive command execution */
 int execmd_recurs(voccxdef *ctx, objnum actor, objnum verb,
-                  objnum dobj, objnum prep, objnum iobj,
-                  int validate_dobj, int validate_iobj);
+				  objnum dobj, objnum prep, objnum iobj,
+				  int validate_dobj, int validate_iobj);
 
 /* try running preparseCmd user function */
 int try_preparse_cmd(voccxdef *ctx, char **cmd, int wrdcnt,
-                     uchar **preparse_list);
+					 uchar **preparse_list);
 
 /*
  *   Handle an unknown verb or sentence structure.  We'll call this when
@@ -434,18 +434,18 @@ int try_preparse_cmd(voccxdef *ctx, char **cmd, int wrdcnt,
  *   remainder of the command should be aborted.  
  */
 int try_unknown_verb(voccxdef *ctx, objnum actor,
-                     char **cmd, int *typelist, int wrdcnt, int *next_start,
-                     int do_fuses, int err, const char *msg, ...);
+					 char **cmd, int *typelist, int wrdcnt, int *next_start,
+					 int do_fuses, int err, const char *msg, ...);
 
 /* find a template */
 int voctplfnd(voccxdef *ctx, objnum verb_in, objnum prep,
-              uchar *tplout, int *newstyle);
+			  uchar *tplout, int *newstyle);
 
 /* build a printable name for an object from the words in a command list */
 void voc_make_obj_name(voccxdef *ctx, char *namebuf, char *cmd[],
-                       int firstwrd, int lastwrd);
+					   int firstwrd, int lastwrd);
 void voc_make_obj_name_from_list(voccxdef *ctx, char *namebuf,
-                                 char *cmd[], const char *firstwrd, const char *lastwrd);
+								 char *cmd[], const char *firstwrd, const char *lastwrd);
 
 /*
  *   check noun - determines whether the next set of words is a valid noun
@@ -454,7 +454,7 @@ void voc_make_obj_name_from_list(voccxdef *ctx, char *namebuf,
  *   simple; we just call vocgobj() with the complaint flag turned off.
  */
 /* int vocchknoun(voccxdef *ctx, char **cmd, int *typelist, int cur,
-                  int *next, vocoldef *nounlist, int chkact); */
+				  int *next, vocoldef *nounlist, int chkact); */
 #define vocchknoun(ctx, cmd, typelist, cur, next, nounlist, chkact) \
  vocgobj(ctx, cmd, typelist, cur, next, FALSE, nounlist, TRUE, chkact, 0)
 #define vocchknoun2(ctx, cmd, typlst, cur, next, nounlist, chkact, nomatch) \
@@ -465,14 +465,14 @@ void voc_make_obj_name_from_list(voccxdef *ctx, char *namebuf,
  *   complaint and multiple-noun flags turned on.
  */
 /* int vocgetnoun(voccxdef *ctx, char **cmd, int *typelist, int cur,
-                  int *next, vocoldef *nounlist); */
+				  int *next, vocoldef *nounlist); */
 #define vocgetnoun(ctx, cmd, typelist, cur, next, nounlist) \
  vocgobj(ctx, cmd, typelist, cur, next, TRUE, nounlist, TRUE, FALSE, 0)
 
 /* get object */
 int vocgobj(voccxdef *ctx, char **cmd, int *typelist, int cur,
-            int *next, int complain, vocoldef *nounlist,
-            int multi, int chkact, int *nomatch);
+			int *next, int complain, vocoldef *nounlist,
+			int multi, int chkact, int *nomatch);
 
 /* tokenize a string - TADS program code interface */
 void voc_parse_tok(voccxdef *ctx);
@@ -494,20 +494,20 @@ void voc_parse_replace_cmd(voccxdef *ctx);
 
 /* check access to an object */
 int vocchkaccess(voccxdef *ctx, objnum obj, prpnum verprop,
-                 int seqno, objnum actor, objnum verb);
+				 int seqno, objnum actor, objnum verb);
 
 /* check to see if an object is visible */
 int vocchkvis(voccxdef *ctx, objnum obj, objnum cmdActor);
 
 /* display an appropriate message for an unreachable object */
 void vocnoreach(voccxdef *ctx, objnum *list1, int cnt,
-                objnum actor, objnum verb, objnum prep, prpnum defprop,
-                int show_multi_prefix, int multi_flags,
-                int multi_base_index, int multi_total_count);
+				objnum actor, objnum verb, objnum prep, prpnum defprop,
+				int show_multi_prefix, int multi_flags,
+				int multi_base_index, int multi_total_count);
 
 /* set {numObj | strObj}.value, as appropriate */
 void vocsetobj(voccxdef *ctx, objnum obj, dattyp typ, const void *val,
-               vocoldef *inobj, vocoldef *outobj);
+			   vocoldef *inobj, vocoldef *outobj);
 
 /* macros to read values out of templates */
 #define voctplpr(tpl) ((objnum)osrp2(((uchar *)tpl)))        /* preposition */
@@ -565,8 +565,8 @@ void vocsetobj(voccxdef *ctx, objnum obj, dattyp typ, const void *val,
 
 /* structure for special internal word table */
 struct vocspdef {
-    const char *vocspin;
-    char  vocspout;
+	const char *vocspin;
+	char  vocspout;
 };
 
 /* check if a word is a special word - true if word is given special word */
@@ -577,19 +577,19 @@ struct vocspdef {
  *   Set a fuse/daemon/notifier.
  */
 void vocsetfd(voccxdef *ctx, vocddef *what, objnum func, prpnum prop,
-              uint tm, runsdef *val, int err);
+			  uint tm, runsdef *val, int err);
 
 /* remove a fuse/daemon/notifier */
 void vocremfd(voccxdef *ctx, vocddef *what, objnum func, prpnum prop,
-              runsdef *val, int err);
+			  runsdef *val, int err);
 
 /* count a turn (down all fuse/notifier timers) */
 void vocturn(voccxdef *ctx, int turncnt, int do_fuses);
 
 /* initialize voc context */
 void vocini(voccxdef *vocctx, errcxdef *errctx, mcmcxdef *memctx,
-            runcxdef *runctx, objucxdef *undoctx, int fuses,
-            int daemons, int notifiers);
+			runcxdef *runctx, objucxdef *undoctx, int fuses,
+			int daemons, int notifiers);
 
 /* clean up the voc context - frees memory allocated by vocini() */
 void vocterm(voccxdef *vocctx);
@@ -630,11 +630,11 @@ void vocdusave_newobj(voccxdef *ctx, objnum objn);
 
 /* save undo for adding a word */
 void vocdusave_addwrd(voccxdef *ctx, objnum objn, prpnum typ, int flags,
-                      char *wrd);
+					  char *wrd);
 
 /* save undo for deleting a word */
 void vocdusave_delwrd(voccxdef *ctx, objnum objn, prpnum typ, int flags,
-                      char *wrd);
+					  char *wrd);
 
 /* save undo for object deletion */
 void vocdusave_delobj(voccxdef *ctx, objnum objn);
@@ -685,17 +685,17 @@ void  voc_stk_ini(voccxdef *ctx, uint siz);
 
 /* return a value */
 #define VOC_RETVAL(ctx, marker, retval) \
-       voc_leave(ctx, marker); return retval
+	   voc_leave(ctx, marker); return retval
 
 /* allocate space from the stack */
 void *voc_stk_alo(voccxdef *ctx, uint siz);
 
 /* allocation cover macros */
 #define VOC_STK_ARRAY(ctx, typ, var, cnt) \
-    (var = (typ *)voc_stk_alo(ctx, (uint)((cnt) * sizeof(typ))))
+	(var = (typ *)voc_stk_alo(ctx, (uint)((cnt) * sizeof(typ))))
 
 #define VOC_MAX_ARRAY(ctx, typ, var) \
-    VOC_STK_ARRAY(ctx, typ, var, VOCMAXAMBIG)
+	VOC_STK_ARRAY(ctx, typ, var, VOCMAXAMBIG)
 
 /*
  *   Stack size for the vocab stack.  We'll scale our stack needs based
@@ -718,9 +718,9 @@ void *voc_stk_alo(voccxdef *ctx, uint siz);
  *   If 'do_fuses' is true, we'll run fuses and daemons.  Otherwise, 
  */
 int exe_fuses_and_daemons(voccxdef *ctx, int err, int do_fuses,
-                          objnum actor, objnum verb,
-                          vocoldef *dobj_list, int do_cnt,
-                          objnum prep, objnum iobj);
+						  objnum actor, objnum verb,
+						  vocoldef *dobj_list, int do_cnt,
+						  objnum prep, objnum iobj);
 
 /*
  *   Execute any pending fuses.  Return TRUE if any fuses were executed,
@@ -746,7 +746,7 @@ void voc_count(voccxdef *ctx, objnum objn, prpnum prp, int *cnt, int *siz);
  *   the callback for every word.  
  */
 void voc_iterate(voccxdef *ctx, objnum objn,
-                 void (*fn)(void *, vocdef *, vocwdef *), void *fnctx);
+				 void (*fn)(void *, vocdef *, vocwdef *), void *fnctx);
 
 /* ------------------------------------------------------------------------ */
 /*

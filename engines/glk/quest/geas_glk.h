@@ -34,14 +34,14 @@ namespace Quest {
 
   Glk Window arrangment.
 
-    +---------+
-    |    B    |
-    +---------+
-    |    M    |
-    |         |
-    +---------+
-    |    I    |
-    +---------+
+	+---------+
+	|    B    |
+	+---------+
+	|    M    |
+	|         |
+	+---------+
+	|    I    |
+	+---------+
 
   B is a one line "banner window", showing the game name and author.  Kept
   in the global variable, it's optional, null if unavailable.

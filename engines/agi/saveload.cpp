@@ -1018,7 +1018,7 @@ bool AgiEngine::saveGameDialog() {
 
 
 void AgiEngine::recordImageStackCall(uint8 type, int16 p1, int16 p2, int16 p3,
-                                     int16 p4, int16 p5, int16 p6, int16 p7) {
+									 int16 p4, int16 p5, int16 p6, int16 p7) {
 	ImageStackElement pnew;
 
 	pnew.type = type;
@@ -1035,7 +1035,7 @@ void AgiEngine::recordImageStackCall(uint8 type, int16 p1, int16 p2, int16 p3,
 }
 
 void AgiEngine::replayImageStackCall(uint8 type, int16 p1, int16 p2, int16 p3,
-                                     int16 p4, int16 p5, int16 p6, int16 p7) {
+									 int16 p4, int16 p5, int16 p6, int16 p7) {
 	switch (type) {
 	case ADD_PIC:
 		debugC(8, kDebugLevelMain, "--- decoding picture %d ---", p1);

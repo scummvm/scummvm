@@ -44,8 +44,8 @@ namespace Wintermute {
 
 //////////////////////////////////////////////////////////////////////////
 Material::Material(BaseGame *inGame) : BaseNamedObject(inGame),
-                                       _surface(nullptr), _ownedSurface(false),
-                                       _sprite(nullptr), _theora(nullptr) {
+									   _surface(nullptr), _ownedSurface(false),
+									   _sprite(nullptr), _theora(nullptr) {
 }
 
 //////////////////////////////////////////////////////////////////////////

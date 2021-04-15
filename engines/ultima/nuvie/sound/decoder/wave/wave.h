@@ -60,12 +60,12 @@ class RewindableAudioStream;
  * raw PCM data, MS IMA ADPCM and MS ADPCM (uses makeADPCMStream internally).
  */
 extern bool loadWAVFromStream(
-    Common::SeekableReadStream &stream,
-    int &size,
-    int &rate,
-    uint8 &flags,
-    uint16 *wavType = 0,
-    int *blockAlign = 0);
+	Common::SeekableReadStream &stream,
+	int &size,
+	int &rate,
+	uint8 &flags,
+	uint16 *wavType = 0,
+	int *blockAlign = 0);
 
 /**
  * Try to load a WAVE from the given seekable stream and create an AudioStream
@@ -79,8 +79,8 @@ extern bool loadWAVFromStream(
  * @return  a new RewindableAudioStream, or NULL, if an error occurred
  */
 RewindableAudioStream *makeWAVStream(
-    Common::SeekableReadStream *stream,
-    DisposeAfterUse::Flag disposeAfterUse);
+	Common::SeekableReadStream *stream,
+	DisposeAfterUse::Flag disposeAfterUse);
 
 } // End of namespace Audio
 

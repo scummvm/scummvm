@@ -305,8 +305,8 @@ int run_dialog_script(DialogTopic *dtpp, int dialogID, int offse, int optionInde
 }
 
 int write_dialog_options(Bitmap *ds, bool ds_has_alpha, int dlgxp, int curyp, int numdisp, int mouseison, int areawid,
-                         int bullet_wid, int usingfont, DialogTopic *dtop, char *disporder, short *dispyp,
-                         int linespacing, int utextcol, int padding) {
+						 int bullet_wid, int usingfont, DialogTopic *dtop, char *disporder, short *dispyp,
+						 int linespacing, int utextcol, int padding) {
 	int ww;
 
 	color_t text_color;

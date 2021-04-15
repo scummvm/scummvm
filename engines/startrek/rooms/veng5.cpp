@@ -104,7 +104,7 @@ extern const RoomTextOffsets veng5TextOffsets[] = {
 };
 
 extern const RoomText veng5Texts[] = {
-      { -1, Common::UNK_LANG, "" }
+	  { -1, Common::UNK_LANG, "" }
 };
 
 void Room::veng5Tick1() {

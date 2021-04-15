@@ -76,11 +76,11 @@ class GlkMetaEngine : public MetaEngine {
 private:
 	Common::String findFileByGameId(const Common::String &gameId) const;
 public:
-    const char* getName() const override {
-        return "glk";
-    }
+	const char* getName() const override {
+		return "glk";
+	}
 
-    bool hasFeature(MetaEngineFeature f) const override;
+	bool hasFeature(MetaEngineFeature f) const override;
 	Common::Error createInstance(OSystem *syst, Engine **engine) const override;
 
 	SaveStateList listSaves(const char *target) const override;

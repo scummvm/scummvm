@@ -663,7 +663,7 @@ void DebugInputDialog::handleKeyDown(Common::KeyState state) {
 }
 
 LoomTownsDifficultyDialog::LoomTownsDifficultyDialog()
-    : Dialog("LoomTownsDifficultyDialog"), _difficulty(-1) {
+	: Dialog("LoomTownsDifficultyDialog"), _difficulty(-1) {
 	GUI::StaticTextWidget *text1 = new GUI::StaticTextWidget(this, "LoomTownsDifficultyDialog.Description1", _("Select a Proficiency Level."));
 	text1->setAlign(Graphics::kTextAlignCenter);
 	GUI::StaticTextWidget *text2 = new GUI::StaticTextWidget(this, "LoomTownsDifficultyDialog.Description2", _("Refer to your Loom(TM) manual for help."));

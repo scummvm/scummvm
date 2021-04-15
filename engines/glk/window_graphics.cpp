@@ -97,7 +97,7 @@ void GraphicsWindow::redraw() {
 }
 
 bool GraphicsWindow::drawPicture(const Common::String &image, int xpos, int ypos, bool scale,
-                                   uint imagewidth, uint imageheight) {
+								   uint imagewidth, uint imageheight) {
 	Picture *pic = g_vm->_pictures->load(image);
 	uint hyperlink = _attr.hyper;
 

@@ -57,7 +57,7 @@ int32 minX, maxX, minY, maxY, minZ, maxZ;
 
 // draw the special effects
 int32 DrawActorSpecialEffectsPC(int32 mflash, SVECTOR *mfpos, int32 mfh, int32 mfw, int32 bullet, SVECTOR *bulletPos, int32 bulletCol, Breath *breath, MATRIXPC *local2screen, int32 brightness,
-                              SVECTOR *minBBox, SVECTOR *maxBBox) {
+							  SVECTOR *minBBox, SVECTOR *maxBBox) {
 	// Put the correct rot and trans matrix in place
 	// transform model from world space to screen space
 	gte_SetRotMatrix_pc(local2screen);
@@ -246,13 +246,13 @@ void DrawBreathingPC(Breath *breath) {
 
 // 8 points on cubic shape, length by 2*radius (width) by 2*radius (height)...
 const short bulletOffsets[BULLET_POINTS][3] = {{-BULLET_RADIUS, BULLET_RADIUS, 0},
-                                               {BULLET_RADIUS, BULLET_RADIUS, 0},
-                                               {BULLET_RADIUS, -BULLET_RADIUS, 0},
-                                               {-BULLET_RADIUS, -BULLET_RADIUS, 0},
-                                               {-BULLET_RADIUS, BULLET_RADIUS, BULLET_LENGTH},
-                                               {BULLET_RADIUS, BULLET_RADIUS, BULLET_LENGTH},
-                                               {BULLET_RADIUS, -BULLET_RADIUS, BULLET_LENGTH},
-                                               {-BULLET_RADIUS, -BULLET_RADIUS, BULLET_LENGTH}};
+											   {BULLET_RADIUS, BULLET_RADIUS, 0},
+											   {BULLET_RADIUS, -BULLET_RADIUS, 0},
+											   {-BULLET_RADIUS, -BULLET_RADIUS, 0},
+											   {-BULLET_RADIUS, BULLET_RADIUS, BULLET_LENGTH},
+											   {BULLET_RADIUS, BULLET_RADIUS, BULLET_LENGTH},
+											   {BULLET_RADIUS, -BULLET_RADIUS, BULLET_LENGTH},
+											   {-BULLET_RADIUS, -BULLET_RADIUS, BULLET_LENGTH}};
 
 // 6 sides for cube....
 const int32 bulletQuads[BULLET_QUADS][4] = {{1, 0, 2, 3}, {0, 1, 4, 5}, {1, 2, 5, 6}, {2, 3, 6, 7}, {3, 0, 7, 4}, {4, 5, 7, 6}};

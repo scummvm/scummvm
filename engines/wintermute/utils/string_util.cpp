@@ -41,13 +41,13 @@ bool StringUtil::compareNoCase(const AnsiString &str1, const AnsiString &str2) {
 
 //////////////////////////////////////////////////////////////////////////
 /*bool StringUtil::CompareNoCase(const WideString &str1, const WideString &str2) {
-    WideString str1lc = str1;
-    WideString str2lc = str2;
+	WideString str1lc = str1;
+	WideString str2lc = str2;
 
-    ToLowerCase(str1lc);
-    ToLowerCase(str2lc);
+	ToLowerCase(str1lc);
+	ToLowerCase(str2lc);
 
-    return (str1lc == str2lc);
+	return (str1lc == str2lc);
 }*/
 
 //////////////////////////////////////////////////////////////////////////

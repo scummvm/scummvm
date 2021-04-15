@@ -661,7 +661,7 @@ void putpixel_compensate(Bitmap *ds, int xx, int yy, int col) {
 
 
 void draw_sprite_support_alpha(Bitmap *ds, bool ds_has_alpha, int xpos, int ypos, Bitmap *image, bool src_has_alpha,
-                               BlendMode blend_mode, int alpha) {
+							   BlendMode blend_mode, int alpha) {
 	if (alpha <= 0)
 		return;
 
@@ -678,7 +678,7 @@ void draw_sprite_support_alpha(Bitmap *ds, bool ds_has_alpha, int xpos, int ypos
 }
 
 void draw_sprite_slot_support_alpha(Bitmap *ds, bool ds_has_alpha, int xpos, int ypos, int src_slot,
-                                    BlendMode blend_mode, int alpha) {
+									BlendMode blend_mode, int alpha) {
 	draw_sprite_support_alpha(ds, ds_has_alpha, xpos, ypos, _GP(spriteset)[src_slot], (_GP(game).SpriteInfos[src_slot].Flags & SPF_ALPHACHANNEL) != 0,
 	                          blend_mode, alpha);
 }
@@ -988,9 +988,9 @@ Bitmap *recycle_bitmap(Bitmap *bimp, int coldep, int wid, int hit, bool make_tra
 // tint_amnt will be set to 0 if there is no tint enabled
 // if this is the case, then light_lev holds the light level (0=none)
 void get_local_tint(int xpp, int ypp, int nolight,
-                    int *tint_amnt, int *tint_r, int *tint_g,
-                    int *tint_b, int *tint_lit,
-                    int *light_lev) {
+					int *tint_amnt, int *tint_r, int *tint_g,
+					int *tint_b, int *tint_lit,
+					int *light_lev) {
 
 	int tint_level = 0, light_level = 0;
 	int tint_amount = 0;
@@ -1072,9 +1072,9 @@ void get_local_tint(int xpp, int ypp, int nolight,
 // Applies the specified RGB Tint or Light Level to the _G(actsps)
 // sprite indexed with actspsindex
 void apply_tint_or_light(int actspsindex, int light_level,
-                         int tint_amount, int tint_red, int tint_green,
-                         int tint_blue, int tint_light, int coldept,
-                         Bitmap *blitFrom) {
+						 int tint_amount, int tint_red, int tint_green,
+						 int tint_blue, int tint_light, int coldept,
+						 Bitmap *blitFrom) {
 
 // In a 256-colour game, we cannot do tinting or lightening
 // (but we can do darkening, if light_level < 0)
@@ -1140,8 +1140,8 @@ void apply_tint_or_light(int actspsindex, int light_level,
 // Returns 1 if something was drawn to _G(actsps); returns 0 if no
 // scaling or stretching was required, in which case nothing was done
 int scale_and_flip_sprite(int useindx, int coldept, int zoom_level,
-                          int sppic, int newwidth, int newheight,
-                          int isMirrored) {
+						  int sppic, int newwidth, int newheight,
+						  int isMirrored) {
 
 	int actsps_used = 1;
 

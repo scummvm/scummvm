@@ -81,8 +81,8 @@ enum demon2TextIds {
 // TODO: Finish floppy offsets
 extern const RoomTextOffsets demon2TextOffsets[] = {
 	{ TX_SPEAKER_KIRK, 2890, 0 },
-    { TX_SPEAKER_MCCOY, 2901, 0 },
-    { TX_SPEAKER_SPOCK, 2911, 0 },
+	{ TX_SPEAKER_MCCOY, 2901, 0 },
+	{ TX_SPEAKER_SPOCK, 2911, 0 },
 	{ TX_SPEAKER_EVERTS, 2921, 0 },
 	{ TX_DEM2_001, 3275, 0 },
 	{ TX_DEM2_002, 3732, 0 },
@@ -121,7 +121,7 @@ extern const RoomTextOffsets demon2TextOffsets[] = {
 };
 
 extern const RoomText demon2Texts[] = {
-    { -1, Common::UNK_LANG, "" }
+	{ -1, Common::UNK_LANG, "" }
 };
 
 void Room::demon2Tick1() {

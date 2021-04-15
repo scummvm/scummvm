@@ -54,8 +54,8 @@ bool reset_btn_pressed = false;
 bool power_btn_pressed = false;
 
 #if ((_V_MAJOR_ > 1) || \
-        (_V_MAJOR_ == 1 && _V_MINOR_ > 8 ) || \
-        (_V_MAJOR_ == 1 && _V_MINOR_ == 8 && _V_PATCH_ >= 18))
+		(_V_MAJOR_ == 1 && _V_MINOR_ > 8 ) || \
+		(_V_MAJOR_ == 1 && _V_MINOR_ == 8 && _V_PATCH_ >= 18))
 void reset_cb(u32, void *) {
 #else
 void reset_cb(void) {

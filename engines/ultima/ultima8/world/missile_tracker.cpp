@@ -33,8 +33,8 @@ namespace Ultima {
 namespace Ultima8 {
 
 MissileTracker::MissileTracker(const Item *item, int32 sx, int32 sy, int32 sz,
-                               int32 tx, int32 ty, int32 tz,
-                               int32 speed, int32 gravity) :
+							   int32 tx, int32 ty, int32 tz,
+							   int32 speed, int32 gravity) :
 		_destX(tx), _destY(ty), _destZ(tz), _gravity(gravity) {
 	_objId = item->getObjId();
 
@@ -42,7 +42,7 @@ MissileTracker::MissileTracker(const Item *item, int32 sx, int32 sy, int32 sz,
 }
 
 MissileTracker::MissileTracker(const Item *item, int32 tx, int32 ty, int32 tz,
-                               int32 speed, int32 gravity) :
+							   int32 speed, int32 gravity) :
 		  _destX(tx), _destY(ty), _destZ(tz), _gravity(gravity)  {
 	assert(item->getParent() == 0);
 

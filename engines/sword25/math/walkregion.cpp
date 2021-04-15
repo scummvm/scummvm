@@ -97,7 +97,7 @@ struct DijkstraNode {
 };
 
 static void initDijkstraNodes(DijkstraNode::Container &dijkstraNodes, const Region &region,
-                              const Vertex &start, const Common::Array<Vertex> &nodes) {
+							  const Vertex &start, const Common::Array<Vertex> &nodes) {
 	// Allocate sufficient space in the array
 	dijkstraNodes.resize(nodes.size());
 
@@ -126,8 +126,8 @@ static DijkstraNode::Iter chooseClosestNode(DijkstraNode::Container &nodes) {
 }
 
 static void relaxNodes(DijkstraNode::Container &nodes,
-                       const Common::Array< Common::Array<int> > &visibilityMatrix,
-                       const DijkstraNode::ConstIter &curNodeIter) {
+					   const Common::Array< Common::Array<int> > &visibilityMatrix,
+					   const DijkstraNode::ConstIter &curNodeIter) {
 	// All the successors of the current node that have not been chosen will be
 	// inserted into the boundary node list, and the cost will be updated if
 	// a shorter path has been found to them.
@@ -146,10 +146,10 @@ static void relaxNodes(DijkstraNode::Container &nodes,
 }
 
 static void relaxEndPoint(const Vertex &curNodePos,
-                          const DijkstraNode::ConstIter &curNodeIter,
-                          const Vertex &endPointPos,
-                          DijkstraNode &endPoint,
-                          const Region &region) {
+						  const DijkstraNode::ConstIter &curNodeIter,
+						  const Vertex &endPointPos,
+						  DijkstraNode &endPoint,
+						  const Region &region) {
 	if (region.isLineOfSight(curNodePos, endPointPos)) {
 		int totalCost = (*curNodeIter).cost + curNodePos.distance(endPointPos);
 		if (totalCost < endPoint.cost) {

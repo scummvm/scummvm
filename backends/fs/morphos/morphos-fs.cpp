@@ -149,7 +149,7 @@ MorphOSFilesystemNode::MorphOSFilesystemNode(BPTR pLock, const char *pDisplayNam
 		} else {
 			_bIsValid = true;
 	    }
-    }
+	}
 	FreeDosObject(DOS_FIB, fib);
 }
 

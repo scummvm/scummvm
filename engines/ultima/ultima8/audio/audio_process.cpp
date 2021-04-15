@@ -244,8 +244,8 @@ int AudioProcess::playSample(AudioSample *sample, int priority, int loops, uint3
 }
 
 void AudioProcess::playSFX(int sfxNum, int priority, ObjId objId, int loops,
-                           bool no_duplicates, uint32 pitchShift, uint16 volume,
-                           int16 lVol, int16 rVol, bool ambient) {
+						   bool no_duplicates, uint32 pitchShift, uint16 volume,
+						   int16 lVol, int16 rVol, bool ambient) {
 
 	SoundFlex *soundflx = GameData::get_instance()->getSoundFlex();
 

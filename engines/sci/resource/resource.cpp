@@ -2243,7 +2243,7 @@ Resource *ResourceManager::updateResource(ResourceId resId, ResourceSource *src,
 }
 
 int Resource::readResourceInfo(ResVersion volVersion, Common::SeekableReadStream *file,
-                                      uint32 &szPacked, ResourceCompression &compression) {
+									  uint32 &szPacked, ResourceCompression &compression) {
 	// SCI0 volume format:  {wResId wPacked+4 wUnpacked wCompression} = 8 bytes
 	// SCI1 volume format:  {bResType wResNumber wPacked+4 wUnpacked wCompression} = 9 bytes
 	// SCI1.1 volume format:  {bResType wResNumber wPacked wUnpacked wCompression} = 9 bytes

@@ -44,8 +44,8 @@ static const struct {
   operator const Graphics::PixelFormat&() const { return pixelFormat; }
 } screenFormats[] = {
   /* Note: These are ordered by _increasing_ preference, so that
-     CLUT8 appears at index 0.  getSupportedFormats() will return
-     them in reversed order. */
+	 CLUT8 appears at index 0.  getSupportedFormats() will return
+	 them in reversed order. */
   { Graphics::PixelFormat::createFormatCLUT8(), TA_TEXTUREMODE_ARGB1555 },
   { Graphics::PixelFormat(2,4,4,4,4,8,4,0,12), TA_TEXTUREMODE_ARGB4444 },
   { Graphics::PixelFormat(2,5,5,5,1,10,5,0,15), TA_TEXTUREMODE_ARGB1555 },
@@ -67,32 +67,32 @@ static void texture_memcpy64_pal(void *dest, void *src, int cnt, unsigned short 
 {
   unsigned char *s = (unsigned char *)src;
   unsigned int *d = (unsigned int *)(void *)
-    (0xe0000000 | (((unsigned long)dest) & 0x03ffffc0));
+	(0xe0000000 | (((unsigned long)dest) & 0x03ffffc0));
   QACR0 = ((0xa4000000>>26)<<2)&0x1c;
   QACR1 = ((0xa4000000>>26)<<2)&0x1c;
   while (cnt--) {
-    COPYPIXEL(0);
-    COPYPIXEL(1);
-    COPYPIXEL(2);
-    COPYPIXEL(3);
-    asm("pref @%0" : : "r" (s+4*16));
-    COPYPIXEL(4);
-    COPYPIXEL(5);
-    COPYPIXEL(6);
-    COPYPIXEL(7);
-    asm("pref @%0" : : "r" (d));
-    d += 8;
-    COPYPIXEL(0);
-    COPYPIXEL(1);
-    COPYPIXEL(2);
-    COPYPIXEL(3);
-    asm("pref @%0" : : "r" (s+4*16));
-    COPYPIXEL(4);
-    COPYPIXEL(5);
-    COPYPIXEL(6);
-    COPYPIXEL(7);
-    asm("pref @%0" : : "r" (d));
-    d += 8;
+	COPYPIXEL(0);
+	COPYPIXEL(1);
+	COPYPIXEL(2);
+	COPYPIXEL(3);
+	asm("pref @%0" : : "r" (s+4*16));
+	COPYPIXEL(4);
+	COPYPIXEL(5);
+	COPYPIXEL(6);
+	COPYPIXEL(7);
+	asm("pref @%0" : : "r" (d));
+	d += 8;
+	COPYPIXEL(0);
+	COPYPIXEL(1);
+	COPYPIXEL(2);
+	COPYPIXEL(3);
+	asm("pref @%0" : : "r" (s+4*16));
+	COPYPIXEL(4);
+	COPYPIXEL(5);
+	COPYPIXEL(6);
+	COPYPIXEL(7);
+	asm("pref @%0" : : "r" (d));
+	d += 8;
   }
 }
 
@@ -100,32 +100,32 @@ static void texture_memcpy64(void *dest, void *src, int cnt)
 {
   unsigned int *s = (unsigned int *)src;
   unsigned int *d = (unsigned int *)(void *)
-    (0xe0000000 | (((unsigned long)dest) & 0x03ffffc0));
+	(0xe0000000 | (((unsigned long)dest) & 0x03ffffc0));
   QACR0 = ((0xa4000000>>26)<<2)&0x1c;
   QACR1 = ((0xa4000000>>26)<<2)&0x1c;
   while (cnt--) {
-    d[0] = *s++;
-    d[1] = *s++;
-    d[2] = *s++;
-    d[3] = *s++;
-    asm("pref @%0" : : "r" (s+16));
-    d[4] = *s++;
-    d[5] = *s++;
-    d[6] = *s++;
-    d[7] = *s++;
-    asm("pref @%0" : : "r" (d));
-    d += 8;
-    d[0] = *s++;
-    d[1] = *s++;
-    d[2] = *s++;
-    d[3] = *s++;
-    asm("pref @%0" : : "r" (s+16));
-    d[4] = *s++;
-    d[5] = *s++;
-    d[6] = *s++;
-    d[7] = *s++;
-    asm("pref @%0" : : "r" (d));
-    d += 8;
+	d[0] = *s++;
+	d[1] = *s++;
+	d[2] = *s++;
+	d[3] = *s++;
+	asm("pref @%0" : : "r" (s+16));
+	d[4] = *s++;
+	d[5] = *s++;
+	d[6] = *s++;
+	d[7] = *s++;
+	asm("pref @%0" : : "r" (d));
+	d += 8;
+	d[0] = *s++;
+	d[1] = *s++;
+	d[2] = *s++;
+	d[3] = *s++;
+	asm("pref @%0" : : "r" (s+16));
+	d[4] = *s++;
+	d[5] = *s++;
+	d[6] = *s++;
+	d[7] = *s++;
+	asm("pref @%0" : : "r" (d));
+	d += 8;
   }
 }
 
@@ -134,12 +134,12 @@ void commit_dummy_transpoly()
   struct polygon_list mypoly;
 
   mypoly.cmd =
-    TA_CMD_POLYGON|TA_CMD_POLYGON_TYPE_TRANSPARENT|TA_CMD_POLYGON_SUBLIST|
-    TA_CMD_POLYGON_STRIPLENGTH_2|TA_CMD_POLYGON_PACKED_COLOUR;
+	TA_CMD_POLYGON|TA_CMD_POLYGON_TYPE_TRANSPARENT|TA_CMD_POLYGON_SUBLIST|
+	TA_CMD_POLYGON_STRIPLENGTH_2|TA_CMD_POLYGON_PACKED_COLOUR;
   mypoly.mode1 = TA_POLYMODE1_Z_ALWAYS|TA_POLYMODE1_NO_Z_UPDATE;
   mypoly.mode2 =
-    TA_POLYMODE2_BLEND_SRC_ALPHA|TA_POLYMODE2_BLEND_DST_INVALPHA|
-    TA_POLYMODE2_FOG_DISABLED|TA_POLYMODE2_ENABLE_ALPHA;
+	TA_POLYMODE2_BLEND_SRC_ALPHA|TA_POLYMODE2_BLEND_DST_INVALPHA|
+	TA_POLYMODE2_FOG_DISABLED|TA_POLYMODE2_ENABLE_ALPHA;
   mypoly.texture = 0;
   mypoly.red = mypoly.green = mypoly.blue = mypoly.alpha = 0;
   ta_commit_list(&mypoly);
@@ -150,12 +150,12 @@ void OSystem_Dreamcast::setPalette(const byte *colors, uint start, uint num)
 {
   unsigned short *dst = palette + start;
   if (num>0)
-    while ( num-- ) {
-      *dst++ = ((colors[0]<<7)&0x7c00)|
+	while ( num-- ) {
+	  *dst++ = ((colors[0]<<7)&0x7c00)|
 	((colors[1]<<2)&0x03e0)|
 	((colors[2]>>3)&0x001f);
-      colors += 3;
-    }
+	  colors += 3;
+	}
   _screen_dirty = true;
 }
 
@@ -163,12 +163,12 @@ void OSystem_Dreamcast::setCursorPalette(const byte *colors, uint start, uint nu
 {
   unsigned short *dst = cursor_palette + start;
   if (num>0)
-    while ( num-- ) {
-      *dst++ = ((colors[0]<<7)&0x7c00)|
+	while ( num-- ) {
+	  *dst++ = ((colors[0]<<7)&0x7c00)|
 	((colors[1]<<2)&0x03e0)|
 	((colors[2]>>3)&0x001f);
-      colors += 3;
-    }
+	  colors += 3;
+	}
   _enable_cursor_palette = true;
 }
 
@@ -176,13 +176,13 @@ void OSystem_Dreamcast::grabPalette(byte *colors, uint start, uint num) const
 {
   const unsigned short *src = palette + start;
   if (num>0)
-    while ( num-- ) {
-      unsigned short p = *src++;
-      colors[0] = ((p&0x7c00)>>7)|((p&0x7000)>>12);
-      colors[1] = ((p&0x03e0)>>2)|((p&0x0380)>>7);
-      colors[2] = ((p&0x001f)<<3)|((p&0x001c)>>2);
-      colors += 3;
-    }
+	while ( num-- ) {
+	  unsigned short p = *src++;
+	  colors[0] = ((p&0x7c00)>>7)|((p&0x7000)>>12);
+	  colors[1] = ((p&0x03e0)>>2)|((p&0x0380)>>7);
+	  colors[2] = ((p&0x001f)<<3)|((p&0x001c)>>2);
+	  colors += 3;
+	}
 }
 
 Graphics::PixelFormat OSystem_Dreamcast::getScreenFormat() const
@@ -195,22 +195,22 @@ Common::List<Graphics::PixelFormat> OSystem_Dreamcast::getSupportedFormats() con
   Common::List<Graphics::PixelFormat> list;
   unsigned i;
   for (i=0; i<NUM_FORMATS; i++)
-    list.push_front(screenFormats[i]);
+	list.push_front(screenFormats[i]);
   return list;
 }
 
 void OSystem_Dreamcast::setScaling()
 {
   if (_screen_w > 400) {
-    _xscale = _yscale = 1.0;
-    _top_offset = (SCREEN_H-_screen_h)>>1;
+	_xscale = _yscale = 1.0;
+	_top_offset = (SCREEN_H-_screen_h)>>1;
   } else if (_aspect_stretch && _screen_w == 320 && _screen_h == 200) {
-    _xscale = SCREEN_W/320.0;
-    _yscale = SCREEN_H/200.0;
-    _top_offset = 0;
+	_xscale = SCREEN_W/320.0;
+	_yscale = SCREEN_H/200.0;
+	_top_offset = 0;
   } else {
-    _xscale = _yscale = 2.0;
-    _top_offset = (SCREEN_H>>1)-_screen_h;
+	_xscale = _yscale = 2.0;
+	_top_offset = (SCREEN_H>>1)-_screen_h;
   }
 }
 
@@ -220,8 +220,8 @@ void OSystem_Dreamcast::initSize(uint w, uint h, const Graphics::PixelFormat *fo
 
   int i = 0;
   if (format != NULL)
-    for (i=NUM_FORMATS-1; i>0; --i)
-      if (*format == screenFormats[i])
+	for (i=NUM_FORMATS-1; i>0; --i)
+	  if (*format == screenFormats[i])
 	break;
   _screenFormat = i;
 
@@ -236,18 +236,18 @@ void OSystem_Dreamcast::initSize(uint w, uint h, const Graphics::PixelFormat *fo
   setScaling();
   ta_sync();
   if (!screen)
-    screen = new unsigned char[SCREEN_W*SCREEN_H*2];
+	screen = new unsigned char[SCREEN_W*SCREEN_H*2];
   if (!overlay)
-    overlay = new unsigned short[OVL_W*OVL_H];
+	overlay = new unsigned short[OVL_W*OVL_H];
   for (i=0; i<NUM_BUFFERS; i++)
-    if (!screen_tx[i])
-      screen_tx[i] = ta_txalloc(SCREEN_W*SCREEN_H*2);
+	if (!screen_tx[i])
+	  screen_tx[i] = ta_txalloc(SCREEN_W*SCREEN_H*2);
   for (i=0; i<NUM_BUFFERS; i++)
-    if (!mouse_tx[i])
-      mouse_tx[i] = ta_txalloc(MOUSE_W*MOUSE_H*2);
+	if (!mouse_tx[i])
+	  mouse_tx[i] = ta_txalloc(MOUSE_W*MOUSE_H*2);
   for (i=0; i<NUM_BUFFERS; i++)
-    if (!ovl_tx[i])
-      ovl_tx[i] = ta_txalloc(OVL_TXSTRIDE*OVL_H*2);
+	if (!ovl_tx[i])
+	  ovl_tx[i] = ta_txalloc(OVL_TXSTRIDE*OVL_H*2);
   _screen_buffer = 0;
   _mouse_buffer = 0;
   _overlay_buffer = 0;
@@ -265,16 +265,16 @@ void OSystem_Dreamcast::copyRectToScreen(const void *buf, int pitch, int x, int 
 					 int w, int h)
 {
   if (w<1 || h<1)
-    return;
+	return;
   if (_screenFormat != 0) {
-    x<<=1; w<<=1;
+	x<<=1; w<<=1;
   }
   unsigned char *dst = screen + y*SCREEN_W*2 + x;
   const byte *src = (const byte *)buf;
   do {
-    memcpy(dst, src, w);
-    dst += SCREEN_W*2;
-    src += pitch;
+	memcpy(dst, src, w);
+	dst += SCREEN_W*2;
+	src += pitch;
   } while (--h);
   _screen_dirty = true;
 }
@@ -307,15 +307,15 @@ void OSystem_Dreamcast::setMouseCursor(const void *buf, uint w, uint h,
 
   int i = 0;
   if (format != NULL)
-    for (i=NUM_FORMATS-1; i>0; --i)
-      if (*format == screenFormats[i])
+	for (i=NUM_FORMATS-1; i>0; --i)
+	  if (*format == screenFormats[i])
 	break;
   _mouseFormat = i;
 
   free(_ms_buf);
 
   if (_mouseFormat != 0)
-    w <<= 1;
+	w <<= 1;
 
   _ms_buf = (byte *)malloc(w * h);
   memcpy(_ms_buf, buf, w * h);
@@ -331,49 +331,49 @@ void OSystem_Dreamcast::updateScreenTextures(void)
 {
   if (_screen_dirty) {
 
-    _screen_buffer++;
-    _screen_buffer &= NUM_BUFFERS-1;
+	_screen_buffer++;
+	_screen_buffer &= NUM_BUFFERS-1;
 
-    unsigned short *dst = (unsigned short *)screen_tx[_screen_buffer];
-    unsigned char *src = screen;
+	unsigned short *dst = (unsigned short *)screen_tx[_screen_buffer];
+	unsigned char *src = screen;
 
-    // while ((*((volatile unsigned int *)(void *)0xa05f810c) & 0x3ff) != 200);
-    // *((volatile unsigned int *)(void *)0xa05f8040) = 0xff0000;
+	// while ((*((volatile unsigned int *)(void *)0xa05f810c) & 0x3ff) != 200);
+	// *((volatile unsigned int *)(void *)0xa05f8040) = 0xff0000;
 
-    if (_screenFormat == 0)
-      for ( int y = 0; y<_screen_h; y++ )
-      {
+	if (_screenFormat == 0)
+	  for ( int y = 0; y<_screen_h; y++ )
+	  {
 	texture_memcpy64_pal( dst, src, _screen_w>>5, palette );
 	src += SCREEN_W*2;
 	dst += SCREEN_W;
-      }
-    else
-      for ( int y = 0; y<_screen_h; y++ )
-      {
+	  }
+	else
+	  for ( int y = 0; y<_screen_h; y++ )
+	  {
 	texture_memcpy64( dst, src, _screen_w>>5 );
 	src += SCREEN_W*2;
 	dst += SCREEN_W;
-      }
+	  }
 
-    _screen_dirty = false;
+	_screen_dirty = false;
   }
 
   if ( _overlay_visible && _overlay_dirty ) {
 
-    _overlay_buffer++;
-    _overlay_buffer &= NUM_BUFFERS-1;
+	_overlay_buffer++;
+	_overlay_buffer &= NUM_BUFFERS-1;
 
-    unsigned short *dst = (unsigned short *)ovl_tx[_overlay_buffer];
-    unsigned short *src = overlay;
+	unsigned short *dst = (unsigned short *)ovl_tx[_overlay_buffer];
+	unsigned short *src = overlay;
 
-    for ( int y = 0; y<OVL_H; y++ )
-    {
-      texture_memcpy64( dst, src, OVL_W>>5 );
-      src += OVL_W;
-      dst += OVL_TXSTRIDE;
-    }
+	for ( int y = 0; y<OVL_H; y++ )
+	{
+	  texture_memcpy64( dst, src, OVL_W>>5 );
+	  src += OVL_W;
+	  dst += OVL_TXSTRIDE;
+	}
 
-    _overlay_dirty = false;
+	_overlay_dirty = false;
   }
 }
 
@@ -385,15 +385,15 @@ void OSystem_Dreamcast::updateScreenPolygons(void)
   // *((volatile unsigned int *)(void *)0xa05f8040) = 0x00ff00;
 
   mypoly.cmd =
-    TA_CMD_POLYGON|TA_CMD_POLYGON_TYPE_OPAQUE|TA_CMD_POLYGON_SUBLIST|
-    TA_CMD_POLYGON_STRIPLENGTH_2|TA_CMD_POLYGON_PACKED_COLOUR|TA_CMD_POLYGON_TEXTURED;
+	TA_CMD_POLYGON|TA_CMD_POLYGON_TYPE_OPAQUE|TA_CMD_POLYGON_SUBLIST|
+	TA_CMD_POLYGON_STRIPLENGTH_2|TA_CMD_POLYGON_PACKED_COLOUR|TA_CMD_POLYGON_TEXTURED;
   mypoly.mode1 = TA_POLYMODE1_Z_ALWAYS|TA_POLYMODE1_NO_Z_UPDATE;
   mypoly.mode2 =
-    TA_POLYMODE2_BLEND_SRC|TA_POLYMODE2_FOG_DISABLED|TA_POLYMODE2_TEXTURE_REPLACE|
-    TA_POLYMODE2_U_SIZE_1024|TA_POLYMODE2_V_SIZE_1024;
+	TA_POLYMODE2_BLEND_SRC|TA_POLYMODE2_FOG_DISABLED|TA_POLYMODE2_TEXTURE_REPLACE|
+	TA_POLYMODE2_U_SIZE_1024|TA_POLYMODE2_V_SIZE_1024;
   mypoly.texture = screenFormats[_screenFormat].textureFormat|
-    TA_TEXTUREMODE_NON_TWIDDLED|TA_TEXTUREMODE_STRIDE|
-    TA_TEXTUREMODE_ADDRESS(screen_tx[_screen_buffer]);
+	TA_TEXTUREMODE_NON_TWIDDLED|TA_TEXTUREMODE_STRIDE|
+	TA_TEXTUREMODE_ADDRESS(screen_tx[_screen_buffer]);
 
   mypoly.red = mypoly.green = mypoly.blue = mypoly.alpha = 0;
 
@@ -430,70 +430,70 @@ void OSystem_Dreamcast::updateScreenPolygons(void)
   ta_commit_end();
 
   if (_overlay_visible) {
-    if (_overlay_fade < 1.0)
-      _overlay_fade += 0.125;
+	if (_overlay_fade < 1.0)
+	  _overlay_fade += 0.125;
   } else {
-    if (_overlay_fade > 0)
-      _overlay_fade -= 0.125;
+	if (_overlay_fade > 0)
+	  _overlay_fade -= 0.125;
   }
 
   if (_overlay_fade > 0.0) {
 
-    mypoly.cmd =
-      TA_CMD_POLYGON|TA_CMD_POLYGON_TYPE_TRANSPARENT|TA_CMD_POLYGON_SUBLIST|
-      TA_CMD_POLYGON_STRIPLENGTH_2|TA_CMD_POLYGON_PACKED_COLOUR|TA_CMD_POLYGON_TEXTURED;
-    mypoly.mode1 = TA_POLYMODE1_Z_ALWAYS|TA_POLYMODE1_NO_Z_UPDATE;
-    mypoly.mode2 =
-      TA_POLYMODE2_BLEND_SRC/*_ALPHA*/|TA_POLYMODE2_BLEND_DST_INVALPHA|
-      TA_POLYMODE2_ENABLE_ALPHA|
-      TA_POLYMODE2_FOG_DISABLED|TA_POLYMODE2_TEXTURE_MODULATE_ALPHA|
-      TA_POLYMODE2_U_SIZE_512|TA_POLYMODE2_V_SIZE_512;
-    mypoly.texture = TA_TEXTUREMODE_ARGB4444|TA_TEXTUREMODE_NON_TWIDDLED|
-      TA_TEXTUREMODE_ADDRESS(ovl_tx[_overlay_buffer]);
+	mypoly.cmd =
+	  TA_CMD_POLYGON|TA_CMD_POLYGON_TYPE_TRANSPARENT|TA_CMD_POLYGON_SUBLIST|
+	  TA_CMD_POLYGON_STRIPLENGTH_2|TA_CMD_POLYGON_PACKED_COLOUR|TA_CMD_POLYGON_TEXTURED;
+	mypoly.mode1 = TA_POLYMODE1_Z_ALWAYS|TA_POLYMODE1_NO_Z_UPDATE;
+	mypoly.mode2 =
+	  TA_POLYMODE2_BLEND_SRC/*_ALPHA*/|TA_POLYMODE2_BLEND_DST_INVALPHA|
+	  TA_POLYMODE2_ENABLE_ALPHA|
+	  TA_POLYMODE2_FOG_DISABLED|TA_POLYMODE2_TEXTURE_MODULATE_ALPHA|
+	  TA_POLYMODE2_U_SIZE_512|TA_POLYMODE2_V_SIZE_512;
+	mypoly.texture = TA_TEXTUREMODE_ARGB4444|TA_TEXTUREMODE_NON_TWIDDLED|
+	  TA_TEXTUREMODE_ADDRESS(ovl_tx[_overlay_buffer]);
 
-    mypoly.red = mypoly.green = mypoly.blue = mypoly.alpha = 0.0;
+	mypoly.red = mypoly.green = mypoly.blue = mypoly.alpha = 0.0;
 
-    ta_commit_list(&mypoly);
+	ta_commit_list(&mypoly);
 
-    myvertex.cmd = TA_CMD_VERTEX;
-    myvertex.ocolour = 0;
-    myvertex.colour = 0xffffff|(((int)(255*_overlay_fade))<<24);
+	myvertex.cmd = TA_CMD_VERTEX;
+	myvertex.ocolour = 0;
+	myvertex.colour = 0xffffff|(((int)(255*_overlay_fade))<<24);
 
-    myvertex.z = 0.5;
-    myvertex.u = 0.0;
-    myvertex.v = 0.0;
+	myvertex.z = 0.5;
+	myvertex.u = 0.0;
+	myvertex.v = 0.0;
 
-    myvertex.x = _overlay_x*_xscale+LEFT_OFFSET;
-    myvertex.y = _overlay_y*_yscale+TOP_OFFSET;
-    ta_commit_list(&myvertex);
+	myvertex.x = _overlay_x*_xscale+LEFT_OFFSET;
+	myvertex.y = _overlay_y*_yscale+TOP_OFFSET;
+	ta_commit_list(&myvertex);
 
-    myvertex.x += OVL_W*_xscale;
-    myvertex.u = OVL_W*(1.0/512.0);
-    ta_commit_list(&myvertex);
+	myvertex.x += OVL_W*_xscale;
+	myvertex.u = OVL_W*(1.0/512.0);
+	ta_commit_list(&myvertex);
 
-    myvertex.x = _overlay_x*_xscale;
-    myvertex.y += OVL_H*_yscale;
-    myvertex.u = 0.0;
-    myvertex.v = OVL_H*(1.0/512.0);
-    ta_commit_list(&myvertex);
+	myvertex.x = _overlay_x*_xscale;
+	myvertex.y += OVL_H*_yscale;
+	myvertex.u = 0.0;
+	myvertex.v = OVL_H*(1.0/512.0);
+	ta_commit_list(&myvertex);
 
-    myvertex.x += OVL_W*_xscale;
-    myvertex.u = OVL_W*(1.0/512.0);
-    myvertex.cmd |= TA_CMD_VERTEX_EOS;
-    ta_commit_list(&myvertex);
+	myvertex.x += OVL_W*_xscale;
+	myvertex.u = OVL_W*(1.0/512.0);
+	myvertex.cmd |= TA_CMD_VERTEX_EOS;
+	ta_commit_list(&myvertex);
   }
 
   if (_softkbd_on)
-    if (_softkbd_motion < 120)
-      _softkbd_motion += 10;
-    else
-      ;
+	if (_softkbd_motion < 120)
+	  _softkbd_motion += 10;
+	else
+	  ;
   else
-    if (_softkbd_motion > 0)
-      _softkbd_motion -= 10;
+	if (_softkbd_motion > 0)
+	  _softkbd_motion -= 10;
 
   if (_softkbd_motion)
-    _softkbd.draw(330.0*sin(0.013*_softkbd_motion) - 320.0, 200.0,
+	_softkbd.draw(330.0*sin(0.013*_softkbd_motion) - 320.0, 200.0,
 		  120-_softkbd_motion);
 
   // *((volatile unsigned int *)(void *)0xa05f8040) = 0xffff00;
@@ -516,15 +516,15 @@ void OSystem_Dreamcast::maybeRefreshScreen(void)
 {
   unsigned int t = Timer();
   if((int)(t-_last_screen_refresh) > USEC_TO_TIMER(30000))
-    updateScreenPolygons();
+	updateScreenPolygons();
 }
 
 void OSystem_Dreamcast::drawMouse(int xdraw, int ydraw, int w, int h,
 				  unsigned char *buf, bool visible)
 {
   if (!visible || buf == NULL || !w || !h || w>MOUSE_W || h>MOUSE_H) {
-    commit_dummy_transpoly();
-    return;
+	commit_dummy_transpoly();
+	return;
   }
 
   struct polygon_list mypoly;
@@ -537,26 +537,26 @@ void OSystem_Dreamcast::drawMouse(int xdraw, int ydraw, int w, int h,
   unsigned int texturemode = screenFormats[_mouseFormat].textureFormat;
 
   if (_mouseFormat == 0) {
-    unsigned short *pal = _enable_cursor_palette? cursor_palette : palette;
-    for (int y=0; y<h; y++) {
-      int x;
-      for (x=0; x<w; x++)
+	unsigned short *pal = _enable_cursor_palette? cursor_palette : palette;
+	for (int y=0; y<h; y++) {
+	  int x;
+	  for (x=0; x<w; x++)
 	if (*buf == _ms_keycolor) {
 	  *dst++ = 0;
 	  buf++;
 	} else
 	  *dst++ = pal[*buf++]|0x8000;
-      dst += MOUSE_W-x;
-    }
+	  dst += MOUSE_W-x;
+	}
   } else if(texturemode == TA_TEXTUREMODE_RGB565 &&
 	    _ms_keycolor<=0xffff) {
-    /* Special handling when doing colorkey on RGB565; we need
-       to convert to ARGB1555 to get an alpha channel... */
-    texturemode = TA_TEXTUREMODE_ARGB1555;
-    unsigned short *bufs = (unsigned short *)buf;
-    for (int y=0; y<h; y++) {
-      int x;
-      for (x=0; x<w; x++)
+	/* Special handling when doing colorkey on RGB565; we need
+	   to convert to ARGB1555 to get an alpha channel... */
+	texturemode = TA_TEXTUREMODE_ARGB1555;
+	unsigned short *bufs = (unsigned short *)buf;
+	for (int y=0; y<h; y++) {
+	  int x;
+	  for (x=0; x<w; x++)
 	if (*bufs == _ms_keycolor) {
 	  *dst++ = 0;
 	  bufs++;
@@ -564,32 +564,32 @@ void OSystem_Dreamcast::drawMouse(int xdraw, int ydraw, int w, int h,
 	  unsigned short p = *bufs++;
 	  *dst++ = (p&0x1f)|((p&0xffc0)>>1)|0x8000;
 	}
-      dst += MOUSE_W-x;
-    }
+	  dst += MOUSE_W-x;
+	}
   } else {
-    unsigned short *bufs = (unsigned short *)buf;
-    for (int y=0; y<h; y++) {
-      int x;
-      for (x=0; x<w; x++)
+	unsigned short *bufs = (unsigned short *)buf;
+	for (int y=0; y<h; y++) {
+	  int x;
+	  for (x=0; x<w; x++)
 	if (*bufs == _ms_keycolor) {
 	  *dst++ = 0;
 	  bufs++;
 	} else
 	  *dst++ = *bufs++;
-      dst += MOUSE_W-x;
-    }
+	  dst += MOUSE_W-x;
+	}
   }
 
   mypoly.cmd =
-    TA_CMD_POLYGON|TA_CMD_POLYGON_TYPE_TRANSPARENT|TA_CMD_POLYGON_SUBLIST|
-    TA_CMD_POLYGON_STRIPLENGTH_2|TA_CMD_POLYGON_PACKED_COLOUR|TA_CMD_POLYGON_TEXTURED;
+	TA_CMD_POLYGON|TA_CMD_POLYGON_TYPE_TRANSPARENT|TA_CMD_POLYGON_SUBLIST|
+	TA_CMD_POLYGON_STRIPLENGTH_2|TA_CMD_POLYGON_PACKED_COLOUR|TA_CMD_POLYGON_TEXTURED;
   mypoly.mode1 = TA_POLYMODE1_Z_ALWAYS|TA_POLYMODE1_NO_Z_UPDATE;
   mypoly.mode2 =
-    TA_POLYMODE2_BLEND_SRC_ALPHA|TA_POLYMODE2_BLEND_DST_INVALPHA|
-    TA_POLYMODE2_FOG_DISABLED|TA_POLYMODE2_TEXTURE_REPLACE|
-    TA_POLYMODE2_U_SIZE_128|TA_POLYMODE2_V_SIZE_128;
+	TA_POLYMODE2_BLEND_SRC_ALPHA|TA_POLYMODE2_BLEND_DST_INVALPHA|
+	TA_POLYMODE2_FOG_DISABLED|TA_POLYMODE2_TEXTURE_REPLACE|
+	TA_POLYMODE2_U_SIZE_128|TA_POLYMODE2_V_SIZE_128;
   mypoly.texture = texturemode|TA_TEXTUREMODE_NON_TWIDDLED|
-    TA_TEXTUREMODE_ADDRESS(mouse_tx[_mouse_buffer]);
+	TA_TEXTUREMODE_ADDRESS(mouse_tx[_mouse_buffer]);
 
   mypoly.red = mypoly.green = mypoly.blue = mypoly.alpha = 0;
 
@@ -625,11 +625,11 @@ void OSystem_Dreamcast::drawMouse(int xdraw, int ydraw, int w, int h,
 void OSystem_Dreamcast::mouseToSoftKbd(int x, int y, int &rx, int &ry) const
 {
   if (_softkbd_motion) {
-    rx = (int)(x*_xscale - (330.0*sin(0.013*_softkbd_motion) + LEFT_OFFSET - 320.0));
-    ry = (int)(y*_yscale + TOP_OFFSET - 200.0);
+	rx = (int)(x*_xscale - (330.0*sin(0.013*_softkbd_motion) + LEFT_OFFSET - 320.0));
+	ry = (int)(y*_yscale + TOP_OFFSET - 200.0);
   } else {
-    rx = -1;
-    ry = -1;
+	rx = -1;
+	ry = -1;
   }
 }
 
@@ -648,7 +648,7 @@ void OSystem_Dreamcast::hideOverlay()
 void OSystem_Dreamcast::clearOverlay()
 {
   if (!_overlay_visible)
-    return;
+	return;
 
   memset(overlay, 0, OVL_W*OVL_H*sizeof(unsigned short));
 
@@ -661,9 +661,9 @@ void OSystem_Dreamcast::grabOverlay(void *buf, int pitch)
   unsigned short *src = overlay;
   unsigned char *dst = (unsigned char *)buf;
   do {
-    memcpy(dst, src, OVL_W*sizeof(int16));
-    src += OVL_W;
-    dst += pitch;
+	memcpy(dst, src, OVL_W*sizeof(int16));
+	src += OVL_W;
+	dst += pitch;
   } while (--h);
 }
 
@@ -671,13 +671,13 @@ void OSystem_Dreamcast::copyRectToOverlay(const void *buf, int pitch,
 					  int x, int y, int w, int h)
 {
   if (w<1 || h<1)
-    return;
+	return;
   unsigned short *dst = overlay + y*OVL_W + x;
   const unsigned char *src = (const unsigned char *)buf;
   do {
-    memcpy(dst, src, w*sizeof(int16));
-    dst += OVL_W;
-    src += pitch;
+	memcpy(dst, src, w*sizeof(int16));
+	dst += OVL_W;
+	src += pitch;
   } while (--h);
   _overlay_dirty = true;
 }
@@ -685,7 +685,7 @@ void OSystem_Dreamcast::copyRectToOverlay(const void *buf, int pitch,
 Graphics::Surface *OSystem_Dreamcast::lockScreen()
 {
   if (!screen)
-    return 0;
+	return 0;
 
   _framebuffer.init(_screen_w, _screen_h, SCREEN_W*2, screen, screenFormats[_screenFormat]);
 

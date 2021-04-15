@@ -69,7 +69,7 @@ bool CryOmni3DEngine::hasFeature(EngineFeature f) const {
 
 class CryOmni3DMetaEngine : public AdvancedMetaEngine {
 public:
-    const char *getName() const override {
+	const char *getName() const override {
 		return "cryomni3d";
 	}
 

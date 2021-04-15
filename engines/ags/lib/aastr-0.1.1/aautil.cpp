@@ -1553,7 +1553,7 @@ void _aa_masked_put_rgb16(byte *addr, int _x) {
 #ifdef ALLEGRO_COLOR24
 void _aa_masked_put_rgb24 (byte *addr, int _x) {
   if (!_aa.transparent)
-    bmp_write24 (addr + 3 * _x, makecol24 (_aa.r, _aa.g, _aa.b));
+	bmp_write24 (addr + 3 * _x, makecol24 (_aa.r, _aa.g, _aa.b));
 }
 #endif
 

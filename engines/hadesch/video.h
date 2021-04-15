@@ -55,7 +55,7 @@ static const int kDefaultSpeed = 100;
 
 class Renderable {
 public:
-        Renderable(Common::Array<PodImage> images);
+		Renderable(Common::Array<PodImage> images);
 	const PodImage &getFrame(int time);
 	void startAnimation(int startms, int msperframe,
 			    bool loop, int first, int last);
@@ -211,7 +211,7 @@ public:
 			     PlayAnimParams params,
 			     EventHandlerWrapper callbackEvent = EventHandlerWrapper(),
 			     Common::Point offset = Common::Point(0, 0));
-    	void playAnimWithMusic(const LayerId &animName,
+		void playAnimWithMusic(const LayerId &animName,
 			       const Common::String &soundName,
 			       int zValue,
 			       PlayAnimParams params,

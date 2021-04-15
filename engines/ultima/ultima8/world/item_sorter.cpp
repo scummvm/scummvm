@@ -598,7 +598,7 @@ ItemSorter::~ItemSorter() {
 }
 
 void ItemSorter::BeginDisplayList(RenderSurface *rs,
-                                  int32 camx, int32 camy, int32 camz) {
+								  int32 camx, int32 camy, int32 camz) {
 	// Get the _shapes, if required
 	if (!_shapes) _shapes = GameData::get_instance()->getMainShapes();
 

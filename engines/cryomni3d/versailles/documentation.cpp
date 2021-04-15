@@ -82,8 +82,8 @@ const Versailles_Documentation::TimelineEntry Versailles_Documentation::kTimelin
 };
 
 void Versailles_Documentation::init(const Sprites *sprites, FontManager *fontManager,
-                                    const Common::StringArray *messages, CryOmni3DEngine *engine,
-                                    const Common::String &allDocsFileName, const Common::String &linksDocsFileName) {
+									const Common::StringArray *messages, CryOmni3DEngine *engine,
+									const Common::String &allDocsFileName, const Common::String &linksDocsFileName) {
 	_sprites = sprites;
 	_fontManager = fontManager;
 	_messages = messages;
@@ -669,7 +669,7 @@ void Versailles_Documentation::docAreaPrepareNavigation() {
 }
 
 void Versailles_Documentation::docAreaPrepareRecord(Graphics::ManagedSurface &surface,
-        MouseBoxes &boxes) {
+		MouseBoxes &boxes) {
 	boxes.reset();
 
 	setupRecordBoxes(true, boxes);
@@ -698,7 +698,7 @@ void Versailles_Documentation::docAreaPrepareRecord(Graphics::ManagedSurface &su
 }
 
 uint Versailles_Documentation::docAreaHandleRecord(Graphics::ManagedSurface &surface,
-        MouseBoxes &boxes, Common::String &nextRecord) {
+		MouseBoxes &boxes, Common::String &nextRecord) {
 	// Hovering is only handled for timeline entries
 	_engine->setCursor(181);
 	_engine->showMouse(true);
@@ -1318,7 +1318,7 @@ Common::String Versailles_Documentation::docAreaHandleCastleMap() {
 }
 
 void Versailles_Documentation::inGamePrepareRecord(Graphics::ManagedSurface &surface,
-        MouseBoxes &boxes) {
+		MouseBoxes &boxes) {
 	_categoryStartRecord = "";
 	_categoryEndRecord = "";
 	_categoryTitle = "";
@@ -1350,7 +1350,7 @@ void Versailles_Documentation::inGamePrepareRecord(Graphics::ManagedSurface &sur
 }
 
 uint Versailles_Documentation::inGameHandleRecord(Graphics::ManagedSurface &surface,
-        MouseBoxes &boxes, Common::String &nextRecord) {
+		MouseBoxes &boxes, Common::String &nextRecord) {
 	_engine->setCursor(181);
 	_engine->showMouse(true);
 
@@ -1401,8 +1401,8 @@ uint Versailles_Documentation::inGameHandleRecord(Graphics::ManagedSurface &surf
 }
 
 void Versailles_Documentation::drawRecordData(Graphics::ManagedSurface &surface,
-        const Common::String &text, const Common::String &title,
-        const Common::String &subtitle, const Common::String &caption) {
+		const Common::String &text, const Common::String &title,
+		const Common::String &subtitle, const Common::String &caption) {
 	unsigned char foreColor = 247;
 	Common::String background;
 	Common::Rect blockTitle;
@@ -1621,7 +1621,7 @@ void Versailles_Documentation::setupRecordBoxes(bool inDocArea, MouseBoxes &boxe
 }
 
 void Versailles_Documentation::drawRecordBoxes(Graphics::ManagedSurface &surface, bool inDocArea,
-        MouseBoxes &boxes) {
+		MouseBoxes &boxes) {
 	if (_visitTrace.size()) {
 		surface.transBlitFrom(_sprites->getSurface(105), boxes.getBoxOrigin(0), _sprites->getKeyColor(105));
 	}
@@ -1662,9 +1662,9 @@ void Versailles_Documentation::drawRecordBoxes(Graphics::ManagedSurface &surface
 }
 
 uint Versailles_Documentation::handlePopupMenu(const Graphics::ManagedSurface
-        &originalSurface,
-        const Common::Point &anchor, bool rightAligned, uint itemHeight,
-        const Common::StringArray &items) {
+		&originalSurface,
+		const Common::Point &anchor, bool rightAligned, uint itemHeight,
+		const Common::StringArray &items) {
 
 	uint maxTextWidth = 0;
 
@@ -1952,7 +1952,7 @@ const char *Versailles_Documentation::getRecordSubtitle(char *start, char *end) 
 }
 
 void Versailles_Documentation::getRecordHyperlinks(char *start, char *end,
-        Common::StringArray &hyperlinks) {
+		Common::StringArray &hyperlinks) {
 	const char *const hyperlinksPatterns[] = { "SAVOIR-PLUS 1=", "SAVOIR-PLUS 2=", "SAVOIR-PLUS 3=" };
 
 	hyperlinks.clear();
@@ -1992,8 +1992,8 @@ Common::String Versailles_Documentation::getRecordTitle(const Common::String &re
 }
 
 Common::String Versailles_Documentation::getRecordData(const Common::String &record,
-        Common::String &title, Common::String &subtitle, Common::String &caption,
-        Common::StringArray &hyperlinks) {
+		Common::String &title, Common::String &subtitle, Common::String &caption,
+		Common::StringArray &hyperlinks) {
 	Common::HashMap<Common::String, RecordInfo>::iterator it = _records.find(record);
 	if (it == _records.end()) {
 		warning("Can't find %s record data", record.c_str());
@@ -2041,7 +2041,7 @@ Common::String Versailles_Documentation::getRecordData(const Common::String &rec
 }
 
 void Versailles_Documentation::convertHyperlinks(const Common::StringArray &hyperlinks,
-        Common::Array<LinkInfo> &links) {
+		Common::Array<LinkInfo> &links) {
 	for (Common::StringArray::const_iterator it = hyperlinks.begin(); it != hyperlinks.end(); it++) {
 		LinkInfo link;
 		link.record = *it;
@@ -2069,7 +2069,7 @@ void Versailles_Documentation::loadLinksFile() {
 }
 
 void Versailles_Documentation::getLinks(const Common::String &record,
-                                        Common::Array<LinkInfo> &links) {
+										Common::Array<LinkInfo> &links) {
 	loadLinksFile();
 
 	links.clear();

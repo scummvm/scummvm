@@ -385,10 +385,10 @@ T nextHigher2(T v) {
 template<class It, class Dat>
 void replace(It begin, It end, const Dat &original, const Dat &replaced) {
 	for (; begin != end; ++begin) {
-        if (*begin == original) {
-            *begin = replaced;
-        }
-    }
+		if (*begin == original) {
+			*begin = replaced;
+		}
+	}
 }
 
 /** @} */

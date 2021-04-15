@@ -193,10 +193,10 @@ void EoBCoreEngine::advanceTimers(uint32 millis) {
 		for (int ii = 0; ii < 10; ii++) {
 			if (c->timers[ii] > ct) {
 				uint32 chrt = c->timers[ii] - ct;
-                c->timers[ii] = chrt > millis ? ct + chrt - millis : 1;
+				c->timers[ii] = chrt > millis ? ct + chrt - millis : 1;
 			} else if (c->timers[ii]) {
-                c->timers[ii] = 1;
-            }
+				c->timers[ii] = 1;
+			}
 		}
 	}
 
@@ -212,9 +212,9 @@ void EoBCoreEngine::advanceTimers(uint32 millis) {
 				_scriptTimers[i].next = chrt > millis ? ct + chrt - millis : 1;
 				debugC(3, kDebugLevelTimer, "EoBCoreEngine::advanceTimers()      - CTIME: %08d   SCRIPT TIMER[%02d].NEXT: %08d", ct, i, _scriptTimers[i].next);
 			} else if (_scriptTimers[i].next) {
-                _scriptTimers[i].next = 1;
+				_scriptTimers[i].next = 1;
 				debugC(3, kDebugLevelTimer, "EoBCoreEngine::advanceTimers()      - CTIME: %08d   SCRIPT TIMER[%02d].NEXT: %08d", ct, i, _scriptTimers[i].next);
-            }
+			}
 		}
 	}
 
@@ -225,8 +225,8 @@ void EoBCoreEngine::advanceTimers(uint32 millis) {
 			uint32 chrt = _wallsOfForce[i].duration - ct;
 			_wallsOfForce[i].duration = chrt > millis ? ct + chrt - millis : 1;
 		} else {
-            _wallsOfForce[i].duration = 1;
-        }
+			_wallsOfForce[i].duration = 1;
+		}
 	}
 }
 

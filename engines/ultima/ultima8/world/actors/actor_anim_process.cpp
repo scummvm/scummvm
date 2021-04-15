@@ -59,7 +59,7 @@ ActorAnimProcess::ActorAnimProcess() : Process(), _tracker(nullptr),
 }
 
 ActorAnimProcess::ActorAnimProcess(Actor *actor, Animation::Sequence action,
-                                   Direction dir, uint32 steps) :
+								   Direction dir, uint32 steps) :
 		_dir(dir), _action(action), _steps(steps), _tracker(nullptr),
 		_firstFrame(true), _currentStep(0), _repeatCounter(0),
 		_animAborted(false), _attackedSomething(false)  {

@@ -1836,7 +1836,7 @@ void OldDOSFont::drawChar(uint16 c, byte *dst, int pitch, int bpp) const {
 	uint16 color1 = _colorMap8bit[1];
 	uint16 color2 = _colorMap8bit[0];
 
-    if (_style == kStyleLeftShadow) {
+	if (_style == kStyleLeftShadow) {
 		drawCharIntern(c, dst + pitch, pitch, 1, _shadowColor, 0);
 		drawCharIntern(c, dst - 1, pitch, 1, _shadowColor, 0);
 		drawCharIntern(c, dst - 1 + pitch, pitch, 1, _shadowColor, 0);

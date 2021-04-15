@@ -958,8 +958,8 @@ void VK::setAdjustmentFromMouse() {
 * It will search through all questions to find a related question Id and its intensity
 */
 void VK::findRelatedQuestionBySentenceId(int inSentenceId, int &outRelatedQuestionId, int &outRelatedIntensity) {
-    outRelatedQuestionId = -1;
-    outRelatedIntensity  = -1;
+	outRelatedQuestionId = -1;
+	outRelatedIntensity  = -1;
 
 	for (int intensity = 0; intensity < 3; ++intensity) {
 		for (int i = 0; i < (int)_questions[intensity].size(); ++i) {

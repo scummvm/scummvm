@@ -41,10 +41,10 @@
 namespace Image {
 
 PNGDecoder::PNGDecoder() :
-        _outputSurface(0),
-        _palette(0),
-        _paletteColorCount(0),
-        _skipSignature(false),
+		_outputSurface(0),
+		_palette(0),
+		_paletteColorCount(0),
+		_skipSignature(false),
 		_keepTransparencyPaletted(false),
 		_transparentColor(-1) {
 }

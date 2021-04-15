@@ -566,7 +566,7 @@ void RMTony::put(int nWhere, int nPart) {
 }
 
 bool RMTony::startTalkCalculate(CharacterTalkType nTalkType, int &headStartPat, int &bodyStartPat,
-                                int &headLoopPat, int &bodyLoopPat) {
+								int &headLoopPat, int &bodyLoopPat) {
 	assert(!_bIsTalking);
 
 	_bIsTalking = true;
@@ -1590,7 +1590,7 @@ void RMTony::endTalk(CORO_PARAM) {
 }
 
 void RMTony::startStaticCalculate(CharacterTalkType nTalk, int &headPat, int &headLoopPat,
-                                  int &bodyStartPat, int &bodyLoopPat) {
+								  int &bodyStartPat, int &bodyLoopPat) {
 	int nPat = getCurPattern();
 
 	headLoopPat = -1;

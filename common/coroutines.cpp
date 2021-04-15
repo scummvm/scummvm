@@ -399,7 +399,7 @@ void CoroutineScheduler::waitForSingleObject(CORO_PARAM, int pid, uint32 duratio
 }
 
 void CoroutineScheduler::waitForMultipleObjects(CORO_PARAM, int nCount, uint32 *pidList, bool bWaitAll,
-                                                uint32 duration, bool *expired) {
+												uint32 duration, bool *expired) {
 	if (!pCurrent)
 		error("Called CoroutineScheduler::waitForMultipleObjects from the main process");
 

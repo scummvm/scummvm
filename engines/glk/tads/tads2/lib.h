@@ -123,7 +123,7 @@ void varused();
  *   anything outside of the normal ASCII set as spaces. 
  */
 #define t_isspace(c) \
-    (((unsigned char)(c)) <= 127 && Common::isSpace((unsigned char)(c)))
+	(((unsigned char)(c)) <= 127 && Common::isSpace((unsigned char)(c)))
 
 } // End of namespace TADS2
 } // End of namespace TADS

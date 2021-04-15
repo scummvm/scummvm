@@ -154,7 +154,7 @@ const Archive::DirectoryEntry *Archive::getEntry(const Common::String &room, uin
 }
 
 ResourceDescription Archive::getDescription(const Common::String &room, uint32 index, uint16 face,
-                                                 ResourceType type) {
+												 ResourceType type) {
 	const DirectoryEntry *entry = getEntry(room, index);
 	if (!entry) {
 		return ResourceDescription();
@@ -171,7 +171,7 @@ ResourceDescription Archive::getDescription(const Common::String &room, uint32 i
 }
 
 ResourceDescriptionArray Archive::listFilesMatching(const Common::String &room, uint32 index, uint16 face,
-                                                 ResourceType type) {
+												 ResourceType type) {
 	const DirectoryEntry *entry = getEntry(room, index);
 	if (!entry) {
 		return ResourceDescriptionArray();

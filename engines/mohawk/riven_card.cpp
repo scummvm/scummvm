@@ -576,7 +576,7 @@ void RivenCard::moveHotspot(uint16 blstId, const Common::Rect &position) {
 }
 
 void RivenCard::addMenuHotspot(uint16 blstId, const Common::Rect &position, uint16 index,
-                               uint16 externalCommandNameId, const char *externalCommandName) {
+							   uint16 externalCommandNameId, const char *externalCommandName) {
 	RivenHotspot *existingHotspot = getHotspotByBlstId(blstId);
 	if (existingHotspot) {
 		moveHotspot(blstId, position);

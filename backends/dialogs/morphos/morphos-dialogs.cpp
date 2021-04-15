@@ -71,7 +71,7 @@ Common::DialogManager::DialogResult MorphosDialogManager::showFileBrowser(const 
 	Common::String utf8Title = title.encode();
 	struct Library *AslBase = OpenLibrary(AslName, 39);
 
-    if (AslBase) {
+	if (AslBase) {
 
 		struct FileRequester *fr = NULL;
 

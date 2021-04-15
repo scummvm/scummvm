@@ -182,7 +182,7 @@ uchar *getstate(uchar *gs)
 	gs[5] = (game_sig >> 8) & 0xFF;
 
 	tscore -= objscore;  /* Only include "permanent" part of score;
-            objscore we can recompute on RESTORE */
+			objscore we can recompute on RESTORE */
 
 	/* Need to setup here */
 	set_internal_buffer(gs);
@@ -237,7 +237,7 @@ void putstate(uchar *gs) { /* Restores games state. */
 		         " Klaustrophobia");
 		if (yesno("?"))
 			skip_descr = 1; /* We don't want to overwrite the descriptions
-               with the pointers from the save file. */
+			   with the pointers from the save file. */
 		else {
 			writestr("Do you want to try using it anyhow (WARNING: This could"
 			         " crash the interpreter)");

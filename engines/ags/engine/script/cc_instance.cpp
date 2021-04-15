@@ -1635,82 +1635,82 @@ bool ccInstance::CreateRuntimeCodeFixups(PScript scri) {
 /*
 bool ccInstance::ReadOperation(ScriptOperation &op, int32_t at_pc)
 {
-    op.Instruction.Code         = code[at_pc];
-    op.Instruction.InstanceId   = (op.Instruction.Code >> INSTANCE_ID_SHIFT) & INSTANCE_ID_MASK;
-    op.Instruction.Code        &= INSTANCE_ID_REMOVEMASK; // now this is pure instruction code
+	op.Instruction.Code         = code[at_pc];
+	op.Instruction.InstanceId   = (op.Instruction.Code >> INSTANCE_ID_SHIFT) & INSTANCE_ID_MASK;
+	op.Instruction.Code        &= INSTANCE_ID_REMOVEMASK; // now this is pure instruction code
 
-    int want_args = sccmd_info[op.Instruction.Code].ArgCount;
-    if (at_pc + want_args >= codesize)
-    {
-        cc_error("unexpected end of code data at %d", at_pc + want_args);
-        return false;
-    }
-    op.ArgCount = want_args;
+	int want_args = sccmd_info[op.Instruction.Code].ArgCount;
+	if (at_pc + want_args >= codesize)
+	{
+		cc_error("unexpected end of code data at %d", at_pc + want_args);
+		return false;
+	}
+	op.ArgCount = want_args;
 
-    at_pc++;
-    for (int i = 0; i < op.ArgCount; ++i, ++at_pc)
-    {
-        char fixup = code_fixups[at_pc];
-        if (fixup > 0)
-        {
-            // could be relative pointer or import address
-            if (!FixupArgument(code[at_pc], fixup, op.Args[i]))
-            {
-                return false;
-            }
-        }
-        else
-        {
-            // should be a numeric literal (int32 or float)
-            op.Args[i].SetInt32( (int32_t)code[at_pc] );
-        }
-    }
+	at_pc++;
+	for (int i = 0; i < op.ArgCount; ++i, ++at_pc)
+	{
+		char fixup = code_fixups[at_pc];
+		if (fixup > 0)
+		{
+			// could be relative pointer or import address
+			if (!FixupArgument(code[at_pc], fixup, op.Args[i]))
+			{
+				return false;
+			}
+		}
+		else
+		{
+			// should be a numeric literal (int32 or float)
+			op.Args[i].SetInt32( (int32_t)code[at_pc] );
+		}
+	}
 
-    return true;
+	return true;
 }
 */
 /*
 bool ccInstance::FixupArgument(intptr_t code_value, char fixup_type, RuntimeScriptValue &argument)
 {
-    switch (fixup_type)
-    {
-    case FIXUP_GLOBALDATA:
-        {
-            ScriptVariable *gl_var = (ScriptVariable*)code_value;
-            argument.SetGlobalVar(&gl_var->RValue);
-        }
-        break;
-    case FIXUP_FUNCTION:
-        // originally commented -- CHECKME: could this be used in very old versions of AGS?
-        //      code[fixup] += (long)&code[0];
-        // This is a program counter value, presumably will be used as SCMD_CALL argument
-        argument.SetInt32((int32_t)code_value);
-        break;
-    case FIXUP_STRING:
-        argument.SetStringLiteral(&strings[0] + code_value);
-        break;
-    case FIXUP_IMPORT:
-        {
-            const ScriptImport *import = _GP(simp).getByIndex((int32_t)code_value);
-            if (import)
-            {
-                argument = import->Value;
-            }
-            else
-            {
-                cc_error("cannot resolve import, key = %ld", code_value);
-                return false;
-            }
-        }
-        break;
-    case FIXUP_STACK:
-        argument = GetStackPtrOffsetFw((int32_t)code_value);
-        break;
-    default:
-        cc_error("internal fixup type error: %d", fixup_type);
-        return false;;
-    }
-    return true;
+	switch (fixup_type)
+	{
+	case FIXUP_GLOBALDATA:
+		{
+			ScriptVariable *gl_var = (ScriptVariable*)code_value;
+			argument.SetGlobalVar(&gl_var->RValue);
+		}
+		break;
+	case FIXUP_FUNCTION:
+		// originally commented -- CHECKME: could this be used in very old versions of AGS?
+		//      code[fixup] += (long)&code[0];
+		// This is a program counter value, presumably will be used as SCMD_CALL argument
+		argument.SetInt32((int32_t)code_value);
+		break;
+	case FIXUP_STRING:
+		argument.SetStringLiteral(&strings[0] + code_value);
+		break;
+	case FIXUP_IMPORT:
+		{
+			const ScriptImport *import = _GP(simp).getByIndex((int32_t)code_value);
+			if (import)
+			{
+				argument = import->Value;
+			}
+			else
+			{
+				cc_error("cannot resolve import, key = %ld", code_value);
+				return false;
+			}
+		}
+		break;
+	case FIXUP_STACK:
+		argument = GetStackPtrOffsetFw((int32_t)code_value);
+		break;
+	default:
+		cc_error("internal fixup type error: %d", fixup_type);
+		return false;;
+	}
+	return true;
 }
 */
 //-----------------------------------------------------------------------------

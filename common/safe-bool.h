@@ -40,14 +40,14 @@ namespace Common {
 		};
 	}
 
-    /**
-     * @defgroup common_safe_bool Safe Boolean
-     * @ingroup common
-     *
-     * @brief Template for a SafeBool function.
-     *
-     * @{
-     */
+	/**
+	 * @defgroup common_safe_bool Safe Boolean
+	 * @ingroup common
+	 *
+	 * @brief Template for a SafeBool function.
+	 *
+	 * @{
+	 */
 
 	/**
 	 * Prevents `operator bool` from implicitly converting to other types.

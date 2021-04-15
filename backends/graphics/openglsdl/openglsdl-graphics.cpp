@@ -33,14 +33,14 @@
 #endif
 
 OpenGLSdlGraphicsManager::OpenGLSdlGraphicsManager(SdlEventSource *eventSource, SdlWindow *window)
-    : SdlGraphicsManager(eventSource, window), _lastRequestedHeight(0),
+	: SdlGraphicsManager(eventSource, window), _lastRequestedHeight(0),
 #if SDL_VERSION_ATLEAST(2, 0, 0)
-      _glContext(),
+	  _glContext(),
 #else
-      _lastVideoModeLoad(0),
+	  _lastVideoModeLoad(0),
 #endif
-      _graphicsScale(2), _ignoreLoadVideoMode(false), _gotResize(false), _wantsFullScreen(false), _ignoreResizeEvents(0),
-      _desiredFullscreenWidth(0), _desiredFullscreenHeight(0) {
+	  _graphicsScale(2), _ignoreLoadVideoMode(false), _gotResize(false), _wantsFullScreen(false), _ignoreResizeEvents(0),
+	  _desiredFullscreenWidth(0), _desiredFullscreenHeight(0) {
 	// Setup OpenGL attributes for SDL
 	SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
 	SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);

@@ -67,7 +67,7 @@ public:
 	static uint16 randomlyGetStrongerWeaponTypes(uint shapeno);
 
 private:
-    NPCDat(Common::SeekableReadStream &datars, Common::SeekableReadStream &namers);
+	NPCDat(Common::SeekableReadStream &datars, Common::SeekableReadStream &namers);
 
 	Std::string _name;
 	uint16 _minHp;

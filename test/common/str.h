@@ -540,21 +540,21 @@ class StringTestSuite : public CxxTest::TestSuite
 		testString.replace(5, 9, Common::String("Displaced ristretto string"), 10, 10);
 		TS_ASSERT_EQUALS(testString, Common::String("Good ristretto coffee friends"));
 
-        // -----------------------
-        // Deep copy compliance
-        // -----------------------
+		// -----------------------
+		// Deep copy compliance
+		// -----------------------
 
-        // Makes a deep copy without changing the length of the original
-        Common::String s1 = "TestTestTestTestTestTestTestTestTestTestTest";
-        Common::String s2(s1);
-        TS_ASSERT_EQUALS(s1, "TestTestTestTestTestTestTestTestTestTestTest");
-        TS_ASSERT_EQUALS(s2, "TestTestTestTestTestTestTestTestTestTestTest");
-        s1.replace(0, 4, "TEST");
-        TS_ASSERT_EQUALS(s1, "TESTTestTestTestTestTestTestTestTestTestTest");
-        TS_ASSERT_EQUALS(s2, "TestTestTestTestTestTestTestTestTestTestTest");
+		// Makes a deep copy without changing the length of the original
+		Common::String s1 = "TestTestTestTestTestTestTestTestTestTestTest";
+		Common::String s2(s1);
+		TS_ASSERT_EQUALS(s1, "TestTestTestTestTestTestTestTestTestTestTest");
+		TS_ASSERT_EQUALS(s2, "TestTestTestTestTestTestTestTestTestTestTest");
+		s1.replace(0, 4, "TEST");
+		TS_ASSERT_EQUALS(s1, "TESTTestTestTestTestTestTestTestTestTestTest");
+		TS_ASSERT_EQUALS(s2, "TestTestTestTestTestTestTestTestTestTestTest");
 
-        // Makes a deep copy when we shorten the string
-    	Common::String s3 = "TestTestTestTestTestTestTestTestTestTestTest";
+		// Makes a deep copy when we shorten the string
+		Common::String s3 = "TestTestTestTestTestTestTestTestTestTestTest";
 		Common::String s4(s3);
 		s3.replace(0, 32, "");
 		TS_ASSERT_EQUALS(s3, "TestTestTest");

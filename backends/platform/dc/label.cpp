@@ -30,11 +30,11 @@ void *get_romfont_address() __asm__(".get_romfont_address");
 __asm__("\
 			\n\
 .get_romfont_address:	\n\
-    mov.l 1f,r0		\n\
-    mov.l @r0,r0	\n\
-    jmp @r0		\n\
-    mov #0,r1		\n\
-    .align 2		\n\
+	mov.l 1f,r0		\n\
+	mov.l @r0,r0	\n\
+	jmp @r0		\n\
+	mov #0,r1		\n\
+	.align 2		\n\
 1:  .long 0x8c0000b4	\n\
 			\n\
 ");
@@ -48,26 +48,26 @@ static void draw_char(unsigned short *dst, int mod, int c, void *font_base)
   if (c<128) c -= 32; else c -= 64;
   src = c*36 + (unsigned char *)font_base;
   for (i=0; i<12; i++) {
-    int n = (src[0]<<16)|(src[1]<<8)|src[2];
-    for (j=0; j<12; j++, n<<=1)
-      if (n & (1<<23)) {
+	int n = (src[0]<<16)|(src[1]<<8)|src[2];
+	for (j=0; j<12; j++, n<<=1)
+	  if (n & (1<<23)) {
 	dst[j] = 0xffff;
 	dst[j+1] = 0xffff;
 	dst[j+2] = 0xa108;
 	dst[j+mod] = 0xa108;
 	dst[j+mod+1] = 0xa108;
-      }
-    dst += mod;
-    for (j=0; j<12; j++, n<<=1)
-      if (n & (1<<23)) {
+	  }
+	dst += mod;
+	for (j=0; j<12; j++, n<<=1)
+	  if (n & (1<<23)) {
 	dst[j] = 0xffff;
 	dst[j+1] = 0xffff;
 	dst[j+2] = 0xa108;
 	dst[j+mod] = 0xa108;
 	dst[j+mod+1] = 0xa108;
-      }
-    dst += mod;
-    src += 3;
+	  }
+	dst += mod;
+	src += 3;
   }
 }
 
@@ -81,10 +81,10 @@ void Label::create_texture(const char *text)
   int tsz = u*32;
   unsigned short *tex = (unsigned short *)ta_txalloc(tsz*2);
   for (int i=0; i<tsz; i++)
-    tex[i] = 0;
+	tex[i] = 0;
   int p=l*14;
   while (l>0)
-    draw_char(tex+(p-=14), u, text[--l], font);
+	draw_char(tex+(p-=14), u, text[--l], font);
   texture = tex;
 }
 
@@ -94,15 +94,15 @@ void Label::draw(float x, float y, unsigned int argb, float scale)
   struct packed_colour_vertex_list myvertex;
 
   mypoly.cmd =
-    TA_CMD_POLYGON|TA_CMD_POLYGON_TYPE_TRANSPARENT|TA_CMD_POLYGON_SUBLIST|
-    TA_CMD_POLYGON_STRIPLENGTH_2|TA_CMD_POLYGON_PACKED_COLOUR|TA_CMD_POLYGON_TEXTURED;
+	TA_CMD_POLYGON|TA_CMD_POLYGON_TYPE_TRANSPARENT|TA_CMD_POLYGON_SUBLIST|
+	TA_CMD_POLYGON_STRIPLENGTH_2|TA_CMD_POLYGON_PACKED_COLOUR|TA_CMD_POLYGON_TEXTURED;
   mypoly.mode1 = TA_POLYMODE1_Z_ALWAYS|TA_POLYMODE1_NO_Z_UPDATE;
   mypoly.mode2 =
-    TA_POLYMODE2_BLEND_SRC_ALPHA|TA_POLYMODE2_BLEND_DST_INVALPHA|
-    TA_POLYMODE2_FOG_DISABLED|TA_POLYMODE2_ENABLE_ALPHA|
-    TA_POLYMODE2_TEXTURE_MODULATE_ALPHA|TA_POLYMODE2_V_SIZE_32|tex_u;
+	TA_POLYMODE2_BLEND_SRC_ALPHA|TA_POLYMODE2_BLEND_DST_INVALPHA|
+	TA_POLYMODE2_FOG_DISABLED|TA_POLYMODE2_ENABLE_ALPHA|
+	TA_POLYMODE2_TEXTURE_MODULATE_ALPHA|TA_POLYMODE2_V_SIZE_32|tex_u;
   mypoly.texture = TA_TEXTUREMODE_ARGB1555|TA_TEXTUREMODE_NON_TWIDDLED|
-    TA_TEXTUREMODE_ADDRESS(texture);
+	TA_TEXTUREMODE_ADDRESS(texture);
 
   mypoly.red = mypoly.green = mypoly.blue = mypoly.alpha = 0;
 

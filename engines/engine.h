@@ -97,16 +97,16 @@ class PauseToken {
 public:
 	PauseToken();
 	/**
-     * Construct a pause token.
-     */
+	 * Construct a pause token.
+	 */
 	PauseToken(const PauseToken &);
 #if __cplusplus >= 201103L
 	PauseToken(PauseToken &&);
 #endif
 	~PauseToken();
 	/**
-     * Assign the pause token.
-     */
+	 * Assign the pause token.
+	 */
 	void operator=(const PauseToken &);
 #if __cplusplus >= 201103L
 	void operator=(PauseToken &&);

@@ -143,7 +143,7 @@ public:
 	// These are used for PSX smoothing.  (Won't do any harm on the PC.)
 	void PreloadIcon(const char *pcIconPath, const char *pcIconName);
 
-      private:
+private:
 	int32 GetScrollingPosition(const int32 nInputX, uint32 &nIconIndex);
 
 	enum IconMenuGameState { INACTIVE = 0, ACTIVE };

@@ -192,7 +192,7 @@ void GameData::parse_header_le16(FileBuffer *fb, uint16 *val) {
 }
 
 uint8 GameData::parse_vm_instruction(FileBuffer *fb,
-                                  Instruction *instr) {
+								  Instruction *instr) {
 	uint i;
 
 	/* Get the opcode */
@@ -481,7 +481,7 @@ done:
 }
 
 void GameData::parse_string_table(FileBuffer *fb, unsigned start_addr,
-                               uint32 end_addr, StringTable *table) {
+							   uint32 end_addr, StringTable *table) {
 	if (start_addr < end_addr) {
 		fb->seek(start_addr);
 		while (1) {

@@ -985,7 +985,7 @@ void LC::c_charOf() {
 	Datum src = g_lingo->pop(false);
 	Datum index = g_lingo->pop();
 
-    if ((index.type != INT && index.type != FLOAT)
+	if ((index.type != INT && index.type != FLOAT)
 			|| (src.type != STRING && src.type != VAR && src.type != FIELDREF && src.type != CHUNKREF && src.type != CASTREF)) {
 		g_lingo->lingoError("LC::c_charOf(): Called with wrong data types: %s and %s", index.type2str(), src.type2str());
 		g_lingo->push(Datum(""));

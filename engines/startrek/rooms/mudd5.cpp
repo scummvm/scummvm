@@ -165,7 +165,7 @@ extern const RoomTextOffsets mudd5TextOffsets[] = {
 };
 
 extern const RoomText mudd5Texts[] = {
-      { -1, Common::UNK_LANG, "" }
+	  { -1, Common::UNK_LANG, "" }
 };
 
 void Room::mudd5Tick1() {

@@ -40,13 +40,13 @@ MusicProcess::~MusicProcess() {
 }
 
 uint32 MusicProcess::I_stopMusic(const uint8 * /*args*/,
-                                 unsigned int /*argsize*/) {
+								 unsigned int /*argsize*/) {
 	if (_theMusicProcess) _theMusicProcess->playMusic_internal(0);
 	return 0;
 }
 
 uint32 MusicProcess::I_playMusic(const uint8 *args,
-                                 unsigned int /*argsize*/) {
+								 unsigned int /*argsize*/) {
 	ARG_UINT8(song);
 	if (_theMusicProcess) _theMusicProcess->playMusic(song & 0x7F);
 	return 0;

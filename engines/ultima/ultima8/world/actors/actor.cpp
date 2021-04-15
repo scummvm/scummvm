@@ -583,7 +583,7 @@ void Actor::setToStartOfAnim(Animation::Sequence anim) {
 }
 
 Animation::Result Actor::tryAnim(Animation::Sequence anim, Direction dir,
-                                 unsigned int steps, PathfindingState *state) {
+								 unsigned int steps, PathfindingState *state) {
 	if (dir < 0 || dir > 16) return Animation::FAILURE;
 
 	if (dir == dir_current)

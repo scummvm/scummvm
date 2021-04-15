@@ -347,7 +347,7 @@ void CruAvatarMoverProcess::handleNormalMode() {
 }
 
 void CruAvatarMoverProcess::step(Animation::Sequence action, Direction direction,
-                              bool adjusted) {
+							  bool adjusted) {
 	Actor *avatar = getControlledActor();
 
 	// For "start run" animations, don't call it a success unless we can actually run

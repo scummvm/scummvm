@@ -48,16 +48,16 @@ static const char key_names[] =
 
 static const short key_codes[] =
   {
-    Common::KEYCODE_ESCAPE, Common::KEYCODE_F1, Common::KEYCODE_F2, Common::KEYCODE_F3, Common::KEYCODE_F4, Common::KEYCODE_F5, Common::KEYCODE_F6, Common::KEYCODE_F7, Common::KEYCODE_F8, Common::KEYCODE_F9, Common::KEYCODE_F10,
-    K('1','!'), K('2','"'), K('3','#'), K('4','$'), K('5','%'),
-    K('6','&'), K('7','\''), K('8','('), K('9',')'), K('0','~'), K('-','='),
-    K('q','Q'), K('w','W'), K('e','E'), K('r','R'), K('t','T'),
-    K('y','Y'), K('u','U'), K('i','I'), K('o','O'), K('p','P'), K('@','`'),
-    K('a','A'), K('s','S'), K('d','D'), K('f','F'), K('g','G'),
-    K('h','H'), K('j','J'), K('k','K'), K('l','L'), K(';','+'), K(':','*'),
-    K('z','Z'), K('x','X'), K('c','C'), K('v','V'), K('b','B'),
-    K('n','N'), K('m','M'), K(',','<'), K('.','>'), K('/','?'), K('\\','_'),
-    ~Common::KBD_SHIFT, ~Common::KBD_CTRL, ~Common::KBD_ALT, ' ', Common::KEYCODE_BACKSPACE, Common::KEYCODE_RETURN
+	Common::KEYCODE_ESCAPE, Common::KEYCODE_F1, Common::KEYCODE_F2, Common::KEYCODE_F3, Common::KEYCODE_F4, Common::KEYCODE_F5, Common::KEYCODE_F6, Common::KEYCODE_F7, Common::KEYCODE_F8, Common::KEYCODE_F9, Common::KEYCODE_F10,
+	K('1','!'), K('2','"'), K('3','#'), K('4','$'), K('5','%'),
+	K('6','&'), K('7','\''), K('8','('), K('9',')'), K('0','~'), K('-','='),
+	K('q','Q'), K('w','W'), K('e','E'), K('r','R'), K('t','T'),
+	K('y','Y'), K('u','U'), K('i','I'), K('o','O'), K('p','P'), K('@','`'),
+	K('a','A'), K('s','S'), K('d','D'), K('f','F'), K('g','G'),
+	K('h','H'), K('j','J'), K('k','K'), K('l','L'), K(';','+'), K(':','*'),
+	K('z','Z'), K('x','X'), K('c','C'), K('v','V'), K('b','B'),
+	K('n','N'), K('m','M'), K(',','<'), K('.','>'), K('/','?'), K('\\','_'),
+	~Common::KBD_SHIFT, ~Common::KBD_CTRL, ~Common::KBD_ALT, ' ', Common::KEYCODE_BACKSPACE, Common::KEYCODE_RETURN
   };
 
 SoftKeyboard::SoftKeyboard(const OSystem_Dreamcast *_os)
@@ -67,12 +67,12 @@ SoftKeyboard::SoftKeyboard(const OSystem_Dreamcast *_os)
 
   const char *np = key_names;
   for (int i=0; i<SK_NUM_KEYS; i++) {
-    labels[0][i].create_texture(np);
-    np += strlen(np)+1;
-    if (key_codes[i]>8192) {
-      labels[1][i].create_texture(np);
-      np += strlen(np)+1;
-    }
+	labels[0][i].create_texture(np);
+	np += strlen(np)+1;
+	if (key_codes[i]>8192) {
+	  labels[1][i].create_texture(np);
+	  np += strlen(np)+1;
+	}
   }
 }
 
@@ -89,22 +89,22 @@ void SoftKeyboard::draw(float x, float y, int transp)
   x0 = x += 4.0;
   y += 4.0;
   for (int i=0; i<SK_NUM_KEYS; i++) {
-    float w = (i == 58? 164.0 : 24.0);
-    unsigned int bg = (i == keySel? bg_alpha_mask|0xffff00 :
+	float w = (i == 58? 164.0 : 24.0);
+	unsigned int bg = (i == keySel? bg_alpha_mask|0xffff00 :
 		       bg_alpha_mask|0xc0c0ff);
-    draw_trans_quad(x, y, x+w, y+24.0, bg, bg, bg, bg);
-    if (key_codes[i]<0 && (shiftState & ~key_codes[i]))
-      labels[0][i].draw(x+2, y+5, txt_alpha_mask|0xffffff, 0.5);
-    else if (key_codes[i]>8192 && (shiftState & Common::KBD_SHIFT))
-      labels[1][i].draw(x+2, y+5, txt_alpha_mask|0x000000, 0.5);
-    else
-      labels[0][i].draw(x+2, y+5, txt_alpha_mask|0x000000, 0.5);
-    x += w+4.0;
-    if (++c == 11) {
-      c = 0;
-      x = x0;
-      y += 28.0;
-    }
+	draw_trans_quad(x, y, x+w, y+24.0, bg, bg, bg, bg);
+	if (key_codes[i]<0 && (shiftState & ~key_codes[i]))
+	  labels[0][i].draw(x+2, y+5, txt_alpha_mask|0xffffff, 0.5);
+	else if (key_codes[i]>8192 && (shiftState & Common::KBD_SHIFT))
+	  labels[1][i].draw(x+2, y+5, txt_alpha_mask|0x000000, 0.5);
+	else
+	  labels[0][i].draw(x+2, y+5, txt_alpha_mask|0x000000, 0.5);
+	x += w+4.0;
+	if (++c == 11) {
+	  c = 0;
+	  x = x0;
+	  y += 28.0;
+	}
   }
 }
 
@@ -112,47 +112,47 @@ int SoftKeyboard::key(int k, byte &shiftFlags)
 {
   switch(k) {
   case 1001:
-    if (++keySel == SK_NUM_KEYS)
-      keySel = 0;
-    break;
+	if (++keySel == SK_NUM_KEYS)
+	  keySel = 0;
+	break;
   case 1002:
-    if (--keySel < 0)
-      keySel = SK_NUM_KEYS - 1;
-    break;
+	if (--keySel < 0)
+	  keySel = SK_NUM_KEYS - 1;
+	break;
   case 1003:
-    if (keySel >= 55) {
-      if (keySel > 58)
+	if (keySel >= 55) {
+	  if (keySel > 58)
 	keySel += 5;
-      keySel -= 55;
-    } else if (keySel > 47) {
-      if ((keySel += 6) < 59)
+	  keySel -= 55;
+	} else if (keySel > 47) {
+	  if ((keySel += 6) < 59)
 	keySel = 59;
-    } else
-      keySel += 11;
-    break;
+	} else
+	  keySel += 11;
+	break;
   case 1004:
-    if (keySel > 58)
-      keySel -= 6;
-    else if ((keySel -= 11) < 0)
-      if ((keySel += 66) > 58)
+	if (keySel > 58)
+	  keySel -= 6;
+	else if ((keySel -= 11) < 0)
+	  if ((keySel += 66) > 58)
 	if ((keySel -= 5) < 59)
 	  keySel = 59;
-    break;
+	break;
   case 1000:
   case 13:
   case 32:
   case 319:
-    if (key_codes[keySel]<0)
-      shiftState ^= ~key_codes[keySel];
-    else {
-      shiftFlags = shiftState;
-      if (key_codes[keySel] > 8192)
+	if (key_codes[keySel]<0)
+	  shiftState ^= ~key_codes[keySel];
+	else {
+	  shiftFlags = shiftState;
+	  if (key_codes[keySel] > 8192)
 	return ((shiftState & Common::KBD_SHIFT)? (key_codes[keySel]>>8):
 		key_codes[keySel]) & 0xff;
-      else
+	  else
 	return key_codes[keySel];
-    }
-    break;
+	}
+	break;
   }
   return 0;
 }
@@ -161,8 +161,8 @@ void SoftKeyboard::mouse(int x, int y)
 {
   os->mouseToSoftKbd(x, y, x, y);
   if (x >= 0 && x < 11*28 && y >= 0 && y < 6*28 &&
-     x%28 >= 4 && y%28 >= 4)
-    if ((keySel = 11*(y/28)+(x/28)) > 58)
-      if ((keySel -= 5) < 59)
+	 x%28 >= 4 && y%28 >= 4)
+	if ((keySel = 11*(y/28)+(x/28)) > 58)
+	  if ((keySel -= 5) < 59)
 	keySel = 58;
 }

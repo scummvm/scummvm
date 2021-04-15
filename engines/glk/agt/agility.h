@@ -31,19 +31,19 @@ namespace AGT {
 
 /* This indicates the AGiliTy version code for the current version. */
 /*  0=0.8.7 and the numbers are assigned sequentially from there.
-    1=0.8.8
-    2=1.0
-    (pre-0.8.7 versions of AGiliTy don't have version codes) */
+	1=0.8.8
+	2=1.0
+	(pre-0.8.7 versions of AGiliTy don't have version codes) */
 /* Don't touch this unless you know exactly what you're doing. */
 #define AGIL_VERID 3
 
 /*
-    This is the master header file for all of the AGT stuff.
-      It includes the global variables, the data types, etc.
-      (everything that is read in from the game file).
-    Variables not read in from the game file but used internally
-      by the AGiliTy interpreter are declared in interp.h.
-    Magx specific things are in comp.h.
+	This is the master header file for all of the AGT stuff.
+	  It includes the global variables, the data types, etc.
+	  (everything that is read in from the game file).
+	Variables not read in from the game file but used internally
+	  by the AGiliTy interpreter are declared in interp.h.
+	Magx specific things are in comp.h.
 */
 
 /* ------------------------------------------------------------------- */
@@ -83,22 +83,22 @@ typedef char tline[81]; /* Both of these must include terminating null */
 typedef char words[WORD_LENG]; /* ...23 in classic, 16 in master's */
 typedef short word;     /* A pointer into the dictionary */
 typedef short slist; /* Index into synlist marking beginning of this
-            synonym list.  [SYNCNT]
-            list of word pointers -- eg synonyms */
+			synonym list.  [SYNCNT]
+			list of word pointers -- eg synonyms */
 typedef char *descr_line; /* This is the type used to return descriptions.
-                 They are actually returned as an array of
-                 pointers to char, one for each line.
-                 It is NULL terminated. */
+				 They are actually returned as an array of
+				 pointers to char, one for each line.
+				 It is NULL terminated. */
 typedef char *filename;  /* Datatype used for picture, sound, etc. names*/
 
 
 typedef enum {fNONE,
-              fDA1, fDA2, fDA3, fDA4, fDA5, fDA6, fDSS,
-              fHNT, fOPT, fTTL,
-              fSAV, fSCR, fLOG,
-              fAGX, fINS, fVOC, fCFG,
-              fAGT, fDAT, fMSG, fCMD, fSTD, fAGT_STD
-             } filetype;
+			  fDA1, fDA2, fDA3, fDA4, fDA5, fDA6, fDSS,
+			  fHNT, fOPT, fTTL,
+			  fSAV, fSCR, fLOG,
+			  fAGX, fINS, fVOC, fCFG,
+			  fAGT, fDAT, fMSG, fCMD, fSTD, fAGT_STD
+			 } filetype;
 
 
 /* ------------------------------------------------------------------- */
@@ -112,11 +112,11 @@ typedef enum {fNONE,
 
 
 #define SS_GRAIN 1024  /* Granularity of size request for static string
-              array (to avoid calling rrealloc too often) */
+			  array (to avoid calling rrealloc too often) */
 #define SYN_GRAIN 32 /* Granularity of requests for synonym array; this
-               is in units of sizeof(word) */
+			   is in units of sizeof(word) */
 #define MAX_BADTOK 10  /* How many bad tokens to report before giving
-              up */
+			  up */
 
 
 
@@ -127,7 +127,7 @@ typedef enum {fNONE,
 #define def_interp_arg 1  /* Decipher arguments to opcodes? */
 #define def_debug_da1 0  /* used to analyse .DA1 files */
 #define def_RAW_CMD_OUT 0  /*Print CMDs out raw, undecoded; sometimes useful
-            when trying to understand new gamefile version */
+			when trying to understand new gamefile version */
 #define def_ERR_LEVEL 2    /* Level of error reporting. */
 /* 0== almost none */
 /* 1== Report possibly serious conditions */
@@ -144,10 +144,10 @@ typedef enum {fNONE,
 /* ------------------------------------------------------------------- */
 
 #define FORMAT_CODE 0xFF  /* Character used for special formatting codes:
-                 --in 1.8x games, it designates bold
-                 --in AGX+ games, it will prefix format codes
-                 --otherwise it designates black (replacing
-                 0, which has obvious problems) */
+				 --in 1.8x games, it designates bold
+				 --in AGX+ games, it will prefix format codes
+				 --otherwise it designates black (replacing
+				 0, which has obvious problems) */
 #define LAST_TEXTCODE 8  /* Last ascii code to be used for text attributes */
 
 
@@ -158,7 +158,7 @@ typedef enum {fNONE,
 
 
 #define OLD_VERB 59    /* Number of built in verbs in original interpreters-- 
-              this number includes ANY, which is verb 0. */
+			  this number includes ANY, which is verb 0. */
 #define DIR_ADDR_CODE (OLD_VERB+17)  /* Verb ID used for direct address */
 #define AUX_VERB 18    /* Additional verbs supported by the interpreter */
 #define BASE_VERB (OLD_VERB+AUX_VERB)  /* Total number of built-in verbs */
@@ -182,7 +182,7 @@ typedef enum {fNONE,
  */
 
 #define MAX_TOKEN_ID 250   /* Upper limit on legal (raw) token values
-                  read from AGT files. Doesn't need to be exact. */
+				  read from AGT files. Doesn't need to be exact. */
 
 /* Number of built in properties and attributes. */
 #define NUM_PROP 14
@@ -252,7 +252,7 @@ typedef struct {
 	integer path[13];
 	integer key;
 	integer contents;   /* Used internally by the interpreter; not read in
-             from the game file */
+			 from the game file */
 	integer points;
 	integer light;  /* Object that lights room; 0=none needed, 1=any */
 	integer pict, initdesc;
@@ -273,7 +273,7 @@ typedef struct {
 	slist syns;   /* List of synonyms */
 	word name, adj;
 	word related_name;  /* Word that should appear on menu when this noun
-              is in scope */
+			  is in scope */
 	word pos_prep, pos_name;   /* Used internally by the interpreter */
 	/* pos_prep==-1 means use noun.position */
 	integer nearby_noun; /* Noun this noun is behind */
@@ -284,7 +284,7 @@ typedef struct {
 	integer initdesc, pict;
 	integer location;    /* 1=carried, 1000=worn */
 	integer contents, next;   /* Used internally by the interpreter; not read in
-             from the game file */
+			 from the game file */
 	integer oclass;
 	integer flagnum; /* Number of associated flag + 1. 0=no flag. */
 	rbool scope;   /* Used internally by the interpreter */
@@ -312,7 +312,7 @@ typedef struct {
 	word adj;
 	integer location;
 	integer contents, next;   /* Used internally by the interpreter; not read in
-                   from the game file */
+				   from the game file */
 	integer weapon;  /* Killed by this */
 	integer points;
 	integer counter;  /* How many times has player been nasty to it? */
@@ -329,7 +329,7 @@ typedef struct {
 	rbool unused; /* True if this creature entry is unused */
 	rbool seen;  /* True if this creature has been seen by the player */
 	rbool proper; /* True if this creature's name is to be treated as a proper
-           noun (i.e. not prepended with "the") */
+		   noun (i.e. not prepended with "the") */
 } creat_rec;
 
 /* These records are used to hold reference information for
@@ -365,20 +365,20 @@ typedef struct {
 } flagdef_rec;
 
 /*  Metacommand headers and a pointer to the actual sequence of tokens
-    to execute if the metacommand is run. */
+	to execute if the metacommand is run. */
 typedef struct {
 	integer actor;  /* Contains the actor object number;
-               1==self(no explicit actor) 2=anybody
-               It is multiplied by negative one for redirected
-               commands */
+			   1==self(no explicit actor) 2=anybody
+			   It is multiplied by negative one for redirected
+			   commands */
 	/* 0 in any of the following word variables denotes ANY;
 	   -1 denotes <*none*> and will only occur in Magx-generated files.
 	   (verbcmd cannot be equal to -1).  Support for -1 is still experimental */
 	word verbcmd, nouncmd, objcmd, prep;  /* prep only in ME games */
 	word noun_adj, obj_adj;  /* Adjectives for noun and obj; not
-                  supported in original AGT games */
+				  supported in original AGT games */
 	integer noun_obj, obj_obj; /* Actual object numbers,
-                or 0 if none specified */
+				or 0 if none specified */
 	integer *data; /* MaxSizeCommand */
 	integer cmdsize; /* Number of commands */
 	/*  integer ptr; */ /* In ME games-- see below for replacement */
@@ -467,20 +467,20 @@ global int ERR_LEVEL;
 global rbool agx_file;  /* Are we reading an AGX file? */
 global rbool have_opt;      /* Do we have an OPT file? */
 global rbool skip_descr; /* Causes read_filerec() to skip over description
-               pointers without actually reading them in.
-               Used to support RESTORE for multi-part games
-               such as Klaustrophobia */
+			   pointers without actually reading them in.
+			   Used to support RESTORE for multi-part games
+			   such as Klaustrophobia */
 global rbool no_auxsyn; /* Prevents building of auxsyn and preplist
-          synonym lists; used by agt2agx. */
+		  synonym lists; used by agt2agx. */
 
 
 global rbool BATCH_MODE, make_test;
 /* These indicates we are in testing mode:
-     -- The random number generator should be set to a standard state.
-     -- Automatically send output to <gamename>.scr
-     -- Automatically read/write input from <gamename>.log
-      (depending on whether we are in BATCH_MODE or make_test mode,
-      respectivly).
+	 -- The random number generator should be set to a standard state.
+	 -- Automatically send output to <gamename>.scr
+	 -- Automatically read/write input from <gamename>.log
+	  (depending on whether we are in BATCH_MODE or make_test mode,
+	  respectivly).
 */
 
 
@@ -494,15 +494,15 @@ global rbool intro_first;
 global rbool box_title;
 global rbool mars_fix;
 global rbool fix_ascii_flag;  /* Translate IBM characters?
-                   Defaults to fix_ascii #define'd above */
+				   Defaults to fix_ascii #define'd above */
 global rbool dbg_nomsg;  /* Causes printing of <msg> arguments by
-               debug disassembler to be supressed */
+			   debug disassembler to be supressed */
 
 global rbool irun_mode;  /* If true, all messages will be in 1st person */
 global rbool verboseflag;
 
 global int font_status; /* 0=unknown; 1=force fixed font,
-               2=allow proportional font. */
+			   2=allow proportional font. */
 
 
 /*   The following are AGT 'purity' flags; they turn off features of */
@@ -549,7 +549,7 @@ global int num_auxcomb;
 global int num_comb;
 
 global integer exitmsg_base; /* Number added to messages used as
-             "illegal direction" messages */
+			 "illegal direction" messages */
 
 
 /* ------------------------------------------------------------------- */
@@ -602,8 +602,8 @@ global short *verbptr, *verbend; /* [TOTAL_VERB] */
 global slist *synlist;  /* [MAX_VERBS+1];*/
 global slist *comblist; /* Global combination list */
 global word *old_agt_verb; /* List of non-canonical verb synonyms in the
-                  original AGT; these are not allowed to be
-                  expanded as dummy verbs. */
+				  original AGT; these are not allowed to be
+				  expanded as dummy verbs. */
 
 
 global slist *userprep; /* Array of user-defined prepostions */
@@ -613,8 +613,8 @@ global word pix_name[MAX_PIX];
 global filename *pictlist, *pixlist, *fontlist, *songlist;
 
 global uchar opt_data[14];  /* Contents of OPT file. For the format of this
-                   block, see the comments to read_opt() in
-                   agtread.c */
+				   block, see the comments to read_opt() in
+				   agtread.c */
 
 /* These are built by reinit_dict */
 
@@ -622,7 +622,7 @@ global slist *auxsyn; /* [TOTAL_VERB]  Built-in synonym list */
 global slist *preplist;  /* [TOTAL_VERB] */
 global uchar *verbflag;  /* [TOTAL_VERB]  Verb flags; see below */
 global slist *auxcomb; /* Built-in combination lists (for multi-word
-              verbs) */
+			  verbs) */
 
 #ifdef PATH_SEP
 global char **gamepath;
@@ -639,7 +639,7 @@ global descr_ptr *err_ptr; /* [NUM_ERR];*/
 global descr_ptr *msg_ptr; /* [MAX_MSG];*/
 global descr_ptr *help_ptr, *room_ptr, *special_ptr; /*[ROOM] */
 global descr_ptr *noun_ptr, *text_ptr, *turn_ptr, /* [NOUN] */
-       *push_ptr, *pull_ptr, *play_ptr;
+	   *push_ptr, *pull_ptr, *play_ptr;
 global descr_ptr *talk_ptr, *ask_ptr, *creat_ptr; /* [CREAT] */
 
 global descr_ptr *quest_ptr, *ans_ptr; /* [MAX_QUEST] */
@@ -655,12 +655,12 @@ global long dp;  /* Dictionary pointer: number of words in dict */
 
 #define DICT_INIT 12*1024 /* Starting size of dictstr */
 #define DICT_GRAN 1024  /* Granularity of dictstr size requests 
-               must be at least 4. */
+			   must be at least 4. */
 global char *dictstr;  /* Pointer to memory block containing dict words */
 global long dictstrptr, dictstrsize;
 /* dictstrptr points to the first unused byte in dictstr.
    dictstrsize points to the end of the space currently allocated for
-      dictstr.
+	  dictstr.
 */
 
 global char *static_str; /*Static string space */
@@ -707,7 +707,7 @@ global rbool open_as_binary;  /* Open text files as binary, anyhow. */
 #define AGT12  3   /* SOS,... */
 #define AGTCOS 4   /* COSMOS and SOGGY: enhanced versions of 1.3x */
 #define AGT135 5   /* By far the most common version; includes practically
-              every version of Classic AGT from 1.19 to 1.7 */
+			  every version of Classic AGT from 1.19 to 1.7 */
 #define AGT182 6
 #define AGT183 7
 #define AGT15 8   /* HOTEL */
@@ -778,9 +778,9 @@ global rbool open_as_binary;  /* Open text files as binary, anyhow. */
 #define AGT_GENPROP 149  /* ObjProp/Property */
 
 /* certain restrictions.  Used internally
-                by the compiler in the parsing
-                of "[obj].[prop].[prop].[flag]"
-                constructions. */
+				by the compiler in the parsing
+				of "[obj].[prop].[prop].[flag]"
+				constructions. */
 
 #define AGT_LVAL   150  /* Used by the compiler in certain psuedo-ops */
 
@@ -824,7 +824,7 @@ global rbool open_as_binary;  /* Open text files as binary, anyhow. */
 #define FT_TLINE 14    /* TextLine */
 #define FT_CHAR 15     /* Characters. */
 #define FT_CFG 16      /* Configuration byte; 0=false, 1=true, 
-              2=none (don't change) */
+			  2=none (don't change) */
 
 #define DT_DEFAULT 0  /* Default internal type for <ftype> */
 #define DT_LONG 1
@@ -865,8 +865,8 @@ void free_dict(void);
 word search_dict(const char *);
 word add_dict(const char *);
 const char *gdict(word w);  /* Almost equivalent to dict[w], but with
-                   some error checking and handling for
-                   the w==-1 case. */
+				   some error checking and handling for
+				   the w==-1 case. */
 
 int verb_code(word);
 int verb_builtin(word);
@@ -933,8 +933,8 @@ void close_descr(void);
 descr_line *agt_read_descr(long start, long len);
 rbool readagt(fc_type fc, rbool diag);
 void free_all_agtread(void); /* Cleans up everything allocated in agtread
-                  should only be called at the very end of
-                  the program */
+				  should only be called at the very end of
+				  the program */
 void free_ttl(descr_line *title);
 
 
@@ -963,8 +963,8 @@ void read_config(genfile cfgfile, rbool lastpass);
 rbool parse_config_line(char *s, rbool lastpass);
 
 descr_line *read_ttl(fc_type fc); /* This returns the title. The return string
-                      must be freed with free_ttl() and not
-                      with free_descr */
+					  must be freed with free_ttl() and not
+					  with free_descr */
 void free_ttl(descr_line *title);
 
 void read_voc(fc_type fc);
@@ -976,8 +976,8 @@ descr_line *read_ins(fc_type fc);
 void free_ins(descr_line *instr);
 rbool open_ins_file(fc_type fc, rbool report_error);
 char *read_ins_line(void); /* Reuses buffer, so return value should be copied
-              if it needs to be used past the next call to
-              read_ins_line or close_ins_file */
+			  if it needs to be used past the next call to
+			  read_ins_line or close_ins_file */
 void close_ins_file(void);
 
 void build_fixchar(void);
@@ -1008,7 +1008,7 @@ void agil_option(int optnum, char *optstr[], rbool setflag, rbool lastpass);
 void close_interface(void);
 
 void print_tos(void); /* Called by the disassembler; in either TOKEN.C
-             or AGTOUT.C */
+			 or AGTOUT.C */
 
 
 /* ------------------------------------------------------------------- */
@@ -1018,14 +1018,14 @@ void print_tos(void); /* Called by the disassembler; in either TOKEN.C
 /* ------------------------------------------------------------------- */
 
 global uchar trans_ascii[256];  /* Table to translate ascii values read
-                   in from file */
+				   in from file */
 
 void build_trans_ascii(void); /* Set up the above table. */
 
 void rprintf(const char *fmt, ...); /* General output routine, mainly used
-                       for diagnostics. There can be a newline
-                       at the end, but there shouldn't be
-                       one in the middle of the string */
+					   for diagnostics. There can be a newline
+					   at the end, but there shouldn't be
+					   one in the middle of the string */
 
 
 
@@ -1086,7 +1086,7 @@ long fixsign32(uchar n1, uchar n2, uchar n3, uchar n4);
 #else
 #define fixsign16(u1,u2) ( (u1) | ((u2)<<8) )
 #define fixsign32(u1,u2,u3,u4)  ( ((long)u1) | (((long)u2)<<8) | \
-                                  (((long)u3)<<16) | (((long)u4)<<24) )
+								  (((long)u3)<<16) | (((long)u4)<<24) )
 #endif
 
 
@@ -1115,7 +1115,7 @@ char *readln(genfile f, char *buff, int n);
 
 /* (None of the following routines are at all reentrant) */
 long buffopen(fc_type fc, filetype ext,
-              long minbuffsize, const char *rectype, long recnum);
+			  long minbuffsize, const char *rectype, long recnum);
 /* Open file for our buffered routines and make it our current file;
 returns the record size. Prints out error message on failure
 rectype="noun","room",etc.; recnum=expected # of objects in file */
@@ -1132,16 +1132,16 @@ void bw_abort(void); /* Close and delete buffered file */
 extern const size_t ft_leng[FT_COUNT];  /* File lengths of the data types */
 long compute_recsize(file_info *recinfo);
 void *read_recblock(void *base, int ftype, long numrec, long offset,
-                    long blocksize);
+					long blocksize);
 /* Only works for FT_BYTE, FT_SLIST, FT_WORD, FT_DICTTEXT, FT_INT16 */
 void *read_recarray(void *base, long eltsize, long numelts,
-                    file_info *field_info, const char *rectype,
-                    long file_offset, long file_blocksize);
+					file_info *field_info, const char *rectype,
+					long file_offset, long file_blocksize);
 void read_globalrec(file_info *global_info, const char *rectype,
-                    long file_offset, long file_blocksize);
+					long file_offset, long file_blocksize);
 
 long write_recarray(void *base, long eltsize, long numelts,
-                    file_info *field_info, long file_offset);
+					file_info *field_info, long file_offset);
 long write_globalrec(file_info *global_info, long file_offset);
 long write_recblock(void *base, int ftype, long numrec, long offset);
 
@@ -1182,7 +1182,7 @@ fc_type init_file_context(const char *game_name, filetype ft);
    name and location-- everything but the global config file.)  */
 /* ft indicates the file type class. At the moment, it can be
    fAGX, fSAV, fSCR, fLOG
-      */
+	  */
 void fix_file_context(fc_type fc, filetype ft);
 fc_type convert_file_context(fc_type fc, filetype ft, const char *name);
 void release_file_context(fc_type *pfc);
@@ -1194,7 +1194,7 @@ rbool fileexist(fc_type fc, filetype ft);
 
 genfile readopen(fc_type fc, filetype ft, const char **errstr);
 genfile writeopen(fc_type fc, filetype ft,
-                  file_id_type *pfileid, const char **errstr);
+				  file_id_type *pfileid, const char **errstr);
 rbool filevalid(genfile f, filetype ft);
 void readclose(genfile f);
 void writeclose(genfile f, file_id_type fileid);
@@ -1209,7 +1209,7 @@ long binsize(genfile f); /* Size of an open binary file */
 rbool textrewind(genfile f);
 
 char *assemble_filename(const char *path, const char *root,
-                        const char *ext);
+						const char *ext);
 
 
 #ifdef global_defined_agtread

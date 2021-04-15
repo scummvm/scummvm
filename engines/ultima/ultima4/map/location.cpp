@@ -57,7 +57,7 @@ static Location *locationPop(Location **stack) {
 /*-------------------------------------------------------------------*/
 
 Location::Location(MapCoords coords, Map *map, int viewmode, LocationContext ctx,
-                   TurnCompleter *turnCompleter, Location *prev) {
+				   TurnCompleter *turnCompleter, Location *prev) {
 
 	this->_coords = coords;
 	this->_map = map;

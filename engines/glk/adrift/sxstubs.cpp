@@ -61,11 +61,11 @@ static sc_int stub_show_tags = 0;
  */
 void
 stub_attach_handlers(sc_bool(*read_line)(sc_char *, sc_int),
-                     void (*print_string)(const sc_char *),
-                     void *(*open_file)(sc_bool),
-                     sc_int(*read_file)(void *, sc_byte *, sc_int),
-                     void (*write_file)(void *, const sc_byte *, sc_int),
-                     void (*close_file)(void *)) {
+					 void (*print_string)(const sc_char *),
+					 void *(*open_file)(sc_bool),
+					 sc_int(*read_file)(void *, sc_byte *, sc_int),
+					 void (*write_file)(void *, const sc_byte *, sc_int),
+					 void (*close_file)(void *)) {
 	stub_read_line = read_line;
 	stub_print_string = print_string;
 	stub_open_file = open_file;
@@ -183,7 +183,7 @@ os_print_string_debug(const sc_char *string) {
 
 void
 os_play_sound(const sc_char *filepath,
-              sc_int offset, sc_int length, sc_bool is_looping) {
+			  sc_int offset, sc_int length, sc_bool is_looping) {
 	if (stub_trace)
 		sx_trace("os_play_sound (\"%s\", %ld, %ld, %s)\n",
 		         stub_notnull(filepath), offset, length,

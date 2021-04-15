@@ -1435,12 +1435,12 @@ int noun_resolve(struct word_type *scope_word, int finding_from, int noun_number
 		object_expected = TRUE;
 
 		wp = backup_pointer;    /* BACK UP THE CURRENT WORD POINTER.
-                                 * SO THE PARSER CAN INVESTIAGE THE
-                                 * POSIBILITY THAT THIS ISN'T A
-                                 * REFERENCE TO AN OBJECT AT ALL */
+								 * SO THE PARSER CAN INVESTIAGE THE
+								 * POSIBILITY THAT THIS ISN'T A
+								 * REFERENCE TO AN OBJECT AT ALL */
 
 		return (FALSE);         /* RETURN TO PARSER WITH NO MATCHING
-                                 * OBJECT HAVING BEEN FOUND. */
+								 * OBJECT HAVING BEEN FOUND. */
 	}
 
 	//printf("--- starting with %d matches\n", matches);

@@ -41,14 +41,14 @@ struct tokcxdef;
 /* stack frame record */
 struct dbgfdef
 {
-    struct runsdef *dbgfbp;                        /* base pointer of frame */
-    objnum  dbgfself;             /* 'self' object (MCMONINV for functions) */
-    objnum  dbgftarg;                               /* actual target object */
-    prpnum  dbgfprop;                          /* property being evalutated */
-    int     dbgfargc;                                /* number of arguments */
-    int     dbgfbif;      /* set to built-in function number if in built-in */
-    uint    dbgffr;         /* offset in object of local frame symbol table */
-    uint    dbgflin;                      /* OPCLINE operand of latest line */
+	struct runsdef *dbgfbp;                        /* base pointer of frame */
+	objnum  dbgfself;             /* 'self' object (MCMONINV for functions) */
+	objnum  dbgftarg;                               /* actual target object */
+	prpnum  dbgfprop;                          /* property being evalutated */
+	int     dbgfargc;                                /* number of arguments */
+	int     dbgfbif;      /* set to built-in function number if in built-in */
+	uint    dbgffr;         /* offset in object of local frame symbol table */
+	uint    dbgflin;                      /* OPCLINE operand of latest line */
 };
 typedef struct dbgfdef dbgfdef;
 
@@ -61,18 +61,18 @@ typedef struct dbgfdef dbgfdef;
 /* breakpoint structure */
 struct dbgbpdef
 {
-    objnum dbgbpself;               /* the "self" object for the breakpoint */
-    objnum dbgbptarg;            /* actual target object for the breakpoint */
-    uint   dbgbpofs;                  /* offset in object of the breakpoint */
-    uint   dbgbpflg;                                    /* breakpoint flags */
+	objnum dbgbpself;               /* the "self" object for the breakpoint */
+	objnum dbgbptarg;            /* actual target object for the breakpoint */
+	uint   dbgbpofs;                  /* offset in object of the breakpoint */
+	uint   dbgbpflg;                                    /* breakpoint flags */
 #define DBGBPFUSED  0x01                         /* breakpoint has been set */
 #define DBGBPFNAME  0x02                 /* name of address has been stored */
 #define DBGBPFCOND  0x04             /* breakpoint has a condition attached */
 #define DBGBPFDISA  0x08                          /* breakpoint is disabled */
 #define DBGBPFCONDNAME 0x10        /* condition name string has been stored */
-    uint   dbgbpnam;       /* offset of address name within dbgcxnam buffer */
-    uint   dbgbpcondnam;        /* offset of condition string within buffer */
-    objnum dbgbpcond;        /* object containing compiled condition for bp */
+	uint   dbgbpnam;       /* offset of address name within dbgcxnam buffer */
+	uint   dbgbpcondnam;        /* offset of condition string within buffer */
+	objnum dbgbpcond;        /* object containing compiled condition for bp */
 };
 typedef struct dbgbpdef dbgbpdef;
 
@@ -82,10 +82,10 @@ typedef struct dbgbpdef dbgbpdef;
 /* watch expression structure */
 struct dbgwxdef
 {
-    objnum  dbgwxobj;              /* object containing compiled expression */
-    objnum  dbgwxself;                         /* 'self' for the expression */
-    uint    dbgwxnam;   /* offset of expression text within dbgcxnam buffer */
-    uint    dbgwxflg;               /* flags for this watch expression slot */
+	objnum  dbgwxobj;              /* object containing compiled expression */
+	objnum  dbgwxself;                         /* 'self' for the expression */
+	uint    dbgwxnam;   /* offset of expression text within dbgcxnam buffer */
+	uint    dbgwxflg;               /* flags for this watch expression slot */
 #define DBGWXFUSED  0x01                            /* watch slot is in use */
 #define DBGWXFNAME  0x02                   /* name of watch has been stored */
 };
@@ -97,16 +97,16 @@ typedef struct dbgwxdef dbgwxdef;
 /* debug context */
 struct dbgcxdef
 {
-    struct tiocxdef *dbgcxtio;                          /* text i/o context */
-    struct tokthdef *dbgcxtab;                              /* symbol table */
-    struct mcmcxdef *dbgcxmem;              /* memory cache manager context */
-    struct errcxdef *dbgcxerr;                    /* error handling context */
-    struct    lindef *dbgcxlin;                    /* chain of line sources */
-    int       dbgcxfcn;                          /* number of frames in use */
-    int       dbgcxdep;          /* actual depth (if overflow frame buffer) */
-    int       dbgcxfid;                        /* source file serial number */
-    dbgfdef   dbgcxfrm[DBGMAXFRAME];                        /* stack frames */
-    int       dbgcxflg;                          /* flags for debug session */
+	struct tiocxdef *dbgcxtio;                          /* text i/o context */
+	struct tokthdef *dbgcxtab;                              /* symbol table */
+	struct mcmcxdef *dbgcxmem;              /* memory cache manager context */
+	struct errcxdef *dbgcxerr;                    /* error handling context */
+	struct    lindef *dbgcxlin;                    /* chain of line sources */
+	int       dbgcxfcn;                          /* number of frames in use */
+	int       dbgcxdep;          /* actual depth (if overflow frame buffer) */
+	int       dbgcxfid;                        /* source file serial number */
+	dbgfdef   dbgcxfrm[DBGMAXFRAME];                        /* stack frames */
+	int       dbgcxflg;                          /* flags for debug session */
 #define    DBGCXFSS   0x01                  /* single-stepping source lines */
 #define    DBGCXFSO   0x02          /* stepping over a function/method call */
 #define    DBGCXFOK   0x04                         /* debugger is linked in */
@@ -114,31 +114,31 @@ struct dbgcxdef
 #define    DBGCXFGBP  0x10                  /* global breakpoints in effect */
 #define    DBGCXFTRC  0x20                        /* call tracing activated */
 #define    DBGCXFLIN2 0x40         /* new-style line records (line numbers) */
-    int       dbgcxsof;                    /* frame depth at step-over time */
-    dbgbpdef  dbgcxbp[DBGBPMAX];                             /* breakpoints */
-    dbgwxdef  dbgcxwx[DBGWXMAX];                       /* watch expressions */
-    struct    prscxdef *dbgcxprs;                        /* parsing context */
-    struct    runcxdef *dbgcxrun;                      /* execution context */
-    uint      dbgcxnamf;               /* next free byte of dbgcxnam buffer */
-    uint      dbgcxnams;                         /* size of dbgcxnam buffer */
-    char     *dbgcxnam;                       /* space for bp address names */
-    char     *dbgcxhstp;                             /* call history buffer */
-    uint      dbgcxhstl;                           /* history buffer length */
-    uint      dbgcxhstf;             /* offset of next free byte of history */
+	int       dbgcxsof;                    /* frame depth at step-over time */
+	dbgbpdef  dbgcxbp[DBGBPMAX];                             /* breakpoints */
+	dbgwxdef  dbgcxwx[DBGWXMAX];                       /* watch expressions */
+	struct    prscxdef *dbgcxprs;                        /* parsing context */
+	struct    runcxdef *dbgcxrun;                      /* execution context */
+	uint      dbgcxnamf;               /* next free byte of dbgcxnam buffer */
+	uint      dbgcxnams;                         /* size of dbgcxnam buffer */
+	char     *dbgcxnam;                       /* space for bp address names */
+	char     *dbgcxhstp;                             /* call history buffer */
+	uint      dbgcxhstl;                           /* history buffer length */
+	uint      dbgcxhstf;             /* offset of next free byte of history */
 
-    /* 
-     *   This member is for the use of the user interface code.  If the
-     *   user interface implementation needs to store additional context,
-     *   it can allocate a structure of its own (it should probably do
-     *   this in dbguini()) and store a pointer to that structure here.
-     *   Since the user interface entrypoints always have the debugger
-     *   context passed as a parameter, the user interface code can
-     *   recover its extra context information by following this pointer
-     *   and casting it to its private structure type.  The TADS code
-     *   won't do anything with this pointer except initialize it to null
-     *   when initializing the debugger context.  
-     */
-    void     *dbgcxui;
+	/* 
+	 *   This member is for the use of the user interface code.  If the
+	 *   user interface implementation needs to store additional context,
+	 *   it can allocate a structure of its own (it should probably do
+	 *   this in dbguini()) and store a pointer to that structure here.
+	 *   Since the user interface entrypoints always have the debugger
+	 *   context passed as a parameter, the user interface code can
+	 *   recover its extra context information by following this pointer
+	 *   and casting it to its private structure type.  The TADS code
+	 *   won't do anything with this pointer except initialize it to null
+	 *   when initializing the debugger context.  
+	 */
+	void     *dbgcxui;
 };
 typedef struct dbgcxdef dbgcxdef;
 
@@ -190,7 +190,7 @@ int dbgpresent();
 
 /* add a debug tracing record */
 /* void dbgenter(dbgcxdef *ctx, runsdef *bp, objnum self, objnum target,
-                 prpnum prop, int binum, int argc); */ 
+				 prpnum prop, int binum, int argc); */ 
 
 /* tell debugger where the current line's local frame table is located */
 /* void dbgframe(dbgcxdef *ctx, uint ofsfr, ofslin); */
@@ -204,7 +204,7 @@ int dbgpresent();
  *   or method as it was originally.
  */
 /* void dbgssi(dbgcxdef *ctx, uint ofs, int instr,
-               int err, uchar *noreg *p); */
+			   int err, uchar *noreg *p); */
 
 /* pop debug trace level */
 /* void dbgleave(dbgcxdef *ctx, int exittype); */
@@ -276,8 +276,8 @@ int dbgbpset(dbgcxdef *ctx, char *addr, int *bpnum);
  *   was set.  
  */
 int dbgbpat(dbgcxdef *ctx, objnum objn, objnum self,
-            uint ofs, int *bpnum, char *bpname, int toggle,
-            char *condition, int *did_set);
+			uint ofs, int *bpnum, char *bpname, int toggle,
+			char *condition, int *did_set);
 
 /* 
  *   Set a breakpoint at an object + offset location, optionally with a
@@ -285,8 +285,8 @@ int dbgbpat(dbgcxdef *ctx, objnum objn, objnum self,
  *   in use, we'll return an error.  
  */
 int dbgbpatid(dbgcxdef *ctx, int bpnum, objnum target, objnum self,
-              uint ofs, char *bpname, int toggle, char *cond,
-              int *did_set);
+			  uint ofs, char *bpname, int toggle, char *cond,
+			  int *did_set);
 
 /*
  *   Determine if there's a breakpoint at a given code location.  Fills in
@@ -320,25 +320,25 @@ int dbgbpsetcond(dbgcxdef *ctx, int bpnum, char *cond);
 
 /* list breakpoints, using user callback to do display */
 void dbgbplist(dbgcxdef *ctx,
-               void (*dispfn)(void *ctx, const char *str, int len),
-               void *dispctx);
+			   void (*dispfn)(void *ctx, const char *str, int len),
+			   void *dispctx);
 
 /* enumerate breakpoints */
 void dbgbpenum(dbgcxdef *ctx,
-               void (*cbfunc)(void *cbctx, int bpnum, const char *desc,
-                              const char *cond, int disabled), void *cbctx);
+			   void (*cbfunc)(void *cbctx, int bpnum, const char *desc,
+							  const char *cond, int disabled), void *cbctx);
 
 /* call callback with lindef data for each breakpoint currently set */
 void dbgbpeach(dbgcxdef *ctx,
-               void (*fn)(void *, int, uchar *, uint),
-               void *fnctx);
+			   void (*fn)(void *, int, uchar *, uint),
+			   void *fnctx);
 
 /* 
  *   Get information on a specific breakpoint.  Returns zero on success,
  *   non-zero on failure. 
  */
 int dbgbpgetinfo(dbgcxdef *ctx, int bpnum, char *descbuf, size_t descbuflen,
-                 char *condbuf, size_t condbuflen);
+				 char *condbuf, size_t condbuflen);
 
 /* 
  *   Evaluate an expression (a text string to be parsed) at a particular
@@ -348,8 +348,8 @@ int dbgbpgetinfo(dbgcxdef *ctx, int bpnum, char *descbuf, size_t descbuflen,
  *   prefix, otherwise we'll simply display the value.  
  */
 int dbgeval(dbgcxdef *ctx, char *expr,
-            void (*dispfn)(void *dispctx, const char *str, int strl),
-            void *dispctx, int level, int showtype);
+			void (*dispfn)(void *dispctx, const char *str, int strl),
+			void *dispctx, int level, int showtype);
 
 /*
  *   Evaluate an expression, extended version.  For aggregate values
@@ -363,19 +363,19 @@ int dbgeval(dbgcxdef *ctx, char *expr,
  *   there for information on the purpose of this flag.  
  */
 int dbgevalext(dbgcxdef *ctx, char *expr,
-               void (*dispfn)(void *dispctx, const char *str, int strl),
-               void *dispctx, int level, int showtype, dattyp *dat,
-               void (*aggcb)(void *aggctx, const char *subname,
-                             int subnamelen, const char *relationship),
-               void *aggctx, int speculative);
+			   void (*dispfn)(void *dispctx, const char *str, int strl),
+			   void *dispctx, int level, int showtype, dattyp *dat,
+			   void (*aggcb)(void *aggctx, const char *subname,
+							 int subnamelen, const char *relationship),
+			   void *aggctx, int speculative);
 
 /* 
  *   enumerate local variables at a given stack context level by calling
  *   the given function once for each local variable 
  */
 void dbgenumlcl(dbgcxdef *ctx, int level,
-                void (*func)(void *ctx, const char *lclnam, size_t lclnamlen),
-                void *cbctx);
+				void (*func)(void *ctx, const char *lclnam, size_t lclnamlen),
+				void *cbctx);
 
 /* 
  *   Compile an expression in a given frame context.  Returns an error
@@ -396,12 +396,12 @@ void dbgenumlcl(dbgcxdef *ctx, int level,
  *   calls.  
  */
 int dbgcompile(dbgcxdef *ctx, char *expr, dbgfdef *fr, objnum *objn,
-               int speculative);
+			   int speculative);
 
 /* display a stack traceback through a user callback */
 void dbgstktr(dbgcxdef *ctx,
-              void (*dispfn)(void *dispctx, const char *str, int strl),
-              void *dispctx, int level, int toponly, int include_markers);
+			  void (*dispfn)(void *dispctx, const char *str, int strl),
+			  void *dispctx, int level, int toponly, int include_markers);
 
 /* format a display of where execution is stopped into a buffer */
 void dbgwhere(dbgcxdef *ctx, char *buf);
@@ -414,8 +414,8 @@ int dbgwxdel(dbgcxdef *ctx, int wxnum);
 
 /* update all watch expressions */
 void dbgwxupd(dbgcxdef *ctx,
-              void (*dispfn)(void *dispctx, const char *txt, int len),
-              void *dispctx);
+			  void (*dispfn)(void *dispctx, const char *txt, int len),
+			  void *dispctx);
 
 /* switch to a new active lindef */
 void dbgswitch(struct lindef **linp, struct lindef *newlin);
@@ -492,7 +492,7 @@ int dbgu_err_resume(dbgcxdef *ctx);
  *   contain a valid filename.  
  */
 int dbgu_find_src(const char *origname, int origlen,
-                  char *fullname, size_t full_len, int must_find_file);
+				  char *fullname, size_t full_len, int must_find_file);
 
 
 /* 
@@ -560,7 +560,7 @@ void trcsho(void);
 #define dbgrst(ctx) ((ctx)->dbgcxfcn = (ctx)->dbgcxdep = 0)
 #define dbgframe(ctx, frofs, linofs) \
    (((ctx)->dbgcxfrm[(ctx)->dbgcxfcn - 1].dbgffr = (frofs)), \
-    ((ctx)->dbgcxfrm[(ctx)->dbgcxfcn - 1].dbgflin = (linofs)))
+	((ctx)->dbgcxfrm[(ctx)->dbgcxfcn - 1].dbgflin = (linofs)))
 #define dbgssi(ctx, ofs, instr, err, p) dbgss(ctx, ofs, instr, err, p)
 #endif /* DBG_OFF */
 
@@ -568,7 +568,7 @@ void trcsho(void);
 /* private internal routines */
 
 void dbgent(dbgcxdef *ctx, struct runsdef *bp, objnum self, objnum target,
-            prpnum prop, int binum, int argc);
+			prpnum prop, int binum, int argc);
 
 void dbglv(dbgcxdef *ctx, int exittype);
 
@@ -577,11 +577,11 @@ void dbgds(dbgcxdef *ctx);
 void dbgss(dbgcxdef *ctx, uint ofs, int instr, int err, uchar *noreg *p);
 
 void dbgpval(struct dbgcxdef *ctx, struct runsdef *val,
-             void (*dispfn)(void *, const char *, int),
-             void *dispctx, int showtype);
+			 void (*dispfn)(void *, const char *, int),
+			 void *dispctx, int showtype);
 
 int dbgtabsea(struct toktdef *tab, char *name, int namel, int hash,
-              struct toksdef *ret);
+			  struct toksdef *ret);
 
 } // End of namespace TADS2
 } // End of namespace TADS

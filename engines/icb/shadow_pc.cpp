@@ -48,11 +48,11 @@ int32 st2pc;
 int32 st3pc;
 
 void MakeShadowPC(rap_API *srap, SVECTORPC *local, int32 nVertices, SVECTORPC *p_n, int32 p_d, SVECTORPC *ldir, CVECTOR *lcolour, MATRIXPC *world2screen, MATRIXPC *local2world,
-                  int32 debug, SVECTOR *bbox, SVECTOR *minbbox, SVECTOR *maxbbox, int16 xminLocal, int16 xmaxLocal, int16 yminLocal, int16 ymaxLocal, int16 zminLocal,
-                  int16 zmaxLocal);
+				  int32 debug, SVECTOR *bbox, SVECTOR *minbbox, SVECTOR *maxbbox, int16 xminLocal, int16 xmaxLocal, int16 yminLocal, int16 ymaxLocal, int16 zminLocal,
+				  int16 zmaxLocal);
 
 void DrawShadow1PC(rap_API *srap, int32 poseBone, MATRIXPC *lw, MATRIXPC *world2screen, MATRIXPC *local2world, int32 nShadows, SVECTORPC *ldirs, CVECTOR *lcolours, SVECTORPC *p_n,
-                   int32 *p_d, int32 debug, SVECTOR **shadowBox, SVECTOR *shadowBoxMin, SVECTOR *shadowBoxMax) {
+				   int32 *p_d, int32 debug, SVECTOR **shadowBox, SVECTOR *shadowBoxMin, SVECTOR *shadowBoxMax) {
 	if (nShadows == 0)
 		return;
 
@@ -90,8 +90,8 @@ void DrawShadow1PC(rap_API *srap, int32 poseBone, MATRIXPC *lw, MATRIXPC *world2
 }
 
 void MakeShadowPC(rap_API *srap, SVECTORPC *local, int32 nVertices, SVECTORPC *p_n, int32 p_d, SVECTORPC *ldir, CVECTOR *lcolour, MATRIXPC *world2screen, MATRIXPC *local2world,
-                  int32 debug, SVECTOR *bbox, SVECTOR *minbbox, SVECTOR *maxbbox, int16 xminLocal, int16 xmaxLocal, int16 yminLocal, int16 ymaxLocal, int16 zminLocal,
-                  int16 zmaxLocal) {
+				  int32 debug, SVECTOR *bbox, SVECTOR *minbbox, SVECTOR *maxbbox, int16 xminLocal, int16 xmaxLocal, int16 yminLocal, int16 ymaxLocal, int16 zminLocal,
+				  int16 zmaxLocal) {
 
 	SVECTORPC workVerts[MAX_VECTORS];
 	SVECTORPC *vertices = NULL;

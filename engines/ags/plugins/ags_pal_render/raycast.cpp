@@ -1520,14 +1520,14 @@ void MoveBackward(ScriptMethodParams &) {
 /*
 void MoveBackward ()
 {
-      double newposx;
-      if (dirX > 0) newposx = -0.2 + posX - dirX * moveSpeed;
-      else newposx = 0.2 + posX - dirX * moveSpeed;
-      double newposy;
-      if (dirY > 0) newposy = -0.2 + posY - dirY * moveSpeed;
-      else newposy = 0.2 + posY - dirY * moveSpeed;
-      if(worldMap[int(newposx)][int(posY)] == false || worldMap[int(newposx)][int(posY)] > 8) posX -= dirX * moveSpeed;
-      if(worldMap[int(posX)][int(newposy)] == false || worldMap[int(posX)][int(newposy)] > 8) posY -= dirY * moveSpeed;
+	  double newposx;
+	  if (dirX > 0) newposx = -0.2 + posX - dirX * moveSpeed;
+	  else newposx = 0.2 + posX - dirX * moveSpeed;
+	  double newposy;
+	  if (dirY > 0) newposy = -0.2 + posY - dirY * moveSpeed;
+	  else newposy = 0.2 + posY - dirY * moveSpeed;
+	  if(worldMap[int(newposx)][int(posY)] == false || worldMap[int(newposx)][int(posY)] > 8) posX -= dirX * moveSpeed;
+	  if(worldMap[int(posX)][int(newposy)] == false || worldMap[int(posX)][int(newposy)] > 8) posY -= dirY * moveSpeed;
 }
 */
 

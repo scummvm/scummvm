@@ -163,8 +163,8 @@ bool Diary::hasUnreadEntries() const {
 
 Diary::ConversationLog::ConversationLog() :
 		dialogActive(false),
-        chapter(0),
-        characterId(0) {
+		chapter(0),
+		characterId(0) {
 }
 
 Diary::ConversationLogLine::ConversationLogLine() :

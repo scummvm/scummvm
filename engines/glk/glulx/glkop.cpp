@@ -31,38 +31,38 @@ namespace Glulx {
    To be precise, we make the following assumptions:
 
    - An argument list is an array of 32-bit values, which can represent
-     either integers or addresses.
+	 either integers or addresses.
    - We can read or write to a 32-bit integer in VM memory using the macros
-     ReadMemory(addr) and WriteMemory(addr), where addr is an address
-     taken from the argument list.
+	 ReadMemory(addr) and WriteMemory(addr), where addr is an address
+	 taken from the argument list.
    - A character array is a sequence of bytes somewhere in VM memory.
-     The array can be turned into a C char array by the macro
-     CaptureCArray(addr, len), and released by ReleaseCArray().
-     The passin, passout hints may be used to avoid unnecessary copying.
+	 The array can be turned into a C char array by the macro
+	 CaptureCArray(addr, len), and released by ReleaseCArray().
+	 The passin, passout hints may be used to avoid unnecessary copying.
    - An integer array is a sequence of integers somewhere in VM memory.
-     The array can be turned into a C integer array by the macro
-     CaptureIArray(addr, len), and released by ReleaseIArray().
-     These macros are responsible for fixing byte-order and alignment
-     (if the C ABI does not match the VM's). The passin, passout hints
-     may be used to avoid unnecessary copying.
+	 The array can be turned into a C integer array by the macro
+	 CaptureIArray(addr, len), and released by ReleaseIArray().
+	 These macros are responsible for fixing byte-order and alignment
+	 (if the C ABI does not match the VM's). The passin, passout hints
+	 may be used to avoid unnecessary copying.
    - A Glk object array is a sequence of integers in VM memory. It is
-     turned into a C pointer array (remember that C pointers may be more
-     than 4 bytes!) The pointer array is allocated by
-     CapturePtrArray(addr, len, objclass) and released by ReleasePtrArray().
-     Again, the macros handle the conversion.
+	 turned into a C pointer array (remember that C pointers may be more
+	 than 4 bytes!) The pointer array is allocated by
+	 CapturePtrArray(addr, len, objclass) and released by ReleasePtrArray().
+	 Again, the macros handle the conversion.
    - A Glk structure (such as event_t) is a set of integers somewhere
-     in VM memory, which can be read and written with the macros
-     ReadStructField(addr, fieldnum) and WriteStructField(addr, fieldnum).
-     The fieldnum is an integer (from 0 to 3, for event_t.)
+	 in VM memory, which can be read and written with the macros
+	 ReadStructField(addr, fieldnum) and WriteStructField(addr, fieldnum).
+	 The fieldnum is an integer (from 0 to 3, for event_t.)
    - A VM string can be turned into a C-style string with the macro
-     ptr = DecodeVMString(addr). After the string is used, this code
-     calls ReleaseVMString(ptr), which should free any memory that
-     DecodeVMString allocates.
+	 ptr = DecodeVMString(addr). After the string is used, this code
+	 calls ReleaseVMString(ptr), which should free any memory that
+	 DecodeVMString allocates.
    - A VM Unicode string can be turned into a zero-terminated array
-     of 32-bit integers, in the same way, with DecodeVMUstring
-     and ReleaseVMUstring.
+	 of 32-bit integers, in the same way, with DecodeVMUstring
+	 and ReleaseVMUstring.
 
-     To work this code over for a new VM, just diddle the macros.
+	 To work this code over for a new VM, just diddle the macros.
 */
 
 static gidispatch_rock_t classtable_register(void *obj, uint objclass) {
@@ -238,7 +238,7 @@ FullDispatcher:
 }
 
 const char *Glulx::read_prefix(const char *cx, int *isref, int *isarray, int *passin, int *passout,
-                                int *nullok, int *isretained,  int *isreturn) {
+								int *nullok, int *isretained,  int *isreturn) {
 	*isref = false;
 	*passin = false;
 	*passout = false;
@@ -326,7 +326,7 @@ void Glulx::prepare_glk_args(const char *proto, dispatch_splot_t *splot) {
 				cx++;
 			}
 			maxargs += nwx; /* This is *only* correct because all structs contain
-                         plain values. */
+						 plain values. */
 			refdepth = 1;
 			while (refdepth > 0) {
 				if (*cx == '[')
@@ -365,7 +365,7 @@ void Glulx::prepare_glk_args(const char *proto, dispatch_splot_t *splot) {
 }
 
 void Glulx::parse_glk_args(dispatch_splot_t *splot, const char **proto, int depth, int *argnumptr,
-                            uint subaddress, int subpassin) {
+							uint subaddress, int subpassin) {
 	const char *cx;
 	int ix, argx;
 	int gargnum, numwanted;
@@ -580,7 +580,7 @@ void Glulx::parse_glk_args(dispatch_splot_t *splot, const char **proto, int dept
 }
 
 void Glulx::unparse_glk_args(dispatch_splot_t *splot, const char **proto, int depth,
-                              int *argnumptr, uint subaddress, int subpassout) {
+							  int *argnumptr, uint subaddress, int subpassout) {
 	const char *cx;
 	int ix, argx;
 	int gargnum, numwanted;
@@ -924,7 +924,7 @@ gidispatch_rock_t Glulx::glulxe_classtable_register(void *obj,  uint objclass) {
 }
 
 void Glulx::glulxe_classtable_unregister(void *obj, uint objclass,
-        gidispatch_rock_t objrock) {
+		gidispatch_rock_t objrock) {
 	classes_remove(objclass, obj);
 }
 

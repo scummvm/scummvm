@@ -54,7 +54,7 @@ U6Lzw::~U6Lzw() {
  * compressed, it just makes it suitable to be read by an LZW decoder.
  */
 unsigned char *U6Lzw::compress_buffer(unsigned char *src, uint32 src_len,
-                                      uint32 &dest_len) {
+									  uint32 &dest_len) {
 	// FIXME - didnt bother fixing this since its output will be larger than
 	//         the uncompressed data
 	uint32 blocks = 0; //, block = 0, b = 0, d = 0, rshift = 0;

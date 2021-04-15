@@ -95,19 +95,19 @@ typedef uchar objdef;
 
 /* undo context */
 struct objucxdef {
-    mcmcxdef *objucxmem;                           /* cache manager context */
-    errcxdef *objucxerr;                                   /* error context */
-    ushort    objucxsiz;                         /* size of the undo buffer */
-    ushort    objucxhead;                  /* head (position of next write) */
-    ushort    objucxtail;               /* tail (position of oldest record) */
-    ushort    objucxprv;                           /* previous head pointer */
-    ushort    objucxtop;                      /* highest head value written */
-    void    (*objucxcun)(void *ctx, uchar *data);
-                                              /* apply a client undo record */
-    ushort  (*objucxcsz)(void *ctx, uchar *data);
-                                        /* get size of a client undo record */
-    void     *objucxccx;                             /* client undo context */
-    uchar     objucxbuf[1];                                  /* undo buffer */
+	mcmcxdef *objucxmem;                           /* cache manager context */
+	errcxdef *objucxerr;                                   /* error context */
+	ushort    objucxsiz;                         /* size of the undo buffer */
+	ushort    objucxhead;                  /* head (position of next write) */
+	ushort    objucxtail;               /* tail (position of oldest record) */
+	ushort    objucxprv;                           /* previous head pointer */
+	ushort    objucxtop;                      /* highest head value written */
+	void    (*objucxcun)(void *ctx, uchar *data);
+											  /* apply a client undo record */
+	ushort  (*objucxcsz)(void *ctx, uchar *data);
+										/* get size of a client undo record */
+	void     *objucxccx;                             /* client undo context */
+	uchar     objucxbuf[1];                                  /* undo buffer */
 };
 
 /*
@@ -236,7 +236,7 @@ objnum objget1sc(mcmcxdef *ctx, objnum objn);
  *   property was not set in the object.
  */
 uint objgetp(mcmcxdef *ctx, objnum objn, prpnum prop,
-             dattyp *typptr);
+			 dattyp *typptr);
 
 /*
  *   Get the *ending* offset of the given property's value, without any
@@ -258,7 +258,7 @@ uint objgetp_end(mcmcxdef *ctx, objnum objn, prpnum prop);
  *   undo operation).
  */
 uint objgetap(mcmcxdef *ctx, noreg objnum objn, prpnum prop,
-              objnum *orn, int inh);
+			  objnum *orn, int inh);
 
 /*
  *   expand an object by a requested amount, returning a pointer to the
@@ -275,7 +275,7 @@ objdef *objexp(mcmcxdef *ctx, objnum obj, ushort *siz);
  *   undo information is retained. 
  */
 void objsetp(mcmcxdef *ctx, objnum obj, prpnum prop,
-             dattyp typ, const void *val, objucxdef *undoctx);
+			 dattyp typ, const void *val, objucxdef *undoctx);
 
 /* 
  *   Delete a property.  If mark_only is true, we'll only mark the
@@ -333,9 +333,9 @@ void objusav(objucxdef *undoctx);
 
 /* initialize undo context */
 objucxdef *objuini(mcmcxdef *memctx, ushort undosiz,
-                   void (*undocb)(void *ctx, uchar *data),
-                   ushort (*sizecb)(void *ctx, uchar *data),
-                   void *callctx);
+				   void (*undocb)(void *ctx, uchar *data),
+				   ushort (*sizecb)(void *ctx, uchar *data),
+				   void *callctx);
 
 /* free the undo context - releases memory allocated by objuini() */
 void objuterm(objucxdef *undoctx);
@@ -352,8 +352,8 @@ void objulose(objucxdef *undoctx);
  *   memory is returned, and *objnptr receives the object number.
  */
 objdef *objnew(mcmcxdef *mctx, int sccnt, ushort propspace,
-               objnum *objnptr, int classflg);
-            
+			   objnum *objnptr, int classflg);
+			
 /* initialize an already allocated object */
 void objini(mcmcxdef *mctx, int sccnt, objnum objn, int classflg);
 

@@ -26,7 +26,7 @@
 namespace OpenGL {
 
 Pipeline::Pipeline()
-    : _activeFramebuffer(nullptr), _isActive(false) {
+	: _activeFramebuffer(nullptr), _isActive(false) {
 }
 
 void Pipeline::activate() {

@@ -62,15 +62,15 @@ class ConfigNode;
 class Configuration {
 private:
 	Std::vector<Shared::XMLTree*> _trees;
-    Common::HashMap<Common::String, Common::String, Common::IgnoreCase_Hash,
-        Common::IgnoreCase_EqualTo> _localKeys;
+	Common::HashMap<Common::String, Common::String, Common::IgnoreCase_Hash,
+		Common::IgnoreCase_EqualTo> _localKeys;
 	Common::HashMap<Common::String, Common::String, Common::IgnoreCase_Hash,
 		Common::IgnoreCase_EqualTo> _settings;
 	Std::string _configFilename;
-    bool _configChanged;
+	bool _configChanged;
 
-    // Sets default configurations common to both enhanced and unhenaced
-    void setCommonDefaults(GameId gameType);
+	// Sets default configurations common to both enhanced and unhenaced
+	void setCommonDefaults(GameId gameType);
 
 	// sets up unenhanced version defaults
 	void setUnenhancedDefaults(GameId gameType);
@@ -84,8 +84,8 @@ public:
 	// read config file. Multiple files may be read. Order is important.
 	bool readConfigFile(Std::string fname, Std::string root, bool readonly = true);
 
-    // Returns true if default settings for game have previously been set
-    bool isDefaultsSet() const;
+	// Returns true if default settings for game have previously been set
+	bool isDefaultsSet() const;
 
 	// Loads up the configuration settings
 	void load(GameId gameId, bool isEnhanced);

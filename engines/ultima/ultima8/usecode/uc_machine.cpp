@@ -2062,7 +2062,7 @@ const Std::string &UCMachine::getString(uint16 str) const {
 	static Std::string emptystring("");
 
 	Std::map<uint16, Std::string>::const_iterator iter =
-            _stringHeap.find(str);
+			_stringHeap.find(str);
 
 	if (iter != _stringHeap.end())
 		return iter->_value;

@@ -111,7 +111,7 @@ inline int intLog2(uint32 v) {
 // Input and Output type can be different
 template<class InputT, class OutputT>
 inline OutputT trunc(InputT x) {
-    return (x > 0) ? floor(x) : ceil(x);
+	return (x > 0) ? floor(x) : ceil(x);
 }
 
 // Round a number towards zero

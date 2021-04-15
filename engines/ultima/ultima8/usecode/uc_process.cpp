@@ -36,7 +36,7 @@ UCProcess::UCProcess() : Process(), _classId(0xFFFF), _ip(0xFFFF),
 }
 
 UCProcess::UCProcess(uint16 classid, uint16 offset, uint32 this_ptr,
-                     int thissize, const uint8 *args, int argsize)
+					 int thissize, const uint8 *args, int argsize)
 	: Process(), _classId(0xFFFF), _ip(0xFFFF), _bp(0x0000), _temp32(0) {
 	_usecode = GameData::get_instance()->getMainUsecode();
 
@@ -47,7 +47,7 @@ UCProcess::~UCProcess() {
 }
 
 void UCProcess::load(uint16 classid, uint16 offset, uint32 this_ptr,
-                     int thissize, const uint8 *args, int argsize) {
+					 int thissize, const uint8 *args, int argsize) {
 	if (_usecode->get_class_size(classid) == 0)
 		perr << "Class is empty..." << Std::endl;
 

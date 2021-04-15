@@ -80,7 +80,7 @@ Converse::Converse() {
  */
 void
 Converse::init(Configuration *cfg, nuvie_game_t t, MsgScroll *s, ActorManager *a,
-               GameClock *c, Player *p, ViewManager *v, ObjManager *o) {
+			   GameClock *c, Player *p, ViewManager *v, ObjManager *o) {
 	Std::string townsdir;
 
 	config = cfg;

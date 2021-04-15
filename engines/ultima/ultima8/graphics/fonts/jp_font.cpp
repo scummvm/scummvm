@@ -75,10 +75,10 @@ void JPFont::getStringSize(const Std::string &text, int32 &width, int32 &height)
 }
 
 void JPFont::getTextSize(const Std::string &text,
-                         int32 &resultwidth, int32 &resultheight,
-                         unsigned int &remaining,
-                         int32 width, int32 height, TextAlign align,
-                         bool u8specials) {
+						 int32 &resultwidth, int32 &resultheight,
+						 unsigned int &remaining,
+						 int32 width, int32 height, TextAlign align,
+						 bool u8specials) {
 	Std::list<PositionedText> tmp;
 	tmp = typesetText<SJISTraits>(this, text, remaining,
 	                              width, height, align, u8specials,
@@ -86,10 +86,10 @@ void JPFont::getTextSize(const Std::string &text,
 }
 
 RenderedText *JPFont::renderText(const Std::string &text,
-                                 unsigned int &remaining,
-                                 int32 width, int32 height, TextAlign align,
-                                 bool u8specials,
-                                 Std::string::size_type cursor) {
+								 unsigned int &remaining,
+								 int32 width, int32 height, TextAlign align,
+								 bool u8specials,
+								 Std::string::size_type cursor) {
 	int32 resultwidth, resultheight;
 	Std::list<PositionedText> lines;
 	lines = typesetText<SJISTraits>(this, text, remaining,

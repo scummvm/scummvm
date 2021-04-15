@@ -45,11 +45,11 @@ AnimScript::~AnimScript() {
 }
 
 AnimScript::AnimScript(Object *parent, byte subType, uint16 index, const Common::String &name) :
-        Object(parent, subType, index, name),
-        _anim(nullptr),
-        _nextItemIndex(-1),
-        _msecsToNextUpdate(0),
-        _done(false) {
+		Object(parent, subType, index, name),
+		_anim(nullptr),
+		_nextItemIndex(-1),
+		_msecsToNextUpdate(0),
+		_done(false) {
 	_type = TYPE;
 }
 

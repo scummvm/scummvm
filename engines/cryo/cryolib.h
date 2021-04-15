@@ -86,7 +86,7 @@ void CLBlitter_CopyViewRect(View *view1, View *view2, Common::Rect *rect1, Commo
 void CLBlitter_Send2ScreenNextCopy(color_t *palette, uint16 first, uint16 count);
 void CLBlitter_OneBlackFlash();
 void CLBlitter_CopyView2ViewSimpleSize(byte *src, int16 srcw, int16 srcp, int16 srch,
-                                       byte *dst, int16 dstw, int16 dstp, int16 dsth);
+									   byte *dst, int16 dstw, int16 dstp, int16 dsth);
 void CLBlitter_CopyView2ScreenCUSTOM(View *view);
 void CLBlitter_CopyView2Screen(View *view);
 void CLBlitter_UpdateScreen();

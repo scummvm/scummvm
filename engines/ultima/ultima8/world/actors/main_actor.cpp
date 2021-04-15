@@ -761,7 +761,7 @@ uint32 MainActor::I_teleportToEgg(const uint8 *args, unsigned int argsize) {
 }
 
 uint32 MainActor::I_accumulateStrength(const uint8 *args,
-                                       unsigned int /*argsize*/) {
+									   unsigned int /*argsize*/) {
 	ARG_SINT16(n);
 	MainActor *av = getMainActor();
 	av->accumulateStr(n);
@@ -770,7 +770,7 @@ uint32 MainActor::I_accumulateStrength(const uint8 *args,
 }
 
 uint32 MainActor::I_accumulateDexterity(const uint8 *args,
-                                        unsigned int /*argsize*/) {
+										unsigned int /*argsize*/) {
 	ARG_SINT16(n);
 	MainActor *av = getMainActor();
 	av->accumulateDex(n);
@@ -779,7 +779,7 @@ uint32 MainActor::I_accumulateDexterity(const uint8 *args,
 }
 
 uint32 MainActor::I_accumulateIntelligence(const uint8 *args,
-        unsigned int /*argsize*/) {
+		unsigned int /*argsize*/) {
 	ARG_SINT16(n);
 	MainActor *av = getMainActor();
 	av->accumulateInt(n);
@@ -788,7 +788,7 @@ uint32 MainActor::I_accumulateIntelligence(const uint8 *args,
 }
 
 uint32 MainActor::I_clrAvatarInCombat(const uint8 * /*args*/,
-                                      unsigned int /*argsize*/) {
+									  unsigned int /*argsize*/) {
 	MainActor *av = getMainActor();
 	av->clearInCombat();
 
@@ -796,7 +796,7 @@ uint32 MainActor::I_clrAvatarInCombat(const uint8 * /*args*/,
 }
 
 uint32 MainActor::I_setAvatarInCombat(const uint8 * /*args*/,
-                                      unsigned int /*argsize*/) {
+									  unsigned int /*argsize*/) {
 	MainActor *av = getMainActor();
 	// Note: only happens in U8, so activity num is not important.
 	av->setInCombat(0);
@@ -805,7 +805,7 @@ uint32 MainActor::I_setAvatarInCombat(const uint8 * /*args*/,
 }
 
 uint32 MainActor::I_isAvatarInCombat(const uint8 * /*args*/,
-                                     unsigned int /*argsize*/) {
+									 unsigned int /*argsize*/) {
 	MainActor *av = getMainActor();
 	if (av->isInCombat())
 		return 1;

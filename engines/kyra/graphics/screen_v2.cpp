@@ -278,7 +278,7 @@ void Screen_v2::setTextColorMap(const uint8 *cmap) {
 }
 
 void Screen_v2::wsaFrameAnimationStep(int x1, int y1, int x2, int y2,
-                                      int w1, int h1, int w2, int h2, int srcPage, int dstPage, int dim) {
+									  int w1, int h1, int w2, int h2, int srcPage, int dstPage, int dim) {
 
 	if (!w1 || !h1 || !w2 || !h2)
 		return;

@@ -38,13 +38,13 @@
 
 class Sword2MetaEngine : public MetaEngine {
 public:
-    const char *getName() const override {
+	const char *getName() const override {
 		return "sword2";
 	}
 
-    bool hasFeature(MetaEngineFeature f) const override;
+	bool hasFeature(MetaEngineFeature f) const override;
 
-    SaveStateList listSaves(const char *target) const override;
+	SaveStateList listSaves(const char *target) const override;
 	int getMaximumSaveSlot() const override;
 	void removeSaveState(const char *target, int slot) const override;
 

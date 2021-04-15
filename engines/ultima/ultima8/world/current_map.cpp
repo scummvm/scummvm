@@ -434,9 +434,9 @@ static inline bool ChunkOnScreen(int32 cx, int32 cy, int32 sleft, int32 stop, in
 }
 
 static inline void CalcFastAreaLimits(int32 &sx_limit,
-                                      int32 &sy_limit,
-                                      int32 &xy_limit,
-                                      const Rect &dims,
+									  int32 &sy_limit,
+									  int32 &xy_limit,
+									  const Rect &dims,
 									  int mapChunkSize) {
 	// By default the fastArea is the screensize rounded down to the nearest
 	// map chunk, plus 3 wide and 7 high.
@@ -551,8 +551,8 @@ inline void CurrentMap::clipMapChunks(int &minx, int &maxx, int &miny, int &maxy
 }
 
 void CurrentMap::areaSearch(UCList *itemlist, const uint8 *loopscript,
-                            uint32 scriptsize, const Item *check, uint16 range,
-                            bool recurse, int32 x, int32 y) const {
+							uint32 scriptsize, const Item *check, uint16 range,
+							bool recurse, int32 x, int32 y) const {
 	int32 xd = 0, yd = 0;
 
 	// if item != 0, search an area around item. Otherwise, search an area
@@ -617,7 +617,7 @@ void CurrentMap::areaSearch(UCList *itemlist, const uint8 *loopscript,
 }
 
 void CurrentMap::surfaceSearch(UCList *itemlist, const uint8 *loopscript,
-                               uint32 scriptsize, const Item *check,
+							   uint32 scriptsize, const Item *check,
 							   bool above, bool below, bool recurse) const {
 	int32 origin[3];
 	int32 dims[3];
@@ -628,9 +628,9 @@ void CurrentMap::surfaceSearch(UCList *itemlist, const uint8 *loopscript,
 }
 
 void CurrentMap::surfaceSearch(UCList *itemlist, const uint8 *loopscript,
-                               uint32 scriptsize, ObjId check,
-                               int32 origin[3], int32 dims[3],
-                               bool above, bool below, bool recurse) const {
+							   uint32 scriptsize, ObjId check,
+							   int32 origin[3], int32 dims[3],
+							   bool above, bool below, bool recurse) const {
 	const Rect searchrange(origin[0] - dims[0], origin[1] - dims[1],
 	                       origin[0], origin[1]);
 
@@ -722,9 +722,9 @@ const Std::list<Item *> *CurrentMap::getItemList(int32 gx, int32 gy) const {
 
 
 bool CurrentMap::isValidPosition(int32 x, int32 y, int32 z,
-                                 uint32 shape,
-                                 ObjId item, const Item **support,
-                                 ObjId *roof, const Item **blocker) const {
+								 uint32 shape,
+								 ObjId item, const Item **support,
+								 ObjId *roof, const Item **blocker) const {
 	const ShapeInfo *si = GameData::get_instance()->
 	                getMainShapes()->getShapeInfo(shape);
 	int32 xd, yd, zd;
@@ -738,10 +738,10 @@ bool CurrentMap::isValidPosition(int32 x, int32 y, int32 z,
 }
 
 bool CurrentMap::isValidPosition(int32 x, int32 y, int32 z,
-                                 int xd, int yd, int zd,
-                                 uint32 shapeflags,
-                                 ObjId item, const Item **support,
-                                 ObjId *roof, const Item **blocker) const {
+								 int xd, int yd, int zd,
+								 uint32 shapeflags,
+								 ObjId item, const Item **support,
+								 ObjId *roof, const Item **blocker) const {
 	return isValidPosition(x, y, z,
 	                       INT_MAX_VALUE / 2, INT_MAX_VALUE / 2, INT_MAX_VALUE / 2,
 	                       xd, yd, zd,
@@ -750,11 +750,11 @@ bool CurrentMap::isValidPosition(int32 x, int32 y, int32 z,
 
 
 bool CurrentMap::isValidPosition(int32 x, int32 y, int32 z,
-                                 int32 startx, int32 starty, int32 startz,
-                                 int xd, int yd, int zd,
-                                 uint32 shapeflags,
-                                 ObjId item_, const Item **support_,
-                                 ObjId *roof_, const Item **blocker_) const {
+								 int32 startx, int32 starty, int32 startz,
+								 int xd, int yd, int zd,
+								 uint32 shapeflags,
+								 ObjId item_, const Item **support_,
+								 ObjId *roof_, const Item **blocker_) const {
 	static const uint32 flagmask = (ShapeInfo::SI_SOLID | ShapeInfo::SI_DAMAGING |
 	                         ShapeInfo::SI_ROOF);
 	static const uint32 blockflagmask = (ShapeInfo::SI_SOLID | ShapeInfo::SI_DAMAGING);
@@ -850,8 +850,8 @@ bool CurrentMap::isValidPosition(int32 x, int32 y, int32 z,
 }
 
 bool CurrentMap::scanForValidPosition(int32 x, int32 y, int32 z, const Item *item,
-                                      Direction movedir, bool wantsupport,
-                                      int32 &tx, int32 &ty, int32 &tz) {
+									  Direction movedir, bool wantsupport,
+									  int32 &tx, int32 &ty, int32 &tz) {
 	// TODO: clean this up. Currently the mask arrays are filled with more
 	// data than is actually used.
 	const uint32 blockflagmask = (ShapeInfo::SI_SOLID | ShapeInfo::SI_DAMAGING) & item->getShapeInfo()->_flags;
@@ -1014,9 +1014,9 @@ bool CurrentMap::scanForValidPosition(int32 x, int32 y, int32 z, const Item *ite
 // Returns item hit or 0 if no hit.
 // end is set to the colision point
 bool CurrentMap::sweepTest(const int32 start[3], const int32 end[3],
-                           const int32 dims[3], uint32 shapeflags,
-                           ObjId item, bool blocking_only,
-                           Std::list<SweepItem> *hit) const {
+						   const int32 dims[3], uint32 shapeflags,
+						   ObjId item, bool blocking_only,
+						   Std::list<SweepItem> *hit) const {
 	const uint32 blockflagmask = (ShapeInfo::SI_SOLID | ShapeInfo::SI_DAMAGING | ShapeInfo::SI_LAND);
 
 	int minx = ((start[0] - dims[0]) / _mapChunkSize) - 1;

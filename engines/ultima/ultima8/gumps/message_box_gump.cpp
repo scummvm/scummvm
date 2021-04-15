@@ -39,7 +39,7 @@ MessageBoxGump::MessageBoxGump()
 }
 
 MessageBoxGump::MessageBoxGump(const Std::string &title, const Std::string &message, uint32 titleColour,
-                               Std::vector<Std::string> *buttons) :
+							   Std::vector<Std::string> *buttons) :
 		ModalGump(0, 0, 100, 100), _title(title), _message(message), _titleColour(titleColour) {
 	if (buttons)
 		buttons->swap(_buttons);

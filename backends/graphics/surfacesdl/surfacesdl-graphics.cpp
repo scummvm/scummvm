@@ -275,7 +275,7 @@ static void initGraphicsModes() {
 	// 0 should be the normal1x mode
 	s_defaultGraphicsMode = 0;
 	for (uint i = 0; i < plugins.size(); ++i) {
-        ScalerPluginObject &plugin = plugins[i]->get<ScalerPluginObject>();
+		ScalerPluginObject &plugin = plugins[i]->get<ScalerPluginObject>();
 		const Common::Array<uint> &factors = plugin.getFactors();
 		const char *name = plugin.getName();
 		const char *prettyName = plugin.getPrettyName();
@@ -1891,7 +1891,7 @@ void SurfaceSdlGraphicsManager::setMouseCursor(const void *buf, uint w, uint h, 
 		} else {
 			assert(!_mouseOrigSurface);
 
-            // Allocate bigger surface because scalers will read past the boudaries.
+			// Allocate bigger surface because scalers will read past the boudaries.
 			_mouseOrigSurface = SDL_CreateRGBSurface(SDL_SWSURFACE | SDL_RLEACCEL | SDL_SRCCOLORKEY | SDL_SRCALPHA,
 							_mouseCurState.w + _maxExtraPixels * 2,
 							_mouseCurState.h + _maxExtraPixels * 2,
@@ -2108,10 +2108,10 @@ void SurfaceSdlGraphicsManager::blitCursor() {
 		// HACK: AdvMame4x requires a height of at least 4 pixels, so we
 		// fall back on the Normal scaler when a smaller cursor is supplied.
 		if (_scalerPlugin->canDrawCursor() && (uint)_mouseCurState.h >= _extraPixels) {
-            _scalerPlugin->scale(
-                    (byte *)_mouseOrigSurface->pixels + _mouseOrigSurface->pitch * _maxExtraPixels + _maxExtraPixels * _mouseOrigSurface->format->BytesPerPixel,
-                    _mouseOrigSurface->pitch, (byte *)_mouseSurface->pixels, _mouseSurface->pitch,
-                    _mouseCurState.w, _mouseCurState.h, 0, 0);
+			_scalerPlugin->scale(
+					(byte *)_mouseOrigSurface->pixels + _mouseOrigSurface->pitch * _maxExtraPixels + _maxExtraPixels * _mouseOrigSurface->format->BytesPerPixel,
+					_mouseOrigSurface->pitch, (byte *)_mouseSurface->pixels, _mouseSurface->pitch,
+					_mouseCurState.w, _mouseCurState.h, 0, 0);
 		} else
 #endif
 		{

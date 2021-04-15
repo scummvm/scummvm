@@ -77,10 +77,10 @@ typedef void *sc_game;
 extern void os_print_string(const sc_char *string);
 extern void os_print_tag(sc_int tag, const sc_char *argument);
 extern void os_play_sound(const sc_char *filepath,
-                          sc_int offset, sc_int length, sc_bool is_looping);
+						  sc_int offset, sc_int length, sc_bool is_looping);
 extern void os_stop_sound();
 extern void os_show_graphic(const sc_char *filepath,
-                            sc_int offset, sc_int length);
+							sc_int offset, sc_int length);
 extern sc_bool os_read_line(sc_char *buffer, sc_int length);
 extern sc_bool os_confirm(sc_int type);
 extern void *os_open_file(sc_bool is_save);
@@ -110,8 +110,8 @@ extern void sc_set_trace_flags(sc_uint trace_flags);
 extern sc_game sc_game_from_filename(const sc_char *filename);
 extern sc_game sc_game_from_stream(Common::SeekableReadStream *stream);
 extern sc_game sc_game_from_callback(sc_int(*callback)
-                                     (void *, sc_byte *, sc_int),
-                                     void *opaque);
+									 (void *, sc_byte *, sc_int),
+									 void *opaque);
 extern void sc_interpret_game(CONTEXT, sc_game game);
 extern void sc_restart_game(CONTEXT, sc_game game);
 extern sc_bool sc_save_game(sc_game game);
@@ -121,16 +121,16 @@ extern void sc_quit_game(sc_game game);
 extern sc_bool sc_save_game_to_filename(sc_game game, const sc_char *filename);
 extern void sc_save_game_to_stream(sc_game game, Common::SeekableReadStream *stream);
 extern void sc_save_game_to_callback(sc_game game,
-                                     void (*callback)
-                                     (void *, const sc_byte *, sc_int),
-                                     void *opaque);
+									 void (*callback)
+									 (void *, const sc_byte *, sc_int),
+									 void *opaque);
 extern sc_bool sc_load_game_from_filename(sc_game game,
-        const sc_char *filename);
+		const sc_char *filename);
 extern sc_bool sc_load_game_from_stream(sc_game game, Common::SeekableReadStream *stream);
 extern sc_bool sc_load_game_from_callback(sc_game game,
-        sc_int(*callback)
-        (void *, sc_byte *, sc_int),
-        void *opaque);
+		sc_int(*callback)
+		(void *, sc_byte *, sc_int),
+		void *opaque);
 extern void sc_free_game(sc_game game);
 extern sc_bool sc_is_game_running(sc_game game);
 extern const sc_char *sc_get_game_name(sc_game game);
@@ -158,16 +158,16 @@ typedef void *sc_game_hint;
 extern sc_game_hint sc_get_first_game_hint(sc_game game);
 extern sc_game_hint sc_get_next_game_hint(sc_game game, sc_game_hint hint);
 extern const sc_char *sc_get_game_hint_question(sc_game game,
-        sc_game_hint hint);
+		sc_game_hint hint);
 extern const sc_char *sc_get_game_subtle_hint(sc_game game,
-        sc_game_hint hint);
+		sc_game_hint hint);
 extern const sc_char *sc_get_game_unsubtle_hint(sc_game game,
-        sc_game_hint hint);
+		sc_game_hint hint);
 
 extern void sc_set_game_debugger_enabled(sc_game game, sc_bool flag);
 extern sc_bool sc_get_game_debugger_enabled(sc_game game);
 extern sc_bool sc_run_game_debugger_command(sc_game game,
-        const sc_char *debug_command);
+		const sc_char *debug_command);
 extern void sc_set_portable_random(sc_bool flag);
 extern void sc_reseed_random_sequence(sc_uint new_seed);
 

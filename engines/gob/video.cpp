@@ -139,7 +139,7 @@ void Font::drawLetter(Surface &surf, uint8 c, uint16 x, uint16 y,
 }
 
 void Font::drawString(const Common::String &str, int16 x, int16 y, int16 color1, int16 color2,
-                      bool transp, Surface &dest) const {
+					  bool transp, Surface &dest) const {
 
 	const char *s = str.c_str();
 

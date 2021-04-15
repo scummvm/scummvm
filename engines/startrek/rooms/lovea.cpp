@@ -84,7 +84,7 @@ extern const RoomTextOffsets loveTextOffsets[] = {
 	{ TX_LOV0_106, 12415, 0 },
 	{ TX_LOV0_107, 12483, 0 },
 	{ TX_LOV0_124, 11931, 0 },
-    { TX_LOV5_015,  3009, 0 },
+	{ TX_LOV5_015,  3009, 0 },
 	{ TX_LOV5_019,  2931, 0 },
 	{ TX_LOV5_027,  3444, 0 },
 	{ TX_LOV5_030,  3348, 0 },
@@ -107,7 +107,7 @@ extern const RoomTextOffsets loveTextOffsets[] = {
 	{ TX_VENA_F41,  5158, 0 },
 	{ TX_LOV5C001,  3497, 0 },
 	{ TX_SPOKCOFF,  3564, 0 },
-    { TX_GENER004,  3924, 0 },	// Game over
+	{ TX_GENER004,  3924, 0 },	// Game over
 	{          -1, 0,    0 }
 };
 

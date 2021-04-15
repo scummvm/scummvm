@@ -48,8 +48,8 @@ LipSync::LipSync(Object *parent, byte subType, uint16 index, const Common::Strin
 		_faceTexture(nullptr),
 		_visual(nullptr),
 		_enabled(false),
-        _checkForNewVisual(false),
-        _positionMs(0) {
+		_checkForNewVisual(false),
+		_positionMs(0) {
 	_type = TYPE;
 }
 

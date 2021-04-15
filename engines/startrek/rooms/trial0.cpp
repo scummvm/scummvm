@@ -106,11 +106,11 @@ extern const RoomTextOffsets trial0TextOffsets[] = {
 	{ TX_SPEAKER_KIRK, 279, 0 },
 	{ TX_SPEAKER_MCCOY, 290, 0 },
 	{ TX_SPEAKER_SPOCK, 300, 0 },
-    { TX_SPEAKER_UHURA, 324, 0 },
-    { TX_SPEAKER_BENNIE, 310, 0 },
-    { TX_SPEAKER_VLICT, 334, 0 },
-    { TX_SPEAKER_QUETZECOATL, 354, 0 },
-    { TX_SPEAKER_KLINGON_GUARD, 340, 0 },
+	{ TX_SPEAKER_UHURA, 324, 0 },
+	{ TX_SPEAKER_BENNIE, 310, 0 },
+	{ TX_SPEAKER_VLICT, 334, 0 },
+	{ TX_SPEAKER_QUETZECOATL, 354, 0 },
+	{ TX_SPEAKER_KLINGON_GUARD, 340, 0 },
 	{ TX_TRI0_001, 2728, 0 },
 	{ TX_TRI0_002, 2315, 0 },
 	{ TX_TRI0_003, 4950, 0 },
@@ -158,7 +158,7 @@ extern const RoomTextOffsets trial0TextOffsets[] = {
 	{ TX_TRI0_049, 6054, 0 },
 	{ TX_TRI0_050, 3269, 0 },
 	{ TX_TRI0_051, 5011, 0 },
-    { TX_TRI0_052, 10206, 0 },
+	{ TX_TRI0_052, 10206, 0 },
 	{ TX_TRI0_053, 831, 0 },
 	{ TX_TRI0_054, 1350, 0 },
 	{ TX_TRI0_055, 5619, 0 },
@@ -191,7 +191,7 @@ extern const RoomTextOffsets trial0TextOffsets[] = {
 };
 
 extern const RoomText trial0Texts[] = {
-    { -1, Common::UNK_LANG, "" }
+	{ -1, Common::UNK_LANG, "" }
 };
 
 void Room::trial0Tick1() {

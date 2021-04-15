@@ -243,7 +243,7 @@ bool WagFileParser::endOfProperties(const Common::SeekableReadStream &stream) co
 
 
 void WagProperty::setPropCode(WagPropertyCode propCode) {
-    _propCode = propCode;
+	_propCode = propCode;
 }
 
 void WagProperty::setPropDataSize(Common::String str) {

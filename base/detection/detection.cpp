@@ -30,25 +30,25 @@
 
 class DetectionDynamic : public Detection {
 public:
-    DetectionDynamic() {}
-    ~DetectionDynamic() {}
+	DetectionDynamic() {}
+	~DetectionDynamic() {}
 
-    const char *getName() const override {
-        return "detection";
-    }
+	const char *getName() const override {
+		return "detection";
+	}
 
-    PluginList getPlugins() const override {
-        PluginList pl;
+	PluginList getPlugins() const override {
+		PluginList pl;
 
-        #define LINK_PLUGIN(ID) \
+		#define LINK_PLUGIN(ID) \
 			extern PluginType g_##ID##_type; \
 			extern PluginObject *g_##ID##_getObject(); \
 			pl.push_back(new StaticPlugin(g_##ID##_getObject(), g_##ID##_type));
 
-        #include "engines/detection_table.h"
+		#include "engines/detection_table.h"
 
-        return pl;
-    }
+		return pl;
+	}
 };
 
 REGISTER_PLUGIN_DYNAMIC(DETECTION_DYNAMIC, PLUGIN_TYPE_DETECTION, DetectionDynamic);

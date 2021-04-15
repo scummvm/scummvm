@@ -176,7 +176,7 @@ extern const RoomTextOffsets demon5TextOffsets[] = {
 };
 
 extern const RoomText demon5Texts[] = {
-    { -1, Common::UNK_LANG, "" }
+	{ -1, Common::UNK_LANG, "" }
 };
 
 void Room::demon5Tick1() {

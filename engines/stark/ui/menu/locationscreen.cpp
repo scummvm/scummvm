@@ -41,7 +41,7 @@
 namespace Stark {
 
 StaticLocationScreen::StaticLocationScreen(Gfx::Driver *gfx, Cursor *cursor,
-                                           const char *locationName, Screen::Name screenName) :
+										   const char *locationName, Screen::Name screenName) :
 		SingleWindowScreen(screenName, gfx, cursor),
 		_locationName(locationName),
 		_location(nullptr),
@@ -145,7 +145,7 @@ void StaticLocationScreen::waitForSoundsToComplete() {
 }
 
 StaticLocationWidget::StaticLocationWidget(const char *renderEntryName, WidgetOnClickCallback *onClickCallback,
-                                           WidgetOnMouseMoveCallback *onMouseMoveCallback):
+										   WidgetOnMouseMoveCallback *onMouseMoveCallback):
 		_onClick(onClickCallback),
 		_onMouseMove(onMouseMoveCallback),
 		_renderEntry(nullptr),

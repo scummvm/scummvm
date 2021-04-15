@@ -402,7 +402,7 @@ bool World::loadMaps(Common::ReadStream *rs, uint32 version) {
 void World::setAlertActive(bool active)
 {
 	assert(GAME_IS_CRUSADER);
-    _alertActive = active;
+	_alertActive = active;
 
 	// Replicate the behavior of the original game.
 	LOOPSCRIPT(script,

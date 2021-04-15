@@ -157,7 +157,7 @@ private:
 	void printObjectDesc(const Common::String &str, bool firstTime);
 public:
 	ImageFile *_controlPanel;
-        ImageFile *_controls;
+		ImageFile *_controls;
 	int _oldUse;
 
 	byte _hotkeyLook;

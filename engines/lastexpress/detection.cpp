@@ -204,8 +204,8 @@ static const ADGameDescription gameDescriptions[] = {
 };
 
 static const char *const directoryGlobs[] = {
-        "data", // GOG release
-        0
+		"data", // GOG release
+		0
 };
 
 class LastExpressMetaEngineDetection : public AdvancedMetaEngineDetection {

@@ -42,7 +42,7 @@ public:
 
 	virtual bool update_location(); /* get location from actor (use any time) */
 	virtual void actor_moved(); /* the actor moved ON PATH...
-                                   (use after get_next_move()) */
+								   (use after get_next_move()) */
 
 	bool check_loc(const MapCoord &loc) override;
 

@@ -57,7 +57,7 @@ Graphics::PixelFormat HLZDecoder::getPixelFormat() const {
 }
 
 static inline uint getReg(Common::SeekableReadStream &stream, uint32 *size, uint32 *reg,
-                          int *regBits) {
+						  int *regBits) {
 	if (*regBits == 0) {
 		if (*size < 4) {
 			error("Can't feed register: not enough data");

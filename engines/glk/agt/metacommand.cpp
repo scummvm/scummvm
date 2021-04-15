@@ -36,12 +36,12 @@ namespace AGT {
 #define DEBUG_SCAN 1
 
 #define MAX_REDIR 50000L  /* Maximum number of redirects, to catch
-                infinite loops. If this is 0, allow infinitely
-                many */
+				infinite loops. If this is 0, allow infinitely
+				many */
 
 #define MAX_SUBCALL 2047  /* Maximum number of subroutine calls.
-                 If this is 0, no limit (except for the 
-                 program's stack size). */
+				 If this is 0, no limit (except for the 
+				 program's stack size). */
 
 
 /*
@@ -53,13 +53,13 @@ scan_metacommand
   2=end of turn         (disambig: nothing happened)
 
 run_metacommand
-    0 to go on to next metacommand,
-    1 to stop running metacommands,  and
-    2 to end the turn.
-    3 indicates that redirection has just occured
-    4 indicates a subcall has just occured.
-    5 to go on to next metacommand after a return has occured.
-    -2 means we're doing disambiguation and just hit an action token.
+	0 to go on to next metacommand,
+	1 to stop running metacommands,  and
+	2 to end the turn.
+	3 indicates that redirection has just occured
+	4 indicates a subcall has just occured.
+	5 to go on to next metacommand after a return has occured.
+	-2 means we're doing disambiguation and just hit an action token.
 
 */
 
@@ -197,7 +197,7 @@ static rbool argfix(int argtype, int *arg, int optype, rbool *special) {
 /* <grammer_arg> is true if "bad" argument is NOUN/OBJECT/etc. and
    is 0. */
 static int argok(const opdef *opdata, int *arg1, int *arg2, int optype,
-                 rbool *grammer_arg) {
+				 rbool *grammer_arg) {
 	if ((opdata->argnum) > 1 && !argfix(opdata->arg2, arg2, optype % 4, grammer_arg))
 		return 0;
 	if ((opdata->argnum) > 0 && !argfix(opdata->arg1, arg1, optype / 4, grammer_arg))
@@ -284,8 +284,8 @@ static int decode_instr(op_rec *oprec, const integer *data, int maxleng) {
 	case 1159:
 		oprec->endor = 0;
 		break;  /* Operations that only affect the stack don't
-         stop disambiguation, either. They also
-         don't mark the end of an OR block */
+		 stop disambiguation, either. They also
+		 don't mark the end of an OR block */
 
 	default:
 		/* Aside from the above exceptions, all actions will stop
@@ -378,24 +378,24 @@ static rbool decode_args(int ip_, op_rec *oprec) {
    for maintaining the subcall stack--  scan_metacommand treats
    a subroutine call just like RedirecTo) */
 /* The progression for subroutine calls goes like this:
-    run_metacommand hits a DoSubroutine token;
-      the subroutine id is saved in subcall_arg by exec_token.
-    run_metacommand does push_subcall, saving cnum and ip,
-      and then returns 4 to scan_metacommand.
-    scan_metacommand saves grammar state to the new stack entry
-      with push_subcall and then starts scanning SUBROUTINEnn
+	run_metacommand hits a DoSubroutine token;
+	  the subroutine id is saved in subcall_arg by exec_token.
+	run_metacommand does push_subcall, saving cnum and ip,
+	  and then returns 4 to scan_metacommand.
+	scan_metacommand saves grammar state to the new stack entry
+	  with push_subcall and then starts scanning SUBROUTINEnn
 
-    Many tokens are executed.
+	Many tokens are executed.
 
-    run_metacommand hits Return. It sets restart_state and
-      returns 5 to its parent.
-    scan_metacommand then runs pop_subcall_grammar and restores
-      the original scanning grammer. It subtracts one from cnum
-      so the original cnum will be rerun.
-    run_metacommand sees that restart_state is set and pops the
-      rest of the information (cnum and ip) off of the stack.
-    Things continue as usual.
-    */
+	run_metacommand hits Return. It sets restart_state and
+	  returns 5 to its parent.
+	scan_metacommand then runs pop_subcall_grammar and restores
+	  the original scanning grammer. It subtracts one from cnum
+	  so the original cnum will be rerun.
+	run_metacommand sees that restart_state is set and pops the
+	  rest of the information (cnum and ip) off of the stack.
+	Things continue as usual.
+	*/
 
 
 
@@ -451,7 +451,7 @@ static void pop_subcall(int *rcnum, int *rip, int *rfailaddr) {
 
 /* This is called after push_subcall */
 static void push_subcall_grammar(int m_actor, int vcode, int m_dobj, word m_prep,
-                                 int m_iobj, int cnum) {
+								 int m_iobj, int cnum) {
 	/* run_metacommand should already have pushed cnum on the stack */
 	substack[subcnt - 1].vb = vb;
 	substack[subcnt - 1].prep = prep;
@@ -465,8 +465,8 @@ static void push_subcall_grammar(int m_actor, int vcode, int m_dobj, word m_prep
 /* Return false if something goes wrong-- such as stack underflow. */
 /* This is called *before* pop_subcall */
 static rbool pop_subcall_grammar(integer *m_actor, int *vcode,
-                                 integer *m_dobj, word *m_prep, integer *m_iobj,
-                                 int *cnum) {
+								 integer *m_dobj, word *m_prep, integer *m_iobj,
+								 int *cnum) {
 	if (subcnt == 0) return 0;
 	vb = substack[subcnt - 1].vb;
 	prep = substack[subcnt - 1].prep;
@@ -490,23 +490,23 @@ static int run_metacommand(int cnum, int *redir_offset)
 /* cnum=command number to run. */
 /* *redir_offset=offset of redirect header, if we exit with redirection. */
 /* Return
-      0 to go on to next metacommand,
-      1 to stop running metacommands,  and
-      2 to end the turn.
-      3 indicates that redirection has just occured
-      4 indicates a subcall has just occured.
-      5 Is used to go on to the next metacommand after a Return.
-      -2 means we're doing disambiguation and just hit an action token. */
+	  0 to go on to next metacommand,
+	  1 to stop running metacommands,  and
+	  2 to end the turn.
+	  3 indicates that redirection has just occured
+	  4 indicates a subcall has just occured.
+	  5 Is used to go on to the next metacommand after a Return.
+	  -2 means we're doing disambiguation and just hit an action token. */
 {
 	int ip_, oip;  /* ip_=Instruction pointer, oip=Old instruction pointer */
 	int r;        /* Used to hold return value from token execution */
 	int fail_addr;  /* What address to jump to on failure */
 	rbool fail;    /* Last token was a conditional token that failed */
 	rbool ortrue, blocktrue, orflag; /* OR stuff
-                     orflag: Are we in an OR group?
-                     ortrue: Is current OR group true?
-                     blocktrue: Is current block w/in OR true?
-                     */
+					 orflag: Are we in an OR group?
+					 ortrue: Is current OR group true?
+					 blocktrue: Is current block w/in OR true?
+					 */
 	static rbool restart = 0; /* Restarting after subroutine?  */
 	op_rec currop;          /* Information on the current token and its args */
 
@@ -515,7 +515,7 @@ static int run_metacommand(int cnum, int *redir_offset)
 	ip_ = 0;
 	orflag = blocktrue = ortrue = 0;
 	*redir_offset = 1;  /* Default: This is what RedirectTo does.
-               Only XRedirect can send a different value */
+			   Only XRedirect can send a different value */
 
 
 	if (restart)  /* finish up Return from subroutine */
@@ -576,7 +576,7 @@ static int run_metacommand(int cnum, int *redir_offset)
 			ip_ = fail_addr;
 			fail_addr = 32000; /* Reset fail_addr */
 			continue; /* Usually fail_addr will fall off the end, causing this to
-           return 0 */
+		   return 0 */
 		}
 
 		/* - Finish decoding arguments and print out debugging message - */
@@ -734,8 +734,8 @@ static int extract_obj(word name, word adj) {
    the header */
 
 static void fix_objnum(integer *objnum, word match,
-                       int real_obj,
-                       int actor_, int dobj_, int iobj_) {
+					   int real_obj,
+					   int actor_, int dobj_, int iobj_) {
 	if (real_obj) *objnum = real_obj;
 	else if (match == ext_code[wdobject]) *objnum = iobj_;
 	else if (match == ext_code[wdnoun]) *objnum = dobj_;
@@ -745,9 +745,9 @@ static void fix_objnum(integer *objnum, word match,
 /* Returns TRUE if we changed *objrec, FALSE otherwise */
 /*  (This is needed for memory allocation purposes) */
 static rbool fix_objrec(parse_rec **objrec, word match,
-                        int real_obj,
-                        parse_rec *actrec, parse_rec *dobjrec,
-                        parse_rec *iobjrec) {
+						int real_obj,
+						parse_rec *actrec, parse_rec *dobjrec,
+						parse_rec *iobjrec) {
 	if (real_obj) *objrec = make_parserec(real_obj, NULL);
 	else if (match == ext_code[wdobject]) *objrec = copy_parserec(iobjrec);
 	else if (match == ext_code[wdnoun]) *objrec = copy_parserec(dobjrec);
@@ -806,7 +806,7 @@ static void objcode_fix(cmd_rec *cmd)
 /* NOUN or OBJECT */
 
 void redirect_exec(cmd_rec *cmd, word *m_actor, int *vcode,
-                   word *m_dobj, word *m_prep, word *m_iobj) {
+				   word *m_dobj, word *m_prep, word *m_iobj) {
 	*m_actor = extract_actor(cmd->actor);
 	vb = *vcode = verb_code(it_name(expand_redirect(cmd->verbcmd)));
 	*m_dobj = extract_obj(cmd->nouncmd, cmd->noun_adj);
@@ -860,7 +860,7 @@ static rbool cm_x_obj(int x_obj, int real_obj) {
 /* Does [obj] match <adj> <noun> [x_obj]? */
 /*  --[obj] must match up with <adj> <noun> */
 /*  --If x_obj(the explicit object) is defined, it must match with
-      the "real" object-- that is, the global dobj or iobj value. */
+	  the "real" object-- that is, the global dobj or iobj value. */
 static rbool cm_obj(word name, word adj, int x_obj, int obj, int real_obj) {
 	if (name == -1) return (obj == 0); /* <NONE> */
 
@@ -917,7 +917,7 @@ static rbool redir_narrows_grammar(cmd_rec *cmd1, cmd_rec *cmd2) {
 		}
 	}
 	if (nomatch_aware) return 0; /* If we are using nomatch, don't need
-                  to go through the rest of this nonsense. */
+				  to go through the rest of this nonsense. */
 
 	if (not_any(cmd2->objcmd, cmd2->obj_adj)) return 0;
 	if (not_any(cmd1->objcmd, cmd1->obj_adj)) return 1;
@@ -934,8 +934,8 @@ static rbool redir_narrows_grammar(cmd_rec *cmd1, cmd_rec *cmd2) {
 
 
 static rbool cm_command(cmd_rec *cmd,
-                        integer m_actor, int m_verb,
-                        integer m_dobj, word m_prep, integer m_iobj) {
+						integer m_actor, int m_verb,
+						integer m_dobj, word m_prep, integer m_iobj) {
 	if (cmd->verbcmd == 0) { /* ANY */
 		if (cmd->actor == 0 && aver >= AGX00)
 			return (m_verb == 0); /* ANY command: rest of line ignored */
@@ -983,8 +983,8 @@ static void scan_for_actor(integer m_actor, int *start, int *end) {
   connection to dobj, iobj, etc. */
 
 int scan_metacommand(integer m_actor, int vcode,
-                     integer m_dobj, word m_prep, integer m_iobj,
-                     int *redir_flag)
+					 integer m_dobj, word m_prep, integer m_iobj,
+					 int *redir_flag)
 /* Return codes:  0=end of this cycle, 1=end of all commands
    2=end of turn */
 /* If doing disambiguation, then -2=end of cycle, something happened;
@@ -997,16 +997,16 @@ int scan_metacommand(integer m_actor, int vcode,
 	word m_verb;
 	int scanend;
 	int redir_offset;   /* Used for multiple redirects in the same
-             metacommand (which can occur in AGATE-style
-             commands)-- this is used to hold the offset
-             of the given redirect. */
+			 metacommand (which can occur in AGATE-style
+			 commands)-- this is used to hold the offset
+			 of the given redirect. */
 	long redirect_count;  /* This is a safety measure: this keeps track of how
-            many redirections have occured on a single turn, and
-            if there are "too many" it will issue an error message
-            and stop. This is to prevent the system from getting
-            into a redirection loop. The number should be set
-            high enough not to prevent deliberate loops,
-            however. */
+			many redirections have occured on a single turn, and
+			if there are "too many" it will issue an error message
+			and stop. This is to prevent the system from getting
+			into a redirection loop. The number should be set
+			high enough not to prevent deliberate loops,
+			however. */
 
 	rfree(substack);
 	subcnt = 0;
@@ -1095,7 +1095,7 @@ int scan_metacommand(integer m_actor, int vcode,
 						scanend = verbend[vcode];
 					}
 					i--; /* Back up one so that the following i++ we'll
-            be at the right location */
+			be at the right location */
 				}
 
 				/* So when i is incremented, we start back at the correct start: i.e.
@@ -1109,7 +1109,7 @@ int scan_metacommand(integer m_actor, int vcode,
 
 			/* -------- SUBROUTINE CALL  ------------ */
 			case 4:  /* Subroutine Call -- same idea as RedirectTo,
-          but less complicated */
+		  but less complicated */
 				push_subcall_grammar(m_actor, vcode, m_dobj, m_prep, m_iobj, i);
 				vcode = verb_code(sub_name[subcall_arg - 1]);
 				m_actor = m_dobj = m_iobj = 0;
@@ -1138,8 +1138,8 @@ int scan_metacommand(integer m_actor, int vcode,
 				m_verb = syntbl[auxsyn[vcode]];
 
 				i--; /* Cause the last command to restart,
-          at which point run_command will pop the rest of the
-          stack. */
+		  at which point run_command will pop the rest of the
+		  stack. */
 
 				break;
 			}

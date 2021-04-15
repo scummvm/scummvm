@@ -75,7 +75,7 @@ void processMainLists(FILE *inf, CptObj *destArr, uint16 *idList) {
 					uint16 destId = (uint16)strtoul(line + 2, &stopCh, 16);
 					assert(stopCh == (line + 6));
 					assert((stopCh[0] == ':') && (stopCh[1] == ':'));
-                    resBuf[resPos] = destId;
+					resBuf[resPos] = destId;
 					resPos++;
 				} else
 					break;
@@ -169,7 +169,7 @@ void processTurntabs(FILE *inf, CptObj *destArr) {
 					uint16 destId = (uint16)strtoul(line + 2, &stopCh, 16);
 					assert(stopCh == (line + 6));
 					assert((stopCh[0] == '-') && (stopCh[1] == '>'));
-                    resBuf[resPos] = destId;
+					resBuf[resPos] = destId;
 					resPos++;
 				} else
 					break;
@@ -211,7 +211,7 @@ void processBins(FILE *inf, CptObj *destArr, const char *typeName, const char *o
 					uint16 destId = (uint16)strtoul(line + 2, &stopCh, 16);
 					assert(stopCh == (line + 6));
 					assert(*stopCh == '\0');
-                    resBuf[resPos] = destId;
+					resBuf[resPos] = destId;
 					resPos++;
 				} else
 					break;
@@ -425,7 +425,7 @@ void doCompile(FILE *inf, FILE *debOutf, FILE *resOutf, TextFile *cptDef, FILE *
 			assert(id);
 			diff[diffDest++] = id;
 			diff[diffDest++] = 0;
-            pos++;
+			pos++;
 			uint16 len = (uint16)strtoul(pos, &pos, 10);
 			diff[diffDest++] = len;
 			assert(len);

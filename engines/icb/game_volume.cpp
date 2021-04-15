@@ -77,9 +77,9 @@ void _game_volume::SetUpParameters(_linked_data_file *pyLOSData) {
 }
 
 bool8 _game_volume::GetCubeAndIndices(const px3DRealPoint &oPoint, // IN:  The current point in space.
-                                      _XYZ_index &oIndex,          // OUT: The XYZ array index containing the point.
-                                      _bullet_cube &oCube          // OUT: Dimensions of the cube represented by the index.
-                                      ) const {
+									  _XYZ_index &oIndex,          // OUT: The XYZ array index containing the point.
+									  _bullet_cube &oCube          // OUT: Dimensions of the cube represented by the index.
+									  ) const {
 	int32 nIndex;
 	int32 nLeastSide;
 	uint32 nSlice;

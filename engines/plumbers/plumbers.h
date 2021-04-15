@@ -155,7 +155,7 @@ private:
 
 	void initTables();
 	void readTablesPC(const Common::String &fileName);
-    	void readTables3DO(const Common::String &fileName);
+		void readTables3DO(const Common::String &fileName);
 	int getSceneNumb(const Common::String &sName);
 	int getMouseHiLite();
 

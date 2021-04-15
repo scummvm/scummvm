@@ -663,11 +663,11 @@ void create_rgb_table(RGB_MAP *table, AL_CONST PALETTE pal, void (*callback)(int
 
    /* checking of position */
 #define dopos(rp, gp, bp, ts) \
-      if ((rp > -1 || r > 0) && (rp < 1 || r < 61) && \
+	  if ((rp > -1 || r > 0) && (rp < 1 || r < 61) && \
 	  (gp > -1 || g > 0) && (gp < 1 || g < 61) && \
 	  (bp > -1 || b > 0) && (bp < 1 || b < 61)) { \
 	 i = first + rp * 32 * 32 + gp * 32 + bp; \
-         if (!data[i]) { \
+		 if (!data[i]) { \
 	    data[i] = val; \
 	    add1(i); \
 	 } \
@@ -680,7 +680,7 @@ void create_rgb_table(RGB_MAP *table, AL_CONST PALETTE pal, void (*callback)(int
 	       add1(i); \
 	    } \
 	 } \
-      }
+	  }
 
 	int i, curr, r, g, b, val, dist2;
 	unsigned int r2, g2, b2;

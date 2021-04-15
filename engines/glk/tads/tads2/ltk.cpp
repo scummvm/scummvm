@@ -64,8 +64,8 @@ void *ltk_sigsuballoc(errcxdef *errcx, size_t siz) {
   /* allocate the memory */
   if (!(ptr = ltk_suballoc(siz)))
   {
-    /* signal an error */
-    errsigf(errcx, "LTK", 0);
+	/* signal an error */
+	errsigf(errcx, "LTK", 0);
   }
 
   /* return the memory */
@@ -106,8 +106,8 @@ void *ltk_sigalloc(errcxdef *errcx, size_t siz) {
   void *ptr;                                 /* pointer to allocated memory */
 
   if (!(ptr = ltk_alloc(siz))) {
-    /* signal error */
-    errsigf(errcx, "LTK", 0);
+	/* signal error */
+	errsigf(errcx, "LTK", 0);
   }
 
   /* return a ptr to the allocated memory */

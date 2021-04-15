@@ -58,7 +58,7 @@ enum {
 
 // Constructor
 GuiManager::GuiManager() : _redrawStatus(kRedrawDisabled), _stateIsSaved(false),
-    _cursorAnimateCounter(0), _cursorAnimateTimer(0) {
+	_cursorAnimateCounter(0), _cursorAnimateTimer(0) {
 	_theme = nullptr;
 	_useStdCursor = false;
 

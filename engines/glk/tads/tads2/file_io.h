@@ -43,19 +43,19 @@ struct tokcxdef;
 
 /* load-on-demand context (passed in by mcm in load callback) */
 struct fiolcxdef {
-    osfildef *fiolcxfp;                        /* file pointer of load file */
-    errcxdef *fiolcxerr;                          /* error handling context */
-    ulong     fiolcxst;                          /* starting offset in file */
-    uint      fiolcxflg;                   /* flags from original load file */
-    uint      fiolcxseed;                                    /* fioxor seed */
-    uint      fiolcxinc;                                /* fioxor increment */
+	osfildef *fiolcxfp;                        /* file pointer of load file */
+	errcxdef *fiolcxerr;                          /* error handling context */
+	ulong     fiolcxst;                          /* starting offset in file */
+	uint      fiolcxflg;                   /* flags from original load file */
+	uint      fiolcxseed;                                    /* fioxor seed */
+	uint      fiolcxinc;                                /* fioxor increment */
 };
 
 /* write game to binary file */
 void fiowrt(struct mcmcxdef *mctx, voccxdef *vctx,
-            struct tokcxdef *tokctx, struct tokthdef *tab,
-            uchar *fmts, uint fmtl, char *fname, uint flags, objnum preinit,
-            int extc, uint prpcnt, char *filever);
+			struct tokcxdef *tokctx, struct tokthdef *tab,
+			uchar *fmts, uint fmtl, char *fname, uint flags, objnum preinit,
+			int extc, uint prpcnt, char *filever);
 
 /* flag values for use with fiowrt */
 #define FIOFSYM   0x01               /* include symbol table in output file */

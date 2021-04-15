@@ -80,12 +80,12 @@ enum typesADPCM {
  * @return   a new RewindableAudioStream, or NULL, if an error occurred
  */
 RewindableAudioStream *makeADPCMStream(
-    Common::SeekableReadStream *stream,
-    DisposeAfterUse::Flag disposeAfterUse,
-    uint32 size, typesADPCM type,
-    int rate = 22050,
-    int channels = 2,
-    uint32 blockAlign = 0);
+	Common::SeekableReadStream *stream,
+	DisposeAfterUse::Flag disposeAfterUse,
+	uint32 size, typesADPCM type,
+	int rate = 22050,
+	int channels = 2,
+	uint32 blockAlign = 0);
 
 } // End of namespace Audio
 

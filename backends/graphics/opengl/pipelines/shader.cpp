@@ -28,7 +28,7 @@ namespace OpenGL {
 
 #if !USE_FORCED_GLES
 ShaderPipeline::ShaderPipeline(Shader *shader)
-    : _activeShader(shader), _colorAttributes() {
+	: _activeShader(shader), _colorAttributes() {
 	_vertexAttribLocation = shader->getAttributeLocation("position");
 	_texCoordAttribLocation = shader->getAttributeLocation("texCoordIn");
 	_colorAttribLocation = shader->getAttributeLocation("blendColorIn");

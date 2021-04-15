@@ -304,7 +304,7 @@ byte AnimData::getColor(int x, int y) {
  * @param transparent Transparent color (for ANIM_MASKSPRITE)
  */
 void AnimData::load(byte *d, int type, uint16 w, uint16 h, int16 file,
-                    int16 frame, const char *n, byte transparent) {
+					int16 frame, const char *n, byte transparent) {
 	assert(d);
 
 	if (_data) {

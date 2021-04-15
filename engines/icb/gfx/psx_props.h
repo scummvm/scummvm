@@ -46,36 +46,36 @@ namespace ICB {
    uint32 cmOffsets[nCms]; // cmOffsets[nCms];
    propcmStruct props[propQty];
    {
-      char* name;
-      uint32 stateQty;
-    }
+	  char* name;
+	  uint32 stateQty;
+	}
    // This is the actual construction matrix and where the cmOffsets point to
    cmStruct cm[cmQty];
    {
-      uint32 propQty; // currently always 1 but is likely to change
-      uint32 propNameOffset;
-      uint32 width; // how many bits in the CM table
-      uint32 stateQty; // how many states
-      uint32 statePtrs[stateQty]; // points to a psxPropLayers struct
-      {
-         int16  xs, xe;
-         int16  ys, ye;
-            uint16  zs, ze;
-            uint16  w, h;
-            uint32  n;
-            uint32  zoverlayOffset; // relative bytes from state start to zoverlay
-            uint32  zOffset; // relative bytes from state start to z data;
-            uint16  palette[256];
-            uint8 rgbData[w*h]
-            uint8   zdata[w*h];
-            psxZOverlay layers[n]
-            {
-            int16 xs, xe;
-                int16 ys, ye;
-                uint16 zs, ze;
-                uint16 dZScale, dZShift;
-            }
-        }
+	  uint32 propQty; // currently always 1 but is likely to change
+	  uint32 propNameOffset;
+	  uint32 width; // how many bits in the CM table
+	  uint32 stateQty; // how many states
+	  uint32 statePtrs[stateQty]; // points to a psxPropLayers struct
+	  {
+		 int16  xs, xe;
+		 int16  ys, ye;
+			uint16  zs, ze;
+			uint16  w, h;
+			uint32  n;
+			uint32  zoverlayOffset; // relative bytes from state start to zoverlay
+			uint32  zOffset; // relative bytes from state start to z data;
+			uint16  palette[256];
+			uint8 rgbData[w*h]
+			uint8   zdata[w*h];
+			psxZOverlay layers[n]
+			{
+			int16 xs, xe;
+				int16 ys, ye;
+				uint16 zs, ze;
+				uint16 dZScale, dZShift;
+			}
+		}
    }
 */
 
@@ -88,35 +88,35 @@ namespace ICB {
    uint32 cmOffsets[nCms]; // cmOffsets[nCms];
    propcmStruct props[propQty];
    {
-      char* name;
-      uint32 stateQty;
-    }
+	  char* name;
+	  uint32 stateQty;
+	}
    // This is the actual construction matrix and where the cmOffsets point to
    cmStruct cm[cmQty];
    {
-      uint32 propQty; // currently always 1 but is likely to change
-      uint32 propNameOffset;
-      uint32 width; // how many bits in the CM table
-      uint32 stateQty; // how many states
-      uint32 statePtrs[stateQty]; // points to a psxPropLayers struct
-      {
-         int16  xs, xe;
-         int16  ys, ye;
-            uint16  zs, ze;
-            uint16  w, h;
-            uint32  n;
-            uint32  zoverlayOffset; // relative bytes from state start to zoverlay
-            uint32  zOffset; // relative bytes from state start to z data;
-            _pxPSXBitmap bitmap; // compress PSX Bitmap format inc. palette
-            uint8   zdata[w*h];
-            psxZOverlay layers[n]
-            {
-            int16 xs, xe;
-                int16 ys, ye;
-                uint16 zs, ze;
-                uint16 dZScale, dZShift;
-            }
-        }
+	  uint32 propQty; // currently always 1 but is likely to change
+	  uint32 propNameOffset;
+	  uint32 width; // how many bits in the CM table
+	  uint32 stateQty; // how many states
+	  uint32 statePtrs[stateQty]; // points to a psxPropLayers struct
+	  {
+		 int16  xs, xe;
+		 int16  ys, ye;
+			uint16  zs, ze;
+			uint16  w, h;
+			uint32  n;
+			uint32  zoverlayOffset; // relative bytes from state start to zoverlay
+			uint32  zOffset; // relative bytes from state start to z data;
+			_pxPSXBitmap bitmap; // compress PSX Bitmap format inc. palette
+			uint8   zdata[w*h];
+			psxZOverlay layers[n]
+			{
+			int16 xs, xe;
+				int16 ys, ye;
+				uint16 zs, ze;
+				uint16 dZScale, dZShift;
+			}
+		}
    }
 */
 
@@ -128,24 +128,24 @@ namespace ICB {
    uint32 propOffsets[propQty]; // propOffsets[propQty];
    psxPropInfo propInfo[propQty];
    {
-      char* name;
-      uint32 stateQty;
+	  char* name;
+	  uint32 stateQty;
    }
    psxProp props[propQty];
    {
-      uint32 stateQty; // how many states
-      uint32 propNameOffset;
-      uint32 statePtrs[stateQty]; // points to a psxPropState struct
-      psxPropState propStates[stateQty];
-      {
-         int16  xs, xe;
-         int16  ys, ye;
-            uint16 zs, ze;
-            uint16 w, h;
-            uint16 nPropRGBsprites;
-            uint16 nBgRGBsprites;
-            _pxPSXBitmap propBitmap; // compressed PSX Bitmap inc. palette
-        }
+	  uint32 stateQty; // how many states
+	  uint32 propNameOffset;
+	  uint32 statePtrs[stateQty]; // points to a psxPropState struct
+	  psxPropState propStates[stateQty];
+	  {
+		 int16  xs, xe;
+		 int16  ys, ye;
+			uint16 zs, ze;
+			uint16 w, h;
+			uint16 nPropRGBsprites;
+			uint16 nBgRGBsprites;
+			_pxPSXBitmap propBitmap; // compressed PSX Bitmap inc. palette
+		}
    }
 */
 
@@ -157,28 +157,28 @@ namespace ICB {
    uint32 propOffsets[propQty]; // propOffsets[propQty];
    psxPropInfo propInfo[propQty];
    {
-      char* name;
-      uint32 stateQty;
+	  char* name;
+	  uint32 stateQty;
    }
    psxProp props[propQty];
    {
-      uint32 stateQty; // how many states
-      uint32 propNameOffset;
-      uint32 statePtrs[stateQty]; // points to a psxPropState struct
-      psxPropState propStates[stateQty];
-      {
-         int16  xs, xe;
-         int16  ys, ye;
-            uint16 zs, ze;
-            uint16 w, h;
-            uint16 nPropRGBsprites;
-            uint16 nBgRGBsprites;
-         uint32 zMicroOffset;
-         uint32 propBitmapOffset;
-         psxZMacroFrag zMacro[nPropRGBsprites];
-         psxZMicroFrag zMicro[nMicroFrags];
-            _pxPSXBitmap propBitmap; // compressed PSX Bitmap inc. palette
-        }
+	  uint32 stateQty; // how many states
+	  uint32 propNameOffset;
+	  uint32 statePtrs[stateQty]; // points to a psxPropState struct
+	  psxPropState propStates[stateQty];
+	  {
+		 int16  xs, xe;
+		 int16  ys, ye;
+			uint16 zs, ze;
+			uint16 w, h;
+			uint16 nPropRGBsprites;
+			uint16 nBgRGBsprites;
+		 uint32 zMicroOffset;
+		 uint32 propBitmapOffset;
+		 psxZMacroFrag zMacro[nPropRGBsprites];
+		 psxZMicroFrag zMicro[nMicroFrags];
+			_pxPSXBitmap propBitmap; // compressed PSX Bitmap inc. palette
+		}
    }
 */
 
@@ -190,34 +190,34 @@ namespace ICB {
    uint32 propOffsets[propQty]; // propOffsets[propQty];
    psxPropInfo propInfo[propQty];
    {
-      char* name;
-      uint32 stateQty;
+	  char* name;
+	  uint32 stateQty;
    }
    psxProp props[propQty];
    {
-      uint32 stateQty; // how many states
-      uint32 propNameOffset;
-      uint32 statePtrs[stateQty]; // points to a psxPropState struct
-      psxPropState propStates[stateQty];
-      {
-         int16  xs, xe;
-         int16  ys, ye;
-            uint16 zs, ze;
-            uint16 w, h;
+	  uint32 stateQty; // how many states
+	  uint32 propNameOffset;
+	  uint32 statePtrs[stateQty]; // points to a psxPropState struct
+	  psxPropState propStates[stateQty];
+	  {
+		 int16  xs, xe;
+		 int16  ys, ye;
+			uint16 zs, ze;
+			uint16 w, h;
 
-         uint16 nPropZsprites;
-         uint16 nPropFGZsprites;
-         uint16 nPropBGZsprites;
-         uint16 padding;
+		 uint16 nPropZsprites;
+		 uint16 nPropFGZsprites;
+		 uint16 nPropBGZsprites;
+		 uint16 padding;
 
-            uint16 nPropRGBsprites;
-            uint16 nBgRGBsprites;
-         uint32 zMicroOffset;
-         uint32 propBitmapOffset;
-         psxZMacroFrag zMacro[nPropRGBsprites];
-         psxZMicroFrag zMicro[nMicroFrags];
-            _pxPSXBitmap propBitmap; // compressed PSX Bitmap inc. palette
-        }
+			uint16 nPropRGBsprites;
+			uint16 nBgRGBsprites;
+		 uint32 zMicroOffset;
+		 uint32 propBitmapOffset;
+		 psxZMacroFrag zMacro[nPropRGBsprites];
+		 psxZMicroFrag zMicro[nMicroFrags];
+			_pxPSXBitmap propBitmap; // compressed PSX Bitmap inc. palette
+		}
    }
 */
 

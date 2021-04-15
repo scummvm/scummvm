@@ -345,19 +345,19 @@ void Codec47Decoder::makeTables47(int width) {
 #endif
 
 extern "C" void ARM_Smush_decode2(      byte  *dst,
-                                  const byte  *src,
-                                        int    width,
-                                        int    height,
-                                  const byte  *param_ptr,
-                                        int16 *_table,
-                                        byte  *_tableBig,
-                                        int32  offset1,
-                                        int32  offset2,
-                                        byte  *_tableSmall);
+								  const byte  *src,
+										int    width,
+										int    height,
+								  const byte  *param_ptr,
+										int16 *_table,
+										byte  *_tableBig,
+										int32  offset1,
+										int32  offset2,
+										byte  *_tableSmall);
 
 #define decode2(SRC,DST,WIDTH,HEIGHT,PARAM) \
  ARM_Smush_decode2(SRC,DST,WIDTH,HEIGHT,PARAM,_table,_tableBig, \
-                   _offset1,_offset2,_tableSmall)
+				   _offset1,_offset2,_tableSmall)
 
 #else
 void Codec47Decoder::level3(byte *d_dst) {

@@ -6757,15 +6757,15 @@ static const SciScriptPatcherEntry lighthouseSignatures[] = {
 // Fixes bug: #5264
 static const uint16 longbowSignatureShowHandCode[] = {
 	0x78,                            // push1 (1 call arg)
-                                     //
+									 //
 	0x78,                            // push1 (1 call arg)
 	0x72, SIG_ADDTOOFFSET(+2),       // lofsa (letter that was typed)
 	0x36,                            // push
 	0x40, SIG_ADDTOOFFSET(+2), 0x02, // call [localproc], 02
-                                     //
+									 //
 	0x36,                            // push (the result is an arg for the next call)
 	0x40, SIG_ADDTOOFFSET(+2), SIG_MAGICDWORD, 0x02, // call [localproc], 02
-                                     //
+									 //
 	0x38, SIG_SELECTOR16(setMotion), // pushi setMotion (0x11c in Longbow German)
 	0x39, SIG_SELECTOR8(x),          // pushi x (0x04 in Longbow German)
 	0x51, 0x1e,                      // class MoveTo
@@ -13032,12 +13032,12 @@ static const uint16 qfg3PatchCombatSpeedThrottling1[] = {
 	0x8b, 0x01,                         // lsl local[1] (stack up the local instead, freed +1 byte)
 	0x1c,                               // ne?
 	0x31, 0x0c,                         // bnt 12d [after sal]
-                                        //
+										//
 	0x81, 0xd2,                         // lag global[210] (load into acc instead of stack)
 	0x76,                               // push0 (push0 instead of ldi 0, freed +1 byte)
 	0x22,                               // lt? (flip the comparison)
 	0x31, 0x06,                         // bnt 6d [after sal]
-                                        //
+										//
 	0xe1, 0xd2,                         // -ag global[210]
 	0x81, 0x58,                         // lag global[88]
 	0xa3, 0x01,                         // sal local[1]
@@ -13444,7 +13444,7 @@ static const uint16 qfg4InnPathfindingPatch[] = {
 static const uint16 qfg4AutosaveSignature[] = {
 	0x30, SIG_ADDTOOFFSET(+2),          // bnt ?? [end the loop]
 	0x78,                               // push1 (1 call arg)
-                                        //
+										//
 	0x39, SIG_SELECTOR8(data),          // pushi data
 	0x76,                               // push0
 	SIG_ADDTOOFFSET(+2),                // (CD="lag global[29]", floppy="lat temp[6]")
@@ -13599,18 +13599,18 @@ static const uint16 qfg4AbsentInnkeeperSignature[] = {
 	0x89, 0x7b,                         // lsg global[123]
 	0x35, 0x03,                         // ldi 3d
 	0x24,                               // le?
-                                        // (~~ junk begins ~~)
+										// (~~ junk begins ~~)
 	0x2f, 0x0f,                         // bt 15d [after the calle]
 	0x39, 0x03,                         // pushi 3d (3 call args)
 	0x89, 0x7b,                         // lsg global[123] (needle value)
 	0x39, 0x04,                         // pushi 4d (haystack values...)
 	0x39, 0x05,                         // pushi 5d
 	0x46, SIG_UINT16(0xfde7), SIG_UINT16(0x0005), SIG_UINT16(0x0006), // calle [export 5 of script 64999], 6d (is needle in haystack?))
-                                        // (~~ junk ends ~~)
+										// (~~ junk ends ~~)
 	0x31, 0x04,                         // bnt 4d [block 11]
 	0x35, 0x0a,                         // ldi 10d
 	0x33, 0x29,                         // jmp 41d [done, local[2]=acc]
-                                        //
+										//
 	SIG_ADDTOOFFSET(+25),               // (...block 11...) (patch ends after this)
 	SIG_ADDTOOFFSET(+14),               // (...block 12...)
 	SIG_ADDTOOFFSET(+2),                // (...else 0...)
@@ -13623,23 +13623,23 @@ static const uint16 qfg4AbsentInnkeeperPatch[] = {
 	0x89, 0x7b,                         // lsg global[123]
 	0x35, 0x05,                         // ldi 5d (make it t <= 5)
 	0x24,                               // le?
-                                        // (*snip*)
+										// (*snip*)
 	0x31, 0x07,                         // bnt 7d [block 11]
 	0x35, 0x0a,                         // ldi 10d
 	0x33, 0x3a,                         // jmp 58d [done, local[2]=acc]
-                                        //
+										//
 	0x34, PATCH_UINT16(0x0000),         // ldi 0 (waste 3 bytes)
-                                        // (14 freed bytes remain.)
-                                        // (use 7 freed bytes to prepend block 11)
-                                        // (and shift all of block 11 up by 7 bytes)
-                                        // (use that new gap below to prepend block 12)
-                                        //
-                                        // (block 11, prepend a time check)
+										// (14 freed bytes remain.)
+										// (use 7 freed bytes to prepend block 11)
+										// (and shift all of block 11 up by 7 bytes)
+										// (use that new gap below to prepend block 12)
+										//
+										// (block 11, prepend a time check)
 	0x89, 0x7b,                         // lsg global[123]
 	0x35, 0x05,                         // ldi 5d
 	0x24,                               // le?
 	0x31, 0x19,                         // bnt 25d [block 12]
-                                        // (block 11, original ops shift up)
+										// (block 11, original ops shift up)
 	0x78,                               // push1 (1 call arg)
 	0x38, PATCH_UINT16(0x0084),         // pushi 132d
 	0x45, 0x04, PATCH_UINT16(0x0002),   // callb [export 4 of script 0], 2d (test flag 132)
@@ -13651,13 +13651,13 @@ static const uint16 qfg4AbsentInnkeeperPatch[] = {
 	0x31, 0x04,                         // bnt 4d [block 12]
 	0x35, 0x0b,                         // ldi 11d
 	0x33, 0x17,                         // jmp 23d [done, local[2]=acc]
-                                        //
-                                        // (block 12, prepend a time check)
+										//
+										// (block 12, prepend a time check)
 	0x89, 0x7b,                         // lsg global[123]
 	0x35, 0x05,                         // ldi 5d
 	0x24,                               // le?
 	0x31, 0x0e,                         // bnt 14d [else block]
-                                        // (block 12, original ops continue here)
+										// (block 12, original ops continue here)
   	PATCH_END
 };
 
@@ -14199,7 +14199,7 @@ static const uint16 qfg4SafeDoorEastSignature[] = {
 	0x45, 0x04, SIG_UINT16(0x0002),     // callb [export 4 of script 0], 2d (test flag 215)
 	0x18,                               // not
 	0x31, SIG_ADDTOOFFSET(+1),          // bnt ?? [end the else block]
-                                        //
+										//
 	0x35, 0x00,                         // ldi 0
 	0xa3, 0x02,                         // sal local[2]
 	SIG_END
@@ -14208,7 +14208,7 @@ static const uint16 qfg4SafeDoorEastSignature[] = {
 static const uint16 qfg4SafeDoorEastPatch[] = {
 	0x35, 0x00,                         // ldi 0
 	0xa3, 0x02,                         // sal local[2]
-                                        //
+										//
 	0x78,                               // push1 (1 call arg)
 	0x38, PATCH_UINT16(0x00d7),         // pushi 215d (right door oiled flag)
 	0x45, 0x04, PATCH_UINT16(0x0002),   // callb [export 4 of script 0], 2d (test flag 215)
@@ -14277,7 +14277,7 @@ static const uint16 qfg4DreamGateSignature[] = {
 	0x72, SIG_ADDTOOFFSET(+2),          // lofsa fSouth
 	0x4a, SIG_UINT16(0x0004),           // send 4d
 	0x31, 0x1a,                         // bnt 26d [skip disposing/nulling] (no heading)
-                                        //
+										//
 	0x38, SIG_SELECTOR16(dispose),      // pushi dispose
 	0x76,                               // push0
 	0x39, SIG_SELECTOR8(heading),       // pushi heading
@@ -14285,7 +14285,7 @@ static const uint16 qfg4DreamGateSignature[] = {
 	0x72, SIG_ADDTOOFFSET(+2),          // lofsa fSouth
 	0x4a, SIG_UINT16(0x0004),           // send 4d (accumulate heading)
 	0x4a, SIG_UINT16(0x0004),           // send 4d (dispose heading)
-                                        //
+										//
 	0x39, SIG_SELECTOR8(heading),       // pushi heading
 	0x78,                               // push1
 	0x76,                               // push0
@@ -14302,18 +14302,18 @@ static const uint16 qfg4DreamGatePatch[] = {
 	0x4a, PATCH_UINT16(0x0004),         // send 4d
 	0xa5, 0x00,                         // sat temp[0]
 	0x31, 0x13,                         // bnt 19d [skip disposing/nulling] (no heading)
-                                        //
+										//
 	0x38, PATCH_SELECTOR16(dispose),    // pushi dispose
 	0x76,                               // push0
 	0x85, 0x00,                         // lat temp[0]
 	0x4a, PATCH_UINT16(0x0004),         // send 4d (dispose: heading:)
-                                        //
+										//
 	0x39, PATCH_SELECTOR8(heading),     // pushi heading
 	0x78,                               // push1
 	0x76,                               // push0
 	0x72, PATCH_GETORIGINALUINT16(4),   // lofsa fSouth
 	0x4a, PATCH_UINT16(0x0006),         // send 6d (set fSouth's heading to null)
-                                        //
+										//
 	0x76,                               // push0
 	0xab, 0x02,                         // ssl local[2] (let doit() watch for nightfall)
 	PATCH_END
@@ -14390,10 +14390,10 @@ static const uint16 qfg4RestartSignature[] = {
 };
 
 static const uint16 qfg4RestartPatch[] = {
-                                        // (loop to assign multiples of 45)
+										// (loop to assign multiples of 45)
 	0x76,                               // push0
 	0xad, 0x00,                         // sst temp[0]
-                                        //
+										//
 	0x8d, 0x00,                         // lst temp[0] (global[144 + n+1] = n*45)
 	0x35, 0x08,                         // ldi 8d
 	0x22,                               // lt?
@@ -14405,12 +14405,12 @@ static const uint16 qfg4RestartPatch[] = {
 	0xc5, 0x00,                         // +at temp[0]
 	0xb1, 0x90,                         // sagi (global[144 + temp[0]])
 	0x33, 0xed,                         // jmp -19d (loop)
-                                        // (that loop freed +30 bytes)
+										// (that loop freed +30 bytes)
 
 	0x35, 0x14,                         // ldi 20d (leave this assignment as-is)
 	0xa1, 0xc6,                         // sag global[198]
 
-                                        // (stack up arbitrary values; then loop to assign them)
+										// (stack up arbitrary values; then loop to assign them)
 	0x7a,                               // push2     (global[367] = 2)
 	0x3c,                               // dup       (global[368] = 2)
 	0x39, 0x03,                         // pushi 3d  (global[369] = 3)
@@ -14432,10 +14432,10 @@ static const uint16 qfg4RestartPatch[] = {
 	0x39, 0x07,                         // pushi 7d  (global[385] = 7)
 	0x39, 0x0a,                         // pushi 10d (global[386] = 10)
 	0x3c,                               // dup       (global[387] = 10)
-                                        //
+										//
 	0x39, 0x15,                         // pushi 21d (pop() and set, backward from 20 to 0)
 	0xad, 0x00,                         // sst temp[0]
-                                        //
+										//
 	0xed, 0x00,                         // -st temp[0]
 	0x35, 0x00,                         // ldi 0
 	0x20,                               // ge?
@@ -14443,9 +14443,9 @@ static const uint16 qfg4RestartPatch[] = {
 	0x85, 0x00,                         // lat temp[0]
 	0xb8, PATCH_UINT16(0x016f),         // ssgi (global[367 + n] = pop())
 	0x33, 0xf2,                         // jmp -14d (loop)
-                                        // (that loop freed +52 bytes)
+										// (that loop freed +52 bytes)
 
-                                        // (reset properties for a few items)
+										// (reset properties for a few items)
 	0x33, 0x1f,                         // jmp 31d [skip subroutine declaration]
 	0x38, PATCH_SELECTOR16(loop),       // pushi loop
 	0x78,                               // push1
@@ -14456,13 +14456,13 @@ static const uint16 qfg4RestartPatch[] = {
 	0x38, PATCH_SELECTOR16(value),      // pushi value (weight)
 	0x78,                               // push1
 	0x7a,                               // push2 (these items all weigh 2)
-                                        //
+										//
 	0x39, PATCH_SELECTOR8(at),          // pushi at
 	0x78,                               // push1
 	0x8f, 0x01,                         // lsp param[1]
 	0x81, 0x09,                         // global[9] (gloryInv)
 	0x4a, PATCH_UINT16(0x0006),         // send 6d
-                                        //
+										//
 	0x4a, PATCH_UINT16(0x0012),         // send 18d
 	0x48,                               // ret
 
@@ -14652,7 +14652,7 @@ static const uint16 qfg4Tarot3TwoOfCupsPatch[] = {
 	0x39, 0x03,                         // pushi 3d (call has 3 args)
 	0x39, 0x6e,                         // pushi 110d (setScalar, arg 5)
 	0x38, PATCH_UINT16(0x00d2),         // pushi 210d (setMotion, x arg)
-                                        //
+										//
 	0x8b, 0x00,                         // lsl local[0] (test the card's View number)
 	0x34, PATCH_UINT16(0x03ff),         // ldi 1023d ("Two of Cups" is special)
 	0x1a,                               // eq?
@@ -14660,7 +14660,7 @@ static const uint16 qfg4Tarot3TwoOfCupsPatch[] = {
 	0x39, 0x66,                         // pushi 102d  (setMotion, special y arg)
 	0x33, 0x02,                         // jmp 2d [to the call]
 	0x39, 0x6e,                         // pushi 110d (setMotion, regular y arg)
-                                        //
+										//
 	0x41, 0xb0, PATCH_UINT16(0x0006),   // call [-80], 6d
 	0x33, 0x13,                         // jmp 19d [end the local[2] switch]
 
@@ -14841,7 +14841,7 @@ static const uint16 qfg4PitRopeFighterPatch[] = {
 	PATCH_ADDTOOFFSET(+21),             // ... (8 + 13)
 	0x76,                               // push0 (null caller, so say won't cue crossByHand)
 	PATCH_ADDTOOFFSET(+5),              // ...
-                                        // (no jmp, self-cue becomes cycles)
+										// (no jmp, self-cue becomes cycles)
 	0x35, 0x20,                         // ldi 32d
 	0x65, PATCH_GETORIGINALBYTEADJUST(1, +6), // aTop cycles (property offset = @state + 6d)
 	0x33, 0x04,                         // jmp 4d [skip waste bytes, end the switch]
@@ -15060,11 +15060,11 @@ static const uint16 qfg4TriggerStaffPatch1[] = {
 	0x76,                               // push0
 	0x81, 0x00,                         // lag global[0] (hero)
 	0x4a, PATCH_UINT16(0x0004),         // send 4d
-                                        //
+										//
 	0x39, 0x11,                         // pushi 17d (push the literal, leave view in acc)
 	0x22,                               // lt? (view > 17 becomes 17 < view, set prev = acc)
 	0x31, PATCH_GETORIGINALBYTEADJUST(15, -8), // bnt ?? [to the not]
-                                        //
+										//
 	0x60,                               // pprev (push the view from prev, ldi 21 comparison is next)
 	PATCH_END
 };
@@ -15295,7 +15295,7 @@ static const uint16 qfg4GuildWalkSignature2[] = {
 	SIG_MAGICDWORD,
 	0x32, SIG_UINT16(0x00f7),           // jmp 247d [end the cond] (2nd condition done)
 
-                                        // (else condition)
+										// (else condition)
 	0x38, SIG_SELECTOR16(init),         // pushi init
 	0x76,                               // push0
 	0x72, SIG_ADDTOOFFSET(+2),          // lofsa secritExit
@@ -15317,10 +15317,10 @@ static const uint16 qfg4GuildWalkPatch2[] = {
 	0x74, PATCH_GETORIGINALUINT16(75),  // lofss crack1
 	0x74, PATCH_GETORIGINALUINT16(91),  // lofss crack2
 	0x74, PATCH_GETORIGINALUINT16(107), // lofss pillar
-                                        //
+										//
 	0x35, 0x08,                         // ldi 8d (decrement and send 7 times, while != 0)
 	0xa5, 0x00,                         // sat temp[0]
-                                        //
+										//
 	0xe5, 0x00,                         // -at temp[0]
 	0x31, 0x13,                         // bnt 19d [on 0, end the loop]
 	0xad, 0x01,                            // sst temp[1] (pop the next object into a temp var)
@@ -15342,20 +15342,20 @@ static const uint16 qfg4GuildWalkPatch2[] = {
 	0x38, PATCH_SELECTOR16(dispose),    // pushi dispose
 	0x76,                               // push0
 	0x4a, PATCH_UINT16(0x0004),         // send 4d ((global[2] obstacles?) dispose:)
-                                        //
+										//
 	0x38, PATCH_SELECTOR16(obstacles),  // pushi obstacles (null the "obstacles" property)
 	0x78,                               // push1
 	0x76,                               // push0
 	0x81, 0x02,                         // lag global[2]
 	0x4a, PATCH_UINT16(0x0006),         // send 6d
-                                        //
+										//
 	0x38, PATCH_SELECTOR16(addObstacle), // pushi addObstacle
 	0x78,                               // push1
 	0x32, PATCH_UINT16(0x020f),         // jmp 527d [3rd polygon type, init, and push]
-                                        // (That will jmp back here)
+										// (That will jmp back here)
 	0x81, 0x02,                         // lag global[2]
 	0x4a, PATCH_UINT16(0x0006),         // send 6d
-                                        //
+										//
 	0x38, PATCH_SELECTOR16(init),       // pushi init
 	0x76,                               // push0
 	0x72, PATCH_GETORIGINALUINT16(605), // lofsa secritExit
@@ -15477,7 +15477,7 @@ static const uint16 qfg4LeftoversPatch[] = {
 	PATCH_ADDTOOFFSET(+15),             // (cond 1, preemptively eaten meals)
 	0x32, PATCH_UINT16(0x00bb),         // jmp 187d [end the cond]
 
-                                        // (cond 2)
+										// (cond 2)
 	0x39, PATCH_SELECTOR8(at),          // pushi at
 	0x78,                               // push1
 	0x39, 0x04,                         // pushi 4d (itemId 4, theRations)
@@ -15528,38 +15528,38 @@ static const uint16 qfg4LeftoversPatch[] = {
 
 	0x38, PATCH_SELECTOR16(hide),       // pushi hide
 	0x76,                               // push0
-                                        //
+										//
 	0x7a,                               // push2 (2 call args)
 	0x39, 0x24,                         // pushi 36d
 	0x78,                               // push1
 	0x43, 0x02, PATCH_UINT16(0x0004),   // callk ScriptID, 4d (ScriptID 36 1, invItem)
-                                        //
+										//
 	0x4a, PATCH_UINT16(0x0004),         // send 4d (invItem hide:)
-                                        // (exhausted item removal end)
+										// (exhausted item removal end)
 
 	0x35, 0x01,                         // ldi 1d
 	0xa5, 0x00,                         // sat temp[0] (eaten)
 
 	0x33, 0x54,                         // jmp 84d [end the cond]
 
-                                        // (cond 3)
+										// (cond 3)
 	0x78,                               // push1 (1 call arg)
 	0x39, 0x03,                         // pushi 3d ("hungry" flag)
 	0x45, 0x04, PATCH_UINT16(0x0002),   // callb [export 4 of script 0], 2d (test flag 3)
 	0x31, 0x26,                         // bnt 38d [next condition]
-                                        //
+										//
 	0x38, PATCH_SELECTOR16(useStamina), // pushi useStamina
 	0x7a,                               // push2
 	0x39, 0x08,                         // pushi 8d
 	0x76,                               // push0
 	0x54, PATCH_UINT16(0x0008),         // self 8d (hero useStamina: 8 0)
-                                        //
+										//
 	0x31, 0x09,                         // bnt 9d [hero dies]
 	0x78,                               // push1 (1 call arg)
 	0x39, 0x05,                         // pushi 5d (say cond:5, "You're starving.")
 	0x41, 0x3a, PATCH_UINT16(0x0002),   // call [58], 2d (gloryMessager say: 1 6 5 1 0 28)
 	0x33, 0x36,                         // jmp 54d [end the cond]
-                                        //
+										//
 	0x39, 0x04,                         // pushi 4d (4 call args)
 	0x39, 0x08,                         // pushi 8d
 	0x39, 0x1c,                         // pushi 28d
@@ -15568,31 +15568,31 @@ static const uint16 qfg4LeftoversPatch[] = {
 	0x47, 0x1a, 0x00, PATCH_UINT16(0x0008), // calle [export 0 of script 26], 8d (hero dies)
 	0x33, 0x25,                         // jmp 37d [end the cond]
 
-                                        // (cond 4)
+										// (cond 4)
 	0x78,                               // push1 (1 call arg)
 	0x7a,                               // push2 ("missed meal" flag)
 	0x45, 0x04, PATCH_UINT16(0x0002),   // callb [export 4 of script 0], 2d (test flag 2)
 	0x31, 0x10,                         // bnt 16d [next condition]
-                                        //
+										//
 	0x78,                               // push1 (1 call arg)
 	0x39, 0x03,                         // pushi 3d ("hungry" flag)
 	0x45, 0x02, PATCH_UINT16(0x0002),   // callb [export 2 of script 0], 2d (set flag 3)
-                                        //
+										//
 	0x78,                               // push1 (1 call arg)
 	0x39, 0x06,                         // pushi 6d (say cond:6, "Really getting hungry.")
 	0x41, 0x11, PATCH_UINT16(0x0002),   // call [17], 2d (gloryMessager say: 1 6 6 1 0 28)
 	0x33, 0x0d,                         // jmp 13d [end the cond]
 
-                                        // (cond else)
+										// (cond else)
 	0x78,                               // push1 (1 call arg)
 	0x7a,                               // push2 ("missed meal" flag)
 	0x45, 0x02, PATCH_UINT16(0x0002),   // callb [export 2 of script 0], 2d (set flag 2)
-                                        //
+										//
 	0x78,                               // push1 (1 call arg)
 	0x39, 0x04,                         // pushi 4d (say cond:4, "Get food soon.")
 	0x41, 0x02, PATCH_UINT16(0x0002),   // call [2], 2d (gloryMessager say: 1 6 4 1 0 28)
 
-                                        // (cond end)
+										// (cond end)
 
 	0x33, 0x14,                         // jmp 20d [skip subroutine declaration]
 	0x38, PATCH_SELECTOR16(say),        // pushi say

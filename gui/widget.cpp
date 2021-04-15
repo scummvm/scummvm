@@ -973,7 +973,7 @@ void ContainerWidget::drawWidget() {
 #pragma mark -
 
 OptionsContainerWidget::OptionsContainerWidget(GuiObject *boss, const Common::String &name, const Common::String &dialogLayout,
-                                               bool scrollable, const Common::String &domain) :
+											   bool scrollable, const Common::String &domain) :
 		Widget(boss, name),
 		_domain(domain),
 		_dialogLayout(dialogLayout),

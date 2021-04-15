@@ -124,7 +124,7 @@ struct StatuePiece {
 		return Common::Point(hotspotx, hotspoty);
 	}
 };
-    
+
 static const StatuePiece statuePieces[] = {
 	{"LowerLeg1", "m1010or0", "m1010or2", 519, 282, 2009, 461, 395, 26, 28, -1, -1 },
 	{"LowerLeg2", "m1010or1", "m1010or3", 571, 276, 2008, 339, 358, 15, 30, -1, -1 },
@@ -336,7 +336,7 @@ public:
 				return;
 			}
 		}
-		
+
 		if (name == "FatesLair") {
 			if (showAllFates())
 				return;
@@ -1172,7 +1172,7 @@ private:
 
 	void statueDClick(int pieceNum) {
 		_statueDrag = pieceNum;
-		
+
 		renderStatue();
 	}
 

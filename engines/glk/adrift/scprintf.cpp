@@ -46,8 +46,8 @@ static const sc_char LESSTHAN = '<';
 static const sc_char GREATERTHAN = '>';
 static const sc_char PERCENT = '%';
 static const sc_char *const ENTITY_LESSTHAN = "&lt;",
-                            *const ENTITY_GREATERTHAN = "&gt;",
-                                   *const ENTITY_PERCENT = "+percent+";
+							*const ENTITY_GREATERTHAN = "&gt;",
+								   *const ENTITY_PERCENT = "+percent+";
 enum {
 	ENTITY_LENGTH = 4,
 	PERCENT_LENGTH = 9

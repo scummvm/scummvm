@@ -362,10 +362,10 @@ Intrinsic RemorseIntrinsics[] = {
 	Actor::I_setActivity, // void Intrinsic131(6 bytes)
 	Item::I_andStatus, // void Intrinsic132(6 bytes)
 	Item::I_getQHi,  // based on same coff set as 026
-    WeaselGump::I_showWeaselGump, // void Intrinsic134(2 bytes)
-    Actor::I_setDead,
-    0, // void UNUSEDInt136()
-    0  // void UNUSEDInt137()
+	WeaselGump::I_showWeaselGump, // void Intrinsic134(2 bytes)
+	Actor::I_setDead,
+	0, // void UNUSEDInt136()
+	0  // void UNUSEDInt137()
 };
 
 } // End of namespace Ultima8

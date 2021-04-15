@@ -81,9 +81,9 @@ SearchSet::ArchiveNodeList::const_iterator SearchSet::find(const String &name) c
 }
 
 /*
-    Keep the nodes sorted according to descending priorities.
-    In case two or node nodes have the same priority, insertion
-    order prevails.
+	Keep the nodes sorted according to descending priorities.
+	In case two or node nodes have the same priority, insertion
+	order prevails.
 */
 void SearchSet::insert(const Node &node) {
 	ArchiveNodeList::iterator it = _list.begin();

@@ -28,7 +28,7 @@ static const VoyeurGameDescription gameDescriptions[] = {
 		{
 			"voyeur",
 			0,
-            AD_ENTRY1s("bvoy.blt", "12e9e10654171501cf8be3a7aa7198e1", 13036269),
+			AD_ENTRY1s("bvoy.blt", "12e9e10654171501cf8be3a7aa7198e1", 13036269),
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
@@ -37,17 +37,17 @@ static const VoyeurGameDescription gameDescriptions[] = {
 	},
 
 	{
-        // Voyeur DOS English
-        {
-            "voyeur",
-            "Demo",
-            AD_ENTRY1s("bvoy.blt", "abd10f241b845ebc2a76d27a43770709", 13015827),
-            Common::EN_ANY,
-            Common::kPlatformDOS,
-            ADGF_DEMO,
-            GUIO1(GUIO_NOMIDI)
+		// Voyeur DOS English
+		{
+			"voyeur",
+			"Demo",
+			AD_ENTRY1s("bvoy.blt", "abd10f241b845ebc2a76d27a43770709", 13015827),
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_DEMO,
+			GUIO1(GUIO_NOMIDI)
 		}
-    },
+	},
 
 	{ AD_TABLE_END_MARKER }
 };

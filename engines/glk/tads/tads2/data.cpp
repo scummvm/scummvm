@@ -34,39 +34,39 @@ namespace TADS2 {
 /* return size of a data value */
 uint datsiz(dattyp typ, const void *val)
 {
-    switch(typ)
-    {
-    case DAT_NUMBER:
-        return(4);                /* numbers are in 4-byte lsb-first format */
+	switch(typ)
+	{
+	case DAT_NUMBER:
+		return(4);                /* numbers are in 4-byte lsb-first format */
 
-    case DAT_OBJECT:
-        return(2);         /* object numbers are in 2-byte lsb-first format */
+	case DAT_OBJECT:
+		return(2);         /* object numbers are in 2-byte lsb-first format */
 
-    case DAT_SSTRING:
-    case DAT_DSTRING:
-    case DAT_LIST:
-        return(osrp2((const char *)val));
+	case DAT_SSTRING:
+	case DAT_DSTRING:
+	case DAT_LIST:
+		return(osrp2((const char *)val));
 
-    case DAT_NIL:
-    case DAT_TRUE:
-        return(0);
+	case DAT_NIL:
+	case DAT_TRUE:
+		return(0);
 
-    case DAT_PROPNUM:
-    case DAT_SYN:
-    case DAT_FNADDR:
-    case DAT_REDIR:
-        return(2);
-        
-    case DAT_TPL:
-        /* template is counted array of 10-byte entries, plus length byte */
-        return(1 + ((*(const uchar *)val) * VOCTPLSIZ));
+	case DAT_PROPNUM:
+	case DAT_SYN:
+	case DAT_FNADDR:
+	case DAT_REDIR:
+		return(2);
+		
+	case DAT_TPL:
+		/* template is counted array of 10-byte entries, plus length byte */
+		return(1 + ((*(const uchar *)val) * VOCTPLSIZ));
 
-    case DAT_TPL2:
-        return(1 + ((*(const uchar *)val) * VOCTPL2SIZ));
+	case DAT_TPL2:
+		return(1 + ((*(const uchar *)val) * VOCTPL2SIZ));
 
-    default:
-        return(0);
-    }
+	default:
+		return(0);
+	}
 }
 
 } // End of namespace TADS2

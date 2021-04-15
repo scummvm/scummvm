@@ -45,7 +45,7 @@ Glossary
   object    - inventory item
   icon      - clickable rectangle with some action tied to it
   dialog    - a set of of dialog lines for character. further divided by categories and each entry may have associated
-              condition to be validated
+			  condition to be validated
   global    - game-wide storage area. must be preserved when saving/loading
   phase     - current story progress. Incremented by 1 for minor events, by 0x10 for major advancements
 */

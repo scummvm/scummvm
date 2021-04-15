@@ -46,7 +46,7 @@ private:
 
 public:
 	GUI_YesNoDialog(GUI *gui, int x, int y, int w, int h, const char *msg,
-        CallBack *yesCallback, CallBack *noCallback);
+		CallBack *yesCallback, CallBack *noCallback);
 	~GUI_YesNoDialog() override;
 
 	GUI_status KeyDown(const Common::KeyState &key) override;

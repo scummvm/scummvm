@@ -263,7 +263,7 @@ ovlData3Struct *scriptFunc1Sub2(int32 scriptNumber, int32 param) {
 }
 
 void scriptFunc2(int scriptNumber, scriptInstanceStruct * scriptHandle,
-                 int param, int param2) {
+				 int param, int param2) {
 	if (scriptHandle->nextScriptPtr) {
 		if (scriptNumber == scriptHandle->nextScriptPtr->overlayNumber
 		        || scriptNumber != -1) {

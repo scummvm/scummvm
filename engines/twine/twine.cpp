@@ -114,7 +114,7 @@ FrameMarker::~FrameMarker() {
 }
 
 TwinEEngine::TwinEEngine(OSystem *system, Common::Language language, uint32 flags, TwineGameType gameType)
-    : Engine(system), _gameType(gameType), _gameLang(language), _gameFlags(flags), _rnd("twine") {
+	: Engine(system), _gameType(gameType), _gameLang(language), _gameFlags(flags), _rnd("twine") {
 	// Add default file directories
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
 	SearchMan.addSubDirectoryMatching(gameDataDir, "fla");

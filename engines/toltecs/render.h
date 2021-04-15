@@ -83,13 +83,13 @@ protected:
 	MicroTileArray *_updateUta;
 
 	bool rectIntersectsItem(const Common::Rect &rect);
-    RenderQueueItem *findItemInQueue(RenderQueueArray *queue, const RenderQueueItem &item);
-    bool hasItemChanged(const RenderQueueItem &item1, const RenderQueueItem &item2);
-    void invalidateItemsByRect(const Common::Rect &rect, const RenderQueueItem *item);
+	RenderQueueItem *findItemInQueue(RenderQueueArray *queue, const RenderQueueItem &item);
+	bool hasItemChanged(const RenderQueueItem &item1, const RenderQueueItem &item2);
+	void invalidateItemsByRect(const Common::Rect &rect, const RenderQueueItem *item);
 
-    void addDirtyRect(const Common::Rect &rect);
-    void restoreDirtyBackground();
-    void updateDirtyRects();
+	void addDirtyRect(const Common::Rect &rect);
+	void restoreDirtyBackground();
+	void updateDirtyRects();
 
 };
 

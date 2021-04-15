@@ -36,7 +36,7 @@
 namespace Common {
 /*
 void WriteStream::writeString(const String &str) {
-    write(str.c_str(), str.size());
+	write(str.c_str(), str.size());
 }
 */
 SeekableReadStream *ReadStream::readStream(uint32 dataSize) {
@@ -89,28 +89,28 @@ bool MemoryReadStream::seek(sint32 offs, int whence) {
 }
 /*
 bool MemoryWriteStreamDynamic::seek(int32 offs, int whence) {
-    // Pre-Condition
-    assert(_pos <= _size);
-    switch (whence) {
-    case SEEK_END:
-        // SEEK_END works just like SEEK_SET, only 'reversed',
-        // i.e. from the end.
-        offs = _size + offs;
-        // Fall through
-    case SEEK_SET:
-        _ptr = _data + offs;
-        _pos = offs;
-        break;
+	// Pre-Condition
+	assert(_pos <= _size);
+	switch (whence) {
+	case SEEK_END:
+		// SEEK_END works just like SEEK_SET, only 'reversed',
+		// i.e. from the end.
+		offs = _size + offs;
+		// Fall through
+	case SEEK_SET:
+		_ptr = _data + offs;
+		_pos = offs;
+		break;
 
-    case SEEK_CUR:
-        _ptr += offs;
-        _pos += offs;
-        break;
-    }
-    // Post-Condition
-    assert(_pos <= _size);
+	case SEEK_CUR:
+		_ptr += offs;
+		_pos += offs;
+		break;
+	}
+	// Post-Condition
+	assert(_pos <= _size);
 
-    return true;    // FIXME: STREAM REWRITE
+	return true;    // FIXME: STREAM REWRITE
 }
 */
 #pragma mark -
@@ -203,50 +203,50 @@ Std::string SeekableReadStream::readLine() {
 
 /*
 uint32 SubReadStream::read(void *dataPtr, uint32 dataSize) {
-    if (dataSize > _end - _pos) {
-        dataSize = _end - _pos;
-        _eos = true;
-    }
+	if (dataSize > _end - _pos) {
+		dataSize = _end - _pos;
+		_eos = true;
+	}
 
-    dataSize = _parentStream->read(dataPtr, dataSize);
-    _eos |= _parentStream->eos();
-    _pos += dataSize;
+	dataSize = _parentStream->read(dataPtr, dataSize);
+	_eos |= _parentStream->eos();
+	_pos += dataSize;
 
-    return dataSize;
+	return dataSize;
 }
 
 SeekableSubReadStream::SeekableSubReadStream(SeekableReadStream *parentStream, uint32 begin, uint32 end, DisposeAfterUse::Flag disposeParentStream)
-    : SubReadStream(parentStream, end, disposeParentStream),
-    _parentStream(parentStream),
-    _begin(begin) {
-    assert(_begin <= _end);
-    _pos = _begin;
-    _parentStream->seek(_pos);
-    _eos = false;
+	: SubReadStream(parentStream, end, disposeParentStream),
+	_parentStream(parentStream),
+	_begin(begin) {
+	assert(_begin <= _end);
+	_pos = _begin;
+	_parentStream->seek(_pos);
+	_eos = false;
 }
 
 bool SeekableSubReadStream::seek(int32 offset, int whence) {
-    assert(_pos >= _begin);
-    assert(_pos <= _end);
+	assert(_pos >= _begin);
+	assert(_pos <= _end);
 
-    switch (whence) {
-    case SEEK_END:
-        offset = size() + offset;
-        // fallthrough
-    case SEEK_SET:
-        _pos = _begin + offset;
-        break;
-    case SEEK_CUR:
-        _pos += offset;
-    }
+	switch (whence) {
+	case SEEK_END:
+		offset = size() + offset;
+		// fallthrough
+	case SEEK_SET:
+		_pos = _begin + offset;
+		break;
+	case SEEK_CUR:
+		_pos += offset;
+	}
 
-    assert(_pos >= _begin);
-    assert(_pos <= _end);
+	assert(_pos >= _begin);
+	assert(_pos <= _end);
 
-    bool ret = _parentStream->seek(_pos);
-    if (ret) _eos = false; // reset eos on successful seek
+	bool ret = _parentStream->seek(_pos);
+	if (ret) _eos = false; // reset eos on successful seek
 
-    return ret;
+	return ret;
 }
 
 */

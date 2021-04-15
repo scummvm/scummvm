@@ -331,7 +331,7 @@ KeyBinder::~KeyBinder() {
 }
 
 void KeyBinder::AddKeyBinding(Common::KeyCode key, byte mod, const Action *action,
-                              int nparams, int *params) {
+							  int nparams, int *params) {
 	Common::KeyState k;
 	ActionType a;
 	a.action = action;

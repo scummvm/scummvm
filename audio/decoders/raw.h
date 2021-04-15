@@ -76,8 +76,8 @@ enum RawFlags {
  * @return The new SeekableAudioStream (or 0 on failure).
  */
 SeekableAudioStream *makeRawStream(const byte *buffer, uint32 size,
-                                   int rate, byte flags,
-                                   DisposeAfterUse::Flag disposeAfterUse = DisposeAfterUse::YES);
+								   int rate, byte flags,
+								   DisposeAfterUse::Flag disposeAfterUse = DisposeAfterUse::YES);
 
 /**
  * Creates an audio stream, which plays from the given stream.
@@ -90,8 +90,8 @@ SeekableAudioStream *makeRawStream(const byte *buffer, uint32 size,
  * @return The new SeekableAudioStream (or 0 on failure).
  */
 SeekableAudioStream *makeRawStream(Common::SeekableReadStream *stream,
-                                   int rate, byte flags,
-                                   DisposeAfterUse::Flag disposeAfterUse = DisposeAfterUse::YES);
+								   int rate, byte flags,
+								   DisposeAfterUse::Flag disposeAfterUse = DisposeAfterUse::YES);
 
 /**
  * Creates a PacketizedAudioStream that will automatically queue

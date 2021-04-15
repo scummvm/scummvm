@@ -33,7 +33,7 @@ namespace CryOmni3D {
 namespace Versailles {
 
 Versailles_DialogsManager::Versailles_DialogsManager(CryOmni3DEngine_Versailles *engine,
-        bool padAudioFileName) :
+		bool padAudioFileName) :
 	_engine(engine), _padAudioFileName(padAudioFileName) {
 }
 
@@ -93,7 +93,7 @@ void Versailles_DialogsManager::executeShow(const Common::String &show) {
 }
 
 void Versailles_DialogsManager::playDialog(const Common::String &video, const Common::String &sound,
-        const Common::String &text, const SubtitlesSettings &settings) {
+		const Common::String &text, const SubtitlesSettings &settings) {
 	// Don't look for HNS file here
 	Common::String videoFName(_engine->prepareFileName(video, "hnm"));
 	Common::String soundFName(sound);
@@ -250,7 +250,7 @@ void Versailles_DialogsManager::displayMessage(const Common::String &text) {
 }
 
 uint Versailles_DialogsManager::askPlayerQuestions(const Common::String &video,
-        const Common::StringArray &questions) {
+		const Common::StringArray &questions) {
 	if (_lastImage.empty()) {
 		loadFrame(video);
 	}

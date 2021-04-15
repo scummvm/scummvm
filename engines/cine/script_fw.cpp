@@ -591,7 +591,7 @@ RawObjectScript::RawObjectScript(uint16 s, uint16 p1, uint16 p2, uint16 p3)
  * @param p3 Third object script parameter
  */
 RawObjectScript::RawObjectScript(const FWScriptInfo &info, const byte *data,
-                                 uint16 s, uint16 p1, uint16 p2, uint16 p3)
+								 uint16 s, uint16 p1, uint16 p2, uint16 p3)
 	: RawScript(info, data, s), _runCount(0), _param1(p1), _param2(p2), _param3(p3) {
 }
 

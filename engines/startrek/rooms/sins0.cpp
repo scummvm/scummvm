@@ -96,8 +96,8 @@ extern const RoomTextOffsets sins0TextOffsets[] = {
 	{ TX_SPEAKER_MCCOY, 300, 0 },
 	{ TX_SPEAKER_SPOCK, 310, 0 },
 	{ TX_SPEAKER_SCOTT, 344, 0 },
-    { TX_SPEAKER_UHURA, 334, 0 },
-    { TX_SPEAKER_MOSHER, 320, 0 },
+	{ TX_SPEAKER_UHURA, 334, 0 },
+	{ TX_SPEAKER_MOSHER, 320, 0 },
 	{ TX_SIN0N000, 3805, 0 },
 	{ TX_SIN0N001, 3994, 0 },
 	{ TX_SIN0N002, 3594, 0 },
@@ -148,7 +148,7 @@ extern const RoomTextOffsets sins0TextOffsets[] = {
 };
 
 extern const RoomText sins0Texts[] = {
-      { -1, Common::UNK_LANG, "" }
+	  { -1, Common::UNK_LANG, "" }
 };
 
 void Room::sins0Tick1() {

@@ -189,10 +189,10 @@ private:
  * This deleter assures Surface::free is called on deletion.
  */
 /*struct SharedPtrTransparentSurfaceDeleter {
-    void operator()(TransparentSurface *ptr) {
-        ptr->free();
-        delete ptr;
-    }
+	void operator()(TransparentSurface *ptr) {
+		ptr->free();
+		delete ptr;
+	}
 };*/
 /** @} */
 } // End of namespace Graphics

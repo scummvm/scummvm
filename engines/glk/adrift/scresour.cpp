@@ -70,7 +70,7 @@ sc_bool res_has_graphics(sc_gameref_t game) {
  * Convenience functions to set, clear, and compare resource fields.
  */
 static void res_set_resource(sc_resourceref_t resource, const sc_char *name,
-                 sc_int offset, sc_int length) {
+				 sc_int offset, sc_int length) {
 	resource->name = name;
 	resource->offset = offset;
 	resource->length = length;

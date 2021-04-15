@@ -165,7 +165,7 @@ public:
 };
 
 class pcPropRGB {
-      private:
+private:
 	char name[32];
 	uint32 stateQty;
 	pcPropRGBState **states;

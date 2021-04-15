@@ -81,7 +81,7 @@ bool isCombatAnimCru(const Sequence anim) {
 
 /** determines if we need to ready or unready our weapon */
 Sequence checkWeapon(const Sequence nextanim,
-                     const Sequence lastanim) {
+					 const Sequence lastanim) {
 	Sequence anim = nextanim;
 	if (isCombatAnim(nextanim) && !isCombatAnim(lastanim)) {
 		anim = readyWeapon;

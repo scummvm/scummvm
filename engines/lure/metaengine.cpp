@@ -52,7 +52,7 @@ LureLanguage LureEngine::getLureLanguage() const {
 
 class LureMetaEngine : public AdvancedMetaEngine {
 public:
-    const char *getName() const override {
+	const char *getName() const override {
 		return "lure";
 	}
 

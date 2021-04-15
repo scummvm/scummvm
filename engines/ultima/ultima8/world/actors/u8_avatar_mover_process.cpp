@@ -623,7 +623,7 @@ void U8AvatarMoverProcess::handleNormalMode() {
 }
 
 void U8AvatarMoverProcess::step(Animation::Sequence action, Direction direction,
-                              bool adjusted) {
+							  bool adjusted) {
 	assert(action == Animation::step || action == Animation::walk ||
 	       action == Animation::run);
 

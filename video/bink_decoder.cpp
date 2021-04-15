@@ -1429,27 +1429,27 @@ void BinkDecoder::BinkVideoTrack::readResidue(VideoFrame &video, int16 *block, i
 #define A4 -5352
 
 #define IDCT_TRANSFORM(dest,s0,s1,s2,s3,s4,s5,s6,s7,d0,d1,d2,d3,d4,d5,d6,d7,munge,src) {\
-    const int a0 = (src)[s0] + (src)[s4]; \
-    const int a1 = (src)[s0] - (src)[s4]; \
-    const int a2 = (src)[s2] + (src)[s6]; \
-    const int a3 = (A1*((src)[s2] - (src)[s6])) >> 11; \
-    const int a4 = (src)[s5] + (src)[s3]; \
-    const int a5 = (src)[s5] - (src)[s3]; \
-    const int a6 = (src)[s1] + (src)[s7]; \
-    const int a7 = (src)[s1] - (src)[s7]; \
-    const int b0 = a4 + a6; \
-    const int b1 = (A3*(a5 + a7)) >> 11; \
-    const int b2 = ((A4*a5) >> 11) - b0 + b1; \
-    const int b3 = (A1*(a6 - a4) >> 11) - b2; \
-    const int b4 = ((A2*a7) >> 11) + b3 - b1; \
-    (dest)[d0] = munge(a0+a2   +b0); \
-    (dest)[d1] = munge(a1+a3-a2+b2); \
-    (dest)[d2] = munge(a1-a3+a2+b3); \
-    (dest)[d3] = munge(a0-a2   -b4); \
-    (dest)[d4] = munge(a0-a2   +b4); \
-    (dest)[d5] = munge(a1-a3+a2-b3); \
-    (dest)[d6] = munge(a1+a3-a2-b2); \
-    (dest)[d7] = munge(a0+a2   -b0); \
+	const int a0 = (src)[s0] + (src)[s4]; \
+	const int a1 = (src)[s0] - (src)[s4]; \
+	const int a2 = (src)[s2] + (src)[s6]; \
+	const int a3 = (A1*((src)[s2] - (src)[s6])) >> 11; \
+	const int a4 = (src)[s5] + (src)[s3]; \
+	const int a5 = (src)[s5] - (src)[s3]; \
+	const int a6 = (src)[s1] + (src)[s7]; \
+	const int a7 = (src)[s1] - (src)[s7]; \
+	const int b0 = a4 + a6; \
+	const int b1 = (A3*(a5 + a7)) >> 11; \
+	const int b2 = ((A4*a5) >> 11) - b0 + b1; \
+	const int b3 = (A1*(a6 - a4) >> 11) - b2; \
+	const int b4 = ((A2*a7) >> 11) + b3 - b1; \
+	(dest)[d0] = munge(a0+a2   +b0); \
+	(dest)[d1] = munge(a1+a3-a2+b2); \
+	(dest)[d2] = munge(a1-a3+a2+b3); \
+	(dest)[d3] = munge(a0-a2   -b4); \
+	(dest)[d4] = munge(a0-a2   +b4); \
+	(dest)[d5] = munge(a1-a3+a2-b3); \
+	(dest)[d6] = munge(a1+a3-a2-b2); \
+	(dest)[d7] = munge(a0+a2   -b0); \
 }
 /* end IDCT_TRANSFORM macro */
 

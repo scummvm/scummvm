@@ -126,10 +126,10 @@ bool MidiPlayer::play(uint32 musicId) {
 
 	sysMidiStop();
 
-    _isLooped = isMusicLooping;
-    if (_isLooped) {
+	_isLooped = isMusicLooping;
+	if (_isLooped) {
 		_loopedMusicId = musicId;
-    } else {
+	} else {
 		_isPlaying = true;
 	}
 

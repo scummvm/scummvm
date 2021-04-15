@@ -138,7 +138,7 @@ extern const RoomTextOffsets tug3TextOffsets[] = {
 
 extern const RoomText tug3Texts[] = {
 	{ TX_TUG3_012, Common::EN_ANY, "" },
-    { -1, Common::UNK_LANG, "" }
+	{ -1, Common::UNK_LANG, "" }
 };
 
 void Room::tug3Tick1() {

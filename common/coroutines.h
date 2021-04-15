@@ -363,7 +363,7 @@ private:
 	Common::List<EVENT *> _events;
 
 #ifdef DEBUG
-    /** Diagnostic process counters. */
+	/** Diagnostic process counters. */
 	int numProcs;
 	int maxProcs;
 

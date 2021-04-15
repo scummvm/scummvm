@@ -50,53 +50,53 @@ struct Point {
 	Point() : x(0), y(0) {}
 	
 	/**
-     * Create a point with position defined by @p x1 and @p y1.
-     */
+	 * Create a point with position defined by @p x1 and @p y1.
+	 */
 	Point(int16 x1, int16 y1) : x(x1), y(y1) {}
 	/**
-     * Determine whether the position of two points is the same.
-     */
+	 * Determine whether the position of two points is the same.
+	 */
 	bool  operator==(const Point &p)    const { return x == p.x && y == p.y; }
 	/**
-     * Determine whether the position of two points is not the same.
-     */
+	 * Determine whether the position of two points is not the same.
+	 */
 	bool  operator!=(const Point &p)    const { return x != p.x || y != p.y; }
 	/**
-     * Create a point by adding the @p delta value to a point.
-     */
+	 * Create a point by adding the @p delta value to a point.
+	 */
 	Point operator+(const Point &delta) const { return Point(x + delta.x, y + delta.y); }
 	/**
-     * Create a point by subtracting the @p delta value from a point.
-     */
+	 * Create a point by subtracting the @p delta value from a point.
+	 */
 	Point operator-(const Point &delta) const { return Point(x - delta.x, y - delta.y); }
 	/**
-     * Create a point by dividing a point by the (int) @p divisor value.
-     */
+	 * Create a point by dividing a point by the (int) @p divisor value.
+	 */
 	Point operator/(int divisor) const { return Point(x / divisor, y / divisor); }
 	/**
-     * Create a point by multiplying a point by the (int) @p multiplier value.
-     */
+	 * Create a point by multiplying a point by the (int) @p multiplier value.
+	 */
 	Point operator*(int multiplier) const { return Point(x * multiplier, y * multiplier); }
 	/**
-     * Create a point by dividing a point by the (double) @p divisor value.
-     */
+	 * Create a point by dividing a point by the (double) @p divisor value.
+	 */
 	Point operator/(double divisor) const { return Point(x / divisor, y / divisor); }
 	/**
-     * Create a point by multiplying a point by the (double) @p multiplier value.
-     */
+	 * Create a point by multiplying a point by the (double) @p multiplier value.
+	 */
 	Point operator*(double multiplier) const { return Point(x * multiplier, y * multiplier); }
 
-    /**
-     * Change a point's position by adding @p delta to its x and y coordinates.
-     */
+	/**
+	 * Change a point's position by adding @p delta to its x and y coordinates.
+	 */
 	void operator+=(const Point &delta) {
 		x += delta.x;
 		y += delta.y;
 	}
 
-    /**
-     * Change a point's position by subtracting @p delta from its x and y arguments.
-     */
+	/**
+	 * Change a point's position by subtracting @p delta from its x and y arguments.
+	 */
 	void operator-=(const Point &delta) {
 		x -= delta.x;
 		y -= delta.y;
@@ -148,29 +148,29 @@ struct Rect {
 
 	Rect() : top(0), left(0), bottom(0), right(0) {}
 	/**
-     * Create a rectangle with the top-left corner at position (0, 0) and the given width @p w and height @p h.
-     */
+	 * Create a rectangle with the top-left corner at position (0, 0) and the given width @p w and height @p h.
+	 */
 	Rect(int16 w, int16 h) : top(0), left(0), bottom(h), right(w) {}
 	/**
-     * Create a rectangle with the top-left corner at the given position (x1, y1)
+	 * Create a rectangle with the top-left corner at the given position (x1, y1)
 	 * and the bottom-right corner at the position (x2, y2).
 	 * 
 	 * The @p x2 value must be greater or equal @p x1 and @p y2 must be greater or equal @p y1.
-     */
+	 */
 	Rect(int16 x1, int16 y1, int16 x2, int16 y2) : top(y1), left(x1), bottom(y2), right(x2) {
 		assert(isValidRect());
 	}
 	/**
-     * Check if two rectangles are identical.
+	 * Check if two rectangles are identical.
 	 *
 	 * @return True if the rectangles are identical, false otherwise.
-     */
+	 */
 	bool operator==(const Rect &rhs) const { return equals(rhs); }
-    /**
-     * Check if two rectangles are different.
+	/**
+	 * Check if two rectangles are different.
 	 *
 	 * @return True if the rectangles are different, false otherwise.
-     */
+	 */
 	bool operator!=(const Rect &rhs) const { return !equals(rhs); }
 
 	int16 width() const { return right - left; }  /*!< Return the width of a rectangle. */
@@ -316,14 +316,14 @@ struct Rect {
 		return (left >= right || top >= bottom);
 	}
 
-    /**
+	/**
 	 * Check if this is a valid rectangle.
 	 */
 	bool isValidRect() const {
 		return (left <= right && top <= bottom);
 	}
 
-    /**
+	/**
 	 * Move this rectangle to the position defined by @p x, @p y. 
 	 */
 	void moveTo(int16 x, int16 y) {
@@ -341,14 +341,14 @@ struct Rect {
 		top += dy; bottom += dy;
 	}
 
-    /**
+	/**
 	 * Move this rectangle to the position of the point @p p. 
 	 */
 	void moveTo(const Point &p) {
 		moveTo(p.x, p.y);
 	}
 
-     /**
+	 /**
 	 * Print debug messages related to this class. 
 	 */
 	void debugPrint(int debuglevel = 0, const char *caption = "Rect:") const {

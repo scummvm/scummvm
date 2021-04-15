@@ -59,19 +59,19 @@ v2:  uint32 DirOffset
 
 
 Dir: byte NameLength
-     char Name [NameLength]
-     byte CD;
-     uint32 NumEntries
+	 char Name [NameLength]
+	 byte CD;
+	 uint32 NumEntries
 
 
 Entry: byte NameLength
-       char Name [NameLength]
-       uint32 Offset
-       uint32 Length
-       uint32 CompLength
-       uint32 Flags
+	   char Name [NameLength]
+	   uint32 Offset
+	   uint32 Length
+	   uint32 CompLength
+	   uint32 Flags
 v2:    uint32 TimeDate1
-       uint32 TimeDate2  // not used
+	   uint32 TimeDate2  // not used
 
 */
 

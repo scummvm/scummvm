@@ -287,7 +287,7 @@ extern const RoomTextOffsets trial1TextOffsets[] = {
 extern const RoomText trial1Texts[] = {
 	{ TX_TRI1C001, Common::EN_ANY, "Zzzt! Sptttz! Zzzt! Tttt!" },
 	{ TX_TRI1C002, Common::EN_ANY, "Clunk." },
-    { -1, Common::UNK_LANG, "" }
+	{ -1, Common::UNK_LANG, "" }
 };
 
 void Room::trial1Tick1() {

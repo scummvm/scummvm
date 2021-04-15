@@ -69,9 +69,9 @@ private:
 };
 
 Texture::Texture() :
-    BiffObject(),
-    _texture(nullptr),
-    _u(0) {
+	BiffObject(),
+	_texture(nullptr),
+	_u(0) {
 	_type = TYPE;
 }
 

@@ -140,7 +140,7 @@ bool CryOmni3DEngine_Versailles::musicWouldChange(uint level, uint placeId) cons
 }
 
 uint CryOmni3DEngine_Versailles::getMusicId(uint level,
-        uint placeId) const {
+		uint placeId) const {
 	// No need of place state
 	switch (level) {
 	case 1:

@@ -31,9 +31,9 @@ namespace Graphics {
 
 // Function to blit a rect
 void copyBlit(byte *dst, const byte *src,
-               const uint dstPitch, const uint srcPitch,
-               const uint w, const uint h,
-               const uint bytesPerPixel) {
+			   const uint dstPitch, const uint srcPitch,
+			   const uint w, const uint h,
+			   const uint bytesPerPixel) {
 	if (dst == src)
 		return;
 
@@ -52,8 +52,8 @@ namespace {
 
 template<typename SrcColor, typename DstColor, bool backward>
 inline void crossBlitLogic(byte *dst, const byte *src, const uint w, const uint h,
-                           const PixelFormat &srcFmt, const PixelFormat &dstFmt,
-                           const uint srcDelta, const uint dstDelta) {
+						   const PixelFormat &srcFmt, const PixelFormat &dstFmt,
+						   const uint srcDelta, const uint dstDelta) {
 	for (uint y = 0; y < h; ++y) {
 		for (uint x = 0; x < w; ++x) {
 			const uint32 color = *(const SrcColor *)src;
@@ -82,8 +82,8 @@ inline void crossBlitLogic(byte *dst, const byte *src, const uint w, const uint 
 
 template<typename DstColor, bool backward>
 inline void crossBlitLogic3BppSource(byte *dst, const byte *src, const uint w, const uint h,
-                                     const PixelFormat &srcFmt, const PixelFormat &dstFmt,
-                                     const uint srcDelta, const uint dstDelta) {
+									 const PixelFormat &srcFmt, const PixelFormat &dstFmt,
+									 const uint srcDelta, const uint dstDelta) {
 	uint32 color;
 	byte r, g, b, a;
 	uint8 *col = (uint8 *)&color;
@@ -119,9 +119,9 @@ inline void crossBlitLogic3BppSource(byte *dst, const byte *src, const uint w, c
 
 // Function to blit a rect from one color format to another
 bool crossBlit(byte *dst, const byte *src,
-               const uint dstPitch, const uint srcPitch,
-               const uint w, const uint h,
-               const Graphics::PixelFormat &dstFmt, const Graphics::PixelFormat &srcFmt) {
+			   const uint dstPitch, const uint srcPitch,
+			   const uint w, const uint h,
+			   const Graphics::PixelFormat &dstFmt, const Graphics::PixelFormat &srcFmt) {
 	// Error out if conversion is impossible
 	if ((srcFmt.bytesPerPixel == 1) || (dstFmt.bytesPerPixel == 1)
 			 || (dstFmt.bytesPerPixel == 3)
@@ -179,10 +179,10 @@ namespace {
 
 template <typename Size>
 void scaleNN(byte *dst, const byte *src,
-               const uint dstPitch, const uint srcPitch,
-               const uint dstW, const uint dstH,
-               const uint srcW, const uint srcH,
-               int *scaleCacheX) {
+			   const uint dstPitch, const uint srcPitch,
+			   const uint dstW, const uint dstH,
+			   const uint srcW, const uint srcH,
+			   int *scaleCacheX) {
 
 	const uint dstDelta = (dstPitch - dstW * sizeof(Size));
 
@@ -200,10 +200,10 @@ void scaleNN(byte *dst, const byte *src,
 } // End of anonymous namespace
 
 bool scaleBlit(byte *dst, const byte *src,
-               const uint dstPitch, const uint srcPitch,
-               const uint dstW, const uint dstH,
-               const uint srcW, const uint srcH,
-               const Graphics::PixelFormat &fmt) {
+			   const uint dstPitch, const uint srcPitch,
+			   const uint dstW, const uint dstH,
+			   const uint srcW, const uint srcH,
+			   const Graphics::PixelFormat &fmt) {
 
 	int *scaleCacheX = new int[dstW];
 	for (uint x = 0; x < dstW; x++) {
@@ -280,7 +280,7 @@ inline byte scaleBlitBilinearInterpolate(byte c01, byte c00, byte c11, byte c10,
 
 template <typename Size>
 Size scaleBlitBilinearInterpolate(Size c01, Size c00, Size c11, Size c10, int ex, int ey,
-                                  const Graphics::PixelFormat &fmt) {
+								  const Graphics::PixelFormat &fmt) {
 	byte c01_a, c01_r, c01_g, c01_b;
 	fmt.colorToARGB(c01, c01_a, c01_r, c01_g, c01_b);
 
@@ -302,11 +302,11 @@ Size scaleBlitBilinearInterpolate(Size c01, Size c00, Size c11, Size c10, int ex
 
 template <typename Size, bool flipx, bool flipy> // TODO: See mirroring comment in RenderTicket ctor
 void scaleBlitBilinearLogic(byte *dst, const byte *src,
-                            const uint dstPitch, const uint srcPitch,
-                            const uint dstW, const uint dstH,
+							const uint dstPitch, const uint srcPitch,
+							const uint dstW, const uint dstH,
 							const uint srcW, const uint srcH,
-                            const Graphics::PixelFormat &fmt,
-                            int *sax, int *say) {
+							const Graphics::PixelFormat &fmt,
+							int *sax, int *say) {
 
 	int spixelw = (srcW - 1);
 	int spixelh = (srcH - 1);
@@ -393,10 +393,10 @@ void scaleBlitBilinearLogic(byte *dst, const byte *src,
 } // End of anonymous namespace
 
 bool scaleBlitBilinear(byte *dst, const byte *src,
-                       const uint dstPitch, const uint srcPitch,
-                       const uint dstW, const uint dstH,
-                       const uint srcW, const uint srcH,
-                       const Graphics::PixelFormat &fmt) {
+					   const uint dstPitch, const uint srcPitch,
+					   const uint dstW, const uint dstH,
+					   const uint srcW, const uint srcH,
+					   const Graphics::PixelFormat &fmt) {
 	if (fmt.bytesPerPixel != 2 && fmt.bytesPerPixel != 4)
 		return false;
 

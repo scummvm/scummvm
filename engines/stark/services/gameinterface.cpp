@@ -189,7 +189,7 @@ Resources::ActionArray GameInterface::listActionsPossibleForObject(Resources::It
 }
 
 Resources::ActionArray GameInterface::listActionsPossibleForObjectAt(Resources::ItemVisual *item,
-                                                                     const Common::Point &pos) {
+																	 const Common::Point &pos) {
 	if (item == nullptr) {
 		return Resources::ActionArray();
 	}
@@ -221,7 +221,7 @@ Resources::ActionArray GameInterface::listStockActionsPossibleForObject(Resource
 }
 
 Resources::ActionArray GameInterface::listStockActionsPossibleForObjectAt(Resources::ItemVisual *item,
-                                                                          const Common::Point &pos) {
+																		  const Common::Point &pos) {
 	Resources::ActionArray actions = listActionsPossibleForObjectAt(item, pos);
 
 	Resources::ActionArray stockActions;

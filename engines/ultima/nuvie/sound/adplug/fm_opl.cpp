@@ -680,7 +680,7 @@ INLINE void advancex(FM_OPL *OPL)
 				{
 					op->volume += (~op->volume *
 	                        		           (eg_inc[op->eg_sel_ar + ((OPL->eg_cnt>>op->eg_sh_ar)&7)])
-        			                          ) >>3;
+					                          ) >>3;
 
 					if (op->volume <= MIN_ATT_INDEX)
 					{
@@ -1470,7 +1470,7 @@ static void OPLWriteReg(FM_OPL *OPL, int r, int v)
 		case 0x08:	/* MODE,DELTA-T : CSM,NOTESEL,x,x,smpl,da/ad,64k,rom */
 			OPL->mode = v;
 #if !(BUILD_Y8950)
-                        break;
+						break;
 #endif
 
 #if BUILD_Y8950

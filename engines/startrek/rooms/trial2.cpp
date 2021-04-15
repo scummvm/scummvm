@@ -203,7 +203,7 @@ extern const RoomTextOffsets trial2TextOffsets[] = {
 
 extern const RoomText trial2Texts[] = {
 	{ TX_TRI1U080, Common::EN_ANY, "#TRI1\\TRI1U080#Affirmative, sir." },
-    { -1, Common::UNK_LANG, "" }
+	{ -1, Common::UNK_LANG, "" }
 };
 
 void Room::trial2Tick1() {

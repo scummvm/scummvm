@@ -56,12 +56,12 @@ static const struct TwinELanguage {
 	const char *name;
 	const char *id;
 } LanguageTypes[] = {
-    {"English", "EN_"},
-    {"French", "FR_"},
-    {"German", "DE_"},
-    {"Spanish", "SP_"},
-    {"Italian", "IT_"},
-    {"Portuguese", ""}};
+	{"English", "EN_"},
+	{"French", "FR_"},
+	{"German", "DE_"},
+	{"Spanish", "SP_"},
+	{"Italian", "IT_"},
+	{"Portuguese", ""}};
 
 enum MidiFileType {
 	MIDIFILE_NONE,

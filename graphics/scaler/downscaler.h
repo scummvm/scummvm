@@ -30,6 +30,6 @@
  * For example, a 320x200 image is scaled to 160x100.
  */
 extern void DownscaleAllByHalf(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr,
-                               uint32 dstPitch, int width, int height);
+							   uint32 dstPitch, int width, int height);
 
 #endif

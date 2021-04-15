@@ -158,13 +158,13 @@ bool BaseSurfaceStorage::restoreAll() {
 bool BaseSurfaceStorage::persist(BasePersistenceManager *persistMgr)
 {
 
-    if (!persistMgr->getIsSaving()) cleanup(false);
+	if (!persistMgr->getIsSaving()) cleanup(false);
 
-    persistMgr->transfer(TMEMBER(_gameRef));
+	persistMgr->transfer(TMEMBER(_gameRef));
 
-    //_surfaces.persist(persistMgr);
+	//_surfaces.persist(persistMgr);
 
-    return STATUS_OK;
+	return STATUS_OK;
 }
 */
 

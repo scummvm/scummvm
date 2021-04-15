@@ -35,7 +35,7 @@
 #include "backends/fs/chroot/chroot-fs.h"
 
 ChRootFilesystemFactory::ChRootFilesystemFactory(const Common::String &root)
-    : _root(root) {
+	: _root(root) {
 }
 
 AbstractFSNode *ChRootFilesystemFactory::makeRootFileNode() const {

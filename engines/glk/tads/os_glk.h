@@ -202,116 +202,116 @@ int os_get_zoneinfo_key(char *buf, size_t buflen);
  *   changes between standard time and daylight time, if applicable.
  */
 struct os_tzrule_t {
-    /* 
-     *   Day of year, 1-365, NEVER counting Feb 29; set to 0 if not used.
-     *   Corresponds to the "J" format in Unix TZ strings.  (Called "Julian
-     *   day" in the POSIX docs, thus the "J", even though it's a bit of a
-     *   misnomer.)(Because of the invariance of the mapping from J-number to
-     *   date, this is just an obtuse way of specifying a month/day date.
-     *   But even so, we'll let the OS layer relay this back to us in
-     *   J-number format and count on the portable caller to work out the
-     *   date, rather than foisting that work on each platform
-     *   implementation.)
-     */
-    int jday;
+	/* 
+	 *   Day of year, 1-365, NEVER counting Feb 29; set to 0 if not used.
+	 *   Corresponds to the "J" format in Unix TZ strings.  (Called "Julian
+	 *   day" in the POSIX docs, thus the "J", even though it's a bit of a
+	 *   misnomer.)(Because of the invariance of the mapping from J-number to
+	 *   date, this is just an obtuse way of specifying a month/day date.
+	 *   But even so, we'll let the OS layer relay this back to us in
+	 *   J-number format and count on the portable caller to work out the
+	 *   date, rather than foisting that work on each platform
+	 *   implementation.)
+	 */
+	int jday;
 
-    /*
-     *   Day of year, 1-366, counting Feb 29 on leap years; set to 0 if not
-     *   used; ignored if 'jday' is nonzero.  This corresponds to the Julian
-     *   day sans "J" in TZ strings (almost - that TZ format uses 0-365 as
-     *   its range, so bump it up by one when parsing a TZ string).  This
-     *   format is even more obtuse than the J-day format, in that it doesn't
-     *   even have an invariant month/day mapping (not after day 59, anyway -
-     *   day 60 is either February 29 or March 1, depending on the leapness
-     *   of the year, and every day after that is similarly conditional).  As
-     *   far as I can tell, no one uses this option, so I'm not sure why it
-     *   exists.  The zoneinfo source format doesn't have a way to represent
-     *   it, which says to me that no one has ever used it in a statutory DST
-     *   start/end date definition in the whole history of time zones around
-     *   the world, since the whole history of time zones around the world is
-     *   exactly what the zoneinfo database captures in exhaustive and
-     *   painstaking detail.  If anyone had ever used it in defining a time
-     *   zone, zoneinfo would have an option for it.  My guess is that it's a
-     *   fossilized bug from some early C RTL that's been retained out of an
-     *   abundance of caution vis-a-vis compatibility, and was entirely
-     *   replaced in practice by the J-number format as soon as someone
-     *   noticed the fiddly leap year behavior.  But for the sake of
-     *   completeness...
-     */
-    int yday;
-    
-    /* 
-     *   The month (1-12), week of the month, and day of the week (1-7 for
-     *   Sunday to Saturday).  Week 1 is the first week in which 'day'
-     *   occurs, week 2 is the second, etc.; week 5 is the last occurrence of
-     *   'day' in the month.  These fields are used for "second Sunday in
-     *   March" types of rules.  Set these to zero if they're not used;
-     *   they're ignored in any case if 'jday' or 'yday' are non-zero.
-     */
-    int month;
-    int week;
-    int day;
+	/*
+	 *   Day of year, 1-366, counting Feb 29 on leap years; set to 0 if not
+	 *   used; ignored if 'jday' is nonzero.  This corresponds to the Julian
+	 *   day sans "J" in TZ strings (almost - that TZ format uses 0-365 as
+	 *   its range, so bump it up by one when parsing a TZ string).  This
+	 *   format is even more obtuse than the J-day format, in that it doesn't
+	 *   even have an invariant month/day mapping (not after day 59, anyway -
+	 *   day 60 is either February 29 or March 1, depending on the leapness
+	 *   of the year, and every day after that is similarly conditional).  As
+	 *   far as I can tell, no one uses this option, so I'm not sure why it
+	 *   exists.  The zoneinfo source format doesn't have a way to represent
+	 *   it, which says to me that no one has ever used it in a statutory DST
+	 *   start/end date definition in the whole history of time zones around
+	 *   the world, since the whole history of time zones around the world is
+	 *   exactly what the zoneinfo database captures in exhaustive and
+	 *   painstaking detail.  If anyone had ever used it in defining a time
+	 *   zone, zoneinfo would have an option for it.  My guess is that it's a
+	 *   fossilized bug from some early C RTL that's been retained out of an
+	 *   abundance of caution vis-a-vis compatibility, and was entirely
+	 *   replaced in practice by the J-number format as soon as someone
+	 *   noticed the fiddly leap year behavior.  But for the sake of
+	 *   completeness...
+	 */
+	int yday;
+	
+	/* 
+	 *   The month (1-12), week of the month, and day of the week (1-7 for
+	 *   Sunday to Saturday).  Week 1 is the first week in which 'day'
+	 *   occurs, week 2 is the second, etc.; week 5 is the last occurrence of
+	 *   'day' in the month.  These fields are used for "second Sunday in
+	 *   March" types of rules.  Set these to zero if they're not used;
+	 *   they're ignored in any case if 'jday' or 'yday' are non-zero.
+	 */
+	int month;
+	int week;
+	int day;
 
-    /* time of day, in seconds after midnight (e.g., 2AM is 120 == 2*60*60) */
-    int time;
+	/* time of day, in seconds after midnight (e.g., 2AM is 120 == 2*60*60) */
+	int time;
 };
 struct os_tzinfo_t {
-    /*
-     *   The local offset from GMT, in seconds, for standard time and
-     *   daylight time in this zone.  These values are positive for zones
-     *   east of GMT and negative for zones west: New York standard time
-     *   (EST) is 5 hours west of GMT, so its offset is -5*60*60.
-     *   
-     *   Set both of these fields (if possible) regardless of whether
-     *   standard or daylight time is currently in effect in the zone.  The
-     *   caller will select which offset to use based on the start/end rules,
-     *   or based on the 'is_dst' flag if no rules are available.
-     *   
-     *   If it's only possible to determine the current wall clock offset, be
-     *   it standard or daylight time, and it's not possible to determine the
-     *   time difference between the two, simply set both of these to the
-     *   current offset.  This information isn't available from the standard
-     *   C library, and many OS APIs also lack it.  
-     */
-    int32_t std_ofs;
-    int32_t dst_ofs;
+	/*
+	 *   The local offset from GMT, in seconds, for standard time and
+	 *   daylight time in this zone.  These values are positive for zones
+	 *   east of GMT and negative for zones west: New York standard time
+	 *   (EST) is 5 hours west of GMT, so its offset is -5*60*60.
+	 *   
+	 *   Set both of these fields (if possible) regardless of whether
+	 *   standard or daylight time is currently in effect in the zone.  The
+	 *   caller will select which offset to use based on the start/end rules,
+	 *   or based on the 'is_dst' flag if no rules are available.
+	 *   
+	 *   If it's only possible to determine the current wall clock offset, be
+	 *   it standard or daylight time, and it's not possible to determine the
+	 *   time difference between the two, simply set both of these to the
+	 *   current offset.  This information isn't available from the standard
+	 *   C library, and many OS APIs also lack it.  
+	 */
+	int32_t std_ofs;
+	int32_t dst_ofs;
 
-    /*
-     *   The abbreviations for the local zone's standard time and daylight
-     *   time, respectively, when displaying date/time values.  E.g., "EST"
-     *   and "EDT" for US Eastern Time.  If the zone doesn't observe daylight
-     *   time (it's on standard time year round), set dst_abbr to an empty
-     *   string.
-     *   
-     *   As with std_ofs and dst_ofs, you can set both of these to the same
-     *   string if it's only possible to determine the one that's currently
-     *   in effect.
-     */
-    char std_abbr[16];
-    char dst_abbr[16];
+	/*
+	 *   The abbreviations for the local zone's standard time and daylight
+	 *   time, respectively, when displaying date/time values.  E.g., "EST"
+	 *   and "EDT" for US Eastern Time.  If the zone doesn't observe daylight
+	 *   time (it's on standard time year round), set dst_abbr to an empty
+	 *   string.
+	 *   
+	 *   As with std_ofs and dst_ofs, you can set both of these to the same
+	 *   string if it's only possible to determine the one that's currently
+	 *   in effect.
+	 */
+	char std_abbr[16];
+	char dst_abbr[16];
 
-    /*
-     *   The ongoing rules for switching between daylight and standard time
-     *   in this zone, if available.  'dst_start' is the date when daylight
-     *   savings starts, 'dst_end' is the date when standard time resumes.
-     *   Set all fields to 0 if the start/stop dates aren't available, or the
-     *   zone is on standard time year round.
-     */
-    struct os_tzrule_t dst_start;
-    struct os_tzrule_t dst_end;
+	/*
+	 *   The ongoing rules for switching between daylight and standard time
+	 *   in this zone, if available.  'dst_start' is the date when daylight
+	 *   savings starts, 'dst_end' is the date when standard time resumes.
+	 *   Set all fields to 0 if the start/stop dates aren't available, or the
+	 *   zone is on standard time year round.
+	 */
+	struct os_tzrule_t dst_start;
+	struct os_tzrule_t dst_end;
 
-    /* 
-     *   True -> the zone is CURRENTLY on daylight savings time; false means
-     *   it's currently on standard time.
-     *   
-     *   This is only used if the start/end rules aren't specified.  In the
-     *   absence of start/end rules, there's no way to know when the current
-     *   standard/daylight phase ends, so we'll have to assume that the
-     *   current mode is in effect permanently.  In this case, the caller
-     *   will use only be able to use the offset and abbreviation for the
-     *   current mode and will have to ignore the other one.
-     */
-    int is_dst;
+	/* 
+	 *   True -> the zone is CURRENTLY on daylight savings time; false means
+	 *   it's currently on standard time.
+	 *   
+	 *   This is only used if the start/end rules aren't specified.  In the
+	 *   absence of start/end rules, there's no way to know when the current
+	 *   standard/daylight phase ends, so we'll have to assume that the
+	 *   current mode is in effect permanently.  In this case, the caller
+	 *   will use only be able to use the offset and abbreviation for the
+	 *   current mode and will have to ignore the other one.
+	 */
+	int is_dst;
 };
 int os_get_timezone_info(struct os_tzinfo_t *info);
 
@@ -855,32 +855,32 @@ long os_get_sys_clock_ms();
 /* #define OSFATTR_WRITE   - the file is writable by this process */
 
 struct os_file_stat_t {
-    /* 
-     *   Size of the file, in bytes.  For platforms lacking 64-bit types, we
-     *   split this into high and low 32-bit portions.  Platforms where the
-     *   native stat() or equivalent only returns a 32-bit file size can
-     *   simply set sizehi to zero, since sizelo can hold the entire size
-     *   value.
-     */
-    uint32_t sizelo;
-    uint32_t sizehi;
+	/* 
+	 *   Size of the file, in bytes.  For platforms lacking 64-bit types, we
+	 *   split this into high and low 32-bit portions.  Platforms where the
+	 *   native stat() or equivalent only returns a 32-bit file size can
+	 *   simply set sizehi to zero, since sizelo can hold the entire size
+	 *   value.
+	 */
+	uint32_t sizelo;
+	uint32_t sizehi;
 
-    /* 
-     *   Creation time, modification time, and last access time.  If the file
-     *   system doesn't keep information on one or more of these, use
-     *   (os_time_t)0 to indicate that the timestamp isn't available.  It's
-     *   fine to return any subset of these.  Per the standard C stat(),
-     *   these should be expressed as seconds after the Unix Epoch.
-     */
-    os_time_t cre_time;
-    os_time_t mod_time;
-    os_time_t acc_time;
+	/* 
+	 *   Creation time, modification time, and last access time.  If the file
+	 *   system doesn't keep information on one or more of these, use
+	 *   (os_time_t)0 to indicate that the timestamp isn't available.  It's
+	 *   fine to return any subset of these.  Per the standard C stat(),
+	 *   these should be expressed as seconds after the Unix Epoch.
+	 */
+	os_time_t cre_time;
+	os_time_t mod_time;
+	os_time_t acc_time;
 
-    /* file mode, using the same flags as returned from osfmode() */
-    unsigned long mode;
+	/* file mode, using the same flags as returned from osfmode() */
+	unsigned long mode;
 
-    /* file attributes, using the same flags as returned from osfmode() */
-    unsigned long attrs;
+	/* file attributes, using the same flags as returned from osfmode() */
+	unsigned long attrs;
 };
 
 
@@ -1087,8 +1087,8 @@ void os_close_dir(osdirhdl_t handle);
  *   minimal manipulation.  
  */
 void *os_find_first_file(const char *dir,
-                         char *outbuf, size_t outbufsiz, int *isdir,
-                         char *outpathbuf, size_t outpathbufsiz);
+						 char *outbuf, size_t outbufsiz, int *isdir,
+						 char *outpathbuf, size_t outpathbufsiz);
 
 /*
  *   Implementation notes for porting os_find_first_file:
@@ -1147,7 +1147,7 @@ void *os_find_first_file(const char *dir,
  *   need not call os_find_close().  
  */
 void *os_find_next_file(void *ctx, char *outbuf, size_t outbufsiz,
-                        int *isdir, char *outpathbuf, size_t outpathbufsiz);
+						int *isdir, char *outpathbuf, size_t outpathbufsiz);
 
 /*
  *   Cancel a search.  The context pointer returned by the last call to
@@ -1165,21 +1165,21 @@ void os_find_close(void *ctx);
  */
 enum os_specfile_t
 {
-    /* not a special file */
-    OS_SPECFILE_NONE,
+	/* not a special file */
+	OS_SPECFILE_NONE,
 
-    /* 
-     *   current directory link - this is a file like the "." file on Unix
-     *   or DOS, which is a special link that simply refers to itself 
-     */
-    OS_SPECFILE_SELF,
+	/* 
+	 *   current directory link - this is a file like the "." file on Unix
+	 *   or DOS, which is a special link that simply refers to itself 
+	 */
+	OS_SPECFILE_SELF,
 
-    /* 
-     *   parent directory link - this is a file like the ".." file on Unix
-     *   or DOS, which is a special link that refers to the parent
-     *   directory 
-     */
-    OS_SPECFILE_PARENT
+	/* 
+	 *   parent directory link - this is a file like the ".." file on Unix
+	 *   or DOS, which is a special link that refers to the parent
+	 *   directory 
+	 */
+	OS_SPECFILE_PARENT
 };
 
 /*
@@ -1293,7 +1293,7 @@ int os_get_exe_filename(char *buf, size_t buflen, const char *argv0);
  *   users who need custom settings aren't stuck with the defaults.
  */
 void os_get_special_path(char *buf, size_t buflen,
-                         const char *argv0, int id);
+						 const char *argv0, int id);
 
 /* 
  *   TADS 3 system resource path.  This path is used to load system
@@ -2004,7 +2004,7 @@ void os_csr_busy(int flag);
  *   should be performed, and no default suffix should be applied.  
  */
 int os_askfile(const char *prompt, char *fname_buf, int fname_buf_len,
-               int prompt_type, os_filetype_t file_type);
+			   int prompt_type, os_filetype_t file_type);
 
 /* 
  *   os_askfile status codes 
@@ -2126,7 +2126,7 @@ unsigned char *os_gets(unsigned char *buf, size_t bufl);
  *   immediately with the OS_EVT_TIMEOUT result code.  
  */
 int os_gets_timeout(unsigned char *buf, size_t bufl,
-                    unsigned long timeout_in_milliseconds, int use_timeout);
+					unsigned long timeout_in_milliseconds, int use_timeout);
 
 /*
  *   Cancel an interrupted editing session.  This MUST be called if any
@@ -2272,41 +2272,41 @@ void os_waitc(void);
  */
 union os_event_info_t
 {
-    /* 
-     *   OS_EVT_KEY - this returns the one or two characters of the
-     *   keystroke.  If the key is an extended key, so that os_getc() would
-     *   return a two-character sequence for the keystroke, the first
-     *   character should be zero and the second the extended key code.
-     *   Otherwise, the first character should simply be the ASCII key code.
-     *   
-     *   The key code here is the "raw" keycode, equivalent to the codes
-     *   returned by os_getc_raw().  Note in particular that this means that
-     *   CTRL and Escape keys are presented as one-byte ASCII control
-     *   characters, not as two-byte CMD_xxx sequences.  
-     *   
-     *   For multi-byte character sets (Shift-JIS, for example), note that
-     *   os_get_event() must NOT return a complete two-byte character here.
-     *   The two bytes here are exclusively used to represent special
-     *   CMD_xxx keys (such as arrow keys and function keys).  For a
-     *   keystroke that is represented in a multi-byte character set using
-     *   more than one byte, os_get_event() must return a series of events.
-     *   Return an ordinary OS_EVT_KEY for the first byte of the sequence,
-     *   putting the byte in key[0]; then, return the second byte as a
-     *   separate OS_EVT_KEY as the next event; and so on for any additional
-     *   bytes.  This will allow callers that are not multibyte-aware to
-     *   treat multi-byte characters as though they were sequences of
-     *   one-byte characters.  
-     */
-    int key[2];
+	/* 
+	 *   OS_EVT_KEY - this returns the one or two characters of the
+	 *   keystroke.  If the key is an extended key, so that os_getc() would
+	 *   return a two-character sequence for the keystroke, the first
+	 *   character should be zero and the second the extended key code.
+	 *   Otherwise, the first character should simply be the ASCII key code.
+	 *   
+	 *   The key code here is the "raw" keycode, equivalent to the codes
+	 *   returned by os_getc_raw().  Note in particular that this means that
+	 *   CTRL and Escape keys are presented as one-byte ASCII control
+	 *   characters, not as two-byte CMD_xxx sequences.  
+	 *   
+	 *   For multi-byte character sets (Shift-JIS, for example), note that
+	 *   os_get_event() must NOT return a complete two-byte character here.
+	 *   The two bytes here are exclusively used to represent special
+	 *   CMD_xxx keys (such as arrow keys and function keys).  For a
+	 *   keystroke that is represented in a multi-byte character set using
+	 *   more than one byte, os_get_event() must return a series of events.
+	 *   Return an ordinary OS_EVT_KEY for the first byte of the sequence,
+	 *   putting the byte in key[0]; then, return the second byte as a
+	 *   separate OS_EVT_KEY as the next event; and so on for any additional
+	 *   bytes.  This will allow callers that are not multibyte-aware to
+	 *   treat multi-byte characters as though they were sequences of
+	 *   one-byte characters.  
+	 */
+	int key[2];
 
-    /*
-     *   OS_EVT_HREF - this returns the text of the HREF as a
-     *   null-terminated string.  
-     */
-    char href[256];
+	/*
+	 *   OS_EVT_HREF - this returns the text of the HREF as a
+	 *   null-terminated string.  
+	 */
+	char href[256];
 
-    /* command ID (for OS_EVT_COMMAND) */
-    int cmd_id;
+	/* command ID (for OS_EVT_COMMAND) */
+	int cmd_id;
 };
 typedef union os_event_info_t os_event_info_t;
 
@@ -2371,7 +2371,7 @@ typedef union os_event_info_t os_event_info_t;
  *   should immediately return a timeout event.  
  */
 int os_get_event(unsigned long timeout_in_milliseconds, int use_timeout,
-                 os_event_info_t *info);
+				 os_event_info_t *info);
 
 
 /* ------------------------------------------------------------------------ */
@@ -2474,8 +2474,8 @@ int os_get_event(unsigned long timeout_in_milliseconds, int use_timeout,
  *   an error occurs, return 0.  
  */
 int os_input_dialog(int icon_id, const char *prompt, int standard_button_set,
-                    const char **buttons, int button_count,
-                    int default_index, int cancel_index);
+					const char **buttons, int button_count,
+					int default_index, int cancel_index);
 
 /*
  *   Standard button set ID's 
@@ -2544,7 +2544,7 @@ int os_paramfile(char *buf);
  *   argc/argv values unchanged.)  
  */
 int os_init(int *argc, char *argv[], const char *prompt,
-            char *buf, int bufsiz);
+			char *buf, int bufsiz);
 
 /*
  *   Termination functions.  There are three main termination functions,
@@ -2768,7 +2768,7 @@ const char *os_get_save_ext();
 #ifndef os_xlat_html4
 # ifndef OS_XLAT_HTML4_DEFINED
 void os_xlat_html4(unsigned int html4_char,
-                   char *result, size_t result_buf_len);
+				   char *result, size_t result_buf_len);
 # endif
 #endif
 

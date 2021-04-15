@@ -30,8 +30,8 @@ namespace Ultima {
 namespace Nuvie {
 
 bool openFile(
-    Common::ReadStream *&in,    // Input stream to open.
-    const char *fname           // Filename
+	Common::ReadStream *&in,    // Input stream to open.
+	const char *fname           // Filename
 );
 
 extern bool fileExists(const char *fname);

@@ -256,7 +256,7 @@ extern const RoomTextOffsets love4TextOffsets[] = {
 	{ TX_LOV4N004, 3206, 0 },
 	{ TX_LOV4N005, 2437, 0 },
 	{ TX_LOV4N006, 7309, 0 },
-    { TX_LOV4N007, 1473, 0 },
+	{ TX_LOV4N007, 1473, 0 },
 	{ TX_LOV4N008, 7843, 0 },
 	{ TX_LOV4N009, 7362, 0 },
 	{ TX_LOV4N010, 7495, 0 },
@@ -271,7 +271,7 @@ extern const RoomTextOffsets love4TextOffsets[] = {
 };
 
 extern const RoomText love4Texts[] = {
-    { -1, Common::UNK_LANG, "" }
+	{ -1, Common::UNK_LANG, "" }
 };
 
 void Room::love4Tick1() {

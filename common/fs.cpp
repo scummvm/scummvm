@@ -174,22 +174,22 @@ FSDirectory::FSDirectory(const FSNode &node, int depth, bool flat, bool ignoreCl
 }
 
 FSDirectory::FSDirectory(const String &prefix, const FSNode &node, int depth, bool flat,
-                         bool ignoreClashes, bool includeDirectories)
+						 bool ignoreClashes, bool includeDirectories)
   : _node(node), _cached(false), _depth(depth), _flat(flat), _ignoreClashes(ignoreClashes),
-    _includeDirectories(includeDirectories) {
+	_includeDirectories(includeDirectories) {
 
 	setPrefix(prefix);
 }
 
 FSDirectory::FSDirectory(const String &name, int depth, bool flat, bool ignoreClashes, bool includeDirectories)
   : _node(name), _cached(false), _depth(depth), _flat(flat), _ignoreClashes(ignoreClashes),
-    _includeDirectories(includeDirectories) {
+	_includeDirectories(includeDirectories) {
 }
 
 FSDirectory::FSDirectory(const String &prefix, const String &name, int depth, bool flat,
-                         bool ignoreClashes, bool includeDirectories)
+						 bool ignoreClashes, bool includeDirectories)
   : _node(name), _cached(false), _depth(depth), _flat(flat), _ignoreClashes(ignoreClashes),
-    _includeDirectories(includeDirectories) {
+	_includeDirectories(includeDirectories) {
 
 	setPrefix(prefix);
 }
@@ -264,7 +264,7 @@ FSDirectory *FSDirectory::getSubDirectory(const String &name, int depth, bool fl
 }
 
 FSDirectory *FSDirectory::getSubDirectory(const String &prefix, const String &name, int depth,
-        bool flat, bool ignoreClashes) {
+		bool flat, bool ignoreClashes) {
 	if (name.empty() || !_node.isDirectory())
 		return nullptr;
 

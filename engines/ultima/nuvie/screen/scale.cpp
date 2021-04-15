@@ -242,7 +242,7 @@ const ScalerStruct *ScalerRegistry::GetPointScaler() {
 //
 void Application::show_8to16_blur
 (
-    int x, int y, int w, int h  // Area to show.
+	int x, int y, int w, int h  // Area to show.
 ) {
 	Manip8to16 manip(palette,
 	                 sdl_surf->format);
@@ -257,7 +257,7 @@ void Application::show_8to16_blur
 
 void Application::show_8to555_blur
 (
-    int x, int y, int w, int h  // Area to show.
+	int x, int y, int w, int h  // Area to show.
 ) {
 	Manip8to555 manip(palette);
 	BlurFilter<unsigned char, uint16, Manip8to555>
@@ -271,7 +271,7 @@ void Application::show_8to555_blur
 
 void Application::show_8to565_blur
 (
-    int x, int y, int w, int h  // Area to show.
+	int x, int y, int w, int h  // Area to show.
 ) {
 	Manip8to565 manip(palette);
 	BlurFilter<unsigned char, uint16, Manip8to565>
@@ -285,7 +285,7 @@ void Application::show_8to565_blur
 
 void Application::show_8to32_blur
 (
-    int x, int y, int w, int h  // Area to show.
+	int x, int y, int w, int h  // Area to show.
 ) {
 	Manip8to32 manip(palette,
 	                 sdl_surf->format);
@@ -356,7 +356,7 @@ void Application::show_8to32_blur
 
 void Application::show_8to16_rotated
 (
-    int x, int y, int w, int h  // Area to show.
+	int x, int y, int w, int h  // Area to show.
 ) {
 	Manip8to16 manip(palette, sdl_surf->format);
 
@@ -365,7 +365,7 @@ void Application::show_8to16_rotated
 
 void Application::show_8to555_rotated
 (
-    int x, int y, int w, int h  // Area to show.
+	int x, int y, int w, int h  // Area to show.
 ) {
 	Manip8to555 manip(palette);
 	RotatorFunc(uint16);
@@ -373,7 +373,7 @@ void Application::show_8to555_rotated
 
 void Application::show_8to565_rotated
 (
-    int x, int y, int w, int h  // Area to show.
+	int x, int y, int w, int h  // Area to show.
 ) {
 	Manip8to565 manip(palette);
 	RotatorFunc(uint16);
@@ -381,7 +381,7 @@ void Application::show_8to565_rotated
 
 void Application::show_8to32_rotated
 (
-    int x, int y, int w, int h  // Area to show.
+	int x, int y, int w, int h  // Area to show.
 ) {
 	Manip8to32 manip(palette, sdl_surf->format);
 	RotatorFunc(uint32);

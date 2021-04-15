@@ -55,7 +55,7 @@ public:
 
 	static CruPickupAreaGump *get_instance();
 private:
-    static CruPickupAreaGump *_instance;
+	static CruPickupAreaGump *_instance;
 };
 
 } // End of namespace Ultima8

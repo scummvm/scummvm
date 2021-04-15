@@ -242,43 +242,43 @@ const ModifierTableEntry defaultModifiers[] = {
 };
 
 const HardwareInputTableEntry defaultMouseButtons[] = {
-    { "MOUSE_LEFT",       MOUSE_BUTTON_LEFT,   _s("Left Mouse Button")   },
-    { "MOUSE_RIGHT",      MOUSE_BUTTON_RIGHT,  _s("Right Mouse Button")  },
-    { "MOUSE_MIDDLE",     MOUSE_BUTTON_MIDDLE, _s("Middle Mouse Button") },
-    { "MOUSE_WHEEL_UP",   MOUSE_WHEEL_UP,      _s("Mouse Wheel Up")      },
-    { "MOUSE_WHEEL_DOWN", MOUSE_WHEEL_DOWN,    _s("Mouse Wheel Down")    },
-    { "MOUSE_X1",         MOUSE_BUTTON_X1,     _s("X1 Mouse Button")     },
-    { "MOUSE_X2",         MOUSE_BUTTON_X2,     _s("X2 Mouse Button")     },
-    { nullptr,            0,                   nullptr                   }
+	{ "MOUSE_LEFT",       MOUSE_BUTTON_LEFT,   _s("Left Mouse Button")   },
+	{ "MOUSE_RIGHT",      MOUSE_BUTTON_RIGHT,  _s("Right Mouse Button")  },
+	{ "MOUSE_MIDDLE",     MOUSE_BUTTON_MIDDLE, _s("Middle Mouse Button") },
+	{ "MOUSE_WHEEL_UP",   MOUSE_WHEEL_UP,      _s("Mouse Wheel Up")      },
+	{ "MOUSE_WHEEL_DOWN", MOUSE_WHEEL_DOWN,    _s("Mouse Wheel Down")    },
+	{ "MOUSE_X1",         MOUSE_BUTTON_X1,     _s("X1 Mouse Button")     },
+	{ "MOUSE_X2",         MOUSE_BUTTON_X2,     _s("X2 Mouse Button")     },
+	{ nullptr,            0,                   nullptr                   }
 };
 
 const HardwareInputTableEntry defaultJoystickButtons[] = {
-    { "JOY_A",              JOYSTICK_BUTTON_A,              _s("Joy A")          },
-    { "JOY_B",              JOYSTICK_BUTTON_B,              _s("Joy B")          },
-    { "JOY_X",              JOYSTICK_BUTTON_X,              _s("Joy X")          },
-    { "JOY_Y",              JOYSTICK_BUTTON_Y,              _s("Joy Y")          },
-    { "JOY_BACK",           JOYSTICK_BUTTON_BACK,           _s("Joy Back")       },
-    { "JOY_GUIDE",          JOYSTICK_BUTTON_GUIDE,          _s("Joy Guide")      },
-    { "JOY_START",          JOYSTICK_BUTTON_START,          _s("Joy Start")      },
-    { "JOY_LEFT_STICK",     JOYSTICK_BUTTON_LEFT_STICK,     _s("Left Stick")     },
-    { "JOY_RIGHT_STICK",    JOYSTICK_BUTTON_RIGHT_STICK,    _s("Right Stick")    },
-    { "JOY_LEFT_SHOULDER",  JOYSTICK_BUTTON_LEFT_SHOULDER,  _s("Left Shoulder")  },
-    { "JOY_RIGHT_SHOULDER", JOYSTICK_BUTTON_RIGHT_SHOULDER, _s("Right Shoulder") },
-    { "JOY_UP",             JOYSTICK_BUTTON_DPAD_UP,        _s("D-pad Up")       },
-    { "JOY_DOWN",           JOYSTICK_BUTTON_DPAD_DOWN,      _s("D-pad Down")     },
-    { "JOY_LEFT",           JOYSTICK_BUTTON_DPAD_LEFT,      _s("D-pad Left")     },
-    { "JOY_RIGHT",          JOYSTICK_BUTTON_DPAD_RIGHT,     _s("D-pad Right")    },
-    { nullptr,              0,                              nullptr              }
+	{ "JOY_A",              JOYSTICK_BUTTON_A,              _s("Joy A")          },
+	{ "JOY_B",              JOYSTICK_BUTTON_B,              _s("Joy B")          },
+	{ "JOY_X",              JOYSTICK_BUTTON_X,              _s("Joy X")          },
+	{ "JOY_Y",              JOYSTICK_BUTTON_Y,              _s("Joy Y")          },
+	{ "JOY_BACK",           JOYSTICK_BUTTON_BACK,           _s("Joy Back")       },
+	{ "JOY_GUIDE",          JOYSTICK_BUTTON_GUIDE,          _s("Joy Guide")      },
+	{ "JOY_START",          JOYSTICK_BUTTON_START,          _s("Joy Start")      },
+	{ "JOY_LEFT_STICK",     JOYSTICK_BUTTON_LEFT_STICK,     _s("Left Stick")     },
+	{ "JOY_RIGHT_STICK",    JOYSTICK_BUTTON_RIGHT_STICK,    _s("Right Stick")    },
+	{ "JOY_LEFT_SHOULDER",  JOYSTICK_BUTTON_LEFT_SHOULDER,  _s("Left Shoulder")  },
+	{ "JOY_RIGHT_SHOULDER", JOYSTICK_BUTTON_RIGHT_SHOULDER, _s("Right Shoulder") },
+	{ "JOY_UP",             JOYSTICK_BUTTON_DPAD_UP,        _s("D-pad Up")       },
+	{ "JOY_DOWN",           JOYSTICK_BUTTON_DPAD_DOWN,      _s("D-pad Down")     },
+	{ "JOY_LEFT",           JOYSTICK_BUTTON_DPAD_LEFT,      _s("D-pad Left")     },
+	{ "JOY_RIGHT",          JOYSTICK_BUTTON_DPAD_RIGHT,     _s("D-pad Right")    },
+	{ nullptr,              0,                              nullptr              }
 };
 
 const AxisTableEntry defaultJoystickAxes[] = {
-    { "JOY_LEFT_TRIGGER",  JOYSTICK_AXIS_LEFT_TRIGGER,  kAxisTypeHalf, _s("Left Trigger")  },
-    { "JOY_RIGHT_TRIGGER", JOYSTICK_AXIS_RIGHT_TRIGGER, kAxisTypeHalf, _s("Right Trigger") },
-    { "JOY_LEFT_STICK_X",  JOYSTICK_AXIS_LEFT_STICK_X,  kAxisTypeFull, _s("Left Stick X")  },
-    { "JOY_LEFT_STICK_Y",  JOYSTICK_AXIS_LEFT_STICK_Y,  kAxisTypeFull, _s("Left Stick Y")  },
-    { "JOY_RIGHT_STICK_X", JOYSTICK_AXIS_RIGHT_STICK_X, kAxisTypeFull, _s("Right Stick X") },
-    { "JOY_RIGHT_STICK_Y", JOYSTICK_AXIS_RIGHT_STICK_Y, kAxisTypeFull, _s("Right Stick Y") },
-    { nullptr,             0,                           kAxisTypeFull, nullptr             }
+	{ "JOY_LEFT_TRIGGER",  JOYSTICK_AXIS_LEFT_TRIGGER,  kAxisTypeHalf, _s("Left Trigger")  },
+	{ "JOY_RIGHT_TRIGGER", JOYSTICK_AXIS_RIGHT_TRIGGER, kAxisTypeHalf, _s("Right Trigger") },
+	{ "JOY_LEFT_STICK_X",  JOYSTICK_AXIS_LEFT_STICK_X,  kAxisTypeFull, _s("Left Stick X")  },
+	{ "JOY_LEFT_STICK_Y",  JOYSTICK_AXIS_LEFT_STICK_Y,  kAxisTypeFull, _s("Left Stick Y")  },
+	{ "JOY_RIGHT_STICK_X", JOYSTICK_AXIS_RIGHT_STICK_X, kAxisTypeFull, _s("Right Stick X") },
+	{ "JOY_RIGHT_STICK_Y", JOYSTICK_AXIS_RIGHT_STICK_Y, kAxisTypeFull, _s("Right Stick Y") },
+	{ nullptr,             0,                           kAxisTypeFull, nullptr             }
 };
 
 HardwareInputSet::~HardwareInputSet() {

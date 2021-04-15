@@ -58,7 +58,7 @@ bool convert_to(AclType target_type, ResultType &the_scalar) {
 	int the_number = -1;
 	String s1;
 	void *p;
-    bool boolval = false;
+	bool boolval = false;
 
 	if (target_type == the_scalar._kind)
 		return true;
@@ -74,8 +74,8 @@ bool convert_to(AclType target_type, ResultType &the_scalar) {
 	}
 
 	switch (the_scalar._kind) {
-    case NUMERIC:
-        dir_from = 'N';
+	case NUMERIC:
+		dir_from = 'N';
 		the_number = the_scalar._data._numeric.acl_int;
 		break;
 
@@ -87,21 +87,21 @@ bool convert_to(AclType target_type, ResultType &the_scalar) {
 
 	case TEXT_LIT:
 	case QUOTE_LIT:
-        dir_from = 'S';
+		dir_from = 'S';
 		if (index_xarray(g_vm->Literals, the_scalar._data._msgTextQuote.index, p))
 			s1 = *(StringPtr)p;
 		break;
 
 	case STR_PTR:
 		// string memory will be disposed ONLY if successful convert
-        dir_from = 'S';
+		dir_from = 'S';
 		s1 = *the_scalar._data._str.acl_str;
 		break;
 
 	case IDENT:
 		//with the_scalar do begin
-        dir_from = 'S';
-        
+		dir_from = 'S';
+
 		switch (the_scalar._data._ident.ident_kind) {
 		case ENUMERATE_ID:
 			dir_from = 'N';
@@ -207,7 +207,7 @@ bool convert_to(AclType target_type, ResultType &the_scalar) {
 			}
 
 			return true;
-			
+
 		default:
 			break;
 		}

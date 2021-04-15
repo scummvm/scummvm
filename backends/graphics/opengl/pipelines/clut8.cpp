@@ -28,7 +28,7 @@ namespace OpenGL {
 
 #if !USE_FORCED_GLES
 CLUT8LookUpPipeline::CLUT8LookUpPipeline()
-    : ShaderPipeline(ShaderMan.query(ShaderManager::kCLUT8LookUp)), _paletteTexture(nullptr) {
+	: ShaderPipeline(ShaderMan.query(ShaderManager::kCLUT8LookUp)), _paletteTexture(nullptr) {
 }
 
 void CLUT8LookUpPipeline::drawTexture(const GLTexture &texture, const GLfloat *coordinates) {

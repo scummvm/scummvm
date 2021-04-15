@@ -61,11 +61,11 @@ void Normal2x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPit
 
 #ifdef USE_ARM_SCALER_ASM
 extern "C" void Normal2xARM(const uint8  *srcPtr,
-                                  uint32  srcPitch,
-                                  uint8  *dstPtr,
-                                  uint32  dstPitch,
-                                  int     width,
-                                  int     height);
+								  uint32  srcPitch,
+								  uint8  *dstPtr,
+								  uint32  dstPitch,
+								  int     width,
+								  int     height);
 
 #else
 /**

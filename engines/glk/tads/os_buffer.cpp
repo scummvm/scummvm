@@ -32,7 +32,7 @@ extern winid_t mainwin;
 #ifndef GLK_MODULE_UNICODE
 
 void os_put_buffer(const char *buf, size_t len) {
-    g_vm->glk_put_buffer(buf, len);
+	g_vm->glk_put_buffer(buf, len);
 }
 
 void os_get_buffer (char *buf, size_t len, size_t init)
@@ -42,8 +42,8 @@ void os_get_buffer (char *buf, size_t len, size_t init)
 
 char *os_fill_buffer(char *buf, size_t len)
 {
-    buf[len] = '\0';
-    return buf;
+	buf[len] = '\0';
+	return buf;
 }
 
 #else
@@ -52,46 +52,46 @@ static uint32 *input = 0;
 static uint max = 0;
 
 void os_put_buffer(const char *buf, size_t len) {
-    uint32 *out;
-    uint outlen;
+	uint32 *out;
+	uint outlen;
 
-    if (!len)
-        return;
+	if (!len)
+		return;
 
-    out = new uint32[len + 1];
-    if (!out)
-        return;
-    outlen = len;
+	out = new uint32[len + 1];
+	if (!out)
+		return;
+	outlen = len;
 
-    outlen = os_parse_chars((const unsigned char *)buf, len, out, outlen);
+	outlen = os_parse_chars((const unsigned char *)buf, len, out, outlen);
 
-    if (outlen)
-        g_vm->glk_put_buffer_uni(out, outlen);
-    else
+	if (outlen)
+		g_vm->glk_put_buffer_uni(out, outlen);
+	else
 		g_vm->glk_put_buffer(buf, len);
 
 	delete[] out;
 }
 
 void os_get_buffer(char *buf, size_t len, size_t init) {
-    input = (uint32 *)malloc(sizeof(uint) * (len + 1));
-    max = len;
+	input = (uint32 *)malloc(sizeof(uint) * (len + 1));
+	max = len;
 
-    if (init)
-        os_parse_chars((const unsigned char *)buf, init + 1, input, len);
+	if (init)
+		os_parse_chars((const unsigned char *)buf, init + 1, input, len);
 
-    g_vm->glk_request_line_event_uni(mainwin, input, len - 1, init);
+	g_vm->glk_request_line_event_uni(mainwin, input, len - 1, init);
 }
 
 char *os_fill_buffer(char *buf, size_t len) {
-    uint res = os_prepare_chars(input, len, (unsigned char *)buf, max);
-    buf[res] = '\0';
+	uint res = os_prepare_chars(input, len, (unsigned char *)buf, max);
+	buf[res] = '\0';
 
-    free(input);
-    input = nullptr;
-    max = 0;
+	free(input);
+	input = nullptr;
+	max = 0;
 
-    return buf;
+	return buf;
 }
 
 #endif /* GLK_MODULE_UNICODE */

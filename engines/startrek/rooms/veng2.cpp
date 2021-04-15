@@ -424,7 +424,7 @@ extern const RoomTextOffsets veng2TextOffsets[] = {
 };
 
 extern const RoomText veng2Texts[] = {
-      { -1, Common::UNK_LANG, "" }
+	  { -1, Common::UNK_LANG, "" }
 };
 
 #define STRICORDER_POS_X 0x45

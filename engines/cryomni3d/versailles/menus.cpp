@@ -529,7 +529,7 @@ uint CryOmni3DEngine_Versailles::displayOptions() {
 }
 
 uint CryOmni3DEngine_Versailles::displayYesNoBox(Graphics::ManagedSurface &surface,
-        const Common::Rect &position, uint msg_id) {
+		const Common::Rect &position, uint msg_id) {
 	uint confirmWidth = _fontManager.getStrWidth(_messages[53]);
 	uint cancelWidth = _fontManager.getStrWidth(_messages[54]);
 	uint oldFont = _fontManager.getCurrentFont();
@@ -604,7 +604,7 @@ uint CryOmni3DEngine_Versailles::displayYesNoBox(Graphics::ManagedSurface &surfa
 }
 
 uint CryOmni3DEngine_Versailles::displayFilePicker(const Graphics::Surface *bgFrame,
-        bool saveMode, Common::String &saveName) {
+		bool saveMode, Common::String &saveName) {
 	bool autoName = (_messages.size() >= 148);
 
 	Graphics::ManagedSurface surface(bgFrame->w, bgFrame->h, bgFrame->format);
@@ -891,8 +891,8 @@ const MsgBoxParameters CryOmni3DEngine_Versailles::kFixedimageMsgBoxParameters =
 };
 
 void CryOmni3DEngine_Versailles::displayMessageBox(const MsgBoxParameters &params,
-        const Graphics::Surface *surface, const Common::String &msg, const Common::Point &position,
-        const Common::Functor0<void> &callback) {
+		const Graphics::Surface *surface, const Common::String &msg, const Common::Point &position,
+		const Common::Functor0<void> &callback) {
 	Graphics::ManagedSurface dstSurface;
 	dstSurface.create(surface->w, surface->h, surface->format);
 	dstSurface.blitFrom(*surface);

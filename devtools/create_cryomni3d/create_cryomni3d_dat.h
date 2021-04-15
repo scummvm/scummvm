@@ -29,7 +29,7 @@
 
 size_t writeFileHeader(FILE *f, uint16 games = 0xdead);
 size_t writeGameHeader(FILE *f, uint32 gameId, uint16 version, uint16 lang, uint32 platforms,
-                       uint32 offset = 0xdeadfeed, uint32 size = 0xdeadfeed);
+					   uint32 offset = 0xdeadfeed, uint32 size = 0xdeadfeed);
 
 #define PLATFORM_WIN                   0x1
 #define PLATFORM_DOS                   0x2

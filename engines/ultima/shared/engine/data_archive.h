@@ -38,12 +38,12 @@ namespace Shared {
  */
 class UltimaDataArchive : public Common::Archive {
 private:
-    Common::Archive *_zip;
+	Common::Archive *_zip;
 	Common::String _publicFolder;
 	Common::String _innerfolder;
 
 
-    UltimaDataArchive(Common::Archive *zip, const Common::String &subfolder) :
+	UltimaDataArchive(Common::Archive *zip, const Common::String &subfolder) :
 		_zip(zip), _publicFolder("data/"), _innerfolder(subfolder + "/") {}
 
 	Common::String innerToPublic(const Common::String &filename) const {
@@ -60,7 +60,7 @@ public:
 	 * if the required data is found, it returns the new archive.
 	 * Otherwise, returns an error message in the errorMsg field
 	 */
-    static bool load(const Common::String &subfolder,
+	static bool load(const Common::String &subfolder,
 		int reqMajorVersion, int reqMinorVersion, Common::U32String &errorMsg);
 public:
 	~UltimaDataArchive() override {

@@ -472,7 +472,7 @@ void Engine::checkCD() {
 #endif
 #ifdef USE_FLAC
 	if (Common::File::exists("track1.fla") ||
-            Common::File::exists("track1.flac") ||
+			Common::File::exists("track1.flac") ||
 	    Common::File::exists("track01.fla") ||
 	    Common::File::exists("track01.flac"))
 		return;

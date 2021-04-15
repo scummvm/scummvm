@@ -43,8 +43,8 @@ namespace JACL {
   FIELD_NOT_BEGUN  There have been fields but we are currently not in one
   FIELD_BEGUN      We are in a field
   FIELD_MIGHT_HAVE_ENDED
-                   We encountered a double quote inside a quoted field, the
-                   field is either ended or the quote is literal
+				   We encountered a double quote inside a quoted field, the
+				   field is either ended or the quote is literal
 */
 
 #define MEM_BLK_SIZE 128
@@ -72,11 +72,11 @@ namespace JACL {
 #define SUBMIT_CHAR(p, c) ((p)->entry_buf[entry_pos++] = (c))
 
 static const char *csv_errors[] = {"success",
-                             "error parsing data while strict checking enabled",
-                             "memory exhausted while increasing buffer size",
-                             "data size too large",
-                             "invalid status code"
-                            };
+							 "error parsing data while strict checking enabled",
+							 "memory exhausted while increasing buffer size",
+							 "data size too large",
+							 "invalid status code"
+							};
 
 int csv_error(struct csv_parser *p) {
 	/* Return the current status of the parser */
@@ -273,7 +273,7 @@ static int csv_increase_buffer(struct csv_parser *p) {
 }
 
 size_t csv_parse(struct csv_parser *p, const void *s, size_t len, void (*cb1)(void *, size_t, void *),
-                 void (*cb2)(int c, void *), void *data) {
+				 void (*cb2)(int c, void *), void *data) {
 	unsigned const char *us = (unsigned const char *)s;  /* Access input data as array of unsigned char */
 	unsigned char c;              /* The character we are currently processing */
 	size_t pos = 0;               /* The number of characters we have processed in this call */

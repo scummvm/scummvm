@@ -246,8 +246,8 @@ void Menu::drawButtonImages(const Common::U32String &text, MystAreaImageSwitch *
 }
 
 void Menu::replaceButtonSubImageWithText(const Common::U32String &text, const Graphics::TextAlign &align, MystAreaImageSwitch *area,
-                                         uint16 subimageIndex, const Common::Rect &backgroundRect, int16 deltaY,
-                                         uint8 r, uint8 g, uint8 b) const {
+										 uint16 subimageIndex, const Common::Rect &backgroundRect, int16 deltaY,
+										 uint8 r, uint8 g, uint8 b) const {
 	uint16 cardBackground = _vm->getCard()->getBackgroundImageId();
 
 	MystAreaImageSwitch::SubImage highlighted = area->getSubImage(subimageIndex);

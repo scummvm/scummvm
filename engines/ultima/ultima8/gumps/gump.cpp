@@ -43,7 +43,7 @@ Gump::Gump() : Object(), _parent(nullptr), _owner(0),
 }
 
 Gump::Gump(int inX, int inY, int width, int height, uint16 inOwner,
-           uint32 inFlags, int32 inLayer) :
+		   uint32 inFlags, int32 inLayer) :
 	Object(), _owner(inOwner), _parent(nullptr), _x(inX), _y(inY),
 	_dims(0, 0, width, height), _flags(inFlags), _layer(inLayer), _index(-1),
 	_shape(nullptr), _frameNum(0), _children(), _focusChild(nullptr),
@@ -289,7 +289,7 @@ void Gump::PaintChildren(RenderSurface *surf, int32 lerp_factor, bool scaled) {
 }
 
 void Gump::PaintCompositing(RenderSurface *surf, int32 lerp_factor,
-                            int32 sx, int32 sy) {
+							int32 sx, int32 sy) {
 	// Don't paint if hidden
 	if (IsHidden()) return;
 
@@ -527,7 +527,7 @@ uint16 Gump::TraceObjId(int32 mx, int32 my) {
 }
 
 bool Gump::GetLocationOfItem(uint16 itemid, int32 &gx, int32 &gy,
-                             int32 lerp_factor) {
+							 int32 lerp_factor) {
 	gx = 0;
 	gy = 0;
 	return false;

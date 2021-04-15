@@ -1315,7 +1315,7 @@ void Myst3Engine::loadNodeSubtitles(uint32 id) {
 }
 
 ResourceDescription Myst3Engine::getFileDescription(const Common::String &room, uint32 index, uint16 face,
-                                                    Archive::ResourceType type) {
+													Archive::ResourceType type) {
 	Common::String archiveRoom = room;
 	if (archiveRoom == "") {
 		archiveRoom = _db->getRoomName(_state->getLocationRoom(), _state->getLocationAge());
@@ -1338,7 +1338,7 @@ ResourceDescription Myst3Engine::getFileDescription(const Common::String &room, 
 }
 
 ResourceDescriptionArray Myst3Engine::listFilesMatching(const Common::String &room, uint32 index, uint16 face,
-                                                     Archive::ResourceType type) {
+													 Archive::ResourceType type) {
 	Common::String archiveRoom = room;
 	if (archiveRoom == "") {
 		archiveRoom = _db->getRoomName(_state->getLocationRoom(), _state->getLocationAge());

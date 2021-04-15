@@ -132,13 +132,13 @@ extern const RoomTextOffsets feather5TextOffsets[] = {
 	{ TX_SPEAKER_KIRK, 2385, 0 },
 	{ TX_SPEAKER_MCCOY, 2396, 0 },
 	{ TX_SPEAKER_SPOCK, 2406, 0 },
-    { TX_SPEAKER_STRAGEY, 2416, 0 },
+	{ TX_SPEAKER_STRAGEY, 2416, 0 },
 	{          -1, 0,    0 }
 };
 
 extern const RoomText feather5Texts[] = {
 	{ TX_FEA5_001, Common::EN_ANY, "#FEA5\\FEA5_001#This is a very finely crafted knife." },
-    { -1, Common::UNK_LANG, "" }
+	{ -1, Common::UNK_LANG, "" }
 };
 
 void Room::feather5Tick1() {

@@ -66,9 +66,9 @@ inline static void RGB2YUV(byte r, byte g, byte b, byte &y, byte &u, byte &v) {
  * @param bytesPerPixel	the number of bytes per pixel
  */
 void copyBlit(byte *dst, const byte *src,
-               const uint dstPitch, const uint srcPitch,
-               const uint w, const uint h,
-               const uint bytesPerPixel);
+			   const uint dstPitch, const uint srcPitch,
+			   const uint w, const uint h,
+			   const uint bytesPerPixel);
 
 /**
  * Blits a rectangle from one graphical format to another.
@@ -93,21 +93,21 @@ void copyBlit(byte *dst, const byte *src,
  *       dstPitch < srcPitch though.
  */
 bool crossBlit(byte *dst, const byte *src,
-               const uint dstPitch, const uint srcPitch,
-               const uint w, const uint h,
-               const Graphics::PixelFormat &dstFmt, const Graphics::PixelFormat &srcFmt);
+			   const uint dstPitch, const uint srcPitch,
+			   const uint w, const uint h,
+			   const Graphics::PixelFormat &dstFmt, const Graphics::PixelFormat &srcFmt);
 
 bool scaleBlit(byte *dst, const byte *src,
-               const uint dstPitch, const uint srcPitch,
-               const uint dstW, const uint dstH,
-               const uint srcW, const uint srcH,
-               const Graphics::PixelFormat &fmt);
+			   const uint dstPitch, const uint srcPitch,
+			   const uint dstW, const uint dstH,
+			   const uint srcW, const uint srcH,
+			   const Graphics::PixelFormat &fmt);
 
 bool scaleBlitBilinear(byte *dst, const byte *src,
-                       const uint dstPitch, const uint srcPitch,
-                       const uint dstW, const uint dstH,
-                       const uint srcW, const uint srcH,
-                       const Graphics::PixelFormat &fmt);
+					   const uint dstPitch, const uint srcPitch,
+					   const uint dstW, const uint dstH,
+					   const uint srcW, const uint srcH,
+					   const Graphics::PixelFormat &fmt);
 /** @} */
 } // End of namespace Graphics
 

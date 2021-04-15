@@ -417,7 +417,7 @@ int32 lua_setlocal(lua_Function func, int32 local_number) {
 void lua_funcinfo(lua_Object func, const char **filename, int32 *linedefined) {
 	if (!lua_isfunction(func))
 		lua_error("API - `funcinfo' called with a non-function value");
-    else {
+	else {
 		TObject *f = luaA_protovalue(Address(func));
 		if (normalized_type(f) == LUA_T_PROTO) {
 			*filename = tfvalue(f)->fileName->str;

@@ -462,7 +462,7 @@ XMLNode *XMLNode::xmlParseFile(XMLTree *tree, const Common::String &fname) {
 }
 
 bool XMLNode::searchPairs(KeyTypeList &ktl, const Common::String &basekey,
-                          const Common::String currkey, const unsigned int pos) {
+						  const Common::String currkey, const unsigned int pos) {
 	/* If our 'current key' is longer then the key we're serching for
 	    we've obviously gone too deep in this branch, and we won't find
 	    it here. */

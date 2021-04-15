@@ -56,8 +56,8 @@ const uint16 Parents::kLoop[kLoopCount][3] = {
 
 
 Parents::Parents(GobEngine *vm, const Common::String &seq, const Common::String &gct,
-                 const Common::String &childName, uint8 house, const Font &font,
-                 const byte *normalPalette, const byte *brightPalette, uint paletteSize) :
+				 const Common::String &childName, uint8 house, const Font &font,
+				 const byte *normalPalette, const byte *brightPalette, uint paletteSize) :
 	SEQFile(vm, seq),
 	_gct(0), _house(house), _font(&font),
 	_paletteSize(paletteSize), _normalPalette(normalPalette), _brightPalette(brightPalette) {

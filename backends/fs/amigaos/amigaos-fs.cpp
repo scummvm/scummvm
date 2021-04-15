@@ -171,10 +171,10 @@ AmigaOSFilesystemNode::AmigaOSFilesystemNode(BPTR pLock, const char *pDisplayNam
 			_bIsValid = true;
 		}
 
-        IDOS->FreeDosObject(DOS_EXAMINEDATA, pExd);
+		IDOS->FreeDosObject(DOS_EXAMINEDATA, pExd);
 	} else {
 		debug(6, "IDOS->ExamineData() failed - ExamineDosObject returned NULL!");
-    }
+	}
 
 	LEAVE();
 }

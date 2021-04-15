@@ -101,7 +101,7 @@ uint SourceScaler::setFactor(uint factor) {
 }
 
 void SourceScaler::scaleIntern(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr,
-                         uint32 dstPitch, int width, int height, int x, int y) {
+						 uint32 dstPitch, int width, int height, int x, int y) {
 	if (!_enable) {
 		// Do not pass _oldSrc, do not update _oldSrc
 		internScale(srcPtr, srcPitch,

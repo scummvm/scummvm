@@ -45,8 +45,8 @@ const char *CommandHandler::_commandText[] = {
 
 CommandHandler::CommandHandler(CGE2Engine *vm, bool turbo)
 	: _turbo(turbo), _textDelay(false), _timerExpiry(0), _talkEnable(true),
-      _head(0), _tail(0), _commandList((Command *)malloc(sizeof(Command)* 256)),
-      _vm(vm) {
+	  _head(0), _tail(0), _commandList((Command *)malloc(sizeof(Command)* 256)),
+	  _vm(vm) {
 }
 
 CommandHandler::~CommandHandler() {

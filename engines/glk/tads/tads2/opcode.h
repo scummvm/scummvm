@@ -110,8 +110,8 @@ namespace TADS2 {
 #define OPCGETPSELF 60      /* get property of the 'self' object */
 #define OPCGETPSLFD 61      /* get property of 'self' and discard result */
 #define OPCGETPOBJ  62      /* get property of a given object */
-                            /*  note: differs from GETP in that object is */
-                            /*  encoded into the instruction */
+							/*  note: differs from GETP in that object is */
+							/*  encoded into the instruction */
 #define OPCGETPOBJD 63      /* get property of an object and discard result */
 #define OPCINDEX    64      /* get an indexed entry from a list */
 
@@ -152,30 +152,30 @@ namespace TADS2 {
 
 /*
 ASSIGNMENT OPERATIONS
-    When (opcode & 0xc0 == 0xc0), we have an assignment operation.
-    (Note that this means that opcodes from 0xc0 up are all reserved
-    for assignment operations.)  The low six bits of the opcode
-    specify exactly what kind of operation is to be performed:
-    
-    bits 0-1:  specifies destination type:
-               00    2-byte operand is local number
-               01    2-byte operand is property to set in obj at tos
-               10    tos is index, [sp-1] is list to be indexed and set
-               11    tos is property pointer, [sp-1] is object
-    
-    bits 2-4:  specifies assignment operation:
-               000   := (direct assignment)
-               001   += (add tos to destination)
-               010   -= (subtract tos from destination)
-               011   *= (multiply destination by tos)
-               100   /= (divide destination by tos)
-               101   ++ (increment tos)
-               110   -- (decrement tos)
-               111   *reserved*
-               
-    bit 5:     specifies what to do with value computed by assignment
-               0     leave on stack (implies pre increment/decrement)
-               1     discard (implies post increment/decrement)
+	When (opcode & 0xc0 == 0xc0), we have an assignment operation.
+	(Note that this means that opcodes from 0xc0 up are all reserved
+	for assignment operations.)  The low six bits of the opcode
+	specify exactly what kind of operation is to be performed:
+	
+	bits 0-1:  specifies destination type:
+			   00    2-byte operand is local number
+			   01    2-byte operand is property to set in obj at tos
+			   10    tos is index, [sp-1] is list to be indexed and set
+			   11    tos is property pointer, [sp-1] is object
+	
+	bits 2-4:  specifies assignment operation:
+			   000   := (direct assignment)
+			   001   += (add tos to destination)
+			   010   -= (subtract tos from destination)
+			   011   *= (multiply destination by tos)
+			   100   /= (divide destination by tos)
+			   101   ++ (increment tos)
+			   110   -- (decrement tos)
+			   111   *reserved*
+			   
+	bit 5:     specifies what to do with value computed by assignment
+			   0     leave on stack (implies pre increment/decrement)
+			   1     discard (implies post increment/decrement)
 */
 #define OPCASI_MASK      0xc0                     /* assignment instruction */
 

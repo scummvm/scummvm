@@ -54,7 +54,7 @@ bool CryOmni3DEngine_Versailles::canVisit() const {
 }
 
 void CryOmni3DEngine_Versailles::getSavesList(bool visit, Common::StringArray &saveNames,
-        int &nextSaveNum) {
+		int &nextSaveNum) {
 	nextSaveNum = 1;
 	bool supportsAutoName = (_messages.size() >= 148);
 
@@ -145,7 +145,7 @@ void CryOmni3DEngine_Versailles::getSavesList(bool visit, Common::StringArray &s
 }
 
 void CryOmni3DEngine_Versailles::saveGame(bool visit, uint saveNum,
-        const Common::String &saveName) {
+		const Common::String &saveName) {
 	if (visit && saveNum == 1) {
 		error("Can't erase bootstrap visit");
 	}

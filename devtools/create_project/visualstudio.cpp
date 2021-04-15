@@ -33,7 +33,7 @@ namespace CreateProjectTool {
 //////////////////////////////////////////////////////////////////////////
 
 VisualStudioProvider::VisualStudioProvider(StringList &global_warnings, std::map<std::string, StringList> &project_warnings, const int version, const MSVCVersion &msvc)
-    : MSVCProvider(global_warnings, project_warnings, version, msvc) {
+	: MSVCProvider(global_warnings, project_warnings, version, msvc) {
 
 	_archs.push_back(ARCH_X86);
 	_archs.push_back(ARCH_AMD64);
@@ -48,7 +48,7 @@ const char *VisualStudioProvider::getPropertiesExtension() {
 }
 
 void VisualStudioProvider::createProjectFile(const std::string &name, const std::string &uuid, const BuildSetup &setup, const std::string &moduleDir,
-                                             const StringList &includeList, const StringList &excludeList) {
+											 const StringList &includeList, const StringList &excludeList) {
 	const std::string projectFile = setup.outputDir + '/' + name + getProjectExtension();
 	std::ofstream project(projectFile.c_str());
 	if (!project || !project.is_open()) {
@@ -314,7 +314,7 @@ void VisualStudioProvider::createBuildProp(const BuildSetup &setup, bool isRelea
 }
 
 void VisualStudioProvider::writeFileListToProject(const FileNode &dir, std::ofstream &projectFile, const int indentation,
-                                                  const std::string &objPrefix, const std::string &filePrefix) {
+												  const std::string &objPrefix, const std::string &filePrefix) {
 	const std::string indentString = getIndent(indentation + 2);
 
 	if (indentation)
@@ -354,7 +354,7 @@ void VisualStudioProvider::writeFileListToProject(const FileNode &dir, std::ofst
 }
 
 void VisualStudioProvider::writeFileToProject(std::ofstream &projectFile, const std::string &filePath, MSVC_Architecture arch,
-                                              const std::string &indentString, const std::string &toolLine) {
+											  const std::string &indentString, const std::string &toolLine) {
 	projectFile << indentString << "<File RelativePath=\"" << filePath << "\">\n"
 	            << indentString << "\t<FileConfiguration Name=\"Debug|" << getMSVCConfigName(arch) << "\">\n"
 	            << toolLine

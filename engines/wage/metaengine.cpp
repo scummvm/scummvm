@@ -39,7 +39,7 @@ const char *WageEngine::getGameFile() const {
 
 class WageMetaEngine : public AdvancedMetaEngine {
 public:
-    const char *getName() const override {
+	const char *getName() const override {
 		return "wage";
 	}
 

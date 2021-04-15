@@ -86,11 +86,11 @@ void _surface_manager::PrintDebugLabel(const char *mess, uint32 c) {
 
 void _surface_manager::PrintTimer(char label, uint32 time, uint32 limit) {
 /*  static uint32 colours[] = { 0x0000ff00, // 0x - 1x
-                                  0x0000ffff,   // 1x - 2x
-                                  0x000000ff,   // 2x - 3x
-                                  0x00ffff00,   // 3x - 4x
-                                  0x00ff0000,   // 4x - 5x
-                                  0x00ffffff }; // 5x +
+								  0x0000ffff,   // 1x - 2x
+								  0x000000ff,   // 2x - 3x
+								  0x00ffff00,   // 3x - 4x
+								  0x00ff0000,   // 4x - 5x
+								  0x00ffffff }; // 5x +
 */
 	static int32 x = 20;
 
@@ -338,7 +338,7 @@ void _surface_manager::Fill_surface(uint32 s_id, uint32 rgb_value) {
 }
 
 static void copyRectToSurface(void *dstBuffer, const void *srcBuffer, int32 srcPitch, int32 dstPitch, int32 width, int32 height,
-                                bool8 colorKeyEnable, uint32 colorKey) {
+								bool8 colorKeyEnable, uint32 colorKey) {
 	assert(srcBuffer);
 	assert(dstBuffer);
 
@@ -365,8 +365,8 @@ static void copyRectToSurface(void *dstBuffer, const void *srcBuffer, int32 srcP
 }
 
 static void copyRectToSurface(Graphics::Surface *dstSurface, Graphics::Surface *srcSurface,
-                              int32 destX, int32 destY, const Common::Rect subRect,
-                              bool8 colorKeyEnable, uint32 colorKey) {
+							  int32 destX, int32 destY, const Common::Rect subRect,
+							  bool8 colorKeyEnable, uint32 colorKey) {
 	assert(srcSurface->format == dstSurface->format);
 	assert(srcSurface->format.bytesPerPixel == 4);
 	assert(destX >= 0 && destX < dstSurface->w);

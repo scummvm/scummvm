@@ -350,7 +350,7 @@ public:
 
 		if (quest == kRescuePhilQuest) {
 			_alchemist = StyxShade("alchemist", 750, 5000, 10000, "alchemist");
-                        if (!persistent->_styxAlchemistSaidIntro)
+						if (!persistent->_styxAlchemistSaidIntro)
 				_alchemist.addSound("alchemist intro");
 			if (persistent->_hintsAreEnabled) {
 				if ((persistent->isInInventory(kCoin) || persistent->_styxCharonUsedCoin)
@@ -361,7 +361,7 @@ public:
 					_alchemist.addSound("alchemist hint 1");
 				}
 			}
-                        if (persistent->_styxAlchemistSaidIntro)
+						if (persistent->_styxAlchemistSaidIntro)
 				_alchemist.addSound("alchemist intro");
 			_alchemist.addSound("alchemist click");
 			_alchemist.start();

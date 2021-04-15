@@ -272,16 +272,16 @@ namespace TADS2 {
  *   OS main entrypoint 
  */
 int os0main(int oargc, char **oargv,
-            int (*mainfn)(int, char **, char *), 
-            const char *before, const char *config);
+			int (*mainfn)(int, char **, char *), 
+			const char *before, const char *config);
 
 /* 
  *   new-style OS main entrypoint - takes an application container context 
  */
 int os0main2(int oargc, char **oargv,
-             int (*mainfn)(int, char **, appctxdef *, char *),
-             const char *before, const char *config,
-             appctxdef *appctx);
+			 int (*mainfn)(int, char **, appctxdef *, char *),
+			 const char *before, const char *config,
+			 appctxdef *appctx);
 
 
 /* open the error message file for reading */

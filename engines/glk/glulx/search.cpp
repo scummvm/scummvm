@@ -32,7 +32,7 @@ enum serop {
 };
 
 uint Glulx::linear_search(uint key, uint keysize,  uint start, uint structsize, uint numstructs,
-                           uint keyoffset, uint options) {
+						   uint keyoffset, uint options) {
 	unsigned char keybuf[4];
 	uint count;
 	uint ix;
@@ -82,7 +82,7 @@ uint Glulx::linear_search(uint key, uint keysize,  uint start, uint structsize, 
 
 
 uint Glulx::binary_search(uint key, uint keysize,  uint start, uint structsize, uint numstructs,
-                           uint keyoffset, uint options) {
+						   uint keyoffset, uint options) {
 	byte keybuf[4];
 	byte byte1, byte2;
 	uint top, bot, val, addr;

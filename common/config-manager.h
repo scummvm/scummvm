@@ -70,7 +70,7 @@ public:
 		bool           empty() const { return _entries.empty(); } /*!< Return true if the configuration is empty, i.e. has no [key, value] pairs, and false otherwise. */
 
 		bool           contains(const String &key) const { return _entries.contains(key); } /*!< Check whether the domain contains a @p key. */
-        /** Return the configuration value for the given key.
+		/** Return the configuration value for the given key.
 		 *  If no entry exists for the given key in the configuration, it is created.
 		 */
 		/** Return the configuration value for the given key.
@@ -84,11 +84,11 @@ public:
 		String &getOrCreateVal(const String &key) { return _entries.getOrCreateVal(key); }
 		String        &getVal(const String &key) { return _entries.getVal(key); } /*!< Retrieve the value of a @p key. */
 		const String  &getVal(const String &key) const { return _entries.getVal(key); } /*!< @overload */
-         /**
-          * Retrieve the value of @p key if it exists and leave the referenced variable unchanged if the key does not exist.
-          * @return True if the key exists, false otherwise.
-          * You can use this method if you frequently attempt to access keys that do not exist.
-          */
+		 /**
+		  * Retrieve the value of @p key if it exists and leave the referenced variable unchanged if the key does not exist.
+		  * @return True if the key exists, false otherwise.
+		  * You can use this method if you frequently attempt to access keys that do not exist.
+		  */
 		const String &getValOrDefault(const String &key) const { return _entries.getValOrDefault(key); }
 		bool tryGetVal(const String &key, String &out) const { return _entries.tryGetVal(key, out); }
 
@@ -133,7 +133,7 @@ public:
 	const Domain            *getDomain(const String &domName) const; /*!< @overload */
 
 
-    /**
+	/**
 	 * @name Generic access methods
 	 * @brief No domain specified, use the values from the
 	 *        various domains in the order of their priority.
@@ -143,7 +143,7 @@ public:
 	bool                     hasKey(const String &key) const; /*!< Check if a given @p key exists. */
 	const String            &get(const String &key) const;    /*!< Get the value of a @p key. */
 	void                     set(const String &key, const String &value); /*!< Assign a @p value to a @p key. */
-    /** @} */
+	/** @} */
 
 	/**
 	 * Update a configuration entry for the active domain and flush
@@ -152,7 +152,7 @@ public:
 	void				setAndFlush(const String &key, const Common::String &value);
 
 #if 1
-    /**
+	/**
 	 * @name Domain-specific access methods
 	 * @brief Access one specific domain and modify it.
 	 *
@@ -170,7 +170,7 @@ public:
 	/** @} */
 #endif
 
-    /**
+	/**
 	 * @name Additional convenience accessors
 	 * @{
 	 */

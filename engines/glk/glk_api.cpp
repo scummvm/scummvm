@@ -198,7 +198,7 @@ void GlkAPI::glk_window_set_arrangement(winid_t win, uint method, uint size, win
 }
 
 void GlkAPI::glk_window_get_arrangement(winid_t win, uint *method,
-                                     uint *size, winid_t *keyWin) {
+									 uint *size, winid_t *keyWin) {
 	if (win) {
 		win->getArrangement(method, size, keyWin);
 	} else {
@@ -782,7 +782,7 @@ uint GlkAPI::glk_buffer_to_upper_case_uni(uint32 *buf, uint len, uint numchars) 
 }
 
 uint GlkAPI::glk_buffer_to_title_case_uni(uint32 *buf, uint len,
-        uint numchars, uint lowerrest) {
+		uint numchars, uint lowerrest) {
 	return bufferChangeCase(buf, len, numchars, CASE_TITLE, COND_LINESTART, lowerrest);
 }
 
@@ -898,7 +898,7 @@ bool GlkAPI::glk_image_draw(winid_t win, uint image, int val1, int val2) {
 }
 
 bool GlkAPI::glk_image_draw_scaled(winid_t win, uint image, int val1, int val2,
-                                  uint width, uint height) {
+								  uint width, uint height) {
 	return glk_image_draw_scaled(win, Common::String::format("%d", image),
 		val1, val2, width, height);
 }
@@ -1011,7 +1011,7 @@ void GlkAPI::glk_window_erase_rect(winid_t win, int left, int top, uint width, u
 }
 
 void GlkAPI::glk_window_fill_rect(winid_t win, uint color, int left, int top,
-                               uint width, uint height) {
+							   uint width, uint height) {
 	if (!win) {
 		warning("window_fill_rect: invalid ref");
 	} else {
@@ -1097,7 +1097,7 @@ schanid_t GlkAPI::glk_schannel_create_ext(uint rock, uint volume) {
 }
 
 uint GlkAPI::glk_schannel_play_multi(schanid_t *chanarray, uint chancount,
-                                    uint *sndarray, uint soundcount, uint notify) {
+									uint *sndarray, uint soundcount, uint notify) {
 	// No implementation
 	return 0;
 }
@@ -1119,7 +1119,7 @@ void GlkAPI::glk_schannel_unpause(schanid_t chan) {
 }
 
 void GlkAPI::glk_schannel_set_volume_ext(schanid_t chan, uint vol,
-                                      uint duration, uint notify) {
+									  uint duration, uint notify) {
 	if (chan) {
 		chan->setVolume(vol, duration, notify);
 	} else {

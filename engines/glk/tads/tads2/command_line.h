@@ -46,7 +46,7 @@ namespace TADS2 {
  *   error instead.  
  */
 char *cmdarg(errcxdef *ec, char ***argpp, int *ip, int argc,
-             int ofs, void (*usagefn)(errcxdef*));
+			 int ofs, void (*usagefn)(errcxdef*));
 
 
 /*
@@ -61,7 +61,7 @@ char *cmdarg(errcxdef *ec, char ***argpp, int *ip, int argc,
  *   which is not expected to return, but should signal an error. 
  */
 int cmdtog(struct errcxdef *ec, int prv, char *argp, int ofs,
-           void (*usagefn)(errcxdef*));
+		   void (*usagefn)(errcxdef*));
 
 } // End of namespace TADS2
 } // End of namespace TADS

@@ -34,8 +34,8 @@ namespace Sword1 {
 
 #if defined(__PSP__)
 #define MAX_OPEN_CLUS 4 // the PSP can't have more than 8 files open simultaneously
-                        // since we also need filehandles for music and sometimes savegames
-                        // set the maximum number of open clusters to 4.
+						// since we also need filehandles for music and sometimes savegames
+						// set the maximum number of open clusters to 4.
 #else
 #define MAX_OPEN_CLUS 8 // don't open more than 8 files at once
 #endif

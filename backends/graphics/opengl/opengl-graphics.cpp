@@ -59,19 +59,19 @@
 namespace OpenGL {
 
 OpenGLGraphicsManager::OpenGLGraphicsManager()
-    : _currentState(), _oldState(), _transactionMode(kTransactionNone), _screenChangeID(1 << (sizeof(int) * 8 - 2)),
-      _pipeline(nullptr), _stretchMode(STRETCH_FIT),
-      _defaultFormat(), _defaultFormatAlpha(),
-      _gameScreen(nullptr), _overlay(nullptr),
-      _cursor(nullptr),
-      _cursorHotspotX(0), _cursorHotspotY(0),
-      _cursorHotspotXScaled(0), _cursorHotspotYScaled(0), _cursorWidthScaled(0), _cursorHeightScaled(0),
-      _cursorKeyColor(0), _cursorDontScale(false), _cursorPaletteEnabled(false)
+	: _currentState(), _oldState(), _transactionMode(kTransactionNone), _screenChangeID(1 << (sizeof(int) * 8 - 2)),
+	  _pipeline(nullptr), _stretchMode(STRETCH_FIT),
+	  _defaultFormat(), _defaultFormatAlpha(),
+	  _gameScreen(nullptr), _overlay(nullptr),
+	  _cursor(nullptr),
+	  _cursorHotspotX(0), _cursorHotspotY(0),
+	  _cursorHotspotXScaled(0), _cursorHotspotYScaled(0), _cursorWidthScaled(0), _cursorHeightScaled(0),
+	  _cursorKeyColor(0), _cursorDontScale(false), _cursorPaletteEnabled(false)
 #ifdef USE_OSD
-      , _osdMessageChangeRequest(false), _osdMessageAlpha(0), _osdMessageFadeStartTime(0), _osdMessageSurface(nullptr),
-      _osdIconSurface(nullptr)
+	  , _osdMessageChangeRequest(false), _osdMessageAlpha(0), _osdMessageFadeStartTime(0), _osdMessageSurface(nullptr),
+	  _osdIconSurface(nullptr)
 #endif
-    {
+	{
 	memset(_gamePalette, 0, sizeof(_gamePalette));
 	g_context.reset();
 }
@@ -655,8 +655,8 @@ void OpenGLGraphicsManager::grabOverlay(void *buf, int pitch) const {
 namespace {
 template<typename SrcColor, typename DstColor>
 void multiplyColorWithAlpha(const byte *src, byte *dst, const uint w, const uint h,
-                            const Graphics::PixelFormat &srcFmt, const Graphics::PixelFormat &dstFmt,
-                            const uint srcPitch, const uint dstPitch, const SrcColor keyColor) {
+							const Graphics::PixelFormat &srcFmt, const Graphics::PixelFormat &dstFmt,
+							const uint srcPitch, const uint dstPitch, const SrcColor keyColor) {
 	for (uint y = 0; y < h; ++y) {
 		for (uint x = 0; x < w; ++x) {
 			const uint32 color = *(const SrcColor *)src;

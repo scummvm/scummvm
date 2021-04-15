@@ -51,8 +51,8 @@ static int countInContainer(int containerIndex) { /* IN - the container to count
 
 /*----------------------------------------------------------------------*/
 static int sumAttributeInContainer(
-    Aint containerIndex,         /* IN - the container to sum */
-    Aint attributeIndex          /* IN - the attribute to sum over */
+	Aint containerIndex,         /* IN - the container to sum */
+	Aint attributeIndex          /* IN - the attribute to sum over */
 ) {
 	uint instanceIndex;
 	int sum = 0;

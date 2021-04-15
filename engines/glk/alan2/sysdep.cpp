@@ -210,8 +210,8 @@ char *stringUpper(char str[]) { /* INOUT - ISO string to convert */
 
   */
 void toIso(char copy[], /* OUT - Mapped  string */
-           char original[], /* IN - string to convert */
-           int charset) {   /* IN - the current character set */
+		   char original[], /* IN - string to convert */
+		   int charset) {   /* IN - the current character set */
 	static unsigned char macMap[256]
 	= {
 		0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0A, 0x0E, 0x0F,
@@ -284,7 +284,7 @@ void toIso(char copy[], /* OUT - Mapped  string */
 
   */
 void fromIso(char copy[],       /* OUT - Mapped string */
-             char original[]) { /* IN - string to convert */
+			 char original[]) { /* IN - string to convert */
 	if (copy != original)
 		(void)strcpy(copy, original);
 }
@@ -299,8 +299,8 @@ void fromIso(char copy[],       /* OUT - Mapped string */
 
   */
 void toNative(char copy[],  /* OUT - Mapped  string */
-              char original[],  /* IN - string to convert */
-              int charset) { /* IN - the current character set */
+			  char original[],  /* IN - string to convert */
+			  int charset) { /* IN - the current character set */
 	toIso(copy, original, charset);
 	if (NATIVECHARSET != 0)
 		fromIso(copy, copy);

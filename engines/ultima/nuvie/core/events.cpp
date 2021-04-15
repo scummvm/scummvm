@@ -131,7 +131,7 @@ void Events::clear() {
 }
 
 bool Events::init(ObjManager *om, MapWindow *mw, MsgScroll *ms, Player *p, Magic *mg,
-                 GameClock *gc, ViewManager *vm, UseCode *uc, GUI *g, KeyBinder *kb) {
+				 GameClock *gc, ViewManager *vm, UseCode *uc, GUI *g, KeyBinder *kb) {
 	clear();
 
 	gui = g;
@@ -409,9 +409,9 @@ void Events::get_target(const MapCoord &init, const char *prompt) {
 
 /* Switch focus to MsgScroll and start getting user input. */
 void Events::get_scroll_input(const char *allowed,
-                             bool can_escape,
-                             bool using_target_cursor,
-                             bool set_numbers_only_to_true) {
+							 bool can_escape,
+							 bool using_target_cursor,
+							 bool set_numbers_only_to_true) {
 	assert(scroll);
 	if (!using_target_cursor) {
 		assert(mode != INPUT_MODE);
@@ -3684,9 +3684,9 @@ void Events::display_not_aboard_vehicle(bool show_prompt) {
 }
 
 bool Events::can_move_obj_between_actors(Obj *obj,
-                                        Actor *src_actor,
-                                        Actor *target_actor,
-                                        bool display_name) { // exchange inventory
+										Actor *src_actor,
+										Actor *target_actor,
+										bool display_name) { // exchange inventory
 	MapCoord from = src_actor->get_location();
 
 	if (target_actor) {

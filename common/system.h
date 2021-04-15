@@ -635,7 +635,7 @@ public:
 	virtual const GraphicsMode *getSupportedGraphicsModes() const {
 		static const GraphicsMode noGraphicsModes[] = {{"NONE", "Normal", 0}, {nullptr, nullptr, 0 }};
 		return noGraphicsModes;
-    }
+	}
 
 	/**
 	 * Return the ID of the 'default' graphics mode. What exactly this means
@@ -1517,7 +1517,7 @@ public:
 	 * @param icon The icon to display on the screen.
 	 */
 	virtual void displayActivityIconOnOSD(const Graphics::Surface *icon) = 0;
-    /** @} */
+	/** @} */
 
 	/**
 	 * @addtogroup common_system_module
@@ -1584,7 +1584,7 @@ public:
 	 * @return The FSNode factory for the current architecture.
 	 */
 	virtual FilesystemFactory *getFilesystemFactory();
-    /** @} */
+	/** @} */
 
 	/**
 	 * @addtogroup common_system_misc

@@ -56,7 +56,7 @@ GfxText32::GfxText32(SegManager *segMan, GfxCache *fonts) :
 void GfxText32::init() {
 	_xResolution = g_sci->_gfxFrameout->getScriptWidth();
 	_yResolution = g_sci->_gfxFrameout->getScriptHeight();
-    // GK1 Korean patched version uses doubled resolution for fonts
+	// GK1 Korean patched version uses doubled resolution for fonts
 	if (g_sci->getGameId() == GID_GK1 && g_sci->getLanguage() == Common::KO_KOR) {
 		_xResolution = _xResolution * 2;
 		_yResolution = _yResolution * 2;

@@ -31,7 +31,7 @@ namespace AGT {
 
    This file contains several things:
    i) The code for each of the built-in verbs, all prefixed with 'v_'
-      (so, for example, the code for DROP is in v_drop()).
+	  (so, for example, the code for DROP is in v_drop()).
    ii) The main routine for checking and running player commands.
    iii) The main routine for doing intelligent disambiguation.
 
@@ -398,8 +398,8 @@ static int v_remove(parse_rec *objrec) {
 			parse_rec tmp;
 			if (PURE_WEAR) drop_obj(i);
 			else it_move(i, 1);  /* Really need to check to make sure
-                   we haven't exceeded weight requirement
-                 here */
+				   we haven't exceeded weight requirement
+				 here */
 			make_parserec(i, &tmp);
 			sysmsgd(9, "$You$ take off $the_n$$noun$.", &tmp);
 		}
@@ -796,7 +796,7 @@ static void v_attack(uchar missile, parse_rec *targrec, parse_rec *weprec) {
 /* child_proc is true if v_put is being called by v_put, and so
    shouldn't print success messages */
 static rbool v_put(parse_rec *nounrec, word prep_,
-                   parse_rec *objrec, rbool child_proc) {
+				   parse_rec *objrec, rbool child_proc) {
 	rbool in_prep;
 	int dobj_, iobj_;
 
@@ -976,9 +976,9 @@ static void v_quit(void) {
 }
 
 const char dirname[12][10] = {"north", "south", "east", "west",
-                              "northeast", "northwest", "southeast", "southwest",
-                              "up", "down", "in", "out"
-                             };
+							  "northeast", "northwest", "southeast", "southwest",
+							  "up", "down", "in", "out"
+							 };
 
 void v_listexit(void) {
 	int i, j, k;
@@ -1069,7 +1069,7 @@ static int checkgram(int vb_, int dobj_, word prep_, int iobj_, rbool redir_flag
 
 /* This checks to make sure that all of the objects are present */
 static rbool verify_scope(int vb_, parse_rec *nounrec,
-                          word prep_, parse_rec *objrec) {
+						  word prep_, parse_rec *objrec) {
 	int msgnum;
 	int dobj_, iobj_;
 	dobj_ = nounrec->obj;
@@ -1522,15 +1522,15 @@ void exec_verb(void) {
 /* If obj==0, then we are doing a noun search, otherwise we are doing
   an object search */
 /* Return the disambiguation score;
-     0 if the object doesn't trigger anything
-     1000 if it runs an action token or built in verb.
-     Other values may be returned if an ErrMessage token is encountered.
-     500 is the cutoff for ALL expansion.
+	 0 if the object doesn't trigger anything
+	 1000 if it runs an action token or built in verb.
+	 Other values may be returned if an ErrMessage token is encountered.
+	 500 is the cutoff for ALL expansion.
   */
 
 
 int objcheck_cycle(rbool *success, parse_rec *act, int verbid,
-                   parse_rec *dorec, word prep_, parse_rec *iorec) {
+				   parse_rec *dorec, word prep_, parse_rec *iorec) {
 	int result;
 
 	actor = act->obj;
@@ -1570,7 +1570,7 @@ int objcheck_cycle(rbool *success, parse_rec *act, int verbid,
 	case 0:
 	case 1:
 		break;  /* Nothing matched, but we still need to check
-              built-in verbs */
+			  built-in verbs */
 	case 2:
 		free_all_parserec();
 		return disambig_score; /* End of turn, no match */
@@ -1585,7 +1585,7 @@ int objcheck_cycle(rbool *success, parse_rec *act, int verbid,
 
 
 int check_obj(parse_rec *act, int verbid,
-              parse_rec *dorec, word prep_, parse_rec *iorec) {
+			  parse_rec *dorec, word prep_, parse_rec *iorec) {
 	int result;
 	rbool success;
 

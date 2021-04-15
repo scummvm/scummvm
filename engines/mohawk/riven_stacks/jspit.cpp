@@ -305,9 +305,9 @@ void JSpit::xvga1300_carriage(const ArgumentArray &args) {
 
 	if (gotClick) {
 		RivenScriptPtr script = _vm->_scriptMan->createScriptFromData(3,
-                          kRivenCommandChangeCard, 1, getCardStackId(0x18D4D),
-                          kRivenCommandTransition, 1, kRivenTransitionPanLeft,
-                          kRivenCommandChangeCard, 1, getCardStackId(0x18AB5));
+						  kRivenCommandChangeCard, 1, getCardStackId(0x18D4D),
+						  kRivenCommandTransition, 1, kRivenTransitionPanLeft,
+						  kRivenCommandChangeCard, 1, getCardStackId(0x18AB5));
 		_vm->_scriptMan->runScript(script, false);
 
 // FIXME: kRivenCommandStoreMovieOpcode takes more arguments.. does it work with the original engine?

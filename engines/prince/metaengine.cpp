@@ -46,7 +46,7 @@ Common::Language PrinceEngine::getLanguage() const {
 
 class PrinceMetaEngine : public AdvancedMetaEngine {
 public:
-    const char *getName() const override {
+	const char *getName() const override {
 		return "prince";
 	}
 

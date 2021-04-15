@@ -90,8 +90,8 @@ enum _barrier_logic_value { NO_IMPACT = 0, BLOCKS, ALLOWS, MAYBE, SPECIAL };
 // This is the truth table that states what kind of ray passes through what
 // type of barrier.
 static enum _barrier_logic_value _barrier_logic_table[BARRIER_TYPE_CARDINALITY][RAY_TYPE_CARDINALITY] = {
-    {BLOCKS, BLOCKS, BLOCKS}, {BLOCKS, ALLOWS, SPECIAL}, {BLOCKS, ALLOWS, BLOCKS}, {BLOCKS, BLOCKS, ALLOWS}, {BLOCKS, ALLOWS, MAYBE},
-    {BLOCKS, ALLOWS, ALLOWS}, {BLOCKS, ALLOWS, ALLOWS},  {BLOCKS, ALLOWS, ALLOWS}, {BLOCKS, ALLOWS, ALLOWS}};
+	{BLOCKS, BLOCKS, BLOCKS}, {BLOCKS, ALLOWS, SPECIAL}, {BLOCKS, ALLOWS, BLOCKS}, {BLOCKS, BLOCKS, ALLOWS}, {BLOCKS, ALLOWS, MAYBE},
+	{BLOCKS, ALLOWS, ALLOWS}, {BLOCKS, ALLOWS, ALLOWS},  {BLOCKS, ALLOWS, ALLOWS}, {BLOCKS, ALLOWS, ALLOWS}};
 
 // simple, this is just for the converters
 // Some extra figures to speed up barrier collision detection.

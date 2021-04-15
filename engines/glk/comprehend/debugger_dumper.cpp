@@ -123,7 +123,7 @@ DebuggerDumper::DebuggerDumper() : _game(nullptr) {
 }
 
 Common::String DebuggerDumper::dumpInstruction(ComprehendGame *game,
-        const FunctionState *func_state, const Instruction *instr) {
+		const FunctionState *func_state, const Instruction *instr) {
 	uint i;
 	int str_index, str_table;
 	ScriptOpcode opcode = _game->getScriptOpcode(instr);

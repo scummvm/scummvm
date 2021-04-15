@@ -144,12 +144,12 @@ static const char HELP_STRING[] =
 	"  --output-rate=RATE       Select output sample rate in Hz (e.g. 22050)\n"
 	"  --opl-driver=DRIVER      Select AdLib (OPL) emulator (db, mame"
 #ifndef DISABLE_NUKED_OPL
-                                                                     ", nuked"
+																	 ", nuked"
 #endif
 #ifdef ENABLE_OPL2LPT
-                                                                     ", opl2lpt"
+																	 ", opl2lpt"
 #endif
-                                                                              ")\n"
+																			  ")\n"
 	"  --show-fps               Set the turn on display FPS info in 3D games\n"
 	"  --no-show-fps            Set the turn off display FPS info in 3D games\n"
 	"  --renderer=RENDERER      Select 3D renderer (software, opengl, opengl_shaders)\n"

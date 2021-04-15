@@ -404,7 +404,7 @@ void output(const char *original) {
 		*symptr = '\0';
 		if (strlen(str) > 0) {
 			skipSpace = FALSE;    /* Only let skipSpace through if it is
-                                     last in the string */
+									 last in the string */
 			if (lastCharOf(str) == ' ') {
 				str[strlen(str) - 1] = '\0'; /* Truncate space character */
 				justify(str);       /* Output part before '$' */

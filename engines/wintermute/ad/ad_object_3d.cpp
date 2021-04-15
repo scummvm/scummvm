@@ -45,14 +45,14 @@ IMPLEMENT_PERSISTENT(AdObject3D, false)
 
 //////////////////////////////////////////////////////////////////////////
 AdObject3D::AdObject3D(BaseGame *inGame) : AdObject(inGame),
-                                           _tempSkelAnim(nullptr),
-                                           _lastPosVector(0.0f, 0.0f, 0.0f),
-                                           _dropToFloor(true),
-                                           _velocity(1.0f),
-                                           _angVelocity(1.0f),
-                                           _ambientLightColor(0x00000000),
-                                           _hasAmbientLightColor(false),
-                                           _shadowVolume(nullptr) {
+										   _tempSkelAnim(nullptr),
+										   _lastPosVector(0.0f, 0.0f, 0.0f),
+										   _dropToFloor(true),
+										   _velocity(1.0f),
+										   _angVelocity(1.0f),
+										   _ambientLightColor(0x00000000),
+										   _hasAmbientLightColor(false),
+										   _shadowVolume(nullptr) {
 	_is3D = true;
 	_state = _nextState = STATE_READY;
 	_shadowType = SHADOW_STENCIL;

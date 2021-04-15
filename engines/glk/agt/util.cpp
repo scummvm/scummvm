@@ -28,13 +28,13 @@ namespace Glk {
 namespace AGT {
 
 /* This includes wrappers for malloc, realloc, strdup, and free
-     that exit gracefully if we run out of memory. */
+	 that exit gracefully if we run out of memory. */
 /* There are also various utilities:
-    concdup:  Creates a new string that is concatation of two others.
-    strcasecmp: case insensitive comparison of strings
-    strncasecmp: case insensitive compare of first n characters of strings
-    fixsign16, fixsign32: routines to assemble signed ints out of
-          individual bytes in an endian-free way. */
+	concdup:  Creates a new string that is concatation of two others.
+	strcasecmp: case insensitive comparison of strings
+	strncasecmp: case insensitive compare of first n characters of strings
+	fixsign16, fixsign32: routines to assemble signed ints out of
+		  individual bytes in an endian-free way. */
 /* Also buffered file i/o routines and some misc. file utilites. */
 
 #ifdef force16
@@ -422,8 +422,8 @@ genfile openbin(fc_type fc, filetype ext, const char *err, rbool ferr)
    It should work with files that have \n, \r, or \r\n termined lines.  */
 
 #define READLN_GRAIN 64 /* Granularity of readln() rrealloc requests
-                this needs to be at least the size of a tab
-                character */
+				this needs to be at least the size of a tab
+				character */
 #define DOS_EOF 26    /* Ctrl-Z is the DOS end-of-file marker */
 
 char *readln(genfile f, char *buff, int n)
@@ -512,9 +512,9 @@ static long real_buff_fcnt;  /* Number of records actually held in buffer */
 static long buff_rsize;  /* Minimum amount that must be read. */
 
 static long block_size;  /* Size of the current block
-                (for non-AGX files, this is just the filesize) */
+				(for non-AGX files, this is just the filesize) */
 static long block_offset; /* Offset of current block in file (this should
-               be zero for non-AGX files) */
+			   be zero for non-AGX files) */
 
 
 static void buff_setrecsize(long recsize) {
@@ -552,7 +552,7 @@ buffreopen will be called before any major file activity
 	const char *errstr;
 
 	assert(buffer == NULL); /* If not, it means these routines have been
-               called by someone else who isn't done yet */
+			   called by someone else who isn't done yet */
 
 	bfile = readopen(fc, ext, &errstr);
 	if (errstr != NULL) {
@@ -616,7 +616,7 @@ uchar *buffread(long index) {
 	else {
 		binseek(bfile, block_offset + index * record_size);
 		real_buff_fcnt = block_size / record_size - index;  /* How many records
-                             could we read in? */
+							 could we read in? */
 		if (real_buff_fcnt > buff_fcnt)
 			real_buff_fcnt = buff_fcnt; /* Don't overflow buffer */
 		if (!binread(bfile, buffer, record_size, real_buff_fcnt, &errstr))
@@ -639,7 +639,7 @@ void buffclose(void) {
    file so we can read files that consist of multiple sections with
    different structures */
 static void buffreopen(long f_ofs, long file_recsize, long recnum,
-                       long bl_size, const char *rectype) {
+					   long bl_size, const char *rectype) {
 	char ebuff[200];
 	long recsize;
 
@@ -687,9 +687,9 @@ static void buffreopen(long f_ofs, long file_recsize, long recnum,
 /* #define DEBUG_SEEK*/  /* Debug seek beyond EOF problem */
 
 static long bw_first, bw_last;  /* First and last record in buffer written to.
-                 This is relative to the beginning of the
-                 buffer bw_last points just beyond the last
-                 one written to */
+				 This is relative to the beginning of the
+				 buffer bw_last points just beyond the last
+				 one written to */
 #ifdef DEBUG_SEEK
 static long bw_fileleng;  /* Current file length */
 #endif /* DEBUG_SEEK */
@@ -849,14 +849,14 @@ static void bw_blockwrite(void *buff, long size, long offset) {
 
 /* Length of file datatypes */
 const size_t ft_leng[FT_COUNT] = {0, 2, 2, /* END, int16, and uint16 */
-                                  4, 4,  /* int32 and uint32 */
-                                  1, 2, 0, /* byte, version, rbool */
-                                  8, 4,  /* descptr, ss_ptr */
-                                  2, 26,  /* slist, path[13] */
-                                  4, 4, /* cmdptr, dictptr */
-                                  81,  /* tline */
-                                  1, 1
-                                 };  /* char, cfg */
+								  4, 4,  /* int32 and uint32 */
+								  1, 2, 0, /* byte, version, rbool */
+								  8, 4,  /* descptr, ss_ptr */
+								  2, 26,  /* slist, path[13] */
+								  4, 4, /* cmdptr, dictptr */
+								  81,  /* tline */
+								  1, 1
+								 };  /* char, cfg */
 
 
 long compute_recsize(file_info *recinfo) {
@@ -874,8 +874,8 @@ long compute_recsize(file_info *recinfo) {
 }
 
 static const int agx_version[] = {0, 0000, 1800, 2000, 3200, 3500, 8200, 8300,
-                                  5000, 5050, 5070, 10000, 10050, 15000, 15500, 16000, 20000
-                                 };
+								  5000, 5050, 5070, 10000, 10050, 15000, 15500, 16000, 20000
+								 };
 
 static int agx_decode_version(int vercode) {
 	if (vercode & 1) /* Large/Soggy */
@@ -935,17 +935,17 @@ static int agx_decode_version(int vercode) {
 
 /* This is as large as the largest data structure we could run into */
 static const uchar zero_block[81] = {0, 0, 0, 0, 0, 0, 0, 0,
-                                     0, 0, 0, 0, 0, 0, 0, 0,
-                                     0, 0, 0, 0, 0, 0, 0, 0,
-                                     0, 0, 0, 0, 0, 0, 0, 0,
-                                     0, 0, 0, 0, 0, 0, 0, 0,
-                                     0, 0, 0, 0, 0, 0, 0, 0,
-                                     0, 0, 0, 0, 0, 0, 0, 0,
-                                     0, 0, 0, 0, 0, 0, 0, 0,
-                                     0, 0, 0, 0, 0, 0, 0, 0,
-                                     0, 0, 0, 0, 0, 0, 0, 0,
-                                     0
-                                    };
+									 0, 0, 0, 0, 0, 0, 0, 0,
+									 0, 0, 0, 0, 0, 0, 0, 0,
+									 0, 0, 0, 0, 0, 0, 0, 0,
+									 0, 0, 0, 0, 0, 0, 0, 0,
+									 0, 0, 0, 0, 0, 0, 0, 0,
+									 0, 0, 0, 0, 0, 0, 0, 0,
+									 0, 0, 0, 0, 0, 0, 0, 0,
+									 0, 0, 0, 0, 0, 0, 0, 0,
+									 0, 0, 0, 0, 0, 0, 0, 0,
+									 0
+									};
 
 static void read_filerec(file_info *rec_desc, const uchar *filedata) {
 	uchar mask;
@@ -1184,8 +1184,8 @@ static void write_filerec(file_info *rec_desc, uchar *filedata) {
    file_offset = the offset of the beginning of the array into the file
    */
 void *read_recarray(void *base, long eltsize, long numelts,
-                    file_info *field_info, const char *rectype,
-                    long file_offset, long file_blocksize) {
+					file_info *field_info, const char *rectype,
+					long file_offset, long file_blocksize) {
 	long i;
 	file_info *curr;
 	uchar *file_data;
@@ -1228,7 +1228,7 @@ void *read_recarray(void *base, long eltsize, long numelts,
    a placeholder for systems that can't seek beyond the end-of-file */
 
 long write_recarray(void *base, long eltsize, long numelts,
-                    file_info *field_info, long file_offset) {
+					file_info *field_info, long file_offset) {
 	long i;
 	file_info *curr;
 	uchar *file_data;
@@ -1266,7 +1266,7 @@ long write_recarray(void *base, long eltsize, long numelts,
 
 
 void read_globalrec(file_info *global_info, const char *rectype,
-                    long file_offset, long file_blocksize) {
+					long file_offset, long file_blocksize) {
 	uchar *file_data;
 
 	if (int_buff) {
@@ -1305,7 +1305,7 @@ static file_info fi_temp[] = {
 /* This routine reads in an array of simple data */
 
 void *read_recblock(void *base, int ftype, long numrec,
-                    long offset, long bl_size) {
+					long offset, long bl_size) {
 	int dsize;
 
 	switch (ftype) {
@@ -1336,7 +1336,7 @@ void *read_recblock(void *base, int ftype, long numrec,
 	default:
 		fatal("Invalid argument to read_recblock.");
 		dsize = 0; /* Silence compiler warnings; this will never actually
-          be reached. */
+		  be reached. */
 	}
 
 	fi_temp[0].ftype = ftype;
@@ -1374,7 +1374,7 @@ long write_recblock(void *base, int ftype, long numrec, long offset) {
 	default:
 		fatal("Invalid argument to write_recblock.");
 		dsize = 0; /* Silence compiler warnings; this will never actually
-          be reached. */
+		  be reached. */
 	}
 
 	fi_temp[0].ftype = ftype;

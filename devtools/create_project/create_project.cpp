@@ -1512,7 +1512,7 @@ FileNode *scanFiles(const std::string &dir, const StringList &includeList, const
 // Project Provider methods
 //////////////////////////////////////////////////////////////////////////
 ProjectProvider::ProjectProvider(StringList &global_warnings, std::map<std::string, StringList> &project_warnings, const int version)
-    : _version(version), _globalWarnings(global_warnings), _projectWarnings(project_warnings) {
+	: _version(version), _globalWarnings(global_warnings), _projectWarnings(project_warnings) {
 }
 
 void ProjectProvider::createProject(BuildSetup &setup) {
@@ -1765,8 +1765,8 @@ std::string ProjectProvider::getLastPathComponent(const std::string &path) {
 }
 
 void ProjectProvider::addFilesToProject(const std::string &dir, std::ofstream &projectFile,
-                                        const StringList &includeList, const StringList &excludeList,
-                                        const std::string &filePrefix) {
+										const StringList &includeList, const StringList &excludeList,
+										const std::string &filePrefix) {
 	FileNode *files = scanFiles(dir, includeList, excludeList);
 
 	writeFileListToProject(*files, projectFile, 0, std::string(), filePrefix + '/');

@@ -540,7 +540,7 @@ void MacText::splitString(const Common::U32String &str, int curLine) {
 							_textLines[curLine].lastChunk().text = Common::U32String();
 							tmp_width = 0;
 							cur_width = 0;
-                        }
+						}
 						tmp_width += char_width;
 						_textLines[curLine].lastChunk().text += c;
 					}

@@ -187,7 +187,7 @@ void GrantPeaceProcess::run() {
 }
 
 uint32 GrantPeaceProcess::I_castGrantPeace(const uint8 *args,
-        unsigned int /*argsize*/) {
+		unsigned int /*argsize*/) {
 	MainActor *avatar = getMainActor();
 
 	GrantPeaceProcess *gpp = new GrantPeaceProcess(avatar);

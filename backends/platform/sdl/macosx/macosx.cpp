@@ -150,9 +150,9 @@ bool OSystem_MacOSX::displayLogFile() {
 	if (_logFilePath.empty())
 		return false;
 
-    CFURLRef url = CFURLCreateFromFileSystemRepresentation(kCFAllocatorDefault, (const UInt8 *)_logFilePath.c_str(), _logFilePath.size(), false);
-    OSStatus err = LSOpenCFURLRef(url, NULL);
-    CFRelease(url);
+	CFURLRef url = CFURLCreateFromFileSystemRepresentation(kCFAllocatorDefault, (const UInt8 *)_logFilePath.c_str(), _logFilePath.size(), false);
+	OSStatus err = LSOpenCFURLRef(url, NULL);
+	CFRelease(url);
 
 	return err != noErr;
 }

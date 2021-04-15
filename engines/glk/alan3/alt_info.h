@@ -58,7 +58,7 @@ struct AltInfo {
 	Aint level;     /* 0 - Global, 1 - location, 2 - parameter */
 	Aid _class;     /* In which class, only used for tracing */
 	Aid instance;   /* In which instance the Alternative was found,
-                       used to set current.instance and tracing */
+					   used to set current.instance and tracing */
 	Aid parameter;     /* In which parameter, only used for tracing */
 };
 

@@ -55,7 +55,7 @@ static void transformToRows(byte *img, uint16 width, uint16 height) {
  *  Constructor for loading sprites from a raw data buffer, one byte per pixel.
  */
 Sprite::Sprite(uint16 width, uint16 height, byte *raw_data, int x, int y, bool columnwise)
-    : _ownsData(true), _data(raw_data), _mirror(false) {
+	: _ownsData(true), _data(raw_data), _mirror(false) {
 
 	 _width = width;
 	 _height = height;
@@ -78,7 +78,7 @@ Sprite::Sprite(uint16 width, uint16 height, byte *raw_data, int x, int y, bool c
  *  pixel.
  */
 Sprite::Sprite(const byte *sprite_data, uint16 length, int x, int y, bool columnwise)
-    : _ownsData(false), _data(NULL), _mirror(false) {
+	: _ownsData(false), _data(NULL), _mirror(false) {
 
 	Common::MemoryReadStream reader(sprite_data, length);
 	_width = reader.readSint16LE();
@@ -250,7 +250,7 @@ Common::Rect Sprite::getRect(const Displacement &displacement) const {
 }
 
 Text::Text(const Common::String &str, const Font *font, byte fontColor,
-                int x, int y, uint spacing) {
+				int x, int y, uint spacing) {
 	_x = x;
 	_y = y;
 	_delay = 0;

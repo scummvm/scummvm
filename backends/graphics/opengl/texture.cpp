@@ -34,10 +34,10 @@
 namespace OpenGL {
 
 GLTexture::GLTexture(GLenum glIntFormat, GLenum glFormat, GLenum glType)
-    : _glIntFormat(glIntFormat), _glFormat(glFormat), _glType(glType),
-      _width(0), _height(0), _logicalWidth(0), _logicalHeight(0),
-      _texCoords(), _glFilter(GL_NEAREST),
-      _glTexture(0) {
+	: _glIntFormat(glIntFormat), _glFormat(glFormat), _glType(glType),
+	  _width(0), _height(0), _logicalWidth(0), _logicalHeight(0),
+	  _texCoords(), _glFilter(GL_NEAREST),
+	  _glTexture(0) {
 	create();
 }
 
@@ -162,7 +162,7 @@ void GLTexture::updateArea(const Common::Rect &area, const Graphics::Surface &sr
 //
 
 Surface::Surface()
-    : _allDirty(false), _dirtyArea() {
+	: _allDirty(false), _dirtyArea() {
 }
 
 void Surface::copyRectToTexture(uint x, uint y, uint w, uint h, const void *srcPtr, uint srcPitch) {
@@ -216,8 +216,8 @@ Common::Rect Surface::getDirtyArea() const {
 //
 
 Texture::Texture(GLenum glIntFormat, GLenum glFormat, GLenum glType, const Graphics::PixelFormat &format)
-    : Surface(), _format(format), _glTexture(glIntFormat, glFormat, glType),
-      _textureData(), _userPixelData() {
+	: Surface(), _format(format), _glTexture(glIntFormat, glFormat, glType),
+	  _textureData(), _userPixelData() {
 }
 
 Texture::~Texture() {
@@ -306,7 +306,7 @@ void Texture::updateGLTexture() {
 }
 
 TextureCLUT8::TextureCLUT8(GLenum glIntFormat, GLenum glFormat, GLenum glType, const Graphics::PixelFormat &format)
-    : Texture(glIntFormat, glFormat, glType, format), _clut8Data(), _palette(new byte[256 * format.bytesPerPixel]) {
+	: Texture(glIntFormat, glFormat, glType, format), _clut8Data(), _palette(new byte[256 * format.bytesPerPixel]) {
 	memset(_palette, 0, sizeof(byte) * format.bytesPerPixel);
 }
 
@@ -421,8 +421,8 @@ void TextureCLUT8::updateGLTexture() {
 
 #if !USE_FORCED_GL
 FakeTexture::FakeTexture(GLenum glIntFormat, GLenum glFormat, GLenum glType, const Graphics::PixelFormat &format)
-    : Texture(glIntFormat, glFormat, glType, format),
-      _rgbData() {
+	: Texture(glIntFormat, glFormat, glType, format),
+	  _rgbData() {
 }
 
 FakeTexture::~FakeTexture() {
@@ -443,7 +443,7 @@ void FakeTexture::allocate(uint width, uint height) {
 }
 
 TextureRGB555::TextureRGB555()
-    : FakeTexture(GL_RGB, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0)) {
+	: FakeTexture(GL_RGB, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0)) {
 }
 
 Graphics::PixelFormat TextureRGB555::getFormat() const {
@@ -485,11 +485,11 @@ void TextureRGB555::updateGLTexture() {
 
 TextureRGBA8888Swap::TextureRGBA8888Swap()
 #ifdef SCUMM_LITTLE_ENDIAN
-    : FakeTexture(GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE, Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24)) // ABGR8888
+	: FakeTexture(GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE, Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24)) // ABGR8888
 #else
-    : FakeTexture(GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE, Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0)) // RGBA8888
+	: FakeTexture(GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE, Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0)) // RGBA8888
 #endif
-      {
+	  {
 }
 
 Graphics::PixelFormat TextureRGBA8888Swap::getFormat() const {
@@ -540,11 +540,11 @@ void TextureRGBA8888Swap::updateGLTexture() {
 // problems, we need to switch to GL_R8 and GL_RED, but that is only supported
 // for ARB_texture_rg and GLES3+ (EXT_rexture_rg does not support GL_R8).
 TextureCLUT8GPU::TextureCLUT8GPU()
-    : _clut8Texture(GL_ALPHA, GL_ALPHA, GL_UNSIGNED_BYTE),
-      _paletteTexture(GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE),
-      _target(new TextureTarget()), _clut8Pipeline(new CLUT8LookUpPipeline()),
-      _clut8Vertices(), _clut8Data(), _userPixelData(), _palette(),
-      _paletteDirty(false) {
+	: _clut8Texture(GL_ALPHA, GL_ALPHA, GL_UNSIGNED_BYTE),
+	  _paletteTexture(GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE),
+	  _target(new TextureTarget()), _clut8Pipeline(new CLUT8LookUpPipeline()),
+	  _clut8Vertices(), _clut8Data(), _userPixelData(), _palette(),
+	  _paletteDirty(false) {
 	// Allocate space for 256 colors.
 	_paletteTexture.setSize(256, 1);
 

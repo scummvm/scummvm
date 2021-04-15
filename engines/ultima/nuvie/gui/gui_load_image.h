@@ -33,7 +33,7 @@ namespace Nuvie {
    Use 'genimage' to turn an 8-bit BMP file into a C image, and include
    the output in your application, either directly or as a header file.
    Create an SDL surface in your program:
-    surface = GUI_LoadImage(image_w, image_h, image_pal, image_data);
+	surface = GUI_LoadImage(image_w, image_h, image_pal, image_data);
  */
 /************************************************************************/
 

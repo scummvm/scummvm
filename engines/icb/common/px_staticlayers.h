@@ -42,7 +42,7 @@ namespace ICB {
 #define TILE_COUNT (TILES_WIDE * TILES_HIGH)
 
 class pcStaticLayers {
-      private:
+private:
 	char id[4];
 	uint32 schema;
 	uint32 mapping;
@@ -51,7 +51,7 @@ class pcStaticLayers {
 
 	uint8 *DataStart() { return (uint8 *)id; }
 
-      public:
+public:
 	uint16 *GetSemiTileTable(int32 idx) { return semiPtrs[idx] ? (uint16 *)(DataStart() + semiPtrs[idx]) : 0; }
 
 	uint16 *GetTileTable(int32 idx) { return tilePtrs[idx] ? (uint16 *)(DataStart() + tilePtrs[idx]) : 0; }

@@ -104,10 +104,10 @@ void TTFont::getStringSize(const Std::string &text, int32 &width, int32 &height)
 }
 
 void TTFont::getTextSize(const Std::string &text,
-                         int32 &resultWidth, int32 &resultHeight,
-                         unsigned int &remaining,
-                         int32 width, int32 height, TextAlign align,
-                         bool u8specials) {
+						 int32 &resultWidth, int32 &resultHeight,
+						 unsigned int &remaining,
+						 int32 width, int32 height, TextAlign align,
+						 bool u8specials) {
 	Std::list<PositionedText> tmp;
 	if (!_SJIS)
 		tmp = typesetText<Traits>(this, text, remaining,

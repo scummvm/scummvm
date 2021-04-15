@@ -33,7 +33,7 @@ namespace CreateProjectTool {
 //////////////////////////////////////////////////////////////////////////
 
 MSBuildProvider::MSBuildProvider(StringList &global_warnings, std::map<std::string, StringList> &project_warnings, const int version, const MSVCVersion &msvc)
-    : MSVCProvider(global_warnings, project_warnings, version, msvc) {
+	: MSVCProvider(global_warnings, project_warnings, version, msvc) {
 
 	_archs.push_back(ARCH_X86);
 	_archs.push_back(ARCH_AMD64);
@@ -74,7 +74,7 @@ inline void outputProperties(std::ostream &project, const std::string &config, c
 } // End of anonymous namespace
 
 void MSBuildProvider::createProjectFile(const std::string &name, const std::string &uuid, const BuildSetup &setup, const std::string &moduleDir,
-                                        const StringList &includeList, const StringList &excludeList) {
+										const StringList &includeList, const StringList &excludeList) {
 	const std::string projectFile = setup.outputDir + '/' + name + getProjectExtension();
 	std::ofstream project(projectFile.c_str());
 	if (!project || !project.is_open()) {
@@ -493,7 +493,7 @@ void MSBuildProvider::outputNasmCommand(std::ostream &projectFile, const std::st
 }
 
 void MSBuildProvider::writeFileListToProject(const FileNode &dir, std::ofstream &projectFile, const int,
-                                             const std::string &objPrefix, const std::string &filePrefix) {
+											 const std::string &objPrefix, const std::string &filePrefix) {
 	// Reset lists
 	_filters.clear();
 	_compileFiles.clear();

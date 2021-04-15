@@ -30,13 +30,13 @@ class ComprehendGame;
 struct Word;
 
 Word *find_dict_word_by_index(ComprehendGame *game,
-                              uint8 index, uint8 type_mask);
+							  uint8 index, uint8 type_mask);
 Word *dict_find_word_by_index_type(ComprehendGame *game,
-                                   uint8 index, uint8 type);
+								   uint8 index, uint8 type);
 Word *dict_find_word_by_string(ComprehendGame *game,
-                               const char *string);
+							   const char *string);
 bool dict_match_index_type(ComprehendGame *game, const char *word,
-                           uint8 index, uint8 type_mask);
+						   uint8 index, uint8 type_mask);
 
 } // namespace Comprehend
 } // namespace Glk

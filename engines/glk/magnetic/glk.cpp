@@ -476,7 +476,7 @@ int Magnetic::gms_graphics_color_luminance(gms_rgbref_t rgb_color) {
 }
 
 int Magnetic::gms_graphics_compare_luminance(const void *void_first,
-        const void *void_second) {
+		const void *void_second) {
 	long first = *(const long *)void_first;
 	long second = *(const long *)void_second;
 
@@ -484,12 +484,12 @@ int Magnetic::gms_graphics_compare_luminance(const void *void_first,
 }
 
 long Magnetic::gms_graphics_contrast_variance(type16 palette[],
-        long color_usage[], gms_gammaref_t gamma) {
+		long color_usage[], gms_gammaref_t gamma) {
 	int index, count, has_black, mean;
 	long sum;
 	int contrast[GMS_PALETTE_SIZE];
 	int luminance[GMS_PALETTE_SIZE + 1];  /* Luminance for each color,
-                                           plus one extra for black */
+										   plus one extra for black */
 
 	/* Calculate the luminance energy of each palette color at this gamma. */
 	has_black = false;
@@ -571,7 +571,7 @@ gms_gammaref_t Magnetic::gms_graphics_equal_contrast_gamma(type16 palette[], lon
 }
 
 gms_gammaref_t Magnetic::gms_graphics_select_gamma(type8 bitmap[],
-        type16 width, type16 height, type16 palette[]) {
+		type16 width, type16 height, type16 palette[]) {
 	long color_usage[GMS_PALETTE_SIZE];
 	int color_count;
 	gms_gammaref_t contrast_gamma;
@@ -611,7 +611,7 @@ gms_gammaref_t Magnetic::gms_graphics_select_gamma(type8 bitmap[],
 }
 
 void Magnetic::gms_graphics_clear_and_border(winid_t glk_window,
-        int x_offset, int y_offset, int pixel_size, type16 width, type16 height) {
+		int x_offset, int y_offset, int pixel_size, type16 width, type16 height) {
 	uint background;
 	glui32 fade_color, shading_color;
 	gms_rgb_t rgb_background, rgb_border, rgb_fade;
@@ -714,7 +714,7 @@ void Magnetic::gms_graphics_clear_and_border(winid_t glk_window,
 }
 
 void Magnetic::gms_graphics_convert_palette(type16 ms_palette[], gms_gammaref_t gamma,
-        glui32 glk_palette[]) {
+		glui32 glk_palette[]) {
 	int index;
 	assert(ms_palette && gamma && glk_palette);
 
@@ -731,7 +731,7 @@ void Magnetic::gms_graphics_convert_palette(type16 ms_palette[], gms_gammaref_t 
 }
 
 void Magnetic::gms_graphics_position_picture(winid_t glk_window,
-        int pixel_size, type16 width, type16 height, int *x_offset, int *y_offset) {
+		int pixel_size, type16 width, type16 height, int *x_offset, int *y_offset) {
 	uint window_width, window_height;
 	assert(glk_window && x_offset && y_offset);
 
@@ -747,8 +747,8 @@ void Magnetic::gms_graphics_position_picture(winid_t glk_window,
 }
 
 void Magnetic::gms_graphics_apply_animation_frame(type8 bitmap[],
-        type16 frame_width, type16 frame_height, type8 mask[], int frame_x, int frame_y,
-        type8 off_screen[], type16 width, type16 height) {
+		type16 frame_width, type16 frame_height, type8 mask[], int frame_x, int frame_y,
+		type8 off_screen[], type16 width, type16 height) {
 	int mask_width, x, y;
 	type8 mask_hibit;
 	long frame_row, buffer_row, mask_row;
@@ -894,7 +894,7 @@ int Magnetic::gms_graphics_is_vertex(type8 off_screen[], type16 width, type16 he
 }
 
 int Magnetic::gms_graphics_compare_layering_inverted(const void *void_first,
-        const void *void_second) {
+		const void *void_second) {
 	gms_layering_t *first = (gms_layering_t *) void_first;
 	gms_layering_t *second = (gms_layering_t *) void_second;
 
@@ -913,8 +913,8 @@ int Magnetic::gms_graphics_compare_layering_inverted(const void *void_first,
 }
 
 void Magnetic::gms_graphics_assign_layers(type8 off_screen[], type8 on_screen[],
-                                       type16 width, type16 height,
-                                       int layers[], long layer_usage[]) {
+									   type16 width, type16 height,
+									   int layers[], long layer_usage[]) {
 	int index, x, y;
 	long index_row;
 	gms_layering_t layering[GMS_PALETTE_SIZE];
@@ -968,9 +968,9 @@ void Magnetic::gms_graphics_assign_layers(type8 off_screen[], type8 on_screen[],
 }
 
 void Magnetic::gms_graphics_paint_region(winid_t glk_window, glui32 palette[], int layers[],
-                                      type8 off_screen[], type8 on_screen[],
-                                      int x, int y, int x_offset, int y_offset,
-                                      int pixel_size, type16 width, type16 height) {
+									  type8 off_screen[], type8 on_screen[],
+									  int x, int y, int x_offset, int y_offset,
+									  int pixel_size, type16 width, type16 height) {
 	type8 pixel;
 	int layer, x_min, x_max, y_min, y_max, x_index, y_index;
 	long index_row;
@@ -1074,8 +1074,8 @@ break_y_max:
 #endif
 
 void Magnetic::gms_graphics_paint_everything(winid_t glk_window,
-        glui32 palette[], type8 off_screen[], int x_offset, int y_offset,
-        type16 width, type16 height) {
+		glui32 palette[], type8 off_screen[], int x_offset, int y_offset,
+		type16 width, type16 height) {
 	type16 x, y;
 	glui32 pixel;
 

@@ -43,7 +43,7 @@ class CombatDat {
 public:
 	CombatDat(Common::SeekableReadStream &rs);
 
-    ~CombatDat();
+	~CombatDat();
 
 	const Std::string &getName() const {
 		return _name;

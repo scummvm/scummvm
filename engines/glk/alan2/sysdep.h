@@ -73,15 +73,15 @@ extern char *stringUpper(char str[]); /* INOUT - ISO string to convert */
 
 /* ISO string conversion functions */
 extern void toIso(char copy[],  /* OUT - Mapped string */
-                  char original[], /* IN - string to convert */
-                  int charset); /* IN - The current character set */
+				  char original[], /* IN - string to convert */
+				  int charset); /* IN - The current character set */
 
 extern void fromIso(char copy[], /* OUT - Mapped string */
-                    char original[]); /* IN - string to convert */
+					char original[]); /* IN - string to convert */
 
 extern void toNative(char copy[], /* OUT - Mapped string */
-                     char original[], /* IN - string to convert */
-                     int charset); /* IN - current character set */
+					 char original[], /* IN - string to convert */
+					 int charset); /* IN - current character set */
 
 } // End of namespace Alan2
 } // End of namespace Glk

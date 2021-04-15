@@ -1037,7 +1037,7 @@ void ThemeEngine::drawButton(const Common::Rect &r, const Common::U32String &str
 }
 
 void ThemeEngine::drawDropDownButton(const Common::Rect &r, uint32 dropdownWidth, const Common::U32String &str,
-                                     ThemeEngine::WidgetStateInfo buttonState, bool inButton, bool inDropdown, bool rtl) {
+									 ThemeEngine::WidgetStateInfo buttonState, bool inButton, bool inDropdown, bool rtl) {
 	if (!ready())
 		return;
 
@@ -1298,7 +1298,7 @@ void ThemeEngine::drawWidgetBackground(const Common::Rect &r, WidgetBackground b
 }
 
 void ThemeEngine::drawTab(const Common::Rect &r, int tabHeight, const Common::Array<int> &tabWidths,
-                          const Common::Array<Common::U32String> &tabs, int active, bool rtl) {
+						  const Common::Array<Common::U32String> &tabs, int active, bool rtl) {
 	if (!ready())
 		return;
 
@@ -1350,8 +1350,8 @@ void ThemeEngine::drawTab(const Common::Rect &r, int tabHeight, const Common::Ar
 }
 
 void ThemeEngine::drawText(const Common::Rect &r, const Common::U32String &str, WidgetStateInfo state,
-                           Graphics::TextAlign align, TextInversionState inverted, int deltax, bool useEllipsis,
-                           FontStyle font, FontColor color, bool restore, const Common::Rect &drawableTextArea) {
+						   Graphics::TextAlign align, TextInversionState inverted, int deltax, bool useEllipsis,
+						   FontStyle font, FontColor color, bool restore, const Common::Rect &drawableTextArea) {
 	if (!ready())
 		return;
 

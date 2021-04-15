@@ -316,10 +316,10 @@ bool RawStream<is16Bit, isUnsigned, isLE>::seek(const Timestamp &where) {
 		return new RawStream<false, UNSIGNED, false>(rate, isStereo, disposeAfterUse, stream, blockList)
 
 SeekableAudioStream *makeRawStream(Common::SeekableReadStream *stream,
-                                   const RawStreamBlockList &blockList,
-                                   int rate,
-                                   uint8 flags,
-                                   DisposeAfterUse::Flag disposeAfterUse) {
+								   const RawStreamBlockList &blockList,
+								   int rate,
+								   uint8 flags,
+								   DisposeAfterUse::Flag disposeAfterUse) {
 	const bool isStereo   = (flags & Audio::FLAG_STEREO) != 0;
 	const bool is16Bit    = (flags & Audio::FLAG_16BITS) != 0;
 	const bool isUnsigned = (flags & Audio::FLAG_UNSIGNED) != 0;
@@ -340,8 +340,8 @@ SeekableAudioStream *makeRawStream(Common::SeekableReadStream *stream,
 }
 
 SeekableAudioStream *makeRawStream(Common::SeekableReadStream *stream,
-                                   int rate, uint8 flags,
-                                   DisposeAfterUse::Flag disposeAfterUse) {
+								   int rate, uint8 flags,
+								   DisposeAfterUse::Flag disposeAfterUse) {
 	RawStreamBlockList blocks;
 	RawStreamBlock block;
 	block.pos = 0;
@@ -359,13 +359,13 @@ SeekableAudioStream *makeRawStream(Common::SeekableReadStream *stream,
 
 
 SeekableAudioStream *makeRawStream(const uint8 *buffer, uint32 size,
-                                   int rate, uint8 flags,
-                                   DisposeAfterUse::Flag disposeAfterUse) {
+								   int rate, uint8 flags,
+								   DisposeAfterUse::Flag disposeAfterUse) {
 	return makeRawStream(new Common::MemoryReadStream(buffer, size, disposeAfterUse), rate, flags, DisposeAfterUse::YES);
 }
 
 SeekableAudioStream *makeRawDiskStream_OLD(Common::SeekableReadStream *stream, RawStreamBlock *block, int numBlocks,
-        int rate, uint8 flags, DisposeAfterUse::Flag disposeStream) {
+		int rate, uint8 flags, DisposeAfterUse::Flag disposeStream) {
 	assert(numBlocks > 0);
 	RawStreamBlockList blocks;
 	for (int i = 0; i < numBlocks; ++i)

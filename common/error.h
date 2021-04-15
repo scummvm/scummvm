@@ -65,7 +65,7 @@ enum ErrorCode {
 
 	/** Failed to find a MetaEnginePlugin. This should never happen, because all MetaEngines must always
 	 * be built into the executable, regardless if the engine plugins are present or not.
-     */
+	 */
 	kMetaEnginePluginNotFound,
 
 	kEnginePluginNotFound,		///< Failed to find an Engine plugin to handle target.

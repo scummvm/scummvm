@@ -137,7 +137,7 @@ void PaperdollGump::Close(bool no_del) {
 }
 
 void PaperdollGump::PaintStat(RenderSurface *surf, unsigned int n,
-                              Std::string text, int val) {
+							  Std::string text, int val) {
 	assert(n < 7); // constant!
 
 	Font *font, *descfont;
@@ -261,7 +261,7 @@ uint16 PaperdollGump::TraceObjId(int32 mx, int32 my) {
 
 // get item coords relative to self
 bool PaperdollGump::GetLocationOfItem(uint16 itemid, int32 &gx, int32 &gy,
-                                      int32 lerp_factor) {
+									  int32 lerp_factor) {
 
 	Item *item = getItem(itemid);
 	if (!item)

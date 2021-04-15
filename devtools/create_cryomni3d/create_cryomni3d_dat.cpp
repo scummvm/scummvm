@@ -43,11 +43,11 @@ struct Parts {
 };
 
 #define DEFINE_GAME_PLATFORM_LANG_FUNCS(game, platform, lang) \
-    size_t write ## game ## _ ## platform ## _ ## lang ## _Header(FILE *f, \
-                                   uint32 offset, uint32 size); \
-    size_t write ## game ## _ ## platform ## _ ## lang ## _Data(FILE *f);
+	size_t write ## game ## _ ## platform ## _ ## lang ## _Header(FILE *f, \
+								   uint32 offset, uint32 size); \
+	size_t write ## game ## _ ## platform ## _ ## lang ## _Data(FILE *f);
 #define GAME_PLATFORM_LANG_PART(game, platform, lang) { write ## game ## _ ## platform ## _ ## lang ## _Header, \
-    write ## game ## _ ## platform ## _ ## lang ## _Data, 0, 0 }
+	write ## game ## _ ## platform ## _ ## lang ## _Data, 0, 0 }
 
 DEFINE_GAME_PLATFORM_LANG_FUNCS(Versailles, ALL, FR)
 DEFINE_GAME_PLATFORM_LANG_FUNCS(Versailles, ALL, BR)
@@ -86,7 +86,7 @@ size_t writeFileHeader(FILE *f, uint16 games) {
 }
 
 size_t writeGameHeader(FILE *f, uint32 gameId, uint16 version, uint16 lang, uint32 platforms,
-                       uint32 offset, uint32 size) {
+					   uint32 offset, uint32 size) {
 	size_t headerSize = 0;
 	headerSize += writeUint32BE(f, gameId); // BE to keep the tag readable
 	headerSize += writeUint16LE(f, version);

@@ -166,8 +166,8 @@ extern const RoomTextOffsets demon0TextOffsets[] = {
 };
 
 extern const RoomText demon0Texts[] = {
-    { TX_DEM0C001, Common::EN_ANY, "All mining equipment use this road." },
-    { -1, Common::UNK_LANG, "" }
+	{ TX_DEM0C001, Common::EN_ANY, "All mining equipment use this road." },
+	{ -1, Common::UNK_LANG, "" }
 };
 
 void Room::demon0Tick1() {

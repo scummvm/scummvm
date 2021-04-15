@@ -195,7 +195,7 @@ enum ItemFlag {
 #define WORD_TYPE_NOUN 0x40
 #define WORD_TYPE_NOUN_PLURAL 0x80
 #define WORD_TYPE_NOUN_MASK (WORD_TYPE_FEMALE | WORD_TYPE_MALE | \
-                             WORD_TYPE_NOUN | WORD_TYPE_NOUN_PLURAL)
+							 WORD_TYPE_NOUN | WORD_TYPE_NOUN_PLURAL)
 
 struct FunctionState {
 	bool _testResult;

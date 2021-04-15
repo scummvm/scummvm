@@ -42,9 +42,9 @@ char gGameName[32];
 
 OSystem_Dreamcast::OSystem_Dreamcast()
   : _devpoll(0), screen(NULL), mouse(NULL), overlay(NULL), _softkbd(this),
-    _ms_buf(NULL), _mixer(NULL),
-    _current_shake_x_pos(0), _current_shake_y_pos(0), _aspect_stretch(false), _softkbd_on(false),
-    _softkbd_motion(0), _enable_cursor_palette(false), _screenFormat(0)
+	_ms_buf(NULL), _mixer(NULL),
+	_current_shake_x_pos(0), _current_shake_y_pos(0), _aspect_stretch(false), _softkbd_on(false),
+	_softkbd_motion(0), _enable_cursor_palette(false), _screenFormat(0)
 {
   memset(screen_tx, 0, sizeof(screen_tx));
   memset(mouse_tx, 0, sizeof(mouse_tx));
@@ -73,21 +73,21 @@ static bool find_track(int track, int &first_sec, int &last_sec)
 {
   struct TOC *toc = cdfs_gettoc();
   if (!toc)
-    return false;
+	return false;
   int i, first, last;
   first = TOC_TRACK(toc->first);
   last = TOC_TRACK(toc->last);
   if (first < 1 || last > 99 || first > last)
-    return false;
+	return false;
   for (i=first; i<=last; i++)
-    if (!(TOC_CTRL(toc->entry[i-1])&4)) {
-      if (track==1) {
+	if (!(TOC_CTRL(toc->entry[i-1])&4)) {
+	  if (track==1) {
 	first_sec = TOC_LBA(toc->entry[i-1]);
 	last_sec = TOC_LBA(toc->entry[i]);
 	return true;
-      } else
+	  } else
 	--track;
-    }
+	}
   return false;
 }
 
@@ -179,9 +179,9 @@ bool OSystem_Dreamcast::hasFeature(Feature f)
   case kFeatureVirtualKeyboard:
   case kFeatureOverlaySupportsAlpha:
   case kFeatureCursorPalette:
-    return true;
+	return true;
   default:
-    return false;
+	return false;
   }
 }
 
@@ -189,18 +189,18 @@ void OSystem_Dreamcast::setFeatureState(Feature f, bool enable)
 {
   switch(f) {
   case kFeatureAspectRatioCorrection:
-    _aspect_stretch = enable;
-    if (screen)
-      setScaling();
-    break;
+	_aspect_stretch = enable;
+	if (screen)
+	  setScaling();
+	break;
   case kFeatureVirtualKeyboard:
-    _softkbd_on = enable;
-    break;
+	_softkbd_on = enable;
+	break;
   case kFeatureCursorPalette:
-    _enable_cursor_palette = enable;
-    break;
+	_enable_cursor_palette = enable;
+	break;
   default:
-    break;
+	break;
   }
 }
 
@@ -208,13 +208,13 @@ bool OSystem_Dreamcast::getFeatureState(Feature f)
 {
   switch(f) {
   case kFeatureAspectRatioCorrection:
-    return _aspect_stretch;
+	return _aspect_stretch;
   case kFeatureVirtualKeyboard:
-    return _softkbd_on;
+	return _softkbd_on;
   case kFeatureCursorPalette:
-    return _enable_cursor_palette;
+	return _enable_cursor_palette;
   default:
-    return false;
+	return false;
   }
 }
 
@@ -250,53 +250,53 @@ void OSystem_Dreamcast::logMessage(LogMessageType::Type type, const char *messag
 namespace DC_Flash {
   static int syscall_info_flash(int sect, int *info)
   {
-    return (*(int (**)(int, void*, int, int))0x8c0000b8)(sect,info,0,0);
+	return (*(int (**)(int, void*, int, int))0x8c0000b8)(sect,info,0,0);
   }
 
   static int syscall_read_flash(int offs, void *buf, int cnt)
   {
-    return (*(int (**)(int, void*, int, int))0x8c0000b8)(offs,buf,cnt,1);
+	return (*(int (**)(int, void*, int, int))0x8c0000b8)(offs,buf,cnt,1);
   }
 
   static int flash_crc(const char *buf, int size)
   {
-    int i, c, n = -1;
-    for(i=0; i<size; i++) {
-      n ^= (buf[i]<<8);
-      for(c=0; c<8; c++)
+	int i, c, n = -1;
+	for(i=0; i<size; i++) {
+	  n ^= (buf[i]<<8);
+	  for(c=0; c<8; c++)
 	if(n & 0x8000)
 	  n = (n << 1) ^ 4129;
 	else
 	  n <<= 1;
-    }
-    return (unsigned short)~n;
+	}
+	return (unsigned short)~n;
   }
 
   static int flash_read_sector(int partition, int sec, unsigned char *dst)
   {
-    int s, r, n, b, bmb, got=0;
-    int info[2];
-    char buf[64];
-    char bm[64];
+	int s, r, n, b, bmb, got=0;
+	int info[2];
+	char buf[64];
+	char bm[64];
 
-    if((r = syscall_info_flash(partition, info))<0)
-      return r;
+	if((r = syscall_info_flash(partition, info))<0)
+	  return r;
 
-    if((r = syscall_read_flash(info[0], buf, 64))<0)
-      return r;
+	if((r = syscall_read_flash(info[0], buf, 64))<0)
+	  return r;
 
-    if(memcmp(buf, "KATANA_FLASH", 12) ||
-       buf[16] != partition || buf[17] != 0)
-      return -2;
+	if(memcmp(buf, "KATANA_FLASH", 12) ||
+	   buf[16] != partition || buf[17] != 0)
+	  return -2;
 
-    n = (info[1]>>6)-1-((info[1] + 0x7fff)>>15);
-    bmb = n+1;
-    for(b = 0; b < n; b++) {
-      if(!(b&511)) {
+	n = (info[1]>>6)-1-((info[1] + 0x7fff)>>15);
+	bmb = n+1;
+	for(b = 0; b < n; b++) {
+	  if(!(b&511)) {
 	if((r = syscall_read_flash(info[0] + (bmb++ << 6), bm, 64))<0)
 	  return r;
-      }
-      if(!(bm[(b>>3)&63] & (0x80>>(b&7)))) {
+	  }
+	  if(!(bm[(b>>3)&63] & (0x80>>(b&7)))) {
 	if((r = syscall_read_flash(info[0] + ((b+1) << 6), buf, 64))<0)
 	  return r;
 	else if((s=READ_LE_UINT16(buf+0)) == sec &&
@@ -304,33 +304,33 @@ namespace DC_Flash {
 	  memcpy(dst+(s-sec)*60, buf+2, 60);
 	  got=1;
 	}
-      }
-    }
-    return got;
+	  }
+	}
+	return got;
   }
 
   static int get_locale_setting()
   {
-    unsigned char data[60];
-    if (flash_read_sector(2,5,data) == 1)
-      return data[5];
-    else
-      return -1;
+	unsigned char data[60];
+	if (flash_read_sector(2,5,data) == 1)
+	  return data[5];
+	else
+	  return -1;
   }
 } // End of namespace DC_Flash
 
 Common::String OSystem_Dreamcast::getSystemLanguage() const {
   static const char *languages[] = {
-    "ja_JP",
-    "en_US",
-    "de_DE",
-    "fr_FR",
-    "es_ES",
-    "it_IT"
+	"ja_JP",
+	"en_US",
+	"de_DE",
+	"fr_FR",
+	"es_ES",
+	"it_IT"
   };
   int l = DC_Flash::get_locale_setting();
   if (l<0 || ((unsigned)l)>=sizeof(languages)/sizeof(languages[0]))
-    l = 1;
+	l = 1;
   return Common::String(languages[l]);
 }
 
@@ -374,7 +374,7 @@ int DCLauncherDialog::runModal()
   Common::Platform platform = Common::kPlatformUnknown;
 
   if (!selectGame(engineId, gameId, dir, language, platform, icon))
-    g_system->quit();
+	g_system->quit();
 
   // Set the game path.
   ConfMan.addGameDomain(gameId);
@@ -382,15 +382,15 @@ int DCLauncherDialog::runModal()
   ConfMan.set("gameid", gameId, gameId);
 
   if (dir != NULL)
-    ConfMan.set("path", dir, gameId);
+	ConfMan.set("path", dir, gameId);
 
   // Set the game language.
   if (language != Common::UNK_LANG)
-    ConfMan.set("language", Common::getLanguageCode(language), gameId);
+	ConfMan.set("language", Common::getLanguageCode(language), gameId);
 
   // Set the game platform.
   if (platform != Common::kPlatformUnknown)
-    ConfMan.set("platform", Common::getPlatformCode(platform), gameId);
+	ConfMan.set("platform", Common::getPlatformCode(platform), gameId);
 
   // Set the target.
   ConfMan.setActiveDomain(gameId);

@@ -271,7 +271,7 @@ extern const RoomTextOffsets trial5TextOffsets[] = {
 };
 
 extern const RoomText trial5Texts[] = {
-    { -1, Common::UNK_LANG, "" }
+	{ -1, Common::UNK_LANG, "" }
 };
 
 void Room::trial5Tick1() {

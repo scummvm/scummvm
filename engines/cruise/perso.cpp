@@ -169,9 +169,9 @@ int cor_droite(int x1, int y1, int x2, int y2, point* outputTable) {
 }
 
 void processActorWalk(MovementEntry &resx_y, int16 *inc_droite, int16 *inc_droite0,
-                      int16 *inc_chemin, point* cor_joueur,
-                      int16 solution0[NUM_NODES + 3][2], int16 *inc_jo1, int16 *inc_jo2,
-                      int16 *dir_perso, int16 *inc_jo0, int16 num) {
+					  int16 *inc_chemin, point* cor_joueur,
+					  int16 solution0[NUM_NODES + 3][2], int16 *inc_jo1, int16 *inc_jo2,
+					  int16 *dir_perso, int16 *inc_jo0, int16 num) {
 	int u = 0;
 	inc_jo = *inc_jo0;
 

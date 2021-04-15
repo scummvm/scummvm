@@ -201,8 +201,8 @@ bool RawStream<bytesPerSample, isUnsigned, isLE>::seek(const Timestamp &where) {
 			return new RawStream<1, UNSIGNED, false>(rate, isStereo, disposeAfterUse, stream)
 
 SeekableAudioStream *makeRawStream(Common::SeekableReadStream *stream,
-                                   int rate, byte flags,
-                                   DisposeAfterUse::Flag disposeAfterUse) {
+								   int rate, byte flags,
+								   DisposeAfterUse::Flag disposeAfterUse) {
 	const bool isStereo      = (flags & Audio::FLAG_STEREO) != 0;
 	const int bytesPerSample = (flags & Audio::FLAG_24BITS ? 3 : (flags & Audio::FLAG_16BITS ? 2 : 1));
 	const bool isUnsigned    = (flags & Audio::FLAG_UNSIGNED) != 0;
@@ -218,8 +218,8 @@ SeekableAudioStream *makeRawStream(Common::SeekableReadStream *stream,
 }
 
 SeekableAudioStream *makeRawStream(const byte *buffer, uint32 size,
-                                   int rate, byte flags,
-                                   DisposeAfterUse::Flag disposeAfterUse) {
+								   int rate, byte flags,
+								   DisposeAfterUse::Flag disposeAfterUse) {
 	return makeRawStream(new Common::MemoryReadStream(buffer, size, disposeAfterUse), rate, flags, DisposeAfterUse::YES);
 }
 

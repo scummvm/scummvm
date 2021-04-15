@@ -349,7 +349,7 @@ static void sayparam(int p) {
   $ = no space needed after this
  */
 static void prsym(
-    char *str   /* IN - The string starting with '$' */
+	char *str   /* IN - The string starting with '$' */
 ) {
 	switch (toLower(str[1])) {
 	case 'n':
@@ -558,8 +558,8 @@ static int count(int cnt /* IN - the container to count */) {
 
   */
 static int sumatr(
-    Aword atr,         /* IN - the attribute to sum over */
-    Aword cnt          /* IN - the container to sum */
+	Aword atr,         /* IN - the attribute to sum over */
+	Aword cnt          /* IN - the container to sum */
 ) {
 	uint i;
 	int sum = 0;
@@ -581,8 +581,8 @@ static int sumatr(
 
   */
 Boolean checklim(
-    Aword cnt,         /* IN - Container code */
-    Aword obj          /* IN - The object to add */
+	Aword cnt,         /* IN - Container code */
+	Aword obj          /* IN - The object to add */
 ) {
 	LimElem *lim;
 	Aword props;
@@ -633,8 +633,8 @@ Boolean checklim(
 
   */
 static Boolean trycheck(
-    Aaddr adr,         /* IN - ACODE address to check table */
-    Boolean act        /* IN - Act if it fails ? */
+	Aaddr adr,         /* IN - ACODE address to check table */
+	Boolean act        /* IN - Act if it fails ? */
 ) {
 	ChkElem *chk;
 
@@ -723,8 +723,8 @@ void go(CONTEXT, int dir) {
 
  */
 static AltElem *findalt(
-    Aword vrbsadr,     /* IN - Address to start of list */
-    Aword param        /* IN - Which parameter to match */
+	Aword vrbsadr,     /* IN - Address to start of list */
+	Aword param        /* IN - Which parameter to match */
 ) {
 	VrbElem *vrb;
 	AltElem *alt;

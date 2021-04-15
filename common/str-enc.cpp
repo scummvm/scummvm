@@ -777,7 +777,7 @@ getReverseConversionTable(CodePage page) {
 }
 
 void U32String::decodeOneByte(const char *src, uint32 len, CodePage page) {
-    	const uint16 *conversionTable = getConversionTable(page);
+		const uint16 *conversionTable = getConversionTable(page);
 
 	if (conversionTable == nullptr) {
 		conversionTable = kASCIIConversionTable;

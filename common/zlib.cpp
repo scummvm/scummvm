@@ -32,13 +32,13 @@
 
 #if defined(USE_ZLIB)
   #ifdef __SYMBIAN32__
-    #include <zlib\zlib.h>
+	#include <zlib\zlib.h>
   #elif defined(__MORPHOS__)
 	#define _NO_PPCINLINE
 	#include <zlib.h>
 	#undef _NO_PPCINLINE
   #else
-    #include <zlib.h>
+	#include <zlib.h>
   #endif
 
   #if ZLIB_VERNUM < 0x1204

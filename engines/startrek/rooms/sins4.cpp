@@ -173,7 +173,7 @@ extern const RoomTextOffsets sins4TextOffsets[] = {
 };
 
 extern const RoomText sins4Texts[] = {
-      { -1, Common::UNK_LANG, "" }
+	  { -1, Common::UNK_LANG, "" }
 };
 
 void Room::sins4Tick1() {

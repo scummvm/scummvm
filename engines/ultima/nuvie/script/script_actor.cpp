@@ -1740,12 +1740,12 @@ Iterate through objects in the actor's inventory.
    local obj
 
    for obj in actor_inventory(actor) do
-      if obj.readied then
-         local armour = armour_tbl[obj.obj_n]
-         if armour ~= nil then
-            ac = ac + armour
-         end
-      end
+	  if obj.readied then
+		 local armour = armour_tbl[obj.obj_n]
+		 if armour ~= nil then
+			ac = ac + armour
+		 end
+	  end
    end
 @within Actor
  */

@@ -34,9 +34,9 @@
 #define JOY_DEADZONE 3200
 
 SymbianSdlEventSource::zoneDesc SymbianSdlEventSource::_zones[TOTAL_ZONES] = {
-        { 0, 0, 320, 145 },
-        { 0, 145, 150, 55 },
-        { 150, 145, 170, 55 }
+		{ 0, 0, 320, 145 },
+		{ 0, 145, 150, 55 },
+		{ 150, 145, 170, 55 }
 };
 
 SymbianSdlEventSource::SymbianSdlEventSource()

@@ -26,7 +26,7 @@
 namespace Kyra {
 
 Screen_MR::Screen_MR(KyraEngine_MR *vm, OSystem *system)
-    : Screen_v2(vm, system, _screenDimTable, _screenDimTableCount) {
+	: Screen_v2(vm, system, _screenDimTable, _screenDimTableCount) {
 }
 
 Screen_MR::~Screen_MR() {

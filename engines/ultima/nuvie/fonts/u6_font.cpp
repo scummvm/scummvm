@@ -50,7 +50,7 @@ bool U6Font::init(unsigned char *data, uint16 num_c, uint16 char_offset) {
 }
 
 uint16 U6Font::drawChar(Screen *screen, uint8 char_num, uint16 x, uint16 y,
-                        uint8 color) {
+						uint8 color) {
 	unsigned char buf[64];
 	unsigned char *pixels;
 	uint16 i, j;

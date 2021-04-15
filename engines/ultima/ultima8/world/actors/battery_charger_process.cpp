@@ -65,7 +65,7 @@ void BatteryChargerProcess::run() {
 		return;
 	}
 
-    if (!audio->isSFXPlayingForObject(CHARGE_GOING_SFX, _itemNum))
+	if (!audio->isSFXPlayingForObject(CHARGE_GOING_SFX, _itemNum))
 		audio->playSFX(CHARGE_GOING_SFX, 0x80, _itemNum, 1);
 
 	uint16 newEnergy = avatar->getMana() + 25;

@@ -182,8 +182,8 @@ Picture *Pictures::load(const Common::String &name) {
 	// Create new picture based on the image
 	pic = new Picture(img->w, img->h, g_system->getScreenFormat());
 	pic->_refCount = 1;
-    pic->_name = name;
-    pic->_scaled = false;
+	pic->_name = name;
+	pic->_scaled = false;
 	if (transColor != -1 || (!palette && img->format.aBits() > 0))
 		pic->clear(pic->getTransparentColor());
 
@@ -210,8 +210,8 @@ Picture *Pictures::load(const Common::String &name) {
 		}
 	}
 
-    store(pic);
-    return pic;
+	store(pic);
+	return pic;
 }
 
 Picture *Pictures::scale(Picture *src, size_t sx, size_t sy) {

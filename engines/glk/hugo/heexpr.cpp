@@ -318,7 +318,7 @@ int Hugo::GetVal() {
 				break;
 			}
 #endif
-                        val = CallRoutine(routineaddr);
+						val = CallRoutine(routineaddr);
 
 			break;
 		}

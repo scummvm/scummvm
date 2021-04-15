@@ -1880,7 +1880,7 @@ reg_t kIntersections(EngineState *s, int argc, reg_t *argv) {
 
 // Compute square of the distance of p to the segment a-b.
 static float pointSegDistance(const Common::Point &a, const Common::Point &b,
-                              const Common::Point &p) {
+							  const Common::Point &p) {
 	FloatPoint ba(b-a);
 	FloatPoint pa(p-a);
 	FloatPoint bp(b-p);

@@ -24,9 +24,9 @@
 
 class Detection : public PluginObject {
 public:
-    Detection() {}
-    virtual ~Detection() {}
+	Detection() {}
+	virtual ~Detection() {}
 
-    virtual const char *getName() const = 0;
-    virtual PluginList getPlugins() const = 0;
+	virtual const char *getName() const = 0;
+	virtual PluginList getPlugins() const = 0;
 };

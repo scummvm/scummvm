@@ -36,10 +36,10 @@ Font::~Font() {
 
 
 void Font::getTextSize(const Std::string &text,
-                       int32 &resultwidth, int32 &resultheight,
-                       unsigned int &remaining,
-                       int32 width, int32 height, TextAlign align,
-                       bool u8specials) {
+					   int32 &resultwidth, int32 &resultheight,
+					   unsigned int &remaining,
+					   int32 width, int32 height, TextAlign align,
+					   bool u8specials) {
 	Std::list<PositionedText> tmp;
 	tmp = typesetText<Traits>(this, text, remaining,
 	                          width, height, align, u8specials,
@@ -146,7 +146,7 @@ bool Font::SJISTraits::canBreakAfter(Std::string::const_iterator &i) {
 
 template<class T>
 static void findWordEnd(const Std::string &text,
-                        Std::string::const_iterator &iter, bool u8specials) {
+						Std::string::const_iterator &iter, bool u8specials) {
 	while (iter != text.end()) {
 		if (T::isSpace(iter, u8specials)) return;
 		T::advance(iter);
@@ -155,7 +155,7 @@ static void findWordEnd(const Std::string &text,
 
 template<class T>
 static void passSpace(const Std::string &text,
-                      Std::string::const_iterator &iter, bool u8specials) {
+					  Std::string::const_iterator &iter, bool u8specials) {
 	while (iter != text.end()) {
 		if (!T::isSpace(iter, u8specials)) return;
 		T::advance(iter);

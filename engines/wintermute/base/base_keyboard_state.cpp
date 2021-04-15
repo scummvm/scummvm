@@ -335,7 +335,7 @@ bool BaseKeyboardState::scCallMethod(ScScript *script, ScStack *stack, ScStack *
 				}
 			}
 
-            if (vKeyCode == Common::KEYCODE_INVALID) {
+			if (vKeyCode == Common::KEYCODE_INVALID) {
 				warning("Unknown VKEY: %d", temp);
 			}
 

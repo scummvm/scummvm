@@ -2971,32 +2971,32 @@ error:
 
 NSVGpath* nsvgDuplicatePath(NSVGpath* p)
 {
-    NSVGpath* res = NULL;
+	NSVGpath* res = NULL;
 
-    if (p == NULL)
-        return NULL;
+	if (p == NULL)
+		return NULL;
 
-    res = (NSVGpath*)malloc(sizeof(NSVGpath));
-    if (res == NULL) goto error;
-    memset(res, 0, sizeof(NSVGpath));
+	res = (NSVGpath*)malloc(sizeof(NSVGpath));
+	if (res == NULL) goto error;
+	memset(res, 0, sizeof(NSVGpath));
 
-    res->pts = (float*)malloc(p->npts*2*sizeof(float));
-    if (res->pts == NULL) goto error;
-    memcpy(res->pts, p->pts, p->npts * sizeof(float) * 2);
-    res->npts = p->npts;
+	res->pts = (float*)malloc(p->npts*2*sizeof(float));
+	if (res->pts == NULL) goto error;
+	memcpy(res->pts, p->pts, p->npts * sizeof(float) * 2);
+	res->npts = p->npts;
 
-    memcpy(res->bounds, p->bounds, sizeof(p->bounds));
+	memcpy(res->bounds, p->bounds, sizeof(p->bounds));
 
-    res->closed = p->closed;
+	res->closed = p->closed;
 
-    return res;
+	return res;
 
 error:
-    if (res != NULL) {
-        free(res->pts);
-        free(res);
-    }
-    return NULL;
+	if (res != NULL) {
+		free(res->pts);
+		free(res);
+	}
+	return NULL;
 }
 
 void nsvgDelete(NSVGimage* image)

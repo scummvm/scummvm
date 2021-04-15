@@ -111,7 +111,7 @@ void Matrix<4, 4>::translate(const Vector3d &vec) {
  * http://clb.demon.fi/MathGeoLib/docs/float3x3_LookAt.php
  */
 void Matrix<4, 4>::buildFromTargetDir(const Math::Vector3d &modelForward, const Math::Vector3d &targetDirection,
-                                      const Math::Vector3d &modelUp, const Math::Vector3d &worldUp)
+									  const Math::Vector3d &modelUp, const Math::Vector3d &worldUp)
 {
 	Matrix3 rotation;
 	rotation.buildFromTargetDir(modelForward, targetDirection, modelUp, worldUp);

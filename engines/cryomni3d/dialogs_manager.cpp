@@ -349,7 +349,7 @@ bool DialogsManager::play(const Common::String &sequence, bool &slowStop) {
 }
 
 Common::Array<DialogsManager::Goto> DialogsManager::executeAfterPlayAndBuildGotoList(
-    const char *actions) {
+	const char *actions) {
 	Common::Array<DialogsManager::Goto> gotos;
 
 	for (; actions && *actions != ':'; actions = nextLine(actions)) {
@@ -486,7 +486,7 @@ void DialogsManager::executeShow(const char *showLine) {
 }
 
 const char *DialogsManager::executePlayerQuestion(const char *text, bool dryRun,
-        const char **realLabel) {
+		const char **realLabel) {
 	// Go after the text
 	const char *actions = nextLine(text);
 
@@ -551,7 +551,7 @@ const char *DialogsManager::parseIf(const char *ifLine) {
 }
 
 void DialogsManager::registerSubtitlesSettings(const Common::String &videoName,
-        const SubtitlesSettings &settings) {
+		const SubtitlesSettings &settings) {
 	_subtitlesSettings[videoName] = settings;
 }
 

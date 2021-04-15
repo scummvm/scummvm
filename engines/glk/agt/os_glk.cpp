@@ -72,8 +72,8 @@ static const glui32 GAGT_PORT_VERSION = 0x00010701;
 /* Forward declaration of event wait functions. */
 static void gagt_event_wait(glui32 wait_type, event_t *event);
 static void gagt_event_wait_2(glui32 wait_type_1,
-                              glui32 wait_type_2,
-                              event_t *event);
+							  glui32 wait_type_2,
+							  event_t *event);
 
 /*
  * Forward declaration of the g_vm->glk_exit() wrapper.  Normal functions in this
@@ -661,7 +661,7 @@ static void gagt_iso_to_cp(const unsigned char *from_string, unsigned char *to_s
  * status buffer printed for non-windowing Glk libraries, for comparison.
  */
 static char *gagt_status_buffer = NULL,
-             *gagt_status_buffer_printed = NULL;
+			 *gagt_status_buffer_printed = NULL;
 
 /*
  * Indication that we are in mid-delay.  The delay is silent, and can look
@@ -978,8 +978,8 @@ struct gagt_attrset_t {
  * correspond to AGT_NORMAL.
  */
 static gagt_attrset_t gagt_current_attribute_set = { AGT_WHITE, FALSE,
-                                                     FALSE, FALSE
-                                                   };
+													 FALSE, FALSE
+												   };
 
 /*
  * An extra flag to indicate if we have coerced fixed font override.  On
@@ -996,9 +996,9 @@ static int gagt_coerced_fixed = FALSE;
  * attributes.
  */
 static const unsigned char GAGT_COLOR_MASK = 0x0f,
-                           GAGT_BLINK_MASK = 1 << 4,
-                           GAGT_FIXED_MASK = 1 << 5,
-                           GAGT_EMPHASIS_MASK = 1 << 6;
+						   GAGT_BLINK_MASK = 1 << 4,
+						   GAGT_FIXED_MASK = 1 << 5,
+						   GAGT_EMPHASIS_MASK = 1 << 6;
 
 /* Forward declaration of message function. */
 static void gagt_standout_string(const char *message);
@@ -1438,7 +1438,7 @@ struct gagt_line_s {
  * lines, with a tail pointer to facilitate adding entries at the end.
  */
 static gagt_lineref_t gagt_page_head = NULL,
-                      gagt_page_tail = NULL;
+					  gagt_page_tail = NULL;
 
 /*
  * Definition of the current output line; this one is appended to on
@@ -1454,7 +1454,7 @@ static gagt_string_t gagt_current_buffer = { NULL, NULL, 0, 0 };
  * String append, move, and allocation free for string_t buffers.
  */
 static void gagt_string_append(gagt_stringref_t buffer, const char *string,
-                               unsigned char packed_attributes) {
+							   unsigned char packed_attributes) {
 	int length, bytes;
 
 	/*
@@ -1741,7 +1741,7 @@ struct gagt_paragraph_s {
  * adding entries at the end.
  */
 static gagt_paragraphref_t gagt_paragraphs_head = NULL,
-                           gagt_paragraphs_tail = NULL;
+						   gagt_paragraphs_tail = NULL;
 
 /*
  * gagt_paragraphs_delete()
@@ -2090,7 +2090,7 @@ static int gagt_get_paragraph_line_count(const gagt_paragraphref_t paragraph) {
  * characters that appear together multiple times in non-table text).
  */
 static const int GAGT_THRESHOLD = 4,
-                 GAGT_COMMON_THRESHOLD = 8;
+				 GAGT_COMMON_THRESHOLD = 8;
 static const char *const GAGT_COMMON_PUNCTUATION = ".!?";
 
 
@@ -2733,7 +2733,7 @@ static int gagt_compare_special_line(const char *compare, const gagt_lineref_t l
 }
 
 static int gagt_compare_special_paragraph(const gagt_specialref_t special,
-        const gagt_paragraphref_t paragraph) {
+		const gagt_paragraphref_t paragraph) {
 	/* If the line counts match, compare line by line. */
 	if (special->line_count == gagt_get_paragraph_line_count(paragraph)) {
 		gagt_lineref_t line;
@@ -2903,7 +2903,7 @@ static glui32 gagt_display_special(const gagt_specialref_t special, glui32 curre
  * been silenced as a result of already using a Glk command.
  */
 static int gagt_help_requested = FALSE,
-           gagt_help_hints_silenced = FALSE;
+		   gagt_help_hints_silenced = FALSE;
 
 /*
  * gagt_display_register_help_request()
@@ -2945,7 +2945,7 @@ static glui32 gagt_display_provide_help_hint(glui32 current_style) {
  * The function handles a flag to coerce fixed width font.
  */
 static glui32 gagt_display_text_element(const char *string, const unsigned char *attributes,
-                                        int length, glui32 current_style, int fixed_width) {
+										int length, glui32 current_style, int fixed_width) {
 	int marker, index;
 	glui32 set_style;
 	assert(g_vm->glk_stream_get_current());
@@ -3004,8 +3004,8 @@ static glui32 gagt_display_text_element(const char *string, const unsigned char 
  * trailing whitespace).
  */
 static glui32 gagt_display_line(const gagt_lineref_t line, glui32 current_style,
-                                int fixed_width, int skip_indent, int skip_outdent,
-                                int trim_hyphen) {
+								int fixed_width, int skip_indent, int skip_outdent,
+								int trim_hyphen) {
 	int start, length;
 	glui32 set_style;
 
@@ -3044,7 +3044,7 @@ static glui32 gagt_display_line(const gagt_lineref_t line, glui32 current_style,
  * from the line, and receives the font hint of the prior line.
  */
 static glui32 gagt_display_hinted_line(const gagt_lineref_t line, glui32 current_style,
-                                       gagt_font_hint_t prior_hint) {
+									   gagt_font_hint_t prior_hint) {
 	glui32 style;
 
 	style = current_style;
@@ -3513,9 +3513,9 @@ static void gagt_delay_resume() {
 /* Saved details of any current box dimensions and flags. */
 static unsigned long gagt_box_flags = 0;
 static int gagt_box_busy = FALSE,
-           gagt_box_width = 0,
-           gagt_box_height = 0,
-           gagt_box_startx = 0;
+		   gagt_box_width = 0,
+		   gagt_box_height = 0,
+		   gagt_box_startx = 0;
 
 
 /*
@@ -5000,8 +5000,8 @@ static int gagt_event_in_glk_select() {
  * use with Glk libraries that don't support separate windows.
  */
 static const int GAGT_DEFAULT_SCREEN_WIDTH = 80,
-                 GAGT_DEFAULT_SCREEN_HEIGHT = 25,
-                 GAGT_DEFAULT_STATUS_WIDTH = 76;
+				 GAGT_DEFAULT_SCREEN_HEIGHT = 25,
+				 GAGT_DEFAULT_STATUS_WIDTH = 76;
 
 
 /*
@@ -5597,7 +5597,7 @@ static void gagt_main() {
  * we only get a call to main once.
  */
 static int gagt_startup_called = FALSE,
-           gagt_main_called = FALSE;
+		   gagt_main_called = FALSE;
 
 /*
  * We try to catch calls to exit() from the interpreter, and redirect them
