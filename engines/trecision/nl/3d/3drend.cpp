@@ -118,7 +118,6 @@ int16 _minXClip;
 int16 _minYClip;
 int16 _maxXClip;
 int16 _maxYClip;
-int16 _screenMaxX;
 
 int16 _zBufStartX;
 int16 _zBufStartY;
@@ -230,7 +229,7 @@ void textureTriangle(int32 x1, int32 y1, int32 z1, int32 c1, int32 tx1, int32 ty
 			// slope dty/_dx
 			int32 mty = ((int32)(_rTextY[y] - (oly = _lTextY[y])) << 16) / dx;
 			// screen offset
-			int32 sl = el + _screenMaxX * y;
+			int32 sl = el + MAXX * y;
 			// pointer to zbuffer
 			int16 *z = _zBuf + (y - _zBufStartY) * _zBufWid + (el - _zBufStartX);
 			uint16 *screenPtr = _curPage + sl;
@@ -411,7 +410,7 @@ void shadowTriangle(int32 x1, int32 y1, int32 x2, int32 y2,
 
 		if (!(dx <= 0)) {
 			// screen offset
-			int32 sl = el + _screenMaxX * y;
+			int32 sl = el + MAXX * y;
 
 			int16 *zBufferPtr = _zBuf + (y - _zBufStartY) * _zBufWid + (el - _zBufStartX);
 			uint16 *screenPtr = _curPage + sl;
@@ -476,12 +475,11 @@ void shadowScanEdge(int32 x1, int32 y1, int32 x2, int32 y2) {
 /*------------------------------------------------
 	Initialize a 3D room
 --------------------------------------------------*/
-void init3DRoom(int16 dx, uint16 *destBuffer, int16 *zBuffer) {
+void init3DRoom(uint16 *destBuffer, int16 *zBuffer) {
 	_curPage = destBuffer;
 	_zBuf = zBuffer;
-	_cx = (dx - 1) / 2;
-	_cy = (480 - 1) / 2;
-	_screenMaxX = dx;
+	_cx = (MAXX - 1) / 2;
+	_cy = (MAXY - 1) / 2;
 }
 
 /*------------------------------------------------
@@ -837,7 +835,7 @@ void drawCharacter(uint8 flag) {
 
 		int p0 = 0;
 		for (int b = _zBufStartY; b < g_vm->_actor->_lim[3]; b++) {
-			int px0 = b * _screenMaxX + _zBufStartX;
+			int px0 = b * MAXX + _zBufStartX;
 			for (int a = 1; a < _zBufWid; a++) {
 				// CHECKME: These are always 0
 				//bool _shadowSplit;
