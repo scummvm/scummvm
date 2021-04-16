@@ -214,12 +214,12 @@ void AGSEngine::setGraphicsMode(size_t w, size_t h) {
 
 bool AGSEngine::canLoadGameStateCurrently() {
 	return !_GP(thisroom).Options.SaveLoadDisabled &&
-		!_G(inside_script) && !_GP(play).fast_forward;
+		!_G(inside_script) && !_GP(play).fast_forward && !_G(no_blocking_functions);
 }
 
 bool AGSEngine::canSaveGameStateCurrently() {
 	return !_GP(thisroom).Options.SaveLoadDisabled &&
-		!_G(inside_script) && !_GP(play).fast_forward;
+		!_G(inside_script) && !_GP(play).fast_forward && !_G(no_blocking_functions);
 }
 
 Common::Error AGSEngine::loadGameState(int slot) {
