@@ -95,7 +95,7 @@ void PaintScreen(uint8 flag) {
 		DObj.x    = 0;
 		DObj.y    = TOP;
 		DObj.dx   = MAXX;
-		DObj.dy   = 480;
+		DObj.dy   = MAXY;
 		DObj.l.left = oldString.x;
 		DObj.l.top = oldString.y - TOP;
 		DObj.l.right = DObj.l.left + oldString.dx;
@@ -128,7 +128,7 @@ void PaintScreen(uint8 flag) {
 			DObj.x    = 0;
 			DObj.y    = TOP;
 			DObj.dx   = MAXX;
-			DObj.dy   = 480;
+			DObj.dy   = MAXY;
 
 			if (SortTable[a]._typology == TYPO_BMP) {
 				DObj.l.left = g_vm->_obj[SortTable[a]._index]._px;
@@ -207,7 +207,7 @@ void PaintScreen(uint8 flag) {
 
 	// Handle papaverine delayed action
 	if ((g_vm->_curRoom == r4A) && (g_vm->_obj[oCHOCOLATES4A]._flag & OBJFLAG_EXTRA)) {
-		if (g_vm->_animMgr->_curAnimFrame[kSmackerBackground] > 480) {
+		if (g_vm->_animMgr->_curAnimFrame[kSmackerBackground] > MAXY) {
 			g_vm->playScript(s4AHELLEN);
 			g_vm->_obj[oCHOCOLATES4A]._flag &= ~OBJFLAG_EXTRA;
 		}
