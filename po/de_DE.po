@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-04-16 12:21+0000\n"
-"PO-Revision-Date: 2021-04-14 05:14+0000\n"
+"PO-Revision-Date: 2021-04-16 16:50+0000\n"
 "Last-Translator: Lothar Serra Mari <serra@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/de/>\n"
@@ -2309,13 +2309,11 @@ msgstr ""
 
 #: engines/engine.cpp:649
 msgid "WARNING: "
-msgstr ""
+msgstr "WARNUNG: "
 
 #: engines/engine.cpp:649
-#, fuzzy
-#| msgid "Full title of the game"
 msgid " Shall we still run the game?"
-msgstr "Vollständiger Name des Spiels"
+msgstr " Sollen wir das Spiel trotzdem starten?"
 
 #: engines/engine.cpp:650
 msgid ""
