@@ -54,7 +54,7 @@ void SceneScriptRC03::InitializeScene() {
 #if BLADERUNNER_ORIGINAL_BUGS
 		Scene_Exit_Add_2D_Exit(2, 524, 350, 573, 359, 2);
 #else
-	// prevent Izo's corpse from blocking the exit hot-spot area
+		// prevent Izo's corpse from blocking the exit hot-spot area
 		Scene_Exit_Add_2D_Exit(2, 524, 340, 573, 359, 2);
 #endif // BLADERUNNER_ORIGINAL_BUGS
 	}
