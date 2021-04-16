@@ -193,11 +193,7 @@ void textureTriangle(int32 x1, int32 y1, int32 z1, int32 c1, int32 tx1, int32 ty
 void textureScanEdge(int32 x1, int32 y1, int32 z1, int32 c1, int32 tx1, int32 ty1, int32 x2, int32 y2, int32 z2, int32 c2, int32 tx2, int32 ty2);
 void shadowTriangle(int32 x1, int32 y1, int32 x2, int32 y2, int32 x3, int32 y3, uint8 cv, int32 zv);
 void shadowScanEdge(int32 x1, int32 y1, int32 x2, int32 y2);
-void init3DRoom(int16 dx, uint16 *destBuffer, int16 *zBuffer);
-void setClipping(int16 x1, int16 y1, int16 x2, int16 y2);
-void setZBufferRegion(int16 sx, int16 sy, int16 dx);
 signed char clockWise(int16 x1, int16 y1, int16 x2, int16 y2, int16 x3, int16 y3);
-void drawCharacter(uint8 flag);
 int read3D(Common::String c);
 void findPath();
 void findShortPath();
