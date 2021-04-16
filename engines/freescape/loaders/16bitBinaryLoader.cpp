@@ -19,6 +19,7 @@
 #include "freescape/loaders/16bitBinaryLoader.h"
 #include "freescape/language/16bitDetokeniser.h"
 #include "freescape/language/instruction.h"
+#include "freescape/language/parser.h"
 
 class StreamLoader
 {
@@ -190,7 +191,7 @@ static Object *loadObject(StreamLoader &stream)
 				Common::Array<uint8> *conditionData = stream.nextBytes(byteSizeOfObject);
 
 				Common::String *conditionSource = detokenise16bitCondition(*conditionData);
-				instructions = nullptr; //getInstructions(conditionSource.get());
+				//instructions = getInstructions(conditionSource);
 			}
 			byteSizeOfObject = 0;
 
