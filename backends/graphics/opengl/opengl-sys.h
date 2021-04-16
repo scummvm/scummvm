@@ -103,6 +103,14 @@ struct Context {
 	 */
 	void reset();
 
+	/** Helper function for checking the GL version supported by the context. */
+	inline bool isGLVersionOrHigher(int major, int minor) {
+		return ((majorVersion > major) || ((majorVersion == major) && (minorVersion >= minor)));
+	}
+
+	/** The GL version supported by the context. */
+	int majorVersion, minorVersion;
+
 	/** The maximum texture size supported by the context. */
 	GLint maxTextureSize;
 
@@ -117,6 +125,12 @@ struct Context {
 
 	/** Whether FBO support is available or not. */
 	bool framebufferObjectSupported;
+
+	/** Whether packed pixels support is available or not. */
+	bool packedPixelsSupported;
+
+	/** Whether texture coordinate edge clamping is available or not. */
+	bool textureEdgeClampSupported;
 
 #define GL_FUNC_DEF(ret, name, param) ret (GL_CALL_CONV *name)param
 #include "backends/graphics/opengl/opengl-func.h"
