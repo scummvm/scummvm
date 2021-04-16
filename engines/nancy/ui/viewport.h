@@ -46,7 +46,8 @@ public:
 		_movementLastFrame(0),
 		_edgesMask(0),
 		_currentFrame(0),
-		_videoFormat(0) {}
+		_videoFormat(0),
+		_stickyCursorPos(-1, -1) {}
 		
 	virtual ~Viewport() { _decoder.close(); _fullFrame.free(); }
 
@@ -94,6 +95,7 @@ public:
 	Graphics::ManagedSurface _fullFrame;
 	Common::Rect _format1Bounds;
 	Common::Rect _format2Bounds;
+	Common::Point _stickyCursorPos;
 };
 
 } // End of namespace UI

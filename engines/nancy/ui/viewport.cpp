@@ -20,6 +20,8 @@
  *
  */
 
+#include "common/system.h"
+
 #include "engines/nancy/nancy.h"
 #include "engines/nancy/graphics.h"
 #include "engines/nancy/cursor.h"
@@ -61,11 +63,17 @@ void Viewport::handleInput(NancyInput &input) {
 	Time playTime = g_nancy->getTotalPlayTime();
 	byte direction = 0;
 
+	// Make cursor sticky when scrolling the viewport
+	if (input.input & (NancyInput::kLeftMouseButton | NancyInput::kRightMouseButton) && _stickyCursorPos.x > -1) {
+		g_system->warpMouse(_stickyCursorPos.x, _stickyCursorPos.y);
+		input.mousePos = _stickyCursorPos;
+	}
+
 	if (_screenPosition.contains(input.mousePos)) {
 		g_nancy->_cursorManager->setCursorType(CursorManager::kNormal);
 	}
 
-	// Do not handle hotspots marked as incative and ignore diagonals if intersecting hotspots are not active
+	// Do not handle hotspots marked as inactive and ignore diagonals if intersecting hotspots are not active
 	if (_upHotspot.contains(input.mousePos) && (_edgesMask & kUp) == 0) {
 		if (_upHotspot.findIntersectingRect(_leftHotspot).contains(input.mousePos)) {
 			if ((_edgesMask & kLeft) == 0) {
@@ -116,6 +124,15 @@ void Viewport::handleInput(NancyInput &input) {
 		} else {
 			direction |= kRight;
 		}
+	}
+
+	// Set sticky cursor
+	if (input.input & (NancyInput::kLeftMouseButton | NancyInput::kRightMouseButton) && direction) {
+		if (_stickyCursorPos.x <= -1) {
+			_stickyCursorPos = input.mousePos;
+		}
+	} else {
+		_stickyCursorPos.x = -1;
 	}
 
 	if (direction) {
