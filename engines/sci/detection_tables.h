@@ -4200,6 +4200,16 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_PQSWAT },
 
+	// Police Quest: SWAT - English Windows (from the Police Quest Collection)
+	// With only first CD copied
+	// Executable scanning reports "2.100.002", VERSION file reports "1.0c"
+	// Original DOS/Windows release VERSION file reports "1.000" is the same
+	{"pqswat", _s("Incomplete game detected. You have to copy data from all the CDs."), {
+		{"resmap.001", 0, "de5ea1beb3d9490737aa5fd398fe9765", 6937},
+		{"ressci.001", 0, "7cd5414f54748f90904a46123a52472f", 29467363},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformDOS, ADGF_WARNING, GUIO_PQSWAT },
+
 	// Police Quest: SWAT - French 1.100 DOS/Windows
 	// Reported by e-Scarlatti in bug #11100
 	{"pqswat", "", {
