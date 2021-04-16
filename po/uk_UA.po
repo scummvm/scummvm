@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-04-16 12:21+0000\n"
-"PO-Revision-Date: 2021-04-13 23:18+0000\n"
+"PO-Revision-Date: 2021-04-16 16:48+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/uk/>\n"
@@ -2304,13 +2304,11 @@ msgstr ""
 
 #: engines/engine.cpp:649
 msgid "WARNING: "
-msgstr ""
+msgstr "ПОПЕРЕДЖЕННЯ: "
 
 #: engines/engine.cpp:649
-#, fuzzy
-#| msgid "Full title of the game"
 msgid " Shall we still run the game?"
-msgstr "Повна назва гри"
+msgstr " Чи ви хочете таки запустити гру?"
 
 #: engines/engine.cpp:650
 msgid ""
@@ -5867,7 +5865,7 @@ msgstr "Yamaha FB-01"
 
 #: engines/sci/detection_tables.h:4207
 msgid "Incomplete game detected. You have to copy data from all the CDs."
-msgstr ""
+msgstr "Неповна версія гри. Ви мусите скопіювати дані з усіх CD."
 
 #: engines/sci/engine/kfile.cpp:485 engines/sci/metaengine.cpp:404
 msgid "(Autosave)"
