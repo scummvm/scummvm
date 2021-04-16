@@ -2713,6 +2713,7 @@ Common::KeymapArray PegasusEngine::initKeymaps() {
 	act->addDefaultInputMapping("UP");
 	act->addDefaultInputMapping("KP8");
 	act->addDefaultInputMapping("JOY_UP");
+	act->addDefaultInputMapping("MOUSE_WHEEL_UP");
 	engineKeyMap->addAction(act);
 
 	act = new Action(kStandardActionMoveDown, _("Down/Zoom Out"));
@@ -2720,6 +2721,7 @@ Common::KeymapArray PegasusEngine::initKeymaps() {
 	act->addDefaultInputMapping("DOWN");
 	act->addDefaultInputMapping("KP5");
 	act->addDefaultInputMapping("JOY_DOWN");
+	act->addDefaultInputMapping("MOUSE_WHEEL_DOWN");
 	engineKeyMap->addAction(act);
 
 	act = new Action(kStandardActionMoveLeft, _("Turn Left"));

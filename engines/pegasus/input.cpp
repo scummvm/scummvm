@@ -63,18 +63,8 @@ void InputDeviceManager::getInput(Input &input, const InputBits filter) {
 	InputBits currentBits = 0;
 
 	Common::Event event;
-	while (g_system->getEventManager()->pollEvent(event)) {
-		switch (event.type) {
-			case Common::EVENT_WHEELUP:
-				currentBits |= (kRawButtonDown << kUpButtonShift);
-				break;
-			case Common::EVENT_WHEELDOWN:
-				currentBits |= (kRawButtonDown << kDownButtonShift);
-				break;
-			default:
-				break;
-		}
-	}
+	while (g_system->getEventManager()->pollEvent(event))
+		;
 
 	// Now fill in the rest of the bitfield
 	if (_keysDown[kPegasusActionUp])
