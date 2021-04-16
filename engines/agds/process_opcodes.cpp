@@ -1021,6 +1021,21 @@ void Process::restartAnimation() {
 	}
 }
 
+void Process::signalAnimationEnd() {
+	Common::String phaseVar = popString();
+	debug("restartAnimation %s", phaseVar.c_str());
+	if (phaseVar.empty()) {
+		warning("no phaseVar");
+		return;
+	}
+	Animation *animation = _engine->findAnimationByPhaseVar(phaseVar);
+	if (animation) {
+		_engine->setGlobal(phaseVar, -2);
+	} else {
+		warning("no animation with phase var %s", phaseVar.c_str());
+	}
+}
+
 void Process::setShadowIntensity() {
 	int value = pop();
 	debug("setShadowIntensity: %d", value);
