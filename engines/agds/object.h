@@ -205,7 +205,6 @@ public:
 	}
 
 	void setUserUseHandler(uint ip) {
-		debug("OBJECT %s USER USE %04x", _name.c_str(), ip);
 		_userUseHandler = ip;
 	}
 
