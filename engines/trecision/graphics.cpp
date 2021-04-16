@@ -89,6 +89,12 @@ void GraphicsManager::clearScreen() {
 	g_system->fillScreen(0);
 }
 
+void GraphicsManager::copyToScreenBuffer(Graphics::Surface *surface, int x, int y) {
+	for (int i = 0; i < surface->h; i++) {
+		memcpy(_vm->_screenBuffer + x + (y + i) * MAXX, surface->getBasePtr(0, i), surface->pitch);
+	}
+}
+
 void GraphicsManager::copyToScreen(int px, int py, int dx, int dy) {
 	g_system->copyRectToScreen(
 		_vm->_screenBuffer + px + py * MAXX,
