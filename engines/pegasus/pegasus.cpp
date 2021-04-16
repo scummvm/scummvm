@@ -1431,6 +1431,7 @@ void PegasusEngine::showTempScreen(const Common::String &fileName) {
 			case Common::EVENT_RBUTTONUP:
 			case Common::EVENT_KEYDOWN:
 			case Common::EVENT_JOYBUTTON_DOWN:
+			case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
 				done = true;
 				break;
 			default:
