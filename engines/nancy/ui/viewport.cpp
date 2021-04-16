@@ -240,11 +240,17 @@ void Viewport::setFrame(uint frameNr) {
 }
 
 void Viewport::setNextFrame() {
-	setFrame(getCurFrame() + 1 >= getFrameCount() ? 0 : getCurFrame() + 1);
+	uint newFrame = getCurFrame() + 1 >= getFrameCount() ? 0 : getCurFrame() + 1;
+	if (newFrame != _currentFrame) {
+		setFrame(newFrame);
+	}
 }
 
 void Viewport::setPreviousFrame() {
-	setFrame((int)getCurFrame() - 1 < 0 ? getFrameCount() - 1 : getCurFrame() - 1);
+	uint newFrame = (int)getCurFrame() - 1 < 0 ? getFrameCount() - 1 : getCurFrame() - 1;
+	if (newFrame != _currentFrame) {
+		setFrame(newFrame);
+	}
 }
 
 void Viewport::setVerticalScroll(uint scroll) {
@@ -267,11 +273,15 @@ void Viewport::setVerticalScroll(uint scroll) {
 }
 
 void Viewport::scrollUp(uint delta) {
-	setVerticalScroll(_drawSurface.getOffsetFromOwner().y < (int16)delta ? 0 : _drawSurface.getOffsetFromOwner().y - delta);
+	if (_drawSurface.getOffsetFromOwner().y != 0) {
+		setVerticalScroll(_drawSurface.getOffsetFromOwner().y < (int16)delta ? 0 : _drawSurface.getOffsetFromOwner().y - delta);
+	}
 }
 
 void Viewport::scrollDown(uint delta) {
-	setVerticalScroll(_drawSurface.getOffsetFromOwner().y + delta > getMaxScroll() ? getMaxScroll() : _drawSurface.getOffsetFromOwner().y + delta);
+	if (_drawSurface.getOffsetFromOwner().y != getMaxScroll()) {
+		setVerticalScroll(_drawSurface.getOffsetFromOwner().y + delta > getMaxScroll() ? getMaxScroll() : _drawSurface.getOffsetFromOwner().y + delta);
+	}
 }
 
 Common::Rect Viewport::getBoundsByFormat(uint format) const {
