@@ -48,9 +48,6 @@ void doRoomIn(uint16 curObj) {
 	g_vm->_obj[curObj]._flag |= OBJFLAG_DONE;
 }
 
-/*-------------------------------------------------------------------------*/
-/*                              doRoomOut         						   */
-/*-------------------------------------------------------------------------*/
 void doRoomOut(uint16 curObj) {
 	g_vm->hideCursor();
 
@@ -63,9 +60,6 @@ void doRoomOut(uint16 curObj) {
 	g_vm->_obj[curObj]._flag |= OBJFLAG_DONE;
 }
 
-/*-------------------------------------------------------------------------*/
-/*                            doMouseExamine           					   */
-/*-------------------------------------------------------------------------*/
 void doMouseExamine(uint16 curObj) {
 	if (!curObj)
 		warning("doMouseExamine - curObj not set");
@@ -76,9 +70,6 @@ void doMouseExamine(uint16 curObj) {
 		CharacterSay(g_vm->_obj[curObj]._examine);
 }
 
-/*-------------------------------------------------------------------------*/
-/*                            doMouseOperate           					   */
-/*-------------------------------------------------------------------------*/
 void doMouseOperate(uint16 curObj) {
 	if (!curObj)
 		warning("doMouseOperate - curObj not set");
@@ -89,17 +80,11 @@ void doMouseOperate(uint16 curObj) {
 		CharacterSay(g_vm->_obj[curObj]._action);
 }
 
-/*-------------------------------------------------------------------------*/
-/*                           doMouseTake           						   */
-/*-------------------------------------------------------------------------*/
 void doMouseTake(uint16 curObj) {
 	if (!curObj)
 		warning("doMouseTake - curObj not set");
 
-	// _flagMouseEnabled = false;
-
 	bool del = g_vm->_logicMgr->mouseTake(curObj);
-	
 	uint16 curAction = g_vm->_obj[curObj]._anim;
 
 	if (curAction)
@@ -109,14 +94,15 @@ void doMouseTake(uint16 curObj) {
 	if (del) {
 		if (curAction) {
 			for (uint16 j = 0; j < MAXATFRAME; j++) {
-				if ((g_vm->_animMgr->_animTab[curAction]._atFrame[j]._type == ATFCLR) && (g_vm->_animMgr->_animTab[curAction]._atFrame[j]._index == curObj))
+				SAtFrame *frame = &g_vm->_animMgr->_animTab[curAction]._atFrame[j];
+				if (frame->_type == ATFCLR && frame->_index == curObj)
 					break;
 
-				if (g_vm->_animMgr->_animTab[curAction]._atFrame[j]._type == 0) {
-					g_vm->_animMgr->_animTab[curAction]._atFrame[j]._child = 0;
-					g_vm->_animMgr->_animTab[curAction]._atFrame[j]._numFrame = 1;
-					g_vm->_animMgr->_animTab[curAction]._atFrame[j]._type = ATFCLR;
-					g_vm->_animMgr->_animTab[curAction]._atFrame[j]._index = curObj;
+				if (frame->_type == 0) {
+					frame->_child = 0;
+					frame->_numFrame = 1;
+					frame->_type = ATFCLR;
+					frame->_index = curObj;
 					break;
 				}
 			}
@@ -642,10 +628,7 @@ static struct ATFHandle {
 }            // 0->character 1->background 2->icon
 AnimType[3] = {	{true}, {true}, {true}	};
 
-/* -----------------11/07/97 11.43-------------------
-					ExecuteATFDO
- --------------------------------------------------*/
-void ExecuteATFDO(ATFHandle *h, int doit, int obj) {
+void ExecuteAtFrameDoit(ATFHandle *h, int doit, int obj) {
 	switch (doit) {
 	case fCLROBJSTATUS:
 		g_vm->_obj[obj]._mode &= ~OBJMODE_OBJSTATUS;
@@ -769,10 +752,7 @@ void ExecuteATFDO(ATFHandle *h, int doit, int obj) {
 	}
 }
 
-/* -----------------11/07/97 11.42-------------------
-					ProcessATF
- --------------------------------------------------*/
-void ProcessATF(ATFHandle *h, int type, int atf) {
+void ProcessAtFrame(ATFHandle *h, int type, int atf) {
 	static int dc = 0;
 
 	switch (type) {
@@ -806,7 +786,7 @@ void ProcessATF(ATFHandle *h, int type, int atf) {
 		g_vm->addIcon(h->curanim->_atFrame[atf]._index);
 		break;
 	case ATFDO:
-		ExecuteATFDO(h, h->curanim->_atFrame[atf]._index, h->object);
+		ExecuteAtFrameDoit(h, h->curanim->_atFrame[atf]._index, h->object);
 		break;
 	case ATFROOM:
 		doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, h->curanim->_atFrame[atf]._index, 0, 0, h->object);
@@ -945,7 +925,7 @@ void AtFrameEnd(int type) {
 				(anim->_atFrame[a]._child == 2 && !(flag & SMKANIM_OFF2)) ||
 			    (anim->_atFrame[a]._child == 3 && !(flag & SMKANIM_OFF3)) ||
 			    (anim->_atFrame[a]._child == 4 && !(flag & SMKANIM_OFF4)))
-				ProcessATF(h, anim->_atFrame[a]._type, a);
+				ProcessAtFrame(h, anim->_atFrame[a]._type, a);
 		}
 	}
 
@@ -977,7 +957,7 @@ void AtFrameHandler(int type) {
 			    (anim->_atFrame[a]._child == 2 && !(flag & SMKANIM_OFF2)) ||
 			    (anim->_atFrame[a]._child == 3 && !(flag & SMKANIM_OFF3)) ||
 			    (anim->_atFrame[a]._child == 4 && !(flag & SMKANIM_OFF4)))
-				ProcessATF(h, anim->_atFrame[a]._type, a);
+				ProcessAtFrame(h, anim->_atFrame[a]._type, a);
 		}
 	}
 
