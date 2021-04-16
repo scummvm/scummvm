@@ -16,7 +16,6 @@
 
 #include "freescape/game.h"
 
-
 using namespace std;
 
 Game *load16bitBinary(Common::String);

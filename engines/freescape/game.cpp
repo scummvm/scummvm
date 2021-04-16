@@ -11,26 +11,24 @@
 //#include "Matrix.h"
 //#include "VertexBuffer.h"
 
-Game::Game(AreaMap *_areasByAreaID)
-{
+Game::Game(AreaMap *_areasByAreaID) {
 	hasReceivedTime = false;
 	areasByAreaID = _areasByAreaID;
 
 	rotation[0] =
-	rotation[1] =
-	rotation[2] = 0.0f;
+		rotation[1] =
+			rotation[2] = 0.0f;
 
 	position[0] = 1000.0f;
 	position[1] = 300.0f;
 	position[2] = 1000.0f;
 
 	velocity[0] =
-	velocity[1] =
-	velocity[2] = 0.0f;
+		velocity[1] =
+			velocity[2] = 0.0f;
 }
 
-Game::~Game()
-{
+Game::~Game() {
 	delete areasByAreaID;
 }
 /*

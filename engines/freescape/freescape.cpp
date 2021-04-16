@@ -1,8 +1,8 @@
 #include "common/scummsys.h"
 
 #include "common/config-manager.h"
-#include "common/debug.h"
 #include "common/debug-channels.h"
+#include "common/debug.h"
 #include "common/error.h"
 #include "common/events.h"
 #include "common/file.h"
@@ -16,9 +16,9 @@
 #include "freescape/loaders/16bitBinaryLoader.h"
 //#include "freescape/loaders/8bitBinaryLoader.h"
 
-#define OFFSET_DARKSIDE       0xc9ce
-#define OFFSET_DRILLER        0xcf3e
-#define OFFSET_TOTALECLIPSE   0xcdb7
+#define OFFSET_DARKSIDE 0xc9ce
+#define OFFSET_DRILLER 0xcf3e
+#define OFFSET_TOTALECLIPSE 0xcdb7
 
 namespace Freescape {
 
@@ -74,13 +74,13 @@ Common::Error FreescapeEngine::run() {
 	//OSystem::kTransactionSizeChangeFailed here
 	//_system->endGFXTransaction();
 
-    Game *_game = load16bitBinary("3DKIT.RUN");
-    Common::File *file = new Common::File();
+	Game *_game = load16bitBinary("3DKIT.RUN");
+	Common::File *file = new Common::File();
 
-    if (!file->open("3DKIT.RUN")) {
-        delete file;
-    	return Common::kNoError;
-    }
+	if (!file->open("3DKIT.RUN")) {
+		delete file;
+		return Common::kNoError;
+	}
 
 	const int32 fileSize = file->size();
 	byte *buf = (byte *)malloc(fileSize);
@@ -88,25 +88,20 @@ Common::Error FreescapeEngine::run() {
 
 	_pixelFormat = g_system->getScreenFormat();
 	// 16 colors palette from ultima
-    static const byte PALETTE[16][3] = {
-                { 0, 0, 0 },{ 0xe0, 0xc0, 0x70 },{ 0xb0, 0x80, 0x40 },{ 0x80, 0x60, 0x10 },
-                { 0x50, 0x30, 0x00 },{ 0x20, 0x80, 0xd0 },{ 0x20, 0x50, 0xb0 },{ 0x20, 0x30, 0x70 },
-                { 0x30, 0x40, 0x30 },{ 0x30, 0x30, 0x30 },{ 0x40, 0x40, 0x40 },{ 0x60, 0x60, 0x60 },
-                { 0x70, 0x70, 0x70 },{ 0x90, 0x90, 0x90 },{ 0xa0, 0xa0, 0xa0 },{ 0xc0, 0xc0, 0xc0 }
-    };
-    g_system->getPaletteManager()->setPalette(&PALETTE[0][0], 0, 16);
+	static const byte PALETTE[16][3] = {
+		{0, 0, 0}, {0xe0, 0xc0, 0x70}, {0xb0, 0x80, 0x40}, {0x80, 0x60, 0x10}, {0x50, 0x30, 0x00}, {0x20, 0x80, 0xd0}, {0x20, 0x50, 0xb0}, {0x20, 0x30, 0x70}, {0x30, 0x40, 0x30}, {0x30, 0x30, 0x30}, {0x40, 0x40, 0x40}, {0x60, 0x60, 0x60}, {0x70, 0x70, 0x70}, {0x90, 0x90, 0x90}, {0xa0, 0xa0, 0xa0}, {0xc0, 0xc0, 0xc0}};
+	g_system->getPaletteManager()->setPalette(&PALETTE[0][0], 0, 16);
 
 	int i = 0;
 	byte *p = buf;
 
-	while(i < fileSize-4) {
-		if(*((uint32*) p) == 0xfa002445) {
+	while (i < fileSize - 4) {
+		if (*((uint32 *)p) == 0xfa002445) {
 			debug("Border found at %x", i);
-			g_system->copyRectToScreen((const void*) p, 320, 0, 0, 320, 200);
+			g_system->copyRectToScreen((const void *)p, 320, 0, 0, 320, 200);
 		}
 		p++;
 		i++;
-
 	}
 
 	// Create debugger console. It requires GFX to be initialized
@@ -126,10 +121,9 @@ Common::Error FreescapeEngine::run() {
 }
 
 bool FreescapeEngine::hasFeature(EngineFeature f) const {
-	return
-		(f == kSupportsReturnToLauncher) ||
-		(f == kSupportsLoadingDuringRuntime) ||
-		(f == kSupportsSavingDuringRuntime);
+	return (f == kSupportsReturnToLauncher) ||
+		   (f == kSupportsLoadingDuringRuntime) ||
+		   (f == kSupportsSavingDuringRuntime);
 }
 
 Common::Error FreescapeEngine::loadGameStream(Common::SeekableReadStream *stream) {
@@ -150,4 +144,4 @@ void FreescapeEngine::syncGameStream(Common::Serializer &s) {
 	s.syncAsUint16LE(dummy);
 }
 
-} // End of namespace Quux
+} // namespace Freescape

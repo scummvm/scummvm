@@ -9,45 +9,43 @@
 #ifndef __Phantasma__Instruction__
 #define __Phantasma__Instruction__
 
-#include "freescape/language/token.h"
 #include "common/array.h"
+#include "freescape/language/token.h"
 
 class CGameState;
 
 class FCLInstruction;
 typedef Common::Array<FCLInstruction> *FCLInstructionVector;
 
-class FCLInstruction
-{
-	public:
-		FCLInstruction(Token::Type type);
-		FCLInstruction(const FCLInstruction &source);
+class FCLInstruction {
+public:
+	FCLInstruction(Token::Type type);
+	FCLInstruction(const FCLInstruction &source);
 
-		void setArguments(Token &);
-		void setArguments(Token &, Token &);
-		void setArguments(Token &, Token &, Token &);
+	void setArguments(Token &);
+	void setArguments(Token &, Token &);
+	void setArguments(Token &, Token &, Token &);
 
-		Token::Type getType();
+	Token::Type getType();
 
-		void getValue(CGameState &, int32_t &);
-		void getValue(CGameState &, int32_t &, int32_t &);
-		void getValue(CGameState &, int32_t &, int32_t &, int32 &);
+	void getValue(CGameState &, int32_t &);
+	void getValue(CGameState &, int32_t &, int32_t &);
+	void getValue(CGameState &, int32_t &, int32_t &, int32 &);
 
-		void setBranches(FCLInstructionVector thenBranch, FCLInstructionVector elseBranch);
+	void setBranches(FCLInstructionVector thenBranch, FCLInstructionVector elseBranch);
 
-	private:
-		enum Token::Type type;
+private:
+	enum Token::Type type;
 
-		struct
-		{
-			Token source, destination, option;
-		} arguments;
+	struct
+	{
+		Token source, destination, option;
+	} arguments;
 
-		struct
-		{
-			FCLInstructionVector thenInstructions, elseInstructions;
-		} conditional;
+	struct
+	{
+		FCLInstructionVector thenInstructions, elseInstructions;
+	} conditional;
 };
-
 
 #endif /* defined(__Phantasma__Instruction__) */
