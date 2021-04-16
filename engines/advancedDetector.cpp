@@ -182,7 +182,7 @@ DetectedGame AdvancedMetaEngineDetection::toDetectedGame(const ADDetectedGame &a
 	else if (desc->flags & ADGF_TESTING)
 		game.gameSupportLevel = kTestingGame;
 	else if (desc->flags & ADGF_UNSUPPORTED)
-		game.gameSupportLevel = kUnupportedGame;
+		game.gameSupportLevel = kUnsupportedGame;
 
 	game.setGUIOptions(desc->guiOptions + _guiOptions);
 	game.appendGUIOptions(getGameGUIOptionsDescriptionLanguage(desc->language));
@@ -381,7 +381,7 @@ Common::Error AdvancedMetaEngineDetection::createInstance(OSystem *syst, Engine 
 			&& !Engine::warnUserAboutUnsupportedGame())
 		return Common::kUserCanceled;
 
-	if (gameDescriptor.gameSupportLevel == kUnupportedGame) {
+	if (gameDescriptor.gameSupportLevel == kUnsupportedGame) {
 		Engine::errorUnsupportedGame(gameDescriptor.extra);
 		return Common::kUserCanceled;
 	}
