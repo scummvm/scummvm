@@ -224,6 +224,7 @@ typedef GLhandleARB GLshader;
 #define GL_TEXTURE_WRAP_T                 0x2803
 
 /* TextureWrapMode */
+#define GL_CLAMP                          0x2900
 #define GL_REPEAT                         0x2901
 #define GL_CLAMP_TO_EDGE                  0x812F
 

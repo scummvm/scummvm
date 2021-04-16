@@ -34,10 +34,15 @@ namespace OpenGL {
 void Context::reset() {
 	maxTextureSize = 0;
 
+	majorVersion = 0;
+	minorVersion = 0;
+
 	NPOTSupported = false;
 	shadersSupported = false;
 	multitextureSupported = false;
 	framebufferObjectSupported = false;
+	packedPixelsSupported = false;
+	textureEdgeClampSupported = false;
 
 #define GL_FUNC_DEF(ret, name, param) name = nullptr;
 #include "backends/graphics/opengl/opengl-func.h"
@@ -112,6 +117,21 @@ void OpenGLGraphicsManager::initializeGLContext() {
 	GL_CALL(glGetIntegerv(GL_MAX_TEXTURE_SIZE, &g_context.maxTextureSize));
 	debug(5, "OpenGL maximum texture size: %d", g_context.maxTextureSize);
 
+	const char *verString = (const char *)g_context.glGetString(GL_VERSION);
+	debug(5, "OpenGL version: %s", verString);
+
+	const char *glVersionFormat;
+	if (g_context.type == kContextGL) {
+		glVersionFormat = "%d.%d";
+	} else {
+		glVersionFormat = "OpenGL ES %d.%d";
+	}
+
+	if (sscanf(verString, glVersionFormat, &g_context.majorVersion, &g_context.minorVersion) != 2) {
+		g_context.majorVersion = g_context.minorVersion = 0;
+		warning("Could not parse GL version '%s'", verString);
+	}
+
 	const char *extString = (const char *)g_context.glGetString(GL_EXTENSIONS);
 	debug(5, "OpenGL extensions: %s", extString);
 
@@ -138,6 +158,10 @@ void OpenGLGraphicsManager::initializeGLContext() {
 			g_context.multitextureSupported = true;
 		} else if (token == "GL_EXT_framebuffer_object") {
 			g_context.framebufferObjectSupported = true;
+		} else if (token == "GL_EXT_packed_pixels" || token == "GL_APPLE_packed_pixels") {
+			g_context.packedPixelsSupported = true;
+		} else if (token == "GL_SGIS_texture_edge_clamp") {
+			g_context.textureEdgeClampSupported = true;
 		}
 	}
 
@@ -155,6 +179,12 @@ void OpenGLGraphicsManager::initializeGLContext() {
 		g_context.framebufferObjectSupported = true;
 	} else {
 		g_context.shadersSupported = ARBShaderObjects & ARBShadingLanguage100 & ARBVertexShader & ARBFragmentShader;
+	}
+
+	// OpenGL 1.2 and later always has packed pixels and texture edge clamp support
+	if (g_context.type != kContextGL || g_context.isGLVersionOrHigher(1, 2)) {
+		g_context.packedPixelsSupported = true;
+		g_context.textureEdgeClampSupported = true;
 	}
 
 	// Log context type.
@@ -181,6 +211,8 @@ void OpenGLGraphicsManager::initializeGLContext() {
 	debug(5, "OpenGL: Shader support: %d", g_context.shadersSupported);
 	debug(5, "OpenGL: Multitexture support: %d", g_context.multitextureSupported);
 	debug(5, "OpenGL: FBO support: %d", g_context.framebufferObjectSupported);
+	debug(5, "OpenGL: Packed pixels support: %d", g_context.packedPixelsSupported);
+	debug(5, "OpenGL: Texture edge clamping support: %d", g_context.textureEdgeClampSupported);
 }
 
 } // End of namespace OpenGL

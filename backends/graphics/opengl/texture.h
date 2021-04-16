@@ -318,28 +318,28 @@ private:
 	byte *_palette;
 };
 
-#if !USE_FORCED_GL
 class FakeTexture : public Texture {
 public:
-	FakeTexture(GLenum glIntFormat, GLenum glFormat, GLenum glType, const Graphics::PixelFormat &format);
+	FakeTexture(GLenum glIntFormat, GLenum glFormat, GLenum glType, const Graphics::PixelFormat &format, const Graphics::PixelFormat &fakeFormat);
 	virtual ~FakeTexture();
 
 	virtual void allocate(uint width, uint height);
 
-	virtual Graphics::PixelFormat getFormat() const = 0;
+	virtual Graphics::PixelFormat getFormat() const { return _fakeFormat; }
 
 	virtual Graphics::Surface *getSurface() { return &_rgbData; }
 	virtual const Graphics::Surface *getSurface() const { return &_rgbData; }
+
+	virtual void updateGLTexture();
 protected:
 	Graphics::Surface _rgbData;
+	Graphics::PixelFormat _fakeFormat;
 };
 
 class TextureRGB555 : public FakeTexture {
 public:
 	TextureRGB555();
 	virtual ~TextureRGB555() {};
-
-	virtual Graphics::PixelFormat getFormat() const;
 
 	virtual void updateGLTexture();
 };
@@ -349,11 +349,8 @@ public:
 	TextureRGBA8888Swap();
 	virtual ~TextureRGBA8888Swap() {};
 
-	virtual Graphics::PixelFormat getFormat() const;
-
 	virtual void updateGLTexture();
 };
-#endif // !USE_FORCED_GL
 
 #if !USE_FORCED_GLES
 class TextureTarget;

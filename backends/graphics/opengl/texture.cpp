@@ -31,6 +31,8 @@
 #include "common/rect.h"
 #include "common/textconsole.h"
 
+#include "graphics/conversion.h"
+
 namespace OpenGL {
 
 GLTexture::GLTexture(GLenum glIntFormat, GLenum glFormat, GLenum glType)
@@ -75,8 +77,13 @@ void GLTexture::create() {
 	GL_CALL(glPixelStorei(GL_UNPACK_ALIGNMENT, 1));
 	GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, _glFilter));
 	GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, _glFilter));
-	GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE));
-	GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));
+	if (g_context.textureEdgeClampSupported) {
+		GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE));
+		GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));
+	} else {
+		GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP));
+		GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP));
+	}
 
 	// If a size is specified, allocate memory for it.
 	if (_width != 0 && _height != 0) {
@@ -419,9 +426,9 @@ void TextureCLUT8::updateGLTexture() {
 	Texture::updateGLTexture();
 }
 
-#if !USE_FORCED_GL
-FakeTexture::FakeTexture(GLenum glIntFormat, GLenum glFormat, GLenum glType, const Graphics::PixelFormat &format)
+FakeTexture::FakeTexture(GLenum glIntFormat, GLenum glFormat, GLenum glType, const Graphics::PixelFormat &format, const Graphics::PixelFormat &fakeFormat)
 	: Texture(glIntFormat, glFormat, glType, format),
+	  _fakeFormat(fakeFormat),
 	  _rgbData() {
 }
 
@@ -442,12 +449,26 @@ void FakeTexture::allocate(uint width, uint height) {
 	_rgbData.create(width, height, getFormat());
 }
 
-TextureRGB555::TextureRGB555()
-	: FakeTexture(GL_RGB, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0)) {
+void FakeTexture::updateGLTexture() {
+	if (!isDirty()) {
+		return;
+	}
+
+	// Convert color space.
+	Graphics::Surface *outSurf = Texture::getSurface();
+
+	const Common::Rect dirtyArea = getDirtyArea();
+
+	byte *dst = (byte *)outSurf->getBasePtr(dirtyArea.left, dirtyArea.top);
+	const byte *src = (const byte *)_rgbData.getBasePtr(dirtyArea.left, dirtyArea.top);
+	Graphics::crossBlit(dst, src, outSurf->pitch, _rgbData.pitch, dirtyArea.width(), dirtyArea.height(), outSurf->format, _rgbData.format);
+
+	// Do generic handling of updating the texture.
+	Texture::updateGLTexture();
 }
 
-Graphics::PixelFormat TextureRGB555::getFormat() const {
-	return Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0);
+TextureRGB555::TextureRGB555()
+	: FakeTexture(GL_RGB, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0), Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0)) {
 }
 
 void TextureRGB555::updateGLTexture() {
@@ -485,19 +506,11 @@ void TextureRGB555::updateGLTexture() {
 
 TextureRGBA8888Swap::TextureRGBA8888Swap()
 #ifdef SCUMM_LITTLE_ENDIAN
-	: FakeTexture(GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE, Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24)) // ABGR8888
+	: FakeTexture(GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE, Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24), Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0)) // RGBA8888 -> ABGR8888
 #else
-	: FakeTexture(GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE, Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0)) // RGBA8888
+	: FakeTexture(GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE, Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0), Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24)) // ABGR8888 -> RGBA8888
 #endif
 	  {
-}
-
-Graphics::PixelFormat TextureRGBA8888Swap::getFormat() const {
-#ifdef SCUMM_LITTLE_ENDIAN
-	return Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0); // RGBA8888
-#else
-	return Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24); // ABGR8888
-#endif
 }
 
 void TextureRGBA8888Swap::updateGLTexture() {
@@ -530,7 +543,6 @@ void TextureRGBA8888Swap::updateGLTexture() {
 	// Do generic handling of updating the texture.
 	Texture::updateGLTexture();
 }
-#endif // !USE_FORCED_GL
 
 #if !USE_FORCED_GLES
 
