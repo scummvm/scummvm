@@ -66,7 +66,7 @@ enum Opcode {
 	kStub44							= 44,
 	kPostIncrementGlobal			= 45,
 	kPostDecrementGlobal			= 46,
-	kStub47							= 47,
+	kSetGlobalWithTop				= 47,
 	kSetGlobal						= 48,
 	kIncrementGlobalByTop			= 49,
 	kDecrementGlobalByTop			= 50,
@@ -304,6 +304,7 @@ enum Opcode {
 	OP(kMul, mul) \
 	OP(kDiv, div) \
 	OP(kMod, mod) \
+	OP(kSetGlobalWithTop, setGlobalWithTop) \
 	OP(kSetGlobal, setGlobal) \
 	OP(kBoolOr, boolOr) \
 	OP(kBoolAnd, boolAnd) \
