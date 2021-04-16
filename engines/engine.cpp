@@ -644,6 +644,10 @@ void Engine::openMainMenuDialog() {
 	syncSoundSettings();
 }
 
+bool Engine::warnUserAboutUnsupportedGame() {
+	return warnUserAboutUnsupportedGame("");
+}
+
 bool Engine::warnUserAboutUnsupportedGame(Common::String msg) {
 	if (ConfMan.getBool("enable_unsupported_game_warning")) {
 		GUI::MessageDialog alert(!msg.empty() ? _("WARNING: ") + Common::U32String(msg) + _(" Shall we still run the game?") :

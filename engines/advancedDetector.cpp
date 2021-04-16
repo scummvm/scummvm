@@ -380,7 +380,7 @@ Common::Error AdvancedMetaEngineDetection::createInstance(OSystem *syst, Engine 
 	if (((gameDescriptor.gameSupportLevel == kUnstableGame
 			|| (gameDescriptor.gameSupportLevel == kTestingGame
 					&& showTestingWarning)))
-			&& !Engine::warnUserAboutUnsupportedGame(""))
+			&& !Engine::warnUserAboutUnsupportedGame())
 		return Common::kUserCanceled;
 
 	if (gameDescriptor.gameSupportLevel == kWarningGame
