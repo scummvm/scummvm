@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-04-16 12:21+0000\n"
+"POT-Creation-Date: 2021-04-16 12:46+0000\n"
 "PO-Revision-Date: 2020-09-18 03:43+0000\n"
 "Last-Translator: Daniel <supsuper@gmail.com>\n"
 "Language-Team: Portuguese (Portugal) <https://translations.scummvm.org/"
@@ -63,7 +63,7 @@ msgstr "Subir"
 #: gui/saveload-dialog.cpp:62 gui/saveload-dialog.cpp:395
 #: gui/saveload-dialog.cpp:467 gui/saveload-dialog.cpp:771
 #: gui/saveload-dialog.cpp:1167 gui/themebrowser.cpp:55
-#: gui/unknown-game-dialog.cpp:54 engines/engine.cpp:653
+#: gui/unknown-game-dialog.cpp:54 engines/engine.cpp:657
 #: backends/dialogs/gtk/gtk-dialogs.cpp:46
 #: backends/events/default/default-events.cpp:185
 #: backends/events/default/default-events.cpp:209
@@ -785,14 +785,14 @@ msgstr "Pesquisar na lista de jogos"
 msgid "Search:"
 msgstr "Pesquisa:"
 
-#: gui/launcher.cpp:210 engines/dialogs.cpp:102 engines/engine.cpp:803
+#: gui/launcher.cpp:210 engines/dialogs.cpp:102 engines/engine.cpp:807
 #: engines/buried/saveload.cpp:515 engines/pegasus/pegasus.cpp:384
 #: engines/tsage/scenes.cpp:631 engines/wage/saveload.cpp:742
 #: engines/xeen/saves.cpp:256
 msgid "Load game:"
 msgstr "Carregar jogo:"
 
-#: gui/launcher.cpp:210 engines/dialogs.cpp:102 engines/engine.cpp:803
+#: gui/launcher.cpp:210 engines/dialogs.cpp:102 engines/engine.cpp:807
 #: engines/buried/saveload.cpp:515 engines/parallaction/metaengine.cpp:118
 #: engines/parallaction/saveload.cpp:194 engines/pegasus/pegasus.cpp:384
 #: engines/scumm/dialogs.cpp:178 engines/tsage/scenes.cpp:631
@@ -2147,7 +2147,7 @@ msgctxt "lowres"
 msgid "~R~eturn to Launcher"
 msgstr "~M~enu"
 
-#: engines/dialogs.cpp:103 engines/engine.cpp:832 engines/agi/saveload.cpp:768
+#: engines/dialogs.cpp:103 engines/engine.cpp:836 engines/agi/saveload.cpp:768
 #: engines/avalanche/parser.cpp:1919 engines/buried/saveload.cpp:534
 #: engines/cine/various.cpp:350 engines/dm/loadsave.cpp:199
 #: engines/drascula/saveload.cpp:383 engines/dreamweb/saveload.cpp:262
@@ -2165,7 +2165,7 @@ msgstr "~M~enu"
 msgid "Save game:"
 msgstr "Guardar jogo:"
 
-#: engines/dialogs.cpp:103 engines/engine.cpp:832
+#: engines/dialogs.cpp:103 engines/engine.cpp:836
 #: backends/platform/symbian/src/SymbianActions.cpp:46
 #: engines/agi/saveload.cpp:768 engines/avalanche/parser.cpp:1919
 #: engines/buried/saveload.cpp:534 engines/cine/various.cpp:350
@@ -2300,17 +2300,17 @@ msgstr ""
 "Não foi possível carregar o jogo (%s)! Por favor consulte o ficheiro README "
 "para informações básicas e instruções em como obter assistência."
 
-#: engines/engine.cpp:649
+#: engines/engine.cpp:653
 msgid "WARNING: "
 msgstr ""
 
-#: engines/engine.cpp:649
+#: engines/engine.cpp:653
 #, fuzzy
 #| msgid "Full title of the game"
 msgid " Shall we still run the game?"
 msgstr "Título completo do jogo"
 
-#: engines/engine.cpp:650
+#: engines/engine.cpp:654
 msgid ""
 "WARNING: The game you are about to start is not yet fully supported by "
 "ScummVM. As such, it is likely to be unstable, and any saved game you make "
@@ -2320,27 +2320,27 @@ msgstr ""
 "é possível que seja instável, e qualquer jogo guardado pode não funcionar em "
 "futuras versões do ScummVM."
 
-#: engines/engine.cpp:653 engines/wintermute/wintermute.cpp:210
+#: engines/engine.cpp:657 engines/wintermute/wintermute.cpp:210
 msgid "Start anyway"
 msgstr "Iniciar na mesma"
 
-#: engines/engine.cpp:660
+#: engines/engine.cpp:664
 #, fuzzy
 msgid "This game is not supported."
 msgstr "ID de jogo não suportado"
 
-#: engines/engine.cpp:660
+#: engines/engine.cpp:664
 #, fuzzy
 msgid ""
 "This game is not supported for the following reason:\n"
 "\n"
 msgstr "Este jogo não permite carregar jogos a partir do menu principal."
 
-#: engines/engine.cpp:799
+#: engines/engine.cpp:803
 msgid "Loading game is currently unavailable"
 msgstr "Não é possível carregar um jogo neste momento"
 
-#: engines/engine.cpp:828
+#: engines/engine.cpp:832
 msgid "Saving game is currently unavailable"
 msgstr "Não é possível guardar um jogo neste momento"
 
