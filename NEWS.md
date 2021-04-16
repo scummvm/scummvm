@@ -16,6 +16,9 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added support for OO-Topos
    - Added support for Glulx interactive fiction games
    - Added support for Private Eye (US release)
+   - Added support for Spanish Blue Force
+   - Added support for Spanish Ringworld
+   - Added support for Spanish Amazon Guardians of Eden
    - Added support for AGS Games versions 2.5+
 
  New ports:
@@ -92,7 +95,6 @@ For a more comprehensive changelog of the latest experimental code, see:
 
  TsAGE:
    - Added support for uninstalled floppy version.
-   - Properly support Spanish Ringworld & Blue Force.
 
  Stark:
    - Added support for Hungarian translation.

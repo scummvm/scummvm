@@ -54,7 +54,7 @@ bool Resources::load(Common::U32String &errorMessage) {
 	}
 
 	// Validate the version number
-	uint expectedVersion = 1;
+	uint expectedVersion = 2;
 	uint version = f.readUint16LE();
 	if (version != expectedVersion) {
 		errorMessage = Common::U32String::format(

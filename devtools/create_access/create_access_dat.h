@@ -29,7 +29,7 @@
 #include "common/endian.h"
 #include "common/array.h"
 
-#define VERSION_NUMBER 1
+#define VERSION_NUMBER 2
 
 enum AccessMode {
 	kFileReadMode = 1,
