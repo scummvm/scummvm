@@ -84,13 +84,15 @@ struct ADGameFileDescription {
  */
 enum ADGameFlags {
 	ADGF_NO_FLAGS        =  0,        ///< No flags.
-	ADGF_REMASTERED      = (1 << 18), ///< Add "-remastered' to gameid.
-	ADGF_AUTOGENTARGET   = (1 << 19), ///< Automatically generate gameid from @ref ADGameDescription::extra.
-	ADGF_UNSTABLE        = (1 << 20), ///< Flag to designate not yet officially supported games that are not fit for public testing.
-	ADGF_TESTING         = (1 << 21), ///< Flag to designate not yet officially supported games that are fit for public testing.
-	ADGF_PIRATED         = (1 << 22), ///< Flag to designate well-known pirated versions with cracks.
-	ADGF_UNSUPPORTED     = (1 << 23), /*!< Flag to mark certain versions (like badly protected full games as demos) not to be run for various reasons.
+	ADGF_REMASTERED      = (1 << 17), ///< Add "-remastered' to gameid.
+	ADGF_AUTOGENTARGET   = (1 << 18), ///< Automatically generate gameid from @ref ADGameDescription::extra.
+	ADGF_UNSTABLE        = (1 << 19), ///< Flag to designate not yet officially supported games that are not fit for public testing.
+	ADGF_TESTING         = (1 << 20), ///< Flag to designate not yet officially supported games that are fit for public testing.
+	ADGF_PIRATED         = (1 << 21), ///< Flag to designate well-known pirated versions with cracks.
+	ADGF_UNSUPPORTED     = (1 << 22), /*!< Flag to mark certain versions (like badly protected full games as demos) not to be run for various reasons.
 	                                       A custom message can be provided in the @ref ADGameDescription::extra field. */
+	ADGF_WARNING         = (1 << 23), /*!< Flag to mark certain versions to show confirmation warning before proceeding.
+	                                       A custom message should be provided in the @ref ADGameDescription::extra field. */
 	ADGF_ADDENGLISH      = (1 << 24), ///< Always add English as a language option.
 	ADGF_MACRESFORK      = (1 << 25), ///< Calculate the MD5 for this entry from the resource fork.
 	ADGF_USEEXTRAASTITLE = (1 << 26), ///< Use @ref ADGameDescription::extra as the main game title, not gameid.

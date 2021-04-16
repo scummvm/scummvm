@@ -94,7 +94,8 @@ enum GameSupportLevel {
 	kStableGame = 0,  // the game is fully supported
 	kTestingGame,     // the game is not supposed to end up in releases yet but is ready for public testing
 	kUnstableGame,    // the game is not even ready for public testing yet
-	kUnsupportedGame  // we don't want to support the game
+	kUnsupportedGame, // we don't want to support the game
+	kWarningGame      // we want to ask user to proceed and provide them with an explanation
 };
 
 

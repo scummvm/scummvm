@@ -546,7 +546,7 @@ public:
 	 *
 	 * @return True if the user chooses to start anyway, false otherwise.
 	 */
-	static bool warnUserAboutUnsupportedGame();
+	static bool warnUserAboutUnsupportedGame(Common::String msg);
 
 	/**
 	 * Display an error message to the user that the game is not supported.
