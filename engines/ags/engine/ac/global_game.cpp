@@ -110,6 +110,18 @@ void DeleteSaveSlot(int slnum) {
 	String nametouse;
 	nametouse = get_save_game_path(slnum);
 	Shared::File::DeleteFile(nametouse);
+	// The code below renames the highest save game to fill in the gap
+	// This does not work (because the system rename() function does not
+	// handle our "/saves/" prefix). We could remove it here and use
+	// g_system->getSavefileManager()->renameSavefile. But it might
+	// actually be better to not fill the gap. The original AGS engine
+	// sorts savegame by date, but as we don't have access to the date,
+	// we save them by slot. So moving the highest slot to the gap may
+	// not be a good idea. An alternative would be to shift by one all
+	// the savegames after the removed one.
+	// One aspect to keep in mind is that MAXSAVEGAMES is 50, but we
+	// allow slot up to 099. So we have some margin.
+#ifndef AGS_PLATFORM_SCUMMVM
 	if ((slnum >= 1) && (slnum <= MAXSAVEGAMES)) {
 		String thisname;
 		for (int i = MAXSAVEGAMES; i > slnum; i--) {
@@ -122,6 +134,7 @@ void DeleteSaveSlot(int slnum) {
 		}
 
 	}
+#endif
 }
 
 void PauseGame() {
