@@ -8,7 +8,8 @@ MODULE_OBJS := \
 	objects/object.o \
 	objects/geometricobject.o \
 	loaders/16bitBinaryLoader.o \
-	language/16bitDetokeniser.o
+	language/16bitDetokeniser.o \
+	language/instruction.o
  
 MODULE_DIRS += \
 	engines/freescape
