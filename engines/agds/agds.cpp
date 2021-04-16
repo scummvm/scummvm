@@ -390,6 +390,7 @@ Console *AGDSEngine::getConsole() {
 void AGDSEngine::newGame() {
 	SystemVariable *doneVar = getSystemVariable("done_resources");
 	Common::String done = doneVar->getString();
+	debug("running engine resource dtor: %s", done.c_str());
 	runObject(done);
 
 	_patches.clear();
@@ -401,6 +402,7 @@ void AGDSEngine::newGame() {
 
 	SystemVariable *initVar = getSystemVariable("init_resources");
 	Common::String init = initVar->getString();
+	debug("running engine resource ctor: %s", init.c_str());
 	runObject(init);
 }
 
