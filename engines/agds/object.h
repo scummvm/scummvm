@@ -80,6 +80,7 @@ private:
 	uint							_userUseHandler;
 	uint							_throwHandler;
 	uint							_useOnHandler;
+	uint							_trapHandler;
 	int								_alpha;
 	int								_scale;
 	bool							_locked;
@@ -215,6 +216,11 @@ public:
 
 	void setUseOnHandler(uint ip) {
 		_useOnHandler = ip;
+	}
+
+	void setTrapHandler(uint ip, RegionPtr region) {
+		_trapHandler = ip;
+		_trapRegion = region;
 	}
 
 	uint getUserUseHandler() const {

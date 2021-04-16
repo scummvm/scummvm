@@ -1388,23 +1388,24 @@ void Process::onUse(uint16 size) {
 }
 
 void Process::onObjectC1(uint16 size) {
-	debug("unknown (0xc1) [handler], %u instructions", size);
+	debug("unknown (0xc1) [handler] stub, %u instructions", size);
 	_ip += size;
 }
 
 void Process::onLook(uint16 size) {
-	debug("look? [handler], %u instructions", size);
+	debug("look [handler], %u instructions", size);
 	_object->setExamineHandler(_ip);
 	_ip += size;
 }
 
-void Process::onObjectB9(uint16 size) {
-	debug("onObject(+B9) [handler], %u instructions", size);
+void Process::onCharacterTrap(uint16 size) {
+	auto regionName = popString();
+	debug("setCharacterTrap %s [handler], %u instructions", regionName.c_str(), size);
 	_ip += size;
 }
 
 void Process::onObjectBD(uint16 size) {
-	debug("onObject(+BD) [handler], %u instructions", size);
+	debug("onObject(+BD) [handler] stub, %u instructions", size);
 	_ip += size;
 }
 
