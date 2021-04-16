@@ -84,7 +84,7 @@ enum Opcode {
 	kObjectRegisterHandlerC1		= 62,
 	kObjectRegisterUseObjectHandler = 63,
 	kObjectRegisterHandlerBD		= 64,
-	kObjectRegisterHandlerB9		= 65,
+	kObjectRegisterCharacterTrap	= 65,
 	kLoadMouseCursorFromObject		= 66,
 	kLoadRegionFromObject			= 68,
 	kLoadPictureFromObject			= 69,
@@ -320,7 +320,7 @@ enum Opcode {
 	OP_U(kObjectRegisterLookHandler, onLook) \
 	OP_U(kObjectRegisterUseHandler, onUse) \
 	OP_U(kObjectRegisterHandlerC1, onObjectC1) \
-	OP_U(kObjectRegisterHandlerB9, onObjectB9) \
+	OP_U(kObjectRegisterCharacterTrap, onCharacterTrap) \
 	OP_U(kObjectRegisterHandlerBD, onObjectBD) \
 	OP(kLoadMouseCursorFromObject, loadMouseCursorFromObject) \
 	OP(kLoadRegionFromObject, loadRegionFromObject) \
