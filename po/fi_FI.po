@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-04-16 12:21+0000\n"
-"PO-Revision-Date: 2021-04-10 09:24+0000\n"
-"Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
+"PO-Revision-Date: 2021-04-16 16:48+0000\n"
+"Last-Translator: jepael <kermespersialainen@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fi/>\n"
 "Language: fi_FI\n"
@@ -7081,12 +7081,10 @@ msgid "Unable to locate the '%s' data file."
 msgstr "Datatiedostoa \"%s\" ei löydetty."
 
 #: engines/twine/detection.cpp:218
-#, fuzzy
-#| msgid "This game requires the FoxTail subengine, which is not compiled in."
 msgid "This version requires Giflib which was not compiled into ScummVM"
 msgstr ""
-"Tämä peli vaatii toimiakseen FoxTail-pelimoottorin, jota ei ole käännetty "
-"tähän ScummVM:ään."
+"Tämä versio vaatii toimiakseen Giflib-kirjaston, jota ei ole käännetty tähän "
+"ScummVM:ään"
 
 #: engines/twine/metaengine.cpp:71
 msgid "Enable wall collisions"
