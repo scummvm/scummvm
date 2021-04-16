@@ -332,7 +332,7 @@ public:
 	/**
 	 * Set the engine's debugger.
 	 *
-	 * Once set, the Engine class is responsible for managing 
+	 * Once set, the Engine class is responsible for managing
 	 * the debugger, and freeing it on exit.
 	 */
 	void setDebugger(GUI::Debugger *debugger) {
@@ -541,6 +541,9 @@ public:
 	/**
 	 * Display a warning to the user that the game is not fully supported.
 	 *
+	 * @param msg  An message that will be presented to user. If empty, then
+	 *             generic message regarding unsupported game is presented
+	 *
 	 * @return True if the user chooses to start anyway, false otherwise.
 	 */
 	static bool warnUserAboutUnsupportedGame();
@@ -548,7 +551,7 @@ public:
 	/**
 	 * Display an error message to the user that the game is not supported.
 	 *
-	 * @param extraMsg  An extra message that will be appended to the default message.				
+	 * @param extraMsg  An extra message that will be appended to the default message.
 	 */
 	static void errorUnsupportedGame(Common::String extraMsg);
 
@@ -613,14 +616,14 @@ public:
 	virtual int getAutosaveSlot() const {
 		return 0;
 	}
-	
+
 	/**
 	 * Check whether it is time to autosave based on the
 	 * provided @p lastSaveTime.
 	 *
 	 * This function is now deprecated as autosaves are handled directly by
 	 * the Engine class and derived classes do not need to worry about it other than
-	 * to implement canSaveAutosaveCurrently() and getAutosaveSlot() 
+	 * to implement canSaveAutosaveCurrently() and getAutosaveSlot()
 	 * if the default implementations are not sufficient.
 	 */
 	bool shouldPerformAutoSave(int lastSaveTime) {

@@ -42,7 +42,7 @@ class FSList;
  *
  * @{
  */
- 
+
 /**
  * A record describing a file to be matched for detecting a specific game
  * variant. A list of such records is used inside every ADGameDescription to
@@ -89,7 +89,7 @@ enum ADGameFlags {
 	ADGF_UNSTABLE        = (1 << 20), ///< Flag to designate not yet officially supported games that are not fit for public testing.
 	ADGF_TESTING         = (1 << 21), ///< Flag to designate not yet officially supported games that are fit for public testing.
 	ADGF_PIRATED         = (1 << 22), ///< Flag to designate well-known pirated versions with cracks.
-	ADGF_UNSUPPORTED     = (1 << 23), /*!< Flag to mark certain versions (like fan translations) not to be run for various reasons.
+	ADGF_UNSUPPORTED     = (1 << 23), /*!< Flag to mark certain versions (like badly protected full games as demos) not to be run for various reasons.
 	                                       A custom message can be provided in the @ref ADGameDescription::extra field. */
 	ADGF_ADDENGLISH      = (1 << 24), ///< Always add English as a language option.
 	ADGF_MACRESFORK      = (1 << 25), ///< Calculate the MD5 for this entry from the resource fork.
@@ -125,7 +125,7 @@ struct ADGameDescription {
 	/**
 	 * A list of individual file entries used for detection.
 	 *
-	 * 13 files (last is zero-terminated) is the maximum number of files currently used in ScummVM. 
+	 * 13 files (last is zero-terminated) is the maximum number of files currently used in ScummVM.
 	 * A hardcoded number is used here due to a C++ limitation for defining const arrays.
 	 */
 	ADGameFileDescription filesDescriptions[14];
@@ -151,7 +151,7 @@ struct ADGameDescription {
 	/**
 	 * Game features that are user-controllable.
 	 *
-	 * This list reflects which features of the GUI should be turned on or off in order to minimize user confusion. 
+	 * This list reflects which features of the GUI should be turned on or off in order to minimize user confusion.
 	 * For instance, there is no point in changing game language in single-language games
 	 * or have MIDI controls in a game that only supports digital music.
 	 */
@@ -200,7 +200,7 @@ struct ADFileBasedFallback {
 
 enum ADFlags {
 	/**
-	 * Store the value of the @ref ADGameDescription::extra field 
+	 * Store the value of the @ref ADGameDescription::extra field
 	 * in the config file, and use it as a hint on subsequent runs.
 	 *
 	 * This can be used when there is no way to autodetect the game
@@ -277,7 +277,7 @@ protected:
 
 	/**
 	 * A list of game GUI options which will be added to each
-	 * entry in addition to per-game options. 
+	 * entry in addition to per-game options.
 	 *
 	 * Refer to @ref GameGUIOption enum for the list.
 	 */
@@ -437,7 +437,7 @@ public:
 	/**
 	 * Base createInstance for AdvancedMetaEngine.
 	 *
-	 * The AdvancedMetaEngine provides a default createInstance that is called first, 
+	 * The AdvancedMetaEngine provides a default createInstance that is called first,
 	 * so this should be invoked first.
 	 * By the time this is called, it is assumed that there is only one
 	 * plugin engine loaded in memory.
@@ -468,7 +468,7 @@ public:
 	/**
 	 * An (optional) generic fallback detection function that is invoked
 	 * if the regular MD5-based detection failed to detect anything.
-	 
+
 	 * @note This is only meant to be used if fallback detection heavily depends on engine resources.
 	 *
 	 * To use this, implement the intended fallbackDetectExtern inside the relevant MetaEngine class.
