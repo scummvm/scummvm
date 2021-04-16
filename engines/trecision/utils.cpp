@@ -210,7 +210,7 @@ uint32 TrecisionEngine::DecCR(Common::String fileName, uint8 *DestArea) {
 	if (ff == nullptr)
 		error("File not found %s", fileName.c_str());
 
-	int dataSize = ff->size() - 8;
+	int32 dataSize = ff->size() - 8;
 	uint8 *ibuf = new uint8[dataSize];
 	uint8 *obuf = DestArea;
 
@@ -218,7 +218,7 @@ uint32 TrecisionEngine::DecCR(Common::String fileName, uint8 *DestArea) {
 	if (signature != FAST_COOKIE)
 		error("DecCR - %s has a bad signature and can't be loaded", fileName.c_str());
 
-	uint32 decompSize = ff->readUint32LE();
+	int32 decompSize = ff->readSint32LE();
 	ff->read(ibuf, dataSize);
 	delete ff;
 

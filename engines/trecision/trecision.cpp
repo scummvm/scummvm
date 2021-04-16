@@ -171,9 +171,8 @@ TrecisionEngine::TrecisionEngine(OSystem *syst) : Engine(syst) {
 }
 
 TrecisionEngine::~TrecisionEngine() {
-	if (_animMgr) {
+	if (_animMgr)
 		_animMgr->stopAllSmkAnims();
-	}
 
 	_dataFile.close();
 	_speechFile.close();
