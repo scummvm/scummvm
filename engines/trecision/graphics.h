@@ -24,6 +24,7 @@
 #define TRECISION_GRAPHICS_H
 
 #include "graphics/pixelformat.h"
+#include "graphics/surface.h"
 
 namespace Trecision {
 class TrecisionEngine;
@@ -48,6 +49,7 @@ public:
 	void unlock();
 	void clearScreen();
 	void copyToScreen(int px, int py, int dx, int dy);
+	void copyToScreenBuffer(Graphics::Surface *surface, int x, int y);
 
 	uint16 palTo16bit(uint8 r, uint8 g, uint8 b) const;
 	void updatePixelFormat(uint16 *p, uint32 len) const;

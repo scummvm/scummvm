@@ -72,10 +72,10 @@ private:
 	FastFile _animFile[MAXSMACK]; // nlanim.cd1 / nlanim.cd2
 	int _curCD;
 
-	void openSmk(Common::SeekableReadStream *stream);
-	void openSmkAnim(Common::String name);
-	void closeSmk();
-	void smkNextFrame();
+	void openSmk(int buf, Common::SeekableReadStream *stream);
+	void openSmkAnim(int buf, Common::String name);
+	void closeSmk(int buf);
+	void smkNextFrame(int buf);
 	void drawFrame(NightlongSmackerDecoder *smkDecoder, uint16 x, uint16 y, bool updateScreen);
 	void drawFrameSubtitles(Graphics::Surface *surface, int frameNum);
 	void setVideoRange(NightlongSmackerDecoder *smkDecoder, int &startFrame, int &endFrame);
@@ -84,7 +84,6 @@ private:
 	void swapCD(int cd);
 
 public:
-	uint8 _curSmackBuffer;
 	uint8 *_smkBuffer[MAXSMACK];
 	uint16 _playingAnims[MAXSMACK];
 	uint16 _curAnimFrame[MAXSMACK];
