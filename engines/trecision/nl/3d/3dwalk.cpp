@@ -135,7 +135,7 @@ int read3D(Common::String c) {
 
 	initSortPan();
 
-	init3DRoom(MAXX, g_vm->_screenBuffer, g_vm->_zBuffer);
+	init3DRoom(g_vm->_screenBuffer, g_vm->_zBuffer);
 	setClipping(0, TOP, MAXX, AREA + TOP);
 
 	return 10L;

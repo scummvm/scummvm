@@ -78,7 +78,7 @@ struct STexture {
 /*------------------------------------------------
 	Initialize a 3D Room
 --------------------------------------------------*/
-void init3DRoom(int16 dx, uint16 *destBuffer, int16 *zBuffer);
+void init3DRoom(uint16 *destBuffer, int16 *zBuffer);
 /*------------------------------------------------
 	Change the clipping area
 --------------------------------------------------*/
