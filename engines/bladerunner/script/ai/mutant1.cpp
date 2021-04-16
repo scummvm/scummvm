@@ -372,6 +372,9 @@ bool AIScriptMutant1::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 			Actor_Set_Friendliness_To_Other(kActorMutant1, kActorMcCoy, 45);
 		}
 
+		// code repeated also in case 599 which precedes this one
+		// redundant?
+		// results in additional reduction in friendliness and increase of aggressiveness for the other two mutants
 		Actor_Modify_Friendliness_To_Other(kActorMutant2, kActorMcCoy, -10);
 		Actor_Modify_Friendliness_To_Other(kActorMutant3, kActorMcCoy, -20);
 		Actor_Modify_Combat_Aggressiveness(kActorMutant2, 10);
@@ -387,7 +390,8 @@ bool AIScriptMutant1::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 
 	case 599:
 		AI_Movement_Track_Flush(kActorMutant1);
-		Actor_Change_Animation_Mode(kActorMutant1, 48);
+		Actor_Change_Animation_Mode(kActorMutant1, kAnimationModeDie);
+		// results in additional reduction in friendlinees and increase of aggressiveness for the other two mutants
 		Actor_Modify_Friendliness_To_Other(kActorMutant2, kActorMcCoy, -10);
 		Actor_Modify_Friendliness_To_Other(kActorMutant3, kActorMcCoy, -20);
 		Actor_Modify_Combat_Aggressiveness(kActorMutant2, 10);

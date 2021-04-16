@@ -71,7 +71,12 @@ bool AIScriptMutant3::Update() {
 
 		case 599:
 			if (Actor_Query_Which_Set_In(kActorMutant3) != Player_Query_Current_Set()) {
+#if BLADERUNNER_ORIGINAL_BUGS
 				Actor_Set_Goal_Number(kActorMutant3, 403);
+#else
+				// intermediate goal to set new Health (revive for reuse)
+				Actor_Set_Goal_Number(kActorMutant3, 411);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 			}
 			break;
 		}
@@ -348,15 +353,16 @@ bool AIScriptMutant3::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		}
 		break;
 
-	case 590:
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+	case 411:
+		// We need the additional intermediate goal 411 (as mutant1 has)
+		// so that we set the health here, instead of the when the goal is set to 599 (dying)
+		// Setting the health "revives" the mutant, which would result in their bound box being reduced to a point
+		// (see Actor::setHealth() call to retire(false, 0, 0, -1))
+		// and thus their corpse being unclickable after McCoy shot them.
+		// Goal 411 does this, but is set only when McCoy is no longer present in the scene/set.
 		AI_Movement_Track_Flush(kActorMutant3);
-		AI_Movement_Track_Append(kActorMutant3, 39, 100);
-		AI_Movement_Track_Repeat(kActorMutant3);
-		break;
-
-	case 599:
-		AI_Movement_Track_Flush(kActorMutant3);
-		Actor_Change_Animation_Mode(kActorMutant3, 48);
 		Actor_Set_Intelligence(kActorMutant3, 40);
 		Actor_Set_Health(kActorMutant3, 10 * Query_Difficulty_Level() + 50, 10 * Query_Difficulty_Level() + 50);
 
@@ -368,6 +374,39 @@ bool AIScriptMutant3::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 			Actor_Set_Friendliness_To_Other(kActorMutant3, kActorMcCoy, 40);
 		}
 
+		// code repeated also in case 599 which precedes this one
+		// redundant? 
+		// results in additional reduction in friendliness and increase of aggressiveness for the other two mutants
+		Actor_Modify_Friendliness_To_Other(kActorMutant1, kActorMcCoy, 20);
+		Actor_Modify_Friendliness_To_Other(kActorMutant2, kActorMcCoy, 15);
+		Actor_Modify_Combat_Aggressiveness(kActorMutant1, 10);
+		Actor_Modify_Combat_Aggressiveness(kActorMutant2, 10);
+		Actor_Set_Goal_Number(kActorMutant3, 403);
+		return true;
+#endif // BLADERUNNER_ORIGINAL_BUGS
+
+	case 590:
+		AI_Movement_Track_Flush(kActorMutant3);
+		AI_Movement_Track_Append(kActorMutant3, 39, 100);
+		AI_Movement_Track_Repeat(kActorMutant3);
+		break;
+
+	case 599:
+		AI_Movement_Track_Flush(kActorMutant3);
+		Actor_Change_Animation_Mode(kActorMutant3, kAnimationModeDie);
+#if BLADERUNNER_ORIGINAL_BUGS
+		Actor_Set_Intelligence(kActorMutant3, 40);
+		Actor_Set_Health(kActorMutant3, 10 * Query_Difficulty_Level() + 50, 10 * Query_Difficulty_Level() + 50);
+
+		if (Game_Flag_Query(kFlagCT04HomelessKilledByMcCoy)) {
+			Actor_Set_Combat_Aggressiveness(kActorMutant3, 80);
+			Actor_Set_Friendliness_To_Other(kActorMutant3, kActorMcCoy, 20);
+		} else {
+			Actor_Set_Combat_Aggressiveness(kActorMutant3, 50);
+			Actor_Set_Friendliness_To_Other(kActorMutant3, kActorMcCoy, 40);
+		}
+#endif // BLADERUNNER_ORIGINAL_BUGS
+		// results in additional reduction in friendliness and increase of aggressiveness for the other two mutants
 		Actor_Modify_Friendliness_To_Other(kActorMutant1, kActorMcCoy, 20);
 		Actor_Modify_Friendliness_To_Other(kActorMutant2, kActorMcCoy, 15);
 		Actor_Modify_Combat_Aggressiveness(kActorMutant1, 10);

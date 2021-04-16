@@ -2056,11 +2056,12 @@ bool Debugger::cmdList(int argc, const char **argv) {
 						             sceneObject->isPresent?   "T" : "F",
 						             sceneObject->isObstacle?  "T" : "F",
 						             sceneObject->isMoving?    "T" : "F");
-						debugPrintf("    Goal: %d, Set: %d, Anim mode: %d id:%d showDmg: %s inCombat: %s\n",
+						debugPrintf("    Goal: %d, Set: %d, Anim mode: %d id:%d fps: %d showDmg: %s inCombat: %s\n",
 						             actor->getGoal(),
 						             actor->getSetId(),
 						             actor->getAnimationMode(),
 						             actor->getAnimationId(),
+						             actor->getFPS(),
 						             actor->getFlagDamageAnimIfMoving()? "T" : "F",
 						             actor->inCombat()? "T" : "F");
 						debugPrintf("    Pos(%02.2f,%02.2f,%02.2f)\n",

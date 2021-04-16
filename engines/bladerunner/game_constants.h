@@ -3496,17 +3496,19 @@ enum GoalFreeSlotA { // Rat A
 	kGoalFreeSlotAAct5Default        = 400,
 	kGoalFreeSlotAAct5Prepare        = 405,
 	kGoalFreeSlotAAct5KP02Attack     = 406,
+	kGoalFreeSlotAGoneIntermediate   = 411,
 	kGoalFreeSlotAGone               = 599
 };
 
 enum GoalFreeSlotB { // Rat B
-	kGoalFreeSlotBAct4Default     = 300,
-	kGoalFreeSlotBAct4WalkAround  = 301,
-	kGoalFreeSlotBAct4AttackMcCoy = 302,
-	kGoalFreeSlotBAct5Default     = 400,
-	kGoalFreeSlotBAct5Prepare     = 405,
-	kGoalFreeSlotBAct5KP02Attack  = 406,
-	kGoalFreeSlotBGone            = 599
+	kGoalFreeSlotBAct4Default      = 300,
+	kGoalFreeSlotBAct4WalkAround   = 301,
+	kGoalFreeSlotBAct4AttackMcCoy  = 302,
+	kGoalFreeSlotBAct5Default      = 400,
+	kGoalFreeSlotBAct5Prepare      = 405,
+	kGoalFreeSlotBAct5KP02Attack   = 406,
+	kGoalFreeSlotBGoneIntermediate = 411,
+	kGoalFreeSlotBGone             = 599
 };
 
 enum GoalMaggie {
