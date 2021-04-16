@@ -9,7 +9,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-04-16 12:21+0000\n"
 "PO-Revision-Date: 2021-04-16 16:48+0000\n"
-"Last-Translator: jepael <kermespersialainen@gmail.com>\n"
+"Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fi/>\n"
 "Language: fi_FI\n"
@@ -2293,13 +2293,11 @@ msgstr ""
 
 #: engines/engine.cpp:649
 msgid "WARNING: "
-msgstr ""
+msgstr "VAROITUS: "
 
 #: engines/engine.cpp:649
-#, fuzzy
-#| msgid "Full title of the game"
 msgid " Shall we still run the game?"
-msgstr "Pelin koko nimi"
+msgstr " Käynnistämmekö pelin tästä huolimatta?"
 
 #: engines/engine.cpp:650
 msgid ""
@@ -5455,16 +5453,17 @@ msgstr ""
 
 #. I18N: Second Chance is the name of the original engine's autosave system
 #: engines/nancy/dialogs.cpp:46
-#, fuzzy
-#| msgid "Enable cross fade"
 msgid "Enable Second Chance"
-msgstr "Ristiinhäivytys päälle"
+msgstr "Toinen mahdollisuus päälle"
 
 #: engines/nancy/dialogs.cpp:46
 msgid ""
 "Enable the Second Chance feature, which automatically saves at specific "
 "scenes. Enabling this disables timed autosaves."
 msgstr ""
+"Laita päälle Toinen mahdollisuus-ominaisuus, joka automaattisesti tallentaa "
+"pelin tietyissä kohtauksissa. Tämän päällelaittaminen poistaa automaattiset "
+"talleennukset käytöstä."
 
 #: engines/nancy/dialogs.cpp:48
 msgid "Speech Options"
@@ -5850,6 +5849,7 @@ msgstr "Yamaha FB-01"
 #: engines/sci/detection_tables.h:4207
 msgid "Incomplete game detected. You have to copy data from all the CDs."
 msgstr ""
+"Vaillinainen peli havaittu. Sinun täytyy kopioida data kaikilta CD-levyiltä."
 
 #: engines/sci/engine/kfile.cpp:485 engines/sci/metaengine.cpp:404
 msgid "(Autosave)"
