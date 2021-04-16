@@ -67,6 +67,7 @@ private:
 	Graphics::TransparentSurface *	_picture;
 	Graphics::TransparentSurface *	_rotatedPicture;
 	RegionPtr						_region;
+	RegionPtr						_trapRegion;
 	Animation *						_animation;
 	Animation *						_mouseCursor;
 	Common::Point					_pos, _animationPos, _offset;

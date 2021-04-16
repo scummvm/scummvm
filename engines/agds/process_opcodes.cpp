@@ -326,6 +326,13 @@ void Process::setGlobal() {
 	_engine->setGlobal(name, value);
 }
 
+void Process::setGlobalWithTop() {
+	Common::String name = popString();
+	int value = top();
+	debug("setGlobalWithTop %s %d", name.c_str(), value);
+	_engine->setGlobal(name, value);
+}
+
 void Process::setPhaseVar() {
 	Common::String name = popString();
 	debug("setPhaseVar %s", name.c_str());
