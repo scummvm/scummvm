@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-04-15 23:11+0000\n"
-"PO-Revision-Date: 2021-04-15 11:24+0000\n"
+"PO-Revision-Date: 2021-04-16 12:24+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
@@ -1191,7 +1191,7 @@ msgstr "Ne pas utiliser la musique Roland MT-32"
 
 #: gui/options.cpp:1515
 msgid "Text and speech:"
-msgstr "Dialogue :"
+msgstr "Textes et voix :"
 
 #: gui/options.cpp:1519 gui/options.cpp:1529
 msgid "Speech"
@@ -1212,7 +1212,7 @@ msgstr "Vitesse des ST :"
 #: gui/options.cpp:1525
 msgctxt "lowres"
 msgid "Text and speech:"
-msgstr "Dialogue :"
+msgstr "Textes et voix :"
 
 #: gui/options.cpp:1529
 msgid "Spch"
@@ -1220,16 +1220,16 @@ msgstr "Voix"
 
 #: gui/options.cpp:1530
 msgid "Subs"
-msgstr "Subs"
+msgstr "ST"
 
 #: gui/options.cpp:1531
 msgctxt "lowres"
 msgid "Both"
-msgstr "V&S"
+msgstr "V&ST"
 
 #: gui/options.cpp:1531
 msgid "Show subtitles and play speech"
-msgstr "Affiche les sous-titres et joue les dialogues audio"
+msgstr "Affiche les sous-titres et joue les voix"
 
 #: gui/options.cpp:1533
 msgctxt "lowres"
@@ -1264,12 +1264,12 @@ msgstr "Bruitage :"
 
 #: gui/options.cpp:1571
 msgid "Speech volume:"
-msgstr "Volume Dialogues :"
+msgstr "Volume Voix :"
 
 #: gui/options.cpp:1573
 msgctxt "lowres"
 msgid "Speech volume:"
-msgstr "Dialogues :"
+msgstr "Volumes Voix :"
 
 #: gui/options.cpp:1822
 msgid "Control"
@@ -6197,7 +6197,7 @@ msgstr "~S~uivant"
 
 #: engines/scumm/dialogs.cpp:611
 msgid "Speech Only"
-msgstr "Voix"
+msgstr "Voix uniquement"
 
 #: engines/scumm/dialogs.cpp:612
 msgid "Speech and Subtitles"
@@ -6205,7 +6205,7 @@ msgstr "Voix et Sous-titres"
 
 #: engines/scumm/dialogs.cpp:613
 msgid "Subtitles Only"
-msgstr "Sous-titres"
+msgstr "Sous-titres uniquement"
 
 #: engines/scumm/dialogs.cpp:621
 msgctxt "lowres"
