@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-04-15 23:11+0000\n"
+"POT-Creation-Date: 2021-04-16 12:21+0000\n"
 "PO-Revision-Date: 2021-04-14 20:24+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
@@ -65,7 +65,7 @@ msgstr "上へ"
 #: gui/saveload-dialog.cpp:62 gui/saveload-dialog.cpp:395
 #: gui/saveload-dialog.cpp:467 gui/saveload-dialog.cpp:771
 #: gui/saveload-dialog.cpp:1167 gui/themebrowser.cpp:55
-#: gui/unknown-game-dialog.cpp:54 engines/engine.cpp:652
+#: gui/unknown-game-dialog.cpp:54 engines/engine.cpp:653
 #: backends/dialogs/gtk/gtk-dialogs.cpp:46
 #: backends/events/default/default-events.cpp:185
 #: backends/events/default/default-events.cpp:209
@@ -792,14 +792,14 @@ msgstr "ゲームリストを検索する"
 msgid "Search:"
 msgstr "検索："
 
-#: gui/launcher.cpp:210 engines/dialogs.cpp:102 engines/engine.cpp:802
+#: gui/launcher.cpp:210 engines/dialogs.cpp:102 engines/engine.cpp:803
 #: engines/buried/saveload.cpp:515 engines/pegasus/pegasus.cpp:384
 #: engines/tsage/scenes.cpp:631 engines/wage/saveload.cpp:742
 #: engines/xeen/saves.cpp:256
 msgid "Load game:"
 msgstr "ゲームをロード："
 
-#: gui/launcher.cpp:210 engines/dialogs.cpp:102 engines/engine.cpp:802
+#: gui/launcher.cpp:210 engines/dialogs.cpp:102 engines/engine.cpp:803
 #: engines/buried/saveload.cpp:515 engines/parallaction/metaengine.cpp:118
 #: engines/parallaction/saveload.cpp:194 engines/pegasus/pegasus.cpp:384
 #: engines/scumm/dialogs.cpp:178 engines/tsage/scenes.cpp:631
@@ -2096,7 +2096,7 @@ msgstr "毎月"
 msgid "<Bad value>"
 msgstr "<不正な値>"
 
-#: engines/advancedDetector.cpp:213
+#: engines/advancedDetector.cpp:215
 msgid "Illegitimate game copy detected. We provide no support in such cases"
 msgstr "違法コピーの痕跡が検出されました。このソフトはサポートできません"
 
@@ -2133,7 +2133,7 @@ msgctxt "lowres"
 msgid "~R~eturn to Launcher"
 msgstr "メインメニューに戻る(~R~)"
 
-#: engines/dialogs.cpp:103 engines/engine.cpp:831 engines/agi/saveload.cpp:768
+#: engines/dialogs.cpp:103 engines/engine.cpp:832 engines/agi/saveload.cpp:768
 #: engines/avalanche/parser.cpp:1919 engines/buried/saveload.cpp:534
 #: engines/cine/various.cpp:350 engines/dm/loadsave.cpp:199
 #: engines/drascula/saveload.cpp:383 engines/dreamweb/saveload.cpp:262
@@ -2151,7 +2151,7 @@ msgstr "メインメニューに戻る(~R~)"
 msgid "Save game:"
 msgstr "ゲームをセーブ："
 
-#: engines/dialogs.cpp:103 engines/engine.cpp:831
+#: engines/dialogs.cpp:103 engines/engine.cpp:832
 #: backends/platform/symbian/src/SymbianActions.cpp:46
 #: engines/agi/saveload.cpp:768 engines/avalanche/parser.cpp:1919
 #: engines/buried/saveload.cpp:534 engines/cine/various.cpp:350
@@ -2283,6 +2283,16 @@ msgid ""
 msgstr "セーブ%sのロードに失敗しました! 詳細はREADMEを参照してください。"
 
 #: engines/engine.cpp:649
+msgid "WARNING: "
+msgstr ""
+
+#: engines/engine.cpp:649
+#, fuzzy
+#| msgid "Full title of the game"
+msgid " Shall we still run the game?"
+msgstr "ゲームのフルネーム"
+
+#: engines/engine.cpp:650
 msgid ""
 "WARNING: The game you are about to start is not yet fully supported by "
 "ScummVM. As such, it is likely to be unstable, and any saved game you make "
@@ -2291,15 +2301,15 @@ msgstr ""
 "警告：このゲームはまだ完全なサポートがなされていません。動作が安定せず、また"
 "将来的にセーブデータの互換性が失われる可能性があります。"
 
-#: engines/engine.cpp:652 engines/wintermute/wintermute.cpp:210
+#: engines/engine.cpp:653 engines/wintermute/wintermute.cpp:210
 msgid "Start anyway"
 msgstr "承知して開始"
 
-#: engines/engine.cpp:659
+#: engines/engine.cpp:660
 msgid "This game is not supported."
 msgstr "未対応のゲームID。"
 
-#: engines/engine.cpp:659
+#: engines/engine.cpp:660
 msgid ""
 "This game is not supported for the following reason:\n"
 "\n"
@@ -2307,11 +2317,11 @@ msgstr ""
 "このゲームはランチャーからロードができません：\n"
 "\n"
 
-#: engines/engine.cpp:798
+#: engines/engine.cpp:799
 msgid "Loading game is currently unavailable"
 msgstr "ロードされたゲームは現在使用できません"
 
-#: engines/engine.cpp:827
+#: engines/engine.cpp:828
 msgid "Saving game is currently unavailable"
 msgstr "セーブされているゲームは現在使用できません"
 
@@ -3987,8 +3997,8 @@ msgstr "無効なセーブファイル名です"
 #: engines/kyra/detection_tables.h:224 engines/kyra/detection_tables.h:237
 #: engines/kyra/detection_tables.h:593 engines/kyra/detection_tables.h:1777
 #: engines/saga/detection_tables.h:187 engines/saga/detection_tables.h:608
-#: engines/saga/detection_tables.h:936 engines/sci/detection_tables.h:4841
-#: engines/sci/detection_tables.h:4849
+#: engines/saga/detection_tables.h:936 engines/sci/detection_tables.h:4851
+#: engines/sci/detection_tables.h:4859
 msgid "Missing game code"
 msgstr "ゲームコードがありません"
 
@@ -5798,6 +5808,10 @@ msgstr "ローランド D-110 / D-10 / D-20"
 #: engines/sci/detection.cpp:326
 msgid "Yamaha FB-01"
 msgstr "ヤマハ FB-01"
+
+#: engines/sci/detection_tables.h:4207
+msgid "Incomplete game detected. You have to copy data from all the CDs."
+msgstr ""
 
 #: engines/sci/engine/kfile.cpp:485 engines/sci/metaengine.cpp:404
 msgid "(Autosave)"

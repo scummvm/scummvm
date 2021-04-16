@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-04-15 23:11+0000\n"
+"POT-Creation-Date: 2021-04-16 12:21+0000\n"
 "PO-Revision-Date: 2020-09-26 21:13+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Galician <https://translations.scummvm.org/projects/scummvm/"
@@ -63,7 +63,7 @@ msgstr "Arriba"
 #: gui/saveload-dialog.cpp:62 gui/saveload-dialog.cpp:395
 #: gui/saveload-dialog.cpp:467 gui/saveload-dialog.cpp:771
 #: gui/saveload-dialog.cpp:1167 gui/themebrowser.cpp:55
-#: gui/unknown-game-dialog.cpp:54 engines/engine.cpp:652
+#: gui/unknown-game-dialog.cpp:54 engines/engine.cpp:653
 #: backends/dialogs/gtk/gtk-dialogs.cpp:46
 #: backends/events/default/default-events.cpp:185
 #: backends/events/default/default-events.cpp:209
@@ -790,14 +790,14 @@ msgstr "Buscar na lista de xogos"
 msgid "Search:"
 msgstr "Buscar:"
 
-#: gui/launcher.cpp:210 engines/dialogs.cpp:102 engines/engine.cpp:802
+#: gui/launcher.cpp:210 engines/dialogs.cpp:102 engines/engine.cpp:803
 #: engines/buried/saveload.cpp:515 engines/pegasus/pegasus.cpp:384
 #: engines/tsage/scenes.cpp:631 engines/wage/saveload.cpp:742
 #: engines/xeen/saves.cpp:256
 msgid "Load game:"
 msgstr "Cargar partida:"
 
-#: gui/launcher.cpp:210 engines/dialogs.cpp:102 engines/engine.cpp:802
+#: gui/launcher.cpp:210 engines/dialogs.cpp:102 engines/engine.cpp:803
 #: engines/buried/saveload.cpp:515 engines/parallaction/metaengine.cpp:118
 #: engines/parallaction/saveload.cpp:194 engines/pegasus/pegasus.cpp:384
 #: engines/scumm/dialogs.cpp:178 engines/tsage/scenes.cpp:631
@@ -2131,7 +2131,7 @@ msgstr "Mensualmente"
 msgid "<Bad value>"
 msgstr "<Valor erróneo>"
 
-#: engines/advancedDetector.cpp:213
+#: engines/advancedDetector.cpp:215
 msgid "Illegitimate game copy detected. We provide no support in such cases"
 msgstr ""
 
@@ -2168,7 +2168,7 @@ msgctxt "lowres"
 msgid "~R~eturn to Launcher"
 msgstr "~V~olver ao Iniciador"
 
-#: engines/dialogs.cpp:103 engines/engine.cpp:831 engines/agi/saveload.cpp:768
+#: engines/dialogs.cpp:103 engines/engine.cpp:832 engines/agi/saveload.cpp:768
 #: engines/avalanche/parser.cpp:1919 engines/buried/saveload.cpp:534
 #: engines/cine/various.cpp:350 engines/dm/loadsave.cpp:199
 #: engines/drascula/saveload.cpp:383 engines/dreamweb/saveload.cpp:262
@@ -2186,7 +2186,7 @@ msgstr "~V~olver ao Iniciador"
 msgid "Save game:"
 msgstr "Gardar partida:"
 
-#: engines/dialogs.cpp:103 engines/engine.cpp:831
+#: engines/dialogs.cpp:103 engines/engine.cpp:832
 #: backends/platform/symbian/src/SymbianActions.cpp:46
 #: engines/agi/saveload.cpp:768 engines/avalanche/parser.cpp:1919
 #: engines/buried/saveload.cpp:534 engines/cine/various.cpp:350
@@ -2326,6 +2326,16 @@ msgstr ""
 "básica e máis instrucións para acadar asistencia adicional."
 
 #: engines/engine.cpp:649
+msgid "WARNING: "
+msgstr ""
+
+#: engines/engine.cpp:649
+#, fuzzy
+#| msgid "Full title of the game"
+msgid " Shall we still run the game?"
+msgstr "Título completo do xogo"
+
+#: engines/engine.cpp:650
 msgid ""
 "WARNING: The game you are about to start is not yet fully supported by "
 "ScummVM. As such, it is likely to be unstable, and any saved game you make "
@@ -2335,27 +2345,27 @@ msgstr ""
 "Por iso, talvez sexa inestable e os ficheiros de gardado talvez non "
 "funcionen en futuras versións de ScummVM."
 
-#: engines/engine.cpp:652 engines/wintermute/wintermute.cpp:210
+#: engines/engine.cpp:653 engines/wintermute/wintermute.cpp:210
 msgid "Start anyway"
 msgstr "Iniciar de todos os xeitos"
 
-#: engines/engine.cpp:659
+#: engines/engine.cpp:660
 #, fuzzy
 msgid "This game is not supported."
 msgstr "ID de xogo non compatible"
 
-#: engines/engine.cpp:659
+#: engines/engine.cpp:660
 #, fuzzy
 msgid ""
 "This game is not supported for the following reason:\n"
 "\n"
 msgstr "O xogo non permite cargar partidas dende o iniciador."
 
-#: engines/engine.cpp:798
+#: engines/engine.cpp:799
 msgid "Loading game is currently unavailable"
 msgstr ""
 
-#: engines/engine.cpp:827
+#: engines/engine.cpp:828
 msgid "Saving game is currently unavailable"
 msgstr ""
 
@@ -4109,8 +4119,8 @@ msgstr "Nome de ficheiro non válido"
 #: engines/kyra/detection_tables.h:224 engines/kyra/detection_tables.h:237
 #: engines/kyra/detection_tables.h:593 engines/kyra/detection_tables.h:1777
 #: engines/saga/detection_tables.h:187 engines/saga/detection_tables.h:608
-#: engines/saga/detection_tables.h:936 engines/sci/detection_tables.h:4841
-#: engines/sci/detection_tables.h:4849
+#: engines/saga/detection_tables.h:936 engines/sci/detection_tables.h:4851
+#: engines/sci/detection_tables.h:4859
 #, fuzzy
 msgid "Missing game code"
 msgstr "Controis principais de xogo:"
@@ -5961,6 +5971,10 @@ msgstr ""
 
 #: engines/sci/detection.cpp:326
 msgid "Yamaha FB-01"
+msgstr ""
+
+#: engines/sci/detection_tables.h:4207
+msgid "Incomplete game detected. You have to copy data from all the CDs."
 msgstr ""
 
 #: engines/sci/engine/kfile.cpp:485 engines/sci/metaengine.cpp:404

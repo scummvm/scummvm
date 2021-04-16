@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-04-15 23:11+0000\n"
+"POT-Creation-Date: 2021-04-16 12:21+0000\n"
 "PO-Revision-Date: 2020-11-29 17:10+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
@@ -64,7 +64,7 @@ msgstr "Ga omhoog"
 #: gui/saveload-dialog.cpp:62 gui/saveload-dialog.cpp:395
 #: gui/saveload-dialog.cpp:467 gui/saveload-dialog.cpp:771
 #: gui/saveload-dialog.cpp:1167 gui/themebrowser.cpp:55
-#: gui/unknown-game-dialog.cpp:54 engines/engine.cpp:652
+#: gui/unknown-game-dialog.cpp:54 engines/engine.cpp:653
 #: backends/dialogs/gtk/gtk-dialogs.cpp:46
 #: backends/events/default/default-events.cpp:185
 #: backends/events/default/default-events.cpp:209
@@ -786,14 +786,14 @@ msgstr "Zoek in lijst met spellen"
 msgid "Search:"
 msgstr "Zoeken:"
 
-#: gui/launcher.cpp:210 engines/dialogs.cpp:102 engines/engine.cpp:802
+#: gui/launcher.cpp:210 engines/dialogs.cpp:102 engines/engine.cpp:803
 #: engines/buried/saveload.cpp:515 engines/pegasus/pegasus.cpp:384
 #: engines/tsage/scenes.cpp:631 engines/wage/saveload.cpp:742
 #: engines/xeen/saves.cpp:256
 msgid "Load game:"
 msgstr "Laad spel:"
 
-#: gui/launcher.cpp:210 engines/dialogs.cpp:102 engines/engine.cpp:802
+#: gui/launcher.cpp:210 engines/dialogs.cpp:102 engines/engine.cpp:803
 #: engines/buried/saveload.cpp:515 engines/parallaction/metaengine.cpp:118
 #: engines/parallaction/saveload.cpp:194 engines/pegasus/pegasus.cpp:384
 #: engines/scumm/dialogs.cpp:178 engines/tsage/scenes.cpp:631
@@ -2107,7 +2107,7 @@ msgstr "Maandelijks"
 msgid "<Bad value>"
 msgstr "<Ongeldige waarde>"
 
-#: engines/advancedDetector.cpp:213
+#: engines/advancedDetector.cpp:215
 msgid "Illegitimate game copy detected. We provide no support in such cases"
 msgstr ""
 "Illegale spelkopie gedetecteerd. Wij leveren geen support in dit soort "
@@ -2146,7 +2146,7 @@ msgctxt "lowres"
 msgid "~R~eturn to Launcher"
 msgstr "S~t~artmenu"
 
-#: engines/dialogs.cpp:103 engines/engine.cpp:831 engines/agi/saveload.cpp:768
+#: engines/dialogs.cpp:103 engines/engine.cpp:832 engines/agi/saveload.cpp:768
 #: engines/avalanche/parser.cpp:1919 engines/buried/saveload.cpp:534
 #: engines/cine/various.cpp:350 engines/dm/loadsave.cpp:199
 #: engines/drascula/saveload.cpp:383 engines/dreamweb/saveload.cpp:262
@@ -2164,7 +2164,7 @@ msgstr "S~t~artmenu"
 msgid "Save game:"
 msgstr "Spel opslaan:"
 
-#: engines/dialogs.cpp:103 engines/engine.cpp:831
+#: engines/dialogs.cpp:103 engines/engine.cpp:832
 #: backends/platform/symbian/src/SymbianActions.cpp:46
 #: engines/agi/saveload.cpp:768 engines/avalanche/parser.cpp:1919
 #: engines/buried/saveload.cpp:534 engines/cine/various.cpp:350
@@ -2305,6 +2305,16 @@ msgstr ""
 "assistentie."
 
 #: engines/engine.cpp:649
+msgid "WARNING: "
+msgstr ""
+
+#: engines/engine.cpp:649
+#, fuzzy
+#| msgid "Full title of the game"
+msgid " Shall we still run the game?"
+msgstr "Volledige titel van het spel"
+
+#: engines/engine.cpp:650
 msgid ""
 "WARNING: The game you are about to start is not yet fully supported by "
 "ScummVM. As such, it is likely to be unstable, and any saved game you make "
@@ -2315,15 +2325,15 @@ msgstr ""
 "instabiel is, en opgeslagen spellen zullen mogelijk niet werken in "
 "toekomstige versies van ScummVM."
 
-#: engines/engine.cpp:652 engines/wintermute/wintermute.cpp:210
+#: engines/engine.cpp:653 engines/wintermute/wintermute.cpp:210
 msgid "Start anyway"
 msgstr "Evengoed starten"
 
-#: engines/engine.cpp:659
+#: engines/engine.cpp:660
 msgid "This game is not supported."
 msgstr "Dit spel wordt niet ondersteund."
 
-#: engines/engine.cpp:659
+#: engines/engine.cpp:660
 msgid ""
 "This game is not supported for the following reason:\n"
 "\n"
@@ -2331,11 +2341,11 @@ msgstr ""
 "Dit spel wordt niet ondersteunt om de volgende reden:\n"
 "\n"
 
-#: engines/engine.cpp:798
+#: engines/engine.cpp:799
 msgid "Loading game is currently unavailable"
 msgstr "Spel laden is nu niet mogelijk"
 
-#: engines/engine.cpp:827
+#: engines/engine.cpp:828
 msgid "Saving game is currently unavailable"
 msgstr "Spel opslaan is nu niet mogelijk"
 
@@ -4047,8 +4057,8 @@ msgstr "ongeldige bewaarbestandsnaam"
 #: engines/kyra/detection_tables.h:224 engines/kyra/detection_tables.h:237
 #: engines/kyra/detection_tables.h:593 engines/kyra/detection_tables.h:1777
 #: engines/saga/detection_tables.h:187 engines/saga/detection_tables.h:608
-#: engines/saga/detection_tables.h:936 engines/sci/detection_tables.h:4841
-#: engines/sci/detection_tables.h:4849
+#: engines/saga/detection_tables.h:936 engines/sci/detection_tables.h:4851
+#: engines/sci/detection_tables.h:4859
 msgid "Missing game code"
 msgstr "Ontbrekende spel code"
 
@@ -5940,6 +5950,10 @@ msgstr "Roland D-110 / D-10 / D-20"
 #: engines/sci/detection.cpp:326
 msgid "Yamaha FB-01"
 msgstr "Yamaha FB-01"
+
+#: engines/sci/detection_tables.h:4207
+msgid "Incomplete game detected. You have to copy data from all the CDs."
+msgstr ""
 
 #: engines/sci/engine/kfile.cpp:485 engines/sci/metaengine.cpp:404
 msgid "(Autosave)"
