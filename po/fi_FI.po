@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-04-15 19:20+0000\n"
+"POT-Creation-Date: 2021-04-15 23:11+0000\n"
 "PO-Revision-Date: 2021-04-10 09:24+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
@@ -5837,7 +5837,7 @@ msgstr "Roland D-110 / D-10 / D-20"
 msgid "Yamaha FB-01"
 msgstr "Yamaha FB-01"
 
-#: engines/sci/engine/kfile.cpp:485 engines/sci/metaengine.cpp:403
+#: engines/sci/engine/kfile.cpp:485 engines/sci/metaengine.cpp:404
 msgid "(Autosave)"
 msgstr "(Autom. tallennus)"
 
@@ -5881,7 +5881,7 @@ msgstr ""
 "%d-bittistä videota ei voida toistaa järjestelmällä jonka maksimi värisyvyys "
 "on 8-bittinen"
 
-#: engines/sci/metaengine.cpp:325
+#: engines/sci/metaengine.cpp:326
 msgid "SCI32 support not compiled in"
 msgstr "SCI32-tukea ei ole käännetty mukaan"
 

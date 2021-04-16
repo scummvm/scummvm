@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.5.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-04-15 19:20+0000\n"
+"POT-Creation-Date: 2021-04-15 23:11+0000\n"
 "PO-Revision-Date: 2021-01-02 18:37+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Basque <https://translations.scummvm.org/projects/scummvm/"
@@ -5946,7 +5946,7 @@ msgstr ""
 msgid "Yamaha FB-01"
 msgstr ""
 
-#: engines/sci/engine/kfile.cpp:485 engines/sci/metaengine.cpp:403
+#: engines/sci/engine/kfile.cpp:485 engines/sci/metaengine.cpp:404
 #, fuzzy
 msgid "(Autosave)"
 msgstr "Autogordetzea:"
@@ -5984,7 +5984,7 @@ msgid ""
 "Cannot play back %dbpp video on a system with maximum color depth of 8bpp"
 msgstr ""
 
-#: engines/sci/metaengine.cpp:325
+#: engines/sci/metaengine.cpp:326
 #, fuzzy
 msgid "SCI32 support not compiled in"
 msgstr "Ezaugarri erantsiak:"

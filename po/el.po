@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-04-15 19:20+0000\n"
+"POT-Creation-Date: 2021-04-15 23:11+0000\n"
 "PO-Revision-Date: 2021-04-14 05:51+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
@@ -5955,7 +5955,7 @@ msgstr "Roland D-110 / D-10 / D-20"
 msgid "Yamaha FB-01"
 msgstr "Yamaha FB-01"
 
-#: engines/sci/engine/kfile.cpp:485 engines/sci/metaengine.cpp:403
+#: engines/sci/engine/kfile.cpp:485 engines/sci/metaengine.cpp:404
 msgid "(Autosave)"
 msgstr "(Αυτόματη αποθήκευση)"
 
@@ -6004,7 +6004,7 @@ msgid ""
 msgstr ""
 "Αδυναμία αναπαραγωγής βίντεο %dbpp σε σύστημα με μέγιστο βάθος χρώματος 8bpp"
 
-#: engines/sci/metaengine.cpp:325
+#: engines/sci/metaengine.cpp:326
 msgid "SCI32 support not compiled in"
 msgstr "Η υποστήριξη της SCI32 μηχανής δεν έχει ενσωματωθεί στο εκτελέσιμο"
 

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-04-15 19:20+0000\n"
+"POT-Creation-Date: 2021-04-15 23:11+0000\n"
 "PO-Revision-Date: 2021-04-14 20:24+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
@@ -5799,7 +5799,7 @@ msgstr "ローランド D-110 / D-10 / D-20"
 msgid "Yamaha FB-01"
 msgstr "ヤマハ FB-01"
 
-#: engines/sci/engine/kfile.cpp:485 engines/sci/metaengine.cpp:403
+#: engines/sci/engine/kfile.cpp:485 engines/sci/metaengine.cpp:404
 msgid "(Autosave)"
 msgstr "(自動セーブ)"
 
@@ -5838,7 +5838,7 @@ msgid ""
 "Cannot play back %dbpp video on a system with maximum color depth of 8bpp"
 msgstr "最大色深度が8bppのシステムで、%dbppの映像を再生する事はできません"
 
-#: engines/sci/metaengine.cpp:325
+#: engines/sci/metaengine.cpp:326
 msgid "SCI32 support not compiled in"
 msgstr "SCI32のサポートはコンパイルされていません"
 

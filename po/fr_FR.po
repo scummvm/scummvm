@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-04-15 19:20+0000\n"
+"POT-Creation-Date: 2021-04-15 23:11+0000\n"
 "PO-Revision-Date: 2021-04-15 11:24+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
@@ -5898,7 +5898,7 @@ msgstr "Roland D-110 / D-10 / D-20"
 msgid "Yamaha FB-01"
 msgstr "Yamaha FB-01"
 
-#: engines/sci/engine/kfile.cpp:485 engines/sci/metaengine.cpp:403
+#: engines/sci/engine/kfile.cpp:485 engines/sci/metaengine.cpp:404
 msgid "(Autosave)"
 msgstr "(Sauvegarde automatique)"
 
@@ -5948,7 +5948,7 @@ msgstr ""
 "Impossible de lire une vidéo %dbpp sur un système avec une profondeur de "
 "couleur maximale de 8bpp"
 
-#: engines/sci/metaengine.cpp:325
+#: engines/sci/metaengine.cpp:326
 msgid "SCI32 support not compiled in"
 msgstr "La prise en charge des jeux SCI32 n'est pas incluse"
 

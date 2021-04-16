@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-04-15 19:20+0000\n"
+"POT-Creation-Date: 2021-04-15 23:11+0000\n"
 "PO-Revision-Date: 2021-04-14 09:15+0000\n"
 "Last-Translator: George Kormendi <grubycza@hotmail.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
@@ -5825,7 +5825,7 @@ msgstr "Roland D-110 / D-10 / D-20"
 msgid "Yamaha FB-01"
 msgstr "Yamaha FB-01"
 
-#: engines/sci/engine/kfile.cpp:485 engines/sci/metaengine.cpp:403
+#: engines/sci/engine/kfile.cpp:485 engines/sci/metaengine.cpp:404
 msgid "(Autosave)"
 msgstr "(Automentés)"
 
@@ -5870,7 +5870,7 @@ msgstr ""
 "Nem lehet lejátszani %d bpp videót olyan rendszeren, melynek maximális "
 "színmélysége 8 bpp"
 
-#: engines/sci/metaengine.cpp:325
+#: engines/sci/metaengine.cpp:326
 msgid "SCI32 support not compiled in"
 msgstr "SCI32 támogatás nincs lefordítva"
 
