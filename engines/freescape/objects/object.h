@@ -14,16 +14,16 @@
 //#include <vector>
 //#include "freescape/language/instruction.h"
 
-typedef struct Vector3d
-{
+typedef struct Vector3d {
 	uint16 x, y, z;
-	uint16 &operator [](int index)
-	{
-		switch(index)
-		{
-			default: return x;
-			case 1: return y;
-			case 2: return z;
+	uint16 &operator[](int index) {
+		switch (index) {
+		default:
+			return x;
+		case 1:
+			return y;
+		case 2:
+			return z;
 		}
 	};
 } Vector3d;
@@ -31,57 +31,55 @@ typedef struct Vector3d
 class VertexBuffer;
 class DrawElementsBuffer;
 class BatchDrawer;
-class Object
-{
-	public:
-		typedef enum
-		{
-			Entrance		= 0,
-			Cube			= 1,
-			Sensor			= 2,
-			Rectangle		= 3,
+class Object {
+public:
+	typedef enum {
+		Entrance = 0,
+		Cube = 1,
+		Sensor = 2,
+		Rectangle = 3,
 
-			EastPyramid		= 4,
-			WestPyramid		= 5,
-			UpPyramid		= 6,
-			DownPyramid		= 7,
-			NorthPyramid	= 8,
-			SouthPyramid	= 9,
+		EastPyramid = 4,
+		WestPyramid = 5,
+		UpPyramid = 6,
+		DownPyramid = 7,
+		NorthPyramid = 8,
+		SouthPyramid = 9,
 
-			Line			= 10,
-			Triangle		= 11,
-			Quadrilateral	= 12,
-			Pentagon		= 13,
-			Hexagon			= 14,
+		Line = 10,
+		Triangle = 11,
+		Quadrilateral = 12,
+		Pentagon = 13,
+		Hexagon = 14,
 
-			Group			= 15
-		} Type;
+		Group = 15
+	} Type;
 
-		Type		getType();
-		uint16	getObjectID();
-		Vector3d	getOrigin();
-		Vector3d	getSize();
+	Type getType();
+	uint16 getObjectID();
+	Vector3d getOrigin();
+	Vector3d getSize();
 
-		/*
+	/*
 		virtual void setupOpenGL(VertexBuffer *areaVertexBuffer, DrawElementsBuffer *areaDrawElementsBuffer);
 		virtual void draw(VertexBuffer *areaVertexBuffer, DrawElementsBuffer *areaDrawElementsBuffer, BatchDrawer *batchDrawer, bool allowPolygonOffset);
 		*/
-		virtual bool isDrawable();
-		virtual bool isPlanar();
+	virtual bool isDrawable();
+	virtual bool isPlanar();
 
-		virtual ~Object();
+	virtual ~Object();
 
-	protected:
-		Type type;
-		uint16 objectID;
-		Vector3d origin, size;
+protected:
+	Type type;
+	uint16 objectID;
+	Vector3d origin, size;
 };
 
 /*
-#include "GeometricObject.h"
 #include "Entrance.h"
-#include "Sensor.h"
+#include "GeometricObject.h"
 #include "Group.h"
+#include "Sensor.h"
 */
 
 #endif /* defined(__Phantasma__Object__) */

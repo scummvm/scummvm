@@ -9,9 +9,9 @@
 #ifndef __Phantasma___6bitDetokeniser__
 #define __Phantasma___6bitDetokeniser__
 
-#include "common/str.h"
 #include "common/array.h"
+#include "common/str.h"
 
-Common::String *detokenise16bitCondition(Common::Array <uint8> &tokenisedCondition);
+Common::String *detokenise16bitCondition(Common::Array<uint8> &tokenisedCondition);
 
 #endif /* defined(__Phantasma___6bitDetokeniser__) */

@@ -6,118 +6,102 @@
 //  Copyright (c) 2013 Thomas Harte. All rights reserved.
 //
 
-
 //#include "freescape/language/parser.h"
 
-#include "common/debug.h"
 #include "common/array.h"
+#include "common/debug.h"
 #include "common/file.h"
 
 #include "freescape/area.h"
-#include "freescape/objects/object.h"
-#include "freescape/objects/geometricobject.h"
-#include "freescape/loaders/16bitBinaryLoader.h"
 #include "freescape/language/16bitDetokeniser.h"
 #include "freescape/language/instruction.h"
 #include "freescape/language/parser.h"
+#include "freescape/loaders/16bitBinaryLoader.h"
+#include "freescape/objects/geometricobject.h"
+#include "freescape/objects/object.h"
 
-class StreamLoader
-{
-	private:
+class StreamLoader {
+private:
+	Common::Array<uint8>::size_type bytePointer;
+	Common::Array<uint8> binary;
+	uint8 readMaskByte1;
+	uint8 readMaskByte2;
 
-		Common::Array<uint8>::size_type bytePointer;
-		Common::Array<uint8> binary;
-		uint8 readMaskByte1;
-		uint8 readMaskByte2;
+public:
+	StreamLoader(Common::Array<uint8> &_binary) {
+		binary = _binary;
+		bytePointer = 0;
+		readMaskByte1 = 0;
+		readMaskByte2 = 0;
+	}
 
-	public:
-		StreamLoader(Common::Array <uint8> &_binary)
-		{
-			binary = _binary;
-			bytePointer = 0;
-			readMaskByte1 = 0;
-			readMaskByte2 = 0;
-		}
+	uint8 get8() {
+		if (!eof()) {
+			uint8 sourceByte = binary[bytePointer];
 
-		uint8 get8()
-		{
-			if(!eof())
-			{
-				uint8 sourceByte = binary[bytePointer];
-				
-				if(bytePointer&1)
-					sourceByte ^= readMaskByte2;
-				else
-					sourceByte ^= readMaskByte1;
+			if (bytePointer & 1)
+				sourceByte ^= readMaskByte2;
+			else
+				sourceByte ^= readMaskByte1;
 
-				bytePointer++;
-				return sourceByte;
-			} else
-				error("eof");
+			bytePointer++;
+			return sourceByte;
+		} else
+			error("eof");
 
-			return 0;
-		}
+		return 0;
+	}
 
-		uint16 get16()
-		{
-			uint16 result = (uint16)(get8() << 8);
-			result |= get8();
-			return result;
-		}
+	uint16 get16() {
+		uint16 result = (uint16)(get8() << 8);
+		result |= get8();
+		return result;
+	}
 
-		uint32 get32()
-		{
-			uint32 result = (uint32)(get16() << 16);
-			result |= get16();
-			return result;
-		}
+	uint32 get32() {
+		uint32 result = (uint32)(get16() << 16);
+		result |= get16();
+		return result;
+	}
 
-		bool eof()
-		{
-			return bytePointer >= binary.size();
-		}
-		
-		void alignPointer()
-		{
-			if(bytePointer&1) bytePointer++;
-		}
-		
-		void skipBytes(Common::Array<uint8>::size_type numberOfBytes)
-		{
-			bytePointer += numberOfBytes;
-		}
+	bool eof() {
+		return bytePointer >= binary.size();
+	}
 
-		Common::Array<uint8> *nextBytes(Common::Array<uint8>::size_type numberOfBytes)
-		{
-			Common::Array<uint8> *returnBuffer(new Common::Array<uint8>);
-			debug("give me the next %d bytes", numberOfBytes);
+	void alignPointer() {
+		if (bytePointer & 1)
+			bytePointer++;
+	}
 
-			while(numberOfBytes--)
-				returnBuffer->push_back(get8());
+	void skipBytes(Common::Array<uint8>::size_type numberOfBytes) {
+		bytePointer += numberOfBytes;
+	}
 
-			return returnBuffer;
-		}
+	Common::Array<uint8> *nextBytes(Common::Array<uint8>::size_type numberOfBytes) {
+		Common::Array<uint8> *returnBuffer(new Common::Array<uint8>);
+		debug("give me the next %d bytes", numberOfBytes);
 
-		Common::Array<uint8>::size_type getFileOffset()
-		{
-			return bytePointer;
-		}
+		while (numberOfBytes--)
+			returnBuffer->push_back(get8());
 
-		void setFileOffset(Common::Array<uint8>::size_type newOffset)
-		{
-			bytePointer = newOffset;
-		}
-		
-		void setReadMask(uint8 byte1, uint8 byte2)
-		{
-			readMaskByte1 = byte1;
-			readMaskByte2 = byte2;
-		}
+		return returnBuffer;
+	}
+
+	Common::Array<uint8>::size_type getFileOffset() {
+		return bytePointer;
+	}
+
+	void setFileOffset(Common::Array<uint8>::size_type newOffset) {
+		bytePointer = newOffset;
+	}
+
+	void setReadMask(uint8 byte1, uint8 byte2) {
+		readMaskByte1 = byte1;
+		readMaskByte2 = byte2;
+	}
 };
 
-
-static Object *loadObject(StreamLoader &stream)
-{
+static Object *loadObject(StreamLoader &stream) {
 	// get object flags and type
 	uint8 objectFlags = stream.get8();
 	Object::Type objectType = (Object::Type)stream.get8();
@@ -138,12 +122,12 @@ static Object *loadObject(StreamLoader &stream)
 
 	// grab location, size
 	Vector3d position, size;
-	position.x		= stream.get16();
-	position.y		= stream.get16();
-	position.z		= stream.get16();
-	size.x			= stream.get16();
-	size.y			= stream.get16();
-	size.z			= stream.get16();
+	position.x = stream.get16();
+	position.y = stream.get16();
+	position.z = stream.get16();
+	size.x = stream.get16();
+	size.y = stream.get16();
+	size.z = stream.get16();
 
 	// object ID
 	uint16 objectID = stream.get16();
@@ -153,64 +137,56 @@ static Object *loadObject(StreamLoader &stream)
 	// length beyond here
 	uint32 byteSizeOfObject = (uint32)(stream.get16() << 1) - 20;
 
-	debug("Object %d ; type %d ; flags %d ; size %d" , objectID , (int)objectType, (int)objectFlags, byteSizeOfObject);
+	debug("Object %d ; type %d ; flags %d ; size %d", objectID, (int)objectType, (int)objectFlags, byteSizeOfObject);
 
-	switch(objectType)
-	{
-		default:
-		{
-			// read the appropriate number of colours
-			int numberOfColours = GeometricObject::numberOfColoursForObjectOfType(objectType);
-			Common::Array<uint8> *colours = new Common::Array<uint8>;
-			for(uint8 colour = 0; colour < numberOfColours; colour++)
-			{
-				colours->push_back(stream.get8());
-				byteSizeOfObject--;
-			}
-
-			// read extra vertices if required...
-			int numberOfOrdinates = GeometricObject::numberOfOrdinatesForType(objectType);
-			debug("number of ordinates %d", numberOfOrdinates);
-			Common::Array<uint16> *ordinates = nullptr;
-
-			if(numberOfOrdinates)
-			{
-				ordinates = new Common::Array<uint16>;
-
-				for(int ordinate = 0; ordinate < numberOfOrdinates; ordinate++)
-				{
-					ordinates->push_back(stream.get16());
-					byteSizeOfObject -= 2;
-				}
-			}
-
-			// grab the object condition, if there is one
-			FCLInstructionVector instructions;
-			if(byteSizeOfObject)
-			{
-				Common::Array<uint8> *conditionData = stream.nextBytes(byteSizeOfObject);
-
-				Common::String *conditionSource = detokenise16bitCondition(*conditionData);
-				//instructions = getInstructions(conditionSource);
-			}
-			byteSizeOfObject = 0;
-
-			// create an object
-			return
-				new GeometricObject(
-					objectType,
-					objectID,
-					position,
-					size,
-					colours,
-					ordinates,
-					instructions);
+	switch (objectType) {
+	default: {
+		// read the appropriate number of colours
+		int numberOfColours = GeometricObject::numberOfColoursForObjectOfType(objectType);
+		Common::Array<uint8> *colours = new Common::Array<uint8>;
+		for (uint8 colour = 0; colour < numberOfColours; colour++) {
+			colours->push_back(stream.get8());
+			byteSizeOfObject--;
 		}
-		break;
 
-		case Object::Entrance:
-		case Object::Sensor:
-		case Object::Group:
+		// read extra vertices if required...
+		int numberOfOrdinates = GeometricObject::numberOfOrdinatesForType(objectType);
+		debug("number of ordinates %d", numberOfOrdinates);
+		Common::Array<uint16> *ordinates = nullptr;
+
+		if (numberOfOrdinates) {
+			ordinates = new Common::Array<uint16>;
+
+			for (int ordinate = 0; ordinate < numberOfOrdinates; ordinate++) {
+				ordinates->push_back(stream.get16());
+				byteSizeOfObject -= 2;
+			}
+		}
+
+		// grab the object condition, if there is one
+		FCLInstructionVector instructions;
+		if (byteSizeOfObject) {
+			Common::Array<uint8> *conditionData = stream.nextBytes(byteSizeOfObject);
+
+			Common::String *conditionSource = detokenise16bitCondition(*conditionData);
+			//instructions = getInstructions(conditionSource);
+		}
+		byteSizeOfObject = 0;
+
+		// create an object
+		return new GeometricObject(
+			objectType,
+			objectID,
+			position,
+			size,
+			colours,
+			ordinates,
+			instructions);
+	} break;
+
+	case Object::Entrance:
+	case Object::Sensor:
+	case Object::Group:
 		break;
 	}
 
@@ -223,29 +199,26 @@ static Object *loadObject(StreamLoader &stream)
 	stream.skipBytes(byteSizeOfObject);
 
 	return nullptr;
-	
 }
 
-Area *loadArea(StreamLoader &stream)
-{
+Area *loadArea(StreamLoader &stream) {
 	// the lowest bit of this value seems to indicate
 	// horizon on or off; this is as much as I currently know
-	uint16 skippedValue		= stream.get16();
-	uint16 numberOfObjects	= stream.get16();
-	uint16 areaNumber			= stream.get16();
+	uint16 skippedValue = stream.get16();
+	uint16 numberOfObjects = stream.get16();
+	uint16 areaNumber = stream.get16();
 
 	debug("Area %d", areaNumber);
 	debug("Skipped value %d", skippedValue);
 	debug("Objects: %d", numberOfObjects);
 
 	// I've yet to decipher this fully
-	uint16 horizonColour	= stream.get16();
+	uint16 horizonColour = stream.get16();
 	debug("Horizon colour %x", (int)horizonColour);
 
 	// this is just a complete guess
-	for(int paletteEntry = 0; paletteEntry < 22; paletteEntry++)
-	{
-		uint8 paletteColour		= stream.get8();
+	for (int paletteEntry = 0; paletteEntry < 22; paletteEntry++) {
+		uint8 paletteColour = stream.get8();
 		debug("Palette colour (?) %x", (int)paletteColour);
 	}
 
@@ -257,18 +230,13 @@ Area *loadArea(StreamLoader &stream)
 
 	// get the objects or whatever; entrances use a unique numbering
 	// system and have the high bit of their IDs set in the original file
-	for(uint16 object = 0; object < numberOfObjects; object++)
-	{
+	for (uint16 object = 0; object < numberOfObjects; object++) {
 		Object *newObject = loadObject(stream);
 
-		if(newObject)
-		{
-			if(newObject->getType() == Object::Entrance)
-			{
+		if (newObject) {
+			if (newObject->getType() == Object::Entrance) {
 				(*entrancesByID)[newObject->getObjectID() & 0x7fff] = newObject;
-			}
-			else
-			{
+			} else {
 				(*objectsByID)[newObject->getObjectID()] = newObject;
 			}
 		}
@@ -277,20 +245,19 @@ Area *loadArea(StreamLoader &stream)
 	return (new Area(areaNumber, objectsByID, entrancesByID));
 }
 
-Game *load16bitBinary(Common::String filename)
-{
+Game *load16bitBinary(Common::String filename) {
 	Common::File *file = new Common::File();
 
-    if (!file->open(filename)) {
-        delete file;
-    	return NULL;
-    }
+	if (!file->open(filename)) {
+		delete file;
+		return NULL;
+	}
 
 	const uint32 fileSize = file->size();
 	byte *buf = (byte *)malloc(fileSize);
 	file->read(buf, fileSize);
 
-	Common::Array <uint8> binary;
+	Common::Array<uint8> binary;
 
 	uint32 i = 0;
 	while (i < fileSize) {
@@ -308,25 +275,21 @@ Game *load16bitBinary(Common::String filename)
 	uint16 platformID = streamLoader.get16();
 	debug("%d", platformID);
 
-	if(
-//		(platformID != 0x4120) && (platformID != 0x5043)
-		(platformID == 12428) || (platformID == 51553)
-	)
-	{
+	if (
+		//		(platformID != 0x4120) && (platformID != 0x5043)
+		(platformID == 12428) || (platformID == 51553)) {
 		// TODO: record original platform type, so we can decode the palette
 		// and possibly the border properly
 		//cout << "AMIGA" << endl;
 
 		streamLoader.setReadMask((platformID >> 8) ^ 'A', (platformID & 0xff) ^ 'M');
-	}
-	else
-	{
+	} else {
 		debug("DOS");
 		// find DOS end of file and consume it
-		while(!streamLoader.eof()) {
+		while (!streamLoader.eof()) {
 			uint8 b = streamLoader.get8();
 			if (b == 0x1a)
-			   break;
+				break;
 		}
 		streamLoader.get8();
 
@@ -343,10 +306,10 @@ Game *load16bitBinary(Common::String filename)
 
 		// check that the next two bytes are "PC", then
 		// skip the number that comes after
-		if(streamLoader.get8() != 'C' || streamLoader.get8() != 'P') return nullptr;
+		if (streamLoader.get8() != 'C' || streamLoader.get8() != 'P')
+			return nullptr;
 	}
 
-	
 	// skip an unknown meaning
 	streamLoader.get16();
 
@@ -357,45 +320,44 @@ Game *load16bitBinary(Common::String filename)
 
 	debug("Number of areas: %d", numberOfAreas);
 
-	uint16 windowCentreX	= streamLoader.get16();
-	uint16 windowCentreY	= streamLoader.get16();
-	uint16 windowWidth	= streamLoader.get16();
-	uint16 windowHeight	= streamLoader.get16();
+	uint16 windowCentreX = streamLoader.get16();
+	uint16 windowCentreY = streamLoader.get16();
+	uint16 windowWidth = streamLoader.get16();
+	uint16 windowHeight = streamLoader.get16();
 
-	
 	debug("Window centre: (%d, %d)", windowCentreX, windowCentreY);
-	debug("Window size: (%d, %d)", windowWidth,  windowHeight);
+	debug("Window size: (%d, %d)", windowWidth, windowHeight);
 
-	uint16 scaleX	= streamLoader.get16();
-	uint16 scaleY	= streamLoader.get16();
-	uint16 scaleZ	= streamLoader.get16();
+	uint16 scaleX = streamLoader.get16();
+	uint16 scaleY = streamLoader.get16();
+	uint16 scaleZ = streamLoader.get16();
 
 	debug("Scale %d, %d, %d", scaleX, scaleY, scaleZ);
-	uint16 timerReload	= streamLoader.get16();
+	uint16 timerReload = streamLoader.get16();
 
 	debug("Timer: every %d 50Hz frames", timerReload);
 
-	uint16 maximumActivationDistance	= streamLoader.get16();
-	uint16 maximumFallDistance		= streamLoader.get16();
-	uint16 maximumClimbDistance		= streamLoader.get16();
+	uint16 maximumActivationDistance = streamLoader.get16();
+	uint16 maximumFallDistance = streamLoader.get16();
+	uint16 maximumClimbDistance = streamLoader.get16();
 
 	debug("Maximum activation distance: %d", maximumActivationDistance);
-	debug("Maximum fall distance: %d",  maximumFallDistance);
+	debug("Maximum fall distance: %d", maximumFallDistance);
 	debug("Maximum climb distance: %d", maximumClimbDistance);
 
-	uint16 startArea					= streamLoader.get16();
-	uint16 startEntrance				= streamLoader.get16();
+	uint16 startArea = streamLoader.get16();
+	uint16 startEntrance = streamLoader.get16();
 
 	debug("Start at entrance %d in area %d", startEntrance, startArea);
 
-	uint16 playerHeight				= streamLoader.get16();
-	uint16 playerStep				= streamLoader.get16();
-	uint16 playerAngle				= streamLoader.get16();
+	uint16 playerHeight = streamLoader.get16();
+	uint16 playerStep = streamLoader.get16();
+	uint16 playerAngle = streamLoader.get16();
 
 	debug("Height %d, step %d, angle %d)", playerHeight, playerStep, playerAngle);
 
-	uint16 startVehicle				= streamLoader.get16();
-	uint16 executeGlobalCondition	= streamLoader.get16();
+	uint16 startVehicle = streamLoader.get16();
+	uint16 executeGlobalCondition = streamLoader.get16();
 
 	debug("Start vehicle %d, execute global condition %d", startVehicle, executeGlobalCondition);
 
@@ -441,13 +403,12 @@ Game *load16bitBinary(Common::String filename)
 	// the number of shorts from the 'PC' tag, so multiply by
 	// two for bytes. Each is four bytes
 	uint32 *fileOffsetForArea = new uint32[numberOfAreas];
-	for(uint16 area = 0; area < numberOfAreas; area++)
+	for (uint16 area = 0; area < numberOfAreas; area++)
 		fileOffsetForArea[area] = (uint32)streamLoader.get32() << 1;
 
 	// now come the global conditions
 	uint16 numberOfGlobalConditions = streamLoader.get16();
-	for(uint16 globalCondition = 0; globalCondition < numberOfGlobalConditions; globalCondition++)
-	{
+	for (uint16 globalCondition = 0; globalCondition < numberOfGlobalConditions; globalCondition++) {
 		// 12 bytes for the name of the condition;
 		// we don't care
 		streamLoader.skipBytes(12);
@@ -459,26 +420,23 @@ Game *load16bitBinary(Common::String filename)
 		// get the condition
 		Common::Array<uint8> *conditionData = streamLoader.nextBytes(lengthOfCondition);
 
-		debug("Global condition %d", globalCondition+1);
+		debug("Global condition %d", globalCondition + 1);
 		debug("%s", detokenise16bitCondition(*conditionData)->c_str());
 	}
 
 	// grab the areas
 	AreaMap *areaMap = new AreaMap;
-	for(uint16 area = 0; area < numberOfAreas; area++)
-	{
+	for (uint16 area = 0; area < numberOfAreas; area++) {
 		debug("Area offset %d", fileOffsetForArea[area]);
 
 		streamLoader.setFileOffset(fileOffsetForArea[area] + baseOffset);
 		Area *newArea = loadArea(streamLoader);
-		
-		if(newArea)
-		{
+
+		if (newArea) {
 			(*areaMap)[newArea->getAreaID()] = newArea;
 		}
-
 	}
-	streamLoader.setFileOffset(fileOffsetForArea[numberOfAreas-1] + baseOffset);
+	streamLoader.setFileOffset(fileOffsetForArea[numberOfAreas - 1] + baseOffset);
 
 	delete[] fileOffsetForArea;
 	return new Game(areaMap);
