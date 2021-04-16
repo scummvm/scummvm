@@ -258,10 +258,13 @@ void Process::run() {
 			updateWithCurrentMousePosition();
 			break;
 		case kExitCodeNewGame:
-			suspend();
+			deactivate();
 			_object->lock();
 			debug("exitProcessNewGame");
 			_engine->newGame();
+			_object->unlock();
+			activate();
+			restart = true;
 			break;
 		case kExitCodeLoadGame:
 			_status = kStatusPassive;
