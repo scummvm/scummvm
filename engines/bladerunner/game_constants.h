@@ -216,11 +216,11 @@ enum Clues {
 	kClueHoldensBadge                      = 110,
 	kClueCar                               = 111,
 	kClueCarIdentified                     = 112,
-	kClueCarRegistration1                  = 113,
-	kClueCarRegistration2                  = 114,
-	kClueCarRegistration3                  = 115,
-	kClueCrazylegsInterview1               = 116,
-	kClueCrazylegsInterview2               = 117,
+	kClueCarRegistration1                  = 113, // Dektora bought the car
+	kClueCarRegistration2                  = 114, // Gavin Kelly bought the car
+	kClueCarRegistration3                  = 115, // Blake Williams bought the car
+	kClueCrazylegsInterview1               = 116, // new: acquired after bug fix. Original: Never acquired
+	kClueCrazylegsInterview2               = 117, // original: Never acquired
 	kClueLichenDogWrapper                  = 118,
 	kClueRequisitionForm                   = 119, // original: Never acquired
 	kClueScaryChair                        = 120,
