@@ -892,11 +892,8 @@ void InitAtFrameHandler(uint16 an, uint16 obj) {
 					AtFrameNext
  --------------------------------------------------*/
 void AtFrameNext() {
-	if (!g_vm->_flagCharacterSpeak)
-		return;
-
 	for (int i = 0; i < 3; ++i) {
-		if (!(AnimType[i].status & ATF_WAITTEXT))
+		if (!(AnimType[i].status & ATF_WAITTEXT) || !g_vm->_flagCharacterSpeak)
 			AnimType[i].curframe++;		
 	}
 }
