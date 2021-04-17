@@ -245,19 +245,7 @@ void SDText::DText(uint16 *frameBuffer) {
 }
 
 #define MAXSAVEFILE		12
-/* -----------------21/01/98 16.38-------------------
- * 						IconSnapShot
- * --------------------------------------------------*/
 void IconSnapShot() {
-	uint16 blackPixel = 0x0000;
-	int a;
-
-	for (int b = 0; b < ICONDY; b++) {
-		for (a = 0; a < (ICONDX - 1); a++)
-			g_vm->_icons[(READICON + 13) * ICONDX * ICONDY + b * ICONDX + a] = g_vm->_graphicsMgr->restorePixelFormat(g_vm->_screenBuffer[MAXX * b * 10 + a * (MAXX / ICONDX)]);
-		g_vm->_icons[(READICON + 13)*ICONDX * ICONDY + b * ICONDX + a] = blackPixel;
-	}
-
 	::createThumbnailFromScreen(&g_vm->_thumbnail);
 }
 

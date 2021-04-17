@@ -41,17 +41,13 @@ public:
 	GraphicsManager(TrecisionEngine *vm);
 	~GraphicsManager();
 	
-	uint16 *_screenPtr;
-
 	bool initScreen();
-
 	void clearScreen();
-	void copyToScreen(int px, int py, int dx, int dy);
+	void copyToScreen(int x, int y, int w, int h);
 	void copyToScreenBuffer(Graphics::Surface *surface, int x, int y);
 
 	uint16 palTo16bit(uint8 r, uint8 g, uint8 b) const;
 	void updatePixelFormat(uint16 *p, uint32 len) const;
-	uint16 restorePixelFormat(uint16 t) const;
 
 	uint16 shadow(uint32 val, uint8 num);
 	uint16 aliasing(uint32 val1, uint32 val2, uint8 num);

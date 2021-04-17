@@ -33,7 +33,6 @@ namespace Trecision {
 const Graphics::PixelFormat GraphicsManager::kImageFormat(2, 5, 5, 5, 0, 10, 5, 0, 0); // RGB555
 
 GraphicsManager::GraphicsManager(TrecisionEngine *vm) : _vm(vm) {
-	_screenPtr = nullptr;
 }
 
 GraphicsManager::~GraphicsManager() {}
@@ -72,10 +71,10 @@ void GraphicsManager::copyToScreenBuffer(Graphics::Surface *surface, int x, int 
 	}
 }
 
-void GraphicsManager::copyToScreen(int px, int py, int dx, int dy) {
+void GraphicsManager::copyToScreen(int x, int y, int w, int h) {
 	g_system->copyRectToScreen(
-		_vm->_screenBuffer + px + py * MAXX,
-		MAXX * 2, px, py, dx, dy
+		_vm->_screenBuffer + x + y * MAXX,
+		MAXX * 2, x, y, w, h
 	);
 }
 
@@ -99,18 +98,6 @@ void GraphicsManager::updatePixelFormat(uint16 *p, uint32 len) const {
 		kImageFormat.colorToRGB(t, r, g, b);
 		p[a] = _screenFormat.RGBToColor(r, g, b);
 	}
-}
-
-/* ------------------------------------------------
-				restorePixelFormat
- --------------------------------------------------*/
-uint16 GraphicsManager::restorePixelFormat(uint16 t) const {
-	if (_screenFormat == kImageFormat)
-		return t;
-
-	uint8 r, g, b;
-	_screenFormat.colorToRGB(t, r, g, b);
-	return (uint16)kImageFormat.RGBToColor(r, g, b);
 }
 
 /*------------------------------------------------
