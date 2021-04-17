@@ -133,7 +133,6 @@ TrecisionEngine::TrecisionEngine(OSystem *syst) : Engine(syst) {
 	_curAscii = 0;
 	_mouseX = _mouseY = 0;
 	_mouseLeftBtn = _mouseRightBtn = false;
-	_oldMouseX = _oldMouseY = 0;
 	_keybInput = false;
 
 	_gamePaused = false;
