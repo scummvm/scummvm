@@ -51,6 +51,7 @@ void AGSCreditz1::AGS_EngineStartup(IAGSEngine *engine) {
 	SCRIPT_METHOD(ScrollCredits);
 	SCRIPT_METHOD(GetCredit);
 	SCRIPT_METHOD(IsCreditScrollingFinished);
+	SCRIPT_METHOD_EXT(IsFinished, IsCreditScrollingFinished);
 	SCRIPT_METHOD(SetCreditImage);
 	SCRIPT_METHOD(PauseScroll);
 	SCRIPT_METHOD(ScrollReset);
