@@ -115,7 +115,7 @@ bool NancyEngine::canLoadGameStateCurrently()  {
 
 bool NancyEngine::canSaveGameStateCurrently() {
 	// TODO also disable during secondary movie
-	return Action::PlayPrimaryVideoChan0::_activePrimaryVideo == nullptr;
+	return State::Scene::hasInstance() && NancySceneState.getActivePrimaryVideo() == nullptr;
 }
 
 bool NancyEngine::canSaveAutosaveCurrently() {

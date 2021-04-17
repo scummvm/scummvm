@@ -48,6 +48,10 @@ public:
 	void setCursorItemID(int16 itemID);
 	void showCursor(bool shouldShow);
 
+	const Common::Point &getCurrentCursorHotspot() { return _cursors[_curCursorID].hotspot;}
+	const Common::Rect &getPrimaryVideoInactiveZone() { return _primaryVideoInactiveZone; }
+	const Common::Point &getPrimaryVideoInitialPos() { return _primaryVideoInitialPos; }
+
 private:
 	struct Cursor {
 		Common::Rect bounds;

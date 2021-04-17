@@ -94,7 +94,8 @@ Scene::Scene() :
 		_menuButton(nullptr),
 		_helpButton(nullptr),
 		_actionManager(),
-		_difficulty(0) {}
+		_difficulty(0),
+		_activePrimaryVideo(nullptr) {}
 
 Scene::~Scene()  {
 	delete _helpButton;
@@ -442,6 +443,14 @@ void Scene::init() {
 	g_nancy->_graphicsManager->redrawAll();
 }
 
+void Scene::setActivePrimaryVideo(Action::PlayPrimaryVideoChan0 *activeVideo) {
+	_activePrimaryVideo = activeVideo;
+}
+
+Action::PlayPrimaryVideoChan0 *Scene::getActivePrimaryVideo() {
+	return _activePrimaryVideo;
+}
+
 void Scene::load() {
 	clearSceneData();
 
@@ -561,11 +570,11 @@ void Scene::run() {
 	// Update the UI elements and handle input
 	NancyInput input = g_nancy->_input->getInput();
 	_viewport.handleInput(input);
+	_actionManager.handleInput(input);
 	_menuButton->handleInput(input);
 	_helpButton->handleInput(input);
 	_textbox.handleInput(input);
 	_inventoryBox.handleInput(input);
-	_actionManager.handleInput(input);
 
 	if (_menuButton->_isClicked) {
 		_menuButton->_isClicked = false;

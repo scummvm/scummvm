@@ -79,6 +79,7 @@ public:
 
 	virtual void readData(Common::SeekableReadStream &stream) override;
 	virtual void execute() override;
+	virtual void handleInput(NancyInput &input) override;
 
 	// Functions for handling the built-in dialogue responses found in the executable
 	void addConditionalResponses();
@@ -105,9 +106,6 @@ public:
 
 	bool _hasDrawnTextbox = false;
 	int16 _pickedResponse = -1;
-
-	// Used to avoid clashes between multiple instances in the same scene
-	static PlayPrimaryVideoChan0 *_activePrimaryVideo;
 
 protected:
 	virtual Common::String getRecordTypeName() const override { return "PlayPrimaryVideoChan0"; }

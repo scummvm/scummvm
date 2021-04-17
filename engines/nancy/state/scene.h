@@ -50,6 +50,7 @@ struct SceneChangeDescription;
 
 namespace Action {
 class SliderPuzzle;
+class PlayPrimaryVideoChan0;
 }
 
 namespace UI {
@@ -164,6 +165,9 @@ public:
 	SceneInfo &getSceneInfo() { return _sceneState.currentScene; }
 	const SceneSummary &getSceneSummary() const { return _sceneState.summary; }
 
+	void setActivePrimaryVideo(Action::PlayPrimaryVideoChan0 *activeVideo);
+	Action::PlayPrimaryVideoChan0 *getActivePrimaryVideo();
+
 private:
 	void init();
 	void load();
@@ -244,6 +248,7 @@ private:
 	Common::Array<uint16> _mapAccessSceneIDs;
 
 	Action::ActionManager _actionManager;
+	Action::PlayPrimaryVideoChan0 *_activePrimaryVideo;
 
 	State _state;
 

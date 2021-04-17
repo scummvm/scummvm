@@ -20,11 +20,13 @@
  *
  */
 
+#include "common/system.h"
 #include "common/random.h"
 #include "common/config-manager.h"
 
 #include "engines/nancy/nancy.h"
 #include "engines/nancy/sound.h"
+#include "engines/nancy/input.h"
 #include "engines/nancy/util.h"
 
 #include "engines/nancy/action/primaryvideo.h"
@@ -34,8 +36,6 @@
 
 namespace Nancy {
 namespace Action {
-
-PlayPrimaryVideoChan0 *PlayPrimaryVideoChan0::_activePrimaryVideo = nullptr;
 
 void PlayPrimaryVideoChan0::ConditionFlag::read(Common::SeekableReadStream &stream) {
 	type = (ConditionType)stream.readByte();
@@ -108,8 +108,8 @@ bool PlayPrimaryVideoChan0::ConditionFlags::isSatisfied() const {
 PlayPrimaryVideoChan0::~PlayPrimaryVideoChan0() {
 	_decoder.close();
 
-	if (_activePrimaryVideo == this) {
-		_activePrimaryVideo = nullptr;
+	if (NancySceneState.getActivePrimaryVideo() == this) {
+		NancySceneState.setActivePrimaryVideo(nullptr);
 	}
 
 	NancySceneState.setShouldClearTextbox(true);
@@ -218,12 +218,13 @@ void PlayPrimaryVideoChan0::readData(Common::SeekableReadStream &stream) {
 }
 
 void PlayPrimaryVideoChan0::execute() {
-	if (_activePrimaryVideo != this && _activePrimaryVideo != nullptr) {
+	PlayPrimaryVideoChan0 *activeVideo = NancySceneState.getActivePrimaryVideo();
+	if (activeVideo != this && activeVideo != nullptr) {
 		return;
 	}
 
 	switch (_state) {
-	case kBegin:
+	case kBegin: {
 		init();
 		registerGraphics();
 		g_nancy->_sound->loadSound(_sound);
@@ -232,8 +233,27 @@ void PlayPrimaryVideoChan0::execute() {
 			g_nancy->_sound->playSound(_sound);
 		}
 
+		// Remove held item and re-add it to inventory
+		int heldItem = NancySceneState.getHeldItem();
+		if (heldItem != -1) {
+			NancySceneState.addItemToInventory(heldItem);
+			NancySceneState.setHeldItem(-1);
+		}
+
+		// Move the mouse to the default position defined in CURS
+		const Common::Point initialMousePos = g_nancy->_cursorManager->getPrimaryVideoInitialPos();
+		const Common::Point cursorHotspot = g_nancy->_cursorManager->getCurrentCursorHotspot();
+		Common::Point adjustedMousePos = g_nancy->_input->getInput().mousePos;
+		adjustedMousePos.x -= cursorHotspot.x;
+		adjustedMousePos.y -= cursorHotspot.y - 1;
+		if (g_nancy->_cursorManager->getPrimaryVideoInactiveZone().bottom > adjustedMousePos.y) {
+			g_system->warpMouse(initialMousePos.x + cursorHotspot.x, initialMousePos.y + cursorHotspot.y);
+			g_nancy->_cursorManager->setCursorType(CursorManager::kNormalArrow);
+		}
+
 		_state = kRun;
-		_activePrimaryVideo = this;
+		NancySceneState.setActivePrimaryVideo(this);
+	}
 		// fall through
 	case kRun:
 		if (!_hasDrawnTextbox) {
@@ -324,6 +344,18 @@ void PlayPrimaryVideoChan0::execute() {
 		}
 
 		break;
+	}
+}
+
+void PlayPrimaryVideoChan0::handleInput(NancyInput &input) {
+	const Common::Rect &inactiveZone = g_nancy->_cursorManager->getPrimaryVideoInactiveZone();
+	const Common::Point cursorHotspot = g_nancy->_cursorManager->getCurrentCursorHotspot();
+	Common::Point adjustedMousePos = input.mousePos;
+	adjustedMousePos.y -= cursorHotspot.y;
+
+	if (inactiveZone.bottom > adjustedMousePos.y) {
+		input.mousePos.y = inactiveZone.bottom + cursorHotspot.y;
+		g_system->warpMouse(input.mousePos.x, input.mousePos.y);
 	}
 }
 
