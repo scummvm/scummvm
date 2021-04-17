@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-04-16 12:46+0000\n"
-"PO-Revision-Date: 2021-04-17 10:11+0000\n"
+"PO-Revision-Date: 2021-04-17 10:33+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
@@ -158,8 +158,8 @@ msgid ""
 "Cannot create a directory to download - the specified directory has a file "
 "with the same name."
 msgstr ""
-"No ha podido crearse un directorio para la descarga. El directorio contiene "
-"un archivo con el mismo nombre."
+"No se ha podido crear un directorio para la descarga: el directorio indicado "
+"contiene un archivo con el mismo nombre."
 
 #: gui/downloaddialog.cpp:147 gui/editgamedialog.cpp:377
 #: gui/fluidsynth-dialog.cpp:154 gui/KeysDialog.cpp:43 gui/launcher.cpp:510
@@ -290,7 +290,7 @@ msgstr "Ignorar opciones gráficas generales"
 #: gui/editgamedialog.cpp:211
 msgctxt "lowres"
 msgid "Override global graphic settings"
-msgstr "Ignorar opciones globales"
+msgstr "Opciones gráficas generales"
 
 #: gui/editgamedialog.cpp:221 gui/options.cpp:1810
 msgid "Shader"
@@ -303,7 +303,7 @@ msgstr "Ignorar opciones de sonido generales"
 #: gui/editgamedialog.cpp:226
 msgctxt "lowres"
 msgid "Override global shader settings"
-msgstr "Ignorar opciones de sonido generales"
+msgstr "Opciones de sonido generales"
 
 #: gui/editgamedialog.cpp:240 gui/options.cpp:1844 engines/dialogs.cpp:326
 msgid "Keymaps"
@@ -320,7 +320,7 @@ msgstr "Ignorar opciones generales del back-end"
 #: gui/editgamedialog.cpp:252
 msgctxt "lowres"
 msgid "Override global backend settings"
-msgstr "Ignorar opciones generales del back-end"
+msgstr "Opciones generales del back-end"
 
 #: gui/editgamedialog.cpp:266 gui/options.cpp:1865 engines/dialogs.cpp:301
 msgid "Audio"
@@ -449,7 +449,7 @@ msgstr "Por defecto"
 
 #: gui/editgamedialog.cpp:549 gui/options.cpp:2628
 msgid "Select SoundFont"
-msgstr "Selecciona un SoundFont"
+msgstr "Selecciona una SoundFont"
 
 #: gui/editgamedialog.cpp:588
 msgid "Select additional game directory"
@@ -712,7 +712,7 @@ msgstr "~J~ugar"
 
 #: gui/launcher.cpp:144
 msgid "Start selected game"
-msgstr "Jugar al juego seleccionado"
+msgstr "Ejecuta el juego seleccionado"
 
 #: gui/launcher.cpp:147
 msgid "~L~oad..."
@@ -909,7 +909,7 @@ msgstr "Cada 30 minutos"
 #: gui/options.cpp:1058 gui/options.cpp:1451
 msgctxt "soundfont"
 msgid "None"
-msgstr "Ninguno"
+msgstr "Ninguna"
 
 #: gui/options.cpp:668
 msgid "Failed to apply some of the graphic options changes:"
@@ -1372,7 +1372,7 @@ msgstr "Confirmar al salir"
 
 #: gui/options.cpp:2132
 msgid "Ask for permission when closing ScummVM or leaving a game."
-msgstr "Pedir permiso para cerrar ScummVM o salir de un juego."
+msgstr "Pide permiso para cerrar ScumMVM o salir de un juego."
 
 #: gui/options.cpp:2138
 msgid "Keys"
