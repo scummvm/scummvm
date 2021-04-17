@@ -111,7 +111,6 @@ MacText::MacText(MacWidget *parent, int x, int y, int w, int h, MacWindowManager
 	_textAlignment = textAlignment;
 	_interLinear = interlinear;
 	_textShadow = textShadow;
-	_maxWidth = maxWidth;
 
 	if (macFont) {
 		_defaultFormatting = MacFontRun(_wm, macFont->getId(), macFont->getSlant(), macFont->getSize(), 0, 0, 0);
@@ -140,7 +139,6 @@ MacText::MacText(MacWidget *parent, int x, int y, int w, int h, MacWindowManager
 	_textAlignment = textAlignment;
 	_interLinear = interlinear;
 	_textShadow = textShadow;
-	_maxWidth = maxWidth;
 
 	if (macFont) {
 		_defaultFormatting = MacFontRun(_wm, macFont->getId(), macFont->getSlant(), macFont->getSize(), 0, 0, 0);
@@ -169,7 +167,6 @@ MacText::MacText(const Common::U32String &s, MacWindowManager *wm, const MacFont
 	_surface = nullptr;
 	_textAlignment = textAlignment;
 	_interLinear = interlinear;
-	_maxWidth = maxWidth;
 	_textShadow = 0;
 
 	if (macFont) {
@@ -198,7 +195,6 @@ MacText::MacText(const Common::String &s, MacWindowManager *wm, const MacFont *m
 	_surface = nullptr;
 	_textAlignment = textAlignment;
 	_interLinear = interlinear;
-	_maxWidth = maxWidth;
 	_textShadow = 0;
 
 	if (macFont) {
