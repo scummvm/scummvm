@@ -59,12 +59,8 @@ Binary load8bitBinary(Common::String filename, uint offset) {
 		// get the condition
 		Common::Array<uint8> *conditionData = streamLoader.nextBytes(lengthOfCondition);
 
-		//debug("Global condition %d", globalCondition + 1);
-		//debug("%s", detokenise16bitCondition(*conditionData)->c_str());
-		/*CCondition *NewCon = GetConditionZXBinary(&ConditionPointer[1], ConditionPointer[0], true);
-		GlobalArea->AddCondition(NumConditions, NewCon);
-		printf("\t%d bytes\n", *ConditionPointer);
-		ConditionPointer += *ConditionPointer;*/
+		//debug("Global condition %d", numCondition + 1);
+		debug("%s", detokenise8bitCondition(*conditionData)->c_str());
 	}
 
 

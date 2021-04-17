@@ -7,6 +7,7 @@ MODULE_OBJS := \
 	objects/object.o \
 	objects/geometricobject.o \
 	loaders/8bitBinaryLoader.o \
+	language/8bitDetokeniser.o \
 	loaders/16bitBinaryLoader.o \
 	language/16bitDetokeniser.o \
 	language/instruction.o
