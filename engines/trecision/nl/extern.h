@@ -44,8 +44,6 @@ extern int8 _characterGoToPosition;
 extern bool OldObjStatus[];
 extern bool VideoObjStatus[];
 
-extern struct ScreenRect VideoCent;
-extern struct ScreenRect VideoBott;
 extern struct SSortTable SortTable[];
 
 /*-------------------------------------------------------------------------*/
