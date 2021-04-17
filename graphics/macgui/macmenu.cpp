@@ -1138,6 +1138,19 @@ bool MacMenu::mouseClick(int x, int y) {
 	return false;
 }
 
+bool MacMenu::contains(int x, int y) {
+	if (_bbox.contains(x, y))
+		return true;
+	for (uint i = 0; i < _menustack.size(); i++) {
+		if (_menustack[i]->bbox.contains(x, y))
+			return true;
+	}
+	if (_activeSubItem != -1 && _menustack.back()->items[_activeSubItem]->submenu != nullptr)
+		if (_menustack.back()->items[_activeSubItem]->submenu->bbox.contains(x, y))
+			return true;
+	return false;
+}
+
 bool MacMenu::mouseMove(int x, int y) {
 	if (_active) {
 		if (mouseClick(x, y))
@@ -1189,47 +1202,30 @@ void MacMenu::closeMenu() {
 }
 
 bool MacMenu::mouseRelease(int x, int y) {
-	if (!(_wm->_mode & kWMModeWin95)) {
-		if (_active) {
-			if (_activeItem != -1 && _activeSubItem != -1 && _menustack.back()->items[_activeSubItem]->enabled) {
-				if (_menustack.back()->items[_activeSubItem]->unicode) {
-					if (checkCallback(true))
-						(*_unicodeccallback)(_menustack.back()->items[_activeSubItem]->action,
-											 _menustack.back()->items[_activeSubItem]->unicodeText, _cdata);
-				} else {
-					if (checkCallback())
-						(*_ccallback)(_menustack.back()->items[_activeSubItem]->action,
-									  _menustack.back()->items[_activeSubItem]->text, _cdata);
-				}
+	if (!_active)
+		return false;
+
+	bool haveCallBack = false;
+	if (_activeItem != -1 && _activeSubItem != -1 && _menustack.back()->items[_activeSubItem]->enabled) {
+		if (_menustack.back()->items[_activeSubItem]->unicode) {
+			if (checkCallback(true)) {
+				(*_unicodeccallback)(_menustack.back()->items[_activeSubItem]->action,
+									 _menustack.back()->items[_activeSubItem]->unicodeText, _cdata);
+				haveCallBack = true;
 			}
-
-			closeMenu();
-			return true;
-		}
-	} else {
-		if (_active) {
-
-			if (_activeItem != -1 && _activeSubItem != -1 && _menustack.back()->items[_activeSubItem]->enabled) {
-				if (_menustack.back()->items[_activeSubItem]->unicode) {
-					if (checkCallback(true)) {
-						(*_unicodeccallback)(_menustack.back()->items[_activeSubItem]->action,
-											 _menustack.back()->items[_activeSubItem]->unicodeText, _cdata);
-						closeMenu();
-					}
-				} else {
-					if (checkCallback()) {
-						(*_ccallback)(_menustack.back()->items[_activeSubItem]->action,
-									  _menustack.back()->items[_activeSubItem]->text, _cdata);
-						closeMenu();
-					}
-				}
+		} else {
+			if (checkCallback()) {
+				(*_ccallback)(_menustack.back()->items[_activeSubItem]->action,
+							  _menustack.back()->items[_activeSubItem]->text, _cdata);
+				haveCallBack = true;
 			}
-
-			return true;
 		}
 	}
 
-	return false;
+	// if the mode is not win95, or the click position is outside of the menu, then we close it
+	if (!(_wm->_mode & kWMModeWin95) || !contains(x, y) || haveCallBack)
+		closeMenu();
+	return true;
 }
 
 bool MacMenu::processMenuShortCut(byte flags, uint16 ascii) {

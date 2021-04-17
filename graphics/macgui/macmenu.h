@@ -124,6 +124,7 @@ private:
 	bool processMenuShortCut(byte flags, uint16 ascii);
 
 	void drawSubMenuArrow(ManagedSurface *dst, int x, int y, int color);
+	bool contains(int x, int y);
 
 	void eventLoop();
 
