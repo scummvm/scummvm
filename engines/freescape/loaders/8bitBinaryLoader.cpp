@@ -3,11 +3,11 @@
 #include "common/file.h"
 
 #include "freescape/area.h"
-#include "freescape/loaders/loader.h"
 #include "freescape/language/8bitDetokeniser.h"
 #include "freescape/language/instruction.h"
 #include "freescape/language/parser.h"
 #include "freescape/loaders/8bitBinaryLoader.h"
+#include "freescape/loaders/loader.h"
 #include "freescape/objects/geometricobject.h"
 #include "freescape/objects/object.h"
 
@@ -51,8 +51,7 @@ Binary load8bitBinary(Common::String filename, uint offset) {
 	//uint8 *ConditionPointer = &Base[GlobalByteCodeTable];
 	uint8 numConditions = streamLoader.get8();
 	debug("%d global conditions", numConditions);
-	while(numConditions--)
-	{
+	while (numConditions--) {
 		// get the length
 		uint32 lengthOfCondition = streamLoader.get8();
 		debug("length of condition: %d", lengthOfCondition);
@@ -62,7 +61,6 @@ Binary load8bitBinary(Common::String filename, uint offset) {
 		//debug("Global condition %d", numCondition + 1);
 		debug("%s", detokenise8bitCondition(*conditionData)->c_str());
 	}
-
 
 	return Binary{nullptr, nullptr};
 }

@@ -13,9 +13,9 @@
 
 #include "8bitDetokeniser.h"
 
-static const int k8bitVariableShield	= 256;
-static const int k8bitVariableEnergy	= 257;
-static const int k8bitVariableScore		= 258;
+static const int k8bitVariableShield = 256;
+static const int k8bitVariableEnergy = 257;
+static const int k8bitVariableScore = 258;
 
 Common::String *detokenise8bitCondition(Common::Array<uint8> &tokenisedCondition) {
 	Common::String detokenisedStream;
@@ -29,27 +29,24 @@ Common::String *detokenise8bitCondition(Common::Array<uint8> &tokenisedCondition
 
 	// this lookup table tells us how many argument bytes to read per opcode
 	uint8 argumentsRequiredByOpcode[32] =
-	{
-		0,	3,	1,	1,	1,	1,	2,	2,
-		2,	1,	1,	2,	1,	1,	2,	1,
-		1,	2,	2,	1,	2,	0,	0,	0,
-		0,	1,	0,	1,	1,	1,	1,	1
-	};
+		{
+			0, 3, 1, 1, 1, 1, 2, 2,
+			2, 1, 1, 2, 1, 1, 2, 1,
+			1, 2, 2, 1, 2, 0, 0, 0,
+			0, 1, 0, 1, 1, 1, 1, 1};
 
-	while(bytePointer < sizeOfTokenisedContent)
-	{
+	while (bytePointer < sizeOfTokenisedContent) {
 		// get the conditional type of the next operation
 		uint8 newConditionalIsShot = tokenisedCondition[bytePointer] & 0x80;
 
 		// if the conditional type has changed then end the old conditional,
 		// if we were in one, and begin a new one
-		if(newConditionalIsShot != conditionalIsShot)
-		{
+		if (newConditionalIsShot != conditionalIsShot) {
 			conditionalIsShot = newConditionalIsShot;
-			if(bytePointer)
+			if (bytePointer)
 				detokenisedStream += "ENDIF\n";
 
-			if(conditionalIsShot)
+			if (conditionalIsShot)
 				detokenisedStream += "IF SHOT? THEN\n";
 			else
 				detokenisedStream += "IF COLLIDED? THEN\n";
@@ -62,118 +59,147 @@ Common::String *detokenise8bitCondition(Common::Array<uint8> &tokenisedCondition
 		// figure out how many argument bytes we're going to need,
 		// check we have enough bytes left to read
 		uint8 numberOfArguments = argumentsRequiredByOpcode[opcode];
-		if(bytePointer + numberOfArguments > sizeOfTokenisedContent)
+		if (bytePointer + numberOfArguments > sizeOfTokenisedContent)
 			break;
 
 		// generate the string
-		switch(opcode)
+		switch (opcode) {
+		default:
+			detokenisedStream += "<UNKNOWN 8 bit: ";
+			detokenisedStream += Common::String::format("%x", (int)opcode);
+			detokenisedStream += " > ";
+			break;
+
+		case 0:
+			break; // NOP
+		case 1:    // add three-byte value to score
 		{
-			default:
-				detokenisedStream += "<UNKNOWN 8 bit: ";
-				detokenisedStream += Common::String::format("%x", (int)opcode);
-				detokenisedStream += " > ";
+			int32 additionValue =
+				tokenisedCondition[bytePointer] |
+				(tokenisedCondition[bytePointer + 1] << 8) |
+				(tokenisedCondition[bytePointer + 2] << 16);
+			detokenisedStream += "ADDVAR";
+			detokenisedStream += Common::String::format("(%d, v%d)", additionValue, k8bitVariableScore);
+			bytePointer += 3;
+			numberOfArguments = 0;
+		} break;
+		case 2: // add one-byte value to energy
+			detokenisedStream += "ADDVAR ";
+			detokenisedStream += Common::String::format("(%d, v%d)", (int)tokenisedCondition[bytePointer], k8bitVariableEnergy);
+			bytePointer++;
+			numberOfArguments = 0;
+			break;
+		case 19: // add one-byte value to shield
+			detokenisedStream += "ADDVAR ";
+			detokenisedStream += Common::String::format("(%d, v%d)", (int)tokenisedCondition[bytePointer], k8bitVariableShield);
+			bytePointer++;
+			numberOfArguments = 0;
 			break;
 
-			case 0: break;			// NOP
-			case 1:					// add three-byte value to score
-			{
-				int32 additionValue =
-					tokenisedCondition[bytePointer] |
-					(tokenisedCondition[bytePointer+1] << 8) |
-					(tokenisedCondition[bytePointer+2] << 16);
-				detokenisedStream += "ADDVAR";
-				detokenisedStream += Common::String::format("(%d, v%d)", additionValue, k8bitVariableScore);
-				bytePointer += 3;
-				numberOfArguments = 0;
-			}
-			break;
-			case 2:					// add one-byte value to energy
-				detokenisedStream += "ADDVAR ";
-				detokenisedStream += Common::String::format("(%d, v%d)", (int)tokenisedCondition[bytePointer], k8bitVariableEnergy);
-				bytePointer ++;
-				numberOfArguments = 0;
-			break;
-			case 19:				// add one-byte value to shield
-				detokenisedStream += "ADDVAR ";
-				detokenisedStream += Common::String::format("(%d, v%d)", (int)tokenisedCondition[bytePointer], k8bitVariableShield);
-				bytePointer ++;
-				numberOfArguments = 0;
+		case 6:
+		case 3:
+			detokenisedStream += "TOGVIS (";
+			break; // these all come in unary and binary versions,
+		case 7:
+		case 4:
+			detokenisedStream += "VIS (";
+			break; // hence each getting two case statement entries
+		case 8:
+		case 5:
+			detokenisedStream += "INVIS (";
 			break;
 
-			case 6:		case 3:		detokenisedStream += "TOGVIS (";		break;	// these all come in unary and binary versions,
-			case 7:		case 4:		detokenisedStream += "VIS (";			break;	// hence each getting two case statement entries
-			case 8:		case 5:		detokenisedStream += "INVIS (";			break;
-
-			case 9:					detokenisedStream += "ADDVAR (1, v";	break;
-			case 10:				detokenisedStream += "SUBVAR (1, v";	break;
-
-			case 11:	// end condition if a variable doesn't have a particular value
-				detokenisedStream += "IF VAR!=? ";
-				detokenisedStream += Common::String::format("(v%d, v%d)", (int)tokenisedCondition[bytePointer], (int)tokenisedCondition[bytePointer+1]);
-				detokenisedStream += "THEN END ENDIF";
-				bytePointer += 2;
-				numberOfArguments = 0;
+		case 9:
+			detokenisedStream += "ADDVAR (1, v";
 			break;
-			case 14:	// end condition if a bit doesn't have a particular value
-				detokenisedStream   += "IF BIT!=? ";
-				detokenisedStream   += Common::String::format("(%d, %d)", (int)tokenisedCondition[bytePointer], (int)tokenisedCondition[bytePointer+1]);
-				detokenisedStream	+= "THEN END ENDIF";
-				bytePointer += 2;
-				numberOfArguments = 0;
-			break;
-			case 30:	// end condition if an object is invisible
-				detokenisedStream	+= "IF INVIS? ";
-				detokenisedStream   += Common::String::format("(%d)", (int)tokenisedCondition[bytePointer]);
-				detokenisedStream   += "THEN END ENDIF";
-				bytePointer ++;
-				numberOfArguments = 0;
-			break;
-			case 31:	// end condition if an object is visible
-				detokenisedStream	+= "IF VIS? ";
-				detokenisedStream   += Common::String::format("(%d)", (int)tokenisedCondition[bytePointer]);
-				detokenisedStream   += "THEN END ENDIF";
-				bytePointer ++;
-				numberOfArguments = 0;
+		case 10:
+			detokenisedStream += "SUBVAR (1, v";
 			break;
 
-			case 12:				detokenisedStream += "SETBIT (";		break;
-			case 13:				detokenisedStream += "CLRBIT (";		break;
-
-			case 15:				detokenisedStream += "SOUND (";			break;
-			case 17:	case 16:	detokenisedStream += "DESTROY (";		break;
-			case 18:				detokenisedStream += "GOTO (";			break;
-
-			case 21:				detokenisedStream += "SWAPJET";			break;
-			case 26:				detokenisedStream += "REDRAW";			break;
-			case 27:				detokenisedStream += "DELAY (";			break;
-			case 28:				detokenisedStream += "SYNCSND (";		break;
-			case 29:				detokenisedStream += "TOGBIT (";		break;
-
-			case 25:
-			{
-				// this should toggle border colour; it's therefore a no-op
-				bytePointer++;
-				numberOfArguments = 0;
-			}
+		case 11: // end condition if a variable doesn't have a particular value
+			detokenisedStream += "IF VAR!=? ";
+			detokenisedStream += Common::String::format("(v%d, v%d)", (int)tokenisedCondition[bytePointer], (int)tokenisedCondition[bytePointer + 1]);
+			detokenisedStream += "THEN END ENDIF";
+			bytePointer += 2;
+			numberOfArguments = 0;
+			break;
+		case 14: // end condition if a bit doesn't have a particular value
+			detokenisedStream += "IF BIT!=? ";
+			detokenisedStream += Common::String::format("(%d, %d)", (int)tokenisedCondition[bytePointer], (int)tokenisedCondition[bytePointer + 1]);
+			detokenisedStream += "THEN END ENDIF";
+			bytePointer += 2;
+			numberOfArguments = 0;
+			break;
+		case 30: // end condition if an object is invisible
+			detokenisedStream += "IF INVIS? ";
+			detokenisedStream += Common::String::format("(%d)", (int)tokenisedCondition[bytePointer]);
+			detokenisedStream += "THEN END ENDIF";
+			bytePointer++;
+			numberOfArguments = 0;
+			break;
+		case 31: // end condition if an object is visible
+			detokenisedStream += "IF VIS? ";
+			detokenisedStream += Common::String::format("(%d)", (int)tokenisedCondition[bytePointer]);
+			detokenisedStream += "THEN END ENDIF";
+			bytePointer++;
+			numberOfArguments = 0;
 			break;
 
-			case 20:
-				detokenisedStream += "SETVAR ";
-				detokenisedStream += Common::String::format("(%d, v%d)", (int)tokenisedCondition[bytePointer], (int)tokenisedCondition[bytePointer+1]);
-				bytePointer += 2;
-				numberOfArguments = 0;
+		case 12:
+			detokenisedStream += "SETBIT (";
+			break;
+		case 13:
+			detokenisedStream += "CLRBIT (";
+			break;
+
+		case 15:
+			detokenisedStream += "SOUND (";
+			break;
+		case 17:
+		case 16:
+			detokenisedStream += "DESTROY (";
+			break;
+		case 18:
+			detokenisedStream += "GOTO (";
+			break;
+
+		case 21:
+			detokenisedStream += "SWAPJET";
+			break;
+		case 26:
+			detokenisedStream += "REDRAW";
+			break;
+		case 27:
+			detokenisedStream += "DELAY (";
+			break;
+		case 28:
+			detokenisedStream += "SYNCSND (";
+			break;
+		case 29:
+			detokenisedStream += "TOGBIT (";
+			break;
+
+		case 25: {
+			// this should toggle border colour; it's therefore a no-op
+			bytePointer++;
+			numberOfArguments = 0;
+		} break;
+
+		case 20:
+			detokenisedStream += "SETVAR ";
+			detokenisedStream += Common::String::format("(%d, v%d)", (int)tokenisedCondition[bytePointer], (int)tokenisedCondition[bytePointer + 1]);
+			bytePointer += 2;
+			numberOfArguments = 0;
 			break;
 		}
 
 		// if there are any regular arguments to add, do so
-		if(numberOfArguments)
-		{
-			for(uint8 argumentNumber = 0; argumentNumber < numberOfArguments; argumentNumber++)
-			{
+		if (numberOfArguments) {
+			for (uint8 argumentNumber = 0; argumentNumber < numberOfArguments; argumentNumber++) {
 				detokenisedStream += Common::String::format("%d", (int)tokenisedCondition[bytePointer]);
 				bytePointer++;
 
-				if(argumentNumber < numberOfArguments-1)
+				if (argumentNumber < numberOfArguments - 1)
 					detokenisedStream += ", ";
 			}
 
@@ -185,5 +211,4 @@ Common::String *detokenise8bitCondition(Common::Array<uint8> &tokenisedCondition
 	}
 
 	return (new Common::String(detokenisedStream));
-
 }
