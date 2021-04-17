@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-04-16 12:46+0000\n"
-"PO-Revision-Date: 2021-04-16 16:50+0000\n"
+"PO-Revision-Date: 2021-04-17 10:10+0000\n"
 "Last-Translator: Lothar Serra Mari <serra@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/de/>\n"
@@ -3920,14 +3920,14 @@ msgid "Language to use for multilingual games"
 msgstr "Sprache, die für mehrsprachige Spiele verwendet wird"
 
 #: engines/ags/detection.cpp:110
-#, fuzzy
-#| msgid "Antialiased"
 msgid "Force antialiased text"
-msgstr "Kantenglättung"
+msgstr "Kantenglättung für Text erzwingen"
 
 #: engines/ags/detection.cpp:110
 msgid "Use antialiasing to draw text even if the game does not ask for it"
 msgstr ""
+"Erzwinge Kantenglättung für die Text-Darstellung, auch wenn das Spiel dies "
+"nicht selbst anfordert"
 
 #: engines/bladerunner/bladerunner.cpp:363
 msgid "Failed to initialize resources"
@@ -5474,7 +5474,7 @@ msgstr "Öffne Cheat-Menü"
 
 #: engines/nancy/input.cpp:258
 msgid "Open event flags cheat menu"
-msgstr ""
+msgstr "Öffne Cheat-Menü"
 
 #: engines/nancy/dialogs.cpp:41
 msgid "Player Speech"
@@ -5513,16 +5513,17 @@ msgstr ""
 
 #. I18N: Second Chance is the name of the original engine's autosave system
 #: engines/nancy/dialogs.cpp:46
-#, fuzzy
-#| msgid "Enable cross fade"
 msgid "Enable Second Chance"
-msgstr "Übergänge aktivieren"
+msgstr "Erhalte eine zweite Chance"
 
 #: engines/nancy/dialogs.cpp:46
 msgid ""
 "Enable the Second Chance feature, which automatically saves at specific "
 "scenes. Enabling this disables timed autosaves."
 msgstr ""
+"Aktiviere die funktion \"zweite Chance\", die das Spiel an bestimmten Orten "
+"automatisch speichert. Wird diese Funktion aktiviert, werden keine "
+"zeitgesteuerten Spielstände angelegt."
 
 #: engines/nancy/dialogs.cpp:48
 msgid "Speech Options"
@@ -5919,7 +5920,7 @@ msgstr "Yamaha FB-01"
 
 #: engines/sci/detection_tables.h:4207
 msgid "Incomplete game detected. You have to copy data from all the CDs."
-msgstr ""
+msgstr "Unvollständiges Spiel erkannt. Du musst die Dateien aller CDs kopieren."
 
 #: engines/sci/engine/kfile.cpp:485 engines/sci/metaengine.cpp:404
 msgid "(Autosave)"
