@@ -1397,6 +1397,10 @@ void KyraEngine_MR::writeSettings() {
 		_flags.lang = Common::DE_DEU;
 		break;
 
+	case 3:
+		_flags.lang = Common::ZH_CNA;
+		break;
+
 	case 0:
 	default:
 		_flags.lang = Common::EN_ANY;

@@ -1823,9 +1823,10 @@ const uint8 KyraEngine_HoF::_rainbowRoomData[] = {
 const char *const KyraEngine_MR::_languageExtension[] = {
 	"TRE",
 	"TRF",
-	"TRG"/*,
-	"TRI",      Italian and Spanish were never included, the supported fan translations are using
-	"TRS"       English/French extensions thus overwriting these languages */
+	"TRG",
+	"TRC"
+	// Italian, Spanish and Russian don't have dedicated language files. The supported fan translations
+	// use one of the existing extensions (English, French or German) thus overwriting that language. 
 };
 
 const int KyraEngine_MR::_languageExtensionSize = ARRAYSIZE(KyraEngine_MR::_languageExtension);

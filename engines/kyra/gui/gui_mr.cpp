@@ -1408,7 +1408,7 @@ int GUI_MR::changeLanguage(Button *caller) {
 	updateMenuButton(caller);
 	if (!_vm->queryGameFlag(0x1B2)) {
 		++_vm->_lang;
-		_vm->_lang %= 3;
+		_vm->_lang %= _vm->_numLang;
 		setupOptionsButtons();
 		renewHighlight(_gameOptions);
 	}
