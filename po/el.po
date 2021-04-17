@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-04-17 13:08+0000\n"
+"POT-Creation-Date: 2021-04-17 17:42+0000\n"
 "PO-Revision-Date: 2021-04-17 10:06+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
@@ -56,8 +56,8 @@ msgstr "Μετάβαση πάνω"
 
 #: gui/browser.cpp:82 gui/chooser.cpp:46 gui/editgamedialog.cpp:376
 #: gui/editrecorddialog.cpp:67 gui/filebrowser-dialog.cpp:65
-#: gui/fluidsynth-dialog.cpp:153 gui/KeysDialog.cpp:44 gui/massadd.cpp:92
-#: gui/options.cpp:1953 gui/predictivedialog.cpp:69 gui/recorderdialog.cpp:68
+#: gui/fluidsynth-dialog.cpp:153 gui/massadd.cpp:92 gui/options.cpp:1946
+#: gui/predictivedialog.cpp:69 gui/recorderdialog.cpp:68
 #: gui/recorderdialog.cpp:155 gui/remotebrowser.cpp:60
 #: gui/saveload-dialog.cpp:62 gui/saveload-dialog.cpp:396
 #: gui/saveload-dialog.cpp:468 gui/saveload-dialog.cpp:770
@@ -126,11 +126,10 @@ msgstr ""
 #: gui/downloaddialog.cpp:119 gui/downloaddialog.cpp:153
 #: gui/filebrowser-dialog.cpp:133 gui/fluidsynth-dialog.cpp:218
 #: gui/launcher.cpp:390 gui/launcher.cpp:411 gui/launcher.cpp:454
-#: gui/options.cpp:2729 gui/options.cpp:2767
-#: backends/events/default/default-events.cpp:185
-#: backends/events/symbiansdl/symbiansdl-events.cpp:191
-#: engines/buried/buried.cpp:533 engines/grim/grim.cpp:353
-#: engines/kyra/gui/saveload_eob.cpp:596 engines/kyra/gui/saveload_eob.cpp:629
+#: gui/options.cpp:2728 gui/options.cpp:2766
+#: backends/events/default/default-events.cpp:185 engines/buried/buried.cpp:533
+#: engines/grim/grim.cpp:353 engines/kyra/gui/saveload_eob.cpp:596
+#: engines/kyra/gui/saveload_eob.cpp:629
 #: engines/parallaction/metaengine.cpp:136
 #: engines/sci/graphics/controls32.cpp:928
 msgid "Yes"
@@ -139,10 +138,9 @@ msgstr "Ναι"
 #: gui/downloaddialog.cpp:119 gui/downloaddialog.cpp:154
 #: gui/filebrowser-dialog.cpp:133 gui/fluidsynth-dialog.cpp:218
 #: gui/launcher.cpp:390 gui/launcher.cpp:411 gui/launcher.cpp:454
-#: gui/options.cpp:2729 gui/options.cpp:2767
-#: backends/events/symbiansdl/symbiansdl-events.cpp:191
-#: engines/buried/buried.cpp:533 engines/grim/grim.cpp:353
-#: engines/kyra/gui/saveload_eob.cpp:596 engines/kyra/gui/saveload_eob.cpp:629
+#: gui/options.cpp:2728 gui/options.cpp:2766 engines/buried/buried.cpp:533
+#: engines/grim/grim.cpp:353 engines/kyra/gui/saveload_eob.cpp:596
+#: engines/kyra/gui/saveload_eob.cpp:629
 #: engines/parallaction/metaengine.cpp:142
 #: engines/sci/graphics/controls32.cpp:928
 msgid "No"
@@ -161,9 +159,9 @@ msgstr ""
 "αρχείο με το ίδιο όνομα."
 
 #: gui/downloaddialog.cpp:147 gui/editgamedialog.cpp:377
-#: gui/fluidsynth-dialog.cpp:154 gui/KeysDialog.cpp:43 gui/launcher.cpp:510
-#: gui/launcher.cpp:514 gui/massadd.cpp:89 gui/options.cpp:1955
-#: gui/saveload-dialog.cpp:1168 engines/engine.cpp:511 engines/engine.cpp:522
+#: gui/fluidsynth-dialog.cpp:154 gui/launcher.cpp:510 gui/launcher.cpp:514
+#: gui/massadd.cpp:89 gui/options.cpp:1948 gui/saveload-dialog.cpp:1168
+#: engines/engine.cpp:511 engines/engine.cpp:522
 #: backends/platform/wii/options.cpp:47 engines/agos/animation.cpp:559
 #: engines/drascula/saveload.cpp:49 engines/groovie/script.cpp:484
 #: engines/parallaction/saveload.cpp:271 engines/sci/engine/kgraphics.cpp:75
@@ -198,7 +196,7 @@ msgstr "Λήφθηκαν %s %S / %s %S"
 msgid "Download speed: %s %S"
 msgstr "Ταχύτητα λήψης: %s %S"
 
-#: gui/editgamedialog.cpp:142 engines/dialogs.cpp:285
+#: gui/editgamedialog.cpp:142 engines/dialogs.cpp:275
 msgid "Game"
 msgstr "Παιχνίδι"
 
@@ -248,10 +246,10 @@ msgstr ""
 "Γλώσσα του παιχνιδιού. Αυτό δε θα μετατρέψει την Ισπανική έκδοση του "
 "παιχνιδιού σας σε Αγγλική"
 
-#: gui/editgamedialog.cpp:161 gui/editgamedialog.cpp:175 gui/options.cpp:1269
-#: gui/options.cpp:1289 gui/options.cpp:1302 gui/options.cpp:1316
-#: gui/options.cpp:1334 gui/options.cpp:1346 gui/options.cpp:2147
-#: gui/options.cpp:2319 audio/null.cpp:41 engines/ags/detection.cpp:94
+#: gui/editgamedialog.cpp:161 gui/editgamedialog.cpp:175 gui/options.cpp:1267
+#: gui/options.cpp:1287 gui/options.cpp:1300 gui/options.cpp:1314
+#: gui/options.cpp:1332 gui/options.cpp:1344 gui/options.cpp:2141
+#: gui/options.cpp:2313 audio/null.cpp:41 engines/ags/detection.cpp:94
 msgid "<default>"
 msgstr "<προκαθορισμένη>"
 
@@ -273,13 +271,13 @@ msgstr "Πλατφόρμα:"
 msgid "Engine"
 msgstr "Μηχανή"
 
-#: gui/editgamedialog.cpp:203 gui/options.cpp:1666 gui/options.cpp:1799
+#: gui/editgamedialog.cpp:203 gui/options.cpp:1664 gui/options.cpp:1792
 #: backends/graphics/sdl/sdl-graphics.cpp:389
 #: backends/graphics3d/sdl/sdl-graphics3d.cpp:132
 msgid "Graphics"
 msgstr "Γραφικά"
 
-#: gui/editgamedialog.cpp:203 gui/options.cpp:1666 gui/options.cpp:1799
+#: gui/editgamedialog.cpp:203 gui/options.cpp:1664 gui/options.cpp:1792
 msgid "GFX"
 msgstr "Γραφ."
 
@@ -292,7 +290,7 @@ msgctxt "lowres"
 msgid "Override global graphic settings"
 msgstr "Παράκαμψη καθολικών ρυθμ. γραφικών"
 
-#: gui/editgamedialog.cpp:221 gui/options.cpp:1810
+#: gui/editgamedialog.cpp:221 gui/options.cpp:1803
 msgid "Shader"
 msgstr "Σκιαστής"
 
@@ -305,11 +303,11 @@ msgctxt "lowres"
 msgid "Override global shader settings"
 msgstr "Υπέρβαση καθολικών ρυθμίσεων σκιαστή"
 
-#: gui/editgamedialog.cpp:240 gui/options.cpp:1844 engines/dialogs.cpp:326
+#: gui/editgamedialog.cpp:240 gui/options.cpp:1837 engines/dialogs.cpp:316
 msgid "Keymaps"
 msgstr "Αντιστοιχίσεις πλήκτρων"
 
-#: gui/editgamedialog.cpp:247 gui/options.cpp:1851 engines/dialogs.cpp:333
+#: gui/editgamedialog.cpp:247 gui/options.cpp:1844 engines/dialogs.cpp:323
 msgid "Backend"
 msgstr "Backend"
 
@@ -322,7 +320,7 @@ msgctxt "lowres"
 msgid "Override global backend settings"
 msgstr "Παράκαμψη καθολικών ρυθμίσεων backend"
 
-#: gui/editgamedialog.cpp:266 gui/options.cpp:1865 engines/dialogs.cpp:301
+#: gui/editgamedialog.cpp:266 gui/options.cpp:1858 engines/dialogs.cpp:291
 msgid "Audio"
 msgstr "Ήχος"
 
@@ -335,11 +333,11 @@ msgctxt "lowres"
 msgid "Override global audio settings"
 msgstr "Παράκαμψη ρυθμ. ήχου"
 
-#: gui/editgamedialog.cpp:280 gui/options.cpp:1870
+#: gui/editgamedialog.cpp:280 gui/options.cpp:1863
 msgid "Volume"
 msgstr "Ένταση"
 
-#: gui/editgamedialog.cpp:282 gui/options.cpp:1872
+#: gui/editgamedialog.cpp:282 gui/options.cpp:1865
 msgctxt "lowres"
 msgid "Volume"
 msgstr "Ένταση"
@@ -353,7 +351,7 @@ msgctxt "lowres"
 msgid "Override global volume settings"
 msgstr "Παράκαμψη ρυθμ. έντασης"
 
-#: gui/editgamedialog.cpp:298 gui/options.cpp:1880
+#: gui/editgamedialog.cpp:298 gui/options.cpp:1873
 msgid "MIDI"
 msgstr "MIDI"
 
@@ -366,7 +364,7 @@ msgctxt "lowres"
 msgid "Override global MIDI settings"
 msgstr "Παράκαμψη ρυθμ. MIDI"
 
-#: gui/editgamedialog.cpp:313 gui/options.cpp:1886
+#: gui/editgamedialog.cpp:313 gui/options.cpp:1879
 msgid "MT-32"
 msgstr "MT-32"
 
@@ -379,11 +377,11 @@ msgctxt "lowres"
 msgid "Override global MT-32 settings"
 msgstr "Παράκαμψη ρυθμ. MT-32"
 
-#: gui/editgamedialog.cpp:327 gui/options.cpp:1893
+#: gui/editgamedialog.cpp:327 gui/options.cpp:1886
 msgid "Paths"
 msgstr "Φάκελοι"
 
-#: gui/editgamedialog.cpp:329 gui/options.cpp:1895
+#: gui/editgamedialog.cpp:329 gui/options.cpp:1888
 msgctxt "lowres"
 msgid "Paths"
 msgstr "Φάκελοι"
@@ -397,7 +395,7 @@ msgctxt "lowres"
 msgid "Game Path:"
 msgstr "Φάκελος Παιχνιδιού:"
 
-#: gui/editgamedialog.cpp:343 gui/options.cpp:2071
+#: gui/editgamedialog.cpp:343 gui/options.cpp:2062
 msgid "Extra Path:"
 msgstr "Πρόσθετα:"
 
@@ -407,48 +405,48 @@ msgid "Specifies path to additional data used by the game"
 msgstr ""
 "Καθορίζει διαδρομή για πρόσθετα δεδομένα που χρησιμοποιούνται από το παιχνίδι"
 
-#: gui/editgamedialog.cpp:345 gui/options.cpp:2073
+#: gui/editgamedialog.cpp:345 gui/options.cpp:2064
 msgctxt "lowres"
 msgid "Extra Path:"
 msgstr "Πρόσθετα:"
 
-#: gui/editgamedialog.cpp:352 gui/options.cpp:2055
+#: gui/editgamedialog.cpp:352 gui/options.cpp:2046
 msgid "Save Path:"
 msgstr "Φάκελος Αποθήκευσης:"
 
 #: gui/editgamedialog.cpp:352 gui/editgamedialog.cpp:354
-#: gui/editgamedialog.cpp:355 gui/options.cpp:2055 gui/options.cpp:2057
-#: gui/options.cpp:2058
+#: gui/editgamedialog.cpp:355 gui/options.cpp:2046 gui/options.cpp:2048
+#: gui/options.cpp:2049
 msgid "Specifies where your saved games are put"
 msgstr "Καθορίζει την τοποθεσία των αποθηκευμένων παιχνιδιών σας"
 
-#: gui/editgamedialog.cpp:354 gui/options.cpp:2057
+#: gui/editgamedialog.cpp:354 gui/options.cpp:2048
 msgctxt "lowres"
 msgid "Save Path:"
 msgstr "Φάκελος Αποθ.:"
 
-#: gui/editgamedialog.cpp:366 engines/dialogs.cpp:348
+#: gui/editgamedialog.cpp:366 engines/dialogs.cpp:338
 msgid "Achievements"
 msgstr "Επιτεύγματα"
 
 #: gui/editgamedialog.cpp:390 gui/editgamedialog.cpp:490
-#: gui/editgamedialog.cpp:556 gui/editgamedialog.cpp:617 gui/options.cpp:1980
-#: gui/options.cpp:1986 gui/options.cpp:1994 gui/options.cpp:2018
-#: gui/options.cpp:2066 gui/options.cpp:2074 gui/options.cpp:2083
-#: gui/options.cpp:2343 gui/options.cpp:2349 gui/options.cpp:2356
-#: gui/options.cpp:2365 gui/options.cpp:2607 gui/options.cpp:2610
-#: gui/options.cpp:2617 gui/options.cpp:2623 gui/options.cpp:2634
+#: gui/editgamedialog.cpp:556 gui/editgamedialog.cpp:617 gui/options.cpp:1969
+#: gui/options.cpp:1975 gui/options.cpp:1983 gui/options.cpp:2014
+#: gui/options.cpp:2057 gui/options.cpp:2065 gui/options.cpp:2074
+#: gui/options.cpp:2337 gui/options.cpp:2343 gui/options.cpp:2350
+#: gui/options.cpp:2359 gui/options.cpp:2606 gui/options.cpp:2609
+#: gui/options.cpp:2616 gui/options.cpp:2622 gui/options.cpp:2633
 msgctxt "path"
 msgid "None"
 msgstr "Κανένα"
 
 #: gui/editgamedialog.cpp:395 gui/editgamedialog.cpp:496
-#: gui/editgamedialog.cpp:621 gui/options.cpp:1974 gui/options.cpp:2337
-#: gui/options.cpp:2613 backends/platform/wii/options.cpp:56
+#: gui/editgamedialog.cpp:621 gui/options.cpp:1963 gui/options.cpp:2331
+#: gui/options.cpp:2612 backends/platform/wii/options.cpp:56
 msgid "Default"
 msgstr "Προκαθορισμένο"
 
-#: gui/editgamedialog.cpp:549 gui/options.cpp:2628
+#: gui/editgamedialog.cpp:549 gui/options.cpp:2627
 msgid "Select SoundFont"
 msgstr "Επιλέξτε SoundFont"
 
@@ -456,7 +454,7 @@ msgstr "Επιλέξτε SoundFont"
 msgid "Select additional game directory"
 msgstr "Επιλέξτε πρόσθετο φάκελο παιχνιδιού"
 
-#: gui/editgamedialog.cpp:601 gui/options.cpp:2542
+#: gui/editgamedialog.cpp:601 gui/options.cpp:2541
 msgid "Select directory for saved games"
 msgstr "Επιλέξτε φάκελο για αποθηκευμένα παιχνίδια"
 
@@ -553,7 +551,7 @@ msgstr "Ημίτονο"
 msgid "Triangle"
 msgstr "Τρίγωνο"
 
-#: gui/fluidsynth-dialog.cpp:139 gui/options.cpp:1902
+#: gui/fluidsynth-dialog.cpp:139 gui/options.cpp:1895
 msgid "Misc"
 msgstr "Διάφορα"
 
@@ -594,24 +592,23 @@ msgstr ""
 "Θέλετε σίγουρα να επαναφέρετε όλες τις ρυθμίσεις του FluidSynth στις "
 "προκαθορισμένες τους τιμές;"
 
-#: gui/gui-manager.cpp:141
+#: gui/gui-manager.cpp:151
 msgid "GUI"
 msgstr "Γραφική Διεπαφή Χρήστη"
 
-#: gui/gui-manager.cpp:145 engines/mohawk/myst.cpp:570
+#: gui/gui-manager.cpp:155 engines/mohawk/myst.cpp:570
 #: engines/mohawk/riven.cpp:840
 msgid "Interact"
 msgstr "Αλληλεπίδραση"
 
-#: gui/gui-manager.cpp:150 gui/unknown-game-dialog.cpp:54
+#: gui/gui-manager.cpp:160 gui/unknown-game-dialog.cpp:54
 #: engines/nancy/dialogs.cpp:314 engines/scumm/help.cpp:125
 #: engines/scumm/help.cpp:140 engines/scumm/help.cpp:165
 #: engines/scumm/help.cpp:191 engines/scumm/help.cpp:209
 msgid "Close"
 msgstr "Κλείσιμο"
 
-#: gui/gui-manager.cpp:156 engines/metaengine.cpp:108
-#: backends/platform/symbian/src/SymbianActions.cpp:40
+#: gui/gui-manager.cpp:166 engines/metaengine.cpp:108
 #: engines/dragons/metaengine.cpp:163 engines/glk/scott/scott.cpp:412
 #: engines/griffon/metaengine.cpp:96 engines/grim/grim.cpp:451
 #: engines/grim/grim.cpp:528 engines/twine/metaengine.cpp:452
@@ -622,8 +619,7 @@ msgstr "Κλείσιμο"
 msgid "Up"
 msgstr "Πάνω"
 
-#: gui/gui-manager.cpp:161 engines/metaengine.cpp:113
-#: backends/platform/symbian/src/SymbianActions.cpp:41
+#: gui/gui-manager.cpp:171 engines/metaengine.cpp:113
 #: engines/dragons/metaengine.cpp:169 engines/glk/scott/scott.cpp:412
 #: engines/griffon/metaengine.cpp:102 engines/grim/grim.cpp:456
 #: engines/grim/grim.cpp:533 engines/twine/metaengine.cpp:459
@@ -634,8 +630,7 @@ msgstr "Πάνω"
 msgid "Down"
 msgstr "Κάτω"
 
-#: gui/gui-manager.cpp:166 engines/metaengine.cpp:118
-#: backends/platform/symbian/src/SymbianActions.cpp:42
+#: gui/gui-manager.cpp:176 engines/metaengine.cpp:118
 #: engines/dragons/metaengine.cpp:175 engines/griffon/metaengine.cpp:108
 #: engines/grim/grim.cpp:461 engines/grim/grim.cpp:538
 #: engines/twine/metaengine.cpp:474 engines/twine/metaengine.cpp:542
@@ -646,8 +641,7 @@ msgstr "Κάτω"
 msgid "Left"
 msgstr "Αριστερά"
 
-#: gui/gui-manager.cpp:171 engines/metaengine.cpp:123
-#: backends/platform/symbian/src/SymbianActions.cpp:43
+#: gui/gui-manager.cpp:181 engines/metaengine.cpp:123
 #: engines/dragons/metaengine.cpp:181 engines/griffon/metaengine.cpp:114
 #: engines/grim/grim.cpp:466 engines/grim/grim.cpp:543
 #: engines/twine/metaengine.cpp:466 engines/twine/metaengine.cpp:535
@@ -658,36 +652,7 @@ msgstr "Αριστερά"
 msgid "Right"
 msgstr "Δεξιά"
 
-#: gui/KeysDialog.cpp:42
-msgid "Map"
-msgstr "Αντιστοίχιση"
-
-#: gui/KeysDialog.cpp:50
-msgid "Select an action and click 'Map'"
-msgstr "Επιλέξτε μια ενέργεια και πατήστε 'Αντιστοίχιση'"
-
-#: gui/KeysDialog.cpp:81 gui/KeysDialog.cpp:103 gui/KeysDialog.cpp:138
-#, c-format
-msgid "Associated key : %s"
-msgstr "Συσχετισμένο κλειδί : %s"
-
-#: gui/KeysDialog.cpp:83 gui/KeysDialog.cpp:105 gui/KeysDialog.cpp:140
-msgid "Associated key : none"
-msgstr "Συσχετισμένο κλειδί: κανένα"
-
-#: gui/KeysDialog.cpp:91
-msgid "Please select an action"
-msgstr "Παρακαλώ επιλέξτε μια ενέργεια"
-
-#: gui/KeysDialog.cpp:107
-msgid "Press the key to associate"
-msgstr "Πατήστε το πλήκτρο για συσχέτιση"
-
-#: gui/KeysDialog.cpp:142 gui/KeysDialog.h:41
-msgid "Choose an action to map"
-msgstr "Επιλέξτε μια ενέργεια για αντιστοίχιση"
-
-#: gui/launcher.cpp:140 engines/dialogs.cpp:99
+#: gui/launcher.cpp:140 engines/dialogs.cpp:95
 msgid "~Q~uit"
 msgstr "Έ~ξ~οδος"
 
@@ -789,14 +754,14 @@ msgstr "Αναζήτηση στη λίστα παιχνιδιών"
 msgid "Search:"
 msgstr "Αναζήτηση:"
 
-#: gui/launcher.cpp:210 engines/dialogs.cpp:102 engines/engine.cpp:807
+#: gui/launcher.cpp:210 engines/dialogs.cpp:98 engines/engine.cpp:807
 #: engines/buried/saveload.cpp:515 engines/pegasus/pegasus.cpp:384
 #: engines/tsage/scenes.cpp:631 engines/wage/saveload.cpp:742
 #: engines/xeen/saves.cpp:256
 msgid "Load game:"
 msgstr "Φόρτωση παιχνιδιού:"
 
-#: gui/launcher.cpp:210 engines/dialogs.cpp:102 engines/engine.cpp:807
+#: gui/launcher.cpp:210 engines/dialogs.cpp:98 engines/engine.cpp:807
 #: engines/buried/saveload.cpp:515 engines/parallaction/metaengine.cpp:118
 #: engines/parallaction/saveload.cpp:194 engines/pegasus/pegasus.cpp:384
 #: engines/scumm/dialogs.cpp:178 engines/tsage/scenes.cpp:631
@@ -876,7 +841,7 @@ msgstr ""
 "Ανακαλύφθηκαν %d νέα παιχνίδια, αγνοήθηκαν %d παιχνίδια που έχουν ήδη "
 "προστεθεί ..."
 
-#: gui/message.cpp:148 gui/message.cpp:152 gui/options.cpp:2254
+#: gui/message.cpp:148 gui/message.cpp:152 gui/options.cpp:2248
 msgid "Open URL"
 msgstr "Άνοιγμα διεύθυνσης URL"
 
@@ -896,277 +861,295 @@ msgstr "Μετάβαση στο Παιχνίδι"
 msgid "Fast replay"
 msgstr "Γρήγορη επανάληψη"
 
-#: gui/options.cpp:136 common/updates.cpp:56
+#: gui/options.cpp:130 common/updates.cpp:56
 msgid "Never"
 msgstr "Ποτέ"
 
-#: gui/options.cpp:136
+#: gui/options.cpp:130
 msgid "Every 5 mins"
 msgstr "Κάθε 5 λεπτά"
 
-#: gui/options.cpp:136
+#: gui/options.cpp:130
 msgid "Every 10 mins"
 msgstr "Κάθε 10 λεπτά"
 
-#: gui/options.cpp:136
+#: gui/options.cpp:130
 msgid "Every 15 mins"
 msgstr "Κάθε 15 λεπτά"
 
-#: gui/options.cpp:136
+#: gui/options.cpp:130
 msgid "Every 30 mins"
 msgstr "Κάθε 30 λεπτά"
 
-#: gui/options.cpp:421 gui/options.cpp:809 gui/options.cpp:947
-#: gui/options.cpp:1058 gui/options.cpp:1451
+#: gui/options.cpp:133
+#, fuzzy
+#| msgid "Autosave"
+msgid "Auto"
+msgstr "Αυτόματη αποθήκευση"
+
+#: gui/options.cpp:133
+msgid "Large"
+msgstr ""
+
+#: gui/options.cpp:133 engines/nancy/dialogs.cpp:120
+msgid "Medium"
+msgstr "Μεσαίο"
+
+#: gui/options.cpp:133
+msgid "Small"
+msgstr ""
+
+#: gui/options.cpp:419 gui/options.cpp:807 gui/options.cpp:945
+#: gui/options.cpp:1056 gui/options.cpp:1449
 msgctxt "soundfont"
 msgid "None"
 msgstr "Κανένα"
 
-#: gui/options.cpp:668
+#: gui/options.cpp:666
 msgid "Failed to apply some of the graphic options changes:"
 msgstr "Δεν ήταν δυνατή η εφαρμογή ορισμένων αλλαγών στις επιλογές γραφικών:"
 
-#: gui/options.cpp:680
+#: gui/options.cpp:678
 msgid "the video mode could not be changed"
 msgstr "δεν ήταν δυνατή η αλλαγή της λειτουργίας βίντεο"
 
-#: gui/options.cpp:693
+#: gui/options.cpp:691
 msgid "the stretch mode could not be changed"
 msgstr "δεν ήταν δυνατή η αλλαγή της λειτουργίας επέκτασης εικόνας"
 
-#: gui/options.cpp:699
+#: gui/options.cpp:697
 msgid "the aspect ratio setting could not be changed"
 msgstr "δεν ήταν δυνατή η αλλαγή της διόρθωσης αναλογίας διαστάσεων"
 
-#: gui/options.cpp:705
+#: gui/options.cpp:703
 msgid "the fullscreen setting could not be changed"
 msgstr "αδυναμία αλλαγής ρύθμισης πλήρους οθόνης"
 
-#: gui/options.cpp:711
+#: gui/options.cpp:709
 msgid "the filtering setting could not be changed"
 msgstr "αδυναμία αλλαγής ρύθμισης φιλτραρίσματος"
 
-#: gui/options.cpp:1137
+#: gui/options.cpp:1135
 msgid "Show On-screen control"
 msgstr "Προβολή στοιχείων χειρισμού στην οθόνη"
 
-#: gui/options.cpp:1141
+#: gui/options.cpp:1139
 msgid "Touchpad mouse mode"
 msgstr "Touchpad σε λειτουργία ποντικιού"
 
-#: gui/options.cpp:1145
+#: gui/options.cpp:1143
 msgid "Swap Menu and Back buttons"
 msgstr "Εναλλαγή των κουμπιών Μενού και Πίσω"
 
-#: gui/options.cpp:1150
+#: gui/options.cpp:1148
 msgid "Pointer Speed:"
 msgstr "Ταχύτητα δείκτη:"
 
-#: gui/options.cpp:1150 gui/options.cpp:1152 gui/options.cpp:1153
+#: gui/options.cpp:1148 gui/options.cpp:1150 gui/options.cpp:1151
 msgid "Speed for keyboard/joystick mouse pointer control"
 msgstr "Ταχύτητα χειρισμού του δείκτη ποντικιού με πληκτρολόγιο/χειριστήριο"
 
-#: gui/options.cpp:1152
+#: gui/options.cpp:1150
 msgctxt "lowres"
 msgid "Pointer Speed:"
 msgstr "Ταχύτητα δείκτη:"
 
-#: gui/options.cpp:1163
+#: gui/options.cpp:1161
 msgid "Joy Deadzone:"
 msgstr "Περιοχή αδράνειας χειριστήριου:"
 
-#: gui/options.cpp:1163 gui/options.cpp:1165 gui/options.cpp:1166
+#: gui/options.cpp:1161 gui/options.cpp:1163 gui/options.cpp:1164
 msgid "Analog joystick Deadzone"
 msgstr "Περιοχή αδράνειας αναλογικού χειριστήριου"
 
-#: gui/options.cpp:1165
+#: gui/options.cpp:1163
 msgctxt "lowres"
 msgid "Joy Deadzone:"
 msgstr "Περιοχή αδράνειας χειριστήριου:"
 
-#: gui/options.cpp:1239
+#: gui/options.cpp:1237
 #, c-format
 msgid "%d hidden achievements remaining"
 msgstr "Απομένουν %d κρυμμένα επιτεύγματα"
 
-#: gui/options.cpp:1244
+#: gui/options.cpp:1242
 #, c-format
 msgid "Achievements unlocked: %d/%d"
 msgstr "Επιτεύγματα που κατακτήθηκαν: %d/%d"
 
-#: gui/options.cpp:1263
+#: gui/options.cpp:1261
 msgid "HW Shader:"
 msgstr "Σκιαστής Υλικού:"
 
-#: gui/options.cpp:1263 gui/options.cpp:1265
+#: gui/options.cpp:1261 gui/options.cpp:1263
 msgid "Different hardware shaders give different visual effects"
 msgstr "Διαφορετικοί σκιαστές υλικού δίνουν διαφορετικά οπτικά εφέ"
 
-#: gui/options.cpp:1265
+#: gui/options.cpp:1263
 msgctxt "lowres"
 msgid "HW Shader:"
 msgstr "Σκιαστής Υλικού:"
 
-#: gui/options.cpp:1266
+#: gui/options.cpp:1264
 msgid "Different shaders give different visual effects"
 msgstr "Διαφορετικοί σκιαστές δίνουν διαφορετικά οπτικά εφέ"
 
-#: gui/options.cpp:1286
+#: gui/options.cpp:1284
 msgid "Graphics mode:"
 msgstr "Λειτουργία γραφικών:"
 
-#: gui/options.cpp:1300
+#: gui/options.cpp:1298
 msgid "Render mode:"
 msgstr "Λειτουργία απόδοσης:"
 
-#: gui/options.cpp:1300 gui/options.cpp:1301
+#: gui/options.cpp:1298 gui/options.cpp:1299
 msgid "Special dithering modes supported by some games"
 msgstr ""
 "Ειδικές λειτουργίες χρωματικής αντιπαράθεσης οι οποίες υποστηρίζονται από "
 "ορισμένα παιχνίδια"
 
-#: gui/options.cpp:1313
+#: gui/options.cpp:1311
 msgid "Stretch mode:"
 msgstr "Λειτουργία επέκτασης:"
 
-#: gui/options.cpp:1324 backends/graphics/sdl/sdl-graphics.cpp:380
+#: gui/options.cpp:1322 backends/graphics/sdl/sdl-graphics.cpp:380
 msgid "Fullscreen mode"
 msgstr "Λειτουργία πλήρους οθόνης"
 
-#: gui/options.cpp:1326
+#: gui/options.cpp:1324
 msgid "V-Sync in 3D Games"
 msgstr "V-Sync σε 3D Παιχνίδια"
 
-#: gui/options.cpp:1326
+#: gui/options.cpp:1324
 msgid "Wait for the vertical sync to refresh the screen in 3D renderer"
 msgstr ""
 "Αναμονή του κάθετου συγχρονισμού (vertical sync) προκειμένου να ανανεωθεί η "
 "εικόνα στην οθόνη κατά την απόδοση 3D περιεχόμενου"
 
-#: gui/options.cpp:1329
+#: gui/options.cpp:1327
 msgid "Game 3D Renderer:"
 msgstr "Απόδοση εικόνας σε παιχνίδια 3D:"
 
-#: gui/options.cpp:1331
+#: gui/options.cpp:1329
 msgctxt "lowres"
 msgid "Game 3D Renderer:"
 msgstr "Απόδοση εικόνας 3D παιχνιδιού:"
 
-#: gui/options.cpp:1344
+#: gui/options.cpp:1342
 msgid "3D Anti-aliasing:"
 msgstr "Εξομάλυνση 3D:"
 
-#: gui/options.cpp:1348 engines/mohawk/dialogs.cpp:328
+#: gui/options.cpp:1346 engines/mohawk/dialogs.cpp:328
 msgid "Disabled"
 msgstr "Απενεργοποιημένες"
 
-#: gui/options.cpp:1360
+#: gui/options.cpp:1358
 msgid "Filter graphics"
 msgstr "Φίλτρο γραφικών"
 
-#: gui/options.cpp:1360
+#: gui/options.cpp:1358
 msgid "Use linear filtering when scaling graphics"
 msgstr "Χρήση γραμμικού φιλτραρίσματος για την κλιμάκωση γραφικών"
 
-#: gui/options.cpp:1363
+#: gui/options.cpp:1361
 msgid "Aspect ratio correction"
 msgstr "Διόρθωση αναλογίας διαστάσεων"
 
-#: gui/options.cpp:1363
+#: gui/options.cpp:1361
 msgid "Correct aspect ratio for games"
 msgstr "Διόρθωση αναλογίας διαστάσεων για παιχνίδια"
 
-#: gui/options.cpp:1371
+#: gui/options.cpp:1369
 msgid "Preferred device:"
 msgstr "Προτιμώμενη συσκευή:"
 
-#: gui/options.cpp:1371
+#: gui/options.cpp:1369
 msgid "Music device:"
 msgstr "Συσκευή Μουσικής:"
 
-#: gui/options.cpp:1371 gui/options.cpp:1373
+#: gui/options.cpp:1369 gui/options.cpp:1371
 msgid "Specifies preferred sound device or sound card emulator"
 msgstr "Καθορίζει την προτιμώμενη συσκευή εξόδου ήχου ή εξομοιωτή κάρτας ήχου"
 
-#: gui/options.cpp:1371 gui/options.cpp:1373 gui/options.cpp:1374
+#: gui/options.cpp:1369 gui/options.cpp:1371 gui/options.cpp:1372
 msgid "Specifies output sound device or sound card emulator"
 msgstr "Καθορίζει τη συσκευή εξόδου ήχου ή εξομοιωτή κάρτας ήχου"
 
-#: gui/options.cpp:1373
+#: gui/options.cpp:1371
 msgctxt "lowres"
 msgid "Preferred dev.:"
 msgstr "Προτιμώμενη Συσκ.:"
 
-#: gui/options.cpp:1373
+#: gui/options.cpp:1371
 msgctxt "lowres"
 msgid "Music device:"
 msgstr "Συσκευή μουσικής:"
 
-#: gui/options.cpp:1400
+#: gui/options.cpp:1398
 msgid "AdLib emulator:"
 msgstr "Εξομοιωτής Adlib:"
 
-#: gui/options.cpp:1400 gui/options.cpp:1401
+#: gui/options.cpp:1398 gui/options.cpp:1399
 msgid "AdLib is used for music in many games"
 msgstr "Η Adlib χρησιμοποιείται για μουσική σε πολλά παιχνίδια"
 
-#: gui/options.cpp:1414
+#: gui/options.cpp:1412
 msgid "GM device:"
 msgstr "Συσκευή GM:"
 
-#: gui/options.cpp:1414
+#: gui/options.cpp:1412
 msgid "Specifies default sound device for General MIDI output"
 msgstr "Καθορίζει προεπιλεγμένη συσκευή ήχου για την έξοδο General MIDI"
 
-#: gui/options.cpp:1425
+#: gui/options.cpp:1423
 msgid "Don't use General MIDI music"
 msgstr "Μη χρήση μουσικής General MIDI"
 
-#: gui/options.cpp:1436 gui/options.cpp:1498
+#: gui/options.cpp:1434 gui/options.cpp:1496
 msgid "Use first available device"
 msgstr "Χρήση πρώτης διαθέσιμης συσκευής"
 
-#: gui/options.cpp:1448
+#: gui/options.cpp:1446
 msgid "SoundFont:"
 msgstr "SoundFont:"
 
-#: gui/options.cpp:1448 gui/options.cpp:1450 gui/options.cpp:1451
+#: gui/options.cpp:1446 gui/options.cpp:1448 gui/options.cpp:1449
 msgid "SoundFont is supported by some audio cards, FluidSynth and Timidity"
 msgstr ""
 "Το SoundFont υποστηρίζεται από μερικές κάρτες ήχου, το FluidSynth και το "
 "Timidity"
 
-#: gui/options.cpp:1450
+#: gui/options.cpp:1448
 msgctxt "lowres"
 msgid "SoundFont:"
 msgstr "SoundFont:"
 
-#: gui/options.cpp:1456
+#: gui/options.cpp:1454
 msgid "Mixed AdLib/MIDI mode"
 msgstr "Μικτή λειτουργία Adlib/MIDI"
 
-#: gui/options.cpp:1456
+#: gui/options.cpp:1454
 msgid "Use both MIDI and AdLib sound generation"
 msgstr "Χρήση MIDI και Adlib για δημιουργία ήχου"
 
-#: gui/options.cpp:1459
+#: gui/options.cpp:1457
 msgid "MIDI gain:"
 msgstr "Αύξηση MIDI:"
 
-#: gui/options.cpp:1469
+#: gui/options.cpp:1467
 msgid "MT-32 Device:"
 msgstr "Συσκευή MT-32:"
 
-#: gui/options.cpp:1469
+#: gui/options.cpp:1467
 msgid "Specifies default sound device for Roland MT-32/LAPC1/CM32l/CM64 output"
 msgstr ""
 "Καθορίζει προεπιλεγμένη συσκευή ήχου για έξοδο Roland MT-32/LAPC1/CM32l/CM64"
 
-#: gui/options.cpp:1474
+#: gui/options.cpp:1472
 msgid "True Roland MT-32 (disable GM emulation)"
 msgstr "Πραγματική Roland MT-32 (απενεργοποίηση εξομοιωτή GM)"
 
-#: gui/options.cpp:1474 gui/options.cpp:1476
+#: gui/options.cpp:1472 gui/options.cpp:1474
 msgid ""
 "Check if you want to use your real hardware Roland-compatible sound device "
 "connected to your computer"
@@ -1174,16 +1157,16 @@ msgstr ""
 "Επιλέξτε αν θέλετε να χρησιμοποιήσετε συσκευή ήχου συμβατή με Roland, η "
 "οποία είναι συνδεδεμένη στον υπολογιστή σας"
 
-#: gui/options.cpp:1476
+#: gui/options.cpp:1474
 msgctxt "lowres"
 msgid "True Roland MT-32 (no GM emulation)"
 msgstr "Πραγματική Roland MT-32 (χωρίς εξομοίωση GM)"
 
-#: gui/options.cpp:1479
+#: gui/options.cpp:1477
 msgid "Roland GS device (enable MT-32 mappings)"
 msgstr "Συσκευή Roland GS (ενεργοποίηση αντιστοιχίσεων MT-32)"
 
-#: gui/options.cpp:1479
+#: gui/options.cpp:1477
 msgid ""
 "Check if you want to enable patch mappings to emulate an MT-32 on a Roland "
 "GS device"
@@ -1191,219 +1174,221 @@ msgstr ""
 "Επιλέξτε αν θέλετε να ενεργοποιήσετε διορθωμένες αντιστοιχίσεις για να "
 "εξομοιώσετε μια MT-32 σε συσκευή Roland GS"
 
-#: gui/options.cpp:1488
+#: gui/options.cpp:1486
 msgid "Don't use Roland MT-32 music"
 msgstr "Μη χρήση μουσικής Roland MT-32"
 
-#: gui/options.cpp:1515
+#: gui/options.cpp:1513
 msgid "Text and speech:"
 msgstr "Κείμενο και ομιλία:"
 
-#: gui/options.cpp:1519 gui/options.cpp:1529
+#: gui/options.cpp:1517 gui/options.cpp:1527
 msgid "Speech"
 msgstr "Ομιλία"
 
-#: gui/options.cpp:1520 gui/options.cpp:1530
+#: gui/options.cpp:1518 gui/options.cpp:1528
 msgid "Subtitles"
 msgstr "Υπότιτλοι"
 
-#: gui/options.cpp:1521
+#: gui/options.cpp:1519
 msgid "Both"
 msgstr "Και τα δυο"
 
-#: gui/options.cpp:1523
+#: gui/options.cpp:1521
 msgid "Subtitle speed:"
 msgstr "Ταχύτητα υποτίτλων:"
 
-#: gui/options.cpp:1525
+#: gui/options.cpp:1523
 msgctxt "lowres"
 msgid "Text and speech:"
 msgstr "Κείμενο και ομιλία:"
 
-#: gui/options.cpp:1529
+#: gui/options.cpp:1527
 msgid "Spch"
 msgstr "Ομιλία"
 
-#: gui/options.cpp:1530
+#: gui/options.cpp:1528
 msgid "Subs"
 msgstr "Υπότ."
 
-#: gui/options.cpp:1531
+#: gui/options.cpp:1529
 msgctxt "lowres"
 msgid "Both"
 msgstr "Και τα δυο"
 
-#: gui/options.cpp:1531
+#: gui/options.cpp:1529
 msgid "Show subtitles and play speech"
 msgstr "Προβολή υποτίτλων και αναπαραγωγή φωνής"
 
-#: gui/options.cpp:1533
+#: gui/options.cpp:1531
 msgctxt "lowres"
 msgid "Subtitle speed:"
 msgstr "Ταχύτητα υπότ.:"
 
-#: gui/options.cpp:1549
+#: gui/options.cpp:1547
 msgid "Music volume:"
 msgstr "Ένταση μουσικής:"
 
-#: gui/options.cpp:1551
+#: gui/options.cpp:1549
 msgctxt "lowres"
 msgid "Music volume:"
 msgstr "Ένταση μουσικής:"
 
-#: gui/options.cpp:1558
+#: gui/options.cpp:1556
 msgid "Mute all"
 msgstr "Σίγαση όλων"
 
-#: gui/options.cpp:1561
+#: gui/options.cpp:1559
 msgid "SFX volume:"
 msgstr "Ένταση εφέ:"
 
-#: gui/options.cpp:1561 gui/options.cpp:1563 gui/options.cpp:1564
+#: gui/options.cpp:1559 gui/options.cpp:1561 gui/options.cpp:1562
 msgid "Special sound effects volume"
 msgstr "Ένταση ειδικών ακουστικών εφέ"
 
-#: gui/options.cpp:1563
+#: gui/options.cpp:1561
 msgctxt "lowres"
 msgid "SFX volume:"
 msgstr "Ένταση εφέ:"
 
-#: gui/options.cpp:1571
+#: gui/options.cpp:1569
 msgid "Speech volume:"
 msgstr "Ένταση ομιλίας:"
 
-#: gui/options.cpp:1573
+#: gui/options.cpp:1571
 msgctxt "lowres"
 msgid "Speech volume:"
 msgstr "Ένταση ομιλίας:"
 
-#: gui/options.cpp:1822
+#: gui/options.cpp:1815
 msgid "Control"
 msgstr "Χειρισμός"
 
-#: gui/options.cpp:1904
+#: gui/options.cpp:1897
 msgctxt "lowres"
 msgid "Misc"
 msgstr "Λοιπά"
 
-#: gui/options.cpp:1916
+#: gui/options.cpp:1909
 msgid "Cloud"
 msgstr "Νέφος"
 
-#: gui/options.cpp:1918
+#: gui/options.cpp:1911
 msgctxt "lowres"
 msgid "Cloud"
 msgstr "Νέφος"
 
-#: gui/options.cpp:1932
+#: gui/options.cpp:1925
 msgid "LAN"
 msgstr "LAN"
 
-#: gui/options.cpp:1934
+#: gui/options.cpp:1927
 msgctxt "lowres"
 msgid "LAN"
 msgstr "LAN"
 
-#: gui/options.cpp:1942
+#: gui/options.cpp:1935
 msgid "Accessibility"
 msgstr "Προσβασιμότητα"
 
-#: gui/options.cpp:1944
+#: gui/options.cpp:1937
 msgctxt "lowres"
 msgid "Accessibility"
 msgstr "Προσβασιμότητα"
 
-#: gui/options.cpp:1954
+#: gui/options.cpp:1947
 msgid "Apply"
 msgstr "Εφαρμογή"
 
-#: gui/options.cpp:2044
+#: gui/options.cpp:2035
 msgid "FluidSynth Settings"
 msgstr "Ρυθμίσεις FluidSynth"
 
-#: gui/options.cpp:2063
+#: gui/options.cpp:2054
 msgid "Theme Path:"
 msgstr "Φάκελος Θέματος:"
 
-#: gui/options.cpp:2065
+#: gui/options.cpp:2056
 msgctxt "lowres"
 msgid "Theme Path:"
 msgstr "Φάκελος Θέματος:"
 
-#: gui/options.cpp:2071 gui/options.cpp:2073 gui/options.cpp:2074
+#: gui/options.cpp:2062 gui/options.cpp:2064 gui/options.cpp:2065
 msgid "Specifies path to additional data used by all games or ScummVM"
 msgstr ""
 "Καθορίζει τη διαδρομή για πρόσθετα δεδομένα που χρησιμοποιούνται από όλα τα "
 "παιχνίδια ή το ScummVM"
 
-#: gui/options.cpp:2080
+#: gui/options.cpp:2071
 msgid "Plugins Path:"
 msgstr "Διαδρομή Πρόσθετων:"
 
-#: gui/options.cpp:2082
+#: gui/options.cpp:2073
 msgctxt "lowres"
 msgid "Plugins Path:"
 msgstr "Διαδρ. Πρόσθ.:"
 
-#: gui/options.cpp:2092
+#: gui/options.cpp:2083
 msgid "ScummVM config path: "
 msgstr "Διαδρομή Ρυθμίσεων: "
 
-#: gui/options.cpp:2096
+#: gui/options.cpp:2087
 msgid "Theme:"
 msgstr "Θέμα:"
 
-#: gui/options.cpp:2100
+#: gui/options.cpp:2091
+#, fuzzy
+#| msgid "Unscaled"
+msgid "GUI scale:"
+msgstr "Χωρίς κλιμάκωση"
+
+#: gui/options.cpp:2098
 msgid "GUI renderer:"
 msgstr "Απόδοση εικόνας GUI:"
 
-#: gui/options.cpp:2112
+#: gui/options.cpp:2110
 msgid "Autosave:"
 msgstr "Αυτόματη αποθήκευση:"
 
-#: gui/options.cpp:2114
+#: gui/options.cpp:2112
 msgctxt "lowres"
 msgid "Autosave:"
 msgstr "Αυτόμ. αποθ.:"
 
-#: gui/options.cpp:2123
+#: gui/options.cpp:2121
 msgid "Always return to the launcher when leaving a game"
 msgstr "Επιστροφή πάντα στο launcher κατά την έξοδο από παιχνίδι"
 
-#: gui/options.cpp:2124
+#: gui/options.cpp:2122
 msgid ""
 "Always return to the launcher when leaving a game instead of closing ScummVM."
 msgstr ""
 "Να γίνεται πάντα επιστροφή στο launcher κατά την έξοδο από ένα παιχνίδι, "
 "αντί να κλείνει η εφαρμογή του ScummVM."
 
-#: gui/options.cpp:2131
+#: gui/options.cpp:2129
 msgid "Ask for confirmation on exit"
 msgstr "Να ζητείται επιβεβαίωση κατά την έξοδο"
 
-#: gui/options.cpp:2132
+#: gui/options.cpp:2130
 msgid "Ask for permission when closing ScummVM or leaving a game."
 msgstr ""
 "Να ζητείται επιβεβαίωση από τον χρήστη κατά το κλείσιμο του ScummVM ή την "
 "έξοδο από ένα παιχνίδι."
 
 #: gui/options.cpp:2138
-msgid "Keys"
-msgstr "Πλήκτρα"
-
-#: gui/options.cpp:2144
 msgid "GUI language:"
 msgstr "Γλώσσα GUI:"
 
-#: gui/options.cpp:2144
+#: gui/options.cpp:2138
 msgid "Language of ScummVM GUI"
 msgstr "Γλώσσα του ScummVM GUI"
 
-#: gui/options.cpp:2170
+#: gui/options.cpp:2164
 msgid "Switch the ScummVM GUI language to the game language"
 msgstr "Χρήση γλώσσας παιχνιδιού ως γλώσσα του ScummVM GUI"
 
-#: gui/options.cpp:2171
+#: gui/options.cpp:2165
 msgid ""
 "When starting a game, change the ScummVM GUI language to the game language. "
 "That way, if a game uses the ScummVM save and load dialogs, they are in the "
@@ -1414,11 +1399,11 @@ msgstr ""
 "παράθυρα διαλόγου του ScummVM για αποθήκευση και φόρτωση, αυτά θα είναι στην "
 "ίδια γλώσσα με το παιχνίδι."
 
-#: gui/options.cpp:2183
+#: gui/options.cpp:2177
 msgid "Use native system file browser"
 msgstr "Χρήση του εγγενούς περιηγητή αρχείων"
 
-#: gui/options.cpp:2184
+#: gui/options.cpp:2178
 msgid ""
 "Use the native system file browser instead of the ScummVM one to select a "
 "file or directory."
@@ -1426,27 +1411,27 @@ msgstr ""
 "Χρήση του εγγενούς περιηγητή αρχείων που παρέχει το λειτουργικό σύστημα αντί "
 "αυτού από το ScummVM για την επιλογή αρχείου ή καταλόγου."
 
-#: gui/options.cpp:2191 gui/updates-dialog.cpp:86
+#: gui/options.cpp:2185 gui/updates-dialog.cpp:86
 msgid "Update check:"
 msgstr "Έλεγχος αναβαθμίσεων:"
 
-#: gui/options.cpp:2191
+#: gui/options.cpp:2185
 msgid "How often to check ScummVM updates"
 msgstr "Συχνότητα ελέγχου ενημερώσεων του ScummVM"
 
-#: gui/options.cpp:2202
+#: gui/options.cpp:2196
 msgid "Check now"
 msgstr "Ελέγξτε τώρα"
 
-#: gui/options.cpp:2209
+#: gui/options.cpp:2203
 msgid "Active storage:"
 msgstr "Ενεργή αποθήκη:"
 
-#: gui/options.cpp:2209
+#: gui/options.cpp:2203
 msgid "Active cloud storage"
 msgstr "Ενεργή αποθήκη"
 
-#: gui/options.cpp:2218
+#: gui/options.cpp:2212
 msgctxt "lowres"
 msgid ""
 "4. Storage is not yet enabled. Verify that username is correct and enable it:"
@@ -1454,247 +1439,247 @@ msgstr ""
 "4. Η αποθήκευση δεν είναι ακόμα ενεργοποιημένη. Επιβεβαιώστε ότι το όνομα "
 "χρήστη είναι σωστό και ενεργοποιήστε τη:"
 
-#: gui/options.cpp:2220
+#: gui/options.cpp:2214
 msgid ""
 "4. Storage is not yet enabled. Verify that username is correct and enable it:"
 msgstr ""
 "4. Η αποθήκευση δεν είναι ακόμα ενεργοποιημένη. Επιβεβαιώστε ότι το όνομα "
 "χρήστη είναι σωστό και ενεργοποιήστε τη:"
 
-#: gui/options.cpp:2221
+#: gui/options.cpp:2215
 msgid "Enable storage"
 msgstr "Ενεργοποίηση αποθήκευσης"
 
-#: gui/options.cpp:2221
+#: gui/options.cpp:2215
 msgid "Confirm you want to use this account for this storage"
 msgstr ""
 "Επιβεβαιώστε ότι επιθυμείτε να χρησιμοποιήσετε αυτόν τον λογαριασμό για αυτή "
 "την αποθήκευση"
 
-#: gui/options.cpp:2223 backends/platform/wii/options.cpp:114
+#: gui/options.cpp:2217 backends/platform/wii/options.cpp:114
 msgid "Username:"
 msgstr "Όνομα χρήστη:"
 
-#: gui/options.cpp:2223
+#: gui/options.cpp:2217
 msgid "Username used by this storage"
 msgstr "Το όνομα χρήστη που χρησιμοποιείται από αυτή την αποθήκη"
 
-#: gui/options.cpp:2224
+#: gui/options.cpp:2218
 msgid "<none>"
 msgstr "<κανένα>"
 
-#: gui/options.cpp:2226
+#: gui/options.cpp:2220
 msgid "Used space:"
 msgstr "Χρησιμοποιημένος χώρος:"
 
-#: gui/options.cpp:2226
+#: gui/options.cpp:2220
 msgid "Space used by ScummVM's saved games on this storage"
 msgstr ""
 "Χώρος που χρησιμοποιείται από τα αποθηκευμένα παιχνίδια του ScummVM σε αυτή "
 "την αποθήκη"
 
-#: gui/options.cpp:2229
+#: gui/options.cpp:2223
 msgid "Last sync:"
 msgstr "Πρόσφατος συγχρονισμός:"
 
-#: gui/options.cpp:2229
+#: gui/options.cpp:2223
 msgid "When was the last time saved games were synced with this storage"
 msgstr ""
 "Πότε πραγματοποιήθηκε ο πιο πρόσφατος συγχρονισμός αποθηκευμένων παιχνιδιών"
 
-#: gui/options.cpp:2230 gui/options.cpp:2967
+#: gui/options.cpp:2224 gui/options.cpp:2961
 msgid "<never>"
 msgstr "<ποτέ>"
 
-#: gui/options.cpp:2232
+#: gui/options.cpp:2226
 msgctxt "lowres"
 msgid "Saved games sync automatically on launch, after saving and on loading."
 msgstr ""
 "Τα αποθηκευμένα παιχνίδια συγχρονίζονται αυτόματα κατά την εκκίνηση, μετά "
 "την αποθήκευση και κατά τη φόρτωση."
 
-#: gui/options.cpp:2234
+#: gui/options.cpp:2228
 msgid "Saved games sync automatically on launch, after saving and on loading."
 msgstr ""
 "Τα αποθηκευμένα παιχνίδια συγχρονίζονται αυτόματα κατά την εκκίνηση, μετά "
 "την αποθήκευση και κατά τη φόρτωση."
 
-#: gui/options.cpp:2235
+#: gui/options.cpp:2229
 msgid "Sync now"
 msgstr "Συγχρονισμός τώρα"
 
-#: gui/options.cpp:2235
+#: gui/options.cpp:2229
 msgid "Start saved games sync"
 msgstr "Εκκίνηση συγχρονισμού αποθηκευμένων παιχνιδιών"
 
-#: gui/options.cpp:2238
+#: gui/options.cpp:2232
 msgctxt "lowres"
 msgid "You can download game files from your cloud ScummVM folder:"
 msgstr ""
 "Μπορείτε να μεταφορτώσετε αρχεία παιχνιδιού από τον δικό σας φάκελο Νέφους "
 "για το ScummVM:"
 
-#: gui/options.cpp:2240
+#: gui/options.cpp:2234
 msgid "You can download game files from your cloud ScummVM folder:"
 msgstr ""
 "Μπορείτε να μεταφορτώσετε αρχεία παιχνιδιού από τον δικό σας φάκελο Νέφους "
 "για το ScummVM:"
 
-#: gui/options.cpp:2241
+#: gui/options.cpp:2235
 msgid "Download game files"
 msgstr "Κατεβάστε αρχεία παιχνιδιού"
 
-#: gui/options.cpp:2241
+#: gui/options.cpp:2235
 msgid "Open downloads manager dialog"
 msgstr "Άνοιγμα διαλόγου διαχείρισης μεταφορτώσεων"
 
-#: gui/options.cpp:2244
+#: gui/options.cpp:2238
 msgctxt "lowres"
 msgid "To change account for this storage, disconnect and connect again:"
 msgstr ""
 "Για να αλλάξετε το λογαριασμό για αυτή την αποθήκη, αποσυνδεθείτε και "
 "συνδεθείτε εκ νέου:"
 
-#: gui/options.cpp:2246
+#: gui/options.cpp:2240
 msgid "To change account for this storage, disconnect and connect again:"
 msgstr ""
 "Για να αλλάξετε το λογαριασμό για αυτή την αποθήκη, αποσυνδεθείτε και "
 "συνδεθείτε εκ νέου:"
 
-#: gui/options.cpp:2247
+#: gui/options.cpp:2241
 msgid "Disconnect"
 msgstr "Αποσύνδεση"
 
-#: gui/options.cpp:2247
+#: gui/options.cpp:2241
 msgid "Stop using this storage on this device"
 msgstr "Διακοπή χρήσης αυτής της αποθήκης σε αυτή τη συσκευή"
 
-#: gui/options.cpp:2250
+#: gui/options.cpp:2244
 msgctxt "lowres"
 msgid "This storage is not connected yet! To connect,"
 msgstr "Η αποθήκη αυτή δεν είναι ακόμα συνδεδεμένη! Για να τη συνδέσετε,"
 
-#: gui/options.cpp:2252
+#: gui/options.cpp:2246
 msgid "This storage is not connected yet! To connect,"
 msgstr "Η αποθήκη αυτή δεν είναι ακόμα συνδεδεμένη! Για να τη συνδέσετε,"
 
-#: gui/options.cpp:2253
+#: gui/options.cpp:2247
 msgid "1. Open this link:"
 msgstr "1. Ανοίξτε αυτόν τον σύνδεσμο:"
 
-#: gui/options.cpp:2256
+#: gui/options.cpp:2250
 msgctxt "lowres"
 msgid "2. Get the code and enter it here:"
 msgstr "2. Γράψτε εδώ τον κωδικό που θα λάβετε:"
 
-#: gui/options.cpp:2258
+#: gui/options.cpp:2252
 msgid "2. Get the code and enter it here:"
 msgstr "2. Γράψτε εδώ τον κωδικό που θα λάβετε:"
 
-#: gui/options.cpp:2260
+#: gui/options.cpp:2254
 msgid "Paste"
 msgstr "Επικόλληση"
 
-#: gui/options.cpp:2260
+#: gui/options.cpp:2254
 msgid "Paste code from clipboard"
 msgstr "Επικόλληση κωδικού από το πρόχειρο"
 
-#: gui/options.cpp:2261
+#: gui/options.cpp:2255
 msgid "3. Connect"
 msgstr "3. Συνδεθείτε"
 
-#: gui/options.cpp:2261
+#: gui/options.cpp:2255
 msgid "Connect your cloud storage account"
 msgstr "Συνδέστε τον λογαριασμό του δικού σας αποθηκευτικού χώρου στο Νέφος"
 
-#: gui/options.cpp:2270
+#: gui/options.cpp:2264
 msgid "Run server"
 msgstr "Εκτέλεση διακομιστή"
 
-#: gui/options.cpp:2270
+#: gui/options.cpp:2264
 msgid "Run local webserver"
 msgstr "Εκτέλεση τοπικού διακομιστή web"
 
-#: gui/options.cpp:2271 gui/options.cpp:3082
+#: gui/options.cpp:2265 gui/options.cpp:3076
 msgid "Not running"
 msgstr "Δεν εκτελείται"
 
-#: gui/options.cpp:2275
+#: gui/options.cpp:2269
 msgctxt "lowres"
 msgid "/root/ Path:"
 msgstr "/root/ Διαδρομή:"
 
-#: gui/options.cpp:2275 gui/options.cpp:2277 gui/options.cpp:2278
+#: gui/options.cpp:2269 gui/options.cpp:2271 gui/options.cpp:2272
 msgid "Select which directory will be shown as /root/ in the Files Manager"
 msgstr ""
 "Επιλέξτε το φάκελο που θα εμφανίζεται ως κορυφαίος /root/ στη Διαχείριση "
 "Αρχείων"
 
-#: gui/options.cpp:2277
+#: gui/options.cpp:2271
 msgid "/root/ Path:"
 msgstr "/root/ Διαδρομή:"
 
-#: gui/options.cpp:2283
+#: gui/options.cpp:2277
 msgid "Server's port:"
 msgstr "Θύρα εξυπηρετητή:"
 
-#: gui/options.cpp:2283
+#: gui/options.cpp:2277
 msgid "Port for server to use"
 msgstr "Η θύρα που θα χρησιμοποιεί ο εξυπηρετητής"
 
-#: gui/options.cpp:2288
+#: gui/options.cpp:2282
 msgctxt "lowres"
 msgid "Run server to manage files with browser (in the same network)."
 msgstr ""
 "Εκκινείστε τον εξυπηρετητή για να διαχειριστείτε αρχεία με κάποιο browser "
 "(εντός του ίδιου δικτύου)."
 
-#: gui/options.cpp:2289
+#: gui/options.cpp:2283
 msgctxt "lowres"
 msgid "Closing options dialog will stop the server."
 msgstr "Κλείνοντας το μενού επιλογών θα σταματήσει ο εξυπηρετητής."
 
-#: gui/options.cpp:2291
+#: gui/options.cpp:2285
 msgid "Run server to manage files with browser (in the same network)."
 msgstr ""
 "Εκκινείστε τον εξυπηρετητή για να διαχειριστείτε αρχεία με κάποιο browser "
 "(εντός του ίδιου δικτύου)."
 
-#: gui/options.cpp:2292
+#: gui/options.cpp:2286
 msgid "Closing options dialog will stop the server."
 msgstr "Κλείνοντας το μενού επιλογών θα σταματήσει ο εξυπηρετητής."
 
-#: gui/options.cpp:2304
+#: gui/options.cpp:2298
 msgid "Use Text to speech"
 msgstr "Μετατροπή κειμένου σε ομιλία"
 
-#: gui/options.cpp:2304
+#: gui/options.cpp:2298
 msgid "Will read text in gui on mouse over."
 msgstr ""
 "Θα διαβάσει το κείμενο που βρίσκεται κάτω από το ποντίκι στο γραφικό "
 "περιβάλλον διεπαφής."
 
-#: gui/options.cpp:2317
+#: gui/options.cpp:2311
 msgid "None"
 msgstr "Κανένα"
 
-#: gui/options.cpp:2392
+#: gui/options.cpp:2391
 msgid "Failed to change cloud storage!"
 msgstr "Αδυναμία αλλαγής αποθήκης Νέφους!"
 
-#: gui/options.cpp:2395
+#: gui/options.cpp:2394
 msgid "Another cloud storage is already active."
 msgstr "Μια άλλη αποθήκη Νέφους είναι ήδη ενεργή."
 
-#: gui/options.cpp:2478
+#: gui/options.cpp:2477
 msgid "Theme does not support selected language!"
 msgstr "Το θέμα δεν υποστηρίζει την επιλεγμένη γλώσσα!"
 
-#: gui/options.cpp:2481
+#: gui/options.cpp:2480
 msgid "Theme cannot be loaded!"
 msgstr "Το θέμα δεν φορτώθηκε!"
 
-#: gui/options.cpp:2484
+#: gui/options.cpp:2483
 msgid ""
 "\n"
 "Misc settings will be restored."
@@ -1702,29 +1687,29 @@ msgstr ""
 "\n"
 "Οι λοιπές ρυθμίσεις θα επαναφερθούν στις αρχικές τους τιμές."
 
-#: gui/options.cpp:2549
+#: gui/options.cpp:2548
 msgid "The chosen directory cannot be written to. Please select another one."
 msgstr ""
 "Δεν ήταν δυνατή η εγγραφή στον επιλεγμένο φάκελο. Παρακαλώ επιλέξτε κάποιον "
 "άλλο."
 
-#: gui/options.cpp:2558
+#: gui/options.cpp:2557
 msgid "Select directory for GUI themes"
 msgstr "Επιλέξτε φάκελο για θέματα GUI"
 
-#: gui/options.cpp:2568
+#: gui/options.cpp:2567
 msgid "Select directory for extra files"
 msgstr "Επιλέξτε φάκελο για πρόσθετα αρχεία"
 
-#: gui/options.cpp:2579
+#: gui/options.cpp:2578
 msgid "Select directory for plugins"
 msgstr "Επιλέξτε φάκελο για πρόσθετα"
 
-#: gui/options.cpp:2592
+#: gui/options.cpp:2591
 msgid "Select directory for Files Manager /root/"
 msgstr "Επιλέξτε φάκελο για το /root/ του Διαχειριστή Αρχείων"
 
-#: gui/options.cpp:2704
+#: gui/options.cpp:2703
 msgid ""
 "Failed to open URL!\n"
 "Please navigate to this page manually."
@@ -1732,51 +1717,51 @@ msgstr ""
 "Αποτυχία ανοίγματος του URL!\n"
 "Παρακαλούμε, μεταφερθείτε σε αυτή τη σελίδα χειροκίνητα."
 
-#: gui/options.cpp:2729
+#: gui/options.cpp:2728
 msgid "Another Storage is working now. Do you want to interrupt it?"
 msgstr ""
 "Κάποια άλλη Αποθήκη έχει εργασία σε εξέλιξη αυτή τη στιγμή. Επιθυμείτε να τη "
 "διακόψετε;"
 
-#: gui/options.cpp:2738 gui/options.cpp:2776
+#: gui/options.cpp:2737 gui/options.cpp:2775
 msgid "Wait until current Storage finishes up and try again."
 msgstr "Περιμένετε να ολοκληρωθεί η τρέχουσα Αποθήκευση και δοκιμάστε ξανά."
 
-#: gui/options.cpp:2751
+#: gui/options.cpp:2750
 msgid "Connecting..."
 msgstr "Γίνεται σύνδεση..."
 
-#: gui/options.cpp:2767
+#: gui/options.cpp:2766
 msgid "This Storage is working now. Do you want to interrupt it?"
 msgstr ""
 "Αυτή η Αποθήκη έχει εργασία σε εξέλιξη αυτή τη στιγμή. Επιθυμείτε να τη "
 "διακόψετε;"
 
-#: gui/options.cpp:2965 backends/cloud/cloudmanager.cpp:157
+#: gui/options.cpp:2959 backends/cloud/cloudmanager.cpp:157
 msgid "<right now>"
 msgstr "<άμεσα>"
 
-#: gui/options.cpp:3074
+#: gui/options.cpp:3068
 msgid "Stop server"
 msgstr "Διακοπή εξυπηρετητή"
 
-#: gui/options.cpp:3075
+#: gui/options.cpp:3069
 msgid "Stop local webserver"
 msgstr "Διακοπή τοπικού εξυπηρετητή ιστού"
 
-#: gui/options.cpp:3127
+#: gui/options.cpp:3121
 msgid "Storage connected."
 msgstr "Η αποθήκη συνδέθηκε."
 
-#: gui/options.cpp:3129
+#: gui/options.cpp:3123
 msgid "Failed to connect storage."
 msgstr "Αποτυχία σύνδεσης αποθήκης."
 
-#: gui/options.cpp:3131
+#: gui/options.cpp:3125
 msgid "Failed to connect storage: "
 msgstr "Αποτυχία σύνδεσης αποθήκης: "
 
-#: gui/options.cpp:3151
+#: gui/options.cpp:3145
 msgid ""
 "Request failed.\n"
 "Check your Internet connection."
@@ -2153,40 +2138,40 @@ msgstr ""
 "Ανιχνεύτηκε μη νόμιμο αντίγραφο παιχνιδιού. Δεν παρέχουμε υποστήριξη σε "
 "τέτοιες περιπτώσεις"
 
-#: engines/dialogs.cpp:73
+#: engines/dialogs.cpp:69
 msgid "~R~esume"
 msgstr "~Σ~υνέχεια"
 
-#: engines/dialogs.cpp:75
+#: engines/dialogs.cpp:71
 msgid "~L~oad"
 msgstr "~Φ~όρτωση"
 
-#: engines/dialogs.cpp:79 backends/platform/3ds/options-dialog.cpp:46
+#: engines/dialogs.cpp:75 backends/platform/3ds/options-dialog.cpp:46
 msgid "~S~ave"
 msgstr "~Α~ποθήκευση"
 
-#: engines/dialogs.cpp:83
+#: engines/dialogs.cpp:79
 msgid "~O~ptions"
 msgstr "~Ε~πιλογές"
 
-#: engines/dialogs.cpp:88
+#: engines/dialogs.cpp:84
 msgid "~H~elp"
 msgstr "~Β~οήθεια"
 
-#: engines/dialogs.cpp:90
+#: engines/dialogs.cpp:86
 msgid "~A~bout"
 msgstr "~Π~ερί"
 
-#: engines/dialogs.cpp:93 engines/dialogs.cpp:169
+#: engines/dialogs.cpp:89 engines/dialogs.cpp:165
 msgid "~R~eturn to Launcher"
 msgstr "Επισ~τ~ροφή στο Launcher"
 
-#: engines/dialogs.cpp:95 engines/dialogs.cpp:171
+#: engines/dialogs.cpp:91 engines/dialogs.cpp:167
 msgctxt "lowres"
 msgid "~R~eturn to Launcher"
 msgstr "Επισ~τ~ρ. στο Launcher"
 
-#: engines/dialogs.cpp:103 engines/engine.cpp:836 engines/agi/saveload.cpp:768
+#: engines/dialogs.cpp:99 engines/engine.cpp:836 engines/agi/saveload.cpp:768
 #: engines/avalanche/parser.cpp:1919 engines/buried/saveload.cpp:534
 #: engines/cine/various.cpp:350 engines/dm/loadsave.cpp:199
 #: engines/drascula/saveload.cpp:383 engines/dreamweb/saveload.cpp:262
@@ -2204,16 +2189,14 @@ msgstr "Επισ~τ~ρ. στο Launcher"
 msgid "Save game:"
 msgstr "Αποθήκευση παιχνιδιού:"
 
-#: engines/dialogs.cpp:103 engines/engine.cpp:836
-#: backends/platform/symbian/src/SymbianActions.cpp:46
-#: engines/agi/saveload.cpp:768 engines/avalanche/parser.cpp:1919
-#: engines/buried/saveload.cpp:534 engines/cine/various.cpp:350
-#: engines/dm/loadsave.cpp:199 engines/drascula/saveload.cpp:383
-#: engines/dreamweb/saveload.cpp:262 engines/glk/streams.cpp:1433
-#: engines/gnap/menu.cpp:466 engines/hugo/file.cpp:298
-#: engines/illusions/menusystem.cpp:703 engines/kingdom/kingdom.cpp:739
-#: engines/lab/savegame.cpp:238 engines/lab/savegame.cpp:243
-#: engines/mads/nebular/dialogs_nebular.cpp:350
+#: engines/dialogs.cpp:99 engines/engine.cpp:836 engines/agi/saveload.cpp:768
+#: engines/avalanche/parser.cpp:1919 engines/buried/saveload.cpp:534
+#: engines/cine/various.cpp:350 engines/dm/loadsave.cpp:199
+#: engines/drascula/saveload.cpp:383 engines/dreamweb/saveload.cpp:262
+#: engines/glk/streams.cpp:1433 engines/gnap/menu.cpp:466
+#: engines/hugo/file.cpp:298 engines/illusions/menusystem.cpp:703
+#: engines/kingdom/kingdom.cpp:739 engines/lab/savegame.cpp:238
+#: engines/lab/savegame.cpp:243 engines/mads/nebular/dialogs_nebular.cpp:350
 #: engines/neverhood/menumodule.cpp:890 engines/parallaction/metaengine.cpp:124
 #: engines/parallaction/saveload.cpp:209 engines/pegasus/pegasus.cpp:403
 #: engines/prince/saveload.cpp:55 engines/sci/engine/guest_additions.cpp:689
@@ -2227,7 +2210,7 @@ msgstr "Αποθήκευση παιχνιδιού:"
 msgid "Save"
 msgstr "Αποθήκευση"
 
-#: engines/dialogs.cpp:133
+#: engines/dialogs.cpp:129
 msgid ""
 "Sorry, this engine does not currently provide in-game help. Please consult "
 "the README for basic information, and for instructions on how to obtain "
@@ -2238,7 +2221,7 @@ msgstr ""
 "πληροφορίες, καθώς και για οδηγίες σχετικά με το πώς να λάβετε περαιτέρω "
 "βοήθεια."
 
-#: engines/dialogs.cpp:217 engines/pegasus/pegasus.cpp:414
+#: engines/dialogs.cpp:213 engines/pegasus/pegasus.cpp:414
 #, c-format
 msgid ""
 "Failed to save game (%s)! Please consult the README for basic information, "
@@ -2248,17 +2231,13 @@ msgstr ""
 "αρχείο README για βασικές πληροφορίες, καθώς και για οδηγίες σχετικά με το "
 "πώς να λάβετε περαιτέρω βοήθεια."
 
-#: engines/dialogs.cpp:359
+#: engines/dialogs.cpp:349
 msgid "~O~K"
 msgstr "~O~K"
 
-#: engines/dialogs.cpp:360
+#: engines/dialogs.cpp:350
 msgid "~C~ancel"
 msgstr "Ακύρ~ω~ση"
-
-#: engines/dialogs.cpp:363
-msgid "~K~eys"
-msgstr "Π~λ~ήκτρα"
 
 #: engines/engine.cpp:319
 #, c-format
@@ -2411,7 +2390,6 @@ msgid "Default game keymap"
 msgstr "Προκαθορισμένες αντιστοιχίες"
 
 #: engines/metaengine.cpp:59 backends/platform/maemo/maemo.cpp:162
-#: backends/platform/symbian/src/SymbianActions.cpp:44
 #: engines/hdb/metaengine.cpp:187 engines/parallaction/metaengine.cpp:105
 #: engines/wintermute/keymapper_tables.h:43 engines/zvision/metaengine.cpp:115
 msgid "Left Click"
@@ -2425,17 +2403,15 @@ msgid "Middle Click"
 msgstr "Μεσαίο Click"
 
 #: engines/metaengine.cpp:70 backends/platform/maemo/maemo.cpp:170
-#: backends/platform/symbian/src/SymbianActions.cpp:45
 #: engines/parallaction/metaengine.cpp:111
 #: engines/wintermute/keymapper_tables.h:49 engines/zvision/metaengine.cpp:121
 msgid "Right Click"
 msgstr "Δεξί Click"
 
-#: engines/metaengine.cpp:76
-#: backends/platform/symbian/src/SymbianActions.cpp:52
-#: engines/hdb/metaengine.cpp:238 engines/mohawk/myst.cpp:593
-#: engines/mohawk/riven.cpp:863 engines/sky/metaengine.cpp:113
-#: engines/twine/metaengine.cpp:232 engines/wintermute/keymapper_tables.h:1255
+#: engines/metaengine.cpp:76 engines/hdb/metaengine.cpp:238
+#: engines/mohawk/myst.cpp:593 engines/mohawk/riven.cpp:863
+#: engines/sky/metaengine.cpp:113 engines/twine/metaengine.cpp:232
+#: engines/wintermute/keymapper_tables.h:1255
 msgid "Pause"
 msgstr "Παύση"
 
@@ -2443,11 +2419,9 @@ msgstr "Παύση"
 msgid "Game menu"
 msgstr "Μενού παιχνιδιού"
 
-#: engines/metaengine.cpp:87
-#: backends/platform/symbian/src/SymbianActions.cpp:47
-#: engines/grim/grim.cpp:502 engines/grim/grim.cpp:594
-#: engines/mohawk/myst.cpp:564 engines/mohawk/riven.cpp:834
-#: engines/wintermute/keymapper_tables.h:217
+#: engines/metaengine.cpp:87 engines/grim/grim.cpp:502
+#: engines/grim/grim.cpp:594 engines/mohawk/myst.cpp:564
+#: engines/mohawk/riven.cpp:834 engines/wintermute/keymapper_tables.h:217
 #: engines/wintermute/keymapper_tables.h:997
 #: engines/wintermute/keymapper_tables.h:1248
 #: engines/wintermute/keymapper_tables.h:1361
@@ -2670,7 +2644,6 @@ msgstr ""
 
 #: backends/events/default/default-events.cpp:209
 #: backends/events/default/default-events.cpp:326
-#: backends/platform/symbian/src/SymbianActions.cpp:54
 #: engines/hdb/metaengine.cpp:255 engines/mohawk/myst_stacks/menu.cpp:318
 #: engines/mohawk/riven_stacks/aspit.cpp:455 engines/scumm/dialogs.cpp:181
 #: engines/scumm/help.cpp:82 engines/scumm/help.cpp:84
@@ -2743,10 +2716,6 @@ msgstr "Απενεργοποιημένο Clicking"
 #: backends/events/openpandora/op-events.cpp:163
 msgid "Touchscreen 'Tap Mode' - Hover (DPad Clicks)"
 msgstr "'Λειτουργία Tap' οθόνης αφής - Αιώρηση (DPad Clicks)"
-
-#: backends/events/symbiansdl/symbiansdl-events.cpp:191
-msgid "Do you want to quit ?"
-msgstr "Θέλετε να βγείτε από το πρόγραμμα;"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:244
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:73
@@ -3546,42 +3515,6 @@ msgstr "Μείον"
 #: backends/platform/sdl/switch/switch.cpp:44
 msgid "Plus"
 msgstr "Συν"
-
-#: backends/platform/symbian/src/SymbianActions.cpp:48
-msgid "Zone"
-msgstr "Ζώνη"
-
-#: backends/platform/symbian/src/SymbianActions.cpp:49
-msgid "Multi Function"
-msgstr "Πολλαπλή Λειτουργία"
-
-#: backends/platform/symbian/src/SymbianActions.cpp:50
-msgid "Swap character"
-msgstr "Ανταλλαγή χαρακτήρα"
-
-#: backends/platform/symbian/src/SymbianActions.cpp:51
-msgid "Skip text"
-msgstr "Παράλειψη κειμένου"
-
-#: backends/platform/symbian/src/SymbianActions.cpp:53
-msgid "Fast mode"
-msgstr "Γρήγορη λειτουργία"
-
-#: backends/platform/symbian/src/SymbianActions.cpp:55
-msgid "Debugger"
-msgstr "Εντοπιστής σφαλμάτων"
-
-#: backends/platform/symbian/src/SymbianActions.cpp:56
-msgid "Global menu"
-msgstr "Καθολικό μενού"
-
-#: backends/platform/symbian/src/SymbianActions.cpp:57
-msgid "Virtual keyboard"
-msgstr "Εικονικό πληκτρολόγιο"
-
-#: backends/platform/symbian/src/SymbianActions.cpp:58
-msgid "Key mapper"
-msgstr "Αντιστοιχίσεις πλήκτρων"
 
 #: backends/platform/wii/options.cpp:51
 msgid "Video"
@@ -5615,10 +5548,6 @@ msgstr "Εναπομένουσες Βοήθειες"
 #: engines/nancy/dialogs.cpp:118
 msgid "Easy"
 msgstr "Εύκολο"
-
-#: engines/nancy/dialogs.cpp:120
-msgid "Medium"
-msgstr "Μεσαίο"
 
 #: engines/nancy/dialogs.cpp:122
 msgid "Hard"
@@ -8282,6 +8211,63 @@ msgstr ""
 "Liberation Fonts ή το πακέτο GNU FreeFont. Θα χρειαστείτε όλα τα fonts από "
 "το πακέτο με fonts που θα επιλέξετε, δηλαδή, LiberationMono, LiberationSans "
 "και LiberationSerif, ή FreeMono, FreeSans και FreeSerif αντίστοιχα."
+
+#~ msgid "Map"
+#~ msgstr "Αντιστοίχιση"
+
+#~ msgid "Select an action and click 'Map'"
+#~ msgstr "Επιλέξτε μια ενέργεια και πατήστε 'Αντιστοίχιση'"
+
+#~ msgid "Associated key : %s"
+#~ msgstr "Συσχετισμένο κλειδί : %s"
+
+#~ msgid "Associated key : none"
+#~ msgstr "Συσχετισμένο κλειδί: κανένα"
+
+#~ msgid "Please select an action"
+#~ msgstr "Παρακαλώ επιλέξτε μια ενέργεια"
+
+#~ msgid "Press the key to associate"
+#~ msgstr "Πατήστε το πλήκτρο για συσχέτιση"
+
+#~ msgid "Choose an action to map"
+#~ msgstr "Επιλέξτε μια ενέργεια για αντιστοίχιση"
+
+#~ msgid "Keys"
+#~ msgstr "Πλήκτρα"
+
+#~ msgid "~K~eys"
+#~ msgstr "Π~λ~ήκτρα"
+
+#~ msgid "Do you want to quit ?"
+#~ msgstr "Θέλετε να βγείτε από το πρόγραμμα;"
+
+#~ msgid "Zone"
+#~ msgstr "Ζώνη"
+
+#~ msgid "Multi Function"
+#~ msgstr "Πολλαπλή Λειτουργία"
+
+#~ msgid "Swap character"
+#~ msgstr "Ανταλλαγή χαρακτήρα"
+
+#~ msgid "Skip text"
+#~ msgstr "Παράλειψη κειμένου"
+
+#~ msgid "Fast mode"
+#~ msgstr "Γρήγορη λειτουργία"
+
+#~ msgid "Debugger"
+#~ msgstr "Εντοπιστής σφαλμάτων"
+
+#~ msgid "Global menu"
+#~ msgstr "Καθολικό μενού"
+
+#~ msgid "Virtual keyboard"
+#~ msgstr "Εικονικό πληκτρολόγιο"
+
+#~ msgid "Key mapper"
+#~ msgstr "Αντιστοιχίσεις πλήκτρων"
 
 #~ msgid "Spanish CD version is not yet supported"
 #~ msgstr "Η Ισπανική έκδοση για CD δεν υποστηρίζεται ακόμα"
