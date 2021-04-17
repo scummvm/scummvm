@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-04-16 12:46+0000\n"
-"PO-Revision-Date: 2021-04-17 09:42+0000\n"
+"PO-Revision-Date: 2021-04-17 10:11+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
@@ -821,7 +821,7 @@ msgstr "¿Quieres cargar la partida guardada?"
 
 #: gui/launcher.cpp:510
 msgid "This game does not support loading games from the launcher."
-msgstr "Este juego no permite cargar partidas desde el lanzador."
+msgstr "Este juego no permite cargar partidas desde el iniciador."
 
 #: gui/launcher.cpp:514
 msgid "ScummVM could not find any engine capable of running the selected game!"
@@ -1358,14 +1358,13 @@ msgstr "Autoguardado:"
 
 #: gui/options.cpp:2123
 msgid "Always return to the launcher when leaving a game"
-msgstr "Volver siempre al lanzador al salir de un juego"
+msgstr "Volver siempre al iniciador tras salir de un juego"
 
 #: gui/options.cpp:2124
 msgid ""
 "Always return to the launcher when leaving a game instead of closing ScummVM."
 msgstr ""
-"Cuando se abandone un juego, se volverá siempre al lanzador en vez de cerrar "
-"ScummVM."
+"Cuando se abandone un juego, ScummVM regresará al iniciador y no se cerrará."
 
 #: gui/options.cpp:2131
 msgid "Ask for confirmation on exit"
@@ -2155,12 +2154,12 @@ msgstr "Acerca ~d~e"
 
 #: engines/dialogs.cpp:93 engines/dialogs.cpp:169
 msgid "~R~eturn to Launcher"
-msgstr "~V~olver al lanzador"
+msgstr "~V~olver al iniciador"
 
 #: engines/dialogs.cpp:95 engines/dialogs.cpp:171
 msgctxt "lowres"
 msgid "~R~eturn to Launcher"
-msgstr "~V~olver al lanzador"
+msgstr "~V~olver al iniciador"
 
 #: engines/dialogs.cpp:103 engines/engine.cpp:836 engines/agi/saveload.cpp:768
 #: engines/avalanche/parser.cpp:1919 engines/buried/saveload.cpp:534
@@ -2626,7 +2625,7 @@ msgid ""
 "Do you really want to return to the Launcher?\n"
 "Any unsaved progress will be lost."
 msgstr ""
-"¿Seguro que quieres volver al lanzador?\n"
+"¿Seguro que quieres volver al iniciador?\n"
 "Se perderán todos los progresos no guardados."
 
 #: backends/events/default/default-events.cpp:209
@@ -3306,11 +3305,11 @@ msgid ""
 "Returning to Launcher..."
 msgstr ""
 "Modo aumentado desactivado. Reactivando modo de arrastre.\n"
-"Volviendo al lanzador..."
+"Volviendo al iniciador..."
 
 #: backends/platform/3ds/osystem-events.cpp:362
 msgid "Magnify Mode Off. Returning to Launcher..."
-msgstr "Modo aumentado desactivado. Volviendo al lanzador..."
+msgstr "Modo aumentado desactivado. Volviendo al iniciador..."
 
 #: backends/platform/3ds/osystem-events.cpp:396
 msgid "Hover Mode"
@@ -3677,7 +3676,7 @@ msgstr "Red no iniciada (%d)"
 
 #: backends/presence/discord/discord.cpp:46
 msgid "Launcher"
-msgstr "Lanzador"
+msgstr "Iniciador"
 
 #: backends/updates/macosx/macosx-updates.mm:74
 msgid "Check for Updates..."
