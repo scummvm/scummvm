@@ -14,10 +14,10 @@
 #include "freescape/freescape.h"
 
 #include "freescape/loaders/16bitBinaryLoader.h"
-//#include "freescape/loaders/8bitBinaryLoader.h"
+#include "freescape/loaders/8bitBinaryLoader.h"
 
 #define OFFSET_DARKSIDE 0xc9ce
-#define OFFSET_DRILLER 0xcf3e
+#define OFFSET_DRILLER 0x8f59
 #define OFFSET_TOTALECLIPSE 0xcdb7
 
 namespace Freescape {
@@ -67,6 +67,8 @@ FreescapeEngine::~FreescapeEngine() {
 }
 
 void FreescapeEngine::drawBorder() {
+	if (_border == nullptr)
+		return;
 	g_system->copyRectToScreen((const void *)_border->data(), _screenW, 0, 0, _screenW, _screenH);
 	g_system->updateScreen();
 }
@@ -90,8 +92,13 @@ Common::Error FreescapeEngine::run() {
 	//OSystem::kTransactionSizeChangeFailed here
 	//_system->endGFXTransaction();
 
-	Binary binary = load16bitBinary("3DKIT.RUN");
-	debug("%s", _targetName.c_str());
+	Binary binary;
+	if (_targetName == "3Dkit")
+		binary = load16bitBinary("3DKIT.RUN");
+	else if (_targetName == "Driller")
+		binary = load8bitBinary("DRILLE.EXE", OFFSET_DRILLER);
+	else
+		error("%s is an invalid game", _targetName.c_str());
 
 	_areasByAreaID = binary.areasByAreaID;
 	_border = binary.border;
