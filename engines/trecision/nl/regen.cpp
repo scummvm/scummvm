@@ -35,7 +35,6 @@
 
 namespace Trecision {
 
-int xr1, xr2, yr1, yr2;
 int VisualRef[50];
 
 SDObj DObj;
@@ -165,23 +164,7 @@ void PaintScreen(uint8 flag) {
 
 	}
 
-	if (TextStatus == TEXT_ON) {
-		for (a = 0; a < g_vm->_limitsNum; a++) {
-			if (IntersecateRect(g_vm->_limits[a].left, g_vm->_limits[a].top,
-			                    g_vm->_limits[a].right, g_vm->_limits[a].bottom,
-								curString.x, curString.y,
-								curString.x + curString.dx,
-								curString.y + curString.dy)) {
-				curString._subtitleRect.left = xr1;
-				curString._subtitleRect.top = yr1;
-				curString._subtitleRect.right = xr2;
-				curString._subtitleRect.bottom = yr2;
-
-				curString.DText();
-			}
-		}
-
-	} else if (TextStatus & TEXT_DRAW) {
+	if (TextStatus & TEXT_DRAW) {
 		curString.DText();
 		g_vm->_limits[g_vm->_limitsNum++] = Common::Rect(curString.x, curString.y, curString.x + curString.dx, curString.y + curString.dy);
 		TextStatus = TEXT_DRAW;                 // Activate text update
@@ -207,7 +190,7 @@ void PaintScreen(uint8 flag) {
 
 	// Handle papaverine delayed action
 	if ((g_vm->_curRoom == r4A) && (g_vm->_obj[oCHOCOLATES4A]._flag & OBJFLAG_EXTRA)) {
-		if (g_vm->_animMgr->_curAnimFrame[kSmackerBackground] > MAXY) {
+		if (g_vm->_animMgr->_curAnimFrame[kSmackerBackground] > 480) {
 			g_vm->playScript(s4AHELLEN);
 			g_vm->_obj[oCHOCOLATES4A]._flag &= ~OBJFLAG_EXTRA;
 		}
@@ -254,30 +237,49 @@ void PaintObjAnm(uint16 CurBox) {
 	for (int a = 0; a < g_vm->_limitsNum; a++) {
 		for (int b = 0; b < MAXOBJINROOM; b++) {
 			uint16 curObject = g_vm->_room[g_vm->_curRoom]._object[b];
-
 			if (!curObject)
 				break;
 
-			if ((g_vm->_obj[curObject]._mode & (OBJMODE_FULL | OBJMODE_MASK)) &&
-			    (g_vm->_obj[curObject]._mode & OBJMODE_OBJSTATUS) &&
-			    (g_vm->_obj[curObject]._nbox == CurBox)) {
+			SObject obj = g_vm->_obj[curObject];
+			
+			if ((obj._mode & (OBJMODE_FULL | OBJMODE_MASK)) &&
+			    (obj._mode & OBJMODE_OBJSTATUS) &&
+			    (obj._nbox == CurBox)) {
 
-				if (IntersecateRect(g_vm->_limits[a].left, g_vm->_limits[a].top,
-				                    g_vm->_limits[a].right, g_vm->_limits[a].bottom,
-				                    g_vm->_obj[curObject]._px, g_vm->_obj[curObject]._py + TOP,
-				                    g_vm->_obj[curObject]._px + g_vm->_obj[curObject]._dx,
-				                    g_vm->_obj[curObject]._py + g_vm->_obj[curObject]._dy + TOP)) {
-					DObj.x = g_vm->_obj[curObject]._px;
-					DObj.y = g_vm->_obj[curObject]._py + TOP;
-					DObj.dx = g_vm->_obj[curObject]._dx;
-					DObj.dy = g_vm->_obj[curObject]._dy;
+				Common::Rect r = g_vm->_limits[a];
+				Common::Rect r2 = Common::Rect(
+					obj._px,
+					obj._py + TOP,
+					obj._px + obj._dx,
+					obj._py + obj._dy + TOP
+				);
+
+				// Include the bottom right of the rect in the intersects() check
+				r2.bottom++;
+				r2.right++;
+				
+				if (r.intersects(r2)) {
+					DObj.x = obj._px;
+					DObj.y = obj._py + TOP;
+					DObj.dx = obj._dx;
+					DObj.dy = obj._dy;
+
+					// Restore the bottom right of the rect
+					r2.bottom--;
+					r2.right--;
+					
+					// TODO: Simplify this?
+					const int16 xr1 = (r2.left > r.left) ? 0 : r.left - r2.left;
+					const int16 yr1 = (r2.top > r.top) ? 0 : r.top - r2.top;
+					const int16 xr2 = MIN<int16>(r.right, r2.right) - r2.left;
+					const int16 yr2 = MIN<int16>(r.bottom, r2.bottom) - r2.top;					
 					DObj.l = Common::Rect(xr1, yr1, xr2, yr2);
 
 					DObj.buf  = ObjPointers[b];
 					DObj.mask = MaskPointers[b];
 					DObj.flag = COPYTORAM;
 
-					if (g_vm->_obj[curObject]._mode & OBJMODE_MASK)
+					if (obj._mode & OBJMODE_MASK)
 						DObj.flag = COPYTORAM + DRAWMASK;
 
 					DrawObj(DObj);
@@ -307,20 +309,6 @@ void PaintObjAnm(uint16 CurBox) {
 	} else if (_actorPos == CurBox && !g_vm->_flagDialogActive) {
 		g_vm->_animMgr->refreshSmkAnim(g_vm->_animMgr->_playingAnims[kSmackerAction]);
 	}
-}
-
-int IntersecateRect(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4) {
-	if ((x1 <= x4) && (x2 >= x3) && (y1 <= y4) && (y2 >= y3)) {
-		xr1 = (x3 > x1) ? 0 : x1 - x3;
-		xr2 = MIN(x2, x4) - x3;
-
-		yr1 = (y3 > y1) ? 0 : y1 - y3;
-		yr2 = MIN(y2, y4) - y3;
-
-		return true;
-	}
-	
-	return false;
 }
 
 } // End of namespace Trecision

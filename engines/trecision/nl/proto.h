@@ -23,7 +23,7 @@
 #ifndef TRECISION_PROTO_H
 #define TRECISION_PROTO_H
 
-#include "common/str.h"
+#include "common/scummsys.h"
 
 namespace Common {
 class SeekableReadStream;
@@ -76,7 +76,6 @@ void ProcessTime();
 void ProcessMouse();
 void PaintScreen(uint8 flag);
 void PaintObjAnm(uint16 CurBox);
-int IntersecateRect(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4);
 void doEvent(uint8 cls, uint8 event, uint8 priority, uint16 u16Param1, uint16 u16Param2, uint8 u8Param, uint32 u32Param);
 void Scheduler();
 void ProcessTheMessage();
