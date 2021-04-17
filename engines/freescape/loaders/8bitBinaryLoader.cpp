@@ -62,7 +62,7 @@ Binary load8bitBinary(Common::String filename, uint offset) {
 		debug("%s", detokenise8bitCondition(*conditionData)->c_str());
 	}
 
-	return Binary{nullptr, nullptr};
+	return Binary{nullptr, nullptr, nullptr};
 }
 
 } // namespace Freescape

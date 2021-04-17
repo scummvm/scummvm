@@ -17,6 +17,7 @@ typedef Common::HashMap<uint16, Area *> AreaMap;
 typedef struct Binary {
 	AreaMap *areasByAreaID;
 	Common::Array<uint8> *border;
+	Common::Array<uint8> *palette;
 } Binary;
 
 class Console;
@@ -35,6 +36,8 @@ private:
 	int _screenW, _screenH;
 
 	Common::Array<uint8> *_border;
+	Common::Array<uint8> *_palette;
+	
 	uint32 _timeOfLastTick;
 	bool _hasReceivedTime;
 	AreaMap *_areasByAreaID;
