@@ -30,7 +30,6 @@
 #define COPYTORAM       2
 
 #define TEXT_OFF	0
-#define TEXT_ON     1
 #define TEXT_DRAW   2
 #define TEXT_DEL    4
 
