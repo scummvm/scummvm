@@ -428,6 +428,9 @@ protected:
 	/** Convert an AD game description into the shared game description format. */
 	virtual DetectedGame toDetectedGame(const ADDetectedGame &adGame) const;
 
+	/** Check for pirated games in the given detected games */
+	bool cleanupPirated(ADDetectedGames &matched) const;
+
 	friend class FileMapArchive;
 };
 
