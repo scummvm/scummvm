@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-04-16 12:46+0000\n"
-"PO-Revision-Date: 2021-04-14 20:24+0000\n"
+"PO-Revision-Date: 2021-04-17 09:42+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ja/>\n"
@@ -2284,13 +2284,11 @@ msgstr "セーブ%sのロードに失敗しました! 詳細はREADMEを参照�
 
 #: engines/engine.cpp:653
 msgid "WARNING: "
-msgstr ""
+msgstr "警告： "
 
 #: engines/engine.cpp:653
-#, fuzzy
-#| msgid "Full title of the game"
 msgid " Shall we still run the game?"
-msgstr "ゲームのフルネーム"
+msgstr " ゲームを続けますか?"
 
 #: engines/engine.cpp:654
 msgid ""
@@ -5811,7 +5809,7 @@ msgstr "ヤマハ FB-01"
 
 #: engines/sci/detection_tables.h:4207
 msgid "Incomplete game detected. You have to copy data from all the CDs."
-msgstr ""
+msgstr "不完全なゲームが検出されました。全てのCDからデータをコピーする必要があります。"
 
 #: engines/sci/engine/kfile.cpp:485 engines/sci/metaengine.cpp:404
 msgid "(Autosave)"
