@@ -502,21 +502,22 @@ void AnimManager::refreshSmkAnim(int num) {
 	refreshPalette(pos);
 
 	while (const Common::Rect *lastRect = _smkAnims[pos]->getNextDirtyRect()) {
-		int inters = 0;
+		bool intersects = false;
 		for (int32 a = 0; a < MAXCHILD; a++) {
 			if (_animTab[num]._flag & (SMKANIM_OFF1 << a)) {
-				// if the rectangle is completely included in the limit, raise it
-				if ((_animTab[num]._lim[a].left <= lastRect->right) &&
-				    (_animTab[num]._lim[a].top <= lastRect->bottom) &&
-				    (_animTab[num]._lim[a].right >= lastRect->left) &&
-				    (_animTab[num]._lim[a].bottom >= lastRect->top)) {
-					inters++;
+				Common::Rect lr = *lastRect;
+				lr.bottom++;
+				lr.right++;
+
+				if (_animTab[num]._lim[a].intersects(lr)) {
+					intersects = true;
+					break;
 				}
 			}
 		}
 
-		if ((_curAnimFrame[pos] > 0) && (inters == 0)) {
-			if (pos == 0) {
+		if (_curAnimFrame[pos] > 0 && !intersects) {
+			if (pos == kSmackerBackground) {
 				for (int32 a = 0; a < lastRect->height(); a++) {
 					byte2wordn(
 						_vm->_screenBuffer + lastRect->left + (lastRect->top + a + TOP) * MAXX,
