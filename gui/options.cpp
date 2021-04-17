@@ -131,10 +131,14 @@ static const char *savePeriodLabels[] = { _s("Never"), _s("Every 5 mins"), _s("E
 static const int savePeriodValues[] = { 0, 5 * 60, 10 * 60, 15 * 60, 30 * 60, -1 };
 
 static const char *guiBaseLabels[] = {
-	_s("Auto"),		// I18N: Automatic GUI scaling
-	_s("Large"),	// I18N: Large GUI scale
-	_s("Medium"),	// I18N: Medium GUI scale
-	_s("Small"),	// I18N: Small GUI scale
+	// I18N: Automatic GUI scaling
+	_s("Auto"),
+	// I18N: Large GUI scale
+	_s("Large"),
+	// I18N: Medium GUI scale
+	_s("Medium"),
+	// I18N: Small GUI scale
+	_s("Small"),
 	nullptr
 };
 static const int guiBaseValues[] = { 0, 240, 480, 720, -1 };
