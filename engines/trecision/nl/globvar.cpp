@@ -43,9 +43,6 @@ int8 _characterGoToPosition = -1;
 bool OldObjStatus[MAXOBJINROOM];
 bool VideoObjStatus[MAXOBJINROOM];
 
-ScreenRect VideoCent = {0, TOP, MAXX - 1, (TOP + AREA) - 1};
-ScreenRect VideoBott = {0, (TOP + AREA), MAXX - 1, MAXY - 1};
-
 SSortTable SortTable[200];
 
 /*-------------------------------------------------------------------------*/
