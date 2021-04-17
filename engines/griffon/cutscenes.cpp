@@ -136,13 +136,13 @@ const char *story2[27] = {
 	" ",
 	"Now I say that I have lived an",
 	"honorable life,",
-	"and I am free to die as I please.",
+	"and I am free to die as I please."
 };
 
 void GriffonEngine::showLogos() {
 	_ticks = g_system->getMillis();
 	int ticks1 = _ticks;
-	
+
 	do {
 		float y = 255.0;
 		if (_ticks < ticks1 + 1000) {
@@ -269,6 +269,7 @@ void GriffonEngine::intro() {
 				int x = 160 - strlen(story[i]) * 4;
 				drawString(_videoBuffer, story[i], x, yy, 4);
 			}
+
 			if (yy < 10 && i == ARRAYSIZE(story) - 1)
 				return;
 		}
@@ -422,14 +423,12 @@ void GriffonEngine::endOfGame() {
 			}
 			#endif
 			if (yy > -8 && yy < 240) {
-				int  x = 160 - strlen(story2[i]) * 4;
+				int x = 160 - strlen(story2[i]) * 4;
 				drawString(_videoBuffer, story2[i], x, yy, 4);
 			}
-			if (yy < 10 && i == ARRAYSIZE(story2)-1){
-				break;
-			}
 
-				
+			if (yy < 10 && i == ARRAYSIZE(story2)-1)
+				break;
 		}
 
 		ya = 255;
