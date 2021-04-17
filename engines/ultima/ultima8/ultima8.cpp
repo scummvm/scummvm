@@ -374,7 +374,8 @@ bool Ultima8Engine::startupGame() {
 	ConfMan.registerDefault("font_antialiasing", true);
 	ConfMan.registerDefault("frameSkip", false);
 	ConfMan.registerDefault("frameLimit", true);
-	ConfMan.registerDefault("interpolate", true);
+	// Position interpolation looks nice on U8, but causes Crusader to look janky.
+	ConfMan.registerDefault("interpolate", _gameInfo->_type == GameInfo::GAME_U8);
 	ConfMan.registerDefault("cheat", false);
 
 	bool loaded = _game->loadFiles();
