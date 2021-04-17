@@ -869,7 +869,7 @@ GraphicsWidget::~GraphicsWidget() {
 	_gfx.free();
 }
 
-void GraphicsWidget::setGfx(const Graphics::ManagedSurface *gfx) {
+void GraphicsWidget::setGfx(const Graphics::ManagedSurface *gfx, bool scale) {
 	_gfx.free();
 
 	if (!gfx || !gfx->getPixels())
@@ -880,15 +880,19 @@ void GraphicsWidget::setGfx(const Graphics::ManagedSurface *gfx) {
 		return;
 	}
 
-	if ((_w != gfx->w || _h != gfx->h) && _w && _h) {
-		_gfx = *scaleGfx(gfx, _w, _h);
+	float sf = g_gui.getScaleFactor();
+	if ((scale && sf != 1.0) || ((_w != gfx->w || _h != gfx->h) && _w && _h)) {
+		Graphics::Surface *tmp2 = gfx->rawSurface().scale(gfx->w * sf, gfx->h * sf, false);
+		_gfx.copyFrom(*tmp2);
+		tmp2->free();
+		delete tmp2;
 	} else {
 		_gfx.copyFrom(*gfx);
 	}
 }
 
-void GraphicsWidget::setGfx(const Graphics::Surface *gfx) {
-	setGfx(new Graphics::ManagedSurface(gfx));
+void GraphicsWidget::setGfx(const Graphics::Surface *gfx, bool scale) {
+	setGfx(new Graphics::ManagedSurface(gfx), scale);
 }
 
 void GraphicsWidget::setGfx(int w, int h, int r, int g, int b) {

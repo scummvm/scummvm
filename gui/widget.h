@@ -421,8 +421,8 @@ public:
 	GraphicsWidget(GuiObject *boss, const Common::String &name, const Common::U32String &tooltip = Common::U32String());
 	~GraphicsWidget() override;
 
-	void setGfx(const Graphics::ManagedSurface *gfx);
-	void setGfx(const Graphics::Surface *gfx);
+	void setGfx(const Graphics::ManagedSurface *gfx, bool scale = false);
+	void setGfx(const Graphics::Surface *gfx, bool scale = false);
 	void setGfx(int w, int h, int r, int g, int b);
 	void setGfxFromTheme(const char *name);
 
