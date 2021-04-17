@@ -54,6 +54,7 @@ struct GameFlags {
 	bool useHiColorMode       : 1;
 	bool useDigSound          : 1;
 	bool useInstallerPackage  : 1;
+	bool hasExtraLanguage     : 1;
 
 	byte gameID;
 };

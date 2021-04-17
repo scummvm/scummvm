@@ -177,6 +177,9 @@ enum kExtractID {
 	k3ItemAnimData,
 	k3ItemMagicTable,
 	k3ItemStringMap,
+	k3FontData,
+	k3VqaSubtitlesIntro,
+	k3VqaSubtitlesBoat,
 
 	kRpgCommonMoreStrings,
 	kRpgCommonDscShapeIndex,

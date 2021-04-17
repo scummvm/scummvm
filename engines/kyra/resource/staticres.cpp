@@ -39,7 +39,7 @@
 
 namespace Kyra {
 
-#define RESFILE_VERSION 108
+#define RESFILE_VERSION 109
 
 namespace {
 bool checkKyraDat(Common::SeekableReadStream *file) {
@@ -95,6 +95,7 @@ const IndexTable iLanguageTable[] = {
 	{ Common::JA_JPN, 6 },
 	{ Common::RU_RUS, 7 },
 	{ Common::HE_ISR, 8 },
+	{ Common::ZH_CNA, 9 },
 	{ -1, -1 }
 };
 
