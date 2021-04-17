@@ -1177,6 +1177,11 @@ void MacMenu::closeMenu() {
 	if (_wm->_mode & kWMModalMenuMode) {
 		_wm->disableScreenCopy();
 	}
+
+	for (uint i = 0; i < _menustack.size(); i++) {
+		_menustack[i]->highlight = -1;
+	}
+
 	_activeItem = -1;
 	_activeSubItem = -1;
 	_menustack.clear();
