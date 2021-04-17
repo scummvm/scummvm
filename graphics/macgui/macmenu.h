@@ -99,6 +99,7 @@ private:
 	ManagedSurface _screen;
 	ManagedSurface _tempSurface;
 	TextAlign _align;
+	int _menuDropdownItemHeight;
 
 private:
 	bool checkCallback(bool unicode = false);
