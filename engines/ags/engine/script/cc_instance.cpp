@@ -1217,14 +1217,6 @@ int ccInstance::Run(int32_t curpc) {
 }
 
 ccInstance::WorkaroundResult ccInstance::checkForWorkaround(ScriptOperation &codeOp) {
-	if ((pc == 0x72bab || pc == 0x7365c) && codeOp.Instruction.Code == SCMD_CALLEXT
-			&& ::AGS::g_vm->getGameId() == "qfg2agdi") {
-		GUIMain &gui = _GP(guis)[2];
-		registers[SREG_AX] = gui.IsVisibleAndNotConcealed() ? 1 : 0;
-
-		return WorkaroundResult::WR_SKIP_FUNCTION;
-	}
-
 	return WorkaroundResult::WR_NONE;
 }
 
