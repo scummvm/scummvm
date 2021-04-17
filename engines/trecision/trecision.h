@@ -194,7 +194,6 @@ public:
 	uint32 _nextRefresh;
 
 	int16 _mouseX, _mouseY;
-	int16 _oldMouseX, _oldMouseY;
 	bool _mouseLeftBtn, _mouseRightBtn;
 	Common::KeyCode _curKey;
 	uint16 _curAscii;
