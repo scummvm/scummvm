@@ -62,29 +62,6 @@ bool GraphicsManager::initScreen() {
 	return true;
 }
 
-/*------------------------------------------------
-					lock
---------------------------------------------------*/
-void GraphicsManager::lock() {
-	if (!_screenPtr) {
-		Graphics::Surface *surface = g_system->lockScreen();
-		_screenPtr = (uint16 *)surface->getPixels();
-	}
-}
-
-/*------------------------------------------------
-					unlock
---------------------------------------------------*/
-void GraphicsManager::unlock() {
-	if (_screenPtr) {
-		g_system->unlockScreen();
-		_screenPtr = nullptr;
-	}
-}
-
-/*------------------------------------------------
-					clearScreen
---------------------------------------------------*/
 void GraphicsManager::clearScreen() {
 	g_system->fillScreen(0);
 }
