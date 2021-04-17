@@ -23,7 +23,6 @@ MODULE_OBJS = \
 	nl/3d/3dvar.o \
 	nl/3d/3dwalk.o \
 	nl/ll/llanim.o \
-	nl/ll/llasm.o \
 	nl/ll/lldec.o \
 	nl/ll/llmouse.o \
 	nl/ll/llscreen.o \
