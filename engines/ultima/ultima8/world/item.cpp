@@ -2248,9 +2248,14 @@ void Item::receiveHitCru(uint16 other, Direction dir, int damage, uint16 type) {
 		return;
 	}
 
+	assert((int)dir >= 0 && (int)dir < 16);
+
+	static const int hurl_x_factor[] = {  0, +1, +2, +2, +2, +2, +2, +1, 0, -1, -2, -2, -2, -2, -2, -1 };
+	static const int hurl_y_factor[] = { -2, -2, -2, -1,  0, +1, +2, +2, +2, +2, +2, +1, 0, -1, -2, -2 };
+
 	int xhurl = 10 + getRandom() % 15;
 	int yhurl = 10 + getRandom() % 15;
-	hurl(-xhurl * Direction_XFactor(dir), -yhurl * Direction_YFactor(dir), 0, 2); //!! constants
+	hurl(-xhurl * hurl_x_factor[(int)dir], -yhurl * hurl_y_factor[(int)dir], 0, 2); //!! constants
 }
 
 
