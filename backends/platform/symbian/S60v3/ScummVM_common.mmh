@@ -117,5 +117,3 @@ LIBRARY  remconcoreapi.lib remconinterfacebase.lib apmime.lib drtaeabi.lib // li
 SOURCEPATH ..\..\sdl
 SOURCE sdl-window.cpp
 
-SOURCEPATH ..\libc_missed
-SOURCE vsscanf.c sscanf.c s_fmax.c __v_scanf.c s_round.c strtod.c
