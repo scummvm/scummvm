@@ -745,7 +745,7 @@ void SeqPlayer_HOF::playScenes() {
 	_vm->sound()->haltTrack();
 	_vm->sound()->voiceStop();
 
-	if ((!checkAbortPlayback() || _vm->shouldQuit()) && _vm->gameFlags().isDemo)
+	if ((!checkAbortPlayback() || _vm->shouldQuit()) && !_vm->gameFlags().isTalkie && _vm->gameFlags().isDemo)
 		_curScene = -1;
 }
 
