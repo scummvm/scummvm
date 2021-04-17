@@ -45,7 +45,7 @@ enum {
 	kMenuDropdownItemHeight = 16,
 	kMenuItemHeight = 20,
 	kMenuWin95LeftDropdownPadding = 34,
-	kMenuWin95RightDropdownPadding = 53,
+	kMenuWin95RightDropdownPadding = 57,
 	kMenuWin95DropdownItemHeight = 20
 };
 
@@ -124,8 +124,12 @@ MacMenu::MacMenu(int id, const Common::Rect &bounds, MacWindowManager *wm)
 
 	if (_wm->_mode & kWMModeWin95) {
 		_menuDropdownItemHeight = kMenuWin95DropdownItemHeight;
+		_menuLeftDropdownPadding = kMenuWin95LeftDropdownPadding;
+		_menuRightDropdownPadding = kMenuWin95RightDropdownPadding;
 	} else {
 		_menuDropdownItemHeight = kMenuDropdownItemHeight;
+		_menuLeftDropdownPadding = kMenuDropdownPadding;
+		_menuRightDropdownPadding = kMenuDropdownPadding;
 	}
 
 	if (_wm->_mode & kWMModeAutohideMenu)
@@ -721,10 +725,8 @@ void MacMenu::calcSubMenuBounds(MacMenuSubMenu *submenu, int x, int y) {
 	int maxWidth = calcSubMenuWidth(submenu);
 	int x1 = x;
 	int y1 = y;
-	int x2 = x1 + maxWidth + kMenuDropdownPadding * 2 - 4;
-	if (_wm->_mode & kWMModeWin95) {
-		x2 = x1 + maxWidth + kMenuWin95LeftDropdownPadding + kMenuWin95RightDropdownPadding;
-	}
+	int x2 = x1 + maxWidth + _menuLeftDropdownPadding + _menuRightDropdownPadding - 4;
+
 	int y2 = y1 + submenu->items.size() * _menuDropdownItemHeight + 2;
 
 	submenu->bbox.left = x1;
@@ -867,10 +869,7 @@ void MacMenu::renderSubmenu(MacMenuSubMenu *menu, bool recursive) {
 	_screen.hLine(r->left + 3, r->bottom + 1, r->right + 1, _wm->_colorBlack);
 
 	int y = r->top + 1;
-	int x = _align == kTextAlignRight ? -kMenuDropdownPadding : kMenuDropdownPadding;
-	if (_wm->_mode & kWMModeWin95) {
-		x = _align == kTextAlignRight ? -kMenuWin95LeftDropdownPadding: kMenuWin95LeftDropdownPadding;
-	}
+	int x = _align == kTextAlignRight ? -kMenuWin95LeftDropdownPadding: kMenuWin95LeftDropdownPadding;
 	x += r->left;
 
 	for (uint i = 0; i < menu->items.size(); i++) {

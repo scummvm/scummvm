@@ -102,6 +102,8 @@ private:
 	ManagedSurface _tempSurface;
 	TextAlign _align;
 	int _menuDropdownItemHeight;
+	int _menuLeftDropdownPadding;
+	int _menuRightDropdownPadding;
 
 private:
 	bool checkCallback(bool unicode = false);
