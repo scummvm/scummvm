@@ -94,6 +94,7 @@ public:
 	int16 getGUIWidth() const { return _baseWidth; }
 	int16 getGUIHeight() const { return _baseHeight; }
 	float getScaleFactor() const { return _scaleFactor; }
+	void computeScaleFactor();
 
 	bool useRTL() const { return _useRTL; }
 	void setLanguageRTL();
@@ -176,8 +177,6 @@ protected:
 		Dialog* parent;
 	};
 	Common::List<GuiObjectTrashItem> _guiObjectTrash;
-
-	void computeScaleFactor();
 
 	void initKeymap();
 	void enableKeymap(bool enabled);

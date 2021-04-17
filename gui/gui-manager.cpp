@@ -112,17 +112,27 @@ void GuiManager::computeScaleFactor() {
 	uint16 h = g_system->getOverlayHeight();
 	uint scale = g_system->getFeatureState(OSystem::kFeatureHiDPI) ? 2 : 1;
 
-	// Hardcoding for now
-	if (h < 240 * scale) {	// 320 x 200
-		_baseHeight = MIN<int16>(200, h);
-	} else if (h < 400 * scale) {	// 320 x 240
-		_baseHeight = 240;
-	} else if (h < 480 * scale) {	// 640 x 400
-		_baseHeight = 400;
-	} else if (h < 720 * scale) {	// 640 x 480
-		_baseHeight = 480;
-	} else {				// 960 x 720
-		_baseHeight = 720;
+	_baseHeight = 0;	// Clean up from previous iteration
+
+	if (ConfMan.hasKey("gui_base")) {
+		_baseHeight = ConfMan.getInt("gui_base");
+
+		if (h < _baseHeight)
+			_baseHeight = 0; // Switch to auto for lower resolutions
+	}
+
+	if (_baseHeight == 0) {	// auto
+		if (h < 240 * scale) {	// 320 x 200
+			_baseHeight = MIN<int16>(200, h);
+		} else if (h < 400 * scale) {	// 320 x 240
+			_baseHeight = 240;
+		} else if (h < 480 * scale) {	// 640 x 400
+			_baseHeight = 400;
+		} else if (h < 720 * scale) {	// 640 x 480
+			_baseHeight = 480;
+		} else {				// 960 x 720
+			_baseHeight = 720;
+		}
 	}
 
 	_scaleFactor = (float)h / (float)_baseHeight;

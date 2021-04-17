@@ -621,6 +621,14 @@
 				/>
 			</layout>
 			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '10' align = 'center'>
+				<widget name = 'GUIBasePopupDesc'
+						type = 'OptionsLabel'
+				/>
+				<widget name = 'GUIBasePopup'
+						type = 'PopUp'
+				/>
+			</layout>
+			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '10' align = 'center'>
 				<widget name = 'RendererPopupDesc'
 						type = 'OptionsLabel'
 				/>

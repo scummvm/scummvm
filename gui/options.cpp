@@ -129,6 +129,10 @@ enum {
 
 static const char *savePeriodLabels[] = { _s("Never"), _s("Every 5 mins"), _s("Every 10 mins"), _s("Every 15 mins"), _s("Every 30 mins"), nullptr };
 static const int savePeriodValues[] = { 0, 5 * 60, 10 * 60, 15 * 60, 30 * 60, -1 };
+
+static const char *guiBaseLabels[] = { _s("Auto"), _s("Large"), _s("Medium"), _s("Small"), nullptr };
+static const int guiBaseValues[] = { 0, 240, 480, 720, -1 };
+
 // The keyboard mouse speed values range from 0 to 7 and correspond to speeds shown in the label
 // "10" (value 3) is the default speed corresponding to the speed before introduction of this control
 static const char *kbdMouseSpeedLabels[] = { "3", "5", "8", "10", "13", "15", "18", "20", nullptr };
@@ -1704,6 +1708,8 @@ GlobalOptionsDialog::GlobalOptionsDialog(LauncherDialog *launcher)
 	_pluginsPathClearButton = nullptr;
 #endif
 	_curTheme = nullptr;
+	_guiBasePopUpDesc = nullptr;
+	_guiBasePopUp = nullptr;
 	_rendererPopUpDesc = nullptr;
 	_rendererPopUp = nullptr;
 	_autosavePeriodPopUpDesc = nullptr;
@@ -1982,8 +1988,15 @@ void GlobalOptionsDialog::build() {
 #endif
 
 	// Misc Tab
+	_guiBasePopUp->setSelected(1);
+	int value = ConfMan.getInt("gui_base");
+	for (int i = 0; guiBaseLabels[i]; i++) {
+		if (value == guiBaseValues[i])
+			_guiBasePopUp->setSelected(i);
+	}
+
 	_autosavePeriodPopUp->setSelected(1);
-	int value = ConfMan.getInt("autosave_period");
+	value = ConfMan.getInt("autosave_period");
 	for (int i = 0; savePeriodLabels[i]; i++) {
 		if (value == savePeriodValues[i])
 			_autosavePeriodPopUp->setSelected(i);
@@ -2074,6 +2087,13 @@ void GlobalOptionsDialog::addMiscControls(GuiObject *boss, const Common::String 
 	new ButtonWidget(boss, prefix + "ThemeButton", _("Theme:"), Common::U32String(), kChooseThemeCmd);
 	_curTheme = new StaticTextWidget(boss, prefix + "CurTheme", g_gui.theme()->getThemeName());
 
+
+	_guiBasePopUpDesc = new StaticTextWidget(boss, prefix + "GUIBasePopupDesc", _("GUI scale:"));
+	_guiBasePopUp = new PopUpWidget(boss, prefix + "GUIBasePopup");
+
+	for (int i = 0; guiBaseLabels[i]; i++) {
+		_guiBasePopUp->appendEntry(_(guiBaseLabels[i]), guiBaseValues[i]);
+	}
 
 	_rendererPopUpDesc = new StaticTextWidget(boss, prefix + "RendererPopupDesc", _("GUI renderer:"));
 	_rendererPopUp = new PopUpWidget(boss, prefix + "RendererPopup");
@@ -2342,6 +2362,11 @@ void GlobalOptionsDialog::apply() {
 		ConfMan.removeKey("rootpath", "cloud");
 #endif // USE_SDL_NET
 #endif // USE_CLOUD
+
+	int oldGuiBase = ConfMan.getInt("gui_base");
+	ConfMan.setInt("gui_base", _guiBasePopUp->getSelectedTag(), _domain);
+	if (oldGuiBase != _guiBasePopUp->getSelectedTag())
+		g_gui.computeScaleFactor();
 
 	ConfMan.setInt("autosave_period", _autosavePeriodPopUp->getSelectedTag(), _domain);
 

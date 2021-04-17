@@ -602,6 +602,16 @@
 				/>
 			</layout>
 			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '6' align = 'center'>
+				<widget name = 'GUIBasePopupDesc'
+						width = '80'
+						height = 'Globals.Line.Height'
+						textalign = 'end'
+				/>
+				<widget name = 'GUIBasePopup'
+						type = 'PopUp'
+				/>
+			</layout>
+			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '6' align = 'center'>
 				<widget name = 'RendererPopupDesc'
 						width = '80'
 						height = 'Globals.Line.Height'
