@@ -386,6 +386,7 @@ SaveLoadChooserSimple::SaveLoadChooserSimple(const U32String &title, const U32St
 	_list->setEditable(saveMode);
 
 	_gfxWidget = new GraphicsWidget(this, 0, 0, 10, 10);
+	_gfxWidget->useThemeTransparency(false);
 
 	_date = new StaticTextWidget(this, 0, 0, 10, 10, _("No date saved"), Graphics::kTextAlignCenter);
 	_time = new StaticTextWidget(this, 0, 0, 10, 10, _("No time saved"), Graphics::kTextAlignCenter);
@@ -586,10 +587,8 @@ void SaveLoadChooserSimple::updateSelection(bool redraw) {
 
 		if (_thumbnailSupport) {
 			const Graphics::Surface *thumb = desc.getThumbnail();
-			if (thumb) {
-				_gfxWidget->setGfx(thumb);
-				_gfxWidget->useAlpha(256);
-			}
+			if (thumb)
+				_gfxWidget->setGfx(thumb, true);
 		}
 
 		if (_saveDateSupport) {
@@ -999,6 +998,7 @@ void SaveLoadChooserGrid::reflowLayout() {
 			}
 
 			PicButtonWidget *button = new PicButtonWidget(container, dstX, dstY, buttonWidth, buttonHeight, Common::U32String(), buttonCmd);
+			button->useThemeTransparency(false);
 			dstY += buttonHeight;
 
 			StaticTextWidget *description = new StaticTextWidget(container, dstX, dstY, buttonWidth, kLineHeight, Common::String(), Graphics::kTextAlignStart);
