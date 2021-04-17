@@ -99,12 +99,6 @@ enum {
 	kSubtitlesBoth
 };
 
-#ifdef GUI_ENABLE_KEYSDIALOG
-enum {
-	kChooseKeyMappingCmd    = 'chma'
-};
-#endif
-
 #ifdef USE_FLUIDSYNTH
 enum {
 	kFluidSynthSettingsCmd  = 'flst'
@@ -1696,9 +1690,6 @@ void OptionsDialog::setupGraphicsTab() {
 
 GlobalOptionsDialog::GlobalOptionsDialog(LauncherDialog *launcher)
 	: OptionsDialog(Common::ConfigManager::kApplicationDomain, "GlobalOptions"), CommandSender(nullptr), _launcher(launcher) {
-#ifdef GUI_ENABLE_KEYSDIALOG
-	_keysDialog = nullptr;
-#endif
 #ifdef USE_FLUIDSYNTH
 	_fluidSynthSettingsDialog = nullptr;
 #endif
@@ -1780,10 +1771,6 @@ GlobalOptionsDialog::GlobalOptionsDialog(LauncherDialog *launcher)
 }
 
 GlobalOptionsDialog::~GlobalOptionsDialog() {
-#ifdef GUI_ENABLE_KEYSDIALOG
-	delete _keysDialog;
-#endif
-
 #ifdef USE_FLUIDSYNTH
 	delete _fluidSynthSettingsDialog;
 #endif
@@ -1954,10 +1941,6 @@ void GlobalOptionsDialog::build() {
 	new ButtonWidget(this, "GlobalOptions.Apply", _("Apply"), Common::U32String(), kApplyCmd);
 	new ButtonWidget(this, "GlobalOptions.Ok", _("OK"), Common::U32String(), kOKCmd);
 
-#ifdef GUI_ENABLE_KEYSDIALOG
-	_keysDialog = new KeysDialog();
-#endif
-
 #ifdef USE_FLUIDSYNTH
 	_fluidSynthSettingsDialog = new FluidSynthSettingsDialog();
 #endif
@@ -2024,11 +2007,6 @@ void GlobalOptionsDialog::build() {
 }
 
 void GlobalOptionsDialog::clean() {
-#ifdef GUI_ENABLE_KEYSDIALOG
-	delete _keysDialog;
-	_keysDialog = nullptr;
-#endif
-
 #ifdef USE_FLUIDSYNTH
 	delete _fluidSynthSettingsDialog;
 	_fluidSynthSettingsDialog = nullptr;
@@ -2133,10 +2111,6 @@ void GlobalOptionsDialog::addMiscControls(GuiObject *boss, const Common::String 
 	);
 
 	_guiConfirmExit->setState(ConfMan.getBool("confirm_exit", _domain));
-
-#ifdef GUI_ENABLE_KEYSDIALOG
-	new ButtonWidget(boss, prefix + "KeysButton", _("Keys"), Common::U32String(), kChooseKeyMappingCmd);
-#endif
 
 	// TODO: joystick setting
 
@@ -2821,11 +2795,6 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 	}
 #endif // USE_SDL_NET
 #endif // USE_CLOUD
-#ifdef GUI_ENABLE_KEYSDIALOG
-	case kChooseKeyMappingCmd:
-		_keysDialog->runModal();
-		break;
-#endif
 #ifdef USE_FLUIDSYNTH
 	case kFluidSynthSettingsCmd:
 		_fluidSynthSettingsDialog->runModal();

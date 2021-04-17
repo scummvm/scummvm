@@ -675,9 +675,6 @@
 						type = 'Button'
 				/>
 			</layout>
-			<widget name='KeysButton'
- 				     type='Button'
-			/>
 		</layout>
 	</dialog>
 
@@ -1004,30 +1001,6 @@
 			/>
 		</layout>
 	</dialog>
-	<dialog name='KeysDialog' overlays='Dialog.GlobalOptions' shading='dim'>
-		<layout type='vertical' padding='8,8,8,8' align = 'center'>
-			<widget name='Action'
-					height='Globals.Line.Height'
-			/>
-			<widget name='List'/>
-			<widget name='Mapping'
-					height='Globals.Line.Height'
-			/>
-			<space size='Globals.Line.Height'/>
-			<layout type='horizontal'>
-				<widget name='Map'
-						type='Button'
-				/>
-				<space/>
-				<widget name='Cancel'
-						type='Button'
-				/>
-				<widget name='Ok'
-						type='Button'
-				/>
-			</layout>
-		</layout>
-	</dialog>
 
 	<dialog name = 'GameOptions' overlays = 'Dialog.Launcher.GameList' shading = 'dim'>
 		<layout type = 'vertical' padding = '0, 0, 0, 0'>
@@ -1257,10 +1230,6 @@
 			<widget name = 'TabWidget' type = 'TabWidget'
 			/>
 			<layout type = 'horizontal' padding = '16, 16, 16, 16'>
-				<space />
-				<widget name='Keys'
-						type='Button'
-				/>
 				<space />
 				<widget name = 'Cancel'
 						type = 'Button'

@@ -47,7 +47,6 @@ OPTION			GCCE -I'/Symbian/S60_5th_Edition_SDK_v1.0/epoc32/include/png'
 // added and managed by porter
 SOURCEPATH  ..\..\..\..\\backends
 SOURCE     audiocd\sdl\sdl-audiocd.cpp
-SOURCE     events\symbiansdl\symbiansdl-events.cpp
 SOURCE     fs\symbian\symbianstream.cpp
 SOURCE     mixer\symbiansdl\symbiansdl-mixer.cpp
 // end porter job\n

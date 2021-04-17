@@ -44,10 +44,6 @@
 #include "engines/engine.h"
 #include "engines/metaengine.h"
 
-#ifdef GUI_ENABLE_KEYSDIALOG
-#include "gui/KeysDialog.h"
-#endif
-
 MainMenuDialog::MainMenuDialog(Engine *engine)
 	: GUI::Dialog("GlobalMenu"), _engine(engine) {
 	_backgroundType = GUI::ThemeEngine::kDialogBackgroundSpecial;
@@ -234,12 +230,6 @@ void MainMenuDialog::load() {
 		close();
 }
 
-#ifdef GUI_ENABLE_KEYSDIALOG
-enum {
-	kKeysCmd = 'KEYS'
-};
-#endif
-
 namespace GUI {
 
 // FIXME: We use the empty string as domain name here. This tells the
@@ -358,17 +348,9 @@ ConfigDialog::ConfigDialog() :
 
 	new GUI::ButtonWidget(this, "GlobalConfig.Ok", _("~O~K"), Common::U32String(), GUI::kOKCmd);
 	new GUI::ButtonWidget(this, "GlobalConfig.Cancel", _("~C~ancel"), Common::U32String(), GUI::kCloseCmd);
-
-#ifdef GUI_ENABLE_KEYSDIALOG
-	new GUI::ButtonWidget(this, "GlobalConfig.Keys", _("~K~eys"), Common::U32String(), kKeysCmd);
-	_keysDialog = NULL;
-#endif
 }
 
 ConfigDialog::~ConfigDialog() {
-#ifdef GUI_ENABLE_KEYSDIALOG
-	delete _keysDialog;
-#endif
 }
 
 void ConfigDialog::build() {
@@ -387,24 +369,6 @@ void ConfigDialog::apply() {
 
 	OptionsDialog::apply();
 }
-
-#ifdef GUI_ENABLE_KEYSDIALOG
-void ConfigDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) {
-	switch (cmd) {
-	case kKeysCmd:
-		//
-		// Create the sub dialog(s)
-		//
-		_keysDialog = new GUI::KeysDialog();
-		_keysDialog->runModal();
-		delete _keysDialog;
-		_keysDialog = NULL;
-		break;
-	default:
-		GUI::OptionsDialog::handleCommand (sender, cmd, data);
-	}
-}
-#endif
 
 ExtraGuiOptionsWidget::ExtraGuiOptionsWidget(GuiObject *containerBoss, const Common::String &name, const Common::String &domain, const ExtraGuiOptions &options) :
 		OptionsContainerWidget(containerBoss, name, dialogLayout(domain), true, domain),
