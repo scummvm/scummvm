@@ -93,6 +93,8 @@ public:
 
 	void printMenu(int level = 0, MacMenuSubMenu *submenu = nullptr);
 
+	void closeMenu();
+
 	Common::Rect _bbox;
 
 private:
