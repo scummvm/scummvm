@@ -13,11 +13,11 @@
 #include "common/file.h"
 
 #include "freescape/area.h"
-#include "freescape/loaders/loader.h"
 #include "freescape/language/16bitDetokeniser.h"
 #include "freescape/language/instruction.h"
 #include "freescape/language/parser.h"
 #include "freescape/loaders/16bitBinaryLoader.h"
+#include "freescape/loaders/loader.h"
 #include "freescape/objects/geometricobject.h"
 #include "freescape/objects/object.h"
 
@@ -366,7 +366,7 @@ Binary load16bitBinary(Common::String filename) {
 		o = streamLoader.getFileOffset();
 		if (streamLoader.get32() == 0x452400fa) {
 			debug("Border found at %x", o);
-			raw_border = streamLoader.nextBytes(320*200);
+			raw_border = streamLoader.nextBytes(320 * 200);
 			break;
 		}
 		streamLoader.setFileOffset(o);
@@ -377,4 +377,4 @@ Binary load16bitBinary(Common::String filename) {
 	return Freescape::Binary{areaMap, raw_border};
 }
 
-}
+} // namespace Freescape

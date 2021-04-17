@@ -16,7 +16,6 @@
 
 #include "../freescape.h"
 
-
 namespace Freescape {
 
 Binary load16bitBinary(Common::String);

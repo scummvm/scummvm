@@ -39,11 +39,9 @@ Binary load8bitBinary(Common::String filename, uint offset) {
 
 	debug("Number of areas: %d", numberOfAreas);
 	uint8 startArea = streamLoader.get8();
-    debug("Start area: %d", startArea);
+	debug("Start area: %d", startArea);
 
-
-
-    return Binary{nullptr, nullptr};
+	return Binary{nullptr, nullptr};
 }
 
-}
+} // namespace Freescape
