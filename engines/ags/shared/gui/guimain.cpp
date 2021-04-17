@@ -806,8 +806,8 @@ void WriteGUI(const std::vector<GUIMain> &theGuis, Stream *out) {
 void ApplyLegacyVisibility(GUIMain &gui, LegacyGUIVisState vis) {
 	// kGUIPopupMouseY had its own rules, which we practically reverted now
 	if (gui.PopupStyle == kGUIPopupMouseY) {
-		// it was only !Visible if the legacy Visibility was Concealed
-		gui.SetVisible(vis != kGUIVisibility_Concealed);
+		// it was only !Visible if the legacy Visibility was LockedOff
+		gui.SetVisible(vis != kGUIVisibility_LockedOff);
 		// and you could tell it's overridden by behavior when legacy Visibility is Off
 		gui.SetConceal(vis == kGUIVisibility_Off);
 	}

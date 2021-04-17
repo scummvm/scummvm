@@ -58,9 +58,9 @@ namespace Shared {
 
 // Legacy GUIMain visibility state, which combined Visible property and override factor
 enum LegacyGUIVisState {
-	kGUIVisibility_Concealed = -1, // gui is hidden by command
-	kGUIVisibility_Off = 0, // gui is disabled (won't show up by command)
-	kGUIVisibility_On = 1  // gui is shown by command
+	kGUIVisibility_LockedOff = -1, // locked hidden (used by PopupMouseY guis)
+	kGUIVisibility_Off = 0,        // hidden
+	kGUIVisibility_On = 1          // shown
 };
 
 class Bitmap;
