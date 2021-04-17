@@ -13,7 +13,9 @@
 //#include <vector>
 //#include <stdint.h>
 #include "common/str.h"
+
 #include "../freescape.h"
+
 
 namespace Freescape {
 
