@@ -783,7 +783,7 @@ bool ThemeParser::parserCallback_dialog(ParserNode *node) {
 			return false;
 	}
 
-	_theme->getEvaluator()->addDialog(name, overlays, SCALEVALUE(width), SCALEVALUE(height), SCALEVALUE(inset));
+	_theme->getEvaluator()->addDialog(name, overlays, SCALEVALUE(width), SCALEVALUE(height), inset);
 
 	if (node->values.contains("shading")) {
 		int shading = 0;
