@@ -362,11 +362,19 @@ Binary load16bitBinary(Common::String filename) {
 
 	Common::Array<uint8>::size_type o;
 	Common::Array<uint8> *raw_border = nullptr;
+	Common::Array<uint8> *raw_palette = nullptr;
+
 	while (!streamLoader.eof()) {
 		o = streamLoader.getFileOffset();
 		if (streamLoader.get32() == 0x452400fa) {
 			debug("Border found at %x", o);
 			raw_border = streamLoader.nextBytes(320 * 200);
+			raw_palette = new Common::Array<uint8>(); 
+
+			for (i = 0; i < 16*3; i++) {
+				raw_palette->push_back(streamLoader.get8() << 2);
+			}
+			
 			break;
 		}
 		streamLoader.setFileOffset(o);
@@ -374,7 +382,7 @@ Binary load16bitBinary(Common::String filename) {
 	}
 
 	delete[] fileOffsetForArea;
-	return Freescape::Binary{areaMap, raw_border};
+	return Freescape::Binary{areaMap, raw_border, raw_palette};
 }
 
 } // namespace Freescape
