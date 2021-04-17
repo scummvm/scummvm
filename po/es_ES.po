@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-04-16 12:46+0000\n"
+"POT-Creation-Date: 2021-04-17 13:08+0000\n"
 "PO-Revision-Date: 2021-04-17 10:33+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
@@ -60,8 +60,8 @@ msgstr "Arriba"
 #: gui/fluidsynth-dialog.cpp:153 gui/KeysDialog.cpp:44 gui/massadd.cpp:92
 #: gui/options.cpp:1953 gui/predictivedialog.cpp:69 gui/recorderdialog.cpp:68
 #: gui/recorderdialog.cpp:155 gui/remotebrowser.cpp:60
-#: gui/saveload-dialog.cpp:62 gui/saveload-dialog.cpp:395
-#: gui/saveload-dialog.cpp:467 gui/saveload-dialog.cpp:771
+#: gui/saveload-dialog.cpp:62 gui/saveload-dialog.cpp:396
+#: gui/saveload-dialog.cpp:468 gui/saveload-dialog.cpp:770
 #: gui/saveload-dialog.cpp:1167 gui/themebrowser.cpp:55
 #: gui/unknown-game-dialog.cpp:54 engines/engine.cpp:657
 #: backends/dialogs/gtk/gtk-dialogs.cpp:46
@@ -1797,7 +1797,7 @@ msgid "Recorder or Playback Gameplay"
 msgstr "Grabar o reproducir vídeos"
 
 #: gui/recorderdialog.cpp:67 gui/recorderdialog.cpp:155
-#: gui/saveload-dialog.cpp:399 gui/saveload-dialog.cpp:467
+#: gui/saveload-dialog.cpp:400 gui/saveload-dialog.cpp:468
 msgid "Delete"
 msgstr "Eliminar"
 
@@ -1851,51 +1851,51 @@ msgstr "Modo lista"
 msgid "Grid view"
 msgstr "Modo mosaico"
 
-#: gui/saveload-dialog.cpp:390 gui/saveload-dialog.cpp:571
+#: gui/saveload-dialog.cpp:391 gui/saveload-dialog.cpp:572
 msgid "No date saved"
 msgstr "No hay fecha guardada"
 
-#: gui/saveload-dialog.cpp:391 gui/saveload-dialog.cpp:572
+#: gui/saveload-dialog.cpp:392 gui/saveload-dialog.cpp:573
 msgid "No time saved"
 msgstr "No hay hora guardada"
 
-#: gui/saveload-dialog.cpp:392 gui/saveload-dialog.cpp:573
+#: gui/saveload-dialog.cpp:393 gui/saveload-dialog.cpp:574
 msgid "No playtime saved"
 msgstr "No hay tiempo guardado"
 
-#: gui/saveload-dialog.cpp:466
+#: gui/saveload-dialog.cpp:467
 msgid "Do you really want to delete this saved game?"
 msgstr "¿Seguro que quieres borrar esta partida?"
 
-#: gui/saveload-dialog.cpp:598 gui/saveload-dialog.cpp:1118
+#: gui/saveload-dialog.cpp:597 gui/saveload-dialog.cpp:1118
 msgid "Date: "
 msgstr "Fecha: "
 
-#: gui/saveload-dialog.cpp:602 gui/saveload-dialog.cpp:1124
+#: gui/saveload-dialog.cpp:601 gui/saveload-dialog.cpp:1124
 msgid "Time: "
 msgstr "Hora: "
 
-#: gui/saveload-dialog.cpp:608 gui/saveload-dialog.cpp:1132
+#: gui/saveload-dialog.cpp:607 gui/saveload-dialog.cpp:1132
 msgid "Playtime: "
 msgstr "Tiempo: "
 
-#: gui/saveload-dialog.cpp:621 gui/saveload-dialog.cpp:709
+#: gui/saveload-dialog.cpp:620 gui/saveload-dialog.cpp:708
 msgid "Untitled saved game"
 msgstr "Partida sin nombre"
 
-#: gui/saveload-dialog.cpp:772
+#: gui/saveload-dialog.cpp:771
 msgid "Next"
 msgstr "Siguiente"
 
-#: gui/saveload-dialog.cpp:775
+#: gui/saveload-dialog.cpp:774
 msgid "Prev"
 msgstr "Anterior"
 
-#: gui/saveload-dialog.cpp:982
+#: gui/saveload-dialog.cpp:981
 msgid "New Save"
 msgstr "Guardar"
 
-#: gui/saveload-dialog.cpp:982
+#: gui/saveload-dialog.cpp:981
 msgid "Create a new saved game"
 msgstr "Guarda una nueva partida"
 
@@ -3935,15 +3935,15 @@ msgstr ""
 "Muestra los textos con bordes suavizados aunque el juego no utilice este "
 "efecto"
 
-#: engines/bladerunner/bladerunner.cpp:363
+#: engines/bladerunner/bladerunner.cpp:359
 msgid "Failed to initialize resources"
 msgstr "No se han podido iniciar los recursos"
 
-#: engines/bladerunner/bladerunner.cpp:1067
+#: engines/bladerunner/bladerunner.cpp:1063
 msgid "A required game resource was not found"
 msgstr "No se ha encontrado un recurso necesario del juego"
 
-#: engines/bladerunner/bladerunner.cpp:2271
+#: engines/bladerunner/bladerunner.cpp:2278
 msgid ""
 "WARNING: This game was saved in Restored Cut Content mode, but you are "
 "playing in Original Content mode. The mode will be adjusted to Restored Cut "
@@ -3953,7 +3953,7 @@ msgstr ""
 "pero estás jugando en el modo Contenidos originales. Se ajustará el modo a "
 "Contenidos restaurados durante esta sesión y hasta que salgas del juego."
 
-#: engines/bladerunner/bladerunner.cpp:2273
+#: engines/bladerunner/bladerunner.cpp:2280
 msgid ""
 "WARNING: This game was saved in Original Content mode, but you are playing "
 "in Restored Cut Content mode. The mode will be adjusted to Original Content "
@@ -3963,7 +3963,7 @@ msgstr ""
 "estás jugando en el modo Contenidos restaurados. Se ajustará el modo a "
 "Contenidos originales durante esta sesión y hasta que salgas del juego."
 
-#: engines/bladerunner/bladerunner.cpp:2275
+#: engines/bladerunner/bladerunner.cpp:2282
 msgid "Continue"
 msgstr "Continuar"
 

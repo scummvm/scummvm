@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-04-16 12:46+0000\n"
+"POT-Creation-Date: 2021-04-17 13:08+0000\n"
 "PO-Revision-Date: 2021-04-17 09:42+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
@@ -62,8 +62,8 @@ msgstr "上へ"
 #: gui/fluidsynth-dialog.cpp:153 gui/KeysDialog.cpp:44 gui/massadd.cpp:92
 #: gui/options.cpp:1953 gui/predictivedialog.cpp:69 gui/recorderdialog.cpp:68
 #: gui/recorderdialog.cpp:155 gui/remotebrowser.cpp:60
-#: gui/saveload-dialog.cpp:62 gui/saveload-dialog.cpp:395
-#: gui/saveload-dialog.cpp:467 gui/saveload-dialog.cpp:771
+#: gui/saveload-dialog.cpp:62 gui/saveload-dialog.cpp:396
+#: gui/saveload-dialog.cpp:468 gui/saveload-dialog.cpp:770
 #: gui/saveload-dialog.cpp:1167 gui/themebrowser.cpp:55
 #: gui/unknown-game-dialog.cpp:54 engines/engine.cpp:657
 #: backends/dialogs/gtk/gtk-dialogs.cpp:46
@@ -1776,7 +1776,7 @@ msgid "Recorder or Playback Gameplay"
 msgstr "ゲームプレイの記録と再生"
 
 #: gui/recorderdialog.cpp:67 gui/recorderdialog.cpp:155
-#: gui/saveload-dialog.cpp:399 gui/saveload-dialog.cpp:467
+#: gui/saveload-dialog.cpp:400 gui/saveload-dialog.cpp:468
 msgid "Delete"
 msgstr "削除"
 
@@ -1830,51 +1830,51 @@ msgstr "リストで表示"
 msgid "Grid view"
 msgstr "グリッドで表示"
 
-#: gui/saveload-dialog.cpp:390 gui/saveload-dialog.cpp:571
+#: gui/saveload-dialog.cpp:391 gui/saveload-dialog.cpp:572
 msgid "No date saved"
 msgstr "日付未記録"
 
-#: gui/saveload-dialog.cpp:391 gui/saveload-dialog.cpp:572
+#: gui/saveload-dialog.cpp:392 gui/saveload-dialog.cpp:573
 msgid "No time saved"
 msgstr "時間未記録"
 
-#: gui/saveload-dialog.cpp:392 gui/saveload-dialog.cpp:573
+#: gui/saveload-dialog.cpp:393 gui/saveload-dialog.cpp:574
 msgid "No playtime saved"
 msgstr "再生時間未記録"
 
-#: gui/saveload-dialog.cpp:466
+#: gui/saveload-dialog.cpp:467
 msgid "Do you really want to delete this saved game?"
 msgstr "セーブデータを削除してもよろしいですか？"
 
-#: gui/saveload-dialog.cpp:598 gui/saveload-dialog.cpp:1118
+#: gui/saveload-dialog.cpp:597 gui/saveload-dialog.cpp:1118
 msgid "Date: "
 msgstr "日付： "
 
-#: gui/saveload-dialog.cpp:602 gui/saveload-dialog.cpp:1124
+#: gui/saveload-dialog.cpp:601 gui/saveload-dialog.cpp:1124
 msgid "Time: "
 msgstr "時間： "
 
-#: gui/saveload-dialog.cpp:608 gui/saveload-dialog.cpp:1132
+#: gui/saveload-dialog.cpp:607 gui/saveload-dialog.cpp:1132
 msgid "Playtime: "
 msgstr "再生時間： "
 
-#: gui/saveload-dialog.cpp:621 gui/saveload-dialog.cpp:709
+#: gui/saveload-dialog.cpp:620 gui/saveload-dialog.cpp:708
 msgid "Untitled saved game"
 msgstr "無名のセーブ"
 
-#: gui/saveload-dialog.cpp:772
+#: gui/saveload-dialog.cpp:771
 msgid "Next"
 msgstr "次"
 
-#: gui/saveload-dialog.cpp:775
+#: gui/saveload-dialog.cpp:774
 msgid "Prev"
 msgstr "前"
 
-#: gui/saveload-dialog.cpp:982
+#: gui/saveload-dialog.cpp:981
 msgid "New Save"
 msgstr "新セーブ"
 
-#: gui/saveload-dialog.cpp:982
+#: gui/saveload-dialog.cpp:981
 msgid "Create a new saved game"
 msgstr "新しいセーブデータを作成する"
 
@@ -3892,15 +3892,15 @@ msgstr "テキストを強制的にアンチエイリアス"
 msgid "Use antialiasing to draw text even if the game does not ask for it"
 msgstr "ゲームが要求していない場合でも、テキストにアンチエイリアシングを使用"
 
-#: engines/bladerunner/bladerunner.cpp:363
+#: engines/bladerunner/bladerunner.cpp:359
 msgid "Failed to initialize resources"
 msgstr "リソースの初期化に失敗しました"
 
-#: engines/bladerunner/bladerunner.cpp:1067
+#: engines/bladerunner/bladerunner.cpp:1063
 msgid "A required game resource was not found"
 msgstr "必要なゲームリソースが見つかりませんでした"
 
-#: engines/bladerunner/bladerunner.cpp:2271
+#: engines/bladerunner/bladerunner.cpp:2278
 msgid ""
 "WARNING: This game was saved in Restored Cut Content mode, but you are "
 "playing in Original Content mode. The mode will be adjusted to Restored Cut "
@@ -3910,7 +3910,7 @@ msgstr ""
 "ナルモードでプレイ中です。ゲームを完全に終了するまで、ディレクターズカット"
 "モードとして調整されます。"
 
-#: engines/bladerunner/bladerunner.cpp:2273
+#: engines/bladerunner/bladerunner.cpp:2280
 msgid ""
 "WARNING: This game was saved in Original Content mode, but you are playing "
 "in Restored Cut Content mode. The mode will be adjusted to Original Content "
@@ -3920,7 +3920,7 @@ msgstr ""
 "カットモードでプレイ中です。ゲームを完全に終了するまで、オリジナルモードとし"
 "て調整されます。"
 
-#: engines/bladerunner/bladerunner.cpp:2275
+#: engines/bladerunner/bladerunner.cpp:2282
 msgid "Continue"
 msgstr "つづく"
 
