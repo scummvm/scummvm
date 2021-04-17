@@ -43,7 +43,10 @@ enum {
 	kMenuPadding = 16,
 	kMenuDropdownPadding = 14,
 	kMenuDropdownItemHeight = 16,
-	kMenuItemHeight = 20
+	kMenuItemHeight = 20,
+	kMenuWin95LeftDropdownPadding = 34,
+	kMenuWin95RightDropdownPadding = 53,
+	kMenuWin95DropdownItemHeight = 20
 };
 
 enum {
@@ -70,7 +73,7 @@ struct MacMenuSubMenu {
 
 	~MacMenuSubMenu();
 
-	int ytoItem(int y) { return MIN<int>((y - bbox.top) / kMenuDropdownItemHeight, items.size() - 1); }
+	int ytoItem(int y, int itemHeight) { return MIN<int>((y - bbox.top) / itemHeight, items.size() - 1); }
 };
 
 struct MacMenuItem {
@@ -118,6 +121,12 @@ MacMenu::MacMenu(int id, const Common::Rect &bounds, MacWindowManager *wm)
 	_bbox.bottom = kMenuHeight;
 
 	_dimensionsDirty = true;
+
+	if (_wm->_mode & kWMModeWin95) {
+		_menuDropdownItemHeight = kMenuWin95DropdownItemHeight;
+	} else {
+		_menuDropdownItemHeight = kMenuDropdownItemHeight;
+	}
 
 	if (_wm->_mode & kWMModeAutohideMenu)
 		_isVisible = false;
@@ -713,7 +722,10 @@ void MacMenu::calcSubMenuBounds(MacMenuSubMenu *submenu, int x, int y) {
 	int x1 = x;
 	int y1 = y;
 	int x2 = x1 + maxWidth + kMenuDropdownPadding * 2 - 4;
-	int y2 = y1 + submenu->items.size() * kMenuDropdownItemHeight + 2;
+	if (_wm->_mode & kWMModeWin95) {
+		x2 = x1 + maxWidth + kMenuWin95LeftDropdownPadding + kMenuWin95RightDropdownPadding;
+	}
+	int y2 = y1 + submenu->items.size() * _menuDropdownItemHeight + 2;
 
 	submenu->bbox.left = x1;
 	submenu->bbox.top = y1;
@@ -729,7 +741,7 @@ void MacMenu::calcSubMenuBounds(MacMenuSubMenu *submenu, int x, int y) {
 		MacMenuSubMenu *menu = submenu->items[i]->submenu;
 
 		if (menu != nullptr)
-			calcSubMenuBounds(menu, x2 - 4, y1 + i * kMenuDropdownItemHeight + 1);
+			calcSubMenuBounds(menu, x2 - 4, y1 + i * _menuDropdownItemHeight + 1);
 	}
 }
 
@@ -856,6 +868,9 @@ void MacMenu::renderSubmenu(MacMenuSubMenu *menu, bool recursive) {
 
 	int y = r->top + 1;
 	int x = _align == kTextAlignRight ? -kMenuDropdownPadding : kMenuDropdownPadding;
+	if (_wm->_mode & kWMModeWin95) {
+		x = _align == kTextAlignRight ? -kMenuWin95LeftDropdownPadding: kMenuWin95LeftDropdownPadding;
+	}
 	x += r->left;
 
 	for (uint i = 0; i < menu->items.size(); i++) {
@@ -930,14 +945,14 @@ void MacMenu::renderSubmenu(MacMenuSubMenu *menu, bool recursive) {
 			}
 		} else { // Delimiter
 			bool flip = r->left & 2;
-			byte *ptr = (byte *)_screen.getBasePtr(r->left + 1, y + kMenuDropdownItemHeight / 2);
+			byte *ptr = (byte *)_screen.getBasePtr(r->left + 1, y + _menuDropdownItemHeight / 2);
 			for (int xx = r->left + 1; xx <= r->right - 1; xx++, ptr++) {
 				*ptr = flip ? _wm->_colorBlack : _wm->_colorWhite;
 				flip = !flip;
 			}
 		}
 
-		y += kMenuDropdownItemHeight;
+		y += _menuDropdownItemHeight;
 	}
 
 	if (recursive && menu->highlight != -1 && menu->items[menu->highlight]->submenu != nullptr)
@@ -1049,7 +1064,7 @@ bool MacMenu::mouseClick(int x, int y) {
 
 	if (_menustack.size() > 0 && _menustack.back()->bbox.contains(x, y)) {
 		MacMenuSubMenu *menu = _menustack.back();
-		int numSubItem = menu->ytoItem(y);
+		int numSubItem = menu->ytoItem(y, _menuDropdownItemHeight);
 
 		if (numSubItem != _activeSubItem) {
 			if (_wm->_mode & kWMModalMenuMode) {
@@ -1101,7 +1116,7 @@ bool MacMenu::mouseClick(int x, int y) {
 
 			MacMenuSubMenu *menu = _menustack.back();
 
-			_activeSubItem = menu->highlight = menu->ytoItem(y);
+			_activeSubItem = menu->highlight = menu->ytoItem(y, _menuDropdownItemHeight);
 
 			_contentIsDirty = true;
 			_wm->setFullRefresh(true);
