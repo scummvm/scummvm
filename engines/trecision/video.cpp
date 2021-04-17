@@ -570,9 +570,10 @@ void AnimManager::refreshSmkAnim(int num) {
 		}
 
 		for (int32 a = 0; a < _animMaxY - _animMinY; a++) {
-			byte2wordm(
+			byte2wordn(
 				_vm->_screenBuffer + _animMinX + (_animMinY + a + TOP) * MAXX,
 				_smkBuffer[kSmackerAction] + _animMinX + (_animMinY + a) * _smkAnims[kSmackerAction]->getWidth(),
+				0,
 				_smkPal[kSmackerAction],
 				_animMaxX - _animMinX
 			);
