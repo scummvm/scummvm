@@ -474,6 +474,27 @@ void AnimManager::refreshPalette(int num) {
 	}
 }
 
+void AnimManager::byte2wordn(void *dest, void *src, void *smk, void *pal, uint32 len) {
+	uint16 *pDest = (uint16 *)dest;
+	uint16 *pPal = (uint16 *)pal;
+	uint16 *pSmk = (uint16 *)smk;
+	uint8 *pSrc = (uint8 *)src;
+
+	for (uint32 i = 0; i < len; i++) {
+		uint8 color = *pSrc++;
+		if (color == 0) {
+			if (pSmk == 0)
+				pDest++;
+			else
+				*pDest++ = *pSmk++;
+		} else {
+			*pDest++ = pPal[color];
+			if (pSmk != 0)
+				pSmk++;
+		}
+	}
+}
+
 void AnimManager::refreshSmkAnim(int num) {
 	if (num == 0)
 		return;
@@ -521,9 +542,9 @@ void AnimManager::refreshSmkAnim(int num) {
 				for (int32 a = 0; a < lastRect->height(); a++) {
 					byte2wordn(
 						_vm->_screenBuffer + lastRect->left + (lastRect->top + a + TOP) * MAXX,
-						_smkBuffer[pos] + lastRect->left + (lastRect->top + a) * _smkAnims[pos]->getWidth(),
+						_smkBuffer[kSmackerBackground] + lastRect->left + (lastRect->top + a) * _smkAnims[kSmackerBackground]->getWidth(),
 						_vm->_smackImageBuffer + lastRect->left + (lastRect->top + a) * MAXX,
-						_smkPal[pos],
+						_smkPal[kSmackerBackground],
 						lastRect->width()
 					);
 

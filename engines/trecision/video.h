@@ -79,6 +79,7 @@ private:
 	void drawFrame(NightlongSmackerDecoder *smkDecoder, uint16 x, uint16 y, bool updateScreen);
 	void drawFrameSubtitles(Graphics::Surface *surface, int frameNum);
 	void setVideoRange(NightlongSmackerDecoder *smkDecoder, int &startFrame, int &endFrame);
+	void byte2wordn(void *dest, void *src, void *smk, void *pal, uint32 len);
 	
 	void refreshSmkIcon(int StartIcon, int num);
 	void swapCD(int cd);
