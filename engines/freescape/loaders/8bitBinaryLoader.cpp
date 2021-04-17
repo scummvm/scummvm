@@ -4,7 +4,7 @@
 
 #include "freescape/area.h"
 #include "freescape/loaders/loader.h"
-//#include "freescape/language/8bitDetokeniser.h"
+#include "freescape/language/8bitDetokeniser.h"
 #include "freescape/language/instruction.h"
 #include "freescape/language/parser.h"
 #include "freescape/loaders/8bitBinaryLoader.h"
@@ -35,11 +35,38 @@ Binary load8bitBinary(Common::String filename, uint offset) {
 
 	StreamLoader streamLoader(binary);
 	uint8 numberOfAreas = streamLoader.get8();
-	streamLoader.get8(); // meaning unknown
+	streamLoader.get16(); // meaning unknown
 
 	debug("Number of areas: %d", numberOfAreas);
 	uint8 startArea = streamLoader.get8();
 	debug("Start area: %d", startArea);
+	uint8 entranceArea = streamLoader.get8();
+	debug("Entrace area: %d", entranceArea);
+	streamLoader.skipBytes(68);
+	uint16 globalByteCodeTable;
+	globalByteCodeTable = streamLoader.get16();
+	debug("GBCT: %d\n", globalByteCodeTable);
+
+	streamLoader.setFileOffset(globalByteCodeTable);
+	//uint8 *ConditionPointer = &Base[GlobalByteCodeTable];
+	uint8 numConditions = streamLoader.get8();
+	debug("%d global conditions", numConditions);
+	while(numConditions--)
+	{
+		// get the length
+		uint32 lengthOfCondition = streamLoader.get8();
+		debug("length of condition: %d", lengthOfCondition);
+		// get the condition
+		Common::Array<uint8> *conditionData = streamLoader.nextBytes(lengthOfCondition);
+
+		//debug("Global condition %d", globalCondition + 1);
+		//debug("%s", detokenise16bitCondition(*conditionData)->c_str());
+		/*CCondition *NewCon = GetConditionZXBinary(&ConditionPointer[1], ConditionPointer[0], true);
+		GlobalArea->AddCondition(NumConditions, NewCon);
+		printf("\t%d bytes\n", *ConditionPointer);
+		ConditionPointer += *ConditionPointer;*/
+	}
+
 
 	return Binary{nullptr, nullptr};
 }
