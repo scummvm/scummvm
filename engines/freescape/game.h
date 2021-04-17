@@ -10,20 +10,24 @@
 #define __Phantasma__Game__
 
 #include "common/hashmap.h"
+#include "common/array.h"
+#include "engines/util.h"
+
 #include "freescape/area.h"
+#include "freescape.h"
+
 //#include "Matrix.h"
 //#include "BatchDrawer.h"
 
-typedef Common::HashMap<uint16, Area*> AreaMap;
 class Game
 {
 	public:
 
-		Game(AreaMap *areasByAreaID);
+		Game(Binary binary);
 		virtual ~Game();
 
-		/*void setAspectRatio(float aspectRatio);
-		void draw();*/
+		//void setAspectRatio(float aspectRatio);
+		void draw();
 		//void advanceToTime(uint32 millisecondsSinceArbitraryMoment);
 
 		//void setupOpenGL();
@@ -32,6 +36,8 @@ class Game
 		//void setMovementVelocity(float x, float y, float z);
 		
 	private:
+		int _screenW, _screenH;
+		Common::Array<uint8> *_border;
 		uint32 timeOfLastTick;
 		bool hasReceivedTime;
 

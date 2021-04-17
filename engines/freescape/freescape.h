@@ -8,16 +8,23 @@
 #include "graphics/surface.h"
 #include "graphics/palette.h"
 
+#include "freescape/area.h"
+
 namespace Freescape {
+
+typedef Common::HashMap<uint16, Area*> AreaMap;
+
+typedef struct Binary {
+	AreaMap *areasByAreaID;
+    Common::Array<uint8> *border;
+} Binary;
 
 class Console;
 
 // our engine debug channels
 enum {
-	kQuuxDebugExample = 1 << 0,
-	kQuuxDebugExample2 = 1 << 1
-	// next new channel must be 1 << 2 (4)
-	// the current limitation is 32 debug channels (1 << 31 is the last one)
+	kFreescapeDebug = 1 << 0,
+	kFreescapeDebug2 = 1 << 1
 };
 
 class FreescapeEngine : public Engine {
@@ -25,6 +32,14 @@ private:
 	// We need random numbers
 	Common::RandomSource *_rnd;
 	Graphics::PixelFormat _pixelFormat;
+	int _screenW, _screenH;
+
+	Common::Array<uint8> *_border;
+	uint32 _timeOfLastTick;
+	bool _hasReceivedTime;
+	AreaMap *_areasByAreaID;
+	float _rotation[3], _velocity[3], _position[3];
+
 public:
 	FreescapeEngine(OSystem *syst);
 	~FreescapeEngine();
@@ -32,6 +47,7 @@ public:
 	Graphics::Surface *_compositeSurface;
 
 	Common::Error run() override;
+	void drawBorder();
 	bool hasFeature(EngineFeature f) const override;
 	bool canLoadGameStateCurrently() override { return true; }
 	bool canSaveGameStateCurrently() override { return true; }

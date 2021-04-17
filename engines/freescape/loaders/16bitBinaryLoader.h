@@ -13,11 +13,12 @@
 //#include <vector>
 //#include <stdint.h>
 #include "common/str.h"
+#include "../freescape.h"
 
-#include "freescape/game.h"
+namespace Freescape {
 
-using namespace std;
+Binary load16bitBinary(Common::String);
 
-Game *load16bitBinary(Common::String);
+}
 
 #endif /* defined(__Phantasma___16bitBinaryLoader__) */
