@@ -73,10 +73,10 @@ void Textbox::init() {
 	scrollbarDefaultPos.y = chunk->readUint16LE();
 	uint16 scrollbarMaxScroll = chunk->readUint16LE();
 
-	_firstLineOffset = chunk->readUint16LE();
+	_firstLineOffset = chunk->readUint16LE() + 1;
 	_lineHeight = chunk->readUint16LE();
-	// Not sure why but to get exact results we subtract 1
 	_borderWidth = chunk->readUint16LE() - 1;
+	_maxWidthDifference = chunk->readUint16LE();
 
 	chunk->seek(0x1FE, SEEK_SET);
 	_fontID = chunk->readUint16LE();
@@ -141,7 +141,7 @@ void Textbox::drawTextbox() {
 
 	const Font *font = g_nancy->_graphicsManager->getFont(_fontID);
 
-	uint maxWidth = _fullSurface.w - _borderWidth * 2;
+	uint maxWidth = _fullSurface.w - _maxWidthDifference - _borderWidth - 2;
 	uint lineDist = _lineHeight + _lineHeight / 4;
 
 	for (uint lineID = 0; lineID < _textLines.size(); ++lineID) {
@@ -211,7 +211,7 @@ void Textbox::drawTextbox() {
 			Array<Common::String> wrappedLines;
 
 			// Do word wrapping on the rest of the text
-			font->wordWrapText(currentSubLine, maxWidth, wrappedLines, horizontalOffset);
+			font->wordWrap(currentSubLine, maxWidth, wrappedLines, horizontalOffset);
 
 			if (hasHotspot) {
 				hotspot.left = _borderWidth;
@@ -226,6 +226,12 @@ void Textbox::drawTextbox() {
 				if (hasHotspot) {
 					hotspot.setWidth(MAX<int16>(hotspot.width(), font->getStringWidth(wrappedLines[i]) + (i == 0 ? horizontalOffset : 0)));
 				}
+				++_numLines;
+			}
+
+			// Simulate a bug in the original engine where player text longer than
+			// a single line gets a double newline afterwards
+			if (wrappedLines.size() > 1 && hasHotspot) {
 				++_numLines;
 			}
 
@@ -295,7 +301,7 @@ void Textbox::onScrollbarMove() {
 
 uint16 Textbox::getInnerHeight() const {
 	uint lineDist = _lineHeight + _lineHeight / 4;
-	return _numLines * lineDist + _firstLineOffset + lineDist / 2;
+	return _numLines * lineDist + _firstLineOffset + lineDist / 2 - 1;
 }
 
 } // End of namespace UI

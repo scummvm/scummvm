@@ -72,6 +72,7 @@ private:
 	uint16 _firstLineOffset;
 	uint16 _lineHeight;
 	uint16 _borderWidth;
+	uint16 _maxWidthDifference;
 	uint16 _numLines;
 	uint16 _fontID;
 

@@ -49,11 +49,14 @@ public:
 
 	void drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint32 color) const override;
 
+	// Custom word wrapping function to fix an edge case with overflowing whitespaces
+	void wordWrap(const Common::String &str, int maxWidth, Common::Array<Common::String> &lines, int initWidth = 0) const;
+
 private:
 	Common::Rect getCharacterSourceRect(char chr) const;
 
 	Common::String _description; // 0xA
-	Common::Point _colorCoordsOffset; // y is def at 0x34, x is just a guess
+	Common::Point _colorCoordsOffset; // 0x32
 
 	uint16 _spaceWidth;              // 0x38
 

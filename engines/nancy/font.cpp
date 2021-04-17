@@ -118,6 +118,27 @@ void Font::drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint32 col
 	}
 }
 
+void Font::wordWrap(const Common::String &str, int maxWidth, Common::Array<Common::String> &lines, int initWidth) const {
+	Common::String temp;
+	for (const char *c = str.begin(); c != str.end(); ++c) {
+		temp += *c;
+		int size = getStringWidth(temp) + (lines.size() == 0 ? initWidth : 0);
+		if (size >= maxWidth) {
+			do {
+				temp.deleteLastChar();
+				--c;
+			} while (temp.size() && temp.lastChar() != ' ');
+
+			lines.push_back(temp);
+			temp.clear();
+		}
+	}
+
+	if (temp.size()) {
+		lines.push_back(temp);
+	}
+}
+
 Common::Rect Font::getCharacterSourceRect(char chr) const {
 	using namespace Common;
 	uint offset = 0;
