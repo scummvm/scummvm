@@ -45,8 +45,6 @@ public:
 
 	bool initScreen();
 
-	void lock();
-	void unlock();
 	void clearScreen();
 	void copyToScreen(int px, int py, int dx, int dy);
 	void copyToScreenBuffer(Graphics::Surface *surface, int x, int y);
