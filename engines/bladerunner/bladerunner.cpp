@@ -1279,9 +1279,9 @@ void BladeRunnerEngine::handleEvents() {
 	// This flag check is to skip the first call of handleEvents() in gameTick().
 	// This prevents a "hack" whereby the player could press Esc quickly and enter the KIA screen,
 	// even in the case when no save games for the game exist. In such case the game is supposed
-	// to immediately play the intro video and subsequently start a new game of medium difficulty. 
-	// It does not expect the player to enter KIA beforehand, which causes side-effects and unforeseen behavior. 
-	// Note: eventually we will support the option to launch into KIA in any case, 
+	// to immediately play the intro video and subsequently start a new game of medium difficulty.
+	// It does not expect the player to enter KIA beforehand, which causes side-effects and unforeseen behavior.
+	// Note: eventually we will support the option to launch into KIA in any case,
 	// but not via the "hack" way that is fixed here.
 	if (_gameJustLaunched) {
 		_gameJustLaunched = false;
