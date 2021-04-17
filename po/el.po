@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-04-17 17:42+0000\n"
-"PO-Revision-Date: 2021-04-17 10:06+0000\n"
+"PO-Revision-Date: 2021-04-17 20:28+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/el/>\n"
@@ -882,14 +882,12 @@ msgid "Every 30 mins"
 msgstr "Κάθε 30 λεπτά"
 
 #: gui/options.cpp:133
-#, fuzzy
-#| msgid "Autosave"
 msgid "Auto"
-msgstr "Αυτόματη αποθήκευση"
+msgstr "Αυτόματη"
 
 #: gui/options.cpp:133
 msgid "Large"
-msgstr ""
+msgstr "Μεγάλo"
 
 #: gui/options.cpp:133 engines/nancy/dialogs.cpp:120
 msgid "Medium"
@@ -897,7 +895,7 @@ msgstr "Μεσαίο"
 
 #: gui/options.cpp:133
 msgid "Small"
-msgstr ""
+msgstr "Μικρό"
 
 #: gui/options.cpp:419 gui/options.cpp:807 gui/options.cpp:945
 #: gui/options.cpp:1056 gui/options.cpp:1449
@@ -1337,10 +1335,8 @@ msgid "Theme:"
 msgstr "Θέμα:"
 
 #: gui/options.cpp:2091
-#, fuzzy
-#| msgid "Unscaled"
 msgid "GUI scale:"
-msgstr "Χωρίς κλιμάκωση"
+msgstr "Κλιμάκωση GUI:"
 
 #: gui/options.cpp:2098
 msgid "GUI renderer:"
