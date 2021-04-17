@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-04-16 12:46+0000\n"
-"PO-Revision-Date: 2021-04-16 12:24+0000\n"
+"PO-Revision-Date: 2021-04-17 09:42+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
@@ -2315,13 +2315,11 @@ msgstr ""
 
 #: engines/engine.cpp:653
 msgid "WARNING: "
-msgstr ""
+msgstr "ATTENTION : "
 
 #: engines/engine.cpp:653
-#, fuzzy
-#| msgid "Full title of the game"
 msgid " Shall we still run the game?"
-msgstr "Nom complet du jeu"
+msgstr " Poursuivre le lancement du jeu ?"
 
 #: engines/engine.cpp:654
 msgid ""
@@ -2329,7 +2327,7 @@ msgid ""
 "ScummVM. As such, it is likely to be unstable, and any saved game you make "
 "might not work in future versions of ScummVM."
 msgstr ""
-"Attention : le jeu que vous vous apprêtez à lancer n'est pas encore "
+"ATTENTION : le jeu que vous vous apprêtez à lancer n'est pas encore "
 "complètement supporté par ScummVM. Il est donc instable et les sauvegardes "
 "peuvent ne pas marcher avec une future version de ScummVM."
 
@@ -5682,7 +5680,7 @@ msgstr ""
 "ScummVM a affiché des messages d'avertissements dans votre fenêtre de "
 "console et ne peut pas garantir que tous les fichiers ont été convertis.\n"
 "\n"
-"Veuillez faire rapport à l'équipe."
+"Merci de faire un rapport à l'équipe."
 
 #: engines/pegasus/pegasus.cpp:2711
 msgid "Up/Zoom In/Move Forward/Open Doors"
@@ -5910,7 +5908,7 @@ msgstr "Yamaha FB-01"
 
 #: engines/sci/detection_tables.h:4207
 msgid "Incomplete game detected. You have to copy data from all the CDs."
-msgstr ""
+msgstr "Jeu incomplet détecté. Vous devez copier les données de tous les CD."
 
 #: engines/sci/engine/kfile.cpp:485 engines/sci/metaengine.cpp:404
 msgid "(Autosave)"
