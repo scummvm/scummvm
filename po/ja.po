@@ -5809,7 +5809,9 @@ msgstr "ヤマハ FB-01"
 
 #: engines/sci/detection_tables.h:4207
 msgid "Incomplete game detected. You have to copy data from all the CDs."
-msgstr "不完全なゲームが検出されました。全てのCDからデータをコピーする必要があります。"
+msgstr ""
+"不完全なゲームが検出されました。全てのCDからデータをコピーする必要がありま"
+"す。"
 
 #: engines/sci/engine/kfile.cpp:485 engines/sci/metaengine.cpp:404
 msgid "(Autosave)"

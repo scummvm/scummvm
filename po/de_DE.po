@@ -5920,7 +5920,8 @@ msgstr "Yamaha FB-01"
 
 #: engines/sci/detection_tables.h:4207
 msgid "Incomplete game detected. You have to copy data from all the CDs."
-msgstr "Unvollständiges Spiel erkannt. Du musst die Dateien aller CDs kopieren."
+msgstr ""
+"Unvollständiges Spiel erkannt. Du musst die Dateien aller CDs kopieren."
 
 #: engines/sci/engine/kfile.cpp:485 engines/sci/metaengine.cpp:404
 msgid "(Autosave)"
