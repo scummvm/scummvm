@@ -25,31 +25,23 @@
 
 namespace Trecision {
 
-void byte2wordm(void *dest, void *src, void *data, uint32 len) {
-	uint16 *d = (uint16 *)dest, *p = (uint16 *)data;
-	uint8 *s = (uint8 *)src;
-	for (uint32 i = 0; i < len; i++) {
-		uint8 v = *s++;
-		if (v == 0)
-			d++;
-		else
-			*d++ = p[v];
-	}
-}
-
 void byte2wordn(void *dest, void *src, void *smk, void *pal, uint32 len) {
 	uint16 *pDest = (uint16 *)dest;
 	uint16 *pPal = (uint16 *)pal;
-	uint16 *t = (uint16 *)smk;
+	uint16 *pSmk = (uint16 *)smk;
 	uint8 *pSrc = (uint8 *)src;
 
 	for (uint32 i = 0; i < len; i++) {
 		uint8 color = *pSrc++;
-		if (color == 0)
-			*pDest++ = *t++;
-		else {
+		if (color == 0) {
+			if (pSmk == 0)
+				pDest++;
+			else
+				*pDest++ = *pSmk++;
+		}  else {
 			*pDest++ = pPal[color];
-			t++;
+			if (pSmk != 0)
+				pSmk++;
 		}
 	}
 }
