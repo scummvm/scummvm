@@ -17,7 +17,7 @@
 #include "freescape/loaders/8bitBinaryLoader.h"
 
 #define OFFSET_DARKSIDE 0xc9ce
-#define OFFSET_DRILLER 0x8f59
+#define OFFSET_DRILLER 0x9B40
 #define OFFSET_TOTALECLIPSE 0xcdb7
 
 namespace Freescape {
@@ -55,7 +55,7 @@ FreescapeEngine::FreescapeEngine(OSystem *syst)
 }
 
 FreescapeEngine::~FreescapeEngine() {
-	debug("QuuxEngine::~QuuxEngine");
+	debug("FreescapeEngine::~FreescapeEngine");
 
 	// Dispose your resources here
 	delete _rnd;
@@ -75,7 +75,7 @@ void FreescapeEngine::drawBorder() {
 
 Common::Error FreescapeEngine::run() {
 	// Initialize graphics using following:
-	initGraphics(320, 200);
+	initGraphics(_screenW, _screenH);
 
 	// You could use backend transactions directly as an alternative,
 	// but it isn't recommended, until you want to handle the error values
