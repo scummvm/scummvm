@@ -1024,7 +1024,7 @@ bool Debugger::cmdLoad(int argc, const char **argv) {
 
 	Common::SeekableReadStream *saveFile = fs.createReadStream();
 
-	_vm->loadGame(*saveFile);
+	_vm->loadGame(*saveFile, 3);
 
 	delete saveFile;
 
@@ -1055,7 +1055,7 @@ bool Debugger::cmdSave(int argc, const char **argv) {
 	Graphics::Surface thumbnail = _vm->generateThumbnail();
 
 	_vm->_time->pause();
-	_vm->saveGame(*saveFile, thumbnail);
+	_vm->saveGame(*saveFile, &thumbnail, true);
 	_vm->_time->resume();
 
 	saveFile->finalize();

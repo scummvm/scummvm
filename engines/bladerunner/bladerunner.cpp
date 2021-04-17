@@ -91,7 +91,7 @@
 #include "engines/util.h"
 #include "engines/advancedDetector.h"
 
-#include "graphics/pixelformat.h"
+#include "graphics/thumbnail.h"
 #include "audio/mididrv.h"
 
 namespace BladeRunner {
@@ -277,7 +277,7 @@ Common::Error BladeRunnerEngine::loadGameState(int slot) {
 	// reseting and updating Blade Runner's _pauseStart and offset before starting a loaded game
 	_time->resetPauseStart();
 
-	loadGame(*saveFile);
+	loadGame(*saveFile, header._version);
 
 	delete saveFile;
 
@@ -302,20 +302,16 @@ Common::Error BladeRunnerEngine::saveGameState(int slot, const Common::String &d
 		return Common::kReadingFailed;
 	}
 
-	Graphics::Surface thumbnail = generateThumbnail();
-
 	BladeRunner::SaveFileHeader header;
 	header._name = desc;
 	header._playTime = getTotalPlayTime();
 
 	BladeRunner::SaveFileManager::writeHeader(*saveFile, header);
 	_time->pause();
-	saveGame(*saveFile, thumbnail);
+	saveGame(*saveFile);
 	_time->resume();
 
 	saveFile->finalize();
-
-	thumbnail.free();
 
 	delete saveFile;
 
@@ -2144,7 +2140,7 @@ void BladeRunnerEngine::playerDied() {
 	_kia->open(kKIASectionLoad);
 }
 
-bool BladeRunnerEngine::saveGame(Common::WriteStream &stream, Graphics::Surface &thumbnail) {
+bool BladeRunnerEngine::saveGame(Common::WriteStream &stream, Graphics::Surface *thumb, bool origformat) {
 	if ( !_gameIsAutoSaving
 	     && ( !playerHasControl() || _sceneScript->isInsideScript() || _aiScripts->isInsideScript())
 	) {
@@ -2154,11 +2150,18 @@ bool BladeRunnerEngine::saveGame(Common::WriteStream &stream, Graphics::Surface 
 	Common::MemoryWriteStreamDynamic memoryStream(DisposeAfterUse::YES);
 	SaveFileWriteStream s(memoryStream);
 
-	thumbnail.convertToInPlace(gameDataPixelFormat());
+	if (!origformat) {
+		if (thumb)
+			Graphics::saveThumbnail(s, *thumb);
+		else
+			Graphics::saveThumbnail(s);
+	} else {
+		thumb->convertToInPlace(gameDataPixelFormat());
 
-	uint16* thumbnailData = (uint16*)thumbnail.getPixels();
-	for (uint i = 0; i < SaveFileManager::kThumbnailSize / 2; ++i) {
-		s.writeUint16LE(thumbnailData[i]);
+		uint16 *thumbnailData = (uint16*)thumb->getPixels();
+		for (uint i = 0; i < SaveFileManager::kThumbnailSize / 2; ++i) {
+			s.writeUint16LE(thumbnailData[i]);
+		}
 	}
 
 	s.writeFloat(1.0f);
@@ -2209,7 +2212,7 @@ bool BladeRunnerEngine::saveGame(Common::WriteStream &stream, Graphics::Surface 
 	return true;
 }
 
-bool BladeRunnerEngine::loadGame(Common::SeekableReadStream &stream) {
+bool BladeRunnerEngine::loadGame(Common::SeekableReadStream &stream, int version) {
 	if (!playerHasControl() || _sceneScript->isInsideScript() || _aiScripts->isInsideScript()) {
 		return false;
 	}
@@ -2244,7 +2247,11 @@ bool BladeRunnerEngine::loadGame(Common::SeekableReadStream &stream) {
 	_gameIsLoading = true;
 	_settings->setLoadingGame();
 
-	s.skip(SaveFileManager::kThumbnailSize); // skip the thumbnail
+	if (version >= 4)
+		Graphics::skipThumbnail(s);
+	else
+		s.skip(SaveFileManager::kThumbnailSize); // skip the thumbnail
+
 	s.skip(4);// always float 1.0, but never used, assuming it's the game version
 	_settings->load(s);
 	_scene->load(s);

@@ -410,7 +410,7 @@ void KIASectionSave::save() {
 
 	BladeRunner::SaveFileManager::writeHeader(*saveFile, header);
 
-	_vm->saveGame(*saveFile, _vm->_kia->_thumbnail);
+	_vm->saveGame(*saveFile, &_vm->_kia->_thumbnail);
 
 	saveFile->finalize();
 
