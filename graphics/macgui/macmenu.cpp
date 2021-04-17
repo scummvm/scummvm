@@ -1169,35 +1169,60 @@ bool MacMenu::checkCallback(bool unicode) {
 	return true;
 }
 
+void MacMenu::closeMenu() {
+	setActive(false);
+	if (_wm->_mode & kWMModeAutohideMenu)
+		_isVisible = false;
+
+	if (_wm->_mode & kWMModalMenuMode) {
+		_wm->disableScreenCopy();
+	}
+	_activeItem = -1;
+	_activeSubItem = -1;
+	_menustack.clear();
+
+	_wm->setFullRefresh(true);
+}
+
 bool MacMenu::mouseRelease(int x, int y) {
-	if (_active) {
-		setActive(false);
-		if (_wm->_mode & kWMModeAutohideMenu)
-			_isVisible = false;
-
-		if (_wm->_mode & kWMModalMenuMode) {
-			_wm->disableScreenCopy();
-		}
-
-		if (_activeItem != -1 && _activeSubItem != -1 && _menustack.back()->items[_activeSubItem]->enabled) {
-			if (_menustack.back()->items[_activeSubItem]->unicode) {
-				if (checkCallback(true))
-					(*_unicodeccallback)(_menustack.back()->items[_activeSubItem]->action,
-								  _menustack.back()->items[_activeSubItem]->unicodeText, _cdata);
-			} else {
-				if (checkCallback())
-					(*_ccallback)(_menustack.back()->items[_activeSubItem]->action,
-								  _menustack.back()->items[_activeSubItem]->text, _cdata);
+	if (!(_wm->_mode & kWMModeWin95)) {
+		if (_active) {
+			if (_activeItem != -1 && _activeSubItem != -1 && _menustack.back()->items[_activeSubItem]->enabled) {
+				if (_menustack.back()->items[_activeSubItem]->unicode) {
+					if (checkCallback(true))
+						(*_unicodeccallback)(_menustack.back()->items[_activeSubItem]->action,
+											 _menustack.back()->items[_activeSubItem]->unicodeText, _cdata);
+				} else {
+					if (checkCallback())
+						(*_ccallback)(_menustack.back()->items[_activeSubItem]->action,
+									  _menustack.back()->items[_activeSubItem]->text, _cdata);
+				}
 			}
+
+			closeMenu();
+			return true;
 		}
+	} else {
+		if (_active) {
 
-		_activeItem = -1;
-		_activeSubItem = -1;
-		_menustack.clear();
+			if (_activeItem != -1 && _activeSubItem != -1 && _menustack.back()->items[_activeSubItem]->enabled) {
+				if (_menustack.back()->items[_activeSubItem]->unicode) {
+					if (checkCallback(true)) {
+						(*_unicodeccallback)(_menustack.back()->items[_activeSubItem]->action,
+											 _menustack.back()->items[_activeSubItem]->unicodeText, _cdata);
+						closeMenu();
+					}
+				} else {
+					if (checkCallback()) {
+						(*_ccallback)(_menustack.back()->items[_activeSubItem]->action,
+									  _menustack.back()->items[_activeSubItem]->text, _cdata);
+						closeMenu();
+					}
+				}
+			}
 
-		_wm->setFullRefresh(true);
-
-		return true;
+			return true;
+		}
 	}
 
 	return false;
