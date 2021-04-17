@@ -881,8 +881,13 @@ void GraphicsWidget::setGfx(const Graphics::ManagedSurface *gfx, bool scale) {
 	}
 
 	float sf = g_gui.getScaleFactor();
-	if ((scale && sf != 1.0) || ((_w != gfx->w || _h != gfx->h) && _w && _h)) {
-		Graphics::Surface *tmp2 = gfx->rawSurface().scale(gfx->w * sf, gfx->h * sf, false);
+	if (scale && sf != 1.0) {
+		_w = gfx->w * sf;
+		_h = gfx->h * sf;
+	}
+
+	if ((_w != gfx->w || _h != gfx->h) && _w && _h) {
+		Graphics::Surface *tmp2 = gfx->rawSurface().scale(_w, _h, false);
 		_gfx.copyFrom(*tmp2);
 		tmp2->free();
 		delete tmp2;
