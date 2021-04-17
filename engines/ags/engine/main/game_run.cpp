@@ -620,7 +620,7 @@ static void game_loop_update_events() {
 		setevent(EV_FADEIN, 0, 0, 0);
 	_G(in_new_room) = 0;
 	update_events();
-	if ((_G(new_room_was) > 0) && (_G(in_new_room) == 0)) {
+	if (!_G(abort_engine) && (_G(new_room_was) > 0) && (_G(in_new_room) == 0)) {
 		// if in a new room, and the room wasn't just changed again in update_events,
 		// then queue the Enters Screen scripts
 		// run these next time round, when it's faded in
@@ -742,6 +742,9 @@ void UpdateGameOnce(bool checkControls, IDriverDependantBitmap *extraBitmap, int
 
 	game_loop_update_events();
 
+	if (_G(abort_engine))
+		return;
+
 	_G(our_eip) = 7;
 
 	//    if (ags_mgetbutton()>NONE) break;
@@ -860,6 +863,10 @@ static int GameTick() {
 		quit("!A blocking function was called before the first room has been loaded");
 
 	UpdateGameOnce(true);
+
+	if (_G(abort_engine))
+		return -1;
+
 	UpdateMouseOverLocation();
 
 	_G(our_eip) = 76;

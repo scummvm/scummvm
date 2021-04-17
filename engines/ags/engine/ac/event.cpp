@@ -178,6 +178,9 @@ void process_event(EventHappened *evp) {
 		} else
 			quit("process_event: RunEvBlock: unknown evb type");
 
+		if (_G(abort_engine))
+			return;
+
 		_G(evblockbasename) = oldbasename;
 		_G(evblocknum) = oldblocknum;
 
@@ -355,10 +358,9 @@ void processallevents(int numev, EventHappened *evlist) {
 	_G(inside_processevent)++;
 
 	for (dd = 0; dd < numev; dd++) {
-
 		process_event(&copyOfList[dd]);
 
-		if (room_was != _GP(play).room_changes)
+		if (room_was != _GP(play).room_changes || _G(abort_engine))
 			break;  // changed room, so discard other events
 	}
 

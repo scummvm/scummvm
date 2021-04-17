@@ -141,6 +141,9 @@ int run_interaction_event(Interaction *nint, int evnt, int chkAny, int isInv) {
 	// Right, so there were some commands defined in response to the event.
 	retval = run_interaction_commandlist(nint->Events[evnt].Response.get(), &nint->Events[evnt].TimesRun, &cmdsrun);
 
+	if (_G(abort_engine))
+		return -1;
+
 	// An inventory interaction, but the wrong item was used
 	if ((isInv) && (cmdsrun == 0))
 		run_unhandled_event(evnt);
@@ -355,6 +358,9 @@ int RunScriptFunctionIfExists(ccInstance *sci, const char *tsname, int numParam,
 		toret = _G(curscript)->inst->CallScriptFunction(tsname, numParam, params);
 	} else
 		quit("Too many parameters to RunScriptFunctionIfExists");
+
+	if (_G(abort_engine))
+		return -1;
 
 	// 100 is if Aborted (eg. because we are LoadAGSGame'ing)
 	if ((toret != 0) && (toret != -2) && (toret != 100)) {
@@ -826,6 +832,9 @@ int run_interaction_commandlist(InteractionCommandList *nicl, int *timesrun, int
 			quit("unknown new interaction command");
 			break;
 		}
+
+		if (_G(abort_engine))
+			return -1;
 
 		// if the room changed within the action, nicl is no longer valid
 		if (room_was != _GP(play).room_changes)
