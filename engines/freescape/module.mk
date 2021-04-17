@@ -3,7 +3,6 @@ MODULE := engines/freescape
 MODULE_OBJS := \
 	metaengine.o \
 	freescape.o \
-	game.o \
 	area.o \
 	objects/object.o \
 	objects/geometricobject.o \

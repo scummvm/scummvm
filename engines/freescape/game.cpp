@@ -6,26 +6,18 @@
 //  Copyright (c) 2013 Thomas Harte. All rights reserved.
 //
 
+#include "common/system.h"
+#include "common/debug.h"
+#include "graphics/surface.h"
+#include "graphics/palette.h"
+
 #include "freescape/game.h"
 //#include "GeometricObject.h"
 //#include "Matrix.h"
 //#include "VertexBuffer.h"
 
-Game::Game(AreaMap *_areasByAreaID) {
-	hasReceivedTime = false;
-	areasByAreaID = _areasByAreaID;
+Game::Game(Binary binary) {
 
-	rotation[0] =
-		rotation[1] =
-			rotation[2] = 0.0f;
-
-	position[0] = 1000.0f;
-	position[1] = 300.0f;
-	position[2] = 1000.0f;
-
-	velocity[0] =
-		velocity[1] =
-			velocity[2] = 0.0f;
 }
 
 Game::~Game() {
@@ -40,9 +32,13 @@ void Game::setAspectRatio(float aspectRatio)
 	Matrix projectionMatrix = Matrix::projectionMatrix(60.0f, aspectRatio, 1.0f, 14189.0f);
 	GeometricObject::setProjectionMatrix(projectionMatrix.contents);
 }
+*/
 
 void Game::draw()
 {
+	g_system->copyRectToScreen((const void *) _border->data(), _screenW, 0, 0, _screenW, _screenH);
+	g_system->updateScreen();
+	/*
 	// set the clear colour to salmon; we're not catching floor/ceiling
 	// colours yet
 	glClearColor(1.0f, 0.5f, 0.5f, 1.0f);
@@ -70,8 +66,10 @@ void Game::draw()
 	glEnable(GL_POLYGON_OFFSET_FILL);
 	(*areasByAreaID)[areaNumber]->draw(true, &batchDrawer);
 	batchDrawer.flush();
+	*/
 }
 
+/*
 void Game::setupOpenGL()
 {
 	GeometricObject::setupOpenGL();

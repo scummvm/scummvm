@@ -20,6 +20,7 @@
 #include "freescape/objects/geometricobject.h"
 #include "freescape/objects/object.h"
 
+
 class StreamLoader {
 private:
 	Common::Array<uint8>::size_type bytePointer;
@@ -100,6 +101,8 @@ public:
 		readMaskByte2 = byte2;
 	}
 };
+
+namespace Freescape {
 
 static Object *loadObject(StreamLoader &stream) {
 	// get object flags and type
@@ -245,12 +248,12 @@ Area *loadArea(StreamLoader &stream) {
 	return (new Area(areaNumber, objectsByID, entrancesByID));
 }
 
-Game *load16bitBinary(Common::String filename) {
+Binary load16bitBinary(Common::String filename) {
 	Common::File *file = new Common::File();
 
 	if (!file->open(filename)) {
 		delete file;
-		return NULL;
+		error("NULL");
 	}
 
 	const uint32 fileSize = file->size();
@@ -307,7 +310,7 @@ Game *load16bitBinary(Common::String filename) {
 		// check that the next two bytes are "PC", then
 		// skip the number that comes after
 		if (streamLoader.get8() != 'C' || streamLoader.get8() != 'P')
-			return nullptr;
+			error("invalid header");
 	}
 
 	// skip an unknown meaning
@@ -438,6 +441,21 @@ Game *load16bitBinary(Common::String filename) {
 	}
 	streamLoader.setFileOffset(fileOffsetForArea[numberOfAreas - 1] + baseOffset);
 
+	Common::Array<uint8>::size_type o;
+	Common::Array<uint8> *raw_border = nullptr;
+	while (!streamLoader.eof()) {
+		o = streamLoader.getFileOffset();
+		if (streamLoader.get32() == 0x452400fa) {
+			debug("Border found at %x", o);
+			raw_border = streamLoader.nextBytes(320*200);
+			break;
+		}
+		streamLoader.setFileOffset(o);
+		streamLoader.get8();
+	}
+
 	delete[] fileOffsetForArea;
-	return new Game(areaMap);
+	return Freescape::Binary{areaMap, raw_border};
+}
+
 }
