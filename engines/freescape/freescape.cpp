@@ -67,7 +67,7 @@ FreescapeEngine::~FreescapeEngine() {
 }
 
 void FreescapeEngine::drawBorder() {
-	g_system->copyRectToScreen((const void *) _border->data(), _screenW, 0, 0, _screenW, _screenH);
+	g_system->copyRectToScreen((const void *)_border->data(), _screenW, 0, 0, _screenW, _screenH);
 	g_system->updateScreen();
 }
 
@@ -100,7 +100,7 @@ Common::Error FreescapeEngine::run() {
 	static const byte PALETTE[16][3] = {
 		{0, 0, 0}, {0xe0, 0xc0, 0x70}, {0xb0, 0x80, 0x40}, {0x80, 0x60, 0x10}, {0x50, 0x30, 0x00}, {0x20, 0x80, 0xd0}, {0x20, 0x50, 0xb0}, {0x20, 0x30, 0x70}, {0x30, 0x40, 0x30}, {0x30, 0x30, 0x30}, {0x40, 0x40, 0x40}, {0x60, 0x60, 0x60}, {0x70, 0x70, 0x70}, {0x90, 0x90, 0x90}, {0xa0, 0xa0, 0xa0}, {0xc0, 0xc0, 0xc0}};
 	g_system->getPaletteManager()->setPalette(&PALETTE[0][0], 0, 16);
-	
+
 	// Create debugger console. It requires GFX to be initialized
 	//Console *console = new Console(this);
 	//setDebugger(console);
