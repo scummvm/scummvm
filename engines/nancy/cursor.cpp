@@ -70,20 +70,16 @@ void CursorManager::setCursor(CursorType type, int16 itemID) {
 		_curItemID = itemID;
 	}
 
-	uint16 newID = 0;
 	bool hasItem = false;
 
 	switch (type) {
 	case kNormalArrow:
-		newID = 4;
+		_curCursorID = 4;
 		break;
 	case kHotspotArrow:
-		newID = 6;
+		_curCursorID = 6;
 		break;
-	case kExitArrow:
-		newID = 3;
-		break;
-	default: {
+	default:
 		if (itemID == -1) {
 			// No item held, set to eyeglass
 			itemID = 0;
@@ -93,13 +89,12 @@ void CursorManager::setCursor(CursorType type, int16 itemID) {
 			hasItem = true;
 		}
 
-		newID = itemID * 4 + type;
-	}
+		_curCursorID = itemID * 4 + type;
 	}
 
 	Graphics::ManagedSurface *surf;
-	Common::Rect bounds = _cursors[newID].bounds;
-	Common::Point hotspot = _cursors[newID].hotspot;
+	Common::Rect bounds = _cursors[_curCursorID].bounds;
+	Common::Point hotspot = _cursors[_curCursorID].hotspot;
 
 	if (hasItem) {
 		surf = &_invCursorsSurface;

@@ -163,7 +163,7 @@ void OrderingPuzzle::handleInput(NancyInput &input) {
 	}
 
 	if (NancySceneState.getViewport().convertViewportToScreen(_exitHotspot).contains(input.mousePos)) {
-		g_nancy->_cursorManager->setCursorType(CursorManager::kExitArrow);
+		g_nancy->_cursorManager->setCursorType(CursorManager::kExit);
 
 		if (input.input & NancyInput::kLeftMouseButtonUp) {
 			_state = kActionTrigger;

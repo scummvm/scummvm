@@ -135,6 +135,10 @@ void Scene::onStateEnter() {
 
 		g_nancy->_graphicsManager->redrawAll();
 
+		if (getHeldItem() != -1) {
+			g_nancy->_cursorManager->setCursorItemID(getHeldItem());
+		}
+
 		// Run once to clear out the previous scene when coming from Map
 		process();
 

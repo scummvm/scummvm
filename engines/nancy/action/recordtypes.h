@@ -72,7 +72,7 @@ protected:
 };
 
 class Hot1FrExitSceneChange : public Hot1FrSceneChange {
-	virtual CursorManager::CursorType getHoverCursor() const override { return CursorManager::kExitArrow; }
+	virtual CursorManager::CursorType getHoverCursor() const override { return CursorManager::kExit; }
 
 protected:
 	virtual Common::String getRecordTypeName() const override { return "Hot1FrExitSceneChange"; }
@@ -190,7 +190,7 @@ public:
 	virtual void readData(Common::SeekableReadStream &stream) override;
 	virtual void execute() override;
 
-	virtual CursorManager::CursorType getHoverCursor() const override { return CursorManager::kExitArrow; }
+	virtual CursorManager::CursorType getHoverCursor() const override { return CursorManager::kExit; }
 
 protected:
 	virtual Common::String getRecordTypeName() const override { return "MapCall"; }
