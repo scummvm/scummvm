@@ -17,32 +17,31 @@
 typedef Common::HashMap<uint16, Object *> ObjectMap;
 
 class BatchDrawer;
-class Area
-{
-	public:
-		Area(
-			uint16 areaID,
-			ObjectMap *objectsByID,
-			ObjectMap *entrancesByID);
-		virtual ~Area();
+class Area {
+public:
+	Area(
+		uint16 areaID,
+		ObjectMap *objectsByID,
+		ObjectMap *entrancesByID);
+	virtual ~Area();
 
-		Object *objectWithID(uint16 objectID);
-		Object *entranceWithID(uint16 objectID);
-		uint16 getAreaID();
+	Object *objectWithID(uint16 objectID);
+	Object *entranceWithID(uint16 objectID);
+	uint16 getAreaID();
 
-		//void setupOpenGL();
-		//void draw(bool allowPolygonOffset, BatchDrawer *batchDrawer);
+	//void setupOpenGL();
+	//void draw(bool allowPolygonOffset, BatchDrawer *batchDrawer);
 
-	private:
-		uint16 areaID;
-		ObjectMap *objectsByID;
-		ObjectMap *entrancesByID;
-		Common::Array<Object *> drawableObjects;
+private:
+	uint16 areaID;
+	ObjectMap *objectsByID;
+	ObjectMap *entrancesByID;
+	Common::Array<Object *> drawableObjects;
 
-		Object *objectWithIDFromMap(ObjectMap *map, uint16 objectID);
+	Object *objectWithIDFromMap(ObjectMap *map, uint16 objectID);
 
-		VertexBuffer *vertexBuffer;
-		DrawElementsBuffer *drawElementsBuffer;
+	VertexBuffer *vertexBuffer;
+	DrawElementsBuffer *drawElementsBuffer;
 };
 
 #endif /* defined(__Phantasma__Area__) */

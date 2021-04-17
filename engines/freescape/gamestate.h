@@ -11,11 +11,10 @@
 
 //#include <iostream>
 
-class CGameState
-{
-	public:
-		int32_t getVariable(int32_t variableNumber);
-		bool getBit(int32_t bitNumber);
+class CGameState {
+public:
+	int32_t getVariable(int32_t variableNumber);
+	bool getBit(int32_t bitNumber);
 };
 
 #endif /* defined(__Phantasma__GameState__) */

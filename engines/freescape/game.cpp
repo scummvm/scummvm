@@ -6,10 +6,10 @@
 //  Copyright (c) 2013 Thomas Harte. All rights reserved.
 //
 
-#include "common/system.h"
 #include "common/debug.h"
-#include "graphics/surface.h"
+#include "common/system.h"
 #include "graphics/palette.h"
+#include "graphics/surface.h"
 
 #include "freescape/game.h"
 //#include "GeometricObject.h"
@@ -17,7 +17,6 @@
 //#include "VertexBuffer.h"
 
 Game::Game(Binary binary) {
-
 }
 
 Game::~Game() {
@@ -34,9 +33,8 @@ void Game::setAspectRatio(float aspectRatio)
 }
 */
 
-void Game::draw()
-{
-	g_system->copyRectToScreen((const void *) _border->data(), _screenW, 0, 0, _screenW, _screenH);
+void Game::draw() {
+	g_system->copyRectToScreen((const void *)_border->data(), _screenW, 0, 0, _screenW, _screenH);
 	g_system->updateScreen();
 	/*
 	// set the clear colour to salmon; we're not catching floor/ceiling

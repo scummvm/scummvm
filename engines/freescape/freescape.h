@@ -4,19 +4,19 @@
 #include "common/random.h"
 #include "common/serializer.h"
 #include "engines/engine.h"
-#include "gui/debugger.h"
-#include "graphics/surface.h"
 #include "graphics/palette.h"
+#include "graphics/surface.h"
+#include "gui/debugger.h"
 
 #include "freescape/area.h"
 
 namespace Freescape {
 
-typedef Common::HashMap<uint16, Area*> AreaMap;
+typedef Common::HashMap<uint16, Area *> AreaMap;
 
 typedef struct Binary {
 	AreaMap *areasByAreaID;
-    Common::Array<uint8> *border;
+	Common::Array<uint8> *border;
 } Binary;
 
 class Console;
@@ -65,6 +65,6 @@ public:
 	}
 };
 
-} // End of namespace Quux
+} // namespace Freescape
 
 #endif

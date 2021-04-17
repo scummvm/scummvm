@@ -9,45 +9,43 @@
 #ifndef __Phantasma__Game__
 #define __Phantasma__Game__
 
-#include "common/hashmap.h"
 #include "common/array.h"
+#include "common/hashmap.h"
 #include "engines/util.h"
 
-#include "freescape/area.h"
 #include "freescape.h"
+#include "freescape/area.h"
 
 //#include "Matrix.h"
 //#include "BatchDrawer.h"
 
-class Game
-{
-	public:
+class Game {
+public:
+	Game(Binary binary);
+	virtual ~Game();
 
-		Game(Binary binary);
-		virtual ~Game();
+	//void setAspectRatio(float aspectRatio);
+	void draw();
+	//void advanceToTime(uint32 millisecondsSinceArbitraryMoment);
 
-		//void setAspectRatio(float aspectRatio);
-		void draw();
-		//void advanceToTime(uint32 millisecondsSinceArbitraryMoment);
+	//void setupOpenGL();
 
-		//void setupOpenGL();
+	//void rotateView(float x, float y, float z);
+	//void setMovementVelocity(float x, float y, float z);
 
-		//void rotateView(float x, float y, float z);
-		//void setMovementVelocity(float x, float y, float z);
-		
-	private:
-		int _screenW, _screenH;
-		Common::Array<uint8> *_border;
-		uint32 timeOfLastTick;
-		bool hasReceivedTime;
+private:
+	int _screenW, _screenH;
+	Common::Array<uint8> *_border;
+	uint32 timeOfLastTick;
+	bool hasReceivedTime;
 
-		AreaMap *areasByAreaID;
+	AreaMap *areasByAreaID;
 
-		float rotation[3], velocity[3], position[3];
-		//Matrix rotationMatrix;
-		//Matrix translationMatrix;
+	float rotation[3], velocity[3], position[3];
+	//Matrix rotationMatrix;
+	//Matrix translationMatrix;
 
-		//BatchDrawer batchDrawer;*/
+	//BatchDrawer batchDrawer;*/
 };
 
 #endif /* defined(__Phantasma__Game__) */
