@@ -72,16 +72,17 @@ private:
 	FastFile _animFile[MAXSMACK]; // nlanim.cd1 / nlanim.cd2
 	int _curCD;
 
-	void openSmk(int buf, Common::SeekableReadStream *stream);
-	void openSmkAnim(int buf, Common::String name);
-	void closeSmk(int buf);
-	void smkNextFrame(int buf);
+	void openSmk(int slot, Common::SeekableReadStream *stream);
+	void openSmkAnim(int slot, Common::String name);
+	void closeSmk(int slot);
+	void smkNextFrame(int slot);
 	void drawFrame(NightlongSmackerDecoder *smkDecoder, uint16 x, uint16 y, bool updateScreen);
 	void drawFrameSubtitles(Graphics::Surface *surface, int frameNum);
 	void setVideoRange(NightlongSmackerDecoder *smkDecoder, int &startFrame, int &endFrame);
 	void byte2wordn(void *dest, void *src, const uint16 *smk, void *pal, uint32 len);
 	
-	void refreshSmkIcon(int StartIcon, int num);
+	void drawSmkIconFrame(int startIcon, int iconNum);
+	void drawSmkActionFrame();
 	void swapCD(int cd);
 
 public:
@@ -92,22 +93,22 @@ public:
 
 	SAnim _animTab[MAXANIM];
 
-	void smkGoto(int buf, int num);
-	void smkSoundOnOff(int pos, bool on);
-	void smkVolumePan(int buf, int track, int vol);
-	int16 smkCurFrame(int buf);
-	
+	void smkGoto(int slot, int frame);
+	void smkSoundOnOff(int slot, bool on);
+	void smkVolumePan(int slot, int track, int vol);
+	int16 smkCurFrame(int slot);
+	void smkStop(uint16 slot);
+
 	void playMovie(Common::String filename, int startFrame = 1, int endFrame = -1);
 	void startFullMotion(const char *name);
 	void stopFullMotion();
 
 	void refreshAllAnimations();
 	void refreshAnim(int box);
-	void refreshSmkAnim(int num);
-	void refreshPalette(int num);
-	void startSmkAnim(uint16 num);
+	void refreshSmkAnim(int animation);
+	void refreshPalette(int slot);
+	void startSmkAnim(uint16 animation);
 	void stopAllSmkAnims();
-	void stopSmkAnim(uint16 num);
 };
 } // end of namespace
 #endif

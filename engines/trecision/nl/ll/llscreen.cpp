@@ -440,7 +440,7 @@ void ReadLoc() {
 		g_vm->_graphicsMgr->resetSmkBackground();
 		g_vm->_animMgr->startSmkAnim(g_vm->_room[g_vm->_curRoom]._bkgAnim);
 	} else
-		g_vm->_animMgr->stopSmkAnim(g_vm->_animMgr->_playingAnims[kSmackerBackground]);
+		g_vm->_animMgr->smkStop(kSmackerBackground);
 
 	InitAtFrameHandler(g_vm->_room[g_vm->_curRoom]._bkgAnim, 0);
 }
