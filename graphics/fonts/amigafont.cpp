@@ -21,6 +21,7 @@
  */
 
 #include "common/stream.h"
+#include "common/memstream.h"
 #include "common/textconsole.h"
 #include "graphics/surface.h"
 #include "graphics/fonts/amigafont.h"
@@ -28,7 +29,7 @@
 namespace Graphics {
 
 // For the data source and license look into gui/themes/fonts/topaz in ScummVM distribution
-static byte amigaTopazFont[2600] = {
+static const byte amigaTopazFont[2600] = {
 	0x00, 0x00, 0x03, 0xf3, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00,
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0x79, 0x00, 0x00, 0x03, 0xe9, 0x00, 0x00, 0x02, 0x79,
 	0x70, 0xff, 0x4e, 0x75, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0c, 0x00, 0x00, 0x00,
@@ -195,17 +196,22 @@ static byte amigaTopazFont[2600] = {
 };
 
 AmigaFont::AmigaFont(Common::SeekableReadStream *stream) {
+	Common::SeekableReadStream *tmp;
 	if (!stream) {
-		_data = amigaTopazFont + 32; // skips dummy header
-		_needCleanup = false;
+		tmp = new Common::MemoryReadStream(amigaTopazFont, sizeof(amigaTopazFont), DisposeAfterUse::NO);
 	} else {
-		stream->seek(32);	// skips dummy header
+		tmp = stream;
+	}
 
-		uint dataSize = stream->size() - stream->pos();
-		_data = (byte *)malloc(dataSize);
-		stream->read(_data, dataSize);
+	tmp->seek(32);	// skips dummy header
 
-		_needCleanup = true;
+	uint dataSize = tmp->size() - tmp->pos();
+	_data = (byte *)malloc(dataSize);
+	tmp->read(_data, dataSize);
+
+	if (tmp != stream) {
+		delete tmp;
+		tmp = nullptr;
 	}
 
 	_font = (AmigaDiskFont *)(_data + 78);
@@ -239,8 +245,7 @@ AmigaFont::AmigaFont(Common::SeekableReadStream *stream) {
 }
 
 AmigaFont::~AmigaFont() {
-	if (_needCleanup)
-		free(_data);
+	free(_data);
 }
 
 int AmigaFont::getFontHeight() const {
