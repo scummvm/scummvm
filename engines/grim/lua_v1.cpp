@@ -27,7 +27,6 @@
 
 #include "graphics/pixelbuffer.h"
 #include "graphics/renderer.h"
-#include "graphics/colormasks.h"
 
 #include "math/matrix3.h"
 
@@ -534,7 +533,7 @@ void Lua_V1::GetSaveGameImage() {
 	for (int l = 0; l < dataSize / 2; l++) {
 		data[l] = savedState->readLEUint16();
 	}
-	Graphics::PixelBuffer buf(Graphics::createPixelFormat<565>(), (byte *)data);
+	Graphics::PixelBuffer buf(Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0), (byte *)data);
 	screenshot = new Bitmap(buf, width, height, "screenshot");
 	delete[] data;
 	if (screenshot) {

@@ -27,7 +27,6 @@
 #include "common/endian.h"
 #include "common/textconsole.h"
 
-#include "graphics/colormasks.h"
 #include "graphics/pixelformat.h"
 
 namespace Graphics {
@@ -43,24 +42,6 @@ namespace Graphics {
 
 class PixelBuffer {
 public:
-	/**
-	 * Create a PixelBuffer.
-	 * Convenience syntax for PixelBuffer(createPixelFormat<format>(), buffersize, dispose).
-	 */
-	template<int format>
-	inline static PixelBuffer createBuffer(int buffersize, DisposeAfterUse::Flag dispose) {
-		return PixelBuffer(createPixelFormat<format>(), buffersize, dispose);
-	}
-
-	/**
-	 * Create a PixelBuffer.
-	 * Convenience syntax for PixelBuffer(createPixelFormat<format>(), buffer).
-	 */
-	template<int format>
-	inline static PixelBuffer createBuffer(byte *buffer) {
-		return PixelBuffer(createPixelFormat<format>(), buffer);
-	}
-
 	/**
 	 * Construct an empty PixelBuffer.
 	 */
