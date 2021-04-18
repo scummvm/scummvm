@@ -50,6 +50,53 @@ void copyBlit(byte *dst, const byte *src,
 
 namespace {
 
+template<typename Size>
+inline void keyBlitLogic(byte *dst, const byte *src, const uint w, const uint h,
+						 const uint srcDelta, const uint dstDelta, const uint32 key) {
+	for (uint y = 0; y < h; ++y) {
+		for (uint x = 0; x < w; ++x) {
+			uint32 color = *(const Size *)src;
+			if (color != key)
+				*(Size *)dst = color;
+
+			src += sizeof(Size);
+			dst += sizeof(Size);
+		}
+
+		src += srcDelta;
+		dst += dstDelta;
+	}
+}
+
+} // End of anonymous namespace
+
+// Function to blit a rect with a transparent color key
+bool keyBlit(byte *dst, const byte *src,
+			   const uint dstPitch, const uint srcPitch,
+			   const uint w, const uint h,
+			   const uint bytesPerPixel, const uint32 key) {
+	if (dst == src)
+		return true;
+
+	// Faster, but larger, to provide optimized handling for each case.
+	const uint srcDelta = (srcPitch - w * bytesPerPixel);
+	const uint dstDelta = (dstPitch - w * bytesPerPixel);
+
+	if (bytesPerPixel == 1) {
+		keyBlitLogic<uint8>(dst, src, w, h, srcDelta, dstDelta, key);
+	} else if (bytesPerPixel == 2) {
+		keyBlitLogic<uint16>(dst, src, w, h, srcDelta, dstDelta, key);
+	} else if (bytesPerPixel == 4) {
+		keyBlitLogic<uint32>(dst, src, w, h, srcDelta, dstDelta, key);
+	} else {
+		return false;
+	}
+
+	return true;
+}
+
+namespace {
+
 template<typename SrcColor, typename DstColor, bool backward>
 inline void crossBlitLogic(byte *dst, const byte *src, const uint w, const uint h,
 						   const PixelFormat &srcFmt, const PixelFormat &dstFmt,

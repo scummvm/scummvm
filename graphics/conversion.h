@@ -71,6 +71,22 @@ void copyBlit(byte *dst, const byte *src,
 			   const uint bytesPerPixel);
 
 /**
+ * Blits a rectangle with a transparent color key.
+ *
+ * @param dst			the buffer which will recieve the converted graphics data
+ * @param src			the buffer containing the original graphics data
+ * @param dstPitch		width in bytes of one full line of the dest buffer
+ * @param srcPitch		width in bytes of one full line of the source buffer
+ * @param w				the width of the graphics data
+ * @param h				the height of the graphics data
+ * @param bytesPerPixel	the number of bytes per pixel
+ * @param key			the transparent color key
+ */
+bool keyBlit(byte *dst, const byte *src,
+			   const uint dstPitch, const uint srcPitch,
+			   const uint w, const uint h,
+			   const uint bytesPerPixel, const uint32 key);
+/**
  * Blits a rectangle from one graphical format to another.
  *
  * @param dst		the buffer which will recieve the converted graphics data
