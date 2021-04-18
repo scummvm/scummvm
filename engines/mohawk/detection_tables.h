@@ -2305,6 +2305,24 @@ static const MohawkGameDescription gameDescriptions[] = {
 	},
 
 	// Rugrats Adventure Game
+	// Spanish Windows
+	// Reported in #12389
+	{
+		{
+			"rugrats",
+			"",
+			AD_ENTRY1s("outline", "a8f4ec8e88b028c2452c1aa84b1a9c51", 6546),
+			Common::ES_ESP,
+			Common::kPlatformWindows,
+			ADGF_UNSTABLE,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_LIVINGBOOKSV4,
+		0,
+		0
+	},
+
+	// Rugrats Adventure Game
 	// English Windows Demo
 	// From GeorgeQGreg (Rugrats Movie Soundtrack)
 	{
