@@ -507,7 +507,7 @@ void Lua_V2::ThumbnailFromFile() {
 	for (int l = 0; l < dataSize / 2; l++) {
 		data[l] = savedState->readLEUint16();
 	}
-	Graphics::PixelBuffer buf(Graphics::createPixelFormat<565>(), (byte *)data);
+	Graphics::PixelBuffer buf(Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0), (byte *)data);
 	Bitmap *screenshot = new Bitmap(buf, width, height, "screenshot");
 	if (!screenshot) {
 		lua_pushnil();

@@ -22,7 +22,6 @@
 
 #include "common/endian.h"
 
-#include "graphics/colormasks.h"
 #include "graphics/pixelbuffer.h"
 #include "image/tga.h"
 

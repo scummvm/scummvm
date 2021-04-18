@@ -176,7 +176,7 @@ void GfxBase::createSpecialtyTexture(uint id, const uint8 *data, int width, int 
 }
 
 Bitmap *GfxBase::createScreenshotBitmap(const Graphics::PixelBuffer src, int w, int h, bool flipOrientation) {
-		Graphics::PixelBuffer buffer = Graphics::PixelBuffer::createBuffer<565>(w * h, DisposeAfterUse::YES);
+		Graphics::PixelBuffer buffer(Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0), w * h, DisposeAfterUse::YES);
 
 		int i1 = (_screenWidth * w - 1) / _screenWidth + 1;
 		int j1 = (_screenHeight * h - 1) / _screenHeight + 1;

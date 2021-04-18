@@ -222,7 +222,7 @@ void EMIEngine::storeSaveGameImage(SaveGame *state) {
 	// copy the actual screenshot to the correct position
 	unsigned int texWidth = 256, texHeight = 128;
 	unsigned int size = texWidth * texHeight;
-	Graphics::PixelBuffer buffer = Graphics::PixelBuffer::createBuffer<565>(size, DisposeAfterUse::YES);
+	Graphics::PixelBuffer buffer(Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0), size, DisposeAfterUse::YES);
 	buffer.clear(size);
 	for (unsigned int j = 0; j < 120; j++) {
 		buffer.copyBuffer(j * texWidth, j * width, width, screenshot->getData(0));

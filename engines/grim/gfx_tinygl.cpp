@@ -25,7 +25,6 @@
 #include "common/system.h"
 
 #include "graphics/surface.h"
-#include "graphics/colormasks.h"
 
 #include "math/glmath.h"
 
