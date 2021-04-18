@@ -287,6 +287,7 @@ MODULE_OBJS = \
 	plugins/agsplugin.o \
 	plugins/plugin_base.o \
 	plugins/ags_blend/ags_blend.o \
+	plugins/ags_controller/ags_controller.o \
 	plugins/ags_creditz/ags_creditz.o \
 	plugins/ags_creditz/ags_creditz1.o \
 	plugins/ags_creditz/ags_creditz2.o \

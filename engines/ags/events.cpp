@@ -32,6 +32,8 @@ EventsManager *g_events;
 EventsManager::EventsManager() {
 	g_events = this;
 	_keys.resize(AGS3::__allegro_KEY_MAX);
+	Common::fill(&_joystickAxis[0], &_joystickAxis[32], 0);
+	Common::fill(&_joystickButton[0], &_joystickButton[32], 0);
 }
 
 EventsManager::~EventsManager() {
@@ -42,22 +44,43 @@ void EventsManager::pollEvents() {
 	Common::Event e;
 
 	while (g_system->getEventManager()->pollEvent(e)) {
-		if (e.type == Common::EVENT_QUIT || e.type == Common::EVENT_RETURN_TO_LAUNCHER) {
+		switch (e.type) {
+		case Common::EVENT_QUIT:
+		case Common::EVENT_RETURN_TO_LAUNCHER:
 			_G(want_exit) = true;
 			_G(abort_engine) = true;
 			_G(check_dynamic_sprites_at_exit) = false;
+			break;
 
-		} else if (e.type == Common::EVENT_KEYDOWN) {
+		case Common::EVENT_JOYAXIS_MOTION:
+			assert(e.joystick.axis < 32);
+			_joystickAxis[e.joystick.axis] = e.joystick.position;
+			break;
+
+		case Common::EVENT_JOYBUTTON_DOWN:
+			assert(e.joystick.button < 32);
+			_joystickButton[e.joystick.button] = true;
+			break;
+
+		case Common::EVENT_JOYBUTTON_UP:
+			assert(e.joystick.button < 32);
+			_joystickButton[e.joystick.button] = false;
+			break;
+
+		case Common::EVENT_KEYDOWN:
 			updateKeys(e.kbd, true);
 
 			if (!isModifierKey(e.kbd.keycode)) {
 				// Add keypresses to the pending key list
 				_pendingKeys.push(e.kbd);
 			}
-		} else if (e.type == Common::EVENT_KEYUP) {
-			updateKeys(e.kbd, false);
+			break;
 
-		} else {
+		case Common::EVENT_KEYUP:
+			updateKeys(e.kbd, false);
+			break;
+
+		default:
 			// Add other event types to the pending events queue. If the event is a
 			// mouse move and the prior one was also, then discard the prior one.
 			// This'll help prevent too many mouse move events accumulating
@@ -66,6 +89,7 @@ void EventsManager::pollEvents() {
 				_pendingEvents.back() = e;
 			else
 				_pendingEvents.push(e);
+			break;
 		}
 	}
 }
