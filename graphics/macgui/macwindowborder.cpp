@@ -161,7 +161,9 @@ void MacWindowBorder::drawScrollBar(ManagedSurface *g, MacWindowManager *wm) {
 	Graphics::drawFilledRect(rr, wm->_colorWhite, wm->getDrawInvertPixel(), &pd);
 
 	// after drawing, we set the _scrollSize negative, to indicate no more drawing is needed
-	_scrollSize = -1;
+	// if win95 mode is enabled, then we keep on drawing the scrollbar
+	if (!(wm->_mode & kWMModeWin95))
+		_scrollSize = -1;
 }
 
 void MacWindowBorder::drawTitle(ManagedSurface *g, MacWindowManager *wm, int titleOffset) {
