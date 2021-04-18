@@ -81,6 +81,9 @@ void EventsManager::pollEvents() {
 			break;
 
 		default:
+			if (e.type == Common::EVENT_MOUSEMOVE)
+				_mousePos = Common::Point(e.mouse.x, e.mouse.y);
+
 			// Add other event types to the pending events queue. If the event is a
 			// mouse move and the prior one was also, then discard the prior one.
 			// This'll help prevent too many mouse move events accumulating

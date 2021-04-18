@@ -35,6 +35,7 @@ private:
 	Common::Queue<Common::Event> _pendingEvents;
 	Common::Queue<Common::KeyState> _pendingKeys;
 	Common::Array<bool> _keys;
+	Common::Point _mousePos;
 	int16 _joystickAxis[32];
 	bool _joystickButton[32];
 
@@ -81,6 +82,13 @@ public:
 	 * Returns the bitset of currently pressed modifier keys
 	 */
 	uint getModifierFlags() const;
+
+	/**
+	 * Get the current mouse position
+	 */
+	Common::Point getMousePos() const {
+		return _mousePos;
+	}
 
 	/**
 	 * Gets a joystick axis position

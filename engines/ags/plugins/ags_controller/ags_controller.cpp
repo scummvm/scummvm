@@ -75,7 +75,7 @@ int64 AGSController::AGS_EngineOnEvent(int event, NumberPtr data) {
 }
 
 void AGSController::Controller_Update() {
-	::AGS::g_events->pollEvents();
+//	::AGS::g_events->pollEvents();
 }
 
 void AGSController::ControllerCount(ScriptMethodParams &params) {
@@ -142,7 +142,26 @@ void AGSController::Controller_BatteryStatus(ScriptMethodParams &params) {
 }
 
 void AGSController::ClickMouse(ScriptMethodParams &params) {
-	error("TODO: ClickMouse - find out what params it gets");
+	PARAMS1(int, button);
+	assert(button < 3);
+	Common::EventType DOWN[3] = {
+		Common::EVENT_LBUTTONDOWN, Common::EVENT_RBUTTONDOWN, Common::EVENT_MBUTTONDOWN
+	};
+	Common::EventType UP[3] = {
+		Common::EVENT_LBUTTONUP, Common::EVENT_RBUTTONUP, Common::EVENT_MBUTTONUP
+	};
+
+	Common::Point mousePos = ::AGS::g_events->getMousePos();
+	Common::Event down, up;
+	down.type = DOWN[button];
+	down.mouse.x = mousePos.x;
+	down.mouse.y = mousePos.y;
+	g_system->getEventManager()->pushEvent(down);
+
+	up.type = UP[button];
+	up.mouse.x = mousePos.x;
+	up.mouse.y = mousePos.y;
+	g_system->getEventManager()->pushEvent(up);
 }
 
 } // namespace AGSController
