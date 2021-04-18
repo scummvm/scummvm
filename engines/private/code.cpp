@@ -82,6 +82,7 @@ void SettingMaps::save(const char *name) {
 }
 
 void SettingMaps::load(const Common::String &name) {
+	debug("loading: %s", name.c_str());
 	assert(_map.contains(name));
 	_setting = _map.getVal(name);
 
@@ -164,14 +165,17 @@ int eval() {
 	if (d.u.sym->type == NUM) {
 		d.type = NUM;
 		d.u.val = d.u.sym->u.val;
+		debugC(1, kPrivateDebugCode, "eval NUM returned %d", d.u.val );
 	} else if (d.u.sym->type == STRING) {
 		d.type = STRING;
 		d.u.str = d.u.sym->u.str;
-		debugC(1, kPrivateDebugCode, "eval returned %s", d.u.str );
+		debugC(1, kPrivateDebugCode, "eval STR returned %s", d.u.str );
 	} else if (d.u.sym->type == RECT) {
 		d.type = RECT;
 		d.u.rect = d.u.sym->u.rect;
+		debugC(1, kPrivateDebugCode, "eval RECT");
 	} else if (d.u.sym->type == NAME) {
+		debugC(1, kPrivateDebugCode, "eval NAME is noop");
 		// No evaluation until is absolutely needed
 	} else
 		assert(0);

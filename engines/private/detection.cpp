@@ -75,7 +75,7 @@ static const ADGameDescription gameDescriptions[] = {
 		   "bklynlgo.bmp", "1dfb703349a46f8ec183de107992b7f5", 33118),
 		Common::EN_GRB,
 		Common::kPlatformWindows,
-		ADGF_DEMO | ADGF_UNSUPPORTED,
+		ADGF_DEMO | ADGF_TESTING,
 		GUIO1(GUIO_NOMIDI)
 	},
 	{

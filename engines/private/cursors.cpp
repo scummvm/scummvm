@@ -300,6 +300,7 @@ static const byte cursorPalette[] = {
 
 struct CursorTable {
 	const char *name;
+	const char *aname;
 	const void *buf;
 	int w;
 	int h;
@@ -308,21 +309,21 @@ struct CursorTable {
 };
 
 static const CursorTable cursorTable[] = {
-	{ "kExit",      MOUSECURSOR_kExit,      32, 32, 9,  0  },
-	{ "kInventory", MOUSECURSOR_kInventory, 32, 32, 15, 3  },
-	{ "kTurnLeft",  MOUSECURSOR_kTurnLeft,  32, 32, 29, 16 },
-	{ "kTurnRight", MOUSECURSOR_kTurnRight, 32, 32, 1,  15 },
-	{ "kZoomIn",    MOUSECURSOR_kZoomIn,    32, 32, 10, 8  },
-	{ "kZoomOut",   MOUSECURSOR_kZoomOut,   32, 32, 13, 31 },
-	{ "kPhone",     MOUSECURSOR_kPhone,     32, 32, 17, 19 },
-	{ "default",    MOUSECURSOR_SCI,        11, 16, 0,  0  },
-	{ nullptr,      nullptr,                0,  0,  0,  0  }
+	{ "kExit",      "k5",      MOUSECURSOR_kExit,      32, 32, 9,  0  },
+	{ "kInventory", "", MOUSECURSOR_kInventory, 32, 32, 15, 3  },
+	{ "kTurnLeft",  "", MOUSECURSOR_kTurnLeft,  32, 32, 29, 16 },
+	{ "kTurnRight", "", MOUSECURSOR_kTurnRight, 32, 32, 1,  15 },
+	{ "kZoomIn",    "", MOUSECURSOR_kZoomIn,    32, 32, 10, 8  },
+	{ "kZoomOut",   "", MOUSECURSOR_kZoomOut,   32, 32, 13, 31 },
+	{ "kPhone",     "", MOUSECURSOR_kPhone,     32, 32, 17, 19 },
+	{ "default",    "", MOUSECURSOR_SCI,        11, 16, 0,  0  },
+	{ nullptr,      nullptr, nullptr,                0,  0,  0,  0  }
 };
 
 void PrivateEngine::changeCursor(const Common::String &cursor) {
 	const CursorTable *entry = cursorTable;
 	while (entry->name) {
-		if (cursor == entry->name)
+		if (cursor == entry->name || cursor == entry->aname)
 			break;
 		entry++;
 	}

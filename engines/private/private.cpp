@@ -134,12 +134,14 @@ Common::Error PrivateEngine::run() {
 			file = _installerArchive.createReadStreamForMember("GAME.TXT");
 
 		// if the demo from the full retail CDROM is used
-		else {
-			if (_installerArchive.hasFile("DEMOGAME.DAT"))
+		else if (_installerArchive.hasFile("DEMOGAME.DAT"))
 				file = _installerArchive.createReadStreamForMember("DEMOGAME.DAT");
+		else {
+			Common::File *f = new Common::File();
+			f->open("SUPPORT/GAME.DUMP");
+			file = f;
 		}
-	}
-
+	}	
 	// Read assets file
 	assert(file != NULL);
 	const int32 fileSize = file->size();
@@ -184,7 +186,12 @@ Common::Error PrivateEngine::run() {
 	if (saveSlot >= 0) { // load the savegame
 		loadGameState(saveSlot);
 	} else {
-		_nextSetting = "kGoIntro";
+		if (Private::Settings::g_setts->_map.contains("kGoIntro"))
+			_nextSetting = "kGoIntro";
+		else if (Private::Settings::g_setts->_map.contains("k58"))
+			_nextSetting = "k58";
+		else
+			error("No setting to start");
 	}
 
 	while (!shouldQuit()) {
@@ -275,7 +282,7 @@ Common::Error PrivateEngine::run() {
 
 		if (!_nextSetting.empty()) {
 			removeTimer();
-			debugC(1, kPrivateDebugFunction, "Executing %s", _nextSetting.c_str());
+			debug("Executing %s", _nextSetting.c_str());
 			clearAreas();
 			_currentSetting = _nextSetting;
 			Settings::g_setts->load(_nextSetting);
