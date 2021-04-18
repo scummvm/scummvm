@@ -112,7 +112,9 @@ void ActionText::start() {
 		Graphics::MacFont *font = new Graphics::MacFont;
 		_txtWnd = director->getWndManager().addTextWindow(font, _textColorIndex, _backgroundColorIndex,
 														  _xRight - _xLeft, align, nullptr, false);
-		_txtWnd->disableBorder();
+		loadBorder(_txtWnd, "pink_border.bmp", Graphics::kWindowBorderScrollbar | Graphics::kWindowBorderActive);
+		loadBorder(_txtWnd, "pink_border.bmp", Graphics::kWindowBorderScrollbar);
+		_txtWnd->enableScrollbar(true);
 		_txtWnd->move(_xLeft, _yTop);
 		_txtWnd->resize(_xRight - _xLeft, _yBottom - _yTop);
 		_txtWnd->setEditable(false);
@@ -138,6 +140,25 @@ void ActionText::end() {
 		_txtWnd = nullptr;
 	} else {
 		director->removeTextAction(this);
+	}
+}
+
+void ActionText::loadBorder(Graphics::MacWindow *target, Common::String filename, uint32 flags) {
+	Common::File borderfile;
+
+	if (!borderfile.open(filename)) {
+		debug(1, "Cannot open border file");
+		return;
+	}
+
+	Common::SeekableReadStream *stream = borderfile.readStream(borderfile.size());
+	if (stream) {
+		// we don't have to pass border offsets here, because 9-patch will automatically calc it
+		target->loadBorder(*stream, flags);
+
+		borderfile.close();
+
+		delete stream;
 	}
 }
 
