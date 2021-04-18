@@ -112,12 +112,8 @@ extern uint8  TextStatus;
 
 int Compare(const void *p1, const void *p2);
 void RedrawRoom();
-void decompress(const uint8 *src, unsigned int src_len, uint8 *dst, unsigned int dst_len);
-char waitKey();
 void FreeKey();
-char *GetNextSent();
 uint16 TextLength(const char *text, uint16 num);
-void IconSnapShot();
 bool DataSave();
 bool DataLoad();
 bool QuitGame();

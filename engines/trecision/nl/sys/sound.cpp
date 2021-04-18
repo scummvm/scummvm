@@ -240,7 +240,7 @@ void WaitSoundFadEnd() {
 /* -----------------14/08/97 16.31-------------------
 					SounPasso
  --------------------------------------------------*/
-void SoundPasso(int midx, int midz, int act, int frame, unsigned short *list) {
+void SoundPasso(int midx, int midz, int act, int frame, uint16 *list) {
 	extern unsigned char _defActionLen[];
 
 	bool stepRight = false;

@@ -209,7 +209,7 @@ float dist3D(float x1, float y1, float z1, float x2, float y2, float z2);
 void putPix(int x, int y, uint16 c);
 void whereIs(int px, int py);
 void pointOut();
-void putLine(int x0, int y0, int x1, int y1, uint16 c);
+void putLine(int x1, int y1, int x2, int y2, uint16 color);
 void viewPanel(SPan *p);
 void pointProject(float x, float y, float z);
 void invPointProject(int x, int y);
