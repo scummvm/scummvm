@@ -64,7 +64,7 @@ void PaintScreen(uint8 flag) {
 		DObj.dx   = MAXX;
 		DObj.dy   = AREA;
 		DObj.l = Common::Rect(x1, y1, x2, y2);
-		DObj.buf  = ImagePointer;
+		DObj.buf  = g_vm->_graphicsMgr->getBackgroundPtr();
 		DObj.flag = COPYTORAM;
 		DrawObj(DObj);
 
@@ -78,7 +78,7 @@ void PaintScreen(uint8 flag) {
 		DObj.dx   = MAXX;
 		DObj.dy   = AREA;
 		DObj.l = Common::Rect(g_vm->_animMgr->_animMinX, g_vm->_animMgr->_animMinY, g_vm->_animMgr->_animMaxX, g_vm->_animMgr->_animMaxY);
-		DObj.buf  = ImagePointer;
+		DObj.buf = g_vm->_graphicsMgr->getBackgroundPtr();
 		DObj.flag = COPYTORAM;
 		DrawObj(DObj);
 
@@ -101,7 +101,7 @@ void PaintScreen(uint8 flag) {
 		DObj.l.bottom = DObj.l.top + oldString.dy;
 
 		if ((oldString.y >= TOP) && ((oldString.y + oldString.dy) < (AREA + TOP))) {
-			DObj.buf  = ImagePointer;
+			DObj.buf = g_vm->_graphicsMgr->getBackgroundPtr();
 			DObj.flag = COPYTORAM;
 			DrawObj(DObj);
 		} else {
@@ -136,7 +136,7 @@ void PaintScreen(uint8 flag) {
 				DObj.l.bottom = DObj.l.top + g_vm->_obj[SortTable[a]._index]._dy;
 			}
 
-			DObj.buf  = ImagePointer;
+			DObj.buf = g_vm->_graphicsMgr->getBackgroundPtr();
 			DObj.flag = COPYTORAM;
 			DrawObj(DObj);
 

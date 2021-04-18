@@ -72,7 +72,7 @@ struct SDObj {
 	uint16 dx;
 	uint16 dy;
 	Common::Rect l;
-	uint16 *buf;
+	const uint16 *buf;
 	uint8 *mask;
 	uint8 flag;         /* 0 - with mask
                             1 - copy to _screenPtr
@@ -96,7 +96,6 @@ struct SFileHandle {
 // FUNCTIONS
 
 // GAME POINTER
-extern uint16 *ImagePointer;
 extern uint16 *ObjPointers[];
 extern uint8 *MaskPointers[];
 extern uint8 *_actionPointer[];

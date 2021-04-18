@@ -39,7 +39,6 @@ namespace Trecision {
 #define MAXMAT		20
 
 // GAME POINTER
-uint16 *ImagePointer;
 uint16 *ObjPointers[MAXOBJINROOM];
 uint8 *MaskPointers[MAXOBJINROOM];
 uint8 *_actionPointer[MAXACTIONFRAMESINROOM];		// puntatore progressivo ai frame
@@ -118,9 +117,7 @@ void openSys() {
 	g_vm->_screenBuffer = new uint16[MAXX * MAXY];
 	memset(g_vm->_screenBuffer, 0, MAXX * MAXY * 2);
 
-	g_vm->_graphicsMgr->copyToScreen(0, 0, MAXX, MAXY);
-
-	ImagePointer = new uint16[MAXX * MAXY * 2];
+	g_vm->_graphicsMgr->clearScreen();
 
 	g_vm->hideCursor();
 
@@ -412,9 +409,10 @@ void ReadLoc() {
 
 	Common::String filename = Common::String::format("%s.cr", g_vm->_room[g_vm->_curRoom]._baseName);
 
-	uint32 dataLength = (g_vm->DecCR(filename, (uint8 *)(ImagePointer - 4)) + 1) / 2;
-	memcpy(&BmInfo, (SBmInfo *)(ImagePointer - 4), sizeof(SBmInfo));
-	g_vm->_graphicsMgr->updatePixelFormat(ImagePointer, BmInfo.dx * BmInfo.dy);
+	uint16 *backgroundPtr = g_vm->_graphicsMgr->getBackgroundPtr();
+	uint32 dataLength = (g_vm->DecCR(filename, (uint8 *)backgroundPtr) + 1) / 2;
+	memcpy(&BmInfo, (SBmInfo *)backgroundPtr, sizeof(SBmInfo));
+	g_vm->_graphicsMgr->updatePixelFormat(backgroundPtr, BmInfo.dx * BmInfo.dy);
 
 	ReadObj();
 
@@ -423,12 +421,11 @@ void ReadLoc() {
 	if (g_vm->_room[g_vm->_curRoom]._sounds[0] != 0)
 		ReadSounds();
 
-	_actionPointer[0] = (uint8 *)ImagePointer + dataLength;
+	_actionPointer[0] = (uint8 *)backgroundPtr + dataLength;
 	Common::String fname = Common::String::format("%s.3d", g_vm->_room[g_vm->_curRoom]._baseName);
 	read3D(fname);
 
-	memset(g_vm->_screenBuffer, 0, MAXX * MAXY * 2);
-	memcpy(g_vm->_screenBuffer + TOP * MAXX, ImagePointer, MAXX * AREA * 2);
+	g_vm->_graphicsMgr->resetScreenBuffer(false);
 
 	g_vm->_curSortTableNum = 0;
 	for (int i = 0; i < MAXOBJINROOM; ++i) {
@@ -439,7 +436,7 @@ void ReadLoc() {
 	RegenRoom();
 
 	if (g_vm->_room[g_vm->_curRoom]._bkgAnim) {
-		g_vm->_graphicsMgr->copyToSmkBackground(ImagePointer);
+		g_vm->_graphicsMgr->resetSmkBackground();
 		g_vm->_animMgr->startSmkAnim(g_vm->_room[g_vm->_curRoom]._bkgAnim);
 	} else
 		g_vm->_animMgr->stopSmkAnim(g_vm->_animMgr->_playingAnims[kSmackerBackground]);
@@ -472,7 +469,8 @@ void ReadObj() {
 	if (!g_vm->_room[g_vm->_curRoom]._object[0])
 		return;
 
-	uint16 *objBuffer = (uint16 *)ImagePointer + BmInfo.dx * BmInfo.dy;
+	uint16 *backgroundPtr = g_vm->_graphicsMgr->getBackgroundPtr();
+	uint16 *objBuffer = (uint16 *)backgroundPtr + BmInfo.dx * BmInfo.dy + 4;
 	uint32 b = 0;
 	for (uint16 a = 0; a < MAXOBJINROOM; a++) {
 		uint16 c = g_vm->_room[g_vm->_curRoom]._object[a];
@@ -694,7 +692,7 @@ void DrawObj(SDObj d) {
 	if (d.l.left > MAXX || d.l.top > MAXX || d.l.right > MAXX || d.l.bottom > MAXX)
 		return;
 	
-	uint16 *buf = d.buf;
+	const uint16 *buf = d.buf;
 	if (d.flag & DRAWMASK) {
 		uint8 *mask = d.mask;
 
