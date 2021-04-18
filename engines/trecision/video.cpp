@@ -101,7 +101,6 @@ AnimManager::AnimManager(TrecisionEngine *vm) : _vm(vm) {
 		_smkBuffer[i] = nullptr;
 		_smkAnims[i] = nullptr;
 		_playingAnims[i] = 0;
-		_curAnimFrame[i] = 0;
 
 		for (int j = 0; j < 256; ++j)
 			_smkPal[i][j] = 0;
@@ -274,9 +273,8 @@ void AnimManager::smkNextFrame(int buf) {
 		return;
 
 	// Loop
-	if (_smkAnims[buf]->getCurFrame() >= (int)_smkAnims[buf]->getFrameCount() - 1) {
+	if (_smkAnims[buf]->endOfVideo()) {
 		_smkAnims[buf]->rewind();
-		_smkAnims[buf]->decodeNextFrame(); // Skip frame 0
 	}
 
 	const Graphics::Surface *surface = _smkAnims[buf]->decodeNextFrame();
@@ -304,6 +302,13 @@ void AnimManager::smkSoundOnOff(int pos, bool on) {
 	_smkAnims[pos]->setMute(!on);
 }
 
+int16 AnimManager::smkCurFrame(int buf) {
+	if (_smkAnims[buf] == nullptr)
+		return -1;
+
+	return _smkAnims[buf]->getCurFrame();
+}
+
 void AnimManager::startSmkAnim(uint16 num) {
 	int pos;
 
@@ -326,7 +331,6 @@ void AnimManager::startSmkAnim(uint16 num) {
 	}
 
 	_playingAnims[pos] = num;
-	_curAnimFrame[pos] = 0;
 
 	// choose how to open
 	if (_animTab[num]._flag & SMKANIM_BKG) {
@@ -391,7 +395,6 @@ void AnimManager::stopSmkAnim(uint16 num) {
 	}
 
 	_playingAnims[pos] = 0;
-	_curAnimFrame[pos] = 0;
 
 	closeSmk(pos);
 
@@ -518,8 +521,6 @@ void AnimManager::refreshSmkAnim(int num) {
 	if (_smkAnims[pos] == nullptr)
 		return;
 
-	_curAnimFrame[pos]++;
-
 	refreshPalette(pos);
 
 	while (const Common::Rect *lastRect = _smkAnims[pos]->getNextDirtyRect()) {
@@ -537,7 +538,7 @@ void AnimManager::refreshSmkAnim(int num) {
 			}
 		}
 
-		if (_curAnimFrame[pos] > 0 && !intersects) {
+		if (smkCurFrame(pos) > 0 && !intersects) {
 			if (pos == kSmackerBackground) {
 				for (int32 a = 0; a < lastRect->height(); a++) {
 					byte2wordn(
@@ -552,7 +553,7 @@ void AnimManager::refreshSmkAnim(int num) {
 					         _vm->_screenBuffer + lastRect->left + (lastRect->top + a + TOP) * MAXX,
 					         lastRect->width() * 2);
 				}
-			} else if (_curAnimFrame[pos] > 1) {
+			} else if (smkCurFrame(pos) > 1) {
 				_animMinX = MIN((uint16)lastRect->left, _animMinX);
 				_animMinY = MIN((uint16)lastRect->top, _animMinY);
 
@@ -573,7 +574,7 @@ void AnimManager::refreshSmkAnim(int num) {
 		}
 	} else if (pos == kSmackerAction) {
 		// Only for the character
-		if (_curAnimFrame[kSmackerAction] == 1) {
+		if (smkCurFrame(kSmackerAction) == 1) {
 			for (uint16 b = 0; b < AREA; b++) {
 				for (uint16 a = 0; a < MAXX; a++) {
 					if (_smkBuffer[kSmackerAction][b * MAXX + a]) {
@@ -607,7 +608,7 @@ void AnimManager::refreshSmkAnim(int num) {
 	}
 
 	if (!(_animTab[num]._flag & SMKANIM_LOOP) && !(_animTab[num]._flag & SMKANIM_BKG)) {
-		if (_curAnimFrame[pos] >= _smkAnims[pos]->getFrameCount()) {
+		if (_smkAnims[pos]->endOfVideo()) {
 			stopSmkAnim(num);
 			g_vm->_flagPaintCharacter = true;
 
@@ -621,19 +622,14 @@ void AnimManager::refreshSmkAnim(int num) {
 	} else
 		smkNextFrame(pos);
 
-	if ((_smkAnims[pos] != nullptr) && (_curAnimFrame[pos] >= _smkAnims[pos]->getFrameCount())) {
+	if (_smkAnims[pos] != nullptr && _smkAnims[pos]->endOfVideo()) {
 		if ((_animTab[num]._flag & SMKANIM_LOOP) || (_animTab[num]._flag & SMKANIM_BKG))
 			InitAtFrameHandler(num, 0);
-
-		_curAnimFrame[pos] = 0;
 	}
 }
 
 void AnimManager::refreshSmkIcon(int StartIcon, int num) {
 	NightlongSmackerDecoder *smkDecoder = _smkAnims[kSmackerIcon];
-
-	//_curAnimFrame[kSmackerIcon]++;	// not needed
-
 	if (smkDecoder == nullptr)
 		return;
 

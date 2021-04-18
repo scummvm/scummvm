@@ -1621,7 +1621,7 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 		break;
 
 	case iPAPAVERINA:
-		if ((_vm->_useWith[WITH] == oCHOCOLATES4A) && ((_vm->_animMgr->_curAnimFrame[kSmackerBackground] < 370) || (_vm->_animMgr->_curAnimFrame[kSmackerBackground] > 480))) {
+		if ((_vm->_useWith[WITH] == oCHOCOLATES4A) && (_vm->_animMgr->smkCurFrame(kSmackerBackground) < 370 || _vm->_animMgr->smkCurFrame(kSmackerBackground) > 480)) {
 			_vm->playScript(s4AHELLEN);
 			_vm->_obj[oPULSANTE4A]._anim = a4A3;
 			*printSentence = false;
