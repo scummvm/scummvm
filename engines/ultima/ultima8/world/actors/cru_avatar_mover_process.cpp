@@ -171,7 +171,7 @@ void CruAvatarMoverProcess::handleCombatMode() {
 		} else {
 			nextanim = Animation::retreat;
 		}
-		waitFor(avatar->doAnim(nextanim, direction));
+		step(nextanim, direction);
 		return;
 	} else if (hasMovementFlags(MOVE_STEP)) {
 		if (avatar->isKneeling()) {
