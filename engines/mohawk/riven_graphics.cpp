@@ -36,7 +36,6 @@
 #include "graphics/fontman.h"
 #include "graphics/font.h"
 #include "graphics/fonts/ttf.h"
-#include "graphics/colormasks.h"
 
 namespace Mohawk {
 
@@ -271,8 +270,8 @@ public:
 	}
 
 	bool drawFrame(uint32 elapsed) override {
-		assert(_effectScreen->format == _mainScreen->format);
-		assert(_effectScreen->format == _system->getScreenFormat());
+		assert(_mainScreen->format.bytesPerPixel == 2);
+		assert(_effectScreen->format.bytesPerPixel == 2);
 
 		if (elapsed == _duration) {
 			_effectScreen->copyRectToSurface(*_mainScreen, 0, 0, Common::Rect(_mainScreen->w, _mainScreen->h));
@@ -288,8 +287,8 @@ public:
 				uint16 *dst = (uint16 *) screen->getBasePtr(0, y);
 				for (uint x = 0; x < _mainScreen->w; x++) {
 					uint8 r1, g1, b1, r2, g2, b2;
-					Graphics::colorToRGB< Graphics::ColorMasks<565> >(*src1++, r1, g1, b1);
-					Graphics::colorToRGB< Graphics::ColorMasks<565> >(*src2++, r2, g2, b2);
+					_mainScreen->format.colorToRGB(*src1++, r1, g1, b1);
+					_effectScreen->format.colorToRGB(*src2++, r2, g2, b2);
 
 					uint r = r1 * alpha + r2 * (255 - alpha);
 					uint g = g1 * alpha + g2 * (255 - alpha);
@@ -299,7 +298,7 @@ public:
 					g /= 255;
 					b /= 255;
 
-					*dst++ = (uint16) Graphics::RGBToColor< Graphics::ColorMasks<565> >(r, g, b);
+					*dst++ = (uint16) screen->format.RGBToColor(r, g, b);
 				}
 			}
 
@@ -329,7 +328,7 @@ RivenGraphics::RivenGraphics(MohawkEngine_Riven* vm) :
 	_bitmapDecoder = new MohawkBitmap();
 
 	// Restrict ourselves to a single pixel format to simplify the effects implementation
-	_pixelFormat = Graphics::createPixelFormat<565>();
+	_pixelFormat = Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0);
 	initGraphics(608, 436, &_pixelFormat);
 
 	// The actual game graphics only take up the first 392 rows. The inventory
