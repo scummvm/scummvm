@@ -304,6 +304,7 @@ void OpenGLSdlGraphicsManager::notifyResize(const int width, const int height) {
 	if (!_wantsFullScreen) {
 		ConfMan.setInt("last_window_width", currentWidth, Common::ConfigManager::kApplicationDomain);
 		ConfMan.setInt("last_window_height", currentHeight, Common::ConfigManager::kApplicationDomain);
+		ConfMan.flushToDisk();
 	}
 
 #else
