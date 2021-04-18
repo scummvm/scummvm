@@ -70,7 +70,7 @@ void Inventory::draw() {
 	if (_vm->isWideScreenModEnabled()) {
 		// Draw a black background to cover the main game frame
 		Common::Rect screen = _vm->_gfx->viewport();
-		_vm->_gfx->drawRect2D(Common::Rect(screen.width(), Renderer::kBottomBorderHeight), 0xFF000000);
+		_vm->_gfx->drawRect2D(Common::Rect(screen.width(), Renderer::kBottomBorderHeight), 0xFF, 0x00, 0x00, 0x00);
 	}
 
 	uint16 hoveredItemVar = hoveredItem();

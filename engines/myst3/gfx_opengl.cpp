@@ -25,7 +25,6 @@
 
 #if defined(USE_OPENGL_GAME) && !defined(USE_GLES2)
 
-#include "graphics/colormasks.h"
 #include "graphics/opengl/context.h"
 #include "graphics/surface.h"
 
@@ -130,10 +129,7 @@ void OpenGLRenderer::selectTargetWindow(Window *window, bool is3D, bool scaled) 
 	}
 }
 
-void OpenGLRenderer::drawRect2D(const Common::Rect &rect, uint32 color) {
-	uint8 a, r, g, b;
-	Graphics::colorToARGB< Graphics::ColorMasks<8888> >(color, a, r, g, b);
-
+void OpenGLRenderer::drawRect2D(const Common::Rect &rect, uint8 a, uint8 r, uint8 g, uint8 b) {
 	glDisable(GL_TEXTURE_2D);
 	glColor4f(r / 255.0, g / 255.0, b / 255.0, a / 255.0);
 

@@ -41,7 +41,6 @@
 
 #if defined(USE_GLES2) || defined(USE_OPENGL_SHADERS)
 
-#include "graphics/colormasks.h"
 #include "graphics/surface.h"
 
 #include "math/glmath.h"
@@ -187,10 +186,7 @@ void ShaderRenderer::selectTargetWindow(Window *window, bool is3D, bool scaled) 
 	}
 }
 
-void ShaderRenderer::drawRect2D(const Common::Rect &rect, uint32 color) {
-	uint8 a, r, g, b;
-	Graphics::colorToARGB< Graphics::ColorMasks<8888> >(color, a, r, g, b);
-
+void ShaderRenderer::drawRect2D(const Common::Rect &rect,  uint8 a, uint8 r, uint8 g, uint8 b) {
 	_boxShader->use();
 	_boxShader->setUniform("textured", false);
 	_boxShader->setUniform("color", Math::Vector4d(r / 255.0, g / 255.0, b / 255.0, a / 255.0));

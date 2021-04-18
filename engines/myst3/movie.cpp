@@ -29,8 +29,6 @@
 
 #include "common/config-manager.h"
 
-#include "graphics/colormasks.h"
-
 namespace Myst3 {
 
 Movie::Movie(Myst3Engine *vm, uint16 id) :

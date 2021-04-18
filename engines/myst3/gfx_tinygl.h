@@ -45,7 +45,7 @@ public:
 	Texture *createTexture(const Graphics::Surface *surface) override;
 	void freeTexture(Texture *texture) override;
 
-	virtual void drawRect2D(const Common::Rect &rect, uint32 color) override;
+	virtual void drawRect2D(const Common::Rect &rect, uint8 a, uint8 r, uint8 g, uint8 b) override;
 	virtual void drawTexturedRect2D(const Common::Rect &screenRect, const Common::Rect &textureRect, Texture *texture,
 	                                float transparency = -1.0, bool additiveBlending = false) override;
 	virtual void drawTexturedRect3D(const Math::Vector3d &topLeft, const Math::Vector3d &bottomLeft,
