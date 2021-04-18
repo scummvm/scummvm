@@ -276,6 +276,15 @@ Blade Runner
    * - Eugene Sandulenko
      -
 
+Buried
+^^^^^^
+
+.. list-table::
+   :widths: 35 65
+
+   * - Matthew Hoops
+     -
+
 CGE
 ^^^
 
@@ -2442,7 +2451,7 @@ Janusz Wiśniewski and Miroslaw Liminowicz from Laboratorium Komputerowe Avalon 
 
 Jan Nedoma for providing the sources to the Wintermute-engine, and for his support while porting the engine to ScummVM.
 
-Bob Bell, Michel Kripalani, Tommy Yune, from Presto Studios for providing the source code of The Journeyman Project: Pegasus Prime.
+Bob Bell, David Black, Michel Kripalani, and Tommy Yune from Presto Studios for providing the source code of The Journeyman Project: Pegasus Prime and The Journeyman Project 2: Buried in Time.
 
 Electronic Arts IP Preservation Team, particularly Stefan Serbicki, and Vasyl Tsvirkunov of Electronic Arts for providing the source code of the two Lost Files of Sherlock Holmes games. James M. Ferguson and Barry Duncan for their tenacious efforts to recover the sources.
 
