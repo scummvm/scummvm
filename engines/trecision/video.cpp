@@ -278,7 +278,8 @@ void AnimManager::smkNextFrame(int buf) {
 	}
 
 	const Graphics::Surface *surface = _smkAnims[buf]->decodeNextFrame();
-	_smkBuffer[buf] = (uint8 *)surface->getPixels();
+	if (surface)
+		_smkBuffer[buf] = (uint8 *)surface->getPixels();
 }
 
 void AnimManager::smkGoto(int buf, int num) {
@@ -499,6 +500,7 @@ void AnimManager::byte2wordn(void *dest, void *src, const uint16 *smk, void *pal
 }
 
 void AnimManager::refreshSmkAnim(int num) {
+	uint16 *backgroundPtr = g_vm->_graphicsMgr->getBackgroundPtr();
 	if (num == 0)
 		return;
 
@@ -549,7 +551,7 @@ void AnimManager::refreshSmkAnim(int num) {
 						lastRect->width()
 					);
 
-					memcpy(ImagePointer + lastRect->left + (lastRect->top + a) * MAXX,
+					memcpy(backgroundPtr + lastRect->left + (lastRect->top + a) * MAXX,
 					         _vm->_screenBuffer + lastRect->left + (lastRect->top + a + TOP) * MAXX,
 					         lastRect->width() * 2);
 				}

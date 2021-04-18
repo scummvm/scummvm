@@ -3642,7 +3642,6 @@ void LogicManager::doMouseLeftRight() {
 			if ((_vm->_curObj >= oWHEEL1A2C) && (_vm->_curObj <= oWHEEL12C2C))
 				_wheel = (_vm->_curObj - oWHEEL1A2C) % 3;
 			else if (_vm->_curObj == oPULSANTE2C) {
-				extern uint16 *ImagePointer;
 				if (_vm->_curMessage->_event == ME_MLEFT) {
 					doEvent(MC_ACTION, ME_MOUSEEXAMINE, MP_DEFAULT, 0, 0, 0, _vm->_curObj);
 					return;
@@ -3666,7 +3665,7 @@ void LogicManager::doMouseLeftRight() {
 				_vm->_obj[oWHEELS2C]._mode |= OBJMODE_OBJSTATUS;
 				_vm->_flagShowCharacter = true;
 				RegenRoom();
-				_vm->_graphicsMgr->copyToSmkBackground(ImagePointer);
+				_vm->_graphicsMgr->resetSmkBackground();
 				_vm->_animMgr->startSmkAnim(_vm->_room[_vm->_curRoom]._bkgAnim);
 
 				// right combination

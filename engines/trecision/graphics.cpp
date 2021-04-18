@@ -36,6 +36,7 @@ GraphicsManager::GraphicsManager(TrecisionEngine *vm) : _vm(vm) {
 }
 
 GraphicsManager::~GraphicsManager() {
+	_background.free();
 	_smkBackground.free();
 }
 
@@ -60,6 +61,8 @@ bool GraphicsManager::initScreen() {
 	_bitMask[2] = _screenFormat.bMax() << _screenFormat.bShift;
 
 	clearScreen();
+
+	_background.create(MAXX, MAXY * 4, _screenFormat);
 	_smkBackground.create(MAXX, AREA, _screenFormat);
 	
 	return true;
@@ -82,20 +85,30 @@ void GraphicsManager::copyToScreen(int x, int y, int w, int h) {
 	);
 }
 
-void GraphicsManager::copyToSmkBackground(uint16 *buffer) {
-	memcpy(_smkBackground.getPixels(), buffer, MAXX * AREA * 2);
+void GraphicsManager::resetSmkBackground() {
+	_smkBackground.copyRectToSurface(_background.getPixels(), _background.pitch, 0, 0, MAXX, AREA);
+}
+
+void GraphicsManager::resetScreenBuffer(bool hasAnimatedBg) {
+	memset(g_vm->_screenBuffer, 0, MAXX * MAXY * 2);
+	if (hasAnimatedBg)
+		memcpy(_background.getPixels(), _smkBackground.getPixels(), MAXX * AREA * 2);
+	memcpy(g_vm->_screenBuffer + TOP * MAXX, _background.getPixels(), MAXX * AREA * 2);
+}
+
+uint16 *GraphicsManager::getBackgroundPtr() {
+	return (uint16 *)_background.getPixels();
 }
 
 const uint16 *GraphicsManager::getSmkBackgroundPtr(int x, int y) {
+	assert(x < MAXX && y < AREA);
 	return (const uint16 *)_smkBackground.getBasePtr(x, y);
 }
 
 void GraphicsManager::putPixel(int x, int y, uint16 color) {
-	extern uint16 *ImagePointer;
-
-	if ((x > 0) && (x < MAXX) && (y > 60) && (y < 420)) {
+	if (x > 0 && x < MAXX && y > 60 && y < 420) {
 		g_vm->_screenBuffer[x + MAXX * y] = color;
-		ImagePointer[x + MAXX * (y - 60)] = color;
+		_background.setPixel(x, y - 60, color);
 		_smkBackground.setPixel(x, y - 60, color);
 	}
 }

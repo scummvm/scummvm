@@ -68,12 +68,10 @@ void RedrawRoom() {
 		VideoObjStatus[i] = false;
 	}
 
-	memset(g_vm->_screenBuffer, 0, MAXX * MAXY * 2);
-	if (g_vm->_room[g_vm->_curRoom]._bkgAnim)
-		memcpy(ImagePointer, g_vm->_graphicsMgr->getSmkBackgroundPtr(0, 0), MAXX * AREA * 2);
-	memcpy(g_vm->_screenBuffer + TOP * MAXX, ImagePointer, MAXX * AREA * 2);
+	const bool hasBgAnim = g_vm->_room[g_vm->_curRoom]._bkgAnim;
+	g_vm->_graphicsMgr->resetScreenBuffer(hasBgAnim);
 
-	if (g_vm->_room[g_vm->_curRoom]._bkgAnim)
+	if (hasBgAnim)
 		g_vm->_animMgr->startSmkAnim(g_vm->_room[g_vm->_curRoom]._bkgAnim);
 
 	if ((g_vm->_curRoom == r4P) && (_curDialog == dF4PI)) {
