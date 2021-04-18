@@ -338,7 +338,7 @@ void World::save(Common::WriteStream *ws) {
 	ws->writeUint16LE(_currentMap->_eggHatcher);
 
 	if (GAME_IS_CRUSADER) {
-		ws->writeByte(_alertActive ? 0 : 1);
+		ws->writeByte(_alertActive ? 1 : 0);
 		ws->writeByte(_difficulty);
 	}
 
