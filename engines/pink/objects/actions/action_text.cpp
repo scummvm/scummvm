@@ -175,17 +175,28 @@ void ActionText::loadBorder(Graphics::MacWindow *target, Common::String filename
 }
 
 void ActionText::draw(Graphics::ManagedSurface *surface) {
-	// not working
+	// alignment not working, thus we implement alignment for center manually
 	Graphics::TextAlign alignment = _centered ? Graphics::kTextAlignCenter : Graphics::kTextAlignLeft;
 	if (!_centered && _actor->getPage()->getGame()->getLanguage() == Common::HE_ISR) {
 		alignment = Graphics::kTextAlignRight;
 	}
-	Graphics::MacFont *font = new Graphics::MacFont();
+	int xOffset = 0, yOffset = 0;
+	Graphics::MacFont *font = nullptr;
+	if (_centered) {
+		font = new Graphics::MacFont(Graphics::kMacFontChicago, 12, Graphics::kMacFontBold);
+	} else {
+		font = new Graphics::MacFont();
+	}
 	Director *director = _actor->getPage()->getGame()->getDirector();
 	Graphics::MacText text(_text, &director->getWndManager(), font, _textColorIndex, _backgroundColorIndex, _xRight - _xLeft, alignment);
 	// we need to first fill this area with backgroundColor, in order to wash away the previous text
 	surface->fillRect(Common::Rect(_xLeft, _yTop, _xRight, _yBottom), _backgroundColorIndex);
-	text.drawToPoint(surface, Common::Rect(0, 0, _xRight - _xLeft, _yBottom - _yTop), Common::Point(_xLeft, _yTop));
+
+	if (_centered) {
+		xOffset = (_xRight - _xLeft) / 2 - text.getTextMaxWidth() / 2;
+		yOffset = (_yBottom - _yTop) / 2 - text.getTextHeight() / 2;
+	}
+	text.drawToPoint(surface, Common::Rect(0, 0, _xRight - _xLeft, _yBottom - _yTop), Common::Point(_xLeft + xOffset, _yTop + yOffset));
 }
 
 #define BLUE(rgb) ((rgb) & 0xFF)
