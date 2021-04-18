@@ -34,7 +34,6 @@
 #include "common/textconsole.h"
 #include "engines/metaengine.h"
 #include "engines/util.h"
-#include "graphics/colormasks.h"
 #include "graphics/cursorman.h"
 #include "graphics/font.h"
 #include "graphics/fontman.h"
