@@ -299,6 +299,13 @@ void OpenGLSdlGraphicsManager::notifyResize(const int width, const int height) {
 	debug(3, "req: %d x %d  cur: %d x %d, scale: %d", width, height, currentWidth, currentHeight, scale);
 
 	handleResize(currentWidth, currentHeight);
+
+	// Remember window size in windowed mode
+	if (!_wantsFullScreen) {
+		ConfMan.setInt("last_window_width", currentWidth, Common::ConfigManager::kApplicationDomain);
+		ConfMan.setInt("last_window_height", currentHeight, Common::ConfigManager::kApplicationDomain);
+	}
+
 #else
 	if (!_ignoreResizeEvents && _hwScreen && !(_hwScreen->flags & SDL_FULLSCREEN)) {
 		// We save that we handled a resize event here. We need to know this
@@ -329,9 +336,19 @@ bool OpenGLSdlGraphicsManager::loadVideoMode(uint requestedWidth, uint requested
 	_lastRequestedWidth  = requestedWidth;
 	_lastRequestedHeight = requestedHeight;
 
-	// Apply the currently saved scale setting.
-	requestedWidth  *= _graphicsScale;
-	requestedHeight *= _graphicsScale;
+	if (ConfMan.hasKey("last_window_width", Common::ConfigManager::kApplicationDomain) && ConfMan.hasKey("last_window_height", Common::ConfigManager::kApplicationDomain)) {
+		requestedWidth  = ConfMan.getInt("last_window_width", Common::ConfigManager::kApplicationDomain);
+		requestedHeight = ConfMan.getInt("last_window_height", Common::ConfigManager::kApplicationDomain);
+	} else {
+		// Set the basic window size based on the desktop resolution
+		Common::Rect desktopRes = _window->getDesktopResolution();
+		requestedWidth  = desktopRes.width()  * 0.3f;
+		requestedHeight = desktopRes.height() * 0.4f;
+
+		// Apply scaler
+		requestedWidth  *= _graphicsScale;
+		requestedHeight *= _graphicsScale;
+	}
 
 	// Set up the mode.
 	return setupMode(requestedWidth, requestedHeight);
