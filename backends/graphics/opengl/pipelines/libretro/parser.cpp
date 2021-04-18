@@ -443,7 +443,7 @@ bool PresetParser::parsePassScale(const uint id, ShaderPass *pass) {
 #undef passKey
 
 ShaderPreset *parsePreset(const Common::String &fileName) {
-	Common::FSNode fileNode(fileName);
+	Common::FSNode fileNode("./shaders/presets/" + fileName);
 	if (!fileNode.exists() || !fileNode.isReadable() || fileNode.isDirectory()) {
 		warning("LibRetro Preset Parsing: No such readable file '%s'", fileName.c_str());
 		return nullptr;
