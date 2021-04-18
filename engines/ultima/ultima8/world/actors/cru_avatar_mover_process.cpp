@@ -425,6 +425,9 @@ void CruAvatarMoverProcess::step(Animation::Sequence action, Direction direction
 
 void CruAvatarMoverProcess::tryAttack() {
 	Actor *avatar = getControlledActor();
+	if (!avatar)
+		return;
+
 	Direction dir = avatar->getDir();
 	if (!avatar->isInCombat()) {
 		avatar->setInCombat(0);
