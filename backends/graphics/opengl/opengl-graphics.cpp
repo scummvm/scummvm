@@ -1081,10 +1081,15 @@ void OpenGLGraphicsManager::notifyContextCreate(ContextType type,
 
 #if !USE_FORCED_GLES
 	if (OpenGLContext.shadersSupported) {
-		ShaderMan.notifyCreate();
-		//_pipeline = new ShaderPipeline(ShaderMan.query(ShaderManager::kDefault)); FIXME
-		//_pipeline = new LibRetroPipeline("shaders/glsl/crt/crt-hyllian-glow.glslp");
-		_pipeline = new LibRetroPipeline("shaders/glsl/crt/crt-geom.glslp");
+			ShaderMan.notifyCreate();
+			//_pipeline = new ShaderPipeline(ShaderMan.query(ShaderManager::kDefault)); FIXME
+
+			// Load selected shader preset from config file
+			if (ConfMan.hasKey("shader_scaler", Common::ConfigManager::kApplicationDomain)) {
+				_pipeline = new LibRetroPipeline(ConfMan.get("shader_scaler", Common::ConfigManager::kApplicationDomain));;
+			} else {
+				// Use some sort of default value
+		}
 	}
 #endif
 
