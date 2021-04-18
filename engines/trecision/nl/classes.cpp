@@ -21,6 +21,7 @@
  */
 
 #include "common/scummsys.h"
+#include "graphics/scaler.h"
 #include "trecision/nl/3d/3dinc.h"
 #include "trecision/nl/define.h"
 #include "trecision/nl/extern.h"
@@ -394,7 +395,7 @@ void doIdle() {
 			doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, rSYS, 0, 0, c);
 			g_vm->_flagShowCharacter = false;
 			g_vm->_flagCharacterExists = false;
-			IconSnapShot();
+			::createThumbnailFromScreen(&g_vm->_thumbnail);
 		}
 		break;
 
@@ -410,7 +411,7 @@ void doIdle() {
 			doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, rSYS, 0, 0, c);
 			g_vm->_flagShowCharacter = false;
 			g_vm->_flagCharacterExists = false;
-			IconSnapShot();
+			::createThumbnailFromScreen(&g_vm->_thumbnail);
 		}
 		break;
 
@@ -419,7 +420,7 @@ void doIdle() {
 		if (!g_vm->_flagSomeoneSpeaks && !g_vm->_flagscriptactive && !g_vm->_flagDialogActive && !g_vm->_flagDialogMenuActive
 		&& (g_vm->_actor->_curAction < hWALKIN) && !g_vm->_flagUseWithStarted && g_vm->_flagShowCharacter
 		&& !g_vm->_animMgr->_playingAnims[kSmackerAction]) {
-			IconSnapShot();
+			::createThumbnailFromScreen(&g_vm->_thumbnail);
 			DataSave();
 			g_vm->showInventoryName(NO_OBJECTS, false);
 			doEvent(MC_INVENTORY, ME_SHOWICONNAME, MP_DEFAULT, g_vm->_mouseX, g_vm->_mouseY, 0, 0);
@@ -432,7 +433,7 @@ void doIdle() {
 		if (!g_vm->_flagSomeoneSpeaks && !g_vm->_flagscriptactive && !g_vm->_flagDialogActive && !g_vm->_flagDialogMenuActive
 		&& (g_vm->_actor->_curAction < hWALKIN) && !g_vm->_flagUseWithStarted && g_vm->_flagShowCharacter
 		&& !g_vm->_animMgr->_playingAnims[kSmackerAction]) {
-			IconSnapShot();
+			::createThumbnailFromScreen(&g_vm->_thumbnail);
 			if (!DataLoad()) {
 				g_vm->showInventoryName(NO_OBJECTS, false);
 				doEvent(MC_INVENTORY, ME_SHOWICONNAME, MP_DEFAULT, g_vm->_mouseX, g_vm->_mouseY, 0, 0);

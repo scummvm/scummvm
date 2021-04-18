@@ -245,9 +245,6 @@ void SDText::DText(uint16 *frameBuffer) {
 }
 
 #define MAXSAVEFILE		12
-void IconSnapShot() {
-	::createThumbnailFromScreen(&g_vm->_thumbnail);
-}
 
 Graphics::Surface *convertScummVMThumbnail(Graphics::Surface *thumbnail) {
 	Graphics::Surface *thumbnailConverted = thumbnail->convertTo(g_system->getScreenFormat());
