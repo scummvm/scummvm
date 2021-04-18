@@ -121,6 +121,13 @@ void ActionText::start() {
 		_txtWnd->setSelectable(false);
 
 		_txtWnd->appendText(_text, font);
+		// if the textHeight is smaller than the area we display the text, then we disable the scrollbar
+		if (_txtWnd->getTextHeight() < _txtWnd->getInnerDimensions().height()) {
+			_txtWnd->disableBorder();
+			_txtWnd->enableScrollbar(false);
+			_txtWnd->resize(_xRight - _xLeft, _yBottom - _yTop);
+			_txtWnd->draw(true);
+		}
 		director->addTextWindow(_txtWnd);
 
 	} else {

@@ -62,6 +62,7 @@ public:
 	void clearSelection();
 	Common::U32String cutSelection();
 	const SelectedText *getSelectedText() { return &_selectedText; }
+	int getTextHeight() { return _mactext->getTextHeight(); }
 
 private:
 	bool isCutAllowed();
