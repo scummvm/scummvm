@@ -345,9 +345,10 @@ Item *CurrentMap::findBestTargetItem(int32 x, int32 y, Direction dir, DirectionM
 	bool bestisoccl = false;
 	Item *bestitem = nullptr;
 	int bestdist = 0xffff;
+	const uint16 controllednpc = World::get_instance()->getControlledNPCNum();
 
 	for (int i = 0; i < MAP_NUM_TARGET_ITEMS; i++) {
-		if (_targets[i] == 0)
+		if (_targets[i] == 0 || _targets[i] == controllednpc)
 			continue;
 		Item *item = getItem(_targets[i]);
 		// FIXME: this should probably always be non-null,
