@@ -106,6 +106,9 @@ void MacTextWindow::appendText(const Common::U32String &str, const MacFont *macF
 
 		updateCursorPos();
 	}
+
+	if (_wm->_mode & kWMModeWin95)
+		calcScrollBar();
 }
 
 void MacTextWindow::appendText(const Common::String &str, const MacFont *macFont, bool skipAdd) {
