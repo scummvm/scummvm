@@ -139,6 +139,27 @@ const char *story2[27] = {
 	"and I am free to die as I please."
 };
 
+#ifdef USE_TTS
+int textToSpeech(int nextparagraph, const char *story[], int arraysize) { 
+Common::TextToSpeechManager *_ttsMan = g_system->getTextToSpeechManager();
+if (_ttsMan != nullptr && ConfMan.getBool("tts_enabled")) {
+	if ((_ttsMan->isSpeaking()) == false) {
+		Common::String paragraph;
+		while (nextparagraph < arraysize && story[nextparagraph][0] != ' ') {
+			paragraph += story[nextparagraph];
+			paragraph += " ";
+			nextparagraph += 1;
+		}
+		while (nextparagraph < arraysize && story[nextparagraph][0] == ' ') {
+			nextparagraph += 1;
+		}
+		_ttsMan->say(paragraph);
+	}
+}
+	return nextparagraph;
+}
+#endif
+
 void GriffonEngine::showLogos() {
 	_ticks = g_system->getMillis();
 	int ticks1 = _ticks;
@@ -188,6 +209,7 @@ void GriffonEngine::showLogos() {
 }
 
 void GriffonEngine::intro() {
+
 	_videoBuffer2->fillRect(Common::Rect(0, 0, _videoBuffer2->w, _videoBuffer2->h), 0);
 	_videoBuffer3->fillRect(Common::Rect(0, 0, _videoBuffer3->w, _videoBuffer3->h), 0);
 
@@ -214,6 +236,7 @@ void GriffonEngine::intro() {
 	float xofs = 0.0;
 	float ld = 0.0;
 	int nextparagraph = 10;
+
 	do {
 		Common::Rect rc;
 
@@ -240,31 +263,14 @@ void GriffonEngine::intro() {
 			cnt = 0;
 			y--;
 		}
-
-		#ifdef USE_TTS
-			Common::TextToSpeechManager *_ttsMan = g_system->getTextToSpeechManager();
-		#endif	
 		
 		for (int i = 0; i < ARRAYSIZE(story); i++) {
 			int yy = y + i * 10;
-			#ifdef USE_TTS
-			if (_ttsMan != nullptr && ConfMan.getBool("tts_enabled")){
-				if ((_ttsMan -> isSpeaking()) == false) {
-				Common::String paragraph;
-				if (i == nextparagraph) {
-					while (nextparagraph < ARRAYSIZE(story) && story[nextparagraph][0] != ' ') {
-						paragraph += story[nextparagraph];
-						paragraph += " ";
-						nextparagraph += 1;
-					}
-					while (nextparagraph < ARRAYSIZE(story) && story[nextparagraph][0] == ' ') {
-						nextparagraph += 1;
-					}
-					_ttsMan -> say(paragraph);
-				}
-				}
-			}
-			#endif
+
+		#ifdef USE_TTS
+			if (i == nextparagraph) nextparagraph = textToSpeech(nextparagraph, story, ARRAYSIZE(story));
+		#endif
+
 			if (yy > -8 && yy < 240) {
 				int x = 160 - strlen(story[i]) * 4;
 				drawString(_videoBuffer, story[i], x, yy, 4);
@@ -398,30 +404,13 @@ void GriffonEngine::endOfGame() {
 
 		y = y - spd * _fpsr;
 
-		#ifdef USE_TTS
-			Common::TextToSpeechManager *_ttsMan = g_system->getTextToSpeechManager();
-		#endif
-
 		for (int i = 0; i < ARRAYSIZE(story2); i++) {
 			int yy = y + i * 10;
-			#ifdef USE_TTS
-			if (_ttsMan != nullptr && ConfMan.getBool("tts_enabled")){
-				if ((_ttsMan -> isSpeaking()) == false) {
-				Common::String paragraph;
-				if (i == nextparagraph) {
-					while (nextparagraph < ARRAYSIZE(story2) && story2[nextparagraph][0] != ' ') {
-						paragraph += story2[nextparagraph];
-						paragraph += " ";
-						nextparagraph += 1;
-					}
-					while (nextparagraph < ARRAYSIZE(story2) && story2[nextparagraph][0] == ' ') {
-						nextparagraph += 1;
-					}
-					_ttsMan -> say(paragraph);
-				}
-				}
-			}
-			#endif
+
+		#ifdef USE_TTS
+			if (i == nextparagraph) nextparagraph = textToSpeech(nextparagraph, story2, ARRAYSIZE(story2));
+		#endif
+			
 			if (yy > -8 && yy < 240) {
 				int x = 160 - strlen(story2[i]) * 4;
 				drawString(_videoBuffer, story2[i], x, yy, 4);
