@@ -67,7 +67,7 @@ protected:
 		int realWidth, realHeight;
 		SDL_GL_GetDrawableSize(_window->getSDLWindow(), &realWidth, &realHeight);
 		int scale = realWidth / windowWidth;
-		debug(4, "window: %dx%d drawable: %dx%d scale: %d", windowWidth, windowHeight, realWidth, realHeight, scale);
+		debug(9, "window: %dx%d drawable: %dx%d scale: %d", windowWidth, windowHeight, realWidth, realHeight, scale);
 		return scale;
 #else
 		return 1;
