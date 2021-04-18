@@ -51,6 +51,7 @@ public:
 private:
 
 	void findColorsInPalette();
+	void loadBorder(Graphics::MacWindow *target, Common::String filename, uint32 flags);
 
 private:
 	Common::String _fileName;
