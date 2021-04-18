@@ -34,14 +34,14 @@ static void fChgMode(ArgArray args) {
 	// assert types
 	assert (args.size() == 2 || args.size() == 3);
 	if (args.size() == 2)
-		debugC(1, kPrivateDebugScript, "ChgMode(%d, %s)", args[0].u.val, args[1].u.str);
+		debugC(1, kPrivateDebugScript, "ChgMode(%d, %s)", args[0].u.val, args[1].u.sym->name->c_str());
 	else if (args.size() == 3)
 		debugC(1, kPrivateDebugScript, "ChgMode(%d, %s, %s)", args[0].u.val, args[1].u.str, args[2].u.sym->name->c_str());
 	else
 		assert(0);
 
 	g_private->_mode = args[0].u.val;
-	g_private->_nextSetting = args[1].u.str;
+	g_private->_nextSetting = args[1].u.sym->name->c_str();
 
 	if (g_private->_mode == 0) {
 		g_private->_origin = Common::Point(kOriginZero[0], kOriginZero[1]);
@@ -407,7 +407,7 @@ static void fExit(ArgArray args) {
 	if (args[0].type == NUM && args[0].u.val == 0)
 		e.nextSetting = "";
 	else
-		e.nextSetting = args[0].u.str;
+		e.nextSetting = args[0].u.sym->name->c_str();
 
 	if (args[1].type == NUM && args[1].u.val == 0)
 		e.cursor = "";
@@ -415,8 +415,9 @@ static void fExit(ArgArray args) {
 		e.cursor = *args[1].u.sym->name;
 
 	if (args[2].type == NAME) {
-		assert(args[2].u.sym->type == RECT);
-		args[2].u.rect = args[2].u.sym->u.rect;
+		Symbol *rect = g_private->maps.lookupRect(args[2].u.sym->name);
+		assert(rect->type == RECT);
+		args[2].u.rect = rect->u.rect;
 	}
 
 	e.rect = *args[2].u.rect;
@@ -564,7 +565,7 @@ static void _fMask(ArgArray args, bool drawn) {
 	int x = 0;
 	int y = 0;
 	const char *f = args[0].u.str;
-	const char *e = args[1].u.str;
+	const char *e = args[1].u.sym->name->c_str();
 	Common::String *c = args[2].u.sym->name;
 
 	if (args.size() == 5) {
@@ -710,13 +711,13 @@ static void fTimer(ArgArray args) {
 	assert (args.size() == 2 || args.size() == 3);
 
 	if (args.size() == 3)
-		debugC(1, kPrivateDebugScript, "Timer(%d, %s, %s)", args[0].u.val, args[1].u.str, args[2].u.str);
+		debugC(1, kPrivateDebugScript, "Timer(%d, %s, %s)", args[0].u.val, args[1].u.sym->name->c_str(), args[2].u.sym->name->c_str());
 	else
 		debugC(1, kPrivateDebugScript, "Timer(%d, %s)", args[0].u.val, args[1].u.str);
 
 	int32 delay = 1000000 * args[0].u.val;
 	// This pointer is necessary since installTimer needs one
-	Common::String *s = new Common::String(args[1].u.str);
+	Common::String *s = new Common::String(args[1].u.sym->name->c_str());
 	if (delay > 0) {
 		assert(g_private->installTimer(delay, s));
 	} else if (delay == 0) {

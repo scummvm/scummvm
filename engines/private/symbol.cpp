@@ -89,8 +89,14 @@ static Symbol *install(const Common::String &n, int t, int d, const char *s, Com
 	sp = (Symbol *)malloc(sizeof(Symbol));
 	sp->name = name;
 	sp->type = t;
-	if (t == NUM || t == NAME)
+	if (t == NUM) {
+		sp->u.val = d; 
+		debug("install NUM: %s %d", name->c_str(), d);
+	}
+	else if (t == NAME) {
 		sp->u.val = d;
+		debug("installing NAME: %s %d", name->c_str(), d);
+	}
 	else if (t == STRING)
 		sp->u.str = scumm_strdup(s); // FIXME: leaks a string here.
 	else if (t == RECT)
@@ -103,9 +109,18 @@ static Symbol *install(const Common::String &n, int t, int d, const char *s, Com
 	return sp;
 }
 
+
+/* lookup some name in some symbol table */
+Symbol *SymbolMaps::lookupRect(Common::String *n) {
+	debug("looking rect up %s", n->c_str());
+
+	assert(rects.contains(*n));
+	return lookup(*n, rects);
+}
+
 /* lookup some name in some symbol table */
 Symbol *SymbolMaps::lookupName(const char *n) {
-	//debug("looking up %s", n);
+	debug("looking up %s", n);
 	Common::String s(n);
 
 	if (settings.contains(s))
@@ -139,7 +154,7 @@ void SymbolMaps::installAll(const char *n) {
 		//debug("name %s", s.c_str());
 		if (strcmp(n, "settings") == 0) {
 			assert(r == NULL);
-			install(s, STRING, 0, s.c_str(), r, &settings);
+			install(s, NAME, 0, s.c_str(), r, &settings);
 		} else if (strcmp(n, "variables") == 0) {
 			assert(r == NULL);
 			install(s, NAME, 0, NULL, r, &variables);
