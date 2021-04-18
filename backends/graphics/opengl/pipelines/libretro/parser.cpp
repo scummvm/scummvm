@@ -449,7 +449,7 @@ ShaderPreset *parsePreset(const Common::String &fileName) {
 		return nullptr;
 	}
 
-	Common::FSNode basePath(".");
+	Common::FSNode basePath("./shaders/presets/");
 	if (!basePath.exists() || !basePath.isReadable() || !basePath.isDirectory()) {
 		warning("LibRetro Preset Parsing: Base path '%s' to file '%s' invalid", basePath.getPath().c_str(), fileName.c_str());
 		return nullptr;
