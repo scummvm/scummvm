@@ -397,6 +397,23 @@ static const MadeGameDescription gameDescriptions[] = {
 		2,
 	},
 
+	// Bugreport #5855
+	{
+		{
+			"manhole",
+			_s("The game is using unsupported engine"),
+			AD_ENTRY1s("manhole.dat", "df77ad5232757d7149342fb6471de4ed", 99317),
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_UNSUPPORTED,
+			GUIO1(GUIO_NOSPEECH)
+		},
+		GID_MANHOLE,
+		0,
+		GF_CD,
+		2,
+	},
+
 	{
 		// The Manhole: New and Enhanced
 		{
