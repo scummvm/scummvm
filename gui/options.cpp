@@ -2375,7 +2375,7 @@ void GlobalOptionsDialog::apply() {
 
 	int oldGuiBase = ConfMan.getInt("gui_base");
 	ConfMan.setInt("gui_base", _guiBasePopUp->getSelectedTag(), _domain);
-	if (oldGuiBase != _guiBasePopUp->getSelectedTag())
+	if (oldGuiBase != (int)_guiBasePopUp->getSelectedTag())
 		g_gui.computeScaleFactor();
 
 	ConfMan.setInt("autosave_period", _autosavePeriodPopUp->getSelectedTag(), _domain);
