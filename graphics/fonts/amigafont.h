@@ -64,8 +64,6 @@ class AmigaFont : public Font {
 	uint32			_pitch;
 	int             _maxCharWidth;
 
-	bool            _needCleanup;
-
 private:
 	uint16 getPixels(byte c) const;
 	uint16 getOffset(byte c) const;
