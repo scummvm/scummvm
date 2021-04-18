@@ -2984,6 +2984,7 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 			Common::FSNode dir(browser.getResult());
 			_shaderPath->setLabel(dir.getPath());
 			g_gui.scheduleTopDialogRedraw();
+			warning("Dialog triggered, there be dragons and the scaling scanner dialog!");
 		}
 		break;
 	}
