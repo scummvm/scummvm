@@ -153,7 +153,6 @@ void doScreenUseWithScreen() {
 	if (!g_vm->_useWith[USED] || !g_vm->_useWith[WITH])
 		warning("doScreenUseWithScreen - _useWith not set properly");
 
-//	stopSmkAnim(_inventoryObj[_useWith[USED]]._anim);
 	if (_characterInMovement)
 		return;
 

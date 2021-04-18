@@ -146,7 +146,7 @@ void TrecisionEngine::doInventory() {
 				doEvent(MC_ACTION, ME_USEWITH, MP_DEFAULT, 0, 0, 0, 0);
 				_lightIcon = 0xFF;
 			} else {
-				_animMgr->stopSmkAnim(_inventoryObj[_useWith[USED]]._anim);
+				_animMgr->smkStop(kSmackerIcon);
 				showInventoryName(_curInventory, true);
 				_lightIcon = _curInventory;
 			}
@@ -180,7 +180,7 @@ void TrecisionEngine::doInventory() {
 				doEvent(MC_ACTION, ME_USEWITH, MP_DEFAULT, 0, 0, 0, 0);
 				_lightIcon = 0xFF;
 			} else {
-				_animMgr->stopSmkAnim(_inventoryObj[_useWith[USED]]._anim);
+				_animMgr->smkStop(kSmackerIcon);
 				showInventoryName(_curInventory, true);
 				_lightIcon = _curInventory;
 			}
@@ -369,7 +369,7 @@ void TrecisionEngine::doInventoryUseWithInventory() {
 	if (!_useWith[USED] || !_useWith[WITH])
 		warning("doInventoryUseWithInventory - _useWith not set properly");
 
-	_animMgr->stopSmkAnim(_inventoryObj[_useWith[USED]]._anim);
+	_animMgr->smkStop(kSmackerIcon);
 
 	bool refreshInventory, printSentence;
 	_logicMgr->useInventoryWithInventory(&refreshInventory, &printSentence);
@@ -387,7 +387,7 @@ void TrecisionEngine::doInventoryUseWithScreen() {
 	if (!_useWith[USED] || !_useWith[WITH])
 		warning("doInventoryUseWithScreen - _useWith not set properly");
 
-	_animMgr->stopSmkAnim(_inventoryObj[_useWith[USED]]._anim);
+	_animMgr->smkStop(kSmackerIcon);
 	if (_characterInMovement)
 		return;
 	

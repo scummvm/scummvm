@@ -2575,7 +2575,7 @@ bool LogicManager::mouseOperate(uint16 curObj) {
 
 	case oWHEELS2C:
 		if (!(_vm->_obj[od2CALLA2D]._mode & OBJMODE_OBJSTATUS)) {
-			_vm->_animMgr->stopSmkAnim(_vm->_room[_vm->_curRoom]._bkgAnim);
+			_vm->_animMgr->smkStop(kSmackerBackground);
 			_vm->_animMgr->_animTab[aBKG2C]._flag |= SMKANIM_OFF1;
 			_vm->_obj[oBASEWHEELS2C]._mode |= OBJMODE_OBJSTATUS;
 			_vm->_obj[omWHEELS2C]._mode |= OBJMODE_OBJSTATUS;
@@ -3721,7 +3721,7 @@ void LogicManager::doMouseLeftRight() {
 				if (_vm->_flagUseWithStarted) {
 					if (_vm->_useWithInv[USED]) {
 						_vm->_lightIcon = 0xFF;
-						_vm->_animMgr->stopSmkAnim(_vm->_inventoryObj[_vm->_useWith[USED]]._anim);
+						_vm->_animMgr->smkStop(kSmackerIcon);
 						_vm->setInventoryStart(_vm->_inventoryRefreshStartIcon, INVENTORY_HIDE);
 						_vm->_flagInventoryLocked = false;
 					}
@@ -3741,7 +3741,7 @@ void LogicManager::doMouseLeftRight() {
 				if (_vm->_flagUseWithStarted) {
 					if (_vm->_useWithInv[USED]) {
 						_vm->_lightIcon = 0xFF;
-						_vm->_animMgr->stopSmkAnim(_vm->_inventoryObj[_vm->_useWith[USED]]._anim);
+						_vm->_animMgr->smkStop(kSmackerIcon);
 						_vm->setInventoryStart(_vm->_inventoryRefreshStartIcon, INVENTORY_HIDE);
 						_vm->_flagInventoryLocked = false;
 					}
@@ -3825,7 +3825,7 @@ void LogicManager::doSystemChangeRoom() {
 	_vm->setInventoryStart(_vm->_inventoryRefreshStartIcon, INVENTORY_HIDE);
 	_vm->_flagCharacterExists = true;
 	_vm->_flagShowCharacter = true;
-	_vm->_animMgr->stopSmkAnim(_vm->_inventoryObj[_vm->_useWith[USED]]._anim);
+	_vm->_animMgr->smkStop(kSmackerIcon);
 	_vm->_useWith[USED] = 0;
 	_vm->_useWith[WITH] = 0;
 	_vm->_useWithInv[USED] = false;
