@@ -314,11 +314,11 @@ void Gui::executeMenuCommand(int action, Common::String &text) {
 }
 
 void Gui::loadBorders() {
+	_consoleWindow->enableScrollbar(true);
 	loadBorder(_sceneWindow, "wage_border_inact-title.bmp", Graphics::kWindowBorderTitle, 22);
 	loadBorder(_sceneWindow, "wage_border_act-noscrollbar-title.bmp", Graphics::kWindowBorderActive|Graphics::kWindowBorderTitle, 22);
 	loadBorder(_consoleWindow, "wage_border_inact.bmp", Graphics::kWindowBorderScrollbar, 0);
 	loadBorder(_consoleWindow, "wage_border_act.bmp", Graphics::kWindowBorderScrollbar|Graphics::kWindowBorderActive, 0);
-	_consoleWindow->enableScrollbar(true);
 }
 
 void Gui::loadBorder(Graphics::MacWindow *target, Common::String filename, uint32 flags, int titlePos) {
