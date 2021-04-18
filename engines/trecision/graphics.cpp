@@ -35,7 +35,9 @@ const Graphics::PixelFormat GraphicsManager::kImageFormat(2, 5, 5, 5, 0, 10, 5, 
 GraphicsManager::GraphicsManager(TrecisionEngine *vm) : _vm(vm) {
 }
 
-GraphicsManager::~GraphicsManager() {}
+GraphicsManager::~GraphicsManager() {
+	_smkBackground.free();
+}
 
 bool GraphicsManager::initScreen() {
 	const Graphics::PixelFormat *bestFormat = &kImageFormat;
@@ -58,6 +60,8 @@ bool GraphicsManager::initScreen() {
 	_bitMask[2] = _screenFormat.bMax() << _screenFormat.bShift;
 
 	clearScreen();
+	_smkBackground.create(MAXX, AREA, _screenFormat);
+	
 	return true;
 }
 
@@ -76,6 +80,75 @@ void GraphicsManager::copyToScreen(int x, int y, int w, int h) {
 		_vm->_screenBuffer + x + y * MAXX,
 		MAXX * 2, x, y, w, h
 	);
+}
+
+void GraphicsManager::copyToSmkBackground(uint16 *buffer) {
+	memcpy(_smkBackground.getPixels(), buffer, MAXX * AREA * 2);
+}
+
+const uint16 *GraphicsManager::getSmkBackgroundPtr(int x, int y) {
+	return (const uint16 *)_smkBackground.getBasePtr(x, y);
+}
+
+void GraphicsManager::putPixel(int x, int y, uint16 color) {
+	extern uint16 *ImagePointer;
+
+	if ((x > 0) && (x < MAXX) && (y > 60) && (y < 420)) {
+		g_vm->_screenBuffer[x + MAXX * y] = color;
+		ImagePointer[x + MAXX * (y - 60)] = color;
+		_smkBackground.setPixel(x, y - 60, color);
+	}
+}
+
+void GraphicsManager::drawLine(int x1, int y1, int x2, int y2, uint16 color) {
+	int deltaX = x2 - x1;
+	if (deltaX < 0)
+		deltaX = -deltaX;
+
+	int deltaY = y2 - y1;
+	if (deltaY < 0)
+		deltaY = -deltaY;
+
+	int x = x1;
+	int y = y1;
+
+	const int incX = (x1 < x2) ? 1 : -1;
+	const int incY = (y1 < y2) ? 1 : -1;
+
+	if (deltaX < deltaY) {
+		int d = (deltaX << 1) - deltaY;
+		const int delta = (deltaX - deltaY) << 1;
+		const int numCycles = deltaY + 1;
+
+		for (int cycle = 0; cycle < numCycles; cycle++) {
+			if (x >= 0 && x < MAXX && y >= 0 && y < MAXY)
+				putPixel(x, y, color);
+
+			if (d < 0)
+				d += (deltaX << 1);
+			else {
+				d += delta;
+				x += incX;
+			}
+			y += incY;
+		}
+	} else {
+		int d = (deltaY << 1) - deltaX;
+		const int delta = (deltaY - deltaX) << 1;
+		const int numCycles = deltaX + 1;
+
+		for (int cycle = 0; cycle < numCycles; cycle++) {
+			if (x >= 0 && x < MAXX && y >= 0 && y < MAXY)
+				putPixel(x, y, color);
+			if (d < 0)
+				d += (deltaY << 1);
+			else {
+				d += delta;
+				y += incY;
+			}
+			x += incX;
+		}
+	}
 }
 
 /* ------------------------------------------------

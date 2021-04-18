@@ -29,6 +29,8 @@
 #include "trecision/nl/proto.h"
 #include "trecision/nl/struct.h"
 #include "trecision/logic.h"
+
+#include "trecision/graphics.h"
 #include "trecision/trecision.h"
 #include "trecision/video.h"
 
@@ -3664,7 +3666,7 @@ void LogicManager::doMouseLeftRight() {
 				_vm->_obj[oWHEELS2C]._mode |= OBJMODE_OBJSTATUS;
 				_vm->_flagShowCharacter = true;
 				RegenRoom();
-				memcpy(_vm->_smackImageBuffer, ImagePointer, MAXX * AREA * 2);
+				_vm->_graphicsMgr->copyToSmkBackground(ImagePointer);
 				_vm->_animMgr->startSmkAnim(_vm->_room[_vm->_curRoom]._bkgAnim);
 
 				// right combination

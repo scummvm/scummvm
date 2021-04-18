@@ -1044,45 +1044,7 @@ int nextStep() {
 				Visualizza percorso
 --------------------------------------------------*/
 void displayPath() {
-//	int a;
-//	int oldx,oldy;
-//	float ox,oz;
-
 	buildFramelist();
-
-	/*	pointProject( _pathNode[0]._x, 0.0, _pathNode[0]._z );
-		oldx = _x2d;
-		oldy = _y2d;
-
-		ox = _pathNode[0]._x;
-		oz = _pathNode[0]._z;
-
-		for ( a=1; a<_numPathNodes; a++ )
-		{
-			pointProject( _pathNode[a]._x, 0.0, _pathNode[a]._z );
-
-			putLine( oldx, oldy, _x2d, _y2d, 0x4210 );
-
-			putLine( (ox           -minx)*300/(maxx-minx)+640-200+a,
-					 (oz           -minx)*300/(maxx-minx)+100,
-					 (_pathNode[a]._x-minx)*300/(maxx-minx)+640-200+a,
-					 (_pathNode[a]._z-minx)*300/(maxx-minx)+100, 0x4210 );
-
-			oldx = _x2d;
-			oldy = _y2d;
-
-			ox = _pathNode[a]._x;
-			oz = _pathNode[a]._z;
-		}
-	*/
-
-	/*	for ( a=0; a<(_lastStep+1); a++ )
-		{
-			//cross3D( _step[a]._px+_step[a]._dx, 0.0, _step[a]._pz+_step[a]._dz, 0x4210 );
-			cross3D( _step[a]._px, 0.0, _step[a]._pz, 0x7210 );
-		}*/
-//	_actor._px=_curX;
-//	_actor._pz=_curZ;
 }
 
 /*-----------------16/10/96 11.07-------------------
@@ -1247,19 +1209,6 @@ float dist3D(float x1, float y1, float z1, float x2, float y2, float z2) {
 	return (sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2) + (z1 - z2) * (z1 - z2)));
 }
 
-/*-----------------06/11/95 20.45-------------------
-					PutPixel
---------------------------------------------------*/
-void putPix(int x, int y, uint16 c) {
-	extern uint16 *ImagePointer;
-
-	if ((x >  0) && (x < MAXX) && (y > 60) && (y < 420)) {
-		g_vm->_screenBuffer[x + MAXX * y] = c;
-		ImagePointer[x + MAXX * (y - 60)] = c;
-		g_vm->_smackImageBuffer[x + MAXX * (y - 60)] = c;
-	}
-}
-
 /*------------------------------------------------
   Find the 3D point corresponding to the 2D point
 --------------------------------------------------*/
@@ -1420,60 +1369,6 @@ void pointOut() {
 }
 
 /*------------------------------------------------
-	Draw 2D line
---------------------------------------------------*/
-void putLine(int x1, int y1, int x2, int y2, uint16 color) {
-	int deltax = x2 - x1;
-	if (deltax < 0)
-		deltax = -deltax;
-
-	int deltay = y2 - y1;
-	if (deltay < 0)
-		deltay = -deltay;
-
-	int x = x1;
-	int y = y1;
-
-	int incX = (x1 < x2) ? 1 : -1;
-	int incY = (y1 < y2) ? 1 : -1;
-
-	if (deltax < deltay) {
-		int d = (deltax << 1) - deltay;
-		int delta_constant = (deltax - deltay) << 1;
-		int numCycles = deltay + 1;
-
-		for (int cycle = 0; cycle < numCycles; cycle++) {
-			if ((x >= 0) && (x < MAXX) && (y >= 0) && (y < MAXY))
-				putPix(x, y, color);
-			
-			if (d < 0)
-				d += (deltax << 1);
-			else {
-				d += delta_constant;
-				x += incX;
-			}
-			y += incY;
-		}
-	} else {
-		int d = (deltay << 1) - deltax;
-		int delta_constant = (deltay - deltax) << 1;
-		int numCycles = deltax + 1;
-
-		for (int cycle = 0; cycle < numCycles; cycle++) {
-			if ((x >= 0) && (x < MAXX) && (y >= 0) && (y < MAXY))
-				putPix(x, y, color);
-			if (d < 0)
-				d += (deltay << 1);
-			else {
-				d += delta_constant;
-				y += incY;
-			}
-			x += incX;
-		}
-	}
-}
-
-/*------------------------------------------------
 				View Panel
 --------------------------------------------------*/
 void viewPanel(SPan *p) {
@@ -1499,8 +1394,8 @@ void viewPanel(SPan *p) {
 		projVerts[3][0] = _x2d;
 		projVerts[3][1] = _y2d;
 
-		putLine(projVerts[0][0], projVerts[0][1], projVerts[2][0], projVerts[2][1], 0x1C1);
-		putLine(projVerts[1][0], projVerts[1][1], projVerts[3][0], projVerts[3][1], 0x1C1);
+		g_vm->_graphicsMgr->drawLine(projVerts[0][0], projVerts[0][1], projVerts[2][0], projVerts[2][1], 0x1C1);
+		g_vm->_graphicsMgr->drawLine(projVerts[1][0], projVerts[1][1], projVerts[3][0], projVerts[3][1], 0x1C1);
 	}
 
 	if (p->_flags & (1 << 28))
@@ -1521,13 +1416,13 @@ void viewPanel(SPan *p) {
 	projVerts[3][1] = _y2d;
 
 	// H1
-	putLine(projVerts[0][0], projVerts[0][1], projVerts[1][0], projVerts[1][1], col);
+	g_vm->_graphicsMgr->drawLine(projVerts[0][0], projVerts[0][1], projVerts[1][0], projVerts[1][1], col);
 	// H2
-	putLine(projVerts[2][0], projVerts[2][1], projVerts[3][0], projVerts[3][1], col);
+	g_vm->_graphicsMgr->drawLine(projVerts[2][0], projVerts[2][1], projVerts[3][0], projVerts[3][1], col);
 	// B
-	putLine(projVerts[0][0], projVerts[0][1], projVerts[2][0], projVerts[2][1], col);
+	g_vm->_graphicsMgr->drawLine(projVerts[0][0], projVerts[0][1], projVerts[2][0], projVerts[2][1], col);
 	// T
-	putLine(projVerts[1][0], projVerts[1][1], projVerts[3][0], projVerts[3][1], col);
+	g_vm->_graphicsMgr->drawLine(projVerts[1][0], projVerts[1][1], projVerts[3][0], projVerts[3][1], col);
 }
 
 /*------------------------------------------------
