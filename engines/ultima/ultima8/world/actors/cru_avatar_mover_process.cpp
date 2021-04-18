@@ -150,6 +150,10 @@ void CruAvatarMoverProcess::handleCombatMode() {
 				mainactor->toggleInCombat();
 		}
 
+		// Ensure the dir we are about to use is valid
+		if (avatar->animDirMode(nextanim) == dirmode_8dirs)
+			direction = static_cast<Direction>(direction - (static_cast<uint32>(direction) % 2));
+
 		// don't check weapon here, Avatar can go straight from drawn-weapon to
 		// walking forward.
 		step(nextanim, direction);
