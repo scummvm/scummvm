@@ -161,28 +161,27 @@ sub html_entities_to_iso8859_1 {
 sub html_entities_to_cpp {
 	my $text = shift;
 
-	# The numerical values are octal!
-	$text =~ s/&Aacute;/\\301/g;
-	$text =~ s/&aacute;/\\341/g;
-	$text =~ s/&eacute;/\\351/g;
-	$text =~ s/&iacute;/\\355/g;
-	$text =~ s/&igrave;/\\354/g;
-	$text =~ s/&oacute;/\\363/g;
-	$text =~ s/&oslash;/\\370/g;
-	$text =~ s/&uacute;/\\372/g;
-	$text =~ s/&#261;/a/g;
-	$text =~ s/&#321;/L/g;
-	$text =~ s/&#322;/l/g;
-	$text =~ s/&#347;/s/g;
-	$text =~ s/&Lcaron;/L/g;
-	$text =~ s/&Scaron;/S/g;
-	$text =~ s/&aring;/\\345/g;
-	$text =~ s/&ntilde;/\\361/g;
+	$text =~ s/&Aacute;/\\303\\201/g;
+	$text =~ s/&aacute;/\\303\\241/g;
+	$text =~ s/&eacute;/\\303\\251/g;
+	$text =~ s/&iacute;/\\303\\255/g;
+	$text =~ s/&igrave;/\\303\\254/g;
+	$text =~ s/&oacute;/\\303\\263/g;
+	$text =~ s/&oslash;/\\303\\270/g;
+	$text =~ s/&uacute;/\\303\\272/g;
+	$text =~ s/&#261;/\\304\\205/g;
+	$text =~ s/&#321;/\\305\\201/g;
+	$text =~ s/&#322;/\\305\\202/g;
+	$text =~ s/&#347;/\\305\\233/g;
+	$text =~ s/&Lcaron;/\\304\\275/g;
+	$text =~ s/&Scaron;/\\305\\240/g;
+	$text =~ s/&aring;/\\303\\245/g;
+	$text =~ s/&ntilde;/\\303\\261/g;
 
-	$text =~ s/&auml;/\\344/g;
-	$text =~ s/&euml;/\\353/g;
-	$text =~ s/&ouml;/\\366/g;
-	$text =~ s/&uuml;/\\374/g;
+	$text =~ s/&auml;/\\303\\244/g;
+	$text =~ s/&euml;/\\303\\253/g;
+	$text =~ s/&uuml;/\\303\\274/g;
+	$text =~ s/&ouml;/\\303\\266/g;
 
 	$text =~ s/&amp;/&/g;
 

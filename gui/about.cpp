@@ -147,7 +147,7 @@ AboutDialog::AboutDialog()
 	_lines.push_back(U32String());
 
 	for (i = 0; i < ARRAYSIZE(credits); i++)
-		addLine(U32String(credits[i]));
+		addLine(U32String(credits[i], Common::kUtf8));
 }
 
 void AboutDialog::addLine(const U32String &str) {
