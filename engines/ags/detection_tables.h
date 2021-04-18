@@ -296,7 +296,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "amtag", "AMTAG" },
 	{ "aneternityreflecting", "An Eternity, Reflecting" },
 	{ "anighttoremember", "A Night to Remember" },
-	{ "anna", "Anna" },
+	{ "anna", "Anna's Quest" },
 	{ "annieandroidautomatedaffection", "Annie Android: Automated Affection" },
 	{ "anoblegame", "A Noble Game" },
 	{ "anthonysessay", "Anthony's Essay" },
@@ -1779,6 +1779,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("qfi", "agsgame.dat", "2a0ba29e479ca5aa8c6b4233f030e78f", 536391599),
 	GAME_ENTRY("qfi", "agsgame.dat", "2a0ba29e479ca5aa8c6b4233f030e78f", 536513114), // Steam Linux
 	GAME_ENTRY("qfi", "qfi.exe", "8a7bc4f9ef0e6b0a5b01d3e4d5d5ee7d", 534881961),
+	GAME_ENTRY("qfi", "qfi.exe", "32b36aebe0729c9360bc10dcddc0653c", 538547259),
 	GAME_ENTRY("resonance", "resonance.exe", "2e635c22bcbf0ed3d46f1bcde71812d4", 849404957), // GOG
 	GAME_ENTRY_PLUGIN_PLATFORM("resonance", "resonance.exe", "2e635c22bcbf0ed3d46f1bcde71812d4", 849410915, AGSTEAM_WADJETEYE, "Steam"), // Steam
 	GAME_ENTRY("richardandalice", "richardandalice.exe", "1023d348f67ba958f78ed62d029565c7", 109164768), // Steam
@@ -1987,6 +1988,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("aneternityreflecting", "An Eternity, Reflecting.exe", "78dd4ca028ee0156b6a093d6d780aa65", 53731093),
 	GAME_ENTRY("anighttoremember", "the trials.exe", "a01a9639ce30bdcd5bf82e528b51fa06", 9643993),
 	GAME_ENTRY("anna", "anna.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 42337759),
+	GAME_ENTRY("anna", "anna.exe", "548d8cf1c544c85da3e78b7aa65a6d41", 16572928),
 	GAME_ENTRY("annieandroidautomatedaffection", "annie source.exe", "fc17e9b3ab53f6b4841e2a4af5c782ff", 5015270),
 	GAME_ENTRY("anoblegame", "a_noble_game.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 3580379),
 	GAME_ENTRY("anthonysessay", "copy of school.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 11033611),
