@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-04-18 13:17+0000\n"
+"POT-Creation-Date: 2021-04-18 13:29+0000\n"
 "PO-Revision-Date: 2020-11-29 17:10+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
@@ -21,16 +21,16 @@ msgstr ""
 "X-Poedit-SourceCharset: iso-8859-1\n"
 "X-Language-name: Nederlands\n"
 
-#: gui/about.cpp:103
+#: gui/about.cpp:104
 #, c-format
 msgid "(built on %s)"
 msgstr "(gebouwd op %s)"
 
-#: gui/about.cpp:110
+#: gui/about.cpp:111
 msgid "Features compiled in:"
 msgstr "Features meegecompileerd:"
 
-#: gui/about.cpp:119
+#: gui/about.cpp:120
 msgid "Available engines:"
 msgstr "Beschikbare engines:"
 
@@ -649,6 +649,22 @@ msgstr "Links"
 #: engines/wintermute/keymapper_tables.h:1698
 msgid "Right"
 msgstr "Rechts"
+
+#: gui/gui-manager.cpp:186 engines/pegasus/pegasus.cpp:2804
+#: engines/wintermute/keymapper_tables.h:298
+#: engines/wintermute/keymapper_tables.h:325
+#: engines/wintermute/keymapper_tables.h:429
+#: engines/wintermute/keymapper_tables.h:557
+#: engines/wintermute/keymapper_tables.h:597
+#: engines/wintermute/keymapper_tables.h:735
+#: engines/wintermute/keymapper_tables.h:943
+#: engines/wintermute/keymapper_tables.h:990
+#: engines/wintermute/keymapper_tables.h:1222
+#: engines/wintermute/keymapper_tables.h:1444
+#: engines/wintermute/keymapper_tables.h:1498
+#: engines/wintermute/keymapper_tables.h:1556
+msgid "???"
+msgstr "???"
 
 #: gui/launcher.cpp:140 engines/dialogs.cpp:95
 msgid "~Q~uit"
@@ -5691,21 +5707,6 @@ msgstr "Toon/Verberg Pauze-Menu"
 #| msgid "Toggle fast mode"
 msgid "Toggle Chatty AI"
 msgstr "Snelle modus aan-/uitzetten"
-
-#: engines/pegasus/pegasus.cpp:2804 engines/wintermute/keymapper_tables.h:298
-#: engines/wintermute/keymapper_tables.h:325
-#: engines/wintermute/keymapper_tables.h:429
-#: engines/wintermute/keymapper_tables.h:557
-#: engines/wintermute/keymapper_tables.h:597
-#: engines/wintermute/keymapper_tables.h:735
-#: engines/wintermute/keymapper_tables.h:943
-#: engines/wintermute/keymapper_tables.h:990
-#: engines/wintermute/keymapper_tables.h:1222
-#: engines/wintermute/keymapper_tables.h:1444
-#: engines/wintermute/keymapper_tables.h:1498
-#: engines/wintermute/keymapper_tables.h:1556
-msgid "???"
-msgstr "???"
 
 #: engines/pegasus/pegasus.cpp:2810
 msgid "Save Game"

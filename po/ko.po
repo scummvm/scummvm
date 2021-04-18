@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-04-18 13:17+0000\n"
+"POT-Creation-Date: 2021-04-18 13:29+0000\n"
 "PO-Revision-Date: 2021-03-07 12:24+0000\n"
 "Last-Translator: Joohan Lee <losernator@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -20,16 +20,16 @@ msgstr ""
 "X-Generator: Weblate 4.4\n"
 "X-Language-name: Korean\n"
 
-#: gui/about.cpp:103
+#: gui/about.cpp:104
 #, c-format
 msgid "(built on %s)"
 msgstr "(빌드 일자: %s)"
 
-#: gui/about.cpp:110
+#: gui/about.cpp:111
 msgid "Features compiled in:"
 msgstr "포함된 기능:"
 
-#: gui/about.cpp:119
+#: gui/about.cpp:120
 msgid "Available engines:"
 msgstr "사용 가능한 엔진:"
 
@@ -641,6 +641,22 @@ msgstr "왼쪽"
 #: engines/wintermute/keymapper_tables.h:1698
 msgid "Right"
 msgstr "오른쪽"
+
+#: gui/gui-manager.cpp:186 engines/pegasus/pegasus.cpp:2804
+#: engines/wintermute/keymapper_tables.h:298
+#: engines/wintermute/keymapper_tables.h:325
+#: engines/wintermute/keymapper_tables.h:429
+#: engines/wintermute/keymapper_tables.h:557
+#: engines/wintermute/keymapper_tables.h:597
+#: engines/wintermute/keymapper_tables.h:735
+#: engines/wintermute/keymapper_tables.h:943
+#: engines/wintermute/keymapper_tables.h:990
+#: engines/wintermute/keymapper_tables.h:1222
+#: engines/wintermute/keymapper_tables.h:1444
+#: engines/wintermute/keymapper_tables.h:1498
+#: engines/wintermute/keymapper_tables.h:1556
+msgid "???"
+msgstr "???"
 
 #: gui/launcher.cpp:140 engines/dialogs.cpp:95
 msgid "~Q~uit"
@@ -5612,21 +5628,6 @@ msgstr "정지 메뉴 표시/숨김"
 #, fuzzy
 msgid "Toggle Chatty AI"
 msgstr "드래그 모드 전환"
-
-#: engines/pegasus/pegasus.cpp:2804 engines/wintermute/keymapper_tables.h:298
-#: engines/wintermute/keymapper_tables.h:325
-#: engines/wintermute/keymapper_tables.h:429
-#: engines/wintermute/keymapper_tables.h:557
-#: engines/wintermute/keymapper_tables.h:597
-#: engines/wintermute/keymapper_tables.h:735
-#: engines/wintermute/keymapper_tables.h:943
-#: engines/wintermute/keymapper_tables.h:990
-#: engines/wintermute/keymapper_tables.h:1222
-#: engines/wintermute/keymapper_tables.h:1444
-#: engines/wintermute/keymapper_tables.h:1498
-#: engines/wintermute/keymapper_tables.h:1556
-msgid "???"
-msgstr "???"
 
 #: engines/pegasus/pegasus.cpp:2810
 msgid "Save Game"
