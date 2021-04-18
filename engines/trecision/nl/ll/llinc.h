@@ -98,7 +98,7 @@ struct SFileHandle {
 // GAME POINTER
 extern uint16 *ObjPointers[];
 extern uint8 *MaskPointers[];
-extern uint8 *_actionPointer[];
+//extern uint8 *_actionPointer[];
 extern uint16 _actionPosition[];
 // DATA POINTER
 extern uint8 *TextArea;

@@ -61,8 +61,9 @@ void actorDoAction(int whatAction) {
 
 	int len;
 	if (whatAction > hLAST) {
-		v = (SVertex *)(_actionPointer[_actionPosition[actionInRoom(whatAction)]]);
-		len = g_vm->_actionLen[whatAction];
+		error("Trying to access unallocated memory pointer _actionPointer");	// FIXME
+		//v = (SVertex *)(_actionPointer[_actionPosition[actionInRoom(whatAction)]]);
+		//len = g_vm->_actionLen[whatAction];
 	} else {
 		int cfp = 0;
 		int cur = 0;

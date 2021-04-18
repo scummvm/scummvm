@@ -41,7 +41,7 @@ namespace Trecision {
 // GAME POINTER
 uint16 *ObjPointers[MAXOBJINROOM];
 uint8 *MaskPointers[MAXOBJINROOM];
-uint8 *_actionPointer[MAXACTIONFRAMESINROOM];		// puntatore progressivo ai frame
+//uint8 *_actionPointer[MAXACTIONFRAMESINROOM];		// puntatore progressivo ai frame
 uint16 _actionPosition[MAXACTIONINROOM];			// Starting position of each action in the room
 // DATA POINTER
 uint8 *TextArea;
@@ -421,7 +421,7 @@ void ReadLoc() {
 	if (g_vm->_room[g_vm->_curRoom]._sounds[0] != 0)
 		ReadSounds();
 
-	_actionPointer[0] = (uint8 *)backgroundPtr + dataLength;
+	//_actionPointer[0] = (uint8 *)backgroundPtr + dataLength;
 	Common::String fname = Common::String::format("%s.3d", g_vm->_room[g_vm->_curRoom]._baseName);
 	read3D(fname);
 
