@@ -2801,7 +2801,7 @@ Common::KeymapArray PegasusEngine::initKeymaps() {
 	// WORKAROUND: I'm also accepting 'e' here since an
 	// alt+click is often intercepted by the OS. 'e' is used as the
 	// easter egg key in Buried in Time and Legacy of Time.
-	act = new Action("WTF", _("???"));
+	act = new Action(kStandardActionEE, _("???"));
 	act->setCustomEngineActionEvent(kPegasusActionEnableEasterEgg);
 	act->addDefaultInputMapping("e");
 	engineKeyMap->addAction(act);
