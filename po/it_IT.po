@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-04-17 20:45+0000\n"
-"PO-Revision-Date: 2021-04-16 16:48+0000\n"
+"PO-Revision-Date: 2021-04-18 10:10+0000\n"
 "Last-Translator: Walter Agazzi <tag2015@gmail.com>\n"
 "Language-Team: Italian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/it/>\n"
@@ -872,25 +872,23 @@ msgstr "ogni 30 minuti"
 
 #. I18N: Automatic GUI scaling
 #: gui/options.cpp:135
-#, fuzzy
-#| msgid "Autosave"
 msgid "Auto"
-msgstr "Autosalvataggio"
+msgstr "Automatica"
 
 #. I18N: Large GUI scale
 #: gui/options.cpp:137
 msgid "Large"
-msgstr ""
+msgstr "Grande"
 
 #. I18N: Medium GUI scale
 #: gui/options.cpp:139 engines/nancy/dialogs.cpp:120
 msgid "Medium"
-msgstr "Intermedio"
+msgstr "Media"
 
 #. I18N: Small GUI scale
 #: gui/options.cpp:141
 msgid "Small"
-msgstr ""
+msgstr "Piccola"
 
 #: gui/options.cpp:429 gui/options.cpp:817 gui/options.cpp:955
 #: gui/options.cpp:1066 gui/options.cpp:1459
@@ -1327,10 +1325,8 @@ msgid "Theme:"
 msgstr "Tema:"
 
 #: gui/options.cpp:2101
-#, fuzzy
-#| msgid "Unscaled"
 msgid "GUI scale:"
-msgstr "Non ridimensionare"
+msgstr "Scala interfaccia:"
 
 #: gui/options.cpp:2108
 msgid "GUI renderer:"
@@ -1401,7 +1397,7 @@ msgstr ""
 
 #: gui/options.cpp:2195 gui/updates-dialog.cpp:86
 msgid "Update check:"
-msgstr "Controllo aggiornamenti:"
+msgstr "Aggiornamenti:"
 
 #: gui/options.cpp:2195
 msgid "How often to check ScummVM updates"
