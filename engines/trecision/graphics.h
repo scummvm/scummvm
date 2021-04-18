@@ -49,6 +49,7 @@ public:
 	void clearScreen();
 	void copyToScreen(int x, int y, int w, int h);
 	void copyToScreenBuffer(Graphics::Surface *surface, int x, int y);
+	void blitToScreenBuffer(Graphics::Surface *surface, int x, int y, uint16 mask);
 	void resetSmkBackground();
 	void resetScreenBuffer(bool hasAnimatedBg);
 	uint16 *getBackgroundPtr();
