@@ -27,6 +27,7 @@
 #include "common/system.h"
 #include "common/translation.h"
 #include "common/util.h"
+#include "graphics/conversion.h"
 #include "graphics/surface.h"
 #include "graphics/fonts/amigafont.h"
 #include "gui/about.h"
@@ -413,7 +414,7 @@ private:
 	float _scale;
 	bool _inited;
 
-	uint32 _colorBlue, _colorOrange;
+	uint32 _colorBlack, _colorBlue, _colorOrange, _colorKey;
 
 	void cls(bool update = true);
 	void loadSounds();
@@ -474,8 +475,10 @@ EE::EE() {
 	_format = g_system->getOverlayFormat();
 	_back.create(_windowW, _windowH, _format);
 
-	_colorBlue   = _format.RGBToColor(5 * 16, 7 * 16, 8 * 16);
-	_colorOrange = _format.RGBToColor(15 * 16, 7 * 16, 8 * 16);
+	_colorBlack  = _format.RGBToColor( 0 * 16,  0 * 16,  0 * 16);
+	_colorBlue   = _format.RGBToColor( 5 * 16,  7 * 16,  8 * 16);
+	_colorOrange = _format.RGBToColor(15 * 16,  7 * 16,  8 * 16);
+	_colorKey    = _colorBlack;
 
 	init();
 }
@@ -486,7 +489,7 @@ EE::~EE() {
 }
 
 void EE::cls(bool update) {
-	_back.fillRect(Common::Rect(0, 0, _windowW, _windowH), 0);
+	_back.fillRect(Common::Rect(0, 0, _windowW, _windowH), _colorBlack);
 
 	if (update)
 		g_system->copyRectToOverlay(_back.getPixels(), _back.pitch, _windowX, _windowY, _windowW, _windowH);
@@ -1110,26 +1113,7 @@ void EE::draw(int sn, int x1, int y1) {
 	int x = x1 * _scale;
 	int y = y1 * _scale;
 
-	if (_back.format.bytesPerPixel == 2) {
-		for (int y_ = 0; y_ < _sp[sn].h; y_++) {
-			uint16 *src = (uint16 *)_sp[sn].getBasePtr(0, y_);
-			uint16 *dst = (uint16 *)_back.getBasePtr(x, y + y_);
-
-			for (int x_ = 0; x_ < _sp[sn].w; x_++, dst++, src++)
-				if (*src != 0)
-					*dst = *src;
-		}
-	} else {
-		for (int y_ = 0; y_ < _sp[sn].h; y_++) {
-			uint32 *src = (uint32 *)_sp[sn].getBasePtr(0, y_);
-			uint32 *dst = (uint32 *)_back.getBasePtr(x, y + y_);
-
-			for (int x_ = 0; x_ < _sp[sn].w; x_++, dst++, src++)
-				if (*src != 0 && *src != 0xff000000 && *src != 0xff)
-					*dst = *src;
-		}
-	}
-
+	Graphics::keyBlit((byte *)_back.getBasePtr(x, y), (const byte *)_sp[sn].getPixels(), _back.pitch, _sp[sn].pitch, _sp[sn].w, _sp[sn].h, _back.format.bytesPerPixel, _colorKey);
 	g_system->copyRectToOverlay(_back.getBasePtr(x, y), _back.pitch, _windowX + x, _windowY + y, _sp[sn].w, _sp[sn].h);
 }
 
@@ -1354,10 +1338,7 @@ void EE::genSprites() {
 
 				pixels >>= 1;
 
-				if (_back.format.bytesPerPixel == 2)
-					*((uint16 *)tmp.getBasePtr(posx, posy)) = (uint16)palette[color + 8];
-				else if (_back.format.bytesPerPixel == 4)
-					*((uint32 *)tmp.getBasePtr(posx, posy)) = palette[color + 8];
+				tmp.setPixel(posx, posy, palette[color + 8]);
 			}
 		}
 
@@ -1388,10 +1369,7 @@ void EE::genSprites() {
 				if (x == 15)
 					pixels = *ptr;
 
-				if (_back.format.bytesPerPixel == 2)
-					*((uint16 *)tmp.getBasePtr(posx, y)) = (uint16)palette[color + 4 * (s / 3)];
-				else if (_back.format.bytesPerPixel == 4)
-					*((uint32 *)tmp.getBasePtr(posx, y)) = palette[color + 4 * (s / 3)];
+				tmp.setPixel(posx, y, palette[color + 4 * (s / 3)]);
 			}
 		}
 
@@ -1407,7 +1385,7 @@ void EE::genSprites() {
 	tmp.create(w, h, g_system->getOverlayFormat());
 	for (int hl = 0; hl < 2; hl++) {
 		for (int i = 0; i < 6; i++) {
-			tmp.fillRect(Common::Rect(0, 0, w, h), hl == 1 ? _colorBlue : 0);
+			tmp.fillRect(Common::Rect(0, 0, w, h), hl == 1 ? _colorBlue : _colorKey);
 
 			char buf[100];
 			int c;
@@ -1415,7 +1393,7 @@ void EE::genSprites() {
 				buf[c] = codes[c + 23 * i] - 3 - c % 6;
 			buf[c] = 0;
 
-			int c1 = i == 0 ? _colorOrange : hl == 1 ? 0 : _colorBlue;
+			int c1 = i == 0 ? _colorOrange : hl == 1 ? _colorKey : _colorBlue;
 
 			_font.drawString(&tmp, buf, 0, 1, w, c1, Graphics::kTextAlignLeft, 0, false);
 
@@ -1431,7 +1409,7 @@ void EE::genSprites() {
 	h = 10;
 	tmp.create(w, h, g_system->getOverlayFormat());
 	for (int i = 0; i < 12; i++) {
-		tmp.fillRect(Common::Rect(0, 0, w, h), 0);
+		tmp.fillRect(Common::Rect(0, 0, w, h), _colorKey);
 
 		char buf[2];
 		buf[0] = i == 10 ? '*' : i == 11 ? ' ' : '0' + i;
