@@ -222,6 +222,16 @@ Common::Error KyraEngine_MR::init() {
 	_screen->loadFont(Screen::FID_8_FNT, "8FAT.FNT");
 	_screen->loadFont(Screen::FID_BOOKFONT_FNT, "BOOKFONT.FNT");
 	_screen->setFont(Screen::FID_8_FNT);
+
+	if (_flags.hasExtraLanguage) {
+		// We don't check the language setting here, since we want to load the file even if the language is currently set to English, French or German.
+		if (_res->exists("MALCOLM.PAK")) {
+			_screen->loadFont(Screen::FID_CHINESE_FNT, "MALCOLM.PAK");
+			_screen->setFont(Screen::FID_CHINESE_FNT);
+			_screen->_lineSpacing = 4;
+		}
+	}
+
 	_screen->setAnimBlockPtr(3500);
 	_screen->setScreenDim(0);
 
@@ -282,7 +292,7 @@ Common::Error KyraEngine_MR::go() {
 
 		_eventList.clear();
 
-		switch (_menu->handle(3)) {
+		switch (_menu->handle((_flags.hasExtraLanguage && _lang == 3) ? 4 : 3)) {
 		case 2:
 			_menuDirectlyToLoad = true;
 			// fall through
@@ -330,19 +340,11 @@ void KyraEngine_MR::initMainMenu() {
 
 	_menu = new MainMenu(this);
 	MainMenu::StaticData data = {
-		{ _mainMenuStrings[_lang*4+0], _mainMenuStrings[_lang*4+1], _mainMenuStrings[_lang*4+2], _mainMenuStrings[_lang*4+3], 0 },
+		{ _mainMenuStrings[0], _mainMenuStrings[1], _mainMenuStrings[2], _mainMenuStrings[3], 0 },
 		{ 0x01, 0x04, 0x0C, 0x04, 0x00, 0x80, 0xFF },
 		{ 0x16, 0x19, 0x1A, 0x16 },
-		Screen::FID_8_FNT, 240
+		_flags.hasExtraLanguage && _lang == 3 ? Screen::FID_CHINESE_FNT : Screen::FID_8_FNT, 240
 	};
-
-	if (_flags.lang == Common::ES_ESP) {
-		for (int i = 0; i < 4; ++i)
-			data.strings[i] = _mainMenuSpanishFan[i];
-	} else if (_flags.lang == Common::IT_ITA) {
-		for (int i = 0; i < 4; ++i)
-			data.strings[i] = _mainMenuItalianFan[i];
-	}
 
 	MainMenu::Animation anim;
 	anim.anim = _menuAnim;
@@ -516,7 +518,7 @@ void KyraEngine_MR::startup() {
 	_interface = new uint8[17920];
 	_interfaceCommandLine = new uint8[3840];
 
-	_screen->setFont(Screen::FID_8_FNT);
+	_screen->setFont((_flags.hasExtraLanguage && _lang == 3) ? Screen::FID_CHINESE_FNT : Screen::FID_8_FNT);
 
 	_stringBuffer = new char[500];
 	allocAnimObjects(1, 16, 50);

@@ -1079,7 +1079,8 @@ const ScreenDim Screen_MR::_screenDimTable[] = {
 	{ 0x00, 0x00, 0x28, 0xC8, 0xFF, 0xF0, 0x00, 0x00 },
 	{ 0x08, 0x48, 0x18, 0x38, 0xFF, 0xF0, 0x00, 0x00 },
 	{ 0x00, 0x00, 0x28, 0xBC, 0xFF, 0xF0, 0x00, 0x00 },
-	{ 0x0A, 0x96, 0x14, 0x30, 0x19, 0xF0, 0x00, 0x00 }
+	{ 0x0A, 0x96, 0x14, 0x30, 0x19, 0xF0, 0x00, 0x00 },
+	{ 0x0A, 0x8E, 0x14, 0x3A, 0x19, 0xF0, 0x00, 0x00 }
 };
 
 const int Screen_MR::_screenDimTableCount = ARRAYSIZE(Screen_MR::_screenDimTable);
@@ -1830,20 +1831,6 @@ const char *const KyraEngine_MR::_languageExtension[] = {
 };
 
 const int KyraEngine_MR::_languageExtensionSize = ARRAYSIZE(KyraEngine_MR::_languageExtension);
-
-const char *const KyraEngine_MR::_mainMenuSpanishFan[] = {
-	"Nueva Partida",
-	"Ver Intro",
-	"Restaurar",
-	"Finalizar"
-};
-
-const char *const KyraEngine_MR::_mainMenuItalianFan[] = {
-	"Nuova Partita",
-	"Introduzione",
-	"Carica una partita",
-	"Esci dal gioco"
-};
 
 const KyraEngine_MR::ShapeDesc KyraEngine_MR::_shapeDescs[] = {
 	{ 57, 91, -31, -82 },

@@ -131,4 +131,71 @@ void Screen_MR::drawFilledBox(int x1, int y1, int x2, int y2, uint8 c1, uint8 c2
 	drawClippedLine(x1, y2-1, x2-1, y2-1, c3);
 }
 
+Big5Font::Big5Font(const uint8 *oneByteData, int pitch) : Font(), _oneByteData(oneByteData), _twoByteData(0), _twoByteDataSize(0), _pitch(pitch), _shadowMode(false) {
+	assert(_oneByteData);
+}
+
+Big5Font::~Big5Font() {
+	delete[] _twoByteData;
+}
+
+bool Big5Font::load(Common::SeekableReadStream &data) {
+	delete[] _twoByteData;
+	_twoByteData = 0;
+
+	if (!data.size())
+		return false;
+
+	_twoByteDataSize = data.size();
+	uint8 *dst = new uint8[_twoByteDataSize];
+	if (!dst)
+		return false;
+
+	data.read(dst, _twoByteDataSize);
+	_twoByteData = dst;
+
+	return true;
+}
+
+int Big5Font::getCharWidth(uint16 c) const {
+	return (c & 0x80) ? 18 : 9;
+}
+
+void Big5Font::drawChar(uint16 c, byte *dst, int pitch, int) const {
+	static const int16 shadowParam[13] = { 1, 0, 0, 0, 1, 0, 1, 2, 0, 0, 0, 1, -1 };
+	const uint8 *glyphData = &_oneByteData[(c & 0x7F) * 14];
+	int w = 7;
+
+	if (c == 0x6187) {
+		glyphData = &_oneByteData[128];
+	} else if (c & 0x80) {
+		c = ((c & 0x7F00) >> 2) | (c & 0x3F);
+		assert(c * 28 < _twoByteDataSize);
+		glyphData = &_twoByteData[c * 28];
+		w = 15;
+	}
+
+	for (const int16 *i = (_shadowMode ? shadowParam : shadowParam + 9); *i != -1; i += 3) {
+		const uint8 *data = glyphData;
+		uint8 *dst3 = dst;
+		dst = &dst3[i[0] + i[1] * _pitch];
+		for (int h = 0; h < 14; ++h) {
+			uint8 in = 0;
+			int bt = -1;
+			uint8 *dst2 = dst;
+			for (int x = 0; x < w; ++x) {
+				if (bt == -1) {
+					in = *data++;
+					bt = 7;
+				}
+				if (in & (1 << (bt--)))
+					*dst = _colorMap[i[2]];
+				dst++;
+			}
+			dst = dst2 + _pitch;
+		}
+		dst = dst3;
+	}
+}
+
 } // End of namespace Kyra

@@ -308,7 +308,7 @@ void KyraEngine_MR::drawMalcolmsMoodText() {
 
 	const char *string = (const char *)getTableEntry(_cCodeFile, stringId[_malcolmsMood]);
 
-	Screen::FontId oldFont = _screen->setFont(Screen::FID_8_FNT);
+	Screen::FontId oldFont = _screen->setFont((_flags.hasExtraLanguage && _lang == 3) ? Screen::FID_CHINESE_FNT : Screen::FID_8_FNT);
 	_screen->_charSpacing = -2;
 
 	int width = _screen->getTextWidth(string);

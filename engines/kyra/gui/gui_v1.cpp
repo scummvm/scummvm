@@ -511,6 +511,8 @@ int MainMenu::handle(int dim) {
 	int fh = _screen->getFontHeight();
 	if (_vm->gameFlags().lang == Common::JA_JPN)
 		fh++;
+	else if (_vm->gameFlags().hasExtraLanguage && _vm->gameFlags().lang == Common::ZH_CNA)
+		fh--;
 
 	int textPos = ((_screen->_curDim->w >> 1) + _screen->_curDim->sx) << 3;
 
@@ -563,6 +565,8 @@ void MainMenu::draw(int select) {
 	int fh = _screen->getFontHeight();
 	if (_vm->gameFlags().lang == Common::JA_JPN)
 		fh++;
+	else if (_vm->gameFlags().hasExtraLanguage && _vm->gameFlags().lang == Common::ZH_CNA)
+		fh--;
 
 	for (int i = 0; i < _static.menuTable[3]; ++i) {
 		int curY = top + i * fh;

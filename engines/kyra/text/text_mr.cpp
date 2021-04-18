@@ -44,40 +44,65 @@ char *TextDisplayer_MR::preprocessString(const char *str) {
 	}
 
 	p = _talkBuffer;
-	Screen::FontId curFont = _screen->setFont(Screen::FID_8_FNT);
-	_screen->_charSpacing = -2;
 
-	const int maxTextWidth = (_vm->language() == 0) ? 176 : 240;
-	int textWidth = _screen->getTextWidth(p);
+	if (_vm->gameFlags().hasExtraLanguage && _vm->_lang == 3) {
+		Screen::FontId curFont = _screen->setFont(Screen::FID_CHINESE_FNT);
+		int textLen = Common::strnlen(p, sizeof(_talkBuffer));
+		int maxTextWidth;
 
-	if (textWidth > maxTextWidth) {
-		int count = 0, offs = 0;
-		if (textWidth > (3*maxTextWidth)) {
-			count = getCharLength(p, textWidth/4);
-			offs = dropCRIntoString(p, count, getCharLength(p, maxTextWidth));
-			p += count + offs;
-			// No update of textWidth here
+		if (textLen > 68) {
+			maxTextWidth = ((textLen + 3) / 3) & ~1;
+			for (int i = textLen + 1; i >= maxTextWidth; --i)
+				p[i + 1] = p[i];
+			p[maxTextWidth] = '\r';
+			++p;
+			textLen -= maxTextWidth;
 		}
 
-		if (textWidth > (2*maxTextWidth)) {
-			count = getCharLength(p, textWidth/3);
+		if (textLen > 34) {
+			maxTextWidth = ((textLen + 2) / 2) & ~1;
+			for (int i = textLen + 1; i >= maxTextWidth; --i)
+				p[i + 1] = p[i];
+			p[maxTextWidth] = '\r';
+		}
+
+		_screen->setFont(curFont);
+	} else {
+		Screen::FontId curFont = _screen->setFont(Screen::FID_8_FNT);
+		_screen->_charSpacing = -2;
+
+		const int maxTextWidth = (_vm->language() == 0) ? 176 : 240;
+		int textWidth = _screen->getTextWidth(p);
+
+		if (textWidth > maxTextWidth) {
+			int count = 0, offs = 0;
+			if (textWidth > (3*maxTextWidth)) {
+				count = getCharLength(p, textWidth/4);
+				offs = dropCRIntoString(p, count, getCharLength(p, maxTextWidth));
+				p += count + offs;
+				// No update of textWidth here
+			}
+
+			if (textWidth > (2*maxTextWidth)) {
+				count = getCharLength(p, textWidth/3);
+				offs = dropCRIntoString(p, count, getCharLength(p, maxTextWidth));
+				p += count + offs;
+				textWidth = _screen->getTextWidth(p);
+			}
+
+			count = getCharLength(p, textWidth/2);
 			offs = dropCRIntoString(p, count, getCharLength(p, maxTextWidth));
 			p += count + offs;
 			textWidth = _screen->getTextWidth(p);
-		}
 
-		count = getCharLength(p, textWidth/2);
-		offs = dropCRIntoString(p, count, getCharLength(p, maxTextWidth));
-		p += count + offs;
-		textWidth = _screen->getTextWidth(p);
-
-		if (textWidth > maxTextWidth) {
-			count = getCharLength(p, textWidth/2);
-			offs = dropCRIntoString(p, count, getCharLength(p, maxTextWidth));
+			if (textWidth > maxTextWidth) {
+				count = getCharLength(p, textWidth/2);
+				offs = dropCRIntoString(p, count, getCharLength(p, maxTextWidth));
+			}
 		}
+		_screen->setFont(curFont);
 	}
 
-	_screen->setFont(curFont);
 	return _talkBuffer;
 }
 
@@ -137,7 +162,8 @@ void TextDisplayer_MR::printText(const Common::String &str, int x, int y, uint8 
 	uint8 colorMap[] = { 0, 255, 240, 240 };
 	colorMap[3] = c1;
 	_screen->setTextColor(colorMap, 0, 3);
-	_screen->_charSpacing = -2;
+	if (!(_vm->gameFlags().hasExtraLanguage && _vm->gameFlags().lang == 3))
+		_screen->_charSpacing = -2;
 	_screen->printText(str.c_str(), x, y, c0, c2);
 	_screen->_charSpacing = 0;
 }
@@ -248,10 +274,10 @@ void KyraEngine_MR::objectChatInit(const char *str, int object, int vocHigh, int
 		xPos = _talkObjectList[object].x;
 	}
 
-	yPos -= lineNum * 10;
+	_text->_talkMessageH = lineNum * (_screen->getFontHeight() + _screen->_lineSpacing);
+	yPos -= _text->_talkMessageH;
 	yPos = MAX(yPos, 0);
 	_text->_talkMessageY = yPos;
-	_text->_talkMessageH = lineNum*10;
 
 	int width = _text->getWidestLineWidth(lineNum);
 	_text->calcWidestLineBounds(xPos, yPos, width, xPos);
@@ -287,8 +313,7 @@ void KyraEngine_MR::objectChatPrintText(const Common::String &str0, int object) 
 
 	for (int i = 0; i < lineNum; ++i) {
 		str = Common::String(&_text->_talkSubstrings[i*_text->maxSubstringLen()]);
-
-		int y = _text->_talkMessageY + i * 10;
+		int y = _text->_talkMessageY + i * (_screen->getFontHeight() + _screen->_lineSpacing);
 		x = _text->getCenterStringX(str, cX1, cX2);
 
 		_text->printText(str, x, y, c1, 0xF0, 0);
@@ -525,10 +550,10 @@ void KyraEngine_MR::albumChatInit(const char *str, int object, int vocHigh, int 
 		xPos = _talkObjectList[object].x;
 	}
 
-	yPos -= lineNum * 10;
+	_text->_talkMessageH = lineNum * (_screen->getFontHeight() + _screen->_lineSpacing);
+	yPos -= _text->_talkMessageH;
 	yPos = MAX(yPos, 0);
 	_text->_talkMessageY = yPos;
-	_text->_talkMessageH = lineNum*10;
 
 	int width = _text->getWidestLineWidth(lineNum);
 	_text->calcWidestLineBounds(xPos, yPos, width, xPos);
