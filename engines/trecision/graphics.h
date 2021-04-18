@@ -54,6 +54,7 @@ public:
 	uint16 *getBackgroundPtr();
 	const uint16 *getSmkBackgroundPtr(int x, int y);
 	void drawLine(int x1, int y1, int x2, int y2, uint16 color);
+	void loadBackground(byte *data);
 
 	uint16 palTo16bit(uint8 r, uint8 g, uint8 b) const;
 	void updatePixelFormat(uint16 *p, uint32 len) const;

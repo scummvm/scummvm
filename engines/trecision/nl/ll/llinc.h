@@ -120,7 +120,7 @@ void DemoOver();
 void openSys();
 void ReadLoc();
 void TendIn();
-void ReadObj();
+void ReadObj(uint16 *objBuffer);
 void ReadExtraObj2C();
 void ReadExtraObj41D();
 void ReadSounds();

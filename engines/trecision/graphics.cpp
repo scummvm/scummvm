@@ -62,7 +62,7 @@ bool GraphicsManager::initScreen() {
 
 	clearScreen();
 
-	_background.create(MAXX, MAXY * 4, _screenFormat);
+	_background.create(MAXX, MAXY, _screenFormat);
 	_smkBackground.create(MAXX, AREA, _screenFormat);
 	
 	return true;
@@ -92,8 +92,8 @@ void GraphicsManager::resetSmkBackground() {
 void GraphicsManager::resetScreenBuffer(bool hasAnimatedBg) {
 	memset(g_vm->_screenBuffer, 0, MAXX * MAXY * 2);
 	if (hasAnimatedBg)
-		memcpy(_background.getPixels(), _smkBackground.getPixels(), MAXX * AREA * 2);
-	memcpy(g_vm->_screenBuffer + TOP * MAXX, _background.getPixels(), MAXX * AREA * 2);
+		memcpy(_background.getPixels(), _smkBackground.getPixels(), _smkBackground.pitch * _smkBackground.h);
+	memcpy(g_vm->_screenBuffer + TOP * MAXX, _background.getPixels(), _background.pitch * AREA);
 }
 
 uint16 *GraphicsManager::getBackgroundPtr() {
@@ -103,6 +103,15 @@ uint16 *GraphicsManager::getBackgroundPtr() {
 const uint16 *GraphicsManager::getSmkBackgroundPtr(int x, int y) {
 	assert(x < MAXX && y < AREA);
 	return (const uint16 *)_smkBackground.getBasePtr(x, y);
+}
+
+void GraphicsManager::loadBackground(byte *data) {
+	Graphics::Surface img;
+	img.create(MAXX, AREA, kImageFormat);
+	memcpy(img.getPixels(), data, img.pitch * img.h);
+	img.convertToInPlace(_screenFormat);
+	_background.copyFrom(img);
+	img.free();
 }
 
 void GraphicsManager::putPixel(int x, int y, uint16 color) {
@@ -164,16 +173,10 @@ void GraphicsManager::drawLine(int x1, int y1, int x2, int y2, uint16 color) {
 	}
 }
 
-/* ------------------------------------------------
-					palTo16bit
- --------------------------------------------------*/
 uint16 GraphicsManager::palTo16bit(uint8 r, uint8 g, uint8 b) const {
 	return (uint16)_screenFormat.RGBToColor(r, g, b);
 }
 
-/* ------------------------------------------------
-				updatePixelFormat
- --------------------------------------------------*/
 void GraphicsManager::updatePixelFormat(uint16 *p, uint32 len) const {
 	if (_screenFormat == kImageFormat)
 		return;
