@@ -884,6 +884,9 @@ void GraphicsWidget::setGfx(const Graphics::ManagedSurface *gfx, bool scale) {
 	if (scale && sf != 1.0) {
 		_w = gfx->w * sf;
 		_h = gfx->h * sf;
+	} else {
+		_w = gfx->w;
+		_h = gfx->h;
 	}
 
 	if ((_w != gfx->w || _h != gfx->h) && _w && _h) {
@@ -916,7 +919,7 @@ void GraphicsWidget::setGfx(int w, int h, int r, int g, int b) {
 void GraphicsWidget::setGfxFromTheme(const char *name) {
 	const Graphics::ManagedSurface *gfx = g_gui.theme()->getImageSurface(name);
 
-	setGfx(gfx);
+	setGfx(gfx, false);
 }
 
 void GraphicsWidget::drawWidget() {
