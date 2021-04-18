@@ -37,8 +37,6 @@
 #include "sword25/gfx/image/vectorimage.h"
 #include "sword25/gfx/image/renderedimage.h"
 
-#include "graphics/colormasks.h"
-
 namespace Sword25 {
 
 #define BEZSMOOTHNESS 0.5
@@ -291,7 +289,7 @@ VectorImage::VectorImage(const byte *pFileData, uint fileSize, bool &success, co
 				r = bs.getByte();
 				g = bs.getByte();
 				b = bs.getByte();
-				_bgColor = Graphics::ARGBToColor<Graphics::ColorMasks<8888> >(0xff, r, g, b);
+				_bgColor = BS_RGB(r, g, b);
 			}
 			break;
 		default:
@@ -546,7 +544,7 @@ bool VectorImage::parseStyles(uint shapeType, SWFBitStream &bs, uint &numFillBit
 		if (shapeType == 3)
 			a = bs.getByte();
 
-		color = Graphics::ARGBToColor<Graphics::ColorMasks<8888> >(a, r, g, b);
+		color = BS_ARGB(a, r, g, b);
 
 		if (type != 0)
 			return false;
@@ -575,7 +573,7 @@ bool VectorImage::parseStyles(uint shapeType, SWFBitStream &bs, uint &numFillBit
 		if (shapeType == 3)
 			a = bs.getByte();
 
-		color = Graphics::ARGBToColor<Graphics::ColorMasks<8888> >(a, r, g, b);
+		color = BS_ARGB(a, r, g, b);
 
 		_elements.back()._lineStyles.push_back(VectorImageElement::LineStyleType(width, color));
 	}
