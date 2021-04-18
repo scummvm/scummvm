@@ -436,7 +436,7 @@ private:
 	void game();
 	void playSound(int d);
 
-	void genSprites();
+	void setupGraphics();
 	void genField();
 };
 
@@ -455,31 +455,6 @@ bool EEHandler::handleKeyDown(Common::KeyState &state) {
 }
 
 EE::EE() {
-	if (g_system->getOverlayWidth() < 320 || g_system->getOverlayHeight() < 200) {
-		warning("EE: Screen is too small");
-		_inited = false;
-
-		return;
-	}
-
-	// Determine scale factor
-	float scaleX = g_system->getOverlayWidth() * 0.9 / 320;
-	float scaleY = g_system->getOverlayHeight() * 0.9 / 200;
-	_scale = MAX(1.0f, MIN(scaleX, scaleY));
-
-	_windowW = 320 * _scale;
-	_windowH = 200 * _scale;
-	_windowX = (g_system->getOverlayWidth() > 320) ? (g_system->getOverlayWidth() - _windowW) / 2 : 0;
-	_windowY = (g_system->getOverlayHeight() > 200) ? (g_system->getOverlayHeight() - _windowH) / 2 : 0;
-
-	_format = g_system->getOverlayFormat();
-	_back.create(_windowW, _windowH, _format);
-
-	_colorBlack  = _format.RGBToColor( 0 * 16,  0 * 16,  0 * 16);
-	_colorBlue   = _format.RGBToColor( 5 * 16,  7 * 16,  8 * 16);
-	_colorOrange = _format.RGBToColor(15 * 16,  7 * 16,  8 * 16);
-	_colorKey    = _colorBlack;
-
 	init();
 }
 
@@ -501,7 +476,7 @@ void EE::run() {
 
 	_shouldQuit = false;
 
-	genSprites();
+	setupGraphics();
 
 	init();
 
@@ -512,6 +487,10 @@ void EE::run() {
 			case Common::EVENT_QUIT:
 			case Common::EVENT_RETURN_TO_LAUNCHER:
 				_shouldQuit = true;
+				break;
+			case Common::EVENT_SCREEN_CHANGED:
+				if (g_gui.checkScreenChange())
+					setupGraphics();
 				break;
 			case Common::EVENT_LBUTTONDOWN:
 				break;
@@ -1056,8 +1035,6 @@ void EE::computer1() {
 }
 
 void EE::init() {
-	cls();
-
 	_rnd = 0;
 	_starter = _winner = _hits = 0;
 	_bvelx = _bvely = 0;
@@ -1313,7 +1290,27 @@ const char *codes =
 "Dvhgkm#Ztrsm|ffrs(#$%&'#$%&O}pes&}{1$M{tiq$%&'#$M{tiq${y5(Fsrv||hv%&'#$"
 "Hutxxxjx'~v2%N|udr%&'#Gtsw}wiw&}{1$Hutxxxjx'#$%&'(#$%W|qw$%&'(#$%&'";
 
-void EE::genSprites() {
+void EE::setupGraphics() {
+	// Determine scale factor
+	float scaleX = g_system->getOverlayWidth() * 0.9 / 320;
+	float scaleY = g_system->getOverlayHeight() * 0.9 / 200;
+	_scale = MIN(scaleX, scaleY);
+
+	_windowW = 320 * _scale;
+	_windowH = 200 * _scale;
+	_windowX = (g_system->getOverlayWidth() > 320) ? (g_system->getOverlayWidth() - _windowW) / 2 : 0;
+	_windowY = (g_system->getOverlayHeight() > 200) ? (g_system->getOverlayHeight() - _windowH) / 2 : 0;
+
+	_format = g_system->getOverlayFormat();
+	_back.create(_windowW, _windowH, _format);
+
+	_colorBlack  = _format.RGBToColor( 0 * 16,  0 * 16,  0 * 16);
+	_colorBlue   = _format.RGBToColor( 5 * 16,  7 * 16,  8 * 16);
+	_colorOrange = _format.RGBToColor(15 * 16,  7 * 16,  8 * 16);
+	_colorKey    = _colorBlack;
+
+	cls();
+
 	uint32 palette[12];
 	for (int i = 0; i < 10 * 3; i += 3)
 		palette[i / 3] = _back.format.RGBToColor(spcolors[i] * 16, spcolors[i + 1] * 16, spcolors[i + 2] * 16);
