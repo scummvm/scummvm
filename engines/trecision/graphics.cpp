@@ -116,9 +116,9 @@ const uint16 *GraphicsManager::getSmkBackgroundPtr(int x, int y) {
 	return (const uint16 *)_smkBackground.getBasePtr(x, y);
 }
 
-void GraphicsManager::loadBackground(byte *data) {
+void GraphicsManager::loadBackground(byte *data, uint16 width, uint16 height) {
 	Graphics::Surface img;
-	img.create(MAXX, AREA, kImageFormat);
+	img.create(width, height, kImageFormat);
 	memcpy(img.getPixels(), data, img.pitch * img.h);
 	img.convertToInPlace(_screenFormat);
 	_background.copyFrom(img);

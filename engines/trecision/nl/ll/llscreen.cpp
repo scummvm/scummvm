@@ -411,7 +411,7 @@ void ReadLoc() {
 	uint32 dataLength = g_vm->DecCR(filename, (uint8 *)bgBuf);
 	assert(dataLength < bufferSize);
 	BmInfo.read((uint16 *)bgBuf);
-	g_vm->_graphicsMgr->loadBackground(bgBuf + sizeof(SBmInfo));
+	g_vm->_graphicsMgr->loadBackground(bgBuf + sizeof(SBmInfo), BmInfo.dx, BmInfo.dy);
 	ReadObj((uint16 *)(bgBuf + BmInfo.dx * BmInfo.dy * 2 + sizeof(SBmInfo)));
 	// FIXME: Memory leak! This should not be deleted yet, because
 	// ReadObj() creates pointers into this buffer
