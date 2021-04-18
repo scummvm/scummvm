@@ -209,7 +209,6 @@ void GriffonEngine::showLogos() {
 }
 
 void GriffonEngine::intro() {
-
 	_videoBuffer2->fillRect(Common::Rect(0, 0, _videoBuffer2->w, _videoBuffer2->h), 0);
 	_videoBuffer3->fillRect(Common::Rect(0, 0, _videoBuffer3->w, _videoBuffer3->h), 0);
 
