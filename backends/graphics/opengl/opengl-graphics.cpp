@@ -1081,14 +1081,23 @@ void OpenGLGraphicsManager::notifyContextCreate(ContextType type,
 
 #if !USE_FORCED_GLES
 	if (OpenGLContext.shadersSupported) {
-			ShaderMan.notifyCreate();
-			//_pipeline = new ShaderPipeline(ShaderMan.query(ShaderManager::kDefault)); FIXME
+		ShaderMan.notifyCreate();
+		//_pipeline = new ShaderPipeline(ShaderMan.query(ShaderManager::kDefault)); FIXME
 
-			// Load selected shader preset from config file
-			if (ConfMan.hasKey("shader_scaler", Common::ConfigManager::kApplicationDomain)) {
-				_pipeline = new LibRetroPipeline(ConfMan.get("shader_scaler", Common::ConfigManager::kApplicationDomain));;
+		// Load selected shader preset from config file
+		if (ConfMan.hasKey("shader_scaler", Common::ConfigManager::kApplicationDomain)) {
+			Common::FSNode shaderPreset("./shaders/presets/" + ConfMan.get("shader_scaler", Common::ConfigManager::kApplicationDomain));
+			if (shaderPreset.isReadable()) {
+				_pipeline = new LibRetroPipeline(ConfMan.get("shader_scaler", Common::ConfigManager::kApplicationDomain));
 			} else {
-				// Use some sort of default value
+				// FIXME FIXME FIXME
+				_pipeline = new LibRetroPipeline("nearest.glslp");
+				warning("Loaded fallback shader since requested shader is not available");
+			}
+		} else {
+			// FIXME FIXME FIXME
+			_pipeline = new LibRetroPipeline("nearest.glslp");
+			warning("Loaded fallback shader since requested shader is not available");
 		}
 	}
 #endif
