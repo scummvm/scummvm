@@ -56,8 +56,14 @@ void AvatarMoverProcess::run() {
 
 	// falling, so don't move
 	if (avatar->getGravityPID() != 0) {
-		_idleTime = 0;
-		return;
+		Process *proc = Kernel::get_instance()->getProcess(avatar->getGravityPID());
+		if (!proc || !proc->is_active()) {
+			warning("FIXME: Removing stale gravity pid %d from Avatar.", avatar->getGravityPID());
+			avatar->setGravityPID(0);
+		} else {
+			_idleTime = 0;
+			return;
+		}
 	}
 
 	// not in fast area, don't move (can happen for some death sequences
