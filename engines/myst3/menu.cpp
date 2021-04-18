@@ -32,8 +32,6 @@
 
 #include "common/events.h"
 
-#include "graphics/colormasks.h"
-
 #include "gui/message.h"
 
 namespace Myst3 {
