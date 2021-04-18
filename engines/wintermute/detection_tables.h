@@ -563,24 +563,38 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("carolreed10", "Demo",
 		WME_ENTRY1s("data.dcp", "72b29cb3f0bc83efa6e3bae41b4e899a", 79971080), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, WME_1_9_3),
 
-	// Carol Reed 11 - Shades Of Black (SD)
-	WME_WINENTRY("carolreed11", "SD",
+	// Carol Reed 11 - Shades Of Black (HD) (MDNA Games) (v1.0)
+	WME_WINENTRY("carolreed11", "HD/1.0",
+		WME_ENTRY1s("data.dcp", "e4080bac9e34d59ed25ae689776f0d15", 853204297), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
+
+	// Carol Reed 11 - Shades Of Black (SD) (MDNA Games) (v1.0)
+	WME_WINENTRY("carolreed11", "SD/1.0",
 		WME_ENTRY1s("data.dcp", "a1e9f54b48493e9c6d737e3a94779d8c", 525450069), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
 
+	// Carol Reed 11 - Shades Of Black (HD) (MDNA Games) (v1.0+patch1)
+	WME_WINENTRY("carolreed11", "HD/1.0+patch1",
+		WME_ENTRY2s("data.dcp", "e4080bac9e34d59ed25ae689776f0d15", 853204297,
+					"patch1.dcp", "12e6487284bdd12c9c3d0c57d84ceac1", 3206), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
+
+	// Carol Reed 11 - Shades Of Black (SD) (MDNA Games) (v1.0+patch1)
+	WME_WINENTRY("carolreed11", "SD/1.0+patch1",
+		WME_ENTRY2s("data.dcp", "a1e9f54b48493e9c6d737e3a94779d8c", 525450069,
+					"patch1.dcp", "12e6487284bdd12c9c3d0c57d84ceac1", 3206), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
+
 	// Carol Reed 11 - Shades Of Black (HD) (MDNA Games) (v1.1)
-	WME_WINENTRY("carolreed11", "HD",
+	WME_WINENTRY("carolreed11", "HD/1.1",
 		WME_ENTRY1s("data.dcp", "7ca1e654e293cb84312a56c6be4ada24", 853204303), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
 
 	// Carol Reed 11 - Shades Of Black (SD) (MDNA Games) (v1.1)
-	WME_WINENTRY("carolreed11", "SD",
+	WME_WINENTRY("carolreed11", "SD/1.1",
 		WME_ENTRY1s("data.dcp", "47ab078a83a1ccc76a6446b2e8055857", 525450074), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
 
 	// Carol Reed 11 - Shades Of Black (HD) (MDNA Games) (Steam)
-	WME_WINENTRY("carolreed11", "HD",
+	WME_WINENTRY("carolreed11", "HD/Steam",
 		WME_ENTRY1s("data.dcp", "459f4a851ea053cc4d204e45e2f88afc", 853256580), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
 
 	// Carol Reed 11 - Shades Of Black (SD) (MDNA Games) (Steam)
-	WME_WINENTRY("carolreed11", "SD",
+	WME_WINENTRY("carolreed11", "SD/Steam",
 		WME_ENTRY1s("data.dcp", "c47314872afbbdc587dae0bc976a3375", 525502344), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
 
 	// Carol Reed 11 - Shades Of Black (HD) (Russian)
