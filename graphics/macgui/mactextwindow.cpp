@@ -164,7 +164,7 @@ bool MacTextWindow::draw(bool forceRedraw) {
 	_cursorDirty = false;
 
 	// Compose
-	_mactext->draw(_composeSurface, 0, _scrollPos, _composeSurface->w - 2, _scrollPos + _composeSurface->h - 2, 1, 1);
+	_mactext->draw(_composeSurface, 0, _scrollPos, _composeSurface->w, _scrollPos + _composeSurface->h, 1, 1);
 
 	if (_cursorState)
 		_composeSurface->blitFrom(*_cursorSurface, *_cursorRect, Common::Point(_cursorX + 1, _cursorY + 1));
