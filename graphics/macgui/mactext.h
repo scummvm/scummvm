@@ -184,6 +184,7 @@ public:
 	int getLastLineWidth();
 	int getTextHeight() { return _textMaxHeight; }
 	int getLineHeight(int line);
+	int getTextMaxWidth() { return _textMaxWidth; }
 
 	void deletePreviousChar(int *row, int *col);
 	void addNewLine(int *row, int *col);
