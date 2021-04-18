@@ -980,6 +980,9 @@ bool MacMenu::processEvent(Common::Event &event) {
 		return false;
 
 	switch (event.type) {
+	case Common::EVENT_QUIT:
+		closeMenu();
+		return false;
 	case Common::EVENT_KEYDOWN:
 		return keyEvent(event);
 	case Common::EVENT_LBUTTONDOWN:
