@@ -75,10 +75,10 @@ private:
 	void openSmk(int slot, Common::SeekableReadStream *stream);
 	void openSmkAnim(int slot, Common::String name);
 	void closeSmk(int slot);
-	void smkNextFrame(int slot);
 	void drawFrame(NightlongSmackerDecoder *smkDecoder, uint16 x, uint16 y, bool updateScreen);
 	void drawFrameSubtitles(Graphics::Surface *surface, int frameNum);
 	void setVideoRange(NightlongSmackerDecoder *smkDecoder, int &startFrame, int &endFrame);
+	void handleEndOfVideo(int animation, int slot);
 	void byte2wordn(void *dest, void *src, const uint16 *smk, void *pal, uint32 len);
 	
 	void drawSmkIconFrame(int startIcon, int iconNum);
@@ -86,7 +86,6 @@ private:
 	void swapCD(int cd);
 
 public:
-	uint8 *_smkBuffer[MAXSMACK];
 	uint16 _playingAnims[MAXSMACK];
 
 	uint16 _animMaxX, _animMinX, _animMaxY, _animMinY;

@@ -75,7 +75,6 @@ void RedrawRoom() {
 		g_vm->_animMgr->startSmkAnim(g_vm->_room[g_vm->_curRoom]._bkgAnim);
 
 	if ((g_vm->_curRoom == r4P) && (_curDialog == dF4PI)) {
-		memset(g_vm->_animMgr->_smkBuffer[kSmackerBackground], 0, MAXX * AREA);
 		g_vm->_animMgr->smkGoto(kSmackerBackground, 21);
 	}
 
