@@ -523,7 +523,7 @@ sub add_paragraph {
 		print "\\\n";
 		print $text . "\\\n";
 	} elsif ($mode eq "CPP") {
-		$text = html_entities_to_ascii($text);
+		$text = html_entities_to_cpp($text);
 		my $line_start = '"C0""';
 		my $line_end = '",';
 		print $line_start . $text . $line_end . "\n";
