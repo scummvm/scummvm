@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-04-18 13:29+0000\n"
+"POT-Creation-Date: 2021-04-18 22:59+0000\n"
 "PO-Revision-Date: 2020-09-18 03:43+0000\n"
 "Last-Translator: Daniel <supsuper@gmail.com>\n"
 "Language-Team: Portuguese (Portugal) <https://translations.scummvm.org/"
@@ -608,10 +608,10 @@ msgstr "Fechar"
 #: engines/dragons/metaengine.cpp:163 engines/glk/scott/scott.cpp:412
 #: engines/griffon/metaengine.cpp:96 engines/grim/grim.cpp:451
 #: engines/grim/grim.cpp:528 engines/twine/metaengine.cpp:452
-#: engines/twine/metaengine.cpp:519 engines/wintermute/keymapper_tables.h:1011
-#: engines/wintermute/keymapper_tables.h:1100
-#: engines/wintermute/keymapper_tables.h:1474
-#: engines/wintermute/keymapper_tables.h:1704
+#: engines/twine/metaengine.cpp:519 engines/wintermute/keymapper_tables.h:1017
+#: engines/wintermute/keymapper_tables.h:1106
+#: engines/wintermute/keymapper_tables.h:1480
+#: engines/wintermute/keymapper_tables.h:1710
 msgid "Up"
 msgstr "Cima"
 
@@ -619,10 +619,10 @@ msgstr "Cima"
 #: engines/dragons/metaengine.cpp:169 engines/glk/scott/scott.cpp:412
 #: engines/griffon/metaengine.cpp:102 engines/grim/grim.cpp:456
 #: engines/grim/grim.cpp:533 engines/twine/metaengine.cpp:459
-#: engines/twine/metaengine.cpp:527 engines/wintermute/keymapper_tables.h:1017
-#: engines/wintermute/keymapper_tables.h:1107
-#: engines/wintermute/keymapper_tables.h:1480
-#: engines/wintermute/keymapper_tables.h:1710
+#: engines/twine/metaengine.cpp:527 engines/wintermute/keymapper_tables.h:1023
+#: engines/wintermute/keymapper_tables.h:1113
+#: engines/wintermute/keymapper_tables.h:1486
+#: engines/wintermute/keymapper_tables.h:1716
 msgid "Down"
 msgstr "Baixo"
 
@@ -630,10 +630,10 @@ msgstr "Baixo"
 #: engines/dragons/metaengine.cpp:175 engines/griffon/metaengine.cpp:108
 #: engines/grim/grim.cpp:461 engines/grim/grim.cpp:538
 #: engines/twine/metaengine.cpp:474 engines/twine/metaengine.cpp:542
-#: engines/wintermute/keymapper_tables.h:1023
-#: engines/wintermute/keymapper_tables.h:1462
-#: engines/wintermute/keymapper_tables.h:1570
-#: engines/wintermute/keymapper_tables.h:1692
+#: engines/wintermute/keymapper_tables.h:1029
+#: engines/wintermute/keymapper_tables.h:1468
+#: engines/wintermute/keymapper_tables.h:1576
+#: engines/wintermute/keymapper_tables.h:1698
 msgid "Left"
 msgstr "Esquerda"
 
@@ -641,26 +641,26 @@ msgstr "Esquerda"
 #: engines/dragons/metaengine.cpp:181 engines/griffon/metaengine.cpp:114
 #: engines/grim/grim.cpp:466 engines/grim/grim.cpp:543
 #: engines/twine/metaengine.cpp:466 engines/twine/metaengine.cpp:535
-#: engines/wintermute/keymapper_tables.h:1029
-#: engines/wintermute/keymapper_tables.h:1468
-#: engines/wintermute/keymapper_tables.h:1578
-#: engines/wintermute/keymapper_tables.h:1698
+#: engines/wintermute/keymapper_tables.h:1035
+#: engines/wintermute/keymapper_tables.h:1474
+#: engines/wintermute/keymapper_tables.h:1584
+#: engines/wintermute/keymapper_tables.h:1704
 msgid "Right"
 msgstr "Direita"
 
 #: gui/gui-manager.cpp:186 engines/pegasus/pegasus.cpp:2804
-#: engines/wintermute/keymapper_tables.h:298
-#: engines/wintermute/keymapper_tables.h:325
-#: engines/wintermute/keymapper_tables.h:429
-#: engines/wintermute/keymapper_tables.h:557
-#: engines/wintermute/keymapper_tables.h:597
-#: engines/wintermute/keymapper_tables.h:735
-#: engines/wintermute/keymapper_tables.h:943
-#: engines/wintermute/keymapper_tables.h:990
-#: engines/wintermute/keymapper_tables.h:1222
-#: engines/wintermute/keymapper_tables.h:1444
-#: engines/wintermute/keymapper_tables.h:1498
-#: engines/wintermute/keymapper_tables.h:1556
+#: engines/wintermute/keymapper_tables.h:304
+#: engines/wintermute/keymapper_tables.h:331
+#: engines/wintermute/keymapper_tables.h:435
+#: engines/wintermute/keymapper_tables.h:563
+#: engines/wintermute/keymapper_tables.h:603
+#: engines/wintermute/keymapper_tables.h:741
+#: engines/wintermute/keymapper_tables.h:949
+#: engines/wintermute/keymapper_tables.h:996
+#: engines/wintermute/keymapper_tables.h:1228
+#: engines/wintermute/keymapper_tables.h:1450
+#: engines/wintermute/keymapper_tables.h:1504
+#: engines/wintermute/keymapper_tables.h:1562
 msgid "???"
 msgstr ""
 
@@ -2371,9 +2371,9 @@ msgid "Left Click"
 msgstr "Clique esquerdo"
 
 #: engines/metaengine.cpp:65 backends/platform/maemo/maemo.cpp:166
-#: engines/wintermute/keymapper_tables.h:249
-#: engines/wintermute/keymapper_tables.h:293
-#: engines/wintermute/keymapper_tables.h:1716
+#: engines/wintermute/keymapper_tables.h:255
+#: engines/wintermute/keymapper_tables.h:299
+#: engines/wintermute/keymapper_tables.h:1722
 msgid "Middle Click"
 msgstr "Clique do meio"
 
@@ -2386,7 +2386,7 @@ msgstr "Clique direito"
 #: engines/metaengine.cpp:76 engines/hdb/metaengine.cpp:238
 #: engines/mohawk/myst.cpp:593 engines/mohawk/riven.cpp:863
 #: engines/sky/metaengine.cpp:113 engines/twine/metaengine.cpp:232
-#: engines/wintermute/keymapper_tables.h:1255
+#: engines/wintermute/keymapper_tables.h:1261
 msgid "Pause"
 msgstr "Pausa"
 
@@ -2396,11 +2396,11 @@ msgstr "Menu do jogo"
 
 #: engines/metaengine.cpp:87 engines/grim/grim.cpp:502
 #: engines/grim/grim.cpp:594 engines/mohawk/myst.cpp:564
-#: engines/mohawk/riven.cpp:834 engines/wintermute/keymapper_tables.h:217
-#: engines/wintermute/keymapper_tables.h:997
-#: engines/wintermute/keymapper_tables.h:1248
-#: engines/wintermute/keymapper_tables.h:1361
-#: engines/wintermute/keymapper_tables.h:1660
+#: engines/mohawk/riven.cpp:834 engines/wintermute/keymapper_tables.h:219
+#: engines/wintermute/keymapper_tables.h:1003
+#: engines/wintermute/keymapper_tables.h:1254
+#: engines/wintermute/keymapper_tables.h:1367
+#: engines/wintermute/keymapper_tables.h:1666
 msgid "Skip"
 msgstr "Ignorar"
 
@@ -2766,19 +2766,19 @@ msgid "Toggle fullscreen"
 msgstr "Alternar entre janela / ecrã inteiro"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:419 engines/scumm/help.cpp:99
-#: engines/wintermute/keymapper_tables.h:710
+#: engines/wintermute/keymapper_tables.h:716
 msgid "Toggle mouse capture"
 msgstr "Alternar captura do rato"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:424
-#: engines/wintermute/keymapper_tables.h:478
-#: engines/wintermute/keymapper_tables.h:847
-#: engines/wintermute/keymapper_tables.h:1061
-#: engines/wintermute/keymapper_tables.h:1129
-#: engines/wintermute/keymapper_tables.h:1286
-#: engines/wintermute/keymapper_tables.h:1402
-#: engines/wintermute/keymapper_tables.h:1419
-#: engines/wintermute/keymapper_tables.h:1450
+#: engines/wintermute/keymapper_tables.h:484
+#: engines/wintermute/keymapper_tables.h:853
+#: engines/wintermute/keymapper_tables.h:1067
+#: engines/wintermute/keymapper_tables.h:1135
+#: engines/wintermute/keymapper_tables.h:1292
+#: engines/wintermute/keymapper_tables.h:1408
+#: engines/wintermute/keymapper_tables.h:1425
+#: engines/wintermute/keymapper_tables.h:1456
 msgid "Save screenshot"
 msgstr "Capturar ecrã"
 
@@ -4619,8 +4619,8 @@ msgstr "Mover para a direita"
 #: engines/scumm/help.cpp:152 engines/scumm/help.cpp:170
 #: engines/scumm/help.cpp:198 engines/scumm/help.cpp:213
 #: engines/scumm/help.cpp:224 engines/scumm/help.cpp:250
-#: engines/sky/metaengine.cpp:82 engines/wintermute/keymapper_tables.h:138
-#: engines/wintermute/keymapper_tables.h:1202
+#: engines/sky/metaengine.cpp:82 engines/wintermute/keymapper_tables.h:140
+#: engines/wintermute/keymapper_tables.h:1208
 msgid "Use"
 msgstr ""
 
@@ -5084,10 +5084,10 @@ msgstr "Menu de Opções da DS"
 msgid "Drop page"
 msgstr "Primeira página"
 
-#: engines/mohawk/myst.cpp:604 engines/wintermute/keymapper_tables.h:1176
-#: engines/wintermute/keymapper_tables.h:1318
-#: engines/wintermute/keymapper_tables.h:1367
-#: engines/wintermute/keymapper_tables.h:1390
+#: engines/mohawk/myst.cpp:604 engines/wintermute/keymapper_tables.h:1182
+#: engines/wintermute/keymapper_tables.h:1324
+#: engines/wintermute/keymapper_tables.h:1373
+#: engines/wintermute/keymapper_tables.h:1396
 msgid "Show map"
 msgstr "Mostrar mapa"
 
@@ -5102,7 +5102,7 @@ msgstr ""
 
 #: engines/mohawk/myst_stacks/menu.cpp:284
 #: engines/mohawk/riven_stacks/aspit.cpp:350
-#: engines/wintermute/keymapper_tables.h:675
+#: engines/wintermute/keymapper_tables.h:681
 msgid "Load game"
 msgstr "Carregar jogo"
 
@@ -5173,17 +5173,17 @@ msgstr "Avançar para a direita"
 msgid "Move backwards"
 msgstr "Retroceder"
 
-#: engines/mohawk/riven.cpp:888 engines/wintermute/keymapper_tables.h:159
-#: engines/wintermute/keymapper_tables.h:520
-#: engines/wintermute/keymapper_tables.h:1672
-#: engines/wintermute/keymapper_tables.h:1775
+#: engines/mohawk/riven.cpp:888 engines/wintermute/keymapper_tables.h:161
+#: engines/wintermute/keymapper_tables.h:526
+#: engines/wintermute/keymapper_tables.h:1678
+#: engines/wintermute/keymapper_tables.h:1785
 msgid "Turn left"
 msgstr "Virar à esquerda"
 
-#: engines/mohawk/riven.cpp:894 engines/wintermute/keymapper_tables.h:165
-#: engines/wintermute/keymapper_tables.h:525
-#: engines/wintermute/keymapper_tables.h:1678
-#: engines/wintermute/keymapper_tables.h:1782
+#: engines/mohawk/riven.cpp:894 engines/wintermute/keymapper_tables.h:167
+#: engines/wintermute/keymapper_tables.h:531
+#: engines/wintermute/keymapper_tables.h:1684
+#: engines/wintermute/keymapper_tables.h:1792
 msgid "Turn right"
 msgstr "Virar à direita"
 
@@ -6050,7 +6050,7 @@ msgstr "Cancelar"
 msgid "Skip cutscene"
 msgstr "Ignorar cenas"
 
-#: engines/scumm/help.cpp:78 engines/wintermute/keymapper_tables.h:1686
+#: engines/scumm/help.cpp:78 engines/wintermute/keymapper_tables.h:1692
 msgid "Space"
 msgstr ""
 
@@ -6097,7 +6097,7 @@ msgstr ""
 msgid "Simulate left mouse button"
 msgstr "Botão esquerdo do rato"
 
-#: engines/scumm/help.cpp:90 engines/wintermute/keymapper_tables.h:1741
+#: engines/scumm/help.cpp:90 engines/wintermute/keymapper_tables.h:1747
 msgid "Tab"
 msgstr ""
 
@@ -6224,15 +6224,15 @@ msgid "Turn off"
 msgstr "Girar à esquerda"
 
 #: engines/scumm/help.cpp:142 engines/scumm/help.cpp:167
-#: engines/scumm/help.cpp:194 engines/wintermute/keymapper_tables.h:1190
+#: engines/scumm/help.cpp:194 engines/wintermute/keymapper_tables.h:1196
 #, fuzzy
 msgid "Walk to"
 msgstr "Avançar"
 
 #: engines/scumm/help.cpp:143 engines/scumm/help.cpp:168
 #: engines/scumm/help.cpp:195 engines/scumm/help.cpp:210
-#: engines/scumm/help.cpp:227 engines/wintermute/keymapper_tables.h:132
-#: engines/wintermute/keymapper_tables.h:1196
+#: engines/scumm/help.cpp:227 engines/wintermute/keymapper_tables.h:134
+#: engines/wintermute/keymapper_tables.h:1202
 msgid "Pick up"
 msgstr ""
 
@@ -6321,14 +6321,14 @@ msgid "pull (Yank)"
 msgstr ""
 
 #: engines/scumm/help.cpp:196 engines/scumm/help.cpp:212
-#: engines/scumm/help.cpp:248 engines/wintermute/keymapper_tables.h:126
-#: engines/wintermute/keymapper_tables.h:1208
+#: engines/scumm/help.cpp:248 engines/wintermute/keymapper_tables.h:128
+#: engines/wintermute/keymapper_tables.h:1214
 msgid "Talk to"
 msgstr ""
 
 #: engines/scumm/help.cpp:199 engines/scumm/help.cpp:211
-#: engines/wintermute/keymapper_tables.h:120
-#: engines/wintermute/keymapper_tables.h:1184
+#: engines/wintermute/keymapper_tables.h:122
+#: engines/wintermute/keymapper_tables.h:1190
 #, fuzzy
 msgid "Look at"
 msgstr "Examinar"
@@ -7385,535 +7385,535 @@ msgid ""
 "is likely to be unplayable totally or partially."
 msgstr ""
 
-#: engines/wintermute/keymapper_tables.h:147
-#: engines/wintermute/keymapper_tables.h:510
-#: engines/wintermute/keymapper_tables.h:1666
-#: engines/wintermute/keymapper_tables.h:1761
+#: engines/wintermute/keymapper_tables.h:149
+#: engines/wintermute/keymapper_tables.h:516
+#: engines/wintermute/keymapper_tables.h:1672
+#: engines/wintermute/keymapper_tables.h:1771
 msgid "Walk forward"
 msgstr "Avançar"
 
-#: engines/wintermute/keymapper_tables.h:153
-#: engines/wintermute/keymapper_tables.h:515
-#: engines/wintermute/keymapper_tables.h:1768
+#: engines/wintermute/keymapper_tables.h:155
+#: engines/wintermute/keymapper_tables.h:521
+#: engines/wintermute/keymapper_tables.h:1778
 msgid "Walk backward"
 msgstr "Retroceder"
 
-#: engines/wintermute/keymapper_tables.h:171
-#: engines/wintermute/keymapper_tables.h:468
-#: engines/wintermute/keymapper_tables.h:1412
+#: engines/wintermute/keymapper_tables.h:173
+#: engines/wintermute/keymapper_tables.h:474
+#: engines/wintermute/keymapper_tables.h:1418
 msgid "Show scene geometry"
 msgstr "Mostrar geometria da cena"
 
-#: engines/wintermute/keymapper_tables.h:180
-#: engines/wintermute/keymapper_tables.h:196
-#: engines/wintermute/keymapper_tables.h:656
-#: engines/wintermute/keymapper_tables.h:852
-#: engines/wintermute/keymapper_tables.h:980
+#: engines/wintermute/keymapper_tables.h:182
+#: engines/wintermute/keymapper_tables.h:198
+#: engines/wintermute/keymapper_tables.h:662
+#: engines/wintermute/keymapper_tables.h:858
+#: engines/wintermute/keymapper_tables.h:986
 #, fuzzy
 msgid "Previous page"
 msgstr "Primeira página"
 
-#: engines/wintermute/keymapper_tables.h:187
-#: engines/wintermute/keymapper_tables.h:204
-#: engines/wintermute/keymapper_tables.h:663
-#: engines/wintermute/keymapper_tables.h:859
-#: engines/wintermute/keymapper_tables.h:985
+#: engines/wintermute/keymapper_tables.h:189
+#: engines/wintermute/keymapper_tables.h:206
+#: engines/wintermute/keymapper_tables.h:669
+#: engines/wintermute/keymapper_tables.h:865
+#: engines/wintermute/keymapper_tables.h:991
 msgid "Next page"
 msgstr "Página seguinte"
 
-#: engines/wintermute/keymapper_tables.h:232
-#: engines/wintermute/keymapper_tables.h:255
-#: engines/wintermute/keymapper_tables.h:304
-#: engines/wintermute/keymapper_tables.h:331
-#: engines/wintermute/keymapper_tables.h:435
-#: engines/wintermute/keymapper_tables.h:563
-#: engines/wintermute/keymapper_tables.h:584
-#: engines/wintermute/keymapper_tables.h:608
-#: engines/wintermute/keymapper_tables.h:635
-#: engines/wintermute/keymapper_tables.h:794
-#: engines/wintermute/keymapper_tables.h:1040
-#: engines/wintermute/keymapper_tables.h:1066
-#: engines/wintermute/keymapper_tables.h:1122
-#: engines/wintermute/keymapper_tables.h:1148
-#: engines/wintermute/keymapper_tables.h:1305
-#: engines/wintermute/keymapper_tables.h:1354
-#: engines/wintermute/keymapper_tables.h:1537
-#: engines/wintermute/keymapper_tables.h:1653
+#: engines/wintermute/keymapper_tables.h:238
+#: engines/wintermute/keymapper_tables.h:261
+#: engines/wintermute/keymapper_tables.h:310
+#: engines/wintermute/keymapper_tables.h:337
+#: engines/wintermute/keymapper_tables.h:441
+#: engines/wintermute/keymapper_tables.h:569
+#: engines/wintermute/keymapper_tables.h:590
+#: engines/wintermute/keymapper_tables.h:614
+#: engines/wintermute/keymapper_tables.h:641
+#: engines/wintermute/keymapper_tables.h:800
+#: engines/wintermute/keymapper_tables.h:1046
+#: engines/wintermute/keymapper_tables.h:1072
+#: engines/wintermute/keymapper_tables.h:1128
+#: engines/wintermute/keymapper_tables.h:1154
+#: engines/wintermute/keymapper_tables.h:1311
+#: engines/wintermute/keymapper_tables.h:1360
+#: engines/wintermute/keymapper_tables.h:1543
+#: engines/wintermute/keymapper_tables.h:1659
 msgid "Show hints"
 msgstr "Mostrar dicas"
 
-#: engines/wintermute/keymapper_tables.h:242
-#: engines/wintermute/keymapper_tables.h:442
-#: engines/wintermute/keymapper_tables.h:614
-#: engines/wintermute/keymapper_tables.h:1093
-#: engines/wintermute/keymapper_tables.h:1169
-#: engines/wintermute/keymapper_tables.h:1312
-#: engines/wintermute/keymapper_tables.h:1324
-#: engines/wintermute/keymapper_tables.h:1333
-#: engines/wintermute/keymapper_tables.h:1504
+#: engines/wintermute/keymapper_tables.h:248
+#: engines/wintermute/keymapper_tables.h:448
+#: engines/wintermute/keymapper_tables.h:620
+#: engines/wintermute/keymapper_tables.h:1099
+#: engines/wintermute/keymapper_tables.h:1175
+#: engines/wintermute/keymapper_tables.h:1318
+#: engines/wintermute/keymapper_tables.h:1330
+#: engines/wintermute/keymapper_tables.h:1339
+#: engines/wintermute/keymapper_tables.h:1510
 msgid "Show inventory"
 msgstr "Mostrar inventário"
 
-#: engines/wintermute/keymapper_tables.h:262
-#: engines/wintermute/keymapper_tables.h:311
-#: engines/wintermute/keymapper_tables.h:338
-#: engines/wintermute/keymapper_tables.h:1486
-#: engines/wintermute/keymapper_tables.h:1544
+#: engines/wintermute/keymapper_tables.h:268
+#: engines/wintermute/keymapper_tables.h:317
+#: engines/wintermute/keymapper_tables.h:344
+#: engines/wintermute/keymapper_tables.h:1492
+#: engines/wintermute/keymapper_tables.h:1550
 msgid "GUI variant A"
 msgstr "Variante da Interface A"
 
-#: engines/wintermute/keymapper_tables.h:269
-#: engines/wintermute/keymapper_tables.h:318
-#: engines/wintermute/keymapper_tables.h:345
-#: engines/wintermute/keymapper_tables.h:1492
-#: engines/wintermute/keymapper_tables.h:1550
+#: engines/wintermute/keymapper_tables.h:275
+#: engines/wintermute/keymapper_tables.h:324
+#: engines/wintermute/keymapper_tables.h:351
+#: engines/wintermute/keymapper_tables.h:1498
+#: engines/wintermute/keymapper_tables.h:1556
 msgid "GUI variant B"
 msgstr "Variante da Interface B"
 
-#: engines/wintermute/keymapper_tables.h:276
-#: engines/wintermute/keymapper_tables.h:352
-#: engines/wintermute/keymapper_tables.h:866
+#: engines/wintermute/keymapper_tables.h:282
+#: engines/wintermute/keymapper_tables.h:358
+#: engines/wintermute/keymapper_tables.h:872
 msgid "Phone cancel button"
 msgstr ""
-
-#: engines/wintermute/keymapper_tables.h:281
-#: engines/wintermute/keymapper_tables.h:357
-#: engines/wintermute/keymapper_tables.h:871
-#, fuzzy
-msgid "Phone up button"
-msgstr "Botão esquerdo do rato"
 
 #: engines/wintermute/keymapper_tables.h:287
 #: engines/wintermute/keymapper_tables.h:363
 #: engines/wintermute/keymapper_tables.h:877
+#, fuzzy
+msgid "Phone up button"
+msgstr "Botão esquerdo do rato"
+
+#: engines/wintermute/keymapper_tables.h:293
+#: engines/wintermute/keymapper_tables.h:369
+#: engines/wintermute/keymapper_tables.h:883
 msgid "Phone down button"
 msgstr ""
 
-#: engines/wintermute/keymapper_tables.h:369
-#: engines/wintermute/keymapper_tables.h:883
+#: engines/wintermute/keymapper_tables.h:375
+#: engines/wintermute/keymapper_tables.h:889
 #, fuzzy
 msgid "Phone 0 button"
 msgstr "Botão direito do rato"
 
-#: engines/wintermute/keymapper_tables.h:374
-#: engines/wintermute/keymapper_tables.h:888
+#: engines/wintermute/keymapper_tables.h:380
+#: engines/wintermute/keymapper_tables.h:894
 #, fuzzy
 msgid "Phone 1 button"
 msgstr "Botão direito do rato"
 
-#: engines/wintermute/keymapper_tables.h:379
-#: engines/wintermute/keymapper_tables.h:893
+#: engines/wintermute/keymapper_tables.h:385
+#: engines/wintermute/keymapper_tables.h:899
 #, fuzzy
 msgid "Phone 2 button"
 msgstr "Botão direito do rato"
 
-#: engines/wintermute/keymapper_tables.h:384
-#: engines/wintermute/keymapper_tables.h:898
+#: engines/wintermute/keymapper_tables.h:390
+#: engines/wintermute/keymapper_tables.h:904
 #, fuzzy
 msgid "Phone 3 button"
 msgstr "Botão direito do rato"
 
-#: engines/wintermute/keymapper_tables.h:389
-#: engines/wintermute/keymapper_tables.h:903
+#: engines/wintermute/keymapper_tables.h:395
+#: engines/wintermute/keymapper_tables.h:909
 #, fuzzy
 msgid "Phone 4 button"
 msgstr "Botão direito do rato"
 
-#: engines/wintermute/keymapper_tables.h:394
-#: engines/wintermute/keymapper_tables.h:908
+#: engines/wintermute/keymapper_tables.h:400
+#: engines/wintermute/keymapper_tables.h:914
 #, fuzzy
 msgid "Phone 5 button"
 msgstr "Botão direito do rato"
 
-#: engines/wintermute/keymapper_tables.h:399
-#: engines/wintermute/keymapper_tables.h:913
+#: engines/wintermute/keymapper_tables.h:405
+#: engines/wintermute/keymapper_tables.h:919
 #, fuzzy
 msgid "Phone 6 button"
 msgstr "Botão direito do rato"
 
-#: engines/wintermute/keymapper_tables.h:404
-#: engines/wintermute/keymapper_tables.h:918
+#: engines/wintermute/keymapper_tables.h:410
+#: engines/wintermute/keymapper_tables.h:924
 #, fuzzy
 msgid "Phone 7 button"
 msgstr "Botão direito do rato"
 
-#: engines/wintermute/keymapper_tables.h:409
-#: engines/wintermute/keymapper_tables.h:923
+#: engines/wintermute/keymapper_tables.h:415
+#: engines/wintermute/keymapper_tables.h:929
 #, fuzzy
 msgid "Phone 8 button"
 msgstr "Botão direito do rato"
 
-#: engines/wintermute/keymapper_tables.h:414
-#: engines/wintermute/keymapper_tables.h:928
+#: engines/wintermute/keymapper_tables.h:420
+#: engines/wintermute/keymapper_tables.h:934
 #, fuzzy
 msgid "Phone 9 button"
 msgstr "Botão direito do rato"
 
-#: engines/wintermute/keymapper_tables.h:419
-#: engines/wintermute/keymapper_tables.h:933
+#: engines/wintermute/keymapper_tables.h:425
+#: engines/wintermute/keymapper_tables.h:939
 #, fuzzy
 msgid "Phone * button"
 msgstr "Botão direito do rato"
 
-#: engines/wintermute/keymapper_tables.h:424
-#: engines/wintermute/keymapper_tables.h:938
+#: engines/wintermute/keymapper_tables.h:430
+#: engines/wintermute/keymapper_tables.h:944
 #, fuzzy
 msgid "Phone # button"
 msgstr "Botão direito do rato"
 
-#: engines/wintermute/keymapper_tables.h:448
-#: engines/wintermute/keymapper_tables.h:1073
+#: engines/wintermute/keymapper_tables.h:454
+#: engines/wintermute/keymapper_tables.h:1079
 msgid "Show help"
 msgstr "Mostrar ajuda"
 
-#: engines/wintermute/keymapper_tables.h:454
-#: engines/wintermute/keymapper_tables.h:621
-#: engines/wintermute/keymapper_tables.h:642
-#: engines/wintermute/keymapper_tables.h:1047
-#: engines/wintermute/keymapper_tables.h:1079
-#: engines/wintermute/keymapper_tables.h:1134
-#: engines/wintermute/keymapper_tables.h:1155
-#: engines/wintermute/keymapper_tables.h:1340
-#: engines/wintermute/keymapper_tables.h:1523
-#: engines/wintermute/keymapper_tables.h:1721
+#: engines/wintermute/keymapper_tables.h:460
+#: engines/wintermute/keymapper_tables.h:627
+#: engines/wintermute/keymapper_tables.h:648
+#: engines/wintermute/keymapper_tables.h:1053
+#: engines/wintermute/keymapper_tables.h:1085
+#: engines/wintermute/keymapper_tables.h:1140
+#: engines/wintermute/keymapper_tables.h:1161
+#: engines/wintermute/keymapper_tables.h:1346
+#: engines/wintermute/keymapper_tables.h:1529
+#: engines/wintermute/keymapper_tables.h:1727
 msgid "Scroll up"
 msgstr "Deslizar para cima"
 
-#: engines/wintermute/keymapper_tables.h:461
-#: engines/wintermute/keymapper_tables.h:628
-#: engines/wintermute/keymapper_tables.h:649
-#: engines/wintermute/keymapper_tables.h:1054
-#: engines/wintermute/keymapper_tables.h:1086
-#: engines/wintermute/keymapper_tables.h:1141
-#: engines/wintermute/keymapper_tables.h:1162
-#: engines/wintermute/keymapper_tables.h:1347
-#: engines/wintermute/keymapper_tables.h:1530
-#: engines/wintermute/keymapper_tables.h:1726
+#: engines/wintermute/keymapper_tables.h:467
+#: engines/wintermute/keymapper_tables.h:634
+#: engines/wintermute/keymapper_tables.h:655
+#: engines/wintermute/keymapper_tables.h:1060
+#: engines/wintermute/keymapper_tables.h:1092
+#: engines/wintermute/keymapper_tables.h:1147
+#: engines/wintermute/keymapper_tables.h:1168
+#: engines/wintermute/keymapper_tables.h:1353
+#: engines/wintermute/keymapper_tables.h:1536
+#: engines/wintermute/keymapper_tables.h:1732
 msgid "Scroll down"
 msgstr "Deslizar para baixo"
 
-#: engines/wintermute/keymapper_tables.h:473
+#: engines/wintermute/keymapper_tables.h:479
 msgid "Change shadow type"
 msgstr ""
 
-#: engines/wintermute/keymapper_tables.h:483
-#: engines/wintermute/keymapper_tables.h:570
+#: engines/wintermute/keymapper_tables.h:489
+#: engines/wintermute/keymapper_tables.h:576
 msgid "Volume max"
 msgstr "Volume máximo"
 
-#: engines/wintermute/keymapper_tables.h:488
+#: engines/wintermute/keymapper_tables.h:494
 msgid "Show debug parser"
 msgstr "Mostrar analisador de depuração"
 
-#: engines/wintermute/keymapper_tables.h:495
-#: engines/wintermute/keymapper_tables.h:603
-#: engines/wintermute/keymapper_tables.h:1228
-#: engines/wintermute/keymapper_tables.h:1434
+#: engines/wintermute/keymapper_tables.h:501
+#: engines/wintermute/keymapper_tables.h:609
+#: engines/wintermute/keymapper_tables.h:1234
+#: engines/wintermute/keymapper_tables.h:1440
 msgid "Debug print"
 msgstr "Saída do depurador"
 
-#: engines/wintermute/keymapper_tables.h:500
-#: engines/wintermute/keymapper_tables.h:1407
+#: engines/wintermute/keymapper_tables.h:506
+#: engines/wintermute/keymapper_tables.h:1413
 msgid "Exit"
 msgstr ""
 
-#: engines/wintermute/keymapper_tables.h:505
+#: engines/wintermute/keymapper_tables.h:511
 msgid "Light helper window"
 msgstr "Janela de assistente leve"
 
-#: engines/wintermute/keymapper_tables.h:530
+#: engines/wintermute/keymapper_tables.h:536
 msgid "Run forward"
 msgstr "Correr para a frente"
 
-#: engines/wintermute/keymapper_tables.h:535
+#: engines/wintermute/keymapper_tables.h:541
 msgid "Run backward"
 msgstr "Correr para trás"
 
-#: engines/wintermute/keymapper_tables.h:540
+#: engines/wintermute/keymapper_tables.h:546
 msgid "Turn left fast"
 msgstr "Virar à esquerda depressa"
 
-#: engines/wintermute/keymapper_tables.h:545
+#: engines/wintermute/keymapper_tables.h:551
 msgid "Turn right fast"
 msgstr "Virar à direita depressa"
 
-#: engines/wintermute/keymapper_tables.h:550
+#: engines/wintermute/keymapper_tables.h:556
 msgid "Show blueprint"
 msgstr "Mostrar modelo"
 
-#: engines/wintermute/keymapper_tables.h:577
+#: engines/wintermute/keymapper_tables.h:583
 msgid "Volume off"
 msgstr "Volume desligado"
 
-#: engines/wintermute/keymapper_tables.h:591
+#: engines/wintermute/keymapper_tables.h:597
 msgid "Change font size"
 msgstr ""
 
-#: engines/wintermute/keymapper_tables.h:670
+#: engines/wintermute/keymapper_tables.h:676
 msgid "Save game"
 msgstr "Guardar jogo"
 
-#: engines/wintermute/keymapper_tables.h:680
+#: engines/wintermute/keymapper_tables.h:686
 msgid "Quick save"
 msgstr "Guardar rápido"
 
-#: engines/wintermute/keymapper_tables.h:685
+#: engines/wintermute/keymapper_tables.h:691
 msgid "Walking speed: Low"
 msgstr ""
 
-#: engines/wintermute/keymapper_tables.h:690
+#: engines/wintermute/keymapper_tables.h:696
 msgid "Walking speed: Medium"
 msgstr ""
 
-#: engines/wintermute/keymapper_tables.h:695
+#: engines/wintermute/keymapper_tables.h:701
 msgid "Walking speed: High"
 msgstr ""
 
-#: engines/wintermute/keymapper_tables.h:700
+#: engines/wintermute/keymapper_tables.h:706
 msgid "Quick load"
 msgstr "Carregar rápido"
 
-#: engines/wintermute/keymapper_tables.h:705
-#: engines/wintermute/keymapper_tables.h:1035
-#: engines/wintermute/keymapper_tables.h:1429
+#: engines/wintermute/keymapper_tables.h:711
+#: engines/wintermute/keymapper_tables.h:1041
+#: engines/wintermute/keymapper_tables.h:1435
 msgid "Cancel waiting"
 msgstr "Cancelar espera"
 
-#: engines/wintermute/keymapper_tables.h:715
+#: engines/wintermute/keymapper_tables.h:721
 msgid "First page"
 msgstr "Primeira página"
 
-#: engines/wintermute/keymapper_tables.h:720
+#: engines/wintermute/keymapper_tables.h:726
 msgid "Last page"
 msgstr "Última página"
 
-#: engines/wintermute/keymapper_tables.h:727
+#: engines/wintermute/keymapper_tables.h:733
 msgid "Walking speed: Ultra Super Mega Fast"
 msgstr ""
 
-#: engines/wintermute/keymapper_tables.h:743
+#: engines/wintermute/keymapper_tables.h:749
 msgid "Show game credits"
 msgstr "Mostrar créditos do jogo"
 
-#: engines/wintermute/keymapper_tables.h:748
+#: engines/wintermute/keymapper_tables.h:754
 msgid "Play selected music record"
 msgstr ""
 
-#: engines/wintermute/keymapper_tables.h:753
+#: engines/wintermute/keymapper_tables.h:759
 msgid "Select next music record"
 msgstr ""
 
-#: engines/wintermute/keymapper_tables.h:758
+#: engines/wintermute/keymapper_tables.h:764
 msgid "Play note 1: A"
 msgstr "Tocar nota 1: A"
 
-#: engines/wintermute/keymapper_tables.h:763
+#: engines/wintermute/keymapper_tables.h:769
 msgid "Play note 2: F#"
 msgstr "Tocar nota 2: F#"
 
-#: engines/wintermute/keymapper_tables.h:768
+#: engines/wintermute/keymapper_tables.h:774
 msgid "Play note 3: D#"
 msgstr "Tocar nota 3: D#"
 
-#: engines/wintermute/keymapper_tables.h:773
+#: engines/wintermute/keymapper_tables.h:779
 msgid "Play note 4: C#"
 msgstr "Tocar nota 4: C#"
 
-#: engines/wintermute/keymapper_tables.h:778
+#: engines/wintermute/keymapper_tables.h:784
 msgid "Play note 5: E"
 msgstr "Tocar nota 5: E"
 
-#: engines/wintermute/keymapper_tables.h:783
+#: engines/wintermute/keymapper_tables.h:789
 msgid "Play note 6: G#"
 msgstr "Tocar nota 6: G#"
 
-#: engines/wintermute/keymapper_tables.h:788
+#: engines/wintermute/keymapper_tables.h:794
 msgid "Play note 7: B"
 msgstr "Tocar nota 7: B"
 
-#: engines/wintermute/keymapper_tables.h:801
+#: engines/wintermute/keymapper_tables.h:807
 msgid "Ability: Telekinesis"
 msgstr ""
 
-#: engines/wintermute/keymapper_tables.h:806
+#: engines/wintermute/keymapper_tables.h:812
 msgid "Ability: Push"
 msgstr ""
 
-#: engines/wintermute/keymapper_tables.h:811
+#: engines/wintermute/keymapper_tables.h:817
 msgid "Ability: Lightning"
 msgstr ""
 
-#: engines/wintermute/keymapper_tables.h:816
+#: engines/wintermute/keymapper_tables.h:822
 msgid "Ability: Light"
 msgstr ""
 
-#: engines/wintermute/keymapper_tables.h:821
+#: engines/wintermute/keymapper_tables.h:827
 msgid "Ability: Wind"
 msgstr ""
 
-#: engines/wintermute/keymapper_tables.h:826
+#: engines/wintermute/keymapper_tables.h:832
 msgid "Ability: Sound"
 msgstr ""
 
-#: engines/wintermute/keymapper_tables.h:831
+#: engines/wintermute/keymapper_tables.h:837
 msgid "Ability: Esence"
 msgstr ""
 
-#: engines/wintermute/keymapper_tables.h:836
+#: engines/wintermute/keymapper_tables.h:842
 msgid "Ability: Exorcist"
 msgstr ""
 
-#: engines/wintermute/keymapper_tables.h:841
+#: engines/wintermute/keymapper_tables.h:847
 msgid "Skip minigame"
 msgstr "Ignorar minijogo"
 
-#: engines/wintermute/keymapper_tables.h:949
+#: engines/wintermute/keymapper_tables.h:955
 msgid "Show hints / Dance move"
 msgstr "Mostrar dicas / Movimento dança"
 
-#: engines/wintermute/keymapper_tables.h:956
+#: engines/wintermute/keymapper_tables.h:962
 msgid "Dance move up"
 msgstr "Dançar para cima"
 
-#: engines/wintermute/keymapper_tables.h:962
+#: engines/wintermute/keymapper_tables.h:968
 msgid "Dance move down"
 msgstr "Dançar para baixo"
 
-#: engines/wintermute/keymapper_tables.h:968
+#: engines/wintermute/keymapper_tables.h:974
 msgid "Dance move left"
 msgstr "Dançar à esquerda"
 
-#: engines/wintermute/keymapper_tables.h:974
+#: engines/wintermute/keymapper_tables.h:980
 msgid "Dance move right"
 msgstr "Dançar à direita"
 
-#: engines/wintermute/keymapper_tables.h:1004
+#: engines/wintermute/keymapper_tables.h:1010
 msgid "Cancel input"
 msgstr "Cancelar introdução"
 
-#: engines/wintermute/keymapper_tables.h:1114
+#: engines/wintermute/keymapper_tables.h:1120
 msgid "Shift"
 msgstr ""
 
-#: engines/wintermute/keymapper_tables.h:1214
+#: engines/wintermute/keymapper_tables.h:1220
 msgid "Use Chapayev"
 msgstr ""
 
-#: engines/wintermute/keymapper_tables.h:1234
-#: engines/wintermute/keymapper_tables.h:1639
+#: engines/wintermute/keymapper_tables.h:1240
+#: engines/wintermute/keymapper_tables.h:1645
 msgid "Next action"
 msgstr "Ação seguinte"
 
-#: engines/wintermute/keymapper_tables.h:1242
-#: engines/wintermute/keymapper_tables.h:1647
+#: engines/wintermute/keymapper_tables.h:1248
+#: engines/wintermute/keymapper_tables.h:1653
 #, fuzzy
 msgid "Previous action"
 msgstr "Ação seguinte"
 
-#: engines/wintermute/keymapper_tables.h:1261
-#: engines/wintermute/keymapper_tables.h:1424
+#: engines/wintermute/keymapper_tables.h:1267
+#: engines/wintermute/keymapper_tables.h:1430
 msgid "Settings"
 msgstr ""
 
-#: engines/wintermute/keymapper_tables.h:1266
+#: engines/wintermute/keymapper_tables.h:1272
 msgid "Dialogue answer 1"
 msgstr ""
 
-#: engines/wintermute/keymapper_tables.h:1271
+#: engines/wintermute/keymapper_tables.h:1277
 msgid "Dialogue answer 2"
 msgstr ""
 
-#: engines/wintermute/keymapper_tables.h:1276
+#: engines/wintermute/keymapper_tables.h:1282
 msgid "Dialogue answer 3"
 msgstr ""
 
-#: engines/wintermute/keymapper_tables.h:1281
+#: engines/wintermute/keymapper_tables.h:1287
 msgid "Dialogue answer 4"
 msgstr ""
 
-#: engines/wintermute/keymapper_tables.h:1291
+#: engines/wintermute/keymapper_tables.h:1297
 msgid "Spin slower"
 msgstr ""
 
-#: engines/wintermute/keymapper_tables.h:1298
+#: engines/wintermute/keymapper_tables.h:1304
 msgid "Spin faster"
 msgstr ""
 
-#: engines/wintermute/keymapper_tables.h:1376
+#: engines/wintermute/keymapper_tables.h:1382
 msgid "Zoom out"
 msgstr "Reduzir"
 
-#: engines/wintermute/keymapper_tables.h:1383
+#: engines/wintermute/keymapper_tables.h:1389
 msgid "Zoom in"
 msgstr "Ampliar"
 
-#: engines/wintermute/keymapper_tables.h:1396
-#: engines/wintermute/keymapper_tables.h:1511
+#: engines/wintermute/keymapper_tables.h:1402
+#: engines/wintermute/keymapper_tables.h:1517
 msgid "Show journal"
 msgstr "Mostrar diário"
 
-#: engines/wintermute/keymapper_tables.h:1439
+#: engines/wintermute/keymapper_tables.h:1445
 msgid "Bezier window"
 msgstr "Janela Bézier"
 
-#: engines/wintermute/keymapper_tables.h:1455
+#: engines/wintermute/keymapper_tables.h:1461
 #, fuzzy
 msgid "Droid action"
 msgstr "Ação seguinte"
 
-#: engines/wintermute/keymapper_tables.h:1517
+#: engines/wintermute/keymapper_tables.h:1523
 msgid "Music menu"
 msgstr "Menu de música"
 
-#: engines/wintermute/keymapper_tables.h:1561
+#: engines/wintermute/keymapper_tables.h:1567
 msgid "Rotate"
 msgstr "Rodar"
 
-#: engines/wintermute/keymapper_tables.h:1586
+#: engines/wintermute/keymapper_tables.h:1592
 msgid "Drop"
 msgstr ""
 
-#: engines/wintermute/keymapper_tables.h:1594
+#: engines/wintermute/keymapper_tables.h:1600
 msgid "Player 1: Up"
 msgstr "Jogador 1: Cima"
 
-#: engines/wintermute/keymapper_tables.h:1599
+#: engines/wintermute/keymapper_tables.h:1605
 msgid "Player 1: Left"
 msgstr "Jogador 1: Esquerda"
 
-#: engines/wintermute/keymapper_tables.h:1604
+#: engines/wintermute/keymapper_tables.h:1610
 msgid "Player 1: Down"
 msgstr "Jogador 1: Baixo"
 
-#: engines/wintermute/keymapper_tables.h:1609
+#: engines/wintermute/keymapper_tables.h:1615
 msgid "Player 1: Right"
 msgstr "Jogador 1: Direita"
 
-#: engines/wintermute/keymapper_tables.h:1614
+#: engines/wintermute/keymapper_tables.h:1620
 msgid "Player 2: Up"
 msgstr "Jogador 2: Cima"
 
-#: engines/wintermute/keymapper_tables.h:1619
+#: engines/wintermute/keymapper_tables.h:1625
 msgid "Player 2: Left"
 msgstr "Jogador 2: Esquerda"
 
-#: engines/wintermute/keymapper_tables.h:1624
+#: engines/wintermute/keymapper_tables.h:1630
 msgid "Player 2: Down"
 msgstr "Jogador 2: Baixo"
 
-#: engines/wintermute/keymapper_tables.h:1629
+#: engines/wintermute/keymapper_tables.h:1635
 msgid "Player 2: Right"
 msgstr "Jogador 2: Direita"
 
-#: engines/wintermute/keymapper_tables.h:1634
+#: engines/wintermute/keymapper_tables.h:1640
 msgid "Debug FPS"
 msgstr "Depurar FPS"
 
-#: engines/wintermute/keymapper_tables.h:1731
+#: engines/wintermute/keymapper_tables.h:1737
 msgid "F1"
 msgstr ""
 
-#: engines/wintermute/keymapper_tables.h:1736
+#: engines/wintermute/keymapper_tables.h:1742
 msgid "Key i"
 msgstr ""
 
