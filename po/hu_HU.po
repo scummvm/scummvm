@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-04-17 20:45+0000\n"
-"PO-Revision-Date: 2021-04-16 16:48+0000\n"
+"PO-Revision-Date: 2021-04-18 09:46+0000\n"
 "Last-Translator: George Kormendi <grubycza@hotmail.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/hu/>\n"
@@ -864,15 +864,13 @@ msgstr "Minden 30 percben"
 
 #. I18N: Automatic GUI scaling
 #: gui/options.cpp:135
-#, fuzzy
-#| msgid "Autosave"
 msgid "Auto"
-msgstr "Automentés"
+msgstr "Auto"
 
 #. I18N: Large GUI scale
 #: gui/options.cpp:137
 msgid "Large"
-msgstr ""
+msgstr "Nagy"
 
 #. I18N: Medium GUI scale
 #: gui/options.cpp:139 engines/nancy/dialogs.cpp:120
@@ -882,7 +880,7 @@ msgstr "Közepes"
 #. I18N: Small GUI scale
 #: gui/options.cpp:141
 msgid "Small"
-msgstr ""
+msgstr "Kicsi"
 
 #: gui/options.cpp:429 gui/options.cpp:817 gui/options.cpp:955
 #: gui/options.cpp:1066 gui/options.cpp:1459
@@ -1314,10 +1312,8 @@ msgid "Theme:"
 msgstr "Téma:"
 
 #: gui/options.cpp:2101
-#, fuzzy
-#| msgid "Unscaled"
 msgid "GUI scale:"
-msgstr "Nem méretezett"
+msgstr "GUI skála:"
 
 #: gui/options.cpp:2108
 msgid "GUI renderer:"
