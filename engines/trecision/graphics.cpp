@@ -73,8 +73,19 @@ void GraphicsManager::clearScreen() {
 }
 
 void GraphicsManager::copyToScreenBuffer(Graphics::Surface *surface, int x, int y) {
-	for (int i = 0; i < surface->h; i++) {
-		memcpy(_vm->_screenBuffer + x + (y + i) * MAXX, surface->getBasePtr(0, i), surface->pitch);
+	for (int curY = 0; curY < surface->h; curY++) {
+		memcpy(_vm->_screenBuffer + x + (y + curY) * MAXX, surface->getBasePtr(0, curY), surface->pitch);
+	}
+}
+
+void GraphicsManager::blitToScreenBuffer(Graphics::Surface *surface, int x, int y, uint16 mask) {
+	for (int curY = 0; curY < surface->h; curY++) {
+		for (int curX = 0; curX < surface->w; curX++) {
+			uint16 *dest = _vm->_screenBuffer + x + curX + (y + curY) * MAXX;
+			uint16 *src = (uint16 *)surface->getBasePtr(curX, curY);
+			if (*src != mask)
+				*dest = *src;
+		}
 	}
 }
 
