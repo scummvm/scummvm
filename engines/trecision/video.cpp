@@ -98,7 +98,6 @@ bool NightlongSmackerDecoder::forceSeekToFrame(uint frame) {
 
 AnimManager::AnimManager(TrecisionEngine *vm) : _vm(vm) {
 	for (int i = 0; i < MAXSMACK; ++i) {
-		_smkBuffer[i] = nullptr;
 		_smkAnims[i] = nullptr;
 		_playingAnims[i] = 0;
 
@@ -259,28 +258,12 @@ void AnimManager::openSmk(int slot, Common::SeekableReadStream *stream) {
 		closeSmk(slot);
 	} else {
 		_smkAnims[slot]->start();
-		if (slot == kSmackerBackground)
-			smkNextFrame(slot);
 	}
 }
 
 void AnimManager::closeSmk(int slot) {
 	delete _smkAnims[slot];
 	_smkAnims[slot] = nullptr;
-}
-
-void AnimManager::smkNextFrame(int slot) {
-	if (_smkAnims[slot] == nullptr)
-		return;
-
-	// Loop
-	if (_smkAnims[slot]->endOfVideo()) {
-		_smkAnims[slot]->rewind();
-	}
-
-	const Graphics::Surface *surface = _smkAnims[slot]->decodeNextFrame();
-	if (surface)
-		_smkBuffer[slot] = (uint8 *)surface->getPixels();
 }
 
 void AnimManager::smkGoto(int slot, int frame) {
@@ -479,31 +462,28 @@ void AnimManager::byte2wordn(void *dest, void *src, const uint16 *smk, void *pal
 
 void AnimManager::refreshSmkAnim(int animation) {
 	uint16 *backgroundPtr = g_vm->_graphicsMgr->getBackgroundPtr();
+
 	if (animation == 0)
 		return;
 
 	if (_animTab[animation]._flag & SMKANIM_ICON) {
 		drawSmkIconFrame(_vm->_inventoryRefreshStartIcon, animation);
 		return;
+	} else if (_animTab[animation]._flag & SMKANIM_BKG) {
+		// Background anim, handled below
+	} else {
+		drawSmkActionFrame();
+		handleEndOfVideo(animation, kSmackerAction);
+		return;
 	}
-
-	int slot = 0;
-	while ((slot < MAXSMACK) && (_playingAnims[slot] != animation))
-		slot++;
-
-	if (slot >= MAXSMACK) {
-		if (_animTab[animation]._flag & SMKANIM_BKG)
-			slot = kSmackerBackground;
-		else
-			slot = kSmackerAction;
-	}
-
-	if (_smkAnims[slot] == nullptr)
+	
+	if (_smkAnims[kSmackerBackground] == nullptr)
 		return;
 
-	refreshPalette(slot);
-
-	while (const Common::Rect *lastRect = _smkAnims[slot]->getNextDirtyRect()) {
+	const Graphics::Surface *surface = _smkAnims[kSmackerBackground]->decodeNextFrame();
+	const Common::Rect *lastRect = _smkAnims[kSmackerBackground]->getNextDirtyRect();
+	
+	while (lastRect) {
 		bool intersects = false;
 		for (int32 a = 0; a < MAXCHILD; a++) {
 			if (_animTab[animation]._flag & (SMKANIM_OFF1 << a)) {
@@ -518,12 +498,15 @@ void AnimManager::refreshSmkAnim(int animation) {
 			}
 		}
 
-		if (smkCurFrame(slot) > 0 && !intersects) {
-			if (slot == kSmackerBackground) {
+		if (smkCurFrame(kSmackerBackground) > 0 && !intersects) {
+			refreshPalette(kSmackerBackground);
+			
+			if (surface) {
+				byte *buf = (byte *)surface->getPixels();
 				for (int32 a = 0; a < lastRect->height(); a++) {
 					byte2wordn(
 						_vm->_screenBuffer + lastRect->left + (lastRect->top + a + TOP) * MAXX,
-						_smkBuffer[kSmackerBackground] + lastRect->left + (lastRect->top + a) * _smkAnims[kSmackerBackground]->getWidth(),
+						buf + lastRect->left + (lastRect->top + a) * _smkAnims[kSmackerBackground]->getWidth(),
 						_vm->_graphicsMgr->getSmkBackgroundPtr(lastRect->left, lastRect->top + a),
 						_smkPal[kSmackerBackground],
 						lastRect->width()
@@ -535,39 +518,30 @@ void AnimManager::refreshSmkAnim(int animation) {
 				}
 			}
 		}
+
+		lastRect = _smkAnims[kSmackerBackground]->getNextDirtyRect();
 	}
 
-	if (slot == kSmackerBackground) {
-		// If it's a background
-		for (int32 a = 0; a < MAXCHILD; a++) {
-			if (!(_animTab[animation]._flag & (SMKANIM_OFF1 << a)) && (_animTab[animation]._lim[a].bottom != 0)) {
-				Common::Rect l = _animTab[animation]._lim[a];
-				l.translate(0, TOP);
-				_vm->_limits[_vm->_limitsNum++] = l;
-			}
+	for (int32 a = 0; a < MAXCHILD; a++) {
+		if (!(_animTab[animation]._flag & (SMKANIM_OFF1 << a)) && (_animTab[animation]._lim[a].bottom != 0)) {
+			Common::Rect l = _animTab[animation]._lim[a];
+			l.translate(0, TOP);
+			_vm->_limits[_vm->_limitsNum++] = l;
 		}
-	} else if (slot == kSmackerAction) {
-		// Only for the character
-		drawSmkActionFrame();
 	}
 
-	if (!(_animTab[animation]._flag & SMKANIM_LOOP) && !(_animTab[animation]._flag & SMKANIM_BKG)) {
-		if (_smkAnims[slot]->endOfVideo()) {
+	handleEndOfVideo(animation, kSmackerBackground);
+}
+
+void AnimManager::handleEndOfVideo(int animation, int slot) {
+	if (_smkAnims[slot]->endOfVideo()) {
+		if (!(_animTab[animation]._flag & SMKANIM_LOOP) && !(_animTab[animation]._flag & SMKANIM_BKG)) {
 			smkStop(slot);
 			g_vm->_flagPaintCharacter = true;
 		} else {
-			if (slot == kSmackerBackground)
-				smkNextFrame(slot);
-		}
-		
-	} else {
-		if (slot == kSmackerBackground)
-			smkNextFrame(slot);
-	}
-	
-	if (_smkAnims[slot] != nullptr && _smkAnims[slot]->endOfVideo()) {
-		if ((_animTab[animation]._flag & SMKANIM_LOOP) || (_animTab[animation]._flag & SMKANIM_BKG))
+			_smkAnims[slot]->rewind();
 			InitAtFrameHandler(animation, 0);
+		}
 	}
 }
 
