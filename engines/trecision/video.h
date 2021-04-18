@@ -87,7 +87,6 @@ private:
 public:
 	uint8 *_smkBuffer[MAXSMACK];
 	uint16 _playingAnims[MAXSMACK];
-	uint16 _curAnimFrame[MAXSMACK];
 
 	uint16 _animMaxX, _animMinX, _animMaxY, _animMinY;
 
@@ -96,7 +95,8 @@ public:
 	void smkGoto(int buf, int num);
 	void smkSoundOnOff(int pos, bool on);
 	void smkVolumePan(int buf, int track, int vol);
-
+	int16 smkCurFrame(int buf);
+	
 	void playMovie(Common::String filename, int startFrame = 1, int endFrame = -1);
 	void startFullMotion(const char *name);
 	void stopFullMotion();
