@@ -121,6 +121,16 @@ static const ADGameDescription gameDescriptions[] = {
 		GUIO1(GUIO_NOMIDI)
 	},
 	{
+		"private-eye", // EU release (DE)
+		"It uses different file format for the assest",
+		AD_ENTRY2s("pvteye.ex_", "5ca171c4e8d804c7277887277d049f03", 600576,
+		   "bklynlgo.bmp", "1dfb703349a46f8ec183de107992b7f5", 33118),
+		Common::DE_DEU,
+		Common::kPlatformWindows,
+		ADGF_UNSUPPORTED,
+		GUIO1(GUIO_NOMIDI)
+	},
+	{
 		"private-eye", // Demo from the EU release
 		"Demo",
 		AD_ENTRY2s("Private Eye Demo", "", 284129,
