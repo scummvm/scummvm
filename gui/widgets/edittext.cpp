@@ -72,6 +72,10 @@ void EditTextWidget::handleMouseDown(int x, int y, int button, int clickCount) {
 	if (_caretVisible)
 		drawCaret(true);
 
+	// Remove highlight
+	if (_highlightVisible)
+		initHighlight();
+
 	if (g_gui.useRTL()) {
 		x = _w - x;
 	}
