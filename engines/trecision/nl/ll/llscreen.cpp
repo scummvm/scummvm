@@ -396,9 +396,6 @@ int actionInRoom(int curA) {
 	return 0;
 }
 
-/*-----------------17/02/95 10.19-------------------
-						ReadLoc
---------------------------------------------------*/
 void ReadLoc() {
 	if (g_vm->_curRoom == r11 && !(g_vm->_room[r11]._flag & OBJFLAG_DONE))
 		g_vm->_flagShowCharacter = true;
@@ -409,13 +406,17 @@ void ReadLoc() {
 
 	Common::String filename = Common::String::format("%s.cr", g_vm->_room[g_vm->_curRoom]._baseName);
 
-	uint16 *backgroundPtr = g_vm->_graphicsMgr->getBackgroundPtr();
-	uint32 dataLength = (g_vm->DecCR(filename, (uint8 *)backgroundPtr) + 1) / 2;
-	memcpy(&BmInfo, (SBmInfo *)backgroundPtr, sizeof(SBmInfo));
-	g_vm->_graphicsMgr->updatePixelFormat(backgroundPtr, BmInfo.dx * BmInfo.dy);
-
-	ReadObj();
-
+	const int bufferSize = 900000; // MAXX * AREA * 2 + MAXOBJINROOM * sizeof(SBmInfo) + some more data
+	static byte *bgBuf = new byte[bufferSize];
+	uint32 dataLength = g_vm->DecCR(filename, (uint8 *)bgBuf);
+	assert(dataLength < bufferSize);
+	BmInfo.read((uint16 *)bgBuf);
+	g_vm->_graphicsMgr->loadBackground(bgBuf + sizeof(SBmInfo));
+	ReadObj((uint16 *)(bgBuf + BmInfo.dx * BmInfo.dy * 2 + sizeof(SBmInfo)));
+	// FIXME: Memory leak! This should not be deleted yet, because
+	// ReadObj() creates pointers into this buffer
+	//delete[] bgBuf;
+	
 	SoundStopAll();
 
 	if (g_vm->_room[g_vm->_curRoom]._sounds[0] != 0)
@@ -462,15 +463,10 @@ void TendIn() {
 	g_vm->_graphicsMgr->copyToScreen(0, 0, MAXX, MAXY);
 }
 
-/*-----------------17/02/95 10.20-------------------
-						ReadObj
---------------------------------------------------*/
-void ReadObj() {
+void ReadObj(uint16 *objBuffer) {
 	if (!g_vm->_room[g_vm->_curRoom]._object[0])
 		return;
 
-	uint16 *backgroundPtr = g_vm->_graphicsMgr->getBackgroundPtr();
-	uint16 *objBuffer = (uint16 *)backgroundPtr + BmInfo.dx * BmInfo.dy + 4;
 	uint32 b = 0;
 	for (uint16 a = 0; a < MAXOBJINROOM; a++) {
 		uint16 c = g_vm->_room[g_vm->_curRoom]._object[a];
