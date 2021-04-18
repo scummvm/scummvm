@@ -556,10 +556,12 @@ void drawCharacter(uint8 flag) {
 
 			g_vm->_actor->_vertex = &g_vm->_actor->_characterArea[cfp * g_vm->_actor->_vertexNum];
 		} else {
-			g_vm->_actor->_vertex = (SVertex *)(_actionPointer[_actionPosition[actionInRoom(g_vm->_actor->_curAction)] + g_vm->_actor->_curFrame]);
+			error("Trying to access unallocated memory pointer _actionPointer"); // FIXME
+			/*g_vm->_actor->_vertex = (SVertex *)(_actionPointer[_actionPosition[actionInRoom(g_vm->_actor->_curAction)] + g_vm->_actor->_curFrame]);
 
 			if (g_vm->_actor->_vertex == nullptr)
 				return;
+			*/
 		}
 	}
 
