@@ -306,10 +306,24 @@ Common::U32String MacTextWindow::cutSelection() {
 }
 
 void MacTextWindow::calcScrollBar() {
-	int maxText = _mactext->getTextHeight() + getInnerDimensions().height();
-	int drawableHeight = getInnerDimensions().height();
-	float scrollSize = (float)drawableHeight * drawableHeight / (float)maxText;
-	float scrollPos = (float)_scrollPos * drawableHeight / (float)maxText;
+	int maxText = 0, maxScrollbar = 0, displayHeight = 0;
+
+	displayHeight = getInnerDimensions().height();
+
+	if (_wm->_mode & kWMModeWin95) {
+		// because in win95 mode, the height of where we draw the text and scrollbar is not the same
+		maxScrollbar = getDimensions().height() - 32;
+	} else {
+		maxScrollbar = getInnerDimensions().height();
+	}
+
+	if (_editable)
+		maxText = _mactext->getTextHeight() + getInnerDimensions().height();
+	else
+		maxText = MAX<int>(_mactext->getTextHeight(), displayHeight);
+
+	float scrollSize = (float)maxScrollbar * (float)displayHeight / (float)maxText;
+	float scrollPos = (float)_scrollPos * (float)maxScrollbar / (float)maxText;
 	setScroll(scrollPos, scrollSize);
 }
 
@@ -359,15 +373,15 @@ bool MacTextWindow::processEvent(Common::Event &event) {
 
 	if (event.type == Common::EVENT_WHEELUP) {
 		setHighlight(kBorderScrollUp);
-		calcScrollBar();
 		scroll(-2);
+		calcScrollBar();
 		return true;
 	}
 
 	if (event.type == Common::EVENT_WHEELDOWN) {
 		setHighlight(kBorderScrollDown);
-		calcScrollBar();
 		scroll(2);
+		calcScrollBar();
 		return true;
 	}
 
