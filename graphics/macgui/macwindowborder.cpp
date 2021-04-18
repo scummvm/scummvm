@@ -52,6 +52,9 @@ MacWindowBorder::MacWindowBorder() {
 	_borderOffsets.titleTop = -1;
 	_borderOffsets.titleBottom = -1;
 	_borderOffsets.dark = false;
+
+	_scrollSize = -1;
+	_scrollPos = 0;
 }
 
 MacWindowBorder::~MacWindowBorder() {
