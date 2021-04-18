@@ -20,11 +20,11 @@
  *
  */
 
+#include "gui/widgets/editable.h"
 #include "common/rect.h"
 #include "common/system.h"
-#include "gui/widgets/editable.h"
-#include "gui/gui-manager.h"
 #include "graphics/font.h"
+#include "gui/gui-manager.h"
 
 namespace GUI {
 
@@ -46,6 +46,11 @@ void EditableWidget::init() {
 	_caretInverse = false;
 
 	_editScrollOffset = 0;
+
+	_highlightVisible = false;
+	_highlightPos = 0;
+	_highlightSize = 0;
+	_highlightCharacterCount = 0;
 
 	_align = g_gui.useRTL() ? Graphics::kTextAlignRight : Graphics::kTextAlignLeft;
 	_drawAlign = _align;
@@ -86,7 +91,11 @@ bool EditableWidget::tryInsertChar(byte c, int pos) {
 
 void EditableWidget::handleTickle() {
 	uint32 time = g_system->getMillis();
-	if (_caretTime < time && isEnabled()) {
+	// prevent blinking, if text is highlighted
+	if (_highlightVisible && isEnabled()) {
+		_caretTime = 0;
+		drawCaret(_caretVisible);
+	} else if (_caretTime < time && isEnabled()) {
 		_caretTime = time + kCaretBlinkTime;
 		drawCaret(_caretVisible);
 	}
@@ -129,32 +138,55 @@ bool EditableWidget::handleKeyDown(Common::KeyState state) {
 	switch (state.keycode) {
 	case Common::KEYCODE_RETURN:
 	case Common::KEYCODE_KP_ENTER:
+		initHighlight();
 		// confirm edit and exit editmode
 		endEditMode();
 		dirty = true;
 		break;
 
 	case Common::KEYCODE_ESCAPE:
+		initHighlight();
 		abortEditMode();
 		dirty = true;
 		break;
 
 	case Common::KEYCODE_BACKSPACE:
-		if (_caretPos > 0) {
+		if (_highlightVisible) {
+			// remove highlighted characters
+			for (uint32 i = _highlightPos + _highlightCharacterCount; i > (uint32)_highlightPos; i--) {
+				_editString.deleteChar(i - 1);
+				_highlightString.deleteChar(i - 1);
+			}
+			// set position of caret to end of string
+			setCaretPos(_highlightPos);
+			initHighlight();
+			sendCommand(_cmd, 0);
+			dirty = true;
+		} else if (_caretPos > 0) {
 			_caretPos--;
 			_editString.deleteChar(_caretPos);
 			dirty = true;
-
+			initHighlight();
 			sendCommand(_cmd, 0);
 		}
 		forcecaret = true;
 		break;
 
 	case Common::KEYCODE_DELETE:
-		if (_caretPos < (int)_editString.size()) {
+		if (_highlightVisible) {
+			// remove highlighted characters
+			for (uint32 i = _highlightPos + _highlightCharacterCount; i > (uint32)_highlightPos; i--) {
+				_editString.deleteChar(i - 1);
+				_highlightString.deleteChar(i - 1);
+			}
+			setCaretPos(_highlightPos);
+			initHighlight();
+			sendCommand(_cmd, 0);
+			dirty = true;
+		} else if (_caretPos < (int)_editString.size()) {
 			_editString.deleteChar(_caretPos);
 			dirty = true;
-
+			initHighlight();
 			sendCommand(_cmd, 0);
 		}
 		forcecaret = true;
@@ -162,6 +194,7 @@ bool EditableWidget::handleKeyDown(Common::KeyState state) {
 
 	case Common::KEYCODE_DOWN:
 	case Common::KEYCODE_END:
+		initHighlight();
 		// Move caret to end
 		setCaretPos(_editString.size());
 		forcecaret = true;
@@ -169,9 +202,22 @@ bool EditableWidget::handleKeyDown(Common::KeyState state) {
 		break;
 
 	case Common::KEYCODE_LEFT:
-		// Move caret one left (if possible)
-		if (_caretPos > 0) {
+		// select text using shift+Left key
+		if (state.flags & Common::KBD_SHIFT) {
+			_highlightVisible = true;
+			if (_highlightPos > 0) {
+				--_highlightPos;
+				_highlightCharacterCount++;
+				// increase size of highlight
+				_highlightSize += g_gui.getCharWidth(_editString[_highlightPos], _font);
+				// temporary string that stores selected characters at the same index of editstring
+				_highlightString.setChar(_editString[_highlightPos], _highlightPos);
+			}
+		} else if (_caretPos > 0) {
+			// Move caret one left (if possible)
 			dirty = setCaretPos(_caretPos - 1);
+			initHighlight();
+			sendCommand(_cmd, 0);
 		}
 		forcecaret = true;
 		dirty = true;
@@ -181,15 +227,21 @@ bool EditableWidget::handleKeyDown(Common::KeyState state) {
 		// Move caret one right (if possible)
 		if (_caretPos < (int)_editString.size()) {
 			dirty = setCaretPos(_caretPos + 1);
+			initHighlight();
+			sendCommand(_cmd, 0);
 		}
+		initHighlight();
+		sendCommand(_cmd, 0);
 		forcecaret = true;
 		dirty = true;
 		break;
 
 	case Common::KEYCODE_UP:
 	case Common::KEYCODE_HOME:
+		initHighlight();
 		// Move caret to start
 		setCaretPos(0);
+		sendCommand(_cmd, 0);
 		forcecaret = true;
 		dirty = true;
 		break;
@@ -197,7 +249,9 @@ bool EditableWidget::handleKeyDown(Common::KeyState state) {
 	case Common::KEYCODE_v:
 		if (state.flags & Common::KBD_CTRL) {
 			if (g_system->hasTextInClipboard()) {
+				initHighlight();
 				U32String text = g_system->getTextFromClipboard();
+				text.trim();
 				for (uint32 i = 0; i < text.size(); ++i) {
 					if (tryInsertChar(text[i], _caretPos))
 						++_caretPos;
@@ -262,8 +316,25 @@ bool EditableWidget::handleKeyDown(Common::KeyState state) {
 }
 
 void EditableWidget::defaultKeyDownHandler(Common::KeyState &state, bool &dirty, bool &forcecaret, bool &handled) {
-	if (state.ascii < 256 && tryInsertChar((byte)state.ascii, _caretPos)) {
+	//  if highlighted, replace selected text with inserted character
+	if (_highlightVisible) {
+		if (state.ascii < 256 && tryInsertChar((byte)state.ascii, _caretPos)) {
+			for (uint32 i = _highlightPos + _highlightCharacterCount; i > (uint32)_highlightPos; i--) {
+				_editString.deleteChar(i - 1);
+				_highlightString.deleteChar(i - 1);
+			}
+			setCaretPos(_highlightPos + 1);
+
+			initHighlight();
+			dirty = true;
+			forcecaret = true;
+
+			sendCommand(_cmd, 0);
+		}
+	} else if (state.ascii < 256 && tryInsertChar((byte)state.ascii, _caretPos)) {
+		// insert character at end of string
 		_caretPos++;
+		initHighlight();
 		dirty = true;
 		forcecaret = true;
 
@@ -275,6 +346,11 @@ void EditableWidget::defaultKeyDownHandler(Common::KeyState &state, bool &dirty,
 
 int EditableWidget::getCaretOffset() const {
 	Common::U32String substr(_editString.begin(), _editString.begin() + _caretPos);
+	return g_gui.getStringWidth(substr, _font) - _editScrollOffset;
+}
+
+int EditableWidget::getHighlightOffset() const {
+	Common::U32String substr(_editString.begin(), _editString.begin() + _highlightPos);
 	return g_gui.getStringWidth(substr, _font) - _editScrollOffset;
 }
 
@@ -311,7 +387,31 @@ void EditableWidget::drawCaret(bool erase) {
 		x += getAbsX();
 	y += getAbsY();
 
-	g_gui.theme()->drawCaret(Common::Rect(x, y, x + 1, y + editRect.height()), erase);
+	if (_highlightVisible) {
+		// highlight rectangle
+		Common::Rect _highlightRect = Common::Rect(x - _highlightSize, y, x, y + editRect.height());
+		_highlightalign = Graphics::kTextAlignRight;
+		// if highlight overlaps editArea redraw highlight
+		if (_highlightRect.left < _textDrawableArea.left || _highlightRect.right > _textDrawableArea.right) {
+			_highlightRect = Common::Rect(x - _highlightSize, y, _textDrawableArea.right, y + editRect.height());
+			_highlightRect.clip(_textDrawableArea);
+			// number of visible characters in highlight
+			_visiblestr = (_textDrawableArea.width() > 200) ? 54 : 24;
+			Common::U32String substr(_editString.begin() + _highlightPos, _editString.begin() + _highlightPos + _visiblestr);
+			// draw selected character and highlight rectangle
+			g_gui.theme()->drawText(_highlightRect, substr, _state, _highlightalign,
+									ThemeEngine::kTextInversionFocus, -_editScrollOffset, false, _font,
+									ThemeEngine::kFontColorNormal, true, _textDrawableArea);
+		} else {
+			g_gui.theme()->drawText(_highlightRect, _highlightString, _state, _highlightalign,
+									ThemeEngine::kTextInversionFocus, -_editScrollOffset, false, _font,
+									ThemeEngine::kFontColorNormal, true, _textDrawableArea);
+		}
+	} else {
+		// if no text selected draw caret
+		initHighlight();
+		g_gui.theme()->drawCaret(Common::Rect(x, y, x + 1, y + editRect.height()), erase);
+	}
 
 	if (erase) {
 		GUI::EditableWidget::String character;
@@ -341,8 +441,8 @@ void EditableWidget::drawCaret(bool erase) {
 		width = MIN(editRect.width() - caretOffset, width);
 		if (width > 0) {
 			g_gui.theme()->drawText(Common::Rect(x, y, x + width, y + editRect.height()), character,
-			                        _state, _drawAlign, _inversion, 0, false, _font,
-			                        ThemeEngine::kFontColorNormal, true, _textDrawableArea);
+									_state, _drawAlign, _inversion, 0, false, _font,
+									ThemeEngine::kFontColorNormal, true, _textDrawableArea);
 		}
 	}
 
@@ -362,21 +462,35 @@ bool EditableWidget::adjustOffset() {
 	int caretpos = getCaretOffset();
 	const int editWidth = getEditRect().width();
 
-	if (caretpos < 0) {
-		// scroll left
-		_editScrollOffset += caretpos;
-		return true;
-	} else if (caretpos >= editWidth) {
-		// scroll right
-		_editScrollOffset -= (editWidth - caretpos);
-		return true;
-	} else if (_editScrollOffset > 0) {
-		const int strWidth = g_gui.getStringWidth(_editString, _font);
-		if (strWidth - _editScrollOffset < editWidth) {
+	// check if highlight visible and adjust _editScrollOffset
+	if (_highlightVisible) {
+		int highlightpos = getHighlightOffset();
+		if (highlightpos < 1) {
+			// scroll left
+			_editScrollOffset += highlightpos;
+			return true;
+		} else if (highlightpos >= editWidth) {
 			// scroll right
-			_editScrollOffset = (strWidth - editWidth);
-			if (_editScrollOffset < 0)
-				_editScrollOffset = 0;
+			_editScrollOffset -= (editWidth - highlightpos);
+			return true;
+		}
+	} else {
+		if (caretpos < 0) {
+			// scroll left
+			_editScrollOffset += caretpos;
+			return true;
+		} else if (caretpos >= editWidth) {
+			// scroll right
+			_editScrollOffset -= (editWidth - caretpos);
+			return true;
+		} else if (_editScrollOffset > 0) {
+			const int strWidth = g_gui.getStringWidth(_editString, _font);
+			if (strWidth - _editScrollOffset < editWidth) {
+				// scroll right
+				_editScrollOffset = (strWidth - editWidth);
+				if (_editScrollOffset < 0)
+					_editScrollOffset = 0;
+			}
 		}
 	}
 
@@ -387,6 +501,21 @@ void EditableWidget::makeCaretVisible() {
 	_caretTime = g_system->getMillis() + kCaretBlinkTime;
 	_caretVisible = true;
 	drawCaret(false);
+}
+
+void EditableWidget::initHighlight() {
+	// disable highlight
+	_highlightVisible = false;
+	// Empty the temporary string of previous values
+	_highlightString.clear();
+	// insert blank characters
+	for (int i = 0; i < (int)_caretPos; i++)
+		_highlightString.insertChar(' ', i);
+	// set highlight position to caret position
+	_highlightPos = _caretPos;
+	_highlightSize = 0;
+	// count number of characters highlighted
+	_highlightCharacterCount = 0;
 }
 
 } // End of namespace GUI

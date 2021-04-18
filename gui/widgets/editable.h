@@ -56,6 +56,14 @@ protected:
 
 	int			_editScrollOffset;
 
+	U32String	_highlightString;
+	bool		_highlightVisible;
+	int			_highlightPos;
+	int			_highlightSize;
+	int			_highlightCharacterCount;
+	int			_visiblestr;
+
+	Graphics::TextAlign _highlightalign;
 	Graphics::TextAlign _align;
 	Graphics::TextAlign _drawAlign;
 
@@ -71,14 +79,14 @@ public:
 	void init();
 
 	virtual void setEditString(const U32String &str);
-	virtual const U32String &getEditString() const		{ return _editString; }
+	virtual const U32String &getEditString() const		{ return (_highlightVisible)?_highlightString:_editString; }
 
 	void handleTickle() override;
 	bool handleKeyDown(Common::KeyState state) override;
 	void reflowLayout() override;
 
 	bool setCaretPos(int newPos);
-
+	void initHighlight();
 protected:
 	virtual void startEditMode() = 0;
 	virtual void endEditMode() = 0;
@@ -90,6 +98,7 @@ protected:
 	 */
 	virtual Common::Rect getEditRect() const = 0;
 	virtual int getCaretOffset() const;
+	virtual int getHighlightOffset() const;
 	void drawCaret(bool erase);
 	bool adjustOffset();
 	void makeCaretVisible();
