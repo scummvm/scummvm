@@ -115,9 +115,6 @@ void openSys() {
 
 	g_vm->_extraRoomObject = nullptr;
 
-	g_vm->_smackImageBuffer = new uint16[MAXX * AREA];
-	memset(g_vm->_smackImageBuffer, 0, MAXX * AREA * 2);
-
 	g_vm->_screenBuffer = new uint16[MAXX * MAXY];
 	memset(g_vm->_screenBuffer, 0, MAXX * MAXY * 2);
 
@@ -442,7 +439,7 @@ void ReadLoc() {
 	RegenRoom();
 
 	if (g_vm->_room[g_vm->_curRoom]._bkgAnim) {
-		memcpy(g_vm->_smackImageBuffer, ImagePointer, MAXX * AREA * 2);
+		g_vm->_graphicsMgr->copyToSmkBackground(ImagePointer);
 		g_vm->_animMgr->startSmkAnim(g_vm->_room[g_vm->_curRoom]._bkgAnim);
 	} else
 		g_vm->_animMgr->stopSmkAnim(g_vm->_animMgr->_playingAnims[kSmackerBackground]);

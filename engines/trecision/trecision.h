@@ -189,7 +189,6 @@ public:
 	Message _snake52;
 
 	uint16 *_screenBuffer;
-	uint16 *_smackImageBuffer;
 
 	uint32 _nextRefresh;
 

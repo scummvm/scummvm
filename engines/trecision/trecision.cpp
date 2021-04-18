@@ -189,7 +189,6 @@ TrecisionEngine::~TrecisionEngine() {
 	delete _actor;
 	delete[] TextArea;
 	delete[] _screenBuffer;
-	delete[] _smackImageBuffer;
 }
 
 Common::Error TrecisionEngine::run() {

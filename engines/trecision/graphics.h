@@ -32,10 +32,13 @@ class TrecisionEngine;
 class GraphicsManager {
 	TrecisionEngine *_vm;
 
+	Graphics::Surface _smkBackground;
 	Graphics::PixelFormat _screenFormat;
 	uint16 _bitMask[3];
 
 	static const Graphics::PixelFormat kImageFormat;
+
+	void putPixel(int x, int y, uint16 c);
 
 public:
 	GraphicsManager(TrecisionEngine *vm);
@@ -45,6 +48,9 @@ public:
 	void clearScreen();
 	void copyToScreen(int x, int y, int w, int h);
 	void copyToScreenBuffer(Graphics::Surface *surface, int x, int y);
+	void copyToSmkBackground(uint16 *buffer);
+	const uint16 *getSmkBackgroundPtr(int x, int y);
+	void drawLine(int x1, int y1, int x2, int y2, uint16 color);
 
 	uint16 palTo16bit(uint8 r, uint8 g, uint8 b) const;
 	void updatePixelFormat(uint16 *p, uint32 len) const;
