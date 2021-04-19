@@ -69,7 +69,7 @@ void RedrawRoom() {
 	}
 
 	const bool hasBgAnim = g_vm->_room[g_vm->_curRoom]._bkgAnim;
-	g_vm->_graphicsMgr->resetScreenBuffer(hasBgAnim);
+	g_vm->_graphicsMgr->resetScreenBuffer();
 
 	if (hasBgAnim)
 		g_vm->_animMgr->startSmkAnim(g_vm->_room[g_vm->_curRoom]._bkgAnim);

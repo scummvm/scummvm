@@ -423,7 +423,6 @@ void ReadLoc() {
 	outFile->close();
 #endif
 
-	//uint32 dataLength = (picFile->size() + 1) / 2;
 	BmInfo.read(picFile);
 
 	g_vm->_graphicsMgr->loadBackground(picFile, BmInfo.dx, BmInfo.dy);
@@ -438,7 +437,7 @@ void ReadLoc() {
 	Common::String fname = Common::String::format("%s.3d", g_vm->_room[g_vm->_curRoom]._baseName);
 	read3D(fname);
 
-	g_vm->_graphicsMgr->resetScreenBuffer(false);
+	g_vm->_graphicsMgr->resetScreenBuffer();
 
 	g_vm->_curSortTableNum = 0;
 	for (int i = 0; i < MAXOBJINROOM; ++i) {
@@ -449,7 +448,6 @@ void ReadLoc() {
 	RegenRoom();
 
 	if (g_vm->_room[g_vm->_curRoom]._bkgAnim) {
-		g_vm->_graphicsMgr->resetSmkBackground();
 		g_vm->_animMgr->startSmkAnim(g_vm->_room[g_vm->_curRoom]._bkgAnim);
 	} else
 		g_vm->_animMgr->smkStop(kSmackerBackground);
