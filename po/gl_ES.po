@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-04-18 22:59+0000\n"
+"POT-Creation-Date: 2021-04-19 00:13+0000\n"
 "PO-Revision-Date: 2020-09-26 21:13+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Galician <https://translations.scummvm.org/projects/scummvm/"
@@ -654,7 +654,7 @@ msgstr "Esquerda"
 msgid "Right"
 msgstr "Dereita"
 
-#: gui/gui-manager.cpp:186 engines/pegasus/pegasus.cpp:2804
+#: gui/gui-manager.cpp:186 engines/pegasus/pegasus.cpp:2807
 #: engines/wintermute/keymapper_tables.h:304
 #: engines/wintermute/keymapper_tables.h:331
 #: engines/wintermute/keymapper_tables.h:435
@@ -4898,13 +4898,13 @@ msgid "Move Right"
 msgstr "Mover á dereita"
 
 #: engines/kyra/engine/eobcommon.cpp:374 engines/kyra/engine/lol.cpp:480
-#: engines/pegasus/pegasus.cpp:2725 engines/twine/metaengine.cpp:392
+#: engines/pegasus/pegasus.cpp:2728 engines/twine/metaengine.cpp:392
 #: engines/zvision/metaengine.cpp:141
 msgid "Turn Left"
 msgstr "Xirar á esquerda"
 
 #: engines/kyra/engine/eobcommon.cpp:375 engines/kyra/engine/lol.cpp:481
-#: engines/pegasus/pegasus.cpp:2732 engines/twine/metaengine.cpp:385
+#: engines/pegasus/pegasus.cpp:2735 engines/twine/metaengine.cpp:385
 #: engines/zvision/metaengine.cpp:147
 msgid "Turn Right"
 msgstr "Xirar á dereita"
@@ -5690,49 +5690,49 @@ msgstr ""
 "\n"
 "Contacta co equipo de ScummVM."
 
-#: engines/pegasus/pegasus.cpp:2711
+#: engines/pegasus/pegasus.cpp:2712
 msgid "Up/Zoom In/Move Forward/Open Doors"
 msgstr "Arriba/Ampliar/Avanzar/Abrir portas"
 
-#: engines/pegasus/pegasus.cpp:2718
+#: engines/pegasus/pegasus.cpp:2720
 msgid "Down/Zoom Out"
 msgstr "Abaixo/Reducir"
 
-#: engines/pegasus/pegasus.cpp:2739
+#: engines/pegasus/pegasus.cpp:2742
 msgid "Action/Select"
 msgstr "Acción/Seleccionar"
 
-#: engines/pegasus/pegasus.cpp:2759
+#: engines/pegasus/pegasus.cpp:2762
 msgid "Display/Hide Inventory Tray"
 msgstr "Mostrar/Ocultar bandexa de inventario"
 
-#: engines/pegasus/pegasus.cpp:2766
+#: engines/pegasus/pegasus.cpp:2769
 msgid "Display/Hide Biochip Tray"
 msgstr "Mostrar/Ocultar bandexa de biochip"
 
-#: engines/pegasus/pegasus.cpp:2774
+#: engines/pegasus/pegasus.cpp:2777
 msgid "Toggle Center Data Display"
 msgstr "Activar/Desactivar pantalla de datos"
 
-#: engines/pegasus/pegasus.cpp:2781
+#: engines/pegasus/pegasus.cpp:2784
 msgid "Display/Hide Info Screen"
 msgstr "Mostrar/Ocultar pantalla de información"
 
-#: engines/pegasus/pegasus.cpp:2788
+#: engines/pegasus/pegasus.cpp:2791
 msgid "Display/Hide Pause Menu"
 msgstr "Mostrar/Ocultar menú de pausa"
 
-#: engines/pegasus/pegasus.cpp:2795
+#: engines/pegasus/pegasus.cpp:2798
 #, fuzzy
 msgid "Toggle Chatty AI"
 msgstr "Modo Rápido"
 
-#: engines/pegasus/pegasus.cpp:2810
+#: engines/pegasus/pegasus.cpp:2813
 #, fuzzy
 msgid "Save Game"
 msgstr "Gardar partida:"
 
-#: engines/pegasus/pegasus.cpp:2816
+#: engines/pegasus/pegasus.cpp:2819
 #, fuzzy
 msgid "Load Game"
 msgstr "Cargar partida:"

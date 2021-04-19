@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-04-18 22:59+0000\n"
+"POT-Creation-Date: 2021-04-19 00:13+0000\n"
 "PO-Revision-Date: 2021-01-27 11:15+0000\n"
 "Last-Translator: Morgan Roberts <morganroberts@mentercaerffili.cymru>\n"
 "Language-Team: Welsh <https://translations.scummvm.org/projects/scummvm/"
@@ -628,7 +628,7 @@ msgstr ""
 msgid "Right"
 msgstr ""
 
-#: gui/gui-manager.cpp:186 engines/pegasus/pegasus.cpp:2804
+#: gui/gui-manager.cpp:186 engines/pegasus/pegasus.cpp:2807
 #: engines/wintermute/keymapper_tables.h:304
 #: engines/wintermute/keymapper_tables.h:331
 #: engines/wintermute/keymapper_tables.h:435
@@ -4573,13 +4573,13 @@ msgid "Move Right"
 msgstr ""
 
 #: engines/kyra/engine/eobcommon.cpp:374 engines/kyra/engine/lol.cpp:480
-#: engines/pegasus/pegasus.cpp:2725 engines/twine/metaengine.cpp:392
+#: engines/pegasus/pegasus.cpp:2728 engines/twine/metaengine.cpp:392
 #: engines/zvision/metaengine.cpp:141
 msgid "Turn Left"
 msgstr ""
 
 #: engines/kyra/engine/eobcommon.cpp:375 engines/kyra/engine/lol.cpp:481
-#: engines/pegasus/pegasus.cpp:2732 engines/twine/metaengine.cpp:385
+#: engines/pegasus/pegasus.cpp:2735 engines/twine/metaengine.cpp:385
 #: engines/zvision/metaengine.cpp:147
 msgid "Turn Right"
 msgstr ""
@@ -5258,47 +5258,47 @@ msgid ""
 "Please report to the team."
 msgstr ""
 
-#: engines/pegasus/pegasus.cpp:2711
+#: engines/pegasus/pegasus.cpp:2712
 msgid "Up/Zoom In/Move Forward/Open Doors"
 msgstr ""
 
-#: engines/pegasus/pegasus.cpp:2718
+#: engines/pegasus/pegasus.cpp:2720
 msgid "Down/Zoom Out"
 msgstr ""
 
-#: engines/pegasus/pegasus.cpp:2739
+#: engines/pegasus/pegasus.cpp:2742
 msgid "Action/Select"
 msgstr ""
 
-#: engines/pegasus/pegasus.cpp:2759
+#: engines/pegasus/pegasus.cpp:2762
 msgid "Display/Hide Inventory Tray"
 msgstr ""
 
-#: engines/pegasus/pegasus.cpp:2766
+#: engines/pegasus/pegasus.cpp:2769
 msgid "Display/Hide Biochip Tray"
 msgstr ""
 
-#: engines/pegasus/pegasus.cpp:2774
+#: engines/pegasus/pegasus.cpp:2777
 msgid "Toggle Center Data Display"
 msgstr ""
 
-#: engines/pegasus/pegasus.cpp:2781
+#: engines/pegasus/pegasus.cpp:2784
 msgid "Display/Hide Info Screen"
 msgstr ""
 
-#: engines/pegasus/pegasus.cpp:2788
+#: engines/pegasus/pegasus.cpp:2791
 msgid "Display/Hide Pause Menu"
 msgstr ""
 
-#: engines/pegasus/pegasus.cpp:2795
+#: engines/pegasus/pegasus.cpp:2798
 msgid "Toggle Chatty AI"
 msgstr ""
 
-#: engines/pegasus/pegasus.cpp:2810
+#: engines/pegasus/pegasus.cpp:2813
 msgid "Save Game"
 msgstr ""
 
-#: engines/pegasus/pegasus.cpp:2816
+#: engines/pegasus/pegasus.cpp:2819
 msgid "Load Game"
 msgstr ""
 

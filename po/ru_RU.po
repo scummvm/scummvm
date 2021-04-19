@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-04-18 22:59+0000\n"
+"POT-Creation-Date: 2021-04-19 00:13+0000\n"
 "PO-Revision-Date: 2021-04-17 22:40+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
@@ -646,7 +646,7 @@ msgstr "Влево"
 msgid "Right"
 msgstr "Вправо"
 
-#: gui/gui-manager.cpp:186 engines/pegasus/pegasus.cpp:2804
+#: gui/gui-manager.cpp:186 engines/pegasus/pegasus.cpp:2807
 #: engines/wintermute/keymapper_tables.h:304
 #: engines/wintermute/keymapper_tables.h:331
 #: engines/wintermute/keymapper_tables.h:435
@@ -4806,13 +4806,13 @@ msgid "Move Right"
 msgstr "Идти вправо"
 
 #: engines/kyra/engine/eobcommon.cpp:374 engines/kyra/engine/lol.cpp:480
-#: engines/pegasus/pegasus.cpp:2725 engines/twine/metaengine.cpp:392
+#: engines/pegasus/pegasus.cpp:2728 engines/twine/metaengine.cpp:392
 #: engines/zvision/metaengine.cpp:141
 msgid "Turn Left"
 msgstr "Поворот налево"
 
 #: engines/kyra/engine/eobcommon.cpp:375 engines/kyra/engine/lol.cpp:481
-#: engines/pegasus/pegasus.cpp:2732 engines/twine/metaengine.cpp:385
+#: engines/pegasus/pegasus.cpp:2735 engines/twine/metaengine.cpp:385
 #: engines/zvision/metaengine.cpp:147
 msgid "Turn Right"
 msgstr "Поворот направо"
@@ -5581,47 +5581,47 @@ msgstr ""
 "\n"
 "Пожалуйста, сообщите об этом команде ScummVM."
 
-#: engines/pegasus/pegasus.cpp:2711
+#: engines/pegasus/pegasus.cpp:2712
 msgid "Up/Zoom In/Move Forward/Open Doors"
 msgstr "Вверх/Увел. масштаб/Вперёд/Открыть двери"
 
-#: engines/pegasus/pegasus.cpp:2718
+#: engines/pegasus/pegasus.cpp:2720
 msgid "Down/Zoom Out"
 msgstr "Вниз/Уменьш. масштаб"
 
-#: engines/pegasus/pegasus.cpp:2739
+#: engines/pegasus/pegasus.cpp:2742
 msgid "Action/Select"
 msgstr "Действие/Выбор"
 
-#: engines/pegasus/pegasus.cpp:2759
+#: engines/pegasus/pegasus.cpp:2762
 msgid "Display/Hide Inventory Tray"
 msgstr "Показать/Спрятать инвентарь"
 
-#: engines/pegasus/pegasus.cpp:2766
+#: engines/pegasus/pegasus.cpp:2769
 msgid "Display/Hide Biochip Tray"
 msgstr "Показать/Спрятать биочип"
 
-#: engines/pegasus/pegasus.cpp:2774
+#: engines/pegasus/pegasus.cpp:2777
 msgid "Toggle Center Data Display"
 msgstr "Включить показ данных в центре экрана"
 
-#: engines/pegasus/pegasus.cpp:2781
+#: engines/pegasus/pegasus.cpp:2784
 msgid "Display/Hide Info Screen"
 msgstr "Показать/Спрятать инфоэкран"
 
-#: engines/pegasus/pegasus.cpp:2788
+#: engines/pegasus/pegasus.cpp:2791
 msgid "Display/Hide Pause Menu"
 msgstr "Показать/Спрятать меню паузы"
 
-#: engines/pegasus/pegasus.cpp:2795
+#: engines/pegasus/pegasus.cpp:2798
 msgid "Toggle Chatty AI"
 msgstr "Переключить болтающий ИИ"
 
-#: engines/pegasus/pegasus.cpp:2810
+#: engines/pegasus/pegasus.cpp:2813
 msgid "Save Game"
 msgstr "Сохранить игру"
 
-#: engines/pegasus/pegasus.cpp:2816
+#: engines/pegasus/pegasus.cpp:2819
 msgid "Load Game"
 msgstr "Загрузить игру"
 

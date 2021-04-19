@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-04-18 22:59+0000\n"
+"POT-Creation-Date: 2021-04-19 00:13+0000\n"
 "PO-Revision-Date: 2021-04-17 09:42+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
@@ -656,7 +656,7 @@ msgstr "左"
 msgid "Right"
 msgstr "右"
 
-#: gui/gui-manager.cpp:186 engines/pegasus/pegasus.cpp:2804
+#: gui/gui-manager.cpp:186 engines/pegasus/pegasus.cpp:2807
 #: engines/wintermute/keymapper_tables.h:304
 #: engines/wintermute/keymapper_tables.h:331
 #: engines/wintermute/keymapper_tables.h:435
@@ -4778,13 +4778,13 @@ msgid "Move Right"
 msgstr "右に行く"
 
 #: engines/kyra/engine/eobcommon.cpp:374 engines/kyra/engine/lol.cpp:480
-#: engines/pegasus/pegasus.cpp:2725 engines/twine/metaengine.cpp:392
+#: engines/pegasus/pegasus.cpp:2728 engines/twine/metaengine.cpp:392
 #: engines/zvision/metaengine.cpp:141
 msgid "Turn Left"
 msgstr "左に曲がる"
 
 #: engines/kyra/engine/eobcommon.cpp:375 engines/kyra/engine/lol.cpp:481
-#: engines/pegasus/pegasus.cpp:2732 engines/twine/metaengine.cpp:385
+#: engines/pegasus/pegasus.cpp:2735 engines/twine/metaengine.cpp:385
 #: engines/zvision/metaengine.cpp:147
 msgid "Turn Right"
 msgstr "右に曲がる"
@@ -5540,47 +5540,47 @@ msgstr ""
 "\n"
 "開発チームに内容を報告してください。"
 
-#: engines/pegasus/pegasus.cpp:2711
+#: engines/pegasus/pegasus.cpp:2712
 msgid "Up/Zoom In/Move Forward/Open Doors"
 msgstr "上/ズームイン/前方へ移動/ドアを開ける"
 
-#: engines/pegasus/pegasus.cpp:2718
+#: engines/pegasus/pegasus.cpp:2720
 msgid "Down/Zoom Out"
 msgstr "下/ズームアウト"
 
-#: engines/pegasus/pegasus.cpp:2739
+#: engines/pegasus/pegasus.cpp:2742
 msgid "Action/Select"
 msgstr "アクション/セレクト"
 
-#: engines/pegasus/pegasus.cpp:2759
+#: engines/pegasus/pegasus.cpp:2762
 msgid "Display/Hide Inventory Tray"
 msgstr "インベントリートレイの表示/非表示"
 
-#: engines/pegasus/pegasus.cpp:2766
+#: engines/pegasus/pegasus.cpp:2769
 msgid "Display/Hide Biochip Tray"
 msgstr "バイオチップトレイの表示/非表示"
 
-#: engines/pegasus/pegasus.cpp:2774
+#: engines/pegasus/pegasus.cpp:2777
 msgid "Toggle Center Data Display"
 msgstr "センターディスプレイの切り替え"
 
-#: engines/pegasus/pegasus.cpp:2781
+#: engines/pegasus/pegasus.cpp:2784
 msgid "Display/Hide Info Screen"
 msgstr "情報スクリーンの表示/非表示"
 
-#: engines/pegasus/pegasus.cpp:2788
+#: engines/pegasus/pegasus.cpp:2791
 msgid "Display/Hide Pause Menu"
 msgstr "ポーズメニューの表示/非表示"
 
-#: engines/pegasus/pegasus.cpp:2795
+#: engines/pegasus/pegasus.cpp:2798
 msgid "Toggle Chatty AI"
 msgstr "おしゃべりAIの切り替え"
 
-#: engines/pegasus/pegasus.cpp:2810
+#: engines/pegasus/pegasus.cpp:2813
 msgid "Save Game"
 msgstr "ゲームをセーブ"
 
-#: engines/pegasus/pegasus.cpp:2816
+#: engines/pegasus/pegasus.cpp:2819
 msgid "Load Game"
 msgstr "ゲームをロード"
 
