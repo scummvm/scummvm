@@ -165,7 +165,7 @@ static const QueenGameDescription gameDescriptions[] = {
 		{
 			"queen",
 			// I18N: The game requires special code which was not yet implemented
-			"Missing game code",
+			_s("Missing game code"),
 			AD_ENTRY1s("queen.1", "b545c73010236dc022bad51c59120a75", 344575),
 			Common::EN_ANY,
 			Common::kPlatformAmiga,
