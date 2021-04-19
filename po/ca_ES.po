@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-04-19 21:09+0000\n"
+"POT-Creation-Date: 2021-04-19 22:19+0000\n"
 "PO-Revision-Date: 2021-03-21 08:24+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
@@ -55,7 +55,7 @@ msgctxt "lowres"
 msgid "Go up"
 msgstr "Amunt"
 
-#: gui/browser.cpp:82 gui/chooser.cpp:46 gui/editgamedialog.cpp:376
+#: gui/browser.cpp:82 gui/chooser.cpp:46 gui/editgamedialog.cpp:380
 #: gui/editrecorddialog.cpp:67 gui/filebrowser-dialog.cpp:65
 #: gui/fluidsynth-dialog.cpp:153 gui/massadd.cpp:92 gui/options.cpp:1956
 #: gui/predictivedialog.cpp:69 gui/recorderdialog.cpp:68
@@ -91,7 +91,7 @@ msgstr "Tria"
 msgid "Select directory where to download game data"
 msgstr "Seleccioneu el directori on baixar les dades del joc"
 
-#: gui/downloaddialog.cpp:50 gui/editgamedialog.cpp:569 gui/launcher.cpp:207
+#: gui/downloaddialog.cpp:50 gui/editgamedialog.cpp:577 gui/launcher.cpp:207
 msgid "Select directory with game data"
 msgstr "Seleccioneu el directori amb les dades del joc"
 
@@ -159,7 +159,7 @@ msgstr ""
 "No s'ha pogut crear un directori per la baixada. El directori conté un arxiu "
 "amb el mateix nom."
 
-#: gui/downloaddialog.cpp:147 gui/editgamedialog.cpp:377
+#: gui/downloaddialog.cpp:147 gui/editgamedialog.cpp:381
 #: gui/fluidsynth-dialog.cpp:154 gui/launcher.cpp:510 gui/launcher.cpp:514
 #: gui/massadd.cpp:89 gui/options.cpp:1958 gui/saveload-dialog.cpp:1168
 #: engines/engine.cpp:511 engines/engine.cpp:522
@@ -233,201 +233,201 @@ msgctxt "lowres"
 msgid "Name:"
 msgstr "Nom:"
 
-#: gui/editgamedialog.cpp:159 engines/mohawk/dialogs.cpp:140
+#: gui/editgamedialog.cpp:162 engines/mohawk/dialogs.cpp:140
 #: engines/mohawk/dialogs.cpp:341
 msgid "Language:"
 msgstr "Llengua:"
 
-#: gui/editgamedialog.cpp:159 gui/editgamedialog.cpp:160
+#: gui/editgamedialog.cpp:162 gui/editgamedialog.cpp:163
 msgid ""
 "Language of the game. This will not turn your Spanish game version into "
 "English"
 msgstr ""
 "Llengua del joc. Això no convertirà la versió en català del joc a l'anglès"
 
-#: gui/editgamedialog.cpp:161 gui/editgamedialog.cpp:175 gui/options.cpp:1277
+#: gui/editgamedialog.cpp:164 gui/editgamedialog.cpp:179 gui/options.cpp:1277
 #: gui/options.cpp:1297 gui/options.cpp:1310 gui/options.cpp:1324
 #: gui/options.cpp:1342 gui/options.cpp:1354 gui/options.cpp:2151
 #: gui/options.cpp:2323 audio/null.cpp:41 engines/ags/detection.cpp:94
 msgid "<default>"
 msgstr "<per defecte>"
 
-#: gui/editgamedialog.cpp:171
+#: gui/editgamedialog.cpp:175
 msgid "Platform:"
 msgstr "Plataforma:"
 
-#: gui/editgamedialog.cpp:171 gui/editgamedialog.cpp:173
-#: gui/editgamedialog.cpp:174
+#: gui/editgamedialog.cpp:175 gui/editgamedialog.cpp:177
+#: gui/editgamedialog.cpp:178
 msgid "Platform the game was originally designed for"
 msgstr "Plataforma per la que el joc es va dissenyar originalment"
 
-#: gui/editgamedialog.cpp:173
+#: gui/editgamedialog.cpp:177
 msgctxt "lowres"
 msgid "Platform:"
 msgstr "Platafor.:"
 
-#: gui/editgamedialog.cpp:187
+#: gui/editgamedialog.cpp:191
 msgid "Engine"
 msgstr "Motor"
 
-#: gui/editgamedialog.cpp:203 gui/options.cpp:1674 gui/options.cpp:1802
+#: gui/editgamedialog.cpp:207 gui/options.cpp:1674 gui/options.cpp:1802
 #: backends/graphics/sdl/sdl-graphics.cpp:408
 msgid "Graphics"
 msgstr "Gràfics"
 
-#: gui/editgamedialog.cpp:203 gui/options.cpp:1674 gui/options.cpp:1802
+#: gui/editgamedialog.cpp:207 gui/options.cpp:1674 gui/options.cpp:1802
 msgid "GFX"
 msgstr "GFX"
 
-#: gui/editgamedialog.cpp:209
+#: gui/editgamedialog.cpp:213
 msgid "Override global graphic settings"
 msgstr "Fés canvis sobre les opcions globals de gràfics"
 
-#: gui/editgamedialog.cpp:211
+#: gui/editgamedialog.cpp:215
 msgctxt "lowres"
 msgid "Override global graphic settings"
 msgstr "Canvia les opcions gràfiques"
 
-#: gui/editgamedialog.cpp:221 gui/options.cpp:1813
+#: gui/editgamedialog.cpp:225 gui/options.cpp:1813
 msgid "Shader"
 msgstr "Ombreig"
 
-#: gui/editgamedialog.cpp:224
+#: gui/editgamedialog.cpp:228
 msgid "Override global shader settings"
 msgstr "Fés canvis sobre les opcions globals d'àudio"
 
-#: gui/editgamedialog.cpp:226
+#: gui/editgamedialog.cpp:230
 msgctxt "lowres"
 msgid "Override global shader settings"
 msgstr "Fés canvis sobre les opcions globals d'àudio"
 
-#: gui/editgamedialog.cpp:240 gui/options.cpp:1847 engines/dialogs.cpp:316
+#: gui/editgamedialog.cpp:244 gui/options.cpp:1847 engines/dialogs.cpp:316
 msgid "Keymaps"
 msgstr "Assignacions de teclat"
 
-#: gui/editgamedialog.cpp:247 gui/options.cpp:1854 engines/dialogs.cpp:323
+#: gui/editgamedialog.cpp:251 gui/options.cpp:1854 engines/dialogs.cpp:323
 msgid "Backend"
 msgstr "de fondo"
 
-#: gui/editgamedialog.cpp:250
+#: gui/editgamedialog.cpp:254
 msgid "Override global backend settings"
 msgstr "Fés canvis sobre les opcions globals d'àudio"
 
-#: gui/editgamedialog.cpp:252
+#: gui/editgamedialog.cpp:256
 msgctxt "lowres"
 msgid "Override global backend settings"
 msgstr "Fés canvis sobre les opcions globals d'àudio"
 
-#: gui/editgamedialog.cpp:266 gui/options.cpp:1868 engines/dialogs.cpp:291
+#: gui/editgamedialog.cpp:270 gui/options.cpp:1868 engines/dialogs.cpp:291
 msgid "Audio"
 msgstr "Àudio"
 
-#: gui/editgamedialog.cpp:269
+#: gui/editgamedialog.cpp:273
 msgid "Override global audio settings"
 msgstr "Fés canvis sobre les opcions globals d'àudio"
 
-#: gui/editgamedialog.cpp:271
+#: gui/editgamedialog.cpp:275
 msgctxt "lowres"
 msgid "Override global audio settings"
 msgstr "Canvia les opcions d'àudio"
 
-#: gui/editgamedialog.cpp:280 gui/options.cpp:1873
+#: gui/editgamedialog.cpp:284 gui/options.cpp:1873
 msgid "Volume"
 msgstr "Volum"
 
-#: gui/editgamedialog.cpp:282 gui/options.cpp:1875
+#: gui/editgamedialog.cpp:286 gui/options.cpp:1875
 msgctxt "lowres"
 msgid "Volume"
 msgstr "Volum"
 
-#: gui/editgamedialog.cpp:285
+#: gui/editgamedialog.cpp:289
 msgid "Override global volume settings"
 msgstr "Fés canvis sobre les opcions globals de volum"
 
-#: gui/editgamedialog.cpp:287
+#: gui/editgamedialog.cpp:291
 msgctxt "lowres"
 msgid "Override global volume settings"
 msgstr "Fes canvis sobre les opcions globals de volum"
 
-#: gui/editgamedialog.cpp:298 gui/options.cpp:1883
+#: gui/editgamedialog.cpp:302 gui/options.cpp:1883
 msgid "MIDI"
 msgstr "MIDI"
 
-#: gui/editgamedialog.cpp:301
+#: gui/editgamedialog.cpp:305
 msgid "Override global MIDI settings"
 msgstr "Fes canvis sobre les opcions globals de MIDI"
 
-#: gui/editgamedialog.cpp:303
+#: gui/editgamedialog.cpp:307
 msgctxt "lowres"
 msgid "Override global MIDI settings"
 msgstr "Canvia les opcions de MIDI"
 
-#: gui/editgamedialog.cpp:313 gui/options.cpp:1889
+#: gui/editgamedialog.cpp:317 gui/options.cpp:1889
 msgid "MT-32"
 msgstr "MT-32"
 
-#: gui/editgamedialog.cpp:316
+#: gui/editgamedialog.cpp:320
 msgid "Override global MT-32 settings"
 msgstr "Fes canvis sobre les opcions globals de MT-32"
 
-#: gui/editgamedialog.cpp:318
+#: gui/editgamedialog.cpp:322
 msgctxt "lowres"
 msgid "Override global MT-32 settings"
 msgstr "Canvia les opcions de MT-32"
 
-#: gui/editgamedialog.cpp:327 gui/options.cpp:1896
+#: gui/editgamedialog.cpp:331 gui/options.cpp:1896
 msgid "Paths"
 msgstr "Camins"
 
-#: gui/editgamedialog.cpp:329 gui/options.cpp:1898
+#: gui/editgamedialog.cpp:333 gui/options.cpp:1898
 msgctxt "lowres"
 msgid "Paths"
 msgstr "Camins"
 
-#: gui/editgamedialog.cpp:336
+#: gui/editgamedialog.cpp:340
 msgid "Game Path:"
 msgstr "Camí del joc:"
 
-#: gui/editgamedialog.cpp:338
+#: gui/editgamedialog.cpp:342
 msgctxt "lowres"
 msgid "Game Path:"
 msgstr "Camí joc:"
 
-#: gui/editgamedialog.cpp:343 gui/options.cpp:2072
+#: gui/editgamedialog.cpp:347 gui/options.cpp:2072
 msgid "Extra Path:"
 msgstr "Camí extra:"
 
-#: gui/editgamedialog.cpp:343 gui/editgamedialog.cpp:345
-#: gui/editgamedialog.cpp:346
+#: gui/editgamedialog.cpp:347 gui/editgamedialog.cpp:349
+#: gui/editgamedialog.cpp:350
 msgid "Specifies path to additional data used by the game"
 msgstr "Indica el camí de dades addicionals utilitzades pel joc"
 
-#: gui/editgamedialog.cpp:345 gui/options.cpp:2074
+#: gui/editgamedialog.cpp:349 gui/options.cpp:2074
 msgctxt "lowres"
 msgid "Extra Path:"
 msgstr "Camí extra:"
 
-#: gui/editgamedialog.cpp:352 gui/options.cpp:2056
+#: gui/editgamedialog.cpp:356 gui/options.cpp:2056
 msgid "Save Path:"
 msgstr "Camí de partides:"
 
-#: gui/editgamedialog.cpp:352 gui/editgamedialog.cpp:354
-#: gui/editgamedialog.cpp:355 gui/options.cpp:2056 gui/options.cpp:2058
+#: gui/editgamedialog.cpp:356 gui/editgamedialog.cpp:358
+#: gui/editgamedialog.cpp:359 gui/options.cpp:2056 gui/options.cpp:2058
 #: gui/options.cpp:2059
 msgid "Specifies where your saved games are put"
 msgstr "Indica on es desaran les partides"
 
-#: gui/editgamedialog.cpp:354 gui/options.cpp:2058
+#: gui/editgamedialog.cpp:358 gui/options.cpp:2058
 msgctxt "lowres"
 msgid "Save Path:"
 msgstr "Partides desades:"
 
-#: gui/editgamedialog.cpp:366 engines/dialogs.cpp:338
+#: gui/editgamedialog.cpp:370 engines/dialogs.cpp:338
 msgid "Achievements"
 msgstr "Fites"
 
-#: gui/editgamedialog.cpp:390 gui/editgamedialog.cpp:490
-#: gui/editgamedialog.cpp:556 gui/editgamedialog.cpp:617 gui/options.cpp:1979
+#: gui/editgamedialog.cpp:394 gui/editgamedialog.cpp:498
+#: gui/editgamedialog.cpp:564 gui/editgamedialog.cpp:625 gui/options.cpp:1979
 #: gui/options.cpp:1985 gui/options.cpp:1993 gui/options.cpp:2024
 #: gui/options.cpp:2067 gui/options.cpp:2075 gui/options.cpp:2084
 #: gui/options.cpp:2347 gui/options.cpp:2353 gui/options.cpp:2360
@@ -437,25 +437,25 @@ msgctxt "path"
 msgid "None"
 msgstr "Cap"
 
-#: gui/editgamedialog.cpp:395 gui/editgamedialog.cpp:496
-#: gui/editgamedialog.cpp:621 gui/options.cpp:1973 gui/options.cpp:2341
+#: gui/editgamedialog.cpp:399 gui/editgamedialog.cpp:504
+#: gui/editgamedialog.cpp:629 gui/options.cpp:1973 gui/options.cpp:2341
 #: gui/options.cpp:2622 backends/platform/wii/options.cpp:56
 msgid "Default"
 msgstr "Per defecte"
 
-#: gui/editgamedialog.cpp:549 gui/options.cpp:2637
+#: gui/editgamedialog.cpp:557 gui/options.cpp:2637
 msgid "Select SoundFont"
 msgstr "Seleccioneu el fitxer SoundFont"
 
-#: gui/editgamedialog.cpp:588
+#: gui/editgamedialog.cpp:596
 msgid "Select additional game directory"
 msgstr "Seleccioneu el directori addicional del joc"
 
-#: gui/editgamedialog.cpp:601 gui/options.cpp:2551
+#: gui/editgamedialog.cpp:609 gui/options.cpp:2551
 msgid "Select directory for saved games"
 msgstr "Seleccioneu el directori de les partides desades"
 
-#: gui/editgamedialog.cpp:607
+#: gui/editgamedialog.cpp:615
 msgid ""
 "Saved games sync feature doesn't work with non-default directories. If you "
 "want your saved games to sync, use default directory."
@@ -464,7 +464,7 @@ msgstr ""
 "directoris que no siguin per defecte. Si vols sincronitzar els teus jocs "
 "salvats, utilitza un directori per defecte"
 
-#: gui/editgamedialog.cpp:633
+#: gui/editgamedialog.cpp:641
 msgid "This game ID is already taken. Please choose another one."
 msgstr ""
 "Aquest identificador de joc ja està en ús. Si us plau, trieu-ne un altre."
