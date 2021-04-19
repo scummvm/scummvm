@@ -1178,6 +1178,21 @@ const KYRAGameDescription adGameDescs[] = {
 		LOL_CD_FLAGS
 	},
 
+	// Incorrectly added multilanguage CD version
+	// Based on Bugreport #6284
+	{
+		{
+			"lol",
+			_s("You added the game incorrectly. Please add the root folder of the game."),
+			AD_ENTRY1s("GENERAL.PAK", "2dd5305434b11b40cbda565c0f729913", 1225285),
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_WARNING | ADGF_DROPLANGUAGE | ADGF_CD,
+			GUIO5(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_MIDIPCSPK, GUIO_RENDERVGA)
+		},
+		LOL_CD_FLAGS
+	},
+
 	// Russian fan translation. Version 1. 03.01.2011
 	{
 		{
