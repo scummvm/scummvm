@@ -30,9 +30,9 @@
 namespace Trecision {
 
 enum SmackerType {
-	kSmackerBackground = 0,		// Smacker animations embedded in nlanim.cd? files
+	kSmackerBackground = 0,		// Scene background animations
 	kSmackerAction = 1,			// Main character action animations
-	kSmackerIcon = 2			// Smacker inventory animations embedded in nlanim.cd? files
+	kSmackerIcon = 2			// Smacker inventory animations
 };
 
 #define MAXSMACK 3
@@ -69,7 +69,7 @@ private:
 	uint16 _smkPal[MAXSMACK][256];
 	NightlongSmackerDecoder *_smkAnims[MAXSMACK];
 
-	FastFile _animFile[MAXSMACK]; // nlanim.cd1 / nlanim.cd2
+	FastFile _animFile[MAXSMACK]; // nlanim.cd1 / nlanim.cd2 / nlanim.cd3
 	int _curCD;
 
 	void openSmk(int slot, Common::SeekableReadStream *stream);
