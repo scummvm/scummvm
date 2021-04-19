@@ -47,6 +47,17 @@ enum GlobalFlag {
 	kFlagActorUpdateStatus15Check
 };
 
+class SharedData;
+
+class CrowsData {
+public:
+	CrowsData(SharedData *sharedData) : _sharedData(sharedData), _data() {}
+	int32 &operator [](uint32 index);
+private:
+	int32 _data[84];
+	SharedData *_sharedData;
+};
+
 /**
  * Shared data
  * -----------
@@ -130,6 +141,7 @@ public:
 	Common::Point   vector2;
 	bool            actorEnableForStatus7;
 	ActorDirection  globalDirection;
+	CrowsData       crowsData;
 
 	// Used by Actor::enableActorsChapter2 (and maybe others)
 	void resetChapter2Data();
@@ -199,8 +211,6 @@ public:
 	void setMattePlaySound(bool val) { _mattePlaySound = val; }
 
 	// Chapter 2 data
-	void setChapter2Data(uint32 index, int32 offset, int32 val);
-	int32 getChapter2Data(uint32 index, int32 offset);
 	void setChapter2Counter(uint32 index, int32 val);
 	int32 getChapter2Counter(uint32 index) const;
 	int32 getChapter2FrameIndexOffset() const { return _chapter2FrameIndexOffset; }
@@ -263,6 +273,8 @@ private:
 
 	int16           _matteBarHeight;
 	uint32          _matteVar2;
+
+	friend class CrowsData;
 };
 
 } // End of namespace Asylum

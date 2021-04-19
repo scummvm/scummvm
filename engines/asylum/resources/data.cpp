@@ -26,14 +26,13 @@
 
 namespace Asylum {
 
-SharedData::SharedData() {
+SharedData::SharedData() : crowsData(this) {
 	// Public data
 	cdNumber                           = 0;
 	movieIndex                         = 0;
 	sceneCounter                       = 0;
 	actorEnableForStatus7              = false;
 	globalDirection                    = kDirectionN;
-
 
 	memset(&_ambientFlags, 0, sizeof(_ambientFlags));
 	memset(&_ambientTicks, 0, sizeof(_ambientTicks));
@@ -118,44 +117,27 @@ void SharedData::loadSmallCursor(int32 *smallCurUp, int32 *smallCurDown) const {
 // Chapter 2 data
 //////////////////////////////////////////////////////////////////////////
 void SharedData::resetChapter2Data() {
-	for (uint32 i = 5; i < 14; i++)
-		_chapter2Data3[i] = 0;
-
-	for (uint32 i = 0; i < ARRAYSIZE(_chapter2Data2); i++)
-		_chapter2Data2[i] = 160;
-
-	for (uint32 i = 0; i < ARRAYSIZE(_chapter2Data5); i++)
-		_chapter2Data5[i] = 0;
+	for (int i = 0; i < 9; i++) {
+		crowsData[i + 11] = 160;
+		crowsData[i + 39] = 0;
+		crowsData[i + 73] = 0;
+	}
 }
 
 void SharedData::reset() {
-	for (uint32 i = 0; i < ARRAYSIZE(_chapter2Data2); i++)
-		_chapter2Data2[i] = 160;
+	for (int i = 0; i < 9; i++)
+		crowsData[i + 11] = 160;
 
 	_chapter2FrameIndexOffset = 1;
 }
 
 static const uint32 chapter2DataSizes[5] = {5, 9, 23, 18, 9};
-void SharedData::setChapter2Data(uint32 index, int32 offset, int32 val) {
-	uint32 *chapter2Data[] = {_chapter2Data1, _chapter2Data2, (uint32 *)_chapter2Data3, _chapter2Data4, _chapter2Data5};
+int32 &CrowsData::operator[](uint32 index) {
+	if (index >= ARRAYSIZE(_data))
+		error("[CrowsData::operator[]] Invalid index (was: %d, valid: [0;%d])", index, ARRAYSIZE(_data) - 1);
 
-	if (index == 0 || index > 5)
-		error("[SharedData::setChapter2Data] Invalid index (was: %d, valid: [1;5])", index);
-	if (offset >= chapter2DataSizes[index - 1])
-		error("[SharedData::setChapter2Data] Invalid offset (was: %d, valid: [0;%d])", offset, chapter2DataSizes[index - 1] - 1);
-
-	chapter2Data[index - 1][offset] = val;
-}
-
-int32 SharedData::getChapter2Data(uint32 index, int32 offset) {
-	const uint32 *chapter2Data[] = {_chapter2Data1, _chapter2Data2, (uint32 *)_chapter2Data3, _chapter2Data4, _chapter2Data5};
-
-	if (index == 0 || index > 5)
-		error("[SharedData::getChapter2Data] Invalid index (was: %d, valid: [1;5])", index);
-	if (offset >= chapter2DataSizes[index - 1])
-		error("[SharedData::getChapter2Data] Invalid offset (was: %d, valid: [0;%d])", offset, chapter2DataSizes[index - 1] - 1);
-
-	return (int32)chapter2Data[index - 1][offset];
+	// TODO use _chapter2Data*[] instead of a dedicated array
+	return _data[index];
 }
 
 void SharedData::setChapter2Counter(uint32 index, int32 val) {
