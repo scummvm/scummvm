@@ -243,6 +243,9 @@ public:
 	bool _flagCharacterExists;
 	bool _flagNoPaintScreen;
 	bool _flagWaitRegen;
+
+	uint16 *ObjPointers[MAXOBJINROOM];
+	uint8 *MaskPointers[MAXOBJINROOM];
 };
 
 extern TrecisionEngine *g_vm;

@@ -167,6 +167,11 @@ TrecisionEngine::TrecisionEngine(OSystem *syst) : Engine(syst) {
 	_flagCharacterExists = true;
 	_flagNoPaintScreen = false;
 	_flagWaitRegen = false;
+
+	for (int i = 0; i < MAXOBJINROOM; ++i) {
+		ObjPointers[i] = nullptr;
+		MaskPointers[i] = nullptr;
+	}
 }
 
 TrecisionEngine::~TrecisionEngine() {
@@ -189,6 +194,11 @@ TrecisionEngine::~TrecisionEngine() {
 	delete _actor;
 	delete[] TextArea;
 	delete[] _screenBuffer;
+
+	for (int i = 0; i < MAXOBJINROOM; ++i) {
+		delete[] ObjPointers[i];
+		delete[] MaskPointers[i];
+	}
 }
 
 Common::Error TrecisionEngine::run() {

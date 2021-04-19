@@ -65,7 +65,7 @@ bool CheckMask(uint16 mx, uint16 my) {
 				}
 
 				if (g_vm->_obj[checkedObj]._mode & OBJMODE_MASK) {
-					uint8 *mask = MaskPointers[a];
+					uint8 *mask = g_vm->MaskPointers[a];
 					int16 d = g_vm->_obj[checkedObj]._px;
 					uint16 max = g_vm->_obj[checkedObj]._py + g_vm->_obj[checkedObj]._dy;
 
