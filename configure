@@ -228,7 +228,7 @@ _dwp=dwp
 _windres=windres
 _stagingpath="staging"
 _win32path="c:/scummvm"
-_amigaospath="Games:ScummVM"
+_amigaospath="ScummVM:"
 _morphospath="PROGDIR:"
 _staticlibpath=
 _xcodetoolspath=
@@ -5679,8 +5679,8 @@ if test "$_dialogs" = "no"; then
 	echo "no"
 else
 	case $_host_os in
-	amigaos*)
-		echo "amigaos (asl)"
+	amigaos* | morphos*)
+		echo "asl"
 		_dialogs=yes
 		;;
 	darwin*)
@@ -5690,10 +5690,6 @@ else
 	mingw*)
 		append_var LIBS "-lole32 -luuid"
 		echo "win32"
-		_dialogs=yes
-		;;
-	morphos*)
-		echo "morphos"
 		_dialogs=yes
 		;;
 	*)
