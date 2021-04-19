@@ -689,9 +689,6 @@ void RegenRoom() {
 	}
 }
 
-/*------------------------------------------------
-                  PaintRegenRoom
---------------------------------------------------*/
 void PaintRegenRoom() {
 	for (uint16 a = 0; a < MAXOBJINROOM; a++) {
 		if (OldObjStatus[a] != VideoObjStatus[a]) {
@@ -705,51 +702,47 @@ void PaintRegenRoom() {
 		}
 	}
 }
-/*-----------------16/05/95 11.03-------------------
-                      DrawObj
---------------------------------------------------*/
+
 void DrawObj(SDObj d) {
 	if (d.l.left > MAXX || d.l.top > MAXX || d.l.right > MAXX || d.l.bottom > MAXX)
 		return;
 	
-	const uint16 *buf = d.buf;
-	if (d.flag & DRAWMASK) {
-		uint8 *mask = d.mask;
+	const uint16 *buf = d.objIndex >= 0 ? ObjPointers[d.objIndex] : g_vm->_graphicsMgr->getBackgroundPtr();
+	if (d.drawMask) {
+		uint8 *mask = MaskPointers[d.objIndex];
 
-		if (d.flag & COPYTORAM) {
-			for (uint16 b = d.y; b < (d.y + d.dy); b++) {
-				uint16 Sco = 0;
-				uint16 c = 0;
-				while (Sco < d.dx) {
-					if (c == 0) {            // jump
-						Sco += *mask;
-						mask++;
+		for (uint16 b = d.y; b < (d.y + d.dy); b++) {
+			uint16 Sco = 0;
+			uint16 c = 0;
+			while (Sco < d.dx) {
+				if (c == 0) {            // jump
+					Sco += *mask;
+					mask++;
 
-						c = 1;
-					} else {                 // copy
-						uint16 maskOffset = *mask;
+					c = 1;
+				} else {                 // copy
+					uint16 maskOffset = *mask;
 
-						if ((maskOffset != 0) && (b >= (d.y + d.l.top)) && (b < (d.y + d.l.bottom))) {
-							if ((Sco >= d.l.left) && ((Sco + maskOffset) < d.l.right))
-								memcpy(g_vm->_screenBuffer + (b * MAXX) + Sco + d.x, buf, maskOffset * 2);
+					if ((maskOffset != 0) && (b >= (d.y + d.l.top)) && (b < (d.y + d.l.bottom))) {
+						if ((Sco >= d.l.left) && ((Sco + maskOffset) < d.l.right))
+							memcpy(g_vm->_screenBuffer + (b * MAXX) + Sco + d.x, buf, maskOffset * 2);
 
-							else if ((Sco < d.l.left) && ((Sco + maskOffset) < d.l.right) && ((Sco + maskOffset) >= d.l.left))
-								memcpy(g_vm->_screenBuffer + (b * MAXX) + d.l.left + d.x, buf + d.l.left - Sco, (maskOffset + Sco - d.l.left) * 2);
+						else if ((Sco < d.l.left) && ((Sco + maskOffset) < d.l.right) && ((Sco + maskOffset) >= d.l.left))
+							memcpy(g_vm->_screenBuffer + (b * MAXX) + d.l.left + d.x, buf + d.l.left - Sco, (maskOffset + Sco - d.l.left) * 2);
 
-							else if ((Sco >= d.l.left) && ((Sco + maskOffset) >= d.l.right) && (Sco < d.l.right))
-								memcpy(g_vm->_screenBuffer + (b * MAXX) + Sco + d.x, buf, (d.l.right - Sco) * 2);
+						else if ((Sco >= d.l.left) && ((Sco + maskOffset) >= d.l.right) && (Sco < d.l.right))
+							memcpy(g_vm->_screenBuffer + (b * MAXX) + Sco + d.x, buf, (d.l.right - Sco) * 2);
 
-							else if ((Sco < d.l.left) && ((Sco + maskOffset) >= d.l.right))
-								memcpy(g_vm->_screenBuffer + (b * MAXX) + d.l.left + d.x, buf + d.l.left - Sco, (d.l.right - d.l.left) * 2);
-						}
-						Sco += *mask;
-						buf += *mask++;
-						c = 0;
+						else if ((Sco < d.l.left) && ((Sco + maskOffset) >= d.l.right))
+							memcpy(g_vm->_screenBuffer + (b * MAXX) + d.l.left + d.x, buf + d.l.left - Sco, (d.l.right - d.l.left) * 2);
 					}
+					Sco += *mask;
+					buf += *mask++;
+					c = 0;
 				}
 			}
 		}
-	} else if (d.flag & COPYTORAM) {
+	} else {
 		for (uint16 b = d.l.top; b < d.l.bottom; b++) {
 			memcpy(g_vm->_screenBuffer + (d.y + b) * MAXX + (d.x + d.l.left),
 				  buf + (b * d.dx) + d.l.left, (d.l.right - d.l.left) * 2);

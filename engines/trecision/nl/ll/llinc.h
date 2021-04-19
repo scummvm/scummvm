@@ -72,11 +72,8 @@ struct SDObj {
 	uint16 dx;
 	uint16 dy;
 	Common::Rect l;
-	const uint16 *buf;
-	uint8 *mask;
-	uint8 flag;         /* 0 - with mask
-                            1 - copy to _screenPtr
-                            2 - copy to _screenBuffer */
+	int objIndex;
+	bool drawMask;
 };
 
 // fastfile
