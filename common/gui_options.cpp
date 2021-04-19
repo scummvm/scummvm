@@ -42,6 +42,8 @@ const struct GameOpt {
 	{ GUIO_LINKMUSICTOSFX,  "sndLinkMusicToSfx" },
 	{ GUIO_NOSPEECHVOLUME,  "sndNoSpchVolume" },
 
+	{ GUIO_NOLANG,        "noLang"},
+
 	{ GUIO_NOLAUNCHLOAD, "launchNoLoad" },
 
 	{ GUIO_MIDIPCSPK,    "midiPCSpk" },
