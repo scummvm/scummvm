@@ -156,7 +156,7 @@ if (_ttsMan != nullptr && ConfMan.getBool("tts_enabled")) {
 		_ttsMan->say(paragraph);
 	}
 }
-	return nextparagraph;
+return nextparagraph;
 }
 #endif
 
@@ -267,7 +267,8 @@ void GriffonEngine::intro() {
 			int yy = y + i * 10;
 
 		#ifdef USE_TTS
-			if (i == nextparagraph) nextparagraph = textToSpeech(nextparagraph, story, ARRAYSIZE(story));
+			if (i == nextparagraph)
+				nextparagraph = textToSpeech(nextparagraph, story, ARRAYSIZE(story));
 		#endif
 
 			if (yy > -8 && yy < 240) {
@@ -407,7 +408,8 @@ void GriffonEngine::endOfGame() {
 			int yy = y + i * 10;
 
 		#ifdef USE_TTS
-			if (i == nextparagraph) nextparagraph = textToSpeech(nextparagraph, story2, ARRAYSIZE(story2));
+			if (i == nextparagraph)
+				nextparagraph = textToSpeech(nextparagraph, story2, ARRAYSIZE(story2));
 		#endif
 			
 			if (yy > -8 && yy < 240) {
