@@ -64,8 +64,8 @@ void PaintScreen(uint8 flag) {
 		DObj.dx   = MAXX;
 		DObj.dy   = AREA;
 		DObj.l = Common::Rect(x1, y1, x2, y2);
-		DObj.buf  = g_vm->_graphicsMgr->getBackgroundPtr();
-		DObj.flag = COPYTORAM;
+		DObj.objIndex = -1;
+		DObj.drawMask = false;
 		DrawObj(DObj);
 
 		g_vm->_actorLimit = g_vm->_limitsNum;
@@ -78,8 +78,8 @@ void PaintScreen(uint8 flag) {
 		DObj.dx   = MAXX;
 		DObj.dy   = AREA;
 		DObj.l = Common::Rect(g_vm->_animMgr->_animMinX, g_vm->_animMgr->_animMinY, g_vm->_animMgr->_animMaxX, g_vm->_animMgr->_animMaxY);
-		DObj.buf = g_vm->_graphicsMgr->getBackgroundPtr();
-		DObj.flag = COPYTORAM;
+		DObj.objIndex = -1;
+		DObj.drawMask = false;
 		DrawObj(DObj);
 
 		g_vm->_actorLimit = g_vm->_limitsNum;
@@ -99,10 +99,10 @@ void PaintScreen(uint8 flag) {
 		DObj.l.top = oldString.y - TOP;
 		DObj.l.right = DObj.l.left + oldString.dx;
 		DObj.l.bottom = DObj.l.top + oldString.dy;
+		DObj.objIndex = -1;
+		DObj.drawMask = false;
 
 		if ((oldString.y >= TOP) && ((oldString.y + oldString.dy) < (AREA + TOP))) {
-			DObj.buf = g_vm->_graphicsMgr->getBackgroundPtr();
-			DObj.flag = COPYTORAM;
 			DrawObj(DObj);
 		} else {
 			for (a = (DObj.l.top + TOP); a < (DObj.l.bottom + TOP); a++)
@@ -136,8 +136,8 @@ void PaintScreen(uint8 flag) {
 				DObj.l.bottom = DObj.l.top + g_vm->_obj[SortTable[a]._index]._dy;
 			}
 
-			DObj.buf = g_vm->_graphicsMgr->getBackgroundPtr();
-			DObj.flag = COPYTORAM;
+			DObj.objIndex = -1;
+			DObj.drawMask = false;
 			DrawObj(DObj);
 
 			if ((SortTable[a + 1]._typology == SortTable[a]._typology) &&
@@ -216,11 +216,8 @@ void PaintObjAnm(uint16 CurBox) {
 					DObj.dx = g_vm->_obj[SortTable[a]._index]._dx;
 					DObj.dy = g_vm->_obj[SortTable[a]._index]._dy;
 					DObj.l = Common::Rect(DObj.dx, DObj.dy);
-					DObj.buf  = ObjPointers[SortTable[a]._roomIndex];
-					DObj.mask = MaskPointers[SortTable[a]._roomIndex];
-					DObj.flag = COPYTORAM;
-					if (g_vm->_obj[SortTable[a]._index]._mode & OBJMODE_MASK)
-						DObj.flag += DRAWMASK;
+					DObj.objIndex = SortTable[a]._roomIndex;
+					DObj.drawMask = g_vm->_obj[SortTable[a]._index]._mode & OBJMODE_MASK;
 					DrawObj(DObj);
 
 					Common::Rect objRect(DObj.x, DObj.y, DObj.x + DObj.dx, DObj.y + DObj.dy);
@@ -275,12 +272,8 @@ void PaintObjAnm(uint16 CurBox) {
 					const int16 yr2 = MIN<int16>(r.bottom, r2.bottom) - r2.top;					
 					DObj.l = Common::Rect(xr1, yr1, xr2, yr2);
 
-					DObj.buf  = ObjPointers[b];
-					DObj.mask = MaskPointers[b];
-					DObj.flag = COPYTORAM;
-
-					if (obj._mode & OBJMODE_MASK)
-						DObj.flag = COPYTORAM + DRAWMASK;
+					DObj.objIndex = b;
+					DObj.drawMask = obj._mode & OBJMODE_MASK;
 
 					DrawObj(DObj);
 				}
