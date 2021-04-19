@@ -241,8 +241,7 @@ DetectedGames AdvancedMetaEngineDetection::detectGames(const Common::FSList &fsl
 	for (uint i = 0; i < matches.size(); i++) {
 		DetectedGame game = toDetectedGame(matches[i]);
 
-		if (game.hasUnknownFiles) {
-			// Non fallback games with unknown files cannot be added/launched
+		if (game.hasUnknownFiles && !canPlayUnknownVariants()) {
 			game.canBeAdded = false;
 		}
 
@@ -251,7 +250,7 @@ DetectedGames AdvancedMetaEngineDetection::detectGames(const Common::FSList &fsl
 
 	bool foundKnownGames = false;
 	for (uint i = 0; i < detectedGames.size(); i++) {
-		foundKnownGames |= detectedGames[i].canBeAdded;
+		foundKnownGames |= !detectedGames[i].hasUnknownFiles;
 	}
 
 	if (!foundKnownGames) {
@@ -344,7 +343,7 @@ Common::Error AdvancedMetaEngineDetection::createInstance(OSystem *syst, Engine 
 
 	ADDetectedGame agdDesc;
 	for (uint i = 0; i < matches.size(); i++) {
-		if (matches[i].desc->gameId == gameid && !matches[i].hasUnknownFiles) {
+		if (matches[i].desc->gameId == gameid && (!matches[i].hasUnknownFiles || canPlayUnknownVariants())) {
 			agdDesc = matches[i];
 			break;
 		}

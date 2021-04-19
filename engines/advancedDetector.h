@@ -403,6 +403,12 @@ protected:
 	virtual ADDetectedGames detectGame(const Common::FSNode &parent, const FileMap &allFiles, Common::Language language, Common::Platform platform, const Common::String &extra) const;
 
 	/**
+	 * @return True if variant of a game with unknown files can be played with the engine and false otherwise.
+	 * By default this is false.
+	 */
+	virtual bool canPlayUnknownVariants() const { return false; }
+
+	/**
 	 * Iterate over all @ref ADFileBasedFallback records inside @p fileBasedFallback
 	 * and return the record (or rather, the ADGameDescription
 	 * contained in it) for which all files described by it are present, and
