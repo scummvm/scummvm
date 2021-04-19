@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-04-19 00:25+0000\n"
+"POT-Creation-Date: 2021-04-19 11:10+0000\n"
 "PO-Revision-Date: 2021-04-19 09:27+0000\n"
 "Last-Translator: George Kormendi <grubycza@hotmail.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
@@ -2691,32 +2691,32 @@ msgstr "Nyújt az ablakhoz"
 msgid "Fit to window (4:3)"
 msgstr "Illeszkedik a (4:3) ablakhoz"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:616
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:622
 #, c-format
 msgid "Resolution: %dx%d"
 msgstr "Felbontás: %dx%d"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:639
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:645
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2498
 msgid "Enabled aspect ratio correction"
 msgstr "Méretarány korrekció engedélyezve"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:641
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:647
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2504
 msgid "Disabled aspect ratio correction"
 msgstr "Méretarány korrekció letiltva"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:662
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:668
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2520
 msgid "Filtering enabled"
 msgstr "Szûrés engedélyezve"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:664
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:670
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2522
 msgid "Filtering disabled"
 msgstr "Szûrés letiltva"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:693
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:699
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2549
 msgid "Stretch mode"
 msgstr "Nyújtás mód"
@@ -3946,10 +3946,10 @@ msgstr "Érvénytelen mentés fájlnév"
 
 #: engines/cge/detection.cpp:48 engines/cge/detection.cpp:54
 #: engines/kyra/detection_tables.h:224 engines/kyra/detection_tables.h:237
-#: engines/kyra/detection_tables.h:593 engines/kyra/detection_tables.h:1792
-#: engines/saga/detection_tables.h:187 engines/saga/detection_tables.h:608
-#: engines/saga/detection_tables.h:936 engines/sci/detection_tables.h:4851
-#: engines/sci/detection_tables.h:4859
+#: engines/kyra/detection_tables.h:593 engines/kyra/detection_tables.h:1634
+#: engines/kyra/detection_tables.h:1806 engines/saga/detection_tables.h:187
+#: engines/saga/detection_tables.h:608 engines/saga/detection_tables.h:936
+#: engines/sci/detection_tables.h:4851 engines/sci/detection_tables.h:4859
 msgid "Missing game code"
 msgstr "Hiányzik a játék kódja"
 

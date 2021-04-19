@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.5.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-04-19 00:25+0000\n"
+"POT-Creation-Date: 2021-04-19 11:10+0000\n"
 "PO-Revision-Date: 2021-01-02 18:37+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Basque <https://translations.scummvm.org/projects/scummvm/"
@@ -2737,34 +2737,34 @@ msgstr "Tiratu leihora"
 msgid "Fit to window (4:3)"
 msgstr "Doitu leihora (4:3)"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:616
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:622
 #, c-format
 msgid "Resolution: %dx%d"
 msgstr "Bereizmena: %dx%d"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:639
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:645
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2498
 msgid "Enabled aspect ratio correction"
 msgstr "Formatu-ratio zuzenketa gaituta"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:641
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:647
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2504
 msgid "Disabled aspect ratio correction"
 msgstr "Formatu-ratio zuzenketa desgaituta"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:662
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:668
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2520
 #, fuzzy
 msgid "Filtering enabled"
 msgstr "Klikatzea gaituta"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:664
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:670
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2522
 #, fuzzy
 msgid "Filtering disabled"
 msgstr "Klikatzea desgaituta"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:693
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:699
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2549
 #, fuzzy
 msgid "Stretch mode"
@@ -4045,10 +4045,10 @@ msgstr "Gordetako jokoko fitxategi-izen baliogabea"
 
 #: engines/cge/detection.cpp:48 engines/cge/detection.cpp:54
 #: engines/kyra/detection_tables.h:224 engines/kyra/detection_tables.h:237
-#: engines/kyra/detection_tables.h:593 engines/kyra/detection_tables.h:1792
-#: engines/saga/detection_tables.h:187 engines/saga/detection_tables.h:608
-#: engines/saga/detection_tables.h:936 engines/sci/detection_tables.h:4851
-#: engines/sci/detection_tables.h:4859
+#: engines/kyra/detection_tables.h:593 engines/kyra/detection_tables.h:1634
+#: engines/kyra/detection_tables.h:1806 engines/saga/detection_tables.h:187
+#: engines/saga/detection_tables.h:608 engines/saga/detection_tables.h:936
+#: engines/sci/detection_tables.h:4851 engines/sci/detection_tables.h:4859
 #, fuzzy
 msgid "Missing game code"
 msgstr "Joko kontrol nagusiak:"
