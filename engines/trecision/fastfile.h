@@ -37,7 +37,8 @@ public:
 	bool open(const Common::String &filename);
 	void close();
 	bool isOpen() const { return _stream != 0; }
-
+	Common::SeekableReadStream *createReadStreamForCompressedMember(const Common::String &name);
+	
 	// Common::Archive API implementation
 	bool hasFile(const Common::String &name) const override;
 	int listMembers(Common::ArchiveMemberList &list) const override;
@@ -48,12 +49,15 @@ public:
 		char name[12];
 		uint32 offset;
 	};
-
+	
 private:
 	Common::SeekableReadStream *_stream;
+	Common::SeekableReadStream *_compStream;
 	Common::Array<FileEntry> _fileEntries;
 
+	uint8 *_compBuffer;
 	const FileEntry *getEntry(const Common::String &name) const;
+	void decompress(const unsigned char *src, unsigned src_len, unsigned char *dst);
 };
 
 } // End of namespace Trecision
