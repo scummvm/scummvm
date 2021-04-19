@@ -473,41 +473,44 @@ void TendIn() {
 	g_vm->_graphicsMgr->copyToScreen(0, 0, MAXX, MAXY);
 }
 
-void readObject(uint16 *objBuffer, uint16 objIndex, uint16 roomObjIndex, uint32 &bufOffset) {
+void readObject(Common::SeekableReadStream *stream, uint16 objIndex, uint16 roomObjIndex) {
 	SObject *obj = &g_vm->_obj[roomObjIndex];
 
 	if (obj->_mode & OBJMODE_FULL) {
-		BmInfo.read(objBuffer + bufOffset);
-		bufOffset += 4;
+		BmInfo.read(stream);
+
 		obj->_px = BmInfo.px;
 		obj->_py = BmInfo.py;
 		obj->_dx = BmInfo.dx;
 		obj->_dy = BmInfo.dy;
 
-		ObjPointers[objIndex] = (uint16 *)(objBuffer + bufOffset);
-		g_vm->_graphicsMgr->updatePixelFormat(ObjPointers[objIndex], (obj->_dx * obj->_dy));
-		bufOffset += (obj->_dx * obj->_dy);
+		uint32 size = obj->_dx * obj->_dy;
+		ObjPointers[objIndex] = new uint16[size];
+		for (uint32 i = 0; i < size; ++i)
+			ObjPointers[objIndex][i] = stream->readUint16LE(); 
+
+		g_vm->_graphicsMgr->updatePixelFormat(ObjPointers[objIndex], size);
 	}
 
 	if (obj->_mode & OBJMODE_MASK) {
-		BmInfo.read(objBuffer + bufOffset);
-		bufOffset += 4;
+		BmInfo.read(stream);
+
 		obj->_px = BmInfo.px;
 		obj->_py = BmInfo.py;
 		obj->_dx = BmInfo.dx;
 		obj->_dy = BmInfo.dy;
 
-		uint32 *p = (uint32 *)(objBuffer + bufOffset);
-		ObjPointers[objIndex] = (uint16 *)p + 2;
-		g_vm->_graphicsMgr->updatePixelFormat(ObjPointers[objIndex], *p);
+		uint32 size = stream->readUint32LE();
+		ObjPointers[objIndex] = new uint16[size];
+		for (uint32 i = 0; i < size; ++i)
+			ObjPointers[objIndex][i] = stream->readUint16LE(); 
 
-		bufOffset += p[0];
-		bufOffset += 2;
+		g_vm->_graphicsMgr->updatePixelFormat(ObjPointers[objIndex], size);
 
-		p = (uint32 *)(objBuffer + bufOffset);
-		MaskPointers[objIndex] = (uint8 *)p + 4;
-		bufOffset += (*p / 2);
-		bufOffset += 2;
+		size = stream->readUint32LE();
+		MaskPointers[objIndex] = new uint8[size];
+		for (uint32 i = 0; i < size; ++i)
+			MaskPointers[objIndex][i] = (uint8)stream->readByte();
 	}
 }
 
@@ -515,13 +518,6 @@ void ReadObj(Common::SeekableReadStream *stream, int size) {
 	if (!g_vm->_room[g_vm->_curRoom]._object[0])
 		return;
 
-	//FIXME: Memory leak. Rewrite loaders to use proper allocation and endian safe reads
-	uint16 *objBuffer = new uint16[size / 2];
-	for (int i = 0; i < size / 2; i++) {
-		objBuffer[i] = stream->readUint16LE();
-	}
-
-	uint32 offset = 0;
 	for (uint16 objIndex = 0; objIndex < MAXOBJINROOM; objIndex++) {
 		uint16 roomObjIndex = g_vm->_room[g_vm->_curRoom]._object[objIndex];
 		if (!roomObjIndex)
@@ -533,7 +529,7 @@ void ReadObj(Common::SeekableReadStream *stream, int size) {
 		if (g_vm->_curRoom == r2C && objIndex == 20)
 			break;
 
-		readObject(objBuffer, objIndex, roomObjIndex, offset);
+		readObject(stream, objIndex, roomObjIndex);
 	}
 }
 
@@ -542,20 +538,16 @@ void ReadExtraObj2C() {
 		return;
 	
 	Common::SeekableReadStream *ff = g_vm->_dataFile.createReadStreamForMember("2c2.bm");
-	uint16 *objBuffer = g_vm->_extraRoomObject = new uint16[ff->size() / 2];
-	for (int i = 0; i < ff->size() / 2; i++) {
-		objBuffer[i] = ff->readUint16LE();
-	}
-	delete ff;
 
-	uint32 offset = 0;
 	for (uint16 objIndex = 20; objIndex < MAXOBJINROOM; objIndex++) {
 		uint16 roomObjIndex = g_vm->_room[g_vm->_curRoom]._object[objIndex];
 		if (!roomObjIndex)
 			break;
 
-		readObject(objBuffer, objIndex, roomObjIndex, offset);
+		readObject(ff, objIndex, roomObjIndex);
 	}
+
+	delete ff;
 }
 
 void ReadExtraObj41D() {
@@ -563,20 +555,14 @@ void ReadExtraObj41D() {
 		return;
 
 	Common::SeekableReadStream *ff = g_vm->_dataFile.createReadStreamForMember("41d2.bm");
-	uint16 *objBuffer = g_vm->_extraRoomObject = new uint16[ff->size() / 2];
-	for (int i = 0; i < ff->size() / 2; i++) {
-		objBuffer[i] = ff->readUint16LE();
-	}
-	delete ff;
-
-	uint32 offset = 0;
 	for (uint16 objIndex = 89; objIndex < MAXOBJINROOM; objIndex++) {
 		uint16 roomObjIndex = g_vm->_room[g_vm->_curRoom]._object[objIndex];
 		if (!roomObjIndex)
 			break;
 
-		readObject(objBuffer, objIndex, roomObjIndex, offset);
+		readObject(ff, objIndex, roomObjIndex);
 	}
+	delete ff;
 }
 
 /*-----------------12/12/95 11.39-------------------
