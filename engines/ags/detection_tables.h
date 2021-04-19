@@ -1025,7 +1025,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "principlesofevil2", "Principles of Evil II" },
 	{ "prisonersofice", "Prisoners of Ice" },
 	{ "prodigal", "Prodigal" },
-	{ "profneely", "Prof. Neely" },
+	{ "profneely", "Professor Neely And The Death Ray Of Doom" },
 	{ "projectevilspy2", "Project Evilspy II" },
 	{ "proofoffiction", "Proof of Fiction" },
 	{ "prototypical", "Prototypical" },
