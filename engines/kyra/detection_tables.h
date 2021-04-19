@@ -1627,6 +1627,20 @@ const KYRAGameDescription adGameDescs[] = {
 		LOL_DEMO_FLAGS
 	},
 
+	// Interactive CD demo, Bugreport #6777
+	{
+		{
+			"lol",
+			_s("Missing game code"), // Reason for being unsupported
+			AD_ENTRY1s("GENERAL.PAK", "17e442d3b6109d4ae8354fa55d6c8121", 710633),
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_DEMO | ADGF_UNSUPPORTED,
+			GUIO5(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_MIDIPCSPK, GUIO_RENDERVGA)
+		},
+		LOL_DEMO_FLAGS
+	},
+
 	{
 		{
 			"eob",
