@@ -466,8 +466,11 @@ void TrecisionEngine::openDataFiles() {
 	if (!_dataFile.open("nldata.cd0"))
 		error("openDataFiles() - Error opening nldata.cd0");
 
-	if (!Common::File::exists("nlanim.cd1") || !Common::File::exists("nlanim.cd2"))
-		error("openDataFiles() - nlanim.cd1 or nlanim.cd2 is missing");
+	if (!Common::File::exists("nlanim.cd1") ||
+		!Common::File::exists("nlanim.cd2") ||
+		!Common::File::exists("nlanim.cd3")
+		)
+		error("openDataFiles() - nlanim.cd1 or nlanim.cd2 or nlanim.cd3 is missing");
 
 	if (!_speechFile.open("nlspeech.cd0"))
 		warning("openDataFiles() - nlspeech.cd0 is missing - skipping");

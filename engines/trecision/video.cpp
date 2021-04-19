@@ -236,20 +236,17 @@ void AnimManager::drawFrameSubtitles(Graphics::Surface *surface, int frameNum) {
 
 void AnimManager::openSmkAnim(int slot, Common::String name) {
 	//debug("Opening anim %s", name.c_str());
-	if (_animFile[slot].hasFile(name)) {
-		openSmk(slot, _animFile[slot].createReadStreamForMember(name));
-		return;
+	for (int i = 0; i < 3; i++) {
+		// Open the animation, or swap the 3 CDs to find it
+		if (_animFile[slot].hasFile(name)) {
+			openSmk(slot, _animFile[slot].createReadStreamForMember(name));
+			return;
+		}
+
+		_curCD = _curCD < 3 ? _curCD + 1 : 1;
+		swapCD(_curCD);
 	}
 
-	_curCD = _curCD == 1 ? 2 : 1;
-	swapCD(_curCD);
-
-	if (_animFile[slot].hasFile(name)) {
-		openSmk(slot, _animFile[slot].createReadStreamForMember(name));
-		return;
-	}
-
-	// Invalid file
 	error("openSmkAnim(): File %s not found", name.c_str());
 }
 
