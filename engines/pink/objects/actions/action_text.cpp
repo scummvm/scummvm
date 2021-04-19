@@ -123,14 +123,11 @@ void ActionText::start() {
 		_txtWnd->appendText(_text, font);
 		// if the textHeight is smaller than the area we display the text, then we disable the scrollbar
 		if (_txtWnd->getTextHeight() < _txtWnd->getInnerDimensions().height()) {
-			delete _txtWnd;
-			_txtWnd = director->getWndManager().addTextWindow(font, _textColorIndex, _backgroundColorIndex,
-															  _xRight - _xLeft, align, nullptr, false);
+			_txtWnd->clearText();
+			_txtWnd->enableScrollbar(false);
 			_txtWnd->disableBorder();
 			_txtWnd->move(_xLeft, _yTop);
 			_txtWnd->resize(_xRight - _xLeft, _yBottom - _yTop);
-			_txtWnd->setEditable(false);
-			_txtWnd->setSelectable(false);
 			_txtWnd->appendText(_text, font);
 		}
 		director->addTextWindow(_txtWnd);
