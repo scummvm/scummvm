@@ -406,7 +406,7 @@ void ReadLoc() {
 
 	Common::String filename = Common::String::format("%s.cr", g_vm->_room[g_vm->_curRoom]._baseName);
 
-	const int bufferSize = 900000; // MAXX * AREA * 2 + MAXOBJINROOM * sizeof(SBmInfo) + some more data
+	const int bufferSize = 1000000; // MAXX * AREA * 2 + MAXOBJINROOM * sizeof(SBmInfo) + some more data
 	static byte *bgBuf = new byte[bufferSize];
 	uint32 dataLength = g_vm->DecCR(filename, (uint8 *)bgBuf);
 	assert(dataLength < bufferSize);
