@@ -500,7 +500,7 @@ Common::Error LoLEngine::go() {
 			return Common::kNoError;
 	}
 
-	if (_flags.isTalkie && !_flags.isDemo) {
+	if (_flags.isTalkie) {
 		if (!_res->loadFileList("FILEDATA.FDT"))
 			error("Couldn't load file list: 'FILEDATA.FDT'");
 	} else if (_pakFileList) {
@@ -833,6 +833,35 @@ void LoLEngine::startupNew() {
 	_inventory[0] = makeItem(216, 0, 0);
 	_inventory[1] = makeItem(217, 0, 0);
 	_inventory[2] = makeItem(218, 0, 0);
+
+	if (_flags.isDemo) {
+		_inventory[5] = makeItem(32, 0, 0);
+		_inventory[6] = makeItem(40, 0, 0);
+		_inventory[7] = makeItem(51, 0, 0);
+		_inventory[8] = makeItem(64, 0, 0);
+		_inventory[10] = makeItem(76, 0, 0);
+		_inventory[11] = makeItem(234, 0, 0);
+		_inventory[12] = makeItem(118, 0, 0);
+		_inventory[13] = makeItem(123, 0, 0);
+		_inventory[14] = makeItem(125, 0, 0);
+		_inventory[15] = makeItem(37, 0, 0);
+		_inventory[16] = makeItem(140, 0, 0);
+		_inventory[17] = makeItem(150, 0, 0);
+		_inventory[18] = makeItem(158, 0, 0);
+		_inventory[19] = makeItem(215, 0, 0);
+		_inventory[20] = makeItem(215, 0, 0);
+		_inventory[21] = makeItem(216, 0, 0);
+		_inventory[22] = makeItem(216, 0, 0);
+		_inventory[23] = makeItem(219, 0, 0);
+		_inventory[24] = makeItem(225, 0, 0);
+		_inventory[27] = makeItem(267, 0, 0);
+		_inventory[28] = makeItem(270, 0, 0);
+		_inventory[29] = makeItem(271, 0, 0);
+		_availableSpells[1] = 1;
+		_availableSpells[2] = 4;
+		_availableSpells[3] = 6;
+		_flagsTable[31] |= 0x20;
+	}
 
 	_availableSpells[0] = 0;
 	setupScreenDims();

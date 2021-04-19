@@ -249,7 +249,7 @@ void LoLEngine::initStaticResource() {
 		_sound->initAudioResourceInfo(kMusicFinale, &resInfoFinale);
 	}
 
-	if (_flags.isDemo)
+	if (_flags.isDemo && !_flags.isTalkie)
 		return;
 
 	int tempSize;

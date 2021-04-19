@@ -731,7 +731,7 @@ int KyraEngine_MR::o3_daggerWarning(EMCState *script) {
 	int curPageBackUp = _screen->_curPage;
 	_screen->_curPage = 2;
 
-	
+
 	int y1 = 0xAA;
 	int y2 = 0xBA;
 	if (_lang == 3) {

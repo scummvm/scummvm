@@ -1397,22 +1397,27 @@ int LoLEngine::olol_countAllMonsters(EMCState *script) {
 int LoLEngine::olol_playEndSequence(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_playEndSequence(%p)", (const void *)script);
 
-	int c = 0;
-	if (_characters[0].id == -9)
-		c = 1;
-	else if (_characters[0].id == -5)
-		c = 3;
-	else if (_characters[0].id == -1)
-		c = 2;
+	if (_flags.isDemo) {
+		_screen->fadeToBlack(150);
+	} else {
+		int c = 0;
+		if (_characters[0].id == -9)
+			c = 1;
+		else if (_characters[0].id == -5)
+			c = 3;
+		else if (_characters[0].id == -1)
+			c = 2;
 
-	while (snd_updateCharacterSpeech())
-		delay(_tickLength);
+		while (snd_updateCharacterSpeech())
+			delay(_tickLength);
 
-	_eventList.clear();
-	_screen->hideMouse();
-	_screen->getPalette(1).clear();
+		_eventList.clear();
+		_screen->hideMouse();
+		_screen->getPalette(1).clear();
 
-	showOutro(c, (_monsterDifficulty == 2));
+		showOutro(c, (_monsterDifficulty == 2));
+	}
+
 	// Don't call quitGame() on a return to launcher request (because this would
 	// make the next game launched from the launcher quit instantly.
 	if (!shouldQuit())

@@ -1827,7 +1827,7 @@ const char *const KyraEngine_MR::_languageExtension[] = {
 	"TRG",
 	"TRC"
 	// Italian, Spanish and Russian don't have dedicated language files. The supported fan translations
-	// use one of the existing extensions (English, French or German) thus overwriting that language. 
+	// use one of the existing extensions (English, French or German) thus overwriting that language.
 };
 
 const int KyraEngine_MR::_languageExtensionSize = ARRAYSIZE(KyraEngine_MR::_languageExtension);

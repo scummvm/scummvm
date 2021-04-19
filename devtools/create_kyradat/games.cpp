@@ -4420,6 +4420,7 @@ const GameNeed gameNeedTable[] = {
 	{ kLoL, kPlatformFMTowns, kNoSpecial, lolFMTownsNeed },
 
 	{ kLoL, kPlatformDOS, kTalkieVersion, lolCDNeed },
+	{ kLoL, kPlatformDOS, kTalkieDemoVersion, lolCDDemoNeed },
 
 	{ kEoB1, kPlatformDOS, kNoSpecial, eob1FloppyNeed },
 	{ kEoB1, kPlatformDOS, kOldFloppy, eob1FloppyOldNeed },

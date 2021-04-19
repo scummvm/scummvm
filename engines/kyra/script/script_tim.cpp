@@ -462,7 +462,7 @@ void TIMInterpreter::setupTextPalette(uint index, int fadePalette) {
 int TIMInterpreter::initAnimStruct(int index, const char *filename, int x, int y, int, int offscreenBuffer, uint16 wsaFlags) {
 	Movie *wsa = 0;
 
-	const bool isLoLDemo = _vm->gameFlags().isDemo && _vm->game() == GI_LOL;
+	const bool isLoLDemo = _vm->gameFlags().isDemo && !_vm->gameFlags().isTalkie && _vm->game() == GI_LOL;
 
 	if (isLoLDemo || _vm->gameFlags().platform == Common::kPlatformPC98 || _currentTim->isLoLOutro)
 		_drawPage2 = 0;

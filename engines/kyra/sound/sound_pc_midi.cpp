@@ -137,7 +137,9 @@ bool SoundMidiPC::init() {
 			midiFile = "LOREINTR";
 
 			if (_vm->gameFlags().isDemo) {
-				if (_vm->resource()->exists("INTROVOC.PAK")) {
+				if (_vm->gameFlags().isTalkie) {
+					pakFile = "ISTARTUP.PAK";
+				} else if (_vm->resource()->exists("INTROVOC.PAK")) {
 					// Intro demo
 					pakFile = "INTROVOC.PAK";
 				} else {
