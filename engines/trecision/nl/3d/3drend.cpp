@@ -540,29 +540,23 @@ int8 clockWise(int16 x1, int16 y1, int16 x2, int16 y2, int16 x3, int16 y3) {
 void drawCharacter(uint8 flag) {
 	// Compute pointer to frame
 	if (flag & CALCPOINTS) {
-		if (g_vm->_actor->_curAction <= hLAST) {
-			int cfp = 0;
-			int cur = 0;
-			while (cur < g_vm->_actor->_curAction)
-				cfp += _defActionLen[cur++];
+		if (g_vm->_actor->_curAction > hLAST)
+			error("Error in drawCharacter() - _curAction > hLAST");
+		
+		int cfp = 0;
+		int cur = 0;
+		while (cur < g_vm->_actor->_curAction)
+			cfp += _defActionLen[cur++];
 
-			if (g_vm->_actor->_curAction == hWALKOUT)
-				cfp = 1;
+		if (g_vm->_actor->_curAction == hWALKOUT)
+			cfp = 1;
 
-			cfp += g_vm->_actor->_curFrame;
+		cfp += g_vm->_actor->_curFrame;
 
-			if (g_vm->_actor->_curAction == hLAST)
-				cfp = 0;
+		if (g_vm->_actor->_curAction == hLAST)
+			cfp = 0;
 
-			g_vm->_actor->_vertex = &g_vm->_actor->_characterArea[cfp * g_vm->_actor->_vertexNum];
-		} else {
-			error("Trying to access unallocated memory pointer _actionPointer"); // FIXME
-			/*g_vm->_actor->_vertex = (SVertex *)(_actionPointer[_actionPosition[actionInRoom(g_vm->_actor->_curAction)] + g_vm->_actor->_curFrame]);
-
-			if (g_vm->_actor->_vertex == nullptr)
-				return;
-			*/
-		}
+		g_vm->_actor->_vertex = &g_vm->_actor->_characterArea[cfp * g_vm->_actor->_vertexNum];
 	}
 
 	SCamera  *_curCamera = g_vm->_actor->_camera;
