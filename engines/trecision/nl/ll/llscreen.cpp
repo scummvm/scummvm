@@ -41,8 +41,6 @@ namespace Trecision {
 #define MAXMAT		20
 
 // GAME POINTER
-uint16 *ObjPointers[MAXOBJINROOM];
-uint8 *MaskPointers[MAXOBJINROOM];
 uint16 _actionPosition[MAXACTIONINROOM];			// Starting position of each action in the room
 // DATA POINTER
 uint8 *TextArea;
@@ -485,11 +483,12 @@ void readObject(Common::SeekableReadStream *stream, uint16 objIndex, uint16 room
 		obj->_dy = BmInfo.dy;
 
 		uint32 size = obj->_dx * obj->_dy;
-		ObjPointers[objIndex] = new uint16[size];
+		delete[] g_vm->ObjPointers[objIndex];
+		g_vm->ObjPointers[objIndex] = new uint16[size];
 		for (uint32 i = 0; i < size; ++i)
-			ObjPointers[objIndex][i] = stream->readUint16LE(); 
+			g_vm->ObjPointers[objIndex][i] = stream->readUint16LE(); 
 
-		g_vm->_graphicsMgr->updatePixelFormat(ObjPointers[objIndex], size);
+		g_vm->_graphicsMgr->updatePixelFormat(g_vm->ObjPointers[objIndex], size);
 	}
 
 	if (obj->_mode & OBJMODE_MASK) {
@@ -501,16 +500,18 @@ void readObject(Common::SeekableReadStream *stream, uint16 objIndex, uint16 room
 		obj->_dy = BmInfo.dy;
 
 		uint32 size = stream->readUint32LE();
-		ObjPointers[objIndex] = new uint16[size];
+		delete[] g_vm->ObjPointers[objIndex];
+		g_vm->ObjPointers[objIndex] = new uint16[size];
 		for (uint32 i = 0; i < size; ++i)
-			ObjPointers[objIndex][i] = stream->readUint16LE(); 
+			g_vm->ObjPointers[objIndex][i] = stream->readUint16LE(); 
 
-		g_vm->_graphicsMgr->updatePixelFormat(ObjPointers[objIndex], size);
+		g_vm->_graphicsMgr->updatePixelFormat(g_vm->ObjPointers[objIndex], size);
 
 		size = stream->readUint32LE();
-		MaskPointers[objIndex] = new uint8[size];
+		delete[] g_vm->MaskPointers[objIndex];
+		g_vm->MaskPointers[objIndex] = new uint8[size];
 		for (uint32 i = 0; i < size; ++i)
-			MaskPointers[objIndex][i] = (uint8)stream->readByte();
+			g_vm->MaskPointers[objIndex][i] = (uint8)stream->readByte();
 	}
 }
 
@@ -621,9 +622,9 @@ void DrawObj(SDObj d) {
 	if (d.l.left > MAXX || d.l.top > MAXX || d.l.right > MAXX || d.l.bottom > MAXX)
 		return;
 	
-	const uint16 *buf = d.objIndex >= 0 ? ObjPointers[d.objIndex] : g_vm->_graphicsMgr->getBackgroundPtr();
+	const uint16 *buf = d.objIndex >= 0 ? g_vm->ObjPointers[d.objIndex] : g_vm->_graphicsMgr->getBackgroundPtr();
 	if (d.drawMask) {
-		uint8 *mask = MaskPointers[d.objIndex];
+		uint8 *mask = g_vm->MaskPointers[d.objIndex];
 
 		for (uint16 b = d.y; b < (d.y + d.dy); b++) {
 			uint16 Sco = 0;
