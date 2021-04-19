@@ -815,7 +815,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "lonecase3showdown", "LoneCase3:Showdown" },
 	{ "lonelynight", "Lonely night" },
 	{ "longexpectedfriday", "Long expected Friday" },
-	{ "lonkeyisland", "Lonkey Island" },
+	{ "lonkeyisland", "The Tale of Lonkey Island" },
 	{ "loomiireturnoftheswans", "Loom II Return Of The Swans" },
 	{ "losjovenesdelaguerra", "Los Jovenes De La Guerra" },
 	{ "lostanswers", "Lost Answers" },
