@@ -302,6 +302,12 @@ void OpenGLSdlGraphicsManager::notifyResize(const int width, const int height) {
 
 	// Remember window size in windowed mode
 	if (!_wantsFullScreen) {
+
+		// FIXME HACK. I don't like this at all, but macOS requires window size in LoDPI
+#ifdef __APPLE__
+		currentWidth /= scale;
+		currentHeight /= scale;
+#endif
 		ConfMan.setInt("last_window_width", currentWidth, Common::ConfigManager::kApplicationDomain);
 		ConfMan.setInt("last_window_height", currentHeight, Common::ConfigManager::kApplicationDomain);
 		ConfMan.flushToDisk();
