@@ -113,8 +113,8 @@ Common::SeekableReadStream *FastFile::createReadStreamForMember(const Common::St
 	return nullptr;
 }
 
-void FastFile::decompress(const unsigned char *src, unsigned src_len, unsigned char *dst, int32 decompSize) {
-	uint16 *sw = (uint16 *)(src + src_len);
+void FastFile::decompress(const unsigned char *src, uint32 srcSize, unsigned char *dst, uint32 decompSize) {
+	uint16 *sw = (uint16 *)(src + srcSize);
 	uint8 *d = dst;
 	int32 bytesWritten = 0;
 	const uint8 *s = src;
@@ -122,17 +122,17 @@ void FastFile::decompress(const unsigned char *src, unsigned src_len, unsigned c
 
 	while (s < (const uint8 *)sw) {
 		if (!--ctrl_cnt) {
-			ctrl = *--sw;
+			ctrl = READ_LE_UINT16(--sw);
 			ctrl_cnt = 16;
 		} else {
 			ctrl <<= 1;
 		}
 
 		if (ctrl & 0x8000) {
-			uint16 foo = *--sw;
+			uint16 foo = READ_LE_UINT16(--sw);
 			const uint8 *cs = d - (foo >> 4);
 
-			uint num = 16 - (foo & 0xF);
+			uint16 num = 16 - (foo & 0xF);
 
 			for (uint16 i = 0; i < num; ++i) {
 				*d++ = *cs++;
