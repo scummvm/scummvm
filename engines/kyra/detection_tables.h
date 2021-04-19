@@ -600,6 +600,19 @@ const KYRAGameDescription adGameDescs[] = {
 		KYRA2_FLOPPY_FLAGS
 	},
 
+	{ // Floppy version extracted. Bugreport #7666
+		{
+			"kyra2",
+			_s("Missing game code"), // Reason for being unsupported
+			AD_ENTRY1s("FATE.PAK", "ac81bcd4aa6e0921a87eb099827a8b06", 107309),
+			Common::PL_POL,
+			Common::kPlatformDOS,
+			ADGF_UNSUPPORTED,
+			GUIO6(GUIO_NOSPEECH, GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_MIDIPCSPK, GUIO_RENDERVGA)
+		},
+		KYRA2_FLOPPY_FLAGS
+	},
+
 	{ // Floppy version extracted
 		{
 			"kyra2",
