@@ -757,6 +757,8 @@ void buildFramelist() {
 	}
 	oz   =  - FRAMECENTER(v) + firstframe;
 
+	// at this point, CurA / _curAction is either hSTART or hWALK
+	
 	// until it arrives at the destination
 	while (((curlen = oz + FRAMECENTER(v) - firstframe) < len) || (!a)) {
 		_step[a]._pz = oz - firstframe;	// where to render
@@ -811,6 +813,8 @@ void buildFramelist() {
 		CurA = _step[a - 1]._curFrame + hSTOP0;		// stop passo prec.
 	else
 		CurA = hSTOP0;		   				// stop passo 01
+
+	assert(CurA <= hLAST);		// _defActionLen below has a size of hLAST + 1
 
 	CurF  = 0;
 

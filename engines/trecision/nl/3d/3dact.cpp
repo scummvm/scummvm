@@ -35,7 +35,10 @@ namespace Trecision {
 /*------------------------------------------------
 					Do Action
 --------------------------------------------------*/
-void actorDoAction(int whatAction) {
+void actorDoAction(int action) {
+	if (action > hLAST)
+		error("error in actorDoAction, invalid action (should be called as an animation)");
+
 	_curStep = 1;
 	float px = g_vm->_actor->_px + g_vm->_actor->_dx;
 	float pz = g_vm->_actor->_pz + g_vm->_actor->_dz;
@@ -60,24 +63,19 @@ void actorDoAction(int whatAction) {
 	float firstFrame = FRAMECENTER(v);
 
 	int len;
-	if (whatAction > hLAST) {
-		error("Trying to access unallocated memory pointer _actionPointer");	// FIXME
-		//v = (SVertex *)(_actionPointer[_actionPosition[actionInRoom(whatAction)]]);
-		//len = g_vm->_actionLen[whatAction];
-	} else {
-		int cfp = 0;
-		int cur = 0;
-		while (cur < whatAction)
-			cfp += _defActionLen[cur++];
-		v = &g_vm->_actor->_characterArea[cfp * g_vm->_actor->_vertexNum];
+	int cfp = 0;
+	int cur = 0;
 
-		if (whatAction == hWALKOUT)
-			v = &g_vm->_actor->_characterArea[g_vm->_actor->_vertexNum];
-		else if (whatAction == hLAST)
-			v = g_vm->_actor->_characterArea;
+	while (cur < action)
+		cfp += _defActionLen[cur++];
+	v = &g_vm->_actor->_characterArea[cfp * g_vm->_actor->_vertexNum];
 
-		len = _defActionLen[whatAction];
-	}
+	if (action == hWALKOUT)
+		v = &g_vm->_actor->_characterArea[g_vm->_actor->_vertexNum];
+	else if (action == hLAST)
+		v = g_vm->_actor->_characterArea;
+
+	len = _defActionLen[action];
 
 	for (b = _curStep; b < len + _curStep; b++) {
 		float curLen = FRAMECENTER(v) - firstFrame;
@@ -87,7 +85,7 @@ void actorDoAction(int whatAction) {
 		_step[b]._px = px;
 		_step[b]._pz = pz;
 
-		_step[b]._curAction = whatAction;
+		_step[b]._curAction = action;
 		_step[b]._curFrame  = b - _curStep;
 
 		_step[b]._theta    = theta;
@@ -95,9 +93,7 @@ void actorDoAction(int whatAction) {
 
 		v += g_vm->_actor->_vertexNum;
 
-		if (whatAction > hLAST)
-			v = (SVertex *)((uint8 *)v + 4);
-		else if (whatAction == hLAST)
+		if (action == hLAST)
 			v = g_vm->_actor->_characterArea;
 	}
 
