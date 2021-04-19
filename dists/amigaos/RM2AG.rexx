@@ -41,7 +41,7 @@ ELSE DO
 	Check for destination path and create it, if needed.
 	*/
 	IF ~EXISTS(install_path'/') THEN
-		ADDRESS COMMAND 'makedir ALL FORCE 'install_path
+		ADDRESS COMMAND 'makedir ALL 'install_path
 END
 
 IF ~OPEN(check_readme,readme_md,'R') THEN DO
@@ -307,7 +307,7 @@ END
 /*
 Install finished README.guide to installation path and delete it on closure.
 */
-ADDRESS COMMAND 'copy QUIET README.guide 'install_path
+ADDRESS COMMAND 'copy CLONE QUIET README.guide 'install_path
 ADDRESS COMMAND 'delete FORCE QUIET README.guide'
 
 EXIT
