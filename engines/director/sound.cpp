@@ -49,17 +49,16 @@ DirectorSound::DirectorSound(DirectorEngine *vm) : _vm(vm) {
 		_channels.push_back(SoundChannel());
 	}
 
-	_scriptSound = new Audio::SoundHandle();
 	_mixer = g_system->getMixer();
 
 	_speaker = new Audio::PCSpeaker();
-	_pcSpeakerHandle = new Audio::SoundHandle();
 	_mixer->playStream(Audio::Mixer::kSFXSoundType,
-		_pcSpeakerHandle, _speaker, -1, 50, 0, DisposeAfterUse::NO, true);
+		&_pcSpeakerHandle, _speaker, -1, 50, 0, DisposeAfterUse::NO, true);
 }
 
 DirectorSound::~DirectorSound() {
-	delete _scriptSound;
+	this->stopSound();
+	delete _speaker;
 }
 
 SoundChannel *DirectorSound::getChannel(uint8 soundChannel) {
@@ -83,8 +82,8 @@ void DirectorSound::playMCI(Audio::AudioStream &stream, uint32 from, uint32 to) 
 	Audio::SeekableAudioStream *seekStream = dynamic_cast<Audio::SeekableAudioStream *>(&stream);
 	Audio::SubSeekableAudioStream *subSeekStream = new Audio::SubSeekableAudioStream(seekStream, Audio::Timestamp(from, seekStream->getRate()), Audio::Timestamp(to, seekStream->getRate()));
 
-	_mixer->stopHandle(*_scriptSound);
-	_mixer->playStream(Audio::Mixer::kSFXSoundType, _scriptSound, subSeekStream);
+	_mixer->stopHandle(_scriptSound);
+	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_scriptSound, subSeekStream);
 }
 
 void DirectorSound::playStream(Audio::AudioStream &stream, uint8 soundChannel) {
@@ -214,14 +213,14 @@ void DirectorSound::stopSound(uint8 soundChannel) {
 
 void DirectorSound::stopSound() {
 	for (uint i = 0; i < _channels.size(); i++) {
-		cancelFade(i);
+		cancelFade(i + 1);
 
 		_mixer->stopHandle(_channels[i].handle);
 		_channels[i].lastPlayingCast = 0;
 	}
 
-	_mixer->stopHandle(*_scriptSound);
-	_mixer->stopHandle(*_pcSpeakerHandle);
+	_mixer->stopHandle(_scriptSound);
+	_mixer->stopHandle(_pcSpeakerHandle);
 }
 
 void DirectorSound::systemBeep() {

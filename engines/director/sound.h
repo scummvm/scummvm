@@ -60,10 +60,10 @@ class DirectorSound {
 private:
 	DirectorEngine *_vm;
 	Common::Array<SoundChannel> _channels;
-	Audio::SoundHandle *_scriptSound;
+	Audio::SoundHandle _scriptSound;
 	Audio::Mixer *_mixer;
 	Audio::PCSpeaker *_speaker;
-	Audio::SoundHandle *_pcSpeakerHandle;
+	Audio::SoundHandle _pcSpeakerHandle;
 
 public:
 	DirectorSound(DirectorEngine *vm);
