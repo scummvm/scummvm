@@ -113,9 +113,10 @@ Common::SeekableReadStream *FastFile::createReadStreamForMember(const Common::St
 	return nullptr;
 }
 
-void FastFile::decompress(const unsigned char *src, unsigned src_len, unsigned char *dst) {
+void FastFile::decompress(const unsigned char *src, unsigned src_len, unsigned char *dst, int32 decompSize) {
 	uint16 *sw = (uint16 *)(src + src_len);
 	uint8 *d = dst;
+	int32 bytesWritten = 0;
 	const uint8 *s = src;
 	unsigned short ctrl = 0, ctrl_cnt = 1;
 
@@ -133,13 +134,20 @@ void FastFile::decompress(const unsigned char *src, unsigned src_len, unsigned c
 
 			uint num = 16 - (foo & 0xF);
 
-			for (uint16 i = 0; i < num; ++i)
+			for (uint16 i = 0; i < num; ++i) {
 				*d++ = *cs++;
+				bytesWritten++;
+				assert(bytesWritten <= decompSize);
+			}
 
 			*d++ = *cs++;
 			*d++ = *cs;
+			bytesWritten += 2;
+			assert(bytesWritten <= decompSize);
 		} else {
 			*d++ = *s++;
+			bytesWritten++;
+			assert(bytesWritten <= decompSize);
 		}
 	}
 }
@@ -159,7 +167,7 @@ Common::SeekableReadStream *FastFile::createReadStreamForCompressedMember(const 
 	int32 decompSize = ff->readSint32LE();
 
 	uint8 *ibuf = new uint8[dataSize];
-	int32 realSize = MAX(dataSize, decompSize) + 8;
+	int32 realSize = MAX(dataSize, decompSize) + 8 + 100;	// add extra padding for the decompressor
 
 	delete _compStream;
 	_compBuffer = new uint8[realSize];
@@ -168,7 +176,7 @@ Common::SeekableReadStream *FastFile::createReadStreamForCompressedMember(const 
 	delete ff;
 
 	if (dataSize < decompSize)
-		decompress(ibuf, dataSize, _compBuffer);
+		decompress(ibuf, dataSize, _compBuffer, realSize);
 	else
 		memcpy(_compBuffer, ibuf, dataSize);
 
