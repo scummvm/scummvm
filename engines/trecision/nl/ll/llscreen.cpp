@@ -408,10 +408,6 @@ void ReadLoc() {
 
 	memset(g_vm->_screenBuffer, 0, MAXX * MAXY * 2);
 
-	const int bufferSize = 900000; // MAXX * AREA * 2 + MAXOBJINROOM * sizeof(SBmInfo) + some more data
-	static byte *bgBuf = new byte[bufferSize];
-
-
 	Common::String filename = Common::String::format("%s.cr", g_vm->_room[g_vm->_curRoom]._baseName);
 	Common::SeekableReadStream *picFile = g_vm->_dataFile.createReadStreamForCompressedMember(filename);
 	uint32 dataLength = (picFile->size() + 1) / 2;
@@ -420,6 +416,8 @@ void ReadLoc() {
 	BmInfo.dx = picFile->readUint16LE();
 	BmInfo.dy = picFile->readUint16LE();
 
+	const int bufferSize = picFile->size() - 8; // MAXX * AREA * 2 + MAXOBJINROOM * sizeof(SBmInfo) + some more data
+	static byte *bgBuf = new byte[bufferSize];
 	picFile->read(bgBuf, picFile->size() - 8);
 
 	Common::DumpFile *outFile = new Common::DumpFile();
