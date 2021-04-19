@@ -23,11 +23,12 @@
 #include "common/scummsys.h"
 #include "trecision/trecision.h"
 #include "trecision/fastfile.h"
+#include "trecision/video.h"
 
 #include "common/str.h"
 #include "common/file.h"
 #include "common/substream.h"
-#include "trecision/video.h"
+#include <common/memstream.h>
 
 namespace Trecision {
 
@@ -41,7 +42,7 @@ int Compare(const void *p1, const void *p2) {
 	return (scumm_stricmp((p1c)->name, (p2c)->name));
 }
 
-FastFile::FastFile() : Common::Archive(), _stream(nullptr) {
+FastFile::FastFile() : Common::Archive(), _stream(nullptr), _compBuffer(nullptr), _compStream(nullptr) {
 }
 
 FastFile::~FastFile() {
@@ -77,6 +78,8 @@ bool FastFile::open(const Common::String &name) {
 void FastFile::close() {
 	delete _stream;
 	_stream = nullptr;
+	delete _compStream;
+	_compStream = nullptr;
 	_fileEntries.clear();
 }
 
@@ -110,4 +113,68 @@ Common::SeekableReadStream *FastFile::createReadStreamForMember(const Common::St
 	return nullptr;
 }
 
+void FastFile::decompress(const unsigned char *src, unsigned src_len, unsigned char *dst) {
+	uint16 *sw = (uint16 *)(src + src_len);
+	uint8 *d = dst;
+	const uint8 *s = src;
+	unsigned short ctrl = 0, ctrl_cnt = 1;
+
+	while (s < (const uint8 *)sw) {
+		if (!--ctrl_cnt) {
+			ctrl = *--sw;
+			ctrl_cnt = 16;
+		} else {
+			ctrl <<= 1;
+		}
+
+		if (ctrl & 0x8000) {
+			uint16 foo = *--sw;
+			const uint8 *cs = d - (foo >> 4);
+
+			uint num = 16 - (foo & 0xF);
+
+			for (uint16 i = 0; i < num; ++i)
+				*d++ = *cs++;
+
+			*d++ = *cs++;
+			*d++ = *cs;
+		} else {
+			*d++ = *s++;
+		}
+	}
+}
+
+#define FAST_COOKIE 0xFA57F00D
+Common::SeekableReadStream *FastFile::createReadStreamForCompressedMember(const Common::String &name) {
+	Common::SeekableReadStream *ff = createReadStreamForMember(name);
+	if (ff == nullptr)
+		error("createReadStreamForCompressedMember - File not found %s", name.c_str());
+
+	int32 dataSize = ff->size() - 8;
+
+	uint32 signature = ff->readUint32LE();
+	if (signature != FAST_COOKIE)
+		error("createReadStreamForCompressedMember - %s has a bad signature and can't be loaded", name.c_str());
+
+	int32 decompSize = ff->readSint32LE();
+
+	uint8 *ibuf = new uint8[dataSize];
+	int32 realSize = MAX(dataSize, decompSize) + 8;
+
+	delete _compStream;
+	_compBuffer = new uint8[realSize];
+
+	ff->read(ibuf, dataSize);
+	delete ff;
+
+	if (dataSize < decompSize)
+		decompress(ibuf, dataSize, _compBuffer);
+	else
+		memcpy(_compBuffer, ibuf, dataSize);
+
+	delete[] ibuf;
+
+	_compStream = new Common::MemoryReadStream(_compBuffer, realSize, DisposeAfterUse::YES);
+	return _compStream;
+}
 } // End of namespace Trecision

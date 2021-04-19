@@ -20,6 +20,8 @@
  *
  */
 
+#include <common/file.h>
+
 #include "common/system.h"
 #include "common/scummsys.h"
 #include "common/str.h"
@@ -406,13 +408,35 @@ void ReadLoc() {
 
 	memset(g_vm->_screenBuffer, 0, MAXX * MAXY * 2);
 
-	Common::String filename = Common::String::format("%s.cr", g_vm->_room[g_vm->_curRoom]._baseName);
+	const int bufferSize = 900000; // MAXX * AREA * 2 + MAXOBJINROOM * sizeof(SBmInfo) + some more data
+	static byte *bgBuf = new byte[bufferSize];
 
-	delete[] _bgBuf;
-	_bgBuf = g_vm->DecCR(filename);
-	BmInfo.read((uint16 *)_bgBuf);
-	g_vm->_graphicsMgr->loadBackground(_bgBuf + sizeof(SBmInfo), BmInfo.dx, BmInfo.dy);
-	ReadObj((uint16 *)(_bgBuf + BmInfo.dx * BmInfo.dy * 2 + sizeof(SBmInfo)));
+
+	Common::String filename = Common::String::format("%s.cr", g_vm->_room[g_vm->_curRoom]._baseName);
+	Common::SeekableReadStream *picFile = g_vm->_dataFile.createReadStreamForCompressedMember(filename);
+	uint32 dataLength = (picFile->size() + 1) / 2;
+	BmInfo.px = picFile->readUint16LE();
+	BmInfo.py = picFile->readUint16LE();
+	BmInfo.dx = picFile->readUint16LE();
+	BmInfo.dy = picFile->readUint16LE();
+
+	picFile->read(bgBuf, picFile->size() - 8);
+
+	Common::DumpFile *outFile = new Common::DumpFile();
+	Common::String outName = filename + ".dump";
+	outFile->open(outName);
+	outFile->writeUint16LE(BmInfo.px);
+	outFile->writeUint16LE(BmInfo.py);
+	outFile->writeUint16LE(BmInfo.dx);
+	outFile->writeUint16LE(BmInfo.dy);
+	outFile->write(bgBuf, picFile->size() - 8);
+	outFile->finalize();
+	outFile->close();
+	
+
+	g_vm->_graphicsMgr->loadBackground(bgBuf, BmInfo.dx, BmInfo.dy);
+
+	ReadObj((uint16 *)(bgBuf + BmInfo.dx * BmInfo.dy * 2));
 	// FIXME: Memory leak! This should not be deleted yet, because
 	// ReadObj() creates pointers into this buffer
 	//delete[] _bgBuf;
