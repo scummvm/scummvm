@@ -69,6 +69,13 @@ struct SBmInfo {
 		dx = *buf++;
 		dy = *buf++;
 	}
+
+	void read(Common::SeekableReadStream *stream) {
+		px = stream->readUint16LE();
+		py = stream->readUint16LE();
+		dx = stream->readUint16LE();
+		dy = stream->readUint16LE();
+	}
 } BmInfo;
 
 /*-----------------17/02/95 10.19-------------------
@@ -411,10 +418,7 @@ void ReadLoc() {
 	Common::String filename = Common::String::format("%s.cr", g_vm->_room[g_vm->_curRoom]._baseName);
 	Common::SeekableReadStream *picFile = g_vm->_dataFile.createReadStreamForCompressedMember(filename);
 	//uint32 dataLength = (picFile->size() + 1) / 2;
-	BmInfo.px = picFile->readUint16LE();
-	BmInfo.py = picFile->readUint16LE();
-	BmInfo.dx = picFile->readUint16LE();
-	BmInfo.dy = picFile->readUint16LE();
+	BmInfo.read(picFile);
 
 	const int bufferSize = picFile->size() - 8; // MAXX * AREA * 2 + MAXOBJINROOM * sizeof(SBmInfo) + some more data
 	delete[] _bgBuf;
