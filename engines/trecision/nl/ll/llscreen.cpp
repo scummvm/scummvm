@@ -405,8 +405,6 @@ int actionInRoom(int curA) {
 	return 0;
 }
 
-static byte *_bgBuf = nullptr;
-
 void ReadLoc() {
 	if (g_vm->_curRoom == r11 && !(g_vm->_room[r11]._flag & OBJFLAG_DONE))
 		g_vm->_flagShowCharacter = true;
@@ -428,19 +426,11 @@ void ReadLoc() {
 
 	//uint32 dataLength = (picFile->size() + 1) / 2;
 	BmInfo.read(picFile);
-	const int bufferSize = picFile->size() - 8 - BmInfo.dx * BmInfo.dy * 2; // MAXX * AREA * 2 + MAXOBJINROOM * sizeof(SBmInfo) + some more data
-	delete[] _bgBuf;
-	_bgBuf = new byte[bufferSize];
 
 	g_vm->_graphicsMgr->loadBackground(picFile, BmInfo.dx, BmInfo.dy);
+	int size = picFile->size() - picFile->pos();
+	ReadObj(picFile, size);
 
-	picFile->read(_bgBuf, bufferSize);
-
-	ReadObj((uint16 *)(_bgBuf));
-	// FIXME: Memory leak! This should not be deleted yet, because
-	// ReadObj() creates pointers into this buffer
-	//delete[] _bgBuf;
-	
 	SoundStopAll();
 
 	if (g_vm->_room[g_vm->_curRoom]._sounds[0] != 0)
@@ -525,9 +515,15 @@ void readObject(uint16 *objBuffer, uint16 objIndex, uint16 roomObjIndex, uint32 
 	}
 }
 
-void ReadObj(uint16 *objBuffer) {
+void ReadObj(Common::SeekableReadStream *stream, int size) {
 	if (!g_vm->_room[g_vm->_curRoom]._object[0])
 		return;
+
+	//FIXME: Memory leak. Rewrite loaders to use proper allocation and endian safe reads
+	uint16 *objBuffer = new uint16[size / 2];
+	for (int i = 0; i < size / 2; i++) {
+		objBuffer[i] = stream->readUint16LE();
+	}
 
 	uint32 offset = 0;
 	for (uint16 objIndex = 0; objIndex < MAXOBJINROOM; objIndex++) {
