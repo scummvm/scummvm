@@ -359,9 +359,9 @@ void Actor::update() {
 		break;
 
 	case kActorStatusGettingHurt:
-		if (getWorld()->chapter == 2) {
+		if (getWorld()->chapter == kChapter2) {
 			updateStatus16_Chapter2();
-		} else if (getWorld()->chapter == 11 && _index == getSharedData()->getPlayerIndex()) {
+		} else if (getWorld()->chapter == kChapter11 && _index == getSharedData()->getPlayerIndex()) {
 			updateStatus16_Chapter11();
 		}
 		break;
@@ -2372,10 +2372,10 @@ void Actor::updateStatus12_Chapter2() {
 	// Face actor
 	faceTarget((uint32)getSharedData()->getPlayerIndex(), kDirectionFromActor);
 
-	int32 data = getSharedData()->getChapter2Data(3, _index + 1);
+	int32 data = getSharedData()->crowsData[_index + 25];
 	if (data > 0) {
-		_direction = (ActorDirection)(_direction + 4);
-		getSharedData()->setChapter2Data(3, _index + 1, data - 1);
+		_direction = DIR(_direction + 4);
+		getSharedData()->crowsData[_index + 25] = data - 1;
 	}
 
 	// Compute coordinates and distance
@@ -2398,8 +2398,8 @@ void Actor::updateStatus12_Chapter2() {
 	} else {
 		_frameIndex = 0;
 
-		getSharedData()->setChapter2Data(3, 2 * _index + 6, player->getPoint1()->x - _point1.x);
-		getSharedData()->setChapter2Data(3, 2 * _index + 7, player->getPoint1()->y - _point1.y);
+		getSharedData()->crowsData[2 * _index + 30] = player->getPoint1()->x - _point1.x;
+		getSharedData()->crowsData[2 * _index + 31] = player->getPoint1()->y - _point1.y;
 
 		updateStatus(kActorStatus18);
 	}
@@ -2421,7 +2421,7 @@ void Actor::updateStatus12_Chapter2_Actor11() {
 	// Update status
 	if (player->getStatus() == kActorStatusRestarting || !getScene()->getActor(10)->isVisible()) {
 		updateStatus(kActorStatusEnabled);
-		getSharedData()->setChapter2Data(1, 3, 160);     // &cursorResources + 8 + 11 (actorIndex)
+		getSharedData()->crowsData[_index - 11] = 160;
 	}
 
 	// Face player
@@ -2519,7 +2519,7 @@ void Actor::updateStatus14() {
 		if (_index == 11)
 			updateStatus(kActorStatusWalking2);
 		else if (_index > 12)
-			updateStatus14_Chapter2();
+			updateStatus14_Chapter2_Helper();
 		break;
 
 	case kChapter11:
@@ -2527,6 +2527,13 @@ void Actor::updateStatus14() {
 			updateStatus14_Chapter11();
 		break;
 	}
+}
+
+void Actor::updateStatus14_Chapter2_Helper() {
+	if (getSharedData()->crowsData[_index + 61])
+		updateStatus14_Chapter2();
+	else
+		updateStatus(kActorStatusWalking2);
 }
 
 void Actor::updateStatus14_Chapter2() {
@@ -2537,39 +2544,39 @@ void Actor::updateStatus14_Chapter2() {
 
 	if (playerStatus == kActorStatusRestarting || !getScene()->getActor(10)->isVisible()) {
 		updateStatus(kActorStatusEnabled);
-		getSharedData()->setChapter2Data(1, (_index - 13) + 5, 160);    // Index > 12
+		getSharedData()->crowsData[_index - 11] = 160;
 	}
 
 	if (playerStatus != kActorStatusGettingHurt) {
-		_point1.x = player->getPoint1()->x - (int16)getSharedData()->getChapter2Data(3, 2 * _index + 6);
-		_point1.y = player->getPoint1()->y - (int16)getSharedData()->getChapter2Data(3, 2 * _index + 7) + 54;
+		_point1.x = player->getPoint1()->x - (int16)getSharedData()->crowsData[2 * _index + 30];
+		_point1.y = player->getPoint1()->y - (int16)getSharedData()->crowsData[2 * _index + 31] + 54;
 	}
 
 	if (_frameIndex == _frameCount - 1) {
 		_frameIndex = 0;
-		if (getSharedData()->getChapter2Data(2, _index + 6) <= 1 || playerStatus == kActorStatusGettingHurt || playerStatus == kActorStatusRestarting) {
-			getSharedData()->setChapter2Data(2, _index + 6, getSharedData()->getChapter2Data(2, _index + 6) + 1);
+		if (getSharedData()->crowsData[_index + 29] <= 1 || playerStatus == kActorStatusGettingHurt || playerStatus == kActorStatusRestarting) {
+			getSharedData()->crowsData[_index + 29]++;
 		} else {
 			updateStatus(kActorStatusAttacking);
 			_point1.y -= 54;
-			getSharedData()->setChapter2Data(2, _index + 6, 0);
-			getSharedData()->setChapter2Data(1, _index + 1, getSharedData()->getChapter2Data(1, _index + 1) + 54);
+			getSharedData()->crowsData[_index + 29] = 0;
+			getSharedData()->crowsData[_index - 2] += 54;
 		}
 	}
 
-	if (playerStatus == kActorStatusRestarting && getSharedData()->getChapter2Data(2, _index + 6) < 100) {
+	if (playerStatus == kActorStatusRestarting && getSharedData()->crowsData[_index + 17] < 100) {
 		_point1.y -= 6;
-		getSharedData()->setChapter2Data(2, _index + 6, 100);
-		getSharedData()->setChapter2Data(1, _index + 1, getSharedData()->getChapter2Data(1, _index + 1) + 6);
+		getSharedData()->crowsData[_index + 29] = 100;
+		getSharedData()->crowsData[_index - 2] += 6;
 	}
 
-	if (getSharedData()->getChapter2Data(2, _index + 6) > 99) {
+	if (getSharedData()->crowsData[_index + 17] > 99) {
 		_point1.y -= 6;
-		getSharedData()->setChapter2Data(2, _index + 6, getSharedData()->getChapter2Data(2, _index + 6) + 1);
-		getSharedData()->setChapter2Data(1, _index + 1, getSharedData()->getChapter2Data(1, _index + 1) + 6);
+		getSharedData()->crowsData[_index + 17]++;
+		getSharedData()->crowsData[_index - 2] += 6;
 
-		if (getSharedData()->getChapter2Data(2, _index + 6) > 108) {
-			getSharedData()->setChapter2Data(2, _index + 6, 0);
+		if (getSharedData()->crowsData[_index + 17] > 108) {
+			getSharedData()->crowsData[_index + 29] = 0;
 
 			updateStatus(kActorStatusEnabled);
 
@@ -2649,7 +2656,7 @@ void Actor::updateStatus15_Chapter2() {
 
 	if (getScene()->getActor(10)->getStatus() == kActorStatusRestarting || !getScene()->getActor(10)->isVisible()) {
 		updateStatus(kActorStatusEnabled);
-		getSharedData()->setChapter2Data(1, (_index - 13) + 5, 160);    // Index > 12
+		getSharedData()->crowsData[_index - 11] = 160;
 	}
 
 	if (_frameIndex == 1)
@@ -2665,7 +2672,7 @@ void Actor::updateStatus15_Chapter2() {
 		getScene()->getActor(_index + 9)->setDirection(_direction);
 	}
 
-	if (_frameIndex < 5 || !getSharedData()->getChapter2Data(4, _index + 7))
+	if (_frameIndex < 5 || !getSharedData()->crowsData[_index + 61])
 		_frameIndex++;
 
 	if (sumPlayer.x > sum.x)
@@ -2686,10 +2693,10 @@ void Actor::updateStatus15_Chapter2() {
 			getSpeech()->playPlayer(51);
 			_vm->setGameFlag(kGameFlag219);
 
-			player->updateFromDirection((ActorDirection)((_direction + 4) & 7));
+			player->updateFromDirection(DIR(_direction + 4));
 			player->updateStatus(kActorStatusGettingHurt);
 
-			getSharedData()->setChapter2Data(4, _index + 7, 0);
+			getSharedData()->crowsData[_index + 61] = 0;
 		}
 	}
 
@@ -2720,7 +2727,7 @@ void Actor::updateStatus15_Chapter2() {
 		else
 			updateStatus(kActorStatusEnabled);
 
-		getSharedData()->setChapter2Data(4, _index + 7, 0);
+		getSharedData()->crowsData[_index + 61] = 0;
 	}
 }
 
@@ -3188,19 +3195,19 @@ void Actor::updateStatus17_Chapter2() {
 void Actor::updateStatus18_Chapter2() {
 	Actor *player = getScene()->getActor();
 
-	_point1.x = player->getPoint1()->x - (int16)getSharedData()->getChapter2Data(3, 2 * _index + 6);
-	_point1.y = player->getPoint1()->y - (int16)getSharedData()->getChapter2Data(3, 2 * _index + 7);
+	_point1.x = player->getPoint1()->x - (int16)getSharedData()->crowsData[2 * _index + 30];
+	_point1.y = player->getPoint1()->y - (int16)getSharedData()->crowsData[2 * _index + 31];
 
 	_frameIndex++;
 
 	if (_frameIndex > _frameCount - 1) {
-		getSharedData()->setChapter2Data(4, _index + 7, true);
+		getSharedData()->crowsData[_index + 61] = 1;
 		updateStatus(kActorStatusEnabled2);
 
 		_point1.y += 54;
 		getSound()->playSound(getWorld()->soundResourceIds[1], false, Config.sfxVolume - 10);
 
-		getSharedData()->setChapter2Data(1, _index + 1, getSharedData()->getChapter2Data(1, _index + 1) - 54);
+		getSharedData()->crowsData[_index - 2] -= 54;
 	}
 }
 

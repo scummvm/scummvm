@@ -444,6 +444,7 @@ private:
 
 	void updateStatus14();
 	void updateStatus14_Chapter2();
+	void updateStatus14_Chapter2_Helper();
 	void updateStatus14_Chapter11();
 
 	void updateStatus15_Chapter2();

@@ -269,10 +269,10 @@ void Special::chapter2(Object *object, ActorIndex actorIndex) {
 
 			if (counter >= 5) {
 				counter = 0;
-				actor->updateFromDirection((ActorDirection)((actor->getDirection() + 1) % ~7)); // TODO check
+				actor->updateFromDirection((ActorDirection)((actor->getDirection() + 1) & 7));
 			}
 
-			getSharedData()->setChapter2Counter(4, counter);
+			getSharedData()->setChapter2Counter(getCounter(actorIndex), counter);
 
 		} else if (actor->getStatus() == kActorStatusEnabled) {
 			actor->updateStatus(kActorStatusWalking);
@@ -292,7 +292,7 @@ void Special::chapter2(Object *object, ActorIndex actorIndex) {
 			Actor *refActor = getScene()->getActor(actorIndex - 9); // Original uses offset to object array (+ offset to actor).
 
 			*actor->getPoint1() = *refActor->getPoint1();
-			actor->getPoint1()->y += (int16)getSharedData()->getChapter2Data(2, actorIndex - 22);    // cursorResources + 30
+			actor->getPoint1()->y += (int16)getSharedData()->crowsData[actorIndex - 11];
 			actor->setFrameIndex(refActor->getFrameIndex());
 			actor->setDirection(refActor->getDirection());
 
