@@ -173,7 +173,7 @@ void TrecisionEngine::setRoom(uint16 r, bool b) {
 	RegenRoom();
 }
 
-void TrecisionEngine::decompress(const unsigned char *src, unsigned src_len, unsigned char *dst, unsigned dst_len) {
+void TrecisionEngine::decompress(const unsigned char *src, unsigned src_len, unsigned char *dst) {
 	uint16 *sw = (uint16 *)(src + src_len);
 	uint8 *d = dst;
 	const uint8 *s = src;
@@ -205,14 +205,13 @@ void TrecisionEngine::decompress(const unsigned char *src, unsigned src_len, uns
 }
 
 #define FAST_COOKIE 0xFA57F00D
-uint32 TrecisionEngine::DecCR(Common::String fileName, uint8 *DestArea) {
+byte *TrecisionEngine::DecCR(Common::String fileName) {
 	Common::SeekableReadStream *ff = g_vm->_dataFile.createReadStreamForMember(fileName);
 	if (ff == nullptr)
 		error("File not found %s", fileName.c_str());
 
 	int32 dataSize = ff->size() - 8;
 	uint8 *ibuf = new uint8[dataSize];
-	uint8 *obuf = DestArea;
 
 	uint32 signature = ff->readUint32LE();
 	if (signature != FAST_COOKIE)
@@ -222,13 +221,15 @@ uint32 TrecisionEngine::DecCR(Common::String fileName, uint8 *DestArea) {
 	ff->read(ibuf, dataSize);
 	delete ff;
 
+	byte *result = new byte[decompSize + 8];
+
 	if (dataSize < decompSize)
-		decompress(ibuf, dataSize, obuf, decompSize);
+		decompress(ibuf, dataSize, result);
 	else
-		memcpy(obuf, ibuf, dataSize);
+		memcpy(result, ibuf, dataSize);
 
 	delete[] ibuf;
-	return decompSize;
+	return result;
 }
 
 } // End of namespace Trecision
