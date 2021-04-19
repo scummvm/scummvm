@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-04-19 00:25+0000\n"
-"PO-Revision-Date: 2021-04-19 09:27+0000\n"
+"PO-Revision-Date: 2021-04-19 11:05+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
@@ -1069,7 +1069,7 @@ msgstr "Disp. preferido:"
 
 #: gui/options.cpp:1379
 msgid "Music device:"
-msgstr "Dispositivo de música:"
+msgstr "Disp. de música:"
 
 #: gui/options.cpp:1379 gui/options.cpp:1381
 msgid "Specifies preferred sound device or sound card emulator"
