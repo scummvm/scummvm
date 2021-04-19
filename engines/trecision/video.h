@@ -66,7 +66,6 @@ public:
 private:
 	TrecisionEngine *_vm;
 
-	uint16 _smkPal[MAXSMACK][256];
 	NightlongSmackerDecoder *_smkAnims[MAXSMACK];
 
 	FastFile _animFile[MAXSMACK]; // nlanim.cd1 / nlanim.cd2 / nlanim.cd3
@@ -79,17 +78,15 @@ private:
 	void drawFrameSubtitles(Graphics::Surface *surface, int frameNum);
 	void setVideoRange(NightlongSmackerDecoder *smkDecoder, int &startFrame, int &endFrame);
 	void handleEndOfVideo(int animation, int slot);
-	void byte2wordn(void *dest, void *src, const uint16 *smk, void *pal, uint32 len);
-	
+
+	void drawSmkBackgroundFrame();
 	void drawSmkIconFrame(int startIcon, int iconNum);
 	void drawSmkActionFrame();
 	void swapCD(int cd);
 
 public:
 	uint16 _playingAnims[MAXSMACK];
-
 	uint16 _animMaxX, _animMinX, _animMaxY, _animMinY;
-
 	SAnim _animTab[MAXANIM];
 
 	void smkGoto(int slot, int frame);
@@ -105,7 +102,6 @@ public:
 	void refreshAllAnimations();
 	void refreshAnim(int box);
 	void refreshSmkAnim(int animation);
-	void refreshPalette(int slot);
 	void startSmkAnim(uint16 animation);
 	void stopAllSmkAnims();
 };

@@ -100,9 +100,6 @@ AnimManager::AnimManager(TrecisionEngine *vm) : _vm(vm) {
 	for (int i = 0; i < MAXSMACK; ++i) {
 		_smkAnims[i] = nullptr;
 		_playingAnims[i] = 0;
-
-		for (int j = 0; j < 256; ++j)
-			_smkPal[i][j] = 0;
 	}
 
 	for (int i = 0; i < MAXANIM; ++i) {
@@ -428,110 +425,27 @@ void AnimManager::refreshAllAnimations() {
 	soundtimefunct();
 }
 
-void AnimManager::refreshPalette(int slot) {
-	if (_smkAnims[slot]->hasDirtyPalette()) {
-		const byte *pal = _smkAnims[slot]->getPalette();
-		for (int32 a = 0; a < 256; a++) {
-			_smkPal[slot][a] = _vm->_graphicsMgr->palTo16bit(
-				pal[a * 3 + 0],
-				pal[a * 3 + 1],
-				pal[a * 3 + 2]);
-		}
-	}
-}
-
-void AnimManager::byte2wordn(void *dest, void *src, const uint16 *smk, void *pal, uint32 len) {
-	uint16 *pDest = (uint16 *)dest;
-	uint16 *pPal = (uint16 *)pal;
-	uint16 *pSmk = (uint16 *)smk;
-	uint8 *pSrc = (uint8 *)src;
-
-	for (uint32 i = 0; i < len; i++) {
-		uint8 color = *pSrc++;
-		if (color == 0) {
-			if (pSmk == 0)
-				pDest++;
-			else
-				*pDest++ = *pSmk++;
-		} else {
-			*pDest++ = pPal[color];
-			if (pSmk != 0)
-				pSmk++;
-		}
-	}
-}
-
 void AnimManager::refreshSmkAnim(int animation) {
-	uint16 *backgroundPtr = g_vm->_graphicsMgr->getBackgroundPtr();
-
 	if (animation == 0)
 		return;
 
 	if (_animTab[animation]._flag & SMKANIM_ICON) {
 		drawSmkIconFrame(_vm->_inventoryRefreshStartIcon, animation);
-		return;
 	} else if (_animTab[animation]._flag & SMKANIM_BKG) {
-		// Background anim, handled below
+		drawSmkBackgroundFrame();
+		handleEndOfVideo(animation, kSmackerBackground);
 	} else {
 		drawSmkActionFrame();
 		handleEndOfVideo(animation, kSmackerAction);
-		return;
 	}
 	
-	if (_smkAnims[kSmackerBackground] == nullptr)
-		return;
-
-	const Graphics::Surface *surface = _smkAnims[kSmackerBackground]->decodeNextFrame();
-	const Common::Rect *lastRect = _smkAnims[kSmackerBackground]->getNextDirtyRect();
-	
-	while (lastRect) {
-		bool intersects = false;
-		for (int32 a = 0; a < MAXCHILD; a++) {
-			if (_animTab[animation]._flag & (SMKANIM_OFF1 << a)) {
-				Common::Rect lr = *lastRect;
-				lr.bottom++;
-				lr.right++;
-
-				if (_animTab[animation]._lim[a].intersects(lr)) {
-					intersects = true;
-					break;
-				}
-			}
-		}
-
-		if (smkCurFrame(kSmackerBackground) > 0 && !intersects) {
-			refreshPalette(kSmackerBackground);
-			
-			if (surface) {
-				byte *buf = (byte *)surface->getPixels();
-				for (int32 a = 0; a < lastRect->height(); a++) {
-					byte2wordn(
-						_vm->_screenBuffer + lastRect->left + (lastRect->top + a + TOP) * MAXX,
-						buf + lastRect->left + (lastRect->top + a) * _smkAnims[kSmackerBackground]->getWidth(),
-						_vm->_graphicsMgr->getSmkBackgroundPtr(lastRect->left, lastRect->top + a),
-						_smkPal[kSmackerBackground],
-						lastRect->width()
-					);
-
-					memcpy(backgroundPtr + lastRect->left + (lastRect->top + a) * MAXX,
-					         _vm->_screenBuffer + lastRect->left + (lastRect->top + a + TOP) * MAXX,
-					         lastRect->width() * 2);
-				}
-			}
-		}
-
-		lastRect = _smkAnims[kSmackerBackground]->getNextDirtyRect();
-	}
-
-	for (int32 a = 0; a < MAXCHILD; a++) {
+	/*for (int32 a = 0; a < MAXCHILD; a++) {
 		if (!(_animTab[animation]._flag & (SMKANIM_OFF1 << a)) && (_animTab[animation]._lim[a].bottom != 0)) {
 			Common::Rect l = _animTab[animation]._lim[a];
 			l.translate(0, TOP);
 			_vm->_limits[_vm->_limitsNum++] = l;
 		}
-	}
-
-	handleEndOfVideo(animation, kSmackerBackground);
+	}*/
 }
 
 void AnimManager::handleEndOfVideo(int animation, int slot) {
@@ -543,6 +457,19 @@ void AnimManager::handleEndOfVideo(int animation, int slot) {
 			_smkAnims[slot]->rewind();
 			InitAtFrameHandler(animation, 0);
 		}
+	}
+}
+
+void AnimManager::drawSmkBackgroundFrame() {
+	NightlongSmackerDecoder *smkDecoder = _smkAnims[kSmackerBackground];
+	const Graphics::Surface *frame = smkDecoder->decodeNextFrame();
+	if (frame) {
+		Graphics::Surface *frame16 = frame->convertTo(g_system->getScreenFormat(), smkDecoder->getPalette());
+		const byte *pal = smkDecoder->getPalette();
+		const uint16 mask = _vm->_graphicsMgr->palTo16bit(pal[0], pal[1], pal[2]);
+		g_vm->_graphicsMgr->blitToScreenBuffer(frame16, 0, TOP, mask);
+		frame16->free();
+		delete frame16;
 	}
 }
 
