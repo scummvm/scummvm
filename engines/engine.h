@@ -541,7 +541,7 @@ public:
 	/**
 	 * Display a warning to the user that the game is not fully supported.
 	 *
-	 * @param msg  An message that will be presented to user. If empty, then
+	 * @param msg  A message that will be presented to user. If empty, then
 	 *             generic message regarding unsupported game is presented
 	 *
 	 * @return True if the user chooses to start anyway, false otherwise.
