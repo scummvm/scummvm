@@ -218,6 +218,19 @@ const KYRAGameDescription adGameDescs[] = {
 		KYRA1_FLOPPY_FLAGS
 	},
 
+	{ // Bugreport #7773
+		{
+			"kyra1",
+			_s("Missing game code"), // Reason for being unsupported
+			AD_ENTRY1s("GEMCUT.EMC", "20f876423f4caa20f5de6b4fc5dfafeb", 6686),
+			Common::CZ_CZE,
+			Common::kPlatformDOS,
+			ADGF_UNSUPPORTED,
+			GUIO5(GUIO_NOSPEECH, GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIPCSPK, GUIO_RENDERVGA)
+		},
+		KYRA1_FLOPPY_FLAGS
+	},
+
 	{ // from trembyle
 		{
 			"kyra1",
