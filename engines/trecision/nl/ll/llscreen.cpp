@@ -396,6 +396,8 @@ int actionInRoom(int curA) {
 	return 0;
 }
 
+static byte *_bgBuf = nullptr;
+
 void ReadLoc() {
 	if (g_vm->_curRoom == r11 && !(g_vm->_room[r11]._flag & OBJFLAG_DONE))
 		g_vm->_flagShowCharacter = true;
@@ -406,16 +408,14 @@ void ReadLoc() {
 
 	Common::String filename = Common::String::format("%s.cr", g_vm->_room[g_vm->_curRoom]._baseName);
 
-	const int bufferSize = 1000000; // MAXX * AREA * 2 + MAXOBJINROOM * sizeof(SBmInfo) + some more data
-	static byte *bgBuf = new byte[bufferSize];
-	uint32 dataLength = g_vm->DecCR(filename, (uint8 *)bgBuf);
-	assert(dataLength < bufferSize);
-	BmInfo.read((uint16 *)bgBuf);
-	g_vm->_graphicsMgr->loadBackground(bgBuf + sizeof(SBmInfo), BmInfo.dx, BmInfo.dy);
-	ReadObj((uint16 *)(bgBuf + BmInfo.dx * BmInfo.dy * 2 + sizeof(SBmInfo)));
+	delete[] _bgBuf;
+	_bgBuf = g_vm->DecCR(filename);
+	BmInfo.read((uint16 *)_bgBuf);
+	g_vm->_graphicsMgr->loadBackground(_bgBuf + sizeof(SBmInfo), BmInfo.dx, BmInfo.dy);
+	ReadObj((uint16 *)(_bgBuf + BmInfo.dx * BmInfo.dy * 2 + sizeof(SBmInfo)));
 	// FIXME: Memory leak! This should not be deleted yet, because
 	// ReadObj() creates pointers into this buffer
-	//delete[] bgBuf;
+	//delete[] _bgBuf;
 	
 	SoundStopAll();
 

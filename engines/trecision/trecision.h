@@ -61,7 +61,7 @@ class TrecisionEngine : public Engine {
 	void openDataFiles();
 	void initNames();
 	void LoadAll();
-	void decompress(const unsigned char *src, unsigned src_len, unsigned char *dst, unsigned dst_len);
+	void decompress(const unsigned char *src, unsigned src_len, unsigned char *dst);
 
 public:
 	TrecisionEngine(OSystem *syst);
@@ -106,7 +106,7 @@ public:
 	// Utils
 	char *getNextSentence();
 	void setRoom(uint16 r, bool b);
-	uint32 DecCR(Common::String fileName, uint8 *DestArea);
+	byte *DecCR(Common::String fileName);
 
 	// Text
 	void addText(uint16 x, uint16 y, const char *text, uint16 tcol, uint16 scol);
