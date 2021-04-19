@@ -23,6 +23,7 @@
 #include "common/algorithm.h"
 
 #include "base/plugins.h"
+#include "common/translation.h"
 
 #include "engines/advancedDetector.h"
 
@@ -95,6 +96,27 @@ static const ADGameDescription teenAgentGameDescriptions[] = {
 		Common::kPlatformDOS,
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSPEECH, GUIO_NOMIDI)
+	},
+	{ // Czech Floppy
+		"teenagent",
+		_s("Missing game code"), // Reason for being unsupported
+		{
+			{"off.res",     0, "c5263a726d038bb6780a40eb3b83cc87", 2720432},
+			{"on.res",      0, "a0d5e5bbf6fab4bdc7f4094ed85f9639", 153907},
+			{"ons.res",     0, "a7e2e8def1f0fb46644c20686af0d91a", 173077},
+			{"varia.res",   0, "b786c48e160e1981b496a30acd3deff9", 216683},
+			{"lan_000.res", 0, "06e409b0a43ff0ced014b93fb8f5dd5b", 535599},
+			{"lan_500.res", 0, "c098cc17cc27a1cad4319fb6789aa5a7", 9538457},
+			{"mmm.res",     0, "d25033d9bc88662d680b56825e892e5c", 42104},
+			{"sam_mmm.res", 0, "a0878ad9a1af39d515e2e0471222f080", 229636},
+			{"sam_sam.res", 0, "547a48cc1be9cf30744de8b0b47838f2", 769552},
+			{"sdr.res",     0, "434c62c1f43b7aa4def62ff276163edb", 14672},
+			AD_LISTEND
+		},
+		Common::CZ_CZE,
+		Common::kPlatformDOS,
+		ADGF_UNSUPPORTED,
+		GUIO1(GUIO_NOMIDI)
 	},
 	{ // Czech CD
 		"teenagent",
