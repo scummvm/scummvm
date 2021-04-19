@@ -819,6 +819,7 @@ void Datum::reset() {
 		switch (type) {
 		case VAR:
 		case STRING:
+		case SYMBOL:
 			delete u.s;
 			break;
 		case ARRAY:
