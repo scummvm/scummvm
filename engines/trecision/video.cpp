@@ -204,6 +204,7 @@ void AnimManager::drawFrame(NightlongSmackerDecoder *smkDecoder, uint16 x, uint1
 		Graphics::Surface *frame16 = frame->convertTo(g_system->getScreenFormat(), smkDecoder->getPalette());
 		drawFrameSubtitles(frame16, smkDecoder->getCurFrame());
 		g_system->copyRectToScreen(frame16->getPixels(), frame16->pitch, x, y, frame16->w, frame16->h);
+		frame16->free();
 		delete frame16;
 
 		if (updateScreen)
@@ -564,6 +565,7 @@ void AnimManager::drawSmkIconFrame(int startIcon, int iconNum) {
 	const Graphics::Surface *frame = smkDecoder->decodeNextFrame();
 	Graphics::Surface *frame16 = frame->convertTo(g_system->getScreenFormat(), smkDecoder->getPalette());
 	g_vm->_graphicsMgr->copyToScreenBuffer(frame16, stx, FIRSTLINE);
+	frame16->free();
 	delete frame16;
 
 	if (smkDecoder->endOfVideo()) {
@@ -596,6 +598,7 @@ void AnimManager::drawSmkActionFrame() {
 			const byte *pal = smkDecoder->getPalette();
 			const uint16 mask = _vm->_graphicsMgr->palTo16bit(pal[0], pal[1], pal[2]);
 			g_vm->_graphicsMgr->blitToScreenBuffer(&anim, _animMinX, _animMinY + TOP, mask);
+			frame16->free();
 			delete frame16;
 		}
 
