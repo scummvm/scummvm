@@ -165,8 +165,15 @@ void ActionText::loadBorder(Graphics::MacWindow *target, Common::String filename
 
 	Common::SeekableReadStream *stream = borderfile.readStream(borderfile.size());
 	if (stream) {
-		// we don't have to pass border offsets here, because 9-patch will automatically calc it
-		target->loadBorder(*stream, flags);
+		Graphics::BorderOffsets offsets;
+		offsets.top = 1;
+		offsets.bottom = 1;
+		offsets.left = 1;
+		offsets.right = 17;
+		offsets.lowerScrollHeight = 15;
+		offsets.upperScrollHeight = 17;
+		offsets.titlePos = 0;
+		target->loadBorder(*stream, flags, offsets);
 
 		borderfile.close();
 
