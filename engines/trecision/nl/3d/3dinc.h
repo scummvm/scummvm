@@ -183,7 +183,7 @@ extern int    _lastStep;
 extern uint8  _defActionLen[];
 
 int actionInRoom(int curA);
-void actorDoAction(int whatAction);
+void actorDoAction(int action);
 void actorStop();
 void setPosition(int num);
 void goToPosition(int num);
