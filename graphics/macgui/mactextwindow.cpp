@@ -309,16 +309,16 @@ Common::U32String MacTextWindow::cutSelection() {
 }
 
 void MacTextWindow::calcScrollBar() {
+	// since this function only able for the window which has scroll bar
+	// thus, if it doesn't has scrollbar, then we don't have to calc it
+	if (!_hasScrollBar)
+		return;
+
 	int maxText = 0, maxScrollbar = 0, displayHeight = 0;
 
 	displayHeight = getInnerDimensions().height();
 
-	if (_wm->_mode & kWMModeWin95) {
-		// because in win95 mode, the height of where we draw the text and scrollbar is not the same
-		maxScrollbar = getDimensions().height() - 32;
-	} else {
-		maxScrollbar = getInnerDimensions().height();
-	}
+	maxScrollbar = getDimensions().height() - getBorderOffsets().upperScrollHeight - getBorderOffsets().lowerScrollHeight;
 
 	if (_editable)
 		maxText = _mactext->getTextHeight() + getInnerDimensions().height();

@@ -359,6 +359,7 @@ private:
 protected:
 	void drawBorder();
 	WindowClick isInBorder(int x, int y);
+	BorderOffsets getBorderOffsets() { return _macBorder.getOffset(); }
 
 protected:
 	ManagedSurface _borderSurface;
@@ -367,6 +368,7 @@ protected:
 	Common::Rect _innerDims;
 
 	Common::List<Common::Rect> _dirtyRects;
+	bool _hasScrollBar;
 
 private:
 	MacWindowBorder _macBorder;
@@ -388,7 +390,6 @@ private:
 
 	Common::String _title;
 
-	bool _hasScrollBar;
 	int _borderType;
 };
 

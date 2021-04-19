@@ -153,11 +153,11 @@ void MacWindowBorder::drawScrollBar(ManagedSurface *g, MacWindowManager *wm) {
 	// here, we first check the _scrollSize, and if it is negative, then we don't draw the scrollBar
 	if (_scrollSize < 0)
 		return;
-	// currently, we are assuming that the width and height of the "border arrow" have the same size
-	int size = kBorderWidth;
-	int rx1 = g->w - size + 2;
-	int ry1 = size + _scrollPos;
-	int rx2 = rx1 + size - 5;
+	int width = _borderOffsets.right;
+	int height = _borderOffsets.upperScrollHeight;
+	int rx1 = g->w - width + 2;
+	int ry1 = height + _scrollPos;
+	int rx2 = rx1 + width - 5;
 	int ry2 = ry1 + _scrollSize ;
 	Common::Rect rr(rx1, ry1, rx2, ry2);
 
