@@ -3665,7 +3665,6 @@ void LogicManager::doMouseLeftRight() {
 				_vm->_obj[oWHEELS2C]._mode |= OBJMODE_OBJSTATUS;
 				_vm->_flagShowCharacter = true;
 				RegenRoom();
-				_vm->_graphicsMgr->resetSmkBackground();
 				_vm->_animMgr->startSmkAnim(_vm->_room[_vm->_curRoom]._bkgAnim);
 
 				// right combination
