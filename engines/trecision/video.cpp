@@ -128,8 +128,11 @@ AnimManager::~AnimManager() {
 void AnimManager::playMovie(Common::String filename, int startFrame, int endFrame) {
 	NightlongSmackerDecoder *smkDecoder = new NightlongSmackerDecoder;
 
-	if (!smkDecoder->loadFile(filename))
+	if (!smkDecoder->loadFile(filename)) {
+		warning("playMovie: File %s not found", filename.c_str());
+		doEvent(MC_DIALOG, ME_ENDCHOICE, MP_HIGH, smkDecoder->getCurFrame(), 0, 0, 0);
 		return;
+	}
 
 	Common::Event event;
 	bool skipVideo = false;
