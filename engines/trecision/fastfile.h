@@ -57,7 +57,7 @@ private:
 
 	uint8 *_compBuffer;
 	const FileEntry *getEntry(const Common::String &name) const;
-	void decompress(const unsigned char *src, unsigned src_len, unsigned char *dst, int32 decompSize);
+	void decompress(const unsigned char *src, uint32 srcSize, unsigned char *dst, uint32 decompSize);
 };
 
 } // End of namespace Trecision
