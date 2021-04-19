@@ -816,7 +816,7 @@ void Actor::updateStatus(ActorStatus actorStatus) {
 //////////////////////////////////////////////////////////////////////////
 
 void Actor::updateDirection() {
-	if(!_processNewDirection)
+	if (!_processNewDirection)
 		return;
 
 	Common::Point sum = _point1 + _point2;
@@ -837,7 +837,7 @@ void Actor::updateDirection() {
 		position.y = _nextPosition.y + sum.y;
 		position.y += (int16)((_nextDirection == kDirectionN ? -1 : 1) * 2 * abs(sum.y - _nextPositionOffset.y));
 
-		switch (direction) {
+		switch (_direction) {
 		default:
 			break;
 
@@ -873,7 +873,7 @@ void Actor::updateDirection() {
 		position.x += (int16)((_nextDirection == kDirectionW ? -1 : 1) * 2 * abs(sum.x - _nextPositionOffset.x));
 		position.y = _nextPosition.y + sum.y;
 
-		switch (direction) {
+		switch (_direction) {
 		default:
 			break;
 
@@ -905,12 +905,12 @@ void Actor::updateDirection() {
 
 	case kDirectionNW:
 	case kDirectionSE:
-		position.x = _nextPosition.x + sum.x;
-		position.y = _nextPosition.y + sum.y;
-		position.x += (int16)((_nextDirection == kDirectionNW ? -1 : 1) * 2 * abs(sum.y - _nextPositionOffset.y));
-		position.y += (int16)((_nextDirection == kDirectionNW ? -1 : 1) * 2 * abs(sum.x - _nextPositionOffset.x));
+		position.x = _nextPosition.x + _nextPositionOffset.x;
+		position.y = _nextPosition.y + _nextPositionOffset.y;
+		position.x += (int16)((_nextDirection == kDirectionNW ? -1 : 1) * abs(sum.y - _nextPositionOffset.y));
+		position.y += (int16)((_nextDirection == kDirectionNW ? -1 : 1) * abs(sum.x - _nextPositionOffset.x));
 
-		switch (direction) {
+		switch (_direction) {
 		default:
 			break;
 
@@ -951,16 +951,16 @@ void Actor::updateDirection() {
 	case kDirectionSW:
 	case kDirectionNE:
 		if (_nextDirection == kDirectionSW) {
-			position.x = (int16)(_nextPosition.x + sum.x - 2 * abs(sum.y - _nextPositionOffset.y));
-			position.y = (int16)(_nextPosition.y + sum.y + 2 * abs(sum.x - _nextPositionOffset.x));
+			position.x = (int16)(_nextPosition.x + _nextPositionOffset.x - abs(sum.y - _nextPositionOffset.y));
+			position.y = (int16)(_nextPosition.y + _nextPositionOffset.y + abs(sum.x - _nextPositionOffset.x));
 		} else {
 			double deltaX = sum.x * -0.56666666;
-			double deltaY = ((419 - sum.y) + deltaX) * 0.87613291;
+			double deltaY = (419 - (sum.y + deltaX)) * 0.87613291;
 			position.x = (int16)(sum.x + 2 * (_nextPositionOffset.x - deltaY));
-			position.y = (int16)(sum.y + 2 * (_nextPosition.x - (sum.y + deltaX + (deltaY * -0.56666666))));
+			position.y = (int16)(sum.y + 2 * (_nextPositionOffset.y - (sum.y + deltaX + (deltaY * 0.56666666))));
 		}
 
-		switch (direction) {
+		switch (_direction) {
 		default:
 			break;
 
