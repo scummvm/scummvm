@@ -417,30 +417,26 @@ void ReadLoc() {
 
 	Common::String filename = Common::String::format("%s.cr", g_vm->_room[g_vm->_curRoom]._baseName);
 	Common::SeekableReadStream *picFile = g_vm->_dataFile.createReadStreamForCompressedMember(filename);
-	//uint32 dataLength = (picFile->size() + 1) / 2;
-	BmInfo.read(picFile);
-
-	const int bufferSize = picFile->size() - 8; // MAXX * AREA * 2 + MAXOBJINROOM * sizeof(SBmInfo) + some more data
-	delete[] _bgBuf;
-	_bgBuf = new byte[bufferSize];
-	picFile->read(_bgBuf, picFile->size() - 8);
-
 #if 0
 	Common::DumpFile *outFile = new Common::DumpFile();
 	Common::String outName = filename + ".dump";
 	outFile->open(outName);
-	outFile->writeUint16LE(BmInfo.px);
-	outFile->writeUint16LE(BmInfo.py);
-	outFile->writeUint16LE(BmInfo.dx);
-	outFile->writeUint16LE(BmInfo.dy);
-	outFile->write(bgBuf, picFile->size() - 8);
+	outFile->write(bgBuf, picFile->size());
 	outFile->finalize();
 	outFile->close();
 #endif
 
-	g_vm->_graphicsMgr->loadBackground(_bgBuf, BmInfo.dx, BmInfo.dy);
+	//uint32 dataLength = (picFile->size() + 1) / 2;
+	BmInfo.read(picFile);
+	const int bufferSize = picFile->size() - 8 - BmInfo.dx * BmInfo.dy * 2; // MAXX * AREA * 2 + MAXOBJINROOM * sizeof(SBmInfo) + some more data
+	delete[] _bgBuf;
+	_bgBuf = new byte[bufferSize];
 
-	ReadObj((uint16 *)(_bgBuf + BmInfo.dx * BmInfo.dy * 2));
+	g_vm->_graphicsMgr->loadBackground(picFile, BmInfo.dx, BmInfo.dy);
+
+	picFile->read(_bgBuf, bufferSize);
+
+	ReadObj((uint16 *)(_bgBuf));
 	// FIXME: Memory leak! This should not be deleted yet, because
 	// ReadObj() creates pointers into this buffer
 	//delete[] _bgBuf;

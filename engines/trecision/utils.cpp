@@ -157,7 +157,7 @@ void StackText::doText() {
 					doClearText
  --------------------------------------------------*/
 void TrecisionEngine::doClearText() {
-	if ((oldString.text == nullptr) && (curString.text)) {
+	if (!oldString.text && curString.text) {
 		oldString.set(curString);
 		curString.text = nullptr;
 

@@ -116,12 +116,18 @@ const uint16 *GraphicsManager::getSmkBackgroundPtr(int x, int y) {
 	return (const uint16 *)_smkBackground.getBasePtr(x, y);
 }
 
-void GraphicsManager::loadBackground(byte *data, uint16 width, uint16 height) {
+void GraphicsManager::loadBackground(Common::SeekableReadStream *stream, uint16 width, uint16 height) {
 	Graphics::Surface img;
 	img.create(width, height, kImageFormat);
-	memcpy(img.getPixels(), data, img.pitch * img.h);
+
+	uint16 *buffer = new uint16[width * height];
+	for (int i = 0; i < width * height; ++i)
+		buffer[i] = stream->readUint16LE();
+
+	memcpy(img.getPixels(), buffer, img.pitch * img.h);
 	img.convertToInPlace(_screenFormat);
 	_background.copyFrom(img);
+	delete[] buffer;
 	img.free();
 }
 
