@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-04-19 00:13+0000\n"
+"POT-Creation-Date: 2021-04-19 00:25+0000\n"
 "PO-Revision-Date: 2021-04-18 09:46+0000\n"
 "Last-Translator: George Kormendi <grubycza@hotmail.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
@@ -3946,7 +3946,7 @@ msgstr "Érvénytelen mentés fájlnév"
 
 #: engines/cge/detection.cpp:48 engines/cge/detection.cpp:54
 #: engines/kyra/detection_tables.h:224 engines/kyra/detection_tables.h:237
-#: engines/kyra/detection_tables.h:593 engines/kyra/detection_tables.h:1777
+#: engines/kyra/detection_tables.h:593 engines/kyra/detection_tables.h:1792
 #: engines/saga/detection_tables.h:187 engines/saga/detection_tables.h:608
 #: engines/saga/detection_tables.h:936 engines/sci/detection_tables.h:4851
 #: engines/sci/detection_tables.h:4859
@@ -4741,6 +4741,10 @@ msgstr "Harc Gomb B/J csere"
 msgid "Left button to attack, right button to pick up items"
 msgstr "Bal gomb a támadás, jobb gomb a tárgyak felvétele"
 
+#: engines/kyra/detection_tables.h:1186
+msgid "You added the game incorrectly. Please add the root folder of the game."
+msgstr ""
+
 #: engines/kyra/metaengine.cpp:117
 msgid "Lands of Lore support is not compiled in"
 msgstr "Lands of Lore támogatás nincs lefordítva"
@@ -5012,7 +5016,7 @@ msgstr "TTS Narrátor"
 msgid "Use TTS to read the descriptions (if TTS is available)"
 msgstr "Használja a TTS-t a leírás olvasásához (ha a TTS elérhetõ)"
 
-#: engines/made/detection_tables.h:387
+#: engines/made/detection_tables.h:387 engines/made/detection_tables.h:404
 msgid "The game is using unsupported engine"
 msgstr "A játék nem támogatott motort használ"
 

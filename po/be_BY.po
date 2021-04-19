@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-04-19 00:13+0000\n"
+"POT-Creation-Date: 2021-04-19 00:25+0000\n"
 "PO-Revision-Date: 2021-03-21 08:24+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Belarusian <https://translations.scummvm.org/projects/scummvm/"
@@ -3987,7 +3987,7 @@ msgstr "Няправільнае імя файла захавання"
 
 #: engines/cge/detection.cpp:48 engines/cge/detection.cpp:54
 #: engines/kyra/detection_tables.h:224 engines/kyra/detection_tables.h:237
-#: engines/kyra/detection_tables.h:593 engines/kyra/detection_tables.h:1777
+#: engines/kyra/detection_tables.h:593 engines/kyra/detection_tables.h:1792
 #: engines/saga/detection_tables.h:187 engines/saga/detection_tables.h:608
 #: engines/saga/detection_tables.h:936 engines/sci/detection_tables.h:4851
 #: engines/sci/detection_tables.h:4859
@@ -4765,6 +4765,10 @@ msgstr "Абмяняць кнопку барацьбы L/R"
 msgid "Left button to attack, right button to pick up items"
 msgstr "Левая кнопка для атакі, правая кнопка для падбору прадметаў"
 
+#: engines/kyra/detection_tables.h:1186
+msgid "You added the game incorrectly. Please add the root folder of the game."
+msgstr ""
+
 #: engines/kyra/metaengine.cpp:117
 #, fuzzy
 msgid "Lands of Lore support is not compiled in"
@@ -5035,7 +5039,7 @@ msgstr "Дыктар TTS"
 msgid "Use TTS to read the descriptions (if TTS is available)"
 msgstr "Ужываць TTS для чытання апісанняў услых (калі TTS даступна)"
 
-#: engines/made/detection_tables.h:387
+#: engines/made/detection_tables.h:387 engines/made/detection_tables.h:404
 #, fuzzy
 msgid "The game is using unsupported engine"
 msgstr "Game id не падтрымваецца"

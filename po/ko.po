@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-04-19 00:13+0000\n"
+"POT-Creation-Date: 2021-04-19 00:25+0000\n"
 "PO-Revision-Date: 2021-03-07 12:24+0000\n"
 "Last-Translator: Joohan Lee <losernator@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -3948,7 +3948,7 @@ msgstr "저장할 파일명을 입력"
 
 #: engines/cge/detection.cpp:48 engines/cge/detection.cpp:54
 #: engines/kyra/detection_tables.h:224 engines/kyra/detection_tables.h:237
-#: engines/kyra/detection_tables.h:593 engines/kyra/detection_tables.h:1777
+#: engines/kyra/detection_tables.h:593 engines/kyra/detection_tables.h:1792
 #: engines/saga/detection_tables.h:187 engines/saga/detection_tables.h:608
 #: engines/saga/detection_tables.h:936 engines/sci/detection_tables.h:4851
 #: engines/sci/detection_tables.h:4859
@@ -4739,6 +4739,10 @@ msgstr "전투시 왼쪽/오른쪽 버튼을 서로 바꾸기"
 msgid "Left button to attack, right button to pick up items"
 msgstr "왼쪽 버튼으로 공격, 오른쪽 버튼으로 아이템 습득"
 
+#: engines/kyra/detection_tables.h:1186
+msgid "You added the game incorrectly. Please add the root folder of the game."
+msgstr ""
+
 #: engines/kyra/metaengine.cpp:117
 msgid "Lands of Lore support is not compiled in"
 msgstr "Lands of Lore 지원은 컴파일 되지 않음"
@@ -5006,7 +5010,7 @@ msgstr "TTS 나레이터"
 msgid "Use TTS to read the descriptions (if TTS is available)"
 msgstr "TTS를 사용하여 설명 읽기 (TTS를 사용할 수있는 경우)"
 
-#: engines/made/detection_tables.h:387
+#: engines/made/detection_tables.h:387 engines/made/detection_tables.h:404
 msgid "The game is using unsupported engine"
 msgstr "게임이 지원되지 않는 엔진을 사용합니다"
 

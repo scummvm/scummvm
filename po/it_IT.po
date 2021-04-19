@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-04-19 00:13+0000\n"
+"POT-Creation-Date: 2021-04-19 00:25+0000\n"
 "PO-Revision-Date: 2021-04-18 10:10+0000\n"
 "Last-Translator: Walter Agazzi <tag2015@gmail.com>\n"
 "Language-Team: Italian <https://translations.scummvm.org/projects/scummvm/"
@@ -3994,7 +3994,7 @@ msgstr "Nome salvataggio non valido"
 
 #: engines/cge/detection.cpp:48 engines/cge/detection.cpp:54
 #: engines/kyra/detection_tables.h:224 engines/kyra/detection_tables.h:237
-#: engines/kyra/detection_tables.h:593 engines/kyra/detection_tables.h:1777
+#: engines/kyra/detection_tables.h:593 engines/kyra/detection_tables.h:1792
 #: engines/saga/detection_tables.h:187 engines/saga/detection_tables.h:608
 #: engines/saga/detection_tables.h:936 engines/sci/detection_tables.h:4851
 #: engines/sci/detection_tables.h:4859
@@ -4797,6 +4797,10 @@ msgid "Left button to attack, right button to pick up items"
 msgstr ""
 "Pulsante sinistro per attaccare, pulsante destro per raccogliere gli oggetti"
 
+#: engines/kyra/detection_tables.h:1186
+msgid "You added the game incorrectly. Please add the root folder of the game."
+msgstr ""
+
 #: engines/kyra/metaengine.cpp:117
 msgid "Lands of Lore support is not compiled in"
 msgstr "Il supporto per Lands of Lore non è stato incluso nella compilazione"
@@ -5070,7 +5074,7 @@ msgstr "Sintesi vocale"
 msgid "Use TTS to read the descriptions (if TTS is available)"
 msgstr "Legge le descrizioni utilizzando la sintesi vocale (se disponibile)"
 
-#: engines/made/detection_tables.h:387
+#: engines/made/detection_tables.h:387 engines/made/detection_tables.h:404
 msgid "The game is using unsupported engine"
 msgstr "Questo gioco utilizza un motore non supportato"
 

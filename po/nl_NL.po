@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-04-19 00:13+0000\n"
+"POT-Creation-Date: 2021-04-19 00:25+0000\n"
 "PO-Revision-Date: 2020-11-29 17:10+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
@@ -4003,7 +4003,7 @@ msgstr "ongeldige bewaarbestandsnaam"
 
 #: engines/cge/detection.cpp:48 engines/cge/detection.cpp:54
 #: engines/kyra/detection_tables.h:224 engines/kyra/detection_tables.h:237
-#: engines/kyra/detection_tables.h:593 engines/kyra/detection_tables.h:1777
+#: engines/kyra/detection_tables.h:593 engines/kyra/detection_tables.h:1792
 #: engines/saga/detection_tables.h:187 engines/saga/detection_tables.h:608
 #: engines/saga/detection_tables.h:936 engines/sci/detection_tables.h:4851
 #: engines/sci/detection_tables.h:4859
@@ -4807,6 +4807,10 @@ msgstr "Vechtknop L/R Omwisselen"
 msgid "Left button to attack, right button to pick up items"
 msgstr "Linkerknop om aan te vallen, rechterknop om voorwerpen op te pakken"
 
+#: engines/kyra/detection_tables.h:1186
+msgid "You added the game incorrectly. Please add the root folder of the game."
+msgstr ""
+
 #: engines/kyra/metaengine.cpp:117
 msgid "Lands of Lore support is not compiled in"
 msgstr "Lands of Lore ondersteuning is niet mee gecompileerd"
@@ -5082,7 +5086,7 @@ msgid "Use TTS to read the descriptions (if TTS is available)"
 msgstr ""
 "Gebruik TTS voor het lezen van de omschrijvingen (als TTS beschikbaar is)"
 
-#: engines/made/detection_tables.h:387
+#: engines/made/detection_tables.h:387 engines/made/detection_tables.h:404
 msgid "The game is using unsupported engine"
 msgstr "Het spel gebruikt een niet ondersteunde engine"
 
