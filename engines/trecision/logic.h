@@ -61,7 +61,7 @@ public:
 	void initScript();
 	void initInventory();
 
-	void setRoom(uint16 r, bool altRoomFl);
+	void setupAltRoom(uint16 room, bool altRoomFl);
 	void endChangeRoom();
 
 	void useInventoryWithInventory(bool *updateInv, bool *printSentence);

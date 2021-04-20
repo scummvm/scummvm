@@ -227,10 +227,10 @@ enum RoomId {
 	kRoom59 = 79,	// Prison (laboratory)
 	kRoom5A = 80,	// Prison (looking outside the window)
 	// Item closeups
-	kRoom2BL = 84,	// Platforms (Egyptian gods book closeup)
+	kRoom2BL = 84,	// Inventory (Egyptian gods book closeup)
+	kRoom36F = 88,  // Inventory (warehouse hideout upstairs, paper behind the painting closeup)
 	kRoom31P = 86,	// Warehouse (alarm panel closeup)
 	kRoom35P = 87,	// Warehouse (hideout security system panel closeup)
-	kRoom36F = 88,	// Warehouse (hideout upstairs, paper behind the painting closeup)
 	kRoom41D = 89,	// Positioner interface closeup
 	kRoom49M = 91,	// Castle (tower, Meridian circle closeup)
 	kRoom4CT = 92,	// Hugh's office (terminal lock screen closeup)
