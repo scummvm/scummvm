@@ -515,10 +515,10 @@ void ReadObj(Common::SeekableReadStream *stream) {
 		if (!roomObjIndex)
 			break;
 
-		if (g_vm->_curRoom == kRoom41D && objIndex == 89)
+		if (g_vm->_curRoom == kRoom41D && objIndex == PATCHOBJ_ROOM41D)
 			break;
 
-		if (g_vm->_curRoom == kRoom2C && objIndex == 20)
+		if (g_vm->_curRoom == kRoom2C && objIndex == PATCHOBJ_ROOM2C)
 			break;
 
 		readObject(stream, objIndex, roomObjIndex);
@@ -531,7 +531,7 @@ void ReadExtraObj2C() {
 	
 	Common::SeekableReadStream *ff = g_vm->_dataFile.createReadStreamForMember("2c2.bm");
 
-	for (uint16 objIndex = 20; objIndex < MAXOBJINROOM; objIndex++) {
+	for (uint16 objIndex = PATCHOBJ_ROOM2C; objIndex < MAXOBJINROOM; objIndex++) {
 		uint16 roomObjIndex = g_vm->_room[g_vm->_curRoom]._object[objIndex];
 		if (!roomObjIndex)
 			break;
@@ -547,7 +547,7 @@ void ReadExtraObj41D() {
 		return;
 
 	Common::SeekableReadStream *ff = g_vm->_dataFile.createReadStreamForMember("41d2.bm");
-	for (uint16 objIndex = 89; objIndex < MAXOBJINROOM; objIndex++) {
+	for (uint16 objIndex = PATCHOBJ_ROOM41D; objIndex < MAXOBJINROOM; objIndex++) {
 		uint16 roomObjIndex = g_vm->_room[g_vm->_curRoom]._object[objIndex];
 		if (!roomObjIndex)
 			break;
