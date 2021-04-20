@@ -557,28 +557,6 @@ void ReadExtraObj41D() {
 	delete ff;
 }
 
-/*-----------------12/12/95 11.39-------------------
-					ReadSounds
---------------------------------------------------*/
-void ReadSounds() {
-	for (uint16 a = 0; a < MAXSOUNDSINROOM; a++) {
-		uint16 b = g_vm->_room[g_vm->_curRoom]._sounds[a];
-
-		if (b == 0)
-			break;
-
-		if (!scumm_stricmp(GSample[b]._name, "RUOTE2C.WAV"))
-			break;
-
-		LoadAudioWav(b, GSample[b]._name);
-
-		if (GSample[b]._flag & kSoundFlagBgMusic)
-			SoundFadIn(b);
-		else if (GSample[b]._flag & kSoundFlagSoundOn)
-			NLPlaySound(b);
-	}
-}
-
 /*------------------------------------------------
                     RegenRoom
 --------------------------------------------------*/
@@ -605,53 +583,6 @@ void PaintRegenRoom() {
 			SortTable[g_vm->_curSortTableNum]._typology = TYPO_BMP;
 			VideoObjStatus[a] = OldObjStatus[a];
 			g_vm->_curSortTableNum++;
-		}
-	}
-}
-
-void DrawObj(SDObj d) {
-	if (d.l.left > MAXX || d.l.top > MAXX || d.l.right > MAXX || d.l.bottom > MAXX)
-		return;
-	
-	const uint16 *buf = d.objIndex >= 0 ? g_vm->ObjPointers[d.objIndex] : g_vm->_graphicsMgr->getBackgroundPtr();
-	if (d.drawMask) {
-		uint8 *mask = g_vm->MaskPointers[d.objIndex];
-
-		for (uint16 b = d.y; b < (d.y + d.dy); b++) {
-			uint16 Sco = 0;
-			uint16 c = 0;
-			while (Sco < d.dx) {
-				if (c == 0) {            // jump
-					Sco += *mask;
-					mask++;
-
-					c = 1;
-				} else {                 // copy
-					uint16 maskOffset = *mask;
-
-					if ((maskOffset != 0) && (b >= (d.y + d.l.top)) && (b < (d.y + d.l.bottom))) {
-						if ((Sco >= d.l.left) && ((Sco + maskOffset) < d.l.right))
-							memcpy(g_vm->_screenBuffer + (b * MAXX) + Sco + d.x, buf, maskOffset * 2);
-
-						else if ((Sco < d.l.left) && ((Sco + maskOffset) < d.l.right) && ((Sco + maskOffset) >= d.l.left))
-							memcpy(g_vm->_screenBuffer + (b * MAXX) + d.l.left + d.x, buf + d.l.left - Sco, (maskOffset + Sco - d.l.left) * 2);
-
-						else if ((Sco >= d.l.left) && ((Sco + maskOffset) >= d.l.right) && (Sco < d.l.right))
-							memcpy(g_vm->_screenBuffer + (b * MAXX) + Sco + d.x, buf, (d.l.right - Sco) * 2);
-
-						else if ((Sco < d.l.left) && ((Sco + maskOffset) >= d.l.right))
-							memcpy(g_vm->_screenBuffer + (b * MAXX) + d.l.left + d.x, buf + d.l.left - Sco, (d.l.right - d.l.left) * 2);
-					}
-					Sco += *mask;
-					buf += *mask++;
-					c = 0;
-				}
-			}
-		}
-	} else {
-		for (uint16 b = d.l.top; b < d.l.bottom; b++) {
-			memcpy(g_vm->_screenBuffer + (d.y + b) * MAXX + (d.x + d.l.left),
-				  buf + (b * d.dx) + d.l.left, (d.l.right - d.l.left) * 2);
 		}
 	}
 }

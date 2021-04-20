@@ -40,13 +40,11 @@ int VisualRef[50];
 SDObj DObj;
 
 void PaintScreen(uint8 flag) {
-	int a;
-
 	AtFrameNext();
 	PaintRegenRoom();
 
 	g_vm->_actorLimit = 255;
-	for (a = 0; a < 20; a++)
+	for (int a = 0; a < 20; a++)
 		VisualRef[a] = 255;
 
 	g_vm->_limitsNum = 0;
@@ -66,7 +64,7 @@ void PaintScreen(uint8 flag) {
 		DObj.l = Common::Rect(x1, y1, x2, y2);
 		DObj.objIndex = -1;
 		DObj.drawMask = false;
-		DrawObj(DObj);
+		g_vm->_graphicsMgr->DrawObj(DObj);
 
 		g_vm->_actorLimit = g_vm->_limitsNum;
 		Common::Rect l = DObj.l;
@@ -80,7 +78,7 @@ void PaintScreen(uint8 flag) {
 		DObj.l = Common::Rect(g_vm->_animMgr->_animMinX, g_vm->_animMgr->_animMinY, g_vm->_animMgr->_animMaxX, g_vm->_animMgr->_animMaxY);
 		DObj.objIndex = -1;
 		DObj.drawMask = false;
-		DrawObj(DObj);
+		g_vm->_graphicsMgr->DrawObj(DObj);
 
 		g_vm->_actorLimit = g_vm->_limitsNum;
 		Common::Rect l = DObj.l;
@@ -103,12 +101,12 @@ void PaintScreen(uint8 flag) {
 		DObj.drawMask = false;
 
 		if ((oldString.y >= TOP) && ((oldString.y + oldString.dy) < (AREA + TOP))) {
-			DrawObj(DObj);
+			g_vm->_graphicsMgr->DrawObj(DObj);
 		} else {
-			for (a = (DObj.l.top + TOP); a < (DObj.l.bottom + TOP); a++)
+			for (int a = (DObj.l.top + TOP); a < (DObj.l.bottom + TOP); a++)
 				memset(g_vm->_screenBuffer + DObj.l.left + a * MAXX, 0x0000, (DObj.l.right - DObj.l.left) * 2);
 		}
-		oldString.text = NULL;
+		oldString.text = nullptr;
 
 		g_vm->_limits[g_vm->_limitsNum].left = DObj.l.left; // aggiunge rettangolo scritta
 		g_vm->_limits[g_vm->_limitsNum].top = DObj.l.top + TOP;
@@ -122,7 +120,7 @@ void PaintScreen(uint8 flag) {
 	}
 
 	// CANCELLA TUTTI GLI OGGETTI TOGLI
-	for (a = 0; a < g_vm->_curSortTableNum; a++) {
+	for (int a = 0; a < g_vm->_curSortTableNum; a++) {
 		if (SortTable[a]._remove) {
 			DObj.x    = 0;
 			DObj.y    = TOP;
@@ -138,7 +136,7 @@ void PaintScreen(uint8 flag) {
 
 			DObj.objIndex = -1;
 			DObj.drawMask = false;
-			DrawObj(DObj);
+			g_vm->_graphicsMgr->DrawObj(DObj);
 
 			if ((SortTable[a + 1]._typology == SortTable[a]._typology) &&
 				(SortTable[a + 1]._roomIndex == SortTable[a]._roomIndex))
@@ -176,7 +174,7 @@ void PaintScreen(uint8 flag) {
 		g_vm->_graphicsMgr->copyToScreen(0, 0, MAXX, MAXY);
 	}
 
-	for (a = 0; a < g_vm->_curSortTableNum; a++) {
+	for (int a = 0; a < g_vm->_curSortTableNum; a++) {
 		SortTable[a]._index = 0;
 		SortTable[a]._roomIndex = 0;
 		SortTable[a]._typology = 0;
@@ -218,7 +216,7 @@ void PaintObjAnm(uint16 CurBox) {
 					DObj.l = Common::Rect(DObj.dx, DObj.dy);
 					DObj.objIndex = SortTable[a]._roomIndex;
 					DObj.drawMask = g_vm->_obj[SortTable[a]._index]._mode & OBJMODE_MASK;
-					DrawObj(DObj);
+					g_vm->_graphicsMgr->DrawObj(DObj);
 
 					Common::Rect objRect(DObj.x, DObj.y, DObj.x + DObj.dx, DObj.y + DObj.dy);
 					
@@ -271,11 +269,10 @@ void PaintObjAnm(uint16 CurBox) {
 					const int16 xr2 = MIN<int16>(r.right, r2.right) - r2.left;
 					const int16 yr2 = MIN<int16>(r.bottom, r2.bottom) - r2.top;					
 					DObj.l = Common::Rect(xr1, yr1, xr2, yr2);
-
 					DObj.objIndex = b;
 					DObj.drawMask = obj._mode & OBJMODE_MASK;
 
-					DrawObj(DObj);
+					g_vm->_graphicsMgr->DrawObj(DObj);
 				}
 			}
 		}

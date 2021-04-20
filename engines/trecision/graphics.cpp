@@ -304,4 +304,51 @@ void GraphicsManager::NlDissolve(int val) {
 	clearScreen();
 }
 
+void GraphicsManager::DrawObj(SDObj d) {
+	if (d.l.left > MAXX || d.l.top > MAXX || d.l.right > MAXX || d.l.bottom > MAXX)
+		return;
+
+	const uint16 *buf = d.objIndex >= 0 ? _vm->ObjPointers[d.objIndex] : getBackgroundPtr();
+	if (d.drawMask) {
+		uint8 *mask = _vm->MaskPointers[d.objIndex];
+
+		for (uint16 b = d.y; b < (d.y + d.dy); b++) {
+			uint16 Sco = 0;
+			uint16 c = 0;
+			while (Sco < d.dx) {
+				if (c == 0) { // jump
+					Sco += *mask;
+					mask++;
+
+					c = 1;
+				} else { // copy
+					uint16 maskOffset = *mask;
+
+					if ((maskOffset != 0) && (b >= (d.y + d.l.top)) && (b < (d.y + d.l.bottom))) {
+						if ((Sco >= d.l.left) && ((Sco + maskOffset) < d.l.right))
+							memcpy(_vm->_screenBuffer + (b * MAXX) + Sco + d.x, buf, maskOffset * 2);
+
+						else if ((Sco < d.l.left) && ((Sco + maskOffset) < d.l.right) && ((Sco + maskOffset) >= d.l.left))
+							memcpy(_vm->_screenBuffer + (b * MAXX) + d.l.left + d.x, buf + d.l.left - Sco, (maskOffset + Sco - d.l.left) * 2);
+
+						else if ((Sco >= d.l.left) && ((Sco + maskOffset) >= d.l.right) && (Sco < d.l.right))
+							memcpy(_vm->_screenBuffer + (b * MAXX) + Sco + d.x, buf, (d.l.right - Sco) * 2);
+
+						else if ((Sco < d.l.left) && ((Sco + maskOffset) >= d.l.right))
+							memcpy(_vm->_screenBuffer + (b * MAXX) + d.l.left + d.x, buf + d.l.left - Sco, (d.l.right - d.l.left) * 2);
+					}
+					Sco += *mask;
+					buf += *mask++;
+					c = 0;
+				}
+			}
+		}
+	} else {
+		for (uint16 b = d.l.top; b < d.l.bottom; b++) {
+			memcpy(_vm->_screenBuffer + (d.y + b) * MAXX + (d.x + d.l.left),
+				   buf + (b * d.dx) + d.l.left, (d.l.right - d.l.left) * 2);
+		}
+	}
+}
+
 } // end of namespace
