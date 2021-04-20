@@ -673,6 +673,14 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("carolreed14", "SD",
 		WME_ENTRY1s("data.dcp", "1a9a5ba095057b4e9d79c7522dd0389f", 717751105), Common::RU_RUS, ADGF_UNSTABLE, WME_1_9_3),
 
+	// Carol Reed 15 - Geospots (HD) (MDNA Games) (v1.0)
+	WME_WINENTRY("carolreed15", "HD/1.0",
+		WME_ENTRY1s("data.dcp", "f3e396b249d706d34a71f5f824ab2d51", 1255754470), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
+
+	// Carol Reed 15 - Geospots (SD) (MDNA Games) (v1.0)
+	WME_WINENTRY("carolreed15", "SD/1.0",
+		WME_ENTRY1s("data.dcp", "cfeaf13640de63c5d2bb050357342d79", 913385369), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
+
 	// Carol Reed 15 - Geospots (HD) (MDNA Games) (v1.1)
 	WME_WINENTRY("carolreed15", "HD/1.1",
 		WME_ENTRY1s("data.dcp", "75645132e95924e83c9c7ff578e860a0", 1255837902), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
