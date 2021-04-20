@@ -1719,7 +1719,7 @@ END_OPCODE
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x56
 IMPLEMENT_OPCODE(Interact)
-	Actor *actor = getScene()->getActor(cmd->param2 == 2 ? kActorInvalid : cmd->param1);
+	Actor *actor = getScene()->getActor(cmd->param2 == 2 ? getSharedData()->getPlayerIndex() : cmd->param1);
 
 	if (actor->getStatus() == kActorStatusWalkingTo || actor->getStatus() == kActorStatusWalkingTo2) {
 		if (cmd->param2 == 2)
@@ -1741,7 +1741,7 @@ IMPLEMENT_OPCODE(Interact)
 	} else {
 		Common::Point point;
 
-		if (actor->canInteract(&point, &cmd->param4) == 1) {
+		if (actor->canInteract(&point, &cmd->param4)) {
 			getScene()->getActor()->processStatus(point.x, point.y, (bool)cmd->param4);
 			cmd->param6 = point.x;
 			cmd->param7 = point.y;

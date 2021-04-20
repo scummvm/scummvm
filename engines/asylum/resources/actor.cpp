@@ -1587,8 +1587,8 @@ bool Actor::canInteract(Common::Point *point, int32* param) {
 	if (getWorld()->chapter != kChapter2 || _index != 8)
 		offset = 40;
 
-	int32 parameter = 5;
-	Common::Point pt = _point1 + _point2;
+	int32 parameter;
+	Common::Point actorPoint = _point1 + _point2, pt = actorPoint;
 
 	if (getWorld()->chapter != kChapter2 || _index != 1) {
 		Common::Point diff = *player->getPoint1() - _point1;
@@ -1603,12 +1603,14 @@ bool Actor::canInteract(Common::Point *point, int32* param) {
 					goto processActor;
 
 				parameter = 3;
+				pt = actorPoint;
 				pt.x -= offset;
 				pt.y += offset;
 				if (getScene()->findActionArea(kActionAreaType2, pt) != -1)
 					goto processActor;
 
 				parameter = 1;
+				pt = actorPoint;
 				pt.x -= offset;
 				pt.y -= offset;
 
@@ -1620,12 +1622,14 @@ bool Actor::canInteract(Common::Point *point, int32* param) {
 					goto processActor;
 
 				parameter = 5;
+				pt = actorPoint;
 				pt.x += offset;
 				pt.y += offset;
 				if (getScene()->findActionArea(kActionAreaType2, pt) != -1)
 					goto processActor;
 
 				parameter = 7;
+				pt = actorPoint;
 				pt.x += offset;
 				pt.y -= offset;
 			}
@@ -1640,12 +1644,14 @@ bool Actor::canInteract(Common::Point *point, int32* param) {
 					goto processActor;
 
 				parameter = 3;
+				pt = actorPoint;
 				pt.x -= offset;
 				pt.y += offset;
 				if (getScene()->findActionArea(kActionAreaType2, pt) != -1)
 					goto processActor;
 
 				parameter = 5;
+				pt = actorPoint;
 				pt.x += offset;
 				pt.y += offset;
 
@@ -1657,12 +1663,14 @@ bool Actor::canInteract(Common::Point *point, int32* param) {
 					goto processActor;
 
 				parameter = 1;
+				pt = actorPoint;
 				pt.x -= offset;
 				pt.y -= offset;
 				if (getScene()->findActionArea(kActionAreaType2, pt) != -1)
 					goto processActor;
 
 				parameter = 7;
+				pt = actorPoint;
 				pt.x += offset;
 				pt.y -= offset;
 			}
@@ -1677,7 +1685,7 @@ bool Actor::canInteract(Common::Point *point, int32* param) {
 		return false;
 
 processActor:
-	if (!process(pt))
+	if (!player->process(pt))
 		return false;
 
 	*point = pt;
