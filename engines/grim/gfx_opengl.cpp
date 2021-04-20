@@ -63,7 +63,7 @@ PFNGLPROGRAMLOCALPARAMETER4FARBPROC glProgramLocalParameter4fARB;
 
 namespace Grim {
 
-GfxBase *CreateGfxOpenGL() {
+GfxBase *CreateGfxOpenGL(void *) {
 	return new GfxOpenGL();
 }
 

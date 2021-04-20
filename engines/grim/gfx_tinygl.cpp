@@ -44,7 +44,7 @@
 
 namespace Grim {
 
-GfxBase *CreateGfxTinyGL() {
+GfxBase *CreateGfxTinyGL(void *) {
 	return new GfxTinyGL();
 }
 

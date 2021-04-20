@@ -40,11 +40,6 @@
 #include "backends/keymapper/standard-actions.h"
 
 #include "graphics/pixelbuffer.h"
-#include "graphics/renderer.h"
-
-#if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS) || defined(USE_GLES2)
-#include "graphics/opengl/context.h"
-#endif
 
 #include "gui/error.h"
 #include "gui/gui-manager.h"
@@ -53,7 +48,7 @@
 #include "image/png.h"
 
 #include "engines/engine.h"
-#include "engines/util.h"
+#include "engines/util3d.h"
 
 #include "engines/grim/md5check.h"
 #include "engines/grim/md5checkdialog.h"
@@ -264,51 +259,18 @@ LuaBase *GrimEngine::createLua() {
 }
 
 GfxBase *GrimEngine::createRenderer(int screenW, int screenH) {
-	Common::String rendererConfig = ConfMan.get("renderer");
-	Graphics::RendererType desiredRendererType = Graphics::parseRendererTypeCode(rendererConfig);
-	Graphics::RendererType matchingRendererType = Graphics::getBestMatchingAvailableRendererType(desiredRendererType);
-
-	_softRenderer = matchingRendererType == Graphics::kRendererTypeTinyGL;
-	if (!_softRenderer) {
-		initGraphics3d(screenW, screenH);
-	} else {
-		initGraphics(screenW, screenH, nullptr);
-	}
-
-#if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS) || defined(USE_GLES2)
-	bool backendCapableOpenGL = g_system->hasFeature(OSystem::kFeatureOpenGLForGame);
-#endif
-
-#if defined(USE_OPENGL_GAME)
-	// Check the OpenGL context actually supports shaders
-	if (backendCapableOpenGL && matchingRendererType == Graphics::kRendererTypeOpenGLShaders && !OpenGLContext.shadersSupported) {
-		matchingRendererType = Graphics::kRendererTypeOpenGL;
-	}
-#endif
-
-	if (matchingRendererType != desiredRendererType && desiredRendererType != Graphics::kRendererTypeDefault) {
-		// Display a warning if unable to use the desired renderer
-		warning("Unable to create a '%s' renderer", rendererConfig.c_str());
-	}
-
-	GfxBase *renderer = nullptr;
+	GfxBase *renderer = createSelectedRender<GfxBase, void>(
+		screenW,
+		screenH,
 #if defined(USE_GLES2) || defined(USE_OPENGL_SHADERS)
-	if (backendCapableOpenGL && matchingRendererType == Graphics::kRendererTypeOpenGLShaders) {
-		renderer = CreateGfxOpenGLShader();
-	}
+		CreateGfxOpenGLShader,
 #endif
 #if defined(USE_OPENGL_GAME) && !defined(USE_GLES2)
-	if (backendCapableOpenGL && matchingRendererType == Graphics::kRendererTypeOpenGL) {
-		renderer = CreateGfxOpenGL();
-	}
+		CreateGfxOpenGL,
 #endif
-	if (matchingRendererType == Graphics::kRendererTypeTinyGL) {
-		renderer = CreateGfxTinyGL();
-	}
-
-	if (!renderer) {
-		error("Unable to create a '%s' renderer", rendererConfig.c_str());
-	}
+		CreateGfxTinyGL,
+		nullptr
+	);
 
 	renderer->setupScreen(screenW, screenH);
 	renderer->loadEmergFont();

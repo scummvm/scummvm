@@ -299,9 +299,9 @@ protected:
 
 // Factory-like functions:
 
-GfxBase *CreateGfxOpenGL();
-GfxBase *CreateGfxOpenGLShader();
-GfxBase *CreateGfxTinyGL();
+GfxBase *CreateGfxOpenGL(void *);
+GfxBase *CreateGfxOpenGLShader(void *);
+GfxBase *CreateGfxTinyGL(void *);
 
 extern GfxBase *g_driver;
 
