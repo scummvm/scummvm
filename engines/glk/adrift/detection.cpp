@@ -40,6 +40,9 @@ enum {
 static const byte V500_SIGNATURE[VERSION_HEADER_SIZE] = {
 	0x3c, 0x42, 0x3f, 0xc9, 0x6a, 0x87, 0xc2, 0xcf, 0x92, 0x45, 0x3e, 0x61, 0x30, 0x30
 };
+static const byte V500_SIGNATURE_2[VERSION_HEADER_SIZE] = {
+	0x3c, 0x42, 0x3f, 0xc9, 0x6a, 0x87, 0xc2, 0xcf, 0x92, 0x45, 0x3e, 0x61, 0x51, 0x36
+};
 
 static const byte V400_SIGNATURE[VERSION_HEADER_SIZE] = {
 	0x3c, 0x42, 0x3f, 0xc9, 0x6a, 0x87, 0xc2, 0xcf, 0x93, 0x45, 0x3e, 0x61, 0x39, 0xfa
@@ -149,7 +152,8 @@ void AdriftMetaEngine::detectClashes(Common::StringMap &map) {
 }
 
 int AdriftMetaEngine::detectGameVersion(const byte *header) {
-	if (memcmp(header, V500_SIGNATURE, VERSION_HEADER_SIZE) == 0) {
+	if (memcmp(header, V500_SIGNATURE, VERSION_HEADER_SIZE) == 0 ||
+		memcmp(header, V500_SIGNATURE_2, VERSION_HEADER_SIZE) == 0) {
 		return TAF_VERSION_500;
 
 	} else if (memcmp(header, V400_SIGNATURE, VERSION_HEADER_SIZE) == 0) {
