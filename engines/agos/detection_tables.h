@@ -1621,6 +1621,32 @@ static const AGOSGameDescription gameDescriptions[] = {
 		GF_TALKIE
 	},
 
+	// Simon the Sorcerer 1 - English DOS CD Demo from Zork Anthology CD
+	// Bugreport #11200
+	{
+		{
+			"simon1",
+			"CD Demo",
+
+			{
+				{ "simon.gme",		GAME_GMEFILE,	"a8c91fe4f316b3e047d6782811eb1b70", 1236298},
+				{ "gamepc"	,		GAME_BASEFILE,	"425c7d1957699d35abca7e12a08c7422", 30879},
+				{ "icon.dat",		GAME_ICONFILE,	"22107c24dfb31b66ac503c28a6e20b19", 14361},
+				{ "stripped.txt",	GAME_STRFILE,	"d9de7542612d9f4e0819ad0df5eac56b", 252},
+				{ "tbllist",		GAME_TBLFILE,	"d198a80de2c59e4a0cd24b98814849e8", 711},
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_DEMO,
+			GUIO1(GUIO_NOSUBTITLES)
+		},
+
+		GType_SIMON1,
+		GID_SIMON1,
+		GF_TALKIE
+	},
+
 	// Simon the Sorcerer 1 - English DOS CD
 	{
 		{
