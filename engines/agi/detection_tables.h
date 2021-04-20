@@ -229,6 +229,9 @@ static const AGIGameDescription gameDescriptions[] = {
 	// Menus not tested
 	GAME3_PO("bc", "1.0O 1989-02-24 (CE)", "bcdir", "dc09d30b147242692f4f85b9811962db", 0x3149, 0, GID_BC, Common::kPlatformApple2GS, GAMEOPTIONS_APPLE2GS),
 
+	// Black Cauldron (Apple IIgs) Bugreport #11015
+	GAME3_PSO("bc", "", "bcdir", "710a56938e5428d26ca7682d38bdba28", 22498, 0x3149, 0, GID_BC, Common::kPlatformApple2GS, GAMEOPTIONS_APPLE2GS),
+
 	// Black Cauldron (PC) 2.00 6/14/87 [AGI 2.439]
 	GAME("bc", "2.00 1987-06-14", "7f598d4712319b09d7bd5b3be10a2e4a", 0x2440, GID_BC),
 
