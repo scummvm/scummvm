@@ -395,7 +395,7 @@ static const AGIGameDescription gameDescriptions[] = {
 	// King's Quest 3 (PC 5.25") 2.00 5/25/87 [AGI 2.435]
 	GAME("kq3", "2.00 1987-05-25 5.25\"", "18aad8f7acaaff760720c5c6885b6bab", 0x2440, GID_KQ3),
 
-	// King's Quest 3 (PC 5.25") 2.00 5/28/87 [AGI 2.XXX]
+	// King's Quest 3 (PC 5.25") 2.00 5/28/87 [AGI 2.435]
 	// Bugreport #10646
 	GAME("kq3", "2.00 1987-05-25 5.25\"", "b46dc63d6272fb6ed24a004ad580a033", 0x2440, GID_KQ3),
 
