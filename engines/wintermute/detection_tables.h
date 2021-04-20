@@ -629,6 +629,14 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("carolreed12", "SD",
 		WME_ENTRY1s("data.dcp", "c58e9a8aa8f87ebfae94a2fa3e07817e", 420274897), Common::RU_RUS, ADGF_UNSTABLE, WME_1_9_3),
 
+	// Carol Reed 13 - The Birdwatcher (HD) (MDNA Games) (v1.0)
+	WME_WINENTRY("carolreed13", "HD/1.0",
+		WME_ENTRY1s("data.dcp", "2fe001cc3463eeca734630180743e3b0", 1268655366), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
+
+	// Carol Reed 13 - The Birdwatcher (SD) (MDNA Games) (v1.0)
+	WME_WINENTRY("carolreed13", "SD/1.0",
+		WME_ENTRY1s("data.dcp", "3c096a9c4e7adfae31e0916421505939", 774246800), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
+
 	// Carol Reed 13 - The Birdwatcher (HD) (MDNA Games) (v1.1)
 	WME_WINENTRY("carolreed13", "HD/1.1",
 		WME_ENTRY1s("data.dcp", "954392d19f0c928b700f17badd35d488", 1267391173), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
@@ -636,6 +644,14 @@ static const WMEGameDescription gameDescriptions[] = {
 	// Carol Reed 13 - The Birdwatcher (SD) (MDNA Games) (v1.1)
 	WME_WINENTRY("carolreed13", "SD/1.1",
 		WME_ENTRY1s("data.dcp", "4c5e1094a2e05b76b2ee5a8d9af5de4a", 774352150), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
+
+	// Carol Reed 13 - The Birdwatcher (HD) (MDNA Games) (v1.2)
+	WME_WINENTRY("carolreed13", "HD/1.2",
+		WME_ENTRY1s("data.dcp", "85cfc970e2b6aaa3f44d83febb0e8509", 1267524698), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
+
+	// Carol Reed 13 - The Birdwatcher (SD) (MDNA Games) (v1.2)
+	WME_WINENTRY("carolreed13", "SD/1.2",
+		WME_ENTRY1s("data.dcp", "d7b6aaa1643fec62645b176fe890fe1f", 774409229), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
 
 	// Carol Reed 13 - The Birdwatcher (HD) (Russian)
 	WME_WINENTRY("carolreed13", "HD",
