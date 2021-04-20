@@ -71,6 +71,7 @@ public:
 	NameList locationList;
 
 	Symbol *constant(int t, int d, const char *s);
+	Symbol *lookupVariable(Common::String *n);
 	Symbol *lookupRect(Common::String *n);
 	Symbol *lookupName(const char *n);
 	void installAll(const char *n);

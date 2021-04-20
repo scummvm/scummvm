@@ -118,6 +118,14 @@ Symbol *SymbolMaps::lookupRect(Common::String *n) {
 	return lookup(*n, rects);
 }
 
+Symbol *SymbolMaps::lookupVariable(Common::String *n) {
+	debug("looking variable up %s", n->c_str());
+
+	assert(variables.contains(*n));
+	return lookup(*n, variables);
+}
+
+
 /* lookup some name in some symbol table */
 Symbol *SymbolMaps::lookupName(const char *n) {
 	debug("looking up %s", n);

@@ -65,7 +65,7 @@ static const ADGameDescription gameDescriptions[] = {
 		   "bklynlgo.bmp", "1dfb703349a46f8ec183de107992b7f5", 33118),
 		Common::EN_GRB,
 		Common::kPlatformWindows,
-		ADGF_UNSUPPORTED,
+		ADGF_UNSTABLE,
 		GUIO1(GUIO_NOMIDI)
 	},
 	{
@@ -75,7 +75,7 @@ static const ADGameDescription gameDescriptions[] = {
 		   "bklynlgo.bmp", "1dfb703349a46f8ec183de107992b7f5", 33118),
 		Common::EN_GRB,
 		Common::kPlatformWindows,
-		ADGF_DEMO | ADGF_TESTING,
+		ADGF_DEMO | ADGF_UNSTABLE,
 		GUIO1(GUIO_NOMIDI)
 	},
 	{
@@ -100,32 +100,32 @@ static const ADGameDescription gameDescriptions[] = {
 	},
 	{
 		"private-eye", // EU release (ES)
-		"It uses different file format for the assest",
+		"Demo",
 		AD_ENTRY2s("pvteye.ex_", "f41770550ab717086b2d0c805fef4b8f", 498176,
 		   "bklynlgo.bmp", "1dfb703349a46f8ec183de107992b7f5", 33118),
 		Common::ES_ESP,
 		Common::kPlatformWindows,
-		ADGF_UNSUPPORTED,
+		ADGF_UNSTABLE,
 		GUIO1(GUIO_NOMIDI)
 	},
 	{
-		"private-eye", // Demo from the  EU release (ES)
-		"It uses different file format for the assest",
+		"private-eye", // Demo from the EU release (ES)
+		"Demo",
 		AD_ENTRY2s("pvtdemo.ex_", "048f751acd7a0f1a87b20d6dc5229210", 497152,
 		   "bklynlgo.bmp", "1dfb703349a46f8ec183de107992b7f5", 33118),
 		Common::ES_ESP,
 		Common::kPlatformWindows,
-		ADGF_DEMO | ADGF_UNSUPPORTED,
+		ADGF_DEMO | ADGF_UNSTABLE,
 		GUIO1(GUIO_NOMIDI)
 	},
 	{
 		"private-eye", // EU release (FR)
-		"It uses different file format for the assest",
+		"Demo",
 		AD_ENTRY2s("pvteye.ex_", "ae0dec43b2f54d45c8a1c93e97092141", 600576,
 		   "bklynlgo.bmp", "1dfb703349a46f8ec183de107992b7f5", 33118),
 		Common::FR_FRA,
 		Common::kPlatformWindows,
-		ADGF_UNSUPPORTED,
+		ADGF_UNSTABLE,
 		GUIO1(GUIO_NOMIDI)
 	},
 	{
@@ -139,13 +139,13 @@ static const ADGameDescription gameDescriptions[] = {
 		GUIO1(GUIO_NOMIDI)
 	},
 	{
-		"private-eye", // Demo from the EU release
+		"private-eye", // Demo from the EU release (UK)
 		"Demo",
 		AD_ENTRY2s("Private Eye Demo", "", 284129,
 		   "bklynlgo.bmp", "1dfb703349a46f8ec183de107992b7f5", 33118),
 		Common::EN_GRB,
 		Common::kPlatformWindows,
-		ADGF_DEMO | ADGF_UNSUPPORTED,
+		ADGF_DEMO | ADGF_UNSTABLE,
 		GUIO1(GUIO_NOMIDI)
 	},
 	/*

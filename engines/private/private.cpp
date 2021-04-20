@@ -39,6 +39,7 @@
 #include "private/private.h"
 #include "private/tokens.h"
 #include "private/grammar.h"
+#include "private/decompiler.h"
 
 namespace Private {
 
@@ -122,32 +123,43 @@ void PrivateEngine::initializePath(const Common::FSNode &gamePath) {
 
 Common::Error PrivateEngine::run() {
 
-	assert(_installerArchive.open("SUPPORT/ASSETS.Z"));
+	Common::File *test = new Common::File();
 	Common::SeekableReadStream *file = NULL;
-	// if the full game is used
-	if (!isDemo()) {
-		assert(_installerArchive.hasFile("GAME.DAT"));
-		file = _installerArchive.createReadStreamForMember("GAME.DAT");
-	} else {
-		// if the demo from archive.org is used
-		if (_installerArchive.hasFile("GAME.TXT"))
-			file = _installerArchive.createReadStreamForMember("GAME.TXT");
 
-		// if the demo from the full retail CDROM is used
-		else if (_installerArchive.hasFile("DEMOGAME.DAT"))
-				file = _installerArchive.createReadStreamForMember("DEMOGAME.DAT");
-		else {
-			Common::File *f = new Common::File();
-			f->open("SUPPORT/GAME.DUMP");
-			file = f;
+	if (isDemo() && test->open("SUPPORT/ASSETS/DEMOGAME.WIN")) {
+		file = (Common::SeekableReadStream *) test;
+	} else {
+
+		assert(_installerArchive.open("SUPPORT/ASSETS.Z"));
+		// if the full game is used
+		if (!isDemo()) {
+			assert(_installerArchive.hasFile("GAME.DAT"));
+			file = _installerArchive.createReadStreamForMember("GAME.DAT");
+		} else {
+			// if the demo from archive.org is used
+			if (_installerArchive.hasFile("GAME.TXT"))
+				file = _installerArchive.createReadStreamForMember("GAME.TXT");
+
+			// if the demo from the full retail CDROM is used
+			else if (_installerArchive.hasFile("DEMOGAME.DAT"))
+					file = _installerArchive.createReadStreamForMember("DEMOGAME.DAT");
+			else {
+				debug("unknown version");
+			}
 		}
 	}	
 	// Read assets file
 	assert(file != NULL);
-	const int32 fileSize = file->size();
+	const uint32 fileSize = file->size();
 	char *buf = (char *)malloc(fileSize + 1);
 	file->read(buf, fileSize);
 	buf[fileSize] = '\0';
+
+	Decompiler decomp(buf, fileSize, false);
+	free(buf);
+
+	buf = (char*) decomp.getResult().c_str();
+	debug("%s", buf);
 
 	// Initialize stuff
 	Gen::g_vm = new Gen::VM();
@@ -155,7 +167,6 @@ Common::Error PrivateEngine::run() {
 
 	initFuncs();
 	parse(buf);
-	free(buf);
 	delete file;
 	assert(maps.constants.size() > 0);
 
