@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-04-20 15:48+0000\n"
-"PO-Revision-Date: 2021-04-20 19:28+0000\n"
+"PO-Revision-Date: 2021-04-20 20:19+0000\n"
 "Last-Translator: Xiao Zheng <welcometoromezx@hotmail.com>\n"
 "Language-Team: Chinese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/zh/>\n"
@@ -368,18 +368,16 @@ msgstr "覆盖全局着色器设置"
 
 #: gui/editgamedialog.cpp:317 gui/options.cpp:1889
 msgid "MT-32"
-msgstr ""
+msgstr "MT-32"
 
 #: gui/editgamedialog.cpp:320
-#, fuzzy
 msgid "Override global MT-32 settings"
-msgstr "覆盖全局着色器设置"
+msgstr "覆盖全局 MT-32 设置"
 
 #: gui/editgamedialog.cpp:322
-#, fuzzy
 msgctxt "lowres"
 msgid "Override global MT-32 settings"
-msgstr "覆盖全局着色器设置"
+msgstr "覆盖全局 MT-32 设置"
 
 #: gui/editgamedialog.cpp:331 gui/options.cpp:1896
 msgid "Paths"
@@ -455,50 +453,50 @@ msgstr "选择 SoundFont"
 
 #: gui/editgamedialog.cpp:596
 msgid "Select additional game directory"
-msgstr ""
+msgstr "选择附加游戏目录"
 
 #: gui/editgamedialog.cpp:609 gui/options.cpp:2551
 msgid "Select directory for saved games"
-msgstr ""
+msgstr "选择游戏存档目录"
 
 #: gui/editgamedialog.cpp:615
 msgid ""
 "Saved games sync feature doesn't work with non-default directories. If you "
 "want your saved games to sync, use default directory."
-msgstr ""
+msgstr "游戏存档同步功能无法同步非默认的目录。如果你想同步存档，请使用默认目录。"
 
 #: gui/editgamedialog.cpp:641
 msgid "This game ID is already taken. Please choose another one."
-msgstr ""
+msgstr "这个游戏 ID 已被使用，请换一个。"
 
 #: gui/editrecorddialog.cpp:58
 msgid "Author:"
-msgstr ""
+msgstr "作者："
 
 #: gui/editrecorddialog.cpp:60
 msgid "Notes:"
-msgstr ""
+msgstr "说明："
 
 #: gui/editrecorddialog.cpp:68 gui/predictivedialog.cpp:70
 #: engines/nancy/dialogs.cpp:102
 msgid "Ok"
-msgstr ""
+msgstr "确认"
 
 #: gui/filebrowser-dialog.cpp:50
 msgid "Choose file for loading"
-msgstr ""
+msgstr "选择要载入的文件"
 
 #: gui/filebrowser-dialog.cpp:50
 msgid "Enter filename for saving"
-msgstr ""
+msgstr "输入存档文件名"
 
 #: gui/filebrowser-dialog.cpp:133
 msgid "Do you really want to overwrite the file?"
-msgstr ""
+msgstr "你确定要覆盖文件吗？"
 
 #: gui/fluidsynth-dialog.cpp:69
 msgid "Reverb"
-msgstr ""
+msgstr "混响效果"
 
 #: gui/fluidsynth-dialog.cpp:71 gui/fluidsynth-dialog.cpp:103
 msgid "Active"
@@ -576,32 +574,32 @@ msgstr ""
 #. I18N: Button to reset keymap mappings to defaults
 #: gui/fluidsynth-dialog.cpp:151 backends/keymapper/remap-widget.cpp:319
 msgid "Reset"
-msgstr ""
+msgstr "重置"
 
 #: gui/fluidsynth-dialog.cpp:151
 msgid "Reset all FluidSynth settings to their default values."
-msgstr ""
+msgstr "将所有 FluidSynth 设置重置为默认值。"
 
 #: gui/fluidsynth-dialog.cpp:218
 msgid ""
 "Do you really want to reset all FluidSynth settings to their default values?"
-msgstr ""
+msgstr "你确定要重置所有 FluidSynth 设置到默认值吗？"
 
 #: gui/gui-manager.cpp:151
 msgid "GUI"
-msgstr ""
+msgstr "图形界面"
 
 #: gui/gui-manager.cpp:155 engines/mohawk/myst.cpp:570
 #: engines/mohawk/riven.cpp:840
 msgid "Interact"
-msgstr ""
+msgstr "互动"
 
 #: gui/gui-manager.cpp:160 gui/unknown-game-dialog.cpp:54
 #: engines/nancy/dialogs.cpp:314 engines/scumm/help.cpp:125
 #: engines/scumm/help.cpp:140 engines/scumm/help.cpp:165
 #: engines/scumm/help.cpp:191 engines/scumm/help.cpp:209
 msgid "Close"
-msgstr ""
+msgstr "关闭"
 
 #: gui/gui-manager.cpp:166 engines/metaengine.cpp:108
 #: engines/dragons/metaengine.cpp:163 engines/glk/scott/scott.cpp:412
@@ -612,7 +610,7 @@ msgstr ""
 #: engines/wintermute/keymapper_tables.h:1480
 #: engines/wintermute/keymapper_tables.h:1710
 msgid "Up"
-msgstr ""
+msgstr "向上"
 
 #: gui/gui-manager.cpp:171 engines/metaengine.cpp:113
 #: engines/dragons/metaengine.cpp:169 engines/glk/scott/scott.cpp:412
@@ -623,7 +621,7 @@ msgstr ""
 #: engines/wintermute/keymapper_tables.h:1486
 #: engines/wintermute/keymapper_tables.h:1716
 msgid "Down"
-msgstr ""
+msgstr "向下"
 
 #: gui/gui-manager.cpp:176 engines/metaengine.cpp:118
 #: engines/dragons/metaengine.cpp:175 engines/griffon/metaengine.cpp:108
@@ -634,7 +632,7 @@ msgstr ""
 #: engines/wintermute/keymapper_tables.h:1576
 #: engines/wintermute/keymapper_tables.h:1698
 msgid "Left"
-msgstr ""
+msgstr "向左"
 
 #: gui/gui-manager.cpp:181 engines/metaengine.cpp:123
 #: engines/dragons/metaengine.cpp:181 engines/griffon/metaengine.cpp:114
@@ -645,7 +643,7 @@ msgstr ""
 #: engines/wintermute/keymapper_tables.h:1584
 #: engines/wintermute/keymapper_tables.h:1704
 msgid "Right"
-msgstr ""
+msgstr "向右"
 
 #: gui/gui-manager.cpp:186 engines/pegasus/pegasus.cpp:2807
 #: engines/wintermute/keymapper_tables.h:304
@@ -669,39 +667,39 @@ msgstr "退出(Q)"
 
 #: gui/launcher.cpp:140 backends/platform/sdl/macosx/appmenu_osx.mm:215
 msgid "Quit ScummVM"
-msgstr ""
+msgstr "退出 ScummVM"
 
 #: gui/launcher.cpp:141
 msgid "A~b~out..."
-msgstr "關於(b)..."
+msgstr "关于(B)..."
 
 #: gui/launcher.cpp:141 backends/platform/sdl/macosx/appmenu_osx.mm:209
 msgid "About ScummVM"
-msgstr ""
+msgstr "关于 ScummVM"
 
 #: gui/launcher.cpp:142
 msgid "~O~ptions..."
-msgstr "選項(O)..."
+msgstr "选项(O)..."
 
 #: gui/launcher.cpp:142
 msgid "Change global ScummVM options"
-msgstr ""
+msgstr "修改全局 ScummVM 设置"
 
 #: gui/launcher.cpp:144
 msgid "~S~tart"
-msgstr "開始(S)"
+msgstr "开始游戏(S)"
 
 #: gui/launcher.cpp:144
 msgid "Start selected game"
-msgstr ""
+msgstr "开始选定的游戏"
 
 #: gui/launcher.cpp:147
 msgid "~L~oad..."
-msgstr "加載遊戲(L)..."
+msgstr "载入游戏(L)..."
 
 #: gui/launcher.cpp:147
 msgid "Load saved game for selected game"
-msgstr ""
+msgstr "为选定的游戏载入存档"
 
 #: gui/launcher.cpp:149
 msgid "Record..."
@@ -709,11 +707,11 @@ msgstr ""
 
 #: gui/launcher.cpp:156
 msgid "~A~dd Game..."
-msgstr "添加遊戲(A)..."
+msgstr "添加游戏(A)..."
 
 #: gui/launcher.cpp:156 gui/launcher.cpp:166
 msgid "Add games to the list"
-msgstr ""
+msgstr "添加一个游戏到列表"
 
 #: gui/launcher.cpp:157
 msgid "Mass Add..."
@@ -721,25 +719,24 @@ msgstr ""
 
 #: gui/launcher.cpp:161
 msgid "~E~dit Game..."
-msgstr "編輯遊戲(E)..."
+msgstr "编辑游戏(E)..."
 
 #: gui/launcher.cpp:161 gui/launcher.cpp:171
 msgid "Change game options"
-msgstr ""
+msgstr "改变游戏设置"
 
 #: gui/launcher.cpp:163
 msgid "~R~emove Game"
-msgstr "刪除遊戲(R)"
+msgstr "删除游戏(R)"
 
 #: gui/launcher.cpp:163 gui/launcher.cpp:173
 msgid "Remove game from the list. The game data files stay intact"
-msgstr ""
+msgstr "从列表中移除游戏，但游戏数据文件会保留"
 
 #: gui/launcher.cpp:166
-#, fuzzy
 msgctxt "lowres"
 msgid "~A~dd Game..."
-msgstr "添加遊戲(A)..."
+msgstr "添加游戏(A)..."
 
 #: gui/launcher.cpp:167
 msgctxt "lowres"
@@ -760,18 +757,18 @@ msgstr "刪除遊戲(R)"
 
 #: gui/launcher.cpp:181
 msgid "Search in game list"
-msgstr ""
+msgstr "在游戏列表中搜索"
 
 #: gui/launcher.cpp:185 gui/launcher.cpp:779
 msgid "Search:"
-msgstr ""
+msgstr "搜索："
 
 #: gui/launcher.cpp:210 engines/dialogs.cpp:98 engines/engine.cpp:803
 #: engines/buried/saveload.cpp:515 engines/pegasus/pegasus.cpp:384
 #: engines/tsage/scenes.cpp:631 engines/wage/saveload.cpp:742
 #: engines/xeen/saves.cpp:256
 msgid "Load game:"
-msgstr ""
+msgstr "载入游戏："
 
 #: gui/launcher.cpp:210 engines/dialogs.cpp:98 engines/engine.cpp:803
 #: engines/buried/saveload.cpp:515 engines/parallaction/metaengine.cpp:118
@@ -779,53 +776,53 @@ msgstr ""
 #: engines/scumm/dialogs.cpp:178 engines/tsage/scenes.cpp:631
 #: engines/wage/saveload.cpp:742 engines/xeen/saves.cpp:256
 msgid "Load"
-msgstr ""
+msgstr "载入"
 
 #: gui/launcher.cpp:378
 msgid "This directory cannot be used yet, it is being downloaded into!"
-msgstr ""
+msgstr "这个目录还不能使用，文件正在下载中！"
 
 #: gui/launcher.cpp:389
 msgid ""
 "Do you really want to run the mass game detector? This could potentially add "
 "a huge number of games."
-msgstr ""
+msgstr "你确定要进行全盘扫描吗？这可能会添加大量的游戏。"
 
 #: gui/launcher.cpp:411
 msgid "Do you really want to remove this game configuration?"
-msgstr ""
+msgstr "你确定要删除这个游戏设定吗？"
 
 #: gui/launcher.cpp:453
 msgid "Do you want to load saved game?"
-msgstr ""
+msgstr "你要载入存档吗？"
 
 #: gui/launcher.cpp:510
 msgid "This game does not support loading games from the launcher."
-msgstr ""
+msgstr "这个游戏不支持直接从启动器载入存档。"
 
 #: gui/launcher.cpp:514
 msgid "ScummVM could not find any engine capable of running the selected game!"
-msgstr ""
+msgstr "ScummVM 找不到任何能运行这个游戏的引擎！"
 
 #: gui/launcher.cpp:579
 msgid "ScummVM could not find any game in the specified directory!"
-msgstr ""
+msgstr "ScummVM 在指定目录找不到任何游戏！"
 
 #: gui/launcher.cpp:594
 msgid "Unknown variant"
-msgstr ""
+msgstr "未知变量"
 
 #: gui/launcher.cpp:600
 msgid "Pick the game:"
-msgstr ""
+msgstr "选择游戏："
 
 #: gui/massadd.cpp:76 gui/massadd.cpp:79
 msgid "... progress ..."
-msgstr ""
+msgstr "...扫描中..."
 
 #: gui/massadd.cpp:257
 msgid "Scan complete!"
-msgstr ""
+msgstr "扫描完成！"
 
 #: gui/massadd.cpp:260
 #, c-format
@@ -835,7 +832,7 @@ msgstr ""
 #: gui/massadd.cpp:264
 #, c-format
 msgid "Scanned %d directories ..."
-msgstr ""
+msgstr "扫描了 %d 目录..."
 
 #: gui/massadd.cpp:267
 #, c-format
@@ -844,11 +841,11 @@ msgstr ""
 
 #: gui/message.cpp:148 gui/message.cpp:152 gui/options.cpp:2258
 msgid "Open URL"
-msgstr ""
+msgstr "打开链接"
 
 #: gui/onscreendialog.cpp:101 gui/onscreendialog.cpp:103
 msgid "Stop"
-msgstr ""
+msgstr "停止"
 
 #: gui/onscreendialog.cpp:106
 msgid "Edit record description"
@@ -861,7 +858,7 @@ msgstr "編輯遊戲(E)..."
 
 #: gui/onscreendialog.cpp:110
 msgid "Fast replay"
-msgstr ""
+msgstr "快速回放"
 
 #: gui/options.cpp:130 common/updates.cpp:56
 msgid "Never"
@@ -907,39 +904,39 @@ msgstr ""
 #: gui/options.cpp:1066 gui/options.cpp:1459
 msgctxt "soundfont"
 msgid "None"
-msgstr ""
+msgstr "无"
 
 #: gui/options.cpp:676
 msgid "Failed to apply some of the graphic options changes:"
-msgstr ""
+msgstr "部分画面选项改动失败："
 
 #: gui/options.cpp:688
 msgid "the video mode could not be changed"
-msgstr ""
+msgstr "无法更改视频模式"
 
 #: gui/options.cpp:701
 msgid "the stretch mode could not be changed"
-msgstr ""
+msgstr "无法更改拉伸模式"
 
 #: gui/options.cpp:707
 msgid "the aspect ratio setting could not be changed"
-msgstr ""
+msgstr "无法更改画面比例"
 
 #: gui/options.cpp:713
 msgid "the fullscreen setting could not be changed"
-msgstr ""
+msgstr "无法更改全屏设定"
 
 #: gui/options.cpp:719
 msgid "the filtering setting could not be changed"
-msgstr ""
+msgstr "无法更改滤镜设定"
 
 #: gui/options.cpp:1145
 msgid "Show On-screen control"
-msgstr ""
+msgstr "显示屏幕中控制"
 
 #: gui/options.cpp:1149
 msgid "Touchpad mouse mode"
-msgstr ""
+msgstr "触摸板鼠标模式"
 
 #: gui/options.cpp:1153
 msgid "Swap Menu and Back buttons"
