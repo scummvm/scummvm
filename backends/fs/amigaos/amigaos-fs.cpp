@@ -33,9 +33,7 @@
  * @param str Common::String containing the path
  * @return Pointer to the first char of the last component inside str
  */
-
 const char *lastPathComponent(const Common::String &str) {
-
 	int offset = str.size();
 
 	if (offset <= 0) {
@@ -82,22 +80,18 @@ AmigaOSFilesystemNode::AmigaOSFilesystemNode(const Common::String &p) {
 
 	// Check whether the node exists and if it's a directory
 	struct ExamineData * pExd = IDOS->ExamineObjectTags(EX_StringNameInput,_sPath.c_str(),TAG_END);
-
 	if (pExd) {
-
 		_nProt = pExd->Protection;
-
 		if (EXD_IS_DIRECTORY(pExd)) {
-
 			_bIsDirectory = true;
 			_pFileLock = IDOS->Lock((CONST_STRPTR)_sPath.c_str(), SHARED_LOCK);
 			_bIsValid = (_pFileLock != 0);
+
 			// Add a trailing slash, if needed
 			const char c = _sPath.lastChar();
 			if (c != '/' && c != ':')
 				_sPath += '/';
 		} else {
-			_bIsDirectory = false;
 			_bIsValid = true;
 		}
 
@@ -113,7 +107,6 @@ AmigaOSFilesystemNode::AmigaOSFilesystemNode(BPTR pLock, const char *pDisplayNam
 	while (true) {
 		char *n = new char[bufSize];
 		if (IDOS->NameFromLock(pLock, (STRPTR)n, bufSize) != DOSFALSE) {
-
 			_sPath = n;
 			_sDisplayName = pDisplayName ? pDisplayName : IDOS->FilePart((STRPTR)n);
 			delete[] n;
@@ -121,7 +114,6 @@ AmigaOSFilesystemNode::AmigaOSFilesystemNode(BPTR pLock, const char *pDisplayNam
 		}
 
 		if (IDOS->IoErr() != ERROR_LINE_TOO_LONG) {
-
 			_bIsValid = false;
 			debug(6, "IDOS->IoErr() failed -> ERROR_LINE_TOO_LONG not matched!");
 			delete[] n;
@@ -137,13 +129,9 @@ AmigaOSFilesystemNode::AmigaOSFilesystemNode(BPTR pLock, const char *pDisplayNam
 
 	// Check whether the node exists and if it's a directory
 	struct ExamineData * pExd = IDOS->ExamineObjectTags(EX_FileLockInput,pLock,TAG_END);
-
 	if (pExd) {
-
 		_nProt = pExd->Protection;
-
 		if (EXD_IS_DIRECTORY(pExd)) {
-
 			_bIsDirectory = true;
 			_pFileLock = IDOS->DupLock(pLock);
 			_bIsValid = _pFileLock != 0;
@@ -156,10 +144,8 @@ AmigaOSFilesystemNode::AmigaOSFilesystemNode(BPTR pLock, const char *pDisplayNam
 			_bIsValid = true;
 		}
 
-	IDOS->FreeDosObject(DOS_EXAMINEDATA, pExd);
-
+		IDOS->FreeDosObject(DOS_EXAMINEDATA, pExd);
 	} else {
-
 		debug(6, "IDOS->ExamineObjectTags() failed -> ExamineDosObject returned NULL!");
 	}
 }
@@ -211,6 +197,7 @@ AbstractFSNode *AmigaOSFilesystemNode::getChild(const Common::String &n) const {
 		newPath += '/';
 
 	newPath += n;
+
 	return new AmigaOSFilesystemNode(newPath);
 }
 
@@ -236,25 +223,21 @@ bool AmigaOSFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, b
 							EX_DoCurrentDir,	TRUE, /* for softlinks */
 							EX_DataFields,	(EXF_NAME|EXF_LINK|EXF_TYPE),
 							TAG_END);
-
 	if (context) {
-
 		// No need to free the value after usage, everything will be dealt with by the
 		// DirContext release
 		struct ExamineData * pExd = NULL;
 
 		AmigaOSFilesystemNode *entry;
-
 		while ((pExd = IDOS->ExamineDir(context))) {
 			if ((EXD_IS_FILE(pExd) && (Common::FSNode::kListFilesOnly == mode))
 			|| (EXD_IS_DIRECTORY(pExd) && (Common::FSNode::kListDirectoriesOnly == mode))
-			|| Common::FSNode::kListAll == mode)
+			|| Common::FSNode::kListAll == mode
+			)
 			{
 				BPTR pLock = IDOS->Lock( pExd->Name, SHARED_LOCK );
-
 				if (pLock) {
 					entry = new AmigaOSFilesystemNode( pLock, pExd->Name );
-
 					if (entry) {
 						myList.push_back(entry);
 					}
@@ -296,7 +279,6 @@ AbstractFSNode *AmigaOSFilesystemNode::getParent() const {
 	AmigaOSFilesystemNode *node;
 
 	BPTR parentDir = IDOS->ParentDir( pLock );
-
 	if (parentDir) {
 		node = new AmigaOSFilesystemNode(parentDir);
 		IDOS->UnLock(parentDir);
@@ -308,11 +290,9 @@ AbstractFSNode *AmigaOSFilesystemNode::getParent() const {
 	}
 
 	return node;
-
 }
 
 bool AmigaOSFilesystemNode::isReadable() const {
-
 	if (!_bIsValid)
 		return false;
 
@@ -320,11 +300,11 @@ bool AmigaOSFilesystemNode::isReadable() const {
 	// thus the negation. Moreover, a pseudo root filesystem is
 	// always readable, whatever the protection says
 	bool readable = !(_nProt & EXDF_OTR_READ) || isRootNode();
+
 	return readable;
 }
 
 bool AmigaOSFilesystemNode::isWritable() const {
-
 	if (!_bIsValid)
 		return false;
 
@@ -332,24 +312,24 @@ bool AmigaOSFilesystemNode::isWritable() const {
 	// thus the negation. Moreover, a pseudo root filesystem is
 	// never writable (due of it's pseudo nature), whatever the protection says
 	bool writable = !(_nProt & EXDF_OTR_WRITE) && !isRootNode();
+
 	return writable;
 }
 
 AbstractFSList AmigaOSFilesystemNode::listVolumes() const {
 
 	AbstractFSList myList;
+
 	const uint32 kLockFlags = LDF_READ | LDF_VOLUMES;
 	char buffer[MAXPATHLEN];
 
 	struct DosList *dosList = IDOS->LockDosList(kLockFlags);
-
 	if (!dosList) {
 		debug(6, "IDOS->LockDOSList() failed!");
 		return myList;
 	}
 
 	dosList = IDOS->NextDosEntry(dosList, LDF_VOLUMES);
-
 	while (dosList) {
 		if (dosList->dol_Type == DLT_VOLUME &&
 			dosList->dol_Name &&
@@ -362,17 +342,21 @@ AbstractFSList AmigaOSFilesystemNode::listVolumes() const {
 			char *volName = new char [strlen(buffer) + 1];
 
 			strcpy(volName, buffer);
+
 			strcat(buffer, ":");
 
 			BPTR volumeLock = IDOS->Lock((STRPTR)buffer, SHARED_LOCK);
-
 			if (volumeLock) {
+
 				char *devName = new char [MAXPATHLEN];
 
 				// Find device name
 				IDOS->DevNameFromLock(volumeLock, devName, MAXPATHLEN, DN_DEVICEONLY);
+
 				snprintf(buffer, MAXPATHLEN, "%s (%s)", volName, devName);
+
 				delete[] devName;
+
 				AmigaOSFilesystemNode *entry = new AmigaOSFilesystemNode(volumeLock, buffer);
 				if (entry) {
 					myList.push_back(entry);
@@ -380,6 +364,7 @@ AbstractFSList AmigaOSFilesystemNode::listVolumes() const {
 
 				IDOS->UnLock(volumeLock);
 			}
+
 			delete[] volName;
 		}
 		dosList = IDOS->NextDosEntry(dosList, LDF_VOLUMES);
