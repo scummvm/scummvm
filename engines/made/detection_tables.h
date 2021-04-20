@@ -325,6 +325,24 @@ static const MadeGameDescription gameDescriptions[] = {
 	},
 
 	{
+		// Return to Zork - Demo from Zork Anthology CD
+		// Bugreport #11202
+		{
+			"rtz",
+			"Demo",
+			AD_ENTRY1s("rtzcd.red", "946997d8b0aa6cb4e848bad02a1fc3d2", 130683),
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_DEMO,
+			GUIO0()
+		},
+		GID_RTZ,
+		0,
+		GF_DEMO,
+		3,
+	},
+
+	{
 		// Return to Zork - Japanese DOS
 		// This is the RTZCD.DAT in the base directory of the FM-Towns CD
 		{
