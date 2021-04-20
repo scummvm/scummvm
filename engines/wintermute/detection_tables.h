@@ -665,6 +665,18 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("carolreed14", "HD",
 		WME_ENTRY1s("data.dcp", "38c9088dca07c9623562e8efdea4c856", 1256960150), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
 
+	// Carol Reed 14 - The Fall Of April (SD) (MDNA Games)
+	WME_WINENTRY("carolreed14", "SD",
+		WME_ENTRY1s("data.dcp", "718195ae82d0989f91da93518a699c1c", 752801480), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
+
+	// Carol Reed 14 - The Fall Of April (HD) (MDNA Games)
+	WME_WINENTRY("carolreed14", "HD",
+		WME_ENTRY1s("data.dcp", "4d949fbca9b7de9f3b5eb94ae618eff6", 1256960467), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
+
+	// Carol Reed 14 - The Fall Of April (SD) (MDNA Games)
+	WME_WINENTRY("carolreed14", "SD",
+		WME_ENTRY1s("data.dcp", "6fca41944257b7532f4195187584507c", 752801794), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
+
 	// Carol Reed 14 - The Fall Of April (HD) (Russian)
 	WME_WINENTRY("carolreed14", "HD",
 		WME_ENTRY1s("data.dcp", "59784da3fe0d8b016394ad0554eecef4", 1251855682), Common::RU_RUS, ADGF_UNSTABLE, WME_1_9_3),
