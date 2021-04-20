@@ -50,8 +50,8 @@ extern struct SSortTable SortTable[];
 /*                                  VARIE           					   */
 /*-------------------------------------------------------------------------*/
 extern uint32 TheTime;
-extern uint32 CharacterSpeakTime;
-extern uint32 SomeOneSpeakTime;
+extern uint32 _characterSpeakTime;
+extern uint32 _someoneSpeakTime;
 
 /*-------------------------------------------------------------------------*/
 /*                                 DIALOGHI           					   */

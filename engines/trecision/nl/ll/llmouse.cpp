@@ -20,6 +20,8 @@
  *
  */
 
+#include <cstring>
+
 #include "common/scummsys.h"
 #include "common/translation.h"
 #include "common/config-manager.h"
@@ -42,22 +44,6 @@
 namespace Trecision {
 
 uint16 BlinkLastDTextChar = MASKCOL;
-
-/*-----------------17/02/95 09.53-------------------
- TextLength - Compute string length from character 0 to num
---------------------------------------------------*/
-uint16 TextLength(const char *text, uint16 num) {
-	if (text == nullptr)
-		return 0;
-
-	uint16 len = (num == 0) ? strlen(text) : num;
-
-	uint16 retVal = 0;
-	for (uint16 c = 0; c < len; c++)
-		retVal += g_vm->_font[(uint8)text[c] * 3 + 2];
-
-	return retVal;
-}
 
 void SDText::set(SDText org) {
 	set(org.x, org.y, org.dx, org.dy, org._subtitleRect.left, org._subtitleRect.top, org._subtitleRect.right, org._subtitleRect.bottom, org.tcol, org.scol, org.text);
@@ -88,7 +74,7 @@ uint16 SDText::checkDText() {
 		return 0;
 
 	uint8 curLine = 0;
-	if (TextLength(text, 0) <= dx) {
+	if (g_vm->TextLength(text, 0) <= dx) {
 		strcpy((char *)DTextLines[curLine], text);
 		return CARHEI;
 	}
@@ -101,9 +87,9 @@ uint16 SDText::checkDText() {
 	while (a < strlen(text)) {
 		a++;
 		if (text[a] == ' ') {
-			if (TextLength(text + curInit, a - curInit) <= dx)
+			if (g_vm->TextLength(text + curInit, a - curInit) <= dx)
 				lastSpace = a;
-			else if (TextLength(text + curInit, lastSpace - curInit) <= dx) {
+			else if (g_vm->TextLength(text + curInit, lastSpace - curInit) <= dx) {
 				uint16 b;
 				for (b = curInit; b < lastSpace; b++)
 					DTextLines[curLine][b - curInit] = text[b];
@@ -118,7 +104,7 @@ uint16 SDText::checkDText() {
 			} else
 				return 0;
 		} else if (text[a] == '\0') {
-			if (TextLength(text + curInit, a - curInit) <= dx) {
+			if (g_vm->TextLength(text + curInit, a - curInit) <= dx) {
 				uint16 b;
 				for (b = curInit; b < a; b++)
 					DTextLines[curLine][b - curInit] = text[b];
@@ -129,7 +115,7 @@ uint16 SDText::checkDText() {
 				return tmpDy;
 			}
 
-			if (TextLength(text + curInit, lastSpace - curInit) <= dx) {
+			if (g_vm->TextLength(text + curInit, lastSpace - curInit) <= dx) {
 				uint16 b;
 				for (b = curInit; b < lastSpace; b++)
 					DTextLines[curLine][b - curInit] = text[b];
@@ -173,17 +159,17 @@ void SDText::DText(uint16 *frameBuffer) {
 	uint16 curDy = checkDText();
 
 	for (uint16 b = 0; b < (curDy / CARHEI); b++) {
-		char *text = (char *)DTextLines[b];
-		uint16 inc = (dx - TextLength(text, 0)) / 2;
-		uint16 len = strlen(text);
+		char *curText = (char *)DTextLines[b];
+		uint16 inc = (dx - g_vm->TextLength(curText, 0)) / 2;
+		uint16 len = strlen(curText);
 
 		if (len >= MAXCHARS) {
-			strcpy(text, g_vm->_sysText[kMessageError]);
-			len = strlen(text);
+			strcpy(curText, g_vm->_sysText[kMessageError]);
+			len = strlen(curText);
 		}
 
 		for (uint16 c = 0; c < len; c++) {
-			byte curChar = text[c]; /* legge prima parte del font */
+			byte curChar = curText[c]; /* legge prima parte del font */
 
 			const uint16 charOffset = g_vm->_font[curChar * 3] + (uint16)(g_vm->_font[curChar * 3 + 1] << 8);
 			uint16 fontDataOffset = 768;
@@ -383,7 +369,7 @@ insave:
 	for (;;) {
 		g_vm->checkSystem();
 
-		GetKey();
+		g_vm->GetKey();
 
 		int16 mx = g_vm->_mouseX;
 		int16 my = g_vm->_mouseY;
@@ -400,7 +386,7 @@ insave:
 					memset(g_vm->_screenBuffer + MAXX * a, 0, MAXX * 2);
 
 				posx    = ICONMARGSX + ((CurPos) * (ICONDX)) + ICONDX / 2;
-				LenText  = TextLength(saveNames[CurPos].c_str(), 0);
+				LenText  = g_vm->TextLength(saveNames[CurPos].c_str(), 0);
 
 				posx = CLIP(posx - (LenText / 2), 2, MAXX - 2 - LenText);
 				SText.set(posx, FIRSTLINE + ICONDY + 10, LenText, CARHEI, 0, 0, LenText, CARHEI, 0x7FFF, MASKCOL, saveNames[CurPos].c_str());
@@ -442,7 +428,7 @@ insave:
 		for (;;) {
 			g_vm->_keybInput = true;
 			g_vm->checkSystem();
-			ch = GetKey();
+			ch = g_vm->GetKey();
 			FreeKey();
 
 			g_vm->_keybInput = false;
@@ -470,7 +456,7 @@ insave:
 			saveNames[CurPos] += '_';	// add blinking cursor
 			
 			posx    = ICONMARGSX + ((CurPos) * (ICONDX)) + ICONDX / 2;
-			LenText  = TextLength(saveNames[CurPos].c_str(), 0);
+			LenText  = g_vm->TextLength(saveNames[CurPos].c_str(), 0);
 
 			posx = CLIP(posx - (LenText / 2), 2, MAXX - 2 - LenText);
 			SText.set(posx, FIRSTLINE + ICONDY + 10, LenText, CARHEI, 0, 0, LenText, CARHEI, 0x7FFF, MASKCOL, saveNames[CurPos].c_str());
@@ -580,8 +566,7 @@ bool DataLoad() {
 
 	for (;;) {
 		g_vm->checkSystem();
-
-		GetKey();
+		g_vm->GetKey();
 
 		if (g_vm->_mouseY >= FIRSTLINE &&
 			g_vm->_mouseY < (FIRSTLINE + ICONDY) &&
@@ -595,7 +580,7 @@ bool DataLoad() {
 					memset(g_vm->_screenBuffer + MAXX * a, 0, MAXX * 2);
 
 				uint16 posX = ICONMARGSX + ((CurPos) * (ICONDX)) + ICONDX / 2;
-				uint16 lenText = TextLength(saveNames[CurPos].c_str(), 0);
+				uint16 lenText = g_vm->TextLength(saveNames[CurPos].c_str(), 0);
 				if (posX - (lenText / 2) < 2)
 					posX = 2;
 				else
@@ -697,7 +682,7 @@ bool QuitGame() {
 
 	g_vm->checkSystem();
 
-	char ch = waitKey();
+	char ch = g_vm->waitKey();
 
 	bool exitFl = ((ch == 'y') || (ch == 'Y'));
 
@@ -723,9 +708,7 @@ void DemoOver() {
 	g_vm->_graphicsMgr->copyToScreen(0, 0, MAXX, TOP);
 
 	FreeKey();
-
-	waitKey();
-
+	g_vm->waitKey();
 	g_vm->quitGame();
 }
 

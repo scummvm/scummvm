@@ -108,11 +108,11 @@ void TrecisionEngine::drawString() {
 /*                           redrawString		        				   */
 /*-------------------------------------------------------------------------*/
 void TrecisionEngine::redrawString() {
-	if (!_flagDialogActive && !_flagDialogMenuActive && !_flagSomeoneSpeaks && !_flagscriptactive && g_vm->isCursorVisible()) {
-		if (isInventoryArea(g_vm->_mouseY))
+	if (!_flagDialogActive && !_flagDialogMenuActive && !_flagSomeoneSpeaks && !_flagscriptactive && isCursorVisible()) {
+		if (isInventoryArea(_mouseY))
 			doEvent(MC_INVENTORY, ME_SHOWICONNAME, MP_DEFAULT, 0, 0, 0, 0);
 		else {
-			CheckMask(g_vm->_mouseX, g_vm->_mouseY);
+			CheckMask(_mouseX, _mouseY);
 			ShowObjName(_curObj, true);
 		}
 	}
@@ -124,7 +124,7 @@ void TrecisionEngine::redrawString() {
 void StackText::doText() {
 	curString.x = x;
 	curString.y = y;
-	curString.dx = TextLength(text, 0);
+	curString.dx = g_vm->TextLength(text, 0);
 	if ((y == MAXY - CARHEI) && (curString.dx > 600))
 		curString.dx = curString.dx * 3 / 5;
 	else if ((y != MAXY - CARHEI) && (curString.dx > 960))
@@ -172,5 +172,67 @@ void TrecisionEngine::setRoom(uint16 r, bool b) {
 	_logicMgr->setRoom(r, b);
 	RegenRoom();
 }
+
+/*-----------------17/02/95 09.53-------------------
+ TextLength - Compute string length from character 0 to num
+--------------------------------------------------*/
+uint16 TrecisionEngine::TextLength(const char *text, uint16 num) {
+	if (text == nullptr)
+		return 0;
+
+	uint16 len = (num == 0) ? strlen(text) : num;
+
+	uint16 retVal = 0;
+	for (uint16 c = 0; c < len; c++)
+		retVal += _font[(uint8)text[c] * 3 + 2];
+
+	return retVal;
+}
+
+/*-----------------16/01/97 20.53-------------------
+					GetKey
+--------------------------------------------------*/
+char TrecisionEngine::GetKey() {
+	Common::KeyCode key = _curKey;
+	uint16 ascii = _curAscii;
+	_curKey = Common::KEYCODE_INVALID;
+	_curAscii = 0;
+
+	switch (key) {
+	case Common::KEYCODE_SPACE:
+	case Common::KEYCODE_ESCAPE:
+	case Common::KEYCODE_RETURN:
+	case Common::KEYCODE_CLEAR:
+	case Common::KEYCODE_BACKSPACE:
+		return key;
+	case Common::KEYCODE_F1:
+	case Common::KEYCODE_F2:
+	case Common::KEYCODE_F3:
+	case Common::KEYCODE_F4:
+	case Common::KEYCODE_F5:
+	case Common::KEYCODE_F6:
+		return 0x3B + key - Common::KEYCODE_F1;
+	default:
+		if (ascii) {
+			return ascii;
+		}
+
+		return 0;
+	}
+}
+
+/*-----------------17/01/97 11.17-------------------
+					waitKey
+--------------------------------------------------*/
+char TrecisionEngine::waitKey() {
+	while (_curKey == Common::KEYCODE_INVALID)
+		checkSystem();
+
+	Common::KeyCode t = _curKey;
+	_curKey = Common::KEYCODE_INVALID;
+
+	return t;
+}
+
 
 } // End of namespace Trecision

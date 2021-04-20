@@ -105,6 +105,9 @@ public:
 	// Utils
 	char *getNextSentence();
 	void setRoom(uint16 r, bool b);
+	uint16 TextLength(const char *text, uint16 num);
+	char GetKey();
+	char waitKey();
 
 	// Text
 	void addText(uint16 x, uint16 y, const char *text, uint16 tcol, uint16 scol);

@@ -49,8 +49,8 @@ SSortTable SortTable[200];
 /*                                  VARIE           					   */
 /*-------------------------------------------------------------------------*/
 uint32 TheTime;
-uint32 CharacterSpeakTime;
-uint32 SomeOneSpeakTime;
+uint32 _characterSpeakTime;
+uint32 _someoneSpeakTime;
 
 /*-------------------------------------------------------------------------*/
 /*                                 DIALOGHI           					   */

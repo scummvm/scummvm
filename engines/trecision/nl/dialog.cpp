@@ -38,7 +38,7 @@ int16 CurPos, LastPos;
 
 void DialogPrint(int x, int y, int c, const char *txt) {
 	SDText curChoice;
-	curChoice.set(x, y, TextLength(txt, 0), 0, 0, 0, MAXX, MAXY, c, MASKCOL, txt);
+	curChoice.set(x, y, g_vm->TextLength(txt, 0), 0, 0, 0, MAXX, MAXY, c, MASKCOL, txt);
 	curChoice.DText();
 }
 
@@ -241,7 +241,10 @@ void afterChoice(int numframe) {
 		g_vm->_obj[oCHIAVI54]._mode |= OBJMODE_OBJSTATUS;
 		g_vm->_obj[od54ALLA55]._mode |= OBJMODE_OBJSTATUS;
 		break;
+	default:
+		break;
 	}
+	
 	// If the player chose to exit the dialog
 	if (g_vm->_choice[_curChoice]._flag & DLGCHOICE_EXITDLG) {
 		g_vm->_animMgr->stopFullMotion();
@@ -486,6 +489,9 @@ void afterChoice(int numframe) {
 
 		case dFCRED:
 			doEvent(MC_SYSTEM, ME_QUIT, MP_SYSTEM, 0, 0, 0, 0);
+			break;
+
+		default:
 			break;
 		}
 		return;

@@ -30,51 +30,6 @@
 
 namespace Trecision {
 
-/*-----------------16/01/97 20.53-------------------
-					GetKey
---------------------------------------------------*/
-char GetKey() {
-	Common::KeyCode key = g_vm->_curKey;
-	uint16 ascii = g_vm->_curAscii;
-	g_vm->_curKey = Common::KEYCODE_INVALID;
-	g_vm->_curAscii = 0;
-
-	switch (key) {
-	case Common::KEYCODE_SPACE:
-	case Common::KEYCODE_ESCAPE:
-	case Common::KEYCODE_RETURN:
-	case Common::KEYCODE_CLEAR:
-	case Common::KEYCODE_BACKSPACE:
-		return key;
-	case Common::KEYCODE_F1:
-	case Common::KEYCODE_F2:
-	case Common::KEYCODE_F3:
-	case Common::KEYCODE_F4:
-	case Common::KEYCODE_F5:
-	case Common::KEYCODE_F6:
-		return 0x3B + key - Common::KEYCODE_F1;
-	default:
-		if (ascii) {
-			return ascii;
-		}
-
-		return 0;
-	}
-}
-
-/*-----------------17/01/97 11.17-------------------
-					waitKey
---------------------------------------------------*/
-char waitKey() {
-	while (g_vm->_curKey == Common::KEYCODE_INVALID)
-		g_vm->checkSystem();
-
-	Common::KeyCode t = g_vm->_curKey;
-	g_vm->_curKey = Common::KEYCODE_INVALID;
-
-	return t;
-}
-
 /*-----------------17/01/97 11.18-------------------
 					FreeKey
 --------------------------------------------------*/

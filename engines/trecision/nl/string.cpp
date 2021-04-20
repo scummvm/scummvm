@@ -56,7 +56,7 @@ const char *dunno = "?";
 /*                                 PositionString           			   */
 /*-------------------------------------------------------------------------*/
 void PositionString(uint16 x, uint16 y, const char *string, uint16 *posx, uint16 *posy, bool characterFl) {
-	uint16 lenText = TextLength(string, 0);
+	uint16 lenText = g_vm->TextLength(string, 0);
 	if (lenText > 960)
 		lenText = (lenText * 2 / 5);
 	else if (lenText > 320)
@@ -118,7 +118,7 @@ void ShowObjName(uint16 obj, bool showhide) {
 		}
 
 		g_vm->_lastObj = (obj | 0x8000);
-		uint16 lenText = TextLength(locsent.c_str(), 0);
+		uint16 lenText = g_vm->TextLength(locsent.c_str(), 0);
 
 		posx = CLIP(320 - (lenText / 2), 2, MAXX - 2 - lenText);
 		posy = MAXY - CARHEI;
@@ -267,7 +267,7 @@ void CharacterTalkInAction(uint16 ss) {
 /*-------------------------------------------------------------------------*/
 void CharacterContinueTalk() {
 	g_vm->_flagSkipTalk = false;
-	CharacterSpeakTime = TheTime;
+	_characterSpeakTime = TheTime;
 
 	substringagain = (CurSubString < (SubStringUsed - 1));
 
@@ -304,7 +304,7 @@ void CharacterMute() {
 	g_vm->_flagSomeoneSpeaks = false;
 	g_vm->_flagCharacterSpeak = false;
 	g_vm->_flagSkipTalk = false;
-	CharacterSpeakTime = 0L;
+	_characterSpeakTime = 0L;
 
 	g_vm->clearText();
 	g_vm->_lastObj = 0;
@@ -348,7 +348,7 @@ void SomeoneTalk(uint16 s, uint16 Person, uint16 NewAnim, bool FromSomeOneSay) {
 void SomeoneContinueTalk() {
 	uint16 posx, posy;
 
-	SomeOneSpeakTime = TheTime;
+	_someoneSpeakTime = TheTime;
 	g_vm->_flagSkipTalk = false;
 
 	substringagain = (CurSubString < (SubStringUsed - 1));
@@ -376,13 +376,13 @@ void SomeoneContinueTalk() {
 }
 
 /*-------------------------------------------------------------------------*/
-/*                                SomeOneMute                 			   */
+/*                                someoneMute                 			   */
 /*-------------------------------------------------------------------------*/
-void SomeOneMute() {
+void someoneMute() {
 	g_vm->_flagCharacterSpeak = false;
 	g_vm->_flagSkipTalk = false;
 	g_vm->_flagSomeoneSpeaks = false;
-	SomeOneSpeakTime = 0L;
+	_someoneSpeakTime = 0;
 
 	g_vm->clearText();
 	g_vm->_lastObj = 0;
@@ -403,7 +403,7 @@ void doString() {
 
 	case ME_CHARACTERSPEAKING:
 		if (g_vm->_flagCharacterSpeak) {
-			if (g_vm->_flagSkipTalk || (TheTime > TalkTime + CharacterSpeakTime)) {
+			if (g_vm->_flagSkipTalk || (TheTime > TalkTime + _characterSpeakTime)) {
 				if (substringagain)
 					CharacterContinueTalk();
 				else
@@ -422,14 +422,14 @@ void doString() {
 
 	case ME_SOMEONEWAIT2MUTE:
 		if (!g_vm->_curMessage->_u16Param1)
-			SomeOneMute();
+			someoneMute();
 		else
 			REEVENT;
 		break;
 
 	case ME_SOMEONESPEAKING:
 		if (g_vm->_flagSomeoneSpeaks) {
-			if (g_vm->_flagSkipTalk || (TheTime >= (TalkTime + SomeOneSpeakTime))) {
+			if (g_vm->_flagSkipTalk || (TheTime >= (TalkTime + _someoneSpeakTime))) {
 				if (substringagain)
 					SomeoneContinueTalk();
 				else {

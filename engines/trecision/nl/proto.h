@@ -88,9 +88,8 @@ void CharacterContinueTalk();
 void CharacterMute();
 void SomeoneTalk(uint16 s, uint16 Person, uint16 NewAnim, bool FromSomeOneSay);
 void SomeoneContinueTalk();
-void SomeOneMute();
+void someoneMute();
 void doString();
-char GetKey();
 void soundtimefunct();
 
 #endif
