@@ -220,21 +220,21 @@ void afterChoice(int numframe) {
 	case dF4A3:
 		g_vm->_obj[oCHOCOLATES4A]._examine = 1105;
 		g_vm->_obj[oCHOCOLATES4A]._action = 1106;
-		g_vm->_obj[oPORTAC4A]._action = 1118;
+		g_vm->_obj[oDOORC4A]._action = 1118;
 		g_vm->_animMgr->_animTab[aBKG4A]._flag |= SMKANIM_OFF1;
 		g_vm->_obj[ocHELLEN4A]._mode &= ~OBJMODE_OBJSTATUS;
 		g_vm->_obj[oHELLENA4A]._mode |= OBJMODE_OBJSTATUS;
 		break;
 
 	case dC581:
-		g_vm->_obj[oFINESTRAB58]._mode |= OBJMODE_OBJSTATUS;
+		g_vm->_obj[oWINDOWB58]._mode |= OBJMODE_OBJSTATUS;
 		if (_curChoice == 262)
 			g_vm->_obj[oTASTIERA56]._examine = 1307;
 		break;
 
 	case dF542:
 		g_vm->_obj[oGRATAC54]._mode &= ~OBJMODE_OBJSTATUS;
-		g_vm->_obj[oPORTAC54]._mode &= ~OBJMODE_OBJSTATUS;
+		g_vm->_obj[oDOORC54]._mode &= ~OBJMODE_OBJSTATUS;
 		g_vm->_obj[oLAVATRICEL54]._mode &= ~OBJMODE_OBJSTATUS;
 		g_vm->_obj[oLAVATRICEF54]._mode &= ~OBJMODE_OBJSTATUS;
 		g_vm->_obj[oGRATAA54]._mode |= OBJMODE_OBJSTATUS;
@@ -273,8 +273,8 @@ void afterChoice(int numframe) {
 			break;
 
 		case dEVA19:
-			g_vm->_obj[oPORTAC18]._flag &= ~kObjFlagRoomOut;
-			g_vm->_obj[oPORTAC18]._action = 221;
+			g_vm->_obj[oDOORC18]._flag &= ~kObjFlagRoomOut;
+			g_vm->_obj[oDOORC18]._action = 221;
 			g_vm->_obj[ocEVA19]._action = 1999;
 			g_vm->_obj[ocEVA19]._flag &= ~kObjFlagPerson;
 			break;
@@ -282,21 +282,21 @@ void afterChoice(int numframe) {
 		case dSHOPKEEPER1A:
 			if (_curChoice == 185) {
 				doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, kRoom18, a1810ENTRADALNEGOZIO, 10, g_vm->_curObj);
-				g_vm->_obj[oPORTAN18]._flag &= ~kObjFlagRoomOut;
-				g_vm->_obj[oPORTAN18]._action = 218;
-				g_vm->_obj[oPORTAN18]._anim = 0;
+				g_vm->_obj[oDOORN18]._flag &= ~kObjFlagRoomOut;
+				g_vm->_obj[oDOORN18]._action = 218;
+				g_vm->_obj[oDOORN18]._anim = 0;
 			} else if (_curChoice == 183)
 				g_vm->_obj[oTESSERA1A]._action = 239;
 			break;
 
 		case dF181:
 			g_vm->_obj[oRETE17]._mode |= OBJMODE_OBJSTATUS;
-			g_vm->_obj[oPORTAA17]._examine = 196;
-			g_vm->_obj[oPORTAUA17]._examine = 187;
-			g_vm->_obj[oPORTAUB17]._examine = 192;
-			g_vm->_obj[oPORTAA17]._action = 188;
-			g_vm->_obj[oPORTAUA17]._action = 193;
-			g_vm->_obj[oPORTAUB17]._action = 197;
+			g_vm->_obj[oDOORA17]._examine = 196;
+			g_vm->_obj[oDOORUA17]._examine = 187;
+			g_vm->_obj[oDOORUB17]._examine = 192;
+			g_vm->_obj[oDOORA17]._action = 188;
+			g_vm->_obj[oDOORUA17]._action = 193;
+			g_vm->_obj[oDOORUB17]._action = 197;
 			g_vm->_obj[oFINGERPAD17]._mode &= ~OBJMODE_OBJSTATUS;
 			g_vm->_room[kRoom17]._flag &= ~kObjFlagDone;
 			g_vm->_room[kRoom17]._flag |= kObjFlagExtra;
@@ -442,17 +442,17 @@ void afterChoice(int numframe) {
 			break;
 
 		case dF562:
-			g_vm->_obj[oPORTA58C55]._action = 1287;
-			g_vm->_obj[oPORTA58C55]._anim = 0;
-			g_vm->_obj[oFINESTRA58P55]._action = 1292;
-			g_vm->_obj[oFINESTRA58P55]._mode |= OBJMODE_OBJSTATUS;
-			g_vm->_obj[oFINESTRA58P55]._anim = 0;
+			g_vm->_obj[oDOOR58C55]._action = 1287;
+			g_vm->_obj[oDOOR58C55]._anim = 0;
+			g_vm->_obj[oWINDOW58P55]._action = 1292;
+			g_vm->_obj[oWINDOW58P55]._mode |= OBJMODE_OBJSTATUS;
+			g_vm->_obj[oWINDOW58P55]._anim = 0;
 			break;
 
 		case dF5A1:
-			g_vm->_obj[oPORTA58C55]._action = 1286;
-			g_vm->_obj[oFINESTRA58P55]._action = 1291;
-			g_vm->_obj[oFINESTRAA5A]._action = 1403;
+			g_vm->_obj[oDOOR58C55]._action = 1286;
+			g_vm->_obj[oWINDOW58P55]._action = 1291;
+			g_vm->_obj[oWINDOWA5A]._action = 1403;
 			g_vm->_obj[oGUARDIA58]._mode |= OBJMODE_OBJSTATUS;
 			g_vm->_choice[286]._flag |= kObjFlagDone;
 			break;
@@ -465,12 +465,12 @@ void afterChoice(int numframe) {
 			break;
 
 		case dC582:
-			g_vm->_obj[oFINESTRAA58]._mode |= OBJMODE_OBJSTATUS;
+			g_vm->_obj[oWINDOWA58]._mode |= OBJMODE_OBJSTATUS;
 			g_vm->addIcon(iCODICE);
 			break;
 
 		case dC5A1:
-			g_vm->_obj[oFINESTRAA5A]._action = 1402;
+			g_vm->_obj[oWINDOWA5A]._action = 1402;
 			if (g_vm->_room[kRoom5A]._flag & kObjFlagExtra)
 				PlayDialog(dF5A1);
 			break;

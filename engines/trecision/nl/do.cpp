@@ -378,11 +378,11 @@ void ExecuteAtFrameDoit(ATFHandle *h, int doit, int obj) {
 		g_vm->_obj[oLAGO53]._examine = 1237;
 		break;
 	case fMOREAU:
-		g_vm->_obj[oFINESTRAB58]._anim = 0;
-		g_vm->_obj[oFINESTRAB58]._action = 1358;
+		g_vm->_obj[oWINDOWB58]._anim = 0;
+		g_vm->_obj[oWINDOWB58]._action = 1358;
 		break;
-	case fPORTA58:
-		doEvent(MC_MOUSE, ME_MLEFT, MP_DEFAULT, 468, 180 + TOP, true, oPORTA58C55);
+	case fDOOR58:
+		doEvent(MC_MOUSE, ME_MLEFT, MP_DEFAULT, 468, 180 + TOP, true, oDOOR58C55);
 		break;
 	case fHELLEN:
 		doEvent(MC_MOUSE, ME_MLEFT, MP_DEFAULT, 336, 263 + TOP, true, 0);

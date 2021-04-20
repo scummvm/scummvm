@@ -234,5 +234,16 @@ char TrecisionEngine::waitKey() {
 	return t;
 }
 
+/* -----------------26/01/98 10.26-------------------
+ * 					NlDelay
+ * --------------------------------------------------*/
+void TrecisionEngine::NlDelay(uint32 val) {
+	uint32 sv = ReadTime();
+
+	while ((sv + val) > ReadTime())
+		g_vm->checkSystem();
+}
+
+
 
 } // End of namespace Trecision
