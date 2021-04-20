@@ -1077,7 +1077,7 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 
 	case iACIDO15:
 		if (_vm->_useWith[WITH] == oBAR11) {
-			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a113USAFIALA, 0, 0, _vm->_useWith[WITH]);
+			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, kAnim113UseVial, 0, 0, _vm->_useWith[WITH]);
 			_vm->replaceIcon(iACIDO15, iFIALAMETA);
 			*printSentence = false;
 		} else if (_vm->_useWith[WITH] == oPADLOCK1B) {
@@ -1087,7 +1087,7 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 				doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a1B2VERSAACIDO, 0, 0, _vm->_useWith[WITH]);
 			_vm->_obj[oBOTOLAC1B]._anim = a1B3APREBOTOLA;
 			_vm->replaceIcon(iACIDO15, iFIALAMETA);
-			_vm->_animMgr->_animTab[a113USAFIALA]._atFrame[0]._index = 1483;
+			_vm->_animMgr->_animTab[kAnim113UseVial]._atFrame[0]._index = 1483;
 			*printSentence = false;
 		} else if ((_vm->_useWith[WITH] == ocGUARD18) || (_vm->_useWith[WITH] == oMANHOLEC1B)) {
 			*printSentence = false;
@@ -1097,8 +1097,8 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 
 	case iFIALAMETA:
 		if (_vm->_useWith[WITH] == oBAR11) {
-			_vm->_animMgr->_animTab[a113USAFIALA]._atFrame[0]._index = 1483;
-			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a113USAFIALA, 0, 0, _vm->_useWith[WITH]);
+			_vm->_animMgr->_animTab[kAnim113UseVial]._atFrame[0]._index = 1483;
+			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, kAnim113UseVial, 0, 0, _vm->_useWith[WITH]);
 			_vm->removeIcon(iFIALAMETA);
 			*printSentence = false;
 		} else if (_vm->_useWith[WITH] == oPADLOCK1B) {
@@ -3256,7 +3256,7 @@ bool LogicManager::mouseOperate(uint16 curObj) {
 		if (_vm->_room[kRoom2C]._flag & OBJFLAG_DONE) { // If room 2C has been visited before, take the book
 			retVal = false;
 			if (_vm->_obj[curObj]._anim)
-				doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a2B4PRENDELIBRO, 0, 0, curObj);
+				doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a2B4TAKEBOOK, 0, 0, curObj);
 			else
 				retVal = true;
 		} else { // If room 2C hasn't been visited before, he tells it's useless
