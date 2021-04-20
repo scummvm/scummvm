@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-04-20 11:06+0000\n"
-"PO-Revision-Date: 2021-04-19 11:05+0000\n"
+"PO-Revision-Date: 2021-04-20 11:55+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
@@ -1307,7 +1307,7 @@ msgstr "Accesibilidad"
 
 #: gui/options.cpp:1956
 msgid "Discard changes and close the dialog"
-msgstr ""
+msgstr "Descarta los cambios y cierra la ventana"
 
 #: gui/options.cpp:1957
 msgid "Apply"
@@ -1315,11 +1315,11 @@ msgstr "Aplicar"
 
 #: gui/options.cpp:1957
 msgid "Apply changes without closing the dialog"
-msgstr ""
+msgstr "Aplica los cambios sin cerrar la ventana"
 
 #: gui/options.cpp:1958
 msgid "Apply changes and close the dialog"
-msgstr ""
+msgstr "Aplica los cambios y cierra la ventana"
 
 #: gui/options.cpp:2045
 msgid "FluidSynth Settings"
@@ -2137,7 +2137,7 @@ msgstr "<Valor incorrecto>"
 
 #: dists/scummvm.appdata.xml.cpp:33
 msgid "Interpreter for numerous adventure games and role-playing games"
-msgstr ""
+msgstr "Intérprete de numerosas aventuras gráficas y RPG"
 
 #: dists/scummvm.appdata.xml.cpp:38
 msgid ""
@@ -2147,6 +2147,11 @@ msgid ""
 "replaces the executables shipped with the game, allowing you to play them on "
 "systems for which they were never designed!"
 msgstr ""
+"ScummVM es un programa que te permite ejecutar una amplia selección de "
+"aventuras gráficas «point-and-click» y RPG clásicos, siempre y cuando ya "
+"tengas sus archivos de datos. Lo interesante es que ScummVM se limita a "
+"sustituir los ejecutables de cada juego, ¡lo que permite jugarlos en "
+"sistemas para los que nunca fueron diseñados!"
 
 #: dists/scummvm.appdata.xml.cpp:46
 msgid ""
@@ -2155,6 +2160,10 @@ msgid ""
 "like LucasArts, Sierra On-Line, Revolution Software, Cyan, Inc. and Westwood "
 "Studios."
 msgstr ""
+"ScummVM es compatible con una inmensa biblioteca de más de 4 000 juegos en "
+"total. Funciona con muchos de los clásicos publicados por estudios "
+"legendarios como LucasArts, Sierra On-Line, Revolution Software, Cyan, Inc. "
+"y Westwood Studios."
 
 #: dists/scummvm.appdata.xml.cpp:52
 msgid ""
@@ -2162,6 +2171,9 @@ msgid ""
 "Myst, Blade Runner and countless other games you will find some really "
 "obscure adventures and truly hidden gems to explore."
 msgstr ""
+"Podrás jugar a títulos tan innovadores como las sagas de Monkey Island, "
+"Broken Sword, Myst, Blade Runner como aventuras menos conocidas y otras "
+"joyas ocultas."
 
 #: engines/advancedDetector.cpp:215
 msgid "Illegitimate game copy detected. We provide no support in such cases"
@@ -5726,10 +5738,8 @@ msgstr "Utiliza una introducción alternativa (solo en la versión CD)"
 
 #. I18N: Inherit the Earth had a "trial" version which is a full game with a simple check
 #: engines/saga/detection_tables.h:609
-#, fuzzy
-#| msgid "Spanish CD version is not yet supported"
 msgid "Windows Trial version is not supported"
-msgstr "La versión española en CD aún no es compatible."
+msgstr "La versión de demostración para Windows no es compatible."
 
 #: engines/saga/metaengine.cpp:114
 msgid "I Have No Mouth support not compiled in"
