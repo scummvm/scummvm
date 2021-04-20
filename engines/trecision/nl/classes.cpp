@@ -54,7 +54,7 @@ void doAction() {
 			g_vm->_obj[g_vm->_curObj]._mode &= ~OBJMODE_HIDDEN;
 
 		if (g_vm->_flagUseWithStarted) {
-			if ((g_vm->_obj[g_vm->_curObj]._flag & (OBJFLAG_ROOMOUT | OBJFLAG_ROOMIN)) && !(g_vm->_obj[g_vm->_curObj]._flag & OBJFLAG_EXAMINE))
+			if ((g_vm->_obj[g_vm->_curObj]._flag & (kObjFlagRoomOut | kObjFlagRoomIn)) && !(g_vm->_obj[g_vm->_curObj]._flag & kObjFlagExamine))
 				return;
 			g_vm->_flagUseWithStarted = false;
 			g_vm->_flagInventoryLocked = false;
@@ -75,7 +75,7 @@ void doAction() {
 			return;
 		}
 
-		if ((g_vm->_curMessage->_event == ME_MOUSEOPERATE) && (g_vm->_obj[g_vm->_curObj]._flag & OBJFLAG_USEWITH)) {
+		if ((g_vm->_curMessage->_event == ME_MOUSEOPERATE) && (g_vm->_obj[g_vm->_curObj]._flag & kObjFlagUseWith)) {
 			g_vm->_flagUseWithStarted = true;
 			g_vm->_flagInventoryLocked = true;
 			g_vm->_useWith[USED] = g_vm->_curObj;
@@ -89,26 +89,26 @@ void doAction() {
 
 	switch (g_vm->_curMessage->_event) {
 	case ME_MOUSEOPERATE:
-		if (g_vm->_obj[g_vm->_curObj]._flag & OBJFLAG_ROOMIN)
+		if (g_vm->_obj[g_vm->_curObj]._flag & kObjFlagRoomIn)
 			doRoomIn(g_vm->_curObj);
-		else if (g_vm->_obj[g_vm->_curObj]._flag & OBJFLAG_PERSON)
+		else if (g_vm->_obj[g_vm->_curObj]._flag & kObjFlagPerson)
 			doMouseTalk(g_vm->_curObj);
-		else if (g_vm->_obj[g_vm->_curObj]._flag & OBJFLAG_ROOMOUT)
+		else if (g_vm->_obj[g_vm->_curObj]._flag & kObjFlagRoomOut)
 			doRoomOut(g_vm->_curObj);
-		else if (g_vm->_obj[g_vm->_curObj]._flag & OBJFLAG_TAKE)
+		else if (g_vm->_obj[g_vm->_curObj]._flag & kObjFlagTake)
 			doMouseTake(g_vm->_curObj);
 		else
 			doMouseOperate(g_vm->_curObj);
 		break;
 
 	case ME_MOUSEEXAMINE:
-		if (g_vm->_obj[g_vm->_curObj]._flag & OBJFLAG_EXAMINE)
+		if (g_vm->_obj[g_vm->_curObj]._flag & kObjFlagExamine)
 			doMouseExamine(g_vm->_curObj);
-		else if (g_vm->_obj[g_vm->_curObj]._flag & OBJFLAG_ROOMIN)
+		else if (g_vm->_obj[g_vm->_curObj]._flag & kObjFlagRoomIn)
 			doRoomIn(g_vm->_curObj);
-		else if (g_vm->_obj[g_vm->_curObj]._flag & OBJFLAG_PERSON)
+		else if (g_vm->_obj[g_vm->_curObj]._flag & kObjFlagPerson)
 			doMouseExamine(g_vm->_curObj);
-		else if (g_vm->_obj[g_vm->_curObj]._flag & OBJFLAG_ROOMOUT)
+		else if (g_vm->_obj[g_vm->_curObj]._flag & kObjFlagRoomOut)
 			doRoomOut(g_vm->_curObj);
 		else
 			doMouseExamine(g_vm->_curObj);
@@ -296,14 +296,14 @@ void doCharacter() {
 
 	case ME_CHARACTERCONTINUEACTION:
 		g_vm->_flagShowCharacter = false;
-		AtFrameHandler(CHARACTER_ANIM);
+		AtFrameHandler(kAnimTypeCharacter);
 		//	If the animation is over
 		if (!g_vm->_animMgr->_playingAnims[kSmackerAction]) {
 			g_vm->showCursor();
 			g_vm->_flagShowCharacter = true;
 			_characterInMovement = false;
 			g_vm->_characterQueue.initQueue();
-			AtFrameEnd(CHARACTER_ANIM);
+			AtFrameEnd(kAnimTypeCharacter);
 			g_vm->_flagWaitRegen = true;
 			g_vm->_lastObj = 0;
 			ShowObjName(g_vm->_curObj, true);
@@ -360,7 +360,7 @@ void doSystem() {
 
 		g_vm->_logicMgr->endChangeRoom();
 
-		g_vm->_room[g_vm->_curRoom]._flag |= OBJFLAG_DONE; // Visited
+		g_vm->_room[g_vm->_curRoom]._flag |= kObjFlagDone; // Visited
 		drawCharacter(CALCPOINTS);			// for right _actorPos entrance
 
 		break;

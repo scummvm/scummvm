@@ -148,31 +148,31 @@ void afterChoice(int numframe) {
 	case dTRAMP171:
 		if (_curChoice == 80) {
 			g_vm->_obj[ocTRAMP17]._action = 213;
-			g_vm->_obj[ocTRAMP17]._flag &= ~OBJFLAG_PERSON;
+			g_vm->_obj[ocTRAMP17]._flag &= ~kObjFlagPerson;
 		} else if (_curChoice == 77) {
 			g_vm->_obj[ocTRAMP17]._action = 211;
-			g_vm->_obj[ocTRAMP17]._flag &= ~OBJFLAG_PERSON;
+			g_vm->_obj[ocTRAMP17]._flag &= ~kObjFlagPerson;
 		}
 		break;
 
 	case dTRAMP1714:
 		if (_curChoice == 106) {
 			g_vm->_obj[ocTRAMP17]._action = 213;
-			g_vm->_obj[ocTRAMP17]._flag &= ~OBJFLAG_PERSON;
+			g_vm->_obj[ocTRAMP17]._flag &= ~kObjFlagPerson;
 		}
 		break;
 
 	case dTRAMP1713:
 		if (_curChoice == 91) {
 			g_vm->_obj[ocTRAMP17]._action = 212;
-			g_vm->_obj[ocTRAMP17]._flag &= ~OBJFLAG_PERSON;
+			g_vm->_obj[ocTRAMP17]._flag &= ~kObjFlagPerson;
 		}
 		break;
 
 	case dTRAMP1716:
 		if (_curChoice == 122) {
 			g_vm->_obj[ocTRAMP17]._action = 212;
-			g_vm->_obj[ocTRAMP17]._flag &= ~OBJFLAG_PERSON;
+			g_vm->_obj[ocTRAMP17]._flag &= ~kObjFlagPerson;
 		}
 		break;
 
@@ -183,7 +183,7 @@ void afterChoice(int numframe) {
 			g_vm->_room[kRoom17]._bkgAnim = aBKG17B;
 			g_vm->addIcon(iSKATE);
 		} else if (_curChoice == 137) {
-			g_vm->_obj[ocTRAMP17]._flag |= OBJFLAG_PERSON;
+			g_vm->_obj[ocTRAMP17]._flag |= kObjFlagPerson;
 		}
 		break;
 
@@ -191,13 +191,13 @@ void afterChoice(int numframe) {
 		if ((_curChoice == 151) || (_curChoice == 152)) {
 			g_vm->_inventoryObj[iFOTO]._action = 1465;
 			g_vm->_obj[oTESSERA1A]._action = 238;
-			if (g_vm->_obj[oTESSERA1A]._flag & OBJFLAG_EXTRA) {
+			if (g_vm->_obj[oTESSERA1A]._flag & kObjFlagExtra) {
 				g_vm->_choice[154]._flag &= ~DLGCHOICE_HIDE;
 				g_vm->_choice[153]._flag |= DLGCHOICE_HIDE;
 			} else
 				g_vm->_choice[153]._flag &= ~DLGCHOICE_HIDE;
 		} else if (_curChoice == 154) {
-			if (g_vm->_obj[oTESSERA1A]._flag & OBJFLAG_EXTRA)
+			if (g_vm->_obj[oTESSERA1A]._flag & kObjFlagExtra)
 				g_vm->_choice[183]._flag &= ~DLGCHOICE_HIDE;
 		} else if (_curChoice == 155)
 			g_vm->_obj[ocGUARD18]._action = 228;
@@ -251,14 +251,14 @@ void afterChoice(int numframe) {
 
 		switch (_curDialog) {
 		case dPOLIZIOTTO16:
-			if ((g_vm->_choice[61]._flag & OBJFLAG_DONE) && (g_vm->_choice[62]._flag & OBJFLAG_DONE) && (g_vm->_obj[ocPOLIZIOTTO16]._flag & OBJFLAG_EXTRA))
+			if ((g_vm->_choice[61]._flag & kObjFlagDone) && (g_vm->_choice[62]._flag & kObjFlagDone) && (g_vm->_obj[ocPOLIZIOTTO16]._flag & kObjFlagExtra))
 				g_vm->_obj[ocPOLIZIOTTO16]._mode &= ~OBJMODE_OBJSTATUS;
 			break;
 
 		case dTRAMP171:
 			if (_curChoice == 77) {
 				g_vm->_obj[ocTRAMP17]._action = 211;
-				g_vm->_obj[ocTRAMP17]._flag &= ~OBJFLAG_PERSON;
+				g_vm->_obj[ocTRAMP17]._flag &= ~kObjFlagPerson;
 			} else if (_curChoice == 80)
 				g_vm->_obj[ocTRAMP17]._action = 213;
 			else if (_curChoice == 122)
@@ -273,16 +273,16 @@ void afterChoice(int numframe) {
 			break;
 
 		case dEVA19:
-			g_vm->_obj[oPORTAC18]._flag &= ~OBJFLAG_ROOMOUT;
+			g_vm->_obj[oPORTAC18]._flag &= ~kObjFlagRoomOut;
 			g_vm->_obj[oPORTAC18]._action = 221;
 			g_vm->_obj[ocEVA19]._action = 1999;
-			g_vm->_obj[ocEVA19]._flag &= ~OBJFLAG_PERSON;
+			g_vm->_obj[ocEVA19]._flag &= ~kObjFlagPerson;
 			break;
 
 		case dSHOPKEEPER1A:
 			if (_curChoice == 185) {
 				doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, kRoom18, a1810ENTRADALNEGOZIO, 10, g_vm->_curObj);
-				g_vm->_obj[oPORTAN18]._flag &= ~OBJFLAG_ROOMOUT;
+				g_vm->_obj[oPORTAN18]._flag &= ~kObjFlagRoomOut;
 				g_vm->_obj[oPORTAN18]._action = 218;
 				g_vm->_obj[oPORTAN18]._anim = 0;
 			} else if (_curChoice == 183)
@@ -298,8 +298,8 @@ void afterChoice(int numframe) {
 			g_vm->_obj[oPORTAUA17]._action = 193;
 			g_vm->_obj[oPORTAUB17]._action = 197;
 			g_vm->_obj[oFINGERPAD17]._mode &= ~OBJMODE_OBJSTATUS;
-			g_vm->_room[kRoom17]._flag &= ~OBJFLAG_DONE;
-			g_vm->_room[kRoom17]._flag |= OBJFLAG_EXTRA;
+			g_vm->_room[kRoom17]._flag &= ~kObjFlagDone;
+			g_vm->_room[kRoom17]._flag |= kObjFlagExtra;
 			break;
 
 		case dF1C1:
@@ -454,11 +454,11 @@ void afterChoice(int numframe) {
 			g_vm->_obj[oFINESTRA58P55]._action = 1291;
 			g_vm->_obj[oFINESTRAA5A]._action = 1403;
 			g_vm->_obj[oGUARDIA58]._mode |= OBJMODE_OBJSTATUS;
-			g_vm->_choice[286]._flag |= OBJFLAG_DONE;
+			g_vm->_choice[286]._flag |= kObjFlagDone;
 			break;
 
 		case dC581:
-			if (!(g_vm->_choice[886]._flag & OBJFLAG_DONE) && (g_vm->_choice[258]._flag & OBJFLAG_DONE)) {
+			if (!(g_vm->_choice[886]._flag & kObjFlagDone) && (g_vm->_choice[258]._flag & kObjFlagDone)) {
 				setPosition(1);
 				PlayDialog(dF581);
 			}
@@ -471,7 +471,7 @@ void afterChoice(int numframe) {
 
 		case dC5A1:
 			g_vm->_obj[oFINESTRAA5A]._action = 1402;
-			if (g_vm->_room[kRoom5A]._flag & OBJFLAG_EXTRA)
+			if (g_vm->_room[kRoom5A]._flag & kObjFlagExtra)
 				PlayDialog(dF5A1);
 			break;
 
@@ -582,7 +582,7 @@ void PlayChoice(uint16 i) {
 	_curSubTitle = ss->_firstSubTitle;
 	g_vm->_flagDialogMenuActive = false;
 
-	ss->_flag |= OBJFLAG_DONE;
+	ss->_flag |= kObjFlagDone;
 
 	// se era one time la disabilita
 	if (ss->_flag & DLGCHOICE_ONETIME)

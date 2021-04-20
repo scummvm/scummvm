@@ -146,14 +146,14 @@ void NLPlaySound(int num) {
 
 	int volume = VOLUME(GSample[num]._volume);
 
-	if (GSample[num]._flag & SOUNDFLAG_SON) {
+	if (GSample[num]._flag & kSoundFlagSoundOn) {
 		volume = 0;
 		smpvol[channel] = 0;
 	}
 
 	Audio::AudioStream *stream = sfxStream[num];
-	Audio::Mixer::SoundType type = GSample[num]._flag & SOUNDFLAG_SBACK ? Audio::Mixer::kMusicSoundType : Audio::Mixer::kSFXSoundType;
-	if (stream != nullptr && GSample[num]._flag & SOUNDFLAG_SLOOP)
+	Audio::Mixer::SoundType type = GSample[num]._flag & kSoundFlagBgMusic ? Audio::Mixer::kMusicSoundType : Audio::Mixer::kSFXSoundType;
+	if (stream != nullptr && GSample[num]._flag & kSoundFlagSoundLoop)
 		stream = Audio::makeLoopingAudioStream(sfxStream[num], 0);
 
 	g_system->getMixer()->playStream(type, &soundHandle[channel], stream, -1, volume, 0, DisposeAfterUse::NO);
@@ -202,8 +202,8 @@ void SoundFadOut() {
  --------------------------------------------------*/
 void SoundFadIn(int num) {
 	Audio::AudioStream *stream = sfxStream[num];
-	Audio::Mixer::SoundType type = GSample[num]._flag & SOUNDFLAG_SBACK ? Audio::Mixer::kMusicSoundType : Audio::Mixer::kSFXSoundType;
-	if (stream != nullptr && GSample[num]._flag & SOUNDFLAG_SLOOP)
+	Audio::Mixer::SoundType type = GSample[num]._flag & kSoundFlagBgMusic ? Audio::Mixer::kMusicSoundType : Audio::Mixer::kSFXSoundType;
+	if (stream != nullptr && GSample[num]._flag & kSoundFlagSoundLoop)
 		stream = Audio::makeLoopingAudioStream(sfxStream[num], 0);
 
 	g_system->getMixer()->playStream(type, &soundHandle[StepChannel], stream, -1, 0, 0, DisposeAfterUse::NO);
@@ -295,9 +295,9 @@ void SoundPasso(int midx, int midz, int act, int frame, uint16 *list) {
 	for (int a = 0; a < MAXSOUNDSINROOM; a++) {
 		b = list[a];
 
-		if (stepRight && (GSample[b]._flag & SOUNDFLAG_STEPRIGHTX))
+		if (stepRight && (GSample[b]._flag & kSoundFlagStepRight))
 			break;
-		if (stepLeft && (GSample[b]._flag & SOUNDFLAG_STEPLEFTX))
+		if (stepLeft && (GSample[b]._flag & kSoundFlagStepLeft))
 			break;
 		if (b == 0)
 			return;
@@ -315,7 +315,7 @@ void SoundPasso(int midx, int midz, int act, int frame, uint16 *list) {
 	sfxStream[b]->rewind();
 
 	int panpos = ((midx - 320) * 127 / 320) / 2;
-	Audio::Mixer::SoundType type = GSample[b]._flag & SOUNDFLAG_SBACK ? Audio::Mixer::kMusicSoundType : Audio::Mixer::kSFXSoundType;
+	Audio::Mixer::SoundType type = GSample[b]._flag & kSoundFlagBgMusic ? Audio::Mixer::kMusicSoundType : Audio::Mixer::kSFXSoundType;
 	
 	g_system->getMixer()->playStream(type, &soundHandle[StepChannel], sfxStream[b], -1, VOLUME(midz), panpos, DisposeAfterUse::NO);
 }

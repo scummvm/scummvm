@@ -318,7 +318,7 @@ void AnimManager::startSmkAnim(uint16 animation) {
 			smkVolumePan(0, 1, 0);
 		else if ((animation == aBKG14) && (_animTab[animation]._flag & SMKANIM_OFF1))
 			smkVolumePan(0, 1, 0);
-		else if ((animation == aBKG1C) && (_vm->_obj[oFAX17]._flag & OBJFLAG_EXTRA)) {
+		else if ((animation == aBKG1C) && (_vm->_obj[oFAX17]._flag & kObjFlagExtra)) {
 			_animTab[animation]._flag |= SMKANIM_OFF1;
 			smkVolumePan(0, 1, 0);
 		} else if ((animation == aBKG1D) && (_animTab[animation]._flag & SMKANIM_OFF1))
@@ -331,14 +331,14 @@ void AnimManager::startSmkAnim(uint16 animation) {
 			smkVolumePan(0, 1, 0);
 		else if ((animation == aBKG28) && (_animTab[animation]._flag & SMKANIM_OFF4))
 			smkVolumePan(0, 1, 0);
-		else if ((animation == aBKG37) && (!(_vm->_room[_vm->_curRoom]._flag & OBJFLAG_EXTRA)))
+		else if ((animation == aBKG37) && (!(_vm->_room[_vm->_curRoom]._flag & kObjFlagExtra)))
 			smkVolumePan(0, 1, 0);
 		else if ((animation == aBKG2E) && (_animTab[animation]._flag & SMKANIM_OFF2))
 			smkVolumePan(0, 2, 0);
-		else if ((animation == aBKG2G) && (g_vm->_choice[556]._flag & OBJFLAG_DONE))
+		else if ((animation == aBKG2G) && (g_vm->_choice[556]._flag & kObjFlagDone))
 			smkVolumePan(0, 2, 0);
 		else if ((animation == aBKG34) &&                                     // If it's BKG 34 and
-		         ((g_vm->_choice[616]._flag & OBJFLAG_DONE) ||          // if the FMV is already done or
+		         ((g_vm->_choice[616]._flag & kObjFlagDone) ||          // if the FMV is already done or
 		          (_vm->_obj[oTUBOT34]._mode & OBJMODE_OBJSTATUS) ||    // if the whole tube is available or
 		          (_vm->_obj[oTUBOFT34]._mode & OBJMODE_OBJSTATUS) ||   // if the outside of the tube is available or
 		          (_vm->_obj[oVALVOLAC34]._mode & OBJMODE_OBJSTATUS)))  // if the valve is closed
@@ -400,8 +400,8 @@ void AnimManager::stopFullMotion() {
 
 	if (!((_curDialog == dSHOPKEEPER1A) && (_curChoice == 185))) {
 		if ((_curDialog == dF582) || (_curDialog == dFLOG) || (_curDialog == dINTRO) || (_curDialog == dF362) || (_curDialog == dC381) || (_curDialog == dF381) ||
-		    (_curDialog == dF491) || ((_curDialog == dC581) && !(g_vm->_choice[886]._flag & OBJFLAG_DONE) && (g_vm->_choice[258]._flag & OBJFLAG_DONE)) ||
-		    ((_curDialog == dC5A1) && (_vm->_room[kRoom5A]._flag & OBJFLAG_EXTRA)))
+		    (_curDialog == dF491) || ((_curDialog == dC581) && !(g_vm->_choice[886]._flag & kObjFlagDone) && (g_vm->_choice[258]._flag & kObjFlagDone)) ||
+		    ((_curDialog == dC5A1) && (_vm->_room[kRoom5A]._flag & kObjFlagExtra)))
 			g_vm->_flagShowCharacter = false;
 		else
 			RedrawRoom();
