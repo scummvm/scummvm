@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-04-20 00:32+0000\n"
+"POT-Creation-Date: 2021-04-20 11:06+0000\n"
 "PO-Revision-Date: 2020-09-18 03:43+0000\n"
 "Last-Translator: Daniel <supsuper@gmail.com>\n"
 "Language-Team: Portuguese (Portugal) <https://translations.scummvm.org/"
@@ -2125,6 +2125,34 @@ msgstr "Mensalmente"
 #: common/updates.cpp:64
 msgid "<Bad value>"
 msgstr "<Valor incorreto>"
+
+#: dists/scummvm.appdata.xml.cpp:33
+msgid "Interpreter for numerous adventure games and role-playing games"
+msgstr ""
+
+#: dists/scummvm.appdata.xml.cpp:38
+msgid ""
+"ScummVM is a program which allows you to run a wide variety of classic "
+"graphical point-and-click adventure games and role-playing games, provided "
+"you already have their data files. The clever part about this: ScummVM just "
+"replaces the executables shipped with the game, allowing you to play them on "
+"systems for which they were never designed!"
+msgstr ""
+
+#: dists/scummvm.appdata.xml.cpp:46
+msgid ""
+"Currently, ScummVM supports a huge library of adventures with over 4000 "
+"games in total. It supports many classics published by legendary studios "
+"like LucasArts, Sierra On-Line, Revolution Software, Cyan, Inc. and Westwood "
+"Studios."
+msgstr ""
+
+#: dists/scummvm.appdata.xml.cpp:52
+msgid ""
+"Next to ground-breaking titles like the Monkey Island series, Broken Sword, "
+"Myst, Blade Runner and countless other games you will find some really "
+"obscure adventures and truly hidden gems to explore."
+msgstr ""
 
 #: engines/advancedDetector.cpp:215
 msgid "Illegitimate game copy detected. We provide no support in such cases"
