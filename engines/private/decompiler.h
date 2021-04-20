@@ -1,9 +1,13 @@
-#include <vector>
-#include <string>
+#ifndef PRIVATE_DECOMPILER_H
+#define PRIVATE_DECOMPILER_H
+
+#include "common/array.h"
+#include "common/str.h"
+#include "common/debug.h"
 
 namespace Private {
 
-const std::string kHeader("Precompiled Game Matrix");
+const Common::String kHeader = "Precompiled Game Matrix";
 
 const unsigned char kCodeString = 0x01;
 const unsigned char kCodeShortLiteral = 0x02;
@@ -12,7 +16,7 @@ const unsigned char kCodeRect = 0x2e;
 const unsigned char kCodeRects = 0x4f;
 const unsigned char kCodeShortId = 0x50;
 
-const std::vector<std::string> kCodeTable = {"",        //
+const static char *kCodeTable[] =    {"",        //
 					     "",        // 0x01  (string)
 					     "",        // 0x02  (short literal)
 					     " {\n",    // 0x03
@@ -92,18 +96,19 @@ const std::vector<std::string> kCodeTable = {"",        //
 					     "",                    //
 					     "",                    //
 					     "rects",               // 0x4f
-					     ""};                   // 0x50  (short id)
+					     ""
+    };                   // 0x50  (short id)
 
 
 class Decompiler {
 public:
-	Decompiler(const std::string &filename, bool mac = false);
-	Decompiler(std::vector<unsigned char> &buffer, bool mac = false);
-	virtual ~Decompiler();
-	void getResult(std::string &result) const;
+	Decompiler(char *buf, uint32 fileSize, bool mac = false);
+	Common::String getResult() const;
 private:
-	void decompile(std::vector<unsigned char> &buffer, bool mac);
-	std::string _result;
+	void decompile(Common::Array<unsigned char> &buffer, bool mac);
+	Common::String _result;
 };
 
 }
+
+#endif

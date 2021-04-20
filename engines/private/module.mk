@@ -3,6 +3,7 @@ MODULE := engines/private
 MODULE_OBJS := \
 	code.o \
 	cursors.o \
+	decompiler.o \
 	funcs.o \
 	grammar.o \
 	lexer.o \

@@ -1,53 +1,49 @@
-#include <fstream>
-#include <sstream>
-#include "decompiler.h"
+#include "private/decompiler.h"
 
 namespace Private {
 
-Decompiler::~Decompiler() {
-}
+Decompiler::Decompiler(char *buf, uint32 fileSize, bool mac) {
 
-Decompiler::Decompiler(const std::string &fileName, bool mac) {
-	std::ifstream infile(fileName);
-	if (!infile.good())
-		throw std::invalid_argument("File does not exist");
-	std::ifstream input(fileName, std::ios::binary);
-	std::vector<unsigned char> buffer(std::istreambuf_iterator<char>(input), {});
-	decompile(buffer, mac);
-}
-Decompiler::Decompiler(std::vector<unsigned char> &buffer, bool mac) {
-	decompile(buffer, mac);
-}
-
-void Decompiler::decompile(std::vector<unsigned char> &buffer, bool mac) {
-	std::vector<unsigned char>::iterator it = buffer.begin();
-
-	std::string firstBytes(it, it + kHeader.length());
-	if (firstBytes != kHeader) {
-		throw std::invalid_argument("Not a precompiled game matrix");
+    Common::Array<unsigned char> array;
+	uint32 i = 0;
+	while (i < fileSize) {
+		array.push_back(buf[i]);
+		i++;
 	}
+	decompile(array, mac);
+}
 
-	std::stringstream ss;
+void Decompiler::decompile(Common::Array<unsigned char> &buffer, bool mac) {
+	Common::Array<unsigned char>::iterator it = buffer.begin();
+
+	Common::String firstBytes((const char *) it, (const char *) it + kHeader.size());
+    //debug("first bytes \"%s\"", firstBytes.c_str());
+
+	if (firstBytes != kHeader) {
+		error("Not a precompiled game matrix");
+	}
+    
+	Common::String ss;
 	bool inDefineRects = false;
-	for (it += kHeader.length() ; it != buffer.end() ; ) {
+	for (it += kHeader.size() ; it != buffer.end() ; ) {
 		unsigned char byte = *it++;
 		if (byte == kCodeString) {
 			unsigned char len = *it++;
-			std::string s(it,it+len);
+			Common::String s((const char *)it,(const char *)it+len);
 			it += len;
-			ss << "\"" << s << "\"";
+			ss += Common::String::format("\"%s\"",  s.c_str());
 		} else if (byte == kCodeShortLiteral || byte == kCodeShortId) {
 			unsigned char b1 = *it++;
 			unsigned char b2 = *it++;
 			unsigned int number = mac ? b2 + (b1 << 8) : b1 + (b2 << 8);
-			if (byte == kCodeShortId) ss << "k";
-			ss << number;
+			if (byte == kCodeShortId) ss += "k";
+			ss += Common::String::format("%d",  number);
 		} else if (byte == kCodeRect && inDefineRects) {
-			ss << "RECT"; // override CRect
-		} else if (byte <= kCodeShortId && kCodeTable[byte].length() > 0) {
-			ss << kCodeTable[byte];
+			ss += "RECT"; // override CRect
+		} else if (byte <= kCodeShortId && strlen(kCodeTable[byte]) > 0) {
+			ss += kCodeTable[byte];
 		} else {
-			throw std::invalid_argument("Unknown byte code");
+			error("Unknown byte code");
 		}
 
 		if (byte == kCodeRects) {
@@ -56,11 +52,11 @@ void Decompiler::decompile(std::vector<unsigned char> &buffer, bool mac) {
 			inDefineRects = false;
 		}
 	}
-	_result = ss.str();
+	_result = ss;
 }
 
-void Decompiler::getResult(std::string &result) const {
-	result = _result;
+Common::String Decompiler::getResult() const {
+	return _result;
 }
 
 }
