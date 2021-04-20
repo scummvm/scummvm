@@ -218,14 +218,20 @@ public:
 		_useOnHandler = ip;
 	}
 
+	uint getUserUseHandler() const {
+		return _userUseHandler;
+	}
+
 	void setTrapHandler(uint ip, RegionPtr region) {
 		_trapHandler = ip;
 		_trapRegion = region;
 	}
 
-	uint getUserUseHandler() const {
-		return _userUseHandler;
-	}
+	RegionPtr getTrapRegion() const
+	{ return _trapRegion; }
+
+	uint getTrapHandler() const
+	{ return _trapHandler; }
 
 	void paint(AGDSEngine &engine, Graphics::Surface &backbuffer, Common::Point pos) const;
 

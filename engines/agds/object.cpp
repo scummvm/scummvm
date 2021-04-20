@@ -238,6 +238,10 @@ bool Object::pointIn(Common::Point pos) {
 	// pos -= _pos;
 	pos -= _regionOffset;
 
+	if (_trapRegion && _trapRegion->pointIn(pos))
+		return true;
+
+
 	if (_region && _region->pointIn(pos))
 		return true;
 
