@@ -227,6 +227,10 @@ Graphics::Surface *OpenGLSDriver::getViewportScreenshot() const {
 	return s;
 }
 
+Driver *CreateGfxOpenGLShader(void *) {
+	return new OpenGLSDriver();
+}
+
 } // End of namespace Gfx
 } // End of namespace Stark
 
