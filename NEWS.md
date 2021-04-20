@@ -89,7 +89,8 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added support for Russobit-M versions of Pajama2 and SpyOzone.
    - Fixed speech playback in Akella version of COMI.
    - Added support for Discord and Humble Bundle versions of Indiana Jones and the Fate of Atlantis.
-   - Added smooth scrolling for FM-Towns versions of games.
+   - Added smooth scrolling for FM-TOWNS versions of games.
+   - Added optional trimming to 200 pixels for some FM-TOWNS games, so aspect-ratio correction is possible.
 
  Tinsel:
    - Enabled the Return to Launcher feature.
