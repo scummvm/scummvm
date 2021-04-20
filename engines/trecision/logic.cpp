@@ -263,8 +263,8 @@ void LogicManager::initScript() {
 	_vm->_scriptFrame[f]._u32Param = oENTRANCE2E;
 }
 
-void LogicManager::setRoom(uint16 r, bool altRoomFl) {
-	switch (r) {
+void LogicManager::setupAltRoom(uint16 room, bool altRoomFl) {
+	switch (room) {
 	case kRoom21:
 		if (!altRoomFl) {
 			read3D("21.3d");
@@ -532,9 +532,7 @@ void LogicManager::endChangeRoom() {
 		_vm->_flagShowCharacter = false;
 	else if ((_vm->_curRoom == kRoom21) && ((_vm->_oldRoom == kRoom23A) || (_vm->_oldRoom == kRoom23B)))
 		StartCharacterAction(aWALKIN, 0, 0, 0);
-	else if ((_vm->_curRoom == kRoom2BL) || (_vm->_curRoom == kRoom36F) || (_vm->_curRoom == kRoom41D) || (_vm->_curRoom == kRoom49M) || (_vm->_curRoom == kRoom4CT) ||
-		(_vm->_curRoom == kRoom58T) || (_vm->_curRoom == kRoom58M) || (_vm->_curRoom == kRoom59L) || (_vm->_curRoom == kRoomControlPanel) ||
-		(_vm->_curRoom == kRoom12CU) || (_vm->_curRoom == kRoom13CU)) { // Screens without inventory
+	else if (_vm->isCloseupOrControlRoom()) { // Screens without inventory
 		_vm->_flagShowCharacter = false;
 		_vm->_flagCharacterExists = false;
 		_vm->_flagInventoryLocked = true;
@@ -4128,9 +4126,9 @@ void LogicManager::doSystemChangeRoom() {
 			_vm->setRoom(kRoom21, true);
 	}
 
-	if ((_vm->_curRoom == kRoom12) && (_vm->_oldRoom == kRoom11))
+	if (_vm->_curRoom == kRoom12 && _vm->_oldRoom == kRoom11)
 		_vm->_animMgr->_animTab[aBKG11]._flag |= SMKANIM_OFF1;
-	else if ((_vm->_oldRoom == kRoom2BL) || (_vm->_oldRoom == kRoom36F))
+	else if (_vm->_oldRoom == kRoom2BL || _vm->_oldRoom == kRoom36F)
 		_vm->_oldRoom = _vm->_curRoom;
 	else if (_vm->_curRoom == kRoomControlPanel) {
 		bool speechON = !ConfMan.getBool("speech_mute");

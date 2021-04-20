@@ -96,6 +96,7 @@ public:
 	void doInventoryUseWithScreen();
 	void rollInventory(uint8 status);
 	void doScrollInventory(uint16 mouseX);
+	bool isCloseupOrControlRoom();
 
 	// Script
 	void endScript();

@@ -169,7 +169,7 @@ void TrecisionEngine::doClearText() {
  * 					setRoom
  * --------------------------------------------------*/
 void TrecisionEngine::setRoom(uint16 r, bool b) {
-	_logicMgr->setRoom(r, b);
+	_logicMgr->setupAltRoom(r, b);
 	RegenRoom();
 }
 

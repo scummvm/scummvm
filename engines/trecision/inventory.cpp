@@ -235,18 +235,27 @@ uint8 TrecisionEngine::iconPos(uint8 icon) {
 	return i;
 }
 
+bool TrecisionEngine::isCloseupOrControlRoom() {
+	return _curRoom == kRoom2BL ||
+		   _curRoom == kRoom36F ||
+		   _curRoom == kRoom41D ||
+		   _curRoom == kRoom49M ||
+		   _curRoom == kRoom4CT ||
+		   _curRoom == kRoom58T ||
+		   _curRoom == kRoom58M ||
+		   _curRoom == kRoom59L ||
+		   _curRoom == kRoomControlPanel ||
+		   _curRoom == kRoom12CU ||
+		   _curRoom == kRoom13CU;
+}
+
 /*-------------------------------------------------------------------------*/
 /*                            showInventoryName           				   */
 /*-------------------------------------------------------------------------*/
 void TrecisionEngine::showInventoryName(uint16 obj, bool showhide) {
 	static const char *dunno = "?";
 
-	if ((_curRoom == kRoom2BL) || (_curRoom == kRoom36F) || (_curRoom == kRoom41D) || (_curRoom == kRoom49M)
-	 || (_curRoom == kRoom4CT) || (_curRoom == kRoom58T) || (_curRoom == kRoom58M) || (_curRoom == kRoom59L)
-	 || (_curRoom == kRoomControlPanel) || (_curRoom == kRoom12CU) || (_curRoom == kRoom13CU))
-		return;
-
-	if (_flagSomeoneSpeaks)
+	if (isCloseupOrControlRoom() || _flagSomeoneSpeaks)
 		return;
 
 	if (_lastObj) {
