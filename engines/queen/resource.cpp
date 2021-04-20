@@ -48,7 +48,8 @@ const RetailGameVersion Resource::_gameVersions[] = {
 	{ "PEint", 1, 0x00103838,   1915913 },
 	{ "aEM10", 2, 0x00103F1E,    351775 },
 	{ "CE101", 2, 0x00107D8D,    563335 },
-	{ "PE100", 2, 0x001086D4,    597032 }
+	{ "PE100", 2, 0x001086D4,    597032 },
+	{ "aGM10", 3, 0x00108C6A,    344575 }
 };
 
 static int compareResourceEntry(const void *a, const void *b) {
