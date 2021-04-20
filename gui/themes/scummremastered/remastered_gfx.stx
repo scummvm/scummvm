@@ -1028,9 +1028,11 @@
 	<!-- Tooltip -->
 	<drawdata id = 'tooltip_bg' cache = 'false'>
 		<drawstep	func = 'square'
-					fill = 'foreground'
-					fg_color = 'blandyellow'
+					fill = 'background'
+					bg_color = 'blandyellow'
+					fg_color = 'black'
 					shadow = '3'
+					stroke = '1'
 		/>
 	</drawdata>
 
