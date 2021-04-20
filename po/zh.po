@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-04-20 15:48+0000\n"
-"PO-Revision-Date: 2021-04-20 19:18+0000\n"
+"PO-Revision-Date: 2021-04-20 19:28+0000\n"
 "Last-Translator: Xiao Zheng <welcometoromezx@hotmail.com>\n"
 "Language-Team: Chinese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/zh/>\n"
@@ -257,11 +257,11 @@ msgstr "原版游戏的平台"
 #: gui/editgamedialog.cpp:177
 msgctxt "lowres"
 msgid "Platform:"
-msgstr ""
+msgstr "平台："
 
 #: gui/editgamedialog.cpp:191
 msgid "Engine"
-msgstr ""
+msgstr "引擎"
 
 #: gui/editgamedialog.cpp:207 gui/options.cpp:1674 gui/options.cpp:1802
 #: backends/graphics/sdl/sdl-graphics.cpp:408
@@ -333,12 +333,12 @@ msgstr "覆盖全局着色器设置"
 
 #: gui/editgamedialog.cpp:284 gui/options.cpp:1873
 msgid "Volume"
-msgstr ""
+msgstr "音量"
 
 #: gui/editgamedialog.cpp:286 gui/options.cpp:1875
 msgctxt "lowres"
 msgid "Volume"
-msgstr ""
+msgstr "音量"
 
 #: gui/editgamedialog.cpp:289
 #, fuzzy
@@ -383,54 +383,54 @@ msgstr "覆盖全局着色器设置"
 
 #: gui/editgamedialog.cpp:331 gui/options.cpp:1896
 msgid "Paths"
-msgstr ""
+msgstr "路径"
 
 #: gui/editgamedialog.cpp:333 gui/options.cpp:1898
 msgctxt "lowres"
 msgid "Paths"
-msgstr ""
+msgstr "路径"
 
 #: gui/editgamedialog.cpp:340
 msgid "Game Path:"
-msgstr ""
+msgstr "游戏路径："
 
 #: gui/editgamedialog.cpp:342
 msgctxt "lowres"
 msgid "Game Path:"
-msgstr ""
+msgstr "游戏路径："
 
 #: gui/editgamedialog.cpp:347 gui/options.cpp:2072
 msgid "Extra Path:"
-msgstr ""
+msgstr "其他路径："
 
 #: gui/editgamedialog.cpp:347 gui/editgamedialog.cpp:349
 #: gui/editgamedialog.cpp:350
 msgid "Specifies path to additional data used by the game"
-msgstr ""
+msgstr "指定游戏使用的其他数据的路径"
 
 #: gui/editgamedialog.cpp:349 gui/options.cpp:2074
 msgctxt "lowres"
 msgid "Extra Path:"
-msgstr ""
+msgstr "其他路径："
 
 #: gui/editgamedialog.cpp:356 gui/options.cpp:2056
 msgid "Save Path:"
-msgstr ""
+msgstr "保存路径："
 
 #: gui/editgamedialog.cpp:356 gui/editgamedialog.cpp:358
 #: gui/editgamedialog.cpp:359 gui/options.cpp:2056 gui/options.cpp:2058
 #: gui/options.cpp:2059
 msgid "Specifies where your saved games are put"
-msgstr ""
+msgstr "指定游戏存档的位置"
 
 #: gui/editgamedialog.cpp:358 gui/options.cpp:2058
 msgctxt "lowres"
 msgid "Save Path:"
-msgstr ""
+msgstr "存档路径："
 
 #: gui/editgamedialog.cpp:370 engines/dialogs.cpp:338
 msgid "Achievements"
-msgstr ""
+msgstr "成就"
 
 #: gui/editgamedialog.cpp:394 gui/editgamedialog.cpp:498
 #: gui/editgamedialog.cpp:564 gui/editgamedialog.cpp:625 gui/options.cpp:1979
@@ -441,17 +441,17 @@ msgstr ""
 #: gui/options.cpp:2626 gui/options.cpp:2632 gui/options.cpp:2643
 msgctxt "path"
 msgid "None"
-msgstr ""
+msgstr "无"
 
 #: gui/editgamedialog.cpp:399 gui/editgamedialog.cpp:504
 #: gui/editgamedialog.cpp:629 gui/options.cpp:1973 gui/options.cpp:2341
 #: gui/options.cpp:2622 backends/platform/wii/options.cpp:56
 msgid "Default"
-msgstr ""
+msgstr "默认"
 
 #: gui/editgamedialog.cpp:557 gui/options.cpp:2637
 msgid "Select SoundFont"
-msgstr ""
+msgstr "选择 SoundFont"
 
 #: gui/editgamedialog.cpp:596
 msgid "Select additional game directory"
