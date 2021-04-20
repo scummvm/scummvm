@@ -121,6 +121,6 @@ IF ~CLOSE(SO_Read) THEN DO
 	EXIT
 END
 
-ADDRESS COMMAND 'delete so_dump'
+ADDRESS COMMAND 'delete FORCE QUIET so_dump'
 
 EXIT
