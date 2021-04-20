@@ -332,14 +332,6 @@ void doScript() {
 	}
 }
 
-/*-------------------------------------------------------------------------*/
-/*                               AtMouseClick           				   */
-/*-------------------------------------------------------------------------*/
-bool AtMouseClick(uint16 curObj) {
-	bool retVal = g_vm->_logicMgr->mouseClick(curObj);
-
-	return retVal;
-}
 
 /* -----------------26/11/97 10.38-------------------
  * 					GestioneATFrame
