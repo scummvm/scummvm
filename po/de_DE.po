@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-04-20 15:48+0000\n"
-"PO-Revision-Date: 2021-04-20 16:57+0000\n"
+"PO-Revision-Date: 2021-04-20 17:59+0000\n"
 "Last-Translator: Lothar Serra Mari <serra@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/de/>\n"
@@ -2138,6 +2138,11 @@ msgid ""
 "replaces the executables shipped with the game, allowing you to play them on "
 "systems for which they were never designed!"
 msgstr ""
+"ScummVM ist ein Programm, welches dir ermöglicht, zahlreiche Adventures und "
+"RPGs auszuführen, vorausgesetzt, du bist im Besitz der passenden "
+"Spieldateien. ScummVM ersetzt dabei die ausführbaren Programmdateien, die "
+"ursprünglich mit dem Spiel mitgeliefert wurden. Dadurch können diese Spiele "
+"auf Systemen gespielt werden, für welche sie nie entwickelt wurden!"
 
 #. I18N: 2 of 3 paragraph of ScummVM description in *nix distributions
 #: dists/scummvm.appdata.xml.cpp:46
@@ -2147,6 +2152,10 @@ msgid ""
 "like LucasArts, Sierra On-Line, Revolution Software, Cyan, Inc. and Westwood "
 "Studios."
 msgstr ""
+"Aktuell unterstützt ScummVM eine umfangreiche Bibliothek von Adventure-"
+"Spielen mit insgesamt über 4000 Spielen. Unterstützt werden viele Klassiker, "
+"die von legendären Studios wie LucasArts, Sierra On-Line, Revolution "
+"Software, Cyan Inc. und den Westwood Studios entwickelt wurden."
 
 #. I18N: 3 of 3 paragraph of ScummVM description in *nix distributions
 #: dists/scummvm.appdata.xml.cpp:52
@@ -2155,6 +2164,9 @@ msgid ""
 "Myst, Blade Runner and countless other games you will find some really "
 "obscure adventures and truly hidden gems to explore."
 msgstr ""
+"Neben bahnbrechenden Titel wie der Monkey Island-Serie, Baphomets Fluch, "
+"Myst, Blade Runner und zahllosen weiteren Spielen wirst du auch einige "
+"wirklich kuriose Adventures und versteckte Schätze entdecken."
 
 #: engines/advancedDetector.cpp:215
 msgid "Illegitimate game copy detected. We provide no support in such cases"
@@ -4840,6 +4852,8 @@ msgstr "Linker Button um anzugreifen, rechter Button, um Items aufzuheben"
 #: engines/kyra/detection_tables.h:1212
 msgid "You added the game incorrectly. Please add the root folder of the game."
 msgstr ""
+"Du hast das Spiel nicht korrekt hinzugefügt. Bitte füge das Stammverzeichnis "
+"des Spiels hinzu."
 
 #: engines/kyra/metaengine.cpp:117
 msgid "Lands of Lore support is not compiled in"
