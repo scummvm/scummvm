@@ -360,7 +360,7 @@ void ExecuteAtFrameDoit(ATFHandle *h, int doit, int obj) {
 		g_vm->_obj[obj]._anim = 0;
 		break;
 	case fCREPACCIO:
-		if (g_vm->_room[r2E]._flag & OBJFLAG_EXTRA)
+		if (g_vm->_room[kRoom2E]._flag & OBJFLAG_EXTRA)
 			g_vm->_obj[oCREPACCIO2E]._position = 7;
 		else
 			g_vm->_obj[oCREPACCIO2E]._position = 6;
@@ -421,12 +421,12 @@ void ExecuteAtFrameDoit(ATFHandle *h, int doit, int obj) {
 
 	case fANIMOFF1:
 		g_vm->_animMgr->_animTab[g_vm->_room[g_vm->_curRoom]._bkgAnim]._flag |= SMKANIM_OFF1;
-		if ((g_vm->_curRoom == r11) || (g_vm->_curRoom == r1D) || (g_vm->_curRoom == r14) || (g_vm->_curRoom == r22) || (g_vm->_curRoom == r48) || (g_vm->_curRoom == r4P))
+		if ((g_vm->_curRoom == kRoom11) || (g_vm->_curRoom == kRoom1D) || (g_vm->_curRoom == kRoom14) || (g_vm->_curRoom == kRoom22) || (g_vm->_curRoom == r48) || (g_vm->_curRoom == r4P))
 			g_vm->_animMgr->smkVolumePan(0, 1, 0);
 		break;
 	case fANIMOFF2:
 		g_vm->_animMgr->_animTab[g_vm->_room[g_vm->_curRoom]._bkgAnim]._flag |= SMKANIM_OFF2;
-		if ((g_vm->_curRoom == r2E))
+		if ((g_vm->_curRoom == kRoom2E))
 			g_vm->_animMgr->smkVolumePan(0, 2, 0);
 		break;
 	case fANIMOFF3:
@@ -434,19 +434,19 @@ void ExecuteAtFrameDoit(ATFHandle *h, int doit, int obj) {
 		break;
 	case fANIMOFF4:
 		g_vm->_animMgr->_animTab[g_vm->_room[g_vm->_curRoom]._bkgAnim]._flag |= SMKANIM_OFF4;
-		if (g_vm->_curRoom == r28)
+		if (g_vm->_curRoom == kRoom28)
 			g_vm->_animMgr->smkVolumePan(0, 1, 0);
 		break;
 
 	case fANIMON1:
 		g_vm->_animMgr->_animTab[g_vm->_room[g_vm->_curRoom]._bkgAnim]._flag &= ~SMKANIM_OFF1;
-		if ((g_vm->_curRoom == r14) || (g_vm->_curRoom == r1D) || (g_vm->_curRoom == r22) || (g_vm->_curRoom == r48) || (g_vm->_curRoom == r4P)) {
+		if ((g_vm->_curRoom == kRoom14) || (g_vm->_curRoom == kRoom1D) || (g_vm->_curRoom == kRoom22) || (g_vm->_curRoom == r48) || (g_vm->_curRoom == r4P)) {
 			g_vm->_animMgr->smkVolumePan(0, 1, 1);
 		}
 		break;
 	case fANIMON2:
 		g_vm->_animMgr->_animTab[g_vm->_room[g_vm->_curRoom]._bkgAnim]._flag &= ~SMKANIM_OFF2;
-		if ((g_vm->_curRoom == r2E)) {
+		if ((g_vm->_curRoom == kRoom2E)) {
 			g_vm->_animMgr->smkVolumePan(0, 2, 1);
 		}
 		break;
@@ -559,7 +559,7 @@ void ProcessAtFrame(ATFHandle *h, int type, int atf) {
 			Common::String filename = Common::String::format("%s2.3d", g_vm->_room[g_vm->_curRoom]._baseName);
 			read3D(filename);
 			g_vm->_room[g_vm->_curRoom]._flag |= OBJFLAG_EXTRA;
-			if (g_vm->_curRoom == r37)
+			if (g_vm->_curRoom == kRoom37)
 				g_vm->_animMgr->smkVolumePan(0, 1, 1);
 			}
 			break;
@@ -570,7 +570,7 @@ void ProcessAtFrame(ATFHandle *h, int type, int atf) {
 	case ATFONESPEAK:
 		switch (h->_curAnim->_atFrame[atf]._index) {
 		case 1:
-			if (g_vm->_room[r1D]._flag & OBJFLAG_EXTRA)
+			if (g_vm->_room[kRoom1D]._flag & OBJFLAG_EXTRA)
 				break;
 
 			SomeoneTalk(307 + dc, oDONNA1D, 0, false);

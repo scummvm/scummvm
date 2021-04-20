@@ -42,23 +42,23 @@ void RedrawRoom() {
 	switch (_curDialog) {
 	case dASCENSORE12:
 		if (_curChoice == 3)
-			StartCharacterAction(a129PARLACOMPUTERESCENDE, r13, 20, 0);
+			StartCharacterAction(a129PARLACOMPUTERESCENDE, kRoom13, 20, 0);
 		else if (_curChoice == 4)
-			StartCharacterAction(a129PARLACOMPUTERESCENDE, r16, 20, 0);
+			StartCharacterAction(a129PARLACOMPUTERESCENDE, kRoom16, 20, 0);
 		break;
 
 	case dASCENSORE13:
 		if (_curChoice == 17)
-			StartCharacterAction(a139CHIUDONOPORTESU, r12, 20, 0);
+			StartCharacterAction(a139CHIUDONOPORTESU, kRoom12, 20, 0);
 		else if (_curChoice == 18)
-			StartCharacterAction(a1316CHIUDONOPORTEGIU, r16, 20, 0);
+			StartCharacterAction(a1316CHIUDONOPORTEGIU, kRoom16, 20, 0);
 		break;
 
 	case dASCENSORE16:
 		if (_curChoice == 32)
-			StartCharacterAction(a1616SALECONASCENSORE, r12, 20, 0);
+			StartCharacterAction(a1616SALECONASCENSORE, kRoom12, 20, 0);
 		else if (_curChoice == 33)
-			StartCharacterAction(a1616SALECONASCENSORE, r13, 20, 0);
+			StartCharacterAction(a1616SALECONASCENSORE, kRoom13, 20, 0);
 		break;
 	}
 
