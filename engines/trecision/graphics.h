@@ -37,6 +37,7 @@ class GraphicsManager {
 	TrecisionEngine *_vm;
 
 	Graphics::Surface _background;
+	Graphics::Surface _smkBackground;
 	Graphics::PixelFormat _screenFormat;
 	uint16 _bitMask[3];
 
@@ -53,8 +54,10 @@ public:
 	void copyToScreen(int x, int y, int w, int h);
 	void copyToScreenBuffer(Graphics::Surface *surface, int x, int y);
 	void blitToScreenBuffer(Graphics::Surface *surface, int x, int y, uint16 mask);
-	void resetScreenBuffer();
+	void resetSmkBackground();
+	void resetScreenBuffer(bool hasAnimatedBg);
 	uint16 *getBackgroundPtr();
+	const uint16 *getSmkBackgroundPtr(int x, int y);
 	void drawLine(int x1, int y1, int x2, int y2, uint16 color);
 	void loadBackground(Common::SeekableReadStream *stream, uint16 width, uint16 height);
 
