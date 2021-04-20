@@ -155,7 +155,7 @@ void AnimManager::playMovie(Common::String filename, int startFrame, int endFram
 		g_system->delayMillis(10);
 	}
 
-	FreeKey();
+	g_vm->FreeKey();
 	doEvent(MC_DIALOG, ME_ENDCHOICE, MP_HIGH, smkDecoder->getCurFrame(), 0, 0, 0);
 
 	delete smkDecoder;
@@ -346,10 +346,10 @@ void AnimManager::startSmkAnim(uint16 animation) {
 	} else if (_animTab[animation]._flag & SMKANIM_ICON) {
 		openSmkAnim(kSmackerIcon, _animTab[animation]._name);
 	} else {
-		uint32 st = ReadTime();
+		uint32 st = _vm->ReadTime();
 
 		openSmkAnim(kSmackerAction, _animTab[animation]._name);
-		_vm->_nextRefresh += (ReadTime() - st); // fixup opening time
+		_vm->_nextRefresh += _vm->ReadTime() - st; // fixup opening time
 	}
 }
 

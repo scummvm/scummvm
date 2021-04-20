@@ -20,6 +20,8 @@
  *
  */
 
+#include <common/system.h>
+
 #include "trecision/nl/extern.h"
 #include "trecision/nl/message.h"
 #include "trecision/nl/proto.h"
@@ -242,6 +244,20 @@ void TrecisionEngine::NlDelay(uint32 val) {
 
 	while ((sv + val) > ReadTime())
 		g_vm->checkSystem();
+}
+
+/*-----------------17/01/97 11.18-------------------
+					FreeKey
+--------------------------------------------------*/
+void TrecisionEngine::FreeKey() {
+	_curKey = Common::KEYCODE_INVALID;
+}
+
+/*-----------------10/12/95 15.52-------------------
+					ReadTime
+--------------------------------------------------*/
+uint32 TrecisionEngine::ReadTime() {
+	return ((g_system->getMillis() * 3) / 50);
 }
 
 

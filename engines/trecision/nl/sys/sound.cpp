@@ -333,7 +333,7 @@ int32 Talk(const char *name) {
 	Audio::SeekableAudioStream *speechStream = Audio::makeWAVStream(stream, DisposeAfterUse::YES);
 
 	g_system->getMixer()->playStream(Audio::Mixer::kSpeechSoundType, &soundHandle[kSoundChannelSpeech], speechStream);
-	_characterSpeakTime = ReadTime();
+	_characterSpeakTime = g_vm->ReadTime();
 
 	return TIME(speechStream->getLength().msecs());
 }

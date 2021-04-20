@@ -347,7 +347,7 @@ bool DataSave() {
 	g_vm->_animQueue.initQueue();
 	g_vm->_characterQueue.initQueue();
 
-	FreeKey();
+	g_vm->FreeKey();
 
 	// Reset the inventory and turn it into save slots
 	memcpy(OldInv, g_vm->_inventory, MAXICON);
@@ -429,7 +429,7 @@ insave:
 			g_vm->_keybInput = true;
 			g_vm->checkSystem();
 			ch = g_vm->GetKey();
-			FreeKey();
+			g_vm->FreeKey();
 
 			g_vm->_keybInput = false;
 
@@ -461,7 +461,7 @@ insave:
 			posx = CLIP(posx - (LenText / 2), 2, MAXX - 2 - LenText);
 			SText.set(posx, FIRSTLINE + ICONDY + 10, LenText, CARHEI, 0, 0, LenText, CARHEI, 0x7FFF, MASKCOL, saveNames[CurPos].c_str());
 
-			if ((ReadTime() / 8) & 1)
+			if ((g_vm->ReadTime() / 8) & 1)
 				BlinkLastDTextChar = 0x0000;
 
 			SText.DText();
@@ -547,7 +547,7 @@ bool DataLoad() {
 	g_vm->_animQueue.initQueue();
 	g_vm->_characterQueue.initQueue();
 
-	FreeKey();
+	g_vm->FreeKey();
 
 	uint8 OldInv[MAXICON];
 	// Reset the inventory and turn it into save slots
@@ -678,7 +678,7 @@ bool QuitGame() {
 
 	g_vm->_graphicsMgr->copyToScreen(0, 0, MAXX, TOP);
 
-	FreeKey();
+	g_vm->FreeKey();
 
 	g_vm->checkSystem();
 
@@ -707,7 +707,7 @@ void DemoOver() {
 
 	g_vm->_graphicsMgr->copyToScreen(0, 0, MAXX, TOP);
 
-	FreeKey();
+	g_vm->FreeKey();
 	g_vm->waitKey();
 	g_vm->quitGame();
 }
