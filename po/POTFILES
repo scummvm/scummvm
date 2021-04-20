@@ -31,6 +31,8 @@ common/error.cpp
 common/rendermode.cpp
 common/updates.cpp
 
+dists/scummvm.appdata.xml.cpp
+
 engines/advancedDetector.cpp
 engines/dialogs.cpp
 engines/engine.cpp
