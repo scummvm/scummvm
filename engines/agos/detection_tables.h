@@ -2474,6 +2474,32 @@ static const AGOSGameDescription gameDescriptions[] = {
 		GF_TALKIE
 	},
 
+	// Simon the Sorcerer 2 - English with MT-32 hack (25th Anniversary Edition)
+	// Bugreport #11394
+	{
+		{
+			"simon2",
+			"25th Anniversary Edition",
+
+			{
+				{ "gsptr30",        GAME_BASEFILE, "608e277904d87dd28725fa08eacc2c0d", 58652 },
+				{ "icon.dat",       GAME_ICONFILE, "72096a62d36e6034ea9fecc13b2dbdab", 18089 },
+				{ "simon2.gme",     GAME_GMEFILE, "d5e4e2e539565471774ecd22ebf15623", 20054555 },
+				{ "stripped.txt",   GAME_STRFILE, "e229f84d46fa83f99b4a7115679f3fb6", 171 },
+				{ "tbllist",        GAME_TBLFILE, "2082f8d02075e590300478853a91ffd9", 513 },
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_CD,
+			GUIO0()
+		},
+
+		GType_SIMON2,
+		GID_SIMON2,
+		GF_TALKIE
+	},
+
 	// Simon the Sorcerer 2 - Russian Fan with MT-32 hack (25th Anniversary Edition)
 	{
 		{
