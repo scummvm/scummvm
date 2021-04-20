@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-04-19 22:19+0000\n"
+"POT-Creation-Date: 2021-04-19 23:46+0000\n"
 "PO-Revision-Date: 2020-09-29 17:13+0000\n"
 "Last-Translator: anonymous <noreply@weblate.org>\n"
 "Language-Team: Polish <https://translations.scummvm.org/projects/scummvm/"
@@ -1305,9 +1305,21 @@ msgctxt "lowres"
 msgid "Accessibility"
 msgstr "Dostępność"
 
+#: gui/options.cpp:1956
+msgid "Discard changes and close the dialog"
+msgstr ""
+
 #: gui/options.cpp:1957
 msgid "Apply"
 msgstr "Zastosuj"
+
+#: gui/options.cpp:1957
+msgid "Apply changes without closing the dialog"
+msgstr ""
+
+#: gui/options.cpp:1958
+msgid "Apply changes and close the dialog"
+msgstr ""
 
 #: gui/options.cpp:2045
 msgid "FluidSynth Settings"
@@ -3975,14 +3987,15 @@ msgstr "   Na pewno chcesz wyjść?   "
 msgid "Invalid save file name"
 msgstr "Nieprawidłowa nazwa pliku zapisu"
 
+#. I18N: The game requires special code which was not yet implemented
 #: engines/cge/detection.cpp:48 engines/cge/detection.cpp:54
 #: engines/kyra/detection_tables.h:224 engines/kyra/detection_tables.h:237
 #: engines/kyra/detection_tables.h:250 engines/kyra/detection_tables.h:606
 #: engines/kyra/detection_tables.h:619 engines/kyra/detection_tables.h:1660
-#: engines/kyra/detection_tables.h:1832 engines/saga/detection_tables.h:187
-#: engines/saga/detection_tables.h:608 engines/saga/detection_tables.h:936
-#: engines/sci/detection_tables.h:4851 engines/sci/detection_tables.h:4859
-#: engines/teenagent/detection.cpp:102
+#: engines/kyra/detection_tables.h:1832 engines/queen/detection.cpp:168
+#: engines/saga/detection_tables.h:187 engines/saga/detection_tables.h:937
+#: engines/saga/detection_tables.h:996 engines/sci/detection_tables.h:4851
+#: engines/sci/detection_tables.h:4859 engines/teenagent/detection.cpp:102
 #, fuzzy
 msgid "Missing game code"
 msgstr "Główne sterowanie gry:"
@@ -5669,6 +5682,12 @@ msgstr "Alternatywne intro"
 #: engines/queen/detection.cpp:46
 msgid "Use an alternative game intro (CD version only)"
 msgstr "Użyj alternatywnego intra (tylko dla wersji CD)"
+
+#. I18N: Inherit the Earth had a "trial" version which is a full game with a simple check
+#: engines/saga/detection_tables.h:609
+#, fuzzy
+msgid "Windows Trial version is not supported"
+msgstr "Identyfikator gry nie jest wspierany"
 
 #: engines/saga/metaengine.cpp:114
 #, fuzzy
@@ -8236,10 +8255,6 @@ msgstr ""
 
 #~ msgid "Key mapper"
 #~ msgstr "Mapper klawiszy"
-
-#, fuzzy
-#~ msgid "Spanish CD version is not yet supported"
-#~ msgstr "Identyfikator gry nie jest wspierany"
 
 #, fuzzy
 #~| msgid "Inventory"

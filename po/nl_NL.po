@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-04-19 22:19+0000\n"
+"POT-Creation-Date: 2021-04-19 23:46+0000\n"
 "PO-Revision-Date: 2020-11-29 17:10+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
@@ -1308,9 +1308,21 @@ msgctxt "lowres"
 msgid "Accessibility"
 msgstr "Toegankelijkheid"
 
+#: gui/options.cpp:1956
+msgid "Discard changes and close the dialog"
+msgstr ""
+
 #: gui/options.cpp:1957
 msgid "Apply"
 msgstr "Toepassen"
+
+#: gui/options.cpp:1957
+msgid "Apply changes without closing the dialog"
+msgstr ""
+
+#: gui/options.cpp:1958
+msgid "Apply changes and close the dialog"
+msgstr ""
 
 #: gui/options.cpp:2045
 msgid "FluidSynth Settings"
@@ -4001,14 +4013,15 @@ msgstr "   Weet u zeker dat u wilt stoppen?   "
 msgid "Invalid save file name"
 msgstr "ongeldige bewaarbestandsnaam"
 
+#. I18N: The game requires special code which was not yet implemented
 #: engines/cge/detection.cpp:48 engines/cge/detection.cpp:54
 #: engines/kyra/detection_tables.h:224 engines/kyra/detection_tables.h:237
 #: engines/kyra/detection_tables.h:250 engines/kyra/detection_tables.h:606
 #: engines/kyra/detection_tables.h:619 engines/kyra/detection_tables.h:1660
-#: engines/kyra/detection_tables.h:1832 engines/saga/detection_tables.h:187
-#: engines/saga/detection_tables.h:608 engines/saga/detection_tables.h:936
-#: engines/sci/detection_tables.h:4851 engines/sci/detection_tables.h:4859
-#: engines/teenagent/detection.cpp:102
+#: engines/kyra/detection_tables.h:1832 engines/queen/detection.cpp:168
+#: engines/saga/detection_tables.h:187 engines/saga/detection_tables.h:937
+#: engines/saga/detection_tables.h:996 engines/sci/detection_tables.h:4851
+#: engines/sci/detection_tables.h:4859 engines/teenagent/detection.cpp:102
 msgid "Missing game code"
 msgstr "Ontbrekende spel code"
 
@@ -5734,6 +5747,12 @@ msgstr "Alternatieve intro"
 msgid "Use an alternative game intro (CD version only)"
 msgstr ""
 "Gebruik een alternatieve versie van de intro (alleen voor de CD versie)"
+
+#. I18N: Inherit the Earth had a "trial" version which is a full game with a simple check
+#: engines/saga/detection_tables.h:609
+#, fuzzy
+msgid "Windows Trial version is not supported"
+msgstr "Spel-ID niet ondersteund"
 
 #: engines/saga/metaengine.cpp:114
 msgid "I Have No Mouth support not compiled in"
@@ -8265,10 +8284,6 @@ msgstr ""
 
 #~ msgid "Key mapper"
 #~ msgstr "Toets koppeltool"
-
-#, fuzzy
-#~ msgid "Spanish CD version is not yet supported"
-#~ msgstr "Spel-ID niet ondersteund"
 
 #, fuzzy
 #~| msgid "General"
