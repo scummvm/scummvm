@@ -451,7 +451,7 @@ void ReadLoc() {
 void TendIn() {
 	TextStatus = TEXT_OFF;
 
-	if (g_vm->_curRoom == rINTRO) {
+	if (g_vm->_curRoom == kRoomIntro) {
 		PlayDialog(dFLOG);
 		return;
 	}
@@ -516,7 +516,7 @@ void ReadObj(Common::SeekableReadStream *stream, int size) {
 		if (!roomObjIndex)
 			break;
 
-		if (g_vm->_curRoom == r41D && objIndex == 89)
+		if (g_vm->_curRoom == kRoom41D && objIndex == 89)
 			break;
 
 		if (g_vm->_curRoom == kRoom2C && objIndex == 20)

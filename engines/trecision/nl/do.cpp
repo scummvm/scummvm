@@ -421,7 +421,7 @@ void ExecuteAtFrameDoit(ATFHandle *h, int doit, int obj) {
 
 	case fANIMOFF1:
 		g_vm->_animMgr->_animTab[g_vm->_room[g_vm->_curRoom]._bkgAnim]._flag |= SMKANIM_OFF1;
-		if ((g_vm->_curRoom == kRoom11) || (g_vm->_curRoom == kRoom1D) || (g_vm->_curRoom == kRoom14) || (g_vm->_curRoom == kRoom22) || (g_vm->_curRoom == r48) || (g_vm->_curRoom == r4P))
+		if ((g_vm->_curRoom == kRoom11) || (g_vm->_curRoom == kRoom1D) || (g_vm->_curRoom == kRoom14) || (g_vm->_curRoom == kRoom22) || (g_vm->_curRoom == kRoom48) || (g_vm->_curRoom == kRoom4P))
 			g_vm->_animMgr->smkVolumePan(0, 1, 0);
 		break;
 	case fANIMOFF2:
@@ -440,7 +440,7 @@ void ExecuteAtFrameDoit(ATFHandle *h, int doit, int obj) {
 
 	case fANIMON1:
 		g_vm->_animMgr->_animTab[g_vm->_room[g_vm->_curRoom]._bkgAnim]._flag &= ~SMKANIM_OFF1;
-		if ((g_vm->_curRoom == kRoom14) || (g_vm->_curRoom == kRoom1D) || (g_vm->_curRoom == kRoom22) || (g_vm->_curRoom == r48) || (g_vm->_curRoom == r4P)) {
+		if ((g_vm->_curRoom == kRoom14) || (g_vm->_curRoom == kRoom1D) || (g_vm->_curRoom == kRoom22) || (g_vm->_curRoom == kRoom48) || (g_vm->_curRoom == kRoom4P)) {
 			g_vm->_animMgr->smkVolumePan(0, 1, 1);
 		}
 		break;

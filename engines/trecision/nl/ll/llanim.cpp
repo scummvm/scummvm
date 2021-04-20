@@ -74,7 +74,7 @@ void RedrawRoom() {
 	if (hasBgAnim)
 		g_vm->_animMgr->startSmkAnim(g_vm->_room[g_vm->_curRoom]._bkgAnim);
 
-	if ((g_vm->_curRoom == r4P) && (_curDialog == dF4PI)) {
+	if ((g_vm->_curRoom == kRoom4P) && (_curDialog == dF4PI)) {
 		g_vm->_animMgr->smkGoto(kSmackerBackground, 21);
 	}
 

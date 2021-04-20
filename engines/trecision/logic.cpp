@@ -141,7 +141,7 @@ void LogicManager::initScript() {
 
 	_vm->_scriptFrame[f]._class = MC_SCRIPT;
 	_vm->_scriptFrame[f]._event = ME_CHANGER;
-	_vm->_scriptFrame[f]._u16Param1 = r49;
+	_vm->_scriptFrame[f]._u16Param1 = kRoom49;
 	_vm->_scriptFrame[f]._u16Param2 = a496;
 	_vm->_scriptFrame[f]._u8Param = 1;
 	_vm->_scriptFrame[f++]._u32Param = 1;
@@ -155,7 +155,7 @@ void LogicManager::initScript() {
 
 	_vm->_scriptFrame[f]._class = MC_SCRIPT;
 	_vm->_scriptFrame[f]._event = ME_CHANGER;
-	_vm->_scriptFrame[f]._u16Param1 = r4A;
+	_vm->_scriptFrame[f]._u16Param1 = kRoom4A;
 	_vm->_scriptFrame[f]._u16Param2 = 0;
 	_vm->_scriptFrame[f]._u8Param = 1;
 	_vm->_scriptFrame[f++]._u32Param = 1;
@@ -398,12 +398,12 @@ void LogicManager::setRoom(uint16 r, bool altRoomFl) {
 			_vm->_obj[oCATWALKA2E]._nbox = FOREGROUND;
 		}
 		break;
-	case r2GV:
+	case kRoom2GV:
 		if (!altRoomFl) {
 			_vm->_obj[oVIADOTTO2GV]._position = 7;
 			_vm->_obj[oVIADOTTO2GV]._anim = a2G7ATTRAVERSAPONTICELLO;
 			read3D("2GV.3d");
-			_vm->_room[r2GV]._flag &= ~OBJFLAG_EXTRA;
+			_vm->_room[kRoom2GV]._flag &= ~OBJFLAG_EXTRA;
 			_vm->_obj[oDUMMY2GV]._mode &= ~OBJMODE_OBJSTATUS;
 			_vm->_obj[oRAGAZZOS2GV]._mode &= ~OBJMODE_OBJSTATUS;
 			_vm->_obj[oCOCCODRILLO2GV]._mode &= ~OBJMODE_OBJSTATUS;
@@ -510,11 +510,11 @@ void LogicManager::endChangeRoom() {
 		StartCharacterAction(aWALKIN, 0, 0, 0);
 	else if ((_vm->_curRoom == kRoom29) && (_vm->_oldRoom == kRoom2A))
 		StartCharacterAction(a298ESCEBOTOLA, 0, 0, 0);
-	else if ((_vm->_curRoom == r29L) && (_vm->_oldRoom == kRoom2A))
+	else if ((_vm->_curRoom == kRoom29L) && (_vm->_oldRoom == kRoom2A))
 		StartCharacterAction(a2910ESCEBOTOLA, 0, 0, 0);
 	else if ((_vm->_curRoom == kRoom2A) && (_vm->_oldRoom == kRoom25))
 		StartCharacterAction(aWALKIN, 0, 0, 0);
-	else if ((_vm->_curRoom == kRoom2A) && ((_vm->_oldRoom == kRoom29) || (_vm->_oldRoom == r29L)))
+	else if ((_vm->_curRoom == kRoom2A) && ((_vm->_oldRoom == kRoom29) || (_vm->_oldRoom == kRoom29L)))
 		StartCharacterAction(aWALKIN, 0, 0, 0);
 	else if ((_vm->_curRoom == kRoom2B) && (_vm->_oldRoom == kRoom2A))
 		StartCharacterAction(a2B2ESCEPOZZO, 0, 2, 0);
@@ -524,21 +524,21 @@ void LogicManager::endChangeRoom() {
 		StartCharacterAction(a2E5SECONDAPARRIVANDO, 0, 0, 0);
 	else if ((_vm->_curRoom == kRoom2F) && (_vm->_oldRoom == kRoom2E))
 		StartCharacterAction(aWALKIN, 0, 0, 0);
-	else if ((_vm->_curRoom == r23B) && (_vm->_oldRoom == kRoom21))
+	else if ((_vm->_curRoom == kRoom23B) && (_vm->_oldRoom == kRoom21))
 		StartCharacterAction(aWALKIN, 0, 0, 0);
 	else if ((_vm->_curRoom == kRoom23A) && (_vm->_oldRoom == kRoom21) && (_vm->_room[kRoom23A]._flag & OBJFLAG_DONE))
 		StartCharacterAction(aWALKIN, 0, 0, 0);
 	else if ((_vm->_curRoom == kRoom23A) && (_vm->_oldRoom == kRoom21) && (!(_vm->_room[kRoom23A]._flag & OBJFLAG_DONE)))
 		_vm->_flagShowCharacter = false;
-	else if ((_vm->_curRoom == kRoom21) && ((_vm->_oldRoom == kRoom23A) || (_vm->_oldRoom == r23B)))
+	else if ((_vm->_curRoom == kRoom21) && ((_vm->_oldRoom == kRoom23A) || (_vm->_oldRoom == kRoom23B)))
 		StartCharacterAction(aWALKIN, 0, 0, 0);
-	else if ((_vm->_curRoom == r2BL) || (_vm->_curRoom == r36F) || (_vm->_curRoom == r41D) || (_vm->_curRoom == r49M) || (_vm->_curRoom == r4CT) ||
-		(_vm->_curRoom == r58T) || (_vm->_curRoom == r58M) || (_vm->_curRoom == r59L) || (_vm->_curRoom == rSYS) ||
-		(_vm->_curRoom == r12CU) || (_vm->_curRoom == r13CU)) { // Screens without inventory
+	else if ((_vm->_curRoom == kRoom2BL) || (_vm->_curRoom == kRoom36F) || (_vm->_curRoom == kRoom41D) || (_vm->_curRoom == kRoom49M) || (_vm->_curRoom == kRoom4CT) ||
+		(_vm->_curRoom == kRoom58T) || (_vm->_curRoom == kRoom58M) || (_vm->_curRoom == kRoom59L) || (_vm->_curRoom == kRoomControlPanel) ||
+		(_vm->_curRoom == kRoom12CU) || (_vm->_curRoom == kRoom13CU)) { // Screens without inventory
 		_vm->_flagShowCharacter = false;
 		_vm->_flagCharacterExists = false;
 		_vm->_flagInventoryLocked = true;
-	} else if ((_vm->_curRoom == r31P) || (_vm->_curRoom == r35P)) { // Screens with inventory
+	} else if ((_vm->_curRoom == kRoom31P) || (_vm->_curRoom == kRoom35P)) { // Screens with inventory
 		_vm->_flagShowCharacter = false;
 		_vm->_flagCharacterExists = false;
 	} else if ((_vm->_curRoom == kRoom2F) && (_vm->_oldRoom == kRoom31))
@@ -559,22 +559,22 @@ void LogicManager::endChangeRoom() {
 		StartCharacterAction(a361ESCEASCENSORE, 0, 0, 0);
 	else if ((_vm->_curRoom == kRoom35) && (_vm->_oldRoom == kRoom36))
 		StartCharacterAction(a3515ESCEASCENSORE, 0, 0, 0);
-	else if ((_vm->_curRoom == r44) && (_vm->_oldRoom == r45 || _vm->_oldRoom == r45S) && !(_vm->_inventoryObj[iDISLOCATORE]._flag & OBJFLAG_EXTRA))
+	else if ((_vm->_curRoom == kRoom44) && (_vm->_oldRoom == kRoom45 || _vm->_oldRoom == kRoom45S) && !(_vm->_inventoryObj[iDISLOCATORE]._flag & OBJFLAG_EXTRA))
 		StartCharacterAction(a445, 0, 0, 0);
-	else if ((_vm->_curRoom == r45 || _vm->_curRoom == r45S) && (_vm->_oldRoom == r44) && !(_vm->_inventoryObj[iDISLOCATORE]._flag & OBJFLAG_EXTRA))
+	else if ((_vm->_curRoom == kRoom45 || _vm->_curRoom == kRoom45S) && (_vm->_oldRoom == kRoom44) && !(_vm->_inventoryObj[iDISLOCATORE]._flag & OBJFLAG_EXTRA))
 		StartCharacterAction(a457, 0, 0, 0);
-	else if ((_vm->_curRoom == r46) && (_vm->_oldRoom == r47 || _vm->_oldRoom == r48 || _vm->_oldRoom == r49) && !(_vm->_inventoryObj[iDISLOCATORE]._flag & OBJFLAG_EXTRA))
+	else if ((_vm->_curRoom == kRoom46) && (_vm->_oldRoom == kRoom47 || _vm->_oldRoom == kRoom48 || _vm->_oldRoom == kRoom49) && !(_vm->_inventoryObj[iDISLOCATORE]._flag & OBJFLAG_EXTRA))
 		StartCharacterAction(aWALKIN, 0, 0, 0);
-	else if ((_vm->_curRoom == r47) && (_vm->_oldRoom == r46) && !(_vm->_inventoryObj[iDISLOCATORE]._flag & OBJFLAG_EXTRA))
+	else if ((_vm->_curRoom == kRoom47) && (_vm->_oldRoom == kRoom46) && !(_vm->_inventoryObj[iDISLOCATORE]._flag & OBJFLAG_EXTRA))
 		StartCharacterAction(a476, 0, 0, 0);
-	else if ((_vm->_curRoom == r48) && (_vm->_oldRoom == r46) && !(_vm->_inventoryObj[iDISLOCATORE]._flag & OBJFLAG_EXTRA))
+	else if ((_vm->_curRoom == kRoom48) && (_vm->_oldRoom == kRoom46) && !(_vm->_inventoryObj[iDISLOCATORE]._flag & OBJFLAG_EXTRA))
 		StartCharacterAction(a485, 0, 0, 0);
-	else if ((_vm->_curRoom == r49) && (_vm->_oldRoom == r46) && !(_vm->_inventoryObj[iDISLOCATORE]._flag & OBJFLAG_EXTRA))
+	else if ((_vm->_curRoom == kRoom49) && (_vm->_oldRoom == kRoom46) && !(_vm->_inventoryObj[iDISLOCATORE]._flag & OBJFLAG_EXTRA))
 		StartCharacterAction(a494, 0, 0, 0);
-	else if ((_vm->_curRoom == r54) && (_vm->_oldRoom == r53)) {
+	else if ((_vm->_curRoom == kRoom54) && (_vm->_oldRoom == kRoom53)) {
 		StartCharacterAction(a5411, 0, 11, 0);
 		_vm->_inventoryObj[iLASER35]._examine = 1599;
-	} else if ((_vm->_oldRoom == r41D) && (_vm->_inventoryObj[iDISLOCATORE]._flag & OBJFLAG_EXTRA)) {
+	} else if ((_vm->_oldRoom == kRoom41D) && (_vm->_inventoryObj[iDISLOCATORE]._flag & OBJFLAG_EXTRA)) {
 		setPosition(30);
 		drawCharacter(CALCPOINTS);
 	}
@@ -590,14 +590,14 @@ void LogicManager::endChangeRoom() {
 	} else if ((_vm->_curRoom == kRoom21) && (_vm->_oldRoom == kRoom1C)) {
 		PlayDialog(dF1C1);
 		WaitSoundFadEnd();
-	} else if ((_vm->_curRoom == r23B) && (_vm->_oldRoom == kRoom23A)) {
+	} else if ((_vm->_curRoom == kRoom23B) && (_vm->_oldRoom == kRoom23A)) {
 		PlayDialog(dF231);
 		WaitSoundFadEnd();
 		_vm->removeIcon(iMAPPA17);
-	} else if ((_vm->_curRoom == r29L) && (_vm->_oldRoom == kRoom29)) {
+	} else if ((_vm->_curRoom == kRoom29L) && (_vm->_oldRoom == kRoom29)) {
 		PlayDialog(dF291);
 		WaitSoundFadEnd();
-	} else if ((_vm->_curRoom == r2GV) && (_vm->_oldRoom == kRoom2G)) {
+	} else if ((_vm->_curRoom == kRoom2GV) && (_vm->_oldRoom == kRoom2G)) {
 		PlayDialog(dF2G2);
 		WaitSoundFadEnd();
 	} else if ((_vm->_curRoom == kRoom31) && (_vm->_oldRoom == kRoom32) && (_vm->_room[kRoom32]._flag & OBJFLAG_EXTRA)) {
@@ -619,23 +619,23 @@ void LogicManager::endChangeRoom() {
 		_vm->_flagNoPaintScreen = false;
 		_vm->clearText();
 		_vm->redrawString();
-	} else if ((_vm->_curRoom == r46) && (_vm->_oldRoom == r43) && !(_vm->_inventoryObj[iDISLOCATORE]._flag & OBJFLAG_EXTRA)) {
+	} else if ((_vm->_curRoom == kRoom46) && (_vm->_oldRoom == kRoom43) && !(_vm->_inventoryObj[iDISLOCATORE]._flag & OBJFLAG_EXTRA)) {
 		PlayDialog(dF431);
 		WaitSoundFadEnd();
-	} else if ((_vm->_curRoom == r45S) && (_vm->_oldRoom == r45) && !(_vm->_inventoryObj[iDISLOCATORE]._flag & OBJFLAG_EXTRA)) {
+	} else if ((_vm->_curRoom == kRoom45S) && (_vm->_oldRoom == kRoom45) && !(_vm->_inventoryObj[iDISLOCATORE]._flag & OBJFLAG_EXTRA)) {
 		PlayDialog(dF451);
 		WaitSoundFadEnd();
-	} else if ((_vm->_curRoom == r4A) && (_vm->_oldRoom == r49) && !(_vm->_inventoryObj[iDISLOCATORE]._flag & OBJFLAG_EXTRA)) {
+	} else if ((_vm->_curRoom == kRoom4A) && (_vm->_oldRoom == kRoom49) && !(_vm->_inventoryObj[iDISLOCATORE]._flag & OBJFLAG_EXTRA)) {
 		PlayDialog(dF491);
 		WaitSoundFadEnd();
-	} else if ((_vm->_curRoom == r4A) && (_vm->_oldRoom == r41D) && (_vm->_inventoryObj[iDISLOCATORE]._flag & OBJFLAG_EXTRA) && (_vm->_obj[ocHELLEN4A]._mode & OBJMODE_OBJSTATUS)) {
+	} else if ((_vm->_curRoom == kRoom4A) && (_vm->_oldRoom == kRoom41D) && (_vm->_inventoryObj[iDISLOCATORE]._flag & OBJFLAG_EXTRA) && (_vm->_obj[ocHELLEN4A]._mode & OBJMODE_OBJSTATUS)) {
 		WaitSoundFadEnd();
 		PlayDialog(dC4A1);
-	} else if ((_vm->_curRoom == r4P) && (_vm->_oldRoom == r4O) && !(_vm->_room[r4P]._flag & OBJFLAG_DONE)) {
+	} else if ((_vm->_curRoom == kRoom4P) && (_vm->_oldRoom == kRoom4O) && !(_vm->_room[kRoom4P]._flag & OBJFLAG_DONE)) {
 		PlayDialog(dF4PI);
 		_vm->_flagShowCharacter = false;
 		WaitSoundFadEnd();
-	} else if ((_vm->_curRoom == r51) && (_vm->_oldRoom == r4CT)) {
+	} else if ((_vm->_curRoom == kRoom51) && (_vm->_oldRoom == kRoom4CT)) {
 		PlayDialog(dF4C1);
 		_vm->_flagShowCharacter = false;
 		WaitSoundFadEnd();
@@ -661,7 +661,7 @@ void LogicManager::endChangeRoom() {
 	if ((_vm->_curRoom == kRoom17) && (_vm->_oldRoom == kRoom18) && !(_vm->_room[kRoom17]._flag & OBJFLAG_DONE) && (_vm->_obj[oRETE17]._mode & OBJMODE_OBJSTATUS))
 		CharacterSay(189);
 
-	if (((_vm->_curRoom == r12CU) || (_vm->_curRoom == r13CU)) && _vm->_closeUpObj && _vm->_obj[_vm->_closeUpObj]._examine)
+	if (((_vm->_curRoom == kRoom12CU) || (_vm->_curRoom == kRoom13CU)) && _vm->_closeUpObj && _vm->_obj[_vm->_closeUpObj]._examine)
 		CharacterSay(_vm->_obj[_vm->_closeUpObj]._examine);
 	else if ((_vm->_curRoom == kRoom23A) && (_vm->_oldRoom == kRoom21) && !(_vm->_room[kRoom23A]._flag & OBJFLAG_DONE)) {
 		_vm->_flagShowCharacter = true;
@@ -670,20 +670,20 @@ void LogicManager::endChangeRoom() {
 		CharacterSay(381);
 	else if ((_vm->_curRoom == kRoom2G) && !(_vm->_room[kRoom2G]._flag & OBJFLAG_DONE))
 		CharacterSay(688);
-	else if ((_vm->_curRoom == r4C) && (_vm->_oldRoom == r4CT))
+	else if ((_vm->_curRoom == kRoom4C) && (_vm->_oldRoom == kRoom4CT))
 		CharacterSay(1163);
-	else if ((_vm->_curRoom == r41) && (_vm->_oldRoom == kRoom36) && !(_vm->_room[r41]._flag & OBJFLAG_DONE))
+	else if ((_vm->_curRoom == kRoom41) && (_vm->_oldRoom == kRoom36) && !(_vm->_room[kRoom41]._flag & OBJFLAG_DONE))
 		CharacterSay(900);
-	else if ((_vm->_curRoom == r58) && (_vm->_obj[oGUARDIA58]._mode & OBJMODE_OBJSTATUS) && (_vm->_obj[oGUARDIA58]._anim)) {
+	else if ((_vm->_curRoom == kRoom58) && (_vm->_obj[oGUARDIA58]._mode & OBJMODE_OBJSTATUS) && (_vm->_obj[oGUARDIA58]._anim)) {
 		_vm->_curObj = oGUARDIA58;
 		doEvent(MC_MOUSE, ME_MRIGHT, MP_DEFAULT, 372, 335 + TOP, 0, oGUARDIA58);
-	} else if ((_vm->_curRoom == r59L))
+	} else if ((_vm->_curRoom == kRoom59L))
 		CharacterSay(1394);
-	else if ((_vm->_curRoom == r58) && (_vm->_oldRoom == r58T))
+	else if ((_vm->_curRoom == kRoom58) && (_vm->_oldRoom == kRoom58T))
 		CharacterSay(1368);
-	else if ((_vm->_curRoom == r5A) && !(_vm->_room[r5A]._flag & OBJFLAG_DONE))
+	else if ((_vm->_curRoom == kRoom5A) && !(_vm->_room[kRoom5A]._flag & OBJFLAG_DONE))
 		CharacterSay(1408);
-	else if ((_vm->_curRoom == rSYS) && (_vm->_oldRoom == rSYS))
+	else if ((_vm->_curRoom == kRoomControlPanel) && (_vm->_oldRoom == kRoomControlPanel))
 		_vm->_logicMgr->DoSys(o00LOAD);
 	_vm->_inventoryObj[iDISLOCATORE]._flag &= ~OBJFLAG_EXTRA;
 }
@@ -1523,7 +1523,7 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 
 	case iCANDELOTTO:
 		if ((_vm->_useWith[WITH] == oSERBATOIOA2G) && (_vm->_inventoryObj[iBOMBOLA]._flag & OBJFLAG_EXTRA) && (_vm->_inventoryObj[iLATTINA28]._flag & OBJFLAG_EXTRA)) {
-			doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, r2GV, 0, 0, _vm->_useWith[WITH]);
+			doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, kRoom2GV, 0, 0, _vm->_useWith[WITH]);
 			_vm->removeIcon(iCANDELOTTO);
 			*printSentence = false;
 		}
@@ -1696,7 +1696,7 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 
 	case iCARD36:
 		if ((_vm->_useWith[WITH] == oFRONTOFFICEA35) && !(_vm->_obj[oFRONTOFFICEA35]._flag & OBJFLAG_EXTRA)) {
-			doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, r35P, 0, 10, _vm->_useWith[WITH]);
+			doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, kRoom35P, 0, 10, _vm->_useWith[WITH]);
 			_vm->removeIcon(iCARD36);
 			*printSentence = false;
 		} else if ((_vm->_useWith[WITH] == oFRONTOFFICEA35) && (_vm->_obj[oFRONTOFFICEA35]._flag & OBJFLAG_EXTRA)) {
@@ -1793,7 +1793,7 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 
 	case iSTRACCIO:
 		if (_vm->_useWith[WITH] == oMANOPOLAR45) {
-			doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, r45S, 0, 2, _vm->_useWith[WITH]);
+			doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, kRoom45S, 0, 2, _vm->_useWith[WITH]);
 			*printSentence = false;
 		} else if ((_vm->_useWith[WITH] == oCAMPANA4U) && (_vm->_inventoryObj[iBIGLIAA]._flag & OBJFLAG_EXTRA) && (_vm->_obj[oCAMPANA4U]._flag & OBJFLAG_EXTRA)) {
 			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a4U5, 0, 0, _vm->_useWith[WITH]);
@@ -1837,7 +1837,7 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 	case iROD:
 		if (_vm->_useWith[WITH] == oSUNDIAL49) {
 			_vm->removeIcon(iROD);
-			StartCharacterAction(a491, r49M, 1, 0);
+			StartCharacterAction(a491, kRoom49M, 1, 0);
 			*printSentence = false;
 		}
 		break;
@@ -1848,7 +1848,7 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 			_vm->_obj[oLICANTROPO4P]._mode &= ~OBJMODE_OBJSTATUS;
 			_vm->_obj[oLICANTROPOM4P]._mode |= OBJMODE_OBJSTATUS;
 			_vm->_obj[oSANGUE4P]._mode |= OBJMODE_OBJSTATUS;
-			_vm->_room[r4P]._flag |= OBJFLAG_EXTRA;
+			_vm->_room[kRoom4P]._flag |= OBJFLAG_EXTRA;
 			read3D("4p2.3d"); // after werewolf
 			_vm->_animMgr->_animTab[aBKG4P]._flag |= SMKANIM_OFF1;
 			PlayDialog(dF4P2);
@@ -1951,7 +1951,7 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 		if (_vm->_useWith[WITH] == oLAGO53) {
 			*printSentence = false;
 			if (!(_vm->_obj[oLUCCHETTO53]._mode & OBJMODE_OBJSTATUS)) {
-				StartCharacterAction(a533, r54, 11, 0);
+				StartCharacterAction(a533, kRoom54, 11, 0);
 				_vm->removeIcon(_vm->_useWith[USED]);
 			} else if (_vm->_useWith[USED] != iSERPENTEB) {
 				doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a534, 0, 0, _vm->_useWith[WITH]);
@@ -1966,7 +1966,7 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 		if (_vm->_useWith[WITH] == oLAGO53) {
 			*printSentence = false;
 			if (!(_vm->_obj[oLUCCHETTO53]._mode & OBJMODE_OBJSTATUS)) {
-				StartCharacterAction(a533C, r54, 11, 0);
+				StartCharacterAction(a533C, kRoom54, 11, 0);
 				_vm->removeIcon(_vm->_useWith[USED]);
 			} else if (_vm->_useWith[USED] != iSERPENTEB) {
 				doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a534, 0, 0, _vm->_useWith[WITH]);
@@ -1997,7 +1997,7 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a563, 0, 0, _vm->_useWith[WITH]);
 			*printSentence = false;
 		} else if (_vm->_useWith[WITH] == oPORTA57C55) {
-			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a551, r57, 17, _vm->_useWith[WITH]);
+			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a551, kRoom57, 17, _vm->_useWith[WITH]);
 			*printSentence = false;
 		} else if ((_vm->_useWith[WITH] == oPORTA58C55) && (!(_vm->_choice[871]._flag & OBJFLAG_DONE) || (_vm->_choice[901]._flag & OBJFLAG_DONE))) {
 			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a552, 0, 0, _vm->_useWith[WITH]);
@@ -2057,7 +2057,7 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 			PlayDialog(dC5A1);
 			_vm->_obj[oFINESTRAA58]._anim = a587;
 			*printSentence = false;
-			_vm->_room[r5A]._flag |= OBJFLAG_EXTRA;
+			_vm->_room[kRoom5A]._flag |= OBJFLAG_EXTRA;
 		} else if ((_vm->_useWith[WITH] == oFINESTRAA5A) && (_vm->_choice[871]._flag & OBJFLAG_DONE)) {
 			_vm->removeIcon(iARMAEVA);
 			PlayDialog(dF5A1);
@@ -2090,7 +2090,7 @@ bool LogicManager::useScreenWithScreen() {
 
 	case oCAVIE23:
 		if (_vm->_useWith[WITH] == oCAMPO23) {
-			doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, r23B, 0, 0, _vm->_useWith[WITH]);
+			doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, kRoom23B, 0, 0, _vm->_useWith[WITH]);
 			printSentence = false;
 		} else {
 			StartCharacterAction(hBOH, 0, 0, 0);
@@ -2199,7 +2199,7 @@ bool LogicManager::mouseExamine(uint16 curObj) {
 			_vm->_obj[oFUSE12CU]._mode |= OBJMODE_OBJSTATUS;
 		else
 			_vm->_obj[oFUSE12CU]._mode &= ~OBJMODE_OBJSTATUS;
-		doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, r12CU, 0, 0, curObj);
+		doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, kRoom12CU, 0, 0, curObj);
 		_vm->_closeUpObj = curObj;
 		break;
 
@@ -2209,7 +2209,7 @@ bool LogicManager::mouseExamine(uint16 curObj) {
 			_vm->_obj[oLETTER13CU]._mode |= OBJMODE_OBJSTATUS;
 		else
 			_vm->_obj[oLETTER13CU]._mode &= ~OBJMODE_OBJSTATUS;
-		doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, r13CU, 0, 0, curObj);
+		doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, kRoom13CU, 0, 0, curObj);
 		_vm->_closeUpObj = curObj;
 		break;
 
@@ -2727,10 +2727,10 @@ bool LogicManager::mouseOperate(uint16 curObj) {
 		break;
 
 	case oSWITCH29:
-		if (_vm->_curRoom == r29L)
+		if (_vm->_curRoom == kRoom29L)
 			retVal = true;
 		else if ((_vm->_obj[oLAMPADINAS29]._mode & OBJMODE_OBJSTATUS)) {
-			doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, r29L, 0, 0, curObj);
+			doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, kRoom29L, 0, 0, curObj);
 			retVal = false;
 		} else if (!(_vm->_obj[_vm->_curObj]._flag & OBJFLAG_EXTRA)) {
 			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a291USAINTERRUTTORELUCE, 0, 0, curObj);
@@ -3117,7 +3117,7 @@ bool LogicManager::mouseOperate(uint16 curObj) {
 		for (int a = oASTAC49; a <= oASTA749; a++)
 			_vm->_obj[a]._mode &= ~OBJMODE_OBJSTATUS;
 		_vm->_obj[oASTAC49]._mode |= OBJMODE_OBJSTATUS;
-		doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, r49, a496, 1, curObj);
+		doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, kRoom49, a496, 1, curObj);
 		retVal = false;
 		break;
 
@@ -3151,14 +3151,14 @@ bool LogicManager::mouseOperate(uint16 curObj) {
 				_comb4CT[a] = 0;
 				_vm->_obj[oAST14C + a]._mode &= ~OBJMODE_OBJSTATUS;
 			}
-			doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, r51, 0, 1, curObj);
+			doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, kRoom51, 0, 1, curObj);
 			_vm->_flagCharacterExists = true;
 		} else {
 			for (a = 0; a < 6; a++) {
 				_comb4CT[a] = 0;
 				_vm->_obj[oAST14C + a]._mode &= ~OBJMODE_OBJSTATUS;
 			}
-			doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, r4C, 0, 4, curObj);
+			doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, kRoom4C, 0, 4, curObj);
 			_vm->_flagCharacterExists = true;
 		}
 		retVal = false;
@@ -3199,14 +3199,14 @@ bool LogicManager::mouseOperate(uint16 curObj) {
 	case oPULSANTECD:
 		for (int a = oPULSANTE1AD; a <= oPULSANTE33AD; a++) {
 			if ((_vm->_obj[a]._goRoom == _vm->_obj[oEXIT41D]._goRoom) ||
-				((_vm->_obj[a]._goRoom == r45) && (_vm->_obj[oEXIT41D]._goRoom == r45S))) {
+				((_vm->_obj[a]._goRoom == kRoom45) && (_vm->_obj[oEXIT41D]._goRoom == kRoom45S))) {
 				CharacterSay(903);
 				break;
 			}
 
 			if (_vm->_obj[a]._goRoom == 0) {
-				if (_vm->_obj[oEXIT41D]._goRoom == r45S)
-					_vm->_obj[a]._goRoom = r45;
+				if (_vm->_obj[oEXIT41D]._goRoom == kRoom45S)
+					_vm->_obj[a]._goRoom = kRoom45;
 				else
 					_vm->_obj[a]._goRoom = _vm->_obj[oEXIT41D]._goRoom;
 				_vm->_obj[a]._mode |= OBJMODE_OBJSTATUS;
@@ -3268,12 +3268,12 @@ bool LogicManager::mouseOperate(uint16 curObj) {
 		break;
 
 	case oTASTIERA58:
-		doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, r58T, 0, 0, curObj);
+		doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, kRoom58T, 0, 0, curObj);
 		break;
 
 	case oLAVAGNA59:
 	case oSIMBOLI59:
-		doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, r59L, 0, 0, curObj);
+		doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, kRoom59L, 0, 0, curObj);
 		break;
 
 	case oFINESTRAA5A:
@@ -3328,7 +3328,7 @@ bool LogicManager::mouseOperate(uint16 curObj) {
 			SoundFadOut();
 			PlayDialog(dF582);
 		} else
-			doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, r58, 0, 2, curObj);
+			doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, kRoom58, 0, 2, curObj);
 
 		for (int i = 0; i < 6; ++i)
 			_comb58[i] = 0;
@@ -3745,7 +3745,7 @@ bool LogicManager::operateInventory() {
 		break;
 
 	case iLIBRO:
-		doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, r2BL, 0, 0, _vm->_useWith[WITH]);
+		doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, kRoom2BL, 0, 0, _vm->_useWith[WITH]);
 		_vm->_obj[oEXIT2BL]._goRoom = _vm->_curRoom;
 		actorStop();
 		nextStep();
@@ -3753,7 +3753,7 @@ bool LogicManager::operateInventory() {
 		break;
 
 	case iFOGLIO36:
-		doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, r36F, 0, 0, _vm->_useWith[WITH]);
+		doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, kRoom36F, 0, 0, _vm->_useWith[WITH]);
 		_vm->_obj[oEXIT36F]._goRoom = _vm->_curRoom;
 		actorStop();
 		nextStep();
@@ -3763,7 +3763,7 @@ bool LogicManager::operateInventory() {
 	case iDISLOCATORE:
 		for (int a = oROOM41; a <= oROOM45B; a++)
 			_vm->_obj[a]._mode &= ~OBJMODE_OBJSTATUS;
-		doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, r41D, 0, 0, _vm->_useWith[WITH]);
+		doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, kRoom41D, 0, 0, _vm->_useWith[WITH]);
 		_vm->_obj[oEXIT41D]._goRoom = _vm->_curRoom;
 		_vm->_inventoryObj[iDISLOCATORE]._flag &= ~OBJFLAG_EXTRA;
 		actorStop();
@@ -3773,22 +3773,22 @@ bool LogicManager::operateInventory() {
 
 	case iCODICE:
 		_vm->_obj[oEXIT58M]._goRoom = _vm->_curRoom;
-		doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, r58M, 0, 0, _vm->_useWith[WITH]);
+		doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, kRoom58M, 0, 0, _vm->_useWith[WITH]);
 		actorStop();
 		nextStep();
 		printSentence = false;
 		break;
 
 	case iTELECOMANDO44:
-		if ((_vm->_actor->_px < 5057.6) && (_vm->_obj[oPUPAZZO44]._mode & OBJMODE_OBJSTATUS) && (_vm->_curRoom == r43)) {
-			doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, r46, 0, 7, _vm->_useWith[WITH]);
+		if ((_vm->_actor->_px < 5057.6) && (_vm->_obj[oPUPAZZO44]._mode & OBJMODE_OBJSTATUS) && (_vm->_curRoom == kRoom43)) {
+			doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, kRoom46, 0, 7, _vm->_useWith[WITH]);
 			printSentence = false;
 		}
 		break;
 
 	case iMAPPA50:
-		if ((_vm->_curRoom >= r51) && (_vm->_curRoom <= r5A))
-			_vm->_inventoryObj[iMAPPA50]._action = 1725 + (_vm->_curRoom - r51);
+		if ((_vm->_curRoom >= kRoom51) && (_vm->_curRoom <= kRoom5A))
+			_vm->_inventoryObj[iMAPPA50]._action = 1725 + (_vm->_curRoom - kRoom51);
 		printSentence = true;
 		break;
 	default:
@@ -3803,19 +3803,19 @@ void LogicManager::doMouseGame() {
 	if ((_vm->_curObj >= oWHEEL1A2C) && (_vm->_curObj <= oWHEEL12C2C))
 		ShowObjName((oWHEEL1A2C % 3) + oWHEELA2C, true);
 	// For the displacer
-	else if (_vm->_curRoom == r41D) {
+	else if (_vm->_curRoom == kRoom41D) {
 		if ((_vm->_curObj >= oPULSANTE1AD) && (_vm->_curObj <= oPULSANTE33AD)) {
-			if (!(_vm->_obj[oROOM41 + _vm->_obj[_vm->_curObj]._goRoom - r41]._mode & OBJMODE_OBJSTATUS)) {
+			if (!(_vm->_obj[oROOM41 + _vm->_obj[_vm->_curObj]._goRoom - kRoom41]._mode & OBJMODE_OBJSTATUS)) {
 				for (int a = oROOM41; a <= oROOM4X; a++) {
 					if (_vm->_obj[a]._mode & OBJMODE_OBJSTATUS)
 						_vm->_obj[a]._mode &= ~OBJMODE_OBJSTATUS;
 				}
 				_vm->_obj[oROOM45B]._mode &= ~OBJMODE_OBJSTATUS;
 
-				if ((oROOM41 + _vm->_obj[_vm->_curObj]._goRoom - r41 == oROOM45) && (_vm->_obj[od44ALLA45]._goRoom == r45S))
+				if ((oROOM41 + _vm->_obj[_vm->_curObj]._goRoom - kRoom41 == oROOM45) && (_vm->_obj[od44ALLA45]._goRoom == kRoom45S))
 					_vm->_obj[oROOM45B]._mode |= OBJMODE_OBJSTATUS;
 				else
-					_vm->_obj[oROOM41 + _vm->_obj[_vm->_curObj]._goRoom - r41]._mode |= OBJMODE_OBJSTATUS;
+					_vm->_obj[oROOM41 + _vm->_obj[_vm->_curObj]._goRoom - kRoom41]._mode |= OBJMODE_OBJSTATUS;
 				RegenRoom();
 			}
 		} else {
@@ -3839,7 +3839,7 @@ void LogicManager::doMouseGame() {
 bool LogicManager::doMouseInventory() {
 	bool retVal = false;
 	// Inventory area
-	if (!_vm->_flagCharacterExists && ((_vm->_curRoom != r31P) && (_vm->_curRoom != r35P)))
+	if (!_vm->_flagCharacterExists && ((_vm->_curRoom != kRoom31P) && (_vm->_curRoom != kRoom35P)))
 		retVal = true; // When it's in a room without a character, such as the map
 	return retVal;
 }
@@ -3847,14 +3847,14 @@ bool LogicManager::doMouseInventory() {
 void LogicManager::doMouseLeftRight() {
 	//  for the displacer
 	if ((_vm->_curObj >= oPULSANTE1AD) && (_vm->_curObj <= oPULSANTE33AD)) {
-		if ((_vm->_obj[_vm->_curObj]._goRoom == r45) && (_vm->_obj[od44ALLA45]._goRoom == r45S) &&
-			(_vm->_obj[oEXIT41D]._goRoom == r45S) && (_vm->_curMessage->_event == ME_MRIGHT))
+		if ((_vm->_obj[_vm->_curObj]._goRoom == kRoom45) && (_vm->_obj[od44ALLA45]._goRoom == kRoom45S) &&
+			(_vm->_obj[oEXIT41D]._goRoom == kRoom45S) && (_vm->_curMessage->_event == ME_MRIGHT))
 			doEvent(MC_ACTION, ME_MOUSEOPERATE, MP_DEFAULT, 0, 0, 0, _vm->_curObj);
-		else if ((_vm->_obj[_vm->_curObj]._goRoom == r45) && (_vm->_obj[od44ALLA45]._goRoom == r45S) &&
-				 (_vm->_obj[oEXIT41D]._goRoom != r45S) && (_vm->_curMessage->_event == ME_MRIGHT)) {
-			_vm->_obj[oEXIT41D]._goRoom = r45S;
+		else if ((_vm->_obj[_vm->_curObj]._goRoom == kRoom45) && (_vm->_obj[od44ALLA45]._goRoom == kRoom45S) &&
+				 (_vm->_obj[oEXIT41D]._goRoom != kRoom45S) && (_vm->_curMessage->_event == ME_MRIGHT)) {
+			_vm->_obj[oEXIT41D]._goRoom = kRoom45S;
 			_vm->_inventoryObj[iDISLOCATORE]._flag |= OBJFLAG_EXTRA;
-			doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, r45S, 0, 0, _vm->_curObj);
+			doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, kRoom45S, 0, 0, _vm->_curObj);
 		} else if (_vm->_obj[oEXIT41D]._goRoom != _vm->_obj[_vm->_curObj]._goRoom && (_vm->_curMessage->_event == ME_MRIGHT)) {
 			_vm->_obj[oEXIT41D]._goRoom = _vm->_obj[_vm->_curObj]._goRoom;
 			_vm->_inventoryObj[iDISLOCATORE]._flag |= OBJFLAG_EXTRA;
@@ -3867,7 +3867,7 @@ void LogicManager::doMouseLeftRight() {
 	}
 	// end of displacer
 
-	if (_vm->_curRoom == r52) {
+	if (_vm->_curRoom == kRoom52) {
 		// snake escape 52
 		if (_vm->_obj[oSNAKEU52]._mode & OBJMODE_OBJSTATUS) {
 			if (GAMEAREA(_vm->_curMessage->_u16Param2) && !_vm->_flagUseWithStarted && (_vm->_curObj != oSNAKEU52)) {
@@ -3877,7 +3877,7 @@ void LogicManager::doMouseLeftRight() {
 				return;
 			}
 		}
-	} else if (_vm->_curRoom == rSYS) {
+	} else if (_vm->_curRoom == kRoomControlPanel) {
 		// Sys
 		CheckMask(_vm->_curMessage->_u16Param1, _vm->_curMessage->_u16Param2);
 		DoSys(_vm->_curObj);
@@ -3886,7 +3886,7 @@ void LogicManager::doMouseLeftRight() {
 
 	// If it's in a room without a character, like a map or a book
 	if (!_vm->_flagCharacterExists) {
-		if ((isInventoryArea(_vm->_curMessage->_u16Param2)) && ((_vm->_curRoom == r31P) || (_vm->_curRoom == r35P))) {
+		if ((isInventoryArea(_vm->_curMessage->_u16Param2)) && ((_vm->_curRoom == kRoom31P) || (_vm->_curRoom == kRoom35P))) {
 			if (ICONAREA(_vm->_curMessage->_u16Param1, _vm->_curMessage->_u16Param2)
 			&& (_vm->whatIcon(_vm->_curMessage->_u16Param1)) && (_vm->_inventoryStatus == INV_INACTION)) {
 				_vm->_useWith[WITH] = 0;
@@ -4058,7 +4058,7 @@ void LogicManager::doMouseLeftRight() {
 			doEvent(MC_CHARACTER, ME_CHARACTERGOTO, MP_DEFAULT, _vm->_curMessage->_u16Param1, _vm->_curMessage->_u16Param2, 0, 0);
 	} else if (isInventoryArea(_vm->_curMessage->_u16Param2)) {
 		// Inventory area
-		if (_vm->_animMgr->_playingAnims[kSmackerAction] || _vm->_flagDialogActive || _vm->_curRoom == rSYS)
+		if (_vm->_animMgr->_playingAnims[kSmackerAction] || _vm->_flagDialogActive || _vm->_curRoom == kRoomControlPanel)
 			return;
 
 		if (ICONAREA(_vm->_curMessage->_u16Param1, _vm->_curMessage->_u16Param2) && _vm->whatIcon(_vm->_curMessage->_u16Param1) && (_vm->_inventoryStatus == INV_INACTION)) {
@@ -4079,7 +4079,7 @@ void LogicManager::doMouseLeftRight() {
 }
 
 void LogicManager::doSystemChangeRoom() {
-	if ((_vm->_curRoom == r41D) && (_vm->_oldRoom != _vm->_curMessage->_u16Param1))
+	if ((_vm->_curRoom == kRoom41D) && (_vm->_oldRoom != _vm->_curMessage->_u16Param1))
 		NlDissolve(30);
 
 	_vm->_oldRoom = _vm->_curRoom;
@@ -4118,7 +4118,7 @@ void LogicManager::doSystemChangeRoom() {
 		if (_vm->_curObj == od21TO22)
 			_vm->setRoom(kRoom21, false);
 		if (_vm->_curObj == od2GVALLA26)
-			_vm->setRoom(r2GV, false);
+			_vm->setRoom(kRoom2GV, false);
 	} else {
 		if (_vm->_curObj == oENTRANCE2E)
 			_vm->setRoom(kRoom2E, true);
@@ -4130,9 +4130,9 @@ void LogicManager::doSystemChangeRoom() {
 
 	if ((_vm->_curRoom == kRoom12) && (_vm->_oldRoom == kRoom11))
 		_vm->_animMgr->_animTab[aBKG11]._flag |= SMKANIM_OFF1;
-	else if ((_vm->_oldRoom == r2BL) || (_vm->_oldRoom == r36F))
+	else if ((_vm->_oldRoom == kRoom2BL) || (_vm->_oldRoom == kRoom36F))
 		_vm->_oldRoom = _vm->_curRoom;
-	else if (_vm->_curRoom == rSYS) {
+	else if (_vm->_curRoom == kRoomControlPanel) {
 		bool speechON = !ConfMan.getBool("speech_mute");
 		bool textON = ConfMan.getBool("subtitles");
 		int speechVol = ConfMan.getInt("speech_volume");
@@ -4164,17 +4164,17 @@ void LogicManager::doSystemChangeRoom() {
 	ReadLoc();
 	_vm->showCursor();
 
-	if ((_vm->_curRoom == kRoom21) && ((_vm->_oldRoom == kRoom23A) || (_vm->_oldRoom == r23B)))
+	if ((_vm->_curRoom == kRoom21) && ((_vm->_oldRoom == kRoom23A) || (_vm->_oldRoom == kRoom23B)))
 		_vm->setRoom(kRoom21, true);
 	else if ((_vm->_curRoom == kRoom21) && (_vm->_oldRoom == kRoom22))
 		_vm->setRoom(kRoom21, false);
-	else if ((_vm->_curRoom == kRoom24) && ((_vm->_oldRoom == kRoom23A) || (_vm->_oldRoom == r23B)))
+	else if ((_vm->_curRoom == kRoom24) && ((_vm->_oldRoom == kRoom23A) || (_vm->_oldRoom == kRoom23B)))
 		_vm->setRoom(kRoom24, false);
 	else if ((_vm->_curRoom == kRoom24) && (_vm->_oldRoom == kRoom26))
 		_vm->setRoom(kRoom24, true);
 	else if ((_vm->_curRoom == kRoom2A) && (_vm->_oldRoom == kRoom25))
 		_vm->setRoom(kRoom2A, true);
-	else if ((_vm->_curRoom == kRoom2A) && ((_vm->_oldRoom == kRoom2B) || (_vm->_oldRoom == kRoom29) || (_vm->_oldRoom == r29L)))
+	else if ((_vm->_curRoom == kRoom2A) && ((_vm->_oldRoom == kRoom2B) || (_vm->_oldRoom == kRoom29) || (_vm->_oldRoom == kRoom29L)))
 		_vm->setRoom(kRoom2A, false);
 	else if ((_vm->_curRoom == kRoom2B) && (_vm->_oldRoom == kRoom28))
 		_vm->setRoom(kRoom2B, true);
@@ -4199,13 +4199,13 @@ void LogicManager::doSystemChangeRoom() {
 		read3D("2B2.3d");
 	else if ((_vm->_curRoom == kRoom2E) && (_vm->_room[_vm->_curRoom]._flag & OBJFLAG_EXTRA))
 		read3D("2E2.3d");
-	else if ((_vm->_curRoom == r2GV) && (_vm->_room[_vm->_curRoom]._flag & OBJFLAG_EXTRA))
+	else if ((_vm->_curRoom == kRoom2GV) && (_vm->_room[_vm->_curRoom]._flag & OBJFLAG_EXTRA))
 		read3D("2GV2.3d");
 	else if ((_vm->_curRoom == kRoom35) && (_vm->_room[_vm->_curRoom]._flag & OBJFLAG_EXTRA))
 		read3D("352.3d");
 	else if ((_vm->_curRoom == kRoom37) && (_vm->_room[_vm->_curRoom]._flag & OBJFLAG_EXTRA))
 		read3D("372.3d");
-	else if ((_vm->_curRoom == r4P) && (_vm->_room[_vm->_curRoom]._flag & OBJFLAG_EXTRA))
+	else if ((_vm->_curRoom == kRoom4P) && (_vm->_room[_vm->_curRoom]._flag & OBJFLAG_EXTRA))
 		read3D("4P2.3d");
 	//			end save/load
 }
@@ -4221,13 +4221,13 @@ void LogicManager::DoSys(uint16 curObj) {
 		break;
 
 	case o00EXIT:
-		if (_vm->_oldRoom == rSYS)
+		if (_vm->_oldRoom == kRoomControlPanel)
 			break;
 		doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, _vm->_obj[o00EXIT]._goRoom, 0, 0, 0);
 		break;
 
 	case o00SAVE:
-		if (_vm->_oldRoom == rSYS)
+		if (_vm->_oldRoom == kRoomControlPanel)
 			break;
 		_vm->_curRoom = _vm->_obj[o00EXIT]._goRoom;
 		if (!DataSave()) {
@@ -4235,7 +4235,7 @@ void LogicManager::DoSys(uint16 curObj) {
 			doEvent(MC_INVENTORY, ME_SHOWICONNAME, MP_DEFAULT, _vm->_mouseX, _vm->_mouseY, 0, 0);
 			doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, _vm->_obj[o00EXIT]._goRoom, 0, 0, 0);
 		}
-		_vm->_curRoom = rSYS;
+		_vm->_curRoom = kRoomControlPanel;
 		break;
 
 	case o00LOAD:

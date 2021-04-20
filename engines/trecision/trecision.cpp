@@ -467,7 +467,7 @@ void TrecisionEngine::initMain() {
 	initMessageSystem();
 	_logicMgr->initInventory();
 
-	_curRoom = rINTRO;
+	_curRoom = kRoomIntro;
 
 	ProcessTime();
 

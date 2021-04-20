@@ -313,7 +313,7 @@ void CharacterMute() {
 	g_vm->redrawString();
 	StopTalk();
 
-	if ((g_vm->_curRoom == r12CU) || (g_vm->_curRoom == r13CU))
+	if ((g_vm->_curRoom == kRoom12CU) || (g_vm->_curRoom == kRoom13CU))
 		doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, g_vm->_oldRoom, 0, 0, g_vm->_curObj);
 }
 
