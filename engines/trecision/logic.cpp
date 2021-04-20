@@ -3971,7 +3971,7 @@ void LogicManager::doMouseLeftRight() {
 
 		int pmousex = _vm->_curMessage->_u16Param1;
 		int pmousey = _vm->_curMessage->_u16Param2;
-		if (!AtMouseClick(_vm->_curObj)) {
+		if (!_vm->_logicMgr->mouseClick(_vm->_curObj)) {
 			if (CheckMask(_vm->_curMessage->_u16Param1, _vm->_curMessage->_u16Param2)) {
 				if ((_vm->_obj[_vm->_curObj]._lim.right - _vm->_obj[_vm->_curObj]._lim.left) < MAXX / 7) {
 					pmousex = (_vm->_obj[_vm->_curObj]._lim.left + _vm->_obj[_vm->_curObj]._lim.right) / 2;
