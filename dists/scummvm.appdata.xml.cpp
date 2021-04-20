@@ -28,27 +28,27 @@
 
 #include "common/translation.h"  // For catching the file during POTFILES revies
 
-// I18N: One line summary as shown in *nix distributions
 static const char *summary =
+// I18N: One line summary as shown in *nix distributions
 _s("Interpreter for numerous adventure games and role-playing games");
 
 
-// I18N: 1 of 3 paragraph of ScummVM description in *nix distributions
 static const char *par1 =
+// I18N: 1 of 3 paragraph of ScummVM description in *nix distributions
 _s("ScummVM is a program which allows you to run a wide variety of classic "
    "graphical point-and-click adventure games and role-playing games, "
    "provided you already have their data files. The clever part about this: "
    "ScummVM just replaces the executables shipped with the game, "
    "allowing you to play them on systems for which they were never designed!");
 
-// I18N: 2 of 3 paragraph of ScummVM description in *nix distributions
 static const char *par2 =
+// I18N: 2 of 3 paragraph of ScummVM description in *nix distributions
 _s("Currently, ScummVM supports a huge library of adventures with over 4000 games in total. "
    "It supports many classics published by legendary studios like LucasArts, Sierra On-Line, "
    "Revolution Software, Cyan, Inc. and Westwood Studios.");
 
-// I18N: 3 of 3 paragraph of ScummVM description in *nix distributions
 static const char *par3 =
+// I18N: 3 of 3 paragraph of ScummVM description in *nix distributions
 _s("Next to ground-breaking titles like the Monkey Island series, Broken Sword, "
    "Myst, Blade Runner and countless other games you will find "
    "some really obscure adventures and truly hidden gems to explore.");
