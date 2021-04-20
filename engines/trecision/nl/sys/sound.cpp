@@ -342,4 +342,26 @@ void StopTalk() {
 	g_system->getMixer()->stopHandle(soundHandle[kSoundChannelSpeech]);
 }
 
+/*-----------------12/12/95 11.39-------------------
+					ReadSounds
+--------------------------------------------------*/
+void ReadSounds() {
+	for (uint16 a = 0; a < MAXSOUNDSINROOM; a++) {
+		uint16 b = g_vm->_room[g_vm->_curRoom]._sounds[a];
+
+		if (b == 0)
+			break;
+
+		if (!scumm_stricmp(GSample[b]._name, "RUOTE2C.WAV"))
+			break;
+
+		LoadAudioWav(b, GSample[b]._name);
+
+		if (GSample[b]._flag & kSoundFlagBgMusic)
+			SoundFadIn(b);
+		else if (GSample[b]._flag & kSoundFlagSoundOn)
+			NLPlaySound(b);
+	}
+}
+
 } // End of namespace Trecision

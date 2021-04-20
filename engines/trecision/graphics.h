@@ -31,6 +31,7 @@ class SeekableReadStream;
 }
 
 namespace Trecision {
+struct SDObj;
 class TrecisionEngine;
 
 class GraphicsManager {
@@ -67,6 +68,8 @@ public:
 	uint16 aliasing(uint32 val1, uint32 val2, uint8 num);
 
 	void NlDissolve(int val);
+	void DrawObj(SDObj d);
+
 }; // end of class
 
 } // end of namespace

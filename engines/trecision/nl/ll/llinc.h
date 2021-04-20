@@ -118,7 +118,6 @@ void ReadExtraObj41D();
 void ReadSounds();
 void RegenRoom();
 void PaintRegenRoom();
-void DrawObj(SDObj d);
 void StopSoundSystem();
 void LoadAudioWav(int num, Common::String fileName);
 void NLPlaySound(int num);
