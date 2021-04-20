@@ -218,7 +218,6 @@ void initSortPan();
 int panCompare(const void *arg1, const void *arg2);
 void sortPanel();
 void actorOrder();
-char waitKey();
 
 } // End of namespace Trecision
 

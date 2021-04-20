@@ -373,7 +373,7 @@ void doSystem() {
 /*                                  doIdle            					   */
 /*-------------------------------------------------------------------------*/
 void doIdle() {
-	char c = GetKey();
+	char c = g_vm->GetKey();
 	switch (c) {
 	// Quit
 	case 'q':

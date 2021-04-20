@@ -29,6 +29,7 @@
 #include "common/system.h"
 #include "audio/decoders/wave.h"
 #include "audio/audiostream.h"
+#include "trecision/nl/extern.h"
 
 namespace Trecision {
 
@@ -331,9 +332,8 @@ int32 Talk(const char *name) {
 
 	Audio::SeekableAudioStream *speechStream = Audio::makeWAVStream(stream, DisposeAfterUse::YES);
 
-	extern uint32 CharacterSpeakTime;
 	g_system->getMixer()->playStream(Audio::Mixer::kSpeechSoundType, &soundHandle[kSoundChannelSpeech], speechStream);
-	CharacterSpeakTime = ReadTime();
+	_characterSpeakTime = ReadTime();
 
 	return TIME(speechStream->getLength().msecs());
 }

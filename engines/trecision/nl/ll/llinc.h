@@ -106,7 +106,6 @@ extern uint8  TextStatus;
 int Compare(const void *p1, const void *p2);
 void RedrawRoom();
 void FreeKey();
-uint16 TextLength(const char *text, uint16 num);
 bool DataSave();
 bool DataLoad();
 bool QuitGame();
