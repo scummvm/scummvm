@@ -47,6 +47,11 @@ static const ADGameDescription gameDescriptions[] = {
 		AD_ENTRY1s("stock_n.dat", "46819043d019a2f36b727cc2bdd6980f", 13497301),
 		Common::EN_ANY, Common::kPlatformWindows, ADGF_NO_FLAGS, GUIO0()
 	},
+	{	// Bugreport #11404
+		"gnap", "",
+		AD_ENTRY1s("stock_n.dat", "46819043d019a2f36b727cc2bdd6980f", 13035286),
+		Common::EN_ANY, Common::kPlatformWindows, ADGF_NO_FLAGS, GUIO0()
+	},
 	{
 		"gnap", "",
 		AD_ENTRY1s("stock_n.dat", "46819043d019a2f36b727cc2bdd6980f", 12995485),
