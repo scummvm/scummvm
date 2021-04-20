@@ -1401,6 +1401,7 @@ void Process::onLook(uint16 size) {
 void Process::onCharacterTrap(uint16 size) {
 	auto regionName = popString();
 	debug("setCharacterTrap %s [handler], %u instructions", regionName.c_str(), size);
+	_object->setTrapHandler(_ip, _engine->loadRegion(regionName));
 	_ip += size;
 }
 

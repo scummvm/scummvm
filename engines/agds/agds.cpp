@@ -413,6 +413,7 @@ void AGDSEngine::tick() {
 		return;
 	}
 	tickInventory();
+	tickCharacter();
 	runProcesses();
 }
 
@@ -1008,8 +1009,23 @@ void AGDSEngine::tickInventory() {
 		_inventoryRegionName.clear();
 		_inventoryRegion.reset();
 	}
-
 }
+
+void AGDSEngine::tickCharacter() {
+	if (!_currentScreen || !_currentCharacter)
+		return;
+
+	auto pos = _currentCharacter->position();
+	auto objects = _currentScreen->find(pos);
+	for(auto & object: objects) {
+		auto region = object->getTrapRegion();
+		if (region && region->pointIn(pos)) {
+			debug("starting trap process");
+			runProcess(object, object->getTrapHandler());
+		}
+	}
+}
+
 
 bool AGDSEngine::hasFeature(EngineFeature f) const {
 	switch (f) {

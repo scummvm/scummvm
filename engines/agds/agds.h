@@ -233,6 +233,7 @@ public:
 	}
 
 	void tickInventory();
+	void tickCharacter();
 
 	int playSound(const Common::String &process, const Common::String &resource, const Common::String &filename, const Common::String &phaseVar, bool playing = true) {
 		return _soundManager.play(process, resource, filename, phaseVar, playing);
