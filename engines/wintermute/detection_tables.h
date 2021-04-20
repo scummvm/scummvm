@@ -547,7 +547,7 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("carolreed9", "Demo",
 		WME_ENTRY1s("data.dcp", "b3312b0b9f209a9a01b2ba9135829640", 86362217), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, WME_1_9_3),
 
-	// Carol Reed 10 - Bosch's Damnation
+	// Carol Reed 10 - Bosch's Damnation (MDNA Games)
 	WME_WINENTRY("carolreed10", "",
 		WME_ENTRY1s("data.dcp", "5c698e28fe10854ea52964e3768e50e4", 588439599), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
 
@@ -589,11 +589,11 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("carolreed11", "SD/1.1",
 		WME_ENTRY1s("data.dcp", "47ab078a83a1ccc76a6446b2e8055857", 525450074), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
 
-	// Carol Reed 11 - Shades Of Black (HD) (MDNA Games) (Steam)
+	// Carol Reed 11 - Shades Of Black (HD) (Steam)
 	WME_WINENTRY("carolreed11", "HD/Steam",
 		WME_ENTRY1s("data.dcp", "459f4a851ea053cc4d204e45e2f88afc", 853256580), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
 
-	// Carol Reed 11 - Shades Of Black (SD) (MDNA Games) (Steam)
+	// Carol Reed 11 - Shades Of Black (SD) (Steam)
 	WME_WINENTRY("carolreed11", "SD/Steam",
 		WME_ENTRY1s("data.dcp", "c47314872afbbdc587dae0bc976a3375", 525502344), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
 
@@ -613,7 +613,7 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("carolreed11", "HD Demo",
 		WME_ENTRY1s("data.dcp", "ba124af0a0ee3113f3f9dc0c1159ec26", 77909344), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, WME_1_9_3),
 
-	// Carol Reed 12 - Profound Red (HD)
+	// Carol Reed 12 - Profound Red (HD) (MDNA Games)
 	WME_WINENTRY("carolreed12", "HD",
 		WME_ENTRY1s("data.dcp", "edc1e69dc52ec2a65fa431a51c783c2e", 944403699), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
 
@@ -629,12 +629,12 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("carolreed12", "SD",
 		WME_ENTRY1s("data.dcp", "c58e9a8aa8f87ebfae94a2fa3e07817e", 420274897), Common::RU_RUS, ADGF_UNSTABLE, WME_1_9_3),
 
-	// Carol Reed 13 - The Birdwatcher (HD)
-	WME_WINENTRY("carolreed13", "HD",
+	// Carol Reed 13 - The Birdwatcher (HD) (MDNA Games) (v1.1)
+	WME_WINENTRY("carolreed13", "HD/1.1",
 		WME_ENTRY1s("data.dcp", "954392d19f0c928b700f17badd35d488", 1267391173), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
 
-	// Carol Reed 13 - The Birdwatcher (SD) (MDNA Games)
-	WME_WINENTRY("carolreed13", "SD",
+	// Carol Reed 13 - The Birdwatcher (SD) (MDNA Games) (v1.1)
+	WME_WINENTRY("carolreed13", "SD/1.1",
 		WME_ENTRY1s("data.dcp", "4c5e1094a2e05b76b2ee5a8d9af5de4a", 774352150), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
 
 	// Carol Reed 13 - The Birdwatcher (HD) (Russian)
@@ -645,7 +645,7 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("carolreed13", "SD",
 		WME_ENTRY1s("data.dcp", "d86676ba56bfac82d19ee63f39098eb7", 607269218), Common::RU_RUS, ADGF_UNSTABLE, WME_1_9_3),
 
-	// Carol Reed 14 - The Fall Of April (HD)
+	// Carol Reed 14 - The Fall Of April (HD) (MDNA Games)
 	WME_WINENTRY("carolreed14", "HD",
 		WME_ENTRY1s("data.dcp", "38c9088dca07c9623562e8efdea4c856", 1256960150), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
 
@@ -658,11 +658,11 @@ static const WMEGameDescription gameDescriptions[] = {
 		WME_ENTRY1s("data.dcp", "1a9a5ba095057b4e9d79c7522dd0389f", 717751105), Common::RU_RUS, ADGF_UNSTABLE, WME_1_9_3),
 
 	// Carol Reed 15 - Geospots (HD) (MDNA Games) (v1.1)
-	WME_WINENTRY("carolreed15", "HD",
+	WME_WINENTRY("carolreed15", "HD/1.1",
 		WME_ENTRY1s("data.dcp", "75645132e95924e83c9c7ff578e860a0", 1255837902), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
 
 	// Carol Reed 15 - Geospots (SD) (MDNA Games) (v1.1)
-	WME_WINENTRY("carolreed15", "SD",
+	WME_WINENTRY("carolreed15", "SD/1.1",
 		WME_ENTRY1s("data.dcp", "7a82716edee6d10be847ae3d9d49b1de", 913384243), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
 
 	// Carol Reed 15 - Geospots (HD) (Russian)
@@ -673,11 +673,11 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("carolreed15", "SD",
 		WME_ENTRY1s("data.dcp", "984255ea48b26dc4c6703cd6f965a4b4", 849201287), Common::RU_RUS, ADGF_UNSTABLE, WME_1_9_3),
 
-	// Carol Reed 16 - Quarantine Diary (HD) (MDNA Games)
+	// Carol Reed 16 - Quarantine Diary (HD) (MDNA Games) (v1.0)
 	WME_WINENTRY("carolreed16", "HD",
 		WME_ENTRY1s("data.dcp", "07158d48b5a1739d9c87dc1d7f780353", 1344041919), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
 
-	// Carol Reed 16 - Quarantine Diary (SD) (MDNA Games)
+	// Carol Reed 16 - Quarantine Diary (SD) (MDNA Games) (v1.0)
 	WME_WINENTRY("carolreed16", "SD",
 		WME_ENTRY1s("data.dcp", "9d98bf2a9a4b11506392f4cd79f94c50", 850376712), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
 
