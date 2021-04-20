@@ -70,6 +70,7 @@ protected:
 
 	int _maxWidth;
 	int _xdelta, _ydelta;
+	int _xpadding, _ypadding;
 
 	Common::U32StringArray _wrappedLines;
 };
