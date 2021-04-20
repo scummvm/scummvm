@@ -416,8 +416,7 @@ void ReadLoc() {
 	BmInfo.read(picFile);
 
 	g_vm->_graphicsMgr->loadBackground(picFile, BmInfo.dx, BmInfo.dy);
-	int size = picFile->size() - picFile->pos();
-	ReadObj(picFile, size);
+	ReadObj(picFile);
 
 	SoundStopAll();
 
@@ -507,7 +506,7 @@ void readObject(Common::SeekableReadStream *stream, uint16 objIndex, uint16 room
 	}
 }
 
-void ReadObj(Common::SeekableReadStream *stream, int size) {
+void ReadObj(Common::SeekableReadStream *stream) {
 	if (!g_vm->_room[g_vm->_curRoom]._object[0])
 		return;
 

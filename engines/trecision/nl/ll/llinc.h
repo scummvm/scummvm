@@ -112,7 +112,7 @@ void DemoOver();
 void openSys();
 void ReadLoc();
 void TendIn();
-void ReadObj(Common::SeekableReadStream *stream, int size);
+void ReadObj(Common::SeekableReadStream *stream);
 void ReadExtraObj2C();
 void ReadExtraObj41D();
 void ReadSounds();
