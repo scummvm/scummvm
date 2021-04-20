@@ -432,20 +432,20 @@ void AnimManager::refreshSmkAnim(int animation) {
 	if (_animTab[animation]._flag & SMKANIM_ICON) {
 		drawSmkIconFrame(_vm->_inventoryRefreshStartIcon, animation);
 	} else if (_animTab[animation]._flag & SMKANIM_BKG) {
-		drawSmkBackgroundFrame();
+		drawSmkBackgroundFrame(animation);
 		handleEndOfVideo(animation, kSmackerBackground);
 	} else {
 		drawSmkActionFrame();
 		handleEndOfVideo(animation, kSmackerAction);
 	}
 	
-	/*for (int32 a = 0; a < MAXCHILD; a++) {
+	for (int32 a = 0; a < MAXCHILD; a++) {
 		if (!(_animTab[animation]._flag & (SMKANIM_OFF1 << a)) && (_animTab[animation]._lim[a].bottom != 0)) {
 			Common::Rect l = _animTab[animation]._lim[a];
 			l.translate(0, TOP);
 			_vm->_limits[_vm->_limitsNum++] = l;
 		}
-	}*/
+	}
 }
 
 void AnimManager::handleEndOfVideo(int animation, int slot) {
@@ -460,17 +460,41 @@ void AnimManager::handleEndOfVideo(int animation, int slot) {
 	}
 }
 
-void AnimManager::drawSmkBackgroundFrame() {
+void AnimManager::drawSmkBackgroundFrame(int animation) {
 	NightlongSmackerDecoder *smkDecoder = _smkAnims[kSmackerBackground];
 	const Graphics::Surface *frame = smkDecoder->decodeNextFrame();
-	if (frame) {
-		Graphics::Surface *frame16 = frame->convertTo(g_system->getScreenFormat(), smkDecoder->getPalette());
-		const byte *pal = smkDecoder->getPalette();
-		const uint16 mask = _vm->_graphicsMgr->palTo16bit(pal[0], pal[1], pal[2]);
-		g_vm->_graphicsMgr->blitToScreenBuffer(frame16, 0, TOP, mask);
-		frame16->free();
-		delete frame16;
+	if (!frame)
+		return;
+
+	Graphics::Surface *frame16 = frame->convertTo(g_system->getScreenFormat(), smkDecoder->getPalette());
+	const Common::Rect *lastRect = smkDecoder->getNextDirtyRect();
+	const byte *pal = smkDecoder->getPalette();
+	uint16 mask = g_vm->_graphicsMgr->palTo16bit(pal[0], pal[1], pal[2]);
+
+	if (smkDecoder->getCurFrame() == 0)
+		_vm->_graphicsMgr->setSmkBackground();
+
+	while (lastRect) {
+		bool intersects = false;
+		for (int32 a = 0; a < MAXCHILD; a++) {
+			if (_animTab[animation]._flag & (SMKANIM_OFF1 << a)) {
+				if (_animTab[animation]._lim[a].intersects(*lastRect)) {
+					intersects = true;
+					break;
+				}
+			}
+		}
+
+		if (smkCurFrame(kSmackerBackground) > 0 && !intersects) {
+			Graphics::Surface anim = frame16->getSubArea(*lastRect);
+			g_vm->_graphicsMgr->blitToScreenBuffer(&anim, lastRect->left, lastRect->top + TOP, mask, true);
+		}
+
+		lastRect = _smkAnims[kSmackerBackground]->getNextDirtyRect();
 	}
+
+	frame16->free();
+	delete frame16;
 }
 
 void AnimManager::drawSmkIconFrame(int startIcon, int iconNum) {
@@ -503,6 +527,11 @@ void AnimManager::drawSmkIconFrame(int startIcon, int iconNum) {
 void AnimManager::drawSmkActionFrame() {
 	NightlongSmackerDecoder *smkDecoder = _smkAnims[kSmackerAction];
 	const Graphics::Surface *frame = smkDecoder->decodeNextFrame();
+	if (!frame)
+		return;
+
+	const byte *pal = smkDecoder->getPalette();
+	uint16 mask = g_vm->_graphicsMgr->palTo16bit(pal[0], pal[1], pal[2]);
 
 	if (smkCurFrame(kSmackerAction) == 0) {
 		for (uint16 curY = 0; curY < AREA; curY++) {
@@ -518,16 +547,12 @@ void AnimManager::drawSmkActionFrame() {
 	}
 
 	if (_animMaxX > _animMinX && _animMaxY > _animMinY) {
-		if (frame) {
-			Graphics::Surface *frame16 = frame->convertTo(g_system->getScreenFormat(), smkDecoder->getPalette());
-			const Common::Rect animRect(_animMinX, _animMinY, _animMaxX, _animMaxY);
-			Graphics::Surface anim = frame16->getSubArea(animRect);
-			const byte *pal = smkDecoder->getPalette();
-			const uint16 mask = _vm->_graphicsMgr->palTo16bit(pal[0], pal[1], pal[2]);
-			g_vm->_graphicsMgr->blitToScreenBuffer(&anim, _animMinX, _animMinY + TOP, mask);
-			frame16->free();
-			delete frame16;
-		}
+		Graphics::Surface *frame16 = frame->convertTo(g_system->getScreenFormat(), smkDecoder->getPalette());
+		const Common::Rect animRect(_animMinX, _animMinY, _animMaxX, _animMaxY);
+		Graphics::Surface anim = frame16->getSubArea(animRect);
+		g_vm->_graphicsMgr->blitToScreenBuffer(&anim, _animMinX, _animMinY + TOP, mask, false);
+		frame16->free();
+		delete frame16;
 
 		_vm->_actorLimit = _vm->_limitsNum;
 		_vm->_limits[_vm->_limitsNum++] = Common::Rect(_animMinX, _animMinY + TOP, _animMaxX, _animMaxY + TOP);
