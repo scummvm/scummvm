@@ -1052,6 +1052,7 @@ void Actor::updateFromDirection(ActorDirection actorDirection) {
 	case kActorStatusWalkingTo:
 	case kActorStatusWalking2:
 		_resourceId = _graphicResourceIds[(actorDirection > kDirectionS ? kDirection8 - actorDirection : actorDirection)];
+		_frameCount = GraphicResource::getFrameCount(_vm, _resourceId);
 		break;
 
 	case kActorStatus8:
