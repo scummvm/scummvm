@@ -39,7 +39,7 @@ ELSE DO
 	Check for destination path and create it, if needed.
 	*/
 	IF ~EXISTS(install_path'sobjs/') THEN
-		ADDRESS COMMAND 'makedir 'install_path'sobjs'
+		ADDRESS COMMAND 'makedir ALL 'install_path'sobjs'
 END
 
 /*
@@ -113,7 +113,7 @@ DO WHILE i>0
 END
 
 /*
-AREXX is doing its own cleaning up of open files.
+AREXX is doing it's own cleaning up of open files.
 Close the file manually anyway.
 */
 IF ~CLOSE(SO_Read) THEN DO
