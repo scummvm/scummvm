@@ -358,7 +358,7 @@ void doSystem() {
 		if (g_vm->_curMessage->_u16Param2)
 			StartCharacterAction(g_vm->_curMessage->_u16Param2, 0, 0, 0);
 
-		AtEndChangeRoom();
+		g_vm->_logicMgr->endChangeRoom();
 
 		g_vm->_room[g_vm->_curRoom]._flag |= OBJFLAG_DONE; // Visited
 		drawCharacter(CALCPOINTS);			// for right _actorPos entrance

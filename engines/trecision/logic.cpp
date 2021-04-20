@@ -30,7 +30,6 @@
 #include "trecision/nl/struct.h"
 #include "trecision/logic.h"
 
-#include "trecision/graphics.h"
 #include "trecision/trecision.h"
 #include "trecision/video.h"
 
@@ -264,10 +263,10 @@ void LogicManager::initScript() {
 	_vm->_scriptFrame[f]._u32Param = oENTRANCE2E;
 }
 
-void LogicManager::setRoom(uint16 r, bool b) {
+void LogicManager::setRoom(uint16 r, bool altRoomFl) {
 	switch (r) {
 	case r21:
-		if (!b) {
+		if (!altRoomFl) {
 			read3D("21.3d");
 			_vm->_room[r21]._flag &= ~OBJFLAG_EXTRA;
 			setPosition(14);
@@ -327,7 +326,7 @@ void LogicManager::setRoom(uint16 r, bool b) {
 		}
 		break;
 	case r24:
-		if (!b) {
+		if (!altRoomFl) {
 			read3D("24.3d");
 			_vm->_room[r24]._flag &= ~OBJFLAG_EXTRA;
 			_vm->_obj[oPASSAGE24]._position = 3;
@@ -346,7 +345,7 @@ void LogicManager::setRoom(uint16 r, bool b) {
 		break;
 
 	case r2A:
-		if (!b) {
+		if (!altRoomFl) {
 			read3D("2A.3d");
 			_vm->_room[r2A]._flag &= ~OBJFLAG_EXTRA;
 			_vm->_obj[oDUMMY2A2]._mode |= OBJMODE_OBJSTATUS;
@@ -359,7 +358,7 @@ void LogicManager::setRoom(uint16 r, bool b) {
 		}
 		break;
 	case r2B:
-		if (!b) {
+		if (!altRoomFl) {
 			read3D("2B.3d");
 			_vm->_room[r2B]._flag &= ~OBJFLAG_EXTRA;
 			_vm->_obj[oPORTA2B]._mode |= OBJMODE_OBJSTATUS;
@@ -372,7 +371,7 @@ void LogicManager::setRoom(uint16 r, bool b) {
 		}
 		break;
 	case r2E:
-		if (!b) {
+		if (!altRoomFl) {
 			_vm->_obj[oCATWALKA2E]._nbox = BACKGROUND;
 			_vm->_obj[oCATWALKA2E]._position = 2;
 			_vm->_obj[oCATWALKA2E]._anim = a2E2PRIMAPALLONTANANDO;
@@ -400,7 +399,7 @@ void LogicManager::setRoom(uint16 r, bool b) {
 		}
 		break;
 	case r2GV:
-		if (!b) {
+		if (!altRoomFl) {
 			_vm->_obj[oVIADOTTO2GV]._position = 7;
 			_vm->_obj[oVIADOTTO2GV]._anim = a2G7ATTRAVERSAPONTICELLO;
 			read3D("2GV.3d");
@@ -413,6 +412,280 @@ void LogicManager::setRoom(uint16 r, bool b) {
 	default:
 		break;
 	}
+}
+
+void LogicManager::endChangeRoom() {
+	//	Specific management of magnetic fields
+	if ((_vm->_curRoom == r2E) && (_vm->_obj[oPULSANTEADS2D]._mode & OBJMODE_OBJSTATUS)) {
+		_vm->_animMgr->_animTab[aBKG2E]._flag |= SMKANIM_OFF1;
+		_vm->_obj[oCAMPO2E]._mode &= ~OBJMODE_OBJSTATUS;
+		_vm->_obj[oCARTELLOA2E]._mode &= ~OBJMODE_OBJSTATUS;
+		_vm->_obj[oCARTELLOS2E]._mode |= OBJMODE_OBJSTATUS;
+	} else if ((_vm->_curRoom == r2E) && (_vm->_obj[oPULSANTEADA2D]._mode & OBJMODE_OBJSTATUS)) {
+		_vm->_animMgr->_animTab[aBKG2E]._flag &= ~SMKANIM_OFF1;
+		_vm->_obj[oCAMPO2E]._mode |= OBJMODE_OBJSTATUS;
+		_vm->_obj[oCARTELLOA2E]._mode |= OBJMODE_OBJSTATUS;
+		_vm->_obj[oCARTELLOS2E]._mode &= ~OBJMODE_OBJSTATUS;
+	}
+
+	if ((_vm->_curRoom == r2C) && (_vm->_obj[oPULSANTEACS2D]._mode & OBJMODE_OBJSTATUS)) {
+		_vm->_animMgr->_animTab[aBKG2C]._flag |= SMKANIM_OFF1;
+		_vm->_obj[oCAMPO2C]._mode &= ~OBJMODE_OBJSTATUS;
+		_vm->_obj[oCARTELLOA2C]._mode &= ~OBJMODE_OBJSTATUS;
+		_vm->_obj[oCARTELLOS2C]._mode |= OBJMODE_OBJSTATUS;
+	} else if ((_vm->_curRoom == r2C) && (_vm->_obj[oPULSANTEACA2D]._mode & OBJMODE_OBJSTATUS)) {
+		_vm->_animMgr->_animTab[aBKG2C]._flag &= ~SMKANIM_OFF1;
+		_vm->_obj[oCAMPO2C]._mode |= OBJMODE_OBJSTATUS;
+		_vm->_obj[oCARTELLOS2C]._mode &= ~OBJMODE_OBJSTATUS;
+		_vm->_obj[oCARTELLOA2C]._mode |= OBJMODE_OBJSTATUS;
+	}
+	
+	if ((_vm->_curRoom == r28) && (_vm->_obj[oPULSANTEBBS2D]._mode & OBJMODE_OBJSTATUS)) {
+		_vm->_animMgr->_animTab[aBKG28]._flag |= SMKANIM_OFF2;
+		_vm->_obj[oCESPUGLIO28]._anim = a283;
+		_vm->_obj[oSERPENTETM28]._mode |= OBJMODE_OBJSTATUS;
+		_vm->_obj[oSERPENTEAM28]._mode |= OBJMODE_OBJSTATUS;
+		RegenRoom();
+	} else if ((_vm->_curRoom == r28) && (_vm->_obj[oPULSANTEBBA2D]._mode & OBJMODE_OBJSTATUS)) {
+		_vm->_animMgr->_animTab[aBKG28]._flag &= ~SMKANIM_OFF2;
+		_vm->_obj[oCESPUGLIO28]._anim = a282;
+		_vm->_obj[oSERPENTETM28]._mode &= ~OBJMODE_OBJSTATUS;
+		_vm->_obj[oSERPENTEAM28]._mode &= ~OBJMODE_OBJSTATUS;
+		RegenRoom();
+	}
+	
+	if ((_vm->_curRoom == r28) && (_vm->_obj[oPULSANTEABS2D]._mode & OBJMODE_OBJSTATUS)) {
+		_vm->_animMgr->_animTab[aBKG28]._flag |= (SMKANIM_OFF1 | SMKANIM_OFF3);
+		_vm->_obj[oCAMPO28]._mode &= ~OBJMODE_OBJSTATUS;
+		_vm->_obj[oCARTELLOA28]._mode &= ~OBJMODE_OBJSTATUS;
+		_vm->_obj[oCARTELLOS28]._mode |= OBJMODE_OBJSTATUS;
+		read3D("282.3d");
+	} else if ((_vm->_curRoom == r28) && (_vm->_obj[oPULSANTEABA2D]._mode & OBJMODE_OBJSTATUS)) {
+		_vm->_animMgr->_animTab[aBKG28]._flag &= ~(SMKANIM_OFF1 | SMKANIM_OFF3);
+		_vm->_obj[oCAMPO28]._mode |= OBJMODE_OBJSTATUS;
+		_vm->_obj[oCARTELLOA28]._mode |= OBJMODE_OBJSTATUS;
+		_vm->_obj[oCARTELLOS28]._mode &= ~OBJMODE_OBJSTATUS;
+	}
+	// End of specific management for the magnetic fields
+
+	// Actions
+	if ((_vm->_curRoom == r12) && ((_vm->_oldRoom == r13) || (_vm->_oldRoom == r16)))
+		StartCharacterAction(a1213ARRIVACONASCENSORE, 0, 0, 0);
+	else if ((_vm->_curRoom == r16) && ((_vm->_oldRoom == r13) || (_vm->_oldRoom == r12)))
+		StartCharacterAction(a1617SCENDECONASCENSORE, 0, 0, 0);
+	else if ((_vm->_curRoom == r13) && (_vm->_oldRoom == r12))
+		StartCharacterAction(a1315ARRIVAASCENSOREALTOENTRA, 0, 0, 0);
+	else if ((_vm->_curRoom == r13) && (_vm->_oldRoom == r16))
+		StartCharacterAction(a1314ARRIVAASCENSOREDABASSO, 0, 0, 0);
+	else if ((_vm->_curRoom == r14) && (_vm->_oldRoom == r13))
+		StartCharacterAction(a1414ENTERROOM, 0, 0, 0);
+	else if ((_vm->_curRoom == r18) && (_vm->_oldRoom == r17) && !(_vm->_room[r18]._flag & OBJFLAG_DONE))
+		StartCharacterAction(a186GUARDAPIAZZA, 0, 0, 0);
+	else if ((_vm->_curRoom == r18) && (_vm->_oldRoom == r19))
+		StartCharacterAction(a189ENTRADALCLUB, 0, 0, 0);
+	else if ((_vm->_curRoom == r1A) && (_vm->_oldRoom == r18) && (_vm->_room[r1A]._flag & OBJFLAG_DONE)) {
+		StartCharacterAction(a1A5ENTRA, 0, 0, 0);
+		_vm->_animMgr->_animTab[aBKG1A]._flag |= SMKANIM_OFF1;
+	} else if ((_vm->_curRoom == r1C) && (_vm->_oldRoom == r1B))
+		StartCharacterAction(a1C1ENTRACUNICOLO, 0, 0, 0);
+	else if ((_vm->_curRoom == r1B) && (_vm->_oldRoom == r1C))
+		StartCharacterAction(a1B11ESCETOMBINO, 0, 0, 0);
+	else if ((_vm->_curRoom == r1D) && (_vm->_oldRoom == r1B) && (_vm->_obj[oDONNA1D]._mode & OBJMODE_OBJSTATUS)) {
+		StartCharacterAction(a1D1SCENDESCALE, 0, 1, 0);
+		_vm->_actor->_lim[0] = 60;
+		_vm->_actor->_lim[2] = 240;
+	} else if ((_vm->_curRoom == r1D) && (_vm->_oldRoom == r1B) && !(_vm->_obj[oDONNA1D]._mode & OBJMODE_OBJSTATUS)) {
+		StartCharacterAction(a1D12SCENDESCALA, 0, 1, 0);
+		_vm->_actor->_lim[0] = 60;
+		_vm->_actor->_lim[2] = 240;
+	} else if ((_vm->_curRoom == r1B) && (_vm->_oldRoom == r1D))
+		StartCharacterAction(a1B4ESCEBOTOLA, 0, 0, 0);
+	else if ((_vm->_curRoom == r1B) && (_vm->_oldRoom == r18) && (_vm->_animMgr->_animTab[aBKG1B]._flag & SMKANIM_OFF1))
+		StartCharacterAction(a1B12SCAPPATOPO, 0, 0, 0);
+	else if ((_vm->_curRoom == r24) && (_vm->_oldRoom == r2H))
+		StartCharacterAction(a242, 0, 0, 0);
+	else if ((_vm->_curRoom == r25) && (_vm->_oldRoom == r2A))
+		StartCharacterAction(a257, 0, 0, 0);
+	else if ((_vm->_curRoom == r28) && (_vm->_oldRoom == r27))
+		StartCharacterAction(aWALKIN, 0, 0, 0);
+	else if ((_vm->_curRoom == r29) && (_vm->_oldRoom == r2A))
+		StartCharacterAction(a298ESCEBOTOLA, 0, 0, 0);
+	else if ((_vm->_curRoom == r29L) && (_vm->_oldRoom == r2A))
+		StartCharacterAction(a2910ESCEBOTOLA, 0, 0, 0);
+	else if ((_vm->_curRoom == r2A) && (_vm->_oldRoom == r25))
+		StartCharacterAction(aWALKIN, 0, 0, 0);
+	else if ((_vm->_curRoom == r2A) && ((_vm->_oldRoom == r29) || (_vm->_oldRoom == r29L)))
+		StartCharacterAction(aWALKIN, 0, 0, 0);
+	else if ((_vm->_curRoom == r2B) && (_vm->_oldRoom == r2A))
+		StartCharacterAction(a2B2ESCEPOZZO, 0, 2, 0);
+	else if ((_vm->_curRoom == r2H) && (_vm->_oldRoom == r24))
+		StartCharacterAction(a2H1ARRIVA, 0, 0, 0);
+	else if ((_vm->_curRoom == r2E) && (_vm->_oldRoom == r2F))
+		StartCharacterAction(a2E5SECONDAPARRIVANDO, 0, 0, 0);
+	else if ((_vm->_curRoom == r2F) && (_vm->_oldRoom == r2E))
+		StartCharacterAction(aWALKIN, 0, 0, 0);
+	else if ((_vm->_curRoom == r23B) && (_vm->_oldRoom == r21))
+		StartCharacterAction(aWALKIN, 0, 0, 0);
+	else if ((_vm->_curRoom == r23A) && (_vm->_oldRoom == r21) && (_vm->_room[r23A]._flag & OBJFLAG_DONE))
+		StartCharacterAction(aWALKIN, 0, 0, 0);
+	else if ((_vm->_curRoom == r23A) && (_vm->_oldRoom == r21) && (!(_vm->_room[r23A]._flag & OBJFLAG_DONE)))
+		_vm->_flagShowCharacter = false;
+	else if ((_vm->_curRoom == r21) && ((_vm->_oldRoom == r23A) || (_vm->_oldRoom == r23B)))
+		StartCharacterAction(aWALKIN, 0, 0, 0);
+	else if ((_vm->_curRoom == r2BL) || (_vm->_curRoom == r36F) || (_vm->_curRoom == r41D) || (_vm->_curRoom == r49M) || (_vm->_curRoom == r4CT) ||
+		(_vm->_curRoom == r58T) || (_vm->_curRoom == r58M) || (_vm->_curRoom == r59L) || (_vm->_curRoom == rSYS) ||
+		(_vm->_curRoom == r12CU) || (_vm->_curRoom == r13CU)) { // Screens without inventory
+		_vm->_flagShowCharacter = false;
+		_vm->_flagCharacterExists = false;
+		_vm->_flagInventoryLocked = true;
+	} else if ((_vm->_curRoom == r31P) || (_vm->_curRoom == r35P)) { // Screens with inventory
+		_vm->_flagShowCharacter = false;
+		_vm->_flagCharacterExists = false;
+	} else if ((_vm->_curRoom == r2F) && (_vm->_oldRoom == r31))
+		StartCharacterAction(a2F4ESCEASCENSORE, 0, 0, 0);
+	else if ((_vm->_curRoom == r31) && (_vm->_oldRoom == r2F))
+		StartCharacterAction(a3114ESCEPASSAGGIO, 0, 0, 0);
+	else if ((_vm->_curRoom == r31) && !(_vm->_room[r31]._flag & OBJFLAG_DONE))
+		setPosition(14);
+	else if ((_vm->_curRoom == r32) && (_vm->_oldRoom == r31))
+		StartCharacterAction(a321SALEMONTACARICHI, 0, 0, 0);
+	else if ((_vm->_curRoom == r33) && (_vm->_oldRoom == r32) && (_vm->_obj[oBRUCIATURA33]._mode & OBJMODE_OBJSTATUS))
+		StartCharacterAction(a3311SALESCALE, 0, 0, 0);
+	else if ((_vm->_curRoom == r33) && (_vm->_oldRoom == r32) && !(_vm->_obj[oBRUCIATURA33]._mode & OBJMODE_OBJSTATUS))
+		StartCharacterAction(a3313CHIUDEBOTOLA, 0, 0, 0);
+	else if ((_vm->_curRoom == r32) && (_vm->_oldRoom == r33))
+		StartCharacterAction(a325SCENDESCALE, 0, 0, 0);
+	else if ((_vm->_curRoom == r36) && (_vm->_oldRoom == r35))
+		StartCharacterAction(a361ESCEASCENSORE, 0, 0, 0);
+	else if ((_vm->_curRoom == r35) && (_vm->_oldRoom == r36))
+		StartCharacterAction(a3515ESCEASCENSORE, 0, 0, 0);
+	else if ((_vm->_curRoom == r44) && (_vm->_oldRoom == r45 || _vm->_oldRoom == r45S) && !(_vm->_inventoryObj[iDISLOCATORE]._flag & OBJFLAG_EXTRA))
+		StartCharacterAction(a445, 0, 0, 0);
+	else if ((_vm->_curRoom == r45 || _vm->_curRoom == r45S) && (_vm->_oldRoom == r44) && !(_vm->_inventoryObj[iDISLOCATORE]._flag & OBJFLAG_EXTRA))
+		StartCharacterAction(a457, 0, 0, 0);
+	else if ((_vm->_curRoom == r46) && (_vm->_oldRoom == r47 || _vm->_oldRoom == r48 || _vm->_oldRoom == r49) && !(_vm->_inventoryObj[iDISLOCATORE]._flag & OBJFLAG_EXTRA))
+		StartCharacterAction(aWALKIN, 0, 0, 0);
+	else if ((_vm->_curRoom == r47) && (_vm->_oldRoom == r46) && !(_vm->_inventoryObj[iDISLOCATORE]._flag & OBJFLAG_EXTRA))
+		StartCharacterAction(a476, 0, 0, 0);
+	else if ((_vm->_curRoom == r48) && (_vm->_oldRoom == r46) && !(_vm->_inventoryObj[iDISLOCATORE]._flag & OBJFLAG_EXTRA))
+		StartCharacterAction(a485, 0, 0, 0);
+	else if ((_vm->_curRoom == r49) && (_vm->_oldRoom == r46) && !(_vm->_inventoryObj[iDISLOCATORE]._flag & OBJFLAG_EXTRA))
+		StartCharacterAction(a494, 0, 0, 0);
+	else if ((_vm->_curRoom == r54) && (_vm->_oldRoom == r53)) {
+		StartCharacterAction(a5411, 0, 11, 0);
+		_vm->_inventoryObj[iLASER35]._examine = 1599;
+	} else if ((_vm->_oldRoom == r41D) && (_vm->_inventoryObj[iDISLOCATORE]._flag & OBJFLAG_EXTRA)) {
+		setPosition(30);
+		drawCharacter(CALCPOINTS);
+	}
+
+	// FullMotion
+	if ((_vm->_curRoom == r17) && (_vm->_oldRoom == r16)) {
+		PlayDialog(dF171);
+		WaitSoundFadEnd();
+	} else if ((_vm->_curRoom == r16) && (_vm->_oldRoom == r17)) {
+		PlayDialog(dF161);
+		WaitSoundFadEnd();
+		_vm->removeIcon(iFOGLIO14);
+	} else if ((_vm->_curRoom == r21) && (_vm->_oldRoom == r1C)) {
+		PlayDialog(dF1C1);
+		WaitSoundFadEnd();
+	} else if ((_vm->_curRoom == r23B) && (_vm->_oldRoom == r23A)) {
+		PlayDialog(dF231);
+		WaitSoundFadEnd();
+		_vm->removeIcon(iMAPPA17);
+	} else if ((_vm->_curRoom == r29L) && (_vm->_oldRoom == r29)) {
+		PlayDialog(dF291);
+		WaitSoundFadEnd();
+	} else if ((_vm->_curRoom == r2GV) && (_vm->_oldRoom == r2G)) {
+		PlayDialog(dF2G2);
+		WaitSoundFadEnd();
+	} else if ((_vm->_curRoom == r31) && (_vm->_oldRoom == r32) && (_vm->_room[r32]._flag & OBJFLAG_EXTRA)) {
+		PlayDialog(dF321);
+		_vm->_flagShowCharacter = false;
+		WaitSoundFadEnd();
+		_vm->_room[r32]._flag &= ~OBJFLAG_EXTRA;
+	} else if ((_vm->_curRoom == r19) && !(_vm->_room[r19]._flag & OBJFLAG_DONE)) {
+		_vm->playScript(s19EVA);
+		_vm->_flagNoPaintScreen = false;
+		_vm->clearText();
+		_vm->redrawString();
+		WaitSoundFadEnd();
+	}
+	// CHECKME: This check is identical to the 3rd one, thus it's always false
+	else if ((_vm->_curRoom == r21) && (/*!( _room[_vm->_curRoom]._flag & OBJFLAG_DONE ) || */ (_vm->_oldRoom == r1C))) {
+		setPosition(10);
+		TendIn();
+		_vm->_flagNoPaintScreen = false;
+		_vm->clearText();
+		_vm->redrawString();
+	} else if ((_vm->_curRoom == r46) && (_vm->_oldRoom == r43) && !(_vm->_inventoryObj[iDISLOCATORE]._flag & OBJFLAG_EXTRA)) {
+		PlayDialog(dF431);
+		WaitSoundFadEnd();
+	} else if ((_vm->_curRoom == r45S) && (_vm->_oldRoom == r45) && !(_vm->_inventoryObj[iDISLOCATORE]._flag & OBJFLAG_EXTRA)) {
+		PlayDialog(dF451);
+		WaitSoundFadEnd();
+	} else if ((_vm->_curRoom == r4A) && (_vm->_oldRoom == r49) && !(_vm->_inventoryObj[iDISLOCATORE]._flag & OBJFLAG_EXTRA)) {
+		PlayDialog(dF491);
+		WaitSoundFadEnd();
+	} else if ((_vm->_curRoom == r4A) && (_vm->_oldRoom == r41D) && (_vm->_inventoryObj[iDISLOCATORE]._flag & OBJFLAG_EXTRA) && (_vm->_obj[ocHELLEN4A]._mode & OBJMODE_OBJSTATUS)) {
+		WaitSoundFadEnd();
+		PlayDialog(dC4A1);
+	} else if ((_vm->_curRoom == r4P) && (_vm->_oldRoom == r4O) && !(_vm->_room[r4P]._flag & OBJFLAG_DONE)) {
+		PlayDialog(dF4PI);
+		_vm->_flagShowCharacter = false;
+		WaitSoundFadEnd();
+	} else if ((_vm->_curRoom == r51) && (_vm->_oldRoom == r4CT)) {
+		PlayDialog(dF4C1);
+		_vm->_flagShowCharacter = false;
+		WaitSoundFadEnd();
+	} else if ((_vm->_curRoom == r1A) && (_vm->_oldRoom == r18)) {
+		if (!(_vm->_room[r1A]._flag & OBJFLAG_DONE)) {
+			PlayDialog(dF1A1);
+			WaitSoundFadEnd();
+			_vm->_obj[oTOPO1C]._flag |= OBJFLAG_TAKE;
+			_vm->_obj[oTOPO1C]._anim = a1C3RACCOGLIETOPO;
+		} else {
+			TendIn();
+			_vm->_flagNoPaintScreen = false;
+			_vm->redrawString();
+		}
+	} else {
+		TendIn();
+		_vm->_flagNoPaintScreen = false;
+		_vm->clearText();
+		_vm->redrawString();
+	}
+
+	//	Sentence
+	if ((_vm->_curRoom == r17) && (_vm->_oldRoom == r18) && !(_vm->_room[r17]._flag & OBJFLAG_DONE) && (_vm->_obj[oRETE17]._mode & OBJMODE_OBJSTATUS))
+		CharacterSay(189);
+
+	if (((_vm->_curRoom == r12CU) || (_vm->_curRoom == r13CU)) && _vm->_closeUpObj && _vm->_obj[_vm->_closeUpObj]._examine)
+		CharacterSay(_vm->_obj[_vm->_closeUpObj]._examine);
+	else if ((_vm->_curRoom == r23A) && (_vm->_oldRoom == r21) && !(_vm->_room[r23A]._flag & OBJFLAG_DONE)) {
+		_vm->_flagShowCharacter = true;
+		StartCharacterAction(aWALKIN, 0, 0, 361);
+	} else if ((_vm->_curRoom == r24) && !(_vm->_room[r24]._flag & OBJFLAG_DONE))
+		CharacterSay(381);
+	else if ((_vm->_curRoom == r2G) && !(_vm->_room[r2G]._flag & OBJFLAG_DONE))
+		CharacterSay(688);
+	else if ((_vm->_curRoom == r4C) && (_vm->_oldRoom == r4CT))
+		CharacterSay(1163);
+	else if ((_vm->_curRoom == r41) && (_vm->_oldRoom == r36) && !(_vm->_room[r41]._flag & OBJFLAG_DONE))
+		CharacterSay(900);
+	else if ((_vm->_curRoom == r58) && (_vm->_obj[oGUARDIA58]._mode & OBJMODE_OBJSTATUS) && (_vm->_obj[oGUARDIA58]._anim)) {
+		_vm->_curObj = oGUARDIA58;
+		doEvent(MC_MOUSE, ME_MRIGHT, MP_DEFAULT, 372, 335 + TOP, 0, oGUARDIA58);
+	} else if ((_vm->_curRoom == r59L))
+		CharacterSay(1394);
+	else if ((_vm->_curRoom == r58) && (_vm->_oldRoom == r58T))
+		CharacterSay(1368);
+	else if ((_vm->_curRoom == r5A) && !(_vm->_room[r5A]._flag & OBJFLAG_DONE))
+		CharacterSay(1408);
+	else if ((_vm->_curRoom == rSYS) && (_vm->_oldRoom == rSYS))
+		_vm->_logicMgr->DoSys(o00LOAD);
+	_vm->_inventoryObj[iDISLOCATORE]._flag &= ~OBJFLAG_EXTRA;
 }
 
 void LogicManager::initInventory() {
@@ -3600,7 +3873,7 @@ void LogicManager::doMouseLeftRight() {
 			if (GAMEAREA(_vm->_curMessage->_u16Param2) && !_vm->_flagUseWithStarted && (_vm->_curObj != oSNAKEU52)) {
 				StartCharacterAction(a526, 0, 1, 0);
 				_vm->_obj[oSCAVO51]._anim = a516;
-				memcpy(&_vm->_snake52, _vm->_curMessage, sizeof(_vm->_snake52));
+				_vm->_snake52.set(_vm->_curMessage);
 				return;
 			}
 		}

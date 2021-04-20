@@ -66,7 +66,6 @@ void doInvOperate();
 void doDoing();
 void doScript();
 bool AtMouseClick(uint16 curObj);
-void AtEndChangeRoom();
 void ProcessAtFrame(ATFHandle *h, int type, int atf);
 void InitAtFrameHandler(uint16 an, uint16 obj);
 void AtFrameNext();

@@ -138,6 +138,17 @@ struct Message {
 	uint16 _u16Param2;						// byte parameter 2
 	uint32 _u32Param;						// int parameter
 	uint32 _timestamp;
+
+	void set(Message *src) {
+		_class = src->_class;
+		_event = src->_event;
+		_priority = src->_priority;
+		_u8Param = src->_u8Param;
+		_u16Param1 = src->_u16Param1;
+		_u16Param2 = src->_u16Param2;
+		_u32Param = src->_u32Param;
+		_timestamp = src->_timestamp;
+	}
 };
 
 // Screen rectangle (don't remove, please!)

@@ -61,7 +61,9 @@ public:
 	void initScript();
 	void initInventory();
 
-	void setRoom(uint16 r, bool b);
+	void setRoom(uint16 r, bool altRoomFl);
+	void endChangeRoom();
+
 	void useInventoryWithInventory(bool *updateInv, bool *printSentence);
 	void useInventoryWithScreen(bool *updateInv, bool *printSentence);
 	bool useScreenWithScreen();
