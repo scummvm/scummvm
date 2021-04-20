@@ -37,7 +37,7 @@ void ProcessTime() {
 	static uint8 OldRegInvSL  = 0xFF;
 	static uint8 OldLightIcon = 0xFF;
 
-	TheTime = ReadTime();
+	TheTime = g_vm->ReadTime();
 	g_vm->_animMgr->refreshAllAnimations();
 
 	if (TheTime >= g_vm->_nextRefresh) {
@@ -58,8 +58,8 @@ void ProcessTime() {
 		g_vm->_textStackTop = -1;
 
 		g_vm->_flagScreenRefreshed = true;
-		uint32 PaintTime = ReadTime();
-		if ((PaintTime - TheTime) >= 5)
+		uint32 PaintTime = g_vm->ReadTime();
+		if (PaintTime - TheTime >= 5)
 			g_vm->_nextRefresh = PaintTime + 1;
 		else
 			g_vm->_nextRefresh = TheTime + 5;

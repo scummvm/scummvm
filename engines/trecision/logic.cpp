@@ -30,6 +30,7 @@
 #include "trecision/nl/struct.h"
 #include "trecision/logic.h"
 
+#include "trecision/graphics.h"
 #include "trecision/trecision.h"
 #include "trecision/video.h"
 
@@ -4078,7 +4079,7 @@ void LogicManager::doMouseLeftRight() {
 
 void LogicManager::doSystemChangeRoom() {
 	if ((_vm->_curRoom == kRoom41D) && (_vm->_oldRoom != _vm->_curMessage->_u16Param1))
-		NlDissolve(30);
+		_vm->_graphicsMgr->NlDissolve(30);
 
 	_vm->_oldRoom = _vm->_curRoom;
 	_vm->_curRoom = _vm->_curMessage->_u16Param1;

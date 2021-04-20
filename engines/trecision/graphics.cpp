@@ -233,4 +233,75 @@ uint16 GraphicsManager::aliasing(uint32 val1, uint32 val2, uint8 num) {
 			((((val1 & _bitMask[0]) * num + (val2 & _bitMask[0]) * (8 - num)) >> 3) & _bitMask[0]));
 }
 
+/* -----------------24/06/98 15.00-------------------
+ * 					NlDissolve
+ * --------------------------------------------------*/
+void GraphicsManager::NlDissolve(int val) {
+	uint16 CenterX = MAXX / 2, CenterY = MAXY / 2;
+	uint32 sv = g_vm->ReadTime(), cv;
+
+	int lastv = 9000;
+	while ((sv + val) > (cv = g_vm->ReadTime())) {
+		g_vm->checkSystem();
+		if (lastv < (sv + val - cv))
+			continue;
+
+		lastv = (sv + val - cv);
+
+		float a = (float)(((CenterX + 200) / val) * lastv);
+		float b = (float)((CenterY / val) * lastv);
+
+		float x = 0.0f;
+		float y = b;
+
+		if ((CenterY - (int)y) > TOP)
+			memset(_vm->_screenBuffer + (TOP)*MAXX, 0, ((CenterY - (int)y) - TOP) * MAXX * 2);
+		if ((AREA + TOP) > (CenterY + (int)y))
+			memset(_vm->_screenBuffer + (CenterY + (int)y) * MAXX, 0, (AREA + TOP - (CenterY + (int)y)) * MAXX * 2);
+
+		float d1 = b * b - a * a * b + a * a / 4.0f;
+		while (a * a * (y - 0.5f) > b * b * (x + 1.0f)) {
+			if (d1 < 0.0f)
+				d1 += b * b * (2.0f * x + 3.0f);
+			else {
+				d1 += b * b * (2.0f * x + 3.0f) + a * a * (-2.0f * y + 2.0f);
+				y -= 1.0f;
+			}
+			x += 1.0f;
+
+			if ((CenterX + (int)x) < MAXX)
+				memset(_vm->_screenBuffer + CenterX + (int)x + (CenterY + (int)y) * MAXX, 0, (MAXX - (CenterX + (int)x)) * 2);
+			if ((CenterX + (int)x) < MAXX)
+				memset(_vm->_screenBuffer + CenterX + (int)x + (CenterY - (int)y) * MAXX, 0, (MAXX - (CenterX + (int)x)) * 2);
+			if ((CenterX - (int)x) > 0)
+				memset(_vm->_screenBuffer + (CenterY + (int)y) * MAXX, 0, (CenterX - (int)x) * 2);
+			if ((CenterX - (int)x) > 0)
+				memset(_vm->_screenBuffer + (CenterY - (int)y) * MAXX, 0, (CenterX - (int)x) * 2);
+		}
+
+		float d2 = b * b * (x + 0.5f) * (x + 0.5f) + a * a * (y - 1.0f) * (y - 1.0f) - a * a * b * b;
+		while (y > 0.0f) {
+			if (d2 < 0.0f) {
+				d2 += b * b * (2.0f * x + 2.0f) + a * a * (-2.0f * y + 3.0f);
+				x += 1.0f;
+			} else
+				d2 += a * a * (-2.0f * y + 3.0f);
+			y -= 1.0f;
+
+			if ((CenterX + (int)x) < MAXX)
+				memset(_vm->_screenBuffer + CenterX + (int)x + (CenterY + (int)y) * MAXX, 0, (MAXX - (CenterX + (int)x)) * 2);
+			if ((CenterX + (int)x) < MAXX)
+				memset(_vm->_screenBuffer + CenterX + (int)x + (CenterY - (int)y) * MAXX, 0, (MAXX - (CenterX + (int)x)) * 2);
+			if ((CenterX - (int)x) > 0)
+				memset(_vm->_screenBuffer + (CenterY + (int)y) * MAXX, 0, (CenterX - (int)x) * 2);
+			if ((CenterX - (int)x) > 0)
+				memset(_vm->_screenBuffer + (CenterY - (int)y) * MAXX, 0, (CenterX - (int)x) * 2);
+		}
+
+		copyToScreen(0, 0, MAXX, MAXY);
+	}
+
+	clearScreen();
+}
+
 } // end of namespace

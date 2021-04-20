@@ -28,7 +28,6 @@ MODULE_OBJS = \
 	nl/ll/llmouse.o \
 	nl/ll/llscreen.o \
 	nl/ll/llvideo.o \
-	nl/sys/main.o \
 	nl/sys/sound.o
 
 # This module can be built as a plugin
