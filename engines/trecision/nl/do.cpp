@@ -341,291 +341,19 @@ bool AtMouseClick(uint16 curObj) {
 	return retVal;
 }
 
-/* -----------------26/11/97 10.37-------------------
- * 					AtEndChangeRoom
- * --------------------------------------------------*/
-void AtEndChangeRoom() {
-	//	Specific management of magnetic fields
-	if ((g_vm->_curRoom == r2E) && (g_vm->_obj[oPULSANTEADS2D]._mode & OBJMODE_OBJSTATUS)) {
-		g_vm->_animMgr->_animTab[aBKG2E]._flag |= SMKANIM_OFF1;
-		g_vm->_obj[oCAMPO2E]._mode &= ~OBJMODE_OBJSTATUS;
-		g_vm->_obj[oCARTELLOA2E]._mode &= ~OBJMODE_OBJSTATUS;
-		g_vm->_obj[oCARTELLOS2E]._mode |= OBJMODE_OBJSTATUS;
-	} else if ((g_vm->_curRoom == r2E) && (g_vm->_obj[oPULSANTEADA2D]._mode & OBJMODE_OBJSTATUS)) {
-		g_vm->_animMgr->_animTab[aBKG2E]._flag &= ~SMKANIM_OFF1;
-		g_vm->_obj[oCAMPO2E]._mode |= OBJMODE_OBJSTATUS;
-		g_vm->_obj[oCARTELLOA2E]._mode |= OBJMODE_OBJSTATUS;
-		g_vm->_obj[oCARTELLOS2E]._mode &= ~OBJMODE_OBJSTATUS;
-	}
-	if ((g_vm->_curRoom == r2C) && (g_vm->_obj[oPULSANTEACS2D]._mode & OBJMODE_OBJSTATUS)) {
-		g_vm->_animMgr->_animTab[aBKG2C]._flag |= SMKANIM_OFF1;
-		g_vm->_obj[oCAMPO2C]._mode &= ~OBJMODE_OBJSTATUS;
-		g_vm->_obj[oCARTELLOA2C]._mode &= ~OBJMODE_OBJSTATUS;
-		g_vm->_obj[oCARTELLOS2C]._mode |= OBJMODE_OBJSTATUS;
-	} else if ((g_vm->_curRoom == r2C) && (g_vm->_obj[oPULSANTEACA2D]._mode & OBJMODE_OBJSTATUS)) {
-		g_vm->_animMgr->_animTab[aBKG2C]._flag &= ~SMKANIM_OFF1;
-		g_vm->_obj[oCAMPO2C]._mode |= OBJMODE_OBJSTATUS;
-		g_vm->_obj[oCARTELLOS2C]._mode &= ~OBJMODE_OBJSTATUS;
-		g_vm->_obj[oCARTELLOA2C]._mode |= OBJMODE_OBJSTATUS;
-	}
-	if ((g_vm->_curRoom == r28) && (g_vm->_obj[oPULSANTEBBS2D]._mode & OBJMODE_OBJSTATUS)) {
-		g_vm->_animMgr->_animTab[aBKG28]._flag |= SMKANIM_OFF2;
-		g_vm->_obj[oCESPUGLIO28]._anim = a283;
-		g_vm->_obj[oSERPENTETM28]._mode |= OBJMODE_OBJSTATUS;
-		g_vm->_obj[oSERPENTEAM28]._mode |= OBJMODE_OBJSTATUS;
-		RegenRoom();
-	} else if ((g_vm->_curRoom == r28) && (g_vm->_obj[oPULSANTEBBA2D]._mode & OBJMODE_OBJSTATUS)) {
-		g_vm->_animMgr->_animTab[aBKG28]._flag &= ~SMKANIM_OFF2;
-		g_vm->_obj[oCESPUGLIO28]._anim = a282;
-		g_vm->_obj[oSERPENTETM28]._mode &= ~OBJMODE_OBJSTATUS;
-		g_vm->_obj[oSERPENTEAM28]._mode &= ~OBJMODE_OBJSTATUS;
-		RegenRoom();
-	}
-	if ((g_vm->_curRoom == r28) && (g_vm->_obj[oPULSANTEABS2D]._mode & OBJMODE_OBJSTATUS)) {
-		g_vm->_animMgr->_animTab[aBKG28]._flag |= (SMKANIM_OFF1 | SMKANIM_OFF3);
-		g_vm->_obj[oCAMPO28]._mode &= ~OBJMODE_OBJSTATUS;
-		g_vm->_obj[oCARTELLOA28]._mode &= ~OBJMODE_OBJSTATUS;
-		g_vm->_obj[oCARTELLOS28]._mode |= OBJMODE_OBJSTATUS;
-		read3D("282.3d");
-	} else if ((g_vm->_curRoom == r28) && (g_vm->_obj[oPULSANTEABA2D]._mode & OBJMODE_OBJSTATUS)) {
-		g_vm->_animMgr->_animTab[aBKG28]._flag &= ~(SMKANIM_OFF1 | SMKANIM_OFF3);
-		g_vm->_obj[oCAMPO28]._mode |= OBJMODE_OBJSTATUS;
-		g_vm->_obj[oCARTELLOA28]._mode |= OBJMODE_OBJSTATUS;
-		g_vm->_obj[oCARTELLOS28]._mode &= ~OBJMODE_OBJSTATUS;
-	}
-	// End of specific management for the magnetic fields
-
-	// Actions
-	if ((g_vm->_curRoom == r12) && ((g_vm->_oldRoom == r13) || (g_vm->_oldRoom == r16)))
-		StartCharacterAction(a1213ARRIVACONASCENSORE, 0, 0, 0);
-	else if ((g_vm->_curRoom == r16) && ((g_vm->_oldRoom == r13) || (g_vm->_oldRoom == r12)))
-		StartCharacterAction(a1617SCENDECONASCENSORE, 0, 0, 0);
-	else if ((g_vm->_curRoom == r13) && (g_vm->_oldRoom == r12))
-		StartCharacterAction(a1315ARRIVAASCENSOREALTOENTRA, 0, 0, 0);
-	else if ((g_vm->_curRoom == r13) && (g_vm->_oldRoom == r16))
-		StartCharacterAction(a1314ARRIVAASCENSOREDABASSO, 0, 0, 0);
-	else if ((g_vm->_curRoom == r14) && (g_vm->_oldRoom == r13))
-		StartCharacterAction(a1414ENTERROOM, 0, 0, 0);
-	else if ((g_vm->_curRoom == r18) && (g_vm->_oldRoom == r17) && !(g_vm->_room[r18]._flag & OBJFLAG_DONE))
-		StartCharacterAction(a186GUARDAPIAZZA, 0, 0, 0);
-	else if ((g_vm->_curRoom == r18) && (g_vm->_oldRoom == r19))
-		StartCharacterAction(a189ENTRADALCLUB, 0, 0, 0);
-	else if ((g_vm->_curRoom == r1A) && (g_vm->_oldRoom == r18) && (g_vm->_room[r1A]._flag & OBJFLAG_DONE)) {
-		StartCharacterAction(a1A5ENTRA, 0, 0, 0);
-		g_vm->_animMgr->_animTab[aBKG1A]._flag |= SMKANIM_OFF1;
-	} else if ((g_vm->_curRoom == r1C) && (g_vm->_oldRoom == r1B))
-		StartCharacterAction(a1C1ENTRACUNICOLO, 0, 0, 0);
-	else if ((g_vm->_curRoom == r1B) && (g_vm->_oldRoom == r1C))
-		StartCharacterAction(a1B11ESCETOMBINO, 0, 0, 0);
-	else if ((g_vm->_curRoom == r1D) && (g_vm->_oldRoom == r1B) && (g_vm->_obj[oDONNA1D]._mode & OBJMODE_OBJSTATUS)) {
-		StartCharacterAction(a1D1SCENDESCALE, 0, 1, 0);
-		g_vm->_actor->_lim[0] = 60;
-		g_vm->_actor->_lim[2] = 240;
-	} else if ((g_vm->_curRoom == r1D) && (g_vm->_oldRoom == r1B) && !(g_vm->_obj[oDONNA1D]._mode & OBJMODE_OBJSTATUS)) {
-		StartCharacterAction(a1D12SCENDESCALA, 0, 1, 0);
-		g_vm->_actor->_lim[0] = 60;
-		g_vm->_actor->_lim[2] = 240;
-	} else if ((g_vm->_curRoom == r1B) && (g_vm->_oldRoom == r1D))
-		StartCharacterAction(a1B4ESCEBOTOLA, 0, 0, 0);
-	else if ((g_vm->_curRoom == r1B) && (g_vm->_oldRoom == r18) && (g_vm->_animMgr->_animTab[aBKG1B]._flag & SMKANIM_OFF1))
-		StartCharacterAction(a1B12SCAPPATOPO, 0, 0, 0);
-	else if ((g_vm->_curRoom == r24) && (g_vm->_oldRoom == r2H))
-		StartCharacterAction(a242, 0, 0, 0);
-	else if ((g_vm->_curRoom == r25) && (g_vm->_oldRoom == r2A))
-		StartCharacterAction(a257, 0, 0, 0);
-	else if ((g_vm->_curRoom == r28) && (g_vm->_oldRoom == r27))
-		StartCharacterAction(aWALKIN, 0, 0, 0);
-	else if ((g_vm->_curRoom == r29) && (g_vm->_oldRoom == r2A))
-		StartCharacterAction(a298ESCEBOTOLA, 0, 0, 0);
-	else if ((g_vm->_curRoom == r29L) && (g_vm->_oldRoom == r2A))
-		StartCharacterAction(a2910ESCEBOTOLA, 0, 0, 0);
-	else if ((g_vm->_curRoom == r2A) && (g_vm->_oldRoom == r25))
-		StartCharacterAction(aWALKIN, 0, 0, 0);
-	else if ((g_vm->_curRoom == r2A) && ((g_vm->_oldRoom == r29) || (g_vm->_oldRoom == r29L)))
-		StartCharacterAction(aWALKIN, 0, 0, 0);
-	else if ((g_vm->_curRoom == r2B) && (g_vm->_oldRoom == r2A))
-		StartCharacterAction(a2B2ESCEPOZZO, 0, 2, 0);
-	else if ((g_vm->_curRoom == r2H) && (g_vm->_oldRoom == r24))
-		StartCharacterAction(a2H1ARRIVA, 0, 0, 0);
-	else if ((g_vm->_curRoom == r2E) && (g_vm->_oldRoom == r2F))
-		StartCharacterAction(a2E5SECONDAPARRIVANDO, 0, 0, 0);
-	else if ((g_vm->_curRoom == r2F) && (g_vm->_oldRoom == r2E))
-		StartCharacterAction(aWALKIN, 0, 0, 0);
-	else if ((g_vm->_curRoom == r23B) && (g_vm->_oldRoom == r21))
-		StartCharacterAction(aWALKIN, 0, 0, 0);
-	else if ((g_vm->_curRoom == r23A) && (g_vm->_oldRoom == r21) && (g_vm->_room[r23A]._flag & OBJFLAG_DONE))
-		StartCharacterAction(aWALKIN, 0, 0, 0);
-	else if ((g_vm->_curRoom == r23A) && (g_vm->_oldRoom == r21) && (!(g_vm->_room[r23A]._flag & OBJFLAG_DONE)))
-		g_vm->_flagShowCharacter = false;
-	else if ((g_vm->_curRoom == r21) && ((g_vm->_oldRoom == r23A) || (g_vm->_oldRoom == r23B)))
-		StartCharacterAction(aWALKIN, 0, 0, 0);
-	else if ((g_vm->_curRoom == r2BL) || (g_vm->_curRoom == r36F) || (g_vm->_curRoom == r41D) || (g_vm->_curRoom == r49M) || (g_vm->_curRoom == r4CT) ||
-	         (g_vm->_curRoom == r58T) || (g_vm->_curRoom == r58M) || (g_vm->_curRoom == r59L) || (g_vm->_curRoom == rSYS) ||
-	         (g_vm->_curRoom == r12CU) || (g_vm->_curRoom == r13CU)) { // Screens without inventory
-		g_vm->_flagShowCharacter = false;
-		g_vm->_flagCharacterExists = false;
-		g_vm->_flagInventoryLocked = true;
-	} else if ((g_vm->_curRoom == r31P) || (g_vm->_curRoom == r35P)) { // Screens with inventory
-		g_vm->_flagShowCharacter = false;
-		g_vm->_flagCharacterExists = false;
-	} else if ((g_vm->_curRoom == r2F) && (g_vm->_oldRoom == r31))
-		StartCharacterAction(a2F4ESCEASCENSORE, 0, 0, 0);
-	else if ((g_vm->_curRoom == r31) && (g_vm->_oldRoom == r2F))
-		StartCharacterAction(a3114ESCEPASSAGGIO, 0, 0, 0);
-	else if ((g_vm->_curRoom == r31) && !(g_vm->_room[r31]._flag & OBJFLAG_DONE))
-		setPosition(14);
-	else if ((g_vm->_curRoom == r32) && (g_vm->_oldRoom == r31))
-		StartCharacterAction(a321SALEMONTACARICHI, 0, 0, 0);
-	else if ((g_vm->_curRoom == r33) && (g_vm->_oldRoom == r32) && (g_vm->_obj[oBRUCIATURA33]._mode & OBJMODE_OBJSTATUS))
-		StartCharacterAction(a3311SALESCALE, 0, 0, 0);
-	else if ((g_vm->_curRoom == r33) && (g_vm->_oldRoom == r32) && !(g_vm->_obj[oBRUCIATURA33]._mode & OBJMODE_OBJSTATUS))
-		StartCharacterAction(a3313CHIUDEBOTOLA, 0, 0, 0);
-	else if ((g_vm->_curRoom == r32) && (g_vm->_oldRoom == r33))
-		StartCharacterAction(a325SCENDESCALE, 0, 0, 0);
-	else if ((g_vm->_curRoom == r36) && (g_vm->_oldRoom == r35))
-		StartCharacterAction(a361ESCEASCENSORE, 0, 0, 0);
-	else if ((g_vm->_curRoom == r35) && (g_vm->_oldRoom == r36))
-		StartCharacterAction(a3515ESCEASCENSORE, 0, 0, 0);
-	else if ((g_vm->_curRoom == r44) && (g_vm->_oldRoom == r45 || g_vm->_oldRoom == r45S) && !(g_vm->_inventoryObj[iDISLOCATORE]._flag & OBJFLAG_EXTRA))
-		StartCharacterAction(a445, 0, 0, 0);
-	else if ((g_vm->_curRoom == r45 || g_vm->_curRoom == r45S) && (g_vm->_oldRoom == r44) && !(g_vm->_inventoryObj[iDISLOCATORE]._flag & OBJFLAG_EXTRA))
-		StartCharacterAction(a457, 0, 0, 0);
-	else if ((g_vm->_curRoom == r46) && (g_vm->_oldRoom == r47 || g_vm->_oldRoom == r48 || g_vm->_oldRoom == r49) && !(g_vm->_inventoryObj[iDISLOCATORE]._flag & OBJFLAG_EXTRA))
-		StartCharacterAction(aWALKIN, 0, 0, 0);
-	else if ((g_vm->_curRoom == r47) && (g_vm->_oldRoom == r46) && !(g_vm->_inventoryObj[iDISLOCATORE]._flag & OBJFLAG_EXTRA))
-		StartCharacterAction(a476, 0, 0, 0);
-	else if ((g_vm->_curRoom == r48) && (g_vm->_oldRoom == r46) && !(g_vm->_inventoryObj[iDISLOCATORE]._flag & OBJFLAG_EXTRA))
-		StartCharacterAction(a485, 0, 0, 0);
-	else if ((g_vm->_curRoom == r49) && (g_vm->_oldRoom == r46) && !(g_vm->_inventoryObj[iDISLOCATORE]._flag & OBJFLAG_EXTRA))
-		StartCharacterAction(a494, 0, 0, 0);
-	else if ((g_vm->_curRoom == r54) && (g_vm->_oldRoom == r53)) {
-		StartCharacterAction(a5411, 0, 11, 0);
-		g_vm->_inventoryObj[iLASER35]._examine = 1599;
-	} else if ((g_vm->_oldRoom == r41D) && (g_vm->_inventoryObj[iDISLOCATORE]._flag & OBJFLAG_EXTRA)) {
-		setPosition(30);
-		drawCharacter(CALCPOINTS);
-	}
-
-	// FullMotion
-	if ((g_vm->_curRoom == r17) && (g_vm->_oldRoom == r16)) {
-		PlayDialog(dF171);
-		WaitSoundFadEnd();
-	} else if ((g_vm->_curRoom == r16) && (g_vm->_oldRoom == r17)) {
-		PlayDialog(dF161);
-		WaitSoundFadEnd();
-		g_vm->removeIcon(iFOGLIO14);
-	} else if ((g_vm->_curRoom == r21) && (g_vm->_oldRoom == r1C)) {
-		PlayDialog(dF1C1);
-		WaitSoundFadEnd();
-	} else if ((g_vm->_curRoom == r23B) && (g_vm->_oldRoom == r23A)) {
-		PlayDialog(dF231);
-		WaitSoundFadEnd();
-		g_vm->removeIcon(iMAPPA17);
-	} else if ((g_vm->_curRoom == r29L) && (g_vm->_oldRoom == r29)) {
-		PlayDialog(dF291);
-		WaitSoundFadEnd();
-	} else if ((g_vm->_curRoom == r2GV) && (g_vm->_oldRoom == r2G)) {
-		PlayDialog(dF2G2);
-		WaitSoundFadEnd();
-	} else if ((g_vm->_curRoom == r31) && (g_vm->_oldRoom == r32) && (g_vm->_room[r32]._flag & OBJFLAG_EXTRA)) {
-		PlayDialog(dF321);
-		g_vm->_flagShowCharacter = false;
-		WaitSoundFadEnd();
-		g_vm->_room[r32]._flag &= ~OBJFLAG_EXTRA;
-	} else if ((g_vm->_curRoom == r19) && !(g_vm->_room[r19]._flag & OBJFLAG_DONE)) {
-		g_vm->playScript(s19EVA);
-		g_vm->_flagNoPaintScreen = false;
-		g_vm->clearText();
-		g_vm->redrawString();
-		WaitSoundFadEnd();
-	}
-	// CHECKME: This check is identical to the 3rd one, thus it's always false
-	else if ((g_vm->_curRoom == r21) && (/*!( _room[g_vm->_curRoom]._flag & OBJFLAG_DONE ) || */ (g_vm->_oldRoom == r1C))) {
-		setPosition(10);
-		TendIn();
-		g_vm->_flagNoPaintScreen = false;
-		g_vm->clearText();
-		g_vm->redrawString();
-	} else if ((g_vm->_curRoom == r46) && (g_vm->_oldRoom == r43) && !(g_vm->_inventoryObj[iDISLOCATORE]._flag & OBJFLAG_EXTRA)) {
-		PlayDialog(dF431);
-		WaitSoundFadEnd();
-	} else if ((g_vm->_curRoom == r45S) && (g_vm->_oldRoom == r45) && !(g_vm->_inventoryObj[iDISLOCATORE]._flag & OBJFLAG_EXTRA)) {
-		PlayDialog(dF451);
-		WaitSoundFadEnd();
-	} else if ((g_vm->_curRoom == r4A) && (g_vm->_oldRoom == r49) && !(g_vm->_inventoryObj[iDISLOCATORE]._flag & OBJFLAG_EXTRA)) {
-		PlayDialog(dF491);
-		WaitSoundFadEnd();
-	} else if ((g_vm->_curRoom == r4A) && (g_vm->_oldRoom == r41D) && (g_vm->_inventoryObj[iDISLOCATORE]._flag & OBJFLAG_EXTRA) && (g_vm->_obj[ocHELLEN4A]._mode & OBJMODE_OBJSTATUS)) {
-		WaitSoundFadEnd();
-		PlayDialog(dC4A1);
-	} else if ((g_vm->_curRoom == r4P) && (g_vm->_oldRoom == r4O) && !(g_vm->_room[r4P]._flag & OBJFLAG_DONE)) {
-		PlayDialog(dF4PI);
-		g_vm->_flagShowCharacter = false;
-		WaitSoundFadEnd();
-	} else if ((g_vm->_curRoom == r51) && (g_vm->_oldRoom == r4CT)) {
-		PlayDialog(dF4C1);
-		g_vm->_flagShowCharacter = false;
-		WaitSoundFadEnd();
-	} else if ((g_vm->_curRoom == r1A) && (g_vm->_oldRoom == r18)) {
-		if (!(g_vm->_room[r1A]._flag & OBJFLAG_DONE)) {
-			PlayDialog(dF1A1);
-			WaitSoundFadEnd();
-			g_vm->_obj[oTOPO1C]._flag |= OBJFLAG_TAKE;
-			g_vm->_obj[oTOPO1C]._anim = a1C3RACCOGLIETOPO;
-		} else {
-			TendIn();
-			g_vm->_flagNoPaintScreen = false;
-			g_vm->redrawString();
-		}
-	} else {
-		TendIn();
-		g_vm->_flagNoPaintScreen = false;
-		g_vm->clearText();
-		g_vm->redrawString();
-	}
-
-//	Sentence
-	if ((g_vm->_curRoom == r17) && (g_vm->_oldRoom == r18) && !(g_vm->_room[r17]._flag & OBJFLAG_DONE) && (g_vm->_obj[oRETE17]._mode & OBJMODE_OBJSTATUS))
-		CharacterSay(189);
-	if (((g_vm->_curRoom == r12CU) || (g_vm->_curRoom == r13CU)) && g_vm->_closeUpObj && g_vm->_obj[g_vm->_closeUpObj]._examine)
-		CharacterSay(g_vm->_obj[g_vm->_closeUpObj]._examine);
-	else if ((g_vm->_curRoom == r23A) && (g_vm->_oldRoom == r21) && !(g_vm->_room[r23A]._flag & OBJFLAG_DONE)) {
-		g_vm->_flagShowCharacter = true;
-		StartCharacterAction(aWALKIN, 0, 0, 361);
-	} else if ((g_vm->_curRoom == r24) && !(g_vm->_room[r24]._flag & OBJFLAG_DONE))
-		CharacterSay(381);
-	else if ((g_vm->_curRoom == r2G) && !(g_vm->_room[r2G]._flag & OBJFLAG_DONE))
-		CharacterSay(688);
-	else if ((g_vm->_curRoom == r4C) && (g_vm->_oldRoom == r4CT))
-		CharacterSay(1163);
-	else if ((g_vm->_curRoom == r41) && (g_vm->_oldRoom == r36) && !(g_vm->_room[r41]._flag & OBJFLAG_DONE))
-		CharacterSay(900);
-	else if ((g_vm->_curRoom == r58) && (g_vm->_obj[oGUARDIA58]._mode & OBJMODE_OBJSTATUS) && (g_vm->_obj[oGUARDIA58]._anim)) {
-		g_vm->_curObj = oGUARDIA58;
-		doEvent(MC_MOUSE, ME_MRIGHT, MP_DEFAULT, 372, 335 + TOP, 0, oGUARDIA58);
-	} else if ((g_vm->_curRoom == r59L))
-		CharacterSay(1394);
-	else if ((g_vm->_curRoom == r58) && (g_vm->_oldRoom == r58T))
-		CharacterSay(1368);
-	else if ((g_vm->_curRoom == r5A) && !(g_vm->_room[r5A]._flag & OBJFLAG_DONE))
-		CharacterSay(1408);
-	else if ((g_vm->_curRoom == rSYS) && (g_vm->_oldRoom == rSYS))
-		g_vm->_logicMgr->DoSys(o00LOAD);
-	g_vm->_inventoryObj[iDISLOCATORE]._flag &= ~OBJFLAG_EXTRA;
-}
-
 /* -----------------26/11/97 10.38-------------------
  * 					GestioneATFrame
  * --------------------------------------------------*/
 #define ATF_WAITTEXT 1
 
 static struct ATFHandle {
-	int16 curframe, lastframe;
-	uint16 object;
-	uint16 status;
-	SAnim *curanim;
-}            // 0->character 1->background 2->icon
-AnimType[3] = {	{true}, {true}, {true}	};
+	int16 _curFrame;
+	int16 _lastFrame;
+	uint16 _object;
+	uint16 _status;
+	SAnim *_curAnim;
+}
+AnimType[3] = {	{1}, {1}, {1}	};
 
 void ExecuteAtFrameDoit(ATFHandle *h, int doit, int obj) {
 	switch (doit) {
@@ -742,11 +470,13 @@ void ExecuteAtFrameDoit(ATFHandle *h, int doit, int obj) {
 		doEvent(MC_SYSTEM, ME_QUIT, MP_SYSTEM, 0, 0, 0, 0);
 		break;
 	case fSTOP2TXT:
-		h->status |= ATF_WAITTEXT;
+		h->_status |= ATF_WAITTEXT;
 		// Sets a flag that is always cleared when you finish speaking
 		// if the flag is cleared the anim no longer plays
 		// (to be done in the smacker player)
 		// also the counters in AtFrameNext stops
+		break;
+	default:
 		break;
 	}
 }
@@ -756,92 +486,98 @@ void ProcessAtFrame(ATFHandle *h, int type, int atf) {
 
 	switch (type) {
 	case ATFTEXT:
-		CharacterTalkInAction(h->curanim->_atFrame[atf]._index);
+		CharacterTalkInAction(h->_curAnim->_atFrame[atf]._index);
 		break;
 	case ATFTEXTACT:
-		CharacterTalkInAction(g_vm->_obj[h->object]._action);
+		CharacterTalkInAction(g_vm->_obj[h->_object]._action);
 		break;
 	case ATFTEXTEX:
-		CharacterTalkInAction(g_vm->_obj[h->object]._examine);
+		CharacterTalkInAction(g_vm->_obj[h->_object]._examine);
 		break;
 	case ATFCLR:
-		g_vm->_obj[h->curanim->_atFrame[atf]._index]._mode &= ~OBJMODE_OBJSTATUS;
+		g_vm->_obj[h->_curAnim->_atFrame[atf]._index]._mode &= ~OBJMODE_OBJSTATUS;
 		RegenRoom();
 		break;
 	case ATFCLRI:
-		g_vm->removeIcon(h->curanim->_atFrame[atf]._index);
+		g_vm->removeIcon(h->_curAnim->_atFrame[atf]._index);
 		break;
 	case ATFCEX:
-		g_vm->_obj[h->object]._examine = h->curanim->_atFrame[atf]._index;
+		g_vm->_obj[h->_object]._examine = h->_curAnim->_atFrame[atf]._index;
 		break;
 	case ATFCACT:
-		g_vm->_obj[h->object]._action = h->curanim->_atFrame[atf]._index;
+		g_vm->_obj[h->_object]._action = h->_curAnim->_atFrame[atf]._index;
 		break;
 	case ATFSET:
-		g_vm->_obj[h->curanim->_atFrame[atf]._index]._mode |= OBJMODE_OBJSTATUS;
+		g_vm->_obj[h->_curAnim->_atFrame[atf]._index]._mode |= OBJMODE_OBJSTATUS;
 		RegenRoom();
 		break;
 	case ATFSETI:
-		g_vm->addIcon(h->curanim->_atFrame[atf]._index);
+		g_vm->addIcon(h->_curAnim->_atFrame[atf]._index);
 		break;
 	case ATFDO:
-		ExecuteAtFrameDoit(h, h->curanim->_atFrame[atf]._index, h->object);
+		ExecuteAtFrameDoit(h, h->_curAnim->_atFrame[atf]._index, h->_object);
 		break;
 	case ATFROOM:
-		doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, h->curanim->_atFrame[atf]._index, 0, 0, h->object);
+		doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, h->_curAnim->_atFrame[atf]._index, 0, 0, h->_object);
 		break;
 	case ATFSETPOS:
-		setPosition(h->curanim->_atFrame[atf]._index);
+		setPosition(h->_curAnim->_atFrame[atf]._index);
 		break;
 	case ATFDIALOG:
-		PlayDialog(h->curanim->_atFrame[atf]._index);
+		PlayDialog(h->_curAnim->_atFrame[atf]._index);
 		break;
 	case ATFCOBJANIM:
-		g_vm->_obj[h->object]._anim = h->curanim->_atFrame[atf]._index;
+		g_vm->_obj[h->_object]._anim = h->_curAnim->_atFrame[atf]._index;
 		RegenRoom();
 		break;
 	case ATFCOBJBOX:
-		g_vm->_obj[h->object]._nbox = h->curanim->_atFrame[atf]._index;
+		g_vm->_obj[h->_object]._nbox = h->_curAnim->_atFrame[atf]._index;
 		RegenRoom();
 		break;
 	case ATFCOBJPOS:
-		g_vm->_obj[h->object]._position = h->curanim->_atFrame[atf]._index;
+		g_vm->_obj[h->_object]._position = h->_curAnim->_atFrame[atf]._index;
 		RegenRoom();
 		break;
 	case ATFSETFORE:
-		g_vm->_obj[h->curanim->_atFrame[atf]._index]._nbox = FOREGROUND;
+		g_vm->_obj[h->_curAnim->_atFrame[atf]._index]._nbox = FOREGROUND;
 		RegenRoom();
 		break;
 	case ATFSETBACK:
-		g_vm->_obj[h->curanim->_atFrame[atf]._index]._nbox = BACKGROUND;
+		g_vm->_obj[h->_curAnim->_atFrame[atf]._index]._nbox = BACKGROUND;
 		RegenRoom();
 		break;
 	case ATFSWITCH:
-		g_vm->_obj[h->curanim->_atFrame[atf]._index]._mode ^= OBJMODE_OBJSTATUS;
+		g_vm->_obj[h->_curAnim->_atFrame[atf]._index]._mode ^= OBJMODE_OBJSTATUS;
 		RegenRoom();
 		break;
 	case ATFSETROOMT:
-		g_vm->setRoom(h->curanim->_atFrame[atf]._index, true);
+		g_vm->setRoom(h->_curAnim->_atFrame[atf]._index, true);
 		break;
 	case ATFSETROOMF:
-		g_vm->setRoom(h->curanim->_atFrame[atf]._index, false);
+		g_vm->setRoom(h->_curAnim->_atFrame[atf]._index, false);
 		break;
 	case ATFREADBOX:
-		if (h->curanim->_atFrame[atf]._index == 1) {
+		switch (h->_curAnim->_atFrame[atf]._index) {
+		case 1: {
 			Common::String filename = Common::String::format("%s.3d", g_vm->_room[g_vm->_curRoom]._baseName);
 			read3D(filename);
 			g_vm->_room[g_vm->_curRoom]._flag &= ~OBJFLAG_EXTRA;
-		} else if (h->curanim->_atFrame[atf]._index == 2) {
+			}
+			break;
+		case 2: {
 			Common::String filename = Common::String::format("%s2.3d", g_vm->_room[g_vm->_curRoom]._baseName);
 			read3D(filename);
 			g_vm->_room[g_vm->_curRoom]._flag |= OBJFLAG_EXTRA;
-			if (g_vm->_curRoom == r37) {
+			if (g_vm->_curRoom == r37)
 				g_vm->_animMgr->smkVolumePan(0, 1, 1);
 			}
+			break;
+		default:
+			break;
 		}
 		break;
 	case ATFONESPEAK:
-		switch (h->curanim->_atFrame[atf]._index) {
+		switch (h->_curAnim->_atFrame[atf]._index) {
 		case 1:
 			if (g_vm->_room[r1D]._flag & OBJFLAG_EXTRA)
 				break;
@@ -854,13 +590,16 @@ void ProcessAtFrame(ATFHandle *h, int type, int atf) {
 		case 2:
 			SomeoneTalk(1788, ocNEGOZIANTE1A, 0, false);
 			break;
+		default:
+			break;
 		}
 		break;
 	case ATFEND:
 		DemoOver();
 		doEvent(MC_SYSTEM, ME_QUIT, MP_SYSTEM, 0, 0, 0, 0);
 		break;
-
+	default:
+		break;
 	}
 
 }
@@ -871,20 +610,17 @@ void ProcessAtFrame(ATFHandle *h, int type, int atf) {
 void InitAtFrameHandler(uint16 an, uint16 obj) {
 	SAnim *anim = &g_vm->_animMgr->_animTab[an];
 
-	ATFHandle *handle = &AnimType[0];
+	ATFHandle *handle = &AnimType[CHARACTER_ANIM];
 	if (anim->_flag & SMKANIM_BKG)
-		handle = &AnimType[1];
+		handle = &AnimType[BACKGROUND_ANIM];
 	if (anim->_flag & SMKANIM_ICON)
-		handle = &AnimType[2];
+		handle = &AnimType[ICON_ANIM];
 
-	handle->curanim = anim;
-	if (obj)
-		handle->object = obj;
-	else
-		handle->object = g_vm->_curObj;
-	handle->curframe = 0;
-	handle->lastframe = -1;
-	handle->status = 0;
+	handle->_curAnim = anim;
+	handle->_object = obj ? obj : g_vm->_curObj;
+	handle->_curFrame = 0;
+	handle->_lastFrame = -1;
+	handle->_status = 0;
 }
 
 /* -----------------11/07/97 11.41-------------------
@@ -892,8 +628,8 @@ void InitAtFrameHandler(uint16 an, uint16 obj) {
  --------------------------------------------------*/
 void AtFrameNext() {
 	for (int i = 0; i < 3; ++i) {
-		if (!(AnimType[i].status & ATF_WAITTEXT) || !g_vm->_flagCharacterSpeak)
-			AnimType[i].curframe++;		
+		if (!(AnimType[i]._status & ATF_WAITTEXT) || !g_vm->_flagCharacterSpeak)
+			AnimType[i]._curFrame++;		
 	}
 }
 
@@ -902,14 +638,14 @@ void AtFrameNext() {
  --------------------------------------------------*/
 void AtFrameEnd(int type) {
 	ATFHandle *h = &AnimType[type];
-	SAnim *anim = h->curanim;
-	h->curframe = 0;
+	SAnim *anim = h->_curAnim;
+	h->_curFrame = 0;
 
 	// if this ATFrame has already been handled
-	if (h->curframe == h->lastframe)
+	if (h->_curFrame == h->_lastFrame)
 		return;
 
-	h->lastframe = h->curframe;
+	h->_lastFrame = h->_curFrame;
 
 	uint16 flag = g_vm->_animMgr->_animTab[g_vm->_room[g_vm->_curRoom]._bkgAnim]._flag;
 	
@@ -925,7 +661,7 @@ void AtFrameEnd(int type) {
 		}
 	}
 
-	h->curanim = nullptr;
+	h->_curAnim = nullptr;
 }
 
 /* -----------------11/07/97 11.44-------------------
@@ -933,21 +669,21 @@ void AtFrameEnd(int type) {
  --------------------------------------------------*/
 void AtFrameHandler(int type) {
 	ATFHandle *h = &AnimType[type];
-	SAnim *anim = h->curanim;
+	SAnim *anim = h->_curAnim;
 	if (anim == nullptr)
 		return;
 
-	if (h->curframe == 0)
-		h->curframe++;
+	if (h->_curFrame == 0)
+		h->_curFrame++;
 	// if this ATFrame has already been applied
-	if (h->curframe <= h->lastframe)
+	if (h->_curFrame <= h->_lastFrame)
 		return;
 
 	uint16 flag = g_vm->_animMgr->_animTab[g_vm->_room[g_vm->_curRoom]._bkgAnim]._flag;
 
 	for (int32 a = 0; a < MAXATFRAME; a++) {
 		// if it's time to run this AtFrame
-		if ((anim->_atFrame[a]._numFrame > h->lastframe) && (anim->_atFrame[a]._numFrame <= h->curframe) && (anim->_atFrame[a]._numFrame != 0)) {
+		if ((anim->_atFrame[a]._numFrame > h->_lastFrame) && (anim->_atFrame[a]._numFrame <= h->_curFrame) && (anim->_atFrame[a]._numFrame != 0)) {
 			if (anim->_atFrame[a]._child == 0 ||
 			    (anim->_atFrame[a]._child == 1 && !(flag & SMKANIM_OFF1)) ||
 			    (anim->_atFrame[a]._child == 2 && !(flag & SMKANIM_OFF2)) ||
@@ -957,8 +693,8 @@ void AtFrameHandler(int type) {
 		}
 	}
 
-	// set lastframe
-	h->lastframe = h->curframe;
+	// set _lastFrame
+	h->_lastFrame = h->_curFrame;
 }
 
 } // End of namespace Trecision
