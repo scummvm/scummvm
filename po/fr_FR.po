@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-04-20 11:06+0000\n"
-"PO-Revision-Date: 2021-04-19 09:27+0000\n"
+"PO-Revision-Date: 2021-04-20 16:57+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
@@ -1309,7 +1309,7 @@ msgstr "Accessibilité"
 
 #: gui/options.cpp:1956
 msgid "Discard changes and close the dialog"
-msgstr ""
+msgstr "Annule les modifications et ferme la boîte de dialogue"
 
 #: gui/options.cpp:1957
 msgid "Apply"
@@ -1317,11 +1317,11 @@ msgstr "Appliquer"
 
 #: gui/options.cpp:1957
 msgid "Apply changes without closing the dialog"
-msgstr ""
+msgstr "Applique les modifications sans fermer la boîte de dialogue"
 
 #: gui/options.cpp:1958
 msgid "Apply changes and close the dialog"
-msgstr ""
+msgstr "Applique les modifications et ferme la boîte de dialogue"
 
 #: gui/options.cpp:2045
 msgid "FluidSynth Settings"
@@ -2134,7 +2134,7 @@ msgstr "<Valeur invalide>"
 
 #: dists/scummvm.appdata.xml.cpp:33
 msgid "Interpreter for numerous adventure games and role-playing games"
-msgstr ""
+msgstr "Interpréteur pour de nombreux jeux d'aventure et jeux de rôle"
 
 #: dists/scummvm.appdata.xml.cpp:38
 msgid ""
@@ -2144,6 +2144,12 @@ msgid ""
 "replaces the executables shipped with the game, allowing you to play them on "
 "systems for which they were never designed!"
 msgstr ""
+"ScummVM est un programme qui vous permet d'exécuter une grande variété de "
+"jeux d'aventure graphique point-and-click et de jeux de rôle, à condition "
+"que vous ayez déjà leurs fichiers de données. Ce qui est génial dans tout ça "
+": ScummVM remplace simplement les exécutables livrés avec les jeux, ce qui "
+"vous permet de jouer sur des systèmes pour lesquels ces jeux n'ont jamais "
+"été conçus !"
 
 #: dists/scummvm.appdata.xml.cpp:46
 msgid ""
@@ -2152,6 +2158,10 @@ msgid ""
 "like LucasArts, Sierra On-Line, Revolution Software, Cyan, Inc. and Westwood "
 "Studios."
 msgstr ""
+"Actuellement, ScummVM supporte une énorme collection d'aventures avec plus "
+"de 4000 jeux au total. Il prend en charge de nombreux classiques publiés par "
+"des studios légendaires comme LucasArts, Sierra On-Line, Revolution "
+"Software, Cyan, Inc. et Westwood Studios."
 
 #: dists/scummvm.appdata.xml.cpp:52
 msgid ""
@@ -2159,6 +2169,10 @@ msgid ""
 "Myst, Blade Runner and countless other games you will find some really "
 "obscure adventures and truly hidden gems to explore."
 msgstr ""
+"À côté de titres révolutionnaires comme la série Monkey Island, Broken Sword "
+"(Les Chevaliers de Baphomet) , Myst, Blade Runner et d'innombrables autres "
+"jeux, vous trouverez des aventures vraiment obscures et des pépites vraiment "
+"bien cachées à explorer."
 
 #: engines/advancedDetector.cpp:215
 msgid "Illegitimate game copy detected. We provide no support in such cases"
@@ -4835,6 +4849,8 @@ msgstr "Bouton Gauche pour attaquer, bouton Droite pour ramasser les objets"
 #: engines/kyra/detection_tables.h:1212
 msgid "You added the game incorrectly. Please add the root folder of the game."
 msgstr ""
+"Le jeu a été ajouté de façon incorrecte. Merci d'ajouter le dossier racine "
+"du jeu."
 
 #: engines/kyra/metaengine.cpp:117
 msgid "Lands of Lore support is not compiled in"
@@ -5727,10 +5743,8 @@ msgstr "Utiliser une intro alternative (version CD uniquement)"
 
 #. I18N: Inherit the Earth had a "trial" version which is a full game with a simple check
 #: engines/saga/detection_tables.h:609
-#, fuzzy
-#| msgid "Spanish CD version is not yet supported"
 msgid "Windows Trial version is not supported"
-msgstr "La version CD espagnole n'est pas encore prise en charge"
+msgstr "La version d'essai Windows n'est pas prise en charge"
 
 #: engines/saga/metaengine.cpp:114
 msgid "I Have No Mouth support not compiled in"
