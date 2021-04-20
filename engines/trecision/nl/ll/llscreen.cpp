@@ -403,7 +403,7 @@ int actionInRoom(int curA) {
 }
 
 void ReadLoc() {
-	if (g_vm->_curRoom == kRoom11 && !(g_vm->_room[kRoom11]._flag & OBJFLAG_DONE))
+	if (g_vm->_curRoom == kRoom11 && !(g_vm->_room[kRoom11]._flag & kObjFlagDone))
 		g_vm->_flagShowCharacter = true;
 
 	SoundFadOut();
@@ -573,9 +573,9 @@ void ReadSounds() {
 
 		LoadAudioWav(b, GSample[b]._name);
 
-		if (GSample[b]._flag & SOUNDFLAG_SBACK)
+		if (GSample[b]._flag & kSoundFlagBgMusic)
 			SoundFadIn(b);
-		else if (GSample[b]._flag & SOUNDFLAG_SON)
+		else if (GSample[b]._flag & kSoundFlagSoundOn)
 			NLPlaySound(b);
 	}
 }

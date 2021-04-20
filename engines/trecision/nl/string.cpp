@@ -98,7 +98,7 @@ void ShowObjName(uint16 obj, bool showhide) {
 			return;
 		}
 
-		if ((g_vm->_obj[g_vm->_curObj]._flag & (OBJFLAG_ROOMOUT | OBJFLAG_ROOMIN)) && !(g_vm->_obj[g_vm->_curObj]._flag & OBJFLAG_EXAMINE))
+		if ((g_vm->_obj[g_vm->_curObj]._flag & (kObjFlagRoomOut | kObjFlagRoomIn)) && !(g_vm->_obj[g_vm->_curObj]._flag & kObjFlagExamine))
 			return;
 
 		locsent += g_vm->_sysText[kMessageUse];
@@ -135,8 +135,8 @@ void ShowObjName(uint16 obj, bool showhide) {
 
 		if (obj == g_vm->_lastObj)
 			return;
-		if (!(g_vm->_obj[obj]._flag & OBJFLAG_EXAMINE)) {
-			if ((g_vm->_obj[obj]._flag & OBJFLAG_DONE) || (g_vm->_room[g_vm->_obj[obj]._goRoom]._flag & OBJFLAG_DONE)) {
+		if (!(g_vm->_obj[obj]._flag & kObjFlagExamine)) {
+			if ((g_vm->_obj[obj]._flag & kObjFlagDone) || (g_vm->_room[g_vm->_obj[obj]._goRoom]._flag & kObjFlagDone)) {
 				locsent = g_vm->_sysText[kMessageGoto];
 				if (g_vm->_obj[obj]._mode & OBJMODE_HIDDEN)
 					locsent += dunno;

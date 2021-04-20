@@ -34,28 +34,31 @@
 #define FOREGROUND   			255
 #define BACKGROUND   			254
 
-// OBJECT FLAGS
-#define OBJFLAG_USE     		0
-#define OBJFLAG_EXAMINE    		1
-#define OBJFLAG_ROOMOUT			2
-#define OBJFLAG_ROOMIN			4
-#define OBJFLAG_PERSON    		8
-#define OBJFLAG_TAKE    		16
-#define OBJFLAG_USEWITH    		32
-#define OBJFLAG_EXTRA    		64
-#define OBJFLAG_DONE    		128
+enum ObjectFlags {
+	kObjFlagUse = 0,
+	kObjFlagExamine = 1,
+	kObjFlagRoomOut = 2,
+	kObjFlagRoomIn = 4,
+	kObjFlagPerson = 8,
+	kObjFlagTake = 16,
+	kObjFlagUseWith = 32,
+	kObjFlagExtra = 64,
+	kObjFlagDone = 128,
+};
 
-// SOUND FLAGS
-#define SOUNDFLAG_SON     		1
-#define SOUNDFLAG_SLOOP    		2
-#define SOUNDFLAG_SBACK    		4
-#define SOUNDFLAG_STEPLEFTX    	8
-#define SOUNDFLAG_STEPRIGHTX    16
+enum SoundFlags {
+	kSoundFlagSoundOn = 1,
+	kSoundFlagSoundLoop = 2,
+	kSoundFlagBgMusic = 4,
+	kSoundFlagStepLeft = 8,
+	kSoundFlagStepRight = 16
+};
 
-
-#define CHARACTER_ANIM  	0
-#define BACKGROUND_ANIM 	1
-#define ICON_ANIM 			2
+enum AnimationTypes {
+	kAnimTypeCharacter = 0,
+	kAnimTypeBackground = 1,
+	kAnimTypeIcon = 2
+};
 
 #define ATFTEXT				1
 #define ATFSND				2
@@ -1280,11 +1283,6 @@ enum RoomId {
 #define oSTRACCIO4R				1031
 #define od4SALLA4O				1032
 #define omMURO4S				1033
-#define od4SALLA4T				1034
-#define od4SALLA4V				1035
-#define od4TALLA4S				1036
-#define od4TALLA4U				1037
-#define od4UALLA4T				1038
 #define oDEMONIO4U				1039
 #define oPOZZA4U				1040
 #define oCAMPANA4U				1041
@@ -1307,11 +1305,6 @@ enum RoomId {
 #define oNUMERO94C		   		1058
 #define oNUMERO04C		   		1059
 #define oAST14C		 	  		1060
-#define oAST24C		   	   		1061
-#define oAST34C		   	   		1062
-#define oAST44C		   	   		1063
-#define oAST54C		   	   		1064
-#define oAST64C		   			1065
 #define oFIUME51		        1066
 #define od51ALLA53		        1067
 #define oAIRCAR51		        1068
@@ -1319,10 +1312,6 @@ enum RoomId {
 #define oPUNTO51		        1070
 #define oSCAVO51		        1071
 #define od51ALLA52		        1072
-#define omPIETREA51		        1073
-#define omPIETREB51		        1074
-#define omPIETREC51		        1075
-#define omPIETRED51		        1076
 #define omALBERO51		        1077
 #define omFOGLIE51		        1078
 #define oCARCERE52              1079
@@ -1450,114 +1439,12 @@ enum RoomId {
 #define oPIANTE5A		        1201
 #define oEXIT58T		        1202
 #define oEXIT41D				1203
-#define oPULSANTEBD				1204
 #define oPULSANTECD				1205
-#define oPULSANTEDD				1206
-#define oPULSANTE1SD			1207
-#define oPULSANTE2SD			1208
-#define oPULSANTE3SD			1209
-#define oPULSANTE4SD			1210
-#define oPULSANTE5SD			1211
-#define oPULSANTE6SD			1212
-#define oPULSANTE7SD			1213
-#define oPULSANTE8SD			1214
-#define oPULSANTE9SD			1215
-#define oPULSANTE10SD			1216
-#define oPULSANTE11SD			1217
-#define oPULSANTE12SD			1218
-#define oPULSANTE13SD			1219
-#define oPULSANTE14SD			1220
-#define oPULSANTE15SD			1221
-#define oPULSANTE16SD			1222
-#define oPULSANTE17SD			1223
-#define oPULSANTE18SD			1224
-#define oPULSANTE19SD			1225
-#define oPULSANTE20SD			1226
-#define oPULSANTE21SD			1227
-#define oPULSANTE22SD			1228
-#define oPULSANTE23SD			1229
-#define oPULSANTE24SD			1230
-#define oPULSANTE25SD			1231
-#define oPULSANTE26SD			1232
-#define oPULSANTE27SD			1233
-#define oPULSANTE28SD			1234
-#define oPULSANTE29SD			1235
-#define oPULSANTE30SD			1236
-#define oPULSANTE31SD			1237
-#define oPULSANTE32SD			1238
-#define oPULSANTE33SD			1239
-#define oPULSANTE34SD			1240
-#define oPULSANTE35SD			1241
-#define oPULSANTE36SD			1242
-#define oPULSANTE37SD			1243
-#define oPULSANTE38SD			1244
-#define oPULSANTE39SD			1245
-#define oPULSANTE40SD			1246
 #define oPULSANTE1AD			1247
-#define oPULSANTE2AD			1248
-#define oPULSANTE3AD			1249
-#define oPULSANTE4AD			1250
-#define oPULSANTE5AD			1251
-#define oPULSANTE6AD			1252
-#define oPULSANTE7AD			1253
-#define oPULSANTE8AD			1254
-#define oPULSANTE9AD			1255
-#define oPULSANTE10AD			1256
-#define oPULSANTE11AD			1257
-#define oPULSANTE12AD			1258
-#define oPULSANTE13AD			1259
-#define oPULSANTE14AD			1260
-#define oPULSANTE15AD			1261
-#define oPULSANTE16AD			1262
-#define oPULSANTE17AD			1263
-#define oPULSANTE18AD			1264
-#define oPULSANTE19AD			1265
-#define oPULSANTE20AD			1266
-#define oPULSANTE21AD			1267
-#define oPULSANTE22AD			1268
-#define oPULSANTE23AD			1269
-#define oPULSANTE24AD			1270
-#define oPULSANTE25AD			1271
-#define oPULSANTE26AD			1272
-#define oPULSANTE27AD			1273
-#define oPULSANTE28AD			1274
-#define oPULSANTE29AD			1275
-#define oPULSANTE30AD			1276
-#define oPULSANTE31AD			1277
-#define oPULSANTE32AD			1278
 #define oPULSANTE33AD			1279
 #define oROOM41					1280
-#define oROOM42					1281
-#define oROOM43					1282
-#define oROOM44					1283
 #define oROOM45					1284
-#define oROOM46					1285
-#define oROOM47					1286
-#define oROOM48					1287
-#define oROOM49					1288
-#define oROOM4A					1289
-#define oROOM4B					1290
-#define oROOM4C					1291
-#define oROOM4D					1292
-#define oROOM4E					1293
-#define oROOM4F					1294
-#define oROOM4G					1295
-#define oROOM4H					1296
 #define oROOM4I					1297
-#define oROOM4J					1298
-#define oROOM4K					1299
-#define oROOM4L					1300
-#define oROOM4M					1301
-#define oROOM4N					1302
-#define oROOM4O					1303
-#define oROOM4P					1304
-#define oROOM4Q					1305
-#define oROOM4R					1306
-#define oROOM4S					1307
-#define oROOM4T					1308
-#define oROOM4U					1309
-#define oROOM4V					1310
-#define oROOM4W					1311
 #define oROOM4X					1312
 #define oROOM45B				1313
 #define oTASTO158				1314
@@ -2423,7 +2310,6 @@ enum AnimationId {
 #define s34PANEL			4
 #define s4AHELLEN			5
 #define s49SUNDIAL			6
-
 #define s21TO22				7
 #define s21TO23				8
 #define s24TO23				9
@@ -2434,148 +2320,11 @@ enum AnimationId {
 /*------------------------------------------------------------------------*/
 /*                                SOUND         						  */
 /*------------------------------------------------------------------------*/
-#define wBKG11              1
-#define wBKG12              2
-#define wBKG13              3
-#define wBKG14              4
-#define wBKG15              5
-#define wBKG16              6
-#define wBKG17              7
-#define wBKG18              8
-#define wBKG19              9
-#define wBKG1A              10
-#define wBKG1B              11
-#define wBKG1C              12
-#define wBKG1D              13
-#define wBKG21              14
-#define wBKG22              15
-#define wBKG24              16
-#define wBKG25              17
-#define wBKG26              18
-#define wBKG27              19
-#define wBKG28              20
-#define wBKG29              21
-#define wBKG2A              22
-#define wBKG2B              23
-#define wBKG2C              24
-#define wBKG2D              25
-#define wBKG2E              26
-#define wBKG2F              27
-#define wBKG2G              28
-#define wBKG2H              29
-#define wBKG31              30
-#define wBKG32              31
-#define wBKG33              32
-#define wBKG34              33
-#define wBKG35              34
-#define wBKG36              35
-#define wBKG37              36
-#define wBKG41              37
-#define wBKG42              38
-#define wBKG43              39
-#define wBKG44              40
-#define wBKG45              41
-#define wBKG46              42
-#define wBKG47              43
-#define wBKG48              44
-#define wBKG49              45
-#define wBKG4A              46
-#define wBKG4B              47
-#define wBKG4C              48
-#define wBKG4D              49
-#define wBKG4E              50
-#define wBKG4F              51
-#define wBKG4G              52
-#define wBKG4H              53
-#define wBKG4I              54
-#define wBKG4J              55
-#define wBKG4K              56
-#define wBKG4L              57
-#define wBKG4M              58
-#define wBKG4N              59
-#define wBKG4O              60
-#define wBKG4P              61
-#define wBKG4Q              62
-#define wBKG4R              63
-#define wBKG4S              64
-#define wBKG4T              65
-#define wBKG4U              66
-#define wBKG4V              67
-#define wBKG4W              68
-#define wBKG4X              69
-#define wBKG51              70
-#define wBKG52              71
-#define wBKG53              72
-#define wBKG54              73
-#define wBKG55              74
-#define wBKG56              75
-#define wBKG57              76
-#define wBKG58              77
-#define wBKG59              78
-#define wBKG5A              79
-#define wBKG23A             80
-#define wBKG23B             81
-#define wBKG29L             82
-#define wBKG2BL             83
-#define wBKG2GV             84
-#define wBKG31P             85
-#define wBKG35P             86
-#define wBKG36F             87
-#define wBKG41D             88
-#define wBKG45S             89
-#define wBKG49M             90
-#define wBKG4CT             91
-#define wBKG58M             92
-#define wBKG58T             93
-#define wBKG59L             94
 
-#define wP1D		        95
-#define wP1S		        96
-#define wP2D		        97
-#define wP2S		        98
-#define wP3D		        99
-#define wP3S		        100
-#define wP4D		        101
-#define wP4S		        102
-#define wP5D		        103
-#define wP5S		        104
-#define wP6D		        105
-#define wP6S		        106
-#define wP7D		        107
-#define wP7S		        108
-#define wP8D		        109
-#define wP8S		        110
-#define wP9D		        111
-#define wP9S		        112
-#define wP10D		        113
-#define wP10S		        114
-#define wP11D		        115
-#define wP11S		        116
-#define wP12D		        117
-#define wP12S		        118
-#define wP13D		        119
-#define wP13S		        120
-#define wP14D		        121
-#define wP14S		        122
-#define wP15D		        123
-#define wP15S		        124
-#define wP16D		        125
-#define wP16S		        126
-#define wP17D		        127
-#define wP17S		        128
 #define wPAD1               129
-#define wPAD2               130
-#define wPAD3               131
-#define wPAD4               132
 #define wPAD5               133
-#define wPAD6               134
-#define wPAD7               135
-#define wPAD8               136
-#define wPAD9               137
-#define wPAD0               138
 #define wASTA49             139
-#define wPULS2C             140
-#define wWHEELS2C            141
+#define wWHEELS2C           141
 #define wCOVER31			142
 #define wWIN35				143
 
@@ -2589,11 +2338,11 @@ enum AnimationId {
 #define dBIGLIETTERIA16		4
 #define dPOLIZIOTTO16		5
 #define dTRAMP171			6
-#define dTRAMP1713        7
-#define dTRAMP1714        8
-#define dTRAMP1716        9
-#define dTRAMP1717        10
-#define dGUARDIAN18		11
+#define dTRAMP1713			7
+#define dTRAMP1714			8
+#define dTRAMP1716			9
+#define dTRAMP1717			10
+#define dGUARDIAN18			11
 #define dEVA19				12
 #define dSHOPKEEPER1A		13
 #define dSAM17				14

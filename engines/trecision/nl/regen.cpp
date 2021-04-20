@@ -189,10 +189,10 @@ void PaintScreen(uint8 flag) {
 	g_vm->_flagWaitRegen = false;
 
 	// Handle papaverine delayed action
-	if ((g_vm->_curRoom == kRoom4A) && (g_vm->_obj[oCHOCOLATES4A]._flag & OBJFLAG_EXTRA)) {
+	if ((g_vm->_curRoom == kRoom4A) && (g_vm->_obj[oCHOCOLATES4A]._flag & kObjFlagExtra)) {
 		if (g_vm->_animMgr->smkCurFrame(kSmackerBackground) > 480) {
 			g_vm->playScript(s4AHELLEN);
-			g_vm->_obj[oCHOCOLATES4A]._flag &= ~OBJFLAG_EXTRA;
+			g_vm->_obj[oCHOCOLATES4A]._flag &= ~kObjFlagExtra;
 		}
 	}
 	//

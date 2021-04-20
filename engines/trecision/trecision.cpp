@@ -232,7 +232,7 @@ Common::Error TrecisionEngine::run() {
 		if (_curMessage->_class == MC_SYSTEM && _curMessage->_event == ME_QUIT)
 			break;
 
-		AtFrameHandler(BACKGROUND_ANIM);
+		AtFrameHandler(kAnimTypeBackground);
 
 		ProcessTheMessage();
 

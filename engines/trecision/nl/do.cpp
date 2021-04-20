@@ -45,7 +45,7 @@ void doRoomIn(uint16 curObj) {
 
 	doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, g_vm->_obj[curObj]._goRoom, curAction, curPos, curObj);
 
-	g_vm->_obj[curObj]._flag |= OBJFLAG_DONE;
+	g_vm->_obj[curObj]._flag |= kObjFlagDone;
 }
 
 void doRoomOut(uint16 curObj) {
@@ -57,7 +57,7 @@ void doRoomOut(uint16 curObj) {
 	if (curAction)
 		doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, curAction, g_vm->_obj[curObj]._goRoom, curPos, curObj);
 
-	g_vm->_obj[curObj]._flag |= OBJFLAG_DONE;
+	g_vm->_obj[curObj]._flag |= kObjFlagDone;
 }
 
 void doMouseExamine(uint16 curObj) {
@@ -360,7 +360,7 @@ void ExecuteAtFrameDoit(ATFHandle *h, int doit, int obj) {
 		g_vm->_obj[obj]._anim = 0;
 		break;
 	case fCREPACCIO:
-		if (g_vm->_room[kRoom2E]._flag & OBJFLAG_EXTRA)
+		if (g_vm->_room[kRoom2E]._flag & kObjFlagExtra)
 			g_vm->_obj[oCREPACCIO2E]._position = 7;
 		else
 			g_vm->_obj[oCREPACCIO2E]._position = 6;
@@ -388,7 +388,7 @@ void ExecuteAtFrameDoit(ATFHandle *h, int doit, int obj) {
 		doEvent(MC_MOUSE, ME_MLEFT, MP_DEFAULT, 336, 263 + TOP, true, 0);
 		break;
 	case fVALVEON34:
-		if (!(g_vm->_choice[616]._flag & OBJFLAG_DONE) &&		// if the fmv is not done
+		if (!(g_vm->_choice[616]._flag & kObjFlagDone) &&		// if the fmv is not done
 		    (g_vm->_obj[oTUBOA34]._mode & OBJMODE_OBJSTATUS) && // if there's a cut pipe
 		    !(g_vm->_obj[oTUBOFT34]._mode & OBJMODE_OBJSTATUS)) // if there's not tube outside
 			g_vm->_animMgr->smkVolumePan(0, 2, 1);
@@ -413,10 +413,10 @@ void ExecuteAtFrameDoit(ATFHandle *h, int doit, int obj) {
 		_forcedActorPos = 0;
 		break;
 	case fSETEXTRA:
-		g_vm->_obj[obj]._flag |= OBJFLAG_EXTRA;
+		g_vm->_obj[obj]._flag |= kObjFlagExtra;
 		break;
 	case fCLREXTRA:
-		g_vm->_obj[obj]._flag &= ~OBJFLAG_EXTRA;
+		g_vm->_obj[obj]._flag &= ~kObjFlagExtra;
 		break;
 
 	case fANIMOFF1:
@@ -552,13 +552,13 @@ void ProcessAtFrame(ATFHandle *h, int type, int atf) {
 		case 1: {
 			Common::String filename = Common::String::format("%s.3d", g_vm->_room[g_vm->_curRoom]._baseName);
 			read3D(filename);
-			g_vm->_room[g_vm->_curRoom]._flag &= ~OBJFLAG_EXTRA;
+			g_vm->_room[g_vm->_curRoom]._flag &= ~kObjFlagExtra;
 			}
 			break;
 		case 2: {
 			Common::String filename = Common::String::format("%s2.3d", g_vm->_room[g_vm->_curRoom]._baseName);
 			read3D(filename);
-			g_vm->_room[g_vm->_curRoom]._flag |= OBJFLAG_EXTRA;
+			g_vm->_room[g_vm->_curRoom]._flag |= kObjFlagExtra;
 			if (g_vm->_curRoom == kRoom37)
 				g_vm->_animMgr->smkVolumePan(0, 1, 1);
 			}
@@ -570,7 +570,7 @@ void ProcessAtFrame(ATFHandle *h, int type, int atf) {
 	case ATFONESPEAK:
 		switch (h->_curAnim->_atFrame[atf]._index) {
 		case 1:
-			if (g_vm->_room[kRoom1D]._flag & OBJFLAG_EXTRA)
+			if (g_vm->_room[kRoom1D]._flag & kObjFlagExtra)
 				break;
 
 			SomeoneTalk(307 + dc, oDONNA1D, 0, false);
@@ -601,11 +601,11 @@ void ProcessAtFrame(ATFHandle *h, int type, int atf) {
 void InitAtFrameHandler(uint16 an, uint16 obj) {
 	SAnim *anim = &g_vm->_animMgr->_animTab[an];
 
-	ATFHandle *handle = &AnimType[CHARACTER_ANIM];
+	ATFHandle *handle = &AnimType[kAnimTypeCharacter];
 	if (anim->_flag & SMKANIM_BKG)
-		handle = &AnimType[BACKGROUND_ANIM];
+		handle = &AnimType[kAnimTypeBackground];
 	if (anim->_flag & SMKANIM_ICON)
-		handle = &AnimType[ICON_ANIM];
+		handle = &AnimType[kAnimTypeIcon];
 
 	handle->_curAnim = anim;
 	handle->_object = obj ? obj : g_vm->_curObj;
