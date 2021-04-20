@@ -159,7 +159,7 @@ void KyraEngine_MR::enterNewScene(uint16 sceneId, int facing, int unk1, int unk2
 		}
 
 		Common::Point pos = getMousePos();
-		if (pos.y > 187)
+		if (pos.y >= _interfaceCommandLineY1)
 			setMousePos(pos.x, 179);
 	}
 	_screen->showMouse();
@@ -559,7 +559,7 @@ void KyraEngine_MR::initSceneAnims(int unk1) {
 }
 
 void KyraEngine_MR::initSceneScreen(int unk1) {
-	_screen->copyBlockToPage(2, 0, 188, 320, 12, _interfaceCommandLine);
+	_screen->copyBlockToPage(2, 0, _interfaceCommandLineY1, 320, _interfaceCommandLineH, _interfaceCommandLine);
 
 	if (_unkSceneScreenFlag1) {
 		_screen->copyRegion(0, 0, 0, 0, 320, 200, 2, 0, Screen::CR_NO_P_CHECK);
@@ -707,7 +707,7 @@ int KyraEngine_MR::checkSceneChange() {
 	return 1;
 }
 int KyraEngine_MR::runSceneScript1(int x, int y) {
-	if (y > 187 && _savedMouseState > -4)
+	if (y >= _interfaceCommandLineY1 && _savedMouseState > -4)
 		return 0;
 	if (_deathHandler >= 0)
 		return 0;
@@ -767,7 +767,7 @@ bool KyraEngine_MR::lineIsPassable(int x, int y) {
 		return false;
 	if ((_pathfinderFlag & 8) && x < 0)
 		return false;
-	if (y > 187)
+	if (y >= _interfaceCommandLineY1)
 		return false;
 
 	uint width = widthTable[getScale(x, y) >> 5];

@@ -26,7 +26,7 @@
 namespace Kyra {
 
 Screen_MR::Screen_MR(KyraEngine_MR *vm, OSystem *system)
-	: Screen_v2(vm, system, _screenDimTable, _screenDimTableCount) {
+	: Screen_v2(vm, system, _screenDimTable, _screenDimTableCount), _interfaceCommandLineY1(vm->gameFlags().hasExtraLanguage ? 185 : 188) {
 }
 
 Screen_MR::~Screen_MR() {
@@ -40,8 +40,8 @@ int Screen_MR::getLayer(int x, int y) {
 
 	if (y < 0) {
 		y = 0;
-	} else if (y >= 188) {
-		y = 187;
+	} else if (y >= _interfaceCommandLineY1) {
+		y = _interfaceCommandLineY1 - 1;
 		// The original actually limits the _maskMin/MaxY check to cases where y has already been clipped to 187.
 		// Whether this was intentional or not: Scenes actually require that we do it that way or animations may
 		// be drawn on the wrong layer (bug #11312).
@@ -131,8 +131,9 @@ void Screen_MR::drawFilledBox(int x1, int y1, int x2, int y2, uint8 c1, uint8 c2
 	drawClippedLine(x1, y2-1, x2-1, y2-1, c3);
 }
 
-Big5Font::Big5Font(const uint8 *oneByteData, int pitch) : Font(), _oneByteData(oneByteData), _twoByteData(0), _twoByteDataSize(0), _pitch(pitch), _shadowMode(false) {
+Big5Font::Big5Font(const uint8 *oneByteData, int pitch) : Font(), _oneByteData(oneByteData), _twoByteData(0), _twoByteDataSize(0), _pitch(pitch), _border(false) {
 	assert(_oneByteData);
+	_textColor[0] = _textColor[1] = 0;
 }
 
 Big5Font::~Big5Font() {
@@ -161,8 +162,21 @@ int Big5Font::getCharWidth(uint16 c) const {
 	return (c & 0x80) ? 18 : 9;
 }
 
+void Big5Font::setColorMap(const uint8 *src) {
+	_colorMap = src;
+	_textColor[0] = _colorMap[1] | (_colorMap[1] << 8);
+	if (_textColor[0]) {
+		_textColor[0] -= 0x100;
+		if (_colorMap[1] == 0xFF)
+			_textColor[0] -= 0x100;
+	}
+	_textColor[0] = TO_LE_16(_textColor[0]);
+	_textColor[1] = _colorMap[0] | (_colorMap[0] << 8);
+}
+
 void Big5Font::drawChar(uint16 c, byte *dst, int pitch, int) const {
-	static const int16 shadowParam[13] = { 1, 0, 0, 0, 1, 0, 1, 2, 0, 0, 0, 1, -1 };
+	static const int8 drawSeqNormal[4] = { 0, 0, 0, -1 };
+	static const int8 drawSeqOutline[19] = { 1, 0, 1, 0, 1, 1, 2, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 0, -1 };
 	const uint8 *glyphData = &_oneByteData[(c & 0x7F) * 14];
 	int w = 7;
 
@@ -175,7 +189,7 @@ void Big5Font::drawChar(uint16 c, byte *dst, int pitch, int) const {
 		w = 15;
 	}
 
-	for (const int16 *i = (_shadowMode ? shadowParam : shadowParam + 9); *i != -1; i += 3) {
+	for (const int8 *i = _border ? drawSeqOutline : drawSeqNormal; *i != -1; i += 3) {
 		const uint8 *data = glyphData;
 		uint8 *dst3 = dst;
 		dst = &dst3[i[0] + i[1] * _pitch];
@@ -189,7 +203,7 @@ void Big5Font::drawChar(uint16 c, byte *dst, int pitch, int) const {
 					bt = 7;
 				}
 				if (in & (1 << (bt--)))
-					*dst = _colorMap[i[2]];
+					*(uint16*)dst = _textColor[i[2]];
 				dst++;
 			}
 			dst = dst2 + _pitch;

@@ -62,7 +62,7 @@ void KyraEngine_MR::showBadConscience() {
 		"GUNFR00.WSA", "GUNFR01.WSA", "GUNFR02.WSA", "GUNFR03.WSA", "GUNFR04.WSA", "GUNFR05.WSA", "GUNFR06.WSA", "GUNFR07.WSA"
 	};
 
-	setupSceneAnimObject(0x0E, 9, 0, 187, -1, -1, -1, -1, 0, 0, 0, -1, animFilenames[anim]);
+	setupSceneAnimObject(0x0E, 9, 0, _interfaceCommandLineY1 - 1, -1, -1, -1, -1, 0, 0, 0, -1, animFilenames[anim]);
 	for (uint i = 0; i <= _badConscienceFrameTable[_badConscienceAnim]; ++i) {
 		if (i == 8)
 			snd_playSoundEffect(0x1B, 0xC8);

@@ -124,7 +124,7 @@ public:
 	enum FontStyle {
 		kStyleNone			=	0,
 		kStyleLeftShadow	=	1	<<	0,
-		kStyleRightShadow	=	1	<<	1,
+		kStyleBorder		=	1	<<	1,
 		kStyleFat			=	1	<<	2,
 		kStyleNarrow1		=	1	<<	3,
 		kStyleNarrow2		=	1	<<	4,
@@ -263,11 +263,11 @@ public:
 	Type getType() const override { return kBIG5; }
 
 	bool load(Common::SeekableReadStream &data) override;
-	int getHeight() const override { return 14; }
+	int getHeight() const override { return _border ? 16 : 14; }
 	int getWidth() const override { return 18; }
 	int getCharWidth(uint16 c) const override;
-	void setColorMap(const uint8 *src) override { _colorMap = src; }
-	void setStyles(int styles) override { _shadowMode = (styles & kStyleRightShadow); }
+	void setColorMap(const uint8 *src) override;
+	void setStyles(int styles) override { _border = (styles & kStyleBorder); }
 	void drawChar(uint16 c, byte *dst, int pitch, int) const override;
 
 private:
@@ -275,8 +275,9 @@ private:
 	const uint8 *_twoByteData;
 	uint32 _twoByteDataSize;
 	const uint8 *_colorMap;
+	uint16 _textColor[2];
 	const uint16 _pitch;
-	bool _shadowMode;
+	bool _border;
 };
 
 /**

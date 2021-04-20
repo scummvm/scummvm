@@ -45,7 +45,7 @@ char *TextDisplayer_MR::preprocessString(const char *str) {
 
 	p = _talkBuffer;
 
-	if (_vm->gameFlags().hasExtraLanguage && _vm->_lang == 3) {
+	if (_vm->_lang == 3) {
 		Screen::FontId curFont = _screen->setFont(Screen::FID_CHINESE_FNT);
 		int textLen = Common::strnlen(p, sizeof(_talkBuffer));
 		int maxTextWidth;
@@ -162,8 +162,7 @@ void TextDisplayer_MR::printText(const Common::String &str, int x, int y, uint8 
 	uint8 colorMap[] = { 0, 255, 240, 240 };
 	colorMap[3] = c1;
 	_screen->setTextColor(colorMap, 0, 3);
-	if (!(_vm->gameFlags().hasExtraLanguage && _vm->gameFlags().lang == 3))
-		_screen->_charSpacing = -2;
+	_screen->_charSpacing = -2;
 	_screen->printText(str.c_str(), x, y, c0, c2);
 	_screen->_charSpacing = 0;
 }
@@ -303,7 +302,8 @@ void KyraEngine_MR::objectChatInit(const char *str, int object, int vocHigh, int
 }
 
 void KyraEngine_MR::objectChatPrintText(const Common::String &str0, int object) {
-	int c1 = _talkObjectList[object].color;
+	int c1 = (_lang == 3 && _albumChatActive) ? 0xEE : _talkObjectList[object].color;
+	int c2 = (_lang == 3) ? 0 : 0xF0;
 	Common::String str = _text->preprocessString(str0.c_str());
 	int lineNum = _text->buildMessageSubstrings(str.c_str());
 	int maxWidth = _text->getWidestLineWidth(lineNum);
@@ -312,11 +312,11 @@ void KyraEngine_MR::objectChatPrintText(const Common::String &str0, int object) 
 	_text->calcWidestLineBounds(cX1, cX2, maxWidth, x);
 
 	for (int i = 0; i < lineNum; ++i) {
-		str = Common::String(&_text->_talkSubstrings[i*_text->maxSubstringLen()]);
+		str = Common::String(&_text->_talkSubstrings[i * _text->maxSubstringLen()]);
 		int y = _text->_talkMessageY + i * (_screen->getFontHeight() + _screen->_lineSpacing);
 		x = _text->getCenterStringX(str, cX1, cX2);
 
-		_text->printText(str, x, y, c1, 0xF0, 0);
+		_text->printText(str, x, y, c1, c2, 0);
 	}
 }
 
@@ -503,7 +503,7 @@ void KyraEngine_MR::goodConscienceChatWaitToFinish() {
 
 void KyraEngine_MR::albumChat(const char *str, int vocHigh, int vocLow) {
 	_talkObjectList[1].x = 190;
-	_talkObjectList[1].y = 188;
+	_talkObjectList[1].y = _interfaceCommandLineY1;
 
 	_chatVocHigh = _chatVocLow = -1;
 	_albumChatActive = true;

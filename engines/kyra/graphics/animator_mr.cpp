@@ -162,15 +162,15 @@ void KyraEngine_MR::refreshAnimObjects(int force) {
 			y -= (0x100 - scale) >> 3;
 		if (y < 0)
 			y = 0;
-		if (y >= 187)
-			y = 186;
+		if (y >= (_interfaceCommandLineY1 - 1))
+			y = _interfaceCommandLineY1 - 2;
 
 		int width = curObject->width + curObject->width2 + 8;
 		int height = curObject->height + curObject->height2*2;
 		if (width + x > 320)
 			width -= width + x - 322;
 
-		const int maxY = _inventoryState ? 143 : 187;
+		const int maxY = (_inventoryState ? _interfaceCommandLineY2 : _interfaceCommandLineY1) - 1;
 		if (height + y > maxY)
 			height -= height + y - (maxY + 1);
 

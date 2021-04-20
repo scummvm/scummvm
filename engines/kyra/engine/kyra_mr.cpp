@@ -62,6 +62,13 @@ KyraEngine_MR::KyraEngine_MR(OSystem *system, const GameFlags &flags) : KyraEngi
 	_itemFile = 0;
 	_gamePlayBuffer = 0;
 	_interface = _interfaceCommandLine = 0;
+	// The slightly larger interface is used in the Chinese version regardless of the actual language setting.
+	_interfaceCommandLineSize = flags.hasExtraLanguage ? 4800 : 3840;
+	_interfaceCommandLineH = _interfaceCommandLineSize / Screen::SCREEN_W;
+	_interfaceCommandLineY1 = Screen::SCREEN_H - _interfaceCommandLineH;
+	_interfaceCommandLineY2 = 156 - _interfaceCommandLineH;
+	_interfaceSize = flags.hasExtraLanguage ? 18880 : 17920;
+	_interfaceH = _interfaceSize / Screen::SCREEN_W;
 	_costPalBuffer = 0;
 	memset(_sceneShapes, 0, sizeof(_sceneShapes));
 	memset(_sceneAnimMovie, 0, sizeof(_sceneAnimMovie));
@@ -227,8 +234,10 @@ Common::Error KyraEngine_MR::init() {
 		// We don't check the language setting here, since we want to load the file even if the language is currently set to English, French or German.
 		if (_res->exists("MALCOLM.PAK")) {
 			_screen->loadFont(Screen::FID_CHINESE_FNT, "MALCOLM.PAK");
-			_screen->setFont(Screen::FID_CHINESE_FNT);
-			_screen->_lineSpacing = 4;
+			if (_lang == 3) {
+				_screen->setFont(Screen::FID_CHINESE_FNT);
+				_screen->_lineSpacing = 2;
+			}
 		}
 	}
 
@@ -292,7 +301,7 @@ Common::Error KyraEngine_MR::go() {
 
 		_eventList.clear();
 
-		switch (_menu->handle((_flags.hasExtraLanguage && _lang == 3) ? 4 : 3)) {
+		switch (_menu->handle(_lang == 3 ? 4 : 3)) {
 		case 2:
 			_menuDirectlyToLoad = true;
 			// fall through
@@ -343,7 +352,7 @@ void KyraEngine_MR::initMainMenu() {
 		{ _mainMenuStrings[0], _mainMenuStrings[1], _mainMenuStrings[2], _mainMenuStrings[3], 0 },
 		{ 0x01, 0x04, 0x0C, 0x04, 0x00, 0x80, 0xFF },
 		{ 0x16, 0x19, 0x1A, 0x16 },
-		_flags.hasExtraLanguage && _lang == 3 ? Screen::FID_CHINESE_FNT : Screen::FID_8_FNT, 240
+		_lang == 3 ? Screen::FID_CHINESE_FNT : Screen::FID_8_FNT, 240
 	};
 
 	MainMenu::Animation anim;
@@ -477,8 +486,15 @@ void KyraEngine_MR::playStudioSFX(const char *str) {
 		return;
 
 	const int strSize = strlen(str) - 1;
-	if (str[strSize] != '?' && str[strSize] != '!')
-		return;
+	if (_flags.lang == Common::ZH_CNA) {
+		// WORKAROUND: The studio sfx is broken in the original, since it still has the
+		// check for '!' and '?' even if the language is set to Chinese. I have fixed this here...
+		if (str[strSize] != '\x80' || !(str[strSize - 1] == '\x81' || str[strSize - 1] == '\x91'))
+			return;
+	} else {
+		if (str[strSize] != '?' && str[strSize] != '!')
+			return;
+	}
 
 	snd_playSoundEffect(_curStudioSFX++, 128);
 
@@ -515,10 +531,10 @@ void KyraEngine_MR::startup() {
 
 	_gamePlayBuffer = new uint8[64000];
 
-	_interface = new uint8[17920];
-	_interfaceCommandLine = new uint8[3840];
+	_interface = new uint8[_interfaceSize];
+	_interfaceCommandLine = new uint8[_interfaceCommandLineSize];
 
-	_screen->setFont((_flags.hasExtraLanguage && _lang == 3) ? Screen::FID_CHINESE_FNT : Screen::FID_8_FNT);
+	_screen->setFont(_lang == 3 ? Screen::FID_CHINESE_FNT : Screen::FID_8_FNT);
 
 	_stringBuffer = new char[500];
 	allocAnimObjects(1, 16, 50);
@@ -643,8 +659,8 @@ void KyraEngine_MR::loadInterfaceShapes() {
 
 void KyraEngine_MR::loadInterface() {
 	_screen->loadBitmap("INTRFACE.CPS", 3, 3, 0);
-	memcpy(_interface, _screen->getCPagePtr(3), 17920);
-	memcpy(_interfaceCommandLine, _screen->getCPagePtr(3), 3840);
+	memcpy(_interface, _screen->getCPagePtr(3), _interfaceSize);
+	memcpy(_interfaceCommandLine, _screen->getCPagePtr(3), _interfaceCommandLineSize);
 }
 
 void KyraEngine_MR::initItems() {
@@ -973,7 +989,7 @@ void KyraEngine_MR::handleInput(int x, int y) {
 	} else if (_itemInHand >= 0 && _savedMouseState >= 0) {
 		if (_itemInHand == 27) {
 			makeCharFacingMouse();
-		} else if (y <= 187) {
+		} else if (y < _interfaceCommandLineY1) {
 			if (_itemInHand == 43)
 				removeHandItem();
 			else
@@ -983,7 +999,7 @@ void KyraEngine_MR::handleInput(int x, int y) {
 	} else if (_savedMouseState == -3) {
 		return;
 	} else {
-		if (y > 187 && _savedMouseState > -4)
+		if (y >= _interfaceCommandLineY1 && _savedMouseState > -4)
 			return;
 		if (_unk5) {
 			_unk5 = 0;
@@ -1083,7 +1099,7 @@ void KyraEngine_MR::updateMouse() {
 	Common::Point mouse = getMousePos();
 	bool hasItemCollision = checkItemCollision(mouse.x, mouse.y) != -1;
 
-	if (mouse.y > 187) {
+	if (mouse.y >= _interfaceCommandLineY1) {
 		bool setItemCursor = false;
 		if (_mouseState == -6) {
 			if (mouse.x < 311)
@@ -1191,7 +1207,7 @@ void KyraEngine_MR::updateMouse() {
 		_screen->setMouseCursor(offsetX, offsetY, _gameShapes[shape]);
 	} else if (type == 0 && _mouseState != _itemInHand && mouse.x > 8 && mouse.x < 311 && mouse.y < 171 && mouse.y > 8) {
 		setItemMouseCursor();
-	} else if (mouse.y > 187 && _mouseState > -4 && type == 0 && !_inventoryState) {
+	} else if (mouse.y >= _interfaceCommandLineY1 && _mouseState > -4 && type == 0 && !_inventoryState) {
 		showInventory();
 	}
 }
