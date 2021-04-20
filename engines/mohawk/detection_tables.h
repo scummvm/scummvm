@@ -1736,6 +1736,22 @@ static const MohawkGameDescription gameDescriptions[] = {
 		"NEWKID.EXE"
 	},
 
+	// Bugreport #11003
+	{
+		{
+			"newkid",
+			"",
+			AD_ENTRY1s("NEWKID.512", "5b643345af12a9ecee7b47768634d844", 3245),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_LIVINGBOOKSV1,
+		0,
+		"NEWKID.EXE"
+	},
+
 	// From aluff in bug#5731
 	{
 		{
