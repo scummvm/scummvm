@@ -321,14 +321,14 @@ void afterChoice(int numframe) {
 			break;
 
 		case dF231:
-			g_vm->_obj[od21TO23]._goRoom = r23B;
-			g_vm->_obj[od24TO23]._goRoom = r23B;
+			g_vm->_obj[od21TO23]._goRoom = kRoom23B;
+			g_vm->_obj[od24TO23]._goRoom = kRoom23B;
 			break;
 
 		case dF291:
 			g_vm->_obj[oSWITCH29]._action = 479;
-			g_vm->_obj[od22TO29]._goRoom = r29L;
-			g_vm->_obj[od2ATO29]._goRoom = r29L;
+			g_vm->_obj[od22TO29]._goRoom = kRoom29L;
+			g_vm->_obj[od2ATO29]._goRoom = kRoom29L;
 			g_vm->_obj[od22TO29]._mode &= ~OBJMODE_OBJSTATUS;
 			g_vm->_obj[od22TO29I]._mode |= OBJMODE_OBJSTATUS;
 			break;
@@ -339,7 +339,7 @@ void afterChoice(int numframe) {
 			break;
 
 		case dF2G2:
-			g_vm->_obj[od26TO2G]._goRoom = r2GV;
+			g_vm->_obj[od26TO2G]._goRoom = kRoom2GV;
 			g_vm->replaceIcon(iSAM, iSAMROTTO);
 			break;
 
@@ -361,7 +361,7 @@ void afterChoice(int numframe) {
 			break;
 
 		case dF381:
-			doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, r41, 0, 18, g_vm->_curObj);
+			doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, kRoom41, 0, 18, g_vm->_curObj);
 			memcpy(g_vm->_cyberInventory, g_vm->_inventory, MAXICON);
 			g_vm->_cyberInventorySize = g_vm->_inventorySize;
 			g_vm->_inventorySize = 0;
@@ -381,14 +381,14 @@ void afterChoice(int numframe) {
 			break;
 
 		case dF451:
-			g_vm->_obj[od44ALLA45]._goRoom = r45S;
+			g_vm->_obj[od44ALLA45]._goRoom = kRoom45S;
 			CharacterSay(1712);
 			break;
 
 		case dF491:
 			for (int c = oPULSANTE1AD; c <= oPULSANTE33AD; c++) {
 				if (!(g_vm->_obj[c]._goRoom)) {
-					g_vm->_obj[c]._goRoom = r4A;
+					g_vm->_obj[c]._goRoom = kRoom4A;
 					g_vm->_obj[c]._mode |= OBJMODE_OBJSTATUS;
 					g_vm->_obj[c - 40]._mode &= ~OBJMODE_OBJSTATUS;
 					break;
@@ -471,7 +471,7 @@ void afterChoice(int numframe) {
 
 		case dC5A1:
 			g_vm->_obj[oFINESTRAA5A]._action = 1402;
-			if (g_vm->_room[r5A]._flag & OBJFLAG_EXTRA)
+			if (g_vm->_room[kRoom5A]._flag & OBJFLAG_EXTRA)
 				PlayDialog(dF5A1);
 			break;
 

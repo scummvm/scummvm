@@ -168,7 +168,7 @@ void doMouse() {
 				doEvent(MC_INVENTORY, ME_SHOWICONNAME, MP_DEFAULT, g_vm->_curMessage->_u16Param1, g_vm->_curMessage->_u16Param2, 0, 0);
 		}	else {
 		// Up area
-			if (g_vm->_curRoom == rSYS)
+			if (g_vm->_curRoom == kRoomControlPanel)
 				break;
 
 			g_vm->_curObj = 0;
@@ -392,7 +392,7 @@ void doIdle() {
 			nextStep();
 			g_vm->showCursor();
 			g_vm->_obj[o00EXIT]._goRoom = g_vm->_curRoom;
-			doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, rSYS, 0, 0, c);
+			doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, kRoomControlPanel, 0, 0, c);
 			g_vm->_flagShowCharacter = false;
 			g_vm->_flagCharacterExists = false;
 			::createThumbnailFromScreen(&g_vm->_thumbnail);
@@ -408,7 +408,7 @@ void doIdle() {
 			nextStep();
 			g_vm->showCursor();
 			g_vm->_obj[o00EXIT]._goRoom = g_vm->_curRoom;
-			doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, rSYS, 0, 0, c);
+			doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, kRoomControlPanel, 0, 0, c);
 			g_vm->_flagShowCharacter = false;
 			g_vm->_flagCharacterExists = false;
 			::createThumbnailFromScreen(&g_vm->_thumbnail);

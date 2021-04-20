@@ -234,7 +234,7 @@ void WaitSoundFadEnd() {
 
 	SWAP(StepChannel, BackChannel);
 
-	if (g_vm->_curRoom == r41D)
+	if (g_vm->_curRoom == kRoom41D)
 		ReadExtraObj41D();
 }
 

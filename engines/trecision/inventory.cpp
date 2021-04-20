@@ -241,9 +241,9 @@ uint8 TrecisionEngine::iconPos(uint8 icon) {
 void TrecisionEngine::showInventoryName(uint16 obj, bool showhide) {
 	static const char *dunno = "?";
 
-	if ((_curRoom == r2BL) || (_curRoom == r36F) || (_curRoom == r41D) || (_curRoom == r49M)
-	 || (_curRoom == r4CT) || (_curRoom == r58T) || (_curRoom == r58M) || (_curRoom == r59L)
-	 || (_curRoom == rSYS) || (_curRoom == r12CU) || (_curRoom == r13CU))
+	if ((_curRoom == kRoom2BL) || (_curRoom == kRoom36F) || (_curRoom == kRoom41D) || (_curRoom == kRoom49M)
+	 || (_curRoom == kRoom4CT) || (_curRoom == kRoom58T) || (_curRoom == kRoom58M) || (_curRoom == kRoom59L)
+	 || (_curRoom == kRoomControlPanel) || (_curRoom == kRoom12CU) || (_curRoom == kRoom13CU))
 		return;
 
 	if (_flagSomeoneSpeaks)

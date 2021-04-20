@@ -137,6 +137,7 @@
 /*-------------------------------------------------------------------------*/
 
 enum RoomId {
+	// Act 1
 	kRoom11 = 1,	// Building (roof)
 	kRoom12 = 2,	// Building (elevator)
 	kRoom13 = 3,	// Ruby's apartment (outside)
@@ -150,15 +151,18 @@ enum RoomId {
 	kRoom1B = 11,	// Alley (between the Liquor store and Free Climax)
 	kRoom1C = 12,	// Underground tunnel (below the alley)
 	kRoom1D = 13,	// Store room (below the liquor store)
+	// Act 2
 	kRoom21 = 14,	// Platforms (subway platform)
 	kRoom22 = 15,	// Platforms (maintenance room, subway platform right door)
 	kRoom23A = 16,	// Platforms (passageway with magnetic field)
+	kRoom23B = 82,	// Platforms (passageway without magnetic field) - alt room
 	kRoom24 = 17,	// Deserted platform (subway platform outside the zoo)
 	kRoom25 = 18,	// Deserted platform (info booth, shed with trapdoor)
 	kRoom26 = 19,	// Zoo (entrance)
 	kRoom27 = 20,	// Zoo (bar)
 	kRoom28 = 21,	// Zoo (goddess)
 	kRoom29 = 22,	// Platforms (storeroom inside the maintenance room, lights off)
+	kRoom29L = 83, 	// Platforms (storeroom inside the maintenance room, lights on) - alt room
 	kRoom2A = 23,	// Platforms (underground passageway below the storeroom)
 	kRoom2B = 24,	// Platforms (bookstore)
 	kRoom2C = 25,	// Zoo (sphinx)
@@ -166,77 +170,79 @@ enum RoomId {
 	kRoom2E = 27,	// Zoo (fissures with bridge, outside cave)
 	kRoom2F = 28,	// Zoo (cave, after fissures)
 	kRoom2G = 29,	// Zoo (pond)
+	kRoom2GV = 85,	// Zoo (pond, after water is drained through the sluice gate) - alt room
 	kRoom2H = 30,	// Deserted platform (on the bridge)
+	// Act 3
 	kRoom31 = 31,	// Warehouse
 	kRoom32 = 32,	// Warehouse walkway (above)
 	kRoom33 = 33,	// Warehouse (roof)
 	kRoom34 = 34,	// Warehouse (machinery room)
 	kRoom35 = 35,	// Warehouse (hideout)
 	kRoom36 = 36,	// Warehouse (hideout upstairs)
-	kRoom37 = 37	// Warehouse (medical room)
+	kRoom37 = 37,	// Warehouse (medical room)
+	// Act 4
+	kRoom41 = 38,	// Amusement park (entrance)
+	kRoom42 = 39,	// Amusement park (shooting range)
+	kRoom43 = 40,	// Amusement park (cable car and hut)
+	kRoom44 = 41,	// Amusement park (inside hut)
+	kRoom45 = 42,	// Amusement park (boiler room below hut)
+	kRoom45S = 90,	// Amusement park (boiler room below hut, after shutting down the boiler) - alt room
+	kRoom46 = 43,	// Castle (courtyard)
+	kRoom47 = 44,	// Castle (church)
+	kRoom48 = 45,	// Castle (alchemist's study)
+	kRoom49 = 46,	// Castle (tower)
+	kRoom4A = 47,	// Hugh's office (entrance/lobby with secretary)
+	kRoom4B = 48,	// Hugh's office (meeting room)
+	kRoom4C = 49,	// Hugh's office (desk)
+	kRoom4D = 50,	// Labyrinth (entrance)
+	kRoom4E = 51,	// Labyrinth
+	kRoom4F = 52,	// Labyrinth
+	kRoom4G = 53,	// Labyrinth (first intersection)
+	kRoom4H = 54,	// Labyrinth
+	kRoom4I = 55,	// Labyrinth
+	kRoom4J = 56,	// Labyrinth
+	kRoom4K = 57,	// Labyrinth (dead end)
+	kRoom4L = 58,	// Labyrinth (water font)
+	kRoom4M = 59,	// Labyrinth (corridor with painting)
+	kRoom4N = 60,	// Labyrinth (painting with chandelier)
+	kRoom4O = 61,	// Labyrinth
+	kRoom4P = 62,	// Labyrinth (werewolf)
+	kRoom4Q = 63,	// Labyrinth (chandeliers)
+	kRoom4R = 64,	// Labyrinth (skeleton)
+	kRoom4S = 65,	// Labyrinth
+	kRoom4T = 66,	// Labyrinth (outside lava room)
+	kRoom4U = 67,	// Labyrinth (lava room)
+	kRoom4V = 68,	// Labyrinth
+	kRoom4W = 69,	// Labyrinth
+	kRoom4X = 70,	// Labyrinth (dead end)
+	// Act 5
+	kRoom51 = 71,	// Rocas Perdida (beach)
+	kRoom52 = 72,	// Rocas Perdida (fence)
+	kRoom53 = 73,	// Rocas Perdida (conduit with grating)
+	kRoom54 = 74,	// Prison (laundry room)
+	kRoom55 = 75,	// Prison (corridor outside detention area)
+	kRoom56 = 76,	// Prison (sentry post)
+	kRoom57 = 77,	// Prison (infirmary)
+	kRoom58 = 78,	// Prison (detention area)
+	kRoom59 = 79,	// Prison (laboratory)
+	kRoom5A = 80,	// Prison (looking outside the window)
+	// Item closeups
+	kRoom2BL = 84,	// Platforms (Egyptian gods book closeup)
+	kRoom31P = 86,	// Warehouse (alarm panel closeup)
+	kRoom35P = 87,	// Warehouse (hideout security system panel closeup)
+	kRoom36F = 88,	// Warehouse (hideout upstairs, paper behind the painting closeup)
+	kRoom41D = 89,	// Positioner interface closeup
+	kRoom49M = 91,	// Castle (tower, Meridian circle closeup)
+	kRoom4CT = 92,	// Hugh's office (terminal lock screen closeup)
+	kRoom58M = 93,	// Prison (detention area, Eva's map closeup)
+	kRoom58T = 94,	// Prison (detention area, Governor's office lock closeup)
+	kRoom59L = 95,	// Prison (laboratory, blackboard closeup)
+	kRoom12CU = 97, // Building (elevator button closeup)
+	kRoom13CU = 98, // Magnetic reader closeup outside Ruby's apartment
+	// Special rooms
+	kRoomIntro = 81,
+	kRoomControlPanel = 96
 };
-
-#define r41						38
-#define r42						39
-#define r43						40
-#define r44						41
-#define r45						42
-#define r46						43
-#define r47						44
-#define r48						45
-#define r49						46
-#define r4A						47
-#define r4B						48
-#define r4C						49
-#define r4D						50
-#define r4E						51
-#define r4F						52
-#define r4G						53
-#define r4H						54
-#define r4I						55
-#define r4J						56
-#define r4K						57
-#define r4L						58
-#define r4M						59
-#define r4N						60
-#define r4O						61
-#define r4P						62
-#define r4Q						63
-#define r4R						64
-#define r4S						65
-#define r4T						66
-#define r4U						67
-#define r4V						68
-#define r4W						69
-#define r4X						70
-#define r51						71
-#define r52						72
-#define r53						73
-#define r54						74
-#define r55						75
-#define r56						76
-#define r57						77
-#define r58						78
-#define r59						79
-#define r5A						80
-#define rINTRO					81
-#define r23B					82
-#define r29L					83
-#define r2BL					84
-#define r2GV					85
-#define r31P					86
-#define r35P					87
-#define r36F					88
-#define r41D					89
-#define r45S					90
-#define r49M					91
-#define r4CT					92
-#define r58M					93
-#define r58T					94
-#define r59L					95
-#define rSYS					96
-#define r12CU					97
-#define r13CU					98
 
 /*-------------------------------------------------------------------------*/
 /*                                 OBJECTS           					   */
