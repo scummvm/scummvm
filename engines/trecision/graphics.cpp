@@ -78,13 +78,18 @@ void GraphicsManager::copyToScreenBuffer(Graphics::Surface *surface, int x, int 
 	}
 }
 
-void GraphicsManager::blitToScreenBuffer(Graphics::Surface *surface, int x, int y, uint16 mask) {
+void GraphicsManager::blitToScreenBuffer(Graphics::Surface *surface, int x, int y, uint16 mask, bool useSmkBg) {
 	for (int curY = 0; curY < surface->h; curY++) {
 		for (int curX = 0; curX < surface->w; curX++) {
-			uint16 *dest = _vm->_screenBuffer + x + curX + (y + curY) * MAXX;
-			uint16 *src = (uint16 *)surface->getBasePtr(curX, curY);
-			if (*src != mask)
-				*dest = *src;
+			const int destX = x + curX;
+			const int destY = y + curY;
+			uint16 *dest = _vm->_screenBuffer + destX + destY * MAXX;
+			const uint16 pixel = (uint16)surface->getPixel(curX, curY);
+			if (pixel != mask) {
+				*dest = pixel;
+			} else if (useSmkBg) {
+				*dest = (uint16)_smkBackground.getPixel(destX, destY - TOP);
+			}
 		}
 	}
 }
@@ -96,24 +101,17 @@ void GraphicsManager::copyToScreen(int x, int y, int w, int h) {
 	);
 }
 
-void GraphicsManager::resetSmkBackground() {
-	_smkBackground.copyRectToSurface(_background.getPixels(), _background.pitch, 0, 0, MAXX, AREA);
+void GraphicsManager::setSmkBackground() {
+	_smkBackground.copyFrom(_background);
 }
 
-void GraphicsManager::resetScreenBuffer(bool hasAnimatedBg) {
-	memset(g_vm->_screenBuffer, 0, MAXX * MAXY * 2);
-	if (hasAnimatedBg)
-		memcpy(_background.getPixels(), _smkBackground.getPixels(), _smkBackground.pitch * _smkBackground.h);
+void GraphicsManager::resetScreenBuffer() {
+	memset(g_vm->_screenBuffer, 0, TOP * MAXX * 2);
 	memcpy(g_vm->_screenBuffer + TOP * MAXX, _background.getPixels(), _background.pitch * AREA);
 }
 
 uint16 *GraphicsManager::getBackgroundPtr() {
 	return (uint16 *)_background.getPixels();
-}
-
-const uint16 *GraphicsManager::getSmkBackgroundPtr(int x, int y) {
-	assert(x < MAXX && y < AREA);
-	return (const uint16 *)_smkBackground.getBasePtr(x, y);
 }
 
 void GraphicsManager::loadBackground(Common::SeekableReadStream *stream, uint16 width, uint16 height) {

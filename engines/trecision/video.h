@@ -79,7 +79,7 @@ private:
 	void setVideoRange(NightlongSmackerDecoder *smkDecoder, int &startFrame, int &endFrame);
 	void handleEndOfVideo(int animation, int slot);
 
-	void drawSmkBackgroundFrame();
+	void drawSmkBackgroundFrame(int animation);
 	void drawSmkIconFrame(int startIcon, int iconNum);
 	void drawSmkActionFrame();
 	void swapCD(int cd);
