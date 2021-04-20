@@ -74,7 +74,7 @@ typedef struct GameVersion {
 #include "fat_amiga_eng_floppy.h"
 #include "fat_amiga_demo.h"
 #include "fat_amiga_interview.h"
-
+#include "fat_amiga_ger_floppy.h" // https://bugs.scummvm.org/ticket/12313
 
 #define FAT(x) x, (sizeof(x)/sizeof(x[0]))
 
@@ -94,11 +94,12 @@ static GameVersion gameVersionsTable[] = {
 	{ "PEint",   1915913, FAT(fatPCInterview),    1, 0 },
 	{ "aEM10",    351775, FAT(fatAmigaEngFl),     2, 0 },
 	{ "CE101",    563335, FAT(fatAmigaDemo),      2, 0 },
-	{ "PE100",    597032, FAT(fatAmigaInterview), 2, 0 }
+	{ "PE100",    597032, FAT(fatAmigaInterview), 2, 0 },
+	{ "aGM10",    344575, FAT(fatAmigaGerFl),     3, 0 },
 };
 
 static const uint32 QTBL_TAG = 0x5154424C;
-static const uint32 CURRENT_VERSION = 2;
+static const uint32 CURRENT_VERSION = 3;
 
 static void writeByte(FILE *fp, uint8 b) {
 	fwrite(&b, 1, 1, fp);

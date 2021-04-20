@@ -159,17 +159,15 @@ static const QueenGameDescription gameDescriptions[] = {
 		},
 	},
 
-	// Amiga Floppy - English. Bugreport #12313
-	// The game requires extraction of queen.tbl
+	// Amiga Floppy - German. Bugreport #12313
 	{
 		{
 			"queen",
-			// I18N: The game requires special code which was not yet implemented
-			_s("Missing game code"),
+			"Floppy",
 			AD_ENTRY1s("queen.1", "b545c73010236dc022bad51c59120a75", 344575),
-			Common::EN_ANY,
+			Common::DE_DEU,
 			Common::kPlatformAmiga,
-			ADGF_UNSUPPORTED,
+			ADGF_NO_FLAGS,
 			GUIO1(GUIO_NOSPEECH)
 		},
 	},
