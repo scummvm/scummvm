@@ -469,6 +469,12 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 		ConfMan.registerDefault("dump_midi", true);
 	}
 
+#ifdef USE_OPENGL
+	if (settings.contains("last_window_width")) {
+		ConfMan.setInt("last_window_width", atoi(settings["last_window_width"].c_str()));
+		ConfMan.setInt("last_window_height", atoi(settings["last_window_height"].c_str()));
+	}
+#endif
 
 	// Init the backend. Must take place after all config data (including
 	// the command line params) was read.

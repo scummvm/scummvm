@@ -32,6 +32,8 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Display path to scummvm configuration file in GUI -> Options -> Paths.
    - Added new optional dependency, giflib >= 5.0.0. Used by some version of LBA.
    - Added HiDPI support to the ScummVM GUI.
+   - Added command line option --window-size for specifying ScummVM window size,
+     applicable only to the OpenGL renderer.
 
  AGOS:
    - Added support for the Japanese PC-98 version of Elvira 1.

@@ -104,6 +104,10 @@ static const char HELP_STRING[] =
 	"  --stretch-mode=MODE      Select stretch mode (center, integral, fit, stretch)\n"
 	"  --filtering              Force filtered graphics mode\n"
 	"  --no-filtering           Force unfiltered graphics mode\n"
+#ifdef USE_OPENGL
+	"  --window-size=W,H        Set the ScummVM window size to the specified dimensions\n"
+	"                           (OpenGL only)\n"
+#endif
 	"  --gui-theme=THEME        Select GUI theme\n"
 	"  --themepath=PATH         Path to where GUI themes are stored\n"
 	"  --list-themes            Display list of all usable GUI themes\n"
@@ -606,6 +610,25 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 
 			DO_LONG_OPTION_BOOL("filtering")
 			END_OPTION
+
+#ifdef USE_OPENGL
+			DO_LONG_OPTION("window-size")
+				Common::StringTokenizer tokenizer(option, ",");
+				if (tokenizer.empty())
+					usage("Invalid window format specified: %s", option);
+				Common::String w = tokenizer.nextToken();
+				if (tokenizer.empty())
+					usage("Invalid window format specified: %s", option);
+				Common::String h = tokenizer.nextToken();
+
+				if (atoi(w.c_str()) == 0 || atoi(h.c_str()) == 0)
+					usage("Invalid window format specified: %s", option);
+
+				settings["last_window_width"] = w;
+				settings["last_window_height"] = h;
+				settings.erase("window_size");
+			END_OPTION
+#endif
 
 #ifdef ENABLE_EVENTRECORDER
 			DO_LONG_OPTION_INT("disable-display")
