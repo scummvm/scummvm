@@ -22,16 +22,11 @@
 
 #include "engines/myst3/gfx.h"
 
-#include "engines/util.h"
+#include "engines/util3d.h"
 
 #include "common/config-manager.h"
 
-#include "graphics/renderer.h"
 #include "graphics/surface.h"
-
-#if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS) || defined(USE_GLES2)
-#include "graphics/opengl/context.h"
-#endif
 
 #include "math/glmath.h"
 
@@ -189,12 +184,6 @@ void Renderer::flipVertical(Graphics::Surface *s) {
 }
 
 Renderer *createRenderer(OSystem *system) {
-	Common::String rendererConfig = ConfMan.get("renderer");
-	Graphics::RendererType desiredRendererType = Graphics::parseRendererTypeCode(rendererConfig);
-	Graphics::RendererType matchingRendererType = Graphics::getBestMatchingAvailableRendererType(desiredRendererType);
-
-	bool isAccelerated = matchingRendererType != Graphics::kRendererTypeTinyGL;
-
 	uint width;
 	uint height = Renderer::kOriginalHeight;
 	if (ConfMan.getBool("widescreen_mod")) {
@@ -203,43 +192,18 @@ Renderer *createRenderer(OSystem *system) {
 		width = Renderer::kOriginalWidth;
 	}
 
-	if (isAccelerated) {
-		initGraphics3d(width, height);
-	} else {
-		initGraphics(width, height, nullptr);
-	}
-
-#if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS) || defined(USE_GLES2)
-	bool backendCapableOpenGL = g_system->hasFeature(OSystem::kFeatureOpenGLForGame);
-#endif
-
-#if defined(USE_OPENGL_GAME)
-	// Check the OpenGL context actually supports shaders
-	if (backendCapableOpenGL && matchingRendererType == Graphics::kRendererTypeOpenGLShaders && !OpenGLContext.shadersSupported) {
-		matchingRendererType = Graphics::kRendererTypeOpenGL;
-	}
-#endif
-
-	if (matchingRendererType != desiredRendererType && desiredRendererType != Graphics::kRendererTypeDefault) {
-		// Display a warning if unable to use the desired renderer
-		warning("Unable to create a '%s' renderer", rendererConfig.c_str());
-	}
-
+	return createSelectedRender<Renderer, OSystem>(
+		width,
+		height,
 #if defined(USE_GLES2) || defined(USE_OPENGL_SHADERS)
-	if (backendCapableOpenGL && matchingRendererType == Graphics::kRendererTypeOpenGLShaders) {
-		return CreateGfxOpenGLShader(system);
-	}
+		CreateGfxOpenGLShader,
 #endif
 #if defined(USE_OPENGL_GAME) && !defined(USE_GLES2)
-	if (backendCapableOpenGL && matchingRendererType == Graphics::kRendererTypeOpenGL) {
-		return CreateGfxOpenGL(system);
-	}
+		CreateGfxOpenGL,
 #endif
-	if (matchingRendererType == Graphics::kRendererTypeTinyGL) {
-		return CreateGfxTinyGL(system);
-	}
-
-	error("Unable to create a '%s' renderer", rendererConfig.c_str());
+		CreateGfxTinyGL,
+		system
+	);
 }
 
 void Renderer::renderDrawable(Drawable *drawable, Window *window) {
