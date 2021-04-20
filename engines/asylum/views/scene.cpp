@@ -948,15 +948,18 @@ void Scene::updateMusic() {
 			break;
 
 		case 1:
-			getWorld()->musicCurrentResourceIndex = getWorld()->musicResourceIndex;
-
 			if (getWorld()->musicResourceIndex == kMusicStopped) {
+				getWorld()->musicCurrentResourceIndex = kMusicStopped;
 				getWorld()->musicStatus = 0;
 				getSound()->playMusic(kResourceNone, 0);
 			} else {
+				getWorld()->musicCurrentResourceIndex = getWorld()->musicResourceIndex;
 				getWorld()->musicStatus = getWorld()->musicStatusExt;
 				getSound()->playMusic(MAKE_RESOURCE(kResourcePackMusic, getWorld()->musicResourceIndex));
 			}
+			getWorld()->musicResourceIndex = kMusicStopped;
+			getWorld()->musicStatusExt = 0;
+			getWorld()->musicFlag = 0;
 			break;
 
 		case 2:
@@ -966,7 +969,7 @@ void Scene::updateMusic() {
 
 		case 4:
 			_musicVolume -= 150;
-			if (_musicVolume >= -2500) {
+			if (_musicVolume > -2500) {
 				getSound()->setMusicVolume(_musicVolume);
 				break;
 			}
@@ -977,6 +980,9 @@ void Scene::updateMusic() {
 			if (getWorld()->musicResourceIndex == kMusicStopped) {
 				getWorld()->musicStatus = 0;
 				getSound()->playMusic(kResourceNone, 0);
+				getWorld()->musicResourceIndex = kMusicStopped;
+				getWorld()->musicStatusExt = 0;
+				getWorld()->musicFlag = 0;
 			} else {
 				getWorld()->musicStatus = 8;
 				getSound()->playMusic(kResourceNone, 0);
@@ -988,18 +994,19 @@ void Scene::updateMusic() {
 
 		case 8:
 			_musicVolume += 150;
-			if (_musicVolume < 150) {
+			if (_musicVolume < Config.musicVolume) {
 				getSound()->setMusicVolume(_musicVolume);
 				break;
 			}
 
 			getSound()->setMusicVolume(Config.musicVolume);
 			getWorld()->musicStatus = getWorld()->musicStatusExt;
-			getWorld()->musicResourceIndex = (int32)kMusicStopped;
+			getWorld()->musicResourceIndex = kMusicStopped;
 			getWorld()->musicStatusExt = 0;
+			getWorld()->musicFlag = 0;
 			break;
 		}
-	} if (getWorld()->musicResourceIndex != kMusicStopped) {
+	} else if (getWorld()->musicResourceIndex != kMusicStopped) {
 		switch (getWorld()->musicStatusExt) {
 		default:
 			break;
