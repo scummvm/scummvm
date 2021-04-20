@@ -151,7 +151,7 @@ void TrecisionEngine::doInventory() {
 				_lightIcon = _curInventory;
 			}
 		} else if (_inventoryObj[_curInventory]._flag & OBJFLAG_USEWITH) {
-			if ((_curInventory == iCANDELOTTO) && (_curRoom == r29)) {
+			if ((_curInventory == iCANDELOTTO) && (_curRoom == kRoom29)) {
 				CharacterSay(1565);
 				return;
 			}

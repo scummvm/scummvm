@@ -403,7 +403,7 @@ int actionInRoom(int curA) {
 }
 
 void ReadLoc() {
-	if (g_vm->_curRoom == r11 && !(g_vm->_room[r11]._flag & OBJFLAG_DONE))
+	if (g_vm->_curRoom == kRoom11 && !(g_vm->_room[kRoom11]._flag & OBJFLAG_DONE))
 		g_vm->_flagShowCharacter = true;
 
 	SoundFadOut();
@@ -412,14 +412,6 @@ void ReadLoc() {
 
 	Common::String filename = Common::String::format("%s.cr", g_vm->_room[g_vm->_curRoom]._baseName);
 	Common::SeekableReadStream *picFile = g_vm->_dataFile.createReadStreamForCompressedMember(filename);
-#if 0
-	Common::DumpFile *outFile = new Common::DumpFile();
-	Common::String outName = filename + ".dump";
-	outFile->open(outName);
-	outFile->write(bgBuf, picFile->size());
-	outFile->finalize();
-	outFile->close();
-#endif
 
 	BmInfo.read(picFile);
 
@@ -527,7 +519,7 @@ void ReadObj(Common::SeekableReadStream *stream, int size) {
 		if (g_vm->_curRoom == r41D && objIndex == 89)
 			break;
 
-		if (g_vm->_curRoom == r2C && objIndex == 20)
+		if (g_vm->_curRoom == kRoom2C && objIndex == 20)
 			break;
 
 		readObject(stream, objIndex, roomObjIndex);

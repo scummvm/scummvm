@@ -136,43 +136,46 @@
 /*                                 ROOMS             					   */
 /*-------------------------------------------------------------------------*/
 
-#define r11						1
-#define r12						2
-#define r13						3
-#define r14						4
-#define r15						5
-#define r16						6
-#define r17						7
-#define r18						8
-#define r19						9
-#define r1A						10
-#define r1B						11
-#define r1C						12
-#define r1D						13
-#define r21						14
-#define r22						15
-#define r23A					16
-#define r24						17
-#define r25						18
-#define r26						19
-#define r27						20
-#define r28						21
-#define r29						22
-#define r2A						23
-#define r2B						24
-#define r2C						25
-#define r2D						26
-#define r2E						27
-#define r2F						28
-#define r2G						29
-#define r2H						30
-#define r31						31
-#define r32						32
-#define r33						33
-#define r34						34
-#define r35						35
-#define r36						36
-#define r37						37
+enum RoomId {
+	kRoom11 = 1,	// Building (roof)
+	kRoom12 = 2,	// Building (elevator)
+	kRoom13 = 3,	// Ruby's apartment (outside)
+	kRoom14 = 4,	// Ruby's apartment (kitchen / living room)
+	kRoom15 = 5,	// Ruby's apartment (bedroom)
+	kRoom16 = 6,	// Subway (building)
+	kRoom17 = 7,	// Subway (Rotmall 17)
+	kRoom18 = 8,	// Free Climax club (square, outside)
+	kRoom19 = 9,	// Free Climax club (inside)
+	kRoom1A = 10,	// Liquor store
+	kRoom1B = 11,	// Alley (between the Liquor store and Free Climax)
+	kRoom1C = 12,	// Underground tunnel (below the alley)
+	kRoom1D = 13,	// Store room (below the liquor store)
+	kRoom21 = 14,	// Platforms (subway platform)
+	kRoom22 = 15,	// Platforms (maintenance room, subway platform right door)
+	kRoom23A = 16,	// Platforms (passageway with magnetic field)
+	kRoom24 = 17,	// Deserted platform (subway platform outside the zoo)
+	kRoom25 = 18,	// Deserted platform (info booth, shed with trapdoor)
+	kRoom26 = 19,	// Zoo (entrance)
+	kRoom27 = 20,	// Zoo (bar)
+	kRoom28 = 21,	// Zoo (goddess)
+	kRoom29 = 22,	// Platforms (storeroom inside the maintenance room, lights off)
+	kRoom2A = 23,	// Platforms (underground passageway below the storeroom)
+	kRoom2B = 24,	// Platforms (bookstore)
+	kRoom2C = 25,	// Zoo (sphinx)
+	kRoom2D = 26,	// Zoo (control room below the sphinx)
+	kRoom2E = 27,	// Zoo (fissures with bridge, outside cave)
+	kRoom2F = 28,	// Zoo (cave, after fissures)
+	kRoom2G = 29,	// Zoo (pond)
+	kRoom2H = 30,	// Deserted platform (on the bridge)
+	kRoom31 = 31,	// Warehouse
+	kRoom32 = 32,	// Warehouse walkway (above)
+	kRoom33 = 33,	// Warehouse (roof)
+	kRoom34 = 34,	// Warehouse (machinery room)
+	kRoom35 = 35,	// Warehouse (hideout)
+	kRoom36 = 36,	// Warehouse (hideout upstairs)
+	kRoom37 = 37	// Warehouse (medical room)
+};
+
 #define r41						38
 #define r42						39
 #define r43						40

@@ -180,7 +180,7 @@ void afterChoice(int numframe) {
 		if (_curChoice == 136) {
 			g_vm->_obj[ocTRAMP17]._mode &= ~OBJMODE_OBJSTATUS;
 			g_vm->_obj[oTRAMPD17]._mode |= OBJMODE_OBJSTATUS;
-			g_vm->_room[r17]._bkgAnim = aBKG17B;
+			g_vm->_room[kRoom17]._bkgAnim = aBKG17B;
 			g_vm->addIcon(iSKATE);
 		} else if (_curChoice == 137) {
 			g_vm->_obj[ocTRAMP17]._flag |= OBJFLAG_PERSON;
@@ -204,12 +204,12 @@ void afterChoice(int numframe) {
 		break;
 	case dF213B:
 	case dF213:
-		g_vm->setRoom(r21, true);
+		g_vm->setRoom(kRoom21, true);
 		break;
 
 	case dF212B:
 	case dF212:
-		g_vm->setRoom(r21, false);
+		g_vm->setRoom(kRoom21, false);
 		break;
 
 	case dF321:
@@ -269,7 +269,7 @@ void afterChoice(int numframe) {
 			if (_curChoice == 152)
 				g_vm->_obj[ocGUARD18]._mode &= ~OBJMODE_OBJSTATUS;
 			else if (_curChoice == 155)
-				StartCharacterAction(a184ENTRACLUB, r19, 2, 0);
+				StartCharacterAction(a184ENTRACLUB, kRoom19, 2, 0);
 			break;
 
 		case dEVA19:
@@ -281,7 +281,7 @@ void afterChoice(int numframe) {
 
 		case dSHOPKEEPER1A:
 			if (_curChoice == 185) {
-				doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, r18, a1810ENTRADALNEGOZIO, 10, g_vm->_curObj);
+				doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, kRoom18, a1810ENTRADALNEGOZIO, 10, g_vm->_curObj);
 				g_vm->_obj[oPORTAN18]._flag &= ~OBJFLAG_ROOMOUT;
 				g_vm->_obj[oPORTAN18]._action = 218;
 				g_vm->_obj[oPORTAN18]._anim = 0;
@@ -298,8 +298,8 @@ void afterChoice(int numframe) {
 			g_vm->_obj[oPORTAUA17]._action = 193;
 			g_vm->_obj[oPORTAUB17]._action = 197;
 			g_vm->_obj[oFINGERPAD17]._mode &= ~OBJMODE_OBJSTATUS;
-			g_vm->_room[r17]._flag &= ~OBJFLAG_DONE;
-			g_vm->_room[r17]._flag |= OBJFLAG_EXTRA;
+			g_vm->_room[kRoom17]._flag &= ~OBJFLAG_DONE;
+			g_vm->_room[kRoom17]._flag |= OBJFLAG_EXTRA;
 			break;
 
 		case dF1C1:
@@ -480,7 +480,7 @@ void afterChoice(int numframe) {
 			break;
 
 		case dINTRO:
-			doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, r11, 0, 20, g_vm->_curObj);
+			doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, kRoom11, 0, 20, g_vm->_curObj);
 			break;
 
 		case dF582:
