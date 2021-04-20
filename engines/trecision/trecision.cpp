@@ -27,6 +27,7 @@
 #include "trecision/nl/message.h"
 #include "trecision/nl/proto.h"
 #include "trecision/nl/sysdef.h"
+#include "trecision/console.h"
 #include "trecision/graphics.h"
 #include "trecision/video.h"
 
@@ -211,7 +212,8 @@ Common::Error TrecisionEngine::run() {
 		return Common::kUnsupportedColorMode;
 	_animMgr = new AnimManager(this);
 	_logicMgr = new LogicManager(this);
-
+	setDebugger(new Console(this));
+	
 	initMain();
 	initCursor();
 

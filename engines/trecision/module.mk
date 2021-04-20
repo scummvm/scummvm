@@ -1,15 +1,16 @@
 MODULE := engines/trecision
 
 MODULE_OBJS = \
-	trecision.o \
-	metaengine.o \
+	console.o \
 	fastfile.o \
 	graphics.o \
-	video.o \
 	inventory.o \
 	logic.o \
+	metaengine.o \
 	script.o \
+	trecision.o \
 	utils.o \
+	video.o \
 	nl/classes.o \
 	nl/dialog.o \
 	nl/do.o \
