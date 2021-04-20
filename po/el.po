@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-04-20 11:06+0000\n"
+"POT-Creation-Date: 2021-04-20 15:48+0000\n"
 "PO-Revision-Date: 2021-04-20 16:57+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
@@ -2159,12 +2159,14 @@ msgstr "Μηνιαία"
 msgid "<Bad value>"
 msgstr "<Εσφαλμένη τιμή>"
 
+#. I18N: One line summary as shown in *nix distributions
 #: dists/scummvm.appdata.xml.cpp:33
 msgid "Interpreter for numerous adventure games and role-playing games"
 msgstr ""
 "Διερμηνευτής για πολυάριθμα παιχνίδια περιπέτειας και ρόλων (adventure και "
 "RPG)"
 
+#. I18N: 1 of 3 paragraph of ScummVM description in *nix distributions
 #: dists/scummvm.appdata.xml.cpp:38
 msgid ""
 "ScummVM is a program which allows you to run a wide variety of classic "
@@ -2174,12 +2176,13 @@ msgid ""
 "systems for which they were never designed!"
 msgstr ""
 "Το ScummVM είναι μια εφαρμογή που σας επιτρέπει να παίξετε μια ευρεία "
-"ποικιλία από κλασσικά παιχνίδια περιπέτειας point-and-click, και ρόλων ("
-"adventure και role-playing), αρκεί να έχετε στην κατοχή σας τα αρχεία "
+"ποικιλία από κλασσικά παιχνίδια περιπέτειας point-and-click, και ρόλων "
+"(adventure και role-playing), αρκεί να έχετε στην κατοχή σας τα αρχεία "
 "δεδομένων τους. Το ενδιαφέρον σε αυτή την υπόθεση είναι το εξής: το ScummVM "
 "απλά αντικαθιστά τα εκτελέσιμα που συνόδευαν τα παιχνίδια, επιτρέποντάς σας "
 "να τα παίξετε σε συστήματα για τα οποία δεν είχαν σχεδιαστεί ποτέ!"
 
+#. I18N: 2 of 3 paragraph of ScummVM description in *nix distributions
 #: dists/scummvm.appdata.xml.cpp:46
 msgid ""
 "Currently, ScummVM supports a huge library of adventures with over 4000 "
@@ -2187,12 +2190,13 @@ msgid ""
 "like LucasArts, Sierra On-Line, Revolution Software, Cyan, Inc. and Westwood "
 "Studios."
 msgstr ""
-"Το ScummVM υποστηρίζει μια τεράστια βιβλιοθήκη από παιχνίδια περιπέτειας ("
-"adventure games) με περισσότερους από 4000 τίτλους συνολικά. Υποστηρίζει "
+"Το ScummVM υποστηρίζει μια τεράστια βιβλιοθήκη από παιχνίδια περιπέτειας "
+"(adventure games) με περισσότερους από 4000 τίτλους συνολικά. Υποστηρίζει "
 "πολλούς από τους κλασσικούς τίτλους που έχουν εκδώσει θρυλικά στούντιο όπως "
 "οι LucasArts, Sierra On-Line, Revolution Software, Cyan, Inc. και Westwood "
 "Studios."
 
+#. I18N: 3 of 3 paragraph of ScummVM description in *nix distributions
 #: dists/scummvm.appdata.xml.cpp:52
 msgid ""
 "Next to ground-breaking titles like the Monkey Island series, Broken Sword, "

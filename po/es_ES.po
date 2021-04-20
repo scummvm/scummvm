@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-04-20 11:06+0000\n"
+"POT-Creation-Date: 2021-04-20 15:48+0000\n"
 "PO-Revision-Date: 2021-04-20 11:55+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
@@ -2135,10 +2135,12 @@ msgstr "Mensualmente"
 msgid "<Bad value>"
 msgstr "<Valor incorrecto>"
 
+#. I18N: One line summary as shown in *nix distributions
 #: dists/scummvm.appdata.xml.cpp:33
 msgid "Interpreter for numerous adventure games and role-playing games"
 msgstr "Intérprete de numerosas aventuras gráficas y RPG"
 
+#. I18N: 1 of 3 paragraph of ScummVM description in *nix distributions
 #: dists/scummvm.appdata.xml.cpp:38
 msgid ""
 "ScummVM is a program which allows you to run a wide variety of classic "
@@ -2153,6 +2155,7 @@ msgstr ""
 "sustituir los ejecutables de cada juego, ¡lo que permite jugarlos en "
 "sistemas para los que nunca fueron diseñados!"
 
+#. I18N: 2 of 3 paragraph of ScummVM description in *nix distributions
 #: dists/scummvm.appdata.xml.cpp:46
 msgid ""
 "Currently, ScummVM supports a huge library of adventures with over 4000 "
@@ -2165,6 +2168,7 @@ msgstr ""
 "legendarios como LucasArts, Sierra On-Line, Revolution Software, Cyan, Inc. "
 "y Westwood Studios."
 
+#. I18N: 3 of 3 paragraph of ScummVM description in *nix distributions
 #: dists/scummvm.appdata.xml.cpp:52
 msgid ""
 "Next to ground-breaking titles like the Monkey Island series, Broken Sword, "

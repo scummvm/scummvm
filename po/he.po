@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.1.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-04-20 11:06+0000\n"
+"POT-Creation-Date: 2021-04-20 15:48+0000\n"
 "PO-Revision-Date: 2020-11-23 12:19+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Hebrew <https://translations.scummvm.org/projects/scummvm/"
@@ -2088,10 +2088,12 @@ msgstr "חודשי"
 msgid "<Bad value>"
 msgstr "<ערך לא תקין>"
 
+#. I18N: One line summary as shown in *nix distributions
 #: dists/scummvm.appdata.xml.cpp:33
 msgid "Interpreter for numerous adventure games and role-playing games"
 msgstr ""
 
+#. I18N: 1 of 3 paragraph of ScummVM description in *nix distributions
 #: dists/scummvm.appdata.xml.cpp:38
 msgid ""
 "ScummVM is a program which allows you to run a wide variety of classic "
@@ -2101,6 +2103,7 @@ msgid ""
 "systems for which they were never designed!"
 msgstr ""
 
+#. I18N: 2 of 3 paragraph of ScummVM description in *nix distributions
 #: dists/scummvm.appdata.xml.cpp:46
 msgid ""
 "Currently, ScummVM supports a huge library of adventures with over 4000 "
@@ -2109,6 +2112,7 @@ msgid ""
 "Studios."
 msgstr ""
 
+#. I18N: 3 of 3 paragraph of ScummVM description in *nix distributions
 #: dists/scummvm.appdata.xml.cpp:52
 msgid ""
 "Next to ground-breaking titles like the Monkey Island series, Broken Sword, "

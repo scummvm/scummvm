@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-04-20 11:06+0000\n"
+"POT-Creation-Date: 2021-04-20 15:48+0000\n"
 "PO-Revision-Date: 2021-04-20 16:57+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
@@ -2132,10 +2132,12 @@ msgstr "Une fois par mois"
 msgid "<Bad value>"
 msgstr "<Valeur invalide>"
 
+#. I18N: One line summary as shown in *nix distributions
 #: dists/scummvm.appdata.xml.cpp:33
 msgid "Interpreter for numerous adventure games and role-playing games"
 msgstr "Interpréteur pour de nombreux jeux d'aventure et jeux de rôle"
 
+#. I18N: 1 of 3 paragraph of ScummVM description in *nix distributions
 #: dists/scummvm.appdata.xml.cpp:38
 msgid ""
 "ScummVM is a program which allows you to run a wide variety of classic "
@@ -2146,11 +2148,12 @@ msgid ""
 msgstr ""
 "ScummVM est un programme qui vous permet d'exécuter une grande variété de "
 "jeux d'aventure graphique point-and-click et de jeux de rôle, à condition "
-"que vous ayez déjà leurs fichiers de données. Ce qui est génial dans tout ça "
-": ScummVM remplace simplement les exécutables livrés avec les jeux, ce qui "
-"vous permet de jouer sur des systèmes pour lesquels ces jeux n'ont jamais "
-"été conçus !"
+"que vous ayez déjà leurs fichiers de données. Ce qui est génial dans tout "
+"ça : ScummVM remplace simplement les exécutables livrés avec les jeux, ce "
+"qui vous permet de jouer sur des systèmes pour lesquels ces jeux n'ont "
+"jamais été conçus !"
 
+#. I18N: 2 of 3 paragraph of ScummVM description in *nix distributions
 #: dists/scummvm.appdata.xml.cpp:46
 msgid ""
 "Currently, ScummVM supports a huge library of adventures with over 4000 "
@@ -2163,6 +2166,7 @@ msgstr ""
 "des studios légendaires comme LucasArts, Sierra On-Line, Revolution "
 "Software, Cyan, Inc. et Westwood Studios."
 
+#. I18N: 3 of 3 paragraph of ScummVM description in *nix distributions
 #: dists/scummvm.appdata.xml.cpp:52
 msgid ""
 "Next to ground-breaking titles like the Monkey Island series, Broken Sword, "
