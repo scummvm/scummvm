@@ -2045,6 +2045,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("baldysadventure", "baldy.exe", "ea0d3284542db629f36cb6fc785e07bc", 179358984),
 	GAME_ENTRY("baltazarthefamiliar", "baltazar.exe", "9cb3c8dc7a8ab9c44815955696be2677", 2867294),
 	GAME_ENTRY("bananaracer", "bananaracer.exe", "e93f9dfa8405f1ca9f881d160ab31dc2", 10452233),
+	GAME_ENTRY("bananaracer", "bananaracer.exe", "e93f9dfa8405f1ca9f881d160ab31dc2", 10454173),
 	GAME_ENTRY("barndilemma", "woh.exe", "089fab88e6e1075a2f5b271f6f5b3c57", 2432485),
 	GAME_ENTRY("barnrunner5part1", "barn runner 5-1.exe", "6cddccb3744ec5c6af7c398fb7b3b11c", 104073543),
 	GAME_ENTRY("barnrunner5part2", "barn runner 5-2.exe", "6cddccb3744ec5c6af7c398fb7b3b11c", 200879890),
