@@ -112,22 +112,16 @@ void ActionText::start() {
 		Graphics::MacFont *font = new Graphics::MacFont;
 		_txtWnd = director->getWndManager().addTextWindow(font, _textColorIndex, _backgroundColorIndex,
 														  _xRight - _xLeft, align, nullptr, false);
+		_txtWnd->setTextColorRGB(_textRGB);
 		_txtWnd->enableScrollbar(true);
+		// it will hide the scrollbar when the text height is smaller than the window height
+		_txtWnd->setMode(Graphics::kWindowModeDynamicScrollbar);
 		_txtWnd->move(_xLeft, _yTop);
 		_txtWnd->resize(_xRight - _xLeft, _yBottom - _yTop);
 		_txtWnd->setEditable(false);
 		_txtWnd->setSelectable(false);
 
 		_txtWnd->appendText(_text, font);
-		// if the textHeight is smaller than the area we display the text, then we disable the scrollbar
-		if (_txtWnd->getTextHeight() < _txtWnd->getInnerDimensions().height()) {
-			_txtWnd->clearText();
-			_txtWnd->enableScrollbar(false);
-			_txtWnd->disableBorder();
-			_txtWnd->move(_xLeft, _yTop);
-			_txtWnd->resize(_xRight - _xLeft, _yBottom - _yTop);
-			_txtWnd->appendText(_text, font);
-		}
 		director->addTextWindow(_txtWnd);
 
 	} else {
