@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-04-21 10:35+0000\n"
-"PO-Revision-Date: 2021-04-20 17:59+0000\n"
+"PO-Revision-Date: 2021-04-21 11:47+0000\n"
 "Last-Translator: Lothar Serra Mari <serra@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/de/>\n"
@@ -6143,6 +6143,9 @@ msgid ""
 "Cut the extra 40 pixels at the bottom of the screen, to make it standard 200 "
 "pixels height, allowing using 'aspect ratio correction'"
 msgstr ""
+"Entfernt die letzten 40 Pixel am unteren Bildschirmrand. Dadurch wird das "
+"Spiel mit einer Höhe von 200 Pixeln dargestellt, was die Nutzung der "
+"Seitenverhältniskorrektur erlaubt"
 
 #: engines/scumm/dialogs.cpp:165
 #, c-format
