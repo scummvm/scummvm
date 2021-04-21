@@ -41,7 +41,6 @@ SoundManager::SoundManager(TrecisionEngine *vm) : _vm(vm) {
 		sfxStream[i] = nullptr;
 
 	nltime = 0;
-	MinSampleBuffer = 0;
 
 	for (int i = 0; i < SAMPLEVOICES; ++i) {
 		playing[i] = 0;
