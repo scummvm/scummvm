@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-04-21 21:47+0000\n"
+"POT-Creation-Date: 2021-04-21 22:31+0000\n"
 "PO-Revision-Date: 2020-11-29 17:10+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
@@ -4045,7 +4045,6 @@ msgstr "   Weet u zeker dat u wilt stoppen?   "
 msgid "Invalid save file name"
 msgstr "ongeldige bewaarbestandsnaam"
 
-#. I18N: The game requires special code which was not yet implemented
 #: engines/cge/detection.cpp:48 engines/cge/detection.cpp:54
 #: engines/kyra/detection_tables.h:224 engines/kyra/detection_tables.h:237
 #: engines/kyra/detection_tables.h:250 engines/kyra/detection_tables.h:606
@@ -4053,10 +4052,9 @@ msgstr "ongeldige bewaarbestandsnaam"
 #: engines/kyra/detection_tables.h:1832 engines/lure/detection.cpp:80
 #: engines/lure/detection.cpp:222 engines/mohawk/detection_tables.h:1012
 #: engines/mohawk/detection_tables.h:1027 engines/neverhood/detection.cpp:110
-#: engines/queen/detection.cpp:168 engines/saga/detection_tables.h:187
-#: engines/saga/detection_tables.h:937 engines/saga/detection_tables.h:996
-#: engines/sci/detection_tables.h:4851 engines/sci/detection_tables.h:4859
-#: engines/teenagent/detection.cpp:102
+#: engines/saga/detection_tables.h:187 engines/saga/detection_tables.h:937
+#: engines/saga/detection_tables.h:996 engines/sci/detection_tables.h:4851
+#: engines/sci/detection_tables.h:4859 engines/teenagent/detection.cpp:102
 msgid "Missing game code"
 msgstr "Ontbrekende spel code"
 
