@@ -62,36 +62,36 @@ public:
 
 private:
 	TrecisionEngine *_vm;
-	Audio::SeekableAudioStream *sfxStream[NUMSAMPLES];
-	Audio::SoundHandle    soundHandle[SAMPLEVOICES];	// Sample handles for each mixer channel
+	Audio::SeekableAudioStream *_sfxStream[NUMSAMPLES];
+	Audio::SoundHandle    _soundHandle[SAMPLEVOICES];	// Sample handles for each mixer channel
 
-	SSound GSample[MAXSAMPLE];
+	SSound _gSample[MAXSAMPLE];
 
-	uint32 nltime;			// timer variable
-	int16 playing[SAMPLEVOICES];			// sample currently playing
-	int16 smpvol[SAMPLEVOICES];
+	uint32 _timer;
+	int16 _samplePlaying[SAMPLEVOICES];			// sample currently playing
+	int16 _sampleVolume[SAMPLEVOICES];
 
-	uint8 StepChannel;
-	uint8 BackChannel;
-	uint8 SoundFadStatus;
+	uint8 _stepChannel;
+	uint8 _backChannel;
+	uint8 _soundFadeStatus;
 
-	int16 SoundFadInVal;
-	int16 SoundFadOutVal;
+	int16 _soundFadeInVal;
+	int16 _soundFadeOutVal;
 
 public:
-	void soundtimefunct();
-	void StopSoundSystem();
-	void LoadAudioWav(int num, Common::String fileName);
-	void NLPlaySound(int num);
-	void NLStopSound(int num);
-	void SoundStopAll();
-	void SoundFadOut();
-	void SoundFadIn(int num);
-	void WaitSoundFadEnd();
+	void soundTimer();
+	void stopSoundSystem();
+	void loadAudioWav(int num, Common::String fileName);
+	void play(int num);
+	void stop(int num);
+	void stopAll();
+	void fadeOut();
+	void fadeIn(int num);
+	void waitEndFading();
 	void SoundPasso(int midx, int midz, int act, int frame, uint16 *list);
-	int32 Talk(const char *name);
-	void StopTalk();
-	void ReadSounds();
+	int32 talkStart(const char *name);
+	void talkStop();
+	void loadRoomSounds();
 
 	void syncGameStream(Common::Serializer &ser);
 	void loadSamples(Common::File *file);

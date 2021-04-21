@@ -313,11 +313,11 @@ void doScript() {
 		break;
 
 	case ME_PLAYSOUND:
-		g_vm->_soundMgr->NLPlaySound(index);
+		g_vm->_soundMgr->play(index);
 		break;
 
 	case ME_STOPSOUND:
-		g_vm->_soundMgr->NLStopSound(index);
+		g_vm->_soundMgr->stop(index);
 		break;
 
 	case ME_REGENROOM:
