@@ -23,21 +23,9 @@
 #include <cstring>
 
 #include "common/scummsys.h"
-#include "common/translation.h"
-#include "common/config-manager.h"
-#include "common/file.h"
-#include "common/savefile.h"
-#include "common/str.h"
-#include "common/system.h"
-#include "graphics/scaler.h"
-#include "gui/saveload.h"
 
-#include "trecision/nl/3d/3dinc.h"
-#include "trecision/nl/struct.h"
 #include "trecision/nl/ll/llinc.h"
 #include "trecision/nl/define.h"
-#include "trecision/nl/message.h"
-#include "trecision/nl/proto.h"
 #include "trecision/graphics.h"
 #include "trecision/trecision.h"
 
@@ -140,9 +128,6 @@ uint16 SDText::checkDText() {
 	return 0;
 }
 
-/*-----------------10/12/95 15.43-------------------
-						DText
---------------------------------------------------*/
 void SDText::DText(uint16 *frameBuffer) {
 	uint16 tmpTCol = tcol;
 	uint16 tmpSCol = scol;
@@ -228,9 +213,6 @@ void SDText::DText(uint16 *frameBuffer) {
 	}
 }
 
-/*-----------------09/02/96 20.57-------------------
-					QuitGame
---------------------------------------------------*/
 bool QuitGame() {
 	for (int a = 0; a < TOP; a++)
 		memcpy(g_vm->_zBuffer + a * MAXX, g_vm->_screenBuffer + MAXX * a, MAXX * 2);
@@ -260,9 +242,6 @@ bool QuitGame() {
 	return exitFl;
 }
 
-/*-----------------09/02/96 20.57-------------------
-					DemoOver
---------------------------------------------------*/
 void DemoOver() {
 	for (int a = 0; a < TOP; a++)
 		memset(g_vm->_screenBuffer + MAXX * a, 0, MAXX * 2);

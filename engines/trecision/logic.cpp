@@ -76,9 +76,6 @@ void LogicManager::syncGameStream(Common::Serializer &ser) {
 	ser.syncAsUint16LE(_slotMachine41Counter);
 }
 
-/* ------------------------------------------------
-					initScript
- --------------------------------------------------*/
 void LogicManager::initScript() {
 	int f = 0;
 
@@ -4223,12 +4220,8 @@ void LogicManager::doSystemChangeRoom() {
 		read3D("372.3d");
 	else if ((_vm->_curRoom == kRoom4P) && (_vm->_room[_vm->_curRoom]._flag & kObjFlagExtra))
 		read3D("4P2.3d");
-	//			end save/load
 }
 
-/* --------------------------------------------------
- * 				DoSys
- * --------------------------------------------------*/
 void LogicManager::DoSys(uint16 curObj) {
 	switch (curObj) {
 	case o00QUIT:

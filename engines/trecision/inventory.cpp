@@ -31,9 +31,6 @@
 
 namespace Trecision {
 
-/*------------------------------------------------
-                    refreshInventory()
---------------------------------------------------*/
 void TrecisionEngine::refreshInventory(uint8 startIcon, uint8 startLine) {
 	if (startLine > ICONDY)
 		startLine = ICONDY;
@@ -73,35 +70,23 @@ void TrecisionEngine::refreshInventory(uint8 startIcon, uint8 startLine) {
 	_graphicsMgr->copyToScreen(0, FIRSTLINE, MAXX, ICONDY);
 }
 
-/*-------------------------------------------------------------------------*/
-/*                            setInventoryStart					  		   */
-/*-------------------------------------------------------------------------*/
 void TrecisionEngine::setInventoryStart(uint8 startIcon, uint8 startLine) {
 	_inventoryRefreshStartIcon = startIcon;
 	_inventoryRefreshStartLine = startLine;
 }
 
-/*-------------------------------------------------------------------------*/
-/*                            moveInventoryLeft          				   */
-/*-------------------------------------------------------------------------*/
 void TrecisionEngine::moveInventoryLeft() {
 	if (_iconBase < _inventorySize - ICONSHOWN)
 		_iconBase++;
 	setInventoryStart(_iconBase, INVENTORY_SHOW);
 }
 
-/*-------------------------------------------------------------------------*/
-/*                            moveInventoryRight          				   */
-/*-------------------------------------------------------------------------*/
 void TrecisionEngine::moveInventoryRight() {
 	if (_iconBase > 0)
 		_iconBase--;
 	setInventoryStart(_iconBase, INVENTORY_SHOW);
 }
 
-/*-------------------------------------------------------------------------*/
-/*                                doInventory          					   */
-/*-------------------------------------------------------------------------*/
 void TrecisionEngine::doInventory() {
 	switch (_curMessage->_event) {
 	case ME_OPEN:
@@ -211,9 +196,6 @@ void TrecisionEngine::doInventory() {
 	}
 }
 
-/*-------------------------------------------------------------------------*/
-/*                                whatIcon           					   */
-/*-------------------------------------------------------------------------*/
 uint8 TrecisionEngine::whatIcon(uint16 invmx) {
 	if (invmx < ICONMARGSX || invmx > MAXX - ICONMARGDX)
 		return 0;
@@ -221,9 +203,6 @@ uint8 TrecisionEngine::whatIcon(uint16 invmx) {
 	return _inventory[_iconBase + ((invmx - ICONMARGSX) / (ICONDX))];
 }
 
-/*-------------------------------------------------------------------------*/
-/*                                 iconPos           					   */
-/*-------------------------------------------------------------------------*/
 uint8 TrecisionEngine::iconPos(uint8 icon) {
 	uint8 i;
 
@@ -249,9 +228,6 @@ bool TrecisionEngine::isCloseupOrControlRoom() {
 		   _curRoom == kRoom13CU;
 }
 
-/*-------------------------------------------------------------------------*/
-/*                            showInventoryName           				   */
-/*-------------------------------------------------------------------------*/
 void TrecisionEngine::showInventoryName(uint16 obj, bool showhide) {
 	static const char *dunno = "?";
 
@@ -321,9 +297,6 @@ void TrecisionEngine::showInventoryName(uint16 obj, bool showhide) {
 	}
 }
 
-/*-------------------------------------------------------------------------*/
-/*                                removeIcon           					   */
-/*-------------------------------------------------------------------------*/
 void TrecisionEngine::removeIcon(uint8 icon) {
 	uint8 pos = iconPos(icon);
 
@@ -343,9 +316,6 @@ void TrecisionEngine::removeIcon(uint8 icon) {
 	redrawString();
 }
 
-/*-------------------------------------------------------------------------*/
-/*                                 addIcon           					   */
-/*-------------------------------------------------------------------------*/
 void TrecisionEngine::addIcon(uint8 icon) {
 	if (iconPos(icon) != MAXICON)
 		return;
@@ -362,18 +332,12 @@ void TrecisionEngine::addIcon(uint8 icon) {
 	redrawString();
 }
 
-/*-------------------------------------------------------------------------*/
-/*                             replaceIcon          					   */
-/*-------------------------------------------------------------------------*/
 void TrecisionEngine::replaceIcon(uint8 oldIcon, uint8 newIcon) {
 	uint8 pos = iconPos(oldIcon);
 
 	_inventory[pos] = newIcon;
 }
 
-/*-------------------------------------------------------------------------*/
-/*                          USE WITH / INV - INV         				   */
-/*-------------------------------------------------------------------------*/
 void TrecisionEngine::doInventoryUseWithInventory() {
 	if (!_useWith[USED] || !_useWith[WITH])
 		warning("doInventoryUseWithInventory - _useWith not set properly");
@@ -389,9 +353,6 @@ void TrecisionEngine::doInventoryUseWithInventory() {
 		setInventoryStart(_iconBase, INVENTORY_SHOW);
 }
 
-/*-------------------------------------------------------------------------*/
-/*                          USE WITH / INV - SCR         				   */
-/*-------------------------------------------------------------------------*/
 void TrecisionEngine::doInventoryUseWithScreen() {
 	if (!_useWith[USED] || !_useWith[WITH])
 		warning("doInventoryUseWithScreen - _useWith not set properly");
@@ -410,9 +371,6 @@ void TrecisionEngine::doInventoryUseWithScreen() {
 		setInventoryStart(_iconBase, INVENTORY_SHOW);
 }
 
-/*-------------------------------------------------------------------------*/
-/*                                ROLLINVENTORY             			   */
-/*-------------------------------------------------------------------------*/
 void TrecisionEngine::rollInventory(uint8 status) {
 	if (status == INV_PAINT) {
 		_inventoryCounter -= _inventorySpeed[_inventorySpeedIndex++];
@@ -444,9 +402,6 @@ void TrecisionEngine::rollInventory(uint8 status) {
 	setInventoryStart(_iconBase, _inventoryCounter);
 }
 
-/*-------------------------------------------------------------------------*/
-/*                              doScrollInventory         				   */
-/*-------------------------------------------------------------------------*/
 void TrecisionEngine::doScrollInventory(uint16 mouseX) {
 	if ((_inventoryStatus == INV_PAINT) || (_inventoryStatus == INV_DEPAINT))
 		return;

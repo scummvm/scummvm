@@ -32,9 +32,6 @@
 
 namespace Trecision {
 
-/*------------------------------------------------
-					RedrawRoom
---------------------------------------------------*/
 void RedrawRoom() {
 	if ((_curDialog != dF321) && (_curDialog != dF431) && (_curDialog != dF4C1) && (_curDialog != dASCENSORE12) && (_curDialog != dASCENSORE13) && (_curDialog != dASCENSORE16))
 		g_vm->_flagShowCharacter = true;

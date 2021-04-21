@@ -29,9 +29,6 @@
 #include "trecision/video.h"
 
 namespace Trecision {
-/*-------------------------------------------------------------------------*/
-/*                               PROCESSTIME          					   */
-/*-------------------------------------------------------------------------*/
 void ProcessTime() {
 	static uint8 OldRegInvSI  = 0xFF;
 	static uint8 OldRegInvSL  = 0xFF;
@@ -66,9 +63,6 @@ void ProcessTime() {
 	}
 }
 
-/*-------------------------------------------------------------------------*/
-/*                              PROCESSMOUSE          					   */
-/*-------------------------------------------------------------------------*/
 void ProcessMouse() {
 	static bool MaskMouse;
 	static uint16 oldmx;

@@ -31,9 +31,6 @@
 
 namespace Trecision {
 
-/*------------------------------------------------
-					Do Action
---------------------------------------------------*/
 void actorDoAction(int action) {
 	if (action > hLAST)
 		error("error in actorDoAction, invalid action (should be called as an animation)");
@@ -115,9 +112,6 @@ void actorDoAction(int action) {
 		doEvent(MC_CHARACTER, ME_CHARACTERDOACTION, MP_DEFAULT, 0, 0, 0, 0);
 }
 
-/*------------------------------------------------
-				Stop character
---------------------------------------------------*/
 void actorStop() {
 	int b = 0;
 
@@ -137,9 +131,6 @@ void actorStop() {
 	_lastStep = 0;
 }
 
-/*------------------------------------------------
-				Set Light Position
---------------------------------------------------*/
 void setPosition(int num) {
 	SLight *_curLight = g_vm->_actor->_light;
 
@@ -196,9 +187,6 @@ void setPosition(int num) {
 	}
 }
 
-/*------------------------------------------------
-				Go To Light Position
---------------------------------------------------*/
 void goToPosition(int num) {
 	extern float _lookX, _lookZ;
 
@@ -241,9 +229,6 @@ void goToPosition(int num) {
 	}
 }
 
-/*------------------------------------------------
-					lookAt
---------------------------------------------------*/
 void lookAt(float x, float z) {
 	float ox = _step[_lastStep]._px - x;
 	float oz = _step[_lastStep]._pz - z;

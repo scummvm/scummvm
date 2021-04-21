@@ -53,9 +53,6 @@ char sn[13];
 uint32 TalkTime;
 const char *dunno = "?";
 
-/*-------------------------------------------------------------------------*/
-/*                                 PositionString           			   */
-/*-------------------------------------------------------------------------*/
 void PositionString(uint16 x, uint16 y, const char *string, uint16 *posx, uint16 *posy, bool characterFl) {
 	uint16 lenText = g_vm->TextLength(string, 0);
 	if (lenText > 960)
@@ -76,9 +73,6 @@ void PositionString(uint16 x, uint16 y, const char *string, uint16 *posx, uint16
 		*posy = VIDEOTOP + 1;
 }
 
-/*-------------------------------------------------------------------------*/
-/*                                 ShowObjName           				   */
-/*-------------------------------------------------------------------------*/
 void ShowObjName(uint16 obj, bool showhide) {
 	uint16 posx;
 	uint16 posy;
@@ -161,9 +155,6 @@ void ShowObjName(uint16 obj, bool showhide) {
 	}
 }
 
-/*-------------------------------------------------------------------------*/
-/*                             FormattingSuperString             		   */
-/*-------------------------------------------------------------------------*/
 void FormattingSuperString() {
 	SubStringUsed  = 0;
 	substringagain = true;
@@ -173,9 +164,6 @@ void FormattingSuperString() {
 	}
 }
 
-/* -----------------08/07/97 22.23-------------------
-				FormattingOneString
- --------------------------------------------------*/
 void FormattingOneString() {
 	uint16 i;
 	memset(SubString[SubStringUsed], '\0', MAXLENSUBSTRING);
@@ -202,9 +190,6 @@ void FormattingOneString() {
 	substringagain = false;
 }
 
-/*-------------------------------------------------------------------------*/
-/*                                CharacterSay             				   */
-/*-------------------------------------------------------------------------*/
 void CharacterSay(uint16 i) {
 	CurS = i;
 
@@ -219,9 +204,6 @@ void CharacterSay(uint16 i) {
 		CharacterTalk(g_vm->_sentence[i]);
 }
 
-/*-------------------------------------------------------------------------*/
-/*                                CharacterTalk            				   */
-/*-------------------------------------------------------------------------*/
 void CharacterTalk(const char *s) {
 	g_vm->_flagSomeoneSpeaks = true;
 	g_vm->_flagCharacterSpeak = true;
@@ -239,9 +221,6 @@ void CharacterTalk(const char *s) {
 	actorStop();
 }
 
-/* -----------------08/07/97 22.26-------------------
-				CharacterTalkInAction
- --------------------------------------------------*/
 void CharacterTalkInAction(uint16 ss) {
 	const char *s = g_vm->_sentence[ss];
 
@@ -263,9 +242,6 @@ void CharacterTalkInAction(uint16 ss) {
 	CharacterContinueTalk();
 }
 
-/*-------------------------------------------------------------------------*/
-/*                            CharacterContinueTalk                		   */
-/*-------------------------------------------------------------------------*/
 void CharacterContinueTalk() {
 	g_vm->_flagSkipTalk = false;
 	_characterSpeakTime = TheTime;
@@ -298,9 +274,6 @@ void CharacterContinueTalk() {
 	doEvent(MC_STRING, ME_CHARACTERSPEAKING, MP_DEFAULT, 0, 0, 0, 0);
 }
 
-/*-------------------------------------------------------------------------*/
-/*                                CharacterMute            				   */
-/*-------------------------------------------------------------------------*/
 void CharacterMute() {
 	g_vm->_flagSomeoneSpeaks = false;
 	g_vm->_flagCharacterSpeak = false;
@@ -318,9 +291,6 @@ void CharacterMute() {
 		doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, g_vm->_oldRoom, 0, 0, g_vm->_curObj);
 }
 
-/*-------------------------------------------------------------------------*/
-/*                                 SomeoneTalk            				   */
-/*-------------------------------------------------------------------------*/
 void SomeoneTalk(uint16 s, uint16 Person, uint16 NewAnim, bool FromSomeOneSay) {
 	SpeakSomeOneAnimation = NewAnim;
 	SpeakSomeOnePerson = Person;
@@ -343,9 +313,6 @@ void SomeoneTalk(uint16 s, uint16 Person, uint16 NewAnim, bool FromSomeOneSay) {
 	doEvent(MC_STRING, ME_SOMEONEWAIT2SPEAK, MP_DEFAULT, SpeakSomeOneAnimation, 0, 0, 0);
 }
 
-/*-------------------------------------------------------------------------*/
-/*                             SomeoneContinueTalk             			   */
-/*-------------------------------------------------------------------------*/
 void SomeoneContinueTalk() {
 	uint16 posx, posy;
 
@@ -376,9 +343,6 @@ void SomeoneContinueTalk() {
 	doEvent(MC_STRING, ME_SOMEONESPEAKING, MP_DEFAULT, 0, 0, 0, 0);
 }
 
-/*-------------------------------------------------------------------------*/
-/*                                someoneMute                 			   */
-/*-------------------------------------------------------------------------*/
 void someoneMute() {
 	g_vm->_flagCharacterSpeak = false;
 	g_vm->_flagSkipTalk = false;
@@ -393,9 +357,6 @@ void someoneMute() {
 	g_vm->_soundMgr->talkStop();
 }
 
-/*-------------------------------------------------------------------------*/
-/*                                    doString            				   */
-/*-------------------------------------------------------------------------*/
 void doString() {
 	switch (g_vm->_curMessage->_event) {
 	case ME_CHARACTERSPEAK:

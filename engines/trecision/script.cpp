@@ -29,9 +29,7 @@ namespace Trecision {
 void SScriptFrame::sendFrame() {
 	doEvent(_class, _event, MP_DEFAULT, _u16Param1, _u16Param2, _u8Param, _u32Param);
 }
-/*-------------------------------------------------------------------------*/
-/*                                endScript           					   */
-/*-------------------------------------------------------------------------*/
+
 void TrecisionEngine::endScript() {
 	_curStack--;
 	if (_curStack == 0) {
@@ -41,9 +39,6 @@ void TrecisionEngine::endScript() {
 	}
 }
 
-/*-------------------------------------------------------------------------*/
-/*                               playScript           					   */
-/*-------------------------------------------------------------------------*/
 void TrecisionEngine::playScript(uint16 id) {
 	_curStack++;
 	_flagscriptactive = true;
@@ -70,9 +65,6 @@ void TrecisionEngine::playScript(uint16 id) {
 	}
 }
 
-/*-------------------------------------------------------------------------*/
-/*                               evalScript           					   */
-/*-------------------------------------------------------------------------*/
 void TrecisionEngine::evalScript() {
 	if (_characterQueue.testEmptyCharacterQueue4Script() && _gameQueue.testEmptyQueue(MC_DIALOG) && _flagScreenRefreshed) {
 		_curScriptFrame[_curStack]++;

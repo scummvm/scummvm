@@ -32,9 +32,6 @@ namespace Trecision {
 
 int maxmesg, maxmesh, maxmesa;
 
-/*-------------------------------------------------------------------------*/
-/*                                  EVENT           					   */
-/*-------------------------------------------------------------------------*/
 void doEvent(uint8 cls,  uint8 event,  uint8 priority,
 			 uint16 u16Param1, uint16 u16Param2,
 			 uint8 u8Param, uint32 u32Param) {
@@ -75,9 +72,6 @@ void doEvent(uint8 cls,  uint8 event,  uint8 priority,
 	lq->orderEvents();
 }
 
-/*-------------------------------------------------------------------------*/
-/*                                SCHEDULER           					   */
-/*-------------------------------------------------------------------------*/
 void Scheduler() {
 	static uint8 token = CLASS_CHAR;
 	static uint8 counter;
@@ -113,9 +107,6 @@ void Scheduler() {
 	}
 }
 
-/*-------------------------------------------------------------------------*/
-/*                            PROCESSTHEMESSAGE          				   */
-/*-------------------------------------------------------------------------*/
 void ProcessTheMessage() {
 	switch (g_vm->_curMessage->_class) {
 	case MC_CHARACTER:
