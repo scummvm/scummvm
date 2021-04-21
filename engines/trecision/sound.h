@@ -62,15 +62,12 @@ public:
 
 private:
 	TrecisionEngine *_vm;
-	SSound GSample[MAXSAMPLE];
-
-public:
 	Audio::SeekableAudioStream *sfxStream[NUMSAMPLES];
 	Audio::SoundHandle    soundHandle[SAMPLEVOICES];	// Sample handles for each mixer channel
 
-	uint32 nltime;			// timer variable
-	int32  MinSampleBuffer;
+	SSound GSample[MAXSAMPLE];
 
+	uint32 nltime;			// timer variable
 	int16 playing[SAMPLEVOICES];			// sample currently playing
 	int16 smpvol[SAMPLEVOICES];
 
@@ -81,7 +78,7 @@ public:
 	int16 SoundFadInVal;
 	int16 SoundFadOutVal;
 
-
+public:
 	void soundtimefunct();
 	void StopSoundSystem();
 	void LoadAudioWav(int num, Common::String fileName);
