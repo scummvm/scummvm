@@ -138,6 +138,7 @@ There are many recognized configuration keys. In the table below, each key is ei
 		alsa_port,integer,,Specifies which ALSA port ScummVM uses when using the ALSA music driver (Linux).
 		":ref:`alt_intro <altintro>`",boolean,false,
 		":ref:`altamigapalette <altamiga>`",boolean,false,
+		":ref:`antialiasing <antialiasing>`", integer,0,"0, 2, 4, 8"
 		":ref:`apple2gs_speedmenu <2gs>`",boolean,false,
 		":ref:`aspect_ratio <ratio>`",boolean,false,
 		":ref:`audio_buffer_size <buffer>`",integer,"Calculated based on output sampling frequency to keep audio latency below 45ms.","Overrides the size of the audio buffer. Allowed values:
@@ -370,6 +371,10 @@ There are many recognized configuration keys. In the table below, each key is ei
 		":ref:`platform <platform>`",string,,
 		":ref:`portaits_on <portraits>`",boolean,true,
 		":ref:`prefer_digitalsfx <dsfx>`",boolean,true,
+		":ref:`renderer <renderer>`",string,default," 
+	- opengl
+	- opengl_shaders
+	- software"
 		":ref:`render_mode <render>`",string,default,"
 	- hercGreen
 	- hercAmber
@@ -421,6 +426,7 @@ There are many recognized configuration keys. In the table below, each key is ei
 		":ref:`tts_narrator <ttsnarrator>`",boolean,false,
 		use_cdaudio,boolean,true, "If true, ScummVM uses audio from the game CD."
 		versioninfo,string,,Shows the ScummVM version that created the configuration file.
+		":ref:`vsync <vsync>`",boolean,true,
 		":ref:`window_style <style>`",boolean,true,
 		":ref:`windows_cursors <wincursors>`",boolean,false,
 
