@@ -152,7 +152,7 @@ void doMouse() {
 			if (g_vm->_flagSomeoneSpeaks || g_vm->_flagDialogMenuActive || g_vm->_flagDialogActive)
 				break;
 
-			CheckMask(g_vm->_curMessage->_u16Param1, g_vm->_curMessage->_u16Param2);
+			g_vm->CheckMask(g_vm->_curMessage->_u16Param1, g_vm->_curMessage->_u16Param2);
 			g_vm->_logicMgr->doMouseGame();
 		} else if (curpos == POSINV) {
 			if (g_vm->_logicMgr->doMouseInventory())
