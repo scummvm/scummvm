@@ -664,23 +664,23 @@ bool Scene::updateScreen() {
 
 bool Scene::updateScene() {
 #ifdef DEBUG_SCENE_TIMES
-#define MESURE_TICKS(func) { \
+#define MEASURE_TICKS(func) { \
 	int32 startTick =_vm->getTick(); \
 	func(); \
 	debugC(kDebugLevelScene, "[Scene] " #func " - Time: %d", _vm->getTick() - startTick); \
 }
 #else
-#define MESURE_TICKS(func) func();
+#define MEASURE_TICKS(func) func();
 #endif
 
 	// Update each part of the scene
 	if (getSharedData()->getMatteBarHeight() != 170 || getSharedData()->getMattePlaySound()) {
-		MESURE_TICKS(updateMouse);
-		MESURE_TICKS(updateActors);
-		MESURE_TICKS(updateObjects);
-		MESURE_TICKS(updateAmbientSounds);
-		MESURE_TICKS(updateMusic);
-		MESURE_TICKS(updateAdjustScreen);
+		MEASURE_TICKS(updateMouse);
+		MEASURE_TICKS(updateActors);
+		MEASURE_TICKS(updateObjects);
+		MEASURE_TICKS(updateAmbientSounds);
+		MEASURE_TICKS(updateMusic);
+		MEASURE_TICKS(updateAdjustScreen);
 	}
 
 	return getScript()->process();
@@ -801,7 +801,7 @@ void Scene::updateMouse() {
 				newDirection = kDirectionE;
 			}
 		}
-	} else if ( player->getDirection() == kDirectionS) {
+	} else if (player->getDirection() == kDirectionS) {
 		if ((mouse.x - actorRect.right) > 10)
 			newDirection = kDirectionSE;
 	} else if ((player->getDirection() != kDirectionE || (mouse.y - actorRect.bottom) > 10)) {
@@ -1343,7 +1343,7 @@ int32 Scene::hitTestActionArea() {
 
 	int32 targetIdx = findActionArea(kActionAreaType2, Common::Point(_ws->xLeft + pt.x, _ws->yTop + pt.y));
 
-	if ( targetIdx == -1 || !(_ws->actions[targetIdx]->actionType & (kActionTypeFind | kActionTypeTalk | kActionTypeGrab | kActionType16)))
+	if (targetIdx == -1 || !(_ws->actions[targetIdx]->actionType & (kActionTypeFind | kActionTypeTalk | kActionTypeGrab | kActionType16)))
 		return -1;
 
 	return targetIdx;

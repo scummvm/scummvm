@@ -331,7 +331,7 @@ void AsylumEngine::playIntro() {
 			do {
 				// Poll events (this ensures we don't freeze the screen)
 				Common::Event ev;
-                while(_eventMan->pollEvent(ev)) {
+                while (_eventMan->pollEvent(ev)) {
                     switch (ev.type) {
                         case Common::EVENT_LBUTTONDOWN:
                         case Common::EVENT_KEYDOWN:

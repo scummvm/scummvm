@@ -187,7 +187,7 @@ bool PuzzleWheel::update(const AsylumEvent &)  {
 
 	// Blinking red light
 	getScreen()->draw(getWorld()->graphicResourceIds[12], (uint32)_frameIndexes[11], puzzleWheelPoints[12]);
-	_frameIndexes[11] = (_frameIndexes[11] + 1 ) % (int32)GraphicResource::getFrameCount(_vm, getWorld()->graphicResourceIds[12]);
+	_frameIndexes[11] = (_frameIndexes[11] + 1) % (int32)GraphicResource::getFrameCount(_vm, getWorld()->graphicResourceIds[12]);
 
 	// Clock
 	if (_showTurnedClock)
