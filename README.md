@@ -32,11 +32,30 @@ For the impatient among you, here is how to get ScummVM running in five simple s
 > To add multiple games in one go, press and hold the shift key, then click 'Add game' -- the label will change to 'Mass Add' and if you press it, you are again asked to select a directory, only this time ScummVM will search through all subdirectories for supported games.
 
 
+
+## Reporting a bug
+
+To report a bug, go to the ScummVM [Issue Tracker](https://bugs.scummvm.org/>) and log in with your GitHub account.
+
+Please make sure the bug is reproducible, and still occurs in the latest git/Daily build version. Also check the [compatibility list](https://www.scummvm.org/compatibility/) for that game, to ensure the issue is not already known. Please do not report bugs for games that are not listed as completeable on the [Supported Games](https://wiki.scummvm.org/index.php?title=Category:Supported_Games>) wiki page, or on the compatibility list. We already know those games have bugs!
+
+Please include the following information in the bug report:
+
+- ScummVM version (test the latest git/Daily build)
+- Bug details, including instructions for how to reproduce the bug. If possible, include log files, screenshots, and any other relevant information.
+- Game language
+- Game version (for example, talkie or floppy)
+- Platform and Compiler (for example, Win32, Linux or FreeBSD)
+- An attached saved game, if possible.
+- If this bug only occurred recently, include the last version without the bug, and the first version with the bug. That way we can fix it quicker by looking at the changes made.
+
+Finally, please report each issue separately; do not file multiple issues on the same ticket. It is difficult to track the status of each individual bug when they aren't on their own tickets.
+
 ## Documentation
 
 ### User documentation
 
-For everything you need to know about using ScummVM, see our [user documentation](https://docs.scummvm.org/).
+For everything you need to know about how to use ScummVM, see our [user documentation](https://docs.scummvm.org/).
 
 ### The ScummVM Wiki
 
