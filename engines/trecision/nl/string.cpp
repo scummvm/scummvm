@@ -289,7 +289,7 @@ void CharacterContinueTalk() {
 			sprintf(sn, "s%04d.wav", CurS);
 	}
 
-	TalkTime = g_vm->_soundMgr->Talk(sn);
+	TalkTime = g_vm->_soundMgr->talkStart(sn);
 	if (!TalkTime)
 		TalkTime = (strlen(SubString[CurSubString]) * 5) / 2 + 50;
 
@@ -312,7 +312,7 @@ void CharacterMute() {
 	g_vm->_lastInv = 0;
 
 	g_vm->redrawString();
-	g_vm->_soundMgr->StopTalk();
+	g_vm->_soundMgr->talkStop();
 
 	if ((g_vm->_curRoom == kRoom12CU) || (g_vm->_curRoom == kRoom13CU))
 		doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, g_vm->_oldRoom, 0, 0, g_vm->_curObj);
@@ -368,7 +368,7 @@ void SomeoneContinueTalk() {
 	else
 		sprintf(sn, "s%04d.wav", CurS);
 
-	TalkTime = g_vm->_soundMgr->Talk(sn);
+	TalkTime = g_vm->_soundMgr->talkStart(sn);
 	if (!TalkTime)
 		TalkTime = (strlen(SubString[CurSubString]) * 5) / 2 + 50;
 
@@ -390,7 +390,7 @@ void someoneMute() {
 	g_vm->_lastInv = 0;
 
 	g_vm->redrawString();
-	g_vm->_soundMgr->StopTalk();
+	g_vm->_soundMgr->talkStop();
 }
 
 /*-------------------------------------------------------------------------*/

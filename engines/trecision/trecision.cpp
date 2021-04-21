@@ -183,7 +183,7 @@ TrecisionEngine::~TrecisionEngine() {
 
 	_dataFile.close();
 	_speechFile.close();
-	_soundMgr->StopSoundSystem();
+	_soundMgr->stopSoundSystem();
 
 	delete _extraRoomObject;
 	delete _animMgr;
