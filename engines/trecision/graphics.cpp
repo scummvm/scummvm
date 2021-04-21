@@ -254,9 +254,9 @@ void GraphicsManager::NlDissolve(int val) {
 		float x = 0.0f;
 		float y = b;
 
-		if ((CenterY - (int)y) > TOP)
-			memset(_vm->_screenBuffer + (TOP)*MAXX, 0, ((CenterY - (int)y) - TOP) * MAXX * 2);
-		if ((AREA + TOP) > (CenterY + (int)y))
+		if (CenterY - (int)y > TOP)
+			memset(_vm->_screenBuffer + TOP*MAXX, 0, (CenterY - (int)y - TOP) * MAXX * 2);
+		if ((AREA + TOP) > CenterY + (int)y)
 			memset(_vm->_screenBuffer + (CenterY + (int)y) * MAXX, 0, (AREA + TOP - (CenterY + (int)y)) * MAXX * 2);
 
 		float d1 = b * b - a * a * b + a * a / 4.0f;
@@ -269,14 +269,16 @@ void GraphicsManager::NlDissolve(int val) {
 			}
 			x += 1.0f;
 
-			if ((CenterX + (int)x) < MAXX)
-				memset(_vm->_screenBuffer + CenterX + (int)x + (CenterY + (int)y) * MAXX, 0, (MAXX - (CenterX + (int)x)) * 2);
-			if ((CenterX + (int)x) < MAXX)
-				memset(_vm->_screenBuffer + CenterX + (int)x + (CenterY - (int)y) * MAXX, 0, (MAXX - (CenterX + (int)x)) * 2);
-			if ((CenterX - (int)x) > 0)
-				memset(_vm->_screenBuffer + (CenterY + (int)y) * MAXX, 0, (CenterX - (int)x) * 2);
-			if ((CenterX - (int)x) > 0)
-				memset(_vm->_screenBuffer + (CenterY - (int)y) * MAXX, 0, (CenterX - (int)x) * 2);
+			int rightX = CenterX + (int)x;
+			if (rightX < MAXX) {
+				memset(_vm->_screenBuffer + rightX + (CenterY + (int)y) * MAXX, 0, (MAXX - rightX) * 2);
+				memset(_vm->_screenBuffer + rightX + (CenterY - (int)y) * MAXX, 0, (MAXX - rightX) * 2);
+			}
+			int leftX = CenterX - (int)x;
+			if (leftX > 0) {
+				memset(_vm->_screenBuffer + (CenterY + (int)y) * MAXX, 0, leftX * 2);
+				memset(_vm->_screenBuffer + (CenterY - (int)y) * MAXX, 0, leftX * 2);
+			}
 		}
 
 		float d2 = b * b * (x + 0.5f) * (x + 0.5f) + a * a * (y - 1.0f) * (y - 1.0f) - a * a * b * b;
@@ -288,14 +290,16 @@ void GraphicsManager::NlDissolve(int val) {
 				d2 += a * a * (-2.0f * y + 3.0f);
 			y -= 1.0f;
 
-			if ((CenterX + (int)x) < MAXX)
-				memset(_vm->_screenBuffer + CenterX + (int)x + (CenterY + (int)y) * MAXX, 0, (MAXX - (CenterX + (int)x)) * 2);
-			if ((CenterX + (int)x) < MAXX)
-				memset(_vm->_screenBuffer + CenterX + (int)x + (CenterY - (int)y) * MAXX, 0, (MAXX - (CenterX + (int)x)) * 2);
-			if ((CenterX - (int)x) > 0)
-				memset(_vm->_screenBuffer + (CenterY + (int)y) * MAXX, 0, (CenterX - (int)x) * 2);
-			if ((CenterX - (int)x) > 0)
-				memset(_vm->_screenBuffer + (CenterY - (int)y) * MAXX, 0, (CenterX - (int)x) * 2);
+			int rightX = CenterX + (int)x;
+			if (rightX < MAXX) {
+				memset(_vm->_screenBuffer + rightX + (CenterY + (int)y) * MAXX, 0, (MAXX - rightX) * 2);
+				memset(_vm->_screenBuffer + rightX + (CenterY - (int)y) * MAXX, 0, (MAXX - rightX) * 2);
+			}
+			int leftX = CenterX - (int)x;
+			if (leftX > 0) {
+				memset(_vm->_screenBuffer + (CenterY + (int)y) * MAXX, 0, leftX * 2);
+				memset(_vm->_screenBuffer + (CenterY - (int)y) * MAXX, 0, leftX * 2);
+			}
 		}
 
 		copyToScreen(0, 0, MAXX, MAXY);
