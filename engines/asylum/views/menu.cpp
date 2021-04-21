@@ -1127,7 +1127,7 @@ void Menu::updateViewMovies() {
 			if (index >= ARRAYSIZE(_movieList))
 				break;
 
-			if (_movieList[index] != -1 ) {
+			if (_movieList[index] != -1) {
 				sprintf((char *)&text, "%d. %s ", index + 1, getText()->get(MAKE_RESOURCE(kResourcePackText, 1359 + _movieList[index])));
 				sprintf((char *)&text2, getText()->get(MAKE_RESOURCE(kResourcePackText, 1356)), moviesCd[_movieList[index]]);
 				strcat((char *)&text, (char *)&text2);
@@ -1152,7 +1152,7 @@ void Menu::updateViewMovies() {
 			if (index >= ARRAYSIZE(_movieList))
 				break;
 
-			if (_movieList[index] != -1 ) {
+			if (_movieList[index] != -1) {
 				sprintf((char *)&text, "%d. %s ", index + 1, getText()->get(MAKE_RESOURCE(kResourcePackText, 1359 + _movieList[index])));
 				sprintf((char *)&text2, getText()->get(MAKE_RESOURCE(kResourcePackText, 1356)), moviesCd[_movieList[index]]);
 				strcat((char *)&text, (char *)&text2);

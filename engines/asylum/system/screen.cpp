@@ -306,9 +306,9 @@ void Screen::setupPalette(byte *buffer, int start, int count) {
 		palette += start;
 
 		for (int32 i = 0; i < count; i++) {
-			palette[0] = (byte )(buffer[0] * 4);
-			palette[1] = (byte )(buffer[1] * 4);
-			palette[2] = (byte )(buffer[2] * 4);
+			palette[0] = (byte)(buffer[0] * 4);
+			palette[1] = (byte)(buffer[1] * 4);
+			palette[2] = (byte)(buffer[2] * 4);
 
 			buffer  += 3;
 			palette += 3;
@@ -713,7 +713,7 @@ void Screen::clearGraphicsInQueue() {
 void Screen::graphicsSelectionSort() {
 	uint32 maxIdx;
 
-	for (uint32 i = 0; i < _queueItems.size(); i++) {
+	for (uint32 i = 0; i < _queueItems.size() - 1; i++) {
 		maxIdx = i;
 
 		for (uint32 j = i + 1; j < _queueItems.size(); j++)
@@ -1215,7 +1215,7 @@ void Screen::copyToBackBufferWithTransparency(byte *buffer, int32 pitch, int16 x
 		for (int32 curX = left; curX < right; curX++) {
 			uint32 offset = (uint32)((mirrored ? right - (curX + 1) : curX) + curY * pitch);
 
-			if (buffer[offset] != 0 )
+			if (buffer[offset] != 0)
 				dest[x + curX + (y + curY) * 640] = buffer[offset];
 		}
 	}

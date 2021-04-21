@@ -211,7 +211,7 @@ void Connector::turn(bool updpos) {
 
 	if (_nextConnector) {
 		if (_isConnected) {
-			if(!(_nextConnectorPosition & _state))
+			if (!(_nextConnectorPosition & _state))
 				disconnect(_nextConnector);
 		} else if (_nextConnectorPosition & _state && _nextConnector->isReadyForConnection()) {
 			connect(_nextConnector);

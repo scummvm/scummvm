@@ -1395,7 +1395,9 @@ IMPLEMENT_OPCODE(PlaySpeechScene2)
 				cmd->param7 = 1;
 				return;
 			}
-		} if (!cmd->param7) {
+		}
+
+		if (!cmd->param7) {
 			_vm->clearGameFlag(kGameFlag219);
 			cmd->param7 = 1;
 			return;
@@ -1639,7 +1641,7 @@ IMPLEMENT_OPCODE(JumpObjectFrame)
 		cmd->param2 = object->getFrameCount() - 1;
 
 	if (cmd->param3) {
-		if(object->getFrameIndex() == (uint32)cmd->param2)
+		if (object->getFrameIndex() == (uint32)cmd->param2)
 			return;
 	} else if (cmd->param4) {
 		if (object->getFrameIndex() < (uint32)cmd->param2)

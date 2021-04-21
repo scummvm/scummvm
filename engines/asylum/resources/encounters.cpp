@@ -924,7 +924,7 @@ bool Encounter::drawPortraits() {
 	}
 
 	// Portrait 1
-	if (_portrait1.transTableNum == 3 )
+	if (_portrait1.transTableNum == 3)
 		getScreen()->draw(_portrait1.resourceId,
 		                  _portrait1.frameIndex,
 		                  _point + Common::Point(5, 5));
