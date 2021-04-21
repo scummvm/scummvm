@@ -73,6 +73,24 @@ static const LureGameDescription gameDescriptions[] = {
 		GF_FLOPPY,
 	},
 
+	{ // VGA version. Assembled 11:13:50 on 08/04/92
+	  // Bugreport #11441
+		{
+			"lure",
+			_s("Missing game code"), // Reason for being unsupported
+			AD_ENTRY1s("disk1.vga", "fbb0fca025579c0eda81d832d1fa5567", 615008),
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_UNSUPPORTED,
+#ifdef USE_TTS
+			GUIO1(GAMEOPTION_TTS_NARRATOR)
+#else
+			GUIO0()
+#endif
+		},
+		GF_FLOPPY,
+	},
+
 	{
 		{
 			"lure",
