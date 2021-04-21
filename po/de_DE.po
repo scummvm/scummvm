@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-04-20 21:56+0000\n"
+"POT-Creation-Date: 2021-04-20 22:57+0000\n"
 "PO-Revision-Date: 2021-04-20 17:59+0000\n"
 "Last-Translator: Lothar Serra Mari <serra@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
@@ -2001,11 +2001,11 @@ msgstr "Fortfahren"
 msgid "Clear value"
 msgstr "Wert löschen"
 
-#: base/main.cpp:619
+#: base/main.cpp:625
 msgid "Error running game:"
 msgstr "Fehler beim Ausführen des Spiels:"
 
-#: base/main.cpp:666
+#: base/main.cpp:672
 msgid "Could not find any engine capable of running the selected game"
 msgstr "Konnte keine Spiel-Engine finden, die dieses Spiel starten kann"
 
@@ -3736,7 +3736,7 @@ msgstr "Keine NTSC-Artefakte für Texte emulieren"
 
 #: engines/agi/detection.cpp:72 engines/cine/detection.cpp:43
 #: engines/drascula/detection.cpp:299 engines/dreamweb/detection.cpp:44
-#: engines/neverhood/detection.cpp:112 engines/sci/detection.cpp:205
+#: engines/neverhood/detection.cpp:124 engines/sci/detection.cpp:205
 #: engines/sherlock/detection.cpp:50 engines/toltecs/detection.cpp:213
 #: engines/ultima/detection.cpp:55 engines/ultima/ultima8/meta_engine.cpp:161
 #: engines/zvision/detection_tables.h:50
@@ -3745,7 +3745,7 @@ msgstr "Originale Spielstand-Menüs"
 
 #: engines/agi/detection.cpp:73 engines/cine/detection.cpp:44
 #: engines/drascula/detection.cpp:300 engines/dreamweb/detection.cpp:45
-#: engines/neverhood/detection.cpp:113 engines/sci/detection.cpp:206
+#: engines/neverhood/detection.cpp:125 engines/sci/detection.cpp:206
 #: engines/sherlock/detection.cpp:51 engines/toltecs/detection.cpp:214
 #: engines/ultima/detection.cpp:56 engines/ultima/ultima8/meta_engine.cpp:162
 #: engines/zvision/detection_tables.h:51
@@ -4045,10 +4045,11 @@ msgstr "Ungültiger Spielstandname"
 #: engines/kyra/detection_tables.h:224 engines/kyra/detection_tables.h:237
 #: engines/kyra/detection_tables.h:250 engines/kyra/detection_tables.h:606
 #: engines/kyra/detection_tables.h:619 engines/kyra/detection_tables.h:1660
-#: engines/kyra/detection_tables.h:1832 engines/queen/detection.cpp:168
-#: engines/saga/detection_tables.h:187 engines/saga/detection_tables.h:937
-#: engines/saga/detection_tables.h:996 engines/sci/detection_tables.h:4851
-#: engines/sci/detection_tables.h:4859 engines/teenagent/detection.cpp:102
+#: engines/kyra/detection_tables.h:1832 engines/neverhood/detection.cpp:110
+#: engines/queen/detection.cpp:168 engines/saga/detection_tables.h:187
+#: engines/saga/detection_tables.h:937 engines/saga/detection_tables.h:996
+#: engines/sci/detection_tables.h:4851 engines/sci/detection_tables.h:4859
+#: engines/teenagent/detection.cpp:102
 msgid "Missing game code"
 msgstr "Fehlender Spiel-Code"
 
@@ -5135,7 +5136,7 @@ msgstr ""
 "Verwende Sprachausgabe, um die Beschreibungen vorzulesen (wenn TTS verfügbar "
 "ist)"
 
-#: engines/made/detection_tables.h:387 engines/made/detection_tables.h:404
+#: engines/made/detection_tables.h:405 engines/made/detection_tables.h:422
 msgid "The game is using unsupported engine"
 msgstr "Dieses Spiel verwendet eine nicht unterstützte Engine"
 
@@ -5619,21 +5620,21 @@ msgstr "Sekunden"
 msgid "Invalid Scene ID!"
 msgstr "Ungültige Szenen-ID!"
 
-#: engines/neverhood/detection.cpp:119
+#: engines/neverhood/detection.cpp:131
 msgid "Skip the Hall of Records storyboard scenes"
 msgstr "Szenenbuch-Sequenz in der Chronikhalle überspringen"
 
-#: engines/neverhood/detection.cpp:120
+#: engines/neverhood/detection.cpp:132
 msgid "Allows the player to skip past the Hall of Records storyboard scenes"
 msgstr ""
 "Ermöglicht dem Spieler, die Szenenbuch-Sequenz in der Chronikhalle zu "
 "überspringen"
 
-#: engines/neverhood/detection.cpp:126
+#: engines/neverhood/detection.cpp:138
 msgid "Scale the making of videos to full screen"
 msgstr "Making-Of-Videos auf Vollbild skalieren"
 
-#: engines/neverhood/detection.cpp:127
+#: engines/neverhood/detection.cpp:139
 msgid "Scale the making of videos, so that they use the whole screen"
 msgstr ""
 "Skaliert die Making-Of-Videos, sodass sie den gesamten Bildschirm ausfüllen"
