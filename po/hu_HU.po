@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-04-20 22:57+0000\n"
-"PO-Revision-Date: 2021-04-20 16:57+0000\n"
+"PO-Revision-Date: 2021-04-21 08:58+0000\n"
 "Last-Translator: George Kormendi <grubycza@hotmail.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/hu/>\n"
@@ -6037,13 +6037,15 @@ msgstr "Semlegesebb színpaletta használata, amely utánozza a NES Classic-ot"
 
 #: engines/scumm/detection.cpp:172
 msgid "Trim FM-TOWNS games to 200 pixels height"
-msgstr ""
+msgstr "FM-TOWNS játékok vágása 200 pixel magasságig"
 
 #: engines/scumm/detection.cpp:173
 msgid ""
 "Cut the extra 40 pixels at the bottom of the screen, to make it standard 200 "
 "pixels height, allowing using 'aspect ratio correction'"
 msgstr ""
+"Levágja az extra 40 képpontot a képernyő alján, hogy 200 pixel magasságú "
+"legyen, lehetővé téve a 'képarány korrekció' használatát"
 
 #: engines/scumm/dialogs.cpp:165
 #, c-format
@@ -6714,6 +6716,10 @@ msgid ""
 "Aspect ratio correction can be acheived by trimming the resolution to "
 "320x200, under 'engine' tab."
 msgstr ""
+"Engedélyezted a 'képarány korrekciót'. Az FM-TOWNS természetes felbontása "
+"azonban 320x240, ami nem teszi lehetővé a képarány korrekcióját.\n"
+"A képarány korrekciója úgy érhető el, hogy a 'motor' fül alatt a felbontást "
+"320x200-ra vágja."
 
 #: engines/scumm/scumm.cpp:1953
 #, c-format
