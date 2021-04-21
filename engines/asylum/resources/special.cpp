@@ -1763,7 +1763,7 @@ void Special::playSoundChapter8(Object *object, ActorIndex actorIndex) {
 
 		case 6:
 			if (!getSound()->isPlaying(getWorld()->soundResourceIds[14]))
-				playSoundPanning(getWorld()->soundResourceIds[7], 15, actorIndex); // BUG: Are we really supposed to use that sound (7 instead of 14)
+				playSoundPanning(getWorld()->soundResourceIds[14], 15, actorIndex);
 			break;
 		}
 	}
