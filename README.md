@@ -12,6 +12,26 @@ For more information, compatibility lists, details on donating, the
 latest release, progress reports and more, please visit the ScummVM [home
 page](https://www.scummvm.org/).
 
+## Quickstart
+
+For the impatient among you, here is how to get ScummVM running in five simple steps.
+
+1. Download ScummVM from [our website](https://www.scummvm.org/downloads/) and install it.
+
+2. Create a directory on your hard drive and copy the game datafiles from the original media to this directory. Repeat this for every game you want to play.
+
+3. Start ScummVM, choose 'Add game', select the directory containing the game datafiles (do not try to select the datafiles themselves!) and press Choose.
+
+4. The Edit Game dialog opens to allow configuration of various settings for the game. These can be reconfigured at any time, but for now everything should be OK at the default settings.
+
+5. Select the game you want to play in the list, and press Start. To play a game next time, skip to step 5, unless you want to add more games.
+
+> 
+> Hint: 
+> 
+> To add multiple games in one go, press and hold the shift key, then click 'Add game' -- the label will change to 'Mass Add' and if you press it, you are again asked to select a directory, only this time ScummVM will search through all subdirectories for supported games.
+
+
 ## Documentation
 
 ### User documentation
