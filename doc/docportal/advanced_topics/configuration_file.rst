@@ -159,7 +159,7 @@ There are many recognized configuration keys. In the table below, each key is ei
 		cdrom,integer,0, "Sets which CD drive to play CD audio from (as a numeric index). If a negative number is set, ScummVM does not access the CD drive."
 		":ref:`color <color>`",boolean,,
 		":ref:`commandpromptwindow <cmd>`",boolean,false,
-		confirm_exit,boolean,false, ScummVM requests confirmation before quitting (SDL backend only)
+		":ref:`confirm_exit <guiconfirm>`",boolean,false, 
 		console,boolean,true, Enables the console window for Win32/Symbian32.
 		controller_map_db,string,"``gamecontrollerdb.txt`` is loaded from the specified extrapath", "Specifies the custom controller mapping file to load to complete the default database (SDL backend only)."
 		copy_protection,boolean,false, Enables copy protection
@@ -236,6 +236,7 @@ There are many recognized configuration keys. In the table below, each key is ei
 		":ref:`gui_browser_native <guibrowser>`", boolean, true
 		gui_browser_show_hidden,boolean,false, Shows hidden files/folders in the ScummVM file browser.
 		gui_list_max_scan_entries,integer,-1, "Specifies the threshold for scanning directories in the Launcher. If the number of game entires exceeds the specified number, then scanning is skipped."
+		":ref:`gui_return_to_launcher_at_exit <guireturn>`",boolean,false,
 		gui_saveload_chooser,string,grid,"- list
 	- grid"
 		gui_saveload_last_pos,string,0,
