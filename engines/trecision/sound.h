@@ -36,7 +36,8 @@ namespace Trecision {
 #define SFADOUT 2
 
 #define SAMPLEVOICES 6
-#define NUMSAMPLES MAXSAMPLE
+#define MAXSAMPLE 	 145            // Maximum number of samples in the game
+#define NUMSAMPLES   MAXSAMPLE
 
 #define VOLUME(a)	( (a * 255) / 127 )
 #define TIME(a)		( (a * 3) / 50 )

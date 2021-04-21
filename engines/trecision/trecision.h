@@ -41,7 +41,11 @@ class LogicManager;
 class SoundManager;
 
 #define SAVE_VERSION_ORIGINAL 102
-#define SAVE_VERSION_SCUMMVM 103
+#define SAVE_VERSION_SCUMMVM  103
+
+#define MAXROOMS         	  100            // Game rooms
+#define MAXOBJ          	  1400           // Game objects
+#define MAXINVENTORY    	  150            // Inventory Items
 
 enum TrecisionMessageIds {
 	kMessageSavePosition = 9,

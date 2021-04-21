@@ -26,13 +26,7 @@
 /******************************************************************************
 Game Structure
 ******************************************************************************/
-#define MAXROOMS         		100            // Game rooms
-#define MAXOBJ          		1400           // Game objects
-#define MAXANIM         		750            // Animations
 #define MAXICON          		82             // Inventory icons
-#define MAXINVENTORY    		150            // Inventory Items
-#define MAXSAMPLE 	 			145            // Maximum number of samples in the game
-#define MAXATFDO				30
 
 #define MAXOBJINROOM     		128            // Objects per room
 #define MAXSOUNDSINROOM  		15             // Sounds per room
@@ -125,12 +119,11 @@ Management of "Use with"
 /******************************************************************************
 Management of cards for Regen
 ******************************************************************************/
+#define TYPO_NONE 0
 //#define TYPO_ANI 1
 #define TYPO_BMP 2
 
 #define MAXMESSAGE 128
-
-#define DEFAULTACTIONS 19               // Number of default actions
 
 /* MACROS */
 #define BETWEEN(a,x,b) ((x>=a) && (x<=b))
