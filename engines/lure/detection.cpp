@@ -196,6 +196,21 @@ static const LureGameDescription gameDescriptions[] = {
 		GF_FLOPPY,
 	},
 
+	// Unsupported demo
+	// Bugreport #11501
+	{
+		{
+			"lure",
+			_s("Missing game code"), // Reason for being unsupported
+			AD_ENTRY1s("disk1.vga", "7a6aa0e958450c33b70b664d9f841ad1", 621984),
+			Common::RU_RUS,
+			Common::kPlatformDOS,
+			ADGF_DEMO | ADGF_UNSUPPORTED,
+			GUIO0()
+		},
+		GF_FLOPPY,
+	},
+
 
 	{ AD_TABLE_END_MARKER, 0 }
 };
