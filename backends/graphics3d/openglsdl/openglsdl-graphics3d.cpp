@@ -440,6 +440,12 @@ bool OpenGLSdlGraphics3dManager::createOrUpdateGLContext(uint gameWidth, uint ga
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 		uint32 sdlflags = SDL_WINDOW_OPENGL;
 
+#ifdef NINTENDO_SWITCH
+		// Switch quirk: Switch seems to need this flag, otherwise the screen
+		// is zoomed when switching from Normal graphics mode to OpenGL
+		sdlflags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
+#endif
+
 		if (renderToFramebuffer || engineSupportsArbitraryResolutions) {
 			sdlflags |= SDL_WINDOW_RESIZABLE;
 		}
