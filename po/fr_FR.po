@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-04-20 22:57+0000\n"
-"PO-Revision-Date: 2021-04-20 16:57+0000\n"
+"PO-Revision-Date: 2021-04-21 08:58+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
@@ -6124,13 +6124,16 @@ msgstr ""
 
 #: engines/scumm/detection.cpp:172
 msgid "Trim FM-TOWNS games to 200 pixels height"
-msgstr ""
+msgstr "Rogner la hauteur des jeux FM-TOWNS à 200 pixels"
 
 #: engines/scumm/detection.cpp:173
 msgid ""
 "Cut the extra 40 pixels at the bottom of the screen, to make it standard 200 "
 "pixels height, allowing using 'aspect ratio correction'"
 msgstr ""
+"Coupe les 40 pixels supplémentaires en bas de l'écran, pour obtenir une "
+"hauteur standard de 200 pixels, ce qui permet d'utiliser la \"correction du "
+"rapport d'aspect\""
 
 #: engines/scumm/dialogs.cpp:165
 #, c-format
@@ -6802,6 +6805,11 @@ msgid ""
 "Aspect ratio correction can be acheived by trimming the resolution to "
 "320x200, under 'engine' tab."
 msgstr ""
+"Vous avez activé la fonction \"correction du rapport d'aspect\". Cependant, "
+"la résolution naturelle du FM-TOWNS est de 320x240, ce qui ne permet pas de "
+"corriger le rapport d'aspect.\n"
+"La correction du rapport d'aspect peut être obtenue en rognant la résolution "
+"à 320x200, sous l'onglet \"moteur\"."
 
 #: engines/scumm/scumm.cpp:1953
 #, c-format
