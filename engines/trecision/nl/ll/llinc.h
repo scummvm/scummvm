@@ -105,8 +105,6 @@ extern uint8  TextStatus;
 
 int Compare(const void *p1, const void *p2);
 void RedrawRoom();
-bool DataSave();
-bool DataLoad();
 bool QuitGame();
 void DemoOver();
 void openSys();

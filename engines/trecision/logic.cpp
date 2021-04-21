@@ -4246,7 +4246,7 @@ void LogicManager::DoSys(uint16 curObj) {
 		if (_vm->_oldRoom == kRoomControlPanel)
 			break;
 		_vm->_curRoom = _vm->_obj[o00EXIT]._goRoom;
-		if (!DataSave()) {
+		if (!g_vm->DataSave()) {
 			_vm->showInventoryName(NO_OBJECTS, false);
 			doEvent(MC_INVENTORY, ME_SHOWICONNAME, MP_DEFAULT, _vm->_mouseX, _vm->_mouseY, 0, 0);
 			doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, _vm->_obj[o00EXIT]._goRoom, 0, 0, 0);
@@ -4255,7 +4255,7 @@ void LogicManager::DoSys(uint16 curObj) {
 		break;
 
 	case o00LOAD:
-		if (!DataLoad()) {
+		if (!g_vm->DataLoad()) {
 			_vm->showInventoryName(NO_OBJECTS, false);
 			doEvent(MC_INVENTORY, ME_SHOWICONNAME, MP_DEFAULT, _vm->_mouseX, _vm->_mouseY, 0, 0);
 		}
