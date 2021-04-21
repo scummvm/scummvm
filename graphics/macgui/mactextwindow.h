@@ -64,6 +64,12 @@ public:
 	const SelectedText *getSelectedText() { return &_selectedText; }
 	int getTextHeight() { return _mactext->getTextHeight(); }
 
+	/**
+	 * if we want to draw the text which color is not black, then we need to set _textColorRGB
+	 * @param rgb text color you want to draw
+	 */
+	void setTextColorRGB (uint32 rgb) { _textColorRGB = rgb; }
+
 private:
 	bool isCutAllowed();
 
@@ -108,6 +114,7 @@ private:
 	MacMenu *_menu;
 
 	int _bgcolor;
+	int _textColorRGB;
 };
 
 } // End of namespace Graphics
