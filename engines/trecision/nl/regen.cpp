@@ -31,6 +31,7 @@
 #include "trecision/nl/ll/llinc.h"
 #include "trecision/trecision.h"
 #include "trecision/graphics.h"
+#include "trecision/sound.h"
 #include "trecision/video.h"
 
 namespace Trecision {
@@ -168,7 +169,7 @@ void PaintScreen(uint8 flag) {
 		TextStatus = TEXT_DRAW;                 // Activate text update
 	}
 
-	SoundPasso((g_vm->_actor->_lim[1] + g_vm->_actor->_lim[0]) / 2, (g_vm->_actor->_lim[5] + g_vm->_actor->_lim[4]) / 2, g_vm->_actor->_curAction, g_vm->_actor->_curFrame, g_vm->_room[g_vm->_curRoom]._sounds);
+	g_vm->_soundMgr->SoundPasso((g_vm->_actor->_lim[1] + g_vm->_actor->_lim[0]) / 2, (g_vm->_actor->_lim[5] + g_vm->_actor->_lim[4]) / 2, g_vm->_actor->_curAction, g_vm->_actor->_curFrame, g_vm->_room[g_vm->_curRoom]._sounds);
 
 	if (!flag && !g_vm->_flagDialogActive) {
 		g_vm->_graphicsMgr->copyToScreen(0, 0, MAXX, MAXY);

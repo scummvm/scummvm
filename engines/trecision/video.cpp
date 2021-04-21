@@ -34,6 +34,8 @@
 #include "trecision/trecision.h"
 #include "trecision/video.h"
 
+#include "sound.h"
+
 namespace Trecision {
 
 bool NightlongSmackerDecoder::loadStream(Common::SeekableReadStream *stream) {
@@ -407,7 +409,7 @@ void AnimManager::stopFullMotion() {
 			RedrawRoom();
 
 		if (_curDialog == dF582)
-			SoundFadOut();
+			_vm->_soundMgr->SoundFadOut();
 	}
 }
 
@@ -422,7 +424,7 @@ void AnimManager::refreshAnim(int box) {
 }
 
 void AnimManager::refreshAllAnimations() {
-	soundtimefunct();
+	_vm->_soundMgr->soundtimefunct();
 }
 
 void AnimManager::refreshSmkAnim(int animation) {

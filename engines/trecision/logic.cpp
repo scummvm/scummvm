@@ -30,6 +30,8 @@
 #include "trecision/nl/struct.h"
 #include "trecision/logic.h"
 
+
+#include "sound.h"
 #include "trecision/graphics.h"
 #include "trecision/trecision.h"
 #include "trecision/video.h"
@@ -581,35 +583,35 @@ void LogicManager::endChangeRoom() {
 	// FullMotion
 	if ((_vm->_curRoom == kRoom17) && (_vm->_oldRoom == kRoom16)) {
 		PlayDialog(dF171);
-		WaitSoundFadEnd();
+		_vm->_soundMgr->WaitSoundFadEnd();
 	} else if ((_vm->_curRoom == kRoom16) && (_vm->_oldRoom == kRoom17)) {
 		PlayDialog(dF161);
-		WaitSoundFadEnd();
+		_vm->_soundMgr->WaitSoundFadEnd();
 		_vm->removeIcon(iFOGLIO14);
 	} else if ((_vm->_curRoom == kRoom21) && (_vm->_oldRoom == kRoom1C)) {
 		PlayDialog(dF1C1);
-		WaitSoundFadEnd();
+		_vm->_soundMgr->WaitSoundFadEnd();
 	} else if ((_vm->_curRoom == kRoom23B) && (_vm->_oldRoom == kRoom23A)) {
 		PlayDialog(dF231);
-		WaitSoundFadEnd();
+		_vm->_soundMgr->WaitSoundFadEnd();
 		_vm->removeIcon(iMAPPA17);
 	} else if ((_vm->_curRoom == kRoom29L) && (_vm->_oldRoom == kRoom29)) {
 		PlayDialog(dF291);
-		WaitSoundFadEnd();
+		_vm->_soundMgr->WaitSoundFadEnd();
 	} else if ((_vm->_curRoom == kRoom2GV) && (_vm->_oldRoom == kRoom2G)) {
 		PlayDialog(dF2G2);
-		WaitSoundFadEnd();
+		_vm->_soundMgr->WaitSoundFadEnd();
 	} else if ((_vm->_curRoom == kRoom31) && (_vm->_oldRoom == kRoom32) && (_vm->_room[kRoom32]._flag & kObjFlagExtra)) {
 		PlayDialog(dF321);
 		_vm->_flagShowCharacter = false;
-		WaitSoundFadEnd();
+		_vm->_soundMgr->WaitSoundFadEnd();
 		_vm->_room[kRoom32]._flag &= ~kObjFlagExtra;
 	} else if ((_vm->_curRoom == kRoom19) && !(_vm->_room[kRoom19]._flag & kObjFlagDone)) {
 		_vm->playScript(s19EVA);
 		_vm->_flagNoPaintScreen = false;
 		_vm->clearText();
 		_vm->redrawString();
-		WaitSoundFadEnd();
+		_vm->_soundMgr->WaitSoundFadEnd();
 	}
 	// CHECKME: This check is identical to the 3rd one, thus it's always false
 	else if ((_vm->_curRoom == kRoom21) && (/*!( _room[_vm->_curRoom]._flag & OBJFLAG_DONE ) || */ (_vm->_oldRoom == kRoom1C))) {
@@ -620,28 +622,28 @@ void LogicManager::endChangeRoom() {
 		_vm->redrawString();
 	} else if ((_vm->_curRoom == kRoom46) && (_vm->_oldRoom == kRoom43) && !(_vm->_inventoryObj[iDISLOCATORE]._flag & kObjFlagExtra)) {
 		PlayDialog(dF431);
-		WaitSoundFadEnd();
+		_vm->_soundMgr->WaitSoundFadEnd();
 	} else if ((_vm->_curRoom == kRoom45S) && (_vm->_oldRoom == kRoom45) && !(_vm->_inventoryObj[iDISLOCATORE]._flag & kObjFlagExtra)) {
 		PlayDialog(dF451);
-		WaitSoundFadEnd();
+		_vm->_soundMgr->WaitSoundFadEnd();
 	} else if ((_vm->_curRoom == kRoom4A) && (_vm->_oldRoom == kRoom49) && !(_vm->_inventoryObj[iDISLOCATORE]._flag & kObjFlagExtra)) {
 		PlayDialog(dF491);
-		WaitSoundFadEnd();
+		_vm->_soundMgr->WaitSoundFadEnd();
 	} else if ((_vm->_curRoom == kRoom4A) && (_vm->_oldRoom == kRoom41D) && (_vm->_inventoryObj[iDISLOCATORE]._flag & kObjFlagExtra) && (_vm->_obj[ocHELLEN4A]._mode & OBJMODE_OBJSTATUS)) {
-		WaitSoundFadEnd();
+		_vm->_soundMgr->WaitSoundFadEnd();
 		PlayDialog(dC4A1);
 	} else if ((_vm->_curRoom == kRoom4P) && (_vm->_oldRoom == kRoom4O) && !(_vm->_room[kRoom4P]._flag & kObjFlagDone)) {
 		PlayDialog(dF4PI);
 		_vm->_flagShowCharacter = false;
-		WaitSoundFadEnd();
+		_vm->_soundMgr->WaitSoundFadEnd();
 	} else if ((_vm->_curRoom == kRoom51) && (_vm->_oldRoom == kRoom4CT)) {
 		PlayDialog(dF4C1);
 		_vm->_flagShowCharacter = false;
-		WaitSoundFadEnd();
+		_vm->_soundMgr->WaitSoundFadEnd();
 	} else if ((_vm->_curRoom == kRoom1A) && (_vm->_oldRoom == kRoom18)) {
 		if (!(_vm->_room[kRoom1A]._flag & kObjFlagDone)) {
 			PlayDialog(dF1A1);
-			WaitSoundFadEnd();
+			_vm->_soundMgr->WaitSoundFadEnd();
 			_vm->_obj[oTOPO1C]._flag |= kObjFlagTake;
 			_vm->_obj[oTOPO1C]._anim = a1C3RACCOGLIETOPO;
 		} else {
@@ -1373,7 +1375,7 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a213, 0, 0, _vm->_useWith[WITH]);
 			*printSentence = false;
 		} else if (_vm->_useWith[WITH] == oCOPERCHIOC31) {
-			NLPlaySound(wCOVER31);
+			_vm->_soundMgr->NLPlaySound(wCOVER31);
 			_vm->_obj[oCOPERCHIOC31]._mode &= ~OBJMODE_OBJSTATUS;
 			_vm->_obj[oCOPERCHIOA31]._mode |= OBJMODE_OBJSTATUS;
 			RegenRoom();
@@ -1389,7 +1391,7 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 				_vm->_obj[oPANNELLOM31]._action = 716;
 				_vm->_obj[oPANNELLOM31]._flag &= ~kObjFlagRoomOut;
 			}
-			NLPlaySound(wCOVER31);
+			_vm->_soundMgr->NLPlaySound(wCOVER31);
 			RegenRoom();
 			*printSentence = false;
 			doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, kRoom31, a3118CHIUDEPANNELLO, 3, _vm->_curObj);
@@ -2912,7 +2914,7 @@ bool LogicManager::mouseOperate(uint16 curObj) {
 
 	case oCOPERCHIOA31:
 		if (_vm->_obj[oFILOTC31]._mode & OBJMODE_OBJSTATUS) {
-			NLPlaySound(wCOVER31);
+			_vm->_soundMgr->NLPlaySound(wCOVER31);
 			_vm->_obj[oPANNELLOM31]._mode &= ~OBJMODE_OBJSTATUS;
 			_vm->_obj[oPANNELLOMA31]._mode |= OBJMODE_OBJSTATUS;
 			_vm->_obj[oPANNELLOM31]._anim = 0;
@@ -2976,7 +2978,7 @@ bool LogicManager::mouseOperate(uint16 curObj) {
 		_vm->_obj[curObj]._mode &= ~OBJMODE_OBJSTATUS;
 		_vm->_obj[curObj + 7]._mode |= OBJMODE_OBJSTATUS;
 		_comb35[_count35++] = curObj;
-		NLPlaySound(wPAD5);
+		_vm->_soundMgr->NLPlaySound(wPAD5);
 		if (_count35 == 7) {
 			if (((_comb35[0] == oPULSANTEF35) && (_comb35[1] == oPULSANTED35) && (_comb35[2] == oPULSANTEC35) &&
 				 (_comb35[3] == oPULSANTEG35) && (_comb35[4] == oPULSANTEB35) && (_comb35[5] == oPULSANTEA35) &&
@@ -3008,7 +3010,7 @@ bool LogicManager::mouseOperate(uint16 curObj) {
 				_vm->_obj[oSCANNERMA36]._mode &= ~OBJMODE_OBJSTATUS;
 				_vm->_obj[oSCANNERMS36]._mode |= OBJMODE_OBJSTATUS;
 
-				NLPlaySound(wWIN35);
+				_vm->_soundMgr->NLPlaySound(wWIN35);
 			} else {
 				_vm->_obj[oPULSANTEA35]._mode |= OBJMODE_OBJSTATUS;
 				_vm->_obj[oPULSANTEB35]._mode |= OBJMODE_OBJSTATUS;
@@ -3082,7 +3084,7 @@ bool LogicManager::mouseOperate(uint16 curObj) {
 		_comb49[2] = _comb49[1];
 		_comb49[1] = _comb49[0];
 		_comb49[0] = curObj;
-		NLPlaySound(wASTA49);
+		_vm->_soundMgr->NLPlaySound(wASTA49);
 		RegenRoom();
 		if ((_comb49[3] == oFORO749) && (_comb49[2] == oFORO849) && (_comb49[1] == oFORO449) && (_comb49[0] == oFORO549)) {
 			PaintScreen(0);
@@ -3138,7 +3140,7 @@ bool LogicManager::mouseOperate(uint16 curObj) {
 				break;
 			}
 		}
-		NLPlaySound(wPAD1 + curObj - oNUMERO14C);
+		_vm->_soundMgr->NLPlaySound(wPAD1 + curObj - oNUMERO14C);
 		RegenRoom();
 		if (a < 5)
 			break;
@@ -3309,7 +3311,7 @@ bool LogicManager::mouseOperate(uint16 curObj) {
 		_comb58[1] = _comb58[0];
 		_comb58[0] = curObj;
 
-		NLPlaySound(wPAD1 + curObj - oTASTO158);
+		_vm->_soundMgr->NLPlaySound(wPAD1 + curObj - oTASTO158);
 		_vm->_obj[oLED158 + _count58]._mode |= OBJMODE_OBJSTATUS;
 		_count58++;
 		RegenRoom();
@@ -3324,7 +3326,7 @@ bool LogicManager::mouseOperate(uint16 curObj) {
 
 		if ((_comb58[0] == oTASTO058) && (_comb58[1] == oTASTO258) && (_comb58[2] == oTASTO358) &&
 			(_comb58[3] == oTASTO858) && (_comb58[4] == oTASTO558) && (_comb58[5] == oTASTO958)) {
-			SoundFadOut();
+			_vm->_soundMgr->SoundFadOut();
 			PlayDialog(dF582);
 		} else
 			doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, kRoom58, 0, 2, curObj);
@@ -3955,7 +3957,7 @@ void LogicManager::doMouseLeftRight() {
 			if (_vm->_curMessage->_event == ME_MRIGHT)
 				_wheelPos[_wheel] = (_wheelPos[_wheel] < 1) ? 11 : _wheelPos[_wheel] - 1;
 
-			NLPlaySound(wWHEELS2C);
+			_vm->_soundMgr->NLPlaySound(wWHEELS2C);
 			_vm->_obj[_vm->_curObj]._mode &= ~OBJMODE_OBJSTATUS;
 			_vm->_obj[_wheelPos[_wheel] * 3 + _wheel + oWHEEL1A2C]._mode |= OBJMODE_OBJSTATUS;
 			RegenRoom();

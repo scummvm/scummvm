@@ -208,12 +208,5 @@ struct StackText {
 	void doText();
 };
 
-struct SSound {
-	char  _name[14];
-	uint8 _volume;
-	uint8 _flag;
-	int8  _panning;
-};
-
 } // End of namespace Trecision
 #endif

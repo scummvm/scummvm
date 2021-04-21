@@ -30,6 +30,8 @@
 #include "trecision/console.h"
 #include "trecision/graphics.h"
 #include "trecision/video.h"
+#include "trecision/logic.h"
+#include "trecision/sound.h"
 
 #include "engines/util.h"
 #include "common/scummsys.h"
@@ -40,7 +42,6 @@
 #include "common/config-manager.h"
 #include "common/file.h"
 #include "common/fs.h"
-#include "logic.h"
 #include "graphics/cursorman.h"
 
 namespace Common {
@@ -121,6 +122,7 @@ TrecisionEngine::TrecisionEngine(OSystem *syst) : Engine(syst) {
 	_animMgr = nullptr;
 	_graphicsMgr = nullptr;
 	_logicMgr = nullptr;
+	_soundMgr = nullptr;
 
 	for (int i = 0; i < 50; ++i) {
 		_limits[i].left = _limits[i].top = _limits[i].right = _limits[i].bottom = 0;
@@ -181,12 +183,14 @@ TrecisionEngine::~TrecisionEngine() {
 
 	_dataFile.close();
 	_speechFile.close();
-	StopSoundSystem();
+	_soundMgr->StopSoundSystem();
 
 	delete _extraRoomObject;
 	delete _animMgr;
 	delete _graphicsMgr;
 	delete _logicMgr;
+	delete _soundMgr;
+	
 	delete[] _font;
 	delete[] _arrows;
 	delete[] _textureArea;
@@ -212,6 +216,7 @@ Common::Error TrecisionEngine::run() {
 		return Common::kUnsupportedColorMode;
 	_animMgr = new AnimManager(this);
 	_logicMgr = new LogicManager(this);
+	_soundMgr = new SoundManager(this);
 	setDebugger(new Console(this));
 	
 	initMain();
@@ -414,10 +419,7 @@ bool TrecisionEngine::syncGameStream(Common::Serializer &ser) {
 		}
 	}
 
-	for (int a = 0; a < MAXSAMPLE; a++) {
-		ser.syncAsByte(GSample[a]._volume);
-		ser.syncAsByte(GSample[a]._flag);
-	}
+	_soundMgr->syncGameStream(ser);
 
 	for (int a = 0; a < MAXCHOICE; a++) {
 		DialogChoice *cur = &_choice[a];
@@ -573,12 +575,7 @@ void TrecisionEngine::LoadAll() {
 		_inventoryObj[i]._anim = dataNl.readUint16LE();
 	}
 
-	for (int i = 0; i < MAXSAMPLE; ++i) {
-		dataNl.read(&GSample[i]._name, ARRAYSIZE(GSample[i]._name));
-		GSample[i]._volume = dataNl.readByte();
-		GSample[i]._flag = dataNl.readByte();
-		GSample[i]._panning = dataNl.readSByte();
-	}
+	_soundMgr->loadSamples(&dataNl);
 
 	for (int i = 0; i < MAXSCRIPTFRAME; ++i) {
 		_scriptFrame[i]._class = dataNl.readByte();

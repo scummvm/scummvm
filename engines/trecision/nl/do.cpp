@@ -31,6 +31,7 @@
 #include "trecision/trecision.h"
 #include "trecision/video.h"
 #include "trecision/logic.h"
+#include "trecision/sound.h"
 
 namespace Trecision {
 
@@ -312,11 +313,11 @@ void doScript() {
 		break;
 
 	case ME_PLAYSOUND:
-		NLPlaySound(index);
+		g_vm->_soundMgr->NLPlaySound(index);
 		break;
 
 	case ME_STOPSOUND:
-		NLStopSound(index);
+		g_vm->_soundMgr->NLStopSound(index);
 		break;
 
 	case ME_REGENROOM:

@@ -115,20 +115,9 @@ void TendIn();
 void ReadObj(Common::SeekableReadStream *stream);
 void ReadExtraObj2C();
 void ReadExtraObj41D();
-void ReadSounds();
 void RegenRoom();
 void PaintRegenRoom();
-void StopSoundSystem();
-void LoadAudioWav(int num, Common::String fileName);
-void NLPlaySound(int num);
-void NLStopSound(int num);
-void SoundFadOut();
 void SoundFadIn(int num);
-void SoundStopAll();
-void WaitSoundFadEnd();
-void SoundPasso(int midx, int midz, int act, int frame, uint16 *list);
-int32 Talk(const char *name);
-void StopTalk();
 void resetZBuffer(int x1, int y1, int x2, int y2);
 
 } // End of namespace Trecision

@@ -7,6 +7,7 @@ MODULE_OBJS = \
 	inventory.o \
 	logic.o \
 	metaengine.o \
+	sound.o \
 	script.o \
 	trecision.o \
 	utils.o \
@@ -27,8 +28,7 @@ MODULE_OBJS = \
 	nl/ll/lldec.o \
 	nl/ll/llmouse.o \
 	nl/ll/llscreen.o \
-	nl/ll/llvideo.o \
-	nl/sys/sound.o
+	nl/ll/llvideo.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_TRECISION), DYNAMIC_PLUGIN)
