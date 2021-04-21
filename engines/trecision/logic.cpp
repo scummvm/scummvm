@@ -3878,7 +3878,7 @@ void LogicManager::doMouseLeftRight() {
 		}
 	} else if (_vm->_curRoom == kRoomControlPanel) {
 		// Sys
-		CheckMask(_vm->_curMessage->_u16Param1, _vm->_curMessage->_u16Param2);
+		_vm->CheckMask(_vm->_curMessage->_u16Param1, _vm->_curMessage->_u16Param2);
 		DoSys(_vm->_curObj);
 		return;
 	}
@@ -3910,7 +3910,7 @@ void LogicManager::doMouseLeftRight() {
 
 	// Special management for 2C wheels
 	if ((_vm->_obj[oBASEWHEELS2C]._mode & OBJMODE_OBJSTATUS) && (_vm->_curRoom == kRoom2C)) {
-		if (CheckMask(_vm->_curMessage->_u16Param1, _vm->_curMessage->_u16Param2)) {
+		if (_vm->CheckMask(_vm->_curMessage->_u16Param1, _vm->_curMessage->_u16Param2)) {
 			if ((_vm->_curObj >= oWHEEL1A2C) && (_vm->_curObj <= oWHEEL12C2C))
 				_wheel = (_vm->_curObj - oWHEEL1A2C) % 3;
 			else if (_vm->_curObj == oPULSANTE2C) {
@@ -3971,7 +3971,7 @@ void LogicManager::doMouseLeftRight() {
 		int pmousex = _vm->_curMessage->_u16Param1;
 		int pmousey = _vm->_curMessage->_u16Param2;
 		if (!_vm->_logicMgr->mouseClick(_vm->_curObj)) {
-			if (CheckMask(_vm->_curMessage->_u16Param1, _vm->_curMessage->_u16Param2)) {
+			if (_vm->CheckMask(_vm->_curMessage->_u16Param1, _vm->_curMessage->_u16Param2)) {
 				if ((_vm->_obj[_vm->_curObj]._lim.right - _vm->_obj[_vm->_curObj]._lim.left) < MAXX / 7) {
 					pmousex = (_vm->_obj[_vm->_curObj]._lim.left + _vm->_obj[_vm->_curObj]._lim.right) / 2;
 					pmousey = ((_vm->_obj[_vm->_curObj]._lim.top + _vm->_obj[_vm->_curObj]._lim.bottom) / 2) + TOP;
@@ -3982,7 +3982,7 @@ void LogicManager::doMouseLeftRight() {
 		}
 		_vm->_characterQueue.initQueue();
 
-		if (CheckMask(_vm->_curMessage->_u16Param1, _vm->_curMessage->_u16Param2) && !_vm->_flagDialogActive) {
+		if (_vm->CheckMask(_vm->_curMessage->_u16Param1, _vm->_curMessage->_u16Param2) && !_vm->_flagDialogActive) {
 			if ((_vm->_curRoom == kRoom1D) && !(_vm->_room[kRoom1D]._flag & kObjFlagExtra) && (_vm->_curObj != oSCALA1D))
 				_vm->_curObj = oDONNA1D;
 			else if ((_vm->_curRoom == kRoom2B) && (_vm->_room[kRoom2B]._flag & kObjFlagExtra) && (_vm->_curObj != oCARTELLO2B) && (_vm->_curObj != od2BALLA28)) {

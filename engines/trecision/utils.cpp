@@ -22,6 +22,8 @@
 
 #include <common/system.h>
 
+
+#include "trecision/nl/define.h"
 #include "trecision/nl/extern.h"
 #include "trecision/nl/message.h"
 #include "trecision/nl/proto.h"
@@ -32,6 +34,8 @@
 namespace Trecision {
 
 void TrecisionEngine::initNames() {
+	// Initial value of useful system texts.
+	// Those values are overwritten by the ones from the game files later
 	_sysText[kMessageSavePosition] = "SAVE POSITION";
 	_sysText[kMessageEmptySpot] = "EMPTY SLOT";
 	_sysText[kMessageLoadPosition] = "LOAD POSITION";
@@ -242,8 +246,8 @@ char TrecisionEngine::waitKey() {
 void TrecisionEngine::NlDelay(uint32 val) {
 	uint32 sv = ReadTime();
 
-	while ((sv + val) > ReadTime())
-		g_vm->checkSystem();
+	while (sv + val > ReadTime())
+		checkSystem();
 }
 
 /*-----------------17/01/97 11.18-------------------
@@ -257,7 +261,68 @@ void TrecisionEngine::FreeKey() {
 					ReadTime
 --------------------------------------------------*/
 uint32 TrecisionEngine::ReadTime() {
-	return ((g_system->getMillis() * 3) / 50);
+	return (g_system->getMillis() * 3) / 50;
+}
+
+/*------------------------------------------------
+					CheckMask
+--------------------------------------------------*/
+bool TrecisionEngine::CheckMask(uint16 mx, uint16 my) {
+	for (int8 a = MAXOBJINROOM - 1; a >= 0; a--) {
+		uint16 checkedObj = _room[_curRoom]._object[a];
+		Common::Rect lim = _obj[checkedObj]._lim;
+		lim.translate(0, TOP);
+		// trecision includes the bottom and right coordinates
+		lim.right++;
+		lim.bottom++;
+
+		if (checkedObj && (_obj[checkedObj]._mode & OBJMODE_OBJSTATUS)) {
+			if (lim.contains(mx, my)) {
+
+				if ((_obj[checkedObj]._mode & OBJMODE_FULL) || (_obj[checkedObj]._mode & OBJMODE_LIM)) {
+					_curObj = checkedObj;
+					return true;
+				}
+
+				if (_obj[checkedObj]._mode & OBJMODE_MASK) {
+					uint8 *mask = MaskPointers[a];
+					int16 d = _obj[checkedObj]._px;
+					uint16 max = _obj[checkedObj]._py + _obj[checkedObj]._dy;
+
+					for (uint16 b = _obj[checkedObj]._py; b < max; b++) {
+						bool insideObj = false;
+						int16 e = 0;
+						while (e < _obj[checkedObj]._dx) {
+							if (!insideObj) { // not inside an object
+								if (b + TOP == my) {
+									if ((mx >= d + e) && (mx < d + e + *mask)) {
+										_curObj = 0;
+									}
+								}
+
+								e += *mask;
+								mask++;
+								insideObj = true;
+							} else { // inside an object
+								if (b + TOP == my) {
+									if ((mx >= d + e) && (mx < d + e + *mask)) {
+										_curObj = checkedObj;
+										return true;
+									}
+								}
+
+								e += *mask;
+								mask++;
+								insideObj = false;
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	_curObj = 0;
+	return false;
 }
 
 

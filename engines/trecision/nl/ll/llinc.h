@@ -130,7 +130,6 @@ void SoundPasso(int midx, int midz, int act, int frame, uint16 *list);
 int32 Talk(const char *name);
 void StopTalk();
 void resetZBuffer(int x1, int y1, int x2, int y2);
-bool CheckMask(uint16 mx, uint16 my);
 
 } // End of namespace Trecision
 

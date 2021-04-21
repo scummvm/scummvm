@@ -112,6 +112,8 @@ public:
 	void NlDelay(uint32 val);
 	void FreeKey();
 	uint32 ReadTime();
+	bool CheckMask(uint16 mx, uint16 my);
+
 
 	// Text
 	void addText(uint16 x, uint16 y, const char *text, uint16 tcol, uint16 scol);
