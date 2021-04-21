@@ -858,9 +858,13 @@ void MacText::resize(int w, int h) {
 }
 
 void MacText::appendText(const Common::U32String &str, int fontId, int fontSize, int fontSlant, bool skipAdd) {
+	appendText(str, fontId, fontSize, fontSlant, 0, 0, 0, skipAdd);
+}
+
+void MacText::appendText(const Common::U32String &str, int fontId, int fontSize, int fontSlant, uint16 r, uint16 g, uint16 b, bool skipAdd) {
 	uint oldLen = _textLines.size();
 
-	MacFontRun fontRun = MacFontRun(_wm, fontId, fontSlant, fontSize, 0, 0, 0);
+	MacFontRun fontRun = MacFontRun(_wm, fontId, fontSlant, fontSize, r, g, b);
 
 	_currentFormatting = fontRun;
 
@@ -873,12 +877,14 @@ void MacText::appendText(const Common::U32String &str, int fontId, int fontSize,
 		}
 	}
 
+	// we need to split the string with the font, in order to get the correct font
+	Common::U32String strWithFont = Common::U32String(fontRun.toString()) + str;
+
 	if (!skipAdd) {
-		_str += fontRun.toString();
-		_str += str;
+		_str += strWithFont;
 	}
 
-	splitString(str);
+	splitString(strWithFont);
 	recalcDims();
 
 	render(oldLen - 1, _textLines.size());
@@ -903,12 +909,12 @@ void MacText::appendTextDefault(const Common::U32String &str, bool skipAdd) {
 	uint oldLen = _textLines.size();
 
 	_currentFormatting = _defaultFormatting;
+	Common::U32String strWithFont = Common::U32String(_defaultFormatting.toString()) + str;
 
 	if (!skipAdd) {
-		_str += _defaultFormatting.toString();
-		_str += str;
+		_str += strWithFont;
 	}
-	splitString(str);
+	splitString(strWithFont);
 	recalcDims();
 
 	render(oldLen - 1, _textLines.size());

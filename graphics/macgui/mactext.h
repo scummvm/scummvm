@@ -175,6 +175,7 @@ public:
 
 	void appendText(const Common::U32String &str, int fontId = kMacFontChicago, int fontSize = 12, int fontSlant = kMacFontRegular, bool skipAdd = false);
 	void appendText(const Common::String &str, int fontId = kMacFontChicago, int fontSize = 12, int fontSlant = kMacFontRegular, bool skipAdd = false);
+	void appendText(const Common::U32String &str, int fontId = kMacFontChicago, int fontSize = 12, int fontSlant = kMacFontRegular, uint16 r = 0, uint16 g = 0, uint16 b = 0, bool skipAdd = false);
 	void appendTextDefault(const Common::U32String &str, bool skipAdd = false);
 	void appendTextDefault(const Common::String &str, bool skipAdd = false);
 	void clearText();
@@ -202,6 +203,7 @@ public:
 	void setSelection(int pos, bool start);
 
 	Common::U32String getEditedString();
+	Common::U32String getText() { return _str; }
 
 private:
 	void init();
