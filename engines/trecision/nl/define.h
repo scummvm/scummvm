@@ -103,7 +103,6 @@ enum AnimationTypes {
 #define HGREEN     	   		0x03E0
 #define HYELLOW     		0x7FE0
 #define HWHITE      		0x7777
-#define HBLUE				0x001F
 
 // Functions for ATFDO
 #define fCLROBJSTATUS 		1

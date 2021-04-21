@@ -239,7 +239,7 @@ bool QuitGame() {
 		memset(g_vm->_screenBuffer + MAXX * a, 0, MAXX * 2);
 
 	SDText SText;
-	SText.set(0, TOP - 20, MAXX, CARHEI, 0, 0, MAXX, CARHEI, 0x7FFF, MASKCOL, g_vm->_sysText[kMessageConfirmExit]);
+	SText.set(0, TOP - 20, MAXX, CARHEI, 0, 0, MAXX, CARHEI, MOUSECOL, MASKCOL, g_vm->_sysText[kMessageConfirmExit]);
 	SText.DText();
 
 	g_vm->_graphicsMgr->copyToScreen(0, 0, MAXX, TOP);
@@ -268,7 +268,7 @@ void DemoOver() {
 		memset(g_vm->_screenBuffer + MAXX * a, 0, MAXX * 2);
 
 	SDText SText;
-	SText.set(0, TOP - 20, MAXX, CARHEI, 0, 0, MAXX, CARHEI, 0x7FFF, MASKCOL, g_vm->_sysText[kMessageDemoOver]);
+	SText.set(0, TOP - 20, MAXX, CARHEI, 0, 0, MAXX, CARHEI, MOUSECOL, MASKCOL, g_vm->_sysText[kMessageDemoOver]);
 	SText.DText();
 
 	g_vm->_graphicsMgr->copyToScreen(0, 0, MAXX, TOP);
