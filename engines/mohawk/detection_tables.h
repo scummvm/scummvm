@@ -1006,6 +1006,36 @@ static const MohawkGameDescription gameDescriptions[] = {
 		0
 	},
 
+	{ // Version 1.0, built on unsupported LivingBooks version
+		{
+			"seussps",
+			_s("Missing game code"), // Reason for being unsupported
+			AD_ENTRY1s("SEUSS_PS.CFG", "627afcfa170460f0e2b7ed4fa734361c", 1439),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_UNSUPPORTED,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_LIVINGBOOKSV2, // Most probably it is incorrect
+		0,
+		0
+	},
+
+	{ // Bugreport #11184, version 2.0
+		{
+			"seussps",
+			_s("Missing game code"), // Reason for being unsupported
+			AD_ENTRY1("SEUSS_PS.CFG", "a2fc5596e6f1511d17acbc687e27a4ac"),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_UNSUPPORTED,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_LIVINGBOOKSV2, // Most probably it is incorrect
+		0,
+		0
+	},
+
 	{
 		{
 			"tortoise",

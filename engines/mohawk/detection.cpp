@@ -43,6 +43,7 @@ static const PlainGameDescriptor mohawkGames[] = {
 	{"maggiesfa", "Maggie's Farmyard Adventure"},
 	{"greeneggs", "Green Eggs and Ham"},
 	{"seussabc", "Dr Seuss's ABC"},
+	{"seussps", "Dr Seuss's Preschool"},
 	{"tortoise", "Aesop's Fables: The Tortoise and the Hare"},
 	{"arthur", "Arthur's Teacher Trouble"},
 	{"grandma", "Just Grandma and Me"},
