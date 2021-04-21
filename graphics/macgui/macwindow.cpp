@@ -514,6 +514,22 @@ void MacWindow::setBorderType(int borderType) {
 	}
 }
 
+void MacWindow::loadWin95Border(const Common::String &filename, uint32 flags) {
+	Common::SeekableReadStream *stream = _wm->getFile(filename);
+	if (stream) {
+		Graphics::BorderOffsets offsets;
+		offsets.top = 1;
+		offsets.bottom = 1;
+		offsets.left = 1;
+		offsets.right = 17;
+		offsets.lowerScrollHeight = 15;
+		offsets.upperScrollHeight = 17;
+		offsets.titlePos = 0;
+		loadBorder(*stream, flags, offsets);
+		delete stream;
+	}
+}
+
 void MacWindow::addDirtyRect(const Common::Rect &r) {
 	if (!r.isValidRect())
 		return;

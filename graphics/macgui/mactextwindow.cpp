@@ -78,6 +78,13 @@ MacTextWindow::MacTextWindow(MacWindowManager *wm, const MacFont *font, int fgco
 
 	if (cursorHandler)
 		g_system->getTimerManager()->installTimerProc(&cursorTimerHandler, 200000, this, "textWindowCursor");
+
+	if (_wm->_mode & kWMModeWin95) {
+		// in win95 mode, we set scrollbar as default
+		_hasScrollBar = true;
+		loadWin95Border("Win95BorderScrollbar.bmp", kWindowBorderScrollbar | kWindowBorderActive);
+		loadWin95Border("Win95BorderScrollbar.bmp",kWindowBorderScrollbar);
+	}
 }
 
 void MacTextWindow::resize(int w, int h, bool inner) {
