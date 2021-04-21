@@ -804,7 +804,7 @@ bool TrecisionEngine::DataSave() {
 		memset(_screenBuffer + MAXX * a, 0, MAXX * 2);
 
 	SDText SText;
-	SText.set(0, TOP - 20, MAXX, CARHEI, 0, 0, MAXX, CARHEI, 0x7FFF, MASKCOL, _sysText[kMessageSavePosition]);
+	SText.set(0, TOP - 20, MAXX, CARHEI, 0, 0, MAXX, CARHEI, MOUSECOL, MASKCOL, _sysText[kMessageSavePosition]);
 	SText.DText();
 
 	_graphicsMgr->copyToScreen(0, 0, MAXX, TOP);
@@ -858,7 +858,7 @@ insave:
 				LenText = TextLength(saveNames[CurPos].c_str(), 0);
 
 				posx = CLIP(posx - (LenText / 2), 2, MAXX - 2 - LenText);
-				SText.set(posx, FIRSTLINE + ICONDY + 10, LenText, CARHEI, 0, 0, LenText, CARHEI, 0x7FFF, MASKCOL, saveNames[CurPos].c_str());
+				SText.set(posx, FIRSTLINE + ICONDY + 10, LenText, CARHEI, 0, 0, LenText, CARHEI, MOUSECOL, MASKCOL, saveNames[CurPos].c_str());
 				SText.DText();
 
 				_graphicsMgr->copyToScreen(0, FIRSTLINE + ICONDY + 10, MAXX, CARHEI);
@@ -929,7 +929,7 @@ insave:
 			LenText = TextLength(saveNames[CurPos].c_str(), 0);
 
 			posx = CLIP(posx - (LenText / 2), 2, MAXX - 2 - LenText);
-			SText.set(posx, FIRSTLINE + ICONDY + 10, LenText, CARHEI, 0, 0, LenText, CARHEI, 0x7FFF, MASKCOL, saveNames[CurPos].c_str());
+			SText.set(posx, FIRSTLINE + ICONDY + 10, LenText, CARHEI, 0, 0, LenText, CARHEI, MOUSECOL, MASKCOL, saveNames[CurPos].c_str());
 
 			if ((ReadTime() / 8) & 1)
 				BlinkLastDTextChar = 0x0000;
@@ -1004,7 +1004,7 @@ bool TrecisionEngine::DataLoad() {
 	showCursor();
 
 	SDText SText;
-	SText.set(0, TOP - 20, MAXX, CARHEI, 0, 0, MAXX, CARHEI, 0x7FFF, MASKCOL, _sysText[kMessageLoadPosition]);
+	SText.set(0, TOP - 20, MAXX, CARHEI, 0, 0, MAXX, CARHEI, MOUSECOL, MASKCOL, _sysText[kMessageLoadPosition]);
 	SText.DText();
 
 	_graphicsMgr->copyToScreen(0, 0, MAXX, TOP);
@@ -1058,7 +1058,7 @@ bool TrecisionEngine::DataLoad() {
 				if ((posX + lenText) > MAXX - 2)
 					posX = MAXX - 2 - lenText;
 
-				SText.set(posX, FIRSTLINE + ICONDY + 10, lenText, CARHEI, 0, 0, lenText, CARHEI, 0x7FFF, MASKCOL, saveNames[CurPos].c_str());
+				SText.set(posX, FIRSTLINE + ICONDY + 10, lenText, CARHEI, 0, 0, lenText, CARHEI, MOUSECOL, MASKCOL, saveNames[CurPos].c_str());
 				SText.DText();
 
 				_graphicsMgr->copyToScreen(0, FIRSTLINE + ICONDY + 10, MAXX, CARHEI);
