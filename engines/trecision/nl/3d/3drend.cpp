@@ -261,60 +261,28 @@ void textureTriangle(int32 x1, int32 y1, int32 z1, int32 c1, int32 tx1, int32 ty
 	Edge scan for textures
 --------------------------------------------------*/
 void textureScanEdge(int32 x1, int32 y1, int32 z1, int32 c1, int32 tx1, int32 ty1, int32 x2, int32 y2, int32 z2, int32 c2, int32 tx2, int32 ty2) {
-	int32 mx; 	// slope _dx/_dy
-	int32 mc; 	// slope dc/_dy
-	int32 mz; 	// slope _dz/_dy
-	int32 mtx;	// slope dtx/_dy
-	int32 mty;   // slope dty/_dy
-
 	// make sure that edge goes from top to bottom
-	int16 dy = (y2 - y1);
+	int16 dy = y2 - y1;
 	if (dy < 0) {
-		// swap y2 with y1
-		int32 temp = y1;
-		y1 = y2;
-		y2 = temp;
-		// swap _x2 with x1
-		temp = x1;
-		x1 = x2;
-		x2 = temp;
-		// swap c2 with c1
-		temp = c1;
-		c1 = c2;
-		c2 = temp;
-		// swap z2 with z1
-		temp = z1;
-		z1 = z2;
-		z2 = temp;
-		// swap tx2 with tx1
-		temp = tx1;
-		tx1 = tx2;
-		tx2 = temp;
-		// swap ty2 with ty1
-		temp = ty1;
-		ty1 = ty2;
-		ty2 = temp;
+		SWAP(y1, y2);
+		SWAP(x1, x2);
+		SWAP(c1, c2);
+		SWAP(z1, z2);
+		SWAP(tx1, tx2);
+		SWAP(ty1, ty2);
 
 		dy = -dy;
 	}
 
-	if (dy) {
-		// initialize for stepping
-		mx = ((x2 - x1) << 16) / dy; // dx/dy
-		mz = ((z2 - z1) << 16) / dy; // dz/dy
-		mc = ((c2 - c1) <<  8) / dy; // dc/dy
+	if (dy == 0)
+		dy = 1;
 
-		mtx = ((tx2 - tx1) << 16) / dy;
-		mty = ((ty2 - ty1) << 16) / dy;
-	} else {
-		// initialize for stepping
-		mx = ((x2 - x1) << 16); // dx/dy
-		mz = ((z2 - z1) << 16); // dz/dy
-		mc = ((c2 - c1) <<  8); // dc/dy
-
-		mtx = ((tx2 - tx1) << 16);
-		mty = ((ty2 - ty1) << 16);
-	}
+	// initialize for stepping
+	int32 mx = ((x2 - x1) << 16) / dy; // dx/dy
+	int32 mz = ((z2 - z1) << 16) / dy; // dz/dy
+	int32 mc = ((c2 - c1) << 8) / dy; // dc/dy
+	int32 mtx = ((tx2 - tx1) << 16) / dy;
+	int32 mty = ((ty2 - ty1) << 16) / dy;
 
 	x1 <<= 16; // starting x coordinate
 	z1 <<= 16; // starting x coordinate
@@ -324,7 +292,7 @@ void textureScanEdge(int32 x1, int32 y1, int32 z1, int32 c1, int32 tx1, int32 ty
 	ty1 <<= 16;
 
 	// step through edge and record color values along the way
-	for (int16 count = y1; count < y2; count++) {
+	for (int32 count = y1; count < y2; count++) {
 		int16 x = (uint16)(x1 >> 16);
 		if (x < _lEdge[count]) {
 			_lEdge[count]  = x;
@@ -436,26 +404,17 @@ void shadowScanEdge(int32 x1, int32 y1, int32 x2, int32 y2) {
 	// make sure that edge goes from top to bottom
 	int16 dy = y2 - y1;
 	if (dy < 0) {
-		// swap y2 with y1
-		int32 temp = y1;
-		y1 = y2;
-		y2 = temp;
-		// swap x2 with x1
-		temp = x1;
-		x1 = x2;
-		x2 = temp;
+		SWAP(y1, y2);
+		SWAP(x1, x2);
 
 		dy = -dy;
 	}
 
-	int32 mx;	// slope _dx/_dy
-	if (dy) {
-		// initialize for stepping
-		mx = ((x2 - x1) << 16) / dy; // dx/dy
-	} else {
-		// initialize for stepping
-		mx = ((x2 - x1) << 16); // dx/dy
-	}
+	if (dy == 0)
+		dy = 1;
+
+	// initialize for stepping
+	int32 mx = ((x2 - x1) << 16) / dy; // slope dx/dy
 
 	x1 <<= 16; // starting x coordinate
 

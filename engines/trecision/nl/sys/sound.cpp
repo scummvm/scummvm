@@ -303,10 +303,7 @@ void SoundPasso(int midx, int midz, int act, int frame, uint16 *list) {
 			return;
 	}
 
-	if (midz < 0)
-		midz = -midz;
-
-	midz = ((int)(GSample[b]._volume) * 1000) / midz;
+	midz = ((int)(GSample[b]._volume) * 1000) / ABS(midz);
 
 	if (midz > 255)
 		midz = 255;

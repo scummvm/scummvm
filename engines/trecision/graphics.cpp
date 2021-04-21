@@ -138,13 +138,8 @@ void GraphicsManager::putPixel(int x, int y, uint16 color) {
 }
 
 void GraphicsManager::drawLine(int x1, int y1, int x2, int y2, uint16 color) {
-	int deltaX = x2 - x1;
-	if (deltaX < 0)
-		deltaX = -deltaX;
-
-	int deltaY = y2 - y1;
-	if (deltaY < 0)
-		deltaY = -deltaY;
+	int deltaX = ABS(x2 - x1);
+	int deltaY = ABS(y2 - y1);
 
 	int x = x1;
 	int y = y1;
