@@ -1829,7 +1829,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 		"Living Books Player"
 	},
 
-	{
+	{ // November release
 		{
 			"arthurrace",
 			"",
@@ -1848,8 +1848,39 @@ static const MohawkGameDescription gameDescriptions[] = {
 	{
 		{
 			"arthurrace",
-			"",
+			"32-bit",
 			AD_ENTRY1("RACE32.LB", "292a05bc48c1dd9583821a4181a02ef2"),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_UNSTABLE,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_LIVINGBOOKSV3,
+		0,
+		0
+	},
+
+	{ // December release, marked as 1.0. Bugreport #11458
+		{
+			"arthurrace",
+			"",
+			AD_ENTRY1s("RACE.LB", "4d4347a010802c1e34e30a3d899546a7", 3155),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_UNSTABLE,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_LIVINGBOOKSV3,
+		0,
+		0
+	},
+
+	// 32-bit version of the previous entry
+	{
+		{
+			"arthurrace",
+			"32-bit",
+			AD_ENTRY1s("RACE32.LB", "badea47f88f0ee96dfc55c9120db5751", 3153),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_UNSTABLE,
