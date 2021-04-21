@@ -768,7 +768,7 @@ void Screen::blit(GraphicFrame *frame, Common::Rect *source, Common::Rect *desti
 				                       destination->height(),
 				                       destination->width(),
 				                       (uint16)destination->width() + frame->surface.pitch,
-				                       (uint16)(frame->surface.pitch - destination->width()));
+				                       _backBuffer.pitch - (uint16)destination->width());
 			} else {
 				blitTranstable((byte *)_backBuffer.getPixels()    + destination->top * _backBuffer.pitch    + destination->left,
 				               (byte *)frame->surface.getPixels() + source->top      * frame->surface.pitch + source->left,
