@@ -76,6 +76,8 @@ MacTextWindow::MacTextWindow(MacWindowManager *wm, const MacFont *font, int fgco
 	_cursorSurface = new ManagedSurface(1, kCursorHeight);
 	_cursorSurface->fillRect(*_cursorRect, _wm->_colorBlack);
 
+	_textColorRGB = 0;
+
 	if (cursorHandler)
 		g_system->getTimerManager()->installTimerProc(&cursorTimerHandler, 200000, this, "textWindowCursor");
 
@@ -103,7 +105,11 @@ void MacTextWindow::appendText(const Common::U32String &str, const MacFont *macF
 	// the reason we put undrawInput here before appendText, is we don't want the appended text affect our input
 	// thus, we first delete all of out input, and we append new text, and we redraw the input
 	undrawInput();
-	_mactext->appendText(str, macFont->getId(), macFont->getSize(), macFont->getSlant(), skipAdd);
+	// we calc the rgb though fgcolor
+	uint16 red = (_textColorRGB >> 16) & 0xFF;
+	uint16 green = (_textColorRGB >> 8) & 0xFF;
+	uint16 blue = (_textColorRGB) & 0xFF;
+	_mactext->appendText(str, macFont->getId(), macFont->getSize(), macFont->getSlant(), red, green, blue, skipAdd);
 
 	_contentIsDirty = true;
 	_inputIsDirty = true;	//force it to redraw input
@@ -116,6 +122,25 @@ void MacTextWindow::appendText(const Common::U32String &str, const MacFont *macF
 
 	if (_wm->_mode & kWMModeWin95)
 		calcScrollBar();
+	// if we enable the dynamic scrollbar, and the text height is smaller than window height, then we disable the border
+	// if the window is editable, then we don't disable the border, because in editable window, the area you scroll is always bigger
+	// than the window
+	if (!_editable && (_mode & kWindowModeDynamicScrollbar) && _mactext->getTextHeight() < getInnerDimensions().height()) {
+		int w = getDimensions().width();
+		int h = getDimensions().height();
+		enableScrollbar(false);
+		disableBorder();
+		resize(w, h);
+		_mactext->_fullRefresh = true;
+	}
+	// if the text height is bigger than the window, then we enable the scrollbar again
+	if (!_editable && (_mode & kWindowModeDynamicScrollbar) && _mactext->getTextHeight() > getInnerDimensions().height()) {
+		enableScrollbar(true);
+		int w = getDimensions().width();
+		int h = getDimensions().height();
+		resize(w, h);
+		_mactext->_fullRefresh = true;
+	}
 }
 
 void MacTextWindow::appendText(const Common::String &str, const MacFont *macFont, bool skipAdd) {
@@ -515,6 +540,9 @@ void MacTextWindow::undrawInput() {
 }
 
 void MacTextWindow::drawInput() {
+	if (!_editable)
+		return;
+
 	int oldLen = _mactext->getLineCount() - _inputTextHeight;
 
 	// add new input line to the text

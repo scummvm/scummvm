@@ -71,6 +71,8 @@ MacWindow::MacWindow(int id, bool scrollable, bool resizable, bool editable, Mac
 	_macBorder.setWindow(this);
 
 	_hasScrollBar = false;
+
+	_mode = 0;
 }
 
 void MacWindow::disableBorder() {

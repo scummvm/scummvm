@@ -62,6 +62,10 @@ enum WindowClick {
 	kBorderBorder,
 	kBorderResizeButton
 };
+
+enum {
+	kWindowModeDynamicScrollbar = 1 << 0
+};
 }
 using namespace MacWindowConstants;
 
@@ -344,6 +348,8 @@ public:
 	void setBorderDirty(bool dirty) { _borderIsDirty = true; }
 	void resizeBorderSurface();
 
+	void setMode(uint32 mode) { _mode = mode; }
+
 private:
 	void drawBorderFromSurface(ManagedSurface *g, uint32 flags);
 	void drawPattern();
@@ -371,6 +377,7 @@ protected:
 	Common::List<Common::Rect> _dirtyRects;
 	bool _hasScrollBar;
 
+	uint32 _mode;
 private:
 	MacWindowBorder _macBorder;
 
