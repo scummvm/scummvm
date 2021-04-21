@@ -68,6 +68,9 @@ For a more comprehensive changelog of the latest experimental code, see:
  Pegasus:
    - Added support for DVD/GOG.com release.
 
+ Queen:
+   - Added support for German Amiga floppy release.
+
  SAGA:
    - Added support for ITE GOG Mac CD v1.1.
    - Added support for ITE PC-98 Japanese.
