@@ -51,9 +51,6 @@ void TrecisionEngine::initNames() {
 	_objName[0] = " ";
 }
 
-/* --------------------------------------------------
- * 					getNextSentence
- * --------------------------------------------------*/
 char *TrecisionEngine::getNextSentence() {
 	while (*_textPtr) {
 		*_textPtr = ~(*_textPtr);
@@ -64,9 +61,6 @@ char *TrecisionEngine::getNextSentence() {
 	return _textPtr;
 }
 
-/*-------------------------------------------------------------------------*/
-/*                                   addText           					   */
-/*-------------------------------------------------------------------------*/
 void TrecisionEngine::addText(uint16 x, uint16 y, const char *text, uint16 tcol, uint16 scol) {
 	_textStackTop++;
 	if (_textStackTop >= MAXTEXTSTACK) {
@@ -82,9 +76,6 @@ void TrecisionEngine::addText(uint16 x, uint16 y, const char *text, uint16 tcol,
 	strcpy(_textStack[_textStackTop].text, text);
 }
 
-/* ------------------------------------------------
-						clearText
- --------------------------------------------------*/
 void TrecisionEngine::clearText() {
 	if (_textStackTop >= 0) {
 		// The stack isn't empty
@@ -98,9 +89,6 @@ void TrecisionEngine::clearText() {
 	}
 }
 
-/* ------------------------------------------------
-					drawString
- --------------------------------------------------*/
 void TrecisionEngine::drawString() {
 	for (int16 i = 0; i <= _textStackTop; i++) {
 		if (_textStack[i].clear)
@@ -110,9 +98,6 @@ void TrecisionEngine::drawString() {
 	}
 }
 
-/*-------------------------------------------------------------------------*/
-/*                           redrawString		        				   */
-/*-------------------------------------------------------------------------*/
 void TrecisionEngine::redrawString() {
 	if (!_flagDialogActive && !_flagDialogMenuActive && !_flagSomeoneSpeaks && !_flagscriptactive && isCursorVisible()) {
 		if (isInventoryArea(_mouseY))
@@ -124,9 +109,6 @@ void TrecisionEngine::redrawString() {
 	}
 }
 
-/* ------------------------------------------------
-						doText
- --------------------------------------------------*/
 void StackText::doText() {
 	curString.x = x;
 	curString.y = y;
@@ -159,9 +141,6 @@ void StackText::doText() {
 	TextStatus |= TEXT_DRAW;
 }
 
-/* ------------------------------------------------
-					doClearText
- --------------------------------------------------*/
 void TrecisionEngine::doClearText() {
 	if (!oldString.text && curString.text) {
 		oldString.set(curString);
@@ -171,9 +150,6 @@ void TrecisionEngine::doClearText() {
 	}
 }
 
-/* --------------------------------------------------
- * 					setRoom
- * --------------------------------------------------*/
 void TrecisionEngine::setRoom(uint16 r, bool b) {
 	_logicMgr->setupAltRoom(r, b);
 	RegenRoom();
@@ -195,9 +171,6 @@ uint16 TrecisionEngine::TextLength(const char *text, uint16 num) {
 	return retVal;
 }
 
-/*-----------------16/01/97 20.53-------------------
-					GetKey
---------------------------------------------------*/
 char TrecisionEngine::GetKey() {
 	Common::KeyCode key = _curKey;
 	uint16 ascii = _curAscii;
@@ -227,9 +200,6 @@ char TrecisionEngine::GetKey() {
 	}
 }
 
-/*-----------------17/01/97 11.17-------------------
-					waitKey
---------------------------------------------------*/
 char TrecisionEngine::waitKey() {
 	while (_curKey == Common::KEYCODE_INVALID)
 		checkSystem();
@@ -240,9 +210,6 @@ char TrecisionEngine::waitKey() {
 	return t;
 }
 
-/* -----------------26/01/98 10.26-------------------
- * 					NlDelay
- * --------------------------------------------------*/
 void TrecisionEngine::NlDelay(uint32 val) {
 	uint32 sv = ReadTime();
 
@@ -250,23 +217,14 @@ void TrecisionEngine::NlDelay(uint32 val) {
 		checkSystem();
 }
 
-/*-----------------17/01/97 11.18-------------------
-					FreeKey
---------------------------------------------------*/
 void TrecisionEngine::FreeKey() {
 	_curKey = Common::KEYCODE_INVALID;
 }
 
-/*-----------------10/12/95 15.52-------------------
-					ReadTime
---------------------------------------------------*/
 uint32 TrecisionEngine::ReadTime() {
 	return (g_system->getMillis() * 3) / 50;
 }
 
-/*------------------------------------------------
-					CheckMask
---------------------------------------------------*/
 bool TrecisionEngine::CheckMask(uint16 mx, uint16 my) {
 	for (int8 a = MAXOBJINROOM - 1; a >= 0; a--) {
 		uint16 checkedObj = _room[_curRoom]._object[a];

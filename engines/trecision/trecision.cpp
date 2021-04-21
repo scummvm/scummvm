@@ -441,9 +441,6 @@ bool TrecisionEngine::syncGameStream(Common::Serializer &ser) {
 	return true;
 }
 
-/*------------------------------------------------
-					InitMain
---------------------------------------------------*/
 void TrecisionEngine::initMain() {
 	for (int c = 0; c < MAXOBJ; c++)
 		_obj[c]._position = -1;
@@ -509,9 +506,6 @@ void TrecisionEngine::initMessageSystem() {
 	}
 }
 
-/* --------------------------------------------------
- * 						LoadAll
- * --------------------------------------------------*/
 void TrecisionEngine::LoadAll() {
 	Common::File dataNl;
 	if (!dataNl.open("DATA.NL"))
@@ -646,9 +640,6 @@ void TrecisionEngine::LoadAll() {
 	dataNl.close();
 }
 
-/*-------------------------------------------------
-					checkSystem
- --------------------------------------------------*/
 void TrecisionEngine::checkSystem() {
 	_animMgr->refreshAllAnimations();
 	eventLoop();
@@ -769,9 +760,6 @@ void TrecisionEngine::loadSaveSlots(Common::StringArray &saveNames) {
 	refreshInventory(0, 0);
 }
 
-/* -----------------25/10/97 15.16-------------------
-						DataSave
- --------------------------------------------------*/
 bool TrecisionEngine::DataSave() {
 	uint8 OldInv[MAXICON], OldIconBase, OldInvLen;
 	char ch;
@@ -975,9 +963,6 @@ insave:
 	return ret;
 }
 
-/*-----------------09/02/96 20.57-------------------
-					DataLoad
---------------------------------------------------*/
 bool TrecisionEngine::DataLoad() {
 	Common::StringArray saveNames;
 	saveNames.reserve(MAXSAVEFILE);

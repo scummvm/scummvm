@@ -35,9 +35,6 @@
 
 namespace Trecision {
 
-/*-------------------------------------------------------------------------*/
-/*                                 doRoomIn            					   */
-/*-------------------------------------------------------------------------*/
 void doRoomIn(uint16 curObj) {
 	g_vm->hideCursor();
 
@@ -115,9 +112,6 @@ void doMouseTake(uint16 curObj) {
 	g_vm->addIcon(g_vm->_obj[g_vm->_curObj]._ninv);
 }
 
-/*-------------------------------------------------------------------------*/
-/*                           doMouseTalk           						   */
-/*-------------------------------------------------------------------------*/
 void doMouseTalk(uint16 curObj) {
 	if (!curObj)
 		warning("doMouseTalk - curObj not set");
@@ -128,9 +122,6 @@ void doMouseTalk(uint16 curObj) {
 		PlayDialog(g_vm->_obj[curObj]._goRoom);
 }
 
-/*-------------------------------------------------------------------------*/
-/*                                doUseWith           					   */
-/*-------------------------------------------------------------------------*/
 void doUseWith() {
 	if (g_vm->_useWithInv[USED]) {
 		if (g_vm->_useWithInv[WITH])
@@ -147,9 +138,6 @@ void doUseWith() {
 	g_vm->_flagUseWithStarted = false;
 }
 
-/*-------------------------------------------------------------------------*/
-/*                          doScreenUseWithScreen         				   */
-/*-------------------------------------------------------------------------*/
 void doScreenUseWithScreen() {
 	if (!g_vm->_useWith[USED] || !g_vm->_useWith[WITH])
 		warning("doScreenUseWithScreen - _useWith not set properly");
@@ -163,9 +151,6 @@ void doScreenUseWithScreen() {
 		CharacterSay(g_vm->_obj[g_vm->_useWith[USED]]._action);
 }
 
-/*-------------------------------------------------------------------------*/
-/*                               doInvExamine          					   */
-/*-------------------------------------------------------------------------*/
 void doInvExamine() {
 	if (!g_vm->_curInventory)
 		warning("doInvExamine - _curInventory not set properly");
@@ -174,9 +159,6 @@ void doInvExamine() {
 		CharacterSay(g_vm->_inventoryObj[g_vm->_curInventory]._examine);
 }
 
-/*-------------------------------------------------------------------------*/
-/*                               doInvOperate          					   */
-/*-------------------------------------------------------------------------*/
 void doInvOperate() {
 	if (!g_vm->_curInventory)
 		warning("doInvOperate - _curInventory not set properly");
@@ -186,9 +168,6 @@ void doInvOperate() {
 		CharacterSay(g_vm->_inventoryObj[g_vm->_curInventory]._action);
 }
 
-/*-------------------------------------------------------------------------*/
-/*                                 doDoing           					   */
-/*-------------------------------------------------------------------------*/
 void doDoing() {
 	switch (g_vm->_curMessage->_event) {
 	case ME_INITOPENCLOSE:
@@ -219,9 +198,6 @@ void doDoing() {
 	}
 }
 
-/*-------------------------------------------------------------------------*/
-/*                                doScript           					   */
-/*-------------------------------------------------------------------------*/
 void doScript() {
 	static uint32 pauseStartTime = 0;
 	Message *message = g_vm->_curMessage;
@@ -596,9 +572,6 @@ void ProcessAtFrame(ATFHandle *h, int type, int atf) {
 
 }
 
-/* -----------------11/07/97 11.42-------------------
-					InitAtFrameHandler
- --------------------------------------------------*/
 void InitAtFrameHandler(uint16 an, uint16 obj) {
 	SAnim *anim = &g_vm->_animMgr->_animTab[an];
 
@@ -615,9 +588,6 @@ void InitAtFrameHandler(uint16 an, uint16 obj) {
 	handle->_status = 0;
 }
 
-/* -----------------11/07/97 11.41-------------------
-					AtFrameNext
- --------------------------------------------------*/
 void AtFrameNext() {
 	for (int i = 0; i < 3; ++i) {
 		if (!(AnimType[i]._status & ATF_WAITTEXT) || !g_vm->_flagCharacterSpeak)
@@ -625,9 +595,6 @@ void AtFrameNext() {
 	}
 }
 
-/* -----------------11/07/97 11.42-------------------
-					AtFrameEnd
- --------------------------------------------------*/
 void AtFrameEnd(int type) {
 	ATFHandle *h = &AnimType[type];
 	SAnim *anim = h->_curAnim;
@@ -656,9 +623,6 @@ void AtFrameEnd(int type) {
 	h->_curAnim = nullptr;
 }
 
-/* -----------------11/07/97 11.44-------------------
-					AtFrameHandler
- --------------------------------------------------*/
 void AtFrameHandler(int type) {
 	ATFHandle *h = &AnimType[type];
 	SAnim *anim = h->_curAnim;

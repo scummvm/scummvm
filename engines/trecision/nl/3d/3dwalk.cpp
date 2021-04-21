@@ -37,9 +37,6 @@ namespace Trecision {
 // locals
 float _lookX, _lookZ;
 
-/*-----------------06/11/95 15.20-------------------
-					read3D
---------------------------------------------------*/
 int read3D(Common::String c) {
 	Common::SeekableReadStream *ff = g_vm->_dataFile.createReadStreamForMember(c);
 	if (ff == nullptr)
@@ -149,9 +146,6 @@ int read3D(Common::String c) {
 #define POINTOUT1		32
 #define POINTOUT2		64
 
-/*------------------------------------------------
-				Create path
---------------------------------------------------*/
 void findPath() {
 	int b;
 

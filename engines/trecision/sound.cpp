@@ -58,9 +58,6 @@ SoundManager::SoundManager(TrecisionEngine *vm) : _vm(vm) {
 SoundManager::~SoundManager() {
 }
 
-/* -----------------05/08/97 16.36-------------------
-					soundTimer
- --------------------------------------------------*/
 void SoundManager::soundTimer() {
 	uint32 ctime = g_system->getMillis() / 8;		    // entra una volta ogni otto
 
@@ -147,9 +144,6 @@ void SoundManager::play(int num) {
 	_samplePlaying[channel] = num;
 }
 
-/* -----------------14/08/97 16.30-------------------
-					stop
- --------------------------------------------------*/
 void SoundManager::stop(int num) {
 	for (int a = 2; a < kSoundChannelSpeech; a++) {
 		if (_samplePlaying[a] == num) {
@@ -169,9 +163,6 @@ void SoundManager::stopAll() {
 	_soundFadeStatus = 0;
 }
 
-/* -----------------14/08/97 16.30-------------------
-					fadeOut
- --------------------------------------------------*/
 void SoundManager::fadeOut() {
 	for (int a = 0; a < SAMPLEVOICES; a++) {	// Turns off all channels except background
 		if (a != _backChannel) {
@@ -184,9 +175,6 @@ void SoundManager::fadeOut() {
 	_soundFadeStatus = SFADOUT;
 }
 
-/* -----------------14/08/97 16.30-------------------
-					fadeIn
- --------------------------------------------------*/
 void SoundManager::fadeIn(int num) {
 	Audio::AudioStream *stream = _sfxStream[num];
 	Audio::Mixer::SoundType type = _gSample[num]._flag & kSoundFlagBgMusic ? Audio::Mixer::kMusicSoundType : Audio::Mixer::kSFXSoundType;
@@ -201,9 +189,6 @@ void SoundManager::fadeIn(int num) {
 	_soundFadeStatus |= SFADIN;
 }
 
-/* -----------------14/08/97 16.31-------------------
-					waitEndFading
- --------------------------------------------------*/
 void SoundManager::waitEndFading() {
 	while ((_soundFadeInVal != (_gSample[_samplePlaying[_stepChannel]]._volume * FADMULT)) && (_samplePlaying[_stepChannel] != 0) && (_soundFadeOutVal != 0))
 		_vm->checkSystem();
@@ -225,9 +210,6 @@ void SoundManager::waitEndFading() {
 		ReadExtraObj41D();
 }
 
-/* -----------------14/08/97 16.31-------------------
-					SounPasso
- --------------------------------------------------*/
 void SoundManager::SoundPasso(int midx, int midz, int act, int frame, uint16 *list) {
 	extern unsigned char _defActionLen[];
 
@@ -326,9 +308,6 @@ void SoundManager::talkStop() {
 	g_system->getMixer()->stopHandle(_soundHandle[kSoundChannelSpeech]);
 }
 
-/*-----------------12/12/95 11.39-------------------
-					loadRoomSounds
---------------------------------------------------*/
 void SoundManager::loadRoomSounds() {
 	for (uint16 a = 0; a < MAXSOUNDSINROOM; a++) {
 		uint16 b = _vm->_room[_vm->_curRoom]._sounds[a];

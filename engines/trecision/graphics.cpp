@@ -228,9 +228,6 @@ uint16 GraphicsManager::aliasing(uint32 val1, uint32 val2, uint8 num) {
 			((((val1 & _bitMask[0]) * num + (val2 & _bitMask[0]) * (8 - num)) >> 3) & _bitMask[0]));
 }
 
-/* -----------------24/06/98 15.00-------------------
- * 					NlDissolve
- * --------------------------------------------------*/
 void GraphicsManager::NlDissolve(int val) {
 	uint16 CenterX = MAXX / 2, CenterY = MAXY / 2;
 	uint32 sv = g_vm->ReadTime(), cv;

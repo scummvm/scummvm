@@ -135,9 +135,6 @@ uint16 _rTextX[480];
 uint16 _lTextY[480];
 uint16 _rTextY[480];
 
-/*------------------------------------------------
-Return the angle in rad based on sinus and cosinus
---------------------------------------------------*/
 float sinCosAngle(float sinus, float cosinus) {
 	if (sinus == 0 && cosinus == 0)
 		return 0;
@@ -155,9 +152,6 @@ float sinCosAngle(float sinus, float cosinus) {
 	return (float)PI2 - (float)acos(cosinus);
 }
 
-/*------------------------------------------------
-		Texture Triangle routine
---------------------------------------------------*/
 void textureTriangle(int32 x1, int32 y1, int32 z1, int32 c1, int32 tx1, int32 ty1,
 					 int32 x2, int32 y2, int32 z2, int32 c2, int32 tx2, int32 ty2,
 					 int32 x3, int32 y3, int32 z3, int32 c3, int32 tx3, int32 ty3,
@@ -257,9 +251,6 @@ void textureTriangle(int32 x1, int32 y1, int32 z1, int32 c1, int32 tx1, int32 ty
 	}
 }
 
-/*------------------------------------------------
-	Edge scan for textures
---------------------------------------------------*/
 void textureScanEdge(int32 x1, int32 y1, int32 z1, int32 c1, int32 tx1, int32 ty1, int32 x2, int32 y2, int32 z2, int32 c2, int32 tx2, int32 ty2) {
 	// make sure that edge goes from top to bottom
 	int16 dy = y2 - y1;
@@ -318,9 +309,6 @@ void textureScanEdge(int32 x1, int32 y1, int32 z1, int32 c1, int32 tx1, int32 ty
 	}
 }
 
-/*------------------------------------------------
-		Shadow Triangle routine
---------------------------------------------------*/
 void shadowTriangle(int32 x1, int32 y1, int32 x2, int32 y2,
 					int32 x3, int32 y3, uint8 cv, int32 zv) {
 	if (y1 > _maxYClip)
@@ -397,9 +385,6 @@ void shadowTriangle(int32 x1, int32 y1, int32 x2, int32 y2,
 	}
 }
 
-/*------------------------------------------------
-	Edge scan for shadows
---------------------------------------------------*/
 void shadowScanEdge(int32 x1, int32 y1, int32 x2, int32 y2) {
 	// make sure that edge goes from top to bottom
 	int16 dy = y2 - y1;
@@ -431,9 +416,6 @@ void shadowScanEdge(int32 x1, int32 y1, int32 x2, int32 y2) {
 	}
 }
 
-/*------------------------------------------------
-	Initialize a 3D room
---------------------------------------------------*/
 void init3DRoom(uint16 *destBuffer, int16 *zBuffer) {
 	_curPage = destBuffer;
 	_zBuf = zBuffer;
@@ -441,9 +423,6 @@ void init3DRoom(uint16 *destBuffer, int16 *zBuffer) {
 	_cy = (MAXY - 1) / 2;
 }
 
-/*------------------------------------------------
-	Set clipping area
---------------------------------------------------*/
 void setClipping(int16 x1, int16 y1, int16 x2, int16 y2) {
 	_minXClip = x1;
 	_minYClip = y1;
@@ -451,9 +430,6 @@ void setClipping(int16 x1, int16 y1, int16 x2, int16 y2) {
 	_maxYClip = y2;
 }
 
-/*------------------------------------------------
-	Set zBuffer region
---------------------------------------------------*/
 void setZBufferRegion(int16 sx, int16 sy, int16 dx) {
 	_zBufStartX = sx;
 	_zBufStartY = sy;
@@ -493,9 +469,6 @@ int8 clockWise(int16 x1, int16 y1, int16 x2, int16 y2, int16 x3, int16 y3) {
 }
 
 
-/*------------------------------------------------
-	Draw the character
---------------------------------------------------*/
 void drawCharacter(uint8 flag) {
 	// Compute pointer to frame
 	if (flag & CALCPOINTS) {

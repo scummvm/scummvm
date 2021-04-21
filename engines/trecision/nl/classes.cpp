@@ -37,9 +37,6 @@ namespace Trecision {
 // inventory
 #define COUNTERSTEP 6
 
-/*-------------------------------------------------------------------------*/
-/*                                DOACTION           					   */
-/*-------------------------------------------------------------------------*/
 void doAction() {
 	if ((g_vm->_curMessage->_event == ME_MOUSEOPERATE) || (g_vm->_curMessage->_event == ME_MOUSEEXAMINE)) {
 		// Action in the game area
@@ -129,9 +126,6 @@ void doAction() {
 	}
 }
 
-/*-------------------------------------------------------------------------*/
-/*                                  DOMOUSE           					   */
-/*-------------------------------------------------------------------------*/
 void doMouse() {
 #define POSUP  0
 #define POSGAME 1
@@ -200,9 +194,6 @@ void doMouse() {
 	}
 }
 
-/* -----------------09/07/97 17.52-------------------
-					StartCharacterAction
- --------------------------------------------------*/
 void StartCharacterAction(uint16 Act, uint16 NewRoom, uint8 NewPos, uint16 sent) {
 	g_vm->_characterQueue.initQueue();
 
@@ -227,9 +218,6 @@ void StartCharacterAction(uint16 Act, uint16 NewRoom, uint8 NewPos, uint16 sent)
 		g_vm->clearText();
 }
 
-/*-------------------------------------------------------------------------*/
-/*                                DOCHARACTER                  			   */
-/*-------------------------------------------------------------------------*/
 void doCharacter() {
 	switch (g_vm->_curMessage->_event) {
 	case ME_CHARACTERDOACTION:
@@ -329,9 +317,6 @@ void doCharacter() {
 	}
 }
 
-/*-------------------------------------------------------------------------*/
-/*                                  DOSYSTEM           					   */
-/*-------------------------------------------------------------------------*/
 void doSystem() {
 	switch (g_vm->_curMessage->_event) {
 	case ME_START:
@@ -369,9 +354,6 @@ void doSystem() {
 	}
 }
 
-/*-------------------------------------------------------------------------*/
-/*                                  doIdle            					   */
-/*-------------------------------------------------------------------------*/
 void doIdle() {
 	char c = g_vm->GetKey();
 	switch (c) {

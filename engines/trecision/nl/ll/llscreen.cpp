@@ -76,9 +76,6 @@ struct SBmInfo {
 	}
 } BmInfo;
 
-/*-----------------17/02/95 10.19-------------------
-						openSys
---------------------------------------------------*/
 void openSys() {
 	// head
 	hh = 0;
@@ -203,9 +200,6 @@ static const int _vertsCorrList[84] = {
 	379, 380, 381, 382
 };
 
-/*-------------------------------------------------
-					readActor
---------------------------------------------------*/
 void SActor::readActor(const char *filename) {
 	_vm->_graphicsMgr->updatePixelFormat((uint16 *)_textureMat, 256 * 91);
 
@@ -390,9 +384,6 @@ void SActor::readActor(const char *filename) {
 	}
 }
 
-/* -----------------27/06/97 17.52-------------------
-					actionInRoom
- --------------------------------------------------*/
 int actionInRoom(int curA) {
 	for (int b = 0; b < MAXACTIONINROOM; b++) {
 		if (g_vm->_room[g_vm->_curRoom]._actions[b] == curA)
@@ -445,9 +436,6 @@ void ReadLoc() {
 	InitAtFrameHandler(g_vm->_room[g_vm->_curRoom]._bkgAnim, 0);
 }
 
-/*-----------------10/12/95 14.59-------------------
-					TendIn
---------------------------------------------------*/
 void TendIn() {
 	TextStatus = TEXT_OFF;
 
@@ -558,9 +546,6 @@ void ReadExtraObj41D() {
 	delete ff;
 }
 
-/*------------------------------------------------
-                    RegenRoom
---------------------------------------------------*/
 void RegenRoom() {
 	for (uint16 a = 0; a < MAXOBJINROOM; a++) {
 		if (g_vm->_room[g_vm->_curRoom]._object[a] == 0)

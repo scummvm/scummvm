@@ -21,16 +21,11 @@
  */
 
 #include "common/scummsys.h"
-#include "trecision/nl/struct.h"
 #include "trecision/nl/ll/llinc.h"
-#include "trecision/nl/define.h"
 #include "trecision/trecision.h"
 
 namespace Trecision {
 
-/*------------------------------------------------
-					resetZBuffer
---------------------------------------------------*/
 void resetZBuffer(int x1, int y1, int x2, int y2) {
 	if (x1 > x2 || y1 > y2)
 		return;
