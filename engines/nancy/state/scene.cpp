@@ -494,9 +494,6 @@ void Scene::load() {
 						_sceneState.summary.videoFormat,
 						_sceneState.summary.videoPaletteFile);
 
-	// TODO TEMPORARY
-	_viewport.setEdgesSize(25, 25, 25, 25);
-
 	if (_viewport.getFrameCount() <= 1) {
 		_viewport.disableEdges(kLeft | kRight);
 	}

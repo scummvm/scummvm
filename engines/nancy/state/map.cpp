@@ -105,7 +105,7 @@ void Map::init() {
 	readFilename(*chunk, videoName);
 
 	_viewport.loadVideo(videoName, 0, 0);
-	_viewport.setEdgesSize(0, 0, 0, 0);
+	_viewport.disableEdges(kLeft | kRight | kUp | kDown);
 
 	// Load the audio
 	chunk->seek(0x18 + _mapID * 0x20, SEEK_SET);

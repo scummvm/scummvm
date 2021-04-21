@@ -70,6 +70,8 @@ NancyEngine::NancyEngine(OSystem *syst, const NancyGameDescription *gd) : Engine
 	_startTimeHours = 0;
 	_overrideMovementTimeDeltas = false;
 	_cheatTypeIsEventFlag = false;
+	_horizontalEdgesSize = 0;
+	_verticalEdgesSize = 0;
 }
 
 NancyEngine::~NancyEngine() {
@@ -460,7 +462,10 @@ void NancyEngine::readBootSummary(const IFF &boot) {
 		readChunkList(boot, ser, "OB");
 	}
 
-	ser.skip(0x99, kGameTypeNancy1, kGameTypeNancy1);
+	ser.skip(0x79, kGameTypeNancy1, kGameTypeNancy1);
+	ser.syncAsUint16LE(_horizontalEdgesSize, kGameTypeNancy1, kGameTypeNancy1);
+	ser.syncAsUint16LE(_verticalEdgesSize, kGameTypeNancy1, kGameTypeNancy1);
+	ser.skip(0x1C, kGameTypeNancy1, kGameTypeNancy1);
 	int16 time = 0;
 	ser.syncAsSint16LE(time, kGameTypeNancy1, kGameTypeNancy1);
 	_playerTimeMinuteLength = time;

@@ -127,6 +127,9 @@ public:
 	Time _fastMovementTimeDelta;
 	Time _playerTimeMinuteLength;
 
+	uint _horizontalEdgesSize;
+	uint _verticalEdgesSize;
+
 private:
 	struct GameFlow {
 		NancyState::NancyState curState = NancyState::kNone;

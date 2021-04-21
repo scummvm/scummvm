@@ -74,10 +74,11 @@ public:
 	Common::Rect convertViewportToScreen(const Common::Rect &viewportRect) const;
 	Common::Rect convertScreenToViewport(const Common::Rect &viewportRect) const;
 
-	// 0 is inactive, -1 is keep unchanged
-	void setEdgesSize(uint16 upSize, uint16 downSize, uint16 leftSize, uint16 rightSize);
 	void disableEdges(byte edges);
 	void enableEdges(byte edges);
+
+protected:
+	void setEdgesSize(uint16 upSize, uint16 downSize, uint16 leftSize, uint16 rightSize);
 
 	Common::Rect _upHotspot;
 	Common::Rect _downHotspot;

@@ -51,10 +51,8 @@ void Viewport::init() {
 	_upHotspot = _downHotspot = _leftHotspot = _rightHotspot = _screenPosition;
 	_downHotspot.translate(0, _screenPosition.height());
 	_rightHotspot.translate(_screenPosition.width(), 0);
-	_upHotspot.setHeight(0);
-	_downHotspot.setHeight(0);
-	_leftHotspot.setWidth(0);
-	_rightHotspot.setWidth(0);
+	
+	setEdgesSize(g_nancy->_verticalEdgesSize, g_nancy->_horizontalEdgesSize + 5, g_nancy->_horizontalEdgesSize, g_nancy->_horizontalEdgesSize);
 
 	RenderObject::init();
 }
