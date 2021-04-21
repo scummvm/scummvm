@@ -508,7 +508,6 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "detention", "Detention" },
 	{ "devochkaquest", "DevochkaQuest" },
 	{ "dgsearchofthebatterie", "DG: search of the batterie" },
-	{ "diamondsintherough", "Diamonds in the Rough" },
 	{ "diemaskennyarlathoteps", "Die Masken Nyarlathoteps" },
 	{ "dinnerforpigeons", "Dinner for Pigeons" },
 	{ "dislocation", "Dislocation" },
@@ -1717,6 +1716,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("detectivegallo", "dgbuild.exe", "5f2e683b0d5e66e47f5800322982171e", 466252165), //Steam
 	GAME_ENTRY("detectivegallo", "dgbuild.exe", "2e0678b5642c64e057022a79742743fb", 90740554), // Steam
 	GAME_ENTRY("detectivegallo", "dgbuild.exe", "2e0678b5642c64e057022a79742743fb", 90740772), //GOG
+	GAME_ENTRY("diamondsintherough", "Diamonds.exe", "14c995189266969d538b31d1df451d3f", 180079079),
 	GAME_ENTRY("docapocalypse", "doc_apocalypse.exe", "1a7dfeb7797720111f9e40b5cbfea4c4", 47961989), // Steam
 	GAME_ENTRY("docapocalypse", "doc_apocalypse.exe", "1a7dfeb7797720111f9e40b5cbfea4c4", 47959435),
 	GAME_ENTRY("donticeyourcool", "Don't Ice Your Cool.exe", "2321081ba51d1869ebe11b9ba126911b", 5979469),
@@ -2217,7 +2217,6 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("detention", "little.exe", "c16204dc8aa338e3199b2c62da0b33f4", 2362176),
 	GAME_ENTRY("devochkaquest", "DevochkaQuest.exe", "84faea68bf7277610c2229be7b3e74af", 32769660),
 	GAME_ENTRY("dgsearchofthebatterie", "dgsfb.exe", "88cf59aad15ca331ab0f854e16c84df3", 1664209),
-	GAME_ENTRY("diamondsintherough", "Diamonds.exe", "14c995189266969d538b31d1df451d3f", 180079079),
 	GAME_ENTRY("diemaskennyarlathoteps", "ags_masken.exe", "74dc062c5f68f3d70da911f2db5737b6", 129219473),
 	GAME_ENTRY("dinnerforpigeons", "DinnerForPigeons.exe", "0de24019f4bf96e6a7add17110514609", 27207204),
 	GAME_ENTRY("dislocation", "dislocation.exe", "aecd482222ff54206e43a029b5f0b170", 168869859),
