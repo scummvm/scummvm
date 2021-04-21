@@ -1307,6 +1307,7 @@ begin_credits("Credits");
 				add_person("Thierry Crozat", "criezy", "Numerous contributions to documentation");
 				add_person("Joachim Eberhard", "joachimeberhard", "Numerous contributions to documentation (retired)");
 				add_person("Matthew Hoops", "clone2727", "Numerous contributions to documentation (retired)");
+				add_person("Cadi Howley", "cadih", "User documentation (GSOD 2020)");
 			end_persons();
 		end_section();
 
