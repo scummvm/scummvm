@@ -400,25 +400,7 @@ bool TrecisionEngine::syncGameStream(Common::Serializer &ser) {
 		ser.syncAsByte(_inventoryObj[a]._flag);
 	}
 
-	for (int a = 0; a < MAXANIM; a++) {
-		SAnim *cur = &_animMgr->_animTab[a];
-		ser.syncBytes((byte *)cur->_name, 14);
-		ser.syncAsUint16LE(cur->_flag);
-		for (int i = 0; i < MAXCHILD; i++) {
-			ser.syncAsUint16LE(cur->_lim[i].left);
-			ser.syncAsUint16LE(cur->_lim[i].top);
-			ser.syncAsUint16LE(cur->_lim[i].right);
-			ser.syncAsUint16LE(cur->_lim[i].bottom);
-		}
-		ser.syncAsByte(cur->_nbox);
-		for (int i = 0; i < MAXATFRAME; i++) {
-			ser.syncAsByte(cur->_atFrame[i]._type);
-			ser.syncAsByte(cur->_atFrame[i]._child);
-			ser.syncAsUint16LE(cur->_atFrame[i]._numFrame);
-			ser.syncAsUint16LE(cur->_atFrame[i]._index);
-		}
-	}
-
+	_animMgr->syncGameStream(ser);
 	_soundMgr->syncGameStream(ser);
 
 	for (int a = 0; a < MAXCHOICE; a++) {
@@ -594,28 +576,7 @@ void TrecisionEngine::LoadAll() {
 		dataNl.readByte(); // Padding
 	}
 
-	for (int i = 0; i < MAXANIM; ++i) {
-		dataNl.read(&_animMgr->_animTab[i]._name, ARRAYSIZE(_animMgr->_animTab[i]._name));
-
-		_animMgr->_animTab[i]._flag = dataNl.readUint16LE();
-
-		for (int j = 0; j < MAXCHILD; ++j) {
-			_animMgr->_animTab[i]._lim[j].left = dataNl.readUint16LE();
-			_animMgr->_animTab[i]._lim[j].top = dataNl.readUint16LE();
-			_animMgr->_animTab[i]._lim[j].right = dataNl.readUint16LE();
-			_animMgr->_animTab[i]._lim[j].bottom = dataNl.readUint16LE();
-		}
-
-		_animMgr->_animTab[i]._nbox = dataNl.readByte();
-		dataNl.readByte(); // Padding
-
-		for (int j = 0; j < MAXATFRAME; ++j) {
-			_animMgr->_animTab[i]._atFrame[j]._type = dataNl.readByte();
-			_animMgr->_animTab[i]._atFrame[j]._child = dataNl.readByte();
-			_animMgr->_animTab[i]._atFrame[j]._numFrame = dataNl.readUint16LE();
-			_animMgr->_animTab[i]._atFrame[j]._index = dataNl.readUint16LE();
-		}
-	}
+	_animMgr->loadAnimTab(&dataNl);
 
 	for (int i = 0; i < MAXDIALOG; ++i) {
 		_dialog[i]._flag = dataNl.readUint16LE();

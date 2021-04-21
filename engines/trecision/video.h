@@ -23,18 +23,14 @@
 #ifndef TRECISION_VIDEO_H
 #define TRECISION_VIDEO_H
 
-#include "nl/struct.h"
-#include "nl/sysdef.h"
+#include "trecision/nl/struct.h"
+
+#include "common/file.h"
 #include "video/smk_decoder.h"
 
 namespace Trecision {
 
-enum SmackerType {
-	kSmackerBackground = 0,		// Scene background animations
-	kSmackerAction = 1,			// Main character action animations
-	kSmackerIcon = 2			// Smacker inventory animations
-};
-
+#define MAXANIM  750
 #define MAXSMACK 3
 
 // SMACKER ANIMATION FLAGS
@@ -47,6 +43,12 @@ enum SmackerType {
 #define SMKANIM_OFF2 64
 #define SMKANIM_OFF3 128
 #define SMKANIM_OFF4 256
+
+enum SmackerType {
+	kSmackerBackground = 0,		// Scene background animations
+	kSmackerAction = 1,			// Main character action animations
+	kSmackerIcon = 2			// Smacker inventory animations
+};
 
 class TrecisionEngine;
 
@@ -104,6 +106,9 @@ public:
 	void refreshSmkAnim(int animation);
 	void startSmkAnim(uint16 animation);
 	void stopAllSmkAnims();
+
+	void syncGameStream(Common::Serializer &ser);
+	void loadAnimTab(Common::File *file);
 };
 } // end of namespace
 #endif

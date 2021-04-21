@@ -178,7 +178,7 @@ void PaintScreen(uint8 flag) {
 	for (int a = 0; a < g_vm->_curSortTableNum; a++) {
 		SortTable[a]._index = 0;
 		SortTable[a]._roomIndex = 0;
-		SortTable[a]._typology = 0;
+		SortTable[a]._typology = TYPO_NONE;
 		SortTable[a]._curFrame = 0;
 	}
 

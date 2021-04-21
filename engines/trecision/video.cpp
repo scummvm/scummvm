@@ -569,4 +569,50 @@ void AnimManager::swapCD(int cd) {
 	}
 }
 
+void AnimManager::syncGameStream(Common::Serializer &ser) {
+	for (int a = 0; a < MAXANIM; a++) {
+		SAnim *cur = &_animTab[a];
+		ser.syncBytes((byte *)cur->_name, 14);
+		ser.syncAsUint16LE(cur->_flag);
+		for (int i = 0; i < MAXCHILD; i++) {
+			ser.syncAsUint16LE(cur->_lim[i].left);
+			ser.syncAsUint16LE(cur->_lim[i].top);
+			ser.syncAsUint16LE(cur->_lim[i].right);
+			ser.syncAsUint16LE(cur->_lim[i].bottom);
+		}
+		ser.syncAsByte(cur->_nbox);
+		for (int i = 0; i < MAXATFRAME; i++) {
+			ser.syncAsByte(cur->_atFrame[i]._type);
+			ser.syncAsByte(cur->_atFrame[i]._child);
+			ser.syncAsUint16LE(cur->_atFrame[i]._numFrame);
+			ser.syncAsUint16LE(cur->_atFrame[i]._index);
+		}
+	}
+}
+
+void AnimManager::loadAnimTab(Common::File *file) {
+	for (int i = 0; i < MAXANIM; ++i) {
+		file->read(&_animTab[i]._name, ARRAYSIZE(_animTab[i]._name));
+
+		_animTab[i]._flag = file->readUint16LE();
+
+		for (int j = 0; j < MAXCHILD; ++j) {
+			_animTab[i]._lim[j].left = file->readUint16LE();
+			_animTab[i]._lim[j].top = file->readUint16LE();
+			_animTab[i]._lim[j].right = file->readUint16LE();
+			_animTab[i]._lim[j].bottom = file->readUint16LE();
+		}
+
+		_animTab[i]._nbox = file->readByte();
+		file->readByte(); // Padding
+
+		for (int j = 0; j < MAXATFRAME; ++j) {
+			_animTab[i]._atFrame[j]._type = file->readByte();
+			_animTab[i]._atFrame[j]._child = file->readByte();
+			_animTab[i]._atFrame[j]._numFrame = file->readUint16LE();
+			_animTab[i]._atFrame[j]._index = file->readUint16LE();
+		}
+	}
+}
+
 } // namespace Trecision
