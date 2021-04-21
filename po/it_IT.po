@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-04-21 10:35+0000\n"
-"PO-Revision-Date: 2021-04-20 16:49+0000\n"
+"PO-Revision-Date: 2021-04-21 16:37+0000\n"
 "Last-Translator: Walter Agazzi <tag2015@gmail.com>\n"
 "Language-Team: Italian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/it/>\n"
@@ -6120,13 +6120,16 @@ msgstr ""
 
 #: engines/scumm/detection.cpp:172
 msgid "Trim FM-TOWNS games to 200 pixels height"
-msgstr ""
+msgstr "Riduci la risoluzione verticale dei giochi FM-TOWNS a 200 pixel"
 
 #: engines/scumm/detection.cpp:173
 msgid ""
 "Cut the extra 40 pixels at the bottom of the screen, to make it standard 200 "
 "pixels height, allowing using 'aspect ratio correction'"
 msgstr ""
+"Rimuove 40 righe della parte inferiore dello schermo, portando la "
+"risoluzione verticale a 200 pixel e permettendo l'uso di \"correzione "
+"proporzioni\""
 
 #: engines/scumm/dialogs.cpp:165
 #, c-format
@@ -6798,6 +6801,11 @@ msgid ""
 "Aspect ratio correction can be acheived by trimming the resolution to "
 "320x200, under 'engine' tab."
 msgstr ""
+"Hai abilitato \"correzione proporzioni\". Tuttavia, la risoluzione nativa "
+"per i giochi FM-TOWNS è 320x240, che non permette la correzione del rapporto "
+"d'aspetto.\n"
+"Perchè funzioni, devi abilitare anche l'opzione \"Riduci la risoluzione "
+"verticale\" presente nella scheda \"motore\"."
 
 #: engines/scumm/scumm.cpp:1953
 #, c-format
