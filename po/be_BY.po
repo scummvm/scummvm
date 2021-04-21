@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-04-20 22:57+0000\n"
+"POT-Creation-Date: 2021-04-21 10:35+0000\n"
 "PO-Revision-Date: 2021-03-21 08:24+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Belarusian <https://translations.scummvm.org/projects/scummvm/"
@@ -4034,11 +4034,11 @@ msgstr "Няправільнае імя файла захавання"
 #: engines/kyra/detection_tables.h:224 engines/kyra/detection_tables.h:237
 #: engines/kyra/detection_tables.h:250 engines/kyra/detection_tables.h:606
 #: engines/kyra/detection_tables.h:619 engines/kyra/detection_tables.h:1660
-#: engines/kyra/detection_tables.h:1832 engines/neverhood/detection.cpp:110
-#: engines/queen/detection.cpp:168 engines/saga/detection_tables.h:187
-#: engines/saga/detection_tables.h:937 engines/saga/detection_tables.h:996
-#: engines/sci/detection_tables.h:4851 engines/sci/detection_tables.h:4859
-#: engines/teenagent/detection.cpp:102
+#: engines/kyra/detection_tables.h:1832 engines/lure/detection.cpp:204
+#: engines/neverhood/detection.cpp:110 engines/queen/detection.cpp:168
+#: engines/saga/detection_tables.h:187 engines/saga/detection_tables.h:937
+#: engines/saga/detection_tables.h:996 engines/sci/detection_tables.h:4851
+#: engines/sci/detection_tables.h:4859 engines/teenagent/detection.cpp:102
 #, fuzzy
 msgid "Missing game code"
 msgstr "Асноўнае кіраванне гульнёй:"
