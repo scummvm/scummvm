@@ -38,6 +38,7 @@ namespace Trecision {
 class AnimManager;
 class GraphicsManager;
 class LogicManager;
+class SoundManager;
 
 #define SAVE_VERSION_ORIGINAL 102
 #define SAVE_VERSION_SCUMMVM 103
@@ -226,6 +227,7 @@ public:
 	AnimManager *_animMgr;
 	GraphicsManager *_graphicsMgr;
 	LogicManager *_logicMgr;
+	SoundManager *_soundMgr;
 
 	uint8 *_font;
 	uint16 *_arrows;

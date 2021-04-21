@@ -90,7 +90,6 @@ void SomeoneTalk(uint16 s, uint16 Person, uint16 NewAnim, bool FromSomeOneSay);
 void SomeoneContinueTalk();
 void someoneMute();
 void doString();
-void soundtimefunct();
 
 #endif
 } // End of namespace Trecision

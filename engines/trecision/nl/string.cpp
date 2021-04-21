@@ -30,6 +30,7 @@
 #include "trecision/trecision.h"
 
 #include "common/config-manager.h"
+#include "trecision/sound.h"
 #include "trecision/video.h"
 
 namespace Trecision {
@@ -288,7 +289,7 @@ void CharacterContinueTalk() {
 			sprintf(sn, "s%04d.wav", CurS);
 	}
 
-	TalkTime = Talk(sn);
+	TalkTime = g_vm->_soundMgr->Talk(sn);
 	if (!TalkTime)
 		TalkTime = (strlen(SubString[CurSubString]) * 5) / 2 + 50;
 
@@ -311,7 +312,7 @@ void CharacterMute() {
 	g_vm->_lastInv = 0;
 
 	g_vm->redrawString();
-	StopTalk();
+	g_vm->_soundMgr->StopTalk();
 
 	if ((g_vm->_curRoom == kRoom12CU) || (g_vm->_curRoom == kRoom13CU))
 		doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, g_vm->_oldRoom, 0, 0, g_vm->_curObj);
@@ -367,7 +368,7 @@ void SomeoneContinueTalk() {
 	else
 		sprintf(sn, "s%04d.wav", CurS);
 
-	TalkTime = Talk(sn);
+	TalkTime = g_vm->_soundMgr->Talk(sn);
 	if (!TalkTime)
 		TalkTime = (strlen(SubString[CurSubString]) * 5) / 2 + 50;
 
@@ -389,7 +390,7 @@ void someoneMute() {
 	g_vm->_lastInv = 0;
 
 	g_vm->redrawString();
-	StopTalk();
+	g_vm->_soundMgr->StopTalk();
 }
 
 /*-------------------------------------------------------------------------*/

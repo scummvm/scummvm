@@ -34,6 +34,7 @@
 #include "trecision/nl/struct.h"
 #include "trecision/nl/ll/llinc.h"
 #include "trecision/graphics.h"
+#include "trecision/sound.h"
 #include "trecision/video.h"
 
 namespace Trecision {
@@ -406,7 +407,7 @@ void ReadLoc() {
 	if (g_vm->_curRoom == kRoom11 && !(g_vm->_room[kRoom11]._flag & kObjFlagDone))
 		g_vm->_flagShowCharacter = true;
 
-	SoundFadOut();
+	g_vm->_soundMgr->SoundFadOut();
 
 	memset(g_vm->_screenBuffer, 0, MAXX * MAXY * 2);
 
@@ -418,10 +419,10 @@ void ReadLoc() {
 	g_vm->_graphicsMgr->loadBackground(picFile, BmInfo.dx, BmInfo.dy);
 	ReadObj(picFile);
 
-	SoundStopAll();
+	g_vm->_soundMgr->SoundStopAll();
 
 	if (g_vm->_room[g_vm->_curRoom]._sounds[0] != 0)
-		ReadSounds();
+		g_vm->_soundMgr->ReadSounds();
 
 	Common::String fname = Common::String::format("%s.3d", g_vm->_room[g_vm->_curRoom]._baseName);
 	read3D(fname);
@@ -456,7 +457,7 @@ void TendIn() {
 	}
 
 	g_vm->_flagPaintCharacter = true;
-	WaitSoundFadEnd();
+	g_vm->_soundMgr->WaitSoundFadEnd();
 	PaintScreen(1);
 
 	g_vm->_graphicsMgr->copyToScreen(0, 0, MAXX, MAXY);
