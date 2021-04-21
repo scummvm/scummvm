@@ -327,6 +327,10 @@ void MacTextWindow::calcScrollBar() {
 
 	maxScrollbar = getDimensions().height() - getBorderOffsets().upperScrollHeight - getBorderOffsets().lowerScrollHeight;
 
+	// if we enable the win95 mode but the text height is smaller than window height, then we don't draw the scrollbar
+	if (_wm->_mode & kWMModeWin95 && displayHeight > _mactext->getTextHeight())
+		return;
+
 	if (_editable)
 		maxText = _mactext->getTextHeight() + getInnerDimensions().height();
 	else
