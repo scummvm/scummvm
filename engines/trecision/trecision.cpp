@@ -44,6 +44,11 @@
 #include "common/fs.h"
 #include "graphics/cursorman.h"
 
+#include "common/savefile.h"
+#include "common/str.h"
+#include "common/translation.h"
+#include "gui/saveload.h"
+
 namespace Common {
 class File;
 }
@@ -175,6 +180,8 @@ TrecisionEngine::TrecisionEngine(OSystem *syst) : Engine(syst) {
 		ObjPointers[i] = nullptr;
 		MaskPointers[i] = nullptr;
 	}
+
+	BlinkLastDTextChar = MASKCOL;
 }
 
 TrecisionEngine::~TrecisionEngine() {
@@ -702,6 +709,428 @@ uint16 *TrecisionEngine::readData16(Common::String fileName, int &size) {
 	delete stream;
 
 	return buf;
+}
+
+void TrecisionEngine::loadSaveSlots(Common::StringArray &saveNames) {
+	Common::SaveFileManager *saveFileMan = g_engine->getSaveFileManager();
+
+	for (int i = 0; i < _inventorySize; i++) {
+		Common::String saveFileName = getSaveStateName(i + 1);
+		Common::InSaveFile *saveFile = saveFileMan->openForLoading(saveFileName);
+		ExtendedSavegameHeader header;
+
+		if (!saveFile) {
+			saveNames.push_back(_sysText[kMessageEmptySpot]);
+			_inventory[i] = iEMPTYSLOT;
+			continue;
+		}
+
+		const byte version = saveFile->readByte();
+
+		if (saveFile && version == SAVE_VERSION_ORIGINAL) {
+			// Original saved game, convert
+			char buf[40];
+			saveFile->read(buf, 40);
+			buf[39] = '\0';
+			saveNames.push_back(buf);
+
+			uint16 *thumbnailBuf = _icons + (READICON + 1 + i) * ICONDX * ICONDY;
+			saveFile->read((void *)thumbnailBuf, ICONDX * ICONDY * sizeof(uint16));
+			_graphicsMgr->updatePixelFormat(thumbnailBuf, ICONDX * ICONDY);
+
+			_inventory[i] = LASTICON + i;
+		}
+		else if (saveFile && version == SAVE_VERSION_SCUMMVM) {
+			const bool headerRead = MetaEngine::readSavegameHeader(saveFile, &header, false);
+			if (headerRead) {
+				saveNames.push_back(header.description);
+
+				Graphics::Surface *thumbnail = convertScummVMThumbnail(header.thumbnail);
+				uint16 *thumbnailBuf = _icons + (READICON + 1 + i) * ICONDX * ICONDY;
+				memcpy(thumbnailBuf, thumbnail->getPixels(), ICONDX * ICONDY * 2);
+				thumbnail->free();
+				delete thumbnail;
+
+				_inventory[i] = LASTICON + i;
+			}
+			else {
+				saveNames.push_back(_sysText[kMessageEmptySpot]);
+				_inventory[i] = iEMPTYSLOT;
+			}
+		}
+		else {
+			saveNames.push_back(_sysText[kMessageEmptySpot]);
+			_inventory[i] = iEMPTYSLOT;
+		}
+
+		delete saveFile;
+	}
+
+	refreshInventory(0, 0);
+}
+
+/* -----------------25/10/97 15.16-------------------
+						DataSave
+ --------------------------------------------------*/
+bool TrecisionEngine::DataSave() {
+	uint8 OldInv[MAXICON], OldIconBase, OldInvLen;
+	char ch;
+	Common::StringArray saveNames;
+	saveNames.reserve(MAXSAVEFILE);
+	uint16 posx, LenText;
+	bool ret = true;
+
+	actorStop();
+	nextStep();
+
+	if (!ConfMan.getBool("originalsaveload")) {
+		GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"), true);
+		int saveSlot = dialog->runModalWithCurrentTarget();
+		Common::String saveName = dialog->getResultString();
+		bool skipSave = saveSlot == -1;
+		delete dialog;
+
+		// Remove the mouse click event from the save/load dialog
+		eventLoop();
+		_mouseLeftBtn = _mouseRightBtn = false;
+
+		if (!skipSave)
+			saveGameState(saveSlot, saveName);
+
+		return !skipSave;
+	}
+
+	for (int a = 0; a < TOP; a++)
+		memset(_screenBuffer + MAXX * a, 0, MAXX * 2);
+
+	SDText SText;
+	SText.set(0, TOP - 20, MAXX, CARHEI, 0, 0, MAXX, CARHEI, 0x7FFF, MASKCOL, _sysText[kMessageSavePosition]);
+	SText.DText();
+
+	_graphicsMgr->copyToScreen(0, 0, MAXX, TOP);
+
+	for (int a = TOP + AREA; a < AREA + 2 * TOP; a++)
+		memset(_screenBuffer + MAXX * a, 0, MAXX * 2);
+	_graphicsMgr->copyToScreen(0, TOP + AREA, MAXX, TOP);
+
+	_gameQueue.initQueue();
+	_animQueue.initQueue();
+	_characterQueue.initQueue();
+
+	FreeKey();
+
+	// Reset the inventory and turn it into save slots
+	memcpy(OldInv, _inventory, MAXICON);
+	memset(_inventory, 0, MAXICON);
+	OldIconBase = _iconBase;
+	_iconBase = 0;
+	OldInvLen = _inventorySize;
+	_inventorySize = MAXSAVEFILE;
+
+insave:
+
+	int8 CurPos = -1;
+	int8 OldPos = -1;
+	bool skipSave = false;
+	ch = 0;
+
+	loadSaveSlots(saveNames);
+
+	for (;;) {
+		checkSystem();
+		GetKey();
+
+		int16 mx = _mouseX;
+		int16 my = _mouseY;
+
+		if (my >= FIRSTLINE &&
+			my < FIRSTLINE + ICONDY &&
+			mx >= ICONMARGSX &&
+			mx < MAXX - ICONMARGDX) {
+			OldPos = CurPos;
+			CurPos = ((mx - ICONMARGSX) / ICONDX);
+
+			if (OldPos != CurPos) {
+				for (int a = FIRSTLINE + ICONDY + 10; a < FIRSTLINE + ICONDY + 10 + CARHEI; a++)
+					memset(_screenBuffer + MAXX * a, 0, MAXX * 2);
+
+				posx = ICONMARGSX + ((CurPos) * (ICONDX)) + ICONDX / 2;
+				LenText = TextLength(saveNames[CurPos].c_str(), 0);
+
+				posx = CLIP(posx - (LenText / 2), 2, MAXX - 2 - LenText);
+				SText.set(posx, FIRSTLINE + ICONDY + 10, LenText, CARHEI, 0, 0, LenText, CARHEI, 0x7FFF, MASKCOL, saveNames[CurPos].c_str());
+				SText.DText();
+
+				_graphicsMgr->copyToScreen(0, FIRSTLINE + ICONDY + 10, MAXX, CARHEI);
+			}
+
+			if (_mouseLeftBtn)
+				break;
+		}
+		else {
+			if (OldPos != -1) {
+				for (int a = FIRSTLINE + ICONDY + 10; a < FIRSTLINE + ICONDY + 10 + CARHEI; a++)
+					memset(_screenBuffer + MAXX * a, 0, MAXX * 2);
+
+				_graphicsMgr->copyToScreen(0, FIRSTLINE + ICONDY + 10, MAXX, CARHEI);
+			}
+
+			OldPos = -1;
+			CurPos = -1;
+
+			if (_mouseLeftBtn || _mouseRightBtn) {
+				skipSave = true;
+				break;
+			}
+		}
+	}
+
+	if (!skipSave) {
+		if (_inventory[CurPos] == iEMPTYSLOT) {
+			saveNames[CurPos].clear();
+
+			for (int a = FIRSTLINE + ICONDY + 10; a < FIRSTLINE + ICONDY + 10 + CARHEI; a++)
+				memset(_screenBuffer + MAXX * a, 0, MAXX * 2);
+
+			_graphicsMgr->copyToScreen(0, FIRSTLINE + ICONDY + 10, MAXX, CARHEI);
+		}
+
+		for (;;) {
+			_keybInput = true;
+			checkSystem();
+			ch = GetKey();
+			FreeKey();
+
+			_keybInput = false;
+
+			if (ch == 0x1B) {
+				ch = 0;
+				for (int a = FIRSTLINE + ICONDY + 10; a < FIRSTLINE + ICONDY + 10 + CARHEI; a++)
+					memset(_screenBuffer + MAXX * a, 0, MAXX * 2);
+
+				_graphicsMgr->copyToScreen(0, FIRSTLINE + ICONDY + 10, MAXX, CARHEI);
+
+				goto insave;
+			}
+
+			if (ch == 8)	// Backspace
+				saveNames[CurPos].deleteLastChar();
+			else if (ch == 13)	// Enter
+				break;
+			else if (saveNames[CurPos].size() < 39 && Common::isPrint(ch))
+				saveNames[CurPos] += ch;
+
+			for (int a = FIRSTLINE + ICONDY + 10; a < FIRSTLINE + ICONDY + 10 + CARHEI; a++)
+				memset(_screenBuffer + MAXX * a, 0, MAXX * 2);
+
+			saveNames[CurPos] += '_';	// add blinking cursor
+
+			posx = ICONMARGSX + ((CurPos) * (ICONDX)) + ICONDX / 2;
+			LenText = TextLength(saveNames[CurPos].c_str(), 0);
+
+			posx = CLIP(posx - (LenText / 2), 2, MAXX - 2 - LenText);
+			SText.set(posx, FIRSTLINE + ICONDY + 10, LenText, CARHEI, 0, 0, LenText, CARHEI, 0x7FFF, MASKCOL, saveNames[CurPos].c_str());
+
+			if ((ReadTime() / 8) & 1)
+				BlinkLastDTextChar = 0x0000;
+
+			SText.DText();
+			BlinkLastDTextChar = MASKCOL;
+
+			saveNames[CurPos].deleteLastChar();	// remove blinking cursor
+
+			_graphicsMgr->copyToScreen(0, FIRSTLINE + ICONDY + 10, MAXX, CARHEI);
+		}
+
+		for (int a = FIRSTLINE; a < MAXY; a++)
+			memset(_screenBuffer + MAXX * a, 0, MAXX * 2);
+
+		ret = false;
+
+		// Restore the inventory
+		memcpy(_inventory, OldInv, MAXICON);
+		_curInventory = 0;
+		_iconBase = OldIconBase;
+		_inventorySize = OldInvLen;
+
+		saveGameState(CurPos + 1, saveNames[CurPos]);
+	}
+
+	for (int a = FIRSTLINE; a < MAXY; a++)
+		memset(_screenBuffer + MAXX * a, 0, MAXX * 2);
+
+	_graphicsMgr->copyToScreen(0, FIRSTLINE, MAXX, TOP);
+
+	for (int a = TOP - 20; a < TOP - 20 + CARHEI; a++)
+		memset(_screenBuffer + MAXX * a, 0, MAXX * 2);
+
+	_graphicsMgr->copyToScreen(0, 0, MAXX, TOP);
+
+	// Restore the inventory
+	memcpy(_inventory, OldInv, MAXICON);
+	_curInventory = 0;
+	_iconBase = OldIconBase;
+	_inventorySize = OldInvLen;
+
+	return ret;
+}
+
+/*-----------------09/02/96 20.57-------------------
+					DataLoad
+--------------------------------------------------*/
+bool TrecisionEngine::DataLoad() {
+	Common::StringArray saveNames;
+	saveNames.reserve(MAXSAVEFILE);
+	bool retval = true;
+
+	if (!ConfMan.getBool("originalsaveload")) {
+		GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Load game:"), _("Load"), false);
+		int saveSlot = dialog->runModalWithCurrentTarget();
+		bool skipLoad = saveSlot == -1;
+		delete dialog;
+
+		// Remove the mouse click event from the save/load dialog
+		eventLoop();
+		_mouseLeftBtn = _mouseRightBtn = false;
+
+		performLoad(saveSlot - 1, skipLoad);
+
+		return !skipLoad;
+	}
+
+	for (int a = 0; a < TOP; a++)
+		memset(_screenBuffer + MAXX * a, 0, MAXX * 2);
+
+	showCursor();
+
+	SDText SText;
+	SText.set(0, TOP - 20, MAXX, CARHEI, 0, 0, MAXX, CARHEI, 0x7FFF, MASKCOL, _sysText[kMessageLoadPosition]);
+	SText.DText();
+
+	_graphicsMgr->copyToScreen(0, 0, MAXX, TOP);
+
+	for (int a = TOP + AREA; a < AREA + 2 * TOP; a++)
+		memset(_screenBuffer + MAXX * a, 0, MAXX * 2);
+	_graphicsMgr->copyToScreen(0, TOP + AREA, MAXX, TOP);
+
+	_gameQueue.initQueue();
+	_animQueue.initQueue();
+	_characterQueue.initQueue();
+
+	FreeKey();
+
+	uint8 OldInv[MAXICON];
+	// Reset the inventory and turn it into save slots
+	memcpy(OldInv, _inventory, MAXICON);
+	memset(_inventory, 0, MAXICON);
+	uint8 OldIconBase = _iconBase;
+	_iconBase = 0;
+	uint8 OldInvLen = _inventorySize;
+	_inventorySize = MAXSAVEFILE;
+
+	loadSaveSlots(saveNames);
+
+	bool skipLoad = false;
+	int8 CurPos = -1;
+	int8 OldPos = -1;
+
+	for (;;) {
+		checkSystem();
+		GetKey();
+
+		if (_mouseY >= FIRSTLINE &&
+			_mouseY < (FIRSTLINE + ICONDY) &&
+			_mouseX >= ICONMARGSX &&
+			(_mouseX < (MAXX - ICONMARGDX))) {
+			OldPos = CurPos;
+			CurPos = (_mouseX - ICONMARGSX) / ICONDX;
+
+			if (OldPos != CurPos) {
+				for (int a = FIRSTLINE + ICONDY + 10; a < FIRSTLINE + ICONDY + 10 + CARHEI; a++)
+					memset(_screenBuffer + MAXX * a, 0, MAXX * 2);
+
+				uint16 posX = ICONMARGSX + ((CurPos) * (ICONDX)) + ICONDX / 2;
+				uint16 lenText = TextLength(saveNames[CurPos].c_str(), 0);
+				if (posX - (lenText / 2) < 2)
+					posX = 2;
+				else
+					posX = posX - (lenText / 2);
+				if ((posX + lenText) > MAXX - 2)
+					posX = MAXX - 2 - lenText;
+
+				SText.set(posX, FIRSTLINE + ICONDY + 10, lenText, CARHEI, 0, 0, lenText, CARHEI, 0x7FFF, MASKCOL, saveNames[CurPos].c_str());
+				SText.DText();
+
+				_graphicsMgr->copyToScreen(0, FIRSTLINE + ICONDY + 10, MAXX, CARHEI);
+			}
+
+			if (_mouseLeftBtn && (_inventory[CurPos] != iEMPTYSLOT))
+				break;
+		}
+		else {
+			if (OldPos != -1) {
+				for (int a = FIRSTLINE + ICONDY + 10; a < FIRSTLINE + ICONDY + 10 + CARHEI; a++)
+					memset(_screenBuffer + MAXX * a, 0, MAXX * 2);
+
+				_graphicsMgr->copyToScreen(0, FIRSTLINE + ICONDY + 10, MAXX, CARHEI);
+			}
+
+			OldPos = -1;
+			CurPos = -1;
+
+			if (_mouseLeftBtn || _mouseRightBtn) {
+				retval = false;
+				skipLoad = true;
+				break;
+			}
+		}
+	}
+
+	performLoad(CurPos, skipLoad);
+
+	if (skipLoad) {
+		// Restore the inventory
+		memcpy(_inventory, OldInv, MAXICON);
+		_curInventory = 0;
+		_iconBase = OldIconBase;
+		_inventorySize = OldInvLen;
+	}
+
+	return retval;
+}
+
+void TrecisionEngine::performLoad(int slot, bool skipLoad) {
+	if (!skipLoad) {
+		for (int a = FIRSTLINE; a < MAXY; a++)
+			memset(_screenBuffer + MAXX * a, 0, MAXX * 2);
+
+		loadGameState(slot + 1);
+
+		_flagNoPaintScreen = true;
+		_curStack = 0;
+		_flagscriptactive = false;
+
+		_oldRoom = _curRoom;
+		doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, _curRoom, 0, 0, 0);
+	}
+
+	actorStop();
+	nextStep();
+	checkSystem();
+
+	for (int a = FIRSTLINE; a < MAXY; a++)
+		memset(_screenBuffer + MAXX * a, 0, MAXX * 2);
+
+	_graphicsMgr->copyToScreen(0, FIRSTLINE, MAXX, TOP);
+
+	for (int a = TOP - 20; a < TOP - 20 + CARHEI; a++)
+		memset(_screenBuffer + MAXX * a, 0, MAXX * 2);
+
+	_graphicsMgr->copyToScreen(0, 0, MAXX, TOP);
+
+	if (_flagscriptactive) {
+		hideCursor();
+	}
 }
 
 SActor::SActor(TrecisionEngine *vm) : _vm(vm) {

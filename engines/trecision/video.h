@@ -27,6 +27,7 @@
 
 #include "common/file.h"
 #include "video/smk_decoder.h"
+#include "common/serializer.h"
 
 namespace Trecision {
 

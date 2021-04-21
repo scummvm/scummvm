@@ -421,7 +421,7 @@ void doIdle() {
 		&& (g_vm->_actor->_curAction < hWALKIN) && !g_vm->_flagUseWithStarted && g_vm->_flagShowCharacter
 		&& !g_vm->_animMgr->_playingAnims[kSmackerAction]) {
 			::createThumbnailFromScreen(&g_vm->_thumbnail);
-			DataSave();
+			g_vm->DataSave();
 			g_vm->showInventoryName(NO_OBJECTS, false);
 			doEvent(MC_INVENTORY, ME_SHOWICONNAME, MP_DEFAULT, g_vm->_mouseX, g_vm->_mouseY, 0, 0);
 			g_vm->refreshInventory(g_vm->_inventoryRefreshStartIcon, g_vm->_inventoryRefreshStartLine);
@@ -434,7 +434,7 @@ void doIdle() {
 		&& (g_vm->_actor->_curAction < hWALKIN) && !g_vm->_flagUseWithStarted && g_vm->_flagShowCharacter
 		&& !g_vm->_animMgr->_playingAnims[kSmackerAction]) {
 			::createThumbnailFromScreen(&g_vm->_thumbnail);
-			if (!DataLoad()) {
+			if (!g_vm->DataLoad()) {
 				g_vm->showInventoryName(NO_OBJECTS, false);
 				doEvent(MC_INVENTORY, ME_SHOWICONNAME, MP_DEFAULT, g_vm->_mouseX, g_vm->_mouseY, 0, 0);
 				g_vm->refreshInventory(g_vm->_inventoryRefreshStartIcon, g_vm->_inventoryRefreshStartLine);

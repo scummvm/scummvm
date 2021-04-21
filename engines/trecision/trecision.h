@@ -24,15 +24,19 @@
 #define TRECISION_TRECISION_H
 
 #include "engines/engine.h"
-#include "common/keyboard.h"
-#include "common/serializer.h"
-#include "graphics/surface.h"
 
 #include "trecision/nl/3d/3dinc.h"
 #include "trecision/nl/ll/llinc.h"
 #include "trecision/nl/struct.h"
 #include "trecision/fastfile.h"
 #include "trecision/video.h"
+
+#include "common/str-array.h"
+#include "common/keyboard.h"
+#include "common/serializer.h"
+#include "graphics/surface.h"
+#include "common/str.h"
+
 
 namespace Trecision {
 class AnimManager;
@@ -46,6 +50,7 @@ class SoundManager;
 #define MAXROOMS         	  100            // Game rooms
 #define MAXOBJ          	  1400           // Game objects
 #define MAXINVENTORY    	  150            // Inventory Items
+#define MAXSAVEFILE		12
 
 enum TrecisionMessageIds {
 	kMessageSavePosition = 9,
@@ -66,6 +71,8 @@ class TrecisionEngine : public Engine {
 	void openDataFiles();
 	void initNames();
 	void LoadAll();
+	void loadSaveSlots(Common::StringArray &saveNames);
+	Graphics::Surface *convertScummVMThumbnail(Graphics::Surface *thumbnail);
 
 public:
 	TrecisionEngine(OSystem *syst);
@@ -119,7 +126,6 @@ public:
 	uint32 ReadTime();
 	bool CheckMask(uint16 mx, uint16 my);
 
-
 	// Text
 	void addText(uint16 x, uint16 y, const char *text, uint16 tcol, uint16 scol);
 	void clearText();
@@ -133,7 +139,10 @@ public:
 	bool isCursorVisible();
 	void showCursor();
 	void hideCursor();
-
+	bool DataSave();
+	bool DataLoad();
+	void performLoad(int slot, bool skipLoad);
+	
 	Graphics::Surface _thumbnail;
 
 	uint16 _curRoom;
@@ -261,6 +270,8 @@ public:
 
 	uint16 *ObjPointers[MAXOBJINROOM];
 	uint8 *MaskPointers[MAXOBJINROOM];
+
+	uint16 BlinkLastDTextChar;
 };
 
 extern TrecisionEngine *g_vm;

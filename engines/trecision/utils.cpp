@@ -325,6 +325,18 @@ bool TrecisionEngine::CheckMask(uint16 mx, uint16 my) {
 	return false;
 }
 
+Graphics::Surface *TrecisionEngine::convertScummVMThumbnail(Graphics::Surface *thumbnail) {
+	Graphics::Surface *thumbnailConverted = thumbnail->convertTo(g_system->getScreenFormat());
+	Graphics::Surface *result = thumbnailConverted->scale(ICONDX, ICONDY);
+
+	thumbnailConverted->free();
+	delete thumbnailConverted;
+	thumbnail->free();
+	delete thumbnail;
+
+	return result;
+}
+
 
 
 } // End of namespace Trecision
