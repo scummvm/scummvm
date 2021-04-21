@@ -4110,21 +4110,36 @@ void LogicManager::doSystemChangeRoom() {
 
 	// Handle exit velocity in dual rooms level 2
 	if (_vm->_room[_vm->_oldRoom]._flag & kObjFlagExtra) {
-		if (_vm->_curObj == od2ETO2C)
+		switch (_vm->_curObj) {
+		case od2ETO2C:
 			_vm->setRoom(kRoom2E, false);
-		if (_vm->_curObj == od24TO23)
+			break;
+		case od24TO23:
 			_vm->setRoom(kRoom24, false);
-		if (_vm->_curObj == od21TO22)
+			break;
+		case od21TO22:
 			_vm->setRoom(kRoom21, false);
-		if (_vm->_curObj == od2GVALLA26)
+			break;
+		case od2GVALLA26:
 			_vm->setRoom(kRoom2GV, false);
+			break;
+		default:
+			break;
+		}
 	} else {
-		if (_vm->_curObj == oENTRANCE2E)
+		switch (_vm->_curObj) {
+		case oENTRANCE2E:
 			_vm->setRoom(kRoom2E, true);
-		if (_vm->_curObj == od24TO26)
+			break;
+		case od24TO26:
 			_vm->setRoom(kRoom24, true);
-		if (_vm->_curObj == od21TO23)
+			break;
+		case od21TO23:
 			_vm->setRoom(kRoom21, true);
+			break;
+		default:
+			break;
+		}
 	}
 
 	if (_vm->_curRoom == kRoom12 && _vm->_oldRoom == kRoom11)
