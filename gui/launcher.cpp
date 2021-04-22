@@ -283,6 +283,10 @@ void LauncherDialog::updateListing() {
 	// Turn it into a list of pointers
 	Common::List<LauncherEntry> domainList;
 	for (ConfigManager::DomainMap::const_iterator iter = domains.begin(); iter != domains.end(); ++iter) {
+		// Do not list temporary targets added when starting a game from the command line
+		if (iter->_value.contains("id_came_from_command_line"))
+			continue;
+
 		String description;
 
 		if (!iter->_value.tryGetVal("description", description)) {
