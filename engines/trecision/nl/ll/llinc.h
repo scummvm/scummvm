@@ -116,7 +116,6 @@ void ReadExtraObj41D();
 void RegenRoom();
 void PaintRegenRoom();
 void SoundFadIn(int num);
-void resetZBuffer(int x1, int y1, int x2, int y2);
 
 } // End of namespace Trecision
 
