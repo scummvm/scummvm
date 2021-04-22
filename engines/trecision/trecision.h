@@ -114,6 +114,9 @@ public:
 	void endScript();
 	void playScript(uint16 id);
 	void evalScript();
+	bool QuitGame();
+	void DemoOver();
+
 
 	// Utils
 	char *getNextSentence();

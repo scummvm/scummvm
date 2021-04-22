@@ -4225,7 +4225,7 @@ void LogicManager::doSystemChangeRoom() {
 void LogicManager::DoSys(uint16 curObj) {
 	switch (curObj) {
 	case o00QUIT:
-		if (QuitGame())
+		if (g_vm->QuitGame())
 			doEvent(MC_SYSTEM, ME_QUIT, MP_SYSTEM, 0, 0, 0, 0);
 		break;
 
@@ -4353,6 +4353,8 @@ void LogicManager::DoSys(uint16 curObj) {
 			ConfMan.setInt("sfx_volume", ((curObj + 1 - o00SOUND1D) / 2) * 51);
 		else
 			ConfMan.setInt("music_volume", ((curObj + 1 - o00MUSIC1D) / 2) * 51);
+		break;
+	default:
 		break;
 	}
 
