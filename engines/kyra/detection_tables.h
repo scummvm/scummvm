@@ -285,6 +285,19 @@ const KYRAGameDescription adGameDescs[] = {
 		KYRA1_AMIGA_FLAGS
 	},
 
+	{ // Supplied by CaptainHIT in bug report #11596
+		{
+			"kyra1",
+			_s("Missing game code"), // Reason for being unsupported
+			AD_ENTRY1s("GEMCUT.EMC", "d0d1f35c5e2b6dee64b048bb77d1fc00", 6998),
+			Common::IT_ITA,
+			Common::kPlatformAmiga,
+			ADGF_NO_FLAGS,
+			GUIO3(GUIO_NOSPEECH, GUIO_MIDIAMIGA, GUIO_RENDERAMIGA)
+		},
+		KYRA1_AMIGA_FLAGS
+	},
+
 	{
 		{
 			"kyra1",
