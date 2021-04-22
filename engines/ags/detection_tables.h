@@ -943,6 +943,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "noughtscrosses", "Noughts & Crosses" },
 	{ "oceanspiritdennisscourgeoftheunderworld", "Oceanspirit Dennis: Scourge of the Underworld" },
 	{ "odottamaton", "Odot Tamat On" },
+	{ "offtheclock", "Off The Clock" },
 	{ "ohdulieber", "Oh du lieber Augustin" },
 	{ "omnipotenttarot", "Omnipotent Tarot" },
 	{ "onceuponacrime", "Once Upon A Crime" },
@@ -2661,6 +2662,9 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("noughtscrosses", "Noughts.exe", "615e73fc1874e92d60a1996c2330ea36", 2159904),
 	GAME_ENTRY("oceanspiritdennisscourgeoftheunderworld", "Oceanspirit Dennis.exe", "18456f28d9bf843b087e80072c85beca", 2419770),
 	GAME_ENTRY("odottamaton", "Odottamaton.exe", "9d9e5ea323793fc526b1533d78c4f9c6", 23822268),
+	GAME_ENTRY("offtheclock", "Off The Clock.ags", "8918895c5c695bae90af13ea4f1a9807", 495345700), // Linux
+	GAME_ENTRY("offtheclock", "Off The Clock.exe", "b2eb107c1f9784b7fc4f58c2a7678dea", 498392456), // Windows
+	GAME_ENTRY("offtheclock", "ac2game.dat", "b2eb107c1f9784b7fc4f58c2a7678dea", 498257938), // Mac
 	GAME_ENTRY("ohdulieber", "Augustin.exe", "b142b43c146c25443a1d155d441a6a81", 13477896),
 	GAME_ENTRY("omnipotenttarot", "OmnipotentTarot.exe", "f120690b506dd63cd7d1112ea6af2f77", 7166774),
 	GAME_ENTRY("onceuponacrime", "OUAC.exe", "6ee842f73649ced615c44d4eb303687c", 6580658),
