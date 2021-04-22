@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-04-22 01:11+0000\n"
-"PO-Revision-Date: 2021-04-17 09:42+0000\n"
+"PO-Revision-Date: 2021-04-22 12:25+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ja/>\n"
@@ -902,7 +902,7 @@ msgstr "自動セーブ"
 #. I18N: Large GUI scale
 #: gui/options.cpp:137
 msgid "Large"
-msgstr ""
+msgstr "ラージ"
 
 #. I18N: Medium GUI scale
 #: gui/options.cpp:139 engines/nancy/dialogs.cpp:120
@@ -912,7 +912,7 @@ msgstr "ミディアム"
 #. I18N: Small GUI scale
 #: gui/options.cpp:141
 msgid "Small"
-msgstr ""
+msgstr "スモール"
 
 #: gui/options.cpp:429 gui/options.cpp:817 gui/options.cpp:955
 #: gui/options.cpp:1066 gui/options.cpp:1459
@@ -1356,10 +1356,8 @@ msgid "Theme:"
 msgstr "テーマ："
 
 #: gui/options.cpp:2101
-#, fuzzy
-#| msgid "Unscaled"
 msgid "GUI scale:"
-msgstr "スケーリングしない"
+msgstr "GUIスケーリング："
 
 #: gui/options.cpp:2108
 msgid "GUI renderer:"
