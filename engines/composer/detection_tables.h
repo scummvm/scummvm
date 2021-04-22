@@ -126,6 +126,23 @@ static const ComposerGameDescription gameDescriptions[] = {
 		GType_ComposerV1
 	},
 
+	// Magic Tales: Imo and the King French Windows. Bugreport #12123
+	{
+		{
+			"imoking",
+			0,
+			{
+				{"book.ini", GAME_CONFIGFILE, "753d3be27f54d564d8d1bff2b9f0d14f", 3375},
+				AD_LISTEND
+			},
+			Common::FR_FRA,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO2(GUIO_NOASPECT, GUIO_NOMIDI)
+		},
+		GType_ComposerV1
+	},
+
 	// Magic Tales: Imo and the King Hebrew Macintosh
 	{
 		{
