@@ -40,7 +40,7 @@ const static char *kCodeTable[] =    {"",        //
 					     "if ",     // 0x15
 					     "else ",   // 0x16
 					     "Exit",    // 0x17
-					     "goto",    // 0x18
+					     "goto ",   // 0x18
 					     "Mask",    // 0x19
 					     "MaskDrawn",           // 0x1a
 					     "Movie",               // 0x1b

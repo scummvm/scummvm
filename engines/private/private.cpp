@@ -126,15 +126,21 @@ Common::Error PrivateEngine::run() {
 	Common::File *test = new Common::File();
 	Common::SeekableReadStream *file = NULL;
 
-	if (isDemo() && test->open("SUPPORT/ASSETS/DEMOGAME.WIN")) {
+	if (isDemo() && test->open("SUPPORT/ASSETS/DEMOGAME.WIN"))
+		file = (Common::SeekableReadStream *) test;
+	else if (test->open("SUPPORT/ASSETS/GAME.WIN")) {
 		file = (Common::SeekableReadStream *) test;
 	} else {
 
 		assert(_installerArchive.open("SUPPORT/ASSETS.Z"));
 		// if the full game is used
 		if (!isDemo()) {
-			assert(_installerArchive.hasFile("GAME.DAT"));
-			file = _installerArchive.createReadStreamForMember("GAME.DAT");
+			if (_installerArchive.hasFile("GAME.DAT"))
+				file = _installerArchive.createReadStreamForMember("GAME.DAT");
+			else if (_installerArchive.hasFile("GAME.WIN")) 
+				file = _installerArchive.createReadStreamForMember("GAME.WIN");
+			else
+				debug("unknown version");
 		} else {
 			// if the demo from archive.org is used
 			if (_installerArchive.hasFile("GAME.TXT"))
@@ -143,6 +149,8 @@ Common::Error PrivateEngine::run() {
 			// if the demo from the full retail CDROM is used
 			else if (_installerArchive.hasFile("DEMOGAME.DAT"))
 					file = _installerArchive.createReadStreamForMember("DEMOGAME.DAT");
+			else if (_installerArchive.hasFile("DEMOGAME.WIN"))
+					file = _installerArchive.createReadStreamForMember("DEMOGAME.WIN");
 			else {
 				debug("unknown version");
 			}
@@ -159,7 +167,7 @@ Common::Error PrivateEngine::run() {
 	free(buf);
 
 	buf = (char*) decomp.getResult().c_str();
-	debug("%s", buf);
+	//debug("%s", buf);
 
 	// Initialize stuff
 	Gen::g_vm = new Gen::VM();
@@ -199,10 +207,9 @@ Common::Error PrivateEngine::run() {
 	} else {
 		if (Private::Settings::g_setts->_map.contains("kGoIntro"))
 			_nextSetting = "kGoIntro";
-		else if (Private::Settings::g_setts->_map.contains("k58"))
-			_nextSetting = "k58";
-		else
-			error("No setting to start");
+		else {
+			_nextSetting = "k1";
+		}
 	}
 
 	while (!shouldQuit()) {

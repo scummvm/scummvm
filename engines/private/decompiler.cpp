@@ -10,18 +10,20 @@ Decompiler::Decompiler(char *buf, uint32 fileSize, bool mac) {
 		array.push_back(buf[i]);
 		i++;
 	}
+
+	Common::String firstBytes((const char *) array.begin(), (const char *) array.begin() + kHeader.size());
+ 
+	if (firstBytes != kHeader) {
+		debug("Not a precompiled game matrix");
+		_result = Common::String(buf);
+		return;
+	}
+
 	decompile(array, mac);
 }
 
 void Decompiler::decompile(Common::Array<unsigned char> &buffer, bool mac) {
 	Common::Array<unsigned char>::iterator it = buffer.begin();
-
-	Common::String firstBytes((const char *) it, (const char *) it + kHeader.size());
-    //debug("first bytes \"%s\"", firstBytes.c_str());
-
-	if (firstBytes != kHeader) {
-		error("Not a precompiled game matrix");
-	}
     
 	Common::String ss;
 	bool inDefineRects = false;

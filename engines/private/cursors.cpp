@@ -309,13 +309,13 @@ struct CursorTable {
 };
 
 static const CursorTable cursorTable[] = {
-	{ "kExit",      "k5",      MOUSECURSOR_kExit,      32, 32, 9,  0  },
-	{ "kInventory", "", MOUSECURSOR_kInventory, 32, 32, 15, 3  },
-	{ "kTurnLeft",  "", MOUSECURSOR_kTurnLeft,  32, 32, 29, 16 },
-	{ "kTurnRight", "", MOUSECURSOR_kTurnRight, 32, 32, 1,  15 },
-	{ "kZoomIn",    "", MOUSECURSOR_kZoomIn,    32, 32, 10, 8  },
-	{ "kZoomOut",   "", MOUSECURSOR_kZoomOut,   32, 32, 13, 31 },
-	{ "kPhone",     "", MOUSECURSOR_kPhone,     32, 32, 17, 19 },
+	{ "kTurnLeft",  "k1", MOUSECURSOR_kTurnLeft,  32, 32, 29, 16 },
+	{ "kTurnRight", "k2", MOUSECURSOR_kTurnRight, 32, 32, 1,  15 },
+	{ "kZoomIn",    "k3", MOUSECURSOR_kZoomIn,    32, 32, 10, 8  },
+	{ "kZoomOut",   "k4", MOUSECURSOR_kZoomOut,   32, 32, 13, 31 },
+	{ "kExit",      "k5", MOUSECURSOR_kExit,      32, 32, 9,  0  },
+	{ "kPhone",     "k6", MOUSECURSOR_kPhone,     32, 32, 17, 19 },
+	{ "kInventory", "k7", MOUSECURSOR_kInventory, 32, 32, 15, 3  },
 	{ "default",    "", MOUSECURSOR_SCI,        11, 16, 0,  0  },
 	{ nullptr,      nullptr, nullptr,                0,  0,  0,  0  }
 };

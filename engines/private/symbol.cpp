@@ -91,11 +91,11 @@ static Symbol *install(const Common::String &n, int t, int d, const char *s, Com
 	sp->type = t;
 	if (t == NUM) {
 		sp->u.val = d; 
-		debug("install NUM: %s %d", name->c_str(), d);
+		//debug("install NUM: %s %d", name->c_str(), d);
 	}
 	else if (t == NAME) {
 		sp->u.val = d;
-		debug("installing NAME: %s %d", name->c_str(), d);
+		//debug("installing NAME: %s %d", name->c_str(), d);
 	}
 	else if (t == STRING)
 		sp->u.str = scumm_strdup(s); // FIXME: leaks a string here.
@@ -128,7 +128,15 @@ Symbol *SymbolMaps::lookupVariable(Common::String *n) {
 
 /* lookup some name in some symbol table */
 Symbol *SymbolMaps::lookupName(const char *n) {
-	debug("looking up %s", n);
+
+	Symbol *s = (Symbol *)malloc(sizeof(Symbol));
+	Common::String *name = new Common::String(n);
+	s->name = name;
+	s->type = NAME;
+	s->u.val = 0;
+
+	return s;
+	/*debug("looking up %s", n);
 	Common::String s(n);
 
 	if (settings.contains(s))
@@ -149,7 +157,8 @@ Symbol *SymbolMaps::lookupName(const char *n) {
 	else {
 		debugC(1, kPrivateDebugCode, "WARNING: %s not defined", n);
 		return constant(STRING, 0, n);
-	}
+	}*/
+
 }
 
 void SymbolMaps::installAll(const char *n) {
@@ -161,6 +170,7 @@ void SymbolMaps::installAll(const char *n) {
 
 		//debug("name %s", s.c_str());
 		if (strcmp(n, "settings") == 0) {
+			debug("new setting %s", n);
 			assert(r == NULL);
 			install(s, NAME, 0, s.c_str(), r, &settings);
 		} else if (strcmp(n, "variables") == 0) {

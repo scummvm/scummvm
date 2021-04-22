@@ -96,6 +96,7 @@ extern int PRIVATE_lex();
 extern int PRIVATE_parse();
 
 void PRIVATE_xerror(const char *str) {
+    assert(0);
 }
 
 int PRIVATE_wrap() {
