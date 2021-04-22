@@ -236,7 +236,7 @@ const KYRAGameDescription adGameDescs[] = {
 			"kyra1",
 			_s("Missing game code"), // Reason for being unsupported
 			AD_ENTRY1("GEMCUT.EMC", "3f319d6908830a46ff42229a39a2c7ec"),
-			Common::ZH_ANY,
+			Common::ZH_TWN,
 			Common::kPlatformDOS,
 			ADGF_UNSUPPORTED,
 			GUIO5(GUIO_NOSPEECH, GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIPCSPK, GUIO_RENDERVGA)
