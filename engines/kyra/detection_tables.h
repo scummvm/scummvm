@@ -618,7 +618,7 @@ const KYRAGameDescription adGameDescs[] = {
 			"kyra2",
 			_s("Missing game code"), // Reason for being unsupported
 			AD_ENTRY1("FATE.PAK", "5bfc4dd48778ca1f3a9e001e345a9774"),
-			Common::ZH_ANY,
+			Common::ZH_TWN,
 			Common::kPlatformDOS,
 			ADGF_UNSUPPORTED,
 			GUIO6(GUIO_NOSPEECH, GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_MIDIPCSPK, GUIO_RENDERVGA)
