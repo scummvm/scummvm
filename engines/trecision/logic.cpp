@@ -4178,25 +4178,45 @@ void LogicManager::doSystemChangeRoom() {
 	_vm->showCursor();
 
 	if (_vm->_curRoom == kRoom21) {
-		if (_vm->_oldRoom == kRoom23A || _vm->_oldRoom == kRoom23B)
-			_vm->setRoom(kRoom21, true);
-		else if (_vm->_oldRoom == kRoom22)
+		switch (_vm->_oldRoom) {
+		case kRoom22:
 			_vm->setRoom(kRoom21, false);
+			break;
+		case kRoom23A:
+		case kRoom23B:
+			_vm->setRoom(kRoom21, true);
+			break;
+		}
 	} else if (_vm->_curRoom == kRoom24) {
-		if (_vm->_oldRoom == kRoom23A || _vm->_oldRoom == kRoom23B)
+		switch (_vm->_oldRoom) {
+		case kRoom23A:
+		case kRoom23B:
 			_vm->setRoom(kRoom24, false);
-		else if (_vm->_oldRoom == kRoom26)
+			break;
+		case kRoom26:
 			_vm->setRoom(kRoom24, true);
+			break;
+		}
 	} else if (_vm->_curRoom == kRoom2A) {
-		if (_vm->_oldRoom == kRoom25)
+		switch (_vm->_oldRoom) {
+		case kRoom25:
 			_vm->setRoom(kRoom2A, true);
-		else if (_vm->_oldRoom == kRoom2B || _vm->_oldRoom == kRoom29 || _vm->_oldRoom == kRoom29L)
+			break;
+		case kRoom2B:
+		case kRoom29:
+		case kRoom29L:
 			_vm->setRoom(kRoom2A, false);
+			break;			
+		}
 	} else if (_vm->_curRoom == kRoom2B) {
-		if (_vm->_oldRoom == kRoom28)
+		switch (_vm->_oldRoom) {
+		case kRoom28:
 			_vm->setRoom(kRoom2B, true);
-		else if (_vm->_oldRoom == kRoom2A)
+			break;
+		case kRoom2A:
 			_vm->setRoom(kRoom2B, false);
+			break;
+		}
 	}
 	//			for save/load
 	else if (_vm->_room[_vm->_curRoom]._flag & kObjFlagExtra) {
