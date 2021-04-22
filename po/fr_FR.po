@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-04-22 16:41+0000\n"
-"PO-Revision-Date: 2021-04-21 08:58+0000\n"
+"PO-Revision-Date: 2021-04-23 08:25+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
@@ -4861,13 +4861,10 @@ msgstr ""
 "du jeu."
 
 #: engines/kyra/detection_tables.h:1240
-#, fuzzy
-#| msgid ""
-#| "You added the game incorrectly. Please add the root folder of the game."
 msgid "You added the game incorrectly. The game data is in ISO image GAME.DAT."
 msgstr ""
-"Le jeu a été ajouté de façon incorrecte. Merci d'ajouter le dossier racine "
-"du jeu."
+"Le jeu a été ajouté de façon incorrecte. Les données du jeu sont dans "
+"l'image ISO GAME.DAT."
 
 #: engines/kyra/metaengine.cpp:117
 msgid "Lands of Lore support is not compiled in"
