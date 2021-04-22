@@ -72,22 +72,6 @@
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 #include <SDL_clipboard.h>
 #endif
-struct LegacyGraphicsMode {
-	const char *name;
-	const char *oldName;
-};
-
-// Table for using old names for scalers in the configuration
-// to keep compatibility with old config files.
-static const LegacyGraphicsMode s_legacyGraphicsModes[] = {
-	{ "supereagle2x", "supereagle" },
-	{ "dotmatrix2x", "dotmatrix" },
-	{ "sai2x", "2xsai" },
-	{ "normal1x", "1x" },
-	{ "normal2x", "2x" },
-	{ "normal3x", "3x" },
-	{ "supersai2x", "super2xsai" },
-};
 
 OSystem_SDL::OSystem_SDL()
 	:
@@ -253,30 +237,7 @@ void OSystem_SDL::initBackend() {
 	}
 
 	// Search for legacy gfx_mode and replace it
-	if (ConfMan.hasKey("gfx_mode")) {
-		Common::String gfxMode(ConfMan.get("gfx_mode"));
-		for (uint i = 0; i < ARRAYSIZE(s_legacyGraphicsModes); ++i) {
-			if (gfxMode == s_legacyGraphicsModes[i].oldName) {
-				ConfMan.set("gfx_mode", s_legacyGraphicsModes[i].name);
-				break;
-			}
-		}
-	}
-	// Look in all game domains as well
-#if 0
-	Common::ConfigManager::DomainMap &dm = ConfMan.getGameDomains();
-	for (Common::ConfigManager::DomainMap::iterator domain = dm.begin(); domain != dm.end(); ++domain) {
-		Common::ConfigManager::Domain::const_iterator gm = domain->_value.find("gfx_mode");
-		if (gm != domain->_value.end()) {
-			for (uint i = 0; i < ARRAYSIZE(s_legacyGraphicsModes); ++i) {
-				if (gm->_value == s_legacyGraphicsModes[i].oldName) {
-					gm->_value = s_legacyGraphicsModes[i].name;
-					break;
-				}
-			}
-		}
-	}
-#endif
+	ScalerMan.updateOldSettings();
 
 	if (_graphicsManager == 0) {
 #ifdef USE_OPENGL

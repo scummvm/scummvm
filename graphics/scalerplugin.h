@@ -230,6 +230,11 @@ public:
 	 * Search the scaler plugins for a special plugin based on its name.
 	 */
 	uint findScalerPluginIndex(const char *name) const;
+
+	/**
+	 * Update scaler settings from older versions of ScummVM.
+	 */
+	void updateOldSettings();
 };
 
 /** Convenience shortcut for accessing singleton */
