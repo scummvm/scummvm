@@ -561,6 +561,21 @@
 	kFeaturesNone,
 	0, 0, 0
 },
+{ // Supplied by damsoftPL in bug report #12033
+	{
+		"gob2",
+		"",
+		AD_ENTRY1s("intro.stk", "d721383633b7acd6f18752e1ad217473", 559840),
+		PL_POL,
+		kPlatformAmiga,
+		ADGF_NO_FLAGS,
+		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
+	},
+	kGameTypeGob2,
+	kFeaturesNone,
+	0, 0, 0
+},
+
 
 // -- Atari ST --
 
