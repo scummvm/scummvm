@@ -173,4 +173,19 @@
 	"disk1.stk", "intro.tot", 0
 },
 
+{ // Supplied by CaptainHIT in bug report #11595
+	{
+		"geisha",
+		"",
+		AD_ENTRY1s("disk1.stk", "84e2b52fbfa965c59dc6a6db52b39450", 208148),
+		ES_ESP,
+		kPlatformAmiga,
+		ADGF_NO_FLAGS,
+		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
+	},
+	kGameTypeGeisha,
+	kFeaturesEGA,
+	"disk1.stk", "intro.tot", 0
+},
+
 #endif // GOB_DETECTION_TABLES_GEISHA_H
