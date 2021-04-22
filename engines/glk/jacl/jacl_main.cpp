@@ -262,6 +262,8 @@ void glk_main() {
 		return;
 	}
 
+	if (g_vm->shouldQuit()) // terminate() could be called by now when game data is bad
+		return;
 
 	/* DUMMY RETRIEVE OF 'HERE' FOR TESTING OF GAME STATE */
 	get_here();
