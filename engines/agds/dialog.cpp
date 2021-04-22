@@ -153,7 +153,8 @@ void Dialog::processSoundDirective(const Common::String &line) {
 		warning("invalid sound directive, missing arg2");
 		return;
 	}
-	auto comma2 = line.find(',', comma1 + 1);
+	++comma1;
+	auto comma2 = line.find(',', comma1);
 	if (comma2 == line.npos) {
 		warning("invalid sound directive, missing arg3");
 		return;
@@ -165,7 +166,11 @@ void Dialog::processSoundDirective(const Common::String &line) {
 	}
 	--end;
 	Common::String name = line.substr(arg1, comma1 - arg1 - 1);
-	Common::String sample = line.substr(comma1 + 1, comma2 - comma1 - 1);
+	while(line[comma1] == ' ')
+		++comma1;
+	Common::String sample = line.substr(comma1, comma2 - comma1);
+	while(line[comma2] == ' ')
+		++comma2;
 	Common::String step = line.substr(comma2 + 1, end - comma2);
 	debug("sound args = %s,%s,%s", name.c_str(), sample.c_str(), step.c_str());
 	_sounds.push_back(Sound(name, sample, atoi(step.c_str())));
