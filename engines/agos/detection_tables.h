@@ -852,6 +852,34 @@ static const AGOSGameDescription gameDescriptions[] = {
 		GF_OLD_BUNDLE | GF_CRUNCHED | GF_CRUNCHED_GAMEPC | GF_PLANAR
 	},
 
+	// Waxworks - French Amiga Floppy
+	// Supplied by CaptainHIT in bug report #11597
+	{
+		{
+			"waxworks",
+			"Floppy",
+
+			{
+				{ "gameamiga",		GAME_BASEFILE,	"06531f4677496b73184dfc58f641c19f", 44204},
+				{ "icon.pkd",		GAME_ICONFILE,	"4822a91c18b1b2005ac17fc617f7dcbe", 18940},
+				{ "menus.dat",		GAME_MENUFILE,	"3409eeb8ca8b46fc04da99de67573f5e", 320},
+				{ "start",			GAME_RESTFILE,	"b575b336e741dde1725edd4079d5ab67", 20902},
+				{ "stripped.txt",	GAME_STRFILE,	"6faaebff2786216900061eeb978f10af", 225},
+				{ "tbllist",		GAME_TBLFILE,	"95c44bfc380770a6b6dd0dfcc69e80a0", 309},
+				{ "xtbllist",		GAME_XTBLFILE,	"6c7b3db345d46349a5226f695c03e20f", 88},
+				AD_LISTEND
+			},
+			Common::FR_FRA,
+			Common::kPlatformAmiga,
+			ADGF_NO_FLAGS,
+			GUIO2(GUIO_NOSPEECH, GUIO_NOMIDI)
+		},
+
+		GType_WW,
+		GID_WAXWORKS,
+		GF_OLD_BUNDLE | GF_CRUNCHED | GF_CRUNCHED_GAMEPC | GF_PLANAR
+	},
+
 	// Waxworks - English DOS Floppy Demo
 	{
 		{
