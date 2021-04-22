@@ -726,6 +726,9 @@ void UpdateGameOnce(bool checkControls, IDriverDependantBitmap *extraBitmap, int
 
 	game_loop_check_controls(checkControls);
 
+	if (_G(abort_engine))
+		return;
+
 	_G(our_eip) = 2;
 
 	game_loop_do_update();
