@@ -1037,3 +1037,68 @@ uint ScalerManager::findScalerPluginIndex(const char *name) const {
 
 	return 0;
 }
+
+struct LegacyGraphicsMode {
+	const char *oldName;
+	const char *newName;
+	uint factor;
+};
+
+// Table for using old names for scalers in the configuration
+// to keep compatibiblity with old config files.
+static const LegacyGraphicsMode s_legacyGraphicsModes[] = {
+	{ "1x", "normal", 1 },
+	{ "2x", "normal", 2 },
+	{ "3x", "normal", 3 },
+	{ "normal1x", "normal", 1 },
+	{ "normal2x", "normal", 2 },
+	{ "normal3x", "normal", 3 },
+	{ "normal4x", "normal", 4 },
+	{ "hq2x", "hq", 2 },
+	{ "hq3x", "hq", 3 },
+	{ "edge2x", "edge", 2 },
+	{ "edge3x", "edge", 3 },
+	{ "advmame2x", "advmame", 2 },
+	{ "advmame3x", "advmame", 3 },
+	{ "advmame4x", "advmame", 4 },
+	{ "2xsai", "sai", 2 },
+	{ "sai2x", "sai", 2 },
+	{ "super2xsai", "supersai", 2 },
+	{ "supersai2x", "supersai", 2 },
+	{ "supereagle", "supereagle", 2 },
+	{ "supereagle2x", "supereagle", 2 },
+	{ "pm2x", "pm", 2 },
+	{ "dotmatrix", "dotmatrix", 2 },
+	{ "dotmatrix2x", "dotmatrix", 2 },
+	{ "tv2x", "tv", 2 }
+};
+
+void ScalerManager::updateOldSettings() {
+	// Search for legacy gfx_mode and replace it
+	if (ConfMan.hasKey("gfx_mode")) {
+		Common::String gfxMode(ConfMan.get("gfx_mode"));
+		for (uint i = 0; i < ARRAYSIZE(s_legacyGraphicsModes); ++i) {
+			if (gfxMode == s_legacyGraphicsModes[i].oldName) {
+				ConfMan.set("scaler", s_legacyGraphicsModes[i].newName);
+				ConfMan.setInt("scale_factor", s_legacyGraphicsModes[i].factor);
+				break;
+			}
+		}
+	}
+
+	// Look in all game domains as well
+	for (Common::ConfigManager::DomainMap::iterator domain = ConfMan.beginGameDomains(); domain != ConfMan.endGameDomains(); ++domain) {
+		if (domain->_value.contains("gfx_mode")) {
+			Common::String gfxMode(domain->_value.getVal("gfx_mode"));
+			for (uint i = 0; i < ARRAYSIZE(s_legacyGraphicsModes); ++i) {
+				if (gfxMode == s_legacyGraphicsModes[i].oldName) {
+					warning("%s: %s -> %s@%dx", domain->_value.getDomainComment().c_str(), s_legacyGraphicsModes[i].oldName, s_legacyGraphicsModes[i].newName, s_legacyGraphicsModes[i].factor);
+					domain->_value.setVal("scaler", s_legacyGraphicsModes[i].newName);
+					domain->_value.setVal("scale_factor", Common::String::format("%i", s_legacyGraphicsModes[i].factor));
+					domain->_value.erase("gfx_mode");
+					break;
+				}
+			}
+		}
+	}
+}
