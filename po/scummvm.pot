@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-04-21 22:31+0000\n"
+"POT-Creation-Date: 2021-04-22 01:11+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -121,7 +121,7 @@ msgstr ""
 
 #: gui/downloaddialog.cpp:119 gui/downloaddialog.cpp:153
 #: gui/filebrowser-dialog.cpp:133 gui/fluidsynth-dialog.cpp:218
-#: gui/launcher.cpp:390 gui/launcher.cpp:411 gui/launcher.cpp:454
+#: gui/launcher.cpp:394 gui/launcher.cpp:415 gui/launcher.cpp:458
 #: gui/options.cpp:2738 gui/options.cpp:2776
 #: backends/events/default/default-events.cpp:185 engines/buried/buried.cpp:533
 #: engines/grim/grim.cpp:353 engines/kyra/gui/saveload_eob.cpp:596
@@ -133,7 +133,7 @@ msgstr ""
 
 #: gui/downloaddialog.cpp:119 gui/downloaddialog.cpp:154
 #: gui/filebrowser-dialog.cpp:133 gui/fluidsynth-dialog.cpp:218
-#: gui/launcher.cpp:390 gui/launcher.cpp:411 gui/launcher.cpp:454
+#: gui/launcher.cpp:394 gui/launcher.cpp:415 gui/launcher.cpp:458
 #: gui/options.cpp:2738 gui/options.cpp:2776 engines/buried/buried.cpp:533
 #: engines/grim/grim.cpp:353 engines/kyra/gui/saveload_eob.cpp:596
 #: engines/kyra/gui/saveload_eob.cpp:629
@@ -142,7 +142,7 @@ msgstr ""
 msgid "No"
 msgstr ""
 
-#: gui/downloaddialog.cpp:137 gui/launcher.cpp:560
+#: gui/downloaddialog.cpp:137 gui/launcher.cpp:564
 msgid "ScummVM couldn't open the specified directory!"
 msgstr ""
 
@@ -153,7 +153,7 @@ msgid ""
 msgstr ""
 
 #: gui/downloaddialog.cpp:147 gui/editgamedialog.cpp:381
-#: gui/fluidsynth-dialog.cpp:154 gui/launcher.cpp:510 gui/launcher.cpp:514
+#: gui/fluidsynth-dialog.cpp:154 gui/launcher.cpp:514 gui/launcher.cpp:518
 #: gui/massadd.cpp:89 gui/options.cpp:1958 gui/saveload-dialog.cpp:1168
 #: engines/engine.cpp:511 engines/engine.cpp:522
 #: backends/platform/wii/options.cpp:47 engines/agos/animation.cpp:559
@@ -741,7 +741,7 @@ msgstr ""
 msgid "Search in game list"
 msgstr ""
 
-#: gui/launcher.cpp:185 gui/launcher.cpp:779
+#: gui/launcher.cpp:185 gui/launcher.cpp:783
 msgid "Search:"
 msgstr ""
 
@@ -760,41 +760,41 @@ msgstr ""
 msgid "Load"
 msgstr ""
 
-#: gui/launcher.cpp:378
+#: gui/launcher.cpp:382
 msgid "This directory cannot be used yet, it is being downloaded into!"
 msgstr ""
 
-#: gui/launcher.cpp:389
+#: gui/launcher.cpp:393
 msgid ""
 "Do you really want to run the mass game detector? This could potentially add "
 "a huge number of games."
 msgstr ""
 
-#: gui/launcher.cpp:411
+#: gui/launcher.cpp:415
 msgid "Do you really want to remove this game configuration?"
 msgstr ""
 
-#: gui/launcher.cpp:453
+#: gui/launcher.cpp:457
 msgid "Do you want to load saved game?"
 msgstr ""
 
-#: gui/launcher.cpp:510
+#: gui/launcher.cpp:514
 msgid "This game does not support loading games from the launcher."
 msgstr ""
 
-#: gui/launcher.cpp:514
+#: gui/launcher.cpp:518
 msgid "ScummVM could not find any engine capable of running the selected game!"
 msgstr ""
 
-#: gui/launcher.cpp:579
+#: gui/launcher.cpp:583
 msgid "ScummVM could not find any game in the specified directory!"
 msgstr ""
 
-#: gui/launcher.cpp:594
+#: gui/launcher.cpp:598
 msgid "Unknown variant"
 msgstr ""
 
-#: gui/launcher.cpp:600
+#: gui/launcher.cpp:604
 msgid "Pick the game:"
 msgstr ""
 
