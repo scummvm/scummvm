@@ -950,6 +950,19 @@ const KYRAGameDescription adGameDescs[] = {
 		},
 		KYRA3_CD_FLAGS
 	},
+	{ // Provided by AquariumTroop. Bugreport #11934
+		{
+			"kyra3",
+			_s("Missing game code"), // Reason for being unsupported
+			AD_ENTRY2s("ONETIME.PAK", "93b4ca2847ab7cfe52188cbde2ffe561", 485162,
+					   "WESTWOOD.001", "c782e09a3b80510962af1426acf5a130", 10426962),
+			Common::ZH_CNA,
+			Common::kPlatformDOS,
+			ADGF_DROPLANGUAGE | ADGF_UNSUPPORTED,
+			GUIO5(GUIO_NOMIDI, GUIO_RENDERVGA, GAMEOPTION_KYRA3_AUDIENCE, GAMEOPTION_KYRA3_SKIP, GAMEOPTION_KYRA3_HELIUM)
+		},
+		KYRA3_CD_FLAGS
+	},
 
 	// installed version
 	{
