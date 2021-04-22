@@ -273,6 +273,20 @@ static const ADGameDescription gameDescriptions[] = {
 	},
 
 	// The Longest Journey
+	// Polish Demo.
+	// Provided by Faalargon, Bugreport #11883 (#1440 in Residualvm)
+	// Folder structure is completely different. Unsupported for now
+	{
+		"tlj", _s("Missing game code"), // Reason for being unsupported
+		AD_ENTRY2s("x.xarc",		"6c6c388f757adcc49e7f33b0b2cccf96", 2904,
+				   "chapters.ini",	"6ee43a176a5eb94153c2d813261c3226", 252),
+		Common::PL_POL,
+		Common::kPlatformWindows,
+		ADGF_DEMO | ADGF_UNSUPPORTED,
+		GUIO_NONE
+	},
+
+	// The Longest Journey
 	// Russian 2CD by 1C
 	{
 		"tlj", "2 CD/Fargus",
