@@ -181,6 +181,24 @@ static const ZVisionGameDescription gameDescriptions[] = {
 	},
 
 	{
+		// Zork Nemesis English Mac version
+		{
+			"znemesis",
+			_s("Missing game code"), // Reason for being unsupported
+			{
+				{ "CSCR.ZFS", 0, "ce26cbb17bfbaa774742b3187262a7c0", 2597635 },
+				{ "ASCR.ZFS", 0, "5ee98db1bf73983eb8148da231342085", 929931 },
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformMacintosh,
+			ADGF_UNSUPPORTED,
+			GUIO4(GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_DOUBLE_FPS, GAMEOPTION_ENABLE_VENUS, GAMEOPTION_DISABLE_ANIM_WHILE_TURNING)
+		},
+		GID_NEMESIS
+	},
+
+	{
 		// Zork Nemesis English demo version
 		{
 			"znemesis",
