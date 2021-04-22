@@ -280,6 +280,23 @@ static const ComposerGameDescription gameDescriptions[] = {
 		GType_ComposerV1
 	},
 
+	// Magic Tales: The Little Samurai - French from bug #12124
+	{
+		{
+			"littlesamurai",
+			0,
+			{
+				{"book.ini", GAME_CONFIGFILE, "1e9199e31b4f93c5e5caeedd3c2e7c0b", 3833},
+				AD_LISTEND
+			},
+			Common::FR_FRA,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO2(GUIO_NOASPECT, GUIO_NOMIDI)
+		},
+		GType_ComposerV1
+	},
+
 	// Magic Tales: The Little Samurai Mac - from bug #5934
 	{
 		{
