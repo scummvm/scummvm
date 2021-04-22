@@ -189,11 +189,13 @@ int add() {
 	Datum d2 = pop();
 	Datum d1 = pop();
 	if (d1.type == NAME) {
+		d1.u.sym = g_private->maps.lookupVariable(d1.u.sym->name);
 		d1.u.val = d1.u.sym->u.val;
 		d1.type = NUM;
 	}
 
 	if (d2.type == NAME) {
+		d2.u.sym = g_private->maps.lookupVariable(d2.u.sym->name);
 		d2.u.val = d2.u.sym->u.val;
 		d2.type = NUM;
 	}
@@ -211,7 +213,7 @@ int negate() {
 	Datum d = pop();
 	int v = 0;
 	if (d.type == NAME) {
-		//debug("negating %s", d.u.sym->name->c_str());
+		d.u.sym = g_private->maps.lookupVariable(d.u.sym->name);
 		v = d.u.sym->u.val;
 		d.type = NUM;
 	} else if (d.type == NUM) {
@@ -219,6 +221,7 @@ int negate() {
 	} else
 		assert(0);
 
+	debugC(1, kPrivateDebugCode, "negating %d\n", d.u.val);
 	d.u.val = !v;
 	push(d);
 	return 0;
@@ -230,6 +233,7 @@ int gt() {
 	if (d1.type == NAME) {
 		//char *name =  d1.u.sym->name->c_str();
 		//debug("eval %s to %d",
+		d1.u.sym = g_private->maps.lookupVariable(d1.u.sym->name);
 		d1.u.val = d1.u.sym->u.val;
 		d1.type = NUM;
 	}
@@ -237,6 +241,7 @@ int gt() {
 	if (d2.type == NAME) {
 		//char *name =  d1.u.sym->name->c_str();
 		//debug("eval %s to %d",
+		d2.u.sym = g_private->maps.lookupVariable(d2.u.sym->name);
 		d2.u.val = d2.u.sym->u.val;
 		d2.type = NUM;
 	}
@@ -252,6 +257,7 @@ int lt() {
 	if (d1.type == NAME) {
 		//char *name =  d1.u.sym->name->c_str();
 		//debug("eval %s to %d",
+		d1.u.sym = g_private->maps.lookupVariable(d1.u.sym->name);
 		d1.u.val = d1.u.sym->u.val;
 		d1.type = NUM;
 	}
@@ -259,6 +265,7 @@ int lt() {
 	if (d2.type == NAME) {
 		//char *name =  d1.u.sym->name->c_str();
 		//debug("eval %s to %d",
+		d2.u.sym = g_private->maps.lookupVariable(d2.u.sym->name);
 		d2.u.val = d2.u.sym->u.val;
 		d2.type = NUM;
 	}
@@ -274,6 +281,7 @@ int ge() {
 	if (d1.type == NAME) {
 		//char *name =  d1.u.sym->name->c_str();
 		//debug("eval %s to %d",
+		d1.u.sym = g_private->maps.lookupVariable(d1.u.sym->name);
 		d1.u.val = d1.u.sym->u.val;
 		d1.type = NUM;
 	}
@@ -281,6 +289,7 @@ int ge() {
 	if (d2.type == NAME) {
 		//char *name =  d1.u.sym->name->c_str();
 		//debug("eval %s to %d",
+		d2.u.sym = g_private->maps.lookupVariable(d2.u.sym->name);
 		d2.u.val = d2.u.sym->u.val;
 		d2.type = NUM;
 	}
@@ -296,6 +305,7 @@ int le() {
 	if (d1.type == NAME) {
 		//char *name =  d1.u.sym->name->c_str();
 		//debug("eval %s to %d",
+		d1.u.sym = g_private->maps.lookupVariable(d1.u.sym->name);
 		d1.u.val = d1.u.sym->u.val;
 		d1.type = NUM;
 	}
@@ -303,6 +313,7 @@ int le() {
 	if (d2.type == NAME) {
 		//char *name =  d1.u.sym->name->c_str();
 		//debug("eval %s to %d",
+		d2.u.sym = g_private->maps.lookupVariable(d2.u.sym->name);
 		d2.u.val = d2.u.sym->u.val;
 		d2.type = NUM;
 	}
@@ -318,6 +329,7 @@ int eq() {
 	if (d1.type == NAME) {
 		//char *name =  d1.u.sym->name->c_str();
 		//debug("eval %s to %d",
+		d1.u.sym = g_private->maps.lookupVariable(d1.u.sym->name);
 		d1.u.val = d1.u.sym->u.val;
 		d1.type = NUM;
 	}
@@ -325,6 +337,7 @@ int eq() {
 	if (d2.type == NAME) {
 		//char *name =  d1.u.sym->name->c_str();
 		//debug("eval %s to %d",
+		d2.u.sym = g_private->maps.lookupVariable(d2.u.sym->name);
 		d2.u.val = d2.u.sym->u.val;
 		d2.type = NUM;
 	}
@@ -338,11 +351,13 @@ int ne() {
 	Datum d2 = pop();
 	Datum d1 = pop();
 	if (d1.type == NAME) {
+		d1.u.sym = g_private->maps.lookupVariable(d1.u.sym->name);
 		d1.u.val = d1.u.sym->u.val;
 		d1.type = NUM;
 	}
 
 	if (d2.type == NAME) {
+		d2.u.sym = g_private->maps.lookupVariable(d2.u.sym->name);
 		d2.u.val = d2.u.sym->u.val;
 		d2.type = NUM;
 	}
@@ -372,6 +387,7 @@ int ifcode() {
 
 	if (d.type == NAME) {
 		debugC(1, kPrivateDebugCode, "name %s", d.u.sym->name->c_str());
+		d.u.sym = g_private->maps.lookupVariable(d.u.sym->name);
 		d.u.val = d.u.sym->u.val;
 	}
 

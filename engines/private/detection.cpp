@@ -100,7 +100,7 @@ static const ADGameDescription gameDescriptions[] = {
 	},
 	{
 		"private-eye", // EU release (ES)
-		"Demo",
+		0,
 		AD_ENTRY2s("pvteye.ex_", "f41770550ab717086b2d0c805fef4b8f", 498176,
 		   "bklynlgo.bmp", "1dfb703349a46f8ec183de107992b7f5", 33118),
 		Common::ES_ESP,
@@ -120,7 +120,7 @@ static const ADGameDescription gameDescriptions[] = {
 	},
 	{
 		"private-eye", // EU release (FR)
-		"Demo",
+		0,
 		AD_ENTRY2s("pvteye.ex_", "ae0dec43b2f54d45c8a1c93e97092141", 600576,
 		   "bklynlgo.bmp", "1dfb703349a46f8ec183de107992b7f5", 33118),
 		Common::FR_FRA,
