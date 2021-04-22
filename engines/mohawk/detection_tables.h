@@ -1608,6 +1608,22 @@ static const MohawkGameDescription gameDescriptions[] = {
 		"GRANDMA.EXE"
 	},
 
+	// From ajshell1 in bug #11576
+	{
+		{
+			"grandma",
+			"Demo",
+			AD_ENTRY1s("GRANDMA.512", "1f2cb06795dddc20bedbd711fb57338e", 869),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_DEMO,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_LIVINGBOOKSV1,
+		GF_DEMO,
+		"GRANDMA.EXE"
+	},
+
 	// From the Mac CD "La Tartaruga e la Lepre" (The Turtle and the Hare) [Italian, English]
 	{
 		{
