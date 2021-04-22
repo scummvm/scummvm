@@ -201,6 +201,21 @@
 	0, 0, 0
 },
 
+{ // Supplied by CaptainHIT in bug report #11591
+	{
+		"ween",
+		"",
+		AD_ENTRY1s("intro.stk", "53c57051c69c641fcc5270a41d35e7d5", 458536),
+		ES_ESP,
+		kPlatformAmiga,
+		ADGF_NO_FLAGS,
+		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
+	},
+	kGameTypeWeen,
+	kFeaturesNone,
+	0, 0, 0
+},
+
 // -- Atari ST --
 
 { // Supplied by pwigren in bug report #3355
