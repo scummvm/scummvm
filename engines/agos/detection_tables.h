@@ -2502,6 +2502,32 @@ static const AGOSGameDescription gameDescriptions[] = {
 		GF_TALKIE
 	},
 
+	// Simon the Sorcerer 2 - Polish Windows CD
+	// Supplied by paboum Bugreport #11770
+	{
+		{
+			"simon2",
+			"CD",
+
+			{
+				{ "gsptr30",		GAME_BASEFILE,	"63b68bdd395baa108b865cfbc0f9afff", 58652},
+				{ "icon.dat",		GAME_ICONFILE,	"72096a62d36e6034ea9fecc13b2dbdab", 18089},
+				{ "simon2.gme",		GAME_GMEFILE,	"e749c4c103d7e7d51b34620ed76c5a04", 20046789},
+				{ "stripped.txt",	GAME_STRFILE,	"e229f84d46fa83f99b4a7115679f3fb6", 171},
+				{ "tbllist",		GAME_TBLFILE,	"2082f8d02075e590300478853a91ffd9", 513},
+				AD_LISTEND
+			},
+			Common::PL_POL,
+			Common::kPlatformWindows,
+			ADGF_CD,
+			GUIO0()
+		},
+
+		GType_SIMON2,
+		GID_SIMON2,
+		GF_TALKIE
+	},
+
 	// Simon the Sorcerer 2 - English with MT-32 hack (25th Anniversary Edition)
 	// Bugreport #11394
 	{
