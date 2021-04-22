@@ -508,6 +508,7 @@ fbpack	Fatty Bear's Fun Pack
 
 freddi	Freddi Fish 1: The Case of the Missing Kelp Seeds
 	d4cccb5af88f3e77f370896e9ba8c5f9	-1	All	Windows	HE 71	-	-	sev
+	01e51615b26e8ddf6ae88dd86e435d4a	-1	en	Windows	HE 71	-	-	PaulPfenning
 	c0039ad982999c92d0de81910d640fa0	26159	nl	Windows	HE 71	-	-	adutchguy
 	68530d2e15f339fbbf3150b78b4d2ffb	-1	en	Mac	HE 73	-	-	satz
 	6d1baa1065ac5f7b210be8ebe4235e49	26384	nl	Mac	HE 73	-	-	daniel9
