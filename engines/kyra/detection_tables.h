@@ -1232,6 +1232,22 @@ const KYRAGameDescription adGameDescs[] = {
 		LOL_CD_FLAGS
 	},
 
+	// Incorrectly added GOG CD version
+	// Based on Bugreport #11769
+	{
+		{
+			"lol",
+			_s("You added the game incorrectly. The game data is in ISO image GAME.DAT."),
+			AD_ENTRY2s("VOC.PAK", "eb398f09ba3321d872b6174a68a987d9", 2276340,
+					   "GAME.DAT", "f6ec0ee628b6b2ea4a1b551e3071d84b", 306751488),
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_WARNING | ADGF_DROPLANGUAGE | ADGF_CD,
+			GUIO5(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_MIDIPCSPK, GUIO_RENDERVGA)
+		},
+		LOL_CD_FLAGS
+	},
+
 	// Russian fan translation. Version 1. 03.01.2011
 	{
 		{
