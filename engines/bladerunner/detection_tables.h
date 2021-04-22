@@ -123,6 +123,18 @@ static const ADGameDescription gameDescriptions[] = {
 		GUIO6(GAMEOPTION_SITCOM, GAMEOPTION_SHORTY, GAMEOPTION_FRAMELIMITER_NODELAYMILLIS, GAMEOPTION_FRAMELIMITER_FPS, GAMEOPTION_DISABLE_STAMINA_DRAIN, GUIO_NOMIDI)
 	},
 
+	// BladeRunner (Chinese)
+	{
+		"bladerunner",
+		_s("Missing game code"), // Reason for being unsupported
+		AD_ENTRY2s("STARTUP.MIX", "c198b54a5366b88b1734bbca21d3b192", 2678672,
+				   "95blade.dll", "187f257c3183d6b0a0aee69e5cde4c76", 307200),
+		Common::ZH_CNA,
+		Common::kPlatformWindows,
+		ADGF_UNSUPPORTED,
+		GUIO6(GAMEOPTION_SITCOM, GAMEOPTION_SHORTY, GAMEOPTION_FRAMELIMITER_NODELAYMILLIS, GAMEOPTION_FRAMELIMITER_FPS, GAMEOPTION_DISABLE_STAMINA_DRAIN, GUIO_NOMIDI)
+	},
+
 	// Versions with restored content
 
 	// BladeRunner (English) - ENG
