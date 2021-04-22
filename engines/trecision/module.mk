@@ -27,8 +27,7 @@ MODULE_OBJS = \
 	nl/ll/llanim.o \
 	nl/ll/lldec.o \
 	nl/ll/llmouse.o \
-	nl/ll/llscreen.o \
-	nl/ll/llvideo.o
+	nl/ll/llscreen.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_TRECISION), DYNAMIC_PLUGIN)

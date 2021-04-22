@@ -292,7 +292,7 @@ void PaintObjAnm(uint16 CurBox) {
 			Common::Rect l(x1, y1, x2, y2);
 			g_vm->_limits[g_vm->_actorLimit].extend(l);
 
-			resetZBuffer(x1, y1, x2, y2);
+			g_vm->resetZBuffer(x1, y1, x2, y2);
 		}
 
 		drawCharacter(DRAWFACES);

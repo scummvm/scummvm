@@ -142,6 +142,8 @@ public:
 	bool DataSave();
 	bool DataLoad();
 	void performLoad(int slot, bool skipLoad);
+	void resetZBuffer(int x1, int y1, int x2, int y2);
+
 	
 	Graphics::Surface _thumbnail;
 
