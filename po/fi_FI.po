@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-04-22 01:11+0000\n"
+"POT-Creation-Date: 2021-04-22 13:36+0000\n"
 "PO-Revision-Date: 2021-04-16 16:48+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
@@ -4003,10 +4003,11 @@ msgstr "Viallinen tiedostonnimi tallennukselle"
 
 #: engines/cge/detection.cpp:48 engines/cge/detection.cpp:54
 #: engines/kyra/detection_tables.h:224 engines/kyra/detection_tables.h:237
-#: engines/kyra/detection_tables.h:250 engines/kyra/detection_tables.h:606
-#: engines/kyra/detection_tables.h:619 engines/kyra/detection_tables.h:1660
-#: engines/kyra/detection_tables.h:1832 engines/lure/detection.cpp:80
-#: engines/lure/detection.cpp:222 engines/mohawk/detection_tables.h:1012
+#: engines/kyra/detection_tables.h:250 engines/kyra/detection_tables.h:291
+#: engines/kyra/detection_tables.h:619 engines/kyra/detection_tables.h:632
+#: engines/kyra/detection_tables.h:1673 engines/kyra/detection_tables.h:1845
+#: engines/lure/detection.cpp:80 engines/lure/detection.cpp:222
+#: engines/mohawk/detection_tables.h:1012
 #: engines/mohawk/detection_tables.h:1027 engines/neverhood/detection.cpp:110
 #: engines/saga/detection_tables.h:187 engines/saga/detection_tables.h:937
 #: engines/saga/detection_tables.h:996 engines/sci/detection_tables.h:4851
@@ -4806,7 +4807,7 @@ msgstr "Taistelupainikkeen vaihto"
 msgid "Left button to attack, right button to pick up items"
 msgstr "Vasen painike hyökkää, oikea painike poimii esineitä"
 
-#: engines/kyra/detection_tables.h:1212
+#: engines/kyra/detection_tables.h:1225
 msgid "You added the game incorrectly. Please add the root folder of the game."
 msgstr ""
 
