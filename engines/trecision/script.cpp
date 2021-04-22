@@ -20,6 +20,8 @@
  *
  */
 
+#include "trecision/graphics.h"
+#include "trecision/nl/define.h"
 #include "trecision/nl/proto.h"
 #include "trecision/nl/message.h"
 #include "trecision/trecision.h"
@@ -34,7 +36,7 @@ void TrecisionEngine::endScript() {
 	_curStack--;
 	if (_curStack == 0) {
 		_flagscriptactive = false;
-		g_vm->showCursor();
+		showCursor();
 		redrawString();
 	}
 }
@@ -42,7 +44,7 @@ void TrecisionEngine::endScript() {
 void TrecisionEngine::playScript(uint16 id) {
 	_curStack++;
 	_flagscriptactive = true;
-	g_vm->hideCursor();
+	hideCursor();
 	_curScriptFrame[_curStack] = _script[id]._firstFrame;
 
 	SScriptFrame *curFrame = &_scriptFrame[_curScriptFrame[_curStack]];
@@ -68,7 +70,7 @@ void TrecisionEngine::playScript(uint16 id) {
 void TrecisionEngine::evalScript() {
 	if (_characterQueue.testEmptyCharacterQueue4Script() && _gameQueue.testEmptyQueue(MC_DIALOG) && _flagScreenRefreshed) {
 		_curScriptFrame[_curStack]++;
-		g_vm->hideCursor();
+		hideCursor();
 
 		SScriptFrame *curFrame = &_scriptFrame[_curScriptFrame[_curStack]];
 		if (curFrame->isEmptyEvent()) {
@@ -88,6 +90,50 @@ void TrecisionEngine::evalScript() {
 			}
 		}
 	}
+}
+
+bool TrecisionEngine::QuitGame() {
+	for (int a = 0; a < TOP; a++)
+		memcpy(_zBuffer + a * MAXX, _screenBuffer + MAXX * a, MAXX * 2);
+
+	for (int a = 0; a < TOP; a++)
+		memset(_screenBuffer + MAXX * a, 0, MAXX * 2);
+
+	SDText SText;
+	SText.set(0, TOP - 20, MAXX, CARHEI, 0, 0, MAXX, CARHEI, MOUSECOL, MASKCOL, _sysText[kMessageConfirmExit]);
+	SText.DText();
+
+	_graphicsMgr->copyToScreen(0, 0, MAXX, TOP);
+
+	FreeKey();
+
+	checkSystem();
+
+	char ch = waitKey();
+
+	bool exitFl = ((ch == 'y') || (ch == 'Y'));
+
+	for (int a = 0; a < TOP; a++)
+		memcpy(_screenBuffer + MAXX * a, _zBuffer + a * MAXX, MAXX * 2);
+
+	_graphicsMgr->copyToScreen(0, 0, MAXX, TOP);
+
+	return exitFl;
+}
+
+void TrecisionEngine::DemoOver() {
+	for (int a = 0; a < TOP; a++)
+		memset(_screenBuffer + MAXX * a, 0, MAXX * 2);
+
+	SDText SText;
+	SText.set(0, TOP - 20, MAXX, CARHEI, 0, 0, MAXX, CARHEI, MOUSECOL, MASKCOL, _sysText[kMessageDemoOver]);
+	SText.DText();
+
+	_graphicsMgr->copyToScreen(0, 0, MAXX, TOP);
+
+	FreeKey();
+	waitKey();
+	quitGame();
 }
 
 } // End of namespace Trecision

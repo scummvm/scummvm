@@ -213,48 +213,4 @@ void SDText::DText(uint16 *frameBuffer) {
 	}
 }
 
-bool QuitGame() {
-	for (int a = 0; a < TOP; a++)
-		memcpy(g_vm->_zBuffer + a * MAXX, g_vm->_screenBuffer + MAXX * a, MAXX * 2);
-
-	for (int a = 0; a < TOP; a++)
-		memset(g_vm->_screenBuffer + MAXX * a, 0, MAXX * 2);
-
-	SDText SText;
-	SText.set(0, TOP - 20, MAXX, CARHEI, 0, 0, MAXX, CARHEI, MOUSECOL, MASKCOL, g_vm->_sysText[kMessageConfirmExit]);
-	SText.DText();
-
-	g_vm->_graphicsMgr->copyToScreen(0, 0, MAXX, TOP);
-
-	g_vm->FreeKey();
-
-	g_vm->checkSystem();
-
-	char ch = g_vm->waitKey();
-
-	bool exitFl = ((ch == 'y') || (ch == 'Y'));
-
-	for (int a = 0; a < TOP; a++)
-		memcpy(g_vm->_screenBuffer + MAXX * a, g_vm->_zBuffer + a * MAXX, MAXX * 2);
-
-	g_vm->_graphicsMgr->copyToScreen(0, 0, MAXX, TOP);
-
-	return exitFl;
-}
-
-void DemoOver() {
-	for (int a = 0; a < TOP; a++)
-		memset(g_vm->_screenBuffer + MAXX * a, 0, MAXX * 2);
-
-	SDText SText;
-	SText.set(0, TOP - 20, MAXX, CARHEI, 0, 0, MAXX, CARHEI, MOUSECOL, MASKCOL, g_vm->_sysText[kMessageDemoOver]);
-	SText.DText();
-
-	g_vm->_graphicsMgr->copyToScreen(0, 0, MAXX, TOP);
-
-	g_vm->FreeKey();
-	g_vm->waitKey();
-	g_vm->quitGame();
-}
-
 } // End of namespace Trecision

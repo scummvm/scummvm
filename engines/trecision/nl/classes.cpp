@@ -361,7 +361,7 @@ void doIdle() {
 	case 'q':
 	case 'Q':
 		if (!g_vm->_flagDialogActive && !g_vm->_flagDialogMenuActive) {
-			if (QuitGame())
+			if (g_vm->QuitGame())
 				doEvent(MC_SYSTEM, ME_QUIT, MP_SYSTEM, 0, 0, 0, 0);
 		}
 		break;
