@@ -10,7 +10,7 @@ Settings are also accessible directly from the Launcher. See :doc:`../use_scummv
 Location
 ==========
 
-The configuration file saves to different default locations, depending on the platform.
+The configuration file saves to different default locations, depending on the platform. The configuration file path is also displayed on the :doc:`../settings/paths` tab.
 
 
 .. tabbed:: Windows
