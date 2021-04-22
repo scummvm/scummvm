@@ -1237,12 +1237,12 @@ const KYRAGameDescription adGameDescs[] = {
 	{
 		{
 			"lol",
-			_s("You added the game incorrectly. The game data is in ISO image GAME.DAT."),
+			_s("You added the game incorrectly. The game data is in ISO image GAME.DAT."), // Reason for being unsupported
 			AD_ENTRY2s("VOC.PAK", "eb398f09ba3321d872b6174a68a987d9", 2276340,
 					   "GAME.DAT", "f6ec0ee628b6b2ea4a1b551e3071d84b", 306751488),
 			Common::EN_ANY,
 			Common::kPlatformDOS,
-			ADGF_WARNING | ADGF_DROPLANGUAGE | ADGF_CD,
+			ADGF_UNSUPPORTED | ADGF_DROPLANGUAGE | ADGF_CD,
 			GUIO5(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_MIDIPCSPK, GUIO_RENDERVGA)
 		},
 		LOL_CD_FLAGS
