@@ -81,6 +81,19 @@ static const ADGameDescription gameDescriptions[] = {
 	},
 
 	// The Longest Journey
+	// Czech 4CD
+	// Bugreport #11914
+	{
+		"tlj", "4 CD build 142",
+		AD_ENTRY2s("x.xarc",		"a0559457126caadab0cadac02d35f26f", 3032,
+				   "chapters.ini",	"547f0b9c04c00d330b60eed6e8d24732", 484),
+		Common::CZ_CZE,
+		Common::kPlatformWindows,
+		ADGF_NO_FLAGS,
+		GUIO_NONE
+	},
+
+	// The Longest Journey
 	// French Demo
 	{
 		"tlj", "Demo",
