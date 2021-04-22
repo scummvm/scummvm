@@ -4177,49 +4177,47 @@ void LogicManager::doSystemChangeRoom() {
 	ReadLoc();
 	_vm->showCursor();
 
-	if ((_vm->_curRoom == kRoom21) && ((_vm->_oldRoom == kRoom23A) || (_vm->_oldRoom == kRoom23B)))
-		_vm->setRoom(kRoom21, true);
-	else if ((_vm->_curRoom == kRoom21) && (_vm->_oldRoom == kRoom22))
-		_vm->setRoom(kRoom21, false);
-	else if ((_vm->_curRoom == kRoom24) && ((_vm->_oldRoom == kRoom23A) || (_vm->_oldRoom == kRoom23B)))
-		_vm->setRoom(kRoom24, false);
-	else if ((_vm->_curRoom == kRoom24) && (_vm->_oldRoom == kRoom26))
-		_vm->setRoom(kRoom24, true);
-	else if ((_vm->_curRoom == kRoom2A) && (_vm->_oldRoom == kRoom25))
-		_vm->setRoom(kRoom2A, true);
-	else if ((_vm->_curRoom == kRoom2A) && ((_vm->_oldRoom == kRoom2B) || (_vm->_oldRoom == kRoom29) || (_vm->_oldRoom == kRoom29L)))
-		_vm->setRoom(kRoom2A, false);
-	else if ((_vm->_curRoom == kRoom2B) && (_vm->_oldRoom == kRoom28))
-		_vm->setRoom(kRoom2B, true);
-	else if ((_vm->_curRoom == kRoom2B) && (_vm->_oldRoom == kRoom2A))
-		_vm->setRoom(kRoom2B, false);
+	if (_vm->_curRoom == kRoom21) {
+		if (_vm->_oldRoom == kRoom23A || _vm->_oldRoom == kRoom23B)
+			_vm->setRoom(kRoom21, true);
+		else if (_vm->_oldRoom == kRoom22)
+			_vm->setRoom(kRoom21, false);
+	} else if (_vm->_curRoom == kRoom24) {
+		if (_vm->_oldRoom == kRoom23A || _vm->_oldRoom == kRoom23B)
+			_vm->setRoom(kRoom24, false);
+		else if (_vm->_oldRoom == kRoom26)
+			_vm->setRoom(kRoom24, true);
+	} else if (_vm->_curRoom == kRoom2A) {
+		if (_vm->_oldRoom == kRoom25)
+			_vm->setRoom(kRoom2A, true);
+		else if (_vm->_oldRoom == kRoom2B || _vm->_oldRoom == kRoom29 || _vm->_oldRoom == kRoom29L)
+			_vm->setRoom(kRoom2A, false);
+	} else if (_vm->_curRoom == kRoom2B) {
+		if (_vm->_oldRoom == kRoom28)
+			_vm->setRoom(kRoom2B, true);
+		else if (_vm->_oldRoom == kRoom2A)
+			_vm->setRoom(kRoom2B, false);
+	}
 	//			for save/load
-	else if ((_vm->_curRoom == kRoom15) && (_vm->_room[_vm->_curRoom]._flag & kObjFlagExtra))
-		read3D("152.3d");
-	else if ((_vm->_curRoom == kRoom17) && (_vm->_room[_vm->_curRoom]._flag & kObjFlagExtra))
-		read3D("172.3d");
-	else if ((_vm->_curRoom == kRoom1D) && (_vm->_room[_vm->_curRoom]._flag & kObjFlagExtra))
-		read3D("1d2.3d");
-	else if ((_vm->_curRoom == kRoom21) && (_vm->_room[_vm->_curRoom]._flag & kObjFlagExtra))
-		read3D("212.3d");
-	else if ((_vm->_curRoom == kRoom24) && (_vm->_room[_vm->_curRoom]._flag & kObjFlagExtra))
-		read3D("242.3d");
-	else if ((_vm->_curRoom == kRoom28) && (_vm->_room[_vm->_curRoom]._flag & kObjFlagExtra))
-		read3D("282.3d");
-	else if ((_vm->_curRoom == kRoom2A) && (_vm->_room[_vm->_curRoom]._flag & kObjFlagExtra))
-		read3D("2A2.3d");
-	else if ((_vm->_curRoom == kRoom2B) && (_vm->_room[_vm->_curRoom]._flag & kObjFlagExtra))
-		read3D("2B2.3d");
-	else if ((_vm->_curRoom == kRoom2E) && (_vm->_room[_vm->_curRoom]._flag & kObjFlagExtra))
-		read3D("2E2.3d");
-	else if ((_vm->_curRoom == kRoom2GV) && (_vm->_room[_vm->_curRoom]._flag & kObjFlagExtra))
-		read3D("2GV2.3d");
-	else if ((_vm->_curRoom == kRoom35) && (_vm->_room[_vm->_curRoom]._flag & kObjFlagExtra))
-		read3D("352.3d");
-	else if ((_vm->_curRoom == kRoom37) && (_vm->_room[_vm->_curRoom]._flag & kObjFlagExtra))
-		read3D("372.3d");
-	else if ((_vm->_curRoom == kRoom4P) && (_vm->_room[_vm->_curRoom]._flag & kObjFlagExtra))
-		read3D("4P2.3d");
+	else if (_vm->_room[_vm->_curRoom]._flag & kObjFlagExtra) {
+		switch (_vm->_curRoom) {
+		case kRoom15: read3D("152.3d"); break;
+		case kRoom17: read3D("172.3d"); break;
+		case kRoom1D: read3D("1d2.3d"); break;
+		case kRoom21: read3D("212.3d"); break;
+		case kRoom24: read3D("242.3d"); break;
+		case kRoom28: read3D("282.3d"); break;
+		case kRoom2A: read3D("2A2.3d"); break;
+		case kRoom2B: read3D("2B2.3d"); break;
+		case kRoom2E: read3D("2E2.3d"); break;
+		case kRoom2GV: read3D("2GV2.3d"); break;
+		case kRoom35: read3D("352.3d"); break;
+		case kRoom37: read3D("372.3d"); break;
+		case kRoom4P: read3D("4P2.3d"); break;
+		default:
+			break;
+		}
+	}
 }
 
 void LogicManager::DoSys(uint16 curObj) {
