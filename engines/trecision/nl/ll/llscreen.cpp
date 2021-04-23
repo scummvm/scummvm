@@ -567,7 +567,7 @@ void PaintRegenRoom() {
 			SortTable[g_vm->_curSortTableNum]._roomIndex = a;
 			SortTable[g_vm->_curSortTableNum]._remove = VideoObjStatus[a];
 			SortTable[g_vm->_curSortTableNum]._curFrame = 0;
-			SortTable[g_vm->_curSortTableNum]._typology = TYPO_BMP;
+			SortTable[g_vm->_curSortTableNum]._isBitmap = true;
 			VideoObjStatus[a] = OldObjStatus[a];
 			g_vm->_curSortTableNum++;
 		}

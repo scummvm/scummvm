@@ -169,7 +169,7 @@ struct MessageQueue {
 
 struct SSortTable {
 	uint16 _index;                          // Index in the list
-	uint16 _typology;                       // Bitmap type
+	uint16 _isBitmap;                       // Bitmap type
 	bool  _remove;                          // Whether to copy or remove
 	uint16 _roomIndex;                       // Room index
 	uint16 _curFrame;                        // Current frame (if animation)
