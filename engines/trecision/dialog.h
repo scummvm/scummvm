@@ -46,6 +46,9 @@ public:
 	void DialogHandler(int numframe);
 	void doDialog();
 
+	void syncGameStream(Common::Serializer &ser);
+	void loadData(Common::File *file);
+
 	Dialog _dialog[MAXDIALOG];
 	DialogChoice _choice[MAXCHOICE];
 	DialogSubTitle _subTitles[MAXSUBTITLES];
@@ -57,6 +60,7 @@ public:
 	int16 CurPos;
 	int16 LastPos;
 
+	
 };
 ; // end of class
 
