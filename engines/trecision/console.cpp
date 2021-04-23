@@ -25,6 +25,8 @@
 #include "trecision/console.h"
 
 
+
+#include "dialog.h"
 #include "nl/message.h"
 #include "nl/proto.h"
 #include "trecision/trecision.h"
@@ -34,6 +36,7 @@ namespace Trecision {
 Console::Console(TrecisionEngine *vm) : GUI::Debugger(), _vm(vm) {
 	registerCmd("room",			WRAP_METHOD(Console, Cmd_Room));
 	registerCmd("filedump",		WRAP_METHOD(Console, Cmd_DumpFile));
+	registerCmd("dialog",		WRAP_METHOD(Console, Cmd_Dialog));
 }
 
 Console::~Console() {
@@ -42,7 +45,7 @@ Console::~Console() {
 bool Console::Cmd_Room(int argc, const char **argv) {
 	if (argc < 2) {
 		debugPrintf("Current room: %d\n", _vm->_curRoom);
-		debugPrintf("Use room <room> to teleport\n");
+		debugPrintf("Use room <roomId> to teleport\n");
 		return true;
 	}
 
@@ -70,6 +73,18 @@ bool Console::Cmd_DumpFile(int argc, const char **argv) {
 	outFile->close();
 
 	return true;
+}
+
+bool Console::Cmd_Dialog(int argc, const char **argv) {
+	if (argc < 2) {
+		debugPrintf("Use dialog <dialogId> to start a dialog\n");
+		return true;
+	}
+
+	int dialogId = atoi(argv[1]);
+	_vm->_dialogMgr->playDialog(dialogId);
+
+	return false;
 }
 
 } // End of namespace StarTrek
