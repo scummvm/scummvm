@@ -22,6 +22,7 @@
 
 #include "common/scummsys.h"
 #include "graphics/scaler.h"
+#include "trecision/dialog.h"
 #include "trecision/nl/3d/3dinc.h"
 #include "trecision/nl/define.h"
 #include "trecision/nl/extern.h"
@@ -169,7 +170,7 @@ void doMouse() {
 			ShowObjName(g_vm->_curObj, true);
 
 			if (g_vm->_flagDialogMenuActive)
-				UpdateChoices(g_vm->_curMessage->_u16Param1, g_vm->_curMessage->_u16Param2);
+				g_vm->_dialogMgr->UpdateChoices(g_vm->_curMessage->_u16Param1, g_vm->_curMessage->_u16Param2);
 		}
 		break;
 
@@ -183,7 +184,7 @@ void doMouse() {
 			break;
 
 		if (g_vm->_flagDialogActive && g_vm->_flagDialogMenuActive) {
-			SelectChoice(g_vm->_curMessage->_u16Param1, g_vm->_curMessage->_u16Param2);
+			g_vm->_dialogMgr->SelectChoice(g_vm->_curMessage->_u16Param1, g_vm->_curMessage->_u16Param2);
 			break;
 		}
 
@@ -305,7 +306,7 @@ void doCharacter() {
 			if ((g_vm->_curMessage->_u16Param1 == g_vm->_obj[oCANCELLATA1B]._anim)
 			&& !(g_vm->_obj[oBOTTIGLIA1D]._mode & OBJMODE_OBJSTATUS)
 			&& !(g_vm->_obj[oRETE17]._mode & OBJMODE_OBJSTATUS)) {
-				PlayDialog(dF181);
+				g_vm->_dialogMgr->PlayDialog(dF181);
 				g_vm->hideCursor();
 				setPosition(1);
 			}

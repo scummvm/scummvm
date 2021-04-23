@@ -28,6 +28,7 @@
 #include "trecision/nl/proto.h"
 #include "trecision/nl/sysdef.h"
 #include "trecision/console.h"
+#include "trecision/dialog.h"
 #include "trecision/graphics.h"
 #include "trecision/video.h"
 #include "trecision/logic.h"
@@ -125,6 +126,7 @@ TrecisionEngine::TrecisionEngine(OSystem *syst) : Engine(syst) {
 
 	_screenBuffer = nullptr;
 	_animMgr = nullptr;
+	_dialogMgr = nullptr;
 	_graphicsMgr = nullptr;
 	_logicMgr = nullptr;
 	_soundMgr = nullptr;
@@ -194,6 +196,7 @@ TrecisionEngine::~TrecisionEngine() {
 
 	delete _extraRoomObject;
 	delete _animMgr;
+	delete _dialogMgr;
 	delete _graphicsMgr;
 	delete _logicMgr;
 	delete _soundMgr;
@@ -222,6 +225,7 @@ Common::Error TrecisionEngine::run() {
 	if (!_graphicsMgr->initScreen())
 		return Common::kUnsupportedColorMode;
 	_animMgr = new AnimManager(this);
+	_dialogMgr = new DialogManager(this);
 	_logicMgr = new LogicManager(this);
 	_soundMgr = new SoundManager(this);
 	setDebugger(new Console(this));
@@ -425,7 +429,7 @@ bool TrecisionEngine::syncGameStream(Common::Serializer &ser) {
 	}
 
 	for (int a = 0; a < MAXDIALOG; a++) {
-		Dialog *cur = &_dialog[a];
+		Dialog *cur = &_dialogMgr->_dialog[a];
 		ser.syncAsUint16LE(cur->_flag);
 		ser.syncAsUint16LE(cur->_interlocutor);
 		ser.syncBytes((byte *)cur->_startAnim, 14);
@@ -580,17 +584,17 @@ void TrecisionEngine::LoadAll() {
 	_animMgr->loadAnimTab(&dataNl);
 
 	for (int i = 0; i < MAXDIALOG; ++i) {
-		_dialog[i]._flag = dataNl.readUint16LE();
-		_dialog[i]._interlocutor = dataNl.readUint16LE();
+		_dialogMgr->_dialog[i]._flag = dataNl.readUint16LE();
+		_dialogMgr->_dialog[i]._interlocutor = dataNl.readUint16LE();
 
-		dataNl.read(&_dialog[i]._startAnim, ARRAYSIZE(_dialog[i]._startAnim));
+		dataNl.read(&_dialogMgr->_dialog[i]._startAnim, ARRAYSIZE(_dialogMgr->_dialog[i]._startAnim));
 
-		_dialog[i]._startLen = dataNl.readUint16LE();
-		_dialog[i]._firstChoice = dataNl.readUint16LE();
-		_dialog[i]._choiceNumb = dataNl.readUint16LE();
+		_dialogMgr->_dialog[i]._startLen = dataNl.readUint16LE();
+		_dialogMgr->_dialog[i]._firstChoice = dataNl.readUint16LE();
+		_dialogMgr->_dialog[i]._choiceNumb = dataNl.readUint16LE();
 
 		for (int j = 0; j < MAXNEWSMKPAL; ++j)
-			_dialog[i]._newPal[j] = dataNl.readUint16LE();
+			_dialogMgr->_dialog[i]._newPal[j] = dataNl.readUint16LE();
 	}
 
 	for (int i = 0; i < MAXCHOICE; ++i) {
@@ -610,12 +614,12 @@ void TrecisionEngine::LoadAll() {
 	}
 
 	for (int i = 0; i < MAXSUBTITLES; ++i) {
-		_subTitles[i]._sentence = dataNl.readUint16LE();
-		_subTitles[i]._x = dataNl.readUint16LE();
-		_subTitles[i]._y = dataNl.readUint16LE();
-		_subTitles[i]._color = dataNl.readUint16LE();
-		_subTitles[i]._startFrame = dataNl.readUint16LE();
-		_subTitles[i]._length = dataNl.readUint16LE();
+		_dialogMgr->_subTitles[i]._sentence = dataNl.readUint16LE();
+		_dialogMgr->_subTitles[i]._x = dataNl.readUint16LE();
+		_dialogMgr->_subTitles[i]._y = dataNl.readUint16LE();
+		_dialogMgr->_subTitles[i]._color = dataNl.readUint16LE();
+		_dialogMgr->_subTitles[i]._startFrame = dataNl.readUint16LE();
+		_dialogMgr->_subTitles[i]._length = dataNl.readUint16LE();
 	}
 
 	for (int i = 0; i < MAXACTION; ++i)

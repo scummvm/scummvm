@@ -20,29 +20,35 @@
  *
  */
 
-#include "common/scummsys.h"
-#include "trecision/nl/define.h"
-#include "trecision/nl/extern.h"
-#include "trecision/nl/message.h"
-#include "trecision/nl/proto.h"
-#include "trecision/nl/struct.h"
-#include "trecision/nl/ll/llinc.h"
 #include "trecision/trecision.h"
+#include "trecision/dialog.h"
+
+
+#include "nl/message.h"
+#include "nl/proto.h"
 #include "trecision/graphics.h"
-#include "trecision/video.h"
+
+#include "trecision/nl/define.h"
 
 namespace Trecision {
+DialogManager::DialogManager(TrecisionEngine *vm) : _vm(vm) {
+	_curDialog = 0;
+	_curChoice = 0;
+	_curSubTitle = 0;
+	CurDispChoice = 0;
+	CurPos = 0;
+	LastPos = 0;
+}
 
-uint16 DispChoice[MAXDISPCHOICES], CurDispChoice;
-int16 CurPos, LastPos;
+DialogManager::~DialogManager() {}
 
-void DialogPrint(int x, int y, int c, const char *txt) {
+void DialogManager::DialogPrint(int x, int y, int c, const char *txt) {
 	SDText curChoice;
-	curChoice.set(x, y, g_vm->TextLength(txt, 0), 0, 0, 0, MAXX, MAXY, c, MASKCOL, txt);
+	curChoice.set(x, y, _vm->TextLength(txt, 0), 0, 0, 0, MAXX, MAXY, c, MASKCOL, txt);
 	curChoice.DText();
 }
 
-void ShowChoices(uint16 i) {
+void DialogManager::ShowChoices(uint16 i) {
 	Dialog *d = &_dialog[i];
 
 	int y = 5;
@@ -69,8 +75,8 @@ void ShowChoices(uint16 i) {
 	g_vm->showCursor();
 }
 
-void UpdateChoices(int16 dmx, int16 dmy) {
-	if ((dmy >= MAXDISPCHOICES) && (dmy < (CARHEI * (CurDispChoice) + 5)))
+void DialogManager::UpdateChoices(int16 dmx, int16 dmy) {
+	if ((dmy >= MAXDISPCHOICES) && (dmy < (CARHEI * (CurDispChoice)+5)))
 		CurPos = (dmy - 5) / CARHEI;
 	else
 		CurPos = -1;
@@ -84,21 +90,21 @@ void UpdateChoices(int16 dmx, int16 dmy) {
 					DialogPrint(10, 5 + c * CARHEI, HWHITE, g_vm->_sentence[g_vm->_choice[DispChoice[c]]._sentenceIndex]);
 			}
 		}
-		g_vm->_graphicsMgr->copyToScreen(0, 5, MAXX, (CurDispChoice)*CARHEI + 5);
+		_vm->_graphicsMgr->copyToScreen(0, 5, MAXX, (CurDispChoice)*CARHEI + 5);
 	}
 	LastPos = CurPos;
 }
 
-void SelectChoice(int16 dmx, int16 dmy) {
+void DialogManager::SelectChoice(int16 dmx, int16 dmy) {
 	UpdateChoices(dmx, dmy);
 
 	if (CurPos != -1) {
-		g_vm->_flagDialogMenuActive = false;
+		_vm->_flagDialogMenuActive = false;
 		PlayChoice(DispChoice[CurPos]);
 	}
 }
 
-void PlayDialog(uint16 i) {
+void DialogManager::PlayDialog(uint16 i) {
 	_curDialog = i;
 	g_vm->_flagDialogActive = true;
 	_curChoice = 0;
@@ -138,7 +144,7 @@ void PlayDialog(uint16 i) {
 	}
 }
 
-void afterChoice(int numframe) {
+void DialogManager::afterChoice(int numFrame) {
 	Dialog *d = &_dialog[_curDialog];
 
 	memset(g_vm->_screenBuffer, 0, MAXX * TOP * 2);
@@ -149,7 +155,8 @@ void afterChoice(int numframe) {
 		if (_curChoice == 80) {
 			g_vm->_obj[ocTRAMP17]._action = 213;
 			g_vm->_obj[ocTRAMP17]._flag &= ~kObjFlagPerson;
-		} else if (_curChoice == 77) {
+		}
+		else if (_curChoice == 77) {
 			g_vm->_obj[ocTRAMP17]._action = 211;
 			g_vm->_obj[ocTRAMP17]._flag &= ~kObjFlagPerson;
 		}
@@ -182,7 +189,8 @@ void afterChoice(int numframe) {
 			g_vm->_obj[oTRAMPD17]._mode |= OBJMODE_OBJSTATUS;
 			g_vm->_room[kRoom17]._bkgAnim = aBKG17B;
 			g_vm->addIcon(iSKATE);
-		} else if (_curChoice == 137) {
+		}
+		else if (_curChoice == 137) {
 			g_vm->_obj[ocTRAMP17]._flag |= kObjFlagPerson;
 		}
 		break;
@@ -194,12 +202,15 @@ void afterChoice(int numframe) {
 			if (g_vm->_obj[oTESSERA1A]._flag & kObjFlagExtra) {
 				g_vm->_choice[154]._flag &= ~DLGCHOICE_HIDE;
 				g_vm->_choice[153]._flag |= DLGCHOICE_HIDE;
-			} else
+			}
+			else
 				g_vm->_choice[153]._flag &= ~DLGCHOICE_HIDE;
-		} else if (_curChoice == 154) {
+		}
+		else if (_curChoice == 154) {
 			if (g_vm->_obj[oTESSERA1A]._flag & kObjFlagExtra)
 				g_vm->_choice[183]._flag &= ~DLGCHOICE_HIDE;
-		} else if (_curChoice == 155)
+		}
+		else if (_curChoice == 155)
 			g_vm->_obj[ocGUARD18]._action = 228;
 		break;
 	case dF213B:
@@ -244,7 +255,7 @@ void afterChoice(int numframe) {
 	default:
 		break;
 	}
-	
+
 	// If the player chose to exit the dialog
 	if (g_vm->_choice[_curChoice]._flag & DLGCHOICE_EXITDLG) {
 		g_vm->_animMgr->stopFullMotion();
@@ -259,7 +270,8 @@ void afterChoice(int numframe) {
 			if (_curChoice == 77) {
 				g_vm->_obj[ocTRAMP17]._action = 211;
 				g_vm->_obj[ocTRAMP17]._flag &= ~kObjFlagPerson;
-			} else if (_curChoice == 80)
+			}
+			else if (_curChoice == 80)
 				g_vm->_obj[ocTRAMP17]._action = 213;
 			else if (_curChoice == 122)
 				g_vm->_obj[ocTRAMP17]._action = 211;
@@ -285,7 +297,8 @@ void afterChoice(int numframe) {
 				g_vm->_obj[oDOORN18]._flag &= ~kObjFlagRoomOut;
 				g_vm->_obj[oDOORN18]._action = 218;
 				g_vm->_obj[oDOORN18]._anim = 0;
-			} else if (_curChoice == 183)
+			}
+			else if (_curChoice == 183)
 				g_vm->_obj[oTESSERA1A]._action = 239;
 			break;
 
@@ -531,7 +544,8 @@ void afterChoice(int numframe) {
 					res = 0;
 					break;
 				}
-			} else {
+			}
+			else {
 				res = 0;
 				break;
 			}
@@ -559,10 +573,10 @@ void afterChoice(int numframe) {
 	ShowChoices(_curDialog);
 }
 
-void DialogHandler(int numframe) {
+void DialogManager::DialogHandler(int numFrame) {
 	if (g_vm->_flagDialogActive && !g_vm->_flagDialogMenuActive) {
 		g_vm->hideCursor();
-		if (numframe == _subTitles[_curSubTitle]._startFrame) {
+		if (numFrame == _subTitles[_curSubTitle]._startFrame) {
 			int i = _curSubTitle++;
 			g_vm->_sdText.x = _subTitles[i]._x;
 			g_vm->_sdText.y = _subTitles[i]._y;
@@ -572,7 +586,7 @@ void DialogHandler(int numframe) {
 	}
 }
 
-void PlayChoice(uint16 i) {
+void DialogManager::PlayChoice(uint16 i) {
 	DialogChoice *ss = &g_vm->_choice[i];
 
 	memset(g_vm->_screenBuffer, 0, MAXX * TOP * 2);
@@ -595,15 +609,15 @@ void PlayChoice(uint16 i) {
 	}
 
 	int totalLength = 0;
-	int subtitleCount = ss->_firstSubTitle + ss->_subTitleNumb;
-	for (int c = _curSubTitle; c < subtitleCount; c++)
+	int subTitleCount = ss->_firstSubTitle + ss->_subTitleNumb;
+	for (int c = _curSubTitle; c < subTitleCount; c++)
 		totalLength += _subTitles[c]._length;
 
 	g_vm->hideCursor();
 	g_vm->_animMgr->playMovie(_dialog[_curDialog]._startAnim, ss->_startFrame, ss->_startFrame + totalLength - 1);
 }
 
-void doDialog() {
+void DialogManager::doDialog() {
 	switch (g_vm->_curMessage->_event) {
 	case ME_ENDCHOICE:
 		afterChoice(g_vm->_curMessage->_u16Param1);

@@ -25,6 +25,7 @@
 #include "common/system.h"
 #include "common/scummsys.h"
 #include "common/str.h"
+#include "trecision/dialog.h"
 #include "trecision/trecision.h"
 #include "trecision/nl/3d/3dinc.h"
 #include "trecision/nl/extern.h"
@@ -440,7 +441,7 @@ void TendIn() {
 	TextStatus = TEXT_OFF;
 
 	if (g_vm->_curRoom == kRoomIntro) {
-		PlayDialog(dFLOG);
+		g_vm->_dialogMgr->PlayDialog(dFLOG);
 		return;
 	}
 

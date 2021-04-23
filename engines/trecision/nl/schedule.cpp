@@ -21,12 +21,14 @@
  */
 
 #include "common/scummsys.h"
+#include "trecision/dialog.h"
 
 #include "trecision/nl/extern.h"
 #include "trecision/nl/message.h"
 #include "trecision/nl/proto.h"
 #include "trecision/nl/struct.h"
 #include "trecision/trecision.h"
+#include "trecision/dialog.h"
 
 namespace Trecision {
 
@@ -142,7 +144,7 @@ void ProcessTheMessage() {
 		break;
 
 	case MC_DIALOG:
-		doDialog();
+		g_vm->_dialogMgr->doDialog();
 		break;
 
 	case MC_SCRIPT:

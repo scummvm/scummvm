@@ -46,12 +46,4 @@ uint32 TheTime;
 uint32 _characterSpeakTime;
 uint32 _someoneSpeakTime;
 
-/*-------------------------------------------------------------------------*/
-/*                                 DIALOGHI           					   */
-/*-------------------------------------------------------------------------*/
-Dialog _dialog[MAXDIALOG];
-DialogSubTitle _subTitles[MAXSUBTITLES];
-
-uint16  _curDialog, _curChoice, _curSubTitle;
-
 } // End of namespace Trecision
