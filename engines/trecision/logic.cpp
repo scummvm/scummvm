@@ -4242,7 +4242,7 @@ void LogicManager::doSystemChangeRoom() {
 void LogicManager::DoSys(uint16 curObj) {
 	switch (curObj) {
 	case o00QUIT:
-		if (g_vm->QuitGame())
+		if (_vm->QuitGame())
 			doEvent(MC_SYSTEM, ME_QUIT, MP_SYSTEM, 0, 0, 0, 0);
 		break;
 
@@ -4256,7 +4256,7 @@ void LogicManager::DoSys(uint16 curObj) {
 		if (_vm->_oldRoom == kRoomControlPanel)
 			break;
 		_vm->_curRoom = _vm->_obj[o00EXIT]._goRoom;
-		if (!g_vm->DataSave()) {
+		if (!_vm->DataSave()) {
 			_vm->showInventoryName(NO_OBJECTS, false);
 			doEvent(MC_INVENTORY, ME_SHOWICONNAME, MP_DEFAULT, _vm->_mouseX, _vm->_mouseY, 0, 0);
 			doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, _vm->_obj[o00EXIT]._goRoom, 0, 0, 0);
@@ -4265,7 +4265,7 @@ void LogicManager::DoSys(uint16 curObj) {
 		break;
 
 	case o00LOAD:
-		if (!g_vm->DataLoad()) {
+		if (!_vm->DataLoad()) {
 			_vm->showInventoryName(NO_OBJECTS, false);
 			doEvent(MC_INVENTORY, ME_SHOWICONNAME, MP_DEFAULT, _vm->_mouseX, _vm->_mouseY, 0, 0);
 		}
