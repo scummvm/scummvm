@@ -45,7 +45,7 @@ void doAction() {
 		if (g_vm->_curObj == oLASTLEV5)
 			CharacterSay(2003);
 
-		if ((!g_vm->_curObj) || (!(g_vm->_obj[g_vm->_curObj]._mode & OBJMODE_OBJSTATUS)))
+		if (!g_vm->_curObj || !(g_vm->_obj[g_vm->_curObj]._mode & OBJMODE_OBJSTATUS))
 			return;
 
 		if (g_vm->_obj[g_vm->_curObj]._mode & OBJMODE_HIDDEN)
@@ -170,7 +170,7 @@ void doMouse() {
 			ShowObjName(g_vm->_curObj, true);
 
 			if (g_vm->_flagDialogMenuActive)
-				g_vm->_dialogMgr->UpdateChoices(g_vm->_curMessage->_u16Param1, g_vm->_curMessage->_u16Param2);
+				g_vm->_dialogMgr->updateChoices(g_vm->_curMessage->_u16Param1, g_vm->_curMessage->_u16Param2);
 		}
 		break;
 
@@ -184,7 +184,7 @@ void doMouse() {
 			break;
 
 		if (g_vm->_flagDialogActive && g_vm->_flagDialogMenuActive) {
-			g_vm->_dialogMgr->SelectChoice(g_vm->_curMessage->_u16Param1, g_vm->_curMessage->_u16Param2);
+			g_vm->_dialogMgr->selectChoice(g_vm->_curMessage->_u16Param1, g_vm->_curMessage->_u16Param2);
 			break;
 		}
 
@@ -306,7 +306,7 @@ void doCharacter() {
 			if ((g_vm->_curMessage->_u16Param1 == g_vm->_obj[oCANCELLATA1B]._anim)
 			&& !(g_vm->_obj[oBOTTIGLIA1D]._mode & OBJMODE_OBJSTATUS)
 			&& !(g_vm->_obj[oRETE17]._mode & OBJMODE_OBJSTATUS)) {
-				g_vm->_dialogMgr->PlayDialog(dF181);
+				g_vm->_dialogMgr->playDialog(dF181);
 				g_vm->hideCursor();
 				setPosition(1);
 			}
