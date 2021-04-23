@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-04-22 16:41+0000\n"
+"POT-Creation-Date: 2021-04-23 12:39+0000\n"
 "PO-Revision-Date: 2021-04-22 12:25+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
@@ -5806,7 +5806,7 @@ msgstr ""
 "不完全なゲームが検出されました。全てのCDからデータをコピーする必要がありま"
 "す。"
 
-#: engines/sci/engine/kfile.cpp:485 engines/sci/metaengine.cpp:404
+#: engines/sci/engine/kfile.cpp:485 engines/sci/metaengine.cpp:371
 msgid "(Autosave)"
 msgstr "(自動セーブ)"
 
@@ -5845,11 +5845,11 @@ msgid ""
 "Cannot play back %dbpp video on a system with maximum color depth of 8bpp"
 msgstr "最大色深度が8bppのシステムで、%dbppの映像を再生する事はできません"
 
-#: engines/sci/metaengine.cpp:326
+#: engines/sci/metaengine.cpp:293
 msgid "SCI32 support not compiled in"
 msgstr "SCI32のサポートはコンパイルされていません"
 
-#: engines/sci/resource/resource.cpp:845
+#: engines/sci/resource/resource.cpp:851
 msgid ""
 "Missing or corrupt game resources have been detected. Some game features may "
 "not work properly. Please check the console for more information, and verify "

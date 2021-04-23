@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-04-22 16:41+0000\n"
+"POT-Creation-Date: 2021-04-23 12:39+0000\n"
 "PO-Revision-Date: 2021-04-23 08:25+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
@@ -5917,7 +5917,7 @@ msgstr "Yamaha FB-01"
 msgid "Incomplete game detected. You have to copy data from all the CDs."
 msgstr "Jeu incomplet détecté. Vous devez copier les données de tous les CD."
 
-#: engines/sci/engine/kfile.cpp:485 engines/sci/metaengine.cpp:404
+#: engines/sci/engine/kfile.cpp:485 engines/sci/metaengine.cpp:371
 msgid "(Autosave)"
 msgstr "(Sauvegarde automatique)"
 
@@ -5967,11 +5967,11 @@ msgstr ""
 "Impossible de lire une vidéo %dbpp sur un système avec une profondeur de "
 "couleur maximale de 8bpp"
 
-#: engines/sci/metaengine.cpp:326
+#: engines/sci/metaengine.cpp:293
 msgid "SCI32 support not compiled in"
 msgstr "La prise en charge des jeux SCI32 n'est pas incluse"
 
-#: engines/sci/resource/resource.cpp:845
+#: engines/sci/resource/resource.cpp:851
 msgid ""
 "Missing or corrupt game resources have been detected. Some game features may "
 "not work properly. Please check the console for more information, and verify "
