@@ -62,9 +62,9 @@ void DialogManager::ShowChoices(uint16 i) {
 
 	CurDispChoice = 0;
 	for (int c = d->_firstChoice; c < (d->_firstChoice + d->_choiceNumb); c++) {
-		if (!(_vm->_choice[c]._flag & DLGCHOICE_HIDE)) {
+		if (!(_choice[c]._flag & DLGCHOICE_HIDE)) {
 			DispChoice[CurDispChoice++] = c;
-			DialogPrint(x, y, HWHITE, _vm->_sentence[_vm->_choice[c]._sentenceIndex]);
+			DialogPrint(x, y, HWHITE, _vm->_sentence[_choice[c]._sentenceIndex]);
 			y += CARHEI;
 		}
 	}
@@ -85,9 +85,9 @@ void DialogManager::UpdateChoices(int16 dmx, int16 dmy) {
 		for (int c = 0; c < MAXDISPCHOICES; c++) {
 			if (DispChoice[c] != 0) {
 				if (c == CurPos)
-					DialogPrint(10, 5 + c * CARHEI, HGREEN, _vm->_sentence[_vm->_choice[DispChoice[c]]._sentenceIndex]);
+					DialogPrint(10, 5 + c * CARHEI, HGREEN, _vm->_sentence[_choice[DispChoice[c]]._sentenceIndex]);
 				else
-					DialogPrint(10, 5 + c * CARHEI, HWHITE, _vm->_sentence[_vm->_choice[DispChoice[c]]._sentenceIndex]);
+					DialogPrint(10, 5 + c * CARHEI, HWHITE, _vm->_sentence[_choice[DispChoice[c]]._sentenceIndex]);
 			}
 		}
 		_vm->_graphicsMgr->copyToScreen(0, 5, MAXX, (CurDispChoice)*CARHEI + 5);
@@ -126,11 +126,11 @@ void DialogManager::PlayDialog(uint16 i) {
 	int skip = 0;
 	int curChoice = 0;
 	for (int c = _dialog[_curDialog]._firstChoice; c < (_dialog[_curDialog]._firstChoice + _dialog[_curDialog]._choiceNumb); ++c) {
-		if (!(_vm->_choice[c]._flag & DLGCHOICE_HIDE))
+		if (!(_choice[c]._flag & DLGCHOICE_HIDE))
 			curChoice++;
 	}
 	
-	if ((_curDialog == dC581) && !(_vm->_choice[262]._flag & DLGCHOICE_HIDE))
+	if ((_curDialog == dC581) && !(_choice[262]._flag & DLGCHOICE_HIDE))
 		skip++;
 	if ((_curDialog == dC581) && (curChoice == 1))
 		skip++;
@@ -199,13 +199,13 @@ void DialogManager::afterChoice(int numFrame) {
 			_vm->_inventoryObj[iFOTO]._action = 1465;
 			_vm->_obj[oTESSERA1A]._action = 238;
 			if (_vm->_obj[oTESSERA1A]._flag & kObjFlagExtra) {
-				_vm->_choice[154]._flag &= ~DLGCHOICE_HIDE;
-				_vm->_choice[153]._flag |= DLGCHOICE_HIDE;
+				_choice[154]._flag &= ~DLGCHOICE_HIDE;
+				_choice[153]._flag |= DLGCHOICE_HIDE;
 			} else
-				_vm->_choice[153]._flag &= ~DLGCHOICE_HIDE;
+				_choice[153]._flag &= ~DLGCHOICE_HIDE;
 		} else if (_curChoice == 154) {
 			if (_vm->_obj[oTESSERA1A]._flag & kObjFlagExtra)
-				_vm->_choice[183]._flag &= ~DLGCHOICE_HIDE;
+				_choice[183]._flag &= ~DLGCHOICE_HIDE;
 		} else if (_curChoice == 155)
 			_vm->_obj[ocGUARD18]._action = 228;
 		break;
@@ -253,12 +253,12 @@ void DialogManager::afterChoice(int numFrame) {
 	}
 
 	// If the player chose to exit the dialog
-	if (_vm->_choice[_curChoice]._flag & DLGCHOICE_EXITDLG) {
+	if (_choice[_curChoice]._flag & DLGCHOICE_EXITDLG) {
 		_vm->_animMgr->stopFullMotion();
 
 		switch (_curDialog) {
 		case dPOLIZIOTTO16:
-			if ((_vm->_choice[61]._flag & kObjFlagDone) && (_vm->_choice[62]._flag & kObjFlagDone) && (_vm->_obj[ocPOLIZIOTTO16]._flag & kObjFlagExtra))
+			if ((_choice[61]._flag & kObjFlagDone) && (_choice[62]._flag & kObjFlagDone) && (_vm->_obj[ocPOLIZIOTTO16]._flag & kObjFlagExtra))
 				_vm->_obj[ocPOLIZIOTTO16]._mode &= ~OBJMODE_OBJSTATUS;
 			break;
 
@@ -461,11 +461,11 @@ void DialogManager::afterChoice(int numFrame) {
 			_vm->_obj[oWINDOW58P55]._action = 1291;
 			_vm->_obj[oWINDOWA5A]._action = 1403;
 			_vm->_obj[oGUARDIA58]._mode |= OBJMODE_OBJSTATUS;
-			_vm->_choice[286]._flag |= kObjFlagDone;
+			_choice[286]._flag |= kObjFlagDone;
 			break;
 
 		case dC581:
-			if (!(_vm->_choice[886]._flag & kObjFlagDone) && (_vm->_choice[258]._flag & kObjFlagDone)) {
+			if (!(_choice[886]._flag & kObjFlagDone) && (_choice[258]._flag & kObjFlagDone)) {
 				setPosition(1);
 				PlayDialog(dF581);
 			}
@@ -505,8 +505,8 @@ void DialogManager::afterChoice(int numFrame) {
 	}
 
 	// If another dialog starts
-	if (_vm->_choice[_curChoice]._nextDialog != 0) {
-		_curDialog = _vm->_choice[_curChoice]._nextDialog;
+	if (_choice[_curChoice]._nextDialog != 0) {
+		_curDialog = _choice[_curChoice]._nextDialog;
 		_vm->_flagDialogActive = true;
 		_curChoice = 0;
 
@@ -521,7 +521,7 @@ void DialogManager::afterChoice(int numFrame) {
 
 	// Immediately starts the fraud choice
 	for (int c = d->_firstChoice; c < (d->_firstChoice + d->_choiceNumb); ++c) {
-		if ((_vm->_choice[c]._flag & DLGCHOICE_FRAUD) && (!(_vm->_choice[c]._flag & DLGCHOICE_HIDE))) {
+		if ((_choice[c]._flag & DLGCHOICE_FRAUD) && (!(_choice[c]._flag & DLGCHOICE_HIDE))) {
 			PlayChoice(c);
 			return;
 		}
@@ -530,8 +530,8 @@ void DialogManager::afterChoice(int numFrame) {
 	// If there's only one option, show it immediately, otherwise show available choices
 	int res = 0;
 	for (int c = d->_firstChoice; c < (d->_firstChoice + d->_choiceNumb); c++) {
-		if (!(_vm->_choice[c]._flag & DLGCHOICE_HIDE)) {
-			if (_vm->_choice[c]._flag & DLGCHOICE_EXITNOW) {
+		if (!(_choice[c]._flag & DLGCHOICE_HIDE)) {
+			if (_choice[c]._flag & DLGCHOICE_EXITNOW) {
 				if (res == 0)
 					res = c;
 				else {
@@ -552,7 +552,7 @@ void DialogManager::afterChoice(int numFrame) {
 	// If no option is visible, close the dialog
 	res = 0;
 	for (int c = d->_firstChoice; c < (d->_firstChoice + d->_choiceNumb); c++) {
-		if (!(_vm->_choice[c]._flag & DLGCHOICE_HIDE))
+		if (!(_choice[c]._flag & DLGCHOICE_HIDE))
 			res++;
 	}
 
@@ -580,7 +580,7 @@ void DialogManager::DialogHandler(int numFrame) {
 }
 
 void DialogManager::PlayChoice(uint16 i) {
-	DialogChoice *ss = &_vm->_choice[i];
+	DialogChoice *ss = &_choice[i];
 
 	memset(_vm->_screenBuffer, 0, MAXX * TOP * 2);
 	_vm->_graphicsMgr->copyToScreen(0, 0, MAXX, TOP);
@@ -597,8 +597,8 @@ void DialogManager::PlayChoice(uint16 i) {
 
 	// Disable other choices
 	for (int c = 0; c < MAXDISPCHOICES; c++) {
-		_vm->_choice[ss->_off[c]]._flag |= DLGCHOICE_HIDE;
-		_vm->_choice[ss->_on[c]]._flag &= ~DLGCHOICE_HIDE;
+		_choice[ss->_off[c]]._flag |= DLGCHOICE_HIDE;
+		_choice[ss->_on[c]]._flag &= ~DLGCHOICE_HIDE;
 	}
 
 	int totalLength = 0;

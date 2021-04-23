@@ -47,8 +47,10 @@ public:
 	void doDialog();
 
 	Dialog _dialog[MAXDIALOG];
-	uint16 _curDialog, _curChoice;
+	DialogChoice _choice[MAXCHOICE];
 	DialogSubTitle _subTitles[MAXSUBTITLES];
+
+	uint16 _curDialog, _curChoice;
 	uint16 _curSubTitle;
 	uint16 DispChoice[MAXDISPCHOICES];
 	uint16 CurDispChoice;

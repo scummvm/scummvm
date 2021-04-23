@@ -415,7 +415,7 @@ bool TrecisionEngine::syncGameStream(Common::Serializer &ser) {
 	_soundMgr->syncGameStream(ser);
 
 	for (int a = 0; a < MAXCHOICE; a++) {
-		DialogChoice *cur = &_choice[a];
+		DialogChoice *cur = &_dialogMgr->_choice[a];
 		ser.syncAsUint16LE(cur->_flag);
 		ser.syncAsUint16LE(cur->_sentenceIndex);
 		ser.syncAsUint16LE(cur->_firstSubTitle);
@@ -598,19 +598,19 @@ void TrecisionEngine::LoadAll() {
 	}
 
 	for (int i = 0; i < MAXCHOICE; ++i) {
-		_choice[i]._flag = dataNl.readUint16LE();
-		_choice[i]._sentenceIndex = dataNl.readUint16LE();
-		_choice[i]._firstSubTitle = dataNl.readUint16LE();
-		_choice[i]._subTitleNumb = dataNl.readUint16LE();
+		_dialogMgr->_choice[i]._flag = dataNl.readUint16LE();
+		_dialogMgr->_choice[i]._sentenceIndex = dataNl.readUint16LE();
+		_dialogMgr->_choice[i]._firstSubTitle = dataNl.readUint16LE();
+		_dialogMgr->_choice[i]._subTitleNumb = dataNl.readUint16LE();
 
 		for (int j = 0; j < MAXDISPCHOICES; ++j)
-			_choice[i]._on[j] = dataNl.readUint16LE();
+			_dialogMgr->_choice[i]._on[j] = dataNl.readUint16LE();
 
 		for (int j = 0; j < MAXDISPCHOICES; ++j)
-			_choice[i]._off[j] = dataNl.readUint16LE();
+			_dialogMgr->_choice[i]._off[j] = dataNl.readUint16LE();
 
-		_choice[i]._startFrame = dataNl.readUint16LE();
-		_choice[i]._nextDialog = dataNl.readUint16LE();
+		_dialogMgr->_choice[i]._startFrame = dataNl.readUint16LE();
+		_dialogMgr->_choice[i]._nextDialog = dataNl.readUint16LE();
 	}
 
 	for (int i = 0; i < MAXSUBTITLES; ++i) {

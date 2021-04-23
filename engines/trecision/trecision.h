@@ -238,9 +238,6 @@ public:
 	int16 _textStackTop;
 	StackText _textStack[MAXTEXTSTACK];
 
-	//Dialogs
-	DialogChoice _choice[MAXCHOICE];
-
 	bool _flagScreenRefreshed;
 
 	AnimManager *_animMgr;
