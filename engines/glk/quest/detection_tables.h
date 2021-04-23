@@ -33,8 +33,10 @@ const PlainGameDescriptor QUEST_GAME_LIST[] = {
 	{ "adventureq", "Adventure!" },
 	{ "attemptedassassination", "Attempted Assassination" },
 	{ "beam", "Beam" },
+	{ "bladesentinel", "The Blade Sentinel" },
 	{ "gatheredindarkness", "Gathered in Darkness" },
 	{ "hauntedhorror", "Haunted Horror" },
+	{ "lovesong", "Lovesong" },
 	{ "magicworld", "Magic World" },
 	{ "redsaucemonday", "Red Sauce Monday" },
 	{ "worldsend", "World's End" },
@@ -52,6 +54,7 @@ const PlainGameDescriptor QUEST_GAME_LIST[] = {
 	{ "elections4", "It's election time in Pakistan: Go rich boy, go!" },
 	{ "escapebathhouse", "Escape from the Mechanical Bathhouse" },
 	{ "everyman", "Everyman" },
+	{ "exittheroom", "Exit the Room" },
 	{ "firstTimes", "First Times" },
 	{ "giftofthemagi", "Gift of the Magi" },
 	{ "medievalistsquest", "Medievalist's Quest" },
@@ -79,6 +82,12 @@ const GlkDetectionEntry QUEST_GAMES[] = {
 	DT_ENTRY0("redsaucemonday", "5a2f3e25d4a8c77e0c53d980dbb37451", 20324),
 	DT_ENTRY0("worldsend", "4f5daac10085927bf5180bea24f7ef0d", 73396),
 
+	// Competition 2001
+	DT_ENTRY0("lovesong", "2ea679cc6ee0735141571eb96075523d", 41264),
+
+	// Competition 2002
+	DT_ENTRY0("bladesentinel", "c348d637606430e2597678927c2f6a69", 51473),
+
 	// Competition 2006
 	DT_ENTRY1("beam", "1.10", "d696f04cb7e6851e0bcbde0dbd78cbd0", 68543),
 
@@ -97,6 +106,7 @@ const GlkDetectionEntry QUEST_GAMES[] = {
 	DT_ENTRY0("elections4", "d0bc0cd54182d6099808767068592b94", 591994),
 	DT_ENTRY0("escapebathhouse", "02f7ba339e50c8faa8c5dc3a1c051d7b", 1067048),
 	DT_ENTRY0("everyman", "410c7211d3f0c700f34e97ed258e33f1", 56218),
+	DT_ENTRY1("exittheroom", "1.9", "5b600a1833b59ad115cb868ccc9d6f14", 129094),
 	DT_ENTRY0("firstTimes", "31d878c82d99856d473762612f154eb6", 10253826),
 	DT_ENTRY0("giftofthemagi", "b33132ce71c8a2eed0f6c1c1af284765", 78647),
 	DT_ENTRY0("medievalistsquest", "e0a15bc2a74a0bd6bb5c24661ea35829", 127977271),
