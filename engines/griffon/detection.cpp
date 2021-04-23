@@ -45,7 +45,6 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 			false
 		}
 	},
-
 	AD_EXTRA_GUI_OPTIONS_TERMINATOR
 };
 
@@ -67,6 +66,7 @@ static const ADGameDescription gameDescriptions[] = {
 		GUIO1(GUIO_NOMIDI)
 #endif
 	},
+
 	AD_TABLE_END_MARKER
 };
 
@@ -93,4 +93,5 @@ public:
 		return "The Griffon Legend (c) 2005 Syn9 (Daniel Kennedy)";
 	}
 };
+
 REGISTER_PLUGIN_STATIC(GRIFFON_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, GriffonMetaEngineDetection);
