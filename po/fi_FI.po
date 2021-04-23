@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-04-23 13:58+0000\n"
-"PO-Revision-Date: 2021-04-16 16:48+0000\n"
+"PO-Revision-Date: 2021-04-23 17:43+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fi/>\n"
@@ -883,15 +883,13 @@ msgstr "30 minuutin välein"
 
 #. I18N: Automatic GUI scaling
 #: gui/options.cpp:135
-#, fuzzy
-#| msgid "Autosave"
 msgid "Auto"
-msgstr "Autom. tallennus"
+msgstr "Auto"
 
 #. I18N: Large GUI scale
 #: gui/options.cpp:137
 msgid "Large"
-msgstr ""
+msgstr "Suuri"
 
 #. I18N: Medium GUI scale
 #: gui/options.cpp:139 engines/nancy/dialogs.cpp:120
@@ -901,7 +899,7 @@ msgstr "Normaali"
 #. I18N: Small GUI scale
 #: gui/options.cpp:141
 msgid "Small"
-msgstr ""
+msgstr "Pieni"
 
 #: gui/options.cpp:429 gui/options.cpp:817 gui/options.cpp:955
 #: gui/options.cpp:1066 gui/options.cpp:1459
@@ -1298,7 +1296,7 @@ msgstr "Helppokäyttötoiminnot"
 
 #: gui/options.cpp:1956
 msgid "Discard changes and close the dialog"
-msgstr ""
+msgstr "Hylkää muutokset ja sulje dialogi"
 
 #: gui/options.cpp:1957
 msgid "Apply"
@@ -1306,11 +1304,11 @@ msgstr "Käytä"
 
 #: gui/options.cpp:1957
 msgid "Apply changes without closing the dialog"
-msgstr ""
+msgstr "Hyväksy muutokset sulkematta dialogia"
 
 #: gui/options.cpp:1958
 msgid "Apply changes and close the dialog"
-msgstr ""
+msgstr "Hyväksy muutokset ja sulje dialogi"
 
 #: gui/options.cpp:2045
 msgid "FluidSynth Settings"
@@ -1349,10 +1347,8 @@ msgid "Theme:"
 msgstr "Teema:"
 
 #: gui/options.cpp:2101
-#, fuzzy
-#| msgid "Unscaled"
 msgid "GUI scale:"
-msgstr "Skaalaamaton"
+msgstr "Käyttöliittymän skaalaus:"
 
 #: gui/options.cpp:2108
 msgid "GUI renderer:"
@@ -2119,7 +2115,7 @@ msgstr "<Huono arvo>"
 #. I18N: One line summary as shown in *nix distributions
 #: dists/scummvm.appdata.xml.cpp:33
 msgid "Interpreter for numerous adventure games and role-playing games"
-msgstr ""
+msgstr "Pelitulkki lukuisille seikkailu- ja roolipeleille"
 
 #. I18N: 1 of 3 paragraph of ScummVM description in *nix distributions
 #: dists/scummvm.appdata.xml.cpp:38
@@ -2130,6 +2126,10 @@ msgid ""
 "replaces the executables shipped with the game, allowing you to play them on "
 "systems for which they were never designed!"
 msgstr ""
+"ScummVM on ohjelma jonka avulla voit pelata lukuisia klassisia graafisia "
+"seikkailu- ja roolipelejä, olettaen että sinulla on jo pelien datatiedostot. "
+"Tämä on fiksua koska: ScummVM korvaa itse ajettavan peliohjelman, joten voit "
+"pelata pelejä jopa alustoilla joille pelejä ei koskaan suunniteltu!"
 
 #. I18N: 2 of 3 paragraph of ScummVM description in *nix distributions
 #: dists/scummvm.appdata.xml.cpp:46
@@ -2139,6 +2139,10 @@ msgid ""
 "like LucasArts, Sierra On-Line, Revolution Software, Cyan, Inc. and Westwood "
 "Studios."
 msgstr ""
+"Tällä hetkellä ScummVM tukee jättimäistä seikkailujen kirjastoa, kaikkiaan "
+"yli 4000 peliä. Se tukee lukuisia klassikkoja legendaarisilta studioilta "
+"kuten LucasArts, Sierra On-Line, Revolution Software, Cyan, Inc. ja Westwood "
+"Studios."
 
 #. I18N: 3 of 3 paragraph of ScummVM description in *nix distributions
 #: dists/scummvm.appdata.xml.cpp:52
@@ -2147,6 +2151,9 @@ msgid ""
 "Myst, Blade Runner and countless other games you will find some really "
 "obscure adventures and truly hidden gems to explore."
 msgstr ""
+"Uraauurtaneiden Monkey Island-, Broken Sword-, Myst-, Blade Runner- ja "
+"lukuisten muiden pelien ohelta löydät myös vähemmän tunnettuja helmiä "
+"tutkittavaksesi."
 
 #: engines/advancedDetector.cpp:215
 msgid "Illegitimate game copy detected. We provide no support in such cases"
@@ -4813,11 +4820,11 @@ msgstr "Vasen painike hyökkää, oikea painike poimii esineitä"
 
 #: engines/kyra/detection_tables.h:1251
 msgid "You added the game incorrectly. Please add the root folder of the game."
-msgstr ""
+msgstr "Lisäsit pelin väärin. Ole hyvä ja lisää pelin juurikansio."
 
 #: engines/kyra/detection_tables.h:1266
 msgid "You added the game incorrectly. The game data is in ISO image GAME.DAT."
-msgstr ""
+msgstr "Lisäsit pelin väärin. Pelin data on ISOn GAME.DAT:issa."
 
 #: engines/kyra/metaengine.cpp:117
 msgid "Lands of Lore support is not compiled in"
@@ -5691,10 +5698,8 @@ msgstr "Käytä vaihtoehtoista pelin introa (vain CD versiossa)"
 
 #. I18N: Inherit the Earth had a "trial" version which is a full game with a simple check
 #: engines/saga/detection_tables.h:609
-#, fuzzy
-#| msgid "Spanish CD version is not yet supported"
 msgid "Windows Trial version is not supported"
-msgstr "Espanjalainen CD-versio ei ole vielä tuettu"
+msgstr "Windows:in koeversio ei ole vielä tuettu"
 
 #: engines/saga/metaengine.cpp:114
 msgid "I Have No Mouth support not compiled in"
@@ -6051,13 +6056,15 @@ msgstr "Käytä neutraalimpaa väripalettia joka emuloi paremmin NES Classic:ia"
 
 #: engines/scumm/detection.cpp:172
 msgid "Trim FM-TOWNS games to 200 pixels height"
-msgstr ""
+msgstr "Trimmaa FM-TOWNS pelit 200 pikselin korkuisiksi"
 
 #: engines/scumm/detection.cpp:173
 msgid ""
 "Cut the extra 40 pixels at the bottom of the screen, to make it standard 200 "
 "pixels height, allowing using 'aspect ratio correction'"
 msgstr ""
+"Leikkaa ylimääräiset 40 pikseliä näytön alaosasta, jättäen jäljelle 200 "
+"pikseliä, jolloin kuvasuhteen korjaus on mahdollista"
 
 #: engines/scumm/dialogs.cpp:165
 #, c-format
@@ -6729,6 +6736,10 @@ msgid ""
 "Aspect ratio correction can be acheived by trimming the resolution to "
 "320x200, under 'engine' tab."
 msgstr ""
+"Olet laittanut kuvasuhteen korjauksen päälle. FM-TOWNS:in luonnollinen "
+"resoluutio on 320x240, joka ei mahdollista kuvasuhteen korjausta.\n"
+"Kuvasuhteen korjaus saadaan mahdolliseksi trimmaamalla resoluution 320x200:"
+"aan 'Pelimoottori'-välilehdellä."
 
 #: engines/scumm/scumm.cpp:1953
 #, c-format
