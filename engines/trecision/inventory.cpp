@@ -117,7 +117,7 @@ void TrecisionEngine::doInventory() {
 		break;
 
 	case ME_OPERATEICON:
-		_curInventory = whatIcon(g_vm->_mouseX);
+		_curInventory = whatIcon(_mouseX);
 		if (_curInventory == 0)
 			break;
 
@@ -153,7 +153,7 @@ void TrecisionEngine::doInventory() {
 		break;
 
 	case ME_EXAMINEICON:
-		_curInventory = whatIcon(g_vm->_mouseX);
+		_curInventory = whatIcon(_mouseX);
 		actorStop();
 		nextStep();
 		if (_flagUseWithStarted) {
@@ -174,17 +174,17 @@ void TrecisionEngine::doInventory() {
 		break;
 
 	case ME_SHOWICONNAME:
-		if (ICONAREA(g_vm->_mouseX, g_vm->_mouseY)) {
+		if (ICONAREA(_mouseX, _mouseY)) {
 			if (_inventoryStatus != INV_ON)
 				doEvent(MC_INVENTORY, ME_OPEN, MP_DEFAULT, 0, 0, 0, 0);
-			_curInventory = whatIcon(g_vm->_mouseX);
+			_curInventory = whatIcon(_mouseX);
 			showInventoryName(_curInventory, true);
 
 			if (!_flagUseWithStarted && !_flagSomeoneSpeaks) {
 				setInventoryStart(_iconBase, INVENTORY_SHOW);
 			}
 		} else {
-			if (!isInventoryArea(g_vm->_mouseY))
+			if (!isInventoryArea(_mouseY))
 				break;
 			showInventoryName(NO_OBJECTS, true);
 			if (!_flagUseWithStarted) {

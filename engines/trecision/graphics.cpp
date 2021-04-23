@@ -106,8 +106,8 @@ void GraphicsManager::setSmkBackground() {
 }
 
 void GraphicsManager::resetScreenBuffer() {
-	memset(g_vm->_screenBuffer, 0, TOP * MAXX * 2);
-	memcpy(g_vm->_screenBuffer + TOP * MAXX, _background.getPixels(), _background.pitch * AREA);
+	memset(_vm->_screenBuffer, 0, TOP * MAXX * 2);
+	memcpy(_vm->_screenBuffer + TOP * MAXX, _background.getPixels(), _background.pitch * AREA);
 }
 
 uint16 *GraphicsManager::getBackgroundPtr() {
@@ -131,7 +131,7 @@ void GraphicsManager::loadBackground(Common::SeekableReadStream *stream, uint16 
 
 void GraphicsManager::putPixel(int x, int y, uint16 color) {
 	if (x > 0 && x < MAXX && y > 60 && y < 420) {
-		g_vm->_screenBuffer[x + MAXX * y] = color;
+		_vm->_screenBuffer[x + MAXX * y] = color;
 		_background.setPixel(x, y - 60, color);
 		_smkBackground.setPixel(x, y - 60, color);
 	}
@@ -230,11 +230,11 @@ uint16 GraphicsManager::aliasing(uint32 val1, uint32 val2, uint8 num) {
 
 void GraphicsManager::NlDissolve(int val) {
 	uint16 CenterX = MAXX / 2, CenterY = MAXY / 2;
-	uint32 sv = g_vm->ReadTime(), cv;
+	uint32 sv = _vm->ReadTime(), cv;
 
 	int lastv = 9000;
-	while ((sv + val) > (cv = g_vm->ReadTime())) {
-		g_vm->checkSystem();
+	while ((sv + val) > (cv = _vm->ReadTime())) {
+		_vm->checkSystem();
 		if (lastv < (sv + val - cv))
 			continue;
 

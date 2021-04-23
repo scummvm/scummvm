@@ -139,14 +139,14 @@ void AnimManager::playMovie(Common::String filename, int startFrame, int endFram
 	bool skipVideo = false;
 	uint16 x = (g_system->getWidth() - smkDecoder->getWidth()) / 2;
 	uint16 y = (g_system->getHeight() - smkDecoder->getHeight()) / 2;
-	g_vm->_sdText.text = nullptr;
+	_vm->_sdText.text = nullptr;
 
 	smkDecoder->start();
 	//debug("playMovie %s, %d - %d", filename.c_str(), startFrame, endFrame);
 	
 	setVideoRange(smkDecoder, startFrame, endFrame);
 	
-	while (!g_vm->shouldQuit() && !smkDecoder->endOfVideo() && smkDecoder->getCurFrame() < endFrame && !skipVideo) {
+	while (!_vm->shouldQuit() && !smkDecoder->endOfVideo() && smkDecoder->getCurFrame() < endFrame && !skipVideo) {
 		if (smkDecoder->needsUpdate()) {
 			drawFrame(smkDecoder, x, y, true);
 		}
@@ -159,7 +159,7 @@ void AnimManager::playMovie(Common::String filename, int startFrame, int endFram
 		g_system->delayMillis(10);
 	}
 
-	g_vm->FreeKey();
+	_vm->FreeKey();
 	doEvent(MC_DIALOG, ME_ENDCHOICE, MP_HIGH, smkDecoder->getCurFrame(), 0, 0, 0);
 
 	delete smkDecoder;
@@ -174,12 +174,12 @@ void AnimManager::setVideoRange(NightlongSmackerDecoder *smkDecoder, int &startF
 	//	If choices are attached
 	if (smkDecoder->getCurFrame() != startFrame) {
 		for (int a = 0; a < MAXNEWSMKPAL; a++) {
-			if ((g_vm->_dialogMgr->_dialog[g_vm->_dialogMgr->_curDialog]._newPal[a] > startFrame || !g_vm->_dialogMgr->_dialog[g_vm->_dialogMgr->_curDialog]._newPal[a]) && a) {
-				smkDecoder->forceSeekToFrame(g_vm->_dialogMgr->_dialog[g_vm->_dialogMgr->_curDialog]._newPal[a - 1] - 1);
+			if ((_vm->_dialogMgr->_dialog[_vm->_dialogMgr->_curDialog]._newPal[a] > startFrame || !_vm->_dialogMgr->_dialog[_vm->_dialogMgr->_curDialog]._newPal[a]) && a) {
+				smkDecoder->forceSeekToFrame(_vm->_dialogMgr->_dialog[_vm->_dialogMgr->_curDialog]._newPal[a - 1] - 1);
 				break;
 			}
 
-			if (!g_vm->_dialogMgr->_dialog[g_vm->_dialogMgr->_curDialog]._newPal[a] || g_vm->_dialogMgr->_dialog[g_vm->_dialogMgr->_curDialog]._newPal[a] == startFrame)
+			if (!_vm->_dialogMgr->_dialog[_vm->_dialogMgr->_curDialog]._newPal[a] || _vm->_dialogMgr->_dialog[_vm->_dialogMgr->_curDialog]._newPal[a] == startFrame)
 				break;
 		}
 
@@ -209,7 +209,7 @@ void AnimManager::drawFrame(NightlongSmackerDecoder *smkDecoder, uint16 x, uint1
 		delete frame16;
 
 		if (updateScreen)
-			g_vm->_system->updateScreen();
+			_vm->_system->updateScreen();
 	}
 }
 
@@ -339,10 +339,10 @@ void AnimManager::startSmkAnim(uint16 animation) {
 			smkVolumePan(0, 1, 0);
 		else if ((animation == aBKG2E) && (_animTab[animation]._flag & SMKANIM_OFF2))
 			smkVolumePan(0, 2, 0);
-		else if ((animation == aBKG2G) && (g_vm->_choice[556]._flag & kObjFlagDone))
+		else if ((animation == aBKG2G) && (_vm->_choice[556]._flag & kObjFlagDone))
 			smkVolumePan(0, 2, 0);
 		else if ((animation == aBKG34) &&                                     // If it's BKG 34 and
-		         ((g_vm->_choice[616]._flag & kObjFlagDone) ||          // if the FMV is already done or
+		         ((_vm->_choice[616]._flag & kObjFlagDone) ||          // if the FMV is already done or
 		          (_vm->_obj[oTUBOT34]._mode & OBJMODE_OBJSTATUS) ||    // if the whole tube is available or
 		          (_vm->_obj[oTUBOFT34]._mode & OBJMODE_OBJSTATUS) ||   // if the outside of the tube is available or
 		          (_vm->_obj[oVALVOLAC34]._mode & OBJMODE_OBJSTATUS)))  // if the valve is closed
@@ -375,7 +375,7 @@ void AnimManager::stopAllSmkAnims() {
 void AnimManager::startFullMotion(const char *name) {
 	stopAllSmkAnims();
 
-	g_vm->_flagShowCharacter = false;
+	_vm->_flagShowCharacter = false;
 	TextStatus = TEXT_OFF;
 	memset(_vm->_screenBuffer, 0, TOP * MAXX * 2);
 	_vm->_graphicsMgr->copyToScreen(0, 0, MAXX, TOP);
@@ -387,30 +387,30 @@ void AnimManager::startFullMotion(const char *name) {
 	_vm->_animQueue.initQueue();
 	_vm->_characterQueue.initQueue();
 	actorStop();
-	g_vm->hideCursor();
+	_vm->hideCursor();
 }
 
 void AnimManager::stopFullMotion() {
-	g_vm->_flagDialogActive = false;
-	g_vm->_flagDialogMenuActive = false;
-	g_vm->showCursor();
-	g_vm->_flagSomeoneSpeaks = false;
+	_vm->_flagDialogActive = false;
+	_vm->_flagDialogMenuActive = false;
+	_vm->showCursor();
+	_vm->_flagSomeoneSpeaks = false;
 
 	_vm->_lightIcon = 0xFF;
-	if (g_vm->_dialogMgr->_curDialog == dFCRED) {
-		g_vm->quitGame();
+	if (_vm->_dialogMgr->_curDialog == dFCRED) {
+		_vm->quitGame();
 		return;
 	}
 
-	if (!((g_vm->_dialogMgr->_curDialog == dSHOPKEEPER1A) && (g_vm->_dialogMgr->_curChoice == 185))) {
-		if ((g_vm->_dialogMgr->_curDialog == dF582) || (g_vm->_dialogMgr->_curDialog == dFLOG) || (g_vm->_dialogMgr->_curDialog == dINTRO) || (g_vm->_dialogMgr->_curDialog == dF362) || (g_vm->_dialogMgr->_curDialog == dC381) || (g_vm->_dialogMgr->_curDialog == dF381) ||
-		    (g_vm->_dialogMgr->_curDialog == dF491) || ((g_vm->_dialogMgr->_curDialog == dC581) && !(g_vm->_choice[886]._flag & kObjFlagDone) && (g_vm->_choice[258]._flag & kObjFlagDone)) ||
-		    ((g_vm->_dialogMgr->_curDialog == dC5A1) && (_vm->_room[kRoom5A]._flag & kObjFlagExtra)))
-			g_vm->_flagShowCharacter = false;
+	if (!((_vm->_dialogMgr->_curDialog == dSHOPKEEPER1A) && (_vm->_dialogMgr->_curChoice == 185))) {
+		if ((_vm->_dialogMgr->_curDialog == dF582) || (_vm->_dialogMgr->_curDialog == dFLOG) || (_vm->_dialogMgr->_curDialog == dINTRO) || (_vm->_dialogMgr->_curDialog == dF362) || (_vm->_dialogMgr->_curDialog == dC381) || (_vm->_dialogMgr->_curDialog == dF381) ||
+		    (_vm->_dialogMgr->_curDialog == dF491) || ((_vm->_dialogMgr->_curDialog == dC581) && !(_vm->_choice[886]._flag & kObjFlagDone) && (_vm->_choice[258]._flag & kObjFlagDone)) ||
+		    ((_vm->_dialogMgr->_curDialog == dC5A1) && (_vm->_room[kRoom5A]._flag & kObjFlagExtra)))
+			_vm->_flagShowCharacter = false;
 		else
 			RedrawRoom();
 
-		if (g_vm->_dialogMgr->_curDialog == dF582)
+		if (_vm->_dialogMgr->_curDialog == dF582)
 			_vm->_soundMgr->fadeOut();
 	}
 }
@@ -456,7 +456,7 @@ void AnimManager::handleEndOfVideo(int animation, int slot) {
 	if (_smkAnims[slot]->endOfVideo()) {
 		if (!(_animTab[animation]._flag & SMKANIM_LOOP) && !(_animTab[animation]._flag & SMKANIM_BKG)) {
 			smkStop(slot);
-			g_vm->_flagPaintCharacter = true;
+			_vm->_flagPaintCharacter = true;
 		} else {
 			_smkAnims[slot]->rewind();
 			InitAtFrameHandler(animation, 0);
@@ -473,7 +473,7 @@ void AnimManager::drawSmkBackgroundFrame(int animation) {
 	Graphics::Surface *frame16 = frame->convertTo(g_system->getScreenFormat(), smkDecoder->getPalette());
 	const Common::Rect *lastRect = smkDecoder->getNextDirtyRect();
 	const byte *pal = smkDecoder->getPalette();
-	uint16 mask = g_vm->_graphicsMgr->palTo16bit(pal[0], pal[1], pal[2]);
+	uint16 mask = _vm->_graphicsMgr->palTo16bit(pal[0], pal[1], pal[2]);
 
 	if (smkDecoder->getCurFrame() == 0)
 		_vm->_graphicsMgr->setSmkBackground();
@@ -491,7 +491,7 @@ void AnimManager::drawSmkBackgroundFrame(int animation) {
 
 		if (smkCurFrame(kSmackerBackground) > 0 && !intersects) {
 			Graphics::Surface anim = frame16->getSubArea(*lastRect);
-			g_vm->_graphicsMgr->blitToScreenBuffer(&anim, lastRect->left, lastRect->top + TOP, mask, true);
+			_vm->_graphicsMgr->blitToScreenBuffer(&anim, lastRect->left, lastRect->top + TOP, mask, true);
 		}
 
 		lastRect = _smkAnims[kSmackerBackground]->getNextDirtyRect();
@@ -519,7 +519,7 @@ void AnimManager::drawSmkIconFrame(int startIcon, int iconNum) {
 
 	const Graphics::Surface *frame = smkDecoder->decodeNextFrame();
 	Graphics::Surface *frame16 = frame->convertTo(g_system->getScreenFormat(), smkDecoder->getPalette());
-	g_vm->_graphicsMgr->copyToScreenBuffer(frame16, stx, FIRSTLINE);
+	_vm->_graphicsMgr->copyToScreenBuffer(frame16, stx, FIRSTLINE);
 	frame16->free();
 	delete frame16;
 
@@ -535,7 +535,7 @@ void AnimManager::drawSmkActionFrame() {
 		return;
 
 	const byte *pal = smkDecoder->getPalette();
-	uint16 mask = g_vm->_graphicsMgr->palTo16bit(pal[0], pal[1], pal[2]);
+	uint16 mask = _vm->_graphicsMgr->palTo16bit(pal[0], pal[1], pal[2]);
 
 	if (smkCurFrame(kSmackerAction) == 0) {
 		for (uint16 curY = 0; curY < AREA; curY++) {
@@ -554,7 +554,7 @@ void AnimManager::drawSmkActionFrame() {
 		Graphics::Surface *frame16 = frame->convertTo(g_system->getScreenFormat(), smkDecoder->getPalette());
 		const Common::Rect animRect(_animMinX, _animMinY, _animMaxX, _animMaxY);
 		Graphics::Surface anim = frame16->getSubArea(animRect);
-		g_vm->_graphicsMgr->blitToScreenBuffer(&anim, _animMinX, _animMinY + TOP, mask, false);
+		_vm->_graphicsMgr->blitToScreenBuffer(&anim, _animMinX, _animMinY + TOP, mask, false);
 		frame16->free();
 		delete frame16;
 
