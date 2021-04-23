@@ -23,9 +23,8 @@
 #include "trecision/trecision.h"
 #include "trecision/dialog.h"
 
-
-#include "nl/message.h"
-#include "nl/proto.h"
+#include "trecision/nl/message.h"
+#include "trecision/nl/proto.h"
 #include "trecision/graphics.h"
 
 #include "trecision/nl/define.h"
@@ -580,34 +579,34 @@ void DialogManager::DialogHandler(int numFrame) {
 }
 
 void DialogManager::PlayChoice(uint16 i) {
-	DialogChoice *ss = &_choice[i];
+	DialogChoice *choice = &_choice[i];
 
 	memset(_vm->_screenBuffer, 0, MAXX * TOP * 2);
 	_vm->_graphicsMgr->copyToScreen(0, 0, MAXX, TOP);
 
 	_curChoice = i;
-	_curSubTitle = ss->_firstSubTitle;
+	_curSubTitle = choice->_firstSubTitle;
 	_vm->_flagDialogMenuActive = false;
 
-	ss->_flag |= kObjFlagDone;
+	choice->_flag |= kObjFlagDone;
 
 	// se era one time la disabilita
-	if (ss->_flag & DLGCHOICE_ONETIME)
-		ss->_flag |= DLGCHOICE_HIDE;
+	if (choice->_flag & DLGCHOICE_ONETIME)
+		choice->_flag |= DLGCHOICE_HIDE;
 
 	// Disable other choices
 	for (int c = 0; c < MAXDISPCHOICES; c++) {
-		_choice[ss->_off[c]]._flag |= DLGCHOICE_HIDE;
-		_choice[ss->_on[c]]._flag &= ~DLGCHOICE_HIDE;
+		_choice[choice->_off[c]]._flag |= DLGCHOICE_HIDE;
+		_choice[choice->_on[c]]._flag &= ~DLGCHOICE_HIDE;
 	}
 
 	int totalLength = 0;
-	int subTitleCount = ss->_firstSubTitle + ss->_subTitleNumb;
+	int subTitleCount = choice->_firstSubTitle + choice->_subTitleNumb;
 	for (int c = _curSubTitle; c < subTitleCount; c++)
 		totalLength += _subTitles[c]._length;
 
 	_vm->hideCursor();
-	_vm->_animMgr->playMovie(_dialog[_curDialog]._startAnim, ss->_startFrame, ss->_startFrame + totalLength - 1);
+	_vm->_animMgr->playMovie(_dialog[_curDialog]._startAnim, choice->_startFrame, choice->_startFrame + totalLength - 1);
 }
 
 void DialogManager::doDialog() {
@@ -627,29 +626,29 @@ void DialogManager::doDialog() {
 
 void DialogManager::syncGameStream(Common::Serializer &ser) {
 	for (int a = 0; a < MAXCHOICE; a++) {
-		DialogChoice *cur = &_choice[a];
-		ser.syncAsUint16LE(cur->_flag);
-		ser.syncAsUint16LE(cur->_sentenceIndex);
-		ser.syncAsUint16LE(cur->_firstSubTitle);
-		ser.syncAsUint16LE(cur->_subTitleNumb);
+		DialogChoice *choice = &_choice[a];
+		ser.syncAsUint16LE(choice->_flag);
+		ser.syncAsUint16LE(choice->_sentenceIndex);
+		ser.syncAsUint16LE(choice->_firstSubTitle);
+		ser.syncAsUint16LE(choice->_subTitleNumb);
 		for (int i = 0; i < MAXDISPCHOICES; i++)
-			ser.syncAsUint16LE(cur->_on[i]);
+			ser.syncAsUint16LE(choice->_on[i]);
 		for (int i = 0; i < MAXDISPCHOICES; i++)
-			ser.syncAsUint16LE(cur->_off[i]);
-		ser.syncAsUint16LE(cur->_startFrame);
-		ser.syncAsUint16LE(cur->_nextDialog);
+			ser.syncAsUint16LE(choice->_off[i]);
+		ser.syncAsUint16LE(choice->_startFrame);
+		ser.syncAsUint16LE(choice->_nextDialog);
 	}
 
 	for (int a = 0; a < MAXDIALOG; a++) {
-		Dialog *cur = &_dialog[a];
-		ser.syncAsUint16LE(cur->_flag);
-		ser.syncAsUint16LE(cur->_interlocutor);
-		ser.syncBytes((byte *)cur->_startAnim, 14);
-		ser.syncAsUint16LE(cur->_startLen);
-		ser.syncAsUint16LE(cur->_firstChoice);
-		ser.syncAsUint16LE(cur->_choiceNumb);
+		Dialog *dialog = &_dialog[a];
+		ser.syncAsUint16LE(dialog->_flag);
+		ser.syncAsUint16LE(dialog->_interlocutor);
+		ser.syncBytes((byte *)dialog->_startAnim, 14);
+		ser.syncAsUint16LE(dialog->_startLen);
+		ser.syncAsUint16LE(dialog->_firstChoice);
+		ser.syncAsUint16LE(dialog->_choiceNumb);
 		for (int i = 0; i < MAXNEWSMKPAL; i++)
-			ser.syncAsUint16LE(cur->_newPal[i]);
+			ser.syncAsUint16LE(dialog->_newPal[i]);
 	}
 }
 
