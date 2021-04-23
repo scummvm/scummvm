@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-04-23 12:39+0000\n"
+"POT-Creation-Date: 2021-04-23 13:58+0000\n"
 "PO-Revision-Date: 2021-04-23 08:25+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
@@ -4031,6 +4031,24 @@ msgstr ""
 "Le fan ayant fait la traduction ne souhaite pas que celle-ci soit incorporée "
 "dans ScummVM."
 
+#: engines/bladerunner/detection_tables.h:129 engines/cge/detection.cpp:48
+#: engines/cge/detection.cpp:54 engines/kyra/detection_tables.h:224
+#: engines/kyra/detection_tables.h:237 engines/kyra/detection_tables.h:250
+#: engines/kyra/detection_tables.h:291 engines/kyra/detection_tables.h:619
+#: engines/kyra/detection_tables.h:632 engines/kyra/detection_tables.h:956
+#: engines/kyra/detection_tables.h:969 engines/kyra/detection_tables.h:1715
+#: engines/kyra/detection_tables.h:1887 engines/lure/detection.cpp:80
+#: engines/lure/detection.cpp:222 engines/mohawk/detection_tables.h:1012
+#: engines/mohawk/detection_tables.h:1027 engines/neverhood/detection.cpp:110
+#: engines/saga/detection_tables.h:187 engines/saga/detection_tables.h:937
+#: engines/saga/detection_tables.h:996 engines/sci/detection_tables.h:4851
+#: engines/sci/detection_tables.h:4859 engines/sherlock/detection_tables.h:214
+#: engines/stark/detection.cpp:293 engines/teenagent/detection.cpp:102
+#: engines/zvision/detection_tables.h:190
+#: engines/zvision/detection_tables.h:210
+msgid "Missing game code"
+msgstr "Code de jeu manquant"
+
 #: engines/buried/biochip_view.cpp:623
 msgid "Your game is now Paused.  Click OK to continue."
 msgstr "Votre jeu est maintenant en pause. Cliquez sur OK pour continuer."
@@ -4042,22 +4060,6 @@ msgstr "Voulez-vous vraiment quitter ?"
 #: engines/buried/saveload.cpp:108
 msgid "Invalid save file name"
 msgstr "Nom de sauvegarde invalide"
-
-#: engines/cge/detection.cpp:48 engines/cge/detection.cpp:54
-#: engines/kyra/detection_tables.h:224 engines/kyra/detection_tables.h:237
-#: engines/kyra/detection_tables.h:250 engines/kyra/detection_tables.h:291
-#: engines/kyra/detection_tables.h:619 engines/kyra/detection_tables.h:632
-#: engines/kyra/detection_tables.h:1689 engines/kyra/detection_tables.h:1861
-#: engines/lure/detection.cpp:80 engines/lure/detection.cpp:222
-#: engines/mohawk/detection_tables.h:1012
-#: engines/mohawk/detection_tables.h:1027 engines/neverhood/detection.cpp:110
-#: engines/saga/detection_tables.h:187 engines/saga/detection_tables.h:937
-#: engines/saga/detection_tables.h:996 engines/sci/detection_tables.h:4851
-#: engines/sci/detection_tables.h:4859 engines/teenagent/detection.cpp:102
-#: engines/zvision/detection_tables.h:190
-#: engines/zvision/detection_tables.h:210
-msgid "Missing game code"
-msgstr "Code de jeu manquant"
 
 #: engines/cge/detection.cpp:99
 msgid "Color Blind Mode"
@@ -4854,13 +4856,13 @@ msgstr "Bouton Combat - Permuter G/D"
 msgid "Left button to attack, right button to pick up items"
 msgstr "Bouton Gauche pour attaquer, bouton Droite pour ramasser les objets"
 
-#: engines/kyra/detection_tables.h:1225
+#: engines/kyra/detection_tables.h:1251
 msgid "You added the game incorrectly. Please add the root folder of the game."
 msgstr ""
 "Le jeu a été ajouté de façon incorrecte. Merci d'ajouter le dossier racine "
 "du jeu."
 
-#: engines/kyra/detection_tables.h:1240
+#: engines/kyra/detection_tables.h:1266
 msgid "You added the game incorrectly. The game data is in ISO image GAME.DAT."
 msgstr ""
 "Le jeu a été ajouté de façon incorrecte. Les données du jeu sont dans "
@@ -6955,20 +6957,20 @@ msgstr "Act./Désact. mode rapide"
 msgid "Toggle really fast mode"
 msgstr "Act./Désact. mode très rapide"
 
-#: engines/stark/detection.cpp:322
+#: engines/stark/detection.cpp:349
 msgid "Load modded assets"
 msgstr "Charger des ressources modifiées"
 
-#: engines/stark/detection.cpp:323
+#: engines/stark/detection.cpp:350
 msgid "Enable loading of external replacement assets."
 msgstr ""
 "Permet le chargement de ressources (ou \"assets\") de remplacement externes."
 
-#: engines/stark/detection.cpp:331
+#: engines/stark/detection.cpp:358
 msgid "Enable linear filtering of the backgrounds images"
 msgstr "Activer le filtrage linéaire des images d'arrière-plan"
 
-#: engines/stark/detection.cpp:332
+#: engines/stark/detection.cpp:359
 msgid ""
 "When linear filtering is enabled the background graphics are smoother in "
 "full screen mode, at the cost of some details."
@@ -6976,11 +6978,11 @@ msgstr ""
 "Lorsque le filtrage linéaire est activé, les graphismes d'arrière-plan sont "
 "plus lisses en mode plein écran, au prix de certains détails."
 
-#: engines/stark/detection.cpp:340 engines/ultima/ultima8/meta_engine.cpp:173
+#: engines/stark/detection.cpp:367 engines/ultima/ultima8/meta_engine.cpp:173
 msgid "Enable font anti-aliasing"
 msgstr "Activer l'anti-crénelage des polices"
 
-#: engines/stark/detection.cpp:341 engines/ultima/ultima8/meta_engine.cpp:174
+#: engines/stark/detection.cpp:368 engines/ultima/ultima8/meta_engine.cpp:174
 msgid "When font anti-aliasing is enabled, the text is smoother."
 msgstr ""
 "Quand l'anti-crénelage des polices est activé, les textes affichés sont plus "
