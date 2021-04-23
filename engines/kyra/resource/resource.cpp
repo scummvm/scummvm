@@ -36,6 +36,9 @@ Resource::Resource(KyraEngine_v1 *vm) : _archiveCache(), _files(), _archiveFiles
 	if (_vm->game() == GI_KYRA3)
 		SearchMan.addSubDirectoryMatching(Common::FSNode(ConfMan.get("path")), "malcolm");
 
+	if (_vm->game() == GI_LOL)
+		SearchMan.addSubDirectoryMatching(Common::FSNode(ConfMan.get("path")), "data", 0, 2);
+
 	_files.add("global_search", &Common::SearchManager::instance(), 3, false);
 	// compressed installer archives are added at level '2',
 	// but that's done in Resource::reset not here

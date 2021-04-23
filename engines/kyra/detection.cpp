@@ -31,6 +31,7 @@ namespace {
 
 const char *const directoryGlobs[] = {
 	"malcolm",
+	"data", // LOL GOG release
 	0
 };
 
