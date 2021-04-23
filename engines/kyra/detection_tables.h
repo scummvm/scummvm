@@ -1263,7 +1263,8 @@ const KYRAGameDescription adGameDescs[] = {
 	{
 		{
 			"lol",
-			_s("You added the game incorrectly. The game data is in ISO image GAME.DAT."), // Reason for being unsupported
+			// I18N: The file in the game directory needs to be extracted
+			_s("You added the game incorrectly. The GAME.DAT file is an ISO image and you need to extract the game data files from it."), // Reason for being unsupported
 			AD_ENTRY2s("VOC.PAK", "eb398f09ba3321d872b6174a68a987d9", 2276340,
 					   "GAME.DAT", "f6ec0ee628b6b2ea4a1b551e3071d84b", 306751488),
 			Common::EN_ANY,
