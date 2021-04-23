@@ -628,6 +628,20 @@ void DialogManager::doDialog() {
 	}
 }
 
+bool DialogManager::showCharacterAfterDialog() const {
+	switch (_curDialog) {
+	case dF321:
+	case dF431:
+	case dF4C1:
+	case dASCENSORE12:
+	case dASCENSORE13:
+	case dASCENSORE16:
+		return false;
+	default:
+		return true;
+	}
+}
+
 void DialogManager::syncGameStream(Common::Serializer &ser) {
 	for (int a = 0; a < MAXCHOICE; a++) {
 		DialogChoice *choice = &_choice[a];

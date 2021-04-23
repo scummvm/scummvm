@@ -51,6 +51,7 @@ public:
 	void afterChoice();
 	void dialogHandler(int numFrame);
 	void doDialog();
+	bool showCharacterAfterDialog() const;
 
 	void syncGameStream(Common::Serializer &ser);
 	void loadData(Common::File *file);
