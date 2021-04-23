@@ -120,7 +120,7 @@ void doMouseTalk(uint16 curObj) {
 	bool printSentence = g_vm->_logicMgr->mouseTalk(curObj);
 
 	if (printSentence)
-		g_vm->_dialogMgr->PlayDialog(g_vm->_obj[curObj]._goRoom);
+		g_vm->_dialogMgr->playDialog(g_vm->_obj[curObj]._goRoom);
 }
 
 void doUseWith() {
@@ -282,7 +282,7 @@ void doScript() {
 		break;
 
 	case ME_PLAYDIALOG:
-		g_vm->_dialogMgr->PlayDialog(index);
+		g_vm->_dialogMgr->playDialog(index);
 		break;
 
 	case ME_CHARACTERSAY:
@@ -493,7 +493,7 @@ void ProcessAtFrame(ATFHandle *h, int type, int atf) {
 		setPosition(h->_curAnim->_atFrame[atf]._index);
 		break;
 	case ATFDIALOG:
-		g_vm->_dialogMgr->PlayDialog(h->_curAnim->_atFrame[atf]._index);
+		g_vm->_dialogMgr->playDialog(h->_curAnim->_atFrame[atf]._index);
 		break;
 	case ATFCOBJANIM:
 		g_vm->_obj[h->_object]._anim = h->_curAnim->_atFrame[atf]._index;

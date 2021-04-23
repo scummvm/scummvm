@@ -578,27 +578,27 @@ void LogicManager::endChangeRoom() {
 
 	// FullMotion
 	if ((_vm->_curRoom == kRoom17) && (_vm->_oldRoom == kRoom16)) {
-		_vm->_dialogMgr->PlayDialog(dF171);
+		_vm->_dialogMgr->playDialog(dF171);
 		_vm->_soundMgr->waitEndFading();
 	} else if ((_vm->_curRoom == kRoom16) && (_vm->_oldRoom == kRoom17)) {
-		_vm->_dialogMgr->PlayDialog(dF161);
+		_vm->_dialogMgr->playDialog(dF161);
 		_vm->_soundMgr->waitEndFading();
 		_vm->removeIcon(iFOGLIO14);
 	} else if ((_vm->_curRoom == kRoom21) && (_vm->_oldRoom == kRoom1C)) {
-		_vm->_dialogMgr->PlayDialog(dF1C1);
+		_vm->_dialogMgr->playDialog(dF1C1);
 		_vm->_soundMgr->waitEndFading();
 	} else if ((_vm->_curRoom == kRoom23B) && (_vm->_oldRoom == kRoom23A)) {
-		_vm->_dialogMgr->PlayDialog(dF231);
+		_vm->_dialogMgr->playDialog(dF231);
 		_vm->_soundMgr->waitEndFading();
 		_vm->removeIcon(iMAPPA17);
 	} else if ((_vm->_curRoom == kRoom29L) && (_vm->_oldRoom == kRoom29)) {
-		_vm->_dialogMgr->PlayDialog(dF291);
+		_vm->_dialogMgr->playDialog(dF291);
 		_vm->_soundMgr->waitEndFading();
 	} else if ((_vm->_curRoom == kRoom2GV) && (_vm->_oldRoom == kRoom2G)) {
-		_vm->_dialogMgr->PlayDialog(dF2G2);
+		_vm->_dialogMgr->playDialog(dF2G2);
 		_vm->_soundMgr->waitEndFading();
 	} else if ((_vm->_curRoom == kRoom31) && (_vm->_oldRoom == kRoom32) && (_vm->_room[kRoom32]._flag & kObjFlagExtra)) {
-		_vm->_dialogMgr->PlayDialog(dF321);
+		_vm->_dialogMgr->playDialog(dF321);
 		_vm->_flagShowCharacter = false;
 		_vm->_soundMgr->waitEndFading();
 		_vm->_room[kRoom32]._flag &= ~kObjFlagExtra;
@@ -617,28 +617,28 @@ void LogicManager::endChangeRoom() {
 		_vm->clearText();
 		_vm->redrawString();
 	} else if ((_vm->_curRoom == kRoom46) && (_vm->_oldRoom == kRoom43) && !(_vm->_inventoryObj[iDISLOCATORE]._flag & kObjFlagExtra)) {
-		_vm->_dialogMgr->PlayDialog(dF431);
+		_vm->_dialogMgr->playDialog(dF431);
 		_vm->_soundMgr->waitEndFading();
 	} else if ((_vm->_curRoom == kRoom45S) && (_vm->_oldRoom == kRoom45) && !(_vm->_inventoryObj[iDISLOCATORE]._flag & kObjFlagExtra)) {
-		_vm->_dialogMgr->PlayDialog(dF451);
+		_vm->_dialogMgr->playDialog(dF451);
 		_vm->_soundMgr->waitEndFading();
 	} else if ((_vm->_curRoom == kRoom4A) && (_vm->_oldRoom == kRoom49) && !(_vm->_inventoryObj[iDISLOCATORE]._flag & kObjFlagExtra)) {
-		_vm->_dialogMgr->PlayDialog(dF491);
+		_vm->_dialogMgr->playDialog(dF491);
 		_vm->_soundMgr->waitEndFading();
 	} else if ((_vm->_curRoom == kRoom4A) && (_vm->_oldRoom == kRoom41D) && (_vm->_inventoryObj[iDISLOCATORE]._flag & kObjFlagExtra) && (_vm->_obj[ocHELLEN4A]._mode & OBJMODE_OBJSTATUS)) {
 		_vm->_soundMgr->waitEndFading();
-		_vm->_dialogMgr->PlayDialog(dC4A1);
+		_vm->_dialogMgr->playDialog(dC4A1);
 	} else if ((_vm->_curRoom == kRoom4P) && (_vm->_oldRoom == kRoom4O) && !(_vm->_room[kRoom4P]._flag & kObjFlagDone)) {
-		_vm->_dialogMgr->PlayDialog(dF4PI);
+		_vm->_dialogMgr->playDialog(dF4PI);
 		_vm->_flagShowCharacter = false;
 		_vm->_soundMgr->waitEndFading();
 	} else if ((_vm->_curRoom == kRoom51) && (_vm->_oldRoom == kRoom4CT)) {
-		_vm->_dialogMgr->PlayDialog(dF4C1);
+		_vm->_dialogMgr->playDialog(dF4C1);
 		_vm->_flagShowCharacter = false;
 		_vm->_soundMgr->waitEndFading();
 	} else if ((_vm->_curRoom == kRoom1A) && (_vm->_oldRoom == kRoom18)) {
 		if (!(_vm->_room[kRoom1A]._flag & kObjFlagDone)) {
-			_vm->_dialogMgr->PlayDialog(dF1A1);
+			_vm->_dialogMgr->playDialog(dF1A1);
 			_vm->_soundMgr->waitEndFading();
 			_vm->_obj[oTOPO1C]._flag |= kObjFlagTake;
 			_vm->_obj[oTOPO1C]._anim = a1C3RACCOGLIETOPO;
@@ -994,7 +994,7 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 			*printSentence = false;
 		} else if ((_vm->_useWith[WITH] == ocPOLIZIOTTO16) && (_vm->_inventoryObj[iBANCONOTE]._flag & kObjFlagExtra)) {
 			_vm->_dialogMgr->_choice[62]._flag &= ~DLGCHOICE_HIDE;
-			_vm->_dialogMgr->PlayDialog(dPOLIZIOTTO16);
+			_vm->_dialogMgr->playDialog(dPOLIZIOTTO16);
 			*printSentence = false;
 		}
 		break;
@@ -1118,7 +1118,7 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 
 	case iKEY15:
 		if (_vm->_useWith[WITH] == oSTRONGBOXC15) {
-			_vm->_dialogMgr->PlayDialog(dF151);
+			_vm->_dialogMgr->playDialog(dF151);
 			_vm->_obj[oSTRONGBOXC15]._mode &= ~OBJMODE_OBJSTATUS;
 			_vm->_obj[oCASSAFORTEA15]._mode |= OBJMODE_OBJSTATUS;
 			_vm->_obj[oSLOT13]._mode &= ~OBJMODE_OBJSTATUS;
@@ -1224,7 +1224,7 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 					_vm->_dialogMgr->_choice[122]._flag &= ~DLGCHOICE_HIDE;
 			} else
 				_vm->_dialogMgr->_choice[91]._flag &= ~DLGCHOICE_HIDE;
-			_vm->_dialogMgr->PlayDialog(dTRAMP171);
+			_vm->_dialogMgr->playDialog(dTRAMP171);
 			*updateInventory = false;
 			*printSentence = false;
 		} else if (_vm->_useWith[WITH] == ocPOLIZIOTTO16) {
@@ -1257,7 +1257,7 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 					_vm->_dialogMgr->_choice[81]._flag &= ~DLGCHOICE_HIDE;
 					_vm->_dialogMgr->_choice[80]._flag &= ~DLGCHOICE_EXITDLG;
 				}
-				_vm->_dialogMgr->PlayDialog(dTRAMP171);
+				_vm->_dialogMgr->playDialog(dTRAMP171);
 				*updateInventory = false;
 				_vm->removeIcon(iLATTINA13);
 				*printSentence = false;
@@ -1273,7 +1273,7 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 					else
 						_vm->_dialogMgr->_choice[122]._flag &= ~DLGCHOICE_HIDE;
 				}
-				_vm->_dialogMgr->PlayDialog(dTRAMP171);
+				_vm->_dialogMgr->playDialog(dTRAMP171);
 				*updateInventory = false;
 				_vm->removeIcon(iLATTINA13);
 				*printSentence = false;
@@ -1290,7 +1290,7 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 					_vm->_dialogMgr->_choice[81]._flag &= ~DLGCHOICE_HIDE;
 					_vm->_dialogMgr->_choice[80]._flag &= ~DLGCHOICE_EXITDLG;
 				}
-				_vm->_dialogMgr->PlayDialog(dTRAMP171);
+				_vm->_dialogMgr->playDialog(dTRAMP171);
 				*updateInventory = false;
 				_vm->removeIcon(iBOTTIGLIA14);
 				*printSentence = false;
@@ -1306,7 +1306,7 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 					else
 						_vm->_dialogMgr->_choice[122]._flag &= ~DLGCHOICE_HIDE;
 				}
-				_vm->_dialogMgr->PlayDialog(dTRAMP171);
+				_vm->_dialogMgr->playDialog(dTRAMP171);
 				*updateInventory = false;
 				_vm->removeIcon(iBOTTIGLIA14);
 				*printSentence = false;
@@ -1321,7 +1321,7 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 			if (_vm->_dialogMgr->_choice[183]._flag & kObjFlagDone) {
 				_vm->_dialogMgr->_choice[185]._flag &= ~DLGCHOICE_HIDE;
 				_vm->_dialogMgr->_dialog[dSHOPKEEPER1A]._startLen = 0;
-				_vm->_dialogMgr->PlayDialog(dSHOPKEEPER1A);
+				_vm->_dialogMgr->playDialog(dSHOPKEEPER1A);
 				*updateInventory = false;
 				_vm->_dialogMgr->_dialog[dSHOPKEEPER1A]._startLen = 1;
 				_vm->replaceIcon(iBOTTIGLIA1D, iTESSERA);
@@ -1333,7 +1333,7 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 	case iTESSERA:
 		if ((_vm->_useWith[WITH] == ocGUARD18) && !(_vm->_dialogMgr->_choice[155]._flag & kObjFlagDone)) {
 			_vm->_dialogMgr->_choice[155]._flag &= ~DLGCHOICE_HIDE;
-			_vm->_dialogMgr->PlayDialog(dGUARDIAN18);
+			_vm->_dialogMgr->playDialog(dGUARDIAN18);
 			*updateInventory = false;
 			_vm->_obj[ocGUARD18]._flag &= ~kObjFlagPerson;
 			_vm->_obj[oDOORC18]._flag |= kObjFlagRoomOut;
@@ -1346,7 +1346,7 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 
 	case iTOPO1D:
 		if ((_vm->_useWith[WITH] == oDONNA1D) && (_vm->_mouseX >= _vm->_obj[oDONNA1D]._lim.left && (_vm->_mouseY >= _vm->_obj[oDONNA1D]._lim.top + TOP) && (_vm->_mouseX <= _vm->_obj[oDONNA1D]._lim.right) && (_vm->_mouseY <= _vm->_obj[oDONNA1D]._lim.bottom + TOP))) {
-			_vm->_dialogMgr->PlayDialog(dF1D1);
+			_vm->_dialogMgr->playDialog(dF1D1);
 			*updateInventory = false;
 			_vm->removeIcon(iTOPO1D);
 			read3D("1d2.3d"); // after skate
@@ -1465,7 +1465,7 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 
 	case iTRONCHESE:
 		if ((_vm->_useWith[WITH] == oCAVO2H) && (_vm->_obj[oCARTELLONE2H]._mode & OBJMODE_OBJSTATUS)) {
-			_vm->_dialogMgr->PlayDialog(dF2H1);
+			_vm->_dialogMgr->playDialog(dF2H1);
 			_vm->_obj[oPASSAGE24]._mode |= OBJMODE_OBJSTATUS;
 			_vm->_obj[omPASSAGGIO24]._mode |= OBJMODE_OBJSTATUS;
 			_vm->_obj[oCARTELLONE24]._mode &= ~OBJMODE_OBJSTATUS;
@@ -1528,7 +1528,7 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 
 	case iRIFLE:
 		if (_vm->_useWith[WITH] == oDINOSAURO2E) {
-			_vm->_dialogMgr->PlayDialog(dF2E2);
+			_vm->_dialogMgr->playDialog(dF2E2);
 			_vm->_obj[oDINOSAURO2E]._mode &= ~OBJMODE_OBJSTATUS;
 			_vm->_obj[oCATWALKA2E]._anim = a2E2PRIMAPALLONTANANDO;
 			_vm->_animMgr->_animTab[aBKG2E]._flag |= SMKANIM_OFF2;
@@ -1541,15 +1541,15 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 		if (_vm->_useWith[WITH] == oCATENAT21) {
 			if (_vm->_room[_vm->_curRoom]._flag & kObjFlagExtra) {
 				if (_vm->_useWith[USED] == iPINZA)
-					_vm->_dialogMgr->PlayDialog(dF212B);
+					_vm->_dialogMgr->playDialog(dF212B);
 				else
-					_vm->_dialogMgr->PlayDialog(dF212);
+					_vm->_dialogMgr->playDialog(dF212);
 				*printSentence = false;
 			} else {
 				if (_vm->_useWith[USED] == iPINZA)
-					_vm->_dialogMgr->PlayDialog(dF213B);
+					_vm->_dialogMgr->playDialog(dF213B);
 				else
-					_vm->_dialogMgr->PlayDialog(dF213);
+					_vm->_dialogMgr->playDialog(dF213);
 				*printSentence = false;
 			}
 		} else if ((_vm->_useWith[WITH] == oDOORC33) && (_vm->_useWith[USED] == iSBARRA21)) {
@@ -1848,11 +1848,11 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 			_vm->_room[kRoom4P]._flag |= kObjFlagExtra;
 			read3D("4p2.3d"); // after werewolf
 			_vm->_animMgr->_animTab[aBKG4P]._flag |= SMKANIM_OFF1;
-			_vm->_dialogMgr->PlayDialog(dF4P2);
+			_vm->_dialogMgr->playDialog(dF4P2);
 			*printSentence = false;
 		} else if (_vm->_useWith[WITH] == oLICANTROPO4P) {
 			_vm->replaceIcon(iPISTOLA4PD, iPISTOLA4B);
-			_vm->_dialogMgr->PlayDialog(dF4P1);
+			_vm->_dialogMgr->playDialog(dF4P1);
 			*printSentence = false;
 		} else if ((_vm->_useWith[WITH] == oSPIDER46) || (_vm->_useWith[WITH] == oDOORC4B) || (_vm->_useWith[WITH] == oSERRATURA4B)) {
 			*printSentence = false;
@@ -2028,7 +2028,7 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 
 	case iCUTTER:
 		if ((_vm->_useWith[WITH] == oPANNELLOA) && (_vm->_obj[oPANNELLOA]._flag & kObjFlagExtra)) {
-			_vm->_dialogMgr->PlayDialog(dF562);
+			_vm->_dialogMgr->playDialog(dF562);
 			_vm->_obj[oPANNELLOA]._mode &= ~OBJMODE_OBJSTATUS;
 			_vm->_obj[oCAVOTAGLIATO56]._mode |= OBJMODE_OBJSTATUS;
 			_vm->_obj[oDOOR58C55]._mode |= OBJMODE_OBJSTATUS;
@@ -2051,13 +2051,13 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 	case iARMAEVA:
 		if ((_vm->_useWith[WITH] == oWINDOWA5A) && (_vm->_dialogMgr->_choice[871]._flag & kObjFlagDone) && !(_vm->_dialogMgr->_choice[286]._flag & kObjFlagDone)) {
 			_vm->removeIcon(iARMAEVA);
-			_vm->_dialogMgr->PlayDialog(dC5A1);
+			_vm->_dialogMgr->playDialog(dC5A1);
 			_vm->_obj[oWINDOWA58]._anim = a587;
 			*printSentence = false;
 			_vm->_room[kRoom5A]._flag |= kObjFlagExtra;
 		} else if ((_vm->_useWith[WITH] == oWINDOWA5A) && (_vm->_dialogMgr->_choice[871]._flag & kObjFlagDone)) {
 			_vm->removeIcon(iARMAEVA);
-			_vm->_dialogMgr->PlayDialog(dF5A1);
+			_vm->_dialogMgr->playDialog(dF5A1);
 			_vm->_obj[oWINDOWA58]._anim = a587;
 			*printSentence = false;
 		}
@@ -2075,7 +2075,7 @@ bool LogicManager::useScreenWithScreen() {
 	switch (_vm->_useWith[USED]) {
 	case oRAMPINO21:
 		if (_vm->_useWith[WITH] == oTUBO21) {
-			_vm->_dialogMgr->PlayDialog(dF211);
+			_vm->_dialogMgr->playDialog(dF211);
 			_vm->setRoom(kRoom21, true);
 			_vm->_animMgr->_animTab[aBKG21]._flag &= ~SMKANIM_OFF1;
 			_vm->_obj[oRAMPINO21]._mode &= ~OBJMODE_OBJSTATUS;
@@ -2106,7 +2106,7 @@ bool LogicManager::useScreenWithScreen() {
 
 	case oTUBET33:
 		if (((_vm->_useWith[WITH] == oSAMA33) || (_vm->_useWith[WITH] == oSERRATURA33 && _vm->_obj[oSAMA33]._mode & OBJMODE_OBJSTATUS)) && (_vm->_obj[oVALVOLA34]._mode & OBJMODE_OBJSTATUS)) {
-			_vm->_dialogMgr->PlayDialog(dF331);
+			_vm->_dialogMgr->playDialog(dF331);
 			setPosition(10);
 			_vm->_obj[oBOTOLAC33]._mode &= ~OBJMODE_OBJSTATUS;
 			_vm->_obj[oSERRATURA33]._mode &= ~OBJMODE_OBJSTATUS;
@@ -2565,7 +2565,7 @@ bool LogicManager::mouseOperate(uint16 curObj) {
 		if (!(_vm->_obj[oSCALA16]._flag & kObjFlagExtra)) {
 			_vm->_obj[oSCALA16]._flag |= kObjFlagExtra;
 			_vm->_dialogMgr->_choice[61]._flag &= ~DLGCHOICE_HIDE;
-			_vm->_dialogMgr->PlayDialog(dPOLIZIOTTO16);
+			_vm->_dialogMgr->playDialog(dPOLIZIOTTO16);
 			_vm->_obj[oSCALA16]._action = 166;
 			_vm->_obj[ocPOLIZIOTTO16]._action = 166;
 		} else
@@ -2656,7 +2656,7 @@ bool LogicManager::mouseOperate(uint16 curObj) {
 		if (_vm->_obj[ocGUARD18]._flag & kObjFlagPerson) {
 			_vm->_dialogMgr->_choice[151]._flag |= DLGCHOICE_HIDE;
 			_vm->_dialogMgr->_choice[152]._flag &= ~DLGCHOICE_HIDE;
-			_vm->_dialogMgr->PlayDialog(dGUARDIAN18);
+			_vm->_dialogMgr->playDialog(dGUARDIAN18);
 			_vm->_obj[ocGUARD18]._flag &= ~kObjFlagPerson;
 			_vm->_obj[ocGUARD18]._action = 227;
 			_vm->_obj[oDOORC18]._action = 220;
@@ -2699,15 +2699,15 @@ bool LogicManager::mouseOperate(uint16 curObj) {
 	case oCATENAT21:
 		if ((_vm->iconPos(iSBARRA21) != MAXICON) && ((_vm->_dialogMgr->_choice[436]._flag & kObjFlagDone) || (_vm->_dialogMgr->_choice[466]._flag & kObjFlagDone))) {
 			if (_vm->_room[_vm->_curRoom]._flag & kObjFlagExtra) // Go right
-				_vm->_dialogMgr->PlayDialog(dF212);                             // 436
+				_vm->_dialogMgr->playDialog(dF212);                             // 436
 			else                                                 // Go left
-				_vm->_dialogMgr->PlayDialog(dF213);                             // 466
+				_vm->_dialogMgr->playDialog(dF213);                             // 466
 			retVal = false;
 		} else if ((_vm->_dialogMgr->_choice[451]._flag & kObjFlagDone) || (_vm->_dialogMgr->_choice[481]._flag & kObjFlagDone)) {
 			if (_vm->_room[_vm->_curRoom]._flag & kObjFlagExtra) // Go right
-				_vm->_dialogMgr->PlayDialog(dF212B);                            // 451
+				_vm->_dialogMgr->playDialog(dF212B);                            // 451
 			else                                                 // Go left
-				_vm->_dialogMgr->PlayDialog(dF213B);                            // 481
+				_vm->_dialogMgr->playDialog(dF213B);                            // 481
 			retVal = false;
 		} else
 			retVal = true;
@@ -2828,7 +2828,7 @@ bool LogicManager::mouseOperate(uint16 curObj) {
 
 	case oPANELM2G:
 		if (!(_vm->_obj[oPANELM2G]._flag & kObjFlagExtra)) {
-			_vm->_dialogMgr->PlayDialog(dF2G1);
+			_vm->_dialogMgr->playDialog(dF2G1);
 			_vm->_obj[oCOPERCHIO2G]._mode &= ~OBJMODE_OBJSTATUS;
 			_vm->_obj[oSERBATOIOC2G]._mode &= ~OBJMODE_OBJSTATUS;
 			_vm->_obj[oRAGAZZOP2G]._mode &= ~OBJMODE_OBJSTATUS;
@@ -2873,7 +2873,7 @@ bool LogicManager::mouseOperate(uint16 curObj) {
 
 	case oCATWALKA2E:
 		if (!(_vm->_obj[oCATWALKA2E]._flag & kObjFlagExtra)) {
-			_vm->_dialogMgr->PlayDialog(dF2E1);
+			_vm->_dialogMgr->playDialog(dF2E1);
 			_vm->_obj[oDINOSAURO2E]._mode |= OBJMODE_OBJSTATUS;
 			_vm->_obj[oCATWALKA2E]._flag |= kObjFlagExtra;
 			_vm->_animMgr->_animTab[aBKG2E]._flag &= ~SMKANIM_OFF2;
@@ -2951,13 +2951,13 @@ bool LogicManager::mouseOperate(uint16 curObj) {
 		_vm->_obj[oASCENSORE35]._anim = a3514ENTRAASCENSORE;
 
 		_vm->_animMgr->_animTab[aBKG35]._flag |= SMKANIM_OFF1;
-		_vm->_dialogMgr->PlayDialog(dF351);
+		_vm->_dialogMgr->playDialog(dF351);
 		setPosition(7);
 		break;
 
 	case oCOMPUTER36:
 		if (!(_vm->_dialogMgr->_choice[646]._flag & kObjFlagDone)) {
-			_vm->_dialogMgr->PlayDialog(dF361);
+			_vm->_dialogMgr->playDialog(dF361);
 			_vm->_obj[oCOMPUTER36]._action = 2004;
 			retVal = false;
 		} else
@@ -3164,7 +3164,7 @@ bool LogicManager::mouseOperate(uint16 curObj) {
 	case oDOORC4A:
 		if (!(_vm->_dialogMgr->_choice[245]._flag & kObjFlagDone) && !(_vm->_dialogMgr->_choice[766]._flag & kObjFlagDone)) {
 			_vm->_dialogMgr->_choice[245]._flag &= ~DLGCHOICE_HIDE;
-			_vm->_dialogMgr->PlayDialog(dC4A1);
+			_vm->_dialogMgr->playDialog(dC4A1);
 			setPosition(14);
 			_vm->_obj[oDOORC4A]._action = 1117;
 			_vm->_obj[oDOORC4A]._anim = 0;
@@ -3178,7 +3178,7 @@ bool LogicManager::mouseOperate(uint16 curObj) {
 			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, _vm->_obj[curObj]._anim, 0, 0, curObj);
 		else if (!(_vm->_dialogMgr->_choice[244]._flag & kObjFlagDone)) {
 			_vm->_dialogMgr->_choice[244]._flag &= ~DLGCHOICE_HIDE;
-			_vm->_dialogMgr->PlayDialog(dC4A1);
+			_vm->_dialogMgr->playDialog(dC4A1);
 			_vm->_obj[oPULSANTE4A]._examine = 1108;
 			_vm->_obj[oPULSANTE4A]._action = 1109;
 			retVal = false;
@@ -3217,7 +3217,7 @@ bool LogicManager::mouseOperate(uint16 curObj) {
 
 	case oDOORC54:
 		if (!(_vm->_dialogMgr->_choice[826]._flag & kObjFlagDone)) {
-			_vm->_dialogMgr->PlayDialog(dF541);
+			_vm->_dialogMgr->playDialog(dF541);
 			retVal = false;
 		} else
 			retVal = true;
@@ -3275,7 +3275,7 @@ bool LogicManager::mouseOperate(uint16 curObj) {
 
 	case oWINDOWA5A:
 		if ((_vm->_dialogMgr->_choice[871]._flag & kObjFlagDone) && !(_vm->_dialogMgr->_choice[286]._flag & kObjFlagDone)) {
-			_vm->_dialogMgr->PlayDialog(dC5A1);
+			_vm->_dialogMgr->playDialog(dC5A1);
 			retVal = false;
 		} else
 			retVal = true;
@@ -3323,7 +3323,7 @@ bool LogicManager::mouseOperate(uint16 curObj) {
 		if ((_comb58[0] == oTASTO058) && (_comb58[1] == oTASTO258) && (_comb58[2] == oTASTO358) &&
 			(_comb58[3] == oTASTO858) && (_comb58[4] == oTASTO558) && (_comb58[5] == oTASTO958)) {
 			_vm->_soundMgr->fadeOut();
-			_vm->_dialogMgr->PlayDialog(dF582);
+			_vm->_dialogMgr->playDialog(dF582);
 		} else
 			doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, kRoom58, 0, 2, curObj);
 
@@ -3419,7 +3419,7 @@ bool LogicManager::mouseTalk(uint16 curObj) {
 	case ocNEGOZIANTE1A:
 		for (int c = _vm->_dialogMgr->_dialog[dSHOPKEEPER1A]._firstChoice; c < (_vm->_dialogMgr->_dialog[dSHOPKEEPER1A]._firstChoice + _vm->_dialogMgr->_dialog[dSHOPKEEPER1A]._choiceNumb); c++) {
 			if (!(_vm->_dialogMgr->_choice[c]._flag & DLGCHOICE_HIDE)) {
-				_vm->_dialogMgr->PlayDialog(_vm->_obj[curObj]._goRoom);
+				_vm->_dialogMgr->playDialog(_vm->_obj[curObj]._goRoom);
 				retVal = false;
 				return retVal;
 			}
@@ -3681,7 +3681,7 @@ bool LogicManager::operateInventory() {
 						} else {
 							_vm->_dialogMgr->_choice[197]._flag |= DLGCHOICE_HIDE;
 							_vm->_dialogMgr->_choice[198]._flag &= ~DLGCHOICE_HIDE;
-							_vm->_dialogMgr->PlayDialog(dSAM17);
+							_vm->_dialogMgr->playDialog(dSAM17);
 							printSentence = false;
 							_vm->_obj[oFAX17]._mode |= OBJMODE_OBJSTATUS;
 						}
@@ -3692,7 +3692,7 @@ bool LogicManager::operateInventory() {
 						} else {
 							_vm->_dialogMgr->_choice[197]._flag |= DLGCHOICE_HIDE;
 							_vm->_dialogMgr->_choice[199]._flag &= ~DLGCHOICE_HIDE;
-							_vm->_dialogMgr->PlayDialog(dSAM17);
+							_vm->_dialogMgr->playDialog(dSAM17);
 							printSentence = false;
 							_vm->_obj[oFAX17]._mode |= OBJMODE_OBJSTATUS;
 						}
@@ -3707,7 +3707,7 @@ bool LogicManager::operateInventory() {
 							printSentence = true;
 						} else {
 							_vm->_dialogMgr->_choice[201]._flag &= ~DLGCHOICE_HIDE;
-							_vm->_dialogMgr->PlayDialog(dSAM17);
+							_vm->_dialogMgr->playDialog(dSAM17);
 							printSentence = false;
 							_vm->_obj[oFAX17]._mode |= OBJMODE_OBJSTATUS;
 						}
@@ -3717,7 +3717,7 @@ bool LogicManager::operateInventory() {
 							printSentence = true;
 						} else {
 							_vm->_dialogMgr->_choice[200]._flag &= ~DLGCHOICE_HIDE;
-							_vm->_dialogMgr->PlayDialog(dSAM17);
+							_vm->_dialogMgr->playDialog(dSAM17);
 							printSentence = false;
 							_vm->_obj[oFAX17]._mode |= OBJMODE_OBJSTATUS;
 						}
@@ -3727,7 +3727,7 @@ bool LogicManager::operateInventory() {
 				_vm->_inventoryObj[iSAM]._action = 1786;
 				printSentence = true;
 			} else {
-				_vm->_dialogMgr->PlayDialog(dSAM17);
+				_vm->_dialogMgr->playDialog(dSAM17);
 				printSentence = false;
 			}
 		}

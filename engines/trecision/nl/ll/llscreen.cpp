@@ -441,7 +441,7 @@ void TendIn() {
 	TextStatus = TEXT_OFF;
 
 	if (g_vm->_curRoom == kRoomIntro) {
-		g_vm->_dialogMgr->PlayDialog(dFLOG);
+		g_vm->_dialogMgr->playDialog(dFLOG);
 		return;
 	}
 

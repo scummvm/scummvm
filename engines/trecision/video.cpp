@@ -217,12 +217,12 @@ void AnimManager::drawFrameSubtitles(Graphics::Surface *surface, int frameNum) {
 	if (!ConfMan.getBool("subtitles"))
 		return;
 
-	_vm->_dialogMgr->DialogHandler(frameNum);
+	_vm->_dialogMgr->dialogHandler(frameNum);
 	if (_vm->_sdText.text == nullptr)
 		return;
 	
 	// Subtitles can be placed in different coordinates in the video,
-	// which are set inside DialogHandler(), but are then reset to
+	// which are set inside dialogHandler(), but are then reset to
 	// fixed coordinates
 	_vm->_sdText.x = 20;
 	_vm->_sdText.y = 380 - TOP;

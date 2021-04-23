@@ -31,19 +31,25 @@ class TrecisionEngine;
 class DialogManager {
 	TrecisionEngine *_vm;
 
-	void ShowChoices(uint16 i);
-	void PlayChoice(uint16 i);
+	void showChoices(uint16 i);
+	void playChoice(uint16 i);
+
+	int16 _curPos;
+	int16 _lastPos;
+	uint16 _dispChoice[MAXDISPCHOICES];
+	uint16 _curDispChoice;
+	DialogSubTitle _subTitles[MAXSUBTITLES];
 
 public:
 	DialogManager(TrecisionEngine *vm);
 	~DialogManager();
 
-	void DialogPrint(int x, int y, int c, const char *txt);
-	void UpdateChoices(int16 dmx, int16 dmy);
-	void SelectChoice(int16 dmx, int16 dmy);
-	void PlayDialog(uint16 i);
-	void afterChoice(int numframe);
-	void DialogHandler(int numframe);
+	void dialogPrint(int x, int y, int c, const char *txt);
+	void updateChoices(int16 dmx, int16 dmy);
+	void selectChoice(int16 dmx, int16 dmy);
+	void playDialog(uint16 i);
+	void afterChoice(int numFrame);
+	void dialogHandler(int numFrame);
 	void doDialog();
 
 	void syncGameStream(Common::Serializer &ser);
@@ -51,16 +57,10 @@ public:
 
 	Dialog _dialog[MAXDIALOG];
 	DialogChoice _choice[MAXCHOICE];
-	DialogSubTitle _subTitles[MAXSUBTITLES];
 
-	uint16 _curDialog, _curChoice;
+	uint16 _curDialog;
+	uint16 _curChoice;
 	uint16 _curSubTitle;
-	uint16 DispChoice[MAXDISPCHOICES];
-	uint16 CurDispChoice;
-	int16 CurPos;
-	int16 LastPos;
-
-	
 };
 ; // end of class
 
