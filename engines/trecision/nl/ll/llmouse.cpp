@@ -174,7 +174,7 @@ void SDText::DText(uint16 *frameBuffer) {
 							uint16 *dst2 = buffer + x + _subtitleRect.left + (y + a) * MAXX;
 							uint16 *dst = nullptr;
 							uint16 size = 0;
-							
+
 							if (charLeft >= _subtitleRect.left && charRight < _subtitleRect.right) {
 								dst = dst1;
 								size = charRight - charLeft;

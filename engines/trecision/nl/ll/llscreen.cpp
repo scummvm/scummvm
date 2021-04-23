@@ -467,7 +467,7 @@ void readObject(Common::SeekableReadStream *stream, uint16 objIndex, uint16 room
 		delete[] g_vm->ObjPointers[objIndex];
 		g_vm->ObjPointers[objIndex] = new uint16[size];
 		for (uint32 i = 0; i < size; ++i)
-			g_vm->ObjPointers[objIndex][i] = stream->readUint16LE(); 
+			g_vm->ObjPointers[objIndex][i] = stream->readUint16LE();
 
 		g_vm->_graphicsMgr->updatePixelFormat(g_vm->ObjPointers[objIndex], size);
 	}
@@ -484,7 +484,7 @@ void readObject(Common::SeekableReadStream *stream, uint16 objIndex, uint16 room
 		delete[] g_vm->ObjPointers[objIndex];
 		g_vm->ObjPointers[objIndex] = new uint16[size];
 		for (uint32 i = 0; i < size; ++i)
-			g_vm->ObjPointers[objIndex][i] = stream->readUint16LE(); 
+			g_vm->ObjPointers[objIndex][i] = stream->readUint16LE();
 
 		g_vm->_graphicsMgr->updatePixelFormat(g_vm->ObjPointers[objIndex], size);
 
@@ -518,7 +518,7 @@ void ReadObj(Common::SeekableReadStream *stream) {
 void ReadExtraObj2C() {
 	if (!g_vm->_room[g_vm->_curRoom]._object[32])
 		return;
-	
+
 	Common::SeekableReadStream *ff = g_vm->_dataFile.createReadStreamForMember("2c2.bm");
 
 	for (uint16 objIndex = PATCHOBJ_ROOM2C; objIndex < MAXOBJINROOM; objIndex++) {

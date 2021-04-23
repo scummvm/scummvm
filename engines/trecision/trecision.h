@@ -148,7 +148,7 @@ public:
 	void performLoad(int slot, bool skipLoad);
 	void resetZBuffer(int x1, int y1, int x2, int y2);
 
-	
+
 	Graphics::Surface _thumbnail;
 
 	uint16 _curRoom;

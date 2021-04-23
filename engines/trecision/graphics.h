@@ -49,7 +49,7 @@ class GraphicsManager {
 public:
 	GraphicsManager(TrecisionEngine *vm);
 	~GraphicsManager();
-	
+
 	bool initScreen();
 	void clearScreen();
 	void copyToScreen(int x, int y, int w, int h);

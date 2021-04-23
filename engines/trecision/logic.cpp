@@ -438,7 +438,7 @@ void LogicManager::endChangeRoom() {
 		_vm->_obj[oCARTELLOS2C]._mode &= ~OBJMODE_OBJSTATUS;
 		_vm->_obj[oCARTELLOA2C]._mode |= OBJMODE_OBJSTATUS;
 	}
-	
+
 	if ((_vm->_curRoom == kRoom28) && (_vm->_obj[oPULSANTEBBS2D]._mode & OBJMODE_OBJSTATUS)) {
 		_vm->_animMgr->_animTab[aBKG28]._flag |= SMKANIM_OFF2;
 		_vm->_obj[oCESPUGLIO28]._anim = a283;
@@ -452,7 +452,7 @@ void LogicManager::endChangeRoom() {
 		_vm->_obj[oSERPENTEAM28]._mode &= ~OBJMODE_OBJSTATUS;
 		RegenRoom();
 	}
-	
+
 	if ((_vm->_curRoom == kRoom28) && (_vm->_obj[oPULSANTEABS2D]._mode & OBJMODE_OBJSTATUS)) {
 		_vm->_animMgr->_animTab[aBKG28]._flag |= (SMKANIM_OFF1 | SMKANIM_OFF3);
 		_vm->_obj[oCAMPO28]._mode &= ~OBJMODE_OBJSTATUS;
@@ -4205,7 +4205,7 @@ void LogicManager::doSystemChangeRoom() {
 		case kRoom29:
 		case kRoom29L:
 			_vm->setRoom(kRoom2A, false);
-			break;			
+			break;
 		}
 	} else if (_vm->_curRoom == kRoom2B) {
 		switch (_vm->_oldRoom) {

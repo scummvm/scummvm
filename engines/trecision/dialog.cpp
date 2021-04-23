@@ -49,7 +49,7 @@ void DialogManager::dialogPrint(int x, int y, int c, const char *txt) {
 
 void DialogManager::showChoices(uint16 i) {
 	assert(i < MAXDIALOG);
-	
+
 	Dialog *dialog = &_dialog[i];
 
 	int x = 10;
@@ -130,7 +130,7 @@ void DialogManager::playDialog(uint16 i) {
 		if (!(_choice[c]._flag & DLGCHOICE_HIDE))
 			curChoice++;
 	}
-	
+
 	if ((_curDialog == dC581) && !(_choice[262]._flag & DLGCHOICE_HIDE))
 		skip++;
 	if ((_curDialog == dC581) && (curChoice == 1))
@@ -582,7 +582,7 @@ void DialogManager::dialogHandler(int numFrame) {
 
 void DialogManager::playChoice(uint16 i) {
 	assert(i < MAXCHOICE);
-	
+
 	DialogChoice *choice = &_choice[i];
 
 	memset(_vm->_screenBuffer, 0, MAXX * TOP * 2);

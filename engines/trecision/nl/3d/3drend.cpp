@@ -474,7 +474,7 @@ void drawCharacter(uint8 flag) {
 	if (flag & CALCPOINTS) {
 		if (g_vm->_actor->_curAction > hLAST)
 			error("Error in drawCharacter() - _curAction > hLAST");
-		
+
 		int cfp = 0;
 		int cur = 0;
 		while (cur < g_vm->_actor->_curAction)

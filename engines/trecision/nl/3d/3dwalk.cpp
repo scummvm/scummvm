@@ -752,7 +752,7 @@ void buildFramelist() {
 	oz   =  - FRAMECENTER(v) + firstframe;
 
 	// at this point, CurA / _curAction is either hSTART or hWALK
-	
+
 	// until it arrives at the destination
 	while (((curlen = oz + FRAMECENTER(v) - firstframe) < len) || (!a)) {
 		_step[a]._pz = oz - firstframe;	// where to render
