@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-04-23 13:58+0000\n"
-"PO-Revision-Date: 2021-04-23 12:20+0000\n"
+"PO-Revision-Date: 2021-04-23 17:43+0000\n"
 "Last-Translator: Lothar Serra Mari <serra@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/de/>\n"
@@ -4862,13 +4862,10 @@ msgstr ""
 "des Spiels hinzu."
 
 #: engines/kyra/detection_tables.h:1266
-#, fuzzy
-#| msgid ""
-#| "You added the game incorrectly. Please add the root folder of the game."
 msgid "You added the game incorrectly. The game data is in ISO image GAME.DAT."
 msgstr ""
-"Du hast das Spiel nicht korrekt hinzugefügt. Bitte füge das Stammverzeichnis "
-"des Spiels hinzu."
+"Du hast das Spiel nicht korrekt hinzugefügt. Die Spiel-Dateien befinden sich "
+"in der ISO-Datei GAME.DAT."
 
 #: engines/kyra/metaengine.cpp:117
 msgid "Lands of Lore support is not compiled in"
@@ -5771,10 +5768,8 @@ msgstr "Verwendet einen alternativen Vorspann (nur bei CD-Version)"
 
 #. I18N: Inherit the Earth had a "trial" version which is a full game with a simple check
 #: engines/saga/detection_tables.h:609
-#, fuzzy
-#| msgid "Spanish CD version is not yet supported"
 msgid "Windows Trial version is not supported"
-msgstr "Die spanische CD-Version wird noch nicht unterstützt"
+msgstr "Die Demo-Version für Windows wird nicht unterstützt"
 
 #: engines/saga/metaengine.cpp:114
 msgid "I Have No Mouth support not compiled in"
