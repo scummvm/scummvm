@@ -48,10 +48,12 @@ void DialogManager::DialogPrint(int x, int y, int c, const char *txt) {
 }
 
 void DialogManager::ShowChoices(uint16 i) {
-	Dialog *d = &_dialog[i];
+	assert(i < MAXDIALOG);
+	
+	Dialog *dialog = &_dialog[i];
 
-	int y = 5;
 	int x = 10;
+	int y = 5;
 	CurPos = -1;
 	LastPos = -1;
 	memset(_vm->_screenBuffer, 0, MAXX * TOP * 2);
@@ -60,7 +62,7 @@ void DialogManager::ShowChoices(uint16 i) {
 		DispChoice[c] = 0;
 
 	CurDispChoice = 0;
-	for (int c = d->_firstChoice; c < (d->_firstChoice + d->_choiceNumb); c++) {
+	for (int c = dialog->_firstChoice; c < (dialog->_firstChoice + dialog->_choiceNumb); c++) {
 		if (!(_choice[c]._flag & DLGCHOICE_HIDE)) {
 			DispChoice[CurDispChoice++] = c;
 			DialogPrint(x, y, HWHITE, _vm->_sentence[_choice[c]._sentenceIndex]);
@@ -145,7 +147,9 @@ void DialogManager::PlayDialog(uint16 i) {
 }
 
 void DialogManager::afterChoice(int numFrame) {
-	Dialog *d = &_dialog[_curDialog];
+	assert(numFrame < MAXDIALOG);
+	
+	Dialog *dialog = &_dialog[_curDialog];
 
 	memset(_vm->_screenBuffer, 0, MAXX * TOP * 2);
 	_vm->_graphicsMgr->copyToScreen(0, 0, MAXX, TOP);
@@ -509,7 +513,7 @@ void DialogManager::afterChoice(int numFrame) {
 		_vm->_flagDialogActive = true;
 		_curChoice = 0;
 
-		d = &_dialog[_curDialog];
+		dialog = &_dialog[_curDialog];
 
 		// If there is a pre-dialog
 		if (_dialog[_curDialog]._startLen > 0) {
@@ -519,7 +523,7 @@ void DialogManager::afterChoice(int numFrame) {
 	}
 
 	// Immediately starts the fraud choice
-	for (int c = d->_firstChoice; c < (d->_firstChoice + d->_choiceNumb); ++c) {
+	for (int c = dialog->_firstChoice; c < dialog->_firstChoice + dialog->_choiceNumb; ++c) {
 		if ((_choice[c]._flag & DLGCHOICE_FRAUD) && (!(_choice[c]._flag & DLGCHOICE_HIDE))) {
 			PlayChoice(c);
 			return;
@@ -528,7 +532,7 @@ void DialogManager::afterChoice(int numFrame) {
 
 	// If there's only one option, show it immediately, otherwise show available choices
 	int res = 0;
-	for (int c = d->_firstChoice; c < (d->_firstChoice + d->_choiceNumb); c++) {
+	for (int c = dialog->_firstChoice; c < dialog->_firstChoice + dialog->_choiceNumb; c++) {
 		if (!(_choice[c]._flag & DLGCHOICE_HIDE)) {
 			if (_choice[c]._flag & DLGCHOICE_EXITNOW) {
 				if (res == 0)
@@ -550,7 +554,7 @@ void DialogManager::afterChoice(int numFrame) {
 
 	// If no option is visible, close the dialog
 	res = 0;
-	for (int c = d->_firstChoice; c < (d->_firstChoice + d->_choiceNumb); c++) {
+	for (int c = dialog->_firstChoice; c < dialog->_firstChoice + dialog->_choiceNumb; c++) {
 		if (!(_choice[c]._flag & DLGCHOICE_HIDE))
 			res++;
 	}
@@ -579,6 +583,8 @@ void DialogManager::DialogHandler(int numFrame) {
 }
 
 void DialogManager::PlayChoice(uint16 i) {
+	assert(i < MAXCHOICE);
+	
 	DialogChoice *choice = &_choice[i];
 
 	memset(_vm->_screenBuffer, 0, MAXX * TOP * 2);
