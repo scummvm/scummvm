@@ -64,7 +64,7 @@ bool GraphicsManager::initScreen() {
 
 	_background.create(MAXX, MAXY, _screenFormat);
 	_smkBackground.create(MAXX, AREA, _screenFormat);
-	
+
 	return true;
 }
 

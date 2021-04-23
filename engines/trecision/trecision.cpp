@@ -154,7 +154,7 @@ TrecisionEngine::TrecisionEngine(OSystem *syst) : Engine(syst) {
 
 	_curStack = 0;
 	_textStackTop = -1;
-	
+
 	_flagscriptactive = false;
 	_flagScreenRefreshed = false;
 
@@ -200,7 +200,7 @@ TrecisionEngine::~TrecisionEngine() {
 	delete _graphicsMgr;
 	delete _logicMgr;
 	delete _soundMgr;
-	
+
 	delete[] _font;
 	delete[] _arrows;
 	delete[] _textureArea;
@@ -220,7 +220,7 @@ Common::Error TrecisionEngine::run() {
 	g_vm = this;
 
 	syncSoundSettings();
-	
+
 	_graphicsMgr = new GraphicsManager(this);
 	if (!_graphicsMgr->initScreen())
 		return Common::kUnsupportedColorMode;
@@ -229,7 +229,7 @@ Common::Error TrecisionEngine::run() {
 	_logicMgr = new LogicManager(this);
 	_soundMgr = new SoundManager(this);
 	setDebugger(new Console(this));
-	
+
 	initMain();
 	initCursor();
 
@@ -624,7 +624,7 @@ byte *TrecisionEngine::readData(Common::String fileName) {
 	byte *buf = new byte[stream->size()];
 	stream->read(buf, stream->size());
 	delete stream;
-	
+
 	return buf;
 }
 

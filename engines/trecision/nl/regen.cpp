@@ -55,7 +55,7 @@ void PaintScreen(uint8 flag) {
 	int y1 = g_vm->_actor->_lim[2] - TOP;
 	int x2 = g_vm->_actor->_lim[1];
 	int y2 = g_vm->_actor->_lim[3] - TOP;
-	
+
 	// erase character
 	if (g_vm->_flagShowCharacter && x2 > x1 && y2 > y1) {                    // if a description exists
 		DObj.x    = 0;
@@ -70,7 +70,7 @@ void PaintScreen(uint8 flag) {
 		g_vm->_actorLimit = g_vm->_limitsNum;
 		Common::Rect l = DObj.l;
 		l.translate(0, TOP);
-		g_vm->_limits[g_vm->_limitsNum++] = l;		
+		g_vm->_limits[g_vm->_limitsNum++] = l;
 	} else if (g_vm->_animMgr->_animMinX != MAXX) {
 		DObj.x    = 0;
 		DObj.y    = TOP;
@@ -220,7 +220,7 @@ void PaintObjAnm(uint16 CurBox) {
 					g_vm->_graphicsMgr->DrawObj(DObj);
 
 					Common::Rect objRect(DObj.x, DObj.y, DObj.x + DObj.dx, DObj.y + DObj.dy);
-					
+
 					if (VisualRef[a] == 255) {
 						g_vm->_limits[g_vm->_limitsNum++] = objRect;
 					} else {
@@ -237,7 +237,7 @@ void PaintObjAnm(uint16 CurBox) {
 				break;
 
 			SObject obj = g_vm->_obj[curObject];
-			
+
 			if ((obj._mode & (OBJMODE_FULL | OBJMODE_MASK)) &&
 			    (obj._mode & OBJMODE_OBJSTATUS) &&
 			    (obj._nbox == CurBox)) {
@@ -253,7 +253,7 @@ void PaintObjAnm(uint16 CurBox) {
 				// Include the bottom right of the rect in the intersects() check
 				r2.bottom++;
 				r2.right++;
-				
+
 				if (r.intersects(r2)) {
 					DObj.x = obj._px;
 					DObj.y = obj._py + TOP;
@@ -263,12 +263,12 @@ void PaintObjAnm(uint16 CurBox) {
 					// Restore the bottom right of the rect
 					r2.bottom--;
 					r2.right--;
-					
+
 					// TODO: Simplify this?
 					const int16 xr1 = (r2.left > r.left) ? 0 : r.left - r2.left;
 					const int16 yr1 = (r2.top > r.top) ? 0 : r.top - r2.top;
 					const int16 xr2 = MIN<int16>(r.right, r2.right) - r2.left;
-					const int16 yr2 = MIN<int16>(r.bottom, r2.bottom) - r2.top;					
+					const int16 yr2 = MIN<int16>(r.bottom, r2.bottom) - r2.top;
 					DObj.l = Common::Rect(xr1, yr1, xr2, yr2);
 					DObj.objIndex = b;
 					DObj.drawMask = obj._mode & OBJMODE_MASK;
@@ -286,7 +286,7 @@ void PaintObjAnm(uint16 CurBox) {
 		int y1 = g_vm->_actor->_lim[2];
 		int x2 = g_vm->_actor->_lim[1];
 		int y2 = g_vm->_actor->_lim[3];
-		
+
 		if (x2 > x1 && y2 > y1) {
 			// enlarge the rectangle of the character
 			Common::Rect l(x1, y1, x2, y2);

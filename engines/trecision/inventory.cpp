@@ -360,7 +360,7 @@ void TrecisionEngine::doInventoryUseWithScreen() {
 	_animMgr->smkStop(kSmackerIcon);
 	if (_characterInMovement)
 		return;
-	
+
 	bool refreshInventory, printSentence;
 	_logicMgr->useInventoryWithScreen(&refreshInventory, &printSentence);
 

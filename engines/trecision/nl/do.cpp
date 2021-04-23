@@ -52,7 +52,7 @@ void doRoomOut(uint16 curObj) {
 
 	uint16 curAction, curPos;
 	g_vm->_logicMgr->roomOut(curObj, &curAction, &curPos);
-	
+
 	if (curAction)
 		doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, curAction, g_vm->_obj[curObj]._goRoom, curPos, curObj);
 
@@ -592,7 +592,7 @@ void InitAtFrameHandler(uint16 an, uint16 obj) {
 void AtFrameNext() {
 	for (int i = 0; i < 3; ++i) {
 		if (!(AnimType[i]._status & ATF_WAITTEXT) || !g_vm->_flagCharacterSpeak)
-			AnimType[i]._curFrame++;		
+			AnimType[i]._curFrame++;
 	}
 }
 
@@ -608,7 +608,7 @@ void AtFrameEnd(int type) {
 	h->_lastFrame = h->_curFrame;
 
 	uint16 flag = g_vm->_animMgr->_animTab[g_vm->_room[g_vm->_curRoom]._bkgAnim]._flag;
-	
+
 	for (int32 a = 0; a < MAXATFRAME; a++) {
 		// if it's time to run this AtFrame
 		if (anim->_atFrame[a]._numFrame == 0 && anim->_atFrame[a]._type) {

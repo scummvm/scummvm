@@ -96,7 +96,7 @@ bool NightlongSmackerDecoder::forceSeekToFrame(uint frame) {
 	}
 
 	_startTime = g_system->getMillis() - (videoTrack->getFrameTime(frame).msecs() / getRate()).toInt();
-	
+
 	return _fileStream->seek(start + offset, SEEK_SET);
 }
 
@@ -110,7 +110,7 @@ AnimManager::AnimManager(TrecisionEngine *vm) : _vm(vm) {
 		_animTab[i]._flag = 0;
 		_animTab[i]._name[0] = '\0';
 	}
-	
+
 	_animMaxX = _animMinX = 0;
 	_animMaxY = _animMinY = 0;
 
@@ -143,9 +143,9 @@ void AnimManager::playMovie(Common::String filename, int startFrame, int endFram
 
 	smkDecoder->start();
 	//debug("playMovie %s, %d - %d", filename.c_str(), startFrame, endFrame);
-	
+
 	setVideoRange(smkDecoder, startFrame, endFrame);
-	
+
 	while (!_vm->shouldQuit() && !smkDecoder->endOfVideo() && smkDecoder->getCurFrame() < endFrame && !skipVideo) {
 		if (smkDecoder->needsUpdate()) {
 			drawFrame(smkDecoder, x, y, true);
@@ -220,7 +220,7 @@ void AnimManager::drawFrameSubtitles(Graphics::Surface *surface, int frameNum) {
 	_vm->_dialogMgr->dialogHandler(frameNum);
 	if (_vm->_sdText.text == nullptr)
 		return;
-	
+
 	// Subtitles can be placed in different coordinates in the video,
 	// which are set inside dialogHandler(), but are then reset to
 	// fixed coordinates
@@ -442,7 +442,7 @@ void AnimManager::refreshSmkAnim(int animation) {
 		drawSmkActionFrame();
 		handleEndOfVideo(animation, kSmackerAction);
 	}
-	
+
 	for (int32 a = 0; a < MAXCHILD; a++) {
 		if (!(_animTab[animation]._flag & (SMKANIM_OFF1 << a)) && (_animTab[animation]._lim[a].bottom != 0)) {
 			Common::Rect l = _animTab[animation]._lim[a];

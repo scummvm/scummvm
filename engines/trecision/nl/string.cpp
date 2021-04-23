@@ -194,7 +194,7 @@ void CharacterSay(uint16 i) {
 	CurS = i;
 
 	//	TODO: Use a define...  ************************
-	// CHECKME: 'i' can't be equal to 99999 because it's a uint16... 
+	// CHECKME: 'i' can't be equal to 99999 because it's a uint16...
 	g_vm->_flagSkipEnable = (i != 99999);
 
 	//	if he took some action

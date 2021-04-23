@@ -196,7 +196,7 @@ bool MessageQueue::testEmptyCharacterQueue4Script() {
 	for (uint8 pos = _head; pos != _tail; pos = (pos + 1) % MAXMESSAGE) {
 		if (_event[pos]->_class != MC_CHARACTER)
 			continue;
-			
+
 		if (_event[pos]->_event == ME_CHARACTERACTION || _event[pos]->_event == ME_CHARACTERGOTO
 			|| _event[pos]->_event == ME_CHARACTERGOTOACTION || _event[pos]->_event == ME_CHARACTERGOTOEXAMINE
 			|| _event[pos]->_event == ME_CHARACTERCONTINUEACTION)

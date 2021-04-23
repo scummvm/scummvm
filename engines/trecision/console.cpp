@@ -51,7 +51,7 @@ bool Console::Cmd_Room(int argc, const char **argv) {
 
 	int newRoom = atoi(argv[1]);
 	doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, newRoom, 0, 0, 0);
-	
+
 	return false;
 }
 
@@ -64,7 +64,7 @@ bool Console::Cmd_DumpFile(int argc, const char **argv) {
 	Common::String fileName = argv[1];
 
 	Common::SeekableReadStream *dataFile = _vm->_dataFile.createReadStreamForCompressedMember(fileName);
-	
+
 	Common::DumpFile *outFile = new Common::DumpFile();
 	Common::String outName = fileName + ".dump";
 	outFile->open(outName);

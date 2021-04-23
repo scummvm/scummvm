@@ -52,7 +52,7 @@ void RedrawRoom() {
 		{ dASCENSORE16, 32,    a1616SALECONASCENSORE, kRoom12 },
 		{ dASCENSORE16, 33,    a1616SALECONASCENSORE, kRoom13 },
 	};
-	
+
 	g_vm->_flagShowCharacter = g_vm->_dialogMgr->showCharacterAfterDialog();
 
 	for (int i = 0; i < 6; i++) {
