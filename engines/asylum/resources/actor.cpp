@@ -1923,7 +1923,7 @@ bool Actor::canMoveCheckActors(Common::Point *point, ActorDirection dir) {
 		int32 x3 = actor->getPoint1()->x + actor->getPoint2()->x + 2 * actor->getField948() + 15;
 		int32 y3 = actor->getPoint1()->y + actor->getPoint2()->y + 2 * actor->getField94C() + 10;
 
-		if (i == getSharedData()->getPlayerIndex() && getWorld()->chapter == kChapter11) {
+		if (i == getSharedData()->getPlayerIndex() && getWorld()->chapter != kChapter11) {
 			x2 -= 10;
 			y2 -= 10;
 			x3 += 10;
@@ -1939,7 +1939,7 @@ bool Actor::canMoveCheckActors(Common::Point *point, ActorDirection dir) {
 			int32 x5 = x3 - 10;
 			int32 y5 = y3 - 10;
 
-			switch (actor->getDirection()) {
+			switch (_direction) {
 			default:
 				break;
 
