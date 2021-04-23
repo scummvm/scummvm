@@ -227,6 +227,8 @@ void AsylumEngine::startGame(ResourcePackId sceneId, StartGameType type) {
 	if (_resource->getCdNumber() != cdNumber)
 		_resource->clearSharedSoundCache();
 
+	_resource->clearMusicCache();
+
 	switch (type) {
 	default:
 		error("[AsylumEngine::startGame] Invalid start game type!");
