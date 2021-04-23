@@ -2,6 +2,7 @@ MODULE := engines/trecision
 
 MODULE_OBJS = \
 	console.o \
+	dialog.o \
 	fastfile.o \
 	graphics.o \
 	inventory.o \
@@ -13,7 +14,6 @@ MODULE_OBJS = \
 	utils.o \
 	video.o \
 	nl/classes.o \
-	nl/dialog.o \
 	nl/do.o \
 	nl/globvar.o \
 	nl/process.o \

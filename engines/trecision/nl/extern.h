@@ -48,12 +48,5 @@ extern uint32 TheTime;
 extern uint32 _characterSpeakTime;
 extern uint32 _someoneSpeakTime;
 
-/*-------------------------------------------------------------------------*/
-/*                                 DIALOGHI           					   */
-/*-------------------------------------------------------------------------*/
-extern Dialog _dialog[];
-extern DialogSubTitle _subTitles[];
-
-extern uint16   _curDialog, _curChoice, _curSubTitle;
 } // End of namespace Trecision
 #endif

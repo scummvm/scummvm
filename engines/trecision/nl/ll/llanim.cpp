@@ -21,6 +21,7 @@
  */
 
 #include "common/util.h"
+#include "trecision/dialog.h"
 #include "trecision/nl/define.h"
 #include "trecision/nl/extern.h"
 #include "trecision/nl/proto.h"
@@ -33,29 +34,33 @@
 namespace Trecision {
 
 void RedrawRoom() {
-	if ((_curDialog != dF321) && (_curDialog != dF431) && (_curDialog != dF4C1) && (_curDialog != dASCENSORE12) && (_curDialog != dASCENSORE13) && (_curDialog != dASCENSORE16))
+	if ((g_vm->_dialogMgr->_curDialog != dF321) && (g_vm->_dialogMgr->_curDialog != dF431)
+	&& (g_vm->_dialogMgr->_curDialog != dF4C1) && (g_vm->_dialogMgr->_curDialog != dASCENSORE12)
+	&& (g_vm->_dialogMgr->_curDialog != dASCENSORE13) && (g_vm->_dialogMgr->_curDialog != dASCENSORE16))
 		g_vm->_flagShowCharacter = true;
 
-	switch (_curDialog) {
+	switch (g_vm->_dialogMgr->_curDialog) {
 	case dASCENSORE12:
-		if (_curChoice == 3)
+		if (g_vm->_dialogMgr->_curChoice == 3)
 			StartCharacterAction(a129PARLACOMPUTERESCENDE, kRoom13, 20, 0);
-		else if (_curChoice == 4)
+		else if (g_vm->_dialogMgr->_curChoice == 4)
 			StartCharacterAction(a129PARLACOMPUTERESCENDE, kRoom16, 20, 0);
 		break;
 
 	case dASCENSORE13:
-		if (_curChoice == 17)
+		if (g_vm->_dialogMgr->_curChoice == 17)
 			StartCharacterAction(a139CHIUDONOPORTESU, kRoom12, 20, 0);
-		else if (_curChoice == 18)
+		else if (g_vm->_dialogMgr->_curChoice == 18)
 			StartCharacterAction(a1316CHIUDONOPORTEGIU, kRoom16, 20, 0);
 		break;
 
 	case dASCENSORE16:
-		if (_curChoice == 32)
+		if (g_vm->_dialogMgr->_curChoice == 32)
 			StartCharacterAction(a1616SALECONASCENSORE, kRoom12, 20, 0);
-		else if (_curChoice == 33)
+		else if (g_vm->_dialogMgr->_curChoice == 33)
 			StartCharacterAction(a1616SALECONASCENSORE, kRoom13, 20, 0);
+		break;
+	default:
 		break;
 	}
 
@@ -71,7 +76,7 @@ void RedrawRoom() {
 	if (hasBgAnim)
 		g_vm->_animMgr->startSmkAnim(g_vm->_room[g_vm->_curRoom]._bkgAnim);
 
-	if ((g_vm->_curRoom == kRoom4P) && (_curDialog == dF4PI)) {
+	if ((g_vm->_curRoom == kRoom4P) && (g_vm->_dialogMgr->_curDialog == dF4PI)) {
 		g_vm->_animMgr->smkGoto(kSmackerBackground, 21);
 	}
 

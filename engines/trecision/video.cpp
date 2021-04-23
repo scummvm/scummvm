@@ -34,6 +34,8 @@
 #include "trecision/trecision.h"
 #include "trecision/video.h"
 
+
+#include "dialog.h"
 #include "sound.h"
 
 namespace Trecision {
@@ -172,12 +174,12 @@ void AnimManager::setVideoRange(NightlongSmackerDecoder *smkDecoder, int &startF
 	//	If choices are attached
 	if (smkDecoder->getCurFrame() != startFrame) {
 		for (int a = 0; a < MAXNEWSMKPAL; a++) {
-			if ((_dialog[_curDialog]._newPal[a] > startFrame || !_dialog[_curDialog]._newPal[a]) && a) {
-				smkDecoder->forceSeekToFrame(_dialog[_curDialog]._newPal[a - 1] - 1);
+			if ((g_vm->_dialogMgr->_dialog[g_vm->_dialogMgr->_curDialog]._newPal[a] > startFrame || !g_vm->_dialogMgr->_dialog[g_vm->_dialogMgr->_curDialog]._newPal[a]) && a) {
+				smkDecoder->forceSeekToFrame(g_vm->_dialogMgr->_dialog[g_vm->_dialogMgr->_curDialog]._newPal[a - 1] - 1);
 				break;
 			}
 
-			if (!_dialog[_curDialog]._newPal[a] || _dialog[_curDialog]._newPal[a] == startFrame)
+			if (!g_vm->_dialogMgr->_dialog[g_vm->_dialogMgr->_curDialog]._newPal[a] || g_vm->_dialogMgr->_dialog[g_vm->_dialogMgr->_curDialog]._newPal[a] == startFrame)
 				break;
 		}
 
@@ -215,7 +217,7 @@ void AnimManager::drawFrameSubtitles(Graphics::Surface *surface, int frameNum) {
 	if (!ConfMan.getBool("subtitles"))
 		return;
 
-	DialogHandler(frameNum);
+	_vm->_dialogMgr->DialogHandler(frameNum);
 	if (_vm->_sdText.text == nullptr)
 		return;
 	
@@ -395,20 +397,20 @@ void AnimManager::stopFullMotion() {
 	g_vm->_flagSomeoneSpeaks = false;
 
 	_vm->_lightIcon = 0xFF;
-	if (_curDialog == dFCRED) {
+	if (g_vm->_dialogMgr->_curDialog == dFCRED) {
 		g_vm->quitGame();
 		return;
 	}
 
-	if (!((_curDialog == dSHOPKEEPER1A) && (_curChoice == 185))) {
-		if ((_curDialog == dF582) || (_curDialog == dFLOG) || (_curDialog == dINTRO) || (_curDialog == dF362) || (_curDialog == dC381) || (_curDialog == dF381) ||
-		    (_curDialog == dF491) || ((_curDialog == dC581) && !(g_vm->_choice[886]._flag & kObjFlagDone) && (g_vm->_choice[258]._flag & kObjFlagDone)) ||
-		    ((_curDialog == dC5A1) && (_vm->_room[kRoom5A]._flag & kObjFlagExtra)))
+	if (!((g_vm->_dialogMgr->_curDialog == dSHOPKEEPER1A) && (g_vm->_dialogMgr->_curChoice == 185))) {
+		if ((g_vm->_dialogMgr->_curDialog == dF582) || (g_vm->_dialogMgr->_curDialog == dFLOG) || (g_vm->_dialogMgr->_curDialog == dINTRO) || (g_vm->_dialogMgr->_curDialog == dF362) || (g_vm->_dialogMgr->_curDialog == dC381) || (g_vm->_dialogMgr->_curDialog == dF381) ||
+		    (g_vm->_dialogMgr->_curDialog == dF491) || ((g_vm->_dialogMgr->_curDialog == dC581) && !(g_vm->_choice[886]._flag & kObjFlagDone) && (g_vm->_choice[258]._flag & kObjFlagDone)) ||
+		    ((g_vm->_dialogMgr->_curDialog == dC5A1) && (_vm->_room[kRoom5A]._flag & kObjFlagExtra)))
 			g_vm->_flagShowCharacter = false;
 		else
 			RedrawRoom();
 
-		if (_curDialog == dF582)
+		if (g_vm->_dialogMgr->_curDialog == dF582)
 			_vm->_soundMgr->fadeOut();
 	}
 }

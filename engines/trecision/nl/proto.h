@@ -44,15 +44,6 @@ void StartCharacterAction(uint16 Act, uint16 NewRoom, uint8 NewPos, uint16 sent)
 void doCharacter();
 void doSystem();
 void doIdle();
-void DialogPrint(int x, int y, int c, const char *txt);
-void ShowChoices(uint16 i);
-void UpdateChoices(int16 dmx, int16 dmy);
-void SelectChoice(int16 dmx, int16 dmy);
-void PlayDialog(uint16 i);
-void afterChoice(int numframe);
-void DialogHandler(int numframe);
-void PlayChoice(uint16 i);
-void doDialog();
 void doRoomIn(uint16 curObj);
 void doRoomOut(uint16 curObj);
 void doMouseExamine(uint16 curObj);

@@ -40,6 +40,7 @@
 
 namespace Trecision {
 class AnimManager;
+class DialogManager;
 class GraphicsManager;
 class LogicManager;
 class SoundManager;
@@ -244,6 +245,7 @@ public:
 
 	AnimManager *_animMgr;
 	GraphicsManager *_graphicsMgr;
+	DialogManager *_dialogMgr;
 	LogicManager *_logicMgr;
 	SoundManager *_soundMgr;
 
