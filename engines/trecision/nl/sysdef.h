@@ -116,13 +116,6 @@ Management of "Use with"
 #define USED 0
 #define WITH 1
 
-/******************************************************************************
-Management of cards for Regen
-******************************************************************************/
-#define TYPO_NONE 0
-//#define TYPO_ANI 1
-#define TYPO_BMP 2
-
 #define MAXMESSAGE 128
 
 /* MACROS */

@@ -128,7 +128,7 @@ void PaintScreen(uint8 flag) {
 			DObj.dx   = MAXX;
 			DObj.dy   = MAXY;
 
-			if (SortTable[a]._typology == TYPO_BMP) {
+			if (SortTable[a]._isBitmap) {
 				DObj.l.left = g_vm->_obj[SortTable[a]._index]._px;
 				DObj.l.top = g_vm->_obj[SortTable[a]._index]._py;
 				DObj.l.right = DObj.l.left + g_vm->_obj[SortTable[a]._index]._dx;
@@ -139,7 +139,7 @@ void PaintScreen(uint8 flag) {
 			DObj.drawMask = false;
 			g_vm->_graphicsMgr->DrawObj(DObj);
 
-			if ((SortTable[a + 1]._typology == SortTable[a]._typology) &&
+			if ((SortTable[a + 1]._isBitmap == SortTable[a]._isBitmap) &&
 				(SortTable[a + 1]._roomIndex == SortTable[a]._roomIndex))
 				VisualRef[a + 1] = g_vm->_limitsNum;
 
@@ -178,7 +178,7 @@ void PaintScreen(uint8 flag) {
 	for (int a = 0; a < g_vm->_curSortTableNum; a++) {
 		SortTable[a]._index = 0;
 		SortTable[a]._roomIndex = 0;
-		SortTable[a]._typology = TYPO_NONE;
+		SortTable[a]._isBitmap = false;
 		SortTable[a]._curFrame = 0;
 	}
 
@@ -207,7 +207,7 @@ void PaintObjAnm(uint16 CurBox) {
 	// disegna nuove schede appartenenti al box corrente
 	for (int a = 0; a < g_vm->_curSortTableNum; a++) {
 		if (!SortTable[a]._remove) {
-			if (SortTable[a]._typology == TYPO_BMP) {
+			if (SortTable[a]._isBitmap) {
 				if (g_vm->_obj[SortTable[a]._index]._nbox == CurBox) {
 					// l'oggetto bitmap al livello desiderato
 					DObj.x = g_vm->_obj[SortTable[a]._index]._px;
