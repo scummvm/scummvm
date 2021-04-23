@@ -33,35 +33,33 @@
 
 namespace Trecision {
 
+struct ElevatorAction {
+	uint16 dialog;
+	uint16 choice;
+	uint16 action;
+	uint16 newRoom;
+};
+
 void RedrawRoom() {
-	if ((g_vm->_dialogMgr->_curDialog != dF321) && (g_vm->_dialogMgr->_curDialog != dF431)
-	&& (g_vm->_dialogMgr->_curDialog != dF4C1) && (g_vm->_dialogMgr->_curDialog != dASCENSORE12)
-	&& (g_vm->_dialogMgr->_curDialog != dASCENSORE13) && (g_vm->_dialogMgr->_curDialog != dASCENSORE16))
-		g_vm->_flagShowCharacter = true;
+	const uint16 curDialog = g_vm->_dialogMgr->_curDialog;
+	const uint16 curChoice = g_vm->_dialogMgr->_curChoice;
+	const uint16 bgAnim = g_vm->_room[g_vm->_curRoom]._bkgAnim;
+	const ElevatorAction elevatorActions[6] = {
+		{ dASCENSORE12,  3, a129PARLACOMPUTERESCENDE, kRoom13 },
+		{ dASCENSORE12,  4, a129PARLACOMPUTERESCENDE, kRoom16 },
+		{ dASCENSORE13, 17,      a139CHIUDONOPORTESU, kRoom12 },
+		{ dASCENSORE13, 18,    a1316CHIUDONOPORTEGIU, kRoom16 },
+		{ dASCENSORE16, 32,    a1616SALECONASCENSORE, kRoom12 },
+		{ dASCENSORE16, 33,    a1616SALECONASCENSORE, kRoom13 },
+	};
+	
+	g_vm->_flagShowCharacter = g_vm->_dialogMgr->showCharacterAfterDialog();
 
-	switch (g_vm->_dialogMgr->_curDialog) {
-	case dASCENSORE12:
-		if (g_vm->_dialogMgr->_curChoice == 3)
-			StartCharacterAction(a129PARLACOMPUTERESCENDE, kRoom13, 20, 0);
-		else if (g_vm->_dialogMgr->_curChoice == 4)
-			StartCharacterAction(a129PARLACOMPUTERESCENDE, kRoom16, 20, 0);
-		break;
-
-	case dASCENSORE13:
-		if (g_vm->_dialogMgr->_curChoice == 17)
-			StartCharacterAction(a139CHIUDONOPORTESU, kRoom12, 20, 0);
-		else if (g_vm->_dialogMgr->_curChoice == 18)
-			StartCharacterAction(a1316CHIUDONOPORTEGIU, kRoom16, 20, 0);
-		break;
-
-	case dASCENSORE16:
-		if (g_vm->_dialogMgr->_curChoice == 32)
-			StartCharacterAction(a1616SALECONASCENSORE, kRoom12, 20, 0);
-		else if (g_vm->_dialogMgr->_curChoice == 33)
-			StartCharacterAction(a1616SALECONASCENSORE, kRoom13, 20, 0);
-		break;
-	default:
-		break;
+	for (int i = 0; i < 6; i++) {
+		if (curDialog == elevatorActions[i].dialog && curChoice == elevatorActions[i].choice) {
+			StartCharacterAction(elevatorActions[i].action, elevatorActions[i].newRoom, 20, 0);
+			break;
+		}
 	}
 
 	g_vm->_curSortTableNum = 0;
@@ -70,13 +68,12 @@ void RedrawRoom() {
 		VideoObjStatus[i] = false;
 	}
 
-	const bool hasBgAnim = g_vm->_room[g_vm->_curRoom]._bkgAnim;
 	g_vm->_graphicsMgr->resetScreenBuffer();
 
-	if (hasBgAnim)
-		g_vm->_animMgr->startSmkAnim(g_vm->_room[g_vm->_curRoom]._bkgAnim);
+	if (bgAnim)
+		g_vm->_animMgr->startSmkAnim(bgAnim);
 
-	if ((g_vm->_curRoom == kRoom4P) && (g_vm->_dialogMgr->_curDialog == dF4PI)) {
+	if (g_vm->_curRoom == kRoom4P && curDialog == dF4PI) {
 		g_vm->_animMgr->smkGoto(kSmackerBackground, 21);
 	}
 
