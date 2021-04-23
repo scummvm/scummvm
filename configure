@@ -747,11 +747,15 @@ show_subengine_help() {
 }
 
 # Copy first argument to second one if they are different. Otherwise, delete the first one.
+# Touch the optional third argument on change
 copy_if_changed() {
 	if cmp -s $1 $2; then
 		rm -f $1
 	else
 		mv -f $1 $2
+		if test -n "$3" ; then
+			touch "$3"
+		fi
 	fi
 }
 
@@ -6122,7 +6126,7 @@ $_mak_plugins
 port_mk = $_port_mk
 EOF
 rm -f config.mk.engines
-copy_if_changed config.mk.new config.mk
+copy_if_changed config.mk.new config.mk config.h
 
 #
 # Create a custom Makefile when building outside the source tree
