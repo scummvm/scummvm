@@ -655,42 +655,48 @@ void DialogManager::syncGameStream(Common::Serializer &ser) {
 
 void DialogManager::loadData(Common::File *file) {
 	for (int i = 0; i < MAXDIALOG; ++i) {
-		_dialog[i]._flag = file->readUint16LE();
-		_dialog[i]._interlocutor = file->readUint16LE();
+		Dialog *dialog = &_dialog[i];
 
-		file->read(&_dialog[i]._startAnim, ARRAYSIZE(_dialog[i]._startAnim));
+		dialog->_flag = file->readUint16LE();
+		dialog->_interlocutor = file->readUint16LE();
 
-		_dialog[i]._startLen = file->readUint16LE();
-		_dialog[i]._firstChoice = file->readUint16LE();
-		_dialog[i]._choiceNumb = file->readUint16LE();
+		file->read(&dialog->_startAnim, ARRAYSIZE(dialog->_startAnim));
+
+		dialog->_startLen = file->readUint16LE();
+		dialog->_firstChoice = file->readUint16LE();
+		dialog->_choiceNumb = file->readUint16LE();
 
 		for (int j = 0; j < MAXNEWSMKPAL; ++j)
-			_dialog[i]._newPal[j] = file->readUint16LE();
+			dialog->_newPal[j] = file->readUint16LE();
 	}
 
 	for (int i = 0; i < MAXCHOICE; ++i) {
-		_choice[i]._flag = file->readUint16LE();
-		_choice[i]._sentenceIndex = file->readUint16LE();
-		_choice[i]._firstSubTitle = file->readUint16LE();
-		_choice[i]._subTitleNumb = file->readUint16LE();
+		DialogChoice *choice = &_choice[i];
+
+		choice->_flag = file->readUint16LE();
+		choice->_sentenceIndex = file->readUint16LE();
+		choice->_firstSubTitle = file->readUint16LE();
+		choice->_subTitleNumb = file->readUint16LE();
 
 		for (int j = 0; j < MAXDISPCHOICES; ++j)
-			_choice[i]._on[j] = file->readUint16LE();
+			choice->_on[j] = file->readUint16LE();
 
 		for (int j = 0; j < MAXDISPCHOICES; ++j)
-			_choice[i]._off[j] = file->readUint16LE();
+			choice->_off[j] = file->readUint16LE();
 
-		_choice[i]._startFrame = file->readUint16LE();
-		_choice[i]._nextDialog = file->readUint16LE();
+		choice->_startFrame = file->readUint16LE();
+		choice->_nextDialog = file->readUint16LE();
 	}
 
 	for (int i = 0; i < MAXSUBTITLES; ++i) {
-		_subTitles[i]._sentence = file->readUint16LE();
-		_subTitles[i]._x = file->readUint16LE();
-		_subTitles[i]._y = file->readUint16LE();
-		_subTitles[i]._color = file->readUint16LE();
-		_subTitles[i]._startFrame = file->readUint16LE();
-		_subTitles[i]._length = file->readUint16LE();
+		DialogSubTitle *subTitle = &_subTitles[i];
+
+		subTitle->_sentence = file->readUint16LE();
+		subTitle->_x = file->readUint16LE();
+		subTitle->_y = file->readUint16LE();
+		subTitle->_color = file->readUint16LE();
+		subTitle->_startFrame = file->readUint16LE();
+		subTitle->_length = file->readUint16LE();
 	}
 }
 
