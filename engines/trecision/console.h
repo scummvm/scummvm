@@ -39,6 +39,7 @@ private:
 
 	bool Cmd_Room(int argc, const char **argv);
 	bool Cmd_DumpFile(int argc, const char **argv);
+	bool Cmd_Dialog(int argc, const char **argv);
 };
 
 } // End of namespace StarTrek
