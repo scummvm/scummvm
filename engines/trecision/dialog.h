@@ -48,7 +48,7 @@ public:
 	void updateChoices(int16 dmx, int16 dmy);
 	void selectChoice(int16 dmx, int16 dmy);
 	void playDialog(uint16 i);
-	void afterChoice(int numFrame);
+	void afterChoice();
 	void dialogHandler(int numFrame);
 	void doDialog();
 

@@ -142,13 +142,11 @@ void DialogManager::playDialog(uint16 i) {
 		_vm->_animMgr->playMovie(_dialog[i]._startAnim, 1, _dialog[i]._startLen);
 	else {
 		_vm->_animMgr->smkSoundOnOff(1, false);
-		afterChoice(1);
+		afterChoice();
 	}
 }
 
-void DialogManager::afterChoice(int numFrame) {
-	assert(numFrame < MAXDIALOG);
-	
+void DialogManager::afterChoice() {
 	Dialog *dialog = &_dialog[_curDialog];
 
 	memset(_vm->_screenBuffer, 0, MAXX * TOP * 2);
@@ -618,7 +616,7 @@ void DialogManager::playChoice(uint16 i) {
 void DialogManager::doDialog() {
 	switch (_vm->_curMessage->_event) {
 	case ME_ENDCHOICE:
-		afterChoice(_vm->_curMessage->_u16Param1);
+		afterChoice();
 		break;
 
 	case ME_STARTDIALOG:
