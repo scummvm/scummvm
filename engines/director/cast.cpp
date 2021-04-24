@@ -1195,6 +1195,11 @@ void Cast::loadCastInfo(Common::SeekableReadStreamEndian &stream, uint16 id) {
 		}
 	}
 
+	// For SoundCastMember, read the flags in the CastInfo
+	if ((_vm->getVersion() < 500) && (member->_type == kCastSound)) {
+		((SoundCastMember *)member)->_looping = castInfo.flags & 16 ? 0 : 1;
+	}
+
 	ci->scriptId = castInfo.scriptId;
 	if (ci->scriptId != 0)
 		_castsScriptIds[ci->scriptId] = id;
