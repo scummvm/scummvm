@@ -64,6 +64,7 @@ std::string MSVCProvider::getLibraryFromFeature(const char *feature, const Build
 		{    "vorbis", "vorbis.lib vorbisfile.lib", 0,               0,                                                 "libvorbisfile_static.lib libvorbis_static.lib" },
 		{      "flac", "FLAC.lib",                  0,               0,                                                 "libFLAC_static.lib win_utf8_io_static.lib" },
 		{       "png", "libpng16.lib",              "libpng16d.lib", 0,                                                 0 },
+		{       "gif", "gif.lib",                   0,               0,                                                 0 },
 		{      "faad", "faad.lib",                  0,               0,                                                 "libfaad.lib" },
 		{     "mpeg2", "mpeg2.lib",                 0,               0,                                                 "libmpeg2.lib" },
 		{    "theora", "theora.lib",                0,               0,                                                 "libtheora_static.lib" },
