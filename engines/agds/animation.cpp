@@ -106,10 +106,11 @@ void Animation::decodeNextFrame() {
 	freeFrame();
 	_delay = _flic->getCurFrameDelay() * _speed / 4000; //40 == 1000 / 25, 25 fps
 	_frame = _engine->convertToTransparent(frame->convertTo(_engine->pixelFormat(), _flic->getPalette()));
+
 	if (_scale != 1) {
 		auto f = _frame->scale(_frame->w * _scale, _frame->h * _scale, true);
 		if (f) {
-			delete _frame;
+			freeFrame();
 			_frame = f;
 		}
 	}
