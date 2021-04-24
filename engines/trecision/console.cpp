@@ -37,6 +37,7 @@ Console::Console(TrecisionEngine *vm) : GUI::Debugger(), _vm(vm) {
 	registerCmd("room",			WRAP_METHOD(Console, Cmd_Room));
 	registerCmd("filedump",		WRAP_METHOD(Console, Cmd_DumpFile));
 	registerCmd("dialog",		WRAP_METHOD(Console, Cmd_Dialog));
+	registerCmd("item",			WRAP_METHOD(Console, Cmd_Item));
 }
 
 Console::~Console() {
@@ -45,11 +46,11 @@ Console::~Console() {
 bool Console::Cmd_Room(int argc, const char **argv) {
 	if (argc < 2) {
 		debugPrintf("Current room: %d\n", _vm->_curRoom);
-		debugPrintf("Use room <roomId> to teleport\n");
+		debugPrintf("Use %s <roomId> to teleport\n", argv[0]);
 		return true;
 	}
 
-	int newRoom = atoi(argv[1]);
+	const int newRoom = atoi(argv[1]);
 	doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, newRoom, 0, 0, 0);
 
 	return false;
@@ -77,12 +78,29 @@ bool Console::Cmd_DumpFile(int argc, const char **argv) {
 
 bool Console::Cmd_Dialog(int argc, const char **argv) {
 	if (argc < 2) {
-		debugPrintf("Use dialog <dialogId> to start a dialog\n");
+		debugPrintf("Use %s <dialogId> to start a dialog\n", argv[0]);
 		return true;
 	}
 
-	int dialogId = atoi(argv[1]);
+	const int dialogId = atoi(argv[1]);
 	_vm->_dialogMgr->playDialog(dialogId);
+
+	return false;
+}
+
+bool Console::Cmd_Item(int argc, const char **argv) {
+	if (argc < 2) {
+		debugPrintf("Use %s <itemId> to add an item to the inventory\n", argv[0]);
+		debugPrintf("Use %s <itemId> remove to remove an item from the inventory\n", argv[0]);
+		return true;
+	}
+
+	const int itemId = atoi(argv[1]);
+	if (argc >= 3 && !scumm_stricmp(argv[2], "remove")) {
+		_vm->removeIcon(itemId);
+	} else {
+		_vm->addIcon(itemId);	
+	}
 
 	return false;
 }
