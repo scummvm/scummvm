@@ -931,8 +931,6 @@ void AGDSEngine::tell(Process &process, const Common::String &regionName, Common
 	_textLayout.layout(*this, process, text, pos, font_id, npc);
 	if (!sound.empty()) {
 		playSoundSync(sound);
-	} else {
-		_syncSoundId = -1;
 	}
 }
 
