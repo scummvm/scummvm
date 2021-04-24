@@ -151,13 +151,8 @@ struct Message {
 	}
 };
 
-// Screen rectangle (don't remove, please!)
-struct ScreenRect {
-	uint16 x0, y0, x1, y1;
-};
-
 struct MessageQueue {
-	uint8   _head, _tail, _len;
+	uint8 _head, _tail, _len;
 	Message *_event[MAXMESSAGE];
 
 	void orderEvents();
@@ -165,6 +160,9 @@ struct MessageQueue {
 	bool testEmptyCharacterQueue4Script();
 	bool getMessage();
 	void initQueue();
+
+private:
+	inline uint8 predEvent(uint8 i);
 };
 
 struct SSortTable {
@@ -189,7 +187,6 @@ struct SScriptFrame {
 	bool  _noWait;
 
 	void sendFrame();
-
 	bool isEmptyEvent() const { return _class == 0 && _event == 0;  }
 };
 

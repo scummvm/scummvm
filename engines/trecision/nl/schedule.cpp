@@ -28,7 +28,6 @@
 #include "trecision/nl/proto.h"
 #include "trecision/nl/struct.h"
 #include "trecision/trecision.h"
-#include "trecision/dialog.h"
 
 namespace Trecision {
 
@@ -66,9 +65,9 @@ void doEvent(uint8 cls,  uint8 event,  uint8 priority,
 
 	if (lq == &g_vm->_gameQueue && lq->_len > maxmesg)
 		maxmesg = lq->_len;
-	if (lq == &g_vm->_animQueue && lq->_len > maxmesa)
+	else if (lq == &g_vm->_animQueue && lq->_len > maxmesa)
 		maxmesa = lq->_len;
-	if (lq == &g_vm->_characterQueue && lq->_len > maxmesh)
+	else if (lq == &g_vm->_characterQueue && lq->_len > maxmesh)
 		maxmesh = lq->_len;
 
 	lq->orderEvents();
@@ -105,6 +104,8 @@ void Scheduler() {
 				retry = true;
 			break;
 
+		default:
+			break;
 		}
 	}
 }
@@ -150,8 +151,15 @@ void ProcessTheMessage() {
 	case MC_SCRIPT:
 		doScript();
 		break;
+
+	default:
+		break;
 	}
 }
+
+inline uint8 MessageQueue::predEvent(uint8 i) {
+	return i == 0 ? MAXMESSAGE - 1 : i - 1;
+};
 
 bool MessageQueue::getMessage() {
 	if (!_len)
@@ -172,13 +180,11 @@ void MessageQueue::initQueue() {
 }
 
 void MessageQueue::orderEvents() {
-#define PredEvent(i)       (((i)==0)?MAXMESSAGE-1:((i)-1))
-
-	for (uint8 pos = PredEvent(_tail); pos != _head; pos = PredEvent(pos)) {
-		if (_event[pos]->_priority > _event[PredEvent(pos)]->_priority) {
+	for (uint8 pos = predEvent(_tail); pos != _head; pos = predEvent(pos)) {
+		if (_event[pos]->_priority > _event[predEvent(pos)]->_priority) {
 			if (_event[pos]->_priority < MP_HIGH)
 				_event[pos]->_priority++;
-			SWAP(_event[pos], _event[PredEvent(pos)]);
+			SWAP(_event[pos], _event[predEvent(pos)]);
 		}
 	}
 }
