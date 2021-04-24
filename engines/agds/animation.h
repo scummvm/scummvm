@@ -164,7 +164,6 @@ public:
 			decodeNextFrame();
 	}
 
-private:
 	void decodeNextFrame();
 };
 

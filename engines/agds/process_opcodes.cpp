@@ -1022,6 +1022,28 @@ void Process::restartAnimation() {
 	}
 }
 
+void Process::animationNextFrame() {
+	Common::String phaseVar = popString();
+	debug("animationGetCurrentFrame %s", phaseVar.c_str());
+	if (phaseVar.empty()) {
+		warning("no phaseVar");
+		return;
+	}
+	Animation *animation = _engine->findAnimationByPhaseVar(phaseVar);
+	if (animation) {
+		auto value = _engine->getGlobal(phaseVar);
+		if (value >= -1) {
+			if (!animation->ended() || value == -1) {
+				animation->decodeNextFrame();
+				_engine->setGlobal(phaseVar, animation->ended()? -1: animation->phase());
+			} else {
+				_engine->setGlobal(phaseVar, -1);
+			}
+		}
+	} else
+		warning("no animation with phase var %s found", phaseVar.c_str());
+}
+
 void Process::signalAnimationEnd() {
 	Common::String phaseVar = popString();
 	debug("restartAnimation %s", phaseVar.c_str());
