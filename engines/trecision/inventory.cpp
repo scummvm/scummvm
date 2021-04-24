@@ -136,7 +136,7 @@ void TrecisionEngine::doInventory() {
 				_lightIcon = _curInventory;
 			}
 		} else if (_inventoryObj[_curInventory]._flag & kObjFlagUseWith) {
-			if ((_curInventory == iCANDELOTTO) && (_curRoom == kRoom29)) {
+			if ((_curInventory == kItemFlare) && (_curRoom == kRoom29)) {
 				CharacterSay(1565);
 				return;
 			}
@@ -302,7 +302,7 @@ void TrecisionEngine::removeIcon(uint8 icon) {
 
 	if (pos == MAXICON)
 		return;
-	_inventory[pos] = iNULL;
+	_inventory[pos] = kItemNull;
 	for (; pos < _inventorySize; pos++)
 		_inventory[pos] = _inventory[pos + 1];
 	_inventorySize--;
@@ -310,7 +310,7 @@ void TrecisionEngine::removeIcon(uint8 icon) {
 	if (_inventorySize < ICONSHOWN)
 		_iconBase = 0;
 
-	if (_iconBase && (_inventorySize > ICONSHOWN) && (_inventory[_iconBase + ICONSHOWN] == iNULL))
+	if (_iconBase && (_inventorySize > ICONSHOWN) && (_inventory[_iconBase + ICONSHOWN] == kItemNull))
 		_iconBase = _inventorySize - ICONSHOWN;
 
 	redrawString();

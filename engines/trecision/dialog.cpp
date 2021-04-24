@@ -189,7 +189,7 @@ void DialogManager::afterChoice() {
 			_vm->_obj[ocTRAMP17]._mode &= ~OBJMODE_OBJSTATUS;
 			_vm->_obj[oTRAMPD17]._mode |= OBJMODE_OBJSTATUS;
 			_vm->_room[kRoom17]._bkgAnim = aBKG17B;
-			_vm->addIcon(iSKATE);
+			_vm->addIcon(kItemSkate);
 		} else if (_curChoice == 137) {
 			_vm->_obj[ocTRAMP17]._flag |= kObjFlagPerson;
 		}
@@ -197,7 +197,7 @@ void DialogManager::afterChoice() {
 
 	case dGUARDIAN18:
 		if ((_curChoice == 151) || (_curChoice == 152)) {
-			_vm->_inventoryObj[iFOTO]._action = 1465;
+			_vm->_inventoryObj[kItemRubysPhoto]._action = 1465;
 			_vm->_obj[oTESSERA1A]._action = 238;
 			if (_vm->_obj[oTESSERA1A]._flag & kObjFlagExtra) {
 				_choice[154]._flag &= ~DLGCHOICE_HIDE;
@@ -221,7 +221,7 @@ void DialogManager::afterChoice() {
 		break;
 
 	case dF321:
-		_vm->removeIcon(iTORCIA32);
+		_vm->removeIcon(kItemTorch);
 		_vm->_flagShowCharacter = false;
 		break;
 
@@ -325,7 +325,7 @@ void DialogManager::afterChoice() {
 
 		case dF2E2:
 			CharacterSay(1561);
-			_vm->_inventoryObj[iRIFLE]._examine = 1562;
+			_vm->_inventoryObj[kItemMicrowaveGun]._examine = 1562;
 			break;
 
 		case dF231:
@@ -348,7 +348,7 @@ void DialogManager::afterChoice() {
 
 		case dF2G2:
 			_vm->_obj[od26TO2G]._goRoom = kRoom2GV;
-			_vm->replaceIcon(iSAM, iSAMROTTO);
+			_vm->replaceIcon(kItemMinicom, kItemDamagedMinicom);
 			break;
 
 		case dF321:
@@ -374,7 +374,7 @@ void DialogManager::afterChoice() {
 			_vm->_cyberInventorySize = _vm->_inventorySize;
 			_vm->_inventorySize = 0;
 			_vm->_iconBase = 0;
-			memset(_vm->_inventory, iNULL, MAXICON);
+			memset(_vm->_inventory, kItemNull, MAXICON);
 			_vm->_inventory[_vm->_inventorySize++] = iDISLOCATORE;
 			break;
 
@@ -418,23 +418,23 @@ void DialogManager::afterChoice() {
 			memcpy(_vm->_inventory, _vm->_cyberInventory, MAXICON);
 			_vm->_inventorySize = _vm->_cyberInventorySize;
 			_vm->_iconBase = 0;
-			_vm->removeIcon(iCARD03);
-			_vm->removeIcon(iPEN);
-			_vm->removeIcon(iKEY05);
-			_vm->removeIcon(iLETTER12);
-			_vm->removeIcon(iCARD14);
-			_vm->removeIcon(iFOTO);
-			_vm->removeIcon(iPISTOLA15);
-			_vm->removeIcon(iRAPPORTO);
-			_vm->removeIcon(iTESSERA);
-			_vm->removeIcon(iRIFLE);
-			_vm->removeIcon(iLAMPADINA29);
-			_vm->removeIcon(iTELECOMANDO2G);
-			_vm->removeIcon(iCARD36);
+			_vm->removeIcon(kItemLiftCard);
+			_vm->removeIcon(kItemPen);
+			_vm->removeIcon(kItemLetterboxKey);
+			_vm->removeIcon(kItemLetter);
+			_vm->removeIcon(kItemSubwayCard);
+			_vm->removeIcon(kItemRubysPhoto);
+			_vm->removeIcon(kItemPistol);
+			_vm->removeIcon(kItemRubysReport);
+			_vm->removeIcon(kItemMembershipCard);
+			_vm->removeIcon(kItemMicrowaveGun);
+			_vm->removeIcon(kItemFaultyBulb);
+			_vm->removeIcon(kItemElevatorRemoteControl);
+			_vm->removeIcon(kItemSecurityCard);
 			_vm->removeIcon(iFOGLIO36);
 			_vm->removeIcon(iSTETOSCOPIO);
 			_vm->removeIcon(iREFERTO);
-			_vm->removeIcon(iLIBRO);
+			_vm->removeIcon(kItemEgyptologyBook);
 			_vm->addIcon(iMAPPA50);
 			_vm->addIcon(iCUTTER);
 			_vm->addIcon(iWALKY);

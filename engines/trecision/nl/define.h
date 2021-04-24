@@ -95,8 +95,6 @@ enum AnimationTypes {
 #define DLGCHOICE_EXITDLG		32
 #define DLGCHOICE_HIDE		  	64
 
-#define  DLGFLAG_NOSKIP 		1
-
 // REDEFINE
 #define MASKCOL  	 		0xEEEE
 #define MOUSECOL    		0x7FFF
@@ -2153,67 +2151,70 @@ enum AnimationId {
 
 #define iEMPTYSLOT   	121
 
-#define iNULL    						0
-#define iBANCONOTE                      1
-#define iSAM                            2
-#define iCARD03                         3   // Lift Card
-#define iPEN                            4
-#define iKEY05                       5   // Small Key
-#define iSTAGNOLA                       6
-#define iBAR11                       7
-#define iFUSE                       8  // FUSIBILEBR
-#define iFUSES                      9  // FUSIBILEOK
-#define iLETTER12                      10
-#define iMONETA13                       11
-#define iLATTINA13                      12  // BIRRA
-#define iBOTTIGLIA14                    13
-#define iFOGLIO14                       14
-#define iCARD14                         15
-#define iFOTO                           16
-#define iKEY15			                17
-#define iPISTOLA15                      18
-#define iACIDO15                        19
-#define iRAPPORTO                       20
-#define iFIALAMETA                      21
-#define iPLASTICA                       22
-#define iMAPPA17                        23
-#define iSKATE                        24
-#define iTESSERA                        25
-#define iTOPO1C                         26
-#define iBOTTIGLIA1D                    27
-#define iTOPO1D                         28
-#define iESSE                           29
-#define iSBARRA21                       30
-#define iKEY22                          31
-#define iPOSTER                         32
-#define iCAVI                           33
-#define iCACCIAVITE                     34
-#define iPIPEWRENCH                     35
-#define iTANICHETTA22                   36
-#define iTRONCHESE                      37
-#define iMAGNETE                        38
-#define iLATTINA27                      39
-#define iBOMBOLA                        40
-#define iTANICHETTA27                   41
-#define iSCOPA27                        42
-#define iLATTINA28                      43
-#define iLAMPADINA29                    44
-#define iTRIPLA                         45
-#define iLIBRO                          46
-#define iLAMPADINA2B                    47
-#define iRIFLE                         48
-#define iCANDELOTTO                     49
-#define iTELECOMANDO2G                  50
-#define iLATTINE                        51
-#define iSAMROTTO                       52
-#define iSIGARO                         53
-#define iPROIETTORE31                   54
-#define iPINZA                          55
-#define iTORCIA32                       56
-#define iPROIETTORE35                   57
-#define iKEY35                          58
-#define iLASER35                        59
-#define iCARD36                         60
+enum InventoryItem {
+	kItemNull = 0,
+	kItemBankNote = 1,
+	kItemMinicom = 2,
+	kItemLiftCard = 3,
+	kItemPen = 4,
+	kItemLetterboxKey = 5,
+	kItemFoilPaper = 6,
+	kItemBar = 7,
+	kItemBurnedFuse = 8,
+	kItemRepairedFuse = 9,
+	kItemLetter = 10,
+	kItemCoin = 11,
+	kItemBeerCan = 12,
+	kItemWineBottle = 13,
+	kItemNoteRotmall17 = 14,
+	kItemSubwayCard = 15,
+	kItemRubysPhoto = 16,
+	kItemRubysSafeboxKey = 17,
+	kItemPistol = 18,
+	kItemTubeOfAcidFull = 19,
+	kItemRubysReport = 20,
+	kItemTubeOfAcidHalfFull = 21,
+	kItemPlasticPlate = 22,
+	kItemSubwayMap = 23,
+	kItemSkate = 24,
+	kItemMembershipCard = 25,
+	kItemDeadRat = 26,
+	kItemBottleOfChateau = 27,
+	kItemRatOnSkate = 28,
+	kItemMetallicS = 29,
+	kItemMagneticBar = 30,
+	kItemBookstoreKey = 31,
+	kItemPoster = 32,
+	kItemCopperLeads = 33,
+	kItemScrewdriver = 34,
+	kItemSocketSpanner = 35,
+	kItemEmptyTinCan = 36,
+	kItemPliers = 37,
+	kItemMagnet = 38,
+	kItemEmptyBeerCan = 39,
+	kItemGasCylinder = 40,
+	kItemTinCanWithOil = 41,
+	kItemBroom = 42,
+	kItemCanWithFuel = 43,
+	kItemFaultyBulb = 44,
+	kItemThreeWayAdapter = 45,
+	kItemEgyptologyBook = 46,
+	kItemWorkingBulb = 47,
+	kItemMicrowaveGun = 48,
+	kItemFlare = 49,
+	kItemElevatorRemoteControl = 50,
+	kItemLargeCans = 51,
+	kItemDamagedMinicom = 52,
+	kItemMatch = 53,
+	kItemProjector = 54,
+	kItemPincers = 55,
+	kItemTorch = 56,
+	kItemProjector2 = 57,
+	kItemDeskKey = 58,
+	kItemLaserGun = 59,
+	kItemSecurityCard = 60
+};
+
 #define iFOGLIO36                       61
 #define iSTETOSCOPIO                    62
 #define iSIRINGA37                      63
