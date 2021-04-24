@@ -37,7 +37,6 @@ private:
 	// We need random numbers
 	Common::RandomSource *_rnd;
 	Graphics::PixelFormat _pixelFormat;
-	Renderer *_gfx;
 	int _screenW, _screenH;
 
 	Common::Array<uint8> *_rawBorder;
@@ -56,8 +55,7 @@ public:
 	FreescapeEngine(OSystem *syst);
 	~FreescapeEngine();
 
-	Graphics::Surface *_compositeSurface;
-
+	Renderer *_gfx;
 	Common::Error run() override;
 	void convertBorder();
 	void drawBorder();
@@ -77,6 +75,8 @@ public:
 	virtual ~Console(void) {
 	}
 };
+
+extern FreescapeEngine *g_freescape;
 
 } // namespace Freescape
 
