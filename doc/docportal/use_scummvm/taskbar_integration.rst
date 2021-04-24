@@ -22,6 +22,7 @@ The icon files must be ICO files for Windows, or PNG files for macOS. They must 
 
         - :ref:`ID <id>`.xxx
 		- gameid.xxx
+        - engineid.xxx
 		- engineid-gameid.xxx
 
 To find the gameid and the engineid, open the :doc:`configuration file <../advanced_topics/configuration_file>`. The game entry will be similar to this:
