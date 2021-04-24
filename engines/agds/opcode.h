@@ -254,7 +254,7 @@ enum Opcode {
 	kGetSampleVolume				= 234,
 	kStub235						= 235,
 	kUserEnabled					= 236,
-	kStub237						= 237,
+	kAnimationNextFrame				= 237,
 	kInventoryHasObjectByName		= 238,
 	kStub239						= 239,
 	kLoadDialog						= 240,
@@ -448,6 +448,7 @@ enum Opcode {
 	OP(kStopCharacter, stopCharacter) \
 	OP(kLeaveCharacterEx, leaveCharacterEx) \
 	OP(kRestartAnimation, restartAnimation) \
+	OP(kAnimationNextFrame, animationNextFrame) \
 	OP(kSignalAnimationEnd, signalAnimationEnd) \
 	OP(kSetShadowIntensity, setShadowIntensity) \
 	OP(kSetNPCTellNotifyVar, setNPCTellNotifyVar) \
