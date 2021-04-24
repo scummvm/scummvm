@@ -4,6 +4,9 @@ MODULE_OBJS := \
 	metaengine.o \
 	freescape.o \
 	area.o \
+	gfx.o \
+	gfx_tinygl.o \
+	gfx_tinygl_texture.o \
 	objects/object.o \
 	objects/geometricobject.o \
 	loaders/8bitBinaryLoader.o \
