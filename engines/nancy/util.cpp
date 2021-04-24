@@ -19,17 +19,30 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-#ifndef NANCY_UTIL_H
-#define NANCY_UTIL_H
-
-#include "common/rect.h"
-#include "common/stream.h"
+#include "engines/nancy/nancy.h"
+#include "engines/nancy/util.h"
 
 namespace Nancy {
 
-void readRect(Common::SeekableReadStream &stream, Common::Rect &inRect);
-void readFilename(Common::SeekableReadStream &stream, Common::String &inString);
+void readRect(Common::SeekableReadStream &stream, Common::Rect &inRect) {
+	inRect.left = stream.readSint32LE();
+	inRect.top = stream.readSint32LE();
+	inRect.right = stream.readSint32LE();
+	inRect.bottom = stream.readSint32LE();
+
+	// TVD's rects are non-inclusive
+	if (g_nancy->getGameType() > kGameTypeVampire) {
+		++inRect.right;
+		++inRect.bottom;
+	}
+}
+
+// Reads an 8-character filename from a 10-character source
+void readFilename(Common::SeekableReadStream &stream, Common::String &inString) {
+	char buf[10];
+	stream.read(buf, 10);
+	buf[9] = '\0';
+	inString = buf;
+}
 
 } // End of namespace Nancy
-
-#endif // NANCY_UTIL_H

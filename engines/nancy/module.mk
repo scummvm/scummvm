@@ -42,6 +42,7 @@ MODULE_OBJS = \
   renderobject.o \
   resource.o \
   sound.o \
+  util.o \
   video.o
 
 # This module can be built as a plugin
