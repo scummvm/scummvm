@@ -221,7 +221,7 @@ void DialogManager::afterChoice() {
 		break;
 
 	case dF321:
-		_vm->removeIcon(kItemTorch);
+		_vm->removeIcon(kItemMakeshiftTorch);
 		_vm->_flagShowCharacter = false;
 		break;
 
@@ -375,7 +375,7 @@ void DialogManager::afterChoice() {
 			_vm->_inventorySize = 0;
 			_vm->_iconBase = 0;
 			memset(_vm->_inventory, kItemNull, MAXICON);
-			_vm->_inventory[_vm->_inventorySize++] = iDISLOCATORE;
+			_vm->_inventory[_vm->_inventorySize++] = kItemPositioner;
 			break;
 
 		case dF371:
@@ -402,7 +402,7 @@ void DialogManager::afterChoice() {
 					break;
 				}
 			}
-			_vm->removeIcon(iROD);
+			_vm->removeIcon(kItemShaft);
 			playDialog(dC4A1);
 			setPosition(12);
 			break;
@@ -431,13 +431,13 @@ void DialogManager::afterChoice() {
 			_vm->removeIcon(kItemFaultyBulb);
 			_vm->removeIcon(kItemElevatorRemoteControl);
 			_vm->removeIcon(kItemSecurityCard);
-			_vm->removeIcon(iFOGLIO36);
-			_vm->removeIcon(iSTETOSCOPIO);
-			_vm->removeIcon(iREFERTO);
+			_vm->removeIcon(kItemSecuritySystemSequence);
+			_vm->removeIcon(kItemStethoscope);
+			_vm->removeIcon(kItemRubysMedicalReport);
 			_vm->removeIcon(kItemEgyptologyBook);
-			_vm->addIcon(iMAPPA50);
-			_vm->addIcon(iCUTTER);
-			_vm->addIcon(iWALKY);
+			_vm->addIcon(kItemPrisonMap);
+			_vm->addIcon(kItemParallelCutter);
+			_vm->addIcon(kItemWristComm);
 			StartCharacterAction(a511, 0, 1, 0);
 			break;
 
@@ -474,7 +474,7 @@ void DialogManager::afterChoice() {
 
 		case dC582:
 			_vm->_obj[oWINDOWA58]._mode |= OBJMODE_OBJSTATUS;
-			_vm->addIcon(iCODICE);
+			_vm->addIcon(kItemGovernorsCode);
 			break;
 
 		case dC5A1:
