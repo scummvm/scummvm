@@ -120,6 +120,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "nile",				"Nile: Passage to Egypt"},
 	{ "noir",				"Noir: A Shadowy Thriller"},
 	{ "operafatal",			"Opera Fatal"},
+	{ "paws",				"P.A.W.S.: Personal Automated Wagging System"},
 	{ "phantasplanet",		"Phantasmagoria Amusement Planet"},
 	{ "pitfall",			"Pitfall: The Mayan Adventure" },
 	{ "planetarizona",		"Escape from Planet Arizona" },

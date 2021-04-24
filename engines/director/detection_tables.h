@@ -659,6 +659,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 		400
 	},
 
+	WINGAME("paws", "", "STARTDOG.EXE", "5c9a56c88b4bb8732377f93f62a885a4", 818961, 404),
+	WINGAME("paws", "Making Of", "MAKEPAWS.EXE", "559f4c728a348c18b96cddaf102e3413", 874293, 404),
+
 	MACGAME_l("phantasplanet", "", "phantasmagoria_PPC", "602e61f10c158183218405dd30a09b3f", 60352, Common::JA_JPN, 400),
 	WINGAME_l("phantasplanet", "", "PHANTAS.EXE", "c2dd62dd0f9488ae8102970553eff170", 690449, Common::JA_JPN, 400),
 
