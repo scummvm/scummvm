@@ -33,6 +33,7 @@ struct GameConstants {
 	uint numEventFlags;
 	int mapAccessSceneIDs[18];
 	int eventFlagsToClearOnSceneChange[32];
+	uint numNonItemCursors;
 	uint numCurtainAnimationFrames;
 };
 

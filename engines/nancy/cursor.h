@@ -65,6 +65,7 @@ private:
 	Common::Point _primaryVideoInitialPos;
 
 	Graphics::ManagedSurface _invCursorsSurface;
+	Graphics::ManagedSurface _object0Copy;
 
 	CursorType _curCursorType;
 	int16 _curItemID;
