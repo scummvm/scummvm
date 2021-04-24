@@ -19,7 +19,7 @@ All settings can also be changed in the :doc:`../advanced_topics/configuration_f
 .. _id:
 
 **ID**
-	Shows the short name of the game. This ID can be used for launching the game from the command line.
+	Shows the short name of the game. Edit this name as required, but use only numbers, letters and hyphens. The ID can also be used for launching the game from the command line.
 
 
 .. _description:

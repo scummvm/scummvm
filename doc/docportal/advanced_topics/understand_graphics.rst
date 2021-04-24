@@ -193,7 +193,7 @@ To toggle between bilinear interpolation and nearest neighbor, press :kbd:`Ctrl+
 
 Vsync
 *******
-V-sync, or vertical sync, synchronizes the frame rate of the game with the monitor's refresh rate. This helps to prevent screen "tearing", where the screen displays parts of multiple frames at once, which looks like a horizontal line where the image appears to split. 
+V-sync, or vertical sync, synchronizes the frame rate of the game with the monitor's refresh rate, or the video capture refresh rate. This helps to prevent screen "tearing", where the screen displays parts of multiple frames at once, which looks like a horizontal line where the image appears to split. 
 
 This setting is enabled by default. 
 

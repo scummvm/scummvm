@@ -20,11 +20,11 @@ Place the icons in a folder, and either change the *iconspath* in the :doc:`conf
 
 The icon files must be ICO files for Windows, or PNG files for macOS. They must follow one of these naming conventions, where xxx is the file extension:
 
+        - :ref:`ID <id>`.xxx
 		- gameid.xxx
-		- :ref:`ID <id>`.xxx
 		- engineid-gameid.xxx
 
-To find the gameid and the engineid, open the :doc:`configuration file <../advanced_topics/configuration_file>`. The gameid is the name of the game in square brackets. The game entry will be similar to this:
+To find the gameid and the engineid, open the :doc:`configuration file <../advanced_topics/configuration_file>`. The game entry will be similar to this:
 
 .. code:: 
 
@@ -32,6 +32,7 @@ To find the gameid and the engineid, open the :doc:`configuration file <../advan
     description=Lure of the Temptress (VGA/DOS/English)
     iconspath=/Users/user/games/icons
     path=/Users/user/games/lure
+    gameid=lure
     engineid=lure
 
 .. figure:: ../images/taskbar/game_icon.png
