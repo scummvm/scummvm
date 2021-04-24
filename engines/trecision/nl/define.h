@@ -2163,7 +2163,7 @@ enum InventoryItem {
 	kItemBurnedFuse = 8,
 	kItemRepairedFuse = 9,
 	kItemLetter = 10,
-	kItemCoin = 11,
+	kItemFiveCreditCoin = 11,
 	kItemBeerCan = 12,
 	kItemWineBottle = 13,
 	kItemNoteRotmall17 = 14,
@@ -2208,73 +2208,72 @@ enum InventoryItem {
 	kItemMatch = 53,
 	kItemProjector = 54,
 	kItemPincers = 55,
-	kItemTorch = 56,
+	kItemMakeshiftTorch = 56,
 	kItemProjector2 = 57,
 	kItemDeskKey = 58,
 	kItemLaserGun = 59,
-	kItemSecurityCard = 60
+	kItemSecurityCard = 60,
+	kItemSecuritySystemSequence = 61,
+	kItemStethoscope = 62,
+	kItemEmptySyringe = 63,
+	kItemRubysMedicalReport = 64,
+	kItemPositioner = 65,
+	kItemHalfCreditCoins = 66,
+	kItemPuppet = 67,
+	kItemHammer = 68,
+	kItemBell = 69,
+	kItemMatchInPacket = 70,
+	kItemPuppetRemoteControl = 71,
+	kItemMud = 72,
+	kItemSaltpetre = 73,
+	kItemSkull = 74,
+	kItemTorch = 75,
+	kItemCharcoalSlack = 76,
+	kItemBagWithPapaverine = 77,
+	kItemJarWithSulfurPowder = 78,
+	kItemShaft = 79,
+	kItemAncientParchment = 80,
+	kItemCharcoalSaltpetrePowder = 81,
+	kItemCharcoalSulfurPowder = 82,
+	kItemSaltpetreSulfurPowder = 83,
+	kItemGunpowder = 84,
+	kItemEmptyGlassJar = 85,
+	kItemMeetingRoomSlide1 = 86,
+	kItemMeetingRoomSlide2 = 87,
+	kItemPiratePistol = 88,
+	kItemClub = 89,
+	kItemIronBullet1 = 90,
+	kItemIronBullet2 = 91,
+	kItemHugsOfficeSlide = 92,
+	kItemHalfCreditCoin = 93,
+	kItemJarWithWerewolfBlood = 94,
+	kItemLeftoverGunpowder = 95,
+	kItemPistolWithGunpowder = 96,
+	kItemLoadedPistol = 97,
+	kItemAsbestosCloth = 98,
+	kItemSilverBullet = 99,
+	kItemParallelCutter = 100,
+	kItemWristComm = 101,
+	kItemPrisonMap = 102,
+	kItemTurtleEgg = 103,
+	kItemSnakeHead = 104,
+	kItemSnakeTail = 105,
+	kItemGuardKeys = 106,
+	kItemSoapPowder = 107,
+	kItemVideoRecorder = 108,
+	kItemDentalFloss = 109,
+	kItemMedicalThermometer = 110,
+	kItemInflatedGloves = 111,
+	kItemGovernorsCode = 112,
+	kItemLowPowerLaser = 113,
+	kItemTester = 114,
+	kItemTubes = 115,
+	kItemSurgicalGloves = 116,
+	kItemPoisonSyringe = 117,
+	kItemInflatedGlovesWithFloss = 118,
+	kItemPoisonSyringeWithFloss = 119,
+	kItemFloatingPoisonSyringe = 120
 };
-
-#define iFOGLIO36                       61
-#define iSTETOSCOPIO                    62
-#define iSIRINGA37                      63
-#define iREFERTO                        64
-#define iDISLOCATORE                    65
-#define iMONETE                         66
-#define iPUPAZZO                        67
-#define iMARTELLO                       68
-#define iCAMPANA                        69
-#define iMATCH                     70
-#define iTELECOMANDO44                  71
-#define iPOLTIGLIA                      72
-#define iSALNITRO                       73
-#define iSKULL                        74
-#define iTORCH47                       75
-#define iCARBONE                        76
-#define iPAPAVERINA                     77
-#define iZOLFO                          78
-#define iROD                           79
-#define iPERGAMENA                      80
-#define iCARSAL                         81
-#define iCARZOL                         82
-#define iSALZOL                         83
-#define iPOLVERE48                      84
-#define iBARATTOLO                      85
-#define iDIAPA4B                        86
-#define iDIAPB4B                        87
-#define iPISTOLA4B                      88
-#define iMAZZA                          89
-#define iBIGLIAA                        90
-#define iBIGLIAB                        91
-#define iDIAP4C                         92
-#define iMONETA4L                       93
-#define iSANGUE                         94
-#define iPOLVERE4P                      95
-#define iPISTOLA4PC                     96
-#define iPISTOLA4PD                     97
-#define iSTRACCIO                       98
-#define iBIGLIA4U                       99
-#define iCUTTER                         100
-#define iWALKY                          101
-#define iMAPPA50                        102
-#define iUOVO                           103
-#define iSERPENTEA                      104
-#define iSERPENTEB                      105
-#define iCHIAVI                         106
-#define iSAPONE                         107
-#define iMDVD                           108
-#define iFILO                           109
-#define iTERMOMETRO                     110
-#define iGUANTI57                       111
-#define iCODICE                         112
-#define iLASER58                        113
-#define iTESTER                         114
-#define iFIALE                          115
-#define iGUANTI59                       116
-#define iSIRINGA59                      117
-#define iGUANTI5A                       118
-#define iSIRINGA5A                      119
-#define iARMAEVA                        120
 
 /*-------------------------------------------------------------------------*/
 /*                                 CHARACTERS         					   */
