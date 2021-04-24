@@ -66,6 +66,8 @@ protected:
 	bool _navButtonsVisible;
 	int _lastRead;
 
+	void recalc();
+
 public:
 	TabWidget(GuiObject *boss, int x, int y, int w, int h);
 	TabWidget(GuiObject *boss, const String &name);
