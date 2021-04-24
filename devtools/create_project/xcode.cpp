@@ -465,6 +465,9 @@ void XcodeProvider::setupFrameworksBuildPhase(const BuildSetup &setup) {
 		DEF_LOCALLIB_STATIC("libglib-2.0");
 		DEF_SYSTBD("libffi");
 	}
+	if (CONTAINS_DEFINE(setup.defines, "USE_FLUIDLITE")) {
+		DEF_LOCALLIB_STATIC("libfluidlite");
+	}
 	if (CONTAINS_DEFINE(setup.defines, "USE_FREETYPE2")) {
 		DEF_LOCALLIB_STATIC("libfreetype");
 	}
