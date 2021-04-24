@@ -71,6 +71,7 @@ public:
 	virtual void setEditable(bool editable) {}
 	virtual bool isModified() { return _modified; }
 	virtual Graphics::MacWidget *createWidget(Common::Rect &bbox, Channel *channel) { return nullptr; }
+	virtual void updateWidget(Graphics::MacWidget *widget, Channel *channel) {}
 	virtual void updateFromWidget(Graphics::MacWidget *widget) {}
 	virtual Common::Rect getInitialRect() { return _initialRect; }
 
@@ -173,7 +174,7 @@ public:
 	int _duration;
 
 	Video::VideoDecoder *_video;
-	const Graphics::Surface *_lastFrame;
+	Graphics::Surface *_lastFrame;
 
 	Channel *_channel;
 };
