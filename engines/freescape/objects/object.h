@@ -9,6 +9,7 @@
 #ifndef __Phantasma__Object__
 #define __Phantasma__Object__
 
+#include "freescape/gfx.h"
 #include "common/system.h"
 
 //#include <vector>
@@ -62,7 +63,7 @@ public:
 
 	
 		//virtual void setupOpenGL(VertexBuffer *areaVertexBuffer, DrawElementsBuffer *areaDrawElementsBuffer);
-	virtual void draw(/*VertexBuffer *areaVertexBuffer, DrawElementsBuffer *areaDrawElementsBuffer, BatchDrawer *batchDrawer, bool allowPolygonOffset*/);
+	virtual void draw(Freescape::Renderer *gfx);
 	
 	virtual bool isDrawable();
 	virtual bool isPlanar();

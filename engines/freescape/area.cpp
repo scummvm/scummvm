@@ -84,10 +84,10 @@ Area::~Area() {
 		(*iterator)->setupOpenGL(vertexBuffer, drawElementsBuffer);
 }*/
 
-void Area::draw(/*bool allowPolygonOffset, BatchDrawer *batchDrawer*/)
+void Area::draw(Freescape::Renderer *gfx)
 {
 	for(Common::Array<Object *>::iterator iterator = drawableObjects.begin(); iterator != drawableObjects.end(); iterator++)
 	{
-		(*iterator)->draw(/*vertexBuffer, drawElementsBuffer, batchDrawer, allowPolygonOffset*/);
+		(*iterator)->draw(gfx);
 	}
 }
