@@ -112,6 +112,7 @@ Common::Error FreescapeEngine::run() {
 	_areasByAreaID = binary.areasByAreaID;
 	_rawBorder = binary.border;
 	_rawPalette = binary.palette;
+	_startArea = binary.startArea;
 	convertBorder();
 
 	debug("FreescapeEngine::init");
@@ -119,6 +120,10 @@ Common::Error FreescapeEngine::run() {
 	Common::Event evt;
 
 	drawBorder();
+	assert(_areasByAreaID->contains(_startArea));
+	Area *area = (*_areasByAreaID)[_startArea];
+	assert(area);
+	area->draw();
 
 	while (!shouldQuit()) {
 		g_system->getEventManager()->pollEvent(evt);

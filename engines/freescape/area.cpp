@@ -82,12 +82,12 @@ Area::~Area() {
 
 	for(std::vector<Object *>::iterator iterator = drawableObjects.begin(); iterator != drawableObjects.end(); iterator++)
 		(*iterator)->setupOpenGL(vertexBuffer, drawElementsBuffer);
-}
-
-void Area::draw(bool allowPolygonOffset, BatchDrawer *batchDrawer)
-{
-	for(std::vector<Object *>::iterator iterator = drawableObjects.begin(); iterator != drawableObjects.end(); iterator++)
-	{
-		(*iterator)->draw(vertexBuffer, drawElementsBuffer, batchDrawer, allowPolygonOffset);
-	}
 }*/
+
+void Area::draw(/*bool allowPolygonOffset, BatchDrawer *batchDrawer*/)
+{
+	for(Common::Array<Object *>::iterator iterator = drawableObjects.begin(); iterator != drawableObjects.end(); iterator++)
+	{
+		(*iterator)->draw(/*vertexBuffer, drawElementsBuffer, batchDrawer, allowPolygonOffset*/);
+	}
+}

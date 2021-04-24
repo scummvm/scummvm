@@ -28,9 +28,7 @@ public:
 	Object *objectWithID(uint16 objectID);
 	Object *entranceWithID(uint16 objectID);
 	uint16 getAreaID();
-
-	//void setupOpenGL();
-	//void draw(bool allowPolygonOffset, BatchDrawer *batchDrawer);
+	void draw(/*bool allowPolygonOffset, BatchDrawer *batchDrawer*/);
 
 private:
 	uint16 areaID;

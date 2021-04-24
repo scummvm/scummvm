@@ -18,6 +18,7 @@ class Renderer;
 typedef Common::HashMap<uint16, Area *> AreaMap;
 
 typedef struct Binary {
+	uint16 startArea; 
 	AreaMap *areasByAreaID;
 	Common::Array<uint8> *border;
 	Common::Array<uint8> *palette;
@@ -46,6 +47,8 @@ private:
 	
 	uint32 _timeOfLastTick;
 	bool _hasReceivedTime;
+
+	uint16 _startArea;
 	AreaMap *_areasByAreaID;
 	float _rotation[3], _velocity[3], _position[3];
 
