@@ -312,6 +312,11 @@ int main(int argc, char *argv[]) {
 		setFeatureBuildState("vorbis", setup.features, false);
 	}
 
+	// HACK: Fluidsynth and Fluidlite can not be enabled simultaneously
+	if (getFeatureBuildState("fluidsynth", setup.features)) {
+		setFeatureBuildState("fluidlite", setup.features, false);
+	}
+
 	// HACK: These features depend on OpenGL
 	if (!getFeatureBuildState("opengl", setup.features)) {
 		setFeatureBuildState("opengl_game", setup.features, false);
@@ -1050,6 +1055,7 @@ const Feature s_features[] = {
 	{  "freetype",   "USE_FREETYPE2", true, true,  "FreeType support" },
 	{      "jpeg",        "USE_JPEG", true, true,  "libjpeg support" },
 	{"fluidsynth",  "USE_FLUIDSYNTH", true, true,  "FluidSynth support" },
+	{ "fluidlite",   "USE_FLUIDLITE", true, false, "FluidLite support" },
 	{   "libcurl",     "USE_LIBCURL", true, true,  "libcurl support" },
 	{    "sdlnet",     "USE_SDL_NET", true, true,  "SDL_net support" },
 	{   "discord",     "USE_DISCORD", true, false, "Discord support" },

@@ -70,6 +70,7 @@ std::string MSVCProvider::getLibraryFromFeature(const char *feature, const Build
 		{  "freetype", "freetype.lib",              "freetyped.lib", 0,                                                 0 },
 		{      "jpeg", "jpeg.lib",                  "jpegd.lib",     0,                                                 "jpeg-static.lib" },
 		{"fluidsynth", "fluidsynth.lib",            0,               0,                                                 "libfluidsynth.lib" },
+		{ "fluidlite", "fluidlite.lib",             0,               0,                                                 0 },
 		{   "libcurl", "libcurl.lib",               "libcurl-d.lib", "ws2_32.lib wldap32.lib crypt32.lib normaliz.lib", 0 },
 		{    "sdlnet", "SDL_net.lib",               0,               "iphlpapi.lib",                                    0 },
 		{   "sdl2net", "SDL2_net.lib",              0,               "iphlpapi.lib",                                    "SDL_net.lib" },
