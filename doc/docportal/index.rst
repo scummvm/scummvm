@@ -61,15 +61,7 @@
       help/contact
       help/faq
       help/credits
-
-
-
-.. toctree::
-      :caption: Release Notes
-      :glob:
-      :hidden:
-
-      release_notes/*
+      help/release
 
 
 
@@ -231,13 +223,13 @@ If you are having problems with any aspect of ScummVM, take a look at our help s
 What's changed since I was last here?
 ======================================
 
-We have a **RELEASE NOTES** section on the sidebar; here you can see what's changed in both current and past releases.
+Check out the :doc:`Release notes <help/release>` for both current and past releases. 
 
 
 The ScummVM Project
 ===================
 
-ScummVM is an open-source project created, maintained and constantly improved by a team of passionate volunteers from all around the world.  If you enjoy using ScummVM and would like to support the team, you can use the PayPal Donate button below.
+ScummVM is an open-source project created, maintained and constantly improved by a team of :doc:`passionate volunteers <help/credits>` from all around the world.  If you enjoy using ScummVM and would like to support the team, you can use the PayPal Donate button below.
 
 .. raw:: html
 
