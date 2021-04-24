@@ -84,10 +84,8 @@ Area::~Area() {
 		(*iterator)->setupOpenGL(vertexBuffer, drawElementsBuffer);
 }*/
 
-void Area::draw(Freescape::Renderer *gfx)
-{
-	for(Common::Array<Object *>::iterator iterator = drawableObjects.begin(); iterator != drawableObjects.end(); iterator++)
-	{
+void Area::draw(Freescape::Renderer *gfx) {
+	for (Common::Array<Object *>::iterator iterator = drawableObjects.begin(); iterator != drawableObjects.end(); iterator++) {
 		(*iterator)->draw(gfx);
 	}
 }

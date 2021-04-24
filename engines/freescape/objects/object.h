@@ -9,8 +9,8 @@
 #ifndef __Phantasma__Object__
 #define __Phantasma__Object__
 
-#include "freescape/gfx.h"
 #include "common/system.h"
+#include "freescape/gfx.h"
 
 //#include <vector>
 //#include "freescape/language/instruction.h"
@@ -61,10 +61,9 @@ public:
 	Vector3d getOrigin();
 	Vector3d getSize();
 
-	
-		//virtual void setupOpenGL(VertexBuffer *areaVertexBuffer, DrawElementsBuffer *areaDrawElementsBuffer);
+	//virtual void setupOpenGL(VertexBuffer *areaVertexBuffer, DrawElementsBuffer *areaDrawElementsBuffer);
 	virtual void draw(Freescape::Renderer *gfx);
-	
+
 	virtual bool isDrawable();
 	virtual bool isPlanar();
 
