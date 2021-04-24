@@ -10,10 +10,10 @@
       use_scummvm/add_play_games
       use_scummvm/save_load_games
       use_scummvm/keyboard_shortcuts
-      use_scummvm/taskbar_integration
       use_scummvm/how_to_settings
       use_scummvm/connect_cloud
       use_scummvm/LAN
+      use_scummvm/taskbar_integration
 
 .. toctree::
       :caption: Platform guides
