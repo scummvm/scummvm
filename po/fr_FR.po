@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-04-23 18:08+0000\n"
+"POT-Creation-Date: 2021-04-23 18:19+0000\n"
 "PO-Revision-Date: 2021-04-23 08:25+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
@@ -4036,8 +4036,8 @@ msgstr ""
 #: engines/kyra/detection_tables.h:237 engines/kyra/detection_tables.h:250
 #: engines/kyra/detection_tables.h:291 engines/kyra/detection_tables.h:619
 #: engines/kyra/detection_tables.h:632 engines/kyra/detection_tables.h:956
-#: engines/kyra/detection_tables.h:969 engines/kyra/detection_tables.h:1715
-#: engines/kyra/detection_tables.h:1887 engines/lure/detection.cpp:80
+#: engines/kyra/detection_tables.h:969 engines/kyra/detection_tables.h:1716
+#: engines/kyra/detection_tables.h:1888 engines/lure/detection.cpp:80
 #: engines/lure/detection.cpp:222 engines/mohawk/detection_tables.h:1012
 #: engines/mohawk/detection_tables.h:1027 engines/neverhood/detection.cpp:110
 #: engines/saga/detection_tables.h:187 engines/saga/detection_tables.h:937
@@ -4862,11 +4862,12 @@ msgstr ""
 "Le jeu a été ajouté de façon incorrecte. Merci d'ajouter le dossier racine "
 "du jeu."
 
-#: engines/kyra/detection_tables.h:1266
-msgid "You added the game incorrectly. The game data is in ISO image GAME.DAT."
+#. I18N: The file in the game directory needs to be extracted
+#: engines/kyra/detection_tables.h:1267
+msgid ""
+"You added the game incorrectly. The GAME.DAT file is an ISO image and you "
+"need to extract the game data files from it."
 msgstr ""
-"Le jeu a été ajouté de façon incorrecte. Les données du jeu sont dans "
-"l'image ISO GAME.DAT."
 
 #: engines/kyra/metaengine.cpp:117
 msgid "Lands of Lore support is not compiled in"
@@ -8256,6 +8257,12 @@ msgstr ""
 "les polices du paquet de polices que vous avez choisi, c'est-à-dire "
 "LiberationMono, LiberationSans et LiberationSerif, ou respectivement "
 "FreeMono, FreeSans et FreeSerif."
+
+#~ msgid ""
+#~ "You added the game incorrectly. The game data is in ISO image GAME.DAT."
+#~ msgstr ""
+#~ "Le jeu a été ajouté de façon incorrecte. Les données du jeu sont dans "
+#~ "l'image ISO GAME.DAT."
 
 #~ msgid "Map"
 #~ msgstr "Affecter"
