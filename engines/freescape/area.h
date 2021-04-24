@@ -11,6 +11,7 @@
 
 #include "common/hashmap.h"
 #include "freescape/objects/object.h"
+#include "freescape/gfx.h"
 //#include "VertexBuffer.h"
 //#include "DrawElementsBuffer.h"
 
@@ -28,7 +29,7 @@ public:
 	Object *objectWithID(uint16 objectID);
 	Object *entranceWithID(uint16 objectID);
 	uint16 getAreaID();
-	void draw(/*bool allowPolygonOffset, BatchDrawer *batchDrawer*/);
+	void draw(Freescape::Renderer *gfx);
 
 private:
 	uint16 areaID;

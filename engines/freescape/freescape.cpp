@@ -126,7 +126,7 @@ Common::Error FreescapeEngine::run() {
 	assert(_areasByAreaID->contains(_startArea));
 	Area *area = (*_areasByAreaID)[_startArea];
 	assert(area);
-	area->draw();
+	area->draw(_gfx);
 
 	while (!shouldQuit()) {
 		g_system->getEventManager()->pollEvent(evt);
