@@ -382,7 +382,7 @@ Binary load16bitBinary(Common::String filename) {
 	}
 
 	delete[] fileOffsetForArea;
-	return Freescape::Binary{areaMap, raw_border, raw_palette};
+	return Freescape::Binary{startArea, areaMap, raw_border, raw_palette};
 }
 
 } // namespace Freescape

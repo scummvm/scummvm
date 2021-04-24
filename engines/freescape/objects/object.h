@@ -60,10 +60,10 @@ public:
 	Vector3d getOrigin();
 	Vector3d getSize();
 
-	/*
-		virtual void setupOpenGL(VertexBuffer *areaVertexBuffer, DrawElementsBuffer *areaDrawElementsBuffer);
-		virtual void draw(VertexBuffer *areaVertexBuffer, DrawElementsBuffer *areaDrawElementsBuffer, BatchDrawer *batchDrawer, bool allowPolygonOffset);
-		*/
+	
+		//virtual void setupOpenGL(VertexBuffer *areaVertexBuffer, DrawElementsBuffer *areaDrawElementsBuffer);
+	virtual void draw(/*VertexBuffer *areaVertexBuffer, DrawElementsBuffer *areaDrawElementsBuffer, BatchDrawer *batchDrawer, bool allowPolygonOffset*/);
+	
 	virtual bool isDrawable();
 	virtual bool isPlanar();
 
