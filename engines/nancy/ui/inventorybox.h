@@ -72,15 +72,15 @@ private:
 	void onReorder();
 	void setHotspots(uint pageNr);
 
-	class Shades : public RenderObject {
+	class Curtains : public RenderObject {
 	public:
-		Shades(RenderObject &redrawFrom, InventoryBox *parent) :
+		Curtains(RenderObject &redrawFrom, InventoryBox *parent) :
 			RenderObject(redrawFrom, 9),
 			_parent(parent),
 			_soundTriggered(false),
 			_areOpen(false),
 			_curFrame(0) {}
-		virtual ~Shades() = default;
+		virtual ~Curtains() = default;
 
 		virtual void init() override;
 		virtual void updateGraphics() override;
@@ -106,7 +106,7 @@ private:
 	Graphics::ManagedSurface _fullInventorySurface;
 
 	Scrollbar *_scrollbar;
-	Shades _shades;
+	Curtains _curtains;
 
 	float _scrollbarPos;
 
@@ -115,14 +115,13 @@ private:
 
 	// INV contents
 	//...
-	Common::Rect _shadesSrc[14]; // 0xD6
+	Common::Array<Common::Rect> _curtainsSrc; // 0xD6
 	// _screenPosition 0x1B6
-	uint16 _shadesFrameTime; // 0x1C6
+	uint16 _curtainsFrameTime; // 0x1C6
 	Common::String _inventoryCursorsImageName; // 0x1D2, should this be here?
 
 	Common::Rect _emptySpace; // 0x1E4
 	Common::Array<ItemDescription> _itemDescriptions; // 0x1F4
-
 };
 
 } // End of namespace UI

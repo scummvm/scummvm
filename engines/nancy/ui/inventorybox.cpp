@@ -41,9 +41,9 @@ namespace UI {
 InventoryBox::InventoryBox(RenderObject &redrawFrom) :
 		RenderObject(redrawFrom, 6),
 		_scrollbar(nullptr),
-		_shades(*this, this),
+		_curtains(*this, this),
 		_scrollbarPos(0),
-		_shadesFrameTime(0) {}
+		_curtainsFrameTime(0) {}
 
 InventoryBox::~InventoryBox() {
 	_fullInventorySurface.free();
@@ -65,12 +65,14 @@ void InventoryBox::init() {
 
 	stream.seek(0xD6, SEEK_SET);
 
-	for (uint i = 0; i < 14; ++i) {
-		readRect(stream, _shadesSrc[i]);
+	uint numFrames = g_nancy->getConstants().numCurtainAnimationFrames;
+	_curtainsSrc.resize(numFrames * 2);
+	for (uint i = 0; i < numFrames * 2; ++i) {
+		readRect(stream, _curtainsSrc[i]);
 	}
 
 	readRect(stream, _screenPosition);
-	_shadesFrameTime = stream.readUint16LE();
+	_curtainsFrameTime = stream.readUint16LE();
 
 	Common::String inventoryBoxIconsImageName;
 	readFilename(stream, inventoryBoxIconsImageName);
@@ -111,7 +113,7 @@ void InventoryBox::init() {
 
 	_scrollbar = new Scrollbar(NancySceneState.getFrame(), 9, scrollbarSrcBounds, scrollbarDefaultPos, scrollbarMaxScroll - scrollbarDefaultPos.y);
 	_scrollbar->init();
-	_shades.init();
+	_curtains.init();
 }
 
 void InventoryBox::updateGraphics() {
@@ -125,7 +127,7 @@ void InventoryBox::updateGraphics() {
 void InventoryBox::registerGraphics() {
 	RenderObject::registerGraphics();
 	_scrollbar->registerGraphics();
-	_shades.registerGraphics();
+	_curtains.registerGraphics();
 }
 
 void InventoryBox::handleInput(NancyInput &input) {
@@ -155,8 +157,8 @@ void InventoryBox::handleInput(NancyInput &input) {
 
 void InventoryBox::addItem(int16 itemID) {
 	if (_order.size() == 0) {
-		// Adds first item, start shades animation
-		_shades.setOpen(true);
+		// Adds first item, start curtains animation
+		_curtains.setOpen(true);
 	}
 	Common::Array<int16> back = _order;
 	_order.clear();
@@ -191,9 +193,9 @@ void InventoryBox::onReorder() {
 	}
 
 	if (_order.size() > 0) {
-		_shades.setOpen(true);
+		_curtains.setOpen(true);
 	} else {
-		_shades.setOpen(false);
+		_curtains.setOpen(false);
 	}
 
 	_needsRedraw = true;
@@ -225,9 +227,14 @@ void InventoryBox::onScrollbarMove() {
 	_needsRedraw = true;
 }
 
-void InventoryBox::Shades::init() {
+void InventoryBox::Curtains::init() {
 	Common::Rect bounds = _parent->getBounds();
-	_drawSurface.create(bounds.width(), bounds.height(), g_nancy->_graphicsManager->getScreenPixelFormat());
+	_drawSurface.create(bounds.width(), bounds.height(), g_nancy->_graphicsManager->getInputPixelFormat());
+
+	if (g_nancy->getGameFlags() & NGF_8BITCOLOR) {
+		_drawSurface.setPalette(g_nancy->_graphicsManager->_object0.getPalette(), 0, 256);
+	}
+
 	_screenPosition = _parent->getScreenPosition();
 	_nextFrameTime = 0;
 	setAnimationFrame(_curFrame);
@@ -237,12 +244,12 @@ void InventoryBox::Shades::init() {
 	RenderObject::init();
 }
 
-void InventoryBox::Shades::updateGraphics() {
+void InventoryBox::Curtains::updateGraphics() {
 	Time time = g_nancy->getTotalPlayTime();
 	if (_areOpen) {
-		if (_curFrame < 7 && time > _nextFrameTime) {
+		if (_curFrame < g_nancy->getConstants().numCurtainAnimationFrames && time > _nextFrameTime) {
 			setAnimationFrame(++_curFrame);
-			_nextFrameTime = time + _parent->_shadesFrameTime;
+			_nextFrameTime = time + _parent->_curtainsFrameTime;
 
 			if (!_soundTriggered) {
 				_soundTriggered = true;
@@ -252,7 +259,7 @@ void InventoryBox::Shades::updateGraphics() {
 	} else {
 		if (_curFrame > 0 && time > _nextFrameTime) {
 			setAnimationFrame(--_curFrame);
-			_nextFrameTime = time + _parent->_shadesFrameTime;
+			_nextFrameTime = time + _parent->_curtainsFrameTime;
 
 			if (!_soundTriggered) {
 				_soundTriggered = true;
@@ -261,17 +268,17 @@ void InventoryBox::Shades::updateGraphics() {
 		}
 	}
 
-	if (_curFrame == 0 || _curFrame == 7) {
+	if (_curFrame == 0 || _curFrame == g_nancy->getConstants().numCurtainAnimationFrames) {
 		_soundTriggered = false;
 	}
 }
 
-void InventoryBox::Shades::setAnimationFrame(uint frame) {
+void InventoryBox::Curtains::setAnimationFrame(uint frame) {
 	Graphics::ManagedSurface &_object0 = g_nancy->_graphicsManager->_object0;
 	Common::Rect srcRect;
 	Common::Point destPoint;
 
-	if (frame > 6) {
+	if (frame > g_nancy->getConstants().numCurtainAnimationFrames - 1) {
 		setVisible(false);
 		return;
 	} else {
@@ -281,11 +288,11 @@ void InventoryBox::Shades::setAnimationFrame(uint frame) {
 	_drawSurface.clear(g_nancy->_graphicsManager->getTransColor());
 
 	// Draw left shade
-	srcRect = _parent->_shadesSrc[frame * 2];
+	srcRect = _parent->_curtainsSrc[frame * 2];
 	_drawSurface.blitFrom(_object0, srcRect, destPoint);
 
 	// Draw right shade
-	srcRect = _parent->_shadesSrc[frame * 2 + 1];
+	srcRect = _parent->_curtainsSrc[frame * 2 + 1];
 	destPoint.x = getBounds().width() - srcRect.width();
 	_drawSurface.blitFrom(_object0, srcRect, destPoint);
 
