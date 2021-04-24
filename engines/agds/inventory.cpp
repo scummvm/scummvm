@@ -47,6 +47,7 @@ void Inventory::visible(bool visible) {
 			_engine->runObject(inv_close);
 	} else if (enabled() && visible) {
 		debug("opening inventory...");
+		removeGaps();
 		Common::String inv_open = _engine->getSystemVariable("inv_open")->getString();
 		if (!inv_open.empty())
 			_engine->runObject(inv_open);
@@ -86,6 +87,23 @@ bool Inventory::remove(const Common::String &name) {
 		}
 	}
 	return removed;
+}
+
+void Inventory::removeGaps() {
+	auto n = _entries.size();
+	for (uint src = 0, dst = 0; src < n; ++src) {
+		if (_entries[src])
+		{
+			if (dst != src)
+			{
+				debug("moving inventory object %u -> %u", src, dst);
+				_entries[dst++] = _entries[src];
+				_entries[src].reset();
+			}
+			else
+				++dst;
+		}
+	}
 }
 
 int Inventory::find(const Common::String &name) const {

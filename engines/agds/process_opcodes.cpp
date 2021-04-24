@@ -919,7 +919,8 @@ void Process::stub192() {
 }
 
 void Process::removeGapsFromInventory() {
-	debug("removeGapsFromInventory: stub");
+	debug("removeGapsFromInventory");
+	_engine->inventory().removeGaps();
 }
 
 void Process::setObjectScale() {
