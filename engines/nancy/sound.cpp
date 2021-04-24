@@ -37,7 +37,7 @@ enum SoundType {
 	kSoundTypeOgg
 };
 
-// Table extracted from nancy1, could be (and probably is) different between games
+// Table valid for vampire diaries and nancy1, could be (and probably is) different between games
 static const Audio::Mixer::SoundType channelSoundTypes[] = {
 	Audio::Mixer::kMusicSoundType, // channel 0
 	Audio::Mixer::kMusicSoundType,

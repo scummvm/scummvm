@@ -27,6 +27,7 @@
 #include "engines/nancy/sound.h"
 #include "engines/nancy/input.h"
 #include "engines/nancy/util.h"
+#include "engines/nancy/constants.h"
 
 #include "engines/nancy/ui/inventorybox.h"
 
@@ -80,18 +81,20 @@ void InventoryBox::init() {
 
 	char itemName[0x14];
 
-	for (uint i = 0; i < 11; ++i) {
+	_itemDescriptions.reserve(g_nancy->getConstants().numItems);
+	for (uint i = 0; i < g_nancy->getConstants().numItems; ++i) {
 		stream.read(itemName, 0x14);
 		itemName[0x13] = '\0';
-		_itemDescriptions[i].name = Common::String(itemName);
-		_itemDescriptions[i].oneTimeUse = stream.readUint16LE();
-		readRect(stream, _itemDescriptions[i].sourceRect);
+		_itemDescriptions.push_back(ItemDescription());
+		ItemDescription &desc = _itemDescriptions.back();
+		desc.name = Common::String(itemName);
+		desc.oneTimeUse = stream.readUint16LE();
+		readRect(stream, desc.sourceRect);
 	}
 
 	g_nancy->_resource->loadImage(inventoryBoxIconsImageName, _iconsSurface);
 
-	uint numItems = 11; // TODO
-	_fullInventorySurface.create(_screenPosition.width(), _screenPosition.height() * ((numItems / 4) + 1), g_nancy->_graphicsManager->getScreenPixelFormat());
+	_fullInventorySurface.create(_screenPosition.width(), _screenPosition.height() * ((g_nancy->getConstants().numItems / 4) + 1), g_nancy->_graphicsManager->getScreenPixelFormat());
 	Common::Rect sourceRect = _screenPosition;
 	sourceRect.moveTo(0, 0);
 	_drawSurface.create(_fullInventorySurface, sourceRect);

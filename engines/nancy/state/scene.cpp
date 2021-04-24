@@ -30,6 +30,7 @@
 #include "engines/nancy/graphics.h"
 #include "engines/nancy/cursor.h"
 #include "engines/nancy/util.h"
+#include "engines/nancy/constants.h"
 
 #include "engines/nancy/state/scene.h"
 
@@ -221,7 +222,7 @@ void Scene::setHeldItem(int16 id)  {
 }
 
 void Scene::setEventFlag(int16 label, NancyFlag flag) {
-	if (label > -1 && label < 168) {
+	if (label > -1 && (uint)label < g_nancy->getConstants().numEventFlags) {
 		_flags.eventFlags[label] = flag;
 	}
 }
@@ -231,7 +232,7 @@ void Scene::setEventFlag(EventFlagDescription eventFlag) {
 }
 
 bool Scene::getEventFlag(int16 label, NancyFlag flag) const {
-	if (label > -1) {
+	if (label > -1 && (uint)label < g_nancy->getConstants().numEventFlags) {
 		return _flags.eventFlags[label] == flag;
 	} else {
 		return false;
@@ -315,7 +316,7 @@ void Scene::synchronize(Common::Serializer &ser) {
 	// TODO hardcoded inventory size
 	auto &order = getInventoryBox()._order;
 	uint prevSize = getInventoryBox()._order.size();
-	getInventoryBox()._order.resize(11);
+	getInventoryBox()._order.resize(g_nancy->getConstants().numItems);
 
 	if (ser.isSaving()) {
 		for (uint i = prevSize; i < order.size(); ++i) {
@@ -323,7 +324,7 @@ void Scene::synchronize(Common::Serializer &ser) {
 		}
 	}
 
-	ser.syncArray(order.data(), 11, Common::Serializer::Sint16LE);
+	ser.syncArray(order.data(), g_nancy->getConstants().numItems, Common::Serializer::Sint16LE);
 
 	while (order.size() && order.back() == -1) {
 		order.pop_back();
@@ -335,7 +336,7 @@ void Scene::synchronize(Common::Serializer &ser) {
 	}
 
 	// TODO hardcoded inventory size
-	ser.syncArray(_flags.items, 11, Common::Serializer::Byte);
+	ser.syncArray(_flags.items.data(), g_nancy->getConstants().numItems, Common::Serializer::Byte);
 	ser.syncAsSint16LE(_flags.heldItem);
 	g_nancy->_cursorManager->setCursorItemID(_flags.heldItem);
 
@@ -350,7 +351,7 @@ void Scene::synchronize(Common::Serializer &ser) {
 	g_nancy->setTotalPlayTime((uint32)_timers.lastTotalTime);
 
 	// TODO hardcoded number of event flags
-	ser.syncArray(_flags.eventFlags, 168, Common::Serializer::Byte);
+	ser.syncArray(_flags.eventFlags.data(), g_nancy->getConstants().numEventFlags, Common::Serializer::Byte);
 
 	ser.syncArray<uint16>(_flags.sceneHitCount, (uint16)2001, Common::Serializer::Uint16LE);
 
@@ -384,18 +385,14 @@ void Scene::synchronize(Common::Serializer &ser) {
 }
 
 void Scene::init() {
-	for (uint i = 0; i < 168; ++i) {
-		_flags.eventFlags[i] = kFalse;
-	}
+	_flags.eventFlags = Common::Array<NancyFlag>(g_nancy->getConstants().numEventFlags, kFalse);
 
 	// Does this ever get used?
 	for (uint i = 0; i < 2001; ++i) {
 		_flags.sceneHitCount[i] = 0;
 	}
 
-	for (uint i = 0; i < 11; ++i) {
-		_flags.items[i] = kFalse;
-	}
+	_flags.items = Common::Array<NancyFlag>(g_nancy->getConstants().numItems, kFalse);
 
 	_timers.lastTotalTime = 0;
 	_timers.playerTime = g_nancy->_startTimeHours * 3600000;
@@ -589,8 +586,12 @@ void Scene::run() {
 	_sceneState.currentScene.verticalOffset = _viewport.getCurVerticalScroll();
 
 	// Handle invisible map button
-	for (uint i = 0; i < _mapAccessSceneIDs.size(); ++i) {
-		if (_sceneState.currentScene.sceneID == _mapAccessSceneIDs[i]) {
+	for (uint i = 0; i < ARRAYSIZE(g_nancy->getConstants().mapAccessSceneIDs); ++i) {
+		if (g_nancy->getConstants().mapAccessSceneIDs[i] == -1) {
+			break;
+		}
+
+		if ((int)_sceneState.currentScene.sceneID == g_nancy->getConstants().mapAccessSceneIDs[i]) {
 			if (_mapHotspot.contains(input.mousePos)) {
 				g_nancy->_cursorManager->setCursorType(CursorManager::kHotspotArrow);
 
@@ -608,18 +609,6 @@ void Scene::initStaticData() {
 	Common::SeekableReadStream *chunk = g_nancy->getBootChunkStream("MAP");
 	chunk->seek(0x8A);
 	readRect(*chunk, _mapHotspot);
-
-	// Hardcoded by original engine
-	_mapAccessSceneIDs.clear();
-	_mapAccessSceneIDs.reserve(8);
-	_mapAccessSceneIDs.push_back(9);
-	_mapAccessSceneIDs.push_back(10);
-	_mapAccessSceneIDs.push_back(11);
-	_mapAccessSceneIDs.push_back(0x4B0);
-	_mapAccessSceneIDs.push_back(0x378);
-	_mapAccessSceneIDs.push_back(0x29A);
-	_mapAccessSceneIDs.push_back(0x4E2);
-	_mapAccessSceneIDs.push_back(0x682);
 
 	chunk = g_nancy->getBootChunkStream("FR0");
 	chunk->seek(0);
@@ -648,16 +637,12 @@ void Scene::initStaticData() {
 
 void Scene::clearSceneData() {
 	// only clear select flags
-	for (uint i = 44; i < 54; ++i) {
-		_flags.eventFlags[i] = kFalse;
-	}
+	for (uint i = 0; i < ARRAYSIZE(g_nancy->getConstants().eventFlagsToClearOnSceneChange); ++i) {
+		if (g_nancy->getConstants().eventFlagsToClearOnSceneChange[i] == -1) {
+			break;
+		}
 
-	for (uint i = 63; i < 74; ++i) {
-		_flags.eventFlags[i] = kFalse;
-	}
-
-	for (uint i = 75; i < 85; ++i) {
-		_flags.eventFlags[i] = kFalse;
+		_flags.eventFlags[g_nancy->getConstants().eventFlagsToClearOnSceneChange[i]] = kFalse;
 	}
 
 	clearLogicConditions();

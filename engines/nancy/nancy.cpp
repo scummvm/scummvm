@@ -36,6 +36,7 @@
 #include "engines/nancy/graphics.h"
 #include "engines/nancy/dialogs.h"
 #include "engines/nancy/console.h"
+#include "engines/nancy/constants.h"
 
 #include "engines/nancy/action/primaryvideo.h"
 
@@ -154,6 +155,10 @@ GameType NancyEngine::getGameType() const {
 
 Common::Platform NancyEngine::getPlatform() const {
 	return _gameDescription->desc.platform;
+}
+
+const GameConstants &NancyEngine::getConstants() const {
+	return gameConstants[getGameType() - 1];
 }
 
 void NancyEngine::setState(NancyState::NancyState state, NancyState::NancyState overridePrevious) {

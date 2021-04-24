@@ -71,6 +71,7 @@ class GraphicsManager;
 class CursorManager;
 class CheatDialog;
 class NancyConsole;
+struct GameConstants;
 
 namespace State {
 class State;
@@ -98,6 +99,8 @@ public:
 	const char *getGameId() const;
 	GameType getGameType() const;
 	Common::Platform getPlatform() const;
+
+	const GameConstants &getConstants() const;
 
 	void setState(NancyState::NancyState state, NancyState::NancyState overridePrevious = NancyState::kNone);
 	NancyState::NancyState getState() { return _gameFlow.curState; }

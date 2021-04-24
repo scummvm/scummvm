@@ -213,9 +213,9 @@ private:
 		};
 
 		LogicCondition logicConditions[30];
-		NancyFlag eventFlags[168];
+		Common::Array<NancyFlag> eventFlags;
 		uint16 sceneHitCount[2001];
-		NancyFlag items[11];
+		Common::Array<NancyFlag> items;
 		int16 heldItem = -1;
 		int16 primaryVideoResponsePicked = -1;
 	};
@@ -245,7 +245,6 @@ private:
 	NancyState::NancyState _gameStateRequested;
 
 	Common::Rect _mapHotspot;
-	Common::Array<uint16> _mapAccessSceneIDs;
 
 	Action::ActionManager _actionManager;
 	Action::PlayPrimaryVideoChan0 *_activePrimaryVideo;

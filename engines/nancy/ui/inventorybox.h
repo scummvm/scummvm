@@ -121,7 +121,7 @@ private:
 	Common::String _inventoryCursorsImageName; // 0x1D2, should this be here?
 
 	Common::Rect _emptySpace; // 0x1E4
-	ItemDescription _itemDescriptions[11]; // 0x1F4
+	Common::Array<ItemDescription> _itemDescriptions; // 0x1F4
 
 };
 
