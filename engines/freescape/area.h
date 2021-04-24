@@ -10,8 +10,8 @@
 #define __Phantasma__Area__
 
 #include "common/hashmap.h"
-#include "freescape/objects/object.h"
 #include "freescape/gfx.h"
+#include "freescape/objects/object.h"
 //#include "VertexBuffer.h"
 //#include "DrawElementsBuffer.h"
 

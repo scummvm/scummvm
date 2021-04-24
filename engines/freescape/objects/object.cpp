@@ -16,8 +16,8 @@ uint16 Object::getObjectID() { return objectID; }
 //Vector3d Object::getSize()		{	return size;		}
 
 //void Object::setupOpenGL(VertexBuffer *areaVertexBuffer, DrawElementsBuffer *areaDrawElementsBuffer)					{}
-void Object::draw(Freescape::Renderer *gfx/*VertexBuffer *areaVertexBuffer, DrawElementsBuffer *areaDrawElementsBuffer, BatchDrawer *batchDrawer, bool allowPolygonOffset*/) {
-    gfx;
+void Object::draw(Freescape::Renderer *gfx /*VertexBuffer *areaVertexBuffer, DrawElementsBuffer *areaDrawElementsBuffer, BatchDrawer *batchDrawer, bool allowPolygonOffset*/) {
+	gfx;
 }
 bool Object::isDrawable() { return false; }
 bool Object::isPlanar() { return false; }
