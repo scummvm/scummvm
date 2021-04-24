@@ -75,7 +75,7 @@ V-Sync in 3D games
 .. _renderer:
 
 Game 3D renderer
-	Changes how a 3D game is rendered. 
+	Changes how a 3D game is rendered. This setting has no effect on 2D games. 
 
 	- OpenGL: renders on hardware (uses the GPU)
 	- OpenGL with shaders: renders on hardware with shader support

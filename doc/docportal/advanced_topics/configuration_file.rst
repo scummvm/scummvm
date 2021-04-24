@@ -209,7 +209,7 @@ There are many recognized configuration keys. In the table below, each key is ei
 		":ref:`frames_per_secondfl <fpsfl>`",boolean,false,
 		:ref:`frontpanel_touchpad_mode <frontpanel>`,boolean, false
 		":ref:`fullscreen <fullscreen>`",boolean,false,
-		gameid,string,,Short name of the game
+		gameid,string,,Short name of the game. For internal use only, do not edit. 
 		gamepath,string,,Specifies the path to the game
 		":ref:`gfx_mode <gfxmode>`",string,normal (1x),"
 	- 1x
