@@ -11,19 +11,23 @@
 
 #include "engines/util.h"
 
+#include "graphics/renderer.h"
+
 #include "freescape/freescape.h"
+#include "freescape/gfx.h"
 
 #include "freescape/loaders/16bitBinaryLoader.h"
 #include "freescape/loaders/8bitBinaryLoader.h"
 
 #define OFFSET_DARKSIDE 0xc9ce
-#define OFFSET_DRILLER 0x9B40
+#define OFFSET_DRILLER 0x9b40
+#define OFFSET_CASTLE 0x9b40
 #define OFFSET_TOTALECLIPSE 0xcdb7
 
 namespace Freescape {
 
 FreescapeEngine::FreescapeEngine(OSystem *syst)
-	: Engine(syst), _screenW(320), _screenH(200), _border(nullptr) {
+	: Engine(syst), _screenW(320), _screenH(200), _border(nullptr), _gfx(nullptr) {
 	// Put your engine in a sane state, but do nothing big yet;
 	// in particular, do not load data from files; rather, if you
 	// need to do such things, do them from run().
@@ -59,61 +63,63 @@ FreescapeEngine::~FreescapeEngine() {
 
 	// Dispose your resources here
 	delete _rnd;
-	delete _areasByAreaID;
+	//delete _areasByAreaID;
 	delete _border;
+	delete _gfx;
 
 	// Remove all of our debug levels here
 	DebugMan.clearAllDebugChannels();
 }
 
+void FreescapeEngine::convertBorder() {
+	Graphics::PixelFormat srcFormat = Graphics::PixelFormat::createFormatCLUT8();
+	_border = new Graphics::Surface();
+	_border->create(_screenW, _screenH, srcFormat);
+	_border->copyRectToSurface(_rawBorder->data(), _border->w, 0, 0, _border->w, _border->h);
+	_border->convertToInPlace(_pixelFormat, _rawPalette->data());
+}
+
 void FreescapeEngine::drawBorder() {
 	if (_border == nullptr)
 		return;
-	g_system->copyRectToScreen((const void *)_border->data(), _screenW, 0, 0, _screenW, _screenH);
-	g_system->updateScreen();
+
+	Texture *t = _gfx->createTexture(_border);
+	const Common::Rect rect(0, 0, 320, 200);
+
+	_gfx->drawTexturedRect2D(rect, rect, t, 1.0, false);
+	_gfx->flipBuffer();
+	_system->updateScreen();
+	_gfx->freeTexture(t);
 }
 
 Common::Error FreescapeEngine::run() {
-	// Initialize graphics using following:
-	initGraphics(_screenW, _screenH);
-
-	// You could use backend transactions directly as an alternative,
-	// but it isn't recommended, until you want to handle the error values
-	// from OSystem::endGFXTransaction yourself.
-	// This is just an example template:
-	//_system->beginGFXTransaction();
-	//	// This setup the graphics mode according to users seetings
-	//	initCommonGFX(false);
-	//
-	//	// Specify dimensions of game graphics window.
-	//	// In this example: 320x200
-	//	_system->initSize(320, 200);
-	//FIXME: You really want to handle
-	//OSystem::kTransactionSizeChangeFailed here
-	//_system->endGFXTransaction();
-
+	// Initialize graphics:
+	_pixelFormat = Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
+	_gfx = Freescape::createRenderer(_system, &_pixelFormat);
+	_gfx->init();
+	_gfx->clear();
+	
 	Binary binary;
 	if (_targetName == "3Dkit")
 		binary = load16bitBinary("3DKIT.RUN");
 	else if (_targetName == "Driller")
 		binary = load8bitBinary("DRILLE.EXE", OFFSET_DRILLER);
+	else if (_targetName == "Castle")
+		binary = load8bitBinary("CME.EXE", OFFSET_CASTLE);
 	else
 		error("%s is an invalid game", _targetName.c_str());
 
 	_areasByAreaID = binary.areasByAreaID;
-	_border = binary.border;
-	_palette = binary.palette;
-
-	g_system->getPaletteManager()->setPalette(_palette->data(), 0, 16);
-
-	// Create debugger console. It requires GFX to be initialized
-	//Console *console = new Console(this);
-	//setDebugger(console);
+	_rawBorder = binary.border;
+	_rawPalette = binary.palette;
+	convertBorder();
 
 	debug("FreescapeEngine::init");
-	drawBorder();
 	// Simple main event loop
 	Common::Event evt;
+
+	drawBorder();
+
 	while (!shouldQuit()) {
 		g_system->getEventManager()->pollEvent(evt);
 		g_system->delayMillis(10);

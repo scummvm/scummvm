@@ -9,8 +9,11 @@
 #include "gui/debugger.h"
 
 #include "freescape/area.h"
+#include "freescape/gfx.h"
 
 namespace Freescape {
+
+class Renderer;
 
 typedef Common::HashMap<uint16, Area *> AreaMap;
 
@@ -33,10 +36,13 @@ private:
 	// We need random numbers
 	Common::RandomSource *_rnd;
 	Graphics::PixelFormat _pixelFormat;
+	Renderer *_gfx;
 	int _screenW, _screenH;
 
-	Common::Array<uint8> *_border;
-	Common::Array<uint8> *_palette;
+	Common::Array<uint8> *_rawBorder;
+	Graphics::Surface *_border;
+
+	Common::Array<uint8> *_rawPalette;
 	
 	uint32 _timeOfLastTick;
 	bool _hasReceivedTime;
@@ -50,6 +56,7 @@ public:
 	Graphics::Surface *_compositeSurface;
 
 	Common::Error run() override;
+	void convertBorder();
 	void drawBorder();
 	bool hasFeature(EngineFeature f) const override;
 	bool canLoadGameStateCurrently() override { return true; }
