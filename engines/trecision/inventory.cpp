@@ -265,7 +265,7 @@ void TrecisionEngine::showInventoryName(uint16 obj, bool showhide) {
 				strcat(locsent, _objName[_inventoryObj[obj]._name]);
 		}
 
-		uint16 lenText = TextLength(locsent, 0);
+		uint16 lenText = textLength(locsent, 0);
 		uint16 posX = CLIP(320 - (lenText / 2), 2, MAXX - 2 - lenText);
 		uint16 posY = MAXY - CARHEI;
 
@@ -285,7 +285,7 @@ void TrecisionEngine::showInventoryName(uint16 obj, bool showhide) {
 		uint16 posX = ICONMARGSX + ((iconPos(_curInventory) - _iconBase) * (ICONDX)) + ICONDX / 2;
 		uint16 posY = MAXY - CARHEI;
 		_lastInv = obj;
-		uint16 lenText = TextLength(_objName[_inventoryObj[obj]._name], 0);
+		uint16 lenText = textLength(_objName[_inventoryObj[obj]._name], 0);
 
 		posX = CLIP(posX - (lenText / 2), 2, MAXX - 2 - lenText);
 

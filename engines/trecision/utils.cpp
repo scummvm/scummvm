@@ -105,7 +105,7 @@ void TrecisionEngine::redrawString() {
 		if (isInventoryArea(_mouseY))
 			doEvent(MC_INVENTORY, ME_SHOWICONNAME, MP_DEFAULT, 0, 0, 0, 0);
 		else {
-			CheckMask(_mouseX, _mouseY);
+			checkMask(_mouseX, _mouseY);
 			ShowObjName(_curObj, true);
 		}
 	}
@@ -114,7 +114,7 @@ void TrecisionEngine::redrawString() {
 void StackText::doText() {
 	curString.x = x;
 	curString.y = y;
-	curString.dx = g_vm->TextLength(text, 0);
+	curString.dx = g_vm->textLength(text, 0);
 	if ((y == MAXY - CARHEI) && (curString.dx > 600))
 		curString.dx = curString.dx * 3 / 5;
 	else if ((y != MAXY - CARHEI) && (curString.dx > 960))
@@ -160,7 +160,7 @@ void TrecisionEngine::setRoom(uint16 r, bool b) {
 /*-------------------------------------------------
  * Compute string length from character 0 to num
  *-------------------------------------------------*/
-uint16 TrecisionEngine::TextLength(const char *text, uint16 num) {
+uint16 TrecisionEngine::textLength(const char *text, uint16 num) {
 	if (text == nullptr)
 		return 0;
 
@@ -173,7 +173,7 @@ uint16 TrecisionEngine::TextLength(const char *text, uint16 num) {
 	return retVal;
 }
 
-char TrecisionEngine::GetKey() {
+char TrecisionEngine::getKey() {
 	Common::KeyCode key = _curKey;
 	uint16 ascii = _curAscii;
 	_curKey = Common::KEYCODE_INVALID;
@@ -212,22 +212,22 @@ char TrecisionEngine::waitKey() {
 	return t;
 }
 
-void TrecisionEngine::NlDelay(uint32 val) {
-	uint32 sv = ReadTime();
+void TrecisionEngine::waitDelay(uint32 val) {
+	uint32 sv = readTime();
 
-	while (sv + val > ReadTime())
+	while (sv + val > readTime())
 		checkSystem();
 }
 
-void TrecisionEngine::FreeKey() {
+void TrecisionEngine::freeKey() {
 	_curKey = Common::KEYCODE_INVALID;
 }
 
-uint32 TrecisionEngine::ReadTime() {
+uint32 TrecisionEngine::readTime() {
 	return (g_system->getMillis() * 3) / 50;
 }
 
-bool TrecisionEngine::CheckMask(uint16 mx, uint16 my) {
+bool TrecisionEngine::checkMask(uint16 mx, uint16 my) {
 	for (int8 a = MAXOBJINROOM - 1; a >= 0; a--) {
 		uint16 checkedObj = _room[_curRoom]._object[a];
 		Common::Rect lim = _obj[checkedObj]._lim;
@@ -245,7 +245,7 @@ bool TrecisionEngine::CheckMask(uint16 mx, uint16 my) {
 				}
 
 				if (_obj[checkedObj]._mode & OBJMODE_MASK) {
-					uint8 *mask = MaskPointers[a];
+					uint8 *mask = _maskPointers[a];
 					int16 d = _obj[checkedObj]._px;
 					uint16 max = _obj[checkedObj]._py + _obj[checkedObj]._dy;
 
@@ -312,28 +312,28 @@ void TrecisionEngine::resetZBuffer(int x1, int y1, int x2, int y2) {
 
 void TrecisionEngine::openSys() {
 	// head
-	hh = 0;
-	FTexture[hh]._dx = 300 / 2;
-	FTexture[hh]._dy = 208 / 2;
-	FTexture[hh]._angle = 0;
-	FTexture[hh]._texture = _textureArea;
-	FTexture[hh]._flag = TEXTUREACTIVE + TEXTURECYLIND;
+	int32 idx = 0;
+	FTexture[idx]._dx = 300 / 2;
+	FTexture[idx]._dy = 208 / 2;
+	FTexture[idx]._angle = 0;
+	FTexture[idx]._texture = _textureArea;
+	FTexture[idx]._flag = TEXTUREACTIVE + TEXTURECYLIND;
 
 	// body
-	hh = 1;
-	FTexture[hh]._dx = 300;
-	FTexture[hh]._dy = 300;
-	FTexture[hh]._angle = 0;
-	FTexture[hh]._texture = FTexture[0]._texture + (300 * 208) / 4;
-	FTexture[hh]._flag = TEXTUREACTIVE + TEXTURECYLIND;
+	idx = 1;
+	FTexture[idx]._dx = 300;
+	FTexture[idx]._dy = 300;
+	FTexture[idx]._angle = 0;
+	FTexture[idx]._texture = FTexture[0]._texture + (300 * 208) / 4;
+	FTexture[idx]._flag = TEXTUREACTIVE + TEXTURECYLIND;
 
 	// arms
-	hh = 2;
-	FTexture[hh]._dx = 300;
-	FTexture[hh]._dy = 150;
-	FTexture[hh]._angle = 0;
-	FTexture[hh]._texture = FTexture[1]._texture + 300 * 300;
-	FTexture[hh]._flag = TEXTUREACTIVE + TEXTURECYLIND;
+	idx = 2;
+	FTexture[idx]._dx = 300;
+	FTexture[idx]._dy = 150;
+	FTexture[idx]._angle = 0;
+	FTexture[idx]._texture = FTexture[1]._texture + 300 * 300;
+	FTexture[idx]._flag = TEXTUREACTIVE + TEXTURECYLIND;
 
 	delete _actor;
 	_actor = new SActor(this);

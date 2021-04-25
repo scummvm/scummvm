@@ -299,7 +299,7 @@ int32 SoundManager::talkStart(const char *name) {
 	Audio::SeekableAudioStream *speechStream = Audio::makeWAVStream(stream, DisposeAfterUse::YES);
 
 	g_system->getMixer()->playStream(Audio::Mixer::kSpeechSoundType, &_soundHandle[kSoundChannelSpeech], speechStream);
-	_characterSpeakTime = _vm->ReadTime();
+	_characterSpeakTime = _vm->readTime();
 
 	return TIME(speechStream->getLength().msecs());
 }

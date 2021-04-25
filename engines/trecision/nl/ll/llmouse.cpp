@@ -60,7 +60,7 @@ uint16 SDText::checkDText() {
 		return 0;
 
 	uint8 curLine = 0;
-	if (g_vm->TextLength(text, 0) <= dx) {
+	if (g_vm->textLength(text, 0) <= dx) {
 		strcpy((char *)DTextLines[curLine], text);
 		return CARHEI;
 	}
@@ -73,9 +73,9 @@ uint16 SDText::checkDText() {
 	while (a < strlen(text)) {
 		a++;
 		if (text[a] == ' ') {
-			if (g_vm->TextLength(text + curInit, a - curInit) <= dx)
+			if (g_vm->textLength(text + curInit, a - curInit) <= dx)
 				lastSpace = a;
-			else if (g_vm->TextLength(text + curInit, lastSpace - curInit) <= dx) {
+			else if (g_vm->textLength(text + curInit, lastSpace - curInit) <= dx) {
 				uint16 b;
 				for (b = curInit; b < lastSpace; b++)
 					DTextLines[curLine][b - curInit] = text[b];
@@ -90,7 +90,7 @@ uint16 SDText::checkDText() {
 			} else
 				return 0;
 		} else if (text[a] == '\0') {
-			if (g_vm->TextLength(text + curInit, a - curInit) <= dx) {
+			if (g_vm->textLength(text + curInit, a - curInit) <= dx) {
 				uint16 b;
 				for (b = curInit; b < a; b++)
 					DTextLines[curLine][b - curInit] = text[b];
@@ -101,7 +101,7 @@ uint16 SDText::checkDText() {
 				return tmpDy;
 			}
 
-			if (g_vm->TextLength(text + curInit, lastSpace - curInit) <= dx) {
+			if (g_vm->textLength(text + curInit, lastSpace - curInit) <= dx) {
 				uint16 b;
 				for (b = curInit; b < lastSpace; b++)
 					DTextLines[curLine][b - curInit] = text[b];
@@ -143,7 +143,7 @@ void SDText::DText(uint16 *frameBuffer) {
 
 	for (uint16 b = 0; b < (curDy / CARHEI); b++) {
 		char *curText = (char *)DTextLines[b];
-		uint16 inc = (dx - g_vm->TextLength(curText, 0)) / 2;
+		uint16 inc = (dx - g_vm->textLength(curText, 0)) / 2;
 		uint16 len = strlen(curText);
 
 		if (len >= MAXCHARS) {
@@ -158,8 +158,8 @@ void SDText::DText(uint16 *frameBuffer) {
 			uint16 fontDataOffset = 768;
 			const uint16 charWidth = g_vm->_font[curChar * 3 + 2];
 
-			if (c == len - 1 && g_vm->BlinkLastDTextChar != MASKCOL)
-				tmpTCol = g_vm->BlinkLastDTextChar;
+			if (c == len - 1 && g_vm->_blinkLastDTextChar != MASKCOL)
+				tmpTCol = g_vm->_blinkLastDTextChar;
 
 			for (uint16 a = b * CARHEI; a < (b + 1) * CARHEI; a++) {
 				uint16 curPos = 0;

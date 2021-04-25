@@ -3084,7 +3084,7 @@ bool LogicManager::mouseOperate(uint16 curObj) {
 		RegenRoom();
 		if ((_comb49[3] == oFORO749) && (_comb49[2] == oFORO849) && (_comb49[1] == oFORO449) && (_comb49[0] == oFORO549)) {
 			PaintScreen(false);
-			_vm->NlDelay(60);
+			_vm->waitDelay(60);
 			_vm->_obj[oOMBRAS49]._mode |= OBJMODE_OBJSTATUS;
 			_vm->_obj[oSCOMPARTO49]._mode |= OBJMODE_OBJSTATUS;
 			_vm->_obj[oAGENDA49]._mode |= OBJMODE_OBJSTATUS;
@@ -3141,7 +3141,7 @@ bool LogicManager::mouseOperate(uint16 curObj) {
 		if (a < 5)
 			break;
 		PaintScreen(false);
-		_vm->NlDelay(60);
+		_vm->waitDelay(60);
 		if ((_comb4CT[0] == 5) && (_comb4CT[1] == 6) && (_comb4CT[2] == 2) &&
 			(_comb4CT[3] == 3) && (_comb4CT[4] == 9) && (_comb4CT[5] == 6)) {
 			for (a = 0; a < 6; a++) {
@@ -3315,7 +3315,7 @@ bool LogicManager::mouseOperate(uint16 curObj) {
 			break;
 
 		PaintScreen(false);
-		_vm->NlDelay(60);
+		_vm->waitDelay(60);
 		_count58 = 0;
 		for (int a = 0; a < 6; a++)
 			_vm->_obj[oLED158 + a]._mode &= ~OBJMODE_OBJSTATUS;
@@ -3876,7 +3876,7 @@ void LogicManager::doMouseLeftRight() {
 		}
 	} else if (_vm->_curRoom == kRoomControlPanel) {
 		// Sys
-		_vm->CheckMask(_vm->_curMessage->_u16Param1, _vm->_curMessage->_u16Param2);
+		_vm->checkMask(_vm->_curMessage->_u16Param1, _vm->_curMessage->_u16Param2);
 		DoSys(_vm->_curObj);
 		return;
 	}
@@ -3908,7 +3908,7 @@ void LogicManager::doMouseLeftRight() {
 
 	// Special management for 2C wheels
 	if ((_vm->_obj[oBASEWHEELS2C]._mode & OBJMODE_OBJSTATUS) && (_vm->_curRoom == kRoom2C)) {
-		if (_vm->CheckMask(_vm->_curMessage->_u16Param1, _vm->_curMessage->_u16Param2)) {
+		if (_vm->checkMask(_vm->_curMessage->_u16Param1, _vm->_curMessage->_u16Param2)) {
 			if ((_vm->_curObj >= oWHEEL1A2C) && (_vm->_curObj <= oWHEEL12C2C))
 				_wheel = (_vm->_curObj - oWHEEL1A2C) % 3;
 			else if (_vm->_curObj == oPULSANTE2C) {
@@ -3969,7 +3969,7 @@ void LogicManager::doMouseLeftRight() {
 		int pmousex = _vm->_curMessage->_u16Param1;
 		int pmousey = _vm->_curMessage->_u16Param2;
 		if (!_vm->_logicMgr->mouseClick(_vm->_curObj)) {
-			if (_vm->CheckMask(_vm->_curMessage->_u16Param1, _vm->_curMessage->_u16Param2)) {
+			if (_vm->checkMask(_vm->_curMessage->_u16Param1, _vm->_curMessage->_u16Param2)) {
 				if ((_vm->_obj[_vm->_curObj]._lim.right - _vm->_obj[_vm->_curObj]._lim.left) < MAXX / 7) {
 					pmousex = (_vm->_obj[_vm->_curObj]._lim.left + _vm->_obj[_vm->_curObj]._lim.right) / 2;
 					pmousey = ((_vm->_obj[_vm->_curObj]._lim.top + _vm->_obj[_vm->_curObj]._lim.bottom) / 2) + TOP;
@@ -3980,7 +3980,7 @@ void LogicManager::doMouseLeftRight() {
 		}
 		_vm->_characterQueue.initQueue();
 
-		if (_vm->CheckMask(_vm->_curMessage->_u16Param1, _vm->_curMessage->_u16Param2) && !_vm->_flagDialogActive) {
+		if (_vm->checkMask(_vm->_curMessage->_u16Param1, _vm->_curMessage->_u16Param2) && !_vm->_flagDialogActive) {
 			if ((_vm->_curRoom == kRoom1D) && !(_vm->_room[kRoom1D]._flag & kObjFlagExtra) && (_vm->_curObj != oSCALA1D))
 				_vm->_curObj = oDONNA1D;
 			else if ((_vm->_curRoom == kRoom2B) && (_vm->_room[kRoom2B]._flag & kObjFlagExtra) && (_vm->_curObj != oCARTELLO2B) && (_vm->_curObj != od2BALLA28)) {
@@ -4242,7 +4242,7 @@ void LogicManager::doSystemChangeRoom() {
 void LogicManager::DoSys(uint16 curObj) {
 	switch (curObj) {
 	case o00QUIT:
-		if (_vm->QuitGame())
+		if (_vm->quitGame())
 			doEvent(MC_SYSTEM, ME_QUIT, MP_SYSTEM, 0, 0, 0, 0);
 		break;
 
@@ -4256,7 +4256,7 @@ void LogicManager::DoSys(uint16 curObj) {
 		if (_vm->_oldRoom == kRoomControlPanel)
 			break;
 		_vm->_curRoom = _vm->_obj[o00EXIT]._goRoom;
-		if (!_vm->DataSave()) {
+		if (!_vm->dataSave()) {
 			_vm->showInventoryName(NO_OBJECTS, false);
 			doEvent(MC_INVENTORY, ME_SHOWICONNAME, MP_DEFAULT, _vm->_mouseX, _vm->_mouseY, 0, 0);
 			doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, _vm->_obj[o00EXIT]._goRoom, 0, 0, 0);
@@ -4265,7 +4265,7 @@ void LogicManager::DoSys(uint16 curObj) {
 		break;
 
 	case o00LOAD:
-		if (!_vm->DataLoad()) {
+		if (!_vm->dataLoad()) {
 			_vm->showInventoryName(NO_OBJECTS, false);
 			doEvent(MC_INVENTORY, ME_SHOWICONNAME, MP_DEFAULT, _vm->_mouseX, _vm->_mouseY, 0, 0);
 		}

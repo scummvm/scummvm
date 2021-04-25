@@ -179,11 +179,11 @@ TrecisionEngine::TrecisionEngine(OSystem *syst) : Engine(syst) {
 	_flagWaitRegen = false;
 
 	for (int i = 0; i < MAXOBJINROOM; ++i) {
-		ObjPointers[i] = nullptr;
-		MaskPointers[i] = nullptr;
+		_objPointers[i] = nullptr;
+		_maskPointers[i] = nullptr;
 	}
 
-	BlinkLastDTextChar = MASKCOL;
+	_blinkLastDTextChar = MASKCOL;
 }
 
 TrecisionEngine::~TrecisionEngine() {
@@ -210,8 +210,8 @@ TrecisionEngine::~TrecisionEngine() {
 	delete[] _screenBuffer;
 
 	for (int i = 0; i < MAXOBJINROOM; ++i) {
-		delete[] ObjPointers[i];
-		delete[] MaskPointers[i];
+		delete[] _objPointers[i];
+		delete[] _maskPointers[i];
 	}
 }
 
@@ -699,7 +699,7 @@ void TrecisionEngine::loadSaveSlots(Common::StringArray &saveNames) {
 	refreshInventory(0, 0);
 }
 
-bool TrecisionEngine::DataSave() {
+bool TrecisionEngine::dataSave() {
 	uint8 OldInv[MAXICON], OldIconBase, OldInvLen;
 	char ch;
 	Common::StringArray saveNames;
@@ -744,7 +744,7 @@ bool TrecisionEngine::DataSave() {
 	_animQueue.initQueue();
 	_characterQueue.initQueue();
 
-	FreeKey();
+	freeKey();
 
 	// Reset the inventory and turn it into save slots
 	memcpy(OldInv, _inventory, MAXICON);
@@ -765,7 +765,7 @@ insave:
 
 	for (;;) {
 		checkSystem();
-		GetKey();
+		getKey();
 
 		int16 mx = _mouseX;
 		int16 my = _mouseY;
@@ -782,7 +782,7 @@ insave:
 					memset(_screenBuffer + MAXX * a, 0, MAXX * 2);
 
 				posx = ICONMARGSX + ((CurPos) * (ICONDX)) + ICONDX / 2;
-				LenText = TextLength(saveNames[CurPos].c_str(), 0);
+				LenText = textLength(saveNames[CurPos].c_str(), 0);
 
 				posx = CLIP(posx - (LenText / 2), 2, MAXX - 2 - LenText);
 				SText.set(posx, FIRSTLINE + ICONDY + 10, LenText, CARHEI, 0, 0, LenText, CARHEI, MOUSECOL, MASKCOL, saveNames[CurPos].c_str());
@@ -825,8 +825,8 @@ insave:
 		for (;;) {
 			_keybInput = true;
 			checkSystem();
-			ch = GetKey();
-			FreeKey();
+			ch = getKey();
+			freeKey();
 
 			_keybInput = false;
 
@@ -853,16 +853,16 @@ insave:
 			saveNames[CurPos] += '_';	// add blinking cursor
 
 			posx = ICONMARGSX + ((CurPos) * (ICONDX)) + ICONDX / 2;
-			LenText = TextLength(saveNames[CurPos].c_str(), 0);
+			LenText = textLength(saveNames[CurPos].c_str(), 0);
 
 			posx = CLIP(posx - (LenText / 2), 2, MAXX - 2 - LenText);
 			SText.set(posx, FIRSTLINE + ICONDY + 10, LenText, CARHEI, 0, 0, LenText, CARHEI, MOUSECOL, MASKCOL, saveNames[CurPos].c_str());
 
-			if ((ReadTime() / 8) & 1)
-				BlinkLastDTextChar = 0x0000;
+			if ((readTime() / 8) & 1)
+				_blinkLastDTextChar = 0x0000;
 
 			SText.DText();
-			BlinkLastDTextChar = MASKCOL;
+			_blinkLastDTextChar = MASKCOL;
 
 			saveNames[CurPos].deleteLastChar();	// remove blinking cursor
 
@@ -902,7 +902,7 @@ insave:
 	return ret;
 }
 
-bool TrecisionEngine::DataLoad() {
+bool TrecisionEngine::dataLoad() {
 	Common::StringArray saveNames;
 	saveNames.reserve(MAXSAVEFILE);
 	bool retval = true;
@@ -941,7 +941,7 @@ bool TrecisionEngine::DataLoad() {
 	_animQueue.initQueue();
 	_characterQueue.initQueue();
 
-	FreeKey();
+	freeKey();
 
 	uint8 OldInv[MAXICON];
 	// Reset the inventory and turn it into save slots
@@ -960,7 +960,7 @@ bool TrecisionEngine::DataLoad() {
 
 	for (;;) {
 		checkSystem();
-		GetKey();
+		getKey();
 
 		if (_mouseY >= FIRSTLINE &&
 			_mouseY < (FIRSTLINE + ICONDY) &&
@@ -974,7 +974,7 @@ bool TrecisionEngine::DataLoad() {
 					memset(_screenBuffer + MAXX * a, 0, MAXX * 2);
 
 				uint16 posX = ICONMARGSX + ((CurPos) * (ICONDX)) + ICONDX / 2;
-				uint16 lenText = TextLength(saveNames[CurPos].c_str(), 0);
+				uint16 lenText = textLength(saveNames[CurPos].c_str(), 0);
 				if (posX - (lenText / 2) < 2)
 					posX = 2;
 				else
