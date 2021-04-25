@@ -97,6 +97,9 @@ Cast::~Cast() {
 		for (Common::HashMap<int, CastMember *>::iterator it = _loadedCast->begin(); it != _loadedCast->end(); ++it)
 			delete it->_value;
 
+	for (Common::HashMap<uint16, CastMemberInfo *>::iterator it = _castsInfo.begin(); it != _castsInfo.end(); ++it)
+		delete it->_value;
+
 	delete _loadedStxts;
 	delete _loadedCast;
 	delete _lingoArchive;
