@@ -322,7 +322,7 @@ void AGOSEngine::playSting(uint16 soundId) {
 	if (!_midi->_adLibMusic || !_midi->_enable_sfx)
 		return;
 
-	char filename[15];
+	char filename[16];
 
 	Common::File mus_file;
 	uint16 mus_offset;
