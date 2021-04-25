@@ -39,6 +39,7 @@
 #define SMKICONBUFFER   2L
 
 #define MAXSYSTEXT	30
+#define MAXMAT 20
 
 namespace Common {
 class SeekableReadStream;
@@ -105,7 +106,6 @@ extern uint8  TextStatus;
 
 int Compare(const void *p1, const void *p2);
 void RedrawRoom();
-void openSys();
 void ReadLoc();
 void TendIn();
 void ReadObj(Common::SeekableReadStream *stream);

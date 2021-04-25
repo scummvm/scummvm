@@ -52,6 +52,7 @@ class SoundManager;
 #define MAXOBJ          	  1400           // Game objects
 #define MAXINVENTORY    	  150            // Inventory Items
 #define MAXSAVEFILE		12
+#define MAXLIGHT 40
 
 enum TrecisionMessageIds {
 	kMessageSavePosition = 9,
@@ -73,7 +74,13 @@ class TrecisionEngine : public Engine {
 	void initNames();
 	void LoadAll();
 	void loadSaveSlots(Common::StringArray &saveNames);
+	void openSys();
 	Graphics::Surface *convertScummVMThumbnail(Graphics::Surface *thumbnail);
+
+	STexture FTexture[MAXMAT];
+	int32 hh;
+	SLight VLight[MAXLIGHT];
+	SCamera FCamera;
 
 public:
 	TrecisionEngine(OSystem *syst);
@@ -251,7 +258,6 @@ public:
 	uint8 *_textureArea;
 	uint16 *_icons;
 	int16 *_zBuffer;
-	uint16 *_extraRoomObject;
 
 	SActor *_actor;
 

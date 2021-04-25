@@ -40,19 +40,12 @@
 
 namespace Trecision {
 
-#define MAXMAT		20
-
 // GAME POINTER
 uint16 _actionPosition[MAXACTIONINROOM];			// Starting position of each action in the room
 // DATA POINTER
 char *TextArea;
 // DTEXT
 char DTextLines[MAXDTEXTLINES][MAXDTEXTCHARS];
-// 3D
-SLight  VLight[MAXLIGHT];
-SCamera FCamera;
-STexture FTexture[MAXMAT];
-int32  hh;
 // MOUSE
 SDText curString;
 SDText oldString;
@@ -76,61 +69,6 @@ struct SBmInfo {
 		dy = stream->readUint16LE();
 	}
 } BmInfo;
-
-void openSys() {
-	// head
-	hh = 0;
-	FTexture[hh]._dx = 300 / 2;
-	FTexture[hh]._dy = 208 / 2;
-	FTexture[hh]._angle = 0;
-	FTexture[hh]._texture = g_vm->_textureArea;
-	FTexture[hh]._flag = TEXTUREACTIVE + TEXTURECYLIND;
-
-	// body
-	hh = 1;
-	FTexture[hh]._dx = 300;
-	FTexture[hh]._dy = 300;
-	FTexture[hh]._angle = 0;
-	FTexture[hh]._texture = FTexture[0]._texture + (300 * 208) / 4;
-	FTexture[hh]._flag = TEXTUREACTIVE + TEXTURECYLIND;
-
-	// arms
-	hh = 2;
-	FTexture[hh]._dx = 300;
-	FTexture[hh]._dy = 150;
-	FTexture[hh]._angle = 0;
-	FTexture[hh]._texture = FTexture[1]._texture + 300 * 300;
-	FTexture[hh]._flag = TEXTUREACTIVE + TEXTURECYLIND;
-
-	delete g_vm->_actor;
-	g_vm->_actor = new SActor(g_vm);
-	g_vm->_actor->readActor("jm.om");
-
-	g_vm->_actor->_light = (SLight *)&VLight;
-	g_vm->_actor->_camera = (SCamera *)&FCamera;
-	g_vm->_actor->_texture = (STexture *)&FTexture[0];
-
-	TextArea = new char[MAXTEXTAREA];
-
-	// zbuffer
-	g_vm->_zBuffer = new int16[ZBUFFERSIZE / 2];
-	for (int c = 0; c < ZBUFFERSIZE / 2; ++c)
-		g_vm->_zBuffer[c] = 0x7FFF;
-
-	g_vm->_extraRoomObject = nullptr;
-
-	g_vm->_screenBuffer = new uint16[MAXX * MAXY];
-	memset(g_vm->_screenBuffer, 0, MAXX * MAXY * 2);
-
-	g_vm->_graphicsMgr->clearScreen();
-
-	g_vm->hideCursor();
-
-	for (int i = 0; i < MAXOBJINROOM; ++i) {
-		OldObjStatus[i] = false;
-		VideoObjStatus[i] = false;
-	}
-}
 
 static const float _vertsCorr[104][3] = {
 	0.000000f,	0.000000f,	0.000000f,		0.000000f,	0.000000f,	0.000000f,
