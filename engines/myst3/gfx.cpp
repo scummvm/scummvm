@@ -22,10 +22,11 @@
 
 #include "engines/myst3/gfx.h"
 
-#include "engines/util3d.h"
+#include "engines/util.h"
 
 #include "common/config-manager.h"
 
+#include "graphics/renderer.h"
 #include "graphics/surface.h"
 
 #include "math/glmath.h"
@@ -191,19 +192,25 @@ Renderer *createRenderer(OSystem *system) {
 	} else {
 		width = Renderer::kOriginalWidth;
 	}
+	Graphics::RendererType matchingRendererType = initGraphicsAndGetRendererType(width, height);
+	bool backendCapableOpenGL = g_system->hasFeature(OSystem::kFeatureOpenGLForGame);
 
-	return createSelectedRender<Renderer, OSystem>(
-		width,
-		height,
 #if defined(USE_GLES2) || defined(USE_OPENGL_SHADERS)
-		CreateGfxOpenGLShader,
+	if (backendCapableOpenGL && matchingRendererType == Graphics::kRendererTypeOpenGLShaders) {
+		return CreateGfxOpenGLShader(system);
+	}
 #endif
 #if defined(USE_OPENGL_GAME) && !defined(USE_GLES2)
-		CreateGfxOpenGL,
+	if (backendCapableOpenGL && matchingRendererType == Graphics::kRendererTypeOpenGL) {
+		return CreateGfxOpenGL(system);
+	}
 #endif
-		CreateGfxTinyGL,
-		system
-	);
+	if (matchingRendererType == Graphics::kRendererTypeTinyGL) {
+		return CreateGfxTinyGL(system);
+	}
+
+	Common::String rendererConfig = ConfMan.get("renderer");
+	error("Unable to create a '%s' renderer", rendererConfig.c_str());
 }
 
 void Renderer::renderDrawable(Drawable *drawable, Window *window) {
