@@ -157,6 +157,9 @@ ProcId MovieGump::U8MovieViewer(Common::SeekableReadStream *rs, bool fade, bool 
 }
 
 void MovieGump::loadSubtitles(Common::SeekableReadStream *rs) {
+	if (!rs)
+		return;
+
 	const uint32 id = rs->readUint32BE();
 	rs->seek(0);
 
