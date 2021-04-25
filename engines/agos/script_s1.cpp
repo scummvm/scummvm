@@ -540,7 +540,7 @@ void AGOSEngine_Simon1::os1_loadStrings() {
 	// 185: load sound files
 	_soundFileId = getVarOrWord();
 	if (getPlatform() == Common::kPlatformAmiga && (getFeatures() & GF_TALKIE)) {
-		char buf[10];
+		char buf[13];
 		sprintf(buf, "%d%s", _soundFileId, "Effects");
 		_sound->readSfxFile(buf);
 		sprintf(buf, "%d%s", _soundFileId, "simon");
