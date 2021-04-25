@@ -190,9 +190,6 @@ void WeaselGump::InitGump(Gump *newparent, bool take_focus) {
 	if (item)
 		_credits = item->getQuality();
 
-	// TODO: remove me (for testing)
-	_credits += 10000;
-
 	_weaselDat = GameData::get_instance()->getWeaselDat(_level);
 	if (!_weaselDat || _weaselDat->getNumItems() == 0)
 		Close();
