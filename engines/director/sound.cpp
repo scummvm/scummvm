@@ -228,13 +228,14 @@ void DirectorSound::systemBeep() {
 }
 
 Audio::AudioStream *AudioDecoder::getLoopingAudioStream() {
-	Audio::RewindableAudioStream *target = getAudioStream(DisposeAfterUse::NO);
+	Audio::RewindableAudioStream *target = getAudioStream(DisposeAfterUse::YES);
 	if (!target)
 		return nullptr;
 	return new Audio::LoopingAudioStream(target, 0);
 }
 
-SNDDecoder::SNDDecoder() {
+SNDDecoder::SNDDecoder()
+		: AudioDecoder() {
 	_data = nullptr;
 	_channels = 0;
 	_size = 0;
@@ -380,6 +381,11 @@ Audio::RewindableAudioStream *SNDDecoder::getAudioStream(DisposeAfterUse::Flag d
 	byte *buffer = (byte *)malloc(_size);
 	memcpy(buffer, _data, _size);
 	return Audio::makeRawStream(buffer, _size, _rate, _flags, disposeAfterUse);
+}
+
+AudioFileDecoder::AudioFileDecoder(Common::String &path)
+		: AudioDecoder() {
+	_path = path;
 }
 
 Audio::RewindableAudioStream *AudioFileDecoder::getAudioStream(DisposeAfterUse::Flag disposeAfterUse) {

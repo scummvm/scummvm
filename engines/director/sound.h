@@ -91,9 +91,10 @@ private:
 
 class AudioDecoder {
 public:
+	AudioDecoder() {};
 	virtual ~AudioDecoder() {};
 public:
-	virtual Audio::RewindableAudioStream *getAudioStream(DisposeAfterUse::Flag disposeAfterUse = DisposeAfterUse::YES) = 0;
+	virtual Audio::RewindableAudioStream *getAudioStream(DisposeAfterUse::Flag disposeAfterUse = DisposeAfterUse::YES) { return nullptr; }
 	virtual Audio::AudioStream *getLoopingAudioStream();
 };
 
@@ -115,9 +116,9 @@ private:
 	byte _flags;
 };
 
-class AudioFileDecoder: public AudioDecoder {
+class AudioFileDecoder : public AudioDecoder {
 public:
-	AudioFileDecoder(Common::String &path): _path(path) {};
+	AudioFileDecoder(Common::String &path);
 	~AudioFileDecoder() {};
 
 	void setPath(Common::String &path);

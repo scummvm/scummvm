@@ -182,6 +182,7 @@ public:
 class SoundCastMember : public CastMember {
 public:
 	SoundCastMember(Cast *cast, uint16 castId, Common::SeekableReadStreamEndian &stream, uint16 version);
+	~SoundCastMember();
 
 	bool _looping;
 	AudioDecoder *_audio;

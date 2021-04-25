@@ -29,6 +29,7 @@
 #include "director/cursor.h"
 #include "director/channel.h"
 #include "director/movie.h"
+#include "director/sound.h"
 #include "director/window.h"
 #include "director/stxt.h"
 
@@ -488,6 +489,11 @@ SoundCastMember::SoundCastMember(Cast *cast, uint16 castId, Common::SeekableRead
 	_type = kCastSound;
 	_audio = nullptr;
 	_looping = 0;
+}
+
+SoundCastMember::~SoundCastMember() {
+	if (_audio)
+		delete _audio;
 }
 
 
