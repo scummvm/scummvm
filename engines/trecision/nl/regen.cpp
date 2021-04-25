@@ -40,7 +40,7 @@ int VisualRef[50];
 
 SDObj DObj;
 
-void PaintScreen(uint8 flag) {
+void PaintScreen(bool flag) {
 	AtFrameNext();
 	PaintRegenRoom();
 

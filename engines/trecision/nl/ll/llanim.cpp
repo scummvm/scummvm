@@ -55,7 +55,7 @@ void RedrawRoom() {
 
 	g_vm->_flagShowCharacter = g_vm->_dialogMgr->showCharacterAfterDialog();
 
-	for (int i = 0; i < 6; i++) {
+	for (int i = 0; i < 6; ++i) {
 		if (curDialog == elevatorActions[i].dialog && curChoice == elevatorActions[i].choice) {
 			StartCharacterAction(elevatorActions[i].action, elevatorActions[i].newRoom, 20, 0);
 			break;
@@ -73,15 +73,14 @@ void RedrawRoom() {
 	if (bgAnim)
 		g_vm->_animMgr->startSmkAnim(bgAnim);
 
-	if (g_vm->_curRoom == kRoom4P && curDialog == dF4PI) {
+	if (g_vm->_curRoom == kRoom4P && curDialog == dF4PI)
 		g_vm->_animMgr->smkGoto(kSmackerBackground, 21);
-	}
 
 	RegenRoom();
 
 	TextStatus = TEXT_OFF;
 	g_vm->_flagPaintCharacter = true;
-	PaintScreen(1);
+	PaintScreen(true);
 	g_vm->_graphicsMgr->copyToScreen(0, 0, 640, 480);
 }
 

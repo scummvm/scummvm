@@ -51,7 +51,7 @@ void ProcessTime() {
 			OldLightIcon = g_vm->_lightIcon;
 		}
 
-		PaintScreen(0);
+		PaintScreen(false);
 		g_vm->_textStackTop = -1;
 
 		g_vm->_flagScreenRefreshed = true;

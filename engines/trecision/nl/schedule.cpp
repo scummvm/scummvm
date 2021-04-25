@@ -75,7 +75,7 @@ void doEvent(uint8 cls,  uint8 event,  uint8 priority,
 
 void Scheduler() {
 	static uint8 token = CLASS_CHAR;
-	static uint8 counter;
+	static uint8 counter = 0;
 	bool retry = true;
 
 	while (retry) {

@@ -117,7 +117,7 @@ void DialogManager::playDialog(uint16 i) {
 	_vm->_inventoryCounter = INVENTORY_HIDE;
 	_vm->clearText();
 	_vm->drawString();
-	PaintScreen(1);
+	PaintScreen(true);
 
 	memset(_vm->_screenBuffer, 0, MAXX * TOP * 2);
 	_vm->_graphicsMgr->copyToScreen(0, 0, MAXX, TOP);
