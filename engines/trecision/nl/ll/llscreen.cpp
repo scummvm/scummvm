@@ -447,7 +447,7 @@ void TendIn() {
 
 	g_vm->_flagPaintCharacter = true;
 	g_vm->_soundMgr->waitEndFading();
-	PaintScreen(1);
+	PaintScreen(true);
 
 	g_vm->_graphicsMgr->copyToScreen(0, 0, MAXX, MAXY);
 }

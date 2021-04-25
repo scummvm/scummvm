@@ -63,7 +63,7 @@ void AtFrameEnd(int type);
 void AtFrameHandler(int type);
 void ProcessTime();
 void ProcessMouse();
-void PaintScreen(uint8 flag);
+void PaintScreen(bool flag);
 void PaintObjAnm(uint16 CurBox);
 void doEvent(uint8 cls, uint8 event, uint8 priority, uint16 u16Param1, uint16 u16Param2, uint8 u8Param, uint32 u32Param);
 void Scheduler();

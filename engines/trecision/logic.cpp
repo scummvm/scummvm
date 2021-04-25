@@ -3083,7 +3083,7 @@ bool LogicManager::mouseOperate(uint16 curObj) {
 		_vm->_soundMgr->play(wASTA49);
 		RegenRoom();
 		if ((_comb49[3] == oFORO749) && (_comb49[2] == oFORO849) && (_comb49[1] == oFORO449) && (_comb49[0] == oFORO549)) {
-			PaintScreen(0);
+			PaintScreen(false);
 			_vm->NlDelay(60);
 			_vm->_obj[oOMBRAS49]._mode |= OBJMODE_OBJSTATUS;
 			_vm->_obj[oSCOMPARTO49]._mode |= OBJMODE_OBJSTATUS;
@@ -3140,7 +3140,7 @@ bool LogicManager::mouseOperate(uint16 curObj) {
 		RegenRoom();
 		if (a < 5)
 			break;
-		PaintScreen(0);
+		PaintScreen(false);
 		_vm->NlDelay(60);
 		if ((_comb4CT[0] == 5) && (_comb4CT[1] == 6) && (_comb4CT[2] == 2) &&
 			(_comb4CT[3] == 3) && (_comb4CT[4] == 9) && (_comb4CT[5] == 6)) {
@@ -3314,7 +3314,7 @@ bool LogicManager::mouseOperate(uint16 curObj) {
 		if (_count58 < 6)
 			break;
 
-		PaintScreen(0);
+		PaintScreen(false);
 		_vm->NlDelay(60);
 		_count58 = 0;
 		for (int a = 0; a < 6; a++)
