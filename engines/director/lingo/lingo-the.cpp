@@ -1279,13 +1279,6 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 		{
 			int castId = d.asCastId();
 			if (castId != sprite->_castId) {
-				// WORKAROUND: Chop Suey cursor is not marked puppet, so it will flash
-				// unnecessarily on frame change unless it is puppet.
-				if (!sprite->_puppet) {
-					warning("setTheSprite(): kTheCastNum: Sprite %d not a puppet", id);
-					sprite->_puppet = true;
-				}
-
 				g_director->getCurrentWindow()->addDirtyRect(channel->getBbox());
 				channel->setCast(castId);
 				channel->_dirty = true;
