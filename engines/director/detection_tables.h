@@ -333,7 +333,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	WINDEMO("c64pack", "Demo", "C64DEMO.EXE", "0458e44d9ad4ae0d3a583ac4141d21ae", 1007517, 400), // full game is not Director
 
-	WINGAME("chopsuey", "", "CHOPSUEY.EXE", "785e26240153a028549e8a66c2e904bf", 772382, 400),
+	WINGAME("chopsuey", "", "CHOPSUEY.EXE", "785e26240153a028549e8a66c2e904bf", 772382, 404),
 
 	MACGAME_l("chuteng", "", "ChuTeng", "ea646eccc9a53f44ce082459d4809a06", 484351, Common::JA_JPN, 400), // executable file name is in Japanese characters
 	WINGAME_l("chuteng", "", "CHUTENG.EXE", "aaef7b33829ff7b0243412c89869e011", 746971, Common::JA_JPN, 400),
