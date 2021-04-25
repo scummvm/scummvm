@@ -139,10 +139,10 @@ static const int _vertsCorrList[84] = {
 	379, 380, 381, 382
 };
 
-void SActor::readActor(const char *filename) {
+void Actor::readActor(const char *filename) {
 	_vm->_graphicsMgr->updatePixelFormat((uint16 *)_textureMat, 256 * 91);
 
-	Common::SeekableReadStream *ff = g_vm->_dataFile.createReadStreamForMember(filename);
+	Common::SeekableReadStream *ff = _vm->_dataFile.createReadStreamForMember(filename);
 	if (ff == nullptr)
 		error("readActor - Error opening file %s", filename);
 
@@ -162,7 +162,7 @@ void SActor::readActor(const char *filename) {
 	_faceNum = ff->readUint32LE();
 	delete ff;
 
-	ff = g_vm->_dataFile.createReadStreamForMember("mat.tex");
+	ff = _vm->_dataFile.createReadStreamForMember("mat.tex");
 	if (ff == nullptr)
 		error("readActor - Error opening file mat.tex");
 
@@ -171,7 +171,7 @@ void SActor::readActor(const char *filename) {
 			_textureMat[i][j] = ff->readUint16LE();
 	}
 
-	g_vm->_graphicsMgr->updatePixelFormat((uint16 *)_textureMat, 91 * 256);
+	_vm->_graphicsMgr->updatePixelFormat((uint16 *)_textureMat, 91 * 256);
 
 	for (int i = 0; i < MAXFACE; ++i) {
 		for (int j = 0; j < 3; ++j) {
@@ -321,6 +321,15 @@ void SActor::readActor(const char *filename) {
 			}
 		}
 	}
+}
+
+void Actor::syncGameStream(Common::Serializer &ser) {
+	ser.syncAsFloatLE(_px);
+	ser.syncAsFloatLE(_py);
+	ser.syncAsFloatLE(_pz);
+	ser.syncAsFloatLE(_dx);
+	ser.syncAsFloatLE(_dz);
+	ser.syncAsFloatLE(_theta);
 }
 
 int actionInRoom(int curA) {

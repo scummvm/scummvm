@@ -336,7 +336,7 @@ void TrecisionEngine::openSys() {
 	FTexture[idx]._flag = TEXTUREACTIVE + TEXTURECYLIND;
 
 	delete _actor;
-	_actor = new SActor(this);
+	_actor = new Actor(this);
 	_actor->readActor("jm.om");
 
 	_actor->_light = (SLight *)&VLight;

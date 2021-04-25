@@ -83,6 +83,10 @@ Useful global variables:
 #define MAXSTEP	1000
 #define FRAMECENTER(v) (-v[86]._z - v[164]._z) / 2.0
 
+namespace Common {
+class Serializer;
+}
+
 namespace Trecision {
 
 struct SPan {
@@ -119,13 +123,13 @@ struct SStep {
 
 class TrecisionEngine;
 
-class SActor {
+class Actor {
 private:
 	TrecisionEngine *_vm;
 
 public:
-	SActor(TrecisionEngine *vm);
-	~SActor();
+	Actor(TrecisionEngine *vm);
+	~Actor();
 
 	SVertex *_characterArea; // TODO: Make it private
 
@@ -152,6 +156,7 @@ public:
 	int _curAction;
 
 	void readActor(const char *filename);
+	void syncGameStream(Common::Serializer &ser);
 };
 
 

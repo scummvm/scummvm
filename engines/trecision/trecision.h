@@ -258,7 +258,7 @@ public:
 	uint16 *_icons;
 	int16 *_zBuffer;
 
-	SActor *_actor;
+	Actor *_actor;
 
 	// Data files
 	FastFile _dataFile;	// nldata.cd0
