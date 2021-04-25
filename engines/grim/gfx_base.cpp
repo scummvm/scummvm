@@ -111,8 +111,8 @@ void GfxBase::drawMesh(const Mesh *mesh) {
 
 #ifndef USE_OPENGL_GAME
 // Allow CreateGfxOpenGL to be called even if OpenGL isn't included
-GfxBase *CreateGfxOpenGL(void *arg) {
-	return CreateGfxTinyGL(arg);
+GfxBase *CreateGfxOpenGL() {
+	return CreateGfxTinyGL();
 }
 #endif // USE_OPENGL_GAME
 

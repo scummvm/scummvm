@@ -40,6 +40,7 @@
 #include "backends/keymapper/standard-actions.h"
 
 #include "graphics/pixelbuffer.h"
+#include "graphics/renderer.h"
 
 #include "gui/error.h"
 #include "gui/gui-manager.h"
@@ -48,7 +49,7 @@
 #include "image/png.h"
 
 #include "engines/engine.h"
-#include "engines/util3d.h"
+#include "engines/util.h"
 
 #include "engines/grim/md5check.h"
 #include "engines/grim/md5checkdialog.h"
@@ -259,18 +260,28 @@ LuaBase *GrimEngine::createLua() {
 }
 
 GfxBase *GrimEngine::createRenderer(int screenW, int screenH) {
-	GfxBase *renderer = createSelectedRender<GfxBase, void>(
-		screenW,
-		screenH,
+	Graphics::RendererType matchingRendererType = initGraphicsAndGetRendererType(screenW, screenH);
+	bool backendCapableOpenGL = g_system->hasFeature(OSystem::kFeatureOpenGLForGame);
+
+	GfxBase *renderer = nullptr;
 #if defined(USE_GLES2) || defined(USE_OPENGL_SHADERS)
-		CreateGfxOpenGLShader,
+	if (backendCapableOpenGL && matchingRendererType == Graphics::kRendererTypeOpenGLShaders) {
+		renderer = CreateGfxOpenGLShader();
+	}
 #endif
 #if defined(USE_OPENGL_GAME) && !defined(USE_GLES2)
-		CreateGfxOpenGL,
+	if (backendCapableOpenGL && matchingRendererType == Graphics::kRendererTypeOpenGL) {
+		renderer = CreateGfxOpenGL();
+	}
 #endif
-		CreateGfxTinyGL,
-		nullptr
-	);
+	if (matchingRendererType == Graphics::kRendererTypeTinyGL) {
+		renderer = CreateGfxTinyGL();
+	}
+
+	if (!renderer) {
+		Common::String rendererConfig = ConfMan.get("renderer");
+		error("Unable to create a '%s' renderer", rendererConfig.c_str());
+	}
 
 	renderer->setupScreen(screenW, screenH);
 	renderer->loadEmergFont();
