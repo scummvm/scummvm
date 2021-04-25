@@ -45,8 +45,10 @@ private:
 	void add(TextBankId textBankId, const TextEntry &entry) {
 		_texts[(int)textBankId].push_back(entry);
 	}
+
+	// custom texts that are not included in the original game
+	void initCustomTexts(TextBankId textBankId);
 public:
-	TextData();
 	bool loadFromHQR(const char *name, TextBankId textBankId, int language, int entryCount);
 
 	const TextEntry *getText(TextBankId textBankId, TextId textIndex) const;

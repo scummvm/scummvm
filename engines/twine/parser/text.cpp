@@ -25,15 +25,17 @@
 #include "common/util.h"
 #include "common/translation.h"
 #include "twine/resources/hqr.h"
+#include "twine/shared.h"
 
 namespace TwinE {
 
-TextData::TextData() {
-	// custom texts that are not included in the original game
-	add(TextBankId::Options_and_menus, TextEntry{_sc("High resolution on", "Options menu"), -1, TextId::kCustomHighResOptionOn});
-	add(TextBankId::Options_and_menus, TextEntry{_sc("High resolution off", "Options menu"), -1, TextId::kCustomHighResOptionOff});
-	add(TextBankId::Options_and_menus, TextEntry{_sc("Wall collision on", "Options menu"), -1, TextId::kCustomWallCollisionOn});
-	add(TextBankId::Options_and_menus, TextEntry{_sc("Wall collision off", "Options menu"), -1, TextId::kCustomWallCollisionOff});
+void TextData::initCustomTexts(TextBankId textBankId) {
+	if (textBankId == TextBankId::Options_and_menus) {
+		add(textBankId, TextEntry{_sc("High resolution on", "Options menu"), -1, TextId::kCustomHighResOptionOn});
+		add(textBankId, TextEntry{_sc("High resolution off", "Options menu"), -1, TextId::kCustomHighResOptionOff});
+		add(textBankId, TextEntry{_sc("Wall collision on", "Options menu"), -1, TextId::kCustomWallCollisionOn});
+		add(textBankId, TextEntry{_sc("Wall collision off", "Options menu"), -1, TextId::kCustomWallCollisionOff});
+	}
 }
 
 bool TextData::loadFromHQR(const char *name, TextBankId textBankId, int language, int entryCount) {
@@ -48,9 +50,10 @@ bool TextData::loadFromHQR(const char *name, TextBankId textBankId, int language
 	}
 
 	_texts[(int)textBankId].clear();
+	initCustomTexts(textBankId);
 
 	const int numIdxEntries = indexStream->size() / 2;
-	_texts[(int)textBankId].reserve(numIdxEntries);
+	_texts[(int)textBankId].reserve(numIdxEntries + _texts[(int)textBankId].size());
 
 	for (int entry = 0; entry < numIdxEntries; ++entry) {
 		const TextId textIdx = (TextId)indexStream->readUint16LE();
