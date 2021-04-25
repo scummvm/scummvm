@@ -354,7 +354,7 @@ bool Ultima8Engine::startupGame() {
 	if (_gameInfo->_type == GameInfo::GAME_U8) {
 		_ucMachine = new UCMachine(U8Intrinsics, 256);
 	} else if (_gameInfo->_type == GameInfo::GAME_REMORSE) {
-		_ucMachine = new UCMachine(RemorseIntrinsics, 308);
+		_ucMachine = new UCMachine(RemorseIntrinsics, 311);
 	} else if (_gameInfo->_type == GameInfo::GAME_REGRET) {
 		_ucMachine = new UCMachine(RegretIntrinsics, 350);
 	} else {
