@@ -190,7 +190,7 @@ Intrinsic RemorseIntrinsics[] = {
 	// 0x090
 	MusicProcess::I_stopMusic, // void Intrinsic090(void)
 	0, // void Intrinsic091(void)
-	0, // TODO: I_playFlic(char *)? void Intrinsic092(void)
+	MovieGump::I_playMovieCutsceneAlt, // TODO: not exactly the same, Alt includes a fade.
 	0, // void Intrinsic093(void)
 	Game::I_playCredits, // TODO: Implement this
 	Ultima8Engine::I_moveKeyDownRecently,
@@ -214,7 +214,7 @@ Intrinsic RemorseIntrinsics[] = {
 	0, // TODO: I_getAnimationsDisabled -> default to 0 (fine for now..)
 	Egg::I_getEggXRange, // void Intrinsic0A7(4 bytes)
 	Actor::I_setDead,
-	0, // I_playFlic(char *) Intrinsic0A9(void)
+	MovieGump::I_playMovieCutsceneAlt, // TODO: not exactly the same, Alt includes a fade.
 	AudioProcess::I_playSFX, // void Intrinsic0AA(2 bytes)
 	0, // int Actor::I_getFlag0x59Field1  Intrinsic0AB(4 bytes)
 	Item::I_getFamilyOfType, // void Intrinsic0AC(2 bytes)

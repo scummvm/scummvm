@@ -196,7 +196,7 @@ const char* const ConvertUsecodeCrusader::_intrinsics[] = {
 	// 0090
 	"void MusicProcess::I_stopMusic(void)",
 	"void I_setSomeMovieGlobal(void)", // sets some global (cleared by 93)
-	"void I_playFlic092(char *)", // same coff as 0A9
+	"void I_playMovieCutsceneFullscreen(char *)", // same coff as 0A9
 	"void I_clearSomeMovieGlobal(void)", // clears some global (set by 91)
 	"void Game::I_playCredits(void)",
 	"byte Kernel::I_getCurrentKeyDown(void)", // get global - something about keyboard (by disasm)
@@ -220,7 +220,7 @@ const char* const ConvertUsecodeCrusader::_intrinsics[] = {
 	"int16 I_getAnimationsDisabled(void)", // From disasm. Not implemented, that's ok..
 	"int16 Egg::I_getEggXRange(Egg *)", // based on disasm
 	"void Actor::I_setDead(Actor *)", // part of same coff set 021, 060, 073, 0A0, 0A8, 0D8, 0E7, 135
-	"void I_playFlic0A9(char *)", // same coff as 092
+	"void I_playMovieCutsceneFullscreen(char *)", // same coff as 092
 	"void AudioProcess::I_playSFX(2 bytes)", // same coff as 0D4
 	"byte Actor::I_getField0x59Bit1(Actor *)",
 	"int16 Item::I_getFamilyOfType(Item *)", // per pentagram notes, matches disasm.
