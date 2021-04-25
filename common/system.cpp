@@ -50,9 +50,7 @@ OSystem::OSystem() {
 #if defined(USE_UPDATES)
 	_updateManager = nullptr;
 #endif
-#if defined(USE_TTS)
 	_textToSpeechManager = nullptr;
-#endif
 #if defined(USE_SYSDIALOGS)
 	_dialogManager = nullptr;
 #endif
@@ -80,10 +78,8 @@ OSystem::~OSystem() {
 	_updateManager = nullptr;
 #endif
 
-#if defined(USE_TTS)
 	delete _textToSpeechManager;
-	_textToSpeechManager = 0;
-#endif
+	_textToSpeechManager = nullptr;
 
 #if defined(USE_SYSDIALOGS)
 	delete _dialogManager;

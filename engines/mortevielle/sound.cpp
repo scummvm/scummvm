@@ -33,9 +33,7 @@
 #include "audio/decoders/raw.h"
 #include "common/scummsys.h"
 #include "common/config-manager.h"
-#ifdef USE_TTS
 #include "common/text-to-speech.h"
-#endif
 
 namespace Mortevielle {
 
@@ -67,7 +65,6 @@ SoundManager::SoundManager(MortevielleEngine *vm, Audio::Mixer *mixer) {
 	_audioStream = nullptr;
 	_ambiantNoiseBuf = nullptr;
 	_noiseBuf = nullptr;
-#ifdef USE_TTS
 	_ttsMan = g_system->getTextToSpeechManager();
 	if (_ttsMan) {
 		_ttsMan->setLanguage(ConfMan.get("language"));
@@ -76,7 +73,6 @@ SoundManager::SoundManager(MortevielleEngine *vm, Audio::Mixer *mixer) {
 		_ttsMan->setPitch(0);
 		_ttsMan->setVolume(100);
 	}
-#endif //USE_TTS
 
 	_soundType = 0;
 	_phonemeNumb = 0;
@@ -207,12 +203,10 @@ void SoundManager::litph(tablint &t, int typ, int tempo) {
 	if (!_buildingSentence) {
 		if (_mixer->isSoundHandleActive(_soundHandle))
 			_mixer->stopHandle(_soundHandle);
-#ifdef USE_TTS
 		if (_ttsMan) {
 			if (_ttsMan->isSpeaking())
 				_ttsMan->stop();
 		}
-#endif // USE_TTS
 		_buildingSentence = true;
 	}
 	int freq = tempo * 252; // 25.2 * 10
@@ -770,7 +764,6 @@ void SoundManager::startSpeech(int rep, int character, int typ) {
 
 	if (typ == 0) {
 		// Speech
-#ifdef USE_TTS
 		const int haut[9] = { 0, 0, 1, -3, 6, -2, 2, 7, -1 };
 		const int voiceIndices[9] = { 0, 1, 2, 3, 0, 4, 5, 1, 6 };
 		if (!_ttsMan)
@@ -806,7 +799,6 @@ void SoundManager::startSpeech(int rep, int character, int typ) {
 
 		_ttsMan->setPitch(pitch);
 		_ttsMan->say(_vm->getString(rep + kDialogStringIndex), Common::kDos850);
-#endif // USE_TTS
 		return;
 	}
 	uint16 savph[501];
@@ -843,15 +835,12 @@ void SoundManager::startSpeech(int rep, int character, int typ) {
 
 void SoundManager::waitSpeech() {
 	if (_soundType == 0) {
-#ifdef USE_TTS
 		if (!_ttsMan)
 			return;
 		while (_ttsMan->isSpeaking() && !_vm->keyPressed() && !_vm->_mouseClick && !_vm->shouldQuit())
 			;
 		// In case the TTS is still speaking, stop it.
 		_ttsMan->stop();
-
-#endif // USE_TTS
 	} else {
 		while (_mixer->isSoundHandleActive(_soundHandle) && !_vm->keyPressed() && !_vm->_mouseClick && !_vm->shouldQuit())
 			;

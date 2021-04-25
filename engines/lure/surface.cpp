@@ -31,10 +31,7 @@
 #include "lure/surface.h"
 #include "common/endian.h"
 #include "common/config-manager.h"
-
-#ifdef USE_TTS
 #include "common/text-to-speech.h"
-#endif
 
 namespace Lure {
 
@@ -472,21 +469,15 @@ Surface *Surface::newDialog(uint16 width, uint8 numLines, const char **lines, bo
 
 	Surface *s = new Surface(width, size.y);
 	s->createDialog();
-#ifdef USE_TTS
 	Common::String text;
-#endif
 
 	uint16 yP = Surface::textY();
 	for (uint8 ctr = 0; ctr < numLines; ++ctr) {
-#ifdef USE_TTS
 		text += lines[ctr];
-#endif
 		s->writeString(Surface::textX(), yP, lines[ctr], true, color, varLength);
 		yP += squashedLines ? FONT_HEIGHT - 1 : FONT_HEIGHT;
 	}
 
-
-#ifdef USE_TTS
 	if (ConfMan.getBool("tts_narrator")) {
 		Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
 		if (ttsMan != nullptr) {
@@ -494,7 +485,6 @@ Surface *Surface::newDialog(uint16 width, uint8 numLines, const char **lines, bo
 			ttsMan->say(text.c_str());
 		}
 	}
-#endif
 
 	return s;
 }

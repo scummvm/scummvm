@@ -60,7 +60,6 @@ void Tooltip::setup(Dialog *parent, Widget *widget, int x, int y) {
 	if (g_gui.useRTL())
 		_x = g_system->getOverlayWidth() - _w - _x + g_gui.getOverlayOffset();
 
-#ifdef USE_TTS
 	if (ConfMan.hasKey("tts_enabled", "scummvm") &&
 			ConfMan.getBool("tts_enabled", "scummvm")) {
 		Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
@@ -68,7 +67,6 @@ void Tooltip::setup(Dialog *parent, Widget *widget, int x, int y) {
 			return;
 		ttsMan->say(widget->getTooltip(), Common::TextToSpeechManager::QUEUE_NO_REPEAT);
 	}
-#endif
 }
 
 void Tooltip::drawDialog(DrawLayer layerToDraw) {

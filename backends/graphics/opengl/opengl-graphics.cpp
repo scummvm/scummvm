@@ -52,9 +52,7 @@
 #include "image/bmp.h"
 #endif
 
-#ifdef USE_TTS
 #include "common/text-to-speech.h"
-#endif
 
 namespace OpenGL {
 
@@ -859,14 +857,12 @@ void OpenGLGraphicsManager::osdMessageUpdateSurface() {
 	_osdMessageAlpha = kOSDMessageInitialAlpha;
 	_osdMessageFadeStartTime = g_system->getMillis() + kOSDMessageFadeOutDelay;
 
-#ifdef USE_TTS
 	if (ConfMan.hasKey("tts_enabled", "scummvm") &&
 			ConfMan.getBool("tts_enabled", "scummvm")) {
 		Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
 		if (ttsMan)
 			ttsMan->say(_osdMessageNextData);
 	}
-#endif // USE_TTS
 	// Clear the text update request
 	_osdMessageNextData.clear();
 	_osdMessageChangeRequest = false;

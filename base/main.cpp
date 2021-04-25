@@ -277,12 +277,10 @@ static Common::Error runGame(const Plugin *plugin, const Plugin *enginePlugin, O
 	    && ConfMan.getBool("gui_use_game_language")
 	    && ConfMan.hasKey("language")) {
 		TransMan.setLanguage(ConfMan.get("language"));
-#ifdef USE_TTS
 		Common::TextToSpeechManager *ttsMan;
 		if ((ttsMan = g_system->getTextToSpeechManager()) != nullptr) {
 			ttsMan->setLanguage(ConfMan.get("language"));
 		}
-#endif // USE_TTS
 	}
 #endif // USE_TRANSLATION
 
@@ -322,12 +320,10 @@ static Common::Error runGame(const Plugin *plugin, const Plugin *enginePlugin, O
 
 #ifdef USE_TRANSLATION
 	TransMan.setLanguage(previousLanguage);
-#ifdef USE_TTS
-		Common::TextToSpeechManager *ttsMan;
-		if ((ttsMan = g_system->getTextToSpeechManager()) != nullptr) {
-			ttsMan->setLanguage(ConfMan.get("language"));
-		}
-#endif // USE_TTS
+	Common::TextToSpeechManager *ttsMan;
+	if ((ttsMan = g_system->getTextToSpeechManager()) != nullptr) {
+		ttsMan->setLanguage(ConfMan.get("language"));
+	}
 #endif // USE_TRANSLATION
 
 	// Return result (== 0 means no error)
@@ -588,20 +584,15 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 				break;
 			}
 #endif
-#ifdef USE_TTS
 			Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
 			if (ttsMan != nullptr) {
 				ttsMan->pushState();
 			}
-#endif
 			// Try to run the game
 			Common::Error result = runGame(plugin, enginePlugin, system, specialDebug);
-
-#ifdef USE_TTS
 			if (ttsMan != nullptr) {
 				ttsMan->popState();
 			}
-#endif
 
 #ifdef ENABLE_EVENTRECORDER
 			// Flush Event recorder file. The recorder does not get reinitialized for next game
