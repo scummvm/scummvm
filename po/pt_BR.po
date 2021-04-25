@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-04-25 17:40+0000\n"
-"PO-Revision-Date: 2021-04-14 20:24+0000\n"
+"PO-Revision-Date: 2021-04-26 06:25+0000\n"
 "Last-Translator: Marcel Souza Lemes <marcosoutsider@gmail.com>\n"
 "Language-Team: Portuguese (Brazil) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/pt_BR/>\n"
@@ -888,15 +888,13 @@ msgstr "A cada 30 minutos"
 
 #. I18N: Automatic GUI scaling
 #: gui/options.cpp:135
-#, fuzzy
-#| msgid "Autosave"
 msgid "Auto"
-msgstr "Salvamento automático"
+msgstr "Automático"
 
 #. I18N: Large GUI scale
 #: gui/options.cpp:137
 msgid "Large"
-msgstr ""
+msgstr "Grande"
 
 #. I18N: Medium GUI scale
 #: gui/options.cpp:139 engines/nancy/dialogs.cpp:120
@@ -906,7 +904,7 @@ msgstr "Média"
 #. I18N: Small GUI scale
 #: gui/options.cpp:141
 msgid "Small"
-msgstr ""
+msgstr "Pequeno"
 
 #: gui/options.cpp:429 gui/options.cpp:817 gui/options.cpp:955
 #: gui/options.cpp:1066 gui/options.cpp:1459
@@ -1304,7 +1302,7 @@ msgstr "Acessibilidade"
 
 #: gui/options.cpp:1956
 msgid "Discard changes and close the dialog"
-msgstr ""
+msgstr "Descartar as alterações e fechar a caixa de diálogo"
 
 #: gui/options.cpp:1957
 msgid "Apply"
@@ -1312,11 +1310,11 @@ msgstr "Aplicar"
 
 #: gui/options.cpp:1957
 msgid "Apply changes without closing the dialog"
-msgstr ""
+msgstr "Aplicar as alterações sem fechar a caixa de diálogo"
 
 #: gui/options.cpp:1958
 msgid "Apply changes and close the dialog"
-msgstr ""
+msgstr "Aplicar as alterações e fechar a caixa de diálogo"
 
 #: gui/options.cpp:2045
 msgid "FluidSynth Settings"
@@ -1355,10 +1353,8 @@ msgid "Theme:"
 msgstr "Tema:"
 
 #: gui/options.cpp:2101
-#, fuzzy
-#| msgid "Unscaled"
 msgid "GUI scale:"
-msgstr "Sem escala"
+msgstr "Escala da interface:"
 
 #: gui/options.cpp:2108
 msgid "GUI renderer:"
@@ -2130,7 +2126,7 @@ msgstr "<Valor inválido>"
 #. I18N: One line summary as shown in *nix distributions
 #: dists/scummvm.appdata.xml.cpp:33
 msgid "Interpreter for numerous adventure games and role-playing games"
-msgstr ""
+msgstr "Interpretador para vários jogos de aventura e RPG"
 
 #. I18N: 1 of 3 paragraph of ScummVM description in *nix distributions
 #: dists/scummvm.appdata.xml.cpp:38
@@ -2141,6 +2137,11 @@ msgid ""
 "replaces the executables shipped with the game, allowing you to play them on "
 "systems for which they were never designed!"
 msgstr ""
+"ScummVM é um programa que permite que você execute uma ampla variedade de "
+"jogos clássicos de point-and-click (apontar e clicar) e RPG, desde que você "
+"já tenha seus arquivos de dados. A melhor parte: ScummVM apenas substitui os "
+"executáveis do jogo, permitindo que você os jogue em sistemas para os quais "
+"eles nunca foram projetados!"
 
 #. I18N: 2 of 3 paragraph of ScummVM description in *nix distributions
 #: dists/scummvm.appdata.xml.cpp:46
@@ -2150,6 +2151,10 @@ msgid ""
 "like LucasArts, Sierra On-Line, Revolution Software, Cyan, Inc. and Westwood "
 "Studios."
 msgstr ""
+"Atualmente o ScummVM suporta uma enorme biblioteca de aventuras com mais de "
+"4000 jogos no total. Ele suporta muitos clássicos publicados por estúdios "
+"lendários como LucasArts, Sierra On-Line, Revolution Software, Cyan, Inc. e "
+"Westwood Studios."
 
 #. I18N: 3 of 3 paragraph of ScummVM description in *nix distributions
 #: dists/scummvm.appdata.xml.cpp:52
@@ -2158,6 +2163,9 @@ msgid ""
 "Myst, Blade Runner and countless other games you will find some really "
 "obscure adventures and truly hidden gems to explore."
 msgstr ""
+"Ao lado de títulos inovadores como a série Monkey Island, Broken Sword, "
+"Myst, Blade Runner e inúmeros outros jogos, você encontrará algumas "
+"aventuras realmente obscuras e verdadeiras joias raras para explorar."
 
 #: engines/advancedDetector.cpp:215
 msgid "Illegitimate game copy detected. We provide no support in such cases"
@@ -2347,13 +2355,11 @@ msgstr ""
 
 #: engines/engine.cpp:649
 msgid "WARNING: "
-msgstr ""
+msgstr "AVISO: "
 
 #: engines/engine.cpp:649
-#, fuzzy
-#| msgid "Full title of the game"
 msgid " Shall we still run the game?"
-msgstr "Título completo do jogo"
+msgstr " Ainda devemos executar o jogo?"
 
 #: engines/engine.cpp:650
 msgid ""
@@ -4832,7 +4838,7 @@ msgstr "Botão esquerdo para atacar, botão direito pra pegar itens"
 
 #: engines/kyra/detection_tables.h:1251
 msgid "You added the game incorrectly. Please add the root folder of the game."
-msgstr ""
+msgstr "Você adicionou o jogo incorretamente. Adicione a pasta raiz do jogo."
 
 #. I18N: The file in the game directory needs to be extracted
 #: engines/kyra/detection_tables.h:1267
@@ -4840,6 +4846,8 @@ msgid ""
 "You added the game incorrectly. The GAME.DAT file is an ISO image and you "
 "need to extract the game data files from it."
 msgstr ""
+"Você adicionou o jogo incorretamente. O arquivo GAME.DAT é uma imagem ISO e "
+"você precisa extrair os arquivos de dados do jogo dela."
 
 #: engines/kyra/metaengine.cpp:117
 msgid "Lands of Lore support is not compiled in"
@@ -5728,10 +5736,8 @@ msgstr "Utiliza introdução alternativa do jogo (somente versão em CD)"
 
 #. I18N: Inherit the Earth had a "trial" version which is a full game with a simple check
 #: engines/saga/detection_tables.h:609
-#, fuzzy
-#| msgid "Spanish CD version is not yet supported"
 msgid "Windows Trial version is not supported"
-msgstr "A versão espanhol em CD ainda não é suportada"
+msgstr "A versão de teste do Windows não é compatível"
 
 #: engines/saga/metaengine.cpp:114
 msgid "I Have No Mouth support not compiled in"
@@ -5885,6 +5891,8 @@ msgstr "Yamaha FB-01"
 #: engines/sci/detection_tables.h:4207
 msgid "Incomplete game detected. You have to copy data from all the CDs."
 msgstr ""
+"Jogo incompleto detectado. Você precisa copiar os arquivos de dados de todos "
+"os CDs."
 
 #: engines/sci/engine/kfile.cpp:485 engines/sci/metaengine.cpp:371
 msgid "(Autosave)"
@@ -6096,13 +6104,15 @@ msgstr "Utiliza uma paleta de cores mais neutra semelhante à do NES Classic"
 
 #: engines/scumm/detection.cpp:172
 msgid "Trim FM-TOWNS games to 200 pixels height"
-msgstr ""
+msgstr "Cortar jogos FM-TOWNS para 200 pixels de altura"
 
 #: engines/scumm/detection.cpp:173
 msgid ""
 "Cut the extra 40 pixels at the bottom of the screen, to make it standard 200 "
 "pixels height, allowing using 'aspect ratio correction'"
 msgstr ""
+"Corta os 40 pixels extras na parte inferior da tela, para torná-la padrão de "
+"200 pixels de altura, permitindo o uso de 'correção de proporção de aspecto'"
 
 #: engines/scumm/dialogs.cpp:165
 #, c-format
@@ -6774,6 +6784,11 @@ msgid ""
 "Aspect ratio correction can be acheived by trimming the resolution to "
 "320x200, under 'engine' tab."
 msgstr ""
+"Você habilitou a 'correção de proporção de aspecto'. No entanto, a resolução "
+"natural do FM-TOWNS é 320x240, o que não permite a correção da proporção de "
+"aspecto.\n"
+"A correção da proporção de aspecto pode ser obtida reduzindo a resolução "
+"para 320x200, na aba 'engine'."
 
 #: engines/scumm/scumm.cpp:1953
 #, c-format
