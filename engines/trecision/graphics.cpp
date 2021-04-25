@@ -230,10 +230,10 @@ uint16 GraphicsManager::aliasing(uint32 val1, uint32 val2, uint8 num) {
 
 void GraphicsManager::NlDissolve(int val) {
 	uint16 CenterX = MAXX / 2, CenterY = MAXY / 2;
-	uint32 sv = _vm->ReadTime(), cv;
+	uint32 sv = _vm->readTime(), cv;
 
 	int lastv = 9000;
-	while ((sv + val) > (cv = _vm->ReadTime())) {
+	while ((sv + val) > (cv = _vm->readTime())) {
 		_vm->checkSystem();
 		if (lastv < (sv + val - cv))
 			continue;
@@ -304,9 +304,9 @@ void GraphicsManager::DrawObj(SDObj d) {
 	if (d.l.left > MAXX || d.l.top > MAXX || d.l.right > MAXX || d.l.bottom > MAXX)
 		return;
 
-	const uint16 *buf = d.objIndex >= 0 ? _vm->ObjPointers[d.objIndex] : getBackgroundPtr();
+	const uint16 *buf = d.objIndex >= 0 ? _vm->_objPointers[d.objIndex] : getBackgroundPtr();
 	if (d.drawMask) {
-		uint8 *mask = _vm->MaskPointers[d.objIndex];
+		uint8 *mask = _vm->_maskPointers[d.objIndex];
 
 		for (uint16 b = d.y; b < (d.y + d.dy); b++) {
 			uint16 Sco = 0;

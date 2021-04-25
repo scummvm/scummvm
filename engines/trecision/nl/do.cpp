@@ -435,7 +435,7 @@ void ExecuteAtFrameDoit(ATFHandle *h, int doit, int obj) {
 		g_vm->_animMgr->_animTab[g_vm->_room[g_vm->_curRoom]._bkgAnim]._flag &= ~SMKANIM_OFF4;
 		break;
 	case fENDDEMO:
-		g_vm->DemoOver();
+		g_vm->demoOver();
 		doEvent(MC_SYSTEM, ME_QUIT, MP_SYSTEM, 0, 0, 0, 0);
 		break;
 	case fSTOP2TXT:
@@ -564,7 +564,7 @@ void ProcessAtFrame(ATFHandle *h, int type, int atf) {
 		}
 		break;
 	case ATFEND:
-		g_vm->DemoOver();
+		g_vm->demoOver();
 		doEvent(MC_SYSTEM, ME_QUIT, MP_SYSTEM, 0, 0, 0, 0);
 		break;
 	default:

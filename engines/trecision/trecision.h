@@ -78,7 +78,6 @@ class TrecisionEngine : public Engine {
 	Graphics::Surface *convertScummVMThumbnail(Graphics::Surface *thumbnail);
 
 	STexture FTexture[MAXMAT];
-	int32 hh;
 	SLight VLight[MAXLIGHT];
 	SCamera FCamera;
 
@@ -122,20 +121,20 @@ public:
 	void endScript();
 	void playScript(uint16 id);
 	void evalScript();
-	bool QuitGame();
-	void DemoOver();
+	bool quitGame();
+	void demoOver();
 
 
 	// Utils
 	char *getNextSentence();
 	void setRoom(uint16 r, bool b);
-	uint16 TextLength(const char *text, uint16 num);
-	char GetKey();
+	uint16 textLength(const char *text, uint16 num);
+	char getKey();
 	char waitKey();
-	void NlDelay(uint32 val);
-	void FreeKey();
-	uint32 ReadTime();
-	bool CheckMask(uint16 mx, uint16 my);
+	void waitDelay(uint32 val);
+	void freeKey();
+	uint32 readTime();
+	bool checkMask(uint16 mx, uint16 my);
 
 	// Text
 	void addText(uint16 x, uint16 y, const char *text, uint16 tcol, uint16 scol);
@@ -150,8 +149,8 @@ public:
 	bool isCursorVisible();
 	void showCursor();
 	void hideCursor();
-	bool DataSave();
-	bool DataLoad();
+	bool dataSave();
+	bool dataLoad();
 	void performLoad(int slot, bool skipLoad);
 	void resetZBuffer(int x1, int y1, int x2, int y2);
 
@@ -278,10 +277,10 @@ public:
 	bool _flagNoPaintScreen;
 	bool _flagWaitRegen;
 
-	uint16 *ObjPointers[MAXOBJINROOM];
-	uint8 *MaskPointers[MAXOBJINROOM];
+	uint16 *_objPointers[MAXOBJINROOM];
+	uint8 *_maskPointers[MAXOBJINROOM];
 
-	uint16 BlinkLastDTextChar;
+	uint16 _blinkLastDTextChar;
 };
 
 extern TrecisionEngine *g_vm;

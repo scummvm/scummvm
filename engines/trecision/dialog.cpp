@@ -43,7 +43,7 @@ DialogManager::~DialogManager() {}
 
 void DialogManager::dialogPrint(int x, int y, int c, const char *txt) {
 	SDText curChoice;
-	curChoice.set(x, y, _vm->TextLength(txt, 0), 0, 0, 0, MAXX, MAXY, c, MASKCOL, txt);
+	curChoice.set(x, y, _vm->textLength(txt, 0), 0, 0, 0, MAXX, MAXY, c, MASKCOL, txt);
 	curChoice.DText();
 }
 

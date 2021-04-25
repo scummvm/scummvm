@@ -402,12 +402,12 @@ void readObject(Common::SeekableReadStream *stream, uint16 objIndex, uint16 room
 		obj->_dy = BmInfo.dy;
 
 		uint32 size = obj->_dx * obj->_dy;
-		delete[] g_vm->ObjPointers[objIndex];
-		g_vm->ObjPointers[objIndex] = new uint16[size];
+		delete[] g_vm->_objPointers[objIndex];
+		g_vm->_objPointers[objIndex] = new uint16[size];
 		for (uint32 i = 0; i < size; ++i)
-			g_vm->ObjPointers[objIndex][i] = stream->readUint16LE();
+			g_vm->_objPointers[objIndex][i] = stream->readUint16LE();
 
-		g_vm->_graphicsMgr->updatePixelFormat(g_vm->ObjPointers[objIndex], size);
+		g_vm->_graphicsMgr->updatePixelFormat(g_vm->_objPointers[objIndex], size);
 	}
 
 	if (obj->_mode & OBJMODE_MASK) {
@@ -419,18 +419,18 @@ void readObject(Common::SeekableReadStream *stream, uint16 objIndex, uint16 room
 		obj->_dy = BmInfo.dy;
 
 		uint32 size = stream->readUint32LE();
-		delete[] g_vm->ObjPointers[objIndex];
-		g_vm->ObjPointers[objIndex] = new uint16[size];
+		delete[] g_vm->_objPointers[objIndex];
+		g_vm->_objPointers[objIndex] = new uint16[size];
 		for (uint32 i = 0; i < size; ++i)
-			g_vm->ObjPointers[objIndex][i] = stream->readUint16LE();
+			g_vm->_objPointers[objIndex][i] = stream->readUint16LE();
 
-		g_vm->_graphicsMgr->updatePixelFormat(g_vm->ObjPointers[objIndex], size);
+		g_vm->_graphicsMgr->updatePixelFormat(g_vm->_objPointers[objIndex], size);
 
 		size = stream->readUint32LE();
-		delete[] g_vm->MaskPointers[objIndex];
-		g_vm->MaskPointers[objIndex] = new uint8[size];
+		delete[] g_vm->_maskPointers[objIndex];
+		g_vm->_maskPointers[objIndex] = new uint8[size];
 		for (uint32 i = 0; i < size; ++i)
-			g_vm->MaskPointers[objIndex][i] = (uint8)stream->readByte();
+			g_vm->_maskPointers[objIndex][i] = (uint8)stream->readByte();
 	}
 }
 

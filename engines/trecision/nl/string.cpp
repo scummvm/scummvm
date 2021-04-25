@@ -54,7 +54,7 @@ uint32 TalkTime;
 const char *dunno = "?";
 
 void PositionString(uint16 x, uint16 y, const char *string, uint16 *posx, uint16 *posy, bool characterFl) {
-	uint16 lenText = g_vm->TextLength(string, 0);
+	uint16 lenText = g_vm->textLength(string, 0);
 	if (lenText > 960)
 		lenText = (lenText * 2 / 5);
 	else if (lenText > 320)
@@ -113,7 +113,7 @@ void ShowObjName(uint16 obj, bool showhide) {
 		}
 
 		g_vm->_lastObj = (obj | 0x8000);
-		uint16 lenText = g_vm->TextLength(locsent.c_str(), 0);
+		uint16 lenText = g_vm->textLength(locsent.c_str(), 0);
 
 		posx = CLIP(320 - (lenText / 2), 2, MAXX - 2 - lenText);
 		posy = MAXY - CARHEI;

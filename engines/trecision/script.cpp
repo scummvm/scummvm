@@ -92,7 +92,7 @@ void TrecisionEngine::evalScript() {
 	}
 }
 
-bool TrecisionEngine::QuitGame() {
+bool TrecisionEngine::quitGame() {
 	for (int a = 0; a < TOP; a++)
 		memcpy(_zBuffer + a * MAXX, _screenBuffer + MAXX * a, MAXX * 2);
 
@@ -105,7 +105,7 @@ bool TrecisionEngine::QuitGame() {
 
 	_graphicsMgr->copyToScreen(0, 0, MAXX, TOP);
 
-	FreeKey();
+	freeKey();
 
 	checkSystem();
 
@@ -121,7 +121,7 @@ bool TrecisionEngine::QuitGame() {
 	return exitFl;
 }
 
-void TrecisionEngine::DemoOver() {
+void TrecisionEngine::demoOver() {
 	for (int a = 0; a < TOP; a++)
 		memset(_screenBuffer + MAXX * a, 0, MAXX * 2);
 
@@ -131,7 +131,7 @@ void TrecisionEngine::DemoOver() {
 
 	_graphicsMgr->copyToScreen(0, 0, MAXX, TOP);
 
-	FreeKey();
+	freeKey();
 	waitKey();
 	quitGame();
 }

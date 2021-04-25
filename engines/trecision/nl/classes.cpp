@@ -147,7 +147,7 @@ void doMouse() {
 			if (g_vm->_flagSomeoneSpeaks || g_vm->_flagDialogMenuActive || g_vm->_flagDialogActive)
 				break;
 
-			g_vm->CheckMask(g_vm->_curMessage->_u16Param1, g_vm->_curMessage->_u16Param2);
+			g_vm->checkMask(g_vm->_curMessage->_u16Param1, g_vm->_curMessage->_u16Param2);
 			g_vm->_logicMgr->doMouseGame();
 		} else if (curpos == POSINV) {
 			if (g_vm->_logicMgr->doMouseInventory())
@@ -356,13 +356,13 @@ void doSystem() {
 }
 
 void doIdle() {
-	char c = g_vm->GetKey();
+	char c = g_vm->getKey();
 	switch (c) {
 	// Quit
 	case 'q':
 	case 'Q':
 		if (!g_vm->_flagDialogActive && !g_vm->_flagDialogMenuActive) {
-			if (g_vm->QuitGame())
+			if (g_vm->quitGame())
 				doEvent(MC_SYSTEM, ME_QUIT, MP_SYSTEM, 0, 0, 0, 0);
 		}
 		break;
@@ -404,7 +404,7 @@ void doIdle() {
 		&& (g_vm->_actor->_curAction < hWALKIN) && !g_vm->_flagUseWithStarted && g_vm->_flagShowCharacter
 		&& !g_vm->_animMgr->_playingAnims[kSmackerAction]) {
 			::createThumbnailFromScreen(&g_vm->_thumbnail);
-			g_vm->DataSave();
+			g_vm->dataSave();
 			g_vm->showInventoryName(NO_OBJECTS, false);
 			doEvent(MC_INVENTORY, ME_SHOWICONNAME, MP_DEFAULT, g_vm->_mouseX, g_vm->_mouseY, 0, 0);
 			g_vm->refreshInventory(g_vm->_inventoryRefreshStartIcon, g_vm->_inventoryRefreshStartLine);
@@ -417,7 +417,7 @@ void doIdle() {
 		&& (g_vm->_actor->_curAction < hWALKIN) && !g_vm->_flagUseWithStarted && g_vm->_flagShowCharacter
 		&& !g_vm->_animMgr->_playingAnims[kSmackerAction]) {
 			::createThumbnailFromScreen(&g_vm->_thumbnail);
-			if (!g_vm->DataLoad()) {
+			if (!g_vm->dataLoad()) {
 				g_vm->showInventoryName(NO_OBJECTS, false);
 				doEvent(MC_INVENTORY, ME_SHOWICONNAME, MP_DEFAULT, g_vm->_mouseX, g_vm->_mouseY, 0, 0);
 				g_vm->refreshInventory(g_vm->_inventoryRefreshStartIcon, g_vm->_inventoryRefreshStartLine);
