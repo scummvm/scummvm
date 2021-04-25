@@ -236,7 +236,6 @@ void StringData::getString(uint16 stringId, char *dest, const char *hotspotName,
 			// Hardcode for end of string
 			ch = '\0';
 		else
-			// All other character reads
 			ch = readCharacter();
 	}
 

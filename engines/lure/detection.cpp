@@ -70,25 +70,25 @@ static const LureGameDescription gameDescriptions[] = {
 			GUIO0()
 #endif
 		},
-		GF_FLOPPY,
+		GF_FLOPPY
 	},
 
-	{ // VGA version. Assembled 11:13:50 on 08/04/92
+	{ // Konami VGA version. Assembled 11:13:50 on 08/04/92
 	  // Bugreport #11441
 		{
 			"lure",
-			_s("Missing game code"), // Reason for being unsupported
+			"Konami VGA",
 			AD_ENTRY1s("disk1.vga", "fbb0fca025579c0eda81d832d1fa5567", 615008),
 			Common::EN_ANY,
 			Common::kPlatformDOS,
-			ADGF_UNSUPPORTED,
+			ADGF_NO_FLAGS,
 #ifdef USE_TTS
 			GUIO1(GAMEOPTION_TTS_NARRATOR)
 #else
 			GUIO0()
 #endif
 		},
-		GF_FLOPPY,
+		GF_FLOPPY | GF_KONAMI
 	},
 
 	{
@@ -105,7 +105,7 @@ static const LureGameDescription gameDescriptions[] = {
 			GUIO0()
 #endif
 		},
-		GF_FLOPPY | GF_EGA,
+		GF_FLOPPY | GF_EGA
 	},
 
 	{
@@ -118,7 +118,7 @@ static const LureGameDescription gameDescriptions[] = {
 			ADGF_NO_FLAGS,
 			GUIO0()
 		},
-		GF_FLOPPY,
+		GF_FLOPPY
 	},
 
 	{
@@ -131,7 +131,7 @@ static const LureGameDescription gameDescriptions[] = {
 			ADGF_NO_FLAGS,
 			GUIO0()
 		},
-		GF_FLOPPY | GF_EGA,
+		GF_FLOPPY | GF_EGA
 	},
 
 	{
@@ -144,7 +144,7 @@ static const LureGameDescription gameDescriptions[] = {
 			ADGF_NO_FLAGS,
 			GUIO0()
 		},
-		GF_FLOPPY,
+		GF_FLOPPY
 	},
 
 	{
@@ -157,7 +157,7 @@ static const LureGameDescription gameDescriptions[] = {
 			ADGF_NO_FLAGS,
 			GUIO0()
 		},
-		GF_FLOPPY,
+		GF_FLOPPY
 	},
 
 	{
@@ -170,7 +170,7 @@ static const LureGameDescription gameDescriptions[] = {
 			ADGF_NO_FLAGS,
 			GUIO0()
 		},
-		GF_FLOPPY,
+		GF_FLOPPY
 	},
 
 	{
@@ -183,7 +183,7 @@ static const LureGameDescription gameDescriptions[] = {
 			ADGF_NO_FLAGS,
 			GUIO0()
 		},
-		GF_FLOPPY,
+		GF_FLOPPY
 	},
 
 	// Russian OG Edition v1.0
@@ -197,7 +197,7 @@ static const LureGameDescription gameDescriptions[] = {
 			ADGF_NO_FLAGS,
 			GUIO0()
 		},
-		GF_FLOPPY,
+		GF_FLOPPY
 	},
 
 	// Russian OG Edition v1.1
@@ -211,7 +211,7 @@ static const LureGameDescription gameDescriptions[] = {
 			ADGF_NO_FLAGS,
 			GUIO0()
 		},
-		GF_FLOPPY,
+		GF_FLOPPY
 	},
 
 	// Unsupported demo
@@ -226,7 +226,7 @@ static const LureGameDescription gameDescriptions[] = {
 			ADGF_DEMO | ADGF_UNSUPPORTED,
 			GUIO0()
 		},
-		GF_FLOPPY,
+		GF_FLOPPY
 	},
 
 
