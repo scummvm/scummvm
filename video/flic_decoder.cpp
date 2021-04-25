@@ -351,8 +351,6 @@ void FlicDecoder::FlicVideoTrack::decodeDeltaFLC(uint8 *data) {
 					WRITE_UINT16((byte *)_surface->getBasePtr(column + i * 2, currentLine), dataWord);
 				}
 				_dirtyRects.push_back(Common::Rect(column, currentLine, column + rleCount * 2, currentLine + 1));
-			} else { // End of cutscene ?
-				return;
 			}
 			column += rleCount * 2;
 		}
