@@ -26,31 +26,36 @@
 
 #include "common/config-manager.h"
 
+#include "graphics/renderer.h"
 #include "graphics/surface.h"
 
-#include "engines/util3d.h"
+#include "engines/util.h"
 
 namespace Stark {
 namespace Gfx {
 
-Driver *CreateGfxTinyGL(void *) {
-	warning("Software renderer is not implemented");
-	return nullptr;
-}
-
 Driver *Driver::create() {
-	return createSelectedRender<Driver, void>(
-		kOriginalWidth,
-		kOriginalHeight,
+	Graphics::RendererType matchingRendererType = initGraphicsAndGetRendererType(kOriginalWidth, kOriginalHeight);
+	bool backendCapableOpenGL = g_system->hasFeature(OSystem::kFeatureOpenGLForGame);
+
+	Driver *driver = nullptr;
 #if defined(USE_GLES2) || defined(USE_OPENGL_SHADERS)
-		CreateGfxOpenGLShader,
+	if (backendCapableOpenGL && matchingRendererType == Graphics::kRendererTypeOpenGLShaders) {
+		driver = new OpenGLSDriver();
+	}
 #endif
 #if defined(USE_OPENGL_GAME) && !defined(USE_GLES2)
-		CreateGfxOpenGL,
+	if (backendCapableOpenGL && matchingRendererType == Graphics::kRendererTypeOpenGL) {
+		driver = new OpenGLDriver();
+	}
 #endif
-		CreateGfxTinyGL,
-		nullptr
-	);
+	if (matchingRendererType == Graphics::kRendererTypeTinyGL) {
+		//driver = CreateTinyGLDriver();
+	}
+
+	if (driver)
+		return driver;
+	error("No renderers have been found for this game");
 }
 
 const Graphics::PixelFormat Driver::getRGBAPixelFormat() {

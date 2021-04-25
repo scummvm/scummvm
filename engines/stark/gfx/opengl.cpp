@@ -278,10 +278,6 @@ Graphics::Surface *OpenGLDriver::getViewportScreenshot() const {
 	return s;
 }
 
-Driver *CreateGfxOpenGL(void *) {
-	return new OpenGLDriver();
-}
-
 } // End of namespace Gfx
 } // End of namespace Stark
 

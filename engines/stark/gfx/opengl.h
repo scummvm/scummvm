@@ -70,8 +70,6 @@ private:
 	Common::Rect _unscaledViewport;
 };
 
-Driver *CreateGfxOpenGL(void *);
-
 } // End of namespace Gfx
 } // End of namespace Stark
 

@@ -83,8 +83,6 @@ private:
 	GLuint _fadeVBO;
 };
 
-Driver *CreateGfxOpenGLShader(void *);
-
 } // End of namespace Gfx
 } // End of namespace Stark
 
