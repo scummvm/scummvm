@@ -566,7 +566,7 @@ void TrecisionEngine::LoadAll() {
 
 	dataNl.read(TextArea, MAXTEXTAREA);
 
-	_textPtr = (char *)TextArea;
+	_textPtr = TextArea;
 
 	for (int a = 0; a < MAXOBJNAME; a++)
 		_objName[a] = getNextSentence();

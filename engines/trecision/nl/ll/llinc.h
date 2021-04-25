@@ -95,9 +95,9 @@ struct SFileHandle {
 // GAME POINTER
 extern uint16 _actionPosition[];
 // DATA POINTER
-extern uint8 *TextArea;
+extern char *TextArea;
 // DTEXT
-extern int8 DTextLines[MAXDTEXTLINES][MAXDTEXTCHARS];
+extern char DTextLines[MAXDTEXTLINES][MAXDTEXTCHARS];
 // MOUSE
 extern SDText curString;
 extern SDText oldString;

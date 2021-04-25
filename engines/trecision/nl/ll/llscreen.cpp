@@ -45,9 +45,9 @@ namespace Trecision {
 // GAME POINTER
 uint16 _actionPosition[MAXACTIONINROOM];			// Starting position of each action in the room
 // DATA POINTER
-uint8 *TextArea;
+char *TextArea;
 // DTEXT
-int8 DTextLines[MAXDTEXTLINES][MAXDTEXTCHARS];
+char DTextLines[MAXDTEXTLINES][MAXDTEXTCHARS];
 // 3D
 SLight  VLight[MAXLIGHT];
 SCamera FCamera;
@@ -110,7 +110,7 @@ void openSys() {
 	g_vm->_actor->_camera = (SCamera *)&FCamera;
 	g_vm->_actor->_texture = (STexture *)&FTexture[0];
 
-	TextArea = new uint8[MAXTEXTAREA];
+	TextArea = new char[MAXTEXTAREA];
 
 	// zbuffer
 	g_vm->_zBuffer = new int16[ZBUFFERSIZE / 2];
@@ -208,11 +208,11 @@ void SActor::readActor(const char *filename) {
 	if (ff == nullptr)
 		error("readActor - Error opening file %s", filename);
 
-	int32 ActionNum = ff->readSint32LE();
+	int32 actionNum = ff->readSint32LE();
 	_vertexNum = ff->readSint32LE();
 
-	_characterArea = new SVertex[_vertexNum * ActionNum];
-	for (int i = 0; i < _vertexNum * ActionNum; ++i) {
+	_characterArea = new SVertex[_vertexNum * actionNum];
+	for (int i = 0; i < _vertexNum * actionNum; ++i) {
 		_characterArea[i]._x = ff->readFloatLE();
 		_characterArea[i]._y = ff->readFloatLE();
 		_characterArea[i]._z = ff->readFloatLE();
@@ -244,10 +244,10 @@ void SActor::readActor(const char *filename) {
 
 	_face = new SFace[_faceNum];
 	for (int i = 0; i < _faceNum; ++i) {
-		_face[i]._a = ff->readSint16LE();
-		_face[i]._b = ff->readSint16LE();
-		_face[i]._c = ff->readSint16LE();
-		_face[i]._mat = ff->readSint16LE();
+		_face[i]._a = ff->readUint16LE();
+		_face[i]._b = ff->readUint16LE();
+		_face[i]._c = ff->readUint16LE();
+		_face[i]._mat = ff->readUint16LE();
 	}
 
 	delete ff;
@@ -298,7 +298,7 @@ void SActor::readActor(const char *filename) {
 	m1[0][1] = v1[1];
 	m1[0][2] = v1[2];
 
-	for (int b = 0; b < ActionNum; b++) {
+	for (int b = 0; b < actionNum; b++) {
 		SVertex *sv = &_vertex[b * _vertexNum];
 
 		v1[0] = sv[P2]._x - sv[P1]._x;
@@ -572,6 +572,57 @@ void PaintRegenRoom() {
 			g_vm->_curSortTableNum++;
 		}
 	}
+}
+
+struct ElevatorAction {
+	uint16 dialog;
+	uint16 choice;
+	uint16 action;
+	uint16 newRoom;
+};
+
+void RedrawRoom() {
+	const uint16 curDialog = g_vm->_dialogMgr->_curDialog;
+	const uint16 curChoice = g_vm->_dialogMgr->_curChoice;
+	const uint16 bgAnim = g_vm->_room[g_vm->_curRoom]._bkgAnim;
+	const ElevatorAction elevatorActions[6] = {
+		{dASCENSORE12, 3, a129PARLACOMPUTERESCENDE, kRoom13},
+		{dASCENSORE12, 4, a129PARLACOMPUTERESCENDE, kRoom16},
+		{dASCENSORE13, 17, a139CHIUDONOPORTESU, kRoom12},
+		{dASCENSORE13, 18, a1316CHIUDONOPORTEGIU, kRoom16},
+		{dASCENSORE16, 32, a1616SALECONASCENSORE, kRoom12},
+		{dASCENSORE16, 33, a1616SALECONASCENSORE, kRoom13},
+	};
+
+	g_vm->_flagShowCharacter = g_vm->_dialogMgr->showCharacterAfterDialog();
+
+	for (int i = 0; i < 6; ++i) {
+		if (curDialog == elevatorActions[i].dialog && curChoice == elevatorActions[i].choice) {
+			StartCharacterAction(elevatorActions[i].action, elevatorActions[i].newRoom, 20, 0);
+			break;
+		}
+	}
+
+	g_vm->_curSortTableNum = 0;
+	for (int i = 0; i < MAXOBJINROOM; ++i) {
+		OldObjStatus[i] = false;
+		VideoObjStatus[i] = false;
+	}
+
+	g_vm->_graphicsMgr->resetScreenBuffer();
+
+	if (bgAnim)
+		g_vm->_animMgr->startSmkAnim(bgAnim);
+
+	if (g_vm->_curRoom == kRoom4P && curDialog == dF4PI)
+		g_vm->_animMgr->smkGoto(kSmackerBackground, 21);
+
+	RegenRoom();
+
+	TextStatus = TEXT_OFF;
+	g_vm->_flagPaintCharacter = true;
+	PaintScreen(true);
+	g_vm->_graphicsMgr->copyToScreen(0, 0, 640, 480);
 }
 
 } // End of namespace Trecision
