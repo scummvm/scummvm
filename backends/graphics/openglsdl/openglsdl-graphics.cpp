@@ -308,8 +308,20 @@ void OpenGLSdlGraphicsManager::notifyResize(const int width, const int height) {
 		currentWidth /= scale;
 		currentHeight /= scale;
 #endif
-		ConfMan.setInt("last_window_width", currentWidth, Common::ConfigManager::kApplicationDomain);
-		ConfMan.setInt("last_window_height", currentHeight, Common::ConfigManager::kApplicationDomain);
+		// Reset maximized flag
+		_windowIsMaximized == false;
+
+		// Check if the ScummVM window is maximized and store the current
+		// window dimensions.
+		if ((SDL_GetWindowFlags(_window->getSDLWindow()) & SDL_WINDOW_MAXIMIZED) == 128) {
+			_windowIsMaximized = true;
+			ConfMan.setInt("window_maximized_width", currentWidth, Common::ConfigManager::kApplicationDomain);
+			ConfMan.setInt("window_maximized_height", currentHeight, Common::ConfigManager::kApplicationDomain);
+		} else {
+			_windowIsMaximized = false;
+			ConfMan.setInt("last_window_width", currentWidth, Common::ConfigManager::kApplicationDomain);
+			ConfMan.setInt("last_window_height", currentHeight, Common::ConfigManager::kApplicationDomain);
+		}
 		ConfMan.flushToDisk();
 	}
 
@@ -343,11 +355,22 @@ bool OpenGLSdlGraphicsManager::loadVideoMode(uint requestedWidth, uint requested
 	_lastRequestedWidth  = requestedWidth;
 	_lastRequestedHeight = requestedHeight;
 
-	if (ConfMan.hasKey("last_window_width", Common::ConfigManager::kApplicationDomain) && ConfMan.hasKey("last_window_height", Common::ConfigManager::kApplicationDomain)) {
+	if (_windowIsMaximized == true) {
+		// Set the window size to the values stored when the window was maximized
+		// for the last time. We also need to reset any scaling here.
+		requestedWidth  = ConfMan.getInt("window_maximized_width", Common::ConfigManager::kApplicationDomain);
+		requestedHeight = ConfMan.getInt("window_maximized_height", Common::ConfigManager::kApplicationDomain);
+		requestedWidth  = requestedWidth / requestedHeight;
+		requestedHeight = requestedWidth / requestedHeight;
+
+	} else if (ConfMan.hasKey("last_window_width", Common::ConfigManager::kApplicationDomain) && ConfMan.hasKey("last_window_height", Common::ConfigManager::kApplicationDomain)) {
+		// Restore previously stored window dimensions.
 		requestedWidth  = ConfMan.getInt("last_window_width", Common::ConfigManager::kApplicationDomain);
 		requestedHeight = ConfMan.getInt("last_window_height", Common::ConfigManager::kApplicationDomain);
+
 	} else {
 		// Set the basic window size based on the desktop resolution
+		// since we have no values stored, e.g. on first launch.
 		Common::Rect desktopRes = _window->getDesktopResolution();
 		requestedWidth  = desktopRes.width()  * 0.3f;
 		requestedHeight = desktopRes.height() * 0.4f;
