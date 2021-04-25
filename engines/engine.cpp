@@ -66,9 +66,7 @@
 #include "graphics/pixelformat.h"
 #include "image/bmp.h"
 
-#ifdef USE_TTS
 #include "common/text-to-speech.h"
-#endif
 
 // FIXME: HACK for error()
 Engine *g_engine = 0;
@@ -601,13 +599,11 @@ void Engine::pauseEngineIntern(bool pause) {
 void Engine::openMainMenuDialog() {
 	if (!_mainMenuDialog)
 		_mainMenuDialog = new MainMenuDialog(this);
-#ifdef USE_TTS
 	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
 	if (ttsMan != nullptr) {
 		ttsMan->pushState();
 		g_gui.initTextToSpeech();
 	}
-#endif
 
 	setGameToLoadSlot(-1);
 
@@ -635,10 +631,8 @@ void Engine::openMainMenuDialog() {
 		}
 	}
 
-#ifdef USE_TTS
 	if (ttsMan != nullptr)
 		ttsMan->popState();
-#endif
 
 	g_system->applyBackendSettings();
 	applyGameSettings();

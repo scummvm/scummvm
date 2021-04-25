@@ -132,12 +132,10 @@ bool Text::playVoxSimple(const TextEntry *text) {
 }
 
 bool Text::stopVox(const TextEntry *text) {
-#ifdef USE_TTS
 	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
 	if (ttsMan != nullptr) {
 		ttsMan->stop();
 	}
-#endif
 	if (text == nullptr) {
 		return false;
 	}

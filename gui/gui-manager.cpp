@@ -83,9 +83,7 @@ GuiManager::GuiManager() : _redrawStatus(kRedrawDisabled), _stateIsSaved(false),
 	setLanguageRTL();
 #endif // USE_TRANSLATION
 
-#ifdef USE_TTS
 	initTextToSpeech();
-#endif // USE_TTS
 
 	ConfMan.registerDefault("gui_theme", "scummremastered");
 	Common::String themefile(ConfMan.get("gui_theme"));
@@ -722,7 +720,6 @@ void GuiManager::setDialogPaddings(int l, int r) {
 	_topDialogRightPadding = r;
 }
 
-#ifdef USE_TTS
 void GuiManager::initTextToSpeech() {
 	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
 	if (ttsMan == nullptr)
@@ -747,6 +744,5 @@ void GuiManager::initTextToSpeech() {
 		voice = ttsMan->getDefaultVoice();
 	ttsMan->setVoice(voice);
 }
-#endif
 
 } // End of namespace GUI

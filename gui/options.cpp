@@ -2494,7 +2494,7 @@ void GlobalOptionsDialog::apply() {
 		MessageDialog error(errorMessage);
 		error.runModal();
 	}
-#ifdef USE_TTS
+
 	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
 	if (ttsMan) {
 #ifdef USE_TRANSLATION
@@ -2521,7 +2521,6 @@ void GlobalOptionsDialog::apply() {
 			selectedVoice = ttsMan->getDefaultVoice();
 		ttsMan->setVoice(selectedVoice);
 	}
-#endif // USE_TTS
 
 	if (isRebuildNeeded) {
 		g_gui.setLanguageRTL();

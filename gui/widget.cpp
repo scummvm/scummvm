@@ -274,7 +274,6 @@ Common::U32String Widget::cleanupHotkey(const Common::U32String &label) {
 }
 
 void Widget::read(const Common::U32String &str) {
-#ifdef USE_TTS
 	if (ConfMan.hasKey("tts_enabled", "scummvm") &&
 			ConfMan.getBool("tts_enabled", "scummvm")) {
 		Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
@@ -282,7 +281,6 @@ void Widget::read(const Common::U32String &str) {
 			return;
 		ttsMan->say(str);
 	}
-#endif
 }
 
 #pragma mark -

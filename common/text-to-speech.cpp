@@ -23,8 +23,6 @@
 
 #include "common/text-to-speech.h"
 #include "common/system.h"
-#if defined(USE_TTS)
-
 namespace Common {
 
 TTSVoice::TTSVoice()
@@ -159,4 +157,3 @@ void TextToSpeechManager::setLanguage(Common::String language) {
 }
 
 }
-#endif

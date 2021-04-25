@@ -48,9 +48,7 @@
 #else
 #include "image/bmp.h"
 #endif
-#ifdef USE_TTS
 #include "common/text-to-speech.h"
-#endif
 
 // SDL surface flags which got removed in SDL2.
 #if SDL_VERSION_ATLEAST(2, 0, 0)
@@ -2211,9 +2209,7 @@ void SurfaceSdlGraphicsManager::drawMouse() {
 void SurfaceSdlGraphicsManager::displayMessageOnOSD(const Common::U32String &msg) {
 	assert(_transactionMode == kTransactionNone);
 	assert(!msg.empty());
-#ifdef USE_TTS
 	Common::U32String textToSay = msg;
-#endif // USE_TTS
 
 	Common::StackLock lock(_graphicsMutex);	// Lock the mutex until this function ends
 
@@ -2289,14 +2285,12 @@ void SurfaceSdlGraphicsManager::displayMessageOnOSD(const Common::U32String &msg
 
 	// Ensure a full redraw takes place next time the screen is updated
 	_forceRedraw = true;
-#ifdef USE_TTS
 	if (ConfMan.hasKey("tts_enabled", "scummvm") &&
 			ConfMan.getBool("tts_enabled", "scummvm")) {
 		Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
 		if (ttsMan)
 			ttsMan->say(textToSay);
 	}
-#endif // USE_TTS
 }
 
 SDL_Rect SurfaceSdlGraphicsManager::getOSDMessageRect() const {
