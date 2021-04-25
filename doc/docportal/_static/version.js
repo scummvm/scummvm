@@ -1,4 +1,4 @@
-document.addEventListener("DOMContentLoaded", function(){
+window.addEventListener("load", function(){
 
     var url = window.location.href;
     var start = url.indexOf("/", 27);
