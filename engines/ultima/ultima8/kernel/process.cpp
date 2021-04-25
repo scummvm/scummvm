@@ -80,7 +80,7 @@ void Process::waitFor(ProcId pid) {
 		// add this process to waiting list of other process
 		Process *p = kernel->getProcess(pid);
 		assert(p);
-		if (p->is_terminated()) {
+		if (p->getProcessFlags() & PROC_TERMINATED) {
 			warning("Proc %d wait for proc %d which is already terminated", _pid, pid);
 			return;
 		}
