@@ -304,6 +304,11 @@ uint32 MovieGump::I_playMovieCutsceneAlt(const uint8 *args, unsigned int /*argsi
 	ARG_UINT16(x);
 	ARG_UINT16(y);
 
+	if (!x)
+		x = 640;
+	if (!y)
+		y = 480;
+
 	warning("MovieGump::I_playMovieCutsceneAlt: TODO: This intrinsic should pause and fade the background to grey");
 
 	if (item) {
