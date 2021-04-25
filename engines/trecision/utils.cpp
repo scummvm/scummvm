@@ -23,6 +23,8 @@
 #include <common/system.h>
 
 
+
+#include "graphics.h"
 #include "trecision/nl/define.h"
 #include "trecision/nl/extern.h"
 #include "trecision/nl/message.h"
@@ -155,9 +157,9 @@ void TrecisionEngine::setRoom(uint16 r, bool b) {
 	RegenRoom();
 }
 
-/*-----------------17/02/95 09.53-------------------
- TextLength - Compute string length from character 0 to num
---------------------------------------------------*/
+/*-------------------------------------------------
+ * Compute string length from character 0 to num
+ *-------------------------------------------------*/
 uint16 TrecisionEngine::TextLength(const char *text, uint16 num) {
 	if (text == nullptr)
 		return 0;
@@ -230,7 +232,7 @@ bool TrecisionEngine::CheckMask(uint16 mx, uint16 my) {
 		uint16 checkedObj = _room[_curRoom]._object[a];
 		Common::Rect lim = _obj[checkedObj]._lim;
 		lim.translate(0, TOP);
-		// trecision includes the bottom and right coordinates
+		// Trecision includes the bottom and right coordinates
 		lim.right++;
 		lim.bottom++;
 
@@ -306,6 +308,59 @@ void TrecisionEngine::resetZBuffer(int x1, int y1, int x2, int y2) {
 	int16 *d = _zBuffer;
 	for (int i = 0; i < size; ++i)
 		*d++ = 0x7FFF;
+}
+
+void TrecisionEngine::openSys() {
+	// head
+	hh = 0;
+	FTexture[hh]._dx = 300 / 2;
+	FTexture[hh]._dy = 208 / 2;
+	FTexture[hh]._angle = 0;
+	FTexture[hh]._texture = _textureArea;
+	FTexture[hh]._flag = TEXTUREACTIVE + TEXTURECYLIND;
+
+	// body
+	hh = 1;
+	FTexture[hh]._dx = 300;
+	FTexture[hh]._dy = 300;
+	FTexture[hh]._angle = 0;
+	FTexture[hh]._texture = FTexture[0]._texture + (300 * 208) / 4;
+	FTexture[hh]._flag = TEXTUREACTIVE + TEXTURECYLIND;
+
+	// arms
+	hh = 2;
+	FTexture[hh]._dx = 300;
+	FTexture[hh]._dy = 150;
+	FTexture[hh]._angle = 0;
+	FTexture[hh]._texture = FTexture[1]._texture + 300 * 300;
+	FTexture[hh]._flag = TEXTUREACTIVE + TEXTURECYLIND;
+
+	delete _actor;
+	_actor = new SActor(this);
+	_actor->readActor("jm.om");
+
+	_actor->_light = (SLight *)&VLight;
+	_actor->_camera = (SCamera *)&FCamera;
+	_actor->_texture = (STexture *)&FTexture[0];
+
+	TextArea = new char[MAXTEXTAREA];
+
+	// zbuffer
+	_zBuffer = new int16[ZBUFFERSIZE / 2];
+	for (int c = 0; c < ZBUFFERSIZE / 2; ++c)
+		_zBuffer[c] = 0x7FFF;
+
+	_screenBuffer = new uint16[MAXX * MAXY];
+	memset(_screenBuffer, 0, MAXX * MAXY * 2);
+
+	_graphicsMgr->clearScreen();
+
+	hideCursor();
+
+	for (int i = 0; i < MAXOBJINROOM; ++i) {
+		OldObjStatus[i] = false;
+		VideoObjStatus[i] = false;
+	}
 }
 
 } // End of namespace Trecision

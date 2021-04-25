@@ -43,15 +43,15 @@ void actorDoAction(int action) {
 
 	_step[b]._px = px;
 	_step[b]._pz = pz;
-	_step[b]._dx = 0.0;
-	_step[b]._dz = 0.0;
+	_step[b]._dx = 0.0f;
+	_step[b]._dz = 0.0f;
 
 	_step[b]._theta     = theta;
 	_step[b]._curAction = hSTAND;
 	_step[b]._curFrame  = 0;
 	_step[b]._curPanel  = _curPanel;
 
-	float t = ((270.0 - theta) * PI2) / 360.0;
+	float t = ((270.0f - theta) * PI2) / 360.0f;
 	float ox = cos(t);
 	float oz = sin(t);
 
@@ -246,20 +246,20 @@ void lookAt(float x, float z) {
 	ox /= t;
 	oz /= t;
 
-	float theta = sinCosAngle(ox, oz) * 180.0 / PI;
-	if (theta >= 360.0)
-		theta -= 360.0;
-	if (theta <  0.0)
-		theta += 360.0;
+	float theta = sinCosAngle(ox, oz) * 180.0f / PI;
+	if (theta >= 360.0f)
+		theta -= 360.0f;
+	if (theta <  0.0f)
+		theta += 360.0f;
 
 	float approx = theta - _step[_lastStep]._theta;
 
-	if ((approx < 30.0) && (approx > -30.0))
-		approx = 0.0;
-	else if (approx > 180.0)
-		approx = -360.0 + approx;
+	if ((approx < 30.0f) && (approx > -30.0f))
+		approx = 0.0f;
+	else if (approx > 180.0f)
+		approx = -360.0f + approx;
 	else if (approx < -180.0)
-		approx = 360.0 + approx;
+		approx = 360.0f + approx;
 
 	approx /= 3.0;
 

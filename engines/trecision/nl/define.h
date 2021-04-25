@@ -2398,8 +2398,6 @@ enum InventoryItem {
 #define dFLOG				64
 #define dFCRED				65
 
-#define MAXLIGHT 40
-
 #define PATCHOBJ_ROOM41D 89
 #define PATCHOBJ_ROOM2C	 20
 
