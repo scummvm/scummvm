@@ -26,8 +26,16 @@
 #include "common/array.h"
 #include "common/scummsys.h"
 #include "common/list.h"
+#include "common/config-manager.h"
+#include "common/system.h"
+
 #include "graphics/pixelformat.h"
 #include "graphics/mode.h"
+#include "graphics/renderer.h"
+
+#if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS) || defined(USE_GLES2)
+#include "graphics/opengl/context.h"
+#endif
 
 /**
  * @defgroup engines_util Util
@@ -79,5 +87,17 @@ void initGraphics(int width, int height, const Common::List<Graphics::PixelForma
  * @overload
  */
 void initGraphics3d(int width, int height);
+
+/**
+ * A helper function for 3d engine render init.
+ * Determines render type by checking settings, features, shader support, etc.
+ *
+ * Calls initGraphics(width, height, nullptr) for software mode.
+ * Calls initGraphics3d(width, height) otherwise.
+ *
+ * Returns matching render type.
+ * Shows an warning, if result is different from render type desired in settings.
+ */
+Graphics::RendererType initGraphicsAndGetRendererType(int width, int height);
 /** @} */
 #endif

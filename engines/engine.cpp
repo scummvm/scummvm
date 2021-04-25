@@ -404,6 +404,38 @@ void initGraphics3d(int width, int height) {
 	g_system->endGFXTransaction();
 }
 
+Graphics::RendererType initGraphicsAndGetRendererType(int width, int height) {
+	Common::String rendererConfig = ConfMan.get("renderer");
+	Graphics::RendererType desiredRendererType = Graphics::parseRendererTypeCode(rendererConfig);
+	Graphics::RendererType matchingRendererType = Graphics::getBestMatchingAvailableRendererType(desiredRendererType);
+
+	bool isAccelerated = matchingRendererType != Graphics::kRendererTypeTinyGL;
+
+	if (isAccelerated) {
+		initGraphics3d(width, height);
+	} else {
+		initGraphics(width, height, nullptr);
+	}
+
+#if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS) || defined(USE_GLES2)
+	bool backendCapableOpenGL = g_system->hasFeature(OSystem::kFeatureOpenGLForGame);
+#endif
+
+#if defined(USE_OPENGL_GAME)
+	// Check the OpenGL context actually supports shaders
+	if (backendCapableOpenGL && matchingRendererType == Graphics::kRendererTypeOpenGLShaders && !OpenGLContext.shadersSupported) {
+		matchingRendererType = Graphics::kRendererTypeOpenGL;
+	}
+#endif
+
+	if (matchingRendererType != desiredRendererType && desiredRendererType != Graphics::kRendererTypeDefault) {
+		// Display a warning if unable to use the desired renderer
+		warning("Unable to create a '%s' renderer", rendererConfig.c_str());
+	}
+
+	return matchingRendererType;
+}
+
 void GUIErrorMessageWithURL(const Common::U32String &msg, const char *url) {
 	GUIErrorMessage(msg, url);
 }
