@@ -82,7 +82,8 @@
 #endif
 
 #ifdef ENABLE_WME3D
-#include "engines/util3d.h"
+#include "graphics/renderer.h"
+#include "engines/util.h"
 #endif
 
 namespace Wintermute {
@@ -495,33 +496,37 @@ bool BaseGame::initialize1() {
 }
 
 //////////////////////////////////////////////////////////////////////
-BaseRenderer3D *makeTinyGL3DRenderer(BaseGame *) {
-	warning("3D software renderered is not supported yet");
-	return nullptr;
-}
-
-//////////////////////////////////////////////////////////////////////
 bool BaseGame::initialize2() { // we know whether we are going to be accelerated
 #ifdef ENABLE_WME3D
 	Common::String rendererConfig = ConfMan.get("renderer");
 	Graphics::RendererType desiredRendererType = Graphics::parseRendererTypeCode(rendererConfig);
+
 	if (!_playing3DGame && (desiredRendererType == Graphics::kRendererTypeDefault || desiredRendererType == Graphics::kRendererTypeTinyGL)) {
 		_renderer = makeOSystemRenderer(this);
-	} else {
-		_renderer3D = createSelectedRender<BaseRenderer3D, BaseGame>(
-			_settings->getResWidth(),
-			_settings->getResHeight(),
-#if defined(USE_GLES2) || defined(USE_OPENGL_SHADERS)
-			makeOpenGL3DShaderRenderer,
-#endif
-#if defined(USE_OPENGL_GAME) && !defined(USE_GLES2)
-			makeOpenGL3DRenderer,
-#endif
-			makeTinyGL3DRenderer,
-			this
-		);
-		_renderer = _renderer3D;
+		if (_renderer == nullptr) {
+			return STATUS_FAILED;
+		}
+		return STATUS_OK;
 	}
+
+	desiredRendererType = initGraphicsAndGetRendererType(_settings->getResWidth(), _settings->getResHeight());
+	bool backendCapableOpenGL = g_system->hasFeature(OSystem::kFeatureOpenGLForGame);
+
+#if defined(USE_OPENGL_SHADERS) || defined(USE_GLES2)
+	if (backendCapableOpenGL && desiredRendererType == Graphics::kRendererTypeOpenGLShaders) {
+		_renderer3D = makeOpenGL3DShaderRenderer(this);
+	}
+#endif
+#if defined(USE_OPENGL_GAME)
+	if (backendCapableOpenGL && desiredRendererType == Graphics::kRendererTypeOpenGL) {
+		_renderer3D = makeOpenGL3DRenderer(this);
+	}
+#endif
+	if (_playing3DGame && desiredRendererType == Graphics::kRendererTypeTinyGL) {
+		_renderer3D = nullptr;// TODO: makeTinyGL3DRenderer(this);
+		error("3D software renderered is not supported yet");
+	}
+	_renderer = _renderer3D;
 #else
 	_renderer = makeOSystemRenderer(this);
 #endif
