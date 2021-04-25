@@ -368,12 +368,9 @@ bool TrecisionEngine::syncGameStream(Common::Serializer &ser) {
 	ser.syncAsSint16LE(_flagCharacterExists);
 	ser.syncBytes(_inventory, MAXICON);
 	ser.syncBytes(_cyberInventory, MAXICON);
-	ser.syncAsFloatLE(_actor->_px);
-	ser.syncAsFloatLE(_actor->_py);
-	ser.syncAsFloatLE(_actor->_pz);
-	ser.syncAsFloatLE(_actor->_dx);
-	ser.syncAsFloatLE(_actor->_dz);
-	ser.syncAsFloatLE(_actor->_theta);
+
+	_actor->syncGameStream(ser);
+
 	ser.syncAsSint32LE(_curPanel);
 	ser.syncAsSint32LE(_oldPanel);
 
@@ -1057,7 +1054,7 @@ void TrecisionEngine::performLoad(int slot, bool skipLoad) {
 	}
 }
 
-SActor::SActor(TrecisionEngine *vm) : _vm(vm) {
+Actor::Actor(TrecisionEngine *vm) : _vm(vm) {
 	_vertex = nullptr;
 	_face = nullptr;
 	_light = nullptr;
@@ -1094,7 +1091,7 @@ SActor::SActor(TrecisionEngine *vm) : _vm(vm) {
 	_characterArea = nullptr;
 }
 
-SActor::~SActor() {
+Actor::~Actor() {
 	delete[] _characterArea;
 	delete[] _face;
 //	delete _light;
