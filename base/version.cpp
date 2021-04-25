@@ -161,6 +161,10 @@ const char *gScummVMFeatures = ""
 	"EventRecorder "
 #endif
 
+#ifdef USE_TASKBAR
+	"taskbar "
+#endif
+
 #ifdef USE_CLOUD
 	"cloud ("
 #ifdef USE_LIBCURL
