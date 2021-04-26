@@ -48,11 +48,7 @@ void Viewport::init() {
 
 	_screenPosition = dest;
 
-	_upHotspot = _downHotspot = _leftHotspot = _rightHotspot = _screenPosition;
-	_downHotspot.translate(0, _screenPosition.height());
-	_rightHotspot.translate(_screenPosition.width(), 0);
-	
-	setEdgesSize(g_nancy->_verticalEdgesSize, g_nancy->_horizontalEdgesSize + 5, g_nancy->_horizontalEdgesSize, g_nancy->_horizontalEdgesSize);
+	setEdgesSize(g_nancy->_verticalEdgesSize, g_nancy->_verticalEdgesSize, g_nancy->_horizontalEdgesSize, g_nancy->_horizontalEdgesSize);
 
 	RenderObject::init();
 }
@@ -67,61 +63,50 @@ void Viewport::handleInput(NancyInput &input) {
 		input.mousePos = _stickyCursorPos;
 	}
 
-	if (_screenPosition.contains(input.mousePos)) {
+	Common::Rect viewportActiveZone;
+
+	if (g_nancy->getGameType() == kGameTypeVampire) {
+		viewportActiveZone = g_nancy->_graphicsManager->getScreen()->getBounds();
+		viewportActiveZone.bottom = _screenPosition.bottom;
+	} else {
+		viewportActiveZone = _screenPosition;
+	}
+	
+	if (viewportActiveZone.contains(input.mousePos)) {
 		g_nancy->_cursorManager->setCursorType(CursorManager::kNormal);
-	}
 
-	// Do not handle hotspots marked as inactive and ignore diagonals if intersecting hotspots are not active
-	if (_upHotspot.contains(input.mousePos) && (_edgesMask & kUp) == 0) {
-		if (_upHotspot.findIntersectingRect(_leftHotspot).contains(input.mousePos)) {
-			if ((_edgesMask & kLeft) == 0) {
-				direction |= kUp;
-			}
-		} else if (_upHotspot.findIntersectingRect(_rightHotspot).contains(input.mousePos)) {
-			if ((_edgesMask & kRight) == 0) {
-				direction |= kUp;
-			}
-		} else {
-			direction |= kUp;
-		}
-	} else if (_downHotspot.contains(input.mousePos) && (_edgesMask & kDown) == 0) {
-		if (_downHotspot.findIntersectingRect(_leftHotspot).contains(input.mousePos)) {
-			if ((_edgesMask & kLeft) == 0) {
-				direction |= kDown;
-			}
-		} else if (_downHotspot.findIntersectingRect(_rightHotspot).contains(input.mousePos)) {
-			if ((_edgesMask & kRight) == 0) {
-				direction |= kDown;
-			}
-		} else {
-			direction |= kDown;
-		}
-	}
-
-	if (_leftHotspot.contains(input.mousePos) && (_edgesMask & kLeft) == 0) {
-		if (_leftHotspot.findIntersectingRect(_upHotspot).contains(input.mousePos)) {
-			if ((_edgesMask & kUp) == 0) {
-				direction |= kLeft;
-			}
-		} else if (_leftHotspot.findIntersectingRect(_downHotspot).contains(input.mousePos)) {
-			if ((_edgesMask & kDown) == 0) {
-				direction |= kLeft;
-			}
-		} else {
+		if (input.mousePos.x < _nonScrollZone.left) {
 			direction |= kLeft;
 		}
-	} else if (_rightHotspot.contains(input.mousePos) && (_edgesMask & kRight) == 0) {
-		if (_rightHotspot.findIntersectingRect(_upHotspot).contains(input.mousePos)) {
-			if ((_edgesMask & kUp) == 0) {
-				direction |= kRight;
-			}
-		} else if (_rightHotspot.findIntersectingRect(_downHotspot).contains(input.mousePos)) {
-			if ((_edgesMask & kDown) == 0) {
-				direction |= kRight;
-			}
-		} else {
+
+		if (input.mousePos.x > _nonScrollZone.right) {
 			direction |= kRight;
 		}
+
+		if (input.mousePos.y < _nonScrollZone.top) {
+			direction |= kUp;
+		}
+
+		if (input.mousePos.y > _nonScrollZone.bottom) {
+			// Handle TVD's weird behavior
+			if (_screenPosition.contains(input.mousePos)) {
+				direction |= kDown;
+			} else {
+				direction &= ~(kLeft | kRight);
+			}
+		}
+
+		// Handle diagonals
+		if (direction & (kLeft | kUp) ||
+			direction & (kLeft | kDown) ||
+			direction & (kRight | kUp) ||
+			direction & (kRight | kDown)) {
+				if (direction & _edgesMask) {
+					direction = 0;
+				}
+		}
+
+		direction &= ~_edgesMask;
 	}
 
 	// Set sticky cursor
@@ -308,16 +293,12 @@ Common::Rect Viewport::convertScreenToViewport(const Common::Rect &viewportRect)
 }
 
 void Viewport::setEdgesSize(uint16 upSize, uint16 downSize, uint16 leftSize, uint16 rightSize) {
-	_upHotspot.setHeight(upSize);
-	_leftHotspot.setWidth(leftSize);
-
-	_downHotspot.top = _screenPosition.bottom;
-	_downHotspot.setHeight(downSize);
-	_downHotspot.translate(0, -downSize);
-
-	_rightHotspot.left = _screenPosition.right;
-	_rightHotspot.setWidth(rightSize);
-	_rightHotspot.translate(-rightSize, 0);
+	_nonScrollZone = _screenPosition;
+	uint offset = g_nancy->getGameType() == kGameTypeVampire ? 0 : 1;
+	_nonScrollZone.top += upSize;
+	_nonScrollZone.left += leftSize;
+	_nonScrollZone.bottom -= downSize + offset;
+	_nonScrollZone.right -= rightSize + offset;
 }
 
 void Viewport::disableEdges(byte edges) {

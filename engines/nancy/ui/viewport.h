@@ -80,11 +80,7 @@ public:
 protected:
 	void setEdgesSize(uint16 upSize, uint16 downSize, uint16 leftSize, uint16 rightSize);
 
-	Common::Rect _upHotspot;
-	Common::Rect _downHotspot;
-	Common::Rect _leftHotspot;
-	Common::Rect _rightHotspot;
-
+	Common::Rect _nonScrollZone;
 	byte _edgesMask;
 
 	byte _movementLastFrame;

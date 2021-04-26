@@ -467,20 +467,21 @@ void NancyEngine::readBootSummary(const IFF &boot) {
 		readChunkList(boot, ser, "OB");
 	}
 
+	ser.skip(0x96, kGameTypeVampire, kGameTypeVampire);
 	ser.skip(0x79, kGameTypeNancy1, kGameTypeNancy1);
-	ser.syncAsUint16LE(_horizontalEdgesSize, kGameTypeNancy1, kGameTypeNancy1);
-	ser.syncAsUint16LE(_verticalEdgesSize, kGameTypeNancy1, kGameTypeNancy1);
-	ser.skip(0x1C, kGameTypeNancy1, kGameTypeNancy1);
+	ser.syncAsUint16LE(_horizontalEdgesSize, kGameTypeVampire, kGameTypeNancy1);
+	ser.syncAsUint16LE(_verticalEdgesSize, kGameTypeVampire, kGameTypeNancy1);
+	ser.skip(0x1C, kGameTypeVampire, kGameTypeNancy1);
 	int16 time = 0;
-	ser.syncAsSint16LE(time, kGameTypeNancy1, kGameTypeNancy1);
+	ser.syncAsSint16LE(time, kGameTypeVampire, kGameTypeNancy1);
 	_playerTimeMinuteLength = time;
 	ser.skip(2, kGameTypeNancy1, kGameTypeNancy1);
-	ser.syncAsByte(_overrideMovementTimeDeltas, kGameTypeNancy1, kGameTypeNancy1);
+	ser.syncAsByte(_overrideMovementTimeDeltas, kGameTypeVampire, kGameTypeNancy1);
 
 	if (_overrideMovementTimeDeltas) {
-		ser.syncAsSint16LE(time, kGameTypeNancy1, kGameTypeNancy1);
+		ser.syncAsSint16LE(time, kGameTypeVampire, kGameTypeNancy1);
 		_slowMovementTimeDelta = time;
-		ser.syncAsSint16LE(time, kGameTypeNancy1, kGameTypeNancy1);
+		ser.syncAsSint16LE(time, kGameTypeVampire, kGameTypeNancy1);
 		_fastMovementTimeDelta = time;
 	}
 }
