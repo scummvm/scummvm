@@ -49,29 +49,22 @@ namespace Trecision {
 
 // DRAW STRUCT
 struct SDText {
-	uint16 x;
-	uint16 y;
-	uint16 dx;
-	uint16 dy;
+	Common::Rect _rect;
 	Common::Rect _subtitleRect;
 	uint16 tcol;
 	uint16 scol;
 	const char *text;
 
 	void set(SDText org);
-	void set(uint16 x, uint16 y, uint16 dx, uint16 dy, uint16 l0, uint16 l1, uint16 l2, uint16 l3, uint16 tcol, uint16 scol, const char *sign);
+	void set(Common::Rect rect, Common::Rect subtitleRect, uint16 tcol, uint16 scol, const char *sign);
 
-	void clear();
 	void DText(uint16 *frameBuffer = nullptr);
 	uint16 checkDText();
 };
 
 
 struct SDObj {
-	uint16 x;
-	uint16 y;
-	uint16 dx;
-	uint16 dy;
+	Common::Rect rect;
 	Common::Rect l;
 	int objIndex;
 	bool drawMask;

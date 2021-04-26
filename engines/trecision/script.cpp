@@ -100,7 +100,13 @@ bool TrecisionEngine::quitGame() {
 		memset(_screenBuffer + MAXX * a, 0, MAXX * 2);
 
 	SDText SText;
-	SText.set(0, TOP - 20, MAXX, CARHEI, 0, 0, MAXX, CARHEI, MOUSECOL, MASKCOL, _sysText[kMessageConfirmExit]);
+	SText.set(
+		Common::Rect(0, TOP - 20, MAXX, CARHEI + (TOP - 20)),
+		Common::Rect(0, 0, MAXX, CARHEI),
+		MOUSECOL,
+		MASKCOL,
+		_sysText[kMessageConfirmExit]
+	);
 	SText.DText();
 
 	_graphicsMgr->copyToScreen(0, 0, MAXX, TOP);
@@ -126,7 +132,13 @@ void TrecisionEngine::demoOver() {
 		memset(_screenBuffer + MAXX * a, 0, MAXX * 2);
 
 	SDText SText;
-	SText.set(0, TOP - 20, MAXX, CARHEI, 0, 0, MAXX, CARHEI, MOUSECOL, MASKCOL, _sysText[kMessageDemoOver]);
+	SText.set(
+		Common::Rect(0, TOP - 20, MAXX, CARHEI + (TOP - 20)),
+		Common::Rect(0, 0, MAXX, CARHEI),
+		MOUSECOL,
+		MASKCOL,
+		_sysText[kMessageDemoOver]
+	);	
 	SText.DText();
 
 	_graphicsMgr->copyToScreen(0, 0, MAXX, TOP);

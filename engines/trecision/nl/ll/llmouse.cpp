@@ -32,26 +32,17 @@
 namespace Trecision {
 
 void SDText::set(SDText org) {
-	set(org.x, org.y, org.dx, org.dy, org._subtitleRect.left, org._subtitleRect.top, org._subtitleRect.right, org._subtitleRect.bottom, org.tcol, org.scol, org.text);
+	set(org._rect, org._subtitleRect, org.tcol, org.scol, org.text);
 }
 
-void SDText::set(uint16 px, uint16 py, uint16 pdx, uint16 pdy, uint16 pl0, uint16 pl1, uint16 pl2, uint16 pl3, uint16 ptcol, uint16 pscol, const char *psign) {
-	x = px;
-	y = py;
-	dx = pdx;
-	dy = pdy;
-	_subtitleRect.left = pl0;
-	_subtitleRect.top = pl1;
-	_subtitleRect.right = pl2;
-	_subtitleRect.bottom = pl3;
+void SDText::set(Common::Rect rect, Common::Rect subtitleRect, uint16 ptcol, uint16 pscol, const char *pText) {
+	_rect = rect;
+	_subtitleRect = subtitleRect;
 	tcol = ptcol;
 	scol = pscol;
-	text = psign;
+	text = pText;
 }
 
-void SDText::clear() {
-	set(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, nullptr);
-}
 /*-------------------------------------------------------------
    checkDText - Computes and returns the dy of the given DText
 --------------------------------------------------------------*/
@@ -60,7 +51,7 @@ uint16 SDText::checkDText() {
 		return 0;
 
 	uint8 curLine = 0;
-	if (g_vm->textLength(text, 0) <= dx) {
+	if (g_vm->textLength(text, 0) <= _rect.width()) {
 		strcpy((char *)DTextLines[curLine], text);
 		return CARHEI;
 	}
@@ -73,9 +64,9 @@ uint16 SDText::checkDText() {
 	while (a < strlen(text)) {
 		a++;
 		if (text[a] == ' ') {
-			if (g_vm->textLength(text + curInit, a - curInit) <= dx)
+			if (g_vm->textLength(text + curInit, a - curInit) <= _rect.width())
 				lastSpace = a;
-			else if (g_vm->textLength(text + curInit, lastSpace - curInit) <= dx) {
+			else if (g_vm->textLength(text + curInit, lastSpace - curInit) <= _rect.width()) {
 				uint16 b;
 				for (b = curInit; b < lastSpace; b++)
 					DTextLines[curLine][b - curInit] = text[b];
@@ -90,7 +81,7 @@ uint16 SDText::checkDText() {
 			} else
 				return 0;
 		} else if (text[a] == '\0') {
-			if (g_vm->textLength(text + curInit, a - curInit) <= dx) {
+			if (g_vm->textLength(text + curInit, a - curInit) <= _rect.width()) {
 				uint16 b;
 				for (b = curInit; b < a; b++)
 					DTextLines[curLine][b - curInit] = text[b];
@@ -101,7 +92,7 @@ uint16 SDText::checkDText() {
 				return tmpDy;
 			}
 
-			if (g_vm->textLength(text + curInit, lastSpace - curInit) <= dx) {
+			if (g_vm->textLength(text + curInit, lastSpace - curInit) <= _rect.width()) {
 				uint16 b;
 				for (b = curInit; b < lastSpace; b++)
 					DTextLines[curLine][b - curInit] = text[b];
@@ -143,7 +134,7 @@ void SDText::DText(uint16 *frameBuffer) {
 
 	for (uint16 b = 0; b < (curDy / CARHEI); b++) {
 		char *curText = (char *)DTextLines[b];
-		uint16 inc = (dx - g_vm->textLength(curText, 0)) / 2;
+		uint16 inc = (_rect.width() - g_vm->textLength(curText, 0)) / 2;
 		uint16 len = strlen(curText);
 
 		if (len >= MAXCHARS) {
@@ -170,8 +161,8 @@ void SDText::DText(uint16 *frameBuffer) {
 						if (CurColor != MASKCOL && (g_vm->_font[charOffset + fontDataOffset])) {
 							const uint16 charLeft = inc + curPos;
 							const uint16 charRight = charLeft + g_vm->_font[charOffset + fontDataOffset];
-							uint16 *dst1 = buffer + x + charLeft + (y + a) * MAXX;
-							uint16 *dst2 = buffer + x + _subtitleRect.left + (y + a) * MAXX;
+							uint16 *dst1 = buffer + _rect.left + charLeft + (_rect.top + a) * MAXX;
+							uint16 *dst2 = buffer + _rect.left + _subtitleRect.left + (_rect.top + a) * MAXX;
 							uint16 *dst = nullptr;
 							uint16 size = 0;
 

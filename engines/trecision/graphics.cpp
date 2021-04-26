@@ -308,10 +308,10 @@ void GraphicsManager::DrawObj(SDObj d) {
 	if (d.drawMask) {
 		uint8 *mask = _vm->_maskPointers[d.objIndex];
 
-		for (uint16 b = d.y; b < (d.y + d.dy); b++) {
+		for (uint16 b = d.rect.top; b < d.rect.bottom; b++) {
 			uint16 Sco = 0;
 			uint16 c = 0;
-			while (Sco < d.dx) {
+			while (Sco < d.rect.width()) {
 				if (c == 0) { // jump
 					Sco += *mask;
 					mask++;
@@ -320,18 +320,18 @@ void GraphicsManager::DrawObj(SDObj d) {
 				} else { // copy
 					uint16 maskOffset = *mask;
 
-					if ((maskOffset != 0) && (b >= (d.y + d.l.top)) && (b < (d.y + d.l.bottom))) {
+					if ((maskOffset != 0) && (b >= (d.rect.top + d.l.top)) && (b < (d.rect.top + d.l.bottom))) {
 						if ((Sco >= d.l.left) && ((Sco + maskOffset) < d.l.right))
-							memcpy(_vm->_screenBuffer + (b * MAXX) + Sco + d.x, buf, maskOffset * 2);
+							memcpy(_vm->_screenBuffer + (b * MAXX) + Sco + d.rect.left, buf, maskOffset * 2);
 
 						else if ((Sco < d.l.left) && ((Sco + maskOffset) < d.l.right) && ((Sco + maskOffset) >= d.l.left))
-							memcpy(_vm->_screenBuffer + (b * MAXX) + d.l.left + d.x, buf + d.l.left - Sco, (maskOffset + Sco - d.l.left) * 2);
+							memcpy(_vm->_screenBuffer + (b * MAXX) + d.l.left + d.rect.left, buf + d.l.left - Sco, (maskOffset + Sco - d.l.left) * 2);
 
 						else if ((Sco >= d.l.left) && ((Sco + maskOffset) >= d.l.right) && (Sco < d.l.right))
-							memcpy(_vm->_screenBuffer + (b * MAXX) + Sco + d.x, buf, (d.l.right - Sco) * 2);
+							memcpy(_vm->_screenBuffer + (b * MAXX) + Sco + d.rect.left, buf, (d.l.right - Sco) * 2);
 
 						else if ((Sco < d.l.left) && ((Sco + maskOffset) >= d.l.right))
-							memcpy(_vm->_screenBuffer + (b * MAXX) + d.l.left + d.x, buf + d.l.left - Sco, (d.l.right - d.l.left) * 2);
+							memcpy(_vm->_screenBuffer + (b * MAXX) + d.l.left + d.rect.left, buf + d.l.left - Sco, (d.l.right - d.l.left) * 2);
 					}
 					Sco += *mask;
 					buf += *mask++;
@@ -341,8 +341,8 @@ void GraphicsManager::DrawObj(SDObj d) {
 		}
 	} else {
 		for (uint16 b = d.l.top; b < d.l.bottom; b++) {
-			memcpy(_vm->_screenBuffer + (d.y + b) * MAXX + (d.x + d.l.left),
-				   buf + (b * d.dx) + d.l.left, (d.l.right - d.l.left) * 2);
+			memcpy(_vm->_screenBuffer + (d.rect.top + b) * MAXX + (d.rect.left + d.l.left),
+				   buf + (b * d.rect.width()) + d.l.left, d.l.width() * 2);
 		}
 	}
 }
