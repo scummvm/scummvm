@@ -13,7 +13,8 @@
 Object *Area::objectWithIDFromMap(ObjectMap *map, uint16 objectID) {
 	if (!map)
 		return nullptr;
-	//TODO //if(!map->count(objectID)) return nullptr;
+	if(!map->contains(objectID)) 
+		return nullptr;
 	return (*map)[objectID];
 }
 
@@ -32,7 +33,11 @@ uint16 Area::getAreaID() {
 Area::Area(
 	uint16 _areaID,
 	ObjectMap *_objectsByID,
-	ObjectMap *_entrancesByID) {
+	ObjectMap *_entrancesByID,
+	uint8 _skyColor,
+	uint8 _groundColor) {
+	skyColor = _skyColor;
+	groundColor = _groundColor;
 	areaID = _areaID;
 	objectsByID = _objectsByID;
 	entrancesByID = _entrancesByID;
@@ -85,6 +90,23 @@ Area::~Area() {
 }*/
 
 void Area::draw(Freescape::Renderer *gfx) {
+	debug("w: %d, h: %d", gfx->kOriginalWidth, gfx->kOriginalHeight);
+	Common::Rect sky(-1, 0, 1, 1);
+	uint8 r, g, b;
+	gfx->_palette->getRGBAt(skyColor, r, g, b);
+	//debug("Rendering area %d sky with color %x -> %x %x %x", areaID, skyColor, r, g, b);
+	gfx->drawRect2D(sky, 255, r, g, b);
+
+	Common::Rect ground(-1, -1, 1, 0);
+	gfx->_palette->getRGBAt(groundColor, r, g, b);
+	//debug("Rendering area %d sky with color %x -> %x %x %x", areaID, skyColor, r, g, b);
+	//ground.clip(gfx->_viewToRender);
+	//ground.debugPrint();
+	gfx->drawRect2D(ground, 255, r, g, b);
+
+	gfx->flipBuffer();
+	g_system->updateScreen();
+
 	for (Common::Array<Object *>::iterator iterator = drawableObjects.begin(); iterator != drawableObjects.end(); iterator++) {
 		(*iterator)->draw(gfx);
 	}

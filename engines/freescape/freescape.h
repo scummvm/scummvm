@@ -6,6 +6,7 @@
 #include "engines/engine.h"
 #include "graphics/palette.h"
 #include "graphics/surface.h"
+#include "graphics/pixelbuffer.h"
 #include "gui/debugger.h"
 
 #include "freescape/area.h"
@@ -36,13 +37,16 @@ class FreescapeEngine : public Engine {
 private:
 	// We need random numbers
 	Common::RandomSource *_rnd;
-	Graphics::PixelFormat _pixelFormat;
+	Graphics::PixelFormat _currentPixelFormat;
+	Graphics::PixelFormat _originalPixelFormat;
+	Graphics::PixelFormat _palettePixelFormat;
 	int _screenW, _screenH;
 
-	Common::Array<uint8> *_rawBorder;
-	Graphics::Surface *_border;
+	Graphics::PixelBuffer *_border;
+	Graphics::PixelBuffer *_palette;
 
-	Common::Array<uint8> *_rawPalette;
+	Graphics::Surface *_borderSurf;
+
 	
 	uint32 _timeOfLastTick;
 	bool _hasReceivedTime;
