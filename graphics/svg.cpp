@@ -53,7 +53,11 @@ SVGBitmap::SVGBitmap(Common::SeekableReadStream *in) {
 	_cache = NULL;
 	_render = NULL;
 
+#ifdef SCUMM_BIG_ENDIAN
+	_pixelformat = new Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
+#else
 	_pixelformat = new Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24);
+#endif
 }
 
 SVGBitmap::~SVGBitmap() {
