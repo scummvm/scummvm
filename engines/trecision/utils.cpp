@@ -363,4 +363,21 @@ void TrecisionEngine::openSys() {
 	}
 }
 
+float TrecisionEngine::sinCosAngle(float sinus, float cosinus) {
+	if (sinus == 0 && cosinus == 0)
+		return 0;
+
+	float t = (float)sqrt((double)(sinus * sinus) + (double)(cosinus * cosinus));
+	cosinus /= t;
+	sinus /= t;
+
+	// 1e3 & 2e4 quad
+	if (sinus >= 0)
+		// 1 & 2 quad
+		return (float)acos(cosinus);
+
+	// 3 quad
+	return (float)PI2 - (float)acos(cosinus);
+}
+
 } // End of namespace Trecision

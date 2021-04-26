@@ -135,23 +135,6 @@ uint16 _rTextX[480];
 uint16 _lTextY[480];
 uint16 _rTextY[480];
 
-float sinCosAngle(float sinus, float cosinus) {
-	if (sinus == 0 && cosinus == 0)
-		return 0;
-
-	float t = (float)sqrt((double)(sinus * sinus) + (double)(cosinus * cosinus));
-	cosinus /= t;
-	sinus /= t;
-
-	// 1e3 & 2e4 quad
-	if (sinus >= 0)
-		// 1 & 2 quad
-		return (float)acos(cosinus);
-
-	// 3 quad
-	return (float)PI2 - (float)acos(cosinus);
-}
-
 void textureTriangle(int32 x1, int32 y1, int32 z1, int32 c1, int32 tx1, int32 ty1,
 					 int32 x2, int32 y2, int32 z2, int32 c2, int32 tx2, int32 ty2,
 					 int32 x3, int32 y3, int32 z3, int32 c3, int32 tx3, int32 ty3,

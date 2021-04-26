@@ -155,7 +155,7 @@ void setPosition(int num) {
 				ox /= t;
 				oz /= t;
 
-				float theta = sinCosAngle(ox, oz) * 180.0 / PI;
+				float theta = g_vm->sinCosAngle(ox, oz) * 180.0f / PI;
 				if (theta >= 360.0)
 					theta -= 360.0;
 				if (theta < 0.0)
@@ -246,7 +246,7 @@ void lookAt(float x, float z) {
 	ox /= t;
 	oz /= t;
 
-	float theta = sinCosAngle(ox, oz) * 180.0f / PI;
+	float theta = g_vm->sinCosAngle(ox, oz) * 180.0f / PI;
 	if (theta >= 360.0f)
 		theta -= 360.0f;
 	if (theta <  0.0f)
