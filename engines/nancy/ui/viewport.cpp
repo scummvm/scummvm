@@ -209,16 +209,11 @@ void Viewport::setFrame(uint frameNr) {
 
 	const Graphics::Surface *newFrame = _decoder.decodeFrame(frameNr);
 
-	if (_videoFormat == 2) {
-		// Format 2 uses full-size images
-		GraphicsManager::copyToManaged(*newFrame, _fullFrame);
-	} else if (_videoFormat == 1) {
-		// Format 1 uses quarter-size, upside-down images
-		GraphicsManager::copyToManaged(*newFrame, _fullFrame, true, true);
-	}
+	// Format 1 uses quarter-size images, while format 2 uses full-size ones
+	// Videos in TVD are always upside-down
+	GraphicsManager::copyToManaged(*newFrame, _fullFrame, g_nancy->getGameType() == kGameTypeVampire, _videoFormat == 1);
 
 	_needsRedraw = true;
-
 	_currentFrame = frameNr;
 }
 
