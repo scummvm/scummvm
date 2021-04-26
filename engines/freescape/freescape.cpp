@@ -106,6 +106,7 @@ Common::Error FreescapeEngine::run() {
 	_gfx->_viewToRender = Common::Rect(64, 60, 575, 260);
 	_gfx->init();
 	_gfx->clear();
+	_gfx->selectTargetWindow(nullptr, false, true);
 	
 	Binary binary;
 	if (_targetName == "3Dkit")
@@ -134,8 +135,9 @@ Common::Error FreescapeEngine::run() {
 	assert(_areasByAreaID->contains(_startArea));
 	Area *area = (*_areasByAreaID)[_startArea];
 	assert(area);
+	drawBorder();
 	area->draw(_gfx);
-	//drawBorder();
+	
 
 	while (!shouldQuit()) {
 		g_system->getEventManager()->pollEvent(evt);

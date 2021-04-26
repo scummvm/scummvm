@@ -91,17 +91,15 @@ Area::~Area() {
 
 void Area::draw(Freescape::Renderer *gfx) {
 	debug("w: %d, h: %d", gfx->kOriginalWidth, gfx->kOriginalHeight);
-	Common::Rect sky(-1, 0, 1, 1);
+	Common::Rect view(20, 30, 305, 110);
+	Common::Rect sky(view.left, view.top, view.right, view.bottom-view.height()/2);
 	uint8 r, g, b;
 	gfx->_palette->getRGBAt(skyColor, r, g, b);
-	//debug("Rendering area %d sky with color %x -> %x %x %x", areaID, skyColor, r, g, b);
 	gfx->drawRect2D(sky, 255, r, g, b);
 
-	Common::Rect ground(-1, -1, 1, 0);
+
+	Common::Rect ground(view.left, view.top+view.height()/2, view.right, view.bottom);
 	gfx->_palette->getRGBAt(groundColor, r, g, b);
-	//debug("Rendering area %d sky with color %x -> %x %x %x", areaID, skyColor, r, g, b);
-	//ground.clip(gfx->_viewToRender);
-	//ground.debugPrint();
 	gfx->drawRect2D(ground, 255, r, g, b);
 
 	gfx->flipBuffer();

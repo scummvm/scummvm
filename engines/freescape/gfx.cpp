@@ -128,6 +128,7 @@ Common::Rect Renderer::viewport() const {
 void Renderer::computeScreenViewport() {
 	int32 screenWidth = _system->getWidth();
 	int32 screenHeight = _system->getHeight();
+	//assert(0);
 
 	/*if (ConfMan.getBool("widescreen_mod")) {
 		_screenViewport = Common::Rect(screenWidth, screenHeight);
