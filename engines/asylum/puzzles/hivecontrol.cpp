@@ -465,7 +465,7 @@ void PuzzleHiveControl::updateScreen() {
 }
 
 void PuzzleHiveControl::playSound() {
-	warning("[PuzzleHiveControl::playSound] Not implemented!");
+	// TODO
 }
 
 bool PuzzleHiveControl::hitTest1(Control control, const Common::Point &point, const Common::Point &location) {
@@ -477,10 +477,13 @@ bool PuzzleHiveControl::hitTest1(Control control, const Common::Point &point, co
 	GraphicFrame *frame = resource.getFrame(0);
 	Common::Point point1(point.x - location.x, point.y - location.y);
 
-	if (!frame->getRect().contains(point1))
+	if (!frame->getRect().contains(point1)) {
 		return false;
-	else
+	} else {
+		point1.x -= frame->x;
+		point1.y -= frame->y;
 		return *((byte *)frame->surface.getPixels() + point1.x + frame->surface.pitch * point1.y) != 0;
+	}
 }
 
 } // End of namespace Asylum
