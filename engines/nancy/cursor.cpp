@@ -83,17 +83,19 @@ void CursorManager::setCursor(CursorType type, int16 itemID) {
 	case kHotspotArrow:
 		_curCursorID = 6;
 		break;
-	default:
+	default: {
+		uint itemsOffset = 0;
 		if (itemID == -1) {
 			// No item held, set to eyeglass
 			itemID = 0;
 		} else {
 			// Item held
-			itemID += 3;
+			itemsOffset = g_nancy->getConstants().numNonItemCursors;
 			hasItem = true;
 		}
 
-		_curCursorID = itemID * 4 + type;
+		_curCursorID = itemID * 4 + itemsOffset + type;
+	}
 	}
 
 	Graphics::ManagedSurface *surf;

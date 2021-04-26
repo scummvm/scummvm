@@ -102,7 +102,7 @@ private:
 		Common::Rect hotspot; // in screen coordinates
 	};
 
-	Graphics::Surface _iconsSurface;
+	Graphics::ManagedSurface _iconsSurface;
 	Graphics::ManagedSurface _fullInventorySurface;
 
 	Scrollbar *_scrollbar;

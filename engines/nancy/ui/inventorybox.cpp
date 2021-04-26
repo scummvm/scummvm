@@ -81,12 +81,13 @@ void InventoryBox::init() {
 	stream.skip(8);
 	readRect(stream, _emptySpace);
 
-	char itemName[0x14];
+	char itemName[20];
+	uint itemNameLength = g_nancy->getGameType() == kGameTypeVampire ? 15 : 20;
 
 	_itemDescriptions.reserve(g_nancy->getConstants().numItems);
 	for (uint i = 0; i < g_nancy->getConstants().numItems; ++i) {
-		stream.read(itemName, 0x14);
-		itemName[0x13] = '\0';
+		stream.read(itemName, itemNameLength);
+		itemName[itemNameLength - 1] = '\0';
 		_itemDescriptions.push_back(ItemDescription());
 		ItemDescription &desc = _itemDescriptions.back();
 		desc.name = Common::String(itemName);
