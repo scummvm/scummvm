@@ -171,9 +171,7 @@ public:
 
 	static const int kOriginalWidth = 320;
 	static const int kOriginalHeight = 200;
-	static const int kTopBorderHeight = 30;
-	static const int kBottomBorderHeight = 90;
-	static const int kFrameHeight = 360;
+	static const int kFrameHeight = 200;
 
 	void computeScreenViewport();
 
