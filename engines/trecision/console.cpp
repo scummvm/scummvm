@@ -99,7 +99,7 @@ bool Console::Cmd_Item(int argc, const char **argv) {
 	if (argc >= 3 && !scumm_stricmp(argv[2], "remove")) {
 		_vm->removeIcon(itemId);
 	} else {
-		_vm->addIcon(itemId);	
+		_vm->addIcon(itemId);
 	}
 
 	return false;
