@@ -39,7 +39,7 @@ public:
 	ENABLE_RUNTIME_CLASSTYPE()
 
 	CruPickupGump();
-	CruPickupGump(const Item *item, int y);
+	CruPickupGump(const Item *item, int y, bool showCount);
 
 	~CruPickupGump() override {};
 
@@ -58,7 +58,7 @@ public:
 	}
 
 	//! Update for a second item pickup - generally just replace existing count text.
-	void updateForNewItem(const Item *item);
+	void updateForNewItem(const Item *item, bool showCount);
 	void addCountText();
 
 	bool loadData(Common::ReadStream *rs, uint32 version);
@@ -71,6 +71,7 @@ private:
 	uint16 _gumpFrameNo;
 	Std::string _itemName;
 	uint16 _q;
+	bool _showCount;
 };
 
 } // End of namespace Ultima8

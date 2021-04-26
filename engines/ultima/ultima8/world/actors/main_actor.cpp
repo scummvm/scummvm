@@ -144,7 +144,7 @@ int16 MainActor::addItemCru(Item *item, bool showtoast) {
 			credits->setQuality(newq);
 			credits->callUsecodeEvent_combine();
 			if (showtoast)
-				pickupArea->addPickup(item);
+				pickupArea->addPickup(item, true);
 			item->destroy();
 		} else {
 			item->setFrame(0);
@@ -152,7 +152,7 @@ int16 MainActor::addItemCru(Item *item, bool showtoast) {
 			if (!_activeInvItem)
 				_activeInvItem = item->getObjId();
 			if (showtoast)
-				pickupArea->addPickup(item);
+				pickupArea->addPickup(item, true);
 		}
 		return 1;
 	}
@@ -176,7 +176,7 @@ int16 MainActor::addItemCru(Item *item, bool showtoast) {
 			if (!_activeWeapon)
 				_activeWeapon = item->getObjId();
 			if (showtoast)
-				pickupArea->addPickup(item);
+				pickupArea->addPickup(item, false);
 		}
 		break;
 	}
@@ -188,7 +188,7 @@ int16 MainActor::addItemCru(Item *item, bool showtoast) {
 			item->callUsecodeEvent_combine();
 			item->moveToContainer(this);
 			if (showtoast)
-				pickupArea->addPickup(item);
+				pickupArea->addPickup(item, true);
 			return 1;
 		} else {
 			// already have this, add some ammo.
@@ -197,7 +197,7 @@ int16 MainActor::addItemCru(Item *item, bool showtoast) {
 				ammo->setQuality(q + 1);
 				ammo->callUsecodeEvent_combine();
 				if (showtoast)
-					pickupArea->addPickup(item);
+					pickupArea->addPickup(item, true);
 				item->destroy();
 				return 1;
 			}
@@ -209,14 +209,14 @@ int16 MainActor::addItemCru(Item *item, bool showtoast) {
 		if (shapeno == 0x111) {
 			addKeycard(item->getQuality() & 0xff);
 			if (showtoast) {
-				pickupArea->addPickup(item);
+				pickupArea->addPickup(item, false);
 			}
 			item->destroy();
 			return 1;
 		} else if ((shapeno == 0x3a2) || (shapeno == 0x3a3) || (shapeno == 0x3a4)) {
 			// Batteries
 			if (showtoast)
-				pickupArea->addPickup(item);
+				pickupArea->addPickup(item, false);
 			item->destroy();
 			int plusenergy = 0;
 			CruBatteryType oldbattery = _cruBatteryType;
@@ -268,7 +268,7 @@ int16 MainActor::addItemCru(Item *item, bool showtoast) {
 						_shieldType = shieldtype;
 					}
 					if (showtoast)
-						pickupArea->addPickup(item);
+						pickupArea->addPickup(item, false);
 					item->destroy();
 					return 1;
 				} else {
@@ -277,7 +277,7 @@ int16 MainActor::addItemCru(Item *item, bool showtoast) {
 					item->callUsecodeEvent_combine();
 					item->moveToContainer(this);
 					if (showtoast)
-						pickupArea->addPickup(item);
+						pickupArea->addPickup(item, true);
 					if (!_activeInvItem)
 						_activeInvItem = item->getObjId();
 					return 1;
@@ -294,7 +294,7 @@ int16 MainActor::addItemCru(Item *item, bool showtoast) {
 						existing->setQuality(q + 1);
 						existing->callUsecodeEvent_combine();
 						if (showtoast)
-							pickupArea->addPickup(item);
+							pickupArea->addPickup(item, true);
 						item->destroy();
 						return 1;
 					}
@@ -304,7 +304,7 @@ int16 MainActor::addItemCru(Item *item, bool showtoast) {
 						existing->setQuality(q + 1);
 						existing->callUsecodeEvent_combine();
 						if (showtoast)
-							pickupArea->addPickup(item);
+							pickupArea->addPickup(item, true);
 						item->destroy();
 						return 1;
 					}
