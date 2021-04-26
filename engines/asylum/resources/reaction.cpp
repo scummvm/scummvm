@@ -498,7 +498,7 @@ void Reaction::play(int32 index) {
 		break;
 	}
 
-	if (getSpeech()->getSoundResourceId() == resourceId || !getSound()->isPlaying(resourceId))
+	if (getSpeech()->getSoundResourceId() != resourceId || !getSound()->isPlaying(resourceId))
 		getSpeech()->playPlayer(index);
 }
 

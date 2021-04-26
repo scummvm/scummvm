@@ -51,8 +51,8 @@ Speech::~Speech() {
 
 ResourceId Speech::play(ResourceId soundResourceId, ResourceId textResourceId) {
 	if (soundResourceId)
-		if (getSound()->isPlaying(soundResourceId))
-			getSound()->stopAll(soundResourceId);
+		if (getSound()->isPlaying(_soundResourceId))
+			getSound()->stopAll(_soundResourceId);
 
 	_soundResourceId = soundResourceId;
 	_textResourceId = textResourceId;

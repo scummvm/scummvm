@@ -1841,7 +1841,7 @@ void Scene::playIntroSpeech() {
 }
 
 void Scene::stopSpeech() {
-	if (_vm->isGameFlagSet(kGameFlag219)) {
+	if (_vm->isGameFlagNotSet(kGameFlag219)) {
 		if (getSpeech()->getSoundResourceId() != kResourceNone && getSound()->isPlaying(getSpeech()->getSoundResourceId()))
 			getSound()->stopAll(getSpeech()->getSoundResourceId());
 		else if (getSpeech()->getTick())
