@@ -43,7 +43,13 @@ DialogManager::~DialogManager() {}
 
 void DialogManager::dialogPrint(int x, int y, int c, const char *txt) {
 	SDText curChoice;
-	curChoice.set(x, y, _vm->textLength(txt, 0), 0, 0, 0, MAXX, MAXY, c, MASKCOL, txt);
+	curChoice.set(
+		Common::Rect(x, y, _vm->textLength(txt, 0), 0),
+		Common::Rect(0, 0, MAXX, MAXY),
+		c,
+		MASKCOL,
+		txt
+	);
 	curChoice.DText();
 }
 
@@ -572,8 +578,8 @@ void DialogManager::dialogHandler(int numFrame) {
 		_vm->hideCursor();
 		if (numFrame == _subTitles[_curSubTitle]._startFrame) {
 			int i = _curSubTitle++;
-			_vm->_sdText.x = _subTitles[i]._x;
-			_vm->_sdText.y = _subTitles[i]._y;
+			_vm->_sdText._rect.left = _subTitles[i]._x;
+			_vm->_sdText._rect.top = _subTitles[i]._y;
 			_vm->_sdText.tcol = _subTitles[i]._color;
 			_vm->_sdText.text = _vm->_sentence[_subTitles[i]._sentence];
 		}

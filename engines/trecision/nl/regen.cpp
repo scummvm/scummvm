@@ -58,10 +58,7 @@ void PaintScreen(bool flag) {
 
 	// erase character
 	if (g_vm->_flagShowCharacter && x2 > x1 && y2 > y1) {                    // if a description exists
-		DObj.x    = 0;
-		DObj.y    = TOP;
-		DObj.dx   = MAXX;
-		DObj.dy   = AREA;
+		DObj.rect = Common::Rect(0, TOP, MAXX, AREA + TOP);
 		DObj.l = Common::Rect(x1, y1, x2, y2);
 		DObj.objIndex = -1;
 		DObj.drawMask = false;
@@ -72,10 +69,7 @@ void PaintScreen(bool flag) {
 		l.translate(0, TOP);
 		g_vm->_limits[g_vm->_limitsNum++] = l;
 	} else if (g_vm->_animMgr->_animMinX != MAXX) {
-		DObj.x    = 0;
-		DObj.y    = TOP;
-		DObj.dx   = MAXX;
-		DObj.dy   = AREA;
+		DObj.rect = Common::Rect(0, TOP, MAXX, AREA + TOP);
 		DObj.l = Common::Rect(g_vm->_animMgr->_animMinX, g_vm->_animMgr->_animMinY, g_vm->_animMgr->_animMaxX, g_vm->_animMgr->_animMaxY);
 		DObj.objIndex = -1;
 		DObj.drawMask = false;
@@ -90,18 +84,15 @@ void PaintScreen(bool flag) {
 // CANCELLO LA SCRITTA
 	if (TextStatus & TEXT_DEL) {
 		// cancello scritta
-		DObj.x    = 0;
-		DObj.y    = TOP;
-		DObj.dx   = MAXX;
-		DObj.dy   = MAXY;
-		DObj.l.left = oldString.x;
-		DObj.l.top = oldString.y - TOP;
-		DObj.l.right = DObj.l.left + oldString.dx;
-		DObj.l.bottom = DObj.l.top + oldString.dy;
+		DObj.rect = Common::Rect(0, TOP, MAXX, MAXY + TOP);
+		DObj.l.left = oldString._rect.left;
+		DObj.l.top = oldString._rect.top - TOP;
+		DObj.l.right = DObj.l.left + oldString._rect.width();
+		DObj.l.bottom = DObj.l.top + oldString._rect.height();
 		DObj.objIndex = -1;
 		DObj.drawMask = false;
 
-		if ((oldString.y >= TOP) && ((oldString.y + oldString.dy) < (AREA + TOP))) {
+		if (oldString._rect.top >= TOP && oldString._rect.bottom < AREA + TOP) {
 			g_vm->_graphicsMgr->DrawObj(DObj);
 		} else {
 			for (int a = (DObj.l.top + TOP); a < (DObj.l.bottom + TOP); a++)
@@ -123,16 +114,10 @@ void PaintScreen(bool flag) {
 	// CANCELLA TUTTI GLI OGGETTI TOGLI
 	for (int a = 0; a < g_vm->_curSortTableNum; a++) {
 		if (SortTable[a]._remove) {
-			DObj.x    = 0;
-			DObj.y    = TOP;
-			DObj.dx   = MAXX;
-			DObj.dy   = MAXY;
+			DObj.rect = Common::Rect(0, TOP, MAXX, AREA + TOP);
 
 			if (SortTable[a]._isBitmap) {
-				DObj.l.left = g_vm->_obj[SortTable[a]._index]._px;
-				DObj.l.top = g_vm->_obj[SortTable[a]._index]._py;
-				DObj.l.right = DObj.l.left + g_vm->_obj[SortTable[a]._index]._dx;
-				DObj.l.bottom = DObj.l.top + g_vm->_obj[SortTable[a]._index]._dy;
+				DObj.l = g_vm->_obj[SortTable[a]._index]._rect;
 			}
 
 			DObj.objIndex = -1;
@@ -165,7 +150,7 @@ void PaintScreen(bool flag) {
 
 	if (TextStatus & TEXT_DRAW) {
 		curString.DText();
-		g_vm->_limits[g_vm->_limitsNum++] = Common::Rect(curString.x, curString.y, curString.x + curString.dx, curString.y + curString.dy);
+		g_vm->_limits[g_vm->_limitsNum++] = curString._rect;
 		TextStatus = TEXT_DRAW;                 // Activate text update
 	}
 
@@ -210,21 +195,18 @@ void PaintObjAnm(uint16 CurBox) {
 			if (SortTable[a]._isBitmap) {
 				if (g_vm->_obj[SortTable[a]._index]._nbox == CurBox) {
 					// l'oggetto bitmap al livello desiderato
-					DObj.x = g_vm->_obj[SortTable[a]._index]._px;
-					DObj.y = g_vm->_obj[SortTable[a]._index]._py + TOP;
-					DObj.dx = g_vm->_obj[SortTable[a]._index]._dx;
-					DObj.dy = g_vm->_obj[SortTable[a]._index]._dy;
-					DObj.l = Common::Rect(DObj.dx, DObj.dy);
+					SObject o = g_vm->_obj[SortTable[a]._index];
+					DObj.rect = o._rect;
+					DObj.rect.translate(0, TOP);
+					DObj.l = Common::Rect(DObj.rect.width(), DObj.rect.height());
 					DObj.objIndex = SortTable[a]._roomIndex;
-					DObj.drawMask = g_vm->_obj[SortTable[a]._index]._mode & OBJMODE_MASK;
+					DObj.drawMask = o._mode & OBJMODE_MASK;
 					g_vm->_graphicsMgr->DrawObj(DObj);
 
-					Common::Rect objRect(DObj.x, DObj.y, DObj.x + DObj.dx, DObj.y + DObj.dy);
-
 					if (VisualRef[a] == 255) {
-						g_vm->_limits[g_vm->_limitsNum++] = objRect;
+						g_vm->_limits[g_vm->_limitsNum++] = DObj.rect;
 					} else {
-						g_vm->_limits[VisualRef[a]].extend(objRect);
+						g_vm->_limits[VisualRef[a]].extend(DObj.rect);
 					}
 				}
 			}
@@ -243,22 +225,17 @@ void PaintObjAnm(uint16 CurBox) {
 			    (obj._nbox == CurBox)) {
 
 				Common::Rect r = g_vm->_limits[a];
-				Common::Rect r2 = Common::Rect(
-					obj._px,
-					obj._py + TOP,
-					obj._px + obj._dx,
-					obj._py + obj._dy + TOP
-				);
+				Common::Rect r2 = obj._rect;
+
+				r2.translate(0, TOP);
 
 				// Include the bottom right of the rect in the intersects() check
 				r2.bottom++;
 				r2.right++;
 
 				if (r.intersects(r2)) {
-					DObj.x = obj._px;
-					DObj.y = obj._py + TOP;
-					DObj.dx = obj._dx;
-					DObj.dy = obj._dy;
+					DObj.rect = obj._rect;
+					DObj.rect.translate(0, TOP);
 
 					// Restore the bottom right of the rect
 					r2.bottom--;

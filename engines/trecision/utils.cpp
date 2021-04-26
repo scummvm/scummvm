@@ -112,33 +112,37 @@ void TrecisionEngine::redrawString() {
 }
 
 void StackText::doText() {
-	curString.x = x;
-	curString.y = y;
-	curString.dx = g_vm->textLength(text, 0);
-	if ((y == MAXY - CARHEI) && (curString.dx > 600))
-		curString.dx = curString.dx * 3 / 5;
-	else if ((y != MAXY - CARHEI) && (curString.dx > 960))
-		curString.dx = curString.dx * 2 / 5;
-	else if ((y != MAXY - CARHEI) && (curString.dx > 320))
-		curString.dx = curString.dx * 3 / 5;
+	curString._rect.left = x;
+	curString._rect.top = y;
+	curString._rect.right = g_vm->textLength(text, 0) + curString._rect.left;
+	int16 w = curString._rect.width();
+	
+	if ((y == MAXY - CARHEI) && (w > 600))
+		w = w * 3 / 5;
+	else if ((y != MAXY - CARHEI) && (w > 960))
+		w = w * 2 / 5;
+	else if ((y != MAXY - CARHEI) && (w > 320))
+		w = w * 3 / 5;
 
+	curString._rect.right = w + curString._rect.left;
+	
 	curString.text = text;
 	curString._subtitleRect.left = 0;
 	curString._subtitleRect.top = 0;
-	curString._subtitleRect.right = curString.dx;
+	curString._subtitleRect.right = curString._rect.width();
 	uint16 hstring = curString.checkDText();
 	curString._subtitleRect.bottom = hstring;
-	curString.dy = hstring;
+	curString._rect.bottom = hstring + curString._rect.top;
 	curString.tcol = tcol;
 	curString.scol = scol;
 
-	if (curString.y <= hstring)
-		curString.y += hstring;
+	if (curString._rect.top <= hstring)
+		curString._rect.top += hstring;
 	else
-		curString.y -= hstring;
+		curString._rect.top -= hstring;
 
-	if (curString.y <= VIDEOTOP)
-		curString.y = VIDEOTOP + 1;
+	if (curString._rect.top <= VIDEOTOP)
+		curString._rect.top = VIDEOTOP + 1;
 
 	TextStatus |= TEXT_DRAW;
 }
@@ -246,13 +250,13 @@ bool TrecisionEngine::checkMask(uint16 mx, uint16 my) {
 
 				if (_obj[checkedObj]._mode & OBJMODE_MASK) {
 					uint8 *mask = _maskPointers[a];
-					int16 d = _obj[checkedObj]._px;
-					uint16 max = _obj[checkedObj]._py + _obj[checkedObj]._dy;
+					int16 d = _obj[checkedObj]._rect.left;
+					uint16 max = _obj[checkedObj]._rect.bottom;
 
-					for (uint16 b = _obj[checkedObj]._py; b < max; b++) {
+					for (uint16 b = _obj[checkedObj]._rect.top; b < max; b++) {
 						bool insideObj = false;
 						int16 e = 0;
-						while (e < _obj[checkedObj]._dx) {
+						while (e < _obj[checkedObj]._rect.right) {
 							if (!insideObj) { // not inside an object
 								if (b + TOP == my) {
 									if ((mx >= d + e) && (mx < d + e + *mask)) {

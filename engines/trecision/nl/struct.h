@@ -28,8 +28,9 @@
 #define TRECISION_NL_STRUCT_H
 
 #include "common/rect.h"
-#include "trecision/nl/sysdef.h"
 #include "common/scummsys.h"
+#include "common/stream.h"
+#include "trecision/nl/sysdef.h"
 
 namespace Trecision {
 
@@ -43,8 +44,7 @@ struct SRoom {
 };
 
 struct SObject {
-	uint16 _dx, _dy;
-	uint16 _px, _py;
+	Common::Rect _rect;
 	Common::Rect _lim;
 	int8  _position;						// -1 if no position
 	uint16 _name;
@@ -70,6 +70,13 @@ struct SObject {
 												6- Extra
 												7- Operated     */
 	uint16 _anim;
+
+	void readRect(Common::SeekableReadStream *stream) {
+		_rect.left = stream->readUint16LE();
+		_rect.top = stream->readUint16LE();
+		_rect.right = stream->readUint16LE() + _rect.left;
+		_rect.bottom = stream->readUint16LE() + _rect.top;
+	}
 };
 
 struct SInvObject {

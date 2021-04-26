@@ -51,25 +51,6 @@ SDText curString;
 SDText oldString;
 uint8  TextStatus;
 
-// info for Toc BmData
-struct SBmInfo {
-	uint16 px, py, dx, dy;
-
-	void read(uint16 *buf) {
-		px = *buf++;
-		py = *buf++;
-		dx = *buf++;
-		dy = *buf++;
-	}
-
-	void read(Common::SeekableReadStream *stream) {
-		px = stream->readUint16LE();
-		py = stream->readUint16LE();
-		dx = stream->readUint16LE();
-		dy = stream->readUint16LE();
-	}
-} BmInfo;
-
 static const float _vertsCorr[104][3] = {
 	0.000000f,	0.000000f,	0.000000f,		0.000000f,	0.000000f,	0.000000f,
 	0.000000f,	0.000000f,	0.000000f,		0.000000f,	0.000000f,	0.000000f,
@@ -353,9 +334,10 @@ void ReadLoc() {
 	Common::String filename = Common::String::format("%s.cr", g_vm->_room[g_vm->_curRoom]._baseName);
 	Common::SeekableReadStream *picFile = g_vm->_dataFile.createReadStreamForCompressedMember(filename);
 
-	BmInfo.read(picFile);
+	SObject bgInfo;
+	bgInfo.readRect(picFile);
 
-	g_vm->_graphicsMgr->loadBackground(picFile, BmInfo.dx, BmInfo.dy);
+	g_vm->_graphicsMgr->loadBackground(picFile, bgInfo._rect.width(), bgInfo._rect.height());
 	ReadObj(picFile);
 
 	g_vm->_soundMgr->stopAll();
@@ -403,14 +385,9 @@ void readObject(Common::SeekableReadStream *stream, uint16 objIndex, uint16 room
 	SObject *obj = &g_vm->_obj[roomObjIndex];
 
 	if (obj->_mode & OBJMODE_FULL) {
-		BmInfo.read(stream);
+		obj->readRect(stream);
 
-		obj->_px = BmInfo.px;
-		obj->_py = BmInfo.py;
-		obj->_dx = BmInfo.dx;
-		obj->_dy = BmInfo.dy;
-
-		uint32 size = obj->_dx * obj->_dy;
+		uint32 size = obj->_rect.width() * obj->_rect.height();
 		delete[] g_vm->_objPointers[objIndex];
 		g_vm->_objPointers[objIndex] = new uint16[size];
 		for (uint32 i = 0; i < size; ++i)
@@ -420,12 +397,7 @@ void readObject(Common::SeekableReadStream *stream, uint16 objIndex, uint16 room
 	}
 
 	if (obj->_mode & OBJMODE_MASK) {
-		BmInfo.read(stream);
-
-		obj->_px = BmInfo.px;
-		obj->_py = BmInfo.py;
-		obj->_dx = BmInfo.dx;
-		obj->_dy = BmInfo.dy;
+		obj->readRect(stream);
 
 		uint32 size = stream->readUint32LE();
 		delete[] g_vm->_objPointers[objIndex];

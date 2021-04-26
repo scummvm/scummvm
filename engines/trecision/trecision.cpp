@@ -499,10 +499,10 @@ void TrecisionEngine::LoadAll() {
 	}
 
 	for (int i = 0; i < MAXOBJ; ++i) {
-		_obj[i]._dx = dataNl.readUint16LE();
-		_obj[i]._dy = dataNl.readUint16LE();
-		_obj[i]._px = dataNl.readUint16LE();
-		_obj[i]._py = dataNl.readUint16LE();
+		_obj[i]._rect.left = dataNl.readUint16LE();
+		_obj[i]._rect.top = dataNl.readUint16LE();
+		_obj[i]._rect.right = dataNl.readUint16LE();
+		_obj[i]._rect.bottom = dataNl.readUint16LE();
 
 		_obj[i]._lim.left = dataNl.readUint16LE();
 		_obj[i]._lim.top = dataNl.readUint16LE();
@@ -728,7 +728,13 @@ bool TrecisionEngine::dataSave() {
 		memset(_screenBuffer + MAXX * a, 0, MAXX * 2);
 
 	SDText SText;
-	SText.set(0, TOP - 20, MAXX, CARHEI, 0, 0, MAXX, CARHEI, MOUSECOL, MASKCOL, _sysText[kMessageSavePosition]);
+	SText.set(
+		Common::Rect(0, TOP - 20, MAXX, CARHEI + (TOP - 20)),
+		Common::Rect(0, 0, MAXX, CARHEI),
+		MOUSECOL,
+		MASKCOL,
+		_sysText[kMessageSavePosition]
+	);
 	SText.DText();
 
 	_graphicsMgr->copyToScreen(0, 0, MAXX, TOP);
@@ -782,7 +788,13 @@ insave:
 				LenText = textLength(saveNames[CurPos].c_str(), 0);
 
 				posx = CLIP(posx - (LenText / 2), 2, MAXX - 2 - LenText);
-				SText.set(posx, FIRSTLINE + ICONDY + 10, LenText, CARHEI, 0, 0, LenText, CARHEI, MOUSECOL, MASKCOL, saveNames[CurPos].c_str());
+				SText.set(
+					Common::Rect(posx, FIRSTLINE + ICONDY + 10, LenText + posx, CARHEI + (FIRSTLINE + ICONDY + 10)),
+					Common::Rect(0, 0, LenText, CARHEI),
+					MOUSECOL,
+					MASKCOL,
+					saveNames[CurPos].c_str()
+				);
 				SText.DText();
 
 				_graphicsMgr->copyToScreen(0, FIRSTLINE + ICONDY + 10, MAXX, CARHEI);
@@ -853,7 +865,13 @@ insave:
 			LenText = textLength(saveNames[CurPos].c_str(), 0);
 
 			posx = CLIP(posx - (LenText / 2), 2, MAXX - 2 - LenText);
-			SText.set(posx, FIRSTLINE + ICONDY + 10, LenText, CARHEI, 0, 0, LenText, CARHEI, MOUSECOL, MASKCOL, saveNames[CurPos].c_str());
+			SText.set(
+				Common::Rect(posx, FIRSTLINE + ICONDY + 10, LenText + posx, CARHEI + (FIRSTLINE + ICONDY + 10)),
+				Common::Rect(0, 0, LenText, CARHEI),
+				MOUSECOL,
+				MASKCOL,
+				saveNames[CurPos].c_str()
+			);
 
 			if ((readTime() / 8) & 1)
 				_blinkLastDTextChar = 0x0000;
@@ -925,7 +943,13 @@ bool TrecisionEngine::dataLoad() {
 	showCursor();
 
 	SDText SText;
-	SText.set(0, TOP - 20, MAXX, CARHEI, 0, 0, MAXX, CARHEI, MOUSECOL, MASKCOL, _sysText[kMessageLoadPosition]);
+	SText.set(
+		Common::Rect(0, TOP - 20, MAXX, CARHEI + (TOP - 20)),
+		Common::Rect(0, 0, MAXX, CARHEI),
+		MOUSECOL,
+		MASKCOL,
+		_sysText[kMessageLoadPosition]
+	);
 	SText.DText();
 
 	_graphicsMgr->copyToScreen(0, 0, MAXX, TOP);
@@ -979,7 +1003,13 @@ bool TrecisionEngine::dataLoad() {
 				if ((posX + lenText) > MAXX - 2)
 					posX = MAXX - 2 - lenText;
 
-				SText.set(posX, FIRSTLINE + ICONDY + 10, lenText, CARHEI, 0, 0, lenText, CARHEI, MOUSECOL, MASKCOL, saveNames[CurPos].c_str());
+				SText.set(
+					Common::Rect(posX, FIRSTLINE + ICONDY + 10, lenText + posX, CARHEI + (FIRSTLINE + ICONDY + 10)),
+					Common::Rect(0, 0, lenText, CARHEI),
+					MOUSECOL,
+					MASKCOL,
+					saveNames[CurPos].c_str()
+				);
 				SText.DText();
 
 				_graphicsMgr->copyToScreen(0, FIRSTLINE + ICONDY + 10, MAXX, CARHEI);
