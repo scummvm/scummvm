@@ -75,19 +75,20 @@ FreescapeEngine::~FreescapeEngine() {
 }
 
 void FreescapeEngine::convertBorder() {
-	Graphics::PixelFormat srcFormat = Graphics::PixelFormat::createFormatCLUT8();
-	_border = new Graphics::Surface();
-	_border->create(_screenW, _screenH, srcFormat);
-	_border->copyRectToSurface(_rawBorder->data(), _border->w, 0, 0, _border->w, _border->h);
-	_border->convertToInPlace(_pixelFormat, _rawPalette->data());
+	_borderSurf = new Graphics::Surface();
+	_borderSurf->create(_screenW, _screenH, _originalPixelFormat);
+	_borderSurf->copyRectToSurface(_border->getRawBuffer(), _borderSurf->w, 0, 0, _borderSurf->w, _borderSurf->h);
+	_borderSurf->convertToInPlace(_currentPixelFormat, _palette->getRawBuffer());
 }
 
 void FreescapeEngine::drawBorder() {
 	if (_border == nullptr)
 		return;
 
-	Texture *t = _gfx->createTexture(_border);
+	Texture *t = _gfx->createTexture(_borderSurf);
 	const Common::Rect rect(0, 0, 320, 200);
+	//g_system->copyRectToScreen(_borderSurf->getPixels(), _borderSurf->pitch, 0, 0, _screenW, _screenH);
+
 
 	_gfx->drawTexturedRect2D(rect, rect, t, 1.0, false);
 	_gfx->flipBuffer();
@@ -97,8 +98,12 @@ void FreescapeEngine::drawBorder() {
 
 Common::Error FreescapeEngine::run() {
 	// Initialize graphics:
-	_pixelFormat = Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
-	_gfx = Freescape::createRenderer(_system, &_pixelFormat);
+	_currentPixelFormat = Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
+	_originalPixelFormat = Graphics::PixelFormat::createFormatCLUT8();
+	_palettePixelFormat = Graphics::PixelFormat(3, 8, 8, 8, 0, 0, 8, 16, 0);
+
+	_gfx = Freescape::createRenderer(_system, &_currentPixelFormat);
+	_gfx->_viewToRender = Common::Rect(64, 60, 575, 260);
 	_gfx->init();
 	_gfx->clear();
 	
@@ -113,20 +118,24 @@ Common::Error FreescapeEngine::run() {
 		error("%s is an invalid game", _targetName.c_str());
 
 	_areasByAreaID = binary.areasByAreaID;
-	_rawBorder = binary.border;
-	_rawPalette = binary.palette;
-	_startArea = binary.startArea;
+	_border = new Graphics::PixelBuffer(_originalPixelFormat, 320*200, DisposeAfterUse::NO);
+	*_border = binary.border->data();
+	_palette = new Graphics::PixelBuffer(_palettePixelFormat, 256, DisposeAfterUse::NO);
+	*_palette = binary.palette->data();
+	//debug("color: %x", binary.palette->data()[0x4c*3]);	
+	_startArea = 1; //binary.startArea;
+	_gfx->_palette = _palette;
 	convertBorder();
 
 	debug("FreescapeEngine::init");
 	// Simple main event loop
 	Common::Event evt;
 
-	drawBorder();
 	assert(_areasByAreaID->contains(_startArea));
 	Area *area = (*_areasByAreaID)[_startArea];
 	assert(area);
 	area->draw(_gfx);
+	//drawBorder();
 
 	while (!shouldQuit()) {
 		g_system->getEventManager()->pollEvent(evt);

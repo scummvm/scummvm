@@ -135,14 +135,33 @@ Area *loadArea(StreamLoader &stream) {
 	debug("Objects: %d", numberOfObjects);
 
 	// I've yet to decipher this fully
-	uint16 horizonColour = stream.get16();
-	debug("Horizon colour %x", (int)horizonColour);
+	stream.get16();
+	stream.get16();
+	stream.get16();
+	
+
+	uint8 skyColor = stream.get8();
+	skyColor = (stream.get8() << 4) | skyColor;
+
+	debug("Sky color %x", skyColor);
+	uint8 groundColor = stream.get8();
+	groundColor = (stream.get8() << 4) | groundColor;
+	debug("Ground color %x", groundColor);
+	stream.skipBytes(14);
 
 	// this is just a complete guess
-	for (int paletteEntry = 0; paletteEntry < 22; paletteEntry++) {
-		uint8 paletteColour = stream.get8();
-		debug("Palette colour (?) %x", (int)paletteColour);
+	/*Common::Array<uint8> palette;
+	uint32 i;
+	for (i = 0; i < 7*3; i++) {
+		uint8 c = stream.get8();
+		palette.push_back(c);
+		debug("color %d", c);
 	}
+	stream.get8(); // ????*/
+	//for (int paletteEntry = 0; paletteEntry < 22; paletteEntry++) {
+	//	uint8 paletteColour = stream.get8() << 2;
+	//	debug("Palette colour (?) %x", paletteColour);
+	//}
 
 	// we'll need to collate all objects and entrances; it's likely a
 	// plain C array would do but maps are safer and the total application
@@ -164,7 +183,7 @@ Area *loadArea(StreamLoader &stream) {
 		}
 	}
 
-	return (new Area(areaNumber, objectsByID, entrancesByID));
+	return (new Area(areaNumber, objectsByID, entrancesByID, skyColor, groundColor));
 }
 
 Binary load16bitBinary(Common::String filename) {
@@ -363,18 +382,20 @@ Binary load16bitBinary(Common::String filename) {
 	Common::Array<uint8>::size_type o;
 	Common::Array<uint8> *raw_border = nullptr;
 	Common::Array<uint8> *raw_palette = nullptr;
-
+	debug("End of areas at %x", streamLoader.getFileOffset());
 	while (!streamLoader.eof()) {
 		o = streamLoader.getFileOffset();
 		if (streamLoader.get32() == 0x452400fa) {
 			debug("Border found at %x", o);
 			raw_border = streamLoader.nextBytes(320 * 200);
 			raw_palette = new Common::Array<uint8>(); 
-
-			for (i = 0; i < 16*3; i++) {
+			debug("Palete follows at %x", streamLoader.getFileOffset());
+			for (i = 0; i < 256*3; i++) {
+				//uint8 c = streamLoader.get8(); 
+				//if (streamLoader.getFileOffset() == 0x170e9 || streamLoader.getFileOffset() == 0x170ea)
+				//	debug("c[%x]: %x -> %x", i/3, c, c << 2);
 				raw_palette->push_back(streamLoader.get8() << 2);
 			}
-			
 			break;
 		}
 		streamLoader.setFileOffset(o);

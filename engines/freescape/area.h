@@ -23,7 +23,9 @@ public:
 	Area(
 		uint16 areaID,
 		ObjectMap *objectsByID,
-		ObjectMap *entrancesByID);
+		ObjectMap *entrancesByID,
+		uint8 skyColor,
+		uint8 groundColor);
 	virtual ~Area();
 
 	Object *objectWithID(uint16 objectID);
@@ -33,6 +35,8 @@ public:
 
 private:
 	uint16 areaID;
+	uint8 skyColor;
+	uint8 groundColor;
 	ObjectMap *objectsByID;
 	ObjectMap *entrancesByID;
 	Common::Array<Object *> drawableObjects;

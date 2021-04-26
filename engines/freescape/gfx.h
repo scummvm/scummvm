@@ -125,7 +125,7 @@ public:
 	virtual Texture *createTexture(const Graphics::Surface *surface) = 0;
 	virtual void freeTexture(Texture *texture) = 0;
 
-	virtual void drawRect2D(const Common::Rect &rect, uint32 color) = 0;
+	virtual void drawRect2D(const Common::Rect &rect, uint8 a, uint8 r, uint8 g, uint8 b) = 0;
 	virtual void drawTexturedRect2D(const Common::Rect &screenRect, const Common::Rect &textureRect, Texture *texture,
 									float transparency = -1.0, bool additiveBlending = false) = 0;
 	virtual void drawTexturedRect3D(const Math::Vector3d &topLeft, const Math::Vector3d &bottomLeft,
@@ -151,6 +151,8 @@ public:
 	void renderWindowOverlay(Window *window);
 
 	Common::Rect viewport() const;
+	Common::Rect _viewToRender;
+	Graphics::PixelBuffer *_palette = nullptr;
 
 	/**
 	 * Select the window where to render

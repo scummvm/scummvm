@@ -135,12 +135,9 @@ void TinyGLRenderer::selectTargetWindow(Window *window, bool is3D, bool scaled) 
 	}
 }
 
-void TinyGLRenderer::drawRect2D(const Common::Rect &rect, uint32 color) {
-	uint8 a, r, g, b;
-	Graphics::colorToARGB< Graphics::ColorMasks<8888> >(color, a, r, g, b);
-
+void TinyGLRenderer::drawRect2D(const Common::Rect &rect, uint8 a, uint8 r, uint8 g, uint8 b) {	
 	tglDisable(TGL_TEXTURE_2D);
-	tglColor4f(r / 255.0, g / 255.0, b / 255.0, a / 255.0);
+	tglColor4f(r / 255.0, g / 255.0, b / 255.0, a);
 
 	if (a != 255) {
 		tglEnable(TGL_BLEND);
