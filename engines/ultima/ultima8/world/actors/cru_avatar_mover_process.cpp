@@ -34,6 +34,8 @@ namespace Ultima8 {
 
 DEFINE_RUNTIME_CLASSTYPE_CODE(CruAvatarMoverProcess)
 
+static const int REBEL_BASE_MAP = 40;
+
 CruAvatarMoverProcess::CruAvatarMoverProcess() : AvatarMoverProcess(), _avatarAngle(0) {
 }
 
@@ -114,6 +116,11 @@ void CruAvatarMoverProcess::handleCombatMode() {
 	Direction direction = (_avatarAngle >= 0 ? Direction_FromCentidegrees(_avatarAngle) : avatar->getDir());
 	const Direction curdir = avatar->getDir();
 	const bool stasis = Ultima8Engine::get_instance()->isAvatarInStasis();
+
+	if (avatar->getMapNum() == REBEL_BASE_MAP) {
+		avatar->clearInCombat();
+		return;
+	}
 
 	// never idle when in combat
 	_idleTime = 0;
@@ -256,8 +263,9 @@ void CruAvatarMoverProcess::handleNormalMode() {
 	const Animation::Sequence lastanim = avatar->getLastAnim();
 	Direction direction = avatar->getDir();
 	const bool stasis = Ultima8Engine::get_instance()->isAvatarInStasis();
+	const bool rebelBase = (avatar->getMapNum() == REBEL_BASE_MAP);
 
-	if (hasMovementFlags(MOVE_STEP | MOVE_JUMP) && hasMovementFlags(MOVE_ANY_DIRECTION | MOVE_TURN_LEFT | MOVE_TURN_RIGHT)) {
+	if (!rebelBase && hasMovementFlags(MOVE_STEP | MOVE_JUMP) && hasMovementFlags(MOVE_ANY_DIRECTION | MOVE_TURN_LEFT | MOVE_TURN_RIGHT)) {
 		// All jump and step movements in crusader are handled identically
 		// whether starting from combat mode or not.
 		avatar->setInCombat(0);
@@ -298,7 +306,7 @@ void CruAvatarMoverProcess::handleNormalMode() {
 
 	Animation::Sequence nextanim = Animation::walk;
 
-	if (hasMovementFlags(MOVE_RUN)) {
+	if (!rebelBase && hasMovementFlags(MOVE_RUN)) {
 		if (lastanim == Animation::run
 			|| lastanim == Animation::startRun
 			|| lastanim == Animation::startRunSmallWeapon
@@ -317,7 +325,7 @@ void CruAvatarMoverProcess::handleNormalMode() {
 		return;
 	}
 
-	if (hasMovementFlags(MOVE_BACK)) {
+	if (!rebelBase && hasMovementFlags(MOVE_BACK)) {
 		if (mainactor)
 			mainactor->toggleInCombat();
 		step(Animation::retreat, direction);
@@ -428,6 +436,9 @@ void CruAvatarMoverProcess::tryAttack() {
 	if (!avatar)
 		return;
 
+	if (avatar->getMapNum() == REBEL_BASE_MAP)
+		return;
+
 	Direction dir = avatar->getDir();
 	if (!avatar->isInCombat()) {
 		avatar->setInCombat(0);
@@ -440,10 +451,12 @@ void CruAvatarMoverProcess::tryAttack() {
 
 void CruAvatarMoverProcess::saveData(Common::WriteStream *ws) {
 	AvatarMoverProcess::saveData(ws);
+	ws->writeSint32LE(_avatarAngle);
 }
 
 bool CruAvatarMoverProcess::loadData(Common::ReadStream *rs, uint32 version) {
 	if (!AvatarMoverProcess::loadData(rs, version)) return false;
+	_avatarAngle = rs->readSint32LE();
 	return true;
 }
 
