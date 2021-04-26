@@ -2897,7 +2897,7 @@ static const AGOSGameDescription gameDescriptions[] = {
 			"2CD",
 
 			{
-				{ "data1.cab",		0,	"600db08891e7a21badc8215e604cd88f", 28845430},
+				{ "data1.cab",	GAME_CABFILE,	"600db08891e7a21badc8215e604cd88f", 28845430},
 				AD_LISTEND
 			},
 			Common::EN_ANY,
@@ -2964,7 +2964,7 @@ static const AGOSGameDescription gameDescriptions[] = {
 			"4CD",
 
 			{
-				{ "data1.cab",		0,	"65804cbc9036ac4b1275d97e0de3be2f", 28943062},
+				{ "data1.cab",	GAME_CABFILE,	"65804cbc9036ac4b1275d97e0de3be2f", 28943062},
 				AD_LISTEND
 			},
 			Common::EN_ANY,
@@ -3047,6 +3047,28 @@ static const AGOSGameDescription gameDescriptions[] = {
 		GF_OLD_BUNDLE | GF_TALKIE
 	},
 
+	// The Feeble Files - German Windows 4CD (with InstallShield cab)
+	{
+		{
+			"feeble",
+			"4CD/unextracted",
+
+			{
+				{ "data1.cab",	GAME_CABFILE,	"600ece2bc02cfffd17afce721bc5ab21", 23201553},
+				{ "0882.vga",				0,	"6655780ef361ed92d0a99d50217502f3", 713180},
+				AD_LISTEND
+			},
+			Common::DE_DEU,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO3(GUIO_NOSUBTITLES, GUIO_NOMUSIC, GUIO_NOASPECT)
+		},
+
+		GType_FF,
+		GID_FEEBLEFILES,
+		GF_OLD_BUNDLE | GF_TALKIE | GF_PACKED
+	},
+
 	// The Feeble Files - Italian Windows 4CD
 	{
 		{
@@ -3123,7 +3145,7 @@ static const AGOSGameDescription gameDescriptions[] = {
 			"CD",
 
 			{
-				{ "data1.cab", 0, "36dd86c1d872cea81ac1de7753dd684a", 40394693},
+				{ "data1.cab", GAME_CABFILE, "36dd86c1d872cea81ac1de7753dd684a", 40394693},
 				AD_LISTEND
 			},
 			Common::EN_ANY,
@@ -3165,7 +3187,7 @@ static const AGOSGameDescription gameDescriptions[] = {
 			"CD",
 
 			{
-				{ "data1.cab", 0, "36dd86c1d872cea81ac1de7753dd684a", 40394693},
+				{ "data1.cab", GAME_CABFILE, "36dd86c1d872cea81ac1de7753dd684a", 40394693},
 				AD_LISTEND
 			},
 			Common::EN_ANY,
@@ -3207,7 +3229,7 @@ static const AGOSGameDescription gameDescriptions[] = {
 			"CD",
 
 			{
-				{ "data1.cab", 0, "36dd86c1d872cea81ac1de7753dd684a", 40394693},
+				{ "data1.cab", GAME_CABFILE, "36dd86c1d872cea81ac1de7753dd684a", 40394693},
 				AD_LISTEND
 			},
 			Common::EN_ANY,
@@ -3249,7 +3271,7 @@ static const AGOSGameDescription gameDescriptions[] = {
 			"CD",
 
 			{
-				{ "data1.cab", 0, "36dd86c1d872cea81ac1de7753dd684a", 40394693},
+				{ "data1.cab", GAME_CABFILE, "36dd86c1d872cea81ac1de7753dd684a", 40394693},
 				AD_LISTEND
 			},
 			Common::EN_ANY,

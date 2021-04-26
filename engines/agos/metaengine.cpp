@@ -203,6 +203,9 @@ void AGOSEngine::loadArchives() {
 
 	if (getFeatures() & GF_PACKED) {
 		for (ag = _gameDescription->desc.filesDescriptions; ag->fileName; ag++) {
+			if (ag->fileType != GAME_CABFILE)
+				continue;
+
 			if (!SearchMan.hasArchive(ag->fileName)) {
 				Common::SeekableReadStream *stream = SearchMan.createReadStreamForMember(ag->fileName);
 
