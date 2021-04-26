@@ -746,19 +746,19 @@ void Encounter::setupSpeechData(char val, EncounterGraphic *encounterGraphic) co
 		break;
 
 	case 'N':
-		encounterGraphic->speech3 = 0;
+		encounterGraphic->frameIndex = 0;
 		break;
 
 	case 'H':
-		encounterGraphic->speech3 = 1;
+		encounterGraphic->frameIndex = 1;
 		break;
 
 	case 'E':
-		encounterGraphic->speech3 = 2;
+		encounterGraphic->frameIndex = 2;
 		break;
 
 	case 'S':
-		encounterGraphic->speech3 = 3;
+		encounterGraphic->frameIndex = 3;
 		break;
 	}
 }
