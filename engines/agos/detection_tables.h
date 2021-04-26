@@ -2894,10 +2894,11 @@ static const AGOSGameDescription gameDescriptions[] = {
 	{
 		{
 			"feeble",
-			"2CD",
+			"2CD/unextracted",
 
 			{
 				{ "data1.cab",	GAME_CABFILE,	"600db08891e7a21badc8215e604cd88f", 28845430},
+				{ "0882.vga",				0,	"6655780ef361ed92d0a99d50217502f3", 713180},
 				AD_LISTEND
 			},
 			Common::EN_ANY,
@@ -2961,10 +2962,11 @@ static const AGOSGameDescription gameDescriptions[] = {
 	{
 		{
 			"feeble",
-			"4CD",
+			"4CD/unextracted",
 
 			{
 				{ "data1.cab",	GAME_CABFILE,	"65804cbc9036ac4b1275d97e0de3be2f", 28943062},
+				{ "0882.vga",				0,	"6655780ef361ed92d0a99d50217502f3", 713180},
 				AD_LISTEND
 			},
 			Common::EN_ANY,
@@ -3142,10 +3144,11 @@ static const AGOSGameDescription gameDescriptions[] = {
 	{
 		{
 			"dimp",
-			"CD",
+			"CD/unextracted",
 
 			{
 				{ "data1.cab", GAME_CABFILE, "36dd86c1d872cea81ac1de7753dd684a", 40394693},
+				{ "0841.vga",			0,	 "b3048a73648d43ff921370da8590e5b3", 40828},
 				AD_LISTEND
 			},
 			Common::EN_ANY,
@@ -3184,10 +3187,11 @@ static const AGOSGameDescription gameDescriptions[] = {
 	{
 		{
 			"jumble",
-			"CD",
+			"CD/unextracted",
 
 			{
 				{ "data1.cab", GAME_CABFILE, "36dd86c1d872cea81ac1de7753dd684a", 40394693},
+				{ "0841.vga",			0,	 "b3048a73648d43ff921370da8590e5b3", 40828},
 				AD_LISTEND
 			},
 			Common::EN_ANY,
@@ -3226,10 +3230,11 @@ static const AGOSGameDescription gameDescriptions[] = {
 	{
 		{
 			"puzzle",
-			"CD",
+			"CD/unextracted",
 
 			{
 				{ "data1.cab", GAME_CABFILE, "36dd86c1d872cea81ac1de7753dd684a", 40394693},
+				{ "0841.vga",			0,	 "b3048a73648d43ff921370da8590e5b3", 40828},
 				AD_LISTEND
 			},
 			Common::EN_ANY,
@@ -3268,10 +3273,11 @@ static const AGOSGameDescription gameDescriptions[] = {
 	{
 		{
 			"swampy",
-			"CD",
+			"CD/unextracted",
 
 			{
 				{ "data1.cab", GAME_CABFILE, "36dd86c1d872cea81ac1de7753dd684a", 40394693},
+				{ "0841.vga",			0,	 "b3048a73648d43ff921370da8590e5b3", 40828},
 				AD_LISTEND
 			},
 			Common::EN_ANY,
