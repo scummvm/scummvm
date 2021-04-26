@@ -135,6 +135,8 @@ public:
 	void freeKey();
 	uint32 readTime();
 	bool checkMask(uint16 mx, uint16 my);
+	float sinCosAngle(float sinus, float cosinus);
+
 
 	// Text
 	void addText(uint16 x, uint16 y, const char *text, uint16 tcol, uint16 scol);

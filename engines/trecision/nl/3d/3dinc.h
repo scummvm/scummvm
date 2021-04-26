@@ -49,9 +49,9 @@ Useful global variables:
  _defActionLen u : character default action length
 --------------------------------------------------*/
 
-#define PI				3.1415927
-#define PI2				6.2831853
-#define EPSILON		    0.007
+#define PI				3.1415927f
+#define PI2				6.2831853f
+#define EPSILON		    0.007f
 
 #define MAXPANELSINROOM	400
 #define PANELIN			0x20000000
@@ -193,7 +193,6 @@ void actorStop();
 void setPosition(int num);
 void goToPosition(int num);
 void lookAt(float x, float z);
-float sinCosAngle(float sinus, float cosinus);
 void textureTriangle(int32 x1, int32 y1, int32 z1, int32 c1, int32 tx1, int32 ty1, int32 x2, int32 y2, int32 z2, int32 c2, int32 tx2, int32 ty2, int32 x3, int32 y3, int32 z3, int32 c3, int32 tx3, int32 ty3, STexture *t);
 void textureScanEdge(int32 x1, int32 y1, int32 z1, int32 c1, int32 tx1, int32 ty1, int32 x2, int32 y2, int32 z2, int32 c2, int32 tx2, int32 ty2);
 void shadowTriangle(int32 x1, int32 y1, int32 x2, int32 y2, int32 x3, int32 y3, uint8 cv, int32 zv);

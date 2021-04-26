@@ -875,7 +875,7 @@ void buildFramelist() {
 		ox /= approx;
 		oz /= approx;
 
-		theta = sinCosAngle(ox, oz) * 180.0 / PI + 180.0;
+		theta = g_vm->sinCosAngle(ox, oz) * 180.0f / PI + 180.0f;
 		if (theta >= 360.0)
 			theta -= 360.0;
 		if (theta <  0.0)
