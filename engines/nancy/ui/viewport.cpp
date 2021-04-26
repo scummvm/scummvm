@@ -262,6 +262,10 @@ void Viewport::scrollDown(uint delta) {
 	}
 }
 
+uint16 Viewport::getMaxScroll() const {
+	return _fullFrame.h - _drawSurface.h - (g_nancy->getGameType() == kGameTypeVampire ? 1 : 0); 
+}
+
 Common::Rect Viewport::getBoundsByFormat(uint format) const {
 	if (format == 1) {
 		return _format1Bounds;
