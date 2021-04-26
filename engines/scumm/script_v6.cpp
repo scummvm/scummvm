@@ -1424,6 +1424,9 @@ void ScummEngine_v6::o6_getAnimateVariable() {
 	 		_currentRoom == ((_game.id == GID_BASEBALL2001) ? 4 : 3) && \
 			vm.slot[_currentScript].number == 2105 && \
 			a->_costume == ((_game.id == GID_BASEBALL2001) ? 107 : 99) && \
+			// Room variable 5 to ensure this workaround executes only once at
+			// the beginning of the script and room variable 22 to check if we
+			// are bunting.
 			readVar(0x8000 + 5) != 0 && readVar(0x8000 + 22) == 4)
 		push(1);
 	else
