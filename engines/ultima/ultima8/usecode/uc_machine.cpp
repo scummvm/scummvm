@@ -98,7 +98,7 @@ UCMachine::UCMachine(Intrinsic *iset, unsigned int icount) {
 		_convUse = new ConvertUsecodeCrusader();
 	} else {
 		_globals = new ByteSet(0x1000);
-		// slight hack: set global 003C to start as avatar number.
+		// slight hack: set global 001E to start as avatar number.
 		_globals->setEntries(0x1E, 2, 1);
 		_convUse = new ConvertUsecodeRegret();
 	}
