@@ -138,7 +138,7 @@ void TrecisionEngine::demoOver() {
 		MOUSECOL,
 		MASKCOL,
 		_sysText[kMessageDemoOver]
-	);	
+	);
 	SText.DText();
 
 	_graphicsMgr->copyToScreen(0, 0, MAXX, TOP);

@@ -116,7 +116,7 @@ void StackText::doText() {
 	curString._rect.top = y;
 	curString._rect.right = g_vm->textLength(text, 0) + curString._rect.left;
 	int16 w = curString._rect.width();
-	
+
 	if ((y == MAXY - CARHEI) && (w > 600))
 		w = w * 3 / 5;
 	else if ((y != MAXY - CARHEI) && (w > 960))
@@ -125,7 +125,7 @@ void StackText::doText() {
 		w = w * 3 / 5;
 
 	curString._rect.right = w + curString._rect.left;
-	
+
 	curString.text = text;
 	curString._subtitleRect.left = 0;
 	curString._subtitleRect.top = 0;
