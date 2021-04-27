@@ -252,7 +252,7 @@ void Scene::load(ResourcePackId packId) {
 	getResource()->setMusicPackId(packId);
 
 	char filename[10];
-	sprintf(filename, SCENE_FILE_MASK, _packId);
+	snprintf(filename, 10, SCENE_FILE_MASK, _packId);
 
 	char sceneTag[6];
 	Common::File* fd = new Common::File;

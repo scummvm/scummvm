@@ -527,7 +527,7 @@ bool Console::cmdPlayVideo(int32 argc, const char **argv) {
 
 	// Check if the video exists
 	char filename[20];
-	sprintf(filename, "mov%03d.smk", index);
+	snprintf(filename, 20, "mov%03d.smk", index);
 	if (!SearchMan.hasFile(filename)) {
 		debugPrintf("[Error] Movie %d does not exists\n", index);
 		return true;
@@ -671,7 +671,7 @@ bool Console::cmdChangeScene(int32 argc, const char **argv) {
 
 	// Check if the scene exists
 	char filename[20];
-	sprintf(filename, "scn.%03d", index);
+	snprintf(filename, 20, "scn.%03d", index);
 	if (!SearchMan.hasFile(filename)) {
 		debugPrintf("[Error] Scene %d does not exists\n", index);
 		return true;
