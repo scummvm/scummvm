@@ -326,6 +326,13 @@ kLanguage SciEngine::getSciLanguage() {
 			switch (getLanguage()) {
 			case Common::FR_FRA:
 				lang = K_LANG_FRENCH;
+				// WORKAROUND: The French version of LSL1VGA is a fan patch that's based
+				// on the official Spanish version, with the Spanish content replaced
+				// with French content. The game scripts require printLang to be Spanish
+				// in order to use the French text and load the correct views.
+				if (g_sci->getGameId() == GID_LSL1) {
+					lang = K_LANG_SPANISH;
+				}
 				break;
 			case Common::ES_ESP:
 				lang = K_LANG_SPANISH;

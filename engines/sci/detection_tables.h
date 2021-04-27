@@ -2554,6 +2554,17 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::PL_POL, Common::kPlatformDOS, 0, GUIO_STD16	},
 
+	// Larry 1 VGA Remake - French fan patch, includes English language
+	// This is the "2.1" patch applied to English version 2.1. bug report #12034
+	{"lsl1sci", "SCI", {
+		{"resource.map", 0, "bbf22cacfcf6ef7e7578045fafad805d", 3337},
+		{"resource.000", 0, "5e501a9bf8c753bf4c96158042422f00", 1938733},
+		{"resource.001", 0, "112648995dbc194037f1e4ed2e195910", 1063341},
+		{"resource.002", 0, "3fe2a3aec0ed53c7d6db1845a67e3aa2", 1095908},
+		{"resource.003", 0, "ac175df0ea9a2cba57f0248651856d27", 376556},
+		AD_LISTEND},
+		Common::FR_FRA, Common::kPlatformDOS, ADGF_ADDENGLISH, GUIO_STD16},
+
 	// Larry 2 - English Amiga (from www.back2roots.org)
 	// Executable scanning reports "x.yyy.zzz"
 	// SCI interpreter version 0.000.572
