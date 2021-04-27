@@ -32,6 +32,7 @@
 #include "trecision/nl/struct.h"
 #include "trecision/logic.h"
 #include "trecision/trecision.h"
+#include "trecision/actor.h"
 
 namespace Trecision {
 
@@ -381,7 +382,7 @@ float TrecisionEngine::sinCosAngle(float sinus, float cosinus) {
 		return (float)acos(cosinus);
 
 	// 3 quad
-	return (float)PI2 - (float)acos(cosinus);
+	return PI2 - (float)acos(cosinus);
 }
 
 } // End of namespace Trecision

@@ -31,6 +31,7 @@
 #include "trecision/nl/ll/llinc.h"
 #include "trecision/graphics.h"
 #include "trecision/trecision.h"
+#include "trecision/actor.h"
 
 namespace Trecision {
 

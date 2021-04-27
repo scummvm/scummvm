@@ -22,6 +22,7 @@
 
 #include "common/scummsys.h"
 #include "graphics/scaler.h"
+#include "trecision/actor.h"
 #include "trecision/dialog.h"
 #include "trecision/nl/3d/3dinc.h"
 #include "trecision/nl/define.h"

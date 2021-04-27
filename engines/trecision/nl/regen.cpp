@@ -33,6 +33,7 @@
 #include "trecision/graphics.h"
 #include "trecision/sound.h"
 #include "trecision/video.h"
+#include "trecision/actor.h"
 
 namespace Trecision {
 

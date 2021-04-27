@@ -22,6 +22,7 @@
 
 #include "common/util.h"
 #include "common/scummsys.h"
+#include "trecision/actor.h"
 #include "trecision/nl/3d/3dinc.h"
 #include "trecision/trecision.h"
 #include "trecision/graphics.h"

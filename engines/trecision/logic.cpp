@@ -29,6 +29,8 @@
 #include "trecision/nl/proto.h"
 #include "trecision/nl/struct.h"
 #include "trecision/logic.h"
+
+#include "trecision/actor.h"
 #include "trecision/dialog.h"
 #include "trecision/sound.h"
 #include "trecision/graphics.h"
