@@ -543,7 +543,7 @@ int32 AsylumEngine::computeSinCosOffset(int32 val) const {
 	return offset - val;
 }
 
-Common::Point AsylumEngine::getSinCosValues(int32 index1, int32 index2) {
+Common::Point AsylumEngine::getSinCosValues(int32 index1, int32 index2) const {
 	if (!_scene)
 		error("[AsylumEngine::getSinCosValues] Subsystems not initialized properly!");
 
