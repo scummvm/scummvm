@@ -105,7 +105,7 @@ void Object::load(Common::SeekableReadStream *stream) {
 
 	for (int i = 0; i < 50; i++) {
 		_frameSoundItems[i].resourceId	= (ResourceId)stream->readSint32LE();
-		_frameSoundItems[i].frameIndex = stream->readSint32LE();
+		_frameSoundItems[i].frameIndex = stream->readUint32LE();
 		_frameSoundItems[i].index	= stream->readSint32LE();
 		_frameSoundItems[i].field_C	= stream->readSint32LE();
 		_frameSoundItems[i].field_10 = stream->readSint32LE();
@@ -173,7 +173,7 @@ void Object::saveLoadWithSerializer(Common::Serializer &s) {
 
 	for (int i = 0; i < ARRAYSIZE(_frameSoundItems); i++) {
 		s.syncAsSint32LE(_frameSoundItems[i].resourceId);
-		s.syncAsSint32LE(_frameSoundItems[i].frameIndex);
+		s.syncAsUint32LE(_frameSoundItems[i].frameIndex);
 		s.syncAsSint32LE(_frameSoundItems[i].index);
 		s.syncAsSint32LE(_frameSoundItems[i].field_C);
 		s.syncAsSint32LE(_frameSoundItems[i].field_10);
