@@ -60,6 +60,8 @@ For a more comprehensive changelog of the latest experimental code, see:
  Kyra:
    - Added support for the Japanese Sega-CD version of Eye of the Beholder.
    - Added support for the Hebrew fan translation of Legend of Kyrandia.
+   - Added support for the Simplified Chinese version of Legend of Kyrandia 3.
+   - Added support for the playable demo of Lands of Lore.
 
  Lure:
    - Fixed fire animation in first room when loading saves.
