@@ -5151,61 +5151,6 @@ static const uint16 kq6PatchMacDrinkMePic[] = {
 	PATCH_END
 };
 
-// During the common Game Over cutscene, one of the guys says "Tickets, only",
-//  but the subtitle says "Tickets, please". Normally people wouldn't have
-//  noticed, but ScummVM supports audio + subtitles in this game at the same
-//  time. This is caused by a buggy message, which really has this text + audio
-//  attached.
-// We assume that "Tickets, only" (the audio) is the correct one. There is
-//  another message with "Tickets, only" in both text and audio. We change
-//  message 1, 0, 1, 1 to message 5, 0, 0, 2 to fix this issue.
-// This mismatch also occurs in Sierra SCI.
-//
-// Applies to at least: PC-CD
-// Responsible method: modeLessScript::changeState(0) in script 640
-static const uint16 kq6SignatureTicketsOnly[] = {
-	0x3c,                               // dup
-	0x35, 0x00,                         // ldi 0
-	0x1a,                               // eq?
-	SIG_MAGICDWORD,
-	0x31, 0x2b,                         // bnt [skip over state 0]
-	0x39, 0x1e,                         // pushi font (we keep the hardcoded selectors in here simply because this is only for KQ6-CD)
-	0x78,                               // push1
-	0x89, 0x16,                         // lsg global[16h]
-	0x38, SIG_UINT16(0x009a),           // pushi posn
-	0x7a,                               // push2
-	0x38, SIG_UINT16(0x00c8),           // pushi 00c8h (200d)
-	0x39, 0x64,                         // pushi 64h (100d)
-	0x38, SIG_UINT16(0x00ab),           // pushi say
-	0x39, 0x05,                         // pushi 05 (parameter count for say)
-	0x76,                               // push0
-	0x78,                               // push1
-	0x76,                               // push0
-	0x78,                               // push1
-	0x78,                               // push1
-	SIG_END
-};
-
-static const uint16 kq6PatchTicketsOnly[] = {
-	0x32, PATCH_UINT16(0x0000),         // jmp (waste 3 bytes)
-	0x2f, 0x2c,                         // bt [skip over state 0] (saves 1 byte)
-	0x39, 0x1e,                         // pushi font (we keep the hardcoded selectors in here simply because this is only for KQ6-CD)
-	0x78,                               // push1
-	0x89, 0x16,                         // lsg global[16h]
-	0x38, PATCH_UINT16(0x009a),         // pushi posn
-	0x7a,                               // push2
-	0x38, PATCH_UINT16(0x00c8),         // pushi 00c8h (200d)
-	0x39, 0x64,                         // pushi 64h (100d)
-	0x38, PATCH_UINT16(0x00ab),         // pushi say
-	0x39, 0x05,                         // pushi 05 (parameter count for say)
-	0x76,                               // push0
-	0x39, 0x05,                         // pushi 05
-	0x76,                               // push0
-	0x76,                               // push0
-	0x7a,                               // push2
-	PATCH_END
-};
-
 // Looking at the ribbon in inventory says that there's a hair even after it's
 //  been removed. This occurs after the hair has been put in the skull or is on
 //  a different inventory page than the ribbon.
@@ -6340,7 +6285,6 @@ static const SciScriptPatcherEntry kq6Signatures[] = {
 	{  true,   480, "fix getting baby tears",                         1, kq6SignatureGetBabyTears,                 kq6PatchGetBabyTears },
 	{  true,   481, "fix duplicate baby cry",                         1, kq6SignatureDuplicateBabyCry,             kq6PatchDuplicateBabyCry },
 	{  true,   481, "fix duplicate baby tears point",                 1, kq6SignatureDuplicateBabyTearsPoint,      kq6PatchDuplicateBabyTearsPoint },
-	{  true,   640, "fix 'Tickets, only' message",                    1, kq6SignatureTicketsOnly,                  kq6PatchTicketsOnly },
 	{  true,   745, "fix wedding genie lamp message",                 1, kq6SignatureWeddingGenieLampMessage,      kq6PatchWeddingGenieLampMessage },
 	{  true,   800, "fix Cassima secret passage peephole",            1, kq6SignatureCassimaSecretPassage,         kq6PatchCassimaSecretPassage },
 	{  true,   907, "fix inventory stack leak",                       1, kq6SignatureInventoryStackFix,            kq6PatchInventoryStackFix },
