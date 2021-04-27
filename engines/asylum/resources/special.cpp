@@ -771,7 +771,7 @@ void Special::chapter11(Object *object, ActorIndex actorIndex) {
 				_vm->clearGameFlag(kGameFlag561);
 			}
 
-			if (actor1->getTickCount() != -1 && actor1->getTickCount() < _vm->getTick()) {
+			if (actor1->getTickCount() != -1 && (uint32)actor1->getTickCount() < _vm->getTick()) {
 				actor1->setTickCount(-1);
 				actor1->show();
 				actor1->getPoint1()->x = actor0->getPoint2()->x + actor0->getPoint1()->x - actor1->getPoint2()->x;
@@ -967,10 +967,9 @@ void Special::chapter11(Object *object, ActorIndex actorIndex) {
 				}
 			}
 
-			if (getWorld()->field_E8490 == -666)
+			if (getWorld()->field_E8490 == -666) {
 				getWorld()->field_E8490 = _vm->getTick() + 3000;
-
-			if (getWorld()->field_E8490 < _vm->getTick()) {
+			} else if ((uint32)getWorld()->field_E8490 < _vm->getTick()) {
 				getWorld()->field_E8490 = -666;
 				if (_vm->isGameFlagSet(kGameFlag572)) {
 					_vm->clearGameFlag(kGameFlag565);
@@ -2036,7 +2035,7 @@ void Special::rock(ActorIndex actorIndex, GameFlag flag1, GameFlag flag2, GameFl
 		getSound()->playSound(getWorld()->soundResourceIds[0], false, Config.sfxVolume - 10);
 		_vm->setGameFlag(flag3);
 		getScene()->getActor(actorIndex)->show();
-	} else if (_vm->getTick() > getWorld()->tickValueArray[actorIndex]) {
+	} else if (getWorld()->tickValueArray[actorIndex] == -666 || _vm->getTick() > (uint32)getWorld()->tickValueArray[actorIndex]) {
 		if (_vm->isGameFlagNotSet(flag4)) {
 			_vm->setGameFlag(flag4);
 			actor->setFrameIndex(0);
@@ -2082,7 +2081,7 @@ void Special::tentacle(ActorIndex actorIndex, GameFlag flag1, GameFlag flag2, Ga
 	if (_vm->isGameFlagSet(flag1)
 	 && _vm->isGameFlagNotSet(flag3)
 	 && !_vm->isGameFlagSet(flag2)
-	 && _vm->getTick() > getWorld()->tickValueArray[actorIndex + 10]) {
+	 && (getWorld()->tickValueArray[actorIndex + 10] == -666 || _vm->getTick() > (uint32)getWorld()->tickValueArray[actorIndex + 10])) {
 		actor->getPoint1()->x = rect.left + rnd(rect.right - rect.left) - actor->getPoint2()->x;
 		actor->getPoint1()->y = rect.top + rnd(rect.bottom - rect.top) - actor->getPoint2()->y;
 
