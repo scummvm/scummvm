@@ -133,6 +133,7 @@ public:
 									Texture *texture) = 0;
 
 	virtual void drawCube(Texture **textures) = 0;
+	virtual void drawTriange() = 0;
 	virtual void draw2DText(const Common::String &text, const Common::Point &position) = 0;
 
 	virtual Graphics::Surface *getScreenshot() = 0;

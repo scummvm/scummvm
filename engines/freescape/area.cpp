@@ -103,6 +103,8 @@ void Area::draw(Freescape::Renderer *gfx) {
 	gfx->_palette->getRGBAt(groundColor, r, g, b);
 	gfx->drawRect2D(ground, 255, r, g, b);
 
+	gfx->drawTriange(); // I have no idea why?
+
 	gfx->flipBuffer();
 	g_system->updateScreen();
 

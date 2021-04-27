@@ -13,6 +13,12 @@
 
 namespace Freescape {
 
+static Object *load8bitObject(StreamLoader &stream) {
+	return nullptr;
+}
+
+
+
 Area *load8bitArea(StreamLoader &stream) {
 	uint8 skippedValue = stream.get8(); // 0
 	uint8 numberOfObjects = stream.get8(); // 1
@@ -26,6 +32,21 @@ Area *load8bitArea(StreamLoader &stream) {
 	stream.get16(); // 6-7
 	stream.get16(); // 8-9
 	// Set16PaletteGradient(SpecCols[IPtr[8]&15], SpecCols[IPtr[9]&15]);
+
+
+	stream.skipBytes(15);
+
+	for (uint8 object = 0; object < numberOfObjects; object++) {
+		Object *newObject = load8bitObject(stream);
+
+		/*if (newObject) {
+			if (newObject->getType() == Object::Entrance) {
+				(*entrancesByID)[newObject->getObjectID() & 0x7fff] = newObject;
+			} else {
+				(*objectsByID)[newObject->getObjectID()] = newObject;
+			}
+		}*/
+	}
 
 	stream.setFileOffset(cPtr);
 	uint8 numConditions = stream.get8();
