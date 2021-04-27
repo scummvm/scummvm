@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-04-27 05:25+0000\n"
+"POT-Creation-Date: 2021-04-27 21:15+0000\n"
 "PO-Revision-Date: 2020-09-29 17:13+0000\n"
 "Last-Translator: anonymous <noreply@weblate.org>\n"
 "Language-Team: Polish <https://translations.scummvm.org/projects/scummvm/"
@@ -3998,19 +3998,15 @@ msgstr ""
 
 #: engines/bladerunner/detection_tables.h:96
 #: engines/bladerunner/detection_tables.h:107
-#: engines/kyra/detection_tables.h:80
+#: engines/kyra/detection_tables.h:85
 msgid ""
 "The fan translator does not wish his translation to be incorporated into "
 "ScummVM."
 msgstr ""
 
 #: engines/bladerunner/detection_tables.h:129 engines/cge/detection.cpp:48
-#: engines/cge/detection.cpp:54 engines/kyra/detection_tables.h:224
-#: engines/kyra/detection_tables.h:237 engines/kyra/detection_tables.h:250
-#: engines/kyra/detection_tables.h:291 engines/kyra/detection_tables.h:619
-#: engines/kyra/detection_tables.h:632 engines/kyra/detection_tables.h:956
-#: engines/kyra/detection_tables.h:969 engines/kyra/detection_tables.h:1716
-#: engines/kyra/detection_tables.h:1888 engines/lure/detection.cpp:80
+#: engines/cge/detection.cpp:54 engines/kyra/detection_tables.h:303
+#: engines/kyra/detection_tables.h:983 engines/lure/detection.cpp:80
 #: engines/lure/detection.cpp:222 engines/mohawk/detection_tables.h:1012
 #: engines/mohawk/detection_tables.h:1027 engines/neverhood/detection.cpp:110
 #: engines/saga/detection_tables.h:187 engines/saga/detection_tables.h:937
@@ -4808,12 +4804,22 @@ msgstr ""
 msgid "Left button to attack, right button to pick up items"
 msgstr ""
 
-#: engines/kyra/detection_tables.h:1251
+#: engines/kyra/detection_tables.h:83
+msgid "Missing language specific game code and/or resources."
+msgstr ""
+
+#: engines/kyra/detection_tables.h:84
+msgid ""
+"Missing language specific game code and/or resources for this fan "
+"translation."
+msgstr ""
+
+#: engines/kyra/detection_tables.h:1402
 msgid "You added the game incorrectly. Please add the root folder of the game."
 msgstr ""
 
 #. I18N: The file in the game directory needs to be extracted
-#: engines/kyra/detection_tables.h:1267
+#: engines/kyra/detection_tables.h:1418
 msgid ""
 "You added the game incorrectly. The GAME.DAT file is an ISO image and you "
 "need to extract the game data files from it."
