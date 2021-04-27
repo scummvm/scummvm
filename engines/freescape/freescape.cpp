@@ -103,7 +103,6 @@ Common::Error FreescapeEngine::run() {
 	_palettePixelFormat = Graphics::PixelFormat(3, 8, 8, 8, 0, 0, 8, 16, 0);
 
 	_gfx = Freescape::createRenderer(_system, &_currentPixelFormat);
-	_gfx->_viewToRender = Common::Rect(64, 60, 575, 260);
 	_gfx->init();
 	_gfx->clear();
 	_gfx->selectTargetWindow(nullptr, false, true);
@@ -111,6 +110,8 @@ Common::Error FreescapeEngine::run() {
 	Binary binary;
 	if (_targetName == "3Dkit")
 		binary = load16bitBinary("3DKIT.RUN");
+	else if (_targetName == "3Dkitcube")
+		binary = load16bitBinary("CUBE.RUN");
 	else if (_targetName == "Driller")
 		binary = load8bitBinary("DRILLE.EXE", OFFSET_DRILLER);
 	else if (_targetName == "Castle")
@@ -118,26 +119,26 @@ Common::Error FreescapeEngine::run() {
 	else
 		error("%s is an invalid game", _targetName.c_str());
 
-	_areasByAreaID = binary.areasByAreaID;
-	_border = new Graphics::PixelBuffer(_originalPixelFormat, 320*200, DisposeAfterUse::NO);
-	*_border = binary.border->data();
-	_palette = new Graphics::PixelBuffer(_palettePixelFormat, 256, DisposeAfterUse::NO);
-	*_palette = binary.palette->data();
-	//debug("color: %x", binary.palette->data()[0x4c*3]);	
-	_startArea = 1; //binary.startArea;
-	_gfx->_palette = _palette;
-	convertBorder();
+	if (binary.areasByAreaID && binary.border && binary.palette) {
+		_areasByAreaID = binary.areasByAreaID;
+		_border = new Graphics::PixelBuffer(_originalPixelFormat, 320*200, DisposeAfterUse::NO);
+		*_border = binary.border->data();
+		_palette = new Graphics::PixelBuffer(_palettePixelFormat, 256, DisposeAfterUse::NO);
+		*_palette = binary.palette->data();
+		//debug("color: %x", binary.palette->data()[0x4c*3]);	
+		_startArea = 1; //binary.startArea;
+		_gfx->_palette = _palette;
+		convertBorder();
 
+		assert(_areasByAreaID->contains(_startArea));
+		Area *area = (*_areasByAreaID)[_startArea];
+		assert(area);
+		drawBorder();
+		area->draw(_gfx);
+	}	
 	debug("FreescapeEngine::init");
 	// Simple main event loop
 	Common::Event evt;
-
-	assert(_areasByAreaID->contains(_startArea));
-	Area *area = (*_areasByAreaID)[_startArea];
-	assert(area);
-	drawBorder();
-	area->draw(_gfx);
-	
 
 	while (!shouldQuit()) {
 		g_system->getEventManager()->pollEvent(evt);

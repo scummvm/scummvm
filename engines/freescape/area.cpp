@@ -91,7 +91,8 @@ Area::~Area() {
 
 void Area::draw(Freescape::Renderer *gfx) {
 	debug("w: %d, h: %d", gfx->kOriginalWidth, gfx->kOriginalHeight);
-	Common::Rect view(20, 30, 305, 110);
+	//Common::Rect view(20, 30, 305, 110);
+	Common::Rect view = gfx->rviewport();
 	Common::Rect sky(view.left, view.top, view.right, view.bottom-view.height()/2);
 	uint8 r, g, b;
 	gfx->_palette->getRGBAt(skyColor, r, g, b);

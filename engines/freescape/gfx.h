@@ -151,7 +151,7 @@ public:
 	void renderWindowOverlay(Window *window);
 
 	Common::Rect viewport() const;
-	Common::Rect _viewToRender;
+	Common::Rect rviewport() const;
 	Graphics::PixelBuffer *_palette = nullptr;
 
 	/**
@@ -180,6 +180,7 @@ protected:
 	Texture *_font;
 
 	Common::Rect _screenViewport;
+	Common::Rect _rscreenViewport;
 
 	Math::Matrix4 _projectionMatrix;
 	Math::Matrix4 _modelViewMatrix;

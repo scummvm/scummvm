@@ -125,9 +125,17 @@ Common::Rect Renderer::viewport() const {
 	return _screenViewport;
 }
 
+Common::Rect Renderer::rviewport() const {
+	return _rscreenViewport;
+}
+
 void Renderer::computeScreenViewport() {
 	int32 screenWidth = _system->getWidth();
 	int32 screenHeight = _system->getHeight();
+	int32 tmargin = 27;
+	int32 vmargin = 40;
+	int32 bmargin = 90;
+
 	//assert(0);
 
 	/*if (ConfMan.getBool("widescreen_mod")) {
@@ -137,6 +145,7 @@ void Renderer::computeScreenViewport() {
 		int32 viewportWidth = MIN<int32>(screenWidth, screenHeight * kOriginalWidth / kOriginalHeight);
 		int32 viewportHeight = MIN<int32>(screenHeight, screenWidth * kOriginalHeight / kOriginalWidth);
 		_screenViewport = Common::Rect(viewportWidth, viewportHeight);
+		_rscreenViewport = Common::Rect(vmargin, tmargin, _screenViewport.right - vmargin, _screenViewport.bottom - bmargin);
 
 		// Pillarboxing
 		_screenViewport.translate((screenWidth - viewportWidth) / 2,
