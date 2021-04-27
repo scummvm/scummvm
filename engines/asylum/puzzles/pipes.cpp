@@ -107,7 +107,7 @@ const Common::Point peepholePoints[] = {
 };
 
 const uint32 peepholeResources[] = {15, 15, 15, 15, 32, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 32, 32, 15,
-                                    15, 32, 32, 15, 15, 15, 15, 15, 15, 15, 15, 32, 15, 15, 15, 15, 15, 15, 15};
+									15, 32, 32, 15, 15, 15, 15, 15, 15, 15, 15, 32, 15, 15, 15, 15, 15, 15, 15};
 
 static BinNum calcStateFromPos(uint32 ind, ConnectorType type, uint32 position) {
 	uint32 shift = (uint32)Common::intLog2(position);

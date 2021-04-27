@@ -84,11 +84,11 @@ ConfigurationManager::~ConfigurationManager() {
 }
 
 void ConfigurationManager::read() {
-    // Default options
-    musicVolume = ConfMan.getInt("music_volume");
-    sfxVolume   = ConfMan.getInt("sfx_volume");
-    voiceVolume = ConfMan.getInt("speech_volume");
-    showMovieSubtitles = ConfMan.getBool("subtitles");
+	// Default options
+	musicVolume = ConfMan.getInt("music_volume");
+	sfxVolume   = ConfMan.getInt("sfx_volume");
+	voiceVolume = ConfMan.getInt("speech_volume");
+	showMovieSubtitles = ConfMan.getBool("subtitles");
 
 	// Convert volumes to engine-values
 	Sound::convertVolumeTo(musicVolume);
@@ -127,11 +127,11 @@ void ConfigurationManager::write() {
 	Sound::convertVolumeFrom(mixerSfxVolume);
 	Sound::convertVolumeFrom(mixerVoiceVolume);
 
-    // Default options
-    ConfMan.setInt("music_volume", mixerMusicVolume);
-    ConfMan.setInt("sfx_volume", mixerSfxVolume);
-    ConfMan.setInt("speech_volume", mixerVoiceVolume);
-    ConfMan.setBool("subtitles", showMovieSubtitles);
+	// Default options
+	ConfMan.setInt("music_volume", mixerMusicVolume);
+	ConfMan.setInt("sfx_volume", mixerSfxVolume);
+	ConfMan.setInt("speech_volume", mixerVoiceVolume);
+	ConfMan.setBool("subtitles", showMovieSubtitles);
 
 	// Engine options
 	ConfMan.setBool("show_encounter_subtitles", showEncounterSubtitles);

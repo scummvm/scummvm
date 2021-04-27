@@ -698,7 +698,7 @@ END_OPCODE
 IMPLEMENT_OPCODE(JumpActorSpeech)
 	Actor *actor = getScene()->getActor(cmd->param1);
 
-    // Actor goes to position (param2, param3)
+	// Actor goes to position (param2, param3)
 	if (actor->process(Common::Point((int16)cmd->param2, (int16)cmd->param3)))
 		return;
 

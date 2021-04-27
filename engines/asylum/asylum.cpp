@@ -154,8 +154,8 @@ Common::Error AsylumEngine::run() {
 	_menu  = new Menu(this);
 	_handler = _menu;
 
-    // Load config
-    Config.read();
+	// Load config
+	Config.read();
 
 	// Setup mixer
 	syncSoundSettings();
@@ -329,28 +329,28 @@ void AsylumEngine::playIntro() {
 			ResourceId introSpeech = MAKE_RESOURCE(kResourcePackSound, 7);
 			_sound->playSound(introSpeech);
 
-            int8 skip = 0;
+			int8 skip = 0;
 			do {
 				// Poll events (this ensures we don't freeze the screen)
 				Common::Event ev;
-                while (_eventMan->pollEvent(ev)) {
-                    switch (ev.type) {
-                        case Common::EVENT_LBUTTONDOWN:
-                        case Common::EVENT_KEYDOWN:
-                            skip = true;
-                            break;
-                        default:
-                            break;
-                    }
-                }
+				while (_eventMan->pollEvent(ev)) {
+					switch (ev.type) {
+					case Common::EVENT_LBUTTONDOWN:
+					case Common::EVENT_KEYDOWN:
+						skip = true;
+						break;
+					default:
+						break;
+					}
+				}
 
 				_system->delayMillis(100);
 
 			} while (_sound->isPlaying(introSpeech) && !skip);
-            
-            if (_sound->isPlaying(introSpeech)) {
-                _sound->stop(introSpeech);
-            }
+
+			if (_sound->isPlaying(introSpeech)) {
+				_sound->stop(introSpeech);
+			}
 		}
 		_cursor->setForceHide(false);
 		_introPlayed = true;
