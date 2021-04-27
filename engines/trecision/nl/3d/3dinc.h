@@ -123,42 +123,6 @@ struct SStep {
 
 class TrecisionEngine;
 
-class Actor {
-private:
-	TrecisionEngine *_vm;
-
-public:
-	Actor(TrecisionEngine *vm);
-	~Actor();
-
-	SVertex *_characterArea; // TODO: Make it private
-
-	SVertex  *_vertex;
-	SFace    *_face;
-	SLight   *_light;
-	SCamera  *_camera;
-	STexture *_texture;
-
-	uint16 _textureMat[256][91];
-	int16  _textureCoord[MAXFACE][3][2];
-
-	int _vertexNum;
-	int _faceNum;
-	int32 _lightNum;
-	int _matNum;
-
-	float _px, _py, _pz;
-	float _dx, _dz;
-	float _theta;
-	int   _lim[6];
-
-	int _curFrame;
-	int _curAction;
-
-	void readActor(const char *filename);
-	void syncGameStream(Common::Serializer &ser);
-};
-
 
 extern SPan      _panel[];
 extern SSortPan  _sortPan[];

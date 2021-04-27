@@ -20,6 +20,8 @@
  *
  */
 
+#include "trecision/actor.h"
+
 #include "common/scummsys.h"
 #include "trecision/nl/3d/3dinc.h"
 #include "trecision/nl/extern.h"

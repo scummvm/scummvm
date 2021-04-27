@@ -28,6 +28,7 @@
 #include "trecision/nl/proto.h"
 #include "trecision/nl/extern.h"
 #include "trecision/trecision.h"
+#include "trecision/actor.h"
 
 #include "common/config-manager.h"
 #include "trecision/sound.h"

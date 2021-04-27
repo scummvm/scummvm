@@ -21,6 +21,8 @@
  */
 
 #include "trecision/trecision.h"
+
+#include "actor.h"
 #include "trecision/nl/3d/3dinc.h"
 #include "trecision/nl/define.h"
 #include "trecision/nl/extern.h"
@@ -1082,51 +1084,6 @@ void TrecisionEngine::performLoad(int slot, bool skipLoad) {
 	if (_flagscriptactive) {
 		hideCursor();
 	}
-}
-
-Actor::Actor(TrecisionEngine *vm) : _vm(vm) {
-	_vertex = nullptr;
-	_face = nullptr;
-	_light = nullptr;
-	_camera = nullptr;
-	_texture = nullptr;
-
-	_vertexNum = 0;
-	_faceNum = 0;
-	_lightNum = 0;
-	_matNum = 0;
-
-	_px = _py = _pz = 0.0;
-	_dx = _dz = 0.0;
-	_theta = 0.0;
-
-	for (int i = 0; i < 6; ++i)
-		_lim[i] = 0;
-
-	_curFrame = 0;
-	_curAction = 0;
-
-	for (int i = 0; i < 256; ++i) {
-		for (int j = 0; j < 91; ++j)
-			_textureMat[i][j] = 0;
-	}
-
-	for (int i = 0; i < MAXFACE; ++i) {
-		for (int j = 0; j < 3; ++j) {
-			_textureCoord[i][j][0] = 0;
-			_textureCoord[i][j][1] = 0;
-		}
-	}
-
-	_characterArea = nullptr;
-}
-
-Actor::~Actor() {
-	delete[] _characterArea;
-	delete[] _face;
-//	delete _light;
-//	delete _camera;
-//	delete _texture;
 }
 
 } // End of namespace Trecision

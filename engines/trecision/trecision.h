@@ -44,6 +44,7 @@ class DialogManager;
 class GraphicsManager;
 class LogicManager;
 class SoundManager;
+class Actor;
 
 #define SAVE_VERSION_ORIGINAL 102
 #define SAVE_VERSION_SCUMMVM  103
