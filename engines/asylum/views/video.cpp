@@ -205,7 +205,7 @@ void VideoPlayer::setupPalette() {
 
 void VideoPlayer::loadSubtitles() {
 	char movieToken[10];
-	sprintf(movieToken, "[MOV%03d]", _currentMovie);
+	snprintf(movieToken, 10, "[MOV%03d]", _currentMovie);
 
 	Common::File subsFile;
 	subsFile.open("vids.cap");

@@ -3349,7 +3349,7 @@ void Actor::updateNumbers(int32 reaction, const Common::Point &point) {
 	_numberPoint.x = point.x;
 	_numberPoint.y = point.y + 8;
 	_numberStringWidth = 40;
-	sprintf(_numberString01, "%d", _numberValue01);
+	snprintf(_numberString01, sizeof(_numberString01), "%d", _numberValue01);
 
 	_numberFlag01 = 1;
 }
