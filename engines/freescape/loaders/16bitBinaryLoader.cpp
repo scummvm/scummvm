@@ -23,7 +23,7 @@
 
 namespace Freescape {
 
-static Object *loadObject(StreamLoader &stream) {
+static Object *load16bitObject(StreamLoader &stream) {
 	// get object flags and type
 	uint8 objectFlags = stream.get8();
 	Object::Type objectType = (Object::Type)stream.get8();
@@ -123,7 +123,7 @@ static Object *loadObject(StreamLoader &stream) {
 	return nullptr;
 }
 
-Area *loadArea(StreamLoader &stream) {
+Area *load16bitArea(StreamLoader &stream) {
 	// the lowest bit of this value seems to indicate
 	// horizon on or off; this is as much as I currently know
 	uint16 skippedValue = stream.get16();
@@ -172,7 +172,7 @@ Area *loadArea(StreamLoader &stream) {
 	// get the objects or whatever; entrances use a unique numbering
 	// system and have the high bit of their IDs set in the original file
 	for (uint16 object = 0; object < numberOfObjects; object++) {
-		Object *newObject = loadObject(stream);
+		Object *newObject = load16bitObject(stream);
 
 		if (newObject) {
 			if (newObject->getType() == Object::Entrance) {
@@ -371,7 +371,7 @@ Binary load16bitBinary(Common::String filename) {
 		debug("Area offset %d", fileOffsetForArea[area]);
 
 		streamLoader.setFileOffset(fileOffsetForArea[area] + baseOffset);
-		Area *newArea = loadArea(streamLoader);
+		Area *newArea = load16bitArea(streamLoader);
 
 		if (newArea) {
 			(*areaMap)[newArea->getAreaID()] = newArea;

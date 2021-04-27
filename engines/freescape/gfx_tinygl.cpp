@@ -237,6 +237,36 @@ void TinyGLRenderer::drawFace(uint face, Texture *texture) {
 	tglEnd();
 }
 
+void TinyGLRenderer::drawTriange() {
+
+	tglViewport(0, 0, 320, 200);
+	tglEnable(TGL_DEPTH_TEST);
+	// GLfloat  h = (GLfloat) winSizeY / (GLfloat) winSizeX;
+	tglMatrixMode(TGL_PROJECTION);
+	tglLoadIdentity();
+	// glFrustum( -1.0, 1.0, -h, h, 5.0, 60.0 );
+	tglMatrixMode(TGL_MODELVIEW);
+	tglLoadIdentity();
+
+	tglMatrixMode(TGL_MODELVIEW);
+	tglLoadIdentity();
+	tglPushMatrix();
+	tglRotatef(0.01, 0, 0, 1);
+	tglBegin(TGL_TRIANGLES);
+	tglColor3f(0.2, 0.2, 1.0); // BLUE!
+	// glColor3f(1.0, 0.2, 0.2); //RED!
+	tglVertex3f(-0.8, -0.8, 0.2);
+
+	tglColor3f(0.2, 1.0, 0.2); // GREEN!
+	// glColor3f(1.0, 0.2, 0.2); //RED!
+	tglVertex3f(0.8, -0.8, 0.2);
+
+	tglColor3f(1.0, 0.2, 0.2); // RED!
+	tglVertex3f(0, 1.2, 0.2);
+	tglEnd();
+	tglPopMatrix();
+}
+
 void TinyGLRenderer::drawCube(Texture **textures) {
 	tglEnable(TGL_TEXTURE_2D);
 	tglDepthMask(TGL_FALSE);

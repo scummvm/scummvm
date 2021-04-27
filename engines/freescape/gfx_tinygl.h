@@ -53,6 +53,7 @@ public:
 	                                Texture *texture) override;
 
 	virtual void drawCube(Texture **textures) override;
+	virtual void drawTriange() override;
 	virtual void draw2DText(const Common::String &text, const Common::Point &position) override;
 
 	virtual Graphics::Surface *getScreenshot() override;
