@@ -213,7 +213,7 @@ void MassAddDialog::handleTickle() {
 					if ((*dom)["engineid"] == result.engineId &&
 						(*dom)["gameid"] == result.gameId &&
 					    (*dom)["platform"] == resultPlatformCode &&
-					    (*dom)["language"] == resultLanguageCode) {
+					    dom->getValOrDefault("language") == resultLanguageCode) {
 						duplicate = true;
 						break;
 					}
