@@ -5197,6 +5197,61 @@ static const uint16 kq6PatchLookRibbonFix[] = {
 	PATCH_END
 };
 
+// During the common Game Over cutscene, the CD audio for "Tickets, only" gets
+//  cut off. This only worked in the original interpreter at slow CPU speeds.
+//  modeLessScript sets a 4 second timer for the message to complete. This is
+//  enough time, but actor animations also cue modeLessScript, and they complete
+//  in 2 seconds unless the interpreter can't keep up due to a slow CPU.
+//
+// We fix this by ignoring the cue from deathCartoonScr if CD audio is enabled
+//  and the audio timeout hasn't completed. This does not change scene duration
+//  or actor delays or when messages start. Text-only mode is unaffected.
+//
+// Applies to: PC CD
+// Responsible method: modeLessScript:changeState
+static const uint16 kq6CDSignatureTicketsOnlyAudioTiming[] = {
+	0x31, 0x2b,                         // bnt 2b [ state 1 ]
+	SIG_ADDTOOFFSET(+38),
+	SIG_MAGICDWORD,
+	0x65, 0x1c,                         // aTop seconds
+	0x32, SIG_UINT16(0x0051),           // jmp 0051 [ end of method ]
+	0x3c,                               // dup
+	0x35, 0x01,                         // ldi 01
+	0x1a,                               // eq?
+	0x31, 0x0c,                         // bnt 0c [ state 2 ]
+	0x81, 0x19,                         // lag 19 [ dialog ]
+	0x30, SIG_UINT16(0x0046),           // bnt 0046
+	0x39, SIG_SELECTOR8(dispose),       // pushi dispose
+	0x76,                               // push0
+	0x4a, 0x04,                         // send 04 [ dialog dispose: ]
+	0x33, 0x3f,                         // jmp 3f
+	SIG_ADDTOOFFSET(+44),
+	0x65, 0x1c,                         // aTop seconds
+	SIG_ADDTOOFFSET(+8),
+	0x81, 0x19,                         // lag 19 [ dialog ]
+	SIG_END
+};
+
+static const uint16 kq6CDPatchTicketsOnlyAudioTiming[] = {
+	0x31, 0x28,                         // bnt 28 [ state 1 ]
+	PATCH_ADDTOOFFSET(+38),
+	0x33, 0x41,                         // jmp 41 [ aTop seconds, end of method ]
+	0x3c,                               // dup
+	0x18,                               // not [ acc = 1 ]
+	0x1a,                               // eq?
+	0x31, 0x10,                         // bnt 10 [ state 2 ]
+	0x81, 0x5a,                         // lag 5a [ mode ]
+	0x7a,                               // push2  [ audio ]
+	0x12,                               // and    [ is audio enabled? ]
+	0x31, 0x40,                         // bnt 40 [ if no audio then dispose dialog normally ]
+	0x63, 0x1c,                         // pToa seconds
+	0x2f, 0x04,                         // bt 04  [ ignore cue from deathCartoonScr if audio is playing ]
+	0x6b, 0x1a,                         // ipToa cycles [ cycles = 1 ]
+	0x33, 0x38,                         // jmp 38 [ dispose dialog normally ]
+	0x6d, 0x14,                         // dpToa state [ state = 0 so that state 1 can repeat ]
+	PATCH_END
+};
+
 // KQ6 CD introduced a bug in the wallflower dance in room 480. The dance is
 //  supposed to last until the music ends but in Text mode it stops after only
 //  three seconds once the user gains control. This isn't usually enough time
@@ -6285,6 +6340,7 @@ static const SciScriptPatcherEntry kq6Signatures[] = {
 	{  true,   480, "fix getting baby tears",                         1, kq6SignatureGetBabyTears,                 kq6PatchGetBabyTears },
 	{  true,   481, "fix duplicate baby cry",                         1, kq6SignatureDuplicateBabyCry,             kq6PatchDuplicateBabyCry },
 	{  true,   481, "fix duplicate baby tears point",                 1, kq6SignatureDuplicateBabyTearsPoint,      kq6PatchDuplicateBabyTearsPoint },
+	{  true,   640, "fix 'Tickets Only' audio timing",                1, kq6CDSignatureTicketsOnlyAudioTiming,     kq6CDPatchTicketsOnlyAudioTiming },
 	{  true,   745, "fix wedding genie lamp message",                 1, kq6SignatureWeddingGenieLampMessage,      kq6PatchWeddingGenieLampMessage },
 	{  true,   800, "fix Cassima secret passage peephole",            1, kq6SignatureCassimaSecretPassage,         kq6PatchCassimaSecretPassage },
 	{  true,   907, "fix inventory stack leak",                       1, kq6SignatureInventoryStackFix,            kq6PatchInventoryStackFix },
