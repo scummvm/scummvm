@@ -279,7 +279,7 @@ void WorldStats::load(Common::SeekableReadStream *stream) {
 			wheels[i] = getObjectById(id);
 	}
 
-	tickCount1 = stream->readSint32LE();
+	tickCount1 = stream->readUint32LE();
 
 	for (int32 i = 0; i < ARRAYSIZE(field_E8660); i++)
 		field_E8660[i] = stream->readUint32LE();
@@ -453,7 +453,7 @@ void WorldStats::saveLoadWithSerializer(Common::Serializer &s) {
 		}
 	}
 
-	s.syncAsSint32LE(tickCount1);
+	s.syncAsUint32LE(tickCount1);
 
 	for (int32 i = 0; i < ARRAYSIZE(field_E8660); i++)
 		s.syncAsUint32LE(field_E8660[i]);

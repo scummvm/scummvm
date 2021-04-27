@@ -139,7 +139,7 @@ public:
 	uint32 field_E8610[6];
 	uint32 field_E8628[6];
 	Object *wheels[7];
-	int32 tickCount1;
+	uint32 tickCount1;
 	uint32 field_E8660[6];
 	int32 dword_4563A0;
 
