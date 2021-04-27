@@ -1189,7 +1189,7 @@ void Screen::bltFast(int16 dX, int16 dY, GraphicFrame* frame, Common::Rect *sour
 	}
 }
 
-void Screen::copyToBackBuffer(byte *buffer, int32 pitch, int16 x, int16 y, uint16 width, uint16 height, bool mirrored) {
+void Screen::copyToBackBuffer(const byte *buffer, int32 pitch, int16 x, int16 y, uint16 width, uint16 height, bool mirrored) {
 	byte *dest = (byte *)_backBuffer.getPixels();
 
 	if (!mirrored) {

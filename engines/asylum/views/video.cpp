@@ -166,7 +166,7 @@ void VideoPlayer::play(Common::String filename, bool showSubtitles) {
 			if (_smkDecoder->hasDirtyPalette())
 				setupPalette();
 
-			getScreen()->copyToBackBuffer((byte *)frame->getPixels(), frame->pitch, x, y, frame->w, frame->h);
+			getScreen()->copyToBackBuffer((const byte *)frame->getPixels(), frame->pitch, x, y, frame->w, frame->h);
 
 			if (showSubtitles) {
 				int32 currentFrame = _smkDecoder->getCurFrame() + 1;
