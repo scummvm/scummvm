@@ -4070,8 +4070,6 @@ int16 Actor::compareX(const Common::Point &vec1, const Common::Point &vec2, cons
 		return -3;
 	else
 		return 0;
-
-	return 0;
 }
 
 int16 Actor::compareY(const Common::Point &vec1, const Common::Point &vec2, const Common::Point &vec) {
@@ -4082,8 +4080,6 @@ int16 Actor::compareY(const Common::Point &vec1, const Common::Point &vec2, cons
 		return -3;
 	else
 		return 0;
-
-	return 0;
 }
 
 
