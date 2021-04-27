@@ -65,10 +65,12 @@ protected:
 	virtual Common::String getRecordTypeName() const override { return Common::String::format("PlaySecondaryVideoChan%i", channel); }
 	virtual bool isViewportRelative() const override { return true; }
 
+	Graphics::ManagedSurface _fullFrame;
 	HoverState _hoverState = kNoHover;
 	AVFDecoder _decoder;
 	int _currentViewportFrame = -1;
-	bool _isPlaying = false;
+	int _currentViewportScroll = -1;
+	bool _isInFrame = false;
 	bool _isHovered = false;
 
 	uint channel;
