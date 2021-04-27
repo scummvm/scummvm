@@ -124,7 +124,7 @@ public:
 	void deleteGraphicFromQueue(ResourceId resourceId);
 
 	// Used by Video
-	void copyToBackBuffer(byte *buffer, int32 pitch, int16 x, int16 y, uint16 width, uint16 height, bool mirrored = false);
+	void copyToBackBuffer(const byte *buffer, int32 pitch, int16 x, int16 y, uint16 width, uint16 height, bool mirrored = false);
 
 	// Debug
 	void drawLine(const Common::Point &origin, const Common::Point &destination, uint32 color = 0xFF);
