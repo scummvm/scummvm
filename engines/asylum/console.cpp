@@ -172,49 +172,49 @@ static const int32 itemIndices[][16] = {
 };
 
 Console::Console(AsylumEngine *engine) : _vm(engine) {
-    // Commands
-    registerCmd("help",           WRAP_METHOD(Console, cmdHelp));
+	// Commands
+	registerCmd("help",           WRAP_METHOD(Console, cmdHelp));
 
-    registerCmd("ls",             WRAP_METHOD(Console, cmdListFiles));
+	registerCmd("ls",             WRAP_METHOD(Console, cmdListFiles));
 
-    registerCmd("action",         WRAP_METHOD(Console, cmdShowAction));
-    registerCmd("actions",        WRAP_METHOD(Console, cmdListActions));
-    registerCmd("actors",         WRAP_METHOD(Console, cmdListActors));
-    registerCmd("flags",          WRAP_METHOD(Console, cmdListFlags));
-    registerCmd("object",         WRAP_METHOD(Console, cmdShowObject));
-    registerCmd("objects",        WRAP_METHOD(Console, cmdListObjects));
-    registerCmd("world",          WRAP_METHOD(Console, cmdShowWorldStats));
+	registerCmd("action",         WRAP_METHOD(Console, cmdShowAction));
+	registerCmd("actions",        WRAP_METHOD(Console, cmdListActions));
+	registerCmd("actors",         WRAP_METHOD(Console, cmdListActors));
+	registerCmd("flags",          WRAP_METHOD(Console, cmdListFlags));
+	registerCmd("object",         WRAP_METHOD(Console, cmdShowObject));
+	registerCmd("objects",        WRAP_METHOD(Console, cmdListObjects));
+	registerCmd("world",          WRAP_METHOD(Console, cmdShowWorldStats));
 
-    registerCmd("video",          WRAP_METHOD(Console, cmdPlayVideo));
-    registerCmd("script",         WRAP_METHOD(Console, cmdRunScript));
-    registerCmd("show_script",    WRAP_METHOD(Console, cmdShowScript));
-    registerCmd("kill_script",    WRAP_METHOD(Console, cmdKillScript));
+	registerCmd("video",          WRAP_METHOD(Console, cmdPlayVideo));
+	registerCmd("script",         WRAP_METHOD(Console, cmdRunScript));
+	registerCmd("show_script",    WRAP_METHOD(Console, cmdShowScript));
+	registerCmd("kill_script",    WRAP_METHOD(Console, cmdKillScript));
 
-    registerCmd("scene",          WRAP_METHOD(Console, cmdChangeScene));
-    registerCmd("puzzle",         WRAP_METHOD(Console, cmdRunPuzzle));
+	registerCmd("scene",          WRAP_METHOD(Console, cmdChangeScene));
+	registerCmd("puzzle",         WRAP_METHOD(Console, cmdRunPuzzle));
 
-    registerCmd("get_status",     WRAP_METHOD(Console, cmdGetStatus));
-    registerCmd("set_status",     WRAP_METHOD(Console, cmdSetStatus));
+	registerCmd("get_status",     WRAP_METHOD(Console, cmdGetStatus));
+	registerCmd("set_status",     WRAP_METHOD(Console, cmdSetStatus));
 
-    registerCmd("encounter",      WRAP_METHOD(Console, cmdRunEncounter));
-    registerCmd("show_enc",       WRAP_METHOD(Console, cmdShowEncounter));
+	registerCmd("encounter",      WRAP_METHOD(Console, cmdRunEncounter));
+	registerCmd("show_enc",       WRAP_METHOD(Console, cmdShowEncounter));
 
-    registerCmd("items",          WRAP_METHOD(Console, cmdListItems));
-    registerCmd("grab",           WRAP_METHOD(Console, cmdAddToInventory));
-    registerCmd("throw",          WRAP_METHOD(Console, cmdRemoveFromInventory));
+	registerCmd("items",          WRAP_METHOD(Console, cmdListItems));
+	registerCmd("grab",           WRAP_METHOD(Console, cmdAddToInventory));
+	registerCmd("throw",          WRAP_METHOD(Console, cmdRemoveFromInventory));
 
-    registerCmd("palette",        WRAP_METHOD(Console, cmdSetPalette));
-    registerCmd("draw",           WRAP_METHOD(Console, cmdDrawResource));
+	registerCmd("palette",        WRAP_METHOD(Console, cmdSetPalette));
+	registerCmd("draw",           WRAP_METHOD(Console, cmdDrawResource));
 
-    registerCmd("toggle_flag",    WRAP_METHOD(Console, cmdToggleFlag));
+	registerCmd("toggle_flag",    WRAP_METHOD(Console, cmdToggleFlag));
 
-    // Variables
-    registerVar("show_actors",     &g_debugActors);
-    registerVar("show_drawrects",  &g_debugDrawRects);
-    registerVar("show_objects",    &g_debugObjects);
-    registerVar("show_polygons",   &g_debugPolygons);
-    registerVar("show_scenerects", &g_debugSceneRects);
-    registerVar("use_scrolling",   &g_debugScrolling);
+	// Variables
+	registerVar("show_actors",     &g_debugActors);
+	registerVar("show_drawrects",  &g_debugDrawRects);
+	registerVar("show_objects",    &g_debugObjects);
+	registerVar("show_polygons",   &g_debugPolygons);
+	registerVar("show_scenerects", &g_debugSceneRects);
+	registerVar("use_scrolling",   &g_debugScrolling);
 }
 
 Console::~Console() {
@@ -228,54 +228,54 @@ Console::~Console() {
 // Help
 //////////////////////////////////////////////////////////////////////////
 bool Console::cmdHelp(int, const char **) {
-    debugPrintf("Debug flags\n");
-    debugPrintf("-----------\n");
-    debugPrintf(" debugflag_list    - Lists the available debug flags and their status\n");
-    debugPrintf(" debugflag_enable  - Enables a debug flag\n");
-    debugPrintf(" debugflag_disable - Disables a debug flag\n");
-    debugPrintf("\n");
-    debugPrintf(" show_actors       - Show actors\n");
-    debugPrintf(" show_objects      - Show objects\n");
-    debugPrintf(" show_polygons     - Show polygons\n");
-    debugPrintf(" show_drawrects    - Show drawing rects\n");
-    debugPrintf(" use_scrolling     - Scroll scene using the mouse\n");
-    debugPrintf("\n");
-    debugPrintf("Commands\n");
-    debugPrintf("--------\n");
-    debugPrintf(" ls          - list engine files\n");
-    debugPrintf("\n");
-    debugPrintf(" actors      - show actors information\n");
-    debugPrintf(" action      - show action information\n");
-    debugPrintf(" actions     - list actions information\n");
-    debugPrintf(" flags       - show flags\n");
-    debugPrintf(" object      - inspect a particular object\n");
-    debugPrintf(" objects     - show objects information\n");
-    debugPrintf(" world       - show worldstats\n");
-    debugPrintf("\n");
-    debugPrintf(" video       - play a video\n");
-    debugPrintf(" script      - run a script\n");
-    debugPrintf(" scene       - change the scene\n");
-    debugPrintf(" show_script - show script commands\n");
-    debugPrintf(" kill_script - terminate a script\n");
-    debugPrintf(" puzzle      - run an puzzle\n");
-    debugPrintf("\n");
-    debugPrintf(" get_status  - get actor's status\n");
-    debugPrintf(" set_status  - set actor's status\n");
-    debugPrintf("\n");
-    debugPrintf(" encounter   - run an encounter\n");
-    debugPrintf(" show_enc    - show encounter commands\n");
-    debugPrintf("\n");
-    debugPrintf(" items       - list all grabbable objects\n");
-    debugPrintf(" grab        - add an item to inventory\n");
-    debugPrintf(" throw       - remove an item from inventory\n");
-    debugPrintf("\n");
-    debugPrintf(" palette     - set the screen palette\n");
-    debugPrintf(" draw        - draw a resource\n");
-    debugPrintf("\n");
-    debugPrintf(" toggle_flag - toggle a flag\n");
-    debugPrintf("\n");
+	debugPrintf("Debug flags\n");
+	debugPrintf("-----------\n");
+	debugPrintf(" debugflag_list    - Lists the available debug flags and their status\n");
+	debugPrintf(" debugflag_enable  - Enables a debug flag\n");
+	debugPrintf(" debugflag_disable - Disables a debug flag\n");
+	debugPrintf("\n");
+	debugPrintf(" show_actors       - Show actors\n");
+	debugPrintf(" show_objects      - Show objects\n");
+	debugPrintf(" show_polygons     - Show polygons\n");
+	debugPrintf(" show_drawrects    - Show drawing rects\n");
+	debugPrintf(" use_scrolling     - Scroll scene using the mouse\n");
+	debugPrintf("\n");
+	debugPrintf("Commands\n");
+	debugPrintf("--------\n");
+	debugPrintf(" ls          - list engine files\n");
+	debugPrintf("\n");
+	debugPrintf(" actors      - show actors information\n");
+	debugPrintf(" action      - show action information\n");
+	debugPrintf(" actions     - list actions information\n");
+	debugPrintf(" flags       - show flags\n");
+	debugPrintf(" object      - inspect a particular object\n");
+	debugPrintf(" objects     - show objects information\n");
+	debugPrintf(" world       - show worldstats\n");
+	debugPrintf("\n");
+	debugPrintf(" video       - play a video\n");
+	debugPrintf(" script      - run a script\n");
+	debugPrintf(" scene       - change the scene\n");
+	debugPrintf(" show_script - show script commands\n");
+	debugPrintf(" kill_script - terminate a script\n");
+	debugPrintf(" puzzle      - run an puzzle\n");
+	debugPrintf("\n");
+	debugPrintf(" get_status  - get actor's status\n");
+	debugPrintf(" set_status  - set actor's status\n");
+	debugPrintf("\n");
+	debugPrintf(" encounter   - run an encounter\n");
+	debugPrintf(" show_enc    - show encounter commands\n");
+	debugPrintf("\n");
+	debugPrintf(" items       - list all grabbable objects\n");
+	debugPrintf(" grab        - add an item to inventory\n");
+	debugPrintf(" throw       - remove an item from inventory\n");
+	debugPrintf("\n");
+	debugPrintf(" palette     - set the screen palette\n");
+	debugPrintf(" draw        - draw a resource\n");
+	debugPrintf("\n");
+	debugPrintf(" toggle_flag - toggle a flag\n");
+	debugPrintf("\n");
 
-    return true;
+	return true;
 }
 
 //////////////////////////////////////////////////////////////////////////
