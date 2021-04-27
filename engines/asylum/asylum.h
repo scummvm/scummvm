@@ -194,7 +194,7 @@ public:
 	 *
 	 * @return The sine cosine values.
 	 */
-	Common::Point getSinCosValues(int32 index1, int32 index2);
+	Common::Point getSinCosValues(int32 index1, int32 index2) const;
 
 	// Serializable
 	void saveLoadWithSerializer(Common::Serializer &s);
