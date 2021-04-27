@@ -43,6 +43,12 @@ public:
 		return result;
 	}
 
+	uint16 rget16() {
+		uint16 result = (uint16)(get8());
+		result |= (get8() << 8);
+		return result;
+	}
+
 	uint32 get32() {
 		uint32 result = (uint32)(get16() << 16);
 		result |= get16();

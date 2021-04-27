@@ -4,6 +4,7 @@
 namespace Freescape {
 static const PlainGameDescriptor freescapeGames[] = {
 	{"3dkit", "The 3D Kit Game"},
+	{"3dkitcube", "The 3D Kit Game with only one cube"},
 	{"driller", "Driller"},
 	{"castle", "Castle Master"},
 	{0, 0}};
@@ -12,6 +13,14 @@ static const ADGameDescription gameDescriptions[] = {
 	{"3Dkit",
 	 0,
 	 AD_ENTRY1s("3DKIT.RUN", "f35147729a2f5b6852a504223aeb6a57", 112158),
+	 Common::EN_ANY,
+	 Common::kPlatformDOS,
+	 ADGF_NO_FLAGS,
+	 GUIO1(GUIO_NOMIDI)},
+
+	{"3Dkitcube",
+	 "One cube",
+	 AD_ENTRY1s("CUBE.RUN", "3b7930be0f646b98885cfb70c26c89a2", 66138),
 	 Common::EN_ANY,
 	 Common::kPlatformDOS,
 	 ADGF_NO_FLAGS,
