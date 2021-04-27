@@ -521,10 +521,17 @@ void PlaySoundPanFrameAnchorAndDie::readData(Common::SeekableReadStream &stream)
 
 void PlaySoundMultiHS::readData(Common::SeekableReadStream &stream) {
 	_sound.read(stream, SoundDescription::kNormal);
-	_sceneChange.readData(stream);
-	_flag.label = stream.readSint16LE();
-	_flag.flag = (NancyFlag)stream.readByte();
-	stream.skip(2);
+
+	if (g_nancy->getGameType() != kGameTypeVampire) {
+		_sceneChange.readData(stream);
+		_flag.label = stream.readSint16LE();
+		_flag.flag = (NancyFlag)stream.readByte();
+		stream.skip(2);
+	} else {
+		_flag.label = -1;
+		_sceneChange.sceneID = 9999;
+	}
+
 	uint16 numHotspots = stream.readUint16LE();
 
 	_hotspots.reserve(numHotspots);
