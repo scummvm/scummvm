@@ -957,14 +957,14 @@ void Special::chapter11(Object *object, ActorIndex actorIndex) {
 
 		case kObjectMonsterStatus:
 			_vm->setGameFlag(kGameFlag572);
-			if (object->getFrameIndex() >= getWorld()->dword_4563A0 + object->getFrameIndex()) {
-				object->setFrameIndex(object->getFrameCount() - 1);
-				getWorld()->dword_4563A0 = -1;
-			}
-
-			if (object->getFrameIndex() < 0) {
-				object->setFrameIndex(0);
+			if (getWorld()->dword_4563A0 == -1 && !object->getFrameIndex()) {
 				getWorld()->dword_4563A0 = 1;
+			} else {
+				object->setFrameIndex(getWorld()->dword_4563A0 + object->getFrameIndex());
+				if (object->getFrameIndex() >= object->getFrameCount()) {
+					object->setFrameIndex(object->getFrameCount() - 1);
+					getWorld()->dword_4563A0 = -1;
+				}
 			}
 
 			if (getWorld()->field_E8490 == -666)
