@@ -802,7 +802,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "lifeofdduck", "Life of D. Duck" },
 	{ "lifeofdduck2", "Life of D. Duck II" },
 	{ "liftreasureofthetanones", "Lif Treasure of the Tanones" },
-	{ "lightcycles", "Light Cycles" },
+	{ "lightcycles", "AGS Cycles" },
 	{ "lightningmaster", "Lightning Master" },
 	{ "likeafox", "Like a Fox!" },
 	{ "limbo", "Limbo" },
