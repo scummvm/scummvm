@@ -645,7 +645,7 @@ bool Menu::click(const AsylumEvent &evt) {
 
 	case kMenuSaveGame:
 		_isEditingSavegameName = false;
-		// Fallback to next case
+		// fallthrough
 
 	case kMenuLoadGame:
 		_dword_455C80 = false;

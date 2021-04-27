@@ -541,7 +541,7 @@ void Actor::update() {
 				return;
 			}
 		}
-		// Fallback to next case
+		// fallthrough
 
 	case kActorStatusWalking: {
 		uint32 index = (_frameIndex >= _frameCount) ? 2 * _frameCount - (_frameIndex + 1) : _frameIndex;
@@ -1946,7 +1946,7 @@ bool Actor::canMoveCheckActors(Common::Point *point, ActorDirection dir) {
 			case kDirectionNW:
 				if (x4 >= x)
 					break;
-				// Fallback to next case
+				// fallthrough
 
 			case kDirectionN:
 				if (y4 >= y)

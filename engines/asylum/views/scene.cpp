@@ -491,7 +491,7 @@ bool Scene::key(const AsylumEvent &evt) {
 	case Common::KEYCODE_LEFTBRACKET:
 		if (evt.kbd.ascii != 123)
 			break;
-		// Fallback to next case (we got a left brace)
+		// fallthrough
 
 	case Common::KEYCODE_p:
 	case Common::KEYCODE_q:

@@ -1604,7 +1604,7 @@ void Encounter::runScript() {
 
 				if (getVariable(3) == 13)
 					break;
-				// Fallback to next case
+				// fallthrough
 
 			case 14:
 				getScene()->getActor()->hide(); // Hide player
