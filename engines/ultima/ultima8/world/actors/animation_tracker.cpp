@@ -89,10 +89,8 @@ bool AnimationTracker::init(const Actor *actor, Animation::Sequence action,
 
 #ifdef WATCHACTOR
 	if (actor && actor->getObjId() == watchactor) {
-		pout << "AnimationTracker: playing action " << actionnum << " " << _startFrame << "-" << _endFrame
-		     << " (_animAction flags: " << Std::hex << _animAction->_flags
-		     << Std::dec << ")" << Std::endl;
-
+		debug(6, "AnimationTracker: playing action %d %d-%d (animAction flags: 0x04%x)",
+			  actionnum, _startFrame, _endFrame, _animAction->getFlags());
 	}
 #endif
 
