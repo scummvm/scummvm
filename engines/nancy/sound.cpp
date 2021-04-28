@@ -78,8 +78,8 @@ bool readDiamondwareHeader(Common::SeekableReadStream *stream, SoundType &type, 
 					uint32 &samplesPerSec, uint16 &bitsPerSample, uint32 &size) {
 	stream->skip(2);
 
-	if (stream->readByte() != 1 || stream->readByte() != 0) {
-		// Version, only 1.0 is supported
+	if (stream->readByte() != 1 || stream->readByte() > 1) {
+		// Version, up to 1.1 is supported
 		return false;
 	}
 
