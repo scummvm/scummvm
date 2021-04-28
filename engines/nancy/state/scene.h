@@ -94,6 +94,8 @@ public:
 		Common::String audioFile;
 		SoundDescription sound;
 		//
+		NancyFlag dontWrap;
+		//
 		uint16 verticalScrollDelta;
 		uint16 horizontalEdgeSize;
 		uint16 verticalEdgeSize;

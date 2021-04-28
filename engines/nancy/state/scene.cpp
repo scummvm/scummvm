@@ -69,7 +69,9 @@ void Scene::SceneSummary::read(Common::SeekableReadStream &stream) {
 
 	sound.read(stream, SoundDescription::kScene);
 
-	ser.skip(0x10);
+	ser.skip(6);
+	ser.syncAsByte(dontWrap);
+	ser.skip(9);
 	ser.syncAsUint16LE(verticalScrollDelta);
 	ser.syncAsUint16LE(horizontalEdgeSize);
 	ser.syncAsUint16LE(verticalEdgeSize);
@@ -488,6 +490,7 @@ void Scene::load() {
 	_viewport.loadVideo(_sceneState.summary.videoFile,
 						_sceneState.nextScene.frameID,
 						_sceneState.nextScene.verticalOffset,
+						_sceneState.summary.dontWrap,
 						_sceneState.summary.videoFormat,
 						_sceneState.summary.videoPaletteFile);
 

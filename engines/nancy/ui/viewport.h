@@ -47,14 +47,15 @@ public:
 		_edgesMask(0),
 		_currentFrame(0),
 		_videoFormat(0),
-		_stickyCursorPos(-1, -1) {}
+		_stickyCursorPos(-1, -1),
+		_dontWrap(kFalse) {}
 		
 	virtual ~Viewport() { _decoder.close(); _fullFrame.free(); }
 
 	virtual void init() override;
 	void handleInput(NancyInput &input);
 
-	void loadVideo(const Common::String &filename, uint frameNr = 0, uint verticalScroll = 0, uint16 format = 2, const Common::String &palette = Common::String());
+	void loadVideo(const Common::String &filename, uint frameNr = 0, uint verticalScroll = 0, NancyFlag dontWrap = kFalse, uint16 format = 2, const Common::String &palette = Common::String());
 
 	void setFrame(uint frameNr);
 	void setNextFrame();
@@ -85,6 +86,8 @@ protected:
 
 	byte _movementLastFrame;
 	Time _nextMovementTime;
+
+	NancyFlag _dontWrap;
 
 	AVFDecoder _decoder;
 	uint16 _currentFrame;
