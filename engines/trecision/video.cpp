@@ -152,7 +152,7 @@ void AnimManager::playMovie(Common::String filename, int startFrame, int endFram
 		}
 
 		while (g_engine->getEventManager()->pollEvent(event)) {
-			if (event.type == Common::EVENT_KEYDOWN && event.kbd.keycode == Common::KEYCODE_ESCAPE)
+			if (event.type == Common::EVENT_KEYUP && event.kbd.keycode == Common::KEYCODE_ESCAPE)
 				skipVideo = true;
 		}
 
