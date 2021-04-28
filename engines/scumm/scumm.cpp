@@ -2315,14 +2315,6 @@ void ScummEngine::scummLoop(int delta) {
 		}
 	}
 
-	// Trigger autosave if necessary.
-	if (!_saveLoadFlag && shouldPerformAutoSave(_lastSaveTime) && canSaveGameStateCurrently()) {
-		_saveLoadSlot = 0;
-		_saveLoadDescription = Common::String::format("Autosave %d", _saveLoadSlot);
-		_saveLoadFlag = 1;
-		_saveTemporaryState = false;
-	}
-
 	if (VAR_GAME_LOADED != 0xFF)
 		VAR(VAR_GAME_LOADED) = 0;
 load_game:

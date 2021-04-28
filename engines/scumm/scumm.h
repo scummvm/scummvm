@@ -340,10 +340,6 @@ public:
 	bool canLoadGameStateCurrently() override;
 	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave = false) override;
 	bool canSaveGameStateCurrently() override;
-	bool canSaveAutosaveCurrently() override {
-		// Keep base engine autosave code disabled in favour of engine's autosave code
-		return false;
-	}
 
 	void pauseEngineIntern(bool pause) override;
 
