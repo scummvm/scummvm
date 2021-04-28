@@ -1054,7 +1054,7 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 			_vm->_inventoryObj[kItemLiftCard]._flag |= kObjFlagExtra;
 			_vm->_obj[oSLOT12]._flag |= kObjFlagPerson;
 			_vm->_obj[oLIFTA12]._flag |= kObjFlagPerson;
-			doMouseTalk(_vm->_useWith[WITH]);
+			_vm->doMouseTalk(_vm->_useWith[WITH]);
 		} else if ((_vm->_useWith[WITH] == oTICKETOFFICE16) || (_vm->_useWith[WITH] == oSLOT23) || (_vm->_useWith[WITH] == oFRONTOFFICEA35) || (_vm->_useWith[WITH] == oSLOTA58) || (_vm->_useWith[WITH] == oSLOTB58)) {
 			*printSentence = false;
 			CharacterSay(1419);

@@ -32,6 +32,7 @@
 #include "common/scummsys.h"
 #include "graphics/scaler.h"
 #include "nl/extern.h"
+#include "sound.h"
 
 
 namespace Trecision {
@@ -527,8 +528,285 @@ void TrecisionEngine::doIdle() {
 		_inventoryScrollTime = TheTime;
 	}
 
-	if (g_engine->shouldQuit() && !_flagDialogActive && !_flagDialogMenuActive)
+	if (shouldQuit() && !_flagDialogActive && !_flagDialogMenuActive)
 		doEvent(MC_SYSTEM, ME_QUIT, MP_SYSTEM, 0, 0, 0, 0);
+}
+
+void TrecisionEngine::doRoomIn(uint16 curObj) {
+	hideCursor();
+
+	uint16 curAction = _obj[curObj]._anim;
+	uint16 curPos = _obj[curObj]._ninv;
+
+	doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, _obj[curObj]._goRoom, curAction, curPos, curObj);
+
+	_obj[curObj]._flag |= kObjFlagDone;
+}
+
+void TrecisionEngine::doRoomOut(uint16 curObj) {
+	hideCursor();
+
+	uint16 curAction, curPos;
+	_logicMgr->roomOut(curObj, &curAction, &curPos);
+
+	if (curAction)
+		doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, curAction, _obj[curObj]._goRoom, curPos, curObj);
+
+	_obj[curObj]._flag |= kObjFlagDone;
+}
+
+void TrecisionEngine::doMouseExamine(uint16 curObj) {
+	if (!curObj)
+		warning("doMouseExamine - curObj not set");
+
+	bool printSentence = _logicMgr->mouseExamine(curObj);
+
+	if (printSentence && _obj[curObj]._examine)
+		CharacterSay(_obj[curObj]._examine);
+}
+
+void TrecisionEngine::doMouseOperate(uint16 curObj) {
+	if (!curObj)
+		warning("doMouseOperate - curObj not set");
+
+	bool printSentence = _logicMgr->mouseOperate(curObj);
+
+	if (printSentence && _obj[curObj]._action)
+		CharacterSay(_obj[curObj]._action);
+}
+
+void TrecisionEngine::doMouseTake(uint16 curObj) {
+	if (!curObj)
+		warning("doMouseTake - curObj not set");
+
+	bool del = _logicMgr->mouseTake(curObj);
+	uint16 curAction = _obj[curObj]._anim;
+
+	if (curAction)
+		doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, curAction, 0, 0, curObj);
+
+	// Remove object being taken
+	if (del) {
+		if (curAction) {
+			for (uint16 j = 0; j < MAXATFRAME; j++) {
+				SAtFrame *frame = &_animMgr->_animTab[curAction]._atFrame[j];
+				if (frame->_type == ATFCLR && frame->_index == curObj)
+					break;
+
+				if (frame->_type == 0) {
+					frame->_child = 0;
+					frame->_numFrame = 1;
+					frame->_type = ATFCLR;
+					frame->_index = curObj;
+					break;
+				}
+			}
+		} else {
+			_obj[curObj]._mode &= ~OBJMODE_OBJSTATUS;
+			RegenRoom();
+		}
+	}
+	addIcon(_obj[_curObj]._ninv);
+}
+
+void TrecisionEngine::doMouseTalk(uint16 curObj) {
+	if (!curObj)
+		warning("doMouseTalk - curObj not set");
+
+	bool printSentence = _logicMgr->mouseTalk(curObj);
+
+	if (printSentence)
+		_dialogMgr->playDialog(_obj[curObj]._goRoom);
+}
+
+void TrecisionEngine::doUseWith() {
+	if (_useWithInv[USED]) {
+		if (_useWithInv[WITH])
+			doInventoryUseWithInventory();
+		else
+			doInventoryUseWithScreen();
+	} else
+		doScreenUseWithScreen();
+
+	_useWith[USED] = 0;
+	_useWith[WITH] = 0;
+	_useWithInv[USED] = false;
+	_useWithInv[WITH] = false;
+	_flagUseWithStarted = false;
+}
+
+void TrecisionEngine::doScreenUseWithScreen() {
+	if (!_useWith[USED] || !_useWith[WITH])
+		warning("doScreenUseWithScreen - _useWith not set properly");
+
+	if (_characterInMovement)
+		return;
+
+	bool printSentence = _logicMgr->useScreenWithScreen();
+
+	if (printSentence)
+		CharacterSay(_obj[_useWith[USED]]._action);
+}
+
+void TrecisionEngine::doInvExamine() {
+	if (!_curInventory)
+		warning("doInvExamine - _curInventory not set properly");
+
+	if (_inventoryObj[_curInventory]._examine)
+		CharacterSay(_inventoryObj[_curInventory]._examine);
+}
+
+void TrecisionEngine::doInvOperate() {
+	if (!_curInventory)
+		warning("doInvOperate - _curInventory not set properly");
+
+	bool printSentence = _logicMgr->operateInventory();
+	if (_inventoryObj[_curInventory]._action && printSentence)
+		CharacterSay(_inventoryObj[_curInventory]._action);
+}
+
+void TrecisionEngine::doDoing() {
+	switch (_curMessage->_event) {
+	case ME_INITOPENCLOSE:
+		if (_actor->_curAction == hSTAND)
+			REEVENT;
+		else if (_actor->_curFrame == 4)
+			doEvent(_curMessage->_class, ME_OPENCLOSE, _curMessage->_priority, _curMessage->_u16Param1, _curMessage->_u16Param2, _curMessage->_u8Param, _curMessage->_u32Param);
+		else
+			REEVENT;
+
+		break;
+	case ME_OPENCLOSE: {
+		uint16 curObj = _curMessage->_u16Param1;
+		uint16 curAnim = _curMessage->_u16Param2;
+		_obj[curObj]._mode &= ~OBJMODE_OBJSTATUS;
+		RegenRoom();
+		if (curAnim)
+			doEvent(MC_ANIMATION, ME_ADDANIM, MP_SYSTEM, curAnim, 0, 0, 0);
+
+		_curMessage->_event = ME_WAITOPENCLOSE;
+	}
+		// no break!
+	case ME_WAITOPENCLOSE:
+		RegenRoom();
+		if (_actor->_curAction == hSTAND)
+			showCursor();
+		break;
+
+	default:
+		break;
+	}
+}
+
+void TrecisionEngine::doScript() {
+	static uint32 pauseStartTime = 0;
+	Message *message = _curMessage;
+	uint8 scope = message->_u8Param;
+	uint16 index = message->_u16Param1;
+	uint16 index2 = message->_u16Param2;
+	uint32 value = message->_u32Param;
+	SObject *obj = &_obj[index];
+
+	switch (message->_event) {
+	case ME_PAUSE:
+		if (!pauseStartTime) {
+			pauseStartTime = TheTime;
+			doEvent(message->_class, message->_event, message->_priority, message->_u16Param1, message->_u16Param2, message->_u8Param, message->_u32Param);
+		} else if (TheTime >= (pauseStartTime + message->_u16Param1))
+			pauseStartTime = 0;
+		else
+			doEvent(message->_class, message->_event, message->_priority, message->_u16Param1, message->_u16Param2, message->_u8Param, message->_u32Param);
+
+		break;
+
+	case ME_SETOBJ:
+		switch (scope) {
+		case C_ONAME:
+			obj->_name = (uint16)value;
+			break;
+		case C_OEXAMINE:
+			obj->_examine = (uint16)value;
+			break;
+		case C_OACTION:
+			obj->_action = (uint16)value;
+			break;
+		case C_OGOROOM:
+			obj->_goRoom = (uint8)value;
+			break;
+		case C_OMODE:
+			if (value)
+				obj->_mode |= (uint8)index2;
+			else
+				obj->_mode &= ~(uint8)index2;
+			break;
+		case C_OFLAG:
+			if (value)
+				obj->_flag |= (uint8)index2;
+			else
+				obj->_flag &= ~(uint8)index2;
+			break;
+		default:
+			break;
+		}
+		break;
+
+	case ME_SETINVOBJ:
+		switch (scope) {
+		case C_INAME:
+			_inventoryObj[index]._name = (uint16)value;
+			break;
+		case C_IEXAMINE:
+			_inventoryObj[index]._examine = (uint16)value;
+			break;
+		case C_IACTION:
+			_inventoryObj[index]._action = (uint16)value;
+			break;
+		case C_IFLAG:
+			if (value)
+				_inventoryObj[index]._flag |= (uint8)index2;
+			else
+				_inventoryObj[index]._flag &= ~(uint8)index2;
+			break;
+		default:
+			break;
+		}
+		break;
+
+	case ME_ADDICON:
+		addIcon(index);
+		break;
+
+	case ME_KILLICON:
+		removeIcon(index);
+		break;
+
+	case ME_PLAYDIALOG:
+		_dialogMgr->playDialog(index);
+		break;
+
+	case ME_CHARACTERSAY:
+		CharacterSay(message->_u32Param);
+		break;
+
+	case ME_PLAYSOUND:
+		_soundMgr->play(index);
+		break;
+
+	case ME_STOPSOUND:
+		_soundMgr->stop(index);
+		break;
+
+	case ME_REGENROOM:
+		RegenRoom();
+		break;
+
+	case ME_CHANGER:
+		doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, index, index2, value, _curObj);
+		break;
+
+	default:
+		break;
+	}
 }
 
 } // End of namespace Trecision

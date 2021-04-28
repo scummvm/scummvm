@@ -385,4 +385,77 @@ float TrecisionEngine::sinCosAngle(float sinus, float cosinus) {
 	return PI2 - (float)acos(cosinus);
 }
 
+void TrecisionEngine::ProcessTime() {
+	static uint8 OldRegInvSI = 0xFF;
+	static uint8 OldRegInvSL = 0xFF;
+	static uint8 OldLightIcon = 0xFF;
+
+	TheTime = readTime();
+	_animMgr->refreshAllAnimations();
+
+	if (TheTime >= _nextRefresh) {
+		drawString();
+
+		if (_inventoryStatus == INV_PAINT || _inventoryStatus == INV_DEPAINT)
+			rollInventory(_inventoryStatus);
+
+		if (_inventoryStatus != INV_OFF && (OldRegInvSI != _inventoryRefreshStartIcon || OldRegInvSL != _inventoryRefreshStartLine || OldLightIcon != _lightIcon)) {
+			refreshInventory(_inventoryRefreshStartIcon, _inventoryRefreshStartLine);
+			OldRegInvSI = _inventoryRefreshStartIcon;
+			OldRegInvSL = _inventoryRefreshStartLine;
+			OldLightIcon = _lightIcon;
+		}
+
+		PaintScreen(false);
+		_textStackTop = -1;
+
+		_flagScreenRefreshed = true;
+		uint32 paintTime = readTime();
+		if (paintTime - TheTime >= 5)
+			_nextRefresh = paintTime + 1;
+		else
+			_nextRefresh = TheTime + 5;
+	}
+}
+
+void TrecisionEngine::ProcessMouse() {
+	static bool MaskMouse;
+	static uint16 oldMouseX;
+	static uint16 oldMouseY;
+	static bool lastMouseOn = true;
+	int16 mx = _mouseX;
+	int16 my = _mouseY;
+
+	if (lastMouseOn && !isCursorVisible()) {
+		oldMouseX = 0; // Switch off
+		oldMouseY = 0;
+	} else if (!lastMouseOn && isCursorVisible()) {
+		oldMouseX = 0; // Switch on
+		oldMouseY = 0;
+	}
+
+	lastMouseOn = isCursorVisible();
+	checkSystem();
+
+	if (!isCursorVisible())
+		return;
+
+	if (_mouseLeftBtn || _mouseRightBtn) {
+		if (!MaskMouse) {
+			doEvent(MC_MOUSE, _mouseRightBtn ? ME_MRIGHT : ME_MLEFT, MP_DEFAULT, mx, my, 0, 0);
+			MaskMouse = true;
+		}
+	} else {
+		MaskMouse = false;
+
+		if (!_flagscriptactive) {
+			if (mx != oldMouseX || my != oldMouseY) {
+				doEvent(MC_MOUSE, ME_MMOVE, MP_DEFAULT, mx, my, 0, 0);
+				oldMouseX = mx;
+				oldMouseY = my;
+			}
+		}
+	}
+}
+
 } // End of namespace Trecision
