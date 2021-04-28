@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-04-27 22:10+0000\n"
-"PO-Revision-Date: 2021-04-24 09:41+0000\n"
+"PO-Revision-Date: 2021-04-28 09:40+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/el/>\n"
@@ -4909,13 +4909,15 @@ msgstr "Αριστερό κουμπί για επίθεση, δεξί κουμπ
 
 #: engines/kyra/detection_tables.h:83
 msgid "Missing language specific game code and/or resources."
-msgstr ""
+msgstr "Λείπει ο κώδικας ή/και αρχεία (resources) για τη συγκεκριμένη γλώσσα."
 
 #: engines/kyra/detection_tables.h:84
 msgid ""
 "Missing language specific game code and/or resources for this fan "
 "translation."
 msgstr ""
+"Λείπει ο κώδικας ή/και αρχεία (resources) για τη συγκεκριμένη γλώσσα αυτής "
+"της ανεπίσημης μετάφρασης."
 
 #: engines/kyra/detection_tables.h:1402
 msgid "You added the game incorrectly. Please add the root folder of the game."
