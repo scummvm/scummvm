@@ -59,6 +59,7 @@ bool isCombatAnimCru(const Sequence anim) {
 	case advance:
 	case retreat:
 	case attack:
+	case reloadSmallWeapon:
 	case kick:
 	case kneel:
 	case kneelStartCru:

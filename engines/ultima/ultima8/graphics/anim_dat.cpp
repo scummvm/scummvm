@@ -95,6 +95,8 @@ uint32 AnimDat::getActionNumberForSequence(Animation::Sequence action, const Act
 			return Animation::walkCru;
 		case Animation::retreat:
 			return (smallwpn ? Animation::retreatSmallWeapon : Animation::retreatLargeWeapon);
+		case Animation::reloadSmallWeapon:
+			return (smallwpn ? Animation::reloadSmallWeapon : Animation::reloadLargeWeapon);
 		case Animation::run:
 			return Animation::runCru;
 		case Animation::combatRunSmallWeapon:

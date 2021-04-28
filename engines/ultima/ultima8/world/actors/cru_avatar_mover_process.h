@@ -62,6 +62,11 @@ private:
 	*/
 	int32 _avatarAngle;
 
+	/**
+	 * Whether we've reloaded the SGA1 yet (it needs to happen every shot)
+	 */
+	bool _SGA1Loaded;
+
 	void handleHangingMode() override;
 	void handleCombatMode() override;
 	void handleNormalMode() override;

@@ -28,6 +28,8 @@
 #include "ultima/ultima8/world/current_map.h"
 #include "ultima/ultima8/world/world.h"
 #include "ultima/ultima8/misc/direction_util.h"
+#include "ultima/ultima8/audio/audio_process.h"
+#include "ultima/ultima8/kernel/delay_process.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -36,7 +38,7 @@ DEFINE_RUNTIME_CLASSTYPE_CODE(CruAvatarMoverProcess)
 
 static const int REBEL_BASE_MAP = 40;
 
-CruAvatarMoverProcess::CruAvatarMoverProcess() : AvatarMoverProcess(), _avatarAngle(0) {
+CruAvatarMoverProcess::CruAvatarMoverProcess() : AvatarMoverProcess(), _avatarAngle(0), _SGA1Loaded(false) {
 }
 
 
@@ -432,21 +434,96 @@ void CruAvatarMoverProcess::step(Animation::Sequence action, Direction direction
 }
 
 void CruAvatarMoverProcess::tryAttack() {
+	// Don't do it while this process is waiting
+	if (is_suspended())
+		return;
+
 	Actor *avatar = getControlledActor();
-	if (!avatar)
+	if (!avatar || avatar->getMapNum() == REBEL_BASE_MAP || avatar->isBusy())
 		return;
 
-	if (avatar->getMapNum() == REBEL_BASE_MAP)
+	Item *wpn = getItem(avatar->getActiveWeapon());
+	if (!wpn || !wpn->getShapeInfo() || !wpn->getShapeInfo()->_weaponInfo)
 		return;
 
-	Direction dir = avatar->getDir();
 	if (!avatar->isInCombat()) {
 		avatar->setInCombat(0);
 	}
-	// Fire event happens from animation
-	Animation::Sequence fireanim = (avatar->isKneeling() ?
-									Animation::kneelAndFire : Animation::attack);
-	waitFor(avatar->doAnim(fireanim, dir));
+
+	Kernel *kernel = Kernel::get_instance();
+	AudioProcess *audio = AudioProcess::get_instance();
+	const WeaponInfo *wpninfo = wpn->getShapeInfo()->_weaponInfo;
+
+	int shotsleft;
+	if (wpninfo->_ammoShape) {
+		shotsleft = wpn->getQuality();
+	} else if (wpninfo->_energyUse) {
+		shotsleft = avatar->getMana() / wpninfo->_energyUse;
+	} else {
+		shotsleft = 1;
+	}
+
+	if (!shotsleft) {
+		Item *ammo = avatar->getFirstItemWithShape(wpninfo->_ammoShape, true);
+		if (ammo) {
+			// reload now
+			// SGA1 is special, it reloads every shot.
+			if (wpn->getShape() == 0x332)
+				_SGA1Loaded = true;
+
+			wpn->setQuality(wpninfo->_clipSize);
+			ammo->setQuality(ammo->getQuality() - 1);
+			if (ammo->getQuality() == 0)
+				ammo->destroy();
+
+			if (wpninfo->_reloadSound) {
+				audio->playSFX(0x2a, 0x80, avatar->getObjId(), 1);
+			}
+			if (avatar->getObjId() == 1 && !avatar->isKneeling()) {
+				avatar->doAnim(Animation::reloadSmallWeapon, dir_current);
+			}
+
+			int delayproc = kernel->addProcess(new DelayProcess(15));
+			this->waitFor(delayproc);
+		} else {
+			// no shots left
+			audio->playSFX(0x2a, 0x80, avatar->getObjId(), 1);
+			int delayproc = kernel->addProcess(new DelayProcess(20));
+			this->waitFor(delayproc);
+		}
+	} else {
+		// Check for SGA1 reload anim (which happens every shot)
+		if (wpn->getShape() == 0x332 && !avatar->isKneeling() && !_SGA1Loaded) {
+			if (wpninfo->_reloadSound) {
+				audio->playSFX(0x2a, 0x80, avatar->getObjId(), 1);
+			}
+			if (avatar->getObjId() == 1) {
+				avatar->doAnim(Animation::reloadSmallWeapon, dir_current);
+			}
+			_SGA1Loaded = true;
+		} else {
+			Direction dir = avatar->getDir();
+			// Fire event happens from animation
+			Animation::Sequence fireanim = (avatar->isKneeling() ?
+											Animation::kneelAndFire : Animation::attack);
+			uint16 fireanimpid = avatar->doAnim(fireanim, dir);
+			waitFor(fireanimpid);
+
+			if (wpn->getShape() == 0x332)
+				_SGA1Loaded = false;
+
+			// Use a shot up
+			if (wpninfo->_ammoShape) {
+				wpn->setQuality(shotsleft - 1);
+			} else if (wpninfo->_energyUse) {
+				avatar->setMana(avatar->getMana() - wpninfo->_energyUse);
+			}
+
+			if (wpninfo->_shotDelay) {
+				waitFor(kernel->addProcess(new DelayProcess(wpninfo->_shotDelay)));
+			}
+		}
+	}
 }
 
 void CruAvatarMoverProcess::saveData(Common::WriteStream *ws) {

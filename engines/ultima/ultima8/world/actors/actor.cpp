@@ -484,7 +484,7 @@ uint16 Actor::doAnim(Animation::Sequence anim, Direction dir, unsigned int steps
 
 		if (anim == Animation::readyWeapon || anim == Animation::stopRunningAndDrawSmallWeapon ||
 				anim == Animation::combatStand || anim == Animation::attack || anim == Animation::kneel ||
-				anim == Animation::kneelAndFire)
+				anim == Animation::kneelAndFire || anim == Animation::reloadSmallWeapon)
 			setActorFlag(ACT_WEAPONREADY);
 		else
 			clearActorFlag(ACT_WEAPONREADY);
@@ -547,7 +547,7 @@ uint16 Actor::doAnim(Animation::Sequence anim, Direction dir, unsigned int steps
 		getLocation(x, y, z);
 		int32 actionno = AnimDat::getActionNumberForSequence(anim, this);
 		const AnimAction *action = GameData::get_instance()->getMainShapes()->getAnim(getShape(), actionno);
-		debug(6, "Actor::doAnim(%d, %d, %d) from (%d, %d, %d) frame repeat %d", anim, dir, steps, x, y, z, action->getFrameRepeat());
+		debug(6, "Actor::doAnim(%d, %d, %d) from (%d, %d, %d) frame repeat %d", anim, dir, steps, x, y, z, action ? action->getFrameRepeat() : -1);
 	}
 #endif
 
