@@ -243,6 +243,11 @@ void TypeFlags::loadWeaponInfo() {
 		else
 			wi->_sound = 0;
 
+		if (config->get(category, section, "reload_sound", val))
+			wi->_reloadSound = static_cast<uint16>(val);
+		else
+			wi->_reloadSound = 0;
+
 		if (config->get(category, section, "display_frame", val))
 			wi->_displayGumpFrame = static_cast<uint16>(val);
 		else
@@ -258,8 +263,20 @@ void TypeFlags::loadWeaponInfo() {
 		else
 			wi->_small = 0;
 
-		// TODO: get from real data.
-		wi->_defaultAmmo = 37;
+		if (config->get(category, section, "clip_size", val))
+			wi->_clipSize = static_cast<uint16>(val);
+		else
+			wi->_clipSize = 10;
+
+		if (config->get(category, section, "energy", val))
+			wi->_energyUse = static_cast<uint16>(val);
+		else
+			wi->_energyUse = 0;
+
+		if (config->get(category, section, "shot_delay", val))
+			wi->_shotDelay = static_cast<uint16>(val);
+		else
+			wi->_shotDelay = 0;
 
 		// TODO: this should be 1, 2, or 3 depending on weapon.
 		// It's used in the AttackProcess
