@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-04-28 03:51+0000\n"
-"PO-Revision-Date: 2021-04-24 19:25+0000\n"
+"PO-Revision-Date: 2021-04-29 00:25+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fi/>\n"
@@ -4816,13 +4816,14 @@ msgstr "Vasen painike hyökkää, oikea painike poimii esineitä"
 
 #: engines/kyra/detection_tables.h:83
 msgid "Missing language specific game code and/or resources."
-msgstr ""
+msgstr "Puuttuu kielispesifisiä tiedostoja ja/tai koodia."
 
 #: engines/kyra/detection_tables.h:84
 msgid ""
 "Missing language specific game code and/or resources for this fan "
 "translation."
 msgstr ""
+"Puuttuu kielispesifisiä tiedostoja ja/tai koodia tälle fanikäännökselle."
 
 #: engines/kyra/detection_tables.h:1402
 msgid "You added the game incorrectly. Please add the root folder of the game."
