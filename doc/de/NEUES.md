@@ -18,6 +18,10 @@ Programmcodes finden Sie auf Englisch unter:
    - Unterstützung für die Glulx interactive fiction-Spiele hinzugefügt.
    - Unterstützung für die US-Version von Private Eye hinzugefügt.
    - Unterstützung für AGS-Spiele (AGS-Version 2.5+) hinzugefügt.
+   - Unterstützung für das Konami-Release von Lure of the Temptress hinzugefügt.
+   - Unterstützung für die spanische Version von Blue Force hinzugefügt.
+   - Unterstützung für die spanische Version von Ringworld hinzugefügt.
+   - Unterstützung für die spanische Version von Amazon: Guardians of Eden hinzugefügt.
 
  Neue Portierungen:
    - Die Version für den Nintendo DS wurde zu großen Teilen neu geschrieben.
@@ -30,6 +34,8 @@ Programmcodes finden Sie auf Englisch unter:
    - Der Pfad zur ScummVM-Konfigurationsdatei wird nun in der GUI unter Optionen -> Pfade angezeigt.
    - Neue optionale Abhängigkeit zur giflib-Bibliothek (>=5.0.0) hinzugefügt. Wird für einige Versionen von LBA benötigt.
    - Unterstützung für hochauflösende Bildschirme (HiDPI) hinzugefügt.
+   - Kommandozeilen-Parameter --window-size hinzugefügt, mit dem die Größe des ScummVM-Fensters festgelegt werden kann.
+     Diese Option kann nur bei der Nutzung des OpenGL-Renderers verwendet werden.
 
  AGOS:
    - Unterstützung für die japanische PC-98-Version von Elvira 1 hinzugefügt.
@@ -56,6 +62,8 @@ Programmcodes finden Sie auf Englisch unter:
  Kyra:
    - Unterstützung für die japanische Sega-CD-Version von Eye of the Beholder hinzugefügt.
    - Unterstützung für die hebräische Fan-Übersetzung von Legend of Kyrandia hinzugefügt.
+   - Unterstützung für die Version in vereinfachtem Chinesisch für Legend of Kyrandia 3 hinzugefügt.
+   - Unterstützung für die spielbare Demo-Version von Lands of Lore hinzugefügt.
 
  Lure:
    - Die Feuer-Animation im ersten Raum wird nun auch nach dem Laden eines Spielstands korrekt abgespielt.
@@ -63,6 +71,9 @@ Programmcodes finden Sie auf Englisch unter:
 
  Pegasus:
    - Unterstützung für die DVD-/GOG.com-Version hinzugefügt.
+
+ Queen:
+   - Unterstützung für die deutsche Amiga-Version hinzugefügt.
 
  SAGA:
    - Unterstützung für ITE GOG Mac CD v1.1 hinzugefügt.
@@ -90,6 +101,8 @@ Programmcodes finden Sie auf Englisch unter:
    - Sprachausgabe in der Akella-Version von COMI korrigiert.
    - Unterstützung für die Discord- und Humble Bundle-Versionen von Indiana Jones and the Fate of Atlantis hinzugefügt
    - Unterstützung für weiches Scrolling in verschiedenen FM-Towns-Spielen hinzugefügt.
+   - Die Darstellung von FM-TOWNS-Spielen kann nun auf eine Höhe von 200 Pixeln beschränkt werden, um eine
+     Seitenverhältniskorrektur zu ermöglichen.
 
  Tinsel:
    - Unterstützung für die Rückkehr zur ScummVM-Benutzeroberfläche hinzugefügt.
