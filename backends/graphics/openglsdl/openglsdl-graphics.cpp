@@ -309,7 +309,7 @@ void OpenGLSdlGraphicsManager::notifyResize(const int width, const int height) {
 		currentHeight /= scale;
 #endif
 		// Reset maximized flag
-		_windowIsMaximized == false;
+		_windowIsMaximized = false;
 
 		// Check if the ScummVM window is maximized and store the current
 		// window dimensions.
