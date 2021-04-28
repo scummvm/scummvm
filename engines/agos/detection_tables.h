@@ -3140,6 +3140,29 @@ static const AGOSGameDescription gameDescriptions[] = {
 		GF_OLD_BUNDLE | GF_TALKIE
 	},
 
+	// The Feeble Files - German Windows 4CD (with InstallShield cab)
+	// Provided by goodoldgeorge Bugreport #12496
+	{
+		{
+			"feeble",
+			"4CD/unextracted",
+
+			{
+				{ "data1.cab",	GAME_CABFILE,	"7722489a6609e8bba40272f64502494e", 28938871},
+				{ "0882.vga",				0,	"6655780ef361ed92d0a99d50217502f3", 713180},
+				AD_LISTEND
+			},
+			Common::PL_POL,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO3(GUIO_NOSUBTITLES, GUIO_NOMUSIC, GUIO_NOASPECT)
+		},
+
+		GType_FF,
+		GID_FEEBLEFILES,
+		GF_OLD_BUNDLE | GF_TALKIE | GF_PACKED
+	},
+
 	// The Feeble Files - Spanish Windows 4CD
 	{
 		{
