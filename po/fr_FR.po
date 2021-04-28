@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-04-27 22:10+0000\n"
-"PO-Revision-Date: 2021-04-23 08:25+0000\n"
+"PO-Revision-Date: 2021-04-28 09:40+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
@@ -4854,13 +4854,15 @@ msgstr "Bouton Gauche pour attaquer, bouton Droite pour ramasser les objets"
 
 #: engines/kyra/detection_tables.h:83
 msgid "Missing language specific game code and/or resources."
-msgstr ""
+msgstr "Code et/ou ressources de jeu spécifiques à la langue manquants."
 
 #: engines/kyra/detection_tables.h:84
 msgid ""
 "Missing language specific game code and/or resources for this fan "
 "translation."
 msgstr ""
+"Code et/ou ressources de jeu spécifiques à la langue manquants pour cette "
+"traduction de fan."
 
 #: engines/kyra/detection_tables.h:1402
 msgid "You added the game incorrectly. Please add the root folder of the game."
@@ -4874,6 +4876,9 @@ msgid ""
 "You added the game incorrectly. The GAME.DAT file is an ISO image and you "
 "need to extract the game data files from it."
 msgstr ""
+"Le jeu a été ajouté de façon incorrecte. Le fichier GAME.DAT est une image "
+"ISO, les fichiers de données du jeu doivent être extraits à partir de celui-"
+"ci."
 
 #: engines/kyra/metaengine.cpp:117
 msgid "Lands of Lore support is not compiled in"
