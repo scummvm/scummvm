@@ -141,7 +141,7 @@ void ProcessTheMessage() {
 		break;
 
 	case MC_DOING:
-		doDoing();
+		g_vm->doDoing();
 		break;
 
 	case MC_DIALOG:
@@ -149,7 +149,7 @@ void ProcessTheMessage() {
 		break;
 
 	case MC_SCRIPT:
-		doScript();
+		g_vm->doScript();
 		break;
 
 	default:

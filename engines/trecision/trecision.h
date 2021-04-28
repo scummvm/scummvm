@@ -130,6 +130,18 @@ public:
 	void doCharacter();
 	void doSystem();
 	void doIdle();
+	void doRoomIn(uint16 curObj);
+	void doRoomOut(uint16 curObj);
+	void doMouseExamine(uint16 curObj);
+	void doMouseOperate(uint16 curObj);
+	void doMouseTake(uint16 curObj);
+	void doMouseTalk(uint16 curObj);
+	void doUseWith();
+	void doScreenUseWithScreen();
+	void doInvExamine();
+	void doInvOperate();
+	void doDoing();
+	void doScript();
 
 
 	// Utils
@@ -143,7 +155,8 @@ public:
 	uint32 readTime();
 	bool checkMask(uint16 mx, uint16 my);
 	float sinCosAngle(float sinus, float cosinus);
-
+	void ProcessTime();
+	void ProcessMouse();
 
 	// Text
 	void addText(uint16 x, uint16 y, const char *text, uint16 tcol, uint16 scol);
