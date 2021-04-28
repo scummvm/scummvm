@@ -27,7 +27,7 @@
 #include "trecision/nl/proto.h"
 #include "trecision/graphics.h"
 
-#include "trecision/nl/define.h"
+#include "trecision/defines.h"
 
 namespace Trecision {
 DialogManager::DialogManager(TrecisionEngine *vm) : _vm(vm) {

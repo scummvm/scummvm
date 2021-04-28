@@ -26,7 +26,7 @@
 
 #include "trecision/trecision.h"
 #include "trecision/nl/extern.h"
-#include "trecision/nl/define.h"
+#include "trecision/defines.h"
 
 #include "audio/decoders/wave.h"
 #include "common/memstream.h"
