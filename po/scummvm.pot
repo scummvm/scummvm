@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-04-28 03:51+0000\n"
+"POT-Creation-Date: 2021-04-28 17:08+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -6895,22 +6895,22 @@ msgstr ""
 msgid "Next location"
 msgstr ""
 
-#: engines/twine/parser/text.cpp:33
+#: engines/twine/parser/text.cpp:34
 msgctxt "Options menu"
 msgid "High resolution on"
 msgstr ""
 
-#: engines/twine/parser/text.cpp:34
+#: engines/twine/parser/text.cpp:35
 msgctxt "Options menu"
 msgid "High resolution off"
 msgstr ""
 
-#: engines/twine/parser/text.cpp:35
+#: engines/twine/parser/text.cpp:36
 msgctxt "Options menu"
 msgid "Wall collision on"
 msgstr ""
 
-#: engines/twine/parser/text.cpp:36
+#: engines/twine/parser/text.cpp:37
 msgctxt "Options menu"
 msgid "Wall collision off"
 msgstr ""
