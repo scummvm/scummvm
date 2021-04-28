@@ -255,7 +255,7 @@ void RedrawRoom() {
 
 	for (int i = 0; i < 6; ++i) {
 		if (curDialog == elevatorActions[i].dialog && curChoice == elevatorActions[i].choice) {
-			StartCharacterAction(elevatorActions[i].action, elevatorActions[i].newRoom, 20, 0);
+			g_vm->StartCharacterAction(elevatorActions[i].action, elevatorActions[i].newRoom, 20, 0);
 			break;
 		}
 	}

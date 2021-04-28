@@ -124,6 +124,12 @@ public:
 	void evalScript();
 	bool quitGame();
 	void demoOver();
+	void doAction();
+	void doMouse();
+	void StartCharacterAction(uint16 Act, uint16 NewRoom, uint8 NewPos, uint16 sent);
+	void doCharacter();
+	void doSystem();
+	void doIdle();
 
 
 	// Utils

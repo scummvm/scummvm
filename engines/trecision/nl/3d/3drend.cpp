@@ -223,13 +223,13 @@ void textureTriangle(int32 x1, int32 y1, int32 z1, int32 c1, int32 tx1, int32 ty
 					*screenPtr = (uint16)(g_vm->_actor->_textureMat[texture[(olx >> 16) + t->_dx * (oly >> 16)]][cl >> 9]);
 					*z = (int16)sl;
 				}
-				screenPtr++;		// increase screen x
-				z++;		// increase zbuffer
+				screenPtr++;	// increase screen x
+				z++;			// increase zbuffer
 				zl += mz;   	// increase the zbuffer by _dz/_dx
-				cl += mc; 	// increase the color by dc/_dx
+				cl += mc; 		// increase the color by dc/_dx
 				olx += mtx;
 				oly += mty;
-				dx--;		// pixel to do --
+				dx--;			// pixel to do --
 			}
 		}
 	}
