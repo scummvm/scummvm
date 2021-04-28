@@ -35,6 +35,7 @@ struct GameConstants {
 	int eventFlagsToClearOnSceneChange[32];
 	uint numNonItemCursors;
 	uint numCurtainAnimationFrames;
+	uint logoEndAfter;
 };
 
 extern const GameConstants gameConstants[];

@@ -25,6 +25,7 @@
 #include "engines/nancy/nancy.h"
 #include "engines/nancy/sound.h"
 #include "engines/nancy/input.h"
+#include "engines/nancy/constants.h"
 
 #include "engines/nancy/state/logo.h"
 
@@ -73,7 +74,8 @@ void Logo::startSound() {
 }
 
 void Logo::run() {
-	if (g_nancy->getTotalPlayTime() - _startTicks >= 7000 || (g_nancy->_input->getInput().input & NancyInput::kLeftMouseButtonDown)) {
+	if ((g_nancy->getTotalPlayTime() - _startTicks >= g_nancy->getConstants().logoEndAfter) ||
+		(g_nancy->_input->getInput().input & NancyInput::kLeftMouseButtonDown)) {
 		_state = kStop;
 	}
 }

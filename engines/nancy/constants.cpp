@@ -32,7 +32,8 @@ const GameConstants gameConstants[] {
 		{ 0, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 125, 219, 220, -1 },
 		{ 110, 111, 112, 113, 114, -1 },
 		8,
-		10
+		10,
+		167000
 	},
 
 	// Nancy Drew: Secrets Can Kill
@@ -44,7 +45,8 @@ const GameConstants gameConstants[] {
 			63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 
 			75, 76, 77, 78, 79, 80, 81, 82, 83, 84, -1 },
 		12,
-		7
+		7,
+		7000
 	},
 
 	// Nancy Drew: Stay Tuned For Danger
@@ -56,7 +58,8 @@ const GameConstants gameConstants[] {
 			11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
 			21, 22, 23, 24, 25, 26, 27, 28, 29, 30, -1 },
 		12, // TODO
-		7 // TODO
+		7, // TODO
+		7000 // TODO
 	}
 };
 
