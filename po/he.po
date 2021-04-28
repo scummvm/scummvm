@@ -9,7 +9,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-04-27 22:10+0000\n"
 "PO-Revision-Date: 2021-04-28 00:30+0000\n"
-"Last-Translator: Arthur Kiyanovski <arthur.kiano@gmail.com>\n"
+"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Hebrew <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/he/>\n"
 "Language: he\n"
@@ -292,10 +292,9 @@ msgid "Override global shader settings"
 msgstr "דרוס הגדרות shader גלובליות"
 
 #: gui/editgamedialog.cpp:230
-#, fuzzy
 msgctxt "lowres"
 msgid "Override global shader settings"
-msgstr "בטל הגדרות שמע גלובליות"
+msgstr "עקוף הגדרות הצללה גלובליות"
 
 #: gui/editgamedialog.cpp:244 gui/options.cpp:1847 engines/dialogs.cpp:316
 msgid "Keymaps"
@@ -303,13 +302,11 @@ msgstr "מיפוי מקשים"
 
 #: gui/editgamedialog.cpp:251 gui/options.cpp:1854 engines/dialogs.cpp:323
 msgid "Backend"
-msgstr ""
+msgstr "צד שרת"
 
 #: gui/editgamedialog.cpp:254
-#, fuzzy
-#| msgid "Override global audio settings"
 msgid "Override global backend settings"
-msgstr "ביטול הגדרות שמע מקיפות"
+msgstr "עקוף הגדרות צד שרת גלובליות"
 
 #: gui/editgamedialog.cpp:256
 #, fuzzy
