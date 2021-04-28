@@ -343,7 +343,9 @@ bool ResolveScriptPath(const String &orig_sc_path, bool read_only, ResolvedPath 
 		}
 	}
 
-	if (child_path[0u] == '\\' || child_path[0u] == '/')
+	// Sometimes we have multiple consecutive slashes or backslashes.
+	// Remove all of them at the start of the child path.
+	while (child_path[0u] == '\\' || child_path[0u] == '/')
 		child_path.ClipLeft(1);
 
 #if AGS_PLATFORM_SCUMMVM
