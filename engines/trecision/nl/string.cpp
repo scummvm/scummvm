@@ -200,7 +200,7 @@ void CharacterSay(uint16 i) {
 
 	//	if he took some action
 	if (g_vm->_sentence[i][0] == '*' && !g_vm->_animMgr->_playingAnims[kSmackerAction])
-		StartCharacterAction(hBOH, 0, 0, 0);
+		g_vm->StartCharacterAction(hBOH, 0, 0, 0);
 	else
 		CharacterTalk(g_vm->_sentence[i]);
 }

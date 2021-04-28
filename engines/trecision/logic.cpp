@@ -471,68 +471,68 @@ void LogicManager::endChangeRoom() {
 
 	// Actions
 	if ((_vm->_curRoom == kRoom12) && ((_vm->_oldRoom == kRoom13) || (_vm->_oldRoom == kRoom16)))
-		StartCharacterAction(a1213ARRIVACONASCENSORE, 0, 0, 0);
+		_vm->StartCharacterAction(a1213ARRIVACONASCENSORE, 0, 0, 0);
 	else if ((_vm->_curRoom == kRoom16) && ((_vm->_oldRoom == kRoom13) || (_vm->_oldRoom == kRoom12)))
-		StartCharacterAction(a1617SCENDECONASCENSORE, 0, 0, 0);
+		_vm->StartCharacterAction(a1617SCENDECONASCENSORE, 0, 0, 0);
 	else if ((_vm->_curRoom == kRoom13) && (_vm->_oldRoom == kRoom12))
-		StartCharacterAction(a1315ARRIVAASCENSOREALTOENTRA, 0, 0, 0);
+		_vm->StartCharacterAction(a1315ARRIVAASCENSOREALTOENTRA, 0, 0, 0);
 	else if ((_vm->_curRoom == kRoom13) && (_vm->_oldRoom == kRoom16))
-		StartCharacterAction(a1314ARRIVAASCENSOREDABASSO, 0, 0, 0);
+		_vm->StartCharacterAction(a1314ARRIVAASCENSOREDABASSO, 0, 0, 0);
 	else if ((_vm->_curRoom == kRoom14) && (_vm->_oldRoom == kRoom13))
-		StartCharacterAction(a1414ENTERROOM, 0, 0, 0);
+		_vm->StartCharacterAction(a1414ENTERROOM, 0, 0, 0);
 	else if ((_vm->_curRoom == kRoom18) && (_vm->_oldRoom == kRoom17) && !(_vm->_room[kRoom18]._flag & kObjFlagDone))
-		StartCharacterAction(a186GUARDAPIAZZA, 0, 0, 0);
+		_vm->StartCharacterAction(a186GUARDAPIAZZA, 0, 0, 0);
 	else if ((_vm->_curRoom == kRoom18) && (_vm->_oldRoom == kRoom19))
-		StartCharacterAction(a189ENTRADALCLUB, 0, 0, 0);
+		_vm->StartCharacterAction(a189ENTRADALCLUB, 0, 0, 0);
 	else if ((_vm->_curRoom == kRoom1A) && (_vm->_oldRoom == kRoom18) && (_vm->_room[kRoom1A]._flag & kObjFlagDone)) {
-		StartCharacterAction(a1A5ENTRA, 0, 0, 0);
+		_vm->StartCharacterAction(a1A5ENTRA, 0, 0, 0);
 		_vm->_animMgr->_animTab[aBKG1A]._flag |= SMKANIM_OFF1;
 	} else if ((_vm->_curRoom == kRoom1C) && (_vm->_oldRoom == kRoom1B))
-		StartCharacterAction(a1C1ENTRACUNICOLO, 0, 0, 0);
+		_vm->StartCharacterAction(a1C1ENTRACUNICOLO, 0, 0, 0);
 	else if ((_vm->_curRoom == kRoom1B) && (_vm->_oldRoom == kRoom1C))
-		StartCharacterAction(a1B11ESCETOMBINO, 0, 0, 0);
+		_vm->StartCharacterAction(a1B11ESCETOMBINO, 0, 0, 0);
 	else if ((_vm->_curRoom == kRoom1D) && (_vm->_oldRoom == kRoom1B) && (_vm->_obj[oDONNA1D]._mode & OBJMODE_OBJSTATUS)) {
-		StartCharacterAction(a1D1SCENDESCALE, 0, 1, 0);
+		_vm->StartCharacterAction(a1D1SCENDESCALE, 0, 1, 0);
 		_vm->_actor->_lim[0] = 60;
 		_vm->_actor->_lim[2] = 240;
 	} else if ((_vm->_curRoom == kRoom1D) && (_vm->_oldRoom == kRoom1B) && !(_vm->_obj[oDONNA1D]._mode & OBJMODE_OBJSTATUS)) {
-		StartCharacterAction(a1D12SCENDESCALA, 0, 1, 0);
+		_vm->StartCharacterAction(a1D12SCENDESCALA, 0, 1, 0);
 		_vm->_actor->_lim[0] = 60;
 		_vm->_actor->_lim[2] = 240;
 	} else if ((_vm->_curRoom == kRoom1B) && (_vm->_oldRoom == kRoom1D))
-		StartCharacterAction(a1B4ESCEBOTOLA, 0, 0, 0);
+		_vm->StartCharacterAction(a1B4ESCEBOTOLA, 0, 0, 0);
 	else if ((_vm->_curRoom == kRoom1B) && (_vm->_oldRoom == kRoom18) && (_vm->_animMgr->_animTab[aBKG1B]._flag & SMKANIM_OFF1))
-		StartCharacterAction(a1B12SCAPPATOPO, 0, 0, 0);
+		_vm->StartCharacterAction(a1B12SCAPPATOPO, 0, 0, 0);
 	else if ((_vm->_curRoom == kRoom24) && (_vm->_oldRoom == kRoom2H))
-		StartCharacterAction(a242, 0, 0, 0);
+		_vm->StartCharacterAction(a242, 0, 0, 0);
 	else if ((_vm->_curRoom == kRoom25) && (_vm->_oldRoom == kRoom2A))
-		StartCharacterAction(a257, 0, 0, 0);
+		_vm->StartCharacterAction(a257, 0, 0, 0);
 	else if ((_vm->_curRoom == kRoom28) && (_vm->_oldRoom == kRoom27))
-		StartCharacterAction(aWALKIN, 0, 0, 0);
+		_vm->StartCharacterAction(aWALKIN, 0, 0, 0);
 	else if ((_vm->_curRoom == kRoom29) && (_vm->_oldRoom == kRoom2A))
-		StartCharacterAction(a298ESCEBOTOLA, 0, 0, 0);
+		_vm->StartCharacterAction(a298ESCEBOTOLA, 0, 0, 0);
 	else if ((_vm->_curRoom == kRoom29L) && (_vm->_oldRoom == kRoom2A))
-		StartCharacterAction(a2910ESCEBOTOLA, 0, 0, 0);
+		_vm->StartCharacterAction(a2910ESCEBOTOLA, 0, 0, 0);
 	else if ((_vm->_curRoom == kRoom2A) && (_vm->_oldRoom == kRoom25))
-		StartCharacterAction(aWALKIN, 0, 0, 0);
+		_vm->StartCharacterAction(aWALKIN, 0, 0, 0);
 	else if ((_vm->_curRoom == kRoom2A) && ((_vm->_oldRoom == kRoom29) || (_vm->_oldRoom == kRoom29L)))
-		StartCharacterAction(aWALKIN, 0, 0, 0);
+		_vm->StartCharacterAction(aWALKIN, 0, 0, 0);
 	else if ((_vm->_curRoom == kRoom2B) && (_vm->_oldRoom == kRoom2A))
-		StartCharacterAction(a2B2ESCEPOZZO, 0, 2, 0);
+		_vm->StartCharacterAction(a2B2ESCEPOZZO, 0, 2, 0);
 	else if ((_vm->_curRoom == kRoom2H) && (_vm->_oldRoom == kRoom24))
-		StartCharacterAction(a2H1ARRIVA, 0, 0, 0);
+		_vm->StartCharacterAction(a2H1ARRIVA, 0, 0, 0);
 	else if ((_vm->_curRoom == kRoom2E) && (_vm->_oldRoom == kRoom2F))
-		StartCharacterAction(a2E5SECONDAPARRIVANDO, 0, 0, 0);
+		_vm->StartCharacterAction(a2E5SECONDAPARRIVANDO, 0, 0, 0);
 	else if ((_vm->_curRoom == kRoom2F) && (_vm->_oldRoom == kRoom2E))
-		StartCharacterAction(aWALKIN, 0, 0, 0);
+		_vm->StartCharacterAction(aWALKIN, 0, 0, 0);
 	else if ((_vm->_curRoom == kRoom23B) && (_vm->_oldRoom == kRoom21))
-		StartCharacterAction(aWALKIN, 0, 0, 0);
+		_vm->StartCharacterAction(aWALKIN, 0, 0, 0);
 	else if ((_vm->_curRoom == kRoom23A) && (_vm->_oldRoom == kRoom21) && (_vm->_room[kRoom23A]._flag & kObjFlagDone))
-		StartCharacterAction(aWALKIN, 0, 0, 0);
+		_vm->StartCharacterAction(aWALKIN, 0, 0, 0);
 	else if ((_vm->_curRoom == kRoom23A) && (_vm->_oldRoom == kRoom21) && (!(_vm->_room[kRoom23A]._flag & kObjFlagDone)))
 		_vm->_flagShowCharacter = false;
 	else if ((_vm->_curRoom == kRoom21) && ((_vm->_oldRoom == kRoom23A) || (_vm->_oldRoom == kRoom23B)))
-		StartCharacterAction(aWALKIN, 0, 0, 0);
+		_vm->StartCharacterAction(aWALKIN, 0, 0, 0);
 	else if (_vm->isCloseupOrControlRoom()) { // Screens without inventory
 		_vm->_flagShowCharacter = false;
 		_vm->_flagCharacterExists = false;
@@ -541,37 +541,37 @@ void LogicManager::endChangeRoom() {
 		_vm->_flagShowCharacter = false;
 		_vm->_flagCharacterExists = false;
 	} else if ((_vm->_curRoom == kRoom2F) && (_vm->_oldRoom == kRoom31))
-		StartCharacterAction(a2F4ESCEASCENSORE, 0, 0, 0);
+		_vm->StartCharacterAction(a2F4ESCEASCENSORE, 0, 0, 0);
 	else if ((_vm->_curRoom == kRoom31) && (_vm->_oldRoom == kRoom2F))
-		StartCharacterAction(a3114ESCEPASSAGGIO, 0, 0, 0);
+		_vm->StartCharacterAction(a3114ESCEPASSAGGIO, 0, 0, 0);
 	else if ((_vm->_curRoom == kRoom31) && !(_vm->_room[kRoom31]._flag & kObjFlagDone))
 		setPosition(14);
 	else if ((_vm->_curRoom == kRoom32) && (_vm->_oldRoom == kRoom31))
-		StartCharacterAction(a321SALEMONTACARICHI, 0, 0, 0);
+		_vm->StartCharacterAction(a321SALEMONTACARICHI, 0, 0, 0);
 	else if ((_vm->_curRoom == kRoom33) && (_vm->_oldRoom == kRoom32) && (_vm->_obj[oBRUCIATURA33]._mode & OBJMODE_OBJSTATUS))
-		StartCharacterAction(a3311SALESCALE, 0, 0, 0);
+		_vm->StartCharacterAction(a3311SALESCALE, 0, 0, 0);
 	else if ((_vm->_curRoom == kRoom33) && (_vm->_oldRoom == kRoom32) && !(_vm->_obj[oBRUCIATURA33]._mode & OBJMODE_OBJSTATUS))
-		StartCharacterAction(a3313CHIUDEBOTOLA, 0, 0, 0);
+		_vm->StartCharacterAction(a3313CHIUDEBOTOLA, 0, 0, 0);
 	else if ((_vm->_curRoom == kRoom32) && (_vm->_oldRoom == kRoom33))
-		StartCharacterAction(a325SCENDESCALE, 0, 0, 0);
+		_vm->StartCharacterAction(a325SCENDESCALE, 0, 0, 0);
 	else if ((_vm->_curRoom == kRoom36) && (_vm->_oldRoom == kRoom35))
-		StartCharacterAction(a361ESCEASCENSORE, 0, 0, 0);
+		_vm->StartCharacterAction(a361ESCEASCENSORE, 0, 0, 0);
 	else if ((_vm->_curRoom == kRoom35) && (_vm->_oldRoom == kRoom36))
-		StartCharacterAction(a3515ESCEASCENSORE, 0, 0, 0);
+		_vm->StartCharacterAction(a3515ESCEASCENSORE, 0, 0, 0);
 	else if ((_vm->_curRoom == kRoom44) && (_vm->_oldRoom == kRoom45 || _vm->_oldRoom == kRoom45S) && !(_vm->_inventoryObj[kItemPositioner]._flag & kObjFlagExtra))
-		StartCharacterAction(a445, 0, 0, 0);
+		_vm->StartCharacterAction(a445, 0, 0, 0);
 	else if ((_vm->_curRoom == kRoom45 || _vm->_curRoom == kRoom45S) && (_vm->_oldRoom == kRoom44) && !(_vm->_inventoryObj[kItemPositioner]._flag & kObjFlagExtra))
-		StartCharacterAction(a457, 0, 0, 0);
+		_vm->StartCharacterAction(a457, 0, 0, 0);
 	else if ((_vm->_curRoom == kRoom46) && (_vm->_oldRoom == kRoom47 || _vm->_oldRoom == kRoom48 || _vm->_oldRoom == kRoom49) && !(_vm->_inventoryObj[kItemPositioner]._flag & kObjFlagExtra))
-		StartCharacterAction(aWALKIN, 0, 0, 0);
+		_vm->StartCharacterAction(aWALKIN, 0, 0, 0);
 	else if ((_vm->_curRoom == kRoom47) && (_vm->_oldRoom == kRoom46) && !(_vm->_inventoryObj[kItemPositioner]._flag & kObjFlagExtra))
-		StartCharacterAction(a476, 0, 0, 0);
+		_vm->StartCharacterAction(a476, 0, 0, 0);
 	else if ((_vm->_curRoom == kRoom48) && (_vm->_oldRoom == kRoom46) && !(_vm->_inventoryObj[kItemPositioner]._flag & kObjFlagExtra))
-		StartCharacterAction(a485, 0, 0, 0);
+		_vm->StartCharacterAction(a485, 0, 0, 0);
 	else if ((_vm->_curRoom == kRoom49) && (_vm->_oldRoom == kRoom46) && !(_vm->_inventoryObj[kItemPositioner]._flag & kObjFlagExtra))
-		StartCharacterAction(a494, 0, 0, 0);
+		_vm->StartCharacterAction(a494, 0, 0, 0);
 	else if ((_vm->_curRoom == kRoom54) && (_vm->_oldRoom == kRoom53)) {
-		StartCharacterAction(a5411, 0, 11, 0);
+		_vm->StartCharacterAction(a5411, 0, 11, 0);
 		_vm->_inventoryObj[kItemLaserGun]._examine = 1599;
 	} else if ((_vm->_oldRoom == kRoom41D) && (_vm->_inventoryObj[kItemPositioner]._flag & kObjFlagExtra)) {
 		setPosition(30);
@@ -664,7 +664,7 @@ void LogicManager::endChangeRoom() {
 		CharacterSay(_vm->_obj[_vm->_closeUpObj]._examine);
 	else if ((_vm->_curRoom == kRoom23A) && (_vm->_oldRoom == kRoom21) && !(_vm->_room[kRoom23A]._flag & kObjFlagDone)) {
 		_vm->_flagShowCharacter = true;
-		StartCharacterAction(aWALKIN, 0, 0, 361);
+		_vm->StartCharacterAction(aWALKIN, 0, 0, 361);
 	} else if ((_vm->_curRoom == kRoom24) && !(_vm->_room[kRoom24]._flag & kObjFlagDone))
 		CharacterSay(381);
 	else if ((_vm->_curRoom == kRoom2G) && !(_vm->_room[kRoom2G]._flag & kObjFlagDone))
@@ -705,7 +705,7 @@ void LogicManager::useInventoryWithInventory(bool *updateInventory, bool *printS
 		if (_vm->_useWith[WITH] == kItemBurnedFuse) {
 			_vm->removeIcon(kItemFoilPaper);
 			_vm->replaceIcon(kItemBurnedFuse, kItemRepairedFuse);
-			StartCharacterAction(hUSEGG, 0, 0, 1441);
+			_vm->StartCharacterAction(hUSEGG, 0, 0, 1441);
 			*printSentence = false;
 		}
 		break;
@@ -714,7 +714,7 @@ void LogicManager::useInventoryWithInventory(bool *updateInventory, bool *printS
 		if (_vm->_useWith[WITH] == kItemFoilPaper) {
 			_vm->removeIcon(kItemFoilPaper);
 			_vm->replaceIcon(kItemBurnedFuse, kItemRepairedFuse);
-			StartCharacterAction(hUSEGG, 0, 0, 1441);
+			_vm->StartCharacterAction(hUSEGG, 0, 0, 1441);
 			*printSentence = false;
 		}
 		break;
@@ -724,7 +724,7 @@ void LogicManager::useInventoryWithInventory(bool *updateInventory, bool *printS
 			_vm->removeIcon(kItemSkate);
 			_vm->removeIcon(kItemDeadRat);
 			_vm->addIcon(kItemRatOnSkate);
-			StartCharacterAction(hUSEGG, 0, 0, 1497);
+			_vm->StartCharacterAction(hUSEGG, 0, 0, 1497);
 			*printSentence = false;
 		}
 		break;
@@ -734,7 +734,7 @@ void LogicManager::useInventoryWithInventory(bool *updateInventory, bool *printS
 			_vm->removeIcon(kItemSkate);
 			_vm->removeIcon(kItemDeadRat);
 			_vm->addIcon(kItemRatOnSkate);
-			StartCharacterAction(hUSEGG, 0, 0, 1497);
+			_vm->StartCharacterAction(hUSEGG, 0, 0, 1497);
 			*printSentence = false;
 		}
 		break;
@@ -743,7 +743,7 @@ void LogicManager::useInventoryWithInventory(bool *updateInventory, bool *printS
 		if (_vm->_useWith[WITH] == kItemMagnet) {
 			_vm->removeIcon(kItemBar);
 			_vm->replaceIcon(kItemMagnet, kItemMagneticBar);
-			StartCharacterAction(hUSEGG, 0, 0, 1438);
+			_vm->StartCharacterAction(hUSEGG, 0, 0, 1438);
 			*printSentence = false;
 		}
 		break;
@@ -752,7 +752,7 @@ void LogicManager::useInventoryWithInventory(bool *updateInventory, bool *printS
 		if (_vm->_useWith[WITH] == kItemBar) {
 			_vm->removeIcon(kItemBar);
 			_vm->replaceIcon(kItemMagnet, kItemMagneticBar);
-			StartCharacterAction(hUSEGG, 0, 0, 1533);
+			_vm->StartCharacterAction(hUSEGG, 0, 0, 1533);
 			*printSentence = false;
 		}
 		break;
@@ -761,7 +761,7 @@ void LogicManager::useInventoryWithInventory(bool *updateInventory, bool *printS
 		if (_vm->_useWith[WITH] == kItemBroom) {
 			_vm->removeIcon(kItemBroom);
 			_vm->replaceIcon(kItemMatch, kItemMakeshiftTorch);
-			StartCharacterAction(hUSEGG, 0, 0, 1575);
+			_vm->StartCharacterAction(hUSEGG, 0, 0, 1575);
 			*printSentence = false;
 		}
 		break;
@@ -770,7 +770,7 @@ void LogicManager::useInventoryWithInventory(bool *updateInventory, bool *printS
 		if (_vm->_useWith[WITH] == kItemMatch) {
 			_vm->removeIcon(kItemBroom);
 			_vm->replaceIcon(kItemMatch, kItemMakeshiftTorch);
-			StartCharacterAction(hUSEGG, 0, 0, 1546);
+			_vm->StartCharacterAction(hUSEGG, 0, 0, 1546);
 			*printSentence = false;
 		}
 		break;
@@ -779,7 +779,7 @@ void LogicManager::useInventoryWithInventory(bool *updateInventory, bool *printS
 		if (_vm->_useWith[WITH] == kItemThreeWayAdapter) {
 			_vm->removeIcon(kItemThreeWayAdapter);
 			_vm->replaceIcon(kItemProjector, kItemProjector2);
-			StartCharacterAction(hUSEGG, 0, 0, 0);
+			_vm->StartCharacterAction(hUSEGG, 0, 0, 0);
 			*printSentence = false;
 		}
 		break;
@@ -788,7 +788,7 @@ void LogicManager::useInventoryWithInventory(bool *updateInventory, bool *printS
 		if (_vm->_useWith[WITH] == kItemProjector) {
 			_vm->removeIcon(kItemThreeWayAdapter);
 			_vm->replaceIcon(kItemProjector, kItemProjector2);
-			StartCharacterAction(hUSEGG, 0, 0, 0);
+			_vm->StartCharacterAction(hUSEGG, 0, 0, 0);
 			*printSentence = false;
 		}
 		break;
@@ -818,7 +818,7 @@ void LogicManager::useInventoryWithInventory(bool *updateInventory, bool *printS
 				_vm->addIcon(kItemEmptyGlassJar);
 			if ((_vm->_useWith[USED] >= kItemCharcoalSaltpetrePowder) || (_vm->_useWith[WITH] >= kItemCharcoalSaltpetrePowder))
 				_vm->addIcon(kItemGunpowder);
-			StartCharacterAction(hUSEGG, 0, 0, 1663);
+			_vm->StartCharacterAction(hUSEGG, 0, 0, 1663);
 			*printSentence = false;
 		}
 		break;
@@ -827,12 +827,12 @@ void LogicManager::useInventoryWithInventory(bool *updateInventory, bool *printS
 		if (_vm->_useWith[WITH] == kItemGunpowder) {
 			_vm->replaceIcon(kItemGunpowder, kItemLeftoverGunpowder);
 			_vm->replaceIcon(kItemPiratePistol, kItemPistolWithGunpowder);
-			StartCharacterAction(hUSEGG, 0, 0, 1676);
+			_vm->StartCharacterAction(hUSEGG, 0, 0, 1676);
 			*printSentence = false;
 		} else if (_vm->_useWith[WITH] == kItemLeftoverGunpowder) {
 			_vm->removeIcon(kItemLeftoverGunpowder);
 			_vm->replaceIcon(kItemPiratePistol, kItemPistolWithGunpowder);
-			StartCharacterAction(hUSEGG, 0, 0, 1700);
+			_vm->StartCharacterAction(hUSEGG, 0, 0, 1700);
 			*printSentence = false;
 		}
 		break;
@@ -841,7 +841,7 @@ void LogicManager::useInventoryWithInventory(bool *updateInventory, bool *printS
 		if (_vm->_useWith[WITH] == kItemPiratePistol) {
 			_vm->replaceIcon(kItemGunpowder, kItemLeftoverGunpowder);
 			_vm->replaceIcon(kItemPiratePistol, kItemPistolWithGunpowder);
-			StartCharacterAction(hUSEGG, 0, 0, 1676);
+			_vm->StartCharacterAction(hUSEGG, 0, 0, 1676);
 			*printSentence = false;
 		}
 		break;
@@ -850,7 +850,7 @@ void LogicManager::useInventoryWithInventory(bool *updateInventory, bool *printS
 		if (_vm->_useWith[WITH] == kItemPiratePistol) {
 			_vm->removeIcon(kItemLeftoverGunpowder);
 			_vm->replaceIcon(kItemPiratePistol, kItemPistolWithGunpowder);
-			StartCharacterAction(hUSEGG, 0, 0, 1700);
+			_vm->StartCharacterAction(hUSEGG, 0, 0, 1700);
 			*printSentence = false;
 		}
 		break;
@@ -860,7 +860,7 @@ void LogicManager::useInventoryWithInventory(bool *updateInventory, bool *printS
 		if ((_vm->_useWith[WITH] == kItemPistolWithGunpowder) && !(_vm->_inventoryObj[kItemPistolWithGunpowder]._flag & kObjFlagExtra)) {
 			_vm->removeIcon(_vm->_useWith[USED]);
 			_vm->replaceIcon(kItemPistolWithGunpowder, kItemLoadedPistol);
-			StartCharacterAction(hUSEGG, 0, 0, 1683);
+			_vm->StartCharacterAction(hUSEGG, 0, 0, 1683);
 			_vm->_inventoryObj[kItemPistolWithGunpowder]._flag |= kObjFlagExtra;
 			*printSentence = false;
 		} else if (_vm->_useWith[WITH] == kItemPistolWithGunpowder) {
@@ -876,7 +876,7 @@ void LogicManager::useInventoryWithInventory(bool *updateInventory, bool *printS
 		if (_vm->_useWith[WITH] == kItemPistolWithGunpowder) {
 			_vm->removeIcon(kItemSilverBullet);
 			_vm->replaceIcon(kItemPistolWithGunpowder, kItemLoadedPistol);
-			StartCharacterAction(hUSEGG, 0, 0, 1718);
+			_vm->StartCharacterAction(hUSEGG, 0, 0, 1718);
 			_vm->_inventoryObj[kItemLoadedPistol]._flag |= kObjFlagExtra;
 			*printSentence = false;
 		} else if (_vm->_useWith[WITH] == kItemPiratePistol) {
@@ -889,7 +889,7 @@ void LogicManager::useInventoryWithInventory(bool *updateInventory, bool *printS
 		if (_vm->_useWith[WITH] == kItemTubes) {
 			_vm->removeIcon(kItemEmptySyringe);
 			_vm->replaceIcon(kItemTubes, kItemPoisonSyringe);
-			StartCharacterAction(hUSEGG, 0, 0, 1756);
+			_vm->StartCharacterAction(hUSEGG, 0, 0, 1756);
 			*printSentence = false;
 		}
 		break;
@@ -898,7 +898,7 @@ void LogicManager::useInventoryWithInventory(bool *updateInventory, bool *printS
 		if (_vm->_useWith[WITH] == kItemEmptySyringe) {
 			_vm->removeIcon(kItemEmptySyringe);
 			_vm->replaceIcon(kItemTubes, kItemPoisonSyringe);
-			StartCharacterAction(hUSEGG, 0, 0, 1756);
+			_vm->StartCharacterAction(hUSEGG, 0, 0, 1756);
 			*printSentence = false;
 		}
 		break;
@@ -907,12 +907,12 @@ void LogicManager::useInventoryWithInventory(bool *updateInventory, bool *printS
 		if (_vm->_useWith[WITH] == kItemInflatedGloves) {
 			_vm->removeIcon(kItemDentalFloss);
 			_vm->replaceIcon(kItemInflatedGloves, kItemInflatedGlovesWithFloss);
-			StartCharacterAction(hUSEGG, 0, 0, 1756);
+			_vm->StartCharacterAction(hUSEGG, 0, 0, 1756);
 			*printSentence = false;
 		} else if (_vm->_useWith[WITH] == kItemPoisonSyringe) {
 			_vm->removeIcon(kItemDentalFloss);
 			_vm->replaceIcon(kItemPoisonSyringe, kItemPoisonSyringeWithFloss);
-			StartCharacterAction(hUSEGG, 0, 0, 1756);
+			_vm->StartCharacterAction(hUSEGG, 0, 0, 1756);
 			*printSentence = false;
 		}
 		break;
@@ -921,12 +921,12 @@ void LogicManager::useInventoryWithInventory(bool *updateInventory, bool *printS
 		if (_vm->_useWith[WITH] == kItemDentalFloss) {
 			_vm->removeIcon(kItemDentalFloss);
 			_vm->replaceIcon(kItemInflatedGloves, kItemInflatedGlovesWithFloss);
-			StartCharacterAction(hUSEGG, 0, 0, 1756);
+			_vm->StartCharacterAction(hUSEGG, 0, 0, 1756);
 			*printSentence = false;
 		} else if (_vm->_useWith[WITH] == kItemPoisonSyringeWithFloss) {
 			_vm->removeIcon(kItemPoisonSyringeWithFloss);
 			_vm->replaceIcon(kItemInflatedGloves, kItemFloatingPoisonSyringe);
-			StartCharacterAction(hUSEGG, 0, 0, 1756);
+			_vm->StartCharacterAction(hUSEGG, 0, 0, 1756);
 			*printSentence = false;
 		}
 		break;
@@ -935,12 +935,12 @@ void LogicManager::useInventoryWithInventory(bool *updateInventory, bool *printS
 		if (_vm->_useWith[WITH] == kItemDentalFloss) {
 			_vm->removeIcon(kItemDentalFloss);
 			_vm->replaceIcon(kItemPoisonSyringe, kItemPoisonSyringeWithFloss);
-			StartCharacterAction(hUSEGG, 0, 0, 1756);
+			_vm->StartCharacterAction(hUSEGG, 0, 0, 1756);
 			*printSentence = false;
 		} else if (_vm->_useWith[WITH] == kItemInflatedGlovesWithFloss) {
 			_vm->removeIcon(kItemPoisonSyringe);
 			_vm->replaceIcon(kItemInflatedGlovesWithFloss, kItemFloatingPoisonSyringe);
-			StartCharacterAction(hUSEGG, 0, 0, 1756);
+			_vm->StartCharacterAction(hUSEGG, 0, 0, 1756);
 			*printSentence = false;
 		}
 		break;
@@ -949,7 +949,7 @@ void LogicManager::useInventoryWithInventory(bool *updateInventory, bool *printS
 		if (_vm->_useWith[WITH] == kItemPoisonSyringe) {
 			_vm->removeIcon(kItemPoisonSyringe);
 			_vm->replaceIcon(kItemInflatedGlovesWithFloss, kItemFloatingPoisonSyringe);
-			StartCharacterAction(hUSEGG, 0, 0, 1756);
+			_vm->StartCharacterAction(hUSEGG, 0, 0, 1756);
 			*printSentence = false;
 		}
 		break;
@@ -958,7 +958,7 @@ void LogicManager::useInventoryWithInventory(bool *updateInventory, bool *printS
 		if (_vm->_useWith[WITH] == kItemInflatedGloves) {
 			_vm->removeIcon(kItemPoisonSyringeWithFloss);
 			_vm->replaceIcon(kItemInflatedGloves, kItemFloatingPoisonSyringe);
-			StartCharacterAction(hUSEGG, 0, 0, 1756);
+			_vm->StartCharacterAction(hUSEGG, 0, 0, 1756);
 			*printSentence = false;
 		}
 		break;
@@ -1836,7 +1836,7 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 	case kItemShaft:
 		if (_vm->_useWith[WITH] == oSUNDIAL49) {
 			_vm->removeIcon(kItemShaft);
-			StartCharacterAction(a491, kRoom49M, 1, 0);
+			_vm->StartCharacterAction(a491, kRoom49M, 1, 0);
 			*printSentence = false;
 		}
 		break;
@@ -1950,7 +1950,7 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 		if (_vm->_useWith[WITH] == oLAGO53) {
 			*printSentence = false;
 			if (!(_vm->_obj[oLUCCHETTO53]._mode & OBJMODE_OBJSTATUS)) {
-				StartCharacterAction(a533, kRoom54, 11, 0);
+				_vm->StartCharacterAction(a533, kRoom54, 11, 0);
 				_vm->removeIcon(_vm->_useWith[USED]);
 			} else if (_vm->_useWith[USED] != kItemSnakeTail) {
 				doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a534, 0, 0, _vm->_useWith[WITH]);
@@ -1965,7 +1965,7 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 		if (_vm->_useWith[WITH] == oLAGO53) {
 			*printSentence = false;
 			if (!(_vm->_obj[oLUCCHETTO53]._mode & OBJMODE_OBJSTATUS)) {
-				StartCharacterAction(a533C, kRoom54, 11, 0);
+				_vm->StartCharacterAction(a533C, kRoom54, 11, 0);
 				_vm->removeIcon(_vm->_useWith[USED]);
 			} else if (_vm->_useWith[USED] != kItemSnakeTail) {
 				doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a534, 0, 0, _vm->_useWith[WITH]);
@@ -2092,7 +2092,7 @@ bool LogicManager::useScreenWithScreen() {
 			doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, kRoom23B, 0, 0, _vm->_useWith[WITH]);
 			printSentence = false;
 		} else {
-			StartCharacterAction(hBOH, 0, 0, 0);
+			_vm->StartCharacterAction(hBOH, 0, 0, 0);
 			printSentence = false;
 		}
 		break;
@@ -3870,7 +3870,7 @@ void LogicManager::doMouseLeftRight() {
 		// snake escape 52
 		if (_vm->_obj[oSNAKEU52]._mode & OBJMODE_OBJSTATUS) {
 			if (GAMEAREA(_vm->_curMessage->_u16Param2) && !_vm->_flagUseWithStarted && (_vm->_curObj != oSNAKEU52)) {
-				StartCharacterAction(a526, 0, 1, 0);
+				_vm->StartCharacterAction(a526, 0, 1, 0);
 				_vm->_obj[oSCAVO51]._anim = a516;
 				_vm->_snake52.set(_vm->_curMessage);
 				return;
@@ -3988,7 +3988,7 @@ void LogicManager::doMouseLeftRight() {
 			else if ((_vm->_curRoom == kRoom2B) && (_vm->_room[kRoom2B]._flag & kObjFlagExtra) && (_vm->_curObj != oCARTELLO2B) && (_vm->_curObj != od2BALLA28)) {
 				_vm->clearText();
 				_vm->_curObj = oDOOR2B;
-				StartCharacterAction(a2B1PROVAAPRIREPORTA, 0, 0, 0);
+				_vm->StartCharacterAction(a2B1PROVAAPRIREPORTA, 0, 0, 0);
 				if (_vm->_flagUseWithStarted) {
 					if (_vm->_useWithInv[USED]) {
 						_vm->_lightIcon = 0xFF;

@@ -283,7 +283,7 @@ void DialogManager::afterChoice() {
 			if (_curChoice == 152)
 				_vm->_obj[ocGUARD18]._mode &= ~OBJMODE_OBJSTATUS;
 			else if (_curChoice == 155)
-				StartCharacterAction(a184ENTRACLUB, kRoom19, 2, 0);
+				_vm->StartCharacterAction(a184ENTRACLUB, kRoom19, 2, 0);
 			break;
 
 		case dEVA19:
@@ -358,7 +358,7 @@ void DialogManager::afterChoice() {
 			break;
 
 		case dF321:
-			StartCharacterAction(a3111TRASCINA, 0, 11, 0);
+			_vm->StartCharacterAction(a3111TRASCINA, 0, 11, 0);
 			break;
 
 		case dF331:
@@ -391,7 +391,7 @@ void DialogManager::afterChoice() {
 
 		case dF431:
 			_vm->_flagShowCharacter = true;
-			StartCharacterAction(aWALKIN, 0, 11, 0);
+			_vm->StartCharacterAction(aWALKIN, 0, 11, 0);
 			break;
 
 		case dF451:
@@ -444,7 +444,7 @@ void DialogManager::afterChoice() {
 			_vm->addIcon(kItemPrisonMap);
 			_vm->addIcon(kItemParallelCutter);
 			_vm->addIcon(kItemWristComm);
-			StartCharacterAction(a511, 0, 1, 0);
+			_vm->StartCharacterAction(a511, 0, 1, 0);
 			break;
 
 		case dF4P1:

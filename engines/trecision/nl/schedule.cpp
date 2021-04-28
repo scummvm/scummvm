@@ -113,19 +113,19 @@ void Scheduler() {
 void ProcessTheMessage() {
 	switch (g_vm->_curMessage->_class) {
 	case MC_CHARACTER:
-		doCharacter();
+		g_vm->doCharacter();
 		break;
 
 	case MC_IDLE:
-		doIdle();
+		g_vm->doIdle();
 		break;
 
 	case MC_MOUSE:
-		doMouse();
+		g_vm->doMouse();
 		break;
 
 	case MC_SYSTEM:
-		doSystem();
+		g_vm->doSystem();
 		break;
 
 	case MC_INVENTORY:
@@ -133,7 +133,7 @@ void ProcessTheMessage() {
 		break;
 
 	case MC_ACTION:
-		doAction();
+		g_vm->doAction();
 		break;
 
 	case MC_STRING:

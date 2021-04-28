@@ -14,7 +14,6 @@ MODULE_OBJS = \
 	trecision.o \
 	utils.o \
 	video.o \
-	nl/classes.o \
 	nl/do.o \
 	nl/globvar.o \
 	nl/process.o \

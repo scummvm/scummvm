@@ -38,12 +38,6 @@ struct SPan;
 
 void performLoad(int slot, bool skipLoad);
 bool pointInside(int pan, double x, double z);
-void doAction();
-void doMouse();
-void StartCharacterAction(uint16 Act, uint16 NewRoom, uint8 NewPos, uint16 sent);
-void doCharacter();
-void doSystem();
-void doIdle();
 void doRoomIn(uint16 curObj);
 void doRoomOut(uint16 curObj);
 void doMouseExamine(uint16 curObj);

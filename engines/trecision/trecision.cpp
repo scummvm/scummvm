@@ -1086,4 +1086,28 @@ void TrecisionEngine::performLoad(int slot, bool skipLoad) {
 	}
 }
 
+void TrecisionEngine::StartCharacterAction(uint16 Act, uint16 NewRoom, uint8 NewPos, uint16 sent) {
+	_characterQueue.initQueue();
+
+	_flagInventoryLocked = false;
+	if (Act > hLAST) {
+		_animMgr->startSmkAnim(Act);
+		InitAtFrameHandler(Act, _curObj);
+		hideCursor();
+		_flagShowCharacter = false;
+		doEvent(MC_CHARACTER, ME_CHARACTERCONTINUEACTION, MP_DEFAULT, Act, NewRoom, NewPos, _curObj);
+	} else {
+		if ((Act == aWALKIN) || (Act == aWALKOUT))
+			_curObj = 0;
+		hideCursor();
+		actorDoAction(Act);
+		nextStep();
+	}
+
+	if (sent)
+		CharacterTalkInAction(sent);
+	else
+		clearText();
+}
+
 } // End of namespace Trecision
