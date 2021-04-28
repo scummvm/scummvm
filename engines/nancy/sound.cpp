@@ -33,6 +33,7 @@
 namespace Nancy {
 
 enum SoundType {
+	kSoundTypeDiamondware,
 	kSoundTypeRaw,
 	kSoundTypeOgg
 };
@@ -72,6 +73,36 @@ static const Audio::Mixer::SoundType channelSoundTypes[] = {
 	Audio::Mixer::kSpeechSoundType, // 30
 	Audio::Mixer::kSFXSoundType
 };
+
+bool readDiamondwareHeader(Common::SeekableReadStream *stream, SoundType &type, uint16 &numChannels,
+					uint32 &samplesPerSec, uint16 &bitsPerSample, uint32 &size) {
+	stream->skip(2);
+
+	if (stream->readByte() != 1 || stream->readByte() != 0) {
+		// Version, only 1.0 is supported
+		return false;
+	}
+
+	stream->skip(5); // sound id, reserved
+
+	if (stream->readByte() != 0) {
+		// Compression type, only uncompressed (0) is supported
+		return false;
+	}
+
+	samplesPerSec = stream->readUint16LE();
+	numChannels = stream->readByte();
+	bitsPerSample = stream->readByte();
+	stream->skip(2); // Absolute value of largest sample in file
+	size = stream->readUint32LE();
+	stream->skip(4); // Number of samples
+	uint dataOffset = stream->readUint16LE();
+	stream->seek(dataOffset);
+
+	type = kSoundTypeDiamondware;
+
+	return true;
+}
 
 bool readWaveHeader(Common::SeekableReadStream *stream, SoundType &type, uint16 &numChannels,
 					uint32 &samplesPerSec, uint16 &bitsPerSample, uint32 &size) {
@@ -160,35 +191,39 @@ Audio::SeekableAudioStream *SoundManager::makeHISStream(Common::SeekableReadStre
 
 	stream->read(buf, 22);
 	buf[21] = 0;
+	Common::String headerID(buf);
 
 	uint16 numChannels = 0, bitsPerSample = 0;
 	uint32 samplesPerSec = 0, size = 0;
 	SoundType type = kSoundTypeRaw;
 
-	if (Common::String(buf) == "Her Interactive Sound") {
+	if (headerID == "DiamondWare Digitized") {
+		if (!readDiamondwareHeader(stream, type, numChannels, samplesPerSec, bitsPerSample, size))
+			return 0;
+	} else if (headerID == "Her Interactive Sound") {
 		// Early HIS file
 		if (!readWaveHeader(stream, type, numChannels, samplesPerSec, bitsPerSample, size))
 			return 0;
-	} else if (Common::String(buf) == "HIS") {
+	} else if (headerID == "HIS") {
 		stream->seek(4);
 		if (!readHISHeader(stream, type, numChannels, samplesPerSec, bitsPerSample, size))
 			return 0;
 	}
 
 	byte flags = 0;
-	if (type == kSoundTypeRaw) {
-		if (bitsPerSample == 8)		// 8 bit data is unsigned
-			flags |= Audio::FLAG_UNSIGNED;
-		else if (bitsPerSample == 16)	// 16 bit data is signed little endian
+	if (type == kSoundTypeRaw || type == kSoundTypeDiamondware) {
+		if (bitsPerSample == 8) {			// 8 bit data is unsigned in HIS files and signed in DWD files
+			flags |= (type == kSoundTypeRaw ? Audio::FLAG_UNSIGNED : Audio::FLAG_LITTLE_ENDIAN);
+		} else if (bitsPerSample == 16) {	// 16 bit data is signed little endian
 			flags |= (Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN);
-		else {
+		} else {
 			warning("Unsupported bitsPerSample %d found in HIS file", bitsPerSample);
 			return 0;
 		}
 
-		if (numChannels == 2)
+		if (numChannels == 2) {
 			flags |= Audio::FLAG_STEREO;
-		else if (numChannels != 1) {
+		} else if (numChannels != 1) {
 			warning("Unsupported number of channels %d found in HIS file", numChannels);
 			return 0;
 		}
@@ -196,14 +231,14 @@ Audio::SeekableAudioStream *SoundManager::makeHISStream(Common::SeekableReadStre
 		// Raw PCM, make sure the last packet is complete
 		uint sampleSize = (flags & Audio::FLAG_16BITS ? 2 : 1) * (flags & Audio::FLAG_STEREO ? 2 : 1);
 		if (size % sampleSize != 0) {
-			warning("Trying to play an HIS file with an incomplete PCM packet");
+			warning("Trying to play an %s file with an incomplete PCM packet", type == kSoundTypeDiamondware ? "DWD" : "HIS");
 			size &= ~(sampleSize - 1);
 		}
 	}
 
 	Common::SeekableSubReadStream *subStream = new Common::SeekableSubReadStream(stream, stream->pos(), stream->pos() + size, disposeAfterUse);
 
-	if (type == kSoundTypeRaw)
+	if (type == kSoundTypeRaw || type == kSoundTypeDiamondware)
 		return Audio::makeRawStream(subStream, samplesPerSec, flags, DisposeAfterUse::YES);
 	else
 		return Audio::makeVorbisStream(subStream, DisposeAfterUse::YES);
@@ -266,7 +301,7 @@ void SoundManager::loadSound(const SoundDescription &description) {
 	_channels[description.channelID].volume = description.volume;
 
 
-	Common::SeekableReadStream *file = SearchMan.createReadStreamForMember(description.name + ".his");
+	Common::SeekableReadStream *file = SearchMan.createReadStreamForMember(description.name + (g_nancy->getGameType() == kGameTypeVampire ? ".dwd" : ".his"));
 	if (file) {
 		_channels[description.channelID].stream = makeHISStream(file, DisposeAfterUse::YES);
 	}
