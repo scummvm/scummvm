@@ -23,7 +23,7 @@
 #include "common/config-manager.h"
 
 #include "trecision/nl/3d/3dinc.h"
-#include "trecision/nl/define.h"
+#include "trecision/defines.h"
 #include "trecision/nl/extern.h"
 #include "trecision/nl/message.h"
 #include "trecision/nl/proto.h"

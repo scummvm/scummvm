@@ -24,7 +24,7 @@
 #include "trecision/dialog.h"
 #include "trecision/logic.h"
 #include "trecision/graphics.h"
-#include "trecision/nl/define.h"
+#include "trecision/defines.h"
 #include "trecision/nl/proto.h"
 #include "trecision/nl/message.h"
 #include "trecision/trecision.h"
