@@ -85,22 +85,23 @@ public:
 	void addConditionalResponses();
 	void addGoodbye();
 
-	Common::String _videoName; // 0x00
-	Common::Rect _src; // 0x1D
-	// _screenPosition 0x2D
-	Common::String _text; // 0x3D
+	Common::String _videoName;
+	Common::String _paletteName;
+	uint _videoFormat = 2;
+	Common::Rect _src;
+	Common::String _text;
 
-	SoundDescription _sound; // 0x619
-	SoundDescription _responseGenericSound; // 0x63B
+	SoundDescription _sound;
+	SoundDescription _responseGenericSound;
 
-	byte _conditionalResponseCharacterID = 0; // 0x65E
-	byte _goodbyeResponseCharacterID = 0; // 0x65F
-	NancyFlag _isDialogueExitScene = NancyFlag::kFalse; // 0x660
-	NancyFlag _doNotPop = NancyFlag::kFalse; // 0x661
-	SceneChangeDescription _sceneChange; // 0x662
+	byte _conditionalResponseCharacterID = 0;
+	byte _goodbyeResponseCharacterID = 0;
+	NancyFlag _isDialogueExitScene = NancyFlag::kFalse;
+	NancyFlag _doNotPop = NancyFlag::kFalse;
+	SceneChangeDescription _sceneChange;
 
-	Common::Array<ResponseStruct> _responses; // 0x69E
-	Common::Array<FlagsStruct> _flagsStructs; // 0x6AA
+	Common::Array<ResponseStruct> _responses;
+	Common::Array<FlagsStruct> _flagsStructs;
 
 	AVFDecoder _decoder;
 
