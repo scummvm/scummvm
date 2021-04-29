@@ -446,7 +446,7 @@ void AnimManager::refreshSmkAnim(int animation) {
 }
 
 void AnimManager::handleEndOfVideo(int animation, int slot) {
-	if (_smkAnims[slot]->endOfVideo()) {
+	if (_smkAnims[slot]->getCurFrame() >= _smkAnims[slot]->getFrameCount()) {
 		if (!(_animTab[animation]._flag & SMKANIM_LOOP) && !(_animTab[animation]._flag & SMKANIM_BKG)) {
 			smkStop(slot);
 			_vm->_flagPaintCharacter = true;
