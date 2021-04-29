@@ -4894,12 +4894,12 @@ static const uint16 kq5PatchMultilingualEndingGlitch[] = {
 // We replace the global[400] checks with a fixed true. This is toggled with
 // enablePatch() below when alternative Windows GM MIDI tracks are used.
 //
-// Instead, we could have set global[400], but this has the possibly unwanted
-// side effects of switching to black&white cursors (which also needs complex
-// changes to GameFeatures::detectsetCursorType()) and breaking savegame
-// compatibilty between the DOS and Windows CD versions of KQ5.
+// Global[400] is also used to determine which cursor type to use: color view
+// resources for DOS or old black and white cursor resources for Windows.
+// We set this depending on if the user has used the "windows_cursors" option
+// in the Windows version. That doesn't affect this patch since it removes
+// global[400] from the code.
 //
-// TODO: Investigate those side effects more closely.
 // Applies to at least: Win CD
 // Responsible method: mordOneScript::changeState(1), dragonScript::changeState(1),
 //                     fireScript::changeState() in script 124

@@ -1632,6 +1632,13 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformAtariST, 0, GUIO_STD16_UNDITHER	},
 
+#define GUIO_KQ5_CD_WINDOWS GUIO6(GUIO_MIDIGM,                         \
+								  GAMEOPTION_PREFER_DIGITAL_SFX,       \
+								  GAMEOPTION_ORIGINAL_SAVELOAD,        \
+								  GAMEOPTION_MIDI_MODE,                \
+								  GAMEOPTION_RGB_RENDERING,            \
+								  GAMEOPTION_KQ_WINDOWS_CURSORS)
+
 	// King's Quest 5 - English Amiga (from www.back2roots.org)
 	// Executable scanning reports "1.004.018"
 	// SCI interpreter version 1.000.060
@@ -1700,7 +1707,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.000", 0, "449471bfd77be52f18a3773c7f7d843d", 571368},
 		{"resource.001", 0, "b45a581ff8751e052c7e364f58d3617f", 16800210},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformWindows, ADGF_CD, GUIO_STD16_SPEECH_GM	},
+		Common::EN_ANY, Common::kPlatformWindows, ADGF_CD, GUIO_KQ5_CD_WINDOWS },
 
 	// King's Quest 5 - English DOS Floppy
 	// SCI interpreter version 1.000.060
@@ -1969,6 +1976,8 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, ADGF_DEMO, GUIO_STD16	},
 
+#undef GUIO_KQ5_CD_WINDOWS
+
 #define GUIO_KQ6_DEMO GUIO6(GUIO_NOSPEECH,                     \
 						  GAMEOPTION_HIGH_RESOLUTION_GRAPHICS, \
 	                      GAMEOPTION_PREFER_DIGITAL_SFX,       \
@@ -1983,7 +1992,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 						  GAMEOPTION_RGB_RENDERING)
 
 #define GUIO_KQ6_CD_WINDOWS GUIO7(GUIO_NOASPECT,                       \
-								  GAMEOPTION_KQ6_WINDOWS_CURSORS,      \
+								  GAMEOPTION_KQ_WINDOWS_CURSORS,       \
 								  GAMEOPTION_HIGH_RESOLUTION_GRAPHICS, \
 						          GAMEOPTION_PREFER_DIGITAL_SFX,       \
 								  GAMEOPTION_ORIGINAL_SAVELOAD,        \
@@ -2108,7 +2117,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.000", 0, "233394a5f33b475ae5975e7e9a420865", 8376352},
 		{"resource.msg", 0, "51ca9f8afc42ef442f6545b3c82a9165", 596121},
 		AD_LISTEND},
-		Common::KO_KOR, Common::kPlatformWindows, ADGF_CD, GUIO5(GUIO_NOASPECT, GAMEOPTION_KQ6_WINDOWS_CURSORS, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_MIDI_MODE)	},
+		Common::KO_KOR, Common::kPlatformWindows, ADGF_CD, GUIO5(GUIO_NOASPECT, GAMEOPTION_KQ_WINDOWS_CURSORS, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_MIDI_MODE)	},
 
 	// King's Quest 6 - English Macintosh Floppy
 	// VERSION file reports "1.0"

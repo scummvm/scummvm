@@ -1330,6 +1330,20 @@ void gamestate_afterRestoreFixUp(EngineState *s, int savegameId) {
 		g_sci->_gfxMenu->kernelSetAttribute(1025 >> 8, 1025 & 0xFF, SCI_MENU_ATTRIBUTE_ENABLED, TRUE_REG);  // Status -> Statistics
 		g_sci->_gfxMenu->kernelSetAttribute(1026 >> 8, 1026 & 0xFF, SCI_MENU_ATTRIBUTE_ENABLED, TRUE_REG);  // Status -> Goals
 		break;
+	case GID_KQ5:
+		// WORKAROUND: We allow users to choose if they want the older KQ5 CD Windows cursors. These
+		//  are black and white Cursor resources instead of the color View resources in the DOS version.
+		//  This setting affects how KQCursor objects are initialized and might have changed since the
+		//  game was saved. The scripts don't expect this since it wasn't an option in the original.
+		//  In order for the cursors to correctly use the current setting, we need to clear the "number"
+		//  property of every KQCursor when restoring when Windows cursors are disabled.
+		if (g_sci->isCD() && !g_sci->_features->useWindowsCursors()) {
+			Common::Array<reg_t> cursors = s->_segMan->findObjectsBySuperClass("KQCursor");
+			for (uint i = 0; i < cursors.size(); ++i) {
+				writeSelector(s->_segMan, cursors[i], SELECTOR(number), NULL_REG);
+			}
+		}
+		break;
 	case GID_KQ6:
 		if (g_sci->isCD()) {
 			// WORKAROUND:

@@ -23,6 +23,7 @@
 
 #include "sci/sci.h"	// for INCLUDE_OLDGFX
 #include "sci/debug.h"	// for g_debug_sleeptime_factor
+#include "sci/engine/features.h"
 #include "sci/engine/file.h"
 #include "sci/engine/guest_additions.h"
 #include "sci/engine/kernel.h"
@@ -169,6 +170,13 @@ void EngineState::initGlobals() {
 	variablesSegment[VAR_GLOBAL] = script_000->getLocalsSegment();
 	variablesBase[VAR_GLOBAL] = variables[VAR_GLOBAL] = script_000->getLocalsBegin();
 	variablesMax[VAR_GLOBAL] = script_000->getLocalsCount();
+
+	// The KQ5 CD Windows interpreter set global 400 to tell the scripts that the
+	//  platform was Windows. The global determines which cursors the scripts use,
+	//  so we only set this if the user has chosen to use Windows cursors.
+	if (g_sci->getGameId() == GID_KQ5 && g_sci->isCD()) {
+		variables[VAR_GLOBAL][400].setOffset(g_sci->_features->useWindowsCursors());
+	}
 }
 
 uint16 EngineState::currentRoomNumber() const {

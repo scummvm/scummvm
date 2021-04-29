@@ -342,6 +342,57 @@ reg_t SegManager::findObjectByName(const Common::String &name, int index) {
 	return result[index];
 }
 
+Common::Array<reg_t> SegManager::findObjectsBySuperClass(const Common::String &superClassName) {
+	Common::Array<reg_t> result;
+
+	reg_t superClass = findObjectByName(superClassName);
+	if (superClass.isNull()) {
+		return result;
+	}
+
+	// Now all values are available; iterate over all objects.
+	for (uint i = 0; i < _heap.size(); i++) {
+		const SegmentObj *mobj = _heap[i];
+
+		if (!mobj)
+			continue;
+
+		reg_t objpos = make_reg(i, 0);
+
+		if (mobj->getType() == SEG_TYPE_SCRIPT) {
+			// It's a script, scan all objects in it
+			const Script *scr = (const Script *)mobj;
+			const ObjMap &objects = scr->getObjectMap();
+			for (ObjMap::const_iterator it = objects.begin(); it != objects.end(); ++it) {
+				objpos.setOffset(it->_value.getPos().getOffset());
+				Object *object = getObject(objpos);
+				if (object) {
+					if (superClass == object->getSuperClassSelector()) {
+						result.push_back(objpos);
+					}
+				}
+			}
+		} else if (mobj->getType() == SEG_TYPE_CLONES) {
+			// It's clone table, scan all objects in it
+			const CloneTable *ct = (const CloneTable *)mobj;
+			for (uint idx = 0; idx < ct->size(); ++idx) {
+				if (!ct->isValidEntry(idx))
+					continue;
+
+				objpos.setOffset(idx);
+				Object *object = getObject(objpos);
+				if (object) {
+					if (superClass == object->getSuperClassSelector()) {
+						result.push_back(objpos);
+					}
+				}
+			}
+		}
+	}
+
+	return result;
+}
+
 // return the seg if script_id is valid and in the map, else 0
 SegmentId SegManager::getScriptSegment(int script_id) const {
 	return _scriptSegMap.getValOrDefault(script_id, 0);
