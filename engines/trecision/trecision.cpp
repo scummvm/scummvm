@@ -725,7 +725,7 @@ bool TrecisionEngine::dataSave() {
 		if (!skipSave)
 			saveGameState(saveSlot, saveName);
 
-		return !skipSave;
+		return skipSave;
 	}
 
 	for (int a = 0; a < TOP; a++)
