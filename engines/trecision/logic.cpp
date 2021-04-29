@@ -275,7 +275,7 @@ void LogicManager::setupAltRoom(uint16 room, bool altRoomFl) {
 			_vm->_obj[oUSCITA21]._position = 11;
 
 			// if we can go beyond
-			if (((_vm->iconPos(kItemMagneticBar) != MAXICON) && ((_vm->_dialogMgr->_choice[436]._flag & kObjFlagDone) || (_vm->_dialogMgr->_choice[466]._flag & kObjFlagDone)))
+			if (((_vm->iconPos(kItemMagneticBar) != -1) && ((_vm->_dialogMgr->_choice[436]._flag & kObjFlagDone) || (_vm->_dialogMgr->_choice[466]._flag & kObjFlagDone)))
 				|| ((_vm->_dialogMgr->_choice[451]._flag & kObjFlagDone) || (_vm->_dialogMgr->_choice[481]._flag & kObjFlagDone))) {
 				_vm->_obj[od21TO23]._flag |= kObjFlagRoomOut;
 				_vm->_obj[od21TO23]._flag &= ~kObjFlagExamine;
@@ -308,7 +308,7 @@ void LogicManager::setupAltRoom(uint16 room, bool altRoomFl) {
 			_vm->_obj[oUSCITA21]._mode |= OBJMODE_OBJSTATUS;
 
 			// If we can go beyond
-			if (((_vm->iconPos(kItemMagneticBar) != MAXICON) && ((_vm->_dialogMgr->_choice[436]._flag & kObjFlagDone) || (_vm->_dialogMgr->_choice[466]._flag & kObjFlagDone)))
+			if (((_vm->iconPos(kItemMagneticBar) != -1) && ((_vm->_dialogMgr->_choice[436]._flag & kObjFlagDone) || (_vm->_dialogMgr->_choice[466]._flag & kObjFlagDone)))
 				|| ((_vm->_dialogMgr->_choice[451]._flag & kObjFlagDone) || (_vm->_dialogMgr->_choice[481]._flag & kObjFlagDone))) {
 				_vm->_obj[od21TO22]._flag |= kObjFlagRoomOut;
 				_vm->_obj[od21TO22]._flag &= ~kObjFlagExamine;
@@ -688,12 +688,12 @@ void LogicManager::endChangeRoom() {
 }
 
 void LogicManager::initInventory() {
-	_vm->_inventorySize = 0;
-	_vm->_inventory[_vm->_inventorySize++] = kItemBankNote;
-	_vm->_inventory[_vm->_inventorySize++] = kItemMinicom;
-	_vm->_inventory[_vm->_inventorySize++] = kItemLiftCard;
-	_vm->_inventory[_vm->_inventorySize++] = kItemPen;
-	_vm->_inventory[_vm->_inventorySize++] = kItemLetterboxKey;
+	_vm->_inventory.clear();
+	_vm->_inventory.push_back(kItemBankNote);
+	_vm->_inventory.push_back(kItemMinicom);
+	_vm->_inventory.push_back(kItemLiftCard);
+	_vm->_inventory.push_back(kItemPen);
+	_vm->_inventory.push_back(kItemLetterboxKey);
 }
 
 void LogicManager::useInventoryWithInventory(bool *updateInventory, bool *printSentence) {
@@ -1490,7 +1490,7 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a2G4VERSALATTINA, 0, 0, _vm->_useWith[WITH]);
 			_vm->_inventoryObj[kItemCanWithFuel]._flag |= kObjFlagExtra;
 			_vm->_inventoryObj[kItemCanWithFuel]._examine = 1537;
-			if (_vm->iconPos(kItemEmptyTinCan) != MAXICON) {
+			if (_vm->iconPos(kItemEmptyTinCan) != -1) {
 				_vm->removeIcon(kItemEmptyTinCan);
 				_vm->replaceIcon(kItemCanWithFuel, kItemLargeCans);
 			}
@@ -1564,7 +1564,7 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 		} else if ((_vm->_useWith[WITH] == oSERPENTEA52) && (_vm->_useWith[USED] == kItemPincers)) {
 			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a528, 0, 0, _vm->_useWith[WITH]);
 			*printSentence = false;
-		} else if ((_vm->_useWith[WITH] == oSERPENTEB52) && (_vm->_useWith[USED] == kItemPincers) && (_vm->iconPos(kItemSnakeHead) == MAXICON)) {
+		} else if ((_vm->_useWith[WITH] == oSERPENTEB52) && (_vm->_useWith[USED] == kItemPincers) && (_vm->iconPos(kItemSnakeHead) == -1)) {
 			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a523, 0, 0, _vm->_useWith[WITH]);
 			*printSentence = false;
 		}
@@ -2263,7 +2263,7 @@ bool LogicManager::mouseExamine(uint16 curObj) {
 		break;
 
 	case oMAPPA16:
-		if (_vm->iconPos(kItemNoteRotmall17) != MAXICON)
+		if (_vm->iconPos(kItemNoteRotmall17) != -1)
 			_vm->_obj[oMAPPA16]._flag |= kObjFlagExtra;
 		retVal = true;
 		break;
@@ -2699,7 +2699,7 @@ bool LogicManager::mouseOperate(uint16 curObj) {
 		break;
 
 	case oCATENAT21:
-		if ((_vm->iconPos(kItemMagneticBar) != MAXICON) && ((_vm->_dialogMgr->_choice[436]._flag & kObjFlagDone) || (_vm->_dialogMgr->_choice[466]._flag & kObjFlagDone))) {
+		if ((_vm->iconPos(kItemMagneticBar) != -1) && ((_vm->_dialogMgr->_choice[436]._flag & kObjFlagDone) || (_vm->_dialogMgr->_choice[466]._flag & kObjFlagDone))) {
 			if (_vm->_room[_vm->_curRoom]._flag & kObjFlagExtra) // Go right
 				_vm->_dialogMgr->playDialog(dF212);                             // 436
 			else                                                 // Go left
