@@ -81,7 +81,7 @@ void CursorManager::setCursor(CursorType type, int16 itemID) {
 		_curCursorID = 4;
 		break;
 	case kHotspotArrow:
-		_curCursorID = 6;
+		_curCursorID = 5;
 		break;
 	default: {
 		uint itemsOffset = 0;
