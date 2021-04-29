@@ -323,8 +323,11 @@ void TrecisionEngine::eventLoop() {
 }
 
 bool TrecisionEngine::hasFeature(EngineFeature f) const {
-	return (f == kSupportsLoadingDuringRuntime) ||
-		   (f == kSupportsSavingDuringRuntime);
+	return (f == kSupportsSubtitleOptions) ||
+//		   (f == kSupportsReturnToLauncher) ||
+		   (f == kSupportsLoadingDuringRuntime) ||
+		   (f == kSupportsSavingDuringRuntime) ||
+		   (f == kSupportsChangingOptionsDuringRuntime);
 }
 
 Common::Error TrecisionEngine::loadGameStream(Common::SeekableReadStream *stream) {
@@ -1110,6 +1113,17 @@ void TrecisionEngine::StartCharacterAction(uint16 Act, uint16 NewRoom, uint8 New
 		CharacterTalkInAction(sent);
 	else
 		clearText();
+}
+
+bool TrecisionEngine::canPlayerInteract() {
+	return (!_flagSomeoneSpeaks &&
+			!_flagscriptactive &&
+			!_flagDialogActive &&
+			!_flagDialogMenuActive &&
+			(_actor->_curAction < hWALKIN) &&
+			!_flagUseWithStarted &&
+			_flagShowCharacter &&
+			!_animMgr->_playingAnims[kSmackerAction]);
 }
 
 } // End of namespace Trecision

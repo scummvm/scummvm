@@ -90,8 +90,8 @@ public:
 	Common::Error run() override;
 	void eventLoop();
 	bool hasFeature(EngineFeature f) const override;
-	bool canLoadGameStateCurrently() override { return true; }
-	bool canSaveGameStateCurrently() override { return true; }
+	bool canLoadGameStateCurrently() override { return canPlayerInteract(); }
+	bool canSaveGameStateCurrently() override { return canPlayerInteract(); }
 	Common::Error loadGameStream(Common::SeekableReadStream *stream) override;
 	Common::Error saveGameStream(Common::WriteStream *stream, bool isAutosave = false) override;
 	bool syncGameStream(Common::Serializer &ser);
@@ -175,6 +175,7 @@ public:
 	bool dataLoad();
 	void performLoad(int slot, bool skipLoad);
 	void resetZBuffer(int x1, int y1, int x2, int y2);
+	bool canPlayerInteract();
 
 
 	Graphics::Surface _thumbnail;
