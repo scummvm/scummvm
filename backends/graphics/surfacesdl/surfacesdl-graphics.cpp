@@ -521,18 +521,8 @@ void SurfaceSdlGraphicsManager::detectSupportedFormats() {
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	{
-		SDL_Window *window = _window->getSDLWindow();
-		if (window == nullptr) {
-			error("Could not find ScummVM window for retrieving default display mode");
-		}
-
-		const int displayIndex = SDL_GetWindowDisplayIndex(window);
-		if (displayIndex < 0) {
-			error("Could not find ScummVM window display index");
-		}
-
 		SDL_DisplayMode defaultMode;
-		if (SDL_GetDesktopDisplayMode(displayIndex, &defaultMode) != 0) {
+		if (SDL_GetDesktopDisplayMode(_window->getDisplayIndex(), &defaultMode) != 0) {
 			error("Could not get default system display mode");
 		}
 
@@ -805,7 +795,7 @@ void SurfaceSdlGraphicsManager::initSize(uint w, uint h, const Graphics::PixelFo
 	_transactionDetails.sizeChanged = true;
 }
 
-static void fixupResolutionForAspectRatio(AspectRatio desiredAspectRatio, int &width, int &height) {
+void SurfaceSdlGraphicsManager::fixupResolutionForAspectRatio(AspectRatio desiredAspectRatio, int &width, int &height) const {
 	assert(&width != &height);
 
 	if (desiredAspectRatio.isAuto())
@@ -821,10 +811,11 @@ static void fixupResolutionForAspectRatio(AspectRatio desiredAspectRatio, int &w
 	uint bestMetric = (uint)-1; // Metric is wasted space
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)
-	const int numModes = SDL_GetNumDisplayModes(0);
+	const int display = _window->getDisplayIndex();
+	const int numModes = SDL_GetNumDisplayModes(display);
 	SDL_DisplayMode modeData, *mode = &modeData;
 	for (int i = 0; i < numModes; ++i) {
-		if (SDL_GetDisplayMode(0, i, &modeData)) {
+		if (SDL_GetDisplayMode(display, i, &modeData)) {
 			continue;
 		}
 #else

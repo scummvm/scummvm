@@ -116,6 +116,11 @@ public:
 	SDL_Window *getSDLWindow() const { return _window; }
 
 	/**
+	 * @return The display containing the ScummVM window.
+	 */
+	int getDisplayIndex() const;
+
+	/**
 	 * Creates or updates the SDL window.
 	 *
 	 * @param width   Width of the window.

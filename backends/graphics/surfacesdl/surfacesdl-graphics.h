@@ -171,6 +171,8 @@ protected:
 
 	virtual void setupHardwareSize();
 
+	void fixupResolutionForAspectRatio(AspectRatio desiredAspectRatio, int &width, int &height) const;
+
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	/* SDL2 features a different API for 2D graphics. We create a wrapper
 	 * around this API to keep the code paths as close as possible. */

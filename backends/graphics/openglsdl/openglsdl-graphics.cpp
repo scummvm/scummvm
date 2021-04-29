@@ -140,10 +140,11 @@ OpenGLSdlGraphicsManager::OpenGLSdlGraphicsManager(SdlEventSource *eventSource, 
 
 	// Retrieve a list of working fullscreen modes
 #if SDL_VERSION_ATLEAST(2, 0, 0)
-	const int numModes = SDL_GetNumDisplayModes(0);
+	const int display = _window->getDisplayIndex();
+	const int numModes = SDL_GetNumDisplayModes(display);
 	for (int i = 0; i < numModes; ++i) {
 		SDL_DisplayMode mode;
-		if (SDL_GetDisplayMode(0, i, &mode)) {
+		if (SDL_GetDisplayMode(display, i, &mode)) {
 			continue;
 		}
 

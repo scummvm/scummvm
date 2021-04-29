@@ -232,9 +232,8 @@ bool SdlWindow::getSDLWMInformation(SDL_SysWMinfo *info) const {
 
 Common::Rect SdlWindow::getDesktopResolution() {
 #if SDL_VERSION_ATLEAST(2, 0, 0)
-	int displayIndex = _window ? SDL_GetWindowDisplayIndex(_window) : 0;
 	SDL_DisplayMode displayMode;
-	if (!SDL_GetDesktopDisplayMode(displayIndex, &displayMode)) {
+	if (!SDL_GetDesktopDisplayMode(getDisplayIndex(), &displayMode)) {
 		_desktopRes = Common::Rect(displayMode.w, displayMode.h);
 	}
 #endif
@@ -263,6 +262,16 @@ SDL_Surface *copySDLSurface(SDL_Surface *src) {
 	}
 
 	return res;
+}
+
+int SdlWindow::getDisplayIndex() const {
+	if (_window) {
+		int displayIndex = SDL_GetWindowDisplayIndex(_window);
+		if (displayIndex >= 0)
+			return displayIndex;
+	}
+	// Default to primary display
+	return 0;
 }
 
 bool SdlWindow::createOrUpdateWindow(int width, int height, uint32 flags) {
