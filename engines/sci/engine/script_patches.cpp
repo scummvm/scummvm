@@ -7691,31 +7691,56 @@ static const uint16 larry6HiresSetScalePatch[] = {
 
 // The init code that runs when LSL6hires starts up unconditionally resets the
 // master music volume to 12 (and the volume dial to 11), but the game should
-// always use the volume stored in ScummVM.
-// Applies to at least: English CD
+// always use the volume stored in ScummVM. Mac version initializes to 5.
+//
+// Applies to at least: English CD, Mac CD
+// Responsible method: initCode:init
 // Fixes bug: #9700
 static const uint16 larry6HiresVolumeResetSignature[] = {
 	SIG_MAGICDWORD,
-	0x35, 0x0b,                         // ldi $0b
-	0xa1, 0xc2,                         // sag global[$c2]
+	0x4a, SIG_UINT16(0x0006),           // send 06 [ LSL6 masterVolume: ... ]
+	0x35, SIG_ADDTOOFFSET(+1),          // ldi 0b on PC, 05 on Mac
+	0xa1, 0xc2,                         // sag c2
 	SIG_END
 };
 
 static const uint16 larry6HiresVolumeResetPatch[] = {
-	0x32, PATCH_UINT16(0x0001),         // jmp 1 [past volume change]
+	PATCH_ADDTOOFFSET(+3),
+	0x33, 0x02,                         // jmp 02 [ skip volume change ]
 	PATCH_END
 };
 
-//          script, description,                                      signature                         patch
+// Mac version stores the master music volume in an additional global which it
+//  sets the volume to on every restore. We disable this code so that the
+//  current ScummVM volume is used.
+//
+// Applies to: Mac CD only
+// Responsible method: LSL6:replay
+static const uint16 larry6HiresMacVolumeRestoreSignature[] = {
+	0x7a,                               // push2
+	SIG_MAGICDWORD,
+	0x76,                               // push0
+	0x88, SIG_UINT16(0x0103),           // lsg 0103
+	0x43, 0x40, SIG_UINT16(0x0004),     // callk DoSound 04 [ kDoSound MasterVolume global259 ]
+	SIG_END
+};
+
+static const uint16 larry6HiresMacVolumeRestorePatch[] = {
+	0x33, 0x07,                         // jmp 07 [ skip volume change ]
+	PATCH_END
+};
+
+//          script, description,                                      signature                             patch
 static const SciScriptPatcherEntry larry6HiresSignatures[] = {
-	{  true,    71, "disable volume reset on startup (1/2)",       1, sci2VolumeResetSignature,         sci2VolumeResetPatch },
-	{  true,    71, "disable volume reset on startup (2/2)",       1, larry6HiresVolumeResetSignature,  larry6HiresVolumeResetPatch },
-	{  true,    71, "disable video benchmarking",                  1, sci2BenchmarkSignature,           sci2BenchmarkPatch },
-	{  true,   270, "fix incorrect setScale call",                 1, larry6HiresSetScaleSignature,     larry6HiresSetScalePatch },
-	{  true, 64928, "Narrator lockup fix",                         1, sciNarratorLockupSignature,       sciNarratorLockupPatch },
-	{  true, 64990, "increase number of save games (1/2)",         1, sci2NumSavesSignature1,           sci2NumSavesPatch1 },
-	{  true, 64990, "increase number of save games (2/2)",         1, sci2NumSavesSignature2,           sci2NumSavesPatch2 },
-	{  true, 64990, "disable change directory button",             1, sci2ChangeDirSignature,           sci2ChangeDirPatch },
+	{  true,     0, "disable mac volume restore",                  1, larry6HiresMacVolumeRestoreSignature, larry6HiresMacVolumeRestorePatch },
+	{  true,    71, "disable volume reset on startup (1/2)",       1, sci2VolumeResetSignature,             sci2VolumeResetPatch },
+	{  true,    71, "disable volume reset on startup (2/2)",       1, larry6HiresVolumeResetSignature,      larry6HiresVolumeResetPatch },
+	{  true,    71, "disable video benchmarking",                  1, sci2BenchmarkSignature,               sci2BenchmarkPatch },
+	{  true,   270, "fix incorrect setScale call",                 1, larry6HiresSetScaleSignature,         larry6HiresSetScalePatch },
+	{  true, 64928, "Narrator lockup fix",                         1, sciNarratorLockupSignature,           sciNarratorLockupPatch },
+	{  true, 64990, "increase number of save games (1/2)",         1, sci2NumSavesSignature1,               sci2NumSavesPatch1 },
+	{  true, 64990, "increase number of save games (2/2)",         1, sci2NumSavesSignature2,               sci2NumSavesPatch2 },
+	{  true, 64990, "disable change directory button",             1, sci2ChangeDirSignature,               sci2ChangeDirPatch },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
