@@ -3835,12 +3835,9 @@ void LogicManager::doMouseGame() {
 		doEvent(MC_INVENTORY, ME_CLOSE, MP_DEFAULT, 0, 0, 0, 0);
 }
 
+// Returns true when it's in a room without a character, such as the map
 bool LogicManager::doMouseInventory() {
-	bool retVal = false;
-	// Inventory area
-	if (!_vm->_flagCharacterExists && ((_vm->_curRoom != kRoom31P) && (_vm->_curRoom != kRoom35P)))
-		retVal = true; // When it's in a room without a character, such as the map
-	return retVal;
+	return !_vm->_flagCharacterExists && _vm->_curRoom != kRoom31P && _vm->_curRoom != kRoom35P;
 }
 
 void LogicManager::doMouseLeftRight() {
