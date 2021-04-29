@@ -194,10 +194,6 @@ void FormattingOneString() {
 void CharacterSay(uint16 i) {
 	CurS = i;
 
-	//	TODO: Use a define...  ************************
-	// CHECKME: 'i' can't be equal to 99999 because it's a uint16...
-	g_vm->_flagSkipEnable = (i != 99999);
-
 	//	if he took some action
 	if (g_vm->_sentence[i][0] == '*' && !g_vm->_animMgr->_playingAnims[kSmackerAction])
 		g_vm->StartCharacterAction(hBOH, 0, 0, 0);
@@ -232,7 +228,6 @@ void CharacterTalkInAction(uint16 ss) {
 	g_vm->_flagSomeoneSpeaks = true;
 	g_vm->_flagCharacterSpeak = true;
 	g_vm->_flagSkipTalk = false;
-	g_vm->_flagSkipEnable = true;
 
 	SuperString = s;
 	SuperStringLen = strlen(SuperString);
@@ -292,7 +287,7 @@ void CharacterMute() {
 		doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, g_vm->_oldRoom, 0, 0, g_vm->_curObj);
 }
 
-void SomeoneTalk(uint16 s, uint16 Person, uint16 NewAnim, bool FromSomeOneSay) {
+void SomeoneTalk(uint16 s, uint16 Person, uint16 NewAnim) {
 	SpeakSomeOneAnimation = NewAnim;
 	SpeakSomeOnePerson = Person;
 	g_vm->_flagSomeoneSpeaks = true;
@@ -303,9 +298,6 @@ void SomeoneTalk(uint16 s, uint16 Person, uint16 NewAnim, bool FromSomeOneSay) {
 	SuperStringLen = strlen(SuperString);
 	SubStringStart = 0;
 	CurSubString = 0;
-
-	if (!FromSomeOneSay)
-		g_vm->_flagSkipEnable = true;
 
 	FormattingSuperString();
 

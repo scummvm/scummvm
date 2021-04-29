@@ -275,13 +275,13 @@ void ProcessAtFrame(ATFHandle *h, int type, int atf) {
 			if (g_vm->_room[kRoom1D]._flag & kObjFlagExtra)
 				break;
 
-			SomeoneTalk(307 + dc, oDONNA1D, 0, false);
+			SomeoneTalk(307 + dc, oDONNA1D, 0);
 			if (dc < 6)
 				dc ++;
 			break;
 
 		case 2:
-			SomeoneTalk(1788, ocNEGOZIANTE1A, 0, false);
+			SomeoneTalk(1788, ocNEGOZIANTE1A, 0);
 			break;
 		default:
 			break;
