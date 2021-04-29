@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-04-28 17:08+0000\n"
+"POT-Creation-Date: 2021-04-29 16:30+0000\n"
 "PO-Revision-Date: 2021-04-17 22:40+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
@@ -4002,8 +4002,8 @@ msgstr "Автор перевода не желает, чтобы его пер�
 #: engines/mohawk/detection_tables.h:1012
 #: engines/mohawk/detection_tables.h:1027 engines/neverhood/detection.cpp:110
 #: engines/saga/detection_tables.h:187 engines/saga/detection_tables.h:937
-#: engines/saga/detection_tables.h:996 engines/sci/detection_tables.h:4862
-#: engines/sci/detection_tables.h:4870 engines/sherlock/detection_tables.h:214
+#: engines/saga/detection_tables.h:996 engines/sci/detection_tables.h:4871
+#: engines/sci/detection_tables.h:4879 engines/sherlock/detection_tables.h:214
 #: engines/stark/detection.cpp:293 engines/teenagent/detection.cpp:102
 #: engines/zvision/detection_tables.h:190
 #: engines/zvision/detection_tables.h:210
@@ -5870,7 +5870,7 @@ msgstr "Roland D-110 / D-10 / D-20"
 msgid "Yamaha FB-01"
 msgstr "Yamaha FB-01"
 
-#: engines/sci/detection_tables.h:4218
+#: engines/sci/detection_tables.h:4227
 msgid "Incomplete game detected. You have to copy data from all the CDs."
 msgstr ""
 "Обнаружена неполная игра. Вам необходимо скопировать данные со всех CD."
@@ -5895,16 +5895,16 @@ msgstr ""
 "Логика игры в покер находится в отдельной DLL и пока не реализована. Пока "
 "сделана заглушка, в которой действия соперников выбираются случайно"
 
-#: engines/sci/engine/savegame.cpp:1418
+#: engines/sci/engine/savegame.cpp:1432
 msgid "The format of this saved game is obsolete, unable to load it"
 msgstr "Формат файла сохранённой игры устарел, не могу загрузить его"
 
-#: engines/sci/engine/savegame.cpp:1420
+#: engines/sci/engine/savegame.cpp:1434
 #, c-format
 msgid "Savegame version is %d, maximum supported is %0d"
 msgstr "Версия файла сохранения: %d, но максимальная поддерживаемая: %0d"
 
-#: engines/sci/engine/savegame.cpp:1431
+#: engines/sci/engine/savegame.cpp:1445
 msgid ""
 "This saved game was created with a different version of the game, unable to "
 "load it"
