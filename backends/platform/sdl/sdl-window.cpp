@@ -296,19 +296,26 @@ bool SdlWindow::createOrUpdateWindow(int width, int height, uint32 flags) {
 	// the documentation says it only works on X11 anyway, which means it is
 	// basically worthless. So we'll just try to keep things closeish to the
 	// maximum for now.
-	SDL_DisplayMode displayMode;
-	SDL_GetDesktopDisplayMode(0, &displayMode);
+	Common::Rect desktopRes = getDesktopResolution();
 	if (!fullscreenFlags) {
-		displayMode.w -= 20;
-		displayMode.h -= 30;
+		int top, left, bottom, right;
+#if SDL_VERSION_ATLEAST(2, 0, 5)
+		if (!_window || SDL_GetWindowBordersSize(_window, &top, &left, &bottom, &right) < 0)
+#endif
+		{
+			left = right = 10;
+			top = bottom = 15;
+		}
+		desktopRes.right -= (left + right);
+		desktopRes.bottom -= (top + bottom);
 	}
 
-	if (width > displayMode.w) {
-		width = displayMode.w;
+	if (width > desktopRes.right) {
+		width = desktopRes.right;
 	}
 
-	if (height > displayMode.h) {
-		height = displayMode.h;
+	if (height > desktopRes.bottom) {
+		height = desktopRes.bottom;
 	}
 
 	if (!_window || oldNonUpdateableFlags != newNonUpdateableFlags) {
