@@ -33,9 +33,17 @@ static const PlainGameDescriptor tonyGames[] = {
 
 #include "tony/detection_tables.h"
 
+static const char *const directoryGlobs[] = {
+	"roasted",
+	"voices",
+	0
+};
+
 class TonyMetaEngineDetection : public AdvancedMetaEngineDetection {
 public:
 	TonyMetaEngineDetection() : AdvancedMetaEngineDetection(Tony::gameDescriptions, sizeof(Tony::TonyGameDescription), tonyGames) {
+		_maxScanDepth = 2;
+		_directoryGlobs = directoryGlobs;
 	}
 
 	const char *getEngineId() const override {
