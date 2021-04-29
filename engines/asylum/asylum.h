@@ -77,7 +77,6 @@ protected:
 	// Engine APIs
 	virtual Common::Error run();
 	virtual bool hasFeature(EngineFeature f) const;
-	virtual GUI::Debugger *getDebugger() { return _console; }
 
 public:
 	enum StartGameType {
