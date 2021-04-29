@@ -108,6 +108,20 @@ static const NGIGameDescription gameDescriptions[] = {
 		GID_FULLPIPE
 	},
 
+	// Full Pipe English Steam version
+	{
+		{
+			"fullpipe",
+			"Steam",
+			AD_ENTRY1s("4620.sc2", "66ef399644434e88f3951acd882742b6", 510),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_DROPPLATFORM,
+			GUIO1(GUIO_NOMIDI)
+		},
+		GID_FULLPIPE
+	},
+
 	// Full Pipe Russian Demo version
 	{
 		{
