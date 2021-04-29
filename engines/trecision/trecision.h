@@ -266,8 +266,6 @@ public:
 	int16 _textStackTop;
 	StackText _textStack[MAXTEXTSTACK];
 
-	bool _flagScreenRefreshed;
-
 	AnimManager *_animMgr;
 	GraphicsManager *_graphicsMgr;
 	DialogManager *_dialogMgr;

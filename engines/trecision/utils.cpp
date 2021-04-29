@@ -406,7 +406,6 @@ void TrecisionEngine::ProcessTime() {
 		PaintScreen(false);
 		_textStackTop = -1;
 
-		_flagScreenRefreshed = true;
 		uint32 paintTime = readTime();
 		if (paintTime - TheTime >= 5)
 			_nextRefresh = paintTime + 1;
