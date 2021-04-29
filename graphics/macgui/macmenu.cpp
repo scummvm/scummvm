@@ -957,8 +957,6 @@ void MacMenu::renderSubmenu(MacMenuSubMenu *menu, bool recursive) {
 	if (recursive && menu->highlight != -1 && menu->items[menu->highlight]->submenu != nullptr)
 		renderSubmenu(menu->items[menu->highlight]->submenu, false);
 
-	_contentIsDirty = true;
-
 	if (_wm->_mode & kWMModalMenuMode)
 		g_system->copyRectToScreen(_screen.getBasePtr(r->left, r->top), _screen.pitch, r->left, r->top, r->width() + 2, r->height() + 2);
 }
@@ -1029,6 +1027,8 @@ bool MacMenu::mouseClick(int x, int y) {
 						}
 
 						_menustack.pop_back(); // Drop previous submenu
+						_contentIsDirty = true;
+						_wm->setFullRefresh(true);
 					}
 				}
 
@@ -1037,6 +1037,7 @@ bool MacMenu::mouseClick(int x, int y) {
 				if (_items[_activeItem]->submenu != nullptr) {
 					_menustack.push_back(_items[_activeItem]->submenu);
 					_items[_activeItem]->submenu->highlight = -1;
+					_contentIsDirty = true;
 				}
 			}
 		}
@@ -1045,9 +1046,6 @@ bool MacMenu::mouseClick(int x, int y) {
 			_wm->activateMenu();
 
 		setActive(true);
-
-		_contentIsDirty = true;
-		_wm->setFullRefresh(true);
 
 		if (_wm->_mode & kWMModalMenuMode) {
 			draw(_wm->_screen);
