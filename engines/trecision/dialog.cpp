@@ -44,7 +44,7 @@ DialogManager::~DialogManager() {}
 void DialogManager::dialogPrint(int x, int y, int c, const char *txt) {
 	SDText curChoice;
 	curChoice.set(
-		Common::Rect(x, y, _vm->textLength(txt, 0), 0),
+		Common::Rect(x, y, _vm->textLength(txt, 0) + x, y),
 		Common::Rect(0, 0, MAXX, MAXY),
 		c,
 		MASKCOL,

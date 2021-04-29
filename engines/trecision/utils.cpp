@@ -257,7 +257,7 @@ bool TrecisionEngine::checkMask(uint16 mx, uint16 my) {
 					for (uint16 b = _obj[checkedObj]._rect.top; b < max; b++) {
 						bool insideObj = false;
 						int16 e = 0;
-						while (e < _obj[checkedObj]._rect.right) {
+						while (e < _obj[checkedObj]._rect.width()) {
 							if (!insideObj) { // not inside an object
 								if (b + TOP == my) {
 									if ((mx >= d + e) && (mx < d + e + *mask)) {
