@@ -376,12 +376,10 @@ void DialogManager::afterChoice() {
 
 		case dF381:
 			doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, kRoom41, 0, 18, _vm->_curObj);
-			memcpy(_vm->_cyberInventory, _vm->_inventory, MAXICON);
-			_vm->_cyberInventorySize = _vm->_inventorySize;
-			_vm->_inventorySize = 0;
+			_vm->_cyberInventory = _vm->_inventory;
 			_vm->_iconBase = 0;
-			memset(_vm->_inventory, kItemNull, MAXICON);
-			_vm->_inventory[_vm->_inventorySize++] = kItemPositioner;
+			_vm->_inventory.clear();
+			_vm->_inventory.push_back(kItemPositioner);
 			break;
 
 		case dF371:
@@ -421,8 +419,7 @@ void DialogManager::afterChoice() {
 			break;
 
 		case dF4C1:
-			memcpy(_vm->_inventory, _vm->_cyberInventory, MAXICON);
-			_vm->_inventorySize = _vm->_cyberInventorySize;
+			_vm->_inventory = _vm->_cyberInventory;
 			_vm->_iconBase = 0;
 			_vm->removeIcon(kItemLiftCard);
 			_vm->removeIcon(kItemPen);

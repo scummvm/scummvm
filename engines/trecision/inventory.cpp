@@ -39,14 +39,18 @@ void TrecisionEngine::refreshInventory(uint8 startIcon, uint8 startLine) {
 		memset(_screenBuffer + (FIRSTLINE + b) * MAXX, 0, MAXX * 2);
 
 	for (uint16 a = 0; a < ICONSHOWN; a++) {
-		if (_inventory[a + startIcon] >= LASTICON) {
+		int index = a + startIcon;
+		if (index >= _inventory.size())
+			break;
+
+		if (_inventory[index] >= LASTICON) {
 			for (uint16 b = 0; b < (ICONDY - startLine); b++)
 				memcpy(_screenBuffer + (FIRSTLINE + b) * MAXX + a * (ICONDX) + ICONMARGSX,
-					  _icons + (_inventory[a + startIcon] - LASTICON + READICON + 1) * ICONDX * ICONDY + (b + startLine) * ICONDX, ICONDX * 2);
-		} else if (_inventory[a + startIcon] != _lightIcon) {
+					   _icons + (_inventory[index] - LASTICON + READICON + 1) * ICONDX * ICONDY + (b + startLine) * ICONDX, ICONDX * 2);
+		} else if (_inventory[index] != _lightIcon) {
 			for (uint16 b = 0; b < (ICONDY - startLine); b++)
 				memcpy(_screenBuffer + (FIRSTLINE + b) * MAXX + a * (ICONDX) + ICONMARGSX,
-					  _icons + _inventory[a + startIcon] * ICONDX * ICONDY + (b + startLine) * ICONDX, ICONDX * 2);
+					   _icons + _inventory[index] * ICONDX * ICONDY + (b + startLine) * ICONDX, ICONDX * 2);
 		}
 	}
 
@@ -59,7 +63,7 @@ void TrecisionEngine::refreshInventory(uint8 startIcon, uint8 startLine) {
 		}
 	}
 
-	if ((startIcon + ICONSHOWN) < _inventorySize) { // Copy right
+	if (startIcon + ICONSHOWN < _inventory.size()) { // Copy right
 		int16 rightArrow = ICONMARGDX * ICONDY * 2;
 		for (uint16 b = 0; b < (ICONDY - startLine); b++) {
 			memcpy(_screenBuffer + (FIRSTLINE + b) * MAXX + MAXX - ICONMARGDX,
@@ -76,7 +80,7 @@ void TrecisionEngine::setInventoryStart(uint8 startIcon, uint8 startLine) {
 }
 
 void TrecisionEngine::moveInventoryLeft() {
-	if (_iconBase < _inventorySize - ICONSHOWN)
+	if (_iconBase < _inventory.size() - ICONSHOWN)
 		_iconBase++;
 	setInventoryStart(_iconBase, INVENTORY_SHOW);
 }
@@ -200,18 +204,18 @@ uint8 TrecisionEngine::whatIcon(uint16 invmx) {
 	if (invmx < ICONMARGSX || invmx > MAXX - ICONMARGDX)
 		return 0;
 
-	return _inventory[_iconBase + ((invmx - ICONMARGSX) / (ICONDX))];
+	int index = _iconBase + ((invmx - ICONMARGSX) / (ICONDX));
+	
+	return index < _inventory.size() ? _inventory[index] : kItemNull;
 }
 
-uint8 TrecisionEngine::iconPos(uint8 icon) {
-	uint8 i;
-
-	for (i = 0; i < MAXICON; i++) {
+int8 TrecisionEngine::iconPos(uint8 icon) {
+	for (uint8 i = 0; i < _inventory.size(); i++) {
 		if (_inventory[i] == icon)
-			break;
+			return i;
 	}
 
-	return i;
+	return -1;
 }
 
 bool TrecisionEngine::isCloseupOrControlRoom() {
@@ -298,33 +302,22 @@ void TrecisionEngine::showInventoryName(uint16 obj, bool showhide) {
 }
 
 void TrecisionEngine::removeIcon(uint8 icon) {
-	uint8 pos = iconPos(icon);
-
-	if (pos == MAXICON)
+	int8 pos = iconPos(icon);
+	if (pos == -1)
 		return;
-	_inventory[pos] = kItemNull;
-	for (; pos < _inventorySize; pos++)
-		_inventory[pos] = _inventory[pos + 1];
-	_inventorySize--;
 
-	if (_inventorySize < ICONSHOWN)
-		_iconBase = 0;
-
-	if (_iconBase && (_inventorySize > ICONSHOWN) && (_inventory[_iconBase + ICONSHOWN] == kItemNull))
-		_iconBase = _inventorySize - ICONSHOWN;
+	_inventory.remove_at(pos);
+	_iconBase = _inventory.size() <= ICONSHOWN ? 0 : _inventory.size() - ICONSHOWN; 
 
 	redrawString();
 }
 
 void TrecisionEngine::addIcon(uint8 icon) {
-	if (iconPos(icon) != MAXICON)
+	if (iconPos(icon) != -1)
 		return;
-	_inventory[_inventorySize++] = icon;
-	if (_inventorySize >= MAXICON)
-		warning("addIcon overflow");
 
-	if (_iconBase < _inventorySize - ICONSHOWN)
-		_iconBase = _inventorySize - ICONSHOWN;
+	_inventory.push_back(icon);
+	_iconBase = _inventory.size() <= ICONSHOWN ? 0 : _inventory.size() - ICONSHOWN; 
 
 	//	To show the icon that enters the inventory
 	//	doEvent(MC_INVENTORY,ME_OPEN,MP_DEFAULT,0,0,0,0);
@@ -333,9 +326,9 @@ void TrecisionEngine::addIcon(uint8 icon) {
 }
 
 void TrecisionEngine::replaceIcon(uint8 oldIcon, uint8 newIcon) {
-	uint8 pos = iconPos(oldIcon);
-
-	_inventory[pos] = newIcon;
+	int8 pos = iconPos(oldIcon);
+	if (pos >= 0)
+		_inventory[pos] = newIcon;
 }
 
 void TrecisionEngine::doInventoryUseWithInventory() {
@@ -403,13 +396,41 @@ void TrecisionEngine::rollInventory(uint8 status) {
 }
 
 void TrecisionEngine::doScrollInventory(uint16 mouseX) {
-	if ((_inventoryStatus == INV_PAINT) || (_inventoryStatus == INV_DEPAINT))
+	if (_inventoryStatus == INV_PAINT || _inventoryStatus == INV_DEPAINT)
 		return;
 
-	if ((mouseX <= ICONMARGSX) && _iconBase)
+	if (mouseX <= ICONMARGSX && _iconBase)
 		doEvent(MC_INVENTORY, ME_ONERIGHT, MP_DEFAULT, 0, 0, 0, 0);
-	else if (BETWEEN(MAXX - ICONMARGDX, mouseX, MAXX) && (_iconBase + ICONSHOWN < _inventorySize))
+	else if (BETWEEN(MAXX - ICONMARGDX, mouseX, MAXX) && (_iconBase + ICONSHOWN < _inventory.size()))
 		doEvent(MC_INVENTORY, ME_ONELEFT, MP_DEFAULT, 0, 0, 0, 0);
+}
+
+void TrecisionEngine::syncInventory(Common::Serializer &ser) {
+	if (ser.isLoading()) {
+		_inventory.clear();
+		_cyberInventory.clear();
+	}
+
+	for (int which = 0; which <= 1; which++) {
+		for (int i = 0; i < MAXICON; i++) {
+			byte val = 0;
+			if (ser.isSaving()) {
+				if (which == 0)
+					val = i < _inventory.size() ? _inventory[i] : 0;
+				else
+					val = i < _cyberInventory.size() ? _cyberInventory[i] : 0;
+				ser.syncAsByte(val);
+			} else {
+				ser.syncAsByte(val);
+				if (val != kItemNull) {
+					if (which == 0)
+						_inventory.push_back(val);
+					else
+						_cyberInventory.push_back(val);
+				}
+			}
+		}
+	}
 }
 
 } // End of namespace Trecision

@@ -502,6 +502,9 @@ void AnimManager::drawSmkIconFrame(int startIcon, int iconNum) {
 	int stx = ICONMARGSX;
 	int32 a;
 	for (a = 0; a < ICONSHOWN; a++) {
+		if (a + startIcon >= _vm->_inventory.size())
+			break;
+
 		if (_vm->_inventory[a + startIcon] == (iconNum - FIRST_INV_ITEM + 1)) {
 			stx = a * ICONDX + ICONMARGSX;
 			break;

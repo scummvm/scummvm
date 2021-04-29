@@ -77,14 +77,6 @@ TrecisionEngine::TrecisionEngine(OSystem *syst) : Engine(syst) {
 	for (int i = 0; i < 10; ++i)
 		_curScriptFrame[i] = 0;
 
-	// Inventory
-	for (int i = 0; i < MAXICON; ++i) {
-		_inventory[i] = 0;
-		_cyberInventory[i] = 0;
-	}
-
-	_inventorySize = 0;
-	_cyberInventorySize = 0;
 	_iconBase = 0;
 	_inventoryRefreshStartIcon = 0;
 	_lastCurInventory = 0;
@@ -348,7 +340,7 @@ Common::Error TrecisionEngine::saveGameStream(Common::WriteStream *stream, bool 
 }
 
 bool TrecisionEngine::syncGameStream(Common::Serializer &ser) {
-	bool unused = true;
+	uint16 unused = 0;
 
 	if (ser.isLoading()) {
 		ser.skip(40, SAVE_VERSION_ORIGINAL, SAVE_VERSION_ORIGINAL);	// description
@@ -356,8 +348,8 @@ bool TrecisionEngine::syncGameStream(Common::Serializer &ser) {
 	}
 
 	ser.syncAsUint16LE(_curRoom);
-	ser.syncAsByte(_inventorySize);
-	ser.syncAsByte(_cyberInventorySize);
+	ser.syncAsByte(unused);	// _inventorySize
+	ser.syncAsByte(unused); // _cyberInventorySize
 	ser.syncAsByte(_iconBase);
 	ser.syncAsSint16LE(_flagSkipTalk);
 	ser.syncAsSint16LE(_flagSkipEnable);
@@ -371,9 +363,8 @@ bool TrecisionEngine::syncGameStream(Common::Serializer &ser) {
 	ser.syncAsSint16LE(unused);	// FlagMousePolling
 	ser.syncAsSint16LE(unused); // FlagDialogSolitaire
 	ser.syncAsSint16LE(_flagCharacterExists);
-	ser.syncBytes(_inventory, MAXICON);
-	ser.syncBytes(_cyberInventory, MAXICON);
 
+	syncInventory(ser);
 	_actor->syncGameStream(ser);
 
 	ser.syncAsSint32LE(_curPanel);
@@ -648,7 +639,7 @@ uint16 *TrecisionEngine::readData16(Common::String fileName, int &size) {
 void TrecisionEngine::loadSaveSlots(Common::StringArray &saveNames) {
 	Common::SaveFileManager *saveFileMan = g_engine->getSaveFileManager();
 
-	for (int i = 0; i < _inventorySize; i++) {
+	for (int i = 0; i < _inventory.size(); i++) {
 		Common::String saveFileName = getSaveStateName(i + 1);
 		Common::InSaveFile *saveFile = saveFileMan->openForLoading(saveFileName);
 		ExtendedSavegameHeader header;
@@ -704,7 +695,8 @@ void TrecisionEngine::loadSaveSlots(Common::StringArray &saveNames) {
 }
 
 bool TrecisionEngine::dataSave() {
-	uint8 OldInv[MAXICON], OldIconBase, OldInvLen;
+	const Common::Array<byte> savedInventory = _inventory;
+	const uint8 savedIconBase = _iconBase;
 	char ch;
 	Common::StringArray saveNames;
 	saveNames.reserve(MAXSAVEFILE);
@@ -757,12 +749,8 @@ bool TrecisionEngine::dataSave() {
 	freeKey();
 
 	// Reset the inventory and turn it into save slots
-	memcpy(OldInv, _inventory, MAXICON);
-	memset(_inventory, 0, MAXICON);
-	OldIconBase = _iconBase;
+	_inventory.clear();
 	_iconBase = 0;
-	OldInvLen = _inventorySize;
-	_inventorySize = MAXSAVEFILE;
 
 insave:
 
@@ -897,10 +885,9 @@ insave:
 		ret = false;
 
 		// Restore the inventory
-		memcpy(_inventory, OldInv, MAXICON);
+		_inventory = savedInventory;
 		_curInventory = 0;
-		_iconBase = OldIconBase;
-		_inventorySize = OldInvLen;
+		_iconBase = savedIconBase;
 
 		saveGameState(CurPos + 1, saveNames[CurPos]);
 	}
@@ -916,15 +903,16 @@ insave:
 	_graphicsMgr->copyToScreen(0, 0, MAXX, TOP);
 
 	// Restore the inventory
-	memcpy(_inventory, OldInv, MAXICON);
+	_inventory = savedInventory;
 	_curInventory = 0;
-	_iconBase = OldIconBase;
-	_inventorySize = OldInvLen;
+	_iconBase = savedIconBase;
 
 	return ret;
 }
 
 bool TrecisionEngine::dataLoad() {
+	const Common::Array<byte> savedInventory = _inventory;
+	const uint8 savedIconBase = _iconBase;	
 	Common::StringArray saveNames;
 	saveNames.reserve(MAXSAVEFILE);
 	bool retval = true;
@@ -971,14 +959,9 @@ bool TrecisionEngine::dataLoad() {
 
 	freeKey();
 
-	uint8 OldInv[MAXICON];
 	// Reset the inventory and turn it into save slots
-	memcpy(OldInv, _inventory, MAXICON);
-	memset(_inventory, 0, MAXICON);
-	uint8 OldIconBase = _iconBase;
+	_inventory.clear();
 	_iconBase = 0;
-	uint8 OldInvLen = _inventorySize;
-	_inventorySize = MAXSAVEFILE;
 
 	loadSaveSlots(saveNames);
 
@@ -1048,10 +1031,9 @@ bool TrecisionEngine::dataLoad() {
 
 	if (skipLoad) {
 		// Restore the inventory
-		memcpy(_inventory, OldInv, MAXICON);
+		_inventory = savedInventory;
 		_curInventory = 0;
-		_iconBase = OldIconBase;
-		_inventorySize = OldInvLen;
+		_iconBase = savedIconBase;
 	}
 
 	return retval;

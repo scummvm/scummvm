@@ -108,10 +108,11 @@ public:
 	void doInventory();
 	void showInventoryName(uint16 obj, bool showhide);
 	uint8 whatIcon(uint16 mx);
-	uint8 iconPos(uint8 icon);
+	int8 iconPos(uint8 icon);
 	void removeIcon(uint8 icon);
 	void addIcon(uint8 icon);
 	void replaceIcon(uint8 oldIcon, uint8 newIcon);
+	void syncInventory(Common::Serializer &ser);
 	void doInventoryUseWithInventory();
 	void doInventoryUseWithScreen();
 	void rollInventory(uint8 status);
@@ -201,10 +202,8 @@ public:
 	// Inventory
 	uint16 _curInventory;
 	SInvObject _inventoryObj[MAXINVENTORY];
-	uint8 _inventory[MAXICON];
-	uint8 _inventorySize;
-	uint8 _cyberInventory[MAXICON];
-	uint8 _cyberInventorySize;
+	Common::Array<byte> _inventory;
+	Common::Array<byte> _cyberInventory;
 	uint8 _iconBase;
 	uint8 _inventoryStatus;
 	uint8 _lightIcon;
