@@ -36,16 +36,13 @@ const uint32 Kernel::TICKS_PER_SECOND = 60;
 const uint32 Kernel::FRAMES_PER_SECOND = Kernel::TICKS_PER_SECOND / Kernel::TICKS_PER_FRAME;
 
 
-Kernel::Kernel() : _loading(false) {
+Kernel::Kernel() : _loading(false), _tickNum(0), _paused(0),
+		_runningProcess(nullptr), _frameByFrame(false) {
 	debugN(MM_INFO, "Creating Kernel...\n");
 
 	_kernel = this;
 	_pIDs = new idMan(1, 32766, 128);
-	current_process = _processes.end();
-	_tickNum = 0;
-	_paused = 0;
-	_runningProcess = nullptr;
-	_frameByFrame = false;
+	_currentProcess = _processes.end();
 }
 
 Kernel::~Kernel() {
@@ -64,7 +61,7 @@ void Kernel::reset() {
 		delete(*it);
 	}
 	_processes.clear();
-	current_process = _processes.begin();
+	_currentProcess = _processes.begin();
 
 	_pIDs->clearAll();
 
@@ -132,47 +129,18 @@ ProcId Kernel::addProcessExec(Process *proc) {
 	return proc->_pid;
 }
 
-void Kernel::removeProcess(Process *proc) {
-	//! the way to remove processes has to be thought over sometime
-	//! we probably want to flag them as terminated before actually
-	//! removing/deleting it or something
-	//! also have to look out for deleting processes while iterating
-	//! over the list. (Hence the special 'erase' in runProcs below, which
-	//! is very Std::list-specific, incidentally)
-
-	for (ProcessIterator it = _processes.begin(); it != _processes.end(); ++it) {
-		if (*it == proc) {
-			proc->_flags &= ~Process::PROC_ACTIVE;
-
-			perr << "[Kernel] Removing process " << proc << Std::endl;
-
-			_processes.erase(it);
-
-			// Clear pid
-			_pIDs->clearID(proc->_pid);
-
-			return;
-		}
-	}
-}
-
-
 void Kernel::runProcesses() {
 	if (!_paused)
 		_tickNum++;
 
 	if (_processes.size() == 0) {
+		warning("Process queue is empty?! Aborting.");
 		return;
-		/*
-		perr << "Process queue is empty?! Aborting.\n";
-
-		//! do this in a cleaner way
-		exit(0);
-		*/
 	}
-	current_process = _processes.begin();
-	while (current_process != _processes.end()) {
-		Process *p = *current_process;
+
+	_currentProcess = _processes.begin();
+	while (_currentProcess != _processes.end()) {
+		Process *p = *_currentProcess;
 
 		if (!_paused && ((p->_flags & (Process::PROC_TERMINATED |
 		                             Process::PROC_TERM_DEFERRED))
@@ -192,22 +160,23 @@ void Kernel::runProcesses() {
 		}
 		if (!_paused && (p->_flags & Process::PROC_TERMINATED)) {
 			// process is killed, so remove it from the list
-			current_process = _processes.erase(current_process);
+			_currentProcess = _processes.erase(_currentProcess);
 
 			// Clear pid
 			_pIDs->clearID(p->_pid);
 
 			//! is this the right place to delete processes?
 			delete p;
-		} else
-			++current_process;
+		} else {
+			++_currentProcess;
+		}
 	}
 
 	if (!_paused && _frameByFrame) pause();
 }
 
 void Kernel::setNextProcess(Process *proc) {
-	if (current_process != _processes.end() && *current_process == proc) return;
+	if (_currentProcess != _processes.end() && *_currentProcess == proc) return;
 
 	if (proc->_flags & Process::PROC_ACTIVE) {
 		for (ProcessIterator it = _processes.begin();
@@ -221,10 +190,10 @@ void Kernel::setNextProcess(Process *proc) {
 		proc->_flags |= Process::PROC_ACTIVE;
 	}
 
-	if (current_process == _processes.end()) {
+	if (_currentProcess == _processes.end()) {
 		_processes.push_front(proc);
 	} else {
-		ProcessIterator t = current_process;
+		ProcessIterator t = _currentProcess;
 		++t;
 
 		_processes.insert(t, proc);

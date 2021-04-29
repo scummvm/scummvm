@@ -56,7 +56,6 @@ public:
 	//! \return pid of process
 	ProcId addProcessExec(Process *proc);
 
-	void removeProcess(Process *proc);
 	void runProcesses();
 	Process *getProcess(ProcId pid);
 
@@ -140,7 +139,7 @@ private:
 	Std::list<Process *> _processes;
 	idMan   *_pIDs;
 
-	Std::list<Process *>::iterator current_process;
+	Std::list<Process *>::iterator _currentProcess;
 
 	Std::map<Common::String, ProcessLoadFunc> _processLoaders;
 
