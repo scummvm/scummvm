@@ -200,8 +200,8 @@ void KyraEngine_MR::enterNewSceneUnk1(int facing, int unk1, int unk2) {
 
 		if (x2 >= 316)
 			x2 = 312;
-		if (y2 >= 185)
-			y2 = 183;
+		if (y2 >= _interfaceCommandLineY1 - 3)
+			y2 = _interfaceCommandLineY1 - 5;
 		if (x2 <= 4)
 			x2 = 8;
 	}
@@ -667,7 +667,7 @@ int KyraEngine_MR::checkSceneChange() {
 	} else if (charX >= 316 && _savedMouseState == -6) {
 		facing = 2;
 		process = 1;
-	} else if (charY >= 186 && _savedMouseState == -5) {
+	} else if (charY >= (_interfaceCommandLineY1 - 2) && _savedMouseState == -5) {
 		facing = 4;
 		process = 1;
 	} else if (charX <= 4 && _savedMouseState == -4) {
