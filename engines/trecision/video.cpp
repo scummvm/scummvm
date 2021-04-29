@@ -99,6 +99,10 @@ bool NightlongSmackerDecoder::forceSeekToFrame(uint frame) {
 	return _fileStream->seek(start + offset, SEEK_SET);
 }
 
+bool NightlongSmackerDecoder::endOfVideo() const {
+	return (uint32)getCurFrame() >= getFrameCount() - 1;
+}
+
 AnimManager::AnimManager(TrecisionEngine *vm) : _vm(vm) {
 	for (int i = 0; i < MAXSMACK; ++i) {
 		_smkAnims[i] = nullptr;
@@ -446,7 +450,7 @@ void AnimManager::refreshSmkAnim(int animation) {
 }
 
 void AnimManager::handleEndOfVideo(int animation, int slot) {
-	if (_smkAnims[slot]->getCurFrame() >= _smkAnims[slot]->getFrameCount()) {
+	if (_smkAnims[slot]->endOfVideo()) {
 		if (!(_animTab[animation]._flag & SMKANIM_LOOP) && !(_animTab[animation]._flag & SMKANIM_BKG)) {
 			smkStop(slot);
 			_vm->_flagPaintCharacter = true;
