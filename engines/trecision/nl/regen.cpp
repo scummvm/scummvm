@@ -88,8 +88,8 @@ void PaintScreen(bool flag) {
 		DObj.rect = Common::Rect(0, TOP, MAXX, MAXY + TOP);
 		DObj.l.left = oldString._rect.left;
 		DObj.l.top = oldString._rect.top - TOP;
-		DObj.l.right = DObj.l.left + oldString._rect.width();
-		DObj.l.bottom = DObj.l.top + oldString._rect.height();
+		DObj.l.setWidth(oldString._rect.width());
+		DObj.l.setHeight(oldString._rect.height());
 		DObj.objIndex = -1;
 		DObj.drawMask = false;
 
