@@ -37,6 +37,7 @@
 #include "engines/nancy/dialogs.h"
 #include "engines/nancy/console.h"
 #include "engines/nancy/constants.h"
+#include "engines/nancy/util.h"
 
 #include "engines/nancy/action/primaryvideo.h"
 
@@ -467,8 +468,12 @@ void NancyEngine::readBootSummary(const IFF &boot) {
 		readChunkList(boot, ser, "OB");
 	}
 
-	ser.skip(0x96, kGameTypeVampire, kGameTypeVampire);
-	ser.skip(0x79, kGameTypeNancy1, kGameTypeNancy1);
+	ser.skip(0x28, kGameTypeVampire, kGameTypeVampire);
+	ser.skip(0x10, kGameTypeNancy1, kGameTypeNancy1);
+	readRect(*bsum, _textboxScreenPosition);
+
+	ser.skip(0x5E, kGameTypeVampire, kGameTypeVampire);
+	ser.skip(0x59, kGameTypeNancy1, kGameTypeNancy1);
 	ser.syncAsUint16LE(_horizontalEdgesSize, kGameTypeVampire, kGameTypeNancy1);
 	ser.syncAsUint16LE(_verticalEdgesSize, kGameTypeVampire, kGameTypeNancy1);
 	ser.skip(0x1C, kGameTypeVampire, kGameTypeNancy1);

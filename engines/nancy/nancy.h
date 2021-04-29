@@ -122,6 +122,7 @@ public:
 
 	Common::RandomSource *_randomSource;
 
+	// BSUM data
 	uint16 _firstSceneID;
 	uint16 _startTimeHours;
 
@@ -132,6 +133,8 @@ public:
 
 	uint _horizontalEdgesSize;
 	uint _verticalEdgesSize;
+
+	Common::Rect _textboxScreenPosition;
 
 private:
 	struct GameFlow {

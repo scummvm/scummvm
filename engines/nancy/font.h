@@ -25,7 +25,7 @@
 #include "common/array.h"
 
 #include "graphics/font.h"
-#include "graphics/surface.h"
+#include "graphics/managed_surface.h"
 
 namespace Common {
 class SeekableReadStream;
@@ -82,7 +82,7 @@ private:
 
 	Common::Array<Common::Rect> _symbolRects; // 0x62
 
-	Graphics::Surface _image;
+	Graphics::ManagedSurface _image;
 
 	int _fontHeight;
 	int _maxCharWidth;

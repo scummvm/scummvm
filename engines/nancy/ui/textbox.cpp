@@ -81,9 +81,7 @@ void Textbox::init() {
 	chunk->seek(0x1FE, SEEK_SET);
 	_fontID = chunk->readUint16LE();
 
-	chunk = g_nancy->getBootChunkStream("BSUM");
-	chunk->seek(0x164);
-	readRect(*chunk, _screenPosition);
+	_screenPosition = g_nancy->_textboxScreenPosition;
 
 	Common::Rect outerBoundingBox = _screenPosition;
 	outerBoundingBox.moveTo(0, 0);
@@ -142,11 +140,10 @@ void Textbox::drawTextbox() {
 	const Font *font = g_nancy->_graphicsManager->getFont(_fontID);
 
 	uint maxWidth = _fullSurface.w - _maxWidthDifference - _borderWidth - 2;
-	uint lineDist = _lineHeight + _lineHeight / 4;
+	uint lineDist = _lineHeight + _lineHeight / 4 + (g_nancy->getGameType() == kGameTypeVampire ? 1 : 0);
 
 	for (uint lineID = 0; lineID < _textLines.size(); ++lineID) {
 		Common::String currentLine = _textLines[lineID];
-		currentLine.trim();
 
 		uint horizontalOffset = 0;
 		bool hasHotspot = false;
@@ -168,12 +165,21 @@ void Textbox::drawTextbox() {
 			currentLine = currentLine.substr(0, currentLine.size() - ARRAYSIZE(_telephoneEndToken) + 1);
 		}
 
-		// Remove hotspot token and mark that we need to calculate the bounds
-		// Assumes a single text line has a single hotspot
-		uint32 hotspotPos = currentLine.find(_hotspotToken);
-		if (hotspotPos != String::npos) {
+		// Remove hotspot tokens and mark that we need to calculate the bounds
+		// A single text line should only have one hotspot, but there's at least
+		// one malformed line in TVD that breaks this
+		uint32 hotspotPos, lastHotspotPos;
+		while (hotspotPos = currentLine.find(_hotspotToken), hotspotPos != String::npos) {
 			currentLine.erase(hotspotPos, ARRAYSIZE(_hotspotToken) - 1);
+
+			if (hasHotspot) {
+				// Replace the second hotspot token with a newline to copy the original behavior
+				// Maybe consider fixing the glitch instead of replicating it??
+				currentLine.insertChar('\n', lastHotspotPos);
+			}
+
 			hasHotspot = true;
+			lastHotspotPos = hotspotPos;
 		}
 
 		// Subdivide current line into sublines for proper handling of the tab and color tokens
@@ -279,6 +285,14 @@ void Textbox::assembleTextLine(char *rawCaption, Common::String &output, uint si
 			output += newBit;
 			i += newBit.size();
 		}
+	}
+
+	// Fix spaces at the end of the string in nancy1
+	output.trim();
+
+	// Fix at least one broken string in TVD
+	if (output.hasSuffix(">>")) {
+		output.deleteLastChar();
 	}
 }
 
