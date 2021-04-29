@@ -498,7 +498,7 @@ void ContainerGump::DropItem(Item *item, int mx, int my) {
 				// maybe this isn't needed? original doesn't do it here..
 				targetitem->callUsecodeEvent_combine();
 			} else {
-				item->setQuality(newquant);
+				targetitem->setQuality(newquant);
 				targetitem->callUsecodeEvent_combine();
 				// combined, so delete other
 				item->destroy();
