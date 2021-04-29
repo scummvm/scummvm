@@ -150,7 +150,6 @@ TrecisionEngine::TrecisionEngine(OSystem *syst) : Engine(syst) {
 	_textStackTop = -1;
 
 	_flagscriptactive = false;
-	_flagScreenRefreshed = false;
 
 	_font = nullptr;
 	_arrows = nullptr;
@@ -353,7 +352,7 @@ bool TrecisionEngine::syncGameStream(Common::Serializer &ser) {
 	ser.syncAsSint16LE(_flagSkipTalk);
 	ser.syncAsSint16LE(unused); // _flagSkipEnable
 	ser.syncAsSint16LE(unused);	// _flagMouseEnabled
-	ser.syncAsSint16LE(_flagScreenRefreshed);
+	ser.syncAsSint16LE(unused);	// _flagScreenRefreshed
 	ser.syncAsSint16LE(_flagPaintCharacter);
 	ser.syncAsSint16LE(_flagSomeoneSpeaks);
 	ser.syncAsSint16LE(_flagCharacterSpeak);

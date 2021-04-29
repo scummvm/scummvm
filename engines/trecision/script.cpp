@@ -77,7 +77,7 @@ void TrecisionEngine::playScript(uint16 id) {
 }
 
 void TrecisionEngine::evalScript() {
-	if (_characterQueue.testEmptyCharacterQueue4Script() && _gameQueue.testEmptyQueue(MC_DIALOG) && _flagScreenRefreshed) {
+	if (_characterQueue.testEmptyCharacterQueue4Script() && _gameQueue.testEmptyQueue(MC_DIALOG)) {
 		_curScriptFrame[_curStack]++;
 		hideCursor();
 
