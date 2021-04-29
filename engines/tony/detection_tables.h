@@ -36,7 +36,7 @@ static const TonyGameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformWindows,
-			ADGF_NO_FLAGS,
+			ADGF_DROPPLATFORM,
 			GUIO1(GUIO_NOMIDI)
 		},
 	},
@@ -54,7 +54,7 @@ static const TonyGameDescription gameDescriptions[] = {
 			},
 			Common::CZ_CZE,
 			Common::kPlatformWindows,
-			ADGF_NO_FLAGS,
+			ADGF_DROPPLATFORM,
 			GUIO1(GUIO_NOMIDI)
 		},
 	},
@@ -72,7 +72,7 @@ static const TonyGameDescription gameDescriptions[] = {
 			},
 			Common::FR_FRA,
 			Common::kPlatformWindows,
-			ADGF_NO_FLAGS,
+			ADGF_DROPPLATFORM,
 			GUIO1(GUIO_NOMIDI)
 		},
 	},
@@ -90,7 +90,7 @@ static const TonyGameDescription gameDescriptions[] = {
 			},
 			Common::DE_DEU,
 			Common::kPlatformWindows,
-			ADGF_NO_FLAGS,
+			ADGF_DROPPLATFORM,
 			GUIO1(GUIO_NOMIDI)
 		},
 	},
@@ -108,7 +108,7 @@ static const TonyGameDescription gameDescriptions[] = {
 			},
 			Common::DE_DEU,
 			Common::kPlatformWindows,
-			ADGF_NO_FLAGS,
+			ADGF_DROPPLATFORM,
 			GUIO1(GUIO_NOMIDI)
 		},
 	},
@@ -126,7 +126,7 @@ static const TonyGameDescription gameDescriptions[] = {
 			},
 			Common::IT_ITA,
 			Common::kPlatformWindows,
-			ADGF_NO_FLAGS,
+			ADGF_DROPPLATFORM,
 			GUIO1(GUIO_NOMIDI)
 		},
 	},
@@ -144,7 +144,7 @@ static const TonyGameDescription gameDescriptions[] = {
 			},
 			Common::IT_ITA,
 			Common::kPlatformWindows,
-			ADGF_NO_FLAGS,
+			ADGF_DROPPLATFORM,
 			GUIO1(GUIO_NOMIDI)
 		},
 	},
@@ -162,7 +162,7 @@ static const TonyGameDescription gameDescriptions[] = {
 			},
 			Common::PL_POL,
 			Common::kPlatformWindows,
-			ADGF_NO_FLAGS,
+			ADGF_DROPPLATFORM,
 			GUIO1(GUIO_NOMIDI)
 		},
 	},
@@ -180,7 +180,7 @@ static const TonyGameDescription gameDescriptions[] = {
 			},
 			Common::PL_POL,
 			Common::kPlatformWindows,
-			ADGF_NO_FLAGS,
+			ADGF_DROPPLATFORM,
 			GUIO1(GUIO_NOMIDI)
 		},
 	},
@@ -198,7 +198,7 @@ static const TonyGameDescription gameDescriptions[] = {
 			},
 			Common::RU_RUS,
 			Common::kPlatformWindows,
-			ADGF_NO_FLAGS,
+			ADGF_DROPPLATFORM,
 			GUIO1(GUIO_NOMIDI)
 		},
 	},
@@ -216,7 +216,7 @@ static const TonyGameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformWindows,
-			ADGF_DEMO,
+			ADGF_DEMO | ADGF_DROPPLATFORM,
 			GUIO1(GUIO_NOMIDI)
 		},
 	},
@@ -250,7 +250,7 @@ static const TonyGameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformWindows,
-			ADGF_DEMO | GF_COMPRESSED,
+			ADGF_DEMO | GF_COMPRESSED | ADGF_DROPPLATFORM,
 			GUIO1(GUIO_NOMIDI)
 		},
 	},
