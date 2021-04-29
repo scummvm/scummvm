@@ -162,7 +162,6 @@ TrecisionEngine::TrecisionEngine(OSystem *syst) : Engine(syst) {
 	_flagDialogActive = false;
 	_flagDialogMenuActive = false;
 	_flagSkipTalk = false;
-	_flagSkipEnable = false;
 	_flagPaintCharacter = false;
 	_flagShowCharacter = true;
 	_flagSomeoneSpeaks = false;
@@ -352,7 +351,7 @@ bool TrecisionEngine::syncGameStream(Common::Serializer &ser) {
 	ser.syncAsByte(unused); // _cyberInventorySize
 	ser.syncAsByte(_iconBase);
 	ser.syncAsSint16LE(_flagSkipTalk);
-	ser.syncAsSint16LE(_flagSkipEnable);
+	ser.syncAsSint16LE(unused); // _flagSkipEnable
 	ser.syncAsSint16LE(unused);	// _flagMouseEnabled
 	ser.syncAsSint16LE(_flagScreenRefreshed);
 	ser.syncAsSint16LE(_flagPaintCharacter);

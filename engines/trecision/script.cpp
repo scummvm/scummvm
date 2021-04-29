@@ -299,7 +299,7 @@ void TrecisionEngine::doMouse() {
 	case ME_MRIGHT:
 	case ME_MLEFT:
 		if (_flagSomeoneSpeaks) {
-			_flagSkipTalk = _flagSkipEnable;
+			_flagSkipTalk = true;
 			break;
 		}
 		if (_actor->_curAction > hWALKIN)

@@ -57,7 +57,7 @@ void CharacterTalk(const char *s);
 void CharacterTalkInAction(uint16 ss);
 void CharacterContinueTalk();
 void CharacterMute();
-void SomeoneTalk(uint16 s, uint16 Person, uint16 NewAnim, bool FromSomeOneSay);
+void SomeoneTalk(uint16 s, uint16 Person, uint16 NewAnim);
 void SomeoneContinueTalk();
 void someoneMute();
 void doString();

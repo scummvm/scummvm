@@ -289,7 +289,6 @@ public:
 	bool _flagDialogActive;
 	bool _flagDialogMenuActive;
 	bool _flagSkipTalk;
-	bool _flagSkipEnable;
 	bool _flagPaintCharacter;
 	bool _flagShowCharacter;
 	bool _flagSomeoneSpeaks;
