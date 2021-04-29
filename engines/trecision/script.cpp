@@ -465,7 +465,7 @@ void TrecisionEngine::doIdle() {
 
 	// Skip
 	case 0x1B:
-		if (!_flagSomeoneSpeaks && !_flagscriptactive && !_flagDialogActive && !_flagDialogMenuActive && (_actor->_curAction < hWALKIN) && !_flagUseWithStarted && _flagShowCharacter && !_animMgr->_playingAnims[kSmackerAction]) {
+		if (canPlayerInteract()) {
 			actorStop();
 			nextStep();
 			showCursor();
@@ -479,7 +479,7 @@ void TrecisionEngine::doIdle() {
 
 	// Sys
 	case 0x3B:
-		if (!_flagSomeoneSpeaks && !_flagscriptactive && !_flagDialogActive && !_flagDialogMenuActive && (_actor->_curAction < hWALKIN) && !_flagUseWithStarted && _flagShowCharacter && !_animMgr->_playingAnims[kSmackerAction]) {
+		if (canPlayerInteract()) {
 			actorStop();
 			nextStep();
 			showCursor();
@@ -493,7 +493,7 @@ void TrecisionEngine::doIdle() {
 
 	// Save
 	case 0x3C:
-		if (!_flagSomeoneSpeaks && !_flagscriptactive && !_flagDialogActive && !_flagDialogMenuActive && (_actor->_curAction < hWALKIN) && !_flagUseWithStarted && _flagShowCharacter && !_animMgr->_playingAnims[kSmackerAction]) {
+		if (canPlayerInteract()) {
 			::createThumbnailFromScreen(&_thumbnail);
 			dataSave();
 			showInventoryName(NO_OBJECTS, false);
@@ -504,7 +504,7 @@ void TrecisionEngine::doIdle() {
 
 	// Load
 	case 0x3D:
-		if (!_flagSomeoneSpeaks && !_flagscriptactive && !_flagDialogActive && !_flagDialogMenuActive && (_actor->_curAction < hWALKIN) && !_flagUseWithStarted && _flagShowCharacter && !_animMgr->_playingAnims[kSmackerAction]) {
+		if (canPlayerInteract()) {
 			::createThumbnailFromScreen(&_thumbnail);
 			if (!dataLoad()) {
 				showInventoryName(NO_OBJECTS, false);
