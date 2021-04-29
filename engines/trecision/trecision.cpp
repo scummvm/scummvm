@@ -501,10 +501,12 @@ void TrecisionEngine::LoadAll() {
 	}
 
 	for (int i = 0; i < MAXOBJ; ++i) {
+		uint16 w = dataNl.readUint16LE();
+		uint16 h = dataNl.readUint16LE();
 		_obj[i]._rect.left = dataNl.readUint16LE();
 		_obj[i]._rect.top = dataNl.readUint16LE();
-		_obj[i]._rect.right = dataNl.readUint16LE();
-		_obj[i]._rect.bottom = dataNl.readUint16LE();
+		_obj[i]._rect.right = w + _obj[i]._rect.left;
+		_obj[i]._rect.bottom = h + _obj[i]._rect.top;
 
 		_obj[i]._lim.left = dataNl.readUint16LE();
 		_obj[i]._lim.top = dataNl.readUint16LE();
