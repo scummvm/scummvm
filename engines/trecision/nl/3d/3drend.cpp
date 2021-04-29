@@ -260,7 +260,7 @@ void textureScanEdge(int32 x1, int32 y1, int32 z1, int32 c1, int32 tx1, int32 ty
 	int32 mty = ((ty2 - ty1) << 16) / dy;
 
 	x1 <<= 16; // starting x coordinate
-	z1 <<= 16; // starting x coordinate
+	z1 <<= 16; // starting z coordinate
 	c1 <<=  8; // starting c color
 
 	tx1 <<= 16;
