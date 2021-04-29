@@ -179,17 +179,6 @@ protected:
 		}
 #endif
 	}
-	/**
-	 * Gets the display index that the ScummVM window is on
-	 */
-	void getWindowDisplayIndexFromSdl(int *index) const {
-#if SDL_VERSION_ATLEAST(2, 0, 0)
-		assert(_window);
-		*index = SDL_GetWindowDisplayIndex(_window->getSDLWindow());
-#else
-		*index = 0;
-#endif
-	}
 
 	void getDisplayDpiFromSdl(float *dpi, float *defaultDpi) const {
 		const float systemDpi =
@@ -205,10 +194,7 @@ protected:
 
 		if (dpi) {
 #if SDL_VERSION_ATLEAST(2, 0, 4)
-			int displayIndex = 0;
-			getWindowDisplayIndexFromSdl(&displayIndex);
-
-			if (SDL_GetDisplayDPI(displayIndex, NULL, dpi, NULL) != 0) {
+			if (SDL_GetDisplayDPI(_window->getDisplayIndex(), NULL, dpi, NULL) != 0) {
 				*dpi = systemDpi;
 			}
 #else
