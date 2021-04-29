@@ -224,10 +224,7 @@ void AnimManager::drawFrameSubtitles(Graphics::Surface *surface, int frameNum) {
 	// which are set inside dialogHandler(), but are then reset to
 	// fixed coordinates
 	_vm->_sdText._rect = Common::Rect(20, 380 - TOP, MAXX - 40 + 20, _vm->_sdText.checkDText() + (380 - TOP));
-	_vm->_sdText._subtitleRect.left = 0;
-	_vm->_sdText._subtitleRect.top = 0;
-	_vm->_sdText._subtitleRect.right = MAXX;
-	_vm->_sdText._subtitleRect.bottom = MAXY;
+	_vm->_sdText._subtitleRect = Common::Rect(MAXX, MAXY);
 	_vm->_sdText.scol = MASKCOL;
 	_vm->_sdText.DText((uint16 *)surface->getPixels());
 }

@@ -115,7 +115,7 @@ void TrecisionEngine::redrawString() {
 void StackText::doText() {
 	curString._rect.left = x;
 	curString._rect.top = y;
-	curString._rect.right = g_vm->textLength(text, 0) + curString._rect.left;
+	curString._rect.setWidth(g_vm->textLength(text, 0));
 	int16 w = curString._rect.width();
 
 	if ((y == MAXY - CARHEI) && (w > 600))
@@ -125,15 +125,12 @@ void StackText::doText() {
 	else if ((y != MAXY - CARHEI) && (w > 320))
 		w = w * 3 / 5;
 
-	curString._rect.right = w + curString._rect.left;
+	curString._rect.setWidth(w);
 
 	curString.text = text;
-	curString._subtitleRect.left = 0;
-	curString._subtitleRect.top = 0;
-	curString._subtitleRect.right = curString._rect.width();
 	uint16 hstring = curString.checkDText();
-	curString._subtitleRect.bottom = hstring;
-	curString._rect.bottom = hstring + curString._rect.top;
+	curString._subtitleRect = Common::Rect(curString._rect.width(), hstring);
+	curString._rect.setHeight(hstring);
 	curString.tcol = tcol;
 	curString.scol = scol;
 

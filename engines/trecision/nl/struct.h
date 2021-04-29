@@ -74,8 +74,8 @@ struct SObject {
 	void readRect(Common::SeekableReadStream *stream) {
 		_rect.left = stream->readUint16LE();
 		_rect.top = stream->readUint16LE();
-		_rect.right = stream->readUint16LE() + _rect.left;
-		_rect.bottom = stream->readUint16LE() + _rect.top;
+		_rect.setWidth(stream->readUint16LE());
+		_rect.setHeight(stream->readUint16LE());
 	}
 };
 
