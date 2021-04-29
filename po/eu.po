@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.5.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-04-28 03:51+0000\n"
+"POT-Creation-Date: 2021-04-28 17:08+0000\n"
 "PO-Revision-Date: 2021-01-02 18:37+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Basque <https://translations.scummvm.org/projects/scummvm/"
@@ -7402,26 +7402,26 @@ msgstr "~A~urrekoa"
 msgid "Next location"
 msgstr "~A~urrekoa"
 
-#: engines/twine/parser/text.cpp:33
+#: engines/twine/parser/text.cpp:34
 #, fuzzy
 #| msgid "Enable high resolution graphics"
 msgctxt "Options menu"
 msgid "High resolution on"
 msgstr "Gaitu erresoluzio altuko grafikoak"
 
-#: engines/twine/parser/text.cpp:34
+#: engines/twine/parser/text.cpp:35
 #, fuzzy
 #| msgid "Enable high resolution graphics"
 msgctxt "Options menu"
 msgid "High resolution off"
 msgstr "Gaitu erresoluzio altuko grafikoak"
 
-#: engines/twine/parser/text.cpp:35
+#: engines/twine/parser/text.cpp:36
 msgctxt "Options menu"
 msgid "Wall collision on"
 msgstr ""
 
-#: engines/twine/parser/text.cpp:36
+#: engines/twine/parser/text.cpp:37
 #, fuzzy
 #| msgid "Snap scroll off"
 msgctxt "Options menu"
