@@ -90,7 +90,7 @@ private:
 
 public:
 	uint16 _playingAnims[MAXSMACK];
-	uint16 _animMaxX, _animMinX, _animMaxY, _animMinY;
+	Common::Rect _animRect;
 	SAnim _animTab[MAXANIM];
 
 	void smkGoto(int slot, int frame);
