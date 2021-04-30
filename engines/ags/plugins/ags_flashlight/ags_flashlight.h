@@ -86,6 +86,7 @@ private:
 	static void DrawDarkness();
 	static void CreateLightBitmap();
 	static void Update();
+	static uint32 blendPixel(uint32 col, bool isAlpha24, int light);
 	static void syncGame(Serializer &s);
 
 	static void SetFlashlightTint(ScriptMethodParams &params);

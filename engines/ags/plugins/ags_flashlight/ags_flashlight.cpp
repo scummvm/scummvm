@@ -184,8 +184,8 @@ int64 AGSFlashlight::AGS_EngineOnEvent(int event, NumberPtr data) {
 		_engine->GetScreenDimensions(&screen_width, &screen_height, &screen_color_depth);
 		_engine->UnrequestEventHook(AGSE_PRESCREENDRAW);
 
-		// Only 16 bit color depth is supported.
-		if (screen_color_depth != 16) {
+		// Only 32 bit color depth is supported.
+		if (screen_color_depth != 32) {
 			_engine->UnrequestEventHook(AGSE_PREGUIDRAW);
 			_engine->UnrequestEventHook(AGSE_PRESCREENDRAW);
 			_engine->UnrequestEventHook(AGSE_SAVEGAME);
@@ -266,10 +266,10 @@ void AGSFlashlight::ClipToRange(int &variable, int min, int max) {
 }
 
 void AGSFlashlight::AlphaBlendBitmap() {
-	uint16 *destpixel = (uint16 *)_engine->GetRawBitmapSurface(_engine->GetVirtualScreen());
+	uint32 *destpixel = (uint32 *)_engine->GetRawBitmapSurface(_engine->GetVirtualScreen());
 	uint32 *sourcepixel = (uint32 *)_engine->GetRawBitmapSurface(g_LightBitmap);
 
-	uint16 *currentdestpixel = destpixel;
+	uint32 *currentdestpixel = destpixel;
 	uint32 *currentsourcepixel = sourcepixel;
 
 	int x, y;
@@ -343,19 +343,37 @@ void AGSFlashlight::DrawTint() {
 	_engine->ReleaseBitmapSurface(screen);
 }
 
+#define DARKEN(VAL, SHIFT) (((int)(col >> SHIFT) & 255) * light / 255)
+
+uint32 AGSFlashlight::blendPixel(uint32 col, bool isAlpha24, int light) {
+	byte b0 = isAlpha24 ? DARKEN(col, 0) : (col & 0xff);
+	byte b1 = DARKEN(col, 8);
+	byte b2 = DARKEN(col, 16);
+	byte b3 = !isAlpha24 ? DARKEN(col, 24) : (col >> 24) & 0xff;
+
+	return b0 | (b1 << 8) | (b2 << 16) | (b3 << 24);
+}
+
+
 void AGSFlashlight::DrawDarkness() {
 	int x, y;
-	uint32 color = (255 - (int)((float)g_DarknessLightLevel * 2.55f)) << 24;
 	BITMAP *screen = _engine->GetVirtualScreen();
-	uint16 *destpixel = (uint16 *)_engine->GetRawBitmapSurface(screen);
-	uint16 *currentpixel;
+	const Graphics::PixelFormat &format = screen->format;
+	uint32 *destpixel = (uint32 *)_engine->GetRawBitmapSurface(screen);
+
+	int light = (int)((float)g_DarknessLightLevel * 2.55f);
+	uint32 color = format.ARGBToColor(255 - light, 0, 0, 0);
+	uint32 *currentpixel;
+
+	assert(format.aShift == 0 || format.aShift == 24);
+	bool isAlpha24 = format.aShift == 24;
 
 	calc_x_n(color);
 
 	if (g_DarknessSize == 0) {
 		// Whole screen.
 		for (x = 0; x < screen_width * screen_height; x++) {
-			*destpixel = (uint16)_blender_alpha16_bgr(*destpixel);
+			*destpixel = blendPixel(*destpixel, isAlpha24, light);
 			destpixel++;
 		}
 	} else {
@@ -364,7 +382,7 @@ void AGSFlashlight::DrawDarkness() {
 			currentpixel = destpixel;
 			for (y = 0; y < g_FlashlightDrawAtY; y++) {
 				for (x = 0; x < screen_width; x++) {
-					*currentpixel = (uint16)_blender_alpha16_bgr(*currentpixel);
+					*currentpixel = blendPixel(*currentpixel, isAlpha24, light);
 					currentpixel++;
 				}
 			}
@@ -375,7 +393,7 @@ void AGSFlashlight::DrawDarkness() {
 			currentpixel = destpixel + (g_FlashlightDrawAtY + g_DarknessDiameter) * screen_width;
 			for (y = g_FlashlightDrawAtY + g_DarknessDiameter; y < screen_height; y++) {
 				for (x = 0; x < screen_width; x++) {
-					*currentpixel = (uint16)_blender_alpha16_bgr(*currentpixel);
+					*currentpixel = blendPixel(*currentpixel, isAlpha24, light);
 					currentpixel++;
 				}
 			}
@@ -388,7 +406,7 @@ void AGSFlashlight::DrawDarkness() {
 			int endpoint = (g_FlashlightDrawAtY + g_DarknessDiameter >= screen_height) ? screen_height + 1 : g_FlashlightDrawAtY + g_DarknessDiameter + 1;
 			for (y = startpoint; y < endpoint; y++) {
 				for (x = 0; x < g_FlashlightDrawAtX; x++) {
-					*currentpixel = (uint16)_blender_alpha16_bgr(*currentpixel);
+					*currentpixel = blendPixel(*currentpixel, isAlpha24, light);
 					currentpixel++;
 				}
 
@@ -403,7 +421,7 @@ void AGSFlashlight::DrawDarkness() {
 			int endpoint = (g_FlashlightDrawAtY + g_DarknessDiameter >= screen_height) ? screen_height + 1 : g_FlashlightDrawAtY + g_DarknessDiameter + 1;
 			for (y = startpoint; y < endpoint; y++) {
 				for (x = g_FlashlightDrawAtX + g_DarknessDiameter; x < screen_width; x++) {
-					*currentpixel = (uint16)_blender_alpha16_bgr(*currentpixel);
+					*currentpixel = blendPixel(*currentpixel, isAlpha24, light);
 					currentpixel++;
 				}
 
