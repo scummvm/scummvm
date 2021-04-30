@@ -51,6 +51,19 @@ bool isCombatAnimU8(const Sequence anim) {
 	}
 }
 
+bool isCastAnimU8(const Sequence anim) {
+	switch (anim) {
+	case cast1:
+	case cast2:
+	case cast3:
+	case cast4:
+	case cast5:
+		return true;
+	default:
+		return false;
+	}
+}
+
 bool isCombatAnimCru(const Sequence anim) {
 	switch (anim) {
 	case combatStand:

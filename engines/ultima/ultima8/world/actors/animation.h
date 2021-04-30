@@ -167,6 +167,7 @@ enum Result {
 bool isCombatAnim(const Sequence anim);
 bool isCombatAnimU8(const Sequence anim);
 bool isCombatAnimCru(const Sequence anim);
+bool isCastAnimU8(const Sequence anim);
 Sequence checkWeapon(const Sequence nextanim, const Sequence lastanim);
 
 } // End of namespace Animation
