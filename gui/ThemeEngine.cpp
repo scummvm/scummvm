@@ -192,6 +192,9 @@ ThemeEngine::ThemeEngine(Common::String id, GraphicsMode mode) :
 	_font(nullptr), _initOk(false), _themeOk(false), _enabled(false), _themeFiles(),
 	_cursor(nullptr), _scaleFactor(1.0f) {
 
+	_baseWidth = 640;	// Default sane values
+	_baseHeight = 480;
+
 	_system = g_system;
 	_parser = new ThemeParser(this);
 	_themeEval = new GUI::ThemeEval();
@@ -227,9 +230,9 @@ ThemeEngine::ThemeEngine(Common::String id, GraphicsMode mode) :
 
 	_cursorHotspotX = _cursorHotspotY = 0;
 	_cursorWidth = _cursorHeight = 0;
+	_cursorTransparent = 255;
 #ifndef USE_RGB_COLOR
 	_cursorFormat = Graphics::PixelFormat::createFormatCLUT8();
-	_cursorTransparent = 255;
 	_cursorPalSize = 0;
 #endif
 
