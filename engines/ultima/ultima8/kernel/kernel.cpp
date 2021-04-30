@@ -167,6 +167,17 @@ void Kernel::runProcesses() {
 
 			//! is this the right place to delete processes?
 			delete p;
+		} else if (!_paused && (p->_flags & Process::PROC_TERM_DEFERRED) && GAME_IS_CRUSADER) {
+			//
+			// In Crusader, move term deferred processes to the end to clean up after
+			// others have run.  This gets the right speed on ELEVAT (which should
+			// execute one movement per tick)
+			//
+			// In U8, frame-count comparison for Devon turning at the start shows this
+			// *shouldn't* be used, and the process should be cleaned up next tick.
+			//
+			_processes.push_back(p);
+			_currentProcess = _processes.erase(_currentProcess);
 		} else {
 			++_currentProcess;
 		}
@@ -191,6 +202,7 @@ void Kernel::setNextProcess(Process *proc) {
 	}
 
 	if (_currentProcess == _processes.end()) {
+		// Not currently running processes, add to the start of the next run.
 		_processes.push_front(proc);
 	} else {
 		ProcessIterator t = _currentProcess;
