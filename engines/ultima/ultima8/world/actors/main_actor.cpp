@@ -168,8 +168,7 @@ int16 MainActor::addItemCru(Item *item, bool showtoast) {
 				item->setQuality(0);
 				item->callUsecodeEvent_combine();
 			} else {
-				warning("TODO: Get default count for ammo type %d", winfo->_ammoType);
-				item->setQuality(100);
+				item->setQuality(winfo->_clipSize);
 			}
 			item->setLocation(x, y, z);
 			item->moveToContainer(this);
