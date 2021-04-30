@@ -68,6 +68,8 @@ enum TrecisionMessageIds {
 	kMessageGoto2 = 26
 };
 
+typedef Common::List<Common::Rect>::iterator DirtyRectsIterator;
+
 class TrecisionEngine : public Engine {
 	void initMain();
 	void initMessageSystem();
@@ -177,7 +179,7 @@ public:
 	void performLoad(int slot, bool skipLoad);
 	void resetZBuffer(int x1, int y1, int x2, int y2);
 	bool canPlayerInteract();
-
+	void addDirtyRect(Common::Rect rect);
 
 	Graphics::Surface _thumbnail;
 
@@ -195,9 +197,8 @@ public:
 
 	char *_textPtr;
 	SDText _sdText;
-	Common::Rect _limits[50];
-	uint16 _limitsNum;
-	int _actorLimit;
+	Common::List<Common::Rect> _dirtyRects;
+	Common::Rect *_actorRect;
 
 	// Inventory
 	uint16 _curInventory;

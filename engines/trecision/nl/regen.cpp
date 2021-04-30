@@ -37,7 +37,7 @@
 
 namespace Trecision {
 
-int VisualRef[50];
+Common::Rect *VisualRef[50];
 
 SDObj DObj;
 
@@ -45,11 +45,11 @@ void PaintScreen(bool flag) {
 	AtFrameNext();
 	PaintRegenRoom();
 
-	g_vm->_actorLimit = 255;
+	g_vm->_actorRect = nullptr;
 	for (int a = 0; a < 20; a++)
-		VisualRef[a] = 255;
+		VisualRef[a] = nullptr;
 
-	g_vm->_limitsNum = 0;
+	g_vm->_dirtyRects.clear();
 	g_vm->_flagPaintCharacter = true; // always redraws the character
 
 	int x1 = g_vm->_actor->_lim[0];
@@ -65,21 +65,17 @@ void PaintScreen(bool flag) {
 		DObj.drawMask = false;
 		g_vm->_graphicsMgr->DrawObj(DObj);
 
-		g_vm->_actorLimit = g_vm->_limitsNum;
-		Common::Rect l = DObj.l;
-		l.translate(0, TOP);
-		g_vm->_limits[g_vm->_limitsNum++] = l;
-	} else if (g_vm->_animMgr->_animMinX != MAXX) {
+		g_vm->_actorRect = &g_vm->_dirtyRects.back();
+		g_vm->addDirtyRect(DObj.l);
+	} else if (g_vm->_animMgr->_animRect.left != MAXX) {
 		DObj.rect = Common::Rect(0, TOP, MAXX, AREA + TOP);
-		DObj.l = Common::Rect(g_vm->_animMgr->_animMinX, g_vm->_animMgr->_animMinY, g_vm->_animMgr->_animMaxX, g_vm->_animMgr->_animMaxY);
+		DObj.l = g_vm->_animMgr->_animRect;
 		DObj.objIndex = -1;
 		DObj.drawMask = false;
 		g_vm->_graphicsMgr->DrawObj(DObj);
 
-		g_vm->_actorLimit = g_vm->_limitsNum;
-		Common::Rect l = DObj.l;
-		l.translate(0, TOP);
-		g_vm->_limits[g_vm->_limitsNum++] = l;
+		g_vm->_actorRect = &g_vm->_dirtyRects.back();
+		g_vm->addDirtyRect(DObj.l);
 	}
 
 // CANCELLO LA SCRITTA
@@ -100,13 +96,7 @@ void PaintScreen(bool flag) {
 				memset(g_vm->_screenBuffer + DObj.l.left + a * MAXX, 0x0000, (DObj.l.right - DObj.l.left) * 2);
 		}
 		oldString.text = nullptr;
-
-		g_vm->_limits[g_vm->_limitsNum].left = DObj.l.left; // aggiunge rettangolo scritta
-		g_vm->_limits[g_vm->_limitsNum].top = DObj.l.top + TOP;
-		g_vm->_limits[g_vm->_limitsNum].right = DObj.l.right;
-		g_vm->_limits[g_vm->_limitsNum].bottom = DObj.l.bottom + TOP;
-
-		g_vm->_limitsNum++;
+		g_vm->addDirtyRect(DObj.l);
 
 		if (!(TextStatus & TEXT_DRAW))        // se non c'e' nuova scritta
 			TextStatus = TEXT_OFF;               // non aggiorna piu' scritta
@@ -127,11 +117,9 @@ void PaintScreen(bool flag) {
 
 			if ((SortTable[a + 1]._isBitmap == SortTable[a]._isBitmap) &&
 				(SortTable[a + 1]._roomIndex == SortTable[a]._roomIndex))
-				VisualRef[a + 1] = g_vm->_limitsNum;
+				VisualRef[a + 1] = &g_vm->_dirtyRects.back();
 
-			Common::Rect l(DObj.l);
-			l.translate(0, TOP);
-			g_vm->_limits[g_vm->_limitsNum++] = l;
+			g_vm->addDirtyRect(DObj.l);
 		}
 	}
 
@@ -151,7 +139,7 @@ void PaintScreen(bool flag) {
 
 	if (TextStatus & TEXT_DRAW) {
 		curString.DText();
-		g_vm->_limits[g_vm->_limitsNum++] = curString._rect;
+		g_vm->_dirtyRects.push_back(curString._rect);
 		TextStatus = TEXT_DRAW;                 // Activate text update
 	}
 
@@ -204,18 +192,19 @@ void PaintObjAnm(uint16 CurBox) {
 					DObj.drawMask = o._mode & OBJMODE_MASK;
 					g_vm->_graphicsMgr->DrawObj(DObj);
 
-					if (VisualRef[a] == 255) {
-						g_vm->_limits[g_vm->_limitsNum++] = DObj.rect;
+					if (VisualRef[a] == nullptr) {
+						g_vm->_dirtyRects.push_back(DObj.rect);
 					} else {
-						g_vm->_limits[VisualRef[a]].extend(DObj.rect);
+						VisualRef[a]->extend(DObj.rect);
 					}
 				}
 			}
 		}
 	}
-	for (int a = 0; a < g_vm->_limitsNum; a++) {
+
+	for (DirtyRectsIterator d = g_vm->_dirtyRects.begin(); d != g_vm->_dirtyRects.end(); ++d) {
 		for (int b = 0; b < MAXOBJINROOM; b++) {
-			uint16 curObject = g_vm->_room[g_vm->_curRoom]._object[b];
+			const uint16 curObject = g_vm->_room[g_vm->_curRoom]._object[b];
 			if (!curObject)
 				break;
 
@@ -225,7 +214,7 @@ void PaintObjAnm(uint16 CurBox) {
 			    (obj._mode & OBJMODE_OBJSTATUS) &&
 			    (obj._nbox == CurBox)) {
 
-				Common::Rect r = g_vm->_limits[a];
+				Common::Rect r = *d;
 				Common::Rect r2 = obj._rect;
 
 				r2.translate(0, TOP);
@@ -268,7 +257,8 @@ void PaintObjAnm(uint16 CurBox) {
 		if (x2 > x1 && y2 > y1) {
 			// enlarge the rectangle of the character
 			Common::Rect l(x1, y1, x2, y2);
-			g_vm->_limits[g_vm->_actorLimit].extend(l);
+			if (g_vm->_actorRect)
+				g_vm->_actorRect->extend(l);
 
 			g_vm->resetZBuffer(x1, y1, x2, y2);
 		}

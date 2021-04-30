@@ -125,12 +125,7 @@ TrecisionEngine::TrecisionEngine(OSystem *syst) : Engine(syst) {
 	_logicMgr = nullptr;
 	_soundMgr = nullptr;
 
-	for (int i = 0; i < 50; ++i) {
-		_limits[i].left = _limits[i].top = _limits[i].right = _limits[i].bottom = 0;
-	}
-
-	_limitsNum = 0;
-	_actorLimit = 0;
+	_actorRect = nullptr;
 	_nextRefresh = 0;
 
 	_curKey = Common::KEYCODE_INVALID;
@@ -1104,6 +1099,11 @@ bool TrecisionEngine::canPlayerInteract() {
 			!_flagUseWithStarted &&
 			_flagShowCharacter &&
 			!_animMgr->_playingAnims[kSmackerAction]);
+}
+
+void TrecisionEngine::addDirtyRect(Common::Rect rect) {
+	rect.translate(0, TOP);
+	_dirtyRects.push_back(rect);
 }
 
 } // End of namespace Trecision

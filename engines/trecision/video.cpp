@@ -114,9 +114,6 @@ AnimManager::AnimManager(TrecisionEngine *vm) : _vm(vm) {
 		_animTab[i]._name[0] = '\0';
 	}
 
-	_animMaxX = _animMinX = 0;
-	_animMaxY = _animMinY = 0;
-
 	_curCD = 1;
 	swapCD(_curCD);
 }
@@ -442,9 +439,8 @@ void AnimManager::refreshSmkAnim(int animation) {
 
 	for (int32 a = 0; a < MAXCHILD; a++) {
 		if (!(_animTab[animation]._flag & (SMKANIM_OFF1 << a)) && (_animTab[animation]._lim[a].bottom != 0)) {
+			g_vm->addDirtyRect(_animTab[animation]._lim[a]);
 			Common::Rect l = _animTab[animation]._lim[a];
-			l.translate(0, TOP);
-			_vm->_limits[_vm->_limitsNum++] = l;
 		}
 	}
 }
@@ -541,25 +537,24 @@ void AnimManager::drawSmkActionFrame() {
 		for (uint16 curY = 0; curY < AREA; curY++) {
 			for (uint16 curX = 0; curX < MAXX; curX++) {
 				if (frame->getPixel(curX, curY)) {
-					_animMinX = MIN(curX, _animMinX);
-					_animMinY = MIN(curY, _animMinY);
-					_animMaxX = MAX(curX, _animMaxX);
-					_animMaxY = MAX(curY, _animMaxY);
+					_animRect.left = MIN<uint16>(curX, _animRect.left);
+					_animRect.top = MIN<uint16>(curY, _animRect.top);
+					_animRect.right = MAX<uint16>(curX, _animRect.right);
+					_animRect.bottom = MAX<uint16>(curY, _animRect.bottom);
 				}
 			}
 		}
 	}
 
-	if (_animMaxX > _animMinX && _animMaxY > _animMinY) {
+	if (_animRect.width() > 0 && _animRect.height() > 0) {
 		Graphics::Surface *frame16 = frame->convertTo(g_system->getScreenFormat(), smkDecoder->getPalette());
-		const Common::Rect animRect(_animMinX, _animMinY, _animMaxX, _animMaxY);
-		Graphics::Surface anim = frame16->getSubArea(animRect);
-		_vm->_graphicsMgr->blitToScreenBuffer(&anim, _animMinX, _animMinY + TOP, mask, false);
+		Graphics::Surface anim = frame16->getSubArea(_animRect);
+		_vm->_graphicsMgr->blitToScreenBuffer(&anim, _animRect.left, _animRect.top + TOP, mask, false);
 		frame16->free();
 		delete frame16;
 
-		_vm->_actorLimit = _vm->_limitsNum;
-		_vm->_limits[_vm->_limitsNum++] = Common::Rect(_animMinX, _animMinY + TOP, _animMaxX, _animMaxY + TOP);
+		_vm->_actorRect = &_vm->_dirtyRects.back();
+		_vm->addDirtyRect(_animRect);
 	}
 }
 
