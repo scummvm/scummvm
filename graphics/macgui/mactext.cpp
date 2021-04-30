@@ -95,21 +95,16 @@ uint MacTextLine::getChunkNum(int *col) {
 
 
 MacText::MacText(MacWidget *parent, int x, int y, int w, int h, MacWindowManager *wm, const Common::U32String &s, const MacFont *macFont, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment, int interlinear, uint16 border, uint16 gutter, uint16 boxShadow, uint16 textShadow) :
-	MacWidget(parent, x, y, w + 2, h, wm, true, border, gutter, boxShadow) {
+	MacWidget(parent, x, y, w + 2, h, wm, true, border, gutter, boxShadow),
+	_macFont(macFont), _maxWidth(maxWidth), _textAlignment(textAlignment), _interLinear(interlinear) {
+
 
 	_str = s;
 	_fullRefresh = true;
 
 	_wm = wm;
-	_macFont = macFont;
 	_fgcolor = fgcolor;
 	_bgcolor = bgcolor;
-	_maxWidth = maxWidth;
-	_textMaxWidth = 0;
-	_textMaxHeight = 0;
-	_surface = nullptr;
-	_textAlignment = textAlignment;
-	_interLinear = interlinear;
 	_textShadow = textShadow;
 
 	if (macFont) {
@@ -123,21 +118,14 @@ MacText::MacText(MacWidget *parent, int x, int y, int w, int h, MacWindowManager
 }
 
 MacText::MacText(MacWidget *parent, int x, int y, int w, int h, MacWindowManager *wm, const Common::String &s, const MacFont *macFont, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment, int interlinear, uint16 border, uint16 gutter, uint16 boxShadow, uint16 textShadow) :
-	MacWidget(parent, x, y, w + 2, h, wm, true, border, gutter, boxShadow) {
+	MacWidget(parent, x, y, w + 2, h, wm, true, border, gutter, boxShadow),
+	_macFont(macFont), _maxWidth(maxWidth), _textAlignment(textAlignment), _interLinear(interlinear) {
 
 	_str = Common::U32String(s);
-	_fullRefresh = true;
 
 	_wm = wm;
-	_macFont = macFont;
 	_fgcolor = fgcolor;
 	_bgcolor = bgcolor;
-	_maxWidth = maxWidth;
-	_textMaxWidth = 0;
-	_textMaxHeight = 0;
-	_surface = nullptr;
-	_textAlignment = textAlignment;
-	_interLinear = interlinear;
 	_textShadow = textShadow;
 
 	if (macFont) {
@@ -152,21 +140,14 @@ MacText::MacText(MacWidget *parent, int x, int y, int w, int h, MacWindowManager
 
 // NOTE: This constructor and the one afterward are for MacText engines that don't use widgets. This is the classic was MacText was constructed.
 MacText::MacText(const Common::U32String &s, MacWindowManager *wm, const MacFont *macFont, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment, int interlinear) :
-	MacWidget(nullptr, 0, 0, 0, 0, wm, false, 0, 0, 0) {
+	MacWidget(nullptr, 0, 0, 0, 0, wm, false, 0, 0, 0),
+	_macFont(macFont), _maxWidth(maxWidth), _textAlignment(textAlignment), _interLinear(interlinear) {
 
 	_str = s;
-	_fullRefresh = true;
 
 	_wm = wm;
-	_macFont = macFont;
 	_fgcolor = fgcolor;
 	_bgcolor = bgcolor;
-	_maxWidth = maxWidth;
-	_textMaxWidth = 0;
-	_textMaxHeight = 0;
-	_surface = nullptr;
-	_textAlignment = textAlignment;
-	_interLinear = interlinear;
 	_textShadow = 0;
 
 	if (macFont) {
@@ -180,21 +161,14 @@ MacText::MacText(const Common::U32String &s, MacWindowManager *wm, const MacFont
 }
 
 MacText::MacText(const Common::String &s, MacWindowManager *wm, const MacFont *macFont, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment, int interlinear) :
-	MacWidget(nullptr, 0, 0, 0, 0, wm, false, 0, 0, 0) {
+	MacWidget(nullptr, 0, 0, 0, 0, wm, false, 0, 0, 0),
+	_macFont(macFont), _maxWidth(maxWidth), _textAlignment(textAlignment), _interLinear(interlinear) {
 
 	_str = Common::U32String(s);
-	_fullRefresh = true;
 
 	_wm = wm;
-	_macFont = macFont;
 	_fgcolor = fgcolor;
 	_bgcolor = bgcolor;
-	_maxWidth = maxWidth;
-	_textMaxWidth = 0;
-	_textMaxHeight = 0;
-	_surface = nullptr;
-	_textAlignment = textAlignment;
-	_interLinear = interlinear;
 	_textShadow = 0;
 
 	if (macFont) {
@@ -208,6 +182,12 @@ MacText::MacText(const Common::String &s, MacWindowManager *wm, const MacFont *m
 }
 
 void MacText::init() {
+	_fullRefresh = true;
+
+	_textMaxWidth = 0;
+	_textMaxHeight = 0;
+	_surface = nullptr;
+
 	_defaultFormatting.wm = _wm;
 	// try to set fgcolor as default color in chunks
 	if (_wm->_mode & kWMModeWin95) {
