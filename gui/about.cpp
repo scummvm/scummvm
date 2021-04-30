@@ -456,6 +456,15 @@ bool EEHandler::handleKeyDown(Common::KeyState &state) {
 
 EE::EE() {
 	init();
+
+	_scale = 1.0;
+	_windowW = 320;
+	_windowH = 200;
+	_windowX = _windowY = 0;
+
+	_format = g_system->getOverlayFormat();
+
+	_colorBlack = _colorBlue = _colorOrange = _colorKey = 0;
 }
 
 EE::~EE() {
