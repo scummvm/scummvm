@@ -680,6 +680,7 @@ bool ThemeEngine::addBitmap(const Common::String &filename, const Common::String
 	if (surf) {
 		surf->free();
 		delete surf;
+		surf = nullptr;
 
 		_bitmaps.erase(filename);
 	}
@@ -696,10 +697,14 @@ bool ThemeEngine::addBitmap(const Common::String &filename, const Common::String
 			}
 		}
 
-		_bitmaps[filename] = new Graphics::ManagedSurface(width * _scaleFactor, height * _scaleFactor, *image->getPixelFormat());
-		image->render(*_bitmaps[filename], width * _scaleFactor, height * _scaleFactor);
+		if (image) {
+			_bitmaps[filename] = new Graphics::ManagedSurface(width * _scaleFactor, height * _scaleFactor, *image->getPixelFormat());
+			image->render(*_bitmaps[filename], width * _scaleFactor, height * _scaleFactor);
 
-		delete image;
+			delete image;
+		} else {
+			return false;
+		}
 
 		return true;
 	}
@@ -750,7 +755,7 @@ bool ThemeEngine::addBitmap(const Common::String &filename, const Common::String
 			surf = new Graphics::ManagedSurface(srcSurface->convertTo(_overlayFormat));
 	}
 
-	if (_scaleFactor != 1.0) {
+	if (_scaleFactor != 1.0 && surf) {
 		Graphics::Surface *tmp2 = surf->rawSurface().scale(surf->w * _scaleFactor, surf->h * _scaleFactor, false);
 
 		surf->free();
