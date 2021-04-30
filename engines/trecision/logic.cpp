@@ -415,6 +415,98 @@ void LogicManager::setupAltRoom(uint16 room, bool altRoomFl) {
 	}
 }
 
+struct CharacterAnimation {
+	uint16 curRoom;
+	uint16 oldRoom;
+	uint16 action;
+};
+
+void LogicManager::startCharacterAnimations() {
+	static const CharacterAnimation characterAnimations[] = {
+		{ kRoom12,  kRoom13,  a1213ARRIVACONASCENSORE },
+		{ kRoom12,  kRoom16,  a1213ARRIVACONASCENSORE },
+		{ kRoom16,  kRoom12,  a1617SCENDECONASCENSORE },
+		{ kRoom16,  kRoom13,  a1617SCENDECONASCENSORE },
+		{ kRoom13,  kRoom12,  a1315ARRIVAASCENSOREALTOENTRA },
+		{ kRoom13,  kRoom16,  a1314ARRIVAASCENSOREDABASSO },
+		{ kRoom14,  kRoom13,  a1414ENTERROOM },
+		{ kRoom18,  kRoom19,  a189ENTRADALCLUB },
+		{ kRoom1A,  kRoom18,  a1A5ENTRA },
+		{ kRoom1C,  kRoom1B,  a1C1ENTRACUNICOLO },
+		{ kRoom1B,  kRoom1C,  a1B11ESCETOMBINO },
+		{ kRoom1B,  kRoom1D,  a1B4ESCEBOTOLA },
+		{ kRoom24,  kRoom2H,  a242 },
+		{ kRoom25,  kRoom2A,  a257 },
+		{ kRoom28,  kRoom27,  aWALKIN },
+		{ kRoom29,  kRoom2A,  a298ESCEBOTOLA },
+		{ kRoom29L, kRoom2A,  a2910ESCEBOTOLA },
+		{ kRoom2A,  kRoom25,  aWALKIN },
+		{ kRoom2A,  kRoom29,  aWALKIN },
+		{ kRoom2A,  kRoom29L, aWALKIN },
+		{ kRoom2H,  kRoom24,  a2H1ARRIVA },
+		{ kRoom2E,  kRoom2F,  a2E5SECONDAPARRIVANDO },
+		{ kRoom2F,  kRoom2E,  aWALKIN },
+		{ kRoom23B, kRoom21,  aWALKIN },
+		{ kRoom21,  kRoom23A, aWALKIN },
+		{ kRoom21,  kRoom23B, aWALKIN },
+		{ kRoom2F,  kRoom31,  a2F4ESCEASCENSORE },
+		{ kRoom31,  kRoom2F,  a3114ESCEPASSAGGIO },
+		{ kRoom32,  kRoom31,  a321SALEMONTACARICHI },
+		{ kRoom32,  kRoom33,  a325SCENDESCALE },
+		{ kRoom36,  kRoom35,  a361ESCEASCENSORE },
+		{ kRoom35,  kRoom36,  a3515ESCEASCENSORE },
+		{ kRoom44,  kRoom45,  a445 },
+		{ kRoom44,  kRoom45S, a445 },
+		{ kRoom45,  kRoom44,  a457 },
+		{ kRoom45S, kRoom44,  a457 },
+		{ kRoom46,  kRoom47,  aWALKIN },
+		{ kRoom46,  kRoom48,  aWALKIN },
+		{ kRoom46,  kRoom49,  aWALKIN },
+		{ kRoom47,  kRoom46,  a476 },
+		{ kRoom48,  kRoom46,  a485 },
+		{ kRoom49,  kRoom46,  a494 },
+		{       0,        0,  0 }
+	};
+
+	int i = 0;
+	
+	do {
+		const CharacterAnimation anim = characterAnimations[i];
+		const bool positionerRoom = _vm->_curRoom >= kRoom44 && _vm->_curRoom <= kRoom49;
+		const bool checkPositioner = !positionerRoom || !(_vm->_inventoryObj[kItemPositioner]._flag & kObjFlagExtra);
+		if (_vm->_curRoom == anim.curRoom && _vm->_oldRoom == anim.oldRoom && checkPositioner) {
+			_vm->StartCharacterAction(anim.action, 0, 0, 0);
+			break;
+		}
+		
+		i++;
+	} while (characterAnimations[i].curRoom != 0);
+
+	if (_vm->_curRoom == kRoom18 && _vm->_oldRoom == kRoom17 && !(_vm->_room[kRoom18]._flag & kObjFlagDone)) {
+		_vm->StartCharacterAction(a186GUARDAPIAZZA, 0, 0, 0);
+	} else if (_vm->_curRoom == kRoom1A && _vm->_oldRoom == kRoom18 && (_vm->_room[kRoom1A]._flag & kObjFlagDone)) {
+		_vm->StartCharacterAction(a1A5ENTRA, 0, 0, 0);
+		_vm->_animMgr->_animTab[aBKG1A]._flag |= SMKANIM_OFF1;
+	} else if (_vm->_curRoom == kRoom1D && _vm->_oldRoom == kRoom1B) {
+		const uint16 cellarAction = (_vm->_obj[oDONNA1D]._mode & OBJMODE_OBJSTATUS) ? a1D1SCENDESCALE : a1D12SCENDESCALA;
+		_vm->StartCharacterAction(cellarAction, 0, 1, 0);
+		_vm->_actor->_lim[0] = 60;
+		_vm->_actor->_lim[2] = 240;
+	} else if (_vm->_curRoom == kRoom1B && _vm->_oldRoom == kRoom18 && (_vm->_animMgr->_animTab[aBKG1B]._flag & SMKANIM_OFF1))
+		_vm->StartCharacterAction(a1B12SCAPPATOPO, 0, 0, 0);
+	else if ((_vm->_curRoom == kRoom2B) && (_vm->_oldRoom == kRoom2A))
+		_vm->StartCharacterAction(a2B2ESCEPOZZO, 0, 2, 0);
+	else if ((_vm->_curRoom == kRoom23A) && (_vm->_oldRoom == kRoom21) && (_vm->_room[kRoom23A]._flag & kObjFlagDone))
+		_vm->StartCharacterAction(aWALKIN, 0, 0, 0);
+	else if (_vm->_curRoom == kRoom33 && _vm->_oldRoom == kRoom32) {
+		const uint16 roofAction = (_vm->_obj[oBRUCIATURA33]._mode & OBJMODE_OBJSTATUS) ? a3311SALESCALE : a3313CHIUDEBOTOLA;
+		_vm->StartCharacterAction(roofAction, 0, 0, 0);
+	} else if ((_vm->_curRoom == kRoom54) && (_vm->_oldRoom == kRoom53)) {
+		_vm->StartCharacterAction(a5411, 0, 11, 0);
+		_vm->_inventoryObj[kItemLaserGun]._examine = 1599;
+	}
+}
+
 void LogicManager::endChangeRoom() {
 	//	Specific management of magnetic fields
 	if ((_vm->_curRoom == kRoom2E) && (_vm->_obj[oPULSANTEADS2D]._mode & OBJMODE_OBJSTATUS)) {
@@ -470,110 +562,20 @@ void LogicManager::endChangeRoom() {
 	// End of specific management for the magnetic fields
 
 	// Actions
-	if ((_vm->_curRoom == kRoom12) && ((_vm->_oldRoom == kRoom13) || (_vm->_oldRoom == kRoom16)))
-		_vm->StartCharacterAction(a1213ARRIVACONASCENSORE, 0, 0, 0);
-	else if ((_vm->_curRoom == kRoom16) && ((_vm->_oldRoom == kRoom13) || (_vm->_oldRoom == kRoom12)))
-		_vm->StartCharacterAction(a1617SCENDECONASCENSORE, 0, 0, 0);
-	else if ((_vm->_curRoom == kRoom13) && (_vm->_oldRoom == kRoom12))
-		_vm->StartCharacterAction(a1315ARRIVAASCENSOREALTOENTRA, 0, 0, 0);
-	else if ((_vm->_curRoom == kRoom13) && (_vm->_oldRoom == kRoom16))
-		_vm->StartCharacterAction(a1314ARRIVAASCENSOREDABASSO, 0, 0, 0);
-	else if ((_vm->_curRoom == kRoom14) && (_vm->_oldRoom == kRoom13))
-		_vm->StartCharacterAction(a1414ENTERROOM, 0, 0, 0);
-	else if ((_vm->_curRoom == kRoom18) && (_vm->_oldRoom == kRoom17) && !(_vm->_room[kRoom18]._flag & kObjFlagDone))
-		_vm->StartCharacterAction(a186GUARDAPIAZZA, 0, 0, 0);
-	else if ((_vm->_curRoom == kRoom18) && (_vm->_oldRoom == kRoom19))
-		_vm->StartCharacterAction(a189ENTRADALCLUB, 0, 0, 0);
-	else if ((_vm->_curRoom == kRoom1A) && (_vm->_oldRoom == kRoom18) && (_vm->_room[kRoom1A]._flag & kObjFlagDone)) {
-		_vm->StartCharacterAction(a1A5ENTRA, 0, 0, 0);
-		_vm->_animMgr->_animTab[aBKG1A]._flag |= SMKANIM_OFF1;
-	} else if ((_vm->_curRoom == kRoom1C) && (_vm->_oldRoom == kRoom1B))
-		_vm->StartCharacterAction(a1C1ENTRACUNICOLO, 0, 0, 0);
-	else if ((_vm->_curRoom == kRoom1B) && (_vm->_oldRoom == kRoom1C))
-		_vm->StartCharacterAction(a1B11ESCETOMBINO, 0, 0, 0);
-	else if ((_vm->_curRoom == kRoom1D) && (_vm->_oldRoom == kRoom1B) && (_vm->_obj[oDONNA1D]._mode & OBJMODE_OBJSTATUS)) {
-		_vm->StartCharacterAction(a1D1SCENDESCALE, 0, 1, 0);
-		_vm->_actor->_lim[0] = 60;
-		_vm->_actor->_lim[2] = 240;
-	} else if ((_vm->_curRoom == kRoom1D) && (_vm->_oldRoom == kRoom1B) && !(_vm->_obj[oDONNA1D]._mode & OBJMODE_OBJSTATUS)) {
-		_vm->StartCharacterAction(a1D12SCENDESCALA, 0, 1, 0);
-		_vm->_actor->_lim[0] = 60;
-		_vm->_actor->_lim[2] = 240;
-	} else if ((_vm->_curRoom == kRoom1B) && (_vm->_oldRoom == kRoom1D))
-		_vm->StartCharacterAction(a1B4ESCEBOTOLA, 0, 0, 0);
-	else if ((_vm->_curRoom == kRoom1B) && (_vm->_oldRoom == kRoom18) && (_vm->_animMgr->_animTab[aBKG1B]._flag & SMKANIM_OFF1))
-		_vm->StartCharacterAction(a1B12SCAPPATOPO, 0, 0, 0);
-	else if ((_vm->_curRoom == kRoom24) && (_vm->_oldRoom == kRoom2H))
-		_vm->StartCharacterAction(a242, 0, 0, 0);
-	else if ((_vm->_curRoom == kRoom25) && (_vm->_oldRoom == kRoom2A))
-		_vm->StartCharacterAction(a257, 0, 0, 0);
-	else if ((_vm->_curRoom == kRoom28) && (_vm->_oldRoom == kRoom27))
-		_vm->StartCharacterAction(aWALKIN, 0, 0, 0);
-	else if ((_vm->_curRoom == kRoom29) && (_vm->_oldRoom == kRoom2A))
-		_vm->StartCharacterAction(a298ESCEBOTOLA, 0, 0, 0);
-	else if ((_vm->_curRoom == kRoom29L) && (_vm->_oldRoom == kRoom2A))
-		_vm->StartCharacterAction(a2910ESCEBOTOLA, 0, 0, 0);
-	else if ((_vm->_curRoom == kRoom2A) && (_vm->_oldRoom == kRoom25))
-		_vm->StartCharacterAction(aWALKIN, 0, 0, 0);
-	else if ((_vm->_curRoom == kRoom2A) && ((_vm->_oldRoom == kRoom29) || (_vm->_oldRoom == kRoom29L)))
-		_vm->StartCharacterAction(aWALKIN, 0, 0, 0);
-	else if ((_vm->_curRoom == kRoom2B) && (_vm->_oldRoom == kRoom2A))
-		_vm->StartCharacterAction(a2B2ESCEPOZZO, 0, 2, 0);
-	else if ((_vm->_curRoom == kRoom2H) && (_vm->_oldRoom == kRoom24))
-		_vm->StartCharacterAction(a2H1ARRIVA, 0, 0, 0);
-	else if ((_vm->_curRoom == kRoom2E) && (_vm->_oldRoom == kRoom2F))
-		_vm->StartCharacterAction(a2E5SECONDAPARRIVANDO, 0, 0, 0);
-	else if ((_vm->_curRoom == kRoom2F) && (_vm->_oldRoom == kRoom2E))
-		_vm->StartCharacterAction(aWALKIN, 0, 0, 0);
-	else if ((_vm->_curRoom == kRoom23B) && (_vm->_oldRoom == kRoom21))
-		_vm->StartCharacterAction(aWALKIN, 0, 0, 0);
-	else if ((_vm->_curRoom == kRoom23A) && (_vm->_oldRoom == kRoom21) && (_vm->_room[kRoom23A]._flag & kObjFlagDone))
-		_vm->StartCharacterAction(aWALKIN, 0, 0, 0);
-	else if ((_vm->_curRoom == kRoom23A) && (_vm->_oldRoom == kRoom21) && (!(_vm->_room[kRoom23A]._flag & kObjFlagDone)))
-		_vm->_flagShowCharacter = false;
-	else if ((_vm->_curRoom == kRoom21) && ((_vm->_oldRoom == kRoom23A) || (_vm->_oldRoom == kRoom23B)))
-		_vm->StartCharacterAction(aWALKIN, 0, 0, 0);
-	else if (_vm->isCloseupOrControlRoom()) { // Screens without inventory
+	startCharacterAnimations();
+
+	if (_vm->isCloseupOrControlRoom()) { // Screens without inventory
 		_vm->_flagShowCharacter = false;
 		_vm->_flagCharacterExists = false;
 		_vm->_flagInventoryLocked = true;
-	} else if ((_vm->_curRoom == kRoom31P) || (_vm->_curRoom == kRoom35P)) { // Screens with inventory
+	} else if (_vm->_curRoom == kRoom31P || _vm->_curRoom == kRoom35P) { // Screens with inventory
 		_vm->_flagShowCharacter = false;
 		_vm->_flagCharacterExists = false;
-	} else if ((_vm->_curRoom == kRoom2F) && (_vm->_oldRoom == kRoom31))
-		_vm->StartCharacterAction(a2F4ESCEASCENSORE, 0, 0, 0);
-	else if ((_vm->_curRoom == kRoom31) && (_vm->_oldRoom == kRoom2F))
-		_vm->StartCharacterAction(a3114ESCEPASSAGGIO, 0, 0, 0);
+	} else if ((_vm->_curRoom == kRoom23A) && (_vm->_oldRoom == kRoom21) && (!(_vm->_room[kRoom23A]._flag & kObjFlagDone)))
+		_vm->_flagShowCharacter = false;
 	else if ((_vm->_curRoom == kRoom31) && !(_vm->_room[kRoom31]._flag & kObjFlagDone))
 		setPosition(14);
-	else if ((_vm->_curRoom == kRoom32) && (_vm->_oldRoom == kRoom31))
-		_vm->StartCharacterAction(a321SALEMONTACARICHI, 0, 0, 0);
-	else if ((_vm->_curRoom == kRoom33) && (_vm->_oldRoom == kRoom32) && (_vm->_obj[oBRUCIATURA33]._mode & OBJMODE_OBJSTATUS))
-		_vm->StartCharacterAction(a3311SALESCALE, 0, 0, 0);
-	else if ((_vm->_curRoom == kRoom33) && (_vm->_oldRoom == kRoom32) && !(_vm->_obj[oBRUCIATURA33]._mode & OBJMODE_OBJSTATUS))
-		_vm->StartCharacterAction(a3313CHIUDEBOTOLA, 0, 0, 0);
-	else if ((_vm->_curRoom == kRoom32) && (_vm->_oldRoom == kRoom33))
-		_vm->StartCharacterAction(a325SCENDESCALE, 0, 0, 0);
-	else if ((_vm->_curRoom == kRoom36) && (_vm->_oldRoom == kRoom35))
-		_vm->StartCharacterAction(a361ESCEASCENSORE, 0, 0, 0);
-	else if ((_vm->_curRoom == kRoom35) && (_vm->_oldRoom == kRoom36))
-		_vm->StartCharacterAction(a3515ESCEASCENSORE, 0, 0, 0);
-	else if ((_vm->_curRoom == kRoom44) && (_vm->_oldRoom == kRoom45 || _vm->_oldRoom == kRoom45S) && !(_vm->_inventoryObj[kItemPositioner]._flag & kObjFlagExtra))
-		_vm->StartCharacterAction(a445, 0, 0, 0);
-	else if ((_vm->_curRoom == kRoom45 || _vm->_curRoom == kRoom45S) && (_vm->_oldRoom == kRoom44) && !(_vm->_inventoryObj[kItemPositioner]._flag & kObjFlagExtra))
-		_vm->StartCharacterAction(a457, 0, 0, 0);
-	else if ((_vm->_curRoom == kRoom46) && (_vm->_oldRoom == kRoom47 || _vm->_oldRoom == kRoom48 || _vm->_oldRoom == kRoom49) && !(_vm->_inventoryObj[kItemPositioner]._flag & kObjFlagExtra))
-		_vm->StartCharacterAction(aWALKIN, 0, 0, 0);
-	else if ((_vm->_curRoom == kRoom47) && (_vm->_oldRoom == kRoom46) && !(_vm->_inventoryObj[kItemPositioner]._flag & kObjFlagExtra))
-		_vm->StartCharacterAction(a476, 0, 0, 0);
-	else if ((_vm->_curRoom == kRoom48) && (_vm->_oldRoom == kRoom46) && !(_vm->_inventoryObj[kItemPositioner]._flag & kObjFlagExtra))
-		_vm->StartCharacterAction(a485, 0, 0, 0);
-	else if ((_vm->_curRoom == kRoom49) && (_vm->_oldRoom == kRoom46) && !(_vm->_inventoryObj[kItemPositioner]._flag & kObjFlagExtra))
-		_vm->StartCharacterAction(a494, 0, 0, 0);
-	else if ((_vm->_curRoom == kRoom54) && (_vm->_oldRoom == kRoom53)) {
-		_vm->StartCharacterAction(a5411, 0, 11, 0);
-		_vm->_inventoryObj[kItemLaserGun]._examine = 1599;
-	} else if ((_vm->_oldRoom == kRoom41D) && (_vm->_inventoryObj[kItemPositioner]._flag & kObjFlagExtra)) {
+	else if ((_vm->_oldRoom == kRoom41D) && (_vm->_inventoryObj[kItemPositioner]._flag & kObjFlagExtra)) {
 		setPosition(30);
 		drawCharacter(CALCPOINTS);
 	}
