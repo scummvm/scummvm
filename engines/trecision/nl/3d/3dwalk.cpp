@@ -263,8 +263,8 @@ void findPath() {
 
 		if (((inters & 1) && (_curPanel < 0) && (_oldPanel < 0)) ||
 				((inters - 1 & 1) && (_curPanel < 0) &&
-				 (!(findAttachedPanel(_pathNode[_numPathNodes - 2]._curp, _pathNode[_numPathNodes - 1]._curp)) ||
-				  (pointInside(_pathNode[_numPathNodes - 1]._curp, (double)_curX, (double)_curZ))))) {
+				 (!findAttachedPanel(_pathNode[_numPathNodes - 2]._curp, _pathNode[_numPathNodes - 1]._curp) ||
+				  pointInside(_pathNode[_numPathNodes - 1]._curp, (double)_curX, (double)_curZ)))) {
 
 			_curPanel = _pathNode[_numPathNodes - 1]._curp;
 
@@ -406,7 +406,7 @@ void findShortPath() {
 		curp = _pathNode[a]._curp;
 
 		// if source and destination panel are on the same block
-		if (!(findAttachedPanel(curp, _pathNode[a + 1]._curp)))
+		if (!findAttachedPanel(curp, _pathNode[a + 1]._curp))
 			continue;
 
 		// go around obstacle starting with _near1
@@ -1046,84 +1046,81 @@ void displayPath() {
 	buildFramelist();
 }
 
-/*-----------------16/10/96 11.07-------------------
-	Guarda e 2 pannelli sono nello stesso blocco
+/*------------------------------------------------
+	Check if two panels are in the same block
 --------------------------------------------------*/
-int findAttachedPanel(int srcP, int destP) {
-	int curp;
-	int nearp;
+bool findAttachedPanel(int srcPanel, int destPanel) {
+	// if at least one is on the floor, return false
+	if (srcPanel < 0 || destPanel < 0)
+		return false;
 
-	// se almeno uno e' sul pavimento sul pavimento esci
-	if ((srcP < 0) || (destP < 0))
-		return 0;
+	// if they are equal, return true
+	if (srcPanel == destPanel)
+		return true;
 
-	// se sono uguali torna 1
-	if (srcP == destP)
-		return 1;
-
-	curp  = srcP;
-	nearp = _panel[srcP]._near1;
+	int curPanel = srcPanel;
+	int nearPanel = _panel[srcPanel]._near1;
 
 	for (int b = 0;; b++) {
-		// se sono attaccati torna 1
-		if (curp == destP)
-			return (1);
+		// if they are attached, return true
+		if (curPanel == destPanel)
+			return true;
 
-		// se e' tornato al pannello di partenza torna 0
-		if ((srcP == curp) && (b))
-			return (0);
+		// if it has returned to the starting panel, return false
+		if (srcPanel == curPanel && b)
+			return false;
 
 		if (b > _panelNum)
-			return (0);
+			return false;
 
-		// se sono attaccati al vertice 1 prende il 2
-		if (_panel[nearp]._near1 == curp) {
-			curp  = nearp;
-			nearp = _panel[curp]._near2;
+		// if they are attached to vertex 1, take 2
+		if (_panel[nearPanel]._near1 == curPanel) {
+			curPanel  = nearPanel;
+			nearPanel = _panel[curPanel]._near2;
 		} else {
-			curp  = nearp;
-			nearp = _panel[curp]._near1;
+			curPanel  = nearPanel;
+			nearPanel = _panel[curPanel]._near1;
 		}
 	}
 }
 
-/*-----------------02/11/96 21.50-------------------
-	Guarda se un pto e' all'interno di un pannello
+/*------------------------------------------------
+	Check if a point is inside a panel
 --------------------------------------------------*/
-bool pointInside(int pan, double x, double z) {
-	int inside_flag;
-	double pgon[4][2], ox, oz, s;
-
+bool pointInside(int pan, float x, float z) {
 	if (pan < 0)
 		return false;
 
 	if (!(_panel[pan]._flags & 0x80000000))
 		return true;
 
+	double pgon[4][2];
 	pgon[0][0] = (double)_panel[pan]._x1;
 	pgon[0][1] = (double)_panel[pan]._z1;
 	pgon[3][0] = (double)_panel[pan]._x2;
 	pgon[3][1] = (double)_panel[pan]._z2;
 
+	uint8 idx = _panel[pan]._col1 & 0x7F;
 	if (_panel[pan]._col1 & 0x80) {
-		pgon[1][0] = (double)_panel[_panel[pan]._col1 & 0x7F]._x2;
-		pgon[1][1] = (double)_panel[_panel[pan]._col1 & 0x7F]._z2;
+		pgon[1][0] = (double)_panel[idx]._x2;
+		pgon[1][1] = (double)_panel[idx]._z2;
 	} else {
-		pgon[1][0] = (double)_panel[_panel[pan]._col1 & 0x7F]._x1;
-		pgon[1][1] = (double)_panel[_panel[pan]._col1 & 0x7F]._z1;
+		pgon[1][0] = (double)_panel[idx]._x1;
+		pgon[1][1] = (double)_panel[idx]._z1;
 	}
 
+	idx = _panel[pan]._col2 & 0x7F;
 	if (_panel[pan]._col2 & 0x80) {
-		pgon[2][0] = (double)_panel[_panel[pan]._col2 & 0x7F]._x2;
-		pgon[2][1] = (double)_panel[_panel[pan]._col2 & 0x7F]._z2;
+		pgon[2][0] = (double)_panel[idx]._x2;
+		pgon[2][1] = (double)_panel[idx]._z2;
 	} else {
-		pgon[2][0] = (double)_panel[_panel[pan]._col2 & 0x7F]._x1;
-		pgon[2][1] = (double)_panel[_panel[pan]._col2 & 0x7F]._z1;
+		pgon[2][0] = (double)_panel[idx]._x1;
+		pgon[2][1] = (double)_panel[idx]._z1;
 	}
 
-	ox = pgon[3][0] - pgon[0][0];
-	oz = pgon[3][1] - pgon[0][1];
-	s = sqrt(ox * ox + oz * oz);
+	double ox = pgon[3][0] - pgon[0][0];
+	double oz = pgon[3][1] - pgon[0][1];
+	double s = sqrt(ox * ox + oz * oz);
 	ox /= s;
 	oz /= s;
 	pgon[0][0] -= EPSILON * ox;
@@ -1141,31 +1138,30 @@ bool pointInside(int pan, double x, double z) {
 	pgon[2][0] += EPSILON * ox;
 	pgon[2][1] += EPSILON * oz;
 
-//	Crossing-Multiply algorithm
-	{
-		double *vtx0 = pgon[3];
-		// get test bit for above/below X axis
-		bool yflag0 = (vtx0[1] >= z);
-		double *vtx1 = pgon[0];
+	// Crossing-Multiply algorithm
+	double *vtx0 = pgon[3];
+	// get test bit for above/below X axis
+	bool yflag0 = (vtx0[1] >= z);
+	double *vtx1 = pgon[0];
 
-		inside_flag = 0;
-		for (int j = 5; --j;) {
-			bool yflag1 = (vtx1[1] >= z);
-			if (yflag0 != yflag1) {
-				bool xflag0 = (vtx0[0] >= x);
-				if ((xflag0 == (vtx1[0] >= x)) && (xflag0))
-					inside_flag += (yflag0 ? -1 : 1);
-				else if ((vtx1[0] - (vtx1[1] - z) * (vtx0[0] - vtx1[0]) / (vtx0[1] - vtx1[1])) >= x)
-					inside_flag += (yflag0 ? -1 : 1);
-			}
-
-			// Move to the next pair of vertices, retaining info as possible.
-			yflag0 = yflag1;
-			vtx0 = vtx1;
-			vtx1 += 2;
+	int counter = 0;
+	for (int j = 5; --j;) {
+		bool yflag1 = (vtx1[1] >= z);
+		if (yflag0 != yflag1) {
+			bool xflag0 = (vtx0[0] >= x);
+			if ((xflag0 == (vtx1[0] >= x)) && (xflag0))
+				counter += (yflag0 ? -1 : 1);
+			else if ((vtx1[0] - (vtx1[1] - z) * (vtx0[0] - vtx1[0]) / (vtx0[1] - vtx1[1])) >= x)
+				counter += (yflag0 ? -1 : 1);
 		}
+
+		// Move to the next pair of vertices, retaining info as possible.
+		yflag0 = yflag1;
+		vtx0 = vtx1;
+		vtx1 += 2;
 	}
-	return (inside_flag != 0);
+
+	return (counter != 0);
 }
 
 /*------------------------------------------------

@@ -169,7 +169,7 @@ float evalPath(int a, float destX, float destZ, int nearP);
 void buildFramelist();
 int nextStep();
 void displayPath();
-int findAttachedPanel(int srcP, int destP);
+bool findAttachedPanel(int srcPanel, int destPanel);
 int pathCompare(const void *arg1, const void *arg2);
 void sortPath();
 float distF(float x1, float y1, float x2, float y2);

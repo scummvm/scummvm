@@ -39,7 +39,7 @@ void TrecisionEngine::refreshInventory(uint8 startIcon, uint8 startLine) {
 		memset(_screenBuffer + (FIRSTLINE + b) * MAXX, 0, MAXX * 2);
 
 	for (uint16 a = 0; a < ICONSHOWN; a++) {
-		int index = a + startIcon;
+		uint index = a + startIcon;
 		if (index >= _inventory.size())
 			break;
 
@@ -196,6 +196,9 @@ void TrecisionEngine::doInventory() {
 				setInventoryStart(_iconBase, INVENTORY_SHOW);
 			}
 		}
+		break;
+
+	default:
 		break;
 	}
 }
@@ -411,8 +414,8 @@ void TrecisionEngine::syncInventory(Common::Serializer &ser) {
 		_cyberInventory.clear();
 	}
 
-	for (int which = 0; which <= 1; which++) {
-		for (int i = 0; i < MAXICON; i++) {
+	for (uint which = 0; which <= 1; which++) {
+		for (uint i = 0; i < MAXICON; i++) {
 			byte val = 0;
 			if (ser.isSaving()) {
 				if (which == 0)

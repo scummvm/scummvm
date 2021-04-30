@@ -145,7 +145,7 @@ public:
 	void doInvOperate();
 	void doDoing();
 	void doScript();
-
+	void doString();
 
 	// Utils
 	char *getNextSentence();

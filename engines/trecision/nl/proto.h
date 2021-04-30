@@ -36,8 +36,7 @@ struct SDObj;
 struct STexture;
 struct SPan;
 
-void performLoad(int slot, bool skipLoad);
-bool pointInside(int pan, double x, double z);
+bool pointInside(int pan, float x, float z);
 void ProcessAtFrame(ATFHandle *h, int type, int atf);
 void InitAtFrameHandler(uint16 an, uint16 obj);
 void AtFrameNext();
