@@ -252,7 +252,7 @@ void DebuggerDumper::dumpDictionary() {
 
 void DebuggerDumper::dumpWordMap() {
 	Word *word[3];
-	char str[3][6];
+	char str[3][7];
 	WordMap *map;
 	uint i, j;
 
