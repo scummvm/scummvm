@@ -81,6 +81,9 @@ public:
 
 	void doSystemChangeRoom();
 	void DoSys(uint16 curObj);
+
+private:
+	void startCharacterAnimations();
 };
 ; // end of class
 
