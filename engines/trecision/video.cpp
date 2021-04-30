@@ -168,8 +168,8 @@ void AnimManager::playMovie(Common::String filename, int startFrame, int endFram
 void AnimManager::setVideoRange(NightlongSmackerDecoder *smkDecoder, int &startFrame, int &endFrame) {
 	uint16 x = (g_system->getWidth() - smkDecoder->getWidth()) / 2;
 	uint16 y = (g_system->getHeight() - smkDecoder->getHeight()) / 2;
-	startFrame = CLIP<int32>(startFrame, 1, smkDecoder->getFrameCount() - 1) - 1;
-	endFrame = CLIP<int32>(endFrame, 1, smkDecoder->getFrameCount()) - 1;
+	startFrame = CLIP<int32>(startFrame, 0, smkDecoder->getFrameCount() - 1);
+	endFrame = CLIP<int32>(endFrame, 0, smkDecoder->getFrameCount() - 1);
 
 	//	If choices are attached
 	if (smkDecoder->getCurFrame() != startFrame) {

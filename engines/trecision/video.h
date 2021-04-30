@@ -99,7 +99,7 @@ public:
 	int16 smkCurFrame(int slot);
 	void smkStop(uint16 slot);
 
-	void playMovie(Common::String filename, int startFrame = 1, int endFrame = -1);
+	void playMovie(Common::String filename, int startFrame = 0, int endFrame = -1);
 	void startFullMotion(const char *name);
 	void stopFullMotion();
 

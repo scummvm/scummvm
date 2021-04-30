@@ -145,7 +145,7 @@ void DialogManager::playDialog(uint16 i) {
 		skip++;
 	// if there's a pre-dialog
 	if ((_dialog[i]._startLen > 0) && !skip)
-		_vm->_animMgr->playMovie(_dialog[i]._startAnim, 1, _dialog[i]._startLen);
+		_vm->_animMgr->playMovie(_dialog[i]._startAnim, 0, _dialog[i]._startLen - 1);
 	else {
 		_vm->_animMgr->smkSoundOnOff(1, false);
 		afterChoice();
@@ -518,7 +518,7 @@ void DialogManager::afterChoice() {
 
 		// If there is a pre-dialog
 		if (_dialog[_curDialog]._startLen > 0) {
-			_vm->_animMgr->playMovie(_dialog[_curDialog]._startAnim, 1, _dialog[_curDialog]._startLen);
+			_vm->_animMgr->playMovie(_dialog[_curDialog]._startAnim, 0, _dialog[_curDialog]._startLen - 1);
 			return;
 		}
 	}
@@ -587,6 +587,9 @@ void DialogManager::playChoice(uint16 i) {
 	assert(i < MAXCHOICE);
 
 	DialogChoice *choice = &_choice[i];
+	const int startFrame = choice->_startFrame - 1;
+	const int endSubTitle = choice->_firstSubTitle + choice->_subTitleNumb;
+	int totalLength = 0;
 
 	memset(_vm->_screenBuffer, 0, MAXX * TOP * 2);
 	_vm->_graphicsMgr->copyToScreen(0, 0, MAXX, TOP);
@@ -607,13 +610,13 @@ void DialogManager::playChoice(uint16 i) {
 		_choice[choice->_on[c]]._flag &= ~DLGCHOICE_HIDE;
 	}
 
-	int totalLength = 0;
-	int subTitleCount = choice->_firstSubTitle + choice->_subTitleNumb;
-	for (int c = _curSubTitle; c < subTitleCount; c++)
-		totalLength += _subTitles[c]._length;
+	// WORKAROUND: For some reason, the dialog choices seem to include
+	// extra frames for each sentence. We chop them off here
+	for (int c = _curSubTitle; c < endSubTitle; c++)
+		totalLength += _subTitles[c]._length - 3;
 
 	_vm->hideCursor();
-	_vm->_animMgr->playMovie(_dialog[_curDialog]._startAnim, choice->_startFrame, choice->_startFrame + totalLength - 1);
+	_vm->_animMgr->playMovie(_dialog[_curDialog]._startAnim, startFrame, startFrame + totalLength - 1);
 }
 
 void DialogManager::doDialog() {
