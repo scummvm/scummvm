@@ -2507,6 +2507,7 @@ void Actor::animateActor(int anim) {
 		break;
 	case 4:				// turn to new direction
 		turnToDirection(dir);
+		startAnimActor(_standFrame);
 		break;
 	case 64:
 		if (_vm->_game.version == 0) {
