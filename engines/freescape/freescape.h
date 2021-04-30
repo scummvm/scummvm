@@ -63,6 +63,7 @@ public:
 	Common::Error run() override;
 	void convertBorder();
 	void drawBorder();
+
 	bool hasFeature(EngineFeature f) const override;
 	bool canLoadGameStateCurrently() override { return true; }
 	bool canSaveGameStateCurrently() override { return true; }

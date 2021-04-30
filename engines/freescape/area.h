@@ -10,6 +10,7 @@
 #define __Phantasma__Area__
 
 #include "common/hashmap.h"
+#include "common/array.h"
 #include "freescape/gfx.h"
 #include "freescape/objects/object.h"
 //#include "VertexBuffer.h"
@@ -25,7 +26,8 @@ public:
 		ObjectMap *objectsByID,
 		ObjectMap *entrancesByID,
 		uint8 skyColor,
-		uint8 groundColor);
+		uint8 groundColor,
+		Common::Array<uint8> *palette = nullptr);
 	virtual ~Area();
 
 	Object *objectWithID(uint16 objectID);
@@ -37,6 +39,7 @@ private:
 	uint16 areaID;
 	uint8 skyColor;
 	uint8 groundColor;
+	Common::Array<uint8> *raw_palette;
 	ObjectMap *objectsByID;
 	ObjectMap *entrancesByID;
 	Common::Array<Object *> drawableObjects;
