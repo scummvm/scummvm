@@ -1601,20 +1601,12 @@ enum RoomId {
 #define aWALKOUT								18
 
 enum AnimationId {
-	kAnim111TakePaper = 75,
-	kAnim112TryRailing = 76,
 	kAnim113UseVial = 77,
-	kAnim114PullBar = 78,
-	kAnim115WalkToDoor = 79,
-	kAnim116TestCar = 80,
-	kAnim117JoshuaEnters = 81
+	kAnim121TryOpenLetterboxes = 82,
+	kAnim122OpenLetterbox17 = 83,
 };
 
-#define a121BOXTEST		   						82
-#define a122APREBOX		   						83
-#define a123SPINGEPORTA			   				84
-#define a124PROVAASCENSOREROMPE	   				85
-#define a125PRENDEFUSIBILE		   				86
+
 #define a127USEWRAPPEDFUSED	  					87
 #define a128RIUSABOTTONE		              	88
 #define a129PARLACOMPUTERESCENDE              	89
@@ -1622,17 +1614,13 @@ enum AnimationId {
 #define a1213ARRIVACONASCENSORE	              	91
 #define a131USABANCONOTA				        92
 #define a132PRENDELATTINA				        93
-#define a133PRENDEMONETA				        94
 #define a133CPRENDEMONETA				        95
 #define a134USAMAGNETICPEN				        96
 #define a135METTELETTERA				        97
-#define a136PRENDELETTERA				        98
 #define a137RICALCAFIRMA				        99
-#define a138USAPANNELLOASPETTA			        100
 #define a139CHIUDONOPORTESU				        101
 #define a1311DABOTTADISTRIBUTORE		        102
 #define a1312METTELETTERARICALCA		        103
-#define a1313ENTRAESICHIUDEPORTASIMON           104
 #define a1314ARRIVAASCENSOREDABASSO		        105
 #define a1315ARRIVAASCENSOREALTOENTRA           106
 #define a1316CHIUDONOPORTEGIU			        107
@@ -1652,12 +1640,6 @@ enum AnimationId {
 #define a1412SPOSTASEDIA			            121
 #define a1413OSSERVAPIANOCOTTURA	            122
 #define a1414ENTERROOM							123
-#define a151APRECASSETTI		                124
-#define a152BUSSABAGNO			                125
-#define a153ALZATAPPARELLA		                126
-#define a154ABBASSATAPPARELLA                   127
-#define a155OPENWINDOW		                128
-#define a156CLOSEWINDOW		                129
 #define a157STACCANASTRO		                130
 #define a158APREARMADIO			                131
 #define a159SPOSTAVESTITI		                132
@@ -1735,23 +1717,13 @@ enum AnimationId {
 #define a212									204
 #define a213									205
 #define a214									206
-#define a215									207
 #define a216									208
-#define a218									209
 #define a219									210
 #define a221									211
-#define a221P   								212
 #define a222   									213
-#define a222P   								214
-#define a223									215
-#define a224									216
-#define a225									217
 #define a227									218
 #define a228									219
 #define a229									220
-#define a2210									221
-#define a2211									222
-#define a2212									223
 #define a2214									224
 #define a2215									225
 #define a226									226

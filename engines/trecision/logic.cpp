@@ -1031,7 +1031,7 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 	case kItemLetterboxKey:
 		if (_vm->_useWith[WITH] == oBOXES12) {
 			if (!(_vm->_obj[oBOXES12]._flag & kObjFlagExtra)) {
-				doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a121BOXTEST, 0, 0, _vm->_useWith[WITH]);
+				doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, kAnim121TryOpenLetterboxes, 0, 0, _vm->_useWith[WITH]);
 				_vm->_obj[oBOXES12]._flag |= kObjFlagExtra;
 				*printSentence = false;
 			} else {
@@ -1039,7 +1039,7 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 				*printSentence = false;
 			}
 		} else if (_vm->_useWith[WITH] == oBOX12 && !(_vm->_inventoryObj[kItemLetter]._flag & kObjFlagExtra)) {
-			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a122APREBOX, 0, 0, oBOX12);
+			doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, kAnim122OpenLetterbox17, 0, 0, oBOX12);
 			_vm->_inventoryObj[kItemLetter]._flag |= kObjFlagExtra;
 			*printSentence = false;
 		} else if ((_vm->_useWith[WITH] == oBOX12) && (_vm->_inventoryObj[kItemLetter]._flag & kObjFlagExtra)) {
