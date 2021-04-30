@@ -52,6 +52,11 @@ MacWindowBorder::MacWindowBorder() {
 	_borderOffsets.titleTop = -1;
 	_borderOffsets.titleBottom = -1;
 	_borderOffsets.dark = false;
+	_borderOffsets.titlePos = 0;
+	_borderOffsets.upperScrollHeight = 0;
+	_borderOffsets.lowerScrollHeight = 0;
+
+	_borderType = 0;
 
 	_scrollSize = -1;
 	_scrollPos = 0;
@@ -200,6 +205,9 @@ void MacWindowBorder::loadBorder(Common::SeekableReadStream &file, uint32 flags,
 	offsets.titleBottom = -1;
 	offsets.titlePos = 0;
 	offsets.dark = false;
+	offsets.upperScrollHeight = 0;
+	offsets.lowerScrollHeight = 0;
+
 	loadBorder(file, flags, offsets);
 }
 
@@ -277,7 +285,7 @@ void MacWindowBorder::blitBorderInto(ManagedSurface &destination, uint32 flags, 
 		warning("Attempt to draw %d x %d window", destination.w, destination.h);
 		return;
 	}
-	
+
 	// we add a special check here, if we have title but the titleWidth is zero, then we try to recalc it
 	if ((flags & kWindowBorderTitle) && _border[flags]->getTitleWidth() == 0) {
 		setTitle(_title, destination.w, wm);

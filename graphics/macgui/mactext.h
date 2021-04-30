@@ -58,7 +58,8 @@ struct MacFontRun {
 	MacFontRun() {
 		wm = nullptr;
 		fontId = textSlant = fontSize = 0;
-		palinfo1 = palinfo2  = palinfo3 = 0;
+		palinfo1 = palinfo2 = palinfo3 = 0;
+		fgcolor = 0;
 		font = nullptr;
 		wordContinuation = false;
 	}

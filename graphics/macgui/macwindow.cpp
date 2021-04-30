@@ -527,6 +527,7 @@ void MacWindow::loadWin95Border(const Common::String &filename, uint32 flags) {
 		offsets.lowerScrollHeight = 15;
 		offsets.upperScrollHeight = 17;
 		offsets.titlePos = 0;
+		offsets.titleTop = 0;
 		loadBorder(*stream, flags, offsets);
 		delete stream;
 	}
