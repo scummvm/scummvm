@@ -170,16 +170,17 @@ void AnimManager::setVideoRange(NightlongSmackerDecoder *smkDecoder, int &startF
 	uint16 y = (g_system->getHeight() - smkDecoder->getHeight()) / 2;
 	startFrame = CLIP<int32>(startFrame, 0, smkDecoder->getFrameCount() - 1);
 	endFrame = CLIP<int32>(endFrame, 0, smkDecoder->getFrameCount() - 1);
+	const Dialog *curDialog = &_vm->_dialogMgr->_dialog[_vm->_dialogMgr->_curDialog];
 
 	//	If choices are attached
 	if (smkDecoder->getCurFrame() != startFrame) {
 		for (int a = 0; a < MAXNEWSMKPAL; a++) {
-			if ((_vm->_dialogMgr->_dialog[_vm->_dialogMgr->_curDialog]._newPal[a] > startFrame || !_vm->_dialogMgr->_dialog[_vm->_dialogMgr->_curDialog]._newPal[a]) && a) {
-				smkDecoder->forceSeekToFrame(_vm->_dialogMgr->_dialog[_vm->_dialogMgr->_curDialog]._newPal[a - 1] - 1);
+			if ((curDialog->_newPal[a] > startFrame || !curDialog->_newPal[a]) && a) {
+				smkDecoder->forceSeekToFrame(curDialog->_newPal[a - 1] - 1);
 				break;
 			}
 
-			if (!_vm->_dialogMgr->_dialog[_vm->_dialogMgr->_curDialog]._newPal[a] || _vm->_dialogMgr->_dialog[_vm->_dialogMgr->_curDialog]._newPal[a] == startFrame)
+			if (!curDialog->_newPal[a] || curDialog->_newPal[a] == startFrame)
 				break;
 		}
 
