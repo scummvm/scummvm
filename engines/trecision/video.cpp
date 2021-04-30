@@ -293,11 +293,12 @@ int16 AnimManager::smkCurFrame(int slot) {
 
 void AnimManager::startSmkAnim(uint16 animation) {
 	int slot;
-
+	uint16 animFlag = _animTab[animation]._flag;
+	
 	// choose the buffer to use
-	if (_animTab[animation]._flag & SMKANIM_BKG)
+	if (animFlag & SMKANIM_BKG)
 		slot = kSmackerBackground;
-	else if (_animTab[animation]._flag & SMKANIM_ICON)
+	else if (animFlag & SMKANIM_ICON)
 		slot = kSmackerIcon;
 	else
 		slot = kSmackerAction;
@@ -309,40 +310,40 @@ void AnimManager::startSmkAnim(uint16 animation) {
 	_playingAnims[slot] = animation;
 
 	// choose how to open
-	if (_animTab[animation]._flag & SMKANIM_BKG) {
+	if (animFlag & SMKANIM_BKG) {
 		openSmkAnim(kSmackerBackground, _animTab[animation]._name);
 
 		// Turns off when not needed
-		if ((animation == aBKG11) && (_animTab[animation]._flag & SMKANIM_OFF1))
+		if (animation == aBKG11 && (animFlag & SMKANIM_OFF1))
 			smkVolumePan(0, 1, 0);
-		else if ((animation == aBKG14) && (_animTab[animation]._flag & SMKANIM_OFF1))
+		else if (animation == aBKG14 && (animFlag & SMKANIM_OFF1))
 			smkVolumePan(0, 1, 0);
-		else if ((animation == aBKG1C) && (_vm->_obj[oFAX17]._flag & kObjFlagExtra)) {
+		else if (animation == aBKG1C && (_vm->_obj[oFAX17]._flag & kObjFlagExtra)) {
 			_animTab[animation]._flag |= SMKANIM_OFF1;
 			smkVolumePan(0, 1, 0);
-		} else if ((animation == aBKG1D) && (_animTab[animation]._flag & SMKANIM_OFF1))
+		} else if (animation == aBKG1D && (animFlag & SMKANIM_OFF1))
 			smkVolumePan(0, 1, 0);
-		else if ((animation == aBKG22) && (_animTab[animation]._flag & SMKANIM_OFF1))
+		else if (animation == aBKG22 && (animFlag & SMKANIM_OFF1))
 			smkVolumePan(0, 1, 0);
-		else if ((animation == aBKG48) && (_animTab[animation]._flag & SMKANIM_OFF1))
+		else if (animation == aBKG48 && (animFlag & SMKANIM_OFF1))
 			smkVolumePan(0, 1, 0);
-		else if ((animation == aBKG4P) && (_animTab[animation]._flag & SMKANIM_OFF1))
+		else if (animation == aBKG4P && (animFlag & SMKANIM_OFF1))
 			smkVolumePan(0, 1, 0);
-		else if ((animation == aBKG28) && (_animTab[animation]._flag & SMKANIM_OFF4))
+		else if (animation == aBKG28 && (animFlag & SMKANIM_OFF4))
 			smkVolumePan(0, 1, 0);
-		else if ((animation == aBKG37) && (!(_vm->_room[_vm->_curRoom]._flag & kObjFlagExtra)))
+		else if (animation == aBKG37 && (!(_vm->_room[_vm->_curRoom]._flag & kObjFlagExtra)))
 			smkVolumePan(0, 1, 0);
-		else if ((animation == aBKG2E) && (_animTab[animation]._flag & SMKANIM_OFF2))
+		else if (animation == aBKG2E && (animFlag & SMKANIM_OFF2))
 			smkVolumePan(0, 2, 0);
-		else if ((animation == aBKG2G) && (_vm->_dialogMgr->_choice[556]._flag & kObjFlagDone))
+		else if (animation == aBKG2G && (_vm->_dialogMgr->_choice[556]._flag & kObjFlagDone))
 			smkVolumePan(0, 2, 0);
-		else if ((animation == aBKG34) &&                                     // If it's BKG 34 and
+		else if (animation == aBKG34 &&                                     // If it's BKG 34 and
 		         ((_vm->_dialogMgr->_choice[616]._flag & kObjFlagDone) ||          // if the FMV is already done or
 		          (_vm->_obj[oTUBOT34]._mode & OBJMODE_OBJSTATUS) ||    // if the whole tube is available or
 		          (_vm->_obj[oTUBOFT34]._mode & OBJMODE_OBJSTATUS) ||   // if the outside of the tube is available or
 		          (_vm->_obj[oVALVOLAC34]._mode & OBJMODE_OBJSTATUS)))  // if the valve is closed
 			smkVolumePan(0, 2, 0);
-	} else if (_animTab[animation]._flag & SMKANIM_ICON) {
+	} else if (animFlag & SMKANIM_ICON) {
 		openSmkAnim(kSmackerIcon, _animTab[animation]._name);
 	} else {
 		uint32 st = _vm->readTime();
