@@ -57,6 +57,7 @@ private:
 	Common::String _fileName;
 	Common::U32String _text;
 	Graphics::MacTextWindow *_txtWnd;
+	Graphics::MacText *_macText;
 
 	uint32 _xLeft;
 	uint32 _yTop;

@@ -36,6 +36,7 @@ namespace Pink {
 
 ActionText::ActionText() {
 	_txtWnd = nullptr;
+	_macText = nullptr;
 
 	_xLeft = _xRight = 0;
 	_yTop = _yBottom = 0;
@@ -126,6 +127,13 @@ void ActionText::start() {
 
 	} else {
 		director->addTextAction(this);
+
+		// alignment not working, thus we implement alignment for center manually
+		Graphics::TextAlign alignment = _centered ? Graphics::kTextAlignCenter : Graphics::kTextAlignLeft;
+		if (!_centered && _actor->getPage()->getGame()->getLanguage() == Common::HE_ISR) {
+			alignment = Graphics::kTextAlignRight;
+		}
+		_macText = new Graphics::MacText(_text, &director->getWndManager(), director->getTextFont(), _textColorIndex, _backgroundColorIndex, _xRight - _xLeft, alignment);
 	}
 }
 
@@ -141,26 +149,20 @@ void ActionText::end() {
 		_txtWnd = nullptr;
 	} else {
 		director->removeTextAction(this);
+		delete _macText;
 	}
 }
 
 void ActionText::draw(Graphics::ManagedSurface *surface) {
-	// alignment not working, thus we implement alignment for center manually
-	Graphics::TextAlign alignment = _centered ? Graphics::kTextAlignCenter : Graphics::kTextAlignLeft;
-	if (!_centered && _actor->getPage()->getGame()->getLanguage() == Common::HE_ISR) {
-		alignment = Graphics::kTextAlignRight;
-	}
 	int xOffset = 0, yOffset = 0;
-	Director *director = _actor->getPage()->getGame()->getDirector();
-	Graphics::MacText text(_text, &director->getWndManager(), director->getTextFont(), _textColorIndex, _backgroundColorIndex, _xRight - _xLeft, alignment);
 	// we need to first fill this area with backgroundColor, in order to wash away the previous text
 	surface->fillRect(Common::Rect(_xLeft, _yTop, _xRight, _yBottom), _backgroundColorIndex);
 
 	if (_centered) {
-		xOffset = (_xRight - _xLeft) / 2 - text.getTextMaxWidth() / 2;
-		yOffset = (_yBottom - _yTop) / 2 - text.getTextHeight() / 2;
+		xOffset = (_xRight - _xLeft) / 2 - _macText->getTextMaxWidth() / 2;
+		yOffset = (_yBottom - _yTop) / 2 - _macText->getTextHeight() / 2;
 	}
-	text.drawToPoint(surface, Common::Rect(0, 0, _xRight - _xLeft, _yBottom - _yTop), Common::Point(_xLeft + xOffset, _yTop + yOffset));
+	_macText->drawToPoint(surface, Common::Rect(0, 0, _xRight - _xLeft, _yBottom - _yTop), Common::Point(_xLeft + xOffset, _yTop + yOffset));
 }
 
 #define BLUE(rgb) ((rgb) & 0xFF)
