@@ -70,6 +70,13 @@ struct MacFontRun {
 		wordContinuation = false;
 	}
 
+	MacFontRun(MacWindowManager *wm_, const Font *font_, byte textSlant_, uint16 fontSize_,
+			uint16 palinfo1_, uint16 palinfo2_, uint16 palinfo3_) {
+		setValues(wm_, 0, textSlant_, fontSize_, palinfo1_, palinfo2_, palinfo3_);
+		font = font_;
+		wordContinuation = false;
+	}
+
 	void setValues(MacWindowManager *wm_, uint16 fontId_, byte textSlant_, uint16 fontSize_,
 			uint16 palinfo1_, uint16 palinfo2_, uint16 palinfo3_) {
 		wm        = wm_;
@@ -144,6 +151,8 @@ public:
 
 	MacText(const Common::U32String &s, MacWindowManager *wm, const MacFont *font, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment, int interlinear = 0);
 	MacText(const Common::String &s, MacWindowManager *wm, const MacFont *font, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment, int interlinear = 0);
+
+	MacText(const Common::U32String &s, MacWindowManager *wm, const Font *font, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment, int interlinear = 0);
 
 	virtual ~MacText();
 
@@ -277,6 +286,8 @@ protected:
 	Common::Array<MacTextLine> _textLines;
 	MacFontRun _defaultFormatting;
 	MacFontRun _currentFormatting;
+
+	bool _macFontMode;
 
 private:
 	ManagedSurface *_cursorSurface;
