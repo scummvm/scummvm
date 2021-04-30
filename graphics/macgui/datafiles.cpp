@@ -82,6 +82,10 @@ void MacWindowManager::loadDataBundle() {
 	}
 }
 
+void MacWindowManager::cleanupDataBundle() {
+	delete _dataBundle;
+}
+
 BorderOffsets MacWindowManager::getBorderOffsets(byte windowType) {
 	int i = 0;
 	while (borders[i].type != 0xFF) {

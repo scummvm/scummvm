@@ -236,6 +236,8 @@ MacWindowManager::~MacWindowManager() {
 	delete _desktopBmp;
 	delete _desktop;
 
+	cleanupDataBundle();
+
 	g_system->getTimerManager()->removeTimerProc(&menuTimerHandler);
 }
 
