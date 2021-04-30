@@ -21,7 +21,7 @@
 
 #define OFFSET_DARKSIDE 0xc9ce
 #define OFFSET_DRILLER 0x9b40
-#define OFFSET_CASTLE 0x9b40
+#define OFFSET_CASTLE 0xe472
 #define OFFSET_TOTALECLIPSE 0xcdb7
 
 namespace Freescape {
@@ -75,6 +75,8 @@ FreescapeEngine::~FreescapeEngine() {
 }
 
 void FreescapeEngine::convertBorder() {
+	if (_border == nullptr)
+		return;
 	_borderSurf = new Graphics::Surface();
 	_borderSurf->create(_screenW, _screenH, _originalPixelFormat);
 	_borderSurf->copyRectToSurface(_border->getRawBuffer(), _borderSurf->w, 0, 0, _borderSurf->w, _borderSurf->h);
@@ -105,7 +107,6 @@ Common::Error FreescapeEngine::run() {
 	_gfx = Freescape::createRenderer(_system, &_currentPixelFormat);
 	_gfx->init();
 	_gfx->clear();
-	_gfx->selectTargetWindow(nullptr, false, true);
 	
 	Binary binary;
 	if (_targetName == "3Dkit")
@@ -119,15 +120,22 @@ Common::Error FreescapeEngine::run() {
 	else
 		error("%s is an invalid game", _targetName.c_str());
 
-	if (binary.areasByAreaID && binary.border && binary.palette) {
+	if (binary.areasByAreaID) {
 		_areasByAreaID = binary.areasByAreaID;
-		_border = new Graphics::PixelBuffer(_originalPixelFormat, 320*200, DisposeAfterUse::NO);
-		*_border = binary.border->data();
-		_palette = new Graphics::PixelBuffer(_palettePixelFormat, 256, DisposeAfterUse::NO);
-		*_palette = binary.palette->data();
+		if (binary.border) {
+			_border = new Graphics::PixelBuffer(_originalPixelFormat, 320*200, DisposeAfterUse::NO);
+			*_border = binary.border->data();
+		}
+
+		if (binary.palette) {
+			_palette = new Graphics::PixelBuffer(_palettePixelFormat, 256, DisposeAfterUse::NO);
+			*_palette = binary.palette->data();
+			_gfx->_palette = _palette;
+		}
+
 		//debug("color: %x", binary.palette->data()[0x4c*3]);	
-		_startArea = 1; //binary.startArea;
-		_gfx->_palette = _palette;
+		_startArea = binary.startArea;
+
 		convertBorder();
 
 		assert(_areasByAreaID->contains(_startArea));

@@ -70,7 +70,7 @@ public:
 
 	Common::Array<uint8> *nextBytes(Common::Array<uint8>::size_type numberOfBytes) {
 		Common::Array<uint8> *returnBuffer(new Common::Array<uint8>);
-		debug("give me the next %d bytes", numberOfBytes);
+		//debug("skiping %d bytes", numberOfBytes);
 
 		while (numberOfBytes--)
 			returnBuffer->push_back(get8());

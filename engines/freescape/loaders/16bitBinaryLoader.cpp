@@ -59,7 +59,9 @@ static Object *load16bitObject(StreamLoader &stream) {
 	// length beyond here
 	uint32 byteSizeOfObject = (uint32)(stream.get16() << 1) - 20;
 
-	debug("Object %d ; type %d ; flags %d ; size %d", objectID, (int)objectType, (int)objectFlags, byteSizeOfObject);
+	debug("Object %d ; type %d ; flags %d ; size %d", (int)objectID, (int)objectType, (int)objectFlags, byteSizeOfObject);
+	debug("Location: %d, %d, %d", position.x, position.y, position.z);
+	debug("Size: %d, %d, %d", size.x, size.y, size.z);
 
 	switch (objectType) {
 	default: {
@@ -67,7 +69,9 @@ static Object *load16bitObject(StreamLoader &stream) {
 		int numberOfColours = GeometricObject::numberOfColoursForObjectOfType(objectType);
 		Common::Array<uint8> *colours = new Common::Array<uint8>;
 		for (uint8 colour = 0; colour < numberOfColours; colour++) {
-			colours->push_back(stream.get8());
+			uint8 c = stream.get8();
+			debug("face %d color: %d", colour, c);
+			colours->push_back(c);
 			byteSizeOfObject--;
 		}
 
