@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-04-29 16:30+0000\n"
+"POT-Creation-Date: 2021-04-30 23:50+0000\n"
 "PO-Revision-Date: 2021-04-17 22:40+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
@@ -1913,28 +1913,28 @@ msgstr "Введите описание слота %d:"
 msgid "Select a Theme"
 msgstr "Выберите тему"
 
-#: gui/ThemeEngine.cpp:270
+#: gui/ThemeEngine.cpp:273
 msgid "Disabled GFX"
 msgstr "Без графики"
 
-#: gui/ThemeEngine.cpp:270
+#: gui/ThemeEngine.cpp:273
 msgctxt "lowres"
 msgid "Disabled GFX"
 msgstr "Без графики"
 
-#: gui/ThemeEngine.cpp:271
+#: gui/ThemeEngine.cpp:274
 msgid "Standard renderer"
 msgstr "Стандартный растеризатор"
 
-#: gui/ThemeEngine.cpp:271 engines/scumm/dialogs.cpp:672
+#: gui/ThemeEngine.cpp:274 engines/scumm/dialogs.cpp:672
 msgid "Standard"
 msgstr "Стандартный"
 
-#: gui/ThemeEngine.cpp:273
+#: gui/ThemeEngine.cpp:276
 msgid "Antialiased renderer"
 msgstr "Растеризатор со сглаживанием"
 
-#: gui/ThemeEngine.cpp:273
+#: gui/ThemeEngine.cpp:276
 msgid "Antialiased"
 msgstr "Со сглаживанием"
 

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-04-29 16:30+0000\n"
+"POT-Creation-Date: 2021-04-30 23:50+0000\n"
 "PO-Revision-Date: 2021-03-21 08:24+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
@@ -1922,30 +1922,30 @@ msgstr "Entreu la descripció per l'espai %d:"
 msgid "Select a Theme"
 msgstr "Seleccioneu un Tema"
 
-#: gui/ThemeEngine.cpp:270
+#: gui/ThemeEngine.cpp:273
 msgid "Disabled GFX"
 msgstr "GFX desactivats"
 
-#: gui/ThemeEngine.cpp:270
+#: gui/ThemeEngine.cpp:273
 msgctxt "lowres"
 msgid "Disabled GFX"
 msgstr "GFX desactivats"
 
-#: gui/ThemeEngine.cpp:271
+#: gui/ThemeEngine.cpp:274
 #, fuzzy
 msgid "Standard renderer"
 msgstr "Pintat estàndard (16bpp)"
 
-#: gui/ThemeEngine.cpp:271 engines/scumm/dialogs.cpp:672
+#: gui/ThemeEngine.cpp:274 engines/scumm/dialogs.cpp:672
 msgid "Standard"
 msgstr "Estàndard"
 
-#: gui/ThemeEngine.cpp:273
+#: gui/ThemeEngine.cpp:276
 #, fuzzy
 msgid "Antialiased renderer"
 msgstr "Pintat amb antialias (16bpp)"
 
-#: gui/ThemeEngine.cpp:273
+#: gui/ThemeEngine.cpp:276
 #, fuzzy
 msgid "Antialiased"
 msgstr "Amb antialias (16bpp)"

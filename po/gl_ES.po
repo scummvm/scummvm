@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-04-29 16:30+0000\n"
+"POT-Creation-Date: 2021-04-30 23:50+0000\n"
 "PO-Revision-Date: 2020-09-26 21:13+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Galician <https://translations.scummvm.org/projects/scummvm/"
@@ -1936,30 +1936,30 @@ msgstr "Introduce unha descrición para o espazo %d:"
 msgid "Select a Theme"
 msgstr "Seleccionar tema"
 
-#: gui/ThemeEngine.cpp:270
+#: gui/ThemeEngine.cpp:273
 msgid "Disabled GFX"
 msgstr "Efectos gráficos desactivados"
 
-#: gui/ThemeEngine.cpp:270
+#: gui/ThemeEngine.cpp:273
 msgctxt "lowres"
 msgid "Disabled GFX"
 msgstr "Efectos desactivados"
 
-#: gui/ThemeEngine.cpp:271
+#: gui/ThemeEngine.cpp:274
 #, fuzzy
 msgid "Standard renderer"
 msgstr "Procesamento estándar"
 
-#: gui/ThemeEngine.cpp:271 engines/scumm/dialogs.cpp:672
+#: gui/ThemeEngine.cpp:274 engines/scumm/dialogs.cpp:672
 msgid "Standard"
 msgstr "Estándar"
 
-#: gui/ThemeEngine.cpp:273
+#: gui/ThemeEngine.cpp:276
 #, fuzzy
 msgid "Antialiased renderer"
 msgstr "Procesamento antidistorsión"
 
-#: gui/ThemeEngine.cpp:273
+#: gui/ThemeEngine.cpp:276
 msgid "Antialiased"
 msgstr "Antidistorsión"
 
