@@ -22,9 +22,7 @@
 
 #include <common/system.h>
 
-
-
-#include "graphics.h"
+#include "trecision/graphics.h"
 #include "trecision/defines.h"
 #include "trecision/nl/extern.h"
 #include "trecision/nl/message.h"
