@@ -40,10 +40,11 @@ class Actor;
 class ActionCEL;
 class ActionSound;
 class ActionText;
+class PinkEngine;
 
 class Director {
 public:
-	Director();
+	Director(PinkEngine *vm);
 	~Director();
 
 	void update();

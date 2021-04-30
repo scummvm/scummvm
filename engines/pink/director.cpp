@@ -24,6 +24,7 @@
 #include "graphics/macgui/mactext.h"
 #include "graphics/palette.h"
 
+#include "pink/pink.h"
 #include "pink/cel_decoder.h"
 #include "pink/director.h"
 #include "pink/objects/actions/action_sound.h"
@@ -88,11 +89,16 @@ static void redrawCallback(void *ref) {
 	}
 }
 
-Director::Director()
+Director::Director(PinkEngine *vm)
 	: _surface(640, 480), _textRendered(false) {
-	_wm = new Graphics::MacWindowManager(Graphics::kWMModeNoDesktop | Graphics::kWMModeAutohideMenu
+	uint32 wmMode = Graphics::kWMModeNoDesktop | Graphics::kWMModeAutohideMenu
 		| Graphics::kWMModalMenuMode | Graphics::kWMModeForceBuiltinFonts
-		| Graphics::kWMModeUnicode | Graphics::kWMModeWin95);
+		| Graphics::kWMModeUnicode;
+
+	if (vm->getLanguage() != Common::HE_ISR) // We do not have Hebrew font in MS fonts :(
+		wmMode |= Graphics::kWMModeWin95;
+
+	_wm = new Graphics::MacWindowManager(wmMode);
 
 	_wm->setScreen(&_surface);
 	_wm->setMenuHotzone(Common::Rect(0, 0, 640, 23));

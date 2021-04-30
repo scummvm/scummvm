@@ -80,7 +80,7 @@ Common::Error PinkEngine::init() {
 	}
 
 	setDebugger(new Console(this));
-	_director = new Director();
+	_director = new Director(this);
 
 	initMenu();
 
