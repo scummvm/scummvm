@@ -268,14 +268,27 @@ bool TTFFont::load(uint8 *ttfFile, uint32 sizeFile, int32 faceIndex, bool bold, 
 		return false;
 	}
 
-	// We only support scalable fonts.
+	// Check if the fixed font has the requested size
 	if (!FT_IS_SCALABLE(_face)) {
-		g_ttf.closeFont(_face);
+		FT_Pos reqsize = computePointSize(size, sizeMode) * 64;
+		bool found = false;
 
-		// Don't delete ttfFile as we return fail
-		_ttfFile = 0;
+		for (int i = 0; i < _face->num_fixed_sizes; i++)
+			if (_face->available_sizes[i].size == reqsize) {
+				found = true;
+				break;
+			}
 
-		return false;
+		if (!found) {
+			warning("The non-scalable font has no requested size: %ld", reqsize);
+
+			g_ttf.closeFont(_face);
+
+			// Don't delete ttfFile as we return fail
+			_ttfFile = 0;
+
+			return false;
+		}
 	}
 	if (stemDarkening) {
 #if FREETYPE_MAJOR > 2 || ( FREETYPE_MAJOR == 2 &&  FREETYPE_MINOR >= 9)
@@ -770,7 +783,7 @@ bool TTFFont::cacheGlyph(Glyph &glyph, uint32 chr) const {
 		// That's 26.6 fixed-point units
 		if (FT_Bitmap_Embolden(_face->glyph->library, &_face->glyph->bitmap, 1 << 6, 0))
 			return false;
-		
+
 		bitmap = &_face->glyph->bitmap;
 #elif FAKE_BOLD >= 1
 		FT_Bitmap_New(&ownBitmap);
@@ -1069,4 +1082,3 @@ DECLARE_SINGLETON(Graphics::TTFLibrary);
 } // End of namespace Common
 
 #endif
-
