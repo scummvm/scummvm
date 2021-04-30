@@ -77,6 +77,8 @@ ManagedSurface::ManagedSurface(Surface *surf, DisposeAfterUse::Flag disposeAfter
 		return;
 	}
 
+	_disposeAfterUse = disposeAfterUse;
+
 	if (disposeAfterUse == DisposeAfterUse::YES) {
 		_innerSurface.w = surf->w;
 		_innerSurface.h = surf->h;
