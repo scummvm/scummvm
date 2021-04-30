@@ -81,7 +81,7 @@ void Process::waitFor(ProcId pid) {
 		Process *p = kernel->getProcess(pid);
 		assert(p);
 		if (p->getProcessFlags() & PROC_TERMINATED) {
-			warning("Proc %d wait for proc %d which is already terminated", _pid, pid);
+			//warning("Proc %d wait for proc %d which is already terminated", _pid, pid);
 			return;
 		}
 		p->_waiting.push_back(_pid);
