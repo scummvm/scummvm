@@ -23,6 +23,7 @@
 #include "graphics/macgui/macfontmanager.h"
 #include "graphics/macgui/mactext.h"
 #include "graphics/palette.h"
+#include "graphics/fonts/ttf.h"
 
 #include "pink/pink.h"
 #include "pink/cel_decoder.h"
@@ -104,10 +105,23 @@ Director::Director(PinkEngine *vm)
 	_wm->setMenuHotzone(Common::Rect(0, 0, 640, 23));
 	_wm->setMenuDelay(250000);
 	_wm->setEngineRedrawCallback(this, redrawCallback);
+
+	_textFont = Graphics::loadTTFFontFromArchive("system.ttf", 16);
+	_textFontCleanup = true;
+
+	if (!_textFont) {
+		_textFont = FontMan.getFontByUsage(Graphics::FontManager::kBigGUIFont);
+		warning("Director: falling back to built-in font");
+
+		_textFontCleanup = false;
+	}
 }
 
 Director::~Director() {
 	delete _wm;
+
+	if (_textFontCleanup)
+		delete _textFont;
 }
 
 void Director::update() {

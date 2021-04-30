@@ -80,6 +80,8 @@ public:
 
 	void draw(bool blit = true);
 
+	const Graphics::Font *getTextFont() { return _textFont; }
+
 private:
 	void mergeDirtyRects();
 	void drawRect(const Common::Rect &rect);
@@ -94,6 +96,9 @@ private:
 	Common::Array<ActionText *> _textActions;
 	Common::Array<Graphics::MacTextWindow *> _textWindows;
 	bool _textRendered;
+
+	const Graphics::Font *_textFont;
+	bool _textFontCleanup;
 };
 
 } // End of namespace Pink
