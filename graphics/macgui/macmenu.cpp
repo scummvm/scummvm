@@ -29,6 +29,7 @@
 
 #include "graphics/primitives.h"
 #include "graphics/font.h"
+#include "graphics/fonts/ttf.h"
 #include "graphics/macgui/macfontmanager.h"
 #include "graphics/macgui/macwindowmanager.h"
 #include "graphics/macgui/macwindow.h"
@@ -109,6 +110,8 @@ MacMenuSubMenu::~MacMenuSubMenu() {
 
 MacMenu::MacMenu(int id, const Common::Rect &bounds, MacWindowManager *wm)
 		: BaseMacWindow(id, false, wm) {
+	_loadedFont = NULL;
+
 	_font = getMenuFont();
 
 	_align = kTextAlignLeft;
@@ -150,6 +153,8 @@ MacMenu::MacMenu(int id, const Common::Rect &bounds, MacWindowManager *wm)
 MacMenu::~MacMenu() {
 	for (uint i = 0; i < _items.size(); i++)
 		delete _items[i];
+
+	delete _loadedFont;
 }
 
 Common::StringArray *MacMenu::readMenuFromResource(Common::SeekableReadStream *res) {
@@ -580,6 +585,19 @@ void MacMenu::createSubMenuFromString(int id, const char *str, int commandId) {
 }
 
 const Font *MacMenu::getMenuFont(int slant) {
+	if (_wm->_mode & kWMModeWin95) {
+		if (!_loadedFont) {
+			_loadedFont = Graphics::loadTTFFontFromArchive("ms_sans_serif.ttf", 16);
+
+			if (_loadedFont)
+				return _loadedFont;
+		} else {
+			return _loadedFont;
+		}
+
+		// If font was not loaded, fallback
+	}
+
 	return _wm->_fontMan->getFont(Graphics::MacFont(kMacFontChicago, 12, slant));
 }
 

@@ -131,6 +131,7 @@ private:
 	ItemArray _items;
 
 	const Font *_font;
+	Font *_loadedFont;
 
 	bool _isVisible;
 
