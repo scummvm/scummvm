@@ -74,7 +74,6 @@ class TrecisionEngine : public Engine {
 	void initMain();
 	void initMessageSystem();
 	void openDataFiles();
-	void initNames();
 	void LoadAll();
 	void loadSaveSlots(Common::StringArray &saveNames);
 	void openSys();

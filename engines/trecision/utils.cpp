@@ -34,24 +34,6 @@
 
 namespace Trecision {
 
-void TrecisionEngine::initNames() {
-	// Initial value of useful system texts.
-	// Those values are overwritten by the ones from the game files later
-	_sysText[kMessageSavePosition] = "SAVE POSITION";
-	_sysText[kMessageEmptySpot] = "EMPTY SLOT";
-	_sysText[kMessageLoadPosition] = "LOAD POSITION";
-	_sysText[kMessageConfirmExit] = "Are you sure that you want to quit (y/n)?";
-	_sysText[kMessageDemoOver] = "This demo is over.";
-	_sysText[kMessageError] = "ERROR!";
-	_sysText[kMessageUse] = "Use ";
-	_sysText[kMessageWith] = " with ";
-	_sysText[kMessageGoto] = "Go to ";
-	_sysText[kMessageGoto2] = "Go to ... ";
-
-	_sentence[0] = "          "; // Use it like a buffer !!!!
-	_objName[0] = " ";
-}
-
 char *TrecisionEngine::getNextSentence() {
 	while (*_textPtr) {
 		*_textPtr = ~(*_textPtr);
