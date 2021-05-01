@@ -44,18 +44,29 @@ enum {
 static void cursorTimerHandler(void *refCon);
 
 MacTextWindow::MacTextWindow(MacWindowManager *wm, const MacFont *font, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment, MacMenu *menu, bool cursorHandler) :
-		MacWindow(wm->getLastId(), true, true, true, wm) {
+		MacWindow(wm->getLastId(), true, true, true, wm), _bgcolor(bgcolor), _maxWidth(maxWidth), _menu(menu) {
 
 	_font = font;
-	_menu = menu;
 	_mactext = new MacText("", _wm, font, fgcolor, bgcolor, maxWidth, textAlignment);
 
 	_fontRef = wm->_fontMan->getFont(*font);
 
-	_bgcolor = bgcolor;
+	init(cursorHandler);
+}
 
+MacTextWindow::MacTextWindow(MacWindowManager *wm, const Font *font, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment, MacMenu *menu, bool cursorHandler) :
+		MacWindow(wm->getLastId(), true, true, true, wm), _bgcolor(bgcolor), _maxWidth(maxWidth), _menu(menu) {
+
+	_font = nullptr;
+	_mactext = new MacText(Common::U32String(""), _wm, font, fgcolor, bgcolor, maxWidth, textAlignment);
+
+	_fontRef = font;
+
+	init(cursorHandler);
+}
+
+void MacTextWindow::init(bool cursorHandler) {
 	_inputTextHeight = 0;
-	_maxWidth = maxWidth;
 
 	_inputIsDirty = true;
 	_inTextSelection = false;
@@ -109,7 +120,12 @@ void MacTextWindow::appendText(const Common::U32String &str, const MacFont *macF
 	uint16 red = (_textColorRGB >> 16) & 0xFF;
 	uint16 green = (_textColorRGB >> 8) & 0xFF;
 	uint16 blue = (_textColorRGB) & 0xFF;
-	_mactext->appendText(str, macFont->getId(), macFont->getSize(), macFont->getSlant(), red, green, blue, skipAdd);
+
+	if (macFont)
+		_mactext->appendText(str, macFont->getId(), macFont->getSize(), macFont->getSlant(), red, green, blue, skipAdd);
+	else {
+		_mactext->appendText(str, _fontRef, red, green, blue, skipAdd);
+	}
 
 	_contentIsDirty = true;
 	_inputIsDirty = true;	//force it to redraw input

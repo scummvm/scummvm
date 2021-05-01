@@ -267,6 +267,15 @@ MacText::~MacText() {
 }
 
 void MacText::setMaxWidth(int maxWidth) {
+	if (maxWidth == _maxWidth)
+		return;
+
+	if (!_str.empty())
+		warning("TODO: MacText::setMaxWidth() is incorrect.");
+
+	// It does not take into account the edited string
+	// Actually, it should reshuffle all paragraphs
+
 	_maxWidth = maxWidth;
 
 	_textLines.clear();
@@ -664,9 +673,10 @@ void MacText::render(int from, int to) {
 
 		// TODO: _textMaxWidth, when -1, was not rendering ANY text.
 		for (uint j = 0; j < _textLines[i].chunks.size(); j++) {
-			debug(9, "MacText::render: line %d[%d] h:%d at %d,%d (%s) fontid: %d on %dx%d, color: %d",
-				i, j, xOffset, _textLines[i].y, _textLines[i].height, _textLines[i].chunks[j].text.encode().c_str(),
-				_textLines[i].chunks[j].fontId, _surface->w, _surface->h, _textLines[i].chunks[j].fgcolor);
+			debug(9, "MacText::render: line %d[%d] h:%d at %d,%d (%s) fontid: %d on %dx%d, fgcolor: %d bgcolor: %d, font: %p",
+				i, j, _textLines[i].height, xOffset, _textLines[i].y, _textLines[i].chunks[j].text.encode().c_str(),
+				_textLines[i].chunks[j].fontId, _surface->w, _surface->h, _textLines[i].chunks[j].fgcolor, _bgcolor,
+				(void *)_textLines[i].chunks[j].getFont());
 
 			if (_textLines[i].chunks[j].text.empty())
 				continue;
@@ -897,6 +907,33 @@ void MacText::appendText(const Common::U32String &str, int fontId, int fontSize,
 		_str += strWithFont;
 	}
 
+	appendText_(strWithFont, oldLen);
+}
+
+void MacText::appendText(const Common::U32String &str, const Font *font, uint16 r, uint16 g, uint16 b, bool skipAdd) {
+	uint oldLen = _textLines.size();
+
+	MacFontRun fontRun = MacFontRun(_wm, font, 0, font->getFontHeight(), r, g, b);
+
+	_currentFormatting = fontRun;
+
+	// we check _str here, if _str is empty but _textLines is not empty, and they are not the end of paragraph
+	// then we remove those empty lines
+	// too many special check may cause some strange problem in the future
+	if (_str.empty()) {
+		while (!_textLines.empty() && !_textLines.back().paragraphEnd) {
+			removeLastLine();
+		}
+	}
+
+	if (!skipAdd) {
+		_str += str;
+	}
+
+	appendText_(str, oldLen);
+}
+
+void MacText::appendText_(const Common::U32String &strWithFont, uint oldLen) {
 	splitString(strWithFont);
 	recalcDims();
 
@@ -966,6 +1003,7 @@ void MacText::removeLastLine() {
 void MacText::draw(ManagedSurface *g, int x, int y, int w, int h, int xoff, int yoff) {
 	if (_textLines.empty())
 		return;
+
 	render();
 
 	if (x + w < _surface->w || y + h < _surface->h)

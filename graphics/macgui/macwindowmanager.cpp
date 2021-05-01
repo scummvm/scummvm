@@ -314,6 +314,16 @@ MacTextWindow *MacWindowManager::addTextWindow(const MacFont *font, int fgcolor,
 	return w;
 }
 
+MacTextWindow *MacWindowManager::addTextWindow(const Font *font, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment, MacMenu *menu, bool cursorHandler) {
+	MacTextWindow *w = new MacTextWindow(this, font, fgcolor, bgcolor, maxWidth, textAlignment, menu, cursorHandler);
+
+	addWindowInitialized(w);
+
+	setActiveWindow(getNextId());
+
+	return w;
+}
+
 
 void MacWindowManager::addWindowInitialized(MacWindow *macwindow) {
 	_windows[macwindow->getId()] = macwindow;
