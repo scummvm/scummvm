@@ -408,7 +408,6 @@ void TrecisionEngine::initMain() {
 	for (int c = 0; c < MAXOBJ; c++)
 		_obj[c]._position = -1;
 
-	initNames();
 	_logicMgr->initScript();
 	openDataFiles();
 	openSys();
