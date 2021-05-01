@@ -5,7 +5,7 @@
 # 'mkdir' seems to incorrectly set permissions to path/dirs on AmigaOS.
 # Once a vanilla installation was created, none of the special subdirectories
 # are found/accessible (extras, themes, plugins), instead ScummVM reports
-# missing theme files and a mssing valid translation.dat.
+# missing theme files and a missing valid translation.dat.
 # Switching to AmigaOS' own "makedir" until there is a fix or other solution. 
 #
 amigaosdist: $(EXECUTABLE) $(PLUGINS)
