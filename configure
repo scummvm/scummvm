@@ -2367,10 +2367,10 @@ unsigned short ebcdic_mm[] = { 0xC2C9, 0xC785, 0x95C4, 0x8981, 0x95E2, 0xA8E2, 0
 const char * _ebcdic() { char* s = (char*) ebcdic_mm; s = (char*) ebcdic_ii; return s; }
 int main() { _ascii (); _ebcdic (); return 0; }
 EOF
-$CXX $LDFLAGS $CXXFLAGS -o $TMPO$HOSTEXEEXT tmp_endianness_check.cpp
-if $_strings $TMPO$HOSTEXEEXT | grep BIGenDianSyS >/dev/null; then
+$CXX $LDFLAGS $CXXFLAGS -o $TMPO$HOSTEXEEXT tmp_endianness_check.cpp >> "$TMPLOG" 2>&1
+if $_strings $TMPO$HOSTEXEEXT 2>> "$TMPLOG"| grep BIGenDianSyS >/dev/null; then
 	_endian=big
-elif $_strings $TMPO$HOSTEXEEXT | grep LiTTleEnDian >/dev/null; then
+elif $_strings $TMPO$HOSTEXEEXT 2>> "$TMPLOG" | grep LiTTleEnDian >/dev/null; then
 	_endian=little
 fi
 echo $_endian;
@@ -2403,7 +2403,7 @@ int main() {
 	return 0;
 }
 EOF
-		if $CXX $CXXFLAGS -c -o $TMPO.o tmp_find_type_with_size.cpp 2>/dev/null ; then
+		if $CXX $CXXFLAGS -c -o $TMPO.o tmp_find_type_with_size.cpp >> "$TMPLOG" 2>&1 ; then
 			break
 		else
 			if test "$datatype" = "unknown"; then
@@ -2428,7 +2428,7 @@ int main() {
 	return 0;
 }
 EOF
-	$CXX $CXXFLAGS -c -o $TMPO.o tmp_pointer_is_32bit.cpp 2>/dev/null
+	$CXX $CXXFLAGS -c -o $TMPO.o tmp_pointer_is_32bit.cpp >> "$TMPLOG" 2>&1
 	status=$?
 	cc_check_clean tmp_pointer_is_32bit.cpp
 	return $status
