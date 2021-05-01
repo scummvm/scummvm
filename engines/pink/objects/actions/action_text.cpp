@@ -87,16 +87,12 @@ void ActionText::start() {
 	delete stream;
 
 	switch(_actor->getPage()->getGame()->getLanguage()) {
-	case Common::RU_RUS:
-		_text = Common::String(str).decode(Common::kWindows1251);
-		break;
-
-	case Common::PL_POL:
-		_text = Common::String(str).decode(Common::kWindows1250);
-		break;
-
 	case Common::DA_DAN:
 		_text = Common::String(str).decode(Common::kWindows1252);
+		break;
+
+	case Common::FI_FIN:
+		_text = Common::String(str).decode(Common::kWindows1257);
 		break;
 
 	case Common::HE_ISR:
@@ -104,6 +100,14 @@ void ActionText::start() {
 		if (!_centered) {
 			align = Graphics::kTextAlignRight;
 		}
+		break;
+
+	case Common::PL_POL:
+		_text = Common::String(str).decode(Common::kWindows1250);
+		break;
+
+	case Common::RU_RUS:
+		_text = Common::String(str).decode(Common::kWindows1251);
 		break;
 
 	case Common::EN_ANY:
