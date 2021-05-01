@@ -119,7 +119,7 @@ SuperSpriteProcess::SuperSpriteProcess(int shape, int frame, int sx, int sy, int
 
 	float travel = _destpt.maxDistXYZ(_nextpt);
 	// FIXME: how to get this scaled correctly?
-	float speed = firetypedat->getCellsPerRound() * 128.0f;
+	float speed = firetypedat->getCellsPerRound() * 32.0f;
 	float rounds = travel / speed;
 	if (rounds < 1)
 		rounds = 1;
@@ -320,8 +320,9 @@ void SuperSpriteProcess::hitAndFinish() {
 	int xstep = _pt3.x - _nowpt.x;
 	int ystep = _pt3.y - _nowpt.y;
 	int zstep = _pt3.z - _nowpt.z;
-	int32 start[3] = {_nowpt.x, _nowpt.y, _nowpt.z};
-	int32 end[3] = {_pt3.x, _pt3.y, _pt3.z};
+	// We add a slight hack - our sweep test is off-by-one on Z??
+	int32 start[3] = {_nowpt.x, _nowpt.y, _nowpt.z + 1};
+	int32 end[3] = {_pt3.x, _pt3.y, _pt3.z + 1};
 	int32 dims[3] = {1, 1, 1};
 	// will never get a collision if not stepping at all..
 	bool collision = !(xstep || ystep || zstep);
@@ -434,8 +435,8 @@ void SuperSpriteProcess::advanceFrame() {
 bool SuperSpriteProcess::areaSearch() {
 	CurrentMap *map = World::get_instance()->getCurrentMap();
 
-	int32 start[3] = {_nowpt.x, _nowpt.y, _nowpt.z};
-	int32 end[3] = {_pt3.x, _pt3.y, _pt3.z};
+	int32 start[3] = {_nowpt.x, _nowpt.y, _nowpt.z + 1};
+	int32 end[3] = {_pt3.x, _pt3.y, _pt3.z + 1};
 	int32 dims[3] = {1, 1, 1};
 
 	Item *item = getItem(_itemNum);
