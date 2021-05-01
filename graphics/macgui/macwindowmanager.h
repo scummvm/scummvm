@@ -300,6 +300,9 @@ public:
 	uint findBestColor(byte cr, byte cg, byte cb);
 	void decomposeColor(uint32 color, byte &r, byte &g, byte &b);
 
+	const byte *getPalette() { return _palette; }
+	uint getPaletteSize() { return _paletteSize; }
+
 	void renderZoomBox(bool redraw = false);
 	void addZoomBox(ZoomBox *box);
 
