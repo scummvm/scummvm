@@ -3452,19 +3452,11 @@ if test -n "$_host"; then
 			# PPC Linker requires this to fix relocation errors
 			append_var CXXFLAGS "-mlongcall"
 
-			# Only static builds link successfully on buildbot
-			LDFLAGS=`echo $LDFLAGS | sed 's/-use-dynld//'`
-			append_var LDFLAGS "-static"
-
 			_port_mk="backends/platform/sdl/amigaos/amigaos.mk"
 			;;
 		ppc-morphos)
 			# PPC Linker requires this to fix relocation errors
 			append_var CXXFLAGS "-mlongcall"
-
-			# Only static builds link successfully on buildbot
-			LDFLAGS=`echo $LDFLAGS | sed 's/-use-dynld//'`
-			append_var LDFLAGS "-static"
 
 			_port_mk="backends/platform/sdl/morphos/morphos.mk"
 			;;
