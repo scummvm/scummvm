@@ -39,7 +39,7 @@ ELSE DO
 	Check for destination path and create it, if needed.
 	*/
 	IF ~EXISTS(install_path'/sobjs/') THEN
-		ADDRESS COMMAND 'makedir 'install_path'/sobjs'
+		ADDRESS COMMAND 'makedir all 'install_path'/sobjs'
 END
 
 /*
@@ -91,13 +91,13 @@ DO WHILE i>0
 		  determine which to use the correct path.
 		*/
 		IF EXISTS('SDK:local/newlib/lib/'lib.so) THEN
-			ADDRESS COMMAND 'copy clone SDK:local/newlib/lib/'lib.so install_path'/sobjs/'
+			ADDRESS COMMAND 'copy clone quiet SDK:local/newlib/lib/'lib.so install_path'/sobjs/'
 		ELSE DO
 			IF EXISTS('SDK:gcc/lib/'lib.so) THEN
-				ADDRESS COMMAND 'copy clone SDK:gcc/lib/'lib.so install_path'/sobjs/'
+				ADDRESS COMMAND 'copy clone quiet SDK:gcc/lib/'lib.so install_path'/sobjs/'
 			ELSE DO
 				IF EXISTS('SDK:gcc/lib/gcc/ppc-amigaos/'gcc_version'/'lib.so) THEN
-					ADDRESS COMMAND 'copy clone SDK:gcc/lib/gcc/ppc-amigaos/'gcc_version'/'lib.so install_path'/sobjs/'
+					ADDRESS COMMAND 'copy clone quiet SDK:gcc/lib/gcc/ppc-amigaos/'gcc_version'/'lib.so install_path'/sobjs/'
 				ELSE DO
 					/*
 					If a shared library is not found, abort.
@@ -121,6 +121,6 @@ IF ~CLOSE(SO_Read) THEN DO
 	EXIT
 END
 
-ADDRESS COMMAND 'delete so_dump'
+ADDRESS COMMAND 'delete force quiet so_dump'
 
 EXIT
