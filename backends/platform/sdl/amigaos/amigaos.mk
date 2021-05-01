@@ -10,7 +10,7 @@
 #
 amigaosdist: $(EXECUTABLE) $(PLUGINS)
 	makedir all $(AMIGAOSPATH)
-	cp ${srcdir}/dists/amigaos/scummvm_drawer.info $(AMIGAOSPATH).info
+	cp ${srcdir}/dists/amigaos/scummvm_drawer.info $(patsubst %/,%,$(AMIGAOSPATH)).info
 	cp ${srcdir}/dists/amigaos/scummvm.info $(AMIGAOSPATH)/$(EXECUTABLE).info
 ifdef DIST_FILES_DOCS
 	cp -r $(srcdir)/doc/ $(AMIGAOSPATH)
