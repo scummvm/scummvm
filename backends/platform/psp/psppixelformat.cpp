@@ -80,7 +80,7 @@ void PSPPixelFormat::convertFromScummvmPixelFormat(const Graphics::PixelFormat *
 		if (pf->bytesPerPixel == 1) {
 			bufferType = Type_Palette_8bit;
 			target = &paletteType;	// The type describes the palette
-		} else if (pf->bytesPerPixel == 2) {
+		} else if (pf->bytesPerPixel == 2 || pf->bytesPerPixel == 4) {
 			paletteType = Type_None;
 			target = &bufferType;	// The type describes the buffer
 		} else {
