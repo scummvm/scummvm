@@ -91,6 +91,10 @@ void ActionText::start() {
 		_text = Common::String(str).decode(Common::kWindows1251);
 		break;
 
+	case Common::PL_POL:
+		_text = Common::String(str).decode(Common::kWindows1250);
+		break;
+
 	case Common::DA_DAN:
 		_text = Common::String(str).decode(Common::kWindows1252);
 		break;
