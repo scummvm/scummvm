@@ -34,8 +34,6 @@ namespace Ultima8 {
 
 DEFINE_RUNTIME_CLASSTYPE_CODE(BookGump)
 
-// TODO: Remove all the hacks
-
 BookGump::BookGump()
 	: ModalGump(), _textWidgetL(0), _textWidgetR(0) {
 
@@ -51,6 +49,21 @@ BookGump::~BookGump(void) {
 
 void BookGump::InitGump(Gump *newparent, bool take_focus) {
 	ModalGump::InitGump(newparent, take_focus);
+
+	//
+	// WORKAROUND (HACK), ScummVM bug #12503
+	// The original game usecode has a bug which does not display the correct text for the
+	// The Spell of Resurrection book.  This bug only exists in some versions of the game.
+	//
+	// Original book text is in the config as "translations" for "spell of resurrection".
+	//
+	Item *item = getItem(_owner);
+	if (item && item->getShape() == 0x120 && item->getQuality() == 0x66) {
+		const Std::string placeholder = "spell of resurrection";
+		const Std::string replacement = _TL_(placeholder);
+		if (replacement != placeholder)
+			_text = replacement;
+	}
 
 	// Create the TextWidgets (NOTE: they _must_ have exactly the same _dims)
 	TextWidget *widget = new TextWidget(9, 5, _text, true, 9, 123, 129); //!! constants
