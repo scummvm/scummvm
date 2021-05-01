@@ -20,6 +20,7 @@
  *
  */
 
+#include "actor.h"
 #include "trecision/nl/message.h"
 #include "trecision/nl/extern.h"
 #include "trecision/nl/proto.h"
@@ -158,7 +159,7 @@ void TrecisionEngine::doInventory() {
 
 	case ME_EXAMINEICON:
 		_curInventory = whatIcon(_mouseX);
-		actorStop();
+		_actor->actorStop();
 		nextStep();
 		if (_flagUseWithStarted) {
 			_flagInventoryLocked = false;
@@ -209,7 +210,7 @@ uint8 TrecisionEngine::whatIcon(uint16 invmx) {
 
 	int index = _iconBase + ((invmx - ICONMARGSX) / (ICONDX));
 	
-	return index < _inventory.size() ? _inventory[index] : kItemNull;
+	return index < (int)_inventory.size() ? _inventory[index] : kItemNull;
 }
 
 int8 TrecisionEngine::iconPos(uint8 icon) {

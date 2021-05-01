@@ -60,6 +60,8 @@ public:
 
 	void readActor(const char *filename);
 	void syncGameStream(Common::Serializer &ser);
+	void actorDoAction(int action);
+	void actorStop();
 };
 
 

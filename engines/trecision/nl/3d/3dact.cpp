@@ -33,121 +33,21 @@
 
 namespace Trecision {
 
-void actorDoAction(int action) {
-	if (action > hLAST)
-		error("error in actorDoAction, invalid action (should be called as an animation)");
-
-	_curStep = 1;
-	float px = g_vm->_actor->_px + g_vm->_actor->_dx;
-	float pz = g_vm->_actor->_pz + g_vm->_actor->_dz;
-	float theta = g_vm->_actor->_theta;
-	int b = 0;
-
-	_step[b]._px = px;
-	_step[b]._pz = pz;
-	_step[b]._dx = 0.0f;
-	_step[b]._dz = 0.0f;
-
-	_step[b]._theta     = theta;
-	_step[b]._curAction = hSTAND;
-	_step[b]._curFrame  = 0;
-	_step[b]._curPanel  = _curPanel;
-
-	float t = ((270.0f - theta) * PI2) / 360.0f;
-	float ox = cos(t);
-	float oz = sin(t);
-
-	SVertex *v = g_vm->_actor->_characterArea;
-	float firstFrame = FRAMECENTER(v);
-
-	int len;
-	int cfp = 0;
-	int cur = 0;
-
-	while (cur < action)
-		cfp += _defActionLen[cur++];
-	v = &g_vm->_actor->_characterArea[cfp * g_vm->_actor->_vertexNum];
-
-	if (action == hWALKOUT)
-		v = &g_vm->_actor->_characterArea[g_vm->_actor->_vertexNum];
-	else if (action == hLAST)
-		v = g_vm->_actor->_characterArea;
-
-	len = _defActionLen[action];
-
-	for (b = _curStep; b < len + _curStep; b++) {
-		float curLen = FRAMECENTER(v) - firstFrame;
-
-		_step[b]._dx = curLen * ox;
-		_step[b]._dz = curLen * oz;
-		_step[b]._px = px;
-		_step[b]._pz = pz;
-
-		_step[b]._curAction = action;
-		_step[b]._curFrame  = b - _curStep;
-
-		_step[b]._theta    = theta;
-		_step[b]._curPanel = _curPanel;
-
-		v += g_vm->_actor->_vertexNum;
-
-		if (action == hLAST)
-			v = g_vm->_actor->_characterArea;
-	}
-
-	_step[b]._px = px;
-	_step[b]._pz = pz;
-	_step[b]._dx = 0.0;
-	_step[b]._dz = 0.0;
-
-	_step[b]._theta     = theta;
-	_step[b]._curAction = hSTAND;
-	_step[b]._curFrame  = 0;
-	_step[b]._curPanel  = _curPanel;
-
-	_lastStep = b;		// Last step
-
-	// Starts action
-	if (g_vm->_obj[g_vm->_curObj]._flag & kObjFlagRoomOut)
-		doEvent(MC_CHARACTER, ME_CHARACTERGOTOEXIT, MP_DEFAULT, g_vm->_obj[g_vm->_curObj]._goRoom, 0, g_vm->_obj[g_vm->_curObj]._ninv, g_vm->_curObj);
-	else
-		doEvent(MC_CHARACTER, ME_CHARACTERDOACTION, MP_DEFAULT, 0, 0, 0, 0);
-}
-
-void actorStop() {
-	int b = 0;
-
-	_step[b]._px = g_vm->_actor->_px + g_vm->_actor->_dx;
-	_step[b]._pz = g_vm->_actor->_pz + g_vm->_actor->_dz;
-	_step[b]._dx = 0.0;
-	_step[b]._dz = 0.0;
-
-	_step[b]._theta = g_vm->_actor->_theta;
-	_step[b]._curAction = hSTAND;
-	_step[b]._curFrame  = 0;
-	_step[b]._curPanel  = _curPanel;
-
-	_characterGoToPosition = -1;
-
-	_curStep = 0;
-	_lastStep = 0;
-}
-
 void setPosition(int num) {
-	SLight *_curLight = g_vm->_actor->_light;
+	SLight *curLight = g_vm->_actor->_light;
 
 	for (int a = 0; a < g_vm->_actor->_lightNum; a++) {
 		// If it's off
-		if (_curLight->_inten == 0) {
+		if (curLight->_inten == 0) {
 			// If it's the required position
-			if (_curLight->_position == num) {
-				g_vm->_actor->_px = _curLight->_x;
-				g_vm->_actor->_pz = _curLight->_z;
+			if (curLight->_position == num) {
+				g_vm->_actor->_px = curLight->_x;
+				g_vm->_actor->_pz = curLight->_z;
 				g_vm->_actor->_dx = 0.0;
 				g_vm->_actor->_dz = 0.0;
 
-				float ox = _curLight->_dx;
-				float oz = _curLight->_dz;
+				float ox = curLight->_dx;
+				float oz = curLight->_dz;
 
 				// If it's a null light
 				if ((ox == 0.0) && (oz == 0.0))
@@ -185,7 +85,7 @@ void setPosition(int num) {
 			}
 		}
 
-		_curLight++;
+		curLight++;
 	}
 }
 

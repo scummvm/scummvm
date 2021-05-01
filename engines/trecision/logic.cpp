@@ -3748,7 +3748,7 @@ bool LogicManager::operateInventory() {
 	case kItemEgyptologyBook:
 		doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, kRoom2BL, 0, 0, _vm->_useWith[WITH]);
 		_vm->_obj[oEXIT2BL]._goRoom = _vm->_curRoom;
-		actorStop();
+		_vm->_actor->actorStop();
 		nextStep();
 		printSentence = false;
 		break;
@@ -3756,7 +3756,7 @@ bool LogicManager::operateInventory() {
 	case kItemSecuritySystemSequence:
 		doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, kRoom36F, 0, 0, _vm->_useWith[WITH]);
 		_vm->_obj[oEXIT36F]._goRoom = _vm->_curRoom;
-		actorStop();
+		_vm->_actor->actorStop();
 		nextStep();
 		printSentence = false;
 		break;
@@ -3767,7 +3767,7 @@ bool LogicManager::operateInventory() {
 		doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, kRoom41D, 0, 0, _vm->_useWith[WITH]);
 		_vm->_obj[oEXIT41D]._goRoom = _vm->_curRoom;
 		_vm->_inventoryObj[kItemPositioner]._flag &= ~kObjFlagExtra;
-		actorStop();
+		_vm->_actor->actorStop();
 		nextStep();
 		printSentence = false;
 		break;
@@ -3775,7 +3775,7 @@ bool LogicManager::operateInventory() {
 	case kItemGovernorsCode:
 		_vm->_obj[oEXIT58M]._goRoom = _vm->_curRoom;
 		doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, kRoom58M, 0, 0, _vm->_useWith[WITH]);
-		actorStop();
+		_vm->_actor->actorStop();
 		nextStep();
 		printSentence = false;
 		break;
@@ -4040,12 +4040,12 @@ void LogicManager::doMouseLeftRight() {
 						doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, _vm->_obj[_vm->_curObj]._goRoom, _vm->_obj[_vm->_curObj]._anim, _vm->_obj[_vm->_curObj]._ninv, _vm->_curObj);
 					else if (_vm->_obj[_vm->_curObj]._flag & kObjFlagRoomOut)
 						doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, _vm->_obj[_vm->_curObj]._goRoom, 0, _vm->_obj[_vm->_curObj]._ninv, _vm->_curObj);
-					actorStop();
+					_vm->_actor->actorStop();
 					nextStep();
 					_vm->_obj[_vm->_curObj]._flag |= kObjFlagDone;
 				} else if (_vm->_obj[_vm->_curObj]._flag & kObjFlagUseWith) {
 					_characterGoToPosition = -1;
-					actorStop();
+					_vm->_actor->actorStop();
 					nextStep();
 					doEvent(MC_ACTION, ME_MOUSEOPERATE, MP_DEFAULT, _vm->_curMessage->_u16Param1, _vm->_curMessage->_u16Param2, 0, _vm->_curObj);
 				} else
@@ -4061,7 +4061,7 @@ void LogicManager::doMouseLeftRight() {
 
 		if (ICONAREA(_vm->_curMessage->_u16Param1, _vm->_curMessage->_u16Param2) && _vm->whatIcon(_vm->_curMessage->_u16Param1) && (_vm->_inventoryStatus == INV_INACTION)) {
 			_vm->_characterQueue.initQueue();
-			actorStop();
+			_vm->_actor->actorStop();
 			nextStep();
 			doEvent(MC_CHARACTER, ME_CHARACTERGOTOACTION, MP_DEFAULT, _vm->_curMessage->_u16Param1, _vm->_curMessage->_u16Param2, 0, 0);
 			_vm->_useWith[WITH] = 0;
@@ -4104,7 +4104,7 @@ void LogicManager::doSystemChangeRoom() {
 	_vm->_lightIcon = 0xFF;
 	_vm->_flagCharacterSpeak = false;
 	_vm->_flagSomeoneSpeaks = false;
-	actorStop();
+	_vm->_actor->actorStop();
 	nextStep();
 
 	// Handle exit velocity in dual rooms level 2

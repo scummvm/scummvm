@@ -376,7 +376,7 @@ void TrecisionEngine::doCharacter() {
 			hideCursor();
 			doEvent(MC_CHARACTER, ME_CHARACTERCONTINUEACTION, _curMessage->_priority, _curMessage->_u16Param1, _curMessage->_u16Param2, _curMessage->_u8Param, _curMessage->_u32Param);
 		} else
-			actorDoAction(_curMessage->_u16Param1);
+			_actor->actorDoAction(_curMessage->_u16Param1);
 
 		clearText();
 		break;
@@ -435,7 +435,7 @@ void TrecisionEngine::doSystem() {
 		_logicMgr->doSystemChangeRoom();
 
 		setPosition(_curMessage->_u8Param);
-		actorStop();
+		_actor->actorStop();
 
 		if (_curMessage->_u16Param2)
 			StartCharacterAction(_curMessage->_u16Param2, 0, 0, 0);
@@ -466,7 +466,7 @@ void TrecisionEngine::doIdle() {
 	// Skip
 	case 0x1B:
 		if (canPlayerInteract()) {
-			actorStop();
+			_actor->actorStop();
 			nextStep();
 			showCursor();
 			_obj[o00EXIT]._goRoom = _curRoom;
@@ -480,7 +480,7 @@ void TrecisionEngine::doIdle() {
 	// Sys
 	case 0x3B:
 		if (canPlayerInteract()) {
-			actorStop();
+			_actor->actorStop();
 			nextStep();
 			showCursor();
 			_obj[o00EXIT]._goRoom = _curRoom;

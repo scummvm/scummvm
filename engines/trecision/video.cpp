@@ -34,6 +34,8 @@
 #include "trecision/video.h"
 
 
+
+#include "actor.h"
 #include "dialog.h"
 #include "sound.h"
 
@@ -382,7 +384,7 @@ void AnimManager::startFullMotion(const char *name) {
 	_vm->_gameQueue.initQueue();
 	_vm->_animQueue.initQueue();
 	_vm->_characterQueue.initQueue();
-	actorStop();
+	_vm->_actor->actorStop();
 	_vm->hideCursor();
 }
 
@@ -425,7 +427,7 @@ void AnimManager::refreshAllAnimations() {
 	_vm->_soundMgr->soundTimer();
 }
 
-void AnimManager::refreshSmkAnim(int animation) {
+void AnimManager::refreshSmkAnim(uint16 animation) {
 	if (animation == 0)
 		return;
 
@@ -496,22 +498,23 @@ void AnimManager::drawSmkBackgroundFrame(int animation) {
 	delete frame16;
 }
 
-void AnimManager::drawSmkIconFrame(int startIcon, int iconNum) {
+void AnimManager::drawSmkIconFrame(uint16 startIcon, uint16 iconNum) {
 	NightlongSmackerDecoder *smkDecoder = _smkAnims[kSmackerIcon];
 	if (smkDecoder == nullptr)
 		return;
 
 	int stx = ICONMARGSX;
-	int32 a;
-	for (a = 0; a < ICONSHOWN; a++) {
+	uint16 a;
+	for (a = 0; a < ICONSHOWN; ++a) {
 		if (a + startIcon >= _vm->_inventory.size())
 			break;
 
-		if (_vm->_inventory[a + startIcon] == (iconNum - FIRST_INV_ITEM + 1)) {
+		if (_vm->_inventory[a + startIcon] == iconNum - FIRST_INV_ITEM + 1) {
 			stx = a * ICONDX + ICONMARGSX;
 			break;
 		}
 	}
+	
 	if (a == ICONSHOWN)
 		return;
 
@@ -521,9 +524,8 @@ void AnimManager::drawSmkIconFrame(int startIcon, int iconNum) {
 	frame16->free();
 	delete frame16;
 
-	if (smkDecoder->endOfVideo()) {
+	if (smkDecoder->endOfVideo())
 		smkDecoder->rewind();
-	}
 }
 
 void AnimManager::drawSmkActionFrame() {
@@ -562,7 +564,7 @@ void AnimManager::drawSmkActionFrame() {
 
 void AnimManager::swapCD(int cd) {
 	Common::String animFileName = Common::String::format("nlanim.cd%d", cd);
-	for (int i = 0; i < MAXSMACK; i++) {
+	for (uint8 i = 0; i < MAXSMACK; ++i) {
 		_animFile[i].close();
 		_animFile[i].open(animFileName);
 	}
@@ -573,14 +575,14 @@ void AnimManager::syncGameStream(Common::Serializer &ser) {
 		SAnim *cur = &_animTab[a];
 		ser.syncBytes((byte *)cur->_name, 14);
 		ser.syncAsUint16LE(cur->_flag);
-		for (int i = 0; i < MAXCHILD; i++) {
+		for (uint8 i = 0; i < MAXCHILD; ++i) {
 			ser.syncAsUint16LE(cur->_lim[i].left);
 			ser.syncAsUint16LE(cur->_lim[i].top);
 			ser.syncAsUint16LE(cur->_lim[i].right);
 			ser.syncAsUint16LE(cur->_lim[i].bottom);
 		}
 		ser.syncAsByte(cur->_nbox);
-		for (int i = 0; i < MAXATFRAME; i++) {
+		for (uint8 i = 0; i < MAXATFRAME; ++i) {
 			ser.syncAsByte(cur->_atFrame[i]._type);
 			ser.syncAsByte(cur->_atFrame[i]._child);
 			ser.syncAsUint16LE(cur->_atFrame[i]._numFrame);
@@ -590,12 +592,12 @@ void AnimManager::syncGameStream(Common::Serializer &ser) {
 }
 
 void AnimManager::loadAnimTab(Common::File *file) {
-	for (int i = 0; i < MAXANIM; ++i) {
+	for (uint16 i = 0; i < MAXANIM; ++i) {
 		file->read(&_animTab[i]._name, ARRAYSIZE(_animTab[i]._name));
 
 		_animTab[i]._flag = file->readUint16LE();
 
-		for (int j = 0; j < MAXCHILD; ++j) {
+		for (uint8 j = 0; j < MAXCHILD; ++j) {
 			_animTab[i]._lim[j].left = file->readUint16LE();
 			_animTab[i]._lim[j].top = file->readUint16LE();
 			_animTab[i]._lim[j].right = file->readUint16LE();
@@ -605,7 +607,7 @@ void AnimManager::loadAnimTab(Common::File *file) {
 		_animTab[i]._nbox = file->readByte();
 		file->readByte(); // Padding
 
-		for (int j = 0; j < MAXATFRAME; ++j) {
+		for (uint8 j = 0; j < MAXATFRAME; ++j) {
 			_animTab[i]._atFrame[j]._type = file->readByte();
 			_animTab[i]._atFrame[j]._child = file->readByte();
 			_animTab[i]._atFrame[j]._numFrame = file->readUint16LE();

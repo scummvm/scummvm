@@ -84,7 +84,7 @@ private:
 	void handleEndOfVideo(int animation, int slot);
 
 	void drawSmkBackgroundFrame(int animation);
-	void drawSmkIconFrame(int startIcon, int iconNum);
+	void drawSmkIconFrame(uint16 startIcon, uint16 iconNum);
 	void drawSmkActionFrame();
 	void swapCD(int cd);
 
@@ -105,7 +105,7 @@ public:
 
 	void refreshAllAnimations();
 	void refreshAnim(int box);
-	void refreshSmkAnim(int animation);
+	void refreshSmkAnim(uint16 animation);
 	void startSmkAnim(uint16 animation);
 	void stopAllSmkAnims();
 

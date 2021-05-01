@@ -631,7 +631,7 @@ uint16 *TrecisionEngine::readData16(Common::String fileName, int &size) {
 void TrecisionEngine::loadSaveSlots(Common::StringArray &saveNames) {
 	Common::SaveFileManager *saveFileMan = g_engine->getSaveFileManager();
 
-	for (int i = 0; i < _inventory.size(); i++) {
+	for (uint i = 0; i < _inventory.size(); ++i) {
 		Common::String saveFileName = getSaveStateName(i + 1);
 		Common::InSaveFile *saveFile = saveFileMan->openForLoading(saveFileName);
 		ExtendedSavegameHeader header;
@@ -695,7 +695,7 @@ bool TrecisionEngine::dataSave() {
 	uint16 posx, LenText;
 	bool ret = true;
 
-	actorStop();
+	_actor->actorStop();
 	nextStep();
 
 	if (!ConfMan.getBool("originalsaveload")) {
@@ -1046,7 +1046,7 @@ void TrecisionEngine::performLoad(int slot, bool skipLoad) {
 		doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, _curRoom, 0, 0, 0);
 	}
 
-	actorStop();
+	_actor->actorStop();
 	nextStep();
 	checkSystem();
 
@@ -1079,7 +1079,7 @@ void TrecisionEngine::StartCharacterAction(uint16 Act, uint16 NewRoom, uint8 New
 		if ((Act == aWALKIN) || (Act == aWALKOUT))
 			_curObj = 0;
 		hideCursor();
-		actorDoAction(Act);
+		_actor->actorDoAction(Act);
 		nextStep();
 	}
 

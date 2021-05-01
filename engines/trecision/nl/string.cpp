@@ -215,7 +215,7 @@ void CharacterTalk(const char *s) {
 	CharacterContinueTalk();
 
 	g_vm->_characterQueue.initQueue();
-	actorStop();
+	g_vm->_actor->actorStop();
 }
 
 void CharacterTalkInAction(uint16 ss) {

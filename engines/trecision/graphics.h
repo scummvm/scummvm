@@ -67,7 +67,7 @@ public:
 	uint16 shadow(uint32 val, uint8 num);
 	uint16 aliasing(uint32 val1, uint32 val2, uint8 num);
 
-	void NlDissolve(int val);
+	void NlDissolve(uint8 val);
 	void DrawObj(SDObj d);
 
 }; // end of class
