@@ -22,6 +22,7 @@
 
 #include "common/util.h"
 #include "common/scummsys.h"
+#include "trecision/3d.h"
 
 #include "trecision/nl/3d/3dinc.h"
 #include "trecision/defines.h"
@@ -247,7 +248,7 @@ void PaintObjAnm(uint16 CurBox) {
 	}
 
 	if (_actorPos == CurBox && g_vm->_flagShowCharacter && g_vm->_flagCharacterExists) {
-		drawCharacter(CALCPOINTS);
+		g_vm->_renderer->drawCharacter(CALCPOINTS);
 
 		int x1 = g_vm->_actor->_lim[0];
 		int y1 = g_vm->_actor->_lim[2];
@@ -263,7 +264,7 @@ void PaintObjAnm(uint16 CurBox) {
 			g_vm->resetZBuffer(x1, y1, x2, y2);
 		}
 
-		drawCharacter(DRAWFACES);
+		g_vm->_renderer->drawCharacter(DRAWFACES);
 
 	} else if (_actorPos == CurBox && !g_vm->_flagDialogActive) {
 		g_vm->_animMgr->refreshSmkAnim(g_vm->_animMgr->_playingAnims[kSmackerAction]);

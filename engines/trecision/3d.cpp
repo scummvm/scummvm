@@ -20,131 +20,142 @@
  *
  */
 
-#include "common/util.h"
-#include "common/scummsys.h"
-#include "trecision/actor.h"
-#include "trecision/nl/3d/3dinc.h"
 #include "trecision/trecision.h"
+#include "trecision/3d.h"
+
+#include "trecision/actor.h"
 #include "trecision/graphics.h"
 
 namespace Trecision {
+#define SHADOWVERTSNUM 42
 
-int16 _shadowLightNum = 0;
-int16 _totalShadowVerts = 0;
+static int16 _shadowVerts[SHADOWVERTSNUM] = {
+	6, 15, 23,
+	24, 32, 78,
+	80, 81, 83,
+	86, 90, 99,
+	107, 108, 116,
+	155, 157, 158,
+	160, 164, 168,
+	169, 173, 174,
+	187, 188, 192,
+	193, 213, 215,
+	227, 229, 235,
+	238, 249, 250,
+	252, 253, 299,
+	306, 330, 336
+};
+#define SHADOWFACESNUM 48
 
-int16 _shadowVertsNum = 42;
-int16 _shadowVerts[42] = {
-	  6,	 15,	 23,
-	 24,	 32,	 78,
-	 80,	 81,	 83,
-	 86,	 90,	 99,
-	107,	108,	116,
-	155,	157,	158,
-	160,	164,	168,
-	169,	173,	174,
-	187,	188,	192,
-	193,	213,	215,
-	227,	229,	235,
-	238,	249,	250,
-	252,	253,	299,
-	306,	330,	336
+int16 _shadowFaces[SHADOWFACESNUM][3] = {
+	22, 21, 5,
+	7, 5, 22,
+	7, 19, 5,
+	5, 2, 19,
+	27, 24, 16,
+	27, 16, 18,
+	18, 16, 9,
+	18, 13, 9,
+	13, 9, 2,
+	3, 19, 12,
+	25, 26, 17,
+	17, 15, 25,
+	17, 19, 15,
+	15, 12, 19,
+	20, 23, 8,
+	8, 6, 20,
+	6, 9, 3,
+	3, 8, 6,
+	12, 3, 4,
+	4, 11, 12,
+	35, 4, 11,
+	13, 2, 1,
+	1, 14, 13,
+	14, 37, 1,
+	1, 34, 37,
+	31, 36, 37,
+	37, 30, 31,
+	29, 34, 35,
+	35, 29, 28,
+	36, 11, 31,
+	30, 37, 14,
+	29, 1, 34,
+	28, 4, 35,
+	36, 10, 35,
+	35, 32, 10,
+	37, 0, 34,
+	37, 33, 0,
+	0, 33, 39,
+	39, 40, 0,
+	10, 38, 32,
+	32, 41, 38,
+	36, 35, 34,
+	36, 37, 35,
+	11, 36, 35,
+	38, 40, 41,
+	41, 38, 39,
+	2, 19, 13,
+	3, 9, 12
 };
 
-int16 _shadowFacesNum = 48;
-int16 _shadowFaces[48][3] = {
-	22,	21,	5,
-	7,	5,	22,
-	7,	19,	5,
-	5,	2,	19,
-	27,	24,	16,
-	27,	16,	18,
-	18,	16,	9,
-	18,	13,	9,
-	13,	9,	2,
-	3,	19,	12,
-	25,	26,	17,
-	17,	15,	25,
-	17,	19,	15,
-	15,	12,	19,
-	20,	23,	8,
-	8,	6,	20,
-	6,	9,	3,
-	3,	8,	6,
-	12,	3,	4,
-	4,	11,	12,
-	35,	4,	11,
-	13,	2,	1,
-	1,	14,	13,
-	14,	37,	1,
-	1,	34,	37,
-	31,	36,	37,
-	37,	30,	31,
-	29,	34,	35,
-	35,	29,	28,
-	36,	11,	31,
-	30,	37,	14,
-	29,	1,	34,
-	28,	4,	35,
-	36,	10,	35,
-	35,	32,	10,
-	37,	0,	34,
-	37,	33,	0,
-	0,	33,	39,
-	39,	40,	0,
-	10,	38,	32,
-	32,	41,	38,
-	36,	35,	34,
-	36,	37,	35,
-	11,	36,	35,
-	38,	40,	41,
-	41,	38,	39,
-	2,	19,	13,
-	3,	9,	12
-};
+Renderer3D::Renderer3D(TrecisionEngine *vm) : _vm(vm) {
+	_zBuf = nullptr;
+	_curPage = nullptr;
 
-uint8 _shadowIntens[10];
+	_minXClip = 0;
+	_minYClip = 0;
+	_maxXClip = 0;
+	_maxYClip = 0;
+	_zBufStartX = 0;
+	_zBufStartY = 0;
+	_zBufWid = 0;
+	_shadowLightNum = 0;
+	_totalShadowVerts = 0;
 
-struct SVVertex {
-	int32 _x, _y, _z;
-	int32 _angle;
-} _vVertex[MAXVERTEX];
+	// data for the triangle routines
+	for (int i = 0; i < 480; ++i) {
+		_lEdge[i] = 0;
+		_rEdge[i] = 0;
+		_lColor[i] = 0;
+		_rColor[i] = 0;
+		_lZ[i] = 0;
+		_rZ[i] = 0;
+		_lTextX[i] = 0;
+		_rTextX[i] = 0;
+		_lTextY[i] = 0;
+		_rTextY[i] = 0;
+	}
 
-SVertex  _shVertex[MAXVERTEX];
+	for (int i = 0; i < 10; ++i)
+		_shadowIntens[i] = 0;
 
-uint32 _materials[21][181];
+	for (int i = 0; i < MAXVERTEX; ++i) {
+		_vVertex[i]._x = 0;
+		_vVertex[i]._y = 0;
+		_vVertex[i]._z = 0;
+		_vVertex[i]._angle = 0;
 
-uint16 *_curPage;
-int16  *_zBuf;
-int16 _minXClip;
-int16 _minYClip;
-int16 _maxXClip;
-int16 _maxYClip;
+		_shVertex[i]._x = 0;
+		_shVertex[i]._y = 0;
+		_shVertex[i]._z = 0;
+		_shVertex[i]._nx = 0;
+		_shVertex[i]._ny = 0;
+		_shVertex[i]._nz = 0;
+	}
+}
 
-int16 _zBufStartX;
-int16 _zBufStartY;
-int16 _zBufWid;
+Renderer3D::~Renderer3D() {
+}
 
-// data for the triangle routines
-int16  _lEdge[480];
-int16  _rEdge[480];
-uint8 _lColor[480];
-uint8 _rColor[480];
-int16  _lZ[480];
-int16  _rZ[480];
-uint16 _lTextX[480];
-uint16 _rTextX[480];
-uint16 _lTextY[480];
-uint16 _rTextY[480];
-
-void textureTriangle(int32 x1, int32 y1, int32 z1, int32 c1, int32 tx1, int32 ty1,
-					 int32 x2, int32 y2, int32 z2, int32 c2, int32 tx2, int32 ty2,
-					 int32 x3, int32 y3, int32 z3, int32 c3, int32 tx3, int32 ty3,
-					 STexture *t) {
-	int32 cl; 	// color of left edge of horizontal scanline
-	int32 zl; 	// zbuffer of left edge of horizontal scanline
-	int32 olx; 	// texture x of left edge of horizontal scanline
-	int32 oly; 	// texture y of left edge of horizontal scanline
-	int16 y; 	// looping variable
+void Renderer3D::textureTriangle(int32 x1, int32 y1, int32 z1, int32 c1, int32 tx1, int32 ty1,
+								 int32 x2, int32 y2, int32 z2, int32 c2, int32 tx2, int32 ty2,
+								 int32 x3, int32 y3, int32 z3, int32 c3, int32 tx3, int32 ty3,
+								 STexture *t) {
+	int32 cl;  // color of left edge of horizontal scanline
+	int32 zl;  // zbuffer of left edge of horizontal scanline
+	int32 olx; // texture x of left edge of horizontal scanline
+	int32 oly; // texture y of left edge of horizontal scanline
+	int16 y;   // looping variable
 
 	if (y1 > _maxYClip)
 		y1 = _maxYClip;
@@ -213,29 +224,29 @@ void textureTriangle(int32 x1, int32 y1, int32 z1, int32 c1, int32 tx1, int32 ty
 			uint16 *screenPtr = _curPage + sl;
 
 			zl <<= 16;
-			cl <<=  8;
+			cl <<= 8;
 			olx <<= 16;
 			oly <<= 16;
 			// loop through every pixel in horizontal scanline
 			while (dx) {
 				sl = zl >> 16;
 				if (*z > sl) {
-					*screenPtr = (uint16)(g_vm->_actor->_textureMat[texture[(olx >> 16) + t->_dx * (oly >> 16)]][cl >> 9]);
+					*screenPtr = (uint16)(_vm->_actor->_textureMat[texture[(olx >> 16) + t->_dx * (oly >> 16)]][cl >> 9]);
 					*z = (int16)sl;
 				}
-				screenPtr++;	// increase screen x
-				z++;			// increase zbuffer
-				zl += mz;   	// increase the zbuffer by _dz/_dx
-				cl += mc; 		// increase the color by dc/_dx
+				screenPtr++; // increase screen x
+				z++;         // increase zbuffer
+				zl += mz;    // increase the zbuffer by _dz/_dx
+				cl += mc;    // increase the color by dc/_dx
 				olx += mtx;
 				oly += mty;
-				dx--;			// pixel to do --
+				dx--; // pixel to do --
 			}
 		}
 	}
 }
 
-void textureScanEdge(int32 x1, int32 y1, int32 z1, int32 c1, int32 tx1, int32 ty1, int32 x2, int32 y2, int32 z2, int32 c2, int32 tx2, int32 ty2) {
+void Renderer3D::textureScanEdge(int32 x1, int32 y1, int32 z1, int32 c1, int32 tx1, int32 ty1, int32 x2, int32 y2, int32 z2, int32 c2, int32 tx2, int32 ty2) {
 	// make sure that edge goes from top to bottom
 	int16 dy = y2 - y1;
 	if (dy < 0) {
@@ -255,13 +266,13 @@ void textureScanEdge(int32 x1, int32 y1, int32 z1, int32 c1, int32 tx1, int32 ty
 	// initialize for stepping
 	int32 mx = ((x2 - x1) << 16) / dy; // dx/dy
 	int32 mz = ((z2 - z1) << 16) / dy; // dz/dy
-	int32 mc = ((c2 - c1) << 8) / dy; // dc/dy
+	int32 mc = ((c2 - c1) << 8) / dy;  // dc/dy
 	int32 mtx = ((tx2 - tx1) << 16) / dy;
 	int32 mty = ((ty2 - ty1) << 16) / dy;
 
 	x1 <<= 16; // starting x coordinate
 	z1 <<= 16; // starting z coordinate
-	c1 <<=  8; // starting c color
+	c1 <<= 8;  // starting c color
 
 	tx1 <<= 16;
 	ty1 <<= 16;
@@ -270,31 +281,31 @@ void textureScanEdge(int32 x1, int32 y1, int32 z1, int32 c1, int32 tx1, int32 ty
 	for (int32 count = y1; count < y2; count++) {
 		int16 x = (uint16)(x1 >> 16);
 		if (x < _lEdge[count]) {
-			_lEdge[count]  = x;
-			_lZ[count]     = (int16)(z1 >> 16);
+			_lEdge[count] = x;
+			_lZ[count] = (int16)(z1 >> 16);
 			_lTextX[count] = (uint16)(tx1 >> 16);
 			_lTextY[count] = (uint16)(ty1 >> 16);
 			_lColor[count] = (uint8)(c1 >> 8);
 		}
 		if (x > _rEdge[count]) {
 			_rEdge[count] = x;
-			_rZ[count]     = (int16)(z1 >> 16);
+			_rZ[count] = (int16)(z1 >> 16);
 			_rTextX[count] = (uint16)(tx1 >> 16);
 			_rTextY[count] = (uint16)(ty1 >> 16);
 			_rColor[count] = (uint8)(c1 >> 8);
 		}
 
-		x1 += mx;  // x = x + dx/dy
-		c1 += mc;  // c = c + dc/dy
-		z1 += mz;  // z = z + dz/dy
+		x1 += mx; // x = x + dx/dy
+		c1 += mc; // c = c + dc/dy
+		z1 += mz; // z = z + dz/dy
 
 		tx1 += mtx;
 		ty1 += mty;
 	}
 }
 
-void shadowTriangle(int32 x1, int32 y1, int32 x2, int32 y2,
-					int32 x3, int32 y3, uint8 cv, int32 zv) {
+void Renderer3D::shadowTriangle(int32 x1, int32 y1, int32 x2, int32 y2,
+								int32 x3, int32 y3, uint8 cv, int32 zv) {
 	if (y1 > _maxYClip)
 		y1 = _maxYClip;
 	if (y1 < _minYClip)
@@ -358,18 +369,18 @@ void shadowTriangle(int32 x1, int32 y1, int32 x2, int32 y2,
 			// loop through every pixel in horizontal scanline
 			while (dx) {
 				if (*zBufferPtr != zv) {
-					*screenPtr = g_vm->_graphicsMgr->shadow(*screenPtr, cv);
-					*zBufferPtr = (int16)zv;
+					*screenPtr = _vm->_graphicsMgr->shadow(*screenPtr, cv);
+					*zBufferPtr = zv;
 				}
-				screenPtr++;		// increase screen x
-				zBufferPtr++;		// increase zbuffer
-				dx--;		// pixel to do --
+				screenPtr++;  // increase screen x
+				zBufferPtr++; // increase zbuffer
+				dx--;         // pixel to do --
 			}
 		}
 	}
 }
 
-void shadowScanEdge(int32 x1, int32 y1, int32 x2, int32 y2) {
+void Renderer3D::shadowScanEdge(int32 x1, int32 y1, int32 x2, int32 y2) {
 	// make sure that edge goes from top to bottom
 	int16 dy = y2 - y1;
 	if (dy < 0) {
@@ -388,43 +399,49 @@ void shadowScanEdge(int32 x1, int32 y1, int32 x2, int32 y2) {
 	x1 <<= 16; // starting x coordinate
 
 	// step through edge and record color values along the way
-	for (int16 count = y1; count < y2; count++) {
-		int16 x = (uint16)(x1 >> 16);
+	for (int32 count = y1; count < y2; count++) {
+		int16 x = (int16)(x1 >> 16);
 		if (x < _lEdge[count])
 			_lEdge[count] = x;
 
 		if (x > _rEdge[count])
 			_rEdge[count] = x;
 
-		x1 += mx;  // x = x + dx/dy
+		x1 += mx; // x = x + dx/dy
 	}
 }
 
-void init3DRoom(uint16 *destBuffer, int16 *zBuffer) {
+/*------------------------------------------------
+	Initialize a 3D Room
+--------------------------------------------------*/
+void Renderer3D::init3DRoom(uint16 *destBuffer, int16 *zBuffer) {
 	_curPage = destBuffer;
 	_zBuf = zBuffer;
 	_cx = (MAXX - 1) / 2;
 	_cy = (MAXY - 1) / 2;
 }
 
-void setClipping(int16 x1, int16 y1, int16 x2, int16 y2) {
+/*------------------------------------------------
+	Change the clipping area
+--------------------------------------------------*/
+void Renderer3D::setClipping(int16 x1, int16 y1, int16 x2, int16 y2) {
 	_minXClip = x1;
 	_minYClip = y1;
 	_maxXClip = x2;
 	_maxYClip = y2;
 }
 
-void setZBufferRegion(int16 sx, int16 sy, int16 dx) {
+void Renderer3D::setZBufferRegion(int16 sx, int16 sy, int16 dx) {
 	_zBufStartX = sx;
 	_zBufStartY = sy;
-	_zBufWid    = dx;
+	_zBufWid = dx;
 }
 
 /*------------------------------------------------
 	Determines whether a triangle has clockwise
 	or counterclockwise vertices
 --------------------------------------------------*/
-int8 clockWise(int16 x1, int16 y1, int16 x2, int16 y2, int16 x3, int16 y3) {
+int8 Renderer3D::clockWise(int16 x1, int16 y1, int16 x2, int16 y2, int16 x3, int16 y3) {
 	x2 -= x1;
 	y2 -= y1;
 
@@ -435,9 +452,9 @@ int8 clockWise(int16 x1, int16 y1, int16 x2, int16 y2, int16 x3, int16 y3) {
 	int32 a2 = ((int32)y2) * x3;
 
 	if (a1 > a2)
-		return  1;		// clockwise
+		return 1; // clockwise
 	if (a1 < a2)
-		return -1;    	// counterclockwise
+		return -1; // counterclockwise
 
 	a1 = ((int32)x2) * x3;
 	a2 = ((int32)y2) * y3;
@@ -452,10 +469,12 @@ int8 clockWise(int16 x1, int16 y1, int16 x2, int16 y2, int16 x3, int16 y3) {
 	return 0;
 }
 
+/*------------------------------------------------
+	Draw the character
+--------------------------------------------------*/
+void Renderer3D::drawCharacter(uint8 flag) {
+	Actor *actor = _vm->_actor;
 
-void drawCharacter(uint8 flag) {
-	Actor *actor = g_vm->_actor;
-	
 	// Compute pointer to frame
 	if (flag & CALCPOINTS) {
 		if (actor->_curAction > hLAST)
@@ -519,8 +538,8 @@ void drawCharacter(uint8 flag) {
 		float sint = sin(t);
 
 		// Put all vertices in dark color
-		for (int a = 0; a < vertexNum; a++)
-			_vVertex[a]._angle = 180;
+		for (int i = 0; i < MAXVERTEX; ++i)
+			_vVertex[i]._angle = 180;
 
 		float dist;
 		float tx = 0;
@@ -533,35 +552,35 @@ void drawCharacter(uint8 flag) {
 			// if it has a shadow    lint & 0x80
 
 			int lint = _curLight->_inten & 0x7F;
-			if (lint) {    // if it's not turned off
-				tx = _curLight->_x - actor->_px - actor->_dx;               // computes direction vector
+			if (lint) {                                       // if it's not turned off
+				tx = _curLight->_x - actor->_px - actor->_dx; // computes direction vector
 				tz = _curLight->_z - actor->_pz - actor->_dz; // between light and actor
 				ty = _curLight->_y;
 
-				if (_curLight->_position) {     // if it's attenuated
-					dist = sqrt(tx * tx + ty * ty + tz * tz);   // Distance light <--> actor
+				if (_curLight->_position) {                   // if it's attenuated
+					dist = sqrt(tx * tx + ty * ty + tz * tz); // Distance light <--> actor
 
 					// adjust light intensity due to the distance
-					if (dist > _curLight->_outr)           // if it's out of range it's off
+					if (dist > _curLight->_outr) // if it's out of range it's off
 						lint = 0;
-					else if (dist > _curLight->_inr)       // if it's inside the circle it's decreased
+					else if (dist > _curLight->_inr) // if it's inside the circle it's decreased
 						lint = (int)((float)lint * (_curLight->_outr - dist) / (_curLight->_outr - _curLight->_inr));
 				}
 			}
 
-			if (lint) {   // If it's still on
+			if (lint) { // If it's still on
 				// Light rotates around the actor
 				l0 = tx * cost - tz * sint;
 				l2 = tx * sint + tz * cost;
 				l1 = ty;
-				t  = sqrt(l0 * l0 + l1 * l1 + l2 * l2);
+				t = sqrt(l0 * l0 + l1 * l1 + l2 * l2);
 				l0 /= t;
 				l1 /= t;
 				l2 /= t;
 
 				// Adjust light intensity according to the spot
 				tx = (float)_curLight->_fallOff;
-				if (tx) {    // for light spot only
+				if (tx) { // for light spot only
 					ty = (float)_curLight->_hotspot;
 
 					pa0 = _curLight->_dx * cost - _curLight->_dz * sint;
@@ -582,21 +601,21 @@ void drawCharacter(uint8 flag) {
 
 					_shadowIntens[_shadowLightNum] = SHADOWAMBIENT;
 
-					if (tz > tx) {           // if it's out of the falloff
+					if (tz > tx) { // if it's out of the falloff
 						lint = 0;
 						_shadowIntens[_shadowLightNum] = 0;
-					} else if (tz > ty) {    // if it's between the falloff and the hotspot
+					} else if (tz > ty) { // if it's between the falloff and the hotspot
 						lint = (int)((float)lint * (tx - tz) / (tx - ty));
 						_shadowIntens[_shadowLightNum] = (int)((float)_shadowIntens[_shadowLightNum] * (tx - tz) / (tx - ty));
 					}
 				}
 			}
 
-			if ((_curLight->_inten & 0x80) && lint) {    // if it's shadowed and still on
+			if ((_curLight->_inten & 0x80) && lint) { // if it's shadowed and still on
 				_curVertex = actor->_vertex;
 
 				// casts shadow vertices
-				for (int a = 0; a < _shadowVertsNum; a++) {
+				for (int a = 0; a < SHADOWVERTSNUM; a++) {
 					pa0 = _curVertex[_shadowVerts[a]]._x;
 					pa1 = _curVertex[_shadowVerts[a]]._y;
 					pa2 = _curVertex[_shadowVerts[a]]._z;
@@ -610,7 +629,7 @@ void drawCharacter(uint8 flag) {
 				// _shadowIntens[_shadowLightNum] = SHADOWAMBIENT;
 
 				_shadowLightNum++;
-				_totalShadowVerts += _shadowVertsNum;
+				_totalShadowVerts += SHADOWVERTSNUM;
 			}
 
 			if (lint) { // if still on
@@ -661,7 +680,7 @@ void drawCharacter(uint8 flag) {
 				pa1 = ty - _shVertex[a]._y;
 			}
 
-			pa0 = tx - (l0 * cost + l1 * sint);     // rotate _curVertex
+			pa0 = tx - (l0 * cost + l1 * sint); // rotate _curVertex
 			pa2 = tz - (-l0 * sint + l1 * cost);
 
 			l0 = pa0 * e10 + pa1 * e11 + pa2 * e12; // project _curVertex
@@ -706,10 +725,10 @@ void drawCharacter(uint8 flag) {
 			setClipping(0, actor->_lim[2], MAXX, actor->_lim[3]);
 
 		for (int b = 0; b < _shadowLightNum; b++) {
-			for (int a = 0; a < _shadowFacesNum; a++) {
-				int p0 = _shadowFaces[a][0] + vertexNum + b * _shadowVertsNum;
-				int p1 = _shadowFaces[a][1] + vertexNum + b * _shadowVertsNum;
-				int p2 = _shadowFaces[a][2] + vertexNum + b * _shadowVertsNum;
+			for (int a = 0; a < SHADOWFACESNUM; a++) {
+				int p0 = _shadowFaces[a][0] + vertexNum + b * SHADOWVERTSNUM;
+				int p1 = _shadowFaces[a][1] + vertexNum + b * SHADOWVERTSNUM;
+				int p2 = _shadowFaces[a][2] + vertexNum + b * SHADOWVERTSNUM;
 
 				int px0 = _vVertex[p0]._x;
 				int py0 = _vVertex[p0]._y;
@@ -753,8 +772,8 @@ void drawCharacter(uint8 flag) {
 			for (int a = 1; a < _zBufWid; a++) {
 				// CHECKME: These are always 0
 				//bool _shadowSplit;
-				int py1 = 0;	//(_zBuf[p0]   >= 0x7FF0) * 0x8000 * _shadowSplit;
-				int py2 = 0;	//(_zBuf[p0 + 1] >= 0x7FF0) * 0x8000 * _shadowSplit;
+				int py1 = 0; //(_zBuf[p0]   >= 0x7FF0) * 0x8000 * _shadowSplit;
+				int py2 = 0; //(_zBuf[p0 + 1] >= 0x7FF0) * 0x8000 * _shadowSplit;
 
 				int p1 = _zBuf[p0] < 0x7FFF;
 				int p2 = _zBuf[p0 + 1] < 0x7FFF;
@@ -763,8 +782,8 @@ void drawCharacter(uint8 flag) {
 					int px1 = _curPage[px0 + a - 1];
 					int px2 = _curPage[px0 + a];
 
-					_curPage[px0 + a - 1] = g_vm->_graphicsMgr->aliasing(px1, px2, 6); // 75% 25%
-					_curPage[px0 + a] = g_vm->_graphicsMgr->aliasing(px1, px2, 2);     // 25% 75%
+					_curPage[px0 + a - 1] = _vm->_graphicsMgr->aliasing(px1, px2, 6); // 75% 25%
+					_curPage[px0 + a] = _vm->_graphicsMgr->aliasing(px1, px2, 2);     // 25% 75%
 
 					// if the first is the character
 					if (p1)

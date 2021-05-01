@@ -23,6 +23,7 @@
 #include "common/util.h"
 #include "common/scummsys.h"
 #include "common/str.h"
+#include "trecision/3d.h"
 
 #include "trecision/defines.h"
 #include "trecision/nl/extern.h"
@@ -102,8 +103,8 @@ int read3D(Common::String filename) {
 
 	initSortPan();
 
-	init3DRoom(g_vm->_screenBuffer, g_vm->_zBuffer);
-	setClipping(0, TOP, MAXX, AREA + TOP);
+	g_vm->_renderer->init3DRoom(g_vm->_screenBuffer, g_vm->_zBuffer);
+	g_vm->_renderer->setClipping(0, TOP, MAXX, AREA + TOP);
 
 	return 10L;
 }

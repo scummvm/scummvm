@@ -23,9 +23,11 @@
 #ifndef TRECISION_ACTOR_H
 #define TRECISION_ACTOR_H
 
+#include "trecision/defines.h"
 #include "trecision/trecision.h"
 
 namespace Trecision {
+
 class Actor {
 private:
 	TrecisionEngine *_vm;
@@ -63,10 +65,7 @@ public:
 	void actorDoAction(int action);
 	void actorStop();
 	void read3D(Common::SeekableReadStream *ff);
-};
-
-
-; // end of class
+}; // end of class
 
 } // end of namespace
 #endif

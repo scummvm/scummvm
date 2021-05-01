@@ -23,13 +23,14 @@
 #include "common/config-manager.h"
 
 #include "trecision/nl/3d/3dinc.h"
-#include "trecision/defines.h"
 #include "trecision/nl/extern.h"
 #include "trecision/nl/message.h"
 #include "trecision/nl/proto.h"
 #include "trecision/nl/struct.h"
-#include "trecision/logic.h"
 
+#include "trecision/defines.h"
+#include "trecision/logic.h"
+#include "trecision/3d.h"
 #include "trecision/actor.h"
 #include "trecision/dialog.h"
 #include "trecision/sound.h"
@@ -577,7 +578,7 @@ void LogicManager::endChangeRoom() {
 		setPosition(14);
 	else if ((_vm->_oldRoom == kRoom41D) && (_vm->_inventoryObj[kItemPositioner]._flag & kObjFlagExtra)) {
 		setPosition(30);
-		drawCharacter(CALCPOINTS);
+		_vm->_renderer->drawCharacter(CALCPOINTS);
 	}
 
 	// FullMotion

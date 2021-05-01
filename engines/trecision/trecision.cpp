@@ -21,8 +21,9 @@
  */
 
 #include "trecision/trecision.h"
+#include "trecision/actor.h"
+#include "trecision/3d.h"
 
-#include "actor.h"
 #include "trecision/nl/3d/3dinc.h"
 #include "trecision/defines.h"
 #include "trecision/nl/extern.h"
@@ -124,7 +125,8 @@ TrecisionEngine::TrecisionEngine(OSystem *syst) : Engine(syst) {
 	_graphicsMgr = nullptr;
 	_logicMgr = nullptr;
 	_soundMgr = nullptr;
-
+	_renderer = nullptr;
+	
 	_actorRect = nullptr;
 	_nextRefresh = 0;
 
@@ -186,7 +188,8 @@ TrecisionEngine::~TrecisionEngine() {
 	delete _graphicsMgr;
 	delete _logicMgr;
 	delete _soundMgr;
-
+	delete _renderer;
+	
 	delete[] _font;
 	delete[] _arrows;
 	delete[] _textureArea;

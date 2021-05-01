@@ -2299,4 +2299,21 @@ enum InventoryItem {
 #define PATCHOBJ_ROOM41D 89
 #define PATCHOBJ_ROOM2C	 20
 
+// 3D Rendering
+#define MAXVERTEX 1000
+#define MAXFACE 1000
+
+#define CALCPOINTS 1
+#define DRAWFACES 2
+#define DOALL 3
+
+#define TEXTUREACTIVE 1
+#define TEXTUREPLANAR 2
+#define TEXTURECYLIND 4
+#define TEXTURELATERAL 8
+
+#define SHADOWAMBIENT 27      // 0 (black) ... 127 (blank) shadow colors - opposite
+#define LIGHTRANGE 2048.0     // after 127 * val the light doesn't have an effect (deleted)
+#define CHARACTERMIDSIZE 91.0 // character half height
+
 #endif
