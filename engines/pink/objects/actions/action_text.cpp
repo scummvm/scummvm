@@ -114,8 +114,7 @@ void ActionText::start() {
 		_text.deleteLastChar();
 
 	if (_scrollBar) {
-		Graphics::MacFont *font = new Graphics::MacFont;
-		_txtWnd = director->getWndManager().addTextWindow(font, _textColorIndex, _backgroundColorIndex,
+		_txtWnd = director->getWndManager().addTextWindow(director->getTextFont(), _textColorIndex, _backgroundColorIndex,
 														  _xRight - _xLeft, align, nullptr, false);
 		_txtWnd->setTextColorRGB(_textRGB);
 		_txtWnd->enableScrollbar(true);
@@ -126,7 +125,7 @@ void ActionText::start() {
 		_txtWnd->setEditable(false);
 		_txtWnd->setSelectable(false);
 
-		_txtWnd->appendText(_text, font);
+		_txtWnd->appendText(_text);
 		director->addTextWindow(_txtWnd);
 
 	} else {
