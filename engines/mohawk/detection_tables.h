@@ -338,6 +338,24 @@ static const MohawkGameDescription gameDescriptions[] = {
 		0,
 	},
 
+	// Myst Masterpiece Edition
+	// Spanish Fan Translation 3.02c
+	// Bugreport #11927
+	{
+		{
+			"myst",
+			"Masterpiece Edition",
+			AD_ENTRY1s("myst.dat", "7552dd490861dc7e6307e1ede80220fd", 76640997),
+			Common::ES_ESP,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUI_OPTIONS_MYST_ME
+		},
+		GType_MYST,
+		GF_ME,
+		0,
+	},
+
 	// Myst Masterpiece Edition - 25th Anniversary
 	// Repacked by the ScummVM team
 	{
