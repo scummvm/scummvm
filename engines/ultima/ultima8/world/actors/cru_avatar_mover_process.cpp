@@ -454,6 +454,14 @@ void CruAvatarMoverProcess::tryAttack() {
 	AudioProcess *audio = AudioProcess::get_instance();
 	const WeaponInfo *wpninfo = wpn->getShapeInfo()->_weaponInfo;
 
+	if (avatar->getObjId() != 1) {
+		// Non-avatar NPCs never need to reload or run out of energy.
+		Animation::Sequence fireanim = (avatar->isKneeling() ?
+										Animation::kneelAndFire : Animation::attack);
+		waitFor(avatar->doAnim(fireanim, avatar->getDir()));
+		return;
+	}
+
 	int shotsleft;
 	if (wpninfo->_ammoShape) {
 		shotsleft = wpn->getQuality();
