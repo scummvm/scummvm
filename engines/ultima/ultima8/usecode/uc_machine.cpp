@@ -1748,12 +1748,13 @@ void UCMachine::execProcess(UCProcess *p) {
 				if (searchtype == 3) recurse = true;
 
 				// ui16a = item, ui16b = range
-				Item *item = getItem(ui16a);
+				const Item *item = getItem(ui16a);
+				const uint16 range = GAME_IS_CRUSADER ? ui16b * 2 : ui16b;
 
 				if (item) {
 					world->getCurrentMap()->areaSearch(itemlist, script,
 					                                   scriptsize, item,
-					                                   ui16b, recurse);
+					                                   range, recurse);
 				} else {
 					// return error or return empty list?
 					perr << "Warning: invalid item " << ui16a << " passed to area search"
