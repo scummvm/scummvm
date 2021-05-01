@@ -358,7 +358,7 @@ Common::WriteStream *MorphOSFilesystemNode::createWriteStream() {
 }
 
 bool MorphOSFilesystemNode::createDirectory() {
-	warning("MorphOSFilesystemNode::createDirectory(): Not supported");
+	warning("AmigaOSFilesystemNode::createDirectory(): Not supported");
 	return _bIsValid && _bIsDirectory;
 }
 
