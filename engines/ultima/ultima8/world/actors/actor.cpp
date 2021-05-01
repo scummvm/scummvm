@@ -666,7 +666,7 @@ uint16 Actor::turnTowardDir(Direction targetdir) {
 		}
 	}
 
-	if (targetdir == curdir)
+	if (targetdir == curdir || targetdir == dir_current)
 		return 0; // nothing to do.
 
 	if (combat) {
@@ -1813,7 +1813,7 @@ uint32 Actor::I_getLastAnimSet(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_ACTOR_FROM_PTR(actor);
 	if (!actor) return 0;
 
-	return actor->getLastAnim();
+	return AnimDat::getActionNumberForSequence(actor->getLastAnim(), actor);
 }
 
 uint32 Actor::I_getStr(const uint8 *args, unsigned int /*argsize*/) {
