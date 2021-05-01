@@ -764,7 +764,7 @@ GameChunk createGameChunkV2() {
 
 	cptr = FindChunk(MASTER_SCNHANDLE, CHUNK_TOTAL_POLY);
 	if (cptr != NULL)
-		chunk.numPolygons = *cptr;
+		chunk.numPolygons = READ_32(cptr);
 
 	if (TinselV2) {
 		cptr = FindChunk(MASTER_SCNHANDLE, CHUNK_NUM_PROCESSES);
