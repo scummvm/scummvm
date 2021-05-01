@@ -106,7 +106,11 @@ Director::Director(PinkEngine *vm)
 	_wm->setMenuDelay(250000);
 	_wm->setEngineRedrawCallback(this, redrawCallback);
 
+	_textFont = NULL;
+
+#ifdef USE_FREETYPE2
 	_textFont = Graphics::loadTTFFontFromArchive("system.ttf", 16);
+#endif
 	_textFontCleanup = true;
 
 	if (!_textFont) {
