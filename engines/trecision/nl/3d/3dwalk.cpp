@@ -38,10 +38,10 @@ namespace Trecision {
 // locals
 float _lookX, _lookZ;
 
-int read3D(Common::String c) {
-	Common::SeekableReadStream *ff = g_vm->_dataFile.createReadStreamForMember(c);
+int read3D(Common::String filename) {
+	Common::SeekableReadStream *ff = g_vm->_dataFile.createReadStreamForMember(filename);
 	if (ff == nullptr)
-		error("read3D: Can't open 3D file %s", c.c_str());
+		error("read3D: Can't open 3D file %s", filename.c_str());
 
 	// read rooms and lights
 	SCamera *cam = g_vm->_actor->_camera;

@@ -45,8 +45,8 @@ public:
 	uint16 _textureMat[256][91];
 	int16  _textureCoord[MAXFACE][3][2];
 
-	int _vertexNum;
-	int _faceNum;
+	uint32 _vertexNum;
+	uint32 _faceNum;
 	int32 _lightNum;
 	int _matNum;
 
@@ -58,7 +58,7 @@ public:
 	int _curFrame;
 	int _curAction;
 
-	void readActor(const char *filename);
+	void readModel(const char *filename);
 	void syncGameStream(Common::Serializer &ser);
 	void actorDoAction(int action);
 	void actorStop();

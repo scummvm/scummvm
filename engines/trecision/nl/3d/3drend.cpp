@@ -720,7 +720,7 @@ void drawCharacter(uint8 flag) {
 			}
 		}
 
-		for (int a = 0; a < g_vm->_actor->_faceNum; a++) {
+		for (uint a = 0; a < g_vm->_actor->_faceNum; ++a) {
 			int p0 = _curFace->_a;
 			int p1 = _curFace->_b;
 			int p2 = _curFace->_c;
@@ -733,7 +733,7 @@ void drawCharacter(uint8 flag) {
 			int py2 = _vVertex[p2]._y;
 
 			if (clockWise(px0, py0, px1, py1, px2, py2) > 0) {
-				int b = _curFace->_mat;
+				uint16 b = _curFace->_mat;
 				if (_curTexture[b]._flag & TEXTUREACTIVE) {
 					textureTriangle(px0, py0, _vVertex[p0]._z, _vVertex[p0]._angle, g_vm->_actor->_textureCoord[a][0][0], g_vm->_actor->_textureCoord[a][0][1],
 									px1, py1, _vVertex[p1]._z, _vVertex[p1]._angle, g_vm->_actor->_textureCoord[a][1][0], g_vm->_actor->_textureCoord[a][1][1],
