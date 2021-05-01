@@ -154,7 +154,7 @@ int actionInRoom(int curA);
 void setPosition(int num);
 void goToPosition(int num);
 void lookAt(float x, float z);
-int read3D(Common::String c);
+void read3D(Common::String c);
 void findPath();
 void findShortPath();
 float evalPath(int a, float destX, float destZ, int nearP);

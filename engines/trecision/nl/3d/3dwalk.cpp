@@ -39,7 +39,7 @@ namespace Trecision {
 // locals
 float _lookX, _lookZ;
 
-int read3D(Common::String filename) {
+void read3D(Common::String filename) {
 	Common::SeekableReadStream *ff = g_vm->_dataFile.createReadStreamForMember(filename);
 	if (ff == nullptr)
 		error("read3D: Can't open 3D file %s", filename.c_str());
@@ -105,8 +105,6 @@ int read3D(Common::String filename) {
 
 	g_vm->_renderer->init3DRoom(g_vm->_screenBuffer, g_vm->_zBuffer);
 	g_vm->_renderer->setClipping(0, TOP, MAXX, AREA + TOP);
-
-	return 10L;
 }
 
 #define NOOLDINTERS		1
