@@ -47,7 +47,7 @@ public:
 
 	uint32 _vertexNum;
 	uint32 _faceNum;
-	int32 _lightNum;
+	uint32 _lightNum;
 	int _matNum;
 
 	float _px, _py, _pz;
@@ -62,6 +62,7 @@ public:
 	void syncGameStream(Common::Serializer &ser);
 	void actorDoAction(int action);
 	void actorStop();
+	void read3D(Common::SeekableReadStream *ff);
 };
 
 

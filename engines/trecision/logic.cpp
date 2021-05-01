@@ -373,7 +373,7 @@ void LogicManager::setupAltRoom(uint16 room, bool altRoomFl) {
 		break;
 	case kRoom2E:
 		if (!altRoomFl) {
-			_vm->_obj[oCATWALKA2E]._nbox = BACKGROUND;
+			_vm->_obj[oCATWALKA2E]._nbox = BOX_BACKGROUND;
 			_vm->_obj[oCATWALKA2E]._position = 2;
 			_vm->_obj[oCATWALKA2E]._anim = a2E2PRIMAPALLONTANANDO;
 			read3D("2E.3d");
@@ -396,7 +396,7 @@ void LogicManager::setupAltRoom(uint16 room, bool altRoomFl) {
 			_vm->_obj[oCRATERE2E]._mode |= OBJMODE_OBJSTATUS;
 			_vm->_obj[oARBUSTI2E]._mode |= OBJMODE_OBJSTATUS;
 			_vm->_obj[oCREPACCIO2E]._position = 7;
-			_vm->_obj[oCATWALKA2E]._nbox = FOREGROUND;
+			_vm->_obj[oCATWALKA2E]._nbox = BOX_FOREGROUND;
 		}
 		break;
 	case kRoom2GV:
