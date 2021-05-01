@@ -43,39 +43,8 @@ int read3D(Common::String filename) {
 	if (ff == nullptr)
 		error("read3D: Can't open 3D file %s", filename.c_str());
 
-	// read rooms and lights
-	SCamera *cam = g_vm->_actor->_camera;
-	cam->_ex = ff->readFloatLE();
-	cam->_ey = ff->readFloatLE();
-	cam->_ez = ff->readFloatLE();
-	for (int i = 0; i < 3; ++i)
-		cam->_e1[i] = ff->readFloatLE();
-	for (int i = 0; i < 3; ++i)
-		cam->_e2[i] = ff->readFloatLE();
-	for (int i = 0; i < 3; ++i)
-		cam->_e3[i] = ff->readFloatLE();
-	cam->_fovX = ff->readFloatLE();
-	cam->_fovY = ff->readFloatLE();
-
-	g_vm->_actor->_lightNum = ff->readSint32LE();
-	if (g_vm->_actor->_lightNum > MAXLIGHT)
-		error("read3D(): Too many lights");
-
-	for (int i = 0; i < g_vm->_actor->_lightNum; ++i) {
-		g_vm->_actor->_light[i]._x = ff->readFloatLE();
-		g_vm->_actor->_light[i]._y = ff->readFloatLE();
-		g_vm->_actor->_light[i]._z = ff->readFloatLE();
-		g_vm->_actor->_light[i]._dx = ff->readFloatLE();
-		g_vm->_actor->_light[i]._dy = ff->readFloatLE();
-		g_vm->_actor->_light[i]._dz = ff->readFloatLE();
-		g_vm->_actor->_light[i]._inr = ff->readFloatLE();
-		g_vm->_actor->_light[i]._outr = ff->readFloatLE();
-		g_vm->_actor->_light[i]._hotspot = ff->readByte();
-		g_vm->_actor->_light[i]._fallOff = ff->readByte();
-		g_vm->_actor->_light[i]._inten = ff->readSByte();
-		g_vm->_actor->_light[i]._position = ff->readSByte();
-	}
-
+	g_vm->_actor->read3D(ff);
+	
 	// read panels
 	_panelNum = ff->readSint32LE();
 	if (_panelNum > MAXPANELSINROOM)
@@ -150,8 +119,9 @@ int read3D(Common::String filename) {
 void findPath() {
 	int b;
 
-	g_vm->_actor->_px += g_vm->_actor->_dx;
-	g_vm->_actor->_pz += g_vm->_actor->_dz;
+	Actor *actor = g_vm->_actor;
+	actor->_px += actor->_dx;
+	actor->_pz += actor->_dz;
 
 	int inters = 0;
 	_numPathNodes = 0;
@@ -159,37 +129,37 @@ void findPath() {
 	// if you have clicked behind the starting panel or the corner it's not possible to walk
 	if ((_curPanel < 0) && (_oldPanel >= 0) &&
 			// behind the starting panel
-			((pointInside(b = _oldPanel, (double)_curX, (double)_curZ)) ||
+			(pointInside(b = _oldPanel, _curX, _curZ) ||
 			 // behind the panel corner1
-		 ((distF(_panel[_oldPanel]._x1, _panel[_oldPanel]._z1, g_vm->_actor->_px, g_vm->_actor->_pz) < EPSILON) &&
-			  (pointInside(b = _panel[_oldPanel]._near1, (double)_curX, (double)_curZ) ||
-			   pointInside(b = _panel[_oldPanel]._near2, (double)_curX, (double)_curZ))) ||
+		 ((distF(_panel[_oldPanel]._x1, _panel[_oldPanel]._z1, actor->_px, actor->_pz) < EPSILON) &&
+			  (pointInside(b = _panel[_oldPanel]._near1, _curX, _curZ) ||
+			   pointInside(b = _panel[_oldPanel]._near2, _curX, _curZ))) ||
 			 // behind the panel corner2
-		 ((distF(_panel[_oldPanel]._x2, _panel[_oldPanel]._z2, g_vm->_actor->_px, g_vm->_actor->_pz) < EPSILON) &&
-			  (pointInside(b = _panel[_oldPanel]._near2, (double)_curX, (double)_curZ) ||
-			   pointInside(b = _panel[_oldPanel]._near1, (double)_curX, (double)_curZ))))) {
-		_curX = g_vm->_actor->_px;
-		_curZ = g_vm->_actor->_pz;
-		g_vm->_actor->_px -= g_vm->_actor->_dx;
-		g_vm->_actor->_pz -= g_vm->_actor->_dz;
+		 ((distF(_panel[_oldPanel]._x2, _panel[_oldPanel]._z2, actor->_px, actor->_pz) < EPSILON) &&
+			  (pointInside(b = _panel[_oldPanel]._near2, _curX, _curZ) ||
+			   pointInside(b = _panel[_oldPanel]._near1, _curX, _curZ))))) {
+		_curX = actor->_px;
+		_curZ = actor->_pz;
+		actor->_px -= actor->_dx;
+		actor->_pz -= actor->_dz;
 		_curPanel = b;
 		_numPathNodes = 0;
 		lookAt(_lookX, _lookZ);
 		return;
 	}
 
-	float dist = distF(g_vm->_actor->_px, g_vm->_actor->_pz, _curX, _curZ);
+	float dist = distF(actor->_px, actor->_pz, _curX, _curZ);
 
 	for (b = 0; b < _panelNum; b++) {
 		if (_panel[b]._flags & 0x80000000) {       // it must be a wide panel
 			if (intersectLineLine(_panel[b]._x1, _panel[b]._z1,
 								  _panel[b]._x2, _panel[b]._z2,
-								  g_vm->_actor->_px, g_vm->_actor->_pz, _curX, _curZ)) {
+								  actor->_px, actor->_pz, _curX, _curZ)) {
 				inters++;
 
 				_pathNode[_numPathNodes]._x    = _x3d;
 				_pathNode[_numPathNodes]._z    = _z3d;
-				_pathNode[_numPathNodes]._dist = distF(g_vm->_actor->_px, g_vm->_actor->_pz, _x3d, _z3d);
+				_pathNode[_numPathNodes]._dist = distF(actor->_px, actor->_pz, _x3d, _z3d);
 				_pathNode[_numPathNodes]._oldp = b;
 				_pathNode[_numPathNodes]._curp = b;
 				_numPathNodes++;
@@ -204,11 +174,11 @@ void findPath() {
 						_numPathNodes--;
 
 						// If the click is inside the nearby panel
-						if ((_curPanel < 0) && (pointInside(b, (double)_curX, (double)_curZ))) {
-							_curX = g_vm->_actor->_px;
-							_curZ = g_vm->_actor->_pz;
-							g_vm->_actor->_px -= g_vm->_actor->_dx;
-							g_vm->_actor->_pz -= g_vm->_actor->_dz;
+						if ((_curPanel < 0) && (pointInside(b, _curX, _curZ))) {
+							_curX = actor->_px;
+							_curZ = actor->_pz;
+							actor->_px -= actor->_dx;
+							actor->_pz -= actor->_dz;
 
 							_curPanel = b;
 							lookAt(_lookX, _lookZ);
@@ -229,8 +199,8 @@ void findPath() {
 				// always adds start and finish node only in on a panel
 				inters++;
 
-				_pathNode[_numPathNodes]._x = g_vm->_actor->_px;
-				_pathNode[_numPathNodes]._z = g_vm->_actor->_pz;
+				_pathNode[_numPathNodes]._x = actor->_px;
+				_pathNode[_numPathNodes]._z = actor->_pz;
 				_pathNode[_numPathNodes]._dist = 0.0;
 				_pathNode[_numPathNodes]._oldp = _oldPanel;
 				_pathNode[_numPathNodes]._curp = _oldPanel;
@@ -264,7 +234,7 @@ void findPath() {
 		if (((inters & 1) && (_curPanel < 0) && (_oldPanel < 0)) ||
 				((inters - 1 & 1) && (_curPanel < 0) &&
 				 (!findAttachedPanel(_pathNode[_numPathNodes - 2]._curp, _pathNode[_numPathNodes - 1]._curp) ||
-				  pointInside(_pathNode[_numPathNodes - 1]._curp, (double)_curX, (double)_curZ)))) {
+				  pointInside(_pathNode[_numPathNodes - 1]._curp, _curX, _curZ)))) {
 
 			_curPanel = _pathNode[_numPathNodes - 1]._curp;
 
@@ -348,7 +318,7 @@ void findPath() {
 
 		_pathNode[_numPathNodes]._x    = _curX;
 		_pathNode[_numPathNodes]._z    = _curZ;
-		_pathNode[_numPathNodes]._dist = distF(g_vm->_actor->_px, g_vm->_actor->_pz, _curX, _curZ);
+		_pathNode[_numPathNodes]._dist = distF(actor->_px, actor->_pz, _curX, _curZ);
 		_pathNode[_numPathNodes]._oldp = _curPanel;
 		_pathNode[_numPathNodes]._curp = _curPanel;
 		_numPathNodes ++;
@@ -356,8 +326,8 @@ void findPath() {
 		findShortPath();
 		displayPath();
 	} else {     // otherwise if it's direct
-		_pathNode[_numPathNodes]._x = g_vm->_actor->_px;
-		_pathNode[_numPathNodes]._z = g_vm->_actor->_pz;
+		_pathNode[_numPathNodes]._x = actor->_px;
+		_pathNode[_numPathNodes]._z = actor->_pz;
 		_pathNode[_numPathNodes]._dist = 0.0;
 		_pathNode[_numPathNodes]._oldp = _oldPanel;
 		_pathNode[_numPathNodes]._curp = _oldPanel;
@@ -365,7 +335,7 @@ void findPath() {
 
 		_pathNode[_numPathNodes]._x    = _curX;
 		_pathNode[_numPathNodes]._z    = _curZ;
-		_pathNode[_numPathNodes]._dist = distF(g_vm->_actor->_px, g_vm->_actor->_pz, _curX, _curZ);
+		_pathNode[_numPathNodes]._dist = distF(actor->_px, actor->_pz, _curX, _curZ);
 		_pathNode[_numPathNodes]._oldp = _curPanel;
 		_pathNode[_numPathNodes]._curp = _curPanel;
 		_numPathNodes++;
@@ -373,8 +343,8 @@ void findPath() {
 		displayPath();
 	}
 
-	g_vm->_actor->_px -= g_vm->_actor->_dx;
-	g_vm->_actor->_pz -= g_vm->_actor->_dz;
+	actor->_px -= actor->_dx;
+	actor->_pz -= actor->_dz;
 }
 /*------------------------------------------------
   Look for the shorter route avoiding obstacle
@@ -1579,11 +1549,11 @@ void initSortPan() {
 
 	// First panel is behind everything and is not sorted
 	_sortPan[0]._min = 30000.0;
-	_sortPan[0]._num = BACKGROUND;
+	_sortPan[0]._num = BOX_BACKGROUND;
 
 	// Last panel is in front of everything and is not sorted
 	_sortPan[30]._min = 0.0;
-	_sortPan[30]._num = FOREGROUND;
+	_sortPan[30]._num = BOX_FOREGROUND;
 
 	// Sort panel blocks by increasing distance from the camera
 	for (b = 0; b < _panelNum; b++) {
@@ -1605,7 +1575,7 @@ void initSortPan() {
 	sortPanel();
 
 	for (b = 0; b < _numSortPan; b++) {
-		if (_sortPan[b]._num == BACKGROUND) {
+		if (_sortPan[b]._num == BOX_BACKGROUND) {
 			// now the panels go from 0 (foreground) to _numSortPan (background)
 			_numSortPan = b;
 			break;
@@ -1640,20 +1610,21 @@ void sortPanel() {
 --------------------------------------------------*/
 void actorOrder() {
 #define LARGEVAL	15.0	// 30 cm (max)
-
-	if (_forcedActorPos) {
+	if (_forcedActorPos != BOX_NORMAL) {
 		_actorPos = _forcedActorPos;
 		return;
 	}
 
-	float ox = g_vm->_actor->_px + g_vm->_actor->_dx - g_vm->_actor->_camera->_ex;
-	float oz = g_vm->_actor->_pz + g_vm->_actor->_dz - g_vm->_actor->_camera->_ez;
+	Actor *actor = g_vm->_actor;
+
+	float ox = actor->_px + actor->_dx - actor->_camera->_ex;
+	float oz = actor->_pz + actor->_dz - actor->_camera->_ez;
 	float dist = sqrt(ox * ox + oz * oz);
 	float lx = (-oz / dist) * LARGEVAL;
 	float lz = (ox / dist) * LARGEVAL;
 
-	ox = g_vm->_actor->_px + g_vm->_actor->_dx;
-	oz = g_vm->_actor->_pz + g_vm->_actor->_dz;
+	ox = actor->_px + actor->_dx;
+	oz = actor->_pz + actor->_dz;
 
 	// It must be copied in front of the nearest box
 	_actorPos = _sortPan[1]._num;
@@ -1663,9 +1634,7 @@ void actorOrder() {
 			// If it's not wide and belongs to this level
 			if (!(_panel[a]._flags & 0x80000000) && (_panel[a]._flags & (1 << (_sortPan[b]._num - 1)))) {
 				// If it intersects the center of the character camera
-				if (intersectLineLine(_panel[a]._x1, _panel[a]._z1, _panel[a]._x2, _panel[a]._z2, g_vm->_actor->_camera->_ex, g_vm->_actor->_camera->_ez, ox, oz)
-				|| intersectLineLine(_panel[a]._x1, _panel[a]._z1, _panel[a]._x2, _panel[a]._z2, g_vm->_actor->_camera->_ex, g_vm->_actor->_camera->_ez, ox + lx, oz + lz)
-				|| intersectLineLine(_panel[a]._x1, _panel[a]._z1, _panel[a]._x2, _panel[a]._z2, g_vm->_actor->_camera->_ex, g_vm->_actor->_camera->_ez, ox - lx, oz - lz)) {
+				if (intersectLineLine(_panel[a]._x1, _panel[a]._z1, _panel[a]._x2, _panel[a]._z2, actor->_camera->_ex, actor->_camera->_ez, ox, oz) || intersectLineLine(_panel[a]._x1, _panel[a]._z1, _panel[a]._x2, _panel[a]._z2, actor->_camera->_ex, actor->_camera->_ez, ox + lx, oz + lz) || intersectLineLine(_panel[a]._x1, _panel[a]._z1, _panel[a]._x2, _panel[a]._z2, actor->_camera->_ex, actor->_camera->_ez, ox - lx, oz - lz)) {
 					// If it intersects it must be copied after the next box
 					_actorPos = _sortPan[b + 1]._num;
 				}

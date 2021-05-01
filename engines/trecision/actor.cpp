@@ -436,4 +436,39 @@ void Actor::actorStop() {
 	_lastStep = 0;
 }
 
+void Actor::read3D(Common::SeekableReadStream *ff) {
+	// read rooms and lights
+	SCamera *cam = _camera;
+	cam->_ex = ff->readFloatLE();
+	cam->_ey = ff->readFloatLE();
+	cam->_ez = ff->readFloatLE();
+	for (int i = 0; i < 3; ++i)
+		cam->_e1[i] = ff->readFloatLE();
+	for (int i = 0; i < 3; ++i)
+		cam->_e2[i] = ff->readFloatLE();
+	for (int i = 0; i < 3; ++i)
+		cam->_e3[i] = ff->readFloatLE();
+	cam->_fovX = ff->readFloatLE();
+	cam->_fovY = ff->readFloatLE();
+
+	_lightNum = ff->readUint32LE();
+	if (_lightNum > MAXLIGHT)
+		error("read3D(): Too many lights");
+
+	for (uint32 i = 0; i < g_vm->_actor->_lightNum; ++i) {
+		_light[i]._x = ff->readFloatLE();
+		_light[i]._y = ff->readFloatLE();
+		_light[i]._z = ff->readFloatLE();
+		_light[i]._dx = ff->readFloatLE();
+		_light[i]._dy = ff->readFloatLE();
+		_light[i]._dz = ff->readFloatLE();
+		_light[i]._inr = ff->readFloatLE();
+		_light[i]._outr = ff->readFloatLE();
+		_light[i]._hotspot = ff->readByte();
+		_light[i]._fallOff = ff->readByte();
+		_light[i]._inten = ff->readSByte();
+		_light[i]._position = ff->readSByte();
+	}
+}
+
 } // End of namespace Trecision

@@ -31,8 +31,9 @@
 #define OBJMODE_HIDDEN  		16
 
 // DEF PER _obj._nbox
-#define FOREGROUND   			255
-#define BACKGROUND   			254
+#define BOX_FOREGROUND   			255
+#define BOX_BACKGROUND   			254
+#define BOX_NORMAL					0
 
 enum ObjectFlags {
 	kObjFlagUse = 0,

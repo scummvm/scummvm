@@ -415,7 +415,7 @@ void AnimManager::stopFullMotion() {
 
 void AnimManager::refreshAnim(int box) {
 	for (int a = 0; a < MAXSMACK; a++) {
-		if ((_playingAnims[a] != 0) && (box == BACKGROUND)) {
+		if ((_playingAnims[a] != 0) && (box == BOX_BACKGROUND)) {
 			if (a != 1) {
 				refreshSmkAnim(_playingAnims[a]);
 			}

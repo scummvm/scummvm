@@ -526,7 +526,7 @@ void drawCharacter(uint8 flag) {
 		float tz = 0;
 		float pa0, pa1, pa2;
 
-		for (int b = 0; b < g_vm->_actor->_lightNum; b++) {
+		for (uint32 b = 0; b < g_vm->_actor->_lightNum; b++) {
 			// if off                lint == 0
 			// if it has a shadow    lint & 0x80
 
@@ -669,9 +669,9 @@ void drawCharacter(uint8 flag) {
 			_x2d = _cx + (int)((l0 * _curCamera->_fovX) / l2);
 			_y2d = _cy + (int)((l1 * _curCamera->_fovY) / l2);
 
-			_vVertex[a]._x = (short)_x2d;
-			_vVertex[a]._y = (short)_y2d;
-			_vVertex[a]._z = (short)((dist - l2) * 128.0);
+			_vVertex[a]._x = _x2d;
+			_vVertex[a]._y = _y2d;
+			_vVertex[a]._z = (int32)((dist - l2) * 128.0);
 
 			g_vm->_actor->_lim[0] = MIN(_x2d, g_vm->_actor->_lim[0]);
 			g_vm->_actor->_lim[1] = MAX(_x2d, g_vm->_actor->_lim[1]);
@@ -683,8 +683,8 @@ void drawCharacter(uint8 flag) {
 
 			_curVertex++;
 		}
-		g_vm->_actor->_lim[4] = (short)dist;
-		g_vm->_actor->_lim[5] = (short)dist;
+		g_vm->_actor->_lim[4] = (int)dist;
+		g_vm->_actor->_lim[5] = (int)dist;
 
 		// vertex clipping
 		g_vm->_actor->_lim[0] = (g_vm->_actor->_lim[0] <= _minXClip + 1) ? _minXClip : g_vm->_actor->_lim[0]--;

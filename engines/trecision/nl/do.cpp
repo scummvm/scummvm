@@ -106,13 +106,13 @@ void ExecuteAtFrameDoit(ATFHandle *h, int doit, int obj) {
 		g_vm->_flagCharacterExists = true;
 		break;
 	case fCHARACTERFOREGROUND:
-		_forcedActorPos = FOREGROUND;
+		_forcedActorPos = BOX_FOREGROUND;
 		break;
 	case fCHARACTERBACKGROUND:
-		_forcedActorPos = BACKGROUND;
+		_forcedActorPos = BOX_BACKGROUND;
 		break;
 	case fCHARACTERNORM:
-		_forcedActorPos = 0;
+		_forcedActorPos = BOX_NORMAL;
 		break;
 	case fSETEXTRA:
 		g_vm->_obj[obj]._flag |= kObjFlagExtra;
@@ -232,11 +232,11 @@ void ProcessAtFrame(ATFHandle *h, int type, int atf) {
 		RegenRoom();
 		break;
 	case ATFSETFORE:
-		g_vm->_obj[h->_curAnim->_atFrame[atf]._index]._nbox = FOREGROUND;
+		g_vm->_obj[h->_curAnim->_atFrame[atf]._index]._nbox = BOX_FOREGROUND;
 		RegenRoom();
 		break;
 	case ATFSETBACK:
-		g_vm->_obj[h->_curAnim->_atFrame[atf]._index]._nbox = BACKGROUND;
+		g_vm->_obj[h->_curAnim->_atFrame[atf]._index]._nbox = BOX_BACKGROUND;
 		RegenRoom();
 		break;
 	case ATFSWITCH:

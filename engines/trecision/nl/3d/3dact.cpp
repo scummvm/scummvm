@@ -33,7 +33,7 @@ namespace Trecision {
 void setPosition(int num) {
 	SLight *curLight = g_vm->_actor->_light;
 
-	for (int a = 0; a < g_vm->_actor->_lightNum; a++) {
+	for (uint32 a = 0; a < g_vm->_actor->_lightNum; a++) {
 		// If it's off
 		if (curLight->_inten == 0) {
 			// If it's the required position
@@ -91,7 +91,7 @@ void goToPosition(int num) {
 
 	SLight *_curLight = g_vm->_actor->_light;
 
-	for (int a = 0; a < g_vm->_actor->_lightNum; a++) {
+	for (uint32 a = 0; a < g_vm->_actor->_lightNum; a++) {
 		// If it's off and if it's a position
 		if (_curLight->_inten == 0) {
 			// If it's the right position
