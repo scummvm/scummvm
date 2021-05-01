@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-04-30 23:50+0000\n"
+"POT-Creation-Date: 2021-05-01 08:22+0000\n"
 "PO-Revision-Date: 2021-04-30 11:25+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
@@ -2783,33 +2783,33 @@ msgstr "Étirer pour remplir la fenêtre"
 msgid "Fit to window (4:3)"
 msgstr "Adapter à la fenêtre (4:3)"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:645
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:646
 #, c-format
 msgid "Resolution: %dx%d"
 msgstr "Résolution : %dx%d"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:668
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2498
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:669
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2489
 msgid "Enabled aspect ratio correction"
 msgstr "Activer la correction du rapport d'aspect"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:670
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2504
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:671
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2495
 msgid "Disabled aspect ratio correction"
 msgstr "Désactiver la correction du rapport d'aspect"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:691
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2520
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:692
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2511
 msgid "Filtering enabled"
 msgstr "Filtrage Activé"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:693
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2522
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:694
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2513
 msgid "Filtering disabled"
 msgstr "Filtrage Désactivé"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:722
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2549
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:723
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2540
 msgid "Stretch mode"
 msgstr "Mode d'étirement"
 
@@ -2818,7 +2818,7 @@ msgctxt "lowres"
 msgid "Normal (no scaling)"
 msgstr "Normal"
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2463
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2454
 msgid "Active graphics filter:"
 msgstr "Mode graphique actif :"
 
