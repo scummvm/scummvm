@@ -450,8 +450,10 @@ void World::setControlledNPCNum(uint16 num) {
 	}
 
 	Actor *controlled = getActor(num);
-	if (controlled && controlled->isInCombat() && num != 1) {
-		controlled->clearInCombat();
+	if (controlled && num != 1) {
+		Kernel::get_instance()->killProcesses(num, 0xc, false);
+		if (controlled->isInCombat())
+			controlled->clearInCombat();
 	}
 
 	TargetReticleProcess *t = TargetReticleProcess::get_instance();
