@@ -108,8 +108,8 @@ struct SSortPan {
 struct SPathNode {
 	float _x, _z;
 	float _dist;
-	short _oldp;
-	short _curp;
+	int16 _oldp;
+	int16 _curp;
 };
 
 struct SStep {
@@ -118,7 +118,7 @@ struct SStep {
 	float _theta;
 	int   _curAction;
 	int   _curFrame;
-	short _curPanel;
+	int16 _curPanel;
 };
 
 class TrecisionEngine;
@@ -152,8 +152,6 @@ extern int    _lastStep;
 extern uint8  _defActionLen[];
 
 int actionInRoom(int curA);
-void actorDoAction(int action);
-void actorStop();
 void setPosition(int num);
 void goToPosition(int num);
 void lookAt(float x, float z);

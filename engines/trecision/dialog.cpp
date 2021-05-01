@@ -23,6 +23,8 @@
 #include "trecision/trecision.h"
 #include "trecision/dialog.h"
 
+
+#include "actor.h"
 #include "trecision/nl/message.h"
 #include "trecision/nl/proto.h"
 #include "trecision/graphics.h"
@@ -414,7 +416,7 @@ void DialogManager::afterChoice() {
 		case dC4A1:
 			_vm->_flagCharacterExists = true;
 			_vm->_flagShowCharacter = true;
-			actorStop();
+			_vm->_actor->actorStop();
 			nextStep();
 			break;
 

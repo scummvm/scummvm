@@ -228,17 +228,21 @@ uint16 GraphicsManager::aliasing(uint32 val1, uint32 val2, uint8 num) {
 			((((val1 & _bitMask[0]) * num + (val2 & _bitMask[0]) * (8 - num)) >> 3) & _bitMask[0]));
 }
 
-void GraphicsManager::NlDissolve(int val) {
-	uint16 CenterX = MAXX / 2, CenterY = MAXY / 2;
-	uint32 sv = _vm->readTime(), cv;
+void GraphicsManager::NlDissolve(uint8 val) {
+	uint16 CenterX = MAXX / 2;
+	uint16 CenterY = MAXY / 2;
 
 	int lastv = 9000;
-	while ((sv + val) > (cv = _vm->readTime())) {
+
+	uint32 sv = _vm->readTime();
+	uint32 cv = _vm->readTime();
+	
+	while (sv + val > cv) {
 		_vm->checkSystem();
-		if (lastv < (sv + val - cv))
+		if (lastv + cv < sv + val)
 			continue;
 
-		lastv = (sv + val - cv);
+		lastv = (sv - cv) + val;
 
 		float a = (float)(((CenterX + 200) / val) * lastv);
 		float b = (float)((CenterY / val) * lastv);
@@ -295,6 +299,7 @@ void GraphicsManager::NlDissolve(int val) {
 		}
 
 		copyToScreen(0, 0, MAXX, MAXY);
+		cv = _vm->readTime();
 	}
 
 	clearScreen();

@@ -22,6 +22,11 @@
 
 #include "trecision/trecision.h"
 #include "trecision/actor.h"
+
+#include "defines.h"
+#include "nl/extern.h"
+#include "nl/message.h"
+#include "nl/proto.h"
 #include "trecision/graphics.h"
 
 namespace Trecision {
@@ -329,6 +334,106 @@ void Actor::syncGameStream(Common::Serializer &ser) {
 	ser.syncAsFloatLE(_dx);
 	ser.syncAsFloatLE(_dz);
 	ser.syncAsFloatLE(_theta);
+}
+
+void Actor::actorDoAction(int action) {
+	if (action > hLAST)
+		error("error in actorDoAction, invalid action (should be called as an animation)");
+
+	_curStep = 1;
+	float px = _px + _dx;
+	float pz = _pz + _dz;
+	float theta = _theta;
+	int b = 0;
+
+	_step[b]._px = px;
+	_step[b]._pz = pz;
+	_step[b]._dx = 0.0f;
+	_step[b]._dz = 0.0f;
+
+	_step[b]._theta = theta;
+	_step[b]._curAction = hSTAND;
+	_step[b]._curFrame = 0;
+	_step[b]._curPanel = _curPanel;
+
+	float t = ((270.0f - theta) * PI2) / 360.0f;
+	float ox = cos(t);
+	float oz = sin(t);
+
+	SVertex *v = _characterArea;
+	float firstFrame = FRAMECENTER(v);
+
+	int len;
+	int cfp = 0;
+	int cur = 0;
+
+	while (cur < action)
+		cfp += _defActionLen[cur++];
+	v = &_characterArea[cfp * _vertexNum];
+
+	if (action == hWALKOUT)
+		v = &_characterArea[_vertexNum];
+	else if (action == hLAST)
+		v = _characterArea;
+
+	len = _defActionLen[action];
+
+	for (b = _curStep; b < len + _curStep; b++) {
+		float curLen = FRAMECENTER(v) - firstFrame;
+
+		_step[b]._dx = curLen * ox;
+		_step[b]._dz = curLen * oz;
+		_step[b]._px = px;
+		_step[b]._pz = pz;
+
+		_step[b]._curAction = action;
+		_step[b]._curFrame = b - _curStep;
+
+		_step[b]._theta = theta;
+		_step[b]._curPanel = _curPanel;
+
+		v += _vertexNum;
+
+		if (action == hLAST)
+			v = _characterArea;
+	}
+
+	_step[b]._px = px;
+	_step[b]._pz = pz;
+	_step[b]._dx = 0.0;
+	_step[b]._dz = 0.0;
+
+	_step[b]._theta = theta;
+	_step[b]._curAction = hSTAND;
+	_step[b]._curFrame = 0;
+	_step[b]._curPanel = _curPanel;
+
+	_lastStep = b; // Last step
+
+	// Starts action
+	if (_vm->_obj[_vm->_curObj]._flag & kObjFlagRoomOut)
+		doEvent(MC_CHARACTER, ME_CHARACTERGOTOEXIT, MP_DEFAULT, _vm->_obj[_vm->_curObj]._goRoom, 0, _vm->_obj[_vm->_curObj]._ninv, _vm->_curObj);
+	else
+		doEvent(MC_CHARACTER, ME_CHARACTERDOACTION, MP_DEFAULT, 0, 0, 0, 0);
+}
+
+void Actor::actorStop() {
+	int b = 0;
+
+	_step[b]._px = _px + _dx;
+	_step[b]._pz = _pz + _dz;
+	_step[b]._dx = 0.0;
+	_step[b]._dz = 0.0;
+
+	_step[b]._theta = _theta;
+	_step[b]._curAction = hSTAND;
+	_step[b]._curFrame = 0;
+	_step[b]._curPanel = _curPanel;
+
+	_characterGoToPosition = -1;
+
+	_curStep = 0;
+	_lastStep = 0;
 }
 
 } // End of namespace Trecision

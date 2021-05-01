@@ -1029,15 +1029,17 @@ int nextStep() {
 	g_vm->_actor->_curAction = _step[_curStep]._curAction;
 	g_vm->_actor->_curFrame = _step[_curStep]._curFrame;
 	_curPanel = _step[_curStep]._curPanel;
+
 	// avanza solo se non e' ultimo frame
 	if (_curStep < _lastStep) {
 		_curStep ++;
 		return false;
-	} else {
-		if (_characterGoToPosition != -1)
-			setPosition(_characterGoToPosition);
-		return true;
 	}
+
+	if (_characterGoToPosition != -1)
+		setPosition(_characterGoToPosition);
+
+	return true;
 }
 /*-----------------15/10/96 11.42-------------------
 				Visualizza percorso
