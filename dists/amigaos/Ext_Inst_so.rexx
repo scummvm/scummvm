@@ -1,5 +1,5 @@
 /*
-$VER: Ext_Inst_so.rexx 0.6 (19.04.2021) Extract and install compiled-in shared libraries from a given ELF binary.
+$VER: Ext_Inst_so.rexx 0.5 (05.12.2020) Extract and install compiled-in shared libraries from a given ELF binary.
 */
 
 PARSE ARG executable install_path
@@ -25,7 +25,7 @@ IF ~EXISTS(executable) THEN DO
 END
 ELSE DO
 	executable=STRIP(executable)
-	executable=STRIP(executable,'B','"')
+	executable=COMPRESS(executable,'"')
 END
 IF installpath='' THEN DO
 	SAY 'No installation destination given!'
@@ -34,12 +34,12 @@ END
 ELSE DO
 	install_path=STRIP(install_path)
 	install_path=STRIP(install_path,'T','/')
-	install_path=STRIP(install_path,'B','"')
+	install_path=COMPRESS(install_path,'"')
 	/*
 	Check for destination path and create it, if needed.
 	*/
-	IF ~EXISTS(install_path'sobjs/') THEN
-		ADDRESS COMMAND 'makedir ALL 'install_path'sobjs'
+	IF ~EXISTS(install_path'/sobjs/') THEN
+		ADDRESS COMMAND 'makedir 'install_path'/sobjs'
 END
 
 /*
@@ -91,13 +91,13 @@ DO WHILE i>0
 		  determine which to use the correct path.
 		*/
 		IF EXISTS('SDK:local/newlib/lib/'lib.so) THEN
-			ADDRESS COMMAND 'copy clone SDK:local/newlib/lib/'lib.so install_path'sobjs/'
+			ADDRESS COMMAND 'copy clone SDK:local/newlib/lib/'lib.so install_path'/sobjs/'
 		ELSE DO
 			IF EXISTS('SDK:gcc/lib/'lib.so) THEN
-				ADDRESS COMMAND 'copy clone SDK:gcc/lib/'lib.so install_path'sobjs/'
+				ADDRESS COMMAND 'copy clone SDK:gcc/lib/'lib.so install_path'/sobjs/'
 			ELSE DO
 				IF EXISTS('SDK:gcc/lib/gcc/ppc-amigaos/'gcc_version'/'lib.so) THEN
-					ADDRESS COMMAND 'copy clone SDK:gcc/lib/gcc/ppc-amigaos/'gcc_version'/'lib.so install_path'sobjs/'
+					ADDRESS COMMAND 'copy clone SDK:gcc/lib/gcc/ppc-amigaos/'gcc_version'/'lib.so install_path'/sobjs/'
 				ELSE DO
 					/*
 					If a shared library is not found, abort.
@@ -113,7 +113,7 @@ DO WHILE i>0
 END
 
 /*
-AREXX is doing it's own cleaning up of open files.
+AREXX is doing its own cleaning up of open files.
 Close the file manually anyway.
 */
 IF ~CLOSE(SO_Read) THEN DO
@@ -121,6 +121,6 @@ IF ~CLOSE(SO_Read) THEN DO
 	EXIT
 END
 
-ADDRESS COMMAND 'delete FORCE QUIET so_dump'
+ADDRESS COMMAND 'delete so_dump'
 
 EXIT
