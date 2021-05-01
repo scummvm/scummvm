@@ -292,6 +292,7 @@ int16 MainActor::addItemCru(Item *item, bool showtoast) {
 					if (q < 0x14) {
 						existing->setQuality(q + 1);
 						existing->callUsecodeEvent_combine();
+						item->setQuality(1); // Count of picked up item is always 1
 						if (showtoast)
 							pickupArea->addPickup(item, true);
 						item->destroy();
@@ -302,6 +303,7 @@ int16 MainActor::addItemCru(Item *item, bool showtoast) {
 					if (q < 10) {
 						existing->setQuality(q + 1);
 						existing->callUsecodeEvent_combine();
+						item->setQuality(1); // Count of picked up item is always 1
 						if (showtoast)
 							pickupArea->addPickup(item, true);
 						item->destroy();
