@@ -319,7 +319,7 @@ void TrecisionEngine::openSys() {
 
 	delete _actor;
 	_actor = new Actor(this);
-	_actor->readActor("jm.om");
+	_actor->readModel("jm.om");
 
 	_actor->_light = (SLight *)&VLight;
 	_actor->_camera = (SCamera *)&FCamera;

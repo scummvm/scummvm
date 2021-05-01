@@ -47,19 +47,19 @@ Actor::Actor(TrecisionEngine *vm) : _vm(vm) {
 	_dx = _dz = 0.0;
 	_theta = 0.0;
 
-	for (int i = 0; i < 6; ++i)
+	for (uint8 i = 0; i < 6; ++i)
 		_lim[i] = 0;
 
 	_curFrame = 0;
 	_curAction = 0;
 
-	for (int i = 0; i < 256; ++i) {
+	for (uint16 i = 0; i < 256; ++i) {
 		for (int j = 0; j < 91; ++j)
 			_textureMat[i][j] = 0;
 	}
 
-	for (int i = 0; i < MAXFACE; ++i) {
-		for (int j = 0; j < 3; ++j) {
+	for (uint16 i = 0; i < MAXFACE; ++i) {
+		for (uint8 j = 0; j < 3; ++j) {
 			_textureCoord[i][j][0] = 0;
 			_textureCoord[i][j][1] = 0;
 		}
@@ -143,18 +143,18 @@ static const int _vertsCorrList[84] = {
 	371, 372, 373, 374, 375, 376, 377, 378,
 	379, 380, 381, 382};
 
-void Actor::readActor(const char *filename) {
+void Actor::readModel(const char *filename) {
 	_vm->_graphicsMgr->updatePixelFormat((uint16 *)_textureMat, 256 * 91);
 
 	Common::SeekableReadStream *ff = _vm->_dataFile.createReadStreamForMember(filename);
 	if (ff == nullptr)
-		error("readActor - Error opening file %s", filename);
+		error("readModel - Error opening file %s", filename);
 
-	int32 actionNum = ff->readSint32LE();
-	_vertexNum = ff->readSint32LE();
+	uint32 actionNum = ff->readUint32LE();
+	_vertexNum = ff->readUint32LE();
 
 	_characterArea = new SVertex[_vertexNum * actionNum];
-	for (int i = 0; i < _vertexNum * actionNum; ++i) {
+	for (uint i = 0; i < _vertexNum * actionNum; ++i) {
 		_characterArea[i]._x = ff->readFloatLE();
 		_characterArea[i]._y = ff->readFloatLE();
 		_characterArea[i]._z = ff->readFloatLE();
@@ -168,24 +168,24 @@ void Actor::readActor(const char *filename) {
 
 	ff = _vm->_dataFile.createReadStreamForMember("mat.tex");
 	if (ff == nullptr)
-		error("readActor - Error opening file mat.tex");
+		error("readModel - Error opening file mat.tex");
 
-	for (int i = 0; i < 256; ++i) {
-		for (int j = 0; j < 91; ++j)
+	for (uint16 i = 0; i < 256; ++i) {
+		for (uint16 j = 0; j < 91; ++j)
 			_textureMat[i][j] = ff->readUint16LE();
 	}
 
 	_vm->_graphicsMgr->updatePixelFormat((uint16 *)_textureMat, 91 * 256);
 
-	for (int i = 0; i < MAXFACE; ++i) {
-		for (int j = 0; j < 3; ++j) {
+	for (uint16 i = 0; i < MAXFACE; ++i) {
+		for (uint16 j = 0; j < 3; ++j) {
 			_textureCoord[i][j][0] = ff->readSint16LE();
 			_textureCoord[i][j][1] = ff->readSint16LE();
 		}
 	}
 
 	_face = new SFace[_faceNum];
-	for (int i = 0; i < _faceNum; ++i) {
+	for (uint i = 0; i < _faceNum; ++i) {
 		_face[i]._a = ff->readUint16LE();
 		_face[i]._b = ff->readUint16LE();
 		_face[i]._c = ff->readUint16LE();
@@ -240,7 +240,7 @@ void Actor::readActor(const char *filename) {
 	m1[0][1] = v1[1];
 	m1[0][2] = v1[2];
 
-	for (int b = 0; b < actionNum; b++) {
+	for (uint b = 0; b < actionNum; b++) {
 		SVertex *sv = &_vertex[b * _vertexNum];
 
 		v1[0] = sv[P2]._x - sv[P1]._x;
