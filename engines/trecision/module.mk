@@ -13,6 +13,7 @@ MODULE_OBJS = \
 	script.o \
 	trecision.o \
 	utils.o \
+	3d.o \
 	video.o \
 	nl/do.o \
 	nl/globvar.o \
@@ -21,7 +22,6 @@ MODULE_OBJS = \
 	nl/schedule.o \
 	nl/string.o \
 	nl/3d/3dact.o \
-	nl/3d/3drend.o \
 	nl/3d/3dvar.o \
 	nl/3d/3dwalk.o \
 	nl/ll/llmouse.o \

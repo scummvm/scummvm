@@ -20,19 +20,21 @@
  *
  */
 
+#include "trecision/3d.h"
 #include "trecision/actor.h"
 #include "trecision/dialog.h"
 #include "trecision/logic.h"
 #include "trecision/graphics.h"
 #include "trecision/defines.h"
-#include "trecision/nl/proto.h"
-#include "trecision/nl/message.h"
 #include "trecision/trecision.h"
+#include "trecision/sound.h"
 
 #include "common/scummsys.h"
 #include "graphics/scaler.h"
-#include "nl/extern.h"
-#include "sound.h"
+
+#include "trecision/nl/proto.h"
+#include "trecision/nl/message.h"
+#include "trecision/nl/extern.h"
 
 
 namespace Trecision {
@@ -443,7 +445,7 @@ void TrecisionEngine::doSystem() {
 		_logicMgr->endChangeRoom();
 
 		_room[_curRoom]._flag |= kObjFlagDone; // Visited
-		drawCharacter(CALCPOINTS);                         // for right _actorPos entrance
+		_renderer->drawCharacter(CALCPOINTS);                         // for right _actorPos entrance
 
 		break;
 	default:

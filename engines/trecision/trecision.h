@@ -33,7 +33,6 @@
 
 #include "common/str-array.h"
 #include "common/keyboard.h"
-#include "common/serializer.h"
 #include "graphics/surface.h"
 #include "common/str.h"
 
@@ -45,6 +44,7 @@ class GraphicsManager;
 class LogicManager;
 class SoundManager;
 class Actor;
+class Renderer3D;
 
 #define SAVE_VERSION_ORIGINAL 102
 #define SAVE_VERSION_SCUMMVM  103
@@ -69,6 +69,40 @@ enum TrecisionMessageIds {
 };
 
 typedef Common::List<Common::Rect>::iterator DirtyRectsIterator;
+
+struct SVertex {
+	float _x, _y, _z;
+	float _nx, _ny, _nz;
+};
+
+struct SFace {
+	uint16 _a, _b, _c;
+	uint16 _mat;
+};
+
+struct SLight {
+	float _x, _y, _z;
+	float _dx, _dy, _dz;
+	float _inr, _outr;
+	uint8 _hotspot;
+	uint8 _fallOff;
+	int8 _inten;
+	int8 _position;
+};
+
+struct SCamera {
+	float _ex, _ey, _ez;
+	float _e1[3];
+	float _e2[3];
+	float _e3[3];
+	float _fovX, _fovY;
+};
+
+struct STexture {
+	int16 _dx, _dy, _angle;
+	uint8 *_texture;
+	uint8 _flag;
+};
 
 class TrecisionEngine : public Engine {
 	void initMain();
@@ -271,6 +305,7 @@ public:
 	DialogManager *_dialogMgr;
 	LogicManager *_logicMgr;
 	SoundManager *_soundMgr;
+	Renderer3D *_renderer;
 
 	uint8 *_font;
 	uint16 *_arrows;
