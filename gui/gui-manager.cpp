@@ -185,8 +185,6 @@ Common::Keymap *GuiManager::getKeymap() const {
 
 	act = new Action(kStandardActionEE, _("???"));
 	act->setKeyEvent(KEYCODE_v);
-	act->addDefaultInputMapping("v");
-	act->addDefaultInputMapping("JOY_RIGHT_STICK");
 	guiMap->addAction(act);
 
 	return guiMap;
