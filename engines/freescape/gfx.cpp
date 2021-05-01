@@ -69,6 +69,10 @@ Renderer::Renderer(OSystem *system)
 		: _system(system),
 		  _font(nullptr) {
 
+	_currentPixelFormat = Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
+	_originalPixelFormat = Graphics::PixelFormat::createFormatCLUT8();
+	_palettePixelFormat = Graphics::PixelFormat(3, 8, 8, 8, 0, 0, 8, 16, 0);
+
 	// Compute the cube faces Axis Aligned Bounding Boxes
 	for (uint i = 0; i < ARRAYSIZE(_cubeFacesAABB); i++) {
 		for (uint j = 0; j < 4; j++) {
@@ -90,6 +94,15 @@ void Renderer::freeFont() {
 		_font = nullptr;
 	}
 }
+
+Graphics::Surface *Renderer::convertFromPalette(Graphics::PixelBuffer *rawsurf) {
+	Graphics::Surface * surf = new Graphics::Surface();
+	surf->create(kOriginalWidth, kOriginalHeight, _originalPixelFormat);
+	surf->copyRectToSurface(rawsurf->getRawBuffer(), surf->w, 0, 0, surf->w, surf->h);
+	surf->convertToInPlace(_currentPixelFormat, _palette->getRawBuffer());
+	return surf;
+}
+
 
 Texture *Renderer::copyScreenshotToTexture() {
 	Graphics::Surface *surface = getScreenshot();
@@ -198,25 +211,21 @@ void Renderer::flipVertical(Graphics::Surface *s) {
 	}
 }
 
-Renderer *createRenderer(OSystem *system, Graphics::PixelFormat *pixelFormat) {
+Renderer *createRenderer(OSystem *system) {
 	Common::String rendererConfig = ConfMan.get("renderer");
+	Graphics::PixelFormat pixelFormat = Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
 	Graphics::RendererType desiredRendererType = Graphics::kRendererTypeTinyGL; //Graphics::parseRendererTypeCode(rendererConfig);
 	Graphics::RendererType matchingRendererType = Graphics::kRendererTypeTinyGL; //Graphics::getBestMatchingAvailableRendererType(desiredRendererType);
 
 	bool isAccelerated = 0; //matchingRendererType != Graphics::kRendererTypeTinyGL;
 
-	uint width;
+	uint width = Renderer::kOriginalWidth;
 	uint height = Renderer::kOriginalHeight;
-	/*if (ConfMan.getBool("widescreen_mod")) {
-		width = Renderer::kOriginalWidth * Renderer::kOriginalHeight / Renderer::kFrameHeight;
-	} else {*/
-		width = Renderer::kOriginalWidth;
-	//}
-	debug("w: %d, h: %d", width, height);
+
 	if (isAccelerated) {
 		initGraphics3d(width, height);
 	} else {
-		initGraphics(width, height, pixelFormat);
+		initGraphics(width, height, &pixelFormat);
 	}
 
 /*#if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS) || defined(USE_GLES2)

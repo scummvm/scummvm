@@ -19,6 +19,7 @@ class Renderer;
 typedef Common::HashMap<uint16, Area *> AreaMap;
 
 typedef struct Binary {
+	uint8 bits;
 	uint16 startArea; 
 	AreaMap *areasByAreaID;
 	Common::Array<uint8> *border;
@@ -37,16 +38,9 @@ class FreescapeEngine : public Engine {
 private:
 	// We need random numbers
 	Common::RandomSource *_rnd;
-	Graphics::PixelFormat _currentPixelFormat;
-	Graphics::PixelFormat _originalPixelFormat;
-	Graphics::PixelFormat _palettePixelFormat;
 	int _screenW, _screenH;
 
-	Graphics::PixelBuffer *_border;
-	Graphics::PixelBuffer *_palette;
-
-	Graphics::Surface *_borderSurf;
-
+	Graphics::Surface *_border;
 	
 	uint32 _timeOfLastTick;
 	bool _hasReceivedTime;

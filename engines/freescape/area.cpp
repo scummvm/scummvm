@@ -96,7 +96,7 @@ void Area::draw(Freescape::Renderer *gfx) {
 	if (gfx->_palette)
 		palette = gfx->_palette;
 	else if (raw_palette) {
-		palette = new Graphics::PixelBuffer(Graphics::PixelFormat(3, 8, 8, 8, 0, 0, 8, 16, 0), 16, DisposeAfterUse::NO); 
+		palette = new Graphics::PixelBuffer(gfx->_palettePixelFormat, 16, DisposeAfterUse::NO); 
 		*palette = raw_palette->data();
 	}
 
@@ -107,11 +107,13 @@ void Area::draw(Freescape::Renderer *gfx) {
 	Common::Rect sky(view.left, view.top, view.right, view.bottom-view.height()/2);
 	uint8 r, g, b;
 	palette->getRGBAt(skyColor, r, g, b);
+	debug("color: %d %x%x%x", skyColor, g, b);
 	gfx->drawRect2D(sky, 255, r, g, b);
 
 
 	Common::Rect ground(view.left, view.top+view.height()/2, view.right, view.bottom);
 	palette->getRGBAt(groundColor, r, g, b);
+	debug("color: %d %x%x%x", groundColor, g, b);
 	gfx->drawRect2D(ground, 255, r, g, b);
 
 	//gfx->drawTriange(); // I have no idea why?

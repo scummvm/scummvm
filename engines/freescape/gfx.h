@@ -111,6 +111,15 @@ public:
 	Renderer(OSystem *system);
 	virtual ~Renderer();
 
+	Graphics::PixelFormat _currentPixelFormat;
+	Graphics::PixelFormat _originalPixelFormat;
+	Graphics::PixelFormat _palettePixelFormat;
+
+    /**
+	 *   Convert from paletted surface
+     */
+	Graphics::Surface *convertFromPalette(Graphics::PixelBuffer *rawsurf);
+
 	virtual void init() = 0;
 	virtual void clear() = 0;
 
@@ -175,6 +184,7 @@ public:
 	static const int kFrameHeight = 200;
 
 	void computeScreenViewport();
+	
 
 protected:
 	OSystem *_system;
@@ -222,7 +232,7 @@ private:
 Renderer *CreateGfxOpenGL(OSystem *system);
 Renderer *CreateGfxOpenGLShader(OSystem *system);
 Renderer *CreateGfxTinyGL(OSystem *system);
-Renderer *createRenderer(OSystem *system, Graphics::PixelFormat *pixelFormat);
+Renderer *createRenderer(OSystem *system);
 
 } // End of namespace Myst3
 
