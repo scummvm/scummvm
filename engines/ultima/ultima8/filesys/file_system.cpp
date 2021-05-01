@@ -45,7 +45,7 @@ FileSystem::~FileSystem() {
 
 
 // Open a streaming file as readable. Streamed (0 on failure)
-Common::SeekableReadStream *FileSystem::ReadFile(const string &vfn, bool is_text) {
+Common::SeekableReadStream *FileSystem::ReadFile(const string &vfn) {
 	Common::SeekableReadStream *readStream;
 	if (!rawOpen(readStream, vfn))
 		return nullptr;
@@ -54,7 +54,7 @@ Common::SeekableReadStream *FileSystem::ReadFile(const string &vfn, bool is_text
 }
 
 // Open a streaming file as writeable. Streamed (0 on failure)
-Common::WriteStream *FileSystem::WriteFile(const string &vfn, bool is_text) {
+Common::WriteStream *FileSystem::WriteFile(const string &vfn) {
 	string filename = vfn;
 	Common::WriteStream *writeStream;
 
