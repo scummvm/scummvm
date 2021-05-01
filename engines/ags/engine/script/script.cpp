@@ -310,6 +310,8 @@ int PrepareTextScript(ccInstance *sci, const char **tsname) {
 		_G(ccErrorString) = "script is already in execution";
 		return -3;
 	}
+
+	assert(_G(num_scripts) < MAX_SCRIPT_AT_ONCE);
 	_G(scripts)[_G(num_scripts)].init();
 	_G(scripts)[_G(num_scripts)].inst = sci;
 	// CHECKME: this conditional block will never run, because
@@ -433,7 +435,7 @@ int RunTextScript2IParam(ccInstance *sci, const char *tsname, const RuntimeScrip
 		bool eventWasClaimed;
 		int toret = run_claimable_event(tsname, true, 2, params, &eventWasClaimed);
 
-		if (eventWasClaimed)
+		if (eventWasClaimed || _G(abort_engine))
 			return toret;
 	}
 

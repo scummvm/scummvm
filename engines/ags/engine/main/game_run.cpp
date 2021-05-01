@@ -553,6 +553,10 @@ static void game_loop_check_controls(bool checkControls) {
 		int numevents_was = _G(numevents);
 		check_controls();
 		check_room_edges(numevents_was);
+
+		if (_G(abort_engine))
+			return;
+
 		// If an inventory interaction changed the room
 		if (inRoom != _G(displayed_room))
 			check_new_room();

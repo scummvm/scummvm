@@ -60,6 +60,8 @@ int run_claimable_event(const char *tsname, bool includeRoom, int numParams, con
 
 	if (includeRoom && _G(roominst)) {
 		toret = RunScriptFunctionIfExists(_G(roominst), tsname, numParams, params);
+		if (_G(abort_engine))
+			return -1;
 
 		if (_G(eventClaimed) == EVENT_CLAIMED) {
 			_G(eventClaimed) = eventClaimedOldValue;
