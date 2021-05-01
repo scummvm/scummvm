@@ -1343,7 +1343,7 @@ CelObjColor::CelObjColor(const uint8 color, const int16 width, const int16 heigh
 	_yResolution = g_sci->_gfxFrameout->getScriptHeight();
 	_hunkPaletteOffset = 0;
 	_mirrorX = false;
-	_isMacSource = false;
+	_isMacSource = (g_sci->getPlatform() == Common::kPlatformMacintosh);
 	_remap = false;
 	_width = width;
 	_height = height;
@@ -1359,7 +1359,7 @@ void CelObjColor::draw(Buffer &target, const Common::Rect &targetRect, const Com
 	error("Unsupported method");
 }
 void CelObjColor::draw(Buffer &target, const Common::Rect &targetRect) const {
-	target.fillRect(targetRect, _info.color);
+	target.fillRect(targetRect, translateMacColor(_isMacSource, _info.color));
 }
 
 CelObjColor *CelObjColor::duplicate() const {

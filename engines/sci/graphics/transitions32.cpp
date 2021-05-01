@@ -207,7 +207,7 @@ void GfxTransitions32::kernelSetShowStyle(const uint16 argc, const reg_t planeOb
 		color = back;
 	} else {
 		isFadeUp = true;
-		color = 0;
+		color = g_sci->_gfxPalette32->getPlatformBlack();
 	}
 
 	Plane *plane = g_sci->_gfxFrameout->getPlanes().findByObject(planeObj);

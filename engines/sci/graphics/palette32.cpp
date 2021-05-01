@@ -438,6 +438,14 @@ int16 GfxPalette32::matchColor(const uint8 r, const uint8 g, const uint8 b) {
 	return bestIndex;
 }
 
+uint8 GfxPalette32::getPlatformBlack() const {
+	return (g_sci->getPlatform() == Common::kPlatformMacintosh) ? 255 : 0;
+}
+
+uint8 GfxPalette32::getPlatformWhite() const {
+	return (g_sci->getPlatform() == Common::kPlatformMacintosh) ? 0 : 255;
+}
+
 void GfxPalette32::submit(const Palette &palette) {
 	// If `_needsUpdate` is already set, there is no need to test whether
 	// this palette submission causes a change to `_sourcePalette` since it is

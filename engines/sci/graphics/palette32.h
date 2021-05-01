@@ -268,6 +268,16 @@ public:
 	int16 matchColor(const uint8 r, const uint8 g, const uint8 b);
 
 	/**
+	 * Gets the palette index for black based on the platform
+	 */
+	uint8 getPlatformBlack() const;
+
+	/**
+	 * Gets the palette index for white based on the platform
+	 */
+	uint8 getPlatformWhite() const;
+
+	/**
 	 * Submits a palette to display. Entries marked as "used" in the submitted
 	 * palette are merged into `_sourcePalette`.
 	 */
