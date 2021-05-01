@@ -88,10 +88,14 @@ void ActionText::start() {
 
 	switch(_actor->getPage()->getGame()->getLanguage()) {
 	case Common::DA_DAN:
+	case Common::ES_ESP:
+	case Common::FR_FRA:
+	case Common::PT_BRA:
 		_text = Common::String(str).decode(Common::kWindows1252);
 		break;
 
 	case Common::FI_FIN:
+	case Common::SE_SWE:
 		_text = Common::String(str).decode(Common::kWindows1257);
 		break;
 
