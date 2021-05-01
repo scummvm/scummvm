@@ -55,14 +55,9 @@ void CruHealthGump::InitGump(Gump *newparent, bool take_focus) {
 void CruHealthGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled) {
 	CruStatGump::PaintThis(surf, lerp_factor, scaled);
 
-	const MainActor *a = getMainActor();
-	if (!a) {
-		// avatar gone??
-		return;
-	}
-
-	int current_hp = a->getHP();
-	int max_hp = a->getMaxHP();
+	const Actor *a = getControlledActor();
+	int current_hp = a ? a->getHP() : 0;
+	int max_hp = a ? a->getMaxHP() : 1;
 	// max width = 67
 	int width = max_hp ? ((current_hp * 67) / max_hp) : 67;
 

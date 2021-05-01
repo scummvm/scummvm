@@ -54,6 +54,8 @@ public:
 private:
 	Gump *_inventoryItemGump;
 	TextWidget *_inventoryText;
+
+	void resetText();
 };
 
 } // End of namespace Ultima8

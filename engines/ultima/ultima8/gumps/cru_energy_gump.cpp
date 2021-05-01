@@ -53,9 +53,7 @@ void CruEnergyGump::InitGump(Gump *newparent, bool take_focus) {
 }
 
 void CruEnergyGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled) {
-	CruStatGump::PaintThis(surf, lerp_factor, scaled);
-
-	const MainActor *a = getMainActor();
+	const Actor *a = getControlledActor();
 	if (!a) {
 		// avatar gone??
 		return;
@@ -63,7 +61,14 @@ void CruEnergyGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scale
 
 	int16 energy = a->getMana();
 	int16 max_energy = a->getMaxMana();
-	int width = max_energy ? ((energy * 67) / max_energy) : 67;
+
+	// Don't display for NPCs without energy
+	if (!max_energy)
+		return;
+
+	CruStatGump::PaintThis(surf, lerp_factor, scaled);
+
+	int width = (energy * 67) / max_energy;
 	const Palette *gamepal = PaletteManager::get_instance()->getPalette(PaletteManager::Pal_Game);
 	if (!gamepal)
 		return;
