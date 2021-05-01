@@ -35,6 +35,12 @@ const uint32 Kernel::TICKS_PER_FRAME = 2;
 const uint32 Kernel::TICKS_PER_SECOND = 60;
 const uint32 Kernel::FRAMES_PER_SECOND = Kernel::TICKS_PER_SECOND / Kernel::TICKS_PER_FRAME;
 
+// A special proc type which means "all"
+const uint16 Kernel::PROC_TYPE_ALL = 6;
+
+// The same as above, but for Crusader.
+// Used in Usecode functions to translate.
+static const uint16 CRU_PROC_TYPE_ALL = 0xc;
 
 Kernel::Kernel() : _loading(false), _tickNum(0), _paused(0),
 		_runningProcess(nullptr), _frameByFrame(false) {
@@ -249,7 +255,7 @@ uint32 Kernel::getNumProcesses(ObjId objid, uint16 processtype) {
 		if (p->is_terminated()) continue;
 
 		if ((objid == 0 || objid == p->_itemNum) &&
-		        (processtype == 6 || processtype == p->_type))
+		        (processtype == PROC_TYPE_ALL || processtype == p->_type))
 			count++;
 	}
 
@@ -264,7 +270,7 @@ Process *Kernel::findProcess(ObjId objid, uint16 processtype) {
 		if (p->is_terminated()) continue;
 
 		if ((objid == 0 || objid == p->_itemNum) &&
-		        (processtype == 6 || processtype == p->_type)) {
+		        (processtype == PROC_TYPE_ALL || processtype == p->_type)) {
 			return p;
 		}
 	}
@@ -278,7 +284,7 @@ void Kernel::killProcesses(ObjId objid, uint16 processtype, bool fail) {
 		Process *p = *it;
 
 		if (p->_itemNum != 0 && (objid == 0 || objid == p->_itemNum) &&
-		        (processtype == 6 || processtype == p->_type) &&
+		        (processtype == PROC_TYPE_ALL || processtype == p->_type) &&
 		        !(p->_flags & Process::PROC_TERMINATED) &&
 		        !(p->_flags & Process::PROC_TERM_DEFERRED)) {
 			if (fail)
@@ -373,12 +379,18 @@ uint32 Kernel::I_getNumProcesses(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_OBJID(item);
 	ARG_UINT16(type);
 
+	if (GAME_IS_CRUSADER && type == CRU_PROC_TYPE_ALL)
+		type = PROC_TYPE_ALL;
+
 	return Kernel::get_instance()->getNumProcesses(item, type);
 }
 
 uint32 Kernel::I_resetRef(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_OBJID(item);
 	ARG_UINT16(type);
+
+	if (GAME_IS_CRUSADER && type == CRU_PROC_TYPE_ALL)
+		type = PROC_TYPE_ALL;
 
 	Kernel::get_instance()->killProcesses(item, type, true);
 	return 0;

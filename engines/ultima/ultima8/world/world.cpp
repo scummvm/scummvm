@@ -451,7 +451,7 @@ void World::setControlledNPCNum(uint16 num) {
 
 	Actor *controlled = getActor(num);
 	if (controlled && num != 1) {
-		Kernel::get_instance()->killProcesses(num, 0xc, false);
+		Kernel::get_instance()->killProcesses(num, Kernel::PROC_TYPE_ALL, true);
 		if (controlled->isInCombat())
 			controlled->clearInCombat();
 	}

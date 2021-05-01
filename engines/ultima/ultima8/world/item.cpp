@@ -2238,7 +2238,7 @@ void Item::receiveHitCru(uint16 other, Direction dir, int damage, uint16 type) {
 	if (damageInfo) {
 		bool wasbroken = damageInfo->applyToItem(this, damage);
 		if (wasbroken) {
-			Kernel::get_instance()->killProcesses(_objId, 0xc, true);
+			Kernel::get_instance()->killProcesses(_objId, Kernel::PROC_TYPE_ALL, true);
 		}
 	}
 

@@ -131,6 +131,9 @@ public:
 	static const uint32 TICKS_PER_SECOND;
 	static const uint32 FRAMES_PER_SECOND;
 
+	// A special process type which means kill all the processes.
+	static const uint16 PROC_TYPE_ALL;
+
 	INTRINSIC(I_getNumProcesses);
 	INTRINSIC(I_resetRef);
 private:
