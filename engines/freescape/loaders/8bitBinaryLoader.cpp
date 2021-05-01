@@ -44,8 +44,10 @@ static Object *load8bitObject(StreamLoader &stream) {
 		Common::Array<uint8> *colours = new Common::Array<uint8>;
 		for (uint8 colour = 0; colour < numberOfColours/2; colour++) {
 			uint8 c = stream.get8();
-			debug("color[%d] = %x", colour, c);
-			colours->push_back(c);
+			colours->push_back(c >> 4);
+			debug("color[%d] = %x", 2*colour, c >> 4);
+			colours->push_back(c & 0xf);
+			debug("color[%d] = %x", 2*colour+1, c & 0xf);
 			byteSizeOfObject--;
 		}
 
@@ -85,13 +87,19 @@ static Object *load8bitObject(StreamLoader &stream) {
 Common::Array <uint8>*getPaletteGradient(float *c1, float *c2)
 {
 	Common::Array <uint8> *raw_palette = new Common::Array <uint8>();
+	uint16 y0, y1, y2;
+	debug("palette:");
 	for(int c = 0; c < 16; c++)
 	{
 		float ic = (float)c / 15.0f;
 		ic = sqrt(ic);
-		raw_palette->push_back(255*(ic*c2[0] + (1-ic)*c1[0]));
-		raw_palette->push_back(255*(ic*c2[1] + (1-ic)*c1[1]));
-		raw_palette->push_back(255*(ic*c2[2] + (1-ic)*c1[2]));
+		y0  = 255*(ic*c2[0] + (1-ic)*c1[0]);
+		y1  = 255*(ic*c2[1] + (1-ic)*c1[1]);
+		y2  = 255*(ic*c2[2] + (1-ic)*c1[2]);
+		debug("%d %d %d", y0, y1, y2);
+		raw_palette->push_back(y2);
+		raw_palette->push_back(y1);
+		raw_palette->push_back(y0);
 	}
 	return raw_palette;
 }
@@ -146,7 +154,7 @@ Area *load8bitArea(StreamLoader &stream) {
 		debug("%s", detokenise8bitCondition(*conditionData)->c_str());
 	}
 
-	return (new Area(areaNumber, objectsByID, entrancesByID, ci1, ci2, raw_palette));
+	return (new Area(areaNumber, objectsByID, entrancesByID, 0, 1, raw_palette));
 }
 
 
@@ -218,7 +226,7 @@ Binary load8bitBinary(Common::String filename, uint offset) {
 		}
 	}
 
-	return Binary{startArea, areaMap, nullptr, nullptr};
+	return Binary{8, startArea, areaMap, nullptr, nullptr};
 }
 
 } // namespace Freescape

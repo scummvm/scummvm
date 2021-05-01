@@ -74,21 +74,12 @@ FreescapeEngine::~FreescapeEngine() {
 	DebugMan.clearAllDebugChannels();
 }
 
-void FreescapeEngine::convertBorder() {
-	if (_border == nullptr)
-		return;
-	_borderSurf = new Graphics::Surface();
-	_borderSurf->create(_screenW, _screenH, _originalPixelFormat);
-	_borderSurf->copyRectToSurface(_border->getRawBuffer(), _borderSurf->w, 0, 0, _borderSurf->w, _borderSurf->h);
-	_borderSurf->convertToInPlace(_currentPixelFormat, _palette->getRawBuffer());
-}
-
 void FreescapeEngine::drawBorder() {
 	if (_border == nullptr)
 		return;
 
-	Texture *t = _gfx->createTexture(_borderSurf);
-	const Common::Rect rect(0, 0, 320, 200);
+	Texture *t = _gfx->createTexture(_border);
+	const Common::Rect rect(0, 0, _screenW, _screenH);
 	//g_system->copyRectToScreen(_borderSurf->getPixels(), _borderSurf->pitch, 0, 0, _screenW, _screenH);
 
 
@@ -100,11 +91,7 @@ void FreescapeEngine::drawBorder() {
 
 Common::Error FreescapeEngine::run() {
 	// Initialize graphics:
-	_currentPixelFormat = Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
-	_originalPixelFormat = Graphics::PixelFormat::createFormatCLUT8();
-	_palettePixelFormat = Graphics::PixelFormat(3, 8, 8, 8, 0, 0, 8, 16, 0);
-
-	_gfx = Freescape::createRenderer(_system, &_currentPixelFormat);
+	_gfx = Freescape::createRenderer(_system);
 	_gfx->init();
 	_gfx->clear();
 	
@@ -122,21 +109,27 @@ Common::Error FreescapeEngine::run() {
 
 	if (binary.areasByAreaID) {
 		_areasByAreaID = binary.areasByAreaID;
-		if (binary.border) {
-			_border = new Graphics::PixelBuffer(_originalPixelFormat, 320*200, DisposeAfterUse::NO);
-			*_border = binary.border->data();
-		}
-
 		if (binary.palette) {
-			_palette = new Graphics::PixelBuffer(_palettePixelFormat, 256, DisposeAfterUse::NO);
-			*_palette = binary.palette->data();
-			_gfx->_palette = _palette;
+			uint pSize = 0; 
+			if (binary.bits == 16)
+				pSize = 256;
+			else if (binary.bits == 8)
+				pSize = 16;
+			else
+				error("Invalid number of bits %d", binary.bits);
+
+			Graphics::PixelBuffer *palette = new Graphics::PixelBuffer(_gfx->_palettePixelFormat, pSize, DisposeAfterUse::NO);
+			*palette = binary.palette->data();
+			_gfx->_palette = palette;
 		}
 
-		//debug("color: %x", binary.palette->data()[0x4c*3]);	
-		_startArea = binary.startArea;
+		if (binary.border) {
+			Graphics::PixelBuffer *border = new Graphics::PixelBuffer(_gfx->_originalPixelFormat, 320*200, DisposeAfterUse::NO);
+			*border = binary.border->data();
+			_border = _gfx->convertFromPalette(border);
+		}
 
-		convertBorder();
+		_startArea = 1; //binary.startArea;
 
 		assert(_areasByAreaID->contains(_startArea));
 		Area *area = (*_areasByAreaID)[_startArea];
