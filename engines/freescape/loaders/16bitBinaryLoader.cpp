@@ -23,6 +23,11 @@
 
 namespace Freescape {
 
+typedef enum {
+		First = 0x0000,
+		Border = 0x4524,
+} ChunkType;
+
 static Object *load16bitObject(StreamLoader &stream) {
 	// get object flags and type
 	uint8 objectFlags = stream.get8();
@@ -98,6 +103,7 @@ static Object *load16bitObject(StreamLoader &stream) {
 			//instructions = getInstructions(conditionSource);
 		}
 		byteSizeOfObject = 0;
+		debug("End of object at %x", stream.getFileOffset());
 
 		// create an object
 		return new GeometricObject(
@@ -123,9 +129,14 @@ static Object *load16bitObject(StreamLoader &stream) {
 	//for (i = 0; i < byteSizeOfObject/2; i++)
 	//	cout << i << stream.get16() << endl;
 	stream.skipBytes(byteSizeOfObject);
+	debug("End of object at %x", stream.getFileOffset());
 
 	return nullptr;
 }
+
+void load16bitInstrument(StreamLoader &stream) {}
+	
+
 
 Area *load16bitArea(StreamLoader &stream) {
 	// the lowest bit of this value seems to indicate
@@ -189,6 +200,8 @@ Area *load16bitArea(StreamLoader &stream) {
 
 	return (new Area(areaNumber, objectsByID, entrancesByID, skyColor, groundColor));
 }
+
+
 
 Binary load16bitBinary(Common::String filename) {
 	Common::File *file = new Common::File();
@@ -261,7 +274,8 @@ Binary load16bitBinary(Common::String filename) {
 	// start grabbing some of the basics...
 
 	uint16 numberOfAreas = streamLoader.get16();
-	streamLoader.get16(); // meaning unknown
+	uint16 sm = streamLoader.get16();
+	debug("Something??: %d", sm); // meaning unknown
 
 	debug("Number of areas: %d", numberOfAreas);
 
@@ -381,29 +395,58 @@ Binary load16bitBinary(Common::String filename) {
 			(*areaMap)[newArea->getAreaID()] = newArea;
 		}
 	}
-	streamLoader.setFileOffset(fileOffsetForArea[numberOfAreas - 1] + baseOffset);
+	load16bitInstrument(streamLoader);
 
 	Common::Array<uint8>::size_type o;
 	Common::Array<uint8> *raw_border = nullptr;
 	Common::Array<uint8> *raw_palette = nullptr;
+	uint16 chunkType = 0;
+	uint16 chunkSize = 0;
+	uint16 colorNumber = 0;
 	debug("End of areas at %x", streamLoader.getFileOffset());
 	while (!streamLoader.eof()) {
 		o = streamLoader.getFileOffset();
-		if (streamLoader.get32() == 0x452400fa) {
-			debug("Border found at %x", o);
-			raw_border = streamLoader.nextBytes(320 * 200);
+		chunkType = streamLoader.get16();
+		if (chunkType == First) {
+			chunkSize = streamLoader.rget16();
+			if (chunkSize != 0xac) {
+				debug("skip %x", chunkType);
+				streamLoader.setFileOffset(o+2);
+			} else {
+				debug("First chunk found at %x with size %x", o, chunkSize);
+				streamLoader.skipBytes(chunkSize-2);
+			}
+		}
+		else if (chunkType == Border) {
+			chunkSize = streamLoader.rget16();
+			debug("Border found at %x with size %x", o, chunkSize);
+
+			if (chunkSize == 320*200 / 4)
+				colorNumber = 4; // CGA
+			else if (chunkSize == 320*200)
+				colorNumber = 256;
+			else
+				error("Unexpected size of image %d", chunkSize);
+
+			raw_border = streamLoader.nextBytes(chunkSize);
 			raw_palette = new Common::Array<uint8>(); 
 			debug("Palete follows at %x", streamLoader.getFileOffset());
-			for (i = 0; i < 256*3; i++) {
-				//uint8 c = streamLoader.get8(); 
-				//if (streamLoader.getFileOffset() == 0x170e9 || streamLoader.getFileOffset() == 0x170ea)
-				//	debug("c[%x]: %x -> %x", i/3, c, c << 2);
+			for (i = 0; i < colorNumber*3; i++)
 				raw_palette->push_back(streamLoader.get8() << 2);
-			}
-			break;
+			
+			debug("Palete finishes at %x", streamLoader.getFileOffset());
+			chunkSize = streamLoader.rget16();
+			debug("Something else of size %x at %x??", chunkSize, streamLoader.getFileOffset());
+			streamLoader.skipBytes(chunkSize);
 		}
-		streamLoader.setFileOffset(o);
-		streamLoader.get8();
+		else {
+			debug("skip %x", chunkType);
+			//chunkSize = streamLoader.rget16();
+			//if (chunkSize > 0 && streamLoader.getFileOffset() + chunkSize-2 == 0x73ea)
+			//	error("Found at %x!", o);
+			//streamLoader.setFileOffset(o+2);
+			//error("Unknown chunk %x find at %x with size %x", chunkType, o, chunkSize);
+		}
 	}
 
 	delete[] fileOffsetForArea;
