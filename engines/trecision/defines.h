@@ -2227,77 +2227,77 @@ enum InventoryItem {
 #define wWIN35				143
 
 /*------------------------------------------------------------------------*/
-/*                                DIALOGS            					  */
+/*                                DIALOGS                                 */
 /*------------------------------------------------------------------------*/
 
-#define	dASCENSORE12		1
-#define	dASCENSORE13		2
-#define	dASCENSORE16		3
-#define dBIGLIETTERIA16		4
-#define dPOLIZIOTTO16		5
-#define dTRAMP171			6
-#define dTRAMP1713			7
-#define dTRAMP1714			8
-#define dTRAMP1716			9
-#define dTRAMP1717			10
-#define dGUARDIAN18			11
-#define dEVA19				12
-#define dSHOPKEEPER1A		13
-#define dSAM17				14
-#define dSFINGE2C			15
-#define dC381				16
-#define dC4A1				17
-#define dC581				18
-#define dC582               19
-#define dC5A1               20
-#define dINTRO  			21
-#define dF151				22
-#define dF181				23
-#define dF161				24
-#define dF171				25
-#define dF1A1				26
-#define dF1C1				27
-#define dF1D1				28
-#define dF211				29
-#define dF212               30
-#define dF212B              31
-#define dF213               32
-#define dF213B              33
-#define dF231               34
-#define dF291               35
-#define dF2E1               36
-#define dF2E2               37
-#define dF2G1               38
-#define dF2G2               39
-#define dF2H1               40
-#define dF321				41
-#define dF331               42
-#define dF351               43
-#define dF361               44
-#define dF362               45
-#define dF371               46
-#define dF372               47
-#define dF381               48
-#define dF431               49
-#define dF451               50
-#define dF491               51
-#define dF4A3               52
-#define dF4C1               53
-#define dF4P1               54
-#define dF4P2               55
-#define dF541               56
-#define dF542               57
-#define dF561               58
-#define dF562               59
-#define dF581               60
-#define dF5A1               61
-#define dF582               62
-#define dF4PI				63
-#define dFLOG				64
-#define dFCRED				65
+#define dASCENSORE12         1    // Elevator floor selection (roof level)
+#define dASCENSORE13         2    // Elevator floor selection (apartment level)
+#define dASCENSORE16         3    // Elevator floor selection (subway level)
+#define dBIGLIETTERIA16      4
+#define dPOLIZIOTTO16        5
+#define dTRAMP171            6    // Bum asks for booze
+#define dTRAMP1713           7
+#define dTRAMP1714           8
+#define dTRAMP1716           9
+#define dTRAMP1717          10    // The bum asks 10 credits for his skate
+#define dGUARDIAN18         11    // The Doorman outside the Free Climax club asks for a membership card
+#define dEVA19              12    // Talking with Eva at the Free Climax club
+#define dSHOPKEEPER1A       13    // Talking with the shopkeeper in the Liquor store
+#define dSAM17              14    // Talking with Hugh via the Minicom
+#define dSFINGE2C           15    // Sphinx pre-recorded message
+#define dC381               16    // Talking with Al and Eva before entering the Amusement Park
+#define dC4A1               17    // Talking with Hugh's secretary
+#define dC581               18    // Talking with Moreau from his cell's door
+#define dC582               19    // Joshua gets the governor's code from Eva from her cell's door
+#define dC5A1               20    // Joshua talks to Eve through her prison cell's window
+#define dINTRO              21    // Intro
+#define dF151               22
+#define dF181               23    // News report about closing the subway
+#define dF161               24    // Joshua boarding train
+#define dF171               25    // Train arriving at Rotmall 17
+#define dF1A1               26    // The shopkeeper and his wife argue about her fear of rats
+#define dF1C1               27    // Opening the grating and going to the platforms
+#define dF1D1               28    // Rolling the rat on the skate towards the shopkeeper's wife
+#define dF211               29    // Crossing the train tracks with the makeshift grapple
+#define dF212               30    // Using the magnet to attract the grapple and cross the tracks
+#define dF212B              31    // Using the pincers to grab the grapple and cross the tracks
+#define dF213               32    // Using the bar to grab the grapple and cross the tracks
+#define dF213B              33    // Using the pincers to grab the grapple and cross the tracks
+#define dF231               34    // Using the leads to short-circuit the magnetic field
+#define dF291               35    // Turning the storeroom light on
+#define dF2E1               36    // Trying to cross the footbridge, a mechanical dinosaur appears
+#define dF2E2               37    // Shooting the mechanical dinosaur with the gun
+#define dF2G1               38    // Opening the machinery panel at the pond
+#define dF2G2               39    // Throwing the flare in the gas tank, opening the sluice gate
+#define dF2H1               40    // Cutting the cable, the sign drops down and forms a passage to the Zoo
+#define dF321               41    // Setting off the warehouse alarm with the torch, electrocuting the guard
+#define dF331               42    // Blowing the trapdoor open at the warehouse, alarm goes off, guard deactivates it
+#define dF351               43    // Using the projector with the hologram, knocking off the terrorist
+#define dF361               44    // Checking out the computer at the hideout and the report on Moreau
+#define dF362               45    // Using the stethoscope at the hideout, listening to Al and Eva, leads to dialog 16
+#define dF371               46    // Discovering Ruby at the Medical room of the hideout
+#define dF372               47    // Opening the panel next to Ruby, finding a report on him
+#define dF381               48    // Talking with Al and Eva
+#define dF431               49    // Using the puppet's remote control to use the cablecar and go to the castle
+#define dF451               50    // Shutting down the boiler with the cloth, driving the spider away
+#define dF491               51    // Joshua finds Moreau's diary and goes to Hugh's office, leads to dialog 17
+#define dF4A3               52    // Hugh's secretary eats a spiked chocolate and falls asleep
+#define dF4C1               53    // Joshua reads evidence from Hugh's computer, leaves cyberspace, goes to Rocas Perdida
+#define dF4P1               54    // Shooting at the werewolf with the wrong type of bullet
+#define dF4P2               55    // Shooting and killing the werewolf
+#define dF541               56    // Peeking through the door, checking the guard
+#define dF542               57    // The guard comes to investigate and falls through the grating
+#define dF561               58    // Joshua talks with Al about the fence cables
+#define dF562               59    // Joshua cuts the fence cables, Al and Eva enter the prison and Eva gets captured
+#define dF581               60    // Talking with Al after talking with Moreau
+#define dF5A1               61    // Joshua sends the poisonous syringe to Eva, she uses it to kill the guard
+#define dF582               62    // Ending sequence, Joshua confronts Hugh
+#define dF4PI               63    // Joshua meets the werewolf for the first time
+#define dFLOG               64    // Dreamcatcher Team17, Trecision and Nightlong logos
+#define dFCRED              65    // Credits
 
 #define PATCHOBJ_ROOM41D 89
-#define PATCHOBJ_ROOM2C	 20
+#define PATCHOBJ_ROOM2C  20
 
 // 3D Rendering
 #define MAXVERTEX 1000
