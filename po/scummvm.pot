@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-05-01 11:37+0000\n"
+"POT-Creation-Date: 2021-05-02 19:04+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -60,7 +60,7 @@ msgstr ""
 #: gui/saveload-dialog.cpp:62 gui/saveload-dialog.cpp:396
 #: gui/saveload-dialog.cpp:468 gui/saveload-dialog.cpp:770
 #: gui/saveload-dialog.cpp:1167 gui/themebrowser.cpp:55
-#: gui/unknown-game-dialog.cpp:54 engines/engine.cpp:653
+#: gui/unknown-game-dialog.cpp:54 engines/engine.cpp:654
 #: backends/dialogs/gtk/gtk-dialogs.cpp:46
 #: backends/events/default/default-events.cpp:185
 #: backends/events/default/default-events.cpp:209
@@ -155,7 +155,7 @@ msgstr ""
 #: gui/downloaddialog.cpp:147 gui/editgamedialog.cpp:381
 #: gui/fluidsynth-dialog.cpp:154 gui/launcher.cpp:514 gui/launcher.cpp:518
 #: gui/massadd.cpp:89 gui/options.cpp:1958 gui/saveload-dialog.cpp:1168
-#: engines/engine.cpp:511 engines/engine.cpp:522
+#: engines/engine.cpp:510 engines/engine.cpp:522
 #: backends/platform/wii/options.cpp:47 engines/agos/animation.cpp:559
 #: engines/drascula/saveload.cpp:49 engines/groovie/script.cpp:484
 #: engines/parallaction/saveload.cpp:271 engines/sci/engine/kgraphics.cpp:75
@@ -745,14 +745,14 @@ msgstr ""
 msgid "Search:"
 msgstr ""
 
-#: gui/launcher.cpp:210 engines/dialogs.cpp:98 engines/engine.cpp:803
+#: gui/launcher.cpp:210 engines/dialogs.cpp:98 engines/engine.cpp:804
 #: engines/buried/saveload.cpp:515 engines/pegasus/pegasus.cpp:384
 #: engines/tsage/scenes.cpp:631 engines/wage/saveload.cpp:742
 #: engines/xeen/saves.cpp:256
 msgid "Load game:"
 msgstr ""
 
-#: gui/launcher.cpp:210 engines/dialogs.cpp:98 engines/engine.cpp:803
+#: gui/launcher.cpp:210 engines/dialogs.cpp:98 engines/engine.cpp:804
 #: engines/buried/saveload.cpp:515 engines/parallaction/metaengine.cpp:118
 #: engines/parallaction/saveload.cpp:194 engines/pegasus/pegasus.cpp:384
 #: engines/scumm/dialogs.cpp:178 engines/tsage/scenes.cpp:631
@@ -2118,7 +2118,7 @@ msgctxt "lowres"
 msgid "~R~eturn to Launcher"
 msgstr ""
 
-#: engines/dialogs.cpp:99 engines/engine.cpp:832 engines/agi/saveload.cpp:768
+#: engines/dialogs.cpp:99 engines/engine.cpp:833 engines/agi/saveload.cpp:768
 #: engines/avalanche/parser.cpp:1919 engines/buried/saveload.cpp:534
 #: engines/cine/various.cpp:350 engines/dm/loadsave.cpp:199
 #: engines/drascula/saveload.cpp:383 engines/dreamweb/saveload.cpp:262
@@ -2136,7 +2136,7 @@ msgstr ""
 msgid "Save game:"
 msgstr ""
 
-#: engines/dialogs.cpp:99 engines/engine.cpp:832 engines/agi/saveload.cpp:768
+#: engines/dialogs.cpp:99 engines/engine.cpp:833 engines/agi/saveload.cpp:768
 #: engines/avalanche/parser.cpp:1919 engines/buried/saveload.cpp:534
 #: engines/cine/various.cpp:350 engines/dm/loadsave.cpp:199
 #: engines/drascula/saveload.cpp:383 engines/dreamweb/saveload.cpp:262
@@ -2214,13 +2214,13 @@ msgstr ""
 msgid "Error"
 msgstr ""
 
-#: engines/engine.cpp:507
+#: engines/engine.cpp:506
 msgid ""
 "You appear to be playing this game directly\n"
 "from the CD. This is known to cause problems,\n"
 "and it is therefore recommended that you copy\n"
 "the data files to your hard disk instead.\n"
-"See the README file for details."
+"See the Documentation (CD audio) for details."
 msgstr ""
 
 #: engines/engine.cpp:518
@@ -2229,60 +2229,60 @@ msgid ""
 "tracks need to be ripped from the disk using\n"
 "an appropriate CD audio extracting tool in\n"
 "order to listen to the game's music.\n"
-"See the README file for details."
+"See the Documentation (CD audio) for details."
 msgstr ""
 
-#: engines/engine.cpp:548 engines/metaengine.cpp:325 engines/savestate.cpp:81
+#: engines/engine.cpp:549 engines/metaengine.cpp:325 engines/savestate.cpp:81
 #: backends/platform/ios7/ios7_osys_main.cpp:251 engines/sky/metaengine.cpp:176
 #: engines/xeen/saves.cpp:290
 msgid "Autosave"
 msgstr ""
 
-#: engines/engine.cpp:550
+#: engines/engine.cpp:551
 msgid "Error occurred making autosave"
 msgstr ""
 
-#: engines/engine.cpp:629
+#: engines/engine.cpp:630
 #, c-format
 msgid ""
 "Failed to load saved game (%s)! Please consult the README for basic "
 "information, and for instructions on how to obtain further assistance."
 msgstr ""
 
-#: engines/engine.cpp:649
+#: engines/engine.cpp:650
 msgid "WARNING: "
 msgstr ""
 
-#: engines/engine.cpp:649
+#: engines/engine.cpp:650
 msgid " Shall we still run the game?"
 msgstr ""
 
-#: engines/engine.cpp:650
+#: engines/engine.cpp:651
 msgid ""
 "WARNING: The game you are about to start is not yet fully supported by "
 "ScummVM. As such, it is likely to be unstable, and any saved game you make "
 "might not work in future versions of ScummVM."
 msgstr ""
 
-#: engines/engine.cpp:653 engines/wintermute/wintermute.cpp:210
+#: engines/engine.cpp:654 engines/wintermute/wintermute.cpp:210
 msgid "Start anyway"
 msgstr ""
 
-#: engines/engine.cpp:660
+#: engines/engine.cpp:661
 msgid "This game is not supported."
 msgstr ""
 
-#: engines/engine.cpp:660
+#: engines/engine.cpp:661
 msgid ""
 "This game is not supported for the following reason:\n"
 "\n"
 msgstr ""
 
-#: engines/engine.cpp:799
+#: engines/engine.cpp:800
 msgid "Loading game is currently unavailable"
 msgstr ""
 
-#: engines/engine.cpp:828
+#: engines/engine.cpp:829
 msgid "Saving game is currently unavailable"
 msgstr ""
 
