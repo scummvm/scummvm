@@ -27,6 +27,7 @@
 #include "ultima/ultima8/world/actors/teleport_to_egg_process.h"
 #include "ultima/ultima8/world/target_reticle_process.h"
 #include "ultima/ultima8/world/camera_process.h"
+#include "ultima/ultima8/graphics/shape_info.h"
 #include "ultima/ultima8/ultima8.h"
 #include "ultima/ultima8/world/actors/avatar_death_process.h"
 #include "ultima/ultima8/kernel/delay_process.h"
@@ -53,12 +54,18 @@ namespace Ultima8 {
 
 DEFINE_RUNTIME_CLASSTYPE_CODE(MainActor)
 
+ShapeInfo *MainActor::_kneelingShapeInfo = nullptr;
+
 MainActor::MainActor() : _justTeleported(false), _accumStr(0), _accumDex(0),
 	_accumInt(0), _cruBatteryType(ChemicalBattery), _keycards(0),
 	_activeInvItem(0), _shieldType(0), _shieldSpriteProc(0) {
 }
 
 MainActor::~MainActor() {
+	if (_kneelingShapeInfo) {
+		delete _kneelingShapeInfo;
+		_kneelingShapeInfo = nullptr;
+	}
 }
 
 GravityProcess *MainActor::ensureGravityProcess() {
@@ -318,6 +325,28 @@ int16 MainActor::addItemCru(Item *item, bool showtoast) {
 	}
 
 	return 0;
+}
+
+const ShapeInfo *MainActor::getShapeInfoFromGameInstance() const {
+	const ShapeInfo *info = Item::getShapeInfoFromGameInstance();
+
+	if (!(_actorFlags & ACT_KNEELING) || GAME_IS_U8)
+		return info;
+
+	// When kneeling in Crusader, return a modified shape with a lower height.
+	if (!_kneelingShapeInfo) {
+		_kneelingShapeInfo = new ShapeInfo();
+		// Not great coupling here, we know most fields don't need filling out..
+		_kneelingShapeInfo->_flags = info->_flags;
+		_kneelingShapeInfo->_x = info->_x;
+		_kneelingShapeInfo->_y = info->_y;
+		_kneelingShapeInfo->_weight = info->_weight;
+		_kneelingShapeInfo->_volume = info->_volume;
+		_kneelingShapeInfo->_family = info->_family;
+		_kneelingShapeInfo->_z = info->_z - 4;
+	}
+
+	return _kneelingShapeInfo;
 }
 
 void MainActor::teleport(int mapNum, int32 x, int32 y, int32 z) {

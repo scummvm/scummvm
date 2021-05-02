@@ -138,9 +138,13 @@ public:
 	}
 	void setActorFlag(uint32 mask) {
 		_actorFlags |= mask;
+		if (mask & ACT_KNEELING)
+			_cachedShapeInfo = nullptr;
 	}
 	void clearActorFlag(uint32 mask) {
 		_actorFlags &= ~mask;
+		if (mask & ACT_KNEELING)
+			_cachedShapeInfo = nullptr;
 	}
 
 	void setCombatTactic(int no) {

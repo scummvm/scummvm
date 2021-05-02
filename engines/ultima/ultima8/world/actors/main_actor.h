@@ -47,6 +47,10 @@ public:
 	bool CanAddItem(Item *item, bool checkwghtvol = false) override;
 	bool addItem(Item *item, bool checkwghtvol = false) override;
 
+	//! Get the ShapeInfo object for this MainActor.  Overrided because it changes
+	//! when Crusader is kneeling.
+	const ShapeInfo *getShapeInfoFromGameInstance() const override;
+
 	//! Add item to avatar's inventory, but with some extra logic to do things like combine
 	//! ammo and credits, use batteries, etc.
 	int16 addItemCru(Item *item, bool showtoast);
@@ -182,6 +186,8 @@ protected:
 
 	uint16 _shieldSpriteProc;
 	uint16 _shieldType;
+
+	static ShapeInfo *_kneelingShapeInfo;
 
 };
 
