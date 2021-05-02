@@ -32,6 +32,8 @@
 
 #include "base/detection/detection.h"
 
+#include "engines/advancedDetector.h"
+
 // Plugin versioning
 
 int pluginTypeVersions[PLUGIN_TYPE_MAX] = {
@@ -705,6 +707,9 @@ DetectionResults EngineManager::detectGames(const Common::FSList &fslist) const 
 	// MetaEngines are always loaded into memory, so, get them and
 	// run detection for all of them.
 	plugins = getPlugins(PLUGIN_TYPE_ENGINE_DETECTION);
+
+	// Clear md5 cache before each detection starts, just in case.
+	MD5Man.clear();
 
 	// Iterate over all known games and for each check if it might be
 	// the game in the presented directory.
