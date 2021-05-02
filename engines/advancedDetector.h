@@ -500,5 +500,51 @@ public:
 	 */
 	bool getFilePropertiesExtern(uint md5Bytes, const FileMap &allFiles, const ADGameDescription &game, const Common::String fname, FileProperties &fileProps) const;
 };
+
+/**
+ * Singleton Cache Storage for Computed MD5s
+ */
+class MD5CacheManager : public Common::Singleton<MD5CacheManager> {
+public:
+	void setMD5(Common::String fname, Common::String md5) {
+		md5HashMap.setVal(fname, md5);
+	}
+
+	Common::String getMD5(Common::String fname) {
+		return md5HashMap.getVal(fname);
+	}
+
+	void setSize(Common::String fname, int32 size) {
+		sizeHashMap.setVal(fname, size);
+	}
+
+	int32 getSize(Common::String fname) {
+		return sizeHashMap.getVal(fname);
+	}
+
+	bool contains(Common::String fname) {
+		return (md5HashMap.contains(fname) && sizeHashMap.contains(fname));
+	}
+
+	MD5CacheManager() {
+		clear();
+	}
+
+	void clear() {
+		md5HashMap.clear(true);
+		sizeHashMap.clear(true);
+	}
+
+private:
+	friend class Common::Singleton<MD5CacheManager>;
+
+	typedef Common::HashMap<Common::String, Common::String, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> FileHashMap;
+	typedef Common::HashMap<Common::String, int32, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> SizeHashMap;
+	FileHashMap md5HashMap;
+	SizeHashMap sizeHashMap;
+};
+
+/** Convenience shortcut for accessing the MD5CacheManager. */
+#define MD5Man MD5CacheManager::instance()
 /** @} */
 #endif
