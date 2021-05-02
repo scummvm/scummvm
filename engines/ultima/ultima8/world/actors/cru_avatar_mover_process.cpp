@@ -135,7 +135,7 @@ void CruAvatarMoverProcess::handleCombatMode() {
 		if (hasMovementFlags(MOVE_STEP)) {
 			nextanim = avatar->isKneeling() ?
 							Animation::kneelingAdvance : Animation::advance;
-		} else if (hasMovementFlags(MOVE_RUN)) {
+		} else if (hasMovementFlags(MOVE_RUN) && avatar->hasAnim(Animation::combatRunSmallWeapon)) {
 			// Take a step before running
 			if (lastanim == Animation::walk || _isAnimRunningJumping(lastanim) || _isAnimStartRunning(lastanim))
 				nextanim = Animation::combatRunSmallWeapon;
