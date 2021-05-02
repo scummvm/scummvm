@@ -450,9 +450,31 @@ void AdvancedMetaEngineDetection::composeFileHashMap(FileMap &allFiles, const Co
 	}
 }
 
+/* Singleton Cache Storage for MD5 */
+
+namespace Common {
+	DECLARE_SINGLETON(MD5CacheManager);
+}
+
 bool AdvancedMetaEngineDetection::getFileProperties(const FileMap &allFiles, const ADGameDescription &game, const Common::String fname, FileProperties &fileProps) const {
 	// FIXME/TODO: We don't handle the case that a file is listed as a regular
 	// file and as one with resource fork.
+	if (!allFiles.contains(fname))
+		return false;
+
+	fileProps.md5.clear();
+
+	const char *numbers = "0123456789";
+	Common::String hashname = allFiles[fname].getPath() + ":";
+	for (uint n = _md5Bytes; n > 0; n/=10) {
+		hashname += numbers[n % 10];
+	}
+
+	if (MD5Man.contains(hashname)) {
+		fileProps.md5 = MD5Man.getMD5(hashname);
+		fileProps.size = MD5Man.getSize(hashname);
+		return true;
+	}
 
 	if (game.flags & ADGF_MACRESFORK) {
 		FileMapArchive fileMapArchive(allFiles);
@@ -465,20 +487,23 @@ bool AdvancedMetaEngineDetection::getFileProperties(const FileMap &allFiles, con
 		fileProps.md5 = macResMan.computeResForkMD5AsString(_md5Bytes);
 		fileProps.size = macResMan.getResForkDataSize();
 
-		if (fileProps.size != 0)
+		if (fileProps.size != 0) {
+			MD5Man.setMD5(hashname, fileProps.md5);
+			MD5Man.setSize(hashname, fileProps.size);
 			return true;
+		}
 	}
-
-	if (!allFiles.contains(fname))
-		return false;
 
 	Common::File testFile;
 
 	if (!testFile.open(allFiles[fname]))
 		return false;
 
-	fileProps.size = (int32)testFile.size();
 	fileProps.md5 = Common::computeStreamMD5AsString(testFile, _md5Bytes);
+	fileProps.size = (int32)testFile.size();
+	MD5Man.setMD5(hashname, fileProps.md5);
+	MD5Man.setSize(hashname, fileProps.size);
+
 	return true;
 }
 
