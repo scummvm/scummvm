@@ -462,13 +462,7 @@ bool AdvancedMetaEngineDetection::getFileProperties(const FileMap &allFiles, con
 	if (!allFiles.contains(fname))
 		return false;
 
-	fileProps.md5.clear();
-
-	const char *numbers = "0123456789";
-	Common::String hashname = allFiles[fname].getPath() + ":";
-	for (uint n = _md5Bytes; n > 0; n/=10) {
-		hashname += numbers[n % 10];
-	}
+	Common::String hashname = Common::String::format("%s:%d", allFiles[fname].getPath().c_str(), _md5Bytes);
 
 	if (MD5Man.contains(hashname)) {
 		fileProps.md5 = MD5Man.getMD5(hashname);
