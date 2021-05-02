@@ -508,6 +508,72 @@ void LogicManager::startCharacterAnimations() {
 	}
 }
 
+bool LogicManager::startPlayDialog() {
+	bool dialogHandled = true;
+
+	if (_vm->_curRoom == kRoom17 && _vm->_oldRoom == kRoom16) {
+		_vm->_dialogMgr->playDialog(dF171);
+		_vm->_soundMgr->waitEndFading();
+	} else if ((_vm->_curRoom == kRoom16) && (_vm->_oldRoom == kRoom17)) {
+		_vm->_dialogMgr->playDialog(dF161);
+		_vm->_soundMgr->waitEndFading();
+		_vm->removeIcon(kItemNoteRotmall17);
+	} else if ((_vm->_curRoom == kRoom21) && (_vm->_oldRoom == kRoom1C)) {
+		_vm->_dialogMgr->playDialog(dF1C1);
+		_vm->_soundMgr->waitEndFading();
+	} else if ((_vm->_curRoom == kRoom23B) && (_vm->_oldRoom == kRoom23A)) {
+		_vm->_dialogMgr->playDialog(dF231);
+		_vm->_soundMgr->waitEndFading();
+		_vm->removeIcon(kItemSubwayMap);
+	} else if ((_vm->_curRoom == kRoom29L) && (_vm->_oldRoom == kRoom29)) {
+		_vm->_dialogMgr->playDialog(dF291);
+		_vm->_soundMgr->waitEndFading();
+	} else if ((_vm->_curRoom == kRoom2GV) && (_vm->_oldRoom == kRoom2G)) {
+		_vm->_dialogMgr->playDialog(dF2G2);
+		_vm->_soundMgr->waitEndFading();
+	} else if ((_vm->_curRoom == kRoom31) && (_vm->_oldRoom == kRoom32) && (_vm->_room[kRoom32]._flag & kObjFlagExtra)) {
+		_vm->_dialogMgr->playDialog(dF321);
+		_vm->_flagShowCharacter = false;
+		_vm->_soundMgr->waitEndFading();
+		_vm->_room[kRoom32]._flag &= ~kObjFlagExtra;
+	} else if ((_vm->_curRoom == kRoom46) && (_vm->_oldRoom == kRoom43) && !(_vm->_inventoryObj[kItemPositioner]._flag & kObjFlagExtra)) {
+		_vm->_dialogMgr->playDialog(dF431);
+		_vm->_soundMgr->waitEndFading();
+	} else if ((_vm->_curRoom == kRoom45S) && (_vm->_oldRoom == kRoom45) && !(_vm->_inventoryObj[kItemPositioner]._flag & kObjFlagExtra)) {
+		_vm->_dialogMgr->playDialog(dF451);
+		_vm->_soundMgr->waitEndFading();
+	} else if ((_vm->_curRoom == kRoom4A) && (_vm->_oldRoom == kRoom49) && !(_vm->_inventoryObj[kItemPositioner]._flag & kObjFlagExtra)) {
+		_vm->_dialogMgr->playDialog(dF491);
+		_vm->_soundMgr->waitEndFading();
+	} else if ((_vm->_curRoom == kRoom4A) && (_vm->_oldRoom == kRoom41D) && (_vm->_inventoryObj[kItemPositioner]._flag & kObjFlagExtra) && (_vm->_obj[ocHELLEN4A]._mode & OBJMODE_OBJSTATUS)) {
+		_vm->_soundMgr->waitEndFading();
+		_vm->_dialogMgr->playDialog(dC4A1);
+	} else if ((_vm->_curRoom == kRoom4P) && (_vm->_oldRoom == kRoom4O) && !(_vm->_room[kRoom4P]._flag & kObjFlagDone)) {
+		_vm->_dialogMgr->playDialog(dF4PI);
+		_vm->_flagShowCharacter = false;
+		_vm->_soundMgr->waitEndFading();
+	} else if ((_vm->_curRoom == kRoom51) && (_vm->_oldRoom == kRoom4CT)) {
+		_vm->_dialogMgr->playDialog(dF4C1);
+		_vm->_flagShowCharacter = false;
+		_vm->_soundMgr->waitEndFading();
+	} else if ((_vm->_curRoom == kRoom1A) && (_vm->_oldRoom == kRoom18)) {
+		if (!(_vm->_room[kRoom1A]._flag & kObjFlagDone)) {
+			_vm->_dialogMgr->playDialog(dF1A1);
+			_vm->_soundMgr->waitEndFading();
+			_vm->_obj[oTOPO1C]._flag |= kObjFlagTake;
+			_vm->_obj[oTOPO1C]._anim = a1C3RACCOGLIETOPO;
+		} else {
+			TendIn();
+			_vm->_flagNoPaintScreen = false;
+			_vm->redrawString();
+		}
+	} else {
+		dialogHandled = false;
+	}
+
+	return dialogHandled;
+}
+
 void LogicManager::endChangeRoom() {
 	//	Specific management of magnetic fields
 	if ((_vm->_curRoom == kRoom2E) && (_vm->_obj[oPULSANTEADS2D]._mode & OBJMODE_OBJSTATUS)) {
@@ -582,32 +648,9 @@ void LogicManager::endChangeRoom() {
 	}
 
 	// FullMotion
-	if ((_vm->_curRoom == kRoom17) && (_vm->_oldRoom == kRoom16)) {
-		_vm->_dialogMgr->playDialog(dF171);
-		_vm->_soundMgr->waitEndFading();
-	} else if ((_vm->_curRoom == kRoom16) && (_vm->_oldRoom == kRoom17)) {
-		_vm->_dialogMgr->playDialog(dF161);
-		_vm->_soundMgr->waitEndFading();
-		_vm->removeIcon(kItemNoteRotmall17);
-	} else if ((_vm->_curRoom == kRoom21) && (_vm->_oldRoom == kRoom1C)) {
-		_vm->_dialogMgr->playDialog(dF1C1);
-		_vm->_soundMgr->waitEndFading();
-	} else if ((_vm->_curRoom == kRoom23B) && (_vm->_oldRoom == kRoom23A)) {
-		_vm->_dialogMgr->playDialog(dF231);
-		_vm->_soundMgr->waitEndFading();
-		_vm->removeIcon(kItemSubwayMap);
-	} else if ((_vm->_curRoom == kRoom29L) && (_vm->_oldRoom == kRoom29)) {
-		_vm->_dialogMgr->playDialog(dF291);
-		_vm->_soundMgr->waitEndFading();
-	} else if ((_vm->_curRoom == kRoom2GV) && (_vm->_oldRoom == kRoom2G)) {
-		_vm->_dialogMgr->playDialog(dF2G2);
-		_vm->_soundMgr->waitEndFading();
-	} else if ((_vm->_curRoom == kRoom31) && (_vm->_oldRoom == kRoom32) && (_vm->_room[kRoom32]._flag & kObjFlagExtra)) {
-		_vm->_dialogMgr->playDialog(dF321);
-		_vm->_flagShowCharacter = false;
-		_vm->_soundMgr->waitEndFading();
-		_vm->_room[kRoom32]._flag &= ~kObjFlagExtra;
-	} else if ((_vm->_curRoom == kRoom19) && !(_vm->_room[kRoom19]._flag & kObjFlagDone)) {
+	const bool dialogHandled = startPlayDialog();
+
+	if ((_vm->_curRoom == kRoom19) && !(_vm->_room[kRoom19]._flag & kObjFlagDone)) {
 		_vm->playScript(s19EVA);
 		_vm->_flagNoPaintScreen = false;
 		_vm->clearText();
@@ -621,38 +664,7 @@ void LogicManager::endChangeRoom() {
 		_vm->_flagNoPaintScreen = false;
 		_vm->clearText();
 		_vm->redrawString();
-	} else if ((_vm->_curRoom == kRoom46) && (_vm->_oldRoom == kRoom43) && !(_vm->_inventoryObj[kItemPositioner]._flag & kObjFlagExtra)) {
-		_vm->_dialogMgr->playDialog(dF431);
-		_vm->_soundMgr->waitEndFading();
-	} else if ((_vm->_curRoom == kRoom45S) && (_vm->_oldRoom == kRoom45) && !(_vm->_inventoryObj[kItemPositioner]._flag & kObjFlagExtra)) {
-		_vm->_dialogMgr->playDialog(dF451);
-		_vm->_soundMgr->waitEndFading();
-	} else if ((_vm->_curRoom == kRoom4A) && (_vm->_oldRoom == kRoom49) && !(_vm->_inventoryObj[kItemPositioner]._flag & kObjFlagExtra)) {
-		_vm->_dialogMgr->playDialog(dF491);
-		_vm->_soundMgr->waitEndFading();
-	} else if ((_vm->_curRoom == kRoom4A) && (_vm->_oldRoom == kRoom41D) && (_vm->_inventoryObj[kItemPositioner]._flag & kObjFlagExtra) && (_vm->_obj[ocHELLEN4A]._mode & OBJMODE_OBJSTATUS)) {
-		_vm->_soundMgr->waitEndFading();
-		_vm->_dialogMgr->playDialog(dC4A1);
-	} else if ((_vm->_curRoom == kRoom4P) && (_vm->_oldRoom == kRoom4O) && !(_vm->_room[kRoom4P]._flag & kObjFlagDone)) {
-		_vm->_dialogMgr->playDialog(dF4PI);
-		_vm->_flagShowCharacter = false;
-		_vm->_soundMgr->waitEndFading();
-	} else if ((_vm->_curRoom == kRoom51) && (_vm->_oldRoom == kRoom4CT)) {
-		_vm->_dialogMgr->playDialog(dF4C1);
-		_vm->_flagShowCharacter = false;
-		_vm->_soundMgr->waitEndFading();
-	} else if ((_vm->_curRoom == kRoom1A) && (_vm->_oldRoom == kRoom18)) {
-		if (!(_vm->_room[kRoom1A]._flag & kObjFlagDone)) {
-			_vm->_dialogMgr->playDialog(dF1A1);
-			_vm->_soundMgr->waitEndFading();
-			_vm->_obj[oTOPO1C]._flag |= kObjFlagTake;
-			_vm->_obj[oTOPO1C]._anim = a1C3RACCOGLIETOPO;
-		} else {
-			TendIn();
-			_vm->_flagNoPaintScreen = false;
-			_vm->redrawString();
-		}
-	} else {
+	} else if (!dialogHandled) {
 		TendIn();
 		_vm->_flagNoPaintScreen = false;
 		_vm->clearText();
