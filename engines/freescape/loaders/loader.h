@@ -66,6 +66,7 @@ public:
 
 	void skipBytes(Common::Array<uint8>::size_type numberOfBytes) {
 		bytePointer += numberOfBytes;
+		assert(bytePointer <= binary.size());
 	}
 
 	Common::Array<uint8> *nextBytes(Common::Array<uint8>::size_type numberOfBytes) {

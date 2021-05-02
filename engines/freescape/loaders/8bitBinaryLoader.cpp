@@ -18,9 +18,9 @@ static Object *load8bitObject(StreamLoader &stream) {
 	Object::Type objectType = (Object::Type)stream.get8();
 	Vector3d position, size;
 
-	position.x = stream.get8();
-	position.y = stream.get8();
-	position.z = stream.get8();
+	position.x = stream.get8() * 32;
+	position.y = stream.get8() * 32;
+	position.z = stream.get8() * 32;
 
 	size.x = stream.get8();
 	size.y = stream.get8();
@@ -84,6 +84,26 @@ static Object *load8bitObject(StreamLoader &stream) {
 	return nullptr;
 }
 
+float specColors[16][3] = {
+    {0, 0, 0}, 
+	{0, 0, 0.75}, 
+	{0.75, 0, 0}, 
+	{0.75, 0, 0.75}, 
+	{0, 0.75, 0}, 
+	{0, 0.75, 0.75}, 
+	{0.75, 0.75, 0}, 
+	{0.75, 0.75, 0.75},
+    {0, 0, 0}, 
+	{0, 0, 1}, 
+	{1, 0, 0}, 
+	{1, 0, 1}, 
+	{0, 1, 0}, 
+	{0, 1, 1}, 
+	{1, 1, 0}, 
+	{1, 1, 1}
+};
+
+
 Common::Array <uint8>*getPaletteGradient(float *c1, float *c2)
 {
 	Common::Array <uint8> *raw_palette = new Common::Array <uint8>();
@@ -96,11 +116,12 @@ Common::Array <uint8>*getPaletteGradient(float *c1, float *c2)
 		y0  = 255*(ic*c2[0] + (1-ic)*c1[0]);
 		y1  = 255*(ic*c2[1] + (1-ic)*c1[1]);
 		y2  = 255*(ic*c2[2] + (1-ic)*c1[2]);
-		debug("%d %d %d", y0, y1, y2);
-		raw_palette->push_back(y2);
-		raw_palette->push_back(y1);
+		debug("%x %x %x", y0, y1, y2);
 		raw_palette->push_back(y0);
+		raw_palette->push_back(y1);
+		raw_palette->push_back(y2);
 	}
+	//assert(0);
 	return raw_palette;
 }
 
@@ -119,7 +140,7 @@ Area *load8bitArea(StreamLoader &stream) {
 	uint8 ci4 = stream.get8()&15; 
 
 	debug("Colors: %d %d %d %d", ci1, ci2, ci3, ci4);
-	Common::Array <uint8> *raw_palette = getPaletteGradient(specColors[ci3], specColors[ci4]);
+	Common::Array <uint8> *raw_palette = getPaletteGradient(specColors[ci4], specColors[ci3]);
 
 	debug("Area %d", areaNumber);
 	debug("Objects: %d", numberOfObjects);
