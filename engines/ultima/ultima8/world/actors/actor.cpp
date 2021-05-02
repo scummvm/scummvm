@@ -177,7 +177,7 @@ bool Actor::giveTreasure() {
 
 		// check chance
 		if (ti._chance < 0.999 &&
-		        (static_cast<double>(getRandom()) / RAND_MAX) > ti._chance) {
+		        (static_cast<double>(getRandom()) / U8_RAND_MAX) > ti._chance) {
 			continue;
 		}
 
@@ -897,6 +897,8 @@ void Actor::receiveHitCru(uint16 other, Direction dir, int damage, uint16 damage
 		doAnim(Animation::teleportOutReplacement, dir_current);
 		doAnim(Animation::teleportInReplacement, dir_current);
 		_hitPoints -= damage;
+		//if (_hitPoints < 0)
+		//	_hitPoints = 0;
 		return;
 	}
 

@@ -169,7 +169,7 @@ void GravityProcess::run() {
 				// in a 180 degree pie around the orginal vector in x/y
 				double heading_r = atan2((double)_ySpeed, (double)_xSpeed);
 				double deltah_r = static_cast<double>(getRandom())
-				                  * M_PI / RAND_MAX - M_PI / 2;
+				                  * M_PI / U8_RAND_MAX - M_PI / 2;
 #ifdef BOUNCE_DIAG
 				double headingold_r = heading_r;
 #endif

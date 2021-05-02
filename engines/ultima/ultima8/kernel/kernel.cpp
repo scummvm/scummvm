@@ -396,8 +396,10 @@ uint32 Kernel::I_resetRef(const uint8 *args, unsigned int /*argsize*/) {
 	return 0;
 }
 
+const uint U8_RAND_MAX = 0x7fffffff;
+
 uint getRandom() {
-	return Ultima8Engine::get_instance()->getRandomNumber(0x7fffffff);
+	return Ultima8Engine::get_instance()->getRandomNumber(U8_RAND_MAX);
 }
 
 } // End of namespace Ultima8
