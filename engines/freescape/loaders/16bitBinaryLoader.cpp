@@ -134,9 +134,28 @@ static Object *load16bitObject(StreamLoader &stream) {
 	return nullptr;
 }
 
-void load16bitInstrument(StreamLoader &stream) {}
-	
+void load16bitInstrument(StreamLoader &stream) {
+	uint16 zero = stream.get16();
+	assert( zero == 0);
+	uint16 type = stream.get16();
+	uint16 x = stream.get16();
+	uint16 y = stream.get16();
+	uint16 length = stream.get16();
+	uint16 height = stream.get16();
+	stream.get16();
+	stream.get16();
+	uint16 lb = stream.get16();
+	uint16 rt = stream.get16();
+	uint16 v = stream.get16();
+	uint16 fgcolor = stream.get16();
+	uint16 bgcolor = stream.get16();
 
+	stream.get16();
+	stream.get16();
+	stream.get16();
+	stream.get16();
+	debug("type %d ; x %d ; y %d ; length %d ; height %d ; lb %d ; rt %d ; variable: %d", type, x, y, length, height, lb, rt, v);
+}
 
 Area *load16bitArea(StreamLoader &stream) {
 	// the lowest bit of this value seems to indicate
@@ -379,7 +398,7 @@ Binary load16bitBinary(Common::String filename) {
 		// get the condition
 		Common::Array<uint8> *conditionData = streamLoader.nextBytes(lengthOfCondition);
 
-		debug("Global condition %d", globalCondition + 1);
+		debug("Global condition %d at %x", globalCondition + 1, streamLoader.getFileOffset());
 		debug("%s", detokenise16bitCondition(*conditionData)->c_str());
 	}
 
@@ -395,7 +414,7 @@ Binary load16bitBinary(Common::String filename) {
 			(*areaMap)[newArea->getAreaID()] = newArea;
 		}
 	}
-	load16bitInstrument(streamLoader);
+	//load16bitInstrument(streamLoader);
 
 	Common::Array<uint8>::size_type o;
 	Common::Array<uint8> *raw_border = nullptr;
@@ -423,6 +442,8 @@ Binary load16bitBinary(Common::String filename) {
 
 			if (chunkSize == 320*200 / 4)
 				colorNumber = 4; // CGA
+			else if (chunkSize == 320*200 / 2)
+				colorNumber = 16;
 			else if (chunkSize == 320*200)
 				colorNumber = 256;
 			else
