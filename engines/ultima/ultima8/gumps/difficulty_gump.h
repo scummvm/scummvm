@@ -50,8 +50,8 @@ public:
 
 private:
 	int _highlighted;
-	int _buttonWidth;
-	int _buttonHeight;
+	int32 _buttonWidth;
+	int32 _buttonHeight;
 
 	void selectEntry(int num);
 };
