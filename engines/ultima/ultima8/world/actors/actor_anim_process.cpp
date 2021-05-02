@@ -67,6 +67,13 @@ ActorAnimProcess::ActorAnimProcess(Actor *actor, Animation::Sequence action,
 	_itemNum = actor->getObjId();
 
 	_type = ACTOR_ANIM_PROC_TYPE;
+#ifdef WATCHACTOR
+	if (_itemNum == watchactor)
+		pout << "Animation [" << Kernel::get_instance()->getFrameNum()
+			 << "] ActorAnimProcess created (" << _itemNum << ","
+			 << _action << "," << _dir << ") steps " << _steps
+			 << Std::endl;
+#endif
 }
 
 bool ActorAnimProcess::init() {
@@ -117,7 +124,7 @@ bool ActorAnimProcess::init() {
 #ifdef WATCHACTOR
 	if (_itemNum == watchactor)
 		pout << "Animation [" << Kernel::get_instance()->getFrameNum()
-		     << "] ActorAnimProcess " << getPid() << " created ("
+		     << "] ActorAnimProcess " << getPid() << " initalized ("
 			 << _itemNum << "," << _action << "," << _dir << ") steps "
 			 << _steps << Std::endl;
 #endif
@@ -327,7 +334,9 @@ void ActorAnimProcess::run() {
 		     << "] showing frame (" << x << "," << y << "," << z << ")"
 		     << " shape (" << a->getShape() << "," << _tracker->getFrame()
 		     << ") sfx " << _tracker->getAnimFrame()->_sfx
-		     << " rep " << _repeatCounter << " ";
+		     << " rep " << _repeatCounter << ConsoleStream::hex
+			 << " flags " << _tracker->getAnimFrame()->_flags << " "
+			 << ConsoleStream::dec;
 
 		if (_tracker->isDone()) pout << "D";
 		if (_tracker->isBlocked()) pout << "B";
