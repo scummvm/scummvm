@@ -104,7 +104,7 @@ public:
 	void setInCombat(int activity) override;
 	void clearInCombat() override;
 
-	ProcId die(uint16 DamageType) override;
+	ProcId die(uint16 damageType, uint16 damagePts, Direction srcDir) override;
 
 	const Std::string &getName() const {
 		return _name;

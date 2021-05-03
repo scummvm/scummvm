@@ -198,8 +198,10 @@ public:
 
 	//! die
 	//! \param damageType damage type that caused the death
+	//! \param damagPts damage points that caused the death
+	//! \param srcDir direction damage came from
 	//! \return the process ID of the death animation
-	virtual ProcId die(uint16 damageType);
+	virtual ProcId die(uint16 damageType, uint16 damagePts, Direction srcDir);
 
 	//! kill all processes except those related to combat
 	void killAllButCombatProcesses();
@@ -234,6 +236,11 @@ public:
 	//! run the given animation
 	//! \return the PID of the ActorAnimProcess
 	uint16 doAnim(Animation::Sequence anim, Direction dir, unsigned int steps = 0);
+
+	//! run the given anim after the other animation (waitfor).
+	//! Safe for either anim to be 0.
+	//! \return the new anim pid, or 0 if failed
+	uint16 doAnimAfter(Animation::Sequence anim, Direction dir, ProcId waitfor);
 
 	//! check if this actor has a specific animation
 	bool hasAnim(Animation::Sequence anim);
@@ -484,6 +491,9 @@ protected:
 
 	void setInCombatU8();
 	void setInCombatCru(int activity);
+
+	ProcId dieU8(uint16 damageType);
+	ProcId dieCru(uint16 damageType, uint16 damagePts, Direction srcDir);
 };
 
 } // End of namespace Ultima8

@@ -53,7 +53,8 @@ void TargetReticleProcess::run() {
 		spriteProc = kernel->getProcess(_reticleSpriteProcess);
 	}
 
-	if (!_reticleEnabled || (mainactor && !mainactor->isInCombat())) {
+	if (!_reticleEnabled || (mainactor && !mainactor->isInCombat()) || !mainactor) {
+		// Reticle not enabled, actor not in combat, or actor is gone.
 		if (spriteProc) {
 			spriteProc->terminate();
 		}

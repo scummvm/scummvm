@@ -80,7 +80,7 @@ void AvatarDeathProcess::run() {
 		// a couple of seconds before showing menu
 		AudioProcess *ap = AudioProcess::get_instance();
 		ap->playSFX(9, 0x10, 0, 1);
-		DelayProcess *delayproc = new DelayProcess(60);
+		DelayProcess *delayproc = new DelayProcess(120);
 		Kernel::get_instance()->addProcess(delayproc);
 		menuproc->waitFor(delayproc);
 	}

@@ -28,6 +28,7 @@
 #include "ultima/ultima8/usecode/uc_list.h"
 #include "ultima/ultima8/misc/direction_util.h"
 #include "ultima/ultima8/games/game_data.h"
+#include "ultima/ultima8/world/fire_type.h"
 #include "ultima/ultima8/graphics/anim_dat.h"
 #include "ultima/ultima8/graphics/main_shape_archive.h"
 #include "ultima/ultima8/graphics/shape.h"
@@ -556,6 +557,15 @@ uint16 Actor::doAnim(Animation::Sequence anim, Direction dir, unsigned int steps
 	return Kernel::get_instance()->addProcess(p);
 }
 
+uint16 Actor::doAnimAfter(Animation::Sequence anim, Direction dir, ProcId waitfor) {
+	ProcId newanim = doAnim(anim, dir);
+	if (newanim && waitfor) {
+		Process *newproc = Kernel::get_instance()->getProcess(newanim);
+		newproc->waitFor(waitfor);
+	}
+	return newanim;
+}
+
 bool Actor::isBusy() const {
 	uint32 count = Kernel::get_instance()->getNumProcesses(_objId, ActorAnimProcess::ACTOR_ANIM_PROC_TYPE);
 	return count != 0;
@@ -890,16 +900,32 @@ void Actor::receiveHitCru(uint16 other, Direction dir, int damage, uint16 damage
 	Kernel *kernel = Kernel::get_instance();
 	uint32 shape = getShape();
 
-	if (shape == 0x3ac && _hitPoints > 0) {
-		// TODO: Finish special case for Vargas.  Should not do any damage
-		// if there is a particular anim process running.  Also, check if the
-		// same special case exists in REGRET.
+	if (GAME_IS_REMORSE && shape == 0x3ac && _hitPoints > 0) {
+		if (isBusy()) {
+			ActorAnimProcess *proc = dynamic_cast<ActorAnimProcess *>(Kernel::get_instance()->findProcess(_objId, ActorAnimProcess::ACTOR_ANIM_PROC_TYPE));
+			if (proc->getAction() == Animation::teleportIn || proc->getAction() == Animation::teleportOut || proc->getAction() == Animation::teleportInReplacement || proc->getAction() == Animation::teleportOutReplacement)
+				return;
+		}
+
+		// TODO: Finish special case for Vargas in No Remorse.
 		doAnim(Animation::teleportOutReplacement, dir_current);
 		doAnim(Animation::teleportInReplacement, dir_current);
 		_hitPoints -= damage;
-		//if (_hitPoints < 0)
-		//	_hitPoints = 0;
+		//if (_bossHealth < 0)
+		//	_bossHealth = 0;
 		return;
+	} else if (GAME_IS_REGRET && shape == 0x5b1) {
+		/* TODO: Finish special case for No Regret */
+		/*
+		_bossHealth = _bossHealth - damage;
+		if (_bossHealth < 1) {
+		 _bossHealth = 0;
+		  Sprite_Int_Create(0x4f1,10,0x13,3,local_8,local_6,local_4);
+		  Item_PlaySFXCru((uint *)pitemno,0x1eb);
+		} else {
+		  Sprite_Int_Create(0x4f1,0,9,3,local_8,local_6,local_4);
+		}
+		*/
 	}
 
 	if (isDead())
@@ -961,7 +987,7 @@ void Actor::receiveHitCru(uint16 other, Direction dir, int damage, uint16 damage
 
 	if (_hitPoints == 0) {
 		// Die!
-		die(damage_type);
+		die(damage_type, damage, dir);
 	} else if (damage) {
 		// Not dead yet.
 		if (!isRobotCru()) {
@@ -1109,7 +1135,7 @@ void Actor::receiveHitU8(uint16 other, Direction dir, int damage, uint16 damage_
 				if (audioproc) audioproc->playSFX(59, 0x60, _objId, 0);
 				clearActorFlag(ACT_WITHSTANDDEATH);
 			} else {
-				die(damage_type);
+				die(damage_type, damage, dir);
 			}
 			return;
 		}
@@ -1188,12 +1214,19 @@ void Actor::receiveHitU8(uint16 other, Direction dir, int damage, uint16 damage_
 	}
 }
 
-ProcId Actor::die(uint16 damageType) {
+ProcId Actor::die(uint16 damageType, uint16 damagePts, Direction srcDir) {
 	setHP(0);
 	setActorFlag(ACT_DEAD);
 	setFlag(FLG_BROKEN);
 	clearActorFlag(ACT_INCOMBAT);
 
+	if (GAME_IS_U8)
+		return dieU8(damageType);
+	else
+		return dieCru(damageType, damagePts, srcDir);
+}
+
+ProcId Actor::dieU8(uint16 damageType) {
 	ProcId animprocid = 0;
 #if 1
 	animprocid = killAllButFallAnims(true);
@@ -1201,36 +1234,17 @@ ProcId Actor::die(uint16 damageType) {
 	Kernel::get_instance()->killProcesses(getObjId(), 6, true); // CONSTANT!
 #endif
 
-	// TODO: In Crusader, this should default to 0x12, but randomly choose anim 0x14
-	// if it's available.
 	if (!animprocid)
 		animprocid = doAnim(Animation::die, dir_current);
 
 	MainActor *avatar = getMainActor();
 	// if hostile to avatar
-	if (GAME_IS_U8 && (getEnemyAlignment() & avatar->getAlignment())) {
+	if (getEnemyAlignment() & avatar->getAlignment()) {
 		if (avatar->isInCombat()) {
 			// play victory fanfare
 			MusicProcess::get_instance()->playCombatMusic(109);
 			// and resume combat music afterwards
 			MusicProcess::get_instance()->queueMusic(98);
-		}
-	} else if (GAME_IS_CRUSADER) {
-		if (!isRobotCru()) {
-			uint16 sfxno;
-			static const uint16 FADING_SCREAM_SFX[] = { 0xD9, 0xDA };
-			static const uint16 MALE_DEATH_SFX[] = { 0x88, 0x8C, 0x8F };
-			static const uint16 FEMALE_DEATH_SFX[] = { 0xD8, 0x10 };
-			if (damageType == 0xf) {
-				sfxno = FADING_SCREAM_SFX[getRandom() % 2];
-			} else {
-				if (hasExtFlags(EXT_FEMALE)) {
-					sfxno = FEMALE_DEATH_SFX[getRandom() % 2];
-				} else {
-					sfxno = MALE_DEATH_SFX[getRandom() % 3];
-				}
-			}
-			AudioProcess::get_instance()->playSFX(sfxno, 0x10, _objId, 0, true);
 		}
 	}
 
@@ -1269,30 +1283,176 @@ ProcId Actor::die(uint16 damageType) {
 
 		int count = 5;
 		Shape *explosionshape = GameData::get_instance()->getMainShapes()
-		                        ->getShape(mi->_explode);
+								->getShape(mi->_explode);
 		assert(explosionshape);
 		unsigned int framecount = explosionshape->frameCount();
 
 		for (int i = 0; i < count; ++i) {
 			Item *piece = ItemFactory::createItem(mi->_explode,
-			                                      getRandom() % framecount,
-			                                      0, // qual
-			                                      Item::FLG_FAST_ONLY, //flags,
-			                                      0, // npcnum
-			                                      0, // mapnum
-			                                      0, true // ext. flags, _objId
-			                                     );
+												  getRandom() % framecount,
+												  0, // qual
+												  Item::FLG_FAST_ONLY, //flags,
+												  0, // npcnum
+												  0, // mapnum
+												  0, true // ext. flags, _objId
+												 );
 			piece->move(_x - 128 + 32 * (getRandom() % 6),
-			            _y - 128 + 32 * (getRandom() % 6),
-			            _z + getRandom() % 8); // move to near actor's position
+						_y - 128 + 32 * (getRandom() % 6),
+						_z + getRandom() % 8); // move to near actor's position
 			piece->hurl(-25 + (getRandom() % 50),
-			            -25 + (getRandom() % 50),
-			            10 + (getRandom() % 10),
-			            4); // (wrong?) CONSTANTS!
+						-25 + (getRandom() % 50),
+						10 + (getRandom() % 10),
+						4); // (wrong?) CONSTANTS!
 		}
 	}
 
 	return animprocid;
+}
+
+ProcId Actor::dieCru(uint16 damageType, uint16 damagePts, Direction srcDir) {
+	bool is_robot = isRobotCru();
+	bool created_koresh = false;
+
+	World *world = World::get_instance();
+
+    if (world->getControlledNPCNum() == _objId) {
+		TargetReticleProcess::get_instance()->avatarMoved();
+		if (_objId != 1) {
+			world->setControlledNPCNum(0);
+		}
+	}
+
+	ProcId lastanim = 0;
+	Kernel::get_instance()->killProcesses(_objId, Kernel::PROC_TYPE_ALL, true);
+	if (damageType == 3 || damageType == 4 || damageType == 10 || damageType == 12) {
+		if (!is_robot /* && violence enabled */) {
+			const FireType *ft = GameData::get_instance()->getFireType(damageType);
+			assert(ft);
+			uint16 dmg2 = ft->getRandomDamage();
+			if (damageType == 3) {
+				dmg2 *= 3;
+			} else {
+				dmg2 *= 2;
+			}
+			dmg2 /= 5;
+			if (dmg2 <= damagePts) {
+				moveToEtherealVoid();
+				CurrentMap *cm = world->getCurrentMap();
+				/* 0x576 - flaming guy running around */
+				bool can_create_koresh = cm->isValidPosition(_x, _y, _z, 0x576, _objId);
+				returnFromEtherealVoid();
+
+				if (can_create_koresh) {
+					created_koresh = true;
+					Direction rundir = _direction;
+					setShape(0x576);
+					setToStartOfAnim(Animation::walk);
+
+					int num_random_steps = getRandom() % 9;
+					// switch to an 8-dir value
+					if (rundir % 2)
+						rundir = static_cast<Direction>((rundir + 1) % 16);
+
+					for (int i = 0; i < num_random_steps; i++) {
+						rundir = Direction_TurnByDelta(rundir, (int)(getRandom() % 3) - 1, dirmode_8dirs);
+						lastanim = doAnimAfter(Animation::walk, rundir, lastanim);
+					}
+
+					lastanim = doAnimAfter(Animation::fallBackwardsCru, dir_current, lastanim);
+
+					int num_random_falls = (getRandom() % 3) + 1;
+					for (int i = 0; i < num_random_falls; i++) {
+						lastanim = doAnimAfter(Animation::fallForwardsCru, dir_current, lastanim);
+					}
+
+					lastanim = doAnimAfter(Animation::combatRollLeft, dir_current, lastanim);
+					tookHitCru();
+				}
+			}
+		}
+	} else if (damageType == 6) {
+		if (!is_robot) {
+			/*  1423 = plasma death */
+			setShape(0x58f);
+			setToStartOfAnim(Animation::stand);
+		}
+	} else if (damageType == 14) {
+		if (!is_robot) {
+			if (true /*isViolenceEnabled()*/) {
+				/* 1430 = fire death skeleton */
+				setShape(0x596);
+				setToStartOfAnim(Animation::fallBackwardsCru);
+			}
+		}
+	} else if (damageType == 15) {
+		if (!is_robot) {
+			setShape(0x59c);
+			setToStartOfAnim(Animation::fallBackwardsCru);
+		}
+	} else if (damageType == 7 && _objId == 1) {
+		lastanim = doAnimAfter(Animation::electrocuted, dir_current, lastanim);
+	}
+
+	if (!created_koresh) {
+		bool fall_backwards = true;
+		bool fall_random_dir = false;
+		Direction dirtest[8];
+		/* 0x383 == 899 (robot), 1423 = plasma death, 1430 = fire death skeleton */
+		if (getShape() != 899 && getShape() != 0x58f && getShape() != 0x596) {
+			dirtest[0] = _direction;
+			for (int i = 1; i < 9; i = i + 1) {
+				char testdir = (i % 2) ? 1 : -1;
+				dirtest[i] = Direction_TurnByDelta(_direction, ((i + 1) / 2) * testdir, dirmode_8dirs);
+			}
+			for (int i = 0; i < 9; i++) {
+				if (dirtest[i] == srcDir) {
+					if (i == 8 || i == 9) {
+						fall_random_dir = true;
+					} else {
+						fall_backwards = false;
+					}
+					break;
+				}
+			}
+		} else {
+			fall_random_dir = true;
+		}
+
+		if (!hasAnim(Animation::fallForwardsCru)) {
+			lastanim = doAnimAfter(Animation::fallBackwardsCru, dir_current, lastanim);
+		} else {
+			if (fall_random_dir) {
+				fall_backwards = (getRandom() % 2) == 0;
+			}
+			if (fall_backwards) {
+				lastanim = doAnimAfter(Animation::fallBackwardsCru, dir_current, lastanim);
+			} else {
+				lastanim = doAnimAfter(Animation::fallForwardsCru, dir_current, lastanim);
+			}
+		}
+
+		if (!is_robot) {
+			uint16 sfxno;
+			static const uint16 FADING_SCREAM_SFX[] = { 0xD9, 0xDA };
+			static const uint16 MALE_DEATH_SFX[] = { 0x88, 0x8C, 0x8F };
+			static const uint16 FEMALE_DEATH_SFX[] = { 0xD8, 0x10 };
+			if (damageType == 0xf) {
+				sfxno = FADING_SCREAM_SFX[getRandom() % 2];
+			} else {
+				if (hasExtFlags(EXT_FEMALE)) {
+					sfxno = FEMALE_DEATH_SFX[getRandom() % 2];
+				} else {
+					sfxno = MALE_DEATH_SFX[getRandom() % 3];
+				}
+			}
+			AudioProcess::get_instance()->playSFX(sfxno, 0x10, _objId, 0, true);
+		}
+	}
+
+	destroyContents();
+	giveTreasure();
+
+	return lastanim;
 }
 
 void Actor::killAllButCombatProcesses() {

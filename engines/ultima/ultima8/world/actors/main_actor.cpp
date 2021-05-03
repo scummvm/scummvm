@@ -547,8 +547,8 @@ void MainActor::clearInCombat() {
 		MusicProcess::get_instance()->restoreMusic();
 }
 
-ProcId MainActor::die(uint16 damageType) {
-	ProcId animprocid = Actor::die(damageType);
+ProcId MainActor::die(uint16 damageType, uint16 damagePts, Direction srcDir) {
+	ProcId animprocid = Actor::die(damageType, damagePts, srcDir);
 
 	Ultima8Engine *app = Ultima8Engine::get_instance();
 	assert(app);
