@@ -123,11 +123,6 @@ struct SStep {
 class TrecisionEngine;
 
 
-extern SPan      _panel[];
-extern SSortPan  _sortPan[];
-extern SPathNode _pathNode[];
-extern SStep     _step[];
-
 extern float  _proj[3][3];
 extern float  _invP[3][3];
 
@@ -145,25 +140,12 @@ extern float  _curX, _curZ;
 
 extern int    _numPathNodes;
 extern int    _numSortPan;
-extern int    _curStep;
-extern int    _lastStep;
 
 extern uint8  _defActionLen[];
 
 int actionInRoom(int curA);
-void setPosition(int num);
-void goToPosition(int num);
-void lookAt(float x, float z);
 void read3D(Common::String c);
-void findPath();
-void findShortPath();
-float evalPath(int a, float destX, float destZ, int nearP);
-void buildFramelist();
-int nextStep();
-void displayPath();
-bool findAttachedPanel(int srcPanel, int destPanel);
-int pathCompare(const void *arg1, const void *arg2);
-void sortPath();
+
 float distF(float x1, float y1, float x2, float y2);
 float dist3D(float x1, float y1, float z1, float x2, float y2, float z2);
 void whereIs(int px, int py);
@@ -174,7 +156,6 @@ void invPointProject(int x, int y);
 bool intersectLinePanel(SPan *p, float x, float y, float z);
 bool intersectLineFloor(float x, float y, float z);
 bool intersectLineLine(float xa, float ya, float xb, float yb, float xc, float yc, float xd, float yd);
-void initSortPan();
 int panCompare(const void *arg1, const void *arg2);
 void sortPanel();
 void actorOrder();

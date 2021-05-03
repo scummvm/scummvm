@@ -130,7 +130,7 @@ void PaintScreen(bool flag) {
 	// PER OGNI BOX DALL'ORIZZONTE IN AVANTI...
 	// COPIA PER LIVELLO
 	for (int liv = _numSortPan; liv >= 0; liv--) {
-		uint16 CurBox = _sortPan[liv]._num;
+		uint16 CurBox = g_vm->_pathFind->_sortPan[liv]._num;
 
 		// disegna tutti gli oggetti e le animazioni che intersecano
 		// i limiti e si riferiscono al box corrente

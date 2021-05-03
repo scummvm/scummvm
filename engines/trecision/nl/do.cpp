@@ -21,6 +21,7 @@
  */
 
 #include "common/scummsys.h"
+#include "trecision/3d.h"
 #include "trecision/nl/3d/3dinc.h"
 #include "trecision/nl/ll/llinc.h"
 #include "trecision/defines.h"
@@ -214,7 +215,7 @@ void ProcessAtFrame(ATFHandle *h, int type, int atf) {
 		doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, h->_curAnim->_atFrame[atf]._index, 0, 0, h->_object);
 		break;
 	case ATFSETPOS:
-		setPosition(h->_curAnim->_atFrame[atf]._index);
+		g_vm->_pathFind->setPosition(h->_curAnim->_atFrame[atf]._index);
 		break;
 	case ATFDIALOG:
 		g_vm->_dialogMgr->playDialog(h->_curAnim->_atFrame[atf]._index);

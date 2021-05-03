@@ -23,8 +23,8 @@
 #include "trecision/trecision.h"
 #include "trecision/dialog.h"
 
-
-#include "actor.h"
+#include "trecision/3d.h"
+#include "trecision/actor.h"
 #include "trecision/nl/message.h"
 #include "trecision/nl/proto.h"
 #include "trecision/graphics.h"
@@ -410,14 +410,14 @@ void DialogManager::afterChoice() {
 			}
 			_vm->removeIcon(kItemShaft);
 			playDialog(dC4A1);
-			setPosition(12);
+			_vm->_pathFind->setPosition(12);
 			break;
 
 		case dC4A1:
 			_vm->_flagCharacterExists = true;
 			_vm->_flagShowCharacter = true;
 			_vm->_actor->actorStop();
-			nextStep();
+			_vm->_pathFind->nextStep();
 			break;
 
 		case dF4C1:
@@ -472,7 +472,7 @@ void DialogManager::afterChoice() {
 
 		case dC581:
 			if (!(_choice[886]._flag & kObjFlagDone) && (_choice[258]._flag & kObjFlagDone)) {
-				setPosition(1);
+				_vm->_pathFind->setPosition(1);
 				playDialog(dF581);
 			}
 			break;

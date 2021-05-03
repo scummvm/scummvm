@@ -49,11 +49,6 @@
 
 namespace Trecision {
 
-SPan      _panel[MAXPANELSINROOM];
-SSortPan  _sortPan[32];
-SPathNode _pathNode[MAXPATHNODES];
-
-SStep     _step[MAXSTEP];
 
 float  _proj[3][3];
 float  _invP[3][3];
@@ -72,8 +67,6 @@ float  _curX, _curZ;
 
 int    _numPathNodes;
 int    _numSortPan;
-int    _curStep;
-int    _lastStep;
 
 uint8  _defActionLen[hLAST + 1] = {
 	/* STAND */		1,

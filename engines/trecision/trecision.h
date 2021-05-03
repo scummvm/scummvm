@@ -45,6 +45,7 @@ class LogicManager;
 class SoundManager;
 class Actor;
 class Renderer3D;
+class PathFinding3D;
 
 #define SAVE_VERSION_ORIGINAL 102
 #define SAVE_VERSION_SCUMMVM  103
@@ -306,6 +307,7 @@ public:
 	LogicManager *_logicMgr;
 	SoundManager *_soundMgr;
 	Renderer3D *_renderer;
+	PathFinding3D *_pathFind; 
 
 	uint8 *_font;
 	uint16 *_arrows;

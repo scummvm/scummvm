@@ -327,25 +327,25 @@ void TrecisionEngine::doCharacter() {
 	case ME_CHARACTERGOTOEXIT:
 	case ME_CHARACTERGOTO:
 
-		if (nextStep()) {
-			_characterInMovement = false;
-			_characterGoToPosition = -1;
+		if (_pathFind->nextStep()) {
+			_pathFind->_characterInMovement = false;
+			_pathFind->_characterGoToPosition = -1;
 			_flagWaitRegen = true;
 		} else
-			_characterInMovement = true;
+			_pathFind->_characterInMovement = true;
 
 		if (_fastWalk) {
-			if (nextStep()) {
-				_characterInMovement = false;
-				_characterGoToPosition = -1;
+			if (_pathFind->nextStep()) {
+				_pathFind->_characterInMovement = false;
+				_pathFind->_characterGoToPosition = -1;
 				_flagWaitRegen = true;
 			} else
-				_characterInMovement = true;
+				_pathFind->_characterInMovement = true;
 		}
 
 		_flagPaintCharacter = true;
 
-		if (_characterInMovement)
+		if (_pathFind->_characterInMovement)
 			REEVENT;
 		else {
 			showCursor();
@@ -390,7 +390,7 @@ void TrecisionEngine::doCharacter() {
 		if (!_animMgr->_playingAnims[kSmackerAction]) {
 			showCursor();
 			_flagShowCharacter = true;
-			_characterInMovement = false;
+			_pathFind->_characterInMovement = false;
 			_characterQueue.initQueue();
 			AtFrameEnd(kAnimTypeCharacter);
 			_flagWaitRegen = true;
@@ -401,12 +401,12 @@ void TrecisionEngine::doCharacter() {
 				_flagShowCharacter = false;
 				doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, _curMessage->_u16Param2, 0, _curMessage->_u8Param, _curMessage->_u32Param);
 			} else if (_curMessage->_u8Param)
-				setPosition(_curMessage->_u8Param);
+				_pathFind->setPosition(_curMessage->_u8Param);
 
 			if ((_curMessage->_u16Param1 == _obj[oCANCELLATA1B]._anim) && !(_obj[oBOTTIGLIA1D]._mode & OBJMODE_OBJSTATUS) && !(_obj[oRETE17]._mode & OBJMODE_OBJSTATUS)) {
 				_dialogMgr->playDialog(dF181);
 				hideCursor();
-				setPosition(1);
+				_pathFind->setPosition(1);
 			}
 		} else
 			REEVENT;
@@ -436,7 +436,7 @@ void TrecisionEngine::doSystem() {
 
 		_logicMgr->doSystemChangeRoom();
 
-		setPosition(_curMessage->_u8Param);
+		_pathFind->setPosition(_curMessage->_u8Param);
 		_actor->actorStop();
 
 		if (_curMessage->_u16Param2)
@@ -469,7 +469,7 @@ void TrecisionEngine::doIdle() {
 	case 0x1B:
 		if (canPlayerInteract()) {
 			_actor->actorStop();
-			nextStep();
+			_pathFind->nextStep();
 			showCursor();
 			_obj[o00EXIT]._goRoom = _curRoom;
 			doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, kRoomControlPanel, 0, 0, c);
@@ -483,7 +483,7 @@ void TrecisionEngine::doIdle() {
 	case 0x3B:
 		if (canPlayerInteract()) {
 			_actor->actorStop();
-			nextStep();
+			_pathFind->nextStep();
 			showCursor();
 			_obj[o00EXIT]._goRoom = _curRoom;
 			doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, kRoomControlPanel, 0, 0, c);
@@ -641,7 +641,7 @@ void TrecisionEngine::doScreenUseWithScreen() {
 	if (!_useWith[USED] || !_useWith[WITH])
 		warning("doScreenUseWithScreen - _useWith not set properly");
 
-	if (_characterInMovement)
+	if (_pathFind->_characterInMovement)
 		return;
 
 	bool printSentence = _logicMgr->useScreenWithScreen();
