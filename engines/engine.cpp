@@ -480,19 +480,19 @@ void Engine::checkCD() {
 
 	// If we can find a compressed audio track, then it should be ok even
 	// if it's running from CD.
-	char buffer[MAXPATHLEN];
+	char buffer[MAX_PATH];
 	int i;
 
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
 
 	if (gameDataDir.getPath().empty()) {
 		// That's it! I give up!
-		if (getcwd(buffer, MAXPATHLEN) == NULL)
+		if (getcwd(buffer, MAX_PATH) == NULL)
 			return;
 	} else
 		Common::strlcpy(buffer, gameDataDir.getPath().c_str(), sizeof(buffer));
 
-	for (i = 0; i < MAXPATHLEN - 1; i++) {
+	for (i = 0; i < MAX_PATH - 1; i++) {
 		if (buffer[i] == '\\')
 			break;
 	}
