@@ -24,6 +24,7 @@
 
 #if defined(DYNAMIC_MODULES) && defined(_WIN32)
 
+#include "backends/platform/sdl/win32/win32_wrapper.h"
 #include "backends/plugins/win32/win32-provider.h"
 #include "backends/plugins/dynamic-plugin.h"
 #include "common/debug.h"
@@ -34,23 +35,11 @@
 
 
 class Win32Plugin final : public DynamicPlugin {
-private:
-	static const TCHAR* toUnicode(const char *x) {
-	#ifndef UNICODE
-		return (const TCHAR *)x;
-	#else
-		static TCHAR unicodeString[MAX_PATH];
-		MultiByteToWideChar(CP_ACP, 0, x, strlen(x) + 1, unicodeString, sizeof(unicodeString) / sizeof(TCHAR));
-		return unicodeString;
-	#endif
-	}
-
-
 protected:
 	void *_dlHandle;
 
 	virtual VoidFunc findSymbol(const char *symbol) override {
-		FARPROC func = GetProcAddress((HMODULE)_dlHandle, toUnicode(symbol));
+		FARPROC func = GetProcAddress((HMODULE)_dlHandle, symbol);
 		if (!func)
 			debug("Failed loading symbol '%s' from plugin '%s'", symbol, _filename.c_str());
 
@@ -63,7 +52,9 @@ public:
 
 	virtual bool loadPlugin() override {
 		assert(!_dlHandle);
-		_dlHandle = LoadLibrary(toUnicode(_filename.c_str()));
+		TCHAR *tFilename = Win32::stringToTchar(_filename);
+		_dlHandle = LoadLibrary(tFilename);
+		free(tFilename);
 
 		if (!_dlHandle) {
 			debug("Failed loading plugin '%s' (error code %d)", _filename.c_str(), (int32) GetLastError());
