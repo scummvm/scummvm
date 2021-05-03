@@ -45,7 +45,7 @@ Actor::Actor(TrecisionEngine *vm) : _vm(vm) {
 	_lightNum = 0;
 	_matNum = 0;
 
-	_px = _py = _pz = 0.0;
+	_px = _pz = 0.0;
 	_dx = _dz = 0.0;
 	_theta = 0.0;
 
@@ -330,8 +330,10 @@ void Actor::readModel(const char *filename) {
 }
 
 void Actor::syncGameStream(Common::Serializer &ser) {
+	float unused = 0;
+	
 	ser.syncAsFloatLE(_px);
-	ser.syncAsFloatLE(_py);
+	ser.syncAsFloatLE(unused);
 	ser.syncAsFloatLE(_pz);
 	ser.syncAsFloatLE(_dx);
 	ser.syncAsFloatLE(_dz);
