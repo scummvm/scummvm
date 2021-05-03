@@ -343,16 +343,17 @@ bool AnimationTracker::step() {
 
 	if (!targetok || (f.is_onground() && !support)) {
 
-		// If on ground, try to adjust properly
+		// If on ground, try to adjust properly. Never do it for dead Crusader NPCs,
+		// as they don't get gravity and the death process gets stuck.
 		// TODO: Profile the effect of disabling this for pathfinding.
 		//       It shouldn't be necessary in that case, and may provide a
 		//       worthwhile speed-up.
-		if (f.is_onground() && zd > 8) {
+		if (f.is_onground() && zd > 8 && !(is_crusader && a->isDead())) {
 			if (is_crusader && !targetok && support) {
 				// Possibly trying to step onto an elevator platform which stops at a z slightly
 				// above the floor.  Re-scan with a small adjustment.
 				// This is a bit of a temporary hack to make navigation possible.. it "hurls"
-				// the avatar sometimes, so it needs fixing properly.
+				// the avatar sometimes.
 				tz += 2;
 			}
 
@@ -365,8 +366,10 @@ bool AnimationTracker::step() {
 			} else {
 #ifdef WATCHACTOR
 				if (a->getObjId() == watchactor) {
-					pout << "AnimationTracker: adjusted step: "
-					     << tx - (_x + dx) << "," << ty - (_y + dy) << "," << tz - (_z + dz)
+					pout << "AnimationTracker: adjusted step: x: "
+					     << tx << "," << _x << "," << dx << " y: "
+						 << ty << "," << _y << "," << dy << " z: "
+						 << tz << "," << _z << "," << dz
 					     << Std::endl;
 				}
 #endif
