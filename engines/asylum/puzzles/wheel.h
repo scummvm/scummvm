@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef ASYLUM_WHEEL_H
-#define ASYLUM_WHEEL_H
+#ifndef ASYLUM_PUZZLES_WHEEL_H
+#define ASYLUM_PUZZLES_WHEEL_H
 
 #include "asylum/puzzles/puzzle.h"
 
@@ -72,4 +72,4 @@ private:
 
 } // End of namespace Asylum
 
-#endif // ASYLUM_WHEEL_H
+#endif // ASYLUM_PUZZLES_WHEEL_H

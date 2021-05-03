@@ -20,6 +20,8 @@
  *
  */
 
+#include "common/file.h"
+
 #include "asylum/system/savegame.h"
 
 #include "asylum/puzzles/puzzles.h"
@@ -36,8 +38,6 @@
 #include "asylum/views/scene.h"
 
 #include "asylum/asylum.h"
-
-#include "common/file.h"
 
 namespace Asylum {
 

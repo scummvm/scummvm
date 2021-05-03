@@ -20,6 +20,9 @@
  *
  */
 
+#include "common/scummsys.h"
+#include "common/timer.h"
+
 #include "asylum/system/screen.h"
 
 #include "asylum/resources/actor.h"
@@ -32,10 +35,6 @@
 
 #include "asylum/asylum.h"
 #include "asylum/respack.h"
-
-#include "common/timer.h"
-
-#include <stdarg.h>    // For va_list etc.
 
 namespace Asylum {
 

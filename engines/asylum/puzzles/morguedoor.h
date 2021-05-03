@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef ASYLUM_MORGUEDOOR_H
-#define ASYLUM_MORGUEDOOR_H
+#ifndef ASYLUM_PUZZLES_MORGUEDOOR_H
+#define ASYLUM_PUZZLES_MORGUEDOOR_H
 
 #include "asylum/puzzles/puzzle.h"
 
@@ -89,4 +89,4 @@ private:
 
 } // End of namespace Asylum
 
-#endif // ASYLUM_MORGUEDOOR_H
+#endif // ASYLUM_PUZZLES_MORGUEDOOR_H

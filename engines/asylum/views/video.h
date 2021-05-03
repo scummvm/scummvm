@@ -20,11 +20,8 @@
  *
  */
 
-#ifndef ASYLUM_VIDEO_H
-#define ASYLUM_VIDEO_H
-
-#include "asylum/eventhandler.h"
-#include "asylum/shared.h"
+#ifndef ASYLUM_VIEWS_VIDEO_H
+#define ASYLUM_VIEWS_VIDEO_H
 
 #include "common/array.h"
 #include "common/events.h"
@@ -36,6 +33,9 @@
 #include "graphics/surface.h"
 
 #include "video/smk_decoder.h"
+
+#include "asylum/eventhandler.h"
+#include "asylum/shared.h"
 
 namespace Asylum {
 
@@ -106,4 +106,4 @@ private:
 
 } // end of namespace Asylum
 
-#endif
+#endif // ASYLUM_VIEWS_VIDEO_H

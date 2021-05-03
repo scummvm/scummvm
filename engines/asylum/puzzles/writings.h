@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef ASYLUM_WRITINGS_H
-#define ASYLUM_WRITINGS_H
+#ifndef ASYLUM_PUZZLES_WRITINGS_H
+#define ASYLUM_PUZZLES_WRITINGS_H
 
 #include "asylum/puzzles/puzzle.h"
 #include "asylum/system/graphics.h"
@@ -52,4 +52,4 @@ private:
 
 } // End of namespace Asylum
 
-#endif // ASYLUM_WRITINGS_H
+#endif // ASYLUM_PUZZLES_WRITINGS_H

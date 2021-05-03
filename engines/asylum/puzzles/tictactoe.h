@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef ASYLUM_TICTACTOE_H
-#define ASYLUM_TICTACTOE_H
+#ifndef ASYLUM_PUZZLES_TICTACTOE_H
+#define ASYLUM_PUZZLES_TICTACTOE_H
 
 #include "asylum/puzzles/puzzle.h"
 
@@ -88,4 +88,4 @@ private:
 
 } // End of namespace Asylum
 
-#endif // ASYLUM_TICTACTOE_H
+#endif // ASYLUM_PUZZLES_TICTACTOE_H

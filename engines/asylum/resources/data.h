@@ -20,13 +20,13 @@
  *
  */
 
-#ifndef ASYLUM_DATA_H
-#define ASYLUM_DATA_H
-
-#include "engines/asylum/shared.h"
+#ifndef ASYLUM_RESOURCES_DATA_H
+#define ASYLUM_RESOURCES_DATA_H
 
 #include "common/rect.h"
 #include "common/serializer.h"
+
+#include "engines/asylum/shared.h"
 
 namespace Asylum {
 
@@ -279,4 +279,4 @@ private:
 
 } // End of namespace Asylum
 
-#endif // ASYLUM_DATA_H
+#endif // ASYLUM_RESOURCES_DATA_H

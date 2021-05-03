@@ -20,13 +20,13 @@
  *
  */
 
-#ifndef ASYLUM_TEXT_H
-#define ASYLUM_TEXT_H
-
-#include "asylum/shared.h"
+#ifndef ASYLUM_SYSTEM_TEXT_H
+#define ASYLUM_SYSTEM_TEXT_H
 
 #include "common/rect.h"
 #include "common/scummsys.h"
+
+#include "asylum/shared.h"
 
 namespace Asylum {
 
@@ -84,4 +84,4 @@ private:
 
 } // end of namespace Asylum
 
-#endif
+#endif // ASYLUM_SYSTEM_TEXT_H

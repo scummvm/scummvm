@@ -20,16 +20,16 @@
  *
  */
 
-#ifndef ASYLUM_SCRIPT_H
-#define ASYLUM_SCRIPT_H
-
-#include "asylum/shared.h"
+#ifndef ASYLUM_RESOURCES_SCRIPT_H
+#define ASYLUM_RESOURCES_SCRIPT_H
 
 #include "common/array.h"
 #include "common/func.h"
 #include "common/serializer.h"
 #include "common/stack.h"
 #include "common/stream.h"
+
+#include "asylum/shared.h"
 
 namespace Asylum {
 
@@ -454,4 +454,4 @@ private:
 
 } // end of namespace Asylum
 
-#endif // ASYLUM_SCRIPT_H
+#endif // ASYLUM_RESOURCES_SCRIPT_H

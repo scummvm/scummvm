@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef ASYLUM_VCR_H
-#define ASYLUM_VCR_H
+#ifndef ASYLUM_PUZZLES_VCR_H
+#define ASYLUM_PUZZLES_VCR_H
 
 #include "asylum/puzzles/puzzle.h"
 
@@ -146,4 +146,4 @@ private:
 
 } // end of namespace Asylum
 
-#endif // ASYLUM_VCR_H
+#endif // ASYLUM_PUZZLES_VCR_H

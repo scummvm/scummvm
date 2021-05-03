@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef ASYLUM_POLYGONS_H
-#define ASYLUM_POLYGONS_H
+#ifndef ASYLUM_RESOURCES_POLYGONS_H
+#define ASYLUM_RESOURCES_POLYGONS_H
 
 #include "common/array.h"
 #include "common/rect.h"
@@ -67,4 +67,4 @@ private:
 
 } // end of namespace Asylum
 
-#endif
+#endif // ASYLUM_RESOURCES_POLYGONS_H

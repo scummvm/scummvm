@@ -154,4 +154,4 @@ const uint8 angleTable03[256] = {
 
 } // end of namespace Asylum
 
-#endif /* ASYLUM_STATICRES_H */
+#endif // ASYLUM_STATICRES_H

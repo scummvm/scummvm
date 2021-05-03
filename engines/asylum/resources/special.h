@@ -20,14 +20,14 @@
  *
  */
 
-#ifndef ASYLUM_SPECIAL_H
-#define ASYLUM_SPECIAL_H
-
-#include "asylum/shared.h"
-#include "asylum/asylum.h"
+#ifndef ASYLUM_RESOURCES_SPECIAL_H
+#define ASYLUM_RESOURCES_SPECIAL_H
 
 #include "common/scummsys.h"
 #include "common/rect.h"
+
+#include "asylum/shared.h"
+#include "asylum/asylum.h"
 
 namespace Asylum {
 
@@ -112,4 +112,4 @@ private:
 
 } // End of namespace Asylum
 
-#endif // ASYLUM_SPECIAL_H
+#endif // ASYLUM_RESOURCES_SPECIAL_H

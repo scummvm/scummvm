@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef ASYLUM_CONFIGURATIONMANAGER_H
-#define ASYLUM_CONFIGURATIONMANAGER_H
+#ifndef ASYLUM_SYSTEM_CONFIG_H
+#define ASYLUM_SYSTEM_CONFIG_H
 
 #include "common/array.h"
 #include "common/singleton.h"
@@ -106,4 +106,4 @@ private:
 
 } // end of namespace Asylum
 
-#endif // ASYLUM_CONFIGURATIONMANAGER_H
+#endif // ASYLUM_SYSTEM_CONFIG_H

@@ -95,4 +95,4 @@ private:
 
 } // End of namespace Asylum
 
-#endif
+#endif // ASYLUM_CONSOLE_H

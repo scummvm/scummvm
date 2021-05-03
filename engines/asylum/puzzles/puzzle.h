@@ -20,14 +20,14 @@
  *
  */
 
-#ifndef ASYLUM_PUZZLE_H
-#define ASYLUM_PUZZLE_H
-
-#include "asylum/eventhandler.h"
-#include "asylum/shared.h"
+#ifndef ASYLUM_PUZZLES_PUZZLE_H
+#define ASYLUM_PUZZLES_PUZZLE_H
 
 #include "common/rect.h"
 #include "common/serializer.h"
+
+#include "asylum/eventhandler.h"
+#include "asylum/shared.h"
 
 namespace Asylum {
 
@@ -76,4 +76,4 @@ protected:
 
 } // End of namespace Asylum
 
-#endif // ASYLUM_PUZZLE_H
+#endif // ASYLUM_PUZZLES_PUZZLE_H

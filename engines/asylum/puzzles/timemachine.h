@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef ASYLUM_TIMEMACHINE_H
-#define ASYLUM_TIMEMACHINE_H
+#ifndef ASYLUM_PUZZLES_TIMEMACHINE_H
+#define ASYLUM_PUZZLES_TIMEMACHINE_H
 
 #include "asylum/puzzles/puzzle.h"
 
@@ -74,4 +74,4 @@ private:
 
 } // End of namespace Asylum
 
-#endif // ASYLUM_TIMEMACHINE_H
+#endif // ASYLUM_PUZZLES_TIMEMACHINE_H

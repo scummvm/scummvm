@@ -20,15 +20,15 @@
  *
  */
 
-#ifndef ASYLUM_GRAPHICS_H
-#define ASYLUM_GRAPHICS_H
+#ifndef ASYLUM_SYSTEM_GRAPHICS_H
+#define ASYLUM_SYSTEM_GRAPHICS_H
 
-#include "asylum/shared.h"
+#include "common/rect.h"
+#include "common/array.h"
 
 #include "graphics/surface.h"
-#include "common/rect.h"
 
-#include "common/array.h"
+#include "asylum/shared.h"
 
 namespace Asylum {
 
@@ -114,4 +114,4 @@ private:
 
 } // end of namespace Asylum
 
-#endif
+#endif // ASYLUM_SYSTEM_GRAPHICS_H

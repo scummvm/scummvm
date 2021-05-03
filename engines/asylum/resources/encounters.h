@@ -20,14 +20,14 @@
  *
  */
 
-#ifndef ASYLUM_ENCOUNTERS_H
-#define ASYLUM_ENCOUNTERS_H
-
-#include "asylum/eventhandler.h"
-#include "asylum/shared.h"
+#ifndef ASYLUM_RESOURCES_ENCOUNTERS_H
+#define ASYLUM_RESOURCES_ENCOUNTERS_H
 
 #include "common/array.h"
 #include "common/serializer.h"
+
+#include "asylum/eventhandler.h"
+#include "asylum/shared.h"
 
 namespace Asylum {
 
@@ -336,4 +336,4 @@ private:
 
 } // end of namespace Asylum
 
-#endif
+#endif // ASYLUM_RESOURCES_ENCOUNTERS_H

@@ -20,14 +20,14 @@
  *
  */
 
-#ifndef ASYLUM_RESOURCEPACK_H
-#define ASYLUM_RESOURCEPACK_H
-
-#include "asylum/shared.h"
+#ifndef ASYLUM_RESPACK_H
+#define ASYLUM_RESPACK_H
 
 #include "common/array.h"
 #include "common/file.h"
 #include "common/hashmap.h"
+
+#include "asylum/shared.h"
 
 namespace Asylum {
 
@@ -118,4 +118,4 @@ private:
 
 } // end of namespace Asylum
 
-#endif
+#endif // ASYLUM_RESPACK_H
