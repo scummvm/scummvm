@@ -407,6 +407,21 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 		0
 	},
 
+	// Crusader - No Remorse (Spanish fan patch) provided by Wesker
+	{
+		{
+			"remorse",
+			"Fan Translation",
+			AD_ENTRY1s("eusecode.flx", "a8b5c421c5d74be8c69fcd4fecadd1dd", 559015),
+			Common::ES_ESP,
+			Common::kPlatformDOS,
+			ADGF_UNSTABLE,
+			GUIO1(GUIO_NOMIDI)
+		},
+		GAME_CRUSADER_REM,
+		0
+	},
+
 	// Crusader - No Remorse (Japanese) provided by Dominus
 	{
 		{
