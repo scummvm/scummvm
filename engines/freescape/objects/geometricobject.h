@@ -13,7 +13,6 @@
 #include "freescape/language/instruction.h"
 #include "freescape/objects/object.h"
 
-class BatchDrawer;
 class GeometricObject : public Object {
 public:
 	static int numberOfColoursForObjectOfType(Type type);

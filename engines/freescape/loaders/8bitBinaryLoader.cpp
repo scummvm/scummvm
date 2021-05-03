@@ -9,22 +9,23 @@
 #include "freescape/loaders/8bitBinaryLoader.h"
 #include "freescape/loaders/loader.h"
 #include "freescape/objects/geometricobject.h"
+#include "freescape/objects/entrance.h"
 #include "freescape/objects/object.h"
 
 namespace Freescape {
 
 static Object *load8bitObject(StreamLoader &stream) {
 	
-	Object::Type objectType = (Object::Type)stream.get8();
-	Vector3d position, size;
+	Object::Type objectType = (Object::Type)(stream.get8() & 0x1F);
+	Vector3d position, v;
 
 	position.x = stream.get8() * 32;
 	position.y = stream.get8() * 32;
 	position.z = stream.get8() * 32;
 
-	size.x = stream.get8();
-	size.y = stream.get8();
-	size.z = stream.get8();
+	v.x = stream.get8();
+	v.y = stream.get8();
+	v.z = stream.get8();
 
 	// object ID
 	uint16 objectID = stream.get8();
@@ -36,9 +37,9 @@ static Object *load8bitObject(StreamLoader &stream) {
 	byteSizeOfObject = byteSizeOfObject - 9;
 	debug("Object %d ; type %d ; size %d", objectID, (int)objectType, byteSizeOfObject);
     debug("pos: %d %d %d", position.x, position.y, position.z);
-	debug("size: %d %d %d", size.x, size.y, size.z);
 	switch (objectType) {
 	default: {
+		debug("size: %d %d %d", v.x, v.y, v.z);
 		// read the appropriate number of colours
 		int numberOfColours = GeometricObject::numberOfColoursForObjectOfType(objectType);
 		Common::Array<uint8> *colours = new Common::Array<uint8>;
@@ -66,13 +67,22 @@ static Object *load8bitObject(StreamLoader &stream) {
 			objectType,
 			objectID,
 			position,
-			size,
+			v, // size
 			nullptr,
 			0,
 			instructions);
 	} break;
 
-	case Object::Entrance:
+	case Object::Entrance: {
+		debug("rotation: %d %d %d", v.x, v.y, v.z);
+		assert(byteSizeOfObject == 0);
+		// create an entrance
+		return new Entrance(
+			objectID,
+			position,
+			v); // rotation
+	} break;
+
 	case Object::Sensor:
 	case Object::Group:
 		break;
@@ -80,7 +90,6 @@ static Object *load8bitObject(StreamLoader &stream) {
 
 	stream.skipBytes(byteSizeOfObject);
 	//debug("Object %d ; size %d", objectID, byteSizeOfObject);
-	//assert(0);
 	return nullptr;
 }
 
@@ -161,7 +170,7 @@ Area *load8bitArea(StreamLoader &stream) {
 			}
 		}
 	}
-
+	//assert(0);
 	stream.setFileOffset(base+cPtr);
 	uint8 numConditions = stream.get8();
 	debug("%d area conditions", numConditions);
@@ -201,7 +210,8 @@ Binary load8bitBinary(Common::String filename, uint offset) {
 
 	StreamLoader streamLoader(binary);
 	uint8 numberOfAreas = streamLoader.get8();
-	streamLoader.get16(); // meaning unknown
+	uint16 dbSize = streamLoader.rget16();
+	debug("Database ends at %x", dbSize);
 
 	debug("Number of areas: %d", numberOfAreas);
 	uint8 startArea = streamLoader.get8();
@@ -246,6 +256,8 @@ Binary load8bitBinary(Common::String filename, uint offset) {
 			(*areaMap)[newArea->getAreaID()] = newArea;
 		}
 	}
+
+	debug("End of areas at %x", streamLoader.getFileOffset());
 
 	return Binary{8, startArea, areaMap, nullptr, nullptr};
 }
