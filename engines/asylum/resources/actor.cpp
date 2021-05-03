@@ -3491,7 +3491,7 @@ bool Actor::processAction(const Common::Point &source, Common::Array<int> *actio
 	Common::Point src = source;
 	uint32 frameNumber = _frameNumber;
 
-	switch (direction){
+	switch (direction) {
 	default:
 		return false;
 

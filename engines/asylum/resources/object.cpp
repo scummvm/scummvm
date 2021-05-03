@@ -11,7 +11,7 @@
 
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
 
  * You should have received a copy of the GNU General Public License
@@ -41,8 +41,7 @@ Object::Object(AsylumEngine *engine) : x(0), y(0), flags(0), actionType(0),
 	_id(kObjectNone), _resourceId(kResourceNone), _field_20(0), _frameIndex(0), _frameCount(0),
 	_field_2C(0), _field_30(0), _field_34(0), _field_3C(0), _polygonIndex(0), _field_B4(0),
 	_tickCount(0), _tickCount2(0), _field_C0(0), _priority(0), _scriptIndex(0), _transparency(0),
-	_field_688(0), _soundResourceId(kResourceNone), _field_6A4(kDirectionN)
-{
+	_field_688(0), _soundResourceId(kResourceNone), _field_6A4(kDirectionN) {
 	memset(&_name, 0, sizeof(_name));
 	memset(&_gameFlags, 0, sizeof(_gameFlags));
 	memset(&_randomResourceIds, 0, sizeof(_randomResourceIds));
@@ -217,27 +216,25 @@ bool Object::isOnScreen() {
 }
 
 bool Object::isVisible() const {
-	if (flags & kObjectFlagEnabled) {
+	if (!(flags & kObjectFlagEnabled))
+		return false;
 
-		// Check each game flag
-		for (int32 i = 0; i < 10; i++) {
-			int32 flag = _gameFlags[i];
-			bool ok = false;
+	// Check each game flag
+	for (int32 i = 0; i < 10; i++) {
+		int32 flag = _gameFlags[i];
+		bool ok = false;
 
-			if (flag <= 0)
-				ok = _vm->isGameFlagNotSet((GameFlag)-flag);
-			else
-				ok = _vm->isGameFlagSet((GameFlag)flag);
+		if (flag <= 0)
+			ok = _vm->isGameFlagNotSet((GameFlag)-flag);
+		else
+			ok = _vm->isGameFlagSet((GameFlag)flag);
 
-			if (!ok)
-				return false;
-		}
-
-		// All flags were ok, we are done!
-		return true;
+		if (!ok)
+			return false;
 	}
 
-	return false;
+	// All flags were ok, we are done!
+	return true;
 }
 
 void Object::adjustCoordinates(Common::Point *point) {
