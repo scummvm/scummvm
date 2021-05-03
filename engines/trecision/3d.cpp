@@ -1527,7 +1527,7 @@ void PathFinding3D::goToPosition(int num) {
 				_oldPanel = _curPanel;
 				_curPanel = -1;
 
-				_vm->_pathFind->findPath();
+				findPath();
 
 				_characterGoToPosition = num;
 				break;
@@ -2050,11 +2050,12 @@ void PathFinding3D::initSortPan() {
 	_sortPan[30]._min = 0.0f;
 	_sortPan[30]._num = BOX_FOREGROUND;
 
+	Actor *actor = _vm->_actor;
 	// Sort panel blocks by increasing distance from the camera
 	for (int b = 0; b < _panelNum; ++b) {
 		if (!(_panel[b]._flags & 0x80000000)) {
-			float dist1 = _vm->dist3D(_vm->_actor->_camera->_ex, 0.0, _vm->_actor->_camera->_ez, _panel[b]._x1, 0.0, _panel[b]._z1);
-			float dist2 = _vm->dist3D(_vm->_actor->_camera->_ex, 0.0, _vm->_actor->_camera->_ez, _panel[b]._x2, 0.0, _panel[b]._z2);
+			float dist1 = _vm->dist3D(actor->_camera->_ex, 0.0, actor->_camera->_ez, _panel[b]._x1, 0.0, _panel[b]._z1);
+			float dist2 = _vm->dist3D(actor->_camera->_ex, 0.0, actor->_camera->_ez, _panel[b]._x2, 0.0, _panel[b]._z2);
 
 			float min = MIN(dist1, dist2);
 
