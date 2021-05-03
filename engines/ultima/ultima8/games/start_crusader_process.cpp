@@ -91,12 +91,19 @@ void StartCrusaderProcess::run() {
 		avatar->setShieldType(1);
 
 #if 0
-		// Give the avatar *all the weapons*.. (handy for testing)
-		uint32 wpnshapes[] = {0x032E, 0x032F, 0x0330, 0x038C, 0x0332, 0x0333, 0x0334,
-			0x038E, 0x0388, 0x038A, 0x038D, 0x038B, 0x0386};
+		// Give the avatar *all the weapons and ammo*.. (handy for testing)
+		uint32 wpnshapes[] = {
+			// Weapons
+			0x032E, 0x032F, 0x0330, 0x038C, 0x0332, 0x0333, 0x0334,
+			0x038E, 0x0388, 0x038A, 0x038D, 0x038B, 0x0386,
+			// Ammo
+			0x033D, 0x033E, 0x033F, 0x0340, 0x0341
+		};
 		for (int i = 0; i < ARRAYSIZE(wpnshapes); i++) {
-			Item *wpn = ItemFactory::createItem(wpnshapes[i], 0, 0, 0, 0, mapnum, 0, true);
-			avatar->addItemCru(wpn, false);
+			for (int j = 0; j < 5; j++) {
+				Item *wpn = ItemFactory::createItem(wpnshapes[i], 0, 0, 0, 0, mapnum, 0, true);
+				avatar->addItemCru(wpn, false);
+			}
 		}
 #endif
 
