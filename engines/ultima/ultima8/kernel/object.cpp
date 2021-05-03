@@ -44,7 +44,7 @@ ObjId Object::assignObjId() {
 
 void Object::clearObjId() {
 	// On clearObjId we kill all processes that belonged to us
-	Kernel::get_instance()->killProcesses(_objId, 6, true);
+	Kernel::get_instance()->killProcesses(_objId, Kernel::PROC_TYPE_ALL, true);
 
 	if (_objId != 0xFFFF)
 		ObjectManager::get_instance()->clearObjId(_objId);

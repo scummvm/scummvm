@@ -908,8 +908,8 @@ void Actor::receiveHitCru(uint16 other, Direction dir, int damage, uint16 damage
 		}
 
 		// TODO: Finish special case for Vargas in No Remorse.
-		doAnim(Animation::teleportOutReplacement, dir_current);
-		doAnim(Animation::teleportInReplacement, dir_current);
+		ProcId teleout = doAnim(Animation::teleportOutReplacement, dir_current);
+		doAnimAfter(Animation::teleportInReplacement, dir_current, teleout);
 		_hitPoints -= damage;
 		//if (_bossHealth < 0)
 		//	_bossHealth = 0;
@@ -1231,7 +1231,7 @@ ProcId Actor::dieU8(uint16 damageType) {
 #if 1
 	animprocid = killAllButFallAnims(true);
 #else
-	Kernel::get_instance()->killProcesses(getObjId(), 6, true); // CONSTANT!
+	Kernel::get_instance()->killProcesses(getObjId(), Kernel::PROC_TYPE_ALL, true);
 #endif
 
 	if (!animprocid)
@@ -1655,7 +1655,7 @@ void Actor::setInCombatU8() {
 	assert(getCombatProcess() == nullptr);
 
 	// kill any processes belonging to this actor
-	Kernel::get_instance()->killProcesses(getObjId(), 6, true);
+	Kernel::get_instance()->killProcesses(getObjId(), Kernel::PROC_TYPE_ALL, true);
 
 	// perform _special actions
 	ProcId castproc = callUsecodeEvent_cast(0);
