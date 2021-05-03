@@ -8,6 +8,7 @@ MODULE_OBJS := \
 	gfx_tinygl.o \
 	gfx_tinygl_texture.o \
 	objects/object.o \
+	objects/entrance.o \
 	objects/geometricobject.o \
 	loaders/8bitBinaryLoader.o \
 	language/8bitDetokeniser.o \

@@ -72,7 +72,7 @@ public:
 protected:
 	Type type;
 	uint16 objectID;
-	Vector3d origin, size;
+	Vector3d origin, size, rotation;
 };
 
 /*

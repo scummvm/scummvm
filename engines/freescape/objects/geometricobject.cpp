@@ -7,7 +7,6 @@
 //
 
 #include "common/str.h"
-
 #include "freescape/objects/geometricobject.h"
 
 #pragma mark -
