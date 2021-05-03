@@ -43,6 +43,7 @@ static Object *load8bitObject(StreamLoader &stream) {
 		// read the appropriate number of colours
 		int numberOfColours = GeometricObject::numberOfColoursForObjectOfType(objectType);
 		Common::Array<uint8> *colours = new Common::Array<uint8>;
+		debug("Number of colors", numberOfColours/2);
 		for (uint8 colour = 0; colour < numberOfColours/2; colour++) {
 			uint8 c = stream.get8();
 			colours->push_back(c >> 4);
@@ -50,6 +51,23 @@ static Object *load8bitObject(StreamLoader &stream) {
 			colours->push_back(c & 0xf);
 			debug("color[%d] = %x", 2*colour+1, c & 0xf);
 			byteSizeOfObject--;
+		}
+
+		// read extra vertices if required...
+		int numberOfOrdinates = GeometricObject::numberOfOrdinatesForType(objectType);
+		debug("number of ordinates %d", numberOfOrdinates);
+		Common::Array<uint16> *ordinates = nullptr;
+
+		if (numberOfOrdinates) {
+			ordinates = new Common::Array<uint16>;
+			uint16 ord = 0;
+
+			for (int ordinate = 0; ordinate < numberOfOrdinates; ordinate++) {
+				ord = stream.get8();
+				debug("ord: %x", ord);
+				ordinates->push_back(ord);
+				byteSizeOfObject--;
+			}
 		}
 
 		// grab the object condition, if there is one
@@ -68,8 +86,8 @@ static Object *load8bitObject(StreamLoader &stream) {
 			objectID,
 			position,
 			v, // size
-			nullptr,
-			0,
+			colours,
+			ordinates,
 			instructions);
 	} break;
 
@@ -89,7 +107,6 @@ static Object *load8bitObject(StreamLoader &stream) {
 	}
 
 	stream.skipBytes(byteSizeOfObject);
-	//debug("Object %d ; size %d", objectID, byteSizeOfObject);
 	return nullptr;
 }
 
@@ -130,7 +147,6 @@ Common::Array <uint8>*getPaletteGradient(float *c1, float *c2)
 		raw_palette->push_back(y1);
 		raw_palette->push_back(y2);
 	}
-	//assert(0);
 	return raw_palette;
 }
 
@@ -170,7 +186,6 @@ Area *load8bitArea(StreamLoader &stream) {
 			}
 		}
 	}
-	//assert(0);
 	stream.setFileOffset(base+cPtr);
 	uint8 numConditions = stream.get8();
 	debug("%d area conditions", numConditions);
@@ -218,7 +233,13 @@ Binary load8bitBinary(Common::String filename, uint offset) {
 	debug("Start area: %d", startArea);
 	uint8 entranceArea = streamLoader.get8();
 	debug("Entrace area: %d", entranceArea);
-	streamLoader.skipBytes(68);
+
+	streamLoader.skipBytes(66);
+
+	uint16 globalSomething;
+	globalSomething = streamLoader.get16();
+	debug("Pointer to something: %x\n", globalSomething);
+
 	uint16 globalByteCodeTable;
 	globalByteCodeTable = streamLoader.get16();
 	debug("GBCT: %d\n", globalByteCodeTable);
