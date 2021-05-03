@@ -36,7 +36,7 @@
 #include "backends/platform/sdl/win32/win32_wrapper.h"
 
 WindowsSaveFileManager::WindowsSaveFileManager() {
-	char defaultSavepath[MAXPATHLEN];
+	char defaultSavepath[MAX_PATH];
 
 
 	// Use the Application Data directory of the user profile.

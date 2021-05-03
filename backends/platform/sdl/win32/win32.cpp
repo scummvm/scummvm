@@ -232,7 +232,7 @@ Common::String OSystem_Win32::getScreenshotsPath() {
 	}
 
 	// Use the My Pictures folder.
-	char picturesPath[MAXPATHLEN];
+	char picturesPath[MAX_PATH];
 
 	if (SHGetFolderPathFunc(NULL, CSIDL_MYPICTURES, NULL, SHGFP_TYPE_CURRENT, picturesPath) != S_OK) {
 		warning("Unable to access My Pictures directory");
@@ -252,7 +252,7 @@ Common::String OSystem_Win32::getScreenshotsPath() {
 }
 
 Common::String OSystem_Win32::getDefaultConfigFileName() {
-	char configFile[MAXPATHLEN];
+	char configFile[MAX_PATH];
 
 	// Use the Application Data directory of the user profile.
 	if (SHGetFolderPathFunc(NULL, CSIDL_APPDATA, NULL, SHGFP_TYPE_CURRENT, configFile) == S_OK) {
@@ -267,9 +267,9 @@ Common::String OSystem_Win32::getDefaultConfigFileName() {
 		FILE *tmp = NULL;
 		if ((tmp = fopen(configFile, "r")) == NULL) {
 			// Check windows directory
-			char oldConfigFile[MAXPATHLEN];
-			uint ret = GetWindowsDirectory(oldConfigFile, MAXPATHLEN);
-			if (ret == 0 || ret > MAXPATHLEN)
+			char oldConfigFile[MAX_PATH];
+			uint ret = GetWindowsDirectory(oldConfigFile, MAX_PATH);
+			if (ret == 0 || ret > MAX_PATH)
 				error("Cannot retrieve the path of the Windows directory");
 
 			strcat(oldConfigFile, "\\" DEFAULT_CONFIG_FILE);
@@ -284,8 +284,8 @@ Common::String OSystem_Win32::getDefaultConfigFileName() {
 	} else {
 		warning("Unable to access application data directory");
 		// Check windows directory
-		uint ret = GetWindowsDirectory(configFile, MAXPATHLEN);
-		if (ret == 0 || ret > MAXPATHLEN)
+		uint ret = GetWindowsDirectory(configFile, MAX_PATH);
+		if (ret == 0 || ret > MAX_PATH)
 			error("Cannot retrieve the path of the Windows directory");
 
 		strcat(configFile, "\\" DEFAULT_CONFIG_FILE);
@@ -295,7 +295,7 @@ Common::String OSystem_Win32::getDefaultConfigFileName() {
 }
 
 Common::String OSystem_Win32::getDefaultLogFileName() {
-	char logFile[MAXPATHLEN];
+	char logFile[MAX_PATH];
 
 	// Use the Application Data directory of the user profile.
 	if (SHGetFolderPathFunc(NULL, CSIDL_APPDATA, NULL, SHGFP_TYPE_CURRENT, logFile) != S_OK) {
