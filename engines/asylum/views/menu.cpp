@@ -11,7 +11,7 @@
 
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
 
  * You should have received a copy of the GNU General Public License
@@ -1699,7 +1699,7 @@ void Menu::clickSaveGame() {
 	//////////////////////////////////////////////////////////////////////////
 	// Previous page
 	if (cursor.x >= 30  && cursor.x <= (30 + getText()->getWidth(MAKE_RESOURCE(kResourcePackText, 1336)))
-	&& cursor.y >= 340 && cursor.y <= (340 + 24)) {
+	 && cursor.y >= 340 && cursor.y <= (340 + 24)) {
 		if (_startIndex) {
 			_startIndex -= 12;
 			if (_startIndex < 0)

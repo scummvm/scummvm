@@ -812,10 +812,10 @@ enum PuzzleId {
 //////////////////////////////////////////////////////////////////////////
 // Sub-integer partial access macros
 //////////////////////////////////////////////////////////////////////////
-#define LOBYTE(d)   (*((char*)&(d)))
-#define BYTE1(d)    (*((char*)&(d)+1))   // Same as HIBYTE()
-#define BYTE2(d)    (*((char*)&(d)+2))
-#define LOWORD(x)   (*((int16*)&(x)))
+#define LOBYTE(d)   (*((char *)&(d)))
+#define BYTE1(d)    (*((char *)&(d) + 1))   // Same as HIBYTE()
+#define BYTE2(d)    (*((char *)&(d) + 2))
+#define LOWORD(x)   (*((int16 *)&(x)))
 
 //////////////////////////////////////////////////////////////////////////
 // Resource ID macros

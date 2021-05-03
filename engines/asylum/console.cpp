@@ -500,7 +500,7 @@ bool Console::cmdListObjects(int32 argc, const char **argv) {
 
 			debugPrintf("Total: %d\n", getWorld()->objects.size());
 
-		} else if (Common::String(argv[1]) == "*"){
+		} else if (Common::String(argv[1]) == "*") {
 			for (uint32 i = 0; i < getWorld()->objects.size(); i++)
 				debugPrintf("%s", getWorld()->objects[i]->toString().c_str());
 

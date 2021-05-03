@@ -43,7 +43,7 @@ enum kDebugLevels {
 	kDebugLevelActor     = 1 << 10,
 	kDebugLevelEncounter = 1 << 11,
 	kDebugLevelVideo     = 1 << 12,
-	kDebugLevelCommands  = 1 << 13,
+	kDebugLevelCommands  = 1 << 13
 };
 
 class AsylumEngine;

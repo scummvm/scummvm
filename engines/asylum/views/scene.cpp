@@ -11,7 +11,7 @@
 
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
 
  * You should have received a copy of the GNU General Public License
@@ -2715,8 +2715,8 @@ void Scene::checkVisibleActorsPriority() {
 }
 
 void Scene::adjustActorPriority(ActorIndex index) {
-	Actor* actor0 = getActor(0);
-	Actor* actor = getActor(index);
+	Actor *actor0 = getActor(0);
+	Actor *actor  = getActor(index);
 
 	if (rectIntersect(actor0->getPoint1()->x,
 	                  actor0->getPoint1()->y,
