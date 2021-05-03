@@ -141,7 +141,7 @@ void CruAvatarMoverProcess::handleCombatMode() {
 				nextanim = Animation::combatRunSmallWeapon;
 			else
 				nextanim = Animation::startRunSmallWeapon;
-		} else if (hasMovementFlags(MOVE_JUMP)) {
+		} else if (hasMovementFlags(MOVE_JUMP) && avatar->hasAnim(Animation::jumpForward)) {
 			if (lastanim == Animation::walk || lastanim == Animation::run || lastanim == Animation::combatRunSmallWeapon)
 				nextanim = Animation::jumpForward;
 			else
