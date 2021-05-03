@@ -126,6 +126,7 @@ TrecisionEngine::TrecisionEngine(OSystem *syst) : Engine(syst) {
 	_logicMgr = nullptr;
 	_soundMgr = nullptr;
 	_renderer = nullptr;
+	_pathFind = nullptr;
 	
 	_actorRect = nullptr;
 	_nextRefresh = 0;
@@ -189,6 +190,7 @@ TrecisionEngine::~TrecisionEngine() {
 	delete _logicMgr;
 	delete _soundMgr;
 	delete _renderer;
+	delete _pathFind;
 	
 	delete[] _font;
 	delete[] _arrows;
@@ -699,7 +701,7 @@ bool TrecisionEngine::dataSave() {
 	bool ret = true;
 
 	_actor->actorStop();
-	nextStep();
+	_pathFind->nextStep();
 
 	if (!ConfMan.getBool("originalsaveload")) {
 		GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"), true);
@@ -1050,7 +1052,7 @@ void TrecisionEngine::performLoad(int slot, bool skipLoad) {
 	}
 
 	_actor->actorStop();
-	nextStep();
+	_pathFind->nextStep();
 	checkSystem();
 
 	for (int a = FIRSTLINE; a < MAXY; a++)
@@ -1083,7 +1085,7 @@ void TrecisionEngine::StartCharacterAction(uint16 Act, uint16 NewRoom, uint8 New
 			_curObj = 0;
 		hideCursor();
 		_actor->actorDoAction(Act);
-		nextStep();
+		_pathFind->nextStep();
 	}
 
 	if (sent)

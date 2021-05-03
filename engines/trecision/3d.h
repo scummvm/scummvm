@@ -82,8 +82,47 @@ public:
 	void init3DRoom(uint16 *destBuffer, int16 *zBuffer);
 	void setClipping(int16 x1, int16 y1, int16 x2, int16 y2);
 	void drawCharacter(uint8 flag);
-};
-  // end of class
+}; // end of class
+
+class PathFinding3D {
+private:
+	TrecisionEngine *_vm;
+
+	bool pointInside(int pan, float x, float z);
+
+	SPathNode _pathNode[MAXPATHNODES];	
+
+public:
+	PathFinding3D(TrecisionEngine *vm);
+	~PathFinding3D();
+
+	float _lookX;
+	float _lookZ;
+	int _curStep;
+	int _lastStep;
+
+	int8 _characterGoToPosition;
+	bool _characterInMovement;
+	SSortPan _sortPan[32];
+	SStep _step[MAXSTEP];
+	SPan _panel[MAXPANELSINROOM];
+
+	void findPath();
+	void findShortPath();
+	float evalPath(int a, float destX, float destZ, int nearP);
+	void setPosition(int num);
+	void goToPosition(int num);
+	void lookAt(float x, float z);
+	void buildFramelist();
+	int nextStep();
+	void displayPath();
+	bool findAttachedPanel(int srcPanel, int destPanel);
+//	int pathCompare(const void *arg1, const void *arg2);
+	void sortPath();
+	void initSortPan();
+
+
+}; // end of class
 
 } // end of namespace
 #endif

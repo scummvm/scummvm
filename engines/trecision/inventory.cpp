@@ -20,6 +20,7 @@
  *
  */
 
+#include "3d.h"
 #include "actor.h"
 #include "trecision/nl/message.h"
 #include "trecision/nl/extern.h"
@@ -160,7 +161,7 @@ void TrecisionEngine::doInventory() {
 	case ME_EXAMINEICON:
 		_curInventory = whatIcon(_mouseX);
 		_actor->actorStop();
-		nextStep();
+		_pathFind->nextStep();
 		if (_flagUseWithStarted) {
 			_flagInventoryLocked = false;
 			_flagUseWithStarted = false;
@@ -355,7 +356,7 @@ void TrecisionEngine::doInventoryUseWithScreen() {
 		warning("doInventoryUseWithScreen - _useWith not set properly");
 
 	_animMgr->smkStop(kSmackerIcon);
-	if (_characterInMovement)
+	if (_pathFind->_characterInMovement)
 		return;
 
 	bool refreshInventory, printSentence;

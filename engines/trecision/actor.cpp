@@ -23,6 +23,8 @@
 #include "trecision/trecision.h"
 #include "trecision/actor.h"
 
+
+#include "3d.h"
 #include "defines.h"
 #include "nl/extern.h"
 #include "nl/message.h"
@@ -340,21 +342,21 @@ void Actor::actorDoAction(int action) {
 	if (action > hLAST)
 		error("error in actorDoAction, invalid action (should be called as an animation)");
 
-	_curStep = 1;
+	_vm->_pathFind->_curStep = 1;
 	float px = _px + _dx;
 	float pz = _pz + _dz;
 	float theta = _theta;
 	int b = 0;
 
-	_step[b]._px = px;
-	_step[b]._pz = pz;
-	_step[b]._dx = 0.0f;
-	_step[b]._dz = 0.0f;
+	_vm->_pathFind->_step[b]._px = px;
+	_vm->_pathFind->_step[b]._pz = pz;
+	_vm->_pathFind->_step[b]._dx = 0.0f;
+	_vm->_pathFind->_step[b]._dz = 0.0f;
 
-	_step[b]._theta = theta;
-	_step[b]._curAction = hSTAND;
-	_step[b]._curFrame = 0;
-	_step[b]._curPanel = _curPanel;
+	_vm->_pathFind->_step[b]._theta = theta;
+	_vm->_pathFind->_step[b]._curAction = hSTAND;
+	_vm->_pathFind->_step[b]._curFrame = 0;
+	_vm->_pathFind->_step[b]._curPanel = _curPanel;
 
 	float t = ((270.0f - theta) * PI2) / 360.0f;
 	float ox = cos(t);
@@ -378,19 +380,19 @@ void Actor::actorDoAction(int action) {
 
 	len = _defActionLen[action];
 
-	for (b = _curStep; b < len + _curStep; b++) {
+	for (b = _vm->_pathFind->_curStep; b < len + _vm->_pathFind->_curStep; b++) {
 		float curLen = FRAMECENTER(v) - firstFrame;
 
-		_step[b]._dx = curLen * ox;
-		_step[b]._dz = curLen * oz;
-		_step[b]._px = px;
-		_step[b]._pz = pz;
+		_vm->_pathFind->_step[b]._dx = curLen * ox;
+		_vm->_pathFind->_step[b]._dz = curLen * oz;
+		_vm->_pathFind->_step[b]._px = px;
+		_vm->_pathFind->_step[b]._pz = pz;
 
-		_step[b]._curAction = action;
-		_step[b]._curFrame = b - _curStep;
+		_vm->_pathFind->_step[b]._curAction = action;
+		_vm->_pathFind->_step[b]._curFrame = b - _vm->_pathFind->_curStep;
 
-		_step[b]._theta = theta;
-		_step[b]._curPanel = _curPanel;
+		_vm->_pathFind->_step[b]._theta = theta;
+		_vm->_pathFind->_step[b]._curPanel = _curPanel;
 
 		v += _vertexNum;
 
@@ -398,17 +400,17 @@ void Actor::actorDoAction(int action) {
 			v = _characterArea;
 	}
 
-	_step[b]._px = px;
-	_step[b]._pz = pz;
-	_step[b]._dx = 0.0;
-	_step[b]._dz = 0.0;
+	_vm->_pathFind->_step[b]._px = px;
+	_vm->_pathFind->_step[b]._pz = pz;
+	_vm->_pathFind->_step[b]._dx = 0.0;
+	_vm->_pathFind->_step[b]._dz = 0.0;
 
-	_step[b]._theta = theta;
-	_step[b]._curAction = hSTAND;
-	_step[b]._curFrame = 0;
-	_step[b]._curPanel = _curPanel;
+	_vm->_pathFind->_step[b]._theta = theta;
+	_vm->_pathFind->_step[b]._curAction = hSTAND;
+	_vm->_pathFind->_step[b]._curFrame = 0;
+	_vm->_pathFind->_step[b]._curPanel = _curPanel;
 
-	_lastStep = b; // Last step
+	_vm->_pathFind->_lastStep = b; // Last step
 
 	// Starts action
 	if (_vm->_obj[_vm->_curObj]._flag & kObjFlagRoomOut)
@@ -420,20 +422,20 @@ void Actor::actorDoAction(int action) {
 void Actor::actorStop() {
 	int b = 0;
 
-	_step[b]._px = _px + _dx;
-	_step[b]._pz = _pz + _dz;
-	_step[b]._dx = 0.0;
-	_step[b]._dz = 0.0;
+	_vm->_pathFind->_step[b]._px = _px + _dx;
+	_vm->_pathFind->_step[b]._pz = _pz + _dz;
+	_vm->_pathFind->_step[b]._dx = 0.0;
+	_vm->_pathFind->_step[b]._dz = 0.0;
 
-	_step[b]._theta = _theta;
-	_step[b]._curAction = hSTAND;
-	_step[b]._curFrame = 0;
-	_step[b]._curPanel = _curPanel;
+	_vm->_pathFind->_step[b]._theta = _theta;
+	_vm->_pathFind->_step[b]._curAction = hSTAND;
+	_vm->_pathFind->_step[b]._curFrame = 0;
+	_vm->_pathFind->_step[b]._curPanel = _curPanel;
 
-	_characterGoToPosition = -1;
+	_vm->_pathFind->_characterGoToPosition = -1;
 
-	_curStep = 0;
-	_lastStep = 0;
+	_vm->_pathFind->_curStep = 0;
+	_vm->_pathFind->_lastStep = 0;
 }
 
 void Actor::read3D(Common::SeekableReadStream *ff) {

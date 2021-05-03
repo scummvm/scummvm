@@ -271,7 +271,7 @@ void LogicManager::setupAltRoom(uint16 room, bool altRoomFl) {
 		if (!altRoomFl) {
 			read3D("21.3d");
 			_vm->_room[kRoom21]._flag &= ~kObjFlagExtra;
-			setPosition(14);
+			_vm->_pathFind->setPosition(14);
 			_vm->_obj[oCATENAT21]._position = 5;
 			_vm->_obj[oUSCITA21]._position = 11;
 
@@ -299,7 +299,7 @@ void LogicManager::setupAltRoom(uint16 room, bool altRoomFl) {
 		} else {
 			read3D("212.3d");
 			_vm->_room[kRoom21]._flag |= kObjFlagExtra;
-			setPosition(15);
+			_vm->_pathFind->setPosition(15);
 			_vm->_obj[oCATENAT21]._position = 6;
 			_vm->_obj[oUSCITA21]._position = 21;
 
@@ -641,9 +641,9 @@ void LogicManager::endChangeRoom() {
 	} else if ((_vm->_curRoom == kRoom23A) && (_vm->_oldRoom == kRoom21) && (!(_vm->_room[kRoom23A]._flag & kObjFlagDone)))
 		_vm->_flagShowCharacter = false;
 	else if ((_vm->_curRoom == kRoom31) && !(_vm->_room[kRoom31]._flag & kObjFlagDone))
-		setPosition(14);
+		_vm->_pathFind->setPosition(14);
 	else if ((_vm->_oldRoom == kRoom41D) && (_vm->_inventoryObj[kItemPositioner]._flag & kObjFlagExtra)) {
-		setPosition(30);
+		_vm->_pathFind->setPosition(30);
 		_vm->_renderer->drawCharacter(CALCPOINTS);
 	}
 
@@ -659,7 +659,7 @@ void LogicManager::endChangeRoom() {
 	}
 	// CHECKME: This check is identical to the 3rd one, thus it's always false
 	else if ((_vm->_curRoom == kRoom21) && (/*!( _room[_vm->_curRoom]._flag & OBJFLAG_DONE ) || */ (_vm->_oldRoom == kRoom1C))) {
-		setPosition(10);
+		_vm->_pathFind->setPosition(10);
 		TendIn();
 		_vm->_flagNoPaintScreen = false;
 		_vm->clearText();
@@ -2049,7 +2049,7 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 			_vm->_obj[oPANNELLOA]._mode &= ~OBJMODE_OBJSTATUS;
 			_vm->_obj[oCAVOTAGLIATO56]._mode |= OBJMODE_OBJSTATUS;
 			_vm->_obj[oDOOR58C55]._mode |= OBJMODE_OBJSTATUS;
-			setPosition(6);
+			_vm->_pathFind->setPosition(6);
 			_vm->removeIcon(kItemParallelCutter);
 			*printSentence = false;
 		} else if (_vm->_useWith[WITH] == oPANNELLOA) {
@@ -2124,7 +2124,7 @@ bool LogicManager::useScreenWithScreen() {
 	case oTUBET33:
 		if (((_vm->_useWith[WITH] == oSAMA33) || (_vm->_useWith[WITH] == oSERRATURA33 && _vm->_obj[oSAMA33]._mode & OBJMODE_OBJSTATUS)) && (_vm->_obj[oVALVOLA34]._mode & OBJMODE_OBJSTATUS)) {
 			_vm->_dialogMgr->playDialog(dF331);
-			setPosition(10);
+			_vm->_pathFind->setPosition(10);
 			_vm->_obj[oBOTOLAC33]._mode &= ~OBJMODE_OBJSTATUS;
 			_vm->_obj[oSERRATURA33]._mode &= ~OBJMODE_OBJSTATUS;
 			_vm->_obj[oBOTOLAA33]._mode |= OBJMODE_OBJSTATUS;
@@ -2969,7 +2969,7 @@ bool LogicManager::mouseOperate(uint16 curObj) {
 
 		_vm->_animMgr->_animTab[aBKG35]._flag |= SMKANIM_OFF1;
 		_vm->_dialogMgr->playDialog(dF351);
-		setPosition(7);
+		_vm->_pathFind->setPosition(7);
 		break;
 
 	case oCOMPUTER36:
@@ -3182,7 +3182,7 @@ bool LogicManager::mouseOperate(uint16 curObj) {
 		if (!(_vm->_dialogMgr->_choice[245]._flag & kObjFlagDone) && !(_vm->_dialogMgr->_choice[766]._flag & kObjFlagDone)) {
 			_vm->_dialogMgr->_choice[245]._flag &= ~DLGCHOICE_HIDE;
 			_vm->_dialogMgr->playDialog(dC4A1);
-			setPosition(14);
+			_vm->_pathFind->setPosition(14);
 			_vm->_obj[oDOORC4A]._action = 1117;
 			_vm->_obj[oDOORC4A]._anim = 0;
 			retVal = false;
@@ -3463,90 +3463,90 @@ bool LogicManager::mouseClick(uint16 curObj) {
 	bool retVal;
 	if ((_vm->_curRoom == kRoom1D) && !(_vm->_room[kRoom1D]._flag & kObjFlagExtra) && (curObj != oSCALA1D)) {
 		_vm->_curObj = oDONNA1D;
-		goToPosition(_vm->_obj[oDONNA1D]._position);
+		_vm->_pathFind->goToPosition(_vm->_obj[oDONNA1D]._position);
 		retVal = true;
 	} else if ((_vm->_curRoom == kRoom2B) && (_vm->_room[kRoom2B]._flag & kObjFlagExtra) && (curObj != oCARTELLO2B) && (curObj != od2BALLA28)) {
 		_vm->_curObj = oDOOR2B;
-		goToPosition(_vm->_obj[oCARTELLO2B]._position);
+		_vm->_pathFind->goToPosition(_vm->_obj[oCARTELLO2B]._position);
 		retVal = true;
 	} else {
 		switch (curObj) {
 		case oDOORA13:
 			if (_vm->_mouseRightBtn && (_vm->_room[kRoom14]._flag & kObjFlagDone)) {
-				if (_characterGoToPosition != 4)
-					goToPosition(4);
-			} else if (_characterGoToPosition != _vm->_obj[curObj]._position)
-				goToPosition(_vm->_obj[curObj]._position);
+				if (_vm->_pathFind->_characterGoToPosition != 4)
+					_vm->_pathFind->goToPosition(4);
+			} else if (_vm->_pathFind->_characterGoToPosition != _vm->_obj[curObj]._position)
+				_vm->_pathFind->goToPosition(_vm->_obj[curObj]._position);
 
 			retVal = true;
 			break;
 
 		case oDIVANO14:
 			if (_vm->_mouseLeftBtn) {
-				if (_characterGoToPosition != 2)
-					goToPosition(2);
-			} else if (_characterGoToPosition != _vm->_obj[curObj]._position)
-				goToPosition(_vm->_obj[curObj]._position);
+				if (_vm->_pathFind->_characterGoToPosition != 2)
+					_vm->_pathFind->goToPosition(2);
+			} else if (_vm->_pathFind->_characterGoToPosition != _vm->_obj[curObj]._position)
+				_vm->_pathFind->goToPosition(_vm->_obj[curObj]._position);
 
 			retVal = true;
 			break;
 
 		case oSCAFFALE1D:
 			if (_vm->_mouseRightBtn) {
-				if (_characterGoToPosition != 9)
-					goToPosition(9);
-			} else if (_characterGoToPosition != _vm->_obj[curObj]._position)
-				goToPosition(_vm->_obj[curObj]._position);
+				if (_vm->_pathFind->_characterGoToPosition != 9)
+					_vm->_pathFind->goToPosition(9);
+			} else if (_vm->_pathFind->_characterGoToPosition != _vm->_obj[curObj]._position)
+				_vm->_pathFind->goToPosition(_vm->_obj[curObj]._position);
 
 			retVal = true;
 			break;
 
 		case oDIVANOR4A:
 			if (_vm->_mouseRightBtn) {
-				if (_characterGoToPosition != 1)
-					goToPosition(1);
-			} else if (_characterGoToPosition != _vm->_obj[curObj]._position)
-				goToPosition(_vm->_obj[curObj]._position);
+				if (_vm->_pathFind->_characterGoToPosition != 1)
+					_vm->_pathFind->goToPosition(1);
+			} else if (_vm->_pathFind->_characterGoToPosition != _vm->_obj[curObj]._position)
+				_vm->_pathFind->goToPosition(_vm->_obj[curObj]._position);
 
 			retVal = true;
 			break;
 
 		case oDOORC21:
 			if ((_vm->_useWith[USED] == kItemPistol) && _vm->_flagUseWithStarted) {
-				if (_characterGoToPosition != 1)
-					goToPosition(1);
-			} else if (_characterGoToPosition != _vm->_obj[curObj]._position)
-				goToPosition(_vm->_obj[curObj]._position);
+				if (_vm->_pathFind->_characterGoToPosition != 1)
+					_vm->_pathFind->goToPosition(1);
+			} else if (_vm->_pathFind->_characterGoToPosition != _vm->_obj[curObj]._position)
+				_vm->_pathFind->goToPosition(_vm->_obj[curObj]._position);
 
 			retVal = true;
 			break;
 
 		case oTUBO21:
 			if ((_vm->_useWith[USED] == oRAMPINO21) && _vm->_flagUseWithStarted) {
-				if (_characterGoToPosition != 4)
-					goToPosition(4);
-			} else if (_characterGoToPosition != _vm->_obj[curObj]._position)
-				goToPosition(_vm->_obj[curObj]._position);
+				if (_vm->_pathFind->_characterGoToPosition != 4)
+					_vm->_pathFind->goToPosition(4);
+			} else if (_vm->_pathFind->_characterGoToPosition != _vm->_obj[curObj]._position)
+				_vm->_pathFind->goToPosition(_vm->_obj[curObj]._position);
 
 			retVal = true;
 			break;
 
 		case oCAMPO23:
 			if ((_vm->_useWith[USED] == oCAVIE23) && _vm->_flagUseWithStarted) {
-				if (_characterGoToPosition != 2)
-					goToPosition(2);
-			} else if (_characterGoToPosition != _vm->_obj[curObj]._position)
-				goToPosition(_vm->_obj[curObj]._position);
+				if (_vm->_pathFind->_characterGoToPosition != 2)
+					_vm->_pathFind->goToPosition(2);
+			} else if (_vm->_pathFind->_characterGoToPosition != _vm->_obj[curObj]._position)
+				_vm->_pathFind->goToPosition(_vm->_obj[curObj]._position);
 
 			retVal = true;
 			break;
 
 		case oTASTO2F:
 			if ((_vm->_useWith[USED] == kItemElevatorRemoteControl) && _vm->_flagUseWithStarted) {
-				if (_characterGoToPosition != 9)
-					goToPosition(9);
-			} else if (_characterGoToPosition != _vm->_obj[curObj]._position)
-				goToPosition(_vm->_obj[curObj]._position);
+				if (_vm->_pathFind->_characterGoToPosition != 9)
+					_vm->_pathFind->goToPosition(9);
+			} else if (_vm->_pathFind->_characterGoToPosition != _vm->_obj[curObj]._position)
+				_vm->_pathFind->goToPosition(_vm->_obj[curObj]._position);
 
 			retVal = true;
 			break;
@@ -3555,111 +3555,111 @@ bool LogicManager::mouseClick(uint16 curObj) {
 		case oSERRATURA33:
 			if ((_vm->_useWith[USED] == oTUBET33) && (_vm->_obj[oVALVOLA34]._mode & OBJMODE_OBJSTATUS)
 			&& (_vm->_obj[oSAMA33]._mode & OBJMODE_OBJSTATUS) && _vm->_flagUseWithStarted) {
-				if (_characterGoToPosition != 4)
-					goToPosition(4);
-			} else if (_characterGoToPosition != _vm->_obj[curObj]._position)
-				goToPosition(_vm->_obj[curObj]._position);
+				if (_vm->_pathFind->_characterGoToPosition != 4)
+					_vm->_pathFind->goToPosition(4);
+			} else if (_vm->_pathFind->_characterGoToPosition != _vm->_obj[curObj]._position)
+				_vm->_pathFind->goToPosition(_vm->_obj[curObj]._position);
 
 			retVal = true;
 			break;
 
 		case oWINDOW33:
 			if (_vm->_mouseLeftBtn) {
-				if (_characterGoToPosition != 7)
-					goToPosition(7);
-			} else if (_characterGoToPosition != _vm->_obj[curObj]._position)
-				goToPosition(_vm->_obj[curObj]._position);
+				if (_vm->_pathFind->_characterGoToPosition != 7)
+					_vm->_pathFind->goToPosition(7);
+			} else if (_vm->_pathFind->_characterGoToPosition != _vm->_obj[curObj]._position)
+				_vm->_pathFind->goToPosition(_vm->_obj[curObj]._position);
 
 			retVal = true;
 			break;
 
 		case oPRESA35:
 			if (!_vm->_flagUseWithStarted) {
-				if (_characterGoToPosition != 2)
-					goToPosition(2);
-			} else if (_characterGoToPosition != _vm->_obj[curObj]._position)
-				goToPosition(_vm->_obj[curObj]._position);
+				if (_vm->_pathFind->_characterGoToPosition != 2)
+					_vm->_pathFind->goToPosition(2);
+			} else if (_vm->_pathFind->_characterGoToPosition != _vm->_obj[curObj]._position)
+				_vm->_pathFind->goToPosition(_vm->_obj[curObj]._position);
 
 			retVal = true;
 			break;
 
 		case oTRIPLA35:
 			if (!_vm->_flagUseWithStarted && _vm->_mouseLeftBtn) {
-				if (_characterGoToPosition != 2)
-					goToPosition(2);
-			} else if (_characterGoToPosition != _vm->_obj[curObj]._position)
-				goToPosition(_vm->_obj[curObj]._position);
+				if (_vm->_pathFind->_characterGoToPosition != 2)
+					_vm->_pathFind->goToPosition(2);
+			} else if (_vm->_pathFind->_characterGoToPosition != _vm->_obj[curObj]._position)
+				_vm->_pathFind->goToPosition(_vm->_obj[curObj]._position);
 
 			retVal = true;
 			break;
 
 		case oPORTALC36:
 			if ((_vm->_useWith[USED] == kItemStethoscope) && _vm->_flagUseWithStarted) {
-				if (_characterGoToPosition != 8)
-					goToPosition(8);
-			} else if (_characterGoToPosition != _vm->_obj[curObj]._position)
-				goToPosition(_vm->_obj[curObj]._position);
+				if (_vm->_pathFind->_characterGoToPosition != 8)
+					_vm->_pathFind->goToPosition(8);
+			} else if (_vm->_pathFind->_characterGoToPosition != _vm->_obj[curObj]._position)
+				_vm->_pathFind->goToPosition(_vm->_obj[curObj]._position);
 
 			retVal = true;
 			break;
 
 		case oSERBATOIOA2G:
 			if ((_vm->_useWith[USED] == kItemFlare) && (_vm->_inventoryObj[kItemGasCylinder]._flag & kObjFlagExtra) && (_vm->_inventoryObj[kItemCanWithFuel]._flag & kObjFlagExtra) && _vm->_flagUseWithStarted) {
-				if (_characterGoToPosition != 6)
-					goToPosition(6);
-			} else if (_characterGoToPosition != _vm->_obj[curObj]._position)
-				goToPosition(_vm->_obj[curObj]._position);
+				if (_vm->_pathFind->_characterGoToPosition != 6)
+					_vm->_pathFind->goToPosition(6);
+			} else if (_vm->_pathFind->_characterGoToPosition != _vm->_obj[curObj]._position)
+				_vm->_pathFind->goToPosition(_vm->_obj[curObj]._position);
 
 			retVal = true;
 			break;
 
 		case oRAGNO41:
 			if ((_vm->_useWith[USED] == kItemHammer) && _vm->_flagUseWithStarted) {
-				if (_characterGoToPosition != 1)
-					goToPosition(1);
-			} else if (_characterGoToPosition != _vm->_obj[curObj]._position)
-				goToPosition(_vm->_obj[curObj]._position);
+				if (_vm->_pathFind->_characterGoToPosition != 1)
+					_vm->_pathFind->goToPosition(1);
+			} else if (_vm->_pathFind->_characterGoToPosition != _vm->_obj[curObj]._position)
+				_vm->_pathFind->goToPosition(_vm->_obj[curObj]._position);
 
 			retVal = true;
 			break;
 
 		case oTAMBURO43:
 			if ((_vm->_useWith[USED] == kItemClub) && _vm->_flagUseWithStarted) {
-				if (_characterGoToPosition != 5)
-					goToPosition(5);
-			} else if (_characterGoToPosition != _vm->_obj[curObj]._position)
-				goToPosition(_vm->_obj[curObj]._position);
+				if (_vm->_pathFind->_characterGoToPosition != 5)
+					_vm->_pathFind->goToPosition(5);
+			} else if (_vm->_pathFind->_characterGoToPosition != _vm->_obj[curObj]._position)
+				_vm->_pathFind->goToPosition(_vm->_obj[curObj]._position);
 
 			retVal = true;
 			break;
 
 		case oLUCCHETTO53:
 			if ((_vm->_useWith[USED] == kItemLaserGun) && _vm->_flagUseWithStarted) {
-				if (_characterGoToPosition != 2)
-					goToPosition(2);
-			} else if (_characterGoToPosition != _vm->_obj[curObj]._position)
-				goToPosition(_vm->_obj[curObj]._position);
+				if (_vm->_pathFind->_characterGoToPosition != 2)
+					_vm->_pathFind->goToPosition(2);
+			} else if (_vm->_pathFind->_characterGoToPosition != _vm->_obj[curObj]._position)
+				_vm->_pathFind->goToPosition(_vm->_obj[curObj]._position);
 
 			retVal = true;
 			break;
 
 		case oDOOR58C55:
 			if ((_vm->_useWith[USED] == kItemGuardKeys) && _vm->_flagUseWithStarted) {
-				if (_characterGoToPosition != 2)
-					goToPosition(2);
-			} else if (_characterGoToPosition != _vm->_obj[curObj]._position)
-				goToPosition(_vm->_obj[curObj]._position);
+				if (_vm->_pathFind->_characterGoToPosition != 2)
+					_vm->_pathFind->goToPosition(2);
+			} else if (_vm->_pathFind->_characterGoToPosition != _vm->_obj[curObj]._position)
+				_vm->_pathFind->goToPosition(_vm->_obj[curObj]._position);
 
 			retVal = true;
 			break;
 
 		default:
 			if (_vm->_obj[curObj]._position == -1) {
-				_characterGoToPosition = -1;
+				_vm->_pathFind->_characterGoToPosition = -1;
 				retVal = false;
 			} else {
-				if (_characterGoToPosition != _vm->_obj[curObj]._position)
-					goToPosition(_vm->_obj[curObj]._position);
+				if (_vm->_pathFind->_characterGoToPosition != _vm->_obj[curObj]._position)
+					_vm->_pathFind->goToPosition(_vm->_obj[curObj]._position);
 				retVal = true;
 			}
 			break;
@@ -3670,13 +3670,13 @@ bool LogicManager::mouseClick(uint16 curObj) {
 			|| (curObj == oRAMPINO21) || (curObj == oCATENA21) || (curObj == od21TO22)
 			|| (curObj == oDOORC21) || (curObj == oDOORA21) || (curObj == oCUNICOLO21)
 			|| (curObj == od24TO23) || (curObj == od2ETO2C) || (curObj == od2GVALLA26)) {
-				_characterGoToPosition = -1;
+				_vm->_pathFind->_characterGoToPosition = -1;
 				retVal = true;
 			}
 		} else if ((curObj == od21TO23) || (curObj == od24TO26) || (curObj == oENTRANCE2E)
 		|| (curObj == oCARTELLO2B) || (curObj == oFRONTOFFICEC35) || (curObj == oFRONTOFFICEA35)
 		|| (curObj == oASCENSORE35) || (curObj == oGIORNALE35)) {
-			_characterGoToPosition = -1;
+			_vm->_pathFind->_characterGoToPosition = -1;
 			retVal = true;
 		}
 	}
@@ -3762,7 +3762,7 @@ bool LogicManager::operateInventory() {
 		doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, kRoom2BL, 0, 0, _vm->_useWith[WITH]);
 		_vm->_obj[oEXIT2BL]._goRoom = _vm->_curRoom;
 		_vm->_actor->actorStop();
-		nextStep();
+		_vm->_pathFind->nextStep();
 		printSentence = false;
 		break;
 
@@ -3770,7 +3770,7 @@ bool LogicManager::operateInventory() {
 		doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, kRoom36F, 0, 0, _vm->_useWith[WITH]);
 		_vm->_obj[oEXIT36F]._goRoom = _vm->_curRoom;
 		_vm->_actor->actorStop();
-		nextStep();
+		_vm->_pathFind->nextStep();
 		printSentence = false;
 		break;
 
@@ -3781,7 +3781,7 @@ bool LogicManager::operateInventory() {
 		_vm->_obj[oEXIT41D]._goRoom = _vm->_curRoom;
 		_vm->_inventoryObj[kItemPositioner]._flag &= ~kObjFlagExtra;
 		_vm->_actor->actorStop();
-		nextStep();
+		_vm->_pathFind->nextStep();
 		printSentence = false;
 		break;
 
@@ -3789,7 +3789,7 @@ bool LogicManager::operateInventory() {
 		_vm->_obj[oEXIT58M]._goRoom = _vm->_curRoom;
 		doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, kRoom58M, 0, 0, _vm->_useWith[WITH]);
 		_vm->_actor->actorStop();
-		nextStep();
+		_vm->_pathFind->nextStep();
 		printSentence = false;
 		break;
 
@@ -3990,7 +3990,7 @@ void LogicManager::doMouseLeftRight() {
 				}
 			}
 			whereIs(pmousex, pmousey);
-			findPath();
+			_vm->_pathFind->findPath();
 		}
 		_vm->_characterQueue.initQueue();
 
@@ -4054,12 +4054,12 @@ void LogicManager::doMouseLeftRight() {
 					else if (_vm->_obj[_vm->_curObj]._flag & kObjFlagRoomOut)
 						doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, _vm->_obj[_vm->_curObj]._goRoom, 0, _vm->_obj[_vm->_curObj]._ninv, _vm->_curObj);
 					_vm->_actor->actorStop();
-					nextStep();
+					_vm->_pathFind->nextStep();
 					_vm->_obj[_vm->_curObj]._flag |= kObjFlagDone;
 				} else if (_vm->_obj[_vm->_curObj]._flag & kObjFlagUseWith) {
-					_characterGoToPosition = -1;
+					_vm->_pathFind->_characterGoToPosition = -1;
 					_vm->_actor->actorStop();
-					nextStep();
+					_vm->_pathFind->nextStep();
 					doEvent(MC_ACTION, ME_MOUSEOPERATE, MP_DEFAULT, _vm->_curMessage->_u16Param1, _vm->_curMessage->_u16Param2, 0, _vm->_curObj);
 				} else
 					doEvent(MC_CHARACTER, ME_CHARACTERGOTOACTION, MP_DEFAULT, _vm->_curMessage->_u16Param1, _vm->_curMessage->_u16Param2, 0, _vm->_curObj);
@@ -4075,7 +4075,7 @@ void LogicManager::doMouseLeftRight() {
 		if (ICONAREA(_vm->_curMessage->_u16Param1, _vm->_curMessage->_u16Param2) && _vm->whatIcon(_vm->_curMessage->_u16Param1) && (_vm->_inventoryStatus == INV_INACTION)) {
 			_vm->_characterQueue.initQueue();
 			_vm->_actor->actorStop();
-			nextStep();
+			_vm->_pathFind->nextStep();
 			doEvent(MC_CHARACTER, ME_CHARACTERGOTOACTION, MP_DEFAULT, _vm->_curMessage->_u16Param1, _vm->_curMessage->_u16Param2, 0, 0);
 			_vm->_useWith[WITH] = 0;
 			_vm->_curObj = 0;
@@ -4118,7 +4118,7 @@ void LogicManager::doSystemChangeRoom() {
 	_vm->_flagCharacterSpeak = false;
 	_vm->_flagSomeoneSpeaks = false;
 	_vm->_actor->actorStop();
-	nextStep();
+	_vm->_pathFind->nextStep();
 
 	// Handle exit velocity in dual rooms level 2
 	if (_vm->_room[_vm->_oldRoom]._flag & kObjFlagExtra) {
